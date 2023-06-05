@@ -1,0 +1,52 @@
+import type { ICustomRender } from '../../customElement';
+import type { ICustomLayout } from '../../customLayout';
+import type { FieldFormat } from '../../table-engine';
+import type { ColumnIconOption } from '../../icon';
+import type { MenuListItem } from '../../menu';
+import type { CellInfo } from '../../common';
+
+export interface IBasicHeaderIndicator {
+  // 单种指标属性配置
+  indicatorKey: string; // 指标的唯一标识 用处对应到具体数据查询阶段 flat数据
+  caption?: string; // 指标名
+  // headerType?: HeaderTypeOption | null; //指标表头类型
+  // headerStyle?: HeaderStyleOption | null; //指标名称在表头部分显示类型
+  headerIcon?: (string | ColumnIconOption)[] | ((args: CellInfo) => (string | ColumnIconOption)[]);
+
+  // linkJump?: boolean;
+  // linkDetect?: boolean;
+  // templateLink?: string;
+
+  // chartSpec?: any | ((arg0: CustomRenderFunctionArg) => any);
+  // chartType?: string; // 如果配置了columnType未chart，chartType来指定图表组件类型 如'vchart' 需要从预先register的图表类型获取
+  // sparklineSpec?: SparklineSpec | ((arg0: CustomRenderFunctionArg) => SparklineSpec);
+
+  dropDownMenu?: MenuListItem[]; // 针对单独指标上配置下拉按钮
+  showSort?: boolean; // 否显示排序icon
+  disableColumnResize?: boolean; // 是否禁用调整列宽,如果是转置表格或者是透视表的指标是行方向指定 那该配置不生效
+
+  /** 指标名称表头自定义渲染内容定义 */
+  headerCustomRender?: ICustomRender; // header单元格的自定义内容
+  /** 指标名称表头自定义布局元素 */
+  headerCustomLayout?: ICustomLayout;
+}
+
+export interface IBasicColumnIndicator {
+  width?: string | number;
+  minWidth?: number | string;
+  maxWidth?: number | string;
+  format?: FieldFormat; // 指标值格式化
+  headerFormat?: FieldFormat; // 指标名称格式化
+  // columnType?: ColumnTypeOption | BaseColumn<any, any> | null; // body指标值显示类型
+  // style?: ColumnStyleOption | null; // body部分指标值显示样式
+  icon?:
+    | string
+    | ColumnIconOption
+    | (string | ColumnIconOption)[]
+    | ((args: CellInfo) => string | ColumnIconOption | (string | ColumnIconOption)[]);
+
+  /** 指标值body单元格自定义渲染内容定义 */
+  customRender?: ICustomRender; // body单元格的自定义内容
+  /** 指标值body单元格自定义布局元素 */
+  customLayout?: ICustomLayout;
+}

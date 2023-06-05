@@ -1,0 +1,49 @@
+import type { Scenegraph } from '../../scenegraph/scenegraph';
+import type { CellRange } from '../../ts-types';
+import { CellPosition } from '../../ts-types';
+import type { HighlightScope } from '../state';
+import { checkCellInSelect, checkColInlineInSelect } from '../common/check-in-select';
+import { updateCell } from './update-cell';
+
+export function clearColHover(
+  scenegraph: Scenegraph,
+  col: number,
+  rowOrigin: number,
+  // selectCellPosStart: CellPosition,
+  // selectCellPosEnd: CellPosition,
+  selectRanges: CellRange[],
+  selectMode: HighlightScope
+): boolean {
+  const table = scenegraph.table;
+  // 更新表头（无group theme）
+  for (let row = 0; row < table.columnHeaderLevelCount; row++) {
+    updateCell(scenegraph, col, row);
+  }
+  // 更新body
+  const cellGroup = scenegraph.getCell(col, table.columnHeaderLevelCount);
+  cellGroup?.parent.addUpdateBoundTag();
+
+  return true;
+}
+
+export function updateColHover(
+  scenegraph: Scenegraph,
+  col: number,
+  rowOrigin: number,
+  // selectCellPosStart: CellPosition,
+  // selectCellPosEnd: CellPosition,
+  selectRanges: CellRange[],
+  selectMode: HighlightScope,
+  singleStyle: boolean
+): boolean {
+  const table = scenegraph.table;
+  // 更新表头（无group theme）
+  for (let row = 0; row < table.columnHeaderLevelCount; row++) {
+    updateCell(scenegraph, col, row);
+  }
+  // 更新body
+  const cellGroup = scenegraph.getCell(col, table.columnHeaderLevelCount);
+  cellGroup?.parent.addUpdateBoundTag();
+
+  return true;
+}

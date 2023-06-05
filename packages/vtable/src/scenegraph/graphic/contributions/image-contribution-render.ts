@@ -1,0 +1,92 @@
+import { injectable } from 'inversify';
+import type {
+  IImage,
+  IContext2d,
+  IImageGraphicAttribute,
+  IMarkAttribute,
+  IGraphicAttribute,
+  IThemeAttribute,
+  IImageRenderContribution
+} from '@visactor/vrender';
+import { BaseRenderContributionTime } from '@visactor/vrender';
+
+/**
+ * @description: image支持绘制部分形状
+ * @return {*}
+ */
+@injectable()
+export class BeforeImageRenderContribution implements IImageRenderContribution {
+  time: BaseRenderContributionTime = BaseRenderContributionTime.beforeFillStroke;
+  useStyle = true;
+  order = 0;
+  drawShape(
+    image: IImage,
+    context: IContext2d,
+    x: number,
+    y: number,
+    doFill: boolean,
+    doStroke: boolean,
+    fVisible: boolean,
+    sVisible: boolean,
+    imageAttribute: Required<IImageGraphicAttribute>,
+    fillCb?: (
+      ctx: IContext2d,
+      markAttribute: Partial<IMarkAttribute & IGraphicAttribute>,
+      themeAttribute: IThemeAttribute
+    ) => boolean,
+    strokeCb?: (
+      ctx: IContext2d,
+      markAttribute: Partial<IMarkAttribute & IGraphicAttribute>,
+      themeAttribute: IThemeAttribute
+    ) => boolean,
+    doFillOrStroke?: { doFill: boolean; doStroke: boolean }
+  ) {
+    const { shape } = image.attribute as any;
+
+    if (shape === 'circle') {
+      const { width = imageAttribute.width, height = imageAttribute.height } = image.attribute;
+
+      context.beginPath();
+      context.arc(x + width / 2, y + height / 2, Math.min(width, height) / 2, 0, 2 * Math.PI);
+      context.closePath();
+
+      context.save();
+      context.clip();
+    }
+  }
+}
+
+@injectable()
+export class AfterImageRenderContribution implements IImageRenderContribution {
+  time: BaseRenderContributionTime = BaseRenderContributionTime.afterFillStroke;
+  useStyle = true;
+  order = 0;
+  drawShape(
+    image: IImage,
+    context: IContext2d,
+    x: number,
+    y: number,
+    doFill: boolean,
+    doStroke: boolean,
+    fVisible: boolean,
+    sVisible: boolean,
+    imageAttribute: Required<IImageGraphicAttribute>,
+    fillCb?: (
+      ctx: IContext2d,
+      markAttribute: Partial<IMarkAttribute & IGraphicAttribute>,
+      themeAttribute: IThemeAttribute
+    ) => boolean,
+    strokeCb?: (
+      ctx: IContext2d,
+      markAttribute: Partial<IMarkAttribute & IGraphicAttribute>,
+      themeAttribute: IThemeAttribute
+    ) => boolean,
+    doFillOrStroke?: { doFill: boolean; doStroke: boolean }
+  ) {
+    const { shape } = image.attribute as any;
+
+    if (shape === 'circle') {
+      context.restore();
+    }
+  }
+}

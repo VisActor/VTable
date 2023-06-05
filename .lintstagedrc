@@ -1,0 +1,3 @@
+{
+  "{packages,tools}/**/*.{ts,tsx}": ["eslint --color --fix", "prettier --write --ignore-unknown"]
+}
