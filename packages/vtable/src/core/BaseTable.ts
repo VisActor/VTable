@@ -1,6 +1,6 @@
 import * as columnStyleContents from '../body-helper/style';
 import * as headerStyleContents from '../header-helper/style';
-import '../tools/style.css';
+import { importStyle } from './style';
 import * as style from '../tools/style';
 import type {
   CellAddress,
@@ -81,6 +81,7 @@ import { FocusInput } from './FouseInput';
 const { toBoxArray } = utilStyle;
 const { isTouchEvent } = event;
 const rangeReg = /^\$(\d+)\$(\d+)$/;
+importStyle();
 export abstract class BaseTable extends EventTarget implements BaseTableAPI {
   internalProps: IBaseTableProtected;
   showPin = true;
