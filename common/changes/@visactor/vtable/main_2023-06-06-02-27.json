@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vtable",
+      "comment": "alpha",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@visactor/vtable"
+}

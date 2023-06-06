@@ -1606,7 +1606,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
    * 更新options 目前只支持全量更新
    * @param options
    */
-  updateOption(options: BaseTableConstructorOptions = {}) {
+  updateOption(options: BaseTableConstructorOptions) {
     (this.options as BaseTable['options']) = options;
     const {
       // rowCount = 0,
@@ -2671,7 +2671,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
    * 获取所有body单元格数据信息
    * @param colMaxCount 限制获取最多列数
    * @param rowMaxCount 限制获取最多行数
-   * @returns MousePointerCellEvent[][]
+   * @returns CellInfo[][]
    */
   getAllBodyCells(colMaxCount?: number, rowMaxCount?: number): CellInfo[][] {
     const start = { col: this.rowHeaderLevelCount, row: this.columnHeaderLevelCount };
@@ -2688,7 +2688,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
    * 获取所有单元格数据信息
    * @param colMaxCount 限制获取最多列数
    * @param rowMaxCount 限制获取最多行数
-   * @returns MousePointerCellEvent[][]
+   * @returns CellInfo[][]
    */
   getAllCells(colMaxCount?: number, rowMaxCount?: number): CellInfo[][] {
     const start = { col: 0, row: 0 };
@@ -2703,7 +2703,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
   }
   /**
    * 获取所有列表头单元格数据信息
-   * @returns MousePointerCellEvent[][]
+   * @returns CellInfo[][]
    */
   getAllColumnHeaderCells(): CellInfo[][] {
     const start = { col: this.rowHeaderLevelCount, row: 0 };
@@ -2718,7 +2718,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
   }
   /**
    * 获取所有行表头单元格数据信息
-   * @returns MousePointerCellEvent[][]
+   * @returns CellInfo[][]
    */
   getAllRowHeaderCells(): CellInfo[][] {
     const start = { col: 0, row: this.columnHeaderLevelCount };

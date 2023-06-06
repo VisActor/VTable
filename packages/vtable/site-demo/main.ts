@@ -1,9 +1,9 @@
 import { menus } from './menu';
-import VChart from '@visactor/vchart';
+// import VChart from '@visactor/vchart';
 import * as VTable from '../src';
 import { default as MarkdownIt } from 'markdown-it';
 window.VTable = VTable;
-window.VChart = VChart;
+// window.VChart = VChart;
 
 // window.ListTable = VTable.ListTable;
 // window.PivotTable = VTable.PivotTable;
