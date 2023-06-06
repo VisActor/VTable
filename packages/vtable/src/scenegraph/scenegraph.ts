@@ -75,7 +75,8 @@ export class Scenegraph {
       width: table.canvas.width,
       height: table.canvas.height,
       disableDirtyBounds: false,
-      background: table.theme.underlayBackgroundColor
+      background: table.theme.underlayBackgroundColor,
+      dpr: table.internalProps.pixelRatio
     });
 
     this.stage.defaultLayer.setTheme({
@@ -778,6 +779,8 @@ export class Scenegraph {
 
     // 更新滚动条状态
     this.component.updateScrollBar();
+
+    this.updateNextFrame();
   }
 
   /**
@@ -1395,6 +1398,16 @@ export class Scenegraph {
       return;
     }
     updateCell(col, row, this.table);
+  }
+
+  setPixelRatio(pixelRatio: number) {
+    // this.stage.setDpr(pixelRatio);
+    // 这里因为本时刻部分节点有更新bounds标记，直接render回导致开启DirtyBounds，无法完整重绘画布；
+    // 所以这里先关闭DirtyBounds，等待下一帧再开启
+    this.stage.disableDirtyBounds();
+    this.stage.window.setDpr(pixelRatio);
+    this.stage.render();
+    this.stage.enableDirtyBounds();
   }
 }
 
