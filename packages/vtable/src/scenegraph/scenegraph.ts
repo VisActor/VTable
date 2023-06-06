@@ -10,7 +10,6 @@ import {
   createRowHeaderColGroup
 } from './group-creater/column';
 import type { WrapText } from './graphic/text';
-import { updateAutoColWidth } from './layout/auto-width';
 import { updateAutoRowHeight } from './layout/auto-height';
 import { getCellMergeInfo } from './utils/get-cell-merge';
 import { updateColWidth } from './layout/update-width';
@@ -22,20 +21,22 @@ import { createFrameBorder } from './style/frame-border';
 import { ResizeColumnHotSpotSize } from '../tools/global';
 import splitModule from './graphic/contributions';
 import { getProp } from './utils/get-prop';
-import { createCellContent, dealWithIcon } from './utils/text-icon-layout';
+import { dealWithIcon } from './utils/text-icon-layout';
 import { SceneProxy } from './group-creater/progress/proxy';
 import { SortOrder } from '../state/state';
-import type { ListTable } from '../ListTable';
 import type { TooltipOptions } from '../ts-types/tooltip';
 import { computeColWidth, computeColsWidth } from './layout/compute-col-width';
-import { getStyleTheme } from './group-creater/column-helper';
 import { moveHeaderPosition } from './layout/move-cell';
 import { updateCell } from './group-creater/cell-helper';
 import type { BaseTableAPI } from '../ts-types/base-table';
+import { updateAllSelectComponent, updateCellSelectBorder } from './select/update-select-border';
+import { createCellSelectBorder } from './select/create-select-border';
+import { moveSelectingRangeComponentsToSelectedRangeComponents } from './select/move-select-border';
+import { deleteAllSelectBorder, deleteLastSelectedRangeComponents } from './select/delete-select-border';
 
 container.load(splitModule);
 
-const groupForDebug = new Group({});
+export const groupForDebug = new Group({});
 groupForDebug.role = 'empty';
 /**
  * @description: 表格场景树，存储和管理表格全部的场景图元
@@ -352,6 +353,13 @@ export class Scenegraph {
     return cell || groupForDebug;
   }
 
+  highPerformanceGetCell(col: number, row: number): Group {
+    if (!this.isPivot && !this.transpose && !this.table.isHeader(col, row)) {
+      return this.proxy.highPerformanceGetCell(col, row);
+    }
+    return this.getCell(col, row);
+  }
+
   getColGroup(col: number, isCornerOrColHeader = false): Group {
     let element: Group;
     if (col < this.frozenColCount && isCornerOrColHeader) {
@@ -396,179 +404,7 @@ export class Scenegraph {
     this.stage.renderNextFrame();
   }
   resetAllSelectComponent() {
-    this.selectingRangeComponents.forEach((selectComp: { rect: IRect; role: CellType }, key: string) => {
-      const [startCol, startRow, endCol, endRow] = key.split('-');
-      let cellsBounds;
-      for (let i = parseInt(startCol, 10); i <= parseInt(endCol, 10); i++) {
-        for (let j = parseInt(startRow, 10); j <= parseInt(endRow, 10); j++) {
-          const cellGroup = this.getCell(i, j);
-          cellGroup.AABBBounds.width(); // hack: globalAABBBounds可能不会自动更新，这里强制更新一下
-          const bounds = cellGroup.globalAABBBounds;
-          if (!cellsBounds) {
-            cellsBounds = bounds;
-          } else {
-            cellsBounds.union(bounds);
-          }
-        }
-      }
-      selectComp.rect.setAttributes({
-        x: cellsBounds.x1 - this.tableGroup.attribute.x,
-        y: cellsBounds.y1 - this.tableGroup.attribute.y,
-        width: cellsBounds.width(),
-        height: cellsBounds.height(),
-        visible: true
-      });
-
-      //#region 判断是不是按着表头部分的选中框 因为绘制层级的原因 线宽会被遮住一半，因此需要动态调整层级
-      const isNearRowHeader =
-        // this.table.scrollLeft === 0 &&
-        parseInt(startCol, 10) === this.table.frozenColCount;
-      const isNearColHeader =
-        // this.table.scrollTop === 0 &&
-        parseInt(startRow, 10) === this.table.frozenRowCount;
-      if (
-        (isNearRowHeader && selectComp.rect.attribute.stroke[3]) ||
-        (isNearColHeader && selectComp.rect.attribute.stroke[0])
-      ) {
-        if (isNearRowHeader) {
-          this.tableGroup.insertAfter(
-            selectComp.rect,
-            selectComp.role === 'columnHeader' ? this.cornerHeaderGroup : this.rowHeaderGroup
-          );
-        }
-        if (isNearColHeader) {
-          this.tableGroup.insertAfter(
-            selectComp.rect,
-            selectComp.role === 'rowHeader' ? this.cornerHeaderGroup : this.colHeaderGroup
-          );
-        }
-        //#region 调整层级后 滚动情况下会出现绘制范围出界 如body的选中框 渲染在了rowheader上面，所有需要调整选中框rect的 边界
-        if (
-          selectComp.rect.attribute.x < this.rowHeaderGroup.attribute.width &&
-          this.table.scrollLeft > 0 &&
-          (selectComp.role === 'body' || selectComp.role === 'columnHeader')
-        ) {
-          selectComp.rect.setAttributes({
-            x: selectComp.rect.attribute.x + (this.rowHeaderGroup.attribute.width - selectComp.rect.attribute.x),
-            width: selectComp.rect.attribute.width - (this.rowHeaderGroup.attribute.width - selectComp.rect.attribute.x)
-          });
-        }
-        if (
-          selectComp.rect.attribute.y < this.colHeaderGroup.attribute.height &&
-          this.table.scrollTop > 0 &&
-          (selectComp.role === 'body' || selectComp.role === 'rowHeader')
-        ) {
-          selectComp.rect.setAttributes({
-            y: selectComp.rect.attribute.y + (this.colHeaderGroup.attribute.height - selectComp.rect.attribute.y),
-            height:
-              selectComp.rect.attribute.height - (this.colHeaderGroup.attribute.height - selectComp.rect.attribute.y)
-          });
-        }
-        //#endregion
-      } else {
-        this.tableGroup.insertAfter(
-          selectComp.rect,
-          selectComp.role === 'body'
-            ? this.bodyGroup
-            : selectComp.role === 'columnHeader'
-            ? this.colHeaderGroup
-            : selectComp.role === 'rowHeader'
-            ? this.rowHeaderGroup
-            : this.cornerHeaderGroup
-        );
-      }
-      //#endregion
-    });
-    this.selectedRangeComponents.forEach((selectComp: { rect: IRect; role: CellType }, key: string) => {
-      const [startCol, startRow, endCol, endRow] = key.split('-');
-      let cellsBounds;
-      for (let i = parseInt(startCol, 10); i <= parseInt(endCol, 10); i++) {
-        for (let j = parseInt(startRow, 10); j <= parseInt(endRow, 10); j++) {
-          const cellGroup = this.getCell(i, j);
-          cellGroup.AABBBounds.width(); // hack: globalAABBBounds可能不会自动更新，这里强制更新一下
-          const bounds = cellGroup.globalAABBBounds;
-          if (!cellsBounds) {
-            cellsBounds = bounds;
-          } else {
-            cellsBounds.union(bounds);
-          }
-        }
-      }
-      selectComp.rect.setAttributes({
-        x: cellsBounds.x1 - this.tableGroup.attribute.x,
-        y: cellsBounds.y1 - this.tableGroup.attribute.y,
-        width: cellsBounds.width(),
-        height: cellsBounds.height(),
-        visible: true
-      });
-
-      //#region 判断是不是按着表头部分的选中框 因为绘制层级的原因 线宽会被遮住一半，因此需要动态调整层级
-      const isNearRowHeader =
-        // this.table.scrollLeft === 0 &&
-        parseInt(startCol, 10) === this.table.frozenColCount;
-      const isNearColHeader =
-        // this.table.scrollTop === 0 &&
-        parseInt(startRow, 10) === this.table.frozenRowCount;
-      if (
-        (isNearRowHeader && selectComp.rect.attribute.stroke[3]) ||
-        (isNearColHeader && selectComp.rect.attribute.stroke[0])
-      ) {
-        if (isNearRowHeader) {
-          this.tableGroup.insertAfter(
-            selectComp.rect,
-            selectComp.role === 'columnHeader' ? this.cornerHeaderGroup : this.rowHeaderGroup
-          );
-        }
-        if (isNearColHeader) {
-          this.tableGroup.insertAfter(
-            selectComp.rect,
-            selectComp.role === 'rowHeader' ? this.cornerHeaderGroup : this.colHeaderGroup
-          );
-        }
-        //#region 调整层级后 滚动情况下会出现绘制范围出界 如body的选中框 渲染在了rowheader上面，所有需要调整选中框rect的 边界
-        if (
-          selectComp.rect.attribute.x < this.rowHeaderGroup.attribute.width &&
-          this.table.scrollLeft > 0 &&
-          (selectComp.role === 'body' || selectComp.role === 'columnHeader')
-        ) {
-          selectComp.rect.setAttributes({
-            x: selectComp.rect.attribute.x + (this.rowHeaderGroup.attribute.width - selectComp.rect.attribute.x),
-            width: selectComp.rect.attribute.width - (this.rowHeaderGroup.attribute.width - selectComp.rect.attribute.x)
-          });
-        }
-        if (
-          selectComp.rect.attribute.y < this.colHeaderGroup.attribute.height &&
-          this.table.scrollTop > 0 &&
-          (selectComp.role === 'body' || selectComp.role === 'rowHeader')
-        ) {
-          selectComp.rect.setAttributes({
-            y: selectComp.rect.attribute.y + (this.colHeaderGroup.attribute.height - selectComp.rect.attribute.y),
-            height:
-              selectComp.rect.attribute.height - (this.colHeaderGroup.attribute.height - selectComp.rect.attribute.y)
-          });
-        }
-        //#endregion
-      } else {
-        this.tableGroup.insertAfter(
-          selectComp.rect,
-          selectComp.role === 'body'
-            ? this.bodyGroup
-            : selectComp.role === 'columnHeader'
-            ? this.colHeaderGroup
-            : selectComp.role === 'rowHeader'
-            ? this.rowHeaderGroup
-            : this.cornerHeaderGroup
-        );
-      }
-      //#endregion
-    });
-  }
-
-  removeInteractionBorder(col: number, row: number) {
-    const cellGroup = this.getCell(col, row);
-    cellGroup.setAttribute('highlightStroke', undefined);
-    cellGroup.setAttribute('highlightStrokeArrayWidth', undefined);
-    cellGroup.setAttribute('highlightStrokeArrayColor', undefined);
+    updateAllSelectComponent(this);
   }
 
   hideHoverIcon(col: number, row: number) {
@@ -626,6 +462,13 @@ export class Scenegraph {
     (cellGroup?.firstChild as any)?.activate?.(this.table);
   }
 
+  removeInteractionBorder(col: number, row: number) {
+    const cellGroup = this.getCell(col, row);
+    cellGroup.setAttribute('highlightStroke', undefined);
+    cellGroup.setAttribute('highlightStrokeArrayWidth', undefined);
+    cellGroup.setAttribute('highlightStrokeArrayColor', undefined);
+  }
+
   createCellSelectBorder(
     start_Col: number,
     start_Row: number,
@@ -635,238 +478,22 @@ export class Scenegraph {
     selectId: string, //整体区域${endRow}-${startCol}${startRow}${endCol}${endRow}作为其编号
     strokes?: boolean[]
   ) {
-    const startCol = Math.min(start_Col, end_Col);
-    const startRow = Math.min(start_Row, end_Row);
-    const endCol = Math.max(start_Col, end_Col);
-    const endRow = Math.max(start_Row, end_Row);
-
-    let cellsBounds;
-    for (let i = startCol; i <= endCol; i++) {
-      for (let j = startRow; j <= endRow; j++) {
-        const cellGroup = this.getCell(i, j);
-        if (cellGroup.role === 'shadow-cell') {
-          continue;
-        }
-        const bounds = cellGroup.globalAABBBounds;
-        if (!cellsBounds) {
-          cellsBounds = bounds;
-        } else {
-          cellsBounds.union(bounds);
-        }
-      }
-    }
-
-    const theme = this.table.theme;
-    // 框选外边框
-    const bodyClickBorderColor = theme.selectionStyle?.cellBorderColor;
-    const bodyClickLineWidth = theme.selectionStyle?.cellBorderLineWidth;
-    const rect = createRect({
-      pickable: false,
-      fill: true,
-      fillColor: (theme.selectionStyle?.cellBgColor as any) ?? 'rgba(0, 0, 255,0.1)',
-      strokeColor: bodyClickBorderColor as string,
-      lineWidth: bodyClickLineWidth as number,
-      stroke: strokes,
-      x: cellsBounds.x1 - this.tableGroup.attribute.x,
-      y: cellsBounds.y1 - this.tableGroup.attribute.y,
-      width: cellsBounds.width(),
-      height: cellsBounds.height(),
-      visible: true
-    });
-    this.lastSelectId = selectId;
-    this.selectingRangeComponents.set(`${startCol}-${startRow}-${endCol}-${endRow}-${selectId}`, {
-      rect,
-      role: selectRangeType
-    });
-    this.tableGroup.insertAfter(
-      rect,
-      selectRangeType === 'body'
-        ? this.bodyGroup
-        : selectRangeType === 'columnHeader'
-        ? this.colHeaderGroup
-        : selectRangeType === 'rowHeader'
-        ? this.rowHeaderGroup
-        : this.cornerHeaderGroup
-    );
+    createCellSelectBorder(this, start_Col, start_Row, end_Col, end_Row, selectRangeType, selectId, strokes);
   }
   moveSelectingRangeComponentsToSelectedRangeComponents() {
-    this.selectingRangeComponents.forEach((rangeComponent, key) => {
-      if (this.selectedRangeComponents.get(key)) {
-        this.selectedRangeComponents.get(key).rect.delete();
-      }
-      this.selectedRangeComponents.set(key, rangeComponent);
-    });
-    this.selectingRangeComponents = new Map();
-    this.updateNextFrame();
+    moveSelectingRangeComponentsToSelectedRangeComponents(this);
   }
   /** 按住shift 则继续上次选中范围 需要将现有的删除掉 */
   deleteLastSelectedRangeComponents() {
-    this.selectedRangeComponents.forEach((selectComp: { rect: IRect; role: CellType }, key: string) => {
-      const lastSelectId = key.split('-')[4];
-      if (lastSelectId === this.lastSelectId) {
-        selectComp.rect.delete();
-        this.selectedRangeComponents.delete(key);
-      }
-    });
+    deleteLastSelectedRangeComponents(this);
   }
   deleteAllSelectBorder() {
-    this.selectedRangeComponents.forEach((selectComp: { rect: IRect; role: CellType }, key: string) => {
-      selectComp.rect.delete();
-    });
-    this.selectedRangeComponents = new Map();
+    deleteAllSelectBorder(this);
   }
 
   updateCellSelectBorder(newStartCol: number, newStartRow: number, newEndCol: number, newEndRow: number) {
-    let startCol = Math.min(newEndCol, newStartCol);
-    let startRow = Math.min(newEndRow, newStartRow);
-    let endCol = Math.max(newEndCol, newStartCol);
-    let endRow = Math.max(newEndRow, newStartRow);
-    //#region region 校验四周的单元格有没有合并的情况，如有则扩大范围
-    const extendSelectRange = () => {
-      let isExtend = false;
-      for (let col = startCol; col <= endCol; col++) {
-        if (col === startCol) {
-          for (let row = startRow; row <= endRow; row++) {
-            const mergeInfo = getCellMergeInfo(this.table, col, row);
-            if (mergeInfo && mergeInfo.start.col < startCol) {
-              startCol = mergeInfo.start.col;
-              isExtend = true;
-              break;
-            }
-          }
-        }
-        if (!isExtend && col === endCol) {
-          for (let row = startRow; row <= endRow; row++) {
-            const mergeInfo = getCellMergeInfo(this.table, col, row);
-            if (mergeInfo && mergeInfo.end.col > endCol) {
-              endCol = mergeInfo.end.col;
-              isExtend = true;
-              break;
-            }
-          }
-        }
-
-        if (isExtend) {
-          break;
-        }
-      }
-      if (!isExtend) {
-        for (let row = startRow; row <= endRow; row++) {
-          if (row === startRow) {
-            for (let col = startCol; col <= endCol; col++) {
-              const mergeInfo = getCellMergeInfo(this.table, col, row);
-              if (mergeInfo && mergeInfo.start.row < startRow) {
-                startRow = mergeInfo.start.row;
-                isExtend = true;
-                break;
-              }
-            }
-          }
-          if (!isExtend && row === endRow) {
-            for (let col = startCol; col <= endCol; col++) {
-              const mergeInfo = getCellMergeInfo(this.table, col, row);
-              if (mergeInfo && mergeInfo.end.row > endRow) {
-                endRow = mergeInfo.end.row;
-                isExtend = true;
-                break;
-              }
-            }
-          }
-
-          if (isExtend) {
-            break;
-          }
-        }
-      }
-      if (isExtend) {
-        extendSelectRange();
-      }
-    };
-    extendSelectRange();
-    //#endregion
-    this.selectingRangeComponents.forEach((selectComp: { rect: IRect; role: CellType }, key: string) => {
-      selectComp.rect.delete();
-    });
-    this.selectingRangeComponents = new Map();
-
-    let needRowHeader = false;
-    let needColumnHeader = false;
-    let needBody = false;
-    let needCornerHeader = false;
-    if (startCol <= this.table.frozenColCount - 1 && startRow <= this.table.frozenRowCount - 1) {
-      needCornerHeader = true;
-    }
-    if (startCol <= this.table.frozenColCount - 1 && endRow >= this.table.frozenRowCount) {
-      needRowHeader = true;
-    }
-    if (startRow <= this.table.frozenRowCount - 1 && endCol >= this.table.frozenColCount) {
-      needColumnHeader = true;
-    }
-    if (endCol >= this.table.frozenColCount && endRow >= this.table.frozenRowCount) {
-      needBody = true;
-    }
-
-    // TODO 可以尝试不拆分三个表头和body【前提是theme中合并配置】 用一个SelectBorder 需要结合clip，并动态设置border的范围【依据区域范围 已经是否跨表头及body】
-    if (needCornerHeader) {
-      const cornerEndCol = Math.min(endCol, this.table.frozenColCount - 1);
-      const cornerEndRow = Math.min(endRow, this.table.frozenRowCount - 1);
-      const strokeArray = [true, !needColumnHeader, !needRowHeader, true];
-      this.createCellSelectBorder(
-        startCol,
-        startRow,
-        cornerEndCol,
-        cornerEndRow,
-        'cornerHeader',
-        `${startCol}${startRow}${endCol}${endRow}`,
-        strokeArray
-      );
-    }
-    if (needColumnHeader) {
-      const columnHeaderStartCol = Math.max(startCol, this.table.frozenColCount);
-      const columnHeaderEndRow = Math.min(endRow, this.table.frozenRowCount - 1);
-      const strokeArray = [true, true, !needBody, !needCornerHeader];
-      this.createCellSelectBorder(
-        columnHeaderStartCol,
-        startRow,
-        endCol,
-        columnHeaderEndRow,
-        'columnHeader',
-        `${startCol}${startRow}${endCol}${endRow}`,
-        strokeArray
-      );
-    }
-    if (needRowHeader) {
-      const columnHeaderStartRow = Math.max(startRow, this.table.frozenRowCount);
-      const columnHeaderEndCol = Math.min(endCol, this.table.frozenColCount - 1);
-      const strokeArray = [!needCornerHeader, !needBody, true, true];
-      this.createCellSelectBorder(
-        startCol,
-        columnHeaderStartRow,
-        columnHeaderEndCol,
-        endRow,
-        'rowHeader',
-        `${startCol}${startRow}${endCol}${endRow}`,
-        strokeArray
-      );
-    }
-    if (needBody) {
-      const columnHeaderStartCol = Math.max(startCol, this.table.frozenColCount);
-      const columnHeaderStartRow = Math.max(startRow, this.table.frozenRowCount);
-      const strokeArray = [!needColumnHeader, true, true, !needRowHeader];
-      this.createCellSelectBorder(
-        columnHeaderStartCol,
-        columnHeaderStartRow,
-        endCol,
-        endRow,
-        'body',
-        `${startCol}${startRow}${endCol}${endRow}`,
-        strokeArray
-      );
-    }
+    updateCellSelectBorder(this, newStartCol, newStartRow, newEndCol, newEndRow);
   }
-  // hideCellsSelectBorder() {
-  //   this.component.selectBorder.setAttribute('visible', false);
-  // }
 
   /**
    * @description: 获取指定单元格指定位置的icon mark
