@@ -28,7 +28,6 @@ import { SortOrder } from '../state/state';
 import type { ListTable } from '../ListTable';
 import type { TooltipOptions } from '../ts-types/tooltip';
 import { computeColWidth, computeColsWidth } from './layout/compute-col-width';
-import { getStyleTheme } from './group-creater/column-helper';
 import { moveHeaderPosition } from './layout/move-cell';
 import { updateCell } from './group-creater/cell-helper';
 import type { BaseTableAPI } from '../ts-types/base-table';
