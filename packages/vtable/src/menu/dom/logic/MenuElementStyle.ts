@@ -1,3 +1,7 @@
+export function importStyle() {
+  const styleElement = document.createElement('style');
+  styleElement.id = 'vtable-menu-styleSheet';
+  styleElement.textContent = `
 @keyframes vtable__menu-element--shown-animation {
 	0% {
 		opacity: 0;
@@ -83,4 +87,8 @@
 }
 .vtable__menu-element__item-text {
 	margin-right: 15px;
+}
+`;
+
+  document.body.appendChild(styleElement);
 }

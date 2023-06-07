@@ -1,6 +1,6 @@
 import * as columnStyleContents from '../body-helper/style';
 import * as headerStyleContents from '../header-helper/style';
-import '../tools/style.css';
+import { importStyle } from './style';
 import * as style from '../tools/style';
 import type {
   CellAddress,
@@ -78,9 +78,11 @@ import {
 import { MenuHandler } from '../menu/dom/MenuHandler';
 import type { BaseTableAPI, BaseTableConstructorOptions, IBaseTableProtected } from '../ts-types/base-table';
 import { FocusInput } from './FouseInput';
+import { defaultPixelRatio } from '../tools/pixel-ratio';
 const { toBoxArray } = utilStyle;
 const { isTouchEvent } = event;
 const rangeReg = /^\$(\d+)\$(\d+)$/;
+importStyle();
 export abstract class BaseTable extends EventTarget implements BaseTableAPI {
   internalProps: IBaseTableProtected;
   showPin = true;
@@ -114,7 +116,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
    */
   readonly options: BaseTableConstructorOptions;
 
-  // public version = version;
+  version = __VERSION__;
 
   pagerConf?: IPagerConf | undefined;
 
@@ -155,7 +157,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
       menu,
       select: click,
       customRender,
-      pixelRatio = 1
+      pixelRatio = defaultPixelRatio
     } = options;
     this.options = options;
     this._widthMode = widthMode;
@@ -699,7 +701,8 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
    * @param pixelRatio
    */
   setPixelRatio(pixelRatio: number) {
-    // do nothing
+    this.internalProps.pixelRatio = pixelRatio;
+    this.scenegraph.setPixelRatio(pixelRatio);
   }
   /**
    * 窗口尺寸发生变化 或者像数比变化
@@ -2029,7 +2032,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
    * 清除选中单元格
    */
   clearSelected() {
-    // do nothing
+    this.stateManeger.updateSelectPos(-1, -1);
   }
   /**
    * 选中单元格  和鼠标选中单元格效果一致
@@ -2037,7 +2040,8 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
    * @param row
    */
   selectCell(col: number, row: number) {
-    // do nothing
+    this.stateManeger.updateSelectPos(col, row);
+    this.stateManeger.endSelectCells();
   }
 
   abstract isListTable(): boolean;
