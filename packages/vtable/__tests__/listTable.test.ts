@@ -3,7 +3,7 @@
 import records from './marketsales.json';
 import { ListTable } from '../src/ListTable';
 import { createDiv } from './dom';
-
+global.__VERSION__ = 'none';
 describe('listTable init test', () => {
   const containerDom: HTMLElement = createDiv();
   containerDom.style.position = 'relative';

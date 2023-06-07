@@ -27,9 +27,8 @@ import type {
 import { ListTable } from './ListTable';
 import { PivotTable } from './PivotTable';
 import type { MousePointerCellEvent } from './ts-types/events';
-export { bindDebugTool } from './scenegraph/debug-tool';
 import * as CustomLayout from './render/layout';
-
+export const version = __VERSION__;
 /**
  * @namespace VTable
  */
