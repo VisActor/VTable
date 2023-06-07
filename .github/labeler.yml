@@ -1,0 +1,36 @@
+# Add 'core' label to any change within the 'core' package
+core:
+  - packages/vtable/**
+
+# Add 'test' label to any change to packages/*/__tests__/* files within the source dir
+test:
+  - packages/*/__tests__/*
+
+# Add 'docs' label to any change to docs/ files within the source dir
+docs:
+  - docs/**
+
+# Add 'eslint' label to any change to eslint files within the source dir
+eslint:
+  - share/eslint-config/**
+  - packages/*/.eslintrc.js
+
+# Add 'jest' label to any change to jest files within the source dir
+jest:
+  - share/jest-config/**
+  - packages/*/jest.config.js
+
+# Add 'typescript' label to any change to tsconfig files within the source dir
+typescript:
+  - share/ts-config/**
+  - packages/*/tsconfig.json
+  - packages/*/tsconfig.eslint.json
+
+# Add 'bundler' label to any change to tools/bunder/** files within the source dir
+bundler:
+  - tools/bundler/**
+  - packages/*/bundler.config.js
+
+# Add 'chore' label to any change to common/** files within the source dir
+chore:
+  - common/**
