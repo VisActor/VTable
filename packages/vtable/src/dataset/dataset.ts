@@ -12,7 +12,8 @@ import type {
   SortTypeRule,
   SortFuncRule,
   Totals,
-  MappingRules
+  MappingRules,
+  SortOrder
 } from '../ts-types';
 import { AggregationType, SortType } from '../ts-types';
 /**
@@ -1009,7 +1010,7 @@ function naturalSort(as: any, bs: any) {
   }
   return a.length - b.length;
 }
-function sortBy(order: ('asc' | 'desc' | 'normal')[]) {
+function sortBy(order: SortOrder[]) {
   let x;
   let i;
   const mapping = {};

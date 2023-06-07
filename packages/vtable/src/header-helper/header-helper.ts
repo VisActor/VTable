@@ -1,4 +1,4 @@
-import type { ColumnIconOption, ListTableAPI, PivotTableAPI, RectProps, SvgIcon } from '../ts-types';
+import type { ColumnIconOption, ListTableAPI, PivotTableAPI, RectProps, SortOrder, SvgIcon } from '../ts-types';
 import { HierarchyState, IconFuncTypeEnum, IconPosition, InternalIconName } from '../ts-types';
 import * as registerIcons from '../icons';
 import { cellInRange } from '../tools/helper';
@@ -62,7 +62,7 @@ export class HeaderHelper {
       }
     } else {
       const states = (this._table as ListTableAPI).sortState;
-      let order: 'asc' | 'desc' | 'normal' | undefined;
+      let order: SortOrder | undefined;
       order = undefined;
       const range = this._table.getCellRange(col, row);
       if (states) {
@@ -192,12 +192,7 @@ export class HeaderHelper {
       bottom
     };
   }
-  getSortIcon(
-    order: 'asc' | 'desc' | 'normal' | undefined,
-    _table: BaseTableAPI,
-    col: number,
-    row: number
-  ): ColumnIconOption | null {
+  getSortIcon(order: SortOrder | undefined, _table: BaseTableAPI, col: number, row: number): ColumnIconOption | null {
     // this.showSortIcon = undefined;
     const icon = order === 'asc' ? this.downIcon : order === 'desc' ? this.upIcon : this.normalIcon;
 
