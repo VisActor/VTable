@@ -2,10 +2,10 @@
 import type { FederatedPointerEvent, IEventTarget } from '@visactor/vrender';
 import { RichText } from '@visactor/vrender';
 import type { KeydownEvent, MousePointerMultiCellEvent, MousePointerSparklineEvent } from '../ts-types';
+import { InteractionState } from '../ts-types';
 import { IconFuncTypeEnum } from '../ts-types';
 import type { EventHandler } from './EventHandler';
 import type { StateManeger } from '../state/state';
-import { InteractionState } from '../state/state';
 import type { Scenegraph } from '../scenegraph/scenegraph';
 import type { Group } from '../scenegraph/graphic/group';
 import { TABLE_EVENT_TYPE } from '../core/TABLE_EVENT_TYPE';

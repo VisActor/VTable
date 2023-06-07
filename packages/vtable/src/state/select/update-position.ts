@@ -1,6 +1,6 @@
 import type { Scenegraph } from '../../scenegraph/scenegraph';
+import { InteractionState } from '../../ts-types';
 import type { StateManeger } from '../state';
-import { InteractionState } from '../state';
 /**
  * @description: 更新select位置
  * @param {StateManeger} state

@@ -1,3 +1,5 @@
+import type { SortOrder } from './common';
+
 //#region 总计小计
 export interface TotalsStatus {
   isRowTotal: boolean;
@@ -75,7 +77,7 @@ export interface SortByRule {
   /**排序维度 */
   sortField: string;
   /**根据指定具体顺序排序 */
-  sortBy?: ('asc' | 'desc' | 'normal')[];
+  sortBy?: SortOrder[];
 }
 //3. 按指标值排序
 export interface SortByIndicatorRule {
