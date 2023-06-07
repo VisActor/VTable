@@ -1,7 +1,7 @@
 import type { CellAddress, CellRange, CellType, FieldDef } from './table-engine';
 import type { DropDownMenuEventArgs, MenuListItem, PivotInfo } from './menu';
 
-import type { AnyFunction, IDimensionInfo, RectProps } from './common';
+import type { AnyFunction, IDimensionInfo, RectProps, SortOrder } from './common';
 import type { IconFuncTypeEnum, CellInfo, HierarchyState } from '.';
 import type { Icon } from '../scenegraph/graphic/icon';
 
@@ -83,7 +83,7 @@ export interface TableEventHandlersEventArgumentMap {
   sort_click: [
     {
       field: FieldDef;
-      order: 'asc' | 'desc' | 'normal';
+      order: SortOrder;
     }
   ];
   freeze_click: [{ col: number; row: number; fields: FieldDef[]; colCount: number }];
@@ -125,7 +125,7 @@ export interface TableEventHandlersEventArgumentMap {
     {
       col: number;
       row: number;
-      order: 'asc' | 'desc' | 'normal';
+      order: SortOrder;
       dimensionInfo: IDimensionInfo[];
       cellType: CellType;
     }

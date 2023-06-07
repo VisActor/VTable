@@ -1,9 +1,9 @@
 import type { Scenegraph } from '../../scenegraph/scenegraph';
 import type { CellRange } from '../../ts-types';
+import { HighlightScope } from '../../ts-types';
 import { CellPosition } from '../../ts-types';
 // import { HoverMode, SelectMode, StateManeger } from '../state';
 import type { StateManeger } from '../state';
-import { HighlightScope } from '../state';
 import { clearColHover, updateColHover } from './col';
 import { clearRowHover, updateRowHover } from './row';
 import { clearSingleHover, updateSingleHover } from './single';

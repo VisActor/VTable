@@ -1,3 +1,5 @@
+import type { SortOrder } from '../ts-types';
+
 export const judgeType = (value: any) => {
   switch (Object.prototype.toString.call(value)) {
     case '[object Object]':
@@ -397,7 +399,7 @@ export function isMobile() {
     /(phone|pad|pod|iPhone|iPod|ios|iPad|Android|Mobile|BlackBerry|IEMobile|MQQBrowser|JUC|Fennec|wOSBrowser|BrowserNG|WebOS|Symbian|Windows Phone)/i
   );
 }
-export function defaultOrderFn(v1: any, v2: any, order: 'asc' | 'desc' | 'normal'): -1 | 0 | 1 {
+export function defaultOrderFn(v1: any, v2: any, order: SortOrder): -1 | 0 | 1 {
   if (order !== 'desc') {
     return v1 === v2 ? 0 : v1 > v2 ? 1 : -1;
   }

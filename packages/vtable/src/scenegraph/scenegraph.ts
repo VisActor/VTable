@@ -1,6 +1,6 @@
 import type { IStage, IRect, ITextCache } from '@visactor/vrender';
 import { createStage, createRect, IContainPointMode, container } from '@visactor/vrender';
-import type { CellType, ColumnIconOption } from '../ts-types';
+import type { CellType, ColumnIconOption, SortOrder } from '../ts-types';
 import { Group } from './graphic/group';
 import type { Icon } from './graphic/icon';
 import {
@@ -24,7 +24,6 @@ import splitModule from './graphic/contributions';
 import { getProp } from './utils/get-prop';
 import { createCellContent, dealWithIcon } from './utils/text-icon-layout';
 import { SceneProxy } from './group-creater/progress/proxy';
-import { SortOrder } from '../state/state';
 import type { ListTable } from '../ListTable';
 import type { TooltipOptions } from '../ts-types/tooltip';
 import { computeColWidth, computeColsWidth } from './layout/compute-col-width';
@@ -1660,12 +1659,7 @@ export class Scenegraph {
 
     // 更新旧frozen icon
     if (oldIconMark !== iconMark) {
-      const oldIcon = this.table.internalProps.headerHelper.getSortIcon(
-        SortOrder.normal,
-        this.table,
-        oldSortCol,
-        oldSortRow
-      );
+      const oldIcon = this.table.internalProps.headerHelper.getSortIcon('normal', this.table, oldSortCol, oldSortRow);
       if (oldIconMark) {
         this.updateIcon(oldIconMark, oldIcon);
       } else {
