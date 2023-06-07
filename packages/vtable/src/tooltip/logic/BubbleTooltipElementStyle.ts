@@ -1,3 +1,7 @@
+export function importStyle() {
+  const styleElement = document.createElement('style');
+  styleElement.id = 'vtable-tooltip-styleSheet';
+  styleElement.textContent = `
 @keyframes vtable__bubble-tooltip-element--shown-animation {
 	0% {
 		opacity: 0;
@@ -60,4 +64,8 @@
 	z-index: 1;
 	background-color: #FFF;
 	border: 1px solid #E6E8ED;
+}
+`;
+
+  document.body.appendChild(styleElement);
 }

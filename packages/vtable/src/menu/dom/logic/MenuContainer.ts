@@ -1,7 +1,6 @@
 import { EventHandler } from '../../../event/EventHandler';
 import type { MenuInstanceInfo, Placement, RectProps } from '../../../ts-types';
 import { createElement } from '../../../tools/dom';
-import './MenuElement.css';
 import { TABLE_EVENT_TYPE } from '../../../core/TABLE_EVENT_TYPE';
 import type { PivotHeaderLayoutMap } from '../../../layout/pivot-header-layout';
 import type { BaseTableAPI } from '../../../ts-types/base-table';
@@ -11,13 +10,7 @@ const HIDDEN_CLASSNAME = `${CLASSNAME}--hidden`;
 const SHOWN_CLASSNAME = `${CLASSNAME}--shown`;
 
 function createMenuDomElement(): HTMLElement {
-  // require("@/menu/tools/MenuElement.css");
-  // require('./MenuElement.css');
   const rootElement = createElement('div', [CLASSNAME, HIDDEN_CLASSNAME]);
-  // const messageElement = createElement('pre', {
-  //   classList: [CONTENT_CLASSNAME],
-  // });
-  // rootElement.appendChild(messageElement);
   return rootElement;
 }
 

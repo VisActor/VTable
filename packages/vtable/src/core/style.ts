@@ -1,3 +1,7 @@
+export function importStyle() {
+  const styleElement = document.createElement('style');
+  styleElement.id = 'vtable-style-styleSheet';
+  styleElement.textContent = `
 .vtable .input-container {
 	position: absolute;
 	top:0px;
@@ -57,4 +61,8 @@
 	opacity: 1;
 	max-width: none;
 	max-height: none;
+}
+`;
+
+  document.body.appendChild(styleElement);
 }
