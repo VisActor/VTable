@@ -3,6 +3,7 @@ import type { Group } from '../../graphic/group';
 import type { WrapText } from '../../graphic/text';
 import { updateCellHeightForColumn } from '../../layout/update-height';
 import type { Scenegraph } from '../../scenegraph';
+import { emptyGroup } from '../../scenegraph';
 import { getProp } from '../../utils/get-prop';
 import { getPadding } from '../../utils/padding';
 import { createColGroup } from '../column';
@@ -251,6 +252,8 @@ export class SceneProxy {
       // 不改变row，更新body group范围
       this.updateBody(y);
     }
+
+    this.scenegraph.updateNextFrame();
   }
 
   updateBody(y: number) {
@@ -304,7 +307,7 @@ export class SceneProxy {
       for (let col = this.bodyLeftCol; col <= this.bodyRightCol; col++) {
         for (let row = syncTopRow; row <= syncBottomRow; row++) {
           // const cellGroup = this.table.scenegraph.getCell(col, row);
-          const cellGroup = this.highPerformanceGetCell(col, row);
+          const cellGroup = this.highPerformanceGetCell(col, row, distStartRow, distEndRow);
           this.updateCellGroupContent(cellGroup);
         }
       }
@@ -367,7 +370,7 @@ export class SceneProxy {
       for (let col = this.bodyLeftCol; col <= this.bodyRightCol; col++) {
         for (let row = syncTopRow; row <= syncBottomRow; row++) {
           // const cellGroup = this.table.scenegraph.getCell(col, row);
-          const cellGroup = this.highPerformanceGetCell(col, row);
+          const cellGroup = this.highPerformanceGetCell(col, row, distStartRow, distEndRow);
           this.updateCellGroupContent(cellGroup);
         }
       }
@@ -397,8 +400,6 @@ export class SceneProxy {
         (this.table as any).scenegraph.bodyGroup.firstChild.firstChild.row,
         (this.table as any).scenegraph.bodyGroup.firstChild.lastChild.row
       );
-
-      this.scenegraph.renderSceneGraph();
 
       if (!this.table.internalProps.autoRowHeight) {
         await this.progress();
@@ -524,7 +525,10 @@ export class SceneProxy {
     }
   }
 
-  highPerformanceGetCell(col: number, row: number) {
+  highPerformanceGetCell(col: number, row: number, rowStart: number = this.rowStart, rowEnd: number = this.rowEnd) {
+    if (row < rowStart || row > rowEnd) {
+      return emptyGroup;
+    }
     if (this.cellCache.get(col)) {
       const cacheCellGoup = this.cellCache.get(col);
       if ((cacheCellGoup._next || cacheCellGoup._prev) && Math.abs(cacheCellGoup.row - row) < row) {
