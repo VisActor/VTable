@@ -35,6 +35,7 @@ import { moveSelectingRangeComponentsToSelectedRangeComponents } from './select/
 import { deleteAllSelectBorder, deleteLastSelectedRangeComponents } from './select/delete-select-border';
 import { handleTextStack } from './stack-text';
 
+
 container.load(splitModule);
 
 export const emptyGroup = new Group({});
