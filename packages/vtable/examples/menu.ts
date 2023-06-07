@@ -212,6 +212,15 @@ export const menus = [
     ]
   },
   {
+    menu: 'stack-text',
+    children: [
+      {
+        path: 'stack-text',
+        name: 'stack-pivot'
+      }
+    ]
+  },
+  {
     menu: '调试使用',
     children: [
       {
