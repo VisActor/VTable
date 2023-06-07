@@ -58,7 +58,6 @@ import type { IWrapTextGraphicAttribute } from '@visactor/vrender';
 import type { ITextSize } from '@visactor/vutils';
 import { WrapText } from '../scenegraph/graphic/text';
 import { textMeasure } from '../scenegraph/utils/measure-text';
-import { getStyleTheme } from '../scenegraph/group-creater/column-helper';
 import { getProp } from '../scenegraph/utils/get-prop';
 import type { ColumnData, ColumnDefine, ColumnsDefine, IndicatorData } from '../ts-types/list-table/layout-map/api';
 import type { TooltipOptions } from '../ts-types/tooltip';
@@ -72,6 +71,7 @@ import {
   _setRecords,
   _toPxWidth,
   createRootElement,
+  getStyleTheme,
   isAutoDefine,
   updateRootElementPadding
 } from './tableHelper';

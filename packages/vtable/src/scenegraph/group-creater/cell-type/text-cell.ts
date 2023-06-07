@@ -6,8 +6,8 @@ import { Group } from '../../graphic/group';
 // import { parseFont } from '../../utils/font';
 import { getFunctionalProp } from '../../utils/get-prop';
 import { createCellContent } from '../../utils/text-icon-layout';
-import { getStyleTheme } from '../column-helper';
 import type { BaseTableAPI } from '../../../ts-types/base-table';
+import { getStyleTheme } from '../../../core/tableHelper';
 
 /**
  * @description: 创建单元格场景节点
