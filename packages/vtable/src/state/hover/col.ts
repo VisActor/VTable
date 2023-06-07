@@ -1,8 +1,5 @@
 import type { Scenegraph } from '../../scenegraph/scenegraph';
-import type { CellRange } from '../../ts-types';
-import { CellPosition } from '../../ts-types';
-import type { HighlightScope } from '../state';
-import { checkCellInSelect, checkColInlineInSelect } from '../common/check-in-select';
+import type { CellRange, HighlightScope } from '../../ts-types';
 import { updateCell } from './update-cell';
 
 export function clearColHover(

@@ -11,6 +11,7 @@ import type {
   ListTableAPI,
   ListTableConstructorOptions,
   MaybePromiseOrUndefined,
+  SortOrder,
   SortState
 } from './ts-types';
 import { HierarchyState } from './ts-types';
@@ -479,7 +480,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
     columns: ColumnsDefine | undefined,
     field: FieldDef,
     fieldKey?: FieldKeyDef
-  ): ((v1: any, v2: any, order: 'asc' | 'desc' | 'normal') => 0 | 1 | -1) | undefined {
+  ): ((v1: any, v2: any, order: SortOrder) => 0 | 1 | -1) | undefined {
     if (!columns) {
       columns = this.internalProps.columns;
     }
@@ -514,7 +515,6 @@ export class ListTable extends BaseTable implements ListTableAPI {
         } else {
           (<SortState>this.internalProps.sortState).order = 'normal';
         }
-        // this.stateManeger.sort.order = SortOrder.normal;
       }
     } else {
       this.internalProps.sortState = sortState;

@@ -10,14 +10,13 @@ import type {
 } from '../../ts-types';
 import { Group } from '../graphic/group';
 import { getProp, getRawProp } from '../utils/get-prop';
-// import { dealMergeCell, getStyleTheme } from './text-column';
 import type { MergeMap } from './column';
 import { getPadding } from '../utils/padding';
 import { parseFont } from '../utils/font';
 import type { PivotHeaderLayoutMap } from '../../layout/pivot-header-layout';
-import type { ICustomLayoutFuc } from '../../ts-types/customLayout';
 import { createCell } from './cell-helper';
 import type { BaseTableAPI, PivotTableProtected } from '../../ts-types/base-table';
+import { getStyleTheme } from '../../core/tableHelper';
 /**
  * 创建复合列 同一列支持创建不同类型单元格
  * @param columnGroup 列Group
@@ -255,120 +254,4 @@ export function getColumnGroupTheme(
   columnTheme.group.width = colWidth;
   columnTheme.group.height = 0;
   return { theme: columnTheme, hasFunctionPros };
-}
-
-/**
- * @description: 从style对象里获取theme所需要的属性
- * @param {FullExtendStyle} headerStyle
- * @param {BaseTableAPI} table
- * @param {number} col
- * @param {number} row
- * @param {any} getProp
- * @return {*}
- */
-export function getStyleTheme(
-  headerStyle: FullExtendStyle,
-  table: BaseTableAPI,
-  col: number,
-  row: number,
-  getProp: any,
-  needGetTheme = true
-) {
-  // 属性参考IStyleOption
-  const padding = getPadding(getProp('padding', headerStyle, col, row, table));
-  const bgColor = getProp('bgColor', headerStyle, col, row, table);
-
-  const font = getProp('font', headerStyle, col, row, table);
-  let fontFamily;
-  let fontSize;
-  let fontWeight;
-  if (font) {
-    // 后期会弃用直接设置font，而使用fontFamily fontSize fontWeight 等属性
-    const { family, size, weight } = parseFont(font);
-    fontFamily = family.join(' ');
-    fontSize = size;
-    fontWeight = weight;
-  } else {
-    fontFamily = getProp('fontFamily', headerStyle, col, row, table);
-    fontSize = getProp('fontSize', headerStyle, col, row, table);
-    fontWeight = getProp('fontWeight', headerStyle, col, row, table);
-  }
-
-  // const fontSize = getFontSize(font);
-  // const fontWeight = getFontWeight(font);
-
-  const textAlign = getProp('textAlign', headerStyle, col, row, table);
-  const textBaseline = getProp('textBaseline', headerStyle, col, row, table);
-  const color = getProp('color', headerStyle, col, row, table);
-
-  const lineHeight = getProp('lineHeight', headerStyle, col, row, table);
-  const underline = getProp('underline', headerStyle, col, row, table); // boolean
-  // const underlineColor = getProp('underlineColor', headerStyle, col, row, table);
-  // const underlineDash = getProp('underlineDash', headerStyle, col, row, table);
-  const lineThrough = getProp('lineThrough', headerStyle, col, row, table); // boolean
-  // const lineThroughColor = getProp('lineThroughColor', headerStyle, col, row, table);
-  // const lineThroughDash = getProp('lineThroughDash', headerStyle, col, row, table);
-  const textDecorationWidth = Math.max(1, Math.floor(fontSize / 10));
-
-  const textOverflow = getProp('textOverflow', headerStyle, col, row, table); // 'clip' | 'ellipsis' | string
-  const borderColor = getProp('borderColor', headerStyle, col, row, table); // string | string[]
-  const borderLineWidth = getProp('borderLineWidth', headerStyle, col, row, table); // number | number[]
-  const borderLineDash = getProp('borderLineDash', headerStyle, col, row, table); // number[] | (number[] | null)[]
-
-  const marked = getProp('marked', headerStyle, col, row, table); // boolean
-
-  const hasFunctionPros =
-    !padding ||
-    !bgColor ||
-    !font ||
-    !textAlign ||
-    !textBaseline ||
-    !color ||
-    !textOverflow ||
-    !borderColor ||
-    !borderLineWidth ||
-    !borderLineDash ||
-    typeof underline !== 'boolean' ||
-    typeof lineThrough !== 'boolean' ||
-    typeof marked !== 'boolean';
-  if (!needGetTheme) {
-    return { hasFunctionPros };
-  }
-  const theme: IThemeSpec & { _vtable: any } = {
-    text: {
-      fontFamily,
-      fontSize,
-      fontWeight,
-      fillColor: color,
-      textAlign,
-      textBaseline,
-      lineHeight: lineHeight ?? fontSize,
-      underline: underline ? textDecorationWidth : undefined,
-      lineThrough: lineThrough ? textDecorationWidth : undefined,
-      ellipsis:
-        !textOverflow || textOverflow === 'clip' ? undefined : textOverflow === 'ellipsis' ? '...' : textOverflow
-    },
-    group: {
-      fillColor: bgColor,
-      lineDash: borderLineDash,
-      lineWidth: borderLineWidth,
-      strokeColor: borderColor
-    },
-    _vtable: {
-      padding,
-      marked
-    }
-  };
-
-  if (Array.isArray(borderLineWidth)) {
-    (theme.group as any).strokeArrayWidth = getPadding(borderLineWidth);
-  }
-  if (Array.isArray(borderColor)) {
-    (theme.group as any).strokeArrayColor = getPadding(borderColor);
-  }
-
-  return {
-    theme,
-    hasFunctionPros
-  };
 }

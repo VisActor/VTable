@@ -22,8 +22,8 @@ import { createSparkLineCellGroup } from './cell-type/spark-line-cell';
 import { createCellGroup } from './cell-type/text-cell';
 import { createVideoCellGroup } from './cell-type/video-cell';
 import type { ICustomLayoutFuc } from '../../ts-types/customLayout';
-import { getStyleTheme } from './column-helper';
 import type { BaseTableAPI, PivotTableProtected } from '../../ts-types/base-table';
+import { getStyleTheme } from '../../core/tableHelper';
 
 export function createCell(
   type: ColumnTypeOption,

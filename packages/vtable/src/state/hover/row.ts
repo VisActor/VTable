@@ -1,7 +1,6 @@
 import type { Scenegraph } from '../../scenegraph/scenegraph';
-import type { CellRange } from '../../ts-types';
+import type { CellRange, HighlightScope } from '../../ts-types';
 import { CellPosition } from '../../ts-types';
-import type { HighlightScope } from '../state';
 import { checkCellInSelect, checkRowInlineInSelect } from '../common/check-in-select';
 import { updateCell } from './update-cell';
 
