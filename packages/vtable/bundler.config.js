@@ -8,6 +8,6 @@ module.exports = {
   name: 'VTable',
   umdOutputFilename: 'vtable',
   rollupOptions: {
-    treeshake: false
+    treeshake: true
   }
 };

@@ -3,7 +3,7 @@
 import records from './marketsales.json';
 import { PivotTable } from '../src/PivotTable';
 import { createDiv } from './dom';
-
+global.__VERSION__ = 'none';
 describe('pivotTable init test', () => {
   const containerDom: HTMLElement = createDiv();
   containerDom.style.position = 'relative';

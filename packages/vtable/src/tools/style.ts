@@ -1,5 +1,3 @@
-// import './style.css';
-
 import type { ScrollStyle } from '../ts-types';
 
 export function getScrollBarSize(scrollStyle?: ScrollStyle): number {
