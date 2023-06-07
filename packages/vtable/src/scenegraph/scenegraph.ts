@@ -37,8 +37,8 @@ import { handleTextStack } from './stack-text';
 
 container.load(splitModule);
 
-export const groupForDebug = new Group({});
-groupForDebug.role = 'empty';
+export const emptyGroup = new Group({});
+emptyGroup.role = 'empty';
 /**
  * @description: 表格场景树，存储和管理表格全部的场景图元
  * @return {*}
@@ -354,7 +354,7 @@ export class Scenegraph {
       cell = this.getCell(range.start.col, range.start.row);
     }
 
-    return cell || groupForDebug;
+    return cell || emptyGroup;
   }
 
   highPerformanceGetCell(col: number, row: number): Group {
