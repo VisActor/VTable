@@ -94,3 +94,6 @@ common/autoinstallers/*/.npmrc
 packages/vtable-docs/public/zh/documents
 packages/vtable-docs/public/en/documents
 packages/vtable-docs/public/*.html
+
+#git-hook
+common/scripts/pre-commit
