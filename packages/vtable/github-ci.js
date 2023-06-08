@@ -41,9 +41,9 @@ const getFormData = data => {
 };
 
 async function uploadFile() {
-  console.log(`file path: ${path.resolve(process.cwd(), `dist/vgrammar.js.js`)}`);
+  console.log(`file path: ${path.resolve(process.cwd(), `dist/vtable.js.js`)}`);
   const formData = getFormData({
-    bundleFile: fs.createReadStream(path.resolve(process.cwd(), `dist/vgrammar.js.js`)),
+    bundleFile: fs.createReadStream(path.resolve(process.cwd(), `dist/vtable.js.js`)),
     triggerType: 'upload-file'
   });
   const res = await fetch(`${host}/api/ci/trigger`, {
