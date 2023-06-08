@@ -1,7 +1,7 @@
 lockfileVersion: 5.4
 
 overrides:
-  '@visactor/vrender': 0.9.0-alpha.0
+  '@visactor/vrender': 0.9.0-alpha.1
 
 importers:
 
@@ -23,7 +23,7 @@ importers:
       '@types/offscreencanvas': 2019.6.4
       '@types/react': 16.9.49
       '@types/react-dom': 16.9.8
-      '@visactor/vrender': 0.9.0-alpha.0
+      '@visactor/vrender': 0.9.0-alpha.1
       '@visactor/vrender-components': 0.9.0-alpha.1
       '@visactor/vscale': 0.9.0-alpha.2
       '@visactor/vutils': 0.9.0-alpha.2
@@ -54,8 +54,8 @@ importers:
       vite: 3.2.6
       vite-plugin-markdown: ^2.1.0
     dependencies:
-      '@visactor/vrender': 0.9.0-alpha.0
-      '@visactor/vrender-components': 0.9.0-alpha.1_ic7pqlcwobarhfzsp5vbpw5ctq
+      '@visactor/vrender': 0.9.0-alpha.1
+      '@visactor/vrender-components': 0.9.0-alpha.1_t54dw3v433tpqhr37nftctsmvm
       '@visactor/vscale': 0.9.0-alpha.2
       '@visactor/vutils': 0.9.0-alpha.2
       cssfontparser: 1.2.1
@@ -2658,20 +2658,20 @@ packages:
     resolution: {integrity: sha512-sL/cEvJWAnClXw0wHk85/2L0G6Sj8UB0Ctc1TEMbKSsmpRosqhwj9gWgFRZSrBr2f9tiXISwNhCPmlfqUqyb9Q==}
     dev: true
 
-  /@visactor/vrender-components/0.9.0-alpha.1_ic7pqlcwobarhfzsp5vbpw5ctq:
+  /@visactor/vrender-components/0.9.0-alpha.1_t54dw3v433tpqhr37nftctsmvm:
     resolution: {integrity: sha512-Z/D2fk61awTAGhZY9Cmq1CXFH4sgrx2EUCCKbVr1Mw/9Orq5nITQ2xHbPWwrProg+VZS9dRoMDP5vvJsAO2RUA==}
     peerDependencies:
       '@visactor/vrender': 0.9.0-alpha.1
       '@visactor/vscale': 0.9.0-alpha.2
     dependencies:
-      '@visactor/vrender': 0.9.0-alpha.0
+      '@visactor/vrender': 0.9.0-alpha.1
       '@visactor/vscale': 0.9.0-alpha.2
       '@visactor/vutils': 0.9.0-alpha.2
       gl-matrix: 3.4.3
     dev: false
 
-  /@visactor/vrender/0.9.0-alpha.0:
-    resolution: {integrity: sha512-sLI8F12Si5+gWBGBvPGlJgLgyUNC/rRPhaedDTJoJL/+19B3p1gEVaMeNkE4WijZNMQ83/vJbAo0aoBoPWKN6A==}
+  /@visactor/vrender/0.9.0-alpha.1:
+    resolution: {integrity: sha512-yd0F5nya1DATzDNIAko4BmZQlsHIOEsdSU+qFTWwBtCzC6b2lnZoYqvZT8YDt6ZqRoH6YGKv28sstRHwPSkqwA==}
     dependencies:
       '@visactor/vutils': 0.9.0-alpha.2
       color-convert: 2.0.1
