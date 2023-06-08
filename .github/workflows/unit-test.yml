@@ -32,7 +32,5 @@ jobs:
         run: node common/scripts/install-run-rush.js install --bypass-policy
       - name: Build
         run: node common/scripts/install-run-rush.js build --only tag:package
-      - name: Compile
-        run: node common/scripts/install-run-rush.js compile --only tag:package
       - name: Test
         run: node common/scripts/install-run-rush.js test --only tag:package
