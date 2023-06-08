@@ -172,8 +172,13 @@ export class TableComponent {
     componentGroup.addChild(this.columnResizerBgLine);
     componentGroup.addChild(this.columnResizerLine);
     componentGroup.addChild(this.columnResizerLabel);
-    componentGroup.addChild(this.hScrollBar);
-    componentGroup.addChild(this.vScrollBar);
+    if (this.table.theme.scrollStyle.hoverOn) {
+      componentGroup.addChild(this.hScrollBar);
+      componentGroup.addChild(this.vScrollBar);
+    } else {
+      componentGroup.stage.defaultLayer.addChild(this.hScrollBar);
+      componentGroup.stage.defaultLayer.addChild(this.vScrollBar);
+    }
     this.menu.bindTableComponent(componentGroup);
     this.drillIcon.appand(componentGroup);
     this.cellMover.appand(componentGroup);
@@ -260,7 +265,7 @@ export class TableComponent {
       const rangeEnd = Math.max(0.05, (tableWidth - frozenColsWidth) / (totalWidth - frozenColsWidth));
       this.hScrollBar.setAttributes({
         x: frozenColsWidth,
-        y: y - width,
+        y: y - (this.table.theme.scrollStyle.hoverOn ? width : 0),
         width: tableWidth - frozenColsWidth,
         range: [0, rangeEnd],
         visible: visible === 'always'
@@ -279,7 +284,7 @@ export class TableComponent {
       const x = Math.min(tableWidth, totalWidth);
       const rangeEnd = Math.max(0.05, (tableHeight - frozenRowsHeight) / (totalHeight - frozenRowsHeight));
       this.vScrollBar.setAttributes({
-        x: x - width,
+        x: x - (this.table.theme.scrollStyle.hoverOn ? width : 0),
         y: frozenRowsHeight,
         height: tableHeight - frozenRowsHeight,
         range: [0, rangeEnd],

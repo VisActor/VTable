@@ -165,7 +165,7 @@ export function createTable() {
     allowFrozenColCount: 2,
     theme: {
       scrollStyle: {
-        hoverOn: true,
+        hoverOn: false,
         scrollSliderColor: 'red',
         visible: 'always'
       }
