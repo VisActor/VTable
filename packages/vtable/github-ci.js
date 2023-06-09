@@ -60,7 +60,8 @@ async function triggerScmBuild({ fileUrl }) {
   const formData = getFormData({
     triggerType: 'scm-build',
     fileUrl: fileUrl,
-    createUser: process.env.GITHUB_ACTOR ?? ''
+    createUser: process.env.GITHUB_ACTOR ?? '',
+    commitBranchName: process.env.GITHUB_HEAD_REF ?? ''
   });
 
   const res = await fetch(`${host}/api/ci/trigger`, {
