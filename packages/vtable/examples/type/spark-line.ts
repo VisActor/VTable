@@ -193,14 +193,27 @@ export function createTable() {
         caption: '这是一个折线图1',
         width: 250,
         columnType: 'sparkline',
-        sparklineSpec: args => {
-          const { col, row } = args;
-          const data = instance.getCellOriginRecord(col, row);
-          if (data.total) {
-            return totalSpec;
+        sparklineSpec: {
+          type: 'line',
+          xField: {
+            field: 'x',
+            domain: [0, 1, 2, 3, 4, 5, 6, 7, 8]
+            // type: 'point'
+          },
+          yField: {
+            field: 'y',
+            domain: [0, 80]
+            // type: 'linear'
           }
-          return baseSpec;
         }
+        // sparklineSpec: args => {
+        //   const { col, row } = args;
+        //   const data = instance.getCellOriginRecord(col, row);
+        //   if (data.total) {
+        //     return totalSpec;
+        //   }
+        //   return baseSpec;
+        // }
       },
       {
         field: 'lineData',
