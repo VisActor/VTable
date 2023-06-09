@@ -48,6 +48,7 @@
     "@visactor/vscale": "0.9.0-alpha.2"
   },
   "devDependencies": {
+    "@visactor/vchart": "0.0.1-alpha.0",
     "@internal/bundler": "workspace:*",
     "@internal/eslint-config": "workspace:*",
     "@internal/ts-config": "workspace:*",
