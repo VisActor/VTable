@@ -16,7 +16,11 @@ describe('listTable init test', () => {
         field: '订单 ID',
         caption: '订单 ID',
         sort: true,
-        width: 'auto'
+        width: 'auto',
+        style: {
+          fontFamily: 'Arial',
+          fontSize: 14
+        }
       },
       {
         field: '订单日期',
@@ -86,7 +90,7 @@ describe('listTable init test', () => {
   });
 
   test('listTable column width', () => {
-    expect(listTable.getColWidth(0)).toBe(162);
+    expect(listTable.getColWidth(0)).toBe(151);
   });
 
   test('listTable row Height', () => {
