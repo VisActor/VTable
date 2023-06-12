@@ -17,7 +17,7 @@ import { TableComponent } from './component/table-component';
 import { updateRowHeight } from './layout/update-height';
 import { updateImageCellContentWhileResize } from './group-creater/cell-type/image-cell';
 import { getPadding } from './utils/padding';
-import { createFrameBorder } from './style/frame-border';
+import { createFrameBorder, updateFrameBorder, updateFrameBorderSize } from './style/frame-border';
 import { ResizeColumnHotSpotSize } from '../tools/global';
 import splitModule from './graphic/contributions';
 import { getProp } from './utils/get-prop';
@@ -1172,7 +1172,7 @@ export class Scenegraph {
       this.rowHeaderGroup,
       this.isPivot ? this.table.theme.rowHeaderStyle.frameStyle : this.table.theme.bodyStyle.frameStyle,
       this.rowHeaderGroup.role,
-      isListTableWithFrozen ? [true, false, true, true] : undefined
+      [true, false, true, true]
     );
     createFrameBorder(
       this.colHeaderGroup,
@@ -1184,7 +1184,7 @@ export class Scenegraph {
       this.cornerHeaderGroup,
       this.isPivot ? this.table.theme.cornerHeaderStyle.frameStyle : this.table.theme.headerStyle.frameStyle,
       this.cornerHeaderGroup.role,
-      isListTableWithFrozen ? [true, false, true, true] : undefined
+      [true, false, true, true]
     );
     createFrameBorder(this.tableGroup, this.table.theme.frameStyle, this.tableGroup.role);
   }
@@ -1235,41 +1235,29 @@ export class Scenegraph {
   updateBorderSizeAndPosition() {
     if (this.bodyGroup.border) {
       this.bodyGroup.appendChild(this.bodyGroup.border);
-      this.bodyGroup.border?.setAttribute(
-        'width',
-        this.bodyGroup.attribute.width - (this.bodyGroup.border.attribute.lineWidth ?? 0)
-      );
+      updateFrameBorderSize(this.bodyGroup);
       if (this.rowHeaderGroup.attribute.width === 0) {
-        this.bodyGroup.border?.setAttribute('stroke', [true, true, true, true]);
+        updateFrameBorder(this.bodyGroup, this.table.theme.bodyStyle.frameStyle, [true, true, true, true]);
       } else {
-        this.bodyGroup.border?.setAttribute('stroke', [true, true, true, false]);
+        updateFrameBorder(this.bodyGroup, this.table.theme.bodyStyle.frameStyle, [true, true, true, false]);
       }
     }
     if (this.colHeaderGroup.border) {
       this.colHeaderGroup.appendChild(this.colHeaderGroup.border);
-      this.colHeaderGroup.border?.setAttribute(
-        'width',
-        this.colHeaderGroup.attribute.width - (this.colHeaderGroup.border.attribute.lineWidth ?? 0)
-      );
+      updateFrameBorderSize(this.colHeaderGroup);
       if (this.cornerHeaderGroup.attribute.width === 0) {
-        this.colHeaderGroup.border?.setAttribute('stroke', [true, true, true, true]);
+        updateFrameBorder(this.colHeaderGroup, this.table.theme.headerStyle.frameStyle, [true, true, true, true]);
       } else {
-        this.colHeaderGroup.border?.setAttribute('stroke', [true, true, true, false]);
+        updateFrameBorder(this.colHeaderGroup, this.table.theme.headerStyle.frameStyle, [true, true, true, false]);
       }
     }
     if (this.rowHeaderGroup.border) {
       this.rowHeaderGroup.appendChild(this.rowHeaderGroup.border);
-      this.rowHeaderGroup.border?.setAttribute(
-        'width',
-        this.rowHeaderGroup.attribute.width - (this.rowHeaderGroup.border.attribute.lineWidth ?? 0)
-      );
+      updateFrameBorderSize(this.rowHeaderGroup);
     }
     if (this.cornerHeaderGroup.border) {
       this.cornerHeaderGroup.appendChild(this.cornerHeaderGroup.border);
-      this.cornerHeaderGroup.border?.setAttribute(
-        'width',
-        this.cornerHeaderGroup.attribute.width - (this.cornerHeaderGroup.border.attribute.lineWidth ?? 0)
-      );
+      updateFrameBorderSize(this.cornerHeaderGroup);
     }
   }
 
