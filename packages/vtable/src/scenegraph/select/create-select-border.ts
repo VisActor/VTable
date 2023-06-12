@@ -39,11 +39,10 @@ export function createCellSelectBorder(
   const bodyClickLineWidth = theme.selectionStyle?.cellBorderLineWidth;
   const rect = createRect({
     pickable: false,
-    fill: true,
-    fillColor: (theme.selectionStyle?.cellBgColor as any) ?? 'rgba(0, 0, 255,0.1)',
-    strokeColor: bodyClickBorderColor as string,
+    fill: (theme.selectionStyle?.cellBgColor as any) ?? 'rgba(0, 0, 255,0.1)',
+    stroke: bodyClickBorderColor as string,
     lineWidth: bodyClickLineWidth as number,
-    stroke: strokes,
+    // stroke: strokes,
     x: cellsBounds.x1 - scene.tableGroup.attribute.x,
     y: cellsBounds.y1 - scene.tableGroup.attribute.y,
     width: cellsBounds.width(),

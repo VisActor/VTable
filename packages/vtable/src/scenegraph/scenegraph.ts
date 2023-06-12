@@ -531,7 +531,7 @@ export class Scenegraph {
           y: (icon.attribute.y ?? 0) + (icon.AABBBounds.height() - icon.backgroundHeight) / 2,
           width: icon.backgroundWidth,
           height: icon.backgroundHeight,
-          fillColor: icon.attribute.backgroundColor,
+          fill: icon.attribute.backgroundColor,
           borderRadius: 5,
           visible: true
         });
@@ -541,7 +541,7 @@ export class Scenegraph {
           y: (icon.attribute.y ?? 0) + (icon.AABBBounds.height() - icon.backgroundHeight) / 2,
           width: icon.backgroundWidth,
           height: icon.backgroundHeight,
-          fillColor: icon.attribute.backgroundColor,
+          fill: icon.attribute.backgroundColor,
           borderRadius: 5,
           pickable: false,
           visible: true

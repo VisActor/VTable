@@ -2,6 +2,7 @@ import type { IGroupGraphicAttribute, IRectGraphicAttribute } from '@visactor/vr
 import { createRect } from '@visactor/vrender';
 import type { TableFrameStyle } from '../../ts-types';
 import type { Group } from '../graphic/group';
+import { isArray } from '@visactor/vutils';
 
 export function createFrameBorder(
   group: Group,
@@ -38,7 +39,7 @@ export function createFrameBorder(
     rectAttributes.shadowOffsetY = shadowOffsetY;
     rectAttributes.shadowColor = shadowColor;
     rectAttributes.stroke = true;
-    rectAttributes.strokeColor = shadowColor;
+    rectAttributes.stroke = shadowColor;
     rectAttributes.lineWidth = 1;
 
     rectAttributes.fill = true;
@@ -49,9 +50,13 @@ export function createFrameBorder(
   if (borderLineWidth) {
     rectAttributes.stroke = true;
     (rectAttributes as any).stroke = strokeArray || true;
-    // (rectAttributes as any).strokeArrayColor = borderColor as string;
     rectAttributes.fill = false;
-    rectAttributes.strokeColor = borderColor as string;
+    if (isArray(borderColor)) {
+      (rectAttributes as any).strokeArrayColor = borderColor as string[];
+      rectAttributes.stroke = true;
+    } else {
+      rectAttributes.stroke = borderColor as string;
+    }
     rectAttributes.lineWidth = borderLineWidth as number;
     borderLineDash && (rectAttributes.lineDash = borderLineDash as number[]);
   }

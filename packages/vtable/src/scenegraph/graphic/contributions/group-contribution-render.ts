@@ -123,7 +123,7 @@ export class SplitGroupAfterRenderContribution implements IGroupRenderContributi
       strokeArrayWidth = (groupAttribute as any).strokeArrayWidth,
 
       lineWidth = groupAttribute.lineWidth,
-      strokeColor = groupAttribute.strokeColor
+      strokeColor = groupAttribute.stroke
       // // select & hover border
       // highlightStroke = (groupAttribute as any).highlightStroke,
       // highlightStrokeArrayColor = (groupAttribute as any).highlightStrokeArrayColor,
@@ -634,8 +634,8 @@ export class AdjustColorGroupBeforeRenderContribution implements IGroupRenderCon
       const table = (group.stage as any).table as BaseTableAPI;
       const hoverColor = getCellHoverColor(group as Group, table);
       if (hoverColor) {
-        (group as any).oldColor = group.attribute.fillColor;
-        group.attribute.fillColor = hoverColor;
+        (group as any).oldColor = group.attribute.fill;
+        group.attribute.fill = hoverColor;
       }
     }
   }
@@ -669,7 +669,7 @@ export class AdjustColorGroupAfterRenderContribution implements IGroupRenderCont
   ) {
     // 处理hover颜色
     if ('oldColor' in group) {
-      group.attribute.fillColor = group.oldColor as any;
+      group.attribute.fill = group.oldColor as any;
       delete group.oldColor;
     }
   }

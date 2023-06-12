@@ -119,10 +119,8 @@ function adjustElementToGroup(
           y: element.y as number,
           dx: (element.dx ?? 0) as number,
           dy: (element.dy ?? 0) as number,
-          fill: !!element.fillColor,
-          fillColor: element.fillColor as string,
-          stroke: !!element.strokeColor,
-          strokeColor: element.strokeColor as string,
+          fill: element.fill as string,
+          stroke: element.stroke as string,
           outerRadius: element.radius as number,
           startAngle: element.startAngle as number,
           endAngle: element.endAngle as number,
@@ -143,16 +141,14 @@ function adjustElementToGroup(
             width: element.width + expandX * 2,
             height: element.height + expandY * 2,
             borderRadius: element.background?.borderRadius ?? 0,
-            fill: true,
-            fillColor: element.background?.fillColor ?? '#888'
+            // fill: true,
+            fill: element.background?.fill ?? '#888'
           });
           customGroup.appendChild(textBackRect);
         }
         const text = new WrapText(
           Object.assign(
             {
-              fill: !!element.fillColor,
-              stroke: !!element.strokeColor,
               pickable: !!element.clickable
             },
             element as any
@@ -169,10 +165,8 @@ function adjustElementToGroup(
           width: element.width as number,
           height: element.height as number,
           borderRadius: element.radius as number,
-          fill: !!element.fillColor,
-          fillColor: element.fillColor as string,
-          stroke: !!element.strokeColor,
-          strokeColor: element.strokeColor as string,
+          fill: element.fill as string,
+          stroke: element.stroke as string,
           pickable: !!element.clickable,
           cursor: element.cursor as Cursor
         });
@@ -185,10 +179,8 @@ function adjustElementToGroup(
           dx: (element.dx ?? 0) as number,
           dy: (element.dy ?? 0) as number,
           radius: element.radius as number,
-          fill: !!element.fillColor,
-          fillColor: element.fillColor as string,
-          stroke: !!element.strokeColor,
-          strokeColor: element.strokeColor as string,
+          fill: element.fill as string,
+          stroke: element.stroke as string,
           pickable: !!element.clickable,
           cursor: element.cursor as Cursor
         });

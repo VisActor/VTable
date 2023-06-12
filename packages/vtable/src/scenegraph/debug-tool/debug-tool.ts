@@ -111,20 +111,6 @@ export class DebugTool {
   }
 
   bindStageEvent() {
-    this._rect = createRect({
-      x: 0,
-      y: 0,
-      width: 0,
-      height: 0,
-      fill: false,
-      stroke: true,
-      strokeColor: 'red',
-      lineWidth: 1,
-      pickable: false,
-      visible: false
-    });
-    this._stage.defaultLayer.appendChild(this._rect);
-
     this._callback.pointermove = (e: FederatedPointerEvent) => {
       if (this._mode !== 'hover') {
         // do nothing

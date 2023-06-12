@@ -414,8 +414,7 @@ function dealWithRichTextIcon(icon: ColumnIconOption) {
     config.backgroundShowMode = 'hover';
     config.hoverImage = icon.hover.image;
     config.backgroundStroke = false;
-    config.backgroundFill = true;
-    config.backgroundFillColor = icon.hover.bgColor ?? 'rgba(22,44,66,0.2)';
+    config.backgroundFill = icon.hover.bgColor ?? 'rgba(22,44,66,0.2)';
   }
 
   if (icon.cursor) {

@@ -267,7 +267,7 @@ export function getStyleTheme(
       fontFamily,
       fontSize,
       fontWeight,
-      fillColor: color,
+      fill: color,
       textAlign,
       textBaseline,
       lineHeight: lineHeight ?? fontSize,
@@ -277,10 +277,10 @@ export function getStyleTheme(
         !textOverflow || textOverflow === 'clip' ? undefined : textOverflow === 'ellipsis' ? '...' : textOverflow
     },
     group: {
-      fillColor: bgColor,
+      fill: bgColor,
       lineDash: borderLineDash,
       lineWidth: borderLineWidth,
-      strokeColor: borderColor
+      stroke: borderColor
     },
     _vtable: {
       padding,
