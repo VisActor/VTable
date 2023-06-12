@@ -16,7 +16,7 @@ import { browser, cellInRanges } from '../tools/helper';
 import { Rect } from '../tools/Rect';
 import { bindMediaClick } from './media-click';
 import { bindDrillEvent, drillClick } from './drill';
-import { bindChartHoverEvent } from './chart';
+import { bindSparklineHoverEvent } from './sparkline-event';
 import { getIconAndPositionFromTarget } from '../scenegraph/utils/icon';
 import type { BaseTableAPI } from '../ts-types/base-table';
 import { handleWhell } from './scroll';
@@ -705,7 +705,7 @@ export class EventManeger {
     }
 
     // chart hover
-    bindChartHoverEvent(this.table);
+    bindSparklineHoverEvent(this.table);
   }
 
   dealTableHover(eventArgsSet?: SceneEvent) {

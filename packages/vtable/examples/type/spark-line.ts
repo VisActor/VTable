@@ -8,7 +8,8 @@ export function createTable() {
       progress: 100,
       id: 1,
       name: 'a',
-      lineData: [
+      lineData: [10, 5, 7, 8, 3, 9, 4],
+      lineData2: [
         { x: 0, y: 10 },
         { x: 1, y: 40 },
         { x: 2, y: 60 },
@@ -23,7 +24,8 @@ export function createTable() {
       progress: 80,
       id: 2,
       name: 'b',
-      lineData: [
+      lineData: [7, 5, 7, 8, 3, 9, 4],
+      lineData2: [
         { x: 0, y: 10 },
         { x: 1, y: 40 },
         { x: 2, y: 60 },
@@ -40,7 +42,8 @@ export function createTable() {
       progress: 1,
       id: 3,
       name: 'c',
-      lineData: [
+      lineData: [1, 5, 7, 8, 3, 9, 4],
+      lineData2: [
         { x: 0, y: 10 },
         { x: 1, y: 40 },
         { x: 2, y: 60 },
@@ -57,7 +60,8 @@ export function createTable() {
       progress: 55,
       id: 4,
       name: 'd',
-      lineData: [
+      lineData: [-5, 5, 7, 8, 3, 9, 4],
+      lineData2: [
         { x: 0, y: 10 },
         { x: 1, y: 40 },
         { x: 2, y: 60 },
@@ -75,7 +79,8 @@ export function createTable() {
       id: 5,
       name: 'e',
       total: true,
-      lineData: [
+      lineData: [4, 5, 7, 8, 3, 9, 4],
+      lineData2: [
         { x: 0, y: 10 },
         { x: 1, y: 40 },
         { x: 2, y: 60 },
@@ -89,7 +94,8 @@ export function createTable() {
       ]
     }
   ];
-  const baseSpec = {
+
+  const baseSpec: VTable.TYPES.SparklineSpec = {
     type: 'line',
     xField: {
       field: 'x',
@@ -109,7 +115,7 @@ export function createTable() {
         strokeWidth: 2
       }
     },
-    symbol: {
+    point: {
       visible: true,
       state: {
         hover: {
@@ -135,7 +141,7 @@ export function createTable() {
       }
     }
   };
-  const totalSpec = {
+  const totalSpec: VTable.TYPES.SparklineSpec = {
     type: 'line',
     xField: 'x',
     yField: 'y',
@@ -147,7 +153,7 @@ export function createTable() {
         strokeWidth: 4
       }
     },
-    symbol: {
+    point: {
       visible: true,
       state: {
         hover: {
@@ -158,6 +164,43 @@ export function createTable() {
           size: 4
         }
       },
+      style: {
+        stroke: 'red',
+        strokeWidth: 1,
+        fill: 'yellow',
+        shape: 'circle',
+        size: 2
+      }
+    },
+    crosshair: {
+      style: {
+        stroke: 'gray',
+        strokeWidth: 1
+      }
+    }
+  };
+
+  const specFieldString: VTable.TYPES.SparklineSpec = {
+    type: 'line',
+    xField: 'x',
+    yField: 'y',
+    pointShowRule: 'all',
+    line: {
+      style: {
+        stroke: '#2E62F1',
+        strokeWidth: 2
+      }
+    },
+    point: {
+      visible: true,
+      hover: {
+        stroke: 'blue',
+        strokeWidth: 1,
+        fill: 'red',
+        shape: 'circle',
+        size: 4
+      },
+
       style: {
         stroke: 'red',
         strokeWidth: 1,
@@ -192,36 +235,15 @@ export function createTable() {
         field: 'lineData',
         caption: '这是一个折线图1',
         width: 250,
-        columnType: 'sparkline',
-        sparklineSpec: {
-          type: 'line',
-          xField: {
-            field: 'x',
-            domain: [0, 1, 2, 3, 4, 5, 6, 7, 8]
-            // type: 'point'
-          },
-          yField: {
-            field: 'y',
-            domain: [0, 80]
-            // type: 'linear'
-          }
-        }
-        // sparklineSpec: args => {
-        //   const { col, row } = args;
-        //   const data = instance.getCellOriginRecord(col, row);
-        //   if (data.total) {
-        //     return totalSpec;
-        //   }
-        //   return baseSpec;
-        // }
+        columnType: 'sparkline'
       },
       {
-        field: 'lineData',
+        field: 'lineData2',
         caption: '这是一个折线图2',
         width: 250,
         columnType: 'sparkline',
         sparklineSpec: Object.assign({}, baseSpec, {
-          symbol: {
+          point: {
             visible: false,
             state: {
               hover: {
@@ -241,6 +263,30 @@ export function createTable() {
             }
           }
         })
+      },
+      {
+        field: 'lineData2',
+        caption: '这是一个折线图3',
+        width: 250,
+        columnType: 'sparkline',
+        sparklineSpec: specFieldString
+      },
+      {
+        field: 'lineData2',
+        caption: '这是一个折线图4',
+        width: 250,
+        columnType: 'sparkline',
+        sparklineSpec: {
+          type: 'line',
+          xField: 'x',
+          yField: 'y',
+          crosshair: {
+            style: {
+              stroke: 'red',
+              interpolate: 'monotone'
+            }
+          }
+        }
       }
     ],
     showPin: true, //显示VTable内置冻结列图标
