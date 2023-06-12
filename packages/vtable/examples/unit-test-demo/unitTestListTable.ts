@@ -11,7 +11,11 @@ export function createTable() {
         caption: '订单 ID',
         sort: true,
         width: 'auto',
-        description: '这是订单的描述信息'
+        description: '这是订单的描述信息',
+        style: {
+          fontFamily: 'Arial',
+          fontSize: 14
+        }
       },
       {
         field: '订单日期',

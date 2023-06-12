@@ -3,8 +3,8 @@ export const menus = [
     menu: '基本表格',
     children: [
       {
-        path: 'list-table',
-        name: 'default'
+        path: 'list',
+        name: 'list'
       }
     ]
   },
