@@ -312,23 +312,20 @@ export function createTable() {
           pointShowRule: 'none',
           smooth: true,
           line: {
-            visible: true,
             style: {
               stroke: '#2E62F1',
               strokeWidth: 2
               // interpolate: 'monotone',
             }
           },
-          symbol: {
+          point: {
             visible: true,
-            state: {
-              hover: {
-                stroke: 'blue',
-                strokeWidth: 1,
-                fill: 'red',
-                shape: 'circle',
-                size: 4
-              }
+            hover: {
+              stroke: 'blue',
+              strokeWidth: 1,
+              fill: 'red',
+              shape: 'circle',
+              size: 4
             },
             style: {
               stroke: 'red',
