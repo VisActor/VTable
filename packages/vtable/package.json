@@ -22,12 +22,20 @@
   "sideEffects": false,
   "main": "cjs/index.js",
   "module": "es/index.js",
+  "browser": "dist/vtable.min.js",
   "types": "es/index.d.ts",
   "files": [
     "cjs",
     "es",
     "dist"
   ],
+  "exports": {
+    ".": {
+      "require": "./cjs/index.js",
+      "import": "./es/index.js",
+      "default": "./dist/vtable.min.js"
+    }
+  },
   "scripts": {
     "demo": "vite serve examples",
     "site-demo": "vite serve site-demo",
