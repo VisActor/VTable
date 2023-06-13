@@ -5,16 +5,14 @@ import type { ITextColumnIndicator, ITextHeaderIndicator } from './multilinetext
 import type { IProgressbarColumnIndicator } from './progress-indicator';
 import type { ISparklineColumnIndicator } from './sparkline-indicator';
 
-export type HeaderIndicator = Partial<ITextHeaderIndicator | ILinkHeaderIndicator | IImageHeaderIndicator>;
+export type HeaderIndicator = ILinkHeaderIndicator | IImageHeaderIndicator | ITextHeaderIndicator;
 
-export type ColumnIndicator = Partial<
-  | ITextColumnIndicator
+export type ColumnIndicator =
   | ILinkColumnIndicator
   | IImageColumnIndicator
   | ISparklineColumnIndicator
   | IProgressbarColumnIndicator
   | IChartColumnIndicator
->;
+  | ITextColumnIndicator;
 
 export type IIndicator = HeaderIndicator & ColumnIndicator;
-export type IIndicatorCustom = IIndicator;
