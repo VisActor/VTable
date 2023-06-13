@@ -16,7 +16,7 @@ export class DebugTool {
   _infoContainer: HTMLElement;
   _highlightRect: HTMLElement;
   _target: IGraphic;
-  _rect: IRect;
+  // _rect: IRect;
   _mode: 'hover' | 'click' = 'hover';
   _customGrapicKeys?: string[];
   _modeTip: HTMLElement;
@@ -123,7 +123,7 @@ export class DebugTool {
         }, 100);
       } else if (!e.target) {
         this._target = undefined;
-        this.removeHighlightBounds();
+        // this.removeHighlightBounds();
         this.clearInfo();
       }
     };
@@ -141,7 +141,7 @@ export class DebugTool {
         }, 100);
       } else if (!e.target) {
         this._target = undefined;
-        this.removeHighlightBounds();
+        // this.removeHighlightBounds();
         this.clearInfo();
       }
     };
@@ -150,7 +150,7 @@ export class DebugTool {
     this._callback.pointerleave = (e: FederatedPointerEvent) => {
       if (this._mode === 'hover') {
         this._target = undefined;
-        this.removeHighlightBounds();
+        // this.removeHighlightBounds();
         this.clearInfo();
       }
     };
@@ -177,10 +177,10 @@ export class DebugTool {
     this._highlightRect.style.height = `${bounds.height()}px`;
   }
 
-  removeHighlightBounds() {
-    this._rect.setAttribute('visible', false);
-    this._stage.renderNextFrame();
-  }
+  // removeHighlightBounds() {
+  //   this._rect.setAttribute('visible', false);
+  //   this._stage.renderNextFrame();
+  // }
 
   updateInfo() {
     if (!this._target) {
@@ -250,7 +250,7 @@ export class DebugTool {
     this._highlightRect.parentElement.removeChild(this._highlightRect);
 
     // 解绑stage事件
-    this._stage.defaultLayer.removeChild(this._rect);
+    // this._stage.defaultLayer.removeChild(this._rect);
     this._stage.removeEventListener('pointermove', this._callback.pointermove);
     this._stage.removeEventListener('pointerup', this._callback.pointerup);
     this._stage.removeEventListener('pointerleave', this._callback.pointerleave);

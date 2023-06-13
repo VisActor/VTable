@@ -73,7 +73,7 @@ export function createCellContent(
     const attribute = {
       text, // 单行(no-autoWrapText)为字符串，多行(autoWrapText)为字符串数组
       maxLineWidth: autoColWidth ? Infinity : cellWidth - (padding[1] + padding[3]),
-      fill: true,
+      // fill: true,
       // textAlign: 'left',
       textBaseline: 'top',
       autoWrapText,
@@ -173,7 +173,7 @@ export function createCellContent(
       const attribute = {
         text, // 单行(no-autoWrapText)为字符串，多行(autoWrapText)为字符串数组
         maxLineWidth: autoColWidth ? Infinity : cellWidth - (padding[1] + padding[3]) - leftIconWidth - rightIconWidth,
-        fill: true,
+        // fill: true,
         // textAlign: 'left',
         textBaseline: 'top',
         // widthLimit: autoColWidth ? -1 : colWidth - (padding[1] + padding[3]),
@@ -190,7 +190,6 @@ export function createCellContent(
     } else {
       const textOption = Object.assign(
         {
-          fill: true,
           text: textStr?.toString()
         },
         (cellGroup.parent as Group)?.theme?.userTheme?.text || {}
