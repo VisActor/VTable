@@ -1,4 +1,5 @@
 import * as VTable from '../../src';
+import { bindDebugTool } from '../../src/scenegraph/debug-tool';
 const ListTable = VTable.ListTable;
 const Table_CONTAINER_DOM_ID = 'vTable';
 
@@ -290,7 +291,7 @@ export function createTable() {
         frameStyle: {
           borderColor: ['green', 'red'],
           // borderColor: 'green',
-          borderLineWidth: [4, 8]
+          borderLineWidth: 4
         }
       },
       headerStyle: {
@@ -336,9 +337,9 @@ export function createTable() {
   //初始化表格
   const instance = new ListTable(option);
 
-  // VTable.bindDebugTool(instance.scenegraph.stage as any, {
-  //   customGrapicKeys: ['role', '_updateTag']
-  // });
+  bindDebugTool(instance.scenegraph.stage as any, {
+    customGrapicKeys: ['role', '_updateTag']
+  });
 
   // 只为了方便控制太调试用，不要拷贝
   (window as any).tableInstance = instance;

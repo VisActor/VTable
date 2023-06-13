@@ -1159,7 +1159,7 @@ export class Scenegraph {
     //   ),
     // } as any);
 
-    const isListTableWithFrozen = !this.isPivot && this.rowHeaderGroup.attribute.width;
+    const isListTableWithFrozen = !this.isPivot;
 
     // 设置border
     createFrameBorder(
@@ -1172,7 +1172,7 @@ export class Scenegraph {
       this.rowHeaderGroup,
       this.isPivot ? this.table.theme.rowHeaderStyle.frameStyle : this.table.theme.bodyStyle.frameStyle,
       this.rowHeaderGroup.role,
-      [true, false, true, true]
+      isListTableWithFrozen ? [true, false, true, true] : undefined
     );
     createFrameBorder(
       this.colHeaderGroup,
@@ -1184,7 +1184,7 @@ export class Scenegraph {
       this.cornerHeaderGroup,
       this.isPivot ? this.table.theme.cornerHeaderStyle.frameStyle : this.table.theme.headerStyle.frameStyle,
       this.cornerHeaderGroup.role,
-      [true, false, true, true]
+      isListTableWithFrozen ? [true, false, true, true] : undefined
     );
     createFrameBorder(this.tableGroup, this.table.theme.frameStyle, this.tableGroup.role);
   }
