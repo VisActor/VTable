@@ -83,7 +83,7 @@
    * PNPM documentation: https://pnpm.io/package_json#pnpmoverrides
    */
   "globalOverrides": {
-    "@visactor/vrender": "0.9.2-fill-stroke.6"
+    "@visactor/vrender": "0.9.2-fill-stroke.9"
   },
   /**
    * The `globalPeerDependencyRules` setting provides various settings for suppressing validation errors
