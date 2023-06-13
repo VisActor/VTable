@@ -58,7 +58,6 @@ export function createFrameBorder(
   // 处理边框
   if (borderLineWidth) {
     rectAttributes.stroke = true;
-    (rectAttributes as any).stroke = strokeArray || true;
     rectAttributes.fill = false;
     rectAttributes.stroke = getStroke(borderColor, strokeArray);
     rectAttributes.lineWidth = borderLineWidth as number;

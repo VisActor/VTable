@@ -12,6 +12,7 @@ import { BaseRenderContributionTime } from '@visactor/vrender';
 import type { Group } from '../group';
 import { getCellHoverColor } from '../../../state/hover/is-cell-hover';
 import type { BaseTableAPI } from '../../../ts-types/base-table';
+import { getPadding } from '../../utils/padding';
 
 // const highlightDash: number[] = [];
 
@@ -136,7 +137,7 @@ export class SplitGroupAfterRenderContribution implements IGroupRenderContributi
       return;
     }
 
-    if (Array.isArray(stroke) || Array.isArray(strokeArrayColor) || Array.isArray(strokeArrayWidth)) {
+    if (Array.isArray(strokeArrayColor) || Array.isArray(strokeArrayWidth)) {
       if (
         (typeof lineWidth === 'number' && lineWidth & 1) ||
         (Array.isArray(strokeArrayWidth) && strokeArrayWidth.some(width => width & 1))
@@ -383,7 +384,6 @@ export class DashGroupBeforeRenderContribution implements IGroupRenderContributi
       stroke &&
       Array.isArray(lineDash) &&
       lineDash.length &&
-      !Array.isArray(stroke) &&
       !Array.isArray(strokeArrayColor) &&
       !Array.isArray(strokeArrayWidth)
     ) {
@@ -428,7 +428,6 @@ export class DashGroupAfterRenderContribution implements IGroupRenderContributio
     if (
       !stroke ||
       !(Array.isArray(lineDash) && lineDash.length) ||
-      Array.isArray(stroke) ||
       Array.isArray(strokeArrayColor) ||
       Array.isArray(strokeArrayWidth)
     ) {
@@ -519,7 +518,6 @@ export class AdjustPosGroupBeforeRenderContribution implements IGroupRenderContr
       stroke &&
       Array.isArray(lineDash) &&
       !lineDash.length && // 非虚线
-      !Array.isArray(stroke) && // 非分段渲染
       !Array.isArray(strokeArrayColor) &&
       !Array.isArray(strokeArrayWidth) &&
       lineWidth & 1 // 奇数线宽
@@ -571,7 +569,6 @@ export class AdjustPosGroupAfterRenderContribution implements IGroupRenderContri
       stroke &&
       Array.isArray(lineDash) &&
       !lineDash.length && // 非虚线
-      !Array.isArray(stroke) && // 非分段渲染
       !Array.isArray(strokeArrayColor) &&
       !Array.isArray(strokeArrayWidth) &&
       lineWidth & 1 // 奇数线宽

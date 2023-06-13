@@ -292,6 +292,7 @@ export function getStyleTheme(
     (theme.group as any).strokeArrayWidth = getPadding(borderLineWidth);
   }
   if (Array.isArray(borderColor)) {
+    (theme.group as any).stroke = getPadding(borderColor);
     (theme.group as any).strokeArrayColor = getPadding(borderColor);
   }
 
