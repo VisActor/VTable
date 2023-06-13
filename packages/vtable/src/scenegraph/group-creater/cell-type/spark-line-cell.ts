@@ -206,8 +206,8 @@ function createSparkLine(
   // 更新symbol节点属性
   const symbolGroup = chartGroup.getChildByName('sparkline-symbol-group') as ILine;
   if (symbolGroup) {
-    const isShowIsolatedPoint = sparklineSpec.point?.visible && sparklineSpec.pointShowRule === 'isolatedPoint';
-    if (sparklineSpec.point?.visible && sparklineSpec.pointShowRule === 'all') {
+    const isShowIsolatedPoint = sparklineSpec.pointShowRule === 'isolatedPoint';
+    if (sparklineSpec.pointShowRule === 'all') {
       for (let i = 0; i < items.length; i++) {
         const { x, y, defined } = items[i];
         if (defined) {
@@ -258,7 +258,7 @@ function createChartGroup(
     const line = createLine({
       x: 0,
       y: 0,
-      curveType: specObj.smooth ?? specObj.line?.style?.interpolate === 'linear' ? 'linear' : 'monotoneX',
+      curveType: specObj.smooth ? 'monotoneX' : 'linear',
       strokeColor: specObj.line?.style?.stroke ?? 'blue',
       lineWidth: specObj.line?.style?.strokeWidth ?? 2
     });

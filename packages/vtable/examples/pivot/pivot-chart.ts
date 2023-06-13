@@ -319,7 +319,6 @@ export function createTable() {
             }
           },
           point: {
-            visible: true,
             hover: {
               stroke: 'blue',
               strokeWidth: 1,

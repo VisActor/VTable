@@ -28,5 +28,9 @@
   "editor.tabSize": 2,
   "editor.detectIndentation": false,
   // Typescript
-  "typescript.preferences.importModuleSpecifier": "project-relative"
+  "typescript.preferences.importModuleSpecifier": "project-relative",
+  "[python]": {
+    "editor.defaultFormatter": "ms-python.black-formatter"
+  },
+  "python.formatting.provider": "none"
 }

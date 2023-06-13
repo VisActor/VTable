@@ -159,8 +159,7 @@ const columns = [
             strokeWidth: 2,
           },
         },
-        symbol: {
-          visible: true,
+        point: {
           hover: {
               stroke: 'blue',
               strokeWidth: 1,
