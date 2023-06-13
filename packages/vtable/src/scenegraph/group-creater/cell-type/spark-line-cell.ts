@@ -246,7 +246,9 @@ function createChartGroup(
     x,
     y,
     width,
-    height
+    height,
+    stroke: false,
+    fill: false
   });
   group.name = 'sparkline';
 
@@ -273,7 +275,9 @@ function createChartGroup(
       x: 0,
       y: 0,
       width,
-      height
+      height,
+      stroke: false,
+      fill: false
     });
     symbolGroup.name = 'sparkline-symbol-group';
     symbolGroup.setTheme({

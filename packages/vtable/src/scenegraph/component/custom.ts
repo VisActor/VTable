@@ -106,6 +106,8 @@ function adjustElementToGroup(
     y: 0,
     width,
     height,
+    fill: false,
+    stroke: false,
     pickable: false
   });
   customGroup.name = 'custom-container';
