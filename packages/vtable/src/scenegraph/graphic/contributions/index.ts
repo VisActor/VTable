@@ -3,11 +3,16 @@ import {
   GraphicRender,
   GroupRenderContribution,
   ImageRenderContribution,
-  RectRenderContribution
+  RectRenderContribution,
+  SplitRectBeforeRenderContribution,
+  SplitRectAfterRenderContribution
 } from '@visactor/vrender';
 import { ChartRender, DefaultCanvasChartRender } from './chart-render';
 import { AfterImageRenderContribution, BeforeImageRenderContribution } from './image-contribution-render';
-import { SplitRectBeforeRenderContribution, SplitRectAfterRenderContribution } from './rect-contribution-render';
+import {
+  SplitRectBeforeRenderContribution as VTableSplitRectBeforeRenderContribution,
+  SplitRectAfterRenderContribution as VTableSplitRectAfterRenderContribution
+} from './rect-contribution-render';
 import {
   DashGroupAfterRenderContribution,
   DashGroupBeforeRenderContribution,
@@ -21,10 +26,18 @@ import {
 
 export default new ContainerModule((bind, unbind, isBound, rebind) => {
   // rect 渲染器注入contributions
-  bind(SplitRectBeforeRenderContribution).toSelf().inSingletonScope();
-  bind(RectRenderContribution).toService(SplitRectBeforeRenderContribution);
-  bind(SplitRectAfterRenderContribution).toSelf().inSingletonScope();
-  bind(RectRenderContribution).toService(SplitRectAfterRenderContribution);
+  if (isBound(SplitRectBeforeRenderContribution)) {
+    rebind(SplitRectBeforeRenderContribution).to(VTableSplitRectBeforeRenderContribution).inSingletonScope();
+  } else {
+    bind(VTableSplitRectBeforeRenderContribution).toSelf().inSingletonScope();
+    bind(RectRenderContribution).toService(VTableSplitRectBeforeRenderContribution);
+  }
+  if (isBound(SplitRectAfterRenderContribution)) {
+    rebind(SplitRectAfterRenderContribution).to(VTableSplitRectAfterRenderContribution).inSingletonScope();
+  } else {
+    bind(VTableSplitRectAfterRenderContribution).toSelf().inSingletonScope();
+    bind(RectRenderContribution).toService(VTableSplitRectAfterRenderContribution);
+  }
 
   // group 渲染器注入contributions
   bind(SplitGroupAfterRenderContribution).toSelf().inSingletonScope();

@@ -6,8 +6,8 @@ type RectOptions = {
   height: number;
   lineWidth?: number;
   borderRadius?: number;
-  fillColor?: string;
-  strokeColor?: string;
+  fill?: string | boolean;
+  stroke?: string | boolean;
 } & ElementOptions;
 
 export class Rect extends BaseElement {
@@ -17,8 +17,8 @@ export class Rect extends BaseElement {
   lineWidth: number;
   borderRadius: number;
   radius: number;
-  fillColor: string;
-  strokeColor: string;
+  fill: string | boolean;
+  stroke: string | boolean;
 
   constructor(options: RectOptions) {
     super(options);
@@ -27,8 +27,8 @@ export class Rect extends BaseElement {
     this.lineWidth = options.lineWidth || 0;
     this.borderRadius = options.borderRadius || 0;
     this.radius = this.borderRadius;
-    this.fillColor = options.fillColor || '#777';
-    this.strokeColor = options.strokeColor || undefined;
+    this.fill = options.fill || '#777';
+    this.stroke = options.stroke || undefined;
 
     this.initLayoutSize();
   }

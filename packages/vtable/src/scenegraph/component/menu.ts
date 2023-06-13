@@ -55,10 +55,8 @@ export class MenuHandler {
       x: 0,
       y: 0,
       // visible: false,
-      fill: true,
-      fillColor: menuStyle.bgColor,
-      stroke: true,
-      strokeColor: menuStyle.borderColor,
+      fill: menuStyle.bgColor,
+      stroke: menuStyle.borderColor,
       borderRadius: menuStyle.borderRadius,
       lineWidth: menuStyle.borderWidth
     });
@@ -171,8 +169,7 @@ export class MenuHandler {
         x,
         // childrenPickable: false,
         height: menuStyle.lineHeight,
-        fill: true,
-        fillColor: menuStyle.bgColor
+        fill: menuStyle.bgColor
       });
       group.role = 'menu-item';
       this._menuInstance.appendChild(group);
@@ -181,11 +178,11 @@ export class MenuHandler {
       group.stateProxy = (stateName: string) => {
         if (stateName === 'hover') {
           return {
-            fillColor: menuStyle.hoverBgColor
+            fill: menuStyle.hoverBgColor
           };
         }
         return {
-          fillColor: menuStyle.bgColor
+          fill: menuStyle.bgColor
         };
       };
       group.addEventListener('pointerenter', (e: FederatedEvent) => {
@@ -200,8 +197,7 @@ export class MenuHandler {
       const textMark = new Text({
         x: menuStyle.menuItemPadding,
         y: menuStyle.menuItemPadding,
-        fill: true,
-        fillColor: isisHighlight ? menuStyle.highlightColor : menuStyle.color,
+        fill: isisHighlight ? menuStyle.highlightColor : menuStyle.color,
         text,
         textBaseline: 'top',
         fontSize: menuStyle.fontSize,

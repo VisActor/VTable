@@ -161,7 +161,7 @@ export function createProgressBarCell(
           y: barTop,
           width: barMaxWidth,
           height: barHeight,
-          fillColor: bgFillColor
+          fill: bgFillColor
         });
         percentCompleteBarGroup.addChild(barBack);
       }
@@ -182,7 +182,7 @@ export function createProgressBarCell(
         y: barTop,
         width: barSize,
         height: barHeight,
-        fillColor
+        fill: fillColor
       });
       percentCompleteBarGroup.addChild(barMain);
     } else if (progressBarDefine.barType === 'negative') {
@@ -218,7 +218,7 @@ export function createProgressBarCell(
           y: barTop,
           width: barMaxWidth,
           height: barHeight,
-          fillColor: bgFillColor
+          fill: bgFillColor
         });
         percentCompleteBarGroup.addChild(barBack);
       }
@@ -256,7 +256,7 @@ export function createProgressBarCell(
         y: barRectNega.top,
         width: barRectNega.width,
         height: barRectNega.height,
-        fillColor: barNagiFillColor
+        fill: barNagiFillColor
       });
       percentCompleteBarGroup.addChild(barNega);
 
@@ -290,7 +290,7 @@ export function createProgressBarCell(
         y: barRectPosi.top,
         width: barRectPosi.width,
         height: barRectPosi.height,
-        fillColor: barPosiFillColor
+        fill: barPosiFillColor
       });
       percentCompleteBarGroup.addChild(barPosi);
 
@@ -300,8 +300,7 @@ export function createProgressBarCell(
       const line = createLine({
         x: 0,
         y: 0,
-        stroke: true,
-        strokeColor: lineStrokeColor,
+        stroke: lineStrokeColor,
         lineWidth: 1,
         lineDash: [2, 2],
         points: [
@@ -374,8 +373,7 @@ export function createProgressBarCell(
         const barMark = createLine({
           x: 0,
           y: 0,
-          stroke: true,
-          strokeColor: barMarkStrokeColor,
+          stroke: barMarkStrokeColor,
           lineWidth,
           points
         });
@@ -412,7 +410,7 @@ export function createProgressBarCell(
         y: barTop,
         width: barMaxWidth,
         height: barHeight,
-        fillColor: barBgFillColor
+        fill: barBgFillColor
       });
       percentCompleteBarGroup.addChild(barBg);
 
@@ -452,7 +450,7 @@ export function createProgressBarCell(
         y: barRect.top,
         width: barRect.width,
         height: barRect.height,
-        fillColor: barRectFillColor
+        fill: barRectFillColor
       });
       percentCompleteBarGroup.addChild(bar);
 
@@ -503,8 +501,7 @@ export function createProgressBarCell(
         const barMark = createLine({
           x: 0,
           y: 0,
-          stroke: true,
-          strokeColor: barMarkStrokeColor,
+          stroke: barMarkStrokeColor,
           lineWidth,
           points
         });

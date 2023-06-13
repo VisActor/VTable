@@ -87,11 +87,9 @@ export function updateChartHover(col: number, row: number, x: number, y: number,
           const highlightSymbol = createSymbol({
             x: pointX,
             y: pointY,
-            fill: true,
-            stroke: true,
-            strokeColor: symbol.hover.stroke,
+            stroke: symbol.hover.stroke,
             lineWidth: symbol.hover.strokeWidth,
-            fillColor: symbol.hover.fill,
+            fill: symbol.hover.fill,
             size: symbol.hover.size * 2, // 之前配置的是圆半径
             symbolType: 'circle'
           });

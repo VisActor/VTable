@@ -7,8 +7,8 @@ type SectorOptions = {
   endDegree?: number;
   clockWise?: boolean;
   lineWidth?: number;
-  fillColor?: string;
-  strokeColor?: string;
+  fill?: string | boolean;
+  stroke?: string | boolean;
 } & ElementOptions;
 
 export class Sector extends BaseElement {
@@ -18,8 +18,8 @@ export class Sector extends BaseElement {
   endDegree = 360;
   clockWise = true;
   lineWidth: number;
-  fillColor: string;
-  strokeColor: string;
+  fill: string | boolean;
+  stroke: string | boolean;
 
   constructor(options: SectorOptions) {
     super(options);
@@ -28,8 +28,8 @@ export class Sector extends BaseElement {
     this.endDegree = options.endDegree;
     this.clockWise = options.clockWise;
     this.lineWidth = options.lineWidth;
-    this.fillColor = options.fillColor;
-    this.strokeColor = options.strokeColor;
+    this.fill = options.fill;
+    this.stroke = options.stroke;
 
     this.width = this.radius * 2;
     this.height = this.radius * 2;

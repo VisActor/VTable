@@ -6,7 +6,7 @@ type TextOptions = {
   text: string;
   fontSize?: number;
   fontFamily?: string;
-  fillColor?: string;
+  fill?: string | boolean;
 } & ElementOptions;
 
 export class Text extends BaseElement {
@@ -14,9 +14,7 @@ export class Text extends BaseElement {
   text: string;
   fontSize: number;
   fontFamily: string;
-  fillColor: string;
-  color: string;
-  // font: string;
+  fill: string | boolean;
   textBaseline: 'top' = 'top';
   textAlign: 'left' = 'left';
 
@@ -25,7 +23,7 @@ export class Text extends BaseElement {
     this.text = options.text;
     this.fontSize = options.fontSize || 12;
     this.fontFamily = options.fontFamily || 'sans-serif';
-    this.color = this.fillColor = options.fillColor || 'black';
+    this.fill = options.fill || 'black';
     // this.font = `${this.fontSize}px ${this.fontFamily}`;
   }
 

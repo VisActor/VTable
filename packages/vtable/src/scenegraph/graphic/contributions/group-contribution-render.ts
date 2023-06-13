@@ -12,6 +12,7 @@ import { BaseRenderContributionTime } from '@visactor/vrender';
 import type { Group } from '../group';
 import { getCellHoverColor } from '../../../state/hover/is-cell-hover';
 import type { BaseTableAPI } from '../../../ts-types/base-table';
+import { getPadding } from '../../utils/padding';
 
 // const highlightDash: number[] = [];
 
@@ -123,7 +124,7 @@ export class SplitGroupAfterRenderContribution implements IGroupRenderContributi
       strokeArrayWidth = (groupAttribute as any).strokeArrayWidth,
 
       lineWidth = groupAttribute.lineWidth,
-      strokeColor = groupAttribute.strokeColor
+      strokeColor = groupAttribute.stroke
       // // select & hover border
       // highlightStroke = (groupAttribute as any).highlightStroke,
       // highlightStrokeArrayColor = (groupAttribute as any).highlightStrokeArrayColor,
@@ -136,7 +137,7 @@ export class SplitGroupAfterRenderContribution implements IGroupRenderContributi
       return;
     }
 
-    if (Array.isArray(stroke) || Array.isArray(strokeArrayColor) || Array.isArray(strokeArrayWidth)) {
+    if (Array.isArray(strokeArrayColor) || Array.isArray(strokeArrayWidth)) {
       if (
         (typeof lineWidth === 'number' && lineWidth & 1) ||
         (Array.isArray(strokeArrayWidth) && strokeArrayWidth.some(width => width & 1))
@@ -383,7 +384,6 @@ export class DashGroupBeforeRenderContribution implements IGroupRenderContributi
       stroke &&
       Array.isArray(lineDash) &&
       lineDash.length &&
-      !Array.isArray(stroke) &&
       !Array.isArray(strokeArrayColor) &&
       !Array.isArray(strokeArrayWidth)
     ) {
@@ -428,7 +428,6 @@ export class DashGroupAfterRenderContribution implements IGroupRenderContributio
     if (
       !stroke ||
       !(Array.isArray(lineDash) && lineDash.length) ||
-      Array.isArray(stroke) ||
       Array.isArray(strokeArrayColor) ||
       Array.isArray(strokeArrayWidth)
     ) {
@@ -519,7 +518,6 @@ export class AdjustPosGroupBeforeRenderContribution implements IGroupRenderContr
       stroke &&
       Array.isArray(lineDash) &&
       !lineDash.length && // 非虚线
-      !Array.isArray(stroke) && // 非分段渲染
       !Array.isArray(strokeArrayColor) &&
       !Array.isArray(strokeArrayWidth) &&
       lineWidth & 1 // 奇数线宽
@@ -571,7 +569,6 @@ export class AdjustPosGroupAfterRenderContribution implements IGroupRenderContri
       stroke &&
       Array.isArray(lineDash) &&
       !lineDash.length && // 非虚线
-      !Array.isArray(stroke) && // 非分段渲染
       !Array.isArray(strokeArrayColor) &&
       !Array.isArray(strokeArrayWidth) &&
       lineWidth & 1 // 奇数线宽
@@ -634,8 +631,8 @@ export class AdjustColorGroupBeforeRenderContribution implements IGroupRenderCon
       const table = (group.stage as any).table as BaseTableAPI;
       const hoverColor = getCellHoverColor(group as Group, table);
       if (hoverColor) {
-        (group as any).oldColor = group.attribute.fillColor;
-        group.attribute.fillColor = hoverColor;
+        (group as any).oldColor = group.attribute.fill;
+        group.attribute.fill = hoverColor;
       }
     }
   }
@@ -669,7 +666,7 @@ export class AdjustColorGroupAfterRenderContribution implements IGroupRenderCont
   ) {
     // 处理hover颜色
     if ('oldColor' in group) {
-      group.attribute.fillColor = group.oldColor as any;
+      group.attribute.fill = group.oldColor as any;
       delete group.oldColor;
     }
   }
