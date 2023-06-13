@@ -94,8 +94,8 @@ export function createFrameBorder(
 
   // 处理边框引起的宽度高度变化（只对最外层tableGroup生效）
   if (isTableGroup && (rectAttributes.shadowBlur || rectAttributes.lineWidth)) {
-    const deltaX = (rectAttributes.shadowBlur ?? 0) + (borderLeft + borderRight);
-    const deltaY = (rectAttributes.shadowBlur ?? 0) + (borderTop + borderBottom);
+    const deltaX = (rectAttributes.shadowBlur ?? 0) + (borderLeft + borderRight) / 2;
+    const deltaY = (rectAttributes.shadowBlur ?? 0) + (borderTop + borderBottom) / 2;
 
     groupAttributes.x = group.attribute.x + deltaX;
     groupAttributes.y = group.attribute.y + deltaY;
