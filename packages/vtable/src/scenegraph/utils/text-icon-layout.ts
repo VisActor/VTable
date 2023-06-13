@@ -224,7 +224,9 @@ export function createCellContent(
         // x: padding[3] + leftIconWidth,
         // y: padding[0],
         x: 0,
-        y: 0
+        y: 0,
+        fill: false,
+        stroke: false
         // pickable: false,
       });
       cellContent.name = 'content';
