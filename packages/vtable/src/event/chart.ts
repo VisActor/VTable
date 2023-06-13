@@ -4,7 +4,7 @@ import type { PivoLayoutMap } from '../layout/pivot-layout';
 import type { MousePointerCellEvent } from '../ts-types';
 import type { BaseTableAPI } from '../ts-types/base-table';
 
-export function bindSparklineHoverEvent(table: BaseTableAPI) {
+export function bindChartHoverEvent(table: BaseTableAPI) {
   // 判断是否有sparkline 类型
   let hasSparkLine = false;
   if (table.isPivotTable()) {
@@ -27,12 +27,8 @@ export function bindSparklineHoverEvent(table: BaseTableAPI) {
     const { col, row, x, y } = e;
     const type = table.getBodyColumnType(col, row);
     if (type !== 'sparkline') {
-      table.stateManeger.updateSparklineHoverPose(-1, -1, 0, 0);
+      table.stateManeger.updateChartHoverPose(-1, -1, 0, 0);
     }
-    table.stateManeger.updateSparklineHoverPose(col, row, x, y);
-  });
-
-  table.listen(TABLE_EVENT_TYPE.MOUSELEAVE_TABLE, (e: MousePointerCellEvent) => {
-    table.stateManeger.updateSparklineHoverPose(-1, -1, 0, 0);
+    table.stateManeger.updateChartHoverPose(col, row, x, y);
   });
 }

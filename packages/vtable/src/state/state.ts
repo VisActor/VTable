@@ -921,7 +921,7 @@ export class StateManeger {
     updateDrill(col, row, drillDown, drillUp, this.table);
   }
 
-  updateSparklineHoverPose(col: number, row: number, x: number, y: number) {
+  updateChartHoverPose(col: number, row: number, x: number, y: number) {
     if (this.sparkLine.col !== -1 && this.sparkLine.row !== -1) {
       clearChartHover(this.sparkLine.col, this.sparkLine.row, this.table);
     }

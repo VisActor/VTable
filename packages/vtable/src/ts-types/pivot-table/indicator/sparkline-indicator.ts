@@ -1,4 +1,4 @@
-import type { SparklineSpec } from '../../sparkline';
+import type { SparklineSpec } from '../../chartType';
 import type { IStyleOption } from '../../column';
 import type { CellInfo } from '../../common';
 import type { StylePropertyFunctionArg } from '../../style-define';

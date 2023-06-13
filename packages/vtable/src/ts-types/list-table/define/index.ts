@@ -6,15 +6,15 @@ import type { ITextColumnBodyDefine, ITextHeaderDefine } from './multilinetext-d
 import type { IProgressbarColumnBodyDefine } from './progressbar-define';
 import type { ISparklineColumnBodyDefine } from './sparkline-define';
 
-export type HeaderDefine = IImageHeaderDefine | ILinkHeaderDefine | ITextHeaderDefine;
+export type HeaderDefine = ITextHeaderDefine | ILinkHeaderDefine | IImageHeaderDefine;
 
 export type ColumnBodyDefine =
+  | ITextColumnBodyDefine
   | ILinkColumnBodyDefine
   | IImageColumnBodyDefine
   | ISparklineColumnBodyDefine
   | IProgressbarColumnBodyDefine
-  | IChartColumnBodyDefine
-  | ITextColumnBodyDefine;
+  | IChartColumnBodyDefine;
 export type TextColumnDefine = ITextColumnBodyDefine & HeaderDefine;
 export type LinkColumnDefine = ILinkColumnBodyDefine & HeaderDefine;
 export type ImageColumnDefine = IImageColumnBodyDefine & HeaderDefine;
@@ -27,12 +27,12 @@ export type GroupColumnDefine = HeaderDefine & {
   hideColumnsSubHeader?: boolean;
 };
 export type ColumnDefine = Either<
+  | TextColumnDefine
   | LinkColumnDefine
   | ImageColumnDefine
   | SparklineColumnDefine
   | ProgressbarColumnDefine
-  | ChartColumnDefine
-  | TextColumnDefine,
+  | ChartColumnDefine,
   GroupColumnDefine
 >;
 

@@ -2,40 +2,47 @@ export type ShapeType = 'circle';
 
 export interface SparklineSpec {
   type: 'line';
-  xField?:
+  xField:
     | string
     | {
         field: string;
+        type: 'point' | 'linear';
         domain?: any[];
+        domainMin?: number;
+        domainMax?: number;
       };
-  yField?:
+  yField:
     | string
     | {
         field: string;
+        type: 'point' | 'linear';
         domain?: any[];
+        domainMin?: number;
+        domainMax?: number;
       };
-  /** all表示正常连接前后点 none表示不会只孤立点 isolatedPoint表示只绘制孤立点的点图形 默认为none */
-  pointShowRule?: 'all' | 'none' | 'isolatedPoint';
+  pointShowRule: 'all' | 'none' | 'isolatedPoint';
   smooth?: boolean;
-  /** 折线配置 */
-  line?: {
-    /** 折线样式 */
+  line: {
+    visible: boolean;
+    // interactive: boolean;
     style: ILineMarkStyle;
+    state?: {
+      hover?: ILineMarkStyle | false;
+      selected?: ILineMarkStyle | false;
+    };
   };
-  /** 数据点配置 默认不显示 */
-  point?: {
-    /** 折线上每个点都显示 默认false*/
-    visible?: boolean;
+  symbol: {
+    visible: boolean;
+    // interactive: boolean;
     style: ISymbolMarkStyle;
-    hover?: ISymbolMarkStyle | false;
+    state?: {
+      hover?: ISymbolMarkStyle | false;
+      selected?: ISymbolMarkStyle | false;
+    };
   };
-  /** crosshair交叉线配置  默认不显示*/
-  crosshair?: {
-    /** crosshair交叉线样式 */
+  crosshair: {
     style: ILineMarkStyle;
   };
-
-  //TODO 增加label
 }
 interface IMarkStyle {
   fill?: string;
@@ -44,7 +51,7 @@ interface IMarkStyle {
 }
 
 interface ILineMarkStyle extends IMarkStyle {
-  stroke?: string;
+  stroke: string;
   interpolate?: 'linear' | 'monotone';
 }
 

@@ -154,6 +154,7 @@ const columns = [
         pointShowRule: 'none',
         smooth: true,
         line: {
+          visible: true,
           style: {
             stroke: '#2E62F1',
             strokeWidth: 2,
@@ -161,12 +162,14 @@ const columns = [
         },
         symbol: {
           visible: true,
-          hover: {
+          state: {
+            hover: {
               stroke: 'blue',
               strokeWidth: 1,
               fill: 'red',
               shape: 'circle',
               size: 4,
+            },
           },
           style: {
             stroke: 'red',
