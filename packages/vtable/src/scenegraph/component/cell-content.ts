@@ -51,15 +51,21 @@ export class CellContent extends Group {
     super(params);
 
     this._leftGroup = new Group({
-      pickable: false
+      pickable: false,
+      fill: false,
+      stroke: false
     });
     this._leftGroup.role = 'content-left';
     this._rightGroup = new Group({
-      pickable: false
+      pickable: false,
+      fill: false,
+      stroke: false
     });
     this._rightGroup.role = 'content-right';
     this._centerGroup = new Group({
-      pickable: false
+      pickable: false,
+      fill: false,
+      stroke: false
     });
     this._centerGroup.role = 'content-center';
 

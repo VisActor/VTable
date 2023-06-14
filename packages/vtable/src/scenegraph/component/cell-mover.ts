@@ -22,13 +22,12 @@ export class CellMover {
       x: 0,
       y: 0,
       symbolType: 'triangle',
-      fillColor: columnMoverLineColor as string
+      fill: columnMoverLineColor as string
     });
     this.columnMoverLine = createLine({
       visible: false,
       pickable: false,
-      stroke: true,
-      strokeColor: columnMoverLineColor as string,
+      stroke: columnMoverLineColor as string,
       lineWidth: columnMoverLineWidth as number,
       x: 0,
       y: 0,
@@ -42,9 +41,7 @@ export class CellMover {
     this.columnMoverBack = createRect({
       visible: false,
       pickable: false,
-      fill: true,
-      fillColor: columnMoverShadowBlockColor,
-      // fillOpacity: 0.3,
+      fill: columnMoverShadowBlockColor,
       x: 0,
       y: 0,
       width: 0,

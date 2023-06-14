@@ -136,7 +136,7 @@ export class SplitRectAfterRenderContribution implements IRectRenderContribution
       strokeArrayWidth = (rectAttribute as any).strokeArrayWidth,
 
       lineWidth = rectAttribute.lineWidth,
-      strokeColor = rectAttribute.strokeColor
+      strokeColor = rectAttribute.stroke
       // // select & hover border
       // highlightStroke = (rectAttribute as any).highlightStroke,
       // highlightStrokeArrayColor = (rectAttribute as any).highlightStrokeArrayColor,

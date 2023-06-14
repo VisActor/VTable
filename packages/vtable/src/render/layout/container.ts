@@ -192,8 +192,8 @@ export class Container extends BaseElement {
         width: this.width,
         height: this.height,
         borderRadius: 0,
-        strokeColor: 'red',
-        fillColor: 'rgba(255, 0, 0, 0.2)',
+        stroke: 'red',
+        fill: 'rgba(255, 0, 0, 0.2)',
         lineWidth: 4
       });
       boundsRect.x += this.x + parentPos.parentX;

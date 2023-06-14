@@ -152,6 +152,10 @@ export const menus = [
       {
         path: 'style',
         name: 'auto-wrap-text'
+      },
+      {
+        path: 'style',
+        name: 'border'
       }
     ]
   },
