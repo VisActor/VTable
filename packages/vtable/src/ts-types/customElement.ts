@@ -24,8 +24,8 @@ interface baseElement {
 export interface TextElement extends baseElement {
   type: 'text';
   text: string | ((value: string) => string);
-  strokeColor?: string | ((value: string) => string);
-  fillColor?: string | ((value: string) => string);
+  stroke?: string | ((value: string) => string);
+  fill?: string | ((value: string) => string);
   fontSize?: number | ((value: string) => number);
   fontFamily?: string | ((value: string) => string);
   fontWeight?: string | number | ((value: string) => string | number);
@@ -43,7 +43,7 @@ export interface TextElement extends baseElement {
   width?: number;
   height?: number;
   background?: {
-    fillColor?: string;
+    fill?: string;
     expandY?: number;
     expandX?: number;
     borderRadius?: number;
@@ -54,8 +54,8 @@ export interface RectElement extends baseElement {
   type: 'rect';
   width: number | string | ((value: string) => number | string);
   height: number | string | ((value: string) => number | string);
-  strokeColor?: string | ((value: string) => string);
-  fillColor?: string | ((value: string) => string);
+  stroke?: string | ((value: string) => string);
+  fill?: string | ((value: string) => string);
   radius?: number | string | ((value: string) => number | string);
 }
 
@@ -63,8 +63,8 @@ export interface CircleElement extends baseElement {
   type: 'circle';
   radius: number | string | ((value: string) => number | string);
   // radian?: number | string | ((value: string) => number | string);
-  strokeColor?: string | ((value: string) => string);
-  fillColor?: string | ((value: string) => string);
+  stroke?: string | ((value: string) => string);
+  fill?: string | ((value: string) => string);
 }
 export interface ArcElement extends baseElement {
   type: 'arc';
@@ -72,8 +72,8 @@ export interface ArcElement extends baseElement {
   startAngle?: number | ((value: string) => number);
   endAngle?: number | ((value: string) => number);
   // clockWise?: boolean;
-  strokeColor?: string | ((value: string) => string);
-  fillColor?: string | ((value: string) => string);
+  stroke?: string | ((value: string) => string);
+  fill?: string | ((value: string) => string);
 }
 export interface IconElement extends baseElement {
   type: 'icon';

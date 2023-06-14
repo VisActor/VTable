@@ -1,8 +1,8 @@
 import type { StateManeger } from '../state';
-import { HighlightScope } from '../state';
 import type { Group } from '../../scenegraph/graphic/group';
 import { getProp } from '../../scenegraph/utils/get-prop';
 import type { BaseTableAPI } from '../../ts-types/base-table';
+import { HighlightScope } from '../../ts-types';
 
 export function getCellHoverColor(cellGroup: Group, table: BaseTableAPI): string | undefined {
   let colorKey;

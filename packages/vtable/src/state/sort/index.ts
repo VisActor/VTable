@@ -1,4 +1,4 @@
-import { BaseTable } from '../../core';
+import { TABLE_EVENT_TYPE } from '../../core/TABLE_EVENT_TYPE';
 import { defaultOrderFn } from '../../tools/util';
 import type { HeaderData, HeaderDefine, ListTableAPI, SortState } from '../../ts-types';
 import type { BaseTableAPI } from '../../ts-types/base-table';
@@ -63,7 +63,7 @@ export function dealSort(col: number, row: number, table: ListTableAPI) {
   table.scenegraph.sortCell();
   // 排序后，清除选中效果
   table.stateManeger.updateSelectPos(-1, -1);
-  table.fireListeners(BaseTable.EVENT_TYPE.SORT_CLICK, tableState);
+  table.fireListeners(TABLE_EVENT_TYPE.SORT_CLICK, tableState);
 }
 
 function executeSort(newState: SortState, table: BaseTableAPI, headerDefine: HeaderDefine): void {

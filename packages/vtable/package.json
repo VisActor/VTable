@@ -1,6 +1,6 @@
 {
   "name": "@visactor/vtable",
-  "version": "0.9.0-alpha.1",
+  "version": "0.9.1-alpha.2",
   "description": "canvas table width high performance",
   "keywords": [
     "grid",
@@ -22,12 +22,20 @@
   "sideEffects": false,
   "main": "cjs/index.js",
   "module": "es/index.js",
+  "browser": "dist/vtable.min.js",
   "types": "es/index.d.ts",
   "files": [
     "cjs",
     "es",
     "dist"
   ],
+  "exports": {
+    ".": {
+      "require": "./cjs/index.js",
+      "import": "./es/index.js",
+      "default": "./dist/vtable.min.js"
+    }
+  },
   "scripts": {
     "demo": "vite serve examples",
     "site-demo": "vite serve site-demo",
@@ -37,16 +45,18 @@
     "dev": "bundle --clean -f es -w",
     "start": "vite ./vite",
     "prepublishOnly": "npm run build",
-    "test": "jest"
+    "test": "jest",
+    "ci": "node github-ci.js"
   },
   "dependencies": {
-    "@visactor/vrender": "0.9.0-alpha.1",
+    "@visactor/vrender": "0.9.2-fill-stroke.10",
     "@visactor/vutils": "0.9.0-alpha.2",
-    "@visactor/vrender-components": "0.9.0-alpha.1",
+    "@visactor/vrender-components": "0.9.2-fill-stroke.10",
     "cssfontparser": "^1.2.1",
     "@visactor/vscale": "0.9.0-alpha.2"
   },
   "devDependencies": {
+    "@visactor/vchart": "0.0.1-alpha.0",
     "@internal/bundler": "workspace:*",
     "@internal/eslint-config": "workspace:*",
     "@internal/ts-config": "workspace:*",
@@ -84,7 +94,9 @@
     "json-formatter-js": "^2.3.4",
     "inversify": "6.0.1",
     "vite-plugin-markdown": "^2.1.0",
-    "markdown-it": "13.0.1"
+    "markdown-it": "13.0.1",
+    "node-fetch": "2.6.7",
+    "form-data": "~4.0.0"
   },
   "unpkg": "latest",
   "unpkgFiles": [

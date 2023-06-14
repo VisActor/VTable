@@ -1,6 +1,5 @@
 import { cellInRange, rangeIntersected } from '../../tools/helper';
-import type { CellAddress, CellRange } from '../../ts-types';
-import type { HighlightScope } from '../state';
+import type { CellAddress, CellRange, HighlightScope } from '../../ts-types';
 
 export function checkColInlineInSelect(col: number, cellRanges: CellRange[]): boolean {
   for (let i = 0; i < cellRanges.length; i++) {

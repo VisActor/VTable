@@ -5,8 +5,8 @@ type CircleOptions = {
   radius: number;
   radian?: number;
   lineWidth?: number;
-  fillColor?: string;
-  strokeColor?: string;
+  fill?: string | boolean;
+  stroke?: string | boolean;
 } & ElementOptions;
 
 export class Circle extends BaseElement {
@@ -14,16 +14,16 @@ export class Circle extends BaseElement {
   radius: number;
   radian: number;
   lineWidth: number;
-  fillColor: string;
-  strokeColor: string;
+  fill: string | boolean;
+  stroke: string | boolean;
 
   constructor(options: CircleOptions) {
     super(options);
     this.radius = options.radius;
     this.radian = options.radian;
     this.lineWidth = options.lineWidth;
-    this.fillColor = options.fillColor;
-    this.strokeColor = options.strokeColor;
+    this.fill = options.fill;
+    this.stroke = options.stroke;
 
     this.width = this.radius * 2;
     this.height = this.radius * 2;

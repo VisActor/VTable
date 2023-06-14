@@ -35,23 +35,6 @@ export class TableComponent {
     // 滚动条
     this.createScrollBar();
 
-    // // 框选外边框
-    // const bodyClickBorderColor = theme.bodyStyle?.click?.cellBorderColor;
-    // const bodyClickLineWidth = theme.bodyStyle?.click?.cellBorderLineWidth;
-
-    // this.selectBorder = createRect({
-    //   visible: false,
-    //   pickable: false,
-    //   fill: false,
-    //   stroke: true,
-    //   strokeColor: bodyClickBorderColor as string,
-    //   lineWidth: bodyClickLineWidth as number,
-    //   x: 0,
-    //   y: 0,
-    //   width: 0,
-    //   height: 0,
-    // });
-
     // 列宽调整基准线
     const columnResizerColor = theme.columnResize?.lineColor;
     const columnResizerWidth = theme.columnResize?.lineWidth;
@@ -60,8 +43,7 @@ export class TableComponent {
     this.columnResizerLine = createLine({
       visible: false,
       pickable: false,
-      stroke: true,
-      strokeColor: columnResizerColor as string,
+      stroke: columnResizerColor as string,
       lineWidth: columnResizerWidth as number,
       x: 0,
       y: 0,
@@ -73,8 +55,7 @@ export class TableComponent {
     this.columnResizerBgLine = createLine({
       visible: false,
       pickable: false,
-      stroke: true,
-      strokeColor: columnResizerBgColor as string,
+      stroke: columnResizerBgColor as string,
       lineWidth: columnResizerBgWidth as number,
       x: 0,
       y: 0,
@@ -92,7 +73,7 @@ export class TableComponent {
       x: 0,
       y: 0,
       fontSize: 10,
-      fillColor: '#FFF',
+      fill: '#FFF',
       text: '',
       textBaseline: 'top',
       dx: 12 + 4,
@@ -101,8 +82,7 @@ export class TableComponent {
     const columnResizerLabelBack = createRect({
       visible: false,
       pickable: false,
-      fill: true,
-      fillColor: '#3073F2',
+      fill: '#3073F2',
       x: 0,
       y: 0,
       width: 38,
@@ -134,7 +114,7 @@ export class TableComponent {
       y: 0,
       width: shadowWidth,
       height: 0,
-      fillColor: {
+      fill: {
         gradient: 'linear',
         x0: 0,
         y0: 0,
@@ -204,12 +184,10 @@ export class TableComponent {
       height: width,
       padding: 0,
       railStyle: {
-        fill: !!scrollRailColor,
-        fillColor: scrollRailColor
+        fill: scrollRailColor
       },
       sliderStyle: {
-        fill: true,
-        fillColor: scrollSliderColor
+        fill: scrollSliderColor
       },
       range: [0, 0.1],
       // scrollRange: [0.4, 0.8]
@@ -227,12 +205,10 @@ export class TableComponent {
       height: this.table.tableNoFrameHeight - this.table.getFrozenRowsHeight(),
       padding: 0,
       railStyle: {
-        fill: !!scrollRailColor,
-        fillColor: scrollRailColor
+        fill: scrollRailColor
       },
       sliderStyle: {
-        fill: true,
-        fillColor: scrollSliderColor
+        fill: scrollSliderColor
       },
       range: [0, 0.1],
       visible: false

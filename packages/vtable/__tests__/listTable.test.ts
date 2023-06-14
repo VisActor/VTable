@@ -17,7 +17,11 @@ describe('listTable init test', () => {
         caption: '订单 ID',
         sort: true,
         width: 'auto',
-        description: '这是订单的描述信息'
+        description: '这是订单的描述信息',
+        style: {
+          fontFamily: 'Arial',
+          fontSize: 14
+        }
       },
       {
         field: '订单日期',
@@ -94,7 +98,7 @@ describe('listTable init test', () => {
   });
   test('listTable scrollToCell', () => {
     listTable.scrollToCell({ col: 4, row: 28 });
-    expect(listTable.getScrollLeft()).toBe(612);
+    expect(listTable.getScrollLeft()).toBe(601);
     expect(listTable.getScrollTop()).toBe(802);
   });
   // test('listTable API getAllCells', () => {

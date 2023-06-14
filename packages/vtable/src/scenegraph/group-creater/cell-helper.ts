@@ -22,8 +22,8 @@ import { createSparkLineCellGroup } from './cell-type/spark-line-cell';
 import { createCellGroup } from './cell-type/text-cell';
 import { createVideoCellGroup } from './cell-type/video-cell';
 import type { ICustomLayoutFuc } from '../../ts-types/customLayout';
-import { getStyleTheme } from './column-helper';
 import type { BaseTableAPI, PivotTableProtected } from '../../ts-types/base-table';
+import { getStyleTheme } from '../../core/tableHelper';
 
 export function createCell(
   type: ColumnTypeOption,
@@ -63,12 +63,12 @@ export function createCell(
           regUrl.test(cellValue))
       ) {
         if (cellTheme) {
-          cellTheme.text.fillColor = getProp('linkColor', headerStyle, col, row, table);
+          cellTheme.text.fill = getProp('linkColor', headerStyle, col, row, table);
           (cellTheme as any).group.cursor = 'pointer';
         } else {
           cellTheme = {
             text: {
-              fillColor: getProp('linkColor', headerStyle, col, row, table)
+              fill: getProp('linkColor', headerStyle, col, row, table)
             },
             group: {
               cursor: 'pointer' as Cursor
@@ -83,11 +83,11 @@ export function createCell(
       const bgColor = bgColorFunc(table, cellValue);
       if (bgColor) {
         if (cellTheme) {
-          cellTheme.group.fillColor = bgColor;
+          cellTheme.group.fill = bgColor;
         } else {
           cellTheme = {
             group: {
-              fillColor: bgColor
+              fill: bgColor
             }
           };
         }

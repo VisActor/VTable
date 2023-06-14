@@ -58,7 +58,6 @@ import type { IWrapTextGraphicAttribute } from '@visactor/vrender';
 import type { ITextSize } from '@visactor/vutils';
 import { WrapText } from '../scenegraph/graphic/text';
 import { textMeasure } from '../scenegraph/utils/measure-text';
-import { getStyleTheme } from '../scenegraph/group-creater/column-helper';
 import { getProp } from '../scenegraph/utils/get-prop';
 import type { ColumnData, ColumnDefine, ColumnsDefine, IndicatorData } from '../ts-types/list-table/layout-map/api';
 import type { TooltipOptions } from '../ts-types/tooltip';
@@ -72,6 +71,7 @@ import {
   _setRecords,
   _toPxWidth,
   createRootElement,
+  getStyleTheme,
   isAutoDefine,
   updateRootElementPadding
 } from './tableHelper';
@@ -2647,8 +2647,8 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     return {
       textAlign: theme.text.textAlign,
       textBaseline: theme.text.textBaseline,
-      bgColor: theme.group.fillColor,
-      color: theme.text.fillColor,
+      bgColor: theme.group.fill,
+      color: theme.text.fill,
       fontFamily: theme.text.fontFamily,
       fontSize: theme.text.fontSize,
       fontWeight: theme.text.fontWeight,
@@ -2658,7 +2658,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
       autoWrapText: autoWrapText ?? false,
       lineClamp: lineClamp ?? 'auto',
       textOverflow,
-      borderColor: theme.group.strokeColor,
+      borderColor: theme.group.stroke,
       borderLineWidth: theme.group.lineWidth,
       borderLineDash: theme.group.lineDash,
       underline: theme.text.underline,
