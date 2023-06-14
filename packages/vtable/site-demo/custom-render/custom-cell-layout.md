@@ -139,7 +139,7 @@ VTable.register.icon('message',{
           text:record.bloggerName,
           fontSize: 13,
           fontFamily: 'sans-serif',
-          fillColor: 'black',
+          fill: 'black',
           marginLeft:10
         });
         bloggerName.getSize(table);
@@ -158,7 +158,7 @@ VTable.register.icon('message',{
           text:record.city,
           fontSize: 11,
           fontFamily: 'sans-serif',
-          fillColor: '#6f7070',
+          fill: '#6f7070',
         });
         bloggerName.getSize(table);
         containerRightTop.add(locationName)
@@ -168,9 +168,9 @@ VTable.register.icon('message',{
           text: record.tags[i],
           fontSize: 10,
           fontFamily: 'sans-serif',
-          fillColor: 'rgb(51, 101, 238)',
+          fill: 'rgb(51, 101, 238)',
           background: {
-            fillColor: '#f4f4f2',
+            fill: '#f4f4f2',
             borderRadius: 5,
             expandX: 5,
             expandY: 5,

@@ -71,13 +71,9 @@ export function createCellGroup(
     width: cellWidth,
     height: cellHeight,
     // 背景相关，cell背景由cellGroup绘制
-    fill: true,
-    stroke: true,
-    // stroke: [true, false, false, false],
-
     lineWidth: cellTheme?.group?.lineWidth ?? undefined,
-    fillColor: cellTheme?.group?.fillColor ?? undefined,
-    strokeColor: cellTheme?.group?.strokeColor ?? undefined,
+    fill: cellTheme?.group?.fill ?? undefined,
+    stroke: cellTheme?.group?.stroke ?? undefined,
     strokeArrayWidth: (cellTheme?.group as any)?.strokeArrayWidth ?? undefined,
     strokeArrayColor: (cellTheme?.group as any)?.strokeArrayColor ?? undefined,
     cursor: (cellTheme?.group as any)?.cursor ?? undefined,
@@ -124,7 +120,7 @@ export function createCellGroup(
         startAngle: Math.PI / 2,
         endAngle: Math.PI,
         outerRadius: 6,
-        fillColor: '#3073F2',
+        fill: '#3073F2',
         pickable: false
       });
       mark.name = 'mark';

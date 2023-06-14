@@ -32,12 +32,9 @@ export function createSparkLineCellGroup(
       height,
 
       // 背景相关，cell背景由cellGroup绘制
-      fill: true,
-      stroke: true,
-
       lineWidth: cellTheme?.group?.lineWidth ?? undefined,
-      fillColor: cellTheme?.group?.fillColor ?? undefined,
-      strokeColor: cellTheme?.group?.strokeColor ?? undefined,
+      fill: cellTheme?.group?.fill ?? undefined,
+      stroke: cellTheme?.group?.stroke ?? undefined,
 
       strokeArrayWidth: (cellTheme?.group as any)?.strokeArrayWidth ?? undefined,
       strokeArrayColor: (cellTheme?.group as any)?.strokeArrayColor ?? undefined,
@@ -249,7 +246,9 @@ function createChartGroup(
     x,
     y,
     width,
-    height
+    height,
+    stroke: false,
+    fill: false
   });
   group.name = 'sparkline';
 
@@ -259,7 +258,7 @@ function createChartGroup(
       x: 0,
       y: 0,
       curveType: specObj.smooth ?? specObj.line?.style?.interpolate === 'linear' ? 'linear' : 'monotoneX',
-      strokeColor: specObj.line?.style?.stroke ?? 'blue',
+      stroke: specObj.line?.style?.stroke ?? 'blue',
       lineWidth: specObj.line?.style?.strokeWidth ?? 2
     });
     line.name = 'sparkline-line';
@@ -276,16 +275,16 @@ function createChartGroup(
       x: 0,
       y: 0,
       width,
-      height
+      height,
+      stroke: false,
+      fill: false
     });
     symbolGroup.name = 'sparkline-symbol-group';
     symbolGroup.setTheme({
       symbol: {
-        fill: true,
-        stroke: true,
-        strokeColor: specObj.point?.style?.stroke ?? '#000',
+        stroke: specObj.point?.style?.stroke ?? '#000',
         lineWidth: specObj.point?.style?.strokeWidth ?? 1,
-        fillColor: specObj.point?.style?.fill ?? '#000',
+        fill: specObj.point?.style?.fill ?? '#000',
         size: (specObj.point?.style?.size ?? 3) * 2, // 之前配置的是圆半径
         symbolType: 'circle'
       }
