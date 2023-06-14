@@ -4,7 +4,7 @@ import { PIVOT_TABLE_EVENT_TYPE } from '../../ts-types/pivot-table/PIVOT_TABLE_E
 import type { Group } from '../graphic/group';
 import type { WrapText } from '../graphic/text';
 
-export function handleTextStack(table: BaseTableAPI) {
+export function handleTextStick(table: BaseTableAPI) {
   const changedCells: { col: number; row: number }[] = [];
   table.listen(PIVOT_TABLE_EVENT_TYPE.SCROLL, e => {
     // reset all changed cell height
@@ -23,7 +23,7 @@ export function handleTextStack(table: BaseTableAPI) {
     if (scrollTop) {
       const frozenRowsHeight = table.getFrozenRowsHeight();
       const { row } = table.getRowAt(scrollTop + frozenRowsHeight + 1);
-      // ergodic all cells in this row, find the header cell with textStack style enabled
+      // ergodic all cells in this row, find the header cell with textStick style enabled
       for (let col = 0; col < table.colCount; col++) {
         if (table.isHeader(col, row) && table._getCellStyle(col, row)?.textStick) {
           // adjust cell vertical layout
@@ -39,7 +39,7 @@ export function handleTextStack(table: BaseTableAPI) {
     if (scrollLeft) {
       const frozenRowsWidth = table.getFrozenColsWidth();
       const { col } = table.getColAt(scrollLeft + frozenRowsWidth + 1);
-      // ergodic all cells in this col, find the header cell with textStack style enabled
+      // ergodic all cells in this col, find the header cell with textStick style enabled
       for (let row = 0; row < table.rowCount; row++) {
         if (table.isHeader(col, row) && table._getCellStyle(col, row)?.textStick) {
           // adjust cell horizontal layout
