@@ -1,4 +1,4 @@
-import type { RectProps, MaybePromiseOrUndefined, IDimensionInfo } from './common';
+import type { RectProps, MaybePromiseOrUndefined, IDimensionInfo, SortOrder } from './common';
 import type { SvgIcon } from './icon';
 export type { HeaderData } from './list-table/layout-map/api';
 export type LayoutObjectId = number | string;
@@ -54,11 +54,7 @@ export interface DataSourceAPI {
   get: (index: number) => MaybePromiseOrUndefined;
   getField: <F extends FieldDef>(index: number, field: F) => FieldData;
   hasField: (index: number, field: FieldDef) => boolean;
-  sort: (
-    field: FieldDef,
-    order: 'desc' | 'asc' | 'normal',
-    orderFn: (v1: any, v2: any, order: 'asc' | 'desc' | 'normal') => -1 | 0 | 1
-  ) => void;
+  sort: (field: FieldDef, order: SortOrder, orderFn: (v1: any, v2: any, order: SortOrder) => -1 | 0 | 1) => void;
   clearSortedMap: () => void;
   updatePager: (pagerConf: IPagerConf) => void;
   getIndexKey: (index: number) => number | number[];
@@ -72,12 +68,12 @@ export interface SortState {
 
   fieldKey?: FieldKeyDef;
   /** 排序规则 */
-  order: 'desc' | 'asc' | 'normal';
+  order: SortOrder;
 }
 export interface PivotSortState {
   col: number;
   row: number;
-  order: 'desc' | 'asc' | 'normal';
+  order: SortOrder;
 }
 
 /**
@@ -138,7 +134,7 @@ export interface PivotTableConstructorOptions extends BaseTableConstructorOption
   /** 设置排序状态，只对应按钮展示效果 无数据排序逻辑 */
   pivotSortState?: {
     dimensions: IDimensionInfo[];
-    order: 'desc' | 'asc' | 'normal';
+    order: SortOrder;
   }[];
 
   //#region layout中挪到外层的属性
@@ -203,7 +199,7 @@ export interface PivotTableAPI extends BaseTableAPI {
   pivotSortState: PivotSortState[];
   isListTable: () => false;
   isPivotTable: () => true;
-  getPivotSortState: (col: number, row: number) => 'desc' | 'asc' | 'normal' | undefined;
+  getPivotSortState: (col: number, row: number) => SortOrder;
   toggleHierarchyState: (col: number, row: number) => void;
 }
 

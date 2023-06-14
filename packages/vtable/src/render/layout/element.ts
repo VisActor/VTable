@@ -7,10 +7,10 @@ export type ElementOptions = {
   marginTop?: number;
   marginBottom?: number;
   background?: {
-    fill?: boolean;
-    stroke?: boolean;
-    strokeColor?: string;
-    fillColor?: string;
+    // fill?: boolean;
+    // stroke?: boolean;
+    stroke?: string | boolean;
+    fill?: string | boolean;
     lineWidth?: number;
     borderRadius?: number;
     expandX?: number;
@@ -35,10 +35,10 @@ export class BaseElement {
   dx = 0;
   dy = 0;
   background?: {
-    fill?: boolean;
-    stroke?: boolean;
-    strokeColor?: string;
-    fillColor?: string;
+    // fill?: boolean;
+    // stroke?: boolean;
+    stroke?: string | boolean;
+    fill?: string | boolean;
     lineWidth?: number;
     cornerRadius?: number;
     expandX?: number;

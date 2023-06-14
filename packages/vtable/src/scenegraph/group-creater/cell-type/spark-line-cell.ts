@@ -32,12 +32,9 @@ export function createSparkLineCellGroup(
       height,
 
       // 背景相关，cell背景由cellGroup绘制
-      fill: true,
-      stroke: true,
-
       lineWidth: cellTheme?.group?.lineWidth ?? undefined,
-      fillColor: cellTheme?.group?.fillColor ?? undefined,
-      strokeColor: cellTheme?.group?.strokeColor ?? undefined,
+      fill: cellTheme?.group?.fill ?? undefined,
+      stroke: cellTheme?.group?.stroke ?? undefined,
 
       strokeArrayWidth: (cellTheme?.group as any)?.strokeArrayWidth ?? undefined,
       strokeArrayColor: (cellTheme?.group as any)?.strokeArrayColor ?? undefined,
@@ -119,6 +116,12 @@ function createSparkLine(
     const indexValues = dataValue.map((value: any) => value[sparklineSpec.xField as string]);
     xScale.domain(indexValues);
     xField = sparklineSpec.xField;
+  } else {
+    // xField未配置 data为数值数组的情况
+    if (Array.isArray(dataValue)) {
+      xScale.domain(Array.from({ length: dataValue.length }, (_, i) => i));
+      xField = sparklineSpec.xField;
+    }
   }
   xScale.range([0, width]);
 
@@ -130,6 +133,12 @@ function createSparkLine(
     const values = dataValue.map((value: any) => value[sparklineSpec.yField as string]);
     yScale.domain([Math.min(...values), Math.max(...values)]);
     yField = sparklineSpec.yField;
+  } else {
+    // yField未配置 检查data是否为数值数组
+    if (Array.isArray(dataValue) && dataValue.every((value: any) => typeof value === 'number')) {
+      yScale.domain([Math.min(...dataValue), Math.max(...dataValue)]);
+      yField = sparklineSpec.yField;
+    }
   }
   yScale.range([0, height]);
 
@@ -172,9 +181,9 @@ function createSparkLine(
     for (let i = 0; i < dataValue.length; i++) {
       const data: any = dataValue[i];
       items.push({
-        x: left + xScale.scale(data[xField]),
-        y: bottom - yScale.scale(data[yField]),
-        defined: isValid(data[yField]),
+        x: left + xScale.scale(xField ? data[xField] : i),
+        y: bottom - yScale.scale(yField ? data[yField] : data),
+        defined: isValid(yField ? data[yField] : data),
         rawData: data
       } as any);
       dataItems.push(data);
@@ -194,8 +203,8 @@ function createSparkLine(
   // 更新symbol节点属性
   const symbolGroup = chartGroup.getChildByName('sparkline-symbol-group') as ILine;
   if (symbolGroup) {
-    const isShowIsolatedPoint = sparklineSpec.symbol.visible && sparklineSpec.pointShowRule === 'isolatedPoint';
-    if (sparklineSpec.symbol.visible && sparklineSpec.pointShowRule === 'all') {
+    const isShowIsolatedPoint = sparklineSpec.point?.visible && sparklineSpec.pointShowRule === 'isolatedPoint';
+    if (sparklineSpec.point?.visible && sparklineSpec.pointShowRule === 'all') {
       for (let i = 0; i < items.length; i++) {
         const { x, y, defined } = items[i];
         if (defined) {
@@ -237,7 +246,9 @@ function createChartGroup(
     x,
     y,
     width,
-    height
+    height,
+    stroke: false,
+    fill: false
   });
   group.name = 'sparkline';
 
@@ -246,35 +257,40 @@ function createChartGroup(
     const line = createLine({
       x: 0,
       y: 0,
-      curveType: specObj.smooth || specObj.line.style.interpolate === 'monotone' ? 'monotoneX' : 'linear',
-      strokeColor: specObj.line.style.stroke,
-      lineWidth: specObj.line.style.strokeWidth
+      curveType: specObj.smooth ?? specObj.line?.style?.interpolate === 'linear' ? 'linear' : 'monotoneX',
+      stroke: specObj.line?.style?.stroke ?? 'blue',
+      lineWidth: specObj.line?.style?.strokeWidth ?? 2
     });
     line.name = 'sparkline-line';
     group.addChild(line);
-    (line as any).hover = specObj.crosshair.style;
+    if (specObj.crosshair) {
+      (line as any).hover = specObj.crosshair?.style ?? {
+        stroke: '#000',
+        interpolate: 'linear'
+      };
+    }
 
     // 生成symbol
     const symbolGroup = new Group({
       x: 0,
       y: 0,
       width,
-      height
+      height,
+      stroke: false,
+      fill: false
     });
     symbolGroup.name = 'sparkline-symbol-group';
     symbolGroup.setTheme({
       symbol: {
-        fill: true,
-        stroke: true,
-        strokeColor: specObj.symbol.style.stroke,
-        lineWidth: specObj.symbol.style.strokeWidth,
-        fillColor: specObj.symbol.style.fill,
-        size: specObj.symbol.style.size * 2, // 之前配置的是圆半径
+        stroke: specObj.point?.style?.stroke ?? '#000',
+        lineWidth: specObj.point?.style?.strokeWidth ?? 1,
+        fill: specObj.point?.style?.fill ?? '#000',
+        size: (specObj.point?.style?.size ?? 3) * 2, // 之前配置的是圆半径
         symbolType: 'circle'
       }
     });
     group.addChild(symbolGroup);
-    (symbolGroup as any).hover = specObj.symbol.state.hover;
+    (symbolGroup as any).hover = specObj.point?.hover ?? false;
   }
   return group;
 }

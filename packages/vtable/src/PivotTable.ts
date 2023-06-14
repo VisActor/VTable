@@ -12,7 +12,8 @@ import type {
   FieldKeyDef,
   PivotTableConstructorOptions,
   IHeaderTreeDefine,
-  IDimensionInfo
+  IDimensionInfo,
+  SortOrder
 } from './ts-types';
 import { PivotHeaderLayoutMap } from './layout/pivot-header-layout';
 import { getField } from './data/DataSource';
@@ -252,7 +253,7 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
     columns: undefined,
     field: FieldDef,
     fieldKey?: FieldKeyDef
-  ): ((v1: any, v2: any, order: 'asc' | 'desc' | 'normal') => 0 | 1 | -1) | undefined {
+  ): ((v1: any, v2: any, order: SortOrder) => 0 | 1 | -1) | undefined {
     return undefined;
   }
   /**
@@ -423,10 +424,10 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
   updatePivotSortState(
     pivotSortStateConfig: {
       dimensions: IDimensionInfo[];
-      order: 'desc' | 'asc' | 'normal';
+      order: SortOrder;
     }[]
   ) {
-    // // dimensions: IDimensionInfo[], order: 'desc' | 'asc' | 'normal'
+    // // dimensions: IDimensionInfo[], order: SortOrder
     // // 清空当前 pivot sort 状态
     // const cells = this.pivotSortState.map((cell) => ({ col: cell.col, row: cell.row }));
     // this.pivotSortState.length = 0;
@@ -453,7 +454,7 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
     // });
   }
 
-  getPivotSortState(col: number, row: number): 'desc' | 'asc' | 'normal' | undefined {
+  getPivotSortState(col: number, row: number): SortOrder {
     if (!this.pivotSortState) {
       return undefined;
     }

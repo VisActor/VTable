@@ -11,8 +11,10 @@ import type {
   ListTableAPI,
   MenuListItem,
   PivotTableAPI,
+  SortOrder,
   SortState
 } from '../ts-types';
+import { HighlightScope, InteractionState } from '../ts-types';
 import { IconFuncTypeEnum } from '../ts-types';
 import { checkMultiCellInSelect } from './common/check-in-select';
 import { updateHoverPosition } from './hover/update-position';
@@ -33,42 +35,6 @@ import type { TooltipOptions } from '../ts-types/tooltip';
 import { getIconAndPositionFromTarget } from '../scenegraph/utils/icon';
 import type { BaseTableAPI } from '../ts-types/base-table';
 import { isObject, isString, isValid } from '../tools/util';
-
-/**
- * 当前表格的交互状态：
- * Default 默认展示
- * grabing 拖拽中
- *   -Resize column 改变列宽
- *   -column move 调整列顺序
- *   -drag select 拖拽多选
- * Scrolling 滚动中
- */
-export enum InteractionState {
-  'default' = 'default',
-  'grabing' = 'grabing',
-  'scrolling' = 'scrolling'
-}
-/**
- * 单元格的高亮效果设置
- * single 单个单元格高亮
- * column 整列高亮
- * row 整行高量
- * cross 十字花 行列均高亮
- * none 无高亮
- */
-export enum HighlightScope {
-  'single' = 'single',
-  'column' = 'column',
-  'row' = 'row',
-  'cross' = 'cross',
-  'none' = 'none'
-}
-
-export enum SortOrder {
-  'asc' = 'asc',
-  'desc' = 'desc',
-  'normal' = 'normal'
-}
 
 export class StateManeger {
   table: BaseTableAPI;
@@ -229,7 +195,7 @@ export class StateManeger {
     this.sort = {
       col: -1,
       row: -1,
-      order: SortOrder.normal
+      order: 'normal'
     };
     this.frozen = {
       col: -1
@@ -325,7 +291,7 @@ export class StateManeger {
   setSortState(sortState: SortState) {
     this.sort.field = sortState.field as string;
     this.sort.fieldKey = sortState.fieldKey as string;
-    this.sort.order = SortOrder[sortState.order];
+    this.sort.order = sortState.order;
 
     // // 这里有一个问题，目前sortState中一般只传入了fieldKey，但是getCellRangeByField需要field
     // const range = this.table.getCellRangeByField(this.sort.field, 0);
@@ -955,7 +921,7 @@ export class StateManeger {
     updateDrill(col, row, drillDown, drillUp, this.table);
   }
 
-  updateChartHoverPose(col: number, row: number, x: number, y: number) {
+  updateSparklineHoverPose(col: number, row: number, x: number, y: number) {
     if (this.sparkLine.col !== -1 && this.sparkLine.row !== -1) {
       clearChartHover(this.sparkLine.col, this.sparkLine.row, this.table);
     }

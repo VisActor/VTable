@@ -2,10 +2,10 @@
 import type { FederatedPointerEvent, IEventTarget } from '@visactor/vrender';
 import { RichText } from '@visactor/vrender';
 import type { KeydownEvent, MousePointerMultiCellEvent, MousePointerSparklineEvent } from '../ts-types';
+import { InteractionState } from '../ts-types';
 import { IconFuncTypeEnum } from '../ts-types';
 import type { EventHandler } from './EventHandler';
 import type { StateManeger } from '../state/state';
-import { InteractionState } from '../state/state';
 import type { Scenegraph } from '../scenegraph/scenegraph';
 import type { Group } from '../scenegraph/graphic/group';
 import { TABLE_EVENT_TYPE } from '../core/TABLE_EVENT_TYPE';
@@ -16,7 +16,7 @@ import { browser, cellInRanges } from '../tools/helper';
 import { Rect } from '../tools/Rect';
 import { bindMediaClick } from './media-click';
 import { bindDrillEvent, drillClick } from './drill';
-import { bindChartHoverEvent } from './chart';
+import { bindSparklineHoverEvent } from './sparkline-event';
 import { getIconAndPositionFromTarget } from '../scenegraph/utils/icon';
 import type { BaseTableAPI } from '../ts-types/base-table';
 import { handleWhell } from './scroll';
@@ -705,7 +705,7 @@ export class EventManeger {
     }
 
     // chart hover
-    bindChartHoverEvent(this.table);
+    bindSparklineHoverEvent(this.table);
   }
 
   dealTableHover(eventArgsSet?: SceneEvent) {

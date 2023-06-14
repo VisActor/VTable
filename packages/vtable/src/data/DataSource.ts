@@ -7,7 +7,8 @@ import type {
   FieldFormat,
   IPagerConf,
   MaybePromiseOrCallOrUndefined,
-  MaybePromiseOrUndefined
+  MaybePromiseOrUndefined,
+  SortOrder
 } from '../ts-types';
 import { HierarchyState } from '../ts-types';
 import { applyChainSafe, getOrApply, obj, isPromise, emptyFn } from '../tools/helper';
@@ -126,7 +127,7 @@ export class DataSource extends EventTarget implements DataSourceAPI {
   /**
    * 记录最近一次排序规则 当展开树形结构的节点时需要用到
    */
-  private lastOrder: 'desc' | 'asc' | 'normal';
+  private lastOrder: SortOrder;
   private lastOrderFn: (a: any, b: any, order: string) => number;
   private lastOrderField: FieldDef;
   protected currentIndexedData: (number | number[])[] | null = [];
@@ -430,8 +431,8 @@ export class DataSource extends EventTarget implements DataSourceAPI {
   }
   sort(
     field: FieldDef,
-    order: 'desc' | 'asc' | 'normal',
-    orderFn: (v1: any, v2: any, order: 'asc' | 'desc' | 'normal') => -1 | 0 | 1 = order !== 'desc'
+    order: SortOrder,
+    orderFn: (v1: any, v2: any, order: SortOrder) => -1 | 0 | 1 = order !== 'desc'
       ? (v1: any, v2: any): -1 | 0 | 1 => (v1 === v2 ? 0 : v1 > v2 ? 1 : -1)
       : (v1: any, v2: any): -1 | 0 | 1 => (v1 === v2 ? 0 : v1 < v2 ? 1 : -1)
   ): void {

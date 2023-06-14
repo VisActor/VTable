@@ -1,4 +1,5 @@
 import * as VTable from '../../src';
+import { bindDebugTool } from '../../src/scenegraph/debug-tool';
 const PivotTable = VTable.PivotTable;
 const Table_CONTAINER_DOM_ID = 'vTable';
 
@@ -483,6 +484,7 @@ export function createTable() {
   };
 
   const instance = new PivotTable(option);
+  window.tableInstance = instance;
 
   const { PIVOT_SORT_CLICK } = VTable.PivotTable.EVENT_TYPE;
   instance.listen(PIVOT_SORT_CLICK, e => {
@@ -490,7 +492,7 @@ export function createTable() {
     instance.updatePivotSortState([{ dimensions: e.dimensionInfo, order }]);
   });
 
-  VTable.bindDebugTool(instance.scenegraph.stage as any, {
+  bindDebugTool(instance.scenegraph.stage as any, {
     customGrapicKeys: ['role', '_updateTag']
   });
 
