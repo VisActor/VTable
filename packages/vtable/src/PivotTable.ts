@@ -528,15 +528,8 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
     (this.internalProps.layoutMap as PivotHeaderLayoutMap).toggleHierarchyState(col, row);
     //影响行数
     this.refreshRowColCount();
-    //TODO 这里可以优化计算性能 针对变化的行高列宽进行计算
-    // //更新列宽
-    // this.computeColsWidth();
-    // //更新行高
-    // this.computeRowsHeight();
-    // 重新判断下行表头宽度是否过宽
-    this._resetFrozenColCount();
-    //更改滚动条size
-    //重绘
+    this.scenegraph.clearCells();
+    this.scenegraph.createSceneGraph();
     this.invalidate();
   }
   /**

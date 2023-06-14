@@ -76,6 +76,10 @@ export const menus = [
       {
         path: 'pivot',
         name: 'pivot-chart'
+      },
+      {
+        path: 'pivot',
+        name: 'pivot-tree'
       }
     ]
   },
