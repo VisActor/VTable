@@ -1,6 +1,7 @@
 import type { IStage, IRect, ITextCache } from '@visactor/vrender';
 import { createStage, createRect, IContainPointMode, container } from '@visactor/vrender';
-import type { CellAddress, CellType, ColumnIconOption, SortOrder } from '../ts-types';
+import { IconFuncTypeEnum } from '../ts-types';
+import { type CellAddress, type CellType, type ColumnIconOption, type SortOrder, SvgIcon } from '../ts-types';
 import { Group } from './graphic/group';
 import type { Icon } from './graphic/icon';
 import {
@@ -1393,9 +1394,27 @@ export class Scenegraph {
     this.stage.enableDirtyBounds();
   }
 
+  updateHierarchyIcon(col: number, row: number) {
+    const cellGroup = this.getCell(col, row);
+    const iconConfig = this.table.internalProps.headerHelper.getHierarchyIcon(cellGroup.col, cellGroup.row);
+    this.findAndUpdateIcon(cellGroup, [IconFuncTypeEnum.collapse, IconFuncTypeEnum.expand], iconConfig);
+  }
+
   updateRow(removeCells: CellAddress[], addCells: CellAddress[]) {
     updateRow(removeCells, addCells, this.table);
     this.updateNextFrame();
+  }
+
+  findAndUpdateIcon(group: Group, funcTypeArr: IconFuncTypeEnum[], iconConfig: ColumnIconOption) {
+    group.forEachChildren((icon: Icon | Group) => {
+      if (icon.type === 'group') {
+        this.findAndUpdateIcon(icon, funcTypeArr, iconConfig);
+      } else if (funcTypeArr.indexOf((icon as Icon).attribute.funcType as IconFuncTypeEnum) !== -1) {
+        this.updateIcon(icon as Icon, iconConfig);
+        return true;
+      }
+      return false;
+    });
   }
 }
 

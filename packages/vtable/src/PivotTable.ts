@@ -531,7 +531,7 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
     // this.scenegraph.clearCells();
     // this.scenegraph.createSceneGraph();
     // this.invalidate();
-
+    this.scenegraph.updateHierarchyIcon(col, row);
     this.scenegraph.updateRow(result.removeCellPositions, result.addCellPositions);
   }
   /**

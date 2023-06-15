@@ -108,17 +108,14 @@ export class HeaderHelper {
       icons.push(...dropDownStateIcons);
     }
 
-    const { captionIcon, hierarchyState, headerIcon } = this._table._getHeaderLayoutMap(col, row);
+    const { captionIcon, headerIcon } = this._table._getHeaderLayoutMap(col, row);
     captionIcon && icons.push(captionIcon);
-    if (hierarchyState) {
-      if (hierarchyState === HierarchyState.expand) {
-        //展开状态 应该显示-号
-        icons.push(this.expandIcon);
-      } else if (hierarchyState === HierarchyState.collapse) {
-        //折叠状态 应该显示-号
-        icons.push(this.collapseIcon);
-      }
+
+    const hierarchyIcon = this.getHierarchyIcon(col, row);
+    if (hierarchyIcon) {
+      icons.push(hierarchyIcon);
     }
+
     if (headerIcon) {
       let headerIconStrs;
       if (typeof headerIcon === 'function') {
@@ -331,6 +328,20 @@ export class HeaderHelper {
       width: iconW,
       height: iconH
     };
+  }
+
+  getHierarchyIcon(col: number, row: number) {
+    const { hierarchyState } = this._table._getHeaderLayoutMap(col, row);
+    if (hierarchyState) {
+      if (hierarchyState === HierarchyState.expand) {
+        //展开状态 应该显示-号
+        return this.expandIcon;
+      } else if (hierarchyState === HierarchyState.collapse) {
+        //折叠状态 应该显示-号
+        return this.collapseIcon;
+      }
+    }
+    return undefined;
   }
 
   private checkDropDownIcon(_table: BaseTableAPI, col: number, row: number) {

@@ -18,7 +18,9 @@ export function updateRow(removeCells: CellAddress[], addCells: CellAddress[], t
     removeRow(row, scene);
   });
 
-  resetRowNumber(scene);
+  if (removeRows.length) {
+    resetRowNumber(scene);
+  }
 
   // add cells
   addRows.forEach(row => {
@@ -31,21 +33,21 @@ export function updateRow(removeCells: CellAddress[], addCells: CellAddress[], t
 
 function removeRow(row: number, scene: Scenegraph) {
   for (let col = 0; col < scene.table.colCount; col++) {
-    const headerColGroup = scene.getColGroup(col, true);
+    // const headerColGroup = scene.getColGroup(col, true);
     const colGroup = scene.getColGroup(col, false);
 
-    // remove cellGroup in headerColGroup
-    let headerCellGroup;
-    headerColGroup.forEachChildren((cellGroup: Group) => {
-      if (cellGroup.row === row) {
-        headerCellGroup = cellGroup;
-        return true;
-      }
-      return false;
-    });
-    if (headerCellGroup) {
-      headerColGroup.removeChild(headerCellGroup);
-    }
+    // // remove cellGroup in headerColGroup
+    // let headerCellGroup;
+    // headerColGroup.forEachChildren((cellGroup: Group) => {
+    //   if (cellGroup.row === row) {
+    //     headerCellGroup = cellGroup;
+    //     return true;
+    //   }
+    //   return false;
+    // });
+    // if (headerCellGroup) {
+    //   headerColGroup.removeChild(headerCellGroup);
+    // }
 
     // remove cellGroup in colGroup
     let cellGroup;
