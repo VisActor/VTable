@@ -1,0 +1,67 @@
+name: Pre-release CI
+
+on:
+  push:
+    branches:
+      - pre-release/*
+
+jobs:
+  build:
+    runs-on: macOS-latest # 如果用了electron，记得改成 macOS-latest
+
+    permissions:
+      contents: write
+
+    strategy:
+      matrix:
+        node-version: [18.x]
+        # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
+
+    steps:
+      - uses: actions/checkout@v3
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'npm'
+          cache-dependency-path: './common/config/rush/pnpm-lock.yaml'
+
+          # Install rush
+      - name: Install rush
+        run: node common/scripts/install-run-rush.js install --bypass-policy
+
+      - name: Build packages
+        run: node common/scripts/install-run-rush.js build --only tag:package
+
+      - name: Parse semver version from branch name
+        id: semver_parser
+        uses: release-kit/semver@v2
+        with:
+          string: ${{ github.ref_name }}
+          pattern: '^pre-release/(.*)$' # ^v?(.*)$ by default
+
+      - name: Apply prereleaseName
+        run: node common/scripts/install-run-rush.js publish --apply --prerelease-name ${{ steps.semver_parser.outputs.prerelease }} --partial-prerelease
+
+      - name: Publish to npm
+        env:
+          NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
+          NPM_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
+        run: node common/scripts/install-run-rush.js publish --publish --include-all --tag ${{ steps.semver_parser.outputs.prerelease }}
+
+      - name: Update shrinkwrap
+        run: node common/scripts/install-run-rush.js update
+
+      - name: Get package version
+        id: package-version
+        uses: culshaw/read-package-node-version-actions@v1
+        with:
+          path: './packages/vtable' # 各项目需要修改一下
+
+      - name: Commit & Push changes
+        uses: actions-js/push@master
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          message: 'build: prelease version ${{ steps.package-version.outputs.version }}'
+          branch: ${{ github.ref_name }}
+          author_name: ${{ github.actor }}

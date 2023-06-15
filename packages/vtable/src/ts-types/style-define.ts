@@ -94,11 +94,11 @@ export type CellStyle = {
   borderLineWidth: LineWidthsDef;
   borderLineDash: LineDashsDef;
   underline: boolean;
-  underlineColor: CanvasRenderingContext2D['strokeStyle'];
+  // underlineColor: CanvasRenderingContext2D['strokeStyle'];
   underlineWidth: number;
-  underlineDash: number[];
+  // underlineDash: number[];
   lineThrough: boolean;
-  lineThroughColor: CanvasRenderingContext2D['strokeStyle'];
-  lineThroughDash: number[];
+  // lineThroughColor: CanvasRenderingContext2D['strokeStyle'];
+  // lineThroughDash: number[];
   lineThroughLineWidth: number;
 };

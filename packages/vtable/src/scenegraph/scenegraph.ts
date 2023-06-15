@@ -34,6 +34,7 @@ import { createCellSelectBorder } from './select/create-select-border';
 import { moveSelectingRangeComponentsToSelectedRangeComponents } from './select/move-select-border';
 import { deleteAllSelectBorder, deleteLastSelectedRangeComponents } from './select/delete-select-border';
 import { updateRow } from './layout/update-row';
+import { handleTextStick } from './stick-text';
 
 container.load(splitModule);
 
@@ -234,6 +235,8 @@ export class Scenegraph {
     } else {
       this.createBodySceneGraphForFirstScreen();
     }
+
+    handleTextStick(this.table);
   }
 
   createHeaderSceneGraph() {
