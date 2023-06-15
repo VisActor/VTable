@@ -484,10 +484,11 @@ describe('pivotTable init test', () => {
       fontStyle: undefined,
       fontVariant: undefined,
       fontWeight: 'bold',
-      lineThrough: undefined,
-      lineThroughDash: undefined,
-      underline: undefined,
-      underlineDash: undefined
+      lineThrough: false,
+      // lineThroughDash: undefined,
+      underline: false,
+      // underlineDash: undefined
+      padding: [10, 16, 10, 16]
     });
   });
   test('pivotTable API getCellStyle', () => {
@@ -508,10 +509,11 @@ describe('pivotTable init test', () => {
       fontStyle: undefined,
       fontVariant: undefined,
       fontWeight: null,
-      lineThrough: undefined,
-      lineThroughDash: undefined,
-      underline: undefined,
-      underlineDash: undefined
+      lineThrough: false,
+      // lineThroughDash: undefined,
+      underline: false,
+      // underlineDash: undefined
+      padding: [10, 16, 10, 16]
     });
   });
   test('pivotTable getCellRange', () => {
