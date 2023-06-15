@@ -116,10 +116,11 @@ describe('listTable init test', () => {
       fontStyle: undefined,
       fontVariant: undefined,
       fontWeight: null,
-      lineThrough: undefined,
-      lineThroughDash: undefined,
-      underline: undefined,
-      underlineDash: undefined
+      lineThrough: false,
+      // lineThroughDash: undefined,
+      underline: false,
+      // underlineDash: undefined
+      padding: [10, 0, 10, 60]
     });
   });
 

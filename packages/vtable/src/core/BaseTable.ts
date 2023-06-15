@@ -55,7 +55,7 @@ import type { PivotHeaderLayoutMap } from '../layout/pivot-header-layout';
 import { TooltipHandler } from '../tooltip/TooltipHandler';
 import type { CachedDataSource, DataSource } from '../data';
 import type { IWrapTextGraphicAttribute } from '@visactor/vrender';
-import type { ITextSize } from '@visactor/vutils';
+import { isBoolean, type ITextSize } from '@visactor/vutils';
 import { WrapText } from '../scenegraph/graphic/text';
 import { textMeasure } from '../scenegraph/utils/measure-text';
 import { getProp } from '../scenegraph/utils/get-prop';
@@ -2647,8 +2647,10 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     return {
       textAlign: theme.text.textAlign,
       textBaseline: theme.text.textBaseline,
-      bgColor: theme.group.fill,
-      color: theme.text.fill,
+      bgColor: isBoolean(theme.group.fill)
+        ? getProp('bgColor', actStyle, col, row, this)
+        : (theme.group.fill as string),
+      color: isBoolean(theme.text.fill) ? getProp('color', actStyle, col, row, this) : (theme.text.fill as string),
       fontFamily: theme.text.fontFamily,
       fontSize: theme.text.fontSize,
       fontWeight: theme.text.fontWeight,
@@ -2658,18 +2660,21 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
       autoWrapText: autoWrapText ?? false,
       lineClamp: lineClamp ?? 'auto',
       textOverflow,
-      borderColor: theme.group.stroke,
+      borderColor: isBoolean(theme.group.stroke)
+        ? getProp('borderColor', actStyle, col, row, this)
+        : (theme.group.stroke as string),
       borderLineWidth: theme.group.lineWidth,
       borderLineDash: theme.group.lineDash,
-      underline: theme.text.underline,
+      underline: !!theme.text.underline,
       // underlineColor: theme.text.underlineColor,
-      underlineDash: (theme.text as any).underlineDash,
-      // underlineWidth: (theme.text as any).underlineWidth,
-      lineThrough: theme.text.lineThrough,
+      // underlineDash: theme.text.underlineDash,
+      lineThrough: !!theme.text.lineThrough,
       // lineThroughColor: theme.text.lineThroughColor,
-      lineThroughDash: (theme.text as any).lineThroughDash
-      // lineThroughLineWidth: textDecorationLineWidth,
-    } as any;
+      // lineThroughDash: (theme.text as any).lineThroughDash
+      padding: theme._vtable.padding,
+      underlineWidth: theme.text.underline,
+      lineThroughLineWidth: theme.text.lineThrough
+    };
   }
   /**
    * 获取所有body单元格数据信息
