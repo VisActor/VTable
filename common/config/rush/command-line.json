@@ -77,12 +77,19 @@
     },
     {
       "commandKind": "global",
-
       "name": "start",
       "summary": "Start the development server",
       "description": "Run this command to start vtable development server",
-
       "shellCommand": "rush run -p @visactor/vtable -s start"
+    },
+    {
+      "name": "change-all",
+      "commandKind": "global",
+      "autoinstallerName": "run-script",
+      "summary": "Run rush change width lint",
+      "description": "Run this command to start VGrammar development server",
+      "safeForSimultaneousRushProcesses": true,
+      "shellCommand": "ts-node common/autoinstallers/lint/change-all.ts"
     }
   ],
   "parameters": [
@@ -127,6 +134,40 @@
       ],
       "argumentName": "SCRIPT_NAME",
       "required": true
+    },
+    {
+      "parameterKind": "string",
+      "longName": "--message",
+      "shortName": "-m",
+      "description": "Write a message for change",
+      "associatedCommands": [
+        "change-all"
+      ],
+      "argumentName": "MESSAGE",
+      "required": true
+    },
+    {
+      "parameterKind": "choice",
+      "longName": "--type",
+      "shortName": "-t",
+      "description": "The bump type of change: major, minor, patch, none",
+      "associatedCommands": [
+        "change-all"
+      ],
+      "alternatives": [
+        {
+          "name": "patch",
+          "description": "A patch change"
+        },
+        {
+          "name": "minor",
+          "description": "A minor change"
+        },
+        {
+          "name": "major",
+          "description": "A major change"
+        }
+      ]
     }
   ]
 }
