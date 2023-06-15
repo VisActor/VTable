@@ -13,6 +13,7 @@ import type { Group } from '../group';
 import { getCellHoverColor } from '../../../state/hover/is-cell-hover';
 import type { BaseTableAPI } from '../../../ts-types/base-table';
 import { getPadding } from '../../utils/padding';
+import { getCellMergeInfo } from '../../utils/get-cell-merge';
 
 // const highlightDash: number[] = [];
 
@@ -573,22 +574,27 @@ export class AdjustPosGroupAfterRenderContribution implements IGroupRenderContri
       !Array.isArray(strokeArrayWidth) &&
       lineWidth & 1 // 奇数线宽
     ) {
-      const table = (group.stage as any).table as BaseTableAPI;
-      const col = (group as any).col as number;
-      const row = (group as any).row as number;
+      if (group.role === 'cell') {
+        const table = (group.stage as any).table as BaseTableAPI;
+        let col = (group as any).col as number;
+        let row = (group as any).row as number;
+        const mergeInfo = getCellMergeInfo(table, col, row);
+        if (mergeInfo) {
+          col = mergeInfo.end.col;
+          row = mergeInfo.end.row;
+        }
 
-      if (table && col === table.colCount - 1) {
-        width -= 1;
-      } else if (table && col === table.frozenColCount - 1 && table.scrollLeft) {
-        width -= 1;
+        if (table && col === table.colCount - 1) {
+          width -= 1;
+        } else if (table && col === table.frozenColCount - 1 && table.scrollLeft) {
+          width -= 1;
+        }
+        if (table && row === table.rowCount - 1) {
+          height -= 1;
+        } else if (table && row === table.frozenRowCount - 1 && table.scrollTop) {
+          height -= 1;
+        }
       }
-
-      if (table && row === table.rowCount - 1) {
-        height -= 1;
-      } else if (table && row === table.frozenRowCount - 1 && table.scrollTop) {
-        height -= 1;
-      }
-
       context.beginPath();
       x = Math.floor(x) + 0.5;
       y = Math.floor(y) + 0.5;

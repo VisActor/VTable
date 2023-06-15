@@ -32,7 +32,7 @@ export function updateColWidth(scene: Scenegraph, col: number, detaX: number) {
   // }
 
   const { autoRowHeight } = scene.table.internalProps;
-
+  let needRerangeRow = false;
   const colOrCornerHeaderColumn = scene.getColGroup(col, true) as Group;
   const oldColOrCornerHeaderColumnWidth = colOrCornerHeaderColumn.attribute.width;
   colOrCornerHeaderColumn?.setAttribute('width', oldColOrCornerHeaderColumnWidth + detaX);
@@ -59,9 +59,28 @@ export function updateColWidth(scene: Scenegraph, col: number, detaX: number) {
       } else {
         resetRowHeight(scene, cell.row);
       }
+      needRerangeRow = true;
     }
   });
 
+  if (needRerangeRow) {
+    let newTotalHeight = 0;
+    for (let col = 0; col < scene.table.colCount; col++) {
+      const colGroup = scene.getColGroup(col, true);
+      let y = 0;
+      colGroup.forEachChildren((cellGroup: Group) => {
+        if (cellGroup.role !== 'cell') {
+          return;
+        }
+        cellGroup.setAttribute('y', y);
+        y += cellGroup.attribute.height;
+      });
+      newTotalHeight = y;
+    }
+    scene.updateContainerHeight(0, newTotalHeight - scene.colHeaderGroup.attribute.height);
+  }
+
+  needRerangeRow = false;
   const rowHeaderOrBodyColumn = scene.getColGroup(col) as Group;
   const oldRowHeaderOrBodyColumn = rowHeaderOrBodyColumn.attribute.width;
   rowHeaderOrBodyColumn?.setAttribute('width', oldRowHeaderOrBodyColumn + detaX);
@@ -88,8 +107,26 @@ export function updateColWidth(scene: Scenegraph, col: number, detaX: number) {
       } else {
         resetRowHeight(scene, cell.row);
       }
+      needRerangeRow = true;
     }
   });
+
+  if (needRerangeRow) {
+    let newTotalHeight = 0;
+    for (let col = 0; col < scene.table.colCount; col++) {
+      const colGroup = scene.getColGroup(col, false);
+      let y = 0;
+      colGroup.forEachChildren((cellGroup: Group) => {
+        if (cellGroup.role !== 'cell') {
+          return;
+        }
+        cellGroup.setAttribute('y', y);
+        y += cellGroup.attribute.height;
+      });
+      newTotalHeight = y;
+    }
+    scene.updateContainerHeight(scene.table.frozenRowCount, newTotalHeight - scene.bodyGroup.attribute.height);
+  }
 
   // 更新剩余列位置
   if (col < scene.frozenColCount) {
@@ -250,7 +287,7 @@ function resetRowHeight(scene: Scenegraph, row: number) {
   let maxHeight = 0;
   // 获取高度
   for (let col = 0; col < scene.table.colCount; col++) {
-    const cell = scene.getCell(col, row);
+    const cell = scene.highPerformanceGetCell(col, row);
     let cellHeight = getCleanCellHeight(cell, scene);
     const mergeInfo = getCellMergeInfo(scene.table, col, row);
     if (mergeInfo && mergeInfo.end.row - mergeInfo.start.row) {
@@ -262,7 +299,7 @@ function resetRowHeight(scene: Scenegraph, row: number) {
   // 更新高度
   for (let col = 0; col < scene.table.colCount; col++) {
     let distHeight = maxHeight;
-    const cell = scene.getCell(col, row);
+    const cell = scene.highPerformanceGetCell(col, row);
     const mergeInfo = getCellMergeInfo(scene.table, col, row);
     if (mergeInfo && mergeInfo.end.row - mergeInfo.start.row) {
       for (let rowIndex = mergeInfo.start.row; rowIndex <= mergeInfo.end.row; rowIndex++) {
@@ -274,33 +311,6 @@ function resetRowHeight(scene: Scenegraph, row: number) {
     updateCellHeightForRow(scene, cell, col, row, distHeight, 0, scene.table.isHeader(col, row));
   }
 
-  const deltaHeight = maxHeight - scene.table.getRowHeight(row);
-  let rowStart = 0;
-  let rowEnd = 0;
-  // 更新header 高度
-  if (row < scene.table.columnHeaderLevelCount) {
-    rowStart = row + 1;
-    rowEnd = scene.table.columnHeaderLevelCount - 1;
-  } else {
-    rowStart = row + 1;
-    rowEnd = scene.table.rowCount - 1;
-  }
-
-  // 更新以下行位置
-  for (let rowIndex = rowStart; rowIndex <= rowEnd; rowIndex++) {
-    // if (rowIndex === 2) debugger;
-    for (let colIndex = 0; colIndex < scene.table.colCount; colIndex++) {
-      const cellGroup = scene.getCell(colIndex, rowIndex);
-      const mergeInfo = getCellMergeInfo(scene.table, colIndex, rowIndex);
-      if (mergeInfo && (mergeInfo.start.col !== colIndex || mergeInfo.start.row !== rowIndex)) {
-        continue;
-      }
-
-      cellGroup.setAttribute('y', cellGroup.attribute.y + deltaHeight);
-    }
-  }
-
-  scene.updateContainerHeight(row, deltaHeight);
   // 更新table行高存储
   scene.table.setRowHeight(row, maxHeight, true);
 }
