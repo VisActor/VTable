@@ -2662,7 +2662,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
       textOverflow,
       borderColor: isBoolean(theme.group.stroke)
         ? getProp('borderColor', actStyle, col, row, this)
-        : (theme.group.stroke as string),
+        : (theme.group.stroke as string | string[]),
       borderLineWidth: theme.group.lineWidth,
       borderLineDash: theme.group.lineDash,
       underline: !!theme.text.underline,
