@@ -681,6 +681,8 @@ export class EventManeger {
         stateManeger.triggerPin(col, row, icon);
       } else if (funcType === IconFuncTypeEnum.drillDown) {
         drillClick(this.table);
+      } else if (funcType === IconFuncTypeEnum.collapse || funcType === IconFuncTypeEnum.expand) {
+        this.table.toggleHierarchyState(col, row);
       }
     });
 

@@ -1,6 +1,6 @@
 import type { IStage, IRect, ITextCache } from '@visactor/vrender';
 import { createStage, createRect, IContainPointMode, container } from '@visactor/vrender';
-import type { CellType, ColumnIconOption, SortOrder } from '../ts-types';
+import type { CellAddress, CellType, ColumnIconOption, SortOrder } from '../ts-types';
 import { Group } from './graphic/group';
 import type { Icon } from './graphic/icon';
 import {
@@ -32,6 +32,7 @@ import { updateAllSelectComponent, updateCellSelectBorder } from './select/updat
 import { createCellSelectBorder } from './select/create-select-border';
 import { moveSelectingRangeComponentsToSelectedRangeComponents } from './select/move-select-border';
 import { deleteAllSelectBorder, deleteLastSelectedRangeComponents } from './select/delete-select-border';
+import { updateRow } from './layout/update-row';
 
 container.load(splitModule);
 
@@ -1390,6 +1391,11 @@ export class Scenegraph {
     this.stage.window.setDpr(pixelRatio);
     this.stage.render();
     this.stage.enableDirtyBounds();
+  }
+
+  updateRow(removeCells: CellAddress[], addCells: CellAddress[]) {
+    updateRow(removeCells, addCells, this.table);
+    this.updateNextFrame();
   }
 }
 

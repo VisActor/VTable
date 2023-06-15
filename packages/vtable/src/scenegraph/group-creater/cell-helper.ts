@@ -239,7 +239,7 @@ export function createCell(
   return cellGroup;
 }
 
-export function updateCell(col: number, row: number, table: BaseTableAPI) {
+export function updateCell(col: number, row: number, table: BaseTableAPI, addNew?: boolean) {
   const oldCellGroup = table.scenegraph.getCell(col, row, true);
 
   const type = table.isHeader(col, row)
@@ -261,7 +261,7 @@ export function updateCell(col: number, row: number, table: BaseTableAPI) {
     // 合并单元格的非起始单元格不需要绘制
     newCellGroup = new Group({
       x: 0,
-      y: oldCellGroup.attribute.y,
+      y: addNew ? 0 : oldCellGroup.attribute.y,
       width: 0,
       height: 0,
       visible: false,
@@ -324,8 +324,8 @@ export function updateCell(col: number, row: number, table: BaseTableAPI) {
       customLayout,
       cellWidth,
       cellHeight,
-      oldCellGroup.parent,
-      oldCellGroup.attribute.y,
+      addNew ? table.scenegraph.getColGroup(col) : oldCellGroup.parent,
+      addNew ? 0 : oldCellGroup.attribute.y,
       padding,
       textAlign,
       textBaseline,
@@ -337,6 +337,10 @@ export function updateCell(col: number, row: number, table: BaseTableAPI) {
     );
   }
 
-  oldCellGroup.parent.insertAfter(newCellGroup, oldCellGroup);
-  oldCellGroup.parent.removeChild(oldCellGroup);
+  if (!addNew) {
+    oldCellGroup.parent.insertAfter(newCellGroup, oldCellGroup);
+    oldCellGroup.parent.removeChild(oldCellGroup);
+  }
+
+  return newCellGroup;
 }

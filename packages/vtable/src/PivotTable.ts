@@ -525,12 +525,14 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
    * @param row
    */
   toggleHierarchyState(col: number, row: number) {
-    (this.internalProps.layoutMap as PivotHeaderLayoutMap).toggleHierarchyState(col, row);
+    const result = (this.internalProps.layoutMap as PivotHeaderLayoutMap).toggleHierarchyState(col, row);
     //影响行数
     this.refreshRowColCount();
-    this.scenegraph.clearCells();
-    this.scenegraph.createSceneGraph();
-    this.invalidate();
+    // this.scenegraph.clearCells();
+    // this.scenegraph.createSceneGraph();
+    // this.invalidate();
+
+    this.scenegraph.updateRow(result.removeCellPositions, result.addCellPositions);
   }
   /**
    * 通过表头的维度值路径来计算单元格位置  getCellAddressByHeaderPaths接口更强大一些 不限表头 不限参数格式
