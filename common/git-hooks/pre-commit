@@ -24,7 +24,7 @@ if [[ $STAGE_FILES != "" ]] ; then
   if [[ $changedFiles != "" ]] ; then
 
     echo "
-    [Notice]: please check, do you need to run ${RED}${BIG_FONT}rush change${RESET} to generate changelog, 
+    [Notice]: please check, do you need to run ${RED}${BIG_FONT}rush change-all${RESET} to generate changelog, 
     you has modified some src files, include: 
     ${changedFiles}
     "
