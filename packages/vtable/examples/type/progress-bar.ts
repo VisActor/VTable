@@ -78,8 +78,8 @@ export function createTable() {
           // barBgColor: '#aaa',
           // barColor: '#444',
           barBgColor: data => {
-            return `rgb(${100 + 100 * (1 - Number(data.rate))},${100 + 100 * (1 - Number(data.rate))},${
-              255 * (1 - Number(data.rate))
+            return `rgb(${100 + 100 * (1 - Number(data.percentile))},${100 + 100 * (1 - Number(data.percentile))},${
+              255 * (1 - Number(data.percentile))
             })`;
           },
           barColor: 'transparent'
@@ -91,8 +91,8 @@ export function createTable() {
         width: 120,
         columnType: 'progressbar',
         style: {
-          barBgColor: data => (Number(data.rate) > 0.5 ? '#faa' : '#aaa'),
-          barColor: data => (Number(data.rate) > 0.5 ? '#f44' : '#444')
+          barBgColor: data => (Number(data.percentile) > 0.5 ? '#faa' : '#aaa'),
+          barColor: data => (Number(data.percentile) > 0.5 ? '#f44' : '#444')
         }
       },
       {
