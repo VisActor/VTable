@@ -99,32 +99,26 @@ export function createTable() {
     type: 'line',
     xField: {
       field: 'x',
-      domain: [0, 1, 2, 3, 4, 5, 6, 7, 8],
-      type: 'point'
+      domain: [0, 1, 2, 3, 4, 5, 6, 7, 8]
     },
     yField: {
       field: 'y',
-      domain: [0, 80],
-      type: 'linear'
+      domain: [0, 80]
     },
     pointShowRule: 'all',
     line: {
-      visible: true,
       style: {
         stroke: '#2E62F1',
         strokeWidth: 2
       }
     },
     point: {
-      visible: true,
-      state: {
-        hover: {
-          stroke: 'blue',
-          strokeWidth: 1,
-          fill: 'red',
-          shape: 'circle',
-          size: 4
-        }
+      hover: {
+        stroke: 'blue',
+        strokeWidth: 1,
+        fill: 'red',
+        shape: 'circle',
+        size: 4
       },
       style: {
         stroke: 'red',
@@ -147,22 +141,18 @@ export function createTable() {
     yField: 'y',
     pointShowRule: 'all',
     line: {
-      visible: true,
       style: {
         stroke: 'green',
         strokeWidth: 4
       }
     },
     point: {
-      visible: true,
-      state: {
-        hover: {
-          stroke: 'blue',
-          strokeWidth: 1,
-          fill: 'red',
-          shape: 'circle',
-          size: 4
-        }
+      hover: {
+        stroke: 'blue',
+        strokeWidth: 1,
+        fill: 'red',
+        shape: 'circle',
+        size: 4
       },
       style: {
         stroke: 'red',
@@ -192,7 +182,6 @@ export function createTable() {
       }
     },
     point: {
-      visible: true,
       hover: {
         stroke: 'blue',
         strokeWidth: 1,
@@ -243,6 +232,7 @@ export function createTable() {
         width: 250,
         columnType: 'sparkline',
         sparklineSpec: Object.assign({}, baseSpec, {
+          smooth: true,
           point: {
             visible: false,
             state: {
@@ -282,8 +272,7 @@ export function createTable() {
           yField: 'y',
           crosshair: {
             style: {
-              stroke: 'red',
-              interpolate: 'monotone'
+              stroke: 'red'
             }
           }
         }

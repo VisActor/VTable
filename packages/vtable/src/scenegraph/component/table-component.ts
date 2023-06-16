@@ -240,8 +240,8 @@ export class TableComponent {
       const y = Math.min(tableHeight, totalHeight);
       const rangeEnd = Math.max(0.05, (tableWidth - frozenColsWidth) / (totalWidth - frozenColsWidth));
       this.hScrollBar.setAttributes({
-        x: frozenColsWidth,
-        y: y - (this.table.theme.scrollStyle.hoverOn ? width : 0),
+        x: frozenColsWidth + (!this.table.theme.scrollStyle.hoverOn ? this.table.scenegraph.tableGroup.attribute.x : 0),
+        y: y - (this.table.theme.scrollStyle.hoverOn ? width : -this.table.scenegraph.tableGroup.attribute.y),
         width: tableWidth - frozenColsWidth,
         range: [0, rangeEnd],
         visible: visible === 'always'
@@ -260,8 +260,9 @@ export class TableComponent {
       const x = Math.min(tableWidth, totalWidth);
       const rangeEnd = Math.max(0.05, (tableHeight - frozenRowsHeight) / (totalHeight - frozenRowsHeight));
       this.vScrollBar.setAttributes({
-        x: x - (this.table.theme.scrollStyle.hoverOn ? width : 0),
-        y: frozenRowsHeight,
+        x: x - (this.table.theme.scrollStyle.hoverOn ? width : -this.table.scenegraph.tableGroup.attribute.x),
+        y:
+          frozenRowsHeight + (!this.table.theme.scrollStyle.hoverOn ? this.table.scenegraph.tableGroup.attribute.y : 0),
         height: tableHeight - frozenRowsHeight,
         range: [0, rangeEnd],
         visible: visible === 'always'
