@@ -24,6 +24,8 @@ Thank you!
 - [ ] Site / documentation update
 - [ ] Demo update
 - [ ] Workflow
+- [ ] Chore
+- [ ] Release
 - [ ] Other (about what?)
 
 ### 🔗 Related issue link
