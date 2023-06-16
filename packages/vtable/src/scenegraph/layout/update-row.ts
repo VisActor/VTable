@@ -84,7 +84,9 @@ function addRow(row: number, scene: Scenegraph) {
         }
         return false;
       });
-      colGroup.insertBefore(cellGroup, cellBefore);
+      if (cellBefore !== cellGroup) {
+        colGroup.insertBefore(cellGroup, cellBefore);
+      }
     }
 
     // reset row number

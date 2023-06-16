@@ -273,7 +273,7 @@ export function updateCell(col: number, row: number, table: BaseTableAPI, addNew
     newCellGroup.mergeCol = range.start.col;
     newCellGroup.mergeRow = range.start.row;
   } else {
-    const mayHaveIcon = cellType !== 'body' ? true : !!define?.icon;
+    const mayHaveIcon = cellType !== 'body' ? true : !!define?.icon || !!define?.tree;
     const headerStyle = table._getCellStyle(col, row);
     const cellTheme = getStyleTheme(headerStyle, table, col, row, getProp).theme;
     const padding = cellTheme._vtable.padding;

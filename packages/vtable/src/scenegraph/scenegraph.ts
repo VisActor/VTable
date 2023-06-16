@@ -1399,7 +1399,12 @@ export class Scenegraph {
 
   updateHierarchyIcon(col: number, row: number) {
     const cellGroup = this.getCell(col, row);
-    const iconConfig = this.table.internalProps.headerHelper.getHierarchyIcon(cellGroup.col, cellGroup.row);
+    let iconConfig;
+    if (this.table.isHeader(col, row)) {
+      iconConfig = this.table.internalProps.headerHelper.getHierarchyIcon(cellGroup.col, cellGroup.row);
+    } else {
+      iconConfig = this.table.internalProps.bodyHelper.getHierarchyIcon(cellGroup.col, cellGroup.row);
+    }
     this.findAndUpdateIcon(cellGroup, [IconFuncTypeEnum.collapse, IconFuncTypeEnum.expand], iconConfig);
   }
 

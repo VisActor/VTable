@@ -316,7 +316,8 @@ function computeTextWidth(col: number, row: number, table: BaseTableAPI): number
   // const dataValue = table.getCellOriginValue(col, row);
   const actStyle = table._getCellStyle(col, row);
   let iconWidth = 0;
-  const mayHaveIcon = table.getCellType(col, row) !== 'body' ? true : !!table.getBodyColumnDefine(col, row)?.icon;
+  const define = table.getBodyColumnDefine(col, row);
+  const mayHaveIcon = table.getCellType(col, row) !== 'body' ? true : !!define?.icon || !!define?.tree;
   if (mayHaveIcon) {
     const icons = table.getCellIcons(col, row);
     icons?.forEach(icon => {

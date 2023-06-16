@@ -448,8 +448,8 @@ export class ListTable extends BaseTable implements ListTableAPI {
    */
   toggleHierarchyState(col: number, row: number) {
     const index = this.getRecordIndexByRow(col, row);
-    this.dataSource.toggleHierarchyState(index);
-    this.internalProps.layoutMap.toggleHierarchyState(col, row);
+    const diffDataIndices = this.dataSource.toggleHierarchyState(index);
+    const diffPositions = this.internalProps.layoutMap.toggleHierarchyState(diffDataIndices);
     //影响行数
     this.refreshRowColCount();
     // //TODO 这里可以优化计算性能 针对变化的行高列宽进行计算
@@ -458,10 +458,13 @@ export class ListTable extends BaseTable implements ListTableAPI {
     // //更新行高
     // this.computeRowsHeight();
     // 重新判断下行表头宽度是否过宽
-    this._resetFrozenColCount();
+    // this._resetFrozenColCount();
     //更改滚动条size
     //重绘
-    this.invalidate();
+    // this.invalidate();
+
+    this.scenegraph.updateHierarchyIcon(col, row);
+    this.scenegraph.updateRow(diffPositions.removeCellPositions, diffPositions.addCellPositions);
   }
 
   hasHierarchyTreeHeader() {

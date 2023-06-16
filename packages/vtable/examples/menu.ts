@@ -5,6 +5,10 @@ export const menus = [
       {
         path: 'list',
         name: 'list'
+      },
+      {
+        path: 'list',
+        name: 'list-tree'
       }
     ]
   },

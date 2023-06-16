@@ -30,7 +30,7 @@ import type { PivotTable } from '../PivotTable';
 import { NumberMap } from '../tools/NumberMap';
 import type { Either } from '../tools/helper';
 import { IndicatorDimensionKeyPlaceholder } from '../tools/global';
-import { diffCellAddress } from '../tools/diff-cell-id';
+import { diffCellAddress } from '../tools/diff-cell';
 interface IPivotLayoutBaseHeadNode {
   id: number;
   // dimensionKey: string;
