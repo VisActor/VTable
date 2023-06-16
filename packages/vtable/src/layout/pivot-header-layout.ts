@@ -30,7 +30,7 @@ import type { PivotTable } from '../PivotTable';
 import { NumberMap } from '../tools/NumberMap';
 import type { Either } from '../tools/helper';
 import { IndicatorDimensionKeyPlaceholder } from '../tools/global';
-import { diffCellId } from '../tools/diff-cell-id';
+import { diffCellAddress } from '../tools/diff-cell-id';
 interface IPivotLayoutBaseHeadNode {
   id: number;
   // dimensionKey: string;
@@ -1377,7 +1377,7 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
     }, {} as { [key: LayoutObjectId]: HeaderData });
     this._CellHeaderPathMap = new Map();
 
-    return diffCellId(oldRowHeaderCellIds, this._rowHeaderCellIds, oldRowHeaderCellPositons, this);
+    return diffCellAddress(oldRowHeaderCellIds, this._rowHeaderCellIds, oldRowHeaderCellPositons, this);
   }
   // 为列宽计算专用，兼容列表
   isHeaderForColWidth(col: number, row: number): boolean {

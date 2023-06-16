@@ -126,6 +126,7 @@ function resetRowNumber(scene: Scenegraph) {
 }
 
 function resetRowNumberAndY(scene: Scenegraph) {
+  let newTotalHeight = 0;
   for (let col = 0; col < scene.table.colCount; col++) {
     const headerColGroup = scene.getColGroup(col, true);
     const colGroup = scene.getColGroup(col, false);
@@ -152,5 +153,9 @@ function resetRowNumberAndY(scene: Scenegraph) {
       cellGroup.setAttribute('y', y);
       y += cellGroup.attribute.height;
     });
+    newTotalHeight = y;
   }
+
+  // update table size
+  scene.updateContainerHeight(scene.table.frozenRowCount, newTotalHeight - scene.bodyGroup.attribute.height);
 }

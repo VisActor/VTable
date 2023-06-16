@@ -1,7 +1,7 @@
 import type { PivotHeaderLayoutMap } from '../layout/pivot-header-layout';
 import type { CellAddress } from '../ts-types';
 
-export function diffCellId(
+export function diffCellAddress(
   oldCellIdsArr: number[][],
   newCellIdsArr: number[][],
   oldRowHeaderCellPositons: CellAddress[],
