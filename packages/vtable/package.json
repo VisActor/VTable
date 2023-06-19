@@ -1,6 +1,6 @@
 {
   "name": "@visactor/vtable",
-  "version": "0.9.1-alpha.2",
+  "version": "0.9.1-alpha.4",
   "description": "canvas table width high performance",
   "keywords": [
     "grid",
@@ -22,7 +22,6 @@
   "sideEffects": false,
   "main": "cjs/index.js",
   "module": "es/index.js",
-  "browser": "dist/vtable.min.js",
   "types": "es/index.d.ts",
   "files": [
     "cjs",
@@ -32,8 +31,7 @@
   "exports": {
     ".": {
       "require": "./cjs/index.js",
-      "import": "./es/index.js",
-      "default": "./dist/vtable.min.js"
+      "import": "./es/index.js"
     }
   },
   "scripts": {
