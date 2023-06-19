@@ -208,8 +208,10 @@ function computeAutoColWidth(
       }
     } else {
       // 基本表格表身body单元格 如果是树形展开 需要考虑缩进值
-      const cellHierarchyState = table.getHierarchyState(col, row);
-      if (cellHierarchyState === HierarchyState.expand || cellHierarchyState === HierarchyState.collapse) {
+      // const cellHierarchyState = table.getHierarchyState(col, row);
+      // if (cellHierarchyState === HierarchyState.expand || cellHierarchyState === HierarchyState.collapse) {
+      const define = table.getBodyColumnDefine(col, row);
+      if (define?.tree) {
         const indexArr = table.dataSource.getIndexKey(table.getRecordIndexByRow(col, row));
         cellHierarchyIndent =
           Array.isArray(indexArr) && table.getHierarchyState(col, row) !== HierarchyState.none
