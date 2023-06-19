@@ -23,7 +23,8 @@ export function getRollupOptions(
   userRollupOptions: Omit<RollupOptions, 'output'>,
   minify: boolean,
   destDir: string,
-  alias: Array<IAlias>
+  alias: Array<IAlias>,
+  es5 = true
 ): RollupOptions {
   return {
     input: entry,
@@ -32,7 +33,7 @@ export function getRollupOptions(
     plugins: [
       resolve(),
       commonjs(),
-      babel({ ...babelPlugins, babelHelpers: 'runtime' }),
+      babel({ ...babelPlugins, babelHelpers: es5 ? 'runtime' : 'bundled' }),
       replace({ ...envs, preventAssignment: true }),
       typescript({
         tsconfig: tsconfigFile,
