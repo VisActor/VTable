@@ -18,6 +18,10 @@ export const menus = [
       {
         path: 'pivot',
         name: 'pivot'
+      },
+      {
+        path: 'pivot',
+        name: 'pivot-tree'
       }
     ]
   },
@@ -80,10 +84,6 @@ export const menus = [
       {
         path: 'pivot',
         name: 'pivot-chart'
-      },
-      {
-        path: 'pivot',
-        name: 'pivot-tree'
       }
     ]
   },
