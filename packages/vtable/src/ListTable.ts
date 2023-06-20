@@ -20,6 +20,7 @@ import { cloneDeep, isValid } from './tools/util';
 import { _setDataSource } from './core/tableHelper';
 import { BaseTable } from './core';
 import type { ListTableProtected } from './ts-types/base-table';
+import { TABLE_EVENT_TYPE } from './core/TABLE_EVENT_TYPE';
 
 export class ListTable extends BaseTable implements ListTableAPI {
   declare internalProps: ListTableProtected;
@@ -447,6 +448,22 @@ export class ListTable extends BaseTable implements ListTableAPI {
    * @param row
    */
   toggleHierarchyState(col: number, row: number) {
+    const hierarchyState = this.getHierarchyState(col, row);
+    if (hierarchyState === HierarchyState.expand) {
+      this.fireListeners(TABLE_EVENT_TYPE.TREE_HIERARCHY_STATE_CHANGE, {
+        col: col,
+        row: row,
+        hierarchyState: HierarchyState.collapse
+      });
+    } else if (hierarchyState === HierarchyState.collapse) {
+      this.fireListeners(TABLE_EVENT_TYPE.TREE_HIERARCHY_STATE_CHANGE, {
+        col: col,
+        row: row,
+        hierarchyState: HierarchyState.expand,
+        originData: this.getCellOriginRecord(col, row)
+      });
+    }
+
     const index = this.getRecordIndexByRow(col, row);
     const diffDataIndices = this.dataSource.toggleHierarchyState(index);
     const diffPositions = this.internalProps.layoutMap.toggleHierarchyState(diffDataIndices);

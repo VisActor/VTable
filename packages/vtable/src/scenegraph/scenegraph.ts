@@ -624,6 +624,13 @@ export class Scenegraph {
     }
   }
 
+  /*
+   * recalculates column width in all autowidth columns
+   */
+  recalculateColWidths() {
+    computeColsWidth(this.table, true);
+  }
+
   updateTableSize() {
     this.tableGroup.setAttributes({
       width: Math.min(
@@ -1409,7 +1416,19 @@ export class Scenegraph {
   }
 
   updateRow(removeCells: CellAddress[], addCells: CellAddress[]) {
+    // add or move rows
     updateRow(removeCells, addCells, this.table);
+
+    // update column width and row height
+    this.recalculateColWidths();
+    if (this.table.internalProps.autoRowHeight) {
+      updateAutoRowHeight(this, true);
+    }
+
+    // check frozen status
+    this.table.stateManeger.checkFrozen();
+
+    // rerender
     this.updateNextFrame();
   }
 

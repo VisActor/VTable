@@ -7,7 +7,6 @@ import type {
   PivotSortState,
   CellAddress,
   ICellHeaderPaths,
-  HierarchyState,
   DropDownMenuEventInfo,
   FieldKeyDef,
   PivotTableConstructorOptions,
@@ -15,6 +14,7 @@ import type {
   IDimensionInfo,
   SortOrder
 } from './ts-types';
+import { HierarchyState } from './ts-types';
 import { PivotHeaderLayoutMap } from './layout/pivot-header-layout';
 import { getField } from './data/DataSource';
 import { PivoLayoutMap } from './layout/pivot-layout';
@@ -525,6 +525,22 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
    * @param row
    */
   toggleHierarchyState(col: number, row: number) {
+    const hierarchyState = this.getHierarchyState(col, row);
+    if (hierarchyState === HierarchyState.expand) {
+      this.fireListeners(PIVOT_TABLE_EVENT_TYPE.TREE_HIERARCHY_STATE_CHANGE, {
+        col: col,
+        row: row,
+        hierarchyState: HierarchyState.collapse
+      });
+    } else if (hierarchyState === HierarchyState.collapse) {
+      this.fireListeners(PIVOT_TABLE_EVENT_TYPE.TREE_HIERARCHY_STATE_CHANGE, {
+        col: col,
+        row: row,
+        hierarchyState: HierarchyState.expand,
+        originData: this.getCellOriginRecord(col, row)
+      });
+    }
+
     const result = (this.internalProps.layoutMap as PivotHeaderLayoutMap).toggleHierarchyState(col, row);
     //影响行数
     this.refreshRowColCount();

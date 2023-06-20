@@ -214,6 +214,51 @@ export function createTable() {
 
   const instance = new ListTable(option);
 
+  const { TREE_HIERARCHY_STATE_CHANGE } = VTable.ListTable.EVENT_TYPE;
+  instance.listen(TREE_HIERARCHY_STATE_CHANGE, args => {
+    console.log(TREE_HIERARCHY_STATE_CHANGE, args);
+    // TODO 调用接口插入设置子节点的数据
+    if (args.hierarchyState === VTable.TYPES.HierarchyState.expand && !Array.isArray(args.originData.children)) {
+      instance.setRecord(
+        {
+          类别: '技术22',
+          销售额: '229.696',
+          数量: '20',
+          利润: '90.704',
+          children: [
+            {
+              类别: '设备22', // 对应原子类别
+              销售额: 2,
+              数量: 5,
+              利润: 4
+            },
+            {
+              类别: '配件22', // 对应原子类别
+              销售额: 3,
+              数量: 8,
+              利润: 5
+            },
+            {
+              类别: '技术22',
+              销售额: 229.696,
+              数量: 20,
+              利润: 90.704,
+              children: true
+            },
+            {
+              类别: '配件33', // 对应原子类别
+              销售额: 1,
+              数量: 6,
+              利润: 7
+            }
+          ]
+        },
+        args.col,
+        args.row
+      );
+    }
+  });
+
   // VTable.bindDebugTool(instance.scenegraph.stage as any, {
   //   customGrapicKeys: ['role', '_updateTag'],
   // });

@@ -8,9 +8,15 @@ import { getPadding } from '../utils/padding';
 import { getProp } from '../utils/get-prop';
 import type { BaseTableAPI } from '../../ts-types/base-table';
 
-export function computeColsWidth(table: BaseTableAPI): void {
+export function computeColsWidth(table: BaseTableAPI, update?: boolean): void {
   const time = typeof window !== 'undefined' ? window.performance.now() : 0;
   table._clearColRangeWidthsMap();
+  const oldColWidths = [];
+  if (update) {
+    for (let col = 0; col < table.colCount; col++) {
+      oldColWidths.push(table.getColWidth(col));
+    }
+  }
   for (let col = 0; col < table.colCount; col++) {
     let maxWidth;
     if (
@@ -57,7 +63,7 @@ export function computeColsWidth(table: BaseTableAPI): void {
       } else {
         colWidth = Math.round(table.getColWidth(col) * factor);
       }
-      table.setColWidth(col, colWidth);
+      table.setColWidth(col, colWidth, false, true);
     }
   } else if (table.widthMode === 'standard-aeolus' && table.internalProps.transpose) {
     // 处理风神列宽特殊逻辑
@@ -78,11 +84,21 @@ export function computeColsWidth(table: BaseTableAPI): void {
     if (actualWidth < canvasWidth && actualWidth - actualHeaderWidth > 0) {
       const factor = (canvasWidth - actualHeaderWidth) / (actualWidth - actualHeaderWidth);
       for (let col = table.frozenColCount; col < table.colCount; col++) {
-        table.setColWidth(col, table.getColWidth(col) * factor);
+        table.setColWidth(col, table.getColWidth(col) * factor, false, true);
       }
     }
   }
   console.log('computeColsWidth  time:', (typeof window !== 'undefined' ? window.performance.now() : 0) - time);
+
+  if (update) {
+    for (let col = 0; col < table.colCount; col++) {
+      const newColWidth = table.getColWidth(col);
+      if (newColWidth !== oldColWidths[col]) {
+        // update the column width in scenegraph
+        table.scenegraph.updateColWidth(col, newColWidth - oldColWidths[col]);
+      }
+    }
+  }
 }
 
 /**
