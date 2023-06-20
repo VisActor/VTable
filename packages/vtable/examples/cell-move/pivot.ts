@@ -384,7 +384,7 @@ export function createTable() {
     // allowFrozenColCount: 5,//最多允许冻结的列数，设置5列显示冻结图标
     enableColumnResizeOnAllRows: true, //是否可以在所有行上调整列宽
     disableColumnResize: false, //关闭调整列宽
-    showPin: false, //显示VTable内置冻结列图标
+    showFrozenIcon: false, //显示VTable内置冻结列图标
     pagerConf: {
       //分页配置
       perPageCount: 5,

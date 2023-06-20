@@ -13,7 +13,7 @@ cover:
 
  - `allowFrozenColCount`  可选做冻结的前几列 默认0
  - `frozenColCount`  初始冻结列数 默认0
- - `showPin` 是否显示冻结图标 默认true
+ - `showFrozenIcon` 是否显示冻结图标 默认true
 
 ## 代码演示
 
@@ -89,7 +89,7 @@ const option = {
   widthMode:'standard',
   allowFrozenColCount: 3,
   frozenColCount: 1,
-  showPin: true
+  showFrozenIcon: true
 };
 const tableInstance = new VTable.ListTable(option);
 window['tableInstance'] = tableInstance;
