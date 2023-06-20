@@ -13,6 +13,7 @@ import terser from '@rollup/plugin-terser';
 import url from '@rollup/plugin-url';
 import Alias from '@rollup/plugin-alias';
 import postcss from 'rollup-plugin-postcss';
+import { warn } from 'console';
 
 export function getRollupOptions(
   entry: string,
@@ -54,6 +55,17 @@ export function getRollupOptions(
       Alias({ entries: alias }),
       minify && terser(),
       ...((userRollupOptions.plugins as Plugin[]) || [])
-    ]
+    ],
+    onwarn: function (warning) {
+      // Skip certain warnings
+
+      // should intercept ... but doesn't in some rollup versions
+      if (warning.code === 'THIS_IS_UNDEFINED' || warning.code === 'SOURCEMAP_ERROR') {
+        return;
+      }
+
+      // console.warn everything else
+      warn(warning.message);
+    }
   };
 }
