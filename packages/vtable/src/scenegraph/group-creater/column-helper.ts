@@ -17,6 +17,8 @@ import type { PivotHeaderLayoutMap } from '../../layout/pivot-header-layout';
 import { createCell } from './cell-helper';
 import type { BaseTableAPI, PivotTableProtected } from '../../ts-types/base-table';
 import { getStyleTheme } from '../../core/tableHelper';
+import { isPromise } from '../../tools/helper';
+import { dealPromiseData } from '../utils/deal-promise-data';
 /**
  * 创建复合列 同一列支持创建不同类型单元格
  * @param columnGroup 列Group
@@ -191,31 +193,66 @@ export function createComplexColumn(
       y += mergeResult.cellHeight / (range.end.row - range.start.row + 1);
       maxWidth = Math.max(maxWidth, mergeResult.cellWidth);
     } else {
-      const cellGroup = createCell(
-        type,
-        define,
-        table,
-        col,
-        row,
-        colWidth,
-        bgColorFunc,
-        customRender,
-        customLayout,
-        cellWidth,
-        cellHeight,
-        columnGroup,
-        y,
-        padding,
-        textAlign,
-        textBaseline,
-        mayHaveIcon,
-        isfunctionalProps,
-        isMerge,
-        range,
-        cellTheme
-      );
-      const height = cellGroup.attribute.height;
-      y += isMerge ? height / (range.end.row - range.start.row + 1) : height;
+      // deal with promise data
+      const value = table.getCellValue(col, row);
+      if (isPromise(value)) {
+        dealPromiseData(
+          value,
+          table,
+          createCell.bind(
+            null,
+            type,
+            define,
+            table,
+            col,
+            row,
+            colWidth,
+            bgColorFunc,
+            customRender,
+            customLayout,
+            cellWidth,
+            cellHeight,
+            columnGroup,
+            y,
+            padding,
+            textAlign,
+            textBaseline,
+            mayHaveIcon,
+            isfunctionalProps,
+            isMerge,
+            range,
+            cellTheme
+          )
+        );
+        const height = table.getRowHeight(row);
+        y += isMerge ? height / (range.end.row - range.start.row + 1) : height;
+      } else {
+        const cellGroup = createCell(
+          type,
+          define,
+          table,
+          col,
+          row,
+          colWidth,
+          bgColorFunc,
+          customRender,
+          customLayout,
+          cellWidth,
+          cellHeight,
+          columnGroup,
+          y,
+          padding,
+          textAlign,
+          textBaseline,
+          mayHaveIcon,
+          isfunctionalProps,
+          isMerge,
+          range,
+          cellTheme
+        );
+        const height = cellGroup.attribute.height;
+        y += isMerge ? height / (range.end.row - range.start.row + 1) : height;
+      }
     }
     if (rowLimit && row > rowLimit) {
       break;
