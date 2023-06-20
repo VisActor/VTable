@@ -25,9 +25,6 @@ jobs:
 
       - name: Print All Github Environment Variables
         run: env
-        
-      - name: Update rush
-        run: node common/scripts/install-run-rush.js update --bypass-policy
 
       - name: Install rush
         run: node common/scripts/install-run-rush.js install --bypass-policy
