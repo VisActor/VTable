@@ -1724,7 +1724,7 @@ export function createTable() {
         borderColor: '#f19090',
         borderLineWidth: 10,
         borderLineDash: [],
-        roundCornerRadius: 10,
+        cornerRadius: 10,
         shadowBlur: 6,
         shadowOffsetX: 0,
         shadowOffsetY: 0,

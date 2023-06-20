@@ -30,7 +30,7 @@ export function createFrameBorder(
     shadowOffsetX,
     shadowOffsetY,
     shadowColor,
-    roundCornerRadius,
+    cornerRadius,
     borderColor,
     borderLineWidth,
     borderLineDash
@@ -73,9 +73,9 @@ export function createFrameBorder(
     (rectAttributes as any).lineWidth = 1;
   }
 
-  if (roundCornerRadius) {
-    rectAttributes.borderRadius = roundCornerRadius;
-    groupAttributes.borderRadius = roundCornerRadius;
+  if (cornerRadius) {
+    rectAttributes.borderRadius = cornerRadius;
+    groupAttributes.borderRadius = cornerRadius;
   }
 
   const borderTop = (rectAttributes as any).strokeArrayWidth

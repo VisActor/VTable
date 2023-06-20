@@ -12,7 +12,7 @@ export type ElementOptions = {
     stroke?: string | boolean;
     fill?: string | boolean;
     lineWidth?: number;
-    borderRadius?: number;
+    cornerRadius?: number;
     expandX?: number;
     expandY?: number;
   };

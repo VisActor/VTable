@@ -142,7 +142,7 @@ function adjustElementToGroup(
             dy: (element.dy ?? 0) as number,
             width: element.width + expandX * 2,
             height: element.height + expandY * 2,
-            borderRadius: element.background?.borderRadius ?? 0,
+            borderRadius: element.background?.cornerRadius ?? 0,
             // fill: true,
             fill: element.background?.fill ?? '#888'
           });

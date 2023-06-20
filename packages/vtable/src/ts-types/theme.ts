@@ -31,7 +31,7 @@ export type TableFrameStyle = FrameStyle & {
   shadowOffsetX?: number; //x方向偏移
   shadowOffsetY?: number; //Y方向偏移
   shadowColor?: string; //阴影颜色
-  roundCornerRadius?: number; //边框圆角半径
+  cornerRadius?: number; //边框圆角半径
 };
 export type menuStyle = {
   color?: string;
