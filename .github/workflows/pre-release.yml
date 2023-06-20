@@ -31,37 +31,40 @@ jobs:
         run: node common/scripts/install-run-rush.js install --bypass-policy
 
       - name: Build packages
+        env:
+          NODE_OPTIONS: "--max_old_space_size=4096"
         run: node common/scripts/install-run-rush.js build --only tag:package
 
       - name: Parse semver version from branch name
         id: semver_parser
-        uses: release-kit/semver@v2
+        uses: xile611/read-package-version-action@v2.1
         with:
-          string: ${{ github.ref_name }}
-          pattern: '^pre-release/(.*)$' # ^v?(.*)$ by default
+          path: packages/vtable
+          semver_string: ${{ github.ref_name }}
+          semver_pattern: '^pre-release/(.*)$' # ^v?(.*)$ by default
 
       - name: Apply prereleaseName
-        run: node common/scripts/install-run-rush.js publish --apply --prerelease-name ${{ steps.semver_parser.outputs.prerelease }} --partial-prerelease
+        run: node common/scripts/install-run-rush.js publish --apply --prerelease-name ${{ steps.semver_parser.outputs.pre_release_name }} --partial-prerelease
 
       - name: Publish to npm
         env:
           NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
           NPM_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
-        run: node common/scripts/install-run-rush.js publish --publish --include-all --tag ${{ steps.semver_parser.outputs.prerelease }}
+        run: node common/scripts/install-run-rush.js publish --publish --include-all --tag ${{ steps.semver_parser.outputs.pre_release_type }}
 
       - name: Update shrinkwrap
         run: node common/scripts/install-run-rush.js update
 
-      - name: Get package version
+      - name: Get npm version
         id: package-version
-        uses: culshaw/read-package-node-version-actions@v1
+        uses: xile611/read-package-version-action@v2.1
         with:
-          path: './packages/vtable' # 各项目需要修改一下
+          path: packages/vtable
 
       - name: Commit & Push changes
         uses: actions-js/push@master
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          message: 'build: prelease version ${{ steps.package-version.outputs.version }}'
+          message: 'build: prelease version ${{ steps.package-version.outputs.current_version }}'
           branch: ${{ github.ref_name }}
           author_name: ${{ github.actor }}

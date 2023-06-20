@@ -21,8 +21,7 @@ import type {
   ListTableConstructorOptions,
   PivotTableConstructorOptions,
   IHeaderTreeDefine,
-  IDimension,
-  IIndicatorCustom
+  IDimension
 } from './ts-types';
 import { ListTable } from './ListTable';
 import { PivotTable } from './PivotTable';
@@ -45,7 +44,6 @@ export {
   PivotTableConstructorOptions,
   IHeaderTreeDefine,
   IDimension,
-  IIndicatorCustom,
   ColumnsDefine,
   ColumnDefine,
   LinkColumnDefine,

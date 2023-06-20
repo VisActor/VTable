@@ -134,7 +134,7 @@ export function createProgressBarCell(
     }
 
     if ((progressBarDefine.barType ?? 'default') === 'default') {
-      const rate =
+      const percentile =
         num < progressBarDefine.min
           ? 0
           : num > progressBarDefine.max
@@ -152,7 +152,7 @@ export function createProgressBarCell(
         context: null,
         value,
         dataValue,
-        rate
+        percentile
       });
 
       if (bgFillColor) {
@@ -166,7 +166,7 @@ export function createProgressBarCell(
         percentCompleteBarGroup.addChild(barBack);
       }
 
-      const barSize = Math.min(barMaxWidth * rate, barMaxWidth);
+      const barSize = Math.min(barMaxWidth * percentile, barMaxWidth);
       const fillColor =
         getOrApply(barColor as any, {
           col,
@@ -175,7 +175,7 @@ export function createProgressBarCell(
           context: null,
           value,
           dataValue,
-          rate
+          percentile
         }) || '#20a8d8';
       const barMain = createRect({
         x: barLeft,
@@ -210,7 +210,7 @@ export function createProgressBarCell(
         context: null,
         value,
         dataValue,
-        rate: positiveRate
+        percentile: positiveRate
       });
       if (bgFillColor) {
         const barBack = createRect({
@@ -249,7 +249,7 @@ export function createProgressBarCell(
           context: null,
           value,
           dataValue,
-          rate: negativeRate
+          percentile: negativeRate
         }) || '#20a8d8';
       const barNega = createRect({
         x: barRectNega.left,
@@ -283,7 +283,7 @@ export function createProgressBarCell(
           context: null,
           value,
           dataValue,
-          rate: positiveRate
+          percentile: positiveRate
         }) || '#20a8d8';
       const barPosi = createRect({
         x: barRectPosi.left,
@@ -324,7 +324,7 @@ export function createProgressBarCell(
               context: null,
               value,
               dataValue,
-              rate: positiveRate
+              percentile: positiveRate
             }) || '#20a8d8';
           if (barMarkPosition === 'right') {
             const markLeft = barRightToLeft
@@ -351,7 +351,7 @@ export function createProgressBarCell(
               context: null,
               value,
               dataValue,
-              rate: negativeRate
+              percentile: negativeRate
             }) || '#20a8d8';
           if (barMarkPosition === 'right') {
             const markLeft = barRightToLeft
@@ -387,12 +387,12 @@ export function createProgressBarCell(
       const range = Math.max(_negativeRange, _positiveRange);
 
       // 计算rate
-      const rate = range === 0 ? 0 : Math.abs(num) / range;
+      const percentile = range === 0 ? 0 : Math.abs(num) / range;
 
       // 绘制
       // 绘制背景
       const barMaxWidth = width - barPaddingLeft - barPaddingRight - 1; /*罫線*/
-      const barSize = Math.min(barMaxWidth * rate, barMaxWidth);
+      const barSize = Math.min(barMaxWidth * percentile, barMaxWidth);
       const barTop = bottom - barPaddingBottom - (barHeight as number) - (barBottom as number) - 1; /*罫線*/
       const barLeft = barRightToLeft ? right - barPaddingRight - barSize : left + barPaddingLeft;
       const barBgFillColor =
@@ -403,7 +403,7 @@ export function createProgressBarCell(
           context: null,
           value,
           dataValue,
-          rate
+          percentile
         }) || '#f0f3f5';
       const barBg = createRect({
         x: barLeft,
@@ -430,7 +430,7 @@ export function createProgressBarCell(
             table,
             context: null,
             value,
-            rate,
+            percentile,
             dataValue
           }) || '#20a8d8';
       } else {
@@ -442,7 +442,7 @@ export function createProgressBarCell(
             context: null,
             value,
             dataValue,
-            rate
+            percentile
           }) || '#20a8d8';
       }
       const bar = createRect({
@@ -468,7 +468,7 @@ export function createProgressBarCell(
               context: null,
               value,
               dataValue,
-              rate
+              percentile
             }) || '#20a8d8';
         } else {
           barMarkStrokeColor =
@@ -479,7 +479,7 @@ export function createProgressBarCell(
               context: null,
               value,
               dataValue,
-              rate
+              percentile
             }) || '#20a8d8';
         }
         if (barMarkPosition === 'right') {

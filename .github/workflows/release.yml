@@ -35,6 +35,11 @@ jobs:
         run: node common/scripts/install-run-rush.js install --bypass-policy
 
       - name: Build packages
+        env:
+          NODE_OPTIONS: "--max_old_space_size=4096"
+        run: node common/scripts/install-run-rush.js build --only tag:package
+
+      - name: Update version
         run: node common/scripts/install-run-rush.js version --bump
 
       - name: Publish to npm
@@ -46,35 +51,36 @@ jobs:
       - name: Update shrinkwrap
         run: node common/scripts/install-run-rush.js update
 
-      - name: Get package version
+      - name: Get npm version
         id: package-version
-        uses: culshaw/read-package-node-version-actions@v1
+        uses: xile611/read-package-version-action@v2.1
         with:
-          path: './packages/vtable' # 各项目修改一下
+          path: packages/vtable
 
       - name: Commit & Push changes
         uses: actions-js/push@master
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          message: 'build: prelease version ${{ steps.package-version.outputs.version }}'
+          message: 'build: prelease version ${{ steps.package-version.outputs.current_version }}'
           branch: ${{ github.ref_name }}
 
       - name: Create Release for Tag
         id: release_tag
-        # See more about this action: https://github.com/actions/create-release
-        uses: actions/create-release@v1
+        uses: ncipollo/release-action@v1.12.0
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: v${{ steps.package-version.outputs.version }}
-          release_name: Release v${{ steps.package-version.outputs.version }}
-          prerelease: false #
+          tag: v${{ steps.package-version.outputs.current_version }}
+          commit: main
+          prerelease: false
+          draft: true #
 
       - name: Create Pull Request
-        uses: peter-evans/create-pull-request@v5
+        uses: dustinirving/create-pr@v1.0.2
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
+          title: '[Auto release] release ${{ steps.package-version.outputs.current_version }}'
           base: main
-          branch: ${{ github.ref_name }}
-          title: '[Auto release] release ${{ steps.package-version.outputs.version }}'
-          author: ${{ github.actor }} <${{ github.actor }}@users.noreply.github.com>
+          head: ${{ github.ref_name }}
+          labels: release # default labels, the action will throw error if not specified
+          reviewers: fangsmile,Rui-Sun # default reviewers, the action will throw error if not specified

@@ -3,7 +3,7 @@ import type { StylePropertyFunctionArg } from '../../style-define';
 import type { IBasicColumnIndicator, IBasicHeaderIndicator } from './basic-indicator';
 
 export interface ILinkHeaderIndicator extends IBasicHeaderIndicator {
-  headerType?: 'link'; // 指标表头类型
+  headerType: 'link'; // 指标表头类型
   headerStyle?:
     | ITextStyleOption //表头可以配置吸附;
     | ((styleArg: StylePropertyFunctionArg) => ITextStyleOption); // 指标名称在表头部分显示类型
@@ -20,7 +20,7 @@ export interface ILinkHeaderIndicator extends IBasicHeaderIndicator {
 }
 
 export interface ILinkColumnIndicator extends IBasicColumnIndicator {
-  columnType?: 'link'; // body指标值显示类型
+  columnType: 'link'; // body指标值显示类型
   style?: ITextStyleOption | ((styleArg: StylePropertyFunctionArg) => ITextStyleOption); // body部分指标值显示样式
 
   // 目前autoWrapText和lineClamp还在style中定义

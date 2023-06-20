@@ -16,7 +16,7 @@ export interface StylePropertyFunctionArg {
   /**原始值 */
   dataValue: string;
   /** progressbar类型特有，表示当前数值在总体数据范围的比例 */
-  rate?: number;
+  percentile?: number;
   /** 单元格的表头路径信息 */
   cellHeaderPaths: ICellHeaderPaths;
 }

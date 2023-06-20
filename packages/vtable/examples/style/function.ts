@@ -14,7 +14,7 @@ function generatePivotDataSource(num, colCount) {
   return array;
 }
 const DEFAULT_BAR_COLOR = data => {
-  const num = data.rate * 100;
+  const num = data.percentile * 100;
   if (num > 80) {
     return '#20a8d8';
   }
@@ -340,7 +340,9 @@ export function createTable() {
           // barBgColor: '#aaa',
           // barColor: '#444',
           barBgColor: data => {
-            return `rgb(${100 + 100 * (1 - data.rate)},${100 + 100 * (1 - data.rate)},${255 * (1 - data.rate)})`;
+            return `rgb(${100 + 100 * (1 - data.percentile)},${100 + 100 * (1 - data.percentile)},${
+              255 * (1 - data.percentile)
+            })`;
           },
           barColor: 'transparent'
         }),

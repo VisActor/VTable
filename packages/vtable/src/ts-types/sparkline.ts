@@ -3,20 +3,27 @@ export type ShapeType = 'circle';
 export interface SparklineSpec {
   type: 'line';
   xField?:
-    | string
+    | string // 只配置field字段名，程序自动分析domain
     | {
         field: string;
-        domain?: any[];
+        /** x轴值域，x轴对应离散轴 需逐个体现在domain数组中 */
+        domain?: (number | string)[];
       };
   yField?:
-    | string
+    | string // 只配置field字段名，程序自动分析domain
     | {
         field: string;
-        domain?: any[];
+        /** y轴值域，y轴对应连续轴，domain数组中只设置最大最小值即可 */
+        domain?: [number, number];
       };
-  /** all表示正常连接前后点 none表示不会只孤立点 isolatedPoint表示只绘制孤立点的点图形 默认为none */
+  /** 配置点显示规则：默认为all
+   * all表示显示所有点
+   * none表示不显示点
+   * isolatedPoint表示只显示孤立点（即前后值为空）。
+   */
   pointShowRule?: 'all' | 'none' | 'isolatedPoint';
   smooth?: boolean;
+  /** 线条是否平滑 */
   /** 折线配置 */
   line?: {
     /** 折线样式 */
@@ -24,8 +31,6 @@ export interface SparklineSpec {
   };
   /** 数据点配置 默认不显示 */
   point?: {
-    /** 折线上每个点都显示 默认false*/
-    visible?: boolean;
     style: ISymbolMarkStyle;
     hover?: ISymbolMarkStyle | false;
   };
@@ -45,7 +50,7 @@ interface IMarkStyle {
 
 interface ILineMarkStyle extends IMarkStyle {
   stroke?: string;
-  interpolate?: 'linear' | 'monotone';
+  // interpolate?: 'linear' | 'monotone';
 }
 
 interface ISymbolMarkStyle extends IMarkStyle {
