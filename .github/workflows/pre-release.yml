@@ -31,6 +31,8 @@ jobs:
         run: node common/scripts/install-run-rush.js install --bypass-policy
 
       - name: Build packages
+        env:
+          NODE_OPTIONS: "--max_old_space_size=4096"
         run: node common/scripts/install-run-rush.js build --only tag:package
 
       - name: Parse semver version from branch name

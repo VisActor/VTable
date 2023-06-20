@@ -30,7 +30,9 @@ jobs:
         run: node common/scripts/install-run-rush.js install --bypass-policy
 
       - name: Build
-        run: node common/scripts/install-run-rush.js build -t @visactor/vtable
+        env:
+          NODE_OPTIONS: "--max_old_space_size=4096"
+        run: BUILD_ENV=ci node common/scripts/install-run-rush.js build -t @visactor/vtable
 
       - name: Run CI
         working-directory: ./packages/vtable

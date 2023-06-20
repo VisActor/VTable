@@ -16,41 +16,44 @@ function packageNameToPath(name: string) {
   return name.replace('@', '').replace('/', '_');
 }
 export async function buildUmd(config: Config, projectRoot: string, rawPackageJson: RawPackageJson, minify: boolean) {
-  const babelPlugins = getBabelPlugins(rawPackageJson.name);
   const entry = path.resolve(
     projectRoot,
     config.sourceDir,
     typeof config.input === 'string' ? config.input : config.input.umd!
   );
-  const rollupOptions = getRollupOptions(
-    entry,
-    rawPackageJson,
-    babelPlugins,
-    config.envs,
-    path.resolve(projectRoot, config.tsconfig),
-    config.rollupOptions,
-    minify,
-    path.resolve(projectRoot, config.outputDir.umd!),
-    config.alias
-  );
-  DebugConfig('RollupOptions', JSON.stringify(rollupOptions));
-  const bundle = await rollup(rollupOptions);
-
   const dest = path.resolve(projectRoot, config.outputDir.umd!);
-  await generateOutputs(bundle, [
-    {
-      format: 'umd',
-      name: config.name || packageNameToPath(rawPackageJson.name),
-      file: minify
-        ? `${dest}/${config.umdOutputFilename || packageNameToPath(rawPackageJson.name)}.es5.min.js`
-        : `${dest}/${config.umdOutputFilename || packageNameToPath(rawPackageJson.name)}.es5.js`,
-      exports: 'named',
-      globals: { react: 'React' }
-    }
-  ]);
 
-  if (bundle) {
-    await bundle.close();
+  if (process.env.BUILD_ENV !== 'ci') {
+    const babelPlugins = getBabelPlugins(rawPackageJson.name);
+    const rollupOptions = getRollupOptions(
+      entry,
+      rawPackageJson,
+      babelPlugins,
+      config.envs,
+      path.resolve(projectRoot, config.tsconfig),
+      config.rollupOptions,
+      minify,
+      path.resolve(projectRoot, config.outputDir.umd!),
+      config.alias
+    );
+    DebugConfig('RollupOptions', JSON.stringify(rollupOptions));
+    const bundle = await rollup(rollupOptions);
+
+    await generateOutputs(bundle, [
+      {
+        format: 'umd',
+        name: config.name || packageNameToPath(rawPackageJson.name),
+        file: minify
+          ? `${dest}/${config.umdOutputFilename || packageNameToPath(rawPackageJson.name)}.es5.min.js`
+          : `${dest}/${config.umdOutputFilename || packageNameToPath(rawPackageJson.name)}.es5.js`,
+        exports: 'named',
+        globals: { react: 'React' }
+      }
+    ]);
+
+    if (bundle) {
+      await bundle.close();
+    }
   }
 
   // build es6
