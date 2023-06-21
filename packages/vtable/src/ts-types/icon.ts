@@ -132,11 +132,11 @@ export enum IconPosition {
 }
 /**
  * 图标类型
- * pin 固定列图标
+ * frozen 固定列图标
  * sort 排序图标
  */
 export enum IconFuncTypeEnum {
-  pin = 'pin',
+  frozen = 'frozen',
   sort = 'sort',
   dropDown = 'dropDown',
   dropDownState = 'dropDownState',
@@ -152,10 +152,9 @@ export enum InternalIconName {
   downwardIconName = 'sort_downward',
   normalIconName = 'sort_normal',
   //冻结列 图钉按钮的几种状态
-  pinIconName = 'pin',
-  pinedIconName = 'pined',
-  pinedHoverIconName = 'pined_hover',
-  pinedCurrentIconName = 'pinedCurrent',
+  freezeIconName = 'freeze',
+  frozenIconName = 'frozen',
+  frozenCurrentIconName = 'frozenCurrent',
   dropdownIconName = 'dropdownIcon',
   // dropdownHoverIconName = 'dropdownIcon_hover',
   expandIconName = 'expand',

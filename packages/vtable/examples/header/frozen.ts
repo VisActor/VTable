@@ -113,7 +113,7 @@ export function createTable() {
         width: 250
       }
     ],
-    showPin: true, //显示VTable内置冻结列图标
+    showFrozenIcon: true, //显示VTable内置冻结列图标
     widthMode: 'standard',
     frozenColCount: 0, //冻结列
     allowFrozenColCount: 8,

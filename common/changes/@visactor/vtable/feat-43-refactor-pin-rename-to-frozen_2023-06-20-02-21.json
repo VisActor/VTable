@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "comment": "refactor: rename pin to frozen",
+      "type": "patch",
+      "packageName": "@visactor/vtable"
+    }
+  ],
+  "packageName": "@visactor/vtable",
+  "email": "892739385@qq.com"
+}
