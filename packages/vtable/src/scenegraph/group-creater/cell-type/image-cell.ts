@@ -244,4 +244,25 @@ export function updateImageCellContentWhileResize(cellGroup: Group, col: number,
       height: cellGroup.attribute.height - padding[0] - padding[2]
     });
   }
+
+  // update video play icon
+  const playIcon = cellGroup.getChildByName('play-icon');
+  if (playIcon) {
+    const left = 0;
+    const top = 0;
+    const width = cellGroup.attribute.width;
+    const height = cellGroup.attribute.height;
+    const iconSize = Math.floor(Math.min(width - padding[1] - padding[3], height - padding[2] - padding[0]) / 2);
+    const anchorX =
+      left + (width > image.attribute.width ? image.attribute.x - left + image.attribute.width / 2 : width / 2);
+    const anchorY =
+      top + (height > image.attribute.height ? image.attribute.y - top + image.attribute.height / 2 : height / 2);
+
+    playIcon.setAttributes({
+      x: anchorX - iconSize / 2,
+      y: anchorY - iconSize / 2,
+      width: iconSize,
+      height: iconSize
+    });
+  }
 }
