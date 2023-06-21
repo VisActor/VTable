@@ -1,5 +1,5 @@
 import { rollup } from 'rollup';
-import path from 'path';
+import * as path from 'path';
 import type { OutputOptions, RollupBuild } from 'rollup';
 import type { RawPackageJson } from '../logic/package';
 import type { Config } from '../logic/config';
@@ -22,17 +22,7 @@ export async function buildUmd(config: Config, projectRoot: string, rawPackageJs
     config.sourceDir,
     typeof config.input === 'string' ? config.input : config.input.umd!
   );
-  const rollupOptions = getRollupOptions(
-    entry,
-    rawPackageJson,
-    babelPlugins,
-    config.envs,
-    path.resolve(projectRoot, config.tsconfig),
-    config.rollupOptions,
-    minify,
-    path.resolve(projectRoot, config.outputDir.umd!),
-    config.alias
-  );
+  const rollupOptions = getRollupOptions(projectRoot, entry, rawPackageJson, babelPlugins, { ...config, minify });
   DebugConfig('RollupOptions', JSON.stringify(rollupOptions));
   const bundle = await rollup(rollupOptions);
 
@@ -45,7 +35,7 @@ export async function buildUmd(config: Config, projectRoot: string, rawPackageJs
         ? `${dest}/${config.umdOutputFilename || packageNameToPath(rawPackageJson.name)}.es5.min.js`
         : `${dest}/${config.umdOutputFilename || packageNameToPath(rawPackageJson.name)}.es5.js`,
       exports: 'named',
-      globals: { react: 'React' }
+      globals: { react: 'React', ...config.globals }
     }
   ]);
 
@@ -56,15 +46,11 @@ export async function buildUmd(config: Config, projectRoot: string, rawPackageJs
   // build es6
   const babelPluginsEs6 = getBabelPlugins(rawPackageJson.name, false);
   const rollupOptionsEs6 = getRollupOptions(
+    projectRoot,
     entry,
     rawPackageJson,
     babelPluginsEs6,
-    config.envs,
-    path.resolve(projectRoot, config.tsconfig),
-    config.rollupOptions,
-    minify,
-    path.resolve(projectRoot, config.outputDir.umd!),
-    config.alias,
+    { ...config, minify },
     false
   );
   DebugConfig('RollupOptionsEs6', JSON.stringify(rollupOptionsEs6));
