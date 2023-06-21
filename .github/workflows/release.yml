@@ -3,7 +3,7 @@ name: Release CI
 on:
   push:
     branches:
-      - release/*
+      - 'release/[0-9]+.[0-9]+.[0-9]+'
 
 jobs:
   build:
@@ -34,13 +34,19 @@ jobs:
       - name: Install rush
         run: node common/scripts/install-run-rush.js install --bypass-policy
 
+      - name: Update version
+        run: node common/scripts/install-run-rush.js version --bump
+
       - name: Build packages
         env:
           NODE_OPTIONS: "--max_old_space_size=4096"
         run: node common/scripts/install-run-rush.js build --only tag:package
 
-      - name: Update version
-        run: node common/scripts/install-run-rush.js version --bump
+      - name: Run Bugserver
+        working-directory: ./packages/vchart
+        env:
+          BUG_SERVER_TOKEN: ${{ secrets.BUG_SERVER_TOKEN }}
+        run: node ../../common/scripts/install-run-rushx.js ci
 
       - name: Publish to npm
         env:
