@@ -2,8 +2,10 @@ name: Bug Server CI
 
 # 这里业务方根据需求设置
 on:
-  pull_request:
+  push:
     branches: ['main']
+  pull_request:
+    branches: ['main', 'develop']
 
 jobs:
   build:

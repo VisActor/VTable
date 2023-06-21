@@ -1,7 +1,6 @@
 import type { RollupOptions, Plugin } from 'rollup';
 import type { RawPackageJson } from './package';
 import type { BabelPlugins } from './babel.config';
-import type { Alias as IAlias } from '@rollup/plugin-alias';
 // import type { RollupBabelInputPluginOptions } from '@rollup/plugin-babel';
 
 import resolve from '@rollup/plugin-node-resolve';
@@ -13,30 +12,41 @@ import terser from '@rollup/plugin-terser';
 import url from '@rollup/plugin-url';
 import Alias from '@rollup/plugin-alias';
 import postcss from 'rollup-plugin-postcss';
+import * as path from 'path';
+import { Config } from './config';
+
+function getExternal(
+  rawPackageJson: RawPackageJson,
+  userExternal: string[] | ((rawPackageJson: RawPackageJson) => string[])
+): string[] {
+  if (typeof userExternal === 'function') {
+    return userExternal(rawPackageJson);
+  }
+  if (Array.isArray(userExternal) && userExternal.length) {
+    return userExternal;
+  }
+  return Object.keys(rawPackageJson.peerDependencies || {});
+}
 
 export function getRollupOptions(
+  projectRoot: string,
   entry: string,
   rawPackageJson: RawPackageJson,
   babelPlugins: BabelPlugins,
-  envs: Record<string, string>,
-  tsconfigFile: string,
-  userRollupOptions: Omit<RollupOptions, 'output'>,
-  minify: boolean,
-  destDir: string,
-  alias: Array<IAlias>,
+  config: Config,
   es5 = true
 ): RollupOptions {
   return {
     input: entry,
-    external: Object.keys(rawPackageJson.peerDependencies || {}),
-    ...userRollupOptions,
+    external: getExternal(rawPackageJson, config.external),
+    ...config.rollupOptions,
     plugins: [
       resolve(),
       commonjs(),
       babel({ ...babelPlugins, babelHelpers: es5 ? 'runtime' : 'bundled' }),
-      replace({ ...envs, preventAssignment: true }),
+      replace({ ...config.envs, preventAssignment: true }),
       typescript({
-        tsconfig: tsconfigFile,
+        tsconfig: path.resolve(projectRoot, config.tsconfig),
         compilerOptions: {
           declaration: false
         }
@@ -49,11 +59,11 @@ export function getRollupOptions(
         include: ['**/*.png', '**/*.jpg', '**/*.jpeg', '**/*.gif', '**/*.svg'],
         fileName: 'static/media/[name].[hash:8].[ext]',
         publicPath: '/',
-        destDir: destDir
+        destDir: path.resolve(projectRoot, config.outputDir.umd!)
       }),
-      Alias({ entries: alias }),
-      minify && terser(),
-      ...((userRollupOptions.plugins as Plugin[]) || [])
+      Alias({ entries: config.alias }),
+      ...(config.minify ? [terser()] : []),
+      ...((config.rollupOptions.plugins as Plugin[]) || [])
     ]
   };
 }

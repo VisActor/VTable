@@ -9,5 +9,11 @@ module.exports = {
   umdOutputFilename: 'vtable',
   rollupOptions: {
     treeshake: true
-  }
+  },
+  globals: {
+    // '@visactor/vrender': 'VRender'
+  },
+  external: [
+    // '@visactor/vrender'
+  ]
 };

@@ -3,7 +3,9 @@ name: Pre-release CI
 on:
   push:
     branches:
-      - pre-release/*
+      - 'pre-release/[0-9]+.[0-9]+.[0-9]+-alpha.[0-9]+'
+      - 'pre-release/[0-9]+.[0-9]+.[0-9]+-beta.[0-9]+'
+      - 'pre-release/[0-9]+.[0-9]+.[0-9]+-rc.[0-9]+'
 
 jobs:
   build:
