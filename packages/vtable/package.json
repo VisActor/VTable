@@ -44,6 +44,7 @@
     "start": "vite ./vite",
     "prepublishOnly": "npm run build",
     "test": "jest",
+    "test-cov": "jest --coverage",
     "ci": "node github-ci.js"
   },
   "dependencies": {
