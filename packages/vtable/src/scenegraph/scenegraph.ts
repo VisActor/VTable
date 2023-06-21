@@ -777,6 +777,7 @@ export class Scenegraph {
 
     // 处理frame border
     this.createFrameBorder();
+    this.updateBorderSizeAndPosition();
 
     // 更新滚动条状态
     this.component.updateScrollBar();

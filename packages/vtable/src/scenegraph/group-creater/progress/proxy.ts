@@ -169,10 +169,11 @@ export class SceneProxy {
 
   createRowCellGroup(onceCount: number) {
     const endRow = Math.min(this.totalRow, this.currentRow + onceCount);
+    let maxHeight = 0;
     for (let col = this.bodyLeftCol; col <= this.bodyRightCol; col++) {
       const colGroup = this.table.scenegraph.getColGroup(col);
       const cellType = col < this.table.rowHeaderLevelCount ? 'rowHeader' : 'body';
-      createComplexColumn(
+      const { height } = createComplexColumn(
         colGroup,
         col,
         colGroup.attribute.width,
@@ -183,7 +184,9 @@ export class SceneProxy {
         this.table,
         cellType
       );
+      maxHeight = Math.max(maxHeight, height);
     }
+    this.table.scenegraph.bodyGroup.setAttribute('height', maxHeight);
 
     if (this.table.internalProps.autoRowHeight) {
       updateAutoRow(
@@ -198,6 +201,10 @@ export class SceneProxy {
     this.rowEnd = endRow;
     this.rowUpdatePos = this.rowEnd;
     this.referenceRow = Math.floor((endRow - this.rowStart) / 2);
+
+    // update container group size and border
+    this.table.scenegraph.updateContainer();
+    this.table.scenegraph.updateBorderSizeAndPosition();
   }
 
   async setY(y: number) {
