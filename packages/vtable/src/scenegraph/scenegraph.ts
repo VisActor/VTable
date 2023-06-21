@@ -33,11 +33,10 @@ import { createCellSelectBorder } from './select/create-select-border';
 import { moveSelectingRangeComponentsToSelectedRangeComponents } from './select/move-select-border';
 import { deleteAllSelectBorder, deleteLastSelectedRangeComponents } from './select/delete-select-border';
 import { handleTextStick } from './stick-text';
+import { emptyGroup } from './utils/empty-group';
 
 container.load(splitModule);
 
-export const emptyGroup = new Group({});
-emptyGroup.role = 'empty';
 /**
  * @description: 表格场景树，存储和管理表格全部的场景图元
  * @return {*}
