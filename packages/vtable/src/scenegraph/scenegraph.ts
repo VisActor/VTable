@@ -1,5 +1,6 @@
 import type { IStage, IRect, ITextCache } from '@visactor/vrender';
 import { createStage, createRect, IContainPointMode, container } from '@visactor/vrender';
+import { isArray, isString } from '@visactor/vutils';
 import type { CellType, ColumnIconOption, SortOrder } from '../ts-types';
 import { Group } from './graphic/group';
 import type { Icon } from './graphic/icon';
@@ -1362,11 +1363,17 @@ export class Scenegraph {
     //   return text.attribute.text as string;
     // }
     if (text) {
-      const textAttributeStr = (text.attribute.text as string[]).join('');
+      const textAttributeStr = isArray(text.attribute.text)
+        ? text.attribute.text.join('')
+        : (text.attribute.text as string);
       let cacheStr = '';
-      (text.cache as ITextCache).layoutData.lines.forEach((line: any) => {
-        cacheStr += line.str;
-      });
+      if (isString(text.cache.clipedText)) {
+        cacheStr = text.cache.clipedText;
+      } else {
+        (text.cache as ITextCache).layoutData.lines.forEach((line: any) => {
+          cacheStr += line.str;
+        });
+      }
       if (cacheStr !== textAttributeStr) {
         return textAttributeStr;
       }
