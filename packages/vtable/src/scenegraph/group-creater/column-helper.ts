@@ -104,10 +104,11 @@ export function createComplexColumn(
       }
     );
   }
+  // insert cell into column group top
   let y = 0;
-  if ((columnGroup.lastChild as Group)?.attribute) {
-    // 支持插入单元格
-    y = (columnGroup.lastChild as Group).attribute.y + (columnGroup.lastChild as Group).attribute.height;
+  if (columnGroup.colHeight) {
+    // insert cell into column group bottom
+    y = columnGroup.colHeight;
   }
 
   for (let j = rowStart; j <= rowEnd; j++) {
@@ -189,6 +190,7 @@ export function createComplexColumn(
       cellGroup.mergeCol = range.start.col;
       cellGroup.mergeRow = range.start.row;
       columnGroup.addChild(cellGroup);
+      columnGroup.updateColumnRowNumber(row);
       range = table.getCellRange(col, row);
       y += mergeResult.cellHeight / (range.end.row - range.start.row + 1);
       maxWidth = Math.max(maxWidth, mergeResult.cellWidth);
@@ -224,7 +226,9 @@ export function createComplexColumn(
             cellTheme
           )
         );
+        columnGroup.updateColumnRowNumber(row);
         const height = table.getRowHeight(row);
+        columnGroup.updateColumnHeight(height);
         y += isMerge ? height / (range.end.row - range.start.row + 1) : height;
       } else {
         const cellGroup = createCell(
@@ -250,7 +254,9 @@ export function createComplexColumn(
           range,
           cellTheme
         );
+        columnGroup.updateColumnRowNumber(row);
         const height = cellGroup.attribute.height;
+        columnGroup.updateColumnHeight(height);
         y += isMerge ? height / (range.end.row - range.start.row + 1) : height;
       }
     }

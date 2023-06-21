@@ -40,17 +40,17 @@ export function createTable() {
   const dataSource = new VTable.data.CachedDataSource({
     get(index) {
       // 每一批次请求100条数据 0-99 100-199 200-299
-      const loadStartIndex = Math.floor(index / 10) * 10;
+      const loadStartIndex = Math.floor(index / 100) * 100;
       // 判断是否已请求过？
       if (!loadedData[loadStartIndex]) {
-        const promiseObject = getRecordsWithAjax(loadStartIndex, 10); // return Promise Object
+        const promiseObject = getRecordsWithAjax(loadStartIndex, 100); // return Promise Object
         loadedData[loadStartIndex] = promiseObject;
       }
       return loadedData[loadStartIndex].then((data: any) => {
         return data[index - loadStartIndex]; //获取批次数据列表中的index对应数据
       });
     },
-    length: 100 //all records count
+    length: 10000 //all records count
   });
 
   const columns: VTable.ColumnsDefine = [

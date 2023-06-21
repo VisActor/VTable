@@ -120,7 +120,7 @@ export class SceneProxy {
       this.rowUpdatePos = this.rowEnd;
       this.referenceRow = Math.floor((this.rowEnd - this.rowStart) / 2);
     } else {
-      this.currentRow = (bodyGroup.firstChild.lastChild as Group)?.row ?? this.totalRow;
+      this.currentRow = (bodyGroup.firstChild as Group)?.rowNumber ?? this.totalRow;
       this.rowEnd = this.currentRow;
       this.rowUpdatePos = this.rowEnd;
       this.referenceRow = Math.floor((this.rowEnd - this.rowStart) / 2);
