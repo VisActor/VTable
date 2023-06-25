@@ -234,6 +234,23 @@ export const menus = [
     ]
   },
   {
+    menu: '业务方',
+    children: [
+      {
+        path: 'business',
+        name: 'one'
+      },
+      {
+        path: 'business',
+        name: 'two'
+      },
+      {
+        path: 'business',
+        name: 'three'
+      }
+    ]
+  },
+  {
     menu: '测试用例',
     children: [
       {
