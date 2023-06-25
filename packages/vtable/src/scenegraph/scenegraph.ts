@@ -535,7 +535,7 @@ export class Scenegraph {
           width: icon.backgroundWidth,
           height: icon.backgroundHeight,
           fill: icon.attribute.backgroundColor,
-          borderRadius: 5,
+          cornerRadius: 5,
           visible: true
         });
       } else {
@@ -545,7 +545,7 @@ export class Scenegraph {
           width: icon.backgroundWidth,
           height: icon.backgroundHeight,
           fill: icon.attribute.backgroundColor,
-          borderRadius: 5,
+          cornerRadius: 5,
           pickable: false,
           visible: true
         }) as IRect;

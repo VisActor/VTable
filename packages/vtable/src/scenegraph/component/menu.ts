@@ -57,7 +57,7 @@ export class MenuHandler {
       // visible: false,
       fill: menuStyle.bgColor,
       stroke: menuStyle.borderColor,
-      borderRadius: menuStyle.cornerRadius,
+      cornerRadius: menuStyle.cornerRadius,
       lineWidth: menuStyle.borderWidth
     });
     this._menuInfo = {

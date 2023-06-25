@@ -74,8 +74,8 @@ export function createFrameBorder(
   }
 
   if (cornerRadius) {
-    rectAttributes.borderRadius = cornerRadius;
-    groupAttributes.borderRadius = cornerRadius;
+    rectAttributes.cornerRadius = cornerRadius;
+    groupAttributes.cornerRadius = cornerRadius;
   }
 
   const borderTop = (rectAttributes as any).strokeArrayWidth

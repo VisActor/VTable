@@ -67,10 +67,12 @@ export function dealWithCustom(
       table
     };
     const customRenderObj = customRender(arg);
-    customElements = customRenderObj.elements;
-    renderDefault = customRenderObj.renderDefault;
-    expectedWidth = customRenderObj.expectedWidth;
-    expectedHeight = customRenderObj.expectedHeight;
+    if (customRenderObj) {
+      customElements = customRenderObj.elements;
+      renderDefault = customRenderObj.renderDefault;
+      expectedWidth = customRenderObj.expectedWidth;
+      expectedHeight = customRenderObj.expectedHeight;
+    }
   } else if (customRender) {
     expectedWidth = customRender.expectedWidth;
     expectedHeight = customRender.expectedHeight;
@@ -142,7 +144,7 @@ function adjustElementToGroup(
             dy: (element.dy ?? 0) as number,
             width: element.width + expandX * 2,
             height: element.height + expandY * 2,
-            borderRadius: element.background?.cornerRadius ?? 0,
+            cornerRadius: element.background?.cornerRadius ?? 0,
             // fill: true,
             fill: element.background?.fill ?? '#888'
           });
@@ -166,7 +168,7 @@ function adjustElementToGroup(
           dy: (element.dy ?? 0) as number,
           width: element.width as number,
           height: element.height as number,
-          borderRadius: element.radius as number,
+          cornerRadius: element.radius as number,
           fill: element.fill as string,
           stroke: element.stroke as string,
           pickable: !!element.clickable,
