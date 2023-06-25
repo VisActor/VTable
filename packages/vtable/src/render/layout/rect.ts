@@ -5,7 +5,7 @@ type RectOptions = {
   width: number;
   height: number;
   lineWidth?: number;
-  borderRadius?: number;
+  cornerRadius?: number;
   fill?: string | boolean;
   stroke?: string | boolean;
 } & ElementOptions;
@@ -15,7 +15,7 @@ export class Rect extends BaseElement {
   declare width: number;
   declare height: number;
   lineWidth: number;
-  borderRadius: number;
+  cornerRadius: number;
   radius: number;
   fill: string | boolean;
   stroke: string | boolean;
@@ -25,8 +25,8 @@ export class Rect extends BaseElement {
     this.width = options.width;
     this.height = options.height;
     this.lineWidth = options.lineWidth || 0;
-    this.borderRadius = options.borderRadius || 0;
-    this.radius = this.borderRadius;
+    this.cornerRadius = options.cornerRadius || 0;
+    this.radius = this.cornerRadius;
     this.fill = options.fill || '#777';
     this.stroke = options.stroke || undefined;
 

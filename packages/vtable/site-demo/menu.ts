@@ -34,6 +34,10 @@ export const menus = [
       },
       {
         path: 'cell-type',
+        name: 'progressbar'
+      },
+      {
+        path: 'cell-type',
         name: 'chart'
       }
     ]
@@ -132,6 +136,14 @@ export const menus = [
       {
         path: 'custom-render',
         name: 'custom-icon'
+      },
+      {
+        path: 'custom-render',
+        name: 'custom-render'
+      },
+      {
+        path: 'custom-render',
+        name: 'custom-render-global'
       },
       {
         path: 'custom-render',

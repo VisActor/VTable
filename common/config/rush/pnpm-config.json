@@ -83,7 +83,7 @@
    * PNPM documentation: https://pnpm.io/package_json#pnpmoverrides
    */
   "globalOverrides": {
-    "@visactor/vrender": "0.10.0-alpha.1"
+    "@visactor/vrender": "0.11.0-alpha.1"
   },
   /**
    * The `globalPeerDependencyRules` setting provides various settings for suppressing validation errors

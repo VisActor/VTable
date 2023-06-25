@@ -171,7 +171,7 @@ VTable.register.icon('message',{
           fill: 'rgb(51, 101, 238)',
           background: {
             fill: '#f4f4f2',
-            borderRadius: 5,
+            cornerRadius: 5,
             expandX: 5,
             expandY: 5,
           },

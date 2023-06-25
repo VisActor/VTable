@@ -279,7 +279,7 @@ export function createTable() {
     // theme: VTable.themes.DEFAULT,
     theme: VTable.themes.DEFAULT.extends({
       frameStyle: {
-        roundCornerRadius: 10,
+        cornerRadius: 10,
         shadowBlur: 5,
         shadowOffsetX: 0,
         shadowOffsetY: 0,

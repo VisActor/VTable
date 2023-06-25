@@ -59,7 +59,7 @@ export default {
     borderColor: '#E1E4E8',
     borderLineWidth: 1,
     borderLineDash: [],
-    roundCornerRadius: 0,
+    cornerRadius: 0,
     shadowBlur: 0,
     shadowOffsetX: 0,
     shadowOffsetY: 0,
