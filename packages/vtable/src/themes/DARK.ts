@@ -83,7 +83,7 @@ export default {
     borderColor: '#d1d5da',
     borderLineWidth: 1,
     borderLineDash: [],
-    roundCornerRadius: 10,
+    cornerRadius: 10,
     shadowBlur: 6,
     shadowOffsetX: 0,
     shadowOffsetY: 0,

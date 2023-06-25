@@ -395,24 +395,26 @@ export function createProgressBarCell(
       const barSize = Math.min(barMaxWidth * percentile, barMaxWidth);
       const barTop = bottom - barPaddingBottom - (barHeight as number) - (barBottom as number) - 1; /*罫線*/
       const barLeft = barRightToLeft ? right - barPaddingRight - barSize : left + barPaddingLeft;
-      const barBgFillColor =
-        getOrApply(barBgColor as any, {
-          col,
-          row,
-          table,
-          context: null,
-          value,
-          dataValue,
-          percentile
-        }) || '#f0f3f5';
-      const barBg = createRect({
-        x: barLeft,
-        y: barTop,
-        width: barMaxWidth,
-        height: barHeight,
-        fill: barBgFillColor
+
+      const bgFillColor = getOrApply(barBgColor as any, {
+        col,
+        row,
+        table,
+        context: null,
+        value,
+        dataValue,
+        percentile
       });
-      percentCompleteBarGroup.addChild(barBg);
+      if (bgFillColor) {
+        const barBack = createRect({
+          x: barLeft,
+          y: barTop,
+          width: barMaxWidth,
+          height: barHeight,
+          fill: bgFillColor
+        });
+        percentCompleteBarGroup.addChild(barBack);
+      }
 
       // 绘制bar
       const barRect = {

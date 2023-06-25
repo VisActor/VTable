@@ -27,7 +27,7 @@ const menuStyle = {
   hoverBgColor: '#EEE',
   lineHeight: 12 + 9 + 9,
   bgColor: '#FFF',
-  borderRadius: 4,
+  cornerRadius: 4,
   borderWidth: 0.5,
   borderColor: '#CCC',
   menuPadding: 6,
@@ -57,7 +57,7 @@ export class MenuHandler {
       // visible: false,
       fill: menuStyle.bgColor,
       stroke: menuStyle.borderColor,
-      borderRadius: menuStyle.borderRadius,
+      cornerRadius: menuStyle.cornerRadius,
       lineWidth: menuStyle.borderWidth
     });
     this._menuInfo = {

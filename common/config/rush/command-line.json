@@ -12,7 +12,7 @@
     {
       "name": "build",
       "summary": "",
-      "enableParallelism": true,
+      "enableParallelism": false,
       "commandKind": "bulk",
       "ignoreMissingScript": true,
       "allowWarningsInSuccessfulBuild": true
@@ -76,8 +76,8 @@
       "shellCommand": "ts-node common/autoinstallers/create/src/cli.ts"
     },
     {
-      "commandKind": "global",
       "name": "start",
+      "commandKind": "global",
       "summary": "Start the development server",
       "description": "Run this command to start vtable development server",
       "shellCommand": "rush run -p @visactor/vtable -s start"
@@ -87,7 +87,7 @@
       "commandKind": "global",
       "autoinstallerName": "run-script",
       "summary": "Run rush change width lint",
-      "description": "Run this command to start VGrammar development server",
+      "description": "Run this command to start VTable development server",
       "safeForSimultaneousRushProcesses": true,
       "shellCommand": "ts-node common/autoinstallers/lint/change-all.ts"
     }
@@ -144,7 +144,17 @@
         "change-all"
       ],
       "argumentName": "MESSAGE",
-      "required": true
+      "required": false
+    },
+    {
+      "parameterKind": "flag",
+      "longName": "--not-commit",
+      "shortName": "-n",
+      "description": "not commit after run rush change",
+      "associatedCommands": [
+        "change-all"
+      ],
+      "required": false
     },
     {
       "parameterKind": "choice",

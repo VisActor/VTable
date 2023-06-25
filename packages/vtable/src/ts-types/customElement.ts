@@ -46,7 +46,7 @@ export interface TextElement extends baseElement {
     fill?: string;
     expandY?: number;
     expandX?: number;
-    borderRadius?: number;
+    cornerRadius?: number;
   };
 }
 
