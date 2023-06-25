@@ -40,14 +40,9 @@ export function createCellGroup(
   textAlign: CanvasTextAlign,
   textBaseline: CanvasTextBaseline,
   mayHaveIcon: boolean,
-  isfunctionalProps: boolean,
   renderDefault: boolean,
-  cellTheme?: IThemeSpec
+  cellTheme: IThemeSpec
 ): Group {
-  // 处理函数样式
-  if (isfunctionalProps) {
-    cellTheme = getCellTheme(table, col, row, cellTheme);
-  }
   const headerStyle = table._getCellStyle(col, row); // to be fixed
   const functionalPadding = getFunctionalProp('padding', headerStyle, col, row, table);
   if (isValid(functionalPadding)) {
@@ -132,65 +127,65 @@ export function createCellGroup(
   return cellGroup;
 }
 
-/**
- * @description: 获取函数式赋值的样式，记录在cellTheme中
- * @param {BaseTableAPI} table
- * @param {number} col
- * @param {number} row
- * @param {IThemeSpec} cellTheme
- * @return {IThemeSpec | undefined}
- */
-export function getCellTheme(
-  table: BaseTableAPI,
-  col: number,
-  row: number,
-  cellTheme?: IThemeSpec
-): IThemeSpec | undefined {
-  // get column header style
-  const headerStyle = table._getCellStyle(col, row);
+// /**
+//  * @description: 获取函数式赋值的样式，记录在cellTheme中
+//  * @param {BaseTableAPI} table
+//  * @param {number} col
+//  * @param {number} row
+//  * @param {IThemeSpec} cellTheme
+//  * @return {IThemeSpec | undefined}
+//  */
+// export function getCellTheme(
+//   table: BaseTableAPI,
+//   col: number,
+//   row: number,
+//   cellTheme?: IThemeSpec
+// ): IThemeSpec | undefined {
+//   // get column header style
+//   const headerStyle = table._getCellStyle(col, row);
 
-  const theme = getStyleTheme(headerStyle, table, col, row, getFunctionalProp).theme;
+//   const theme = getStyleTheme(headerStyle, table, col, row, getFunctionalProp).theme;
 
-  for (const prop in theme.group) {
-    if (isValid(theme.group[prop])) {
-      if (!cellTheme) {
-        cellTheme = {};
-      }
+//   for (const prop in theme.group) {
+//     if (isValid(theme.group[prop])) {
+//       if (!cellTheme) {
+//         cellTheme = {};
+//       }
 
-      if (!cellTheme.group) {
-        cellTheme.group = {};
-      }
+//       if (!cellTheme.group) {
+//         cellTheme.group = {};
+//       }
 
-      cellTheme.group[prop] = theme.group[prop];
-    }
-  }
+//       cellTheme.group[prop] = theme.group[prop];
+//     }
+//   }
 
-  for (const prop in theme.text) {
-    if (isValid(theme.text[prop])) {
-      if (!cellTheme) {
-        cellTheme = {};
-      }
+//   for (const prop in theme.text) {
+//     if (isValid(theme.text[prop])) {
+//       if (!cellTheme) {
+//         cellTheme = {};
+//       }
 
-      if (!cellTheme.text) {
-        cellTheme.text = {};
-      }
+//       if (!cellTheme.text) {
+//         cellTheme.text = {};
+//       }
 
-      cellTheme.text[prop] = theme.text[prop];
-    }
-  }
+//       cellTheme.text[prop] = theme.text[prop];
+//     }
+//   }
 
-  for (const prop in theme._vtable) {
-    if (isValid(theme._vtable[prop])) {
-      if (!cellTheme) {
-        cellTheme = {};
-      }
+//   for (const prop in theme._vtable) {
+//     if (isValid(theme._vtable[prop])) {
+//       if (!cellTheme) {
+//         cellTheme = {};
+//       }
 
-      if (!(cellTheme as any)._vtable) {
-        (cellTheme as any)._vtable = {};
-      }
+//       if (!(cellTheme as any)._vtable) {
+//         (cellTheme as any)._vtable = {};
+//       }
 
-      (cellTheme as any)._vtable[prop] = theme._vtable[prop];
-    }
-  }
-  return cellTheme;
-}
+//       (cellTheme as any)._vtable[prop] = theme._vtable[prop];
+//     }
+//   }
+//   return cellTheme;
+// }

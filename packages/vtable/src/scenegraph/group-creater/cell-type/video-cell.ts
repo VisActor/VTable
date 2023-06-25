@@ -9,7 +9,6 @@ import { calcStartPosition } from '../../utils/cell-pos';
 import { _adjustWidthHeight } from './image-cell';
 import { getFunctionalProp, getProp } from '../../utils/get-prop';
 import { isValid } from '../../../tools/util';
-import { getCellTheme } from './text-cell';
 import type { BaseTableAPI } from '../../../ts-types/base-table';
 
 const regedIcons = icons.get();
@@ -28,9 +27,8 @@ export function createVideoCellGroup(
   textAlign: CanvasTextAlign,
   textBaseline: CanvasTextBaseline,
   table: BaseTableAPI,
-  cellTheme?: IThemeSpec
+  cellTheme: IThemeSpec
 ) {
-  cellTheme = getCellTheme(table, col, row, cellTheme);
   const headerStyle = table._getCellStyle(col, row); // to be fixed
   const functionalPadding = getFunctionalProp('padding', headerStyle, col, row, table);
   // const margin = getProp('padding', headerStyle, col, row, table);

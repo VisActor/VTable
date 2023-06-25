@@ -9,7 +9,6 @@ import { calcKeepAspectRatioSize } from '../../utils/keep-aspect-ratio';
 import { calcStartPosition } from '../../utils/cell-pos';
 import type { Scenegraph } from '../../scenegraph';
 import { getProp, getFunctionalProp } from '../../utils/get-prop';
-import { getCellTheme } from './text-cell';
 import { isValid } from '../../../tools/util';
 import { getPadding } from '../../utils/padding';
 
@@ -29,9 +28,8 @@ export function createImageCellGroup(
   textAlign: CanvasTextAlign,
   textBaseline: CanvasTextBaseline,
   table: BaseTableAPI,
-  cellTheme?: IThemeSpec
+  cellTheme: IThemeSpec
 ) {
-  cellTheme = getCellTheme(table, col, row, cellTheme);
   const headerStyle = table._getCellStyle(col, row); // to be fixed
   const functionalPadding = getFunctionalProp('padding', headerStyle, col, row, table);
   // const margin = getProp('padding', headerStyle, col, row, table);
