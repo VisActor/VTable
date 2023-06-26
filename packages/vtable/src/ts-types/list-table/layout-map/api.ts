@@ -62,7 +62,7 @@ export interface HeaderData extends WidthData {
   headerType: 'text' | 'link' | 'image' | 'video'; // headerType.BaseHeader;
   define: ColumnDefine;
   // sortIconPosition?: RectProps;
-  // pinIconPosition?: RectProps;
+  // freezeIconPosition?: RectProps;
   /**存储图标的位置 坐标及宽高 是包括了boxWidth boxWidth 共getHitIcon方法使用 计算是否命中图标*/
   // iconPositionList?: { [key in IconFuncTypeEnum]?: RectProps & { icon: ColumnIconOption } };
   dropDownMenu?: MenuListItem[];

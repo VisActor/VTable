@@ -83,6 +83,36 @@ const option = {
   defaultRowHeight:250,
   defaultHeaderRowHeight:50,
   indicators: [
+    {
+        indicatorKey: 'lineChart',
+        caption: '销售额走势',
+        headerStyle: {
+          color: 'blue',
+          // bgColor: 'yellow',
+        },
+        columnType: 'chart',
+        chartType: 'vchart',
+        width: 320,
+        chartSpec: {
+          type: 'common',
+          series: [
+            {
+              type: 'line',
+              data: {
+                id: 'data',
+              },
+              xField: 'x',
+              yField: 'y',
+              seriesField: 'type',
+            },
+          ],
+          axes: [
+            { orient: 'left', range: { min: 0 } },
+            { orient: 'bottom', label: { visible: true }, type: 'band' },
+          ],
+
+        },
+    },
       {
         indicatorKey: 'areaChart',
         caption: '利润走势',
@@ -106,8 +136,7 @@ const option = {
               point: {
                 style: {
                   fillOpacity: 1,
-                  stroke: '#000',
-                  strokeWidth: 4,
+                  strokeWidth: 0,
                 },
                 state: {
                   hover: {
@@ -146,73 +175,6 @@ const option = {
                   },
                 },
               },
-            },
-          ],
-          axes: [
-            { orient: 'left', range: { min: 0 } },
-            { orient: 'bottom', label: { visible: true }, type: 'band' },
-          ],
-          legends: [
-            {
-              visible: true,
-              orient: 'bottom',
-            },
-          ],
-        },
-      },
-      {
-        indicatorKey: 'lineChart',
-        caption: '销售额走势',
-        headerStyle: {
-          color: 'blue',
-          // bgColor: 'yellow',
-        },
-        columnType: 'chart',
-        chartType: 'vchart',
-        width: 320,
-        chartSpec: {
-          type: 'common',
-          series: [
-            {
-              type: 'line',
-              data: {
-                id: 'data',
-              },
-              xField: 'x',
-              yField: 'y',
-              seriesField: 'type',
-              line: {
-                state: {
-                  hover: {
-                    strokeWidth: 4,
-                  },
-                  selected: {
-                    stroke: 'red',
-                  },
-                  hover_reverse: {
-                    stroke: '#ddd',
-                  },
-                },
-              },
-              point: {
-                state: {
-                  hover: {
-                    fill: 'red',
-                  },
-                  selected: {
-                    fill: 'yellow',
-                  },
-                  hover_reverse: {
-                    fill: '#ddd',
-                  },
-                },
-              },
-              legends: [
-                {
-                  visible: true,
-                  orient: 'bottom',
-                },
-              ],
             },
           ],
           axes: [

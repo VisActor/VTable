@@ -104,6 +104,8 @@ export interface Config {
   preTasks: Record<string, (config: Config, projectRoot: string, rawPackageJson: RawPackageJson) => Promise<unknown>>;
   // 构建后执行的任务列表
   postTasks: Record<string, (config: Config, projectRoot: string, rawPackageJson: RawPackageJson) => Promise<unknown>>;
+  // 全局变量的名称
+  globals: Record<string, string>;
 }
 
 export const DEFAULT_CONFIG_FILE = 'bundler.config.js';
@@ -139,7 +141,8 @@ export function getDefaultConfig(): Config {
     alias: [],
     rollupOptions: {},
     preTasks: {},
-    postTasks: {}
+    postTasks: {},
+    globals: {}
   };
 }
 

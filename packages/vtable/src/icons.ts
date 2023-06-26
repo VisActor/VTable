@@ -77,7 +77,7 @@ const builtins = {
     };
   },
 
-  get pin(): SvgIcon {
+  get freeze(): SvgIcon {
     return {
       type: 'svg',
       svg:
@@ -93,8 +93,8 @@ const builtins = {
         '</svg>',
       width: 22,
       height: 22,
-      name: 'pin',
-      funcType: IconFuncTypeEnum.pin,
+      name: 'freeze',
+      funcType: IconFuncTypeEnum.frozen,
       positionType: IconPosition.right,
       marginRight: 0,
       hover: {
@@ -105,7 +105,7 @@ const builtins = {
       cursor: 'pointer'
     };
   },
-  get pined(): SvgIcon {
+  get frozen(): SvgIcon {
     return {
       type: 'svg',
       svg:
@@ -114,8 +114,8 @@ const builtins = {
         '</svg>',
       width: 22,
       height: 22,
-      name: 'pined',
-      funcType: IconFuncTypeEnum.pin,
+      name: 'frozen',
+      funcType: IconFuncTypeEnum.frozen,
       positionType: IconPosition.right,
       marginRight: 0,
       hover: {
@@ -126,7 +126,7 @@ const builtins = {
       cursor: 'pointer'
     };
   },
-  get pinedCurrent(): SvgIcon {
+  get frozenCurrent(): SvgIcon {
     return {
       type: 'svg',
       svg:
@@ -135,9 +135,9 @@ const builtins = {
         '</svg>',
       width: 22,
       height: 22,
-      funcType: IconFuncTypeEnum.pin,
+      funcType: IconFuncTypeEnum.frozen,
       positionType: IconPosition.right,
-      name: 'pinedCurrent',
+      name: 'frozenCurrent',
       marginRight: 0,
       // marginLeft: 6,
       hover: {

@@ -10,12 +10,12 @@
 
 <div align="center">
 
-VTable is not just a high-performance multidimensional data analysis table, but also a grid artist that creates art between rows and columns.
+VTable，不只是一款高性能的多维数据分析表格，更是一个在行列间创作的方格艺术家。
 
 <p align="center">
-  <a href="">Introduction</a> •
+  <a href="">简介</a> •
   <a href="">demo</a> •
-  <a href="">Tutorial</a> •
+  <a href="">教程</a> •
   <a href="">API</a>•
 </p>
 
@@ -29,7 +29,7 @@ VTable is not just a high-performance multidimensional data analysis table, but 
 
 <div align="center">
 
-English| [简体中文](./README.zh-CN.md)
+[English](./README.md) | 简体中文
 
 </div>
 
@@ -39,26 +39,24 @@ English| [简体中文](./README.zh-CN.md)
 
 </div>
 
-# Introduction
+# 简介
 
-VTable is based on visual rendering engine [VRender](https://github.com/VisActor/VRender). 
+VTable 是 VisActor 可视化体系中的表格组件库，基于可视化渲染引擎 [VRender](https://github.com/VisActor/VRender) 进行封装。
+核心能力如下：
+1. 性能极致：支持百万级数据快速运算与渲染
+2. 多维分析：多维数据自动分析与呈现
+3. 表现力强：提供灵活强大的图形能力，无缝融合[VChart](https://github.com/VisActor/VChart)
 
-The core capabilities are as follows:
+# 仓库简介
 
-1. Extreme performance: Supports fast computation and rendering of millions of data points.
-2. Multidimensional analysis: Automatically analyzes and presents multidimensional data.
-3. Strong expressiveness: Provides flexible and powerful graphic capabilities, seamlessly integrating with charts of [VChart](https://github.com/VisActor/VChart).
+本仓库包含如下 package
 
-# Repo Intro
+1. vtable 表格组件
+2. vtable-docs: 教程文档
 
-This repository includes the following packages:
+# Usage使用
 
-1. vtable: VTable components
-2. vtable-docs: VTable documentation
-
-# Usage
-
-## Installation
+## 安装
 
 [npm package](https://www.npmjs.com/package/@visactor/vtable)
 
@@ -70,7 +68,7 @@ npm install @visactor/vtable
 yarn add @visactor/vtable
 ```
 
-## Quick Start
+## 快速上手
 
 ```javascript
 import * as VTable from '@visactor/vtable';
@@ -122,33 +120,30 @@ const option = {
 };
 const tableInstance = new VTable.ListTable(option);
 
-
-
-
 ```
 
 ##
 
-[More demos and detailed tutorials](https://visactor.io/vtable)
+[更多 demo 和详细教程](https://visactor.io/vtable)
 
-# Related Links
+# 相关链接
 
-- [Official website](https://visactor.io/vtable)
+- [官网](https://visactor.io/vtable)
 
-# Ecosystem
+# 生态
 
-| Project                                                     | Description                                                                            |
-| ----------------------------------------------------------- | -------------------------------------------------------------------------------------- |
-| [AI-generated Components](https://visactor.io/ai-vtable)    | AI-generated table component.                                                          |
+| 项目                                             | 介绍                                                                      |
+| ------------------------------------------------ | ------------------------------------------------------------------------- |
+| [智能生成组件](https://visactor.io/ai-vtable)    | 基于 AI 的智能表格生成组件                                                |                                                        |
 
-# Contribution
+# 参与贡献
 
-If you would like to contribute, please read the [Code of Conduct ](./CODE_OF_CONDUCT.md) 和 [ Guide](./CONTRIBUTING.zh-CN.md) first。
+如想参与贡献，请先阅读 [行为准则](./CODE_OF_CONDUCT.md) 和 [贡献指南](./CONTRIBUTING.zh-CN.md)。
 
-Small streams converge to make great rivers and seas!
+细流成河，终成大海！
 
 <a href="https://github.com/visactor/vtable/graphs/contributors"><img src="https://contrib.rocks/image?repo=visactor/vtable" /></a>
 
-# License
+# 许可证
 
-[MIT License](./LICENSE)
+[MIT 协议](./LICENSE)

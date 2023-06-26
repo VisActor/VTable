@@ -111,7 +111,7 @@ export function createTable() {
         mergeCell: true
       }
     ],
-    showPin: true, //显示VTable内置冻结列图标
+    showFrozenIcon: true, //显示VTable内置冻结列图标
     widthMode: 'standard',
     allowFrozenColCount: 2
   };

@@ -18,9 +18,9 @@ cover:
 'sort_upward',
 'sort_downward',
 'sort_normal',
-'pin',
-'pined',
-'pinedCurrent',
+'frozen',
+'frozen',
+'frozenCurrent',
 'dropdownIcon',
 'dropdownIcon_hover',
 'expand',
@@ -30,14 +30,14 @@ cover:
 
 ```ts
 
-VTable.register.icon('pined',{
+VTable.register.icon('frozen',{
       type: 'svg',
       svg:
-       'http://' + window.location.host + "/mock-data/pined.svg",
+       'http://' + window.location.host + "/mock-data/frozen.svg",
       width: 22,
       height: 22,
-      name: 'pined',
-      funcType: VTable.TYPES.IconFuncTypeEnum.pin,
+      name: 'frozen',
+      funcType: VTable.TYPES.IconFuncTypeEnum.frozen,
       positionType: VTable.TYPES.IconPosition.right,
       marginRight: 0,
       hover: {
@@ -48,14 +48,14 @@ VTable.register.icon('pined',{
       cursor: 'pointer',
     }
   );
-  VTable.register.icon('pinedCurrent',{
+  VTable.register.icon('frozenCurrent',{
       type: 'svg',
       svg:
-        'http://' + window.location.host + "/mock-data/pinedCurrent.svg",
+        'http://' + window.location.host + "/mock-data/frozenCurrent.svg",
       width: 22,
       height: 22,
-      name: 'pinedCurrent',
-      funcType: VTable.TYPES.IconFuncTypeEnum.pin,
+      name: 'frozenCurrent',
+      funcType: VTable.TYPES.IconFuncTypeEnum.frozen,
       positionType: VTable.TYPES.IconPosition.right,
       marginRight: 0,
       hover: {
@@ -68,14 +68,14 @@ VTable.register.icon('pined',{
   );
 
 
-VTable.register.icon('pin',{
+VTable.register.icon('frozen',{
       type: 'svg',
       svg:
-        'http://' + window.location.host + "/mock-data/pin.svg",
+        'http://' + window.location.host + "/mock-data/frozen.svg",
       width: 22,
       height: 22,
-      name: 'pin',
-      funcType: VTable.TYPES.IconFuncTypeEnum.pin,
+      name: 'frozen',
+      funcType: VTable.TYPES.IconFuncTypeEnum.frozen,
       positionType: VTable.TYPES.IconPosition.right,
       marginRight: 0,
       hover: {

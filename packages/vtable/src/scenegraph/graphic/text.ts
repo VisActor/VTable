@@ -29,7 +29,7 @@ export class WrapText extends Text {
    * 计算单行文字的bounds，可以缓存长度以及截取的文字
    * @param text
    */
-  updateSingallineAABBBounds(text: number | string): Bounds {
+  updateSingallineAABBBounds(text: number | string) {
     const textTheme = getTheme(this).text;
     // const textMeasure = graphicUtil.textMeasure;
     let width: number;

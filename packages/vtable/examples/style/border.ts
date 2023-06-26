@@ -231,7 +231,7 @@ export function createTable() {
           svg: `<svg t="1669210764476" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="9160" width="200" height="200"><path d="M512.5 214c39.6 0 71.7-32.1 71.7-71.7s-32.1-71.7-71.7-71.7-71.7 32.1-71.7 71.7 32.1 71.7 71.7 71.7zM501.9 668.7v250.8c0 45.1-67.6 45.1-67.6 0V668.7h-89.6l95.9-332.6h-15.1l-56.5 190c-13.4 41.4-70.3 24.4-57.3-20l62.7-206.4c6.7-23.5 36.5-65.3 88-65.3H561c51.1 0 81 42.1 88.7 65.3l62.7 206.2c12.5 44.3-43.9 62.7-57.3 19.5l-56.4-189.3h-16.3l96.9 332.6h-90v251.2c0 44.8-67.3 44.6-67.3 0V668.7h-20.1z" p-id="9161"></path></svg>`,
           width: 22,
           height: 22,
-          // funcType: VTable.TYPES.IconFuncTypeEnum.sort,//对应内部特定功能的图标，目前有sort pin expand等
+          // funcType: VTable.TYPES.IconFuncTypeEnum.sort,//对应内部特定功能的图标，目前有sort frozen expand等
           name: 'woman', //定义图标的名称，在内部会作为缓存的key值
           positionType: VTable.TYPES.IconPosition.contentRight, // 指定位置，可以在文本的前后，或者在绝对定位在单元格的左侧右侧
           marginLeft: 0, // 左侧内容间隔 在特定位置position中起作用
@@ -279,7 +279,7 @@ export function createTable() {
     // theme: VTable.themes.DEFAULT,
     theme: VTable.themes.DEFAULT.extends({
       frameStyle: {
-        roundCornerRadius: 10,
+        cornerRadius: 10,
         shadowBlur: 5,
         shadowOffsetX: 0,
         shadowOffsetY: 0,
@@ -301,7 +301,7 @@ export function createTable() {
         }
       }
     }),
-    showPin: true, //显示VTable内置冻结列图标
+    showFrozenIcon: true, //显示VTable内置冻结列图标
     padding: { top: 10, bottom: 10, left: 10, right: 20 }, //整体表格的内边距 与parentElement的定位
     hover: {
       highlightMode: 'cross',

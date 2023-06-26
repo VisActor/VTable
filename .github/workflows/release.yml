@@ -3,7 +3,7 @@ name: Release CI
 on:
   push:
     branches:
-      - release/*
+      - 'release/[0-9]+.[0-9]+.[0-9]+'
 
 jobs:
   build:
@@ -34,13 +34,19 @@ jobs:
       - name: Install rush
         run: node common/scripts/install-run-rush.js install --bypass-policy
 
+      - name: Update version
+        run: node common/scripts/install-run-rush.js version --bump
+
       - name: Build packages
         env:
           NODE_OPTIONS: "--max_old_space_size=4096"
         run: node common/scripts/install-run-rush.js build --only tag:package
 
-      - name: Update version
-        run: node common/scripts/install-run-rush.js version --bump
+      - name: Run Bugserver
+        working-directory: ./packages/vtable
+        env:
+          BUG_SERVER_TOKEN: ${{ secrets.BUG_SERVER_TOKEN }}
+        run: node ../../common/scripts/install-run-rushx.js ci
 
       - name: Publish to npm
         env:
@@ -64,6 +70,12 @@ jobs:
           message: 'build: prelease version ${{ steps.package-version.outputs.current_version }}'
           branch: ${{ github.ref_name }}
 
+      - name: Collect changelog of rush
+        uses: xile611/collect-rush-changlog@main
+        id: changelog
+        with:
+          version: ${{ steps.package-version.outputs.current_version }}
+
       - name: Create Release for Tag
         id: release_tag
         uses: ncipollo/release-action@v1.12.0
@@ -73,6 +85,8 @@ jobs:
           tag: v${{ steps.package-version.outputs.current_version }}
           commit: main
           prerelease: false
+          body: |
+            ${{ steps.changelog.outputs.markdown }}
           draft: true #
 
       - name: Create Pull Request
@@ -84,3 +98,5 @@ jobs:
           head: ${{ github.ref_name }}
           labels: release # default labels, the action will throw error if not specified
           reviewers: fangsmile,Rui-Sun # default reviewers, the action will throw error if not specified
+          body: |
+            ${{ steps.changelog.outputs.markdown }}

@@ -535,7 +535,7 @@ export class Scenegraph {
           width: icon.backgroundWidth,
           height: icon.backgroundHeight,
           fill: icon.attribute.backgroundColor,
-          borderRadius: 5,
+          cornerRadius: 5,
           visible: true
         });
       } else {
@@ -545,7 +545,7 @@ export class Scenegraph {
           width: icon.backgroundWidth,
           height: icon.backgroundHeight,
           fill: icon.attribute.backgroundColor,
-          borderRadius: 5,
+          cornerRadius: 5,
           pickable: false,
           visible: true
         }) as IRect;
@@ -1311,8 +1311,8 @@ export class Scenegraph {
       if (colGroup.col <= updateCol) {
         colGroup.forEachChildren((cellGroup: Group) => {
           cellGroup.forEachChildren((icon: Icon) => {
-            if (icon.attribute.funcType === 'pin') {
-              const iconConfig = this.table.internalProps.headerHelper.getPinIcon(cellGroup.col, cellGroup.row);
+            if (icon.attribute.funcType === 'frozen') {
+              const iconConfig = this.table.internalProps.headerHelper.getFrozenIcon(cellGroup.col, cellGroup.row);
               this.updateIcon(icon, iconConfig);
               return true;
             }
@@ -1327,8 +1327,8 @@ export class Scenegraph {
       if (colGroup.col <= updateCol) {
         colGroup.forEachChildren((cellGroup: Group) => {
           cellGroup.forEachChildren((icon: Icon) => {
-            if (icon.attribute.funcType === 'pin') {
-              const iconConfig = this.table.internalProps.headerHelper.getPinIcon(cellGroup.col, cellGroup.row);
+            if (icon.attribute.funcType === 'frozen') {
+              const iconConfig = this.table.internalProps.headerHelper.getFrozenIcon(cellGroup.col, cellGroup.row);
               this.updateIcon(icon, iconConfig);
               return true;
             }

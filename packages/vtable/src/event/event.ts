@@ -677,8 +677,8 @@ export class EventManeger {
         stateManeger.triggerDropDownMenu(col, row, x, y);
       } else if (funcType === IconFuncTypeEnum.sort) {
         stateManeger.triggerSort(col, row, icon);
-      } else if (funcType === IconFuncTypeEnum.pin) {
-        stateManeger.triggerPin(col, row, icon);
+      } else if (funcType === IconFuncTypeEnum.frozen) {
+        stateManeger.triggerFreeze(col, row, icon);
       } else if (funcType === IconFuncTypeEnum.drillDown) {
         drillClick(this.table);
       }

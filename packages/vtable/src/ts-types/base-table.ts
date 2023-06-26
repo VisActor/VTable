@@ -208,7 +208,7 @@ export interface BaseTableConstructorOptions {
   /**
    * 是否显示固定列图钉 基本表格生效
    */
-  showPin?: boolean;
+  showFrozenIcon?: boolean;
 
   padding?:
     | {
@@ -316,7 +316,7 @@ export interface BaseTableAPI {
   /**
    * 是否显示图钉
    */
-  showPin: boolean;
+  showFrozenIcon: boolean;
   readonly canvas: HTMLCanvasElement;
   /** 表格可视区域的行数 */
   readonly visibleRowCount: number;
