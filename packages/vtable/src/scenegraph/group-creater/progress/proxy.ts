@@ -4,7 +4,7 @@ import type { WrapText } from '../../graphic/text';
 import { updateCellHeightForColumn } from '../../layout/update-height';
 import { emptyGroup } from '../../utils/empty-group';
 import { getProp } from '../../utils/get-prop';
-import { getPadding } from '../../utils/padding';
+import { getQuadProps } from '../../utils/padding';
 import { createColGroup } from '../column';
 import { createComplexColumn } from '../column-helper';
 
@@ -576,7 +576,7 @@ function updateAutoRow(
       // const contentHeight = cellGroup.getContentHeight();
       const text = (cellGroup.getChildByName('text') as WrapText) || cellGroup.getChildByName('content');
       const headerStyle = table._getCellStyle(col, row);
-      const padding = getPadding(getProp('padding', headerStyle, col, row, table));
+      const padding = getQuadProps(getProp('padding', headerStyle, col, row, table));
       const height = text.AABBBounds.height() + (padding[0] + padding[2]);
       maxRowHeight = Math.max(maxRowHeight, height);
       (cellGroup as any).needUpdateForAutoRowHeight = false;

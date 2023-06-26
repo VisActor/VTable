@@ -3,7 +3,7 @@ import type { IFullThemeSpec } from '@visactor/vrender';
 import type { Group } from '../graphic/group';
 import type { WrapText } from '../graphic/text';
 import { getProp } from './get-prop';
-import { getPadding } from './padding';
+import { getQuadProps } from './padding';
 import type { BaseTableAPI } from '../../ts-types/base-table';
 
 /**
@@ -42,7 +42,7 @@ export function getTextPos(
  */
 export function updateTextPose(table: BaseTableAPI, cell: Group, col: number, row: number, theme: IFullThemeSpec) {
   const headerStyle = table._getCellStyle(col, row);
-  const padding = getPadding(getProp('padding', headerStyle, col, row, table));
+  const padding = getQuadProps(getProp('padding', headerStyle, col, row, table));
   // const text = cell.getChildAt(1) as WrapText;
   const text = cell.getChildByName('text') as WrapText;
   text.setAttributes(

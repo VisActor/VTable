@@ -11,7 +11,7 @@ import type {
 import { Group } from '../graphic/group';
 import { getProp, getRawProp } from '../utils/get-prop';
 import type { MergeMap } from './column';
-import { getPadding } from '../utils/padding';
+import { getQuadProps } from '../utils/padding';
 import { parseFont } from '../utils/font';
 import type { PivotHeaderLayoutMap } from '../../layout/pivot-header-layout';
 import { createCell } from './cell-helper';

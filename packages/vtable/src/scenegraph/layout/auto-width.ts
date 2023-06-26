@@ -3,7 +3,7 @@ import { dealWithCustom } from '../component/custom';
 import type { Group } from '../graphic/group';
 import type { Scenegraph } from '../scenegraph';
 import { getCellMergeInfo } from '../utils/get-cell-merge';
-import { getPadding } from '../utils/padding';
+import { getQuadProps } from '../utils/padding';
 import { updateCellContentWidth } from '../utils/text-icon-layout';
 
 /**
@@ -137,7 +137,7 @@ function updateCell(cellGroup: Group, width: number, scene: Scenegraph) {
     width,
     width - oldWidth,
     scene.table.internalProps.autoRowHeight,
-    getPadding(style.padding as number),
+    getQuadProps(style.padding as number),
     style.textAlign,
     style.textBaseline,
     scene

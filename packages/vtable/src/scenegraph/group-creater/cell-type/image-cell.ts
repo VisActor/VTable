@@ -11,7 +11,7 @@ import type { Scenegraph } from '../../scenegraph';
 import { getProp, getFunctionalProp } from '../../utils/get-prop';
 import { getCellTheme } from './text-cell';
 import { isValid } from '../../../tools/util';
-import { getPadding } from '../../utils/padding';
+import { getQuadProps } from '../../utils/padding';
 
 const regedIcons = icons.get();
 
@@ -208,7 +208,7 @@ export function updateImageCellContentWhileResize(cellGroup: Group, col: number,
   const headerStyle = table._getCellStyle(col, row); // to be fixed
   const textAlign = getProp('textAlign', headerStyle, col, row, table) ?? 'left';
   const textBaseline = getProp('textBaseline', headerStyle, col, row, table) ?? 'middle';
-  const padding = getPadding(getProp('padding', headerStyle, col, row, table)) ?? [0, 0, 0, 0];
+  const padding = getQuadProps(getProp('padding', headerStyle, col, row, table)) ?? [0, 0, 0, 0];
 
   if (image.keepAspectRatio) {
     const { width: imageWidth, height: imageHeight } = calcKeepAspectRatioSize(

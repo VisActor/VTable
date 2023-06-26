@@ -17,7 +17,7 @@ import { updateColWidth } from './layout/update-width';
 import { TableComponent } from './component/table-component';
 import { updateRowHeight } from './layout/update-height';
 import { updateImageCellContentWhileResize } from './group-creater/cell-type/image-cell';
-import { getPadding } from './utils/padding';
+import { getQuadProps } from './utils/padding';
 import { createFrameBorder, updateFrameBorder, updateFrameBorderSize } from './style/frame-border';
 import { ResizeColumnHotSpotSize } from '../tools/global';
 import splitModule from './graphic/contributions';
@@ -1004,7 +1004,7 @@ export class Scenegraph {
         cellGroup.setAttribute('width', width);
       }
       const headerStyle = this.table._getCellStyle(col, row);
-      const padding = getPadding(getProp('padding', headerStyle, col, row, this.table));
+      const padding = getQuadProps(getProp('padding', headerStyle, col, row, this.table));
 
       // const text = cellGroup.getChildAt(1) as WrapText;
       const text = cellGroup.getChildByName('text') as WrapText;
