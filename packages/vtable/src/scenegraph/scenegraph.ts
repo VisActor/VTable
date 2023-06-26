@@ -38,6 +38,17 @@ container.load(splitModule);
 
 export const emptyGroup = new Group({});
 emptyGroup.role = 'empty';
+
+export type MergeMap = Map<
+  string,
+  {
+    x: number;
+    y: number;
+    cellWidth: number;
+    cellHeight: number;
+  }
+>;
+
 /**
  * @description: 表格场景树，存储和管理表格全部的场景图元
  * @return {*}
@@ -65,10 +76,13 @@ export class Scenegraph {
   frozenRowCount: number;
   clear: boolean;
 
+  mergeMap: MergeMap;
+
   constructor(table: BaseTableAPI) {
     this.table = table;
     this.hasFrozen = false;
     this.clear = true;
+    this.mergeMap = new Map();
 
     this.stage = createStage({
       canvas: table.canvas,
@@ -199,6 +213,57 @@ export class Scenegraph {
     this.tableGroup.addChild(colHeaderGroup);
     this.tableGroup.addChild(cornerHeaderGroup);
     this.tableGroup.addChild(componentGroup);
+  }
+
+  /**
+   * @description: 清空全部单元格内容，用于setRecord
+   * @return {*}
+   */
+  clearCells() {
+    this.clear = true;
+    this.hasFrozen = false;
+    this.mergeMap.clear();
+
+    this.colHeaderGroup.clear();
+    this.rowHeaderGroup.clear();
+    this.cornerHeaderGroup.clear();
+    this.bodyGroup.clear();
+
+    this.colHeaderGroup.setAttributes({
+      x: 0,
+      y: 0,
+      width: 0,
+      height: 0
+    });
+    this.rowHeaderGroup.setAttributes({
+      x: 0,
+      y: 0,
+      width: 0,
+      height: 0
+    });
+    this.cornerHeaderGroup.setAttributes({
+      x: 0,
+      y: 0,
+      width: 0,
+      height: 0
+    });
+    this.bodyGroup.setAttributes({
+      x: 0,
+      y: 0,
+      width: 0,
+      height: 0
+    });
+    this.tableGroup.setAttributes({
+      x: 0,
+      y: 0,
+      width: 0,
+      height: 0
+    });
+
+    if ((this.tableGroup as any).border) {
+      (this.tableGroup.parent as Group).removeChild((this.tableGroup as any).border);
+      delete (this.tableGroup as any).border;
+    }
   }
 
   /**
@@ -1084,56 +1149,6 @@ export class Scenegraph {
     this.table.stateManeger.setScrollLeft(oldHorizontalBarPos);
     this.table.stateManeger.setScrollTop(oldVerticalBarPos);
     this.updateNextFrame();
-  }
-
-  /**
-   * @description: 清空全部单元格内容，用于setRecord
-   * @return {*}
-   */
-  clearCells() {
-    this.clear = true;
-    this.hasFrozen = false;
-
-    this.colHeaderGroup.clear();
-    this.rowHeaderGroup.clear();
-    this.cornerHeaderGroup.clear();
-    this.bodyGroup.clear();
-
-    this.colHeaderGroup.setAttributes({
-      x: 0,
-      y: 0,
-      width: 0,
-      height: 0
-    });
-    this.rowHeaderGroup.setAttributes({
-      x: 0,
-      y: 0,
-      width: 0,
-      height: 0
-    });
-    this.cornerHeaderGroup.setAttributes({
-      x: 0,
-      y: 0,
-      width: 0,
-      height: 0
-    });
-    this.bodyGroup.setAttributes({
-      x: 0,
-      y: 0,
-      width: 0,
-      height: 0
-    });
-    this.tableGroup.setAttributes({
-      x: 0,
-      y: 0,
-      width: 0,
-      height: 0
-    });
-
-    if ((this.tableGroup as any).border) {
-      (this.tableGroup.parent as Group).removeChild((this.tableGroup as any).border);
-      delete (this.tableGroup as any).border;
-    }
   }
 
   updateCellContentWhileResize(col: number, row: number) {
