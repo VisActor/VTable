@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "comment": "fix: fix merge cell y position\n\n",
+      "type": "patch",
+      "packageName": "@visactor/vtable"
+    }
+  ],
+  "packageName": "@visactor/vtable",
+  "email": "892739385@qq.com"
+}
