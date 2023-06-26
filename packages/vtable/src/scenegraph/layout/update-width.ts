@@ -8,7 +8,7 @@ import { createSparkLineCellGroup } from '../group-creater/cell-type/spark-line-
 import type { Scenegraph } from '../scenegraph';
 import { getCellMergeInfo } from '../utils/get-cell-merge';
 import { getProp } from '../utils/get-prop';
-import { getPadding } from '../utils/padding';
+import { getQuadProps } from '../utils/padding';
 import { updateCellContentWidth } from '../utils/text-icon-layout';
 import { updateCellHeightForRow } from './update-height';
 // import { updateAutoRowHeight } from './auto-height';
@@ -216,7 +216,7 @@ function updateCellWidth(
     const style = scene.table._getCellStyle(col, row) as ProgressBarStyle;
     const value = scene.table.getCellValue(col, row);
     const dataValue = scene.table.getCellOriginValue(col, row);
-    const padding = getPadding(getProp('padding', style, col, row, scene.table));
+    const padding = getQuadProps(getProp('padding', style, col, row, scene.table));
 
     const newBarCell = createProgressBarCell(
       columnDefine,
@@ -241,7 +241,7 @@ function updateCellWidth(
     // 目前先采用重新生成节点的方案
     cellGroup.removeAllChild();
     const headerStyle = scene.table._getCellStyle(col, row);
-    const padding = getPadding(getProp('padding', headerStyle, col, row, scene.table));
+    const padding = getQuadProps(getProp('padding', headerStyle, col, row, scene.table));
     createSparkLineCellGroup(
       cellGroup,
       cellGroup.parent,
@@ -267,7 +267,7 @@ function updateCellWidth(
       distWidth,
       detaX,
       autoRowHeight,
-      getPadding(style.padding as number),
+      getQuadProps(style.padding as number),
       style.textAlign,
       style.textBaseline,
       scene
@@ -328,6 +328,6 @@ function getCleanCellHeight(cell: Group, scene: Scenegraph) {
     }
   });
 
-  const padding = getPadding(scene.table._getCellStyle(cell.col, cell.row).padding as number);
+  const padding = getQuadProps(scene.table._getCellStyle(cell.col, cell.row).padding as number);
   return maxHeight + padding[0] + padding[2];
 }
