@@ -51,7 +51,7 @@ export class WrapText extends Text {
     if (!this.shouldUpdateShape() && this.cache) {
       width = this.cache.clipedWidth;
       const dx = textDrawOffsetX(textAlign, width);
-      const dy = textLayoutOffsetY(textBaseline, lineHeight);
+      const dy = textLayoutOffsetY(textBaseline, lineHeight, fontSize);
       this._AABBBounds.set(dx, dy, dx + width, dy + lineHeight);
       if (stroke) {
         this._AABBBounds.expand(lineWidth / 2);
@@ -86,7 +86,7 @@ export class WrapText extends Text {
     this.clearUpdateShapeTag();
 
     const dx = textDrawOffsetX(textAlign, width);
-    const dy = textLayoutOffsetY(textBaseline, lineHeight);
+    const dy = textLayoutOffsetY(textBaseline, lineHeight, fontSize);
     this._AABBBounds.set(dx, dy, dx + width, dy + lineHeight);
 
     if (stroke) {
