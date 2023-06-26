@@ -504,6 +504,7 @@ export interface BaseTableAPI {
   isPivotTable: (() => boolean) & (() => boolean);
 
   _clearColRangeWidthsMap: (col?: number) => void;
+  _clearRowRangeHeightsMap: (row?: number) => void;
 
   //#endregion  tableAPI
 }

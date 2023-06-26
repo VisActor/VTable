@@ -67,7 +67,7 @@ export default {
   },
   bodyStyle: {
     fontSize: 14,
-    bgColor: 'white',
+    bgColor: getBackgroundColor,
     hover: {
       // cellBorderColor: "#003fff",
       cellBgColor: '#CCE0FF',

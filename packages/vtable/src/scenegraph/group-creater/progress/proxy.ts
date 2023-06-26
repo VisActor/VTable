@@ -14,6 +14,7 @@ const mergeMap = new Map();
 export class SceneProxy {
   table: BaseTableAPI;
   scenegraph: Scenegraph;
+  mode: 'column' | 'row' | 'pivot' = 'column';
   currentRow = 0;
   totalRow: number;
   rowLimit = 1000;
@@ -44,6 +45,12 @@ export class SceneProxy {
   constructor(table: BaseTableAPI) {
     this.table = table;
     this.scenegraph = table.scenegraph;
+
+    if (this.table.internalProps.transpose) {
+      this.mode = 'row';
+    } else if (this.table.isPivotTable()) {
+      this.mode = 'pivot';
+    }
   }
 
   setParams() {
