@@ -178,6 +178,10 @@ export const menus = [
       {
         path: 'layout',
         name: 'width-mode-autoWidth'
+      },
+      {
+        path: 'layout',
+        name: 'merge'
       }
     ]
   },

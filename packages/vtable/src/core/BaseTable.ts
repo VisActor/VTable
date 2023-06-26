@@ -1528,14 +1528,14 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     return this.stateManeger.scroll.verticalBarPos;
   }
   set scrollTop(scrollTop: number) {
-    this.stateManeger.setScrollTop(scrollTop);
+    this.stateManeger.setScrollTop(Math.ceil(scrollTop));
   }
 
   get scrollLeft(): number {
     return this.stateManeger.scroll.horizontalBarPos;
   }
   set scrollLeft(scrollLeft: number) {
-    this.stateManeger.setScrollLeft(scrollLeft);
+    this.stateManeger.setScrollLeft(Math.ceil(scrollLeft));
   }
 
   getScrollLeft() {
@@ -1545,10 +1545,10 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     return this.scrollTop;
   }
   setScrollLeft(num: number) {
-    this.scrollLeft = num;
+    this.scrollLeft = Math.ceil(num);
   }
   setScrollTop(num: number) {
-    this.scrollTop = num;
+    this.scrollTop = Math.ceil(num);
   }
   /**
    * 获取有省略文字的的单元格文本内容
