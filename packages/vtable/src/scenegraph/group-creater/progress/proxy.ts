@@ -9,8 +9,6 @@ import { getPadding } from '../../utils/padding';
 import { createColGroup } from '../column';
 import { createComplexColumn } from '../column-helper';
 
-const mergeMap = new Map();
-
 export class SceneProxy {
   table: BaseTableAPI;
   scenegraph: Scenegraph;
@@ -181,7 +179,7 @@ export class SceneProxy {
         colGroup.attribute.width,
         this.currentRow + 1,
         endRow,
-        mergeMap,
+        this.table.scenegraph.mergeMap,
         this.table.internalProps.defaultRowHeight,
         this.table,
         cellType
