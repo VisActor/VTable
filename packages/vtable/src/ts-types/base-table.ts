@@ -288,7 +288,7 @@ export interface BaseTableConstructorOptions {
   limitMaxAutoWidth?: boolean | number;
 
   // maximum number of data items maintained in table instance
-  dataLimit?: number;
+  maintainedDataCount?: number;
 }
 export interface BaseTableAPI {
   /** 表格的行数 */

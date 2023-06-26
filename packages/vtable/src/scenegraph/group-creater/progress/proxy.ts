@@ -41,8 +41,8 @@ export class SceneProxy {
 
   constructor(table: BaseTableAPI) {
     this.table = table;
-    if (this.table.options.dataLimit) {
-      this.rowLimit = this.table.options.dataLimit;
+    if (this.table.options.maintainedDataCount) {
+      this.rowLimit = this.table.options.maintainedDataCount;
     }
   }
 
