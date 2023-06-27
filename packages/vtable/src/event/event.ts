@@ -20,6 +20,7 @@ import { bindSparklineHoverEvent } from './sparkline-event';
 import { getIconAndPositionFromTarget } from '../scenegraph/utils/icon';
 import type { BaseTableAPI } from '../ts-types/base-table';
 import { handleWhell } from './scroll';
+import { handleTextStick } from '../scenegraph/stick-text';
 
 interface SceneEvent {
   abstractPos: {
@@ -687,6 +688,11 @@ export class EventManeger {
     // 下拉菜单内容点击
     this.table.listen(TABLE_EVENT_TYPE.DROPDOWNMENU_CLICK, () => {
       stateManeger.hideMenu();
+    });
+
+    // 处理textStick
+    this.table.listen(TABLE_EVENT_TYPE.SCROLL, e => {
+      handleTextStick(this.table);
     });
 
     // link/image/video点击

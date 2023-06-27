@@ -41,5 +41,5 @@ function optimizeScrollXY(x: number, y: number, ratio: ScrollSpeedRatio): [numbe
   const deltaX = angle <= 1 / ANGLE ? 0 : x;
   const deltaY = angle > ANGLE ? 0 : y;
 
-  return [deltaX * ratio.horizontal, deltaY * ratio.vertical];
+  return [Math.ceil(deltaX * ratio.horizontal), Math.ceil(deltaY * ratio.vertical)];
 }
