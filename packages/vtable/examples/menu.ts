@@ -47,6 +47,10 @@ export const menus = [
       {
         path: 'type',
         name: 'spark-line'
+      },
+      {
+        path: 'type',
+        name: 'chart'
       }
     ]
   },

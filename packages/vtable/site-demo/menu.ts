@@ -199,6 +199,10 @@ export const menus = [
       {
         path: 'business',
         name: 'project-schedule'
+      },
+      {
+        path: 'business',
+        name: 'temperature-trend'
       }
     ]
   }

@@ -26,7 +26,10 @@ const columns: VTable.ColumnsDefine = [
     field: 'email1',
     caption: 'email',
     width: 200,
-    sort: true
+    sort: true,
+    style: {
+      borderLineWidth: 0
+    }
   },
   {
     caption: 'full name',

@@ -248,7 +248,7 @@ const option = {
     ],
     corner: {
       titleOnDimension: 'row',
-    },
+    }
 };
 const tableInstance = new VTable.PivotTable(option);
 window['tableInstance'] = tableInstance;
