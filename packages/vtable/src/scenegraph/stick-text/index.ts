@@ -43,6 +43,9 @@ export function handleTextStick(table: BaseTableAPI) {
     }
   }
 
+  if (rowStart === -1) {
+    return;
+  }
   // 行表头单元格
   for (let row = rowStart; row <= rowEnd; row++) {
     for (let col = 0; col < frozenColCount; col++) {
