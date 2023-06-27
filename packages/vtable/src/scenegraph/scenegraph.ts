@@ -1,7 +1,7 @@
 import type { IStage, IRect, ITextCache } from '@visactor/vrender';
 import { createStage, createRect, IContainPointMode, container } from '@visactor/vrender';
+import { type CellAddress, type CellType, type ColumnIconOption, type SortOrder, IconFuncTypeEnum } from '../ts-types';
 import { isArray, isString } from '@visactor/vutils';
-import type { CellType, ColumnIconOption, SortOrder } from '../ts-types';
 import { Group } from './graphic/group';
 import type { Icon } from './graphic/icon';
 import {
@@ -33,6 +33,7 @@ import { updateAllSelectComponent, updateCellSelectBorder } from './select/updat
 import { createCellSelectBorder } from './select/create-select-border';
 import { moveSelectingRangeComponentsToSelectedRangeComponents } from './select/move-select-border';
 import { deleteAllSelectBorder, deleteLastSelectedRangeComponents } from './select/delete-select-border';
+import { updateRow } from './layout/update-row';
 import { handleTextStick } from './stick-text';
 import { emptyGroup } from './utils/empty-group';
 
@@ -682,6 +683,13 @@ export class Scenegraph {
     if (newWidth !== oldWidth) {
       this.updateColWidth(col, newWidth - oldWidth);
     }
+  }
+
+  /*
+   * recalculates column width in all autowidth columns
+   */
+  recalculateColWidths() {
+    computeColsWidth(this.table, true);
   }
 
   updateTableSize() {
@@ -1414,6 +1422,46 @@ export class Scenegraph {
     this.stage.window.setDpr(pixelRatio);
     this.stage.render();
     this.stage.enableDirtyBounds();
+  }
+
+  updateHierarchyIcon(col: number, row: number) {
+    const cellGroup = this.getCell(col, row);
+    let iconConfig;
+    if (this.table.isHeader(col, row)) {
+      iconConfig = this.table.internalProps.headerHelper.getHierarchyIcon(cellGroup.col, cellGroup.row);
+    } else {
+      iconConfig = this.table.internalProps.bodyHelper.getHierarchyIcon(cellGroup.col, cellGroup.row);
+    }
+    this.findAndUpdateIcon(cellGroup, [IconFuncTypeEnum.collapse, IconFuncTypeEnum.expand], iconConfig);
+  }
+
+  updateRow(removeCells: CellAddress[], addCells: CellAddress[]) {
+    // add or move rows
+    updateRow(removeCells, addCells, this.table);
+
+    // update column width and row height
+    this.recalculateColWidths();
+    if (this.table.internalProps.autoRowHeight) {
+      updateAutoRowHeight(this, true);
+    }
+
+    // check frozen status
+    this.table.stateManeger.checkFrozen();
+
+    // rerender
+    this.updateNextFrame();
+  }
+
+  findAndUpdateIcon(group: Group, funcTypeArr: IconFuncTypeEnum[], iconConfig: ColumnIconOption) {
+    group.forEachChildren((icon: Icon | Group) => {
+      if (icon.type === 'group') {
+        this.findAndUpdateIcon(icon, funcTypeArr, iconConfig);
+      } else if (funcTypeArr.indexOf((icon as Icon).attribute.funcType as IconFuncTypeEnum) !== -1) {
+        this.updateIcon(icon as Icon, iconConfig);
+        return true;
+      }
+      return false;
+    });
   }
 }
 

@@ -30,6 +30,7 @@ import type { PivotTable } from '../PivotTable';
 import { NumberMap } from '../tools/NumberMap';
 import type { Either } from '../tools/helper';
 import { IndicatorDimensionKeyPlaceholder } from '../tools/global';
+import { diffCellAddress } from '../tools/diff-cell';
 interface IPivotLayoutBaseHeadNode {
   id: number;
   // dimensionKey: string;
@@ -1028,7 +1029,7 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
       const row = this._columnHeaderCellIds[i];
       for (let j = 0; j < row.length; j++) {
         if (row[j] === id) {
-          return { col: j, row: i };
+          return { col: j + this._table.frozenColCount, row: i };
         }
       }
     }
@@ -1036,7 +1037,7 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
       const row = this._rowHeaderCellIds[i];
       for (let j = 0; j < row.length; j++) {
         if (row[j] === id) {
-          return { col: j, row: i };
+          return { col: j, row: i + this._table.frozenRowCount };
         }
       }
     }
@@ -1323,6 +1324,8 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
    * @param row
    */
   toggleHierarchyState(col: number, row: number) {
+    const oldRowHeaderCellIds = this._rowHeaderCellIds.slice(0);
+    const oldRowHeaderCellPositons = oldRowHeaderCellIds.map(id => this.getHeaderCellAdress(id[0]));
     const hd = this.getHeader(col, row);
     (<any>hd.define).hierarchyState =
       (<any>hd.define).hierarchyState === HierarchyState.collapse ? HierarchyState.expand : HierarchyState.collapse;
@@ -1373,6 +1376,8 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
       return o;
     }, {} as { [key: LayoutObjectId]: HeaderData });
     this._CellHeaderPathMap = new Map();
+
+    return diffCellAddress(oldRowHeaderCellIds, this._rowHeaderCellIds, oldRowHeaderCellPositons, this);
   }
   // 为列宽计算专用，兼容列表
   isHeaderForColWidth(col: number, row: number): boolean {

@@ -64,13 +64,9 @@ export class BodyHelper {
         addIcon(iconResults);
       }
     }
-    const hierarchyState = this._table.getHierarchyState(col, row);
-    if (hierarchyState === HierarchyState.expand) {
-      //展开状态 应该显示-号
-      iconArr.push(this.expandIcon);
-    } else if (hierarchyState === HierarchyState.collapse) {
-      //折叠状态 应该显示-号
-      iconArr.push(this.collapseIcon);
+    const hierarchyIcon = this.getHierarchyIcon(col, row);
+    if (hierarchyIcon) {
+      iconArr.push(hierarchyIcon);
     }
 
     context &&
@@ -135,5 +131,17 @@ export class BodyHelper {
       }
     });
     return retIcon;
+  }
+
+  getHierarchyIcon(col: number, row: number) {
+    const hierarchyState = this._table.getHierarchyState(col, row);
+    if (hierarchyState === HierarchyState.expand) {
+      //展开状态 应该显示-号
+      return this.expandIcon;
+    } else if (hierarchyState === HierarchyState.collapse) {
+      //折叠状态 应该显示-号
+      return this.collapseIcon;
+    }
+    return undefined;
   }
 }

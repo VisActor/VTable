@@ -241,7 +241,7 @@ export function createCell(
   return cellGroup;
 }
 
-export function updateCell(col: number, row: number, table: BaseTableAPI) {
+export function updateCell(col: number, row: number, table: BaseTableAPI, addNew?: boolean) {
   const oldCellGroup = table.scenegraph.getCell(col, row, true);
 
   const type = table.isHeader(col, row)
@@ -263,7 +263,7 @@ export function updateCell(col: number, row: number, table: BaseTableAPI) {
     // 合并单元格的非起始单元格不需要绘制
     newCellGroup = new Group({
       x: 0,
-      y: oldCellGroup.attribute.y,
+      y: addNew ? 0 : oldCellGroup.attribute.y,
       width: 0,
       height: 0,
       visible: false,
@@ -275,10 +275,12 @@ export function updateCell(col: number, row: number, table: BaseTableAPI) {
     newCellGroup.mergeCol = range.start.col;
     newCellGroup.mergeRow = range.start.row;
 
-    oldCellGroup.parent.insertAfter(newCellGroup, oldCellGroup);
-    oldCellGroup.parent.removeChild(oldCellGroup);
+    if (!addNew) {
+      oldCellGroup.parent.insertAfter(newCellGroup, oldCellGroup);
+      oldCellGroup.parent.removeChild(oldCellGroup);
+    }
   } else {
-    const mayHaveIcon = cellType !== 'body' ? true : !!define?.icon;
+    const mayHaveIcon = cellType !== 'body' ? true : !!define?.icon || !!define?.tree;
     const headerStyle = table._getCellStyle(col, row);
     const cellTheme = getStyleTheme(headerStyle, table, col, row, getProp).theme;
     const padding = cellTheme._vtable.padding;
@@ -346,11 +348,12 @@ export function updateCell(col: number, row: number, table: BaseTableAPI) {
           mayHaveIcon,
           isMerge,
           range,
+          addNew,
           cellTheme
         )
       );
     } else {
-      updateCellContent(
+      newCellGroup = updateCellContent(
         type,
         define,
         table,
@@ -368,10 +371,13 @@ export function updateCell(col: number, row: number, table: BaseTableAPI) {
         mayHaveIcon,
         isMerge,
         range,
+        addNew,
         cellTheme
       );
     }
   }
+
+  return newCellGroup;
 }
 
 function updateCellContent(
@@ -392,6 +398,7 @@ function updateCellContent(
   mayHaveIcon: boolean,
   isMerge: boolean,
   range: CellRange,
+  addNew: boolean,
   cellTheme?: IThemeSpec
 ) {
   const newCellGroup = createCell(
@@ -406,8 +413,10 @@ function updateCellContent(
     customLayout,
     cellWidth,
     cellHeight,
-    oldCellGroup.parent,
-    oldCellGroup.attribute.y,
+    // oldCellGroup.parent,
+    addNew ? table.scenegraph.getColGroup(col) : oldCellGroup.parent,
+    // oldCellGroup.attribute.y,
+    addNew ? 0 : oldCellGroup.attribute.y,
     padding,
     textAlign,
     textBaseline,
@@ -417,6 +426,9 @@ function updateCellContent(
     range,
     cellTheme
   );
-  oldCellGroup.parent.insertAfter(newCellGroup, oldCellGroup);
-  oldCellGroup.parent.removeChild(oldCellGroup);
+  if (!addNew) {
+    oldCellGroup.parent.insertAfter(newCellGroup, oldCellGroup);
+    oldCellGroup.parent.removeChild(oldCellGroup);
+  }
+  return newCellGroup;
 }

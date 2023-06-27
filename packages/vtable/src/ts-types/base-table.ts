@@ -508,6 +508,8 @@ export interface BaseTableAPI {
 
   _clearColRangeWidthsMap: (col?: number) => void;
 
+  toggleHierarchyState: (col: number, row: number) => void;
+
   //#endregion  tableAPI
 }
 export interface ListTableProtected extends IBaseTableProtected {
