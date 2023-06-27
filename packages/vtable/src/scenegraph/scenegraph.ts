@@ -33,6 +33,7 @@ import { createCellSelectBorder } from './select/create-select-border';
 import { moveSelectingRangeComponentsToSelectedRangeComponents } from './select/move-select-border';
 import { deleteAllSelectBorder, deleteLastSelectedRangeComponents } from './select/delete-select-border';
 import { handleTextStick } from './stick-text';
+import { computeRowsHeight } from './layout/compute-row-height';
 
 container.load(splitModule);
 
@@ -219,6 +220,9 @@ export class Scenegraph {
   createSceneGraph() {
     this.clear = false;
     computeColsWidth(this.table);
+    if ((this.table.dataSource as any).getOriginalRecord(0)) {
+      computeRowsHeight(this.table);
+    }
 
     this.frozenColCount = this.table.rowHeaderLevelCount;
     this.frozenRowCount = this.table.columnHeaderLevelCount;
@@ -766,10 +770,10 @@ export class Scenegraph {
     // 对齐auto列宽
     // updateAutoColWidth(this);
     // 对齐autoWrapText
-    const { autoRowHeight } = this.table.internalProps;
-    if (autoRowHeight) {
-      updateAutoRowHeight(this);
-    }
+    // const { autoRowHeight } = this.table.internalProps;
+    // if (autoRowHeight) {
+    //   updateAutoRowHeight(this);
+    // }
 
     this.dealWidthMode();
 

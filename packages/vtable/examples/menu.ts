@@ -195,6 +195,10 @@ export const menus = [
       {
         path: 'auto-size',
         name: 'auto-width'
+      },
+      {
+        path: 'auto-size',
+        name: 'auto-height'
       }
     ]
   },

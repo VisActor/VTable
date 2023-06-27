@@ -54,7 +54,7 @@ export function createCellGroup(
   if (cellTheme?.text?.textBaseline) {
     textBaseline = cellTheme?.text?.textBaseline;
   }
-  const { autoRowHeight } = table.internalProps;
+  // const { autoRowHeight } = table.internalProps;
   const autoColWidth = colWidth === 'auto';
   const autoWrapText = headerStyle.autoWrapText ?? table.internalProps.autoWrapText;
   const lineClamp = headerStyle.lineClamp;
@@ -96,7 +96,8 @@ export function createCellGroup(
       textStr,
       padding as any,
       autoColWidth,
-      autoRowHeight,
+      // autoRowHeight,
+      false,
       autoWrapText,
       typeof lineClamp === 'number' ? lineClamp : undefined,
       // autoColWidth ? 0 : colWidth,

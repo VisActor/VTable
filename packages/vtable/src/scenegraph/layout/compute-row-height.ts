@@ -262,7 +262,7 @@ function computeTextHeight(col: number, row: number, table: BaseTableAPI): numbe
     maxHeight = lines.length * lineHeight;
   }
 
-  return Math.max(maxHeight, iconHeight) / spanRow;
+  return (Math.max(maxHeight, iconHeight) + padding[0] + padding[2]) / spanRow;
 }
 
 function dealWithRichTextIcon(iconConfig: ColumnIconOption) {

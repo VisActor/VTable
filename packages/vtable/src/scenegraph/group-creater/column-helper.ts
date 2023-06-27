@@ -90,7 +90,8 @@ export function createComplexColumn(
     // margin = getProp('margin', headerStyle, col, 0, table)
 
     let cellWidth = colWidth;
-    let cellHeight = table.internalProps.autoRowHeight ? 0 : table.getRowHeight(row);
+    // let cellHeight = table.internalProps.autoRowHeight ? 0 : table.getRowHeight(row);
+    let cellHeight = table.getRowHeight(row);
     const type =
       (table.isHeader(col, row) ? table._getHeaderLayoutMap(col, row).headerType : table.getBodyColumnType(col, row)) ||
       'text';
