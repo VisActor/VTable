@@ -35,6 +35,7 @@ export class Style extends EventTarget implements ColumnStyle {
   private _fontStyle?: FontStylePropertyDefine;
   private _padding?: PaddingsPropertyDefine;
   private _defaultPadding: PaddingsPropertyDefine = [10, 16, 10, 16];
+  private _textStick: boolean;
   private _textOverflow?: TextOverflow;
   private _textAlign?: TextAlignType;
   private _textBaseline?: TextBaselineType;
@@ -73,6 +74,7 @@ export class Style extends EventTarget implements ColumnStyle {
     this._padding = style?.padding ?? bodyStyle?.padding ?? this._defaultPadding;
     this._borderColor = style?.borderColor ?? bodyStyle?.borderColor;
     this._textOverflow = style?.textOverflow ?? bodyStyle?.textOverflow; //|| "clip";
+    this._textStick = style.textStick ?? bodyStyle?.textStick ?? false;
     this._bgColor = style?.bgColor ?? bodyStyle?.bgColor;
     this._lineHeight = style?.lineHeight ?? bodyStyle?.lineHeight;
     this._underline = style?.underline ?? bodyStyle?.underline;
@@ -155,6 +157,13 @@ export class Style extends EventTarget implements ColumnStyle {
   }
   set borderColor(borderColor: ColorsPropertyDefine | undefined) {
     this._borderColor = borderColor;
+    this.doChangeStyle();
+  }
+  get textStick(): boolean {
+    return this._textStick;
+  }
+  set textStick(textStick: boolean) {
+    this._textStick = textStick;
     this.doChangeStyle();
   }
   get textAlign(): TextAlignType | undefined {

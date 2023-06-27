@@ -8,6 +8,10 @@ export const menus = [
       },
       {
         path: 'list',
+        name: 'list-tree'
+      },
+      {
+        path: 'list',
         name: 'list-data-promise'
       }
     ]
@@ -18,6 +22,10 @@ export const menus = [
       {
         path: 'pivot',
         name: 'pivot'
+      },
+      {
+        path: 'pivot',
+        name: 'pivot-tree'
       }
     ]
   },
@@ -51,6 +59,10 @@ export const menus = [
       {
         path: 'type',
         name: 'spark-line'
+      },
+      {
+        path: 'type',
+        name: 'chart'
       }
     ]
   },
@@ -238,6 +250,23 @@ export const menus = [
       {
         path: 'test',
         name: 'vchart'
+      }
+    ]
+  },
+  {
+    menu: '业务方',
+    children: [
+      {
+        path: 'business',
+        name: 'one'
+      },
+      {
+        path: 'business',
+        name: 'two'
+      },
+      {
+        path: 'business',
+        name: 'three'
       }
     ]
   },

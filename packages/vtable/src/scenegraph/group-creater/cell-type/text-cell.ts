@@ -106,6 +106,7 @@ export function createCellGroup(
       cellHeight,
       textAlign,
       textBaseline,
+      table,
       cellTheme
     );
 

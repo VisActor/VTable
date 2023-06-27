@@ -69,10 +69,10 @@ export function createChartCellGroup(
     dataId: 'data',
     data: table.getCellValue(col, row),
     viewBox: {
-      x1: cellGroup.globalAABBBounds.x1 + (table as any).tableX + padding[3],
-      x2: cellGroup.globalAABBBounds.x1 + width + (table as any).tableX - padding[1],
-      y1: cellGroup.globalAABBBounds.y1 + (table as any).tableY + padding[0],
-      y2: cellGroup.globalAABBBounds.y1 + height + (table as any).tableY - padding[2]
+      x1: Math.ceil(cellGroup.globalAABBBounds.x1 + table.tableX + padding[3]),
+      x2: Math.ceil(cellGroup.globalAABBBounds.x1 + width + table.tableX - padding[1]),
+      y1: Math.ceil(cellGroup.globalAABBBounds.y1 + table.tableY + padding[0]),
+      y2: Math.ceil(cellGroup.globalAABBBounds.y1 + height + table.tableY - padding[2])
     }
     // clipRect: {
     //   left: cellGroup.globalAABBBounds.x1 + (table as any).tableX + padding[3],

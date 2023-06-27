@@ -1549,10 +1549,10 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     return this.scrollTop;
   }
   setScrollLeft(num: number) {
-    this.scrollLeft = num;
+    this.scrollLeft = Math.ceil(num);
   }
   setScrollTop(num: number) {
-    this.scrollTop = num;
+    this.scrollTop = Math.ceil(num);
   }
   /**
    * 获取有省略文字的的单元格文本内容
@@ -2397,6 +2397,16 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     this.invalidate();
     console.log('setRecords cost time:', (typeof window !== 'undefined' ? window.performance.now() : 0) - time);
   }
+  /**
+   * add or update a single record, col and row is optional, but all missing will be invalid
+   * @param col col position of the record, it is optional
+   * @param row row position of the record, it is optional
+   */
+  setRecord(record: any, col?: number, row?: number) {
+    const index = this.getRecordIndexByRow(col, row);
+    this.dataSource.setRecord(record, index);
+  }
+
   setDropDownMenuHighlight(cells: DropDownMenuHighlightInfo[]): void {
     this.stateManeger.setDropDownMenuHighlight(cells);
   }

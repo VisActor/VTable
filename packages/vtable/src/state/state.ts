@@ -546,7 +546,7 @@ export class StateManeger {
 
   updateVerticalScrollBar(yRatio: number) {
     const totalHeight = this.table.getAllRowsHeight();
-    this.scroll.verticalBarPos = yRatio * (totalHeight - this.table.scenegraph.height);
+    this.scroll.verticalBarPos = Math.ceil(yRatio * (totalHeight - this.table.scenegraph.height));
     this.table.scenegraph.setY(-this.scroll.verticalBarPos);
 
     // 滚动期间清空选中清空
@@ -564,7 +564,7 @@ export class StateManeger {
   }
   updateHorizontalScrollBar(xRatio: number) {
     const totalWidth = this.table.getAllColsWidth();
-    this.scroll.horizontalBarPos = xRatio * (totalWidth - this.table.scenegraph.width);
+    this.scroll.horizontalBarPos = Math.ceil(xRatio * (totalWidth - this.table.scenegraph.width));
     this.table.scenegraph.setX(-this.scroll.horizontalBarPos);
 
     // 滚动期间清空选中清空
@@ -583,7 +583,7 @@ export class StateManeger {
     // 矫正top值范围
     const totalHeight = this.table.getAllRowsHeight();
     top = Math.max(0, Math.min(top, totalHeight - this.table.scenegraph.height));
-
+    top = Math.ceil(top);
     this.scroll.verticalBarPos = top;
 
     // 设置scenegraph坐标
@@ -609,7 +609,7 @@ export class StateManeger {
     const frozenWidth = this.table.getFrozenColsWidth();
 
     left = Math.max(0, Math.min(left, totalWidth - this.table.scenegraph.width));
-
+    left = Math.ceil(left);
     this.scroll.horizontalBarPos = left;
 
     // 设置scenegraph坐标

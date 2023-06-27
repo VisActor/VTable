@@ -1,16 +1,22 @@
 import type { SimpleHeaderLayoutMap } from '../../layout';
 import type { PivotHeaderLayoutMap } from '../../layout/pivot-header-layout';
 import type { TextColumnDefine } from '../../ts-types';
-import { IconPosition } from '../../ts-types';
+import { HierarchyState, IconPosition } from '../../ts-types';
 import * as calc from '../../tools/calc';
 import { toFixed, validToString } from '../../tools/util';
 import { getQuadProps } from '../utils/padding';
 import { getProp } from '../utils/get-prop';
 import type { BaseTableAPI } from '../../ts-types/base-table';
 
-export function computeColsWidth(table: BaseTableAPI): void {
+export function computeColsWidth(table: BaseTableAPI, update?: boolean): void {
   const time = typeof window !== 'undefined' ? window.performance.now() : 0;
   table._clearColRangeWidthsMap();
+  const oldColWidths = [];
+  if (update) {
+    for (let col = 0; col < table.colCount; col++) {
+      oldColWidths.push(table.getColWidth(col));
+    }
+  }
   for (let col = 0; col < table.colCount; col++) {
     let maxWidth;
     if (
@@ -57,7 +63,7 @@ export function computeColsWidth(table: BaseTableAPI): void {
       } else {
         colWidth = Math.round(table.getColWidth(col) * factor);
       }
-      table.setColWidth(col, colWidth);
+      table.setColWidth(col, colWidth, false, true);
     }
   } else if (table.widthMode === 'standard-aeolus' && table.internalProps.transpose) {
     // 处理风神列宽特殊逻辑
@@ -78,11 +84,21 @@ export function computeColsWidth(table: BaseTableAPI): void {
     if (actualWidth < canvasWidth && actualWidth - actualHeaderWidth > 0) {
       const factor = (canvasWidth - actualHeaderWidth) / (actualWidth - actualHeaderWidth);
       for (let col = table.frozenColCount; col < table.colCount; col++) {
-        table.setColWidth(col, table.getColWidth(col) * factor);
+        table.setColWidth(col, table.getColWidth(col) * factor, false, true);
       }
     }
   }
   console.log('computeColsWidth  time:', (typeof window !== 'undefined' ? window.performance.now() : 0) - time);
+
+  if (update) {
+    for (let col = 0; col < table.colCount; col++) {
+      const newColWidth = table.getColWidth(col);
+      if (newColWidth !== oldColWidths[col]) {
+        // update the column width in scenegraph
+        table.scenegraph.updateColWidth(col, newColWidth - oldColWidths[col]);
+      }
+    }
+  }
 }
 
 /**
@@ -193,11 +209,36 @@ function computeAutoColWidth(
       continue;
     }
 
-    // TO DO: 处理树形展开
+    // 处理树形展开
+    let cellHierarchyIndent = 0;
+    const layoutMap = table.internalProps.layoutMap;
+    //判断是否为表头
+    if (layoutMap.isHeader(col, row)) {
+      const hd = layoutMap.getHeader(col, row);
+      // 如果某级表头设置了only-body，在计算表头内容宽度时跳过改级表头
+      if (hd?.define?.columnWidthComputeMode === 'only-body') {
+        continue;
+      }
+      if (hd?.hierarchyLevel) {
+        cellHierarchyIndent = (hd.hierarchyLevel ?? 0) * ((layoutMap as PivotHeaderLayoutMap).rowHierarchyIndent ?? 0);
+      }
+    } else {
+      // 基本表格表身body单元格 如果是树形展开 需要考虑缩进值
+      // const cellHierarchyState = table.getHierarchyState(col, row);
+      // if (cellHierarchyState === HierarchyState.expand || cellHierarchyState === HierarchyState.collapse) {
+      const define = table.getBodyColumnDefine(col, row);
+      if (define?.tree) {
+        const indexArr = table.dataSource.getIndexKey(table.getRecordIndexByRow(col, row));
+        cellHierarchyIndent =
+          Array.isArray(indexArr) && table.getHierarchyState(col, row) !== HierarchyState.none
+            ? (indexArr.length - 1) * ((layoutMap as SimpleHeaderLayoutMap).hierarchyIndent ?? 0)
+            : 0;
+      }
+    }
 
     // 测量文字宽度
     const textWidth = computeTextWidth(col, row, table);
-    maxWidth = Math.max(textWidth, maxWidth);
+    maxWidth = Math.max(textWidth + cellHierarchyIndent, maxWidth);
   }
 
   // 处理宽度限制
@@ -293,7 +334,8 @@ function computeTextWidth(col: number, row: number, table: BaseTableAPI): number
   // const dataValue = table.getCellOriginValue(col, row);
   const actStyle = table._getCellStyle(col, row);
   let iconWidth = 0;
-  const mayHaveIcon = table.getCellType(col, row) !== 'body' ? true : !!table.getBodyColumnDefine(col, row)?.icon;
+  const define = table.getBodyColumnDefine(col, row);
+  const mayHaveIcon = table.getCellType(col, row) !== 'body' ? true : !!define?.icon || !!define?.tree;
   if (mayHaveIcon) {
     const icons = table.getCellIcons(col, row);
     icons?.forEach(icon => {

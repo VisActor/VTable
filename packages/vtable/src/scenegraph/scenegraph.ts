@@ -1,7 +1,7 @@
 import type { IStage, IRect, ITextCache } from '@visactor/vrender';
 import { createStage, createRect, IContainPointMode, container } from '@visactor/vrender';
+import { type CellAddress, type CellType, type ColumnIconOption, type SortOrder, IconFuncTypeEnum } from '../ts-types';
 import { isArray, isString } from '@visactor/vutils';
-import type { CellType, ColumnIconOption, SortOrder } from '../ts-types';
 import { Group } from './graphic/group';
 import type { Icon } from './graphic/icon';
 import {
@@ -33,11 +33,22 @@ import { updateAllSelectComponent, updateCellSelectBorder } from './select/updat
 import { createCellSelectBorder } from './select/create-select-border';
 import { moveSelectingRangeComponentsToSelectedRangeComponents } from './select/move-select-border';
 import { deleteAllSelectBorder, deleteLastSelectedRangeComponents } from './select/delete-select-border';
+import { updateRow } from './layout/update-row';
 import { handleTextStick } from './stick-text';
 import { computeRowsHeight } from './layout/compute-row-height';
 import { emptyGroup } from './utils/empty-group';
 
 container.load(splitModule);
+
+export type MergeMap = Map<
+  string,
+  {
+    x: number;
+    y: number;
+    cellWidth: number;
+    cellHeight: number;
+  }
+>;
 
 /**
  * @description: 表格场景树，存储和管理表格全部的场景图元
@@ -66,10 +77,13 @@ export class Scenegraph {
   frozenRowCount: number;
   clear: boolean;
 
+  mergeMap: MergeMap;
+
   constructor(table: BaseTableAPI) {
     this.table = table;
     this.hasFrozen = false;
     this.clear = true;
+    this.mergeMap = new Map();
 
     this.stage = createStage({
       canvas: table.canvas,
@@ -203,6 +217,57 @@ export class Scenegraph {
   }
 
   /**
+   * @description: 清空全部单元格内容，用于setRecord
+   * @return {*}
+   */
+  clearCells() {
+    this.clear = true;
+    this.hasFrozen = false;
+    this.mergeMap.clear();
+
+    this.colHeaderGroup.clear();
+    this.rowHeaderGroup.clear();
+    this.cornerHeaderGroup.clear();
+    this.bodyGroup.clear();
+
+    this.colHeaderGroup.setAttributes({
+      x: 0,
+      y: 0,
+      width: 0,
+      height: 0
+    });
+    this.rowHeaderGroup.setAttributes({
+      x: 0,
+      y: 0,
+      width: 0,
+      height: 0
+    });
+    this.cornerHeaderGroup.setAttributes({
+      x: 0,
+      y: 0,
+      width: 0,
+      height: 0
+    });
+    this.bodyGroup.setAttributes({
+      x: 0,
+      y: 0,
+      width: 0,
+      height: 0
+    });
+    this.tableGroup.setAttributes({
+      x: 0,
+      y: 0,
+      width: 0,
+      height: 0
+    });
+
+    if ((this.tableGroup as any).border) {
+      (this.tableGroup.parent as Group).removeChild((this.tableGroup as any).border);
+      delete (this.tableGroup as any).border;
+    }
+  }
+
+  /**
    * @description: 初始化表格外组件
    * @return {*}
    */
@@ -237,8 +302,6 @@ export class Scenegraph {
     } else {
       this.createBodySceneGraphForFirstScreen();
     }
-
-    handleTextStick(this.table);
   }
 
   createHeaderSceneGraph() {
@@ -626,6 +689,13 @@ export class Scenegraph {
     }
   }
 
+  /*
+   * recalculates column width in all autowidth columns
+   */
+  recalculateColWidths() {
+    computeColsWidth(this.table, true);
+  }
+
   updateTableSize() {
     this.tableGroup.setAttributes({
       width: Math.min(
@@ -786,6 +856,8 @@ export class Scenegraph {
 
     // 更新滚动条状态
     this.component.updateScrollBar();
+    // 处理单元格内容需要textStick的情况
+    handleTextStick(this.table);
 
     this.updateNextFrame();
   }
@@ -1091,56 +1163,6 @@ export class Scenegraph {
     this.updateNextFrame();
   }
 
-  /**
-   * @description: 清空全部单元格内容，用于setRecord
-   * @return {*}
-   */
-  clearCells() {
-    this.clear = true;
-    this.hasFrozen = false;
-
-    this.colHeaderGroup.clear();
-    this.rowHeaderGroup.clear();
-    this.cornerHeaderGroup.clear();
-    this.bodyGroup.clear();
-
-    this.colHeaderGroup.setAttributes({
-      x: 0,
-      y: 0,
-      width: 0,
-      height: 0
-    });
-    this.rowHeaderGroup.setAttributes({
-      x: 0,
-      y: 0,
-      width: 0,
-      height: 0
-    });
-    this.cornerHeaderGroup.setAttributes({
-      x: 0,
-      y: 0,
-      width: 0,
-      height: 0
-    });
-    this.bodyGroup.setAttributes({
-      x: 0,
-      y: 0,
-      width: 0,
-      height: 0
-    });
-    this.tableGroup.setAttributes({
-      x: 0,
-      y: 0,
-      width: 0,
-      height: 0
-    });
-
-    if ((this.tableGroup as any).border) {
-      (this.tableGroup.parent as Group).removeChild((this.tableGroup as any).border);
-      delete (this.tableGroup as any).border;
-    }
-  }
-
   updateCellContentWhileResize(col: number, row: number) {
     const type = this.table.getBodyColumnType(col, row);
     const cellGroup = this.getCell(col, row);
@@ -1404,6 +1426,46 @@ export class Scenegraph {
     this.stage.window.setDpr(pixelRatio);
     this.stage.render();
     this.stage.enableDirtyBounds();
+  }
+
+  updateHierarchyIcon(col: number, row: number) {
+    const cellGroup = this.getCell(col, row);
+    let iconConfig;
+    if (this.table.isHeader(col, row)) {
+      iconConfig = this.table.internalProps.headerHelper.getHierarchyIcon(cellGroup.col, cellGroup.row);
+    } else {
+      iconConfig = this.table.internalProps.bodyHelper.getHierarchyIcon(cellGroup.col, cellGroup.row);
+    }
+    this.findAndUpdateIcon(cellGroup, [IconFuncTypeEnum.collapse, IconFuncTypeEnum.expand], iconConfig);
+  }
+
+  updateRow(removeCells: CellAddress[], addCells: CellAddress[]) {
+    // add or move rows
+    updateRow(removeCells, addCells, this.table);
+
+    // update column width and row height
+    this.recalculateColWidths();
+    if (this.table.internalProps.autoRowHeight) {
+      updateAutoRowHeight(this, true);
+    }
+
+    // check frozen status
+    this.table.stateManeger.checkFrozen();
+
+    // rerender
+    this.updateNextFrame();
+  }
+
+  findAndUpdateIcon(group: Group, funcTypeArr: IconFuncTypeEnum[], iconConfig: ColumnIconOption) {
+    group.forEachChildren((icon: Icon | Group) => {
+      if (icon.type === 'group') {
+        this.findAndUpdateIcon(icon, funcTypeArr, iconConfig);
+      } else if (funcTypeArr.indexOf((icon as Icon).attribute.funcType as IconFuncTypeEnum) !== -1) {
+        this.updateIcon(icon as Icon, iconConfig);
+        return true;
+      }
+      return false;
+    });
   }
 }
 

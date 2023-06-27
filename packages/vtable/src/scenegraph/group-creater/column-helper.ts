@@ -10,9 +10,7 @@ import type {
 } from '../../ts-types';
 import { Group } from '../graphic/group';
 import { getProp, getRawProp } from '../utils/get-prop';
-import type { MergeMap } from './column';
-import { getQuadProps } from '../utils/padding';
-import { parseFont } from '../utils/font';
+import type { MergeMap } from '../scenegraph';
 import type { PivotHeaderLayoutMap } from '../../layout/pivot-header-layout';
 import { createCell } from './cell-helper';
 import type { BaseTableAPI, PivotTableProtected } from '../../ts-types/base-table';
@@ -134,12 +132,13 @@ export function createComplexColumn(
     // let cellWidth = 0;
     // let cellHeight = 0;
     if (mergeResult) {
+      const height = mergeResult.cellHeight / (range.end.row - range.start.row + 1);
       // 已有Merge单元格，使用空Group占位
       const cellGroup = new Group({
         x: 0,
         y,
         width: 0,
-        height: 0,
+        height,
         visible: false,
         pickable: false
       });
@@ -150,8 +149,9 @@ export function createComplexColumn(
       cellGroup.mergeRow = range.start.row;
       columnGroup.addChild(cellGroup);
       columnGroup.updateColumnRowNumber(row);
+      columnGroup.updateColumnHeight(height);
       range = table.getCellRange(col, row);
-      y += mergeResult.cellHeight / (range.end.row - range.start.row + 1);
+      y += height;
       maxWidth = Math.max(maxWidth, mergeResult.cellWidth);
     } else {
       // deal with promise data
@@ -185,9 +185,12 @@ export function createComplexColumn(
           )
         );
         columnGroup.updateColumnRowNumber(row);
-        const height = table.getRowHeight(row);
+        // const height = table.getRowHeight(row);
+        const height = isMerge
+          ? table.getRowHeight(row) / (range.end.row - range.start.row + 1)
+          : table.getRowHeight(row);
         columnGroup.updateColumnHeight(height);
-        y += isMerge ? height / (range.end.row - range.start.row + 1) : height;
+        y += height;
       } else {
         const cellGroup = createCell(
           type,
@@ -212,9 +215,12 @@ export function createComplexColumn(
           cellTheme
         );
         columnGroup.updateColumnRowNumber(row);
-        const height = cellGroup.attribute.height;
+        // const height = cellGroup.attribute.height;
+        const height = isMerge
+          ? cellGroup.attribute.height / (range.end.row - range.start.row + 1)
+          : cellGroup.attribute.height;
         columnGroup.updateColumnHeight(height);
-        y += isMerge ? height / (range.end.row - range.start.row + 1) : height;
+        y += height;
       }
     }
     if (rowLimit && row > rowLimit) {
