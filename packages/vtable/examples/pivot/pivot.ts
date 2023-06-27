@@ -318,7 +318,6 @@ export function createTable() {
             width: 'auto',
             showSort: false,
             style: {
-              borderLineWidth: 0,
               color: 'black',
               fontWeight: 'bold',
               bgColor: arg => {
