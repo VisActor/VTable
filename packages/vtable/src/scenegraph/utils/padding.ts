@@ -1,6 +1,6 @@
 import { parsePadding } from '@visactor/vrender';
 
-export function getPadding(paddingOrigin: number | number[]): [number, number, number, number] {
+export function getQuadProps(paddingOrigin: number | number[]): [number, number, number, number] {
   let padding = parsePadding(paddingOrigin);
   if (typeof padding === 'number' || typeof padding === 'string') {
     padding = [padding, padding, padding, padding];

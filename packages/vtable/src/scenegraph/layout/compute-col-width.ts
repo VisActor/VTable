@@ -4,7 +4,7 @@ import type { TextColumnDefine } from '../../ts-types';
 import { IconPosition } from '../../ts-types';
 import * as calc from '../../tools/calc';
 import { toFixed, validToString } from '../../tools/util';
-import { getPadding } from '../utils/padding';
+import { getQuadProps } from '../utils/padding';
 import { getProp } from '../utils/get-prop';
 import type { BaseTableAPI } from '../../ts-types/base-table';
 
@@ -308,7 +308,7 @@ function computeTextWidth(col: number, row: number, table: BaseTableAPI): number
     spanCol = cellRange.end.col - cellRange.start.col + 1;
   }
 
-  const padding = getPadding(getProp('padding', actStyle, col, row, table));
+  const padding = getQuadProps(getProp('padding', actStyle, col, row, table));
   const paddingWidth = padding[1] + padding[3]; // + cellHierarchyIndent
 
   const fontSize = getProp('fontSize', actStyle, col, row, table);

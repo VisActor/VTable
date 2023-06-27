@@ -1,5 +1,6 @@
 import type { IStage, IRect, ITextCache } from '@visactor/vrender';
 import { createStage, createRect, IContainPointMode, container } from '@visactor/vrender';
+import { isArray, isString } from '@visactor/vutils';
 import type { CellType, ColumnIconOption, SortOrder } from '../ts-types';
 import { Group } from './graphic/group';
 import type { Icon } from './graphic/icon';
@@ -16,7 +17,7 @@ import { updateColWidth } from './layout/update-width';
 import { TableComponent } from './component/table-component';
 import { updateRowHeight } from './layout/update-height';
 import { updateImageCellContentWhileResize } from './group-creater/cell-type/image-cell';
-import { getPadding } from './utils/padding';
+import { getQuadProps } from './utils/padding';
 import { createFrameBorder, updateFrameBorder, updateFrameBorderSize } from './style/frame-border';
 import { ResizeColumnHotSpotSize } from '../tools/global';
 import splitModule from './graphic/contributions';
@@ -33,11 +34,9 @@ import { createCellSelectBorder } from './select/create-select-border';
 import { moveSelectingRangeComponentsToSelectedRangeComponents } from './select/move-select-border';
 import { deleteAllSelectBorder, deleteLastSelectedRangeComponents } from './select/delete-select-border';
 import { handleTextStick } from './stick-text';
+import { emptyGroup } from './utils/empty-group';
 
 container.load(splitModule);
-
-export const emptyGroup = new Group({});
-emptyGroup.role = 'empty';
 
 export type MergeMap = Map<
   string,
@@ -841,6 +840,7 @@ export class Scenegraph {
 
     // 处理frame border
     this.createFrameBorder();
+    this.updateBorderSizeAndPosition();
 
     // 更新滚动条状态
     this.component.updateScrollBar();
@@ -1068,7 +1068,7 @@ export class Scenegraph {
         cellGroup.setAttribute('width', width);
       }
       const headerStyle = this.table._getCellStyle(col, row);
-      const padding = getPadding(getProp('padding', headerStyle, col, row, this.table));
+      const padding = getQuadProps(getProp('padding', headerStyle, col, row, this.table));
 
       // const text = cellGroup.getChildAt(1) as WrapText;
       const text = cellGroup.getChildByName('text') as WrapText;
@@ -1377,11 +1377,17 @@ export class Scenegraph {
     //   return text.attribute.text as string;
     // }
     if (text) {
-      const textAttributeStr = (text.attribute.text as string[]).join('');
+      const textAttributeStr = isArray(text.attribute.text)
+        ? text.attribute.text.join('')
+        : (text.attribute.text as string);
       let cacheStr = '';
-      (text.cache as ITextCache).layoutData.lines.forEach((line: any) => {
-        cacheStr += line.str;
-      });
+      if (isString(text.cache.clipedText)) {
+        cacheStr = text.cache.clipedText;
+      } else {
+        (text.cache as ITextCache).layoutData.lines.forEach((line: any) => {
+          cacheStr += line.str;
+        });
+      }
       if (cacheStr !== textAttributeStr) {
         return textAttributeStr;
       }

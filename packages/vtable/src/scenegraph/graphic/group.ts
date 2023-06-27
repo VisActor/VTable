@@ -7,6 +7,8 @@ export class Group extends VRenderGroup {
   row?: number;
   mergeCol?: number;
   mergeRow?: number;
+  rowNumber?: number; // row number of the column group
+  colHeight?: number; // current height of the column group
   border?: IRect; // table/header/body的border mark，挂载在这里方便更新
   needUpdate?: boolean;
 
@@ -232,4 +234,22 @@ export class Group extends VRenderGroup {
 
   //   // this.emit('AAABBBoundsChange');
   // }
+
+  // update column group row number
+  updateColumnRowNumber(row: number) {
+    if (!this.rowNumber) {
+      this.rowNumber = row;
+    } else {
+      this.rowNumber = Math.max(this.rowNumber, row);
+    }
+  }
+
+  // update column height
+  updateColumnHeight(cellHeight: number) {
+    if (!this.colHeight) {
+      this.colHeight = cellHeight;
+    } else {
+      this.colHeight += cellHeight;
+    }
+  }
 }

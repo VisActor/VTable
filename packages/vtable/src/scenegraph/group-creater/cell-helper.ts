@@ -24,6 +24,8 @@ import { createVideoCellGroup } from './cell-type/video-cell';
 import type { ICustomLayoutFuc } from '../../ts-types/customLayout';
 import type { BaseTableAPI, PivotTableProtected } from '../../ts-types/base-table';
 import { getStyleTheme } from '../../core/tableHelper';
+import { isPromise } from '../../tools/helper';
+import { dealPromiseData } from '../utils/deal-promise-data';
 
 export function createCell(
   type: ColumnTypeOption,
@@ -272,6 +274,9 @@ export function updateCell(col: number, row: number, table: BaseTableAPI) {
     newCellGroup.row = row;
     newCellGroup.mergeCol = range.start.col;
     newCellGroup.mergeRow = range.start.row;
+
+    oldCellGroup.parent.insertAfter(newCellGroup, oldCellGroup);
+    oldCellGroup.parent.removeChild(oldCellGroup);
   } else {
     const mayHaveIcon = cellType !== 'body' ? true : !!define?.icon;
     const headerStyle = table._getCellStyle(col, row);
@@ -312,31 +317,106 @@ export function updateCell(col: number, row: number, table: BaseTableAPI) {
       cellHeight = table.getRowHeight(row);
     }
 
-    newCellGroup = createCell(
-      type,
-      define,
-      table,
-      col,
-      row,
-      table.getColWidth(col),
-      bgColorFunc,
-      customRender,
-      customLayout,
-      cellWidth,
-      cellHeight,
-      oldCellGroup.parent,
-      oldCellGroup.attribute.y,
-      padding,
-      textAlign,
-      textBaseline,
-      mayHaveIcon,
-      false,
-      isMerge,
-      range,
-      cellTheme
-    );
-  }
+    // deal with promise data
+    const value = table.getCellValue(col, row);
+    if (isPromise(value)) {
+      // clear cell content sync
+      oldCellGroup.removeAllChild();
 
+      // update cell content async
+      dealPromiseData(
+        value,
+        table,
+        updateCellContent.bind(
+          null,
+          type,
+          define,
+          table,
+          col,
+          row,
+          bgColorFunc,
+          customRender,
+          customLayout,
+          cellWidth,
+          cellHeight,
+          oldCellGroup,
+          padding,
+          textAlign,
+          textBaseline,
+          mayHaveIcon,
+          isMerge,
+          range,
+          cellTheme
+        )
+      );
+    } else {
+      updateCellContent(
+        type,
+        define,
+        table,
+        col,
+        row,
+        bgColorFunc,
+        customRender,
+        customLayout,
+        cellWidth,
+        cellHeight,
+        oldCellGroup,
+        padding,
+        textAlign,
+        textBaseline,
+        mayHaveIcon,
+        isMerge,
+        range,
+        cellTheme
+      );
+    }
+  }
+}
+
+function updateCellContent(
+  type: ColumnTypeOption,
+  define: ColumnDefine,
+  table: BaseTableAPI,
+  col: number,
+  row: number,
+  bgColorFunc: Function,
+  customRender: ICustomRender,
+  customLayout: ICustomLayoutFuc,
+  cellWidth: number,
+  cellHeight: number,
+  oldCellGroup: Group,
+  padding: [number, number, number, number],
+  textAlign: CanvasTextAlign,
+  textBaseline: CanvasTextBaseline,
+  mayHaveIcon: boolean,
+  isMerge: boolean,
+  range: CellRange,
+  cellTheme?: IThemeSpec
+) {
+  const newCellGroup = createCell(
+    type,
+    define,
+    table,
+    col,
+    row,
+    table.getColWidth(col),
+    bgColorFunc,
+    customRender,
+    customLayout,
+    cellWidth,
+    cellHeight,
+    oldCellGroup.parent,
+    oldCellGroup.attribute.y,
+    padding,
+    textAlign,
+    textBaseline,
+    mayHaveIcon,
+    false,
+    isMerge,
+    range,
+    cellTheme
+  );
   oldCellGroup.parent.insertAfter(newCellGroup, oldCellGroup);
   oldCellGroup.parent.removeChild(oldCellGroup);
 }
