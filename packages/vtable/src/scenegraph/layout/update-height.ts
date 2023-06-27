@@ -5,7 +5,7 @@ import { createSparkLineCellGroup } from '../group-creater/cell-type/spark-line-
 import type { Scenegraph } from '../scenegraph';
 import { getCellMergeInfo } from '../utils/get-cell-merge';
 import { getProp } from '../utils/get-prop';
-import { getPadding } from '../utils/padding';
+import { getQuadProps } from '../utils/padding';
 import { updateCellContentHeight } from '../utils/text-icon-layout';
 import type { IProgressbarColumnBodyDefine } from '../../ts-types/list-table/define/progressbar-define';
 import { dealWithCustom } from '../component/custom';
@@ -173,7 +173,7 @@ export function updateCellHeight(
     const style = scene.table._getCellStyle(col, row) as ProgressBarStyle;
     const value = scene.table.getCellValue(col, row);
     const dataValue = scene.table.getCellOriginValue(col, row);
-    const padding = getPadding(getProp('padding', style, col, row, scene.table));
+    const padding = getQuadProps(getProp('padding', style, col, row, scene.table));
 
     const newBarCell = createProgressBarCell(
       columnDefine,
@@ -198,7 +198,7 @@ export function updateCellHeight(
     // 目前先采用重新生成节点的方案
     cell.removeAllChild();
     const headerStyle = scene.table._getCellStyle(col, row);
-    const padding = getPadding(getProp('padding', headerStyle, col, row, scene.table));
+    const padding = getQuadProps(getProp('padding', headerStyle, col, row, scene.table));
     createSparkLineCellGroup(
       cell,
       cell.parent,
@@ -221,7 +221,7 @@ export function updateCellHeight(
       distHeight,
       detaY,
       scene.table.internalProps.autoRowHeight,
-      getPadding(style.padding as number),
+      getQuadProps(style.padding as number),
       style.textAlign,
       style.textBaseline
     );

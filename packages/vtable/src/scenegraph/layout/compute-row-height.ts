@@ -7,7 +7,7 @@ import type { BaseTableAPI, HeaderData } from '../../ts-types/base-table';
 import type { ColumnData, TextColumnDefine } from '../../ts-types/list-table/layout-map/api';
 import { WrapText } from '../graphic/text';
 import { getProp } from '../utils/get-prop';
-import { getPadding } from '../utils/padding';
+import { getQuadProps } from '../utils/padding';
 import { getCellRect } from './compute-col-width';
 
 const utilTextMark = new WrapText({});
@@ -209,7 +209,7 @@ function computeTextHeight(col: number, row: number, table: BaseTableAPI): numbe
     spanRow = cellRange.end.row - cellRange.start.row + 1;
   }
 
-  const padding = getPadding(getProp('padding', actStyle, col, row, table));
+  const padding = getQuadProps(getProp('padding', actStyle, col, row, table));
   const fontSize = getProp('fontSize', actStyle, col, row, table);
   const lineHeight = getProp('lineHeight', actStyle, col, row, table) ?? fontSize;
   const fontFamily = getProp('fontFamily', actStyle, col, row, table);

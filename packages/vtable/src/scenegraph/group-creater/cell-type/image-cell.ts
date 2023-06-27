@@ -10,7 +10,7 @@ import { calcStartPosition } from '../../utils/cell-pos';
 import type { Scenegraph } from '../../scenegraph';
 import { getProp, getFunctionalProp } from '../../utils/get-prop';
 import { isValid } from '../../../tools/util';
-import { getPadding } from '../../utils/padding';
+import { getQuadProps } from '../../utils/padding';
 
 const regedIcons = icons.get();
 
@@ -206,7 +206,7 @@ export function updateImageCellContentWhileResize(cellGroup: Group, col: number,
   const headerStyle = table._getCellStyle(col, row); // to be fixed
   const textAlign = getProp('textAlign', headerStyle, col, row, table) ?? 'left';
   const textBaseline = getProp('textBaseline', headerStyle, col, row, table) ?? 'middle';
-  const padding = getPadding(getProp('padding', headerStyle, col, row, table)) ?? [0, 0, 0, 0];
+  const padding = getQuadProps(getProp('padding', headerStyle, col, row, table)) ?? [0, 0, 0, 0];
 
   if (image.keepAspectRatio) {
     const { width: imageWidth, height: imageHeight } = calcKeepAspectRatioSize(
@@ -240,6 +240,27 @@ export function updateImageCellContentWhileResize(cellGroup: Group, col: number,
       y: padding[0],
       width: cellGroup.attribute.width - padding[1] - padding[3],
       height: cellGroup.attribute.height - padding[0] - padding[2]
+    });
+  }
+
+  // update video play icon
+  const playIcon = cellGroup.getChildByName('play-icon');
+  if (playIcon) {
+    const left = 0;
+    const top = 0;
+    const width = cellGroup.attribute.width;
+    const height = cellGroup.attribute.height;
+    const iconSize = Math.floor(Math.min(width - padding[1] - padding[3], height - padding[2] - padding[0]) / 2);
+    const anchorX =
+      left + (width > image.attribute.width ? image.attribute.x - left + image.attribute.width / 2 : width / 2);
+    const anchorY =
+      top + (height > image.attribute.height ? image.attribute.y - top + image.attribute.height / 2 : height / 2);
+
+    playIcon.setAttributes({
+      x: anchorX - iconSize / 2,
+      y: anchorY - iconSize / 2,
+      width: iconSize,
+      height: iconSize
     });
   }
 }

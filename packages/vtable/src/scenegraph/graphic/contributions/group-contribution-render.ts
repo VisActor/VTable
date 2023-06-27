@@ -12,7 +12,7 @@ import { BaseRenderContributionTime } from '@visactor/vrender';
 import type { Group } from '../group';
 import { getCellHoverColor } from '../../../state/hover/is-cell-hover';
 import type { BaseTableAPI } from '../../../ts-types/base-table';
-import { getPadding } from '../../utils/padding';
+import { getQuadProps } from '../../utils/padding';
 import { getCellMergeInfo } from '../../utils/get-cell-merge';
 
 // const highlightDash: number[] = [];

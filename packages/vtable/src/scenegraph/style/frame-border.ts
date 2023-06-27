@@ -3,7 +3,7 @@ import { createRect } from '@visactor/vrender';
 import type { TableFrameStyle } from '../../ts-types';
 import type { Group } from '../graphic/group';
 import { isArray } from '@visactor/vutils';
-import { getPadding } from '../utils/padding';
+import { getQuadProps } from '../utils/padding';
 
 /**
  * @description: create frame border
@@ -66,10 +66,10 @@ export function createFrameBorder(
   }
 
   if (Array.isArray(borderColor)) {
-    (rectAttributes as any).strokeArrayColor = getPadding(borderColor as any);
+    (rectAttributes as any).strokeArrayColor = getQuadProps(borderColor as any);
   }
   if (Array.isArray(borderLineWidth)) {
-    (rectAttributes as any).strokeArrayWidth = getPadding(borderLineWidth);
+    (rectAttributes as any).strokeArrayWidth = getQuadProps(borderLineWidth);
     (rectAttributes as any).lineWidth = 1;
   }
 

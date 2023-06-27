@@ -1,4 +1,5 @@
 import * as VTable from '../../src';
+import { bindDebugTool } from '../../src/scenegraph/debug-tool';
 const ListTable = VTable.ListTable;
 const Table_CONTAINER_DOM_ID = 'vTable';
 
@@ -24,7 +25,9 @@ export function createTable() {
         width: 150,
         showSort: true, //显示VTable内置排序图标
         style: {
-          autoWrapText: true
+          autoWrapText: true,
+          lineHeight: 50,
+          textBaseline: 'middle'
         }
       },
       {
@@ -36,7 +39,11 @@ export function createTable() {
           }
           return v1 === v2 ? 0 : v1 > v2 ? 1 : -1;
         },
-        width: 100
+        width: 100,
+        style: {
+          lineHeight: 40,
+          textBaseline: 'middle'
+        }
       },
       {
         field: 'id',
@@ -69,6 +76,7 @@ export function createTable() {
     widthMode: 'standard',
     allowFrozenColCount: 2,
     defaultRowHeight: 50,
+    autoRowHeight: true,
     // theme: {},
     hover: {
       // isShowTooltip: true, //当hover到未展示全的文本上时是否需要出现提示框
@@ -88,9 +96,9 @@ export function createTable() {
     order: 'desc'
   });
 
-  // VTable.bindDebugTool(instance.scenegraph.stage as any, {
-  //   customGrapicKeys: ['role', '_updateTag'],
-  // });
+  bindDebugTool(instance.scenegraph.stage as any, {
+    customGrapicKeys: ['role', '_updateTag']
+  });
 
   // 只为了方便控制太调试用，不要拷贝
   (window as any).tableInstance = instance;

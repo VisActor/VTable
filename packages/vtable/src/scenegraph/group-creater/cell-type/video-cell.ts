@@ -118,7 +118,7 @@ export function createVideoCellGroup(
       image: (regedIcons.play as any).svg,
       cursor: (regedIcons.play as any).cursor
     });
-    playIcon.role = 'play-icon';
+    playIcon.name = 'play-icon';
     cellGroup.appendChild(playIcon);
     // 触发重绘
     table.scenegraph.updateNextFrame();
