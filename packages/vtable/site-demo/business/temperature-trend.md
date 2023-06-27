@@ -447,14 +447,14 @@ cover:
   const option = {
     parentElement: document.getElementById(Table_CONTAINER_DOM_ID),
     records,
-    defaultRowHeight: 200,
+    defaultRowHeight: 150,
     defaultHeaderRowHeight: 50,
     indicators: [
       {
         indicatorKey: 'dayTrendChart',
         columnType: 'chart',
         chartType: 'vchart',
-        width: 500,
+        width: 400,
         chartSpec: {
           type: 'common',
           series: [
@@ -577,7 +577,7 @@ cover:
         indicatorKey: 'yearTrendChart',
         columnType: 'chart',
         chartType: 'vchart',
-        width: 500,
+        width: 350,
         chartSpec: {
           type: 'common',
           data: {
