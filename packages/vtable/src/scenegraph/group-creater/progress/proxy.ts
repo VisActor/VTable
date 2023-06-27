@@ -2,18 +2,14 @@ import type { BaseTableAPI } from '../../../ts-types/base-table';
 import type { Group } from '../../graphic/group';
 import type { WrapText } from '../../graphic/text';
 import { updateCellHeightForColumn } from '../../layout/update-height';
-import type { Scenegraph } from '../../scenegraph';
-import { emptyGroup } from '../../scenegraph';
+import { emptyGroup } from '../../utils/empty-group';
 import { getProp } from '../../utils/get-prop';
-import { getPadding } from '../../utils/padding';
+import { getQuadProps } from '../../utils/padding';
 import { createColGroup } from '../column';
 import { createComplexColumn } from '../column-helper';
 
-const mergeMap = new Map();
-
 export class SceneProxy {
   table: BaseTableAPI;
-  scenegraph: Scenegraph;
   currentRow = 0;
   totalRow: number;
   rowLimit = 1000;
@@ -43,7 +39,9 @@ export class SceneProxy {
 
   constructor(table: BaseTableAPI) {
     this.table = table;
-    this.scenegraph = table.scenegraph;
+    if (this.table.options.maintainedDataCount) {
+      this.rowLimit = this.table.options.maintainedDataCount;
+    }
   }
 
   setParams() {
@@ -120,7 +118,7 @@ export class SceneProxy {
       this.rowUpdatePos = this.rowEnd;
       this.referenceRow = Math.floor((this.rowEnd - this.rowStart) / 2);
     } else {
-      this.currentRow = (bodyGroup.firstChild.lastChild as Group).row;
+      this.currentRow = (bodyGroup.firstChild as Group)?.rowNumber ?? this.totalRow;
       this.rowEnd = this.currentRow;
       this.rowUpdatePos = this.rowEnd;
       this.referenceRow = Math.floor((this.rowEnd - this.rowStart) / 2);
@@ -172,21 +170,24 @@ export class SceneProxy {
 
   createRowCellGroup(onceCount: number) {
     const endRow = Math.min(this.totalRow, this.currentRow + onceCount);
+    let maxHeight = 0;
     for (let col = this.bodyLeftCol; col <= this.bodyRightCol; col++) {
-      const colGroup = this.scenegraph.getColGroup(col);
+      const colGroup = this.table.scenegraph.getColGroup(col);
       const cellType = col < this.table.rowHeaderLevelCount ? 'rowHeader' : 'body';
-      createComplexColumn(
+      const { height } = createComplexColumn(
         colGroup,
         col,
         colGroup.attribute.width,
         this.currentRow + 1,
         endRow,
-        mergeMap,
+        this.table.scenegraph.mergeMap,
         this.table.internalProps.defaultRowHeight,
         this.table,
         cellType
       );
+      maxHeight = Math.max(maxHeight, height);
     }
+    this.table.scenegraph.bodyGroup.setAttribute('height', maxHeight);
 
     if (this.table.internalProps.autoRowHeight) {
       updateAutoRow(
@@ -201,15 +202,19 @@ export class SceneProxy {
     this.rowEnd = endRow;
     this.rowUpdatePos = this.rowEnd;
     this.referenceRow = Math.floor((endRow - this.rowStart) / 2);
+
+    // update container group size and border
+    this.table.scenegraph.updateContainer();
+    this.table.scenegraph.updateBorderSizeAndPosition();
   }
 
   async setY(y: number) {
     if (y < this.yLimitTop && this.rowStart === this.bodyTopRow) {
       // 执行真实body group坐标修改
-      this.scenegraph.setBodyAndRowHeaderY(-y);
+      this.table.scenegraph.setBodyAndRowHeaderY(-y);
     } else if (y > this.yLimitBottom && this.rowEnd === this.bodyBottomRow) {
       // 执行真实body group坐标修改
-      this.scenegraph.setBodyAndRowHeaderY(-y);
+      this.table.scenegraph.setBodyAndRowHeaderY(-y);
     } else {
       // 执行动态更新节点
       this.dynamicSetY(y);
@@ -253,11 +258,11 @@ export class SceneProxy {
       this.updateBody(y);
     }
 
-    this.scenegraph.updateNextFrame();
+    this.table.scenegraph.updateNextFrame();
   }
 
   updateBody(y: number) {
-    this.scenegraph.setBodyAndRowHeaderY(-y);
+    this.table.scenegraph.setBodyAndRowHeaderY(-y);
   }
 
   async moveCell(count: number, direction: 'up' | 'down', screenTopRow: number) {
@@ -277,7 +282,7 @@ export class SceneProxy {
       const endRow = direction === 'up' ? this.rowStart + count - 1 : this.rowEnd;
       // console.log('move', startRow, endRow, direction);
       for (let col = this.bodyLeftCol; col <= this.bodyRightCol; col++) {
-        const colGroup = this.scenegraph.getColGroup(col);
+        const colGroup = this.table.scenegraph.getColGroup(col);
         for (let row = startRow; row <= endRow; row++) {
           if (direction === 'up') {
             const cellGroup = colGroup.firstChild as Group;
@@ -343,7 +348,7 @@ export class SceneProxy {
       const distEndRow = direction === 'up' ? this.rowEnd + count : this.rowEnd - count;
       const distStartRowY = this.table.getRowsHeight(this.bodyTopRow, distStartRow - 1);
       for (let col = this.bodyLeftCol; col <= this.bodyRightCol; col++) {
-        const colGroup = this.scenegraph.getColGroup(col);
+        const colGroup = this.table.scenegraph.getColGroup(col);
         colGroup.forEachChildren((cellGroup: Group, index) => {
           // 这里使用colGroup变量而不是for this.rowStart to this.rowEndthis.rowEnd是因为在更新内可能出现row号码重复的情况
           this.updateCellGroupPosition(
@@ -449,7 +454,7 @@ export class SceneProxy {
       return;
     }
 
-    this.scenegraph.updateCellContent(cellGroup.col, cellGroup.row);
+    this.table.scenegraph.updateCellContent(cellGroup.col, cellGroup.row);
     // 更新内容
     // const textMark = cellGroup.firstChild as WrapText;
     // const autoWrapText = Array.isArray(textMark.attribute.text);
@@ -535,16 +540,16 @@ export class SceneProxy {
         // 由缓存单元格向前后查找要快于从头查找
         let cellGroup = getCellByCache(cacheCellGoup, row);
         if (!cellGroup) {
-          cellGroup = this.scenegraph.getCell(col, row);
+          cellGroup = this.table.scenegraph.getCell(col, row);
         }
         cellGroup.row && this.cellCache.set(col, cellGroup);
         return cellGroup;
       }
-      const cellGroup = this.scenegraph.getCell(col, row);
+      const cellGroup = this.table.scenegraph.getCell(col, row);
       cellGroup.row && this.cellCache.set(col, cellGroup);
       return cellGroup;
     }
-    const cellGroup = this.scenegraph.getCell(col, row);
+    const cellGroup = this.table.scenegraph.getCell(col, row);
     cellGroup.row && this.cellCache.set(col, cellGroup);
     return cellGroup;
   }
@@ -569,7 +574,7 @@ function updateAutoRow(
       // const contentHeight = cellGroup.getContentHeight();
       const text = (cellGroup.getChildByName('text') as WrapText) || cellGroup.getChildByName('content');
       const headerStyle = table._getCellStyle(col, row);
-      const padding = getPadding(getProp('padding', headerStyle, col, row, table));
+      const padding = getQuadProps(getProp('padding', headerStyle, col, row, table));
       const height = text.AABBBounds.height() + (padding[0] + padding[2]);
       maxRowHeight = Math.max(maxRowHeight, height);
       (cellGroup as any).needUpdateForAutoRowHeight = false;

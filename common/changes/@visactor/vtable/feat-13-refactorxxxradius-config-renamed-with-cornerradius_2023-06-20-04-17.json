@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "comment": "refactor: borderRadius rename to cornerRadius",
+      "type": "patch",
+      "packageName": "@visactor/vtable"
+    }
+  ],
+  "packageName": "@visactor/vtable",
+  "email": "892739385@qq.com"
+}

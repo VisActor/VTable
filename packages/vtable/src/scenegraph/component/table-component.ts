@@ -87,7 +87,7 @@ export class TableComponent {
       y: 0,
       width: 38,
       height: 16,
-      borderRadius: 5,
+      cornerRadius: 5,
       dx: 12,
       dy: -8
     });

@@ -19,6 +19,8 @@ VTable is not just a high-performance multidimensional data analysis table, but 
   <a href="">API</a>•
 </p>
 
+![](https://github.com/visactor/vtable/actions/workflows/bug-server.yml/badge.svg)
+![](https://github.com/visactor/vtable/actions/workflows/unit-test.yml/badge.svg)
 [![npm Version](https://img.shields.io/npm/v/@visactor/vtable.svg)](https://www.npmjs.com/package/@visactor/vtable)
 [![npm Download](https://img.shields.io/npm/dm/@visactor/vtable.svg)](https://www.npmjs.com/package/@visactor/vtable)
 [![license](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/visactor/vtable/blob/main/LICENSE)

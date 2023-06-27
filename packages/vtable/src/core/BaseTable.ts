@@ -85,7 +85,7 @@ const rangeReg = /^\$(\d+)\$(\d+)$/;
 importStyle();
 export abstract class BaseTable extends EventTarget implements BaseTableAPI {
   internalProps: IBaseTableProtected;
-  showPin = true;
+  showFrozenIcon = true;
   showSort = true;
   padding: { top: number; left: number; right: number; bottom: number };
   globalDropDownMenu?: MenuListItem[];
@@ -150,7 +150,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
       dragHeaderMode,
       // showHeader,
       // scrollBar,
-      showPin,
+      showFrozenIcon,
       allowFrozenColCount,
       padding,
       hover,
@@ -184,9 +184,9 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     // style.initDocument(scrollBar);
     // showHeader !== undefined && (this.showHeader = showHeader);
     // scrollBar !== undefined && (this.scrollBar = scrollBar);
-    showPin !== undefined && (this.showPin = showPin);
+    showFrozenIcon !== undefined && (this.showFrozenIcon = showFrozenIcon);
     if (typeof allowFrozenColCount === 'number' && allowFrozenColCount <= 0) {
-      this.showPin = false;
+      this.showFrozenIcon = false;
     }
     //设置是否自动撑开的配置
     internalProps.autoRowHeight = options.autoRowHeight ?? false;
@@ -1545,10 +1545,10 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     return this.scrollTop;
   }
   setScrollLeft(num: number) {
-    this.scrollLeft = num;
+    this.scrollLeft = Math.ceil(num);
   }
   setScrollTop(num: number) {
-    this.scrollTop = num;
+    this.scrollTop = Math.ceil(num);
   }
   /**
    * 获取有省略文字的的单元格文本内容
@@ -1625,7 +1625,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
       columnResizeMode,
       dragHeaderMode,
       // scrollBar,
-      showPin,
+      showFrozenIcon,
       allowFrozenColCount,
       padding,
       hover,
@@ -1656,14 +1656,14 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
 
     // 更新基础组件显示状态
     // (showHeader!=undefined) &&(this.showHeader = showHeader);
-    // (showPin!=undefined) &&(this.showPin = showPin);
+    // (showFrozenIcon!=undefined) &&(this.showFrozenIcon = showFrozenIcon);
     // (showSort!=undefined) &&(this.showSort = showSort);
     // style.initDocument(scrollBar);
     // this.showHeader = typeof showHeader === 'boolean' ? showHeader : true;
     // this.scrollBar = typeof scrollBar === 'boolean' ? scrollBar : true;
-    this.showPin = typeof showPin === 'boolean' ? showPin : true;
+    this.showFrozenIcon = typeof showFrozenIcon === 'boolean' ? showFrozenIcon : true;
     if (typeof allowFrozenColCount === 'number' && allowFrozenColCount <= 0) {
-      this.showPin = false;
+      this.showFrozenIcon = false;
     }
 
     this.widthMode = widthMode ?? 'standard';

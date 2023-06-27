@@ -1724,7 +1724,7 @@ export function createTable() {
         borderColor: '#f19090',
         borderLineWidth: 10,
         borderLineDash: [],
-        roundCornerRadius: 10,
+        cornerRadius: 10,
         shadowBlur: 6,
         shadowOffsetX: 0,
         shadowOffsetY: 0,
@@ -1760,7 +1760,7 @@ export function createTable() {
     },
     parentElement: document.getElementById(Table_CONTAINER_DOM_ID),
     records,
-    showPin: false, //显示VTable内置冻结列图标
+    showFrozenIcon: false, //显示VTable内置冻结列图标
     widthMode: 'autoWidth', // 宽度模式：standard 标准模式； adaptive 自动填满容器
     defaultRowHeight: 40,
     columnResizeType: 'indicator', // 'column' | 'indicator' | 'all'

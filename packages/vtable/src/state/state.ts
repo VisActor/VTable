@@ -18,7 +18,7 @@ import { HighlightScope, InteractionState } from '../ts-types';
 import { IconFuncTypeEnum } from '../ts-types';
 import { checkMultiCellInSelect } from './common/check-in-select';
 import { updateHoverPosition } from './hover/update-position';
-import { dealPin } from './pin';
+import { dealFreeze } from './frozen';
 import { dealSort } from './sort';
 import { selectEnd, updateSelectPosition } from './select/update-position';
 import { cellInRange } from '../tools/helper';
@@ -533,7 +533,7 @@ export class StateManeger {
       // const oldFrozenCol = this.frozen.col;
       this.frozen.col = col;
 
-      // 更新scenegraph，这里因为dealPin更新了table里存储的frozen信息，会影响scenegraph里的getCell
+      // 更新scenegraph，这里因为dealFreeze更新了table里存储的frozen信息，会影响scenegraph里的getCell
       // 因此先更新scenegraph结构再更新icon
       this.table.scenegraph.updateFrozen();
 
@@ -546,7 +546,7 @@ export class StateManeger {
 
   updateVerticalScrollBar(yRatio: number) {
     const totalHeight = this.table.getAllRowsHeight();
-    this.scroll.verticalBarPos = yRatio * (totalHeight - this.table.scenegraph.height);
+    this.scroll.verticalBarPos = Math.ceil(yRatio * (totalHeight - this.table.scenegraph.height));
     this.table.scenegraph.setY(-this.scroll.verticalBarPos);
 
     // 滚动期间清空选中清空
@@ -564,7 +564,7 @@ export class StateManeger {
   }
   updateHorizontalScrollBar(xRatio: number) {
     const totalWidth = this.table.getAllColsWidth();
-    this.scroll.horizontalBarPos = xRatio * (totalWidth - this.table.scenegraph.width);
+    this.scroll.horizontalBarPos = Math.ceil(xRatio * (totalWidth - this.table.scenegraph.width));
     this.table.scenegraph.setX(-this.scroll.horizontalBarPos);
 
     // 滚动期间清空选中清空
@@ -583,7 +583,7 @@ export class StateManeger {
     // 矫正top值范围
     const totalHeight = this.table.getAllRowsHeight();
     top = Math.max(0, Math.min(top, totalHeight - this.table.scenegraph.height));
-
+    top = Math.ceil(top);
     this.scroll.verticalBarPos = top;
 
     // 设置scenegraph坐标
@@ -609,7 +609,7 @@ export class StateManeger {
     const frozenWidth = this.table.getFrozenColsWidth();
 
     left = Math.max(0, Math.min(left, totalWidth - this.table.scenegraph.width));
-
+    left = Math.ceil(left);
     this.scroll.horizontalBarPos = left;
 
     // 设置scenegraph坐标
@@ -880,7 +880,7 @@ export class StateManeger {
     );
   }
 
-  triggerPin(col: number, row: number, iconMark: Icon) {
+  triggerFreeze(col: number, row: number, iconMark: Icon) {
     if (this.table.isPivotTable() || (this.table as ListTable).transpose) {
       return;
     }
@@ -888,9 +888,9 @@ export class StateManeger {
     // let oldFrowzenRow = this.frowzen.row;
 
     // 更新frozen
-    dealPin(col, row, this.table);
+    dealFreeze(col, row, this.table);
 
-    // // 更新scenegraph，这里因为dealPin更新了table里存储的frozen信息，会影响scenegraph里的getCell
+    // // 更新scenegraph，这里因为dealFreeze更新了table里存储的frozen信息，会影响scenegraph里的getCell
     // // 因此先更新scenegraph结构再更新icon
     // this.table.scenegraph.updateFrozen(this.frowzen.col);
 

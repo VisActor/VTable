@@ -2,147 +2,74 @@ import VChart from '@visactor/vchart';
 const Table_CONTAINER_DOM_ID = 'vTable';
 
 export function createTable() {
-  const canvasEl = document.createElement('canvas');
-  canvasEl.width = 1600;
-  canvasEl.height = 800;
-  canvasEl.style.width = '1600px';
-  canvasEl.style.height = '800px';
-  document.getElementById(Table_CONTAINER_DOM_ID)?.appendChild(canvasEl);
-  const spec = {
-    type: 'common',
-    series: [
-      {
-        type: 'area',
-        data: {
-          id: 'data'
+  const spec1 = {
+    type: 'line',
+    data: {
+      values: [
+        {
+          time: '2:00',
+          value: 38
         },
-        xField: 'x',
-        yField: 'y',
-        seriesField: 'type',
-        point: {
-          style: {
-            fillOpacity: 1,
-            stroke: '#000',
-            strokeWidth: 4
-          },
-          state: {
-            hover: {
-              fillOpacity: 0.5,
-              stroke: 'blue',
-              strokeWidth: 2
-            },
-            selected: {
-              fill: 'red'
-            }
-          }
+        {
+          time: '4:00',
+          value: 56
         },
-        area: {
-          style: {
-            fillOpacity: 0.3,
-            stroke: '#000',
-            strokeWidth: 4
-          },
-          state: {
-            hover: {
-              fillOpacity: 1
-            },
-            selected: {
-              fill: 'red',
-              fillOpacity: 1
-            }
-          }
+        {
+          time: '6:00',
+          value: 10
         },
-        line: {
-          state: {
-            hover: {
-              stroke: 'red'
-            },
-            selected: {
-              stroke: 'yellow'
-            }
-          }
+        {
+          time: '8:00',
+          value: 70
+        },
+        {
+          time: '10:00',
+          value: 36
+        },
+        {
+          time: '12:00',
+          value: 94
+        },
+        {
+          time: '14:00',
+          value: 24
+        },
+        {
+          time: '16:00',
+          value: 44
+        },
+        {
+          time: '18:00',
+          value: 36
+        },
+        {
+          time: '20:00',
+          value: 68
+        },
+        {
+          time: '22:00',
+          value: 22
         }
+      ]
+    },
+    xField: 'time',
+    yField: 'value',
+    point: {
+      visible: false
+    },
+    line: {
+      style: {
+        curveType: 'stepAfter'
       }
-    ],
-    axes: [
-      { orient: 'left', range: { min: 0 } },
-      { orient: 'bottom', label: { visible: true }, type: 'band' }
-    ],
-    legends: [
-      {
-        visible: true,
-        orient: 'bottom'
-      }
-    ]
+    },
+    crosshair: {
+      xField: { visible: true }
+    }
   };
 
-  const cs = new VChart(spec, {
-    renderCanvas: canvasEl,
-    mode: 'desktop-browser',
-    canvasControled: false,
-    interactive: false,
-    animation: false,
-    viewBox: {
-      x1: 100,
-      y1: 100,
-      x2: 400,
-      y2: 400
-    }
-  } as any);
-  cs.renderSync();
-  cs._compiler._srView.renderer.stage().render();
-  cs.updateDataSync('data', [
-    { x: '0', type: 'A', y: '100' },
-    { x: '1', type: 'A', y: '707' },
-    { x: '2', type: 'A', y: '832' },
-    { x: '3', type: 'A', y: '726' },
-    { x: '4', type: 'A', y: '756' },
-    { x: '5', type: 'A', y: '777' },
-    { x: '6', type: 'A', y: '689' },
-    { x: '7', type: 'A', y: '795' },
-    { x: '8', type: 'A', y: '889' },
-    { x: '9', type: 'A', y: '757' },
-    { x: '0', type: 'B', y: '773' },
-    { x: '1', type: 'B', y: '785' },
-    { x: '2', type: 'B', y: '635' },
-    { x: '3', type: 'B', y: '813' },
-    { x: '4', type: 'B', y: '678' },
-    { x: '5', type: 'B', y: '796' },
-    { x: '6', type: 'B', y: '652' },
-    { x: '7', type: 'B', y: '623' },
-    { x: '8', type: 'B', y: '649' },
-    { x: '9', type: 'B', y: '630' }
-  ]);
-  cs._compiler._srView.renderer.stage().render();
-  // setTimeout(() => {
-  cs.updateViewBox({
-    x1: 600,
-    y1: 100,
-    x2: 900,
-    y2: 400
-  });
-  cs.updateDataSync('data', [
-    { x: '0', type: 'A', y: '600' },
-    { x: '1', type: 'A', y: '707' },
-    { x: '2', type: 'A', y: '832' },
-    { x: '3', type: 'A', y: '726' },
-    { x: '4', type: 'A', y: '756' },
-    { x: '5', type: 'A', y: '777' },
-    { x: '6', type: 'A', y: '689' },
-    { x: '7', type: 'A', y: '795' },
-    { x: '8', type: 'A', y: '889' },
-    { x: '9', type: 'A', y: '757' },
-    { x: '0', type: 'B', y: '773' },
-    { x: '1', type: 'B', y: '785' },
-    { x: '2', type: 'B', y: '635' },
-    { x: '3', type: 'B', y: '813' },
-    { x: '4', type: 'B', y: '678' },
-    { x: '5', type: 'B', y: '796' },
-    { x: '6', type: 'B', y: '652' },
-    { x: '7', type: 'B', y: '623' },
-    { x: '8', type: 'B', y: '649' },
-    { x: '9', type: 'B', y: '630' }
-  ]);
-  cs._compiler._srView.renderer.stage().render();
-  // }, 0);
+  const vchart = new VChart(spec1, { dom: Table_CONTAINER_DOM_ID });
+  vchart.renderAsync();
+
+  // 只为了方便控制台调试用，不要拷贝
+  window.vchart = vchart;
 }

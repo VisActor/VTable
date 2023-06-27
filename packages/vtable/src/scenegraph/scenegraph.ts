@@ -1,7 +1,7 @@
 import type { IStage, IRect, ITextCache } from '@visactor/vrender';
 import { createStage, createRect, IContainPointMode, container } from '@visactor/vrender';
-import { IconFuncTypeEnum } from '../ts-types';
-import { type CellAddress, type CellType, type ColumnIconOption, type SortOrder, SvgIcon } from '../ts-types';
+import { type CellAddress, type CellType, type ColumnIconOption, type SortOrder, IconFuncTypeEnum } from '../ts-types';
+import { isArray, isString } from '@visactor/vutils';
 import { Group } from './graphic/group';
 import type { Icon } from './graphic/icon';
 import {
@@ -17,7 +17,7 @@ import { updateColWidth } from './layout/update-width';
 import { TableComponent } from './component/table-component';
 import { updateRowHeight } from './layout/update-height';
 import { updateImageCellContentWhileResize } from './group-creater/cell-type/image-cell';
-import { getPadding } from './utils/padding';
+import { getQuadProps } from './utils/padding';
 import { createFrameBorder, updateFrameBorder, updateFrameBorderSize } from './style/frame-border';
 import { ResizeColumnHotSpotSize } from '../tools/global';
 import splitModule from './graphic/contributions';
@@ -35,11 +35,20 @@ import { moveSelectingRangeComponentsToSelectedRangeComponents } from './select/
 import { deleteAllSelectBorder, deleteLastSelectedRangeComponents } from './select/delete-select-border';
 import { updateRow } from './layout/update-row';
 import { handleTextStick } from './stick-text';
+import { emptyGroup } from './utils/empty-group';
 
 container.load(splitModule);
 
-export const emptyGroup = new Group({});
-emptyGroup.role = 'empty';
+export type MergeMap = Map<
+  string,
+  {
+    x: number;
+    y: number;
+    cellWidth: number;
+    cellHeight: number;
+  }
+>;
+
 /**
  * @description: 表格场景树，存储和管理表格全部的场景图元
  * @return {*}
@@ -67,10 +76,13 @@ export class Scenegraph {
   frozenRowCount: number;
   clear: boolean;
 
+  mergeMap: MergeMap;
+
   constructor(table: BaseTableAPI) {
     this.table = table;
     this.hasFrozen = false;
     this.clear = true;
+    this.mergeMap = new Map();
 
     this.stage = createStage({
       canvas: table.canvas,
@@ -204,6 +216,57 @@ export class Scenegraph {
   }
 
   /**
+   * @description: 清空全部单元格内容，用于setRecord
+   * @return {*}
+   */
+  clearCells() {
+    this.clear = true;
+    this.hasFrozen = false;
+    this.mergeMap.clear();
+
+    this.colHeaderGroup.clear();
+    this.rowHeaderGroup.clear();
+    this.cornerHeaderGroup.clear();
+    this.bodyGroup.clear();
+
+    this.colHeaderGroup.setAttributes({
+      x: 0,
+      y: 0,
+      width: 0,
+      height: 0
+    });
+    this.rowHeaderGroup.setAttributes({
+      x: 0,
+      y: 0,
+      width: 0,
+      height: 0
+    });
+    this.cornerHeaderGroup.setAttributes({
+      x: 0,
+      y: 0,
+      width: 0,
+      height: 0
+    });
+    this.bodyGroup.setAttributes({
+      x: 0,
+      y: 0,
+      width: 0,
+      height: 0
+    });
+    this.tableGroup.setAttributes({
+      x: 0,
+      y: 0,
+      width: 0,
+      height: 0
+    });
+
+    if ((this.tableGroup as any).border) {
+      (this.tableGroup.parent as Group).removeChild((this.tableGroup as any).border);
+      delete (this.tableGroup as any).border;
+    }
+  }
+
+  /**
    * @description: 初始化表格外组件
    * @return {*}
    */
@@ -235,8 +298,6 @@ export class Scenegraph {
     } else {
       this.createBodySceneGraphForFirstScreen();
     }
-
-    handleTextStick(this.table);
   }
 
   createHeaderSceneGraph() {
@@ -537,7 +598,7 @@ export class Scenegraph {
           width: icon.backgroundWidth,
           height: icon.backgroundHeight,
           fill: icon.attribute.backgroundColor,
-          borderRadius: 5,
+          cornerRadius: 5,
           visible: true
         });
       } else {
@@ -547,7 +608,7 @@ export class Scenegraph {
           width: icon.backgroundWidth,
           height: icon.backgroundHeight,
           fill: icon.attribute.backgroundColor,
-          borderRadius: 5,
+          cornerRadius: 5,
           pickable: false,
           visible: true
         }) as IRect;
@@ -787,9 +848,12 @@ export class Scenegraph {
 
     // 处理frame border
     this.createFrameBorder();
+    this.updateBorderSizeAndPosition();
 
     // 更新滚动条状态
     this.component.updateScrollBar();
+    // 处理单元格内容需要textStick的情况
+    handleTextStick(this.table);
 
     this.updateNextFrame();
   }
@@ -1012,7 +1076,7 @@ export class Scenegraph {
         cellGroup.setAttribute('width', width);
       }
       const headerStyle = this.table._getCellStyle(col, row);
-      const padding = getPadding(getProp('padding', headerStyle, col, row, this.table));
+      const padding = getQuadProps(getProp('padding', headerStyle, col, row, this.table));
 
       // const text = cellGroup.getChildAt(1) as WrapText;
       const text = cellGroup.getChildByName('text') as WrapText;
@@ -1093,56 +1157,6 @@ export class Scenegraph {
     this.table.stateManeger.setScrollLeft(oldHorizontalBarPos);
     this.table.stateManeger.setScrollTop(oldVerticalBarPos);
     this.updateNextFrame();
-  }
-
-  /**
-   * @description: 清空全部单元格内容，用于setRecord
-   * @return {*}
-   */
-  clearCells() {
-    this.clear = true;
-    this.hasFrozen = false;
-
-    this.colHeaderGroup.clear();
-    this.rowHeaderGroup.clear();
-    this.cornerHeaderGroup.clear();
-    this.bodyGroup.clear();
-
-    this.colHeaderGroup.setAttributes({
-      x: 0,
-      y: 0,
-      width: 0,
-      height: 0
-    });
-    this.rowHeaderGroup.setAttributes({
-      x: 0,
-      y: 0,
-      width: 0,
-      height: 0
-    });
-    this.cornerHeaderGroup.setAttributes({
-      x: 0,
-      y: 0,
-      width: 0,
-      height: 0
-    });
-    this.bodyGroup.setAttributes({
-      x: 0,
-      y: 0,
-      width: 0,
-      height: 0
-    });
-    this.tableGroup.setAttributes({
-      x: 0,
-      y: 0,
-      width: 0,
-      height: 0
-    });
-
-    if ((this.tableGroup as any).border) {
-      (this.tableGroup.parent as Group).removeChild((this.tableGroup as any).border);
-      delete (this.tableGroup as any).border;
-    }
   }
 
   updateCellContentWhileResize(col: number, row: number) {
@@ -1319,8 +1333,8 @@ export class Scenegraph {
       if (colGroup.col <= updateCol) {
         colGroup.forEachChildren((cellGroup: Group) => {
           cellGroup.forEachChildren((icon: Icon) => {
-            if (icon.attribute.funcType === 'pin') {
-              const iconConfig = this.table.internalProps.headerHelper.getPinIcon(cellGroup.col, cellGroup.row);
+            if (icon.attribute.funcType === 'frozen') {
+              const iconConfig = this.table.internalProps.headerHelper.getFrozenIcon(cellGroup.col, cellGroup.row);
               this.updateIcon(icon, iconConfig);
               return true;
             }
@@ -1335,8 +1349,8 @@ export class Scenegraph {
       if (colGroup.col <= updateCol) {
         colGroup.forEachChildren((cellGroup: Group) => {
           cellGroup.forEachChildren((icon: Icon) => {
-            if (icon.attribute.funcType === 'pin') {
-              const iconConfig = this.table.internalProps.headerHelper.getPinIcon(cellGroup.col, cellGroup.row);
+            if (icon.attribute.funcType === 'frozen') {
+              const iconConfig = this.table.internalProps.headerHelper.getFrozenIcon(cellGroup.col, cellGroup.row);
               this.updateIcon(icon, iconConfig);
               return true;
             }
@@ -1371,11 +1385,17 @@ export class Scenegraph {
     //   return text.attribute.text as string;
     // }
     if (text) {
-      const textAttributeStr = (text.attribute.text as string[]).join('');
+      const textAttributeStr = isArray(text.attribute.text)
+        ? text.attribute.text.join('')
+        : (text.attribute.text as string);
       let cacheStr = '';
-      (text.cache as ITextCache).layoutData.lines.forEach((line: any) => {
-        cacheStr += line.str;
-      });
+      if (isString(text.cache.clipedText)) {
+        cacheStr = text.cache.clipedText;
+      } else {
+        (text.cache as ITextCache).layoutData.lines.forEach((line: any) => {
+          cacheStr += line.str;
+        });
+      }
       if (cacheStr !== textAttributeStr) {
         return textAttributeStr;
       }

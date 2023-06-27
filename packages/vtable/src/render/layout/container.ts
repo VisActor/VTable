@@ -191,7 +191,7 @@ export class Container extends BaseElement {
       const boundsRect = new Rect({
         width: this.width,
         height: this.height,
-        borderRadius: 0,
+        cornerRadius: 0,
         stroke: 'red',
         fill: 'rgba(255, 0, 0, 0.2)',
         lineWidth: 4

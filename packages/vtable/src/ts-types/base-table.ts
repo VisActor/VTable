@@ -208,7 +208,7 @@ export interface BaseTableConstructorOptions {
   /**
    * 是否显示固定列图钉 基本表格生效
    */
-  showPin?: boolean;
+  showFrozenIcon?: boolean;
 
   padding?:
     | {
@@ -286,6 +286,9 @@ export interface BaseTableConstructorOptions {
    * 计算列宽时 指定最大列宽 可设置boolean或者具体的值 默认为450
    */
   limitMaxAutoWidth?: boolean | number;
+
+  // maximum number of data items maintained in table instance
+  maintainedDataCount?: number;
 }
 export interface BaseTableAPI {
   /** 表格的行数 */
@@ -313,7 +316,7 @@ export interface BaseTableAPI {
   /**
    * 是否显示图钉
    */
-  showPin: boolean;
+  showFrozenIcon: boolean;
   readonly canvas: HTMLCanvasElement;
   /** 表格可视区域的行数 */
   readonly visibleRowCount: number;

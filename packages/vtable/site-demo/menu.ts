@@ -34,6 +34,10 @@ export const menus = [
       },
       {
         path: 'cell-type',
+        name: 'progressbar'
+      },
+      {
+        path: 'cell-type',
         name: 'chart'
       }
     ]
@@ -135,6 +139,14 @@ export const menus = [
       },
       {
         path: 'custom-render',
+        name: 'custom-render'
+      },
+      {
+        path: 'custom-render',
+        name: 'custom-render-global'
+      },
+      {
+        path: 'custom-render',
         name: 'custom-cell-layout'
       }
     ]
@@ -166,6 +178,10 @@ export const menus = [
       {
         path: 'layout',
         name: 'width-mode-autoWidth'
+      },
+      {
+        path: 'layout',
+        name: 'merge'
       }
     ]
   },
@@ -183,6 +199,10 @@ export const menus = [
       {
         path: 'business',
         name: 'project-schedule'
+      },
+      {
+        path: 'business',
+        name: 'temperature-trend'
       }
     ]
   }

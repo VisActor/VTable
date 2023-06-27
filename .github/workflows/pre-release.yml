@@ -3,7 +3,9 @@ name: Pre-release CI
 on:
   push:
     branches:
-      - pre-release/*
+      - 'pre-release/[0-9]+.[0-9]+.[0-9]+-alpha.[0-9]+'
+      - 'pre-release/[0-9]+.[0-9]+.[0-9]+-beta.[0-9]+'
+      - 'pre-release/[0-9]+.[0-9]+.[0-9]+-rc.[0-9]+'
 
 jobs:
   build:
@@ -30,11 +32,6 @@ jobs:
       - name: Install rush
         run: node common/scripts/install-run-rush.js install --bypass-policy
 
-      - name: Build packages
-        env:
-          NODE_OPTIONS: "--max_old_space_size=4096"
-        run: node common/scripts/install-run-rush.js build --only tag:package
-
       - name: Parse semver version from branch name
         id: semver_parser
         uses: xile611/read-package-version-action@v2.1
@@ -45,6 +42,11 @@ jobs:
 
       - name: Apply prereleaseName
         run: node common/scripts/install-run-rush.js publish --apply --prerelease-name ${{ steps.semver_parser.outputs.pre_release_name }} --partial-prerelease
+
+      - name: Build packages
+        env:
+          NODE_OPTIONS: "--max_old_space_size=4096"
+        run: node common/scripts/install-run-rush.js build --only tag:package
 
       - name: Publish to npm
         env:

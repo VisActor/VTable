@@ -77,7 +77,7 @@ export function createCellContent(
     const hierarchyOffset = getHierarchyOffset(cellGroup.col, cellGroup.row, table);
 
     const attribute = {
-      text, // 单行(no-autoWrapText)为字符串，多行(autoWrapText)为字符串数组
+      text: text.length === 1 && !autoWrapText ? text[0] : text, // 单行(no-autoWrapText)为字符串，多行(autoWrapText)为字符串数组
       maxLineWidth: autoColWidth ? Infinity : cellWidth - (padding[1] + padding[3] + hierarchyOffset),
       // fill: true,
       // textAlign: 'left',
@@ -178,7 +178,7 @@ export function createCellContent(
     if (inlineFrontIcons.length === 0 && inlineEndIcons.length === 0) {
       const text = convertInternal(textStr).replace(/\r?\n/g, '\n').replace(/\r/g, '\n').split('\n');
       const attribute = {
-        text, // 单行(no-autoWrapText)为字符串，多行(autoWrapText)为字符串数组
+        text: text.length === 1 && !autoWrapText ? text[0] : text, // 单行(no-autoWrapText)为字符串，多行(autoWrapText)为字符串数组
         maxLineWidth: autoColWidth ? Infinity : cellWidth - (padding[1] + padding[3]) - leftIconWidth - rightIconWidth,
         // fill: true,
         // textAlign: 'left',

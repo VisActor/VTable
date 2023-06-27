@@ -347,3 +347,32 @@ export type Either<X, Y> =
     } & {
       [KX in Exclude<keyof X, keyof Y>]?: never;
     });
+
+/** 判断两个矩形是否相交，不包括包含关系，如果相交返回true，否则返回falses */
+export function checkIntersect(
+  rectA: {
+    x1: number;
+    x2: number;
+    y1: number;
+    y2: number;
+  },
+  rectB: {
+    x1: number;
+    x2: number;
+    y1: number;
+    y2: number;
+  }
+) {
+  // 判断两个矩形是否有重叠部分
+  if (rectA.x2 <= rectB.x1 || rectA.x1 >= rectB.x2 || rectA.y2 <= rectB.y1 || rectA.y1 >= rectB.y2) {
+    return false;
+  }
+  // 判断是否为包含关系
+  if (
+    (rectA.x1 <= rectB.x1 && rectA.x2 >= rectB.x2 && rectA.y1 <= rectB.y1 && rectA.y2 >= rectB.y2) ||
+    (rectB.x1 <= rectA.x1 && rectB.x2 >= rectA.x2 && rectB.y1 <= rectA.y1 && rectB.y2 >= rectA.y2)
+  ) {
+    return false;
+  }
+  return true;
+}

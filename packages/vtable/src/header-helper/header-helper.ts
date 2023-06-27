@@ -12,27 +12,25 @@ export class HeaderHelper {
   normalIcon: SvgIcon;
   upIcon: SvgIcon;
   downIcon: SvgIcon;
-  pinIcon: SvgIcon;
-  pinedIcon: SvgIcon;
-  pinedHoverIcon: SvgIcon;
-  pinedCurrentIcon: SvgIcon;
+  freezeIcon: SvgIcon;
+  frozenIcon: SvgIcon;
+  frozenCurrentIcon: SvgIcon;
   dropDownAbsoluteIcon: SvgIcon;
   // dropDownHoverIcon: SvgIcon;
 
   expandIcon: SvgIcon;
   collapseIcon: SvgIcon;
-  // //存储鼠标hover到的图标类型，后面需要用name判断，应该再拿个inline对象上赋值showPinIcon，绘制感应区域
-  // _showPinIcon?: SvgIcon;
+  // //存储鼠标hover到的图标类型，后面需要用name判断，应该再拿个inline对象上赋值showFrozenIconIcon，绘制感应区域
+  // _showFrozenIconIcon?: SvgIcon;
   // _showSortIcon?: SvgIcon;
   _table: BaseTableAPI;
   constructor(_table: BaseTableAPI) {
     this._table = _table;
     const regedIcons = registerIcons.get();
     //pin默认值
-    this.pinIcon = regedIcons[InternalIconName.pinIconName] as SvgIcon;
-    this.pinedIcon = regedIcons[InternalIconName.pinedIconName] as SvgIcon;
-    this.pinedHoverIcon = regedIcons[InternalIconName.pinedHoverIconName] as SvgIcon;
-    this.pinedCurrentIcon = regedIcons[InternalIconName.pinedCurrentIconName] as SvgIcon;
+    this.freezeIcon = regedIcons[InternalIconName.freezeIconName] as SvgIcon;
+    this.frozenIcon = regedIcons[InternalIconName.frozenIconName] as SvgIcon;
+    this.frozenCurrentIcon = regedIcons[InternalIconName.frozenCurrentIconName] as SvgIcon;
 
     //sort默认值
     this.normalIcon = regedIcons[InternalIconName.normalIconName] as SvgIcon;
@@ -88,11 +86,11 @@ export class HeaderHelper {
       }
     }
 
-    if (this._table.showPin && col < this._table.allowFrozenColCount) {
-      const pinInline = this.getPinIcon(col, row);
+    if (this._table.showFrozenIcon && col < this._table.allowFrozenColCount) {
+      const pinInline = this.getFrozenIcon(col, row);
       if (pinInline) {
         icons.push(pinInline);
-        // context.showIcon = this.showPinIcon;//todo 暂时去掉 需要想其他方式
+        // context.showIcon = this.showFrozenIconIcon;//todo 暂时去掉 需要想其他方式
       }
     }
 
@@ -153,8 +151,8 @@ export class HeaderHelper {
     return icons;
   }
 
-  getPinIcon(col: number, row: number): ColumnIconOption | null {
-    // this.showPinIcon = undefined;
+  getFrozenIcon(col: number, row: number): ColumnIconOption | null {
+    // this.showFrozenIconIcon = undefined;
     if (this._table.isPivotTable() || (this._table as ListTable).transpose) {
       // 透视表和转置模式不显示冻结按钮
       return null;
@@ -164,31 +162,16 @@ export class HeaderHelper {
       return null;
     }
 
-    let pin = this.pinIcon;
+    let frozen = this.freezeIcon;
     // 使用table.options.frozenColCount原始冻结信息获取按钮
     if (this._table.options.frozenColCount - 1 > col) {
-      pin = this.pinedIcon;
+      frozen = this.frozenIcon;
     } else if (this._table.options.frozenColCount - 1 === col) {
-      pin = this.pinedCurrentIcon;
+      frozen = this.frozenCurrentIcon;
     }
-    return pin;
+    return frozen;
   }
-  private getPinRect(
-    cellRect: RectProps,
-    marginRight: number
-  ): { left: number; right: number; top: number; bottom: number } {
-    const left = cellRect.right - (this.pinIcon.hover?.width || 0) - marginRight;
-    const right = cellRect.right - marginRight;
-    const top = cellRect.top + cellRect.height / 2 - (this.pinIcon.hover?.width || 0) / 2;
-    const bottom = (this.pinIcon.hover?.width || marginRight) + top;
 
-    return {
-      left,
-      right,
-      top,
-      bottom
-    };
-  }
   getSortIcon(order: SortOrder | undefined, _table: BaseTableAPI, col: number, row: number): ColumnIconOption | null {
     // this.showSortIcon = undefined;
     const icon = order === 'asc' ? this.downIcon : order === 'desc' ? this.upIcon : this.normalIcon;

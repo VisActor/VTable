@@ -1,6 +1,6 @@
 import type { BaseTableAPI } from '../../ts-types/base-table';
 
-export function dealPin(col: number, row: number, table: BaseTableAPI) {
+export function dealFreeze(col: number, row: number, table: BaseTableAPI) {
   // table.setFrozenColCount(col + 1);
   if (table.frozenColCount > 0) {
     if (col !== table.frozenColCount - 1) {

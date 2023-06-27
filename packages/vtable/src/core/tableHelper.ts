@@ -2,7 +2,7 @@ import type { IThemeSpec } from '@visactor/vrender';
 import type { BaseTable } from '../core';
 import { CachedDataSource, DataSource } from '../data';
 import { parseFont } from '../scenegraph/utils/font';
-import { getPadding } from '../scenegraph/utils/padding';
+import { getQuadProps } from '../scenegraph/utils/padding';
 import { Rect } from '../tools/Rect';
 import * as calc from '../tools/calc';
 import type { FullExtendStyle } from '../ts-types';
@@ -203,7 +203,7 @@ export function getStyleTheme(
   needGetTheme = true
 ) {
   // 属性参考IStyleOption
-  const padding = getPadding(getProp('padding', headerStyle, col, row, table));
+  const padding = getQuadProps(getProp('padding', headerStyle, col, row, table));
   const bgColor = getProp('bgColor', headerStyle, col, row, table);
 
   const font = getProp('font', headerStyle, col, row, table);
@@ -289,11 +289,12 @@ export function getStyleTheme(
   };
 
   if (Array.isArray(borderLineWidth)) {
-    (theme.group as any).strokeArrayWidth = getPadding(borderLineWidth);
+    (theme.group as any).strokeArrayWidth = getQuadProps(borderLineWidth);
   }
   if (Array.isArray(borderColor)) {
-    (theme.group as any).stroke = getPadding(borderColor);
-    (theme.group as any).strokeArrayColor = getPadding(borderColor);
+    const strokeColors = getQuadProps(borderColor);
+    (theme.group as any).stroke = strokeColors.every(color => !color) ? false : strokeColors; // deal width strokeColor: [null, null, null, null]
+    (theme.group as any).strokeArrayColor = getQuadProps(borderColor);
   }
 
   return {

@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "comment": "fix: solve chart image shake caused by decimals\n\n",
+      "type": "patch",
+      "packageName": "@visactor/vtable"
+    }
+  ],
+  "packageName": "@visactor/vtable",
+  "email": "892739385@qq.com"
+}

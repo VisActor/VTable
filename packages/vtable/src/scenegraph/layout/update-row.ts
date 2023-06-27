@@ -69,6 +69,11 @@ function addRow(row: number, scene: Scenegraph) {
     // create cellGroup
     const cellGroup = updateCell(col, row, scene.table, true);
 
+    if (!cellGroup) {
+      // TODO: deal with data promise situation
+      continue;
+    }
+
     // insert cellGroup in colGroup
     const colGroup = scene.getColGroup(col);
     if (colGroup.firstChild && row < (colGroup.firstChild as Group).row) {

@@ -29,7 +29,7 @@ export class WrapText extends Text {
    * 计算单行文字的bounds，可以缓存长度以及截取的文字
    * @param text
    */
-  updateSingallineAABBBounds(text: number | string): Bounds {
+  updateSingallineAABBBounds(text: number | string) {
     const textTheme = getTheme(this).text;
     // const textMeasure = graphicUtil.textMeasure;
     let width: number;
@@ -44,14 +44,14 @@ export class WrapText extends Text {
       fontSize = textTheme.fontSize,
       fontFamily = textTheme.fontFamily,
       stroke = textTheme.stroke,
-      lineHeight = attribute.lineHeight ?? (attribute.fontSize || textTheme.fontSize) + buf,
+      lineHeight = attribute.lineHeight ?? (attribute.fontSize ?? textTheme.lineHeight ?? textTheme.fontSize) + buf,
       lineWidth = textTheme.lineWidth
     } = attribute;
 
     if (!this.shouldUpdateShape() && this.cache) {
       width = this.cache.clipedWidth;
       const dx = textDrawOffsetX(textAlign, width);
-      const dy = textLayoutOffsetY(textBaseline, lineHeight);
+      const dy = textLayoutOffsetY(textBaseline, lineHeight, fontSize);
       this._AABBBounds.set(dx, dy, dx + width, dy + lineHeight);
       if (stroke) {
         this._AABBBounds.expand(lineWidth / 2);
@@ -86,7 +86,7 @@ export class WrapText extends Text {
     this.clearUpdateShapeTag();
 
     const dx = textDrawOffsetX(textAlign, width);
-    const dy = textLayoutOffsetY(textBaseline, lineHeight);
+    const dy = textLayoutOffsetY(textBaseline, lineHeight, fontSize);
     this._AABBBounds.set(dx, dy, dx + width, dy + lineHeight);
 
     if (stroke) {
@@ -108,7 +108,7 @@ export class WrapText extends Text {
       textAlign = textTheme.textAlign,
       textBaseline = textTheme.textBaseline,
       fontSize = textTheme.fontSize,
-      lineHeight = this.attribute.lineHeight || this.attribute.fontSize || textTheme.fontSize,
+      lineHeight = this.attribute.lineHeight ?? this.attribute.fontSize ?? textTheme.lineHeight ?? textTheme.fontSize,
       ellipsis = textTheme.ellipsis,
       maxLineWidth,
       stroke = textTheme.stroke,

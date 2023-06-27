@@ -41,22 +41,22 @@ export class ProgressBarStyle extends Style {
   }
   constructor(style: ProgressBarStyleOption = {}, bodyStyle: IStyleOption = {}) {
     super(style, bodyStyle);
-    this._showBar = style.showBar || true;
-    this._barColor = style.barColor || DEFAULT_BAR_COLOR;
-    this._barPositiveColor = style.barPositiveColor || '#4dbd74';
-    this._barNegativeColor = style.barNegativeColor || '#f86c6b';
-    this._barAxisColor = style.barAxisColor || 'black';
+    this._showBar = style.showBar ?? true;
+    this._barColor = style.barColor ?? DEFAULT_BAR_COLOR;
+    this._barPositiveColor = style.barPositiveColor ?? '#4dbd74';
+    this._barNegativeColor = style.barNegativeColor ?? '#f86c6b';
+    this._barAxisColor = style.barAxisColor ?? 'black';
     this._barBgColor = style.barBgColor;
-    this._barHeight = style.barHeight || 3;
-    this._barHeight = style.barHeight || 3;
-    this._barBottom = style.barBottom || 0;
-    this._barPadding = style.barPadding || [1, 1, 1, 1];
-    this._showBarMark = style.showBarMark || false;
-    this._barMarkPositiveColor = style.barMarkPositiveColor || '#4dbd74';
-    this._barMarkNegativeColor = style.barMarkNegativeColor || '#f86c6b';
-    this._barMarkWidth = style.barMarkWidth || 2;
-    this._barMarkPosition = style.barMarkPosition || 'right';
-    this._barRightToLeft = style.barRightToLeft || false;
+    this._barHeight = style.barHeight ?? 3;
+    this._barHeight = style.barHeight ?? 3;
+    this._barBottom = style.barBottom ?? 0;
+    this._barPadding = style.barPadding ?? [1, 1, 1, 1];
+    this._showBarMark = style.showBarMark ?? false;
+    this._barMarkPositiveColor = style.barMarkPositiveColor ?? '#4dbd74';
+    this._barMarkNegativeColor = style.barMarkNegativeColor ?? '#f86c6b';
+    this._barMarkWidth = style.barMarkWidth ?? 2;
+    this._barMarkPosition = style.barMarkPosition ?? 'right';
+    this._barRightToLeft = style.barRightToLeft ?? false;
   }
   get showBar(): boolean | ((args: StylePropertyFunctionArg) => boolean) {
     return this._showBar;

@@ -3,7 +3,7 @@ import type { ProgressBarStyle } from '../../../body-helper/style/ProgressBarSty
 import { str, getOrApply } from '../../../tools/helper';
 import { Group } from '../../graphic/group';
 import { getProp } from '../../utils/get-prop';
-import { getPadding } from '../../utils/padding';
+import { getQuadProps } from '../../utils/padding';
 import type { BaseTableAPI } from '../../../ts-types/base-table';
 
 export function createProgressBarCell(
@@ -85,7 +85,7 @@ export function createProgressBarCell(
   const right = contentWidth;
   const bottom = contentHeight;
 
-  const borderWidth = getPadding(getProp('borderLineWidth', style, col, row, table));
+  const borderWidth = getQuadProps(getProp('borderLineWidth', style, col, row, table));
   let barPaddingTop = Math.max((barPadding as number[])[0], borderWidth[0]);
   const barPaddingRight = Math.max((barPadding as number[])[1], borderWidth[1]);
   const barPaddingBottom = Math.max((barPadding as number[])[2], borderWidth[2]);
@@ -395,24 +395,26 @@ export function createProgressBarCell(
       const barSize = Math.min(barMaxWidth * percentile, barMaxWidth);
       const barTop = bottom - barPaddingBottom - (barHeight as number) - (barBottom as number) - 1; /*罫線*/
       const barLeft = barRightToLeft ? right - barPaddingRight - barSize : left + barPaddingLeft;
-      const barBgFillColor =
-        getOrApply(barBgColor as any, {
-          col,
-          row,
-          table,
-          context: null,
-          value,
-          dataValue,
-          percentile
-        }) || '#f0f3f5';
-      const barBg = createRect({
-        x: barLeft,
-        y: barTop,
-        width: barMaxWidth,
-        height: barHeight,
-        fill: barBgFillColor
+
+      const bgFillColor = getOrApply(barBgColor as any, {
+        col,
+        row,
+        table,
+        context: null,
+        value,
+        dataValue,
+        percentile
       });
-      percentCompleteBarGroup.addChild(barBg);
+      if (bgFillColor) {
+        const barBack = createRect({
+          x: barLeft,
+          y: barTop,
+          width: barMaxWidth,
+          height: barHeight,
+          fill: bgFillColor
+        });
+        percentCompleteBarGroup.addChild(barBack);
+      }
 
       // 绘制bar
       const barRect = {
