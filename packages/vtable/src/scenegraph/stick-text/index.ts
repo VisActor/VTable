@@ -3,7 +3,7 @@ import type { BaseTableAPI } from '../../ts-types/base-table';
 import { PIVOT_TABLE_EVENT_TYPE } from '../../ts-types/pivot-table/PIVOT_TABLE_EVENT_TYPE';
 import type { Group } from '../graphic/group';
 import type { WrapText } from '../graphic/text';
-import { table } from 'console';
+import type { PivotHeaderLayoutMap } from '../../layout/pivot-header-layout';
 const changedCells: { col: number; row: number }[] = [];
 export function handleTextStick(table: BaseTableAPI) {
   changedCells.forEach(cellPos => {
@@ -49,7 +49,10 @@ export function handleTextStick(table: BaseTableAPI) {
   // 行表头单元格
   for (let row = rowStart; row <= rowEnd; row++) {
     for (let col = 0; col < frozenColCount; col++) {
-      if (table._getCellStyle(col, row)?.textStick) {
+      if (
+        table._getCellStyle(col, row)?.textStick &&
+        (table.internalProps.layoutMap as PivotHeaderLayoutMap).rowHierarchyType !== 'tree'
+      ) {
         const cellGroup = table.scenegraph.getCell(col, row);
         // adjust cell vertical
         adjustCellContentVerticalLayout(cellGroup, frozenRowsHeight, table.tableNoFrameHeight);

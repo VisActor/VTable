@@ -10,8 +10,8 @@ import type { Scenegraph } from '../scenegraph';
 export function updateRow(removeCells: CellAddress[], addCells: CellAddress[], table: BaseTableAPI) {
   const scene = table.scenegraph;
   // deduplication
-  const removeRows = deduplication(removeCells.map(cell => cell.row)).sort();
-  const addRows = deduplication(addCells.map(cell => cell.row)).sort();
+  const removeRows = deduplication(removeCells.map(cell => cell.row)).sort((a, b) => a - b);
+  const addRows = deduplication(addCells.map(cell => cell.row)).sort((a, b) => a - b);
 
   // remove cells
   removeRows.forEach(row => {
