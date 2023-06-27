@@ -7,7 +7,6 @@ import type {
   PivotSortState,
   CellAddress,
   ICellHeaderPaths,
-  HierarchyState,
   DropDownMenuEventInfo,
   FieldKeyDef,
   PivotTableConstructorOptions,
@@ -15,6 +14,7 @@ import type {
   IDimensionInfo,
   SortOrder
 } from './ts-types';
+import { HierarchyState } from './ts-types';
 import { PivotHeaderLayoutMap } from './layout/pivot-header-layout';
 import { getField } from './data/DataSource';
 import { PivoLayoutMap } from './layout/pivot-layout';
@@ -525,19 +525,30 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
    * @param row
    */
   toggleHierarchyState(col: number, row: number) {
-    (this.internalProps.layoutMap as PivotHeaderLayoutMap).toggleHierarchyState(col, row);
+    const hierarchyState = this.getHierarchyState(col, row);
+    if (hierarchyState === HierarchyState.expand) {
+      this.fireListeners(PIVOT_TABLE_EVENT_TYPE.TREE_HIERARCHY_STATE_CHANGE, {
+        col: col,
+        row: row,
+        hierarchyState: HierarchyState.collapse
+      });
+    } else if (hierarchyState === HierarchyState.collapse) {
+      this.fireListeners(PIVOT_TABLE_EVENT_TYPE.TREE_HIERARCHY_STATE_CHANGE, {
+        col: col,
+        row: row,
+        hierarchyState: HierarchyState.expand,
+        originData: this.getCellOriginRecord(col, row)
+      });
+    }
+
+    const result = (this.internalProps.layoutMap as PivotHeaderLayoutMap).toggleHierarchyState(col, row);
     //影响行数
     this.refreshRowColCount();
-    //TODO 这里可以优化计算性能 针对变化的行高列宽进行计算
-    // //更新列宽
-    // this.computeColsWidth();
-    // //更新行高
-    // this.computeRowsHeight();
-    // 重新判断下行表头宽度是否过宽
-    this._resetFrozenColCount();
-    //更改滚动条size
-    //重绘
-    this.invalidate();
+    // this.scenegraph.clearCells();
+    // this.scenegraph.createSceneGraph();
+    // this.invalidate();
+    this.scenegraph.updateHierarchyIcon(col, row);
+    this.scenegraph.updateRow(result.removeCellPositions, result.addCellPositions);
   }
   /**
    * 通过表头的维度值路径来计算单元格位置  getCellAddressByHeaderPaths接口更强大一些 不限表头 不限参数格式

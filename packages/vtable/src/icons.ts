@@ -239,7 +239,7 @@ const builtins = {
       height: 16,
       funcType: IconFuncTypeEnum.expand,
       name: 'expand',
-      positionType: IconPosition.inlineFront,
+      positionType: IconPosition.contentLeft,
       marginLeft: 0,
       marginRight: 4,
       hover: {
@@ -261,7 +261,7 @@ const builtins = {
       height: 16,
       funcType: IconFuncTypeEnum.collapse,
       name: 'collapse',
-      positionType: IconPosition.inlineFront,
+      positionType: IconPosition.contentLeft,
       marginLeft: 0,
       marginRight: 4,
       hover: {

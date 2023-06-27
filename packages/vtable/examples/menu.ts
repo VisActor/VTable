@@ -8,6 +8,10 @@ export const menus = [
       },
       {
         path: 'list',
+        name: 'list-tree'
+      },
+      {
+        path: 'list',
         name: 'list-data-promise'
       }
     ]
@@ -18,6 +22,10 @@ export const menus = [
       {
         path: 'pivot',
         name: 'pivot'
+      },
+      {
+        path: 'pivot',
+        name: 'pivot-tree'
       }
     ]
   },

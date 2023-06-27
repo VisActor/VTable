@@ -14,6 +14,7 @@ import { HierarchyState } from '../ts-types';
 import { applyChainSafe, getOrApply, obj, isPromise, emptyFn } from '../tools/helper';
 import { EventTarget } from '../event/EventTarget';
 import { getValueByPath, isValid } from '../tools/util';
+import { diffCellIndices } from '../tools/diff-cell';
 
 /**
  * 判断字段数据是否为访问器的格式
@@ -302,6 +303,7 @@ export class DataSource extends EventTarget implements DataSourceAPI {
    * @param index
    */
   toggleHierarchyState(index: number) {
+    const oldIndexedData = this.currentIndexedData.slice(0);
     const indexed = this.getIndexKey(index);
     const state = this.getHierarchyState(index);
 
@@ -350,6 +352,8 @@ export class DataSource extends EventTarget implements DataSourceAPI {
     }
     // 变更了pagerConf所以需要更新分页数据  TODO待定 因为只关注根节点的数量的话 可能不会影响到
     this.updatePagerData();
+
+    return diffCellIndices(oldIndexedData, this.currentIndexedData);
   }
   /**
    * 某个节点状态由折叠变为展开，往this.currentIndexedData中插入展开后的新增节点，注意需要递归，因为展开节点下面的子节点也能是展开状态

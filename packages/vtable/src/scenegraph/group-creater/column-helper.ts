@@ -112,7 +112,7 @@ export function createComplexColumn(
   for (let j = rowStart; j <= rowEnd; j++) {
     const row = j;
     const define = cellType !== 'body' ? table.getHeaderDefine(col, row) : table.getBodyColumnDefine(col, row);
-    const mayHaveIcon = cellType !== 'body' ? true : !!define?.icon;
+    const mayHaveIcon = cellType !== 'body' ? true : !!define?.icon || !!define?.tree;
     let cellTheme;
     if (!useColumnTheme) {
       const headerStyle = table._getCellStyle(col, row);
