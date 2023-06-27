@@ -1528,14 +1528,14 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     return this.stateManeger.scroll.verticalBarPos;
   }
   set scrollTop(scrollTop: number) {
-    this.stateManeger.setScrollTop(Math.ceil(scrollTop));
+    this.stateManeger.setScrollTop(scrollTop);
   }
 
   get scrollLeft(): number {
     return this.stateManeger.scroll.horizontalBarPos;
   }
   set scrollLeft(scrollLeft: number) {
-    this.stateManeger.setScrollLeft(Math.ceil(scrollLeft));
+    this.stateManeger.setScrollLeft(scrollLeft);
   }
 
   getScrollLeft() {
