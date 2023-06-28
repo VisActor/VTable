@@ -2534,6 +2534,9 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     this.bodyStyleCache.set(cacheKey, cacheStyle);
     return cacheStyle;
   }
+  clearCellStyleCache() {
+    this.headerStyleCache.clear();
+  }
   /**
    * 该列是否可调整列宽
    * @param col
