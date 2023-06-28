@@ -487,6 +487,9 @@ export class StateManeger {
     }
     // console.log('detaX', detaX);
     this.table.scenegraph.updateColWidth(this.columnResize.col, detaX);
+    if (this.table.widthMode === 'adaptive' && this.columnResize.col < this.table.colCount - 1) {
+      this.table.scenegraph.updateColWidth(this.columnResize.col + 1, -detaX);
+    }
     this.columnResize.x = x;
 
     this.table.scenegraph.component.updateResizeCol(this.columnResize.col, y);
