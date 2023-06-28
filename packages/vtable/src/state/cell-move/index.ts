@@ -1,3 +1,4 @@
+import type { BaseTableAPI } from '../../ts-types/base-table';
 import type { StateManeger } from '../state';
 import { adjustMoveHeaderTarget } from './adjust-header';
 
@@ -89,6 +90,16 @@ export function endMoveCol(state: StateManeger) {
   //     state.targetCol - state.sourceCol,
   //     state.targetRow - state.sourceRow
   //   );
+
+  // clear columns width and rows height cache
+  clearWidthsAndHeightsCache(
+    state.columnMove.colSource,
+    state.columnMove.rowSource,
+    state.columnMove.colTarget,
+    state.columnMove.rowTarget,
+    state.table
+  );
+
   // 更新状态
   if (moveSuccess) {
     state.table.scenegraph.updateHeaderPosition(
@@ -99,9 +110,26 @@ export function endMoveCol(state: StateManeger) {
     );
   }
 
-  // 清空列宽缓存
   state.updateCursor();
-  (state.table as any)._colRangeWidthsMap.clear();
   state.table.scenegraph.component.hideMoveCol();
   state.table.scenegraph.updateNextFrame();
+}
+
+function clearWidthsAndHeightsCache(
+  colSource: number,
+  rowSource: number,
+  colTarget: number,
+  rowTarget: number,
+  table: BaseTableAPI
+) {
+  const colMin = Math.min(colSource, colTarget);
+  const colMax = Math.max(colSource, colTarget);
+  const rowMin = Math.min(rowSource, rowTarget);
+  const rowMax = Math.max(rowSource, rowTarget);
+  for (let col = colMin; col <= colMax; col++) {
+    table._clearColRangeWidthsMap(col);
+  }
+  for (let row = rowMin; row <= rowMax; row++) {
+    table._clearRowRangeHeightsMap(row);
+  }
 }
