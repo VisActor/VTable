@@ -87,6 +87,10 @@ export const menus = [
       },
       {
         path: 'pivot',
+        name: 'pivot-image-tree'
+      },
+      {
+        path: 'pivot',
         name: 'pivot-link'
       },
       {

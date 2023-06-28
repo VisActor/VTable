@@ -31,6 +31,8 @@ import { NumberMap } from '../tools/NumberMap';
 import type { Either } from '../tools/helper';
 import { IndicatorDimensionKeyPlaceholder } from '../tools/global';
 import { diffCellAddress } from '../tools/diff-cell';
+import type { ILinkDimension } from '../ts-types/pivot-table/dimension/link-dimension';
+import type { IImageDimension } from '../ts-types/pivot-table/dimension/image-dimension';
 interface IPivotLayoutBaseHeadNode {
   id: number;
   // dimensionKey: string;
@@ -636,13 +638,13 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
         headerType: dimensionInfo?.headerType ?? 'text',
         headerIcon: dimensionInfo?.headerIcon,
         define: Object.assign(<any>hd, {
-          linkJump: 'linkJump' in dimensionInfo ? dimensionInfo.linkJump : null,
-          linkDetect: 'linkDetect' in dimensionInfo ? dimensionInfo.linkDetect : null,
-          templateLink: 'templateLink' in dimensionInfo ? dimensionInfo.templateLink : null,
+          linkJump: (dimensionInfo as ILinkDimension)?.linkJump,
+          linkDetect: (dimensionInfo as ILinkDimension)?.linkDetect,
+          templateLink: (dimensionInfo as ILinkDimension)?.templateLink,
 
           // image相关 to be fixed
-          keepAspectRatio: 'keepAspectRatio' in dimensionInfo ? dimensionInfo.keepAspectRatio : false,
-          imageAutoSizing: 'imageAutoSizing' in dimensionInfo ? dimensionInfo.imageAutoSizing : null,
+          keepAspectRatio: (dimensionInfo as IImageDimension)?.keepAspectRatio ?? false,
+          imageAutoSizing: (dimensionInfo as IImageDimension)?.imageAutoSizing,
 
           headerCustomRender: dimensionInfo?.headerCustomRender,
           headerCustomLayout: dimensionInfo?.headerCustomLayout,

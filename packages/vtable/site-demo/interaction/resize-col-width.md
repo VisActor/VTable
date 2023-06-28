@@ -12,6 +12,12 @@ cover:
 ## 关键配置
 
 - `columnResizeMode: 'all' | 'none' | 'header' | 'body'` 指定可操作调整列宽的区域
+- `columnResizeType: 'column' | 'indicator' | 'all' | 'indicatorGroup'` 调整列宽的生效范围，可配置项：
+
+  - column: 调整列宽只调整当前列
+  - indicator: 调整列宽时对应相同指标的列都会被调整
+  - indicatorGroup: 调整同父级维度下所有指标列的宽度
+  - all： 所有列宽都被调整
 
 ## 代码演示
 
@@ -301,20 +307,54 @@ const option = {
                     "caption": "Quantity",
                     "width": "auto",
                     "showSort": false,
+                    "headerStyle":{
+                      fontWeight: "normal",
+                    },
+                    "format":(rec)=>{return '$'+Number(rec['230517143221042']).toFixed(2)},
+                    style:{
+                      padding:[16,28,16,28],
+                      color(args){
+                        if(args.dataValue>=0)
+                        return 'black';
+                        return 'red'
+                      }
+                    }
                 },
                 {
                     "indicatorKey": "230517143221040",
                     "caption": "Sales",
                     "width": "auto",
                     "showSort": false,
-                    "format":(rec)=>{return Number(rec['230517143221040']).toFixed(2)}
+                    "headerStyle":{
+                      fontWeight: "normal",
+                    },
+                    "format":(rec)=>{return '$'+Number(rec['230517143221040']).toFixed(2)},
+                    style:{
+                      padding:[16,28,16,28],
+                      color(args){
+                        if(args.dataValue>=0)
+                        return 'black';
+                        return 'red'
+                      }
+                    }
                 },
                 {
                     "indicatorKey": "230517143221041",
                     "caption": "Profit",
                     "width": "auto",
                     "showSort": false,
-                    "format":(rec)=>{return Number(rec['230517143221041']).toFixed(2)}
+                    "headerStyle":{
+                      fontWeight: "normal",
+                    },
+                    "format":(rec)=>{return '$'+Number(rec['230517143221041']).toFixed(2)},
+                    style:{
+                      padding:[16,28,16,28],
+                      color(args){
+                        if(args.dataValue>=0)
+                        return 'black';
+                        return 'red'
+                      }
+                    }
                 }
             ],
     "corner": {
@@ -323,6 +363,7 @@ const option = {
             "textStick": true
         }
     },
+    //columnResizeType:'all',
   widthMode:'standard'
 };
 const tableInstance = new VTable.PivotTable(option);
