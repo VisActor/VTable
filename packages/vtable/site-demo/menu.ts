@@ -17,7 +17,15 @@ export const menus = [
       },
       {
         path: 'table-type',
+        name: 'list-table-tree'
+      },
+      {
+        path: 'table-type',
         name: 'pivot-table'
+      },
+      {
+        path: 'table-type',
+        name: 'pivot-table-tree'
       },
       {
         path: 'table-type',

@@ -15,75 +15,66 @@ cover:
 ## 代码演示
 
 ```ts
-// <script type='text/javascript' src='../sales.js'></script>
-// import { menus } from './menu';
-  fetch('../mock-data/North_American_Superstore_list100.json')
+  fetch('../mock-data/company_struct.json')
     .then((res) => res.json())
     .then((data) => {
 
 const columns =[
     {
-        "field": "230517143221027",
-        "caption": "Order ID",
+        "field": "group",
+        "caption": "department",
+        "width": "auto",
+         tree: true,
+         fieldFormat(rec){
+            return rec['department']??rec['group']??rec['name'];
+         }
+    },
+    {
+        "field": "total_children",
+        "caption": "memebers count",
+        "width": "auto",
+        fieldFormat(rec){
+          if(rec?.['position']){
+            return `position:  ${rec['position']}`
+          }else
+          return rec?.['total_children'];
+        }
+    },
+    {
+        "field": "monthly_expense",
+        "caption": "monthly expense",
+        "width": "auto",
+        fieldFormat(rec){
+          if(rec?.['salary']){
+            return `salary:  ${rec['salary']}`
+          }else
+          return rec?.['monthly_expense'];
+        }
+    },
+    {
+        "field": "new_hires_this_month",
+        "caption": "new hires this month",
         "width": "auto"
     },
     {
-        "field": "230517143221030",
-        "caption": "Customer ID",
+        "field": "resignations_this_month",
+        "caption": "resignations this month",
         "width": "auto"
     },
     {
-        "field": "230517143221032",
-        "caption": "Product Name",
+        "field": "complaints_and_suggestions",
+        "caption": "recived complaints counts",
         "width": "auto"
     },
-    {
-        "field": "230517143221023",
-        "caption": "Category",
-        "width": "auto"
-    },
-    {
-        "field": "230517143221034",
-        "caption": "Sub-Category",
-        "width": "auto"
-    },
-    {
-        "field": "230517143221037",
-        "caption": "Region",
-        "width": "auto"
-    },
-    {
-        "field": "230517143221024",
-        "caption": "City",
-        "width": "auto"
-    },
-    {
-        "field": "230517143221029",
-        "caption": "Order Date",
-        "width": "auto"
-    },
-    {
-        "field": "230517143221042",
-        "caption": "Quantity",
-        "width": "auto"
-    },
-    {
-        "field": "230517143221040",
-        "caption": "Sales",
-        "width": "auto"
-    },
-    {
-        "field": "230517143221041",
-        "caption": "Profit",
-        "width": "auto"
-    }
+   
 ];
 
 const option = {
   parentElement: document.getElementById(Table_CONTAINER_DOM_ID),
   records:data,
   columns,
-  widthMode:'standard'
+  widthMode:'standard',
+
 };
 const tableInstance = new VTable.ListTable(option);
 window['tableInstance'] = tableInstance;

@@ -348,15 +348,6 @@ export function createTable() {
           {
             dimensionKey: '220524114340031',
             dimensionTitle: '省份'
-          },
-          {
-            indicatorKey: '220524114340014',
-            dimensionTitle: '指标名称',
-            headerStyle: {
-              textAlign: 'left',
-              borderColor: 'white',
-              textStick: true
-            }
           }
         ],
         indicators: [
