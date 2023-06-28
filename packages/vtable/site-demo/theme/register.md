@@ -50,14 +50,13 @@ VTable.register.theme('themeRegisterOne',{
         }
       }
     })
-  fetch('../mock-data/North_American_Superstore_pivot.json')
-    .then((res) => res.json())
-    .then((data) => {
-
-const option = {
-  parentElement: document.getElementById(Table_CONTAINER_DOM_ID),
-  records:data,
-  "rowTree": [
+fetch('../mock-data/North_American_Superstore_pivot.json')
+  .then((res) => res.json())
+  .then((data) => {
+  const option = {
+    parentElement: document.getElementById(Table_CONTAINER_DOM_ID),
+    records:data,
+    "rowTree": [
         {
             "dimensionKey": "230517143221047",
             "value": "Aberdeen"
@@ -178,12 +177,12 @@ const option = {
             "textStick": true
         }
     },
-  widthMode:'standard',
-  theme:'themeRegisterOne'
-};
-const tableInstance = new VTable.PivotTable(option);
-window['tableInstance'] = tableInstance;
-    })
+    widthMode:'standard',
+    theme:'themeRegisterOne'
+  };
+  const tableInstance = new VTable.PivotTable(option);
+  window['tableInstance'] = tableInstance;
+})
 ```
 
 ## 相关教程

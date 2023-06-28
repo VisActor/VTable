@@ -300,20 +300,54 @@ const option = {
                     "caption": "Quantity",
                     "width": "auto",
                     "showSort": false,
+                    "headerStyle":{
+                      fontWeight: "normal",
+                    },
+                    "format":(rec)=>{return '$'+Number(rec['230517143221042']).toFixed(2)},
+                    style:{
+                      padding:[16,28,16,28],
+                      color(args){
+                        if(args.dataValue>=0)
+                        return 'black';
+                        return 'red'
+                      }
+                    }
                 },
                 {
                     "indicatorKey": "230517143221040",
                     "caption": "Sales",
                     "width": "auto",
                     "showSort": false,
-                    "format":(rec)=>{return Number(rec['230517143221040']).toFixed(2)}
+                    "headerStyle":{
+                      fontWeight: "normal",
+                    },
+                    "format":(rec)=>{return '$'+Number(rec['230517143221040']).toFixed(2)},
+                    style:{
+                      padding:[16,28,16,28],
+                      color(args){
+                        if(args.dataValue>=0)
+                        return 'black';
+                        return 'red'
+                      }
+                    }
                 },
                 {
                     "indicatorKey": "230517143221041",
                     "caption": "Profit",
                     "width": "auto",
                     "showSort": false,
-                    "format":(rec)=>{return Number(rec['230517143221041']).toFixed(2)}
+                    "headerStyle":{
+                      fontWeight: "normal",
+                    },
+                    "format":(rec)=>{return '$'+Number(rec['230517143221041']).toFixed(2)},
+                    style:{
+                      padding:[16,28,16,28],
+                      color(args){
+                        if(args.dataValue>=0)
+                        return 'black';
+                        return 'red'
+                      }
+                    }
                 }
             ],
     "corner": {

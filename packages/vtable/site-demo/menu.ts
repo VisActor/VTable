@@ -17,7 +17,15 @@ export const menus = [
       },
       {
         path: 'table-type',
+        name: 'list-table-tree'
+      },
+      {
+        path: 'table-type',
         name: 'pivot-table'
+      },
+      {
+        path: 'table-type',
+        name: 'pivot-table-tree'
       },
       {
         path: 'table-type',
@@ -59,10 +67,6 @@ export const menus = [
       },
       {
         path: 'interaction',
-        name: 'frozen-col'
-      },
-      {
-        path: 'interaction',
         name: 'resize-col-width'
       },
       {
@@ -72,10 +76,6 @@ export const menus = [
       {
         path: 'interaction',
         name: 'context-menu'
-      },
-      {
-        path: 'interaction',
-        name: 'sort'
       }
     ]
   },
@@ -170,20 +170,7 @@ export const menus = [
   },
   {
     menu: '布局',
-    children: [
-      {
-        path: 'layout',
-        name: 'width-mode-adaptive'
-      },
-      {
-        path: 'layout',
-        name: 'width-mode-autoWidth'
-      },
-      {
-        path: 'layout',
-        name: 'merge'
-      }
-    ]
+    children: []
   },
   {
     menu: 'business',
@@ -203,6 +190,35 @@ export const menus = [
       {
         path: 'business',
         name: 'temperature-trend'
+      }
+    ]
+  },
+  {
+    menu: 'basic functionality',
+    children: [
+      {
+        path: 'basic-functionality',
+        name: 'frozen-col'
+      },
+      {
+        path: 'basic-functionality',
+        name: 'sort'
+      },
+      {
+        path: 'basic-functionality',
+        name: 'auto-wrap-text'
+      },
+      {
+        path: 'basic-functionality',
+        name: 'width-mode-adaptive'
+      },
+      {
+        path: 'basic-functionality',
+        name: 'width-mode-autoWidth'
+      },
+      {
+        path: 'basic-functionality',
+        name: 'merge'
       }
     ]
   }

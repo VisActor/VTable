@@ -23,9 +23,9 @@ cover:
   for (let i = 1; i <= 10; i++) {
     for (let j = 1; j <= 10; j++) {
       const record = {
-        地区: '地区' + i,
+        region: 'region' + i,
       };
-      record['类别'] = '类别' + j;
+      record['category'] = 'category' + j;
       record.areaChart = [
         { x: '0', type: 'A', y: 900 + i + j },
         { x: '1', type: 'A', y: '707' },
@@ -80,19 +80,19 @@ cover:
 const option = {
   parentElement: document.getElementById(Table_CONTAINER_DOM_ID),
   records,
-  defaultRowHeight:250,
+  defaultRowHeight:200,
   defaultHeaderRowHeight:50,
   indicators: [
     {
         indicatorKey: 'lineChart',
-        caption: '销售额走势',
+        caption: 'Sales trend chart',
         headerStyle: {
           color: 'blue',
           // bgColor: 'yellow',
         },
         columnType: 'chart',
         chartType: 'vchart',
-        width: 320,
+        width: 300,
         chartSpec: {
           type: 'common',
           series: [
@@ -115,13 +115,13 @@ const option = {
     },
       {
         indicatorKey: 'areaChart',
-        caption: '利润走势',
+        caption: 'Profit trend chart',
         headerStyle: {
           color: 'green',
         },
         columnType: 'chart',
         chartType: 'vchart',
-        width: 320,
+        width: 300,
         chartSpec: {
           type: 'common',
           series: [
@@ -165,35 +165,19 @@ const option = {
                   },
                 },
               },
-              line: {
-                state: {
-                  hover: {
-                    stroke: 'red',
-                  },
-                  selected: {
-                    stroke: 'yellow',
-                  },
-                },
-              },
             },
           ],
           axes: [
             { orient: 'left', range: { min: 0 } },
             { orient: 'bottom', label: { visible: true }, type: 'band' },
           ],
-          legends: [
-            {
-              visible: true,
-              orient: 'bottom',
-            },
-          ],
         },
       },
     ],
     columnTree: [
       {
-        dimensionKey: '地区',
-        value: '地区1',
+        dimensionKey: 'region',
+        value: 'region1',
         children: [
           {
             indicatorKey: 'areaChart',
@@ -204,8 +188,8 @@ const option = {
         ],
       },
       {
-        dimensionKey: '地区',
-        value: '地区2',
+        dimensionKey: 'region',
+        value: 'region2',
         children: [
           {
             indicatorKey: 'areaChart',
@@ -216,8 +200,8 @@ const option = {
         ],
       },
       {
-        dimensionKey: '地区',
-        value: '地区3',
+        dimensionKey: 'region',
+        value: 'region3',
         children: [
           {
             indicatorKey: 'areaChart',
@@ -230,20 +214,20 @@ const option = {
     ],
     rowTree: [
       {
-        dimensionKey: '类别',
-        value: '类别1',
+        dimensionKey: 'category',
+        value: 'category1',
       },
       {
-        dimensionKey: '类别',
-        value: '类别2',
+        dimensionKey: 'category',
+        value: 'category2',
       },
       {
-        dimensionKey: '类别',
-        value: '类别3',
+        dimensionKey: 'category',
+        value: 'category3',
       },
       {
-        dimensionKey: '类别',
-        value: '类别4',
+        dimensionKey: 'category',
+        value: 'category4',
       },
     ],
     corner: {

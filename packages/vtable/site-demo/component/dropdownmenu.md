@@ -156,7 +156,7 @@ window['tableInstance'] = tableInstance;
 
 tableInstance.listen('click_cell', (args) => {
         const { col, row, targetIcon } = args;
-        if(col===0&&row>=1&&targetIcon.name==='order'){
+        if(col===0&&row>=1&&targetIcon?.name==='order'){
           const { left, top, width, height, bottom, right } = targetIcon.position;
           tableInstance.showDropDownMenu(col, row, {
         content: [
