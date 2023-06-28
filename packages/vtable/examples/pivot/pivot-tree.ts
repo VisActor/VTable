@@ -1,4 +1,5 @@
 import * as VTable from '../../src';
+import { bindDebugTool } from '../../src/scenegraph/debug-tool';
 const PivotTable = VTable.PivotTable;
 const Table_CONTAINER_DOM_ID = 'vTable';
 
@@ -445,6 +446,10 @@ export function createTable() {
       const tableInstance = new PivotTable(option);
       // 只为了方便控制太调试用，不要拷贝
       (window as any).tableInstance = tableInstance;
+
+      bindDebugTool(tableInstance.scenegraph.stage as any, {
+        customGrapicKeys: ['role', '_updateTag']
+      });
     })
     // eslint-disable-next-line no-console
     .catch(e => console.log(e));
