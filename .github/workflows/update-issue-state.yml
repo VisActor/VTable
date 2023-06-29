@@ -2,7 +2,7 @@
 name: Update issue state
 
 on:
-  issue_comment:
+  issues:
     types: [opened, reopened, edited]
 
 jobs:
