@@ -21,15 +21,7 @@ jobs:
 
           echo "Found issue: ${issue_title} (#${issue_number})"
 
-      - name: Get branch protection information
-        id: get_branch_protection
-        run: |
-          branch_name=$(echo "${{ github.event.client_payload.ref }}" | sed 's/refs\/heads\///')
-          branch_protection_url=$(curl -s -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" "https://api.github.com/repos/${{ github.repository }}/branches/${branch_name}/protection" | jq -r '.url')
-          echo "Found branch protection: ${branch_protection_url}"
-
       - name: Update issue state
-        if: steps.get_branch_protection.outputs.url != 'null'
         run: |
           echo "Updating issue state to 'In Progress'"
           curl -s -X PATCH -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" -H "Accept: application/vnd.github.v3+json" -d '{"fields":{"Status":"In Progress"}}' "${{ steps.get_issue.outputs.url }}"
