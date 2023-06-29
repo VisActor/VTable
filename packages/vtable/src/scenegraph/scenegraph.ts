@@ -421,7 +421,7 @@ export class Scenegraph {
 
   highPerformanceGetCell(col: number, row: number): Group {
     if (!this.isPivot && !this.transpose && !this.table.isHeader(col, row)) {
-      return this.proxy.highPerformanceGetCell(col, row);
+      return this.proxy.highPerformanceGetCell(col, row, 0, this.table.rowCount - 1);
     }
     return this.getCell(col, row);
   }

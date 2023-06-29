@@ -24,6 +24,7 @@ export function createCellSelectBorder(
       if (cellGroup.role === 'shadow-cell') {
         continue;
       }
+      cellGroup.AABBBounds.width();
       const bounds = cellGroup.globalAABBBounds;
       if (!cellsBounds) {
         cellsBounds = bounds;
