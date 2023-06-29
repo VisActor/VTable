@@ -1,4 +1,3 @@
-
 name: Update issue state
 
 on:
@@ -21,7 +20,24 @@ jobs:
 
           echo "Found issue: ${issue_title} (#${issue_number})"
 
+      - name: Get branches from issue
+        uses: actions/http-request@v2
+        id: branches
+        with:
+          url: https://api.github.com/repos/:owner/:repo/issues/:issue_number/branches
+          method: GET
+          headers: |
+            Authorization: token ${{ secrets.GITHUB_TOKEN }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Extract branch names
+        run: |
+          branches=$(echo ${{ steps.branches.outputs.data }} | jq -r '.[].name')
+          echo "Related branches: $branches"
+
       - name: Update issue state
+        if: branches != 'null'
         run: |
           echo "Updating issue state to 'In Progress'"
           curl -s -X PATCH -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" -H "Accept: application/vnd.github.v3+json" -d '{"fields":{"Status":"In Progress"}}' "${{ steps.get_issue.outputs.url }}"
