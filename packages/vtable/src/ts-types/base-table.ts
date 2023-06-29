@@ -415,6 +415,7 @@ export interface BaseTableAPI {
   dispose: () => void;
   addDisposable: (disposable: { dispose: () => void }) => void;
   _getCellStyle: (col: number, row: number) => FullExtendStyle;
+  clearCellStyleCache: () => void;
 
   getFrozenRowsHeight: () => number;
   getFrozenColsWidth: () => number;

@@ -91,17 +91,20 @@ export function endMoveCol(state: StateManeger) {
   //     state.targetRow - state.sourceRow
   //   );
 
-  // clear columns width and rows height cache
-  clearWidthsAndHeightsCache(
-    state.columnMove.colSource,
-    state.columnMove.rowSource,
-    state.columnMove.colTarget,
-    state.columnMove.rowTarget,
-    state.table
-  );
-
   // 更新状态
   if (moveSuccess) {
+    // clear columns width and rows height cache
+    clearWidthsAndHeightsCache(
+      state.columnMove.colSource,
+      state.columnMove.rowSource,
+      state.columnMove.colTarget,
+      state.columnMove.rowTarget,
+      state.table
+    );
+
+    // clear cell style cache
+    state.table.clearCellStyleCache();
+
     state.table.scenegraph.updateHeaderPosition(
       state.columnMove.colSource,
       state.columnMove.rowSource,
