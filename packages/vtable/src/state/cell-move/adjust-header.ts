@@ -1,3 +1,4 @@
+import type { PivotHeaderLayoutMap } from '../../layout/pivot-header-layout';
 import type { CellAddress } from '../../ts-types';
 import type { BaseTableAPI } from '../../ts-types/base-table';
 
@@ -23,7 +24,23 @@ export function adjustMoveHeaderTarget(source: CellAddress, target: CellAddress,
       target.col = table.rowHeaderLevelCount - 1;
     }
     // tree模式[透视表行表头]
-    if (target.row >= source.row) {
+    const layoutMap = table.internalProps.layoutMap as PivotHeaderLayoutMap;
+    if (layoutMap.rowHierarchyType === 'tree') {
+      const sourceRowHeaderPaths = layoutMap.getCellHeaderPathsWidthTreeNode(source.col, source.row).rowHeaderPaths;
+      const targetRowHeaderPaths = layoutMap.getCellHeaderPathsWidthTreeNode(target.col, target.row).rowHeaderPaths;
+      if (sourceRowHeaderPaths.length <= targetRowHeaderPaths.length) {
+        const targetPathNode = targetRowHeaderPaths[sourceRowHeaderPaths.length - 1]; //找到共同层级节点
+        // 根据这个目标节点找到结束的row index
+        if (targetPathNode) {
+          if (target.row >= source.row) {
+            //如果拖拽目标的列在原位置的上面 位置是层级的最上端
+            target.row = targetPathNode.startInTotal + targetPathNode.size - 1 + table.columnHeaderLevelCount;
+          } else {
+            target.row = targetPathNode.startInTotal + table.columnHeaderLevelCount;
+          }
+        } //如果拖拽目标的列在原位置的下面 位置是层级的最下端
+      }
+    } else if (target.row >= source.row) {
       //table模式 如果拖拽目标的列在原位置的下面 位置是层级的最下端
       target.row = targetCellRange.end.row;
     } else {

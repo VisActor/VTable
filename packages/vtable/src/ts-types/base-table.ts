@@ -415,6 +415,7 @@ export interface BaseTableAPI {
   dispose: () => void;
   addDisposable: (disposable: { dispose: () => void }) => void;
   _getCellStyle: (col: number, row: number) => FullExtendStyle;
+  clearCellStyleCache: () => void;
 
   getFrozenRowsHeight: () => number;
   getFrozenColsWidth: () => number;
@@ -507,6 +508,7 @@ export interface BaseTableAPI {
   isPivotTable: (() => boolean) & (() => boolean);
 
   _clearColRangeWidthsMap: (col?: number) => void;
+  _clearRowRangeHeightsMap: (row?: number) => void;
 
   toggleHierarchyState: (col: number, row: number) => void;
 
