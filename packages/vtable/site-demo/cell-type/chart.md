@@ -232,7 +232,8 @@ const option = {
     ],
     corner: {
       titleOnDimension: 'row',
-    }
+    },
+    dragHeaderMode: 'all'
 };
 const tableInstance = new VTable.PivotTable(option);
 window['tableInstance'] = tableInstance;

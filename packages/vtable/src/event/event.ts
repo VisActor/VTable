@@ -68,7 +68,7 @@ export class EventManeger {
       }
       if (stateManeger.interactionState === InteractionState.grabing) {
         if (stateManeger.isResizeCol()) {
-          this.dealColumnResizer(eventArgsSet);
+          this.dealColumnResize(eventArgsSet);
           if (eventArgsSet.eventArgs && (this.table as any).hasListeners(TABLE_EVENT_TYPE.RESIZE_COLUMN)) {
             this.table.fireListeners(TABLE_EVENT_TYPE.RESIZE_COLUMN, {
               col: this.table.stateManeger.columnResize.col,
@@ -87,7 +87,7 @@ export class EventManeger {
       //   return;
       // }
       // 更新列宽调整pointer
-      if (this.checkColumnResizer(eventArgsSet)) {
+      if (this.checkColumnResize(eventArgsSet)) {
         stateManeger.updateCursor('col-resize');
       } else {
         stateManeger.updateCursor();
@@ -293,8 +293,8 @@ export class EventManeger {
         : undefined;
       if (!hitIcon) {
         // 处理列宽调整
-        if (this.checkColumnResizer(eventArgsSet, true)) {
-          // this.startColumnResizer(e);
+        if (this.checkColumnResize(eventArgsSet, true)) {
+          // this.startColumnResize(e);
           // this._resizing = true;
           stateManeger.updateInteractionState(InteractionState.grabing);
           return;
@@ -780,7 +780,7 @@ export class EventManeger {
     // do nothing
   }
 
-  checkColumnResizer(eventArgsSet: SceneEvent, update?: boolean): boolean {
+  checkColumnResize(eventArgsSet: SceneEvent, update?: boolean): boolean {
     // return false;
     const { eventArgs } = eventArgsSet;
 
@@ -803,7 +803,7 @@ export class EventManeger {
     return false;
   }
 
-  dealColumnResizer(eventArgsSet: SceneEvent) {
+  dealColumnResize(eventArgsSet: SceneEvent) {
     this.table.stateManeger.updateResizeCol(eventArgsSet.abstractPos.x, eventArgsSet.abstractPos.y);
   }
 
@@ -841,7 +841,7 @@ export class EventManeger {
     );
   }
 
-  startColumnResizer(eventArgsSet: SceneEvent) {
+  startColumnResize(eventArgsSet: SceneEvent) {
     // do nothing
   }
 

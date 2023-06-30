@@ -10,6 +10,7 @@ interface IChartGraphicAttribute extends IGroupGraphicAttribute {
   spec: any;
   ClassType: any;
   chartInstance: any;
+  cellPadding: number[];
   viewBox: {
     x1: number;
     y1: number;
