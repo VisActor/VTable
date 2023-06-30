@@ -161,7 +161,7 @@ export class EventManeger {
     // do nothing
   }
 
-  checkColumnResizer(eventArgsSet: SceneEvent, update?: boolean): boolean {
+  checkColumnResize(eventArgsSet: SceneEvent, update?: boolean): boolean {
     // return false;
     const { eventArgs } = eventArgsSet;
 
@@ -184,7 +184,7 @@ export class EventManeger {
     return false;
   }
 
-  dealColumnResizer(eventArgsSet: SceneEvent) {
+  dealColumnResize(eventArgsSet: SceneEvent) {
     this.table.stateManeger.updateResizeCol(eventArgsSet.abstractPos.x, eventArgsSet.abstractPos.y);
   }
 
@@ -222,7 +222,7 @@ export class EventManeger {
     );
   }
 
-  startColumnResizer(eventArgsSet: SceneEvent) {
+  startColumnResize(eventArgsSet: SceneEvent) {
     // do nothing
   }
 

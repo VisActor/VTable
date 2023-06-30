@@ -36,6 +36,7 @@ import { deleteAllSelectBorder, deleteLastSelectedRangeComponents } from './sele
 import { updateRow } from './layout/update-row';
 import { handleTextStick } from './stick-text';
 import { emptyGroup } from './utils/empty-group';
+import { updateChartSize } from './refresh-node/update-chart';
 
 container.load(splitModule);
 
@@ -675,6 +676,15 @@ export class Scenegraph {
   updateColWidth(col: number, detaX: number) {
     updateColWidth(this, col, detaX);
     this.updateContainerWidth(col, detaX);
+  }
+
+  /**
+   * @description: 列宽调整需要修改Chart的尺寸
+   * @param {number} col
+   * @return {*}
+   */
+  updateChartSize(col: number) {
+    updateChartSize(this, col);
   }
 
   updateAutoColWidth(col: number) {

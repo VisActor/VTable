@@ -18,9 +18,9 @@ export class TableComponent {
 
   border: IRect; // 表格外边框
   // selectBorder: IRect; // 表格选择区域边框
-  columnResizerLine: ILine; // 表格列宽调整基准线
-  columnResizerBgLine: ILine; // 表格列宽调整基准线背景
-  columnResizerLabel: IGroup; // 表格列宽调整标记
+  columnResizeLine: ILine; // 表格列宽调整基准线
+  columnResizeBgLine: ILine; // 表格列宽调整基准线背景
+  columnResizeLabel: IGroup; // 表格列宽调整标记
   menu: MenuHandler; // 表格菜单
   vScrollBar: ScrollBar; // 表格横向滚动条
   hScrollBar: ScrollBar; // 表格纵向滚动条
@@ -36,15 +36,15 @@ export class TableComponent {
     this.createScrollBar();
 
     // 列宽调整基准线
-    const columnResizerColor = theme.columnResize?.lineColor;
-    const columnResizerWidth = theme.columnResize?.lineWidth;
-    const columnResizerBgColor = theme.columnResize?.bgColor;
-    const columnResizerBgWidth = theme.columnResize?.width;
-    this.columnResizerLine = createLine({
+    const columnResizeColor = theme.columnResize?.lineColor;
+    const columnResizeWidth = theme.columnResize?.lineWidth;
+    const columnResizeBgColor = theme.columnResize?.bgColor;
+    const columnResizeBgWidth = theme.columnResize?.width;
+    this.columnResizeLine = createLine({
       visible: false,
       pickable: false,
-      stroke: columnResizerColor as string,
-      lineWidth: columnResizerWidth as number,
+      stroke: columnResizeColor as string,
+      lineWidth: columnResizeWidth as number,
       x: 0,
       y: 0,
       points: [
@@ -52,14 +52,14 @@ export class TableComponent {
         { x: 0, y: 0 }
       ]
     });
-    this.columnResizerBgLine = createLine({
+    this.columnResizeBgLine = createLine({
       visible: false,
       pickable: false,
-      stroke: columnResizerBgColor as string,
-      lineWidth: columnResizerBgWidth as number,
+      stroke: columnResizeBgColor as string,
+      lineWidth: columnResizeBgWidth as number,
       x: 0,
       y: 0,
-      // dx: -(columnResizerBgWidth - columnResizerWidth) / 2,
+      // dx: -(columnResizeBgWidth - columnResizeWidth) / 2,
       points: [
         { x: 0, y: 0 },
         { x: 0, y: 0 }
@@ -67,7 +67,7 @@ export class TableComponent {
     });
 
     // 列宽调整文字标签
-    const columnResizerLabelText = createText({
+    const columnResizeLabelText = createText({
       visible: false,
       pickable: false,
       x: 0,
@@ -79,7 +79,7 @@ export class TableComponent {
       dx: 12 + 4,
       dy: -8 + 2
     });
-    const columnResizerLabelBack = createRect({
+    const columnResizeLabelBack = createRect({
       visible: false,
       pickable: false,
       fill: '#3073F2',
@@ -91,14 +91,14 @@ export class TableComponent {
       dx: 12,
       dy: -8
     });
-    this.columnResizerLabel = createGroup({
+    this.columnResizeLabel = createGroup({
       visible: false,
       pickable: false,
       x: 0,
       y: 0
     });
-    this.columnResizerLabel.appendChild(columnResizerLabelBack);
-    this.columnResizerLabel.appendChild(columnResizerLabelText);
+    this.columnResizeLabel.appendChild(columnResizeLabelBack);
+    this.columnResizeLabel.appendChild(columnResizeLabelText);
 
     // 列顺序调整基准线
     this.cellMover = new CellMover(this.table);
@@ -149,9 +149,9 @@ export class TableComponent {
   addToGroup(componentGroup: Group) {
     componentGroup.addChild(this.frozenShadowLine);
     // componentGroup.addChild(this.selectBorder);
-    componentGroup.addChild(this.columnResizerBgLine);
-    componentGroup.addChild(this.columnResizerLine);
-    componentGroup.addChild(this.columnResizerLabel);
+    componentGroup.addChild(this.columnResizeBgLine);
+    componentGroup.addChild(this.columnResizeLine);
+    componentGroup.addChild(this.columnResizeLabel);
     if (this.table.theme.scrollStyle.hoverOn) {
       componentGroup.addChild(this.hScrollBar);
       componentGroup.addChild(this.vScrollBar);
@@ -301,11 +301,11 @@ export class TableComponent {
    * @return {*}
    */
   hideResizeCol() {
-    // this.columnResizerLine.attribute.visible = false;
-    this.columnResizerLine.setAttribute('visible', false);
-    this.columnResizerBgLine.setAttribute('visible', false);
-    this.columnResizerLabel.setAttribute('visible', false);
-    this.columnResizerLabel.hideAll();
+    // this.columnResizeLine.attribute.visible = false;
+    this.columnResizeLine.setAttribute('visible', false);
+    this.columnResizeBgLine.setAttribute('visible', false);
+    this.columnResizeLabel.setAttribute('visible', false);
+    this.columnResizeLabel.hideAll();
   }
 
   /**
@@ -315,10 +315,10 @@ export class TableComponent {
    * @return {*}
    */
   showResizeCol(col: number, y: number) {
-    // this.columnResizerLine.attribute.visible = false;
+    // this.columnResizeLine.attribute.visible = false;
     // 基准线
     const colX = getColX(col, this.table);
-    this.columnResizerLine.setAttributes({
+    this.columnResizeLine.setAttributes({
       visible: true,
       x: colX,
       points: [
@@ -326,7 +326,7 @@ export class TableComponent {
         { x: 0, y: this.table.getRowsHeight(0, this.table.rowCount - 1) }
       ]
     });
-    this.columnResizerBgLine.setAttributes({
+    this.columnResizeBgLine.setAttributes({
       visible: true,
       x: colX,
       points: [
@@ -336,14 +336,14 @@ export class TableComponent {
     });
 
     // 标签
-    // this.columnResizerLabel.setAttribute('visible', true);
-    this.columnResizerLabel.showAll();
-    this.columnResizerLabel.setAttributes({
+    // this.columnResizeLabel.setAttribute('visible', true);
+    this.columnResizeLabel.showAll();
+    this.columnResizeLabel.setAttributes({
       visible: true,
       x: colX,
       y
     });
-    (this.columnResizerLabel.lastChild as WrapText).setAttribute('text', `${this.table.getColWidth(col)}px`);
+    (this.columnResizeLabel.lastChild as WrapText).setAttribute('text', `${this.table.getColWidth(col)}px`);
   }
 
   /**
@@ -355,15 +355,15 @@ export class TableComponent {
   updateResizeCol(col: number, y: number) {
     // 基准线
     const colX = getColX(col, this.table);
-    // this.columnResizerLine.setAttribute('x', x);
-    this.columnResizerLine.setAttributes({
+    // this.columnResizeLine.setAttribute('x', x);
+    this.columnResizeLine.setAttributes({
       x: colX,
       points: [
         { x: 0, y: 0 },
         { x: 0, y: this.table.getRowsHeight(0, this.table.rowCount - 1) } // todo: 优化points赋值
       ]
     });
-    this.columnResizerBgLine.setAttributes({
+    this.columnResizeBgLine.setAttributes({
       x: colX,
       points: [
         { x: 0, y: 0 },
@@ -372,14 +372,11 @@ export class TableComponent {
     });
 
     // 标签
-    this.columnResizerLabel.setAttributes({
+    this.columnResizeLabel.setAttributes({
       x: colX,
       y
     });
-    (this.columnResizerLabel.lastChild as WrapText).setAttribute(
-      'text',
-      `${Math.floor(this.table.getColWidth(col))}px`
-    );
+    (this.columnResizeLabel.lastChild as WrapText).setAttribute('text', `${Math.floor(this.table.getColWidth(col))}px`);
   }
 
   /**

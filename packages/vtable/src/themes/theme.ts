@@ -71,7 +71,7 @@ export class TableTheme implements ITableThemeDefine {
   private _scroll: ITableThemeDefine['scrollStyle'] | null = null;
   private _tooltip: ITableThemeDefine['tooltipStyle'] | null = null;
   private _frameStyle: ITableThemeDefine['frameStyle'] | null = null;
-  private _columnResizer: RequiredTableThemeDefine['columnResize'] | null = null;
+  private _columnResize: RequiredTableThemeDefine['columnResize'] | null = null;
   private _dragHeaderSplitLine: RequiredTableThemeDefine['dragHeaderSplitLine'] | null = null;
   private _frozenColumnLine: RequiredTableThemeDefine['frozenColumnLine'] | null = null;
   private _selectionStyle: RequiredTableThemeDefine['selectionStyle'] | null = null;
@@ -378,17 +378,17 @@ export class TableTheme implements ITableThemeDefine {
   }
 
   /**
-   * resizer 分割线样式
+   * resize 分割线样式
    */
   get columnResize(): RequiredTableThemeDefine['columnResize'] {
-    if (!this._columnResizer) {
+    if (!this._columnResize) {
       const { obj, superTheme } = this.internalTheme;
       const columnResize: RequiredTableThemeDefine['columnResize'] = ingoreNoneValueMerge(
         {},
         superTheme.columnResize,
         obj.columnResize
       );
-      this._columnResizer = {
+      this._columnResize = {
         get lineColor(): ColorPropertyDefine {
           return columnResize.lineColor ?? '#416EFF';
         },
@@ -403,7 +403,7 @@ export class TableTheme implements ITableThemeDefine {
         }
       };
     }
-    return this._columnResizer;
+    return this._columnResize;
   }
   /**
    * 移位 分割线样式
