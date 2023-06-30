@@ -254,6 +254,13 @@ export class TableComponent {
       if (visible === 'always') {
         this.hScrollBar.showAll();
       }
+    } else {
+      this.hScrollBar.setAttributes({
+        x: -this.table.tableNoFrameWidth * 2,
+        y: -this.table.tableNoFrameHeight * 2,
+        width: 0,
+        visible: false
+      });
     }
 
     if (totalHeight > tableHeight) {
@@ -276,6 +283,13 @@ export class TableComponent {
       if (visible === 'always') {
         this.vScrollBar.showAll();
       }
+    } else {
+      this.vScrollBar.setAttributes({
+        x: -this.table.tableNoFrameWidth * 2,
+        y: -this.table.tableNoFrameHeight * 2,
+        height: 0,
+        visible: false
+      });
     }
 
     this.table.stateManeger.setScrollLeft(oldHorizontalBarPos);
