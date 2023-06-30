@@ -60,4 +60,8 @@ export function bindContainerDomListener(eventManeger: EventManeger) {
   handler.on(table.getElement(), 'contextmenu', (e: any) => {
     e.preventDefault();
   });
+
+  handler.on(table.getParentElement(), 'resize', () => {
+    table.resize();
+  });
 }

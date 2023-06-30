@@ -439,6 +439,7 @@ export class StateManeger {
     setTimeout(() => {
       this.columnResize.resizing = false;
     }, 0);
+    this.table.scenegraph.updateChartSize(this.columnResize.col);
     this.checkFrozen();
     this.table.scenegraph.component.hideResizeCol();
     this.table.scenegraph.updateNextFrame();
@@ -456,6 +457,8 @@ export class StateManeger {
     this.table.scenegraph.updateNextFrame();
   }
   updateResizeCol(x: number, y: number) {
+    x = Math.ceil(x);
+    y = Math.ceil(y);
     let detaX = x - this.columnResize.x;
     // table.getColWidth会使用Math.round，因此这里直接跳过小于1px的修改
     if (Math.abs(detaX) < 1) {
@@ -485,7 +488,7 @@ export class StateManeger {
         detaX = minWidth - widthCache;
       }
     }
-    // console.log('detaX', detaX);
+    detaX = Math.ceil(detaX);
     this.table.scenegraph.updateColWidth(this.columnResize.col, detaX);
     if (this.table.widthMode === 'adaptive' && this.columnResize.col < this.table.colCount - 1) {
       this.table.scenegraph.updateColWidth(this.columnResize.col + 1, -detaX);
@@ -502,7 +505,6 @@ export class StateManeger {
     }
     this.table.scenegraph.updateNextFrame();
   }
-
   startMoveCol(col: number, row: number, x: number, y: number) {
     startMoveCol(col, row, x, y, this);
   }

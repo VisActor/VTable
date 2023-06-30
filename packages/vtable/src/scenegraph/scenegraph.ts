@@ -36,6 +36,7 @@ import { deleteAllSelectBorder, deleteLastSelectedRangeComponents } from './sele
 import { updateRow } from './layout/update-row';
 import { handleTextStick } from './stick-text';
 import { emptyGroup } from './utils/empty-group';
+import { updateChartSize } from './refresh-node/update-chart';
 
 container.load(splitModule);
 
@@ -677,6 +678,15 @@ export class Scenegraph {
     this.updateContainerWidth(col, detaX);
   }
 
+  /**
+   * @description: 列宽调整需要修改Chart的尺寸
+   * @param {number} col
+   * @return {*}
+   */
+  updateChartSize(col: number) {
+    updateChartSize(this, col);
+  }
+
   updateAutoColWidth(col: number) {
     const oldWidth = this.table.getColWidth(col);
     const newWidth = computeColWidth(col, 0, this.table.rowCount - 1, this.table, true);
@@ -690,6 +700,21 @@ export class Scenegraph {
    */
   recalculateColWidths() {
     computeColsWidth(this.table, true);
+  }
+
+  resize() {
+    this.recalculateColWidths();
+    if (this.table.internalProps.autoRowHeight) {
+      updateAutoRowHeight(this, true);
+    }
+    this.dealWidthMode();
+    this.dealFrozen();
+    this.updateTableSize();
+    this.updateBorderSizeAndPosition();
+    this.component.updateScrollBar();
+
+    // this.stage.window.resize(width, height);
+    this.updateNextFrame();
   }
 
   updateTableSize() {

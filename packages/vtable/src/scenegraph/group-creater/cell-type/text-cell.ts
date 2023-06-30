@@ -89,7 +89,6 @@ export function createCellGroup(
 
   if (renderDefault) {
     const textStr: string = table.getCellValue(col, row);
-
     let icons;
     if (mayHaveIcon) {
       icons = table.getCellIcons(col, row);
@@ -129,7 +128,6 @@ export function createCellGroup(
       cellGroup.appendChild(mark);
     }
   }
-
   return cellGroup;
 }
 

@@ -28,7 +28,7 @@ export function bindTableGroupListener(eventManeger: EventManeger) {
     }
     if (stateManeger.interactionState === InteractionState.grabing) {
       if (stateManeger.isResizeCol()) {
-        eventManeger.dealColumnResizer(eventArgsSet);
+        eventManeger.dealColumnResize(eventArgsSet);
         if (eventArgsSet.eventArgs && (table as any).hasListeners(TABLE_EVENT_TYPE.RESIZE_COLUMN)) {
           table.fireListeners(TABLE_EVENT_TYPE.RESIZE_COLUMN, {
             col: table.stateManeger.columnResize.col,
@@ -47,7 +47,7 @@ export function bindTableGroupListener(eventManeger: EventManeger) {
     //   return;
     // }
     // 更新列宽调整pointer
-    if (eventManeger.checkColumnResizer(eventArgsSet)) {
+    if (eventManeger.checkColumnResize(eventArgsSet)) {
       stateManeger.updateCursor('col-resize');
     } else {
       stateManeger.updateCursor();
@@ -250,8 +250,8 @@ export function bindTableGroupListener(eventManeger: EventManeger) {
           eventManeger.isTouchdown = false;
           eventManeger.touchMove = true;
           // 处理列宽调整
-          if (!eventManeger.touchEnd && eventManeger.checkColumnResizer(eventArgsSet, true)) {
-            // eventManeger.startColumnResizer(e);
+          if (!eventManeger.touchEnd && eventManeger.checkColumnResize(eventArgsSet, true)) {
+            // eventManeger.startColumnResize(e);
             // eventManeger._resizing = true;
             stateManeger.updateInteractionState(InteractionState.grabing);
             return;
@@ -273,8 +273,8 @@ export function bindTableGroupListener(eventManeger: EventManeger) {
         }, 500);
       } else {
         // 处理列宽调整
-        if (eventManeger.checkColumnResizer(eventArgsSet, true)) {
-          // eventManeger.startColumnResizer(e);
+        if (eventManeger.checkColumnResize(eventArgsSet, true)) {
+          // eventManeger.startColumnResize(e);
           // eventManeger._resizing = true;
           stateManeger.updateInteractionState(InteractionState.grabing);
           return;

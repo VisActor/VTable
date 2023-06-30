@@ -68,13 +68,6 @@ export function moveHeaderPosition(
   const updateRowStart = Math.min(sourceRowStart, targetRowStart);
   const updateRowEnd = Math.max(sourceRowEnd, targetRowEnd);
 
-  for (let col = updateColStart; col <= updateColEnd; col++) {
-    // 更新单元格记录全量属性，不更新column theme
-    for (let row = updateRowStart; row <= updateRowEnd; row++) {
-      scene.updateCellContent(col, row);
-    }
-  }
-
   // 更新columnGroup列宽
   for (let col = updateColStart; col <= updateColEnd; col++) {
     const columnHeaderGroup = table.scenegraph.getColGroup(col, true);
@@ -89,6 +82,16 @@ export function moveHeaderPosition(
 
   // 更新容器尺寸
   scene.updateContainer();
+
+  for (let col = updateColStart; col <= updateColEnd; col++) {
+    // 将该列的chartInstance清除掉
+    const columnGroup = table.scenegraph.getColGroup(col);
+    columnGroup?.setAttribute('chartInstance', undefined);
+    // 更新单元格记录全量属性，不更新column theme
+    for (let row = updateRowStart; row <= updateRowEnd; row++) {
+      scene.updateCellContent(col, row);
+    }
+  }
 }
 
 function changeCell(colSource: number, rowSource: number, colTarget: number, rowTarget: number, table: BaseTableAPI) {
