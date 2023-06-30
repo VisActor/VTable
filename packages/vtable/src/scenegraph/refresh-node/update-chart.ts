@@ -15,8 +15,7 @@ export function updateChartSize(scenegraph: Scenegraph, col: number) {
         const height = cellNode.AABBBounds.height();
 
         cellNode.children.forEach((node: Chart) => {
-          if (node.type === 'chart') {
-            console.log(node);
+          if ((node as any).type === 'chart') {
             node.cacheCanvas = null;
             node.setAttribute(
               'width',
