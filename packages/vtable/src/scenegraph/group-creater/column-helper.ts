@@ -43,9 +43,7 @@ export function createComplexColumn(
   defaultRowHeight: number | number[],
   table: BaseTableAPI,
   cellType: CellType,
-  rowLimit?: number,
-  customRender?: ICustomRender,
-  customLayout?: ICustomLayout
+  rowLimit?: number
 ) {
   let maxWidth = 0;
   let padding;
@@ -210,8 +208,6 @@ export function createComplexColumn(
             row,
             colWidth,
             bgColorFunc,
-            customRender,
-            customLayout,
             cellWidth,
             cellHeight,
             columnGroup,
@@ -242,8 +238,6 @@ export function createComplexColumn(
           row,
           colWidth,
           bgColorFunc,
-          customRender,
-          customLayout,
           cellWidth,
           cellHeight,
           columnGroup,
