@@ -512,6 +512,8 @@ export interface BaseTableAPI {
 
   toggleHierarchyState: (col: number, row: number) => void;
 
+  resize: () => void;
+
   //#endregion  tableAPI
 }
 export interface ListTableProtected extends IBaseTableProtected {

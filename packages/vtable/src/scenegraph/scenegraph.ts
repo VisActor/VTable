@@ -702,6 +702,21 @@ export class Scenegraph {
     computeColsWidth(this.table, true);
   }
 
+  resize() {
+    this.recalculateColWidths();
+    if (this.table.internalProps.autoRowHeight) {
+      updateAutoRowHeight(this, true);
+    }
+    this.dealWidthMode();
+    this.dealFrozen();
+    this.updateTableSize();
+    this.updateBorderSizeAndPosition();
+    this.component.updateScrollBar();
+
+    // this.stage.window.resize(width, height);
+    this.updateNextFrame();
+  }
+
   updateTableSize() {
     this.tableGroup.setAttributes({
       width: Math.min(
