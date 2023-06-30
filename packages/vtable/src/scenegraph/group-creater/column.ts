@@ -152,19 +152,6 @@ export function createColGroup(
     columnGroup.role = 'column';
     columnGroup.col = i;
     containerGroup.addChild(columnGroup);
-
-    let customRender;
-    let customLayout;
-
-    if (cellType !== 'body') {
-      const define = table.getHeaderDefine(col, rowStart);
-      customRender = define?.headerCustomRender;
-      customLayout = define?.headerCustomLayout;
-    } else {
-      const define = table.getBodyColumnDefine(col, rowStart);
-      customRender = define?.customRender || table.customRender;
-      customLayout = define?.customLayout;
-    }
     const { width: default2Width, height: default2Height } = createComplexColumn(
       columnGroup,
       col,
@@ -175,9 +162,7 @@ export function createColGroup(
       cellType === 'columnHeader' ? defaultHeaderRowHeight ?? defaultRowHeight : defaultRowHeight,
       table,
       cellType,
-      rowLimit,
-      customRender,
-      customLayout
+      rowLimit
     );
     x += default2Width;
     heightMax = Math.max(heightMax, default2Height);

@@ -35,8 +35,6 @@ export function createCell(
   row: number,
   colWidth: number,
   bgColorFunc: Function,
-  customRender: ICustomRender,
-  customLayout: ICustomLayoutFuc,
   cellWidth: number,
   cellHeight: number,
   columnGroup: Group,
@@ -98,6 +96,17 @@ export function createCell(
 
     let elementsGroup;
     let renderDefault = true;
+    let customRender;
+    let customLayout;
+    const cellType = table.getCellType(col, row);
+    if (cellType !== 'body') {
+      customRender = define?.headerCustomRender;
+      customLayout = define?.headerCustomLayout;
+    } else {
+      customRender = define?.customRender || table.customRender;
+      customLayout = define?.customLayout;
+    }
+
     if (customLayout || customRender) {
       const { autoRowHeight } = table.internalProps;
       const customResult = dealWithCustom(
