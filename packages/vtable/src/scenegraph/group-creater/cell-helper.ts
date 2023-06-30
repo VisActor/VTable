@@ -94,7 +94,7 @@ export function createCell(
       }
     }
 
-    let elementsGroup;
+    let customElementsGroup;
     let renderDefault = true;
     let customRender;
     let customLayout;
@@ -120,7 +120,7 @@ export function createCell(
         autoRowHeight,
         table
       );
-      elementsGroup = customResult.elementsGroup;
+      customElementsGroup = customResult.elementsGroup;
       renderDefault = customResult.renderDefault;
     }
     cellGroup = createCellGroup(
@@ -138,19 +138,13 @@ export function createCell(
       textBaseline,
       mayHaveIcon,
       isfunctionalProps,
+      customElementsGroup,
       renderDefault,
       cellTheme
     );
     if (isMerge) {
       cellGroup.mergeCol = range.end.col;
       cellGroup.mergeRow = range.end.row;
-    }
-    if (elementsGroup) {
-      cellGroup.appendChild(elementsGroup);
-      cellGroup.setAttributes({
-        width: Math.max(cellGroup.attribute.width, elementsGroup.attribute.width),
-        height: Math.max(cellGroup.attribute.height, elementsGroup.attribute.height)
-      });
     }
   } else if (type === 'image') {
     // 创建图片单元格
@@ -225,6 +219,7 @@ export function createCell(
       textBaseline,
       false,
       true,
+      null,
       true,
       cellTheme
     );
