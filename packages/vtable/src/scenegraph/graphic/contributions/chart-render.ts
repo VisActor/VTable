@@ -45,15 +45,19 @@ export class DefaultCanvasChartRender implements IGraphicRender {
     const { width = groupAttribute.width, height = groupAttribute.height } = chart.attribute;
 
     const { chartInstance, active, cacheCanvas, activeChartInstance } = chart;
-
+    // console.log('render chart', chart.parent.col, chart.parent.row, viewBox, cacheCanvas);
     if (!active && cacheCanvas) {
-      // console.log('x,y', x, y, width, height, viewBox);
       context.drawImage(cacheCanvas, x, y, width, height);
     } else if (activeChartInstance) {
       activeChartInstance.updateDataSync('data', data);
     } else {
       // console.log('viewBox', viewBox);
-      chartInstance.updateViewBox(viewBox);
+      chartInstance.updateViewBox({
+        x1: viewBox.x1 - (chart.getRootNode() as any).table.scrollLeft,
+        x2: viewBox.x2 - (chart.getRootNode() as any).table.scrollLeft,
+        y1: viewBox.y1 - (chart.getRootNode() as any).table.scrollTop,
+        y2: viewBox.y2 - (chart.getRootNode() as any).table.scrollTop
+      });
       chartInstance.updateDataSync(dataId, data);
       const sg = chartInstance.getStage();
       chart.cacheCanvas = sg.toCanvas(); // 截图空白问题 因为开启了动画 首屏截图是无数据的TODO
