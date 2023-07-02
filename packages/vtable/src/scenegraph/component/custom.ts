@@ -1,18 +1,12 @@
 import type { Cursor } from '@visactor/vrender';
 import { createArc, createCircle, createLine, createRect, TextAlignType, TextBaselineType } from '@visactor/vrender';
-import { isFunction, isString } from '../../tools/util';
-import type {
-  ICustomLayout,
-  ICustomRender,
-  ICustomRenderElement,
-  ICustomRenderElements,
-  ICustomRenderFuc,
-  ICustomRenderObj
-} from '../../ts-types';
+import { isFunction, isString, isValid } from '../../tools/util';
+import type { ICustomLayout, ICustomRender, ICustomRenderElement, ICustomRenderElements } from '../../ts-types';
 import { Group } from '../graphic/group';
 import { Icon } from '../graphic/icon';
 import { WrapText } from '../graphic/text';
 import type { BaseTableAPI } from '../../ts-types/base-table';
+import type { Rect } from '../../render/layout';
 
 export function dealWithCustom(
   customLayout: ICustomLayout,
@@ -268,12 +262,15 @@ function adjustElementsPos(
     }
 
     // 转换字符串值（百分比、px）
-    element.x = isString(element.x)
-      ? transformString(element.x as string, width - borderLineWidths[1])
-      : Number(element.x);
-    element.y = isString(element.y)
-      ? transformString(element.y as string, height - borderLineWidths[2])
-      : Number(element.y);
+    const rect = element as Rect;
+    if (isValid(rect.x)) {
+      rect.x = isString(rect.x)
+        ? transformString((rect as any).x as string, width - borderLineWidths[1])
+        : Number(rect.x);
+      rect.y = isString(rect.y)
+        ? transformString((rect as any).y as string, height - borderLineWidths[2])
+        : Number(rect.y);
+    }
     if ('width' in element) {
       element.width = isString(element.width)
         ? transformString(element.width as string, width - borderLineWidths[1])
@@ -308,8 +305,8 @@ function adjustElementsPos(
       element.hover.y += top;
     }
     // 矫正位置
-    element.x = element.x + left;
-    element.y = element.y + top;
+    rect.x = rect.x + left;
+    rect.y = rect.y + top;
 
     result.push(element as unknown as ICustomRenderElement);
   }
