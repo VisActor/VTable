@@ -4,6 +4,7 @@ import type { ICustomLayout } from '../../customLayout';
 import type { FieldDef, FieldFormat, FieldKeyDef } from '../../table-engine';
 import type { ColumnIconOption } from '../../icon';
 import type { MenuListItem } from '../../menu';
+import type { BaseTableAPI } from '../../base-table';
 
 // eslint-disable-next-line no-unused-vars
 export interface IBasicHeaderDefine {
@@ -66,7 +67,7 @@ export interface IBasicColumnBodyDefine {
     | string
     | ColumnIconOption
     | (string | ColumnIconOption)[]
-    | ((args: CellInfo) => string | ColumnIconOption | (string | ColumnIconOption)[]);
+    | ((args: CellInfo & { table: BaseTableAPI }) => string | ColumnIconOption | (string | ColumnIconOption)[]);
 
   // columnType?: ColumnTypeOption | BaseColumn<T, any> | null;
 

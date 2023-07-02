@@ -1,5 +1,5 @@
 import type { Cursor } from '@visactor/vrender';
-import { createArc, createCircle, createRect, TextAlignType, TextBaselineType } from '@visactor/vrender';
+import { createArc, createCircle, createLine, createRect, TextAlignType, TextBaselineType } from '@visactor/vrender';
 import { isFunction, isString } from '../../tools/util';
 import type {
   ICustomLayout,
@@ -226,6 +226,16 @@ function adjustElementToGroup(
         });
         image.role = 'image-custom';
         customGroup.appendChild(image);
+        break;
+
+      case 'line':
+        const line = createLine({
+          points: element.points,
+          stroke: element.stroke as string,
+          pickable: !!element.clickable,
+          cursor: element.cursor as Cursor
+        });
+        customGroup.appendChild(line);
         break;
     }
   });
