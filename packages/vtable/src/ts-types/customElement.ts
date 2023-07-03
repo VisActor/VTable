@@ -49,6 +49,12 @@ export interface TextElement extends baseElement {
     cornerRadius?: number;
   };
 }
+export interface LineElement extends Omit<baseElement, 'x' | 'y'> {
+  type: 'line';
+  stroke?: string | ((value: string) => string);
+  points: { x: number; y: number }[];
+  lineWidth?: number;
+}
 
 export interface RectElement extends baseElement {
   type: 'rect';
@@ -104,7 +110,14 @@ export interface ImageElement extends baseElement {
   };
   shape?: 'circle' | 'square';
 }
-export type ICustomRenderElement = TextElement | RectElement | CircleElement | IconElement | ImageElement | ArcElement;
+export type ICustomRenderElement =
+  | TextElement
+  | RectElement
+  | CircleElement
+  | IconElement
+  | ImageElement
+  | ArcElement
+  | LineElement;
 export type ICustomRenderElements = Array<ICustomRenderElement>;
 
 export type ICustomRenderFuc = (args: CustomRenderFunctionArg) => ICustomRenderObj;
