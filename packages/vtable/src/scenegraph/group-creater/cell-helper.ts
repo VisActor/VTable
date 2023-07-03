@@ -136,6 +136,7 @@ export function createCell(
       textAlign,
       textBaseline,
       mayHaveIcon,
+      customElementsGroup,
       renderDefault,
       cellTheme
     );
@@ -216,6 +217,7 @@ export function createCell(
       textAlign,
       textBaseline,
       false,
+      null,
       true,
       cellTheme
     );

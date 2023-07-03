@@ -40,6 +40,7 @@ export function createCellGroup(
   textAlign: CanvasTextAlign,
   textBaseline: CanvasTextBaseline,
   mayHaveIcon: boolean,
+  customElementsGroup: Group,
   renderDefault: boolean,
   cellTheme: IThemeSpec
 ): Group {
