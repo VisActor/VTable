@@ -271,6 +271,10 @@ export const menus = [
       {
         path: 'business',
         name: 'multiple-table'
+      },
+      {
+        path: 'business',
+        name: 'roadmap'
       }
     ]
   },

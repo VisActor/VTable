@@ -255,7 +255,11 @@ export function updateCellHeight(
         false,
         scene.table
       );
-      cell.appendChild(customResult.elementsGroup);
+      if (cell.childrenCount > 0) {
+        cell.insertBefore(customResult.elementsGroup, cell.firstChild);
+      } else {
+        cell.appendChild(customResult.elementsGroup);
+      }
     }
   }
 }

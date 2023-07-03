@@ -41,6 +41,7 @@ export function createCellGroup(
   textBaseline: CanvasTextBaseline,
   mayHaveIcon: boolean,
   isfunctionalProps: boolean,
+  customElementsGroup: Group,
   renderDefault: boolean,
   cellTheme?: IThemeSpec
 ): Group {
@@ -86,10 +87,11 @@ export function createCellGroup(
   cellGroup.col = col;
   cellGroup.row = row;
   columnGroup.addChild(cellGroup);
-
+  if (customElementsGroup) {
+    cellGroup.appendChild(customElementsGroup);
+  }
   if (renderDefault) {
     const textStr: string = table.getCellValue(col, row);
-
     let icons;
     if (mayHaveIcon) {
       icons = table.getCellIcons(col, row);
@@ -129,7 +131,12 @@ export function createCellGroup(
       cellGroup.appendChild(mark);
     }
   }
-
+  if (customElementsGroup) {
+    cellGroup.setAttributes({
+      width: Math.max(cellGroup.attribute.width, customElementsGroup.attribute.width),
+      height: Math.max(cellGroup.attribute.height, customElementsGroup.attribute.height)
+    });
+  }
   return cellGroup;
 }
 

@@ -512,6 +512,9 @@ export interface BaseTableAPI {
 
   toggleHierarchyState: (col: number, row: number) => void;
 
+  resize: () => void;
+
+  getMergeCellRect: (col: number, row: number) => Rect;
   //#endregion  tableAPI
 }
 export interface ListTableProtected extends IBaseTableProtected {

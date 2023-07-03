@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "comment": "feat: add resize event response",
+      "type": "patch",
+      "packageName": "@visactor/vtable"
+    }
+  ],
+  "packageName": "@visactor/vtable",
+  "email": "sunrui1992@foxmail.com"
+}
