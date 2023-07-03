@@ -35,8 +35,6 @@ export function createCell(
   row: number,
   colWidth: number,
   bgColorFunc: Function,
-  customRender: ICustomRender,
-  customLayout: ICustomLayoutFuc,
   cellWidth: number,
   cellHeight: number,
   columnGroup: Group,
@@ -95,8 +93,19 @@ export function createCell(
       }
     }
 
-    let elementsGroup;
+    let customElementsGroup;
     let renderDefault = true;
+    let customRender;
+    let customLayout;
+    const cellType = table.getCellType(col, row);
+    if (cellType !== 'body') {
+      customRender = define?.headerCustomRender;
+      customLayout = define?.headerCustomLayout;
+    } else {
+      customRender = define?.customRender || table.customRender;
+      customLayout = define?.customLayout;
+    }
+
     if (customLayout || customRender) {
       const { autoRowHeight } = table.internalProps;
       const customResult = dealWithCustom(
@@ -110,7 +119,7 @@ export function createCell(
         autoRowHeight,
         table
       );
-      elementsGroup = customResult.elementsGroup;
+      customElementsGroup = customResult.elementsGroup;
       renderDefault = customResult.renderDefault;
     }
     cellGroup = createCellGroup(
@@ -133,13 +142,6 @@ export function createCell(
     if (isMerge) {
       cellGroup.mergeCol = range.end.col;
       cellGroup.mergeRow = range.end.row;
-    }
-    if (elementsGroup) {
-      cellGroup.appendChild(elementsGroup);
-      cellGroup.setAttributes({
-        width: Math.max(cellGroup.attribute.width, elementsGroup.attribute.width),
-        height: Math.max(cellGroup.attribute.height, elementsGroup.attribute.height)
-      });
     }
   } else if (type === 'image') {
     // 创建图片单元格
@@ -370,8 +372,6 @@ export function updateCell(col: number, row: number, table: BaseTableAPI, addNew
         col,
         row,
         bgColorFunc,
-        customRender,
-        customLayout,
         cellWidth,
         cellHeight,
         oldCellGroup,
@@ -397,8 +397,6 @@ function updateCellContent(
   col: number,
   row: number,
   bgColorFunc: Function,
-  customRender: ICustomRender,
-  customLayout: ICustomLayoutFuc,
   cellWidth: number,
   cellHeight: number,
   oldCellGroup: Group,
@@ -419,8 +417,6 @@ function updateCellContent(
     row,
     table.getColWidth(col),
     bgColorFunc,
-    customRender,
-    customLayout,
     cellWidth,
     cellHeight,
     // oldCellGroup.parent,

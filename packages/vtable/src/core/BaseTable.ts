@@ -320,6 +320,11 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     return this.internalProps.canvas;
   }
 
+  resize() {
+    this._updateSize();
+    this.scenegraph.resize();
+  }
+
   /**
    * Get the number of rows.
    */
@@ -725,17 +730,21 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
       element.style.height = (height1 && `${height1 - padding.top - padding.bottom}px`) || '0px';
 
       const { canvas } = this.internalProps;
-      canvas.style.width = '';
-      canvas.style.height = '';
-
       widthP = canvas.parentElement?.offsetWidth ?? 1 - 1;
       heightP = canvas.parentElement?.offsetHeight ?? 1 - 1;
-      canvas.width = widthP;
-      canvas.height = heightP;
 
       //style 与 width，height相同
-      canvas.style.width = `${widthP}px`;
-      canvas.style.height = `${heightP}px`;
+      if (this?.scenegraph?.stage) {
+        this.scenegraph.stage.window.resize(widthP, heightP);
+      } else {
+        canvas.style.width = '';
+        canvas.style.height = '';
+        canvas.width = widthP;
+        canvas.height = heightP;
+
+        canvas.style.width = `${widthP}px`;
+        canvas.style.height = `${heightP}px`;
+      }
     } else if (Env.mode === 'node') {
       widthP = this.canvasWidth - 1;
       heightP = this.canvasHeight - 1;
@@ -2163,9 +2172,10 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     const t = themes.of(theme);
     this.internalProps.theme = t ? t : themes.DEFAULT;
     this.options.theme = theme;
-    this._updateSize();
-    this._resetFrozenColCount();
-    this.invalidate();
+    // this._updateSize();
+    // this._resetFrozenColCount();
+    // this.invalidate();
+    this.resize();
   }
 
   /**
@@ -2537,6 +2547,9 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     );
     this.bodyStyleCache.set(cacheKey, cacheStyle);
     return cacheStyle;
+  }
+  clearCellStyleCache() {
+    this.headerStyleCache.clear();
   }
   /**
    * 该列是否可调整列宽

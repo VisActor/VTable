@@ -80,7 +80,7 @@ export function createTable() {
       borderLineWidth: 1,
       borderLineDash: []
     },
-    columnResizer: {
+    columnResize: {
       lineWidth: 1,
       lineColor: '#416EFF',
       bgColor: '#D9E2FF',

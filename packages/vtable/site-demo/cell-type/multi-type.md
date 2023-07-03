@@ -63,6 +63,33 @@ const records = [
    "YoY":-10,
    "QoQ":-10,
    "trend":[{x:1,y:500},{x:2,y:680},{x:3,y:400},{x:4,y:600},{x:5,y:800}],
+  },
+   {
+   "name":"孔雀",
+   "introduction":"火烈鸟是一种美丽的粉红色鸟类，长腿长颈，善游泳，是热带地区的常见鸟类。",
+   "image":'http://' + window.location.host + "/mock-data/media/flamingo.jpeg",
+   "vedio":'http://' + window.location.host + "/mock-data/media/flamingo.mp4",
+   "YoY":-1,
+   "QoQ":-6,
+   "trend":[{x:1,y:980},{x:2,y:880},{x:3,y:900},{x:4,y:1600},{x:5,y:1800}],
+  },
+   {
+   "name":"鸵鸟",
+   "introduction":"鸵鸟是一种大型鸟类，不能飞行，奔跑速度快，是世界上最大的鸟类之一",
+   "image":'http://' + window.location.host + "/mock-data/media/ostrich.jpeg",
+   "vedio":'http://' + window.location.host + "/mock-data/media/ostrich.mp4",
+   "YoY":-3,
+   "QoQ":10,
+   "trend":[{x:1,y:560},{x:2,y:680},{x:3,y:5500},{x:4,y:600},{x:5,y:900}],
+  },
+   {
+   "name":"鸳鸯",
+   "introduction":"鸳鸯是一种双翼鸟类，雄鸟头部蓝色，雌鸟头部褐色，通常成双栖息和交配，是中华文化中的象征之一。",
+   "image":'http://' + window.location.host + "/mock-data/media/Mandarin.jpeg",
+   "vedio":'http://' + window.location.host + "/mock-data/media/Mandarin.mp4",
+   "YoY":10,
+   "QoQ":16,
+   "trend":[{x:1,y:500},{x:2,y:480},{x:3,y:400},{x:4,y:500},{x:5,y:800}],
   }
 ];
 
@@ -189,7 +216,7 @@ const option = {
   records,
   columns,
   autoWrapText:true,
-  autoRowHeight:true
+  defaultRowHeight:120
 };
 const tableInstance = new VTable.ListTable(option);
 window['tableInstance'] = tableInstance;

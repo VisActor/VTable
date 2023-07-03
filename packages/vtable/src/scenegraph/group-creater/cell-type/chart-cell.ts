@@ -68,11 +68,12 @@ export function createChartCellGroup(
     chartInstance,
     dataId: 'data',
     data: table.getCellValue(col, row),
+    cellPadding: padding,
     viewBox: {
-      x1: Math.ceil(cellGroup.globalAABBBounds.x1 + table.tableX + padding[3]),
-      x2: Math.ceil(cellGroup.globalAABBBounds.x1 + width + table.tableX - padding[1]),
-      y1: Math.ceil(cellGroup.globalAABBBounds.y1 + table.tableY + padding[0]),
-      y2: Math.ceil(cellGroup.globalAABBBounds.y1 + height + table.tableY - padding[2])
+      x1: Math.ceil(cellGroup.globalAABBBounds.x1 + table.tableX + padding[3]) + table.scrollLeft,
+      x2: Math.ceil(cellGroup.globalAABBBounds.x1 + width + table.tableX - padding[1]) + table.scrollLeft,
+      y1: Math.ceil(cellGroup.globalAABBBounds.y1 + table.tableY + padding[0]) + table.scrollTop,
+      y2: Math.ceil(cellGroup.globalAABBBounds.y1 + height + table.tableY - padding[2] + table.scrollTop)
     }
     // clipRect: {
     //   left: cellGroup.globalAABBBounds.x1 + (table as any).tableX + padding[3],

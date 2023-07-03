@@ -244,6 +244,7 @@ export function getStyleTheme(
   const borderLineDash = getProp('borderLineDash', headerStyle, col, row, table); // number[] | (number[] | null)[]
 
   const marked = getProp('marked', headerStyle, col, row, table); // boolean
+  const cursor = getProp('cursor', headerStyle, col, row, table); // boolean
 
   const hasFunctionPros =
     !padding ||
@@ -280,7 +281,8 @@ export function getStyleTheme(
       fill: bgColor,
       lineDash: borderLineDash,
       lineWidth: borderLineWidth,
-      stroke: borderColor
+      stroke: borderColor,
+      cursor: cursor === 'auto' || cursor === 'default' ? undefined : cursor
     },
     _vtable: {
       padding,

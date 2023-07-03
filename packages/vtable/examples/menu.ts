@@ -87,6 +87,10 @@ export const menus = [
       },
       {
         path: 'pivot',
+        name: 'pivot-image-tree'
+      },
+      {
+        path: 'pivot',
         name: 'pivot-link'
       },
       {
@@ -267,6 +271,14 @@ export const menus = [
       {
         path: 'business',
         name: 'three'
+      },
+      {
+        path: 'business',
+        name: 'multiple-table'
+      },
+      {
+        path: 'business',
+        name: 'roadmap'
       }
     ]
   },

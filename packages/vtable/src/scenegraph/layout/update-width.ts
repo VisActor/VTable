@@ -35,7 +35,7 @@ export function updateColWidth(scene: Scenegraph, col: number, detaX: number) {
   const { autoRowHeight } = scene.table.internalProps;
   let needRerangeRow = false;
   const colOrCornerHeaderColumn = scene.getColGroup(col, true) as Group;
-  const oldColOrCornerHeaderColumnWidth = colOrCornerHeaderColumn.attribute.width;
+  const oldColOrCornerHeaderColumnWidth = colOrCornerHeaderColumn?.attribute.width;
   colOrCornerHeaderColumn?.setAttribute('width', oldColOrCornerHeaderColumnWidth + detaX);
   // 更新单元格宽度
   colOrCornerHeaderColumn?.forEachChildren((cell: Group, index: number) => {

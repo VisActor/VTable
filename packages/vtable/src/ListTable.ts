@@ -480,6 +480,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
     //重绘
     // this.invalidate();
 
+    this.clearCellStyleCache();
     this.scenegraph.updateHierarchyIcon(col, row);
     this.scenegraph.updateRow(diffPositions.removeCellPositions, diffPositions.addCellPositions);
   }

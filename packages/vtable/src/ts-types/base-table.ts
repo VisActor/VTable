@@ -415,6 +415,7 @@ export interface BaseTableAPI {
   dispose: () => void;
   addDisposable: (disposable: { dispose: () => void }) => void;
   _getCellStyle: (col: number, row: number) => FullExtendStyle;
+  clearCellStyleCache: () => void;
 
   getFrozenRowsHeight: () => number;
   getFrozenColsWidth: () => number;
@@ -511,6 +512,9 @@ export interface BaseTableAPI {
 
   toggleHierarchyState: (col: number, row: number) => void;
 
+  resize: () => void;
+
+  getMergeCellRect: (col: number, row: number) => Rect;
   //#endregion  tableAPI
 }
 export interface ListTableProtected extends IBaseTableProtected {

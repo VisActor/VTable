@@ -44,7 +44,9 @@ export function updateAutoRowHeight(scene: Scenegraph, clearCellSize?: boolean) 
       // 更新行表头行高
       let colHeaderHeight = 0;
       colHeader?.firstChild?.forEachChildren((cell: Group) => {
-        colHeaderHeight += cell.attribute.height;
+        if (cell.role !== 'shadow-cell') {
+          colHeaderHeight += cell.attribute.height;
+        }
       });
       colHeader.setAttribute('height', colHeaderHeight);
       cornerHeader.setAttribute('height', colHeaderHeight);

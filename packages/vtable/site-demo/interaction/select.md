@@ -11,8 +11,13 @@ cover:
 
 ## 关键配置
 
-select
-
+- `
+  keyboardOptions: {
+      selectAllOnCtrlA: true,
+      copySelected: true
+  }
+`
+配置 开启ctrl+A可选功能，及快捷键复制选中内容。
 ## 代码演示
 
 ```ts
@@ -85,6 +90,10 @@ const option = {
   records:data,
   columns,
   widthMode:'standard',
+  keyboardOptions: {
+      selectAllOnCtrlA: true,
+      copySelected: true
+  },
   theme:VTable.themes.ARCO.extends({
       selectionStyle:{
         cellBorderLineWidth: 2,

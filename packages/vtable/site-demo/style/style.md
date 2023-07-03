@@ -328,7 +328,12 @@ const option = {
             "width": "auto",
             "showSort": false,
             "style":{
-              "color": 'black',
+              padding:[16,28,16,28],
+              color(args){
+                if(args.dataValue>=0)
+                  return 'black';
+                return 'red'
+              },
               "fontWeight": 'bold',
               "bgColor":(arg) => {
                 const cellHeaderPaths = arg.table.getCellHeaderPaths(
@@ -347,6 +352,7 @@ const option = {
             },
             "headerStyle": {
               "color": 'black',
+              fontWeight: "normal",
               "textStick": true,
               "fontWeight": 'bold',
               "bgColor":(arg) => {
@@ -361,18 +367,21 @@ const option = {
                 return 'gray';
               }
             },
+            "format":(rec)=>{return '$'+Number(rec['230517143221042']).toFixed(2)},
           },
           {
             "indicatorKey": "230517143221040",
             "caption": "Sales",
             "width": "auto",
             "showSort": false,
-            "format": (rec) => {
-              return Number(rec['230517143221040']).toFixed(2)
-            },
             "style":{
-              "color": 'blue',
-              "fontWeight": 'bold',
+              padding:[16,28,16,28],
+              color(args){
+                if(args.dataValue>=0)
+                  return 'black';
+                return 'blue'
+              },
+              fontWeight: "normal",
               "bgColor":(arg) => {
                 const cellHeaderPaths = arg.table.getCellHeaderPaths(
                   arg.col,
@@ -400,23 +409,28 @@ const option = {
                 return 'gray';
               }
             },
+             "format":(rec)=>{return '$'+Number(rec['230517143221040']).toFixed(2)},
           },
           {
             "indicatorKey": "230517143221041",
             "caption": "Profit",
             "width": "auto",
             "showSort": false,
-            "format": (rec) => {
-              return Number(rec['230517143221041']).toFixed(2)
-            },
             "style":{
-              "color": 'white',
-              "fontWeight": 'bold',
+              padding:[16,28,16,28],
+              color(args){
+                if(args.dataValue>=0)
+                  return 'black';
+                return 'white'
+              },
+              fontWeight: "normal",
               "bgColor":(arg) => {
                 const cellHeaderPaths = arg.table.getCellHeaderPaths(
                   arg.col,
                   arg.row,
                 );
+                if(arg.dataValue<0)
+                  return 'purple';
                 if (cellHeaderPaths.colHeaderPaths[0].value === 'Office Supplies')
                   {return '#bd422a';}
                 if (cellHeaderPaths.colHeaderPaths[0].value === 'Technology')
@@ -439,6 +453,7 @@ const option = {
                 return 'gray';
               }
             },
+             "format":(rec)=>{return '$'+Number(rec['230517143221041']).toFixed(2)},
           }
         ],
         "corner": {
