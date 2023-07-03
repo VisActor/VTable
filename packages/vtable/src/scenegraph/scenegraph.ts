@@ -291,6 +291,9 @@ export class Scenegraph {
 
     this.proxy = new SceneProxy(this.table);
 
+    // update table group position for cell group global position, not create border yet.
+    createFrameBorder(this.tableGroup, this.table.theme.frameStyle, this.tableGroup.role, undefined, true);
+
     // 首屏表头全量
     this.createHeaderSceneGraph();
     // body生成首屏
@@ -1237,7 +1240,7 @@ export class Scenegraph {
       this.cornerHeaderGroup.role,
       isListTableWithFrozen ? [true, false, true, true] : undefined
     );
-    createFrameBorder(this.tableGroup, this.table.theme.frameStyle, this.tableGroup.role);
+    createFrameBorder(this.tableGroup, this.table.theme.frameStyle, this.tableGroup.role, undefined);
   }
 
   /**

@@ -17,7 +17,8 @@ export function createFrameBorder(
   group: Group,
   frameTheme: TableFrameStyle | undefined,
   role: string,
-  strokeArray?: [boolean, boolean, boolean, boolean] // to do 处理成0b001111形式
+  strokeArray: [boolean, boolean, boolean, boolean] | undefined, // to do 处理成0b001111形式
+  justForXYPosition?: boolean
 ) {
   if (!frameTheme) {
     return;
@@ -103,6 +104,10 @@ export function createFrameBorder(
     // groupAttributes.height = group.attribute.height - deltaY - deltaY;
   }
   group.setAttributes(groupAttributes);
+
+  if (justForXYPosition) {
+    return;
+  }
 
   if (rectAttributes.stroke) {
     rectAttributes.x = borderLeft / 2;
