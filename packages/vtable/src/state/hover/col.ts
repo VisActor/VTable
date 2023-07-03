@@ -17,8 +17,8 @@ export function clearColHover(
     updateCell(scenegraph, col, row);
   }
   // 更新body
-  const cellGroup = scenegraph.getCell(col, table.columnHeaderLevelCount);
-  cellGroup?.parent.addUpdateBoundTag();
+  const cellGroup = scenegraph.getColGroup(col);
+  cellGroup?.addUpdateBoundTag();
 
   return true;
 }
@@ -39,8 +39,8 @@ export function updateColHover(
     updateCell(scenegraph, col, row);
   }
   // 更新body
-  const cellGroup = scenegraph.getCell(col, table.columnHeaderLevelCount);
-  cellGroup?.parent.addUpdateBoundTag();
+  const cellGroup = scenegraph.getColGroup(col);
+  cellGroup?.addUpdateBoundTag();
 
   return true;
 }

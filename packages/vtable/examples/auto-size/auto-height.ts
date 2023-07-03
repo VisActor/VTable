@@ -1,12 +1,13 @@
 import * as VTable from '../../src';
+import { bindDebugTool } from '../../src/scenegraph/debug-tool';
 const ListTable = VTable.ListTable;
 const Table_CONTAINER_DOM_ID = 'vTable';
 
 export function createTable() {
   const personsDataSource: any[] = [];
-  for (let i = 0; i < 10; i++) {
+  for (let i = 0; i < 1000; i++) {
     personsDataSource.push({
-      progress: i,
+      progress: Math.ceil(20 * Math.random()),
       id: i + 1,
       name: 'name'
     });
@@ -17,13 +18,21 @@ export function createTable() {
       {
         field: 'progress',
         fieldFormat(rec) {
-          return `已完成已完成已完成${rec.progress}%`;
+          // return `已完成已完成已完成${rec.progress}%`;
+          let str = '';
+          for (let i = 0; i < rec.progress; i++) {
+            str = str + '已完成';
+          }
+          return str + rec.progress;
         },
         caption: 'progress',
         description: '这是一个标题的详细描述',
         width: 150,
         showSort: true, //显示VTable内置排序图标
         style: {
+          autoWrapText: true
+        },
+        headerStyle: {
           autoWrapText: true
         }
       },
@@ -89,9 +98,9 @@ export function createTable() {
     order: 'desc'
   });
 
-  // VTable.bindDebugTool(instance.scenegraph.stage as any, {
-  //   customGrapicKeys: ['role', '_updateTag'],
-  // });
+  bindDebugTool(instance.scenegraph.stage as any, {
+    customGrapicKeys: ['role', '_updateTag']
+  });
 
   // 只为了方便控制太调试用，不要拷贝
   (window as any).tableInstance = instance;

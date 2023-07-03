@@ -10,6 +10,7 @@ import { updateCellContentHeight } from '../utils/text-icon-layout';
 import type { IProgressbarColumnBodyDefine } from '../../ts-types/list-table/define/progressbar-define';
 import { dealWithCustom } from '../component/custom';
 import { updateImageCellContentWhileResize } from '../group-creater/cell-type/image-cell';
+import { getStyleTheme } from '../../core/tableHelper';
 
 export function updateRowHeight(scene: Scenegraph, row: number, detaY: number) {
   for (let col = 0; col < scene.table.colCount; col++) {
@@ -209,7 +210,8 @@ export function updateCellHeight(
       cell.attribute.width,
       cell.attribute.height,
       padding,
-      scene.table
+      scene.table,
+      getStyleTheme(headerStyle, scene.table, col, row, getProp).theme
     );
   } else if (type === 'image' || type === 'video') {
     updateImageCellContentWhileResize(cell, col, row, scene.table);

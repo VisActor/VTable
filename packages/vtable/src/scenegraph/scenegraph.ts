@@ -285,9 +285,11 @@ export class Scenegraph {
   createSceneGraph() {
     this.clear = false;
     computeColsWidth(this.table);
-    if ((this.table.dataSource as any).getOriginalRecord(0)) {
-      computeRowsHeight(this.table);
-    }
+    // compute the column header cell height
+    // table.rowHeightsMap.clear();
+    this.table._clearRowRangeHeightsMap();
+    this.table.internalProps._rowHeightsMap.clear();
+    computeRowsHeight(this.table, 0, this.table.columnHeaderLevelCount - 1);
 
     this.frozenColCount = this.table.rowHeaderLevelCount;
     this.frozenRowCount = this.table.columnHeaderLevelCount;

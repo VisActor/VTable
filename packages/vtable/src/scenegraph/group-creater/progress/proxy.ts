@@ -1,6 +1,7 @@
 import type { BaseTableAPI } from '../../../ts-types/base-table';
 import type { Group } from '../../graphic/group';
 import type { WrapText } from '../../graphic/text';
+import { computeRowsHeight } from '../../layout/compute-row-height';
 import { updateCellHeightForColumn } from '../../layout/update-height';
 import { emptyGroup } from '../../utils/empty-group';
 import { getProp } from '../../utils/get-prop';
@@ -13,7 +14,7 @@ export class SceneProxy {
   mode: 'column' | 'row' | 'pivot' = 'column';
   currentRow = 0;
   totalRow: number;
-  rowLimit = 1000;
+  rowLimit = 20;
   yLimitTop: number; // y > yLimitTop动态更新，否则直接修改xy
   yLimitBottom: number; // y < yLimitBottom动态更新，否则直接修改xy
   // bottomOffset: number;
@@ -88,6 +89,9 @@ export class SceneProxy {
     table: BaseTableAPI
   ) {
     this.setParams();
+
+    // compute row height in first screen
+    computeRowsHeight(table, this.table.columnHeaderLevelCount, Math.min(this.firstScreenRowLimit, table.rowCount - 1));
 
     // 生成首屏单元格
     // rowHeader
@@ -177,6 +181,8 @@ export class SceneProxy {
 
   createRowCellGroup(onceCount: number) {
     const endRow = Math.min(this.totalRow, this.currentRow + onceCount);
+    // compute rows height
+    computeRowsHeight(this.table, this.currentRow + 1, endRow);
     let maxHeight = 0;
     for (let col = this.bodyLeftCol; col <= this.bodyRightCol; col++) {
       const colGroup = this.table.scenegraph.getColGroup(col);
@@ -196,15 +202,15 @@ export class SceneProxy {
     }
     this.table.scenegraph.bodyGroup.setAttribute('height', maxHeight);
 
-    if (this.table.internalProps.autoRowHeight) {
-      updateAutoRow(
-        this.bodyLeftCol, // colStart
-        this.bodyRightCol, // colEnd
-        this.currentRow + 1, // rowStart
-        endRow, // rowEnd
-        this.table
-      );
-    }
+    // if (this.table.internalProps.autoRowHeight) {
+    //   updateAutoRow(
+    //     this.bodyLeftCol, // colStart
+    //     this.bodyRightCol, // colEnd
+    //     this.currentRow + 1, // rowStart
+    //     endRow, // rowEnd
+    //     this.table
+    //   );
+    // }
     this.currentRow = endRow;
     this.rowEnd = endRow;
     this.rowUpdatePos = this.rowEnd;
@@ -316,6 +322,9 @@ export class SceneProxy {
       // 更新同步范围
       const syncTopRow = Math.max(this.bodyTopRow, screenTopRow - this.screenRowCount * 2);
       const syncBottomRow = Math.min(this.bodyBottomRow, screenTopRow + this.screenRowCount * 3);
+      if (this.table.internalProps.autoRowHeight) {
+        computeRowsHeight(this.table, syncTopRow, syncBottomRow);
+      }
       for (let col = this.bodyLeftCol; col <= this.bodyRightCol; col++) {
         for (let row = syncTopRow; row <= syncBottomRow; row++) {
           // const cellGroup = this.table.scenegraph.getCell(col, row);
@@ -356,7 +365,7 @@ export class SceneProxy {
       const distStartRowY = this.table.getRowsHeight(this.bodyTopRow, distStartRow - 1);
       for (let col = this.bodyLeftCol; col <= this.bodyRightCol; col++) {
         const colGroup = this.table.scenegraph.getColGroup(col);
-        colGroup.forEachChildren((cellGroup: Group, index) => {
+        colGroup?.forEachChildren((cellGroup: Group, index) => {
           // 这里使用colGroup变量而不是for this.rowStart to this.rowEndthis.rowEnd是因为在更新内可能出现row号码重复的情况
           this.updateCellGroupPosition(
             cellGroup,
@@ -379,6 +388,9 @@ export class SceneProxy {
         syncBottomRow = Math.min(this.bodyBottomRow, screenTopRow + this.screenRowCount * 3);
       }
       console.log('更新同步范围', syncTopRow, syncBottomRow);
+      if (this.table.internalProps.autoRowHeight) {
+        computeRowsHeight(this.table, syncTopRow, syncBottomRow);
+      }
       for (let col = this.bodyLeftCol; col <= this.bodyRightCol; col++) {
         for (let row = syncTopRow; row <= syncBottomRow; row++) {
           // const cellGroup = this.table.scenegraph.getCell(col, row);
@@ -426,6 +438,9 @@ export class SceneProxy {
   updateCellGroups(count: number) {
     const distRow = Math.min(this.bodyBottomRow, this.rowUpdatePos + count);
     console.log('updateCellGroups', this.rowUpdatePos, distRow);
+    if (this.table.internalProps.autoRowHeight) {
+      computeRowsHeight(this.table, this.rowUpdatePos, distRow);
+    }
     for (let col = this.bodyLeftCol; col <= this.bodyRightCol; col++) {
       for (let row = this.rowUpdatePos; row <= distRow; row++) {
         // const cellGroup = this.table.scenegraph.getCell(col, row);
@@ -498,6 +513,9 @@ export class SceneProxy {
       syncBottomRow = Math.min(this.bodyBottomRow, this.screenTopRow + this.screenRowCount * 3);
     }
     console.log('sort更新同步范围', syncTopRow, syncBottomRow);
+    if (this.table.internalProps.autoRowHeight) {
+      computeRowsHeight(this.table, syncTopRow, syncBottomRow);
+    }
     for (let col = this.bodyLeftCol; col <= this.bodyRightCol; col++) {
       for (let row = syncTopRow; row <= syncBottomRow; row++) {
         // const cellGroup = this.table.scenegraph.getCell(col, row);
@@ -570,30 +588,30 @@ function updateAutoRow(
   table: BaseTableAPI,
   direction: 'up' | 'down' = 'up'
 ) {
-  // 获取行高
-  for (let row = rowStart; row <= rowEnd; row++) {
-    let maxRowHeight = 0;
-    for (let col = colStart; col <= colEnd; col++) {
-      const cellGroup = table.scenegraph.getCell(col, row);
-      if (!cellGroup.row) {
-        continue;
-      }
-      // const contentHeight = cellGroup.getContentHeight();
-      const text = (cellGroup.getChildByName('text') as WrapText) || cellGroup.getChildByName('content');
-      const headerStyle = table._getCellStyle(col, row);
-      const padding = getQuadProps(getProp('padding', headerStyle, col, row, table));
-      const height = text.AABBBounds.height() + (padding[0] + padding[2]);
-      maxRowHeight = Math.max(maxRowHeight, height);
-      (cellGroup as any).needUpdateForAutoRowHeight = false;
-    }
-    // updateRowHeight(table.scenegraph, row, table.getRowHeight(row) - maxRowHeight);
-    for (let col = colStart; col <= colEnd; col++) {
-      const cellGroup = table.scenegraph.getCell(col, row);
-      updateCellHeightForColumn(table.scenegraph, cellGroup, col, row, maxRowHeight, 0, false);
-    }
+  // // 获取行高
+  // for (let row = rowStart; row <= rowEnd; row++) {
+  //   let maxRowHeight = 0;
+  //   for (let col = colStart; col <= colEnd; col++) {
+  //     const cellGroup = table.scenegraph.highPerformanceGetCell(col, row);
+  //     if (!cellGroup.row) {
+  //       continue;
+  //     }
+  //     // const contentHeight = cellGroup.getContentHeight();
+  //     const text = (cellGroup.getChildByName('text') as WrapText) || cellGroup.getChildByName('content');
+  //     const headerStyle = table._getCellStyle(col, row);
+  //     const padding = getQuadProps(getProp('padding', headerStyle, col, row, table));
+  //     const height = text.AABBBounds.height() + (padding[0] + padding[2]);
+  //     maxRowHeight = Math.max(maxRowHeight, height);
+  //     (cellGroup as any).needUpdateForAutoRowHeight = false;
+  //   }
+  //   // updateRowHeight(table.scenegraph, row, table.getRowHeight(row) - maxRowHeight);
+  //   for (let col = colStart; col <= colEnd; col++) {
+  //     const cellGroup = table.scenegraph.highPerformanceGetCell(col, row);
+  //     updateCellHeightForColumn(table.scenegraph, cellGroup, col, row, maxRowHeight, 0, false);
+  //   }
 
-    table.setRowHeight(row, maxRowHeight, true);
-  }
+  //   table.setRowHeight(row, maxRowHeight, true);
+  // }
 
   // 更新y位置
   if (direction === 'up') {

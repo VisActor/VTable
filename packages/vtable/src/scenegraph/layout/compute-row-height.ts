@@ -10,27 +10,32 @@ import { getProp } from '../utils/get-prop';
 import { getQuadProps } from '../utils/padding';
 import { getCellRect } from './compute-col-width';
 
-const utilTextMark = new WrapText({});
+const utilTextMark = new WrapText({
+  autoWrapText: true
+});
 const utilRichTextMark = new RichText({
   width: 0,
   height: 0,
   textConfig: []
 });
 
-export function computeRowsHeight(table: BaseTableAPI): void {
+export function computeRowsHeight(table: BaseTableAPI, rowStart?: number, rowEnd?: number): void {
   if (!table.internalProps.autoRowHeight) {
     // autoRowHeight false use default height
     return;
   }
+  rowStart = rowStart ?? 0;
+  rowEnd = rowEnd ?? table.rowCount - 1;
   const time = typeof window !== 'undefined' ? window.performance.now() : 0;
-  table._clearRowRangeHeightsMap();
-  // table.rowHeightsMap.clear();
-  table.internalProps._rowHeightsMap.clear();
 
   // compute header row in column header row
-  for (let row = 0; row < table.columnHeaderLevelCount; row++) {
+  for (let row = rowStart; row < table.columnHeaderLevelCount; row++) {
     const height = computeRowHeight(row, 0, table.colCount - 1, table);
     table.setRowHeight(row, height);
+  }
+
+  if (rowEnd < table.columnHeaderLevelCount) {
+    return;
   }
 
   // compute body row
@@ -50,18 +55,20 @@ export function computeRowsHeight(table: BaseTableAPI): void {
   ) {
     // check fixed style and no wrap situation, just compute 0-table.rowHeaderLevelCount column(the column after row header) in ervey row
     // in traspose table and row indicator pivot table
-    for (let row = table.columnHeaderLevelCount; row < table.rowCount; row++) {
+    for (let row = Math.max(rowStart, table.columnHeaderLevelCount); row < rowEnd; row++) {
+      table._clearRowRangeHeightsMap(row);
       const height = computeRowHeight(row, 0, table.rowHeaderLevelCount, table);
       table.setRowHeight(row, height);
     }
   } else {
-    for (let row = table.columnHeaderLevelCount; row < table.rowCount; row++) {
+    for (let row = Math.max(rowStart, table.columnHeaderLevelCount); row < rowEnd; row++) {
+      table._clearRowRangeHeightsMap(row);
       const height = computeRowHeight(row, 0, table.colCount - 1, table);
       table.setRowHeight(row, height);
     }
   }
 
-  console.log('computeColsWidth  time:', (typeof window !== 'undefined' ? window.performance.now() : 0) - time);
+  console.log('computeRowsHeight  time:', (typeof window !== 'undefined' ? window.performance.now() : 0) - time);
 }
 
 export function computeRowHeight(row: number, startCol: number, endCol: number, table: BaseTableAPI): number {
