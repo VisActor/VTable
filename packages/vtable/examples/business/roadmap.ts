@@ -76,6 +76,7 @@ export function createTable() {
     {
       month: 'AUG',
       Basic: 'Custom Layout',
+      Basic2: 'Row Frozen',
       // Animation: ''
       Component: 'Access Common Visual Component',
       Visualize: 'Extend Sparkline'
@@ -83,6 +84,7 @@ export function createTable() {
     {
       month: 'SEP',
       Basic: 'Checkbox Type',
+      Basic2: 'Row Frozen',
       Animation: 'Sort Animation',
       Component: 'Access Common Visual Component',
       Visualize: 'Pivot Chart'
@@ -90,6 +92,7 @@ export function createTable() {
     {
       month: 'OCT',
       Basic: 'Download',
+      Basic2: 'Pivot Analysis',
       Animation: 'Expand Animation',
       Component: 'Access Common Visual Component',
       Visualize: 'Pivot Chart'
@@ -97,6 +100,7 @@ export function createTable() {
     {
       month: 'NOV',
       Basic: 'Editable',
+      Basic2: 'Pivot Analysis',
       Animation: 'Drag Animation',
       // Component: '',
       Visualize: 'Other Table Type'
@@ -114,8 +118,7 @@ export function createTable() {
     columns: [
       {
         field: 'month',
-        caption: 'MONTH',
-        width: 200, // TODO  无效问题
+        caption: '',
         style: {
           textAlign: 'center',
           color: 'white',
@@ -151,52 +154,107 @@ export function createTable() {
       {
         field: '',
         caption: ' ',
-        width: 100,
         style: {
           borderLineWidth: 0
         }
       },
       {
-        field: 'Basic',
-        mergeCell: true,
-        icon(args) {
-          const { col, row, table } = args;
-          const style = table.getCellStyle(col, row);
-          const cellValue = table.getCellValue(col, row);
-          const cellMergeRectW = table.getMergeCellRect(col, row).width;
-          let textWidth = 0;
-          if (cellValue) {
-            textWidth = table.measureText(cellValue, {
-              fontFamily: style.fontFamily,
-              fontSize: style.fontSize
-            }).width;
-          }
-          const bgWidth = Math.min(cellMergeRectW, Math.max(cellMergeRectW * 0.8, textWidth + 50));
-          return [
-            'function',
-            {
-              name: 'arrow',
-              type: 'svg',
-              width: bgWidth,
-              height: 50,
-              positionType: VTable.TYPES.IconPosition.absoluteRight,
-              marginRight: (cellMergeRectW - bgWidth) / 2,
-              svg: '<svg xmlns="http://www.w3.org/2000/svg" width="67" height="11" viewBox="0 0 67 11" fill="none"><path d="M60 0.5H2L7 5L2 10H60L65.5 5L60 0.5Z" fill="#E13B9F" stroke="#E13B9F"/></svg>'
-            }
-          ];
-        },
-        headerIcon: ['milestone'],
         caption: 'BASIC\nFUNCTION',
-        width: 'auto',
-        style: {
-          borderLineWidth: 2,
-          borderColor: ''
-        },
-        headerStyle: {
-          color: 'black',
-          textAlign: 'left',
-          lineHeight: 30
-        }
+        hideColumnsSubHeader: true,
+        headerIcon: ['milestone'],
+        columns: [
+          //如果只有一行 可直接拿到外层columns中
+          {
+            field: 'Basic',
+            mergeCell: true,
+            icon(args) {
+              const { col, row, table } = args;
+              const style = table.getCellStyle(col, row);
+              const cellValue = table.getCellValue(col, row);
+              if (!cellValue) {
+                return '';
+              }
+              const cellMergeRectW = table.getMergeCellRect(col, row).width;
+              let textWidth = 0;
+              if (cellValue) {
+                textWidth = table.measureText(cellValue, {
+                  fontFamily: style.fontFamily,
+                  fontSize: style.fontSize
+                }).width;
+              }
+              const bgWidth = Math.min(cellMergeRectW, Math.max(cellMergeRectW * 0.8, textWidth + 50));
+              return [
+                'function',
+                {
+                  name: 'arrow',
+                  type: 'svg',
+                  width: bgWidth,
+                  height: 50,
+                  positionType: VTable.TYPES.IconPosition.absoluteRight,
+                  marginRight: (cellMergeRectW - bgWidth) / 2,
+                  svg: '<svg xmlns="http://www.w3.org/2000/svg" width="67" height="11" viewBox="0 0 67 11" fill="none"><path d="M60 0.5H2L7 5L2 10H60L65.5 5L60 0.5Z" fill="#E13B9F" stroke="#E13B9F"/></svg>'
+                }
+              ];
+            },
+            headerIcon: ['milestone'],
+            caption: 'BASIC\nFUNCTION',
+            width: 'auto',
+            style: {
+              borderLineWidth: 2,
+              borderColor: ''
+            },
+            headerStyle: {
+              color: 'black',
+              textAlign: 'left',
+              lineHeight: 30
+            }
+          },
+          {
+            field: 'Basic2',
+            mergeCell: true,
+            icon(args) {
+              const { col, row, table } = args;
+              const style = table.getCellStyle(col, row);
+              const cellValue = table.getCellValue(col, row);
+              if (!cellValue) {
+                return '';
+              }
+              const cellMergeRectW = table.getMergeCellRect(col, row).width;
+              let textWidth = 0;
+              if (cellValue) {
+                textWidth = table.measureText(cellValue, {
+                  fontFamily: style.fontFamily,
+                  fontSize: style.fontSize
+                }).width;
+              }
+              const bgWidth = Math.min(cellMergeRectW, Math.max(cellMergeRectW * 0.8, textWidth + 50));
+              return [
+                'function',
+                {
+                  name: 'arrow',
+                  type: 'svg',
+                  width: bgWidth,
+                  height: 50,
+                  positionType: VTable.TYPES.IconPosition.absoluteRight,
+                  marginRight: (cellMergeRectW - bgWidth) / 2,
+                  svg: '<svg xmlns="http://www.w3.org/2000/svg" width="67" height="11" viewBox="0 0 67 11" fill="none"><path d="M60 0.5H2L7 5L2 10H60L65.5 5L60 0.5Z" fill="#E13B9F" stroke="#E13B9F"/></svg>'
+                }
+              ];
+            },
+
+            caption: '',
+            width: 'auto',
+            style: {
+              borderLineWidth: 2,
+              borderColor: ''
+            },
+            headerStyle: {
+              color: 'black',
+              textAlign: 'left',
+              lineHeight: 30
+            }
+          }
+        ]
       },
 
       {
@@ -223,7 +281,7 @@ export function createTable() {
           const style = table.getCellStyle(col, row);
           const cellValue = table.getCellValue(col, row);
           if (!cellValue) {
-            return {};
+            return '';
           }
           const cellMergeRectW = table.getMergeCellRect(col, row).width;
           let textWidth = 0;
@@ -273,7 +331,7 @@ export function createTable() {
           const style = table.getCellStyle(col, row);
           const cellValue = table.getCellValue(col, row);
           if (!cellValue) {
-            return {};
+            return '';
           }
           const cellMergeRectW = table.getMergeCellRect(col, row).width;
           let textWidth = 0;
@@ -323,7 +381,7 @@ export function createTable() {
           const style = table.getCellStyle(col, row);
           const cellValue = table.getCellValue(col, row);
           if (!cellValue) {
-            return {};
+            return '';
           }
           const cellMergeRectW = table.getMergeCellRect(col, row).width;
           let textWidth = 0;
@@ -357,8 +415,7 @@ export function createTable() {
         color: 'white'
       },
       rowHeaderStyle: {
-        borderLineWidth: 0,
-        color: 'white'
+        borderLineWidth: 0
       },
       selectionStyle: {
         cellBorderColor: ''
@@ -375,17 +432,5 @@ export function createTable() {
 
   const instance = new ListTable(option);
 
-  // instance.setRecords(personsDataSource);
-
-  // VTable.bindDebugTool(instance.scenegraph.stage as any, {
-  //   customGrapicKeys: ['role', '_updateTag'],
-  // });
-
-  // instance.updateSortState({
-  //   field: 'id',
-  //   order: 'desc',
-  // });
-
-  // 只为了方便控制太调试用，不要拷贝
   (window as any).tableInstance = instance;
 }
