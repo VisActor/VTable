@@ -95,9 +95,13 @@ function moveColumnFromRowHeaderToBody(scene: Scenegraph) {
   const column =
     scene.rowHeaderGroup.lastChild instanceof Group
       ? scene.rowHeaderGroup.lastChild
-      : (scene.rowHeaderGroup.lastChild._prev as Group);
+      : (scene.rowHeaderGroup.lastChild?._prev as Group);
   if (column) {
-    scene.bodyGroup.insertBefore(column, scene.bodyGroup.firstChild);
+    if (scene.bodyGroup.firstChild) {
+      scene.bodyGroup.insertBefore(column, scene.bodyGroup.firstChild);
+    } else {
+      scene.bodyGroup.appendChild(column);
+    }
     // 更新容器宽度
     scene.bodyGroup.setAttribute('width', scene.bodyGroup.attribute.width + column.attribute.width);
     scene.rowHeaderGroup.setAttribute('width', scene.rowHeaderGroup.attribute.width - column.attribute.width);
@@ -109,9 +113,13 @@ function moveColumnFromCornerHeaderToColHeader(scene: Scenegraph) {
   const headerColumn =
     scene.cornerHeaderGroup.lastChild instanceof Group
       ? scene.cornerHeaderGroup.lastChild
-      : (scene.cornerHeaderGroup.lastChild._prev as Group);
+      : (scene.cornerHeaderGroup.lastChild?._prev as Group);
   if (headerColumn) {
-    scene.colHeaderGroup.insertBefore(headerColumn, scene.colHeaderGroup.firstChild);
+    if (scene.colHeaderGroup.firstChild) {
+      scene.colHeaderGroup.insertBefore(headerColumn, scene.colHeaderGroup.firstChild);
+    } else {
+      scene.bodyGroup.appendChild(headerColumn);
+    }
     scene.colHeaderGroup.setAttribute('width', scene.colHeaderGroup.attribute.width + headerColumn.attribute.width);
     scene.cornerHeaderGroup.setAttribute(
       'width',
