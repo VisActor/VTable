@@ -58,6 +58,7 @@ export function createChartCellGroup(
   cellGroup.AABBBounds.width(); // TODO 需要底层VRender修改
   // chart
   const chartGroup = new Chart({
+    stroke: false,
     x: padding[3],
     y: padding[0],
     canvas: table.canvas,
