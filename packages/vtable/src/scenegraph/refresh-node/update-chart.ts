@@ -11,11 +11,30 @@ export function updateChartSize(scenegraph: Scenegraph, col: number) {
     if (chartInstance) {
       // chartInstance.updateViewBox();
       columnGroup.getChildren().forEach((cellNode: Group) => {
-        const width = cellNode.AABBBounds.width();
-        const height = cellNode.AABBBounds.height();
+        const width = scenegraph.table.getColWidth(cellNode.col);
+        const height = scenegraph.table.getRowHeight(cellNode.row);
 
         cellNode.children.forEach((node: Chart) => {
           if ((node as any).type === 'chart') {
+            // 调试问题使用
+            // if (columnGroup.col === 2) {
+            //   columnGroup.AABBBounds.width();
+            //   node.AABBBounds.width();
+            //   console.log(
+            //     'set viewbox y1',
+            //     Math.ceil(cellNode.globalAABBBounds.y1 + node.attribute.cellPadding[0] + scenegraph.table.scrollTop),
+            //     node.globalAABBBounds.height()
+            //   );
+
+            //   console.log(
+            //     'updateChartSize',
+            //     columnGroup,
+            //     columnGroup.globalAABBBounds.y1,
+            //     cellNode.globalAABBBounds.y1,
+            //     node.globalAABBBounds.y1
+            //   );
+            // }
+
             node.cacheCanvas = null;
             node.setAttribute(
               'width',
@@ -27,31 +46,13 @@ export function updateChartSize(scenegraph: Scenegraph, col: number) {
             );
 
             node.setAttribute('viewBox', {
-              x1: Math.ceil(
-                cellNode.globalAABBBounds.x1 +
-                  scenegraph.table.tableX +
-                  node.attribute.cellPadding[3] +
-                  scenegraph.table.scrollLeft
-              ),
+              x1: Math.ceil(cellNode.globalAABBBounds.x1 + node.attribute.cellPadding[3] + scenegraph.table.scrollLeft),
               x2: Math.ceil(
-                cellNode.globalAABBBounds.x1 +
-                  width +
-                  scenegraph.table.tableX -
-                  node.attribute.cellPadding[1] +
-                  scenegraph.table.scrollLeft
+                cellNode.globalAABBBounds.x1 + width - node.attribute.cellPadding[1] + scenegraph.table.scrollLeft
               ),
-              y1: Math.ceil(
-                cellNode.globalAABBBounds.y1 +
-                  scenegraph.table.tableY +
-                  node.attribute.cellPadding[0] +
-                  scenegraph.table.scrollTop
-              ),
+              y1: Math.ceil(cellNode.globalAABBBounds.y1 + node.attribute.cellPadding[0] + scenegraph.table.scrollTop),
               y2: Math.ceil(
-                cellNode.globalAABBBounds.y1 +
-                  height +
-                  scenegraph.table.tableY -
-                  node.attribute.cellPadding[2] +
-                  scenegraph.table.scrollTop
+                cellNode.globalAABBBounds.y1 + height - node.attribute.cellPadding[2] + scenegraph.table.scrollTop
               )
             });
           }
