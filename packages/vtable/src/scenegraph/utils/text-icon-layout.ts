@@ -545,7 +545,7 @@ export function updateCellContentWidth(
     newHeight = cellGroup.attribute.height - (padding[0] + padding[2]);
 
     cellGroup.forEachChildren((child: any) => {
-      if (child.type === 'rect') {
+      if (child.type === 'rect' || child.type === 'chart') {
         return;
       }
       if (child.name === 'mark') {
@@ -560,7 +560,7 @@ export function updateCellContentWidth(
     });
   } else if (textBaseline === 'middle' || textBaseline === 'bottom') {
     cellGroup.forEachChildren((child: any) => {
-      if (child.type === 'rect') {
+      if (child.type === 'rect' || child.type === 'chart') {
         return;
       }
       if (child.name === 'mark') {

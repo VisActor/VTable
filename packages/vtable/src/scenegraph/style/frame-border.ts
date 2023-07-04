@@ -97,8 +97,8 @@ export function createFrameBorder(
     const deltaX = (rectAttributes.shadowBlur ?? 0) + (borderLeft + borderRight) / 2;
     const deltaY = (rectAttributes.shadowBlur ?? 0) + (borderTop + borderBottom) / 2;
 
-    groupAttributes.x = group.attribute.x + deltaX;
-    groupAttributes.y = group.attribute.y + deltaY;
+    groupAttributes.x = deltaX;
+    groupAttributes.y = deltaY;
     // 宽度高度在tableNoFrameWidth&tableNoFrameHeight中处理
     // groupAttributes.width = group.attribute.width - deltaX - deltaX;
     // groupAttributes.height = group.attribute.height - deltaY - deltaY;
