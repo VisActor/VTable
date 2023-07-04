@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "comment": "feat: add custom element line type\n\n",
+      "type": "patch",
+      "packageName": "@visactor/vtable"
+    }
+  ],
+  "packageName": "@visactor/vtable",
+  "email": "892739385@qq.com"
+}
