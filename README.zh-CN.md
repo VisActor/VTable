@@ -97,26 +97,25 @@ const columns =[
 ];
 
 const option = {
-  parentElement: document.getElementById(Table_CONTAINER_DOM_ID),
+  parentElement: document.getElementById(CONTAINER_ID),
   records:[
-      {
+    {
       "230517143221027": "CA-2018-156720",
       "230517143221030": "JM-15580",
       "230517143221032": "Bagged Rubber Bands",
       "230517143221040": "3.024",
       "230517143221041": "-0.605"
-  },
-  {
+    },
+    {
       "230517143221027": "CA-2018-115427",
       "230517143221030": "EB-13975",
       "230517143221032": "GBC Binding covers",
       "230517143221040": "20.72",
       "230517143221041": "6.475"
-  },
-  ...
+    },
+    // ...
   ],
   columns,
-  widthMode:'standard'
 };
 const tableInstance = new VTable.ListTable(option);
 
