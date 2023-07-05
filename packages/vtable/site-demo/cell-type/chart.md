@@ -1,11 +1,12 @@
 ---
 category: examples
-group: cell-type chart
-title: 单元格内容类型：chart
-cover:
+group: Cell Type
+title: 图表类型
+cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/chart.png
+order: 2-3
 ---
 
-# 单元格内容类型：chart
+# 图表类型
 
 将vchart图表库结合渲染到表格中，丰富可视化展示形式，提升多图表渲染性能。
 
@@ -17,7 +18,7 @@ cover:
 - `chartSpec: {}` 图表spec
 ## 代码演示
 
-```ts
+```javascript livedemo template=vtable
   VTable.register.chartType('vchart', VChart);
   const records = [];
   for (let i = 1; i <= 10; i++) {
@@ -78,7 +79,7 @@ cover:
 
 
 const option = {
-  parentElement: document.getElementById(Table_CONTAINER_DOM_ID),
+  parentElement: document.getElementById(CONTAINER_ID),
   records,
   defaultRowHeight:200,
   defaultHeaderRowHeight:50,

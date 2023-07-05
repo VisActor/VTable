@@ -1,11 +1,12 @@
 ---
 category: examples
-group: table-type list-table
-title: 基本表格
-cover:
+group: Component
+title: tooltip
+cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/tooltip.png
+order: 8-1
 ---
 
-# 基本表格
+# tooltip
 
 在该示例中，配置了tooltip.isShowOverflowTextTooltip为true，超长显示不了被省略的文字被hover时将提示出来。
 同时通过监听`mouseenter_cell`事件，鼠标移入符合提示条件【第一列订单号】的单元格时，调用接口showTooltip来显示提示信息。
@@ -18,10 +19,9 @@ cover:
 
 ## 代码演示
 
-```ts
-// <script type='text/javascript' src='../sales.js'></script>
-// import { menus } from './menu';
-  fetch('../mock-data/North_American_Superstore_list100.json')
+```javascript livedemo template=vtable
+
+  fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American_Superstore_list100.json')
     .then((res) => res.json())
     .then((data) => {
 
@@ -84,7 +84,7 @@ const columns =[
 ];
 
   const option = {
-    parentElement: document.getElementById(Table_CONTAINER_DOM_ID),
+    parentElement: document.getElementById(CONTAINER_ID),
     records:data,
     columns,
     widthMode:'standard',

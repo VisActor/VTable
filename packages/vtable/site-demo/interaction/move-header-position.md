@@ -1,13 +1,14 @@
 ---
 category: examples
-group: table-type pivot-table
-title: 透视表格
-cover:
+group: Interaction
+title: 移动表头位置
+cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/move-header-position.gif
+order: 4-5
 ---
 
-# 透视表格
+# 移动表头位置
 
-透视表格
+点击表头选中某一行或者某一列，拖拽进行移动。
 
 ## 关键配置
 
@@ -15,15 +16,13 @@ cover:
 
 ## 代码演示
 
-```ts
-// <script type='text/javascript' src='../sales.js'></script>
-// import { menus } from './menu';
-  fetch('../mock-data/North_American_Superstore_pivot.json')
+```javascript livedemo template=vtable
+  fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American_Superstore_pivot.json')
     .then((res) => res.json())
     .then((data) => {
 
 const option = {
-  parentElement: document.getElementById(Table_CONTAINER_DOM_ID),
+  parentElement: document.getElementById(CONTAINER_ID),
   records:data,
   "rowTree": [
         {

@@ -34,7 +34,7 @@ export const menus = [
     ]
   },
   {
-    menu: '单元格内容类型',
+    menu: '单元格类型',
     children: [
       {
         path: 'cell-type',
@@ -47,6 +47,35 @@ export const menus = [
       {
         path: 'cell-type',
         name: 'chart'
+      }
+    ]
+  },
+  {
+    menu: 'basic functionality',
+    children: [
+      {
+        path: 'basic-functionality',
+        name: 'frozen-col'
+      },
+      {
+        path: 'basic-functionality',
+        name: 'sort'
+      },
+      {
+        path: 'basic-functionality',
+        name: 'auto-wrap-text'
+      },
+      {
+        path: 'basic-functionality',
+        name: 'width-mode-adaptive'
+      },
+      {
+        path: 'basic-functionality',
+        name: 'width-mode-autoWidth'
+      },
+      {
+        path: 'basic-functionality',
+        name: 'merge'
       }
     ]
   },
@@ -122,10 +151,6 @@ export const menus = [
       {
         path: 'style',
         name: 'style'
-      },
-      {
-        path: 'style',
-        name: 'progressbar-style'
       }
     ]
   },
@@ -164,7 +189,7 @@ export const menus = [
       },
       {
         path: 'component',
-        name: 'dropdownmenu'
+        name: 'dropdown'
       }
     ]
   },
@@ -193,36 +218,11 @@ export const menus = [
       },
       {
         path: 'business',
+        name: 'ranking'
+      },
+      {
+        path: 'business',
         name: 'roadmap'
-      }
-    ]
-  },
-  {
-    menu: 'basic functionality',
-    children: [
-      {
-        path: 'basic-functionality',
-        name: 'frozen-col'
-      },
-      {
-        path: 'basic-functionality',
-        name: 'sort'
-      },
-      {
-        path: 'basic-functionality',
-        name: 'auto-wrap-text'
-      },
-      {
-        path: 'basic-functionality',
-        name: 'width-mode-adaptive'
-      },
-      {
-        path: 'basic-functionality',
-        name: 'width-mode-autoWidth'
-      },
-      {
-        path: 'basic-functionality',
-        name: 'merge'
       }
     ]
   }

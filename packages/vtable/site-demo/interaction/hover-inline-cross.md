@@ -1,24 +1,24 @@
 ---
 category: examples
-group: table-type list-table
-title: 基本表格
-cover:
+group: Interaction
+title: hover行列十字高亮
+cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/hover-cross.png
+order: 4-3
 ---
 
-# 基本表格
+# hover行列十字高亮
 
-基本表格
+鼠标hover到某个单元格，高亮该单元格所在整行及整列。
 
 ## 关键配置
 
-hover
+- `hover` 配置高亮模式
 
 ## 代码演示
 
-```ts
-// <script type='text/javascript' src='../sales.js'></script>
-// import { menus } from './menu';
-  fetch('../mock-data/North_American_Superstore_list100.json')
+```javascript livedemo template=vtable
+
+  fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American_Superstore_list100.json')
     .then((res) => res.json())
     .then((data) => {
 
@@ -81,7 +81,7 @@ const columns =[
 ];
 
 const option = {
-  parentElement: document.getElementById(Table_CONTAINER_DOM_ID),
+  parentElement: document.getElementById(CONTAINER_ID),
   records:data,
   columns,
   widthMode:'standard',

@@ -1,8 +1,9 @@
 ---
 category: examples
-group: table-type pivot-table
-title: 样式
-cover:
+group: Business
+title: 2018年QS中国大学数学专业排名Mathematics
+cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/ranking.png
+order: 9-3
 ---
 
 # 2018年QS中国大学数学专业排名Mathematics
@@ -17,9 +18,8 @@ cover:
 
 ## 代码演示
 
-```ts
-// <script type='text/javascript' src='../sales.js'></script>
-// import { menus } from './menu';
+```javascript livedemo template=vtable
+
 const records =[
   {
     "世界排名": "20",
@@ -192,7 +192,7 @@ const columns =[
 ];
 
 const option = {
-  parentElement: document.getElementById(Table_CONTAINER_DOM_ID),
+  parentElement: document.getElementById(CONTAINER_ID),
   records,
   columns,
   widthMode:'standard'

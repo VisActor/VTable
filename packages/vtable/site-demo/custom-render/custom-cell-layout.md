@@ -1,11 +1,12 @@
 ---
 category: examples
-group: table-type list-table
-title: 自定义内容布局绘制
-cover:
+group: Custom
+title: 单元格自定义布局
+cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/custom-cell-layout.png
+order: 7-1
 ---
 
-# 基本表格
+# 单元格自定义布局
 
 自定义单元格内容，可实现图文混排效果
 
@@ -15,12 +16,12 @@ cover:
 
 ## 代码演示
 
-```ts
+```javascript livedemo template=vtable
 VTable.register.icon('location',{
   type:'svg',
   name:'location',
   positionType:VTable.TYPES.IconPosition.left,
-  svg:'http://' + window.location.host + "/mock-data/location.svg",
+  svg:"https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/location.svg",
 })
 VTable.register.icon('favorite',{
   type:'svg',
@@ -39,7 +40,7 @@ VTable.register.icon('favorite',{
       arrowMark:true,
     }
   },
-  svg:'http://' + window.location.host + "/mock-data/favorite.svg",
+  svg:"https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/favorite.svg",
 })
 
 VTable.register.icon('message',{
@@ -60,11 +61,11 @@ VTable.register.icon('message',{
       arrowMark:true
     }
   },
-  svg:'http://' + window.location.host + "/mock-data/message.svg",
+  svg:"https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/message.svg",
 })
 
   const option = {
-    parentElement: document.getElementById(Table_CONTAINER_DOM_ID),
+    parentElement: document.getElementById(CONTAINER_ID),
     columns:[
       {
         field: 'bloggerId',
@@ -242,7 +243,7 @@ VTable.register.icon('message',{
   {
     'bloggerId':1,
     "bloggerName": "虚拟主播小花",
-    "bloggerAvatar": 'http://' + window.location.host + "/mock-data/custom-render/flower.jpg",
+    "bloggerAvatar": "https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/custom-render/flower.jpg",
     "introduction": "大家好，我是虚拟主播小花。喜欢游戏、动漫和美食的小仙女，希望通过直播和大家分享快乐时光。",
     "fansCount": 400,
     "worksCount": 10,
@@ -253,7 +254,7 @@ VTable.register.icon('message',{
     {
       'bloggerId':2,
     "bloggerName": "虚拟主播小狼",
-    "bloggerAvatar":'http://' + window.location.host + "/mock-data/custom-render/wolf.jpg",
+    "bloggerAvatar":"https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/custom-render/wolf.jpg",
     "introduction": "大家好，我是虚拟主播小狼。喜欢音乐、旅行和摄影的小狼人，希望通过直播和大家一起探索世界的美好。",
     "fansCount": 800,
     "worksCount": 20,
@@ -264,7 +265,7 @@ VTable.register.icon('message',{
     {
       'bloggerId':3,
     "bloggerName": "虚拟主播小兔",
-    "bloggerAvatar": 'http://' + window.location.host + "/mock-data/custom-render/rabbit.jpg",
+    "bloggerAvatar": "https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/custom-render/rabbit.jpg",
     "introduction": "大家好，我是虚拟主播小兔。喜欢绘画、手工和美妆的小可爱，希望通过直播和大家一起分享创意和时尚。",
     "fansCount": 600,
     "worksCount": 15,
@@ -275,7 +276,7 @@ VTable.register.icon('message',{
     {
       'bloggerId':4,
     "bloggerName": "虚拟主播小猫",
-    "bloggerAvatar": 'http://' + window.location.host + "/mock-data/custom-render/cat.jpg",
+    "bloggerAvatar": "https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/custom-render/cat.jpg",
     "introduction": "大家好，我是虚拟主播小猫。喜欢舞蹈、健身和烹饪的小懒猫，希望通过直播和大家一起健康快乐地生活。",
     "fansCount": 1000,
     "worksCount": 30,
@@ -286,7 +287,7 @@ VTable.register.icon('message',{
     {
       'bloggerId':5,
     "bloggerName": "虚拟主播小熊",
-    "bloggerAvatar":'http://' + window.location.host + "/mock-data/custom-render/bear.jpg",
+    "bloggerAvatar":"https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/custom-render/bear.jpg",
     "introduction": "大家好，我是虚拟主播小熊。喜欢电影、读书和哲学的小智者，希望通过直播和大家一起探索人生的意义。",
     "fansCount": 1200,
     "worksCount": 25,
@@ -297,7 +298,7 @@ VTable.register.icon('message',{
     {
       'bloggerId':6,
     "bloggerName": "虚拟主播小鸟",
-    "bloggerAvatar": 'http://' + window.location.host + "/mock-data/custom-render/bird.jpeg",
+    "bloggerAvatar": "https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/custom-render/bird.jpeg",
     "introduction": "大家好，我是虚拟主播小鸟。喜欢唱歌、表演和综艺的小嗨鸟，希望通过直播和大家一起嗨翻天。",
     "fansCount": 900,
     "worksCount": 12,

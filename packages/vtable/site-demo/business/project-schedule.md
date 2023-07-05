@@ -1,8 +1,9 @@
 ---
 category: examples
-group: table-type list-table
-title: 基本表格
-cover:
+group: Business
+title: 项目进度表
+cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/project-schedule.png
+order: 9-2
 ---
 
 # 项目进度表
@@ -15,7 +16,7 @@ cover:
 
 ## 代码演示
 
-```ts
+```javascript livedemo template=vtable
 function getColor(min, max, n) {
   if (max === min) {
     if (n > 0) {
@@ -424,7 +425,7 @@ const columns =[
 ];
 
 const option = {
-  parentElement: document.getElementById(Table_CONTAINER_DOM_ID),
+  parentElement: document.getElementById(CONTAINER_ID),
   records,
   columns,
   widthMode: 'standard',
