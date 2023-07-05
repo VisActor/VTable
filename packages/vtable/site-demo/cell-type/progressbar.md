@@ -1,13 +1,14 @@
 ---
 category: examples
-group: cell-type 单元格内容类型
-title: 单元格内容类型
-cover:
+group: Cell Type
+title: 数据条类型
+cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/progressbar.png
+order: 2-2
 ---
 
-# 单元格内容类型
+# 数据条类型
 
-通过columnType指定单元格内容类型。图片视频来源：https://birdsoftheworld.org/bow/home
+展示数据条类型的多种使用方式
 
 ## 关键配置
 
@@ -24,14 +25,14 @@ columnType:
 
 ## 代码演示
 
-```ts
+```javascript livedemo template=vtable
 
 const records = [
   {
    "name":"鸽子",
    "introduction":"鸽子是一种常见的城市鸟类，具有灰色的羽毛和短而粗壮的喙",
-   "image":'http://' + window.location.host + "/mock-data/media/pigeon.jpeg",
-   "vedio":'http://' + window.location.host + "/mock-data/media/pigeon.mp4",
+   "image":"https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/media/pigeon.jpeg",
+   "vedio":"https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/media/pigeon.mp4",
    "YoY":50,
    "QoQ":10,
    "trend":[{x:1,y:1500},{x:2,y:1480},{x:3,y:1520},{x:4,y:1550},{x:5,y:1600}],
@@ -40,8 +41,8 @@ const records = [
   {
    "name":"燕子",
    "introduction":"燕子是一种善于飞行的鸟类，通常栖息在房屋和建筑物的附近。",
-   "image":'http://' + window.location.host + "/mock-data/media/swallow.jpeg",
-   "vedio":'http://' + window.location.host + "/mock-data/media/swallow.mp4",
+   "image":"https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/media/swallow.jpeg",
+   "vedio":"https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/media/swallow.mp4",
    "YoY":10,
    "QoQ":-10,
    "trend":[{x:1,y:800},{x:2,y:780},{x:3,y:700},{x:4,y:800},{x:5,y:900}],
@@ -49,8 +50,8 @@ const records = [
    {
    "name":"喜鹊",
    "introduction":"喜鹊是一种常见的小型鸟类，主要分布在亚洲地区。它们体型较小，具有黑色的头部和喉咙、灰色的背部和白色的腹部。喜鹊是群居动物，常常在树林中或城市公园中筑巢繁殖，以昆虫、果实和种子为食。它们还具有很高的智商和社交性，被认为是一种聪明、有趣的鸟类。",
-   "image":'http://' + window.location.host + "/mock-data/media/Magpie.jpeg",
-   "vedio":'http://' + window.location.host + "/mock-data/media/Magpie.mp4",
+   "image":"https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/media/Magpie.jpeg",
+   "vedio":"https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/media/Magpie.mp4",
    "YoY":-10,
    "QoQ":-10,
    "trend":[{x:1,y:500},{x:2,y:680},{x:3,y:400},{x:4,y:600},{x:5,y:800}],
@@ -58,8 +59,8 @@ const records = [
    {
    "name":"孔雀",
    "introduction":"孔雀是一种美丽的大型鸟类，拥有灿烂的蓝绿色羽毛和长长的尾羽。主要生活在南亚地区，以昆虫、水果和种子为食。",
-   "image":'http://' + window.location.host + "/mock-data/media/peacock.jpeg",
-   "vedio":'http://' + window.location.host + "/mock-data/media/peacock.mp4",
+   "image":"https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/media/peacock.jpeg",
+   "vedio":"https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/media/peacock.mp4",
    "YoY":5,
    "QoQ":-10,
    "trend":[{x:1,y:500},{x:2,y:680},{x:3,y:400},{x:4,y:600},{x:5,y:800}],
@@ -73,7 +74,6 @@ const columns = [
     columnType: 'progressbar',
      width:200,
       fieldFormat(rec){
-        debugger;
         if(typeof rec['YoY'] === 'number')
         return rec['YoY']+'%'
       return rec['YoY'];
@@ -160,7 +160,7 @@ const columns = [
   },
 ];
 const option = {
-  parentElement: document.getElementById(Table_CONTAINER_DOM_ID),
+  parentElement: document.getElementById(CONTAINER_ID),
   records,
   columns,
   autoWrapText:true,

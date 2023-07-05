@@ -1,8 +1,9 @@
 ---
 category: examples
-group: table-type transpose-table
+group: table-type
 title: 转置表格
-cover:
+cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/transpose.png
+order: 1-3
 ---
 
 # 转置表格
@@ -15,10 +16,9 @@ cover:
 
 ## 代码演示
 
-```ts
-// <script type='text/javascript' src='../sales.js'></script>
-// import { menus } from './menu';
-  fetch('../mock-data/North_American_Superstore_list100.json')
+```javascript livedemo template=vtable
+
+  fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American_Superstore_list100.json')
     .then((res) => res.json())
     .then((data) => {
 
@@ -81,11 +81,12 @@ const columns =[
 ];
 
 const option = {
-  parentElement: document.getElementById(Table_CONTAINER_DOM_ID),
+  parentElement: document.getElementById(CONTAINER_ID),
   records:data,
   columns,
   transpose:true,
-  widthMode:'standard'
+  widthMode:'standard',
+  defaultRowHeight:50
 };
 const tableInstance = new VTable.ListTable(option);
 window['tableInstance'] = tableInstance;

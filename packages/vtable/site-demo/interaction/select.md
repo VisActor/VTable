@@ -1,13 +1,14 @@
 ---
 category: examples
-group: table-type list-table
-title: 基本表格
-cover:
+group: Interaction
+title: 选择单元格
+cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/select.png
+order: 4-1
 ---
 
-# 基本表格
+# 选择单元格
 
-选中单元格 配置选中效果
+选中单元格，按住ctrl或者shift多选，也可开启快捷键进行ctrlA全选。
 
 ## 关键配置
 
@@ -17,13 +18,12 @@ cover:
       copySelected: true
   }
 `
-配置 开启ctrl+A可选功能，及快捷键复制选中内容。
+开启ctrl+A可选功能，及快捷键复制选中内容。
 ## 代码演示
 
-```ts
-// <script type='text/javascript' src='../sales.js'></script>
-// import { menus } from './menu';
-  fetch('../mock-data/North_American_Superstore_list100.json')
+```javascript livedemo template=vtable
+
+  fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American_Superstore_list100.json')
     .then((res) => res.json())
     .then((data) => {
 
@@ -86,7 +86,7 @@ const columns =[
 ];
 
 const option = {
-  parentElement: document.getElementById(Table_CONTAINER_DOM_ID),
+  parentElement: document.getElementById(CONTAINER_ID),
   records:data,
   columns,
   widthMode:'standard',

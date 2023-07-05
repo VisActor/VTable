@@ -1,11 +1,12 @@
 ---
 category: examples
-group: table-type list-table
-title: 基本表格
-cover:
+group: Interaction
+title: 右键菜单
+cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/context-menu.png
+order: 4-6
 ---
 
-# 点击右键
+# 右键菜单
 
 右键弹出菜单, 如需根据点击下拉菜单的项目来继续操作，可以监听事件dropdownmenu_click。
 
@@ -15,10 +16,9 @@ cover:
 
 ## 代码演示
 
-```ts
-// <script type='text/javascript' src='../sales.js'></script>
-// import { menus } from './menu';
-  fetch('../mock-data/North_American_Superstore_list100.json')
+```javascript livedemo template=vtable
+
+  fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American_Superstore_list100.json')
     .then((res) => res.json())
     .then((data) => {
 
@@ -81,7 +81,7 @@ const columns =[
 ];
 
 const option = {
-  parentElement: document.getElementById(Table_CONTAINER_DOM_ID),
+  parentElement: document.getElementById(CONTAINER_ID),
   records:data,
   columns,
   widthMode:'standard',

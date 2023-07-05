@@ -1,13 +1,14 @@
 ---
 category: examples
-group: table-type list-table
-title: 自定义内容布局绘制
-cover:
+group: Custom
+title: 单元格自定义内容
+cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/custom-render.png
+order: 7-4
 ---
 
-# 基本表格
+# 单元格自定义内容
 
-自定义单元格内容，可实现图文混排效果
+通过列配置项customRender，设置当前自定义函数
 
 ## 关键配置
 
@@ -15,10 +16,10 @@ cover:
 
 ## 代码演示
 
-```ts
+```javascript livedemo template=vtable
 
   const option = {
-    parentElement: document.getElementById(Table_CONTAINER_DOM_ID),
+    parentElement: document.getElementById(CONTAINER_ID),
     columns:[
       {
         field: 'type',

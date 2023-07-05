@@ -94,7 +94,8 @@
     "vite-plugin-markdown": "^2.1.0",
     "markdown-it": "13.0.1",
     "node-fetch": "2.6.7",
-    "form-data": "~4.0.0"
+    "form-data": "~4.0.0",
+    "axios": "~1.4.0"
   },
   "unpkg": "latest",
   "unpkgFiles": [

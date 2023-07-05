@@ -1,13 +1,14 @@
 ---
 category: examples
-group: basic-functionality auto-wrap-text
-title: 基本表格
-cover:
+group: Basic Features
+title: 自动换行
+cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/auto-wrap-text.gif
+order: 3-1
 ---
 
-# 基本表格
+# 自动换行
 
-开启了自动换行，当列宽有变化时，文本会根据宽度来自动计算展示内容。在使用此功能时，一般需要将autoRowHeight置为true。
+开启了自动换行，当列宽有变化时，文本会根据宽度来自动计算展示内容。在使用此功能时，需要配合开启autoRowHeight，才能将折行文字显示出来。
 
 ## 关键配置
 
@@ -15,10 +16,8 @@ cover:
 
 ## 代码演示
 
-```ts
-// <script type='text/javascript' src='../sales.js'></script>
-// import { menus } from './menu';
-  fetch('../mock-data/North_American_Superstore_list100.json')
+```javascript livedemo template=vtable
+  fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American_Superstore_list100.json')
     .then((res) => res.json())
     .then((data) => {
 
@@ -70,7 +69,7 @@ const columns =[
 ];
 
 const option = {
-  parentElement: document.getElementById(Table_CONTAINER_DOM_ID),
+  parentElement: document.getElementById(CONTAINER_ID),
   records:data,
   columns,
   widthMode:'standard',

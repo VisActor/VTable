@@ -1,13 +1,14 @@
 ---
 category: examples
-group: cell-type chart
-title: 单元格内容类型：chart
-cover:
+group: Business
+title: 各地年气温趋势
+cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/temperature-trend.png
+order: 9-5
 ---
 
-# 单元格内容类型：chart
+# 各地年气温趋势
 
-展示不同地区分时分月分年的气温趋势。
+展示不同地区日月年的气温趋势。
 
 ## 关键配置
 
@@ -17,7 +18,7 @@ cover:
 - `chartSpec: {}` 图表spec
 ## 代码演示
 
-```ts
+```javascript livedemo template=vtable
   VTable.register.chartType('vchart', VChart);
   const temperatureList = {
     东北: {
@@ -445,7 +446,7 @@ cover:
     records.push(record);
   }
   const option = {
-    parentElement: document.getElementById(Table_CONTAINER_DOM_ID),
+    parentElement: document.getElementById(CONTAINER_ID),
     records,
     defaultRowHeight: 150,
     defaultHeaderRowHeight: 50,

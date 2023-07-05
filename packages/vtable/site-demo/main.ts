@@ -7,7 +7,7 @@ window.VChart = VChart;
 
 // window.ListTable = VTable.ListTable;
 // window.PivotTable = VTable.PivotTable;
-window.Table_CONTAINER_DOM_ID = 'VTable';
+window.CONTAINER_ID = 'VTable';
 
 const md = new MarkdownIt();
 
@@ -65,7 +65,7 @@ const handleClick = (e: { target: any }, isInit?: boolean) => {
           console.info('%c %s', 'color: #1890ff;font-weight: bold', `当前 demo 路径：./examples/${path}/${name}.md`);
           document.getElementById('article').innerHTML = module.html;
 
-          const jsCode = document.getElementsByClassName('language-ts')[0].innerHTML;
+          const jsCode = document.getElementsByClassName('language-javascript')[0].innerHTML;
           evaluateCode(md.utils.unescapeAll(jsCode));
         })
         .catch(err => {

@@ -1,13 +1,14 @@
 ---
 category: examples
-group: theme custom
-title: 表格主题
-cover:
+group: Theme
+title: 表格主题-register
+cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/register.png
+order: 6-7
 ---
 
-# 表格主题-custom
+# 表格主题-register
 
-自定义主题
+全局注册一个自定义主题
 
 ## 关键配置
 
@@ -16,7 +17,7 @@ cover:
   
 ## 代码演示
 
-```ts
+```javascript livedemo template=vtable
 
 VTable.register.theme('themeRegisterOne',{
       defaultStyle:{
@@ -50,11 +51,11 @@ VTable.register.theme('themeRegisterOne',{
         }
       }
     })
-fetch('../mock-data/North_American_Superstore_pivot.json')
+fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American_Superstore_pivot.json')
   .then((res) => res.json())
   .then((data) => {
   const option = {
-    parentElement: document.getElementById(Table_CONTAINER_DOM_ID),
+    parentElement: document.getElementById(CONTAINER_ID),
     records:data,
     "rowTree": [
         {

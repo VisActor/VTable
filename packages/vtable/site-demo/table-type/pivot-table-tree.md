@@ -1,8 +1,9 @@
 ---
 category: examples
-group: table-type pivot-table
-title: 透视表格
-cover:
+group: table-type
+title: 透视表格树形展示
+cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/pivot-tree.png
+order: 1-5
 ---
 
 # 透视表格
@@ -11,18 +12,17 @@ cover:
 
 ## 关键配置
 
-
+- `rowHierarchyType` 将层级展示设置为`tree`，默认为平铺模式`grid`。
 ## 代码演示
 
-```ts
-// <script type='text/javascript' src='../sales.js'></script>
-// import { menus } from './menu';
-  fetch('../mock-data/North_American_Superstore_pivot2.json')
+```javascript livedemo template=vtable
+
+  fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American_Superstore_pivot2.json')
     .then((res) => res.json())
     .then((data) => {
 
 const option = {
-  parentElement: document.getElementById(Table_CONTAINER_DOM_ID),
+  parentElement: document.getElementById(CONTAINER_ID),
   records:data,
   "rowTree": [
     {

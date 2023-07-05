@@ -1,13 +1,14 @@
 ---
 category: examples
-group: table-type list-table
-title: 基本表格
-cover:
+group: Component
+title: 滚动条
+cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/scrollbar.png
+order: 8-3
 ---
 
-# 滚动条样式
+# 滚动条
 
-滚动条可配样式
+该示例战士了滚动条可配样式。
 
 ## 关键配置
 
@@ -15,10 +16,9 @@ cover:
 
 ## 代码演示
 
-```ts
-// <script type='text/javascript' src='../sales.js'></script>
-// import { menus } from './menu';
-  fetch('../mock-data/North_American_Superstore_list100.json')
+```javascript livedemo template=vtable
+
+  fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American_Superstore_list100.json')
     .then((res) => res.json())
     .then((data) => {
 
@@ -81,7 +81,7 @@ cover:
   ];
 
   const option = {
-    parentElement: document.getElementById(Table_CONTAINER_DOM_ID),
+    parentElement: document.getElementById(CONTAINER_ID),
     records:data,
     columns,
     widthMode:'standard',
