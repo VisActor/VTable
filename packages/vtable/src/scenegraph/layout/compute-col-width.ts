@@ -8,16 +8,27 @@ import { getQuadProps } from '../utils/padding';
 import { getProp } from '../utils/get-prop';
 import type { BaseTableAPI } from '../../ts-types/base-table';
 
-export function computeColsWidth(table: BaseTableAPI, update?: boolean): void {
+export function computeColsWidth(table: BaseTableAPI, colStart?: number, colEnd?: number, update?: boolean): void {
   const time = typeof window !== 'undefined' ? window.performance.now() : 0;
-  table._clearColRangeWidthsMap();
+  colStart = colStart ?? 0;
+  colEnd = colEnd ?? table.colCount - 1;
+  // table._clearColRangeWidthsMap();
+  // clear colRangeWidthsMap
+  if (colStart === 0 && colEnd === table.colCount - 1) {
+    table._clearColRangeWidthsMap();
+    // } else {
+    //   for (let col = colStart; col <= colEnd; col++) {
+    //     table._clearColRangeWidthsMap(col);
+    //   }
+  }
+
   const oldColWidths = [];
   if (update) {
     for (let col = 0; col < table.colCount; col++) {
       oldColWidths.push(table.getColWidth(col));
     }
   }
-  for (let col = 0; col < table.colCount; col++) {
+  for (let col = colStart; col <= colEnd; col++) {
     let maxWidth;
     if (
       !table.internalProps.transpose &&
@@ -44,7 +55,12 @@ export function computeColsWidth(table: BaseTableAPI, update?: boolean): void {
     }
 
     table._setColContentWidth(col, maxWidth);
-    table.setColWidth(col, maxWidth, false, true);
+
+    const oldWidth = table.getColWidth(col);
+    if (oldWidth !== maxWidth) {
+      table._clearColRangeWidthsMap(col);
+      table.setColWidth(col, maxWidth, false, true);
+    }
   }
   // 处理adaptive宽度
   if (table.widthMode === 'adaptive') {
@@ -88,7 +104,7 @@ export function computeColsWidth(table: BaseTableAPI, update?: boolean): void {
       }
     }
   }
-  console.log('computeColsWidth  time:', (typeof window !== 'undefined' ? window.performance.now() : 0) - time);
+  // console.log('computeColsWidth  time:', (typeof window !== 'undefined' ? window.performance.now() : 0) - time);
 
   if (update) {
     for (let col = 0; col < table.colCount; col++) {

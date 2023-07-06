@@ -256,7 +256,8 @@ export function createCell(
 }
 
 export function updateCell(col: number, row: number, table: BaseTableAPI, addNew?: boolean) {
-  const oldCellGroup = table.scenegraph.getCell(col, row, true);
+  // const oldCellGroup = table.scenegraph.getCell(col, row, true);
+  const oldCellGroup = table.scenegraph.highPerformanceGetCell(col, row, true);
 
   const type = table.isHeader(col, row)
     ? table._getHeaderLayoutMap(col, row).headerType
@@ -436,6 +437,11 @@ function updateCellContent(
   if (!addNew) {
     oldCellGroup.parent.insertAfter(newCellGroup, oldCellGroup);
     oldCellGroup.parent.removeChild(oldCellGroup);
+
+    // update cache
+    if (table.scenegraph?.proxy.cellCache.get(col)) {
+      table.scenegraph?.proxy.cellCache.set(col, newCellGroup);
+    }
   }
   return newCellGroup;
 }

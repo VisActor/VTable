@@ -28,6 +28,15 @@ export function computeRowsHeight(table: BaseTableAPI, rowStart?: number, rowEnd
   rowEnd = rowEnd ?? table.rowCount - 1;
   const time = typeof window !== 'undefined' ? window.performance.now() : 0;
 
+  // clear rowRangeHeightsMap
+  if (rowStart === 0 && rowEnd === table.rowCount - 1) {
+    table._clearRowRangeHeightsMap();
+  } else {
+    for (let row = rowStart; row <= rowEnd; row++) {
+      table._clearRowRangeHeightsMap(row);
+    }
+  }
+
   // compute header row in column header row
   for (let row = rowStart; row < table.columnHeaderLevelCount; row++) {
     const height = computeRowHeight(row, 0, table.colCount - 1, table);
