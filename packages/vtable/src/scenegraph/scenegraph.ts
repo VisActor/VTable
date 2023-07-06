@@ -1316,7 +1316,7 @@ export class Scenegraph {
 
   updateCellContent(col: number, row: number) {
     if (this.clear) {
-      return;
+      return undefined;
     }
     return updateCell(col, row, this.table);
   }
