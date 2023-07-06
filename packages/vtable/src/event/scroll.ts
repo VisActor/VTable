@@ -19,7 +19,12 @@ export function handleWhell(event: WheelEvent, state: StateManeger) {
     state.showVerticalScrollBar(true);
   }
 
-  event.preventDefault();
+  if (
+    event.cancelable &&
+    ((deltaY !== 0 && isVerticalScrollable(deltaY, state)) || (deltaX !== 0 && isHorizontalScrollable(deltaX, state)))
+  ) {
+    event.preventDefault();
+  }
 }
 
 interface ScrollSpeedRatio {
@@ -41,5 +46,33 @@ function optimizeScrollXY(x: number, y: number, ratio: ScrollSpeedRatio): [numbe
   const deltaX = angle <= 1 / ANGLE ? 0 : x;
   const deltaY = angle > ANGLE ? 0 : y;
 
-  return [deltaX * ratio.horizontal, deltaY * ratio.vertical];
+  return [Math.ceil(deltaX * ratio.horizontal), Math.ceil(deltaY * ratio.vertical)];
+}
+
+export function isVerticalScrollable(deltaY: number, state: StateManeger) {
+  return !isScrollToTop(deltaY, state) && !isScrollToBottom(deltaY, state);
+}
+
+export function isHorizontalScrollable(deltaX: number, state: StateManeger) {
+  return !isScrollToLeft(deltaX, state) && !isScrollToRight(deltaX, state);
+}
+
+function isScrollToTop(deltaY: number, state: StateManeger) {
+  const totalHeight = state.table.getAllRowsHeight() - state.table.scenegraph.height;
+  return totalHeight !== 0 && deltaY <= 0 && state.scroll.verticalBarPos < 1;
+}
+
+function isScrollToBottom(deltaY: number, state: StateManeger) {
+  const totalHeight = state.table.getAllRowsHeight() - state.table.scenegraph.height;
+  return totalHeight !== 0 && deltaY >= 0 && Math.abs(state.scroll.verticalBarPos - totalHeight) < 1;
+}
+
+function isScrollToLeft(deltaX: number, state: StateManeger) {
+  const totalWidth = state.table.getAllColsWidth() - state.table.scenegraph.width;
+  return totalWidth !== 0 && deltaX <= 0 && state.scroll.horizontalBarPos < 1;
+}
+
+function isScrollToRight(deltaX: number, state: StateManeger) {
+  const totalWidth = state.table.getAllColsWidth() - state.table.scenegraph.width;
+  return totalWidth !== 0 && deltaX >= 0 && Math.abs(state.scroll.horizontalBarPos - totalWidth) < 1;
 }

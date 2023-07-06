@@ -3,7 +3,7 @@ import { createRect } from '@visactor/vrender';
 import type { TableFrameStyle } from '../../ts-types';
 import type { Group } from '../graphic/group';
 import { isArray } from '@visactor/vutils';
-import { getPadding } from '../utils/padding';
+import { getQuadProps } from '../utils/padding';
 
 /**
  * @description: create frame border
@@ -17,7 +17,8 @@ export function createFrameBorder(
   group: Group,
   frameTheme: TableFrameStyle | undefined,
   role: string,
-  strokeArray?: [boolean, boolean, boolean, boolean] // to do 处理成0b001111形式
+  strokeArray: [boolean, boolean, boolean, boolean] | undefined, // to do 处理成0b001111形式
+  justForXYPosition?: boolean
 ) {
   if (!frameTheme) {
     return;
@@ -66,10 +67,10 @@ export function createFrameBorder(
   }
 
   if (Array.isArray(borderColor)) {
-    (rectAttributes as any).strokeArrayColor = getPadding(borderColor as any);
+    (rectAttributes as any).strokeArrayColor = getQuadProps(borderColor as any);
   }
   if (Array.isArray(borderLineWidth)) {
-    (rectAttributes as any).strokeArrayWidth = getPadding(borderLineWidth);
+    (rectAttributes as any).strokeArrayWidth = getQuadProps(borderLineWidth);
     (rectAttributes as any).lineWidth = 1;
   }
 
@@ -96,13 +97,17 @@ export function createFrameBorder(
     const deltaX = (rectAttributes.shadowBlur ?? 0) + (borderLeft + borderRight) / 2;
     const deltaY = (rectAttributes.shadowBlur ?? 0) + (borderTop + borderBottom) / 2;
 
-    groupAttributes.x = group.attribute.x + deltaX;
-    groupAttributes.y = group.attribute.y + deltaY;
+    groupAttributes.x = deltaX;
+    groupAttributes.y = deltaY;
     // 宽度高度在tableNoFrameWidth&tableNoFrameHeight中处理
     // groupAttributes.width = group.attribute.width - deltaX - deltaX;
     // groupAttributes.height = group.attribute.height - deltaY - deltaY;
   }
   group.setAttributes(groupAttributes);
+
+  if (justForXYPosition) {
+    return;
+  }
 
   if (rectAttributes.stroke) {
     rectAttributes.x = borderLeft / 2;

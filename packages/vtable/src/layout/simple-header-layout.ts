@@ -650,10 +650,17 @@ export class SimpleHeaderLayoutMap implements LayoutMapAPI {
   }
   /**
    * 点击某个单元格的展开折叠按钮 改变该节点的状态 维度树重置
-   * @param col
-   * @param row
    */
-  toggleHierarchyState(col: number, row: number) {
-    // do nothing
+  toggleHierarchyState(diffDataIndices: { add: number[]; remove: number[] }) {
+    const addCellPositions = diffDataIndices.add.map(index => {
+      return { col: 0, row: this._table.frozenRowCount + index };
+    });
+    const removeCellPositions = diffDataIndices.remove.map(index => {
+      return { col: 0, row: this._table.frozenRowCount + index };
+    });
+    return {
+      addCellPositions,
+      removeCellPositions
+    };
   }
 }

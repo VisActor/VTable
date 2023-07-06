@@ -1,29 +1,35 @@
 ---
 category: examples
-group: table-type pivot-table
-title: 透视表格
-cover:
+group: Interaction
+title: 调整列宽
+cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/resize-col-width.gif
+order: 4-4
 ---
 
-# 透视表格
+# 调整列宽
 
-在这个demo中配置了columnResizeMode为header，指定了调整列宽只能作用于表头部分
+鼠标放置在列间隔线上出现调整列宽的鼠标样式，可拖拽进行列宽调整。
 
 ## 关键配置
 
 - `columnResizeMode: 'all' | 'none' | 'header' | 'body'` 指定可操作调整列宽的区域
+- `columnResizeType: 'column' | 'indicator' | 'all' | 'indicatorGroup'` 调整列宽的生效范围，可配置项：
+
+  - column: 调整列宽只调整当前列
+  - indicator: 调整列宽时对应相同指标的列都会被调整
+  - indicatorGroup: 调整同父级维度下所有指标列的宽度
+  - all： 所有列宽都被调整
 
 ## 代码演示
 
-```ts
-// <script type='text/javascript' src='../sales.js'></script>
-// import { menus } from './menu';
-  fetch('../mock-data/North_American_Superstore_pivot.json')
+```javascript livedemo template=vtable
+
+  fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American_Superstore_pivot.json')
     .then((res) => res.json())
     .then((data) => {
 
 const option = {
-  parentElement: document.getElementById(Table_CONTAINER_DOM_ID),
+  parentElement: document.getElementById(CONTAINER_ID),
   columnResizeMode:'header',
   records:data,
   "rowTree": [
@@ -301,20 +307,54 @@ const option = {
                     "caption": "Quantity",
                     "width": "auto",
                     "showSort": false,
+                    "headerStyle":{
+                      fontWeight: "normal",
+                    },
+                    "format":(rec)=>{return '$'+Number(rec['230517143221042']).toFixed(2)},
+                    style:{
+                      padding:[16,28,16,28],
+                      color(args){
+                        if(args.dataValue>=0)
+                        return 'black';
+                        return 'red'
+                      }
+                    }
                 },
                 {
                     "indicatorKey": "230517143221040",
                     "caption": "Sales",
                     "width": "auto",
                     "showSort": false,
-                    "format":(rec)=>{return Number(rec['230517143221040']).toFixed(2)}
+                    "headerStyle":{
+                      fontWeight: "normal",
+                    },
+                    "format":(rec)=>{return '$'+Number(rec['230517143221040']).toFixed(2)},
+                    style:{
+                      padding:[16,28,16,28],
+                      color(args){
+                        if(args.dataValue>=0)
+                        return 'black';
+                        return 'red'
+                      }
+                    }
                 },
                 {
                     "indicatorKey": "230517143221041",
                     "caption": "Profit",
                     "width": "auto",
                     "showSort": false,
-                    "format":(rec)=>{return Number(rec['230517143221041']).toFixed(2)}
+                    "headerStyle":{
+                      fontWeight: "normal",
+                    },
+                    "format":(rec)=>{return '$'+Number(rec['230517143221041']).toFixed(2)},
+                    style:{
+                      padding:[16,28,16,28],
+                      color(args){
+                        if(args.dataValue>=0)
+                        return 'black';
+                        return 'red'
+                      }
+                    }
                 }
             ],
     "corner": {
@@ -323,6 +363,7 @@ const option = {
             "textStick": true
         }
     },
+    //columnResizeType:'all',
   widthMode:'standard'
 };
 const tableInstance = new VTable.PivotTable(option);

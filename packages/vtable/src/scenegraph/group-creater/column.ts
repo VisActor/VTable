@@ -3,15 +3,6 @@ import type { BaseTableAPI } from '../../ts-types/base-table';
 import { Group } from '../graphic/group';
 import { createComplexColumn } from './column-helper';
 
-export type MergeMap = Map<
-  string,
-  {
-    x: number;
-    y: number;
-    cellWidth: number;
-    cellHeight: number;
-  }
->;
 /**
  * @description: 处理全部角表头
  * @param {Group} colHeaderGroup 列表头容器Group
@@ -134,7 +125,6 @@ export function createColGroup(
     return;
   }
   const { layoutMap, defaultRowHeight, defaultHeaderRowHeight, defaultColWidth } = table.internalProps;
-  const mergeMap: MergeMap = new Map();
   let x = 0;
   let heightMax = 0;
   for (let i = colStart; i <= colEnd; i++) {
@@ -162,32 +152,17 @@ export function createColGroup(
     columnGroup.role = 'column';
     columnGroup.col = i;
     containerGroup.addChild(columnGroup);
-
-    let customRender;
-    let customLayout;
-
-    if (cellType !== 'body') {
-      const define = table.getHeaderDefine(col, rowStart);
-      customRender = define?.headerCustomRender;
-      customLayout = define?.headerCustomLayout;
-    } else {
-      const define = table.getBodyColumnDefine(col, rowStart);
-      customRender = define?.customRender || table.customRender;
-      customLayout = define?.customLayout;
-    }
     const { width: default2Width, height: default2Height } = createComplexColumn(
       columnGroup,
       col,
       colWidth,
       rowStart,
       rowEnd,
-      mergeMap,
+      table.scenegraph.mergeMap,
       cellType === 'columnHeader' ? defaultHeaderRowHeight ?? defaultRowHeight : defaultRowHeight,
       table,
       cellType,
-      rowLimit,
-      customRender,
-      customLayout
+      rowLimit
     );
     x += default2Width;
     heightMax = Math.max(heightMax, default2Height);

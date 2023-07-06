@@ -3,13 +3,16 @@ import type { IThemeSpec } from '@visactor/vrender';
 import { RichText } from '@visactor/vrender';
 import { convertInternal } from '../../tools/util';
 import type { ColumnIconOption } from '../../ts-types';
-import { IconPosition } from '../../ts-types';
+import { IconFuncTypeEnum, IconPosition } from '../../ts-types';
 import { CellContent } from '../component/cell-content';
 import type { Group } from '../graphic/group';
 import { Icon } from '../graphic/icon';
 import { WrapText } from '../graphic/text';
 import type { Scenegraph } from '../scenegraph';
 import { getCellMergeInfo } from './get-cell-merge';
+import { getHierarchyOffset } from './get-hierarchy-offset';
+import type { BaseTableAPI } from '../../ts-types/base-table';
+import { isNumber } from '@visactor/vutils';
 
 /**
  * @description: 创建单元格内容
@@ -46,6 +49,7 @@ export function createCellContent(
   cellHeight: number,
   textAlign: CanvasTextAlign,
   textBaseline: CanvasTextBaseline,
+  table: BaseTableAPI,
   cellTheme?: IThemeSpec
 ) {
   const leftIcons: ColumnIconOption[] = [];
@@ -70,9 +74,11 @@ export function createCellContent(
     // 没有icon，cellGroup只添加WrapText
     const text = convertInternal(textStr).replace(/\r?\n/g, '\n').replace(/\r/g, '\n').split('\n');
 
+    const hierarchyOffset = getHierarchyOffset(cellGroup.col, cellGroup.row, table);
+
     const attribute = {
-      text, // 单行(no-autoWrapText)为字符串，多行(autoWrapText)为字符串数组
-      maxLineWidth: autoColWidth ? Infinity : cellWidth - (padding[1] + padding[3]),
+      text: text.length === 1 && !autoWrapText ? text[0] : text, // 单行(no-autoWrapText)为字符串，多行(autoWrapText)为字符串数组
+      maxLineWidth: autoColWidth ? Infinity : cellWidth - (padding[1] + padding[3] + hierarchyOffset),
       // fill: true,
       // textAlign: 'left',
       textBaseline: 'top',
@@ -80,7 +86,8 @@ export function createCellContent(
       lineClamp,
       // widthLimit: autoColWidth ? -1 : colWidth - (padding[1] + padding[3]),
       heightLimit: autoRowHeight ? -1 : cellHeight - (padding[0] + padding[2]),
-      pickable: false
+      pickable: false,
+      dx: hierarchyOffset
     };
     const wrapText = new WrapText(
       cellTheme && cellTheme.text ? (Object.assign({}, cellTheme.text, attribute) as any) : attribute
@@ -124,7 +131,7 @@ export function createCellContent(
 
     // 添加非cell icon & absolute icon
     leftIcons.forEach(icon => {
-      const iconMark = dealWithIcon(icon);
+      const iconMark = dealWithIcon(icon, undefined, cellGroup.col, cellGroup.row, table);
       iconMark.role = 'icon-left';
       iconMark.name = icon.name;
       iconMark.setAttribute('x', leftIconWidth + (iconMark.attribute.marginLeft ?? 0));
@@ -135,7 +142,7 @@ export function createCellContent(
     });
 
     rightIcons.forEach(icon => {
-      const iconMark = dealWithIcon(icon);
+      const iconMark = dealWithIcon(icon, undefined, cellGroup.col, cellGroup.row, table);
       iconMark.role = 'icon-right';
       iconMark.name = icon.name;
       iconMark.setAttribute('x', rightIconWidth + (iconMark.attribute.marginLeft ?? 0));
@@ -146,7 +153,7 @@ export function createCellContent(
     });
 
     absoluteLeftIcons.forEach(icon => {
-      const iconMark = dealWithIcon(icon);
+      const iconMark = dealWithIcon(icon, undefined, cellGroup.col, cellGroup.row, table);
       iconMark.role = 'icon-absolute-left';
       iconMark.name = icon.name;
       iconMark.setAttribute('x', absoluteLeftIconWidth + (iconMark.attribute.marginLeft ?? 0));
@@ -156,7 +163,7 @@ export function createCellContent(
     });
 
     absoluteRightIcons.forEach(icon => {
-      const iconMark = dealWithIcon(icon);
+      const iconMark = dealWithIcon(icon, undefined, cellGroup.col, cellGroup.row, table);
       iconMark.role = 'icon-absolute-right';
       iconMark.name = icon.name;
       iconMark.setAttribute('x', absoluteRightIconWidth + (iconMark.attribute.marginLeft ?? 0));
@@ -171,7 +178,7 @@ export function createCellContent(
     if (inlineFrontIcons.length === 0 && inlineEndIcons.length === 0) {
       const text = convertInternal(textStr).replace(/\r?\n/g, '\n').replace(/\r/g, '\n').split('\n');
       const attribute = {
-        text, // 单行(no-autoWrapText)为字符串，多行(autoWrapText)为字符串数组
+        text: text.length === 1 && !autoWrapText ? text[0] : text, // 单行(no-autoWrapText)为字符串，多行(autoWrapText)为字符串数组
         maxLineWidth: autoColWidth ? Infinity : cellWidth - (padding[1] + padding[3]) - leftIconWidth - rightIconWidth,
         // fill: true,
         // textAlign: 'left',
@@ -241,13 +248,13 @@ export function createCellContent(
       });
 
       contentLeftIcons.forEach(icon => {
-        const iconMark = dealWithIcon(icon);
+        const iconMark = dealWithIcon(icon, undefined, cellGroup.col, cellGroup.row, table);
         iconMark.role = 'icon-content-left';
         iconMark.name = icon.name;
         cellContent.addLeftOccupyingIcon(iconMark);
       });
       contentRightIcons.forEach(icon => {
-        const iconMark = dealWithIcon(icon);
+        const iconMark = dealWithIcon(icon, undefined, cellGroup.col, cellGroup.row, table);
         iconMark.role = 'icon-content-right';
         iconMark.name = icon.name;
         cellContent.addRightOccupyingIcon(iconMark);
@@ -322,7 +329,13 @@ export function createCellContent(
  * @param {ColumnIconOption} icon
  * @return {*}
  */
-export function dealWithIcon(icon: ColumnIconOption, mark?: Icon): Icon {
+export function dealWithIcon(
+  icon: ColumnIconOption,
+  mark?: Icon,
+  col?: number,
+  row?: number,
+  table?: BaseTableAPI
+): Icon {
   // positionType在外部处理
   const iconAttribute = {} as any;
 
@@ -344,7 +357,18 @@ export function dealWithIcon(icon: ColumnIconOption, mark?: Icon): Icon {
   iconAttribute.visibleTime = icon.visibleTime ?? 'always';
   iconAttribute.funcType = icon.funcType;
 
-  iconAttribute.marginLeft = icon.marginLeft ?? 0;
+  let hierarchyOffset = 0;
+  if (
+    isNumber(col) &&
+    isNumber(row) &&
+    table &&
+    (icon.funcType === IconFuncTypeEnum.collapse || icon.funcType === IconFuncTypeEnum.expand)
+  ) {
+    // compute hierarchy offset
+    hierarchyOffset = getHierarchyOffset(col, row, table);
+  }
+
+  iconAttribute.marginLeft = (icon.marginLeft ?? 0) + hierarchyOffset;
   iconAttribute.marginRight = icon.marginRight ?? 0;
 
   if (icon.interactive) {
@@ -521,7 +545,7 @@ export function updateCellContentWidth(
     newHeight = cellGroup.attribute.height - (padding[0] + padding[2]);
 
     cellGroup.forEachChildren((child: any) => {
-      if (child.type === 'rect') {
+      if (child.type === 'rect' || child.type === 'chart') {
         return;
       }
       if (child.name === 'mark') {
@@ -536,7 +560,7 @@ export function updateCellContentWidth(
     });
   } else if (textBaseline === 'middle' || textBaseline === 'bottom') {
     cellGroup.forEachChildren((child: any) => {
-      if (child.type === 'rect') {
+      if (child.type === 'rect' || child.type === 'chart') {
         return;
       }
       if (child.name === 'mark') {

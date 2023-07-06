@@ -30,6 +30,9 @@ import type { PivotTable } from '../PivotTable';
 import { NumberMap } from '../tools/NumberMap';
 import type { Either } from '../tools/helper';
 import { IndicatorDimensionKeyPlaceholder } from '../tools/global';
+import { diffCellAddress } from '../tools/diff-cell';
+import type { ILinkDimension } from '../ts-types/pivot-table/dimension/link-dimension';
+import type { IImageDimension } from '../ts-types/pivot-table/dimension/image-dimension';
 interface IPivotLayoutBaseHeadNode {
   id: number;
   // dimensionKey: string;
@@ -635,13 +638,13 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
         headerType: dimensionInfo?.headerType ?? 'text',
         headerIcon: dimensionInfo?.headerIcon,
         define: Object.assign(<any>hd, {
-          linkJump: 'linkJump' in dimensionInfo ? dimensionInfo.linkJump : null,
-          linkDetect: 'linkDetect' in dimensionInfo ? dimensionInfo.linkDetect : null,
-          templateLink: 'templateLink' in dimensionInfo ? dimensionInfo.templateLink : null,
+          linkJump: (dimensionInfo as ILinkDimension)?.linkJump,
+          linkDetect: (dimensionInfo as ILinkDimension)?.linkDetect,
+          templateLink: (dimensionInfo as ILinkDimension)?.templateLink,
 
           // image相关 to be fixed
-          keepAspectRatio: 'keepAspectRatio' in dimensionInfo ? dimensionInfo.keepAspectRatio : false,
-          imageAutoSizing: 'imageAutoSizing' in dimensionInfo ? dimensionInfo.imageAutoSizing : null,
+          keepAspectRatio: (dimensionInfo as IImageDimension)?.keepAspectRatio ?? false,
+          imageAutoSizing: (dimensionInfo as IImageDimension)?.imageAutoSizing,
 
           headerCustomRender: dimensionInfo?.headerCustomRender,
           headerCustomLayout: dimensionInfo?.headerCustomLayout,
@@ -1028,7 +1031,7 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
       const row = this._columnHeaderCellIds[i];
       for (let j = 0; j < row.length; j++) {
         if (row[j] === id) {
-          return { col: j, row: i };
+          return { col: j + this._table.frozenColCount, row: i };
         }
       }
     }
@@ -1036,7 +1039,7 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
       const row = this._rowHeaderCellIds[i];
       for (let j = 0; j < row.length; j++) {
         if (row[j] === id) {
-          return { col: j, row: i };
+          return { col: j, row: i + this._table.frozenRowCount };
         }
       }
     }
@@ -1323,6 +1326,8 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
    * @param row
    */
   toggleHierarchyState(col: number, row: number) {
+    const oldRowHeaderCellIds = this._rowHeaderCellIds.slice(0);
+    const oldRowHeaderCellPositons = oldRowHeaderCellIds.map(id => this.getHeaderCellAdress(id[0]));
     const hd = this.getHeader(col, row);
     (<any>hd.define).hierarchyState =
       (<any>hd.define).hierarchyState === HierarchyState.collapse ? HierarchyState.expand : HierarchyState.collapse;
@@ -1373,6 +1378,8 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
       return o;
     }, {} as { [key: LayoutObjectId]: HeaderData });
     this._CellHeaderPathMap = new Map();
+
+    return diffCellAddress(oldRowHeaderCellIds, this._rowHeaderCellIds, oldRowHeaderCellPositons, this);
   }
   // 为列宽计算专用，兼容列表
   isHeaderForColWidth(col: number, row: number): boolean {

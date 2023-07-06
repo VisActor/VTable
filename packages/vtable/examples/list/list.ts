@@ -14,65 +14,67 @@ const generatePersons = count => {
   }));
 };
 
-const records = generatePersons(1000000);
-const columns: VTable.ColumnsDefine = [
-  {
-    field: 'id',
-    caption: 'ID',
-    width: 120,
-    sort: true
-  },
-  {
-    field: 'email1',
-    caption: 'email',
-    width: 200,
-    sort: true
-  },
-  {
-    caption: 'full name',
-    columns: [
-      {
-        field: 'name',
-        caption: 'First Name',
-        width: 200
-      },
-      {
-        field: 'name',
-        caption: 'Last Name',
-        width: 200
-      }
-    ]
-  },
-  {
-    field: 'date1',
-    caption: 'birthday',
-    width: 200
-  },
-  {
-    field: 'sex',
-    caption: 'sex',
-    width: 100
-  },
-  {
-    field: 'tel',
-    caption: 'telephone',
-    width: 150
-  },
-  {
-    field: 'work',
-    caption: 'job',
-    width: 200
-  },
-  {
-    field: 'city',
-    caption: 'city',
-    width: 150
-  }
-];
-const option = {
-  parentElement: document.getElementById(Table_CONTAINER_DOM_ID),
-  records,
-  columns
-};
-const tableInstance = new VTable.ListTable(option);
-window.tableInstance = tableInstance;
+export function createTable() {
+  const records = generatePersons(1000000);
+  const columns: VTable.ColumnsDefine = [
+    {
+      field: 'id',
+      caption: 'ID',
+      width: 120,
+      sort: true
+    },
+    {
+      field: 'email1',
+      caption: 'email',
+      width: 200,
+      sort: true
+    },
+    {
+      caption: 'full name',
+      columns: [
+        {
+          field: 'name',
+          caption: 'First Name',
+          width: 200
+        },
+        {
+          field: 'name',
+          caption: 'Last Name',
+          width: 200
+        }
+      ]
+    },
+    {
+      field: 'date1',
+      caption: 'birthday',
+      width: 200
+    },
+    {
+      field: 'sex',
+      caption: 'sex',
+      width: 100
+    },
+    {
+      field: 'tel',
+      caption: 'telephone',
+      width: 150
+    },
+    {
+      field: 'work',
+      caption: 'job',
+      width: 200
+    },
+    {
+      field: 'city',
+      caption: 'city',
+      width: 150
+    }
+  ];
+  const option = {
+    parentElement: document.getElementById(Table_CONTAINER_DOM_ID),
+    records,
+    columns
+  };
+  const tableInstance = new VTable.ListTable(option);
+  window.tableInstance = tableInstance;
+}

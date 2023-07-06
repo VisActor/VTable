@@ -10,13 +10,13 @@ import type {
 } from '../../ts-types';
 import { Group } from '../graphic/group';
 import { getProp, getRawProp } from '../utils/get-prop';
-import type { MergeMap } from './column';
-import { getPadding } from '../utils/padding';
-import { parseFont } from '../utils/font';
+import type { MergeMap } from '../scenegraph';
 import type { PivotHeaderLayoutMap } from '../../layout/pivot-header-layout';
 import { createCell } from './cell-helper';
 import type { BaseTableAPI, PivotTableProtected } from '../../ts-types/base-table';
 import { getStyleTheme } from '../../core/tableHelper';
+import { isPromise } from '../../tools/helper';
+import { dealPromiseData } from '../utils/deal-promise-data';
 /**
  * 创建复合列 同一列支持创建不同类型单元格
  * @param columnGroup 列Group
@@ -43,9 +43,7 @@ export function createComplexColumn(
   defaultRowHeight: number | number[],
   table: BaseTableAPI,
   cellType: CellType,
-  rowLimit?: number,
-  customRender?: ICustomRender,
-  customLayout?: ICustomLayout
+  rowLimit?: number
 ) {
   let maxWidth = 0;
   let padding;
@@ -102,16 +100,17 @@ export function createComplexColumn(
       }
     );
   }
+  // insert cell into column group top
   let y = 0;
-  if ((columnGroup.lastChild as Group)?.attribute) {
-    // 支持插入单元格
-    y = (columnGroup.lastChild as Group).attribute.y + (columnGroup.lastChild as Group).attribute.height;
+  if (columnGroup.colHeight) {
+    // insert cell into column group bottom
+    y = columnGroup.colHeight;
   }
 
   for (let j = rowStart; j <= rowEnd; j++) {
     const row = j;
     const define = cellType !== 'body' ? table.getHeaderDefine(col, row) : table.getBodyColumnDefine(col, row);
-    const mayHaveIcon = cellType !== 'body' ? true : !!define?.icon;
+    const mayHaveIcon = cellType !== 'body' ? true : !!define?.icon || !!define?.tree;
     let cellTheme;
     if (!useColumnTheme) {
       const headerStyle = table._getCellStyle(col, row);
@@ -172,12 +171,13 @@ export function createComplexColumn(
     // let cellWidth = 0;
     // let cellHeight = 0;
     if (mergeResult) {
+      const height = mergeResult.cellHeight / (range.end.row - range.start.row + 1);
       // 已有Merge单元格，使用空Group占位
       const cellGroup = new Group({
         x: 0,
         y,
         width: 0,
-        height: 0,
+        height,
         visible: false,
         pickable: false
       });
@@ -187,35 +187,78 @@ export function createComplexColumn(
       cellGroup.mergeCol = range.start.col;
       cellGroup.mergeRow = range.start.row;
       columnGroup.addChild(cellGroup);
+      columnGroup.updateColumnRowNumber(row);
+      columnGroup.updateColumnHeight(height);
       range = table.getCellRange(col, row);
-      y += mergeResult.cellHeight / (range.end.row - range.start.row + 1);
+      y += height;
       maxWidth = Math.max(maxWidth, mergeResult.cellWidth);
     } else {
-      const cellGroup = createCell(
-        type,
-        define,
-        table,
-        col,
-        row,
-        colWidth,
-        bgColorFunc,
-        customRender,
-        customLayout,
-        cellWidth,
-        cellHeight,
-        columnGroup,
-        y,
-        padding,
-        textAlign,
-        textBaseline,
-        mayHaveIcon,
-        isfunctionalProps,
-        isMerge,
-        range,
-        cellTheme
-      );
-      const height = cellGroup.attribute.height;
-      y += isMerge ? height / (range.end.row - range.start.row + 1) : height;
+      // deal with promise data
+      const value = table.getCellValue(col, row);
+      if (isPromise(value)) {
+        dealPromiseData(
+          value,
+          table,
+          createCell.bind(
+            null,
+            type,
+            define,
+            table,
+            col,
+            row,
+            colWidth,
+            bgColorFunc,
+            cellWidth,
+            cellHeight,
+            columnGroup,
+            y,
+            padding,
+            textAlign,
+            textBaseline,
+            mayHaveIcon,
+            isfunctionalProps,
+            isMerge,
+            range,
+            cellTheme
+          )
+        );
+        columnGroup.updateColumnRowNumber(row);
+        // const height = table.getRowHeight(row);
+        const height = isMerge
+          ? table.getRowHeight(row) / (range.end.row - range.start.row + 1)
+          : table.getRowHeight(row);
+        columnGroup.updateColumnHeight(height);
+        y += height;
+      } else {
+        const cellGroup = createCell(
+          type,
+          define,
+          table,
+          col,
+          row,
+          colWidth,
+          bgColorFunc,
+          cellWidth,
+          cellHeight,
+          columnGroup,
+          y,
+          padding,
+          textAlign,
+          textBaseline,
+          mayHaveIcon,
+          isfunctionalProps,
+          isMerge,
+          range,
+          cellTheme
+        );
+        columnGroup.updateColumnRowNumber(row);
+        // const height = cellGroup.attribute.height;
+        const height = isMerge
+          ? cellGroup.attribute.height / (range.end.row - range.start.row + 1)
+          : cellGroup.attribute.height;
+        columnGroup.updateColumnHeight(height);
+        y += height;
+      }
     }
     if (rowLimit && row > rowLimit) {
       break;

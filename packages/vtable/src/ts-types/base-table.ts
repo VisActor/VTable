@@ -286,6 +286,9 @@ export interface BaseTableConstructorOptions {
    * 计算列宽时 指定最大列宽 可设置boolean或者具体的值 默认为450
    */
   limitMaxAutoWidth?: boolean | number;
+
+  // maximum number of data items maintained in table instance
+  maintainedDataCount?: number;
 }
 export interface BaseTableAPI {
   /** 表格的行数 */
@@ -412,6 +415,7 @@ export interface BaseTableAPI {
   dispose: () => void;
   addDisposable: (disposable: { dispose: () => void }) => void;
   _getCellStyle: (col: number, row: number) => FullExtendStyle;
+  clearCellStyleCache: () => void;
 
   getFrozenRowsHeight: () => number;
   getFrozenColsWidth: () => number;
@@ -504,7 +508,13 @@ export interface BaseTableAPI {
   isPivotTable: (() => boolean) & (() => boolean);
 
   _clearColRangeWidthsMap: (col?: number) => void;
+  _clearRowRangeHeightsMap: (row?: number) => void;
 
+  toggleHierarchyState: (col: number, row: number) => void;
+
+  resize: () => void;
+
+  getMergeCellRect: (col: number, row: number) => Rect;
   //#endregion  tableAPI
 }
 export interface ListTableProtected extends IBaseTableProtected {

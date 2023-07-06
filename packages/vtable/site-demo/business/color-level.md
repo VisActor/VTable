@@ -1,8 +1,9 @@
 ---
 category: examples
-group: table-type pivot-table
+group: Business
 title: 销售热图
-cover:
+cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/color-level.png
+order: 9-1
 ---
 
 # 销售热图
@@ -15,7 +16,7 @@ cover:
 
 ## 代码演示
 
-```ts
+```javascript livedemo template=vtable
 function getColor(min, max, n) {
   if (max === min) {
     if (n > 0) {
@@ -30,7 +31,7 @@ function getColor(min, max, n) {
   return `rgb(${red},${green},255)`;
 }
 const option = {
-  parentElement: document.getElementById(Table_CONTAINER_DOM_ID),
+  parentElement: document.getElementById(CONTAINER_ID),
   columnResizeType: 'all',
   records: [
     {

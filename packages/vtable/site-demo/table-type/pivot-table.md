@@ -1,8 +1,9 @@
 ---
 category: examples
-group: table-type pivot-table
+group: table-type
 title: 透视表格
-cover:
+cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/pivot-table.png
+order: 1-4
 ---
 
 # 透视表格
@@ -11,18 +12,17 @@ cover:
 
 ## 关键配置
 
-
+- `PivotTable`
 ## 代码演示
 
-```ts
-// <script type='text/javascript' src='../sales.js'></script>
-// import { menus } from './menu';
-  fetch('../mock-data/North_American_Superstore_pivot.json')
+```javascript livedemo template=vtable
+
+  fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American_Superstore_pivot.json')
     .then((res) => res.json())
     .then((data) => {
 
 const option = {
-  parentElement: document.getElementById(Table_CONTAINER_DOM_ID),
+  parentElement: document.getElementById(CONTAINER_ID),
   records:data,
   "rowTree": [
         {
@@ -299,20 +299,54 @@ const option = {
                     "caption": "Quantity",
                     "width": "auto",
                     "showSort": false,
+                    "headerStyle":{
+                      fontWeight: "normal",
+                    },
+                     "format":(rec)=>{return '$'+Number(rec['230517143221042']).toFixed(2)},
+                     style:{
+                      padding:[16,28,16,28],
+                      color(args){
+                        if(args.dataValue>=0)
+                        return 'black';
+                        return 'red'
+                      }
+                     }
                 },
                 {
                     "indicatorKey": "230517143221040",
                     "caption": "Sales",
                     "width": "auto",
                     "showSort": false,
-                    "format":(rec)=>{return Number(rec['230517143221040']).toFixed(2)}
+                    "headerStyle":{
+                      fontWeight: "normal",
+                    },
+                    "format":(rec)=>{return '$'+Number(rec['230517143221040']).toFixed(2)},
+                    style:{
+                      padding:[16,28,16,28],
+                      color(args){
+                        if(args.dataValue>=0)
+                        return 'black';
+                        return 'red'
+                      }
+                     }
                 },
                 {
                     "indicatorKey": "230517143221041",
                     "caption": "Profit",
                     "width": "auto",
                     "showSort": false,
-                    "format":(rec)=>{return Number(rec['230517143221041']).toFixed(2)}
+                    "headerStyle":{
+                      fontWeight: "normal",
+                    },
+                    "format":(rec)=>{return '$'+Number(rec['230517143221041']).toFixed(2)},
+                    style:{
+                      padding:[16,28,16,28],
+                      color(args){
+                        if(args.dataValue>=0)
+                        return 'black';
+                        return 'red'
+                      }
+                     }
                 }
             ],
     "corner": {

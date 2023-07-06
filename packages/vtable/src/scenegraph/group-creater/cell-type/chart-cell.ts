@@ -58,6 +58,7 @@ export function createChartCellGroup(
   cellGroup.AABBBounds.width(); // TODO 需要底层VRender修改
   // chart
   const chartGroup = new Chart({
+    stroke: false,
     x: padding[3],
     y: padding[0],
     canvas: table.canvas,
@@ -68,11 +69,12 @@ export function createChartCellGroup(
     chartInstance,
     dataId: 'data',
     data: table.getCellValue(col, row),
+    cellPadding: padding,
     viewBox: {
-      x1: cellGroup.globalAABBBounds.x1 + (table as any).tableX + padding[3],
-      x2: cellGroup.globalAABBBounds.x1 + width + (table as any).tableX - padding[1],
-      y1: cellGroup.globalAABBBounds.y1 + (table as any).tableY + padding[0],
-      y2: cellGroup.globalAABBBounds.y1 + height + (table as any).tableY - padding[2]
+      x1: Math.ceil(cellGroup.globalAABBBounds.x1 + padding[3] + table.scrollLeft),
+      x2: Math.ceil(cellGroup.globalAABBBounds.x1 + width - padding[1] + table.scrollLeft),
+      y1: Math.ceil(cellGroup.globalAABBBounds.y1 + padding[0] + table.scrollTop),
+      y2: Math.ceil(cellGroup.globalAABBBounds.y1 + height - padding[2] + table.scrollTop)
     }
     // clipRect: {
     //   left: cellGroup.globalAABBBounds.x1 + (table as any).tableX + padding[3],
@@ -81,8 +83,34 @@ export function createChartCellGroup(
     //   height: height - padding[0] - padding[2],
     // },
   });
+
+  // 调试使用
+  // (chartGroup as Group).onBeforeAttributeUpdate = (val: any) => {
+  //   if (val.y === 9.5) {
+  //     console.log('ffffff------------------', val);
+  //   }
+  // };
   cellGroup.appendChild(chartGroup);
   // 将生成的实例存到columnGroup中 已共享
   columnGroup.setAttribute('chartInstance', chartGroup.chartInstance);
+
+  // 调试问题使用
+  // if (col === 2) {
+  //   columnGroup.AABBBounds.width();
+  //   chartGroup.AABBBounds.width();
+  //   console.log(
+  //     'set viewbox y1',
+  //     Math.ceil(cellGroup.globalAABBBounds.y1 + padding[0] + table.scrollTop),
+  //     chartGroup.globalAABBBounds.height()
+  //   );
+
+  //   console.log(
+  //     'create chart',
+  //     columnGroup,
+  //     columnGroup.globalAABBBounds.y1,
+  //     cellGroup.globalAABBBounds.y1,
+  //     chartGroup.globalAABBBounds.y1
+  //   );
+  // }
   return cellGroup;
 }

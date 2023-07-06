@@ -1,13 +1,14 @@
 ---
 category: examples
-group: table-type list-table
-title: 基本表格
-cover:
+group: Custom
+title: 自定义图标
+cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/custom-icon.png
+order: 7-2
 ---
 
-# 基本表格
+# 自定义图标
 
-选中单元格 配置选中效果
+在单元格中显示图标内容
 
 ## 关键配置
 
@@ -28,12 +29,12 @@ cover:
 `
 ## 代码演示
 
-```ts
+```javascript livedemo template=vtable
 
 VTable.register.icon('frozen',{
       type: 'svg',
       svg:
-       'http://' + window.location.host + "/mock-data/frozen.svg",
+       "https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/frozen.svg",
       width: 22,
       height: 22,
       name: 'frozen',
@@ -51,7 +52,7 @@ VTable.register.icon('frozen',{
   VTable.register.icon('frozenCurrent',{
       type: 'svg',
       svg:
-        'http://' + window.location.host + "/mock-data/frozenCurrent.svg",
+        "https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/frozenCurrent.svg",
       width: 22,
       height: 22,
       name: 'frozenCurrent',
@@ -71,7 +72,7 @@ VTable.register.icon('frozen',{
 VTable.register.icon('frozen',{
       type: 'svg',
       svg:
-        'http://' + window.location.host + "/mock-data/frozen.svg",
+        "https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/frozen.svg",
       width: 22,
       height: 22,
       name: 'frozen',
@@ -90,7 +91,7 @@ VTable.register.icon('frozen',{
   VTable.register.icon('order',{
       type: 'svg',
       svg:
-        'http://' + window.location.host + "/mock-data/order.svg",
+        "https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/order.svg",
       width: 22,
       height: 22,
       name: 'order',
@@ -104,9 +105,8 @@ VTable.register.icon('frozen',{
       cursor: 'pointer',
     }
   );
-// <script type='text/javascript' src='../sales.js'></script>
-// import { menus } from './menu';
-  fetch('../mock-data/North_American_Superstore_list100.json')
+
+  fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American_Superstore_list100.json')
     .then((res) => res.json())
     .then((data) => {
 
@@ -165,7 +165,7 @@ const columns =[
             positionType: VTable.TYPES.IconPosition.left,
             width:20,
             height:20,
-            svg:'http://' + window.location.host + "/mock-data/edit.svg",
+            svg:"https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/edit.svg",
             tooltip: {
               style: { arrowMark: true },
               // 气泡框，按钮的的解释信息
@@ -181,7 +181,7 @@ const columns =[
             positionType: VTable.TYPES.IconPosition.left,
             width:20,
             height:20,
-            svg:'http://' + window.location.host + "/mock-data/delete.svg",
+            svg:"https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/delete.svg",
             tooltip: {
               style: { arrowMark: true },
               // 气泡框，按钮的的解释信息
@@ -194,7 +194,7 @@ const columns =[
 ];
 
 const option = {
-  parentElement: document.getElementById(Table_CONTAINER_DOM_ID),
+  parentElement: document.getElementById(CONTAINER_ID),
   records:data,
   columns,
   widthMode:'standard',

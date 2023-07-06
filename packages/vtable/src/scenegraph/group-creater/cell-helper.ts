@@ -24,6 +24,8 @@ import { createVideoCellGroup } from './cell-type/video-cell';
 import type { ICustomLayoutFuc } from '../../ts-types/customLayout';
 import type { BaseTableAPI, PivotTableProtected } from '../../ts-types/base-table';
 import { getStyleTheme } from '../../core/tableHelper';
+import { isPromise } from '../../tools/helper';
+import { dealPromiseData } from '../utils/deal-promise-data';
 
 export function createCell(
   type: ColumnTypeOption,
@@ -33,8 +35,6 @@ export function createCell(
   row: number,
   colWidth: number,
   bgColorFunc: Function,
-  customRender: ICustomRender,
-  customLayout: ICustomLayoutFuc,
   cellWidth: number,
   cellHeight: number,
   columnGroup: Group,
@@ -94,8 +94,19 @@ export function createCell(
       }
     }
 
-    let elementsGroup;
+    let customElementsGroup;
     let renderDefault = true;
+    let customRender;
+    let customLayout;
+    const cellType = table.getCellType(col, row);
+    if (cellType !== 'body') {
+      customRender = define?.headerCustomRender;
+      customLayout = define?.headerCustomLayout;
+    } else {
+      customRender = define?.customRender || table.customRender;
+      customLayout = define?.customLayout;
+    }
+
     if (customLayout || customRender) {
       const { autoRowHeight } = table.internalProps;
       const customResult = dealWithCustom(
@@ -109,7 +120,7 @@ export function createCell(
         autoRowHeight,
         table
       );
-      elementsGroup = customResult.elementsGroup;
+      customElementsGroup = customResult.elementsGroup;
       renderDefault = customResult.renderDefault;
     }
     cellGroup = createCellGroup(
@@ -127,19 +138,13 @@ export function createCell(
       textBaseline,
       mayHaveIcon,
       isfunctionalProps,
+      customElementsGroup,
       renderDefault,
       cellTheme
     );
     if (isMerge) {
       cellGroup.mergeCol = range.end.col;
       cellGroup.mergeRow = range.end.row;
-    }
-    if (elementsGroup) {
-      cellGroup.appendChild(elementsGroup);
-      cellGroup.setAttributes({
-        width: Math.max(cellGroup.attribute.width, elementsGroup.attribute.width),
-        height: Math.max(cellGroup.attribute.height, elementsGroup.attribute.height)
-      });
     }
   } else if (type === 'image') {
     // 创建图片单元格
@@ -214,6 +219,7 @@ export function createCell(
       textBaseline,
       false,
       true,
+      null,
       true,
       cellTheme
     );
@@ -239,7 +245,7 @@ export function createCell(
   return cellGroup;
 }
 
-export function updateCell(col: number, row: number, table: BaseTableAPI) {
+export function updateCell(col: number, row: number, table: BaseTableAPI, addNew?: boolean) {
   const oldCellGroup = table.scenegraph.getCell(col, row, true);
 
   const type = table.isHeader(col, row)
@@ -261,7 +267,7 @@ export function updateCell(col: number, row: number, table: BaseTableAPI) {
     // 合并单元格的非起始单元格不需要绘制
     newCellGroup = new Group({
       x: 0,
-      y: oldCellGroup.attribute.y,
+      y: addNew ? 0 : oldCellGroup.attribute.y,
       width: 0,
       height: 0,
       visible: false,
@@ -272,8 +278,13 @@ export function updateCell(col: number, row: number, table: BaseTableAPI) {
     newCellGroup.row = row;
     newCellGroup.mergeCol = range.start.col;
     newCellGroup.mergeRow = range.start.row;
+
+    if (!addNew) {
+      oldCellGroup.parent.insertAfter(newCellGroup, oldCellGroup);
+      oldCellGroup.parent.removeChild(oldCellGroup);
+    }
   } else {
-    const mayHaveIcon = cellType !== 'body' ? true : !!define?.icon;
+    const mayHaveIcon = cellType !== 'body' ? true : !!define?.icon || !!define?.tree;
     const headerStyle = table._getCellStyle(col, row);
     const cellTheme = getStyleTheme(headerStyle, table, col, row, getProp).theme;
     const padding = cellTheme._vtable.padding;
@@ -312,31 +323,110 @@ export function updateCell(col: number, row: number, table: BaseTableAPI) {
       cellHeight = table.getRowHeight(row);
     }
 
-    newCellGroup = createCell(
-      type,
-      define,
-      table,
-      col,
-      row,
-      table.getColWidth(col),
-      bgColorFunc,
-      customRender,
-      customLayout,
-      cellWidth,
-      cellHeight,
-      oldCellGroup.parent,
-      oldCellGroup.attribute.y,
-      padding,
-      textAlign,
-      textBaseline,
-      mayHaveIcon,
-      false,
-      isMerge,
-      range,
-      cellTheme
-    );
+    // deal with promise data
+    const value = table.getCellValue(col, row);
+    if (isPromise(value)) {
+      // clear cell content sync
+      oldCellGroup.removeAllChild();
+
+      // update cell content async
+      dealPromiseData(
+        value,
+        table,
+        updateCellContent.bind(
+          null,
+          type,
+          define,
+          table,
+          col,
+          row,
+          bgColorFunc,
+          customRender,
+          customLayout,
+          cellWidth,
+          cellHeight,
+          oldCellGroup,
+          padding,
+          textAlign,
+          textBaseline,
+          mayHaveIcon,
+          isMerge,
+          range,
+          addNew,
+          cellTheme
+        )
+      );
+    } else {
+      newCellGroup = updateCellContent(
+        type,
+        define,
+        table,
+        col,
+        row,
+        bgColorFunc,
+        cellWidth,
+        cellHeight,
+        oldCellGroup,
+        padding,
+        textAlign,
+        textBaseline,
+        mayHaveIcon,
+        isMerge,
+        range,
+        addNew,
+        cellTheme
+      );
+    }
   }
 
-  oldCellGroup.parent.insertAfter(newCellGroup, oldCellGroup);
-  oldCellGroup.parent.removeChild(oldCellGroup);
+  return newCellGroup;
+}
+
+function updateCellContent(
+  type: ColumnTypeOption,
+  define: ColumnDefine,
+  table: BaseTableAPI,
+  col: number,
+  row: number,
+  bgColorFunc: Function,
+  cellWidth: number,
+  cellHeight: number,
+  oldCellGroup: Group,
+  padding: [number, number, number, number],
+  textAlign: CanvasTextAlign,
+  textBaseline: CanvasTextBaseline,
+  mayHaveIcon: boolean,
+  isMerge: boolean,
+  range: CellRange,
+  addNew: boolean,
+  cellTheme?: IThemeSpec
+) {
+  const newCellGroup = createCell(
+    type,
+    define,
+    table,
+    col,
+    row,
+    table.getColWidth(col),
+    bgColorFunc,
+    cellWidth,
+    cellHeight,
+    // oldCellGroup.parent,
+    addNew ? table.scenegraph.getColGroup(col) : oldCellGroup.parent,
+    // oldCellGroup.attribute.y,
+    addNew ? 0 : oldCellGroup.attribute.y,
+    padding,
+    textAlign,
+    textBaseline,
+    mayHaveIcon,
+    false,
+    isMerge,
+    range,
+    cellTheme
+  );
+  if (!addNew) {
+    oldCellGroup.parent.insertAfter(newCellGroup, oldCellGroup);
+    oldCellGroup.parent.removeChild(oldCellGroup);
+  }
+  return newCellGroup;
 }
