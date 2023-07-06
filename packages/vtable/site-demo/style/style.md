@@ -2,7 +2,8 @@
 category: examples
 group: table-type pivot-table
 title: 样式
-cover:
+cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/style.png
+order: 5-1
 ---
 
 # 样式
@@ -17,15 +18,14 @@ cover:
 
 ## 代码演示
 
-```ts
-// <script type='text/javascript' src='../sales.js'></script>
-// import { menus } from './menu';
-  fetch('../mock-data/North_American_Superstore_pivot.json')
+```javascript livedemo template=vtable
+
+  fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American_Superstore_pivot.json')
     .then((res) => res.json())
     .then((data) => {
 
 const option = {
-        parentElement: document.getElementById(Table_CONTAINER_DOM_ID),
+        parentElement: document.getElementById(CONTAINER_ID),
         records: data,
         "rowTree": [{
             "dimensionKey": "230517143221047",

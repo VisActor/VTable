@@ -1,11 +1,12 @@
 ---
 category: examples
-group: table-type list-table
-title: 表格列宽适应容器宽度
-cover:
+group: Basic Features
+title: 适应容器宽度
+cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/width-mode-adaptive.png
+order: 3-5
 ---
 
-# 列宽模式
+# 列宽模式-适应容器宽度
 
 表格列宽适应容器宽度
 
@@ -15,10 +16,9 @@ cover:
 
 ## 代码演示
 
-```ts
-// <script type='text/javascript' src='../sales.js'></script>
-// import { menus } from './menu';
-  fetch('../mock-data/North_American_Superstore_list100.json')
+```javascript livedemo template=vtable
+
+  fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American_Superstore_list100.json')
     .then((res) => res.json())
     .then((data) => {
 
@@ -81,7 +81,7 @@ const columns =[
 ];
 
 const option = {
-  parentElement: document.getElementById(Table_CONTAINER_DOM_ID),
+  parentElement: document.getElementById(CONTAINER_ID),
   records:data,
   columns,
   widthMode: 'adaptive'

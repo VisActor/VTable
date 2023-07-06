@@ -1,13 +1,14 @@
 ---
 category: examples
-group: table-type list-table
-title: 基本表格
-cover:
+group: Basic Features
+title: 冻结列
+cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/frozen-col.gif
+order: 3-3
 ---
 
-# 基本表格
+# 冻结列
 
-选中单元格 配置选中效果
+为了在横向滚动过程中，始终保持这些关键信息列可见，我们需要将这些列进行“冻结”。
 
 ## 关键配置
 
@@ -17,10 +18,9 @@ cover:
 
 ## 代码演示
 
-```ts
-// <script type='text/javascript' src='../sales.js'></script>
-// import { menus } from './menu';
-  fetch('../mock-data/North_American_Superstore_list100.json')
+```javascript livedemo template=vtable
+
+  fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American_Superstore_list100.json')
     .then((res) => res.json())
     .then((data) => {
 
@@ -83,7 +83,7 @@ const columns =[
 ];
 
 const option = {
-  parentElement: document.getElementById(Table_CONTAINER_DOM_ID),
+  parentElement: document.getElementById(CONTAINER_ID),
   records:data,
   columns,
   widthMode:'standard',

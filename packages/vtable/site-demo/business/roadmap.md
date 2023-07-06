@@ -1,19 +1,20 @@
 ---
 category: examples
-group: business road
+group: Business
 title: 产品路线图
-cover:
+cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/roadmap.png
+order: 9-6
 ---
 
 # 路线图
 
-该示例展示了VTable后续的主要研发能力
+该示例展示了VTable后续的主要研发路线图
 
 ## 关键配置
 
 ## 代码演示
 
-```ts
+```javascript livedemo template=vtable
 // 注册里程碑的icon 小旗帜
   VTable.register.icon('milestone', {
     name: 'milestone',
@@ -125,7 +126,7 @@ cover:
     }
   ];
   const option = {
-    parentElement:document.getElementById(Table_CONTAINER_DOM_ID),
+    parentElement:document.getElementById(CONTAINER_ID),
     columns: [
       {
         field: 'month',

@@ -1,13 +1,14 @@
 ---
 category: examples
-group: table-type pivot-table
-title: 透视表格
-cover:
+group: Interaction
+title: 调整列宽
+cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/resize-col-width.gif
+order: 4-4
 ---
 
-# 透视表格
+# 调整列宽
 
-在这个demo中配置了columnResizeMode为header，指定了调整列宽只能作用于表头部分
+鼠标放置在列间隔线上出现调整列宽的鼠标样式，可拖拽进行列宽调整。
 
 ## 关键配置
 
@@ -21,15 +22,14 @@ cover:
 
 ## 代码演示
 
-```ts
-// <script type='text/javascript' src='../sales.js'></script>
-// import { menus } from './menu';
-  fetch('../mock-data/North_American_Superstore_pivot.json')
+```javascript livedemo template=vtable
+
+  fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American_Superstore_pivot.json')
     .then((res) => res.json())
     .then((data) => {
 
 const option = {
-  parentElement: document.getElementById(Table_CONTAINER_DOM_ID),
+  parentElement: document.getElementById(CONTAINER_ID),
   columnResizeMode:'header',
   records:data,
   "rowTree": [

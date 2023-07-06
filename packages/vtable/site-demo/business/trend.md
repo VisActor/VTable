@@ -1,8 +1,9 @@
 ---
 category: examples
-group: table-type pivot-table
+group: Business
 title: 趋势表
-cover:
+cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/trend.png
+order: 9-4
 ---
 
 # 趋势表
@@ -17,7 +18,7 @@ cover:
 
 ## 代码演示
 
-```ts
+```javascript livedemo template=vtable
 function generateLineData1(count) {
   const lineData = [];
   for (let i = 0; i < count; i++) {
@@ -35,6 +36,10 @@ const option = {
       {
         dimensionKey: 'order_data',
         value: '利润金额',
+      },
+      {
+        dimensionKey: 'order_data',
+        value: '销售金额',
       },
       {
         dimensionKey: 'order_data',
@@ -244,7 +249,7 @@ const option = {
           if (dataValue > 0) {
             return {
               type: 'svg',
-              svg: 'http://' + window.location.host + "/mock-data/up-arrow.svg",
+              svg: "https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/up-arrow.svg",
               width: 12,
               height: 12,
               name: 'up-green',
@@ -253,7 +258,7 @@ const option = {
           } else if (dataValue < 0)
             return {
               type: 'svg',
-              svg: 'http://' + window.location.host + "/mock-data/down-arrow.svg",
+              svg: "https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/down-arrow.svg",
               width: 14,
               height: 14,
               name: 'down-red',
@@ -341,6 +346,11 @@ const option = {
         time: '2020',
         data: 102504,
         ratio: 0.11,
+      }, {
+        order_data: '销售金额',
+        time: '2020',
+        data: 202504,
+        ratio: 0.11,
       },
       {
         order_data: '运输成本',
@@ -359,6 +369,12 @@ const option = {
         time: '2021',
         data: 302504,
         ratio: -0.12,
+      },
+       {
+        order_data: '销售金额',
+        time: '2020',
+        data: 302504,
+        ratio: 0.11,
       },
       {
         order_data: '运输成本',
@@ -463,6 +479,54 @@ const option = {
         ratio: 0.12,
       },
       {
+        order_data: '销售金额',
+        time: '2020Q1',
+        data: 2304,
+        // "ratio":0.12
+      },
+      {
+        order_data: '销售金额',
+        time: '2020Q2',
+        data: 2504,
+        ratio: 0.12,
+      },
+      {
+        order_data: '销售金额',
+        time: '2020Q3',
+        data: 2904,
+        ratio: 0.12,
+      },
+      {
+        order_data: '销售金额',
+        time: '2020Q4',
+        data: 2704,
+        ratio: -0.08,
+      },
+      {
+        order_data: '销售金额',
+        time: '2021Q1',
+        data: 2304,
+        ratio: 0.12,
+      },
+      {
+        order_data: '销售金额',
+        time: '2021Q2',
+        data: 5304,
+        ratio: 0.12,
+      },
+      {
+        order_data: '销售金额',
+        time: '2021Q3',
+        data: 3304,
+        ratio: 0.12,
+      },
+      {
+        order_data: '销售金额',
+        time: '2021Q4',
+        data: 3304,
+        ratio: 0.12,
+      },
+      {
         order_data: '运输成本',
         time: '2020Q1',
         data: 2304,
@@ -521,6 +585,11 @@ const option = {
         lineData: generateLineData1(30),
       },
       {
+        order_data: '销售金额',
+        time: 'line',
+        lineData: generateLineData1(30),
+      },
+      {
         order_data: '运输成本',
         time: 'line',
         lineData: generateLineData1(30),
@@ -550,7 +619,7 @@ const option = {
       },
     },
     defaultColWidth: 200,
-    parentElement: document.getElementById(Table_CONTAINER_DOM_ID),
+    parentElement: document.getElementById(CONTAINER_ID),
     columnResizeType: 'indicatorGroup',
   };
 const tableInstance = new VTable.PivotTable(option);

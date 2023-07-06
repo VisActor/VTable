@@ -1,8 +1,9 @@
 ---
 category: examples
-group: table-type list-table
+group: Component
 title: 下拉菜单
-cover:
+cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/dropdown.png
+order: 8-2
 ---
 
 # 下拉菜单
@@ -18,11 +19,11 @@ cover:
 
 ## 代码演示
 
-```ts
+```javascript livedemo template=vtable
   VTable.register.icon('order',{
       type: 'svg',
       svg:
-        'http://' + window.location.host + "/mock-data/order.svg",
+        "https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/order.svg",
       width: 22,
       height: 22,
       name: 'order',
@@ -44,7 +45,7 @@ cover:
             funcType: VTable.TYPES.IconFuncTypeEnum.dropDown,
             width:20,
             height:20,
-            svg:'http://' + window.location.host + "/mock-data/dropdown.svg",
+            svg:"https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/dropdown.svg",
             marginLeft:10,
             tooltip: {
               style: { arrowMark: true,font:10,bgColor:'white',color:'black' },
@@ -75,9 +76,8 @@ cover:
   //     visibleTime: 'mouseenter_cell',
   //   }
   // );
-// <script type='text/javascript' src='../sales.js'></script>
-// import { menus } from './menu';
-  fetch('../mock-data/North_American_Superstore_list100.json')
+
+  fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American_Superstore_list100.json')
     .then((res) => res.json())
     .then((data) => {
 
@@ -93,7 +93,7 @@ const columns =[
           text: '按利润',
           icon: {
             svg: '<svg width="14" height="14" viewBox="0 0 96 96" fill="none" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" clip-rule="evenodd" d="M71 89.0005L54 71.9719L54 60L67.004 73.025L67.0032 25L75.0032 25L75.004 73.017L88 60V71.9719L71 89.0005ZM48 81V89H8V81H48ZM48 45V53H8V45H48ZM88 9V17H8V9H88Z" fill="#2e2f32" fill-opacity="0.9"></path></svg>',
-            // svg: 'http://' + window.location.host + "/mock-data/order.svg",
+            // svg: "https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/order.svg",
             // width: 15,
             // height: 15,
           },
@@ -144,7 +144,7 @@ const columns =[
 ];
 
 const option = {
-  parentElement: document.getElementById(Table_CONTAINER_DOM_ID),
+  parentElement: document.getElementById(CONTAINER_ID),
   records:data,
   columns,
   widthMode:'standard',
@@ -168,7 +168,7 @@ tableInstance.listen('click_cell', (args) => {
             text: '删除',
             menuKey: 'delete',
             // icon: {
-            //   svg:  'http://' + window.location.host + "/mock-data/order.svg",
+            //   svg:  "https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/order.svg",
             // },
             icon: {
               svg:  '<svg t="1684643332116" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="11284" width="200" height="200"><path d="M912.526651 867.741144 555.540144 510.712681l356.986507-357.000833c11.171434-11.18576 11.171434-29.257348 0-40.443108-11.20111-11.18576-29.272697-11.18576-40.444131 0L515.096013 470.267527 158.096203 113.267716c-11.187807-11.159154-29.258371-11.159154-40.444131 0-11.186783 11.186783-11.186783 29.286 0 40.47176L474.623229 510.712681 117.623419 867.741144c-11.159154 11.172457-11.159154 29.216415 0 40.443108 11.18576 11.17348 29.284977 11.17348 40.47176 0l357.000833-357.027439 356.985484 357.027439c11.171434 11.17348 29.243021 11.17348 40.444131 0C923.698085 896.957559 923.725714 878.913601 912.526651 867.741144z" fill="#5D5D5D" p-id="11285"></path></svg>',

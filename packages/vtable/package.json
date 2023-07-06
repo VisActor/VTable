@@ -1,6 +1,6 @@
 {
   "name": "@visactor/vtable",
-  "version": "0.9.1-alpha.4",
+  "version": "0.9.1-alpha.5",
   "description": "canvas table width high performance",
   "keywords": [
     "grid",
@@ -42,7 +42,6 @@
     "build": "bundle --clean",
     "dev": "bundle --clean -f es -w",
     "start": "vite ./vite",
-    "prepublishOnly": "npm run build",
     "test": "jest",
     "test-cov": "jest --coverage",
     "ci": "node github-ci.js"
@@ -95,7 +94,8 @@
     "vite-plugin-markdown": "^2.1.0",
     "markdown-it": "13.0.1",
     "node-fetch": "2.6.7",
-    "form-data": "~4.0.0"
+    "form-data": "~4.0.0",
+    "axios": "~1.4.0"
   },
   "unpkg": "latest",
   "unpkgFiles": [

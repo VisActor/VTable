@@ -1,21 +1,22 @@
 ---
 category: examples
-group: table-type list-table
-title: 基本表格
-cover:
+group: table-type
+title: 基本表格树形展示
+cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/list-tree.png
+order: 1-2
 ---
 
-# 基本表格
+# 基本表格树形展示
 
-基本表格
+基本表格树形展示，开启某一列的tree模式，同时配合数据源的树形结构children。
 
 ## 关键配置
 
 - tree:true 在某一列上设置开启树形展示
 ## 代码演示
 
-```ts
-  fetch('../mock-data/company_struct.json')
+```javascript livedemo template=vtable
+  fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/company_struct.json')
     .then((res) => res.json())
     .then((data) => {
 
@@ -70,7 +71,7 @@ const columns =[
 ];
 
 const option = {
-  parentElement: document.getElementById(Table_CONTAINER_DOM_ID),
+  parentElement: document.getElementById(CONTAINER_ID),
   records:data,
   columns,
   widthMode:'standard',
