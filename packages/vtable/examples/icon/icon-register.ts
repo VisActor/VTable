@@ -345,13 +345,13 @@ export function createTable() {
               title: '对象定义形式 非注册'
             }
           }
-        ]
-        // style: {
-        //   autoWrapText: true
-        // },
-        // headerStyle: {
-        //   autoWrapText: true
-        // }
+        ],
+        style: {
+          autoWrapText: true
+        },
+        headerStyle: {
+          autoWrapText: true
+        }
       },
       {
         field: 'id',
