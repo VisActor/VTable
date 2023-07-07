@@ -1,10 +1,10 @@
 import { Group } from '../../graphic/group';
-import { getCellTheme } from './text-cell';
 import { Chart } from '../../graphic/chart';
 import * as registerChartTypes from '../../../chartType';
 import { getFunctionalProp } from '../../utils/get-prop';
 import { isValid } from '../../../tools/util';
 import type { BaseTableAPI } from '../../../ts-types/base-table';
+import type { IThemeSpec } from '@visactor/vrender';
 export function createChartCellGroup(
   cellGroup: Group | null,
   columnGroup: Group,
@@ -19,12 +19,12 @@ export function createChartCellGroup(
   chartType: any,
   chartSpec: any,
   chartInstance: any,
-  table: BaseTableAPI
+  table: BaseTableAPI,
+  cellTheme: IThemeSpec
 ) {
   // 获取注册的chart图表类型
   const registerCharts = registerChartTypes.get();
   const ClassType = registerCharts[chartType];
-  const cellTheme = getCellTheme(table, col, row);
   const headerStyle = table._getCellStyle(col, row); // to be fixed
   const functionalPadding = getFunctionalProp('padding', headerStyle, col, row, table);
   if (isValid(functionalPadding)) {

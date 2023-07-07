@@ -8,6 +8,10 @@ export const menus = [
       },
       {
         path: 'list',
+        name: 'list-transpose'
+      },
+      {
+        path: 'list',
         name: 'list-tree'
       },
       {
@@ -215,6 +219,10 @@ export const menus = [
       {
         path: 'auto-size',
         name: 'auto-width'
+      },
+      {
+        path: 'auto-size',
+        name: 'auto-height'
       }
     ]
   },

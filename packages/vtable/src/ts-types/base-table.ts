@@ -515,6 +515,9 @@ export interface BaseTableAPI {
   resize: () => void;
 
   getMergeCellRect: (col: number, row: number) => Rect;
+
+  getTargetColAt: (absoluteX: number) => { col: number; left: number; right: number; width: number } | null;
+  getTargetRowAt: (absoluteY: number) => { row: number; top: number; bottom: number; height: number } | null;
   //#endregion  tableAPI
 }
 export interface ListTableProtected extends IBaseTableProtected {

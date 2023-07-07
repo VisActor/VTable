@@ -34,7 +34,6 @@ export class WrapText extends Text {
     // const textMeasure = graphicUtil.textMeasure;
     let width: number;
     let str: string;
-    const buf = 2;
     const attribute = this.attribute;
     const {
       maxLineWidth = textTheme.maxLineWidth,
@@ -44,7 +43,7 @@ export class WrapText extends Text {
       fontSize = textTheme.fontSize,
       fontFamily = textTheme.fontFamily,
       stroke = textTheme.stroke,
-      lineHeight = attribute.lineHeight ?? (attribute.fontSize ?? textTheme.lineHeight ?? textTheme.fontSize) + buf,
+      lineHeight = attribute.lineHeight ?? attribute.fontSize ?? textTheme.fontSize,
       lineWidth = textTheme.lineWidth
     } = attribute;
 
@@ -108,7 +107,7 @@ export class WrapText extends Text {
       textAlign = textTheme.textAlign,
       textBaseline = textTheme.textBaseline,
       fontSize = textTheme.fontSize,
-      lineHeight = this.attribute.lineHeight ?? this.attribute.fontSize ?? textTheme.lineHeight ?? textTheme.fontSize,
+      lineHeight = this.attribute.lineHeight ?? this.attribute.fontSize ?? textTheme.fontSize,
       ellipsis = textTheme.ellipsis,
       maxLineWidth,
       stroke = textTheme.stroke,

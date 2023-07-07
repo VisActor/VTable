@@ -50,7 +50,7 @@ export function createCellContent(
   textAlign: CanvasTextAlign,
   textBaseline: CanvasTextBaseline,
   table: BaseTableAPI,
-  cellTheme?: IThemeSpec
+  cellTheme: IThemeSpec
 ) {
   const leftIcons: ColumnIconOption[] = [];
   const rightIcons: ColumnIconOption[] = [];
@@ -89,9 +89,7 @@ export function createCellContent(
       pickable: false,
       dx: hierarchyOffset
     };
-    const wrapText = new WrapText(
-      cellTheme && cellTheme.text ? (Object.assign({}, cellTheme.text, attribute) as any) : attribute
-    );
+    const wrapText = new WrapText(cellTheme.text ? (Object.assign({}, cellTheme.text, attribute) as any) : attribute);
     wrapText.name = 'text';
 
     cellGroup.appendChild(wrapText);
@@ -189,9 +187,7 @@ export function createCellContent(
         autoWrapText,
         lineClamp
       };
-      const wrapText = new WrapText(
-        cellTheme && cellTheme.text ? (Object.assign({}, cellTheme.text, attribute) as any) : attribute
-      );
+      const wrapText = new WrapText(cellTheme.text ? (Object.assign({}, cellTheme.text, attribute) as any) : attribute);
       wrapText.name = 'text';
       textMark = wrapText;
     } else {
@@ -201,7 +197,7 @@ export function createCellContent(
         },
         (cellGroup.parent as Group)?.theme?.userTheme?.text || {}
       );
-      if (cellTheme && cellTheme.text) {
+      if (cellTheme.text) {
         Object.assign(textOption, cellTheme.text);
       }
       textOption.textBaseline = 'middle';
