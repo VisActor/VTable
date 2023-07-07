@@ -403,7 +403,7 @@ export function dealWithIcon(
  * @param {ColumnIconOption} icon
  * @return {*}
  */
-function dealWithRichTextIcon(icon: ColumnIconOption) {
+export function dealWithRichTextIcon(icon: ColumnIconOption) {
   // positionType在外部处理
   const config = {} as any;
 

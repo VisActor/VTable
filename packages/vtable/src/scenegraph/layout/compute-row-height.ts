@@ -9,6 +9,7 @@ import { WrapText } from '../graphic/text';
 import { getProp } from '../utils/get-prop';
 import { getQuadProps } from '../utils/padding';
 import { getCellRect } from './compute-col-width';
+import { dealWithRichTextIcon } from '../utils/text-icon-layout';
 
 const utilTextMark = new WrapText({
   autoWrapText: true
@@ -203,7 +204,7 @@ function computeTextHeight(col: number, row: number, table: BaseTableAPI): numbe
         icon.positionType !== IconPosition.inlineEnd
       ) {
         iconWidth += (icon.width ?? 0) + (icon.marginLeft ?? 0) + (icon.marginRight ?? 0);
-        iconHeight = Math.max(iconHeight, (icon.height ?? 0) + (icon.marginLeft ?? 0) + (icon.marginRight ?? 0));
+        iconHeight = Math.max(iconHeight, icon.height ?? 0);
       } else if (icon.positionType === IconPosition.inlineFront) {
         iconInlineFront.push(icon);
         iconInlineFrontHeight = Math.max(
@@ -233,37 +234,37 @@ function computeTextHeight(col: number, row: number, table: BaseTableAPI): numbe
   const lines = validToString(cellValue).split('\n') || [];
 
   if (iconInlineFront.length || iconInlineEnd.length) {
-    if (autoWrapText) {
-      const textOption = Object.assign({
-        text: cellValue?.toString(),
-        fontFamily,
-        fontSize,
-        lineHeight
-      });
-      textOption.textBaseline = 'middle';
-      const textConfig = [
-        ...iconInlineFront.map(icon => dealWithRichTextIcon(icon)),
-        textOption,
-        ...iconInlineEnd.map(icon => dealWithRichTextIcon(icon))
-      ];
-      utilRichTextMark.setAttributes({
-        width: table.getColWidth(col) - (padding[1] + padding[3]) - iconWidth,
-        height: 0,
-        textConfig
-      });
-      maxHeight = utilRichTextMark.AABBBounds.height();
-    } else {
-      maxHeight = 0;
-      lines.forEach((line: string, index: number) => {
-        if (index === 0 && iconInlineFront.length) {
-          maxHeight += Math.max(lineHeight, iconInlineFrontHeight);
-        } else if (index === lines.length - 1 && iconInlineEnd.length) {
-          maxHeight += Math.max(lineHeight, iconInlineEndHeight);
-        } else {
-          maxHeight += lineHeight;
-        }
-      });
-    }
+    // if (autoWrapText) {
+    const textOption = Object.assign({
+      text: cellValue?.toString(),
+      fontFamily,
+      fontSize,
+      lineHeight
+    });
+    textOption.textBaseline = 'middle';
+    const textConfig = [
+      ...iconInlineFront.map(icon => dealWithRichTextIcon(icon)),
+      textOption,
+      ...iconInlineEnd.map(icon => dealWithRichTextIcon(icon))
+    ];
+    utilRichTextMark.setAttributes({
+      width: table.getColWidth(col) - (padding[1] + padding[3]) - iconWidth,
+      height: 0,
+      textConfig
+    });
+    maxHeight = utilRichTextMark.AABBBounds.height();
+    // } else {
+    //   maxHeight = 0;
+    //   lines.forEach((line: string, index: number) => {
+    //     if (index === 0 && iconInlineFront.length) {
+    //       maxHeight += Math.max(lineHeight, iconInlineFrontHeight);
+    //     } else if (index === lines.length - 1 && iconInlineEnd.length) {
+    //       maxHeight += Math.max(lineHeight, iconInlineEndHeight);
+    //     } else {
+    //       maxHeight += lineHeight;
+    //     }
+    //   });
+    // }
   } else if (autoWrapText) {
     const maxLineWidth = table.getColWidth(col) - (padding[1] + padding[3]) - iconWidth;
     utilTextMark.setAttributes({
@@ -279,11 +280,4 @@ function computeTextHeight(col: number, row: number, table: BaseTableAPI): numbe
   }
 
   return (Math.max(maxHeight, iconHeight) + padding[0] + padding[2]) / spanRow;
-}
-
-function dealWithRichTextIcon(iconConfig: ColumnIconOption) {
-  return {
-    width: iconConfig.width,
-    height: iconConfig.height
-  };
 }
