@@ -64,13 +64,13 @@ export function computeRowsHeight(table: BaseTableAPI, rowStart?: number, rowEnd
   ) {
     // check fixed style and no wrap situation, just compute 0-table.rowHeaderLevelCount column(the column after row header) in ervey row
     // in traspose table and row indicator pivot table
-    for (let row = Math.max(rowStart, table.columnHeaderLevelCount); row < rowEnd; row++) {
+    for (let row = Math.max(rowStart, table.columnHeaderLevelCount); row <= rowEnd; row++) {
       table._clearRowRangeHeightsMap(row);
       const height = computeRowHeight(row, 0, table.rowHeaderLevelCount, table);
       table.setRowHeight(row, height);
     }
   } else {
-    for (let row = Math.max(rowStart, table.columnHeaderLevelCount); row < rowEnd; row++) {
+    for (let row = Math.max(rowStart, table.columnHeaderLevelCount); row <= rowEnd; row++) {
       table._clearRowRangeHeightsMap(row);
       const height = computeRowHeight(row, 0, table.colCount - 1, table);
       table.setRowHeight(row, height);
