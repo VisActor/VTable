@@ -8,6 +8,10 @@ export const menus = [
       },
       {
         path: 'list',
+        name: 'list-transpose'
+      },
+      {
+        path: 'list',
         name: 'list-tree'
       },
       {
