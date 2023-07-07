@@ -245,6 +245,15 @@ export const menus = [
     ]
   },
   {
+    menu: 'custom',
+    children: [
+      {
+        path: 'custom',
+        name: 'custom-layout'
+      }
+    ]
+  },
+  {
     menu: '调试使用',
     children: [
       {
