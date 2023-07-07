@@ -197,22 +197,22 @@ export class SceneProxy {
       this.currentRow = this.totalRow;
       this.rowEnd = this.currentRow;
       this.rowUpdatePos = this.rowEnd;
-      this.referenceRow = Math.floor((this.rowEnd - this.rowStart) / 2);
+      this.referenceRow = this.rowStart + Math.floor((this.rowEnd - this.rowStart) / 2);
 
       this.currentCol = this.totalCol;
       this.colEnd = this.currentCol;
       this.colUpdatePos = this.colEnd;
-      this.referenceCol = Math.floor((this.colEnd - this.colStart) / 2);
+      this.referenceCol = this.colStart + Math.floor((this.colEnd - this.colStart) / 2);
     } else {
       this.currentRow = (bodyGroup.firstChild as Group)?.rowNumber ?? this.totalRow;
       this.rowEnd = this.currentRow;
       this.rowUpdatePos = this.rowEnd;
-      this.referenceRow = Math.floor((this.rowEnd - this.rowStart) / 2);
+      this.referenceRow = this.rowStart + Math.floor((this.rowEnd - this.rowStart) / 2);
 
       this.currentCol = (bodyGroup.lastChild as Group)?.col ?? this.totalCol;
       this.colEnd = this.currentCol;
       this.colUpdatePos = this.colEnd;
-      this.referenceCol = Math.floor((this.colEnd - this.colStart) / 2);
+      this.referenceCol = this.colStart + Math.floor((this.colEnd - this.colStart) / 2);
 
       // 开始异步任务
       await this.progress();
@@ -359,7 +359,7 @@ export class SceneProxy {
     this.currentRow = endRow;
     this.rowEnd = endRow;
     this.rowUpdatePos = this.rowEnd;
-    this.referenceRow = Math.floor((endRow - this.rowStart) / 2);
+    this.referenceRow = this.rowStart + Math.floor((endRow - this.rowStart) / 2);
 
     // update container group size and border
     this.table.scenegraph.updateContainer();
@@ -395,7 +395,7 @@ export class SceneProxy {
     this.currentCol = endCol;
     this.colEnd = endCol;
     this.colUpdatePos = this.colEnd;
-    this.referenceCol = Math.floor((endCol - this.colStart) / 2);
+    this.referenceCol = this.colStart + Math.floor((endCol - this.colStart) / 2);
     console.log('async', this.referenceCol, this.colStart, this.colEnd);
 
     // update container group size and border

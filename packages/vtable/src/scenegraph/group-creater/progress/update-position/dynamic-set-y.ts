@@ -120,7 +120,7 @@ async function moveCell(count: number, direction: 'up' | 'down', screenTopRow: n
       (proxy.table as any).scenegraph.bodyGroup.firstChild.lastChild.row
     );
 
-    proxy.table.scenegraph.stage.render();
+    // proxy.table.scenegraph.stage.render();
     await proxy.progress();
   } else {
     const distStartRow = direction === 'up' ? proxy.rowStart + count : proxy.rowStart - count;
