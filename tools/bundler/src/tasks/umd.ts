@@ -32,8 +32,8 @@ export async function buildUmd(config: Config, projectRoot: string, rawPackageJs
       format: 'umd',
       name: config.name || packageNameToPath(rawPackageJson.name),
       file: minify
-        ? `${dest}/${config.umdOutputFilename || packageNameToPath(rawPackageJson.name)}.es5.min.js`
-        : `${dest}/${config.umdOutputFilename || packageNameToPath(rawPackageJson.name)}.es5.js`,
+        ? `${dest}/${config.umdOutputFilename || packageNameToPath(rawPackageJson.name)}.min.js`
+        : `${dest}/${config.umdOutputFilename || packageNameToPath(rawPackageJson.name)}.js`,
       exports: 'named',
       globals: { react: 'React', ...config.globals }
     }
@@ -41,34 +41,5 @@ export async function buildUmd(config: Config, projectRoot: string, rawPackageJs
 
   if (bundle) {
     await bundle.close();
-  }
-
-  // build es6
-  const babelPluginsEs6 = getBabelPlugins(rawPackageJson.name, false);
-  const rollupOptionsEs6 = getRollupOptions(
-    projectRoot,
-    entry,
-    rawPackageJson,
-    babelPluginsEs6,
-    { ...config, minify },
-    false
-  );
-  DebugConfig('RollupOptionsEs6', JSON.stringify(rollupOptionsEs6));
-  const bundleEs6 = await rollup(rollupOptionsEs6);
-
-  await generateOutputs(bundleEs6, [
-    {
-      format: 'umd',
-      name: config.name || packageNameToPath(rawPackageJson.name),
-      file: minify
-        ? `${dest}/${config.umdOutputFilename || packageNameToPath(rawPackageJson.name)}.min.js`
-        : `${dest}/${config.umdOutputFilename || packageNameToPath(rawPackageJson.name)}.js`,
-      exports: 'named',
-      globals: { react: 'React' }
-    }
-  ]);
-
-  if (bundleEs6) {
-    await bundleEs6.close();
   }
 }
