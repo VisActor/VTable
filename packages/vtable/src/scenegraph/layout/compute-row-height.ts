@@ -228,6 +228,8 @@ function computeTextHeight(col: number, row: number, table: BaseTableAPI): numbe
 
   const padding = getQuadProps(getProp('padding', actStyle, col, row, table));
   const fontSize = getProp('fontSize', actStyle, col, row, table);
+  const fontStyle = getProp('fontStyle', actStyle, col, row, table);
+  const fontWeight = getProp('fontWeight', actStyle, col, row, table);
   const lineHeight = getProp('lineHeight', actStyle, col, row, table) ?? fontSize;
   const fontFamily = getProp('fontFamily', actStyle, col, row, table);
   const autoWrapText = getProp('autoWrapText', actStyle, col, row, table);
@@ -239,6 +241,8 @@ function computeTextHeight(col: number, row: number, table: BaseTableAPI): numbe
       text: cellValue?.toString(),
       fontFamily,
       fontSize,
+      fontStyle,
+      fontWeight,
       lineHeight
     });
     textOption.textBaseline = 'middle';
@@ -271,6 +275,8 @@ function computeTextHeight(col: number, row: number, table: BaseTableAPI): numbe
       maxLineWidth,
       text: lines,
       fontSize,
+      fontStyle,
+      fontWeight,
       fontFamily
     });
     maxHeight = utilTextMark.AABBBounds.height();
