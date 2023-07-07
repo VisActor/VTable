@@ -59,8 +59,8 @@ export function computeColsWidth(table: BaseTableAPI, colStart?: number, colEnd?
     const oldWidth = table.getColWidth(col);
     if (oldWidth !== maxWidth) {
       table._clearColRangeWidthsMap(col);
-      table.setColWidth(col, maxWidth, false, true);
     }
+    table.setColWidth(col, maxWidth, false, true);
   }
   // 处理adaptive宽度
   if (table.widthMode === 'adaptive') {
