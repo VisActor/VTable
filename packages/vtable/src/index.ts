@@ -25,6 +25,7 @@ import type {
 } from './ts-types';
 import { ListTable } from './ListTable';
 import { PivotTable } from './PivotTable';
+import { PivotChart } from './PivotChart';
 import type { MousePointerCellEvent } from './ts-types/events';
 import * as CustomLayout from './render/layout';
 export const version = __VERSION__;
@@ -42,6 +43,7 @@ export {
   ListTableConstructorOptions,
   PivotTable,
   PivotTableConstructorOptions,
+  PivotChart,
   IHeaderTreeDefine,
   IDimension,
   ColumnsDefine,

@@ -16,6 +16,7 @@ import type {
 } from '../ts-types';
 import type { PivotTable } from '../PivotTable';
 import { IndicatorDimensionKeyPlaceholder } from '../tools/global';
+import type { PivotChart } from '../PivotChart';
 /**
  * 简化配置，包含数据处理的 布局辅助计算类
  */
@@ -85,8 +86,8 @@ export class PivoLayoutMap implements LayoutMapAPI {
 
   // dimensions: IDimension[];
   cornerSetting: ICornerDefine;
-  _table: PivotTable;
-  constructor(table: PivotTable, dataset: Dataset) {
+  _table: PivotTable | PivotChart;
+  constructor(table: PivotTable | PivotChart, dataset: Dataset) {
     this._table = table;
     this.rowsDefine = table.options.rows ?? [];
     this.columnsDefine = table.options.columns ?? [];
@@ -229,7 +230,7 @@ export class PivoLayoutMap implements LayoutMapAPI {
         this._headerObjectMap[indicatorKey] = {
           id: indicatorKey,
           field: this.indicatorDimensionKey,
-          caption: indicatorKey,
+          caption: indicatorInfo.caption ?? indicatorKey,
           style: indicatorInfo?.headerStyle, //?? indicatorDimensionInfo?.headerStyle,
           define: {
             field: this.indicatorDimensionKey,
@@ -704,7 +705,7 @@ export class PivoLayoutMap implements LayoutMapAPI {
     }
     return {
       colHeaderPaths:
-        colHeaderPaths.map((key: string) => {
+        colHeaderPaths?.map((key: string) => {
           const isIndicatorKey = this._indicatorObjects.find(indicator => {
             indicator.indicatorKey === key;
           });
@@ -715,7 +716,7 @@ export class PivoLayoutMap implements LayoutMapAPI {
           };
         }) ?? [],
       rowHeaderPaths:
-        rowHeaderPaths.map((key: string) => {
+        rowHeaderPaths?.map((key: string) => {
           const isIndicatorKey = this._indicatorObjects.find(indicator => {
             indicator.indicatorKey === key;
           });

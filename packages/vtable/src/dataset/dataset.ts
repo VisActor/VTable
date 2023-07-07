@@ -13,9 +13,21 @@ import type {
   SortFuncRule,
   Totals,
   MappingRules,
-  SortOrder
+  SortOrder,
+  IHeaderTreeDefine
 } from '../ts-types';
 import { AggregationType, SortType } from '../ts-types';
+import type { Aggregator } from './statistics-helper';
+import {
+  AvgAggregator,
+  CountAggregator,
+  MaxAggregator,
+  MinAggregator,
+  SumAggregator,
+  naturalSort,
+  sortBy,
+  typeSort
+} from './statistics-helper';
 /**
  * 数据处理模块
  */
@@ -81,15 +93,23 @@ export class Dataset {
   rows: string[];
   columns: string[];
   indicators: string[];
-  constructor(dataConfig: IDataConfig, rows: string[], columns: string[], indicators: string[], records?: any[]) {
+  constructor(
+    dataConfig: IDataConfig,
+    rows: string[],
+    columns: string[],
+    indicators: string[],
+    records: any[],
+    customColTree?: IHeaderTreeDefine[],
+    customRowTree?: IHeaderTreeDefine[]
+  ) {
     this.registerAggregators();
     this.dataConfig = dataConfig;
     // this.allTotal = new SumAggregator(this.indicators[0]);
-    this.sortRules = this.dataConfig.sortRules;
-    this.aggregationRules = this.dataConfig.aggregationRules;
-    this.derivedFieldRules = this.dataConfig.derivedFieldRules;
-    this.mappingRules = this.dataConfig.mappingRules;
-    this.totals = dataConfig.totals;
+    this.sortRules = this.dataConfig?.sortRules;
+    this.aggregationRules = this.dataConfig?.aggregationRules;
+    this.derivedFieldRules = this.dataConfig?.derivedFieldRules;
+    this.mappingRules = this.dataConfig?.mappingRules;
+    this.totals = this.dataConfig?.totals;
     this.rows = rows;
     this.columns = columns;
     this.indicators = indicators;
@@ -142,24 +162,32 @@ export class Dataset {
       // console.log('madeTree:', t41 - t4);
 
       const t7 = typeof window !== 'undefined' ? window.performance.now() : 0;
-      this.rowKeysPath = this.TreeToArr(
-        this.ArrToTree(
-          this.rowKeys,
-          this.rowsIsTotal,
-          this?.totals?.row?.showGrandTotals || this.columns.length === 0,
-          this.rowGrandTotalLabel,
-          this.rowSubTotalLabel
-        )
-      );
-      this.colKeysPath = this.TreeToArr(
-        this.ArrToTree(
-          this.colKeys,
-          this.colsIsTotal,
-          this.totals?.column?.showGrandTotals || this.rows.length === 0,
-          this.colGrandTotalLabel,
-          this.colSubTotalLabel
-        )
-      );
+      if (customRowTree) {
+        this.rowKeysPath = this.TreeToArr2(customRowTree);
+      } else {
+        this.rowKeysPath = this.TreeToArr(
+          this.ArrToTree(
+            this.rowKeys,
+            this.rowsIsTotal,
+            this?.totals?.row?.showGrandTotals || this.columns.length === 0,
+            this.rowGrandTotalLabel,
+            this.rowSubTotalLabel
+          )
+        );
+      }
+      if (customColTree) {
+        this.colKeysPath = this.TreeToArr2(customColTree);
+      } else {
+        this.colKeysPath = this.TreeToArr(
+          this.ArrToTree(
+            this.colKeys,
+            this.colsIsTotal,
+            this.totals?.column?.showGrandTotals || this.rows.length === 0,
+            this.colGrandTotalLabel,
+            this.colSubTotalLabel
+          )
+        );
+      }
       const t8 = typeof window !== 'undefined' ? window.performance.now() : 0;
       console.log('TreeToArr:', t8 - t7);
     }
@@ -195,8 +223,8 @@ export class Dataset {
   }
   filterRecord(record: any) {
     let isReserved = true;
-    for (let i = 0; i < this.dataConfig.filterRules?.length; i++) {
-      const filterRule = this.dataConfig.filterRules[i];
+    for (let i = 0; i < this.dataConfig?.filterRules?.length; i++) {
+      const filterRule = this.dataConfig?.filterRules[i];
       if (!filterRule.filterFunc?.(record)) {
         isReserved = false;
         break;
@@ -705,31 +733,31 @@ export class Dataset {
         path.push(value);
         const flatKey = path.join(concatStr);
         //id的值可以每次生成一个新的 这里用的path作为id 方便layout对象获取
-        let item: { id: string; child: any[] } = map.get(flatKey); // 当前节点
+        let item: { id: string; children: any[] } = map.get(flatKey); // 当前节点
         if (!item) {
           item = {
             // name: value,
-            id: flatKey, //getId(node?.id ?? '', (node?.child?.length ?? result.length) + 1),
-            child: []
+            id: flatKey, //getId(node?.id ?? '', (node?.children?.length ?? result.length) + 1),
+            children: []
           };
           if (subTotalFlags[index]) {
-            let curChild = item.child;
+            let curChild = item.children;
             for (let i = index; i < list.length - 1; i++) {
-              const totalChild: { id: string; child: any[] } = {
+              const totalChild: { id: string; children: any[] } = {
                 id: `${flatKey}${concatStr}${subTotalLabel}`, // getId(item?.id, 1),
-                child: []
+                children: []
               };
               curChild.push(totalChild);
-              curChild = totalChild.child;
+              curChild = totalChild.children;
             }
           }
           map.set(flatKey, item); // 存储路径对应的节点
           if (node) {
             //为了确保汇总小计放到最后 使用splice插入到倒数第二个位置。如果小计放前面 直接push就行
             if (subTotalFlags[index - 1]) {
-              node.child.splice(node.child.length - 1, 0, item);
+              node.children.splice(node.children.length - 1, 0, item);
             } else {
-              node.child.push(item);
+              node.children.push(item);
             }
           } else {
             result.push(item);
@@ -742,18 +770,18 @@ export class Dataset {
     arr.forEach(item => addList(item));
     //最后将总计的节点加上
     if (isGrandTotal) {
-      const node: { id: string; child: any[] } = {
+      const node: { id: string; children: any[] } = {
         id: grandTotalLabel, // getId(item?.id, 1),
-        child: []
+        children: []
       };
-      let curChild = node.child;
+      let curChild = node.children;
       for (let i = 1; i < subTotalFlags.length; i++) {
-        const totalChild: { id: string; child: any[] } = {
+        const totalChild: { id: string; children: any[] } = {
           id: grandTotalLabel, // getId(item?.id, 1),
-          child: []
+          children: []
         };
         curChild.push(totalChild);
-        curChild = totalChild.child;
+        curChild = totalChild.children;
       }
       result.push(node);
     }
@@ -764,9 +792,9 @@ export class Dataset {
     const result: any[] = []; // 结果
     function getPath(node: any, arr: any) {
       arr.push(node.id);
-      if (node.child.length > 0) {
+      if (node.children.length > 0) {
         // 存在多个节点就递归
-        node.child?.forEach((childItem: any) => getPath(childItem, [...arr]));
+        node.children?.forEach((childItem: any) => getPath(childItem, [...arr]));
       } else {
         result.push(arr);
       }
@@ -774,281 +802,18 @@ export class Dataset {
     tree.forEach((treeNode: any) => getPath(treeNode, []));
     return result;
   }
-}
-
-abstract class Aggregator {
-  className = 'Aggregator';
-  isRecord?: boolean = true;
-  records?: any[] = [];
-  type?: string;
-  field?: string;
-  formatFun?: any;
-  _formatedValue?: any;
-  constructor(dimension: string, formatFun?: any, isRecord?: boolean) {
-    this.field = dimension;
-    this.formatFun = formatFun;
-    this.isRecord = isRecord ?? this.isRecord;
-  }
-  // push(record: any) {
-  //   if (this.isRecord) {
-  //     if (record.className === 'Aggregator') this.records.push(...record.records);
-  //     else this.records.push(record);
-  //   }
-  // }
-  abstract push(record: any): void;
-  abstract value(): any;
-  formatValue() {
-    if (!this._formatedValue) {
-      if (this.formatFun) {
-        this._formatedValue = this.formatFun(this.value());
+  private TreeToArr2(tree: any) {
+    const result: any[] = []; // 结果
+    function getPath(node: any, arr: any) {
+      arr.push(arr.length > 0 ? [arr[arr.length - 1], node.value].join(String.fromCharCode(0)) : node.value);
+      if (node.children?.length > 0) {
+        // 存在多个节点就递归
+        node.children?.forEach((childItem: any) => getPath(childItem, [...arr]));
       } else {
-        this._formatedValue = this.value();
+        result.push(arr);
       }
     }
-    return this._formatedValue;
+    tree.forEach((treeNode: any) => getPath(treeNode, []));
+    return result;
   }
-}
-class SumAggregator extends Aggregator {
-  type: string = AggregationType.SUM;
-  sum = 0;
-  push(record: any): void {
-    if (this.isRecord) {
-      if (record.className === 'Aggregator') {
-        this.records.push(...record.records);
-      } else {
-        this.records.push(record);
-      }
-    }
-    if (record.className === 'Aggregator') {
-      this.sum += record.value();
-    } else if (!isNaN(parseFloat(record[this.field]))) {
-      this.sum += parseFloat(record[this.field]);
-    }
-  }
-  value() {
-    return this.sum;
-  }
-}
-
-class CountAggregator extends Aggregator {
-  type: string = AggregationType.COUNT;
-  count = 0;
-  push(record: any): void {
-    if (this.isRecord) {
-      if (record.className === 'Aggregator') {
-        this.records.push(...record.records);
-      } else {
-        this.records.push(record);
-      }
-    }
-    if (record.className === 'Aggregator') {
-      this.count += record.value();
-    } else {
-      this.count++;
-    }
-  }
-  value() {
-    return this.count;
-  }
-}
-class AvgAggregator extends Aggregator {
-  type: string = AggregationType.AVG;
-  sum = 0;
-  count = 0;
-  push(record: any): void {
-    if (this.isRecord) {
-      if (record.className === 'Aggregator') {
-        this.records.push(...record.records);
-      } else {
-        this.records.push(record);
-      }
-    }
-    if (record.className === 'Aggregator' && record.type === AggregationType.AVG) {
-      this.sum += record.sum;
-      this.count += record.count;
-    } else if (!isNaN(parseFloat(record[this.field]))) {
-      this.sum += parseFloat(record[this.field]);
-      this.count++;
-    }
-  }
-  value() {
-    return this.sum / this.count;
-  }
-}
-class MaxAggregator extends Aggregator {
-  type: string = AggregationType.MAX;
-  max: number = Number.MIN_SAFE_INTEGER;
-  isRecord?: boolean = false;
-  push(record: any): void {
-    if (this.isRecord) {
-      if (record.className === 'Aggregator') {
-        this.records.push(...record.records);
-      } else {
-        this.records.push(record);
-      }
-    }
-    //TODO push Aggregator类型的对象没有做处理
-    if (typeof record === 'number') {
-      this.max = record > this.max ? record : this.max;
-    } else if (typeof record[this.field] === 'number') {
-      this.max = record[this.field] > this.max ? record[this.field] : this.max;
-    } else if (!isNaN(record[this.field])) {
-      this.max = parseFloat(record[this.field]) > this.max ? parseFloat(record[this.field]) : this.max;
-    }
-  }
-  value() {
-    return this.max;
-  }
-}
-class MinAggregator extends Aggregator {
-  type: string = AggregationType.MIN;
-  min: number = Number.MAX_SAFE_INTEGER;
-  isRecord?: boolean = false;
-  push(record: any): void {
-    if (this.isRecord) {
-      if (record.className === 'Aggregator') {
-        this.records.push(...record.records);
-      } else {
-        this.records.push(record);
-      }
-    }
-    //TODO push Aggregator类型的对象没有做处理
-    if (typeof record === 'number') {
-      this.min = record < this.min ? record : this.min;
-    } else if (typeof record[this.field] === 'number') {
-      this.min = record[this.field] < this.min ? record[this.field] : this.min;
-    }
-  }
-  value() {
-    return this.min;
-  }
-}
-function indicatorSort(a: any, b: any) {
-  if (a && b) {
-    // 数据健全兼容，用户数据不全时，能够展示.
-    return a.toString().localeCompare(b.toString(), 'zh');
-  }
-  if (a) {
-    return 1;
-  }
-  return -1;
-}
-function typeSort(a: any, b: any) {
-  if (a && b) {
-    // 数据健全兼容，用户数据不全时，能够展示.
-    return a.toString().localeCompare(b.toString(), 'zh');
-  }
-  if (a) {
-    return 1;
-  }
-  return -1;
-}
-function naturalSort(as: any, bs: any) {
-  const rx = /(\d+)|(\D+)/g;
-  const rd = /\d/;
-  const rz = /^0/;
-  let a;
-  let a1;
-  let b;
-  let b1;
-  let nas = 0;
-  let nbs = 0;
-  if (bs !== null && as === null) {
-    return -1;
-  }
-  if (as !== null && bs === null) {
-    return 1;
-  }
-  if (typeof as === 'number' && isNaN(as)) {
-    return -1;
-  }
-  if (typeof bs === 'number' && isNaN(bs)) {
-    return 1;
-  }
-  nas = +as;
-  nbs = +bs;
-  if (nas < nbs) {
-    return -1;
-  }
-  if (nas > nbs) {
-    return 1;
-  }
-  if (typeof as === 'number' && typeof bs !== 'number') {
-    return -1;
-  }
-  if (typeof bs === 'number' && typeof as !== 'number') {
-    return 1;
-  }
-  if (typeof as === 'number' && typeof bs === 'number') {
-    return 0;
-  }
-  if (isNaN(nbs) && !isNaN(nas)) {
-    return -1;
-  }
-  if (isNaN(nas) && !isNaN(nbs)) {
-    return 1;
-  }
-  a = String(as);
-  b = String(bs);
-  if (a === b) {
-    return 0;
-  }
-  if (!(rd.test(a) && rd.test(b))) {
-    return a > b ? 1 : -1;
-  }
-  a = a.match(rx);
-  b = b.match(rx);
-  while (a.length && b.length) {
-    a1 = a.shift();
-    b1 = b.shift();
-    if (a1 !== b1) {
-      if (rd.test(a1) && rd.test(b1)) {
-        return <any>a1.replace(rz, '.0') - <any>b1.replace(rz, '.0');
-      }
-      return a1 > b1 ? 1 : -1;
-    }
-  }
-  return a.length - b.length;
-}
-function sortBy(order: SortOrder[]) {
-  let x;
-  let i;
-  const mapping = {};
-  const lowercase_mapping = {};
-  // for (i in order) {
-  for (let i = 0; i < order.length; i++) {
-    x = order[i];
-    mapping[x] = i;
-    if (typeof x === 'string') {
-      lowercase_mapping[x.toLowerCase()] = i;
-    }
-  }
-  return function (a: any, b: any) {
-    if (mapping[a] !== null && mapping[a] !== undefined && mapping[b] !== null && mapping[b] !== undefined) {
-      return mapping[a] - mapping[b];
-    } else if (mapping[a] !== null && mapping[a] !== undefined) {
-      return -1;
-    } else if (mapping[b] !== null && mapping[b] !== undefined) {
-      return 1;
-    } else if (
-      lowercase_mapping[a] !== null &&
-      mapping[a] !== undefined &&
-      lowercase_mapping[b] !== null &&
-      mapping[b] !== undefined
-    ) {
-      return lowercase_mapping[a] - lowercase_mapping[b];
-    } else if (
-      lowercase_mapping[a] === null ||
-      mapping[a] === undefined ||
-      lowercase_mapping[b] === null ||
-      mapping[b] === undefined
-    ) {
-      return 0;
-    } else if (lowercase_mapping[a] !== null && mapping[a] !== undefined) {
-      return -1;
-    } else if (lowercase_mapping[b] !== null && mapping[b] !== undefined) {
-      return 1;
-    }
-    return naturalSort(a, b);
-  };
 }
