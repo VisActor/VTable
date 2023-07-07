@@ -345,6 +345,12 @@ export function createTable() {
             }
           }
         ]
+        // style: {
+        //   autoWrapText: true
+        // },
+        // headerStyle: {
+        //   autoWrapText: true
+        // }
       },
       {
         field: 'id',
