@@ -90,6 +90,8 @@ export class Dataset {
   private colSubTotalLabel: string;
   private rowGrandTotalLabel: string;
   private rowSubTotalLabel: string;
+  private collectValuesBy: { field: string; by: string[] }[]; //收集维度值，field收集维度，by按什么进行分组收集
+  collectedValues: Record<string, Record<string, Set<string>>> = {};
   rows: string[];
   columns: string[];
   indicators: string[];
@@ -117,6 +119,9 @@ export class Dataset {
     this.colSubTotalLabel = this.totals?.column?.subTotalLabel ?? '小计';
     this.rowGrandTotalLabel = this.totals?.row?.grandTotalLabel ?? '总计';
     this.rowSubTotalLabel = this.totals?.row?.subTotalLabel ?? '小计';
+    this.collectValuesBy = this.dataConfig?.collectValuesBy ?? [
+      { field: '230417170554008', by: ['230417171050031', '230417171050028'] }
+    ];
     // for (let i = 0; i < this.indicators.length; i++) {
     //   this.indicatorStatistics.push({
     //     max: new this.aggregators[AggregationType.MAX](this.indicators[i]),
@@ -214,16 +219,20 @@ export class Dataset {
    * 处理数据,遍历所有条目，过滤和派生字段的处理有待优化TODO
    */
   processRecords() {
+    let isNeedFilter = false;
+    if (this.dataConfig?.filterRules?.length >= 1) {
+      isNeedFilter = true;
+    }
     for (let i = 0, len = this.records.length; i < len; i++) {
       const record = this.records[i];
-      if (this.filterRecord(record)) {
+      if (!isNeedFilter || this.filterRecord(record)) {
         this.processRecord(record);
       }
     }
   }
   filterRecord(record: any) {
     let isReserved = true;
-    for (let i = 0; i < this.dataConfig?.filterRules?.length; i++) {
+    for (let i = 0; i < this.dataConfig.filterRules.length; i++) {
       const filterRule = this.dataConfig?.filterRules[i];
       if (!filterRule.filterFunc?.(record)) {
         isReserved = false;
@@ -254,6 +263,21 @@ export class Dataset {
       colKey.push(record[colAttr]);
     }
 
+    //#region 按照collectValuesBy 收集维度值
+    for (let m = 0, len3 = this.collectValuesBy?.length; m < len3; m++) {
+      if (record[this.collectValuesBy[m].field]) {
+        if (!this.collectedValues[this.collectValuesBy[m].field]) {
+          this.collectedValues[this.collectValuesBy[m].field] = {};
+        }
+        const collectKeys = this.collectValuesBy[m].by.map(byField => record[byField]).join(this.stringJoinChar);
+        if (!this.collectedValues[this.collectValuesBy[m].field][collectKeys]) {
+          this.collectedValues[this.collectValuesBy[m].field][collectKeys] = new Set();
+        }
+
+        this.collectedValues[this.collectValuesBy[m].field][collectKeys].add(record[this.collectValuesBy[m].field]);
+      }
+    }
+    //#endregion
     // this.allTotal.push(record);
 
     const flatRowKey = rowKey.join(this.stringJoinChar);
@@ -673,27 +697,28 @@ export class Dataset {
                 }
               }
             }
-            if (that.totals?.row?.showGrandTotals || this.columns.length === 0) {
-              const flatRowTotalKey = that.rowGrandTotalLabel;
-              if (!this.tree[flatRowTotalKey]) {
-                this.tree[flatRowTotalKey] = {};
-                rowTotalKeys.push(flatRowTotalKey);
-              }
-              if (!this.tree[flatRowTotalKey][flatColKey]) {
-                this.tree[flatRowTotalKey][flatColKey] = [];
-              }
-              for (let i = 0; i < this.indicators.length; i++) {
-                if (!this.tree[flatRowTotalKey][flatColKey][i]) {
-                  const aggRule = this.getAggregatorRule(this.indicators[i]);
-                  this.tree[flatRowTotalKey][flatColKey][i] = new this.aggregators[
-                    aggRule?.aggregationType ?? AggregationType.SUM
-                  ](aggRule?.field ?? this.indicators[i], aggRule?.formatFun);
-                }
-                this.tree[flatRowTotalKey][flatColKey][i].push(that.tree[flatRowKey]?.[flatColKey]?.[i]);
-              }
-            }
-            colCompute(flatRowKey, flatColKey);
           }
+
+          if (that.totals?.row?.showGrandTotals || this.columns.length === 0) {
+            const flatRowTotalKey = that.rowGrandTotalLabel;
+            if (!this.tree[flatRowTotalKey]) {
+              this.tree[flatRowTotalKey] = {};
+              rowTotalKeys.push(flatRowTotalKey);
+            }
+            if (!this.tree[flatRowTotalKey][flatColKey]) {
+              this.tree[flatRowTotalKey][flatColKey] = [];
+            }
+            for (let i = 0; i < this.indicators.length; i++) {
+              if (!this.tree[flatRowTotalKey][flatColKey][i]) {
+                const aggRule = this.getAggregatorRule(this.indicators[i]);
+                this.tree[flatRowTotalKey][flatColKey][i] = new this.aggregators[
+                  aggRule?.aggregationType ?? AggregationType.SUM
+                ](aggRule?.field ?? this.indicators[i], aggRule?.formatFun);
+              }
+              this.tree[flatRowTotalKey][flatColKey][i].push(that.tree[flatRowKey]?.[flatColKey]?.[i]);
+            }
+          }
+          colCompute(flatRowKey, flatColKey);
         });
       });
       //增加出来的rowTotalKeys 再遍历一次 汇总小计的小计 如 东北小计（row）-办公用品小计（col）所指单元格的值
@@ -806,7 +831,7 @@ export class Dataset {
     const result: any[] = []; // 结果
     function getPath(node: any, arr: any) {
       arr.push(arr.length > 0 ? [arr[arr.length - 1], node.value].join(String.fromCharCode(0)) : node.value);
-      if (node.children?.length > 0) {
+      if (node.children?.length > 0 && !node.children[0].indicatorKey) {
         // 存在多个节点就递归
         node.children?.forEach((childItem: any) => getPath(childItem, [...arr]));
       } else {

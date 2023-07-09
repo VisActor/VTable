@@ -169,4 +169,6 @@ export interface IDataConfig {
 
   mappingRules?: MappingRules;
   derivedFieldRules?: DerivedFieldRules;
+
+  collectValuesBy?: { field: string; by: string[]; range?: boolean }[];
 }

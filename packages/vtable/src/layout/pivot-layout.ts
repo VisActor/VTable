@@ -288,15 +288,20 @@ export class PivoLayoutMap implements LayoutMapAPI {
         if (typeof indicator === 'string') {
           return false;
         }
-        return indicator.caption === indicatorStr;
+        return indicator.indicatorKey === indicatorStr;
       }) as IIndicator;
       this._indicatorObjects.push({
         id: indicatorStr,
         indicatorKey: indicatorStr,
         field: indicatorStr,
-        define: { field: indicatorStr, headerType: 'text', columnType: indicatorInfo?.columnType ?? 'text' },
+        define: Object.assign(
+          { field: indicatorStr, headerType: 'text', columnType: indicatorInfo?.columnType ?? 'text' },
+          indicatorInfo
+        ),
         fieldFormat: indicatorInfo?.format,
         columnType: indicatorInfo?.columnType ?? 'text',
+        chartType: indicatorInfo && ('chartType' in indicatorInfo ? indicatorInfo.chartType : null),
+        chartSpec: indicatorInfo && ('chartSpec' in indicatorInfo ? indicatorInfo.chartSpec : null),
         style: indicatorInfo?.style
       });
     });
@@ -541,40 +546,72 @@ export class PivoLayoutMap implements LayoutMapAPI {
   getHeaderCellAddressByField(field: string): CellAddress | undefined {
     throw new Error(`Method not implemented.${field}`);
   }
+  // getBody(_col: number, _row: number): IndicatorData {
+  //   // const dimensionInfo = this.dimensions?.find((dimension: IDimension) => {
+  //   //   return dimension.indicators?.length! > 0;
+  //   // });
+  //   // if (this.indicatorsAsCol)
+  //   //   return this.indicators[
+  //   //     (_col - this.rowHeaderLevelCount) % (dimensionInfo?.indicators?.length ?? 0)
+  //   //   ];
+  //   // return this.indicators[
+  //   //   (_row - this.columnHeaderLevelCount) % (dimensionInfo?.indicators?.length ?? 0)
+  //   // ];
+  //   // const dimensionInfo = this.dimensions?.[this.indicatorDimensionKey];
+  //   let indicatorInfo;
+  //   if (this.indicatorsAsCol) {
+  //     indicatorInfo = this.getIndicatorInfo(
+  //       this?.indicators?.[(_col - this.rowHeaderLevelCount) % (this.indicators?.length ?? 0)]
+  //     );
+  //   } else {
+  //     indicatorInfo = this.getIndicatorInfo(
+  //       this?.indicators?.[(_row - this.columnHeaderLevelCount) % (this.indicators?.length ?? 0)]
+  //     );
+  //   }
+  //   return {
+  //     id: 0,
+  //     indicatorKey: this.indicators[(_col - this.rowHeaderLevelCount) % (this.indicators?.length ?? 0)],
+  //     field: this.indicators[(_col - this.rowHeaderLevelCount) % (this.indicators?.length ?? 0)],
+  //     columnType: indicatorInfo?.columnType ?? 'text',
+  //     style: indicatorInfo?.style,
+  //     define: {
+  //       field: this.indicators[(_col - this.rowHeaderLevelCount) % (this.indicators?.length ?? 0)],
+  //       headerType: 'text',
+  //       columnType: indicatorInfo?.columnType ?? 'text'
+  //     }
+  //   };
+  // }
   getBody(_col: number, _row: number): IndicatorData {
-    // const dimensionInfo = this.dimensions?.find((dimension: IDimension) => {
-    //   return dimension.indicators?.length! > 0;
-    // });
-    // if (this.indicatorsAsCol)
-    //   return this.indicators[
-    //     (_col - this.rowHeaderLevelCount) % (dimensionInfo?.indicators?.length ?? 0)
-    //   ];
-    // return this.indicators[
-    //   (_row - this.columnHeaderLevelCount) % (dimensionInfo?.indicators?.length ?? 0)
-    // ];
-    // const dimensionInfo = this.dimensions?.[this.indicatorDimensionKey];
-    let indicatorInfo;
+    // let indicatorData;
+    //正常情况下 通过行号或者列号可以取到Indicator的配置信息 但如果指标在前维度在后的情况下（如风神：列配置【指标名称，地区】） indicators中的数量是和真正指标值一样数量
+    // if (this.indicatorsAsCol) indicatorData = this.indicators[_col - this.rowHeaderLevelCount];
+    // else indicatorData = this.indicators[_row - this.columnHeaderLevelCount];
+    // if (indicatorData) return indicatorData;
+    const paths = this.getCellHeaderPaths(_col, _row);
     if (this.indicatorsAsCol) {
-      indicatorInfo = this.getIndicatorInfo(
-        this?.indicators?.[(_col - this.rowHeaderLevelCount) % (this.indicators?.length ?? 0)]
-      );
-    } else {
-      indicatorInfo = this.getIndicatorInfo(
-        this?.indicators?.[(_row - this.columnHeaderLevelCount) % (this.indicators?.length ?? 0)]
+      const indicatorKey = paths.colHeaderPaths.find(colPath => colPath.indicatorKey)?.indicatorKey;
+      return (
+        this._indicatorObjects.find(indicator => indicator.indicatorKey === indicatorKey) ??
+        this._indicatorObjects[0] ?? {
+          id: '',
+          field: undefined,
+          indicatorKey: undefined,
+          columnType: undefined,
+          define: undefined
+        }
       );
     }
-    return {
-      id: 0,
-      indicatorKey: this.indicators[(_col - this.rowHeaderLevelCount) % (this.indicators?.length ?? 0)],
-      field: this.indicators[(_col - this.rowHeaderLevelCount) % (this.indicators?.length ?? 0)],
-      columnType: indicatorInfo?.columnType ?? 'text',
-      style: indicatorInfo?.style,
-      define: {
-        field: this.indicators[(_col - this.rowHeaderLevelCount) % (this.indicators?.length ?? 0)],
-        headerType: 'text',
-        columnType: indicatorInfo?.columnType ?? 'text'
+    const indicatorKey = paths.rowHeaderPaths.find(rowPath => rowPath.indicatorKey)?.indicatorKey;
+    return (
+      this._indicatorObjects.find(indicator => indicator.indicatorKey === indicatorKey) ??
+      this._indicatorObjects[0] ?? {
+        id: '',
+        field: undefined,
+        indicatorKey: undefined,
+        columnType: undefined,
+        define: undefined
       }
-    };
+    );
   }
   getBodyLayoutRangeById(id: LayoutObjectId): CellRange {
     for (let col = 0; col < (this.colCount ?? 0); col++) {

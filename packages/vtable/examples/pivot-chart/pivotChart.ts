@@ -85,89 +85,15 @@ export function createTable() {
       children: [
         {
           dimensionKey: '230417171050028',
-          value: '办公用品',
-          children: [
-            {
-              dimensionKey: '230417170554008',
-              value: '器具'
-            },
-            {
-              dimensionKey: '230417170554008',
-              value: '信封'
-            },
-            {
-              dimensionKey: '230417170554008',
-              value: '收纳具'
-            },
-            {
-              dimensionKey: '230417170554008',
-              value: '标签'
-            },
-            {
-              dimensionKey: '230417170554008',
-              value: '用品'
-            },
-            {
-              dimensionKey: '230417170554008',
-              value: '系固件'
-            },
-            {
-              dimensionKey: '230417170554008',
-              value: '纸张'
-            },
-            {
-              dimensionKey: '230417170554008',
-              value: '美术'
-            },
-            {
-              dimensionKey: '230417170554008',
-              value: '装订机'
-            }
-          ]
+          value: '办公用品'
         },
         {
           dimensionKey: '230417171050028',
-          value: '家具',
-          children: [
-            {
-              dimensionKey: '230417170554008',
-              value: '书架'
-            },
-            {
-              dimensionKey: '230417170554008',
-              value: '桌子'
-            },
-            {
-              dimensionKey: '230417170554008',
-              value: '椅子'
-            },
-            {
-              dimensionKey: '230417170554008',
-              value: '用具'
-            }
-          ]
+          value: '家具'
         },
         {
           dimensionKey: '230417171050028',
-          value: '技术',
-          children: [
-            {
-              dimensionKey: '230417170554008',
-              value: '复印机'
-            },
-            {
-              dimensionKey: '230417170554008',
-              value: '电话'
-            },
-            {
-              dimensionKey: '230417170554008',
-              value: '设备'
-            },
-            {
-              dimensionKey: '230417170554008',
-              value: '配件'
-            }
-          ]
+          value: '技术'
         }
       ]
     }
@@ -180,10 +106,56 @@ export function createTable() {
         color: 'red'
       }
     },
-    '230417171050028',
-    '230417170554008'
+    '230417171050028'
+    // '230417170554008'
   ];
-  const rows = ['230417170554012'];
+  const rows = [
+    {
+      dimensionKey: '230417170554012',
+      dimensionTitle: '邮寄方式',
+      headerStyle: {
+        color: 'red'
+      }
+    }
+  ];
+  const indicators: VTable.TYPES.IIndicator[] = [
+    {
+      indicatorKey: '230417171050011',
+      caption: '数量',
+      width: 100,
+      columnType: 'chart',
+      chartType: 'vchart',
+      chartSpec: {
+        // type: 'common',
+
+        type: 'bar',
+        data: {
+          id: 'data'
+        },
+        xField: ['230417170554008', '230707112948023'],
+        yField: '230417171050011',
+        seriesField: '230417170554008',
+
+        axes: [
+          { orient: 'left', visible: true, label: { visible: true } },
+          { orient: 'bottom', visible: true }
+        ]
+      },
+      style: {
+        padding: 0
+      }
+    },
+    {
+      indicatorKey: '230417171050025',
+      caption: '销售额',
+      width: 100
+    },
+    {
+      indicatorKey: '230707112948009',
+      caption: '折扣',
+      width: 100
+    }
+  ];
   const records = [
     {
       '10002': '60',
@@ -6919,41 +6891,65 @@ export function createTable() {
     }
   ];
   const option: VTable.PivotTableConstructorOptions = {
-    rows,
-    columns,
-    indicatorsAsCol: false,
-    parentElement: document.getElementById(Table_CONTAINER_DOM_ID),
-    records,
-    defaultRowHeight: 100,
-    defaultHeaderRowHeight: 50,
-    indicators: [
-      {
-        indicatorKey: '230417171050011',
-        caption: '数量',
-        width: 100
-      },
-      {
-        indicatorKey: '230417171050025',
-        caption: '销售额',
-        width: 100
-      },
-      {
-        indicatorKey: '230707112948009',
-        caption: '折扣',
-        width: 100
-      }
-    ],
     columnTree,
     rowTree,
-    corner: {
-      titleOnDimension: 'row'
+    rows,
+    columns,
+    indicators,
+    indicatorsAsCol: false,
+    dataConfig: {
+      aggregationRules: [
+        {
+          indicatorKey: '230417171050011', //field转为指标key
+          field: '230417171050011', //指标依据字段
+          aggregationType: VTable.TYPES.AggregationType.MAX //计算类型
+        },
+        {
+          indicatorKey: '230417171050025', //field转为指标key
+          field: '230417171050025', //指标依据字段
+          aggregationType: VTable.TYPES.AggregationType.MAX //计算类型
+        },
+        {
+          indicatorKey: '230707112948009', //field转为指标key
+          field: '230707112948009', //指标依据字段
+          aggregationType: VTable.TYPES.AggregationType.MAX //计算类型
+        }
+      ],
+      // 配置小计总计显示
+      totals: {
+        row: {
+          showGrandTotals: true,
+          showSubTotals: false,
+          grandTotalLabel: '行总计'
+          // collectValuesBy:'230707112948023'
+        },
+        column: {
+          showGrandTotals: true,
+          showSubTotals: false,
+          grandTotalLabel: '列总计'
+        }
+      }
     },
+    parentElement: document.getElementById(Table_CONTAINER_DOM_ID),
+    records,
+    defaultRowHeight: 200,
+    defaultHeaderRowHeight: 50,
+    defaultColWidth: 280,
+    defaultHeaderColWidth: 100,
+    indicatorTitle: '指标',
+    corner: {
+      titleOnDimension: 'row',
+      headerStyle: {
+        autoWrapText: true
+      }
+    }
     // hover: {
+    //   disableHeaderHover:false,
     //   disableHover: true
     // },
-    select: {
-      disableSelect: true
-    }
+    // select: {
+    //   disableSelect: true
+    // }
   };
 
   const tableInstance = new VTable.PivotChart(option);

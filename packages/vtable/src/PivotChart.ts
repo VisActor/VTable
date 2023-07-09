@@ -12,7 +12,8 @@ import type {
   PivotTableConstructorOptions,
   IHeaderTreeDefine,
   IDimensionInfo,
-  SortOrder
+  SortOrder,
+  IIndicator
 } from './ts-types';
 import { HierarchyState } from './ts-types';
 import type { PivotHeaderLayoutMap } from './layout/pivot-header-layout';
@@ -26,6 +27,7 @@ import { _setDataSource } from './core/tableHelper';
 import { BaseTable } from './core/BaseTable';
 import type { PivotTableProtected } from './ts-types/base-table';
 import type { DatesetForPivotChart } from './dataset/datasetForPivotChart';
+import type { IChartColumnIndicator } from './ts-types/pivot-table/indicator/chart-indicator';
 
 export class PivotChart extends BaseTable implements PivotTableAPI {
   declare internalProps: PivotTableProtected;
@@ -44,6 +46,7 @@ export class PivotChart extends BaseTable implements PivotTableAPI {
     }
     this.internalProps.dataConfig = options.dataConfig;
     this.internalProps.enableDataAnalysis = this.options.enableDataAnalysis = true; // options.enableDataAnalysis;
+
     if (this.internalProps.enableDataAnalysis && (options.rows || options.columns)) {
       const rowKeys = options.rows.reduce((keys, rowObj) => {
         if (typeof rowObj === 'string') {
@@ -70,6 +73,8 @@ export class PivotChart extends BaseTable implements PivotTableAPI {
           }
           return keys;
         }, []) ?? [];
+      const collectValuesBy = this.generateCollectValuesConfig(columnKeys, rowKeys);
+      this.internalProps.dataConfig.collectValuesBy = collectValuesBy;
       this.dataset = new Dataset(
         this.internalProps.dataConfig,
         rowKeys,
@@ -329,7 +334,7 @@ export class PivotChart extends BaseTable implements PivotTableAPI {
         colKey[colKey.length - 1],
         (this.internalProps.layoutMap as PivoLayoutMap).getIndicatorName(col, row)
       );
-      return aggregator.formatValue ? aggregator.formatValue() : '';
+      return aggregator.records;
     } else if (this.flatDataToObjects) {
       //数据为行列树结构 根据row col获取对应的维度名称 查找到对应值
       const cellDimensionPath = this.internalProps.layoutMap.getCellHeaderPaths(col, row);
@@ -628,5 +633,71 @@ export class PivotChart extends BaseTable implements PivotTableAPI {
       isPivotCorner: this.isCornerHeader(col, row)
     };
     return result;
+  }
+
+  // generateTotalsConfig(option: PivotTableConstructorOptions) {
+  //   if (option.indicatorsAsCol) {
+  //     return {
+  //       column: {
+  //         showGrandTotals: true,
+  //         showSubTotals: false,
+  //         grandTotalLabel: '列总计'
+  //       }
+  //     };
+  //   }
+  //   return {
+  //     row: {
+  //       showGrandTotals: true,
+  //       showSubTotals: false,
+  //       grandTotalLabel: '行总计'
+  //     }
+  //   };
+  // }
+  generateCollectValuesConfig(columnKeys: string[], rowKeys: string[]) {
+    const option = this.options;
+    const collectValuesBy = [];
+
+    if (option.indicatorsAsCol) {
+      for (let i = 0, len = option.indicators.length; i < len; i++) {
+        if (typeof option.indicators[i] === 'string') {
+          collectValuesBy.push({ field: option.indicators[i] as string, by: columnKeys, range: true });
+        } else {
+          const indicatorDefine = option.indicators[i] as IIndicator;
+          collectValuesBy.push({
+            field: indicatorDefine.indicatorKey,
+            by: columnKeys,
+            range: true
+          });
+          if ((indicatorDefine as IChartColumnIndicator).chartSpec) {
+            collectValuesBy.push({
+              field: (indicatorDefine as IChartColumnIndicator).chartSpec.seriesField,
+              by: rowKeys
+              // range: true
+            });
+          }
+        }
+      }
+    } else {
+      for (let i = 0, len = option.indicators.length; i < len; i++) {
+        if (typeof option.indicators[i] === 'string') {
+          collectValuesBy.push({ field: option.indicators[i] as string, by: rowKeys, range: true });
+        } else {
+          const indicatorDefine = option.indicators[i] as IIndicator;
+          collectValuesBy.push({
+            field: indicatorDefine.indicatorKey,
+            by: rowKeys,
+            range: true
+          });
+          if ((indicatorDefine as IChartColumnIndicator).chartSpec) {
+            collectValuesBy.push({
+              field: (indicatorDefine as IChartColumnIndicator).chartSpec.seriesField,
+              by: columnKeys
+              // range: true
+            });
+          }
+        }
+      }
+    }
+    return collectValuesBy;
   }
 }

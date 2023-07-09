@@ -103,7 +103,7 @@ export class AvgAggregator extends Aggregator {
 export class MaxAggregator extends Aggregator {
   type: string = AggregationType.MAX;
   max: number = Number.MIN_SAFE_INTEGER;
-  isRecord?: boolean = false;
+  isRecord?: boolean = true;
   push(record: any): void {
     if (this.isRecord) {
       if (record.className === 'Aggregator') {
@@ -112,8 +112,9 @@ export class MaxAggregator extends Aggregator {
         this.records.push(record);
       }
     }
-    //TODO push Aggregator类型的对象没有做处理
-    if (typeof record === 'number') {
+    if (record.className === 'Aggregator') {
+      this.max = record.max > this.max ? record.max : this.max;
+    } else if (typeof record === 'number') {
       this.max = record > this.max ? record : this.max;
     } else if (typeof record[this.field] === 'number') {
       this.max = record[this.field] > this.max ? record[this.field] : this.max;
@@ -137,8 +138,9 @@ export class MinAggregator extends Aggregator {
         this.records.push(record);
       }
     }
-    //TODO push Aggregator类型的对象没有做处理
-    if (typeof record === 'number') {
+    if (record.className === 'Aggregator') {
+      this.min = record.min < this.min ? record.min : this.min;
+    } else if (typeof record === 'number') {
       this.min = record < this.min ? record : this.min;
     } else if (typeof record[this.field] === 'number') {
       this.min = record[this.field] < this.min ? record[this.field] : this.min;
