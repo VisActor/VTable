@@ -296,7 +296,7 @@ export class PivoLayoutMap implements LayoutMapAPI {
         field: indicatorStr,
         define: Object.assign(
           { field: indicatorStr, headerType: 'text', columnType: indicatorInfo?.columnType ?? 'text' },
-          indicatorInfo
+          indicatorInfo as any
         ),
         fieldFormat: indicatorInfo?.format,
         columnType: indicatorInfo?.columnType ?? 'text',
