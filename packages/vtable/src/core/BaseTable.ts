@@ -79,6 +79,7 @@ import { MenuHandler } from '../menu/dom/MenuHandler';
 import type { BaseTableAPI, BaseTableConstructorOptions, IBaseTableProtected } from '../ts-types/base-table';
 import { FocusInput } from './FouseInput';
 import { defaultPixelRatio } from '../tools/pixel-ratio';
+import { TableLegend } from '../render/component/legend';
 const { toBoxArray } = utilStyle;
 const { isTouchEvent } = event;
 const rangeReg = /^\$(\d+)\$(\d+)$/;
@@ -297,6 +298,10 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
 
     this.headerStyleCache = new Map();
     this.bodyStyleCache = new Map();
+
+    if (options.legends) {
+      internalProps.legends = new TableLegend(options.legends, this);
+    }
   }
   /** 节流绘制 */
   throttleInvalidate = throttle2(this.invalidate.bind(this), 200);
