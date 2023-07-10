@@ -266,6 +266,15 @@ export const menus = [
     ]
   },
   {
+    menu: 'components',
+    children: [
+      {
+        path: 'components',
+        name: 'legend'
+      }
+    ]
+  },
+  {
     menu: '调试使用',
     children: [
       {

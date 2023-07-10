@@ -140,6 +140,10 @@ export interface TableEventHandlersEventArgumentMap {
       originData?: any;
     }
   ];
+
+  legend_item_click: [{ model: any; value: any; event: PointerEvent }];
+  legend_item_hover: [{ model: any; value: any; event: PointerEvent }];
+  legend_item_unHover: [{ model: any; value: any; event: PointerEvent }];
 }
 export interface DrillMenuEventInfo {
   dimensionKey: string | number;

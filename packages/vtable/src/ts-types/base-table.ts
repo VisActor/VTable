@@ -52,6 +52,8 @@ import type { HeaderHelper } from '../header-helper/header-helper';
 import type { EventHandler } from '../event/EventHandler';
 import type { NumberMap } from '../tools/NumberMap';
 import type { FocusInput } from '../core/FouseInput';
+import type { ITableLegendOption } from './component/legend';
+import type { TableLegend } from '../render/component/legend';
 
 export interface IBaseTableProtected {
   element: HTMLElement;
@@ -165,6 +167,8 @@ export interface IBaseTableProtected {
    * 计算列宽时 指定最大列宽 可设置boolean或者具体的值 默认为450
    */
   limitMaxAutoWidth?: boolean | number;
+
+  legends?: TableLegend;
 }
 export interface BaseTableConstructorOptions {
   // /** 指定表格的行数 */
@@ -289,6 +293,8 @@ export interface BaseTableConstructorOptions {
 
   // maximum number of data items maintained in table instance
   maintainedDataCount?: number;
+
+  legends?: ITableLegendOption;
 }
 export interface BaseTableAPI {
   /** 表格的行数 */
