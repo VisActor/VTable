@@ -1,0 +1,58 @@
+{
+  "name": "@visactor/vtable",
+  "entries": [
+    {
+      "version": "0.9.1",
+      "tag": "@visactor/vtable_v0.9.1",
+      "date": "Wed, 05 Jul 2023 06:55:19 GMT",
+      "comments": {
+        "patch": [
+          {
+            "comment": "fix: chart shake after resize column width\n\n"
+          },
+          {
+            "comment": "fix: fix chart size after column width changed\n\n"
+          },
+          {
+            "comment": "fix: solve chart image shake caused by decimals\n\n"
+          },
+          {
+            "comment": "fix: fix merge cell y position\n\n"
+          },
+          {
+            "comment": "fix: fix problems width customRender expectedWidth and expectedHeight\n\n"
+          },
+          {
+            "comment": "feat: add custom element line type\n\n"
+          },
+          {
+            "comment": "refactor: borderRadius rename to cornerRadius"
+          },
+          {
+            "comment": "refactor: rename to cornerRadius and add demo"
+          },
+          {
+            "comment": "refactor: rename pin to frozen"
+          },
+          {
+            "comment": "feat: support event in mobile device"
+          },
+          {
+            "comment": "feat: add resize event response"
+          },
+          {
+            "comment": "alpha"
+          }
+        ],
+        "none": [
+          {
+            "comment": "none"
+          },
+          {
+            "comment": "update vrender version"
+          }
+        ]
+      }
+    }
+  ]
+}
