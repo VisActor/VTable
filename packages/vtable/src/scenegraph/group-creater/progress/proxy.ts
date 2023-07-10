@@ -139,6 +139,14 @@ export class SceneProxy {
     this.table._clearRowRangeHeightsMap();
     computeRowsHeight(this.table, 0, Math.min(this.firstScreenRowLimit, this.table.rowCount - 1));
 
+    // update colHeaderGroup rowHeaderGroup bodyGroup position
+    this.table.scenegraph.colHeaderGroup.setAttribute('x', this.table.getFrozenColsWidth());
+    this.table.scenegraph.rowHeaderGroup.setAttribute('y', this.table.getFrozenRowsHeight());
+    this.table.scenegraph.bodyGroup.setAttributes({
+      x: this.table.getFrozenColsWidth(),
+      y: this.table.getFrozenRowsHeight()
+    });
+
     // create cornerHeaderGroup
     createColGroup(
       cornerHeaderGroup,
