@@ -1,4 +1,5 @@
 import * as VTable from '../../src';
+import { bindDebugTool } from '../../src/scenegraph/debug-tool';
 const ListTable = VTable.ListTable;
 const Table_CONTAINER_DOM_ID = 'vTable';
 
@@ -221,7 +222,7 @@ export function createTable() {
 
   const instance = new ListTable(option);
 
-  VTable.bindDebugTool(instance.scenegraph.stage as any, {
+  bindDebugTool(instance.scenegraph.stage as any, {
     customGrapicKeys: ['role', '_updateTag']
   });
 

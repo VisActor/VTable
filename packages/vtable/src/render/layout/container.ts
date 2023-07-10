@@ -187,6 +187,19 @@ export class Container extends BaseElement {
     this.updateYAlign();
 
     const elements = [];
+    if (this.background && this.background.fill) {
+      const backgroundRect = new Rect({
+        width: this.width,
+        height: this.height,
+        stroke: this.background.stroke ?? false,
+        fill: this.background.fill,
+        cornerRadius: this.background.cornerRadius ?? 0,
+        lineWidth: this.background.lineWidth ?? 1
+      });
+      backgroundRect.x += this.x + parentPos.parentX;
+      backgroundRect.y += this.y + parentPos.parentY;
+      elements.push(backgroundRect);
+    }
     if (this.showBounds) {
       const boundsRect = new Rect({
         width: this.width,

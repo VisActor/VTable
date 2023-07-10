@@ -11,7 +11,7 @@ import { bindMediaClick } from './media-click';
 import { bindDrillEvent, drillClick } from './drill';
 import { bindSparklineHoverEvent } from './sparkline-event';
 import type { BaseTableAPI } from '../ts-types/base-table';
-import { handleTextStick } from '../scenegraph/stick-text';
+import { checkHaveTextStick, handleTextStick } from '../scenegraph/stick-text';
 import { bindTableGroupListener } from './listener/table-group';
 import { bindScrollBarListener } from './listener/scroll-bar';
 import { bindContainerDomListener } from './listener/container-dom';
@@ -74,9 +74,11 @@ export class EventManeger {
     });
 
     // 处理textStick
-    this.table.listen(TABLE_EVENT_TYPE.SCROLL, e => {
-      handleTextStick(this.table);
-    });
+    if (checkHaveTextStick(this.table)) {
+      this.table.listen(TABLE_EVENT_TYPE.SCROLL, e => {
+        handleTextStick(this.table);
+      });
+    }
 
     // link/image/video点击
     bindMediaClick(this.table);

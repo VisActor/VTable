@@ -78,7 +78,11 @@ export function createTable() {
             showBounds: false,
             direction: 'column',
             alignContent: 'center',
-            justifyContent: 'center'
+            justifyContent: 'center',
+            background: {
+              fill: 'blue',
+              stroke: 'red'
+            }
           });
           container.add(containerLeft);
 

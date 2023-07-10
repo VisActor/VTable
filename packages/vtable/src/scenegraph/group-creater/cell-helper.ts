@@ -43,10 +43,9 @@ export function createCell(
   textAlign: CanvasTextAlign,
   textBaseline: CanvasTextBaseline,
   mayHaveIcon: boolean,
-  isfunctionalProps: boolean,
   isMerge: boolean,
   range: CellRange,
-  cellTheme?: IThemeSpec
+  cellTheme: IThemeSpec
 ): Group {
   let cellGroup: Group;
   if (type === 'text' || type === 'link') {
@@ -137,7 +136,6 @@ export function createCell(
       textAlign,
       textBaseline,
       mayHaveIcon,
-      isfunctionalProps,
       customElementsGroup,
       renderDefault,
       cellTheme
@@ -197,7 +195,8 @@ export function createCell(
       (define as ChartColumnDefine).chartType,
       (define as ChartColumnDefine).chartSpec,
       (columnGroup.attribute as any).chartInstance,
-      table
+      table,
+      cellTheme
     );
   } else if (type === 'progressbar') {
     const style = table._getCellStyle(col, row) as ProgressBarStyle;
@@ -218,7 +217,6 @@ export function createCell(
       textAlign,
       textBaseline,
       false,
-      true,
       null,
       true,
       cellTheme
@@ -239,14 +237,27 @@ export function createCell(
     // 进度图插入到文字前，绘制在文字下
     cellGroup.insertBefore(progressBarGroup, cellGroup.firstChild);
   } else if (type === 'sparkline') {
-    cellGroup = createSparkLineCellGroup(null, columnGroup, 0, y, col, row, cellWidth, cellHeight, padding, table);
+    cellGroup = createSparkLineCellGroup(
+      null,
+      columnGroup,
+      0,
+      y,
+      col,
+      row,
+      cellWidth,
+      cellHeight,
+      padding,
+      table,
+      cellTheme
+    );
   }
 
   return cellGroup;
 }
 
 export function updateCell(col: number, row: number, table: BaseTableAPI, addNew?: boolean) {
-  const oldCellGroup = table.scenegraph.getCell(col, row, true);
+  // const oldCellGroup = table.scenegraph.getCell(col, row, true);
+  const oldCellGroup = table.scenegraph.highPerformanceGetCell(col, row, true);
 
   const type = table.isHeader(col, row)
     ? table._getHeaderLayoutMap(col, row).headerType
@@ -419,7 +430,6 @@ function updateCellContent(
     textAlign,
     textBaseline,
     mayHaveIcon,
-    false,
     isMerge,
     range,
     cellTheme
@@ -427,6 +437,11 @@ function updateCellContent(
   if (!addNew) {
     oldCellGroup.parent.insertAfter(newCellGroup, oldCellGroup);
     oldCellGroup.parent.removeChild(oldCellGroup);
+
+    // update cache
+    if (table.scenegraph?.proxy.cellCache.get(col)) {
+      table.scenegraph?.proxy.cellCache.set(col, newCellGroup);
+    }
   }
   return newCellGroup;
 }

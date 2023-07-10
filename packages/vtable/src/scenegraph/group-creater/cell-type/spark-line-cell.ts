@@ -1,10 +1,9 @@
-import type { ILine, ISymbol } from '@visactor/vrender';
+import type { ILine, ISymbol, IThemeSpec } from '@visactor/vrender';
 import { createLine, createSymbol } from '@visactor/vrender';
 import { PointScale, LinearScale } from '@visactor/vscale';
 import { isValid } from '../../../tools/util';
 import { Group } from '../../graphic/group';
 import type { CellInfo, SparklineSpec } from '../../../ts-types';
-import { getCellTheme } from './text-cell';
 import type { BaseTableAPI } from '../../../ts-types/base-table';
 
 const xScale: PointScale = new PointScale();
@@ -20,9 +19,9 @@ export function createSparkLineCellGroup(
   width: number,
   height: number,
   padding: number[],
-  table: BaseTableAPI
+  table: BaseTableAPI,
+  cellTheme: IThemeSpec
 ) {
-  const cellTheme = getCellTheme(table, col, row);
   // cell
   if (!cellGroup) {
     cellGroup = new Group({
