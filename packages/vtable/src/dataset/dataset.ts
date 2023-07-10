@@ -90,8 +90,8 @@ export class Dataset {
   private colSubTotalLabel: string;
   private rowGrandTotalLabel: string;
   private rowSubTotalLabel: string;
-  private collectValuesBy: { field: string; by: string[] }[]; //收集维度值，field收集维度，by按什么进行分组收集
-  collectedValues: Record<string, Record<string, Set<string>>> = {};
+  private collectValuesBy: Record<string, { by: string[]; range?: boolean; sumBy?: string[] }>; //收集维度值，field收集维度，by按什么进行分组收集
+  collectedValues: Record<string, Record<string, { max?: number; min?: number } | Set<string>>> = {};
   rows: string[];
   columns: string[];
   indicators: string[];
@@ -119,9 +119,9 @@ export class Dataset {
     this.colSubTotalLabel = this.totals?.column?.subTotalLabel ?? '小计';
     this.rowGrandTotalLabel = this.totals?.row?.grandTotalLabel ?? '总计';
     this.rowSubTotalLabel = this.totals?.row?.subTotalLabel ?? '小计';
-    this.collectValuesBy = this.dataConfig?.collectValuesBy ?? [
-      { field: '230417170554008', by: ['230417171050031', '230417171050028'] }
-    ];
+    this.collectValuesBy = this.dataConfig?.collectValuesBy ?? {
+      '230417170554008': { by: ['230417171050031', '230417171050028'] }
+    };
     // for (let i = 0; i < this.indicators.length; i++) {
     //   this.indicatorStatistics.push({
     //     max: new this.aggregators[AggregationType.MAX](this.indicators[i]),
@@ -146,6 +146,33 @@ export class Dataset {
       this.records = records;
       const t0 = typeof window !== 'undefined' ? window.performance.now() : 0;
       this.setRecords(records);
+
+      //processRecord中按照collectValuesBy 收集了维度值。现在需要对有聚合需求的 处理收集维度值范围
+      for (const field in this.collectedValues) {
+        if (this.collectValuesBy[field]?.sumBy) {
+          for (const byKeys in this.collectedValues[field]) {
+            const max = Object.values(this.collectedValues[field][byKeys]).reduce((acc, cur) => {
+              return cur.value() > acc ? cur.value() : acc;
+            }, Number.MIN_SAFE_INTEGER);
+            const min = Object.values(this.collectedValues[field][byKeys]).reduce((acc, cur) => {
+              return cur.value() < acc ? cur.value() : acc;
+            }, Number.MAX_SAFE_INTEGER);
+            this.collectedValues[field][byKeys] = {};
+            (
+              this.collectedValues[field][byKeys] as {
+                max: number;
+                min: number;
+              }
+            ).max = max;
+            (
+              this.collectedValues[field][byKeys] as {
+                max: number;
+                min: number;
+              }
+            ).min = min;
+          }
+        }
+      }
       const t1 = typeof window !== 'undefined' ? window.performance.now() : 0;
       console.log('processRecords:', t1 - t0);
 
@@ -264,17 +291,42 @@ export class Dataset {
     }
 
     //#region 按照collectValuesBy 收集维度值
-    for (let m = 0, len3 = this.collectValuesBy?.length; m < len3; m++) {
-      if (record[this.collectValuesBy[m].field]) {
-        if (!this.collectedValues[this.collectValuesBy[m].field]) {
-          this.collectedValues[this.collectValuesBy[m].field] = {};
+    for (const field in this.collectValuesBy) {
+      if (record[field]) {
+        if (!this.collectedValues[field]) {
+          this.collectedValues[field] = {};
         }
-        const collectKeys = this.collectValuesBy[m].by.map(byField => record[byField]).join(this.stringJoinChar);
-        if (!this.collectedValues[this.collectValuesBy[m].field][collectKeys]) {
-          this.collectedValues[this.collectValuesBy[m].field][collectKeys] = new Set();
+        const collectKeys = this.collectValuesBy[field].by.map(byField => record[byField]).join(this.stringJoinChar);
+        if (!this.collectedValues[field][collectKeys]) {
+          if (this.collectValuesBy[field].sumBy) {
+            this.collectedValues[field][collectKeys] = {};
+          } else if (this.collectValuesBy[field].range) {
+            this.collectedValues[field][collectKeys] = {
+              min: Number.MAX_SAFE_INTEGER,
+              max: Number.MIN_SAFE_INTEGER
+            };
+          } else {
+            this.collectedValues[field][collectKeys] = new Set();
+          }
         }
 
-        this.collectedValues[this.collectValuesBy[m].field][collectKeys].add(record[this.collectValuesBy[m].field]);
+        if (this.collectValuesBy[field].sumBy) {
+          const sumByKeys = this.collectValuesBy[field].sumBy.map(byField => record[byField]).join(this.stringJoinChar);
+          if (!this.collectedValues[field][collectKeys][sumByKeys]) {
+            this.collectedValues[field][collectKeys][sumByKeys] = new this.aggregators[AggregationType.SUM](field);
+          }
+          this.collectedValues[field][collectKeys][sumByKeys].push(record);
+        } else if (this.collectValuesBy[field].range) {
+          const fieldRange = this.collectedValues[field][collectKeys] as {
+            max: number;
+            min: number;
+          };
+          fieldRange.max = Math.max(record[field], fieldRange.max);
+          fieldRange.min = Math.min(record[field], fieldRange.min);
+        } else {
+          const fieldRange = this.collectedValues[field][collectKeys] as Set<string>;
+          fieldRange.add(record[field]);
+        }
       }
     }
     //#endregion

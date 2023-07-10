@@ -73,7 +73,7 @@ export class PivotChart extends BaseTable implements PivotTableAPI {
           }
           return keys;
         }, []) ?? [];
-      const collectValuesBy = this.generateCollectValuesConfig(columnKeys, rowKeys);
+      const collectValuesBy = this._generateCollectValuesConfig(columnKeys, rowKeys);
       this.internalProps.dataConfig.collectValuesBy = collectValuesBy;
       this.dataset = new Dataset(
         this.internalProps.dataConfig,
@@ -653,47 +653,69 @@ export class PivotChart extends BaseTable implements PivotTableAPI {
   //     }
   //   };
   // }
-  generateCollectValuesConfig(columnKeys: string[], rowKeys: string[]) {
+  /**
+   * 根据用户配置 生成 收集维度值collectValuesBy 的配置  传给dataset用
+   * @param columnKeys
+   * @param rowKeys
+   * @returns
+   */
+  private _generateCollectValuesConfig(columnKeys: string[], rowKeys: string[]) {
     const option = this.options;
-    const collectValuesBy = [];
+    const collectValuesBy = {};
 
     if (option.indicatorsAsCol) {
       for (let i = 0, len = option.indicators.length; i < len; i++) {
         if (typeof option.indicators[i] === 'string') {
-          collectValuesBy.push({ field: option.indicators[i] as string, by: columnKeys, range: true });
-        } else {
-          const indicatorDefine = option.indicators[i] as IIndicator;
-          collectValuesBy.push({
-            field: indicatorDefine.indicatorKey,
+          collectValuesBy[option.indicators[i] as string] = {
             by: columnKeys,
             range: true
-          });
+          };
+        } else {
+          const indicatorDefine = option.indicators[i] as IIndicator;
+          collectValuesBy[indicatorDefine.indicatorKey] = {
+            by: columnKeys,
+            range: true,
+            sumBy:
+              (indicatorDefine as IChartColumnIndicator).chartSpec?.stack !== false &&
+              columnKeys.concat((indicatorDefine as IChartColumnIndicator).chartSpec?.xField)
+          };
           if ((indicatorDefine as IChartColumnIndicator).chartSpec) {
-            collectValuesBy.push({
-              field: (indicatorDefine as IChartColumnIndicator).chartSpec.seriesField,
+            const field =
+              typeof (indicatorDefine as IChartColumnIndicator).chartSpec.xField === 'string'
+                ? (indicatorDefine as IChartColumnIndicator).chartSpec.xField
+                : (indicatorDefine as IChartColumnIndicator).chartSpec.xField[0];
+            collectValuesBy[field] = {
               by: rowKeys
               // range: true
-            });
+            };
           }
         }
       }
     } else {
       for (let i = 0, len = option.indicators.length; i < len; i++) {
         if (typeof option.indicators[i] === 'string') {
-          collectValuesBy.push({ field: option.indicators[i] as string, by: rowKeys, range: true });
-        } else {
-          const indicatorDefine = option.indicators[i] as IIndicator;
-          collectValuesBy.push({
-            field: indicatorDefine.indicatorKey,
+          collectValuesBy[option.indicators[i] as string] = {
             by: rowKeys,
             range: true
-          });
+          };
+        } else {
+          const indicatorDefine = option.indicators[i] as IIndicator;
+          collectValuesBy[indicatorDefine.indicatorKey] = {
+            by: rowKeys,
+            range: true,
+            sumBy:
+              (indicatorDefine as IChartColumnIndicator).chartSpec?.stack !== false &&
+              columnKeys.concat((indicatorDefine as IChartColumnIndicator).chartSpec?.xField)
+          };
           if ((indicatorDefine as IChartColumnIndicator).chartSpec) {
-            collectValuesBy.push({
-              field: (indicatorDefine as IChartColumnIndicator).chartSpec.seriesField,
+            const field =
+              typeof (indicatorDefine as IChartColumnIndicator).chartSpec.xField === 'string'
+                ? (indicatorDefine as IChartColumnIndicator).chartSpec.xField
+                : (indicatorDefine as IChartColumnIndicator).chartSpec.xField[0];
+            collectValuesBy[field] = {
               by: columnKeys
               // range: true
-            });
+            };
           }
         }
       }

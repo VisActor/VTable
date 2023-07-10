@@ -170,5 +170,5 @@ export interface IDataConfig {
   mappingRules?: MappingRules;
   derivedFieldRules?: DerivedFieldRules;
 
-  collectValuesBy?: { field: string; by: string[]; range?: boolean }[];
+  collectValuesBy?: Record<string, { field: string; by: string[]; range?: boolean }>;
 }

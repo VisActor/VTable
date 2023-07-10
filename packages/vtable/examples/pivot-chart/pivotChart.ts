@@ -127,14 +127,14 @@ export function createTable() {
       chartType: 'vchart',
       chartSpec: {
         // type: 'common',
-
+        // stack: true,
         type: 'bar',
         data: {
           id: 'data'
         },
-        xField: ['230417170554008', '230707112948023'],
+        xField: ['230417170554008'],
         yField: '230417171050011',
-        seriesField: '230417170554008',
+        seriesField: '230707112948023',
 
         axes: [
           { orient: 'left', visible: true, label: { visible: true } },
@@ -6914,21 +6914,21 @@ export function createTable() {
           field: '230707112948009', //指标依据字段
           aggregationType: VTable.TYPES.AggregationType.MAX //计算类型
         }
-      ],
+      ]
       // 配置小计总计显示
-      totals: {
-        row: {
-          showGrandTotals: true,
-          showSubTotals: false,
-          grandTotalLabel: '行总计'
-          // collectValuesBy:'230707112948023'
-        },
-        column: {
-          showGrandTotals: true,
-          showSubTotals: false,
-          grandTotalLabel: '列总计'
-        }
-      }
+      // totals: {
+      //   row: {
+      //     showGrandTotals: true,
+      //     showSubTotals: false,
+      //     grandTotalLabel: '行总计'
+      //     // collectValuesBy:'230707112948023'
+      //   },
+      //   column: {
+      //     showGrandTotals: true,
+      //     showSubTotals: false,
+      //     grandTotalLabel: '列总计'
+      //   }
+      // }
     },
     parentElement: document.getElementById(Table_CONTAINER_DOM_ID),
     records,
