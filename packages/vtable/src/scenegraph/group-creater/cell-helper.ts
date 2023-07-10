@@ -181,6 +181,7 @@ export function createCell(
       cellTheme
     );
   } else if (type === 'chart') {
+    const chartInstance = table.internalProps.layoutMap.getChartInstance(col, row);
     cellGroup = createChartCellGroup(
       null,
       columnGroup,
@@ -194,7 +195,7 @@ export function createCell(
       table.getCellValue(col, row),
       (define as ChartColumnDefine).chartType,
       (define as ChartColumnDefine).chartSpec,
-      (columnGroup.attribute as any).chartInstance,
+      chartInstance,
       table,
       cellTheme
     );
