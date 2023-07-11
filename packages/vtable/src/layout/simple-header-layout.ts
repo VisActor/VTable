@@ -663,4 +663,13 @@ export class SimpleHeaderLayoutMap implements LayoutMapAPI {
       removeCellPositions
     };
   }
+  setChartInstance(_col: number, _row: number, chartInstance: any) {
+    const columnObj = this.transpose ? this._columns[_row] : this._columns[_col];
+    columnObj.chartInstance = chartInstance;
+  }
+
+  getChartInstance(_col: number, _row: number) {
+    const columnObj = this.transpose ? this._columns[_row] : this._columns[_col];
+    return columnObj.chartInstance;
+  }
 }

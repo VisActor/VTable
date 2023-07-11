@@ -83,34 +83,9 @@ export function createChartCellGroup(
     //   height: height - padding[0] - padding[2],
     // },
   });
-
-  // 调试使用
-  // (chartGroup as Group).onBeforeAttributeUpdate = (val: any) => {
-  //   if (val.y === 9.5) {
-  //     console.log('ffffff------------------', val);
-  //   }
-  // };
   cellGroup.appendChild(chartGroup);
-  // 将生成的实例存到columnGroup中 已共享
-  columnGroup.setAttribute('chartInstance', chartGroup.chartInstance);
+  // 将生成的实例存到layoutMap中 共享
+  table.internalProps.layoutMap.setChartInstance(col, row, chartGroup.chartInstance);
 
-  // 调试问题使用
-  // if (col === 2) {
-  //   columnGroup.AABBBounds.width();
-  //   chartGroup.AABBBounds.width();
-  //   console.log(
-  //     'set viewbox y1',
-  //     Math.ceil(cellGroup.globalAABBBounds.y1 + padding[0] + table.scrollTop),
-  //     chartGroup.globalAABBBounds.height()
-  //   );
-
-  //   console.log(
-  //     'create chart',
-  //     columnGroup,
-  //     columnGroup.globalAABBBounds.y1,
-  //     cellGroup.globalAABBBounds.y1,
-  //     chartGroup.globalAABBBounds.y1
-  //   );
-  // }
   return cellGroup;
 }
