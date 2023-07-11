@@ -3,6 +3,62 @@ import type { ITableLegendOption } from '../../../ts-types/component/legend';
 import { isPercent } from '../../../tools/calc';
 import { ITitle } from '@visactor/vchart/esm/component';
 
+const defaultLegendSpec = {
+  orient: 'bottom',
+  position: 'middle',
+  padding: 30,
+  title: {
+    visible: false,
+    padding: 0,
+    textStyle: {
+      fontSize: 14,
+      fill: '#000000',
+      fontWeight: 'normal'
+    },
+    space: 12
+  },
+  item: {
+    visible: true,
+    spaceCol: 10,
+    spaceRow: 10,
+    padding: 2,
+    background: {
+      state: {
+        selectedHover: {
+          fill: 'gray',
+          fillOpacity: 0.7
+        },
+        unSelectedHover: {
+          fill: 'gray',
+          fillOpacity: 0.2
+        }
+      }
+    },
+    shape: {
+      space: 4,
+      state: {
+        unSelected: {
+          fillOpacity: 0.5
+        }
+      }
+    },
+    label: {
+      space: 4,
+      style: {
+        fill: '#89909D',
+        fontSize: 14
+      },
+      state: {
+        unSelected: {
+          fillOpacity: 0.5
+        }
+      }
+    }
+  },
+  allowAllCanceled: false,
+  visible: true
+};
+
 export function getLegendAttributes(spec: ITableLegendOption, rect: { width: number; height: number }) {
   const {
     // 需要进行样式转换的属性
@@ -26,7 +82,7 @@ export function getLegendAttributes(spec: ITableLegendOption, rect: { width: num
     padding, // vchart 布局模块已经处理了
 
     ...restSpec
-  } = merge({}, spec);
+  } = merge({}, defaultLegendSpec, spec);
 
   const attrs: any = restSpec;
 

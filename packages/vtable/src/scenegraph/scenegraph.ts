@@ -257,8 +257,8 @@ export class Scenegraph {
       height: 0
     });
     this.tableGroup.setAttributes({
-      x: 0,
-      y: 0,
+      x: this.table.tableX,
+      y: this.table.tableY,
       width: 0,
       height: 0
     });

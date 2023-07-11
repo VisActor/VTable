@@ -1,4 +1,5 @@
 import * as VTable from '../../src';
+import { bindDebugTool } from '../../src/scenegraph/debug-tool';
 const Table_CONTAINER_DOM_ID = 'vTable';
 const generatePersons = count => {
   return Array.from(new Array(count)).map((_, i) => ({
@@ -80,26 +81,36 @@ export function createTable() {
           label: 'line_5',
           shape: {
             fill: '#1664FF',
-            symbolType: 'circle',
-            fillOpacity: 1,
-            strokeOpacity: 1,
-            opacity: 1
+            symbolType: 'circle'
           }
         },
         {
           label: 'bar_12',
           shape: {
             fill: '#1AC6FF',
-            symbolType: 'square',
-            fillOpacity: 1,
-            strokeOpacity: 1,
-            opacity: 1
+            symbolType: 'square'
           }
         }
       ],
-      orient: 'top'
+      orient: 'bottom',
+      position: 'start'
     }
   };
   const tableInstance = new VTable.ListTable(option);
   (window as any).tableInstance = tableInstance;
+
+  bindDebugTool(tableInstance.scenegraph.stage as any, {
+    customGrapicKeys: ['role', '_updateTag']
+  });
+
+  const { LEGEND_ITEM_CLICK, LEGEND_ITEM_HOVER, LEGEND_ITEM_UNHOVER } = VTable.ListTable.EVENT_TYPE;
+  tableInstance.listen(LEGEND_ITEM_CLICK, args => {
+    console.log('LEGEND_ITEM_CLICK', args);
+  });
+  tableInstance.listen(LEGEND_ITEM_HOVER, args => {
+    console.log('LEGEND_ITEM_HOVER', args);
+  });
+  tableInstance.listen(LEGEND_ITEM_UNHOVER, args => {
+    console.log('LEGEND_ITEM_UNHOVER', args);
+  });
 }
