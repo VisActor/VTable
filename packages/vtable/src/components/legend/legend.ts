@@ -2,7 +2,7 @@ import { cloneDeep, get, merge } from '@visactor/vutils';
 import type { ITableLegendOption } from '../../ts-types/component/legend';
 import type { BaseTableAPI } from '../../ts-types/base-table';
 import { DiscreteLegend, LegendEvent } from '@visactor/vrender-components';
-import { getLegendAttributes } from './util/get-legend-attributes';
+import { getLegendAttributes } from '../util/get-legend-attributes';
 import { TABLE_EVENT_TYPE } from '../../core/TABLE_EVENT_TYPE';
 import { getQuadProps } from '../../scenegraph/utils/padding';
 
