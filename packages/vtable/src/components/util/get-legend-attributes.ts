@@ -1,6 +1,6 @@
 import { degreeToRadian, isEmpty, isValid, merge } from '@visactor/vutils';
-import type { ITableLegendOption } from '../../../ts-types/component/legend';
-import { isPercent } from '../../../tools/calc';
+import type { ITableLegendOption } from '../../ts-types/component/legend';
+import { isPercent } from '../../tools/calc';
 
 const defaultLegendSpec = {
   orient: 'bottom',

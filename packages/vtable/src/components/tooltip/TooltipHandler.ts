@@ -1,13 +1,13 @@
-import type { CellRange, RectProps } from '../ts-types';
-import { Placement } from '../ts-types';
+import type { CellRange, RectProps } from '../../ts-types';
+import { Placement } from '../../ts-types';
 import type { BaseTooltip } from './BaseTooltip';
 import { BubbleTooltip } from './Tooltip';
-import { cellInRange } from '../tools/helper';
-import { isMobile } from '../tools/util';
+import { cellInRange } from '../../tools/helper';
+import { isMobile } from '../../tools/util';
 // import { DG_EVENT_TYPE } from '../core/DG_EVENT_TYPE';
-import type { TooltipOptions } from '../ts-types/tooltip';
-import { TABLE_EVENT_TYPE } from '../core/TABLE_EVENT_TYPE';
-import type { BaseTableAPI } from '../ts-types/base-table';
+import type { TooltipOptions } from '../../ts-types/tooltip';
+import { TABLE_EVENT_TYPE } from '../../core/TABLE_EVENT_TYPE';
+import type { BaseTableAPI } from '../../ts-types/base-table';
 const TOOLTIP_INSTANCE_FACTORY = {
   // tooltip(table: BaseTableAPI): BaseTooltip {
   //   return new Tooltip(table);
