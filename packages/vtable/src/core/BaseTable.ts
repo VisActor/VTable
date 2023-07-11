@@ -267,6 +267,14 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     this.stateManeger = new StateManeger(this);
     this.eventManeger = new EventManeger(this);
 
+    if (options.legends) {
+      internalProps.legends = new TableLegend(options.legends, this);
+      this.scenegraph.tableGroup.setAttributes({
+        x: this.tableX,
+        y: this.tableY
+      });
+    }
+
     //原有的toolTip提示框处理，主要在文字绘制不全的时候 出来全文本提示信息 需要加个字段设置是否有效
     internalProps.tooltip = Object.assign(
       {
@@ -298,10 +306,6 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
 
     this.headerStyleCache = new Map();
     this.bodyStyleCache = new Map();
-
-    if (options.legends) {
-      internalProps.legends = new TableLegend(options.legends, this);
-    }
   }
   /** 节流绘制 */
   throttleInvalidate = throttle2(this.invalidate.bind(this), 200);

@@ -4,6 +4,7 @@ import type { BaseTableAPI } from '../../ts-types/base-table';
 import { DiscreteLegend, LegendEvent } from '@visactor/vrender-components';
 import { getLegendAttributes } from './util/get-legend-attributes';
 import { TABLE_EVENT_TYPE } from '../../core/TABLE_EVENT_TYPE';
+import { getQuadProps } from '../../scenegraph/utils/padding';
 
 export class TableLegend {
   table: BaseTableAPI;
@@ -41,25 +42,30 @@ export class TableLegend {
     this.table.scenegraph.stage.defaultLayer.appendChild(legend);
 
     // 调整位置
-    const width = isFinite(this.legendComponent.AABBBounds.width()) ? this.legendComponent.AABBBounds.width() : 0;
-    const height = isFinite(this.legendComponent.AABBBounds.height()) ? this.legendComponent.AABBBounds.height() : 0;
+    let width = isFinite(this.legendComponent.AABBBounds.width()) ? this.legendComponent.AABBBounds.width() : 0;
+    let height = isFinite(this.legendComponent.AABBBounds.height()) ? this.legendComponent.AABBBounds.height() : 0;
     const rectWidth = this.table.tableNoFrameWidth;
     const rectHeight = this.table.tableNoFrameHeight;
+    const padding = getQuadProps(attrs.padding ?? 10);
 
     let x = 0;
     let y = 0;
     if (this.orient === 'left') {
-      x = 0;
+      x = padding[3];
       y = 0;
+      width += padding[1] + padding[3];
     } else if (this.orient === 'top') {
       x = 0;
-      y = 0;
+      y = padding[0];
+      height += padding[0] + padding[2];
     } else if (this.orient === 'right') {
-      x = rectWidth - width;
+      x = rectWidth - width - padding[1];
       y = 0;
+      width += padding[1] + padding[3];
     } else if (this.orient === 'bottom') {
       x = 0;
-      y = rectHeight - height;
+      y = rectHeight - height - padding[2];
+      height += padding[0] + padding[2];
     }
 
     const layout = this.orient === 'bottom' || this.orient === 'top' ? 'horizontal' : 'vertical';
@@ -71,13 +77,17 @@ export class TableLegend {
       if (position === 'middle') {
         offsetX = (rectWidth - width) / 2;
       } else if (position === 'end') {
-        offsetX = rectWidth - width;
+        offsetX = rectWidth - width - padding[1];
+      } else {
+        offsetX = padding[3];
       }
     } else {
       if (position === 'middle') {
         offsetY = (rectHeight - height) / 2;
       } else if (position === 'end') {
-        offsetY = rectHeight - height;
+        offsetY = rectHeight - height - padding[2];
+      } else {
+        offsetY = padding[0];
       }
     }
 
@@ -87,6 +97,19 @@ export class TableLegend {
       x,
       y
     });
+
+    // update table size
+    if (this.orient === 'left') {
+      this.table.tableNoFrameWidth = this.table.tableNoFrameWidth - Math.ceil(width);
+      this.table.tableX = Math.ceil(width);
+    } else if (this.orient === 'top') {
+      this.table.tableNoFrameHeight = this.table.tableNoFrameHeight - Math.ceil(height);
+      this.table.tableY = Math.ceil(height);
+    } else if (this.orient === 'right') {
+      this.table.tableNoFrameWidth = this.table.tableNoFrameWidth - Math.ceil(width);
+    } else if (this.orient === 'bottom') {
+      this.table.tableNoFrameHeight = this.table.tableNoFrameHeight - Math.ceil(height);
+    }
   }
 
   getLegendAttributes(rect: any) {
@@ -110,16 +133,19 @@ export class TableLegend {
     if (this.legendComponent) {
       this.legendComponent.addEventListener(LegendEvent.legendItemClick, (e: any) => {
         const selectedData = get(e, 'detail.currentSelected');
+        this.table.scenegraph.updateNextFrame();
         this.table.fireListeners(TABLE_EVENT_TYPE.LEGEND_ITEM_CLICK, { model: this, value: selectedData, event: e });
       });
 
       this.legendComponent.addEventListener(LegendEvent.legendItemHover, (e: any) => {
         const detail = get(e, 'detail');
+        this.table.scenegraph.updateNextFrame();
         this.table.fireListeners(TABLE_EVENT_TYPE.LEGEND_ITEM_HOVER, { model: this, value: detail, event: e });
       });
 
       this.legendComponent.addEventListener(LegendEvent.legendItemUnHover, (e: any) => {
         const detail = get(e, 'detail');
+        this.table.scenegraph.updateNextFrame();
         this.table.fireListeners(TABLE_EVENT_TYPE.LEGEND_ITEM_UNHOVER, { model: this, value: detail, event: e });
       });
     }
