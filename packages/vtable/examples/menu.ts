@@ -17,6 +17,10 @@ export const menus = [
       {
         path: 'list',
         name: 'list-data-promise'
+      },
+      {
+        path: 'list',
+        name: 'list-chart'
       }
     ]
   },
