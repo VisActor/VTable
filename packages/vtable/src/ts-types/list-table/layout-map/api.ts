@@ -115,6 +115,7 @@ export interface ColumnData extends WidthData {
   chartType?: string;
   /** 如果是绘制图表库组件的图表类型 统一图表配置chartSpec */
   chartSpec?: any | ((arg0: CellInfo) => any);
+  chartInstance?: any;
   sparklineSpec?: SparklineSpec | ((arg0: CellInfo) => SparklineSpec);
   style: ColumnStyleOption | null | undefined;
   define: ColumnDefine;
@@ -140,6 +141,7 @@ export interface IndicatorData extends WidthData {
   columnType: 'text' | 'link' | 'image' | 'video' | 'sparkline' | 'progressbar' | 'chart'; //BaseColumn<T, any>;
   chartType?: string;
   chartSpec?: any | ((arg0: CustomRenderFunctionArg) => any);
+  chartInstance?: any;
   style?: ColumnStyleOption | null | undefined;
   define: ColumnDefine;
   // headerIcon?:
