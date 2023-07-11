@@ -1,7 +1,6 @@
 import { degreeToRadian, isEmpty, isValid, merge } from '@visactor/vutils';
 import type { ITableLegendOption } from '../../../ts-types/component/legend';
 import { isPercent } from '../../../tools/calc';
-import { ITitle } from '@visactor/vchart/esm/component';
 
 const defaultLegendSpec = {
   orient: 'bottom',

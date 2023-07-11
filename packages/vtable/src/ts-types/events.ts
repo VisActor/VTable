@@ -192,4 +192,8 @@ export interface TableEventHandlersReturnMap {
   pivot_sort_click: void;
 
   tree_hierarchy_state_change: void;
+
+  legend_item_click: void;
+  legend_item_hover: void;
+  legend_item_unHover: void;
 }
