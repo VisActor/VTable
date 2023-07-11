@@ -2,6 +2,7 @@
 import * as VTable from '../../src';
 const ListTable = VTable.ListTable;
 const Table_CONTAINER_DOM_ID = 'vTable';
+import { bindDebugTool } from '../../src/scenegraph/debug-tool';
 
 export function createTable() {
   // register icon
@@ -344,7 +345,13 @@ export function createTable() {
               title: '对象定义形式 非注册'
             }
           }
-        ]
+        ],
+        style: {
+          autoWrapText: true
+        },
+        headerStyle: {
+          autoWrapText: true
+        }
       },
       {
         field: 'id',
@@ -590,7 +597,7 @@ export function createTable() {
     }
   });
 
-  VTable.bindDebugTool(instance.scenegraph.stage as any, {
+  bindDebugTool(instance.scenegraph.stage as any, {
     customGrapicKeys: ['role', '_updateTag']
   });
 

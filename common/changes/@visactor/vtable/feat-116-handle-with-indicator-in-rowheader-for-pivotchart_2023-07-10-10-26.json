@@ -1,7 +1,7 @@
 {
   "changes": [
     {
-      "comment": "fix: fix chart size after column width changed\n\n",
+      "comment": "refactor: chart type handle with transpose or indicator in row\n\n",
       "type": "patch",
       "packageName": "@visactor/vtable"
     }

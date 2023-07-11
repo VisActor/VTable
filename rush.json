@@ -3,7 +3,6 @@
   "rushVersion": "5.94.1",
   "pnpmVersion": "7.32.1",
   "nodeSupportedVersionRange": ">=14.15.0 <15.0.0 || >=16.13.0 <17.0.0 || >=18.15.0 <19.0.0",
-  // "nodeSupportedVersionInstructions": "Run 'nvs use' to switch to the expected node version.",
   "suppressNodeLtsWarning": true,
   "ensureConsistentVersions": true,
   "projectFolderMinDepth": 2,
@@ -18,38 +17,42 @@
     "versionBumpCommitMessage": "Bump versions [skip ci]",
     "changeLogUpdateCommitMessage": "Update changelogs [skip ci]"
   },
-  // "eventHooks": {
-  //   "preRushInstall": [],
-  //   "postRushInstall": [],
-  //   "preRushBuild": [],
-  //   "postRushBuild": []
-  // },
-  // "telemetryEnabled": false,
-  // "hotfixChangeEnabled": false,
-  "allowedProjectTags": ["tool", "share", "package"],
+  "allowedProjectTags": [
+    "tool",
+    "share",
+    "package"
+  ],
   "projects": [
     {
       "packageName": "@visactor/vtable",
       "projectFolder": "packages/vtable",
-      "tags": ["package"],
+      "tags": [
+        "package"
+      ],
       "shouldPublish": true
     },
     {
       "packageName": "@internal/bundler",
       "projectFolder": "tools/bundler",
-      "tags": ["tool"],
+      "tags": [
+        "tool"
+      ],
       "shouldPublish": false
     },
     {
       "packageName": "@internal/eslint-config",
       "projectFolder": "share/eslint-config",
-      "tags": ["share"],
+      "tags": [
+        "share"
+      ],
       "shouldPublish": false
     },
     {
       "packageName": "@internal/ts-config",
       "projectFolder": "share/ts-config",
-      "tags": ["share"],
+      "tags": [
+        "share"
+      ],
       "shouldPublish": false
     }
   ]

@@ -73,7 +73,9 @@ export function createTable() {
   const option = {
     parentElement: document.getElementById(Table_CONTAINER_DOM_ID),
     records,
-    columns
+    columns,
+    transpose: true,
+    defaultColWidth: 200
   };
   const tableInstance = new VTable.ListTable(option);
   (window as any).tableInstance = tableInstance;
