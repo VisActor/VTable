@@ -103,7 +103,7 @@ export function createFrameBorder(
   //   // groupAttributes.width = group.attribute.width - deltaX - deltaX;
   //   // groupAttributes.height = group.attribute.height - deltaY - deltaY;
   // }
-  // group.setAttributes(groupAttributes);
+  group.setAttributes(groupAttributes);
 
   if (justForXYPosition) {
     return;
