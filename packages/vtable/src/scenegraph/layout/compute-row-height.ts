@@ -194,7 +194,8 @@ function computeTextHeight(col: number, row: number, table: BaseTableAPI): numbe
   let iconInlineFrontHeight = 0;
   const iconInlineEnd: ColumnIconOption[] = [];
   let iconInlineEndHeight = 0;
-  const mayHaveIcon = table.getCellType(col, row) !== 'body' ? true : !!table.getBodyColumnDefine(col, row)?.icon;
+  const define = table.getBodyColumnDefine(col, row);
+  const mayHaveIcon = table.getCellType(col, row) !== 'body' ? true : !!define?.icon || !!define?.tree;
   if (mayHaveIcon) {
     const icons = table.getCellIcons(col, row);
     icons?.forEach(icon => {
