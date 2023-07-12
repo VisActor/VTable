@@ -822,10 +822,10 @@ export class PivoLayoutMap implements LayoutMapAPI {
     return indicatorObj?.chartInstance;
   }
 
-  updateDataStateToChartInstance(activeChartInstance?: any) {
+  updateDataStateToChartInstance(activeChartInstance?: any): void {
     const state = {
       vtable_selected: {
-        filter: datum => {
+        filter: (datum: any) => {
           if ((this._table as PivotChart)._selectedItems.length >= 1) {
             const match = (this._table as PivotChart)._selectedItems.find(item => {
               for (const itemKey in item) {
@@ -837,11 +837,11 @@ export class PivoLayoutMap implements LayoutMapAPI {
             });
             return !!match;
           }
-          return;
+          return false;
         }
       },
       vtable_selected_reverse: {
-        filter: datum => {
+        filter: (datum: any) => {
           if ((this._table as PivotChart)._selectedItems.length >= 1) {
             const match = (this._table as PivotChart)._selectedItems.find(item => {
               for (const itemKey in item) {
@@ -853,7 +853,7 @@ export class PivoLayoutMap implements LayoutMapAPI {
             });
             return !match;
           }
-          return;
+          return false;
         }
       }
     };

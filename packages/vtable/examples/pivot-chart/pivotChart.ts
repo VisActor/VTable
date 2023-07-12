@@ -132,6 +132,16 @@ export function createTable() {
         data: {
           id: 'data'
         },
+        // brush: {
+        //   brushType: 'rect',
+        //   brushLinkSeriesIndex: [1, 2],
+        //   inBrush: {
+        //     colorAlpha: 1
+        //   },
+        //   outOfBrush: {
+        //     colorAlpha: 0.2
+        //   }
+        // },
         xField: ['230417170554008'],
         yField: '230417171050011',
         seriesField: '230707112948023',

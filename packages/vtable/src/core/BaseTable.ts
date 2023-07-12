@@ -2059,6 +2059,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
 
   abstract isListTable(): boolean;
   abstract isPivotTable(): boolean;
+  abstract isPivotChart(): boolean;
 
   protected abstract _getSortFuncFromHeaderOption(
     columns: ColumnsDefine | undefined,
