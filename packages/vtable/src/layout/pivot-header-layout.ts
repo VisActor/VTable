@@ -773,9 +773,6 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
     }
     return results;
   }
-  get columnWidths(): WidthData[] {
-    return this._columnWidths;
-  }
 
   private setColumnWidths() {
     const returnWidths: WidthData[] = new Array(this.colCount).fill(undefined);
@@ -828,6 +825,12 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
     this._columnWidths = returnWidths;
   }
 
+  get columnWidths(): WidthData[] {
+    return this._columnWidths;
+  }
+  getColumnWidthDefined(col: number): WidthData {
+    return this._columnWidths[col];
+  }
   get showHeader(): boolean {
     return this._showHeader;
   }

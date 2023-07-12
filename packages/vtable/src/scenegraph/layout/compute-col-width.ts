@@ -9,7 +9,6 @@ import { getProp } from '../utils/get-prop';
 import type { BaseTableAPI } from '../../ts-types/base-table';
 
 export function computeColsWidth(table: BaseTableAPI, colStart?: number, colEnd?: number, update?: boolean): void {
-  const time = typeof window !== 'undefined' ? window.performance.now() : 0;
   colStart = colStart ?? 0;
   colEnd = colEnd ?? table.colCount - 1;
   // table._clearColRangeWidthsMap();
@@ -135,7 +134,7 @@ export function computeColWidth(
 ): number {
   const { layoutMap, transpose } = table.internalProps;
   // const ctx = _getInitContext.call(table);
-  const { width } = layoutMap.columnWidths?.[col] || {};
+  const { width } = layoutMap.getColumnWidthDefined(col);
 
   if (transpose) {
     // 转置模式
@@ -147,7 +146,16 @@ export function computeColWidth(
           ? table.defaultHeaderColWidth[col] ?? table.defaultColWidth
           : table.defaultHeaderColWidth;
       }
-      return table.defaultColWidth;
+
+      if (width !== 'auto') {
+        // if (width && (typeof width === 'string' || width > 0)) return width;
+        if (typeof width === 'string') {
+          return calc.toPx(width, table.internalProps.calcWidthContext);
+        } else if (width) {
+          return width;
+        }
+        return table.defaultColWidth;
+      }
     } else if (
       (table.widthMode === 'standard-aeolus' || table.widthMode === 'adaptive') &&
       col === 0 &&

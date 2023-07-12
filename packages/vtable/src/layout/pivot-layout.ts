@@ -318,7 +318,18 @@ export class PivoLayoutMap implements LayoutMapAPI {
     }
     return returnWidths;
   }
-
+  getColumnWidthDefined(col: number): WidthData {
+    const returnWidths: WidthData[] = [];
+    for (let i = 0; i < this.rowHeaderLevelCount; i++) {
+      const dimension = this.getDimensionInfo(this.rowShowAttrs[i]) ?? this.getIndicatorInfo(this.rowShowAttrs[i]);
+      returnWidths.push({ width: dimension?.width });
+    }
+    for (let j = 0; j < this.colCount - this.rowHeaderLevelCount; j++) {
+      const indicator = this._indicatorObjects[j % this._indicatorObjects.length];
+      returnWidths.push({ width: indicator?.width });
+    }
+    return returnWidths[col];
+  }
   get showColumnHeader(): boolean {
     return this._showColumnHeader;
   }
