@@ -26,6 +26,7 @@ import type { BaseTableAPI, PivotTableProtected } from '../../ts-types/base-tabl
 import { getStyleTheme } from '../../core/tableHelper';
 import { isPromise } from '../../tools/helper';
 import { dealPromiseData } from '../utils/deal-promise-data';
+import { CartesianAxis } from '../../components/axis/axis';
 
 export function createCell(
   type: ColumnTypeOption,
@@ -143,6 +144,11 @@ export function createCell(
     if (isMerge) {
       cellGroup.mergeCol = range.end.col;
       cellGroup.mergeRow = range.end.row;
+    }
+
+    if ((define as any).isAxis) {
+      const axis = new CartesianAxis({ orient: 'bottom', type: 'band' }, [], table);
+      cellGroup.appendChild(axis.component);
     }
   } else if (type === 'image') {
     // 创建图片单元格
