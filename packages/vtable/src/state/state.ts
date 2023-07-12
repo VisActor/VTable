@@ -127,6 +127,7 @@ export class StateManeger {
     col: number;
     row: number;
   };
+  // 当鼠标hover到迷你图上时存储行列值，好在鼠标移动到其他单元格时清理Sparkline的高亮状态
   sparkLine: {
     col: number;
     row: number;

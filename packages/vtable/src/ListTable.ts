@@ -63,6 +63,9 @@ export class ListTable extends BaseTable implements ListTableAPI {
   isPivotTable(): false {
     return false;
   }
+  isPivotChart(): false {
+    return false;
+  }
   /**
    * Get the sort state.
    */
@@ -497,7 +500,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
     };
     return result;
   }
-  protected getSortFuncFromHeaderOption(
+  protected _getSortFuncFromHeaderOption(
     columns: ColumnsDefine | undefined,
     field: FieldDef,
     fieldKey?: FieldKeyDef
@@ -515,7 +518,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
         ) {
           return header.sort;
         } else if (header.columns) {
-          const sort = this.getSortFuncFromHeaderOption(header.columns, field, fieldKey);
+          const sort = this._getSortFuncFromHeaderOption(header.columns, field, fieldKey);
           if (sort) {
             return sort;
           }
@@ -551,7 +554,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
       ({ order, field, fieldKey } = this.internalProps.sortState as SortState);
     }
     if (field) {
-      const sortFunc = this.getSortFuncFromHeaderOption(this.internalProps.columns, field, fieldKey);
+      const sortFunc = this._getSortFuncFromHeaderOption(this.internalProps.columns, field, fieldKey);
       let hd;
       if (fieldKey) {
         hd = this.internalProps.layoutMap.headerObjects.find((col: any) => col && col.fieldKey === fieldKey);

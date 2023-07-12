@@ -2,6 +2,9 @@ import type { GraphicType, IGroupGraphicAttribute } from '@visactor/vrender';
 import { genNumberType, Group } from '@visactor/vrender';
 import { Bounds } from '@visactor/vutils';
 import type { BaseTableAPI } from '../../ts-types/base-table';
+import type { PivotChart } from '../../PivotChart';
+import { clearChartCacheImage, updateChartSize } from '../refresh-node/update-chart';
+import type { PivoLayoutMap } from '../../layout/pivot-layout';
 
 interface IChartGraphicAttribute extends IGroupGraphicAttribute {
   canvas: HTMLCanvasElement;
@@ -104,6 +107,31 @@ export class Chart extends Group {
     });
     // this.activeChartInstance.updateData('data', this.attribute.data);
     this.activeChartInstance.renderSync();
+
+    (table.internalProps.layoutMap as any).updateDataStateToChartInstance(this.activeChartInstance);
+    console.log('bind event activeChartInstance');
+    this.activeChartInstance.on('click', (params: any) => {
+      console.log('click captured', params);
+      (table as PivotChart)._selectedItems = [];
+      if (table.isPivotChart()) {
+        if (params.datum?.key !== 0 && Object.keys(params.datum).length > 0) {
+          //本以为没有点击到图元上 datum为空 发现是{key:0}或者{}
+          const selectedState = {};
+          for (const itemKey in params.datum) {
+            if (!itemKey.startsWith('VGRAMMAR_') && !itemKey.startsWith('__VCHART')) {
+              selectedState[itemKey] = params.datum[itemKey];
+            }
+          }
+          (table as PivotChart)._selectedItems.push(selectedState);
+        }
+        (table.internalProps.layoutMap as PivoLayoutMap).updateDataStateToChartInstance(this.activeChartInstance);
+        clearChartCacheImage(table.scenegraph);
+      }
+    });
+    this.activeChartInstance.on('dragend', (params: any) => {
+      console.log('dragend captured', params);
+    });
+    console.log('active');
   }
   /**
    * 图表失去焦点
@@ -113,5 +141,6 @@ export class Chart extends Group {
     this.active = false;
     this.activeChartInstance.release();
     this.activeChartInstance = null;
+    console.log('deactivate');
   }
 }

@@ -506,7 +506,7 @@ export interface BaseTableAPI {
   getCustomLayout: (col: number, row: number) => ICustomLayout;
   isListTable: () => boolean;
   isPivotTable: (() => boolean) & (() => boolean);
-
+  isPivotChart: (() => boolean) & (() => boolean);
   _clearColRangeWidthsMap: (col?: number) => void;
   _clearRowRangeHeightsMap: (row?: number) => void;
 

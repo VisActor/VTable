@@ -135,25 +135,117 @@ export function createTable() {
         xField: ['230417170554008'],
         yField: '230417171050011',
         seriesField: '230707112948023',
-
         axes: [
           { orient: 'left', visible: true, label: { visible: true } },
           { orient: 'bottom', visible: true }
-        ]
+        ],
+        bar: {
+          state: {
+            selected: {
+              fill: 'yellow'
+            },
+            selected_reverse: {
+              // fill: '#ddd'
+              opacity: 0.2
+            }
+          }
+        }
       },
       style: {
-        padding: 0
+        padding: 1
       }
     },
     {
       indicatorKey: '230417171050025',
       caption: '销售额',
-      width: 100
+      width: 100,
+      columnType: 'chart',
+      chartType: 'vchart',
+      chartSpec: {
+        // type: 'common',
+        // stack: true,
+        type: 'area',
+        data: {
+          id: 'data'
+        },
+        xField: ['230417170554008'],
+        yField: '230417171050025',
+        seriesField: '230707112948023',
+
+        axes: [
+          { orient: 'left', visible: true, label: { visible: true } },
+          { orient: 'bottom', visible: true }
+        ],
+        line: {
+          state: {
+            selected: {
+              lineWidth: 3
+            },
+            selected_reverse: {
+              lineWidth: 1
+            }
+          }
+        },
+        area: {
+          state: {
+            selected: {
+              opacity: 1
+            },
+            selected_reverse: {
+              opacity: 0.2
+            }
+          }
+        },
+        point: {
+          state: {
+            selected: {
+              fill: 'yellow'
+            },
+            selected_reverse: {
+              fill: '#ddd'
+            }
+          }
+        }
+      },
+      style: {
+        padding: 1
+      }
     },
     {
       indicatorKey: '230707112948009',
       caption: '折扣',
-      width: 100
+      width: 100,
+      columnType: 'chart',
+      chartType: 'vchart',
+      chartSpec: {
+        // type: 'common',
+        stack: false,
+        type: 'bar',
+        data: {
+          id: 'data'
+        },
+        xField: ['230417170554008', '230707112948023'],
+        yField: '230707112948009',
+        seriesField: '230707112948023',
+        axes: [
+          { orient: 'left', visible: true, label: { visible: true } },
+          { orient: 'bottom', visible: true }
+        ],
+        bar: {
+          state: {
+            selected: {
+              fill: 'yellow'
+            },
+            selected_reverse: {
+              // fill: '#ddd'
+              opacity: 0.2
+            }
+          }
+        }
+      },
+      style: {
+        padding: 1
+      }
     }
   ];
   const records = [
@@ -6897,39 +6989,6 @@ export function createTable() {
     columns,
     indicators,
     indicatorsAsCol: false,
-    dataConfig: {
-      aggregationRules: [
-        {
-          indicatorKey: '230417171050011', //field转为指标key
-          field: '230417171050011', //指标依据字段
-          aggregationType: VTable.TYPES.AggregationType.MAX //计算类型
-        },
-        {
-          indicatorKey: '230417171050025', //field转为指标key
-          field: '230417171050025', //指标依据字段
-          aggregationType: VTable.TYPES.AggregationType.MAX //计算类型
-        },
-        {
-          indicatorKey: '230707112948009', //field转为指标key
-          field: '230707112948009', //指标依据字段
-          aggregationType: VTable.TYPES.AggregationType.MAX //计算类型
-        }
-      ]
-      // 配置小计总计显示
-      // totals: {
-      //   row: {
-      //     showGrandTotals: true,
-      //     showSubTotals: false,
-      //     grandTotalLabel: '行总计'
-      //     // collectValuesBy:'230707112948023'
-      //   },
-      //   column: {
-      //     showGrandTotals: true,
-      //     showSubTotals: false,
-      //     grandTotalLabel: '列总计'
-      //   }
-      // }
-    },
     parentElement: document.getElementById(Table_CONTAINER_DOM_ID),
     records,
     defaultRowHeight: 200,
@@ -6942,7 +7001,12 @@ export function createTable() {
       headerStyle: {
         autoWrapText: true
       }
-    }
+    },
+    theme: VTable.themes.ARCO.extends({
+      selectionStyle: {
+        cellBgColor: ''
+      }
+    })
     // hover: {
     //   disableHeaderHover:false,
     //   disableHover: true

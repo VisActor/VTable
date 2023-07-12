@@ -96,7 +96,9 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
   isPivotTable(): true {
     return true;
   }
-
+  isPivotChart(): false {
+    return false;
+  }
   _canResizeColumn(col: number, row: number): boolean {
     const ifCan = super._canResizeColumn(col, row);
     if (ifCan) {
@@ -249,7 +251,7 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
     table.frozenColCount = layoutMap.rowHeaderLevelCount; //TODO
     table.frozenRowCount = layoutMap.headerLevelCount;
   }
-  protected getSortFuncFromHeaderOption(
+  protected _getSortFuncFromHeaderOption(
     columns: undefined,
     field: FieldDef,
     fieldKey?: FieldKeyDef
@@ -317,7 +319,7 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
       const aggregator = this.dataset.getAggregator(
         rowKey[rowKey.length - 1],
         colKey[colKey.length - 1],
-        (this.internalProps.layoutMap as PivoLayoutMap).getIndicatorName(col, row)
+        (this.internalProps.layoutMap as PivoLayoutMap).getIndicatorKey(col, row)
       );
       return aggregator.formatValue ? aggregator.formatValue() : '';
     } else if (this.flatDataToObjects) {
@@ -353,7 +355,7 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
       const aggregator = this.dataset.getAggregator(
         rowKey[rowKey.length - 1],
         colKey[colKey.length - 1],
-        (this.internalProps.layoutMap as PivoLayoutMap).getIndicatorName(col, row)
+        (this.internalProps.layoutMap as PivoLayoutMap).getIndicatorKey(col, row)
       );
       return aggregator.value ? aggregator.value() : undefined;
       // return ''
@@ -389,7 +391,7 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
       const aggregator = this.dataset.getAggregator(
         rowKey[rowKey.length - 1],
         colKey[colKey.length - 1],
-        (this.internalProps.layoutMap as PivoLayoutMap).getIndicatorName(col, row)
+        (this.internalProps.layoutMap as PivoLayoutMap).getIndicatorKey(col, row)
       );
       return aggregator.records;
       // return ''

@@ -30,7 +30,7 @@ export class PivoLayoutMap implements LayoutMapAPI {
   columnsDefine: (IDimension | string)[];
   indicatorsDefine: (IIndicator | string)[];
 
-  indicators: string[];
+  indicatorKeys: string[];
 
   _showRowHeader = true;
   _showColumnHeader = true;
@@ -95,7 +95,7 @@ export class PivoLayoutMap implements LayoutMapAPI {
     this.indicatorTitle = table.options.indicatorTitle;
     this.dataset = dataset;
     this.dataConfig = dataset.dataConfig;
-    this.indicators = dataset.indicators;
+    this.indicatorKeys = dataset.indicatorKeys;
     this.indicatorsAsCol = table.options.indicatorsAsCol ?? true;
     this.hideIndicatorName = table.options.hideIndicatorName ?? false;
     this.indicatorDimensionKey = IndicatorDimensionKeyPlaceholder;
@@ -128,14 +128,14 @@ export class PivoLayoutMap implements LayoutMapAPI {
 
     this._colCount =
       (this.colKeysPath.length === 0 ? 1 : this.colKeysPath.length) *
-        (this.indicatorsAsCol ? this.indicators.length : 1) +
+        (this.indicatorsAsCol ? this.indicatorKeys.length : 1) +
       this.rowHeaderLevelCount;
     this._rowCount =
       (this.rowKeysPath.length === 0 ? 1 : this.rowKeysPath.length) *
-        (!this.indicatorsAsCol ? this.indicators.length : 1) +
+        (!this.indicatorsAsCol ? this.indicatorKeys.length : 1) +
       this.columnHeaderLevelCount;
 
-    this._bodyRowCount = this.rowKeysPath.length * (!this.indicatorsAsCol ? this.indicators.length : 1);
+    this._bodyRowCount = this.rowKeysPath.length * (!this.indicatorsAsCol ? this.indicatorKeys.length : 1);
     this.initHeaderObjects();
     this.initIndicatorObjects();
   }
@@ -283,19 +283,19 @@ export class PivoLayoutMap implements LayoutMapAPI {
     // const indicatorDimensionInfo = this.dimensions?.find(
     //   (dimension) => dimension.dimensionKey === this.indicatorDimensionKey
     // );
-    this.indicators.forEach(indicatorStr => {
+    this.indicatorKeys.forEach(indicatorKey => {
       const indicatorInfo = this.indicatorsDefine?.find(indicator => {
         if (typeof indicator === 'string') {
           return false;
         }
-        return indicator.indicatorKey === indicatorStr;
+        return indicator.indicatorKey === indicatorKey;
       }) as IIndicator;
       this._indicatorObjects.push({
-        id: indicatorStr,
-        indicatorKey: indicatorStr,
-        field: indicatorStr,
+        id: indicatorKey,
+        indicatorKey: indicatorKey,
+        field: indicatorKey,
         define: Object.assign(
-          { field: indicatorStr, headerType: 'text', columnType: indicatorInfo?.columnType ?? 'text' },
+          { field: indicatorKey, headerType: 'text', columnType: indicatorInfo?.columnType ?? 'text' },
           indicatorInfo as any
         ),
         fieldFormat: indicatorInfo?.format,
@@ -494,20 +494,20 @@ export class PivoLayoutMap implements LayoutMapAPI {
         if (row < this.columns.length) {
           return this.convertColKeys[row][
             this.indicatorsAsCol
-              ? Math.floor((col - this.rowHeaderLevelCount) / this.indicators.length)
+              ? Math.floor((col - this.rowHeaderLevelCount) / this.indicatorKeys.length)
               : col - this.rowHeaderLevelCount
           ];
         }
-        return this.indicators[(col - this.rowHeaderLevelCount) % this.indicators.length];
+        return this.indicatorKeys[(col - this.rowHeaderLevelCount) % this.indicatorKeys.length];
       } else if (this.isRowHeader(col, row)) {
         if (col < this.rows.length) {
           return this.rowKeysPath[
             !this.indicatorsAsCol
-              ? Math.floor((row - this.columnHeaderLevelCount) / this.indicators.length)
+              ? Math.floor((row - this.columnHeaderLevelCount) / this.indicatorKeys.length)
               : row - this.columnHeaderLevelCount
           ][col];
         }
-        return this.indicators[(row - this.columnHeaderLevelCount) % this.indicators.length];
+        return this.indicatorKeys[(row - this.columnHeaderLevelCount) % this.indicatorKeys.length];
       }
     }
     return 0;
@@ -518,16 +518,16 @@ export class PivoLayoutMap implements LayoutMapAPI {
    * @param row
    * @returns
    */
-  getIndicatorName(col: number, row: number) {
+  getIndicatorKey(col: number, row: number) {
     if (this.isHeader(col, row)) {
       return '';
     }
     if (this.indicatorsAsCol) {
       const bodyCol = col - this.rowHeaderLevelCount;
-      return this.indicators[bodyCol % this.indicators.length];
+      return this.indicatorKeys[bodyCol % this.indicatorKeys.length];
     }
     const bodyRow = row - this.columnHeaderLevelCount;
-    return this.indicators[bodyRow % this.indicators.length];
+    return this.indicatorKeys[bodyRow % this.indicatorKeys.length];
   }
   getHeader(col: number, row: number): HeaderData {
     const id = this.getCellId(col, row);
@@ -690,7 +690,7 @@ export class PivoLayoutMap implements LayoutMapAPI {
     }
     return this.indicatorsAsCol
       ? row - this.columnHeaderLevelCount
-      : Math.floor((row - this.columnHeaderLevelCount) / this.indicators.length);
+      : Math.floor((row - this.columnHeaderLevelCount) / this.indicatorKeys.length);
   }
   /**
    * 根据列号，得出body部分也就是数据部分 是第几条
@@ -704,7 +704,7 @@ export class PivoLayoutMap implements LayoutMapAPI {
     // return col - this.rowHeaderLevelCount;
     return !this.indicatorsAsCol
       ? col - this.rowHeaderLevelCount
-      : Math.floor((col - this.rowHeaderLevelCount) / this.indicators.length);
+      : Math.floor((col - this.rowHeaderLevelCount) / this.indicatorKeys.length);
   }
   getRecordStartRowByRecordIndex(index: number): number {
     return this.columnHeaderLevelCount + index;
@@ -740,12 +740,15 @@ export class PivoLayoutMap implements LayoutMapAPI {
         rowHeaderPaths = rowHeaderPaths.slice(0, col + 1);
       }
     }
+    if (colHeaderPaths && this.indicatorsAsCol && col >= this.rowHeaderLevelCount) {
+      colHeaderPaths.push(this.indicatorKeys[(col - this.rowHeaderLevelCount) % this.indicatorKeys.length]);
+    } else if (rowHeaderPaths && row >= this.columnHeaderLevelCount) {
+      rowHeaderPaths.push(this.indicatorKeys[(row - this.columnHeaderLevelCount) % this.indicatorKeys.length]);
+    }
     return {
       colHeaderPaths:
         colHeaderPaths?.map((key: string) => {
-          const isIndicatorKey = this._indicatorObjects.find(indicator => {
-            indicator.indicatorKey === key;
-          });
+          const isIndicatorKey = this._indicatorObjects.find(indicator => indicator.indicatorKey === key);
           return {
             dimensionKey: !isIndicatorKey ? key : undefined,
             indicatorKey: isIndicatorKey ? key : undefined,
@@ -754,9 +757,7 @@ export class PivoLayoutMap implements LayoutMapAPI {
         }) ?? [],
       rowHeaderPaths:
         rowHeaderPaths?.map((key: string) => {
-          const isIndicatorKey = this._indicatorObjects.find(indicator => {
-            indicator.indicatorKey === key;
-          });
+          const isIndicatorKey = this._indicatorObjects.find(indicator => indicator.indicatorKey === key);
           return {
             dimensionKey: !isIndicatorKey ? key : undefined,
             indicatorKey: isIndicatorKey ? key : undefined,
@@ -819,5 +820,47 @@ export class PivoLayoutMap implements LayoutMapAPI {
       indicatorObj = this._indicatorObjects.find(indicator => indicator.indicatorKey === indicatorKey);
     }
     return indicatorObj?.chartInstance;
+  }
+
+  updateDataStateToChartInstance(activeChartInstance?: any) {
+    const state = {
+      vtable_selected: {
+        filter: datum => {
+          if ((this._table as PivotChart)._selectedItems.length >= 1) {
+            const match = (this._table as PivotChart)._selectedItems.find(item => {
+              for (const itemKey in item) {
+                if (item[itemKey] !== datum[itemKey]) {
+                  return false;
+                }
+              }
+              return true;
+            });
+            return !!match;
+          }
+          return;
+        }
+      },
+      vtable_selected_reverse: {
+        filter: datum => {
+          if ((this._table as PivotChart)._selectedItems.length >= 1) {
+            const match = (this._table as PivotChart)._selectedItems.find(item => {
+              for (const itemKey in item) {
+                if (item[itemKey] !== datum[itemKey]) {
+                  return false;
+                }
+              }
+              return true;
+            });
+            return !match;
+          }
+          return;
+        }
+      }
+    };
+    this._indicatorObjects.forEach((_indicatorObject: IndicatorData) => {
+      const chartInstance = _indicatorObject.chartInstance;
+      chartInstance.updateState(state);
+    });
+    activeChartInstance?.updateState(state);
   }
 }
