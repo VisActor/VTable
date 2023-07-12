@@ -80,6 +80,7 @@ import type { BaseTableAPI, BaseTableConstructorOptions, IBaseTableProtected } f
 import { FocusInput } from './FouseInput';
 import { defaultPixelRatio } from '../tools/pixel-ratio';
 import { TableLegend } from '../components/legend/legend';
+import { CartesianAxis } from '../components/axis/axis';
 const { toBoxArray } = utilStyle;
 const { isTouchEvent } = event;
 const rangeReg = /^\$(\d+)\$(\d+)$/;
