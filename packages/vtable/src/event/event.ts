@@ -141,8 +141,10 @@ export class EventManeger {
     const { eventArgs } = eventArgsSet;
 
     if (eventArgs) {
-      // 注意：如果启用下面这句代码逻辑 则在点击选中单元格时失效hover效果。但是会导致chart实例的click事件失效，所以先注释掉这个处理逻辑
-      // this.table.stateManeger.updateHoverPos(-1, -1);
+      // 注意：如果启用下面这句代码逻辑 则在点击选中单元格时失效hover效果。但是会导致chart实例的click事件失效，所以先特殊处理这个逻辑
+      if (!this.table.isPivotChart()) {
+        this.table.stateManeger.updateHoverPos(-1, -1);
+      }
       this.table.stateManeger.updateSelectPos(
         eventArgs.col,
         eventArgs.row,
