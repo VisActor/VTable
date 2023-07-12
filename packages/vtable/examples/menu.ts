@@ -117,6 +117,10 @@ export const menus = [
       {
         path: 'pivot',
         name: 'pivot-dataset'
+      },
+      {
+        path: 'pivot',
+        name: 'pivot-indicator-row'
       }
     ]
   },

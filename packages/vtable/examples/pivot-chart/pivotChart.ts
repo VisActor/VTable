@@ -122,7 +122,7 @@ export function createTable() {
     {
       indicatorKey: '230417171050011',
       caption: '数量',
-      width: 100,
+      width: 'auto',
       columnType: 'chart',
       chartType: 'vchart',
       chartSpec: {
@@ -168,7 +168,6 @@ export function createTable() {
     {
       indicatorKey: '230417171050025',
       caption: '销售额',
-      width: 100,
       columnType: 'chart',
       chartType: 'vchart',
       chartSpec: {
@@ -224,7 +223,7 @@ export function createTable() {
     {
       indicatorKey: '230707112948009',
       caption: '折扣',
-      width: 100,
+      width: 'auto',
       columnType: 'chart',
       chartType: 'vchart',
       chartSpec: {

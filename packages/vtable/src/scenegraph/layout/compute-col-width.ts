@@ -7,6 +7,7 @@ import { toFixed, validToString } from '../../tools/util';
 import { getQuadProps } from '../utils/padding';
 import { getProp } from '../utils/get-prop';
 import type { BaseTableAPI } from '../../ts-types/base-table';
+import type { PivoLayoutMap } from '../../layout/pivot-layout';
 
 export function computeColsWidth(table: BaseTableAPI, colStart?: number, colEnd?: number, update?: boolean): void {
   colStart = colStart ?? 0;
@@ -134,7 +135,7 @@ export function computeColWidth(
 ): number {
   const { layoutMap, transpose } = table.internalProps;
   // const ctx = _getInitContext.call(table);
-  const { width } = layoutMap.getColumnWidthDefined(col);
+  const { width } = layoutMap?.getColumnWidthDefined(col) ?? {};
 
   if (transpose) {
     // 转置模式
@@ -208,6 +209,18 @@ function computeAutoColWidth(
     // 超过5000行启动列宽自动计算采样
     deltaRow = Math.ceil((endRow - startRow) / 5000);
   }
+  // 如果是透视图 并且指标是以行展示 计算列宽需要根据x轴的值域范围
+  if (
+    table.isPivotChart() &&
+    !(table.internalProps.layoutMap as PivoLayoutMap).indicatorsAsCol &&
+    col >= table.rowHeaderLevelCount
+  ) {
+    const optimunWidth = (table.internalProps.layoutMap as PivoLayoutMap).getOptimunWidthForChart(col);
+    if (optimunWidth > 0) {
+      return optimunWidth;
+    }
+  }
+
   for (let row = startRow; row <= endRow; row += deltaRow) {
     // 先判断CustomRender
     const customWidth = computeCustomRenderWidth(col, row, table);

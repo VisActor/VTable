@@ -90,7 +90,7 @@ export class Dataset {
   private colSubTotalLabel: string;
   private rowGrandTotalLabel: string;
   private rowSubTotalLabel: string;
-  private collectValuesBy: Record<string, { by: string[]; range?: boolean; sumBy?: string[] }>; //收集维度值，field收集维度，by按什么进行分组收集
+  collectValuesBy: Record<string, { by: string[]; range?: boolean; sumBy?: string[]; type?: 'xField' | undefined }>; //收集维度值，field收集维度，by按什么进行分组收集
   collectedValues: Record<string, Record<string, { max?: number; min?: number } | Set<string>>> = {};
   rows: string[];
   columns: string[];

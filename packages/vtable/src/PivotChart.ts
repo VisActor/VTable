@@ -619,7 +619,8 @@ export class PivotChart extends BaseTable implements PivotTableAPI {
                 ? (indicatorDefine as IChartColumnIndicator).chartSpec.xField
                 : (indicatorDefine as IChartColumnIndicator).chartSpec.xField[0];
             collectValuesBy[field] = {
-              by: columnKeys
+              by: columnKeys,
+              type: 'xField'
               // range: true
             };
           }

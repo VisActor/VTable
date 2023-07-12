@@ -11,6 +11,7 @@ import type {
   IDimension,
   IIndicator,
   IPivotTableCellHeaderPaths,
+  ITitleDefine,
   LayoutObjectId,
   ShowColumnRowType
 } from '../ts-types';
@@ -25,7 +26,7 @@ export class PivoLayoutMap implements LayoutMapAPI {
   private _headerObjectMap: { [key: LayoutObjectId]: HeaderData } = {};
   // private _emptyDataCache = new EmptyDataCache();
   private _indicatorObjects: IndicatorData[] = [];
-
+  private _columnWidths: WidthData[] = [];
   rowsDefine: (IDimension | string)[];
   columnsDefine: (IDimension | string)[];
   indicatorsDefine: (IIndicator | string)[];
@@ -34,6 +35,8 @@ export class PivoLayoutMap implements LayoutMapAPI {
 
   _showRowHeader = true;
   _showColumnHeader = true;
+  _rowHeaderTitle: ITitleDefine;
+  _columnHeaderTitle: ITitleDefine;
   // transpose: boolean = false;
   /**
    * 通过indicatorsAsCol和hideIndicatorName判断指标值显示在column还是row 还是根本不显示
@@ -138,6 +141,64 @@ export class PivoLayoutMap implements LayoutMapAPI {
     this._bodyRowCount = this.rowKeysPath.length * (!this.indicatorsAsCol ? this.indicatorKeys.length : 1);
     this.initHeaderObjects();
     this.initIndicatorObjects();
+
+    this.setColumnWidths();
+  }
+  private setColumnWidths() {
+    const returnWidths: WidthData[] = new Array(this.colCount).fill(undefined);
+    if (this.showRowHeader) {
+      if (this.rowHeaderTitle) {
+        returnWidths[0] = {};
+      }
+      this.rowShowAttrs.forEach((objKey, index) => {
+        const dimension = this.rowsDefine?.find(dimension =>
+          typeof dimension === 'string' ? false : dimension.dimensionKey === objKey
+        ) as IDimension;
+        dimension &&
+          (returnWidths[index + (this.rowHeaderTitle ? 1 : 0)] = {
+            width: dimension.width,
+            minWidth: dimension.minWidth,
+            maxWidth: dimension.maxWidth
+          });
+      });
+    }
+    if (this.indicatorsAsCol) {
+      for (let i = this.rowHeaderLevelCount; i < this.colCount; i++) {
+        const cellDefine = this.getBody(i, this.columnHeaderLevelCount);
+        returnWidths[i] = {
+          width: cellDefine?.width,
+          minWidth: cellDefine?.minWidth,
+          maxWidth: cellDefine?.maxWidth
+        };
+      }
+    } else {
+      let width: string | number = 0;
+      let maxWidth: string | number;
+      let minWidth: string | number;
+      let isAuto;
+      this._indicatorObjects.forEach((obj, index) => {
+        if (typeof obj.width === 'number') {
+          width = Math.max(obj.width, <number>width);
+        } else if (obj.width === 'auto') {
+          isAuto = true;
+        }
+        if (typeof obj.minWidth === 'number') {
+          minWidth = Math.max(obj.minWidth, <number>minWidth);
+        }
+        if (typeof obj.maxWidth === 'number') {
+          maxWidth = Math.max(obj.maxWidth, <number>maxWidth);
+        }
+      });
+      width = width > 0 ? width : isAuto ? 'auto' : undefined;
+      returnWidths.fill({ width, minWidth, maxWidth }, this.rowHeaderLevelCount, this.colCount);
+    }
+    this._columnWidths = returnWidths;
+  }
+  get columnWidths(): WidthData[] {
+    return this._columnWidths;
+  }
+  getColumnWidthDefined(col: number): WidthData {
+    return this._columnWidths[col];
   }
   private getDimensionInfo(dimensionKey: string) {
     const dimensionInfo: IDimension =
@@ -302,33 +363,15 @@ export class PivoLayoutMap implements LayoutMapAPI {
         columnType: indicatorInfo?.columnType ?? 'text',
         chartType: indicatorInfo && ('chartType' in indicatorInfo ? indicatorInfo.chartType : null),
         chartSpec: indicatorInfo && ('chartSpec' in indicatorInfo ? indicatorInfo.chartSpec : null),
-        style: indicatorInfo?.style
+        sparklineSpec: 'sparklineSpec' in indicatorInfo ? indicatorInfo.sparklineSpec : null,
+        style: indicatorInfo?.style,
+        icon: indicatorInfo?.icon,
+        width: indicatorInfo?.width,
+        minWidth: indicatorInfo?.minWidth,
+        maxWidth: indicatorInfo?.maxWidth,
+        disableColumnResize: indicatorInfo?.disableColumnResize
       });
     });
-  }
-  get columnWidths(): WidthData[] {
-    const returnWidths: WidthData[] = [];
-    for (let i = 0; i < this.rowHeaderLevelCount; i++) {
-      const dimension = this.getDimensionInfo(this.rowShowAttrs[i]) ?? this.getIndicatorInfo(this.rowShowAttrs[i]);
-      returnWidths.push({ width: dimension?.width });
-    }
-    for (let j = 0; j < this.colCount - this.rowHeaderLevelCount; j++) {
-      const indicator = this._indicatorObjects[j % this._indicatorObjects.length];
-      returnWidths.push({ width: indicator?.width });
-    }
-    return returnWidths;
-  }
-  getColumnWidthDefined(col: number): WidthData {
-    const returnWidths: WidthData[] = [];
-    for (let i = 0; i < this.rowHeaderLevelCount; i++) {
-      const dimension = this.getDimensionInfo(this.rowShowAttrs[i]) ?? this.getIndicatorInfo(this.rowShowAttrs[i]);
-      returnWidths.push({ width: dimension?.width });
-    }
-    for (let j = 0; j < this.colCount - this.rowHeaderLevelCount; j++) {
-      const indicator = this._indicatorObjects[j % this._indicatorObjects.length];
-      returnWidths.push({ width: indicator?.width });
-    }
-    return returnWidths[col];
   }
   get showColumnHeader(): boolean {
     return this._showColumnHeader;
@@ -341,6 +384,12 @@ export class PivoLayoutMap implements LayoutMapAPI {
   }
   set showRowHeader(_showRowHeader: boolean) {
     this._showRowHeader = _showRowHeader;
+  }
+  get rowHeaderTitle(): ITitleDefine {
+    return this._rowHeaderTitle;
+  }
+  set rowHeaderTitle(_rowHeaderTitle: ITitleDefine) {
+    this._rowHeaderTitle = _rowHeaderTitle;
   }
   getCellType(col: number, row: number): CellType {
     if (this.isCornerHeader(col, row)) {
@@ -873,5 +922,24 @@ export class PivoLayoutMap implements LayoutMapAPI {
       chartInstance.updateState(state);
     });
     activeChartInstance?.updateState(state);
+  }
+  /** 获取某一图表列的最优宽度，计算逻辑是根据图表的xField的维度值个数 * barWidth */
+  getOptimunWidthForChart(col: number) {
+    const path = this.getCellHeaderPaths(col, this.columnHeaderLevelCount).colHeaderPaths;
+    let ff: any;
+    for (const key in this.dataset.collectValuesBy) {
+      if (this.dataset.collectValuesBy[key].type === 'xField') {
+        ff =
+          this.dataset.collectedValues[key][
+            path
+              .map(pathObj => {
+                return pathObj.value;
+              })
+              .join(this.dataset.stringJoinChar)
+          ];
+        break;
+      }
+    }
+    return ff ? ff?.size * 50 : 0;
   }
 }
