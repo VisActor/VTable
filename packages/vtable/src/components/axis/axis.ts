@@ -1,11 +1,22 @@
-import { cloneDeep, merge } from '@visactor/vutils';
-import { BandScale, LinearScale } from '@visactor/vscale';
+import { isValidNumber, merge } from '@visactor/vutils';
 import type { BaseTableAPI } from '../../ts-types/base-table';
 import type { ICellAxisOption } from '../../ts-types/component/axis';
 import { LineAxis, type LineAxisAttributes } from '@visactor/vrender-components';
-import { getAxisAttributes } from './get-axis-attributes';
+import { commonAxis, getAxisAttributes } from './get-axis-attributes';
 import { isXAxis, isYAxis } from '../util/orient';
 import type { IOrientType } from '../../ts-types/component/util';
+import { BandAxisScale } from './band-scale';
+import { registerDataSetInstanceParser, registerDataSetInstanceTransform } from '../util/register';
+import type { Parser } from '@visactor/vdataset';
+import { DataView } from '@visactor/vdataset';
+import type { IBaseScale } from '@visactor/vscale';
+import { ticks } from '@visactor/vchart/esm/data/transforms/tick-data';
+
+const DEFAULT_BAND_INNER_PADDING = 0.1;
+const DEFAULT_BAND_OUTER_PADDING = 0.3;
+const scaleParser: Parser = (scale: IBaseScale) => {
+  return scale;
+};
 
 export class CartesianAxis {
   table: BaseTableAPI;
@@ -14,19 +25,23 @@ export class CartesianAxis {
   visible: boolean;
   type: 'linear' | 'band' | 'time';
   inverse: boolean;
-  data: any[];
-  tickData: any[];
-  scale: BandScale | LinearScale;
+  data?: any[];
+  tickData: DataView;
+  scale: BandAxisScale;
   component: LineAxis;
 
-  constructor(option: ICellAxisOption, data: any[], table: BaseTableAPI) {
+  constructor(option: ICellAxisOption, table: BaseTableAPI) {
     this.table = table;
-    this.option = cloneDeep(option);
+    // this.option = cloneDeep(option);
+    this.option = merge({}, option, commonAxis);
+
     this.orient = option.orient ?? 'left';
     this.visible = option.visible ?? true;
     this.type = option.type ?? 'band';
     this.inverse = 'inverse' in option ? !!option.inverse : false;
-    this.data = data;
+    if (option.type === 'band') {
+      this.data = option.data;
+    }
 
     this.initScale();
     this.initData();
@@ -35,68 +50,73 @@ export class CartesianAxis {
   }
 
   initScale() {
-    if (this.type === 'band') {
-      this.scale = new BandScale();
-      // this.scale.paddingInner(0.1, true).paddingOuter(0.3);
-    } else if (this.type === 'linear' || this.type === 'time') {
-      this.scale = new LinearScale();
-    }
+    // if (this.type === 'band') {
+    this.scale = new BandAxisScale();
+    this.scale.bandPadding = (this.option as any).bandPadding;
+    this.scale.paddingInner = (this.option as any).paddingInner;
+    this.scale.paddingOuter = (this.option as any).paddingOuter;
+    this.scale.calcScales(DEFAULT_BAND_INNER_PADDING, DEFAULT_BAND_OUTER_PADDING); // 0.1 0.3
+    this.scale.updateScaleDomain(this.data);
+    this.updateScaleRange();
+    // } else if (this.type === 'linear' || this.type === 'time') {
+    //   this.scale = new LinearScale();
+    // }
+  }
+  initData() {
+    // this.tickData = [
+    //   {
+    //     index: 0,
+    //     label: 'A',
+    //     value: 'A'
+    //   },
+    //   {
+    //     index: 1,
+    //     label: 'B',
+    //     value: 'B'
+    //   },
+    //   {
+    //     index: 2,
+    //     label: 'C',
+    //     value: 'C'
+    //   }
+    // ];
+    registerDataSetInstanceParser(this.table.dataSet, 'scale', scaleParser);
+    registerDataSetInstanceTransform(this.table.dataSet, 'ticks', ticks);
+
+    const label = this.option.label || {};
+    const tick = this.option.tick || {};
+    const tickData = new DataView(this.table.dataSet)
+      .parse(this.scale._scale, {
+        type: 'scale'
+      })
+      .transform(
+        {
+          type: 'ticks',
+          options: {
+            tickCount: tick.tickCount,
+            forceTickCount: tick.forceTickCount,
+            tickStep: tick.tickStep,
+
+            axisOrientType: this.orient,
+            coordinateType: 'cartesian',
+
+            labelStyle: label.style,
+            labelFormatter: label.formatMethod,
+            // labelGap: label.minGap,
+
+            labelLastVisible: label.lastVisible,
+            labelFlush: label.flush
+          }
+        },
+        false
+      );
+    this.tickData = tickData;
+
+    this.computeData();
   }
 
-  initData() {
-    this.tickData = [
-      {
-        id: 'A',
-        label: 'A',
-        value: 0.2,
-        rawValue: 'A'
-      },
-      {
-        id: 'E',
-        label: 'E',
-        value: 0.5,
-        rawValue: 'E'
-      },
-      {
-        id: 'H',
-        label: 'H',
-        value: 0.8,
-        rawValue: 'H'
-      }
-    ];
-    // registerDataSetInstanceParser(this._option.dataSet, 'scale', scaleParser);
-    // registerDataSetInstanceTransform(this._option.dataSet, 'ticks', ticks);
-
-    // const label = this._spec.label || {};
-    // const tick = this._tick || {};
-    // const tickData = new DataView(this._option.dataSet)
-    //   .parse(this._scale, {
-    //     type: 'scale'
-    //   })
-    //   .transform(
-    //     {
-    //       type: 'ticks',
-    //       options: {
-    //         tickCount: tick.tickCount,
-    //         forceTickCount: tick.forceTickCount,
-    //         tickStep: tick.tickStep,
-
-    //         axisOrientType: this._orient,
-    //         coordinateType: 'cartesian',
-
-    //         labelStyle: label.style,
-    //         labelFormatter: label.formatMethod,
-    //         labelGap: label.minGap,
-
-    //         labelLastVisible: label.lastVisible,
-    //         labelFlush: label.flush
-    //       } as ICartesianTickDataOpt
-    //     },
-    //     false
-    //   );
-    // tickData.target.addListener('change', this._forceLayout.bind(this));
-
-    // this._tickData = new CompilableData(this._option, tickData);
+  computeData(): void {
+    this.tickData.reRunAllTransform();
   }
 
   initEvent() {
@@ -153,7 +173,36 @@ export class CartesianAxis {
     return attrs;
   }
 
-  getLabelItems(axisLength: number) {
-    return [this.tickData];
+  getLabelItems(length: number) {
+    return [
+      this.tickData.latestData
+        .map((obj: any) => {
+          return {
+            id: obj.value,
+            label: obj.value,
+            value: length === 0 ? 0 : this.scale.dataToPosition([obj.value]) / length,
+            rawValue: obj.value
+          };
+        })
+        .filter((entry: any) => entry.value >= 0 && entry.value <= 1)
+    ];
+  }
+
+  updateScaleRange() {
+    const { width, height } = this.getLayoutRect();
+    // const inverse = this.option.inverse;
+    const inverse = false;
+    let newRange: [number, number] = [0, 0];
+    if (isXAxis(this.orient)) {
+      if (isValidNumber(width)) {
+        newRange = inverse ? [width, 0] : [0, width];
+      }
+    } else {
+      if (isValidNumber(height)) {
+        newRange = inverse ? [0, height] : [height, 0];
+      }
+    }
+
+    this.scale.updateRange(newRange);
   }
 }

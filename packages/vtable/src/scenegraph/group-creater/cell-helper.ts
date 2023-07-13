@@ -147,7 +147,7 @@ export function createCell(
     }
 
     if ((define as any).isAxis) {
-      const axis = new CartesianAxis({ orient: 'bottom', type: 'band' }, [], table);
+      const axis = new CartesianAxis({ orient: 'bottom', type: 'band', data: ['A', 'B', 'C', 'D'] }, table);
       cellGroup.appendChild(axis.component);
     }
   } else if (type === 'image') {

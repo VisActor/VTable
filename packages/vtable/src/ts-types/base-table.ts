@@ -54,6 +54,7 @@ import type { NumberMap } from '../tools/NumberMap';
 import type { FocusInput } from '../core/FouseInput';
 import type { ITableLegendOption } from './component/legend';
 import type { TableLegend } from '../components/legend/legend';
+import type { DataSet } from '@visactor/vdataset';
 
 export interface IBaseTableProtected {
   element: HTMLElement;
@@ -365,6 +366,7 @@ export interface BaseTableAPI {
   ) => EventListenerId) &
     ((type: string, listener: AnyListener) => EventListenerId);
 
+  dataSet: DataSet;
   /** 场景树对象 */
   scenegraph: Scenegraph;
   /** 状态管理模块 */
