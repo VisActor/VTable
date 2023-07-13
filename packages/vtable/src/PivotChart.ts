@@ -13,7 +13,9 @@ import type {
   IDimensionInfo,
   SortOrder,
   IIndicator,
-  PivotChartConstructorOptions
+  PivotChartConstructorOptions,
+  CollectValueBy,
+  AggregationRules
 } from './ts-types';
 import { AggregationType } from './ts-types';
 import { HierarchyState } from './ts-types';
@@ -42,7 +44,7 @@ export class PivotChart extends BaseTable implements PivotTableAPI {
       //TODO hack处理之前的demo都是定义到layout上的 所以这里直接并到options中
       Object.assign(options, (options as any).layout);
     }
-    this._parseChartSpec();
+    this.setCustomStateNameToSpec();
     this.internalProps.dataConfig = {};
     this.internalProps.enableDataAnalysis = true;
     if (this.internalProps.enableDataAnalysis && (options.rows || options.columns)) {
@@ -72,7 +74,7 @@ export class PivotChart extends BaseTable implements PivotTableAPI {
           return keys;
         }, []) ?? [];
       this.internalProps.dataConfig.collectValuesBy = this._generateCollectValuesConfig(columnKeys, rowKeys);
-      this.internalProps.dataConfig.aggregationRules = this._generateAggregationRules(indicatorKeys);
+      this.internalProps.dataConfig.aggregationRules = this._generateAggregationRules();
       this.dataset = new Dataset(
         this.internalProps.dataConfig,
         rowKeys,
@@ -305,7 +307,7 @@ export class PivotChart extends BaseTable implements PivotTableAPI {
         colKey[colKey.length - 1],
         (this.internalProps.layoutMap as PivoLayoutMap).getIndicatorKey(col, row)
       );
-      return aggregator.records;
+      return aggregator.value ? aggregator.value() : undefined;
     }
     const { field, fieldFormat } = this.internalProps.layoutMap.getBody(col, row);
     return this.getFieldData(fieldFormat || field, col, row);
@@ -567,104 +569,177 @@ export class PivotChart extends BaseTable implements PivotTableAPI {
    */
   private _generateCollectValuesConfig(columnKeys: string[], rowKeys: string[]) {
     const option = this.options;
-    const collectValuesBy = {};
+    const collectValuesBy: Record<string, CollectValueBy> = {};
 
-    if (option.indicatorsAsCol) {
+    if (option.indicatorsAsCol === false) {
       for (let i = 0, len = option.indicators.length; i < len; i++) {
-        if (typeof option.indicators[i] === 'string') {
-          collectValuesBy[option.indicators[i] as string] = {
-            by: columnKeys,
-            range: true
-          };
-        } else {
-          const indicatorDefine = option.indicators[i] as IIndicator;
-          collectValuesBy[indicatorDefine.indicatorKey] = {
-            by: columnKeys,
-            range: true,
-            sumBy:
-              (indicatorDefine as IChartColumnIndicator).chartSpec?.stack !== false &&
-              columnKeys.concat((indicatorDefine as IChartColumnIndicator).chartSpec?.xField)
-          };
-          if ((indicatorDefine as IChartColumnIndicator).chartSpec) {
-            const field =
-              typeof (indicatorDefine as IChartColumnIndicator).chartSpec.xField === 'string'
-                ? (indicatorDefine as IChartColumnIndicator).chartSpec.xField
-                : (indicatorDefine as IChartColumnIndicator).chartSpec.xField[0];
-            collectValuesBy[field] = {
-              by: rowKeys
-              // range: true
+        if (typeof option.indicators[i] !== 'string') {
+          if ((option.indicators[i] as IChartColumnIndicator).chartSpec) {
+            const indicatorDefine = option.indicators[i] as IIndicator;
+            // 收集指标值的范围
+            collectValuesBy[indicatorDefine.indicatorKey] = {
+              by: rowKeys,
+              range: true,
+              // 判断是否需要匹配维度值相同的进行求和计算
+              sumBy:
+                (indicatorDefine as IChartColumnIndicator).chartSpec?.stack !== false &&
+                columnKeys.concat((indicatorDefine as IChartColumnIndicator).chartSpec?.xField)
             };
+            if ((indicatorDefine as IChartColumnIndicator).chartSpec.series) {
+              (indicatorDefine as IChartColumnIndicator).chartSpec.series.forEach((chartSeries: any) => {
+                const xfield = typeof chartSeries.xField === 'string' ? chartSeries.xField : chartSeries.xField[0];
+                collectValuesBy[xfield] = {
+                  by: columnKeys,
+                  type: 'xField'
+                };
+
+                const yfield = chartSeries.yField;
+                collectValuesBy[yfield] = {
+                  by: rowKeys,
+                  range: true,
+                  sumBy: chartSeries.stack !== false && columnKeys.concat(xfield)
+                };
+              });
+            } else {
+              const field =
+                typeof (indicatorDefine as IChartColumnIndicator).chartSpec.xField === 'string'
+                  ? (indicatorDefine as IChartColumnIndicator).chartSpec.xField
+                  : (indicatorDefine as IChartColumnIndicator).chartSpec.xField[0];
+              collectValuesBy[field] = {
+                by: columnKeys,
+                type: 'xField'
+              };
+            }
           }
         }
       }
     } else {
       for (let i = 0, len = option.indicators.length; i < len; i++) {
-        if (typeof option.indicators[i] === 'string') {
-          collectValuesBy[option.indicators[i] as string] = {
-            by: rowKeys,
-            range: true
-          };
-        } else {
-          const indicatorDefine = option.indicators[i] as IIndicator;
-          collectValuesBy[indicatorDefine.indicatorKey] = {
-            by: rowKeys,
-            range: true,
-            sumBy:
-              (indicatorDefine as IChartColumnIndicator).chartSpec?.stack !== false &&
-              columnKeys.concat((indicatorDefine as IChartColumnIndicator).chartSpec?.xField)
-          };
-          if ((indicatorDefine as IChartColumnIndicator).chartSpec) {
-            const field =
-              typeof (indicatorDefine as IChartColumnIndicator).chartSpec.xField === 'string'
-                ? (indicatorDefine as IChartColumnIndicator).chartSpec.xField
-                : (indicatorDefine as IChartColumnIndicator).chartSpec.xField[0];
-            collectValuesBy[field] = {
+        if (typeof option.indicators[i] !== 'string') {
+          if ((option.indicators[i] as IChartColumnIndicator).chartSpec) {
+            const indicatorDefine = option.indicators[i] as IIndicator;
+            // 收集指标值的范围
+            collectValuesBy[indicatorDefine.indicatorKey] = {
               by: columnKeys,
-              type: 'xField'
-              // range: true
+              range: true,
+              // 判断是否需要匹配维度值相同的进行求和计算
+              sumBy:
+                (indicatorDefine as IChartColumnIndicator).chartSpec?.stack !== false &&
+                rowKeys.concat((indicatorDefine as IChartColumnIndicator).chartSpec?.yfield)
             };
+            if ((indicatorDefine as IChartColumnIndicator).chartSpec.series) {
+              (indicatorDefine as IChartColumnIndicator).chartSpec.series.forEach((chartSeries: any) => {
+                const yField = typeof chartSeries.yField === 'string' ? chartSeries.yField : chartSeries.yField[0];
+                collectValuesBy[yField] = {
+                  by: rowKeys,
+                  type: 'yField'
+                };
+
+                const xfield = chartSeries.xField;
+                collectValuesBy[xfield] = {
+                  by: columnKeys,
+                  range: true,
+                  sumBy: chartSeries.stack !== false && rowKeys.concat(yField)
+                };
+              });
+            } else {
+              const field =
+                typeof (indicatorDefine as IChartColumnIndicator).chartSpec.yField === 'string'
+                  ? (indicatorDefine as IChartColumnIndicator).chartSpec.yField
+                  : (indicatorDefine as IChartColumnIndicator).chartSpec.yField[0];
+              collectValuesBy[field] = {
+                by: rowKeys,
+                type: 'yField'
+              };
+            }
           }
         }
       }
     }
     return collectValuesBy;
   }
-  private _generateAggregationRules(indicatorKeys: string[]) {
-    return indicatorKeys.map((indicatorKey: string) => {
-      return {
-        indicatorKey, //field转为指标key
-        field: indicatorKey, //指标依据字段
-        aggregationType: AggregationType.MAX //计算类型
-      };
+  // private _generateAggregationRules(indicatorKeys: string[]): AggregationRules {
+  //   return indicatorKeys.map((indicatorKey: string) => {
+  //     return {
+  //       indicatorKey, //field转为指标key
+  //       field: indicatorKey, //指标依据字段
+  //       aggregationType: AggregationType.RECORD //计算类型
+  //     };
+  //   });
+  // }
+  private _generateAggregationRules() {
+    const aggregationRules: AggregationRules = [];
+    this.options.indicators.forEach((indicator: IIndicator | string) => {
+      if (typeof indicator === 'string') {
+        aggregationRules.push({
+          indicatorKey: indicator, //field转为指标key
+          field: indicator, //指标依据字段
+          aggregationType: AggregationType.RECORD //计算类型
+        });
+      } else {
+        // 如果chartSpec配置了组合图 series 则需要考虑 series中存在的多个指标
+        if ((indicator as IChartColumnIndicator).chartSpec?.series) {
+          const fields: string[] = [];
+          (indicator as IChartColumnIndicator).chartSpec?.series.forEach((seriesSpec: any) => {
+            const seriesField = this.options.indicatorsAsCol === false ? seriesSpec.yField : seriesSpec.xField;
+            if (fields.indexOf(seriesField) === -1) {
+              fields.push(seriesField);
+            }
+          });
+          aggregationRules.push({
+            indicatorKey: indicator.indicatorKey, //field转为指标key
+            field: fields, //指标依据字段
+            aggregationType: AggregationType.RECORD //计算类型
+          });
+        } else {
+          aggregationRules.push({
+            indicatorKey: indicator.indicatorKey, //field转为指标key
+            field: indicator.indicatorKey, //指标依据字段
+            aggregationType: AggregationType.RECORD //计算类型
+          });
+        }
+      }
     });
+
+    return aggregationRules;
   }
-  private _parseChartSpec() {
+  private setCustomStateNameToSpec() {
+    /** 修改设置的selected 和 dselected_reverse的名字加前缀vtable */
+    const setCustomStateName = (spec: any) => {
+      if (spec.bar?.state?.selected) {
+        spec.bar.state.vtable_selected = spec.bar.state.selected;
+        spec.bar.state.vtable_selected_reverse = spec.bar.state.selected_reverse;
+        delete spec.bar.state.selected;
+        delete spec.bar.state.selected_reverse;
+      }
+      if (spec.point?.state?.selected) {
+        spec.point.state.vtable_selected = spec.point.state.selected;
+        spec.point.state.vtable_selected_reverse = spec.point.state.selected_reverse;
+        delete spec.point.state.selected;
+        delete spec.point.state.selected_reverse;
+      }
+      if (spec.line?.state?.selected) {
+        spec.line.state.vtable_selected = spec.line.state.selected;
+        spec.line.state.vtable_selected_reverse = spec.line.state.selected_reverse;
+        delete spec.line.state.selected;
+        delete spec.line.state.selected_reverse;
+      }
+      if (spec.area?.state?.selected) {
+        spec.area.state.vtable_selected = spec.area.state.selected;
+        spec.area.state.vtable_selected_reverse = spec.area.state.selected_reverse;
+        delete spec.area.state.selected;
+        delete spec.area.state.selected_reverse;
+      }
+    };
     this.options.indicators.forEach((indicator: string | IIndicator) => {
       if ((indicator as IChartColumnIndicator).chartSpec) {
-        const chartSpec = (indicator as IChartColumnIndicator).chartSpec;
-        if (chartSpec.bar?.state?.selected) {
-          chartSpec.bar.state.vtable_selected = chartSpec.bar.state.selected;
-          chartSpec.bar.state.vtable_selected_reverse = chartSpec.bar.state.selected_reverse;
-          delete chartSpec.bar.state.selected;
-          delete chartSpec.bar.state.selected_reverse;
-        }
-        if (chartSpec.point?.state?.selected) {
-          chartSpec.point.state.vtable_selected = chartSpec.point.state.selected;
-          chartSpec.point.state.vtable_selected_reverse = chartSpec.point.state.selected_reverse;
-          delete chartSpec.point.state.selected;
-          delete chartSpec.point.state.selected_reverse;
-        }
-        if (chartSpec.line?.state?.selected) {
-          chartSpec.line.state.vtable_selected = chartSpec.line.state.selected;
-          chartSpec.line.state.vtable_selected_reverse = chartSpec.line.state.selected_reverse;
-          delete chartSpec.line.state.selected;
-          delete chartSpec.line.state.selected_reverse;
-        }
-        if (chartSpec.area?.state?.selected) {
-          chartSpec.area.state.vtable_selected = chartSpec.area.state.selected;
-          chartSpec.area.state.vtable_selected_reverse = chartSpec.area.state.selected_reverse;
-          delete chartSpec.area.state.selected;
-          delete chartSpec.area.state.selected_reverse;
+        const spec = (indicator as IChartColumnIndicator).chartSpec;
+        if (spec.series) {
+          spec.series.forEach((series: any) => {
+            setCustomStateName(series);
+          });
+        } else {
+          setCustomStateName(spec);
         }
       }
     });

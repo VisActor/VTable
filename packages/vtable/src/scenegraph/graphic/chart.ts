@@ -114,7 +114,7 @@ export class Chart extends Group {
       console.log('click captured', params);
       (table as PivotChart)._selectedItems = [];
       if (table.isPivotChart()) {
-        if (params.datum?.key !== 0 && Object.keys(params.datum).length > 0) {
+        if (params.datum && params.datum.key !== 0 && Object.keys(params?.datum).length > 0) {
           //本以为没有点击到图元上 datum为空 发现是{key:0}或者{}
           const selectedState = {};
           for (const itemKey in params.datum) {

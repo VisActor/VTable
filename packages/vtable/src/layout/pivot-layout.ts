@@ -926,10 +926,10 @@ export class PivoLayoutMap implements LayoutMapAPI {
   /** 获取某一图表列的最优宽度，计算逻辑是根据图表的xField的维度值个数 * barWidth */
   getOptimunWidthForChart(col: number) {
     const path = this.getCellHeaderPaths(col, this.columnHeaderLevelCount).colHeaderPaths;
-    let ff: any;
+    let collectedValues: any;
     for (const key in this.dataset.collectValuesBy) {
-      if (this.dataset.collectValuesBy[key].type === 'xField') {
-        ff =
+      if (this.dataset.collectValuesBy[key].type === 'xField' && !this.dataset.collectValuesBy[key].range) {
+        collectedValues =
           this.dataset.collectedValues[key][
             path
               .map(pathObj => {
@@ -940,6 +940,6 @@ export class PivoLayoutMap implements LayoutMapAPI {
         break;
       }
     }
-    return ff ? ff?.size * 50 : 0;
+    return (collectedValues?.size ?? 0) * 50;
   }
 }

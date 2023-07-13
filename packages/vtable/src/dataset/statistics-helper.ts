@@ -6,10 +6,10 @@ export abstract class Aggregator {
   isRecord?: boolean = true;
   records?: any[] = [];
   type?: string;
-  field?: string;
+  field?: string | string[];
   formatFun?: any;
   _formatedValue?: any;
-  constructor(dimension: string, formatFun?: any, isRecord?: boolean) {
+  constructor(dimension: string | string[], formatFun?: any, isRecord?: boolean) {
     this.field = dimension;
     this.formatFun = formatFun;
     this.isRecord = isRecord ?? this.isRecord;
@@ -31,6 +31,22 @@ export abstract class Aggregator {
       }
     }
     return this._formatedValue;
+  }
+}
+export class RecordAggregator extends Aggregator {
+  type: string = AggregationType.RECORD;
+  isRecord?: boolean = true;
+  push(record: any): void {
+    if (this.isRecord) {
+      if (record.className === 'Aggregator') {
+        this.records.push(...record.records);
+      } else {
+        this.records.push(record);
+      }
+    }
+  }
+  value() {
+    return this.records;
   }
 }
 export class SumAggregator extends Aggregator {
@@ -103,7 +119,6 @@ export class AvgAggregator extends Aggregator {
 export class MaxAggregator extends Aggregator {
   type: string = AggregationType.MAX;
   max: number = Number.MIN_SAFE_INTEGER;
-  isRecord?: boolean = true;
   push(record: any): void {
     if (this.isRecord) {
       if (record.className === 'Aggregator') {

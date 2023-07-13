@@ -1,3 +1,4 @@
+import { isValid } from '../tools/util';
 import type {
   FilterRules,
   IDataConfig,
@@ -14,7 +15,9 @@ import type {
   Totals,
   MappingRules,
   SortOrder,
-  IHeaderTreeDefine
+  IHeaderTreeDefine,
+  CollectValueBy,
+  CollectedValue
 } from '../ts-types';
 import { AggregationType, SortType } from '../ts-types';
 import type { Aggregator } from './statistics-helper';
@@ -23,6 +26,7 @@ import {
   CountAggregator,
   MaxAggregator,
   MinAggregator,
+  RecordAggregator,
   SumAggregator,
   naturalSort,
   sortBy,
@@ -79,7 +83,7 @@ export class Dataset {
   indicatorStatistics: { max: Aggregator; min: Aggregator; total: Aggregator }[] = [];
 
   aggregators: {
-    [key: string]: { new (dimension: string, formatFun?: any, isRecord?: boolean): Aggregator };
+    [key: string]: { new (dimension: string | string[], formatFun?: any, isRecord?: boolean): Aggregator };
   } = {};
 
   stringJoinChar = String.fromCharCode(0);
@@ -90,8 +94,8 @@ export class Dataset {
   private colSubTotalLabel: string;
   private rowGrandTotalLabel: string;
   private rowSubTotalLabel: string;
-  collectValuesBy: Record<string, { by: string[]; range?: boolean; sumBy?: string[]; type?: 'xField' | undefined }>; //收集维度值，field收集维度，by按什么进行分组收集
-  collectedValues: Record<string, Record<string, { max?: number; min?: number } | Set<string>>> = {};
+  collectValuesBy: Record<string, CollectValueBy>; //收集维度值，field收集维度，by按什么进行分组收集
+  collectedValues: Record<string, Record<string, CollectedValue>> = {};
   rows: string[];
   columns: string[];
   indicatorKeys: string[];
@@ -233,6 +237,7 @@ export class Dataset {
   }
   //将聚合类型注册
   registerAggregators() {
+    this.registerAggregator(AggregationType.RECORD, RecordAggregator);
     this.registerAggregator(AggregationType.SUM, SumAggregator);
     this.registerAggregator(AggregationType.COUNT, CountAggregator);
     this.registerAggregator(AggregationType.MAX, MaxAggregator);
@@ -385,15 +390,27 @@ export class Dataset {
         this.tree[flatRowKey][flatColKey] = [];
       }
       for (let i = 0; i < this.indicatorKeys.length; i++) {
+        const aggRule = this.getAggregatorRule(this.indicatorKeys[i]);
         if (!this.tree[flatRowKey]?.[flatColKey]?.[i]) {
-          const aggRule = this.getAggregatorRule(this.indicatorKeys[i]);
           this.tree[flatRowKey][flatColKey][i] = new this.aggregators[aggRule?.aggregationType ?? AggregationType.SUM](
             aggRule?.field ?? this.indicatorKeys[i],
             aggRule?.formatFun
           );
         }
-        //push融合了计算过程
-        this.tree[flatRowKey]?.[flatColKey]?.[i].push(record);
+        //加入聚合结果 考虑field为数组的情况
+        if (aggRule?.field) {
+          if (typeof aggRule?.field === 'string') {
+            isValid(aggRule?.field) && this.tree[flatRowKey]?.[flatColKey]?.[i].push(record);
+          } else {
+            const isPush = aggRule?.field.find(field => {
+              return record[field];
+            });
+            isPush && this.tree[flatRowKey]?.[flatColKey]?.[i].push(record);
+          }
+        } else {
+          //push融合了计算过程
+          isValid(record[this.indicatorKeys[i]]) && this.tree[flatRowKey]?.[flatColKey]?.[i].push(record);
+        }
       }
     }
     //统计整体的最大最小值和总计值 共mapping使用
