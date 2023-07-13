@@ -1,6 +1,6 @@
 ---
 category: examples
-group: table-type pivot-table
+group: Style
 title: 样式
 cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/style.png
 order: 5-1
