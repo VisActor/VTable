@@ -29,7 +29,7 @@ const THEME_CONSTANTS = {
   AXIS_TICK_SIZE: 4
 };
 
-const commonAxis = {
+export const commonAxis = {
   domainLine: {
     visible: true,
     style: {
@@ -96,7 +96,8 @@ const commonAxis = {
 };
 
 export function getAxisAttributes(option: ICellAxisOption) {
-  const spec = merge({}, option, commonAxis);
+  // const spec = merge({}, option, commonAxis);
+  const spec = option;
   let titleAngle = spec.title?.angle ?? 0;
   let titleTextStyle;
   if (spec.orient === 'left' || spec.orient === 'right') {

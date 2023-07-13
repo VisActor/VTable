@@ -81,6 +81,7 @@ import { FocusInput } from './FouseInput';
 import { defaultPixelRatio } from '../tools/pixel-ratio';
 import { TableLegend } from '../components/legend/legend';
 import { CartesianAxis } from '../components/axis/axis';
+import { DataSet } from '@visactor/vdataset';
 const { toBoxArray } = utilStyle;
 const { isTouchEvent } = event;
 const rangeReg = /^\$(\d+)\$(\d+)$/;
@@ -102,6 +103,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
   canvasWidth?: number;
   canvasHeight?: number;
 
+  dataSet: DataSet;
   scenegraph: Scenegraph;
   stateManeger?: StateManeger;
   eventManeger?: EventManeger;
@@ -264,6 +266,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     internalProps.limitMaxAutoWidth = options.limitMaxAutoWidth ?? 450;
 
     // 生成scenegraph
+    this.dataSet = new DataSet();
     this.scenegraph = new Scenegraph(this);
     this.stateManeger = new StateManeger(this);
     this.eventManeger = new EventManeger(this);
