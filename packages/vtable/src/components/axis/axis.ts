@@ -10,7 +10,7 @@ import { registerDataSetInstanceParser, registerDataSetInstanceTransform } from 
 import type { Parser } from '@visactor/vdataset';
 import { DataView } from '@visactor/vdataset';
 import type { IBaseScale } from '@visactor/vscale';
-import { ticks } from '@visactor/vchart/esm/data/transforms/tick-data';
+// import { ticks } from '@visactor/vchart/esm/data/transforms/tick-data';
 import { LinearAxisScale } from './linear-scale';
 import { doOverlap } from './label-overlap';
 
@@ -56,17 +56,18 @@ export class CartesianAxis {
   }
 
   initScale() {
+    const option = this.option as any;
     if (this.type === 'band') {
       this.scale = new BandAxisScale();
-      this.scale.bandPadding = (this.option as any).bandPadding;
-      this.scale.paddingInner = (this.option as any).paddingInner;
-      this.scale.paddingOuter = (this.option as any).paddingOuter;
+      this.scale.bandPadding = option.bandPadding;
+      this.scale.paddingInner = option.paddingInner;
+      this.scale.paddingOuter = option.paddingOuter;
       this.scale.calcScales(DEFAULT_BAND_INNER_PADDING, DEFAULT_BAND_OUTER_PADDING); // 0.1 0.3
       this.scale.updateScaleDomain(this.data);
       this.updateScaleRange();
     } else if (this.type === 'linear' || this.type === 'time') {
       this.scale = new LinearAxisScale();
-      this.scale.setExtraAttrFromSpec(this.option.nice, this.option.zero, this.option.range, this.option.expand);
+      this.scale.setExtraAttrFromSpec(option.nice, option.zero, option.range, option.expand);
       this.scale.transformScaleDomain();
       this.scale.updateScaleDomain();
       this.updateScaleRange();
@@ -74,7 +75,7 @@ export class CartesianAxis {
   }
   initData() {
     registerDataSetInstanceParser(this.table.dataSet, 'scale', scaleParser);
-    registerDataSetInstanceTransform(this.table.dataSet, 'ticks', ticks);
+    // registerDataSetInstanceTransform(this.table.dataSet, 'ticks', ticks);
 
     const label = this.option.label || {};
     const tick = this.option.tick || {};
