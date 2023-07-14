@@ -10,7 +10,7 @@ import { registerDataSetInstanceParser, registerDataSetInstanceTransform } from 
 import type { Parser } from '@visactor/vdataset';
 import { DataView } from '@visactor/vdataset';
 import type { IBaseScale } from '@visactor/vscale';
-// import { ticks } from '@visactor/vchart/esm/data/transforms/tick-data';
+import { ticks } from '../util/tick-data';
 import { LinearAxisScale } from './linear-scale';
 import { doOverlap } from './label-overlap';
 
@@ -75,7 +75,7 @@ export class CartesianAxis {
   }
   initData() {
     registerDataSetInstanceParser(this.table.dataSet, 'scale', scaleParser);
-    // registerDataSetInstanceTransform(this.table.dataSet, 'ticks', ticks);
+    registerDataSetInstanceTransform(this.table.dataSet, 'ticks', ticks);
 
     const label = this.option.label || {};
     const tick = this.option.tick || {};
