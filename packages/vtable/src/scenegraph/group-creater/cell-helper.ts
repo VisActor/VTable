@@ -146,9 +146,50 @@ export function createCell(
       cellGroup.mergeRow = range.end.row;
     }
 
-    if ((define as any).isAxis) {
-      const axis = new CartesianAxis({ orient: 'bottom', type: 'band', data: ['A', 'B', 'C', 'D'] }, table);
+    if ((define as any).isAxis && cellType === 'columnHeader') {
+      const axis = new CartesianAxis(
+        {
+          orient: 'top',
+          type: 'band',
+          data: ['A', 'B', 'C'],
+          title: {
+            visible: true,
+            text: 'X Axis'
+          }
+        },
+        cellGroup.attribute.width,
+        cellGroup.attribute.height,
+        table
+      );
+      cellGroup.clear();
+      // axis.component.setAttribute('y', 40);
       cellGroup.appendChild(axis.component);
+    } else if ((define as any).isAxis && cellType === 'rowHeader') {
+      cellGroup.setAttribute('clip', false);
+      const axis = new CartesianAxis(
+        {
+          orient: 'left',
+          type: 'linear',
+          range: { min: 0, max: 30 },
+          label: {
+            flush: true
+          },
+          grid: {
+            visible: true
+          },
+          title: {
+            visible: true,
+            text: 'Y Axis'
+          }
+        },
+        cellGroup.attribute.width,
+        cellGroup.attribute.height,
+        table
+      );
+      cellGroup.clear();
+      // axis.component.setAttribute('x', 80);
+      cellGroup.appendChild(axis.component);
+      axis.overlap();
     }
   } else if (type === 'image') {
     // 创建图片单元格

@@ -76,7 +76,7 @@ export const commonAxis = {
   },
   label: {
     visible: true,
-    space: 2,
+    space: 0,
     style: {
       fontSize: THEME_CONSTANTS.LABEL_FONT_SIZE,
       fill: '#89909D',

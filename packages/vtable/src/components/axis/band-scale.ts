@@ -1,7 +1,5 @@
 import { BandScale } from '@visactor/vscale';
-import { isArray, isValidNumber } from '@visactor/vutils';
-
-type StringOrNumber = string | number;
+import { isArray } from '@visactor/vutils';
 
 export class BandAxisScale {
   _scale: BandScale;
@@ -18,15 +16,6 @@ export class BandAxisScale {
   valueToPosition(value: any): number {
     const bandStart = this._scale.scale(value);
     return bandStart;
-  }
-  updateGroupScaleRange() {
-    let parentScale = this._scale;
-    this._scales.forEach((scale, i) => {
-      if (i > 0) {
-        scale.range([0, parentScale.bandwidth()]);
-        parentScale = scale;
-      }
-    });
   }
 
   getPosition(values: any[]) {
@@ -59,24 +48,6 @@ export class BandAxisScale {
         .paddingInner(_paddingInner ?? _padding ?? defalutBandInnerPadding, true)
         .paddingOuter(_paddingOuter ?? _padding ?? defalutBandOuterPadding);
     }
-  }
-  computeBandDomain(data: { min: number; max: number; values: any[] }[]): StringOrNumber[] {
-    // const values = data.map(d => d.values);
-    // return Array.from(new Set(values.flat()));
-
-    // // 性能优化 old
-    // const reuslt = {};
-    // data.forEach(d => d.values.forEach(v => (reuslt[v] = true)));
-    // return Object.keys(reuslt);
-
-    // 性能优化 9.13
-    const tempSet = new Set();
-    for (let i = 0; i < data.length; i++) {
-      for (let j = 0; j < data[i].values.length; j++) {
-        tempSet.add(data[i].values[j]);
-      }
-    }
-    return Array.from(tempSet) as StringOrNumber[];
   }
 
   dataToPosition(values: any[], cfg: any = {}): number {
