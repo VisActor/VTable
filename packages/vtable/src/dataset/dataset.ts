@@ -402,7 +402,7 @@ export class Dataset {
           if (typeof aggRule?.field === 'string') {
             isValid(aggRule?.field) && this.tree[flatRowKey]?.[flatColKey]?.[i].push(record);
           } else {
-            const isPush = aggRule?.field.find(field => {
+            const isPush = aggRule?.field.find((field: string) => {
               return record[field];
             });
             isPush && this.tree[flatRowKey]?.[flatColKey]?.[i].push(record);
@@ -461,8 +461,8 @@ export class Dataset {
       )
     );
   }
-  private getAggregatorRule(indicatorKey: string): AggregationRule | undefined {
-    return this.aggregationRules?.find((value: AggregationRule, index: number) => {
+  private getAggregatorRule(indicatorKey: string): AggregationRule<AggregationType> | undefined {
+    return this.aggregationRules?.find((value: AggregationRule<AggregationType>, index: number) => {
       return indicatorKey === value.indicatorKey;
     });
   }

@@ -15,7 +15,8 @@ import type {
   IIndicator,
   PivotChartConstructorOptions,
   CollectValueBy,
-  AggregationRules
+  AggregationRules,
+  AggregationRule
 } from './ts-types';
 import { AggregationType } from './ts-types';
 import { HierarchyState } from './ts-types';
@@ -156,7 +157,7 @@ export class PivotChart extends BaseTable implements PivotTableAPI {
         return keys;
       }, []);
       this.internalProps.dataConfig.collectValuesBy = this._generateCollectValuesConfig(columnKeys, rowKeys);
-      this.internalProps.dataConfig.aggregationRules = this._generateAggregationRules(indicatorKeys);
+      this.internalProps.dataConfig.aggregationRules = this._generateAggregationRules();
       this.dataset = new Dataset(internalProps.dataConfig, rowKeys, columnKeys, indicatorKeys, options.records);
     }
     // 更新表头
@@ -675,7 +676,7 @@ export class PivotChart extends BaseTable implements PivotTableAPI {
           indicatorKey: indicator, //field转为指标key
           field: indicator, //指标依据字段
           aggregationType: AggregationType.RECORD //计算类型
-        });
+        } as AggregationRule<AggregationType.RECORD>);
       } else {
         // 如果chartSpec配置了组合图 series 则需要考虑 series中存在的多个指标
         if ((indicator as IChartColumnIndicator).chartSpec?.series) {

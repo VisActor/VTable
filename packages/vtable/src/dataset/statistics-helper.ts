@@ -52,6 +52,7 @@ export class RecordAggregator extends Aggregator {
 export class SumAggregator extends Aggregator {
   type: string = AggregationType.SUM;
   sum = 0;
+  declare field?: string;
   push(record: any): void {
     if (this.isRecord) {
       if (record.className === 'Aggregator') {
@@ -74,6 +75,7 @@ export class SumAggregator extends Aggregator {
 export class CountAggregator extends Aggregator {
   type: string = AggregationType.COUNT;
   count = 0;
+  declare field?: string;
   push(record: any): void {
     if (this.isRecord) {
       if (record.className === 'Aggregator') {
@@ -96,6 +98,7 @@ export class AvgAggregator extends Aggregator {
   type: string = AggregationType.AVG;
   sum = 0;
   count = 0;
+  declare field?: string;
   push(record: any): void {
     if (this.isRecord) {
       if (record.className === 'Aggregator') {
@@ -119,6 +122,7 @@ export class AvgAggregator extends Aggregator {
 export class MaxAggregator extends Aggregator {
   type: string = AggregationType.MAX;
   max: number = Number.MIN_SAFE_INTEGER;
+  declare field?: string;
   push(record: any): void {
     if (this.isRecord) {
       if (record.className === 'Aggregator') {
@@ -145,6 +149,7 @@ export class MinAggregator extends Aggregator {
   type: string = AggregationType.MIN;
   min: number = Number.MAX_SAFE_INTEGER;
   isRecord?: boolean = false;
+  declare field?: string;
   push(record: any): void {
     if (this.isRecord) {
       if (record.className === 'Aggregator') {

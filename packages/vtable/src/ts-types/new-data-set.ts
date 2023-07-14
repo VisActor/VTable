@@ -114,16 +114,16 @@ export type FilterRules = FilterRule[];
 //#endregion 过滤规则
 
 //#region 聚合规则
-export interface AggregationRule {
+export interface AggregationRule<T extends AggregationType> {
   /** 区别于field 重新起个key值，供配置indicators使用 */
   indicatorKey: string;
   // 可以收集单个字段的聚合结果，或者收集多个字段的聚合结果
-  field: string | string[];
-  aggregationType: AggregationType;
+  field: T extends AggregationType.RECORD ? string[] | string : string;
+  aggregationType: T;
   /**计算结果格式化 */
   formatFun?: (num: number) => string;
 }
-export type AggregationRules = AggregationRule[];
+export type AggregationRules = AggregationRule<AggregationType>[];
 //#endregion 聚合规则
 
 //#region 映射规则
