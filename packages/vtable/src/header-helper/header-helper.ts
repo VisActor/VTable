@@ -2,7 +2,7 @@ import type { ColumnIconOption, ListTableAPI, PivotTableAPI, RectProps, SortOrde
 import { HierarchyState, IconFuncTypeEnum, IconPosition, InternalIconName } from '../ts-types';
 import * as registerIcons from '../icons';
 import { cellInRange } from '../tools/helper';
-import { isMenuHighlight } from '../menu/dom/logic/MenuElement';
+import { isMenuHighlight } from '../components/menu/dom/logic/MenuElement';
 import { Style } from './style/Style';
 import { ImageStyle } from './style/ImageStyle';
 import { TextHeaderStyle } from './style';

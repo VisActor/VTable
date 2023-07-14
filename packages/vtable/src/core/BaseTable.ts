@@ -52,7 +52,7 @@ import { EventManeger } from '../event/event';
 import { BodyHelper } from '../body-helper/body-helper';
 import { HeaderHelper } from '../header-helper/header-helper';
 import type { PivotHeaderLayoutMap } from '../layout/pivot-header-layout';
-import { TooltipHandler } from '../tooltip/TooltipHandler';
+import { TooltipHandler } from '../components/tooltip/TooltipHandler';
 import type { CachedDataSource, DataSource } from '../data';
 import type { IWrapTextGraphicAttribute } from '@visactor/vrender';
 import { isBoolean, type ITextSize } from '@visactor/vutils';
@@ -75,11 +75,13 @@ import {
   isAutoDefine,
   updateRootElementPadding
 } from './tableHelper';
-import { MenuHandler } from '../menu/dom/MenuHandler';
+import { MenuHandler } from '../components/menu/dom/MenuHandler';
 import type { BaseTableAPI, BaseTableConstructorOptions, IBaseTableProtected } from '../ts-types/base-table';
 import { FocusInput } from './FouseInput';
 import { defaultPixelRatio } from '../tools/pixel-ratio';
-import { TableLegend } from '../render/component/legend';
+import { TableLegend } from '../components/legend/legend';
+import { CartesianAxis } from '../components/axis/axis';
+import { DataSet } from '@visactor/vdataset';
 const { toBoxArray } = utilStyle;
 const { isTouchEvent } = event;
 const rangeReg = /^\$(\d+)\$(\d+)$/;
@@ -101,6 +103,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
   canvasWidth?: number;
   canvasHeight?: number;
 
+  dataSet: DataSet;
   scenegraph: Scenegraph;
   stateManeger?: StateManeger;
   eventManeger?: EventManeger;
@@ -263,6 +266,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     internalProps.limitMaxAutoWidth = options.limitMaxAutoWidth ?? 450;
 
     // 生成scenegraph
+    this.dataSet = new DataSet();
     this.scenegraph = new Scenegraph(this);
     this.stateManeger = new StateManeger(this);
     this.eventManeger = new EventManeger(this);

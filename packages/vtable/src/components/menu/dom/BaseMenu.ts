@@ -1,5 +1,5 @@
-import type { MenuInstanceInfo } from '../../ts-types';
-import type { BaseTableAPI } from '../../ts-types/base-table';
+import type { MenuInstanceInfo } from '../../../ts-types';
+import type { BaseTableAPI } from '../../../ts-types/base-table';
 import type { MenuContainer } from './logic/MenuContainer';
 import type { MenuElement } from './logic/MenuElement';
 

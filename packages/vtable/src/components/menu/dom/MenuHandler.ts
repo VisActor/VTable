@@ -1,9 +1,9 @@
-import type { CellRange, DropDownMenuOptions, MenuInstanceInfo, MenuInstanceType } from '../../ts-types';
+import type { CellRange, DropDownMenuOptions, MenuInstanceInfo, MenuInstanceType } from '../../../ts-types';
 import type { BaseMenu } from './BaseMenu';
 import { Container, Menu } from './Menu';
-import { cellInRange } from '../../tools/helper';
-import { TABLE_EVENT_TYPE } from '../../core/TABLE_EVENT_TYPE';
-import type { BaseTableAPI } from '../../ts-types/base-table';
+import { cellInRange } from '../../../tools/helper';
+import { TABLE_EVENT_TYPE } from '../../../core/TABLE_EVENT_TYPE';
+import type { BaseTableAPI } from '../../../ts-types/base-table';
 // import { DEFAULTFONT } from '../../tools/global';
 // import { getFontSize } from '../../tools/canvases';
 

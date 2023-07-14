@@ -1,6 +1,6 @@
-import type { Placement, RectProps } from '../ts-types';
-import type { BaseTableAPI } from '../ts-types/base-table';
-import type { TooltipOptions } from '../ts-types/tooltip';
+import type { Placement, RectProps } from '../../ts-types';
+import type { BaseTableAPI } from '../../ts-types/base-table';
+import type { TooltipOptions } from '../../ts-types/tooltip';
 import type { BubbleTooltipElement } from './logic/BubbleTooltipElement';
 
 export abstract class BaseTooltip {
