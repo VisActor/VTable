@@ -230,7 +230,10 @@ export function bindTableGroupListener(eventManeger: EventManeger) {
     if (stateManeger.interactionState !== InteractionState.default) {
       return;
     }
-
+    //处理当点击到的不是图表上时 更新图表的状态为空
+    if (table.isPivotChart() && eventArgsSet?.eventArgs?.target.type !== 'chart') {
+      table.scenegraph.updateChartState(null);
+    }
     // 处理menu
     if (
       stateManeger.menu.isShow &&
@@ -276,6 +279,7 @@ export function bindTableGroupListener(eventManeger: EventManeger) {
         if (eventManeger.checkColumnResize(eventArgsSet, true)) {
           // eventManeger.startColumnResize(e);
           // eventManeger._resizing = true;
+          table.scenegraph.updateChartState(null);
           stateManeger.updateInteractionState(InteractionState.grabing);
           return;
         }
@@ -479,6 +483,7 @@ export function bindTableGroupListener(eventManeger: EventManeger) {
       eventManeger.dealTableHover();
       eventManeger.dealTableSelect();
       stateManeger.updateCursor();
+      table.scenegraph.updateChartState(null);
     }
   });
 

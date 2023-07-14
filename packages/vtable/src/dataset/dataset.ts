@@ -1,3 +1,4 @@
+import { isValid } from '../tools/util';
 import type {
   FilterRules,
   IDataConfig,
@@ -13,9 +14,24 @@ import type {
   SortFuncRule,
   Totals,
   MappingRules,
-  SortOrder
+  SortOrder,
+  IHeaderTreeDefine,
+  CollectValueBy,
+  CollectedValue
 } from '../ts-types';
 import { AggregationType, SortType } from '../ts-types';
+import type { Aggregator } from './statistics-helper';
+import {
+  AvgAggregator,
+  CountAggregator,
+  MaxAggregator,
+  MinAggregator,
+  RecordAggregator,
+  SumAggregator,
+  naturalSort,
+  sortBy,
+  typeSort
+} from './statistics-helper';
 /**
  * 数据处理模块
  */
@@ -67,7 +83,7 @@ export class Dataset {
   indicatorStatistics: { max: Aggregator; min: Aggregator; total: Aggregator }[] = [];
 
   aggregators: {
-    [key: string]: { new (dimension: string, formatFun?: any, isRecord?: boolean): Aggregator };
+    [key: string]: { new (dimension: string | string[], formatFun?: any, isRecord?: boolean): Aggregator };
   } = {};
 
   stringJoinChar = String.fromCharCode(0);
@@ -78,25 +94,38 @@ export class Dataset {
   private colSubTotalLabel: string;
   private rowGrandTotalLabel: string;
   private rowSubTotalLabel: string;
+  collectValuesBy: Record<string, CollectValueBy>; //收集维度值，field收集维度，by按什么进行分组收集
+  collectedValues: Record<string, Record<string, CollectedValue>> = {};
   rows: string[];
   columns: string[];
-  indicators: string[];
-  constructor(dataConfig: IDataConfig, rows: string[], columns: string[], indicators: string[], records?: any[]) {
+  indicatorKeys: string[];
+  constructor(
+    dataConfig: IDataConfig,
+    rows: string[],
+    columns: string[],
+    indicatorKeys: string[],
+    records: any[],
+    customColTree?: IHeaderTreeDefine[],
+    customRowTree?: IHeaderTreeDefine[]
+  ) {
     this.registerAggregators();
     this.dataConfig = dataConfig;
     // this.allTotal = new SumAggregator(this.indicators[0]);
-    this.sortRules = this.dataConfig.sortRules;
-    this.aggregationRules = this.dataConfig.aggregationRules;
-    this.derivedFieldRules = this.dataConfig.derivedFieldRules;
-    this.mappingRules = this.dataConfig.mappingRules;
-    this.totals = dataConfig.totals;
+    this.sortRules = this.dataConfig?.sortRules;
+    this.aggregationRules = this.dataConfig?.aggregationRules;
+    this.derivedFieldRules = this.dataConfig?.derivedFieldRules;
+    this.mappingRules = this.dataConfig?.mappingRules;
+    this.totals = this.dataConfig?.totals;
     this.rows = rows;
     this.columns = columns;
-    this.indicators = indicators;
+    this.indicatorKeys = indicatorKeys;
     this.colGrandTotalLabel = this.totals?.column?.grandTotalLabel ?? '总计';
     this.colSubTotalLabel = this.totals?.column?.subTotalLabel ?? '小计';
     this.rowGrandTotalLabel = this.totals?.row?.grandTotalLabel ?? '总计';
     this.rowSubTotalLabel = this.totals?.row?.subTotalLabel ?? '小计';
+    this.collectValuesBy = this.dataConfig?.collectValuesBy ?? {
+      '230417170554008': { by: ['230417171050031', '230417171050028'] }
+    };
     // for (let i = 0; i < this.indicators.length; i++) {
     //   this.indicatorStatistics.push({
     //     max: new this.aggregators[AggregationType.MAX](this.indicators[i]),
@@ -121,6 +150,33 @@ export class Dataset {
       this.records = records;
       const t0 = typeof window !== 'undefined' ? window.performance.now() : 0;
       this.setRecords(records);
+
+      //processRecord中按照collectValuesBy 收集了维度值。现在需要对有聚合需求的 处理收集维度值范围
+      for (const field in this.collectedValues) {
+        if (this.collectValuesBy[field]?.sumBy) {
+          for (const byKeys in this.collectedValues[field]) {
+            const max = Object.values(this.collectedValues[field][byKeys]).reduce((acc, cur) => {
+              return cur.value() > acc ? cur.value() : acc;
+            }, Number.MIN_SAFE_INTEGER);
+            const min = Object.values(this.collectedValues[field][byKeys]).reduce((acc, cur) => {
+              return cur.value() < acc ? cur.value() : acc;
+            }, Number.MAX_SAFE_INTEGER);
+            this.collectedValues[field][byKeys] = {};
+            (
+              this.collectedValues[field][byKeys] as {
+                max: number;
+                min: number;
+              }
+            ).max = max;
+            (
+              this.collectedValues[field][byKeys] as {
+                max: number;
+                min: number;
+              }
+            ).min = min;
+          }
+        }
+      }
       const t1 = typeof window !== 'undefined' ? window.performance.now() : 0;
       console.log('processRecords:', t1 - t0);
 
@@ -142,24 +198,32 @@ export class Dataset {
       // console.log('madeTree:', t41 - t4);
 
       const t7 = typeof window !== 'undefined' ? window.performance.now() : 0;
-      this.rowKeysPath = this.TreeToArr(
-        this.ArrToTree(
-          this.rowKeys,
-          this.rowsIsTotal,
-          this?.totals?.row?.showGrandTotals || this.columns.length === 0,
-          this.rowGrandTotalLabel,
-          this.rowSubTotalLabel
-        )
-      );
-      this.colKeysPath = this.TreeToArr(
-        this.ArrToTree(
-          this.colKeys,
-          this.colsIsTotal,
-          this.totals?.column?.showGrandTotals || this.rows.length === 0,
-          this.colGrandTotalLabel,
-          this.colSubTotalLabel
-        )
-      );
+      if (customRowTree) {
+        this.rowKeysPath = this.TreeToArr2(customRowTree);
+      } else {
+        this.rowKeysPath = this.TreeToArr(
+          this.ArrToTree(
+            this.rowKeys,
+            this.rowsIsTotal,
+            this?.totals?.row?.showGrandTotals || this.columns.length === 0,
+            this.rowGrandTotalLabel,
+            this.rowSubTotalLabel
+          )
+        );
+      }
+      if (customColTree) {
+        this.colKeysPath = this.TreeToArr2(customColTree);
+      } else {
+        this.colKeysPath = this.TreeToArr(
+          this.ArrToTree(
+            this.colKeys,
+            this.colsIsTotal,
+            this.totals?.column?.showGrandTotals || this.rows.length === 0,
+            this.colGrandTotalLabel,
+            this.colSubTotalLabel
+          )
+        );
+      }
       const t8 = typeof window !== 'undefined' ? window.performance.now() : 0;
       console.log('TreeToArr:', t8 - t7);
     }
@@ -173,6 +237,7 @@ export class Dataset {
   }
   //将聚合类型注册
   registerAggregators() {
+    this.registerAggregator(AggregationType.RECORD, RecordAggregator);
     this.registerAggregator(AggregationType.SUM, SumAggregator);
     this.registerAggregator(AggregationType.COUNT, CountAggregator);
     this.registerAggregator(AggregationType.MAX, MaxAggregator);
@@ -186,17 +251,21 @@ export class Dataset {
    * 处理数据,遍历所有条目，过滤和派生字段的处理有待优化TODO
    */
   processRecords() {
+    let isNeedFilter = false;
+    if (this.dataConfig?.filterRules?.length >= 1) {
+      isNeedFilter = true;
+    }
     for (let i = 0, len = this.records.length; i < len; i++) {
       const record = this.records[i];
-      if (this.filterRecord(record)) {
+      if (!isNeedFilter || this.filterRecord(record)) {
         this.processRecord(record);
       }
     }
   }
   filterRecord(record: any) {
     let isReserved = true;
-    for (let i = 0; i < this.dataConfig.filterRules?.length; i++) {
-      const filterRule = this.dataConfig.filterRules[i];
+    for (let i = 0; i < this.dataConfig.filterRules.length; i++) {
+      const filterRule = this.dataConfig?.filterRules[i];
       if (!filterRule.filterFunc?.(record)) {
         isReserved = false;
         break;
@@ -226,6 +295,46 @@ export class Dataset {
       colKey.push(record[colAttr]);
     }
 
+    //#region 按照collectValuesBy 收集维度值
+    for (const field in this.collectValuesBy) {
+      if (record[field]) {
+        if (!this.collectedValues[field]) {
+          this.collectedValues[field] = {};
+        }
+        const collectKeys = this.collectValuesBy[field].by.map(byField => record[byField]).join(this.stringJoinChar);
+        if (!this.collectedValues[field][collectKeys]) {
+          if (this.collectValuesBy[field].sumBy) {
+            this.collectedValues[field][collectKeys] = {};
+          } else if (this.collectValuesBy[field].range) {
+            this.collectedValues[field][collectKeys] = {
+              min: Number.MAX_SAFE_INTEGER,
+              max: Number.MIN_SAFE_INTEGER
+            };
+          } else {
+            this.collectedValues[field][collectKeys] = new Set();
+          }
+        }
+
+        if (this.collectValuesBy[field].sumBy) {
+          const sumByKeys = this.collectValuesBy[field].sumBy.map(byField => record[byField]).join(this.stringJoinChar);
+          if (!this.collectedValues[field][collectKeys][sumByKeys]) {
+            this.collectedValues[field][collectKeys][sumByKeys] = new this.aggregators[AggregationType.SUM](field);
+          }
+          this.collectedValues[field][collectKeys][sumByKeys].push(record);
+        } else if (this.collectValuesBy[field].range) {
+          const fieldRange = this.collectedValues[field][collectKeys] as {
+            max: number;
+            min: number;
+          };
+          fieldRange.max = Math.max(record[field], fieldRange.max);
+          fieldRange.min = Math.min(record[field], fieldRange.min);
+        } else {
+          const fieldRange = this.collectedValues[field][collectKeys] as Set<string>;
+          fieldRange.add(record[field]);
+        }
+      }
+    }
+    //#endregion
     // this.allTotal.push(record);
 
     const flatRowKey = rowKey.join(this.stringJoinChar);
@@ -280,28 +389,40 @@ export class Dataset {
       if (!this.tree[flatRowKey]?.[flatColKey]) {
         this.tree[flatRowKey][flatColKey] = [];
       }
-      for (let i = 0; i < this.indicators.length; i++) {
+      for (let i = 0; i < this.indicatorKeys.length; i++) {
+        const aggRule = this.getAggregatorRule(this.indicatorKeys[i]);
         if (!this.tree[flatRowKey]?.[flatColKey]?.[i]) {
-          const aggRule = this.getAggregatorRule(this.indicators[i]);
           this.tree[flatRowKey][flatColKey][i] = new this.aggregators[aggRule?.aggregationType ?? AggregationType.SUM](
-            aggRule?.field ?? this.indicators[i],
+            aggRule?.field ?? this.indicatorKeys[i],
             aggRule?.formatFun
           );
         }
-        //push融合了计算过程
-        this.tree[flatRowKey]?.[flatColKey]?.[i].push(record);
+        //加入聚合结果 考虑field为数组的情况
+        if (aggRule?.field) {
+          if (typeof aggRule?.field === 'string') {
+            isValid(aggRule?.field) && this.tree[flatRowKey]?.[flatColKey]?.[i].push(record);
+          } else {
+            const isPush = aggRule?.field.find((field: string) => {
+              return record[field];
+            });
+            isPush && this.tree[flatRowKey]?.[flatColKey]?.[i].push(record);
+          }
+        } else {
+          //push融合了计算过程
+          isValid(record[this.indicatorKeys[i]]) && this.tree[flatRowKey]?.[flatColKey]?.[i].push(record);
+        }
       }
     }
     //统计整体的最大最小值和总计值 共mapping使用
     if (this.mappingRules) {
-      for (let i = 0; i < this.indicators.length; i++) {
+      for (let i = 0; i < this.indicatorKeys.length; i++) {
         if (!this.indicatorStatistics[i]) {
-          const aggRule = this.getAggregatorRule(this.indicators[i]);
+          const aggRule = this.getAggregatorRule(this.indicatorKeys[i]);
           this.indicatorStatistics[i] = {
-            max: new this.aggregators[AggregationType.MAX](this.indicators[i]),
-            min: new this.aggregators[AggregationType.MIN](this.indicators[i]),
+            max: new this.aggregators[AggregationType.MAX](this.indicatorKeys[i]),
+            min: new this.aggregators[AggregationType.MIN](this.indicatorKeys[i]),
             total: new this.aggregators[aggRule?.aggregationType ?? AggregationType.SUM](
-              aggRule?.field ?? this.indicators[i],
+              aggRule?.field ?? this.indicatorKeys[i],
               aggRule?.formatFun
             )
           };
@@ -340,8 +461,8 @@ export class Dataset {
       )
     );
   }
-  private getAggregatorRule(indicatorKey: string): AggregationRule | undefined {
-    return this.aggregationRules?.find((value: AggregationRule, index: number) => {
+  private getAggregatorRule(indicatorKey: string): AggregationRule<AggregationType> | undefined {
+    return this.aggregationRules?.find((value: AggregationRule<AggregationType>, index: number) => {
       return indicatorKey === value.indicatorKey;
     });
   }
@@ -353,7 +474,7 @@ export class Dataset {
    * @returns
    */
   getAggregator(rowKey: string[] | string = [], colKey: string[] | string = [], indicator: string): Aggregator {
-    const indicatorIndex = this.indicators.indexOf(indicator);
+    const indicatorIndex = this.indicatorKeys.indexOf(indicator);
     let agg;
     let flatRowKey;
     let flatColKey;
@@ -591,12 +712,12 @@ export class Dataset {
             if (!this.tree[flatRowKey][flatColTotalKey]) {
               this.tree[flatRowKey][flatColTotalKey] = [];
             }
-            for (let i = 0; i < this.indicators.length; i++) {
+            for (let i = 0; i < this.indicatorKeys.length; i++) {
               if (!this.tree[flatRowKey][flatColTotalKey][i]) {
-                const aggRule = this.getAggregatorRule(this.indicators[i]);
+                const aggRule = this.getAggregatorRule(this.indicatorKeys[i]);
                 this.tree[flatRowKey][flatColTotalKey][i] = new this.aggregators[
                   aggRule?.aggregationType ?? AggregationType.SUM
-                ](aggRule?.field ?? this.indicators[i], aggRule?.formatFun);
+                ](aggRule?.field ?? this.indicatorKeys[i], aggRule?.formatFun);
               }
               this.tree[flatRowKey][flatColTotalKey][i].push(that.tree[flatRowKey]?.[flatColKey]?.[i]);
             }
@@ -607,12 +728,12 @@ export class Dataset {
           if (!this.tree[flatRowKey][flatColTotalKey]) {
             this.tree[flatRowKey][flatColTotalKey] = [];
           }
-          for (let i = 0; i < this.indicators.length; i++) {
+          for (let i = 0; i < this.indicatorKeys.length; i++) {
             if (!this.tree[flatRowKey][flatColTotalKey][i]) {
-              const aggRule = this.getAggregatorRule(this.indicators[i]);
+              const aggRule = this.getAggregatorRule(this.indicatorKeys[i]);
               this.tree[flatRowKey][flatColTotalKey][i] = new this.aggregators[
                 aggRule?.aggregationType ?? AggregationType.SUM
-              ](aggRule?.field ?? this.indicators[i], aggRule?.formatFun);
+              ](aggRule?.field ?? this.indicatorKeys[i], aggRule?.formatFun);
             }
             this.tree[flatRowKey][flatColTotalKey][i].push(that.tree[flatRowKey]?.[flatColKey]?.[i]);
           }
@@ -634,38 +755,39 @@ export class Dataset {
               }
               if (!this.tree[flatRowTotalKey][flatColKey]) {
                 this.tree[flatRowTotalKey][flatColKey] = [];
-                for (let i = 0; i < this.indicators.length; i++) {
+                for (let i = 0; i < this.indicatorKeys.length; i++) {
                   if (!this.tree[flatRowTotalKey][flatColKey][i]) {
-                    const aggRule = this.getAggregatorRule(this.indicators[i]);
+                    const aggRule = this.getAggregatorRule(this.indicatorKeys[i]);
                     this.tree[flatRowTotalKey][flatColKey][i] = new this.aggregators[
                       aggRule?.aggregationType ?? AggregationType.SUM
-                    ](aggRule?.field ?? this.indicators[i], aggRule?.formatFun);
+                    ](aggRule?.field ?? this.indicatorKeys[i], aggRule?.formatFun);
                   }
                   this.tree[flatRowTotalKey][flatColKey][i].push(that.tree[flatRowKey]?.[flatColKey]?.[i]);
                 }
               }
             }
-            if (that.totals?.row?.showGrandTotals || this.columns.length === 0) {
-              const flatRowTotalKey = that.rowGrandTotalLabel;
-              if (!this.tree[flatRowTotalKey]) {
-                this.tree[flatRowTotalKey] = {};
-                rowTotalKeys.push(flatRowTotalKey);
-              }
-              if (!this.tree[flatRowTotalKey][flatColKey]) {
-                this.tree[flatRowTotalKey][flatColKey] = [];
-              }
-              for (let i = 0; i < this.indicators.length; i++) {
-                if (!this.tree[flatRowTotalKey][flatColKey][i]) {
-                  const aggRule = this.getAggregatorRule(this.indicators[i]);
-                  this.tree[flatRowTotalKey][flatColKey][i] = new this.aggregators[
-                    aggRule?.aggregationType ?? AggregationType.SUM
-                  ](aggRule?.field ?? this.indicators[i], aggRule?.formatFun);
-                }
-                this.tree[flatRowTotalKey][flatColKey][i].push(that.tree[flatRowKey]?.[flatColKey]?.[i]);
-              }
-            }
-            colCompute(flatRowKey, flatColKey);
           }
+
+          if (that.totals?.row?.showGrandTotals || this.columns.length === 0) {
+            const flatRowTotalKey = that.rowGrandTotalLabel;
+            if (!this.tree[flatRowTotalKey]) {
+              this.tree[flatRowTotalKey] = {};
+              rowTotalKeys.push(flatRowTotalKey);
+            }
+            if (!this.tree[flatRowTotalKey][flatColKey]) {
+              this.tree[flatRowTotalKey][flatColKey] = [];
+            }
+            for (let i = 0; i < this.indicatorKeys.length; i++) {
+              if (!this.tree[flatRowTotalKey][flatColKey][i]) {
+                const aggRule = this.getAggregatorRule(this.indicatorKeys[i]);
+                this.tree[flatRowTotalKey][flatColKey][i] = new this.aggregators[
+                  aggRule?.aggregationType ?? AggregationType.SUM
+                ](aggRule?.field ?? this.indicatorKeys[i], aggRule?.formatFun);
+              }
+              this.tree[flatRowTotalKey][flatColKey][i].push(that.tree[flatRowKey]?.[flatColKey]?.[i]);
+            }
+          }
+          colCompute(flatRowKey, flatColKey);
         });
       });
       //增加出来的rowTotalKeys 再遍历一次 汇总小计的小计 如 东北小计（row）-办公用品小计（col）所指单元格的值
@@ -705,31 +827,31 @@ export class Dataset {
         path.push(value);
         const flatKey = path.join(concatStr);
         //id的值可以每次生成一个新的 这里用的path作为id 方便layout对象获取
-        let item: { id: string; child: any[] } = map.get(flatKey); // 当前节点
+        let item: { id: string; children: any[] } = map.get(flatKey); // 当前节点
         if (!item) {
           item = {
             // name: value,
-            id: flatKey, //getId(node?.id ?? '', (node?.child?.length ?? result.length) + 1),
-            child: []
+            id: flatKey, //getId(node?.id ?? '', (node?.children?.length ?? result.length) + 1),
+            children: []
           };
           if (subTotalFlags[index]) {
-            let curChild = item.child;
+            let curChild = item.children;
             for (let i = index; i < list.length - 1; i++) {
-              const totalChild: { id: string; child: any[] } = {
+              const totalChild: { id: string; children: any[] } = {
                 id: `${flatKey}${concatStr}${subTotalLabel}`, // getId(item?.id, 1),
-                child: []
+                children: []
               };
               curChild.push(totalChild);
-              curChild = totalChild.child;
+              curChild = totalChild.children;
             }
           }
           map.set(flatKey, item); // 存储路径对应的节点
           if (node) {
             //为了确保汇总小计放到最后 使用splice插入到倒数第二个位置。如果小计放前面 直接push就行
             if (subTotalFlags[index - 1]) {
-              node.child.splice(node.child.length - 1, 0, item);
+              node.children.splice(node.children.length - 1, 0, item);
             } else {
-              node.child.push(item);
+              node.children.push(item);
             }
           } else {
             result.push(item);
@@ -742,18 +864,18 @@ export class Dataset {
     arr.forEach(item => addList(item));
     //最后将总计的节点加上
     if (isGrandTotal) {
-      const node: { id: string; child: any[] } = {
+      const node: { id: string; children: any[] } = {
         id: grandTotalLabel, // getId(item?.id, 1),
-        child: []
+        children: []
       };
-      let curChild = node.child;
+      let curChild = node.children;
       for (let i = 1; i < subTotalFlags.length; i++) {
-        const totalChild: { id: string; child: any[] } = {
+        const totalChild: { id: string; children: any[] } = {
           id: grandTotalLabel, // getId(item?.id, 1),
-          child: []
+          children: []
         };
         curChild.push(totalChild);
-        curChild = totalChild.child;
+        curChild = totalChild.children;
       }
       result.push(node);
     }
@@ -764,9 +886,9 @@ export class Dataset {
     const result: any[] = []; // 结果
     function getPath(node: any, arr: any) {
       arr.push(node.id);
-      if (node.child.length > 0) {
+      if (node.children.length > 0) {
         // 存在多个节点就递归
-        node.child?.forEach((childItem: any) => getPath(childItem, [...arr]));
+        node.children?.forEach((childItem: any) => getPath(childItem, [...arr]));
       } else {
         result.push(arr);
       }
@@ -774,281 +896,18 @@ export class Dataset {
     tree.forEach((treeNode: any) => getPath(treeNode, []));
     return result;
   }
-}
-
-abstract class Aggregator {
-  className = 'Aggregator';
-  isRecord?: boolean = true;
-  records?: any[] = [];
-  type?: string;
-  field?: string;
-  formatFun?: any;
-  _formatedValue?: any;
-  constructor(dimension: string, formatFun?: any, isRecord?: boolean) {
-    this.field = dimension;
-    this.formatFun = formatFun;
-    this.isRecord = isRecord ?? this.isRecord;
-  }
-  // push(record: any) {
-  //   if (this.isRecord) {
-  //     if (record.className === 'Aggregator') this.records.push(...record.records);
-  //     else this.records.push(record);
-  //   }
-  // }
-  abstract push(record: any): void;
-  abstract value(): any;
-  formatValue() {
-    if (!this._formatedValue) {
-      if (this.formatFun) {
-        this._formatedValue = this.formatFun(this.value());
+  private TreeToArr2(tree: any) {
+    const result: any[] = []; // 结果
+    function getPath(node: any, arr: any) {
+      arr.push(arr.length > 0 ? [arr[arr.length - 1], node.value].join(String.fromCharCode(0)) : node.value);
+      if (node.children?.length > 0 && !node.children[0].indicatorKey) {
+        // 存在多个节点就递归
+        node.children?.forEach((childItem: any) => getPath(childItem, [...arr]));
       } else {
-        this._formatedValue = this.value();
+        result.push(arr);
       }
     }
-    return this._formatedValue;
+    tree.forEach((treeNode: any) => getPath(treeNode, []));
+    return result;
   }
-}
-class SumAggregator extends Aggregator {
-  type: string = AggregationType.SUM;
-  sum = 0;
-  push(record: any): void {
-    if (this.isRecord) {
-      if (record.className === 'Aggregator') {
-        this.records.push(...record.records);
-      } else {
-        this.records.push(record);
-      }
-    }
-    if (record.className === 'Aggregator') {
-      this.sum += record.value();
-    } else if (!isNaN(parseFloat(record[this.field]))) {
-      this.sum += parseFloat(record[this.field]);
-    }
-  }
-  value() {
-    return this.sum;
-  }
-}
-
-class CountAggregator extends Aggregator {
-  type: string = AggregationType.COUNT;
-  count = 0;
-  push(record: any): void {
-    if (this.isRecord) {
-      if (record.className === 'Aggregator') {
-        this.records.push(...record.records);
-      } else {
-        this.records.push(record);
-      }
-    }
-    if (record.className === 'Aggregator') {
-      this.count += record.value();
-    } else {
-      this.count++;
-    }
-  }
-  value() {
-    return this.count;
-  }
-}
-class AvgAggregator extends Aggregator {
-  type: string = AggregationType.AVG;
-  sum = 0;
-  count = 0;
-  push(record: any): void {
-    if (this.isRecord) {
-      if (record.className === 'Aggregator') {
-        this.records.push(...record.records);
-      } else {
-        this.records.push(record);
-      }
-    }
-    if (record.className === 'Aggregator' && record.type === AggregationType.AVG) {
-      this.sum += record.sum;
-      this.count += record.count;
-    } else if (!isNaN(parseFloat(record[this.field]))) {
-      this.sum += parseFloat(record[this.field]);
-      this.count++;
-    }
-  }
-  value() {
-    return this.sum / this.count;
-  }
-}
-class MaxAggregator extends Aggregator {
-  type: string = AggregationType.MAX;
-  max: number = Number.MIN_SAFE_INTEGER;
-  isRecord?: boolean = false;
-  push(record: any): void {
-    if (this.isRecord) {
-      if (record.className === 'Aggregator') {
-        this.records.push(...record.records);
-      } else {
-        this.records.push(record);
-      }
-    }
-    //TODO push Aggregator类型的对象没有做处理
-    if (typeof record === 'number') {
-      this.max = record > this.max ? record : this.max;
-    } else if (typeof record[this.field] === 'number') {
-      this.max = record[this.field] > this.max ? record[this.field] : this.max;
-    } else if (!isNaN(record[this.field])) {
-      this.max = parseFloat(record[this.field]) > this.max ? parseFloat(record[this.field]) : this.max;
-    }
-  }
-  value() {
-    return this.max;
-  }
-}
-class MinAggregator extends Aggregator {
-  type: string = AggregationType.MIN;
-  min: number = Number.MAX_SAFE_INTEGER;
-  isRecord?: boolean = false;
-  push(record: any): void {
-    if (this.isRecord) {
-      if (record.className === 'Aggregator') {
-        this.records.push(...record.records);
-      } else {
-        this.records.push(record);
-      }
-    }
-    //TODO push Aggregator类型的对象没有做处理
-    if (typeof record === 'number') {
-      this.min = record < this.min ? record : this.min;
-    } else if (typeof record[this.field] === 'number') {
-      this.min = record[this.field] < this.min ? record[this.field] : this.min;
-    }
-  }
-  value() {
-    return this.min;
-  }
-}
-function indicatorSort(a: any, b: any) {
-  if (a && b) {
-    // 数据健全兼容，用户数据不全时，能够展示.
-    return a.toString().localeCompare(b.toString(), 'zh');
-  }
-  if (a) {
-    return 1;
-  }
-  return -1;
-}
-function typeSort(a: any, b: any) {
-  if (a && b) {
-    // 数据健全兼容，用户数据不全时，能够展示.
-    return a.toString().localeCompare(b.toString(), 'zh');
-  }
-  if (a) {
-    return 1;
-  }
-  return -1;
-}
-function naturalSort(as: any, bs: any) {
-  const rx = /(\d+)|(\D+)/g;
-  const rd = /\d/;
-  const rz = /^0/;
-  let a;
-  let a1;
-  let b;
-  let b1;
-  let nas = 0;
-  let nbs = 0;
-  if (bs !== null && as === null) {
-    return -1;
-  }
-  if (as !== null && bs === null) {
-    return 1;
-  }
-  if (typeof as === 'number' && isNaN(as)) {
-    return -1;
-  }
-  if (typeof bs === 'number' && isNaN(bs)) {
-    return 1;
-  }
-  nas = +as;
-  nbs = +bs;
-  if (nas < nbs) {
-    return -1;
-  }
-  if (nas > nbs) {
-    return 1;
-  }
-  if (typeof as === 'number' && typeof bs !== 'number') {
-    return -1;
-  }
-  if (typeof bs === 'number' && typeof as !== 'number') {
-    return 1;
-  }
-  if (typeof as === 'number' && typeof bs === 'number') {
-    return 0;
-  }
-  if (isNaN(nbs) && !isNaN(nas)) {
-    return -1;
-  }
-  if (isNaN(nas) && !isNaN(nbs)) {
-    return 1;
-  }
-  a = String(as);
-  b = String(bs);
-  if (a === b) {
-    return 0;
-  }
-  if (!(rd.test(a) && rd.test(b))) {
-    return a > b ? 1 : -1;
-  }
-  a = a.match(rx);
-  b = b.match(rx);
-  while (a.length && b.length) {
-    a1 = a.shift();
-    b1 = b.shift();
-    if (a1 !== b1) {
-      if (rd.test(a1) && rd.test(b1)) {
-        return <any>a1.replace(rz, '.0') - <any>b1.replace(rz, '.0');
-      }
-      return a1 > b1 ? 1 : -1;
-    }
-  }
-  return a.length - b.length;
-}
-function sortBy(order: SortOrder[]) {
-  let x;
-  let i;
-  const mapping = {};
-  const lowercase_mapping = {};
-  // for (i in order) {
-  for (let i = 0; i < order.length; i++) {
-    x = order[i];
-    mapping[x] = i;
-    if (typeof x === 'string') {
-      lowercase_mapping[x.toLowerCase()] = i;
-    }
-  }
-  return function (a: any, b: any) {
-    if (mapping[a] !== null && mapping[a] !== undefined && mapping[b] !== null && mapping[b] !== undefined) {
-      return mapping[a] - mapping[b];
-    } else if (mapping[a] !== null && mapping[a] !== undefined) {
-      return -1;
-    } else if (mapping[b] !== null && mapping[b] !== undefined) {
-      return 1;
-    } else if (
-      lowercase_mapping[a] !== null &&
-      mapping[a] !== undefined &&
-      lowercase_mapping[b] !== null &&
-      mapping[b] !== undefined
-    ) {
-      return lowercase_mapping[a] - lowercase_mapping[b];
-    } else if (
-      lowercase_mapping[a] === null ||
-      mapping[a] === undefined ||
-      lowercase_mapping[b] === null ||
-      mapping[b] === undefined
-    ) {
-      return 0;
-    } else if (lowercase_mapping[a] !== null && mapping[a] !== undefined) {
-      return -1;
-    } else if (lowercase_mapping[b] !== null && mapping[b] !== undefined) {
-      return 1;
-    }
-    return naturalSort(a, b);
-  };
 }

@@ -2,73 +2,115 @@ import VChart from '@visactor/vchart';
 const Table_CONTAINER_DOM_ID = 'vTable';
 
 export function createTable() {
-  const spec1 = {
-    type: 'line',
-    data: {
-      values: [
-        {
-          time: '2:00',
-          value: 38
-        },
-        {
-          time: '4:00',
-          value: 56
-        },
-        {
-          time: '6:00',
-          value: 10
-        },
-        {
-          time: '8:00',
-          value: 70
-        },
-        {
-          time: '10:00',
-          value: 36
-        },
-        {
-          time: '12:00',
-          value: 94
-        },
-        {
-          time: '14:00',
-          value: 24
-        },
-        {
-          time: '16:00',
-          value: 44
-        },
-        {
-          time: '18:00',
-          value: 36
-        },
-        {
-          time: '20:00',
-          value: 68
-        },
-        {
-          time: '22:00',
-          value: 22
-        }
-      ]
-    },
-    xField: 'time',
-    yField: 'value',
-    point: {
-      visible: false
-    },
-    line: {
-      style: {
-        curveType: 'stepAfter'
+  const spec = {
+    type: 'bar',
+    data: [
+      {
+        id: 'barData',
+        values: [
+          {
+            name: 'Apple',
+            value: 214480
+          },
+          {
+            name: 'Google',
+            value: 155506
+          },
+          {
+            name: 'Amazon',
+            value: 100764
+          },
+          {
+            name: 'Microsoft',
+            value: 92715
+          },
+          {
+            name: 'Coca-Cola',
+            value: 66341
+          },
+          {
+            name: 'Samsung',
+            value: 59890
+          },
+          {
+            name: 'Toyota',
+            value: 53404
+          },
+          {
+            name: 'Mercedes-Benz',
+            value: 48601
+          },
+          {
+            name: 'Facebook',
+            value: 45168
+          },
+          {
+            name: "McDonald's",
+            value: 43417
+          },
+          {
+            name: 'Intel',
+            value: 43293
+          },
+          {
+            name: 'IBM',
+            value: 42972
+          },
+          {
+            name: 'BMW',
+            value: 41006
+          },
+          {
+            name: 'Disney',
+            value: 39874
+          },
+          {
+            name: 'Cisco',
+            value: 34575
+          },
+          {
+            name: 'GE',
+            value: 32757
+          },
+          {
+            name: 'Nike',
+            value: 30120
+          },
+          {
+            name: 'Louis Vuitton',
+            value: 28152
+          },
+          {
+            name: 'Oracle',
+            value: 26133
+          },
+          {
+            name: 'Honda',
+            value: 23682
+          }
+        ]
       }
-    },
-    crosshair: {
-      xField: { visible: true }
+    ],
+    direction: 'horizontal',
+    xField: 'value',
+    yField: 'name',
+    axes: [
+      {
+        orient: 'bottom',
+        visible: false
+      }
+    ],
+    label: {
+      visible: true
     }
   };
 
-  const vchart = new VChart(spec1, { dom: Table_CONTAINER_DOM_ID });
-  vchart.renderAsync();
+  const vchart = new VChart(spec, { dom: Table_CONTAINER_DOM_ID, animation: false });
+  vchart.renderSync();
+  setTimeout(() => {
+    const canvas1 = vchart.getStage().toCanvas();
+    document.body.appendChild(canvas1);
+  }, 1000);
 
   // 只为了方便控制台调试用，不要拷贝
   window.vchart = vchart;

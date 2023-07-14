@@ -187,6 +187,31 @@ export class SimpleHeaderLayoutMap implements LayoutMapAPI {
   get columnWidths(): WidthData[] {
     return this._columns;
   }
+
+  getColumnWidthDefined(col: number): WidthData {
+    if (this.transpose) {
+      let width: string | number = 0;
+      let maxWidth: string | number;
+      let minWidth: string | number;
+      let isAuto;
+      this.columnObjects.forEach((obj, index) => {
+        if (typeof obj.width === 'number') {
+          width = Math.max(obj.width, <number>width);
+        } else if (obj.width === 'auto') {
+          isAuto = true;
+        }
+        if (typeof obj.minWidth === 'number') {
+          minWidth = Math.max(obj.minWidth, <number>minWidth);
+        }
+        if (typeof obj.maxWidth === 'number') {
+          maxWidth = Math.max(obj.maxWidth, <number>maxWidth);
+        }
+      });
+      width = width > 0 ? width : isAuto ? 'auto' : undefined;
+      return { width, minWidth, maxWidth };
+    }
+    return this._columns[col];
+  }
   getCellId(col: number, row: number): LayoutObjectId {
     if (this.transpose) {
       if (this.headerLevelCount <= col) {

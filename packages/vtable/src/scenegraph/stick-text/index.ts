@@ -38,7 +38,7 @@ export function handleTextStick(table: BaseTableAPI) {
       if (table._getCellStyle(col, row)?.textStick) {
         const cellGroup = table.scenegraph.getCell(col, row);
         // adjust cell Horizontal
-        adjustCellContentHorizontalLayout(cellGroup, 0, table.tableNoFrameWidth);
+        adjustCellContentHorizontalLayout(cellGroup, frozenColsWidth, table.tableNoFrameWidth);
         changedCells.push({ col, row });
       }
     }
@@ -140,15 +140,18 @@ export function checkHaveTextStick(table: BaseTableAPI) {
   const columnObjects = table.internalProps.layoutMap.columnObjects;
   for (let i = 0; i < headerObjects.length; i++) {
     const header = headerObjects[i];
-    if (header && (header.define.headerStyle as ITextStyleOption)?.textStick) {
+    if (header && (header.style as ITextStyleOption)?.textStick) {
+      console.log('checkHaveTextStick', true);
       return true;
     }
   }
   for (let i = 0; i < columnObjects.length; i++) {
     const column = columnObjects[i];
-    if (column && (column.define.style as ITextStyleOption)?.textStick) {
+    if (column && (column.style as ITextStyleOption)?.textStick) {
+      console.log('checkHaveTextStick', true);
       return true;
     }
   }
+  console.log('checkHaveTextStick', false);
   return false;
 }

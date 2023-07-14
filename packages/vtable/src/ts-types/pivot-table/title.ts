@@ -6,7 +6,7 @@ type IBasicTitleDefine = {
 };
 
 type ITextTitleDefine = IBasicTitleDefine & {
-  headerType: 'text';
+  headerType?: 'text';
   headerStyle: ITextStyleOption;
 };
 

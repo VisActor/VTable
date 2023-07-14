@@ -114,7 +114,7 @@ export function createTable() {
         },
         cornerDescription: '地区维度',
         headerStyle: {
-          textAlign: 'right',
+          textAlign: 'left',
           borderColor: 'blue',
           color: 'gray',
           textStick: true,
@@ -470,7 +470,15 @@ export function createTable() {
     columnHeaderTitle: {
       title: true,
       headerStyle: {
+        textAlign: 'center',
         textStick: true
+      }
+    },
+    rowHeaderTitle: {
+      title: true,
+      headerStyle: {
+        textStick: true,
+        textBaseline: 'bottom'
       }
     },
     indicatorTitle: '指标名称',
@@ -495,11 +503,6 @@ export function createTable() {
     const order = e.order === 'asc' ? 'desc' : e.order === 'desc' ? 'normal' : 'asc';
     instance.updatePivotSortState([{ dimensions: e.dimensionInfo, order }]);
   });
-
-  VTable.bindDebugTool(instance.scenegraph.stage as any, {
-    customGrapicKeys: ['role', '_updateTag']
-  });
-
   // 只为了方便控制太调试用，不要拷贝
   (window as any).tableInstance = instance;
 }

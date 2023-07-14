@@ -2068,8 +2068,9 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
 
   abstract isListTable(): boolean;
   abstract isPivotTable(): boolean;
+  abstract isPivotChart(): boolean;
 
-  protected abstract getSortFuncFromHeaderOption(
+  protected abstract _getSortFuncFromHeaderOption(
     columns: ColumnsDefine | undefined,
     field: FieldDef,
     fieldKey?: FieldKeyDef
@@ -2395,7 +2396,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
         }
         // 根据sort规则进行排序
         if (order && field && order !== 'normal') {
-          const sortFunc = this.getSortFuncFromHeaderOption(undefined, field, fieldKey);
+          const sortFunc = this._getSortFuncFromHeaderOption(undefined, field, fieldKey);
           // 如果sort传入的信息不能生成正确的sortFunc，直接更新表格，避免首次加载无法正常显示内容
           let hd;
           if (fieldKey) {

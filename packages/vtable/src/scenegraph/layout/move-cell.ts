@@ -45,7 +45,7 @@ export function moveHeaderPosition(
     targetRowEnd = table.rowCount - 1;
   } else if (direction === 'row') {
     const sourceMergeInfo = getCellMergeInfo(table, colSource, rowSource);
-    const targetMergeInfo = getCellMergeInfo(table, colSource, rowSource);
+    const targetMergeInfo = getCellMergeInfo(table, colTarget, rowTarget);
     if (sourceMergeInfo && targetMergeInfo) {
       sourceRowStart = sourceMergeInfo.start.row;
       sourceRowEnd = sourceMergeInfo.end.row;

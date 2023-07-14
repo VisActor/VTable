@@ -30,7 +30,7 @@ const DEFAULT_BAR_COLOR = data => {
 
 export function createTable() {
   const records = generatePivotDataSource(19, 18);
-  const theme: VTable.TYPES.IListTableThemeDefine = {
+  const theme: VTable.TYPES.ITableThemeDefine = {
     underlayBackgroundColor: '#F6F6F6',
     defaultStyle: {
       borderColor: '#000',
@@ -103,6 +103,12 @@ export function createTable() {
     // }
   };
   const option: VTable.PivotTableConstructorOptions = {
+    columnHeaderTitle: {
+      title: true,
+      headerStyle: {
+        textStick: true
+      }
+    },
     columns: [
       {
         dimensionKey: '地区',
@@ -115,9 +121,9 @@ export function createTable() {
         },
         cornerDescription: '地区维度',
         headerStyle: {
-          textAlign: 'right',
+          textAlign: 'center',
           borderColor: 'blue',
-          color: 'gray',
+          color: 'pink',
           textStick: true,
           bgColor(arg) {
             if (arg.cellHeaderPaths.colHeaderPaths && arg.cellHeaderPaths.colHeaderPaths[0].value === '东北') {
@@ -492,9 +498,9 @@ export function createTable() {
     instance.updatePivotSortState([{ dimensions: e.dimensionInfo, order }]);
   });
 
-  bindDebugTool(instance.scenegraph.stage as any, {
-    customGrapicKeys: ['role', '_updateTag']
-  });
+  // bindDebugTool(instance.scenegraph.stage as any, {
+  //   customGrapicKeys: ['role', '_updateTag']
+  // });
 
   // 只为了方便控制太调试用，不要拷贝
   (window as any).tableInstance = instance;

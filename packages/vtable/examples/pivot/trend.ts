@@ -236,9 +236,6 @@ export function createTable() {
       {
         dimensionKey: 'order_data',
         dimensionTitle: '订单数据',
-        headerStyle: {
-          textStick: true
-        },
         width: '100',
         showSort: false
       }

@@ -192,7 +192,50 @@ export interface PivotTableConstructorOptions extends BaseTableConstructorOption
   /** 指标标题 用于显示到角头的值*/
   indicatorTitle?: string;
 }
+export interface PivotChartConstructorOptions extends BaseTableConstructorOptions {
+  /**
+   * 调整列宽的生效范围：'column' | 'indicator' | 'all' | 'indicatorGroup'，单列|按指标|所有列|属于同一维度值的多个指标
+   */
+  columnResizeType?: 'column' | 'indicator' | 'all' | 'indicatorGroup';
+  /** 列表头维度结构 */
+  columnTree?: IHeaderTreeDefine[];
+  /** 行表头维度结构 */
+  rowTree?: IHeaderTreeDefine[];
+  /** 定义各个维度和各个指标的具体配置项和样式定义 rows 和 dimension 代替掉 */
+  // dimensions?: IDimension[];
 
+  /** 定义行上各个维度具体配置项和样式定义 */
+  rows?: (IDimension | string)[]; // (string | IDimension)[]; 后续支持数据分析的透视表 支持string配置
+  /** 定义列上各个维度具体配置项和样式定义 */
+  columns?: (IDimension | string)[]; // (string | IDimension)[];
+  /** 定义指标具体配置项和样式定义 包含表头和body的定义*/
+  indicators?: (IIndicator | string)[]; // (string | IIndicator)[];
+
+  /** 指标以列展示 ———有数据分析的透视表才需要配置这个 */
+  indicatorsAsCol?: boolean;
+  /** 是否隐藏指标名称 */
+  hideIndicatorName?: boolean; //
+  /** 角头单元格配置项和样式定义 */
+  corner?: ICornerDefine;
+  /**
+   * boolean 是否显示列维度值表头
+   */
+  showColumnHeader?: boolean;
+  /**
+   * boolean 是否显示行维度值表头
+   */
+  showRowHeader?: boolean;
+  /**
+   * 列表头增加一行来显示维度名称 可以自定义或者显示dimensionTitle组合名
+   */
+  columnHeaderTitle?: ITitleDefine;
+  /**
+   * 行表头的增加一列来显示维度名称 可以自定义或者显示dimensionTitle组合名
+   */
+  rowHeaderTitle?: ITitleDefine;
+  /** 指标标题 用于显示到角头的值*/
+  indicatorTitle?: string;
+}
 export interface PivotTableAPI extends BaseTableAPI {
   options: PivotTableConstructorOptions;
   // internalProps: PivotTableProtected;
@@ -202,7 +245,12 @@ export interface PivotTableAPI extends BaseTableAPI {
   getPivotSortState: (col: number, row: number) => SortOrder;
   toggleHierarchyState: (col: number, row: number) => void;
 }
-
+export interface PivotChartAPI extends BaseTableAPI {
+  options: PivotTableConstructorOptions;
+  // internalProps: PivotTableProtected;
+  isListTable: () => false;
+  isPivotTable: () => true;
+}
 export type SetPasteValueTestData = CellAddress & {
   table: BaseTableAPI;
   record: any;
