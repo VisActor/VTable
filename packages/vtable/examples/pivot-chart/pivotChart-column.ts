@@ -142,8 +142,9 @@ export function createTable() {
         //     colorAlpha: 0.2
         //   }
         // },
-        xField: ['230417170554008'],
-        yField: '230417171050011',
+        direction: 'horizontal',
+        xField: '230417171050011',
+        yField: '230417170554008',
         seriesField: '230417171050030',
         axes: [
           { orient: 'left', visible: true, label: { visible: true } },
@@ -175,13 +176,14 @@ export function createTable() {
         data: {
           id: 'data'
         },
-
+        direction: 'horizontal',
         series: [
           {
             type: 'bar',
             stack: true,
-            xField: ['230417170554008'],
-            yField: '230713150305011',
+            direction: 'horizontal',
+            xField: '230713150305011',
+            yField: ['230417170554008'],
             seriesField: '230417171050030',
             bar: {
               state: {
@@ -198,8 +200,9 @@ export function createTable() {
           {
             type: 'line',
             stack: false,
-            xField: ['230417170554008'],
-            yField: '230417171050025',
+            direction: 'horizontal',
+            xField: '230417171050025',
+            yField: ['230417170554008'],
             seriesField: '230417171050030',
             line: {
               state: {
@@ -245,8 +248,9 @@ export function createTable() {
         data: {
           id: 'data'
         },
-        xField: ['230417170554008'],
-        yField: '230707112948009',
+        direction: 'horizontal',
+        xField: '230707112948009',
+        yField: '230417170554008',
         seriesField: '230417171050030',
         axes: [
           { orient: 'left', visible: true, label: { visible: true } },
@@ -9272,7 +9276,7 @@ export function createTable() {
     rows,
     columns,
     indicators,
-    indicatorsAsCol: false,
+    indicatorsAsCol: true,
     parentElement: document.getElementById(Table_CONTAINER_DOM_ID),
     records,
     defaultRowHeight: 200,

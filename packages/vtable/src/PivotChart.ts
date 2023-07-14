@@ -626,7 +626,7 @@ export class PivotChart extends BaseTable implements PivotTableAPI {
               // 判断是否需要匹配维度值相同的进行求和计算
               sumBy:
                 (indicatorDefine as IChartColumnIndicator).chartSpec?.stack !== false &&
-                rowKeys.concat((indicatorDefine as IChartColumnIndicator).chartSpec?.yfield)
+                rowKeys.concat((indicatorDefine as IChartColumnIndicator).chartSpec?.yField)
             };
             if ((indicatorDefine as IChartColumnIndicator).chartSpec.series) {
               (indicatorDefine as IChartColumnIndicator).chartSpec.series.forEach((chartSeries: any) => {
