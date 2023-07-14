@@ -47,6 +47,10 @@ export const menus = [
       {
         path: 'pivot-chart',
         name: 'pivotChart-column'
+      },
+      {
+        path: 'pivot-chart',
+        name: 'pivotChart-headerTitle'
       }
     ]
   },

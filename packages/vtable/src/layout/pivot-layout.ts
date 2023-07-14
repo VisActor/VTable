@@ -44,7 +44,7 @@ export class PivoLayoutMap implements LayoutMapAPI {
   private _indicatorShowType: ShowColumnRowType = 'column';
   indicatorsAsCol = true;
   hideIndicatorName = false;
-  indicatorDimensionKey: string;
+  indicatorDimensionKey: string = IndicatorDimensionKeyPlaceholder;
   indicatorTitle: string;
   /**
    * 对应dataset中的rowKeys，行表头的每行表头键值，包含小计总计
@@ -101,7 +101,10 @@ export class PivoLayoutMap implements LayoutMapAPI {
     this.indicatorKeys = dataset.indicatorKeys;
     this.indicatorsAsCol = table.options.indicatorsAsCol ?? true;
     this.hideIndicatorName = table.options.hideIndicatorName ?? false;
-    this.indicatorDimensionKey = IndicatorDimensionKeyPlaceholder;
+    this.showRowHeader = table.options.showRowHeader ?? true;
+    this.showColumnHeader = table.options.showColumnHeader ?? true;
+    this.rowHeaderTitle = table.options.rowHeaderTitle;
+    this.columnHeaderTitle = table.options.columnHeaderTitle;
     // this.dimensions = [];
     this.cornerSetting = table.options.corner ?? { titleOnDimension: 'column' };
 
@@ -109,9 +112,10 @@ export class PivoLayoutMap implements LayoutMapAPI {
     this.rows = dataset.rows;
     this.rowKeysPath = dataset.rowKeysPath;
     this.colKeysPath = dataset.colKeysPath;
-    this.convertColKeys = transpose(this.colKeysPath);
+
     this.tree = dataset.tree;
     this.initState();
+    this.convertColKeys = transpose(this.colKeysPath);
   }
   /**
    * 初始化该类的计算变量
@@ -126,9 +130,91 @@ export class PivoLayoutMap implements LayoutMapAPI {
     }
 
     this.colShowAttrs =
-      this._indicatorShowType === 'column' ? this.columns.concat(this.indicatorDimensionKey) : this.columns;
-    this.rowShowAttrs = this._indicatorShowType === 'row' ? this.rows.concat(this.indicatorDimensionKey) : this.rows;
+      this._indicatorShowType === 'column' ? this.columns.concat(this.indicatorDimensionKey) : Array.from(this.columns);
+    this.rowShowAttrs =
+      this._indicatorShowType === 'row' ? this.rows.concat(this.indicatorDimensionKey) : Array.from(this.rows);
 
+    this._bodyRowCount = this.rowKeysPath.length * (!this.indicatorsAsCol ? this.indicatorKeys.length : 1);
+    this.initHeaderObjects();
+    this.initIndicatorObjects();
+    //#region 处理headerTitle
+    if (this.rowHeaderTitle) {
+      const cell_id = 'rowHeaderTitle';
+      const caption =
+        typeof this.rowHeaderTitle.title === 'string'
+          ? this.rowHeaderTitle.title
+          : (this.rowsDefine.reduce((title: string, value) => {
+              if (typeof value === 'string') {
+                return title;
+              }
+              return title + (title ? `/${value.dimensionTitle}` : `${value.dimensionTitle}`);
+            }, '') as string);
+      this._headerObjectMap[caption] = {
+        id: caption,
+        caption,
+        field: cell_id,
+        headerType: this.rowHeaderTitle.headerType ?? 'text',
+        style: this.rowHeaderTitle.headerStyle,
+        define: <any>{
+          // id:
+        }
+      };
+      this._headerObjectMap[cell_id] = {
+        id: cell_id,
+        caption: '',
+        field: cell_id,
+        headerType: this.cornerSetting.headerType ?? 'text',
+        style: this.cornerSetting.headerStyle,
+        define: <any>{
+          // id:
+        }
+      };
+      this._headerObjects.push(this._headerObjectMap[caption]);
+      this._headerObjects.push(this._headerObjectMap[cell_id]);
+      this.rowShowAttrs.unshift(cell_id);
+      this.rowKeysPath.forEach((rowKey, index) => {
+        rowKey.unshift(caption);
+      });
+    }
+    if (this.columnHeaderTitle) {
+      const cell_id = 'columnHeaderTitleCell';
+      const caption =
+        typeof this.columnHeaderTitle.title === 'string'
+          ? this.columnHeaderTitle.title
+          : (this.columnsDefine.reduce((title: string, value) => {
+              if (typeof value === 'string') {
+                return title;
+              }
+              return title + (title ? `/${value.dimensionTitle}` : `${value.dimensionTitle}`);
+            }, '') as string);
+      this._headerObjectMap[caption] = {
+        id: caption,
+        caption,
+        field: cell_id,
+        headerType: this.columnHeaderTitle.headerType ?? 'text',
+        style: this.columnHeaderTitle.headerStyle,
+        define: <any>{
+          // id:
+        }
+      };
+      this._headerObjectMap[cell_id] = {
+        id: cell_id,
+        caption: '',
+        field: cell_id,
+        headerType: this.cornerSetting.headerType ?? 'text',
+        style: this.cornerSetting.headerStyle,
+        define: <any>{
+          // id:
+        }
+      };
+      this._headerObjects.push(this._headerObjectMap[caption]);
+      this._headerObjects.push(this._headerObjectMap[cell_id]);
+      this.colShowAttrs.unshift(cell_id);
+      this.colKeysPath.forEach((columnKey, index) => {
+        columnKey.unshift(caption);
+      });
+    }
+    //#endregion
     this._colCount =
       (this.colKeysPath.length === 0 ? 1 : this.colKeysPath.length) *
         (this.indicatorsAsCol ? this.indicatorKeys.length : 1) +
@@ -137,11 +223,6 @@ export class PivoLayoutMap implements LayoutMapAPI {
       (this.rowKeysPath.length === 0 ? 1 : this.rowKeysPath.length) *
         (!this.indicatorsAsCol ? this.indicatorKeys.length : 1) +
       this.columnHeaderLevelCount;
-
-    this._bodyRowCount = this.rowKeysPath.length * (!this.indicatorsAsCol ? this.indicatorKeys.length : 1);
-    this.initHeaderObjects();
-    this.initIndicatorObjects();
-
     this.setColumnWidths();
   }
   private setColumnWidths() {
@@ -385,6 +466,12 @@ export class PivoLayoutMap implements LayoutMapAPI {
   set showRowHeader(_showRowHeader: boolean) {
     this._showRowHeader = _showRowHeader;
   }
+  get columnHeaderTitle(): ITitleDefine {
+    return this._columnHeaderTitle;
+  }
+  set columnHeaderTitle(_columnHeaderTitle: ITitleDefine) {
+    this._columnHeaderTitle = _columnHeaderTitle;
+  }
   get rowHeaderTitle(): ITitleDefine {
     return this._rowHeaderTitle;
   }
@@ -510,14 +597,30 @@ export class PivoLayoutMap implements LayoutMapAPI {
   get columnHeaderLevelCount(): number {
     const colLevelCount = this.colShowAttrs.length;
     if (this.showColumnHeader) {
-      return colLevelCount;
+      const count = !this.indicatorsAsCol
+        ? colLevelCount
+        : this.hideIndicatorName //设置隐藏表头，且表头最下面一级就是指标维度 则-1
+        ? this.colShowAttrs[this.colShowAttrs.length - 1] === this.indicatorDimensionKey
+          ? colLevelCount - 1
+          : colLevelCount
+        : colLevelCount;
+
+      return count;
     }
     return 0;
   }
   get rowHeaderLevelCount(): number {
     const rowLevelCount = this.rowShowAttrs.length;
     if (this.showRowHeader) {
-      return rowLevelCount;
+      const count = this.indicatorsAsCol
+        ? rowLevelCount
+        : this.hideIndicatorName //设置隐藏表头，且表头最下面一级就是指标维度 则-1
+        ? this.rowShowAttrs[this.rowShowAttrs.length - 1] === this.indicatorDimensionKey
+          ? rowLevelCount - 1
+          : rowLevelCount
+        : rowLevelCount;
+
+      return count;
     }
     return 0;
   }
@@ -551,7 +654,7 @@ export class PivoLayoutMap implements LayoutMapAPI {
           return this.rowShowAttrs[col];
         }
       } else if (this.isColumnHeader(col, row)) {
-        if (row < this.columns.length) {
+        if (row < this.columns.length + (this.columnHeaderTitle ? 1 : 0)) {
           return this.convertColKeys[row][
             this.indicatorsAsCol
               ? Math.floor((col - this.rowHeaderLevelCount) / this.indicatorKeys.length)
@@ -560,7 +663,7 @@ export class PivoLayoutMap implements LayoutMapAPI {
         }
         return this.indicatorKeys[(col - this.rowHeaderLevelCount) % this.indicatorKeys.length];
       } else if (this.isRowHeader(col, row)) {
-        if (col < this.rows.length) {
+        if (col < this.rows.length + (this.rowHeaderTitle ? 1 : 0)) {
           return this.rowKeysPath[
             !this.indicatorsAsCol
               ? Math.floor((row - this.columnHeaderLevelCount) / this.indicatorKeys.length)
