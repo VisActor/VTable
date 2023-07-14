@@ -1237,13 +1237,15 @@ export function createTable() {
         indicatorKey: '221026124726014',
         caption: '销售额',
         width: 100,
-        showSort: false
+        showSort: false,
+        isAxis: true
       },
       {
         indicatorKey: '221026124726015',
         caption: '数量',
         width: 100,
-        showSort: false
+        showSort: false,
+        isAxis: true
       }
     ],
     corner: {
@@ -1256,7 +1258,8 @@ export function createTable() {
     records,
     showFrozenIcon: false, //显示VTable内置冻结列图标
     widthMode: 'standard', // 宽度模式：standard 标准模式； adaptive 自动填满容器
-    defaultRowHeight: 40,
+    defaultRowHeight: 80,
+    defaultColWidth: 100,
     columnResizeType: 'indicator', // 'column' | 'indicator' | 'all'
     dragHeaderMode: 'all'
   };

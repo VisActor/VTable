@@ -76,7 +76,7 @@ export function createCellGroup(
 
     lineCap: 'square',
 
-    clip: true
+    clip: false
   } as any);
   cellGroup.role = 'cell';
   cellGroup.col = col;
