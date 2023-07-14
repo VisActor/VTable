@@ -886,8 +886,8 @@ export class PivoLayoutMap implements LayoutMapAPI {
     const state = {
       vtable_selected: {
         filter: (datum: any) => {
-          if ((this._table as PivotChart)._selectedItems.length >= 1) {
-            const match = (this._table as PivotChart)._selectedItems.find(item => {
+          if ((this._table as PivotChart)._selectedDataItemsInChart.length >= 1) {
+            const match = (this._table as PivotChart)._selectedDataItemsInChart.find(item => {
               for (const itemKey in item) {
                 if (item[itemKey] !== datum[itemKey]) {
                   return false;
@@ -902,8 +902,8 @@ export class PivoLayoutMap implements LayoutMapAPI {
       },
       vtable_selected_reverse: {
         filter: (datum: any) => {
-          if ((this._table as PivotChart)._selectedItems.length >= 1) {
-            const match = (this._table as PivotChart)._selectedItems.find(item => {
+          if ((this._table as PivotChart)._selectedDataItemsInChart.length >= 1) {
+            const match = (this._table as PivotChart)._selectedDataItemsInChart.find(item => {
               for (const itemKey in item) {
                 if (item[itemKey] !== datum[itemKey]) {
                   return false;

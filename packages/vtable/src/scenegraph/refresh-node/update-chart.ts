@@ -1,3 +1,5 @@
+import type { PivotChart } from '../../PivotChart';
+import type { PivoLayoutMap } from '../../layout/pivot-layout';
 import type { Chart } from '../graphic/chart';
 import type { Group } from '../graphic/group';
 import type { Scenegraph } from '../scenegraph';
@@ -70,5 +72,42 @@ export function clearChartCacheImage(scenegraph: Scenegraph) {
         }
       });
     });
+  }
+}
+/** 更新选中的图表图元状态 */
+export function updateChartState(scenegraph: Scenegraph, datum: any) {
+  const table = scenegraph.table;
+  if (table.isPivotChart()) {
+    const preSelectItemsCount = (table as PivotChart)._selectedDataItemsInChart.length;
+    if (datum === null && preSelectItemsCount === 0) {
+      //避免无效的更新
+      return;
+    }
+    (table as PivotChart)._selectedDataItemsInChart = [];
+    if (datum && datum.key !== 0 && Object.keys(datum).length > 0) {
+      //本以为没有点击到图元上 datum为空 发现是{key:0}或者{}
+      const selectedState = {};
+      for (const itemKey in datum) {
+        if (!itemKey.startsWith('VGRAMMAR_') && !itemKey.startsWith('__VCHART')) {
+          selectedState[itemKey] = datum[itemKey];
+        }
+      }
+      (table as PivotChart)._selectedDataItemsInChart.push(selectedState);
+    }
+    //避免无效的更新
+    if ((table as PivotChart)._selectedDataItemsInChart.length === 0 && preSelectItemsCount === 0) {
+      return;
+    }
+    // 根据hover的单元格位置 获取单元格实例 拿到chart图元
+    const cellGroup = scenegraph.getCell(
+      table.stateManeger.hover?.cellPos?.col,
+      table.stateManeger.hover?.cellPos?.row
+    );
+
+    (table.internalProps.layoutMap as PivoLayoutMap).updateDataStateToChartInstance(
+      cellGroup?.getChildren()?.[0]?.type === 'chart' ? (cellGroup.getChildren()[0] as Chart).activeChartInstance : null
+    );
+    // 清楚chart缓存图片
+    clearChartCacheImage(scenegraph);
   }
 }

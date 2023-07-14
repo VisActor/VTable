@@ -108,25 +108,10 @@ export class Chart extends Group {
     // this.activeChartInstance.updateData('data', this.attribute.data);
     this.activeChartInstance.renderSync();
 
-    (table.internalProps.layoutMap as any).updateDataStateToChartInstance(this.activeChartInstance);
-    console.log('bind event activeChartInstance');
+    (table.internalProps.layoutMap as any)?.updateDataStateToChartInstance?.(this.activeChartInstance);
     this.activeChartInstance.on('click', (params: any) => {
       console.log('click captured', params);
-      (table as PivotChart)._selectedItems = [];
-      if (table.isPivotChart()) {
-        if (params.datum && params.datum.key !== 0 && Object.keys(params?.datum).length > 0) {
-          //本以为没有点击到图元上 datum为空 发现是{key:0}或者{}
-          const selectedState = {};
-          for (const itemKey in params.datum) {
-            if (!itemKey.startsWith('VGRAMMAR_') && !itemKey.startsWith('__VCHART')) {
-              selectedState[itemKey] = params.datum[itemKey];
-            }
-          }
-          (table as PivotChart)._selectedItems.push(selectedState);
-        }
-        (table.internalProps.layoutMap as PivoLayoutMap).updateDataStateToChartInstance(this.activeChartInstance);
-        clearChartCacheImage(table.scenegraph);
-      }
+      table.scenegraph.updateChartState(params?.datum);
     });
     this.activeChartInstance.on('dragend', (params: any) => {
       console.log('dragend captured', params);
