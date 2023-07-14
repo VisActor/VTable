@@ -147,6 +147,7 @@ export function createCell(
     }
 
     if ((define as any).isAxis && cellType === 'columnHeader') {
+      cellGroup.setAttribute('clip', false);
       const axis = new CartesianAxis(
         {
           orient: 'top',
