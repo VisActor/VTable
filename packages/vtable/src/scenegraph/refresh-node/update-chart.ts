@@ -79,12 +79,25 @@ export function updateChartState(scenegraph: Scenegraph, datum: any) {
   const table = scenegraph.table;
   if (table.isPivotChart()) {
     const preSelectItemsCount = (table as PivotChart)._selectedDataItemsInChart.length;
-    if (datum === null && preSelectItemsCount === 0) {
+    if ((datum === null || datum?.length === 0 || Object.keys(datum).length === 0) && preSelectItemsCount === 0) {
       //避免无效的更新
       return;
     }
     (table as PivotChart)._selectedDataItemsInChart = [];
-    if (datum && datum.key !== 0 && Object.keys(datum).length > 0) {
+    if (Array.isArray(datum)) {
+      datum.forEach((dataItem: any) => {
+        if (dataItem && dataItem.key !== 0 && Object.keys(dataItem).length > 0) {
+          //本以为没有点击到图元上 datum为空 发现是{key:0}或者{}
+          const selectedState = {};
+          for (const itemKey in dataItem) {
+            if (!itemKey.startsWith('VGRAMMAR_') && !itemKey.startsWith('__VCHART')) {
+              selectedState[itemKey] = dataItem[itemKey];
+            }
+          }
+          (table as PivotChart)._selectedDataItemsInChart.push(selectedState);
+        }
+      });
+    } else if (datum && datum.key !== 0 && Object.keys(datum).length > 0) {
       //本以为没有点击到图元上 datum为空 发现是{key:0}或者{}
       const selectedState = {};
       for (const itemKey in datum) {

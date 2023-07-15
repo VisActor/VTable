@@ -111,13 +111,21 @@ export class Chart extends Group {
     (table.internalProps.layoutMap as any)?.updateDataStateToChartInstance?.(this.activeChartInstance);
     this.activeChartInstance.on('click', (params: any) => {
       console.log('click captured', params);
-      table.scenegraph.updateChartState(params?.datum);
+      if (Chart.temp) {
+        table.scenegraph.updateChartState(params?.datum);
+      }
     });
-    this.activeChartInstance.on('dragend', (params: any) => {
-      console.log('dragend captured', params);
-    });
+    // this.activeChartInstance.on('brushEnd', (params: any) => {
+    //   console.log('brushEnd captured', params);
+    //   table.scenegraph.updateChartState(params?.value?.inBrushData);
+    //   Chart.temp = 0;
+    //   setTimeout(() => {
+    //     Chart.temp = 1;
+    //   }, 0);
+    // });
     console.log('active');
   }
+  static temp: number = 1;
   /**
    * 图表失去焦点
    * @param table

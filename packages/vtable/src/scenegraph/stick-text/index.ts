@@ -38,7 +38,7 @@ export function handleTextStick(table: BaseTableAPI) {
       if (table._getCellStyle(col, row)?.textStick) {
         const cellGroup = table.scenegraph.getCell(col, row);
         // adjust cell Horizontal
-        adjustCellContentHorizontalLayout(cellGroup, frozenColsWidth, table.tableNoFrameWidth);
+        adjustCellContentHorizontalLayout(cellGroup, frozenColsWidth + table.tableX, table.tableNoFrameWidth);
         changedCells.push({ col, row });
       }
     }
@@ -56,7 +56,7 @@ export function handleTextStick(table: BaseTableAPI) {
       ) {
         const cellGroup = table.scenegraph.getCell(col, row);
         // adjust cell vertical
-        adjustCellContentVerticalLayout(cellGroup, frozenRowsHeight, table.tableNoFrameHeight);
+        adjustCellContentVerticalLayout(cellGroup, frozenRowsHeight + table.tableY, table.tableNoFrameHeight);
         changedCells.push({ col, row });
       }
     }
@@ -67,9 +67,9 @@ export function handleTextStick(table: BaseTableAPI) {
       if (table._getCellStyle(col, row)?.textStick) {
         const cellGroup = table.scenegraph.getCell(col, row);
         // adjust cell vertical
-        adjustCellContentVerticalLayout(cellGroup, frozenRowsHeight, table.tableNoFrameHeight);
+        adjustCellContentVerticalLayout(cellGroup, frozenRowsHeight + table.tableY, table.tableNoFrameHeight);
         // adjust cell Horizontal
-        adjustCellContentHorizontalLayout(cellGroup, frozenColsWidth, table.tableNoFrameWidth);
+        adjustCellContentHorizontalLayout(cellGroup, frozenColsWidth + table.tableX, table.tableNoFrameWidth);
         changedCells.push({ col, row });
       }
     }
