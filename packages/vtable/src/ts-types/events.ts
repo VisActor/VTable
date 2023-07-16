@@ -6,7 +6,9 @@ import type { IconFuncTypeEnum, CellInfo, HierarchyState } from '.';
 import type { Icon } from '../scenegraph/graphic/icon';
 
 export type KeyboardEventListener = (e: KeyboardEvent) => void;
-export type AnyListener = AnyFunction;
+export type TableEventListener<TYPE extends keyof TableEventHandlersEventArgumentMap> = (
+  args: TableEventHandlersEventArgumentMap[TYPE]
+) => TableEventHandlersReturnMap[TYPE]; //AnyFunction;
 export type EventListenerId = number;
 
 export type SelectedCellEvent = CellAddress & {
@@ -55,91 +57,88 @@ export type MousePointerSparklineEvent = MousePointerCellEvent & {
 };
 
 export interface TableEventHandlersEventArgumentMap {
-  selected_cell: [SelectedCellEvent];
-  click_cell: [MousePointerCellEvent];
-  dblclick_cell: [MousePointerCellEvent];
-  mouseenter_table: [MousePointerCellEvent];
-  mouseleave_table: [MousePointerCellEvent];
-  mouseenter_cell: [MousePointerCellEvent];
-  mouseleave_cell: [MousePointerCellEvent];
-  mousemove_cell: [MousePointerCellEvent];
-  mousedown_cell: [MousePointerCellEvent];
-  mouseup_cell: [MousePointerCellEvent];
-  contextmenu_cell: [MousePointerMultiCellEvent];
-  keydown: [KeydownEvent];
-  scroll: [
-    {
-      scrollLeft: number;
-      scrollTop: number;
-      scrollWidth: number;
-      scrollHeight: number;
-      viewWidth: number;
-      viewHeight: number;
-    }
-  ];
-  resize_column: [{ col: number; colWidth: number }];
-  resize_column_end: [{ col: number; columns: number[] }];
-  change_header_position: [{ source: CellAddress; target: CellAddress }];
-  sort_click: [
-    {
-      field: FieldDef;
-      order: SortOrder;
-    }
-  ];
-  freeze_click: [{ col: number; row: number; fields: FieldDef[]; colCount: number }];
-  dropdownmenu_click: [DropDownMenuEventArgs];
-  copydata: [CellRange[]];
+  selected_cell: SelectedCellEvent;
+  click_cell: MousePointerCellEvent;
+  dblclick_cell: MousePointerCellEvent;
+  mouseenter_table: MousePointerCellEvent;
+  mouseleave_table: MousePointerCellEvent;
+  mouseenter_cell: MousePointerCellEvent;
+  mouseleave_cell: MousePointerCellEvent;
+  mousemove_cell: MousePointerCellEvent;
+  mousedown_cell: MousePointerCellEvent;
+  mouseup_cell: MousePointerCellEvent;
+  contextmenu_cell: MousePointerMultiCellEvent;
+  keydown: KeydownEvent;
+  scroll: {
+    scrollLeft: number;
+    scrollTop: number;
+    scrollWidth: number;
+    scrollHeight: number;
+    viewWidth: number;
+    viewHeight: number;
+  };
+  resize_column: { col: number; colWidth: number };
+  resize_column_end: { col: number; columns: number[] };
+  change_header_position: { source: CellAddress; target: CellAddress };
+  sort_click: {
+    field: FieldDef;
+    order: SortOrder;
+  };
+  freeze_click: { col: number; row: number; fields: FieldDef[]; colCount: number };
+  dropdownmenu_click: DropDownMenuEventArgs;
+  copydata: CellRange[];
 
-  mouseover_chart_symbol: [MousePointerSparklineEvent];
+  mouseover_chart_symbol: MousePointerSparklineEvent;
 
-  drag_select_end: [MousePointerMultiCellEvent];
+  drag_select_end: MousePointerMultiCellEvent;
 
-  drillmenu_click: [DrillMenuEventInfo];
+  drillmenu_click: DrillMenuEventInfo;
 
-  dropdown_icon_click: [CellAddress];
-  dropdown_menu_clear: [CellAddress];
+  dropdown_icon_click: CellAddress;
+  dropdown_menu_clear: CellAddress;
 
-  show_menu: [
-    {
-      x: number;
-      y: number;
-      col: number;
-      row: number;
-      type: 'dropDown' | 'contextmenu' | 'custom';
-    }
-  ];
+  show_menu: {
+    x: number;
+    y: number;
+    col: number;
+    row: number;
+    type: 'dropDown' | 'contextmenu' | 'custom';
+  };
   hide_menu: [];
-  icon_click: [
-    {
-      name: string;
-      col: number;
-      row: number;
-      x: number;
-      y: number;
-      funcType?: IconFuncTypeEnum | string;
-      icon: Icon;
-    }
-  ];
+  icon_click: {
+    name: string;
+    col: number;
+    row: number;
+    x: number;
+    y: number;
+    funcType?: IconFuncTypeEnum | string;
+    icon: Icon;
+  };
 
-  pivot_sort_click: [
-    {
-      col: number;
-      row: number;
-      order: SortOrder;
-      dimensionInfo: IDimensionInfo[];
-      cellType: CellType;
-    }
-  ];
-  tree_hierarchy_state_change: [
-    {
-      col: number;
-      row: number;
-      hierarchyState: HierarchyState;
-      dimensionInfo?: IDimensionInfo[];
-      /**整条数据-原始数据 */
-      originData?: any;
-    }
-  ];
+  pivot_sort_click: {
+    col: number;
+    row: number;
+    order: SortOrder;
+    dimensionInfo: IDimensionInfo[];
+    cellType: CellType;
+  };
+  tree_hierarchy_state_change: {
+    col: number;
+    row: number;
+    hierarchyState: HierarchyState;
+    dimensionInfo?: IDimensionInfo[];
+    /**整条数据-原始数据 */
+    originData?: any;
+  };
+  vchart_event_type: {
+    eventName: string;
+    col: number;
+    row: number;
+    chartEventArguments: any;
+  };
+  //datasource部分的事件
+  change_order: [];
+  source_length_update: number;
 }
 export interface DrillMenuEventInfo {
   dimensionKey: string | number;
@@ -188,4 +187,9 @@ export interface TableEventHandlersReturnMap {
   pivot_sort_click: void;
 
   tree_hierarchy_state_change: void;
+
+  vchart_event_type: void;
+  //datasource部分的事件
+  change_order: void;
+  source_length_update: void;
 }

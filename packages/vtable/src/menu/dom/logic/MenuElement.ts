@@ -139,7 +139,7 @@ export class MenuElement {
       });
 
       table.fireListeners(TABLE_EVENT_TYPE.DROPDOWN_MENU_CLEAR, null); // 清除菜单
-      table.fireListeners(TABLE_EVENT_TYPE.HIDE_MENU); // 清除菜单
+      table.fireListeners(TABLE_EVENT_TYPE.HIDE_MENU, null); // 清除菜单
       // table.invalidateCell(col, row); // 更新状态图表
       e.stopPropagation();
     });
@@ -175,7 +175,7 @@ export class MenuElement {
       });
 
       table.fireListeners(TABLE_EVENT_TYPE.DROPDOWN_MENU_CLEAR, null); // 清除菜单
-      table.fireListeners(TABLE_EVENT_TYPE.HIDE_MENU); // 清除菜单
+      table.fireListeners(TABLE_EVENT_TYPE.HIDE_MENU, null); // 清除菜单
       e.stopPropagation();
     });
     this._rootElement?.addEventListener('mousemove', e => {
@@ -317,7 +317,7 @@ export class MenuElement {
       });
 
       table.fireListeners(TABLE_EVENT_TYPE.DROPDOWN_MENU_CLEAR, null); // 清除菜单
-      table.fireListeners(TABLE_EVENT_TYPE.HIDE_MENU); // 清除菜单
+      table.fireListeners(TABLE_EVENT_TYPE.HIDE_MENU, null); // 清除菜单
       e.stopPropagation();
     });
   }

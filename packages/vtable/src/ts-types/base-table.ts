@@ -1,7 +1,7 @@
 import type { ITextSize } from '@visactor/vutils';
 import type { RectProps, MaybePromiseOrUndefined, ICellHeaderPaths, CellInfo } from './common';
 import type {
-  AnyListener,
+  TableEventListener,
   TableEventHandlersEventArgumentMap,
   TableEventHandlersReturnMap,
   EventListenerId,
@@ -353,11 +353,11 @@ export interface BaseTableAPI {
   /** 表格宽度模式 */
   widthMode: WidthModeDef;
 
-  listen: (<TYPE extends keyof TableEventHandlersEventArgumentMap>(
+  listen: <TYPE extends keyof TableEventHandlersEventArgumentMap>(
     type: TYPE,
-    listener: (...event: TableEventHandlersEventArgumentMap[TYPE]) => TableEventHandlersReturnMap[TYPE]
-  ) => EventListenerId) &
-    ((type: string, listener: AnyListener) => EventListenerId);
+    listener: TableEventListener<TYPE> //(event: TableEventHandlersEventArgumentMap[TYPE]) => TableEventHandlersReturnMap[TYPE]
+  ) => EventListenerId;
+  // &(<T extends keyof TableEventHandlersEventArgumentMap>(type: string, listener: AnyListener<T>) => EventListenerId);
 
   /** 场景树对象 */
   scenegraph: Scenegraph;
@@ -446,7 +446,7 @@ export interface BaseTableAPI {
   getBodyColumnType: (col: number, row: number) => ColumnTypeOption;
   fireListeners: <TYPE extends keyof TableEventHandlersEventArgumentMap>(
     type: TYPE,
-    ...event: TableEventHandlersEventArgumentMap[TYPE]
+    event: TableEventHandlersEventArgumentMap[TYPE]
   ) => TableEventHandlersReturnMap[TYPE][];
 
   //更新分页

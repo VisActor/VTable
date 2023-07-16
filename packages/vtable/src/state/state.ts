@@ -746,7 +746,7 @@ export class StateManeger {
 
   hideMenu() {
     this.table.fireListeners(TABLE_EVENT_TYPE.DROPDOWN_MENU_CLEAR, null);
-    this.table.fireListeners(TABLE_EVENT_TYPE.HIDE_MENU);
+    this.table.fireListeners(TABLE_EVENT_TYPE.HIDE_MENU, null);
     this.menu.isShow = false;
     this.table.scenegraph.component.menu.detach();
     if (this.residentHoverIcon) {

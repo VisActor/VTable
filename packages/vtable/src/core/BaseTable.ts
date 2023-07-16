@@ -1613,9 +1613,9 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
 
   fireListeners<TYPE extends keyof TableEventHandlersEventArgumentMap>(
     type: TYPE,
-    ...event: TableEventHandlersEventArgumentMap[TYPE]
+    event: TableEventHandlersEventArgumentMap[TYPE]
   ): TableEventHandlersReturnMap[TYPE][] {
-    return super.fireListeners(type, ...event);
+    return super.fireListeners(type, event);
   }
 
   /**

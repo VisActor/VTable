@@ -23,7 +23,7 @@ import { HierarchyState } from './ts-types';
 import type { PivotHeaderLayoutMap } from './layout/pivot-header-layout';
 import { getField } from './data/DataSource';
 import { PivoLayoutMap } from './layout/pivot-layout';
-import { PIVOT_TABLE_EVENT_TYPE } from './ts-types/pivot-table/PIVOT_TABLE_EVENT_TYPE';
+import { PIVOT_CHART_EVENT_TYPE } from './ts-types/pivot-table/PIVOT_TABLE_EVENT_TYPE';
 import { cellInRange, emptyFn } from './tools/helper';
 import { Dataset } from './dataset/dataset';
 import { _setDataSource } from './core/tableHelper';
@@ -96,8 +96,8 @@ export class PivotChart extends BaseTable implements PivotTableAPI {
       this.setRecords([]);
     }
   }
-  static get EVENT_TYPE(): typeof PIVOT_TABLE_EVENT_TYPE {
-    return PIVOT_TABLE_EVENT_TYPE;
+  static get EVENT_TYPE(): typeof PIVOT_CHART_EVENT_TYPE {
+    return PIVOT_CHART_EVENT_TYPE;
   }
   isListTable(): false {
     return false;
@@ -470,13 +470,13 @@ export class PivotChart extends BaseTable implements PivotTableAPI {
   toggleHierarchyState(col: number, row: number) {
     const hierarchyState = this.getHierarchyState(col, row);
     if (hierarchyState === HierarchyState.expand) {
-      this.fireListeners(PIVOT_TABLE_EVENT_TYPE.TREE_HIERARCHY_STATE_CHANGE, {
+      this.fireListeners(PIVOT_CHART_EVENT_TYPE.TREE_HIERARCHY_STATE_CHANGE, {
         col: col,
         row: row,
         hierarchyState: HierarchyState.collapse
       });
     } else if (hierarchyState === HierarchyState.collapse) {
-      this.fireListeners(PIVOT_TABLE_EVENT_TYPE.TREE_HIERARCHY_STATE_CHANGE, {
+      this.fireListeners(PIVOT_CHART_EVENT_TYPE.TREE_HIERARCHY_STATE_CHANGE, {
         col: col,
         row: row,
         hierarchyState: HierarchyState.expand,

@@ -63,105 +63,105 @@ export class ProgressBarStyle extends Style {
   }
   set showBar(value: boolean | ((args: StylePropertyFunctionArg) => boolean)) {
     this._showBar = value;
-    this.doChangeStyle();
+    //this.doChangeStyle();
   }
   get barColor(): ColorPropertyDefine {
     return this._barColor;
   }
   set barColor(barColor: ColorPropertyDefine) {
     this._barColor = barColor;
-    this.doChangeStyle();
+    //this.doChangeStyle();
   }
   get barBgColor(): ColorPropertyDefine {
     return this._barBgColor;
   }
   set barBgColor(barBgColor: ColorPropertyDefine) {
     this._barBgColor = barBgColor;
-    this.doChangeStyle();
+    //this.doChangeStyle();
   }
   get barHeight(): number | string {
     return this._barHeight;
   }
   set barHeight(barHeight: number | string) {
     this._barHeight = barHeight;
-    this.doChangeStyle();
+    //this.doChangeStyle();
   }
   get barBottom(): number | string {
     return this._barBottom;
   }
   set barBottom(barBottom: number | string) {
     this._barBottom = barBottom;
-    this.doChangeStyle();
+    //this.doChangeStyle();
   }
   get barPositiveColor(): ColorPropertyDefine {
     return this._barPositiveColor;
   }
   set barPositiveColor(barPositiveColor: ColorPropertyDefine) {
     this._barPositiveColor = barPositiveColor;
-    this.doChangeStyle();
+    //this.doChangeStyle();
   }
   get barNegativeColor(): ColorPropertyDefine {
     return this._barNegativeColor;
   }
   set barNegativeColor(barNegativeColor: ColorPropertyDefine) {
     this._barNegativeColor = barNegativeColor;
-    this.doChangeStyle();
+    //this.doChangeStyle();
   }
   get barAxisColor(): ColorPropertyDefine {
     return this._barAxisColor;
   }
   set barAxisColor(barAxisColor: ColorPropertyDefine) {
     this._barAxisColor = barAxisColor;
-    this.doChangeStyle();
+    //this.doChangeStyle();
   }
   get barPadding(): (number | string)[] {
     return this._barPadding;
   }
   set barPadding(barPadding: (number | string)[]) {
     this._barPadding = barPadding;
-    this.doChangeStyle();
+    //this.doChangeStyle();
   }
   get showBarMark(): boolean {
     return this._showBarMark;
   }
   set showBarMark(value: boolean) {
     this._showBarMark = value;
-    this.doChangeStyle();
+    //this.doChangeStyle();
   }
   get barMarkPositiveColor(): ColorPropertyDefine {
     return this._barMarkPositiveColor;
   }
   set barMarkPositiveColor(value: ColorPropertyDefine) {
     this._barMarkPositiveColor = value;
-    this.doChangeStyle();
+    //this.doChangeStyle();
   }
   get barMarkNegativeColor(): ColorPropertyDefine {
     return this._barMarkNegativeColor;
   }
   set barMarkNegativeColor(value: ColorPropertyDefine) {
     this._barMarkNegativeColor = value;
-    this.doChangeStyle();
+    //this.doChangeStyle();
   }
   get barMarkWidth(): number {
     return this._barMarkWidth;
   }
   set barMarkWidth(value: number) {
     this._barMarkWidth = value;
-    this.doChangeStyle();
+    //this.doChangeStyle();
   }
   get barMarkPosition(): 'right' | 'bottom' {
     return this._barMarkPosition;
   }
   set barMarkPosition(value: 'right' | 'bottom') {
     this._barMarkPosition = value;
-    this.doChangeStyle();
+    //this.doChangeStyle();
   }
   get barRightToLeft(): boolean {
     return this._barRightToLeft;
   }
   set barRightToLeft(value: boolean) {
     this._barRightToLeft = value;
-    this.doChangeStyle();
+    //this.doChangeStyle();
   }
   clone(): ProgressBarStyle {
     return new ProgressBarStyle(this, null);

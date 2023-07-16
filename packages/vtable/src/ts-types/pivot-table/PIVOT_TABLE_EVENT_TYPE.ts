@@ -13,7 +13,16 @@ export interface PivotTableEvents extends TableEvents {
   DRILLMENU_CLICK: 'drillmenu_click';
 }
 
+export interface PivotChartEvents extends TableEvents {
+  /**
+   * 代理vchart中的事件
+   */
+  VCHART_EVENT_TYPE: 'vchart_event_type';
+}
 export const PIVOT_TABLE_EVENT_TYPE: PivotTableEvents = extend(TABLE_EVENT_TYPE, {
   PIVOT_SORT_CLICK: 'pivot_sort_click' as const,
   DRILLMENU_CLICK: 'drillmenu_click' as const
+});
+export const PIVOT_CHART_EVENT_TYPE: PivotChartEvents = extend(TABLE_EVENT_TYPE, {
+  VCHART_EVENT_TYPE: 'vchart_event_type' as const
 });

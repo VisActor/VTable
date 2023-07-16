@@ -40,7 +40,7 @@ export interface ColumnStyle {
   fontStyle?: FontStylePropertyDefine;
 
   textOverflow?: TextOverflow;
-  doChangeStyle: () => void;
+  // doChangeStyle: () => void;
   clone: () => ColumnStyle;
   linkColor?: ColorPropertyDefine;
 }
