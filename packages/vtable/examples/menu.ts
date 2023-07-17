@@ -129,6 +129,10 @@ export const menus = [
       {
         path: 'pivot',
         name: 'pivot-indicator-row'
+      },
+      {
+        path: 'pivot',
+        name: 'pivot-frozen'
       }
     ]
   },

@@ -250,6 +250,9 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
     table.rowCount = layoutMap.rowCount ?? 0;
     table.frozenColCount = layoutMap.rowHeaderLevelCount; //TODO
     table.frozenRowCount = layoutMap.headerLevelCount;
+
+    table.bottomFrozenRowCount = 1;
+    table.rightFrozenColCount = 1;
   }
   protected _getSortFuncFromHeaderOption(
     columns: undefined,

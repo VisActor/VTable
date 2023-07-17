@@ -112,6 +112,9 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
   _cellToBeInvalidatedNextFrame: Set<string>;
   _willNextFrameInvalidate: boolean;
 
+  bottomFrozenRowCount: number = 0;
+  rightFrozenColCount: number = 0;
+
   static get EVENT_TYPE(): typeof TABLE_EVENT_TYPE {
     return TABLE_EVENT_TYPE;
   }
