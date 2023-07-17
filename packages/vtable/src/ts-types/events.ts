@@ -115,21 +115,25 @@ export interface TableEventHandlersEventArgumentMap {
     icon: Icon;
   };
 
-  pivot_sort_click: {
-    col: number;
-    row: number;
-    order: SortOrder;
-    dimensionInfo: IDimensionInfo[];
-    cellType: CellType;
-  };
-  tree_hierarchy_state_change: {
-    col: number;
-    row: number;
-    hierarchyState: HierarchyState;
-    dimensionInfo?: IDimensionInfo[];
-    /**整条数据-原始数据 */
-    originData?: any;
-  };
+  pivot_sort_click: [
+    {
+      col: number;
+      row: number;
+      order: SortOrder;
+      dimensionInfo: IDimensionInfo[];
+      cellType: CellType;
+    }
+  ];
+  tree_hierarchy_state_change: [
+    {
+      col: number;
+      row: number;
+      hierarchyState: HierarchyState;
+      dimensionInfo?: IDimensionInfo[];
+      /**整条数据-原始数据 */
+      originData?: any;
+    }
+  ];
   vchart_event_type: {
     eventName: string;
     col: number;
@@ -139,6 +143,9 @@ export interface TableEventHandlersEventArgumentMap {
   //datasource部分的事件
   change_order: [];
   source_length_update: number;
+  legend_item_click: [{ model: any; value: any; event: PointerEvent }];
+  legend_item_hover: [{ model: any; value: any; event: PointerEvent }];
+  legend_item_unHover: [{ model: any; value: any; event: PointerEvent }];
 }
 export interface DrillMenuEventInfo {
   dimensionKey: string | number;
@@ -192,4 +199,7 @@ export interface TableEventHandlersReturnMap {
   //datasource部分的事件
   change_order: void;
   source_length_update: void;
+  legend_item_click: void;
+  legend_item_hover: void;
+  legend_item_unHover: void;
 }
