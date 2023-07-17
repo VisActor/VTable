@@ -400,7 +400,7 @@ export class Dataset {
         //加入聚合结果 考虑field为数组的情况
         if (aggRule?.field) {
           if (typeof aggRule?.field === 'string') {
-            isValid(aggRule?.field) && this.tree[flatRowKey]?.[flatColKey]?.[i].push(record);
+            isValid(record[aggRule?.field]) && this.tree[flatRowKey]?.[flatColKey]?.[i].push(record);
           } else {
             const isPush = aggRule?.field.find((field: string) => {
               return record[field];

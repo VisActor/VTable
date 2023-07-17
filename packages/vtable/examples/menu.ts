@@ -51,6 +51,10 @@ export const menus = [
       {
         path: 'pivot-chart',
         name: 'pivotChart-headerTitle'
+      },
+      {
+        path: 'pivot-chart',
+        name: 'pivotChart-legend'
       }
     ]
   },
