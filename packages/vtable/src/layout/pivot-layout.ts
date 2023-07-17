@@ -985,7 +985,12 @@ export class PivoLayoutMap implements LayoutMapAPI {
     return indicatorObj?.chartInstance;
   }
 
+  //#region pivot chart 区别于 pivot table 的特有方法
+  /** 将_selectedDataItemsInChart保存的数据状态同步到各个图表实例中 */
   updateDataStateToChartInstance(activeChartInstance?: any): void {
+    if (!activeChartInstance) {
+      activeChartInstance = (this._table as PivotChart)._getActiveChartInstance();
+    }
     const state = {
       vtable_selected: {
         filter: (datum: any) => {
@@ -1045,4 +1050,44 @@ export class PivoLayoutMap implements LayoutMapAPI {
     }
     return (collectedValues?.size ?? 0) * 50;
   }
+  /**
+   *  获取图表对应的指标值
+   * */
+  getIndicatorKeyInChartSpec(_col: number, _row: number) {
+    const paths = this.getCellHeaderPaths(_col, _row);
+    let indicatorObj;
+    if (this.indicatorsAsCol) {
+      const indicatorKey = paths.colHeaderPaths.find(colPath => colPath.indicatorKey)?.indicatorKey;
+      indicatorObj = this._indicatorObjects.find(indicator => indicator.indicatorKey === indicatorKey);
+    } else {
+      const indicatorKey = paths.rowHeaderPaths.find(rowPath => rowPath.indicatorKey)?.indicatorKey;
+      indicatorObj = this._indicatorObjects.find(indicator => indicator.indicatorKey === indicatorKey);
+    }
+    const indicatorKeys: string[] = [];
+    const chartSpec = indicatorObj?.chartSpec;
+    if (chartSpec) {
+      if (this.indicatorsAsCol === false) {
+        if (chartSpec.series) {
+          chartSpec.series.forEach((chartSeries: any) => {
+            const yField = chartSeries.yField;
+            indicatorKeys.push[yField];
+          });
+        } else {
+          indicatorKeys.push(chartSpec.yField);
+        }
+      } else {
+        if (chartSpec.series) {
+          chartSpec.series.forEach((chartSeries: any) => {
+            const xField = chartSeries.xField;
+            indicatorKeys.push[xField];
+          });
+        } else {
+          indicatorKeys.push(chartSpec.xField);
+        }
+      }
+      return indicatorKeys;
+    }
+    return null;
+  }
+  //#endregion
 }

@@ -181,6 +181,7 @@ export type CollectValueBy = {
   by: string[];
   /** 是否计算一个range范围 true的话对应的收集数据的结果为{max:number,min:number} */
   range?: boolean;
+  /** 收集是按照sumBy字段相同的进行分组聚合 聚合结果求最大最小值；如果不设置该值 则按单条数据求最大最小值 */
   sumBy?: string[];
   /** 帮助计算列宽使用 如果是chart图表 收集的是xFiled的维度值 可以根据维度值的个数乘于图元宽度计算一个最优列宽*/
   type?: 'xField' | 'yField' | undefined;

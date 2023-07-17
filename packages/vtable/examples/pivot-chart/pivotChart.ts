@@ -9301,5 +9301,11 @@ export function createTable() {
   };
 
   const tableInstance = new VTable.PivotChart(option);
+  tableInstance.listenChart('click', args => {
+    console.log('listenChart click', args);
+  });
+  tableInstance.listenChart('mouseover', args => {
+    console.log('listenChart mouseover', args);
+  });
   window.tableInstance = tableInstance;
 }

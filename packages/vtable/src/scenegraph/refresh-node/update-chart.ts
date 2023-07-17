@@ -74,7 +74,7 @@ export function clearChartCacheImage(scenegraph: Scenegraph) {
     });
   }
 }
-/** 更新选中的图表图元状态 */
+/** 组织图表数据状态_selectedDataItemsInChart 更新选中的图表图元状态 */
 export function updateChartState(scenegraph: Scenegraph, datum: any) {
   const table = scenegraph.table;
   if (table.isPivotChart()) {
@@ -111,15 +111,8 @@ export function updateChartState(scenegraph: Scenegraph, datum: any) {
     if ((table as PivotChart)._selectedDataItemsInChart.length === 0 && preSelectItemsCount === 0) {
       return;
     }
-    // 根据hover的单元格位置 获取单元格实例 拿到chart图元
-    const cellGroup = scenegraph.getCell(
-      table.stateManeger.hover?.cellPos?.col,
-      table.stateManeger.hover?.cellPos?.row
-    );
 
-    (table.internalProps.layoutMap as PivoLayoutMap).updateDataStateToChartInstance(
-      cellGroup?.getChildren()?.[0]?.type === 'chart' ? (cellGroup.getChildren()[0] as Chart).activeChartInstance : null
-    );
+    (table.internalProps.layoutMap as PivoLayoutMap).updateDataStateToChartInstance();
     // 清楚chart缓存图片
     clearChartCacheImage(scenegraph);
   }
