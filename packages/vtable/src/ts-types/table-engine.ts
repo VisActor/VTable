@@ -36,7 +36,7 @@ export type FieldData = MaybePromiseOrUndefined;
 
 export type WidthModeDef = 'standard' | 'adaptive' | 'autoWidth' | 'standard-aeolus';
 export type ShowColumnRowType = 'column' | 'row' | 'none';
-export type CellType = 'body' | 'rowHeader' | 'columnHeader' | 'cornerHeader';
+export type CellType = 'body' | 'rowHeader' | 'columnHeader' | 'cornerHeader' | 'bottomFrozen' | 'rightFrozen';
 
 export interface TableKeyboardOptions {
   // moveCellOnTab?: boolean;
