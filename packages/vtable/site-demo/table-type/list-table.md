@@ -4,6 +4,7 @@ group: table-type
 title: 基本表格
 cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/list-table.png
 order: 1-1
+link: '/guide/table_type/List_table/list_table_define_and_generate'
 ---
 
 # 基本表格

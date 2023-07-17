@@ -4,6 +4,7 @@ group: Interaction
 title: 调整列宽
 cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/resize-col-width.gif
 order: 4-4
+link: '/guide/interaction_and_event/resize_column_width'
 ---
 
 # 调整列宽

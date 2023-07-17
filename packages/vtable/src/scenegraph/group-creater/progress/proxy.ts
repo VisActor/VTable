@@ -613,6 +613,9 @@ export class SceneProxy {
     if (row < rowStart || row > rowEnd) {
       return emptyGroup;
     }
+    if (row < this.rowStart || row > this.rowEnd || col < this.colStart || col > this.colEnd) {
+      return emptyGroup;
+    }
     if (this.cellCache.get(col)) {
       const cacheCellGoup = this.cellCache.get(col);
       if ((cacheCellGoup._next || cacheCellGoup._prev) && Math.abs(cacheCellGoup.row - row) < row) {

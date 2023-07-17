@@ -401,8 +401,6 @@ export function updateCell(col: number, row: number, table: BaseTableAPI, addNew
           col,
           row,
           bgColorFunc,
-          customRender,
-          customLayout,
           cellWidth,
           cellHeight,
           oldCellGroup,

@@ -4,6 +4,7 @@ group: Component
 title: 滚动条
 cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/scrollbar.png
 order: 8-3
+link: '/guide/interaction_and_event/scroll'
 ---
 
 # 滚动条

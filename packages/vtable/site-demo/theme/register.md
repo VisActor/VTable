@@ -4,6 +4,7 @@ group: Theme
 title: 表格主题-register
 cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/register.png
 order: 6-7
+link: '/guide/theme_and_style/theme'
 ---
 
 # 表格主题-register

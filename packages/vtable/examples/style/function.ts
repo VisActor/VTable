@@ -2,6 +2,7 @@ import * as VTable from '../../src';
 import { bindDebugTool } from '../../src/scenegraph/debug-tool';
 const PivotTable = VTable.PivotTable;
 const Table_CONTAINER_DOM_ID = 'vTable';
+import { bindDebugTool } from '../../src/scenegraph/debug-tool';
 
 function generatePivotDataSource(num, colCount) {
   const array = new Array(num);
