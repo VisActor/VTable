@@ -122,7 +122,7 @@ export function createTable() {
         style: {
           textAlign: 'center',
           color: 'white',
-          borderLineWidth: 0
+          borderLineWidth: 1
         },
         customRender(args) {
           const { width, height } = args.rect!;
@@ -155,7 +155,7 @@ export function createTable() {
         field: '',
         caption: ' ',
         style: {
-          borderLineWidth: 0
+          borderLineWidth: 1
         }
       },
       {
@@ -200,8 +200,8 @@ export function createTable() {
             caption: 'BASIC\nFUNCTION',
             width: 'auto',
             style: {
-              borderLineWidth: 2,
-              borderColor: ''
+              borderLineWidth: 1,
+              borderColor: '#000'
             },
             headerStyle: {
               color: 'black',
@@ -245,8 +245,8 @@ export function createTable() {
             caption: '',
             width: 'auto',
             style: {
-              borderLineWidth: 2,
-              borderColor: ''
+              borderLineWidth: 1,
+              borderColor: '#000'
             },
             headerStyle: {
               color: 'black',
@@ -261,15 +261,15 @@ export function createTable() {
         field: '',
         caption: ' ',
         style: {
-          borderLineWidth: 0
+          borderLineWidth: 1
         }
       },
       {
         field: 'Visualize',
         caption: 'VISUALIZE',
         style: {
-          borderLineWidth: 2,
-          borderColor: ''
+          borderLineWidth: 1,
+          borderColor: '#000'
         },
         headerStyle: {
           color: 'black'
@@ -310,15 +310,15 @@ export function createTable() {
         field: '',
         caption: ' ',
         style: {
-          borderLineWidth: 0
+          borderLineWidth: 1
         }
       },
       {
         field: 'Animation',
         caption: 'ANIMATION',
         style: {
-          borderLineWidth: 2,
-          borderColor: ''
+          borderLineWidth: 1,
+          borderColor: '#000'
         },
         headerStyle: {
           color: 'black'
@@ -359,15 +359,15 @@ export function createTable() {
         field: '',
         caption: ' ',
         style: {
-          borderLineWidth: 0
+          borderLineWidth: 1
         }
       },
       {
         field: 'Component',
         caption: 'COMPONENT',
         style: {
-          borderLineWidth: 2,
-          borderColor: ''
+          borderLineWidth: 1,
+          borderColor: '#000'
         },
         headerStyle: {
           color: 'black'
@@ -412,7 +412,7 @@ export function createTable() {
         color: 'white'
       },
       rowHeaderStyle: {
-        borderLineWidth: 0
+        borderLineWidth: 1
       },
       selectionStyle: {
         cellBorderColor: ''

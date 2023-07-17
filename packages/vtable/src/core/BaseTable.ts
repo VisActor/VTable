@@ -816,7 +816,14 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
             ? Number(width)
             : this._adjustColWidth(endCol, this._colWidthDefineToPxWidth(width));
       } else {
-        adjustW = 0;
+        // adjustW = 0;
+        // use default column width if no width in colWidthsMap
+        adjustW =
+          this.isRowHeader(endCol, 0) || this.isCornerHeader(endCol, 0)
+            ? Array.isArray(this.defaultHeaderColWidth)
+              ? this.defaultHeaderColWidth[endCol] ?? this.internalProps.defaultColWidth
+              : this.defaultHeaderColWidth
+            : this.internalProps.defaultColWidth;
       }
       const addWidth = cachedLowerColWidth + adjustW;
       // 合法地址存入缓存
