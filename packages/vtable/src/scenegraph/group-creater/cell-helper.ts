@@ -146,7 +146,7 @@ export function createCell(
       cellGroup.mergeRow = range.end.row;
     }
 
-    if ((define as any).isAxis && cellType === 'columnHeader') {
+    if ((define as any)?.isAxis && cellType === 'columnHeader') {
       cellGroup.setAttribute('clip', false);
       const axis = new CartesianAxis(
         {
@@ -165,7 +165,7 @@ export function createCell(
       cellGroup.clear();
       // axis.component.setAttribute('y', 40);
       cellGroup.appendChild(axis.component);
-    } else if ((define as any).isAxis && cellType === 'rowHeader') {
+    } else if ((define as any)?.isAxis && cellType === 'rowHeader') {
       cellGroup.setAttribute('clip', false);
       const axis = new CartesianAxis(
         {
