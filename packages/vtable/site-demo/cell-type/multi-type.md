@@ -4,6 +4,7 @@ group: Cell Type
 title: 单元格内容类型
 cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/multi-type.png
 order: 2-1
+link: '/guide/column_type/columnType'
 ---
 
 # 单元格内容类型
