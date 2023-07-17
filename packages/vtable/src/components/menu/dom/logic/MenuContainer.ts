@@ -1,9 +1,9 @@
-import { EventHandler } from '../../../event/EventHandler';
-import type { MenuInstanceInfo, Placement, RectProps } from '../../../ts-types';
-import { createElement } from '../../../tools/dom';
-import { TABLE_EVENT_TYPE } from '../../../core/TABLE_EVENT_TYPE';
-import type { PivotHeaderLayoutMap } from '../../../layout/pivot-header-layout';
-import type { BaseTableAPI } from '../../../ts-types/base-table';
+import { EventHandler } from '../../../../event/EventHandler';
+import type { MenuInstanceInfo, Placement, RectProps } from '../../../../ts-types';
+import { createElement } from '../../../../tools/dom';
+import { TABLE_EVENT_TYPE } from '../../../../core/TABLE_EVENT_TYPE';
+import type { PivotHeaderLayoutMap } from '../../../../layout/pivot-header-layout';
+import type { BaseTableAPI } from '../../../../ts-types/base-table';
 
 const CLASSNAME = 'vtable__menu-element';
 const HIDDEN_CLASSNAME = `${CLASSNAME}--hidden`;

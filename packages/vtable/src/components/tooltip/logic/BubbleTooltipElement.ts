@@ -1,11 +1,11 @@
-import { EventHandler } from '../../event/EventHandler';
-import type { RectProps } from '../../ts-types';
-import { Placement } from '../../ts-types';
-import { createElement } from '../../tools/dom';
+import { EventHandler } from '../../../event/EventHandler';
+import type { RectProps } from '../../../ts-types';
+import { Placement } from '../../../ts-types';
+import { createElement } from '../../../tools/dom';
 import { importStyle } from './BubbleTooltipElementStyle';
-import { isMobile } from '../../tools/util';
-import type { TooltipOptions } from '../../ts-types/tooltip';
-import type { BaseTableAPI } from '../../ts-types/base-table';
+import { isMobile } from '../../../tools/util';
+import type { TooltipOptions } from '../../../ts-types/tooltip';
+import type { BaseTableAPI } from '../../../ts-types/base-table';
 importStyle();
 const TOOLTIP_CLASS = 'vtable__bubble-tooltip-element';
 const CONTENT_CLASS = `${TOOLTIP_CLASS}__content`;

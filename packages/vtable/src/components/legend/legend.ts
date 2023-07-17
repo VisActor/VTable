@@ -2,14 +2,15 @@ import { cloneDeep, get, merge } from '@visactor/vutils';
 import type { ITableLegendOption } from '../../ts-types/component/legend';
 import type { BaseTableAPI } from '../../ts-types/base-table';
 import { DiscreteLegend, LegendEvent } from '@visactor/vrender-components';
-import { getLegendAttributes } from './util/get-legend-attributes';
+import { getLegendAttributes } from './get-legend-attributes';
 import { TABLE_EVENT_TYPE } from '../../core/TABLE_EVENT_TYPE';
 import { getQuadProps } from '../../scenegraph/utils/padding';
+import type { IOrientType } from '../../ts-types/component/util';
 
 export class TableLegend {
   table: BaseTableAPI;
   option: ITableLegendOption;
-  orient: 'left' | 'top' | 'right' | 'bottom' | 'z';
+  orient: IOrientType;
   visible: boolean;
   position: 'start' | 'middle' | 'end';
   selectedData: (string | number)[];

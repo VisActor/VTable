@@ -42,18 +42,19 @@ import type { TooltipOptions } from './tooltip';
 import type { IWrapTextGraphicAttribute } from '../scenegraph/graphic/text';
 import type { ICustomLayout } from './customLayout';
 import type { CachedDataSource, DataSource } from '../data';
-import type { MenuHandler } from '../menu/dom/MenuHandler';
+import type { MenuHandler } from '../components/menu/dom/MenuHandler';
 import type { PivotHeaderLayoutMap } from '../layout/pivot-header-layout';
 import type { SimpleHeaderLayoutMap } from '../layout';
 import type { PivoLayoutMap } from '../layout/pivot-layout';
-import type { TooltipHandler } from '../tooltip/TooltipHandler';
+import type { TooltipHandler } from '../components/tooltip/TooltipHandler';
 import type { BodyHelper } from '../body-helper/body-helper';
 import type { HeaderHelper } from '../header-helper/header-helper';
 import type { EventHandler } from '../event/EventHandler';
 import type { NumberMap } from '../tools/NumberMap';
 import type { FocusInput } from '../core/FouseInput';
 import type { ITableLegendOption } from './component/legend';
-import type { TableLegend } from '../render/component/legend';
+import type { TableLegend } from '../components/legend/legend';
+import type { DataSet } from '@visactor/vdataset';
 
 export interface IBaseTableProtected {
   element: HTMLElement;
@@ -365,6 +366,7 @@ export interface BaseTableAPI {
   ) => EventListenerId;
   // &(<T extends keyof TableEventHandlersEventArgumentMap>(type: string, listener: AnyListener<T>) => EventListenerId);
 
+  dataSet: DataSet;
   /** 场景树对象 */
   scenegraph: Scenegraph;
   /** 状态管理模块 */
