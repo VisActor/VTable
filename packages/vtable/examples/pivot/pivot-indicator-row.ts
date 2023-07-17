@@ -9,6 +9,7 @@ export function createTable() {
       const option: VTable.PivotTableConstructorOptions = {
         parentElement: document.getElementById(Table_CONTAINER_DOM_ID),
         records: data,
+        indicatorTitle: '指标名称',
         menu: {
           contextMenuItems: ['复制单元格内容', '查询详情']
         },
@@ -344,9 +345,8 @@ export function createTable() {
         corner: {
           titleOnDimension: 'row',
           headerStyle: {
-            textStick: true,
-            bgColor: '#356b9c',
-            color: '#00ffff'
+            bgColor: 'yellow',
+            color: 'red'
           }
         },
         widthMode: 'standard'

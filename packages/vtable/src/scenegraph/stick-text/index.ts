@@ -34,7 +34,7 @@ export function handleTextStick(table: BaseTableAPI) {
       : table.colCount - 1;
   // 列表头单元格
   for (let row = 0; row < frozenRowCount; row++) {
-    for (let col = 0; col <= colEnd; col++) {
+    for (let col = colStart; col <= colEnd; col++) {
       if (table._getCellStyle(col, row)?.textStick) {
         const cellGroup = table.scenegraph.getCell(col, row);
         // adjust cell Horizontal
