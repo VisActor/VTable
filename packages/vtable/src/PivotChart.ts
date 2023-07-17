@@ -16,7 +16,8 @@ import type {
   PivotChartConstructorOptions,
   CollectValueBy,
   AggregationRules,
-  AggregationRule
+  AggregationRule,
+  AnyFunction
 } from './ts-types';
 import { AggregationType } from './ts-types';
 import { HierarchyState } from './ts-types';
@@ -30,6 +31,7 @@ import { _setDataSource } from './core/tableHelper';
 import { BaseTable } from './core/BaseTable';
 import type { PivotTableProtected } from './ts-types/base-table';
 import type { IChartColumnIndicator } from './ts-types/pivot-table/indicator/chart-indicator';
+import type { Chart } from './scenegraph/graphic/chart';
 
 export class PivotChart extends BaseTable implements PivotTableAPI {
   declare internalProps: PivotTableProtected;
@@ -39,6 +41,7 @@ export class PivotChart extends BaseTable implements PivotTableAPI {
   dataset?: Dataset; //数据处理对象  开启数据透视分析的表
 
   _selectedDataItemsInChart: any[] = [];
+  _chartEventMap: Record<string, AnyFunction> = {};
   constructor(options: PivotChartConstructorOptions) {
     super(options);
     if ((options as any).layout) {
@@ -588,27 +591,34 @@ export class PivotChart extends BaseTable implements PivotTableAPI {
             };
             if ((indicatorDefine as IChartColumnIndicator).chartSpec.series) {
               (indicatorDefine as IChartColumnIndicator).chartSpec.series.forEach((chartSeries: any) => {
-                const xfield = typeof chartSeries.xField === 'string' ? chartSeries.xField : chartSeries.xField[0];
-                collectValuesBy[xfield] = {
+                const xField = typeof chartSeries.xField === 'string' ? chartSeries.xField : chartSeries.xField[0];
+                collectValuesBy[xField] = {
                   by: columnKeys,
                   type: 'xField'
                 };
 
-                const yfield = chartSeries.yField;
-                collectValuesBy[yfield] = {
+                const yField = chartSeries.yField;
+                collectValuesBy[yField] = {
                   by: rowKeys,
                   range: true,
-                  sumBy: chartSeries.stack !== false && columnKeys.concat(xfield)
+                  sumBy: chartSeries.stack !== false && columnKeys.concat(xField)
                 };
               });
             } else {
-              const field =
+              const xField =
                 typeof (indicatorDefine as IChartColumnIndicator).chartSpec.xField === 'string'
                   ? (indicatorDefine as IChartColumnIndicator).chartSpec.xField
                   : (indicatorDefine as IChartColumnIndicator).chartSpec.xField[0];
-              collectValuesBy[field] = {
+              collectValuesBy[xField] = {
                 by: columnKeys,
                 type: 'xField'
+              };
+              //下面这个收集的值 应该是和收集的 collectValuesBy[indicatorDefine.indicatorKey] 相同
+              const yField = (indicatorDefine as IChartColumnIndicator).chartSpec.yField;
+              collectValuesBy[yField] = {
+                by: rowKeys,
+                range: true,
+                sumBy: (indicatorDefine as IChartColumnIndicator).chartSpec.stack !== false && columnKeys.concat(xField)
               };
             }
           }
@@ -636,21 +646,28 @@ export class PivotChart extends BaseTable implements PivotTableAPI {
                   type: 'yField'
                 };
 
-                const xfield = chartSeries.xField;
-                collectValuesBy[xfield] = {
+                const xField = chartSeries.xField;
+                collectValuesBy[xField] = {
                   by: columnKeys,
                   range: true,
                   sumBy: chartSeries.stack !== false && rowKeys.concat(yField)
                 };
               });
             } else {
-              const field =
+              const yField =
                 typeof (indicatorDefine as IChartColumnIndicator).chartSpec.yField === 'string'
                   ? (indicatorDefine as IChartColumnIndicator).chartSpec.yField
                   : (indicatorDefine as IChartColumnIndicator).chartSpec.yField[0];
-              collectValuesBy[field] = {
+              collectValuesBy[yField] = {
                 by: rowKeys,
                 type: 'yField'
+              };
+              //下面这个收集的值 应该是和收集的 collectValuesBy[indicatorDefine.indicatorKey] 相同
+              const xField = (indicatorDefine as IChartColumnIndicator).chartSpec.xField;
+              collectValuesBy[xField] = {
+                by: columnKeys,
+                range: true,
+                sumBy: (indicatorDefine as IChartColumnIndicator).chartSpec.stack !== false && rowKeys.concat(yField)
               };
             }
           }
@@ -744,5 +761,43 @@ export class PivotChart extends BaseTable implements PivotTableAPI {
         }
       }
     });
+  }
+  /** 获取当前hover单元格的图表实例。这个方法hover实时获取有点缺陷：鼠标hover到单元格上触发了 chart.ts中的activate方法 但此时this.stateManeger.hover?.cellPos?.col还是-1 */
+  _getActiveChartInstance() {
+    // 根据hover的单元格位置 获取单元格实例 拿到chart图元
+    const cellGroup = this.scenegraph.getCell(
+      this.stateManeger.hover?.cellPos?.col,
+      this.stateManeger.hover?.cellPos?.row
+    );
+    return cellGroup?.getChildren()?.[0]?.type === 'chart'
+      ? (cellGroup.getChildren()[0] as Chart).activeChartInstance
+      : null;
+  }
+  /**
+   * 监听vchart事件
+   * @param type vchart事件类型
+   * @param listener vchart事件监听器
+   * @returns 事件监听器id
+   */
+  listenChart(type: string, listener: AnyFunction): void {
+    // this.internalProps.layoutMap.columnObjects.forEach((indicatorObj: IndicatorData) => {
+    //   indicatorObj.chartInstance.on(type, listener);
+    // });
+    this._chartEventMap[type] = listener;
+  }
+
+  unlistenChart(type: string): void {
+    // this.internalProps.layoutMap.columnObjects.forEach((indicatorObj: IndicatorData) => {
+    //   indicatorObj.chartInstance.off(type);
+    // });
+    delete this._chartEventMap[type];
+  }
+  /** 给activeChartInstance逐个绑定chart用户监听事件 */
+  _bindChartEvent(activeChartInstance: any) {
+    if (activeChartInstance) {
+      for (const key in this._chartEventMap) {
+        activeChartInstance.on(key, this._chartEventMap[key]);
+      }
+    }
   }
 }

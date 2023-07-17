@@ -115,14 +115,15 @@ export class Chart extends Group {
         table.scenegraph.updateChartState(params?.datum);
       }
     });
-    // this.activeChartInstance.on('brushEnd', (params: any) => {
-    //   console.log('brushEnd captured', params);
-    //   table.scenegraph.updateChartState(params?.value?.inBrushData);
-    //   Chart.temp = 0;
-    //   setTimeout(() => {
-    //     Chart.temp = 1;
-    //   }, 0);
-    // });
+    this.activeChartInstance.on('brushEnd', (params: any) => {
+      console.log('brushEnd captured', params);
+      table.scenegraph.updateChartState(params?.value?.inBrushData);
+      Chart.temp = 0;
+      setTimeout(() => {
+        Chart.temp = 1;
+      }, 0);
+    });
+    (table as PivotChart)?._bindChartEvent(this.activeChartInstance);
     console.log('active');
   }
   static temp: number = 1;
