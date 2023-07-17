@@ -15,18 +15,17 @@ const generatePersons = count => {
 };
 
 export function createTable() {
-  const records = generatePersons(1000000);
+  const records = generatePersons(100);
   const columns: VTable.ColumnsDefine = [
     {
       field: 'id',
       caption: 'ID',
-      width: 120,
-      sort: true
+      sort: true,
+      width: 'auto'
     },
     {
       field: 'email1',
       caption: 'email',
-      width: 200,
       sort: true
     },
     {
@@ -34,48 +33,43 @@ export function createTable() {
       columns: [
         {
           field: 'name',
-          caption: 'First Name',
-          width: 200
+          caption: 'First Name'
         },
         {
           field: 'name',
-          caption: 'Last Name',
-          width: 200
+          caption: 'Last Name'
         }
       ]
     },
     {
       field: 'date1',
-      caption: 'birthday',
-      width: 200
+      caption: 'birthday'
+      // width: 200
     },
     {
       field: 'sex',
-      caption: 'sex',
-      width: 100
+      caption: 'sex'
     },
     {
       field: 'tel',
-      caption: 'telephone',
-      width: 150
+      caption: 'telephone'
     },
     {
       field: 'work',
-      caption: 'job',
-      width: 200
+      caption: 'job'
     },
     {
       field: 'city',
-      caption: 'city',
-      width: 150
+      caption: 'city'
     }
   ];
-  const option = {
+  const option: VTable.ListTableConstructorOptions = {
     parentElement: document.getElementById(Table_CONTAINER_DOM_ID),
     records,
     columns,
+    widthMode: 'standard',
     transpose: true,
-    defaultColWidth: 200
+    dragHeaderMode: 'all'
   };
   const tableInstance = new VTable.ListTable(option);
   (window as any).tableInstance = tableInstance;

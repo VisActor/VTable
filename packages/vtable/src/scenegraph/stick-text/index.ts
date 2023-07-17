@@ -34,11 +34,11 @@ export function handleTextStick(table: BaseTableAPI) {
       : table.colCount - 1;
   // 列表头单元格
   for (let row = 0; row < frozenRowCount; row++) {
-    for (let col = 0; col <= colEnd; col++) {
+    for (let col = colStart; col <= colEnd; col++) {
       if (table._getCellStyle(col, row)?.textStick) {
         const cellGroup = table.scenegraph.getCell(col, row);
         // adjust cell Horizontal
-        adjustCellContentHorizontalLayout(cellGroup, 0, table.tableNoFrameWidth);
+        adjustCellContentHorizontalLayout(cellGroup, frozenColsWidth + table.tableX, table.tableNoFrameWidth);
         changedCells.push({ col, row });
       }
     }
@@ -56,7 +56,7 @@ export function handleTextStick(table: BaseTableAPI) {
       ) {
         const cellGroup = table.scenegraph.getCell(col, row);
         // adjust cell vertical
-        adjustCellContentVerticalLayout(cellGroup, frozenRowsHeight, table.tableNoFrameHeight);
+        adjustCellContentVerticalLayout(cellGroup, frozenRowsHeight + table.tableY, table.tableNoFrameHeight);
         changedCells.push({ col, row });
       }
     }
@@ -67,9 +67,9 @@ export function handleTextStick(table: BaseTableAPI) {
       if (table._getCellStyle(col, row)?.textStick) {
         const cellGroup = table.scenegraph.getCell(col, row);
         // adjust cell vertical
-        adjustCellContentVerticalLayout(cellGroup, frozenRowsHeight, table.tableNoFrameHeight);
+        adjustCellContentVerticalLayout(cellGroup, frozenRowsHeight + table.tableY, table.tableNoFrameHeight);
         // adjust cell Horizontal
-        adjustCellContentHorizontalLayout(cellGroup, frozenColsWidth, table.tableNoFrameWidth);
+        adjustCellContentHorizontalLayout(cellGroup, frozenColsWidth + table.tableX, table.tableNoFrameWidth);
         changedCells.push({ col, row });
       }
     }
@@ -140,15 +140,18 @@ export function checkHaveTextStick(table: BaseTableAPI) {
   const columnObjects = table.internalProps.layoutMap.columnObjects;
   for (let i = 0; i < headerObjects.length; i++) {
     const header = headerObjects[i];
-    if (header && (header.define.headerStyle as ITextStyleOption)?.textStick) {
+    if (header && (header.style as ITextStyleOption)?.textStick) {
+      console.log('checkHaveTextStick', true);
       return true;
     }
   }
   for (let i = 0; i < columnObjects.length; i++) {
     const column = columnObjects[i];
-    if (column && (column.define.style as ITextStyleOption)?.textStick) {
+    if (column && (column.style as ITextStyleOption)?.textStick) {
+      console.log('checkHaveTextStick', true);
       return true;
     }
   }
+  console.log('checkHaveTextStick', false);
   return false;
 }

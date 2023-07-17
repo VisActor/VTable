@@ -9,6 +9,7 @@ export interface TotalsStatus {
 }
 
 export enum AggregationType {
+  RECORD = 'RECORD',
   SUM = 'SUM',
   MIN = 'MIN',
   MAX = 'MAX',
@@ -113,15 +114,16 @@ export type FilterRules = FilterRule[];
 //#endregion 过滤规则
 
 //#region 聚合规则
-export interface AggregationRule {
+export interface AggregationRule<T extends AggregationType> {
   /** 区别于field 重新起个key值，供配置indicators使用 */
   indicatorKey: string;
-  field: string;
-  aggregationType: AggregationType;
+  // 可以收集单个字段的聚合结果，或者收集多个字段的聚合结果
+  field: T extends AggregationType.RECORD ? string[] | string : string;
+  aggregationType: T;
   /**计算结果格式化 */
   formatFun?: (num: number) => string;
 }
-export type AggregationRules = AggregationRule[];
+export type AggregationRules = AggregationRule<AggregationType>[];
 //#endregion 聚合规则
 
 //#region 映射规则
@@ -169,4 +171,18 @@ export interface IDataConfig {
 
   mappingRules?: MappingRules;
   derivedFieldRules?: DerivedFieldRules;
+
+  collectValuesBy?: Record<string, CollectValueBy>;
 }
+
+/** 在处理数据的过程中 去额外收集某个维度的维度值范围 可为离散值或者连续值范围 */
+export type CollectValueBy = {
+  // field: string;
+  by: string[];
+  /** 是否计算一个range范围 true的话对应的收集数据的结果为{max:number,min:number} */
+  range?: boolean;
+  sumBy?: string[];
+  /** 帮助计算列宽使用 如果是chart图表 收集的是xFiled的维度值 可以根据维度值的个数乘于图元宽度计算一个最优列宽*/
+  type?: 'xField' | 'yField' | undefined;
+};
+export type CollectedValue = { max?: number; min?: number } | Set<string>;

@@ -233,6 +233,8 @@ interface LayoutMapAPI {
   getHeaderCellAddressByField: (field: string) => CellAddress | undefined;
   getRecordIndexByRow: (col: number, row: number) => number;
   getRecordStartRowByRecordIndex: (index: number) => number;
+  /** 从定义中获取一列配置项width的定义值 */
+  getColumnWidthDefined: (col: number) => WidthData;
 }
 
 export type { LayoutMapAPI };

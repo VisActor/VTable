@@ -147,7 +147,7 @@ export function createTable() {
             renderDefault: true,
             elements,
             expectedHeight: 100, // TODO 无效
-            expectedWidth: 200
+            expectedWidth: 180
           };
         }
       },
@@ -260,7 +260,6 @@ export function createTable() {
       {
         field: '',
         caption: ' ',
-        width: 100,
         style: {
           borderLineWidth: 0
         }
@@ -310,7 +309,6 @@ export function createTable() {
       {
         field: '',
         caption: ' ',
-        width: 100,
         style: {
           borderLineWidth: 0
         }
@@ -360,7 +358,6 @@ export function createTable() {
       {
         field: '',
         caption: ' ',
-        width: 100,
         style: {
           borderLineWidth: 0
         }

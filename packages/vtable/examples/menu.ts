@@ -38,6 +38,23 @@ export const menus = [
     ]
   },
   {
+    menu: '透视图',
+    children: [
+      {
+        path: 'pivot-chart',
+        name: 'pivotChart'
+      },
+      {
+        path: 'pivot-chart',
+        name: 'pivotChart-column'
+      },
+      {
+        path: 'pivot-chart',
+        name: 'pivotChart-headerTitle'
+      }
+    ]
+  },
+  {
     menu: '单元格类型',
     children: [
       {
@@ -103,7 +120,15 @@ export const menus = [
       },
       {
         path: 'pivot',
-        name: 'pivot-chart'
+        name: 'trend'
+      },
+      {
+        path: 'pivot',
+        name: 'pivot-dataset'
+      },
+      {
+        path: 'pivot',
+        name: 'pivot-indicator-row'
       }
     ]
   },

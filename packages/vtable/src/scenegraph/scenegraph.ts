@@ -37,8 +37,11 @@ import { updateRow } from './layout/update-row';
 import { handleTextStick } from './stick-text';
 import { computeRowsHeight } from './layout/compute-row-height';
 import { emptyGroup } from './utils/empty-group';
-import { updateChartSize } from './refresh-node/update-chart';
+import { clearChartCacheImage, updateChartSize, updateChartState } from './refresh-node/update-chart';
 import { dealFrozen, resetFrozen } from './layout/frozen';
+import type { Chart } from './graphic/chart';
+import type { PivoLayoutMap } from '../layout/pivot-layout';
+import type { PivotChart } from '../PivotChart';
 
 container.load(splitModule);
 
@@ -654,7 +657,10 @@ export class Scenegraph {
   updateChartSize(col: number) {
     updateChartSize(this, col);
   }
-
+  /** 更新图表的高亮状态 */
+  updateChartState(datum: any) {
+    this.table.isPivotChart() && updateChartState(this, datum);
+  }
   updateAutoColWidth(col: number) {
     const oldWidth = this.table.getColWidth(col);
     const newWidth = computeColWidth(col, 0, this.table.rowCount - 1, this.table, true);

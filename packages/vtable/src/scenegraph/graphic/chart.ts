@@ -2,6 +2,9 @@ import type { GraphicType, IGroupGraphicAttribute } from '@visactor/vrender';
 import { genNumberType, Group } from '@visactor/vrender';
 import { Bounds } from '@visactor/vutils';
 import type { BaseTableAPI } from '../../ts-types/base-table';
+import type { PivotChart } from '../../PivotChart';
+import { clearChartCacheImage, updateChartSize } from '../refresh-node/update-chart';
+import type { PivoLayoutMap } from '../../layout/pivot-layout';
 
 interface IChartGraphicAttribute extends IGroupGraphicAttribute {
   canvas: HTMLCanvasElement;
@@ -104,7 +107,25 @@ export class Chart extends Group {
     });
     // this.activeChartInstance.updateData('data', this.attribute.data);
     this.activeChartInstance.renderSync();
+
+    (table.internalProps.layoutMap as any)?.updateDataStateToChartInstance?.(this.activeChartInstance);
+    this.activeChartInstance.on('click', (params: any) => {
+      console.log('click captured', params);
+      if (Chart.temp) {
+        table.scenegraph.updateChartState(params?.datum);
+      }
+    });
+    // this.activeChartInstance.on('brushEnd', (params: any) => {
+    //   console.log('brushEnd captured', params);
+    //   table.scenegraph.updateChartState(params?.value?.inBrushData);
+    //   Chart.temp = 0;
+    //   setTimeout(() => {
+    //     Chart.temp = 1;
+    //   }, 0);
+    // });
+    console.log('active');
   }
+  static temp: number = 1;
   /**
    * 图表失去焦点
    * @param table
@@ -113,5 +134,6 @@ export class Chart extends Group {
     this.active = false;
     this.activeChartInstance.release();
     this.activeChartInstance = null;
+    console.log('deactivate');
   }
 }
