@@ -129,9 +129,11 @@ export function createTable() {
         // type: 'common',
         stack: true,
         type: 'bar',
+        padding: { left: 0, right: 0, top: 3, bottom: 3 },
         data: {
           id: 'data',
           fields: {
+            //设置xField数据的顺序
             230417170554008: {
               sortIndex: 0,
               domain: [
@@ -156,6 +158,7 @@ export function createTable() {
               // lockStatisticsByDomain:  true
             },
             230717170834024: {
+              //设置seriesField数据的顺序 应该设置20001的顺序的 但是按照图例的顺序设置后堆叠效果和3.X不一致
               sortIndex: 1,
               domain: ['消费者', '小型企业', '公司']
               // lockStatisticsByDomain:  true
@@ -236,6 +239,7 @@ export function createTable() {
       chartType: 'vchart',
       chartSpec: {
         type: 'common',
+        padding: { left: 0, right: 0, top: 3, bottom: 3 },
         data: {
           id: 'data',
           fields: {
@@ -394,6 +398,7 @@ export function createTable() {
         // type: 'common',
         stack: true,
         type: 'area',
+        padding: { left: 0, right: 0, top: 3, bottom: 3 },
         data: {
           id: 'data',
           fields: {
@@ -10430,6 +10435,22 @@ export function createTable() {
   });
   tableInstance.listenChart('mouseover', args => {
     console.log('listenChart mouseover', args);
+  });
+  const { LEGEND_ITEM_CLICK, LEGEND_ITEM_HOVER, LEGEND_ITEM_UNHOVER } = VTable.ListTable.EVENT_TYPE;
+  tableInstance.listen(LEGEND_ITEM_CLICK, args => {
+    console.log('LEGEND_ITEM_CLICK', args);
+    tableInstance.updateFilterRules([
+      {
+        filterKey: '20001',
+        filteredValues: args.value
+      }
+    ]);
+  });
+  tableInstance.listen(LEGEND_ITEM_HOVER, args => {
+    console.log('LEGEND_ITEM_HOVER', args);
+  });
+  tableInstance.listen(LEGEND_ITEM_UNHOVER, args => {
+    console.log('LEGEND_ITEM_UNHOVER', args);
   });
   window.tableInstance = tableInstance;
 }

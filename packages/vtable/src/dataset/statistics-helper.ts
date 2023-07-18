@@ -32,6 +32,9 @@ export abstract class Aggregator {
     }
     return this._formatedValue;
   }
+  reset() {
+    this.records = [];
+  }
 }
 export class RecordAggregator extends Aggregator {
   type: string = AggregationType.RECORD;
@@ -47,6 +50,9 @@ export class RecordAggregator extends Aggregator {
   }
   value() {
     return this.records;
+  }
+  reset() {
+    this.records = [];
   }
 }
 export class SumAggregator extends Aggregator {
@@ -70,6 +76,10 @@ export class SumAggregator extends Aggregator {
   value() {
     return this.sum;
   }
+  reset() {
+    this.records = [];
+    this.sum = 0;
+  }
 }
 
 export class CountAggregator extends Aggregator {
@@ -92,6 +102,10 @@ export class CountAggregator extends Aggregator {
   }
   value() {
     return this.count;
+  }
+  reset() {
+    this.records = [];
+    this.count = 0;
   }
 }
 export class AvgAggregator extends Aggregator {
@@ -117,6 +131,11 @@ export class AvgAggregator extends Aggregator {
   }
   value() {
     return this.sum / this.count;
+  }
+  reset() {
+    this.records = [];
+    this.sum = 0;
+    this.count = 0;
   }
 }
 export class MaxAggregator extends Aggregator {
@@ -144,6 +163,10 @@ export class MaxAggregator extends Aggregator {
   value() {
     return this.max;
   }
+  reset() {
+    this.records = [];
+    this.max = Number.MIN_SAFE_INTEGER;
+  }
 }
 export class MinAggregator extends Aggregator {
   type: string = AggregationType.MIN;
@@ -168,6 +191,10 @@ export class MinAggregator extends Aggregator {
   }
   value() {
     return this.min;
+  }
+  reset() {
+    this.records = [];
+    this.min = Number.MAX_SAFE_INTEGER;
   }
 }
 export function indicatorSort(a: any, b: any) {

@@ -108,7 +108,7 @@ export class Chart extends Group {
     // this.activeChartInstance.updateData('data', this.attribute.data);
     this.activeChartInstance.renderSync();
 
-    (table.internalProps.layoutMap as any)?.updateDataStateToChartInstance?.(this.activeChartInstance);
+    (table.internalProps.layoutMap as any)?.updateDataStateToActiveChartInstance?.(this.activeChartInstance);
     this.activeChartInstance.on('click', (params: any) => {
       console.log('click captured', params);
       if (Chart.temp) {
@@ -136,5 +136,9 @@ export class Chart extends Group {
     this.activeChartInstance.release();
     this.activeChartInstance = null;
     console.log('deactivate');
+  }
+  /** 更新图表对应数据 */
+  updateData(data: any) {
+    this.attribute.data = data;
   }
 }

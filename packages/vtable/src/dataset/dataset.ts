@@ -152,31 +152,7 @@ export class Dataset {
       this.setRecords(records);
 
       //processRecord中按照collectValuesBy 收集了维度值。现在需要对有聚合需求的 处理收集维度值范围
-      for (const field in this.collectedValues) {
-        if (this.collectValuesBy[field]?.sumBy) {
-          for (const byKeys in this.collectedValues[field]) {
-            const max = Object.values(this.collectedValues[field][byKeys]).reduce((acc, cur) => {
-              return cur.value() > acc ? cur.value() : acc;
-            }, Number.MIN_SAFE_INTEGER);
-            const min = Object.values(this.collectedValues[field][byKeys]).reduce((acc, cur) => {
-              return cur.value() < acc ? cur.value() : acc;
-            }, Number.MAX_SAFE_INTEGER);
-            this.collectedValues[field][byKeys] = {};
-            (
-              this.collectedValues[field][byKeys] as {
-                max: number;
-                min: number;
-              }
-            ).max = max;
-            (
-              this.collectedValues[field][byKeys] as {
-                max: number;
-                min: number;
-              }
-            ).min = min;
-          }
-        }
-      }
+      this.processCollectedValuesWithSumBy();
       const t1 = typeof window !== 'undefined' ? window.performance.now() : 0;
       console.log('processRecords:', t1 - t0);
 
@@ -227,9 +203,6 @@ export class Dataset {
       const t8 = typeof window !== 'undefined' ? window.performance.now() : 0;
       console.log('TreeToArr:', t8 - t7);
     }
-
-    delete this.rowFlatKeys;
-    delete this.colFlatKeys;
   }
   //将聚合类型注册 收集到aggregators
   registerAggregator(type: string, aggregator: any) {
@@ -247,6 +220,34 @@ export class Dataset {
   setRecords(records: any[]) {
     this.processRecords();
   }
+  /**processRecord中按照collectValuesBy 收集了维度值。现在需要对有聚合需求的 处理收集维度值范围 */
+  processCollectedValuesWithSumBy() {
+    for (const field in this.collectedValues) {
+      if (this.collectValuesBy[field]?.sumBy) {
+        for (const byKeys in this.collectedValues[field]) {
+          const max = Object.values(this.collectedValues[field][byKeys]).reduce((acc, cur) => {
+            return cur.value() > acc ? cur.value() : acc;
+          }, Number.MIN_SAFE_INTEGER);
+          const min = Object.values(this.collectedValues[field][byKeys]).reduce((acc, cur) => {
+            return cur.value() < acc ? cur.value() : acc;
+          }, Number.MAX_SAFE_INTEGER);
+          this.collectedValues[field][byKeys] = {};
+          (
+            this.collectedValues[field][byKeys] as {
+              max: number;
+              min: number;
+            }
+          ).max = max;
+          (
+            this.collectedValues[field][byKeys] as {
+              max: number;
+              min: number;
+            }
+          ).min = min;
+        }
+      }
+    }
+  }
   /**
    * 处理数据,遍历所有条目，过滤和派生字段的处理有待优化TODO
    */
@@ -261,12 +262,20 @@ export class Dataset {
         this.processRecord(record);
       }
     }
+    this.rowFlatKeys = {};
+    this.colFlatKeys = {};
   }
   filterRecord(record: any) {
     let isReserved = true;
     for (let i = 0; i < this.dataConfig.filterRules.length; i++) {
       const filterRule = this.dataConfig?.filterRules[i];
-      if (!filterRule.filterFunc?.(record)) {
+      if (filterRule.filterKey) {
+        const filterValue = record[filterRule.filterKey];
+        if (filterRule.filteredValues.indexOf(filterValue) === -1) {
+          isReserved = false;
+          break;
+        }
+      } else if (!filterRule.filterFunc?.(record)) {
         isReserved = false;
         break;
       }
@@ -461,6 +470,25 @@ export class Dataset {
       )
     );
   }
+  /** 更新过滤规则 修改tree数据及收集的value */
+  updateFilterRules(filterRules: FilterRules, isResetTree: boolean = false) {
+    this.filterRules = filterRules;
+    if (isResetTree) {
+      this.tree = {};
+    } else {
+      for (const treeRowKey in this.tree) {
+        for (const treeColKey in this.tree[treeRowKey]) {
+          for (let i = 0; i < this.tree[treeRowKey][treeColKey].length; i++) {
+            this.tree[treeRowKey][treeColKey][i].reset();
+          }
+        }
+      }
+    }
+    this.collectedValues = {};
+    this.processRecords();
+    this.processCollectedValuesWithSumBy();
+  }
+
   private getAggregatorRule(indicatorKey: string): AggregationRule<AggregationType> | undefined {
     return this.aggregationRules?.find((value: AggregationRule<AggregationType>, index: number) => {
       return indicatorKey === value.indicatorKey;
