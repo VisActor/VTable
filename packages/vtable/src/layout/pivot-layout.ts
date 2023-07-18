@@ -944,9 +944,12 @@ export class PivoLayoutMap implements LayoutMapAPI {
     this.dataConfig = dataset.dataConfig;
     this.rowKeysPath = dataset.rowKeysPath;
     this.colKeysPath = dataset.colKeysPath;
-    this.convertColKeys = transpose(this.colKeysPath);
     this.tree = dataset.tree;
+    this._indicatorObjects = [];
+    this._headerObjects = [];
+    this._headerObjectMap = {};
     this.initState();
+    this.convertColKeys = transpose(this.colKeysPath);
   }
 
   // 为列宽计算专用，兼容列表 对齐pivot-header-layout文件
@@ -987,10 +990,7 @@ export class PivoLayoutMap implements LayoutMapAPI {
 
   //#region pivot chart 区别于 pivot table 的特有方法
   /** 将_selectedDataItemsInChart保存的数据状态同步到各个图表实例中 */
-  updateDataStateToChartInstance(activeChartInstance?: any): void {
-    if (!activeChartInstance) {
-      activeChartInstance = (this._table as PivotChart)._getActiveChartInstance();
-    }
+  _generateChartState() {
     const state = {
       vtable_selected: {
         filter: (datum: any) => {
@@ -1025,10 +1025,24 @@ export class PivoLayoutMap implements LayoutMapAPI {
         }
       }
     };
+    return state;
+  }
+  updateDataStateToChartInstance(activeChartInstance?: any): void {
+    if (!activeChartInstance) {
+      activeChartInstance = (this._table as PivotChart)._getActiveChartInstance();
+    }
+    const state = this._generateChartState();
     this._indicatorObjects.forEach((_indicatorObject: IndicatorData) => {
       const chartInstance = _indicatorObject.chartInstance;
       chartInstance.updateState(state);
     });
+    activeChartInstance?.updateState(state);
+  }
+  updateDataStateToActiveChartInstance(activeChartInstance?: any): void {
+    if (!activeChartInstance) {
+      activeChartInstance = (this._table as PivotChart)._getActiveChartInstance();
+    }
+    const state = this._generateChartState();
     activeChartInstance?.updateState(state);
   }
   /** 获取某一图表列的最优宽度，计算逻辑是根据图表的xField的维度值个数 * barWidth */

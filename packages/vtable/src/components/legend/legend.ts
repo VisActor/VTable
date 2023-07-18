@@ -47,7 +47,7 @@ export class TableLegend {
     let height = isFinite(this.legendComponent.AABBBounds.height()) ? this.legendComponent.AABBBounds.height() : 0;
     const rectWidth = this.table.tableNoFrameWidth;
     const rectHeight = this.table.tableNoFrameHeight;
-    const padding = getQuadProps(attrs.padding ?? 10);
+    const padding = getQuadProps(attrs.padding ?? this.option.padding ?? 10);
 
     let x = 0;
     let y = 0;

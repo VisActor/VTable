@@ -17,7 +17,8 @@ import type {
   CollectValueBy,
   AggregationRules,
   AggregationRule,
-  AnyFunction
+  AnyFunction,
+  FilterRules
 } from './ts-types';
 import { AggregationType } from './ts-types';
 import { HierarchyState } from './ts-types';
@@ -32,6 +33,7 @@ import { BaseTable } from './core/BaseTable';
 import type { PivotTableProtected } from './ts-types/base-table';
 import type { IChartColumnIndicator } from './ts-types/pivot-table/indicator/chart-indicator';
 import type { Chart } from './scenegraph/graphic/chart';
+import { clearChartCacheImage, updateChartData } from './scenegraph/refresh-node/update-chart';
 
 export class PivotChart extends BaseTable implements PivotTableAPI {
   declare internalProps: PivotTableProtected;
@@ -799,5 +801,19 @@ export class PivotChart extends BaseTable implements PivotTableAPI {
         activeChartInstance.on(key, this._chartEventMap[key]);
       }
     }
+  }
+  /** 更新数据过来规则 */
+  updateFilterRules(filterRules: FilterRules) {
+    this.internalProps.dataConfig.filterRules = filterRules;
+    this.dataset.updateFilterRules(filterRules);
+    clearChartCacheImage(this.scenegraph);
+    updateChartData(this.scenegraph);
+    this.invalidate();
+  }
+  /** 设置图例的选择状态。设置完后同步图表的状态需要配合updateFilterRules接口使用 */
+  setLegendSelected(selectedData: (string | number)[]) {
+    this.internalProps.legends.legendComponent.setSelected(selectedData);
+    // this.updateFilterRules([{ filterKey: '20001', filteredValues: selectedData }]);
+    // this.invalidate();
   }
 }
