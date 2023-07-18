@@ -75,7 +75,7 @@ export async function createGroupForFirstScreen(
     xOrigin,
     yOrigin,
     proxy.table.rowHeaderLevelCount, // colStart
-    Math.min(proxy.firstScreenColLimit, proxy.table.colCount - 1), // colEnd
+    Math.min(proxy.firstScreenColLimit, proxy.table.colCount - 1 - proxy.table.rightFrozenColCount), // colEnd
     0, // rowStart
     proxy.table.columnHeaderLevelCount - 1, // rowEnd
     'columnHeader', // isHeader
@@ -90,7 +90,7 @@ export async function createGroupForFirstScreen(
     0, // colStart
     proxy.table.rowHeaderLevelCount - 1, // colEnd
     proxy.table.columnHeaderLevelCount, // rowStart
-    Math.min(proxy.firstScreenRowLimit, proxy.table.rowCount - 1), // rowEnd
+    Math.min(proxy.firstScreenRowLimit, proxy.table.rowCount - 1 - proxy.table.bottomFrozenRowCount), // rowEnd
     'rowHeader', // isHeader
     proxy.table
   );
@@ -102,7 +102,7 @@ export async function createGroupForFirstScreen(
       xOrigin,
       yOrigin,
       proxy.table.rowHeaderLevelCount, // colStart
-      Math.min(proxy.firstScreenColLimit, proxy.table.colCount - 1), // colEnd
+      Math.min(proxy.firstScreenColLimit, proxy.table.colCount - 1 - proxy.table.rightFrozenColCount), // colEnd
       proxy.table.rowCount - 1 - proxy.table.bottomFrozenRowCount + 1, // rowStart
       proxy.table.rowCount - 1, // rowEnd
       'body', // isHeader
@@ -134,7 +134,7 @@ export async function createGroupForFirstScreen(
       proxy.table.colCount - 1 - proxy.table.rightFrozenColCount + 1, // colStart
       proxy.table.colCount - 1, // colEnd
       proxy.table.columnHeaderLevelCount, // rowStart
-      Math.min(proxy.firstScreenRowLimit, proxy.table.rowCount - 1), // rowEnd
+      Math.min(proxy.firstScreenRowLimit, proxy.table.rowCount - 1 - proxy.table.bottomFrozenRowCount), // rowEnd
       'body', // isHeader
       proxy.table
     );

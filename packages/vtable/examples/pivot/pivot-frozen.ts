@@ -194,7 +194,8 @@ export function createTable() {
           bgColor: '#45b89f'
         },
         width: 'auto',
-        dropDownMenu: ['升序排序I', '降序排序I', '冻结列I']
+        dropDownMenu: ['升序排序I', '降序排序I', '冻结列I'],
+        multiDimension: true
         // headerType: 'MULTILINETEXT',
       }
     ],
@@ -229,7 +230,8 @@ export function createTable() {
           barColor: 'transparent'
         },
         columnType: 'progressbar',
-        showSort: true
+        showSort: true,
+        multiIndicator: true
         // headerType: 'MULTILINETEXT',
       },
       {
@@ -246,7 +248,8 @@ export function createTable() {
           barColor: DEFAULT_BAR_COLOR
         },
         showSort: true,
-        dropDownMenu: ['利润升序排序I', '利润降序排序I', '利润冻结列I']
+        dropDownMenu: ['利润升序排序I', '利润降序排序I', '利润冻结列I'],
+        multiIndicator: true
       }
     ],
     columnTree: [
