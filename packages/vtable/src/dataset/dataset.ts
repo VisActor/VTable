@@ -541,6 +541,9 @@ export class Dataset {
           },
           formatValue() {
             return '';
+          },
+          reset() {
+            // do nothing
           }
         };
   }
