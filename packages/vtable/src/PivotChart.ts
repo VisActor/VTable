@@ -810,4 +810,10 @@ export class PivotChart extends BaseTable implements PivotTableAPI {
     updateChartData(this.scenegraph);
     this.invalidate();
   }
+  /** 设置图例的选择状态。设置完后同步图表的状态需要配合updateFilterRules接口使用 */
+  setLegendSelected(selectedData: (string | number)[]) {
+    this.internalProps.legends.legendComponent.setSelected(selectedData);
+    // this.updateFilterRules([{ filterKey: '20001', filteredValues: selectedData }]);
+    // this.invalidate();
+  }
 }
