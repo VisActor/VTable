@@ -160,7 +160,7 @@ export class Scenegraph {
       y: 0,
       width: 0,
       height: 0,
-      clip: true,
+      clip: false,
       pickable: false
     });
     colHeaderGroup.role = 'col-header';
@@ -171,7 +171,7 @@ export class Scenegraph {
       y: 0,
       width: 0,
       height: 0,
-      clip: true,
+      clip: false,
       pickable: false
     });
     cornerHeaderGroup.role = 'corner-header';
@@ -182,7 +182,7 @@ export class Scenegraph {
       y: 0,
       width: 0,
       height: 0,
-      clip: true,
+      clip: false,
       pickable: false
     });
     rowHeaderGroup.role = 'row-header';
