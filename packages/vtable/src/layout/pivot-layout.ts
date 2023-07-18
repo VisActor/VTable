@@ -633,6 +633,12 @@ export class PivoLayoutMap implements LayoutMapAPI {
   get bodyRowCount() {
     return this._bodyRowCount;
   }
+  get bottomFrozenRowCount(): number {
+    return 0;
+  }
+  get rightFrozenColCount(): number {
+    return 0;
+  }
   get headerObjects(): HeaderData[] {
     return this._headerObjects;
   }
