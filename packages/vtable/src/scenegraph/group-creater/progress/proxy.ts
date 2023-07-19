@@ -5,6 +5,7 @@ import { computeRowsHeight } from '../../layout/compute-row-height';
 import { emptyGroup } from '../../utils/empty-group';
 import { createColGroup } from '../column';
 import { createComplexColumn } from '../column-helper';
+import { createGroupForFirstScreen } from './create-group-for-first-screen';
 import { dynamicSetX } from './update-position/dynamic-set-x';
 import { dynamicSetY } from './update-position/dynamic-set-y';
 import { updateAutoRow } from './update-position/update-auto-row';
@@ -121,110 +122,23 @@ export class SceneProxy {
     cornerHeaderGroup: Group,
     colHeaderGroup: Group,
     rowHeaderGroup: Group,
+    rightFrozenGroup: Group,
+    bottomFrozenGroup: Group,
     bodyGroup: Group,
     xOrigin: number,
     yOrigin: number
   ) {
-    // compute parameters
-    this.setParamsForRow();
-    this.setParamsForColumn();
-
-    // compute colums width in first screen
-    this.table.internalProps._colWidthsMap.clear();
-    this.table._clearColRangeWidthsMap();
-    computeColsWidth(this.table, 0, Math.min(this.firstScreenColLimit, this.table.colCount - 1));
-
-    // compute rows height in first screen
-    this.table.internalProps._rowHeightsMap.clear();
-    this.table._clearRowRangeHeightsMap();
-    computeRowsHeight(this.table, 0, Math.min(this.firstScreenRowLimit, this.table.rowCount - 1));
-
-    // update colHeaderGroup rowHeaderGroup bodyGroup position
-    this.table.scenegraph.colHeaderGroup.setAttribute('x', this.table.getFrozenColsWidth());
-    this.table.scenegraph.rowHeaderGroup.setAttribute('y', this.table.getFrozenRowsHeight());
-    this.table.scenegraph.bodyGroup.setAttributes({
-      x: this.table.getFrozenColsWidth(),
-      y: this.table.getFrozenRowsHeight()
-    });
-
-    // create cornerHeaderGroup
-    createColGroup(
+    await createGroupForFirstScreen(
       cornerHeaderGroup,
-      xOrigin,
-      yOrigin,
-      0, // colStart
-      this.table.rowHeaderLevelCount - 1, // colEnd
-      0, // rowStart
-      this.table.columnHeaderLevelCount - 1, // rowEnd
-      'cornerHeader', // CellType
-      this.table
-    );
-
-    // create colHeaderGroup
-    createColGroup(
       colHeaderGroup,
-      xOrigin,
-      yOrigin,
-      this.table.rowHeaderLevelCount, // colStart
-      Math.min(this.firstScreenColLimit, this.table.colCount - 1), // colEnd
-      0, // rowStart
-      this.table.columnHeaderLevelCount - 1, // rowEnd
-      'columnHeader', // isHeader
-      this.table
-    );
-
-    // create rowHeaderGroup
-    createColGroup(
       rowHeaderGroup,
-      xOrigin,
-      yOrigin,
-      0, // colStart
-      this.table.rowHeaderLevelCount - 1, // colEnd
-      this.table.columnHeaderLevelCount, // rowStart
-      Math.min(this.firstScreenRowLimit, this.table.rowCount - 1), // rowEnd
-      'rowHeader', // isHeader
-      this.table
-    );
-
-    // create bodyGroup
-    createColGroup(
+      rightFrozenGroup,
+      bottomFrozenGroup,
       bodyGroup,
       xOrigin,
       yOrigin,
-      this.table.rowHeaderLevelCount, // colStart
-      Math.min(this.firstScreenColLimit, this.table.colCount - 1), // colEnd
-      this.table.columnHeaderLevelCount, // rowStart
-      Math.min(this.firstScreenRowLimit, this.table.rowCount - 1), // rowEnd
-      'body', // isHeader
-      this.table
+      this
     );
-
-    // update progress information
-    if (!bodyGroup.firstChild) {
-      // 无数据
-      this.currentRow = this.totalRow;
-      this.rowEnd = this.currentRow;
-      this.rowUpdatePos = this.rowEnd;
-      this.referenceRow = this.rowStart + Math.floor((this.rowEnd - this.rowStart) / 2);
-
-      this.currentCol = this.totalCol;
-      this.colEnd = this.currentCol;
-      this.colUpdatePos = this.colEnd;
-      this.referenceCol = this.colStart + Math.floor((this.colEnd - this.colStart) / 2);
-    } else {
-      this.currentRow = (bodyGroup.firstChild as Group)?.rowNumber ?? this.totalRow;
-      this.rowEnd = this.currentRow;
-      this.rowUpdatePos = this.rowEnd;
-      this.referenceRow = this.rowStart + Math.floor((this.rowEnd - this.rowStart) / 2);
-
-      this.currentCol = (bodyGroup.lastChild as Group)?.col ?? this.totalCol;
-      this.colEnd = this.currentCol;
-      this.colUpdatePos = this.colEnd;
-      this.referenceCol = this.colStart + Math.floor((this.colEnd - this.colStart) / 2);
-
-      // 开始异步任务
-      await this.progress();
-    }
   }
 
   async createColGroupForFirstScreen(
