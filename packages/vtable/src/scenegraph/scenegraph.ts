@@ -796,11 +796,14 @@ export class Scenegraph {
       width: Math.min(
         this.table.tableNoFrameWidth,
         Math.max(this.colHeaderGroup.attribute.width, this.bodyGroup.attribute.width, 0) +
-          Math.max(this.cornerHeaderGroup.attribute.width, this.rowHeaderGroup.attribute.width, 0)
+          Math.max(this.cornerHeaderGroup.attribute.width, this.rowHeaderGroup.attribute.width, 0) +
+          this.rightBottomCellGroup.attribute.width
       ),
       height: Math.min(
         this.table.tableNoFrameHeight,
-        (this.colHeaderGroup.attribute.height ?? 0) + (this.bodyGroup.attribute.height ?? 0)
+        (this.colHeaderGroup.attribute.height ?? 0) +
+          (this.bodyGroup.attribute.height ?? 0) +
+          this.bottomFrozenGroup.attribute.height
       )
     } as any);
 
@@ -808,6 +811,39 @@ export class Scenegraph {
       this.tableGroup.border.setAttributes({
         width: this.tableGroup.attribute.width + this.tableGroup.border.attribute.lineWidth,
         height: this.tableGroup.attribute.height + this.tableGroup.border.attribute.lineWidth
+      });
+    }
+
+    if (this.table.bottomFrozenRowCount > 0) {
+      this.bottomFrozenGroup.setAttribute(
+        'y',
+        this.tableGroup.attribute.height - this.bottomFrozenGroup.attribute.height
+      );
+      this.leftBottomCellGroup.setAttributes({
+        visible: true,
+        y: this.tableGroup.attribute.height - this.bottomFrozenGroup.attribute.height,
+        height: this.bottomFrozenGroup.attribute.height,
+        width: this.table.getFrozenColsWidth()
+      });
+      this.rightBottomCellGroup.setAttributes({
+        visible: true,
+        y: this.tableGroup.attribute.height - this.bottomFrozenGroup.attribute.height,
+        height: this.bottomFrozenGroup.attribute.height
+      });
+    }
+
+    if (this.table.rightFrozenColCount > 0) {
+      this.rightFrozenGroup.setAttribute('x', this.tableGroup.attribute.width - this.rightFrozenGroup.attribute.width);
+      this.rightTopCellGroup.setAttributes({
+        visible: true,
+        x: this.tableGroup.attribute.width - this.rightFrozenGroup.attribute.width,
+        width: this.rightFrozenGroup.attribute.width,
+        height: this.table.getFrozenRowsHeight()
+      });
+      this.rightBottomCellGroup.setAttributes({
+        visible: true,
+        x: this.tableGroup.attribute.width - this.rightFrozenGroup.attribute.width,
+        width: this.rightFrozenGroup.attribute.width
       });
     }
   }

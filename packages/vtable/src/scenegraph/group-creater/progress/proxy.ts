@@ -91,9 +91,9 @@ export class SceneProxy {
 
   setParamsForRow() {
     this.bodyTopRow = this.table.columnHeaderLevelCount;
-    this.bodyBottomRow = this.table.rowCount - 1;
+    this.bodyBottomRow = this.table.rowCount - 1 - this.table.bottomFrozenRowCount;
     this.bodyLeftCol = 0;
-    this.bodyRightCol = this.table.colCount - 1;
+    this.bodyRightCol = this.table.colCount - 1 - this.table.rightFrozenColCount;
 
     // 计算渐进加载数量
     const totalActualBodyRowCount = Math.min(this.rowLimit, this.bodyBottomRow - this.bodyTopRow + 1); // 渐进加载总row数量
@@ -223,10 +223,10 @@ export class SceneProxy {
           // 先更新
           await this.updateRowCellGroupsAsync();
           await this.progress();
-        } else if (this.currentCol < this.totalCol) {
+        } else if (this.currentCol + this.table.rightFrozenColCount < this.totalCol) {
           await this.createCol();
           await this.progress();
-        } else if (this.currentRow < this.totalRow) {
+        } else if (this.currentRow + this.table.bottomFrozenRowCount < this.totalRow) {
           // console.log('progress currentRow', this.currentRow);
           // 先更新没有需要更新的节点，在生成新节点
           await this.createRow();
