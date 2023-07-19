@@ -232,7 +232,6 @@ export class Scenegraph {
     });
     componentGroup.role = 'component';
     this.componentGroup = componentGroup;
-
     const rightTopCellGroup = new Group({
       x: 0,
       y: 0,
@@ -240,7 +239,9 @@ export class Scenegraph {
       height: 0,
       visible: false,
       pickable: false,
-      fill: '#fff'
+      fill: this.table.theme.cornerHeaderStyle.bgColor,
+      stroke: this.table.theme.cornerHeaderStyle.borderColor,
+      lineWidth: this.table.theme.cornerHeaderStyle.borderLineWidth
     });
     rightTopCellGroup.role = 'corner-frozen';
     this.rightTopCellGroup = rightTopCellGroup;
@@ -252,7 +253,9 @@ export class Scenegraph {
       height: 0,
       visible: false,
       pickable: false,
-      fill: '#fff'
+      fill: this.table.theme.cornerHeaderStyle.bgColor,
+      stroke: this.table.theme.cornerHeaderStyle.borderColor,
+      lineWidth: this.table.theme.cornerHeaderStyle.borderLineWidth
     });
     leftBottomCellGroup.role = 'corner-frozen';
     this.leftBottomCellGroup = leftBottomCellGroup;
@@ -264,7 +267,9 @@ export class Scenegraph {
       height: 0,
       visible: false,
       pickable: false,
-      fill: '#fff'
+      fill: this.table.theme.cornerHeaderStyle.bgColor,
+      stroke: this.table.theme.cornerHeaderStyle.borderColor,
+      lineWidth: this.table.theme.cornerHeaderStyle.borderLineWidth
     });
     rightBottomCellGroup.role = 'corner-frozen';
     this.rightBottomCellGroup = rightBottomCellGroup;

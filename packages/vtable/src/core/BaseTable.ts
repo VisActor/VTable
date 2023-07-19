@@ -964,13 +964,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
 
     let h = 0;
     for (let i = startRow; i <= endRow; i++) {
-      h +=
-        this.rowHeightsMap.get(i) ||
-        (this.isColumnHeader(0, i) || this.isCornerHeader(0, i)
-          ? Array.isArray(this.defaultHeaderRowHeight)
-            ? this.defaultHeaderRowHeight[i] ?? this.internalProps.defaultRowHeight
-            : this.defaultHeaderRowHeight
-          : this.internalProps.defaultRowHeight);
+      h += this.getRowHeight(i);
     }
     if (startRow >= 0 && endRow >= 0 && h > 0) {
       this._rowRangeHeightsMap.set(`$${startRow}$${endRow}`, Math.round(h));
@@ -1790,6 +1784,28 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     return w;
   }
   /**
+   * 获取底部冻结固定列总宽
+   * @returns
+   */
+  getBottomFrozenRowsHeight(): number {
+    if (this.bottomFrozenRowCount > 0) {
+      const height = this.getRowsHeight(this.rowCount - this.bottomFrozenRowCount, this.rowCount - 1);
+      return height;
+    }
+    return 0;
+  }
+  /**
+   * 获取右侧冻结固定列总宽
+   * @returns
+   */
+  getRightFrozenColsWidth(): number {
+    if (this.rightFrozenColCount > 0) {
+      const width = this.getColsWidth(this.colCount - this.rightFrozenColCount, this.colCount - 1);
+      return width;
+    }
+    return 0;
+  }
+  /**
    * 获取实际绘制范围的宽高，而非可绘制画布大小
    * @param table
    * @returns
@@ -2541,7 +2557,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
         return cacheStyle;
       }
       const hd = layoutMap.getHeader(col, row);
-      if (!hd) {
+      if (!hd || hd.isEmpty) {
         return EMPTY_STYLE;
       }
       // const styleClass = hd.headerType.StyleClass; //BaseHeader文件

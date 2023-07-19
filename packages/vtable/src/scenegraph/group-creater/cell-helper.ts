@@ -152,10 +152,7 @@ export function createCell(
       cellGroup.clear();
       cellGroup.appendChild(axis.component);
       axis.overlap();
-    } else if (
-      col > table.colCount - table.rightFrozenColCount - 1 ||
-      row > table.rowCount - table.bottomFrozenRowCount - 1
-    ) {
+    } else if (table.internalProps.layoutMap.isEmpty(col, row)) {
       cellGroup.clear();
     }
 
