@@ -123,7 +123,7 @@ export class Chart extends Group {
         Chart.temp = 1;
       }, 0);
     });
-    (table as PivotChart)?._bindChartEvent(this.activeChartInstance);
+    (table as PivotChart)._bindChartEvent?.(this.activeChartInstance);
     console.log('active');
   }
   static temp: number = 1;
