@@ -802,7 +802,7 @@ export class PivotChart extends BaseTable implements PivotTableAPI {
       }
     }
   }
-  /** 更新数据过来规则 */
+  /** 更新数据过滤规则，适用场景：点击图例项后 更新过滤规则 来更新图表 */
   updateFilterRules(filterRules: FilterRules) {
     this.internalProps.dataConfig.filterRules = filterRules;
     this.dataset.updateFilterRules(filterRules);
@@ -842,6 +842,8 @@ export class PivotChart extends BaseTable implements PivotTableAPI {
       position = chartInstance.convertDatumToPosition(datum);
       this.invalidate();
     }
-    return position ? { x: position.x + cellPosition.bounds.x1, y: position.y + cellPosition.bounds.y1 } : null;
+    return position
+      ? { x: Math.round(position.x + cellPosition.bounds.x1), y: Math.round(position.y + cellPosition.bounds.y1) }
+      : null;
   }
 }

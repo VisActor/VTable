@@ -60,7 +60,7 @@ export function updateChartSize(scenegraph: Scenegraph, col: number) {
   }
 }
 
-/** 供调整列宽后更新chart使用 */
+/** 清理所有chart节点的 图表缓存图片 */
 export function clearChartCacheImage(scenegraph: Scenegraph) {
   // 将调整列宽的后面的面也都一起需要调整viewbox。  TODO：columnResizeType支持后需要根据变化的列去调整，范围可能变多或者变少
   for (let c = scenegraph.proxy.colStart; c <= scenegraph.proxy.colEnd; c++) {
@@ -76,7 +76,7 @@ export function clearChartCacheImage(scenegraph: Scenegraph) {
   }
 }
 
-/** 供调整列宽后更新chart使用 */
+/** 更新所有的图表chart节点上缓存attribute中的data数据 */
 export function updateChartData(scenegraph: Scenegraph) {
   // 将调整列宽的后面的面也都一起需要调整viewbox。  TODO：columnResizeType支持后需要根据变化的列去调整，范围可能变多或者变少
   for (let c = scenegraph.proxy.colStart; c <= scenegraph.proxy.colEnd; c++) {

@@ -6,7 +6,8 @@ module.exports = {
   runner: 'jest-electron/runner',
   testEnvironment: 'jest-electron/environment',
   testRegex: '/__tests__/.*\\.test\\.(js|ts)$',
-  silent: true,
+  silent: false,
+  verbose: true,
   globals: {
     'ts-jest': {
       diagnostics: {
@@ -19,7 +20,6 @@ module.exports = {
     },
     __DEV__: true
   },
-  verbose: true,
   collectCoverage: false,
   coverageReporters: ['json-summary', 'lcov', 'text'],
   collectCoverageFrom: [

@@ -39,7 +39,7 @@ export class Chart extends Group {
     // 创建chart
     if (!params.chartInstance) {
       const ctx = params.canvas.getContext('2d');
-      this.chartInstance = new params.ClassType(params.spec, {
+      params.chartInstance = this.chartInstance = new params.ClassType(params.spec, {
         renderCanvas: params.canvas,
         mode: 'desktop-browser',
         canvasControled: false,

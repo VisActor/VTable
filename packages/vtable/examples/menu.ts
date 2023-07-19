@@ -342,7 +342,7 @@ export const menus = [
     ]
   },
   {
-    menu: '测试用例',
+    menu: '测试用例（勿修改demo内容）',
     children: [
       {
         path: 'unit-test-demo',
@@ -351,6 +351,10 @@ export const menus = [
       {
         path: 'unit-test-demo',
         name: 'unitTestListTable'
+      },
+      {
+        path: 'unit-test-demo',
+        name: 'unitTestPivotChart'
       }
     ]
   }
