@@ -1,6 +1,6 @@
 import type { GraphicType, IGroupGraphicAttribute } from '@visactor/vrender';
 import { genNumberType, Group } from '@visactor/vrender';
-import { Bounds } from '@visactor/vutils';
+import { Bounds, cloneDeep } from '@visactor/vutils';
 import type { BaseTableAPI } from '../../ts-types/base-table';
 import type { PivotChart } from '../../PivotChart';
 import { clearChartCacheImage, updateChartSize } from '../refresh-node/update-chart';

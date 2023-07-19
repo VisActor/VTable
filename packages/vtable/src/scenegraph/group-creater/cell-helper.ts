@@ -146,52 +146,65 @@ export function createCell(
       cellGroup.mergeRow = range.end.row;
     }
 
-    if ((define as any)?.isAxis && cellType === 'columnHeader') {
-      cellGroup.setAttribute('clip', false);
-      const axis = new CartesianAxis(
-        {
-          orient: 'top',
-          type: 'band',
-          data: ['A', 'B', 'C'],
-          title: {
-            visible: true,
-            text: 'X Axis'
-          }
-        },
-        cellGroup.attribute.width,
-        cellGroup.attribute.height,
-        table
-      );
+    const axisConfig = table.internalProps.layoutMap.getAxisConfigInPivotChart(col, row);
+    if (axisConfig) {
+      const axis = new CartesianAxis(axisConfig, cellGroup.attribute.width, cellGroup.attribute.height, table);
       cellGroup.clear();
-      // axis.component.setAttribute('y', 40);
-      cellGroup.appendChild(axis.component);
-    } else if ((define as any)?.isAxis && cellType === 'rowHeader') {
-      cellGroup.setAttribute('clip', false);
-      const axis = new CartesianAxis(
-        {
-          orient: 'left',
-          type: 'linear',
-          range: { min: 0, max: 30 },
-          label: {
-            flush: true
-          },
-          grid: {
-            visible: true
-          },
-          title: {
-            visible: true,
-            text: 'Y Axis'
-          }
-        },
-        cellGroup.attribute.width,
-        cellGroup.attribute.height,
-        table
-      );
-      cellGroup.clear();
-      // axis.component.setAttribute('x', 80);
       cellGroup.appendChild(axis.component);
       axis.overlap();
+    } else if (
+      col > table.colCount - table.rightFrozenColCount - 1 ||
+      row > table.rowCount - table.bottomFrozenRowCount - 1
+    ) {
+      cellGroup.clear();
     }
+
+    // if ((define as any)?.isAxis && cellType === 'columnHeader') {
+    //   cellGroup.setAttribute('clip', false);
+    //   const axis = new CartesianAxis(
+    //     {
+    //       orient: 'top',
+    //       type: 'band',
+    //       data: ['A', 'B', 'C'],
+    //       title: {
+    //         visible: true,
+    //         text: 'X Axis'
+    //       }
+    //     },
+    //     cellGroup.attribute.width,
+    //     cellGroup.attribute.height,
+    //     table
+    //   );
+    //   cellGroup.clear();
+    //   // axis.component.setAttribute('y', 40);
+    //   cellGroup.appendChild(axis.component);
+    // } else if ((define as any)?.isAxis && cellType === 'rowHeader') {
+    //   cellGroup.setAttribute('clip', false);
+    //   const axis = new CartesianAxis(
+    //     {
+    //       orient: 'left',
+    //       type: 'linear',
+    //       range: { min: 0, max: 30 },
+    //       label: {
+    //         flush: true
+    //       },
+    //       grid: {
+    //         visible: true
+    //       },
+    //       title: {
+    //         visible: true,
+    //         text: 'Y Axis'
+    //       }
+    //     },
+    //     cellGroup.attribute.width,
+    //     cellGroup.attribute.height,
+    //     table
+    //   );
+    //   cellGroup.clear();
+    //   // axis.component.setAttribute('x', 80);
+    //   cellGroup.appendChild(axis.component);
+    //   axis.overlap();
+    // }
   } else if (type === 'image') {
     // 创建图片单元格
     cellGroup = createImageCellGroup(
@@ -242,7 +255,8 @@ export function createCell(
       padding,
       table.getCellValue(col, row),
       (define as ChartColumnDefine).chartType,
-      (define as ChartColumnDefine).chartSpec,
+      // (define as ChartColumnDefine).chartSpec,
+      table.internalProps.layoutMap.getChartSpec(col, row),
       chartInstance,
       table,
       cellTheme
