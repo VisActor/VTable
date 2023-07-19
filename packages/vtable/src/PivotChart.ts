@@ -18,7 +18,8 @@ import type {
   AggregationRules,
   AggregationRule,
   AnyFunction,
-  FilterRules
+  FilterRules,
+  IPivotTableCellHeaderPaths
 } from './ts-types';
 import { AggregationType } from './ts-types';
 import { HierarchyState } from './ts-types';
@@ -514,12 +515,11 @@ export class PivotChart extends BaseTable implements PivotTableAPI {
    * @returns
    */
   getCellAddressByHeaderPaths(
-    dimensionPaths:
-      | {
-          colHeaderPaths: IDimensionInfo[];
-          rowHeaderPaths: IDimensionInfo[];
-        }
-      | IDimensionInfo[]
+    dimensionPaths: // | {
+    //     colHeaderPaths: IDimensionInfo[];
+    //     rowHeaderPaths: IDimensionInfo[];
+    //   }
+    IPivotTableCellHeaderPaths | IDimensionInfo[]
   ): CellAddress {
     const cellAddress = (this.internalProps.layoutMap as PivotHeaderLayoutMap).getCellAdressByHeaderPath(
       dimensionPaths
@@ -815,5 +815,33 @@ export class PivotChart extends BaseTable implements PivotTableAPI {
     this.internalProps.legends.legendComponent.setSelected(selectedData);
     // this.updateFilterRules([{ filterKey: '20001', filteredValues: selectedData }]);
     // this.invalidate();
+  }
+  /**
+   * 获取图表上某一个图元的位置
+   * @param datum 图元对应的数据
+   * @param cellHeaderPaths 单元格的header路径
+   * @returns 图元在整个表格上的坐标位置（相对表格左上角视觉坐标）
+   */
+  getChartDatumPosition(datum: any, cellHeaderPaths: IPivotTableCellHeaderPaths): { x: number; y: number } {
+    const cellAddr = this.getCellAddressByHeaderPaths(cellHeaderPaths);
+    const cellPosition = this.getCellRelativeRect(cellAddr.col, cellAddr.row);
+    console.log(cellPosition);
+    const cellGroup = this.scenegraph.getCell(cellAddr.col, cellAddr.row);
+    let position;
+    const chartNode: Chart = cellGroup?.getChildren()?.[0] as Chart;
+    if (chartNode.attribute.chartInstance) {
+      const chartInstance = chartNode.attribute.chartInstance;
+      const { dataId, data, viewBox } = chartNode.attribute;
+      chartInstance.updateViewBox({
+        x1: viewBox.x1 - (chartNode.getRootNode() as any).table.scrollLeft,
+        x2: viewBox.x2 - (chartNode.getRootNode() as any).table.scrollLeft,
+        y1: viewBox.y1 - (chartNode.getRootNode() as any).table.scrollTop,
+        y2: viewBox.y2 - (chartNode.getRootNode() as any).table.scrollTop
+      });
+      chartInstance.updateDataSync(dataId, data);
+      position = chartInstance.convertDatumToPosition(datum);
+      this.invalidate();
+    }
+    return position ? { x: position.x + cellPosition.bounds.x1, y: position.y + cellPosition.bounds.y1 } : null;
   }
 }

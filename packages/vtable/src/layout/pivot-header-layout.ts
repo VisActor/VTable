@@ -1707,12 +1707,11 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
    * @returns
    */
   getCellAdressByHeaderPath(
-    dimensionPaths:
-      | {
-          colHeaderPaths: IDimensionInfo[];
-          rowHeaderPaths: IDimensionInfo[];
-        }
-      | IDimensionInfo[]
+    dimensionPaths: // | {
+    //     colHeaderPaths: IDimensionInfo[];
+    //     rowHeaderPaths: IDimensionInfo[];
+    //   }
+    IPivotTableCellHeaderPaths | IDimensionInfo[]
   ): CellAddress | undefined {
     let colHeaderPaths;
     let rowHeaderPaths;
@@ -1769,9 +1768,10 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
         for (let j = 0; j < colArr.length; j++) {
           const dimension = colArr[j];
           if (
-            ((isValid(colDimension.dimensionKey) && dimension.dimensionKey === colDimension.dimensionKey) ||
-              (isValid(colDimension.indicatorKey) && dimension.indicatorKey === colDimension.indicatorKey)) &&
-            dimension.value === colDimension.value
+            (!isValid(colDimension.indicatorKey) &&
+              dimension.dimensionKey === colDimension.dimensionKey &&
+              dimension.value === colDimension.value) ||
+            (isValid(colDimension.indicatorKey) && dimension.indicatorKey === colDimension.indicatorKey)
           ) {
             colArr = dimension.children;
             if (needLowestLevel && !colArr) {
@@ -1793,7 +1793,9 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
         for (let j = 0; j < rowArr.length; j++) {
           const dimension = rowArr[j];
           if (
-            ((isValid(rowDimension.dimensionKey) && dimension.dimensionKey === rowDimension.dimensionKey) ||
+            ((!isValid(rowDimension.indicatorKey) &&
+              dimension.dimensionKey === rowDimension.dimensionKey &&
+              dimension.value === rowDimension.value) ||
               (isValid(rowDimension.indicatorKey) && dimension.indicatorKey === rowDimension.indicatorKey)) &&
             dimension.value === rowDimension.value
           ) {
