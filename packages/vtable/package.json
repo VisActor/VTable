@@ -42,7 +42,7 @@
     "build": "bundle --clean",
     "dev": "bundle --clean -f es -w",
     "start": "vite ./vite",
-    "test": "jest",
+    "test": "jest --silent",
     "test-cov": "jest --coverage",
     "ci": "node github-ci.js"
   },
@@ -60,7 +60,7 @@
     "d3-hierarchy": "^3.1.1"
   },
   "devDependencies": {
-    "@visactor/vchart": "1.1.0-beta.6",
+    "@visactor/vchart": "1.1.0-beta.7",
     "@internal/bundler": "workspace:*",
     "@internal/eslint-config": "workspace:*",
     "@internal/ts-config": "workspace:*",

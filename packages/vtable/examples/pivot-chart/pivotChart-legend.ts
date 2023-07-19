@@ -10452,5 +10452,44 @@ export function createTable() {
   tableInstance.listen(LEGEND_ITEM_UNHOVER, args => {
     console.log('LEGEND_ITEM_UNHOVER', args);
   });
+
+  setTimeout(() => {
+    const datum = {
+      '10001': '数量',
+      '10002': '111',
+      '10003': '230713183656009',
+      '20001': '公司-数量',
+      '230417170554008': '配件',
+      '230417170554012': '一级',
+      '230417171050028': '技术',
+      '230417171050031': '中国',
+      '230713183656009': '111',
+      '230717170834024': '公司'
+    };
+    const cellAddr = {
+      colHeaderPaths: [
+        {
+          dimensionKey: '230417171050031',
+          value: '中国'
+        },
+        {
+          dimensionKey: '230417171050028',
+          value: '技术'
+        }
+      ],
+      rowHeaderPaths: [
+        {
+          dimensionKey: '230417170554012',
+          value: '一级'
+        },
+        {
+          indicatorKey: '230713183656009',
+          value: '数量'
+        }
+      ]
+    };
+    const position = tableInstance.getChartDatumPosition(datum, cellAddr);
+    console.log('getChartDatumPosition', position);
+  }, 3000);
   window.tableInstance = tableInstance;
 }

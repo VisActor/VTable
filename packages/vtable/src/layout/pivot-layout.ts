@@ -1,5 +1,5 @@
 import type { Dataset } from '../dataset/dataset';
-import { transpose } from '../tools/util';
+import { isValid, transpose } from '../tools/util';
 import type { HeaderData, IndicatorData, LayoutMapAPI, WidthData } from '../ts-types/list-table/layout-map/api';
 // import { EmptyDataCache } from './utils';
 import type {
@@ -9,6 +9,8 @@ import type {
   ICornerDefine,
   IDataConfig,
   IDimension,
+  IDimensionInfo,
+  IHeaderTreeDefine,
   IIndicator,
   IPivotTableCellHeaderPaths,
   ITitleDefine,
@@ -27,6 +29,8 @@ export class PivoLayoutMap implements LayoutMapAPI {
   // private _emptyDataCache = new EmptyDataCache();
   private _indicatorObjects: IndicatorData[] = [];
   private _columnWidths: WidthData[] = [];
+  rowTree: IHeaderTreeDefine[];
+  columnTree: IHeaderTreeDefine[];
   rowsDefine: (IDimension | string)[];
   columnsDefine: (IDimension | string)[];
   indicatorsDefine: (IIndicator | string)[];
@@ -92,6 +96,8 @@ export class PivoLayoutMap implements LayoutMapAPI {
   _table: PivotTable | PivotChart;
   constructor(table: PivotTable | PivotChart, dataset: Dataset) {
     this._table = table;
+    this.rowTree = table.options.rowTree;
+    this.columnTree = table.options.columnTree;
     this.rowsDefine = table.options.rows ?? [];
     this.columnsDefine = table.options.columns ?? [];
     this.indicatorsDefine = table.options.indicators ?? [];
@@ -910,24 +916,149 @@ export class PivoLayoutMap implements LayoutMapAPI {
     }
     return {
       colHeaderPaths:
-        colHeaderPaths?.map((key: string) => {
-          const isIndicatorKey = this._indicatorObjects.find(indicator => indicator.indicatorKey === key);
+        colHeaderPaths?.map((key: string, index: number) => {
+          const indicatorObject = this._indicatorObjects.find(indicator => indicator.indicatorKey === key);
           return {
-            dimensionKey: !isIndicatorKey ? key : undefined,
-            indicatorKey: isIndicatorKey ? key : undefined,
-            value: key
+            dimensionKey: !indicatorObject ? this.colShowAttrs[index] : undefined,
+            indicatorKey: indicatorObject ? key : undefined,
+            value: !indicatorObject ? key : (indicatorObject.define.caption as string)
           };
         }) ?? [],
       rowHeaderPaths:
-        rowHeaderPaths?.map((key: string) => {
-          const isIndicatorKey = this._indicatorObjects.find(indicator => indicator.indicatorKey === key);
+        rowHeaderPaths?.map((key: string, index: number) => {
+          const indicatorObject = this._indicatorObjects.find(indicator => indicator.indicatorKey === key);
           return {
-            dimensionKey: !isIndicatorKey ? key : undefined,
-            indicatorKey: isIndicatorKey ? key : undefined,
-            value: key
+            dimensionKey: !indicatorObject ? this.rowShowAttrs[index] : undefined,
+            indicatorKey: indicatorObject ? key : undefined,
+            value: !indicatorObject ? key : (indicatorObject.define.caption as string)
           };
         }) ?? []
     };
+  }
+  /**
+   * 通过dimensionPath获取到对应的表头地址col row, dimensionPath不要求必须按照表头层级顺序传递
+   * @param dimensions
+   * @returns
+   */
+  getCellAdressByHeaderPath(
+    dimensionPaths:
+      | {
+          colHeaderPaths: IDimensionInfo[];
+          rowHeaderPaths: IDimensionInfo[];
+        }
+      | IDimensionInfo[]
+  ): CellAddress | undefined {
+    let colHeaderPaths;
+    let rowHeaderPaths;
+    if (Array.isArray(dimensionPaths)) {
+      if (dimensionPaths.length > this.rowShowAttrs.length + this.colShowAttrs.length) {
+        //如果传入的path长度比行列维度层级多的话 无法匹配
+        return undefined;
+      }
+      // 如果传入的是整体的path 按照行列维度区分开
+      colHeaderPaths = dimensionPaths.filter(
+        (path: IDimensionInfo) => this.colShowAttrs.indexOf(path.dimensionKey) >= 0
+      );
+      rowHeaderPaths = dimensionPaths.filter(
+        (path: IDimensionInfo) => this.rowShowAttrs.indexOf(path.dimensionKey) >= 0
+      );
+    } else {
+      colHeaderPaths = dimensionPaths.colHeaderPaths;
+      rowHeaderPaths = dimensionPaths.rowHeaderPaths;
+    }
+
+    if (!Array.isArray(colHeaderPaths) && !Array.isArray(rowHeaderPaths)) {
+      return undefined;
+    }
+    // 行列维度path根据key排序
+    colHeaderPaths?.sort((a, b) => {
+      return (
+        this.colShowAttrs.indexOf(a.dimensionKey ?? this.indicatorDimensionKey) -
+        this.colShowAttrs.indexOf(b.dimensionKey ?? this.indicatorDimensionKey)
+      );
+    });
+    rowHeaderPaths?.sort((a, b) => {
+      return (
+        this.rowShowAttrs.indexOf(a.dimensionKey ?? this.indicatorDimensionKey) -
+        this.rowShowAttrs.indexOf(b.dimensionKey ?? this.indicatorDimensionKey)
+      );
+    });
+    let needLowestLevel = false; // needLowestLevel来标记是否需要 提供到最底层的维度层级信息
+    // 如果行列维度都有值 说明是匹配body单元格 那这个时候 维度层级应该是满的
+    if (colHeaderPaths?.length >= 1 && rowHeaderPaths?.length >= 1) {
+      needLowestLevel = true;
+    }
+    //这里相当于默认了行列号为0
+    let col = 0;
+    let row = 0;
+    let defaultCol;
+    let defaultRow;
+    let rowTree = this.rowTree;
+    let columnTree = this.columnTree;
+    let toFindIndicator;
+    // 按照colHeaderPaths维度层级寻找到底层维度值节点
+    if (colHeaderPaths) {
+      for (let i = 0; i < colHeaderPaths.length; i++) {
+        const colDimension = colHeaderPaths[i];
+        if (colDimension.indicatorKey) {
+          toFindIndicator = colDimension.indicatorKey;
+          break;
+        }
+        for (let j = 0; j < columnTree.length; j++) {
+          const dimension = columnTree[j];
+          if (
+            !isValid(colDimension.indicatorKey) &&
+            dimension.dimensionKey === colDimension.dimensionKey &&
+            dimension.value === colDimension.value
+          ) {
+            columnTree = dimension.children;
+            if (!columnTree || columnTree.length === 0 || columnTree?.[0]?.indicatorKey) {
+              col += j;
+            }
+            break;
+          }
+          col += dimension.children?.[0]?.indicatorKey ? 0 : dimension.children?.length ?? 0;
+        }
+      }
+    }
+    // 按照rowHeaderPaths维度层级寻找到底层维度值节点
+    if (rowHeaderPaths) {
+      for (let i = 0; i < rowHeaderPaths.length; i++) {
+        const rowDimension = rowHeaderPaths[i];
+        if (rowDimension.indicatorKey) {
+          toFindIndicator = rowDimension.indicatorKey;
+          break;
+        }
+        // 判断级别，找到distDimension
+        // let isCol = false;
+        for (let j = 0; j < rowTree.length; j++) {
+          const dimension = rowTree[j];
+          if (
+            !isValid(rowDimension.indicatorKey) &&
+            dimension.dimensionKey === rowDimension.dimensionKey &&
+            dimension.value === rowDimension.value
+          ) {
+            rowTree = dimension.children;
+            if (!rowTree || rowTree.length === 0 || rowTree?.[0]?.indicatorKey) {
+              row += j;
+            }
+            break;
+          }
+          row += dimension.children?.[0]?.indicatorKey ? 0 : dimension.children?.length ?? 0;
+        }
+      }
+    }
+    col =
+      (this.indicatorsAsCol ? col * this.indicatorKeys.length + this.indicatorKeys.indexOf(toFindIndicator) : col) +
+      this.rowHeaderLevelCount;
+
+    row =
+      (!this.indicatorsAsCol ? row * this.indicatorKeys.length + this.indicatorKeys.indexOf(toFindIndicator) : row) +
+      this.columnHeaderLevelCount;
+    if (isValid(col) || isValid(row)) {
+      return { col: col ?? defaultCol, row: row ?? defaultRow };
+    }
+    return undefined;
   }
   getHeaderDimension(col: number, row: number): IDimension | undefined {
     if (this.isHeader(col, row)) {
