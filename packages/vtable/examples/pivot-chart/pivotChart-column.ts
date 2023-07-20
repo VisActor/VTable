@@ -9294,7 +9294,8 @@ export function createTable() {
       selectionStyle: {
         cellBgColor: ''
       }
-    })
+    }),
+    widthMode: 'adaptive'
     // hover: {
     //   disableHeaderHover:false,
     //   disableHover: true
