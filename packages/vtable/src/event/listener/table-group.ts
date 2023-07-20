@@ -431,7 +431,7 @@ export function bindTableGroupListener(eventManeger: EventManeger) {
   });
 
   table.scenegraph.tableGroup.addEventListener('click', (e: FederatedPointerEvent) => {
-    console.log('click', e);
+    console.log('click', e.clone());
     if (table.stateManeger.columnResize.resizing || table.stateManeger.columnMove.moving) {
       return;
     }

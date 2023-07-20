@@ -44,6 +44,7 @@ export class PivotChart extends BaseTable implements PivotTableAPI {
   dataset?: Dataset; //数据处理对象  开启数据透视分析的表
 
   _selectedDataItemsInChart: any[] = [];
+  _selectedDimensionInChart: { key: string; value: string } | null = null;
   _chartEventMap: Record<string, AnyFunction> = {};
   constructor(options: PivotChartConstructorOptions) {
     super(options);

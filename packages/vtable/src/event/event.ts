@@ -17,6 +17,7 @@ import { bindScrollBarListener } from './listener/scroll-bar';
 import { bindContainerDomListener } from './listener/container-dom';
 import { bindTouchListener } from './listener/touch';
 import type { SceneEvent } from './util';
+import { bindAxisClickEvent } from './pivot-chart/axis-click';
 
 export class EventManeger {
   table: BaseTableAPI;
@@ -97,6 +98,9 @@ export class EventManeger {
 
     // chart hover
     bindSparklineHoverEvent(this.table);
+
+    // axis click
+    bindAxisClickEvent(this.table);
   }
 
   dealTableHover(eventArgsSet?: SceneEvent) {

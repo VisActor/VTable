@@ -71,9 +71,9 @@ export class Chart extends Group {
     const tableBound = table.scenegraph.tableGroup.globalAABBBounds;
     const bodyBound = new Bounds();
     bodyBound.x1 = tableBound.x1 + table.getFrozenColsWidth();
-    bodyBound.x2 = tableBound.x2;
+    bodyBound.x2 = tableBound.x2 - table.getRightFrozenColsWidth();
     bodyBound.y1 = tableBound.y1 + table.getFrozenRowsHeight();
-    bodyBound.y2 = tableBound.y2;
+    bodyBound.y2 = tableBound.y2 - table.getBottomFrozenRowsHeight();
     const clipBound = bodyBound.intersect({
       x1: x1 - table.scrollLeft,
       x2: x2 - table.scrollLeft,
