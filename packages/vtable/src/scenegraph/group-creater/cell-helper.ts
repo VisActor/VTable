@@ -27,6 +27,7 @@ import { getStyleTheme } from '../../core/tableHelper';
 import { isPromise } from '../../tools/helper';
 import { dealPromiseData } from '../utils/deal-promise-data';
 import { CartesianAxis } from '../../components/axis/axis';
+import type { PivotLayoutMap } from '../../layout/pivot-layout';
 
 export function createCell(
   type: ColumnTypeOption,
@@ -252,8 +253,9 @@ export function createCell(
       padding,
       table.getCellValue(col, row),
       (define as ChartColumnDefine).chartType,
-      // (define as ChartColumnDefine).chartSpec,
-      table.internalProps.layoutMap.getChartSpec(col, row),
+      table.isPivotChart()
+        ? (table.internalProps.layoutMap as PivotLayoutMap).getChartSpec(col, row)
+        : (define as ChartColumnDefine).chartSpec,
       chartInstance,
       table,
       cellTheme

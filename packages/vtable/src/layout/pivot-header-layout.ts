@@ -1944,4 +1944,14 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
       );
     }
   }
+
+  getAxisConfigInPivotChart(col: number, row: number): any {
+    return undefined;
+  }
+  isEmpty(col: number, row: number) {
+    return false;
+  }
+  getChartAxes(col: number, row: number): any[] {
+    return [];
+  }
 }

@@ -1,15 +1,15 @@
 import { cloneDeep } from '@visactor/vutils';
-import type { PivoLayoutMap } from '../pivot-layout';
+import type { PivotLayoutMap } from '../pivot-layout';
 
-export function getRawChartSpec(col: number, row: number, layout: PivoLayoutMap): any {
+export function getRawChartSpec(col: number, row: number, layout: PivotLayoutMap): any {
   const paths = layout.getCellHeaderPaths(col, row);
   let indicatorObj;
   if (layout.indicatorsAsCol) {
     const indicatorKey = paths.colHeaderPaths.find(colPath => colPath.indicatorKey)?.indicatorKey;
-    indicatorObj = layout._indicatorObjects.find(indicator => indicator.indicatorKey === indicatorKey);
+    indicatorObj = layout.columnObjects.find(indicator => indicator.indicatorKey === indicatorKey);
   } else {
     const indicatorKey = paths.rowHeaderPaths.find(rowPath => rowPath.indicatorKey)?.indicatorKey;
-    indicatorObj = layout._indicatorObjects.find(indicator => indicator.indicatorKey === indicatorKey);
+    indicatorObj = layout.columnObjects.find(indicator => indicator.indicatorKey === indicatorKey);
   }
   // const indicatorKeys: string[] = [];
   const chartSpec = indicatorObj?.chartSpec;
@@ -17,7 +17,7 @@ export function getRawChartSpec(col: number, row: number, layout: PivoLayoutMap)
   return chartSpec;
 }
 
-export function getChartSpec(col: number, row: number, layout: PivoLayoutMap): any {
+export function getChartSpec(col: number, row: number, layout: PivotLayoutMap): any {
   let chartSpec = layout.getRawChartSpec(col, row);
   if (chartSpec) {
     chartSpec = cloneDeep(chartSpec);
@@ -28,7 +28,7 @@ export function getChartSpec(col: number, row: number, layout: PivoLayoutMap): a
   return null;
 }
 
-export function getChartAxes(col: number, row: number, layout: PivoLayoutMap): any {
+export function getChartAxes(col: number, row: number, layout: PivotLayoutMap): any {
   const axes = [];
   if (layout.indicatorsAsCol) {
     const indicatorKeys = layout.getIndicatorKeyInChartSpec(col, row);
@@ -37,7 +37,7 @@ export function getChartAxes(col: number, row: number, layout: PivoLayoutMap): a
       const data = layout.dataset.collectedValues[key];
       const range =
         data[
-          layout.colKeysPath[colIndex][
+          layout.getColKeysPath()[colIndex][
             layout.columnHeaderLevelCount - 1 - (layout.hasIndicatorAxisInColumnHeader ? 1 : 0)
           ]
         ];
@@ -54,8 +54,8 @@ export function getChartAxes(col: number, row: number, layout: PivoLayoutMap): a
     const rowDimensionKey = layout.getDimensionKeyInChartSpec(layout.rowHeaderLevelCount, col)[0];
     const data = layout.dataset.collectedValues[rowDimensionKey];
     const recordRow = layout.getRecordIndexByRow(row);
-    const rowPath = layout.rowKeysPath[recordRow];
-    const domain = data[rowPath[rowPath.length - 1]];
+    const rowPath = layout.getRowKeysPath()[recordRow];
+    const domain = data[rowPath[rowPath.length - 1]] as Set<string>;
     axes.push({
       type: 'band',
       orient: 'left',
@@ -74,7 +74,7 @@ export function getChartAxes(col: number, row: number, layout: PivoLayoutMap): a
     const rowIndex = layout.getRecordIndexByRow(row);
     indicatorKeys.forEach((key, index) => {
       const data = layout.dataset.collectedValues[key];
-      const range = data[layout.rowKeysPath[rowIndex][layout.rowHeaderLevelCount - 2]];
+      const range = data[layout.getRowKeysPath()[rowIndex][layout.rowHeaderLevelCount - 2]];
       axes.push({
         type: 'linear',
         orient: index === 0 ? 'left' : 'right',
@@ -88,8 +88,8 @@ export function getChartAxes(col: number, row: number, layout: PivoLayoutMap): a
     const columnDimensionKey = layout.getDimensionKeyInChartSpec(col, layout.columnHeaderLevelCount)[0];
     const data = layout.dataset.collectedValues[columnDimensionKey];
     const recordCol = layout.getRecordIndexByCol(col);
-    const colPath = layout.colKeysPath[recordCol];
-    const domain = data[colPath[colPath.length - 1]];
+    const colPath = layout.getColKeysPath()[recordCol];
+    const domain = data[colPath[colPath.length - 1]] as Set<string>;
     axes.push({
       type: 'band',
       orient: 'bottom',

@@ -1,6 +1,6 @@
-import type { PivoLayoutMap } from '../pivot-layout';
+import type { PivotLayoutMap } from '../pivot-layout';
 
-export function getAxisConfigInPivotChart(col: number, row: number, layout: PivoLayoutMap): any {
+export function getAxisConfigInPivotChart(col: number, row: number, layout: PivotLayoutMap): any {
   if (!layout._table.isPivotChart()) {
     return undefined;
   }
@@ -20,7 +20,7 @@ export function getAxisConfigInPivotChart(col: number, row: number, layout: Pivo
       }
       const data = layout.dataset.collectedValues[defaultKey];
       const index = layout.getRecordIndexByCol(col);
-      const range = data[layout.colKeysPath[index][layout.columnHeaderLevelCount - 2]];
+      const range = data[layout.getColKeysPath()[index][layout.columnHeaderLevelCount - 2]];
 
       // 顶侧副指标轴
       return {
@@ -64,7 +64,9 @@ export function getAxisConfigInPivotChart(col: number, row: number, layout: Pivo
       const index = layout.getRecordIndexByCol(col);
       const range =
         data[
-          layout.colKeysPath[index][layout.columnHeaderLevelCount - 1 - (layout.hasIndicatorAxisInColumnHeader ? 1 : 0)]
+          layout.getColKeysPath()[index][
+            layout.columnHeaderLevelCount - 1 - (layout.hasIndicatorAxisInColumnHeader ? 1 : 0)
+          ]
         ];
       let indicatorInfo = null;
       indicatorKeys.forEach(key => {
@@ -117,8 +119,8 @@ export function getAxisConfigInPivotChart(col: number, row: number, layout: Pivo
       const data = layout.dataset.collectedValues[rowDimensionKey];
 
       const recordRow = layout.getRecordIndexByRow(row);
-      const rowPath = layout.rowKeysPath[recordRow];
-      const domain = data[rowPath[rowPath.length - 1]];
+      const rowPath = layout.getRowKeysPath()[recordRow];
+      const domain = data[rowPath[rowPath.length - 1]] as Set<string>;
 
       // 底部维度轴
       return {
@@ -152,7 +154,7 @@ export function getAxisConfigInPivotChart(col: number, row: number, layout: Pivo
       const defaultKey = indicatorKeys[0];
       const data = layout.dataset.collectedValues[defaultKey];
       const index = layout.getRecordIndexByRow(row);
-      const range = data[layout.rowKeysPath[index][layout.rowHeaderLevelCount - 2]];
+      const range = data[layout.getRowKeysPath()[index][layout.rowHeaderLevelCount - 2]];
       let indicatorInfo = null;
       indicatorKeys.forEach(key => {
         const info = layout.getIndicatorInfo(key);
@@ -190,7 +192,7 @@ export function getAxisConfigInPivotChart(col: number, row: number, layout: Pivo
       }
       const data = layout.dataset.collectedValues[defaultKey];
       const index = layout.getRecordIndexByRow(row);
-      const range = data[layout.rowKeysPath[index][layout.rowHeaderLevelCount - 2]];
+      const range = data[layout.getRowKeysPath()[index][layout.rowHeaderLevelCount - 2]];
 
       // 右侧副指标轴
       return {
@@ -218,8 +220,8 @@ export function getAxisConfigInPivotChart(col: number, row: number, layout: Pivo
       const data = layout.dataset.collectedValues[columnDimensionKey];
 
       const recordCol = layout.getRecordIndexByCol(col);
-      const colPath = layout.colKeysPath[recordCol];
-      const domain = data[colPath[colPath.length - 1]];
+      const colPath = layout.getColKeysPath()[recordCol];
+      const domain = data[colPath[colPath.length - 1]] as Set<string>;
 
       // 底部维度轴
       return {

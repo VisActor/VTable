@@ -4,13 +4,14 @@ import { Bounds, cloneDeep } from '@visactor/vutils';
 import type { BaseTableAPI } from '../../ts-types/base-table';
 import type { PivotChart } from '../../PivotChart';
 import { clearChartCacheImage, updateChartSize } from '../refresh-node/update-chart';
-import type { PivoLayoutMap } from '../../layout/pivot-layout';
+import type { PivotLayoutMap } from '../../layout/pivot-layout';
 
 interface IChartGraphicAttribute extends IGroupGraphicAttribute {
   canvas: HTMLCanvasElement;
   dataId: string;
   data: any;
   spec: any;
+  axes: any;
   ClassType: any;
   chartInstance: any;
   cellPadding: number[];
