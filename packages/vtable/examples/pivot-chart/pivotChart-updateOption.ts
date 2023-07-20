@@ -9238,8 +9238,8 @@ export function createTable() {
       selectionStyle: {
         cellBgColor: ''
       }
-    }),
-    widthMode: 'adaptive'
+    })
+    // widthMode: 'adaptive'
   };
 
   const tableInstance = new VTable.PivotChart(option);
@@ -9270,9 +9270,9 @@ export function createTable() {
         selectionStyle: {
           cellBgColor: ''
         }
-      })
-      // widthMode:'adaptive'
+      }),
+      widthMode: 'adaptive'
     };
     tableInstance.updateOption(option1);
-  }, 6000);
+  }, 3000);
 }

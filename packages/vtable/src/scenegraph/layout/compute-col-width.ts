@@ -183,7 +183,7 @@ export function computeColWidth(
     return table.getColWidth(col);
   }
 
-  return computeAutoColWidth(col, startRow, endRow, forceCompute, table);
+  return computeAutoColWidth(width, col, startRow, endRow, forceCompute, table);
 }
 
 /**
@@ -196,6 +196,7 @@ export function computeColWidth(
  * @return {*}
  */
 function computeAutoColWidth(
+  widthDeifne: string | number,
   col: number,
   startRow: number,
   endRow: number,
@@ -209,15 +210,17 @@ function computeAutoColWidth(
     // 超过5000行启动列宽自动计算采样
     deltaRow = Math.ceil((endRow - startRow) / 5000);
   }
-  // 如果是透视图 并且指标是以行展示 计算列宽需要根据x轴的值域范围
-  if (
-    table.isPivotChart() &&
-    !(table.internalProps.layoutMap as PivoLayoutMap).indicatorsAsCol &&
-    col >= table.rowHeaderLevelCount
-  ) {
-    const optimunWidth = (table.internalProps.layoutMap as PivoLayoutMap).getOptimunWidthForChart(col);
-    if (optimunWidth > 0) {
-      return optimunWidth;
+  // 如果是透视图
+  if (table.isPivotChart() && col >= table.rowHeaderLevelCount) {
+    if (!(table.internalProps.layoutMap as PivoLayoutMap).indicatorsAsCol) {
+      //并且指标是以行展示 计算列宽需要根据x轴的值域范围
+      const optimunWidth = (table.internalProps.layoutMap as PivoLayoutMap).getOptimunWidthForChart(col);
+      if (optimunWidth > 0) {
+        return optimunWidth;
+      }
+    } else {
+      //直接拿表头的默认列宽
+      return table.defaultColWidth;
     }
   }
 
@@ -230,7 +233,9 @@ function computeAutoColWidth(
     }
 
     // 判断透视表如果在指标
-    const indicatorWidth = computeIndicatorWidth(col, row, forceCompute, table);
+    // const indicatorWidth = computeIndicatorWidth(col, row, forceCompute, table);
+    // const indicatorWidth = table.internalProps.layoutMap.getColumnWidthDefined(col);
+    const indicatorWidth = widthDeifne;
     if (typeof indicatorWidth === 'number') {
       maxWidth = Math.max(indicatorWidth, maxWidth);
       continue;
