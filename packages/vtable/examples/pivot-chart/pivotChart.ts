@@ -61,10 +61,19 @@ export function createTable() {
       dimensionKey: '230417171050031',
       dimensionTitle: '国家',
       headerStyle: {
-        color: 'red'
+        color: 'red',
+        textAlign: 'center'
       }
     },
-    '230417171050028'
+    {
+      dimensionKey: '230417171050028',
+      dimensionTitle: '类别',
+      headerStyle: {
+        color: 'red',
+        borderLineWidth: [0, 0, 1, 1]
+      }
+    }
+
     // '230417170554008'
   ];
   const rows = [
@@ -72,7 +81,10 @@ export function createTable() {
       dimensionKey: '230417170554012',
       dimensionTitle: '邮寄方式',
       headerStyle: {
-        color: 'red'
+        color: 'red',
+        borderLineWidth: [1, 0, 1, 0],
+        autoWrapText: true,
+        textStick: true
       }
     }
   ];
@@ -83,6 +95,14 @@ export function createTable() {
       width: 'auto',
       columnType: 'chart',
       chartType: 'vchart',
+      headerStyle: {
+        color: 'red',
+        borderLineWidth: [1, 0, 1, 0],
+        autoWrapText: true
+      },
+      style: {
+        padding: 1
+      },
       chartSpec: {
         // type: 'common',
         stack: true,
@@ -118,9 +138,6 @@ export function createTable() {
             }
           }
         }
-      },
-      style: {
-        padding: 1
       }
     },
     {
@@ -128,6 +145,14 @@ export function createTable() {
       caption: '销售额 & 利润',
       columnType: 'chart',
       chartType: 'vchart',
+      headerStyle: {
+        color: 'red',
+        borderLineWidth: [1, 0, 1, 0],
+        autoWrapText: true
+      },
+      style: {
+        padding: 1
+      },
       chartSpec: {
         type: 'common',
         data: {
@@ -185,9 +210,6 @@ export function createTable() {
           { orient: 'left', visible: true, label: { visible: true } },
           { orient: 'bottom', visible: true }
         ]
-      },
-      style: {
-        padding: 1
       }
     },
     {
@@ -196,6 +218,14 @@ export function createTable() {
       width: 'auto',
       columnType: 'chart',
       chartType: 'vchart',
+      headerStyle: {
+        color: 'red',
+        borderLineWidth: [1, 0, 1, 0],
+        autoWrapText: true
+      },
+      style: {
+        padding: 1
+      },
       chartSpec: {
         // type: 'common',
         stack: false,
@@ -240,9 +270,6 @@ export function createTable() {
             }
           }
         }
-      },
-      style: {
-        padding: 1
       }
     }
   ];
@@ -9234,25 +9261,45 @@ export function createTable() {
     parentElement: document.getElementById(Table_CONTAINER_DOM_ID),
     records,
     defaultRowHeight: 200,
-    defaultHeaderRowHeight: 50,
+    defaultHeaderRowHeight: 30,
     defaultColWidth: 280,
-    defaultHeaderColWidth: 100,
-    indicatorTitle: '指标',
+    defaultHeaderColWidth: [80, 50],
+
     corner: {
       titleOnDimension: 'row',
       headerStyle: {
-        autoWrapText: true
+        autoWrapText: true,
+        padding: 0
       }
     },
-    theme: VTable.themes.ARCO.extends({
+    theme: {
+      bodyStyle: {
+        borderColor: 'gray',
+        borderLineWidth: [1, 0, 0, 1]
+      },
+      headerStyle: {
+        borderColor: 'gray',
+        borderLineWidth: [0, 0, 0, 1],
+        hover: {
+          cellBgColor: '#CCE0FF'
+        }
+      },
+      cornerHeaderStyle: {
+        borderColor: 'gray',
+        borderLineWidth: [0, 1, 0, 0],
+        hover: {
+          cellBgColor: ''
+        }
+      },
       selectionStyle: {
-        cellBgColor: ''
+        cellBgColor: '',
+        cellBorderColor: ''
+      },
+      frameStyle: {
+        borderLineWidth: 0
       }
-    })
-    // hover: {
-    //   disableHeaderHover:false,
-    //   disableHover: true
-    // },
+    }
+
     // select: {
     //   disableSelect: true
     // }
