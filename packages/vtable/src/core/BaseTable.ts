@@ -1732,9 +1732,10 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     internalProps.limitMaxAutoWidth = options.limitMaxAutoWidth ?? 450;
     // 生成scenegraph
     this.dataSet = new DataSet();
-    this.scenegraph = new Scenegraph(this);
-    this.stateManeger = new StateManeger(this);
-    this.eventManeger = new EventManeger(this);
+    this.scenegraph.clearCells();
+    this.stateManeger.initState();
+    // this.stateManeger = new StateManeger(this);
+    // this.eventManeger = new EventManeger(this);
 
     if (options.legends) {
       internalProps.legends = new TableLegend(options.legends, this);

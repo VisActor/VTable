@@ -424,12 +424,11 @@ export function createTable() {
         corner: {
           titleOnDimension: 'row',
           headerStyle: {
-            textStick: true,
             bgColor: '#356b9c',
             color: '#00ffff'
           }
         },
-        widthMode: 'standard'
+        widthMode: 'adaptive'
       };
       const tableInstance = new VTable.PivotTable(option);
       // 只为了方便控制太调试用，不要拷贝

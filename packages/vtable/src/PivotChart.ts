@@ -195,6 +195,9 @@ export class PivotChart extends BaseTable implements PivotTableAPI {
       this.setRecords(options.records as any, undefined);
     } else {
       this._resetFrozenColCount();
+      // 生成单元格场景树
+      this.scenegraph.createSceneGraph();
+      this.invalidate();
     }
 
     return new Promise(resolve => {
@@ -213,23 +216,6 @@ export class PivotChart extends BaseTable implements PivotTableAPI {
     if (this.internalProps.enableDataAnalysis) {
       internalProps.layoutMap = new PivoLayoutMap(this, this.dataset);
     }
-    // else if (Array.isArray(this.options.columnTree) || Array.isArray(this.options.rowTree)) {
-    //   internalProps.layoutMap = new PivotHeaderLayoutMap(this);
-    //   //判断如果数据是二维数组 则标识已经分析过 直接从二维数组挨个读取渲染即可
-    //   //不是二维数组 对应是个object json对象 则表示flat数据，需要对应行列维度进行转成方便数据查询的行列树结构
-    //   if (this.options.records?.[0]?.constructor !== Array) {
-    //     this.flatDataToObjects = new DatesetForPivotChart(
-    //       {
-    //         rows: internalProps.layoutMap.rowDimensionKeys,
-    //         columns: internalProps.layoutMap.colDimensionKeys,
-    //         indicators: internalProps.layoutMap.indicatorKeys,
-    //         indicatorsAsCol: internalProps.layoutMap.indicatorsAsCol,
-    //         indicatorDimensionKey: internalProps.layoutMap.indicatorDimensionKey
-    //       },
-    //       this.options.records
-    //     );
-    //   }
-    // }
 
     //设置列宽
     for (let col = 0; col < internalProps.layoutMap.columnWidths.length; col++) {
