@@ -1,5 +1,5 @@
 import type { PivotChart } from '../../PivotChart';
-import type { PivoLayoutMap } from '../../layout/pivot-layout';
+import type { PivotLayoutMap } from '../../layout/pivot-layout';
 import type { Chart } from '../graphic/chart';
 import type { Group } from '../graphic/group';
 import type { Scenegraph } from '../scenegraph';
@@ -131,7 +131,7 @@ export function updateChartState(scenegraph: Scenegraph, datum: any) {
       return;
     }
 
-    (table.internalProps.layoutMap as PivoLayoutMap).updateDataStateToChartInstance();
+    (table.internalProps.layoutMap as PivotLayoutMap).updateDataStateToChartInstance();
     // 清楚chart缓存图片
     clearChartCacheImage(scenegraph);
   }

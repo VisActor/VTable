@@ -26,7 +26,15 @@ import { getChartAxes, getChartSpec, getRawChartSpec } from './pivot-chart/get-c
 /**
  * 简化配置，包含数据处理的 布局辅助计算类
  */
-export class PivoLayoutMap implements LayoutMapAPI {
+
+const EMPTY_HEADER: HeaderData = {
+  isEmpty: true,
+  id: undefined,
+  field: undefined,
+  headerType: undefined,
+  define: undefined
+};
+export class PivotLayoutMap implements LayoutMapAPI {
   private _headerObjects: HeaderData[] = [];
   private _headerObjectMap: { [key: LayoutObjectId]: HeaderData } = {};
   // private _emptyDataCache = new EmptyDataCache();
@@ -340,7 +348,7 @@ export class PivoLayoutMap implements LayoutMapAPI {
     return dimensionInfo;
   }
 
-  private getIndicatorInfo(indicatorKey: string, indicatorValue = '') {
+  getIndicatorInfo(indicatorKey: string, indicatorValue = '') {
     const indicatorInfo = this.indicatorsDefine?.find(indicator => {
       if (typeof indicator === 'string') {
         return false;
@@ -354,6 +362,13 @@ export class PivoLayoutMap implements LayoutMapAPI {
       return false;
     }) as IIndicator;
     return indicatorInfo;
+  }
+
+  getColKeysPath() {
+    return this.colKeysPath;
+  }
+  getRowKeysPath() {
+    return this.rowKeysPath;
   }
   /**
    * 初始化_headerObjects
@@ -818,7 +833,7 @@ export class PivoLayoutMap implements LayoutMapAPI {
   }
   getHeader(col: number, row: number): HeaderData {
     const id = this.getCellId(col, row);
-    return this._headerObjectMap[id as number]! ?? { isEmpty: true };
+    return this._headerObjectMap[id as number]! ?? EMPTY_HEADER;
   }
   getHeaderField(col: number, row: number) {
     const id = this.getCellId(col, row);

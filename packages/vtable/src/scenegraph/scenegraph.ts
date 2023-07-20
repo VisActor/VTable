@@ -239,9 +239,9 @@ export class Scenegraph {
       height: 0,
       visible: false,
       pickable: false,
-      fill: this.table.theme.cornerHeaderStyle.bgColor,
-      stroke: this.table.theme.cornerHeaderStyle.borderColor,
-      lineWidth: this.table.theme.cornerHeaderStyle.borderLineWidth
+      fill: this.table.theme.cornerHeaderStyle.bgColor as string,
+      stroke: this.table.theme.cornerHeaderStyle.borderColor as string,
+      lineWidth: this.table.theme.cornerHeaderStyle.borderLineWidth as number
     });
     rightTopCellGroup.role = 'corner-frozen';
     this.rightTopCellGroup = rightTopCellGroup;
@@ -253,9 +253,9 @@ export class Scenegraph {
       height: 0,
       visible: false,
       pickable: false,
-      fill: this.table.theme.cornerHeaderStyle.bgColor,
-      stroke: this.table.theme.cornerHeaderStyle.borderColor,
-      lineWidth: this.table.theme.cornerHeaderStyle.borderLineWidth
+      fill: this.table.theme.cornerHeaderStyle.bgColor as string,
+      stroke: this.table.theme.cornerHeaderStyle.borderColor as string,
+      lineWidth: this.table.theme.cornerHeaderStyle.borderLineWidth as number
     });
     leftBottomCellGroup.role = 'corner-frozen';
     this.leftBottomCellGroup = leftBottomCellGroup;
@@ -267,9 +267,9 @@ export class Scenegraph {
       height: 0,
       visible: false,
       pickable: false,
-      fill: this.table.theme.cornerHeaderStyle.bgColor,
-      stroke: this.table.theme.cornerHeaderStyle.borderColor,
-      lineWidth: this.table.theme.cornerHeaderStyle.borderLineWidth
+      fill: this.table.theme.cornerHeaderStyle.bgColor as string,
+      stroke: this.table.theme.cornerHeaderStyle.borderColor as string,
+      lineWidth: this.table.theme.cornerHeaderStyle.borderLineWidth as number
     });
     rightBottomCellGroup.role = 'corner-frozen';
     this.rightBottomCellGroup = rightBottomCellGroup;

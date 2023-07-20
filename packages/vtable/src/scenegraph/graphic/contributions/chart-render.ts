@@ -53,7 +53,7 @@ export class DefaultCanvasChartRender implements IGraphicRender {
     } else {
       // console.log('viewBox', viewBox);
       const { axes } = chart.attribute;
-      axes.forEach((axis, index) => {
+      axes.forEach((axis: any, index: number) => {
         if (axis.type === 'linear') {
           const chartAxis = chartInstance._chart._components[index];
           chartAxis._domain = {

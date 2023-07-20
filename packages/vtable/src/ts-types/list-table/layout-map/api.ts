@@ -87,6 +87,9 @@ export interface HeaderData extends WidthData {
    * 表头描述 鼠标hover会提示该信息
    */
   description?: string | ((args: CellInfo) => string);
+
+  // header内容为空
+  isEmpty?: boolean;
 }
 
 export interface WidthData {
