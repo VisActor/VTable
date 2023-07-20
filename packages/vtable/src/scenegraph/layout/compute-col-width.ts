@@ -237,7 +237,7 @@ function computeAutoColWidth(
     }
 
     const cellType = table.isHeader(col, row)
-      ? table._getHeaderLayoutMap(col, row).headerType
+      ? table._getHeaderLayoutMap(col, row)?.headerType
       : table.getBodyColumnType(col, row);
     if (cellType !== 'text' && cellType !== 'link' && cellType !== 'progressbar') {
       // text&link&progressbar测量文字宽度

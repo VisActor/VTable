@@ -310,6 +310,9 @@ export interface BaseTableAPI {
   frozenRowCount: number;
   /** 表格的冻结列数 包括表头在内 */
   frozenColCount: number;
+
+  bottomFrozenRowCount: number;
+  rightFrozenColCount: number;
   /** 当前表格默认表头行高 */
   defaultHeaderRowHeight: number | number[];
   /** 当前表格默认行高 */

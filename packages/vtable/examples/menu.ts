@@ -144,6 +144,10 @@ export const menus = [
       },
       {
         path: 'pivot',
+        name: 'pivot-frozen'
+      },
+      {
+        path: 'pivot',
         name: 'pivot-basic-updateOption'
       }
     ]

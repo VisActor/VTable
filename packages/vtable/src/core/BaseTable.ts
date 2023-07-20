@@ -109,6 +109,9 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
   eventManeger?: EventManeger;
   _pixelRatio: number;
 
+  bottomFrozenRowCount: number = 0;
+  rightFrozenColCount: number = 0;
+
   static get EVENT_TYPE(): typeof TABLE_EVENT_TYPE {
     return TABLE_EVENT_TYPE;
   }
