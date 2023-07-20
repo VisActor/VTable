@@ -21,6 +21,10 @@ export const menus = [
       {
         path: 'list',
         name: 'list-chart'
+      },
+      {
+        path: 'list',
+        name: 'list-updateOption'
       }
     ]
   },
@@ -55,6 +59,10 @@ export const menus = [
       {
         path: 'pivot-chart',
         name: 'pivotChart-legend'
+      },
+      {
+        path: 'pivot-chart',
+        name: 'pivotChart-updateOption'
       }
     ]
   },

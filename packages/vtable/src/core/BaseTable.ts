@@ -109,9 +109,6 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
   eventManeger?: EventManeger;
   _pixelRatio: number;
 
-  _cellToBeInvalidatedNextFrame: Set<string>;
-  _willNextFrameInvalidate: boolean;
-
   static get EVENT_TYPE(): typeof TABLE_EVENT_TYPE {
     return TABLE_EVENT_TYPE;
   }
@@ -251,9 +248,6 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     } else {
       this._updateSize();
     }
-
-    this._cellToBeInvalidatedNextFrame = new Set(); // for all
-    this._willNextFrameInvalidate = false;
 
     this.options = options;
     internalProps.theme = themes.of(options.theme ?? themes.DEFAULT);
@@ -1665,7 +1659,8 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
       menu,
       select: click,
       pixelRatio,
-      widthMode
+      widthMode,
+      customRender
     } = options;
     if (pixelRatio && pixelRatio !== this.internalProps.pixelRatio) {
       this.internalProps.pixelRatio = pixelRatio;
@@ -1700,6 +1695,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     }
 
     this.widthMode = widthMode ?? 'standard';
+    this.customRender = customRender;
     // 更新protectedSpace
     const internalProps: IBaseTableProtected = this.internalProps;
     if (Env.mode !== 'node') {
@@ -1719,15 +1715,35 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     internalProps.dragHeaderMode = dragHeaderMode;
 
     internalProps.cellTextOverflows = {};
+    internalProps._rowHeightsMap = new NumberMap();
+    internalProps._rowRangeHeightsMap = new Map();
+    internalProps._colRangeWidthsMap = new Map();
+    this.colWidthsMap = new NumberMap();
+    this.colContentWidthsMap = new NumberMap();
+    this.colWidthsLimit = {};
 
     internalProps.theme = themes.of(options.theme ?? themes.DEFAULT);
-
+    // this._updateSize();
     //设置是否自动撑开的配置
     internalProps.autoRowHeight = options.autoRowHeight ?? false;
     //是否统一设置为多行文本
     internalProps.autoWrapText = options.autoWrapText;
     internalProps.allowFrozenColCount = options.allowFrozenColCount ?? internalProps.colCount;
     internalProps.limitMaxAutoWidth = options.limitMaxAutoWidth ?? 450;
+    // 生成scenegraph
+    this.dataSet = new DataSet();
+    this.scenegraph = new Scenegraph(this);
+    this.stateManeger = new StateManeger(this);
+    this.eventManeger = new EventManeger(this);
+
+    if (options.legends) {
+      internalProps.legends = new TableLegend(options.legends, this);
+      this.scenegraph.tableGroup.setAttributes({
+        x: this.tableX,
+        y: this.tableY
+      });
+    }
+
     internalProps.tooltip = Object.assign(
       {
         renderMode: 'html',
@@ -1749,6 +1765,8 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     if (internalProps.menu.renderMode === 'html' && !internalProps.menuHandler) {
       internalProps.menuHandler = new MenuHandler(this);
     }
+    this.headerStyleCache = new Map();
+    this.bodyStyleCache = new Map();
   }
   /**
    * 获取固定行总高

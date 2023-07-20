@@ -133,6 +133,7 @@ export class PivotChart extends BaseTable implements PivotTableAPI {
     // const range = internalProps.selection.range; //保留原有单元格选中状态
     super.updateOption(options);
 
+    this.setCustomStateNameToSpec();
     // 更新protectedSpace
     internalProps.dataConfig = {};
     this.internalProps.enableDataAnalysis = true;
@@ -162,9 +163,18 @@ export class PivotChart extends BaseTable implements PivotTableAPI {
         }
         return keys;
       }, []);
+
       this.internalProps.dataConfig.collectValuesBy = this._generateCollectValuesConfig(columnKeys, rowKeys);
       this.internalProps.dataConfig.aggregationRules = this._generateAggregationRules();
-      this.dataset = new Dataset(internalProps.dataConfig, rowKeys, columnKeys, indicatorKeys, options.records);
+      this.dataset = new Dataset(
+        this.internalProps.dataConfig,
+        rowKeys,
+        columnKeys,
+        indicatorKeys,
+        options.records,
+        options.columnTree,
+        options.rowTree
+      );
     }
     // 更新表头
     this.refreshHeader();
@@ -723,6 +733,7 @@ export class PivotChart extends BaseTable implements PivotTableAPI {
 
     return aggregationRules;
   }
+  /** 将spec中的 selected和selected_reverse  更名为vtable_selected和vtable_selected_reverse */
   private setCustomStateNameToSpec() {
     /** 修改设置的selected 和 dselected_reverse的名字加前缀vtable */
     const setCustomStateName = (spec: any) => {
