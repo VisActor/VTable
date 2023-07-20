@@ -1268,6 +1268,13 @@ export class PivotLayoutMap implements LayoutMapAPI {
               return true;
             });
             return !!match;
+          } else if ((this._table as PivotChart)._selectedDimensionInChart) {
+            // 判断维度点击
+            const { key, value } = (this._table as PivotChart)._selectedDimensionInChart;
+            if (datum[key] === value) {
+              return true;
+            }
+            return false;
           }
           return false;
         }
@@ -1284,6 +1291,13 @@ export class PivotLayoutMap implements LayoutMapAPI {
               return true;
             });
             return !match;
+          } else if ((this._table as PivotChart)._selectedDimensionInChart) {
+            // 判断维度点击
+            const { key, value } = (this._table as PivotChart)._selectedDimensionInChart;
+            if (datum[key] !== value) {
+              return true;
+            }
+            return false;
           }
           return false;
         }
