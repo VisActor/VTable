@@ -55,6 +55,8 @@ import type { FocusInput } from '../core/FouseInput';
 import type { ITableLegendOption } from './component/legend';
 import type { TableLegend } from '../components/legend/legend';
 import type { DataSet } from '@visactor/vdataset';
+import type { Title } from '../components/title/title';
+import type { ITitle } from './component/title';
 
 export interface IBaseTableProtected {
   element: HTMLElement;
@@ -169,6 +171,7 @@ export interface IBaseTableProtected {
    */
   limitMaxAutoWidth?: boolean | number;
 
+  title?: Title;
   legends?: TableLegend;
 }
 export interface BaseTableConstructorOptions {
@@ -296,6 +299,7 @@ export interface BaseTableConstructorOptions {
   maintainedDataCount?: number;
 
   legends?: ITableLegendOption;
+  title?: ITitle;
 }
 export interface BaseTableAPI {
   /** 表格的行数 */

@@ -25,6 +25,10 @@ export const menus = [
       {
         path: 'list',
         name: 'list-updateOption'
+      },
+      {
+        path: 'list',
+        name: 'list-title'
       }
     ]
   },
