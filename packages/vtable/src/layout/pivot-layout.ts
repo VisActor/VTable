@@ -20,10 +20,21 @@ import type {
 import type { PivotTable } from '../PivotTable';
 import { IndicatorDimensionKeyPlaceholder } from '../tools/global';
 import type { PivotChart } from '../PivotChart';
+import { cloneDeep } from '@visactor/vutils';
+import { getAxisConfigInPivotChart } from './pivot-chart/get-axis-config';
+import { getChartAxes, getChartSpec, getRawChartSpec } from './pivot-chart/get-chart-spec';
 /**
  * 简化配置，包含数据处理的 布局辅助计算类
  */
-export class PivoLayoutMap implements LayoutMapAPI {
+
+const EMPTY_HEADER: HeaderData = {
+  isEmpty: true,
+  id: undefined,
+  field: undefined,
+  headerType: undefined,
+  define: undefined
+};
+export class PivotLayoutMap implements LayoutMapAPI {
   private _headerObjects: HeaderData[] = [];
   private _headerObjectMap: { [key: LayoutObjectId]: HeaderData } = {};
   // private _emptyDataCache = new EmptyDataCache();
@@ -94,6 +105,8 @@ export class PivoLayoutMap implements LayoutMapAPI {
   // dimensions: IDimension[];
   cornerSetting: ICornerDefine;
   _table: PivotTable | PivotChart;
+
+  hasIndicatorAxisInColumnHeader: boolean;
   constructor(table: PivotTable | PivotChart, dataset: Dataset) {
     this._table = table;
     this.rowTree = table.options.rowTree;
@@ -220,15 +233,52 @@ export class PivoLayoutMap implements LayoutMapAPI {
         columnKey.unshift(caption);
       });
     }
+
+    if (this._table.isPivotChart()) {
+      if (this.indicatorsAsCol) {
+        const cell_id = 'rowHeaderEmpty';
+        this._headerObjectMap[cell_id] = {
+          id: cell_id,
+          caption: '',
+          field: cell_id,
+          headerType: this.cornerSetting.headerType ?? 'text',
+          style: this.cornerSetting.headerStyle,
+          define: <any>{
+            // id:
+          }
+        };
+        this._headerObjects.push(this._headerObjectMap[cell_id]);
+        this.rowShowAttrs.push(cell_id);
+      }
+
+      // deal with sub indicator axis
+      this.hasIndicatorAxisInColumnHeader = this._indicatorObjects.some(indicatorObject => {
+        if (
+          indicatorObject.chartSpec &&
+          indicatorObject.chartSpec.series &&
+          indicatorObject.chartSpec.series.length > 1
+        ) {
+          return true;
+        }
+        return false;
+      });
+
+      if (!this.hasIndicatorAxisInColumnHeader) {
+        this.colShowAttrs.pop();
+      }
+    }
+
     //#endregion
     this._colCount =
       (this.colKeysPath.length === 0 ? 1 : this.colKeysPath.length) *
         (this.indicatorsAsCol ? this.indicatorKeys.length : 1) +
-      this.rowHeaderLevelCount;
+      this.rowHeaderLevelCount +
+      this.rightFrozenColCount;
     this._rowCount =
       (this.rowKeysPath.length === 0 ? 1 : this.rowKeysPath.length) *
         (!this.indicatorsAsCol ? this.indicatorKeys.length : 1) +
-      this.columnHeaderLevelCount;
+      this.columnHeaderLevelCount +
+      this.bottomFrozenRowCount;
     this.setColumnWidths();
   }
   private setColumnWidths() {
@@ -298,7 +348,7 @@ export class PivoLayoutMap implements LayoutMapAPI {
     return dimensionInfo;
   }
 
-  private getIndicatorInfo(indicatorKey: string, indicatorValue = '') {
+  getIndicatorInfo(indicatorKey: string, indicatorValue = '') {
     const indicatorInfo = this.indicatorsDefine?.find(indicator => {
       if (typeof indicator === 'string') {
         return false;
@@ -312,6 +362,13 @@ export class PivoLayoutMap implements LayoutMapAPI {
       return false;
     }) as IIndicator;
     return indicatorInfo;
+  }
+
+  getColKeysPath() {
+    return this.colKeysPath;
+  }
+  getRowKeysPath() {
+    return this.rowKeysPath;
   }
   /**
    * 初始化_headerObjects
@@ -502,6 +559,12 @@ export class PivoLayoutMap implements LayoutMapAPI {
     if (row < this.columnHeaderLevelCount) {
       return true;
     }
+    if (col >= this.colCount - this.rightFrozenColCount) {
+      return true;
+    }
+    if (row >= this.rowCount - this.bottomFrozenRowCount) {
+      return true;
+    }
     return false;
   }
   isCornerHeader(col: number, row: number): boolean {
@@ -512,6 +575,26 @@ export class PivoLayoutMap implements LayoutMapAPI {
   }
   isColumnHeader(col: number, row: number): boolean {
     if (col >= this.rowHeaderLevelCount && row < this.columnHeaderLevelCount) {
+      return true;
+    }
+    return false;
+  }
+  isRightFrozenColumn(col: number, row: number): boolean {
+    if (
+      col >= this.colCount - this.rightFrozenColCount &&
+      row >= this.columnHeaderLevelCount &&
+      row < this.rowCount - this.bottomFrozenRowCount
+    ) {
+      return true;
+    }
+    return false;
+  }
+  isBottomFrozenRow(col: number, row: number): boolean {
+    if (
+      col >= this.rowHeaderLevelCount &&
+      row >= this.rowCount - this.bottomFrozenRowCount &&
+      col < this.colCount - this.rightFrozenColCount
+    ) {
       return true;
     }
     return false;
@@ -611,6 +694,14 @@ export class PivoLayoutMap implements LayoutMapAPI {
           : colLevelCount
         : colLevelCount;
 
+      // if (this.indicatorsAsCol && this._table.isPivotChart()) {
+      //   // 指标在列上，指标及其对应坐标轴显示在底部，下侧冻结行数为1；
+      //   // 如果指标对应两个轴，则第二个轴显示在上部，columnHeaderLevelCount不变，否则columnHeader不显示指标，columnHeaderLevelCount - 1
+      //   // count -= 1;
+      // } else if (this._table.isPivotChart()) {
+      //   // 指标在行上，维度对应坐标轴显示在底部，下侧冻结行数为1，上侧不变
+      // }
+
       return count;
     }
     return 0;
@@ -626,6 +717,13 @@ export class PivoLayoutMap implements LayoutMapAPI {
           : rowLevelCount
         : rowLevelCount;
 
+      // if (this.indicatorsAsCol && this._table.isPivotChart()) {
+      //   // 指标在列上，维度对应坐标轴显示在左侧，rowHeaderLevelCount + 1；
+      //   count += 1;
+      // } else if (this._table.isPivotChart()) {
+      //   // 指标在行上，指标对应坐标轴显示在左侧指标单元格，rowHeaderLevelCount不变
+      // }
+
       return count;
     }
     return 0;
@@ -640,9 +738,20 @@ export class PivoLayoutMap implements LayoutMapAPI {
     return this._bodyRowCount;
   }
   get bottomFrozenRowCount(): number {
+    if (this.indicatorsAsCol && this._table.isPivotChart()) {
+      return 1; // 指标在列上，指标及其对应坐标轴显示在底部，下侧冻结行数为1
+    } else if (this._table.isPivotChart()) {
+      return 1; // 指标在行上，维度对应坐标轴显示在底部，下侧冻结行数为1
+    }
     return 0;
   }
   get rightFrozenColCount(): number {
+    if (this.indicatorsAsCol && this._table.isPivotChart()) {
+      return 0; // 指标在列上，没有图表需要显示右轴
+    } else if (this._table.isPivotChart()) {
+      // 查找指标，判断是否有双轴情况，如果有，则右侧冻结列数为1
+      return 1;
+    }
     return 0;
   }
   get headerObjects(): HeaderData[] {
@@ -658,6 +767,12 @@ export class PivoLayoutMap implements LayoutMapAPI {
    * @returns
    */
   getCellId(col: number, row: number): LayoutObjectId {
+    if (
+      (col < this.rowHeaderLevelCount && row >= this.rowCount - this.bottomFrozenRowCount) ||
+      (row < this.columnHeaderLevelCount && col >= this.colCount - this.rightFrozenColCount)
+    ) {
+      return 0;
+    }
     if (row >= 0 && col >= 0) {
       if (this.isCornerHeader(col, row)) {
         if (this.cornerSetting.titleOnDimension === 'column') {
@@ -683,6 +798,18 @@ export class PivoLayoutMap implements LayoutMapAPI {
           ][col];
         }
         return this.indicatorKeys[(row - this.columnHeaderLevelCount) % this.indicatorKeys.length];
+      } else if (this.isRightFrozenColumn(col, row)) {
+        if (!this.indicatorsAsCol) {
+          return this.indicatorKeys[(row - this.columnHeaderLevelCount) % this.indicatorKeys.length];
+        }
+        return this.rowKeysPath[row - this.columnHeaderLevelCount][this.rowHeaderLevelCount - 1];
+      } else if (this.isBottomFrozenRow(col, row)) {
+        if (this.indicatorsAsCol) {
+          return this.indicatorKeys[(col - this.rowHeaderLevelCount) % this.indicatorKeys.length];
+        }
+        return this.convertColKeys[this.columnHeaderLevelCount - 1][
+          Math.floor((col - this.rowHeaderLevelCount) / this.indicatorKeys.length)
+        ];
       }
     }
     return 0;
@@ -706,7 +833,7 @@ export class PivoLayoutMap implements LayoutMapAPI {
   }
   getHeader(col: number, row: number): HeaderData {
     const id = this.getCellId(col, row);
-    return this._headerObjectMap[id as number]!;
+    return this._headerObjectMap[id as number]! ?? EMPTY_HEADER;
   }
   getHeaderField(col: number, row: number) {
     const id = this.getCellId(col, row);
@@ -1141,6 +1268,13 @@ export class PivoLayoutMap implements LayoutMapAPI {
               return true;
             });
             return !!match;
+          } else if ((this._table as PivotChart)._selectedDimensionInChart) {
+            // 判断维度点击
+            const { key, value } = (this._table as PivotChart)._selectedDimensionInChart;
+            if (datum[key] === value) {
+              return true;
+            }
+            return false;
           }
           return false;
         }
@@ -1157,6 +1291,13 @@ export class PivoLayoutMap implements LayoutMapAPI {
               return true;
             });
             return !match;
+          } else if ((this._table as PivotChart)._selectedDimensionInChart) {
+            // 判断维度点击
+            const { key, value } = (this._table as PivotChart)._selectedDimensionInChart;
+            if (datum[key] !== value) {
+              return true;
+            }
+            return false;
           }
           return false;
         }
@@ -1205,23 +1346,24 @@ export class PivoLayoutMap implements LayoutMapAPI {
    *  获取图表对应的指标值
    * */
   getIndicatorKeyInChartSpec(_col: number, _row: number) {
-    const paths = this.getCellHeaderPaths(_col, _row);
-    let indicatorObj;
-    if (this.indicatorsAsCol) {
-      const indicatorKey = paths.colHeaderPaths.find(colPath => colPath.indicatorKey)?.indicatorKey;
-      indicatorObj = this._indicatorObjects.find(indicator => indicator.indicatorKey === indicatorKey);
-    } else {
-      const indicatorKey = paths.rowHeaderPaths.find(rowPath => rowPath.indicatorKey)?.indicatorKey;
-      indicatorObj = this._indicatorObjects.find(indicator => indicator.indicatorKey === indicatorKey);
-    }
+    // const paths = this.getCellHeaderPaths(_col, _row);
+    // let indicatorObj;
+    // if (this.indicatorsAsCol) {
+    //   const indicatorKey = paths.colHeaderPaths.find(colPath => colPath.indicatorKey)?.indicatorKey;
+    //   indicatorObj = this._indicatorObjects.find(indicator => indicator.indicatorKey === indicatorKey);
+    // } else {
+    //   const indicatorKey = paths.rowHeaderPaths.find(rowPath => rowPath.indicatorKey)?.indicatorKey;
+    //   indicatorObj = this._indicatorObjects.find(indicator => indicator.indicatorKey === indicatorKey);
+    // }
+    // const chartSpec = indicatorObj?.chartSpec;
+    const chartSpec = this.getRawChartSpec(_col, _row);
     const indicatorKeys: string[] = [];
-    const chartSpec = indicatorObj?.chartSpec;
     if (chartSpec) {
       if (this.indicatorsAsCol === false) {
         if (chartSpec.series) {
           chartSpec.series.forEach((chartSeries: any) => {
             const yField = chartSeries.yField;
-            indicatorKeys.push[yField];
+            indicatorKeys.push(yField);
           });
         } else {
           indicatorKeys.push(chartSpec.yField);
@@ -1230,7 +1372,7 @@ export class PivoLayoutMap implements LayoutMapAPI {
         if (chartSpec.series) {
           chartSpec.series.forEach((chartSeries: any) => {
             const xField = chartSeries.xField;
-            indicatorKeys.push[xField];
+            indicatorKeys.push(xField);
           });
         } else {
           indicatorKeys.push(chartSpec.xField);
@@ -1239,6 +1381,58 @@ export class PivoLayoutMap implements LayoutMapAPI {
       return indicatorKeys;
     }
     return null;
+  }
+
+  /**
+   *  获取图表对应的指标值
+   * */
+  getDimensionKeyInChartSpec(_col: number, _row: number) {
+    // const paths = this.getCellHeaderPaths(_col, _row);
+    // let indicatorObj;
+    // if (this.indicatorsAsCol) {
+    //   const indicatorKey = paths.colHeaderPaths.find(colPath => colPath.indicatorKey)?.indicatorKey;
+    //   indicatorObj = this._indicatorObjects.find(indicator => indicator.indicatorKey === indicatorKey);
+    // } else {
+    //   const indicatorKey = paths.rowHeaderPaths.find(rowPath => rowPath.indicatorKey)?.indicatorKey;
+    //   indicatorObj = this._indicatorObjects.find(indicator => indicator.indicatorKey === indicatorKey);
+    // }
+    // const chartSpec = indicatorObj?.chartSpec;
+    const chartSpec = this.getRawChartSpec(_col, _row);
+    const dimensionKeys: string[] = [];
+    if (chartSpec) {
+      if (this.indicatorsAsCol === false) {
+        dimensionKeys.push(chartSpec.xField);
+      } else {
+        dimensionKeys.push(chartSpec.yField);
+      }
+      return dimensionKeys;
+    }
+    return null;
+  }
+
+  getAxisConfigInPivotChart(col: number, row: number): any {
+    return getAxisConfigInPivotChart(col, row, this);
+  }
+  getRawChartSpec(col: number, row: number): any {
+    return getRawChartSpec(col, row, this);
+  }
+  getChartSpec(col: number, row: number): any {
+    return getChartSpec(col, row, this);
+  }
+  getChartAxes(col: number, row: number): any {
+    return getChartAxes(col, row, this);
+  }
+  isEmpty(col: number, row: number): boolean {
+    if (!this._table.isPivotChart()) {
+      return false;
+    }
+    if (col > this.colCount - this.rightFrozenColCount - 1 || row > this.rowCount - this.bottomFrozenRowCount - 1) {
+      return true;
+    }
+    if (this.hasIndicatorAxisInColumnHeader && this.indicatorsAsCol && row === this.columnHeaderLevelCount - 1) {
+      return true;
+    }
+    return false;
   }
   //#endregion
 }

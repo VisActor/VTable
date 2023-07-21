@@ -1,43 +1,82 @@
-// @ts-nocheck
-// 有问题可对照demo unitTestPivotTable
-import records from './marketsales.json';
-import * as VTable from '../src/index';
+/* eslint-disable */
+import * as VTable from '../../src';
 import VChart from '@visactor/vchart';
-import { createDiv } from './dom';
+import { bindDebugTool } from '../../src/scenegraph/debug-tool';
+const Table_CONTAINER_DOM_ID = 'vTable';
 VTable.register.chartType('vchart', VChart);
-global.__VERSION__ = 'none';
-
-function createTable(containerDom) {
+export function createTable() {
   const rowTree = [
     {
       dimensionKey: '230417170554012',
-      value: '一级'
-      // children: [
-      //   {
-      //     value: '数量',
-      //     indicatorKey: '230417171050011'
-      //   },
-      //   {
-      //     value: '销售额',
-      //     indicatorKey: '230417171050025'
-      //   },
-      //   {
-      //     value: '折扣',
-      //     indicatorKey: '230707112948009'
-      //   }
-      // ]
+      value: '一级',
+      children: [
+        {
+          value: '数量',
+          indicatorKey: '230417171050011'
+        },
+        {
+          value: '销售额',
+          indicatorKey: '230417171050025'
+        },
+        {
+          value: '折扣',
+          indicatorKey: '230707112948009'
+        }
+      ]
     },
     {
       dimensionKey: '230417170554012',
-      value: '二级'
+      value: '二级',
+      children: [
+        {
+          value: '数量',
+          indicatorKey: '230417171050011'
+        },
+        {
+          value: '销售额',
+          indicatorKey: '230417171050025'
+        },
+        {
+          value: '折扣',
+          indicatorKey: '230707112948009'
+        }
+      ]
     },
     {
       dimensionKey: '230417170554012',
-      value: '当日'
+      value: '当日',
+      children: [
+        {
+          value: '数量',
+          indicatorKey: '230417171050011'
+        },
+        {
+          value: '销售额',
+          indicatorKey: '230417171050025'
+        },
+        {
+          value: '折扣',
+          indicatorKey: '230707112948009'
+        }
+      ]
     },
     {
       dimensionKey: '230417170554012',
-      value: '标准级'
+      value: '标准级',
+      children: [
+        {
+          value: '数量',
+          indicatorKey: '230417171050011'
+        },
+        {
+          value: '销售额',
+          indicatorKey: '230417171050025'
+        },
+        {
+          value: '折扣',
+          indicatorKey: '230707112948009'
+        }
+      ]
     }
   ];
   const columnTree = [
@@ -9235,7 +9274,7 @@ function createTable(containerDom) {
     columns,
     indicators,
     indicatorsAsCol: false,
-    parentElement: containerDom,
+    parentElement: document.getElementById(Table_CONTAINER_DOM_ID),
     records,
     defaultRowHeight: 200,
     defaultHeaderRowHeight: 50,
@@ -9263,321 +9302,15 @@ function createTable(containerDom) {
   };
 
   const tableInstance = new VTable.PivotChart(option);
-  return tableInstance;
+  tableInstance.listenChart('click', args => {
+    console.log('listenChart click', args);
+  });
+  tableInstance.listenChart('mouseover', args => {
+    console.log('listenChart mouseover', args);
+  });
+  window.tableInstance = tableInstance;
+
+  bindDebugTool(tableInstance.scenegraph.stage as any, {
+    customGrapicKeys: ['role', '_updateTag']
+  });
 }
-describe('pivotTable init test', () => {
-  const containerDom: HTMLElement = createDiv();
-  containerDom.style.position = 'relative';
-  containerDom.style.width = '500px';
-  containerDom.style.height = '500px';
-
-  const pivotChart = createTable(containerDom);
-
-  test('pivotTable init', () => {
-    expect(pivotChart.frozenColCount).toBe(2);
-  });
-  test('pivotTable rowHeaderLevelCount', () => {
-    expect(pivotChart.rowHeaderLevelCount).toBe(2);
-  });
-
-  test('pivotTable API getCellHeaderPaths', () => {
-    expect(pivotChart.getCellHeaderPaths(2, 4)).toEqual({
-      colHeaderPaths: [
-        {
-          dimensionKey: '230417171050031',
-          value: '中国'
-        },
-        {
-          dimensionKey: '230417171050028',
-          value: '办公用品'
-        }
-      ],
-      rowHeaderPaths: [
-        {
-          dimensionKey: '230417170554012',
-          value: '一级'
-        },
-        {
-          indicatorKey: '230707112948009',
-          value: '折扣'
-        }
-      ]
-    });
-  });
-
-  test('pivotTable API getCellAddressByHeaderPaths', () => {
-    expect(
-      pivotChart.getCellAddressByHeaderPaths({
-        colHeaderPaths: [
-          {
-            dimensionKey: '230417171050031',
-            value: '中国'
-          },
-          {
-            dimensionKey: '230417171050028',
-            value: '办公用品'
-          }
-        ],
-        rowHeaderPaths: [
-          {
-            dimensionKey: '230417170554012',
-            value: '一级'
-          },
-          {
-            indicatorKey: '230707112948009',
-            value: '折扣'
-          }
-        ]
-      })
-    ).toEqual({ col: 2, row: 4 });
-  });
-
-  test('pivotTable getChartDatumPosition', () => {
-    const datum = {
-      '10002': '83',
-      '10003': '230417171050011',
-      '230417170554008': '美术',
-      '230417170554012': '一级',
-      '230417171050011': '83',
-      '230417171050028': '办公用品',
-      '230417171050030': '公司',
-      '230417171050031': '中国',
-      '230713150305018': '数量'
-    };
-    const cellAddr = {
-      colHeaderPaths: [
-        {
-          dimensionKey: '230417171050031',
-          value: '中国'
-        },
-        {
-          dimensionKey: '230417171050028',
-          value: '办公用品'
-        }
-      ],
-      rowHeaderPaths: [
-        {
-          dimensionKey: '230417170554012',
-          value: '一级'
-        },
-        {
-          indicatorKey: '230417171050011',
-          value: '数量'
-        }
-      ]
-    };
-    expect(pivotChart.getChartDatumPosition(datum, cellAddr)).toEqual({ x: 543, y: 299 });
-  });
-
-  test('pivotTable collectValuesBy', () => {
-    expect(pivotChart.dataset.collectValuesBy).toEqual({
-      '230417171050011': {
-        by: ['230417170554012'],
-        range: true,
-        sumBy: ['230417171050031', '230417171050028', '230417170554008']
-      },
-      '230417170554008': {
-        by: ['230417171050031', '230417171050028'],
-        type: 'xField'
-      },
-      '230417171050025': {
-        by: ['230417170554012'],
-        range: true,
-        sumBy: false
-      },
-      '230713150305011': {
-        by: ['230417170554012'],
-        range: true,
-        sumBy: ['230417171050031', '230417171050028', '230417170554008']
-      },
-      '230707112948009': {
-        by: ['230417170554012'],
-        range: true,
-        sumBy: false
-      }
-    });
-  });
-  test('pivotTable collectedValues', () => {
-    const collectedValues = {
-      '230417171050011': {
-        一级: {
-          max: 569,
-          min: 84
-        },
-        二级: {
-          max: 739,
-          min: 130
-        },
-        当日: {
-          max: 189,
-          min: 24
-        },
-        标准级: {
-          max: 1869,
-          min: 382
-        }
-      },
-      // '230417170554008': {
-      //   '中国\u0000办公用品': {},
-      //   '中国\u0000家具': {},
-      //   '中国\u0000技术': {}
-      // },
-      '230417171050025': {
-        一级: {
-          min: 3249.231948852539,
-          max: 202830.06872558594
-        },
-        二级: {
-          min: 4169.62003326416,
-          max: 263829.8865661621
-        },
-        当日: {
-          min: 280.6999969482422,
-          max: 66037.07626342773
-        },
-        标准级: {
-          min: 11755.520034790039,
-          max: 674093.7589492798
-        }
-      },
-      '230707112948009': {
-        一级: {
-          min: 0,
-          max: 11.700000174343586
-        },
-        二级: {
-          min: 0,
-          max: 19.60000029206276
-        },
-        当日: {
-          min: 0,
-          max: 4.400000065565109
-        },
-        标准级: {
-          min: 0,
-          max: 50.20000074803829
-        }
-      },
-      '230713150305011': {
-        一级: {
-          max: 55795.29215191305,
-          min: -35885.98998451233
-        },
-        二级: {
-          max: 81585.58783792704,
-          min: -15135.001037597656
-        },
-        当日: {
-          max: 29006.31952905655,
-          min: -1339.5200354009867
-        },
-        标准级: {
-          max: 198549.0919586867,
-          min: -81045.1600060612
-        }
-      }
-    };
-    // collectedValues['230417170554008']['中国 办公用品'] = new Set(
-    //   '信封',
-    //   '器具',
-    //   '收纳具',
-    //   '标签',
-    //   '用品',
-    //   '系固件',
-    //   '纸张',
-    //   '美术',
-    //   '装订机'
-    // );
-    // debugger;
-    // collectedValues['230417170554008']['中国 家具'] = new Set('书架', '桌子', '椅子', '用具');
-    // collectedValues['230417170554008']['中国 技术'] = new Set('复印机', '电话', '设备', '配件');
-
-    const result = pivotChart.dataset.collectedValues;
-    delete result['230417170554008']; //这个key是set类型 这里不能正确进行比对
-    expect(result).toEqual(collectedValues);
-  });
-  test('pivotTable updateFilterRules', () => {
-    pivotChart.updateFilterRules([
-      {
-        filterKey: '230417171050030',
-        filteredValues: ['消费者', '公司']
-      }
-    ]);
-    const result = pivotChart.dataset.collectedValues;
-    delete result['230417170554008']; //这个key是set类型 这里不能正确进行比对
-    expect(result).toEqual({
-      '230417171050011': {
-        一级: {
-          max: 480,
-          min: 64
-        },
-        二级: {
-          max: 634,
-          min: 113
-        },
-        当日: {
-          max: 173,
-          min: 17
-        },
-        标准级: {
-          max: 1561,
-          min: 341
-        }
-      },
-      '230417171050025': {
-        一级: {
-          min: 4544.3999671936035,
-          max: 202830.06872558594
-        },
-        二级: {
-          min: 6804.840015411377,
-          max: 263829.8865661621
-        },
-        当日: {
-          min: 1278.8720092773438,
-          max: 66037.07626342773
-        },
-        标准级: {
-          min: 15698.620056152344,
-          max: 674093.7589492798
-        }
-      },
-      '230707112948009': {
-        一级: {
-          min: 0,
-          max: 11.700000174343586
-        },
-        二级: {
-          min: 0,
-          max: 19.60000029206276
-        },
-        当日: {
-          min: 0,
-          max: 4.400000065565109
-        },
-        标准级: {
-          min: 0,
-          max: 50.20000074803829
-        }
-      },
-      '230713150305011': {
-        一级: {
-          max: 40780.32046222687,
-          min: -22801.40795326233
-        },
-        二级: {
-          max: 76863.13573145121,
-          min: -19659.724044799805
-        },
-        当日: {
-          max: 24637.115519046783,
-          min: -3140.724991455674
-        },
-        标准级: {
-          max: 160010.98391120136,
-          min: -70610.2390923649
-        }
-      }
-    });
-  });
-});

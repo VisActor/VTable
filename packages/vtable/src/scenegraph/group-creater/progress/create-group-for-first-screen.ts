@@ -108,21 +108,21 @@ export async function createGroupForFirstScreen(
       'body', // isHeader
       proxy.table
     );
-    proxy.table.scenegraph.bottomFrozenGroup.setAttribute(
-      'y',
-      proxy.table.tableNoFrameHeight - proxy.table.scenegraph.bottomFrozenGroup.attribute.height
-    );
-    proxy.table.scenegraph.leftBottomCellGroup.setAttributes({
-      visible: true,
-      y: proxy.table.tableNoFrameHeight - proxy.table.scenegraph.bottomFrozenGroup.attribute.height,
-      height: proxy.table.scenegraph.bottomFrozenGroup.attribute.height,
-      width: proxy.table.getFrozenColsWidth()
-    });
-    proxy.table.scenegraph.rightBottomCellGroup.setAttributes({
-      visible: true,
-      y: proxy.table.tableNoFrameHeight - proxy.table.scenegraph.bottomFrozenGroup.attribute.height,
-      height: proxy.table.scenegraph.bottomFrozenGroup.attribute.height
-    });
+    // proxy.table.scenegraph.bottomFrozenGroup.setAttribute(
+    //   'y',
+    //   proxy.table.tableNoFrameHeight - proxy.table.scenegraph.bottomFrozenGroup.attribute.height
+    // );
+    // proxy.table.scenegraph.leftBottomCellGroup.setAttributes({
+    //   visible: true,
+    //   y: proxy.table.tableNoFrameHeight - proxy.table.scenegraph.bottomFrozenGroup.attribute.height,
+    //   height: proxy.table.scenegraph.bottomFrozenGroup.attribute.height,
+    //   width: proxy.table.getFrozenColsWidth()
+    // });
+    // proxy.table.scenegraph.rightBottomCellGroup.setAttributes({
+    //   visible: true,
+    //   y: proxy.table.tableNoFrameHeight - proxy.table.scenegraph.bottomFrozenGroup.attribute.height,
+    //   height: proxy.table.scenegraph.bottomFrozenGroup.attribute.height
+    // });
   }
 
   if (proxy.table.rightFrozenColCount > 0) {
@@ -138,21 +138,21 @@ export async function createGroupForFirstScreen(
       'body', // isHeader
       proxy.table
     );
-    proxy.table.scenegraph.rightFrozenGroup.setAttribute(
-      'x',
-      proxy.table.tableNoFrameWidth - proxy.table.scenegraph.rightFrozenGroup.attribute.width
-    );
-    proxy.table.scenegraph.rightTopCellGroup.setAttributes({
-      visible: true,
-      x: proxy.table.tableNoFrameWidth - proxy.table.scenegraph.rightFrozenGroup.attribute.width,
-      width: proxy.table.scenegraph.rightFrozenGroup.attribute.width,
-      height: proxy.table.getFrozenRowsHeight()
-    });
-    proxy.table.scenegraph.rightBottomCellGroup.setAttributes({
-      visible: true,
-      x: proxy.table.tableNoFrameWidth - proxy.table.scenegraph.rightFrozenGroup.attribute.width,
-      width: proxy.table.scenegraph.rightFrozenGroup.attribute.width
-    });
+    // proxy.table.scenegraph.rightFrozenGroup.setAttribute(
+    //   'x',
+    //   proxy.table.tableNoFrameWidth - proxy.table.scenegraph.rightFrozenGroup.attribute.width
+    // );
+    // proxy.table.scenegraph.rightTopCellGroup.setAttributes({
+    //   visible: true,
+    //   x: proxy.table.tableNoFrameWidth - proxy.table.scenegraph.rightFrozenGroup.attribute.width,
+    //   width: proxy.table.scenegraph.rightFrozenGroup.attribute.width,
+    //   height: proxy.table.getFrozenRowsHeight()
+    // });
+    // proxy.table.scenegraph.rightBottomCellGroup.setAttributes({
+    //   visible: true,
+    //   x: proxy.table.tableNoFrameWidth - proxy.table.scenegraph.rightFrozenGroup.attribute.width,
+    //   width: proxy.table.scenegraph.rightFrozenGroup.attribute.width
+    // });
   }
 
   // create bodyGroup

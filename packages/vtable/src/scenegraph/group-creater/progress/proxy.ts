@@ -65,7 +65,8 @@ export class SceneProxy {
 
   setParamsForColumn() {
     this.bodyLeftCol = this.table.rowHeaderLevelCount;
-    this.bodyRightCol = this.table.colCount - 1;
+    // this.bodyRightCol = this.table.colCount - 1;
+    this.bodyRightCol = this.table.colCount - 1 - this.table.rightFrozenColCount;
 
     // compute the column info about progress creation
     const totalActualBodyColCount = Math.min(this.colLimit, this.bodyRightCol - this.bodyLeftCol + 1);
@@ -91,9 +92,9 @@ export class SceneProxy {
 
   setParamsForRow() {
     this.bodyTopRow = this.table.columnHeaderLevelCount;
-    this.bodyBottomRow = this.table.rowCount - 1;
-    this.bodyLeftCol = 0;
-    this.bodyRightCol = this.table.colCount - 1;
+    this.bodyBottomRow = this.table.rowCount - 1 - this.table.bottomFrozenRowCount;
+    // this.bodyLeftCol = 0;
+    // this.bodyRightCol = this.table.colCount - 1 - this.table.rightFrozenColCount;
 
     // 计算渐进加载数量
     const totalActualBodyRowCount = Math.min(this.rowLimit, this.bodyBottomRow - this.bodyTopRow + 1); // 渐进加载总row数量
@@ -258,11 +259,55 @@ export class SceneProxy {
     // compute rows height
     computeRowsHeight(this.table, this.currentRow + 1, endRow);
 
-    // create row cellGroup
+    if (this.table.rowHeaderLevelCount) {
+      // create row header row cellGroup
+      let maxHeight = 0;
+      for (let col = 0; col < this.table.rowHeaderLevelCount; col++) {
+        const colGroup = this.table.scenegraph.getColGroup(col);
+        const cellType = 'rowHeader';
+        const { height } = createComplexColumn(
+          colGroup,
+          col,
+          colGroup.attribute.width,
+          this.currentRow + 1,
+          endRow,
+          this.table.scenegraph.mergeMap,
+          this.table.internalProps.defaultRowHeight,
+          this.table,
+          cellType
+        );
+        maxHeight = Math.max(maxHeight, height);
+        this.table.scenegraph.rowHeaderGroup.setAttribute('height', maxHeight);
+      }
+    }
+
+    if (this.table.rightFrozenColCount) {
+      // create row header row cellGroup
+      let maxHeight = 0;
+      for (let col = this.table.colCount - this.table.rightFrozenColCount; col < this.table.colCount; col++) {
+        const colGroup = this.table.scenegraph.getColGroup(col);
+        const cellType = 'rowHeader';
+        const { height } = createComplexColumn(
+          colGroup,
+          col,
+          colGroup.attribute.width,
+          this.currentRow + 1,
+          endRow,
+          this.table.scenegraph.mergeMap,
+          this.table.internalProps.defaultRowHeight,
+          this.table,
+          cellType
+        );
+        maxHeight = Math.max(maxHeight, height);
+        this.table.scenegraph.rightFrozenGroup.setAttribute('height', maxHeight);
+      }
+    }
+
+    // create body row cellGroup
     let maxHeight = 0;
     for (let col = this.bodyLeftCol; col <= this.bodyRightCol; col++) {
       const colGroup = this.table.scenegraph.getColGroup(col);
-      const cellType = col < this.table.rowHeaderLevelCount ? 'rowHeader' : 'body';
+      const cellType = 'body';
       const { height } = createComplexColumn(
         colGroup,
         col,

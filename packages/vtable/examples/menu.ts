@@ -59,6 +59,10 @@ export const menus = [
       {
         path: 'pivot-chart',
         name: 'pivotChart-3W'
+      },
+      {
+        path: 'pivot-chart',
+        name: 'pivotChart-axis'
       }
     ]
   },
