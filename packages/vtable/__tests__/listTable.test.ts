@@ -112,13 +112,15 @@ describe('listTable init test', () => {
       allowFrozenColCount: 5,
       autoRowHeight: true,
       autoWrapText: true,
-      widthMode: 'autoWidth'
+      widthMode: 'autoWidth',
+      limitMaxAutoWidth: 170
     };
     listTable.updateOption(option1);
     expect(listTable.rowCount).toBe(21);
     expect(listTable.colCount).toBe(12);
     expect(listTable.getScrollTop()).toBe(0);
-    expect(listTable.getColWidth(5)).toBe(189);
+    expect(listTable.getColWidth(0)).toBe(122);
+    expect(listTable.getColWidth(5)).toBe(170);
   });
   // test('listTable API getAllCells', () => {
   //   expect(JSON.parse(JSON.stringify(listTable.getCellInfo(5, 5)))).toEqual({
