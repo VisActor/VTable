@@ -9246,6 +9246,191 @@ export function createTable() {
   window.tableInstance = tableInstance;
 
   setTimeout(() => {
+    const indicators: VTable.TYPES.IIndicator[] = [
+      {
+        indicatorKey: '230417171050011',
+        caption: '数量',
+        width: 'auto',
+        columnType: 'chart',
+        chartType: 'vchart',
+        headerStyle: {
+          color: 'red',
+          borderLineWidth: [1, 0, 1, 0],
+          autoWrapText: true
+        },
+        style: {
+          padding: 1
+        },
+        chartSpec: {
+          // type: 'common',
+          stack: true,
+          type: 'bar',
+          data: {
+            id: 'data'
+          },
+          // brush: {
+          //   brushType: 'rect',
+          //   brushLinkSeriesIndex: [1, 2],
+          //   inBrush: {
+          //     colorAlpha: 1
+          //   },
+          //   outOfBrush: {
+          //     colorAlpha: 0.2
+          //   }
+          // },
+          xField: ['230417170554008'],
+          yField: '230417171050011',
+          seriesField: '230417171050030',
+          axes: [
+            { orient: 'left', visible: true, label: { visible: true } },
+            { orient: 'bottom', visible: true }
+          ],
+          bar: {
+            state: {
+              selected: {
+                fill: 'yellow'
+              },
+              selected_reverse: {
+                // fill: '#ddd'
+                opacity: 0.2
+              }
+            }
+          }
+        }
+      },
+      {
+        indicatorKey: '230417171050025',
+        caption: '销售额 & 利润',
+        columnType: 'chart',
+        chartType: 'vchart',
+        headerStyle: {
+          color: 'red',
+          borderLineWidth: [1, 0, 1, 0],
+          autoWrapText: true
+        },
+        style: {
+          padding: 1
+        },
+        chartSpec: {
+          type: 'common',
+          data: {
+            id: 'data'
+          },
+
+          series: [
+            {
+              type: 'bar',
+              stack: true,
+              xField: ['230417170554008'],
+              yField: '230713150305011',
+              seriesField: '230417171050030',
+              bar: {
+                state: {
+                  selected: {
+                    fill: 'yellow'
+                  },
+                  selected_reverse: {
+                    // fill: '#ddd'
+                    opacity: 0.2
+                  }
+                }
+              }
+            },
+            {
+              type: 'line',
+              stack: false,
+              xField: ['230417170554008'],
+              yField: '230417171050025',
+              seriesField: '230417171050030',
+              line: {
+                state: {
+                  selected: {
+                    lineWidth: 3
+                  },
+                  selected_reverse: {
+                    lineWidth: 1
+                  }
+                }
+              },
+              point: {
+                state: {
+                  selected: {
+                    fill: 'yellow'
+                  },
+                  selected_reverse: {
+                    fill: '#ddd'
+                  }
+                }
+              }
+            }
+          ],
+          axes: [
+            { orient: 'left', visible: true, label: { visible: true } },
+            { orient: 'bottom', visible: true }
+          ]
+        }
+      },
+      {
+        indicatorKey: '230707112948009',
+        caption: '折扣',
+        width: 'auto',
+        columnType: 'chart',
+        chartType: 'vchart',
+        headerStyle: {
+          color: 'red',
+          borderLineWidth: [1, 0, 1, 0],
+          autoWrapText: true
+        },
+        style: {
+          padding: 1
+        },
+        chartSpec: {
+          // type: 'common',
+          stack: false,
+          type: 'area',
+          data: {
+            id: 'data'
+          },
+          xField: ['230417170554008'],
+          yField: '230707112948009',
+          seriesField: '230417171050030',
+          axes: [
+            { orient: 'left', visible: true, label: { visible: true } },
+            { orient: 'bottom', visible: true }
+          ],
+          line: {
+            state: {
+              selected: {
+                lineWidth: 3
+              },
+              selected_reverse: {
+                lineWidth: 1
+              }
+            }
+          },
+          point: {
+            state: {
+              selected: {
+                fill: 'yellow'
+              },
+              selected_reverse: {
+                fill: '#ddd'
+              }
+            }
+          },
+          area: {
+            state: {
+              selected: {
+                opacity: 1
+              },
+              selected_reverse: {
+                opacity: 0.2
+              }
+            }
+          }
+        }
+      }
+    ];
     const option1: VTable.PivotTableConstructorOptions = {
       columnTree,
       rowTree,
