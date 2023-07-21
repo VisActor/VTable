@@ -515,6 +515,8 @@ export class Scenegraph {
       element = this.rowHeaderGroup.getColGroup(col) as Group;
     } else if (isCornerOrColHeader) {
       element = this.colHeaderGroup.getColGroup(col) as Group;
+    } else if (this.table.rightFrozenColCount > 0 && col > this.table.colCount - 1 - this.table.rightFrozenColCount) {
+      element = this.rightFrozenGroup.getColGroup(col) as Group;
     } else {
       element = this.bodyGroup.getColGroup(col) as Group;
     }

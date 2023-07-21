@@ -259,11 +259,55 @@ export class SceneProxy {
     // compute rows height
     computeRowsHeight(this.table, this.currentRow + 1, endRow);
 
-    // create row cellGroup
+    if (this.table.rowHeaderLevelCount) {
+      // create row header row cellGroup
+      let maxHeight = 0;
+      for (let col = 0; col < this.table.rowHeaderLevelCount; col++) {
+        const colGroup = this.table.scenegraph.getColGroup(col);
+        const cellType = 'rowHeader';
+        const { height } = createComplexColumn(
+          colGroup,
+          col,
+          colGroup.attribute.width,
+          this.currentRow + 1,
+          endRow,
+          this.table.scenegraph.mergeMap,
+          this.table.internalProps.defaultRowHeight,
+          this.table,
+          cellType
+        );
+        maxHeight = Math.max(maxHeight, height);
+        this.table.scenegraph.rowHeaderGroup.setAttribute('height', maxHeight);
+      }
+    }
+
+    if (this.table.rightFrozenColCount) {
+      // create row header row cellGroup
+      let maxHeight = 0;
+      for (let col = this.table.colCount - this.table.rightFrozenColCount; col < this.table.colCount; col++) {
+        const colGroup = this.table.scenegraph.getColGroup(col);
+        const cellType = 'rowHeader';
+        const { height } = createComplexColumn(
+          colGroup,
+          col,
+          colGroup.attribute.width,
+          this.currentRow + 1,
+          endRow,
+          this.table.scenegraph.mergeMap,
+          this.table.internalProps.defaultRowHeight,
+          this.table,
+          cellType
+        );
+        maxHeight = Math.max(maxHeight, height);
+        this.table.scenegraph.rightFrozenGroup.setAttribute('height', maxHeight);
+      }
+    }
+
+    // create body row cellGroup
     let maxHeight = 0;
     for (let col = this.bodyLeftCol; col <= this.bodyRightCol; col++) {
       const colGroup = this.table.scenegraph.getColGroup(col);
-      const cellType = col < this.table.rowHeaderLevelCount ? 'rowHeader' : 'body';
+      const cellType = 'body';
       const { height } = createComplexColumn(
         colGroup,
         col,
