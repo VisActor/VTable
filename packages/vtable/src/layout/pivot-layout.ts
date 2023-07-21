@@ -1268,13 +1268,15 @@ export class PivotLayoutMap implements LayoutMapAPI {
               return true;
             });
             return !!match;
-          } else if ((this._table as PivotChart)._selectedDimensionInChart) {
+          } else if ((this._table as PivotChart)._selectedDimensionInChart.length) {
             // 判断维度点击
-            const { key, value } = (this._table as PivotChart)._selectedDimensionInChart;
-            if (datum[key] === value) {
+            const match = (this._table as PivotChart)._selectedDimensionInChart.every(item => {
+              if (datum[item.key] !== item.value) {
+                return false;
+              }
               return true;
-            }
-            return false;
+            });
+            return !!match;
           }
           return false;
         }
@@ -1291,13 +1293,15 @@ export class PivotLayoutMap implements LayoutMapAPI {
               return true;
             });
             return !match;
-          } else if ((this._table as PivotChart)._selectedDimensionInChart) {
+          } else if ((this._table as PivotChart)._selectedDimensionInChart.length) {
             // 判断维度点击
-            const { key, value } = (this._table as PivotChart)._selectedDimensionInChart;
-            if (datum[key] !== value) {
+            const match = (this._table as PivotChart)._selectedDimensionInChart.every(item => {
+              if (datum[item.key] !== item.value) {
+                return false;
+              }
               return true;
-            }
-            return false;
+            });
+            return !match;
           }
           return false;
         }
