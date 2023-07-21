@@ -149,6 +149,15 @@ export class EventManeger {
       if (!this.table.isPivotChart() && eventArgsSet?.eventArgs?.target.type !== 'chart') {
         this.table.stateManeger.updateHoverPos(-1, -1);
       }
+
+      if (
+        this.table.isPivotChart() &&
+        (eventArgsSet?.eventArgs?.target.name === 'axis-label' || eventArgsSet?.eventArgs?.target.type === 'chart')
+      ) {
+        // 点击透视图坐标轴标签或图标内容，执行图表状态更新，不触发Select
+        this.table.stateManeger.updateSelectPos(-1, -1);
+        return false;
+      }
       this.table.stateManeger.updateSelectPos(
         eventArgs.col,
         eventArgs.row,
