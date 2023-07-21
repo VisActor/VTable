@@ -238,7 +238,7 @@ export class Scenegraph {
       width: 0,
       height: 0,
       visible: false,
-      pickable: false,
+      pickable: true,
       fill: this.table.theme.cornerHeaderStyle.bgColor as string,
       stroke: this.table.theme.cornerHeaderStyle.borderColor as string,
       lineWidth: this.table.theme.cornerHeaderStyle.borderLineWidth as number
@@ -252,7 +252,7 @@ export class Scenegraph {
       width: 0,
       height: 0,
       visible: false,
-      pickable: false,
+      pickable: true,
       fill: this.table.theme.cornerHeaderStyle.bgColor as string,
       stroke: this.table.theme.cornerHeaderStyle.borderColor as string,
       lineWidth: this.table.theme.cornerHeaderStyle.borderLineWidth as number
@@ -266,7 +266,7 @@ export class Scenegraph {
       width: 0,
       height: 0,
       visible: false,
-      pickable: false,
+      pickable: true,
       fill: this.table.theme.cornerHeaderStyle.bgColor as string,
       stroke: this.table.theme.cornerHeaderStyle.borderColor as string,
       lineWidth: this.table.theme.cornerHeaderStyle.borderLineWidth as number
@@ -482,7 +482,16 @@ export class Scenegraph {
     // hasFrozen处理前，列表头的冻结部分在colHeaderGroup中
     // hasFrozen处理后，列表头的冻结部分在cornerHeaderGroup中
     // 因此在获取cell时需要区别hasFrozen时机
-    let cell = this.getColGroup(col, row < this.frozenRowCount)?.getRowGroup(row);
+    // const colGroup = row < this.frozenRowCount ? this.colHeaderGroup : this.cornerHeaderGroup;
+    let cell;
+    if (this.table.rightFrozenColCount > 0 && col > this.table.colCount - 1 - this.table.rightFrozenColCount) {
+      cell = this.rightFrozenGroup.getColGroup(col)?.getRowGroup(row);
+    } else if (this.table.bottomFrozenRowCount > 0 && row > this.table.rowCount - 1 - this.table.bottomFrozenRowCount) {
+      cell = this.bottomFrozenGroup.getColGroup(col)?.getRowGroup(row);
+    } else {
+      cell = this.getColGroup(col, row < this.frozenRowCount)?.getRowGroup(row);
+    }
+
     if (cell && cell.role === 'shadow-cell' && !getShadow) {
       const range = this.table.getCellRange(col, row);
       cell = this.getCell(range.start.col, range.start.row);

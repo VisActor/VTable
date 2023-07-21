@@ -39,12 +39,14 @@ export function bindAxisClickEvent(table: BaseTableAPI) {
       layout.updateDataStateToChartInstance();
       // 清除chart缓存图片
       clearChartCacheImage(table.scenegraph);
+      table.scenegraph.updateNextFrame();
     } else if ((table as PivotChart)._selectedDimensionInChart) {
       (table as PivotChart)._selectedDimensionInChart = null;
       const layout = table.internalProps.layoutMap as PivotLayoutMap;
       layout.updateDataStateToChartInstance();
       // 清除chart缓存图片
       clearChartCacheImage(table.scenegraph);
+      table.scenegraph.updateNextFrame();
     }
   });
 }
