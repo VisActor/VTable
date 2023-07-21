@@ -9365,7 +9365,7 @@ describe('pivotTable init test', () => {
         }
       ]
     };
-    expect(pivotChart.getChartDatumPosition(datum, cellAddr)).toEqual({ x: 490, y: 226 });
+    expect(pivotChart.getChartDatumPosition(datum, cellAddr)).toEqual({ x: 543, y: 299 });
   });
 
   test('pivotTable collectValuesBy', () => {

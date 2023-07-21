@@ -7,7 +7,7 @@ import { toFixed, validToString } from '../../tools/util';
 import { getQuadProps } from '../utils/padding';
 import { getProp } from '../utils/get-prop';
 import type { BaseTableAPI } from '../../ts-types/base-table';
-import type { PivoLayoutMap } from '../../layout/pivot-layout';
+import type { PivotLayoutMap } from '../../layout/pivot-layout';
 
 export function computeColsWidth(table: BaseTableAPI, colStart?: number, colEnd?: number, update?: boolean): void {
   colStart = colStart ?? 0;
@@ -212,9 +212,9 @@ function computeAutoColWidth(
   }
   // 如果是透视图
   if (table.isPivotChart() && col >= table.rowHeaderLevelCount) {
-    if (!(table.internalProps.layoutMap as PivoLayoutMap).indicatorsAsCol) {
+    if (!(table.internalProps.layoutMap as PivotLayoutMap).indicatorsAsCol) {
       //并且指标是以行展示 计算列宽需要根据x轴的值域范围
-      const optimunWidth = (table.internalProps.layoutMap as PivoLayoutMap).getOptimunWidthForChart(col);
+      const optimunWidth = (table.internalProps.layoutMap as PivotLayoutMap).getOptimunWidthForChart(col);
       if (optimunWidth > 0) {
         return optimunWidth;
       }

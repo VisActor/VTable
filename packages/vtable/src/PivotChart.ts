@@ -25,7 +25,7 @@ import { AggregationType } from './ts-types';
 import { HierarchyState } from './ts-types';
 import type { PivotHeaderLayoutMap } from './layout/pivot-header-layout';
 import { getField } from './data/DataSource';
-import { PivoLayoutMap } from './layout/pivot-layout';
+import { PivotLayoutMap } from './layout/pivot-layout';
 import { PIVOT_CHART_EVENT_TYPE } from './ts-types/pivot-table/PIVOT_TABLE_EVENT_TYPE';
 import { cellInRange, emptyFn } from './tools/helper';
 import { Dataset } from './dataset/dataset';
@@ -44,6 +44,7 @@ export class PivotChart extends BaseTable implements PivotTableAPI {
   dataset?: Dataset; //数据处理对象  开启数据透视分析的表
 
   _selectedDataItemsInChart: any[] = [];
+  _selectedDimensionInChart: { key: string; value: string } | null = null;
   _chartEventMap: Record<string, AnyFunction> = {};
   constructor(options: PivotChartConstructorOptions) {
     super(options);
@@ -214,7 +215,7 @@ export class PivotChart extends BaseTable implements PivotTableAPI {
     }
 
     if (this.internalProps.enableDataAnalysis) {
-      internalProps.layoutMap = new PivoLayoutMap(this, this.dataset);
+      internalProps.layoutMap = new PivotLayoutMap(this, this.dataset);
     }
 
     //设置列宽
@@ -245,6 +246,9 @@ export class PivotChart extends BaseTable implements PivotTableAPI {
     table.rowCount = layoutMap.rowCount ?? 0;
     table.frozenColCount = layoutMap.rowHeaderLevelCount; //TODO
     table.frozenRowCount = layoutMap.headerLevelCount;
+
+    table.bottomFrozenRowCount = layoutMap?.bottomFrozenRowCount ?? 0;
+    table.rightFrozenColCount = layoutMap?.rightFrozenColCount ?? 0;
   }
   protected _getSortFuncFromHeaderOption(
     columns: undefined,
@@ -308,7 +312,7 @@ export class PivotChart extends BaseTable implements PivotTableAPI {
       const aggregator = this.dataset.getAggregator(
         rowKey[rowKey.length - 1],
         colKey[colKey.length - 1],
-        (this.internalProps.layoutMap as PivoLayoutMap).getIndicatorKey(col, row)
+        (this.internalProps.layoutMap as PivotLayoutMap).getIndicatorKey(col, row)
       );
       return aggregator.value ? aggregator.value() : undefined;
     }
@@ -328,7 +332,7 @@ export class PivotChart extends BaseTable implements PivotTableAPI {
       const aggregator = this.dataset.getAggregator(
         rowKey[rowKey.length - 1],
         colKey[colKey.length - 1],
-        (this.internalProps.layoutMap as PivoLayoutMap).getIndicatorKey(col, row)
+        (this.internalProps.layoutMap as PivotLayoutMap).getIndicatorKey(col, row)
       );
       return aggregator.value ? aggregator.value() : undefined;
       // return ''
@@ -349,7 +353,7 @@ export class PivotChart extends BaseTable implements PivotTableAPI {
       const aggregator = this.dataset.getAggregator(
         rowKey[rowKey.length - 1],
         colKey[colKey.length - 1],
-        (this.internalProps.layoutMap as PivoLayoutMap).getIndicatorKey(col, row)
+        (this.internalProps.layoutMap as PivotLayoutMap).getIndicatorKey(col, row)
       );
       return aggregator.records;
       // return ''
@@ -363,7 +367,7 @@ export class PivotChart extends BaseTable implements PivotTableAPI {
   updateSortRules(sortRules: SortRules) {
     this.internalProps.dataConfig.sortRules = sortRules;
     this.dataset.updateSortRules(sortRules);
-    (this.internalProps.layoutMap as PivoLayoutMap).updateDataset(this.dataset);
+    (this.internalProps.layoutMap as PivotLayoutMap).updateDataset(this.dataset);
     this.invalidate();
   }
   updatePivotSortState(
@@ -830,7 +834,21 @@ export class PivotChart extends BaseTable implements PivotTableAPI {
     const chartNode: Chart = cellGroup?.getChildren()?.[0] as Chart;
     if (chartNode.attribute.chartInstance) {
       const chartInstance = chartNode.attribute.chartInstance;
-      const { dataId, data, viewBox } = chartNode.attribute;
+      const { dataId, data, viewBox, axes } = chartNode.attribute;
+      axes.forEach((axis: any, index: number) => {
+        if (axis.type === 'linear') {
+          const chartAxis = chartInstance._chart._components[index];
+          chartAxis._domain = {
+            min: axis.range?.min ?? 0,
+            max: axis.range?.max ?? 0
+          };
+        } else if (axis.type === 'band') {
+          const chartAxis = chartInstance._chart._components[index];
+          chartAxis._spec.domain = axis.domain.slice(0);
+          chartAxis.updateScaleDomain();
+        }
+      });
+
       chartInstance.updateViewBox({
         x1: viewBox.x1 - (chartNode.getRootNode() as any).table.scrollLeft,
         x2: viewBox.x2 - (chartNode.getRootNode() as any).table.scrollLeft,

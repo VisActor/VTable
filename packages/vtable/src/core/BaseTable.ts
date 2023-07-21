@@ -86,6 +86,8 @@ const { toBoxArray } = utilStyle;
 const { isTouchEvent } = event;
 const rangeReg = /^\$(\d+)\$(\d+)$/;
 importStyle();
+
+const EMPTY_STYLE = {};
 export abstract class BaseTable extends EventTarget implements BaseTableAPI {
   internalProps: IBaseTableProtected;
   showFrozenIcon = true;
@@ -874,14 +876,28 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
    * @returns
    */
   getRowHeight(row: number): number {
-    return (
-      this.rowHeightsMap.get(row) ||
-      (this.isColumnHeader(0, row) || this.isCornerHeader(0, row)
-        ? Array.isArray(this.defaultHeaderRowHeight)
-          ? this.defaultHeaderRowHeight[row] ?? this.internalProps.defaultRowHeight
-          : this.defaultHeaderRowHeight
-        : this.internalProps.defaultRowHeight)
-    );
+    // return (
+    //   this.rowHeightsMap.get(row) ||
+    //   (this.isColumnHeader(0, row) || this.isCornerHeader(0, row)
+    //     ? Array.isArray(this.defaultHeaderRowHeight)
+    //       ? this.defaultHeaderRowHeight[row] ?? this.internalProps.defaultRowHeight
+    //       : this.defaultHeaderRowHeight
+    //     : this.internalProps.defaultRowHeight)
+    //     );
+    if (this.rowHeightsMap.get(row)) {
+      return this.rowHeightsMap.get(row);
+    }
+    if (this.isColumnHeader(0, row) || this.isCornerHeader(0, row)) {
+      return Array.isArray(this.defaultHeaderRowHeight)
+        ? this.defaultHeaderRowHeight[row] ?? this.internalProps.defaultRowHeight
+        : this.defaultHeaderRowHeight;
+    }
+    if (this.isBottomFrozenRow(this.rowHeaderLevelCount, row)) {
+      return Array.isArray(this.defaultHeaderRowHeight)
+        ? this.defaultHeaderRowHeight[row] ?? this.internalProps.defaultRowHeight
+        : this.defaultHeaderRowHeight;
+    }
+    return this.internalProps.defaultRowHeight;
   }
   /**
    * 设置某一行的高度
@@ -942,13 +958,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
 
     let h = 0;
     for (let i = startRow; i <= endRow; i++) {
-      h +=
-        this.rowHeightsMap.get(i) ||
-        (this.isColumnHeader(0, i) || this.isCornerHeader(0, i)
-          ? Array.isArray(this.defaultHeaderRowHeight)
-            ? this.defaultHeaderRowHeight[i] ?? this.internalProps.defaultRowHeight
-            : this.defaultHeaderRowHeight
-          : this.internalProps.defaultRowHeight);
+      h += this.getRowHeight(i);
     }
     if (startRow >= 0 && endRow >= 0 && h > 0) {
       this._rowRangeHeightsMap.set(`$${startRow}$${endRow}`, Math.round(h));
@@ -970,6 +980,10 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     } else if (width) {
       return width;
     } else if (this.isRowHeader(col, 0) || this.isCornerHeader(col, 0)) {
+      return Array.isArray(this.defaultHeaderColWidth)
+        ? this.defaultHeaderColWidth[col] ?? this.defaultColWidth
+        : this.defaultHeaderColWidth;
+    } else if (this.isRightFrozenColumn(col, this.columnHeaderLevelCount)) {
       return Array.isArray(this.defaultHeaderColWidth)
         ? this.defaultHeaderColWidth[col] ?? this.defaultColWidth
         : this.defaultHeaderColWidth;
@@ -1336,8 +1350,8 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     col: boolean;
   } | null {
     const { frozenRowCount, frozenColCount } = this.internalProps;
-    const isFrozenRow = frozenRowCount > 0 && row < frozenRowCount;
-    const isFrozenCol = frozenColCount > 0 && col < frozenColCount;
+    const isFrozenRow = (frozenRowCount > 0 && row < frozenRowCount) || this.isBottomFrozenRow(col, row);
+    const isFrozenCol = (frozenColCount > 0 && col < frozenColCount) || this.isRightFrozenColumn(col, row);
     if (isFrozenRow || isFrozenCol) {
       return {
         row: isFrozenRow,
@@ -1787,6 +1801,28 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
   getFrozenColsWidth(): number {
     const w = this.getColsWidth(0, this.frozenColCount - 1);
     return w;
+  }
+  /**
+   * 获取底部冻结固定列总宽
+   * @returns
+   */
+  getBottomFrozenRowsHeight(): number {
+    if (this.bottomFrozenRowCount > 0) {
+      const height = this.getRowsHeight(this.rowCount - this.bottomFrozenRowCount, this.rowCount - 1);
+      return height;
+    }
+    return 0;
+  }
+  /**
+   * 获取右侧冻结固定列总宽
+   * @returns
+   */
+  getRightFrozenColsWidth(): number {
+    if (this.rightFrozenColCount > 0) {
+      const width = this.getColsWidth(this.colCount - this.rightFrozenColCount, this.colCount - 1);
+      return width;
+    }
+    return 0;
   }
   /**
    * 获取实际绘制范围的宽高，而非可绘制画布大小
@@ -2483,6 +2519,14 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
   isCornerHeader(col: number, row: number): boolean {
     return this.internalProps.layoutMap?.isCornerHeader(col, row);
   }
+  /** 判断单元格是否属于角表头部分 */
+  isRightFrozenColumn(col: number, row: number): boolean {
+    return this.internalProps.layoutMap?.isRightFrozenColumn(col, row);
+  }
+  /** 判断单元格是否属于角表头部分 */
+  isBottomFrozenRow(col: number, row: number): boolean {
+    return this.internalProps.layoutMap?.isBottomFrozenRow(col, row);
+  }
   /** 获取单元格的基本信息 目前主要组织单元格信息给事件传递给用户的参数使用 */
   getCellInfo(col: number, row: number): MousePointerCellEvent {
     const colDef = this.isHeader(col, row) ? this.getHeaderDefine(col, row) : this.getBodyColumnDefine(col, row);
@@ -2532,6 +2576,9 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
         return cacheStyle;
       }
       const hd = layoutMap.getHeader(col, row);
+      if (!hd || hd.isEmpty) {
+        return EMPTY_STYLE;
+      }
       // const styleClass = hd.headerType.StyleClass; //BaseHeader文件
       const styleClass = this.internalProps.headerHelper.getStyleClass(hd.headerType);
       const { style } = hd;

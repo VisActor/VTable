@@ -75,7 +75,8 @@ export function createChartCellGroup(
       x2: Math.ceil(cellGroup.globalAABBBounds.x1 + width - padding[1] + table.scrollLeft),
       y1: Math.ceil(cellGroup.globalAABBBounds.y1 + padding[0] + table.scrollTop),
       y2: Math.ceil(cellGroup.globalAABBBounds.y1 + height - padding[2] + table.scrollTop)
-    }
+    },
+    axes: table.internalProps.layoutMap.getChartAxes(col, row)
     // clipRect: {
     //   left: cellGroup.globalAABBBounds.x1 + (table as any).tableX + padding[3],
     //   top: cellGroup.globalAABBBounds.y1 + (table as any).tableY + padding[0],

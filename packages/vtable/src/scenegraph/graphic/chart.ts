@@ -1,16 +1,17 @@
 import type { GraphicType, IGroupGraphicAttribute } from '@visactor/vrender';
 import { genNumberType, Group } from '@visactor/vrender';
-import { Bounds } from '@visactor/vutils';
+import { Bounds, cloneDeep } from '@visactor/vutils';
 import type { BaseTableAPI } from '../../ts-types/base-table';
 import type { PivotChart } from '../../PivotChart';
 import { clearChartCacheImage, updateChartSize } from '../refresh-node/update-chart';
-import type { PivoLayoutMap } from '../../layout/pivot-layout';
+import type { PivotLayoutMap } from '../../layout/pivot-layout';
 
 interface IChartGraphicAttribute extends IGroupGraphicAttribute {
   canvas: HTMLCanvasElement;
   dataId: string;
   data: any;
   spec: any;
+  axes: any;
   ClassType: any;
   chartInstance: any;
   cellPadding: number[];
@@ -70,9 +71,9 @@ export class Chart extends Group {
     const tableBound = table.scenegraph.tableGroup.globalAABBBounds;
     const bodyBound = new Bounds();
     bodyBound.x1 = tableBound.x1 + table.getFrozenColsWidth();
-    bodyBound.x2 = tableBound.x2;
+    bodyBound.x2 = tableBound.x2 - table.getRightFrozenColsWidth();
     bodyBound.y1 = tableBound.y1 + table.getFrozenRowsHeight();
-    bodyBound.y2 = tableBound.y2;
+    bodyBound.y2 = tableBound.y2 - table.getBottomFrozenRowsHeight();
     const clipBound = bodyBound.intersect({
       x1: x1 - table.scrollLeft,
       x2: x2 - table.scrollLeft,
