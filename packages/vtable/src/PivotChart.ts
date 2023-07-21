@@ -134,6 +134,7 @@ export class PivotChart extends BaseTable implements PivotTableAPI {
     // const range = internalProps.selection.range; //保留原有单元格选中状态
     super.updateOption(options);
 
+    this.setCustomStateNameToSpec();
     // 更新protectedSpace
     internalProps.dataConfig = {};
     this.internalProps.enableDataAnalysis = true;
@@ -163,9 +164,18 @@ export class PivotChart extends BaseTable implements PivotTableAPI {
         }
         return keys;
       }, []);
+
       this.internalProps.dataConfig.collectValuesBy = this._generateCollectValuesConfig(columnKeys, rowKeys);
       this.internalProps.dataConfig.aggregationRules = this._generateAggregationRules();
-      this.dataset = new Dataset(internalProps.dataConfig, rowKeys, columnKeys, indicatorKeys, options.records);
+      this.dataset = new Dataset(
+        this.internalProps.dataConfig,
+        rowKeys,
+        columnKeys,
+        indicatorKeys,
+        options.records ?? this.internalProps.records,
+        options.columnTree,
+        options.rowTree
+      );
     }
     // 更新表头
     this.refreshHeader();
@@ -186,6 +196,9 @@ export class PivotChart extends BaseTable implements PivotTableAPI {
       this.setRecords(options.records as any, undefined);
     } else {
       this._resetFrozenColCount();
+      // 生成单元格场景树
+      this.scenegraph.createSceneGraph();
+      this.invalidate();
     }
 
     return new Promise(resolve => {
@@ -204,23 +217,6 @@ export class PivotChart extends BaseTable implements PivotTableAPI {
     if (this.internalProps.enableDataAnalysis) {
       internalProps.layoutMap = new PivotLayoutMap(this, this.dataset);
     }
-    // else if (Array.isArray(this.options.columnTree) || Array.isArray(this.options.rowTree)) {
-    //   internalProps.layoutMap = new PivotHeaderLayoutMap(this);
-    //   //判断如果数据是二维数组 则标识已经分析过 直接从二维数组挨个读取渲染即可
-    //   //不是二维数组 对应是个object json对象 则表示flat数据，需要对应行列维度进行转成方便数据查询的行列树结构
-    //   if (this.options.records?.[0]?.constructor !== Array) {
-    //     this.flatDataToObjects = new DatesetForPivotChart(
-    //       {
-    //         rows: internalProps.layoutMap.rowDimensionKeys,
-    //         columns: internalProps.layoutMap.colDimensionKeys,
-    //         indicators: internalProps.layoutMap.indicatorKeys,
-    //         indicatorsAsCol: internalProps.layoutMap.indicatorsAsCol,
-    //         indicatorDimensionKey: internalProps.layoutMap.indicatorDimensionKey
-    //       },
-    //       this.options.records
-    //     );
-    //   }
-    // }
 
     //设置列宽
     for (let col = 0; col < internalProps.layoutMap.columnWidths.length; col++) {
@@ -573,6 +569,9 @@ export class PivotChart extends BaseTable implements PivotTableAPI {
   }
   /**
    * 根据用户配置 生成 收集维度值collectValuesBy 的配置  传给dataset用
+   * 这个收集规则的逻辑是按照正常使用方式：
+   * 指标显示在行表头indicatorsAsCol=false时，图表yField为指标值，xField为维度值（考虑stack）direction为默认值'vertical'；
+   * 指标显示在列表头indicatorsAsCol=true时，图表xField为指标值，yField为维度值（考虑stack）direction为'horizontal'；
    * @param columnKeys
    * @param rowKeys
    * @returns
@@ -581,105 +580,104 @@ export class PivotChart extends BaseTable implements PivotTableAPI {
     const option = this.options;
     const collectValuesBy: Record<string, CollectValueBy> = {};
 
-    if (option.indicatorsAsCol === false) {
-      for (let i = 0, len = option.indicators.length; i < len; i++) {
-        if (typeof option.indicators[i] !== 'string') {
-          if ((option.indicators[i] as IChartColumnIndicator).chartSpec) {
-            const indicatorDefine = option.indicators[i] as IIndicator;
-            // 收集指标值的范围
-            collectValuesBy[indicatorDefine.indicatorKey] = {
-              by: rowKeys,
-              range: true,
-              // 判断是否需要匹配维度值相同的进行求和计算
-              sumBy:
-                (indicatorDefine as IChartColumnIndicator).chartSpec?.stack !== false &&
-                columnKeys.concat((indicatorDefine as IChartColumnIndicator).chartSpec?.xField)
-            };
-            if ((indicatorDefine as IChartColumnIndicator).chartSpec.series) {
-              (indicatorDefine as IChartColumnIndicator).chartSpec.series.forEach((chartSeries: any) => {
-                const xField = typeof chartSeries.xField === 'string' ? chartSeries.xField : chartSeries.xField[0];
-                collectValuesBy[xField] = {
-                  by: columnKeys,
-                  type: 'xField'
-                };
-
-                const yField = chartSeries.yField;
-                collectValuesBy[yField] = {
-                  by: rowKeys,
-                  range: true,
-                  sumBy: chartSeries.stack !== false && columnKeys.concat(xField)
-                };
-              });
-            } else {
-              const xField =
-                typeof (indicatorDefine as IChartColumnIndicator).chartSpec.xField === 'string'
-                  ? (indicatorDefine as IChartColumnIndicator).chartSpec.xField
-                  : (indicatorDefine as IChartColumnIndicator).chartSpec.xField[0];
+    for (let i = 0, len = option.indicators.length; i < len; i++) {
+      if (typeof option.indicators[i] !== 'string' && (option.indicators[i] as IChartColumnIndicator).chartSpec) {
+        if (option.indicatorsAsCol === false) {
+          const indicatorDefine = option.indicators[i] as IIndicator;
+          // 收集指标值的范围
+          collectValuesBy[indicatorDefine.indicatorKey] = {
+            by: rowKeys,
+            range: true,
+            // 判断是否需要匹配维度值相同的进行求和计算
+            sumBy:
+              (indicatorDefine as IChartColumnIndicator).chartSpec?.stack !== false &&
+              columnKeys.concat((indicatorDefine as IChartColumnIndicator).chartSpec?.xField)
+          };
+          if ((indicatorDefine as IChartColumnIndicator).chartSpec.series) {
+            (indicatorDefine as IChartColumnIndicator).chartSpec.series.forEach((chartSeries: any) => {
+              const xField = typeof chartSeries.xField === 'string' ? chartSeries.xField : chartSeries.xField[0];
               collectValuesBy[xField] = {
                 by: columnKeys,
-                type: 'xField'
+                type: chartSeries.direction !== 'horizontal' ? 'xField' : undefined,
+                range: chartSeries.direction === 'horizontal'
               };
-              //下面这个收集的值 应该是和收集的 collectValuesBy[indicatorDefine.indicatorKey] 相同
-              const yField = (indicatorDefine as IChartColumnIndicator).chartSpec.yField;
+
+              const yField = chartSeries.yField;
               collectValuesBy[yField] = {
                 by: rowKeys,
-                range: true,
-                sumBy: (indicatorDefine as IChartColumnIndicator).chartSpec.stack !== false && columnKeys.concat(xField)
+                range: chartSeries.direction !== 'horizontal', // direction默认为'vertical'
+                sumBy: chartSeries.stack !== false && columnKeys.concat(xField) // 逻辑严谨的话 这个concat的值也需要结合 chartSeries.direction来判断是xField还是yField
               };
-            }
-          }
-        }
-      }
-    } else {
-      for (let i = 0, len = option.indicators.length; i < len; i++) {
-        if (typeof option.indicators[i] !== 'string') {
-          if ((option.indicators[i] as IChartColumnIndicator).chartSpec) {
-            const indicatorDefine = option.indicators[i] as IIndicator;
-            // 收集指标值的范围
-            collectValuesBy[indicatorDefine.indicatorKey] = {
+            });
+          } else {
+            const xField =
+              typeof (indicatorDefine as IChartColumnIndicator).chartSpec.xField === 'string'
+                ? (indicatorDefine as IChartColumnIndicator).chartSpec.xField
+                : (indicatorDefine as IChartColumnIndicator).chartSpec.xField[0];
+            collectValuesBy[xField] = {
               by: columnKeys,
-              range: true,
-              // 判断是否需要匹配维度值相同的进行求和计算
-              sumBy:
-                (indicatorDefine as IChartColumnIndicator).chartSpec?.stack !== false &&
-                rowKeys.concat((indicatorDefine as IChartColumnIndicator).chartSpec?.yField)
+              type:
+                (indicatorDefine as IChartColumnIndicator).chartSpec.direction !== 'horizontal' ? 'xField' : undefined,
+              range: (indicatorDefine as IChartColumnIndicator).chartSpec.direction === 'horizontal'
             };
-            if ((indicatorDefine as IChartColumnIndicator).chartSpec.series) {
-              (indicatorDefine as IChartColumnIndicator).chartSpec.series.forEach((chartSeries: any) => {
-                const yField = typeof chartSeries.yField === 'string' ? chartSeries.yField : chartSeries.yField[0];
-                collectValuesBy[yField] = {
-                  by: rowKeys,
-                  type: 'yField'
-                };
-
-                const xField = chartSeries.xField;
-                collectValuesBy[xField] = {
-                  by: columnKeys,
-                  range: true,
-                  sumBy: chartSeries.stack !== false && rowKeys.concat(yField)
-                };
-              });
-            } else {
-              const yField =
-                typeof (indicatorDefine as IChartColumnIndicator).chartSpec.yField === 'string'
-                  ? (indicatorDefine as IChartColumnIndicator).chartSpec.yField
-                  : (indicatorDefine as IChartColumnIndicator).chartSpec.yField[0];
+            //下面这个收集的值 应该是和收集的 collectValuesBy[indicatorDefine.indicatorKey] 相同
+            const yField = (indicatorDefine as IChartColumnIndicator).chartSpec.yField;
+            collectValuesBy[yField] = {
+              by: rowKeys,
+              range: (option.indicators[i] as IChartColumnIndicator).chartSpec.direction !== 'horizontal', // direction默认为'vertical'
+              sumBy: (indicatorDefine as IChartColumnIndicator).chartSpec.stack !== false && columnKeys.concat(xField) // 逻辑严谨的话 这个concat的值也需要结合 chartSeries.direction来判断是xField还是yField
+            };
+          }
+        } else {
+          const indicatorDefine = option.indicators[i] as IIndicator;
+          // 收集指标值的范围
+          collectValuesBy[indicatorDefine.indicatorKey] = {
+            by: columnKeys,
+            range: true,
+            // 判断是否需要匹配维度值相同的进行求和计算
+            sumBy:
+              (indicatorDefine as IChartColumnIndicator).chartSpec?.stack !== false &&
+              rowKeys.concat((indicatorDefine as IChartColumnIndicator).chartSpec?.yField)
+          };
+          if ((indicatorDefine as IChartColumnIndicator).chartSpec.series) {
+            (indicatorDefine as IChartColumnIndicator).chartSpec.series.forEach((chartSeries: any) => {
+              const yField = typeof chartSeries.yField === 'string' ? chartSeries.yField : chartSeries.yField[0];
               collectValuesBy[yField] = {
                 by: rowKeys,
-                type: 'yField'
+                type: chartSeries.direction === 'horizontal' ? 'yField' : undefined,
+                range: chartSeries.direction !== 'horizontal'
               };
-              //下面这个收集的值 应该是和收集的 collectValuesBy[indicatorDefine.indicatorKey] 相同
-              const xField = (indicatorDefine as IChartColumnIndicator).chartSpec.xField;
+
+              const xField = chartSeries.xField;
               collectValuesBy[xField] = {
                 by: columnKeys,
-                range: true,
-                sumBy: (indicatorDefine as IChartColumnIndicator).chartSpec.stack !== false && rowKeys.concat(yField)
+                range: chartSeries.direction === 'horizontal', // direction默认为'vertical'
+                sumBy: chartSeries.stack !== false && rowKeys.concat(yField)
               };
-            }
+            });
+          } else {
+            const yField =
+              typeof (indicatorDefine as IChartColumnIndicator).chartSpec.yField === 'string'
+                ? (indicatorDefine as IChartColumnIndicator).chartSpec.yField
+                : (indicatorDefine as IChartColumnIndicator).chartSpec.yField[0];
+            collectValuesBy[yField] = {
+              by: rowKeys,
+              type:
+                (indicatorDefine as IChartColumnIndicator).chartSpec.direction === 'horizontal' ? 'yField' : undefined,
+              range: (indicatorDefine as IChartColumnIndicator).chartSpec.direction !== 'horizontal'
+            };
+            //下面这个收集的值 应该是和收集的 collectValuesBy[indicatorDefine.indicatorKey] 相同
+            const xField = (indicatorDefine as IChartColumnIndicator).chartSpec.xField;
+            collectValuesBy[xField] = {
+              by: columnKeys,
+              range: (option.indicators[i] as IChartColumnIndicator).chartSpec.direction === 'horizontal', // direction默认为'vertical'
+              sumBy: (indicatorDefine as IChartColumnIndicator).chartSpec.stack !== false && rowKeys.concat(yField)
+            };
           }
         }
       }
     }
+
     return collectValuesBy;
   }
   // private _generateAggregationRules(indicatorKeys: string[]): AggregationRules {
@@ -727,6 +725,7 @@ export class PivotChart extends BaseTable implements PivotTableAPI {
 
     return aggregationRules;
   }
+  /** 将spec中的 selected和selected_reverse  更名为vtable_selected和vtable_selected_reverse */
   private setCustomStateNameToSpec() {
     /** 修改设置的selected 和 dselected_reverse的名字加前缀vtable */
     const setCustomStateName = (spec: any) => {

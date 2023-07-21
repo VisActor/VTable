@@ -231,6 +231,9 @@ export class ListTable extends BaseTable implements ListTableAPI {
       this.setRecords(options.records as any, options.sortState);
     } else {
       this._resetFrozenColCount();
+      // 生成单元格场景树
+      this.scenegraph.createSceneGraph();
+      this.invalidate();
     }
 
     return new Promise(resolve => {
