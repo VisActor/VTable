@@ -236,7 +236,7 @@ function computeAutoColWidth(
     // const indicatorWidth = computeIndicatorWidth(col, row, forceCompute, table);
     // const indicatorWidth = table.internalProps.layoutMap.getColumnWidthDefined(col);
     const indicatorWidth = widthDeifne;
-    if (typeof indicatorWidth === 'number') {
+    if (typeof indicatorWidth === 'number' && table.widthMode === 'standard') {
       maxWidth = Math.max(indicatorWidth, maxWidth);
       continue;
     }
