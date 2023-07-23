@@ -87,7 +87,7 @@ export function createTable() {
       // enableSingalCellHighlight: true, //hover到的单元格高亮
       disableHeaderHover: true
     },
-    autoRowHeight: true
+    heightMode: 'autoHeight'
   };
 
   const instance = new ListTable(option);

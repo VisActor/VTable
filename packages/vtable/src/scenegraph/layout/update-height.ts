@@ -222,7 +222,8 @@ export function updateCellHeight(
       cell,
       distHeight,
       detaY,
-      scene.table.internalProps.autoRowHeight,
+      // scene.table.internalProps.autoRowHeight,
+      scene.table.heightMode === 'autoHeight',
       getQuadProps(style.padding as number),
       style.textAlign,
       style.textBaseline

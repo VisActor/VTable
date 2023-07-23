@@ -109,7 +109,7 @@ export function createCell(
     }
 
     if (customLayout || customRender) {
-      const { autoRowHeight } = table.internalProps;
+      // const { autoRowHeight } = table.internalProps;
       const customResult = dealWithCustom(
         customLayout,
         customRender,
@@ -118,7 +118,7 @@ export function createCell(
         table.getColWidth(col),
         table.getRowHeight(row),
         false,
-        autoRowHeight,
+        table.heightMode === 'autoHeight',
         table
       );
       customElementsGroup = customResult.elementsGroup;

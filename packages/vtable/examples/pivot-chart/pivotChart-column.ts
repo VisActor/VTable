@@ -9295,7 +9295,8 @@ export function createTable() {
         cellBgColor: ''
       }
     }),
-    widthMode: 'adaptive'
+    widthMode: 'adaptive',
+    heightMode: 'adaptive'
     // hover: {
     //   disableHeaderHover:false,
     //   disableHover: true

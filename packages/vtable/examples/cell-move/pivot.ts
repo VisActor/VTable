@@ -395,7 +395,7 @@ export function createTable() {
       highlightMode: 'cross'
     },
     widthMode: 'standard', // 宽度模式：standard 标准模式； adaptive 自动填满容器
-    // autoRowHeight: true,
+    // heightMode: 'autoHeight',
     autoWrapText: true,
     columnResizeType: 'indicator', // 'column' | 'indicator' | 'all'
     pivotSortState: [

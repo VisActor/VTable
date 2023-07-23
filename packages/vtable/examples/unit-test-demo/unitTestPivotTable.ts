@@ -451,7 +451,7 @@ export function createTable(el: any, v: any) {
     showRowHeader: true,
     hideIndicatorName: false,
     defaultColWidth: 150,
-    autoRowHeight: true,
+    heightMode: 'autoHeight',
     autoWrapText: true,
     records: [
       {
@@ -1333,7 +1333,7 @@ export function createTable(el: any, v: any) {
   //     showRowHeader: true,
   //     hideIndicatorName: true,
   //     defaultColWidth: 150,
-  //     autoRowHeight: true,
+  //     heightMode: 'autoHeight',
   //     autoWrapText: true
   //   };
   //   tableInstance.updateOption(option1);

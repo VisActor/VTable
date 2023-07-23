@@ -32,7 +32,8 @@ export function updateColWidth(scene: Scenegraph, col: number, detaX: number) {
   //   width = scene.table.getColWidth(col);
   // }
 
-  const { autoRowHeight } = scene.table.internalProps;
+  // const { autoRowHeight } = scene.table.internalProps;
+  const autoRowHeight = scene.table.heightMode === 'autoHeight';
   let needRerangeRow = false;
   const colOrCornerHeaderColumn = scene.getColGroup(col, true) as Group;
   const oldColOrCornerHeaderColumnWidth = colOrCornerHeaderColumn?.attribute.width;

@@ -110,7 +110,7 @@ describe('listTable init test', () => {
       records: recordDeleted,
       defaultColWidth: 150,
       allowFrozenColCount: 5,
-      autoRowHeight: true,
+      heightMode: 'autoHeight',
       autoWrapText: true,
       widthMode: 'autoWidth',
       limitMaxAutoWidth: 170

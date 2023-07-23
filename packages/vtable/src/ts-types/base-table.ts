@@ -30,6 +30,7 @@ import type {
   FieldFormat,
   FullExtendStyle,
   HeaderValues,
+  HeightModeDef,
   HierarchyState,
   IDataConfig,
   IPagerConf,
@@ -124,7 +125,7 @@ export interface IBaseTableProtected {
   disposables?: { dispose: () => void }[] | null;
   theme: TableTheme;
   transpose?: boolean; //是否转置
-  autoRowHeight?: boolean; //是否自动撑开高度 对于设置了autoWrapText的multilineText的列生效
+  // autoRowHeight?: boolean; //是否自动撑开高度 对于设置了autoWrapText的multilineText的列生效
   pixelRatio?: number;
   /** 下拉菜单的相关配置。消失时机：显示后点击菜单区域外自动消失*/
   menu: {
@@ -265,8 +266,10 @@ export interface BaseTableConstructorOptions {
   theme?: ITableThemeDefine;
   /** 宽度模式 */
   widthMode?: 'standard' | 'adaptive' | 'autoWidth' | 'standard-aeolus';
-  /** 行高是否根据内容来计算 */
-  autoRowHeight?: boolean;
+  /** 高度模式 */
+  heightMode?: 'standard' | 'adaptive' | 'autoHeight';
+  // /** 行高是否根据内容来计算 */
+  // autoRowHeight?: boolean;
   /** 设备的像素比 不配的话默认获取window.devicePixelRatio */
   pixelRatio?: number;
   /** 自定义渲染 函数形式*/
@@ -362,6 +365,8 @@ export interface BaseTableAPI {
   tableY: number;
   /** 表格宽度模式 */
   widthMode: WidthModeDef;
+  /** 表格宽度模式 */
+  heightMode: HeightModeDef;
 
   listen: <TYPE extends keyof TableEventHandlersEventArgumentMap>(
     type: TYPE,

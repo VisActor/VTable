@@ -32,7 +32,8 @@ import type {
   HierarchyState,
   FieldKeyDef,
   CellType,
-  LayoutObjectId
+  LayoutObjectId,
+  HeightModeDef
 } from '../ts-types';
 import type { ColumnIconOption } from '../ts-types';
 import { event, style as utilStyle } from '../tools/helper';
@@ -100,6 +101,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
   tableX: number;
   tableY: number;
   _widthMode: WidthModeDef;
+  _heightMode: HeightModeDef;
   customRender?: ICustomRender;
 
   canvasWidth?: number;
@@ -149,6 +151,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
       defaultColWidth = 80,
       defaultHeaderColWidth,
       widthMode = 'standard',
+      heightMode = 'standard',
       keyboardOptions,
       parentElement,
       // disableRowHeaderColumnResize,
@@ -167,6 +170,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     } = options;
     this.options = options;
     this._widthMode = widthMode;
+    this._heightMode = heightMode;
     this.customRender = customRender;
     this.padding = { top: 0, right: 0, left: 0, bottom: 0 };
     if (padding) {
@@ -195,7 +199,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
       this.showFrozenIcon = false;
     }
     //设置是否自动撑开的配置
-    internalProps.autoRowHeight = options.autoRowHeight ?? false;
+    // internalProps.autoRowHeight = options.autoRowHeight ?? false;
 
     internalProps.handler = new EventHandler();
     internalProps.element = createRootElement(this.padding);
@@ -585,6 +589,14 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
   set widthMode(widthMode: WidthModeDef) {
     if (widthMode !== this._widthMode) {
       this._widthMode = widthMode;
+    }
+  }
+  get heightMode(): HeightModeDef {
+    return this._heightMode;
+  }
+  set heightMode(heightMode: HeightModeDef) {
+    if (heightMode !== this._heightMode) {
+      this._heightMode = heightMode;
     }
   }
 
@@ -1677,6 +1689,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
       select: click,
       pixelRatio,
       widthMode,
+      heightMode,
       customRender
     } = options;
     if (pixelRatio && pixelRatio !== this.internalProps.pixelRatio) {
@@ -1712,6 +1725,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     }
 
     this.widthMode = widthMode ?? 'standard';
+    this.heightMode = heightMode ?? 'standard';
     this.customRender = customRender;
     // 更新protectedSpace
     const internalProps: IBaseTableProtected = this.internalProps;
@@ -1742,7 +1756,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     internalProps.theme = themes.of(options.theme ?? themes.DEFAULT);
     // this._updateSize();
     //设置是否自动撑开的配置
-    internalProps.autoRowHeight = options.autoRowHeight ?? false;
+    // internalProps.autoRowHeight = options.autoRowHeight ?? false;
     //是否统一设置为多行文本
     internalProps.autoWrapText = options.autoWrapText;
     internalProps.allowFrozenColCount = options.allowFrozenColCount ?? internalProps.colCount;

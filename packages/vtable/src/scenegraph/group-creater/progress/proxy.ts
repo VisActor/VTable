@@ -414,7 +414,7 @@ export class SceneProxy {
   updateCellGroups(count: number) {
     const distRow = Math.min(this.bodyBottomRow, this.rowUpdatePos + count);
     // console.log('updateCellGroups', this.rowUpdatePos, distRow);
-    if (this.table.internalProps.autoRowHeight) {
+    if (this.table.heightMode === 'autoHeight') {
       computeRowsHeight(this.table, this.rowUpdatePos, distRow);
     }
     for (let col = this.bodyLeftCol; col <= this.bodyRightCol; col++) {
@@ -425,7 +425,7 @@ export class SceneProxy {
       }
     }
 
-    if (this.table.internalProps.autoRowHeight) {
+    if (this.table.heightMode === 'autoHeight') {
       updateAutoRow(
         this.bodyLeftCol, // colStart
         this.bodyRightCol, // colEnd
@@ -512,7 +512,7 @@ export class SceneProxy {
     // 更新同步范围
     let syncTopRow;
     let syncBottomRow;
-    if (this.table.internalProps.autoRowHeight) {
+    if (this.table.heightMode === 'autoHeight') {
       syncTopRow = this.rowStart;
       syncBottomRow = this.rowEnd;
     } else {
@@ -520,7 +520,7 @@ export class SceneProxy {
       syncBottomRow = Math.min(this.bodyBottomRow, this.screenTopRow + this.screenRowCount * 3);
     }
     console.log('sort更新同步范围', syncTopRow, syncBottomRow);
-    if (this.table.internalProps.autoRowHeight) {
+    if (this.table.heightMode === 'autoHeight') {
       computeRowsHeight(this.table, syncTopRow, syncBottomRow);
     }
     for (let col = this.bodyLeftCol; col <= this.bodyRightCol; col++) {
@@ -531,7 +531,7 @@ export class SceneProxy {
       }
     }
     console.log('updateAutoRow', this.rowEnd > this.bodyBottomRow - (this.rowEnd - this.rowStart + 1) ? 'down' : 'up');
-    if (this.table.internalProps.autoRowHeight) {
+    if (this.table.heightMode === 'autoHeight') {
       updateAutoRow(
         this.bodyLeftCol, // colStart
         this.bodyRightCol, // colEnd
@@ -557,7 +557,7 @@ export class SceneProxy {
       this.updateBody(0);
     }
 
-    if (!this.table.internalProps.autoRowHeight) {
+    if (this.table.heightMode !== 'autoHeight') {
       await this.progress();
     }
   }

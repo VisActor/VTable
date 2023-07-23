@@ -214,7 +214,7 @@ export function createTable() {
     // theme: VTable.themes.SIMPLIFY,
     // defaultRowHeight: 100,
     // autoWrapText: false,
-    // autoRowHeight: true,
+    // heightMode: 'autoHeight',
   };
 
   const instance = new ListTable(option);

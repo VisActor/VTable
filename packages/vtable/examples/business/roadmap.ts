@@ -423,7 +423,7 @@ export function createTable() {
     defaultRowHeight: 30,
     defaultHeaderColWidth: 200,
     defaultColWidth: 180,
-    autoRowHeight: true,
+    heightMode: 'autoHeight',
     columnResizeMode: 'none'
   };
 
