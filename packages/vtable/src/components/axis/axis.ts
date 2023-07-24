@@ -239,4 +239,12 @@ export class CartesianAxis {
 
     return null;
   }
+
+  getScale() {
+    return this.scale._scale;
+  }
+
+  getDomainSpec() {
+    return (this.scale as LinearAxisScale).domain;
+  }
 }

@@ -1,3 +1,4 @@
+import { isArray } from '@visactor/vutils';
 import { isValid } from '../tools/util';
 import type {
   FilterRules,
@@ -32,6 +33,7 @@ import {
   sortBy,
   typeSort
 } from './statistics-helper';
+import { getNewRangeToAlign } from './util/zero-align';
 /**
  * 数据处理模块
  */
@@ -202,6 +204,11 @@ export class Dataset {
       }
       const t8 = typeof window !== 'undefined' ? window.performance.now() : 0;
       console.log('TreeToArr:', t8 - t7);
+
+      if (this.dataConfig.isPivotChart) {
+        // 处理PivotChart双轴图0值对齐
+        this.dealWithZeroAlign();
+      }
     }
   }
   //将聚合类型注册 收集到aggregators
@@ -940,5 +947,49 @@ export class Dataset {
     }
     tree.forEach((treeNode: any) => getPath(treeNode, []));
     return result;
+  }
+
+  private dealWithZeroAlign() {
+    const indicatorsToAlign = [];
+    for (let i = 0; i < this.aggregationRules.length; i++) {
+      const rule = this.aggregationRules[i];
+      if (isArray(rule.field) && rule.field.length === 2) {
+        indicatorsToAlign.push(rule.field);
+      }
+    }
+
+    indicatorsToAlign.forEach(indicatorToAlign => {
+      const indicator1 = indicatorToAlign[0];
+      const indicator2 = indicatorToAlign[1];
+      const collectedValue1 = this.collectedValues[indicator1];
+      const collectedValue2 = this.collectedValues[indicator2];
+      this.collectedValues[indicator1 + '_align'] = {};
+      this.collectedValues[indicator2 + '_align'] = {};
+
+      for (const key in collectedValue1) {
+        const range1 = collectedValue1[key];
+        const range2 = collectedValue2[key];
+
+        const newRanges = getNewRangeToAlign(
+          range1 as { min: number; max: number },
+          range2 as { min: number; max: number }
+        );
+        if (!newRanges) {
+          // 没有正确完成0值对齐，直接沿用之前的range
+          this.collectedValues[indicator1 + '_align'][key] = {
+            min: (range1 as { min: number; max: number }).min,
+            max: (range1 as { min: number; max: number }).max
+          };
+          this.collectedValues[indicator2 + '_align'][key] = {
+            min: (range2 as { min: number; max: number }).min,
+            max: (range2 as { min: number; max: number }).max
+          };
+        } else {
+          const { range1: newRange1, range2: newRange2 } = newRanges;
+          this.collectedValues[indicator1 + '_align'][key] = { min: newRange1[0], max: newRange1[1] };
+          this.collectedValues[indicator2 + '_align'][key] = { min: newRange2[0], max: newRange2[1] };
+        }
+      }
+    });
   }
 }
