@@ -53,7 +53,7 @@ export class PivotChart extends BaseTable implements PivotTableAPI {
       Object.assign(options, (options as any).layout);
     }
     this.setCustomStateNameToSpec();
-    this.internalProps.dataConfig = {};
+    this.internalProps.dataConfig = { isPivotChart: true };
     this.internalProps.enableDataAnalysis = true;
     if (this.internalProps.enableDataAnalysis && (options.rows || options.columns)) {
       const rowKeys = options.rows.reduce((keys, rowObj) => {

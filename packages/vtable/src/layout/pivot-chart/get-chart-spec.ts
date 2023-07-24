@@ -34,7 +34,10 @@ export function getChartAxes(col: number, row: number, layout: PivotLayoutMap): 
     const indicatorKeys = layout.getIndicatorKeyInChartSpec(col, row);
     const colIndex = layout.getRecordIndexByCol(col);
     indicatorKeys.forEach((key, index) => {
-      const data = layout.dataset.collectedValues[key];
+      // const data = layout.dataset.collectedValues[key];
+      const data = layout.dataset.collectedValues[key + '_align']
+        ? layout.dataset.collectedValues[key + '_align']
+        : layout.dataset.collectedValues[key];
       const range =
         data[
           layout.getColKeysPath()[colIndex][
@@ -47,7 +50,8 @@ export function getChartAxes(col: number, row: number, layout: PivotLayoutMap): 
         visible: true,
         label: { visible: false },
         range,
-        seriesIndex: index
+        seriesIndex: index,
+        grid: index === 0 ? undefined : { visible: false }
       });
     });
 
@@ -73,7 +77,9 @@ export function getChartAxes(col: number, row: number, layout: PivotLayoutMap): 
     const indicatorKeys = layout.getIndicatorKeyInChartSpec(col, row);
     const rowIndex = layout.getRecordIndexByRow(row);
     indicatorKeys.forEach((key, index) => {
-      const data = layout.dataset.collectedValues[key];
+      const data = layout.dataset.collectedValues[key + '_align']
+        ? layout.dataset.collectedValues[key + '_align']
+        : layout.dataset.collectedValues[key];
       const range = data[layout.getRowKeysPath()[rowIndex][layout.rowHeaderLevelCount - 2]];
       axes.push({
         type: 'linear',
@@ -81,7 +87,8 @@ export function getChartAxes(col: number, row: number, layout: PivotLayoutMap): 
         visible: true,
         label: { visible: false },
         range,
-        seriesIndex: index
+        seriesIndex: index,
+        grid: index === 0 ? undefined : { visible: false }
       });
     });
 

@@ -173,6 +173,7 @@ export interface IDataConfig {
   derivedFieldRules?: DerivedFieldRules;
 
   collectValuesBy?: Record<string, CollectValueBy>;
+  isPivotChart?: boolean;
 }
 
 /** 在处理数据的过程中 去额外收集某个维度的维度值范围 可为离散值或者连续值范围 */

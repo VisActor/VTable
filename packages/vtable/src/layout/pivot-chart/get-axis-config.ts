@@ -18,7 +18,10 @@ export function getAxisConfigInPivotChart(col: number, row: number, layout: Pivo
       if (!defaultKey) {
         return undefined;
       }
-      const data = layout.dataset.collectedValues[defaultKey];
+      // const data = layout.dataset.collectedValues[defaultKey];
+      const data = layout.dataset.collectedValues[defaultKey + '_align']
+        ? layout.dataset.collectedValues[defaultKey + '_align']
+        : layout.dataset.collectedValues[defaultKey];
       const index = layout.getRecordIndexByCol(col);
       const range = data[layout.getColKeysPath()[index][layout.columnHeaderLevelCount - 2]];
 
@@ -60,7 +63,10 @@ export function getAxisConfigInPivotChart(col: number, row: number, layout: Pivo
     ) {
       const indicatorKeys = layout.getIndicatorKeyInChartSpec(col, row);
       const defaultKey = indicatorKeys[0];
-      const data = layout.dataset.collectedValues[defaultKey];
+      // const data = layout.dataset.collectedValues[defaultKey];
+      const data = layout.dataset.collectedValues[defaultKey + '_align']
+        ? layout.dataset.collectedValues[defaultKey + '_align']
+        : layout.dataset.collectedValues[defaultKey];
       const index = layout.getRecordIndexByCol(col);
       const range =
         data[
@@ -122,7 +128,7 @@ export function getAxisConfigInPivotChart(col: number, row: number, layout: Pivo
       const rowPath = layout.getRowKeysPath()[recordRow];
       const domain = data[rowPath[rowPath.length - 1]] as Set<string>;
 
-      // 底部维度轴
+      // 左侧维度轴
       return {
         orient: 'left',
         type: 'band',
@@ -152,7 +158,10 @@ export function getAxisConfigInPivotChart(col: number, row: number, layout: Pivo
     ) {
       const indicatorKeys = layout.getIndicatorKeyInChartSpec(col, row);
       const defaultKey = indicatorKeys[0];
-      const data = layout.dataset.collectedValues[defaultKey];
+      // const data = layout.dataset.collectedValues[defaultKey];
+      const data = layout.dataset.collectedValues[defaultKey + '_align']
+        ? layout.dataset.collectedValues[defaultKey + '_align']
+        : layout.dataset.collectedValues[defaultKey];
       const index = layout.getRecordIndexByRow(row);
       const range = data[layout.getRowKeysPath()[index][layout.rowHeaderLevelCount - 2]];
       let indicatorInfo = null;
@@ -190,7 +199,10 @@ export function getAxisConfigInPivotChart(col: number, row: number, layout: Pivo
       if (!defaultKey) {
         return undefined;
       }
-      const data = layout.dataset.collectedValues[defaultKey];
+      // const data = layout.dataset.collectedValues[defaultKey];
+      const data = layout.dataset.collectedValues[defaultKey + '_align']
+        ? layout.dataset.collectedValues[defaultKey + '_align']
+        : layout.dataset.collectedValues[defaultKey];
       const index = layout.getRecordIndexByRow(row);
       const range = data[layout.getRowKeysPath()[index][layout.rowHeaderLevelCount - 2]];
 
