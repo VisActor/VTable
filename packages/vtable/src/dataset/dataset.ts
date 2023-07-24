@@ -209,9 +209,12 @@ export class Dataset {
       if (this.dataConfig.isPivotChart) {
         // 处理PivotChart双轴图0值对齐
         this.dealWithZeroAlign();
+<<<<<<< HEAD
 
         // 记录PivotChart维度对应的数据
         this.cacheDeminsionCollectedValues();
+=======
+>>>>>>> 962ccde (feat: add zero align in axis component)
       }
     }
   }
