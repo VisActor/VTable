@@ -103,6 +103,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
   tableY: number;
   _widthMode: WidthModeDef;
   _heightMode: HeightModeDef;
+  _autoFillWidth: boolean;
   customRender?: ICustomRender;
 
   canvasWidth?: number;
@@ -153,6 +154,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
       defaultHeaderColWidth,
       widthMode = 'standard',
       heightMode = 'standard',
+      autoFillWidth = false,
       keyboardOptions,
       parentElement,
       // disableRowHeaderColumnResize,
@@ -172,6 +174,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     this.options = options;
     this._widthMode = widthMode;
     this._heightMode = heightMode;
+    this._autoFillWidth = autoFillWidth;
     this.customRender = customRender;
     this.padding = { top: 0, right: 0, left: 0, bottom: 0 };
     if (padding) {
@@ -607,7 +610,14 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
       this._heightMode = heightMode;
     }
   }
-
+  get autoFillWidth(): boolean {
+    return this._autoFillWidth;
+  }
+  set autoFillWidth(autoFillWidth: boolean) {
+    if (autoFillWidth !== this._autoFillWidth) {
+      this._autoFillWidth = autoFillWidth;
+    }
+  }
   /**
    * 根据设置的列宽配置 计算列宽值
    * @param {string|number} width width definition
@@ -1698,6 +1708,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
       pixelRatio,
       widthMode,
       heightMode,
+      autoFillWidth,
       customRender
     } = options;
     if (pixelRatio && pixelRatio !== this.internalProps.pixelRatio) {
@@ -1734,6 +1745,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
 
     this.widthMode = widthMode ?? 'standard';
     this.heightMode = heightMode ?? 'standard';
+    this.autoFillWidth = autoFillWidth ?? false;
     this.customRender = customRender;
     // 更新protectedSpace
     const internalProps: IBaseTableProtected = this.internalProps;

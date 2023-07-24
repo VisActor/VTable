@@ -268,9 +268,11 @@ export interface BaseTableConstructorOptions {
    */
   theme?: ITableThemeDefine;
   /** 宽度模式 */
-  widthMode?: 'standard' | 'adaptive' | 'autoWidth' | 'standard-aeolus';
+  widthMode?: 'standard' | 'adaptive' | 'autoWidth';
   /** 高度模式 */
   heightMode?: 'standard' | 'adaptive' | 'autoHeight';
+  /** 当列宽度不能占满容器时，是否需要自动拉宽来填充容器的宽度。默认false */
+  autoFillWidth?: boolean;
   // /** 行高是否根据内容来计算 */
   // autoRowHeight?: boolean;
   /** 设备的像素比 不配的话默认获取window.devicePixelRatio */
@@ -371,6 +373,8 @@ export interface BaseTableAPI {
   widthMode: WidthModeDef;
   /** 表格宽度模式 */
   heightMode: HeightModeDef;
+  /** 当列宽度不能占满容器时，是否需要自动拉宽来填充容器的宽度。默认false */
+  autoFillWidth: boolean;
 
   listen: <TYPE extends keyof TableEventHandlersEventArgumentMap>(
     type: TYPE,

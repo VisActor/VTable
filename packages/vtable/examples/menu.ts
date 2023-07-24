@@ -12,6 +12,10 @@ export const menus = [
       },
       {
         path: 'list',
+        name: 'list-transpose-autoFillWidth'
+      },
+      {
+        path: 'list',
         name: 'list-tree'
       },
       {
@@ -79,6 +83,10 @@ export const menus = [
       {
         path: 'pivot-chart',
         name: 'pivotChart-axis'
+      },
+      {
+        path: 'pivot-chart',
+        name: 'pivotChart-adaptive'
       }
     ]
   },

@@ -34,7 +34,7 @@ export type FieldFormat = FieldGetter | FieldAssessor;
 
 export type FieldData = MaybePromiseOrUndefined;
 
-export type WidthModeDef = 'standard' | 'adaptive' | 'autoWidth' | 'standard-aeolus';
+export type WidthModeDef = 'standard' | 'adaptive' | 'autoWidth';
 export type HeightModeDef = 'standard' | 'adaptive' | 'autoHeight';
 export type ShowColumnRowType = 'column' | 'row' | 'none';
 export type CellType = 'body' | 'rowHeader' | 'columnHeader' | 'cornerHeader' | 'bottomFrozen' | 'rightFrozen';

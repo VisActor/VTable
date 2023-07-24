@@ -1056,7 +1056,7 @@ export class Scenegraph {
         }
         this.setColWidth(col, colWidth);
       }
-    } else if (table.widthMode === 'standard-aeolus' && this.transpose) {
+    } else if (table.autoFillWidth) {
       // 处理风神列宽特殊逻辑
       // table._colRangeWidthsMap = new Map();
       const canvasWidth = table.tableNoFrameWidth;
