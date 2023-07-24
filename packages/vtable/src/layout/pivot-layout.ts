@@ -23,6 +23,7 @@ import type { PivotChart } from '../PivotChart';
 import { cloneDeep } from '@visactor/vutils';
 import { getAxisConfigInPivotChart } from './pivot-chart/get-axis-config';
 import { getChartAxes, getChartSpec, getRawChartSpec } from './pivot-chart/get-chart-spec';
+import type { ITableAxisOption } from '../ts-types/component/axis';
 /**
  * 简化配置，包含数据处理的 布局辅助计算类
  */
@@ -106,7 +107,7 @@ export class PivotLayoutMap implements LayoutMapAPI {
   cornerSetting: ICornerDefine;
   _table: PivotTable | PivotChart;
 
-  hasIndicatorAxisInColumnHeader: boolean;
+  hasTwoIndicatorAxes: boolean;
   constructor(table: PivotTable | PivotChart, dataset: Dataset) {
     this._table = table;
     this.rowTree = table.options.rowTree;
@@ -235,6 +236,17 @@ export class PivotLayoutMap implements LayoutMapAPI {
     }
 
     if (this._table.isPivotChart()) {
+      this.hasTwoIndicatorAxes = this._indicatorObjects.some(indicatorObject => {
+        if (
+          indicatorObject.chartSpec &&
+          indicatorObject.chartSpec.series &&
+          indicatorObject.chartSpec.series.length > 1
+        ) {
+          return true;
+        }
+        return false;
+      });
+
       if (this.indicatorsAsCol) {
         const cell_id = 'rowHeaderEmpty';
         this._headerObjectMap[cell_id] = {
@@ -249,22 +261,19 @@ export class PivotLayoutMap implements LayoutMapAPI {
         };
         this._headerObjects.push(this._headerObjectMap[cell_id]);
         this.rowShowAttrs.push(cell_id);
-      }
 
-      // deal with sub indicator axis
-      this.hasIndicatorAxisInColumnHeader = this._indicatorObjects.some(indicatorObject => {
-        if (
-          indicatorObject.chartSpec &&
-          indicatorObject.chartSpec.series &&
-          indicatorObject.chartSpec.series.length > 1
-        ) {
-          return true;
+        // deal with sub indicator axis
+
+        if (!this.hasTwoIndicatorAxes) {
+          this.colShowAttrs.pop();
         }
-        return false;
-      });
-
-      if (!this.hasIndicatorAxisInColumnHeader) {
-        this.colShowAttrs.pop();
+      } else {
+        const axisOption = ((this._table as PivotChart).pivotChartAxes as ITableAxisOption[]).find(axisOption => {
+          return axisOption.orient === 'left';
+        });
+        if (axisOption?.visible === false) {
+          this.rowShowAttrs.pop();
+        }
       }
     }
 
@@ -738,22 +747,77 @@ export class PivotLayoutMap implements LayoutMapAPI {
     return this._bodyRowCount;
   }
   get bottomFrozenRowCount(): number {
-    if (this.indicatorsAsCol && this._table.isPivotChart()) {
-      return 1; // 指标在列上，指标及其对应坐标轴显示在底部，下侧冻结行数为1
-    } else if (this._table.isPivotChart()) {
-      return 1; // 指标在行上，维度对应坐标轴显示在底部，下侧冻结行数为1
+    if (!this._table.isPivotChart()) {
+      return 0;
     }
-    return 0;
+    const axisOption = ((this._table as PivotChart).pivotChartAxes as ITableAxisOption[]).find(axisOption => {
+      return axisOption.orient === 'bottom';
+    });
+    if (axisOption?.visible === false) {
+      return 0;
+    }
+    if (this.indicatorsAsCol) {
+      // 指标在列上，指标及其对应坐标轴显示在底部，下侧冻结行数为1
+      return 1;
+    }
+    return 1; // 指标在行上，维度对应坐标轴显示在底部，下侧冻结行数为1
   }
   get rightFrozenColCount(): number {
-    if (this.indicatorsAsCol && this._table.isPivotChart()) {
+    if (!this._table.isPivotChart()) {
+      return 0;
+    }
+    const axisOption = ((this._table as PivotChart).pivotChartAxes as ITableAxisOption[]).find(axisOption => {
+      return axisOption.orient === 'right';
+    });
+    if (axisOption?.visible === false) {
+      return 0;
+    }
+
+    if (this.indicatorsAsCol) {
       return 0; // 指标在列上，没有图表需要显示右轴
-    } else if (this._table.isPivotChart()) {
+    } else if (this.hasTwoIndicatorAxes) {
       // 查找指标，判断是否有双轴情况，如果有，则右侧冻结列数为1
       return 1;
     }
     return 0;
   }
+  get leftAxesCount(): number {
+    if (!this._table.isPivotChart()) {
+      return 0;
+    }
+    const axisOption = ((this._table as PivotChart).pivotChartAxes as ITableAxisOption[]).find(axisOption => {
+      return axisOption.orient === 'left';
+    });
+    if (axisOption?.visible === false) {
+      return 0;
+    }
+    if (this.indicatorsAsCol) {
+      return 1; // 左侧维度轴
+    }
+    return 1; // 左侧主指标轴
+  }
+  get topAxesCount(): number {
+    if (!this._table.isPivotChart()) {
+      return 0;
+    }
+    const axisOption = ((this._table as PivotChart).pivotChartAxes as ITableAxisOption[]).find(axisOption => {
+      return axisOption.orient === 'top';
+    });
+    if (axisOption?.visible === false) {
+      return 0;
+    }
+    if (this.indicatorsAsCol && this.hasTwoIndicatorAxes) {
+      return 1; // 顶部副指标
+    }
+    return 0; // 顶部无轴
+  }
+  get rightAxesCount(): number {
+    return this.rightFrozenColCount;
+  }
+  get bottomAxesCount(): number {
+    return this.bottomFrozenRowCount;
+  }
+
   get headerObjects(): HeaderData[] {
     return this._headerObjects;
   }
@@ -1433,7 +1497,7 @@ export class PivotLayoutMap implements LayoutMapAPI {
     if (col > this.colCount - this.rightFrozenColCount - 1 || row > this.rowCount - this.bottomFrozenRowCount - 1) {
       return true;
     }
-    if (this.hasIndicatorAxisInColumnHeader && this.indicatorsAsCol && row === this.columnHeaderLevelCount - 1) {
+    if (this.hasTwoIndicatorAxes && this.indicatorsAsCol && row === this.columnHeaderLevelCount - 1) {
       return true;
     }
     return false;

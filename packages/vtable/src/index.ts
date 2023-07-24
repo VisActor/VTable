@@ -46,6 +46,7 @@ export {
   PivotTableConstructorOptions,
   PivotChartConstructorOptions,
   PivotChart,
+  PivotChartConstructorOptions,
   IHeaderTreeDefine,
   IDimension,
   ColumnsDefine,

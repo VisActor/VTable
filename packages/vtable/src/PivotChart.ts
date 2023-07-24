@@ -35,6 +35,8 @@ import type { PivotTableProtected } from './ts-types/base-table';
 import type { IChartColumnIndicator } from './ts-types/pivot-table/indicator/chart-indicator';
 import type { Chart } from './scenegraph/graphic/chart';
 import { clearChartCacheImage, updateChartData } from './scenegraph/refresh-node/update-chart';
+import type { ITableAxisOption } from './ts-types/component/axis';
+import { isArray } from '@visactor/vutils';
 
 export class PivotChart extends BaseTable implements PivotTableAPI {
   declare internalProps: PivotTableProtected;
@@ -46,6 +48,8 @@ export class PivotChart extends BaseTable implements PivotTableAPI {
   _selectedDataItemsInChart: any[] = [];
   _selectedDimensionInChart: { key: string; value: string }[] = [];
   _chartEventMap: Record<string, AnyFunction> = {};
+
+  _axes: ITableAxisOption[];
   constructor(options: PivotChartConstructorOptions) {
     super(options);
     if ((options as any).layout) {
@@ -55,6 +59,8 @@ export class PivotChart extends BaseTable implements PivotTableAPI {
     this.setCustomStateNameToSpec();
     this.internalProps.dataConfig = { isPivotChart: true };
     this.internalProps.enableDataAnalysis = true;
+    this._axes = isArray(options.axes) ? options.axes : [];
+
     if (this.internalProps.enableDataAnalysis && (options.rows || options.columns)) {
       const rowKeys = options.rows.reduce((keys, rowObj) => {
         if (typeof rowObj === 'string') {
@@ -106,6 +112,10 @@ export class PivotChart extends BaseTable implements PivotTableAPI {
   static get EVENT_TYPE(): typeof PIVOT_CHART_EVENT_TYPE {
     return PIVOT_CHART_EVENT_TYPE;
   }
+  get pivotChartAxes() {
+    return this._axes;
+  }
+
   isListTable(): false {
     return false;
   }
