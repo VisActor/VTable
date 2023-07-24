@@ -28,6 +28,10 @@ export const menus = [
       },
       {
         path: 'list',
+        name: 'list-title'
+      },
+      {
+        path: 'list',
         name: 'list-height-adaptive'
       }
     ]

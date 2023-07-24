@@ -1,0 +1,123 @@
+import { Title as TitleComponents } from '@visactor/vrender-components';
+// eslint-disable-next-line no-duplicate-imports
+import type { TitleAttrs } from '@visactor/vrender-components';
+import type { ITitle } from '../../ts-types/component/title';
+import { getQuadProps } from '../../scenegraph/utils/padding';
+import type { BaseTableAPI } from '../../ts-types/base-table';
+import { isEqual } from '@visactor/vutils';
+export class Title {
+  table: BaseTableAPI;
+  _titleOption: ITitle;
+  private _titleComponent: TitleComponents;
+  private _cacheAttrs: TitleAttrs;
+  constructor(titleOption: ITitle, table: BaseTableAPI) {
+    this.table = table;
+    this._titleOption = titleOption;
+    this._titleComponent = this._createOrUpdateTitleComponent(this._getTitleAttrs());
+  }
+
+  private _createOrUpdateTitleComponent(attrs: TitleAttrs): TitleComponents {
+    if (this._titleComponent) {
+      if (!isEqual(attrs, this._cacheAttrs)) {
+        this._titleComponent.setAttributes(attrs);
+      }
+    } else {
+      const title = new TitleComponents(attrs);
+      title.name = 'title';
+      this.table.scenegraph.stage.defaultLayer.appendChild(title);
+      this._titleComponent = title;
+      // 代理 title 组件上的事件
+      // title.on('*', (event: any, type: string) => this._delegateEvent(title as unknown as INode, event, type));
+    }
+    // update table size
+
+    // 调整位置
+    let width = isFinite(this._titleComponent.AABBBounds.width()) ? this._titleComponent.AABBBounds.width() : 0;
+    const height = isFinite(this._titleComponent.AABBBounds.height()) ? this._titleComponent.AABBBounds.height() : 0;
+    const rectWidth = this.table.tableNoFrameWidth;
+    const rectHeight = this.table.tableNoFrameHeight;
+    const padding = getQuadProps((attrs.padding as number | number[]) ?? this._titleOption.padding ?? 10);
+
+    let x = 0;
+    let y = 0;
+    if (this._titleOption.orient === 'left') {
+      x = padding[3];
+      y = 0;
+      // width += padding[1] + padding[3];
+    } else if (this._titleOption.orient === 'top') {
+      x = 0;
+      y = padding[0];
+      // height += padding[0] + padding[2];
+    } else if (this._titleOption.orient === 'right') {
+      x = rectWidth - width - padding[1];
+      y = 0;
+      width += padding[1] + padding[3];
+    } else if (this._titleOption.orient === 'bottom') {
+      x = 0;
+      y = rectHeight - height - padding[2];
+      // height += padding[0] + padding[2];
+    }
+    if (this._titleOption.orient === 'left') {
+      this.table.tableNoFrameWidth = this.table.tableNoFrameWidth - Math.ceil(width);
+      this.table.tableX = Math.ceil(width);
+    } else if (this._titleOption.orient === 'top') {
+      this.table.tableNoFrameHeight = this.table.tableNoFrameHeight - Math.ceil(height);
+      this.table.tableY = Math.ceil(height);
+    } else if (this._titleOption.orient === 'right') {
+      this.table.tableNoFrameWidth = this.table.tableNoFrameWidth - Math.ceil(width);
+    } else if (this._titleOption.orient === 'bottom') {
+      this.table.tableNoFrameHeight = this.table.tableNoFrameHeight - Math.ceil(height);
+    }
+    this._cacheAttrs = attrs;
+    if (this._titleOption.orient === 'right' || this._titleOption.orient === 'bottom') {
+      this._titleComponent.setAttributes({
+        x:
+          this._titleOption.x ?? this._titleOption.orient === 'right'
+            ? this.table.tableX + this.table.tableNoFrameWidth
+            : this.table.tableX,
+        y:
+          this._titleOption.y ?? this._titleOption.orient === 'bottom'
+            ? this.table.tableY + this.table.tableNoFrameHeight
+            : this.table.tableY
+      });
+    }
+    return this._titleComponent;
+  }
+
+  dispose(): void {
+    this._titleComponent = null;
+  }
+  private _getTitleAttrs() {
+    const padding = getQuadProps(this._titleOption.padding ?? 10);
+    const realWidth = this._titleOption.width ?? this.table.tableNoFrameWidth - padding[1] - padding[3];
+    return {
+      text: this._titleOption.text ?? '',
+      subtext: this._titleOption.subtext ?? '',
+      x:
+        this._titleOption.x ?? this._titleOption.orient === 'right'
+          ? this.table.tableX + this.table.tableNoFrameWidth
+          : this.table.tableX,
+      y:
+        this._titleOption.y ?? this._titleOption.orient === 'bottom'
+          ? this.table.tableY + this.table.tableNoFrameHeight
+          : this.table.tableY,
+      width: realWidth,
+      height: this._titleOption.height,
+      minWidth: this._titleOption.minWidth,
+      maxWidth: this._titleOption.maxWidth,
+      minHeight: this._titleOption.minHeight,
+      maxHeight: this._titleOption.maxHeight,
+      padding: this._titleOption.padding,
+      align: this._titleOption.align ?? 'left',
+      verticalAlign: this._titleOption.verticalAlign ?? 'top',
+      textStyle: {
+        width: realWidth,
+        ...this._titleOption.textStyle
+      },
+      subtextStyle: {
+        width: realWidth,
+        ...this._titleOption.subtextStyle
+      }
+    } as TitleAttrs;
+  }
+}
