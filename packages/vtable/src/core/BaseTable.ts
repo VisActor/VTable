@@ -82,6 +82,7 @@ import { defaultPixelRatio } from '../tools/pixel-ratio';
 import { TableLegend } from '../components/legend/legend';
 import { CartesianAxis } from '../components/axis/axis';
 import { DataSet } from '@visactor/vdataset';
+import { Title } from '../components/title/title';
 const { toBoxArray } = utilStyle;
 const { isTouchEvent } = event;
 const rangeReg = /^\$(\d+)\$(\d+)$/;
@@ -272,6 +273,13 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
 
     if (options.legends) {
       internalProps.legends = new TableLegend(options.legends, this);
+      this.scenegraph.tableGroup.setAttributes({
+        x: this.tableX,
+        y: this.tableY
+      });
+    }
+    if (options.title) {
+      internalProps.title = new Title(options.title, this);
       this.scenegraph.tableGroup.setAttributes({
         x: this.tableX,
         y: this.tableY
@@ -1761,7 +1769,13 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
         y: this.tableY
       });
     }
-
+    if (options.title) {
+      internalProps.title = new Title(options.title, this);
+      this.scenegraph.tableGroup.setAttributes({
+        x: this.tableX,
+        y: this.tableY
+      });
+    }
     internalProps.tooltip = Object.assign(
       {
         renderMode: 'html',

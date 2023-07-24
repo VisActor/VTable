@@ -161,4 +161,7 @@ export class TableLegend {
       height: height
     };
   }
+  dispose() {
+    this.legendComponent = null;
+  }
 }
