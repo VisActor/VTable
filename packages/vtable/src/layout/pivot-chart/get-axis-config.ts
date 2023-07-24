@@ -1,4 +1,7 @@
+import { merge } from '@visactor/vutils';
 import type { PivotLayoutMap } from '../pivot-layout';
+import type { ITableAxisOption } from '../../ts-types/component/axis';
+import type { PivotChart } from '../../PivotChart';
 
 export function getAxisConfigInPivotChart(col: number, row: number, layout: PivotLayoutMap): any {
   if (!layout._table.isPivotChart()) {
@@ -8,7 +11,7 @@ export function getAxisConfigInPivotChart(col: number, row: number, layout: Pivo
   // 是否是指标
   if (layout.indicatorsAsCol) {
     if (
-      layout.hasIndicatorAxisInColumnHeader &&
+      layout.hasTwoIndicatorAxes &&
       row === layout.columnHeaderLevelCount - 1 &&
       col >= layout.rowHeaderLevelCount &&
       col < layout.colCount - layout.rightFrozenColCount
@@ -23,39 +26,29 @@ export function getAxisConfigInPivotChart(col: number, row: number, layout: Pivo
         ? layout.dataset.collectedValues[defaultKey + '_align']
         : layout.dataset.collectedValues[defaultKey];
       const index = layout.getRecordIndexByCol(col);
-      const range = data[layout.getColKeysPath()[index][layout.columnHeaderLevelCount - 2]];
+      const range = data[layout.getColKeysPath()[index][layout.columnHeaderLevelCount - 1 - layout.topAxesCount]];
 
-      // 顶侧副指标轴
-      return {
+      const axisOption = ((layout._table as PivotChart).pivotChartAxes as ITableAxisOption[]).find(axisOption => {
+        return axisOption.orient === 'top';
+      });
+      if (axisOption?.visible === false) {
+        return;
+      }
+      // 顶部副指标轴
+      return merge({}, axisOption, {
         orient: 'top',
         type: 'linear',
         range: range,
         label: {
           flush: true
         },
-        grid: {
-          visible: true
-        },
+        // grid: {
+        //   visible: true
+        // },
         title: {
           visible: false
         }
-      };
-      // // 顶部副指标轴
-      // return {
-      //   orient: 'top',
-      //   type: 'linear',
-      //   range: { min: 0, max: 30 },
-      //   label: {
-      //     flush: true
-      //   },
-      //   grid: {
-      //     visible: true
-      //   },
-      //   title: {
-      //     visible: true,
-      //     text: 'Linear Axis'
-      //   }
-      // };
+      });
     } else if (
       row === layout.rowCount - layout.bottomFrozenRowCount &&
       col >= layout.rowHeaderLevelCount &&
@@ -68,12 +61,7 @@ export function getAxisConfigInPivotChart(col: number, row: number, layout: Pivo
         ? layout.dataset.collectedValues[defaultKey + '_align']
         : layout.dataset.collectedValues[defaultKey];
       const index = layout.getRecordIndexByCol(col);
-      const range =
-        data[
-          layout.getColKeysPath()[index][
-            layout.columnHeaderLevelCount - 1 - (layout.hasIndicatorAxisInColumnHeader ? 1 : 0)
-          ]
-        ];
+      const range = data[layout.getColKeysPath()[index][layout.columnHeaderLevelCount - 1 - layout.topAxesCount]];
       let indicatorInfo = null;
       indicatorKeys.forEach(key => {
         const info = layout.getIndicatorInfo(key);
@@ -82,40 +70,29 @@ export function getAxisConfigInPivotChart(col: number, row: number, layout: Pivo
         }
       });
 
+      const axisOption = ((layout._table as PivotChart).pivotChartAxes as ITableAxisOption[]).find(axisOption => {
+        return axisOption.orient === 'bottom';
+      });
+      if (axisOption?.visible === false) {
+        return;
+      }
       // 底侧指标轴
-      return {
+      return merge({}, axisOption, {
         orient: 'bottom',
         type: 'linear',
         range: range,
         label: {
           flush: true
         },
-        grid: {
-          visible: true
-        },
+        // grid: {
+        //   visible: true
+        // },
         title: {
-          visible: true,
+          // visible: true,
           text: (indicatorInfo as any)?.caption,
           autoRotate: true
         }
-      };
-
-      // // 底部指标轴
-      // return {
-      //   orient: 'bottom',
-      //   type: 'linear',
-      //   range: { min: 0, max: 30 },
-      //   label: {
-      //     flush: true
-      //   },
-      //   grid: {
-      //     visible: true
-      //   },
-      //   title: {
-      //     visible: true,
-      //     text: 'Linear Axis'
-      //   }
-      // };
+      });
     } else if (
       col === layout.rowHeaderLevelCount - 1 &&
       row >= layout.rowHeaderLevelCount &&
@@ -128,27 +105,21 @@ export function getAxisConfigInPivotChart(col: number, row: number, layout: Pivo
       const rowPath = layout.getRowKeysPath()[recordRow];
       const domain = data[rowPath[rowPath.length - 1]] as Set<string>;
 
+      const axisOption = ((layout._table as PivotChart).pivotChartAxes as ITableAxisOption[]).find(axisOption => {
+        return axisOption.orient === 'left';
+      });
+      if (axisOption?.visible === false) {
+        return;
+      }
       // 左侧维度轴
-      return {
+      return merge({}, axisOption, {
         orient: 'left',
         type: 'band',
         data: Array.from(domain).reverse(),
         title: {
           visible: false
         }
-        // reverse: true
-      };
-
-      // // 左侧维度轴
-      // return {
-      //   orient: 'left',
-      //   type: 'band',
-      //   data: ['A', 'B', 'C'],
-      //   title: {
-      //     visible: true,
-      //     text: 'X Axis'
-      //   }
-      // };
+      });
     }
   } else {
     if (
@@ -163,7 +134,7 @@ export function getAxisConfigInPivotChart(col: number, row: number, layout: Pivo
         ? layout.dataset.collectedValues[defaultKey + '_align']
         : layout.dataset.collectedValues[defaultKey];
       const index = layout.getRecordIndexByRow(row);
-      const range = data[layout.getRowKeysPath()[index][layout.rowHeaderLevelCount - 2]];
+      const range = data[layout.getRowKeysPath()[index][layout.rowHeaderLevelCount - 1 - layout.leftAxesCount]];
       let indicatorInfo = null;
       indicatorKeys.forEach(key => {
         const info = layout.getIndicatorInfo(key);
@@ -172,23 +143,29 @@ export function getAxisConfigInPivotChart(col: number, row: number, layout: Pivo
         }
       });
 
+      const axisOption = ((layout._table as PivotChart).pivotChartAxes as ITableAxisOption[]).find(axisOption => {
+        return axisOption.orient === 'left';
+      });
+      if (axisOption?.visible === false) {
+        return;
+      }
       // 左侧指标轴
-      return {
+      return merge({}, axisOption, {
         orient: 'left',
         type: 'linear',
         range: range,
         label: {
           flush: true
         },
-        grid: {
-          visible: true
-        },
+        // grid: {
+        //   visible: true
+        // },
         title: {
-          visible: true,
+          // visible: true,
           text: (indicatorInfo as any)?.caption,
           autoRotate: true
         }
-      };
+      });
     } else if (
       col === layout.colCount - layout.rightFrozenColCount &&
       row >= layout.columnHeaderLevelCount &&
@@ -204,23 +181,29 @@ export function getAxisConfigInPivotChart(col: number, row: number, layout: Pivo
         ? layout.dataset.collectedValues[defaultKey + '_align']
         : layout.dataset.collectedValues[defaultKey];
       const index = layout.getRecordIndexByRow(row);
-      const range = data[layout.getRowKeysPath()[index][layout.rowHeaderLevelCount - 2]];
+      const range = data[layout.getRowKeysPath()[index][layout.rowHeaderLevelCount - 1 - layout.leftAxesCount]];
 
+      const axisOption = ((layout._table as PivotChart).pivotChartAxes as ITableAxisOption[]).find(axisOption => {
+        return axisOption.orient === 'right';
+      });
+      if (axisOption?.visible === false) {
+        return;
+      }
       // 右侧副指标轴
-      return {
+      return merge({}, axisOption, {
         orient: 'right',
         type: 'linear',
         range: range,
         label: {
           flush: true
         },
-        grid: {
-          visible: true
-        },
+        // grid: {
+        //   visible: true
+        // },
         title: {
           visible: false
         }
-      };
+      });
     } else if (
       row === layout.rowCount - layout.bottomFrozenRowCount &&
       col >= layout.rowHeaderLevelCount &&
@@ -235,15 +218,21 @@ export function getAxisConfigInPivotChart(col: number, row: number, layout: Pivo
       const colPath = layout.getColKeysPath()[recordCol];
       const domain = data[colPath[colPath.length - 1]] as Set<string>;
 
+      const axisOption = ((layout._table as PivotChart).pivotChartAxes as ITableAxisOption[]).find(axisOption => {
+        return axisOption.orient === 'bottom';
+      });
+      if (axisOption?.visible === false) {
+        return;
+      }
       // 底部维度轴
-      return {
+      return merge({}, axisOption, {
         orient: 'bottom',
         type: 'band',
         data: Array.from(domain),
         title: {
           visible: false
         }
-      };
+      });
     }
   }
 

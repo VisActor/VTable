@@ -8,6 +8,7 @@ import type { IDataConfig } from './new-data-set';
 import type { Either } from '../tools/helper';
 import type { ICornerDefine, IDimension, IIndicator, ITitleDefine } from './pivot-table';
 import type { ColumnsDefine } from './list-table';
+import type { ICellAxisOption, ITableAxisOption } from './component/axis';
 
 export interface CellAddress {
   col: number;
@@ -235,6 +236,8 @@ export interface PivotChartConstructorOptions extends BaseTableConstructorOption
   rowHeaderTitle?: ITitleDefine;
   /** 指标标题 用于显示到角头的值*/
   indicatorTitle?: string;
+
+  axes: ITableAxisOption[];
 }
 export interface PivotTableAPI extends BaseTableAPI {
   options: PivotTableConstructorOptions;

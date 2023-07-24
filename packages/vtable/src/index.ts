@@ -20,6 +20,7 @@ import type {
   GroupColumnDefine,
   ListTableConstructorOptions,
   PivotTableConstructorOptions,
+  PivotChartConstructorOptions,
   IHeaderTreeDefine,
   IDimension
 } from './ts-types';
@@ -44,6 +45,7 @@ export {
   PivotTable,
   PivotTableConstructorOptions,
   PivotChart,
+  PivotChartConstructorOptions,
   IHeaderTreeDefine,
   IDimension,
   ColumnsDefine,

@@ -9267,7 +9267,7 @@ export function createTable() {
       '230713150305018': '利润'
     }
   ];
-  const option: VTable.PivotTableConstructorOptions = {
+  const option: VTable.PivotChartConstructorOptions = {
     columnTree,
     rowTree,
     rows,
@@ -9291,7 +9291,7 @@ export function createTable() {
       selectionStyle: {
         cellBgColor: ''
       }
-    })
+    }),
     // hover: {
     //   disableHeaderHover:false,
     //   disableHover: true
@@ -9299,6 +9299,23 @@ export function createTable() {
     // select: {
     //   disableSelect: true
     // }
+    axes: [
+      {
+        orient: 'bottom'
+        // visible: false
+      },
+      {
+        orient: 'left',
+        // visible: false,
+        title: {
+          visible: true
+        }
+      },
+      {
+        orient: 'right',
+        visible: false
+      }
+    ]
   };
 
   const tableInstance = new VTable.PivotChart(option);

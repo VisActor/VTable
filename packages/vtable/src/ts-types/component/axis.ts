@@ -14,3 +14,5 @@ export type ICellAxisOption = Omit<ICartesianAxisSpec, 'type'> &
         };
       }
   );
+
+export type ITableAxisOption = ICartesianAxisSpec;
