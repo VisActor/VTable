@@ -6,7 +6,7 @@ import type { Rect } from '../tools/Rect';
 import type { BaseTableAPI, BaseTableConstructorOptions } from './base-table';
 import type { IDataConfig } from './new-data-set';
 import type { Either } from '../tools/helper';
-import type { ICornerDefine, IDimension, IIndicator, ITitleDefine } from './pivot-table';
+import type { IChartIndicator, ICornerDefine, IDimension, IIndicator, ITitleDefine } from './pivot-table';
 import type { ColumnsDefine } from './list-table';
 
 export interface CellAddress {
@@ -210,7 +210,7 @@ export interface PivotChartConstructorOptions extends BaseTableConstructorOption
   /** 定义列上各个维度具体配置项和样式定义 */
   columns?: (IDimension | string)[]; // (string | IDimension)[];
   /** 定义指标具体配置项和样式定义 包含表头和body的定义*/
-  indicators?: (IIndicator | string)[]; // (string | IIndicator)[];
+  indicators?: (IChartIndicator | string)[]; // (string | IIndicator)[];
 
   /** 指标以列展示 ———有数据分析的透视表才需要配置这个 */
   indicatorsAsCol?: boolean;
