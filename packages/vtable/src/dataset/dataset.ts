@@ -98,6 +98,7 @@ export class Dataset {
   private rowSubTotalLabel: string;
   collectValuesBy: Record<string, CollectValueBy>; //收集维度值，field收集维度，by按什么进行分组收集
   collectedValues: Record<string, Record<string, CollectedValue>> = {};
+  cacheCollectedValues: Record<string, Record<string, CollectedValue>> = {};
   rows: string[];
   columns: string[];
   indicatorKeys: string[];
@@ -208,6 +209,9 @@ export class Dataset {
       if (this.dataConfig.isPivotChart) {
         // 处理PivotChart双轴图0值对齐
         this.dealWithZeroAlign();
+
+        // 记录PivotChart维度对应的数据
+        this.cacheDeminsionCollectedValues();
       }
     }
   }
@@ -495,6 +499,11 @@ export class Dataset {
     this.collectedValues = {};
     this.processRecords();
     this.processCollectedValuesWithSumBy();
+
+    if (this.dataConfig.isPivotChart) {
+      // 处理PivotChart双轴图0值对齐
+      this.dealWithZeroAlign();
+    }
   }
 
   private getAggregatorRule(indicatorKey: string): AggregationRule<AggregationType> | undefined {
@@ -993,5 +1002,13 @@ export class Dataset {
         }
       }
     });
+  }
+
+  private cacheDeminsionCollectedValues() {
+    for (const key in this.collectValuesBy) {
+      if (this.collectValuesBy[key].type === 'xField' || this.collectValuesBy[key].type === 'yField') {
+        this.cacheCollectedValues[key] = this.collectedValues[key];
+      }
+    }
   }
 }

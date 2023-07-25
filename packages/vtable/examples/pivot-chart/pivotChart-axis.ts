@@ -9313,7 +9313,10 @@ export function createTable() {
       },
       {
         orient: 'right',
-        visible: false
+        visible: true,
+        grid: {
+          visible: false
+        }
       }
     ]
   };

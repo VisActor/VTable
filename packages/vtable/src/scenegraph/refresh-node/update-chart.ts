@@ -1,5 +1,7 @@
 import type { PivotChart } from '../../PivotChart';
+import { CartesianAxis } from '../../components/axis/axis';
 import type { PivotLayoutMap } from '../../layout/pivot-layout';
+import type { BaseTableAPI } from '../../ts-types/base-table';
 import type { Chart } from '../graphic/chart';
 import type { Group } from '../graphic/group';
 import type { Scenegraph } from '../scenegraph';
@@ -78,6 +80,7 @@ export function clearChartCacheImage(scenegraph: Scenegraph) {
 
 /** 更新所有的图表chart节点上缓存attribute中的data数据 */
 export function updateChartData(scenegraph: Scenegraph) {
+  const table = scenegraph.table;
   // 将调整列宽的后面的面也都一起需要调整viewbox。  TODO：columnResizeType支持后需要根据变化的列去调整，范围可能变多或者变少
   for (let c = scenegraph.proxy.colStart; c <= scenegraph.proxy.colEnd; c++) {
     const columnGroup = scenegraph.getColGroup(c);
@@ -86,12 +89,26 @@ export function updateChartData(scenegraph: Scenegraph) {
       const row = cellNode.row;
       cellNode.children.forEach((node: Chart) => {
         if ((node as any).type === 'chart') {
-          node.updateData(scenegraph.table.getCellValue(col, row));
+          node.updateData(table.getCellValue(col, row));
+          const newAxes = table.internalProps.layoutMap.getChartAxes(col, row);
+          node.setAttribute('axes', newAxes);
+          const chartSpec = node.attribute.spec;
+          chartSpec.axes = newAxes;
+          node.setAttribute('spec', chartSpec);
           node.addUpdateBoundTag();
         }
       });
     });
   }
+
+  // update left axes
+  updateTableAxes(scenegraph.rowHeaderGroup, scenegraph.table);
+  // update top axes
+  updateTableAxes(scenegraph.colHeaderGroup, scenegraph.table);
+  // update right axes
+  updateTableAxes(scenegraph.rightFrozenGroup, scenegraph.table);
+  // update bottom axes
+  updateTableAxes(scenegraph.bottomFrozenGroup, scenegraph.table);
 }
 /** 组织图表数据状态_selectedDataItemsInChart 更新选中的图表图元状态 */
 export function updateChartState(scenegraph: Scenegraph, datum: any) {
@@ -135,4 +152,36 @@ export function updateChartState(scenegraph: Scenegraph, datum: any) {
     // 清楚chart缓存图片
     clearChartCacheImage(scenegraph);
   }
+}
+
+/**
+ * @description: update table axis component
+ * @param {Group} containerGroup
+ * @param {BaseTableAPI} table
+ * @return {*}
+ */
+function updateTableAxes(containerGroup: Group, table: BaseTableAPI) {
+  containerGroup.forEachChildren((column: Group) => {
+    if (column.role === 'column') {
+      column.forEachChildren((cell: Group) => {
+        if (cell.role === 'cell') {
+          let isAxisComponent = false;
+          cell.forEachChildren((mark: Group) => {
+            if (mark.name === 'axis') {
+              isAxisComponent = true;
+              return true;
+            }
+            return false;
+          });
+          if (isAxisComponent) {
+            const axisConfig = table.internalProps.layoutMap.getAxisConfigInPivotChart(cell.col, cell.row);
+            const axis = new CartesianAxis(axisConfig, cell.attribute.width, cell.attribute.height, table);
+            cell.clear();
+            cell.appendChild(axis.component);
+            axis.overlap();
+          }
+        }
+      });
+    }
+  });
 }
