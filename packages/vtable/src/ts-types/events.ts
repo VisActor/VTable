@@ -143,6 +143,9 @@ export interface TableEventHandlersEventArgumentMap {
   legend_item_click: { model: any; value: any; event: PointerEvent };
   legend_item_hover: { model: any; value: any; event: PointerEvent };
   legend_item_unHover: { model: any; value: any; event: PointerEvent };
+
+  mouseenter_axis: MousePointerCellEvent & { axisPosition: 'left' | 'right' | 'top' | 'bottom' };
+  mouseleave_axis: MousePointerCellEvent & { axisPosition: 'left' | 'right' | 'top' | 'bottom' };
 }
 export interface DrillMenuEventInfo {
   dimensionKey: string | number;
@@ -199,4 +202,7 @@ export interface TableEventHandlersReturnMap {
   legend_item_click: void;
   legend_item_hover: void;
   legend_item_unHover: void;
+
+  mouseenter_axis: void;
+  mouseleave_axis: void;
 }

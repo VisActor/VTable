@@ -9328,6 +9328,16 @@ export function createTable() {
   tableInstance.listenChart('mouseover', args => {
     console.log('listenChart mouseover', args);
   });
+
+  const { MOUSEENTER_AXIS, MOUSELEAVE_AXIS } = VTable.ListTable.EVENT_TYPE;
+
+  tableInstance.listen(MOUSEENTER_AXIS, args => {
+    console.log('axis enter', args.axisPosition, args);
+  });
+  tableInstance.listen(MOUSELEAVE_AXIS, args => {
+    console.log('axis leave', args.axisPosition, args);
+  });
+
   window.tableInstance = tableInstance;
 
   bindDebugTool(tableInstance.scenegraph.stage as any, {
