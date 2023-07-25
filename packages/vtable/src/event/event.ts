@@ -18,6 +18,7 @@ import { bindContainerDomListener } from './listener/container-dom';
 import { bindTouchListener } from './listener/touch';
 import type { SceneEvent } from './util';
 import { bindAxisClickEvent } from './pivot-chart/axis-click';
+import { bindAxisHoverEvent } from './pivot-chart/axis-hover';
 
 export class EventManeger {
   table: BaseTableAPI;
@@ -101,6 +102,9 @@ export class EventManeger {
 
     // axis click
     bindAxisClickEvent(this.table);
+
+    // chart axis event
+    bindAxisHoverEvent(this.table);
   }
 
   dealTableHover(eventArgsSet?: SceneEvent) {

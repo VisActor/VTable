@@ -112,6 +112,9 @@ export interface TableEvents {
   LEGEND_ITEM_CLICK: 'legend_item_click';
   LEGEND_ITEM_HOVER: 'legend_item_hover';
   LEGEND_ITEM_UNHOVER: 'legend_item_unHover';
+
+  MOUSEENTER_AXIS: 'mouseenter_axis';
+  MOUSELEAVE_AXIS: 'mouseleave_axis';
 }
 /**
  * Table event types
@@ -151,5 +154,8 @@ export const TABLE_EVENT_TYPE: TableEvents = {
 
   LEGEND_ITEM_CLICK: 'legend_item_click',
   LEGEND_ITEM_HOVER: 'legend_item_hover',
-  LEGEND_ITEM_UNHOVER: 'legend_item_unHover'
+  LEGEND_ITEM_UNHOVER: 'legend_item_unHover',
+
+  MOUSEENTER_AXIS: 'mouseenter_axis',
+  MOUSELEAVE_AXIS: 'mouseleave_axis'
 } as TableEvents;
