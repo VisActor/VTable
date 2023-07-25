@@ -924,14 +924,21 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     }
 
     let h = 0;
-    for (let i = startRow; i <= endRow; i++) {
-      h +=
-        this.rowHeightsMap.get(i) ||
-        (this.isColumnHeader(0, i) || this.isCornerHeader(0, i)
-          ? Array.isArray(this.defaultHeaderRowHeight)
-            ? this.defaultHeaderRowHeight[i] ?? this.internalProps.defaultRowHeight
-            : this.defaultHeaderRowHeight
-          : this.internalProps.defaultRowHeight);
+    // for (let i = startRow; i <= endRow; i++) {
+    //   h +=
+    //     this.rowHeightsMap.get(i) ||
+    //     (this.isColumnHeader(0, i) || this.isCornerHeader(0, i)
+    //       ? Array.isArray(this.defaultHeaderRowHeight)
+    //         ? this.defaultHeaderRowHeight[i] ?? this.internalProps.defaultRowHeight
+    //         : this.defaultHeaderRowHeight
+    //       : this.internalProps.defaultRowHeight);
+    // }
+    if (this.rowHeightsMap.count() === 0) {
+      h += this.defaultRowHeight * (endRow - startRow + 1);
+    } else {
+      for (let i = startRow; i <= endRow; i++) {
+        h += this.getRowHeight(i);
+      }
     }
     if (startRow >= 0 && endRow >= 0 && h > 0) {
       this._rowRangeHeightsMap.set(`$${startRow}$${endRow}`, Math.round(h));

@@ -120,7 +120,7 @@ async function moveCell(count: number, direction: 'up' | 'down', screenTopRow: n
       (proxy.table as any).scenegraph.bodyGroup.firstChild.lastChild.row
     );
 
-    // proxy.table.scenegraph.stage.render();
+    proxy.table.scenegraph.updateNextFrame();
     await proxy.progress();
   } else {
     const distStartRow = direction === 'up' ? proxy.rowStart + count : proxy.rowStart - count;
@@ -154,6 +154,8 @@ async function moveCell(count: number, direction: 'up' | 'down', screenTopRow: n
     if (proxy.table.internalProps.autoRowHeight) {
       computeRowsHeight(proxy.table, syncTopRow, syncBottomRow);
     }
+    proxy.rowStart = distStartRow;
+    proxy.rowEnd = distEndRow;
     for (let col = proxy.bodyLeftCol; col <= proxy.bodyRightCol; col++) {
       for (let row = syncTopRow; row <= syncBottomRow; row++) {
         // const cellGroup = proxy.table.scenegraph.getCell(col, row);
@@ -177,8 +179,6 @@ async function moveCell(count: number, direction: 'up' | 'down', screenTopRow: n
       );
     }
 
-    proxy.rowStart = distStartRow;
-    proxy.rowEnd = distEndRow;
     proxy.currentRow = direction === 'up' ? proxy.currentRow + count : proxy.currentRow - count;
     proxy.totalRow = direction === 'up' ? proxy.totalRow + count : proxy.totalRow - count;
     proxy.referenceRow = proxy.rowStart + Math.floor((proxy.rowEnd - proxy.rowStart) / 2);
@@ -191,6 +191,7 @@ async function moveCell(count: number, direction: 'up' | 'down', screenTopRow: n
       (proxy.table as any).scenegraph.bodyGroup.firstChild.lastChild.row
     );
 
+    proxy.table.scenegraph.updateNextFrame();
     if (!proxy.table.internalProps.autoRowHeight) {
       await proxy.progress();
     }
