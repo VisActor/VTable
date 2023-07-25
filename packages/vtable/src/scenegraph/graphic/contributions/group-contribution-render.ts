@@ -6,7 +6,8 @@ import type {
   IMarkAttribute,
   IGraphicAttribute,
   IThemeAttribute,
-  IGroupRenderContribution
+  IGroupRenderContribution,
+  IDrawContext
 } from '@visactor/vrender';
 import { BaseRenderContributionTime } from '@visactor/vrender';
 import type { Group } from '../group';
@@ -34,6 +35,7 @@ export class SplitGroupBeforeRenderContribution implements IGroupRenderContribut
     fVisible: boolean,
     sVisible: boolean,
     groupAttribute: Required<IGroupGraphicAttribute>,
+    drawContext: IDrawContext,
     fillCb?: (
       ctx: IContext2d,
       markAttribute: Partial<IMarkAttribute & IGraphicAttribute>,
@@ -105,6 +107,7 @@ export class SplitGroupAfterRenderContribution implements IGroupRenderContributi
     fVisible: boolean,
     sVisible: boolean,
     groupAttribute: Required<IGroupGraphicAttribute>,
+    drawContext: IDrawContext,
     fillCb?: (
       ctx: IContext2d,
       markAttribute: Partial<IMarkAttribute & IGraphicAttribute>,
@@ -362,6 +365,7 @@ export class DashGroupBeforeRenderContribution implements IGroupRenderContributi
     fVisible: boolean,
     sVisible: boolean,
     groupAttribute: Required<IGroupGraphicAttribute>,
+    drawContext: IDrawContext,
     fillCb?: (
       ctx: IContext2d,
       markAttribute: Partial<IMarkAttribute & IGraphicAttribute>,
@@ -407,6 +411,7 @@ export class DashGroupAfterRenderContribution implements IGroupRenderContributio
     fVisible: boolean,
     sVisible: boolean,
     groupAttribute: Required<IGroupGraphicAttribute>,
+    drawContext: IDrawContext,
     fillCb?: (
       ctx: IContext2d,
       markAttribute: Partial<IMarkAttribute & IGraphicAttribute>,
@@ -493,6 +498,7 @@ export class AdjustPosGroupBeforeRenderContribution implements IGroupRenderContr
     fVisible: boolean,
     sVisible: boolean,
     groupAttribute: Required<IGroupGraphicAttribute>,
+    drawContext: IDrawContext,
     fillCb?: (
       ctx: IContext2d,
       markAttribute: Partial<IMarkAttribute & IGraphicAttribute>,
@@ -543,6 +549,7 @@ export class AdjustPosGroupAfterRenderContribution implements IGroupRenderContri
     fVisible: boolean,
     sVisible: boolean,
     groupAttribute: Required<IGroupGraphicAttribute>,
+    drawContext: IDrawContext,
     fillCb?: (
       ctx: IContext2d,
       markAttribute: Partial<IMarkAttribute & IGraphicAttribute>,
@@ -620,6 +627,7 @@ export class AdjustColorGroupBeforeRenderContribution implements IGroupRenderCon
     fVisible: boolean,
     sVisible: boolean,
     groupAttribute: Required<IGroupGraphicAttribute>,
+    drawContext: IDrawContext,
     fillCb?: (
       ctx: IContext2d,
       markAttribute: Partial<IMarkAttribute & IGraphicAttribute>,
@@ -659,6 +667,7 @@ export class AdjustColorGroupAfterRenderContribution implements IGroupRenderCont
     fVisible: boolean,
     sVisible: boolean,
     groupAttribute: Required<IGroupGraphicAttribute>,
+    drawContext: IDrawContext,
     fillCb?: (
       ctx: IContext2d,
       markAttribute: Partial<IMarkAttribute & IGraphicAttribute>,
