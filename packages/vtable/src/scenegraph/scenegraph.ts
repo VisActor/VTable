@@ -4,14 +4,7 @@ import { type CellAddress, type CellType, type ColumnIconOption, type SortOrder,
 import { isArray, isString } from '@visactor/vutils';
 import { Group } from './graphic/group';
 import type { Icon } from './graphic/icon';
-import {
-  createBodyColGroup,
-  createColHeaderColGroup,
-  createCornerHeaderColGroup,
-  createRowHeaderColGroup
-} from './group-creater/column';
 import type { WrapText } from './graphic/text';
-import { updateAutoRowHeight } from './layout/auto-height';
 import { getCellMergeInfo } from './utils/get-cell-merge';
 import { updateColWidth } from './layout/update-width';
 import { TableComponent } from './component/table-component';
@@ -37,7 +30,7 @@ import { updateRow } from './layout/update-row';
 import { handleTextStick } from './stick-text';
 import { computeRowsHeight } from './layout/compute-row-height';
 import { emptyGroup } from './utils/empty-group';
-import { updateChartSize } from './refresh-node/update-chart';
+import { updateChartSize, updateChartState } from './refresh-node/update-chart';
 import { dealFrozen, resetFrozen } from './layout/frozen';
 
 container.load(splitModule);
@@ -63,6 +56,11 @@ export class Scenegraph {
   cornerHeaderGroup: Group; // 列表头冻结列Group
   rowHeaderGroup: Group; // 行表头Group
   bodyGroup: Group; // 内容Group
+  rightFrozenGroup: Group; // 右侧冻结列Group
+  bottomFrozenGroup: Group; // 下侧冻结行Group
+  rightTopCellGroup: Group; // 右上角占位单元格Group，只在有右侧冻结列时使用
+  leftBottomCellGroup: Group; // 左下角占位单元格Group,只在有下侧冻结行时使用
+  rightBottomCellGroup: Group; // 右下角占位单元格Group,只在有右侧下侧都有冻结行时使用
   componentGroup: Group; // 表格外组件Group
   /** 所有选中区域对应的选框组件 */
   selectedRangeComponents: Map<string, { rect: IRect; role: CellType }>;
@@ -75,8 +73,10 @@ export class Scenegraph {
   isPivot: boolean;
   transpose: boolean;
   hasFrozen: boolean; // 是否已经处理冻结列，用在getCell判断是否从cornerHeaderGroup获取cellGroup
-  frozenColCount: number;
-  frozenRowCount: number;
+  frozenColCount: number; // 冻结列数
+  frozenRowCount: number; // 冻结行数
+  rightFrozenColCount: number; // 右侧冻结列数
+  bottomFrozenRowCount: number; // 底部冻结行数
   clear: boolean;
 
   mergeMap: MergeMap;
@@ -199,6 +199,28 @@ export class Scenegraph {
     bodyGroup.role = 'body';
     this.bodyGroup = bodyGroup;
 
+    const rightFrozenGroup = new Group({
+      x: 0,
+      y: 0,
+      width,
+      height: 0,
+      clip: false,
+      pickable: false
+    });
+    rightFrozenGroup.role = 'right-frozen';
+    this.rightFrozenGroup = rightFrozenGroup;
+
+    const bottomFrozenGroup = new Group({
+      x: 0,
+      y: 0,
+      width,
+      height: 0,
+      clip: false,
+      pickable: false
+    });
+    bottomFrozenGroup.role = 'bottom-frozen';
+    this.bottomFrozenGroup = bottomFrozenGroup;
+
     const componentGroup = new Group({
       x: 0,
       y: 0,
@@ -210,10 +232,56 @@ export class Scenegraph {
     });
     componentGroup.role = 'component';
     this.componentGroup = componentGroup;
+    const rightTopCellGroup = new Group({
+      x: 0,
+      y: 0,
+      width: 0,
+      height: 0,
+      visible: false,
+      pickable: true,
+      fill: this.table.theme.cornerHeaderStyle.bgColor as string,
+      stroke: this.table.theme.cornerHeaderStyle.borderColor as string,
+      lineWidth: this.table.theme.cornerHeaderStyle.borderLineWidth as number
+    });
+    rightTopCellGroup.role = 'corner-frozen';
+    this.rightTopCellGroup = rightTopCellGroup;
+
+    const leftBottomCellGroup = new Group({
+      x: 0,
+      y: 0,
+      width: 0,
+      height: 0,
+      visible: false,
+      pickable: true,
+      fill: this.table.theme.cornerHeaderStyle.bgColor as string,
+      stroke: this.table.theme.cornerHeaderStyle.borderColor as string,
+      lineWidth: this.table.theme.cornerHeaderStyle.borderLineWidth as number
+    });
+    leftBottomCellGroup.role = 'corner-frozen';
+    this.leftBottomCellGroup = leftBottomCellGroup;
+
+    const rightBottomCellGroup = new Group({
+      x: 0,
+      y: 0,
+      width: 0,
+      height: 0,
+      visible: false,
+      pickable: true,
+      fill: this.table.theme.cornerHeaderStyle.bgColor as string,
+      stroke: this.table.theme.cornerHeaderStyle.borderColor as string,
+      lineWidth: this.table.theme.cornerHeaderStyle.borderLineWidth as number
+    });
+    rightBottomCellGroup.role = 'corner-frozen';
+    this.rightBottomCellGroup = rightBottomCellGroup;
 
     this.tableGroup.addChild(bodyGroup);
+    this.tableGroup.addChild(rightFrozenGroup);
+    this.tableGroup.addChild(bottomFrozenGroup);
     this.tableGroup.addChild(rowHeaderGroup);
     this.tableGroup.addChild(colHeaderGroup);
+    this.tableGroup.addChild(rightBottomCellGroup);
+    this.tableGroup.addChild(rightTopCellGroup);
+    this.tableGroup.addChild(leftBottomCellGroup);
     this.tableGroup.addChild(cornerHeaderGroup);
     this.tableGroup.addChild(componentGroup);
   }
@@ -256,9 +324,43 @@ export class Scenegraph {
       width: 0,
       height: 0
     });
-    this.tableGroup.setAttributes({
+    this.rightFrozenGroup.setAttributes({
       x: 0,
       y: 0,
+      width: 0,
+      height: 0
+    });
+    this.bottomFrozenGroup.setAttributes({
+      x: 0,
+      y: 0,
+      width: 0,
+      height: 0
+    });
+    this.rightTopCellGroup.setAttributes({
+      x: 0,
+      y: 0,
+      width: 0,
+      height: 0,
+      visible: false
+    });
+    this.leftBottomCellGroup.setAttributes({
+      x: 0,
+      y: 0,
+      width: 0,
+      height: 0,
+      visible: false
+    });
+    this.rightTopCellGroup.setAttributes({
+      x: 0,
+      y: 0,
+      width: 0,
+      height: 0,
+      visible: false
+    });
+
+    this.tableGroup.setAttributes({
+      x: this.table.tableX,
+      y: this.table.tableY,
       width: 0,
       height: 0
     });
@@ -298,6 +400,8 @@ export class Scenegraph {
       this.cornerHeaderGroup,
       this.colHeaderGroup,
       this.rowHeaderGroup,
+      this.rightFrozenGroup,
+      this.bottomFrozenGroup,
       this.bodyGroup,
       0,
       0
@@ -378,7 +482,16 @@ export class Scenegraph {
     // hasFrozen处理前，列表头的冻结部分在colHeaderGroup中
     // hasFrozen处理后，列表头的冻结部分在cornerHeaderGroup中
     // 因此在获取cell时需要区别hasFrozen时机
-    let cell = this.getColGroup(col, row < this.frozenRowCount)?.getRowGroup(row);
+    // const colGroup = row < this.frozenRowCount ? this.colHeaderGroup : this.cornerHeaderGroup;
+    let cell;
+    if (this.table.rightFrozenColCount > 0 && col > this.table.colCount - 1 - this.table.rightFrozenColCount) {
+      cell = this.rightFrozenGroup.getColGroup(col)?.getRowGroup(row);
+    } else if (this.table.bottomFrozenRowCount > 0 && row > this.table.rowCount - 1 - this.table.bottomFrozenRowCount) {
+      cell = this.bottomFrozenGroup.getColGroup(col)?.getRowGroup(row);
+    } else {
+      cell = this.getColGroup(col, row < this.frozenRowCount)?.getRowGroup(row);
+    }
+
     if (cell && cell.role === 'shadow-cell' && !getShadow) {
       const range = this.table.getCellRange(col, row);
       cell = this.getCell(range.start.col, range.start.row);
@@ -402,6 +515,8 @@ export class Scenegraph {
       element = this.rowHeaderGroup.getColGroup(col) as Group;
     } else if (isCornerOrColHeader) {
       element = this.colHeaderGroup.getColGroup(col) as Group;
+    } else if (this.table.rightFrozenColCount > 0 && col > this.table.colCount - 1 - this.table.rightFrozenColCount) {
+      element = this.rightFrozenGroup.getColGroup(col) as Group;
     } else {
       element = this.bodyGroup.getColGroup(col) as Group;
     }
@@ -654,7 +769,10 @@ export class Scenegraph {
   updateChartSize(col: number) {
     updateChartSize(this, col);
   }
-
+  /** 更新图表的高亮状态 */
+  updateChartState(datum: any) {
+    this.table.isPivotChart() && updateChartState(this, datum);
+  }
   updateAutoColWidth(col: number) {
     const oldWidth = this.table.getColWidth(col);
     const newWidth = computeColWidth(col, 0, this.table.rowCount - 1, this.table, true);
@@ -676,10 +794,11 @@ export class Scenegraph {
 
   resize() {
     this.recalculateColWidths();
-    if (this.table.internalProps.autoRowHeight) {
+    if (this.table.heightMode === 'autoHeight') {
       this.recalculateRowHeights();
     }
     this.dealWidthMode();
+    this.dealHeightMode();
     this.dealFrozen();
     this.updateTableSize();
     this.updateBorderSizeAndPosition();
@@ -694,11 +813,14 @@ export class Scenegraph {
       width: Math.min(
         this.table.tableNoFrameWidth,
         Math.max(this.colHeaderGroup.attribute.width, this.bodyGroup.attribute.width, 0) +
-          Math.max(this.cornerHeaderGroup.attribute.width, this.rowHeaderGroup.attribute.width, 0)
+          Math.max(this.cornerHeaderGroup.attribute.width, this.rowHeaderGroup.attribute.width, 0) +
+          this.rightBottomCellGroup.attribute.width
       ),
       height: Math.min(
         this.table.tableNoFrameHeight,
-        (this.colHeaderGroup.attribute.height ?? 0) + (this.bodyGroup.attribute.height ?? 0)
+        (this.colHeaderGroup.attribute.height ?? 0) +
+          (this.bodyGroup.attribute.height ?? 0) +
+          this.bottomFrozenGroup.attribute.height
       )
     } as any);
 
@@ -706,6 +828,39 @@ export class Scenegraph {
       this.tableGroup.border.setAttributes({
         width: this.tableGroup.attribute.width + this.tableGroup.border.attribute.lineWidth,
         height: this.tableGroup.attribute.height + this.tableGroup.border.attribute.lineWidth
+      });
+    }
+
+    if (this.table.bottomFrozenRowCount > 0) {
+      this.bottomFrozenGroup.setAttribute(
+        'y',
+        this.tableGroup.attribute.height - this.bottomFrozenGroup.attribute.height
+      );
+      this.leftBottomCellGroup.setAttributes({
+        visible: true,
+        y: this.tableGroup.attribute.height - this.bottomFrozenGroup.attribute.height,
+        height: this.bottomFrozenGroup.attribute.height,
+        width: this.table.getFrozenColsWidth()
+      });
+      this.rightBottomCellGroup.setAttributes({
+        visible: true,
+        y: this.tableGroup.attribute.height - this.bottomFrozenGroup.attribute.height,
+        height: this.bottomFrozenGroup.attribute.height
+      });
+    }
+
+    if (this.table.rightFrozenColCount > 0) {
+      this.rightFrozenGroup.setAttribute('x', this.tableGroup.attribute.width - this.rightFrozenGroup.attribute.width);
+      this.rightTopCellGroup.setAttributes({
+        visible: true,
+        x: this.tableGroup.attribute.width - this.rightFrozenGroup.attribute.width,
+        width: this.rightFrozenGroup.attribute.width,
+        height: this.table.getFrozenRowsHeight()
+      });
+      this.rightBottomCellGroup.setAttributes({
+        visible: true,
+        x: this.tableGroup.attribute.width - this.rightFrozenGroup.attribute.width,
+        width: this.rightFrozenGroup.attribute.width
       });
     }
   }
@@ -821,6 +976,9 @@ export class Scenegraph {
     }
     this.bodyGroup.setAttribute('y', this.colHeaderGroup.attribute.height + y);
     this.rowHeaderGroup.setAttribute('y', this.colHeaderGroup.attribute.height + y);
+    if (this.table.rightFrozenColCount > 0) {
+      this.rightFrozenGroup.setAttribute('y', this.colHeaderGroup.attribute.height + y);
+    }
     // this.tableGroup.setAttribute('height', this.table.tableNoFrameHeight - y);
     // (this.tableGroup.lastChild as any).setAttribute('width', this.table.tableNoFrameWidth - x);
     this.updateNextFrame();
@@ -837,6 +995,9 @@ export class Scenegraph {
     }
     this.bodyGroup.setAttribute('x', this.rowHeaderGroup.attribute.width + x);
     this.colHeaderGroup.setAttribute('x', this.rowHeaderGroup.attribute.width + x);
+    if (this.table.bottomFrozenRowCount > 0) {
+      this.bottomFrozenGroup.setAttribute('x', this.rowHeaderGroup.attribute.width + x);
+    }
     this.updateNextFrame();
   }
 
@@ -854,7 +1015,7 @@ export class Scenegraph {
     // }
 
     this.dealWidthMode();
-
+    this.dealHeightMode();
     // 处理冻结
     this.dealFrozen();
 
@@ -895,7 +1056,7 @@ export class Scenegraph {
         }
         this.setColWidth(col, colWidth);
       }
-    } else if (table.widthMode === 'standard-aeolus' && this.transpose) {
+    } else if (table.autoFillWidth) {
       // 处理风神列宽特殊逻辑
       // table._colRangeWidthsMap = new Map();
       const canvasWidth = table.tableNoFrameWidth;
@@ -947,6 +1108,37 @@ export class Scenegraph {
       x: this.rowHeaderGroup.attribute.width,
       y: this.colHeaderGroup.attribute.height
     });
+  }
+
+  /**
+   * @description: 处理高度模式
+   * @return {*}
+   */
+  dealHeightMode() {
+    const table = this.table;
+    // 处理adaptive宽度
+    if (table.heightMode === 'adaptive') {
+      table._clearRowRangeHeightsMap();
+      // const canvasWidth = table.internalProps.canvas.width;
+      const totalDrawHeight =
+        table.tableNoFrameHeight - table.getFrozenRowsHeight() - table.getBottomFrozenRowsHeight();
+      let actualHeight = 0;
+      for (let row = table.frozenRowCount; row < table.rowCount - table.bottomFrozenRowCount; row++) {
+        actualHeight += table.getRowHeight(row);
+      }
+      const factor = totalDrawHeight / actualHeight;
+      for (let row = table.frozenRowCount; row < table.rowCount - table.bottomFrozenRowCount; row++) {
+        let rowHeight;
+        if (row === table.rowCount - table.bottomFrozenRowCount - 1) {
+          rowHeight =
+            totalDrawHeight -
+            table.getRowsHeight(table.frozenRowCount, table.rowCount - table.bottomFrozenRowCount - 2);
+        } else {
+          rowHeight = Math.round(table.getRowHeight(row) * factor);
+        }
+        this.setRowHeight(row, rowHeight);
+      }
+    }
   }
 
   /**
@@ -1352,7 +1544,7 @@ export class Scenegraph {
 
     // update column width and row height
     this.recalculateColWidths();
-    if (this.table.internalProps.autoRowHeight) {
+    if (this.table.heightMode === 'autoHeight') {
       this.recalculateRowHeights();
     }
 

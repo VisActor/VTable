@@ -825,7 +825,7 @@ export function createTable() {
     ],
     widthMode: 'standard',
     columnResizeMode: 'all',
-    autoRowHeight: true,
+    heightMode: 'autoHeight',
     autoWrapText: false,
     enableColumnResizeOnAllRows: true,
     maxCharactersNumber: 256,

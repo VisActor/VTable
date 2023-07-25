@@ -331,8 +331,6 @@ export function createTable() {
     },
     records: [...personsDataSource],
     dragHeaderMode: 'column' as any
-
-    // widthMode: 'standard-aeolus',
   };
   //初始化表格
   const instance = new ListTable(option);

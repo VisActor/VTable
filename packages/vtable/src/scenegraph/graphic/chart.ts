@@ -1,13 +1,17 @@
 import type { GraphicType, IGroupGraphicAttribute } from '@visactor/vrender';
 import { genNumberType, Group } from '@visactor/vrender';
-import { Bounds } from '@visactor/vutils';
+import { Bounds, cloneDeep } from '@visactor/vutils';
 import type { BaseTableAPI } from '../../ts-types/base-table';
+import type { PivotChart } from '../../PivotChart';
+import { clearChartCacheImage, updateChartSize } from '../refresh-node/update-chart';
+import type { PivotLayoutMap } from '../../layout/pivot-layout';
 
 interface IChartGraphicAttribute extends IGroupGraphicAttribute {
   canvas: HTMLCanvasElement;
   dataId: string;
   data: any;
   spec: any;
+  axes: any;
   ClassType: any;
   chartInstance: any;
   cellPadding: number[];
@@ -36,7 +40,7 @@ export class Chart extends Group {
     // 创建chart
     if (!params.chartInstance) {
       const ctx = params.canvas.getContext('2d');
-      this.chartInstance = new params.ClassType(params.spec, {
+      params.chartInstance = this.chartInstance = new params.ClassType(params.spec, {
         renderCanvas: params.canvas,
         mode: 'desktop-browser',
         canvasControled: false,
@@ -67,9 +71,9 @@ export class Chart extends Group {
     const tableBound = table.scenegraph.tableGroup.globalAABBBounds;
     const bodyBound = new Bounds();
     bodyBound.x1 = tableBound.x1 + table.getFrozenColsWidth();
-    bodyBound.x2 = tableBound.x2;
+    bodyBound.x2 = tableBound.x2 - table.getRightFrozenColsWidth();
     bodyBound.y1 = tableBound.y1 + table.getFrozenRowsHeight();
-    bodyBound.y2 = tableBound.y2;
+    bodyBound.y2 = tableBound.y2 - table.getBottomFrozenRowsHeight();
     const clipBound = bodyBound.intersect({
       x1: x1 - table.scrollLeft,
       x2: x2 - table.scrollLeft,
@@ -104,7 +108,26 @@ export class Chart extends Group {
     });
     // this.activeChartInstance.updateData('data', this.attribute.data);
     this.activeChartInstance.renderSync();
+
+    (table.internalProps.layoutMap as any)?.updateDataStateToActiveChartInstance?.(this.activeChartInstance);
+    this.activeChartInstance.on('click', (params: any) => {
+      console.log('click captured', params);
+      if (Chart.temp) {
+        table.scenegraph.updateChartState(params?.datum);
+      }
+    });
+    this.activeChartInstance.on('brushEnd', (params: any) => {
+      console.log('brushEnd captured', params);
+      table.scenegraph.updateChartState(params?.value?.inBrushData);
+      Chart.temp = 0;
+      setTimeout(() => {
+        Chart.temp = 1;
+      }, 0);
+    });
+    (table as PivotChart)._bindChartEvent?.(this.activeChartInstance);
+    console.log('active');
   }
+  static temp: number = 1;
   /**
    * 图表失去焦点
    * @param table
@@ -113,5 +136,10 @@ export class Chart extends Group {
     this.active = false;
     this.activeChartInstance.release();
     this.activeChartInstance = null;
+    console.log('deactivate');
+  }
+  /** 更新图表对应数据 */
+  updateData(data: any) {
+    this.attribute.data = data;
   }
 }

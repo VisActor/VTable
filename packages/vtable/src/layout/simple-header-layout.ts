@@ -86,7 +86,26 @@ export class SimpleHeaderLayoutMap implements LayoutMapAPI {
     }
     return false;
   }
-
+  isRightFrozenColumn(col: number, row: number): boolean {
+    if (
+      col >= this.colCount - this.rightFrozenColCount &&
+      row >= this.columnHeaderLevelCount &&
+      row < this.rowCount - this.bottomFrozenRowCount
+    ) {
+      return true;
+    }
+    return false;
+  }
+  isBottomFrozenRow(col: number, row: number): boolean {
+    if (
+      col >= this.rowHeaderLevelCount &&
+      row >= this.rowCount - this.bottomFrozenRowCount &&
+      col < this.colCount - this.rightFrozenColCount
+    ) {
+      return true;
+    }
+    return false;
+  }
   isCornerHeader(col: number, row: number): boolean {
     return false;
   }
@@ -161,6 +180,12 @@ export class SimpleHeaderLayoutMap implements LayoutMapAPI {
   get rowHeaderLevelCount(): number {
     return this.transpose ? this.headerLevelCount : 0;
   }
+  get bottomFrozenRowCount(): number {
+    return 0;
+  }
+  get rightFrozenColCount(): number {
+    return 0;
+  }
   get colCount(): number | undefined {
     //标准表格 列数是由表头定义的field决定的；如果是转置表格，这个值么有地方用到，而且是由数据量决定的，在listTable中有定义这个值
     return this.transpose ? this.headerLevelCount + this.recordsCount : this._columns.length;
@@ -186,6 +211,31 @@ export class SimpleHeaderLayoutMap implements LayoutMapAPI {
   //对比multi-layout 那个里面有columWidths对象，保持结构一致
   get columnWidths(): WidthData[] {
     return this._columns;
+  }
+
+  getColumnWidthDefined(col: number): WidthData {
+    if (this.transpose) {
+      let width: string | number = 0;
+      let maxWidth: string | number;
+      let minWidth: string | number;
+      let isAuto;
+      this.columnObjects.forEach((obj, index) => {
+        if (typeof obj.width === 'number') {
+          width = Math.max(obj.width, <number>width);
+        } else if (obj.width === 'auto') {
+          isAuto = true;
+        }
+        if (typeof obj.minWidth === 'number') {
+          minWidth = Math.max(obj.minWidth, <number>minWidth);
+        }
+        if (typeof obj.maxWidth === 'number') {
+          maxWidth = Math.max(obj.maxWidth, <number>maxWidth);
+        }
+      });
+      width = width > 0 ? width : isAuto ? 'auto' : undefined;
+      return { width, minWidth, maxWidth };
+    }
+    return this._columns[col];
   }
   getCellId(col: number, row: number): LayoutObjectId {
     if (this.transpose) {
@@ -671,5 +721,14 @@ export class SimpleHeaderLayoutMap implements LayoutMapAPI {
   getChartInstance(_col: number, _row: number) {
     const columnObj = this.transpose ? this._columns[_row] : this._columns[_col];
     return columnObj.chartInstance;
+  }
+  getAxisConfigInPivotChart(col: number, row: number): any {
+    return undefined;
+  }
+  isEmpty(col: number, row: number) {
+    return false;
+  }
+  getChartAxes(col: number, row: number): any[] {
+    return [];
   }
 }

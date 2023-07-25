@@ -92,17 +92,17 @@ export function createFrameBorder(
     ? (rectAttributes as any).strokeArrayWidth[3]
     : (rectAttributes.lineWidth as number) ?? 0;
 
-  // 处理边框引起的宽度高度变化（只对最外层tableGroup生效）
-  if (isTableGroup && (rectAttributes.shadowBlur || rectAttributes.lineWidth)) {
-    const deltaX = (rectAttributes.shadowBlur ?? 0) + (borderLeft + borderRight) / 2;
-    const deltaY = (rectAttributes.shadowBlur ?? 0) + (borderTop + borderBottom) / 2;
+  // // 处理边框引起的宽度高度变化（只对最外层tableGroup生效）
+  // if (isTableGroup && (rectAttributes.shadowBlur || rectAttributes.lineWidth)) {
+  //   const deltaX = (rectAttributes.shadowBlur ?? 0) + (borderLeft + borderRight) / 2;
+  //   const deltaY = (rectAttributes.shadowBlur ?? 0) + (borderTop + borderBottom) / 2;
 
-    groupAttributes.x = deltaX;
-    groupAttributes.y = deltaY;
-    // 宽度高度在tableNoFrameWidth&tableNoFrameHeight中处理
-    // groupAttributes.width = group.attribute.width - deltaX - deltaX;
-    // groupAttributes.height = group.attribute.height - deltaY - deltaY;
-  }
+  //   groupAttributes.x = deltaX;
+  //   groupAttributes.y = deltaY;
+  //   // 宽度高度在tableNoFrameWidth&tableNoFrameHeight中处理
+  //   // groupAttributes.width = group.attribute.width - deltaX - deltaX;
+  //   // groupAttributes.height = group.attribute.height - deltaY - deltaY;
+  // }
   group.setAttributes(groupAttributes);
 
   if (justForXYPosition) {

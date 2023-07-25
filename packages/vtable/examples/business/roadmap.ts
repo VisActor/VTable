@@ -122,7 +122,7 @@ export function createTable() {
         style: {
           textAlign: 'center',
           color: 'white',
-          borderLineWidth: 0
+          borderLineWidth: 1
         },
         customRender(args) {
           const { width, height } = args.rect!;
@@ -147,7 +147,7 @@ export function createTable() {
             renderDefault: true,
             elements,
             expectedHeight: 100, // TODO 无效
-            expectedWidth: 200
+            expectedWidth: 180
           };
         }
       },
@@ -155,7 +155,7 @@ export function createTable() {
         field: '',
         caption: ' ',
         style: {
-          borderLineWidth: 0
+          borderLineWidth: 1
         }
       },
       {
@@ -200,8 +200,8 @@ export function createTable() {
             caption: 'BASIC\nFUNCTION',
             width: 'auto',
             style: {
-              borderLineWidth: 2,
-              borderColor: ''
+              borderLineWidth: 1,
+              borderColor: '#000'
             },
             headerStyle: {
               color: 'black',
@@ -245,8 +245,8 @@ export function createTable() {
             caption: '',
             width: 'auto',
             style: {
-              borderLineWidth: 2,
-              borderColor: ''
+              borderLineWidth: 1,
+              borderColor: '#000'
             },
             headerStyle: {
               color: 'black',
@@ -260,17 +260,16 @@ export function createTable() {
       {
         field: '',
         caption: ' ',
-        width: 100,
         style: {
-          borderLineWidth: 0
+          borderLineWidth: 1
         }
       },
       {
         field: 'Visualize',
         caption: 'VISUALIZE',
         style: {
-          borderLineWidth: 2,
-          borderColor: ''
+          borderLineWidth: 1,
+          borderColor: '#000'
         },
         headerStyle: {
           color: 'black'
@@ -310,17 +309,16 @@ export function createTable() {
       {
         field: '',
         caption: ' ',
-        width: 100,
         style: {
-          borderLineWidth: 0
+          borderLineWidth: 1
         }
       },
       {
         field: 'Animation',
         caption: 'ANIMATION',
         style: {
-          borderLineWidth: 2,
-          borderColor: ''
+          borderLineWidth: 1,
+          borderColor: '#000'
         },
         headerStyle: {
           color: 'black'
@@ -360,17 +358,16 @@ export function createTable() {
       {
         field: '',
         caption: ' ',
-        width: 100,
         style: {
-          borderLineWidth: 0
+          borderLineWidth: 1
         }
       },
       {
         field: 'Component',
         caption: 'COMPONENT',
         style: {
-          borderLineWidth: 2,
-          borderColor: ''
+          borderLineWidth: 1,
+          borderColor: '#000'
         },
         headerStyle: {
           color: 'black'
@@ -415,7 +412,7 @@ export function createTable() {
         color: 'white'
       },
       rowHeaderStyle: {
-        borderLineWidth: 0
+        borderLineWidth: 1
       },
       selectionStyle: {
         cellBorderColor: ''
@@ -426,7 +423,7 @@ export function createTable() {
     defaultRowHeight: 30,
     defaultHeaderColWidth: 200,
     defaultColWidth: 180,
-    autoRowHeight: true,
+    heightMode: 'autoHeight',
     columnResizeMode: 'none'
   };
 

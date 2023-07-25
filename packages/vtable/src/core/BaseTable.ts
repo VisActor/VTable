@@ -32,7 +32,8 @@ import type {
   HierarchyState,
   FieldKeyDef,
   CellType,
-  LayoutObjectId
+  LayoutObjectId,
+  HeightModeDef
 } from '../ts-types';
 import type { ColumnIconOption } from '../ts-types';
 import { event, style as utilStyle } from '../tools/helper';
@@ -52,7 +53,7 @@ import { EventManeger } from '../event/event';
 import { BodyHelper } from '../body-helper/body-helper';
 import { HeaderHelper } from '../header-helper/header-helper';
 import type { PivotHeaderLayoutMap } from '../layout/pivot-header-layout';
-import { TooltipHandler } from '../tooltip/TooltipHandler';
+import { TooltipHandler } from '../components/tooltip/TooltipHandler';
 import type { CachedDataSource, DataSource } from '../data';
 import type { IWrapTextGraphicAttribute } from '@visactor/vrender';
 import { isBoolean, type ITextSize } from '@visactor/vutils';
@@ -75,14 +76,20 @@ import {
   isAutoDefine,
   updateRootElementPadding
 } from './tableHelper';
-import { MenuHandler } from '../menu/dom/MenuHandler';
+import { MenuHandler } from '../components/menu/dom/MenuHandler';
 import type { BaseTableAPI, BaseTableConstructorOptions, IBaseTableProtected } from '../ts-types/base-table';
 import { FocusInput } from './FouseInput';
 import { defaultPixelRatio } from '../tools/pixel-ratio';
+import { TableLegend } from '../components/legend/legend';
+import { CartesianAxis } from '../components/axis/axis';
+import { DataSet } from '@visactor/vdataset';
+import { Title } from '../components/title/title';
 const { toBoxArray } = utilStyle;
 const { isTouchEvent } = event;
 const rangeReg = /^\$(\d+)\$(\d+)$/;
 importStyle();
+
+const EMPTY_STYLE = {};
 export abstract class BaseTable extends EventTarget implements BaseTableAPI {
   internalProps: IBaseTableProtected;
   showFrozenIcon = true;
@@ -95,18 +102,21 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
   tableX: number;
   tableY: number;
   _widthMode: WidthModeDef;
+  _heightMode: HeightModeDef;
+  _autoFillWidth: boolean;
   customRender?: ICustomRender;
 
   canvasWidth?: number;
   canvasHeight?: number;
 
+  dataSet: DataSet;
   scenegraph: Scenegraph;
   stateManeger?: StateManeger;
   eventManeger?: EventManeger;
   _pixelRatio: number;
 
-  _cellToBeInvalidatedNextFrame: Set<string>;
-  _willNextFrameInvalidate: boolean;
+  bottomFrozenRowCount: number = 0;
+  rightFrozenColCount: number = 0;
 
   static get EVENT_TYPE(): typeof TABLE_EVENT_TYPE {
     return TABLE_EVENT_TYPE;
@@ -143,6 +153,8 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
       defaultColWidth = 80,
       defaultHeaderColWidth,
       widthMode = 'standard',
+      heightMode = 'standard',
+      autoFillWidth = false,
       keyboardOptions,
       parentElement,
       // disableRowHeaderColumnResize,
@@ -161,6 +173,8 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     } = options;
     this.options = options;
     this._widthMode = widthMode;
+    this._heightMode = heightMode;
+    this._autoFillWidth = autoFillWidth;
     this.customRender = customRender;
     this.padding = { top: 0, right: 0, left: 0, bottom: 0 };
     if (padding) {
@@ -189,7 +203,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
       this.showFrozenIcon = false;
     }
     //设置是否自动撑开的配置
-    internalProps.autoRowHeight = options.autoRowHeight ?? false;
+    // internalProps.autoRowHeight = options.autoRowHeight ?? false;
 
     internalProps.handler = new EventHandler();
     internalProps.element = createRootElement(this.padding);
@@ -248,9 +262,6 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
       this._updateSize();
     }
 
-    this._cellToBeInvalidatedNextFrame = new Set(); // for all
-    this._willNextFrameInvalidate = false;
-
     this.options = options;
     internalProps.theme = themes.of(options.theme ?? themes.DEFAULT);
     internalProps.bodyHelper = new BodyHelper(this);
@@ -262,9 +273,25 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     internalProps.limitMaxAutoWidth = options.limitMaxAutoWidth ?? 450;
 
     // 生成scenegraph
+    this.dataSet = new DataSet();
     this.scenegraph = new Scenegraph(this);
     this.stateManeger = new StateManeger(this);
     this.eventManeger = new EventManeger(this);
+
+    if (options.legends) {
+      internalProps.legends = new TableLegend(options.legends, this);
+      this.scenegraph.tableGroup.setAttributes({
+        x: this.tableX,
+        y: this.tableY
+      });
+    }
+    if (options.title) {
+      internalProps.title = new Title(options.title, this);
+      this.scenegraph.tableGroup.setAttributes({
+        x: this.tableX,
+        y: this.tableY
+      });
+    }
 
     //原有的toolTip提示框处理，主要在文字绘制不全的时候 出来全文本提示信息 需要加个字段设置是否有效
     internalProps.tooltip = Object.assign(
@@ -575,7 +602,22 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
       this._widthMode = widthMode;
     }
   }
-
+  get heightMode(): HeightModeDef {
+    return this._heightMode;
+  }
+  set heightMode(heightMode: HeightModeDef) {
+    if (heightMode !== this._heightMode) {
+      this._heightMode = heightMode;
+    }
+  }
+  get autoFillWidth(): boolean {
+    return this._autoFillWidth;
+  }
+  set autoFillWidth(autoFillWidth: boolean) {
+    if (autoFillWidth !== this._autoFillWidth) {
+      this._autoFillWidth = autoFillWidth;
+    }
+  }
   /**
    * 根据设置的列宽配置 计算列宽值
    * @param {string|number} width width definition
@@ -803,7 +845,14 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
             ? Number(width)
             : this._adjustColWidth(endCol, this._colWidthDefineToPxWidth(width));
       } else {
-        adjustW = 0;
+        // adjustW = 0;
+        // use default column width if no width in colWidthsMap
+        adjustW =
+          this.isRowHeader(endCol, 0) || this.isCornerHeader(endCol, 0)
+            ? Array.isArray(this.defaultHeaderColWidth)
+              ? this.defaultHeaderColWidth[endCol] ?? this.internalProps.defaultColWidth
+              : this.defaultHeaderColWidth
+            : this.internalProps.defaultColWidth;
       }
       const addWidth = cachedLowerColWidth + adjustW;
       // 合法地址存入缓存
@@ -857,14 +906,28 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
    * @returns
    */
   getRowHeight(row: number): number {
-    return (
-      this.rowHeightsMap.get(row) ||
-      (this.isColumnHeader(0, row) || this.isCornerHeader(0, row)
-        ? Array.isArray(this.defaultHeaderRowHeight)
-          ? this.defaultHeaderRowHeight[row] ?? this.internalProps.defaultRowHeight
-          : this.defaultHeaderRowHeight
-        : this.internalProps.defaultRowHeight)
-    );
+    // return (
+    //   this.rowHeightsMap.get(row) ||
+    //   (this.isColumnHeader(0, row) || this.isCornerHeader(0, row)
+    //     ? Array.isArray(this.defaultHeaderRowHeight)
+    //       ? this.defaultHeaderRowHeight[row] ?? this.internalProps.defaultRowHeight
+    //       : this.defaultHeaderRowHeight
+    //     : this.internalProps.defaultRowHeight)
+    //     );
+    if (this.rowHeightsMap.get(row)) {
+      return this.rowHeightsMap.get(row);
+    }
+    if (this.isColumnHeader(0, row) || this.isCornerHeader(0, row)) {
+      return Array.isArray(this.defaultHeaderRowHeight)
+        ? this.defaultHeaderRowHeight[row] ?? this.internalProps.defaultRowHeight
+        : this.defaultHeaderRowHeight;
+    }
+    if (this.isBottomFrozenRow(this.rowHeaderLevelCount, row)) {
+      return Array.isArray(this.defaultHeaderRowHeight)
+        ? this.defaultHeaderRowHeight[row] ?? this.internalProps.defaultRowHeight
+        : this.defaultHeaderRowHeight;
+    }
+    return this.internalProps.defaultRowHeight;
   }
   /**
    * 设置某一行的高度
@@ -925,13 +988,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
 
     let h = 0;
     for (let i = startRow; i <= endRow; i++) {
-      h +=
-        this.rowHeightsMap.get(i) ||
-        (this.isColumnHeader(0, i) || this.isCornerHeader(0, i)
-          ? Array.isArray(this.defaultHeaderRowHeight)
-            ? this.defaultHeaderRowHeight[i] ?? this.internalProps.defaultRowHeight
-            : this.defaultHeaderRowHeight
-          : this.internalProps.defaultRowHeight);
+      h += this.getRowHeight(i);
     }
     if (startRow >= 0 && endRow >= 0 && h > 0) {
       this._rowRangeHeightsMap.set(`$${startRow}$${endRow}`, Math.round(h));
@@ -953,6 +1010,10 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     } else if (width) {
       return width;
     } else if (this.isRowHeader(col, 0) || this.isCornerHeader(col, 0)) {
+      return Array.isArray(this.defaultHeaderColWidth)
+        ? this.defaultHeaderColWidth[col] ?? this.defaultColWidth
+        : this.defaultHeaderColWidth;
+    } else if (this.isRightFrozenColumn(col, this.columnHeaderLevelCount)) {
       return Array.isArray(this.defaultHeaderColWidth)
         ? this.defaultHeaderColWidth[col] ?? this.defaultColWidth
         : this.defaultHeaderColWidth;
@@ -1319,8 +1380,8 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     col: boolean;
   } | null {
     const { frozenRowCount, frozenColCount } = this.internalProps;
-    const isFrozenRow = frozenRowCount > 0 && row < frozenRowCount;
-    const isFrozenCol = frozenColCount > 0 && col < frozenColCount;
+    const isFrozenRow = (frozenRowCount > 0 && row < frozenRowCount) || this.isBottomFrozenRow(col, row);
+    const isFrozenCol = (frozenColCount > 0 && col < frozenColCount) || this.isRightFrozenColumn(col, row);
     if (isFrozenRow || isFrozenCol) {
       return {
         row: isFrozenRow,
@@ -1613,9 +1674,9 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
 
   fireListeners<TYPE extends keyof TableEventHandlersEventArgumentMap>(
     type: TYPE,
-    ...event: TableEventHandlersEventArgumentMap[TYPE]
+    event: TableEventHandlersEventArgumentMap[TYPE]
   ): TableEventHandlersReturnMap[TYPE][] {
-    return super.fireListeners(type, ...event);
+    return super.fireListeners(type, event);
   }
 
   /**
@@ -1645,7 +1706,10 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
       menu,
       select: click,
       pixelRatio,
-      widthMode
+      widthMode,
+      heightMode,
+      autoFillWidth,
+      customRender
     } = options;
     if (pixelRatio && pixelRatio !== this.internalProps.pixelRatio) {
       this.internalProps.pixelRatio = pixelRatio;
@@ -1680,6 +1744,9 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     }
 
     this.widthMode = widthMode ?? 'standard';
+    this.heightMode = heightMode ?? 'standard';
+    this.autoFillWidth = autoFillWidth ?? false;
+    this.customRender = customRender;
     // 更新protectedSpace
     const internalProps: IBaseTableProtected = this.internalProps;
     if (Env.mode !== 'node') {
@@ -1699,15 +1766,42 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     internalProps.dragHeaderMode = dragHeaderMode;
 
     internalProps.cellTextOverflows = {};
+    internalProps._rowHeightsMap = new NumberMap();
+    internalProps._rowRangeHeightsMap = new Map();
+    internalProps._colRangeWidthsMap = new Map();
+    this.colWidthsMap = new NumberMap();
+    this.colContentWidthsMap = new NumberMap();
+    this.colWidthsLimit = {};
 
     internalProps.theme = themes.of(options.theme ?? themes.DEFAULT);
-
+    // this._updateSize();
     //设置是否自动撑开的配置
-    internalProps.autoRowHeight = options.autoRowHeight ?? false;
+    // internalProps.autoRowHeight = options.autoRowHeight ?? false;
     //是否统一设置为多行文本
     internalProps.autoWrapText = options.autoWrapText;
     internalProps.allowFrozenColCount = options.allowFrozenColCount ?? internalProps.colCount;
     internalProps.limitMaxAutoWidth = options.limitMaxAutoWidth ?? 450;
+    // 生成scenegraph
+    this.dataSet = new DataSet();
+    this.scenegraph.clearCells();
+    this.stateManeger.initState();
+    // this.stateManeger = new StateManeger(this);
+    // this.eventManeger = new EventManeger(this);
+
+    if (options.legends) {
+      internalProps.legends = new TableLegend(options.legends, this);
+      this.scenegraph.tableGroup.setAttributes({
+        x: this.tableX,
+        y: this.tableY
+      });
+    }
+    if (options.title) {
+      internalProps.title = new Title(options.title, this);
+      this.scenegraph.tableGroup.setAttributes({
+        x: this.tableX,
+        y: this.tableY
+      });
+    }
     internalProps.tooltip = Object.assign(
       {
         renderMode: 'html',
@@ -1729,6 +1823,8 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     if (internalProps.menu.renderMode === 'html' && !internalProps.menuHandler) {
       internalProps.menuHandler = new MenuHandler(this);
     }
+    this.headerStyleCache = new Map();
+    this.bodyStyleCache = new Map();
   }
   /**
    * 获取固定行总高
@@ -1745,6 +1841,28 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
   getFrozenColsWidth(): number {
     const w = this.getColsWidth(0, this.frozenColCount - 1);
     return w;
+  }
+  /**
+   * 获取底部冻结固定列总宽
+   * @returns
+   */
+  getBottomFrozenRowsHeight(): number {
+    if (this.bottomFrozenRowCount > 0) {
+      const height = this.getRowsHeight(this.rowCount - this.bottomFrozenRowCount, this.rowCount - 1);
+      return height;
+    }
+    return 0;
+  }
+  /**
+   * 获取右侧冻结固定列总宽
+   * @returns
+   */
+  getRightFrozenColsWidth(): number {
+    if (this.rightFrozenColCount > 0) {
+      const width = this.getColsWidth(this.colCount - this.rightFrozenColCount, this.colCount - 1);
+      return width;
+    }
+    return 0;
   }
   /**
    * 获取实际绘制范围的宽高，而非可绘制画布大小
@@ -2059,8 +2177,9 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
 
   abstract isListTable(): boolean;
   abstract isPivotTable(): boolean;
+  abstract isPivotChart(): boolean;
 
-  protected abstract getSortFuncFromHeaderOption(
+  protected abstract _getSortFuncFromHeaderOption(
     columns: ColumnsDefine | undefined,
     field: FieldDef,
     fieldKey?: FieldKeyDef
@@ -2386,7 +2505,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
         }
         // 根据sort规则进行排序
         if (order && field && order !== 'normal') {
-          const sortFunc = this.getSortFuncFromHeaderOption(undefined, field, fieldKey);
+          const sortFunc = this._getSortFuncFromHeaderOption(undefined, field, fieldKey);
           // 如果sort传入的信息不能生成正确的sortFunc，直接更新表格，避免首次加载无法正常显示内容
           let hd;
           if (fieldKey) {
@@ -2440,6 +2559,14 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
   isCornerHeader(col: number, row: number): boolean {
     return this.internalProps.layoutMap?.isCornerHeader(col, row);
   }
+  /** 判断单元格是否属于角表头部分 */
+  isRightFrozenColumn(col: number, row: number): boolean {
+    return this.internalProps.layoutMap?.isRightFrozenColumn(col, row);
+  }
+  /** 判断单元格是否属于角表头部分 */
+  isBottomFrozenRow(col: number, row: number): boolean {
+    return this.internalProps.layoutMap?.isBottomFrozenRow(col, row);
+  }
   /** 获取单元格的基本信息 目前主要组织单元格信息给事件传递给用户的参数使用 */
   getCellInfo(col: number, row: number): MousePointerCellEvent {
     const colDef = this.isHeader(col, row) ? this.getHeaderDefine(col, row) : this.getBodyColumnDefine(col, row);
@@ -2489,6 +2616,9 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
         return cacheStyle;
       }
       const hd = layoutMap.getHeader(col, row);
+      if (!hd || hd.isEmpty) {
+        return EMPTY_STYLE;
+      }
       // const styleClass = hd.headerType.StyleClass; //BaseHeader文件
       const styleClass = this.internalProps.headerHelper.getStyleClass(hd.headerType);
       const { style } = hd;

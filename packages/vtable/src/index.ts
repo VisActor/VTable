@@ -18,11 +18,13 @@ import type {
   GroupColumnDefine,
   ListTableConstructorOptions,
   PivotTableConstructorOptions,
+  PivotChartConstructorOptions,
   IHeaderTreeDefine,
   IDimension
 } from './ts-types';
 import { ListTable } from './ListTable';
 import { PivotTable } from './PivotTable';
+import { PivotChart } from './PivotChart';
 import type { MousePointerCellEvent } from './ts-types/events';
 import * as CustomLayout from './render/layout';
 export const version = __VERSION__;
@@ -40,6 +42,9 @@ export {
   ListTableConstructorOptions,
   PivotTable,
   PivotTableConstructorOptions,
+  PivotChartConstructorOptions,
+  PivotChart,
+  PivotChartConstructorOptions,
   IHeaderTreeDefine,
   IDimension,
   ColumnsDefine,

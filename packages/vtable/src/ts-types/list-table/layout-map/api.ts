@@ -87,6 +87,9 @@ export interface HeaderData extends WidthData {
    * 表头描述 鼠标hover会提示该信息
    */
   description?: string | ((args: CellInfo) => string);
+
+  // header内容为空
+  isEmpty?: boolean;
 }
 
 export interface WidthData {
@@ -233,6 +236,8 @@ interface LayoutMapAPI {
   getHeaderCellAddressByField: (field: string) => CellAddress | undefined;
   getRecordIndexByRow: (col: number, row: number) => number;
   getRecordStartRowByRecordIndex: (index: number) => number;
+  /** 从定义中获取一列配置项width的定义值 */
+  getColumnWidthDefined: (col: number) => WidthData;
 }
 
 export type { LayoutMapAPI };

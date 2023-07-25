@@ -9,72 +9,72 @@ describe('listTable init test', () => {
   containerDom.style.position = 'relative';
   containerDom.style.width = '1000px';
   containerDom.style.height = '800px';
-
-  const option = {
-    columns: [
-      {
-        field: '订单 ID',
-        caption: '订单 ID',
-        sort: true,
-        width: 'auto',
-        description: '这是订单的描述信息',
-        style: {
-          fontFamily: 'Arial',
-          fontSize: 14
-        }
-      },
-      {
-        field: '订单日期',
-        caption: '订单日期'
-      },
-      {
-        field: '发货日期',
-        caption: '发货日期'
-      },
-      {
-        field: '客户名称',
-        caption: '客户名称',
-        style: {
-          padding: [10, 0, 10, 60]
-        }
-      },
-      {
-        field: '邮寄方式',
-        caption: '邮寄方式'
-      },
-      {
-        field: '省/自治区',
-        caption: '省/自治区'
-      },
-      {
-        field: '产品名称',
-        caption: '产品名称'
-      },
-      {
-        field: '类别',
-        caption: '类别'
-      },
-      {
-        field: '子类别',
-        caption: '子类别'
-      },
-      {
-        field: '销售额',
-        caption: '销售额'
-      },
-      {
-        field: '数量',
-        caption: '数量'
-      },
-      {
-        field: '折扣',
-        caption: '折扣'
-      },
-      {
-        field: '利润',
-        caption: '利润'
+  const columns = [
+    {
+      field: '订单 ID',
+      caption: '订单 ID',
+      sort: true,
+      width: 'auto',
+      description: '这是订单的描述信息',
+      style: {
+        fontFamily: 'Arial',
+        fontSize: 14
       }
-    ],
+    },
+    {
+      field: '订单日期',
+      caption: '订单日期'
+    },
+    {
+      field: '发货日期',
+      caption: '发货日期'
+    },
+    {
+      field: '客户名称',
+      caption: '客户名称',
+      style: {
+        padding: [10, 0, 10, 60]
+      }
+    },
+    {
+      field: '邮寄方式',
+      caption: '邮寄方式'
+    },
+    {
+      field: '省/自治区',
+      caption: '省/自治区'
+    },
+    {
+      field: '产品名称',
+      caption: '产品名称'
+    },
+    {
+      field: '类别',
+      caption: '类别'
+    },
+    {
+      field: '子类别',
+      caption: '子类别'
+    },
+    {
+      field: '销售额',
+      caption: '销售额'
+    },
+    {
+      field: '数量',
+      caption: '数量'
+    },
+    {
+      field: '折扣',
+      caption: '折扣'
+    },
+    {
+      field: '利润',
+      caption: '利润'
+    }
+  ];
+  const option = {
+    columns,
     defaultColWidth: 150,
     allowFrozenColCount: 5
   };
@@ -100,6 +100,27 @@ describe('listTable init test', () => {
     listTable.scrollToCell({ col: 4, row: 28 });
     expect(listTable.getScrollLeft()).toBe(601);
     expect(listTable.getScrollTop()).toBe(802);
+  });
+
+  test('listTable updateOption records&autoWidth&widthMode', () => {
+    columns.shift();
+    const recordDeleted = records.slice(10, 30);
+    const option1 = {
+      columns,
+      records: recordDeleted,
+      defaultColWidth: 150,
+      allowFrozenColCount: 5,
+      heightMode: 'autoHeight',
+      autoWrapText: true,
+      widthMode: 'autoWidth',
+      limitMaxAutoWidth: 170
+    };
+    listTable.updateOption(option1);
+    expect(listTable.rowCount).toBe(21);
+    expect(listTable.colCount).toBe(12);
+    expect(listTable.getScrollTop()).toBe(0);
+    expect(listTable.getColWidth(0)).toBe(122);
+    expect(listTable.getColWidth(5)).toBe(170);
   });
   // test('listTable API getAllCells', () => {
   //   expect(JSON.parse(JSON.stringify(listTable.getCellInfo(5, 5)))).toEqual({

@@ -11,22 +11,39 @@ const CHECK_SCM_BUILD_MAX_COUNT = 30;
 const CHECK_PHOTO_TEST_INTERVAL_MS = 10 * 1000;
 const CHECK_PHOTO_TEST_MAX_COUNT = 30;
 
-const fetch = async (url, options) => {
-  const newOptions = {
-    ...options,
-    headers: {
-      ...options.headers,
-      ...commonHeader
+const FETCH_RETRY_COUNT = 3;
+const FETCH_RETRY_WAIT_MS = 2000;
+
+let checkPhotoTestMaxCount = CHECK_PHOTO_TEST_MAX_COUNT;
+
+async function fetch(url, options) {
+  let count = FETCH_RETRY_COUNT + 1;
+  while (count > 0) {
+    try {
+      const result = await nodeFetch(url, options);
+      const json = await result.json();
+      if (json.code === -1) {
+        throw new Error(`Request Fail, msg: ${json.msg}`);
+      }
+      return json;
+    } catch (error) {
+      console.error('**************fetch error! Error: **************');
+      console.error(error);
+      count = count - 1;
+      if (count === 0) {
+        throw error;
+      }
+
+      console.log(`**************fetch retry: ${FETCH_RETRY_COUNT - count + 1} / ${FETCH_RETRY_COUNT} **************`);
+
+      await fetchWait(FETCH_RETRY_WAIT_MS);
     }
-  };
-  const result = await nodeFetch(url, newOptions);
-  const json = await result.json();
-  if (json.code === -1) {
-    console.log(`request url: ${url}`);
-    throw new Error(`Request Fail, msg: ${json.msg}`);
   }
-  return json;
-};
+}
+
+function fetchWait(time) {
+  return new Promise(resolve => setTimeout(resolve, time));
+}
 
 const getFormData = data => {
   const formData = new FormData({ readable: true });
@@ -159,7 +176,7 @@ async function waitUntilPhotoTestOK({ bundleId, scmVersion }) {
       count++;
       const { data } = await getPhotoResult({ scmVersion, bundleId });
       // pending / ok
-      if (['ok'].includes(data.status) || count > CHECK_PHOTO_TEST_MAX_COUNT) {
+      if (['ok'].includes(data.status) || count > checkPhotoTestMaxCount) {
         resolve(data);
         clearInterval(interval);
       }
@@ -192,9 +209,13 @@ async function trigger() {
   }
 
   const {
-    data: { bundleId }
+    data: { bundleId, taskAmount }
   } = await triggerPhotoTest({ scmVersion, scmVersionStatus });
   console.log(`triggerPhotoTest bundleId:${bundleId}`);
+
+  if (taskAmount) {
+    checkPhotoTestMaxCount = Math.ceil(taskAmount / 10);
+  }
 
   const {
     status: photoTestStatus,

@@ -12,6 +12,10 @@ export const menus = [
       },
       {
         path: 'list',
+        name: 'list-transpose-autoFillWidth'
+      },
+      {
+        path: 'list',
         name: 'list-tree'
       },
       {
@@ -21,6 +25,18 @@ export const menus = [
       {
         path: 'list',
         name: 'list-chart'
+      },
+      {
+        path: 'list',
+        name: 'list-updateOption'
+      },
+      {
+        path: 'list',
+        name: 'list-title'
+      },
+      {
+        path: 'list',
+        name: 'list-height-adaptive'
       }
     ]
   },
@@ -34,6 +50,43 @@ export const menus = [
       {
         path: 'pivot',
         name: 'pivot-tree'
+      }
+    ]
+  },
+  {
+    menu: '透视图',
+    children: [
+      {
+        path: 'pivot-chart',
+        name: 'pivotChart'
+      },
+      {
+        path: 'pivot-chart',
+        name: 'pivotChart-column'
+      },
+      {
+        path: 'pivot-chart',
+        name: 'pivotChart-headerTitle'
+      },
+      {
+        path: 'pivot-chart',
+        name: 'pivotChart-legend'
+      },
+      {
+        path: 'pivot-chart',
+        name: 'pivotChart-updateOption'
+      },
+      {
+        path: 'pivot-chart',
+        name: 'pivotChart-3W'
+      },
+      {
+        path: 'pivot-chart',
+        name: 'pivotChart-axis'
+      },
+      {
+        path: 'pivot-chart',
+        name: 'pivotChart-adaptive'
       }
     ]
   },
@@ -103,7 +156,23 @@ export const menus = [
       },
       {
         path: 'pivot',
-        name: 'pivot-chart'
+        name: 'trend'
+      },
+      {
+        path: 'pivot',
+        name: 'pivot-dataset'
+      },
+      {
+        path: 'pivot',
+        name: 'pivot-indicator-row'
+      },
+      {
+        path: 'pivot',
+        name: 'pivot-frozen'
+      },
+      {
+        path: 'pivot',
+        name: 'pivot-basic-updateOption'
       }
     ]
   },
@@ -266,6 +335,19 @@ export const menus = [
     ]
   },
   {
+    menu: 'components',
+    children: [
+      {
+        path: 'components',
+        name: 'legend'
+      },
+      {
+        path: 'components',
+        name: 'axis'
+      }
+    ]
+  },
+  {
     menu: '调试使用',
     children: [
       {
@@ -300,7 +382,7 @@ export const menus = [
     ]
   },
   {
-    menu: '测试用例',
+    menu: '测试用例（勿修改demo内容）',
     children: [
       {
         path: 'unit-test-demo',
@@ -309,6 +391,10 @@ export const menus = [
       {
         path: 'unit-test-demo',
         name: 'unitTestListTable'
+      },
+      {
+        path: 'unit-test-demo',
+        name: 'unitTestPivotChart'
       }
     ]
   }

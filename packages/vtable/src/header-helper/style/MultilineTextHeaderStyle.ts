@@ -21,13 +21,13 @@ export class TextHeaderStyle extends Style {
   }
   set lineClamp(lineClamp: LineClamp | undefined) {
     this._lineClamp = lineClamp;
-    this.doChangeStyle();
+    //this.doChangeStyle();
   }
   get autoWrapText(): boolean | undefined {
     return this._autoWrapText;
   }
   set autoWrapText(autoWrapText: boolean | undefined) {
     this._autoWrapText = autoWrapText;
-    this.doChangeStyle();
+    //this.doChangeStyle();
   }
 }
