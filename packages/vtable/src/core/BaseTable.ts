@@ -933,8 +933,14 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     //         : this.defaultHeaderRowHeight
     //       : this.internalProps.defaultRowHeight);
     // }
-    if (this.rowHeightsMap.count() === 0) {
-      h += this.defaultRowHeight * (endRow - startRow + 1);
+    // autoRowHeight || all rows in header, use accumulation
+    if (!this.internalProps.autoRowHeight && this.internalProps.layoutMap && endRow >= this.columnHeaderLevelCount) {
+      for (let i = startRow; i < this.columnHeaderLevelCount; i++) {
+        // part in header
+        h += this.getRowHeight(i);
+      }
+      // part in body
+      h += this.defaultRowHeight * (endRow - Math.max(this.columnHeaderLevelCount, startRow) + 1);
     } else {
       for (let i = startRow; i <= endRow; i++) {
         h += this.getRowHeight(i);
