@@ -12,7 +12,7 @@ export type ITitle = {
   /**
    * 主标题内容
    */
-  text: string | number | (string | number)[];
+  text?: string | number | (string | number)[];
   /**
    * 副标题内容
    */
@@ -57,12 +57,12 @@ export type ITitle = {
    * 文字水平对齐方式
    * 'left' | 'center' | 'right'
    */
-  align?: string;
+  align?: 'left' | 'center' | 'right';
   /**
    * 文字垂直对齐方式
    * 'top' | 'middle' | 'bottom'
    */
-  verticalAlign?: string;
+  verticalAlign?: 'top' | 'middle' | 'bottom';
   /**
    * 主标题样式
    */

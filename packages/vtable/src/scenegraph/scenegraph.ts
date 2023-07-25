@@ -794,10 +794,11 @@ export class Scenegraph {
 
   resize() {
     this.recalculateColWidths();
-    if (this.table.internalProps.autoRowHeight) {
+    if (this.table.heightMode === 'autoHeight') {
       this.recalculateRowHeights();
     }
     this.dealWidthMode();
+    this.dealHeightMode();
     this.dealFrozen();
     this.updateTableSize();
     this.updateBorderSizeAndPosition();
@@ -1014,7 +1015,7 @@ export class Scenegraph {
     // }
 
     this.dealWidthMode();
-
+    this.dealHeightMode();
     // 处理冻结
     this.dealFrozen();
 
@@ -1055,7 +1056,7 @@ export class Scenegraph {
         }
         this.setColWidth(col, colWidth);
       }
-    } else if (table.widthMode === 'standard-aeolus' && this.transpose) {
+    } else if (table.autoFillWidth) {
       // 处理风神列宽特殊逻辑
       // table._colRangeWidthsMap = new Map();
       const canvasWidth = table.tableNoFrameWidth;
@@ -1107,6 +1108,37 @@ export class Scenegraph {
       x: this.rowHeaderGroup.attribute.width,
       y: this.colHeaderGroup.attribute.height
     });
+  }
+
+  /**
+   * @description: 处理高度模式
+   * @return {*}
+   */
+  dealHeightMode() {
+    const table = this.table;
+    // 处理adaptive宽度
+    if (table.heightMode === 'adaptive') {
+      table._clearRowRangeHeightsMap();
+      // const canvasWidth = table.internalProps.canvas.width;
+      const totalDrawHeight =
+        table.tableNoFrameHeight - table.getFrozenRowsHeight() - table.getBottomFrozenRowsHeight();
+      let actualHeight = 0;
+      for (let row = table.frozenRowCount; row < table.rowCount - table.bottomFrozenRowCount; row++) {
+        actualHeight += table.getRowHeight(row);
+      }
+      const factor = totalDrawHeight / actualHeight;
+      for (let row = table.frozenRowCount; row < table.rowCount - table.bottomFrozenRowCount; row++) {
+        let rowHeight;
+        if (row === table.rowCount - table.bottomFrozenRowCount - 1) {
+          rowHeight =
+            totalDrawHeight -
+            table.getRowsHeight(table.frozenRowCount, table.rowCount - table.bottomFrozenRowCount - 2);
+        } else {
+          rowHeight = Math.round(table.getRowHeight(row) * factor);
+        }
+        this.setRowHeight(row, rowHeight);
+      }
+    }
   }
 
   /**
@@ -1512,7 +1544,7 @@ export class Scenegraph {
 
     // update column width and row height
     this.recalculateColWidths();
-    if (this.table.internalProps.autoRowHeight) {
+    if (this.table.heightMode === 'autoHeight') {
       this.recalculateRowHeights();
     }
 

@@ -88,7 +88,7 @@ export function createTable() {
       }
     }
   ];
-  const indicators: VTable.TYPES.IIndicator[] = [
+  const indicators: VTable.TYPES.IChartIndicator[] = [
     {
       indicatorKey: '230417171050011',
       caption: '数量',
@@ -9251,7 +9251,7 @@ export function createTable() {
       '230713150305018': '利润'
     }
   ];
-  const option: VTable.PivotTableConstructorOptions = {
+  const option: VTable.PivotChartConstructorOptions = {
     columnTree,
     rowTree,
     rows,

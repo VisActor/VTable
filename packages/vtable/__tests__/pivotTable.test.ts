@@ -457,7 +457,7 @@ describe('pivotTable init test', () => {
     showRowHeader: true,
     hideIndicatorName: false,
     defaultColWidth: 150,
-    autoRowHeight: true,
+    heightMode: 'autoHeight',
     autoWrapText: true
   };
 
@@ -673,7 +673,7 @@ describe('pivotTable init test', () => {
       showRowHeader: true,
       hideIndicatorName: true,
       defaultColWidth: 150,
-      autoRowHeight: true,
+      heightMode: 'autoHeight',
       autoWrapText: true
     };
     pivotTable.updateOption(option1);

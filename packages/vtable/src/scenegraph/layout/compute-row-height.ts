@@ -21,60 +21,79 @@ const utilRichTextMark = new RichText({
 });
 
 export function computeRowsHeight(table: BaseTableAPI, rowStart?: number, rowEnd?: number): void {
-  if (!table.internalProps.autoRowHeight) {
-    // autoRowHeight false use default height
-    return;
-  }
-  rowStart = rowStart ?? 0;
-  rowEnd = rowEnd ?? table.rowCount - 1;
   const time = typeof window !== 'undefined' ? window.performance.now() : 0;
+  if (table.heightMode === 'autoHeight') {
+    rowStart = rowStart ?? 0;
+    rowEnd = rowEnd ?? table.rowCount - 1;
 
-  // clear rowRangeHeightsMap
-  if (rowStart === 0 && rowEnd === table.rowCount - 1) {
-    table._clearRowRangeHeightsMap();
-  } else {
-    for (let row = rowStart; row <= rowEnd; row++) {
-      table._clearRowRangeHeightsMap(row);
+    // clear rowRangeHeightsMap
+    if (rowStart === 0 && rowEnd === table.rowCount - 1) {
+      table._clearRowRangeHeightsMap();
+    } else {
+      for (let row = rowStart; row <= rowEnd; row++) {
+        table._clearRowRangeHeightsMap(row);
+      }
     }
-  }
 
-  // compute header row in column header row
-  for (let row = rowStart; row < table.columnHeaderLevelCount; row++) {
-    const height = computeRowHeight(row, 0, table.colCount - 1, table);
-    table.setRowHeight(row, height);
-  }
-
-  if (rowEnd < table.columnHeaderLevelCount) {
-    return;
-  }
-
-  // compute body row
-  if (
-    !table.internalProps.transpose &&
-    !(table.isPivotTable() && (table.internalProps.layoutMap as PivotHeaderLayoutMap).indicatorsAsCol) &&
-    checkFixedStyleAndNoWrap(table)
-  ) {
-    // check fixed style and no wrap situation, fill all row width single compute
-    // traspose table and row indicator pivot table cannot use single row height
-    const height = computeRowHeight(table.columnHeaderLevelCount, 0, table.colCount - 1, table);
-    fillRowsHeight(height, table.columnHeaderLevelCount, table.rowCount - 1, table);
-  } else if (
-    (table.internalProps.transpose ||
-      (table.isPivotTable() && !(table.internalProps.layoutMap as PivotHeaderLayoutMap).indicatorsAsCol)) &&
-    checkFixedStyleAndNoWrap(table)
-  ) {
-    // check fixed style and no wrap situation, just compute 0-table.rowHeaderLevelCount column(the column after row header) in ervey row
-    // in traspose table and row indicator pivot table
-    for (let row = Math.max(rowStart, table.columnHeaderLevelCount); row <= rowEnd; row++) {
-      table._clearRowRangeHeightsMap(row);
-      const height = computeRowHeight(row, 0, table.rowHeaderLevelCount, table);
-      table.setRowHeight(row, height);
-    }
-  } else {
-    for (let row = Math.max(rowStart, table.columnHeaderLevelCount); row <= rowEnd; row++) {
-      table._clearRowRangeHeightsMap(row);
+    // compute header row in column header row
+    for (let row = rowStart; row < table.columnHeaderLevelCount; row++) {
       const height = computeRowHeight(row, 0, table.colCount - 1, table);
       table.setRowHeight(row, height);
+    }
+
+    if (rowEnd < table.columnHeaderLevelCount) {
+      return;
+    }
+
+    // compute body row
+    if (
+      !table.internalProps.transpose &&
+      !(table.isPivotTable() && (table.internalProps.layoutMap as PivotHeaderLayoutMap).indicatorsAsCol) &&
+      checkFixedStyleAndNoWrap(table)
+    ) {
+      // check fixed style and no wrap situation, fill all row width single compute
+      // traspose table and row indicator pivot table cannot use single row height
+      const height = computeRowHeight(table.columnHeaderLevelCount, 0, table.colCount - 1, table);
+      fillRowsHeight(height, table.columnHeaderLevelCount, table.rowCount - 1, table);
+    } else if (
+      (table.internalProps.transpose ||
+        (table.isPivotTable() && !(table.internalProps.layoutMap as PivotHeaderLayoutMap).indicatorsAsCol)) &&
+      checkFixedStyleAndNoWrap(table)
+    ) {
+      // check fixed style and no wrap situation, just compute 0-table.rowHeaderLevelCount column(the column after row header) in ervey row
+      // in traspose table and row indicator pivot table
+      for (let row = Math.max(rowStart, table.columnHeaderLevelCount); row <= rowEnd; row++) {
+        table._clearRowRangeHeightsMap(row);
+        const height = computeRowHeight(row, 0, table.rowHeaderLevelCount, table);
+        table.setRowHeight(row, height);
+      }
+    } else {
+      for (let row = Math.max(rowStart, table.columnHeaderLevelCount); row <= rowEnd; row++) {
+        table._clearRowRangeHeightsMap(row);
+        const height = computeRowHeight(row, 0, table.colCount - 1, table);
+        table.setRowHeight(row, height);
+      }
+    }
+  }
+  // 处理adaptive宽度
+  else if (table.heightMode === 'adaptive') {
+    table._clearRowRangeHeightsMap();
+    // const canvasWidth = table.internalProps.canvas.width;
+    const totalDrawHeight = table.tableNoFrameHeight - table.getFrozenRowsHeight() - table.getBottomFrozenRowsHeight();
+    let actualHeight = 0;
+    for (let row = table.frozenRowCount; row < table.rowCount - table.bottomFrozenRowCount; row++) {
+      actualHeight += table.getRowHeight(row);
+    }
+    const factor = totalDrawHeight / actualHeight;
+    for (let row = table.frozenRowCount; row < table.rowCount - table.bottomFrozenRowCount; row++) {
+      let rowHeight;
+      if (row === table.rowCount - table.bottomFrozenRowCount - 1) {
+        rowHeight =
+          totalDrawHeight - table.getRowsHeight(table.frozenRowCount, table.rowCount - table.bottomFrozenRowCount - 2);
+      } else {
+        rowHeight = Math.round(table.getRowHeight(row) * factor);
+      }
+      table.setRowHeight(row, rowHeight, false);
     }
   }
 

@@ -158,7 +158,7 @@ export function createTable() {
     showFrozenIcon: true, //显示VTable内置冻结列图标
     widthMode: 'standard',
     allowFrozenColCount: 2,
-    autoRowHeight: true,
+    heightMode: 'autoHeight',
     autoWrapText: true,
     tooltip: {
       renderMode: 'html',

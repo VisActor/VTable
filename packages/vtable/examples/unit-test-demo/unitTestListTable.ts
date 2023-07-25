@@ -933,7 +933,7 @@ export function createTable() {
     records,
     defaultColWidth: 150,
     allowFrozenColCount: 5,
-    // autoRowHeight: true,
+    // heightMode: 'autoHeight',
     autoWrapText: true
     // tooltip:{
     //   isShowOverflowTextTooltip:true
@@ -948,7 +948,7 @@ export function createTable() {
   //     records: f,
   //     defaultColWidth: 150,
   //     allowFrozenColCount: 5,
-  //     autoRowHeight: true,
+  //     heightMode: 'autoHeight',
   //     autoWrapText: true,
   //     widthMode: 'autoWidth'
   //   };

@@ -76,7 +76,7 @@ describe('listTable init test', () => {
     ],
     defaultColWidth: 150,
     allowFrozenColCount: 5,
-    autoRowHeight: true,
+    heightMode: 'autoHeight',
     autoWrapText: true
   };
 

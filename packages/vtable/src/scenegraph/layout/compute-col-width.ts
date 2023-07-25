@@ -81,7 +81,7 @@ export function computeColsWidth(table: BaseTableAPI, colStart?: number, colEnd?
       }
       table.setColWidth(col, colWidth, false, true);
     }
-  } else if (table.widthMode === 'standard-aeolus' && table.internalProps.transpose) {
+  } else if (table.autoFillWidth) {
     // 处理风神列宽特殊逻辑
     table._clearColRangeWidthsMap();
     const canvasWidth = table.tableNoFrameWidth;
@@ -158,10 +158,10 @@ export function computeColWidth(
         return table.defaultColWidth;
       }
     } else if (
-      (table.widthMode === 'standard-aeolus' || table.widthMode === 'adaptive') &&
+      table.widthMode === 'adaptive' &&
       col === 0 &&
       width !== 'auto' &&
-      ((layoutMap as PivotHeaderLayoutMap)?.showColumnHeader || (layoutMap as SimpleHeaderLayoutMap)?.showHeader)
+      (layoutMap as SimpleHeaderLayoutMap)?.showHeader
     ) {
       // ToBeFixed hack逻辑，转置第一列列宽为header[0]
       if (typeof width === 'string') {
@@ -170,7 +170,7 @@ export function computeColWidth(
         return width;
       }
     }
-    // autoWidth adaptive standard-aeolus 需要计算内容宽度
+    // autoWidth adaptive 需要计算内容宽度
     // do nothing
   } else if (width !== 'auto' && table.widthMode !== 'autoWidth' && !forceCompute) {
     // if (width && (typeof width === 'string' || width > 0)) return width;
