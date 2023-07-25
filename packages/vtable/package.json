@@ -49,7 +49,7 @@
   "dependencies": {
     "@visactor/vrender": "0.12.3",
     "@visactor/vutils": "0.9.0-alpha.2",
-    "@visactor/vrender-components": "0.11.0-alpha.3",
+    "@visactor/vrender-components": "0.12.3",
     "cssfontparser": "^1.2.1",
     "@visactor/vscale": "0.9.0-alpha.2",
     "@visactor/vdataset": "0.11.1",
