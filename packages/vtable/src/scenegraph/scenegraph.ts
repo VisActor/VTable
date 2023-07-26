@@ -75,8 +75,6 @@ export class Scenegraph {
   hasFrozen: boolean; // 是否已经处理冻结列，用在getCell判断是否从cornerHeaderGroup获取cellGroup
   frozenColCount: number; // 冻结列数
   frozenRowCount: number; // 冻结行数
-  rightFrozenColCount: number; // 右侧冻结列数
-  bottomFrozenRowCount: number; // 底部冻结行数
   clear: boolean;
 
   mergeMap: MergeMap;
@@ -515,12 +513,23 @@ export class Scenegraph {
       element = this.rowHeaderGroup.getColGroup(col) as Group;
     } else if (isCornerOrColHeader) {
       element = this.colHeaderGroup.getColGroup(col) as Group;
-    } else if (this.table.rightFrozenColCount > 0 && col > this.table.colCount - 1 - this.table.rightFrozenColCount) {
+    } else if (
+      !isCornerOrColHeader &&
+      this.table.rightFrozenColCount > 0 &&
+      col > this.table.colCount - 1 - this.table.rightFrozenColCount
+    ) {
       element = this.rightFrozenGroup.getColGroup(col) as Group;
     } else {
       element = this.bodyGroup.getColGroup(col) as Group;
     }
     return element || undefined;
+  }
+
+  getColGroupInBottom(col: number): Group | undefined {
+    if (this.table.bottomFrozenRowCount > 0) {
+      return this.bottomFrozenGroup.getColGroup(col) as Group;
+    }
+    return undefined;
   }
 
   /**
