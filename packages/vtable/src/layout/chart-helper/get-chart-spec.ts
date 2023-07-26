@@ -152,7 +152,7 @@ export function getChartDataId(
   if (chartSpec?.series) {
     const dataIdfield: Record<string, string> = {};
 
-    if (chartSpec.data.id) {
+    if (chartSpec.data?.id) {
       dataIdfield[chartSpec.data.id] = undefined;
     }
     chartSpec?.series.forEach((seriesSpec: any) => {
