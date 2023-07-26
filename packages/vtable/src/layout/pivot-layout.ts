@@ -336,7 +336,11 @@ export class PivotLayoutMap implements LayoutMapAPI {
         }
       });
       width = width > 0 ? width : isAuto ? 'auto' : undefined;
-      returnWidths.fill({ width, minWidth, maxWidth }, this.rowHeaderLevelCount, this.colCount);
+      returnWidths.fill(
+        { width, minWidth, maxWidth },
+        this.rowHeaderLevelCount,
+        this.colCount - this.rightFrozenColCount
+      );
     }
     this._columnWidths = returnWidths;
   }
