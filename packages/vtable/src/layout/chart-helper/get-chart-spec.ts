@@ -156,7 +156,7 @@ export function getChartDataId(
       dataIdfield[chartSpec.data.id] = undefined;
     }
     chartSpec?.series.forEach((seriesSpec: any) => {
-      if (!seriesSpec.fromDataId) {
+      if (!seriesSpec.data?.fromDataId) {
         const seriesField = seriesSpec.direction === 'horizontal' ? seriesSpec.xField : seriesSpec.yField;
         dataIdfield[seriesSpec.data?.id ?? chartSpec.data?.id ?? 'data'] = seriesSpec.data?.id
           ? seriesField
