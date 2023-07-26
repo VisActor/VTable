@@ -151,9 +151,17 @@ export function getChartDataId(
   // 如果chartSpec配置了组合图 series 则需要考虑 series中存在的多个指标
   if (chartSpec?.series) {
     const dataIdfield: Record<string, string> = {};
+
+    if (chartSpec.data.id) {
+      dataIdfield[chartSpec.data.id] = undefined;
+    }
     chartSpec?.series.forEach((seriesSpec: any) => {
-      const seriesField = seriesSpec.direction === 'horizontal' ? seriesSpec.xField : seriesSpec.yField;
-      dataIdfield[seriesSpec.data?.id ?? chartSpec.data?.id ?? 'data'] = seriesSpec.data?.id ? seriesField : undefined;
+      if (!seriesSpec.fromDataId) {
+        const seriesField = seriesSpec.direction === 'horizontal' ? seriesSpec.xField : seriesSpec.yField;
+        dataIdfield[seriesSpec.data?.id ?? chartSpec.data?.id ?? 'data'] = seriesSpec.data?.id
+          ? seriesField
+          : undefined;
+      }
     });
     return dataIdfield;
   }
