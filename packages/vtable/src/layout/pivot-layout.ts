@@ -1007,6 +1007,10 @@ export class PivotLayoutMap implements LayoutMapAPI {
       return result;
     }
 
+    if (this.isRightFrozenColumn(col, row) || this.isBottomFrozenRow(col, row)) {
+      return result;
+    }
+
     //in header
     const id = this.getCellId(col, row);
     for (let c = col - 1; c >= 0; c--) {
