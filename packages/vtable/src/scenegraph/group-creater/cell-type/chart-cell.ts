@@ -1,10 +1,10 @@
 import { Group } from '../../graphic/group';
-import { getCellTheme } from './text-cell';
 import { Chart } from '../../graphic/chart';
 import * as registerChartTypes from '../../../chartType';
 import { getFunctionalProp } from '../../utils/get-prop';
 import { isValid } from '../../../tools/util';
 import type { BaseTableAPI } from '../../../ts-types/base-table';
+import type { IThemeSpec } from '@visactor/vrender';
 export function createChartCellGroup(
   cellGroup: Group | null,
   columnGroup: Group,
@@ -19,12 +19,12 @@ export function createChartCellGroup(
   chartType: any,
   chartSpec: any,
   chartInstance: any,
-  table: BaseTableAPI
+  table: BaseTableAPI,
+  cellTheme: IThemeSpec
 ) {
   // 获取注册的chart图表类型
   const registerCharts = registerChartTypes.get();
   const ClassType = registerCharts[chartType];
-  const cellTheme = getCellTheme(table, col, row);
   const headerStyle = table._getCellStyle(col, row); // to be fixed
   const functionalPadding = getFunctionalProp('padding', headerStyle, col, row, table);
   if (isValid(functionalPadding)) {
@@ -83,34 +83,9 @@ export function createChartCellGroup(
     //   height: height - padding[0] - padding[2],
     // },
   });
-
-  // 调试使用
-  // (chartGroup as Group).onBeforeAttributeUpdate = (val: any) => {
-  //   if (val.y === 9.5) {
-  //     console.log('ffffff------------------', val);
-  //   }
-  // };
   cellGroup.appendChild(chartGroup);
-  // 将生成的实例存到columnGroup中 已共享
-  columnGroup.setAttribute('chartInstance', chartGroup.chartInstance);
+  // 将生成的实例存到layoutMap中 共享
+  table.internalProps.layoutMap.setChartInstance(col, row, chartGroup.chartInstance);
 
-  // 调试问题使用
-  // if (col === 2) {
-  //   columnGroup.AABBBounds.width();
-  //   chartGroup.AABBBounds.width();
-  //   console.log(
-  //     'set viewbox y1',
-  //     Math.ceil(cellGroup.globalAABBBounds.y1 + padding[0] + table.scrollTop),
-  //     chartGroup.globalAABBBounds.height()
-  //   );
-
-  //   console.log(
-  //     'create chart',
-  //     columnGroup,
-  //     columnGroup.globalAABBBounds.y1,
-  //     cellGroup.globalAABBBounds.y1,
-  //     chartGroup.globalAABBBounds.y1
-  //   );
-  // }
   return cellGroup;
 }

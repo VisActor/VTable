@@ -4,6 +4,7 @@ import { PIVOT_TABLE_EVENT_TYPE } from '../../ts-types/pivot-table/PIVOT_TABLE_E
 import type { Group } from '../graphic/group';
 import type { WrapText } from '../graphic/text';
 import type { PivotHeaderLayoutMap } from '../../layout/pivot-header-layout';
+import type { ITextStyleOption } from '../../ts-types';
 const changedCells: { col: number; row: number }[] = [];
 export function handleTextStick(table: BaseTableAPI) {
   changedCells.forEach(cellPos => {
@@ -132,4 +133,22 @@ function adjustCellContentHorizontalLayout(cellGroup: Group, minLeft: number, ma
       child.setAttribute('dx', -deltaWidth); // 2 is the buffer
     });
   }
+}
+
+export function checkHaveTextStick(table: BaseTableAPI) {
+  const headerObjects = table.internalProps.layoutMap.headerObjects;
+  const columnObjects = table.internalProps.layoutMap.columnObjects;
+  for (let i = 0; i < headerObjects.length; i++) {
+    const header = headerObjects[i];
+    if (header && (header.define.headerStyle as ITextStyleOption)?.textStick) {
+      return true;
+    }
+  }
+  for (let i = 0; i < columnObjects.length; i++) {
+    const column = columnObjects[i];
+    if (column && (column.define.style as ITextStyleOption)?.textStick) {
+      return true;
+    }
+  }
+  return false;
 }

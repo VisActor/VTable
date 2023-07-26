@@ -127,4 +127,9 @@ export class NumberMap<T> {
       }
     }
   }
+  clear() {
+    this._keys.length = 0;
+    this._vals = {};
+    this._sorted = false;
+  }
 }

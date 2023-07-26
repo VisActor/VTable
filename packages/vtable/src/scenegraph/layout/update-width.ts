@@ -1,4 +1,5 @@
 import type { ProgressBarStyle } from '../../body-helper/style/ProgressBarStyle';
+import { getStyleTheme } from '../../core/tableHelper';
 import type { IProgressbarColumnBodyDefine } from '../../ts-types/list-table/define/progressbar-define';
 import type { Group } from '../graphic/group';
 import type { Icon } from '../graphic/icon';
@@ -252,7 +253,8 @@ function updateCellWidth(
       cellGroup.attribute.width,
       cellGroup.attribute.height,
       padding,
-      scene.table
+      scene.table,
+      getStyleTheme(headerStyle, scene.table, col, row, getProp).theme
     );
   } else if (type === 'image' || type === 'video') {
     // // 只更新背景边框

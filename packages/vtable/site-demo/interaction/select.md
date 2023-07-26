@@ -4,6 +4,7 @@ group: Interaction
 title: 选择单元格
 cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/select.png
 order: 4-1
+link: '/guide/interaction_and_event/select'
 ---
 
 # 选择单元格

@@ -49,46 +49,8 @@ export function createComplexColumn(
   let padding;
   let textAlign;
   let textBaseline;
-  let isfunctionalProps = false;
   /** useColumnTheme 判断是否可以使用columnTheme */
-  const useColumnTheme =
-    ((table.isListTable() && !table.scenegraph.transpose) ||
-      (table.isPivotTable() && (table.internalProps.layoutMap as PivotHeaderLayoutMap).indicatorsAsCol)) &&
-    cellType === 'body';
 
-  if (useColumnTheme) {
-    if (!columnGroup.childrenCount) {
-      // 只在首屏生效
-      const { theme: columnTheme, hasFunctionPros } = getColumnGroupTheme(col, colWidth, table);
-      isfunctionalProps = hasFunctionPros;
-      // get column header style
-      if (columnTheme._vtable.padding) {
-        padding = columnTheme._vtable.padding;
-      }
-      if (columnTheme.text.textAlign) {
-        textAlign = columnTheme.text.textAlign;
-      }
-      if (columnTheme.text.textBaseline) {
-        textBaseline = columnTheme.text.textBaseline;
-      }
-      columnGroup.setTheme(columnTheme);
-    } else if (columnGroup.theme) {
-      const style = table._getCellStyle(col, table.columnHeaderLevelCount); // to be fixed
-      const { hasFunctionPros } = getStyleTheme(style, table, col, table.columnHeaderLevelCount, getRawProp, false);
-      isfunctionalProps = hasFunctionPros;
-      const columnTheme = columnGroup.theme.userTheme as any;
-      // 渐进加载时获取
-      if (columnTheme._vtable.padding) {
-        padding = columnTheme._vtable.padding;
-      }
-      if (columnTheme.text.textAlign) {
-        textAlign = columnTheme.text.textAlign;
-      }
-      if (columnTheme.text.textBaseline) {
-        textBaseline = columnTheme.text.textBaseline;
-      }
-    }
-  }
   let bgColorFunc: Function;
   // 判断是否有mapping  遍历dataset中mappingRules
   if ((table.internalProps as PivotTableProtected)?.dataConfig?.mappingRules && cellType === 'body') {
@@ -111,27 +73,24 @@ export function createComplexColumn(
     const row = j;
     const define = cellType !== 'body' ? table.getHeaderDefine(col, row) : table.getBodyColumnDefine(col, row);
     const mayHaveIcon = cellType !== 'body' ? true : !!define?.icon || !!define?.tree;
-    let cellTheme;
-    if (!useColumnTheme) {
-      const headerStyle = table._getCellStyle(col, row);
-      cellTheme = getStyleTheme(headerStyle, table, col, row, getProp).theme;
-      cellTheme.group.width = colWidth;
-      cellTheme.group.height = Array.isArray(defaultRowHeight) ? defaultRowHeight[row] : defaultRowHeight;
-      if (cellTheme._vtable.padding) {
-        padding = cellTheme._vtable.padding;
-      }
-      if (cellTheme.text.textAlign) {
-        textAlign = cellTheme.text.textAlign;
-      }
-      if (cellTheme.text.textBaseline) {
-        textBaseline = cellTheme.text.textBaseline;
-      }
+    const headerStyle = table._getCellStyle(col, row);
+    const cellTheme = getStyleTheme(headerStyle, table, col, row, getProp).theme;
+    cellTheme.group.width = colWidth;
+    cellTheme.group.height = Array.isArray(defaultRowHeight) ? defaultRowHeight[row] : defaultRowHeight;
+    if (cellTheme._vtable.padding) {
+      padding = cellTheme._vtable.padding;
+    }
+    if (cellTheme.text.textAlign) {
+      textAlign = cellTheme.text.textAlign;
+    }
+    if (cellTheme.text.textBaseline) {
+      textBaseline = cellTheme.text.textBaseline;
     }
     // margin = getProp('margin', headerStyle, col, 0, table)
 
-    let cellGroup;
     let cellWidth = colWidth;
-    let cellHeight = table.internalProps.autoRowHeight ? 0 : table.getRowHeight(row);
+    // let cellHeight = table.internalProps.autoRowHeight ? 0 : table.getRowHeight(row);
+    let cellHeight = table.getRowHeight(row);
     const type =
       (table.isHeader(col, row) ? table._getHeaderLayoutMap(col, row).headerType : table.getBodyColumnType(col, row)) ||
       'text';
@@ -216,7 +175,6 @@ export function createComplexColumn(
             textAlign,
             textBaseline,
             mayHaveIcon,
-            isfunctionalProps,
             isMerge,
             range,
             cellTheme
@@ -246,7 +204,6 @@ export function createComplexColumn(
           textAlign,
           textBaseline,
           mayHaveIcon,
-          isfunctionalProps,
           isMerge,
           range,
           cellTheme

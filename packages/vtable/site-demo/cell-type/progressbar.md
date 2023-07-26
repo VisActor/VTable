@@ -4,6 +4,7 @@ group: Cell Type
 title: 数据条类型
 cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/progressbar.png
 order: 2-2
+link: '/guide/column_type/progressbar'
 ---
 
 # 数据条类型

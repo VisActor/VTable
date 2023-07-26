@@ -33,8 +33,7 @@ export function getRollupOptions(
   entry: string,
   rawPackageJson: RawPackageJson,
   babelPlugins: BabelPlugins,
-  config: Config,
-  es5 = true
+  config: Config
 ): RollupOptions {
   return {
     input: entry,
@@ -43,7 +42,7 @@ export function getRollupOptions(
     plugins: [
       resolve(),
       commonjs(),
-      babel({ ...babelPlugins, babelHelpers: es5 ? 'runtime' : 'bundled' }),
+      babel({ ...babelPlugins, babelHelpers: 'bundled' }),
       replace({ ...config.envs, preventAssignment: true }),
       typescript({
         tsconfig: path.resolve(projectRoot, config.tsconfig),

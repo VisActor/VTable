@@ -924,14 +924,27 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     }
 
     let h = 0;
-    for (let i = startRow; i <= endRow; i++) {
-      h +=
-        this.rowHeightsMap.get(i) ||
-        (this.isColumnHeader(0, i) || this.isCornerHeader(0, i)
-          ? Array.isArray(this.defaultHeaderRowHeight)
-            ? this.defaultHeaderRowHeight[i] ?? this.internalProps.defaultRowHeight
-            : this.defaultHeaderRowHeight
-          : this.internalProps.defaultRowHeight);
+    // for (let i = startRow; i <= endRow; i++) {
+    //   h +=
+    //     this.rowHeightsMap.get(i) ||
+    //     (this.isColumnHeader(0, i) || this.isCornerHeader(0, i)
+    //       ? Array.isArray(this.defaultHeaderRowHeight)
+    //         ? this.defaultHeaderRowHeight[i] ?? this.internalProps.defaultRowHeight
+    //         : this.defaultHeaderRowHeight
+    //       : this.internalProps.defaultRowHeight);
+    // }
+    // autoRowHeight || all rows in header, use accumulation
+    if (!this.internalProps.autoRowHeight && this.internalProps.layoutMap && endRow >= this.columnHeaderLevelCount) {
+      for (let i = startRow; i < this.columnHeaderLevelCount; i++) {
+        // part in header
+        h += this.getRowHeight(i);
+      }
+      // part in body
+      h += this.defaultRowHeight * (endRow - Math.max(this.columnHeaderLevelCount, startRow) + 1);
+    } else {
+      for (let i = startRow; i <= endRow; i++) {
+        h += this.getRowHeight(i);
+      }
     }
     if (startRow >= 0 && endRow >= 0 && h > 0) {
       this._rowRangeHeightsMap.set(`$${startRow}$${endRow}`, Math.round(h));
@@ -1018,17 +1031,21 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
   }
   /**
    * 清空含有指定row的缓存
-   * @param col
+   * @param row
    */
-  _clearRowRangeHeightsMap(row: number): void {
-    const keys = this._rowRangeHeightsMap.keys();
-    for (const key of keys) {
-      const reg = rangeReg.exec(key);
-      if (reg) {
-        const start = Number(reg[1]);
-        const end = Number(reg[2]);
-        if (row >= start && row <= end) {
-          this._rowRangeHeightsMap.delete(key);
+  _clearRowRangeHeightsMap(row?: number): void {
+    if (typeof row !== 'number') {
+      this._rowRangeHeightsMap.clear();
+    } else {
+      const keys = this._rowRangeHeightsMap.keys();
+      for (const key of keys) {
+        const reg = rangeReg.exec(key);
+        if (reg) {
+          const start = Number(reg[1]);
+          const end = Number(reg[2]);
+          if (row >= start && row <= end) {
+            this._rowRangeHeightsMap.delete(key);
+          }
         }
       }
     }

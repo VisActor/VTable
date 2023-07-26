@@ -1833,4 +1833,30 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
     }
     return undefined;
   }
+
+  setChartInstance(_col: number, _row: number, chartInstance: any) {
+    const paths = this.getCellHeaderPaths(_col, _row);
+    let indicatorObj;
+    if (this.indicatorsAsCol) {
+      const indicatorKey = paths.colHeaderPaths.find(colPath => colPath.indicatorKey)?.indicatorKey;
+      indicatorObj = this._indicators.find(indicator => indicator.indicatorKey === indicatorKey);
+    } else {
+      const indicatorKey = paths.rowHeaderPaths.find(rowPath => rowPath.indicatorKey)?.indicatorKey;
+      indicatorObj = this._indicators.find(indicator => indicator.indicatorKey === indicatorKey);
+    }
+    indicatorObj && (indicatorObj.chartInstance = chartInstance);
+  }
+
+  getChartInstance(_col: number, _row: number) {
+    const paths = this.getCellHeaderPaths(_col, _row);
+    let indicatorObj;
+    if (this.indicatorsAsCol) {
+      const indicatorKey = paths.colHeaderPaths.find(colPath => colPath.indicatorKey)?.indicatorKey;
+      indicatorObj = this._indicators.find(indicator => indicator.indicatorKey === indicatorKey);
+    } else {
+      const indicatorKey = paths.rowHeaderPaths.find(rowPath => rowPath.indicatorKey)?.indicatorKey;
+      indicatorObj = this._indicators.find(indicator => indicator.indicatorKey === indicatorKey);
+    }
+    return indicatorObj?.chartInstance;
+  }
 }
