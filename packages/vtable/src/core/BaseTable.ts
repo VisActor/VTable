@@ -777,7 +777,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
 
       //style 与 width，height相同
       if (this?.scenegraph?.stage) {
-        this.scenegraph.stage.window.resize(widthP, heightP);
+        this.scenegraph.stage.resize(widthP, heightP);
       } else {
         canvas.style.width = '';
         canvas.style.height = '';
