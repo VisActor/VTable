@@ -47,12 +47,12 @@
     "ci": "node github-ci.js"
   },
   "dependencies": {
-    "@visactor/vrender": "0.12.3",
-    "@visactor/vutils": "0.9.0-alpha.2",
-    "@visactor/vrender-components": "0.12.3",
+    "@visactor/vrender": "~0.13.0",
+    "@visactor/vrender-components": "~0.13.0",
+    "@visactor/vutils": "~0.13.3",
+    "@visactor/vscale": "~0.13.3",
+    "@visactor/vdataset": "~0.13.3",
     "cssfontparser": "^1.2.1",
-    "@visactor/vscale": "0.9.0-alpha.2",
-    "@visactor/vdataset": "0.11.1",
     "d3-dsv": "^3.0.1",
     "d3-array": "3.2.3",
     "d3-geo": "^3.0.1",

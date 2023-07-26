@@ -21,11 +21,11 @@ importers:
       '@types/react': 16.9.49
       '@types/react-dom': 16.9.8
       '@visactor/vchart': 1.1.0-beta.7
-      '@visactor/vdataset': 0.11.1
-      '@visactor/vrender': 0.12.3
-      '@visactor/vrender-components': 0.12.3
-      '@visactor/vscale': 0.9.0-alpha.2
-      '@visactor/vutils': 0.9.0-alpha.2
+      '@visactor/vdataset': ~0.13.3
+      '@visactor/vrender': ~0.13.0
+      '@visactor/vrender-components': ~0.13.0
+      '@visactor/vscale': ~0.13.3
+      '@visactor/vutils': ~0.13.3
       '@vitejs/plugin-react': 3.1.0
       axios: ~1.4.0
       chai: 4.3.4
@@ -61,11 +61,11 @@ importers:
       vite: 3.2.6
       vite-plugin-markdown: ^2.1.0
     dependencies:
-      '@visactor/vdataset': 0.11.1
-      '@visactor/vrender': 0.12.3
-      '@visactor/vrender-components': 0.12.3
-      '@visactor/vscale': 0.9.0-alpha.2
-      '@visactor/vutils': 0.9.0-alpha.2
+      '@visactor/vdataset': 0.13.4
+      '@visactor/vrender': 0.13.3
+      '@visactor/vrender-components': 0.13.3
+      '@visactor/vscale': 0.13.3
+      '@visactor/vutils': 0.13.3
       cssfontparser: 1.2.1
       d3-array: 3.2.3
       d3-dsv: 3.0.1
@@ -2708,6 +2708,29 @@ packages:
       simple-statistics: 7.8.3
       simplify-geojson: 1.0.5
       topojson-client: 3.1.0
+    dev: true
+
+  /@visactor/vdataset/0.13.4:
+    resolution: {integrity: sha512-D70QAOZ3U4VletEvmw2c7pSF6yAxdyph4s7CPyIYPauyomuTmoImhkTG7BcUCC+PaKUUWsJEK7qLDbKNavIkjA==}
+    dependencies:
+      '@turf/flatten': 6.5.0
+      '@turf/helpers': 6.5.0
+      '@turf/rewind': 6.5.0
+      '@visactor/vutils': 0.13.3
+      d3-dsv: 3.0.1
+      d3-geo: 1.12.1
+      d3-hexbin: 0.2.2
+      d3-hierarchy: 3.1.2
+      eventemitter3: 4.0.7
+      geobuf: 3.0.2
+      geojson-dissolve: 3.1.0
+      path-browserify: 1.0.1
+      pbf: 3.2.1
+      point-at-length: 1.1.0
+      simple-statistics: 7.8.3
+      simplify-geojson: 1.0.5
+      topojson-client: 3.1.0
+    dev: false
 
   /@visactor/vgrammar-coordinate/0.3.2:
     resolution: {integrity: sha512-zin0i/iU3QKIPsO9JMh4DinPG9ZHKmy9+zGvR5V1eill+iI18So9nqCgqC5thtbrMhw5305iCzSYWeA9Sc7rAw==}
@@ -2786,6 +2809,15 @@ packages:
       '@visactor/vscale': 0.11.2
       '@visactor/vutils': 0.11.1
 
+  /@visactor/vrender-components/0.13.3:
+    resolution: {integrity: sha512-2IYpsMDpIkX6z0coloqtADzpyc9p8HIO65Gj394Iz18rmqD1Dt5T5MyNfB6YMbB3JD84vaWDDaCPv/oinCqZRQ==}
+    dependencies:
+      '@visactor/vrender': 0.13.3
+      '@visactor/vscale': 0.13.3
+      '@visactor/vutils': 0.13.3
+      inversify: 6.0.1
+    dev: false
+
   /@visactor/vrender/0.12.3:
     resolution: {integrity: sha512-Umu77Q2gZqn2p681eXolxjXetEby8wIdb2gvMyKr0SuFFMSH9+cfyJLjOYO5v4ZFgNgvx9ENiQS0sm4zaGlUjg==}
     dependencies:
@@ -2793,16 +2825,26 @@ packages:
       color-convert: 2.0.1
       inversify: 6.0.1
       reflect-metadata: 0.1.13
+    dev: true
+
+  /@visactor/vrender/0.13.3:
+    resolution: {integrity: sha512-E8I1y+4km2Um3K6jg63lvFsXv4p6hjTq0Tot4uwDBRHP5WcY8jOLJ3H9/aNLXqaw2x3fF19adWZp5ruNDGxAgg==}
+    dependencies:
+      '@visactor/vutils': 0.13.3
+      color-convert: 2.0.1
+      core-js: 3.31.1
+      inversify: 6.0.1
+    dev: false
 
   /@visactor/vscale/0.11.2:
     resolution: {integrity: sha512-50ct/lDhkT50F5oW7hnLbRYdp3m2HSkDRKXSgC7oSgPsJswz7PcLELbfjIB6gzhG2trUwMLaONe07SaC2bNIlA==}
     dependencies:
       '@visactor/vutils': 0.11.1
 
-  /@visactor/vscale/0.9.0-alpha.2:
-    resolution: {integrity: sha512-zNQc2YeEhT86LOucDtc8tsAQV4F3zTDjHos0tlG6MEJB9sUFI4dJY93TmvAqzzu2iGD1rP1ofhDk83g3Poknnw==}
+  /@visactor/vscale/0.13.3:
+    resolution: {integrity: sha512-iVPguZ0uVSlOSfPWZaZmfp9hCeIxb67kCWgY+yVYEhzKTdnZLfNqxUarFhdqx2P9wNiAGjxhUJBNEenkndW5hg==}
     dependencies:
-      '@visactor/vutils': 0.9.0-alpha.2
+      '@visactor/vutils': 0.13.3
     dev: false
 
   /@visactor/vutils/0.11.1:
@@ -2811,9 +2853,10 @@ packages:
       '@turf/helpers': 6.5.0
       '@turf/invariant': 6.5.0
       eventemitter3: 4.0.7
+    dev: true
 
-  /@visactor/vutils/0.9.0-alpha.2:
-    resolution: {integrity: sha512-g8zC6y4e1PKwTLK48wCeDRR24OrGoSvKQkhetjoRGu2W0deUUcC5+KMHs+eSRMo1IOiypdfi00paV7YoCBw3sA==}
+  /@visactor/vutils/0.13.3:
+    resolution: {integrity: sha512-lCFiuUHwqz/0RCvIYa79ycduCLAILWaXddPOjxEd3VRX9CCoWMUmRtM3gF5JxtK2pK6Mu7hW7LaMSuWFw+0Kkw==}
     dependencies:
       '@turf/helpers': 6.5.0
       '@turf/invariant': 6.5.0
@@ -4050,6 +4093,11 @@ packages:
     dependencies:
       browserslist: 4.21.9
 
+  /core-js/3.31.1:
+    resolution: {integrity: sha512-2sKLtfq1eFST7l7v62zaqXacPc7uG8ZAya8ogijLhTtaKNcpzpB4TMoTw2Si+8GYKRwFPMMtUT0263QFWFfqyQ==}
+    requiresBuild: true
+    dev: false
+
   /core-util-is/1.0.2:
     resolution: {integrity: sha512-3lqz5YjWTYnW6dlDa5TLaTCcShfar1e40rmcJVwCBJC6mWlFuj0eCHIElmG1g5kyuJ/GD+8Wn4FFCcz4gJPfaQ==}
     dev: true
@@ -4229,7 +4277,6 @@ packages:
 
   /d3-array/1.2.4:
     resolution: {integrity: sha512-KHW6M86R+FUPYGb3R5XiYjXPq7VzwxZ22buHhAEVG5ztoEcZZMLov530mmccaqA1GghZArjQV46fuc8kUqhhHw==}
-    dev: true
 
   /d3-array/3.2.3:
     resolution: {integrity: sha512-JRHwbQQ84XuAESWhvIPaUV4/1UYTBOLiOPGWqgFDHZS1D5QN9c57FbH3QpEnQMYiOXNzKUQyGTZf+EVO7RT5TQ==}
@@ -4250,7 +4297,6 @@ packages:
     resolution: {integrity: sha512-XG4d1c/UJSEX9NfU02KwBL6BYPj8YKHxgBEw5om2ZnTRSbIcego6dhHwcxuSR3clxh0EpE38os1DVPOmnYtTPg==}
     dependencies:
       d3-array: 1.2.4
-    dev: true
 
   /d3-geo/3.1.0:
     resolution: {integrity: sha512-JEo5HxXDdDYXCaWdwLRt79y7giK8SbhZJbFWXqbRTolCHFI5jRqteLzCsq51NKbUoX0PjBVSohxrx+NoOUujYA==}
@@ -9641,6 +9687,7 @@ packages:
 
   /reflect-metadata/0.1.13:
     resolution: {integrity: sha512-Ts1Y/anZELhSsjMcU605fU9RE4Oi3p5ORujwbIKXfWa+0Zxs510Qrmrce5/Jowq3cHSZSJqBjypxmHarc+vEWg==}
+    dev: true
 
   /regenerate-unicode-properties/10.1.0:
     resolution: {integrity: sha512-d1VudCLoIGitcU/hEg2QqvyGZQmdC0Lf8BqdOMXGFSvJP4bNV1+XqbPQeHHLD51Jh4QJJ225dlIFvY4Ly6MXmQ==}
