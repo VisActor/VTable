@@ -1,6 +1,5 @@
 import type { IGraphic } from '@visactor/vrender';
 import type { BaseTableAPI } from '../../ts-types/base-table';
-import { PIVOT_TABLE_EVENT_TYPE } from '../../ts-types/pivot-table/PIVOT_TABLE_EVENT_TYPE';
 import type { Group } from '../graphic/group';
 import type { WrapText } from '../graphic/text';
 import type { PivotHeaderLayoutMap } from '../../layout/pivot-header-layout';
@@ -38,7 +37,11 @@ export function handleTextStick(table: BaseTableAPI) {
       if (table._getCellStyle(col, row)?.textStick) {
         const cellGroup = table.scenegraph.getCell(col, row);
         // adjust cell Horizontal
-        adjustCellContentHorizontalLayout(cellGroup, frozenColsWidth + table.tableX, table.tableNoFrameWidth);
+        adjustCellContentHorizontalLayout(
+          cellGroup,
+          frozenColsWidth + table.tableX,
+          table.tableNoFrameWidth - table.getRightFrozenColsWidth()
+        );
         changedCells.push({ col, row });
       }
     }
@@ -56,7 +59,11 @@ export function handleTextStick(table: BaseTableAPI) {
       ) {
         const cellGroup = table.scenegraph.getCell(col, row);
         // adjust cell vertical
-        adjustCellContentVerticalLayout(cellGroup, frozenRowsHeight + table.tableY, table.tableNoFrameHeight);
+        adjustCellContentVerticalLayout(
+          cellGroup,
+          frozenRowsHeight + table.tableY,
+          table.tableNoFrameHeight - table.getBottomFrozenRowsHeight()
+        );
         changedCells.push({ col, row });
       }
     }
@@ -67,9 +74,17 @@ export function handleTextStick(table: BaseTableAPI) {
       if (table._getCellStyle(col, row)?.textStick) {
         const cellGroup = table.scenegraph.getCell(col, row);
         // adjust cell vertical
-        adjustCellContentVerticalLayout(cellGroup, frozenRowsHeight + table.tableY, table.tableNoFrameHeight);
+        adjustCellContentVerticalLayout(
+          cellGroup,
+          frozenRowsHeight + table.tableY,
+          table.tableNoFrameHeight - table.getBottomFrozenRowsHeight()
+        );
         // adjust cell Horizontal
-        adjustCellContentHorizontalLayout(cellGroup, frozenColsWidth + table.tableX, table.tableNoFrameWidth);
+        adjustCellContentHorizontalLayout(
+          cellGroup,
+          frozenColsWidth + table.tableX,
+          table.tableNoFrameWidth - table.getRightFrozenColsWidth()
+        );
         changedCells.push({ col, row });
       }
     }
