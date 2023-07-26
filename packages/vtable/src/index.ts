@@ -1,6 +1,4 @@
 /* eslint-disable sort-imports */
-
-// export { version } from '../../package.json';
 import * as TYPES from './ts-types';
 import * as core from './core';
 import * as data from './data';
