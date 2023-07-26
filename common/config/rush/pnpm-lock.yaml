@@ -2808,7 +2808,6 @@ packages:
       '@visactor/vrender': 0.12.3
       '@visactor/vscale': 0.11.2
       '@visactor/vutils': 0.11.1
-    dev: true
 
   /@visactor/vrender-components/0.13.3:
     resolution: {integrity: sha512-2IYpsMDpIkX6z0coloqtADzpyc9p8HIO65Gj394Iz18rmqD1Dt5T5MyNfB6YMbB3JD84vaWDDaCPv/oinCqZRQ==}
@@ -2841,7 +2840,6 @@ packages:
     resolution: {integrity: sha512-50ct/lDhkT50F5oW7hnLbRYdp3m2HSkDRKXSgC7oSgPsJswz7PcLELbfjIB6gzhG2trUwMLaONe07SaC2bNIlA==}
     dependencies:
       '@visactor/vutils': 0.11.1
-    dev: true
 
   /@visactor/vscale/0.13.3:
     resolution: {integrity: sha512-iVPguZ0uVSlOSfPWZaZmfp9hCeIxb67kCWgY+yVYEhzKTdnZLfNqxUarFhdqx2P9wNiAGjxhUJBNEenkndW5hg==}
