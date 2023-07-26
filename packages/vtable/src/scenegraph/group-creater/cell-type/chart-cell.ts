@@ -19,6 +19,7 @@ export function createChartCellGroup(
   chartType: any,
   chartSpec: any,
   chartInstance: any,
+  dataId: string | Record<string, string>,
   table: BaseTableAPI,
   cellTheme: IThemeSpec
 ) {
@@ -67,7 +68,7 @@ export function createChartCellGroup(
     width: width - padding[3] - padding[1],
     height: height - padding[2] - padding[0],
     chartInstance,
-    dataId: 'data',
+    dataId,
     data: table.getCellValue(col, row),
     cellPadding: padding,
     viewBox: {

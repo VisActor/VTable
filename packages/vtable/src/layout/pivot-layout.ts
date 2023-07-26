@@ -21,8 +21,8 @@ import type { PivotTable } from '../PivotTable';
 import { IndicatorDimensionKeyPlaceholder } from '../tools/global';
 import type { PivotChart } from '../PivotChart';
 import { cloneDeep } from '@visactor/vutils';
-import { getAxisConfigInPivotChart } from './pivot-chart/get-axis-config';
-import { getChartAxes, getChartSpec, getRawChartSpec } from './pivot-chart/get-chart-spec';
+import { getAxisConfigInPivotChart } from './chart-helper/get-axis-config';
+import { getChartAxes, getChartDataId, getChartSpec, getRawChartSpec } from './chart-helper/get-chart-spec';
 import type { ITableAxisOption } from '../ts-types/component/axis';
 /**
  * 简化配置，包含数据处理的 布局辅助计算类
@@ -1489,6 +1489,9 @@ export class PivotLayoutMap implements LayoutMapAPI {
   }
   getChartAxes(col: number, row: number): any {
     return getChartAxes(col, row, this);
+  }
+  getChartDataId(col: number, row: number): any {
+    return getChartDataId(col, row, this);
   }
   isEmpty(col: number, row: number): boolean {
     if (!this._table.isPivotChart()) {

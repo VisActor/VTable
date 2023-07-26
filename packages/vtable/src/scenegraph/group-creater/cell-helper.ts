@@ -257,6 +257,7 @@ export function createCell(
         ? (table.internalProps.layoutMap as PivotLayoutMap).getChartSpec(col, row)
         : (define as ChartColumnDefine).chartSpec,
       chartInstance,
+      (table.internalProps.layoutMap as PivotLayoutMap)?.getChartDataId(col, row) ?? 'data',
       table,
       cellTheme
     );

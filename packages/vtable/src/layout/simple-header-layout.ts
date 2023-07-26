@@ -10,6 +10,7 @@ import type {
   LayoutMapAPI,
   WidthData
 } from '../ts-types/list-table/layout-map/api';
+import { getChartDataId } from './chart-helper/get-chart-spec';
 // import { EmptyDataCache } from './utils';
 
 let seqId = 0;
@@ -730,5 +731,12 @@ export class SimpleHeaderLayoutMap implements LayoutMapAPI {
   }
   getChartAxes(col: number, row: number): any[] {
     return [];
+  }
+  getRawChartSpec(col: number, row: number): any {
+    const body = this.getBody(col, row);
+    return body?.chartSpec;
+  }
+  getChartDataId(col: number, row: number): any {
+    return getChartDataId(col, row, this);
   }
 }
