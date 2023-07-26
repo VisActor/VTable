@@ -89,6 +89,7 @@ export class PivotChart extends BaseTable implements PivotTableAPI {
         }, []) ?? [];
       this.internalProps.dataConfig.collectValuesBy = this._generateCollectValuesConfig(columnKeys, rowKeys);
       this.internalProps.dataConfig.aggregationRules = this._generateAggregationRules();
+      this.internalProps.dataConfig.dimensionSortArray = this._getDimensionSortArray();
       this.dataset = new Dataset(
         this.internalProps.dataConfig,
         rowKeys,
@@ -872,5 +873,21 @@ export class PivotChart extends BaseTable implements PivotTableAPI {
     return position
       ? { x: Math.round(position.x + cellPosition.bounds.x1), y: Math.round(position.y + cellPosition.bounds.y1) }
       : null;
+  }
+
+  _getDimensionSortArray(): string[] | undefined {
+    if (this.options?.axes?.length) {
+      const dimensionAxisOrient = this.options.indicatorsAsCol ? 'left' : 'bottom';
+      const dimensionAxisOption = this.options.axes.find(axis => {
+        if (axis.orient === dimensionAxisOrient) {
+          return true;
+        }
+        return false;
+      });
+      if (dimensionAxisOption && isArray((dimensionAxisOption as any).domain)) {
+        return (dimensionAxisOption as any).domain;
+      }
+    }
+    return undefined;
   }
 }

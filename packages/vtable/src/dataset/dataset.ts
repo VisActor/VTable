@@ -1007,8 +1007,29 @@ export class Dataset {
   private cacheDeminsionCollectedValues() {
     for (const key in this.collectValuesBy) {
       if (this.collectValuesBy[key].type === 'xField' || this.collectValuesBy[key].type === 'yField') {
-        this.cacheCollectedValues[key] = this.collectedValues[key];
+        if (this.dataConfig.dimensionSortArray) {
+          this.cacheCollectedValues[key] = arraySortByAnotherArray(
+            this.collectedValues[key] as unknown as string[],
+            this.dataConfig.dimensionSortArray
+          ) as unknown as Record<string, CollectedValue>;
+        } else {
+          this.cacheCollectedValues[key] = this.collectedValues[key];
+        }
       }
     }
   }
+}
+
+function arraySortByAnotherArray(array: string[], sortArray: string[]) {
+  return array.sort((a, b) => {
+    const aIndex = sortArray.indexOf(a);
+    const bIndex = sortArray.indexOf(b);
+    if (aIndex < bIndex) {
+      return -1;
+    }
+    if (aIndex > bIndex) {
+      return 1;
+    }
+    return 0;
+  });
 }
