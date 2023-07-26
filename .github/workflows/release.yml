@@ -42,11 +42,11 @@ jobs:
           NODE_OPTIONS: "--max_old_space_size=4096"
         run: node common/scripts/install-run-rush.js build --only tag:package
 
-      - name: Run Bugserver
-        working-directory: ./packages/vtable
-        env:
-          BUG_SERVER_TOKEN: ${{ secrets.BUG_SERVER_TOKEN }}
-        run: node ../../common/scripts/install-run-rushx.js ci
+      # - name: Run Bugserver
+      #   working-directory: ./packages/vtable
+      #   env:
+      #     BUG_SERVER_TOKEN: ${{ secrets.BUG_SERVER_TOKEN }}
+      #   run: node ../../common/scripts/install-run-rushx.js ci
 
       - name: Publish to npm
         env:
