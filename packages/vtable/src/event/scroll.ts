@@ -46,14 +46,22 @@ function optimizeScrollXY(x: number, y: number, ratio: ScrollSpeedRatio): [numbe
   const deltaX = angle <= 1 / ANGLE ? 0 : x;
   const deltaY = angle > ANGLE ? 0 : y;
 
-  return [Math.ceil(deltaX * ratio.horizontal), Math.ceil(deltaY * ratio.vertical)];
+  return [Math.ceil(deltaX * (ratio.horizontal ?? 0)), Math.ceil(deltaY * (ratio.vertical ?? 0))];
 }
 
 export function isVerticalScrollable(deltaY: number, state: StateManeger) {
+  const totalHeight = state.table.getAllRowsHeight() - state.table.scenegraph.height;
+  if (totalHeight === 0) {
+    return false;
+  }
   return !isScrollToTop(deltaY, state) && !isScrollToBottom(deltaY, state);
 }
 
 export function isHorizontalScrollable(deltaX: number, state: StateManeger) {
+  const totalWidth = state.table.getAllColsWidth() - state.table.scenegraph.width;
+  if (totalWidth === 0) {
+    return false;
+  }
   return !isScrollToLeft(deltaX, state) && !isScrollToRight(deltaX, state);
 }
 
