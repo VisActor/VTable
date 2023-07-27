@@ -44,7 +44,7 @@
     "start": "vite ./vite",
     "test": "jest",
     "test-cov": "jest --coverage",
-    "ci": "node github-ci.js"
+    "ci": "ts-node --transpileOnly --skipProject ./scripts/trigger-test.ts"
   },
   "dependencies": {
     "@visactor/vrender": "0.11.0-alpha.3",
