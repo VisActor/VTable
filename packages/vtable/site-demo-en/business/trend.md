@@ -31,7 +31,7 @@ const option = {
     rowTree: [
       {
         dimensionKey: 'order_data',
-        value: 'Order',
+        value: 'Order Number',
       },
       {
         dimensionKey: 'order_data',

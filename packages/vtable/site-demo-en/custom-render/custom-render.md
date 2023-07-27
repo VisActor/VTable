@@ -25,7 +25,7 @@ link: '/guide/custom_define/custom_render'
       {
         field: 'type',
         caption:'',
-        width:70,
+        width:170,
         headerStyle:{
           bgColor:'#4991e3'
         },
@@ -42,7 +42,7 @@ link: '/guide/custom_define/custom_render'
       {
         field: 'urgency',
         caption:'urgency',
-        width:'260',
+        width:400,
         headerStyle:{
           lineHeight:50,
           fontSize:26,
@@ -62,8 +62,8 @@ link: '/guide/custom_define/custom_render'
             type: 'rect',
             fill: '#4991e3',
             x: left+20,
-            y: top-15,
-            width: row===1?160:180,
+            y: top-20,
+            width: 300,
             height:28
           });
           elements.push({
@@ -100,12 +100,12 @@ link: '/guide/custom_define/custom_render'
           });
           elements.push({
             type: 'text',
-            color: 'blue',
+            fill: 'blue',
             font: '14px sans-serif',
             baseline: 'top',
             text: item,
-            x: left+6,
-            y: top,
+            x: left+10,
+            y: top+5,
           });
           maxWidth=Math.max(maxWidth, table.measureText(item,{fontSize:"15",}).width);
         })
@@ -176,7 +176,7 @@ link: '/guide/custom_define/custom_render'
           
           elements.push({
             type: 'text',
-            color: 'blue',
+            fill: 'blue',
             font: '14px sans-serif',
             baseline: 'top',
             text: item,
@@ -200,7 +200,7 @@ link: '/guide/custom_define/custom_render'
         "not_urgency": ['preventive measures','development relationship','identify new development opportunities','establish long-term goals'],
       },
       {
-        'type': 'Not important',
+        'type': 'Not\nimportant',
         "urgency": ['Receive visitors','Certain calls, reports, letters, etc','Urgent matters','Public activities'],
         "not_urgency": ['Trivial busy work','Some letters','Some phone calls','Time-killing activities','Some pleasant activities'],
       },
