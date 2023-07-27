@@ -59,7 +59,7 @@ export class DefaultCanvasChartRender implements IGraphicRender {
             dataIdStr,
             dataIdAndField
               ? data.filter((item: any) => {
-                  return item[dataIdAndField] !== undefined;
+                  return item.hasOwnProperty(dataIdAndField);
                 }) ?? []
               : data ?? []
           );
@@ -96,7 +96,7 @@ export class DefaultCanvasChartRender implements IGraphicRender {
             dataIdStr,
             dataIdAndField
               ? data.filter((item: any) => {
-                  return item[dataIdAndField] !== undefined;
+                  return item.hasOwnProperty(dataIdAndField);
                 }) ?? []
               : data ?? []
           );

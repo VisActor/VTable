@@ -159,10 +159,14 @@ export function getChartDataId(
     }
     chartSpec?.series.forEach((seriesSpec: any) => {
       if (!seriesSpec.data?.fromDataId) {
-        const seriesField = seriesSpec.direction === 'horizontal' ? seriesSpec.xField : seriesSpec.yField;
-        dataIdfield[seriesSpec.data?.id ?? chartSpec.data?.id ?? 'data'] = seriesSpec.data?.id
-          ? seriesField
-          : undefined;
+        if (!seriesSpec.data?.transforms) {
+          const seriesField = seriesSpec.direction === 'horizontal' ? seriesSpec.xField : seriesSpec.yField;
+          dataIdfield[seriesSpec.data?.id ?? chartSpec.data?.id ?? 'data'] = seriesSpec.data?.id
+            ? seriesField
+            : undefined;
+        } else {
+          dataIdfield[seriesSpec.data?.id ?? chartSpec.data?.id ?? 'data'] = undefined;
+        }
       }
     });
     return dataIdfield;

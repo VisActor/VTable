@@ -462,7 +462,7 @@ order: 9-5
             {
               type: 'line',
               data: {
-                id: 'data',
+                id: 'data1',
                 transforms: [
                   {
                     type: 'fold',
@@ -493,7 +493,7 @@ order: 9-5
             {
               type: 'area',
               data: {
-                id: 'data',
+                id: 'data2',
                 transforms: [
                   {
                     type: 'fold',
@@ -582,7 +582,7 @@ order: 9-5
         chartSpec: {
           type: 'common',
           data: {
-            id: 'data',
+            id: 'data3',
             transforms: [
               {
                 type: 'fold',
