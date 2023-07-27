@@ -18,7 +18,7 @@ export interface IBasicHeaderIndicator {
   // templateLink?: string;
 
   // chartSpec?: any | ((arg0: CustomRenderFunctionArg) => any);
-  // chartType?: string; // 如果配置了columnType未chart，chartType来指定图表组件类型 如'vchart' 需要从预先register的图表类型获取
+  // chartModule?: string; // 如果配置了columnType未chart，chartType来指定图表组件类型 如'vchart' 需要从预先register的图表类型获取
   // sparklineSpec?: SparklineSpec | ((arg0: CustomRenderFunctionArg) => SparklineSpec);
 
   dropDownMenu?: MenuListItem[]; // 针对单独指标上配置下拉按钮

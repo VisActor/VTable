@@ -7,7 +7,7 @@ export interface IChartColumnBodyDefine extends IBasicColumnBodyDefine {
   style?: IStyleOption | ((styleArg: StylePropertyFunctionArg) => IStyleOption);
   columnType: 'chart';
   /** 注入的图表库组件名称 */
-  chartType?: string;
+  chartModule?: string;
   /** 对应图表库的spec 其中value对应在records中提供 */
   chartSpec?: any | ((arg0: CellInfo) => any);
 }

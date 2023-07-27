@@ -252,11 +252,12 @@ export function createCell(
       table.getRowHeight(row),
       padding,
       table.getCellValue(col, row),
-      (define as ChartColumnDefine).chartType,
+      (define as ChartColumnDefine).chartModule,
       table.isPivotChart()
         ? (table.internalProps.layoutMap as PivotLayoutMap).getChartSpec(col, row)
         : (define as ChartColumnDefine).chartSpec,
       chartInstance,
+      (table.internalProps.layoutMap as PivotLayoutMap)?.getChartDataId(col, row) ?? 'data',
       table,
       cellTheme
     );

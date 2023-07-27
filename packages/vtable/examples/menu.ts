@@ -62,7 +62,11 @@ export const menus = [
       },
       {
         path: 'pivot-chart',
-        name: 'pivotChart-column'
+        name: 'horizontal'
+      },
+      {
+        path: 'pivot-chart',
+        name: 'horizontal-hideHeader'
       },
       {
         path: 'pivot-chart',
@@ -71,6 +75,14 @@ export const menus = [
       {
         path: 'pivot-chart',
         name: 'pivotChart-legend'
+      },
+      {
+        path: 'pivot-chart',
+        name: 'pivotChart-hideHeader'
+      },
+      {
+        path: 'pivot-chart',
+        name: 'pivotChart-fromDataId'
       },
       {
         path: 'pivot-chart',
@@ -87,6 +99,14 @@ export const menus = [
       {
         path: 'pivot-chart',
         name: 'pivotChart-adaptive'
+      },
+      {
+        path: 'pivot-chart',
+        name: 'pivotChart-no-columns'
+      },
+      {
+        path: 'pivot-chart',
+        name: 'pivotChart-no-dimensions'
       }
     ]
   },

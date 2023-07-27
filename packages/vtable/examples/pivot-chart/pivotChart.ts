@@ -2,7 +2,7 @@
 import * as VTable from '../../src';
 import VChart from '@visactor/vchart';
 const Table_CONTAINER_DOM_ID = 'vTable';
-VTable.register.chartType('vchart', VChart);
+VTable.register.chartModule('vchart', VChart);
 export function createTable() {
   const rowTree = [
     {
@@ -38,42 +38,27 @@ export function createTable() {
   ];
   const columnTree = [
     {
-      dimensionKey: '230417171050031',
-      value: '中国',
-      children: [
-        {
-          dimensionKey: '230417171050028',
-          value: '办公用品'
-        },
-        {
-          dimensionKey: '230417171050028',
-          value: '家具'
-        },
-        {
-          dimensionKey: '230417171050028',
-          value: '技术'
-        }
-      ]
+      dimensionKey: '',
+      value: ''
     }
   ];
   const columns: (VTable.IDimension | string)[] = [
-    {
-      dimensionKey: '230417171050031',
-      dimensionTitle: '国家',
-      headerStyle: {
-        color: 'red',
-        textAlign: 'center'
-      }
-    },
-    {
-      dimensionKey: '230417171050028',
-      dimensionTitle: '类别',
-      headerStyle: {
-        color: 'red',
-        borderLineWidth: [0, 0, 1, 1]
-      }
-    }
-
+    // {
+    //   dimensionKey: '230417171050031',
+    //   dimensionTitle: '国家',
+    //   headerStyle: {
+    //     color: 'red',
+    //     textAlign: 'center'
+    //   }
+    // },
+    // {
+    //   dimensionKey: '230417171050028',
+    //   dimensionTitle: '类别',
+    //   headerStyle: {
+    //     color: 'red',
+    //     borderLineWidth: [0, 0, 1, 1]
+    //   }
+    // }
     // '230417170554008'
   ];
   const rows = [
@@ -94,7 +79,7 @@ export function createTable() {
       caption: '数量',
       width: 'auto',
       columnType: 'chart',
-      chartType: 'vchart',
+      chartModule: 'vchart',
       headerStyle: {
         color: 'red',
         borderLineWidth: [1, 0, 1, 0],
@@ -144,7 +129,7 @@ export function createTable() {
       indicatorKey: '230417171050025',
       caption: '销售额 & 利润',
       columnType: 'chart',
-      chartType: 'vchart',
+      chartModule: 'vchart',
       headerStyle: {
         color: 'red',
         borderLineWidth: [1, 0, 1, 0],
@@ -217,7 +202,7 @@ export function createTable() {
       caption: '折扣',
       width: 'auto',
       columnType: 'chart',
-      chartType: 'vchart',
+      chartModule: 'vchart',
       headerStyle: {
         color: 'red',
         borderLineWidth: [1, 0, 1, 0],

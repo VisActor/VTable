@@ -240,75 +240,46 @@ export function createTable() {
       chartSpec: {
         type: 'common',
         padding: { left: 0, right: 0, top: 3, bottom: 3 },
-        // data: {
-        //   id: 'dataId',
-        //   fields: {
-        //     230417170554008: {
-        //       sortIndex: 0,
-        //       domain: [
-        //         '纸张',
-        //         '标签',
-        //         '装订机',
-        //         '系固件',
-        //         '用品',
-        //         '美术',
-        //         '器具',
-        //         '收纳具',
-        //         '信封',
-        //         '椅子',
-        //         '书架',
-        //         '用具',
-        //         '桌子',
-        //         '复印机',
-        //         '电话',
-        //         '设备',
-        //         '配件'
-        //       ]
-        //       // lockStatisticsByDomain:  true
-        //     },
-        //     230717170834024: {
-        //       sortIndex: 1,
-        //       domain: ['消费者', '小型企业', '公司']
-        //       // lockStatisticsByDomain:  true
-        //     }
-        //   }
-        // },
+        data: {
+          id: 'dataId',
+          fields: {
+            230417170554008: {
+              sortIndex: 0,
+              domain: [
+                '纸张',
+                '标签',
+                '装订机',
+                '系固件',
+                '用品',
+                '美术',
+                '器具',
+                '收纳具',
+                '信封',
+                '椅子',
+                '书架',
+                '用具',
+                '桌子',
+                '复印机',
+                '电话',
+                '设备',
+                '配件'
+              ]
+              // lockStatisticsByDomain:  true
+            },
+            230717170834024: {
+              sortIndex: 1,
+              domain: ['消费者', '小型企业', '公司']
+              // lockStatisticsByDomain:  true
+            }
+          }
+        },
         series: [
           {
             type: 'bar',
             stack: true,
             data: {
               id: 'id1',
-              fields: {
-                230417170554008: {
-                  sortIndex: 0,
-                  domain: [
-                    '纸张',
-                    '标签',
-                    '装订机',
-                    '系固件',
-                    '用品',
-                    '美术',
-                    '器具',
-                    '收纳具',
-                    '信封',
-                    '椅子',
-                    '书架',
-                    '用具',
-                    '桌子',
-                    '复印机',
-                    '电话',
-                    '设备',
-                    '配件'
-                  ]
-                  // lockStatisticsByDomain:  true
-                },
-                230717170834024: {
-                  sortIndex: 1,
-                  domain: ['消费者', '小型企业', '公司']
-                  // lockStatisticsByDomain:  true
-                }
-              }
+              fromDataId: 'dataId'
             },
             xField: ['230417170554008'],
             yField: '230713152555009',
@@ -330,31 +301,7 @@ export function createTable() {
             stack: false,
             data: {
               id: 'id2',
-              fields: {
-                230417170554008: {
-                  sortIndex: 0,
-                  domain: [
-                    '纸张',
-                    '标签',
-                    '装订机',
-                    '系固件',
-                    '用品',
-                    '美术',
-                    '器具',
-                    '收纳具',
-                    '信封',
-                    '椅子',
-                    '书架',
-                    '用具',
-                    '桌子',
-                    '复印机',
-                    '电话',
-                    '设备',
-                    '配件'
-                  ]
-                  // lockStatisticsByDomain:  true
-                }
-              }
+              fromDataId: 'dataId'
             },
             invalidType: 'break',
             xField: ['230417170554008'],

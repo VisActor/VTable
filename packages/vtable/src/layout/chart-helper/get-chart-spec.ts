@@ -2,8 +2,10 @@ import { cloneDeep, merge } from '@visactor/vutils';
 import type { PivotLayoutMap } from '../pivot-layout';
 import type { PivotChart } from '../../PivotChart';
 import type { ITableAxisOption } from '../../ts-types/component/axis';
+import type { PivotHeaderLayoutMap } from '../pivot-header-layout';
+import type { SimpleHeaderLayoutMap } from '../simple-header-layout';
 
-export function getRawChartSpec(col: number, row: number, layout: PivotLayoutMap): any {
+export function getRawChartSpec(col: number, row: number, layout: PivotLayoutMap | PivotHeaderLayoutMap): any {
   const paths = layout.getCellHeaderPaths(col, row);
   let indicatorObj;
   if (layout.indicatorsAsCol) {
@@ -40,7 +42,8 @@ export function getChartAxes(col: number, row: number, layout: PivotLayoutMap): 
       const data = layout.dataset.collectedValues[key + '_align']
         ? layout.dataset.collectedValues[key + '_align']
         : layout.dataset.collectedValues[key];
-      const range = data[layout.getColKeysPath()[colIndex][layout.columnHeaderLevelCount - 1 - layout.topAxesCount]];
+      const range =
+        data[layout.getColKeysPath()[colIndex][Math.max(0, layout.columnHeaderLevelCount - 1 - layout.topAxesCount)]];
       const axisOption = ((layout._table as PivotChart).pivotChartAxes as ITableAxisOption[]).find(axisOption => {
         return axisOption.orient === (index === 0 ? 'bottom' : 'top');
       });
@@ -88,7 +91,8 @@ export function getChartAxes(col: number, row: number, layout: PivotLayoutMap): 
       const data = layout.dataset.collectedValues[key + '_align']
         ? layout.dataset.collectedValues[key + '_align']
         : layout.dataset.collectedValues[key];
-      const range = data[layout.getRowKeysPath()[rowIndex][layout.rowHeaderLevelCount - 1 - layout.leftAxesCount]];
+      const range =
+        data[layout.getRowKeysPath()[rowIndex][Math.max(0, layout.rowHeaderLevelCount - 1 - layout.leftAxesCount)]];
       const axisOption = ((layout._table as PivotChart).pivotChartAxes as ITableAxisOption[]).find(axisOption => {
         return axisOption.orient === (index === 0 ? 'left' : 'right');
       });
@@ -131,4 +135,41 @@ export function getChartAxes(col: number, row: number, layout: PivotLayoutMap): 
     );
   }
   return axes;
+}
+/**
+ *  获取单元格对应spec的dataId。
+ * 如果是spec外层的dataId,则是string,否则通过series获取到的是Record<string, string> => <dataId, series-chart的指标key用于过滤数据>
+ * @param col
+ * @param row
+ * @param layout
+ * @returns
+ */
+export function getChartDataId(
+  col: number,
+  row: number,
+  layout: PivotLayoutMap | PivotHeaderLayoutMap | SimpleHeaderLayoutMap
+): string | Record<string, string> {
+  const chartSpec = layout.getRawChartSpec(col, row);
+  // 如果chartSpec配置了组合图 series 则需要考虑 series中存在的多个指标
+  if (chartSpec?.series) {
+    const dataIdfield: Record<string, string> = {};
+
+    if (chartSpec.data?.id) {
+      dataIdfield[chartSpec.data.id] = undefined;
+    }
+    chartSpec?.series.forEach((seriesSpec: any) => {
+      if (!seriesSpec.data?.fromDataId) {
+        if (!seriesSpec.data?.transforms) {
+          const seriesField = seriesSpec.direction === 'horizontal' ? seriesSpec.xField : seriesSpec.yField;
+          dataIdfield[seriesSpec.data?.id ?? chartSpec.data?.id ?? 'data'] = seriesSpec.data?.id
+            ? seriesField
+            : undefined;
+        } else {
+          dataIdfield[seriesSpec.data?.id ?? chartSpec.data?.id ?? 'data'] = undefined;
+        }
+      }
+    });
+    return dataIdfield;
+  }
+  return chartSpec.data.id;
 }

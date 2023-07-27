@@ -7,33 +7,75 @@ export function createTable() {
   const rowTree = [
     {
       dimensionKey: '230417170554012',
-      value: '一级'
-      // children: [
-      //   {
-      //     value: '数量',
-      //     indicatorKey: '230417171050011'
-      //   },
-      //   {
-      //     value: '销售额',
-      //     indicatorKey: '230417171050025'
-      //   },
-      //   {
-      //     value: '折扣',
-      //     indicatorKey: '230707112948009'
-      //   }
-      // ]
+      value: '一级',
+      children: [
+        {
+          value: '数量',
+          indicatorKey: '230417171050011'
+        },
+        {
+          value: '销售额',
+          indicatorKey: '230417171050025'
+        },
+        {
+          value: '折扣',
+          indicatorKey: '230707112948009'
+        }
+      ]
     },
     {
       dimensionKey: '230417170554012',
-      value: '二级'
+      value: '二级',
+      children: [
+        {
+          value: '数量',
+          indicatorKey: '230417171050011'
+        },
+        {
+          value: '销售额',
+          indicatorKey: '230417171050025'
+        },
+        {
+          value: '折扣',
+          indicatorKey: '230707112948009'
+        }
+      ]
     },
     {
       dimensionKey: '230417170554012',
-      value: '当日'
+      value: '当日',
+      children: [
+        {
+          value: '数量',
+          indicatorKey: '230417171050011'
+        },
+        {
+          value: '销售额',
+          indicatorKey: '230417171050025'
+        },
+        {
+          value: '折扣',
+          indicatorKey: '230707112948009'
+        }
+      ]
     },
     {
       dimensionKey: '230417170554012',
-      value: '标准级'
+      value: '标准级',
+      children: [
+        {
+          value: '数量',
+          indicatorKey: '230417171050011'
+        },
+        {
+          value: '销售额',
+          indicatorKey: '230417171050025'
+        },
+        {
+          value: '折扣',
+          indicatorKey: '230707112948009'
+        }
+      ]
     }
   ];
   const columnTree = [
@@ -61,19 +103,10 @@ export function createTable() {
       dimensionKey: '230417171050031',
       dimensionTitle: '国家',
       headerStyle: {
-        color: 'red',
-        textAlign: 'center'
+        color: 'red'
       }
     },
-    {
-      dimensionKey: '230417171050028',
-      dimensionTitle: '类别',
-      headerStyle: {
-        color: 'red',
-        borderLineWidth: [0, 0, 1, 1]
-      }
-    }
-
+    '230417171050028'
     // '230417170554008'
   ];
   const rows = [
@@ -81,10 +114,7 @@ export function createTable() {
       dimensionKey: '230417170554012',
       dimensionTitle: '邮寄方式',
       headerStyle: {
-        color: 'red',
-        borderLineWidth: [1, 0, 1, 0],
-        autoWrapText: true,
-        textStick: true
+        color: 'red'
       }
     }
   ];
@@ -95,14 +125,6 @@ export function createTable() {
       width: 'auto',
       columnType: 'chart',
       chartModule: 'vchart',
-      headerStyle: {
-        color: 'red',
-        borderLineWidth: [1, 0, 1, 0],
-        autoWrapText: true
-      },
-      style: {
-        padding: 1
-      },
       chartSpec: {
         // type: 'common',
         stack: true,
@@ -120,8 +142,9 @@ export function createTable() {
         //     colorAlpha: 0.2
         //   }
         // },
-        xField: ['230417170554008'],
-        yField: '230417171050011',
+        direction: 'horizontal',
+        xField: '230417171050011',
+        yField: '230417170554008',
         seriesField: '230417171050030',
         axes: [
           { orient: 'left', visible: true, label: { visible: true } },
@@ -138,6 +161,9 @@ export function createTable() {
             }
           }
         }
+      },
+      style: {
+        padding: 1
       }
     },
     {
@@ -145,26 +171,19 @@ export function createTable() {
       caption: '销售额 & 利润',
       columnType: 'chart',
       chartModule: 'vchart',
-      headerStyle: {
-        color: 'red',
-        borderLineWidth: [1, 0, 1, 0],
-        autoWrapText: true
-      },
-      style: {
-        padding: 1
-      },
       chartSpec: {
         type: 'common',
         data: {
           id: 'data'
         },
-
+        direction: 'horizontal',
         series: [
           {
             type: 'bar',
             stack: true,
-            xField: ['230417170554008'],
-            yField: '230713150305011',
+            direction: 'horizontal',
+            xField: '230713150305011',
+            yField: ['230417170554008'],
             seriesField: '230417171050030',
             bar: {
               state: {
@@ -181,8 +200,9 @@ export function createTable() {
           {
             type: 'line',
             stack: false,
-            xField: ['230417170554008'],
-            yField: '230417171050025',
+            direction: 'horizontal',
+            xField: '230417171050025',
+            yField: ['230417170554008'],
             seriesField: '230417171050030',
             line: {
               state: {
@@ -210,6 +230,9 @@ export function createTable() {
           { orient: 'left', visible: true, label: { visible: true } },
           { orient: 'bottom', visible: true }
         ]
+      },
+      style: {
+        padding: 1
       }
     },
     {
@@ -218,14 +241,6 @@ export function createTable() {
       width: 'auto',
       columnType: 'chart',
       chartModule: 'vchart',
-      headerStyle: {
-        color: 'red',
-        borderLineWidth: [1, 0, 1, 0],
-        autoWrapText: true
-      },
-      style: {
-        padding: 1
-      },
       chartSpec: {
         // type: 'common',
         stack: false,
@@ -233,8 +248,9 @@ export function createTable() {
         data: {
           id: 'data'
         },
-        xField: ['230417170554008'],
-        yField: '230707112948009',
+        direction: 'horizontal',
+        xField: '230707112948009',
+        yField: '230417170554008',
         seriesField: '230417171050030',
         axes: [
           { orient: 'left', visible: true, label: { visible: true } },
@@ -270,6 +286,9 @@ export function createTable() {
             }
           }
         }
+      },
+      style: {
+        padding: 1
       }
     }
   ];
@@ -9257,61 +9276,38 @@ export function createTable() {
     rows,
     columns,
     indicators,
-    indicatorsAsCol: false,
+    indicatorsAsCol: true,
     parentElement: document.getElementById(Table_CONTAINER_DOM_ID),
     records,
     defaultRowHeight: 200,
-    defaultHeaderRowHeight: 30,
+    defaultHeaderRowHeight: 50,
     defaultColWidth: 280,
-    defaultHeaderColWidth: [80, 50],
-
+    defaultHeaderColWidth: 100,
+    indicatorTitle: '指标',
     corner: {
       titleOnDimension: 'row',
       headerStyle: {
-        autoWrapText: true,
-        padding: 0
+        autoWrapText: true
       }
     },
-    theme: {
-      bodyStyle: {
-        borderColor: 'gray',
-        borderLineWidth: [1, 0, 0, 1]
-      },
-      headerStyle: {
-        borderColor: 'gray',
-        borderLineWidth: [0, 0, 0, 1],
-        hover: {
-          cellBgColor: '#CCE0FF'
-        }
-      },
-      cornerHeaderStyle: {
-        borderColor: 'gray',
-        borderLineWidth: [0, 1, 0, 0],
-        hover: {
-          cellBgColor: ''
-        }
-      },
+    theme: VTable.themes.ARCO.extends({
       selectionStyle: {
-        cellBgColor: '',
-        cellBorderColor: ''
-      },
-      frameStyle: {
-        borderLineWidth: 0
+        cellBgColor: ''
       }
-    },
-    widthMode: 'adaptive',
-    heightMode: 'adaptive'
+    }),
+    // widthMode: 'adaptive',
+    // heightMode: 'adaptive',
+    showRowHeader: false
+    // showColumnHeader:false,
+    // hover: {
+    //   disableHeaderHover:false,
+    //   disableHover: true
+    // },
     // select: {
     //   disableSelect: true
     // }
   };
 
   const tableInstance = new VTable.PivotChart(option);
-  tableInstance.listenChart('click', args => {
-    console.log('listenChart click', args);
-  });
-  tableInstance.listenChart('mouseover', args => {
-    console.log('listenChart mouseover', args);
-  });
   window.tableInstance = tableInstance;
 }

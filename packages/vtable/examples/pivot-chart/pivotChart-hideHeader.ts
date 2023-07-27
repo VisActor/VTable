@@ -10354,6 +10354,8 @@ export function createTable() {
     defaultColWidth: 280,
     defaultHeaderColWidth: 100,
     indicatorTitle: '指标',
+    showRowHeader: false,
+    showColumnHeader: false,
     corner: {
       titleOnDimension: 'row',
       headerStyle: {

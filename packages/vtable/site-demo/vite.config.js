@@ -2,7 +2,7 @@ const { plugin: mdPlugin, Mode } = require('vite-plugin-markdown');
 
 module.exports = {
   optimizeDeps: {
-    exclude: ['@visactor/vrender', '@visactor/vscale', '@visactor/vrender-components']
+    // exclude: ['@visactor/vrender', '@visactor/vscale', '@visactor/vrender-components']
   },
   server: {
     host: '0.0.0.0',

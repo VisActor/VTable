@@ -8,7 +8,7 @@ import type { PivotLayoutMap } from '../../layout/pivot-layout';
 
 interface IChartGraphicAttribute extends IGroupGraphicAttribute {
   canvas: HTMLCanvasElement;
-  dataId: string;
+  dataId: string | Record<string, string>; //如果是spec外层的dataId,则是string,否则通过series获取到的是Record<string, string> <dataId, series-chart的指标key用于过滤数据>
   data: any;
   spec: any;
   axes: any;
@@ -39,7 +39,6 @@ export class Chart extends Group {
 
     // 创建chart
     if (!params.chartInstance) {
-      const ctx = params.canvas.getContext('2d');
       params.chartInstance = this.chartInstance = new params.ClassType(params.spec, {
         renderCanvas: params.canvas,
         mode: 'desktop-browser',

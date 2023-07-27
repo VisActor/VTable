@@ -33,6 +33,7 @@ import { IndicatorDimensionKeyPlaceholder } from '../tools/global';
 import { diffCellAddress } from '../tools/diff-cell';
 import type { ILinkDimension } from '../ts-types/pivot-table/dimension/link-dimension';
 import type { IImageDimension } from '../ts-types/pivot-table/dimension/image-dimension';
+import { getChartDataId, getRawChartSpec } from './chart-helper/get-chart-spec';
 interface IPivotLayoutBaseHeadNode {
   id: number;
   // dimensionKey: string;
@@ -542,7 +543,7 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
             field: indicatorInfo.indicatorKey,
             fieldFormat: indicatorInfo?.format,
             columnType: indicatorInfo?.columnType ?? 'text',
-            chartType: 'chartType' in indicatorInfo ? indicatorInfo.chartType : null,
+            chartModule: 'chartModule' in indicatorInfo ? indicatorInfo.chartModule : null,
             chartSpec: 'chartSpec' in indicatorInfo ? indicatorInfo.chartSpec : null,
             sparklineSpec: 'sparklineSpec' in indicatorInfo ? indicatorInfo.sparklineSpec : null,
             style: indicatorInfo?.style,
@@ -1953,5 +1954,11 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
   }
   getChartAxes(col: number, row: number): any[] {
     return [];
+  }
+  getRawChartSpec(col: number, row: number): any {
+    return getRawChartSpec(col, row, this);
+  }
+  getChartDataId(col: number, row: number): any {
+    return getChartDataId(col, row, this);
   }
 }

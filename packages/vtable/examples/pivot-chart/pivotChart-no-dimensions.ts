@@ -6,118 +6,18 @@ VTable.register.chartModule('vchart', VChart);
 export function createTable() {
   const rowTree = [
     {
-      dimensionKey: '230417170554012',
-      value: '一级',
-      children: [
-        {
-          value: '数量',
-          indicatorKey: '230713183656009'
-        },
-        {
-          value: '销售额',
-          indicatorKey: '230417171050025'
-        },
-        {
-          value: '折扣',
-          indicatorKey: '230707112948009'
-        }
-      ]
-    },
-    {
-      dimensionKey: '230417170554012',
-      value: '二级',
-      children: [
-        {
-          value: '数量',
-          indicatorKey: '230713183656009'
-        },
-        {
-          value: '销售额',
-          indicatorKey: '230417171050025'
-        },
-        {
-          value: '折扣',
-          indicatorKey: '230707112948009'
-        }
-      ]
-    },
-    {
-      dimensionKey: '230417170554012',
-      value: '当日',
-      children: [
-        {
-          value: '数量',
-          indicatorKey: '230713183656009'
-        },
-        {
-          value: '销售额',
-          indicatorKey: '230417171050025'
-        },
-        {
-          value: '折扣',
-          indicatorKey: '230707112948009'
-        }
-      ]
-    },
-    {
-      dimensionKey: '230417170554012',
-      value: '标准级',
-      children: [
-        {
-          value: '数量',
-          indicatorKey: '230713183656009'
-        },
-        {
-          value: '销售额',
-          indicatorKey: '230417171050025'
-        },
-        {
-          value: '折扣',
-          indicatorKey: '230707112948009'
-        }
-      ]
+      dimensionKey: '',
+      value: ''
     }
   ];
   const columnTree = [
     {
-      dimensionKey: '230417171050031',
-      value: '中国',
-      children: [
-        {
-          dimensionKey: '230417171050028',
-          value: '办公用品'
-        },
-        {
-          dimensionKey: '230417171050028',
-          value: '家具'
-        },
-        {
-          dimensionKey: '230417171050028',
-          value: '技术'
-        }
-      ]
+      dimensionKey: '',
+      value: ''
     }
   ];
-  const columns: (VTable.IDimension | string)[] = [
-    {
-      dimensionKey: '230417171050031',
-      dimensionTitle: '国家',
-      headerStyle: {
-        color: 'red'
-      }
-    },
-    '230417171050028'
-    // '230417170554008'
-  ];
-  const rows = [
-    {
-      dimensionKey: '230417170554012',
-      dimensionTitle: '邮寄方式',
-      headerStyle: {
-        color: 'red'
-      }
-    }
-  ];
+  const columns: (VTable.IDimension | string)[] = [];
+  const rows = [];
   const indicators: VTable.TYPES.IIndicator[] = [
     {
       indicatorKey: '230713183656009',

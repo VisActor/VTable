@@ -4,76 +4,29 @@ import VChart from '@visactor/vchart';
 const Table_CONTAINER_DOM_ID = 'vTable';
 VTable.register.chartModule('vchart', VChart);
 export function createTable() {
-  const rowTree = [
-    {
-      dimensionKey: '230417170554012',
-      value: '一级'
-      // children: [
-      //   {
-      //     value: '数量',
-      //     indicatorKey: '230417171050011'
-      //   },
-      //   {
-      //     value: '销售额',
-      //     indicatorKey: '230417171050025'
-      //   },
-      //   {
-      //     value: '折扣',
-      //     indicatorKey: '230707112948009'
-      //   }
-      // ]
-    },
-    {
-      dimensionKey: '230417170554012',
-      value: '二级'
-    },
-    {
-      dimensionKey: '230417170554012',
-      value: '当日'
-    },
-    {
-      dimensionKey: '230417170554012',
-      value: '标准级'
-    }
-  ];
   const columnTree = [
     {
-      dimensionKey: '230417171050031',
-      value: '中国',
-      children: [
-        {
-          dimensionKey: '230417171050028',
-          value: '办公用品'
-        },
-        {
-          dimensionKey: '230417171050028',
-          value: '家具'
-        },
-        {
-          dimensionKey: '230417171050028',
-          value: '技术'
-        }
-      ]
+      dimensionKey: '',
+      value: ''
     }
   ];
   const columns: (VTable.IDimension | string)[] = [
-    {
-      dimensionKey: '230417171050031',
-      dimensionTitle: '国家',
-      headerStyle: {
-        color: 'red',
-        textAlign: 'center'
-      }
-    },
-    {
-      dimensionKey: '230417171050028',
-      dimensionTitle: '类别',
-      headerStyle: {
-        color: 'red',
-        borderLineWidth: [0, 0, 1, 1]
-      }
-    }
-
+    // {
+    //   dimensionKey: '230417171050031',
+    //   dimensionTitle: '国家',
+    //   headerStyle: {
+    //     color: 'red',
+    //     textAlign: 'center'
+    //   }
+    // },
+    // {
+    //   dimensionKey: '230417171050028',
+    //   dimensionTitle: '类别',
+    //   headerStyle: {
+    //     color: 'red',
+    //     borderLineWidth: [0, 0, 1, 1]
+    //   }
+    // }
     // '230417170554008'
   ];
   const rows = [
@@ -88,7 +41,7 @@ export function createTable() {
       }
     }
   ];
-  const indicators: VTable.TYPES.IIndicator[] = [
+  const indicators: VTable.TYPES.IChartIndicator[] = [
     {
       indicatorKey: '230417171050011',
       caption: '数量',
@@ -9251,9 +9204,9 @@ export function createTable() {
       '230713150305018': '利润'
     }
   ];
-  const option: VTable.PivotTableConstructorOptions = {
+  const option: VTable.PivotChartConstructorOptions = {
     columnTree,
-    rowTree,
+    // rowTree,
     rows,
     columns,
     indicators,
@@ -9263,7 +9216,7 @@ export function createTable() {
     defaultRowHeight: 200,
     defaultHeaderRowHeight: 30,
     defaultColWidth: 280,
-    defaultHeaderColWidth: [80, 50],
+    defaultHeaderColWidth: 80,
 
     corner: {
       titleOnDimension: 'row',
@@ -9298,9 +9251,8 @@ export function createTable() {
       frameStyle: {
         borderLineWidth: 0
       }
-    },
-    widthMode: 'adaptive',
-    heightMode: 'adaptive'
+    }
+
     // select: {
     //   disableSelect: true
     // }
