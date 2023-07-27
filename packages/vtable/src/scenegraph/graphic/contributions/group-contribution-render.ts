@@ -141,6 +141,8 @@ export class SplitGroupAfterRenderContribution implements IGroupRenderContributi
       return;
     }
 
+    let widthForStroke;
+    let heightForStroke;
     if (Array.isArray(strokeArrayColor) || Array.isArray(strokeArrayWidth)) {
       if (
         (typeof lineWidth === 'number' && lineWidth & 1) ||
@@ -148,6 +150,17 @@ export class SplitGroupAfterRenderContribution implements IGroupRenderContributi
       ) {
         x = Math.floor(x) + 0.5;
         y = Math.floor(y) + 0.5;
+
+        const { width: widthFroDraw, height: heightFroDraw } = getCellSizeForDraw(
+          group,
+          Math.ceil(width),
+          Math.ceil(height)
+        );
+        widthForStroke = widthFroDraw;
+        heightForStroke = heightFroDraw;
+      } else {
+        widthForStroke = Math.ceil(width);
+        heightForStroke = Math.ceil(height);
       }
       renderStroke(
         group,
@@ -158,8 +171,10 @@ export class SplitGroupAfterRenderContribution implements IGroupRenderContributi
         stroke,
         strokeArrayWidth || lineWidth,
         strokeArrayColor || strokeColor,
-        Math.ceil(width),
-        Math.ceil(height)
+        // Math.ceil(width),
+        // Math.ceil(height)
+        widthForStroke,
+        heightForStroke
       );
     }
   }
@@ -445,37 +460,50 @@ export class DashGroupAfterRenderContribution implements IGroupRenderContributio
     width = Math.ceil(width);
     height = Math.ceil(height);
 
+    let widthForStroke;
+    let heightForStroke;
     if (lineWidth & 1) {
       x = Math.floor(x) + 0.5;
       y = Math.floor(y) + 0.5;
+
+      const { width: widthFroDraw, height: heightFroDraw } = getCellSizeForDraw(
+        group,
+        Math.ceil(width),
+        Math.ceil(height)
+      );
+      widthForStroke = widthFroDraw;
+      heightForStroke = heightFroDraw;
+    } else {
+      widthForStroke = Math.ceil(width);
+      heightForStroke = Math.ceil(height);
     }
     context.setStrokeStyle(group, group.attribute, x, y, groupAttribute);
     // 分段设置lineDashOffset，实现虚线边框对齐
     // top
     context.beginPath();
     context.moveTo(x, y);
-    context.lineTo(x + width, y);
+    context.lineTo(x + widthForStroke, y);
     context.lineDashOffset = context.currentMatrix.e / context.currentMatrix.a;
     context.stroke();
 
     // right
     context.beginPath();
-    context.moveTo(x + width, y);
-    context.lineTo(x + width, y + height);
+    context.moveTo(x + widthForStroke, y);
+    context.lineTo(x + widthForStroke, y + heightForStroke);
     context.lineDashOffset = context.currentMatrix.f / context.currentMatrix.d;
     context.stroke();
 
     // bottom
     context.beginPath();
-    context.moveTo(x, y + height);
-    context.lineTo(x + width, y + height);
+    context.moveTo(x, y + heightForStroke);
+    context.lineTo(x + widthForStroke, y + heightForStroke);
     context.lineDashOffset = context.currentMatrix.e / context.currentMatrix.a;
     context.stroke();
 
     // left
     context.beginPath();
     context.moveTo(x, y);
-    context.lineTo(x, y + height);
+    context.lineTo(x, y + heightForStroke);
     context.lineDashOffset = context.currentMatrix.f / context.currentMatrix.d;
     context.stroke();
   }
@@ -569,9 +597,9 @@ export class AdjustPosGroupAfterRenderContribution implements IGroupRenderContri
       strokeArrayColor = (groupAttribute as any).strokeArrayColor
     } = group.attribute as any;
 
-    let { width = groupAttribute.width, height = groupAttribute.height } = group.attribute;
-    width = Math.ceil(width);
-    height = Math.ceil(height);
+    const { width = groupAttribute.width, height = groupAttribute.height } = group.attribute;
+    // width = Math.ceil(width);
+    // height = Math.ceil(height);
 
     if (
       stroke &&
@@ -581,31 +609,36 @@ export class AdjustPosGroupAfterRenderContribution implements IGroupRenderContri
       !Array.isArray(strokeArrayWidth) &&
       lineWidth & 1 // 奇数线宽
     ) {
-      if (group.role === 'cell') {
-        const table = (group.stage as any).table as BaseTableAPI;
-        let col = (group as any).col as number;
-        let row = (group as any).row as number;
-        const mergeInfo = getCellMergeInfo(table, col, row);
-        if (mergeInfo) {
-          col = mergeInfo.end.col;
-          row = mergeInfo.end.row;
-        }
+      // if (group.role === 'cell') {
+      //   const table = (group.stage as any).table as BaseTableAPI;
+      //   let col = (group as any).col as number;
+      //   let row = (group as any).row as number;
+      //   const mergeInfo = getCellMergeInfo(table, col, row);
+      //   if (mergeInfo) {
+      //     col = mergeInfo.end.col;
+      //     row = mergeInfo.end.row;
+      //   }
 
-        if (table && col === table.colCount - 1) {
-          width -= 1;
-        } else if (table && col === table.frozenColCount - 1 && table.scrollLeft) {
-          width -= 1;
-        }
-        if (table && row === table.rowCount - 1) {
-          height -= 1;
-        } else if (table && row === table.frozenRowCount - 1 && table.scrollTop) {
-          height -= 1;
-        }
-      }
+      //   if (table && col === table.colCount - 1) {
+      //     width -= 1;
+      //   } else if (table && col === table.frozenColCount - 1 && table.scrollLeft) {
+      //     width -= 1;
+      //   }
+      //   if (table && row === table.rowCount - 1) {
+      //     height -= 1;
+      //   } else if (table && row === table.frozenRowCount - 1 && table.scrollTop) {
+      //     height -= 1;
+      //   }
+      // }
+      const { width: widthFroDraw, height: heightFroDraw } = getCellSizeForDraw(
+        group,
+        Math.ceil(width),
+        Math.ceil(height)
+      );
       context.beginPath();
       x = Math.floor(x) + 0.5;
       y = Math.floor(y) + 0.5;
-      context.rect(x, y, width, height);
+      context.rect(x, y, widthFroDraw, heightFroDraw);
       context.setStrokeStyle(group, group.attribute, x, y, groupAttribute);
       context.stroke();
     }
@@ -685,4 +718,36 @@ export class AdjustColorGroupAfterRenderContribution implements IGroupRenderCont
       delete group.oldColor;
     }
   }
+}
+
+function getCellSizeForDraw(group: any, width: number, height: number) {
+  const table = group.stage.table as BaseTableAPI;
+  if (group.role === 'cell') {
+    let col = group.col as number;
+    let row = group.row as number;
+    const mergeInfo = getCellMergeInfo(table, col, row);
+    if (mergeInfo) {
+      col = mergeInfo.end.col;
+      row = mergeInfo.end.row;
+    }
+
+    if (table && col === table.colCount - 1) {
+      width -= 1;
+    } else if (table && col === table.frozenColCount - 1 && table.scrollLeft) {
+      width -= 1;
+    }
+    if (table && row === table.rowCount - 1) {
+      height -= 1;
+    } else if (table && row === table.frozenRowCount - 1 && table.scrollTop) {
+      height -= 1;
+    }
+  } else if (group.role === 'corner-frozen') {
+    if (table.scrollLeft) {
+      width -= 1;
+    }
+    if (table.scrollTop) {
+      height -= 1;
+    }
+  }
+  return { width, height };
 }

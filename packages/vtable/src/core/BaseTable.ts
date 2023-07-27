@@ -2638,27 +2638,60 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
       if (!hd || hd.isEmpty) {
         return EMPTY_STYLE;
       }
-      // const styleClass = hd.headerType.StyleClass; //BaseHeader文件
+
       const styleClass = this.internalProps.headerHelper.getStyleClass(hd.headerType);
-      const { style } = hd;
-      cacheStyle = <FullExtendStyle>headerStyleContents.of(
-        style,
-        layoutMap.isColumnHeader(col, row)
-          ? this.theme.headerStyle
-          : layoutMap.isRowHeader(col, row)
-          ? this.theme.rowHeaderStyle
-          : this.theme.cornerHeaderStyle,
-        {
-          col,
-          row,
-          table: this as BaseTableAPI,
-          value: this.getCellValue(col, row),
-          dataValue: this.getCellOriginValue(col, row),
-          cellHeaderPaths: this.getCellHeaderPaths(col, row)
-        },
-        styleClass,
-        this.options.autoWrapText
-      );
+      if (layoutMap.isBottomFrozenRow(col, row) && this.theme.bottomFrozenStyle) {
+        cacheStyle = <FullExtendStyle>headerStyleContents.of(
+          {},
+          this.theme.bottomFrozenStyle,
+          {
+            col,
+            row,
+            table: this as BaseTableAPI,
+            value: this.getCellValue(col, row),
+            dataValue: this.getCellOriginValue(col, row),
+            cellHeaderPaths: this.getCellHeaderPaths(col, row)
+          },
+          styleClass,
+          this.options.autoWrapText
+        );
+      } else if (layoutMap.isRightFrozenColumn(col, row) && this.theme.rightFrozenStyle) {
+        cacheStyle = <FullExtendStyle>headerStyleContents.of(
+          {},
+          this.theme.rightFrozenStyle,
+          {
+            col,
+            row,
+            table: this as BaseTableAPI,
+            value: this.getCellValue(col, row),
+            dataValue: this.getCellOriginValue(col, row),
+            cellHeaderPaths: this.getCellHeaderPaths(col, row)
+          },
+          styleClass,
+          this.options.autoWrapText
+        );
+      } else {
+        // const styleClass = hd.headerType.StyleClass; //BaseHeader文件
+        const { style } = hd;
+        cacheStyle = <FullExtendStyle>headerStyleContents.of(
+          style,
+          layoutMap.isColumnHeader(col, row)
+            ? this.theme.headerStyle
+            : layoutMap.isRowHeader(col, row)
+            ? this.theme.rowHeaderStyle
+            : this.theme.cornerHeaderStyle,
+          {
+            col,
+            row,
+            table: this as BaseTableAPI,
+            value: this.getCellValue(col, row),
+            dataValue: this.getCellOriginValue(col, row),
+            cellHeaderPaths: this.getCellHeaderPaths(col, row)
+          },
+          styleClass,
+          this.options.autoWrapText
+        );
+      }
       this.headerStyleCache.set(`${col}-${row}`, cacheStyle);
       return cacheStyle;
     }
