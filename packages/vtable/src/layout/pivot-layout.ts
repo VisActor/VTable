@@ -713,7 +713,7 @@ export class PivotLayoutMap implements LayoutMapAPI {
 
       return count;
     }
-    return 0;
+    return !this.indicatorsAsCol ? 0 : this.hideIndicatorName ? 0 : 1;
   }
   get rowHeaderLevelCount(): number {
     const rowLevelCount = this.rowShowAttrs.length;
@@ -735,7 +735,7 @@ export class PivotLayoutMap implements LayoutMapAPI {
 
       return count;
     }
-    return 0;
+    return this.indicatorsAsCol ? 0 : this.hideIndicatorName ? 0 : 1;
   }
   get colCount(): number {
     return this._colCount;
@@ -871,7 +871,7 @@ export class PivotLayoutMap implements LayoutMapAPI {
         if (this.indicatorsAsCol) {
           return this.indicatorKeys[(col - this.rowHeaderLevelCount) % this.indicatorKeys.length];
         }
-        return this.convertColKeys[this.columnHeaderLevelCount - 1][
+        return this.convertColKeys[this.convertColKeys.length - 1][
           Math.floor((col - this.rowHeaderLevelCount) / this.indicatorKeys.length)
         ];
       }
@@ -1095,14 +1095,14 @@ export class PivotLayoutMap implements LayoutMapAPI {
     if (recordCol >= 0) {
       colPath = this.colKeysPath[recordCol];
       colHeaderPaths = colPath?.[colPath.length - 1]?.split(this.dataset.stringJoinChar);
-      if (row < this.columns.length - 1) {
+      if (colHeaderPaths && this.showColumnHeader && row < this.columns.length - 1) {
         colHeaderPaths = colHeaderPaths.slice(0, row + 1);
       }
     }
     if (recordRow >= 0) {
       rowPath = this.rowKeysPath[recordRow];
       rowHeaderPaths = rowPath?.[rowPath.length - 1]?.split(this.dataset.stringJoinChar);
-      if (col < this.rows.length - 1) {
+      if (rowHeaderPaths && this.showRowHeader && col < this.rows.length - 1) {
         rowHeaderPaths = rowHeaderPaths.slice(0, col + 1);
       }
     }

@@ -4,38 +4,6 @@ import VChart from '@visactor/vchart';
 const Table_CONTAINER_DOM_ID = 'vTable';
 VTable.register.chartType('vchart', VChart);
 export function createTable() {
-  const rowTree = [
-    {
-      dimensionKey: '230417170554012',
-      value: '一级'
-      // children: [
-      //   {
-      //     value: '数量',
-      //     indicatorKey: '230417171050011'
-      //   },
-      //   {
-      //     value: '销售额',
-      //     indicatorKey: '230417171050025'
-      //   },
-      //   {
-      //     value: '折扣',
-      //     indicatorKey: '230707112948009'
-      //   }
-      // ]
-    },
-    {
-      dimensionKey: '230417170554012',
-      value: '二级'
-    },
-    {
-      dimensionKey: '230417170554012',
-      value: '当日'
-    },
-    {
-      dimensionKey: '230417170554012',
-      value: '标准级'
-    }
-  ];
   const columnTree = [
     {
       dimensionKey: '',
@@ -9238,7 +9206,7 @@ export function createTable() {
   ];
   const option: VTable.PivotChartConstructorOptions = {
     columnTree,
-    rowTree,
+    // rowTree,
     rows,
     columns,
     indicators,
@@ -9248,7 +9216,7 @@ export function createTable() {
     defaultRowHeight: 200,
     defaultHeaderRowHeight: 30,
     defaultColWidth: 280,
-    defaultHeaderColWidth: [80, 50],
+    defaultHeaderColWidth: 80,
 
     corner: {
       titleOnDimension: 'row',
