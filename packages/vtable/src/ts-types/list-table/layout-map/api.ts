@@ -115,7 +115,7 @@ export interface ColumnData extends WidthData {
 
   columnType: 'text' | 'link' | 'image' | 'video' | 'sparkline' | 'progressbar' | 'chart'; //BaseColumn<T, any>;
   /** 如果是绘制图表库组件的图表类型 需要将注入的组件名称 写到chartType */
-  chartType?: string;
+  chartModule?: string;
   /** 如果是绘制图表库组件的图表类型 统一图表配置chartSpec */
   chartSpec?: any | ((arg0: CellInfo) => any);
   chartInstance?: any;
@@ -142,7 +142,7 @@ export interface IndicatorData extends WidthData {
   // fieldKey: FieldKeyDef;
   fieldFormat?: FieldFormat;
   columnType: 'text' | 'link' | 'image' | 'video' | 'sparkline' | 'progressbar' | 'chart'; //BaseColumn<T, any>;
-  chartType?: string;
+  chartModule?: string;
   chartSpec?: any | ((arg0: CustomRenderFunctionArg) => any);
   chartInstance?: any;
   style?: ColumnStyleOption | null | undefined;

@@ -1,7 +1,7 @@
 /* eslint-disable */
 import * as VTable from '../../src';
 import VChart from '@visactor/vchart';
-VTable.register.chartType('vchart', VChart);
+VTable.register.chartModule('vchart', VChart);
 const Table_CONTAINER_DOM_ID = 'vTable';
 export function createTable() {
   const columns = [
@@ -21,7 +21,7 @@ export function createTable() {
       caption: 'vchart area',
       width: '320',
       columnType: 'chart',
-      chartType: 'vchart',
+      chartModule: 'vchart',
       chartSpec: {
         type: 'area',
         data: {
@@ -102,7 +102,7 @@ export function createTable() {
       caption: 'vchart line',
       width: '320',
       columnType: 'chart',
-      chartType: 'vchart',
+      chartModule: 'vchart',
       chartSpec: {
         type: 'common',
         series: [
@@ -176,7 +176,7 @@ export function createTable() {
       caption: 'vchart line',
       width: '320',
       columnType: 'chart',
-      chartType: 'vchart',
+      chartModule: 'vchart',
       chartSpec: {
         type: 'common',
         series: [
@@ -225,7 +225,7 @@ export function createTable() {
       caption: 'vchart line',
       width: '320',
       columnType: 'chart',
-      chartType: 'vchart',
+      chartModule: 'vchart',
       chartSpec: {
         type: 'common',
         series: [
@@ -261,7 +261,7 @@ export function createTable() {
       caption: 'vchart area',
       width: '320',
       columnType: 'chart',
-      chartType: 'vchart',
+      chartModule: 'vchart',
       chartSpec: {
         type: 'common',
         series: [
@@ -346,7 +346,7 @@ export function createTable() {
       caption: 'vchart line',
       width: '320',
       columnType: 'chart',
-      chartType: 'vchart',
+      chartModule: 'vchart',
       chartSpec: {
         type: 'common',
         series: [
@@ -420,7 +420,7 @@ export function createTable() {
       caption: 'vchart line',
       width: '320',
       columnType: 'chart',
-      chartType: 'vchart',
+      chartModule: 'vchart',
       chartSpec: {
         type: 'common',
         series: [
@@ -469,7 +469,7 @@ export function createTable() {
       caption: 'vchart line',
       width: '320',
       columnType: 'chart',
-      chartType: 'vchart',
+      chartModule: 'vchart',
       chartSpec: {
         type: 'common',
         series: [

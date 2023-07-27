@@ -1,6 +1,6 @@
 import { Group } from '../../graphic/group';
 import { Chart } from '../../graphic/chart';
-import * as registerChartTypes from '../../../chartType';
+import * as registerChartTypes from '../../../chartModule';
 import { getFunctionalProp } from '../../utils/get-prop';
 import { isValid } from '../../../tools/util';
 import type { BaseTableAPI } from '../../../ts-types/base-table';
@@ -16,7 +16,7 @@ export function createChartCellGroup(
   height: number,
   padding: number[],
   dataValue: string,
-  chartType: any,
+  chartModule: any,
   chartSpec: any,
   chartInstance: any,
   dataId: string | Record<string, string>,
@@ -25,7 +25,7 @@ export function createChartCellGroup(
 ) {
   // 获取注册的chart图表类型
   const registerCharts = registerChartTypes.get();
-  const ClassType = registerCharts[chartType];
+  const ClassType = registerCharts[chartModule];
   const headerStyle = table._getCellStyle(col, row); // to be fixed
   const functionalPadding = getFunctionalProp('padding', headerStyle, col, row, table);
   if (isValid(functionalPadding)) {

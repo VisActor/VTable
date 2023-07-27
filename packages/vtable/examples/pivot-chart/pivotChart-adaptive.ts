@@ -2,7 +2,7 @@
 import * as VTable from '../../src';
 import VChart from '@visactor/vchart';
 const Table_CONTAINER_DOM_ID = 'vTable';
-VTable.register.chartType('vchart', VChart);
+VTable.register.chartModule('vchart', VChart);
 export function createTable() {
   const rowTree = [
     {
@@ -94,7 +94,7 @@ export function createTable() {
       caption: '数量',
       width: 'auto',
       columnType: 'chart',
-      chartType: 'vchart',
+      chartModule: 'vchart',
       headerStyle: {
         color: 'red',
         borderLineWidth: [1, 0, 1, 0],
@@ -144,7 +144,7 @@ export function createTable() {
       indicatorKey: '230417171050025',
       caption: '销售额 & 利润',
       columnType: 'chart',
-      chartType: 'vchart',
+      chartModule: 'vchart',
       headerStyle: {
         color: 'red',
         borderLineWidth: [1, 0, 1, 0],
@@ -217,7 +217,7 @@ export function createTable() {
       caption: '折扣',
       width: 'auto',
       columnType: 'chart',
-      chartType: 'vchart',
+      chartModule: 'vchart',
       headerStyle: {
         color: 'red',
         borderLineWidth: [1, 0, 1, 0],

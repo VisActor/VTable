@@ -543,7 +543,7 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
             field: indicatorInfo.indicatorKey,
             fieldFormat: indicatorInfo?.format,
             columnType: indicatorInfo?.columnType ?? 'text',
-            chartType: 'chartType' in indicatorInfo ? indicatorInfo.chartType : null,
+            chartModule: 'chartModule' in indicatorInfo ? indicatorInfo.chartModule : null,
             chartSpec: 'chartSpec' in indicatorInfo ? indicatorInfo.chartSpec : null,
             sparklineSpec: 'sparklineSpec' in indicatorInfo ? indicatorInfo.sparklineSpec : null,
             style: indicatorInfo?.style,

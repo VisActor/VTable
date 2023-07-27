@@ -3,7 +3,7 @@ import * as VTable from '../../src';
 import VChart from '@visactor/vchart';
 import { bindDebugTool } from '../../src/scenegraph/debug-tool';
 const Table_CONTAINER_DOM_ID = 'vTable';
-VTable.register.chartType('vchart', VChart);
+VTable.register.chartModule('vchart', VChart);
 export function createTable() {
   const rowTree = [
     {
@@ -125,7 +125,7 @@ export function createTable() {
       caption: '数量',
       width: 'auto',
       columnType: 'chart',
-      chartType: 'vchart',
+      chartModule: 'vchart',
       chartSpec: {
         // type: 'common',
         stack: true,
@@ -170,7 +170,7 @@ export function createTable() {
       indicatorKey: '230417171050025',
       caption: '销售额 & 利润',
       columnType: 'chart',
-      chartType: 'vchart',
+      chartModule: 'vchart',
       chartSpec: {
         type: 'common',
         data: {
@@ -238,7 +238,7 @@ export function createTable() {
       caption: '折扣',
       width: 'auto',
       columnType: 'chart',
-      chartType: 'vchart',
+      chartModule: 'vchart',
       chartSpec: {
         // type: 'common',
         stack: false,

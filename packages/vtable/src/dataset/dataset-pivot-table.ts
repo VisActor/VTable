@@ -79,7 +79,7 @@ export class DatasetForPivotTable {
   indicatorStatistics: { max: Aggregator; min: Aggregator; total: Aggregator }[] = [];
 
   aggregators: {
-    [key: string]: { new (dimension: string, formatFun?: any, isRecord?: boolean): Aggregator };
+    [key: string]: { new (dimension: string | string[], formatFun?: any, isRecord?: boolean): Aggregator };
   } = {};
 
   stringJoinChar = String.fromCharCode(0);
@@ -92,7 +92,7 @@ export class DatasetForPivotTable {
   private rowSubTotalLabel: string;
   rows: string[];
   columns: string[];
-  indicators: string[];
+  indicatorKeys: string[];
   constructor(
     dataConfig: IDataConfig,
     rows: string[],
@@ -112,7 +112,7 @@ export class DatasetForPivotTable {
     this.totals = this.dataConfig?.totals;
     this.rows = rows;
     this.columns = columns;
-    this.indicators = indicators;
+    this.indicatorKeys = indicators;
     this.colGrandTotalLabel = this.totals?.column?.grandTotalLabel ?? '总计';
     this.colSubTotalLabel = this.totals?.column?.subTotalLabel ?? '小计';
     this.rowGrandTotalLabel = this.totals?.row?.grandTotalLabel ?? '总计';
@@ -308,11 +308,11 @@ export class DatasetForPivotTable {
       if (!this.tree[flatRowKey]?.[flatColKey]) {
         this.tree[flatRowKey][flatColKey] = [];
       }
-      for (let i = 0; i < this.indicators.length; i++) {
+      for (let i = 0; i < this.indicatorKeys.length; i++) {
         if (!this.tree[flatRowKey]?.[flatColKey]?.[i]) {
-          const aggRule = this.getAggregatorRule(this.indicators[i]);
+          const aggRule = this.getAggregatorRule(this.indicatorKeys[i]);
           this.tree[flatRowKey][flatColKey][i] = new this.aggregators[aggRule?.aggregationType ?? AggregationType.SUM](
-            aggRule?.field ?? this.indicators[i],
+            aggRule?.field ?? this.indicatorKeys[i],
             aggRule?.formatFun
           );
         }
@@ -322,14 +322,14 @@ export class DatasetForPivotTable {
     }
     //统计整体的最大最小值和总计值 共mapping使用
     if (this.mappingRules) {
-      for (let i = 0; i < this.indicators.length; i++) {
+      for (let i = 0; i < this.indicatorKeys.length; i++) {
         if (!this.indicatorStatistics[i]) {
-          const aggRule = this.getAggregatorRule(this.indicators[i]);
+          const aggRule = this.getAggregatorRule(this.indicatorKeys[i]);
           this.indicatorStatistics[i] = {
-            max: new this.aggregators[AggregationType.MAX](this.indicators[i]),
-            min: new this.aggregators[AggregationType.MIN](this.indicators[i]),
+            max: new this.aggregators[AggregationType.MAX](this.indicatorKeys[i]),
+            min: new this.aggregators[AggregationType.MIN](this.indicatorKeys[i]),
             total: new this.aggregators[aggRule?.aggregationType ?? AggregationType.SUM](
-              aggRule?.field ?? this.indicators[i],
+              aggRule?.field ?? this.indicatorKeys[i],
               aggRule?.formatFun
             )
           };
@@ -368,8 +368,8 @@ export class DatasetForPivotTable {
       )
     );
   }
-  private getAggregatorRule(indicatorKey: string): AggregationRule | undefined {
-    return this.aggregationRules?.find((value: AggregationRule, index: number) => {
+  private getAggregatorRule(indicatorKey: string): AggregationRule<AggregationType> | undefined {
+    return this.aggregationRules?.find((value: AggregationRule<AggregationType>, index: number) => {
       return indicatorKey === value.indicatorKey;
     });
   }
@@ -381,7 +381,7 @@ export class DatasetForPivotTable {
    * @returns
    */
   getAggregator(rowKey: string[] | string = [], colKey: string[] | string = [], indicator: string): Aggregator {
-    const indicatorIndex = this.indicators.indexOf(indicator);
+    const indicatorIndex = this.indicatorKeys.indexOf(indicator);
     let agg;
     let flatRowKey;
     let flatColKey;
@@ -420,6 +420,9 @@ export class DatasetForPivotTable {
           },
           formatValue() {
             return '';
+          },
+          reset() {
+            // do nothing
           }
         };
   }
@@ -619,12 +622,12 @@ export class DatasetForPivotTable {
             if (!this.tree[flatRowKey][flatColTotalKey]) {
               this.tree[flatRowKey][flatColTotalKey] = [];
             }
-            for (let i = 0; i < this.indicators.length; i++) {
+            for (let i = 0; i < this.indicatorKeys.length; i++) {
               if (!this.tree[flatRowKey][flatColTotalKey][i]) {
-                const aggRule = this.getAggregatorRule(this.indicators[i]);
+                const aggRule = this.getAggregatorRule(this.indicatorKeys[i]);
                 this.tree[flatRowKey][flatColTotalKey][i] = new this.aggregators[
                   aggRule?.aggregationType ?? AggregationType.SUM
-                ](aggRule?.field ?? this.indicators[i], aggRule?.formatFun);
+                ](aggRule?.field ?? this.indicatorKeys[i], aggRule?.formatFun);
               }
               this.tree[flatRowKey][flatColTotalKey][i].push(that.tree[flatRowKey]?.[flatColKey]?.[i]);
             }
@@ -635,12 +638,12 @@ export class DatasetForPivotTable {
           if (!this.tree[flatRowKey][flatColTotalKey]) {
             this.tree[flatRowKey][flatColTotalKey] = [];
           }
-          for (let i = 0; i < this.indicators.length; i++) {
+          for (let i = 0; i < this.indicatorKeys.length; i++) {
             if (!this.tree[flatRowKey][flatColTotalKey][i]) {
-              const aggRule = this.getAggregatorRule(this.indicators[i]);
+              const aggRule = this.getAggregatorRule(this.indicatorKeys[i]);
               this.tree[flatRowKey][flatColTotalKey][i] = new this.aggregators[
                 aggRule?.aggregationType ?? AggregationType.SUM
-              ](aggRule?.field ?? this.indicators[i], aggRule?.formatFun);
+              ](aggRule?.field ?? this.indicatorKeys[i], aggRule?.formatFun);
             }
             this.tree[flatRowKey][flatColTotalKey][i].push(that.tree[flatRowKey]?.[flatColKey]?.[i]);
           }
@@ -662,12 +665,12 @@ export class DatasetForPivotTable {
               }
               if (!this.tree[flatRowTotalKey][flatColKey]) {
                 this.tree[flatRowTotalKey][flatColKey] = [];
-                for (let i = 0; i < this.indicators.length; i++) {
+                for (let i = 0; i < this.indicatorKeys.length; i++) {
                   if (!this.tree[flatRowTotalKey][flatColKey][i]) {
-                    const aggRule = this.getAggregatorRule(this.indicators[i]);
+                    const aggRule = this.getAggregatorRule(this.indicatorKeys[i]);
                     this.tree[flatRowTotalKey][flatColKey][i] = new this.aggregators[
                       aggRule?.aggregationType ?? AggregationType.SUM
-                    ](aggRule?.field ?? this.indicators[i], aggRule?.formatFun);
+                    ](aggRule?.field ?? this.indicatorKeys[i], aggRule?.formatFun);
                   }
                   this.tree[flatRowTotalKey][flatColKey][i].push(that.tree[flatRowKey]?.[flatColKey]?.[i]);
                 }
@@ -682,12 +685,12 @@ export class DatasetForPivotTable {
               if (!this.tree[flatRowTotalKey][flatColKey]) {
                 this.tree[flatRowTotalKey][flatColKey] = [];
               }
-              for (let i = 0; i < this.indicators.length; i++) {
+              for (let i = 0; i < this.indicatorKeys.length; i++) {
                 if (!this.tree[flatRowTotalKey][flatColKey][i]) {
-                  const aggRule = this.getAggregatorRule(this.indicators[i]);
+                  const aggRule = this.getAggregatorRule(this.indicatorKeys[i]);
                   this.tree[flatRowTotalKey][flatColKey][i] = new this.aggregators[
                     aggRule?.aggregationType ?? AggregationType.SUM
-                  ](aggRule?.field ?? this.indicators[i], aggRule?.formatFun);
+                  ](aggRule?.field ?? this.indicatorKeys[i], aggRule?.formatFun);
                 }
                 this.tree[flatRowTotalKey][flatColKey][i].push(that.tree[flatRowKey]?.[flatColKey]?.[i]);
               }
