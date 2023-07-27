@@ -2675,9 +2675,9 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
         const { style } = hd;
         cacheStyle = <FullExtendStyle>headerStyleContents.of(
           style,
-          layoutMap.isColumnHeader(col, row)
+          layoutMap.isColumnHeader(col, row) || layoutMap.isBottomFrozenRow(col, row)
             ? this.theme.headerStyle
-            : layoutMap.isRowHeader(col, row)
+            : layoutMap.isRowHeader(col, row) || layoutMap.isRightFrozenColumn(col, row)
             ? this.theme.rowHeaderStyle
             : this.theme.cornerHeaderStyle,
           {
