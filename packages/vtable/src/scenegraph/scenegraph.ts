@@ -32,6 +32,7 @@ import { computeRowsHeight } from './layout/compute-row-height';
 import { emptyGroup } from './utils/empty-group';
 import { updateChartSize, updateChartState } from './refresh-node/update-chart';
 import { dealFrozen, resetFrozen } from './layout/frozen';
+import { createCornerCell } from './style/corner-cell';
 
 container.load(splitModule);
 
@@ -230,56 +231,25 @@ export class Scenegraph {
     });
     componentGroup.role = 'component';
     this.componentGroup = componentGroup;
-    const rightTopCellGroup = new Group({
-      x: 0,
-      y: 0,
-      width: 0,
-      height: 0,
-      visible: false,
-      pickable: true,
-      fill: this.table.theme.cornerHeaderStyle.bgColor as string,
-      stroke: this.table.theme.cornerHeaderStyle.borderColor as string,
-      lineWidth: this.table.theme.cornerHeaderStyle.borderLineWidth as number
-    });
-    rightTopCellGroup.role = 'corner-frozen';
-    this.rightTopCellGroup = rightTopCellGroup;
 
-    const leftBottomCellGroup = new Group({
-      x: 0,
-      y: 0,
-      width: 0,
-      height: 0,
-      visible: false,
-      pickable: true,
-      fill: this.table.theme.cornerHeaderStyle.bgColor as string,
-      stroke: this.table.theme.cornerHeaderStyle.borderColor as string,
-      lineWidth: this.table.theme.cornerHeaderStyle.borderLineWidth as number
-    });
-    leftBottomCellGroup.role = 'corner-frozen';
-    this.leftBottomCellGroup = leftBottomCellGroup;
-
-    const rightBottomCellGroup = new Group({
-      x: 0,
-      y: 0,
-      width: 0,
-      height: 0,
-      visible: false,
-      pickable: true,
-      fill: this.table.theme.cornerHeaderStyle.bgColor as string,
-      stroke: this.table.theme.cornerHeaderStyle.borderColor as string,
-      lineWidth: this.table.theme.cornerHeaderStyle.borderLineWidth as number
-    });
-    rightBottomCellGroup.role = 'corner-frozen';
-    this.rightBottomCellGroup = rightBottomCellGroup;
+    this.rightTopCellGroup = createCornerCell(
+      this.table.theme.cornerRightTopCellStyle || this.table.theme.cornerHeaderStyle
+    );
+    this.leftBottomCellGroup = createCornerCell(
+      this.table.theme.cornerLeftBottomCellStyle || this.table.theme.cornerHeaderStyle
+    );
+    this.rightBottomCellGroup = createCornerCell(
+      this.table.theme.cornerRightBottomCellStyle || this.table.theme.cornerHeaderStyle
+    );
 
     this.tableGroup.addChild(bodyGroup);
     this.tableGroup.addChild(rightFrozenGroup);
     this.tableGroup.addChild(bottomFrozenGroup);
     this.tableGroup.addChild(rowHeaderGroup);
     this.tableGroup.addChild(colHeaderGroup);
-    this.tableGroup.addChild(rightBottomCellGroup);
-    this.tableGroup.addChild(rightTopCellGroup);
-    this.tableGroup.addChild(leftBottomCellGroup);
+    this.tableGroup.addChild(this.rightBottomCellGroup);
+    this.tableGroup.addChild(this.rightTopCellGroup);
+    this.tableGroup.addChild(this.leftBottomCellGroup);
     this.tableGroup.addChild(cornerHeaderGroup);
     this.tableGroup.addChild(componentGroup);
   }

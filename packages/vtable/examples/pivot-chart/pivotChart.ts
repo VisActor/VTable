@@ -9271,7 +9271,42 @@ export function createTable() {
       },
       cornerHeaderStyle: {
         borderColor: 'gray',
-        borderLineWidth: [0, 1, 0, 0],
+        borderLineWidth: [0, 0, 1, 0],
+        hover: {
+          cellBgColor: ''
+        }
+      },
+      cornerRightTopCellStyle: {
+        borderColor: 'gray',
+        borderLineWidth: [0, 0, 1, 1],
+        hover: {
+          cellBgColor: ''
+        }
+      },
+      cornerLeftBottomCellStyle: {
+        borderColor: 'gray',
+        borderLineWidth: [1, 1, 0, 0],
+        hover: {
+          cellBgColor: ''
+        }
+      },
+      cornerRightBottomCellStyle: {
+        borderColor: 'gray',
+        borderLineWidth: [1, 0, 0, 1],
+        hover: {
+          cellBgColor: ''
+        }
+      },
+      rightFrozenStyle: {
+        borderColor: 'gray',
+        borderLineWidth: [1, 0, 1, 1],
+        hover: {
+          cellBgColor: ''
+        }
+      },
+      bottomFrozenStyle: {
+        borderColor: 'gray',
+        borderLineWidth: [1, 1, 0, 1],
         hover: {
           cellBgColor: ''
         }

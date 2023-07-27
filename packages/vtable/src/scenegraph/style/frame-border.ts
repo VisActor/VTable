@@ -151,7 +151,7 @@ export function updateFrameBorder(
   group.border?.setAttribute('stroke', getStroke(borderColor, strokeArray));
 }
 
-function getStroke(borderColor: string | string[], strokeArray: boolean[] | undefined) {
+export function getStroke(borderColor: string | string[], strokeArray: boolean[] | undefined) {
   let stroke: boolean | string | (boolean | string)[] = true;
   if (strokeArray && !isArray(borderColor)) {
     stroke = strokeArray.map(stroke => {
