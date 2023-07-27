@@ -924,7 +924,8 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     }
     if (this.isBottomFrozenRow(this.rowHeaderLevelCount, row)) {
       return Array.isArray(this.defaultHeaderRowHeight)
-        ? this.defaultHeaderRowHeight[row] ?? this.internalProps.defaultRowHeight
+        ? this.defaultHeaderRowHeight[this.columnHeaderLevelCount - this.bottomFrozenRowCount] ??
+            this.internalProps.defaultRowHeight
         : this.defaultHeaderRowHeight;
     }
     return this.internalProps.defaultRowHeight;
@@ -997,7 +998,12 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     //       : this.internalProps.defaultRowHeight);
     // }
     // autoRowHeight || all rows in header, use accumulation
-    if (this.heightMode === 'standard' && this.internalProps.layoutMap && endRow >= this.columnHeaderLevelCount) {
+    if (
+      this.heightMode !== 'autoHeight' &&
+      this.internalProps.layoutMap &&
+      endRow >= this.columnHeaderLevelCount &&
+      !this.bottomFrozenRowCount
+    ) {
       for (let i = startRow; i < this.columnHeaderLevelCount; i++) {
         // part in header
         h += this.getRowHeight(i);
@@ -1034,7 +1040,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
         : this.defaultHeaderColWidth;
     } else if (this.isRightFrozenColumn(col, this.columnHeaderLevelCount)) {
       return Array.isArray(this.defaultHeaderColWidth)
-        ? this.defaultHeaderColWidth[this.rowHeaderLevelCount - 1] ?? this.defaultColWidth
+        ? this.defaultHeaderColWidth[this.rowHeaderLevelCount - this.rightFrozenColCount] ?? this.defaultColWidth
         : this.defaultHeaderColWidth;
     }
     return this.defaultColWidth;
