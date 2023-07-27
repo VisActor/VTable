@@ -110,7 +110,7 @@ link: '/guide/custom_define/custom_render'
             fill: 'white',
             fontSize: 20,
             fontWeight: 500, 
-            baseline: 'top',
+            textBaseline: 'middle',
             text:col===1?( row===1? 'important & urgency':'not important but urgency'):(row===1? 'important but not urgency':'not important & not urgency'),
             x: left+50,
             y: top,
