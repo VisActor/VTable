@@ -5,7 +5,7 @@ import fs, { ReadStream } from 'fs';
 import path from 'path';
 
 const BUG_SERVER_HOST = 'https://bug-server.zijieapi.com';
-const PRODUCT = 'VisActor/VChart';
+const PRODUCT = 'VisActor/VTable';
 const CHECK_SCM_BUILD_INTERVAL_MS = 10 * 1000;
 const CHECK_SCM_BUILD_MAX_COUNT = 30;
 const CHECK_PHOTO_TEST_INTERVAL_MS = 10 * 1000;
