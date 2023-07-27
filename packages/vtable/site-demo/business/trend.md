@@ -31,19 +31,19 @@ const option = {
     rowTree: [
       {
         dimensionKey: 'order_data',
-        value: '订单数量',
+        value: 'Order Number',
       },
       {
         dimensionKey: 'order_data',
-        value: '利润金额',
+        value: 'Profit Amount',
       },
       {
         dimensionKey: 'order_data',
-        value: '销售金额',
+        value: 'Sales Amount',
       },
       {
         dimensionKey: 'order_data',
-        value: '运输成本',
+        value: 'Transportation Cost',
       },
     ],
     columnTree: [
@@ -173,7 +173,7 @@ const option = {
         children: [
           {
             indicatorKey: 'lineData',
-            value: '趋势图',
+            value: 'Trend ',
           },
         ],
       },
@@ -181,7 +181,7 @@ const option = {
     rows:[
       {
         dimensionKey: 'order_data',
-        dimensionTitle: '订单数据',
+        dimensionTitle: 'Order Data',
         headerStyle: {
           textStick: true,
         },
@@ -192,7 +192,7 @@ const option = {
     columns:[
       {
         dimensionKey: 'time',
-        dimensionTitle: '季度',
+        dimensionTitle: 'Quarter',
         width: '200',
         showSort: false,
         headerStyle: {
@@ -210,7 +210,7 @@ const option = {
       },
       {
         dimensionKey: 'year',
-        dimensionTitle: '年度',
+        dimensionTitle: 'Year',
         width: '200',
         showSort: false,
         headerStyle: {
@@ -221,7 +221,7 @@ const option = {
     indicators: [
       {
         indicatorKey: 'data',
-        value: '数据',
+        value: 'Data',
         width: 'auto',
         style: {
           textAlign: 'right',
@@ -279,7 +279,7 @@ const option = {
       },
       {
         indicatorKey: 'lineData',
-        caption: '趋势图',
+        caption: 'Trend ',
         width: '300',
         columnType: 'sparkline',
         sparklineSpec: {
@@ -336,261 +336,261 @@ const option = {
     hideIndicatorName: true,
     records: [
       {
-        order_data: '订单数量',
+        order_data: 'Order Number',
         time: '2020',
         data: 12304,
         ratio: 0.11,
       },
       {
-        order_data: '利润金额',
+        order_data: 'Profit Amount',
         time: '2020',
         data: 102504,
         ratio: 0.11,
       }, {
-        order_data: '销售金额',
+        order_data: 'Sales Amount',
         time: '2020',
         data: 202504,
         ratio: 0.11,
       },
       {
-        order_data: '运输成本',
+        order_data: 'transportation Cost',
         time: '2020',
         data: 6504,
         ratio: 0.11,
       },
       {
-        order_data: '订单数量',
+        order_data: 'Order Number',
         time: '2021',
         data: 19304,
         ratio: -0.12,
       },
       {
-        order_data: '利润金额',
+        order_data: 'Profit Amount',
         time: '2021',
         data: 302504,
         ratio: -0.12,
       },
        {
-        order_data: '销售金额',
+        order_data: 'Sales Amount',
         time: '2020',
         data: 302504,
         ratio: 0.11,
       },
       {
-        order_data: '运输成本',
+        order_data: 'Transportation Cost',
         time: '2021',
         data: 9504,
         ratio: -0.12,
       },
       {
-        order_data: '订单数量',
+        order_data: 'Order Number',
         time: '2020Q1',
         data: 2304,
         // "ratio":0.12
       },
       {
-        order_data: '订单数量',
+        order_data: 'Order Number',
         time: '2020Q2',
         data: 2504,
         ratio: 0.12,
       },
       {
-        order_data: '订单数量',
+        order_data: 'Order Number',
         time: '2020Q3',
         data: 2904,
         ratio: 0.12,
       },
       {
-        order_data: '订单数量',
+        order_data: 'Order Number',
         time: '2020Q4',
         data: 2704,
         ratio: -0.08,
       },
       {
-        order_data: '订单数量',
+        order_data: 'Order Number',
         time: '2021Q1',
         data: 2304,
         ratio: 0.12,
       },
       {
-        order_data: '订单数量',
+        order_data: 'Order Number',
         time: '2021Q2',
         data: 2304,
         ratio: 0.12,
       },
       {
-        order_data: '订单数量',
+        order_data: 'Order Number',
         time: '2021Q3',
         data: 2304,
         ratio: 0.12,
       },
       {
-        order_data: '订单数量',
+        order_data: 'Order Number',
         time: '2021Q4',
         data: 2304,
         ratio: 0.12,
       },
       {
-        order_data: '利润金额',
+        order_data: 'Profit Amount',
         time: '2020Q1',
         data: 2304,
         // "ratio":0.12
       },
       {
-        order_data: '利润金额',
+        order_data: 'Profit Amount',
         time: '2020Q2',
         data: 2504,
         ratio: 0.12,
       },
       {
-        order_data: '利润金额',
+        order_data: 'Profit Amount',
         time: '2020Q3',
         data: 2904,
         ratio: 0.12,
       },
       {
-        order_data: '利润金额',
+        order_data: 'Profit Amount',
         time: '2020Q4',
         data: 2704,
         ratio: -0.08,
       },
       {
-        order_data: '利润金额',
+        order_data: 'Profit Amount',
         time: '2021Q1',
         data: 2304,
         ratio: 0.12,
       },
       {
-        order_data: '利润金额',
+        order_data: 'Profit Amount',
         time: '2021Q2',
         data: 2304,
         ratio: 0.12,
       },
       {
-        order_data: '利润金额',
+        order_data: 'Profit Amount',
         time: '2021Q3',
         data: 2304,
         ratio: 0.12,
       },
       {
-        order_data: '利润金额',
+        order_data: 'Profit Amount',
         time: '2021Q4',
         data: 2304,
         ratio: 0.12,
       },
       {
-        order_data: '销售金额',
+        order_data: 'Sales Amount',
         time: '2020Q1',
         data: 2304,
         // "ratio":0.12
       },
       {
-        order_data: '销售金额',
+        order_data: 'Sales Amount',
         time: '2020Q2',
         data: 2504,
         ratio: 0.12,
       },
       {
-        order_data: '销售金额',
+        order_data: 'Sales Amount',
         time: '2020Q3',
         data: 2904,
         ratio: 0.12,
       },
       {
-        order_data: '销售金额',
+        order_data: 'Sales Amount',
         time: '2020Q4',
         data: 2704,
         ratio: -0.08,
       },
       {
-        order_data: '销售金额',
+        order_data: 'Sales Amount',
         time: '2021Q1',
         data: 2304,
         ratio: 0.12,
       },
       {
-        order_data: '销售金额',
+        order_data: 'Sales Amount',
         time: '2021Q2',
         data: 5304,
         ratio: 0.12,
       },
       {
-        order_data: '销售金额',
+        order_data: 'Sales Amount',
         time: '2021Q3',
         data: 3304,
         ratio: 0.12,
       },
       {
-        order_data: '销售金额',
+        order_data: 'Sales Amount',
         time: '2021Q4',
         data: 3304,
         ratio: 0.12,
       },
       {
-        order_data: '运输成本',
+        order_data: 'Transportation Cost',
         time: '2020Q1',
         data: 2304,
         // "ratio":0.12
       },
       {
-        order_data: '运输成本',
+        order_data: 'Transportation Cost',
         time: '2020Q2',
         data: 2504,
         ratio: 0.12,
       },
       {
-        order_data: '运输成本',
+        order_data: 'Transportation Cost',
         time: '2020Q3',
         data: 2904,
         ratio: 0.12,
       },
       {
-        order_data: '运输成本',
+        order_data: 'Transportation Cost',
         time: '2020Q4',
         data: 2704,
         ratio: -0.08,
       },
       {
-        order_data: '运输成本',
+        order_data: 'Transportation Cost',
         time: '2021Q1',
         data: 2304,
         ratio: 0.12,
       },
       {
-        order_data: '运输成本',
+        order_data: 'Transportation Cost',
         time: '2021Q2',
         data: 2304,
         ratio: 0.12,
       },
       {
-        order_data: '运输成本',
+        order_data: 'Transportation Cost',
         time: '2021Q3',
         data: 2304,
         ratio: 0.12,
       },
       {
-        order_data: '运输成本',
+        order_data: 'Transportation Cost',
         time: '2021Q4',
         data: 2304,
         ratio: 0.12,
       },
       {
-        order_data: '订单数量',
+        order_data: 'Order Number',
         time: 'line',
         lineData: generateLineData1(30),
       },
       {
-        order_data: '利润金额',
+        order_data: 'Profit Amount',
         time: 'line',
         lineData: generateLineData1(30),
       },
       {
-        order_data: '销售金额',
+        order_data: 'Sales Amount',
         time: 'line',
         lineData: generateLineData1(30),
       },
       {
-        order_data: '运输成本',
+        order_data: 'Transportation Cost',
         time: 'line',
         lineData: generateLineData1(30),
       },
