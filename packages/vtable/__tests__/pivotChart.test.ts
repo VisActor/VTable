@@ -10,20 +10,6 @@ const rowTree = [
   {
     dimensionKey: '230417170554012',
     value: '一级'
-    // children: [
-    //   {
-    //     value: '数量',
-    //     indicatorKey: '230417171050011'
-    //   },
-    //   {
-    //     value: '销售额',
-    //     indicatorKey: '230417171050025'
-    //   },
-    //   {
-    //     value: '折扣',
-    //     indicatorKey: '230707112948009'
-    //   }
-    // ]
   },
   {
     dimensionKey: '230417170554012',
@@ -67,7 +53,6 @@ const columns: (VTable.IDimension | string)[] = [
     }
   },
   '230417171050028'
-  // '230417170554008'
 ];
 const rows = [
   {
@@ -9657,7 +9642,7 @@ describe('pivotTable init test', () => {
         caption: '数量',
         width: 'auto',
         columnType: 'chart',
-        chartType: 'vchart',
+        chartModule: 'vchart',
         chartSpec: {
           // type: 'common',
           stack: true,
@@ -9692,7 +9677,7 @@ describe('pivotTable init test', () => {
         indicatorKey: '230417171050025',
         caption: '销售额 & 利润',
         columnType: 'chart',
-        chartType: 'vchart',
+        chartModule: 'vchart',
         chartSpec: {
           type: 'common',
           data: {
@@ -9760,7 +9745,7 @@ describe('pivotTable init test', () => {
         caption: '折扣',
         width: 'auto',
         columnType: 'chart',
-        chartType: 'vchart',
+        chartModule: 'vchart',
         chartSpec: {
           // type: 'common',
           stack: false,
