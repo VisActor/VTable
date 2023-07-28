@@ -25,7 +25,7 @@ link: '/guide/custom_define/custom_render'
       {
         field: 'type',
         caption:'',
-        width:70,
+        width:170,
         headerStyle:{
           bgColor:'#4991e3'
         },
@@ -41,8 +41,8 @@ link: '/guide/custom_define/custom_render'
       }, 
       {
         field: 'urgency',
-        caption:'紧急',
-        width:'260',
+        caption:'urgency',
+        width:400,
         headerStyle:{
           lineHeight:50,
           fontSize:26,
@@ -62,8 +62,8 @@ link: '/guide/custom_define/custom_render'
             type: 'rect',
             fill: '#4991e3',
             x: left+20,
-            y: top-15,
-            width: row===1?160:180,
+            y: top-20,
+            width: 300,
             height:28
           });
           elements.push({
@@ -71,8 +71,8 @@ link: '/guide/custom_define/custom_render'
             fill: 'white',
             fontSize: 20,
             fontWeight: 500, 
-            baseline: 'top',
-            text: row===1? '重要且紧急':'不重要但紧急',
+            baseline: 'middle',
+            text: row===1? 'important & urgency':'not important but urgency',
             x: left+50,
             y: top,
           });
@@ -100,12 +100,12 @@ link: '/guide/custom_define/custom_render'
           });
           elements.push({
             type: 'text',
-            color: 'blue',
+            fill: 'blue',
             font: '14px sans-serif',
-            baseline: 'top',
+            textBaseline: 'middle',
             text: item,
-            x: left+6,
-            y: top,
+            x: left+10,
+            y: top+5,
           });
           maxWidth=Math.max(maxWidth, table.measureText(item,{fontSize:"15",}).width);
         })
@@ -118,7 +118,7 @@ link: '/guide/custom_define/custom_render'
     },
     {
       field: 'not_urgency',
-      caption:'不紧急',
+      caption:'not urgency',
       width:'auto',
       headerStyle:{
           lineHeight:50,
@@ -155,8 +155,8 @@ link: '/guide/custom_define/custom_render'
             fill: 'white',
             fontSize: 20,
             fontWeight: 500, 
-            baseline: 'top',
-            text: row===1? '重要不紧急':'不重要不紧急',
+            baseline: 'middle',
+            text: row===1? 'important but not urgency':'not important and not urgency',
             x: left+50,
             y: top,
           });
@@ -176,9 +176,9 @@ link: '/guide/custom_define/custom_render'
           
           elements.push({
             type: 'text',
-            color: 'blue',
+            fill: 'blue',
             font: '14px sans-serif',
-            baseline: 'top',
+            textBaseline: 'middle',
             text: item,
             x: left+6,
             y: top,
@@ -195,14 +195,14 @@ link: '/guide/custom_define/custom_render'
     ],
     records:[
       {
-        'type':'重要',
-        "urgency": ['危机','迫切问题','在限定时间内容必须完成的任务'],
-        "not_urgency": ['预防性措施','发展关系','明确新的发展机会','制定长期目标'],
+        'type': 'important',
+        "urgency": ['crisis','urgent problem','tasks that must be completed within a limited time'],
+        "not_urgency": ['preventive measures','development relationship','identify new development opportunities','establish long-term goals'],
       },
       {
-        'type':'不重要',
-        "urgency": ['接待访客','某些电话、报告，信件等','迫切需要解决的事务','公共活动'],
-        "not_urgency": ['琐碎忙碌的工作','某些信件','某些电话','消磨时间的活动','某些令人愉悦的活动'],
+        'type': 'Not\nimportant',
+        "urgency": ['Receive visitors','Certain calls, reports, letters, etc','Urgent matters','Public activities'],
+        "not_urgency": ['Trivial busy work','Some letters','Some phone calls','Time-killing activities','Some pleasant activities'],
       },
     ],
     defaultRowHeight:80,

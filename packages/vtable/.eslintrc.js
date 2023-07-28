@@ -25,7 +25,7 @@ module.exports = {
       }
     }
   ],
-  ignorePatterns: ['bugserver-config'],
+  ignorePatterns: ['scripts/**', 'bundler.config.js'],
   rules: {
     'prettier/prettier': ['warn'],
     // 强制使用 Unix 换行符： \n

@@ -32,7 +32,7 @@ function getColor(min, max, n) {
 }
 const records = [
   {
-    'projectName': '项目一',
+    'projectName': 'Project No.1',
     "startTime": "2023/5/1",
     "endTime": "2023/5/10",
     "estimateDays": 10,
@@ -48,7 +48,7 @@ const records = [
     "date10":1
   },
   {
-    'projectName': '项目二',
+    'projectName': 'Project No.2',
     "startTime": "2023/5/1",
     "endTime": "2023/5/5",
     "estimateDays": 5,
@@ -59,7 +59,7 @@ const records = [
     "date5":1,
   },
   {
-    'projectName': '项目三',
+    'projectName': 'Project No.3',
     "startTime": "2023/5/7",
     "endTime": "2023/5/8",
     "estimateDays": 3,
@@ -68,7 +68,7 @@ const records = [
     "date8":1,
   },
   {
-    'projectName': '项目四',
+    'projectName': 'Project No.4',
     "startTime": "2023/5/11",
     "endTime": "2023/5/12",
     "estimateDays": 2,
@@ -76,7 +76,7 @@ const records = [
     "date12":1,
   },
   {
-    'projectName': '项目五',
+    'projectName': 'Project No.5',
     "startTime": "2023/5/0",
     "endTime": "2023/5/10",
     "estimateDays": 2,
@@ -84,7 +84,7 @@ const records = [
     "date10":1,
   },
    {
-    'projectName': '项目六',
+    'projectName': 'Project No.6',
     "startTime": "2023/5/11",
     "endTime": "2023/5/15",
     "estimateDays": 5,
@@ -95,7 +95,7 @@ const records = [
     "date15":1,
   },
   {
-    'projectName': '项目七',
+    'projectName': 'Project No.7',
     "startTime": "2023/5/16",
     "endTime": "2023/5/19",
     "estimateDays": 4,
@@ -105,7 +105,7 @@ const records = [
     "date19":1,
   },
      {
-    'projectName': '项目八',
+    'projectName': 'Project No.8',
     "startTime": "2023/5/13",
     "endTime": "2023/5/15",
     "estimateDays": 3,
@@ -114,7 +114,7 @@ const records = [
     "date15":1,
   },
   {
-    'projectName': '项目九',
+    'projectName': 'Project No.9',
     "startTime": "2023/5/20",
     "endTime": "2023/5/21",
     "estimateDays": 2,
@@ -122,7 +122,7 @@ const records = [
     "date21":1,
   },
   {
-    'projectName': '项目十',
+    'projectName': 'Project No.10',
     "startTime": "2023/5/16",
     "endTime": "2023/5/21",
     "estimateDays": 6,
@@ -137,7 +137,7 @@ const records = [
 const columns =[
     {
         "field": "projectName",
-        "caption": "项目名称",
+        "caption": "Project Name",
         "width": "auto",
         "style":{
           color:'#ff689d',
@@ -146,30 +146,30 @@ const columns =[
     },
     {
         "field": "startTime",
-        "caption": "开始时间",
+        "caption": "Start Time",
         "width": "auto",
     },
     {
         "field": "endTime",
-        "caption": "结束时间",
+        "caption": "End Time",
         "width": "auto"
     },
     {
         "field": "estimateDays",
-        "caption": "工期（天）",
+        "caption": "Duration (days)",
         "width": "auto",
         "style":{
           color:'red'
         }
     },
     {
-        "caption": "时间段:2023/5/1-2023/5/15",
+        "caption": "Period:2023/5/1-2023/5/15",
         "headerStyle":{
           textAlign:'center'
         },
         "columns":[
           {
-            "caption": "周一",
+            "caption": "Monday",
             "width": "auto",
              "columns":[
               {
@@ -181,7 +181,7 @@ const columns =[
              ]
           },
            {
-            "caption": "周二",
+            "caption": "Tuesday",
             "width": "auto",
              "columns":[
               {
@@ -193,7 +193,7 @@ const columns =[
              ]
           },
            {
-            "caption": "周三",
+            "caption": "Wednesday",
             "width": "auto",
              "columns":[
               {
@@ -205,7 +205,7 @@ const columns =[
              ]
           },
            {
-            "caption": "周四",
+            "caption": "Thursday",
             "width": "auto",
              "columns":[
               {
@@ -217,7 +217,7 @@ const columns =[
              ]
           },
            {
-            "caption": "周五",
+            "caption": "Friday",
             "width": "auto",
              "columns":[
               {
@@ -229,7 +229,7 @@ const columns =[
              ]
           },
            {
-            "caption": "周六",
+            "caption": "Saturday",
             "width": "auto",
              "columns":[
               {
@@ -241,7 +241,7 @@ const columns =[
              ]
           },
            {
-            "caption": "周日",
+            "caption": "Sunday",
             "width": "auto",
              "columns":[
               {
@@ -253,7 +253,7 @@ const columns =[
              ]
           },
           {
-            "caption": "周一",
+            "caption": "Monday",
             "width": "auto",
              "columns":[
               {
@@ -265,7 +265,7 @@ const columns =[
              ]
           },
            {
-            "caption": "周二",
+            "caption": "Tuesday",
             "width": "auto",
              "columns":[
               {
@@ -277,7 +277,7 @@ const columns =[
              ]
           },
            {
-            "caption": "周三",
+            "caption": "Wes day",
             "width": "auto",
              "columns":[
               {
@@ -289,7 +289,7 @@ const columns =[
              ]
           },
            {
-            "caption": "周四",
+            "caption": "Thursday",
             "width": "auto",
              "columns":[
               {
@@ -301,7 +301,7 @@ const columns =[
              ]
           },
            {
-            "caption": "周五",
+            "caption": "Friday",
             "width": "auto",
              "columns":[
               {
@@ -313,7 +313,7 @@ const columns =[
              ]
           },
            {
-            "caption": "周六",
+            "caption": "Saturday",
             "width": "auto",
              "columns":[
               {
@@ -325,7 +325,7 @@ const columns =[
              ]
           },
            {
-            "caption": "周日",
+            "caption": "Sunday",
             "width": "auto",
              "columns":[
               {
@@ -337,7 +337,7 @@ const columns =[
              ]
           },
            {
-            "caption": "周一",
+            "caption": "Monday",
             "width": "auto",
              "columns":[
               {
@@ -349,7 +349,7 @@ const columns =[
              ]
           },
           {
-            "caption": "周二",
+            "caption": "Tuesday",
             "width": "auto",
              "columns":[
               {
@@ -361,7 +361,7 @@ const columns =[
              ]
           },
            {
-            "caption": "周三",
+            "caption": "Wednesday",
             "width": "auto",
              "columns":[
               {
@@ -373,7 +373,7 @@ const columns =[
              ]
           },
            {
-            "caption": "周四",
+            "caption": "Thursday",
             "width": "auto",
              "columns":[
               {
@@ -385,7 +385,7 @@ const columns =[
              ]
           },
            {
-            "caption": "周五",
+            "caption": "Friday",
             "width": "auto",
              "columns":[
               {
@@ -397,7 +397,7 @@ const columns =[
              ]
           },
            {
-            "caption": "周六",
+            "caption": "Saturday",
             "width": "auto",
              "columns":[
               {
@@ -409,7 +409,7 @@ const columns =[
              ]
           },
            {
-            "caption": "周日",
+            "caption": "Sunday",
             "width": "auto",
              "columns":[
               {

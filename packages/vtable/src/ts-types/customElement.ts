@@ -26,6 +26,8 @@ export interface TextElement extends baseElement {
   text: string | ((value: string) => string);
   stroke?: string | ((value: string) => string);
   fill?: string | ((value: string) => string);
+  color?: string | ((value: string) => string);
+  lineWidth: number;
   fontSize?: number | ((value: string) => number);
   fontFamily?: string | ((value: string) => string);
   fontWeight?: string | number | ((value: string) => string | number);
