@@ -2,6 +2,18 @@
   "name": "@visactor/vtable",
   "entries": [
     {
+      "version": "0.9.2",
+      "tag": "@visactor/vtable_v0.9.2",
+      "date": "Wed, 26 Jul 2023 03:47:00 GMT",
+      "comments": {
+        "patch": [
+          {
+            "comment": "refactor: chart type handle with transpose or indicator in row\n\n"
+          }
+        ]
+      }
+    },
+    {
       "version": "0.9.1",
       "tag": "@visactor/vtable_v0.9.1",
       "date": "Wed, 05 Jul 2023 06:55:19 GMT",
