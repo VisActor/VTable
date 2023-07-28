@@ -105,7 +105,7 @@ const columns =[
             style: {
               bgColor: 'black',
               color: 'white',
-              font: 'normal normal normal 14px/1 STKaiti',
+              font: 'normal bold normal 14px/1 STKaiti',
               arrowMark: true,
             },
           });
