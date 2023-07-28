@@ -175,7 +175,7 @@
     ]
   },
   {
-    "department": "Sales Department",
+    "department": "Scales Department",
     "total_children": 35,
     "monthly_expense": "$50000",
     "new_hires_this_month": 7,
@@ -183,21 +183,21 @@
     "complaints_and_suggestions": 2,
     "children": [
       {
-        "group": "Inside Sales Group",
+        "group": "Inside Scales Group",
         "children": [
           {
             "name": "Alex Brown",
-            "position": "Inside Sales Manager",
+            "position": "Inside Scales Manager",
             "salary": "$10000"
           },
           {
             "name": "Julia Lee",
-            "position": "Inside Sales Supervisor",
+            "position": "Inside Scales Supervisor",
             "salary": "$8000"
           },
           {
             "name": "Erica Chen",
-            "position": "Inside Sales Representative",
+            "position": "Inside Scales Representative",
             "salary": "$5000"
           }
         ],
@@ -208,21 +208,21 @@
         "complaints_and_suggestions": 1
       },
       {
-        "group": "Outside Sales Group",
+        "group": "Outside Scales Group",
         "children": [
           {
             "name": "Daniel Zhang",
-            "position": "Outside Sales Manager",
+            "position": "Outside Scales Manager",
             "salary": "$10000"
           },
           {
             "name": "Karen Wang",
-            "position": "Outside Sales Supervisor",
+            "position": "Outside Scales Supervisor",
             "salary": "$8000"
           },
           {
             "name": "Jack Liu",
-            "position": "Outside Sales Representative",
+            "position": "Outside Scales Representative",
             "salary": "$5000"
           }
         ],

@@ -18,7 +18,7 @@ link: '/guide/table_type/Pivot_table/pivot_table_tree'
 
 ```javascript livedemo template=vtable
 
-  fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American_Superstore_pivot2.json')
+  fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American_Superstore_Pivot2_data.json')
     .then((res) => res.json())
     .then((data) => {
 
@@ -27,90 +27,90 @@ const option = {
   records:data,
   "rowTree": [
     {
-        "dimensionKey": "230627170530016",
+        "dimensionKey": "Category",
         "value": "Furniture",
         hierarchyState: 'expand',
         "children": [
             {
-                "dimensionKey": "230627170530068",
+                "dimensionKey": "Sub-Category",
                 "value": "Bookcases",
                 hierarchyState: 'collapse',
             },
             {
-                "dimensionKey": "230627170530068",
+                "dimensionKey": "Sub-Category",
                 "value": "Chairs",
                 hierarchyState: 'collapse',
             },
             {
-                "dimensionKey": "230627170530068",
+                "dimensionKey": "Sub-Category",
                 "value": "Furnishings"
             },
             {
-                "dimensionKey": "230627170530068",
+                "dimensionKey": "Sub-Category",
                 "value": "Tables"
             }
         ]
     },
     {
-        "dimensionKey": "230627170530016",
+        "dimensionKey": "Category",
         "value": "Office Supplies",
         "children": [
             {
-                "dimensionKey": "230627170530068",
+                "dimensionKey": "Sub-Category",
                 "value": "Appliances"
             },
             {
-                "dimensionKey": "230627170530068",
+                "dimensionKey": "Sub-Category",
                 "value": "Art"
             },
             {
-                "dimensionKey": "230627170530068",
+                "dimensionKey": "Sub-Category",
                 "value": "Binders"
             },
             {
-                "dimensionKey": "230627170530068",
+                "dimensionKey": "Sub-Category",
                 "value": "Envelopes"
             },
             {
-                "dimensionKey": "230627170530068",
+                "dimensionKey": "Sub-Category",
                 "value": "Fasteners"
             },
             {
-                "dimensionKey": "230627170530068",
+                "dimensionKey": "Sub-Category",
                 "value": "Labels"
             },
             {
-                "dimensionKey": "230627170530068",
+                "dimensionKey": "Sub-Category",
                 "value": "Paper"
             },
             {
-                "dimensionKey": "230627170530068",
+                "dimensionKey": "Sub-Category",
                 "value": "Storage"
             },
             {
-                "dimensionKey": "230627170530068",
+                "dimensionKey": "Sub-Category",
                 "value": "Supplies"
             }
         ]
     },
     {
-        "dimensionKey": "230627170530016",
+        "dimensionKey": "Category",
         "value": "Technology",
         "children": [
             {
-                "dimensionKey": "230627170530068",
+                "dimensionKey": "Sub-Category",
                 "value": "Accessories"
             },
             {
-                "dimensionKey": "230627170530068",
+                "dimensionKey": "Sub-Category",
                 "value": "Copiers"
             },
             {
-                "dimensionKey": "230627170530068",
+                "dimensionKey": "Sub-Category",
                 "value": "Machines"
             },
             {
-                "dimensionKey": "230627170530068",
+                "dimensionKey": "Sub-Category",
                 "value": "Phones"
             }
         ]
@@ -118,85 +118,77 @@ const option = {
 ],
     "columnTree": [
     {
-        "dimensionKey": "230627170530059",
+        "dimensionKey": "Region",
         "value": "West",
         "children": [
             {
-                "dimensionKey": "230627170530056",
                 "value": "Sales",
-                "indicatorKey": "230627170530019"
+                "indicatorKey": "Sales"
             },
             {
-                "dimensionKey": "230627170530056",
                 "value": "Profit",
-                "indicatorKey": "230627170530022"
+                "indicatorKey": "Profit"
             }
         ]
     },
     {
-        "dimensionKey": "230627170530059",
+        "dimensionKey": "Region",
         "value": "South",
         "children": [
             {
-                "dimensionKey": "230627170530056",
                 "value": "Sales",
-                "indicatorKey": "230627170530019"
+                "indicatorKey": "Sales"
             },
             {
-                "dimensionKey": "230627170530056",
                 "value": "Profit",
-                "indicatorKey": "230627170530022"
+                "indicatorKey": "Profit"
             }
         ]
     },
     {
-        "dimensionKey": "230627170530059",
+        "dimensionKey": "Region",
         "value": "Central",
         "children": [
             {
-                "dimensionKey": "230627170530056",
                 "value": "Sales",
-                "indicatorKey": "230627170530019"
+                "indicatorKey": "Sales"
             },
             {
-                "dimensionKey": "230627170530056",
                 "value": "Profit",
-                "indicatorKey": "230627170530022"
+                "indicatorKey": "Profit"
             }
         ]
     },
     {
-        "dimensionKey": "230627170530059",
+        "dimensionKey": "Region",
         "value": "East",
         "children": [
             {
-                "dimensionKey": "230627170530056",
                 "value": "Sales",
-                "indicatorKey": "230627170530019"
+                "indicatorKey": "Sales"
             },
             {
-                "dimensionKey": "230627170530056",
                 "value": "Profit",
-                "indicatorKey": "230627170530022"
+                "indicatorKey": "Profit"
             }
         ]
     }
 ],
 "rows": [
   {
-            "dimensionKey": "230627170530016",
+            "dimensionKey": "Category",
             "dimensionTitle": "Catogery",
             "width": "auto",
   },
   {
-            "dimensionKey": "230627170530068",
+            "dimensionKey": "Sub-Category",
             "dimensionTitle": "Sub-Catogery",
             "width": "auto",
         },
     ],
     "columns": [
         {
-           "dimensionKey": "230627170530059",
+           "dimensionKey": "Region",
             "dimensionTitle": "Region",
             "headerStyle": {
                 "textStick": true
@@ -206,7 +198,7 @@ const option = {
     ],
     "indicators": [
                 {
-                    "indicatorKey": "230627170530019",
+                    "indicatorKey": "Sales",
                     "caption": "Sales",
                     "width": "auto",
                     "showSort": false,
@@ -215,7 +207,7 @@ const option = {
                     },
                     "format":(rec)=>{
                       if(rec)
-                      return '$'+Number(rec['230627170530019']).toFixed(2);
+                      return '$'+Number(rec['Sales']).toFixed(2);
                       return '';
                     },
                     style:{
@@ -228,7 +220,7 @@ const option = {
                      }
                 },
                 {
-                    "indicatorKey": "230627170530022",
+                    "indicatorKey": "Profit",
                     "caption": "Profit",
                     "width": "auto",
                     "showSort": false,
@@ -236,7 +228,7 @@ const option = {
                       fontWeight: "normal",
                     },
                     "format":(rec)=>{if(rec)
-                      return '$'+Number(rec['230627170530022']).toFixed(2);
+                      return '$'+Number(rec['Profit']).toFixed(2);
                       return '';},
                     style:{
                       padding:[16,28,16,28],

@@ -75,23 +75,23 @@ import * as VTable from '@visactor/vtable';
 
 const columns =[
     {
-        "field": "230517143221027",
+        "field": "Order ID",
         "caption": "Order ID",
     },
     {
-        "field": "230517143221030",
+        "field": "Customer ID",
         "caption": "Customer ID",
     },
     {
-        "field": "230517143221032",
+        "field": "Product Name",
         "caption": "Product Name",
     },
     {
-        "field": "230517143221040",
+        "field": "Sales",
         "caption": "Sales",
     },
     {
-        "field": "230517143221041",
+        "field": "Profit",
         "caption": "Profit",
     }
 ];
@@ -100,18 +100,18 @@ const option = {
   parentElement: document.getElementById(Table_CONTAINER_DOM_ID),
   records:[
       {
-      "230517143221027": "CA-2018-156720",
-      "230517143221030": "JM-15580",
-      "230517143221032": "Bagged Rubber Bands",
-      "230517143221040": "3.024",
-      "230517143221041": "-0.605"
+      "Order ID": "CA-2018-156720",
+      "Customer ID": "JM-15580",
+      "Product Name": "Bagged Rubber Bands",
+      "Sales": "3.024",
+      "Profit": "-0.605"
   },
   {
-      "230517143221027": "CA-2018-115427",
-      "230517143221030": "EB-13975",
-      "230517143221032": "GBC Binding covers",
-      "230517143221040": "20.72",
-      "230517143221041": "6.475"
+      "Order ID": "CA-2018-115427",
+      "Customer ID": "EB-13975",
+      "Product Name": "GBC Binding covers",
+      "Sales": "20.72",
+      "Profit": "6.475"
   },
   ...
   ],

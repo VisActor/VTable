@@ -71,10 +71,10 @@ link: '/guide/custom_define/custom_render'
             fill: 'white',
             fontSize: 20,
             fontWeight: 500, 
-            baseline: 'middle',
+            textBaseline: 'middle',
             text: row===1? 'important & urgency':'not important but urgency',
             x: left+50,
-            y: top,
+            y: top-5,
           });
         dataValue.forEach((
           item,i
@@ -119,7 +119,7 @@ link: '/guide/custom_define/custom_render'
     {
       field: 'not_urgency',
       caption:'not urgency',
-      width:'auto',
+      width:400,
       headerStyle:{
           lineHeight:50,
           bgColor:'#4991e3',
@@ -146,19 +146,20 @@ link: '/guide/custom_define/custom_render'
             type: 'rect',
             fill: '#4991e3',
             x: left+20,
-            y: top-15,
-            width: row===1?160:180,
+            y: top-20,
+            width: 320,
             height:28
           });
+
           elements.push({
             type: 'text',
             fill: 'white',
             fontSize: 20,
             fontWeight: 500, 
-            baseline: 'middle',
+            textBaseline: 'middle',
             text: row===1? 'important but not urgency':'not important and not urgency',
             x: left+50,
-            y: top,
+            y: top-5,
           });
         dataValue.forEach((
           item,i

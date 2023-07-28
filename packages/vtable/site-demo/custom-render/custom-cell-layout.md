@@ -75,7 +75,7 @@ VTable.register.icon('message',{
       {
         field: 'bloggerName',
         caption:'anchor nickname',
-        width:'260',
+        width:330,
          style:{
         fontFamily:'Arial',
         fontWeight:500

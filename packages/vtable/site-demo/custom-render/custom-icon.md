@@ -107,49 +107,49 @@ VTable.register.icon('frozen',{
     }
   );
 
-  fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American_Superstore_list100.json')
+  fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American_Superstore_data.json')
     .then((res) => res.json())
     .then((data) => {
 
 const columns =[
     {
-        "field": "230517143221027",
+        "field": "Order ID",
         "caption": "Order ID",
         "width": "auto",
         icon: 'order'
     },
     {
-        "field": "230517143221030",
+        "field": "Customer ID",
         "caption": "Customer ID",
         "width": "auto"
     },
     {
-        "field": "230517143221032",
+        "field": "Product Name",
         "caption": "Product Name",
         "width": "auto"
     },
     {
-        "field": "230517143221023",
+        "field": "Category",
         "caption": "Category",
         "width": "auto"
     },
     {
-        "field": "230517143221034",
+        "field": "Sub-Category",
         "caption": "Sub-Category",
         "width": "auto"
     },
     {
-        "field": "230517143221037",
+        "field": "Region",
         "caption": "Region",
         "width": "auto"
     },
     {
-        "field": "230517143221024",
+        "field": "City",
         "caption": "City",
         "width": "auto"
     },
     {
-        "field": "230517143221029",
+        "field": "Order Date",
         "caption": "Order Date",
         "width": "auto"
     },
