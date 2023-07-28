@@ -469,10 +469,10 @@ export class Scenegraph {
   }
 
   highPerformanceGetCell(col: number, row: number, getShadow?: boolean): Group {
-    if (!this.table.isHeader(col, row)) {
-      return this.proxy.highPerformanceGetCell(col, row, 0, this.table.rowCount - 1, getShadow);
-    }
-    return this.getCell(col, row, getShadow);
+    // if (!this.table.isHeader(col, row)) {
+    return this.proxy.highPerformanceGetCell(col, row, getShadow);
+    // }
+    // return this.getCell(col, row, getShadow);
   }
 
   getColGroup(col: number, isCornerOrColHeader = false): Group {

@@ -7,14 +7,14 @@ import { createColGroup } from '../column';
 import { createComplexColumn } from '../column-helper';
 import { createGroupForFirstScreen } from './create-group-for-first-screen';
 import { dynamicSetX } from './update-position/dynamic-set-x';
-import { dynamicSetY } from './update-position/dynamic-set-y';
+import { dynamicSetY, updateRowContent } from './update-position/dynamic-set-y';
 import { updateAutoRow } from './update-position/update-auto-row';
 
 export class SceneProxy {
   table: BaseTableAPI;
   mode: 'column' | 'row' | 'pivot' = 'column';
 
-  rowLimit = 1000;
+  rowLimit = 100;
   currentRow = 0; // 目前渐进生成的row number
   totalRow: number; // 渐进完成最后一行的row number
   yLimitTop: number; // y > yLimitTop动态更新，否则直接修改xy
@@ -31,7 +31,7 @@ export class SceneProxy {
   rowUpdateDirection: 'up' | 'down'; // 当前行更新的方向
   screenTopRow: number = 0; // 当前屏幕范围内显示的第一行的row number
 
-  colLimit = 1000;
+  colLimit = 100;
   bodyLeftCol: number; // table body部分的第一列col number
   bodyRightCol: number; // table body部分的最后一列col number
   totalCol: number; // 渐进完成最后一列的col number
@@ -417,13 +417,8 @@ export class SceneProxy {
     if (this.table.heightMode === 'autoHeight') {
       computeRowsHeight(this.table, this.rowUpdatePos, distRow);
     }
-    for (let col = this.bodyLeftCol; col <= this.bodyRightCol; col++) {
-      for (let row = this.rowUpdatePos; row <= distRow; row++) {
-        // const cellGroup = this.table.scenegraph.getCell(col, row);
-        const cellGroup = this.highPerformanceGetCell(col, row);
-        this.updateCellGroupContent(cellGroup);
-      }
-    }
+
+    updateRowContent(this.rowUpdatePos, distRow, this);
 
     if (this.table.heightMode === 'autoHeight') {
       updateAutoRow(
@@ -565,16 +560,33 @@ export class SceneProxy {
   highPerformanceGetCell(
     col: number,
     row: number,
-    rowStart: number = this.rowStart,
-    rowEnd: number = this.rowEnd,
+    // rowStart: number = this.rowStart,
+    // rowEnd: number = this.rowEnd,
     getShadow?: boolean
   ) {
-    if (row < rowStart || row > rowEnd) {
+    // if (row < rowStart || row > rowEnd) {
+    //   return emptyGroup;
+    // }
+    // if (row < this.rowStart || row > this.rowEnd || col < this.colStart || col > this.colEnd) {
+    //   return emptyGroup;
+    // }
+
+    if (
+      row >= this.table.columnHeaderLevelCount - 1 && // not column header
+      row < this.table.rowCount - this.table.bottomFrozenRowCount && // not bottom frozen
+      (row < this.rowStart || row > this.rowEnd) // not in proxy row range
+    ) {
       return emptyGroup;
     }
-    if (row < this.rowStart || row > this.rowEnd || col < this.colStart || col > this.colEnd) {
+
+    if (
+      col >= this.table.rowHeaderLevelCount - 1 && // not row header
+      col < this.table.colCount - this.table.rightFrozenColCount && // not right frozen
+      (col < this.colStart || col > this.colEnd) // not in proxy col range
+    ) {
       return emptyGroup;
     }
+
     if (this.cellCache.get(col)) {
       const cacheCellGoup = this.cellCache.get(col);
       if ((cacheCellGoup._next || cacheCellGoup._prev) && Math.abs(cacheCellGoup.row - row) < row) {

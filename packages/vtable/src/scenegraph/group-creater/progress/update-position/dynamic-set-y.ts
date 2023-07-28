@@ -1,5 +1,7 @@
 import type { Group } from '../../../graphic/group';
 import { computeRowsHeight } from '../../../layout/compute-row-height';
+import { getCellMergeInfo } from '../../../utils/get-cell-merge';
+import { updateCell } from '../../cell-helper';
 import type { SceneProxy } from '../proxy';
 import { updateAutoRow } from './update-auto-row';
 
@@ -57,28 +59,7 @@ async function moveCell(count: number, direction: 'up' | 'down', screenTopRow: n
     const startRow = direction === 'up' ? proxy.rowStart : proxy.rowEnd - count + 1;
     const endRow = direction === 'up' ? proxy.rowStart + count - 1 : proxy.rowEnd;
     // console.log('move', startRow, endRow, direction);
-    for (let col = proxy.bodyLeftCol; col <= proxy.bodyRightCol; col++) {
-      const colGroup = proxy.table.scenegraph.getColGroup(col);
-      for (let row = startRow; row <= endRow; row++) {
-        if (direction === 'up') {
-          const cellGroup = colGroup.firstChild as Group;
-          proxy.updateCellGroupPosition(
-            cellGroup,
-            (colGroup.lastChild as Group).row + 1,
-            (colGroup.lastChild as Group).attribute.y + (colGroup.lastChild as Group).attribute.height
-          );
-          colGroup.appendChild(cellGroup);
-        } else {
-          const cellGroup = colGroup.lastChild as Group;
-          proxy.updateCellGroupPosition(
-            cellGroup,
-            (colGroup.firstChild as Group).row - 1,
-            (colGroup.firstChild as Group).attribute.y - cellGroup.attribute.height
-          );
-          colGroup.insertBefore(cellGroup, colGroup.firstChild);
-        }
-      }
-    }
+    updatePartRowPosition(startRow, endRow, direction, proxy);
     const distStartRow = direction === 'up' ? proxy.rowEnd + 1 : proxy.rowStart - count;
     const distEndRow = direction === 'up' ? proxy.rowEnd + count : proxy.rowStart - 1;
 
@@ -88,13 +69,13 @@ async function moveCell(count: number, direction: 'up' | 'down', screenTopRow: n
     if (proxy.table.heightMode === 'autoHeight') {
       computeRowsHeight(proxy.table, syncTopRow, syncBottomRow);
     }
-    for (let col = proxy.bodyLeftCol; col <= proxy.bodyRightCol; col++) {
-      for (let row = syncTopRow; row <= syncBottomRow; row++) {
-        // const cellGroup = proxy.table.scenegraph.getCell(col, row);
-        const cellGroup = proxy.highPerformanceGetCell(col, row, distStartRow, distEndRow);
-        proxy.updateCellGroupContent(cellGroup);
-      }
-    }
+
+    proxy.rowStart = direction === 'up' ? proxy.rowStart + count : proxy.rowStart - count;
+    proxy.rowEnd = direction === 'up' ? proxy.rowEnd + count : proxy.rowEnd - count;
+
+    checkFirstRowMerge(distStartRow, proxy);
+
+    updateRowContent(syncTopRow, syncBottomRow, proxy);
     if (proxy.table.heightMode === 'autoHeight') {
       updateAutoRow(
         proxy.bodyLeftCol, // colStart
@@ -106,8 +87,6 @@ async function moveCell(count: number, direction: 'up' | 'down', screenTopRow: n
       );
     }
 
-    proxy.rowStart = direction === 'up' ? proxy.rowStart + count : proxy.rowStart - count;
-    proxy.rowEnd = direction === 'up' ? proxy.rowEnd + count : proxy.rowEnd - count;
     proxy.currentRow = direction === 'up' ? proxy.currentRow + count : proxy.currentRow - count;
     proxy.totalRow = direction === 'up' ? proxy.totalRow + count : proxy.totalRow - count;
     proxy.referenceRow = proxy.rowStart + Math.floor((proxy.rowEnd - proxy.rowStart) / 2);
@@ -126,21 +105,10 @@ async function moveCell(count: number, direction: 'up' | 'down', screenTopRow: n
     const distStartRow = direction === 'up' ? proxy.rowStart + count : proxy.rowStart - count;
     const distEndRow = direction === 'up' ? proxy.rowEnd + count : proxy.rowEnd - count;
     const distStartRowY = proxy.table.getRowsHeight(proxy.bodyTopRow, distStartRow - 1);
-    for (let col = proxy.bodyLeftCol; col <= proxy.bodyRightCol; col++) {
-      const colGroup = proxy.table.scenegraph.getColGroup(col);
-      colGroup?.forEachChildren((cellGroup: Group, index) => {
-        // 这里使用colGroup变量而不是for proxy.rowStart to proxy.rowEndproxy.rowEnd是因为在更新内可能出现row号码重复的情况
-        proxy.updateCellGroupPosition(
-          cellGroup,
-          direction === 'up' ? cellGroup.row + count : cellGroup.row - count,
-          index === 0 // row === proxy.rowStart
-            ? distStartRowY
-            : (cellGroup._prev as Group).attribute.y + (cellGroup._prev as Group).attribute.height
-        );
-      });
-    }
+    // 更新distStartRow位置的merge单元格，避免distStartRow位置不是merge的起始位置造成的空白
 
     // 更新同步范围
+    updateAllRowPosition(distStartRowY, count, direction, proxy);
     let syncTopRow;
     let syncBottomRow;
     if (proxy.table.heightMode === 'autoHeight') {
@@ -156,13 +124,10 @@ async function moveCell(count: number, direction: 'up' | 'down', screenTopRow: n
     }
     proxy.rowStart = distStartRow;
     proxy.rowEnd = distEndRow;
-    for (let col = proxy.bodyLeftCol; col <= proxy.bodyRightCol; col++) {
-      for (let row = syncTopRow; row <= syncBottomRow; row++) {
-        // const cellGroup = proxy.table.scenegraph.getCell(col, row);
-        const cellGroup = proxy.highPerformanceGetCell(col, row, distStartRow, distEndRow);
-        proxy.updateCellGroupContent(cellGroup);
-      }
-    }
+
+    checkFirstRowMerge(distStartRow, proxy);
+
+    updateRowContent(syncTopRow, syncBottomRow, proxy);
     console.log(
       'updateAutoRow',
       distEndRow > proxy.bodyBottomRow - (proxy.rowEnd - proxy.rowStart + 1) ? 'down' : 'up'
@@ -194,6 +159,151 @@ async function moveCell(count: number, direction: 'up' | 'down', screenTopRow: n
     proxy.table.scenegraph.updateNextFrame();
     if (proxy.table.heightMode !== 'autoHeight') {
       await proxy.progress();
+    }
+  }
+}
+
+function updatePartRowPosition(startRow: number, endRow: number, direction: 'up' | 'down', proxy: SceneProxy) {
+  // row header group
+  for (let col = 0; col < proxy.table.rowHeaderLevelCount; col++) {
+    const colGroup = proxy.table.scenegraph.getColGroup(col);
+    for (let row = startRow; row <= endRow; row++) {
+      updateCellGroupPosition(colGroup, direction, proxy);
+    }
+  }
+  // right frozen group
+  for (let col = proxy.table.colCount - proxy.table.rightFrozenColCount; col < proxy.table.colCount; col++) {
+    const colGroup = proxy.table.scenegraph.getColGroup(col);
+    for (let row = startRow; row <= endRow; row++) {
+      updateCellGroupPosition(colGroup, direction, proxy);
+    }
+  }
+  // body group
+  for (let col = proxy.bodyLeftCol; col <= proxy.bodyRightCol; col++) {
+    const colGroup = proxy.table.scenegraph.getColGroup(col);
+    for (let row = startRow; row <= endRow; row++) {
+      updateCellGroupPosition(colGroup, direction, proxy);
+    }
+  }
+}
+
+function updateCellGroupPosition(colGroup: Group, direction: 'up' | 'down', proxy: SceneProxy) {
+  if (direction === 'up') {
+    const cellGroup = colGroup.firstChild as Group;
+    proxy.updateCellGroupPosition(
+      cellGroup,
+      (colGroup.lastChild as Group).row + 1,
+      (colGroup.lastChild as Group).attribute.y + (colGroup.lastChild as Group).attribute.height
+    );
+    colGroup.appendChild(cellGroup);
+  } else {
+    const cellGroup = colGroup.lastChild as Group;
+    proxy.updateCellGroupPosition(
+      cellGroup,
+      (colGroup.firstChild as Group).row - 1,
+      (colGroup.firstChild as Group).attribute.y - cellGroup.attribute.height
+    );
+    colGroup.insertBefore(cellGroup, colGroup.firstChild);
+  }
+}
+
+function updateAllRowPosition(distStartRowY: number, count: number, direction: 'up' | 'down', proxy: SceneProxy) {
+  // row header group
+  for (let col = 0; col < proxy.table.rowHeaderLevelCount; col++) {
+    const colGroup = proxy.table.scenegraph.getColGroup(col);
+    colGroup?.forEachChildren((cellGroup: Group, index) => {
+      // 这里使用colGroup变量而不是for proxy.rowStart to proxy.rowEndproxy.rowEnd是因为在更新内可能出现row号码重复的情况
+      proxy.updateCellGroupPosition(
+        cellGroup,
+        direction === 'up' ? cellGroup.row + count : cellGroup.row - count,
+        index === 0 // row === proxy.rowStart
+          ? distStartRowY
+          : (cellGroup._prev as Group).attribute.y + proxy.table.getRowHeight((cellGroup._prev as Group).row)
+      );
+    });
+  }
+  // right frozen group
+  for (let col = proxy.table.colCount - proxy.table.rightFrozenColCount; col < proxy.table.colCount; col++) {
+    const colGroup = proxy.table.scenegraph.getColGroup(col);
+    colGroup?.forEachChildren((cellGroup: Group, index) => {
+      // 这里使用colGroup变量而不是for proxy.rowStart to proxy.rowEndproxy.rowEnd是因为在更新内可能出现row号码重复的情况
+      proxy.updateCellGroupPosition(
+        cellGroup,
+        direction === 'up' ? cellGroup.row + count : cellGroup.row - count,
+        index === 0 // row === proxy.rowStart
+          ? distStartRowY
+          : (cellGroup._prev as Group).attribute.y + proxy.table.getRowHeight((cellGroup._prev as Group).row)
+      );
+    });
+  }
+  // body group
+  for (let col = proxy.bodyLeftCol; col <= proxy.bodyRightCol; col++) {
+    const colGroup = proxy.table.scenegraph.getColGroup(col);
+    colGroup?.forEachChildren((cellGroup: Group, index) => {
+      // 这里使用colGroup变量而不是for proxy.rowStart to proxy.rowEndproxy.rowEnd是因为在更新内可能出现row号码重复的情况
+      proxy.updateCellGroupPosition(
+        cellGroup,
+        direction === 'up' ? cellGroup.row + count : cellGroup.row - count,
+        index === 0 // row === proxy.rowStart
+          ? distStartRowY
+          : (cellGroup._prev as Group).attribute.y + proxy.table.getRowHeight((cellGroup._prev as Group).row)
+      );
+    });
+  }
+}
+
+export function updateRowContent(syncTopRow: number, syncBottomRow: number, proxy: SceneProxy) {
+  // row header group
+  for (let col = 0; col < proxy.table.rowHeaderLevelCount; col++) {
+    for (let row = syncTopRow; row <= syncBottomRow; row++) {
+      // const cellGroup = proxy.table.scenegraph.getCell(col, row);
+      const cellGroup = proxy.highPerformanceGetCell(col, row, true);
+      proxy.updateCellGroupContent(cellGroup);
+    }
+  }
+  // right frozen group
+  for (let col = proxy.table.colCount - proxy.table.rightFrozenColCount; col < proxy.table.colCount; col++) {
+    for (let row = syncTopRow; row <= syncBottomRow; row++) {
+      // const cellGroup = proxy.table.scenegraph.getCell(col, row);
+      const cellGroup = proxy.highPerformanceGetCell(col, row);
+      proxy.updateCellGroupContent(cellGroup);
+    }
+  }
+  // body group
+  for (let col = proxy.bodyLeftCol; col <= proxy.bodyRightCol; col++) {
+    for (let row = syncTopRow; row <= syncBottomRow; row++) {
+      // const cellGroup = proxy.table.scenegraph.getCell(col, row);
+      const cellGroup = proxy.highPerformanceGetCell(col, row);
+      proxy.updateCellGroupContent(cellGroup);
+    }
+  }
+}
+
+function checkFirstRowMerge(row: number, proxy: SceneProxy) {
+  for (let col = 0; col < proxy.table.colCount; col++) {
+    const range = getCellMergeInfo(proxy.table, col, row);
+    if (range && range.start.row !== row) {
+      // 在row的位置添加range.start.row单元格
+      const oldCellGroup = proxy.highPerformanceGetCell(col, row, true);
+      const newCellGroup = updateCell(range.start.col, range.start.row, proxy.table, true);
+
+      newCellGroup.col = col;
+      newCellGroup.row = row;
+      newCellGroup.setAttribute(
+        'y',
+        proxy.table.getRowsHeight(proxy.table.columnHeaderLevelCount, range.start.row - 1)
+      );
+
+      oldCellGroup.parent.insertAfter(newCellGroup, oldCellGroup);
+      oldCellGroup.parent.removeChild(oldCellGroup);
+
+      oldCellGroup.needUpdate = false;
+      newCellGroup.needUpdate = false;
+
+      // update cache
+      if (proxy.cellCache.get(col)) {
+        proxy.cellCache.set(col, newCellGroup);
+      }
     }
   }
 }
