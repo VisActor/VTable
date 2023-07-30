@@ -1,7 +1,7 @@
 import type { ITextSize } from '@visactor/vutils';
 import type { RectProps, MaybePromiseOrUndefined, ICellHeaderPaths, CellInfo } from './common';
 import type {
-  AnyListener,
+  TableEventListener,
   TableEventHandlersEventArgumentMap,
   TableEventHandlersReturnMap,
   EventListenerId,
@@ -30,6 +30,7 @@ import type {
   FieldFormat,
   FullExtendStyle,
   HeaderValues,
+  HeightModeDef,
   HierarchyState,
   IDataConfig,
   IPagerConf,
@@ -42,16 +43,21 @@ import type { TooltipOptions } from './tooltip';
 import type { IWrapTextGraphicAttribute } from '../scenegraph/graphic/text';
 import type { ICustomLayout } from './customLayout';
 import type { CachedDataSource, DataSource } from '../data';
-import type { MenuHandler } from '../menu/dom/MenuHandler';
+import type { MenuHandler } from '../components/menu/dom/MenuHandler';
 import type { PivotHeaderLayoutMap } from '../layout/pivot-header-layout';
 import type { SimpleHeaderLayoutMap } from '../layout';
-import type { PivoLayoutMap } from '../layout/pivot-layout';
-import type { TooltipHandler } from '../tooltip/TooltipHandler';
+import type { PivotLayoutMap } from '../layout/pivot-layout';
+import type { TooltipHandler } from '../components/tooltip/TooltipHandler';
 import type { BodyHelper } from '../body-helper/body-helper';
 import type { HeaderHelper } from '../header-helper/header-helper';
 import type { EventHandler } from '../event/EventHandler';
 import type { NumberMap } from '../tools/NumberMap';
 import type { FocusInput } from '../core/FouseInput';
+import type { ITableLegendOption } from './component/legend';
+import type { TableLegend } from '../components/legend/legend';
+import type { DataSet } from '@visactor/vdataset';
+import type { Title } from '../components/title/title';
+import type { ITitle } from './component/title';
 
 export interface IBaseTableProtected {
   element: HTMLElement;
@@ -121,7 +127,7 @@ export interface IBaseTableProtected {
   disposables?: { dispose: () => void }[] | null;
   theme: TableTheme;
   transpose?: boolean; //是否转置
-  autoRowHeight?: boolean; //是否自动撑开高度 对于设置了autoWrapText的multilineText的列生效
+  // autoRowHeight?: boolean; //是否自动撑开高度 对于设置了autoWrapText的multilineText的列生效
   pixelRatio?: number;
   /** 下拉菜单的相关配置。消失时机：显示后点击菜单区域外自动消失*/
   menu: {
@@ -145,7 +151,7 @@ export interface IBaseTableProtected {
 
   dataSourceEventIds?: EventListenerId[];
   headerEvents?: EventListenerId[];
-  layoutMap: PivotHeaderLayoutMap | SimpleHeaderLayoutMap | PivoLayoutMap;
+  layoutMap: PivotHeaderLayoutMap | SimpleHeaderLayoutMap | PivotLayoutMap;
   headerValues?: HeaderValues;
   tooltipHandler: TooltipHandler;
 
@@ -165,6 +171,9 @@ export interface IBaseTableProtected {
    * 计算列宽时 指定最大列宽 可设置boolean或者具体的值 默认为450
    */
   limitMaxAutoWidth?: boolean | number;
+
+  title?: Title;
+  legends?: TableLegend;
 }
 export interface BaseTableConstructorOptions {
   // /** 指定表格的行数 */
@@ -259,9 +268,13 @@ export interface BaseTableConstructorOptions {
    */
   theme?: ITableThemeDefine;
   /** 宽度模式 */
-  widthMode?: 'standard' | 'adaptive' | 'autoWidth' | 'standard-aeolus';
-  /** 行高是否根据内容来计算 */
-  autoRowHeight?: boolean;
+  widthMode?: 'standard' | 'adaptive' | 'autoWidth';
+  /** 高度模式 */
+  heightMode?: 'standard' | 'adaptive' | 'autoHeight';
+  /** 当列宽度不能占满容器时，是否需要自动拉宽来填充容器的宽度。默认false */
+  autoFillWidth?: boolean;
+  // /** 行高是否根据内容来计算 */
+  // autoRowHeight?: boolean;
   /** 设备的像素比 不配的话默认获取window.devicePixelRatio */
   pixelRatio?: number;
   /** 自定义渲染 函数形式*/
@@ -289,6 +302,9 @@ export interface BaseTableConstructorOptions {
 
   // maximum number of data items maintained in table instance
   maintainedDataCount?: number;
+
+  legends?: ITableLegendOption;
+  title?: ITitle;
 }
 export interface BaseTableAPI {
   /** 表格的行数 */
@@ -303,6 +319,9 @@ export interface BaseTableAPI {
   frozenRowCount: number;
   /** 表格的冻结列数 包括表头在内 */
   frozenColCount: number;
+
+  bottomFrozenRowCount: number;
+  rightFrozenColCount: number;
   /** 当前表格默认表头行高 */
   defaultHeaderRowHeight: number | number[];
   /** 当前表格默认行高 */
@@ -352,13 +371,18 @@ export interface BaseTableAPI {
   tableY: number;
   /** 表格宽度模式 */
   widthMode: WidthModeDef;
+  /** 表格宽度模式 */
+  heightMode: HeightModeDef;
+  /** 当列宽度不能占满容器时，是否需要自动拉宽来填充容器的宽度。默认false */
+  autoFillWidth: boolean;
 
-  listen: (<TYPE extends keyof TableEventHandlersEventArgumentMap>(
+  listen: <TYPE extends keyof TableEventHandlersEventArgumentMap>(
     type: TYPE,
-    listener: (...event: TableEventHandlersEventArgumentMap[TYPE]) => TableEventHandlersReturnMap[TYPE]
-  ) => EventListenerId) &
-    ((type: string, listener: AnyListener) => EventListenerId);
+    listener: TableEventListener<TYPE> //(event: TableEventHandlersEventArgumentMap[TYPE]) => TableEventHandlersReturnMap[TYPE]
+  ) => EventListenerId;
+  // &(<T extends keyof TableEventHandlersEventArgumentMap>(type: string, listener: AnyListener<T>) => EventListenerId);
 
+  dataSet: DataSet;
   /** 场景树对象 */
   scenegraph: Scenegraph;
   /** 状态管理模块 */
@@ -419,6 +443,8 @@ export interface BaseTableAPI {
 
   getFrozenRowsHeight: () => number;
   getFrozenColsWidth: () => number;
+  getBottomFrozenRowsHeight: () => number;
+  getRightFrozenColsWidth: () => number;
   selectCell: (col: number, row: number) => void;
 
   getAllRowsHeight: () => number;
@@ -446,7 +472,7 @@ export interface BaseTableAPI {
   getBodyColumnType: (col: number, row: number) => ColumnTypeOption;
   fireListeners: <TYPE extends keyof TableEventHandlersEventArgumentMap>(
     type: TYPE,
-    ...event: TableEventHandlersEventArgumentMap[TYPE]
+    event: TableEventHandlersEventArgumentMap[TYPE]
   ) => TableEventHandlersReturnMap[TYPE][];
 
   //更新分页
@@ -506,7 +532,7 @@ export interface BaseTableAPI {
   getCustomLayout: (col: number, row: number) => ICustomLayout;
   isListTable: () => boolean;
   isPivotTable: (() => boolean) & (() => boolean);
-
+  isPivotChart: (() => boolean) & (() => boolean);
   _clearColRangeWidthsMap: (col?: number) => void;
   _clearRowRangeHeightsMap: (row?: number) => void;
 
@@ -526,7 +552,7 @@ export interface ListTableProtected extends IBaseTableProtected {
 }
 
 export interface PivotTableProtected extends IBaseTableProtected {
-  layoutMap: PivotHeaderLayoutMap | PivoLayoutMap;
+  layoutMap: PivotHeaderLayoutMap | PivotLayoutMap;
   dataConfig?: IDataConfig;
   /**
    * 透视表 传入数据是透视后的嵌套层级结构 还是需要进行汇总计算的平坦数据

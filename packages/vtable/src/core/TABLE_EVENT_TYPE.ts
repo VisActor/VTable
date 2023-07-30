@@ -107,6 +107,14 @@ export interface TableEvents {
    * icon图标点击事件
    */
   ICON_CLICK: 'icon_click';
+
+  // legend component
+  LEGEND_ITEM_CLICK: 'legend_item_click';
+  LEGEND_ITEM_HOVER: 'legend_item_hover';
+  LEGEND_ITEM_UNHOVER: 'legend_item_unHover';
+
+  MOUSEENTER_AXIS: 'mouseenter_axis';
+  MOUSELEAVE_AXIS: 'mouseleave_axis';
 }
 /**
  * Table event types
@@ -142,5 +150,12 @@ export const TABLE_EVENT_TYPE: TableEvents = {
   SHOW_MENU: 'show_menu',
   HIDE_MENU: 'hide_menu',
 
-  ICON_CLICK: 'icon_click'
+  ICON_CLICK: 'icon_click',
+
+  LEGEND_ITEM_CLICK: 'legend_item_click',
+  LEGEND_ITEM_HOVER: 'legend_item_hover',
+  LEGEND_ITEM_UNHOVER: 'legend_item_unHover',
+
+  MOUSEENTER_AXIS: 'mouseenter_axis',
+  MOUSELEAVE_AXIS: 'mouseleave_axis'
 } as TableEvents;

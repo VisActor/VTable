@@ -3,18 +3,23 @@
  *License: https://github.com/future-architect/cheetah-grid/blob/master/LICENSE
  * @license
  */
-import type { AnyListener, EventListenerId } from '../ts-types';
+import type {
+  TableEventListener,
+  EventListenerId,
+  TableEventHandlersEventArgumentMap,
+  TableEventHandlersReturnMap
+} from '../ts-types';
 import { isValid } from '../tools/util';
 
 let idCount = 1;
 
 export class EventTarget {
   private listenersData: {
-    listeners: { [type: string]: AnyListener[] };
+    listeners: { [TYPE in keyof TableEventHandlersEventArgumentMap]?: TableEventListener<TYPE>[] };
     listenerData: {
       [id: number]: {
         type: string;
-        listener: AnyListener;
+        listener: TableEventListener<keyof TableEventHandlersEventArgumentMap>;
         remove: () => void;
       };
     };
@@ -29,8 +34,12 @@ export class EventTarget {
    * @param listener 事件监听器
    * @returns 事件监听器id
    */
-  listen(type: string, listener: AnyListener): EventListenerId {
-    const list = this.listenersData.listeners[type] || (this.listenersData.listeners[type] = []);
+  listen<TYPE extends keyof TableEventHandlersEventArgumentMap>(
+    type: TYPE,
+    listener: TableEventListener<TYPE>
+  ): EventListenerId {
+    const list: TableEventListener<TYPE>[] =
+      this.listenersData.listeners[type] || (this.listenersData.listeners[type] = []);
     list.push(listener);
 
     const id = idCount++;
@@ -56,11 +65,15 @@ export class EventTarget {
     this.listenersData.listenerData[id].remove();
   }
 
-  addEventListener(type: string, listener: AnyListener, option?: any): void {
+  addEventListener<TYPE extends keyof TableEventHandlersEventArgumentMap>(
+    type: TYPE,
+    listener: TableEventListener<TYPE>,
+    option?: any
+  ): void {
     this.listen(type, listener);
   }
 
-  removeEventListener(type: string, listener: AnyListener): void {
+  removeEventListener(type: string, listener: TableEventListener<keyof TableEventHandlersEventArgumentMap>): void {
     if (!this.listenersData) {
       return;
     }
@@ -79,7 +92,20 @@ export class EventTarget {
     return !!this.listenersData.listeners[type];
   }
 
-  fireListeners(type: string, ...args: any[]): any {
+  // fireListeners(type: string, ...args: any[]): any {
+  //   if (!this.listenersData) {
+  //     return [];
+  //   }
+  //   const list = this.listenersData.listeners[type];
+  //   if (!list) {
+  //     return [];
+  //   }
+  //   return list.map(listener => listener.call(this, ...args)).filter(r => isValid(r));
+  // }
+  fireListeners<TYPE extends keyof TableEventHandlersEventArgumentMap>(
+    type: TYPE,
+    event: TableEventHandlersEventArgumentMap[TYPE]
+  ): TableEventHandlersReturnMap[TYPE][] {
     if (!this.listenersData) {
       return [];
     }
@@ -87,9 +113,8 @@ export class EventTarget {
     if (!list) {
       return [];
     }
-    return list.map(listener => listener.call(this, ...args)).filter(r => isValid(r));
+    return list.map(listener => listener.call(this, event)).filter(r => isValid(r));
   }
-
   dispose(): void {
     delete this.listenersData;
   }

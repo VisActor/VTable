@@ -75,6 +75,14 @@ export const menus = [
       },
       {
         path: 'basic-functionality',
+        name: 'height-mode-adaptive'
+      },
+      {
+        path: 'basic-functionality',
+        name: 'height-mode-autoHeight'
+      },
+      {
+        path: 'basic-functionality',
         name: 'merge'
       }
     ]

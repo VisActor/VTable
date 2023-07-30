@@ -128,7 +128,7 @@ export class EventHandler {
     const id = idCount++;
     if (target?.addEventListener) {
       if (type !== 'resize' || (target as Window) === window) {
-        (target as EventHandlerTarget)?.addEventListener(type, listener, ...(options as []));
+        (target as EventTarget)?.addEventListener(type, listener, ...(options as []));
       } else {
         const resizeObserver = new ResizeObserver(target as HTMLElement, listener);
         this.reseizeListeners[id] = resizeObserver;

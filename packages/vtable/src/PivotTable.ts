@@ -17,7 +17,7 @@ import type {
 import { HierarchyState } from './ts-types';
 import { PivotHeaderLayoutMap } from './layout/pivot-header-layout';
 import { getField } from './data/DataSource';
-import { PivoLayoutMap } from './layout/pivot-layout';
+import { PivotLayoutMap } from './layout/pivot-layout';
 import { FlatDataToObjects } from './dataset/flatDataToObject';
 import { PIVOT_TABLE_EVENT_TYPE } from './ts-types/pivot-table/PIVOT_TABLE_EVENT_TYPE';
 import { cellInRange, emptyFn } from './tools/helper';
@@ -96,7 +96,9 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
   isPivotTable(): true {
     return true;
   }
-
+  isPivotChart(): false {
+    return false;
+  }
   _canResizeColumn(col: number, row: number): boolean {
     const ifCan = super._canResizeColumn(col, row);
     if (ifCan) {
@@ -181,6 +183,9 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
       this.setRecords(options.records as any, undefined);
     } else {
       this._resetFrozenColCount();
+      // 生成单元格场景树
+      this.scenegraph.createSceneGraph();
+      this.invalidate();
     }
 
     this.pivotSortState = [];
@@ -199,14 +204,14 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
     if (internalProps.headerEvents) {
       internalProps.headerEvents.forEach((id: number) => this.unlisten(id));
     }
-
+    const records = this.options.records ?? this.internalProps.records;
     if (this.options.enableDataAnalysis) {
-      internalProps.layoutMap = new PivoLayoutMap(this, this.dataset);
+      internalProps.layoutMap = new PivotLayoutMap(this, this.dataset);
     } else if (Array.isArray(this.options.columnTree) || Array.isArray(this.options.rowTree)) {
       internalProps.layoutMap = new PivotHeaderLayoutMap(this);
       //判断如果数据是二维数组 则标识已经分析过 直接从二维数组挨个读取渲染即可
       //不是二维数组 对应是个object json对象 则表示flat数据，需要对应行列维度进行转成方便数据查询的行列树结构
-      if (this.options.records?.[0]?.constructor !== Array) {
+      if (records?.[0]?.constructor !== Array) {
         this.flatDataToObjects = new FlatDataToObjects(
           {
             rows: internalProps.layoutMap.rowDimensionKeys,
@@ -215,7 +220,7 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
             indicatorsAsCol: internalProps.layoutMap.indicatorsAsCol,
             indicatorDimensionKey: internalProps.layoutMap.indicatorDimensionKey
           },
-          this.options.records
+          records
         );
       }
     }
@@ -248,8 +253,11 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
     table.rowCount = layoutMap.rowCount ?? 0;
     table.frozenColCount = layoutMap.rowHeaderLevelCount; //TODO
     table.frozenRowCount = layoutMap.headerLevelCount;
+
+    table.bottomFrozenRowCount = layoutMap?.bottomFrozenRowCount ?? 0;
+    table.rightFrozenColCount = layoutMap?.rightFrozenColCount ?? 0;
   }
-  protected getSortFuncFromHeaderOption(
+  protected _getSortFuncFromHeaderOption(
     columns: undefined,
     field: FieldDef,
     fieldKey?: FieldKeyDef
@@ -317,7 +325,7 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
       const aggregator = this.dataset.getAggregator(
         rowKey[rowKey.length - 1],
         colKey[colKey.length - 1],
-        (this.internalProps.layoutMap as PivoLayoutMap).getIndicatorName(col, row)
+        (this.internalProps.layoutMap as PivotLayoutMap).getIndicatorKey(col, row)
       );
       return aggregator.formatValue ? aggregator.formatValue() : '';
     } else if (this.flatDataToObjects) {
@@ -353,7 +361,7 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
       const aggregator = this.dataset.getAggregator(
         rowKey[rowKey.length - 1],
         colKey[colKey.length - 1],
-        (this.internalProps.layoutMap as PivoLayoutMap).getIndicatorName(col, row)
+        (this.internalProps.layoutMap as PivotLayoutMap).getIndicatorKey(col, row)
       );
       return aggregator.value ? aggregator.value() : undefined;
       // return ''
@@ -389,7 +397,7 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
       const aggregator = this.dataset.getAggregator(
         rowKey[rowKey.length - 1],
         colKey[colKey.length - 1],
-        (this.internalProps.layoutMap as PivoLayoutMap).getIndicatorName(col, row)
+        (this.internalProps.layoutMap as PivotLayoutMap).getIndicatorKey(col, row)
       );
       return aggregator.records;
       // return ''
@@ -418,7 +426,7 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
   updateSortRules(sortRules: SortRules) {
     this.internalProps.dataConfig.sortRules = sortRules;
     this.dataset.updateSortRules(sortRules);
-    (this.internalProps.layoutMap as PivoLayoutMap).updateDataset(this.dataset);
+    (this.internalProps.layoutMap as PivotLayoutMap).updateDataset(this.dataset);
     this.invalidate();
   }
   updatePivotSortState(

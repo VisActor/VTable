@@ -127,6 +127,7 @@ export class StateManeger {
     col: number;
     row: number;
   };
+  // 当鼠标hover到迷你图上时存储行列值，好在鼠标移动到其他单元格时清理Sparkline的高亮状态
   sparkLine: {
     col: number;
     row: number;
@@ -745,7 +746,7 @@ export class StateManeger {
 
   hideMenu() {
     this.table.fireListeners(TABLE_EVENT_TYPE.DROPDOWN_MENU_CLEAR, null);
-    this.table.fireListeners(TABLE_EVENT_TYPE.HIDE_MENU);
+    this.table.fireListeners(TABLE_EVENT_TYPE.HIDE_MENU, null);
     this.menu.isShow = false;
     this.table.scenegraph.component.menu.detach();
     if (this.residentHoverIcon) {

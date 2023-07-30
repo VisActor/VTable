@@ -85,7 +85,7 @@ async function moveCell(count: number, direction: 'up' | 'down', screenTopRow: n
     // 更新同步范围
     const syncTopRow = Math.max(proxy.bodyTopRow, screenTopRow - proxy.screenRowCount * 1);
     const syncBottomRow = Math.min(proxy.bodyBottomRow, screenTopRow + proxy.screenRowCount * 2);
-    if (proxy.table.internalProps.autoRowHeight) {
+    if (proxy.table.heightMode === 'autoHeight') {
       computeRowsHeight(proxy.table, syncTopRow, syncBottomRow);
     }
     for (let col = proxy.bodyLeftCol; col <= proxy.bodyRightCol; col++) {
@@ -95,7 +95,7 @@ async function moveCell(count: number, direction: 'up' | 'down', screenTopRow: n
         proxy.updateCellGroupContent(cellGroup);
       }
     }
-    if (proxy.table.internalProps.autoRowHeight) {
+    if (proxy.table.heightMode === 'autoHeight') {
       updateAutoRow(
         proxy.bodyLeftCol, // colStart
         proxy.bodyRightCol, // colEnd
@@ -143,7 +143,7 @@ async function moveCell(count: number, direction: 'up' | 'down', screenTopRow: n
     // 更新同步范围
     let syncTopRow;
     let syncBottomRow;
-    if (proxy.table.internalProps.autoRowHeight) {
+    if (proxy.table.heightMode === 'autoHeight') {
       syncTopRow = distStartRow;
       syncBottomRow = distEndRow;
     } else {
@@ -151,7 +151,7 @@ async function moveCell(count: number, direction: 'up' | 'down', screenTopRow: n
       syncBottomRow = Math.min(proxy.bodyBottomRow, screenTopRow + proxy.screenRowCount * 2);
     }
     console.log('更新同步范围', syncTopRow, syncBottomRow);
-    if (proxy.table.internalProps.autoRowHeight) {
+    if (proxy.table.heightMode === 'autoHeight') {
       computeRowsHeight(proxy.table, syncTopRow, syncBottomRow);
     }
     proxy.rowStart = distStartRow;
@@ -168,7 +168,7 @@ async function moveCell(count: number, direction: 'up' | 'down', screenTopRow: n
       distEndRow > proxy.bodyBottomRow - (proxy.rowEnd - proxy.rowStart + 1) ? 'down' : 'up'
     );
 
-    if (proxy.table.internalProps.autoRowHeight) {
+    if (proxy.table.heightMode === 'autoHeight') {
       updateAutoRow(
         proxy.bodyLeftCol, // colStart
         proxy.bodyRightCol, // colEnd
@@ -192,7 +192,7 @@ async function moveCell(count: number, direction: 'up' | 'down', screenTopRow: n
     );
 
     proxy.table.scenegraph.updateNextFrame();
-    if (!proxy.table.internalProps.autoRowHeight) {
+    if (proxy.table.heightMode !== 'autoHeight') {
       await proxy.progress();
     }
   }

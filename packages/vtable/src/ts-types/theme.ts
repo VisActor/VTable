@@ -71,6 +71,11 @@ export interface ITableThemeDefine {
   // selectionBgColor?: ColorPropertyDefine; //多选单元格背景色 手动设置的多选 非框选
   defaultStyle?: ThemeStyle;
   cornerHeaderStyle?: ThemeStyle; //角头样式
+  cornerRightTopCellStyle?: ThemeStyle; // 右上角占位单元格样式
+  cornerLeftBottomCellStyle?: ThemeStyle; // 左下角占位单元格样式
+  cornerRightBottomCellStyle?: ThemeStyle; // 右下角占位单元格样式
+  rightFrozenStyle?: ThemeStyle; // 右侧冻结单元格样式
+  bottomFrozenStyle?: ThemeStyle; // 下部冻结单元格样式
   headerStyle?: ThemeStyle;
   rowHeaderStyle?: ThemeStyle;
   bodyStyle?: ThemeStyle;

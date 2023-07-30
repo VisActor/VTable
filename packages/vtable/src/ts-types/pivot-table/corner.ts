@@ -9,17 +9,17 @@ interface IBasicCornerDefine {
 
 interface ITextCornerDefine extends IBasicCornerDefine {
   headerType?: 'text';
-  headerStyle?: ITextStyleOption;
+  headerStyle?: Omit<ITextStyleOption, 'textStick'>;
 }
 
 interface IImageCornerDefine extends IBasicCornerDefine {
   headerType: 'image';
-  headerStyle?: IImageStyleOption;
+  headerStyle?: Omit<IImageStyleOption, 'textStick'>;
 }
 
 interface ILinkCornerDefine extends IBasicCornerDefine {
   headerType: 'link';
-  headerStyle?: ITextStyleOption;
+  headerStyle?: Omit<ITextStyleOption, 'textStick'>;
 }
 
 export type ICornerDefine = IImageCornerDefine | ILinkCornerDefine | ITextCornerDefine;

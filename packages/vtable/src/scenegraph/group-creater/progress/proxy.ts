@@ -5,6 +5,7 @@ import { computeRowsHeight } from '../../layout/compute-row-height';
 import { emptyGroup } from '../../utils/empty-group';
 import { createColGroup } from '../column';
 import { createComplexColumn } from '../column-helper';
+import { createGroupForFirstScreen } from './create-group-for-first-screen';
 import { dynamicSetX } from './update-position/dynamic-set-x';
 import { dynamicSetY } from './update-position/dynamic-set-y';
 import { updateAutoRow } from './update-position/update-auto-row';
@@ -64,7 +65,8 @@ export class SceneProxy {
 
   setParamsForColumn() {
     this.bodyLeftCol = this.table.rowHeaderLevelCount;
-    this.bodyRightCol = this.table.colCount - 1;
+    // this.bodyRightCol = this.table.colCount - 1;
+    this.bodyRightCol = this.table.colCount - 1 - this.table.rightFrozenColCount;
 
     // compute the column info about progress creation
     const totalActualBodyColCount = Math.min(this.colLimit, this.bodyRightCol - this.bodyLeftCol + 1);
@@ -90,9 +92,9 @@ export class SceneProxy {
 
   setParamsForRow() {
     this.bodyTopRow = this.table.columnHeaderLevelCount;
-    this.bodyBottomRow = this.table.rowCount - 1;
-    this.bodyLeftCol = 0;
-    this.bodyRightCol = this.table.colCount - 1;
+    this.bodyBottomRow = this.table.rowCount - 1 - this.table.bottomFrozenRowCount;
+    // this.bodyLeftCol = 0;
+    // this.bodyRightCol = this.table.colCount - 1 - this.table.rightFrozenColCount;
 
     // 计算渐进加载数量
     const totalActualBodyRowCount = Math.min(this.rowLimit, this.bodyBottomRow - this.bodyTopRow + 1); // 渐进加载总row数量
@@ -121,110 +123,23 @@ export class SceneProxy {
     cornerHeaderGroup: Group,
     colHeaderGroup: Group,
     rowHeaderGroup: Group,
+    rightFrozenGroup: Group,
+    bottomFrozenGroup: Group,
     bodyGroup: Group,
     xOrigin: number,
     yOrigin: number
   ) {
-    // compute parameters
-    this.setParamsForRow();
-    this.setParamsForColumn();
-
-    // compute colums width in first screen
-    this.table.internalProps._colWidthsMap.clear();
-    this.table._clearColRangeWidthsMap();
-    computeColsWidth(this.table, 0, Math.min(this.firstScreenColLimit, this.table.colCount - 1));
-
-    // compute rows height in first screen
-    this.table.internalProps._rowHeightsMap.clear();
-    this.table._clearRowRangeHeightsMap();
-    computeRowsHeight(this.table, 0, Math.min(this.firstScreenRowLimit, this.table.rowCount - 1));
-
-    // update colHeaderGroup rowHeaderGroup bodyGroup position
-    this.table.scenegraph.colHeaderGroup.setAttribute('x', this.table.getFrozenColsWidth());
-    this.table.scenegraph.rowHeaderGroup.setAttribute('y', this.table.getFrozenRowsHeight());
-    this.table.scenegraph.bodyGroup.setAttributes({
-      x: this.table.getFrozenColsWidth(),
-      y: this.table.getFrozenRowsHeight()
-    });
-
-    // create cornerHeaderGroup
-    createColGroup(
+    await createGroupForFirstScreen(
       cornerHeaderGroup,
-      xOrigin,
-      yOrigin,
-      0, // colStart
-      this.table.rowHeaderLevelCount - 1, // colEnd
-      0, // rowStart
-      this.table.columnHeaderLevelCount - 1, // rowEnd
-      'cornerHeader', // CellType
-      this.table
-    );
-
-    // create colHeaderGroup
-    createColGroup(
       colHeaderGroup,
-      xOrigin,
-      yOrigin,
-      this.table.rowHeaderLevelCount, // colStart
-      Math.min(this.firstScreenColLimit, this.table.colCount - 1), // colEnd
-      0, // rowStart
-      this.table.columnHeaderLevelCount - 1, // rowEnd
-      'columnHeader', // isHeader
-      this.table
-    );
-
-    // create rowHeaderGroup
-    createColGroup(
       rowHeaderGroup,
-      xOrigin,
-      yOrigin,
-      0, // colStart
-      this.table.rowHeaderLevelCount - 1, // colEnd
-      this.table.columnHeaderLevelCount, // rowStart
-      Math.min(this.firstScreenRowLimit, this.table.rowCount - 1), // rowEnd
-      'rowHeader', // isHeader
-      this.table
-    );
-
-    // create bodyGroup
-    createColGroup(
+      rightFrozenGroup,
+      bottomFrozenGroup,
       bodyGroup,
       xOrigin,
       yOrigin,
-      this.table.rowHeaderLevelCount, // colStart
-      Math.min(this.firstScreenColLimit, this.table.colCount - 1), // colEnd
-      this.table.columnHeaderLevelCount, // rowStart
-      Math.min(this.firstScreenRowLimit, this.table.rowCount - 1), // rowEnd
-      'body', // isHeader
-      this.table
+      this
     );
-
-    // update progress information
-    if (!bodyGroup.firstChild) {
-      // 无数据
-      this.currentRow = this.totalRow;
-      this.rowEnd = this.currentRow;
-      this.rowUpdatePos = this.rowEnd;
-      this.referenceRow = this.rowStart + Math.floor((this.rowEnd - this.rowStart) / 2);
-
-      this.currentCol = this.totalCol;
-      this.colEnd = this.currentCol;
-      this.colUpdatePos = this.colEnd;
-      this.referenceCol = this.colStart + Math.floor((this.colEnd - this.colStart) / 2);
-    } else {
-      this.currentRow = (bodyGroup.firstChild as Group)?.rowNumber ?? this.totalRow;
-      this.rowEnd = this.currentRow;
-      this.rowUpdatePos = this.rowEnd;
-      this.referenceRow = this.rowStart + Math.floor((this.rowEnd - this.rowStart) / 2);
-
-      this.currentCol = (bodyGroup.lastChild as Group)?.col ?? this.totalCol;
-      this.colEnd = this.currentCol;
-      this.colUpdatePos = this.colEnd;
-      this.referenceCol = this.colStart + Math.floor((this.colEnd - this.colStart) / 2);
-
-      // 开始异步任务
-      await this.progress();
-    }
   }
 
   async createColGroupForFirstScreen(
@@ -344,11 +259,55 @@ export class SceneProxy {
     // compute rows height
     computeRowsHeight(this.table, this.currentRow + 1, endRow);
 
-    // create row cellGroup
+    if (this.table.rowHeaderLevelCount) {
+      // create row header row cellGroup
+      let maxHeight = 0;
+      for (let col = 0; col < this.table.rowHeaderLevelCount; col++) {
+        const colGroup = this.table.scenegraph.getColGroup(col);
+        const cellType = 'rowHeader';
+        const { height } = createComplexColumn(
+          colGroup,
+          col,
+          colGroup.attribute.width,
+          this.currentRow + 1,
+          endRow,
+          this.table.scenegraph.mergeMap,
+          this.table.internalProps.defaultRowHeight,
+          this.table,
+          cellType
+        );
+        maxHeight = Math.max(maxHeight, height);
+        this.table.scenegraph.rowHeaderGroup.setAttribute('height', maxHeight);
+      }
+    }
+
+    if (this.table.rightFrozenColCount) {
+      // create row header row cellGroup
+      let maxHeight = 0;
+      for (let col = this.table.colCount - this.table.rightFrozenColCount; col < this.table.colCount; col++) {
+        const colGroup = this.table.scenegraph.getColGroup(col);
+        const cellType = 'rowHeader';
+        const { height } = createComplexColumn(
+          colGroup,
+          col,
+          colGroup.attribute.width,
+          this.currentRow + 1,
+          endRow,
+          this.table.scenegraph.mergeMap,
+          this.table.internalProps.defaultRowHeight,
+          this.table,
+          cellType
+        );
+        maxHeight = Math.max(maxHeight, height);
+        this.table.scenegraph.rightFrozenGroup.setAttribute('height', maxHeight);
+      }
+    }
+
+    // create body row cellGroup
     let maxHeight = 0;
     for (let col = this.bodyLeftCol; col <= this.bodyRightCol; col++) {
       const colGroup = this.table.scenegraph.getColGroup(col);
-      const cellType = col < this.table.rowHeaderLevelCount ? 'rowHeader' : 'body';
+      const cellType = 'body';
       const { height } = createComplexColumn(
         colGroup,
         col,
@@ -455,7 +414,7 @@ export class SceneProxy {
   updateCellGroups(count: number) {
     const distRow = Math.min(this.bodyBottomRow, this.rowUpdatePos + count);
     // console.log('updateCellGroups', this.rowUpdatePos, distRow);
-    if (this.table.internalProps.autoRowHeight) {
+    if (this.table.heightMode === 'autoHeight') {
       computeRowsHeight(this.table, this.rowUpdatePos, distRow);
     }
     for (let col = this.bodyLeftCol; col <= this.bodyRightCol; col++) {
@@ -466,7 +425,7 @@ export class SceneProxy {
       }
     }
 
-    if (this.table.internalProps.autoRowHeight) {
+    if (this.table.heightMode === 'autoHeight') {
       updateAutoRow(
         this.bodyLeftCol, // colStart
         this.bodyRightCol, // colEnd
@@ -553,7 +512,7 @@ export class SceneProxy {
     // 更新同步范围
     let syncTopRow;
     let syncBottomRow;
-    if (this.table.internalProps.autoRowHeight) {
+    if (this.table.heightMode === 'autoHeight') {
       syncTopRow = this.rowStart;
       syncBottomRow = this.rowEnd;
     } else {
@@ -561,7 +520,7 @@ export class SceneProxy {
       syncBottomRow = Math.min(this.bodyBottomRow, this.screenTopRow + this.screenRowCount * 3);
     }
     console.log('sort更新同步范围', syncTopRow, syncBottomRow);
-    if (this.table.internalProps.autoRowHeight) {
+    if (this.table.heightMode === 'autoHeight') {
       computeRowsHeight(this.table, syncTopRow, syncBottomRow);
     }
     for (let col = this.bodyLeftCol; col <= this.bodyRightCol; col++) {
@@ -572,7 +531,7 @@ export class SceneProxy {
       }
     }
     console.log('updateAutoRow', this.rowEnd > this.bodyBottomRow - (this.rowEnd - this.rowStart + 1) ? 'down' : 'up');
-    if (this.table.internalProps.autoRowHeight) {
+    if (this.table.heightMode === 'autoHeight') {
       updateAutoRow(
         this.bodyLeftCol, // colStart
         this.bodyRightCol, // colEnd
@@ -598,7 +557,7 @@ export class SceneProxy {
       this.updateBody(0);
     }
 
-    if (!this.table.internalProps.autoRowHeight) {
+    if (this.table.heightMode !== 'autoHeight') {
       await this.progress();
     }
   }

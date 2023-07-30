@@ -49,16 +49,59 @@ export class DefaultCanvasChartRender implements IGraphicRender {
     if (!active && cacheCanvas) {
       context.drawImage(cacheCanvas, x, y, width, height);
     } else if (activeChartInstance) {
-      activeChartInstance.updateDataSync('data', data);
+      if (typeof dataId === 'string') {
+        activeChartInstance.updateDataSync(dataId, data ?? []);
+      } else {
+        // 如果是组合图有series系列 需要组个设置数据 这里的data包括的单元格完整数据 需要根据key过滤
+        for (const dataIdStr in dataId) {
+          const dataIdAndField = dataId[dataIdStr];
+          activeChartInstance.updateDataSync(
+            dataIdStr,
+            dataIdAndField
+              ? data.filter((item: any) => {
+                  return item.hasOwnProperty(dataIdAndField);
+                }) ?? []
+              : data ?? []
+          );
+        }
+      }
     } else {
       // console.log('viewBox', viewBox);
+      const { axes } = chart.attribute;
+      axes.forEach((axis: any, index: number) => {
+        if (axis.type === 'linear') {
+          const chartAxis = chartInstance._chart._components[index];
+          chartAxis._domain = {
+            min: axis.range?.min ?? 0,
+            max: axis.range?.max ?? 0
+          };
+        } else if (axis.type === 'band') {
+          const chartAxis = chartInstance._chart._components[index];
+          chartAxis._spec.domain = axis.domain.slice(0);
+          chartAxis.updateScaleDomain();
+        }
+      });
       chartInstance.updateViewBox({
         x1: viewBox.x1 - (chart.getRootNode() as any).table.scrollLeft,
         x2: viewBox.x2 - (chart.getRootNode() as any).table.scrollLeft,
         y1: viewBox.y1 - (chart.getRootNode() as any).table.scrollTop,
         y2: viewBox.y2 - (chart.getRootNode() as any).table.scrollTop
       });
-      chartInstance.updateDataSync(dataId, data);
+      if (typeof dataId === 'string') {
+        chartInstance.updateDataSync(dataId, data ?? []);
+      } else {
+        for (const dataIdStr in dataId) {
+          const dataIdAndField = dataId[dataIdStr];
+          chartInstance.updateDataSync(
+            dataIdStr,
+            dataIdAndField
+              ? data.filter((item: any) => {
+                  return item.hasOwnProperty(dataIdAndField);
+                }) ?? []
+              : data ?? []
+          );
+        }
+      }
       const sg = chartInstance.getStage();
       chart.cacheCanvas = sg.toCanvas(); // 截图空白问题 因为开启了动画 首屏截图是无数据的TODO
     }

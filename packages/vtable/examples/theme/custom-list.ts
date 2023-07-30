@@ -148,7 +148,7 @@ export function createTable() {
       highlightMode: 'cross',
       disableHeaderHover: true
     },
-    autoRowHeight: true,
+    heightMode: 'autoHeight',
     autoWrapText: true
   };
 

@@ -174,7 +174,7 @@ export function createTable() {
       }
     },
     widthMode: 'standard',
-    autoRowHeight: true,
+    heightMode: 'autoHeight',
     autoWrapText: true,
     transpose: true,
     defaultHeaderColWidth: [100, 150]

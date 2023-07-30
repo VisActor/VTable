@@ -72,7 +72,7 @@ export interface IBasicColumnBodyDefine {
   // columnType?: ColumnTypeOption | BaseColumn<T, any> | null;
 
   // /** 如果是绘制图表库组件的图表类型 需要将注入的组件名称 写到chartType */
-  // chartType?: string;
+  // chartModule?: string;
   // /** 如果是绘制图表库组件的图表类型 统一图表配置chartSpec */
   // chartSpec?: any | ((arg0: CellInfo) => any);
   // sparklineSpec?: SparklineSpec | ((arg0: CellInfo) => SparklineSpec);

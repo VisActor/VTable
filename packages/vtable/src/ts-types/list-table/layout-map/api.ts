@@ -87,6 +87,9 @@ export interface HeaderData extends WidthData {
    * 表头描述 鼠标hover会提示该信息
    */
   description?: string | ((args: CellInfo) => string);
+
+  // header内容为空
+  isEmpty?: boolean;
 }
 
 export interface WidthData {
@@ -112,7 +115,7 @@ export interface ColumnData extends WidthData {
 
   columnType: 'text' | 'link' | 'image' | 'video' | 'sparkline' | 'progressbar' | 'chart'; //BaseColumn<T, any>;
   /** 如果是绘制图表库组件的图表类型 需要将注入的组件名称 写到chartType */
-  chartType?: string;
+  chartModule?: string;
   /** 如果是绘制图表库组件的图表类型 统一图表配置chartSpec */
   chartSpec?: any | ((arg0: CellInfo) => any);
   chartInstance?: any;
@@ -139,7 +142,7 @@ export interface IndicatorData extends WidthData {
   // fieldKey: FieldKeyDef;
   fieldFormat?: FieldFormat;
   columnType: 'text' | 'link' | 'image' | 'video' | 'sparkline' | 'progressbar' | 'chart'; //BaseColumn<T, any>;
-  chartType?: string;
+  chartModule?: string;
   chartSpec?: any | ((arg0: CustomRenderFunctionArg) => any);
   chartInstance?: any;
   style?: ColumnStyleOption | null | undefined;
@@ -233,6 +236,8 @@ interface LayoutMapAPI {
   getHeaderCellAddressByField: (field: string) => CellAddress | undefined;
   getRecordIndexByRow: (col: number, row: number) => number;
   getRecordStartRowByRecordIndex: (index: number) => number;
+  /** 从定义中获取一列配置项width的定义值 */
+  getColumnWidthDefined: (col: number) => WidthData;
 }
 
 export type { LayoutMapAPI };
