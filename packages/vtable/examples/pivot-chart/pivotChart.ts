@@ -38,27 +38,41 @@ export function createTable() {
   ];
   const columnTree = [
     {
-      dimensionKey: '',
-      value: ''
+      dimensionKey: '230417171050031',
+      value: '中国',
+      children: [
+        {
+          dimensionKey: '230417171050028',
+          value: '办公用品'
+        },
+        {
+          dimensionKey: '230417171050028',
+          value: '家具'
+        },
+        {
+          dimensionKey: '230417171050028',
+          value: '技术'
+        }
+      ]
     }
   ];
   const columns: (VTable.IDimension | string)[] = [
-    // {
-    //   dimensionKey: '230417171050031',
-    //   dimensionTitle: '国家',
-    //   headerStyle: {
-    //     color: 'red',
-    //     textAlign: 'center'
-    //   }
-    // },
-    // {
-    //   dimensionKey: '230417171050028',
-    //   dimensionTitle: '类别',
-    //   headerStyle: {
-    //     color: 'red',
-    //     borderLineWidth: [0, 0, 1, 1]
-    //   }
-    // }
+    {
+      dimensionKey: '230417171050031',
+      dimensionTitle: '国家',
+      headerStyle: {
+        color: 'red',
+        textAlign: 'center'
+      }
+    },
+    {
+      dimensionKey: '230417171050028',
+      dimensionTitle: '类别',
+      headerStyle: {
+        color: 'red',
+        borderLineWidth: [0, 0, 1, 1]
+      }
+    }
     // '230417170554008'
   ];
   const rows = [
@@ -9267,6 +9281,13 @@ export function createTable() {
         borderLineWidth: [0, 0, 0, 1],
         hover: {
           cellBgColor: '#CCE0FF'
+        }
+      },
+      rowHeaderStyle: {
+        borderColor: 'gray',
+        borderLineWidth: [1, 0, 1, 0],
+        hover: {
+          cellBgColor: ''
         }
       },
       cornerHeaderStyle: {
