@@ -619,7 +619,7 @@ export class SceneProxy {
     // }
 
     if (
-      row >= this.table.columnHeaderLevelCount - 1 && // not column header
+      row >= this.table.columnHeaderLevelCount && // not column header
       row < this.table.rowCount - this.table.bottomFrozenRowCount && // not bottom frozen
       (row < this.rowStart || row > this.rowEnd) // not in proxy row range
     ) {
@@ -627,7 +627,7 @@ export class SceneProxy {
     }
 
     if (
-      col >= this.table.rowHeaderLevelCount - 1 && // not row header
+      col >= this.table.rowHeaderLevelCount && // not row header
       col < this.table.colCount - this.table.rightFrozenColCount && // not right frozen
       (col < this.colStart || col > this.colEnd) // not in proxy col range
     ) {
