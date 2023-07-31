@@ -264,10 +264,12 @@ export class PivotLayoutMap implements LayoutMapAPI {
           if (this._chartItemSpanSize > 0) {
             return true;
           }
+          return false;
         });
         if (this._chartItemSpanSize > 0) {
           return true;
         }
+        return false;
       });
 
       if (this.indicatorsAsCol) {
