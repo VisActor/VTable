@@ -1,4 +1,4 @@
-import { cloneDeep, merge } from '@visactor/vutils';
+import { cloneDeep, isArray, merge } from '@visactor/vutils';
 import type { PivotLayoutMap } from '../pivot-layout';
 import type { PivotChart } from '../../PivotChart';
 import type { ITableAxisOption } from '../../ts-types/component/axis';
@@ -38,6 +38,9 @@ export function getChartAxes(col: number, row: number, layout: PivotLayoutMap): 
     const indicatorKeys = layout.getIndicatorKeyInChartSpec(col, row);
     const colIndex = layout.getRecordIndexByCol(col);
     indicatorKeys.forEach((key, index) => {
+      if (isArray(key)) {
+        key = key[0];
+      }
       // const data = layout.dataset.collectedValues[key];
       const data = layout.dataset.collectedValues[key + '_align']
         ? layout.dataset.collectedValues[key + '_align']
@@ -60,7 +63,10 @@ export function getChartAxes(col: number, row: number, layout: PivotLayoutMap): 
       );
     });
 
-    const rowDimensionKey = layout.getDimensionKeyInChartSpec(layout.rowHeaderLevelCount, col)[0];
+    let rowDimensionKey = layout.getDimensionKeyInChartSpec(layout.rowHeaderLevelCount, col)[0];
+    if (isArray(rowDimensionKey)) {
+      rowDimensionKey = rowDimensionKey[0];
+    }
     const data =
       layout.dataset.cacheCollectedValues[rowDimensionKey] || layout.dataset.collectedValues[rowDimensionKey];
     const recordRow = layout.getRecordIndexByRow(row);
@@ -89,6 +95,9 @@ export function getChartAxes(col: number, row: number, layout: PivotLayoutMap): 
     const indicatorKeys = layout.getIndicatorKeyInChartSpec(col, row);
     const rowIndex = layout.getRecordIndexByRow(row);
     indicatorKeys.forEach((key, index) => {
+      if (isArray(key)) {
+        key = key[0];
+      }
       const data = layout.dataset.collectedValues[key + '_align']
         ? layout.dataset.collectedValues[key + '_align']
         : layout.dataset.collectedValues[key];
@@ -111,7 +120,10 @@ export function getChartAxes(col: number, row: number, layout: PivotLayoutMap): 
       );
     });
 
-    const columnDimensionKey = layout.getDimensionKeyInChartSpec(col, layout.columnHeaderLevelCount)[0];
+    let columnDimensionKey = layout.getDimensionKeyInChartSpec(col, layout.columnHeaderLevelCount)[0];
+    if (isArray(columnDimensionKey)) {
+      columnDimensionKey = columnDimensionKey[0];
+    }
     const data =
       layout.dataset.cacheCollectedValues[columnDimensionKey] || layout.dataset.collectedValues[columnDimensionKey];
     const recordCol = layout.getRecordIndexByCol(col);
