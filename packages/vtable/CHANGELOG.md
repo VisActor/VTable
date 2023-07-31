@@ -1,6 +1,15 @@
 # Change Log - @visactor/vtable
 
-This log was last generated on Wed, 05 Jul 2023 06:55:19 GMT and should not be manually modified.
+This log was last generated on Wed, 26 Jul 2023 03:47:00 GMT and should not be manually modified.
+
+## 0.9.2
+Wed, 26 Jul 2023 03:47:00 GMT
+
+### Patches
+
+- refactor: chart type handle with transpose or indicator in row
+
+
 
 ## 0.9.1
 Wed, 05 Jul 2023 06:55:19 GMT

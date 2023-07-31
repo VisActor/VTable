@@ -58,7 +58,7 @@ export class DefaultCanvasChartRender implements IGraphicRender {
           activeChartInstance.updateDataSync(
             dataIdStr,
             dataIdAndField
-              ? data.filter((item: any) => {
+              ? data?.filter((item: any) => {
                   return item.hasOwnProperty(dataIdAndField);
                 }) ?? []
               : data ?? []
@@ -95,7 +95,7 @@ export class DefaultCanvasChartRender implements IGraphicRender {
           chartInstance.updateDataSync(
             dataIdStr,
             dataIdAndField
-              ? data.filter((item: any) => {
+              ? data?.filter((item: any) => {
                   return item.hasOwnProperty(dataIdAndField);
                 }) ?? []
               : data ?? []

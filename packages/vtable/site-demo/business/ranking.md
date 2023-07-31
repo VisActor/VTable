@@ -1,12 +1,12 @@
 ---
 category: examples
 group: Business
-title: 2018年QS中国大学数学专业排名Mathematics
+title: 2018年QSChina大学数学专业排名Mathematics
 cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/ranking.png
 order: 9-3
 ---
 
-# 2018年QS中国大学数学专业排名Mathematics
+# 2018年QSChina大学数学专业排名Mathematics
 
 在这个例子中，通过配置headerStyle和style分别配置了表头和body的样式。透视表列维度Category相同的全部置为相同背景色，指标中的Quantity，Sales和Profit分别设置不同的字体颜色。数据来源：https://www.university-list.net/zhongguo/paiming/dx-100034.html
 
@@ -22,107 +22,107 @@ order: 9-3
 
 const records =[
   {
-    "世界排名": "20",
-    "大学": "Peking University 北京大学",
-    "国家/地区": "中国",
-    "综合评分": "85.3",
-    "学术声誉": "84.1",
-    "雇主评价": "90",
-    "论文平均引用率": "84.6",
-    "H指数": "83.5",
-     "排名提升": 1
+    "WordRanking": "20",
+    "University": "Peking University",
+    "Country / Region":"China",
+    "Overall Rating":  "85.3",
+    "Academic Reputation": "84.1",
+    "Employer evaluation": "90",
+    "Average Citation Rate of Papers": "84.6",
+    "H-index": "83.5",
+     "Rank up": 1
 }, {
-    "世界排名": "26",
-    "大学": "Tsinghua University 清华大学",
-    "国家/地区": "中国",
-    "综合评分": "83.8",
-    "学术声誉": "80.8",
-    "雇主评价": "89.3",
-    "论文平均引用率": "79.6",
-    "H指数": "88.3",
-     "排名提升": 2
+    "WordRanking": "26",
+    "University": "Tsinghua University",
+    "Country / Region":"China",
+    "Overall Rating":  "83.8",
+    "Academic Reputation": "80.8",
+    "Employer evaluation": "89.3",
+    "Average Citation Rate of Papers": "79.6",
+    "H-index": "88.3",
+     "Rank up": 2
 }, {
-    "世界排名": "51-100",
-    "大学": "Zhejiang University 浙江大学",
-    "国家/地区": "中国",
-    "综合评分": "",
-    "学术声誉": "63.7",
-    "雇主评价": "75.4",
-    "论文平均引用率": "81.2",
-    "H指数": "85.4",
-     "排名提升": 1
+    "WordRanking": "51-100",
+    "University": "Zhejiang University",
+    "Country / Region":"China",
+    "Overall Rating":  "",
+    "Academic Reputation": "63.7",
+    "Employer evaluation": "75.4",
+    "Average Citation Rate of Papers": "81.2",
+    "H-index": "85.4",
+     "Rank up": 1
 }, {
-    "世界排名": "51-100",
-    "大学": "Fudan University 复旦大学",
-    "国家/地区": "中国",
-    "综合评分": "",
-    "学术声誉": "73.3",
-    "雇主评价": "78.4",
-    "论文平均引用率": "84.2",
-    "H指数": "78.6",
-     "排名提升": -1
+    "WordRanking": "51-100",
+    "University": "Fudan University",
+    "Country / Region":"China",
+    "Overall Rating":  "",
+    "Academic Reputation": "73.3",
+    "Employer evaluation": "78.4",
+    "Average Citation Rate of Papers": "84.2",
+    "H-index": "78.6",
+     "Rank up": -1
 }, {
-    "世界排名": "51-100",
-    "大学": "Shanghai Jiao Tong University 上海交通大学",
-    "国家/地区": "中国",
-    "综合评分": "",
-    "学术声誉": "68",
-    "雇主评价": "80.6",
-    "论文平均引用率": "84.1",
-    "H指数": "87.2",
-     "排名提升": 3
+    "W o r d R an king": "51-100",
+    "University": "Shanghai Jiao Tong University",
+    "Country / Region":"China",
+    "Overall Rating":  "",
+    "Academic Reputation": "68",
+    "Employer evaluation": "80.6",
+    "Average Citation Rate of Papers": "84.1",
+    "H-index": "87.2",
+     "Rank up": 3
 }, {
-    "世界排名": "101-150",
-    "大学": "University of Science and Technology of China 中国科学技术大学",
-    "国家/地区": "中国",
-    "综合评分": "",
-    "学术声誉": "64",
-    "雇主评价": "67.9",
-    "论文平均引用率": "80.8",
-    "H指数": "79.4",
-     "排名提升": 2
+    "WordRanking": "101-150",
+    "University": "University of Science and Technology of China",
+    "Country / Region":"China",
+    "Overall Rating":  "",
+    "Academic Reputation": "64",
+    "Employer evaluation": "67.9",
+    "Average Citation Rate of Papers": "80.8",
+    "H-index": "79.4",
+     "Rank up": 2
 }, {
-    "世界排名": "151-200",
-    "大学": "Sun Yat-sen University 中山大学",
-    "国家/地区": "中国",
-    "综合评分": "",
-    "学术声誉": "55.1",
-    "雇主评价": "69.2",
-    "论文平均引用率": "82.7",
-    "H指数": "74.7",
-     "排名提升": -1
+    "WordRanking": "151-200",
+    "University": "Sun Yat-sen University",
+    "Country / Region":"China",
+    "Overall Rating":  "",
+    "Academic Reputation": "55.1",
+    "Employer evaluation": "69.2",
+    "Average Citation Rate of Papers": "82.7",
+    "H-index": "74.7",
+     "Rank up": -1
 }, {
-    "世界排名": "151-200",
-    "大学": "Nanjing University 南京大学",
-    "国家/地区": "中国",
-    "综合评分": "",
-    "学术声誉": "55.4",
-    "雇主评价": "73.9",
-    "论文平均引用率": "83.4",
-    "H指数": "77.1",
-    "排名提升": -1
+    "WordRanking": "151-200",
+    "University": "Nanjing University",
+    "Country / Region":"China",
+    "Overall Rating":  "",
+    "Academic Reputation": "55.4",
+    "Employer evaluation": "73.9",
+    "Average Citation Rate of Papers": "83.4",
+    "H-index": "77.1",
+    "Rank up": -1
   }
 ];
 
 const columns =[
     {
-        "field": "世界排名",
-        "caption": "世界排名",
+        "field": "WordRanking",
+        "caption": "WordRanking",
         "width": "auto"
     },
     {
-        "field": "大学",
-        "caption": "大学",
+        "field": "University",
+        "caption": "University",
         "width": "auto"
     },
     {
-        "field": "国家/地区",
-        "caption": "国家/地区",
+        "field": "Country / Region",
+        "caption": "Country / Region",
         "width": "auto"
     },
     {
-        "field": "综合评分",
-        "caption": "综合评分",
+        "field": "Overall Rating",
+        "caption": "Overall Rating",
         "width": "auto",
         columnType: 'progressbar',
         style:{
@@ -132,8 +132,8 @@ const columns =[
         }
     },
     {
-        "field": "学术声誉",
-        "caption": "学术声誉",
+        "field": "Academic Reputation",
+        "caption": "Academic Reputation",
         "width": "auto",
         columnType: 'progressbar',
         style:{
@@ -143,8 +143,8 @@ const columns =[
         }
     },
     {
-        "field": "论文平均引用率",
-        "caption": "论文平均引用率",
+        "field": "Average Citation Rate of Papers",
+        "caption": "Average Citation Rate of Papers",
         "width": "auto",
         columnType: 'progressbar',
         style:{
@@ -154,8 +154,8 @@ const columns =[
         }
     },
     {
-        "field": "H指数",
-        "caption": "H指数",
+        "field": "H-index",
+        "caption": "H-index",
         "width": "auto",
         columnType: 'progressbar', 
         style:{
@@ -165,8 +165,8 @@ const columns =[
         }
     },
     {
-        "field": "排名提升",
-        "caption": "排名提升【非真实】",
+        "field": "Rank up",
+        "caption": "Rank up【unreal】",
         "width": "auto",
         columnType: 'progressbar',
         barType:'negative',

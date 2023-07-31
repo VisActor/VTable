@@ -310,7 +310,7 @@ function updateCellWidth(
     // const rect = cell.firstChild as Rect;
     // rect.setAttribute('width', cell.attribute.width);
     updateImageCellContentWhileResize(cellGroup, col, row, scene.table);
-  } else if (cellGroup.firstChild.name === 'axis') {
+  } else if (cellGroup.firstChild?.name === 'axis') {
     // recreate axis component
     const axisConfig = scene.table.internalProps.layoutMap.getAxisConfigInPivotChart(col, row);
     if (axisConfig) {

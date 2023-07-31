@@ -18,56 +18,56 @@ link: '/guide/basic_function/row_height_column_width'
 ## 代码演示
 
 ```javascript livedemo template=vtable
-  fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American_Superstore_list100.json')
+  fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American_Superstore_data.json')
     .then((res) => res.json())
     .then((data) => {
 
 const columns =[
     {
-        "field": "230517143221027",
+        "field": "Order ID",
         "caption": "Order ID",
         "width": 100
     },
     {
-        "field": "230517143221030",
+        "field": "Customer ID",
         "caption": "Customer ID",
     },
     {
-        "field": "230517143221032",
+        "field": "Product Name",
         "caption": "Product Name",
     },
     {
-        "field": "230517143221023",
+        "field": "Category",
         "caption": "Category",
     },
     {
-        "field": "230517143221034",
+        "field": "Sub-Category",
         "caption": "Sub-Category",
     },
     {
-        "field": "230517143221037",
+        "field": "Region",
         "caption": "Region",
     },
     {
-        "field": "230517143221024",
+        "field": "City",
         "caption": "City",
     },
     {
-        "field": "230517143221029",
+        "field": "Order Date",
         "caption": "Order Date",
     },
     {
-        "field": "230517143221042",
+        "field": "Quantity",
         "caption": "Quantity",
         "width": "auto"
     },
     {
-        "field": "230517143221040",
+        "field": "Sales",
         "caption": "Sales",
         "width": "auto"
     },
     {
-        "field": "230517143221041",
+        "field": "Profit",
         "caption": "Profit",
         "width": "auto"
     }

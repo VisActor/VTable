@@ -71,31 +71,33 @@ export function createCellContent(
   let absoluteRightIconWidth = 0;
 
   if (!Array.isArray(icons) || icons.length === 0) {
-    // 没有icon，cellGroup只添加WrapText
-    const text = convertInternal(textStr).replace(/\r?\n/g, '\n').replace(/\r/g, '\n').split('\n');
+    if (textStr) {
+      // 没有icon，cellGroup只添加WrapText
+      const text = convertInternal(textStr).replace(/\r?\n/g, '\n').replace(/\r/g, '\n').split('\n');
 
-    const hierarchyOffset = getHierarchyOffset(cellGroup.col, cellGroup.row, table);
+      const hierarchyOffset = getHierarchyOffset(cellGroup.col, cellGroup.row, table);
 
-    const attribute = {
-      text: text.length === 1 && !autoWrapText ? text[0] : text, // 单行(no-autoWrapText)为字符串，多行(autoWrapText)为字符串数组
-      maxLineWidth: autoColWidth ? Infinity : cellWidth - (padding[1] + padding[3] + hierarchyOffset),
-      // fill: true,
-      // textAlign: 'left',
-      textBaseline: 'top',
-      autoWrapText,
-      lineClamp,
-      // widthLimit: autoColWidth ? -1 : colWidth - (padding[1] + padding[3]),
-      heightLimit: autoRowHeight ? -1 : cellHeight - (padding[0] + padding[2]),
-      pickable: false,
-      dx: hierarchyOffset
-    };
-    const wrapText = new WrapText(cellTheme.text ? (Object.assign({}, cellTheme.text, attribute) as any) : attribute);
-    wrapText.name = 'text';
+      const attribute = {
+        text: text.length === 1 && !autoWrapText ? text[0] : text, // 单行(no-autoWrapText)为字符串，多行(autoWrapText)为字符串数组
+        maxLineWidth: autoColWidth ? Infinity : cellWidth - (padding[1] + padding[3] + hierarchyOffset),
+        // fill: true,
+        // textAlign: 'left',
+        textBaseline: 'top',
+        autoWrapText,
+        lineClamp,
+        // widthLimit: autoColWidth ? -1 : colWidth - (padding[1] + padding[3]),
+        heightLimit: autoRowHeight ? -1 : cellHeight - (padding[0] + padding[2]),
+        pickable: false,
+        dx: hierarchyOffset
+      };
+      const wrapText = new WrapText(cellTheme.text ? (Object.assign({}, cellTheme.text, attribute) as any) : attribute);
+      wrapText.name = 'text';
 
-    cellGroup.appendChild(wrapText);
+      cellGroup.appendChild(wrapText);
 
-    contentWidth = wrapText.AABBBounds.width();
-    contentHeight = wrapText.AABBBounds.height();
+      contentWidth = wrapText.AABBBounds.width();
+      contentHeight = wrapText.AABBBounds.height();
+    }
   } else {
     // icon分类
     icons.forEach(icon => {

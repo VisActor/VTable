@@ -147,7 +147,8 @@ function adjustElementToGroup(
         const text = new WrapText(
           Object.assign(
             {
-              pickable: !!element.clickable
+              pickable: !!element.clickable,
+              fill: element.color ?? element.fill
             },
             element as any
           )

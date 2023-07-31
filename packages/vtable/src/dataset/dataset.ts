@@ -154,8 +154,10 @@ export class Dataset {
       const t0 = typeof window !== 'undefined' ? window.performance.now() : 0;
       this.setRecords(records);
 
-      //processRecord中按照collectValuesBy 收集了维度值。现在需要对有聚合需求的 处理收集维度值范围
+      //processRecord中按照collectValuesBy 收集了维度值。现在需要对有聚合需求的sumby 处理收集维度值范围
       this.processCollectedValuesWithSumBy();
+      //processRecord中按照collectValuesBy 收集了维度值。现在需要对有排序需求的处理sortby
+      this.processCollectedValuesWithSortBy();
       const t1 = typeof window !== 'undefined' ? window.performance.now() : 0;
       console.log('processRecords:', t1 - t0);
 
@@ -259,6 +261,18 @@ export class Dataset {
       }
     }
   }
+  /**processRecord中按照collectValuesBy 收集了维度值。现在需要对有排序需求的处理 */
+  processCollectedValuesWithSortBy() {
+    for (const field in this.collectedValues) {
+      if (this.collectValuesBy[field]?.sortBy) {
+        for (const byKeys in this.collectedValues[field]) {
+          this.collectedValues[field][byKeys] = (this.collectedValues[field][byKeys] as Array<string>).sort(
+            (a, b) => this.collectValuesBy[field]?.sortBy.indexOf(a) - this.collectValuesBy[field]?.sortBy.indexOf(b)
+          );
+        }
+      }
+    }
+  }
   /**
    * 处理数据,遍历所有条目，过滤和派生字段的处理有待优化TODO
    */
@@ -331,7 +345,7 @@ export class Dataset {
               max: Number.MIN_SAFE_INTEGER
             };
           } else {
-            this.collectedValues[field][collectKeys] = new Set();
+            this.collectedValues[field][collectKeys] = [];
           }
         }
 
@@ -349,8 +363,10 @@ export class Dataset {
           fieldRange.max = Math.max(record[field], fieldRange.max);
           fieldRange.min = Math.min(record[field], fieldRange.min);
         } else {
-          const fieldRange = this.collectedValues[field][collectKeys] as Set<string>;
-          fieldRange.add(record[field]);
+          const fieldRange = this.collectedValues[field][collectKeys] as Array<string>;
+          if (fieldRange.indexOf(record[field]) === -1) {
+            fieldRange.push(record[field]);
+          }
         }
       }
     }

@@ -21,7 +21,7 @@ order: 9-5
 ```javascript livedemo template=vtable
   VTable.register.chartModule('vchart', VChart);
   const temperatureList = {
-    东北: {
+    "North East": {
       year: {
         '2013': 4.7,
         '2014': 5.5,
@@ -75,7 +75,7 @@ order: 9-5
         '23': -20.2
       }
     },
-    华北: {
+    "North China": {
       year: {
         '2013': 12.6,
         '2014': 13.2,
@@ -130,7 +130,7 @@ order: 9-5
       }
     },
 
-    华东: {
+    "East China": {
       year: {
         '2013': 16.4,
         '2014': 16.9,
@@ -184,7 +184,7 @@ order: 9-5
         '23': 2.2
       }
     },
-    华南: {
+    "South China": {
       year: {
         '2013': 22.9,
         '2014': 22.8,
@@ -238,7 +238,7 @@ order: 9-5
         '23': 12.4
       }
     },
-    中南: {
+    "Central South": {
       year: {
         '2013': 18.9,
         '2014': 19.0,
@@ -292,7 +292,7 @@ order: 9-5
         '23': 11.9
       }
     },
-    西南: {
+    "South West": {
       year: {
         '2013': 16.1,
         '2014': 16.3,
@@ -346,7 +346,7 @@ order: 9-5
         '23': 11.9
       }
     },
-    西北: {
+    "North West": {
       year: {
         '2013': 10.5,
         '2014': 10.3,
@@ -404,31 +404,31 @@ order: 9-5
   const rowTree = [
     {
       dimensionKey: 'region',
-      value: '东北'
+      value: 'North East'
     },
     {
       dimensionKey: 'region',
-      value: '华北'
+      value: 'North China'
     },
     {
       dimensionKey: 'region',
-      value: '华东'
+      value: 'East China'
     },
     {
       dimensionKey: 'region',
-      value: '华南'
+      value: 'South China'
     },
     {
       dimensionKey: 'region',
-      value: '中南'
+      value: 'Central South'
     },
     {
       dimensionKey: 'region',
-      value: '西南'
+      value: 'South West'
     },
     {
       dimensionKey: 'region',
-      value: '西北'
+      value: 'North West'
     }
   ];
 
@@ -625,46 +625,46 @@ order: 9-5
     ],
     columnTree: [
       {
-        value: '日气温走势',
+        value: 'Daily Temperature Trend',
         indicatorKey: 'dayTrendChart'
       },
       {
-        value: '月气温走势',
+        value: 'Monthly Temperature Trend',
         indicatorKey: 'monthTrendChart'
       },
       {
-        value: '年气温走势',
+        value: 'Annual Temperature Trend',
         indicatorKey: 'yearTrendChart'
       }
     ],
     rowTree: [
       {
         dimensionKey: 'region',
-        value: '东北'
+        value: 'North East'
       },
       {
         dimensionKey: 'region',
-        value: '华北'
+        value: 'North China'
       },
       {
         dimensionKey: 'region',
-        value: '华东'
+        value: 'East China'
       },
       {
         dimensionKey: 'region',
-        value: '华南'
+        value: 'South China'
       },
       {
         dimensionKey: 'region',
-        value: '中南'
+        value: 'Central South'
       },
       {
         dimensionKey: 'region',
-        value: '西南'
+        value: 'South West'
       },
       {
         dimensionKey: 'region',
-        value: '西北'
+        value: 'North West'
       }
     ],
     corner: {
