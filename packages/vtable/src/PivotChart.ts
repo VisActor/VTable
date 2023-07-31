@@ -587,7 +587,7 @@ export class PivotChart extends BaseTable implements PivotTableAPI {
    * @param rowKeys
    * @returns
    */
-  private _generateCollectValuesConfig(columnKeys: string[], rowKeys: string[]) {
+  private _generateCollectValuesConfig(columnKeys: string[], rowKeys: string[]): Record<string, CollectValueBy> {
     const option = this.options;
     const collectValuesBy: Record<string, CollectValueBy> = {};
 
@@ -610,14 +610,24 @@ export class PivotChart extends BaseTable implements PivotTableAPI {
               collectValuesBy[xField] = {
                 by: columnKeys,
                 type: chartSeries.direction !== 'horizontal' ? 'xField' : undefined,
-                range: chartSeries.direction === 'horizontal'
+                range: chartSeries.direction === 'horizontal',
+                sortBy:
+                  chartSeries.direction !== 'horizontal'
+                    ? chartSeries?.data?.fields?.[xField]?.domain ??
+                      (indicatorDefine as IChartColumnIndicator).chartSpec?.data?.fields?.[xField]?.domain
+                    : undefined
               };
 
               const yField = chartSeries.yField;
               collectValuesBy[yField] = {
                 by: rowKeys,
                 range: chartSeries.direction !== 'horizontal', // direction默认为'vertical'
-                sumBy: chartSeries.stack !== false && columnKeys.concat(xField) // 逻辑严谨的话 这个concat的值也需要结合 chartSeries.direction来判断是xField还是yField
+                sumBy: chartSeries.stack !== false && columnKeys.concat(xField), // 逻辑严谨的话 这个concat的值也需要结合 chartSeries.direction来判断是xField还是yField
+                sortBy:
+                  chartSeries.direction === 'horizontal'
+                    ? chartSeries?.data?.fields?.[yField]?.domain ??
+                      (indicatorDefine as IChartColumnIndicator).chartSpec?.data?.fields?.[yField]?.domain
+                    : undefined
               };
             });
           } else {
@@ -629,14 +639,22 @@ export class PivotChart extends BaseTable implements PivotTableAPI {
               by: columnKeys,
               type:
                 (indicatorDefine as IChartColumnIndicator).chartSpec.direction !== 'horizontal' ? 'xField' : undefined,
-              range: (indicatorDefine as IChartColumnIndicator).chartSpec.direction === 'horizontal'
+              range: (indicatorDefine as IChartColumnIndicator).chartSpec.direction === 'horizontal',
+              sortBy:
+                (indicatorDefine as IChartColumnIndicator).chartSpec.direction !== 'horizontal'
+                  ? (indicatorDefine as IChartColumnIndicator).chartSpec?.data?.fields?.[xField]?.domain
+                  : undefined
             };
             //下面这个收集的值 应该是和收集的 collectValuesBy[indicatorDefine.indicatorKey] 相同
             const yField = (indicatorDefine as IChartColumnIndicator).chartSpec.yField;
             collectValuesBy[yField] = {
               by: rowKeys,
               range: (option.indicators[i] as IChartColumnIndicator).chartSpec.direction !== 'horizontal', // direction默认为'vertical'
-              sumBy: (indicatorDefine as IChartColumnIndicator).chartSpec.stack !== false && columnKeys.concat(xField) // 逻辑严谨的话 这个concat的值也需要结合 chartSeries.direction来判断是xField还是yField
+              sumBy: (indicatorDefine as IChartColumnIndicator).chartSpec.stack !== false && columnKeys.concat(xField), // 逻辑严谨的话 这个concat的值也需要结合 chartSeries.direction来判断是xField还是yField
+              sortBy:
+                (indicatorDefine as IChartColumnIndicator).chartSpec.direction === 'horizontal'
+                  ? (indicatorDefine as IChartColumnIndicator).chartSpec?.data?.fields?.[yField]?.domain
+                  : undefined
             };
           }
         } else {
@@ -656,14 +674,24 @@ export class PivotChart extends BaseTable implements PivotTableAPI {
               collectValuesBy[yField] = {
                 by: rowKeys,
                 type: chartSeries.direction === 'horizontal' ? 'yField' : undefined,
-                range: chartSeries.direction !== 'horizontal'
+                range: chartSeries.direction !== 'horizontal',
+                sortBy:
+                  chartSeries.direction === 'horizontal'
+                    ? chartSeries?.data?.fields?.[yField]?.domain ??
+                      (indicatorDefine as IChartColumnIndicator).chartSpec?.data?.fields?.[yField]?.domain
+                    : undefined
               };
 
               const xField = chartSeries.xField;
               collectValuesBy[xField] = {
                 by: columnKeys,
                 range: chartSeries.direction === 'horizontal', // direction默认为'vertical'
-                sumBy: chartSeries.stack !== false && rowKeys.concat(yField)
+                sumBy: chartSeries.stack !== false && rowKeys.concat(yField),
+                sortBy:
+                  chartSeries.direction !== 'horizontal'
+                    ? chartSeries?.data?.fields?.[xField]?.domain ??
+                      (indicatorDefine as IChartColumnIndicator).chartSpec?.data?.fields?.[xField]?.domain
+                    : undefined
               };
             });
           } else {
@@ -675,14 +703,22 @@ export class PivotChart extends BaseTable implements PivotTableAPI {
               by: rowKeys,
               type:
                 (indicatorDefine as IChartColumnIndicator).chartSpec.direction === 'horizontal' ? 'yField' : undefined,
-              range: (indicatorDefine as IChartColumnIndicator).chartSpec.direction !== 'horizontal'
+              range: (indicatorDefine as IChartColumnIndicator).chartSpec.direction !== 'horizontal',
+              sortBy:
+                (indicatorDefine as IChartColumnIndicator).chartSpec.direction === 'horizontal'
+                  ? (indicatorDefine as IChartColumnIndicator).chartSpec?.data?.fields?.[yField]?.domain
+                  : undefined
             };
             //下面这个收集的值 应该是和收集的 collectValuesBy[indicatorDefine.indicatorKey] 相同
             const xField = (indicatorDefine as IChartColumnIndicator).chartSpec.xField;
             collectValuesBy[xField] = {
               by: columnKeys,
               range: (option.indicators[i] as IChartColumnIndicator).chartSpec.direction === 'horizontal', // direction默认为'vertical'
-              sumBy: (indicatorDefine as IChartColumnIndicator).chartSpec.stack !== false && rowKeys.concat(yField)
+              sumBy: (indicatorDefine as IChartColumnIndicator).chartSpec.stack !== false && rowKeys.concat(yField),
+              sortBy:
+                (indicatorDefine as IChartColumnIndicator).chartSpec.direction !== 'horizontal'
+                  ? (indicatorDefine as IChartColumnIndicator).chartSpec?.data?.fields?.[xField]?.domain
+                  : undefined
             };
           }
         }

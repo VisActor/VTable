@@ -284,7 +284,7 @@ export function naturalSort(as: any, bs: any) {
   }
   return a.length - b.length;
 }
-export function sortBy(order: SortOrder[]) {
+export function sortBy(order: string[]) {
   let x;
   let i;
   const mapping = {};

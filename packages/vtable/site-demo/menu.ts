@@ -30,6 +30,10 @@ export const menus = [
       {
         path: 'table-type',
         name: 'transpose-table'
+      },
+      {
+        path: 'table-type',
+        name: 'pivot-chart'
       }
     ]
   },

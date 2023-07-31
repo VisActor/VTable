@@ -78,7 +78,7 @@ export interface SortByRule {
   /**排序维度 */
   sortField: string;
   /**根据指定具体顺序排序 */
-  sortBy?: SortOrder[];
+  sortBy?: string[];
 }
 //3. 按指标值排序
 export interface SortByIndicatorRule {
@@ -179,7 +179,7 @@ export interface IDataConfig {
 
 /** 在处理数据的过程中 去额外收集某个维度的维度值范围 可为离散值或者连续值范围 */
 export type CollectValueBy = {
-  // field: string;
+  /** 要收集的字段按什么进行分组 */
   by: string[];
   /** 是否计算一个range范围 true的话对应的收集数据的结果为{max:number,min:number} */
   range?: boolean;
@@ -187,5 +187,7 @@ export type CollectValueBy = {
   sumBy?: string[];
   /** 帮助计算列宽使用 如果是chart图表 收集的是xFiled的维度值 可以根据维度值的个数乘于图元宽度计算一个最优列宽*/
   type?: 'xField' | 'yField' | undefined;
+  /** 如果是收集的离散值，离散值的排序依据 */
+  sortBy?: string[];
 };
-export type CollectedValue = { max?: number; min?: number } | Set<string>;
+export type CollectedValue = { max?: number; min?: number } | Array<string>;

@@ -470,7 +470,7 @@ export class PivotLayoutMap implements LayoutMapAPI {
     } else if (this.cornerSetting.titleOnDimension === 'row') {
       cornerAttrs = this.rowShowAttrs;
     }
-    cornerAttrs.forEach(cornerAttrStr => {
+    cornerAttrs?.forEach(cornerAttrStr => {
       if (!this._headerObjectMap[cornerAttrStr]) {
         const dimensionInfo = this.getDimensionInfo(cornerAttrStr);
         this._headerObjectMap[cornerAttrStr] = {
@@ -1416,7 +1416,7 @@ export class PivotLayoutMap implements LayoutMapAPI {
         break;
       }
     }
-    return (collectedValues?.size ?? 0) * 50;
+    return (collectedValues?.length ?? 0) * 50;
   }
   /**
    *  获取图表对应的指标值

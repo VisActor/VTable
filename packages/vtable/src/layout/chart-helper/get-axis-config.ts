@@ -105,7 +105,7 @@ export function getAxisConfigInPivotChart(col: number, row: number, layout: Pivo
 
       const recordRow = layout.getRecordIndexByRow(row);
       const rowPath = layout.getRowKeysPath()[recordRow];
-      const domain = data[rowPath[rowPath.length - 1]] as Set<string>;
+      const domain = data[rowPath[rowPath.length - 1]] as Array<string>;
 
       const axisOption = ((layout._table as PivotChart).pivotChartAxes as ITableAxisOption[]).find(axisOption => {
         return axisOption.orient === 'left';
@@ -220,7 +220,7 @@ export function getAxisConfigInPivotChart(col: number, row: number, layout: Pivo
 
       const recordCol = layout.getRecordIndexByCol(col);
       const colPath = layout.getColKeysPath()[recordCol];
-      const domain = data[colPath[colPath.length - 1]] as Set<string>;
+      const domain = data[colPath[colPath.length - 1]] as Array<string>;
 
       const axisOption = ((layout._table as PivotChart).pivotChartAxes as ITableAxisOption[]).find(axisOption => {
         return axisOption.orient === 'bottom';

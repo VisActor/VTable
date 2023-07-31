@@ -27,12 +27,12 @@ link: '/guide/custom_define/custom_render'
         caption:'',
         width:170,
         headerStyle:{
-          bgColor:'#4991e3'
+          bgColor:'#a23be1'
         },
         style:{
           fontFamily:'Arial',
           fontWeight:600,
-          bgColor:'#4991e3',
+          bgColor:'#a23be1',
           fontSize:26,
           padding:20,
           lineHeight:32,
@@ -47,7 +47,7 @@ link: '/guide/custom_define/custom_render'
           lineHeight:50,
           fontSize:26,
           fontWeight:600,
-          bgColor:'#4991e3',
+          bgColor:'#a23be1',
           color:'white',
           textAlign:'center'
         },
@@ -59,7 +59,7 @@ link: '/guide/custom_define/custom_render'
       width:400,
       headerStyle:{
           lineHeight:50,
-          bgColor:'#4991e3',
+          bgColor:'#a23be1',
           color:'white',
           textAlign:'center',
           fontSize:26,
@@ -99,7 +99,7 @@ link: '/guide/custom_define/custom_render'
         let maxWidth=0;
         elements.push({
             type: 'rect',
-            fill: '#4991e3',
+            fill: '#a23be1',
             x: left+20,
             y: top-20,
             width: 300,
@@ -113,7 +113,7 @@ link: '/guide/custom_define/custom_render'
             textBaseline: 'middle',
             text:col===1?( row===1? 'important & urgency':'not important but urgency'):(row===1? 'important but not urgency':'not important & not urgency'),
             x: left+50,
-            y: top,
+            y: top-5,
           });
         dataValue.forEach((
           item,i
