@@ -108,8 +108,11 @@ export class PivotLayoutMap implements LayoutMapAPI {
   _table: PivotTable | PivotChart;
 
   hasTwoIndicatorAxes: boolean;
+  /** 图表spec中barWidth的收集 */
+  _chartItemSpanSize: number;
   constructor(table: PivotTable | PivotChart, dataset: Dataset) {
     this._table = table;
+    this._chartItemSpanSize = 0;
     this.rowTree = table.options.rowTree;
     this.columnTree = table.options.columnTree;
     this.rowsDefine = table.options.rows ?? [];
@@ -245,6 +248,26 @@ export class PivotLayoutMap implements LayoutMapAPI {
           return true;
         }
         return false;
+      });
+      this._chartItemSpanSize = 0;
+      this._indicatorObjects.find(indicatorObject => {
+        if (indicatorObject.chartSpec?.barWidth) {
+          this._chartItemSpanSize = indicatorObject.chartSpec?.barWidth;
+        }
+        if (this._chartItemSpanSize > 0) {
+          return true;
+        }
+        indicatorObject.chartSpec.series?.find((seriesObject: any) => {
+          if (seriesObject.barWidth) {
+            this._chartItemSpanSize = seriesObject.barWidth;
+          }
+          if (this._chartItemSpanSize > 0) {
+            return true;
+          }
+        });
+        if (this._chartItemSpanSize > 0) {
+          return true;
+        }
       });
 
       if (this.indicatorsAsCol) {
@@ -1416,7 +1439,8 @@ export class PivotLayoutMap implements LayoutMapAPI {
         break;
       }
     }
-    return (collectedValues?.length ?? 0) * 50;
+    const barWidth = this._chartItemSpanSize || 25;
+    return (collectedValues?.length ?? 0) * (barWidth + barWidth / 3);
   }
   /**
    *  获取图表对应的指标值
