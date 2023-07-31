@@ -62,41 +62,41 @@ link: '/guide/table_type/Pivot_Chart/pivot_chart_useage'
                 'Sub-Category': {
                   sortIndex: 0,
                   domain: [
-                    "Chairs",
-                    "Tables",
-                    "Bookcases",
-                    "Furnishings",
-                    
-                      "Binders",
-                      "Art",
-                      "Storage",
-                      "Appliances",
-                      "Envelopes",
-                      "Fasteners",
-                      "Paper",
-                      "Labels",
-                      "Supplies",
-                        "Accessories",
-                        "Phones",
-                        "Copiers",
-                        "Machines"
-                      
-                  ]   
+                    'Chairs',
+                    'Tables',
+                    'Bookcases',
+                    'Furnishings',
+
+                    'Binders',
+                    'Art',
+                    'Storage',
+                    'Appliances',
+                    'Envelopes',
+                    'Fasteners',
+                    'Paper',
+                    'Labels',
+                    'Supplies',
+                    'Accessories',
+                    'Phones',
+                    'Copiers',
+                    'Machines'
+                  ]
                 },
                 'Segment-Indicator': {
                   //设置seriesField数据的顺序 应该设置20001的顺序的 但是按照图例的顺序设置后堆叠效果和3.X不一致
                   sortIndex: 1,
                   domain: [
-                    "Consumer-Quantity",
-                    "Corporate-Quantity",
-                    "Home Office-Quantity",
-                    "Consumer-Sales",
-                    "Corporate-Sales",
-                    "Home Office-Sales",
-                    "Consumer-Profit",
-                    "Corporate-Profit",
-                    "Home Office-Profit"
-                ]
+                    'Consumer-Quantity',
+                    'Corporate-Quantity',
+                    'Home Office-Quantity',
+                    'Consumer-Sales',
+                    'Corporate-Sales',
+                    'Home Office-Sales',
+                    'Consumer-Profit',
+                    'Corporate-Profit',
+                    'Home Office-Profit'
+                  ]
+                  // lockStatisticsByDomain:  true
                 }
               }
             },
@@ -117,7 +117,38 @@ link: '/guide/table_type/Pivot_Chart/pivot_chart_useage'
                   opacity: 0.2
                 }
               }
-            }
+            },
+            scales: [
+              {
+                id: 'color',
+                type: 'ordinal',
+                domain: [
+                  'Consumer-Quantity',
+                  'Corporate-Quantity',
+                  'Home Office-Quantity',
+                  'Consumer-Sales',
+                  'Corporate-Sales',
+                  'Home Office-Sales',
+                  'Consumer-Profit',
+                  'Corporate-Profit',
+                  'Home Office-Profit'
+                ],
+                range: [
+                  '#2E62F1',
+                  '#4DC36A',
+                  '#FF8406',
+                  '#FFCC00',
+                  '#4F44CF',
+                  '#5AC8FA',
+                  '#003A8C',
+                  '#B08AE2',
+                  '#FF6341',
+                  '#98DD62',
+                  '#07A199',
+                  '#87DBDD'
+                ]
+              }
+            ]
           },
           style: {
             padding: 1
@@ -133,48 +164,47 @@ link: '/guide/table_type/Pivot_Chart/pivot_chart_useage'
             series: [
               {
                 type: 'bar',
-                data:{
-                  id:'data1',
+                data: {
+                  id: 'data1',
                   fields: {
                     //设置xField数据的顺序
                     'Sub-Category': {
                       sortIndex: 0,
                       domain: [
-                        "Chairs",
-                        "Tables",
-                        "Bookcases",
-                        "Furnishings",
-                        
-                          "Binders",
-                          "Art",
-                          "Storage",
-                          "Appliances",
-                          "Envelopes",
-                          "Fasteners",
-                          "Paper",
-                          "Labels",
-                          "Supplies",
-                            "Accessories",
-                            "Phones",
-                            "Copiers",
-                            "Machines"
-                          
-                      ]   
+                        'Chairs',
+                        'Tables',
+                        'Bookcases',
+                        'Furnishings',
+
+                        'Binders',
+                        'Art',
+                        'Storage',
+                        'Appliances',
+                        'Envelopes',
+                        'Fasteners',
+                        'Paper',
+                        'Labels',
+                        'Supplies',
+                        'Accessories',
+                        'Phones',
+                        'Copiers',
+                        'Machines'
+                      ]
                     },
                     'Segment-Indicator': {
                       //设置seriesField数据的顺序 应该设置20001的顺序的 但是按照图例的顺序设置后堆叠效果和3.X不一致
                       sortIndex: 1,
                       domain: [
-                        "Consumer-Quantity",
-                        "Corporate-Quantity",
-                        "Home Office-Quantity",
-                        "Consumer-Sales",
-                        "Corporate-Sales",
-                        "Home Office-Sales",
-                        "Consumer-Profit",
-                        "Corporate-Profit",
-                        "Home Office-Profit"
-                    ]
+                        'Consumer-Quantity',
+                        'Corporate-Quantity',
+                        'Home Office-Quantity',
+                        'Consumer-Sales',
+                        'Corporate-Sales',
+                        'Home Office-Sales',
+                        'Consumer-Profit',
+                        'Corporate-Profit',
+                        'Home Office-Profit'
+                      ]
                       // lockStatisticsByDomain:  true
                     }
                   }
@@ -197,48 +227,48 @@ link: '/guide/table_type/Pivot_Chart/pivot_chart_useage'
               },
               {
                 type: 'line',
-                data:{
-                  id:'data2',
+                data: {
+                  id: 'data2',
                   fields: {
                     //设置xField数据的顺序
                     'Sub-Category': {
                       sortIndex: 0,
                       domain: [
-                        "Chairs",
-                        "Tables",
-                        "Bookcases",
-                        "Furnishings",
-                        
-                          "Binders",
-                          "Art",
-                          "Storage",
-                          "Appliances",
-                          "Envelopes",
-                          "Fasteners",
-                          "Paper",
-                          "Labels",
-                          "Supplies",
-                      
-                        "Phones",
-                        "Accessories",
-                        "Machines",
-                        "Copiers"    
+                        'Chairs',
+                        'Tables',
+                        'Bookcases',
+                        'Furnishings',
+
+                        'Binders',
+                        'Art',
+                        'Storage',
+                        'Appliances',
+                        'Envelopes',
+                        'Fasteners',
+                        'Paper',
+                        'Labels',
+                        'Supplies',
+
+                        'Phones',
+                        'Accessories',
+                        'Machines',
+                        'Copiers'
                       ]
                     },
                     'Segment-Indicator': {
                       //设置seriesField数据的顺序 应该设置20001的顺序的 但是按照图例的顺序设置后堆叠效果和3.X不一致
                       sortIndex: 1,
                       domain: [
-                        "Consumer-Quantity",
-                        "Corporate-Quantity",
-                        "Home Office-Quantity",
-                        "Consumer-Sales",
-                        "Corporate-Sales",
-                        "Home Office-Sales",
-                        "Consumer-Profit",
-                        "Corporate-Profit",
-                        "Home Office-Profit"
-                    ]
+                        'Consumer-Quantity',
+                        'Corporate-Quantity',
+                        'Home Office-Quantity',
+                        'Consumer-Sales',
+                        'Corporate-Sales',
+                        'Home Office-Sales',
+                        'Consumer-Profit',
+                        'Corporate-Profit',
+                        'Home Office-Profit'
+                      ]
                       // lockStatisticsByDomain:  true
                     }
                   }
@@ -269,6 +299,41 @@ link: '/guide/table_type/Pivot_Chart/pivot_chart_useage'
                 }
               }
             ],
+            scales: [
+              {
+                id: 'color',
+                type: 'ordinal',
+                domain: [
+                  'Consumer-Quantity',
+                  'Corporate-Quantity',
+                  'Home Office-Quantity',
+                  'Consumer-Sales',
+                  'Corporate-Sales',
+                  'Home Office-Sales',
+                  'Consumer-Profit',
+                  'Corporate-Profit',
+                  'Home Office-Profit'
+                ],
+                range: [
+                  '#2E62F1',
+                  '#4DC36A',
+                  '#FF8406',
+                  '#FFCC00',
+                  '#4F44CF',
+                  '#5AC8FA',
+                  '#003A8C',
+                  '#B08AE2',
+                  '#FF6341',
+                  '#98DD62',
+                  '#07A199',
+                  '#87DBDD'
+                ]
+              }
+            ]
+            // axes: [
+            //   { orient: 'left', visible: true, label: { visible: true } },
+            //   { orient: 'bottom', visible: true }
+            // ]
           },
           style: {
             padding: 1
@@ -295,28 +360,28 @@ link: '/guide/table_type/Pivot_Chart/pivot_chart_useage'
             autoWrapText: true
           }
         },
-     theme: {
+        theme: {
           bodyStyle: {
             borderColor: 'gray',
             borderLineWidth: [1, 0, 0, 1]
           },
           headerStyle: {
             borderColor: 'gray',
-            borderLineWidth: [0, 0, 0, 1],
+            borderLineWidth: [0, 0, 1, 1],
             hover: {
               cellBgColor: '#CCE0FF'
             }
           },
           rowHeaderStyle: {
             borderColor: 'gray',
-            borderLineWidth: [1, 0, 0, 0],
+            borderLineWidth: [1, 1, 0, 0],
             hover: {
               cellBgColor: '#CCE0FF'
             }
           },
           cornerHeaderStyle: {
             borderColor: 'gray',
-            borderLineWidth: [0, 0, 1, 0],
+            borderLineWidth: [0, 1, 1, 0],
             hover: {
               cellBgColor: ''
             }

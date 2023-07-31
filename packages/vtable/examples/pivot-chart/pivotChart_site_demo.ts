@@ -83,16 +83,6 @@ export function createTable() {
                 }
               }
             },
-            // brush: {
-            //   brushType: 'rect',
-            //   brushLinkSeriesIndex: [1, 2],
-            //   inBrush: {
-            //     colorAlpha: 1
-            //   },
-            //   outOfBrush: {
-            //     colorAlpha: 0.2
-            //   }
-            // },
             xField: ['Sub-Category'],
             yField: 'Quantity',
             seriesField: 'Segment-Indicator',
@@ -110,7 +100,38 @@ export function createTable() {
                   opacity: 0.2
                 }
               }
-            }
+            },
+            scales: [
+              {
+                id: 'color',
+                type: 'ordinal',
+                domain: [
+                  'Consumer-Quantity',
+                  'Corporate-Quantity',
+                  'Home Office-Quantity',
+                  'Consumer-Sales',
+                  'Corporate-Sales',
+                  'Home Office-Sales',
+                  'Consumer-Profit',
+                  'Corporate-Profit',
+                  'Home Office-Profit'
+                ],
+                range: [
+                  '#2E62F1',
+                  '#4DC36A',
+                  '#FF8406',
+                  '#FFCC00',
+                  '#4F44CF',
+                  '#5AC8FA',
+                  '#003A8C',
+                  '#B08AE2',
+                  '#FF6341',
+                  '#98DD62',
+                  '#07A199',
+                  '#87DBDD'
+                ]
+              }
+            ]
           },
           style: {
             padding: 1
@@ -260,6 +281,37 @@ export function createTable() {
                   }
                 }
               }
+            ],
+            scales: [
+              {
+                id: 'color',
+                type: 'ordinal',
+                domain: [
+                  'Consumer-Quantity',
+                  'Corporate-Quantity',
+                  'Home Office-Quantity',
+                  'Consumer-Sales',
+                  'Corporate-Sales',
+                  'Home Office-Sales',
+                  'Consumer-Profit',
+                  'Corporate-Profit',
+                  'Home Office-Profit'
+                ],
+                range: [
+                  '#2E62F1',
+                  '#4DC36A',
+                  '#FF8406',
+                  '#FFCC00',
+                  '#4F44CF',
+                  '#5AC8FA',
+                  '#003A8C',
+                  '#B08AE2',
+                  '#FF6341',
+                  '#98DD62',
+                  '#07A199',
+                  '#87DBDD'
+                ]
+              }
             ]
             // axes: [
             //   { orient: 'left', visible: true, label: { visible: true } },
@@ -299,21 +351,21 @@ export function createTable() {
           },
           headerStyle: {
             borderColor: 'gray',
-            borderLineWidth: [0, 0, 0, 1],
+            borderLineWidth: [0, 0, 1, 1],
             hover: {
               cellBgColor: '#CCE0FF'
             }
           },
           rowHeaderStyle: {
             borderColor: 'gray',
-            borderLineWidth: [1, 0, 0, 0],
+            borderLineWidth: [1, 1, 0, 0],
             hover: {
               cellBgColor: '#CCE0FF'
             }
           },
           cornerHeaderStyle: {
             borderColor: 'gray',
-            borderLineWidth: [0, 0, 1, 0],
+            borderLineWidth: [0, 1, 1, 0],
             hover: {
               cellBgColor: ''
             }
