@@ -469,10 +469,10 @@ export class Scenegraph {
   }
 
   highPerformanceGetCell(col: number, row: number, getShadow?: boolean): Group {
-    if (!this.table.isHeader(col, row)) {
-      return this.proxy.highPerformanceGetCell(col, row, 0, this.table.rowCount - 1, getShadow);
-    }
-    return this.getCell(col, row, getShadow);
+    // if (!this.table.isHeader(col, row)) {
+    return this.proxy.highPerformanceGetCell(col, row, getShadow);
+    // }
+    // return this.getCell(col, row, getShadow);
   }
 
   getColGroup(col: number, isCornerOrColHeader = false): Group {
@@ -1228,6 +1228,7 @@ export class Scenegraph {
     this.bodyGroup.setDeltaWidth(bodyX - this.bodyGroup.attribute.width);
 
     this.colHeaderGroup.setAttribute('x', this.cornerHeaderGroup.attribute.width);
+    this.bottomFrozenGroup.setAttribute('x', this.rowHeaderGroup.attribute.width);
     this.bodyGroup.setAttribute('x', this.rowHeaderGroup.attribute.width);
 
     this.updateTableSize();
