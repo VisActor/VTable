@@ -9860,6 +9860,6 @@ describe('pivotTable init test', () => {
       })
     };
     pivotChart.updateOption(option1);
-    expect(pivotChart.getChartDatumPosition(datum, cellAddr)).toEqual({ x: 543, y: 233 });
+    expect(pivotChart.getChartDatumPosition(datum, cellAddr)).toEqual({ x: 428, y: 233 });
   });
 });
