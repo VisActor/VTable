@@ -734,12 +734,12 @@ function getCellSizeForDraw(group: any, width: number, height: number) {
     if (table && col === table.colCount - 1) {
       width -= 1;
     } else if (table && col === table.frozenColCount - 1 && table.scrollLeft) {
-      width -= 1.5;
+      width -= 1;
     }
     if (table && row === table.rowCount - 1) {
       height -= 1;
     } else if (table && row === table.frozenRowCount - 1 && table.scrollTop) {
-      height -= 1.5;
+      height -= 1;
     }
   } else if (group.role === 'corner-frozen') {
     if (table.scrollLeft) {
