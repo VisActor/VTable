@@ -6,7 +6,7 @@ import { emptyGroup } from '../../utils/empty-group';
 import { createColGroup } from '../column';
 import { createComplexColumn } from '../column-helper';
 import { createGroupForFirstScreen } from './create-group-for-first-screen';
-import { dynamicSetX } from './update-position/dynamic-set-x';
+import { dynamicSetX, updateColContent } from './update-position/dynamic-set-x';
 import { dynamicSetY, updateRowContent } from './update-position/dynamic-set-y';
 import { updateAutoRow } from './update-position/update-auto-row';
 
@@ -14,7 +14,7 @@ export class SceneProxy {
   table: BaseTableAPI;
   mode: 'column' | 'row' | 'pivot' = 'column';
 
-  rowLimit = 100;
+  rowLimit = 1000;
   currentRow = 0; // 目前渐进生成的row number
   totalRow: number; // 渐进完成最后一行的row number
   yLimitTop: number; // y > yLimitTop动态更新，否则直接修改xy
@@ -31,7 +31,7 @@ export class SceneProxy {
   rowUpdateDirection: 'up' | 'down'; // 当前行更新的方向
   screenTopRow: number = 0; // 当前屏幕范围内显示的第一行的row number
 
-  colLimit = 100;
+  colLimit = 1000;
   bodyLeftCol: number; // table body部分的第一列col number
   bodyRightCol: number; // table body部分的最后一列col number
   totalCol: number; // 渐进完成最后一列的col number
@@ -338,6 +338,51 @@ export class SceneProxy {
     const endCol = Math.min(this.totalCol, this.currentCol + onceCount);
     computeColsWidth(this.table, this.currentCol + 1, endCol);
 
+    if (this.table.columnHeaderLevelCount) {
+      // create colGroup
+      const lastColumnGroup = (
+        this.table.scenegraph.colHeaderGroup.lastChild instanceof Group
+          ? this.table.scenegraph.colHeaderGroup.lastChild
+          : this.table.scenegraph.colHeaderGroup.lastChild._prev
+      ) as Group;
+      const xOrigin = lastColumnGroup.attribute.x + lastColumnGroup.attribute.width;
+      const yOrigin = lastColumnGroup.attribute.y;
+      // create colHeaderGroup
+      createColGroup(
+        this.table.scenegraph.colHeaderGroup,
+        xOrigin,
+        yOrigin,
+        this.currentCol + 1, // colStart
+        endCol, // colEnd
+        0, // rowStart
+        this.table.columnHeaderLevelCount - 1, // rowEnd
+        'columnHeader', // isHeader
+        this.table
+      );
+    }
+    if (this.table.bottomFrozenRowCount) {
+      // create colGroup
+      const lastColumnGroup = (
+        this.table.scenegraph.bottomFrozenGroup.lastChild instanceof Group
+          ? this.table.scenegraph.bottomFrozenGroup.lastChild
+          : this.table.scenegraph.bottomFrozenGroup.lastChild._prev
+      ) as Group;
+      const xOrigin = lastColumnGroup.attribute.x + lastColumnGroup.attribute.width;
+      const yOrigin = lastColumnGroup.attribute.y;
+      // create bottomFrozenGroup
+      createColGroup(
+        this.table.scenegraph.bottomFrozenGroup,
+        xOrigin,
+        yOrigin,
+        this.currentCol + 1, // colStart
+        endCol, // colEnd
+        this.table.rowCount - this.table.bottomFrozenRowCount, // rowStart
+        this.table.rowCount - 1, // rowEnd
+        'columnHeader', // isHeader
+        this.table
+      );
+    }
+
     // create colGroup
     const lastColumnGroup = (
       this.table.scenegraph.bodyGroup.lastChild instanceof Group
@@ -441,26 +486,28 @@ export class SceneProxy {
   updateColGroups(count: number) {
     const distCol = Math.min(this.bodyRightCol, this.colUpdatePos + count);
     // console.log('updateCellGroups', this.colUpdatePos, distCol);
-    for (let col = this.colUpdatePos; col <= distCol; col++) {
-      const colGroup = this.table.scenegraph.getColGroup(col);
-      if (colGroup) {
-        // colGroup.forEachChildren((cellGroup: Group) => {
-        //   this.updateCellGroupContent(cellGroup);
-        // });
-        // for (let row = (colGroup.firstChild as Group).row; row <= (colGroup.lastChild as Group).row; row++) {
-        //   const cellGroup = this.highPerformanceGetCell(colGroup.col, row);
-        //   this.updateCellGroupContent(cellGroup);
-        // }
-        let cellGroup = colGroup.firstChild;
-        while (cellGroup) {
-          // this.updateCellGroupContent(cellGroup as Group);
-          // cellGroup = cellGroup._next;
-          const newCellGroup = this.updateCellGroupContent(cellGroup as Group);
-          cellGroup = newCellGroup._next;
-        }
-        colGroup.needUpdate = false;
-      }
-    }
+    // for (let col = this.colUpdatePos; col <= distCol; col++) {
+    //   const colGroup = this.table.scenegraph.getColGroup(col);
+    //   if (colGroup) {
+    //     // colGroup.forEachChildren((cellGroup: Group) => {
+    //     //   this.updateCellGroupContent(cellGroup);
+    //     // });
+    //     // for (let row = (colGroup.firstChild as Group).row; row <= (colGroup.lastChild as Group).row; row++) {
+    //     //   const cellGroup = this.highPerformanceGetCell(colGroup.col, row);
+    //     //   this.updateCellGroupContent(cellGroup);
+    //     // }
+    //     let cellGroup = colGroup.firstChild;
+    //     while (cellGroup) {
+    //       // this.updateCellGroupContent(cellGroup as Group);
+    //       // cellGroup = cellGroup._next;
+    //       const newCellGroup = this.updateCellGroupContent(cellGroup as Group);
+    //       cellGroup = newCellGroup._next;
+    //     }
+    //     colGroup.needUpdate = false;
+    //   }
+    // }
+    computeColsWidth(this.table, this.colUpdatePos, distCol);
+    updateColContent(this.colUpdatePos, distCol, this);
     this.colUpdatePos = distCol + 1;
   }
 

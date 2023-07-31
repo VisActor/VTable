@@ -281,6 +281,12 @@ export function updateRowContent(syncTopRow: number, syncBottomRow: number, prox
 
 function checkFirstRowMerge(row: number, proxy: SceneProxy) {
   for (let col = 0; col < proxy.table.colCount; col++) {
+    if (
+      (col >= proxy.table.rowHeaderLevelCount && col < proxy.colStart) ||
+      (col > proxy.colEnd && col < proxy.table.colCount - proxy.table.rightFrozenColCount)
+    ) {
+      continue;
+    }
     const range = getCellMergeInfo(proxy.table, col, row);
     if (range && range.start.row !== row) {
       // 在row的位置添加range.start.row单元格
