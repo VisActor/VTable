@@ -639,7 +639,7 @@ export class SceneProxy {
       if ((cacheCellGoup._next || cacheCellGoup._prev) && Math.abs(cacheCellGoup.row - row) < row) {
         // 由缓存单元格向前后查找要快于从头查找
         let cellGroup = getCellByCache(cacheCellGoup, row);
-        if (!cellGroup) {
+        if (!cellGroup || (!getShadow && cellGroup.role === 'shadow-cell')) {
           cellGroup = this.table.scenegraph.getCell(col, row, getShadow);
         }
         cellGroup.row && this.cellCache.set(col, cellGroup);
