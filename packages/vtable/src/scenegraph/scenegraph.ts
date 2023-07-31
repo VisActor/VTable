@@ -1228,6 +1228,7 @@ export class Scenegraph {
     this.bodyGroup.setDeltaWidth(bodyX - this.bodyGroup.attribute.width);
 
     this.colHeaderGroup.setAttribute('x', this.cornerHeaderGroup.attribute.width);
+    this.bottomFrozenGroup.setAttribute('x', this.rowHeaderGroup.attribute.width);
     this.bodyGroup.setAttribute('x', this.rowHeaderGroup.attribute.width);
 
     this.updateTableSize();
