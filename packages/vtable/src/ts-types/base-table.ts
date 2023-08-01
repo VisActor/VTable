@@ -185,6 +185,9 @@ export interface BaseTableConstructorOptions {
    * 当前需要冻结的列数 基本表格生效
    */
   frozenColCount?: number;
+  rightFrozenColCount?: number;
+  bottomFrozenRowCount?: number;
+
   // /** 待实现 TODO */
   // frozenRowCount?: number;
   /** 可冻结列数，表示前多少列会出现冻结操作按钮 基本表格生效 */

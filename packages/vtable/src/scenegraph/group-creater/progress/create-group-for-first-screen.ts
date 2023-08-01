@@ -138,21 +138,6 @@ export async function createGroupForFirstScreen(
       'body', // isHeader
       proxy.table
     );
-    // proxy.table.scenegraph.rightFrozenGroup.setAttribute(
-    //   'x',
-    //   proxy.table.tableNoFrameWidth - proxy.table.scenegraph.rightFrozenGroup.attribute.width
-    // );
-    // proxy.table.scenegraph.rightTopCellGroup.setAttributes({
-    //   visible: true,
-    //   x: proxy.table.tableNoFrameWidth - proxy.table.scenegraph.rightFrozenGroup.attribute.width,
-    //   width: proxy.table.scenegraph.rightFrozenGroup.attribute.width,
-    //   height: proxy.table.getFrozenRowsHeight()
-    // });
-    // proxy.table.scenegraph.rightBottomCellGroup.setAttributes({
-    //   visible: true,
-    //   x: proxy.table.tableNoFrameWidth - proxy.table.scenegraph.rightFrozenGroup.attribute.width,
-    //   width: proxy.table.scenegraph.rightFrozenGroup.attribute.width
-    // });
   }
 
   // create bodyGroup

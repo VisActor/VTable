@@ -376,6 +376,19 @@ export const menus = [
     ]
   },
   {
+    menu: 'frozen',
+    children: [
+      {
+        path: 'frozen',
+        name: 'list-table-bottom-frozen'
+      },
+      {
+        path: 'frozen',
+        name: 'list-table-transpose-right-frozen'
+      }
+    ]
+  },
+  {
     menu: '调试使用',
     children: [
       {
