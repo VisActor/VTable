@@ -160,6 +160,10 @@ export const menus = [
       },
       {
         path: 'pivot',
+        name: 'pivot-adaptive'
+      },
+      {
+        path: 'pivot',
         name: 'pivot-no-indicator'
       },
       {
