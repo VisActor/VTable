@@ -327,7 +327,7 @@ export function updateCell(col: number, row: number, table: BaseTableAPI, addNew
   const oldCellGroup = table.scenegraph.highPerformanceGetCell(col, row, true);
 
   if (!addNew && oldCellGroup.role === 'empty') {
-    return;
+    return undefined;
   }
 
   const type = table.isHeader(col, row)
