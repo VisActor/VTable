@@ -1477,9 +1477,9 @@ export class PivotLayoutMap implements LayoutMapAPI {
     const dimensionKeys: string[] = [];
     if (chartSpec) {
       if (this.indicatorsAsCol === false) {
-        dimensionKeys.push(chartSpec.xField);
+        dimensionKeys.push(chartSpec.xField ?? chartSpec?.series[0]?.xField);
       } else {
-        dimensionKeys.push(chartSpec.yField);
+        dimensionKeys.push(chartSpec.yField ?? chartSpec?.series[0]?.yField);
       }
       return dimensionKeys;
     }
