@@ -298,7 +298,11 @@ export function createCell(
       table
     );
     // 进度图插入到文字前，绘制在文字下
-    cellGroup.insertBefore(progressBarGroup, cellGroup.firstChild);
+    if (cellGroup.firstChild) {
+      cellGroup.insertBefore(progressBarGroup, cellGroup.firstChild);
+    } else {
+      cellGroup.appendChild(progressBarGroup);
+    }
   } else if (type === 'sparkline') {
     cellGroup = createSparkLineCellGroup(
       null,
