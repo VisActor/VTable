@@ -23,9 +23,21 @@ export function getCellHoverColor(cellGroup: Group, table: BaseTableAPI): string
     return undefined;
   }
 
-  const hoverStyle = table.isHeader(cellGroup.col, cellGroup.row)
-    ? table.theme.headerStyle?.hover
-    : table.theme.bodyStyle?.hover;
+  let hoverStyle;
+  const layout = table.internalProps.layoutMap;
+  if (layout.isCornerHeader(cellGroup.col, cellGroup.row)) {
+    hoverStyle = table.theme.cornerHeaderStyle?.hover;
+  } else if (layout.isColumnHeader(cellGroup.col, cellGroup.row)) {
+    hoverStyle = table.theme.headerStyle?.hover;
+  } else if (layout.isRowHeader(cellGroup.col, cellGroup.row)) {
+    hoverStyle = table.theme.rowHeaderStyle?.hover;
+  } else if (layout.isBottomFrozenRow(cellGroup.col, cellGroup.row)) {
+    hoverStyle = table.theme.bottomFrozenStyle?.hover || table.theme.headerStyle?.hover;
+  } else if (layout.isRightFrozenColumn(cellGroup.col, cellGroup.row)) {
+    hoverStyle = table.theme.rightFrozenStyle?.hover || table.theme.rowHeaderStyle?.hover;
+  } else if (!table.isHeader(cellGroup.col, cellGroup.row)) {
+    hoverStyle = table.theme.bodyStyle?.hover;
+  }
   const fillColor = getProp(colorKey, hoverStyle, cellGroup.col, cellGroup.row, table);
   return fillColor;
 }

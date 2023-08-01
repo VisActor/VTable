@@ -1,4 +1,4 @@
-import { merge } from '@visactor/vutils';
+import { isArray, merge } from '@visactor/vutils';
 import type { PivotLayoutMap } from '../pivot-layout';
 import type { ITableAxisOption } from '../../ts-types/component/axis';
 import type { PivotChart } from '../../PivotChart';
@@ -17,7 +17,10 @@ export function getAxisConfigInPivotChart(col: number, row: number, layout: Pivo
       col < layout.colCount - layout.rightFrozenColCount
     ) {
       const indicatorKeys = layout.getIndicatorKeyInChartSpec(col, layout.columnHeaderLevelCount - 1);
-      const defaultKey = indicatorKeys[1];
+      let defaultKey = indicatorKeys[1];
+      if (isArray(defaultKey)) {
+        defaultKey = defaultKey[0];
+      }
       if (!defaultKey) {
         return undefined;
       }
@@ -56,7 +59,10 @@ export function getAxisConfigInPivotChart(col: number, row: number, layout: Pivo
       col < layout.colCount - layout.rightFrozenColCount
     ) {
       const indicatorKeys = layout.getIndicatorKeyInChartSpec(col, row);
-      const defaultKey = indicatorKeys[0];
+      let defaultKey = indicatorKeys[0];
+      if (isArray(defaultKey)) {
+        defaultKey = defaultKey[0];
+      }
       // const data = layout.dataset.collectedValues[defaultKey];
       const data = layout.dataset.collectedValues[defaultKey + '_align']
         ? layout.dataset.collectedValues[defaultKey + '_align']
@@ -100,7 +106,10 @@ export function getAxisConfigInPivotChart(col: number, row: number, layout: Pivo
       row >= layout.rowHeaderLevelCount &&
       row < layout.rowCount - layout.bottomFrozenRowCount
     ) {
-      const rowDimensionKey = layout.getDimensionKeyInChartSpec(layout.rowHeaderLevelCount, row)[0];
+      let rowDimensionKey = layout.getDimensionKeyInChartSpec(layout.rowHeaderLevelCount, row)[0];
+      if (isArray(rowDimensionKey)) {
+        rowDimensionKey = rowDimensionKey[0];
+      }
       const data = layout.dataset.collectedValues[rowDimensionKey];
 
       const recordRow = layout.getRecordIndexByRow(row);
@@ -130,7 +139,10 @@ export function getAxisConfigInPivotChart(col: number, row: number, layout: Pivo
       row < layout.rowCount - layout.bottomFrozenRowCount
     ) {
       const indicatorKeys = layout.getIndicatorKeyInChartSpec(col, row);
-      const defaultKey = indicatorKeys[0];
+      let defaultKey = indicatorKeys[0];
+      if (isArray(defaultKey)) {
+        defaultKey = defaultKey[0];
+      }
       // const data = layout.dataset.collectedValues[defaultKey];
       const data = layout.dataset.collectedValues[defaultKey + '_align']
         ? layout.dataset.collectedValues[defaultKey + '_align']
@@ -175,7 +187,11 @@ export function getAxisConfigInPivotChart(col: number, row: number, layout: Pivo
       row < layout.rowCount - layout.bottomFrozenRowCount
     ) {
       const indicatorKeys = layout.getIndicatorKeyInChartSpec(layout.rowHeaderLevelCount - 1, row);
-      const defaultKey = indicatorKeys[1];
+      let defaultKey = indicatorKeys[1];
+      if (isArray(defaultKey)) {
+        defaultKey = defaultKey[0];
+      }
+
       if (!defaultKey) {
         return undefined;
       }
@@ -215,7 +231,10 @@ export function getAxisConfigInPivotChart(col: number, row: number, layout: Pivo
     ) {
       // const indicatorKeys = layout.getIndicatorKeyInChartSpec(col, row);
 
-      const columnDimensionKey = layout.getDimensionKeyInChartSpec(col, layout.columnHeaderLevelCount)[0];
+      let columnDimensionKey = layout.getDimensionKeyInChartSpec(col, layout.columnHeaderLevelCount)[0];
+      if (isArray(columnDimensionKey)) {
+        columnDimensionKey = columnDimensionKey[0];
+      }
       const data = layout.dataset.collectedValues[columnDimensionKey];
 
       const recordCol = layout.getRecordIndexByCol(col);

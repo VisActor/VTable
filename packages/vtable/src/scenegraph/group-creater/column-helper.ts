@@ -86,6 +86,11 @@ export function createComplexColumn(
     if (cellTheme.text.textBaseline) {
       textBaseline = cellTheme.text.textBaseline;
     }
+
+    // enable clip body
+    if (cellType !== 'body' && !cellTheme.group.fill) {
+      cellTheme.group.fill = '#fff';
+    }
     // margin = getProp('margin', headerStyle, col, 0, table)
 
     let cellWidth = colWidth;
