@@ -326,6 +326,10 @@ export function updateCell(col: number, row: number, table: BaseTableAPI, addNew
   // const oldCellGroup = table.scenegraph.getCell(col, row, true);
   const oldCellGroup = table.scenegraph.highPerformanceGetCell(col, row, true);
 
+  if (!addNew && oldCellGroup.role === 'empty') {
+    return;
+  }
+
   const type = table.isHeader(col, row)
     ? table._getHeaderLayoutMap(col, row).headerType
     : table.getBodyColumnType(col, row);
