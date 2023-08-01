@@ -139,15 +139,18 @@ export class StateManeger {
   constructor(table: BaseTableAPI) {
     this.table = table;
     this.initState();
-    this.setHoverState();
-    this.setSelectState();
-    this.setFrozenState();
 
     this.updateVerticalScrollBar = this.updateVerticalScrollBar.bind(this);
     this.updateHorizontalScrollBar = this.updateHorizontalScrollBar.bind(this);
   }
 
   initState() {
+    this._initState();
+    this.setHoverState();
+    this.setSelectState();
+    this.setFrozenState();
+  }
+  _initState() {
     this.interactionState = InteractionState.default;
     this.select = {
       highlightScope: HighlightScope.single,
