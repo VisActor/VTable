@@ -298,7 +298,11 @@ export function createCell(
       table
     );
     // 进度图插入到文字前，绘制在文字下
-    cellGroup.insertBefore(progressBarGroup, cellGroup.firstChild);
+    if (cellGroup.firstChild) {
+      cellGroup.insertBefore(progressBarGroup, cellGroup.firstChild);
+    } else {
+      cellGroup.appendChild(progressBarGroup);
+    }
   } else if (type === 'sparkline') {
     cellGroup = createSparkLineCellGroup(
       null,
@@ -321,6 +325,10 @@ export function createCell(
 export function updateCell(col: number, row: number, table: BaseTableAPI, addNew?: boolean) {
   // const oldCellGroup = table.scenegraph.getCell(col, row, true);
   const oldCellGroup = table.scenegraph.highPerformanceGetCell(col, row, true);
+
+  if (!addNew && oldCellGroup.role === 'empty') {
+    return undefined;
+  }
 
   const type = table.isHeader(col, row)
     ? table._getHeaderLayoutMap(col, row).headerType

@@ -214,6 +214,7 @@ export function createCellContent(
         height: autoRowHeight ? 0 : cellHeight - (padding[0] + padding[2]),
         textConfig,
         verticalDirection: autoRowHeight ? 'top' : (textBaseline as any)
+        // verticalDirection: textBaseline as any
         // textAlign: textAlign as any,
         // textBaseline: textBaseline as any,
       });
@@ -281,9 +282,10 @@ export function createCellContent(
   const width = autoColWidth
     ? leftIconWidth + contentWidth + rightIconWidth // + padding[1] + padding[3]
     : cellWidth - (padding[1] + padding[3]);
-  const height = autoRowHeight
-    ? Math.max(leftIconHeight, contentHeight, rightIconHeight) // + padding[0] + padding[2]
-    : cellHeight - (padding[0] + padding[2]);
+  // const height = autoRowHeight
+  //   ? Math.max(leftIconHeight, contentHeight, rightIconHeight) // + padding[0] + padding[2]
+  //   : cellHeight - (padding[0] + padding[2]);
+  const height = cellHeight - (padding[0] + padding[2]);
 
   // 更新各个部分横向位置
   cellGroup.forEachChildren((child: any) => {
