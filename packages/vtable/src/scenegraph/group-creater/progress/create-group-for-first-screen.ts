@@ -15,6 +15,9 @@ export async function createGroupForFirstScreen(
   yOrigin: number,
   proxy: SceneProxy
 ) {
+  const leftBottomCornerGroup = proxy.table.scenegraph.leftBottomCornerGroup;
+  const rightTopCornerGroup = proxy.table.scenegraph.rightTopCornerGroup;
+
   // compute parameters
   proxy.setParamsForRow();
   proxy.setParamsForColumn();
@@ -96,6 +99,18 @@ export async function createGroupForFirstScreen(
   );
 
   if (proxy.table.bottomFrozenRowCount > 0) {
+    // create left bottom frozen
+    createColGroup(
+      leftBottomCornerGroup,
+      xOrigin,
+      yOrigin,
+      0, // colStart
+      proxy.table.rowHeaderLevelCount - 1, // colEnd
+      proxy.table.rowCount - 1 - proxy.table.bottomFrozenRowCount + 1, // rowStart
+      proxy.table.rowCount - 1, // rowEnd
+      'rowHeader', // isHeader
+      proxy.table
+    );
     // create bottomFrozenGroup
     createColGroup(
       bottomFrozenGroup,
@@ -108,24 +123,21 @@ export async function createGroupForFirstScreen(
       'body', // isHeader
       proxy.table
     );
-    // proxy.table.scenegraph.bottomFrozenGroup.setAttribute(
-    //   'y',
-    //   proxy.table.tableNoFrameHeight - proxy.table.scenegraph.bottomFrozenGroup.attribute.height
-    // );
-    // proxy.table.scenegraph.leftBottomCellGroup.setAttributes({
-    //   visible: true,
-    //   y: proxy.table.tableNoFrameHeight - proxy.table.scenegraph.bottomFrozenGroup.attribute.height,
-    //   height: proxy.table.scenegraph.bottomFrozenGroup.attribute.height,
-    //   width: proxy.table.getFrozenColsWidth()
-    // });
-    // proxy.table.scenegraph.rightBottomCellGroup.setAttributes({
-    //   visible: true,
-    //   y: proxy.table.tableNoFrameHeight - proxy.table.scenegraph.bottomFrozenGroup.attribute.height,
-    //   height: proxy.table.scenegraph.bottomFrozenGroup.attribute.height
-    // });
   }
 
   if (proxy.table.rightFrozenColCount > 0) {
+    // create right top frozen Group
+    createColGroup(
+      rightTopCornerGroup,
+      xOrigin,
+      yOrigin,
+      proxy.table.colCount - 1 - proxy.table.rightFrozenColCount + 1, // colStart
+      proxy.table.colCount - 1, // colEnd
+      0, // rowStart
+      proxy.table.columnHeaderLevelCount - 1, // rowEnd
+      'columnHeader', // isHeader
+      proxy.table
+    );
     // create rightFrozenGroup
     createColGroup(
       rightFrozenGroup,

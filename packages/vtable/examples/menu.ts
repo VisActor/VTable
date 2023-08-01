@@ -385,6 +385,18 @@ export const menus = [
       {
         path: 'frozen',
         name: 'list-table-transpose-right-frozen'
+      },
+      {
+        path: 'frozen',
+        name: 'list-table-right-frozen'
+      },
+      {
+        path: 'frozen',
+        name: 'pivot-table-right-frozen'
+      },
+      {
+        path: 'frozen',
+        name: 'pivot-table-bottom-frozen'
       }
     ]
   },

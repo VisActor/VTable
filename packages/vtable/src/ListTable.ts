@@ -304,6 +304,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
       table.frozenRowCount = layoutMap.headerLevelCount;
 
       table.bottomFrozenRowCount = this.options.bottomFrozenRowCount ?? 0;
+      table.rightFrozenColCount = this.options.rightFrozenColCount ?? 0;
     }
   }
 
