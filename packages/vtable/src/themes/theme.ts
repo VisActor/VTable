@@ -337,6 +337,7 @@ export class TableTheme implements ITableThemeDefine {
       const header: ThemeStyle = ingoreNoneValueMerge(
         {},
         this.defaultStyle,
+        this.rowHeaderStyle,
         superTheme.rightFrozenStyle,
         obj.rightFrozenStyle // ?? obj.headerStyle
       );
@@ -354,6 +355,7 @@ export class TableTheme implements ITableThemeDefine {
       const header: ThemeStyle = ingoreNoneValueMerge(
         {},
         this.defaultStyle,
+        this.headerStyle,
         superTheme.bottomFrozenStyle,
         obj.bottomFrozenStyle // ?? obj.headerStyle
       );

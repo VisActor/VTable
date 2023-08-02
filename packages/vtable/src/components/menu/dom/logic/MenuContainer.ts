@@ -22,6 +22,10 @@ export class MenuContainer {
     this._handler = new EventHandler();
     this._rootElement = createMenuDomElement();
 
+    // 鼠标在菜单上滚动阻止冒泡
+    this._rootElement.addEventListener('wheel', e => {
+      e.stopPropagation();
+    });
     // 绑定交互事件
     this._rootElement?.addEventListener('mousedown', e => {
       e.stopPropagation();

@@ -822,11 +822,16 @@ export class Scenegraph {
       return;
     }
     this.updateColWidth(col, width - oldWidth);
+    this.table._clearColRangeWidthsMap(col);
   }
 
   setRowHeight(row: number, height: number) {
     const oldHeight = this.table.getRowHeight(row);
+    if (oldHeight === height) {
+      return;
+    }
     this.updateRowHeight(row, height - oldHeight);
+    this.table._clearRowRangeHeightsMap(row);
   }
 
   /**

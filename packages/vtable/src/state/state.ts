@@ -77,6 +77,7 @@ export class StateManeger {
   };
   columnResize: {
     col: number;
+    /** x坐标是相对table内坐标 */
     x: number;
     resizing: boolean;
   };
@@ -460,10 +461,10 @@ export class StateManeger {
 
     this.table.scenegraph.updateNextFrame();
   }
-  updateResizeCol(x: number, y: number) {
-    x = Math.ceil(x);
-    y = Math.ceil(y);
-    let detaX = x - this.columnResize.x;
+  updateResizeCol(xInTable: number, yInTable: number) {
+    xInTable = Math.ceil(xInTable);
+    yInTable = Math.ceil(yInTable);
+    let detaX = xInTable - this.columnResize.x;
     // table.getColWidth会使用Math.round，因此这里直接跳过小于1px的修改
     if (Math.abs(detaX) < 1) {
       return;
@@ -497,9 +498,9 @@ export class StateManeger {
     if (this.table.widthMode === 'adaptive' && this.columnResize.col < this.table.colCount - 1) {
       this.table.scenegraph.updateColWidth(this.columnResize.col + 1, -detaX);
     }
-    this.columnResize.x = x;
+    this.columnResize.x = xInTable;
 
-    this.table.scenegraph.component.updateResizeCol(this.columnResize.col, y);
+    this.table.scenegraph.component.updateResizeCol(this.columnResize.col, yInTable);
     if (
       this.columnResize.col < this.table.frozenColCount &&
       !this.table.isPivotTable() &&

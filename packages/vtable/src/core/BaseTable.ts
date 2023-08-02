@@ -60,7 +60,13 @@ import { isBoolean, type ITextSize } from '@visactor/vutils';
 import { WrapText } from '../scenegraph/graphic/text';
 import { textMeasure } from '../scenegraph/utils/measure-text';
 import { getProp } from '../scenegraph/utils/get-prop';
-import type { ColumnData, ColumnDefine, ColumnsDefine, IndicatorData } from '../ts-types/list-table/layout-map/api';
+import type {
+  ColumnData,
+  ColumnDefine,
+  ColumnsDefine,
+  ImageColumnDefine,
+  IndicatorData
+} from '../ts-types/list-table/layout-map/api';
 import type { TooltipOptions } from '../ts-types/tooltip';
 import { IconCache } from '../plugins/icons';
 import {
@@ -1002,7 +1008,8 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
       this.heightMode === 'standard' &&
       this.internalProps.layoutMap &&
       endRow >= this.columnHeaderLevelCount &&
-      !this.bottomFrozenRowCount
+      !this.bottomFrozenRowCount &&
+      !this.hasAutoImageColumn()
     ) {
       for (let i = startRow; i < this.columnHeaderLevelCount; i++) {
         // part in header
@@ -1810,8 +1817,12 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     this.dataSet = new DataSet();
     this.scenegraph.clearCells();
     this.stateManeger.initState();
+
+    this._updateSize();
     // this.stateManeger = new StateManeger(this);
     // this.eventManeger = new EventManeger(this);
+    this.internalProps.legends?.dispose();
+    this.internalProps.title?.dispose();
 
     if (options.legends) {
       internalProps.legends = new TableLegend(options.legends, this);
@@ -1911,11 +1922,11 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
   _getMouseAbstractPoint(
     evt: TouchEvent | MouseEvent | undefined,
     isAddScroll = true
-  ): { x: number; y: number } | null {
+  ): { x: number; y: number; inTable: boolean } {
     const table = this;
     let e: MouseEvent | Touch;
     if (!evt) {
-      return null;
+      return { inTable: false, x: undefined, y: undefined };
     }
     if (isTouchEvent(evt)) {
       e = evt.changedTouches[0];
@@ -1925,11 +1936,12 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     const clientX = e.clientX || e.pageX + window.scrollX;
     const clientY = e.clientY || e.pageY + window.scrollY;
     const rect = table.internalProps.canvas.getBoundingClientRect();
+    let inTable = true;
     if (rect.right <= clientX) {
-      return null;
+      inTable = false;
     }
     if (rect.bottom <= clientY) {
-      return null;
+      inTable = false;
     }
 
     const currentWidth = rect.width;
@@ -1942,38 +1954,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
 
     const x = (clientX - rect.left) / widthRatio + (isAddScroll ? table.scrollLeft : 0) - table.tableX;
     const y = (clientY - rect.top) / heightRatio + (isAddScroll ? table.scrollTop : 0) - table.tableY;
-    return { x, y };
-  }
-  _getCellEventArgsSet<EVT extends TouchEvent | MouseEvent>(
-    e: EVT
-  ): {
-    abstractPos?: { x: number; y: number };
-    cell?: CellAddress;
-    eventArgs?: CellAddress & { event: EVT; related?: CellAddress };
-  } {
-    //将滚动值考虑进去，转换鼠标坐标值
-    const abstractPos = this._getMouseAbstractPoint(e);
-    if (!abstractPos) {
-      return {};
-    }
-    const cell = this.getCellAt(abstractPos.x, abstractPos.y);
-    if (cell.col < 0 || cell.row < 0) {
-      return {
-        abstractPos,
-        cell
-      };
-    }
-    const eventArgs = {
-      col: cell.col,
-      row: cell.row,
-      event: e,
-      rect: cell.rect
-    };
-    return {
-      abstractPos,
-      cell,
-      eventArgs
-    };
+    return { x, y, inTable };
   }
   getTheme() {
     return this.internalProps.theme;
@@ -3184,5 +3165,14 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
       customLayout = define?.customLayout;
     }
     return customLayout;
+  }
+
+  hasAutoImageColumn() {
+    return (this.internalProps.layoutMap.columnObjects as ColumnData[]).find((column: ColumnData) => {
+      if (column.columnType === 'image' && (column.define as ImageColumnDefine).imageAutoSizing) {
+        return true;
+      }
+      return false;
+    });
   }
 }
