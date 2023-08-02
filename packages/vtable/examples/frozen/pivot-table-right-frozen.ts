@@ -499,9 +499,9 @@ export function createTable() {
     instance.updatePivotSortState([{ dimensions: e.dimensionInfo, order }]);
   });
 
-  bindDebugTool(instance.scenegraph.stage as any, {
-    customGrapicKeys: ['role', '_updateTag']
-  });
+  // bindDebugTool(instance.scenegraph.stage as any, {
+  //   customGrapicKeys: ['role', '_updateTag']
+  // });
 
   // 只为了方便控制太调试用，不要拷贝
   (window as any).tableInstance = instance;

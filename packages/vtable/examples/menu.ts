@@ -58,6 +58,10 @@ export const menus = [
     children: [
       {
         path: 'pivot-chart',
+        name: 'aeolus'
+      },
+      {
+        path: 'pivot-chart',
         name: 'pivotChart_site_demo'
       },
       {

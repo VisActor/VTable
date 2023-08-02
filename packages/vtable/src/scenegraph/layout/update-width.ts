@@ -69,20 +69,21 @@ export function updateColWidth(scene: Scenegraph, col: number, detaX: number) {
         column.setAttribute('x', column.attribute.x + detaX);
       }
     });
-    if (leftBottomColumn) {
-      scene.leftBottomCornerGroup.forEachChildrenSkipChild((column: Group, index) => {
-        if (column.col > col) {
-          column.setAttribute('x', column.attribute.x + detaX);
-        }
-      });
-    }
-    if (bottomColumn) {
-      scene.bottomFrozenGroup.forEachChildrenSkipChild((column: Group, index) => {
-        if (column.col > col) {
-          column.setAttribute('x', column.attribute.x + detaX);
-        }
-      });
-    }
+  }
+
+  if (leftBottomColumn) {
+    scene.leftBottomCornerGroup.forEachChildrenSkipChild((column: Group, index) => {
+      if (column.col > col) {
+        column.setAttribute('x', column.attribute.x + detaX);
+      }
+    });
+  }
+  if (bottomColumn) {
+    scene.bottomFrozenGroup.forEachChildrenSkipChild((column: Group, index) => {
+      if (column.col > col) {
+        column.setAttribute('x', column.attribute.x + detaX);
+      }
+    });
   }
 
   scene.table.setColWidth(col, rowHeaderOrBodyColumn.attribute.width, true);
