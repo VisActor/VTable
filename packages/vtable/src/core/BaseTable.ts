@@ -60,7 +60,13 @@ import { isBoolean, type ITextSize } from '@visactor/vutils';
 import { WrapText } from '../scenegraph/graphic/text';
 import { textMeasure } from '../scenegraph/utils/measure-text';
 import { getProp } from '../scenegraph/utils/get-prop';
-import type { ColumnData, ColumnDefine, ColumnsDefine, IndicatorData } from '../ts-types/list-table/layout-map/api';
+import type {
+  ColumnData,
+  ColumnDefine,
+  ColumnsDefine,
+  ImageColumnDefine,
+  IndicatorData
+} from '../ts-types/list-table/layout-map/api';
 import type { TooltipOptions } from '../ts-types/tooltip';
 import { IconCache } from '../plugins/icons';
 import {
@@ -1002,7 +1008,8 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
       this.heightMode === 'standard' &&
       this.internalProps.layoutMap &&
       endRow >= this.columnHeaderLevelCount &&
-      !this.bottomFrozenRowCount
+      !this.bottomFrozenRowCount &&
+      !this.hasAutoImageColumn()
     ) {
       for (let i = startRow; i < this.columnHeaderLevelCount; i++) {
         // part in header
@@ -3184,5 +3191,14 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
       customLayout = define?.customLayout;
     }
     return customLayout;
+  }
+
+  hasAutoImageColumn() {
+    return (this.internalProps.layoutMap.columnObjects as ColumnData[]).find((column: ColumnData) => {
+      if (column.columnType === 'image' && (column.define as ImageColumnDefine).imageAutoSizing) {
+        return true;
+      }
+      return false;
+    });
   }
 }
