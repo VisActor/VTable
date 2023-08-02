@@ -80,8 +80,105 @@ export function createTable() {
       subtext: '这是一个子标题\ndsag反馈第三个国际服大教室',
       orient: 'top',
       padding: 40
+    },
+    legends: {
+      data: [
+        {
+          label: '公司-数量',
+          shape: {
+            fill: '#2E62F1',
+            symbolType: 'circle'
+          }
+        },
+        {
+          label: '小型企业-数量',
+          shape: {
+            fill: '#4DC36A',
+            symbolType: 'square'
+          }
+        },
+        {
+          label: '消费者-数量',
+          shape: {
+            fill: '#FF8406',
+            symbolType: 'circle'
+          }
+        },
+        {
+          label: '公司-销售额',
+          shape: {
+            fill: '#FFCC00',
+            symbolType: 'circle'
+          }
+        },
+        {
+          label: '小型企业-销售额',
+          shape: {
+            fill: '#4F44CF',
+            symbolType: 'circle'
+          }
+        },
+        {
+          label: '消费者-销售额',
+          shape: {
+            fill: '#5AC8FA',
+            symbolType: 'circle'
+          }
+        },
+        {
+          label: '公司-利润',
+          shape: {
+            fill: '#003A8C',
+            symbolType: 'circle'
+          }
+        },
+        {
+          label: '小型企业-利润',
+          shape: {
+            fill: '#B08AE2',
+            symbolType: 'circle'
+          }
+        },
+        {
+          label: '消费者-利润',
+          shape: {
+            fill: '#FF6341',
+            symbolType: 'circle'
+          }
+        },
+        {
+          label: '公司-折扣',
+          shape: {
+            fill: '#98DD62',
+            symbolType: 'circle'
+          }
+        },
+        {
+          label: '小型企业-折扣',
+          shape: {
+            fill: '#07A199',
+            symbolType: 'circle'
+          }
+        },
+        {
+          label: '消费者-折扣',
+          shape: {
+            fill: '#87DBDD',
+            symbolType: 'circle'
+          }
+        }
+      ],
+      orient: 'top',
+      position: 'start',
+      maxRow: 1,
+      padding: [50, 0, 0, 0]
     }
   };
   const tableInstance = new VTable.ListTable(option);
   (window as any).tableInstance = tableInstance;
+
+  setTimeout(() => {
+    delete option.legends;
+    tableInstance.updateOption(option);
+  }, 6000);
 }
