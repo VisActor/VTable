@@ -102,10 +102,10 @@ export class TableLegend {
     // update table size
     if (this.orient === 'left') {
       this.table.tableNoFrameWidth = this.table.tableNoFrameWidth - Math.ceil(width);
-      this.table.tableX = Math.ceil(width);
+      this.table.tableX += Math.ceil(width);
     } else if (this.orient === 'top') {
       this.table.tableNoFrameHeight = this.table.tableNoFrameHeight - Math.ceil(height);
-      this.table.tableY = Math.ceil(height);
+      this.table.tableY += Math.ceil(height);
     } else if (this.orient === 'right') {
       this.table.tableNoFrameWidth = this.table.tableNoFrameWidth - Math.ceil(width);
     } else if (this.orient === 'bottom') {
