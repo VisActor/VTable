@@ -99,18 +99,20 @@ export async function createGroupForFirstScreen(
   );
 
   if (proxy.table.bottomFrozenRowCount > 0) {
-    // create left bottom frozen
-    createColGroup(
-      leftBottomCornerGroup,
-      xOrigin,
-      yOrigin,
-      0, // colStart
-      proxy.table.rowHeaderLevelCount - 1, // colEnd
-      proxy.table.rowCount - 1 - proxy.table.bottomFrozenRowCount + 1, // rowStart
-      proxy.table.rowCount - 1, // rowEnd
-      'rowHeader', // isHeader
-      proxy.table
-    );
+    if (!proxy.table.isPivotChart()) {
+      // create left bottom frozen
+      createColGroup(
+        leftBottomCornerGroup,
+        xOrigin,
+        yOrigin,
+        0, // colStart
+        proxy.table.rowHeaderLevelCount - 1, // colEnd
+        proxy.table.rowCount - 1 - proxy.table.bottomFrozenRowCount + 1, // rowStart
+        proxy.table.rowCount - 1, // rowEnd
+        'rowHeader', // isHeader
+        proxy.table
+      );
+    }
     // create bottomFrozenGroup
     createColGroup(
       bottomFrozenGroup,
@@ -126,18 +128,20 @@ export async function createGroupForFirstScreen(
   }
 
   if (proxy.table.rightFrozenColCount > 0) {
-    // create right top frozen Group
-    createColGroup(
-      rightTopCornerGroup,
-      xOrigin,
-      yOrigin,
-      proxy.table.colCount - 1 - proxy.table.rightFrozenColCount + 1, // colStart
-      proxy.table.colCount - 1, // colEnd
-      0, // rowStart
-      proxy.table.columnHeaderLevelCount - 1, // rowEnd
-      'columnHeader', // isHeader
-      proxy.table
-    );
+    if (!proxy.table.isPivotChart()) {
+      // create right top frozen Group
+      createColGroup(
+        rightTopCornerGroup,
+        xOrigin,
+        yOrigin,
+        proxy.table.colCount - 1 - proxy.table.rightFrozenColCount + 1, // colStart
+        proxy.table.colCount - 1, // colEnd
+        0, // rowStart
+        proxy.table.columnHeaderLevelCount - 1, // rowEnd
+        'columnHeader', // isHeader
+        proxy.table
+      );
+    }
     // create rightFrozenGroup
     createColGroup(
       rightFrozenGroup,

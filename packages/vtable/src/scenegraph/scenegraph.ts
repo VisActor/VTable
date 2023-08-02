@@ -353,7 +353,7 @@ export class Scenegraph {
     if (
       this.table.rightFrozenColCount > 0 &&
       col >= this.table.colCount - this.table.rightFrozenColCount &&
-      row <= this.table.frozenRowCount
+      row < this.table.frozenRowCount
     ) {
       cell = this.rightBottomCornerGroup.getColGroup(col)?.getRowGroup(row);
     } else if (
@@ -361,11 +361,11 @@ export class Scenegraph {
       row >= this.table.rowCount - this.table.bottomFrozenRowCount &&
       col < this.table.frozenColCount
     ) {
-      cell = this.bottomFrozenGroup.getColGroup(col)?.getRowGroup(row);
+      cell = this.leftBottomCornerGroup.getColGroup(col)?.getRowGroup(row);
     } else if (this.table.rightFrozenColCount > 0 && col > this.table.colCount - 1 - this.table.rightFrozenColCount) {
       cell = this.rightFrozenGroup.getColGroup(col)?.getRowGroup(row);
     } else if (this.table.bottomFrozenRowCount > 0 && row > this.table.rowCount - 1 - this.table.bottomFrozenRowCount) {
-      cell = this.leftBottomCornerGroup.getColGroup(col)?.getRowGroup(row);
+      cell = this.bottomFrozenGroup.getColGroup(col)?.getRowGroup(row);
     } else {
       cell = this.getColGroup(col, row < this.frozenRowCount)?.getRowGroup(row);
     }
