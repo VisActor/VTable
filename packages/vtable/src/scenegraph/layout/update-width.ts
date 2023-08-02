@@ -25,150 +25,25 @@ import { updateCellHeightForRow } from './update-height';
 export function updateColWidth(scene: Scenegraph, col: number, detaX: number) {
   const autoRowHeight = scene.table.heightMode === 'autoHeight';
   // deal width corner header or column header
-  let needRerangeRow = false;
   const colOrCornerHeaderColumn = scene.getColGroup(col, true) as Group;
-  const oldColOrCornerHeaderColumnWidth = colOrCornerHeaderColumn?.attribute.width;
-  colOrCornerHeaderColumn?.setAttribute('width', oldColOrCornerHeaderColumnWidth + detaX);
-  // 更新单元格宽度
-  colOrCornerHeaderColumn?.forEachChildren((cell: Group, index: number) => {
-    const isHeightChange = updateCellWidth(
-      scene,
-      cell,
-      col,
-      // index,
-      cell.row,
-      oldColOrCornerHeaderColumnWidth,
-      detaX,
-      // true
-      index < scene.table.columnHeaderLevelCount,
-      autoRowHeight
-    );
-    if (isHeightChange) {
-      const mergeInfo = getCellMergeInfo(scene.table, cell.col, cell.row);
-      if (mergeInfo && mergeInfo.end.row - mergeInfo.start.row) {
-        for (let row = mergeInfo.start.row; row <= mergeInfo.end.row; row++) {
-          resetRowHeight(scene, row);
-        }
-      } else {
-        resetRowHeight(scene, cell.row);
-      }
-      needRerangeRow = true;
-    }
-  });
-
-  if (needRerangeRow) {
-    let newTotalHeight = 0;
-    for (let col = 0; col < scene.table.colCount; col++) {
-      const colGroup = scene.getColGroup(col, true);
-      let y = 0;
-      colGroup.forEachChildren((cellGroup: Group) => {
-        if (cellGroup.role !== 'cell') {
-          return;
-        }
-        cellGroup.setAttribute('y', y);
-        y += cellGroup.attribute.height;
-      });
-      newTotalHeight = y;
-    }
-    scene.updateContainerHeight(0, newTotalHeight - scene.colHeaderGroup.attribute.height);
+  if (colOrCornerHeaderColumn) {
+    updateColunmWidth(colOrCornerHeaderColumn, detaX, autoRowHeight, 'col-corner', scene);
   }
   // deal width row header or body or right frozen cells
-  needRerangeRow = false;
   const rowHeaderOrBodyColumn = scene.getColGroup(col) as Group;
-  const oldRowHeaderOrBodyColumn = rowHeaderOrBodyColumn.attribute.width;
-  rowHeaderOrBodyColumn?.setAttribute('width', oldRowHeaderOrBodyColumn + detaX);
-  rowHeaderOrBodyColumn?.forEachChildren((cell: Group, index: number) => {
-    const isHeightChange = updateCellWidth(
-      scene,
-      cell,
-      // col + (!isRowHeader ? scene.table.frozenColCount : 0),
-      cell.col,
-      // index + scene.table.frozenRowCount,
-      cell.row,
-      oldRowHeaderOrBodyColumn,
-      detaX,
-      // isRowHeader
-      col < scene.table.rowHeaderLevelCount,
-      autoRowHeight
-    );
-    if (isHeightChange) {
-      const mergeInfo = getCellMergeInfo(scene.table, cell.col, cell.row);
-      if (mergeInfo && mergeInfo.end.row - mergeInfo.start.row) {
-        for (let row = mergeInfo.start.row; row <= mergeInfo.end.row; row++) {
-          resetRowHeight(scene, row);
-        }
-      } else {
-        resetRowHeight(scene, cell.row);
-      }
-      needRerangeRow = true;
-    }
-  });
-
-  if (needRerangeRow) {
-    let newTotalHeight = 0;
-    for (let col = 0; col < scene.table.colCount; col++) {
-      const colGroup = scene.getColGroup(col, false);
-      let y = 0;
-      colGroup.forEachChildren((cellGroup: Group) => {
-        if (cellGroup.role !== 'cell') {
-          return;
-        }
-        cellGroup.setAttribute('y', y);
-        y += cellGroup.attribute.height;
-      });
-      newTotalHeight = y;
-    }
-    scene.updateContainerHeight(scene.table.frozenRowCount, newTotalHeight - scene.bodyGroup.attribute.height);
+  if (rowHeaderOrBodyColumn) {
+    updateColunmWidth(rowHeaderOrBodyColumn, detaX, autoRowHeight, 'row-body', scene);
   }
 
+  const leftBottomColumn = scene.getColGroupInLeftBottomCorner(col);
+  // deal width left bottom frozen cells
+  if (leftBottomColumn) {
+    updateColunmWidth(leftBottomColumn, detaX, autoRowHeight, 'left-bottom', scene);
+  }
   // deal width bottom frozen cells
   const bottomColumn = scene.getColGroupInBottom(col);
   if (bottomColumn) {
-    const oldBottomColumnWidth = bottomColumn.attribute.width;
-    bottomColumn?.setAttribute('width', oldBottomColumnWidth + detaX);
-    bottomColumn?.forEachChildren((cell: Group, index: number) => {
-      const isHeightChange = updateCellWidth(
-        scene,
-        cell,
-        // col + (!isRowHeader ? scene.table.frozenColCount : 0),
-        cell.col,
-        // index + scene.table.frozenRowCount,
-        cell.row,
-        oldBottomColumnWidth,
-        detaX,
-        // isRowHeader
-        col < scene.table.rowHeaderLevelCount,
-        autoRowHeight
-      );
-      if (isHeightChange) {
-        const mergeInfo = getCellMergeInfo(scene.table, cell.col, cell.row);
-        if (mergeInfo && mergeInfo.end.row - mergeInfo.start.row) {
-          for (let row = mergeInfo.start.row; row <= mergeInfo.end.row; row++) {
-            resetRowHeight(scene, row);
-          }
-        } else {
-          resetRowHeight(scene, cell.row);
-        }
-        needRerangeRow = true;
-      }
-    });
-
-    if (needRerangeRow) {
-      let newTotalHeight = 0;
-      for (let col = 0; col < scene.table.colCount; col++) {
-        const colGroup = scene.getColGroup(col, false);
-        let y = 0;
-        colGroup.forEachChildren((cellGroup: Group) => {
-          if (cellGroup.role !== 'cell') {
-            return;
-          }
-          cellGroup.setAttribute('y', y);
-          y += cellGroup.attribute.height;
-        });
-        newTotalHeight = y;
-      }
-      scene.updateContainerHeight(scene.table.frozenRowCount, newTotalHeight - scene.bodyGroup.attribute.height);
-    }
+    updateColunmWidth(bottomColumn, detaX, autoRowHeight, 'bottom', scene);
   }
 
   // 更新剩余列位置
@@ -194,6 +69,13 @@ export function updateColWidth(scene: Scenegraph, col: number, detaX: number) {
         column.setAttribute('x', column.attribute.x + detaX);
       }
     });
+    if (leftBottomColumn) {
+      scene.leftBottomCornerGroup.forEachChildrenSkipChild((column: Group, index) => {
+        if (column.col > col) {
+          column.setAttribute('x', column.attribute.x + detaX);
+        }
+      });
+    }
     if (bottomColumn) {
       scene.bottomFrozenGroup.forEachChildrenSkipChild((column: Group, index) => {
         if (column.col > col) {
@@ -204,6 +86,71 @@ export function updateColWidth(scene: Scenegraph, col: number, detaX: number) {
   }
 
   scene.table.setColWidth(col, rowHeaderOrBodyColumn.attribute.width, true);
+}
+
+function updateColunmWidth(
+  columnGroup: Group,
+  detaX: number,
+  autoRowHeight: boolean,
+  mode: 'col-corner' | 'row-body' | 'bottom' | 'left-bottom',
+  scene: Scenegraph
+) {
+  let needRerangeRow = false;
+  // const colOrCornerHeaderColumn = scene.getColGroup(col, true) as Group;
+  const oldColumnWidth = columnGroup?.attribute.width ?? 0;
+  columnGroup?.setAttribute('width', oldColumnWidth + detaX);
+  // 更新单元格宽度
+  columnGroup?.forEachChildren((cell: Group, index: number) => {
+    const isHeightChange = updateCellWidth(
+      scene,
+      cell,
+      cell.col,
+      cell.row,
+      oldColumnWidth,
+      detaX,
+      mode === 'row-body' ? cell.col < scene.table.rowHeaderLevelCount : true,
+      autoRowHeight
+    );
+    if (isHeightChange) {
+      const mergeInfo = getCellMergeInfo(scene.table, cell.col, cell.row);
+      if (mergeInfo && mergeInfo.end.row - mergeInfo.start.row) {
+        for (let row = mergeInfo.start.row; row <= mergeInfo.end.row; row++) {
+          resetRowHeight(scene, row);
+        }
+      } else {
+        resetRowHeight(scene, cell.row);
+      }
+      needRerangeRow = true;
+    }
+  });
+
+  if (needRerangeRow) {
+    let newTotalHeight = 0;
+    for (let col = 0; col < scene.table.colCount; col++) {
+      // const colGroup = scene.getColGroup(col, true);
+      let colGroup;
+      if (mode === 'col-corner') {
+        colGroup = scene.getColGroup(col, true);
+      } else if (mode === 'row-body') {
+        colGroup = scene.getColGroup(col, false);
+      } else if (mode === 'bottom') {
+        colGroup = scene.getColGroupInBottom(col);
+      } else if (mode === 'left-bottom') {
+        colGroup = scene.getColGroupInLeftBottomCorner(col);
+      }
+      let y = 0;
+      colGroup.forEachChildren((cellGroup: Group) => {
+        if (cellGroup.role !== 'cell') {
+          cellGroup.setAttribute('y', y);
+          return;
+        }
+        cellGroup.setAttribute('y', y);
+        y += cellGroup.attribute.height ?? 0;
+      });
+      newTotalHeight = y;
+    }
+    scene.updateContainerHeight(0, newTotalHeight - (scene.colHeaderGroup.attribute.height ?? 0));
+  }
 }
 
 /**
