@@ -22,6 +22,7 @@ export function createTable() {
           dimensionKey: 'Order Year',
           dimensionTitle: 'Order Year',
           headerStyle: {
+            textBaseline: 'top',
             textStick: true
           }
         },
@@ -147,6 +148,7 @@ export function createTable() {
             series: [
               {
                 type: 'bar',
+                barWidth: 20,
                 data: {
                   id: 'data1',
                   fields: {
@@ -330,16 +332,16 @@ export function createTable() {
         indicatorsAsCol: false,
         parentElement: document.getElementById(Table_CONTAINER_DOM_ID),
         records: data,
-        defaultRowHeight: 160,
+        defaultRowHeight: 131,
         defaultHeaderRowHeight: 50,
         defaultColWidth: 280,
         defaultHeaderColWidth: 80,
-        indicatorTitle: '指标',
+        indicatorTitle: 'indicator',
         autoWrapText: true,
         // widthMode:'adaptive',
         // heightMode:'adaptive',
         corner: {
-          titleOnDimension: 'column',
+          titleOnDimension: 'row',
           headerStyle: {
             autoWrapText: true
           }

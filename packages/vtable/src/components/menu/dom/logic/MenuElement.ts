@@ -97,6 +97,10 @@ export class MenuElement {
     (this._secondElement as any).sub = true;
     this._showChildrenIndex = -1;
 
+    // 鼠标在菜单上滚动阻止冒泡
+    this._rootElement.addEventListener('wheel', e => {
+      e.stopPropagation();
+    });
     // 绑定交互事件
     this._rootElement?.addEventListener('mousedown', e => {
       e.stopPropagation();
@@ -247,6 +251,10 @@ export class MenuElement {
       }
     });
 
+    // 鼠标在菜单上滚动阻止冒泡
+    this._secondElement?.addEventListener('wheel', e => {
+      e.stopPropagation();
+    });
     this._secondElement?.addEventListener('mousemove', e => {
       if (this._rootElement.classList.contains(HIDDEN_CLASSNAME)) {
         return;
