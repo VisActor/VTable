@@ -171,7 +171,7 @@ export class TooltipHandler {
         const abstractPos = table._getMouseAbstractPoint(event, false);
         if (
           !(
-            abstractPos &&
+            abstractPos.inTable &&
             abstractPos.x >= left - 5 &&
             abstractPos.x <= right + 5 &&
             abstractPos.y >= top - 5 &&

@@ -205,8 +205,8 @@ export class EventManeger {
     return false;
   }
 
-  dealColumnResize(eventArgsSet: SceneEvent) {
-    this.table.stateManeger.updateResizeCol(eventArgsSet.abstractPos.x, eventArgsSet.abstractPos.y);
+  dealColumnResize(xInTable: number, yInTable: number) {
+    this.table.stateManeger.updateResizeCol(xInTable, xInTable);
   }
 
   chechColumnMover(eventArgsSet: SceneEvent): boolean {

@@ -1911,11 +1911,11 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
   _getMouseAbstractPoint(
     evt: TouchEvent | MouseEvent | undefined,
     isAddScroll = true
-  ): { x: number; y: number } | null {
+  ): { x: number; y: number; inTable: boolean } {
     const table = this;
     let e: MouseEvent | Touch;
     if (!evt) {
-      return null;
+      return { inTable: false, x: undefined, y: undefined };
     }
     if (isTouchEvent(evt)) {
       e = evt.changedTouches[0];
@@ -1925,11 +1925,12 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     const clientX = e.clientX || e.pageX + window.scrollX;
     const clientY = e.clientY || e.pageY + window.scrollY;
     const rect = table.internalProps.canvas.getBoundingClientRect();
+    let inTable = true;
     if (rect.right <= clientX) {
-      return null;
+      inTable = false;
     }
     if (rect.bottom <= clientY) {
-      return null;
+      inTable = false;
     }
 
     const currentWidth = rect.width;
@@ -1942,38 +1943,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
 
     const x = (clientX - rect.left) / widthRatio + (isAddScroll ? table.scrollLeft : 0) - table.tableX;
     const y = (clientY - rect.top) / heightRatio + (isAddScroll ? table.scrollTop : 0) - table.tableY;
-    return { x, y };
-  }
-  _getCellEventArgsSet<EVT extends TouchEvent | MouseEvent>(
-    e: EVT
-  ): {
-    abstractPos?: { x: number; y: number };
-    cell?: CellAddress;
-    eventArgs?: CellAddress & { event: EVT; related?: CellAddress };
-  } {
-    //将滚动值考虑进去，转换鼠标坐标值
-    const abstractPos = this._getMouseAbstractPoint(e);
-    if (!abstractPos) {
-      return {};
-    }
-    const cell = this.getCellAt(abstractPos.x, abstractPos.y);
-    if (cell.col < 0 || cell.row < 0) {
-      return {
-        abstractPos,
-        cell
-      };
-    }
-    const eventArgs = {
-      col: cell.col,
-      row: cell.row,
-      event: e,
-      rect: cell.rect
-    };
-    return {
-      abstractPos,
-      cell,
-      eventArgs
-    };
+    return { x, y, inTable };
   }
   getTheme() {
     return this.internalProps.theme;
