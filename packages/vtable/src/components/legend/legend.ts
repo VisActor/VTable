@@ -162,6 +162,7 @@ export class TableLegend {
     };
   }
   dispose() {
+    this.table.scenegraph.stage.defaultLayer.removeChild(this.legendComponent);
     this.legendComponent = null;
   }
 }

@@ -223,7 +223,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
     }
     // // 恢复selection状态
     // internalProps.selection.range = range;
-    this._updateSize();
+    // this._updateSize();
     // 传入新数据
     if (options.dataSource) {
       _setDataSource(this, options.dataSource);

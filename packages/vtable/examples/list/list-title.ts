@@ -84,4 +84,15 @@ export function createTable() {
   };
   const tableInstance = new VTable.ListTable(option);
   (window as any).tableInstance = tableInstance;
+
+  setTimeout(() => {
+    option.title = {
+      text: 'dsagf---hahhah',
+      align: 'right',
+      subtext: '这是一个子标题\ndsag反馈第三个国际服大教室',
+      orient: 'top',
+      padding: 40
+    };
+    tableInstance.updateOption(option);
+  }, 6000);
 }
