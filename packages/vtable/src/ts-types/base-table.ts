@@ -399,7 +399,7 @@ export interface BaseTableAPI {
   _getMouseAbstractPoint: (
     evt: TouchEvent | MouseEvent | undefined,
     isAddScroll?: boolean
-  ) => { x: number; y: number } | null;
+  ) => { x: number; y: number; inTable: boolean };
   getElement: () => HTMLElement;
   getParentElement: () => HTMLElement;
 
