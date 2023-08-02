@@ -66,16 +66,17 @@ export function computeColsWidth(table: BaseTableAPI, colStart?: number, colEnd?
   if (table.widthMode === 'adaptive') {
     table._clearColRangeWidthsMap();
     // const canvasWidth = table.internalProps.canvas.width;
-    const totalDrawWidth = table.tableNoFrameWidth;
+    const totalDrawWidth = table.tableNoFrameWidth - table.getFrozenColsWidth() - table.getRightFrozenColsWidth();
     let actualWidth = 0;
-    for (let col = 0; col < table.colCount; col++) {
+    for (let col = table.frozenColCount; col < table.colCount - table.rightFrozenColCount; col++) {
       actualWidth += table.getColWidth(col);
     }
     const factor = totalDrawWidth / actualWidth;
-    for (let col = 0; col < table.colCount; col++) {
+    for (let col = table.frozenColCount; col < table.colCount - table.rightFrozenColCount; col++) {
       let colWidth;
-      if (col === table.colCount - 1) {
-        colWidth = totalDrawWidth - table.getColsWidth(0, table.colCount - 2);
+      if (col === table.colCount - table.rightFrozenColCount - 1) {
+        colWidth =
+          totalDrawWidth - table.getColsWidth(table.frozenColCount, table.colCount - table.rightFrozenColCount - 2);
       } else {
         colWidth = Math.round(table.getColWidth(col) * factor);
       }
@@ -89,7 +90,7 @@ export function computeColsWidth(table: BaseTableAPI, colStart?: number, colEnd?
     let actualHeaderWidth = 0;
     for (let col = 0; col < table.colCount; col++) {
       const colWidth = table.getColWidth(col);
-      if (col < table.frozenColCount) {
+      if (col < table.frozenColCount || col >= table.colCount - table.rightFrozenColCount) {
         actualHeaderWidth += colWidth;
       }
 
@@ -99,7 +100,7 @@ export function computeColsWidth(table: BaseTableAPI, colStart?: number, colEnd?
     // 如果内容宽度小于canvas宽度，执行adaptive放大
     if (actualWidth < canvasWidth && actualWidth - actualHeaderWidth > 0) {
       const factor = (canvasWidth - actualHeaderWidth) / (actualWidth - actualHeaderWidth);
-      for (let col = table.frozenColCount; col < table.colCount; col++) {
+      for (let col = table.frozenColCount; col < table.colCount - table.rightFrozenColCount; col++) {
         table.setColWidth(col, table.getColWidth(col) * factor, false, true);
       }
     }

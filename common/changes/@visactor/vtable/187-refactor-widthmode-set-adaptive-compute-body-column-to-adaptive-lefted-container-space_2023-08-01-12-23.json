@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "comment": "refactor: widthMode set adaptive , compute body column to adaptive lefted container space #187\n\n",
+      "type": "patch",
+      "packageName": "@visactor/vtable"
+    }
+  ],
+  "packageName": "@visactor/vtable",
+  "email": "892739385@qq.com"
+}
