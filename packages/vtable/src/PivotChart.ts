@@ -881,7 +881,8 @@ export class PivotChart extends BaseTable implements PivotTableAPI {
     const chartNode: Chart = cellGroup?.getChildren()?.[0] as Chart;
     if (chartNode.attribute.chartInstance) {
       const chartInstance = chartNode.attribute.chartInstance;
-      const { dataId, data, viewBox, axes } = chartNode.attribute;
+      const { dataId, data, axes } = chartNode.attribute;
+      const viewBox = chartNode.getViewBox();
       axes.forEach((axis: any, index: number) => {
         if (axis.type === 'linear') {
           const chartAxis = chartInstance._chart._components[index];

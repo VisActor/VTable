@@ -41,7 +41,8 @@ export class DefaultCanvasChartRender implements IGraphicRender {
   ) {
     const groupAttribute = getTheme(chart, params?.theme).group;
 
-    const { dataId, data, viewBox } = chart.attribute;
+    const { dataId, data } = chart.attribute;
+    const viewBox = chart.getViewBox();
     const { width = groupAttribute.width, height = groupAttribute.height } = chart.attribute;
 
     const { chartInstance, active, cacheCanvas, activeChartInstance } = chart;
