@@ -58,7 +58,8 @@ export function getChartAxes(col: number, row: number, layout: PivotLayoutMap): 
           label: { visible: false },
           title: { visible: false },
           range,
-          seriesIndex: index
+          seriesIndex: index,
+          height: -1
         })
       );
     });
@@ -112,7 +113,8 @@ export function getChartAxes(col: number, row: number, layout: PivotLayoutMap): 
           label: { visible: false },
           title: { visible: false },
           range,
-          seriesIndex: index
+          seriesIndex: index,
+          width: -1
           // grid: index === 0 ? undefined : { visible: false }
         })
       );
