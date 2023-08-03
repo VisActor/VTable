@@ -99,7 +99,7 @@ export function getAxisConfigInPivotChart(col: number, row: number, layout: Pivo
       });
     } else if (
       col === layout.rowHeaderLevelCount - 1 &&
-      row >= layout.rowHeaderLevelCount &&
+      row >= layout.columnHeaderLevelCount &&
       row < layout.rowCount - layout.bottomFrozenRowCount
     ) {
       let rowDimensionKey = layout.getDimensionKeyInChartSpec(layout.rowHeaderLevelCount, row)[0];

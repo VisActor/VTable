@@ -51,7 +51,6 @@ export function createTable() {
       }
     },
     '230417171050028'
-    // '230417170554008'
   ];
   const rows = [
     {
@@ -9210,6 +9209,12 @@ export function createTable() {
       '230713150305018': '利润'
     }
   ];
+  const containerDom: HTMLElement = document.getElementById(Table_CONTAINER_DOM_ID);
+
+  containerDom.style.position = 'relative';
+  containerDom.style.width = '500px';
+  containerDom.style.height = '500px';
+
   const option: VTable.PivotTableConstructorOptions = {
     columnTree,
     rowTree,
@@ -9239,194 +9244,230 @@ export function createTable() {
 
   const tableInstance = new VTable.PivotChart(option);
   window.tableInstance = tableInstance;
-  // setTimeout(() => {
-  //   const indicators1: VTable.TYPES.IIndicator[] = [
-  //     {
-  //       indicatorKey: '230417171050011',
-  //       caption: '数量',
-  //       width: 'auto',
-  //       columnType: 'chart',
-  //       chartModule: 'vchart',
-  //       chartSpec: {
-  //         // type: 'common',
-  //         stack: true,
-  //         type: 'bar',
-  //         data: {
-  //           id: 'data'
-  //         },
-  //         xField: ['230417170554008'],
-  //         yField: '230417171050011',
-  //         seriesField: '230417171050030',
-  //         axes: [
-  //           { orient: 'left', visible: false, label: { visible: true } },
-  //           { orient: 'bottom', visible: false }
-  //         ],
-  //         bar: {
-  //           state: {
-  //             selected: {
-  //               fill: 'yellow'
-  //             },
-  //             selected_reverse: {
-  //               // fill: '#ddd'
-  //               opacity: 0.2
-  //             }
-  //           }
-  //         }
-  //       },
-  //       style: {
-  //         padding: 1
-  //       }
-  //     },
-  //     {
-  //       indicatorKey: '230417171050025',
-  //       caption: '销售额 & 利润',
-  //       columnType: 'chart',
-  //       chartModule: 'vchart',
-  //       chartSpec: {
-  //         type: 'common',
-  //         data: {
-  //           id: 'data'
-  //         },
 
-  //         series: [
-  //           {
-  //             type: 'bar',
-  //             stack: true,
-  //             xField: ['230417170554008'],
-  //             yField: '230713150305011',
-  //             seriesField: '230417171050030',
-  //             bar: {
-  //               state: {
-  //                 selected: {
-  //                   fill: 'yellow'
-  //                 },
-  //                 selected_reverse: {
-  //                   // fill: '#ddd'
-  //                   opacity: 0.2
-  //                 }
-  //               }
-  //             }
-  //           },
-  //           {
-  //             type: 'line',
-  //             stack: false,
-  //             xField: ['230417170554008'],
-  //             yField: '230417171050025',
-  //             seriesField: '230417171050030',
-  //             line: {
-  //               state: {
-  //                 selected: {
-  //                   lineWidth: 3
-  //                 },
-  //                 selected_reverse: {
-  //                   lineWidth: 1
-  //                 }
-  //               }
-  //             },
-  //             point: {
-  //               state: {
-  //                 selected: {
-  //                   fill: 'yellow'
-  //                 },
-  //                 selected_reverse: {
-  //                   fill: '#ddd'
-  //                 }
-  //               }
-  //             }
-  //           }
-  //         ],
-  //         axes: [
-  //           { orient: 'left', visible: true, label: { visible: true } },
-  //           { orient: 'bottom', visible: true }
-  //         ]
-  //       },
-  //       style: {
-  //         padding: 1
-  //       }
-  //     },
-  //     {
-  //       indicatorKey: '230707112948009',
-  //       caption: '折扣',
-  //       width: 'auto',
-  //       columnType: 'chart',
-  //       chartModule: 'vchart',
-  //       chartSpec: {
-  //         // type: 'common',
-  //         stack: false,
-  //         type: 'area',
-  //         data: {
-  //           id: 'data'
-  //         },
-  //         xField: ['230417170554008'],
-  //         yField: '230707112948009',
-  //         seriesField: '230417171050030',
-  //         axes: [
-  //           { orient: 'left', visible: true, label: { visible: true } },
-  //           { orient: 'bottom', visible: true }
-  //         ],
-  //         line: {
-  //           state: {
-  //             selected: {
-  //               lineWidth: 3
-  //             },
-  //             selected_reverse: {
-  //               lineWidth: 1
-  //             }
-  //           }
-  //         },
-  //         point: {
-  //           state: {
-  //             selected: {
-  //               fill: 'yellow'
-  //             },
-  //             selected_reverse: {
-  //               fill: '#ddd'
-  //             }
-  //           }
-  //         },
-  //         area: {
-  //           state: {
-  //             selected: {
-  //               opacity: 1
-  //             },
-  //             selected_reverse: {
-  //               opacity: 0.2
-  //             }
-  //           }
-  //         }
-  //       },
-  //       style: {
-  //         padding: 1
-  //       }
-  //     }
-  //   ];
-  //   const recordDeleted=records.slice(-700);
+  const datum = {
+    '10002': '83',
+    '10003': '230417171050011',
+    '230417170554008': '美术',
+    '230417170554012': '一级',
+    '230417171050011': '83',
+    '230417171050028': '办公用品',
+    '230417171050030': '公司',
+    '230417171050031': '中国',
+    '230713150305018': '数量'
+  };
+  const cellAddr = {
+    colHeaderPaths: [
+      {
+        dimensionKey: '230417171050031',
+        value: '中国'
+      },
+      {
+        dimensionKey: '230417171050028',
+        value: '办公用品'
+      }
+    ],
+    rowHeaderPaths: [
+      {
+        dimensionKey: '230417170554012',
+        value: '一级'
+      },
+      {
+        indicatorKey: '230417171050011',
+        value: '数量'
+      }
+    ]
+  };
+  console.log(tableInstance.getChartDatumPosition(datum, cellAddr));
+  setTimeout(() => {
+    const indicators1: VTable.TYPES.IIndicator[] = [
+      {
+        indicatorKey: '230417171050011',
+        caption: '数量',
+        width: 'auto',
+        columnType: 'chart',
+        chartModule: 'vchart',
+        chartSpec: {
+          // type: 'common',
+          stack: true,
+          type: 'bar',
+          data: {
+            id: 'data'
+          },
+          xField: ['230417170554008'],
+          yField: '230417171050011',
+          seriesField: '230417171050030',
+          axes: [
+            { orient: 'left', visible: false, label: { visible: true } },
+            { orient: 'bottom', visible: false }
+          ],
+          bar: {
+            state: {
+              selected: {
+                fill: 'yellow'
+              },
+              selected_reverse: {
+                // fill: '#ddd'
+                opacity: 0.2
+              }
+            }
+          }
+        },
+        style: {
+          padding: 1
+        }
+      },
+      {
+        indicatorKey: '230417171050025',
+        caption: '销售额 & 利润',
+        columnType: 'chart',
+        chartModule: 'vchart',
+        chartSpec: {
+          type: 'common',
+          data: {
+            id: 'data'
+          },
 
-  //   const option1: VTable.PivotTableConstructorOptions = {
-  //     records:recordDeleted,
-  //     columnTree,
-  //     rowTree,
-  //     rows,
-  //     columns,
-  //     indicators:indicators1,
-  //     indicatorsAsCol: false,
-  //     defaultRowHeight: 200,
-  //     defaultHeaderRowHeight: 50,
-  //     defaultColWidth: 280,
-  //     defaultHeaderColWidth: 100,
-  //     indicatorTitle: '指标',
-  //     corner: {
-  //       titleOnDimension: 'row',
-  //       headerStyle: {
-  //         autoWrapText: true
-  //       }
-  //     },
-  //     theme: VTable.themes.ARCO.extends({
-  //       selectionStyle: {
-  //         cellBgColor: ''
-  //       }
-  //     })
-  //   };
-  //   tableInstance.updateOption(option1)
-  // }, 3000);
+          series: [
+            {
+              type: 'bar',
+              stack: true,
+              xField: ['230417170554008'],
+              yField: '230713150305011',
+              seriesField: '230417171050030',
+              bar: {
+                state: {
+                  selected: {
+                    fill: 'yellow'
+                  },
+                  selected_reverse: {
+                    // fill: '#ddd'
+                    opacity: 0.2
+                  }
+                }
+              }
+            },
+            {
+              type: 'line',
+              stack: false,
+              xField: ['230417170554008'],
+              yField: '230417171050025',
+              seriesField: '230417171050030',
+              line: {
+                state: {
+                  selected: {
+                    lineWidth: 3
+                  },
+                  selected_reverse: {
+                    lineWidth: 1
+                  }
+                }
+              },
+              point: {
+                state: {
+                  selected: {
+                    fill: 'yellow'
+                  },
+                  selected_reverse: {
+                    fill: '#ddd'
+                  }
+                }
+              }
+            }
+          ],
+          axes: [
+            { orient: 'left', visible: true, label: { visible: true } },
+            { orient: 'bottom', visible: true }
+          ]
+        },
+        style: {
+          padding: 1
+        }
+      },
+      {
+        indicatorKey: '230707112948009',
+        caption: '折扣',
+        width: 'auto',
+        columnType: 'chart',
+        chartModule: 'vchart',
+        chartSpec: {
+          // type: 'common',
+          stack: false,
+          type: 'area',
+          data: {
+            id: 'data'
+          },
+          xField: ['230417170554008'],
+          yField: '230707112948009',
+          seriesField: '230417171050030',
+          axes: [
+            { orient: 'left', visible: true, label: { visible: true } },
+            { orient: 'bottom', visible: true }
+          ],
+          line: {
+            state: {
+              selected: {
+                lineWidth: 3
+              },
+              selected_reverse: {
+                lineWidth: 1
+              }
+            }
+          },
+          point: {
+            state: {
+              selected: {
+                fill: 'yellow'
+              },
+              selected_reverse: {
+                fill: '#ddd'
+              }
+            }
+          },
+          area: {
+            state: {
+              selected: {
+                opacity: 1
+              },
+              selected_reverse: {
+                opacity: 0.2
+              }
+            }
+          }
+        },
+        style: {
+          padding: 1
+        }
+      }
+    ];
+    const recordDeleted = records.slice(-700);
+
+    const option1: VTable.PivotTableConstructorOptions = {
+      records: recordDeleted,
+      columnTree,
+      rowTree,
+      rows,
+      columns,
+      indicators: indicators1,
+      indicatorsAsCol: false,
+      defaultRowHeight: 200,
+      defaultHeaderRowHeight: 50,
+      defaultColWidth: 280,
+      defaultHeaderColWidth: 100,
+      indicatorTitle: '指标',
+      corner: {
+        titleOnDimension: 'row',
+        headerStyle: {
+          autoWrapText: true
+        }
+      },
+      theme: VTable.themes.ARCO.extends({
+        selectionStyle: {
+          cellBgColor: ''
+        }
+      })
+    };
+    tableInstance.updateOption(option1);
+    console.log(tableInstance.getChartDatumPosition(datum, cellAddr));
+  }, 3000);
 }
