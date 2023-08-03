@@ -205,7 +205,7 @@ export function createTable() {
         rows,
         columns,
         indicators,
-        indicatorsAsCol: true,
+        indicatorsAsCol: false,
         parentElement: document.getElementById(Table_CONTAINER_DOM_ID),
         records: data,
         defaultRowHeight: 200,

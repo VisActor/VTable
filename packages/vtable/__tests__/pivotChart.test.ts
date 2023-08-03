@@ -9350,7 +9350,7 @@ describe('pivotTable init test', () => {
         }
       ]
     };
-    expect(pivotChart.getChartDatumPosition(datum, cellAddr)).toEqual({ x: 428, y: 299 });
+    expect(pivotChart.getChartDatumPosition(datum, cellAddr)).toEqual({ x: 429, y: 299 });
   });
 
   test('pivotTable collectValuesBy', () => {
@@ -9860,6 +9860,6 @@ describe('pivotTable init test', () => {
       })
     };
     pivotChart.updateOption(option1);
-    expect(pivotChart.getChartDatumPosition(datum, cellAddr)).toEqual({ x: 428, y: 233 });
+    expect(pivotChart.getChartDatumPosition(datum, cellAddr)).toEqual({ x: 429, y: 233 });
   });
 });

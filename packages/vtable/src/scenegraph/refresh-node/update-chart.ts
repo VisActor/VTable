@@ -45,16 +45,16 @@ export function updateChartSize(scenegraph: Scenegraph, col: number) {
             Math.ceil(height - node.attribute.cellPadding[0] - node.attribute.cellPadding[2])
           );
 
-          node.setAttribute('viewBox', {
-            x1: Math.ceil(cellNode.globalAABBBounds.x1 + node.attribute.cellPadding[3] + scenegraph.table.scrollLeft),
-            x2: Math.ceil(
-              cellNode.globalAABBBounds.x1 + width - node.attribute.cellPadding[1] + scenegraph.table.scrollLeft
-            ),
-            y1: Math.ceil(cellNode.globalAABBBounds.y1 + node.attribute.cellPadding[0] + scenegraph.table.scrollTop),
-            y2: Math.ceil(
-              cellNode.globalAABBBounds.y1 + height - node.attribute.cellPadding[2] + scenegraph.table.scrollTop
-            )
-          });
+          // node.setAttribute('viewBox', {
+          //   x1: Math.ceil(cellNode.globalAABBBounds.x1 + node.attribute.cellPadding[3] + scenegraph.table.scrollLeft),
+          //   x2: Math.ceil(
+          //     cellNode.globalAABBBounds.x1 + width - node.attribute.cellPadding[1] + scenegraph.table.scrollLeft
+          //   ),
+          //   y1: Math.ceil(cellNode.globalAABBBounds.y1 + node.attribute.cellPadding[0] + scenegraph.table.scrollTop),
+          //   y2: Math.ceil(
+          //     cellNode.globalAABBBounds.y1 + height - node.attribute.cellPadding[2] + scenegraph.table.scrollTop
+          //   )
+          // });
         }
       });
     });
