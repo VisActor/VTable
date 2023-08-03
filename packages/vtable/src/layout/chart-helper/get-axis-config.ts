@@ -32,9 +32,7 @@ export function getAxisConfigInPivotChart(col: number, row: number, layout: Pivo
       const range =
         data[layout.getColKeysPath()[index][Math.max(0, layout.columnHeaderLevelCount - 1 - layout.topAxesCount)]];
 
-      const axisOption = ((layout._table as PivotChart).pivotChartAxes as ITableAxisOption[]).find(axisOption => {
-        return axisOption.orient === 'top';
-      });
+      const axisOption = getAxisOption(col, row, 'top', layout);
       if (axisOption?.visible === false) {
         return;
       }
@@ -78,9 +76,7 @@ export function getAxisConfigInPivotChart(col: number, row: number, layout: Pivo
         }
       });
 
-      const axisOption = ((layout._table as PivotChart).pivotChartAxes as ITableAxisOption[]).find(axisOption => {
-        return axisOption.orient === 'bottom';
-      });
+      const axisOption = getAxisOption(col, row, 'bottom', layout);
       if (axisOption?.visible === false) {
         return;
       }
@@ -103,7 +99,7 @@ export function getAxisConfigInPivotChart(col: number, row: number, layout: Pivo
       });
     } else if (
       col === layout.rowHeaderLevelCount - 1 &&
-      row >= layout.rowHeaderLevelCount &&
+      row >= layout.columnHeaderLevelCount &&
       row < layout.rowCount - layout.bottomFrozenRowCount
     ) {
       let rowDimensionKey = layout.getDimensionKeyInChartSpec(layout.rowHeaderLevelCount, row)[0];
@@ -116,9 +112,7 @@ export function getAxisConfigInPivotChart(col: number, row: number, layout: Pivo
       const rowPath = layout.getRowKeysPath()[recordRow];
       const domain = data[rowPath[rowPath.length - 1]] as Array<string>;
 
-      const axisOption = ((layout._table as PivotChart).pivotChartAxes as ITableAxisOption[]).find(axisOption => {
-        return axisOption.orient === 'left';
-      });
+      const axisOption = getAxisOption(col, row, 'left', layout);
       if (axisOption?.visible === false) {
         return;
       }
@@ -158,9 +152,7 @@ export function getAxisConfigInPivotChart(col: number, row: number, layout: Pivo
         }
       });
 
-      const axisOption = ((layout._table as PivotChart).pivotChartAxes as ITableAxisOption[]).find(axisOption => {
-        return axisOption.orient === 'left';
-      });
+      const axisOption = getAxisOption(col, row, 'left', layout);
       if (axisOption?.visible === false) {
         return;
       }
@@ -203,9 +195,7 @@ export function getAxisConfigInPivotChart(col: number, row: number, layout: Pivo
       const range =
         data[layout.getRowKeysPath()[index][Math.max(0, layout.rowHeaderLevelCount - 1 - layout.leftAxesCount)]];
 
-      const axisOption = ((layout._table as PivotChart).pivotChartAxes as ITableAxisOption[]).find(axisOption => {
-        return axisOption.orient === 'right';
-      });
+      const axisOption = getAxisOption(col, row, 'right', layout);
       if (axisOption?.visible === false) {
         return;
       }
@@ -241,9 +231,7 @@ export function getAxisConfigInPivotChart(col: number, row: number, layout: Pivo
       const colPath = layout.getColKeysPath()[recordCol];
       const domain = data[colPath[colPath.length - 1]] as Array<string>;
 
-      const axisOption = ((layout._table as PivotChart).pivotChartAxes as ITableAxisOption[]).find(axisOption => {
-        return axisOption.orient === 'bottom';
-      });
+      const axisOption = getAxisOption(col, row, 'bottom', layout);
       if (axisOption?.visible === false) {
         return;
       }
@@ -260,4 +248,20 @@ export function getAxisConfigInPivotChart(col: number, row: number, layout: Pivo
   }
 
   return undefined;
+}
+
+export function getAxisOption(col: number, row: number, orient: string, layout: PivotLayoutMap) {
+  const spec = layout.getRawChartSpec(col, row);
+  if (spec && isArray(spec.axes)) {
+    const axisOption = spec.axes.find((axis: any) => {
+      return axis.orient === orient;
+    });
+    if (axisOption) {
+      return axisOption;
+    }
+  }
+  const axisOption = ((layout._table as PivotChart).pivotChartAxes as ITableAxisOption[]).find(axisOption => {
+    return axisOption.orient === orient;
+  });
+  return axisOption;
 }

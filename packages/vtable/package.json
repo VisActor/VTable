@@ -52,15 +52,10 @@
     "@visactor/vutils": "~0.13.3",
     "@visactor/vscale": "~0.13.3",
     "@visactor/vdataset": "~0.13.3",
-    "cssfontparser": "^1.2.1",
-    "d3-dsv": "^3.0.1",
-    "d3-array": "3.2.3",
-    "d3-geo": "^3.0.1",
-    "d3-hexbin": "^0.2.2",
-    "d3-hierarchy": "^3.1.1"
+    "cssfontparser": "^1.2.1"
   },
   "devDependencies": {
-    "@visactor/vchart": "1.1.0-beta.7",
+    "@visactor/vchart": "1.1.0-beta.10",
     "@internal/bundler": "workspace:*",
     "@internal/eslint-config": "workspace:*",
     "@internal/ts-config": "workspace:*",
@@ -101,7 +96,12 @@
     "markdown-it": "13.0.1",
     "node-fetch": "2.6.7",
     "form-data": "~4.0.0",
-    "axios": "~1.4.0"
+    "axios": "~1.4.0",
+    "d3-dsv": "^3.0.1",
+    "d3-array": "3.2.3",
+    "d3-geo": "^3.0.1",
+    "d3-hexbin": "^0.2.2",
+    "d3-hierarchy": "^3.1.1"
   },
   "unpkg": "latest",
   "unpkgFiles": [

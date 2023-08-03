@@ -66,6 +66,10 @@ export const menus = [
       },
       {
         path: 'pivot-chart',
+        name: 'pivotChart-horizontal'
+      },
+      {
+        path: 'pivot-chart',
         name: 'horizontal'
       },
       {

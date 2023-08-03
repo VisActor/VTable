@@ -39,7 +39,7 @@ export class CartesianAxis {
     this.width = width;
     this.height = height;
     // this.option = cloneDeep(option);
-    this.option = merge({}, option, commonAxis);
+    this.option = merge({}, commonAxis, option);
 
     this.orient = option.orient ?? 'left';
     this.visible = option.visible ?? true;

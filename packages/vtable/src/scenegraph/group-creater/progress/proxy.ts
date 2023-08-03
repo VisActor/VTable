@@ -53,6 +53,11 @@ export class SceneProxy {
   constructor(table: BaseTableAPI) {
     this.table = table;
 
+    if (this.table.isPivotChart()) {
+      this.rowLimit = 100;
+      this.colLimit = 100;
+    }
+
     if (this.table.internalProps.transpose) {
       this.mode = 'row';
     } else if (this.table.isPivotTable()) {

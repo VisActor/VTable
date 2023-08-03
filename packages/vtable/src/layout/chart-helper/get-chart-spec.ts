@@ -4,6 +4,7 @@ import type { PivotChart } from '../../PivotChart';
 import type { ITableAxisOption } from '../../ts-types/component/axis';
 import type { PivotHeaderLayoutMap } from '../pivot-header-layout';
 import type { SimpleHeaderLayoutMap } from '../simple-header-layout';
+import { getAxisOption } from './get-axis-config';
 
 export function getRawChartSpec(col: number, row: number, layout: PivotLayoutMap | PivotHeaderLayoutMap): any {
   const paths = layout.getCellHeaderPaths(col, row);
@@ -47,9 +48,8 @@ export function getChartAxes(col: number, row: number, layout: PivotLayoutMap): 
         : layout.dataset.collectedValues[key];
       const range =
         data[layout.getColKeysPath()[colIndex][Math.max(0, layout.columnHeaderLevelCount - 1 - layout.topAxesCount)]];
-      const axisOption = ((layout._table as PivotChart).pivotChartAxes as ITableAxisOption[]).find(axisOption => {
-        return axisOption.orient === (index === 0 ? 'bottom' : 'top');
-      });
+
+      const axisOption = getAxisOption(col, row, index === 0 ? 'bottom' : 'top', layout);
       axes.push(
         merge({}, axisOption, {
           type: 'linear',
@@ -58,7 +58,8 @@ export function getChartAxes(col: number, row: number, layout: PivotLayoutMap): 
           label: { visible: false },
           title: { visible: false },
           range,
-          seriesIndex: index
+          seriesIndex: index,
+          height: -1
         })
       );
     });
@@ -72,9 +73,8 @@ export function getChartAxes(col: number, row: number, layout: PivotLayoutMap): 
     const recordRow = layout.getRecordIndexByRow(row);
     const rowPath = layout.getRowKeysPath()[recordRow];
     const domain = data[rowPath[rowPath.length - 1]] as Set<string>;
-    const axisOption = ((layout._table as PivotChart).pivotChartAxes as ITableAxisOption[]).find(axisOption => {
-      return axisOption.orient === 'left';
-    });
+
+    const axisOption = getAxisOption(col, row, 'left', layout);
     axes.push(
       merge({}, axisOption, {
         type: 'band',
@@ -103,9 +103,8 @@ export function getChartAxes(col: number, row: number, layout: PivotLayoutMap): 
         : layout.dataset.collectedValues[key];
       const range =
         data[layout.getRowKeysPath()[rowIndex][Math.max(0, layout.rowHeaderLevelCount - 1 - layout.leftAxesCount)]];
-      const axisOption = ((layout._table as PivotChart).pivotChartAxes as ITableAxisOption[]).find(axisOption => {
-        return axisOption.orient === (index === 0 ? 'left' : 'right');
-      });
+
+      const axisOption = getAxisOption(col, row, index === 0 ? 'left' : 'right', layout);
       axes.push(
         merge({}, axisOption, {
           type: 'linear',
@@ -114,7 +113,8 @@ export function getChartAxes(col: number, row: number, layout: PivotLayoutMap): 
           label: { visible: false },
           title: { visible: false },
           range,
-          seriesIndex: index
+          seriesIndex: index,
+          width: -1
           // grid: index === 0 ? undefined : { visible: false }
         })
       );
@@ -129,9 +129,8 @@ export function getChartAxes(col: number, row: number, layout: PivotLayoutMap): 
     const recordCol = layout.getRecordIndexByCol(col);
     const colPath = layout.getColKeysPath()[recordCol];
     const domain = data[colPath[colPath.length - 1]] as Set<string>;
-    const axisOption = ((layout._table as PivotChart).pivotChartAxes as ITableAxisOption[]).find(axisOption => {
-      return axisOption.orient === 'bottom';
-    });
+
+    const axisOption = getAxisOption(col, row, 'bottom', layout);
     axes.push(
       merge({}, axisOption, {
         type: 'band',
