@@ -1101,7 +1101,7 @@ export class Scenegraph {
    */
   dealHeightMode() {
     const table = this.table;
-    // 处理adaptive宽度
+    // 处理adaptive高度
     if (table.heightMode === 'adaptive') {
       table._clearRowRangeHeightsMap();
       // const canvasWidth = table.internalProps.canvas.width;
