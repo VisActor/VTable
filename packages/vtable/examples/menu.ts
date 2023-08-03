@@ -111,6 +111,10 @@ export const menus = [
       {
         path: 'pivot-chart',
         name: 'pivotChart-no-dimensions'
+      },
+      {
+        path: 'pivot-chart',
+        name: 'pivotChart-records'
       }
     ]
   },

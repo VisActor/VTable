@@ -45,7 +45,7 @@ export class Dataset {
   /**
    * 明细数据
    */
-  records: any[];
+  records: any[] | Record<string, any[]>;
   /**
    * 树形节点，最后的子节点对应到body部分的每个单元格 树结构： 行-列-单元格
    */
@@ -107,7 +107,7 @@ export class Dataset {
     rows: string[],
     columns: string[],
     indicatorKeys: string[],
-    records: any[],
+    records: any[] | Record<string, any[]>,
     customColTree?: IHeaderTreeDefine[],
     customRowTree?: IHeaderTreeDefine[]
   ) {
@@ -152,7 +152,7 @@ export class Dataset {
       //处理数据
       this.records = records;
       const t0 = typeof window !== 'undefined' ? window.performance.now() : 0;
-      this.setRecords(records);
+      this.setRecords();
 
       //processRecord中按照collectValuesBy 收集了维度值。现在需要对有聚合需求的sumby 处理收集维度值范围
       this.processCollectedValuesWithSumBy();
@@ -230,7 +230,7 @@ export class Dataset {
     this.registerAggregator(AggregationType.MIN, MinAggregator);
     this.registerAggregator(AggregationType.AVG, AvgAggregator);
   }
-  setRecords(records: any[]) {
+  setRecords() {
     this.processRecords();
   }
   /**processRecord中按照collectValuesBy 收集了维度值。现在需要对有聚合需求的 处理收集维度值范围 */
@@ -281,10 +281,23 @@ export class Dataset {
     if (this.dataConfig?.filterRules?.length >= 1) {
       isNeedFilter = true;
     }
-    for (let i = 0, len = this.records.length; i < len; i++) {
-      const record = this.records[i];
-      if (!isNeedFilter || this.filterRecord(record)) {
-        this.processRecord(record);
+    //常规records是数组的情况
+    if (Array.isArray(this.records)) {
+      for (let i = 0, len = this.records.length; i < len; i++) {
+        const record = this.records[i];
+        if (!isNeedFilter || this.filterRecord(record)) {
+          this.processRecord(record);
+        }
+      }
+    } else {
+      //records是用户传来的按指标分组后的数据
+      for (const key in this.records) {
+        for (let i = 0, len = this.records[key].length; i < len; i++) {
+          const record = this.records[key][i];
+          if (!isNeedFilter || this.filterRecord(record)) {
+            this.processRecord(record, key);
+          }
+        }
       }
     }
     this.rowFlatKeys = {};
@@ -312,7 +325,7 @@ export class Dataset {
    * @param record
    * @returns
    */
-  processRecord(record: any) {
+  processRecord(record: any, assignedIndicatorKey?: string) {
     //这个派生字段的计算位置有待确定，是否应该放到filter之前
     this.derivedFieldRules?.forEach((derivedFieldRule: DerivedFieldRule, i: number) => {
       record[derivedFieldRule.fieldName] = derivedFieldRule.derivedFunc(record);
@@ -434,8 +447,13 @@ export class Dataset {
             aggRule?.formatFun
           );
         }
+        if (assignedIndicatorKey) {
+          this.indicatorKeys[i] === assignedIndicatorKey &&
+            isValid(record[assignedIndicatorKey]) &&
+            this.tree[flatRowKey]?.[flatColKey]?.[i].push(record);
+        }
         //加入聚合结果 考虑field为数组的情况
-        if (aggRule?.field) {
+        else if (aggRule?.field) {
           if (typeof aggRule?.field === 'string') {
             isValid(record[aggRule?.field]) && this.tree[flatRowKey]?.[flatColKey]?.[i].push(record);
           } else {

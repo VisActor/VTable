@@ -2240,8 +2240,8 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
   /**
    * Get the records.
    */
-  get records(): any[] | null {
-    return this.internalProps.records || null;
+  get records(): any {
+    return this.internalProps.records;
   }
   /**
    * Get the data source.

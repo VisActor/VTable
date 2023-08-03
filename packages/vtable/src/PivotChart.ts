@@ -19,7 +19,8 @@ import type {
   AggregationRule,
   AnyFunction,
   FilterRules,
-  IPivotTableCellHeaderPaths
+  IPivotTableCellHeaderPaths,
+  PivotChartAPI
 } from './ts-types';
 import { AggregationType } from './ts-types';
 import { HierarchyState } from './ts-types';
@@ -31,15 +32,15 @@ import { cellInRange, emptyFn } from './tools/helper';
 import { Dataset } from './dataset/dataset';
 import { _setDataSource } from './core/tableHelper';
 import { BaseTable } from './core/BaseTable';
-import type { PivotTableProtected } from './ts-types/base-table';
+import type { PivotChartProtected } from './ts-types/base-table';
 import type { IChartColumnIndicator } from './ts-types/pivot-table/indicator/chart-indicator';
 import type { Chart } from './scenegraph/graphic/chart';
 import { clearChartCacheImage, updateChartData } from './scenegraph/refresh-node/update-chart';
 import type { ITableAxisOption } from './ts-types/component/axis';
 import { isArray } from '@visactor/vutils';
 
-export class PivotChart extends BaseTable implements PivotTableAPI {
-  declare internalProps: PivotTableProtected;
+export class PivotChart extends BaseTable implements PivotChartAPI {
+  declare internalProps: PivotChartProtected;
   declare options: PivotChartConstructorOptions;
   pivotSortState: PivotSortState[];
 
@@ -58,10 +59,9 @@ export class PivotChart extends BaseTable implements PivotTableAPI {
     }
     this.setCustomStateNameToSpec();
     this.internalProps.dataConfig = { isPivotChart: true };
-    this.internalProps.enableDataAnalysis = true;
     this._axes = isArray(options.axes) ? options.axes : [];
 
-    if (this.internalProps.enableDataAnalysis && (options.rows || options.columns)) {
+    if (options.rows || options.columns) {
       const rowKeys = options.rows.reduce((keys, rowObj) => {
         if (typeof rowObj === 'string') {
           keys.push(rowObj);
@@ -88,7 +88,7 @@ export class PivotChart extends BaseTable implements PivotTableAPI {
           return keys;
         }, []) ?? [];
       this.internalProps.dataConfig.collectValuesBy = this._generateCollectValuesConfig(columnKeys, rowKeys);
-      this.internalProps.dataConfig.aggregationRules = this._generateAggregationRules();
+      this.internalProps.dataConfig.aggregationRules = this._generateAggregationRules(Array.isArray(options.records));
       this.internalProps.dataConfig.dimensionSortArray = this._getDimensionSortArray();
       this.dataset = new Dataset(
         this.internalProps.dataConfig,
@@ -148,9 +148,8 @@ export class PivotChart extends BaseTable implements PivotTableAPI {
     this.setCustomStateNameToSpec();
     // 更新protectedSpace
     internalProps.dataConfig = {};
-    this.internalProps.enableDataAnalysis = true;
     //TODO 这里需要加上判断 dataConfig是否有配置变化
-    if (this.internalProps.enableDataAnalysis && (options.rows || options.columns)) {
+    if (options.rows || options.columns) {
       const rowKeys = options.rows.reduce((keys, rowObj) => {
         if (typeof rowObj === 'string') {
           keys.push(rowObj);
@@ -177,7 +176,10 @@ export class PivotChart extends BaseTable implements PivotTableAPI {
       }, []);
 
       this.internalProps.dataConfig.collectValuesBy = this._generateCollectValuesConfig(columnKeys, rowKeys);
-      this.internalProps.dataConfig.aggregationRules = this._generateAggregationRules();
+      this.internalProps.dataConfig.aggregationRules = this._generateAggregationRules(
+        Array.isArray(options.records ?? this.internalProps.records)
+      );
+
       this.dataset = new Dataset(
         this.internalProps.dataConfig,
         rowKeys,
@@ -224,10 +226,7 @@ export class PivotChart extends BaseTable implements PivotTableAPI {
     if (internalProps.headerEvents) {
       internalProps.headerEvents.forEach((id: number) => this.unlisten(id));
     }
-
-    if (this.internalProps.enableDataAnalysis) {
-      internalProps.layoutMap = new PivotLayoutMap(this, this.dataset);
-    }
+    internalProps.layoutMap = new PivotLayoutMap(this, this.dataset);
 
     //设置列宽
     for (let col = 0; col < internalProps.layoutMap.columnWidths.length; col++) {
@@ -440,13 +439,13 @@ export class PivotChart extends BaseTable implements PivotTableAPI {
       if (moveContext.moveType === 'column') {
         // 是扁平数据结构 需要将二维数组this.records进行调整
         if (this.options.records?.[0]?.constructor === Array) {
-          for (let row = 0; row < this.records.length; row++) {
-            const sourceColumns = (this.records[row] as unknown as number[]).splice(
+          for (let row = 0; row < this.internalProps.records.length; row++) {
+            const sourceColumns = (this.internalProps.records[row] as unknown as number[]).splice(
               moveContext.sourceIndex - this.rowHeaderLevelCount,
               moveContext.moveSize
             );
             sourceColumns.unshift((moveContext.targetIndex as any) - this.rowHeaderLevelCount, 0 as any);
-            Array.prototype.splice.apply(this.records[row] as unknown as number[], sourceColumns);
+            Array.prototype.splice.apply(this.internalProps.records[row] as unknown as number[], sourceColumns);
           }
         }
         //colWidthsMap 中存储着每列的宽度 根据移动 sourceCol targetCol 调整其中的位置
@@ -465,12 +464,12 @@ export class PivotChart extends BaseTable implements PivotTableAPI {
       } else if (moveContext.moveType === 'row') {
         // 是扁平数据结构 需要将二维数组this.records进行调整
         if (this.options.records?.[0]?.constructor === Array) {
-          const sourceRows = (this.records as unknown as number[]).splice(
+          const sourceRows = (this.internalProps.records as unknown as number[]).splice(
             moveContext.sourceIndex - this.columnHeaderLevelCount,
             moveContext.moveSize
           );
           sourceRows.unshift((moveContext.targetIndex as any) - this.columnHeaderLevelCount, 0 as any);
-          Array.prototype.splice.apply(this.records, sourceRows);
+          Array.prototype.splice.apply(this.internalProps.records, sourceRows);
         }
         //colWidthsMap 中存储着每列的宽度 根据移动 sourceCol targetCol 调整其中的位置
         this.rowHeightsMap.adjustOrder(moveContext.sourceIndex, moveContext.targetIndex, moveContext.moveSize);
@@ -736,8 +735,14 @@ export class PivotChart extends BaseTable implements PivotTableAPI {
   //     };
   //   });
   // }
-  private _generateAggregationRules() {
+  /**
+   *
+   * @param indicatorFromChartSpec 是否需要考虑chartSpec中的yField或者xField分析作为指标来分组数据
+   * @returns
+   */
+  private _generateAggregationRules(indicatorFromChartSpec: boolean) {
     const aggregationRules: AggregationRules = [];
+
     this.options.indicators.forEach((indicator: IIndicator | string) => {
       if (typeof indicator === 'string') {
         aggregationRules.push({
@@ -746,8 +751,15 @@ export class PivotChart extends BaseTable implements PivotTableAPI {
           aggregationType: AggregationType.RECORD //计算类型
         } as AggregationRule<AggregationType.RECORD>);
       } else {
-        // 如果chartSpec配置了组合图 series 则需要考虑 series中存在的多个指标
-        if ((indicator as IChartColumnIndicator).chartSpec?.series) {
+        //如果不需要考虑chartSpec中的yField或者xField分析作为指标来分组数据
+        if (!indicatorFromChartSpec) {
+          aggregationRules.push({
+            indicatorKey: indicator.indicatorKey, //field转为指标key
+            field: indicator.indicatorKey, //指标依据字段
+            aggregationType: AggregationType.RECORD //计算类型
+          });
+        } else if ((indicator as IChartColumnIndicator).chartSpec?.series) {
+          // 如果chartSpec配置了组合图 series 则需要考虑 series中存在的多个指标
           const fields: string[] = [];
           (indicator as IChartColumnIndicator).chartSpec?.series.forEach((seriesSpec: any) => {
             const seriesField = this.options.indicatorsAsCol === false ? seriesSpec.yField : seriesSpec.xField;
@@ -761,8 +773,12 @@ export class PivotChart extends BaseTable implements PivotTableAPI {
             aggregationType: AggregationType.RECORD //计算类型
           });
         } else {
+          const field =
+            this.options.indicatorsAsCol === false
+              ? (indicator as IChartColumnIndicator).chartSpec.yField
+              : (indicator as IChartColumnIndicator).chartSpec.xField;
           aggregationRules.push({
-            indicatorKey: indicator.indicatorKey, //field转为指标key
+            indicatorKey: field ?? indicator.indicatorKey, //field转为指标key
             field: indicator.indicatorKey, //指标依据字段
             aggregationType: AggregationType.RECORD //计算类型
           });

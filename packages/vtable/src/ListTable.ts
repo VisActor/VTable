@@ -368,8 +368,8 @@ export class ListTable extends BaseTable implements ListTableAPI {
   getCellAddress(findTargetRecord: any | ((record: any) => boolean), field: FieldDef): CellAddress {
     let targetRecordIndex: number;
 
-    for (let i = 0; i < this.records.length; i++) {
-      const record = this.records[i];
+    for (let i = 0; i < this.internalProps.records.length; i++) {
+      const record = this.internalProps.records[i];
       if (typeof findTargetRecord === 'function') {
         if ((<Function>findTargetRecord)(record)) {
           targetRecordIndex = i;
