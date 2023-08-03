@@ -59,10 +59,10 @@ export class Title {
     }
     if (this._titleOption.orient === 'left') {
       this.table.tableNoFrameWidth = this.table.tableNoFrameWidth - Math.ceil(width);
-      this.table.tableX = Math.ceil(width);
+      this.table.tableX += Math.ceil(width);
     } else if (this._titleOption.orient === 'top') {
       this.table.tableNoFrameHeight = this.table.tableNoFrameHeight - Math.ceil(height);
-      this.table.tableY = Math.ceil(height);
+      this.table.tableY += Math.ceil(height);
     } else if (this._titleOption.orient === 'right') {
       this.table.tableNoFrameWidth = this.table.tableNoFrameWidth - Math.ceil(width);
     } else if (this._titleOption.orient === 'bottom') {
@@ -85,6 +85,7 @@ export class Title {
   }
 
   dispose(): void {
+    this.table.scenegraph.stage.defaultLayer.removeChild(this._titleComponent);
     this._titleComponent = null;
   }
   private _getTitleAttrs() {

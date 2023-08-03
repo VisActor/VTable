@@ -1817,8 +1817,12 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     this.dataSet = new DataSet();
     this.scenegraph.clearCells();
     this.stateManeger.initState();
+
+    this._updateSize();
     // this.stateManeger = new StateManeger(this);
     // this.eventManeger = new EventManeger(this);
+    this.internalProps.legends?.dispose();
+    this.internalProps.title?.dispose();
 
     if (options.legends) {
       internalProps.legends = new TableLegend(options.legends, this);
