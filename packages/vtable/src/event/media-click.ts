@@ -8,7 +8,7 @@ export function bindMediaClick(table: BaseTableAPI): void {
   if (Env.mode === 'browser') {
     // table.hasMedia = false;
 
-    table.listen(TABLE_EVENT_TYPE.CLICK_CELL, (e: MousePointerCellEvent) => {
+    table.on(TABLE_EVENT_TYPE.CLICK_CELL, (e: MousePointerCellEvent) => {
       //如果目前是在某个icon上，如收起展开按钮 则不进行其他点击逻辑
       const { col, row } = e;
       // const type = table.getBodyColumnDefine(col, row).columnType;

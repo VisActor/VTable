@@ -10414,14 +10414,14 @@ export function createTable() {
   };
 
   const tableInstance = new VTable.PivotChart(option);
-  tableInstance.listenChart('click', args => {
+  tableInstance.onVChartEvent('click', args => {
     console.log('listenChart click', args);
   });
-  tableInstance.listenChart('mouseover', args => {
+  tableInstance.onVChartEvent('mouseover', args => {
     console.log('listenChart mouseover', args);
   });
   const { LEGEND_ITEM_CLICK, LEGEND_ITEM_HOVER, LEGEND_ITEM_UNHOVER } = VTable.ListTable.EVENT_TYPE;
-  tableInstance.listen(LEGEND_ITEM_CLICK, args => {
+  tableInstance.on(LEGEND_ITEM_CLICK, args => {
     console.log('LEGEND_ITEM_CLICK', args);
     tableInstance.updateFilterRules([
       {
@@ -10430,10 +10430,10 @@ export function createTable() {
       }
     ]);
   });
-  tableInstance.listen(LEGEND_ITEM_HOVER, args => {
+  tableInstance.on(LEGEND_ITEM_HOVER, args => {
     console.log('LEGEND_ITEM_HOVER', args);
   });
-  tableInstance.listen(LEGEND_ITEM_UNHOVER, args => {
+  tableInstance.on(LEGEND_ITEM_UNHOVER, args => {
     console.log('LEGEND_ITEM_UNHOVER', args);
   });
 

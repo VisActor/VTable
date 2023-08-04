@@ -372,7 +372,7 @@ export interface BaseTableAPI {
   /** 当列宽度不能占满容器时，是否需要自动拉宽来填充容器的宽度。默认false */
   autoFillWidth: boolean;
 
-  listen: <TYPE extends keyof TableEventHandlersEventArgumentMap>(
+  on: <TYPE extends keyof TableEventHandlersEventArgumentMap>(
     type: TYPE,
     listener: TableEventListener<TYPE> //(event: TableEventHandlersEventArgumentMap[TYPE]) => TableEventHandlersReturnMap[TYPE]
   ) => EventListenerId;
@@ -446,7 +446,7 @@ export interface BaseTableAPI {
   getAllRowsHeight: () => number;
   getAllColsWidth: () => number;
 
-  unlisten: (id: EventListenerId) => void;
+  off: (id: EventListenerId) => void;
   getBodyField: (col: number, row: number) => FieldDef | undefined;
   getRecordByRowCol: (col: number, row: number) => MaybePromiseOrUndefined;
   getRecordIndexByRow: (col: number, row: number) => number;

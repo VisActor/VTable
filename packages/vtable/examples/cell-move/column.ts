@@ -221,7 +221,7 @@ export function createTable() {
 
   const { MOUSELEAVE_TABLE } = VTable.ListTable.EVENT_TYPE;
 
-  instance.listen(MOUSELEAVE_TABLE, (...args) => console.log(MOUSELEAVE_TABLE, args));
+  instance.on(MOUSELEAVE_TABLE, (...args) => console.log(MOUSELEAVE_TABLE, args));
 
   VTable.bindDebugTool(instance.scenegraph.stage as any, {
     customGrapicKeys: ['role', '_updateTag']

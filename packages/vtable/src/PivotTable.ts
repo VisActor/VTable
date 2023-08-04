@@ -202,7 +202,7 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
 
     //原表头绑定的事件 解除掉
     if (internalProps.headerEvents) {
-      internalProps.headerEvents.forEach((id: number) => this.unlisten(id));
+      internalProps.headerEvents.forEach((id: number) => this.off(id));
     }
     const records = this.options.records ?? this.internalProps.records;
     if (this.options.enableDataAnalysis) {

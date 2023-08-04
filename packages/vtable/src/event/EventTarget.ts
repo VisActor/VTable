@@ -34,7 +34,7 @@ export class EventTarget {
    * @param listener 事件监听器
    * @returns 事件监听器id
    */
-  listen<TYPE extends keyof TableEventHandlersEventArgumentMap>(
+  on<TYPE extends keyof TableEventHandlersEventArgumentMap>(
     type: TYPE,
     listener: TableEventListener<TYPE>
   ): EventListenerId {
@@ -58,7 +58,7 @@ export class EventTarget {
     return id;
   }
 
-  unlisten(id: EventListenerId): void {
+  off(id: EventListenerId): void {
     if (!this.listenersData) {
       return;
     }
@@ -70,7 +70,7 @@ export class EventTarget {
     listener: TableEventListener<TYPE>,
     option?: any
   ): void {
-    this.listen(type, listener);
+    this.on(type, listener);
   }
 
   removeEventListener(type: string, listener: TableEventListener<keyof TableEventHandlersEventArgumentMap>): void {
@@ -80,7 +80,7 @@ export class EventTarget {
     for (const key in this.listenersData.listenerData) {
       const listenerData = this.listenersData.listenerData[key];
       if (listenerData.type === type && listenerData.listener === listener) {
-        this.unlisten(key as unknown as number);
+        this.off(key as unknown as number);
       }
     }
   }

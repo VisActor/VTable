@@ -7,7 +7,7 @@ export function bindAxisHoverEvent(table: BaseTableAPI) {
     return;
   }
 
-  table.listen(TABLE_EVENT_TYPE.MOUSEENTER_CELL, e => {
+  table.on(TABLE_EVENT_TYPE.MOUSEENTER_CELL, e => {
     const cellGroup = table.scenegraph.getCell(e.col, e.row);
     cellGroup.forEachChildren(child => {
       if (child.name === 'axis') {
@@ -18,7 +18,7 @@ export function bindAxisHoverEvent(table: BaseTableAPI) {
     });
   });
 
-  table.listen(TABLE_EVENT_TYPE.MOUSELEAVE_CELL, e => {
+  table.on(TABLE_EVENT_TYPE.MOUSELEAVE_CELL, e => {
     const cellGroup = table.scenegraph.getCell(e.col, e.row);
     cellGroup.forEachChildren(child => {
       if (child.name === 'axis') {

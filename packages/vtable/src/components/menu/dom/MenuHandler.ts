@@ -181,7 +181,7 @@ export class MenuHandler {
     // 1. 没有菜单，点击弹出菜单
     // 2. 已显示菜单，点击关闭菜单
     // 3. 已显示菜单，点击其他菜单按钮，关闭当前菜单，显示另一菜单
-    table.listen(TABLE_EVENT_TYPE.DROPDOWN_ICON_CLICK, e => {
+    table.on(TABLE_EVENT_TYPE.DROPDOWN_ICON_CLICK, e => {
       if (this._attachInfo) {
         if (this._isBindToCell(e.col, e.row)) {
           this._unbindFromCell();
@@ -193,11 +193,11 @@ export class MenuHandler {
       }
     });
     // 监听菜单清除事件
-    table.listen(TABLE_EVENT_TYPE.DROPDOWN_MENU_CLEAR, e => {
+    table.on(TABLE_EVENT_TYPE.DROPDOWN_MENU_CLEAR, e => {
       this._unbindFromCell();
     });
     // 监听右键菜单
-    table.listen(TABLE_EVENT_TYPE.CONTEXTMENU_CELL, e => {
+    table.on(TABLE_EVENT_TYPE.CONTEXTMENU_CELL, e => {
       if (table.internalProps.menu?.renderMode === 'html') {
         // 获取右键菜单信息及位置
         const abstractPos = table._getMouseAbstractPoint(e.event, false);

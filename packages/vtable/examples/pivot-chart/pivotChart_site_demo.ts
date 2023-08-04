@@ -418,10 +418,10 @@ export function createTable() {
       };
 
       const tableInstance = new VTable.PivotChart(option);
-      tableInstance.listenChart('click', args => {
+      tableInstance.onVChartEvent('click', args => {
         console.log('listenChart click', args);
       });
-      tableInstance.listenChart('mouseover', args => {
+      tableInstance.onVChartEvent('mouseover', args => {
         console.log('listenChart mouseover', args);
       });
       window.tableInstance = tableInstance;

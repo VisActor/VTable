@@ -102,7 +102,7 @@ export class TooltipHandler {
   }
   _bindTableEvent(table: BaseTableAPI): void {
     // (table.options.hover?.isShowTooltip || table.options.tooltip?.isShowOverflowTextTooltip) &&
-    table.listen(TABLE_EVENT_TYPE.MOUSEENTER_CELL, e => {
+    table.on(TABLE_EVENT_TYPE.MOUSEENTER_CELL, e => {
       //移动端不监听mousemove事件 （修改移动端tooltip时加的isMobile判断）
       if (isMobile()) {
         return;
@@ -159,7 +159,7 @@ export class TooltipHandler {
         }
       }
     });
-    table.listen(TABLE_EVENT_TYPE.MOUSEMOVE_CELL, e => {
+    table.on(TABLE_EVENT_TYPE.MOUSEMOVE_CELL, e => {
       //移动端不监听mousemove事件 （修改移动端tooltip时加的isMobile判断）
       if (isMobile()) {
         return;
@@ -187,7 +187,7 @@ export class TooltipHandler {
         this._bindToCell(e.col, e.row);
       }
     });
-    table.listen(TABLE_EVENT_TYPE.MOUSELEAVE_CELL, e => {
+    table.on(TABLE_EVENT_TYPE.MOUSELEAVE_CELL, e => {
       if (e.related) {
         if (this._isBindCell(e.related.col, e.related.row)) {
           return;
@@ -195,12 +195,12 @@ export class TooltipHandler {
       }
       this._unbindFromCell();
     });
-    table.listen(TABLE_EVENT_TYPE.SELECTED_CELL, e => {
+    table.on(TABLE_EVENT_TYPE.SELECTED_CELL, e => {
       if (this._isBindCell(e.col, e.row)) {
         this._unbindFromCell();
       }
     });
-    table.listen(TABLE_EVENT_TYPE.SCROLL, e => {
+    table.on(TABLE_EVENT_TYPE.SCROLL, e => {
       const info = this._attachInfo;
       if (info?.tooltipOptions && info?.range?.start) {
         const { col, row } = info.range.start;

@@ -93,7 +93,7 @@ const tableInstance = new VTable.ListTable(option);
 window['tableInstance'] = tableInstance;
 
 
-tableInstance.listen('dropdownmenu_click', (args) => {
+tableInstance.on('dropdownmenu_click', (args) => {
   console.log('dropdownmenu_click',args);
 })
     })

@@ -424,7 +424,7 @@ export function createTable() {
 
   const instance = new ListTable(option);
 
-  instance.listen('click_cell', args => {
+  instance.on('click_cell', args => {
     console.log('click_cell', args);
     const { col, row, targetIcon } = args;
     if (targetIcon) {
@@ -514,7 +514,7 @@ export function createTable() {
   });
   // instance.setRecords(personsDataSource);
 
-  instance.listen('click_cell', args => {
+  instance.on('click_cell', args => {
     console.log('click_cell', args);
     const { col, row, targetIcon } = args;
     if (targetIcon) {

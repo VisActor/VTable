@@ -48,7 +48,7 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
 
   _selectedDataItemsInChart: any[] = [];
   _selectedDimensionInChart: { key: string; value: string }[] = [];
-  _chartEventMap: Record<string, AnyFunction> = {};
+  _chartEventMap: Record<string, { query?: any; callback: AnyFunction }> = {};
 
   _axes: ITableAxisOption[];
   constructor(options: PivotChartConstructorOptions) {
@@ -222,7 +222,7 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
 
     //原表头绑定的事件 解除掉
     if (internalProps.headerEvents) {
-      internalProps.headerEvents.forEach((id: number) => this.unlisten(id));
+      internalProps.headerEvents.forEach((id: number) => this.off(id));
     }
     internalProps.layoutMap = new PivotLayoutMap(this, this.dataset);
 
@@ -838,24 +838,28 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
    * @param listener vchart事件监听器
    * @returns 事件监听器id
    */
-  listenChart(type: string, listener: AnyFunction): void {
-    // this.internalProps.layoutMap.columnObjects.forEach((indicatorObj: IndicatorData) => {
-    //   indicatorObj.chartInstance.on(type, listener);
-    // });
-    this._chartEventMap[type] = listener;
+  onVChartEvent(type: string, callback: AnyFunction): void;
+  onVChartEvent(type: string, query: any, callback: AnyFunction): void;
+  onVChartEvent(type: string, query?: any, callback?: AnyFunction): void {
+    if (query) {
+      this._chartEventMap[type] = { callback, query };
+    } else {
+      this._chartEventMap[type] = { callback };
+    }
   }
 
-  unlistenChart(type: string): void {
-    // this.internalProps.layoutMap.columnObjects.forEach((indicatorObj: IndicatorData) => {
-    //   indicatorObj.chartInstance.off(type);
-    // });
+  offVChartEvent(type: string): void {
     delete this._chartEventMap[type];
   }
   /** 给activeChartInstance逐个绑定chart用户监听事件 */
   _bindChartEvent(activeChartInstance: any) {
     if (activeChartInstance) {
       for (const key in this._chartEventMap) {
-        activeChartInstance.on(key, this._chartEventMap[key]);
+        if (this._chartEventMap[key].query) {
+          activeChartInstance.on(key, this._chartEventMap[key].query, this._chartEventMap[key].callback);
+        } else {
+          activeChartInstance.on(key, this._chartEventMap[key].callback);
+        }
       }
     }
   }

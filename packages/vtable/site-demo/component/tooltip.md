@@ -94,7 +94,7 @@ const columns =[
   };
   const tableInstance = new VTable.ListTable(option);
   window['tableInstance'] = tableInstance;
-  tableInstance.listen('mouseenter_cell', (args) => {
+  tableInstance.on('mouseenter_cell', (args) => {
         const { col, row, targetIcon } = args;
         if(col===0&&row>=1){
           const rect = tableInstance.getVisibleCellRangeRelativeRect({ col, row });

@@ -249,7 +249,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
 
     //原表头绑定的事件 解除掉
     if (internalProps.headerEvents) {
-      internalProps.headerEvents.forEach((id: number) => table.unlisten(id));
+      internalProps.headerEvents.forEach((id: number) => table.off(id));
     }
 
     const layoutMap = (internalProps.layoutMap = new SimpleHeaderLayoutMap(

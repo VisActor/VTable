@@ -5,7 +5,7 @@ import type { BaseTableAPI } from '../ts-types/base-table';
 import { PIVOT_TABLE_EVENT_TYPE } from '../ts-types/pivot-table/PIVOT_TABLE_EVENT_TYPE';
 
 export function bindDrillEvent(table: BaseTableAPI) {
-  table.listen(TABLE_EVENT_TYPE.MOUSEENTER_CELL, (e: MousePointerCellEvent) => {
+  table.on(TABLE_EVENT_TYPE.MOUSEENTER_CELL, (e: MousePointerCellEvent) => {
     //是否需要显示出上钻下钻按钮
     // if (!table.isPivotTable()) {
     //   return;
