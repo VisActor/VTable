@@ -3,12 +3,12 @@ import type { PivotHeaderLayoutMap } from '../../layout/pivot-header-layout';
 import type { TextColumnDefine } from '../../ts-types';
 import { HierarchyState, IconPosition } from '../../ts-types';
 import * as calc from '../../tools/calc';
-import { toFixed, validToString } from '../../tools/util';
+import { validToString } from '../../tools/util';
 import { getQuadProps } from '../utils/padding';
 import { getProp } from '../utils/get-prop';
 import type { BaseTableAPI } from '../../ts-types/base-table';
 import type { PivotLayoutMap } from '../../layout/pivot-layout';
-import { getAxisConfigInPivotChart, getAxisOption } from '../../layout/chart-helper/get-axis-config';
+import { getAxisConfigInPivotChart } from '../../layout/chart-helper/get-axis-config';
 import { computeAxisConpomentWidth } from '../../components/axis/get-axis-component-size';
 
 export function computeColsWidth(table: BaseTableAPI, colStart?: number, colEnd?: number, update?: boolean): void {
@@ -138,7 +138,7 @@ export function computeColWidth(
 ): number {
   const { layoutMap, transpose } = table.internalProps;
   // const ctx = _getInitContext.call(table);
-  const { width } = layoutMap?.getColumnWidthDefined(col) ?? {};
+  let { width } = layoutMap?.getColumnWidthDefined(col) ?? {};
 
   if (transpose) {
     // 转置模式
@@ -146,9 +146,12 @@ export function computeColWidth(
       // return table.getColWidth(col);
       // standard模式使用默认值
       if (table.isRowHeader(col, 0) || table.isCornerHeader(col, 0)) {
-        return Array.isArray(table.defaultHeaderColWidth)
+        const defaultWidth = Array.isArray(table.defaultHeaderColWidth)
           ? table.defaultHeaderColWidth[col] ?? table.defaultColWidth
           : table.defaultHeaderColWidth;
+        if (defaultWidth === 'auto') {
+          width = 'auto';
+        }
       }
 
       if (width !== 'auto') {
@@ -183,7 +186,10 @@ export function computeColWidth(
       return width;
     }
     //是透视表的行表头部分 则宽度按defaultHeaderColWidth设置
-    return table.getColWidth(col);
+    const defaultWidth = table.getColWidthDefine(col);
+    if (defaultWidth !== 'auto') {
+      return table.getColWidth(col);
+    }
   }
 
   return computeAutoColWidth(width, col, startRow, endRow, forceCompute, table);

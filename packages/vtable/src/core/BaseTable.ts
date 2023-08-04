@@ -499,13 +499,13 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
   /**
    * Get the default column width.
    */
-  get defaultHeaderColWidth(): number | number[] {
+  get defaultHeaderColWidth(): (number | 'auto') | (number | 'auto')[] {
     return this.internalProps.defaultHeaderColWidth;
   }
   /**
    * Set the default column width.
    */
-  set defaultHeaderColWidth(defaultHeaderColWidth: number | number[]) {
+  set defaultHeaderColWidth(defaultHeaderColWidth: (number | 'auto') | (number | 'auto')[]) {
     this.internalProps.defaultHeaderColWidth = defaultHeaderColWidth;
     this.options.defaultHeaderColWidth = defaultHeaderColWidth;
   }
@@ -631,82 +631,11 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
    * @private
    */
   private _colWidthDefineToPxWidth(width: string | number): number {
-    if (isAutoDefine(width)) {
-      return _toPxWidth(this, this._calculateAutoColWidthExpr());
+    if (width === 'auto') {
+      // hack for defaultWidht support 'auto'
+      return 0;
     }
     return _toPxWidth(this, width);
-  }
-
-  /**
-   * 计算列宽为auto情况下的宽度.
-   * @returns {string}
-   * @private
-   */
-  private _calculateAutoColWidthExpr(): string {
-    const fullWidth = this.internalProps.calcWidthContext.full;
-    let sumMin = 0;
-    const others: (string | number)[] = [];
-    let autoCount = 0;
-    const hasLimitsOnAuto = [];
-    for (let col = 0; col < this.internalProps.colCount; col++) {
-      const def = this.getColWidthDefine(col);
-      const limits = this._getColWidthLimits(col);
-
-      if (isAutoDefine(def)) {
-        if (limits) {
-          hasLimitsOnAuto.push(limits);
-          if (limits.min) {
-            sumMin += limits.min;
-          }
-        }
-        autoCount++;
-      } else {
-        let expr = def;
-        if (limits) {
-          const orgWidth = _toPxWidth(this, expr);
-          const newWidth = _applyColWidthLimits(limits, orgWidth);
-          if (orgWidth !== newWidth) {
-            expr = `${newWidth}px`;
-          }
-          sumMin += newWidth;
-        }
-        others.push(expr);
-      }
-      if (sumMin > fullWidth) {
-        return '0px';
-      }
-    }
-    if (hasLimitsOnAuto.length && others.length) {
-      const autoPx =
-        (fullWidth - _toPxWidth(this, `calc(${others.map(c => (typeof c === 'number' ? `${c}px` : c)).join(' + ')})`)) /
-        autoCount;
-      hasLimitsOnAuto.forEach(limits => {
-        if (limits.min && autoPx < limits.min) {
-          others.push(limits.minDef);
-          autoCount--;
-        } else if (limits.max && limits.max < autoPx) {
-          others.push(limits.maxDef);
-          autoCount--;
-        }
-      });
-      if (autoCount <= 0) {
-        return `${autoPx}px`;
-      }
-    }
-    if (others.length) {
-      const strDefs: string[] = [];
-      let num = 0;
-      others.forEach(c => {
-        if (typeof c === 'number') {
-          num += c;
-        } else {
-          strDefs.push(c);
-        }
-      });
-      strDefs.push(`${num}px`);
-      return `calc((100% - (${strDefs.join(' + ')})) / ${autoCount})`;
-    }
-    return `${100 / autoCount}%`;
   }
 
   /**
@@ -853,12 +782,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
       } else {
         // adjustW = 0;
         // use default column width if no width in colWidthsMap
-        adjustW =
-          this.isRowHeader(endCol, 0) || this.isCornerHeader(endCol, 0)
-            ? Array.isArray(this.defaultHeaderColWidth)
-              ? this.defaultHeaderColWidth[endCol] ?? this.internalProps.defaultColWidth
-              : this.defaultHeaderColWidth
-            : this.internalProps.defaultColWidth;
+        adjustW = this.getColWidth(endCol);
       }
       const addWidth = cachedLowerColWidth + adjustW;
       // 合法地址存入缓存
@@ -870,12 +794,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
 
     let w = 0;
     for (let col = startCol; col <= endCol; col++) {
-      w +=
-        this.isRowHeader(col, 0) || this.isCornerHeader(col, 0)
-          ? Array.isArray(this.defaultHeaderColWidth)
-            ? this.defaultHeaderColWidth[col] ?? this.internalProps.defaultColWidth
-            : this.defaultHeaderColWidth
-          : this.internalProps.defaultColWidth;
+      w += this.getColWidth(col);
     }
 
     this.colWidthsMap.each(startCol, endCol, (width, col) => {
@@ -883,20 +802,15 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
       w +=
         (this.widthMode === 'adaptive' || (this as any).transpose
           ? Number(width)
-          : this._adjustColWidth(col, this._colWidthDefineToPxWidth(width))) -
-        (this.isRowHeader(col, 0) || this.isCornerHeader(col, 0)
-          ? Array.isArray(this.defaultHeaderColWidth)
-            ? this.defaultHeaderColWidth[col] ?? this.internalProps.defaultColWidth
-            : this.defaultHeaderColWidth
-          : this.internalProps.defaultColWidth);
+          : this._adjustColWidth(col, this._colWidthDefineToPxWidth(width))) - this.getColWidth(col);
     });
     for (let col = startCol; col <= endCol; col++) {
       if (this.colWidthsMap.has(col)) {
         continue;
       }
-      const adj = this._adjustColWidth(col, this.internalProps.defaultColWidth);
+      const adj = this._adjustColWidth(col, this.internalProps.defaultColWidth as number);
       if (adj !== this.internalProps.defaultColWidth) {
-        w += adj - this.internalProps.defaultColWidth;
+        w += adj - (this.internalProps.defaultColWidth as number);
       }
     }
 
