@@ -448,9 +448,7 @@ export class Dataset {
           );
         }
         if (assignedIndicatorKey) {
-          this.indicatorKeys[i] === assignedIndicatorKey &&
-            isValid(record[assignedIndicatorKey]) &&
-            this.tree[flatRowKey]?.[flatColKey]?.[i].push(record);
+          this.indicatorKeys[i] === assignedIndicatorKey && this.tree[flatRowKey]?.[flatColKey]?.[i].push(record);
         }
         //加入聚合结果 考虑field为数组的情况
         else if (aggRule?.field) {

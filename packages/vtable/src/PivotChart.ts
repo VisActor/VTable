@@ -88,7 +88,7 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
           return keys;
         }, []) ?? [];
       this.internalProps.dataConfig.collectValuesBy = this._generateCollectValuesConfig(columnKeys, rowKeys);
-      this.internalProps.dataConfig.aggregationRules = this._generateAggregationRules(Array.isArray(options.records));
+      this.internalProps.dataConfig.aggregationRules = this._generateAggregationRules();
       this.internalProps.dataConfig.dimensionSortArray = this._getDimensionSortArray();
       this.dataset = new Dataset(
         this.internalProps.dataConfig,
@@ -176,9 +176,7 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
       }, []);
 
       this.internalProps.dataConfig.collectValuesBy = this._generateCollectValuesConfig(columnKeys, rowKeys);
-      this.internalProps.dataConfig.aggregationRules = this._generateAggregationRules(
-        Array.isArray(options.records ?? this.internalProps.records)
-      );
+      this.internalProps.dataConfig.aggregationRules = this._generateAggregationRules();
 
       this.dataset = new Dataset(
         this.internalProps.dataConfig,
@@ -740,9 +738,9 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
    * @param indicatorFromChartSpec 是否需要考虑chartSpec中的yField或者xField分析作为指标来分组数据
    * @returns
    */
-  private _generateAggregationRules(indicatorFromChartSpec: boolean) {
+  private _generateAggregationRules() {
     const aggregationRules: AggregationRules = [];
-
+    // indicatorFromChartSpec = true;
     this.options.indicators.forEach((indicator: IIndicator | string) => {
       if (typeof indicator === 'string') {
         aggregationRules.push({
@@ -751,14 +749,7 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
           aggregationType: AggregationType.RECORD //计算类型
         } as AggregationRule<AggregationType.RECORD>);
       } else {
-        //如果不需要考虑chartSpec中的yField或者xField分析作为指标来分组数据
-        if (!indicatorFromChartSpec) {
-          aggregationRules.push({
-            indicatorKey: indicator.indicatorKey, //field转为指标key
-            field: indicator.indicatorKey, //指标依据字段
-            aggregationType: AggregationType.RECORD //计算类型
-          });
-        } else if ((indicator as IChartColumnIndicator).chartSpec?.series) {
+        if ((indicator as IChartColumnIndicator).chartSpec?.series) {
           // 如果chartSpec配置了组合图 series 则需要考虑 series中存在的多个指标
           const fields: string[] = [];
           (indicator as IChartColumnIndicator).chartSpec?.series.forEach((seriesSpec: any) => {
@@ -778,8 +769,8 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
               ? (indicator as IChartColumnIndicator).chartSpec.yField
               : (indicator as IChartColumnIndicator).chartSpec.xField;
           aggregationRules.push({
-            indicatorKey: field ?? indicator.indicatorKey, //field转为指标key
-            field: indicator.indicatorKey, //指标依据字段
+            indicatorKey: indicator.indicatorKey, //field转为指标key
+            field: field ?? indicator.indicatorKey, //指标依据字段
             aggregationType: AggregationType.RECORD //计算类型
           });
         }
