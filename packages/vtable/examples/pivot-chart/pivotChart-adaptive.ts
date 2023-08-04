@@ -9299,7 +9299,7 @@ export function createTable() {
         borderLineWidth: 0
       }
     },
-    widthMode: 'autoWidth',
+    widthMode: 'adaptive',
     heightMode: 'adaptive'
     // select: {
     //   disableSelect: true

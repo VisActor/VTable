@@ -4,7 +4,7 @@ export type ICellAxisOption = Omit<ICartesianAxisSpec, 'type'> &
   (
     | {
         type: 'band';
-        data: (number | string)[];
+        domain: (number | string)[];
       }
     | {
         type: 'linear' | 'time';

@@ -120,7 +120,7 @@ export function getAxisConfigInPivotChart(col: number, row: number, layout: Pivo
       return merge({}, axisOption, {
         orient: 'left',
         type: 'band',
-        data: Array.from(domain).reverse(),
+        domain: Array.from(domain).reverse(),
         title: {
           visible: false
         }
@@ -239,7 +239,7 @@ export function getAxisConfigInPivotChart(col: number, row: number, layout: Pivo
       return merge({}, axisOption, {
         orient: 'bottom',
         type: 'band',
-        data: Array.from(domain),
+        domain: Array.from(domain),
         title: {
           visible: false
         }

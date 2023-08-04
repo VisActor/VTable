@@ -46,7 +46,7 @@ export class CartesianAxis {
     this.type = option.type ?? 'band';
     this.inverse = 'inverse' in option ? !!option.inverse : false;
     if (option.type === 'band') {
-      this.data = option.data;
+      this.data = option.domain;
     }
 
     this.initScale();

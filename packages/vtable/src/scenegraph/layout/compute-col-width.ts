@@ -230,13 +230,21 @@ function computeAutoColWidth(
   for (let row = startRow; row <= endRow; row += deltaRow) {
     // 判断透视图轴组件
     if (table.isPivotChart()) {
-      const axisConfig = getAxisConfigInPivotChart(col, row, table.internalProps.layoutMap as PivotLayoutMap);
+      const layout = table.internalProps.layoutMap as PivotLayoutMap;
+      const axisConfig = getAxisConfigInPivotChart(col, row, layout);
       if (axisConfig) {
         const axisWidth = computeAxisConpomentWidth(axisConfig, table);
         if (typeof axisWidth === 'number') {
           maxWidth = Math.max(axisWidth, maxWidth);
           continue;
         }
+      } else if (
+        layout.isLeftBottomCorner(col, row) ||
+        layout.isRightTopCorner(col, row) ||
+        layout.isRightBottomCorner(col, row)
+      ) {
+        // 透视图三角为无效单元格，不参与宽度计算
+        continue;
       }
     }
 
