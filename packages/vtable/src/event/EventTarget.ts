@@ -115,7 +115,7 @@ export class EventTarget {
     }
     return list.map(listener => listener.call(this, event)).filter(r => isValid(r));
   }
-  dispose(): void {
+  release(): void {
     delete this.listenersData;
   }
 }

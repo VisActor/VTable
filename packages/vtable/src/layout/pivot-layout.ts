@@ -1560,7 +1560,7 @@ export class PivotLayoutMap implements LayoutMapAPI {
     return false;
   }
   //#endregion
-  dispose() {
+  release() {
     const activeChartInstance = (this._table as PivotChart)._getActiveChartInstance();
     activeChartInstance?.release();
     this._indicatorObjects.forEach(indicatorObject => {

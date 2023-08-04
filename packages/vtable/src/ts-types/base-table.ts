@@ -124,7 +124,7 @@ export interface IBaseTableProtected {
   //   left: number;
   //   top: number;
   // };
-  disposables?: { dispose: () => void }[] | null;
+  releaseList?: { release: () => void }[] | null;
   theme: TableTheme;
   transpose?: boolean; //是否转置
   // autoRowHeight?: boolean; //是否自动撑开高度 对于设置了autoWrapText的multilineText的列生效
@@ -432,8 +432,8 @@ export interface BaseTableAPI {
   getColsWidth: (startCol: number, endCol: number) => number;
   getRowsHeight: (startRow: number, endRow: number) => number;
 
-  dispose: () => void;
-  addDisposable: (disposable: { dispose: () => void }) => void;
+  release: () => void;
+  addReleaseObj: (releaseObj: { release: () => void }) => void;
   _getCellStyle: (col: number, row: number) => FullExtendStyle;
   clearCellStyleCache: () => void;
 

@@ -161,7 +161,7 @@ export class TableLegend {
       height: height
     };
   }
-  dispose() {
+  release() {
     this.table.scenegraph.stage.defaultLayer.removeChild(this.legendComponent);
     this.legendComponent = null;
   }

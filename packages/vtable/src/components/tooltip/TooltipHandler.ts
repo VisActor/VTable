@@ -33,10 +33,10 @@ export class TooltipHandler {
     this._bindTableEvent(table);
     this.confine = confine;
   }
-  dispose(): void {
+  release(): void {
     const tooltipInstances = this._tooltipInstances;
     for (const k in tooltipInstances) {
-      tooltipInstances[k]?.dispose?.();
+      tooltipInstances[k]?.release?.();
     }
     delete this._tooltipInstances;
     this._attachInfo = null;

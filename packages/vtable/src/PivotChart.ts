@@ -193,9 +193,9 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
 
     // this.hasMedia = null; // 避免重复绑定
     // 清空目前数据
-    if (internalProps.disposables) {
-      internalProps.disposables.forEach(disposable => disposable?.dispose?.());
-      internalProps.disposables = null;
+    if (internalProps.releaseList) {
+      internalProps.releaseList.forEach(releaseObj => releaseObj?.release?.());
+      internalProps.releaseList = null;
     }
     // // 恢复selection状态
     // internalProps.selection.range = range;

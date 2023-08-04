@@ -739,7 +739,7 @@ export class SimpleHeaderLayoutMap implements LayoutMapAPI {
   getChartDataId(col: number, row: number): any {
     return getChartDataId(col, row, this);
   }
-  dispose() {
+  release() {
     const activeChartInstance = this._table._getActiveChartInstance();
     activeChartInstance?.release();
     this.columnObjects.forEach(indicatorObject => {

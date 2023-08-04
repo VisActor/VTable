@@ -86,7 +86,7 @@ export class MenuHandler {
     this.bindEvent();
   }
 
-  dispose() {
+  release() {
     // do nothing
   }
 

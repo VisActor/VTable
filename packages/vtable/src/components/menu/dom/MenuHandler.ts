@@ -124,10 +124,10 @@ export class MenuHandler {
     this._menuInstances = {};
     this._bindTableEvent(table);
   }
-  dispose(): void {
+  release(): void {
     const menuInstances = this._menuInstances;
     for (const k in menuInstances) {
-      menuInstances[k].dispose();
+      menuInstances[k].release();
     }
     delete this._menuInstances;
     this._attachInfo = null;

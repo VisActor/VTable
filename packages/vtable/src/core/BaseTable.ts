@@ -1669,32 +1669,35 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
   }
   /**
    * 添加析构逻辑
-   * @param disposable
+   * @param releaseObj
    */
-  addDisposable(disposable: { dispose: () => void }): void {
-    if (!disposable || !disposable.dispose || typeof disposable.dispose !== 'function') {
-      throw new Error('not disposable!');
+  addReleaseObj(releaseObj: { release: () => void }): void {
+    if (!releaseObj || !releaseObj.release || typeof releaseObj.release !== 'function') {
+      throw new Error('not releaseObj!');
     }
-    const disposables = (this.internalProps.disposables = this.internalProps.disposables || []);
-    disposables.push(disposable);
+    const releaseList = (this.internalProps.releaseList = this.internalProps.releaseList || []);
+    releaseList.push(releaseObj);
+  }
+  private dispose() {
+    this.release();
   }
   /**
    * Dispose the table instance.
    * @returns {void}
    */
-  dispose(): void {
+  release(): void {
     const internalProps = this.internalProps;
-    internalProps.tooltipHandler?.dispose?.();
-    internalProps.menuHandler?.dispose?.();
+    internalProps.tooltipHandler?.release?.();
+    internalProps.menuHandler?.release?.();
     IconCache.clearAll();
 
-    super.dispose?.();
-    internalProps.handler?.dispose?.();
-    // internalProps.scrollable?.dispose?.();
-    internalProps.focusControl?.dispose?.();
-    if (internalProps.disposables) {
-      internalProps.disposables.forEach(disposable => disposable?.dispose?.());
-      internalProps.disposables = null;
+    super.release?.();
+    internalProps.handler?.release?.();
+    // internalProps.scrollable?.release?.();
+    internalProps.focusControl?.release?.();
+    if (internalProps.releaseList) {
+      internalProps.releaseList.forEach(releaseObj => releaseObj?.release?.());
+      internalProps.releaseList = null;
     }
 
     this.scenegraph.stage.release();
@@ -1816,9 +1819,9 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     internalProps.limitMaxAutoWidth = options.limitMaxAutoWidth ?? 450;
     // 生成scenegraph
     this.dataSet = new DataSet();
-    internalProps.legends?.dispose();
-    internalProps.title?.dispose();
-    internalProps.layoutMap.dispose();
+    internalProps.legends?.release();
+    internalProps.title?.release();
+    internalProps.layoutMap.release();
     this.scenegraph.clearCells();
     this.stateManeger.initState();
 
