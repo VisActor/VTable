@@ -8,6 +8,8 @@ import { getQuadProps } from '../utils/padding';
 import { getProp } from '../utils/get-prop';
 import type { BaseTableAPI } from '../../ts-types/base-table';
 import type { PivotLayoutMap } from '../../layout/pivot-layout';
+import { getAxisConfigInPivotChart, getAxisOption } from '../../layout/chart-helper/get-axis-config';
+import { computeAxisConpomentWidth } from '../../components/axis/get-axis-component-size';
 
 export function computeColsWidth(table: BaseTableAPI, colStart?: number, colEnd?: number, update?: boolean): void {
   colStart = colStart ?? 0;
@@ -226,7 +228,19 @@ function computeAutoColWidth(
   }
 
   for (let row = startRow; row <= endRow; row += deltaRow) {
-    // 先判断CustomRender
+    // 判断透视图轴组件
+    if (table.isPivotChart()) {
+      const axisConfig = getAxisConfigInPivotChart(col, row, table.internalProps.layoutMap as PivotLayoutMap);
+      if (axisConfig) {
+        const axisWidth = computeAxisConpomentWidth(axisConfig, table);
+        if (typeof axisWidth === 'number') {
+          maxWidth = Math.max(axisWidth, maxWidth);
+          continue;
+        }
+      }
+    }
+
+    // 判断CustomRender
     const customWidth = computeCustomRenderWidth(col, row, table);
     if (typeof customWidth === 'number') {
       maxWidth = Math.max(customWidth, maxWidth);

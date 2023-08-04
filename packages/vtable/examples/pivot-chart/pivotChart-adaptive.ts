@@ -124,7 +124,7 @@ export function createTable() {
         yField: '230417171050011',
         seriesField: '230417171050030',
         axes: [
-          { orient: 'left', visible: true, label: { visible: true } },
+          { orient: 'left', visible: true, label: { visible: true }, title: { visible: true } },
           { orient: 'bottom', visible: true }
         ],
         bar: {
@@ -207,7 +207,7 @@ export function createTable() {
           }
         ],
         axes: [
-          { orient: 'left', visible: true, label: { visible: true } },
+          { orient: 'left', visible: true, label: { visible: true }, title: { visible: true } },
           { orient: 'bottom', visible: true }
         ]
       }
@@ -237,7 +237,7 @@ export function createTable() {
         yField: '230707112948009',
         seriesField: '230417171050030',
         axes: [
-          { orient: 'left', visible: true, label: { visible: true } },
+          { orient: 'left', visible: true, label: { visible: true }, title: { visible: true } },
           { orient: 'bottom', visible: true }
         ],
         line: {
@@ -9299,7 +9299,7 @@ export function createTable() {
         borderLineWidth: 0
       }
     },
-    widthMode: 'adaptive',
+    widthMode: 'autoWidth',
     heightMode: 'adaptive'
     // select: {
     //   disableSelect: true
