@@ -821,17 +821,7 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
       }
     });
   }
-  /** 获取当前hover单元格的图表实例。这个方法hover实时获取有点缺陷：鼠标hover到单元格上触发了 chart.ts中的activate方法 但此时this.stateManeger.hover?.cellPos?.col还是-1 */
-  _getActiveChartInstance() {
-    // 根据hover的单元格位置 获取单元格实例 拿到chart图元
-    const cellGroup = this.scenegraph.getCell(
-      this.stateManeger.hover?.cellPos?.col,
-      this.stateManeger.hover?.cellPos?.row
-    );
-    return cellGroup?.getChildren()?.[0]?.type === 'chart'
-      ? (cellGroup.getChildren()[0] as Chart).activeChartInstance
-      : null;
-  }
+
   /**
    * 监听vchart事件
    * @param type vchart事件类型

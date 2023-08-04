@@ -238,6 +238,7 @@ interface LayoutMapAPI {
   getRecordStartRowByRecordIndex: (index: number) => number;
   /** 从定义中获取一列配置项width的定义值 */
   getColumnWidthDefined: (col: number) => WidthData;
+  dispose: () => void;
 }
 
 export type { LayoutMapAPI };

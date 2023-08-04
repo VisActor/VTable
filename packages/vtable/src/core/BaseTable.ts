@@ -90,6 +90,7 @@ import { TableLegend } from '../components/legend/legend';
 import { CartesianAxis } from '../components/axis/axis';
 import { DataSet } from '@visactor/vdataset';
 import { Title } from '../components/title/title';
+import type { Chart } from '../scenegraph/graphic/chart';
 const { toBoxArray } = utilStyle;
 const { isTouchEvent } = event;
 const rangeReg = /^\$(\d+)\$(\d+)$/;
@@ -1815,14 +1816,15 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     internalProps.limitMaxAutoWidth = options.limitMaxAutoWidth ?? 450;
     // 生成scenegraph
     this.dataSet = new DataSet();
+    internalProps.legends?.dispose();
+    internalProps.title?.dispose();
+    internalProps.layoutMap.dispose();
     this.scenegraph.clearCells();
     this.stateManeger.initState();
 
     this._updateSize();
     // this.stateManeger = new StateManeger(this);
     // this.eventManeger = new EventManeger(this);
-    this.internalProps.legends?.dispose();
-    this.internalProps.title?.dispose();
 
     if (options.legends) {
       internalProps.legends = new TableLegend(options.legends, this);
@@ -3174,5 +3176,16 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
       }
       return false;
     });
+  }
+  /** 获取当前hover单元格的图表实例。这个方法hover实时获取有点缺陷：鼠标hover到单元格上触发了 chart.ts中的activate方法 但此时this.stateManeger.hover?.cellPos?.col还是-1 */
+  _getActiveChartInstance() {
+    // 根据hover的单元格位置 获取单元格实例 拿到chart图元
+    const cellGroup = this.scenegraph.getCell(
+      this.stateManeger.hover?.cellPos?.col,
+      this.stateManeger.hover?.cellPos?.row
+    );
+    return cellGroup?.getChildren()?.[0]?.type === 'chart'
+      ? (cellGroup.getChildren()[0] as Chart).activeChartInstance
+      : null;
   }
 }

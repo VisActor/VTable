@@ -1961,4 +1961,11 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
   getChartDataId(col: number, row: number): any {
     return getChartDataId(col, row, this);
   }
+  dispose() {
+    const activeChartInstance = (this._table as PivotTable)._getActiveChartInstance();
+    activeChartInstance?.release();
+    this._indicators.forEach(indicatorObject => {
+      indicatorObject.chartInstance?.release();
+    });
+  }
 }
