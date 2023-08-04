@@ -488,13 +488,13 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
       if (moveContext.moveType === 'column') {
         // 是扁平数据结构 需要将二维数组this.records进行调整
         if (this.options.records?.[0]?.constructor === Array) {
-          for (let row = 0; row < this.records.length; row++) {
-            const sourceColumns = (this.records[row] as unknown as number[]).splice(
+          for (let row = 0; row < this.internalProps.records.length; row++) {
+            const sourceColumns = (this.internalProps.records[row] as unknown as number[]).splice(
               moveContext.sourceIndex - this.rowHeaderLevelCount,
               moveContext.moveSize
             );
             sourceColumns.unshift((moveContext.targetIndex as any) - this.rowHeaderLevelCount, 0 as any);
-            Array.prototype.splice.apply(this.records[row] as unknown as number[], sourceColumns);
+            Array.prototype.splice.apply(this.internalProps.records[row] as unknown as number[], sourceColumns);
           }
         }
         //colWidthsMap 中存储着每列的宽度 根据移动 sourceCol targetCol 调整其中的位置
@@ -513,12 +513,12 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
       } else if (moveContext.moveType === 'row') {
         // 是扁平数据结构 需要将二维数组this.records进行调整
         if (this.options.records?.[0]?.constructor === Array) {
-          const sourceRows = (this.records as unknown as number[]).splice(
+          const sourceRows = (this.internalProps.records as unknown as number[]).splice(
             moveContext.sourceIndex - this.columnHeaderLevelCount,
             moveContext.moveSize
           );
           sourceRows.unshift((moveContext.targetIndex as any) - this.columnHeaderLevelCount, 0 as any);
-          Array.prototype.splice.apply(this.records, sourceRows);
+          Array.prototype.splice.apply(this.internalProps.records, sourceRows);
         }
         //colWidthsMap 中存储着每列的宽度 根据移动 sourceCol targetCol 调整其中的位置
         this.rowHeightsMap.adjustOrder(moveContext.sourceIndex, moveContext.targetIndex, moveContext.moveSize);

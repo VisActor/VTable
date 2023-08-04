@@ -113,7 +113,7 @@ export function computeRowHeight(row: number, startCol: number, endCol: number, 
       }
     } else {
       //直接拿默认行高
-      return table.defaultRowHeight;
+      return table.getRowHeight(row);
     }
   }
   for (let col = startCol; col <= endCol; col++) {
