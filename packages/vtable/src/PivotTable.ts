@@ -185,7 +185,7 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
       this._resetFrozenColCount();
       // 生成单元格场景树
       this.scenegraph.createSceneGraph();
-      this.invalidate();
+      this.render();
     }
 
     this.pivotSortState = [];
@@ -427,7 +427,7 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
     this.internalProps.dataConfig.sortRules = sortRules;
     this.dataset.updateSortRules(sortRules);
     (this.internalProps.layoutMap as PivotLayoutMap).updateDataset(this.dataset);
-    this.invalidate();
+    this.render();
   }
   updatePivotSortState(
     pivotSortStateConfig: {

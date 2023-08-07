@@ -94,7 +94,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
     this.refreshHeader();
     //需要异步等待其他事情都完成后再绘制
     setTimeout(() => {
-      this.invalidate();
+      this.render();
     }, 0);
   }
 
@@ -113,7 +113,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
     this.refreshHeader();
     //需要异步等待其他事情都完成后再绘制
     setTimeout(() => {
-      this.invalidate();
+      this.render();
     }, 0);
   }
   /**
@@ -138,7 +138,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
 
       // 转置后为行布局，列宽只支持依据该列所有内容自适应宽度
       this._resetFrozenColCount();
-      this.invalidate();
+      this.render();
     }
   }
   /** 获取单元格展示值 */
@@ -233,7 +233,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
       this._resetFrozenColCount();
       // 生成单元格场景树
       this.scenegraph.createSceneGraph();
-      this.invalidate();
+      this.render();
     }
 
     return new Promise(resolve => {

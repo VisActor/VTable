@@ -209,7 +209,7 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
       this._resetFrozenColCount();
       // 生成单元格场景树
       this.scenegraph.createSceneGraph();
-      this.invalidate();
+      this.render();
     }
 
     return new Promise(resolve => {
@@ -376,7 +376,7 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
     this.internalProps.dataConfig.sortRules = sortRules;
     this.dataset.updateSortRules(sortRules);
     (this.internalProps.layoutMap as PivotLayoutMap).updateDataset(this.dataset);
-    this.invalidate();
+    this.render();
   }
   updatePivotSortState(
     pivotSortStateConfig: {
@@ -859,7 +859,7 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
     this.dataset.updateFilterRules(filterRules);
     clearChartCacheImage(this.scenegraph);
     updateChartData(this.scenegraph);
-    this.invalidate();
+    this.render();
   }
   /** 设置图例的选择状态。设置完后同步图表的状态需要配合updateFilterRules接口使用 */
   setLegendSelected(selectedData: (string | number)[]) {
@@ -906,7 +906,7 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
       });
       chartInstance.updateDataSync(dataId, data);
       position = chartInstance.convertDatumToPosition(datum);
-      this.invalidate();
+      this.render();
     }
     return position
       ? { x: Math.round(position.x + cellPosition.bounds.x1), y: Math.round(position.y + cellPosition.bounds.y1) }

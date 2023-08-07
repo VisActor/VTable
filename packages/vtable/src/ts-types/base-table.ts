@@ -403,7 +403,7 @@ export interface BaseTableAPI {
   _setFrozenColCount: (count: number) => void;
   _updateSize: () => void;
 
-  invalidate: () => void;
+  render: () => void;
   throttleInvalidate: () => void;
   getRowHeight: (row: number) => number;
   setRowHeight: (row: number, height: number, clearCache?: boolean) => void;

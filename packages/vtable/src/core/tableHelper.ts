@@ -44,7 +44,7 @@ export function _dealWithUpdateDataSource(table: BaseTableAPI, fn: (table: BaseT
       if (table.dataSource.enableHierarchyState) {
         table.refreshRowColCount();
       }
-      table.invalidate();
+      table.render();
     })
   ];
 }
