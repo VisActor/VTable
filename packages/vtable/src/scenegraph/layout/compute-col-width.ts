@@ -151,6 +151,8 @@ export function computeColWidth(
           : table.defaultHeaderColWidth;
         if (defaultWidth === 'auto') {
           width = 'auto';
+        } else {
+          return defaultWidth;
         }
       }
 
