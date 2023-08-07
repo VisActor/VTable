@@ -43,12 +43,6 @@ export function getAxisConfigInPivotChart(col: number, row: number, layout: Pivo
         range: range,
         label: {
           flush: true
-        },
-        // grid: {
-        //   visible: true
-        // },
-        title: {
-          visible: false
         }
       });
     } else if (
@@ -81,22 +75,24 @@ export function getAxisConfigInPivotChart(col: number, row: number, layout: Pivo
         return;
       }
       // 底侧指标轴
-      return merge({}, axisOption, {
-        orient: 'bottom',
-        type: 'linear',
-        range: range,
-        label: {
-          flush: true
+      return merge(
+        {
+          title: {
+            visible: true,
+            text: (indicatorInfo as any)?.caption,
+            autoRotate: true
+          }
         },
-        // grid: {
-        //   visible: true
-        // },
-        title: {
-          // visible: true,
-          text: (indicatorInfo as any)?.caption,
-          autoRotate: true
+        axisOption,
+        {
+          orient: 'bottom',
+          type: 'linear',
+          range: range,
+          label: {
+            flush: true
+          }
         }
-      });
+      );
     } else if (
       col === layout.rowHeaderLevelCount - 1 &&
       row >= layout.columnHeaderLevelCount &&
@@ -120,10 +116,7 @@ export function getAxisConfigInPivotChart(col: number, row: number, layout: Pivo
       return merge({}, axisOption, {
         orient: 'left',
         type: 'band',
-        domain: Array.from(domain).reverse(),
-        title: {
-          visible: false
-        }
+        domain: Array.from(domain).reverse()
       });
     }
   } else {
@@ -157,22 +150,24 @@ export function getAxisConfigInPivotChart(col: number, row: number, layout: Pivo
         return;
       }
       // 左侧指标轴
-      return merge({}, axisOption, {
-        orient: 'left',
-        type: 'linear',
-        range: range,
-        label: {
-          flush: true
+      return merge(
+        {
+          title: {
+            visible: true,
+            text: (indicatorInfo as any)?.caption,
+            autoRotate: true
+          }
         },
-        // grid: {
-        //   visible: true
-        // },
-        title: {
-          // visible: true,
-          text: (indicatorInfo as any)?.caption,
-          autoRotate: true
+        axisOption,
+        {
+          orient: 'left',
+          type: 'linear',
+          range: range,
+          label: {
+            flush: true
+          }
         }
-      });
+      );
     } else if (
       col === layout.colCount - layout.rightFrozenColCount &&
       row >= layout.columnHeaderLevelCount &&
@@ -206,12 +201,6 @@ export function getAxisConfigInPivotChart(col: number, row: number, layout: Pivo
         range: range,
         label: {
           flush: true
-        },
-        // grid: {
-        //   visible: true
-        // },
-        title: {
-          visible: false
         }
       });
     } else if (
@@ -239,10 +228,7 @@ export function getAxisConfigInPivotChart(col: number, row: number, layout: Pivo
       return merge({}, axisOption, {
         orient: 'bottom',
         type: 'band',
-        domain: Array.from(domain),
-        title: {
-          visible: false
-        }
+        domain: Array.from(domain)
       });
     }
   }
