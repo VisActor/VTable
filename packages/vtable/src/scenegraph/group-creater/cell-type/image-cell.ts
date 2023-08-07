@@ -197,7 +197,7 @@ export function updateImageCellContentWhileResize(cellGroup: Group, col: number,
   const image = cellGroup.getChildByName('image') as Image;
   const originImage =
     (typeof image.attribute.image !== 'string' && image.attribute.image) ||
-    image.resources.get(image.attribute.image).data;
+    image.resources?.get(image.attribute.image).data;
 
   if (!originImage) {
     return;

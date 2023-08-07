@@ -4,6 +4,7 @@ import type { DropDownMenuEventArgs, MenuListItem, PivotInfo } from './menu';
 import type { AnyFunction, IDimensionInfo, RectProps, SortOrder } from './common';
 import type { IconFuncTypeEnum, CellInfo, HierarchyState } from '.';
 import type { Icon } from '../scenegraph/graphic/icon';
+import type { FederatedPointerEvent } from '@visactor/vrender';
 
 export type KeyboardEventListener = (e: KeyboardEvent) => void;
 export type TableEventListener<TYPE extends keyof TableEventHandlersEventArgumentMap> = (
@@ -43,6 +44,7 @@ export type MousePointerCellEvent = CellAddress &
     scaleRatio?: number;
     targetIcon?: { name: string; position: RectProps; funcType: string };
     event?: MouseEvent | PointerEvent | TouchEvent;
+    federatedEvent?: FederatedPointerEvent;
   };
 // 多单元格的事件传出参数 需要将当前鼠标处的单元格的信息FocusedCellInfo也带着
 export type MousePointerMultiCellEvent = MousePointerCellEvent & {
