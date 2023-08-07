@@ -8,8 +8,7 @@ export function createTable() {
     {
       progress: 100,
       id: 1,
-      name: 'a',
-      link: animalImageUrl
+      name: 'a'
     },
     {
       progress: 80,
