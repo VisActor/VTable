@@ -11,6 +11,7 @@ import { cellInRanges } from '../../tools/helper';
 import { Rect } from '../../tools/Rect';
 import type { EventManeger } from '../event';
 import type { BaseTableAPI } from '../../ts-types/base-table';
+import type { IIconGraphicAttribute } from '../../scenegraph/graphic/icon';
 
 export function bindTableGroupListener(eventManeger: EventManeger) {
   const table = eventManeger.table;
@@ -271,7 +272,7 @@ export function bindTableGroupListener(eventManeger: EventManeger) {
     const hitIcon = (eventArgsSet?.eventArgs?.target as any)?.role?.startsWith('icon')
       ? eventArgsSet.eventArgs.target
       : undefined;
-    if (!hitIcon) {
+    if (!hitIcon || (hitIcon.attribute as IIconGraphicAttribute).interactive === false) {
       if (e.pointerType === 'touch') {
         eventManeger.touchEnd = false;
         eventManeger.touchSetTimeout = setTimeout(() => {

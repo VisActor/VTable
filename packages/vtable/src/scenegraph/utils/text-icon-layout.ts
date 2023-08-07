@@ -356,6 +356,7 @@ export function dealWithIcon(
   iconAttribute.height = icon.height;
   iconAttribute.visibleTime = icon.visibleTime ?? 'always';
   iconAttribute.funcType = icon.funcType;
+  iconAttribute.interactive = icon.interactive;
 
   let hierarchyOffset = 0;
   if (

@@ -75,7 +75,7 @@ export function createImageCellGroup(
     y: padding[0],
     width: width - padding[1] - padding[3],
     height: height - padding[0] - padding[2],
-    image: value ?? (regedIcons.damage_pic as any).svg,
+    image: value, //?? (regedIcons.damage_pic as any).svg,
     cursor: 'pointer' as Cursor
   });
   image.name = 'image';
