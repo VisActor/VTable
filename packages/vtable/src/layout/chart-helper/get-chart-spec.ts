@@ -46,10 +46,15 @@ export function getChartAxes(col: number, row: number, layout: PivotLayoutMap): 
       const data = layout.dataset.collectedValues[key + '_align']
         ? layout.dataset.collectedValues[key + '_align']
         : layout.dataset.collectedValues[key];
-      const range =
-        data[layout.getColKeysPath()[colIndex][Math.max(0, layout.columnHeaderLevelCount - 1 - layout.topAxesCount)]];
+      const range = data[
+        layout.getColKeysPath()[colIndex][Math.max(0, layout.columnHeaderLevelCount - 1 - layout.topAxesCount)]
+      ] as { max?: number; min?: number };
 
       const axisOption = getAxisOption(col, row, index === 0 ? 'bottom' : 'top', layout);
+      if (axisOption?.zero) {
+        range.min = Math.min(range.min, 0);
+        range.max = Math.max(range.max, 0);
+      }
       axes.push(
         merge({}, axisOption, {
           type: 'linear',
@@ -101,10 +106,15 @@ export function getChartAxes(col: number, row: number, layout: PivotLayoutMap): 
       const data = layout.dataset.collectedValues[key + '_align']
         ? layout.dataset.collectedValues[key + '_align']
         : layout.dataset.collectedValues[key];
-      const range =
-        data[layout.getRowKeysPath()[rowIndex][Math.max(0, layout.rowHeaderLevelCount - 1 - layout.leftAxesCount)]];
+      const range = data[
+        layout.getRowKeysPath()[rowIndex][Math.max(0, layout.rowHeaderLevelCount - 1 - layout.leftAxesCount)]
+      ] as { max?: number; min?: number };
 
       const axisOption = getAxisOption(col, row, index === 0 ? 'left' : 'right', layout);
+      if (axisOption?.zero) {
+        range.min = Math.min(range.min, 0);
+        range.max = Math.max(range.max, 0);
+      }
       axes.push(
         merge({}, axisOption, {
           type: 'linear',
