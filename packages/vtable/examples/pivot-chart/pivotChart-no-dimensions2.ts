@@ -6,118 +6,18 @@ VTable.register.chartModule('vchart', VChart);
 export function createTable() {
   const rowTree = [
     {
-      dimensionKey: '230417170554012',
-      value: '一级',
-      children: [
-        {
-          value: '数量',
-          indicatorKey: '230713183656009'
-        },
-        {
-          value: '销售额',
-          indicatorKey: '230417171050025'
-        },
-        {
-          value: '折扣',
-          indicatorKey: '230707112948009'
-        }
-      ]
-    },
-    {
-      dimensionKey: '230417170554012',
-      value: '二级',
-      children: [
-        {
-          value: '数量',
-          indicatorKey: '230713183656009'
-        },
-        {
-          value: '销售额',
-          indicatorKey: '230417171050025'
-        },
-        {
-          value: '折扣',
-          indicatorKey: '230707112948009'
-        }
-      ]
-    },
-    {
-      dimensionKey: '230417170554012',
-      value: '当日',
-      children: [
-        {
-          value: '数量',
-          indicatorKey: '230713183656009'
-        },
-        {
-          value: '销售额',
-          indicatorKey: '230417171050025'
-        },
-        {
-          value: '折扣',
-          indicatorKey: '230707112948009'
-        }
-      ]
-    },
-    {
-      dimensionKey: '230417170554012',
-      value: '标准级',
-      children: [
-        {
-          value: '数量',
-          indicatorKey: '230713183656009'
-        },
-        {
-          value: '销售额',
-          indicatorKey: '230417171050025'
-        },
-        {
-          value: '折扣',
-          indicatorKey: '230707112948009'
-        }
-      ]
+      dimensionKey: '',
+      value: ''
     }
   ];
   const columnTree = [
     {
-      dimensionKey: '230417171050031',
-      value: '中国',
-      children: [
-        {
-          dimensionKey: '230417171050028',
-          value: '办公用品'
-        },
-        {
-          dimensionKey: '230417171050028',
-          value: '家具'
-        },
-        {
-          dimensionKey: '230417171050028',
-          value: '技术'
-        }
-      ]
+      dimensionKey: '',
+      value: ''
     }
   ];
-  const columns: (VTable.IDimension | string)[] = [
-    {
-      dimensionKey: '230417171050031',
-      dimensionTitle: '国家',
-      headerStyle: {
-        color: 'red'
-      }
-    },
-    '230417171050028'
-    // '230417170554008'
-  ];
-  const rows = [
-    {
-      dimensionKey: '230417170554012',
-      dimensionTitle: '邮寄方式',
-      headerStyle: {
-        color: 'red'
-      }
-    }
-  ];
+  const columns: (VTable.IDimension | string)[] = [];
+  const rows = [];
   const indicators: VTable.TYPES.IIndicator[] = [
     {
       indicatorKey: '230713183656009',
@@ -10465,8 +10365,255 @@ export function createTable() {
     //   disableSelect: true
     // }
   };
-
-  const tableInstance = new VTable.PivotChart(option);
+  const option1 = {
+    parentElement: document.getElementById(Table_CONTAINER_DOM_ID),
+    rowTree: [
+      {
+        dimensionKey: '',
+        value: ''
+      }
+    ],
+    columnTree: [
+      {
+        dimensionKey: '',
+        value: ''
+      }
+    ],
+    rows: [],
+    columns: [],
+    records: {
+      '0': [
+        {
+          '10001': '销售额',
+          '10002': '2403392.6722841263',
+          '10003': '230804115238023',
+          '20001': '销售额',
+          '230804115238020': '一级',
+          '230804115238023': '2403392.6722841263'
+        },
+        {
+          '10001': '销售额',
+          '10002': '827490.930524826',
+          '10003': '230804115238023',
+          '20001': '销售额',
+          '230804115238020': '当日',
+          '230804115238023': '827490.930524826'
+        },
+        {
+          '10001': '销售额',
+          '10002': '9339292.830370903',
+          '10003': '230804115238023',
+          '20001': '销售额',
+          '230804115238020': '标准级',
+          '230804115238023': '9339292.830370903'
+        },
+        {
+          '10001': '销售额',
+          '10002': '3498777.6997537613',
+          '10003': '230804115238023',
+          '20001': '销售额',
+          '230804115238020': '二级',
+          '230804115238023': '3498777.6997537613'
+        }
+      ],
+      '1': [
+        {
+          '10001': '利润',
+          '10002': '276281.10993189365',
+          '10003': '230804115238026',
+          '20001': '利润',
+          '230804115238020': '一级',
+          '230804115238026': '276281.10993189365'
+        },
+        {
+          '10001': '利润',
+          '10002': '134374.30981696397',
+          '10003': '230804115238026',
+          '20001': '利润',
+          '230804115238020': '当日',
+          '230804115238026': '134374.30981696397'
+        },
+        {
+          '10001': '利润',
+          '10002': '1260994.3519947156',
+          '10003': '230804115238026',
+          '20001': '利润',
+          '230804115238020': '标准级',
+          '230804115238026': '1260994.3519947156'
+        },
+        {
+          '10001': '利润',
+          '10002': '475889.1553846523',
+          '10003': '230804115238026',
+          '20001': '利润',
+          '230804115238020': '二级',
+          '230804115238026': '475889.1553846523'
+        }
+      ]
+    },
+    indicators: [
+      {
+        indicatorKey: '0',
+        width: 'auto',
+        caption: 'caption',
+        columnType: 'chart',
+        chartModule: 'vchart',
+        chartSpec: {
+          xField: '230804115238020',
+          yField: '10002',
+          data: {
+            id: 'data-0',
+            fields: {
+              '10001': {
+                alias: '指标名称 '
+              },
+              '10002': {
+                alias: '指标值 '
+              },
+              '20001': {
+                alias: '图例项 ',
+                domain: ['销售额', '利润']
+              },
+              '230804115238020': {
+                alias: '邮寄方式',
+                domain: ['标准级', '当日', '二级', '一级']
+              },
+              '230804115238023': {
+                alias: '销售额'
+              },
+              '230804115238026': {
+                alias: '利润'
+              }
+            }
+          },
+          type: 'line'
+        }
+      },
+      {
+        indicatorKey: '1',
+        width: 'auto',
+        caption: 'caption',
+        columnType: 'chart',
+        chartModule: 'vchart',
+        chartSpec: {
+          xField: '230804115238020',
+          yField: '10002',
+          data: {
+            id: 'data-1',
+            fields: {
+              '10001': {
+                alias: '指标名称 '
+              },
+              '10002': {
+                alias: '指标值 '
+              },
+              '20001': {
+                alias: '图例项 ',
+                domain: ['销售额', '利润']
+              },
+              '230804115238020': {
+                alias: '邮寄方式',
+                domain: ['标准级', '当日', '二级', '一级']
+              },
+              '230804115238023': {
+                alias: '销售额'
+              },
+              '230804115238026': {
+                alias: '利润'
+              }
+            }
+          },
+          type: 'line'
+        }
+      }
+    ],
+    defaultRowHeight: 200,
+    defaultHeaderRowHeight: 30,
+    defaultColWidth: 280,
+    defaultHeaderColWidth: [80, 50],
+    indicatorTitle: 'indicator',
+    corner: {
+      titleOnDimension: 'row',
+      headerStyle: {
+        autoWrapText: true,
+        padding: 0
+      }
+    },
+    widthMode: 'adaptive',
+    heightMode: 'adaptive',
+    autoWrapText: true,
+    indicatorsAsCol: false,
+    theme: {
+      bodyStyle: {
+        borderColor: 'gray',
+        borderLineWidth: [1, 0, 0, 1]
+      },
+      headerStyle: {
+        borderColor: 'gray',
+        borderLineWidth: [0, 0, 0, 1],
+        hover: {
+          cellBgColor: '#CCE0FF'
+        }
+      },
+      rowHeaderStyle: {
+        borderColor: 'gray',
+        borderLineWidth: [1, 0, 1, 0],
+        hover: {
+          cellBgColor: ''
+        }
+      },
+      cornerHeaderStyle: {
+        borderColor: 'gray',
+        borderLineWidth: [0, 0, 1, 0],
+        hover: {
+          cellBgColor: ''
+        }
+      },
+      cornerRightTopCellStyle: {
+        borderColor: 'gray',
+        borderLineWidth: [0, 0, 1, 1],
+        hover: {
+          cellBgColor: ''
+        }
+      },
+      cornerLeftBottomCellStyle: {
+        borderColor: 'gray',
+        borderLineWidth: [1, 1, 0, 0],
+        hover: {
+          cellBgColor: ''
+        }
+      },
+      cornerRightBottomCellStyle: {
+        borderColor: 'gray',
+        borderLineWidth: [1, 0, 0, 1],
+        hover: {
+          cellBgColor: ''
+        }
+      },
+      rightFrozenStyle: {
+        borderColor: 'gray',
+        borderLineWidth: [1, 0, 1, 1],
+        hover: {
+          cellBgColor: ''
+        }
+      },
+      bottomFrozenStyle: {
+        borderColor: 'gray',
+        borderLineWidth: [1, 1, 0, 1],
+        hover: {
+          cellBgColor: ''
+        }
+      },
+      selectionStyle: {
+        cellBgColor: '',
+        cellBorderColor: ''
+      },
+      frameStyle: {
+        borderLineWidth: 0
+      }
+    }
+  };
+  const tableInstance = new VTable.PivotChart(option1);
   tableInstance.onVChartEvent('click', args => {
     console.log('listenChart click', args);
   });
@@ -10490,43 +10637,5 @@ export function createTable() {
     console.log('LEGEND_ITEM_UNHOVER', args);
   });
 
-  setTimeout(() => {
-    const datum = {
-      '10001': '数量',
-      '10002': '111',
-      '10003': '230713183656009',
-      '20001': '公司-数量',
-      '230417170554008': '配件',
-      '230417170554012': '一级',
-      '230417171050028': '技术',
-      '230417171050031': '中国',
-      '230713183656009': '111',
-      '230717170834024': '公司'
-    };
-    const cellAddr = {
-      colHeaderPaths: [
-        {
-          dimensionKey: '230417171050031',
-          value: '中国'
-        },
-        {
-          dimensionKey: '230417171050028',
-          value: '技术'
-        }
-      ],
-      rowHeaderPaths: [
-        {
-          dimensionKey: '230417170554012',
-          value: '一级'
-        },
-        {
-          indicatorKey: '230713183656009',
-          value: '数量'
-        }
-      ]
-    };
-    const position = tableInstance.getChartDatumPosition(datum, cellAddr);
-    console.log('getChartDatumPosition', position);
-  }, 3000);
   window.tableInstance = tableInstance;
 }

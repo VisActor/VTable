@@ -86,7 +86,7 @@ export class CachedDataSource extends DataSource {
     this._recordCache[index] = record;
   }
 
-  dispose(): void {
-    super.dispose?.();
+  release(): void {
+    super.release?.();
   }
 }

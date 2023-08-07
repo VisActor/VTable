@@ -332,7 +332,7 @@ export class MenuElement {
   get rootElement() {
     return this._rootElement;
   }
-  dispose(): void {
+  release(): void {
     this.unbindFromCell();
 
     const rootElement = this._rootElement;
@@ -340,7 +340,7 @@ export class MenuElement {
       rootElement.parentElement.removeChild(rootElement);
     }
 
-    this._handler.dispose();
+    this._handler.release();
     delete this._rootElement;
   }
   bindToCell(table: BaseTableAPI, col: number, row: number, menuInstanceInfo: MenuInstanceInfo): boolean {

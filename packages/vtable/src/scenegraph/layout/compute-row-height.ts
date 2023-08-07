@@ -10,6 +10,7 @@ import { getProp } from '../utils/get-prop';
 import { getQuadProps } from '../utils/padding';
 import { getCellRect } from './compute-col-width';
 import { dealWithRichTextIcon } from '../utils/text-icon-layout';
+import type { PivotLayoutMap } from '../../layout/pivot-layout';
 
 const utilTextMark = new WrapText({
   autoWrapText: true
@@ -22,7 +23,7 @@ const utilRichTextMark = new RichText({
 
 export function computeRowsHeight(table: BaseTableAPI, rowStart?: number, rowEnd?: number): void {
   const time = typeof window !== 'undefined' ? window.performance.now() : 0;
-  if (table.heightMode === 'autoHeight') {
+  if (table.heightMode === 'autoHeight' || table.heightMode === 'adaptive') {
     rowStart = rowStart ?? 0;
     rowEnd = rowEnd ?? table.rowCount - 1;
 
@@ -75,8 +76,8 @@ export function computeRowsHeight(table: BaseTableAPI, rowStart?: number, rowEnd
       }
     }
   }
-  // 处理adaptive宽度
-  else if (table.heightMode === 'adaptive') {
+  // 处理adaptive高度
+  if (table.heightMode === 'adaptive') {
     table._clearRowRangeHeightsMap();
     // const canvasWidth = table.internalProps.canvas.width;
     const totalDrawHeight = table.tableNoFrameHeight - table.getFrozenRowsHeight() - table.getBottomFrozenRowsHeight();
@@ -102,6 +103,19 @@ export function computeRowsHeight(table: BaseTableAPI, rowStart?: number, rowEnd
 
 export function computeRowHeight(row: number, startCol: number, endCol: number, table: BaseTableAPI): number {
   let maxHeight = 0;
+  // 如果是透视图
+  if (table.isPivotChart() && row >= table.columnHeaderLevelCount) {
+    if ((table.internalProps.layoutMap as PivotLayoutMap).indicatorsAsCol) {
+      //并且指标是以列展示 计算行高需要根据y轴的值域范围
+      const optimunHeight = (table.internalProps.layoutMap as PivotLayoutMap).getOptimunHeightForChart(row);
+      if (optimunHeight > 0) {
+        return optimunHeight;
+      }
+    } else {
+      //直接拿默认行高
+      return table.getRowHeight(row);
+    }
+  }
   for (let col = startCol; col <= endCol; col++) {
     // CustomRender height calculation
     const customHeight = computeCustomRenderHeight(col, row, table);

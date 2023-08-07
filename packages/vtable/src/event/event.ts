@@ -54,7 +54,7 @@ export class EventManeger {
     const stateManeger: StateManeger = this.table.stateManeger;
 
     // 图标点击
-    this.table.listen(TABLE_EVENT_TYPE.ICON_CLICK, iconInfo => {
+    this.table.on(TABLE_EVENT_TYPE.ICON_CLICK, iconInfo => {
       const { col, row, x, y, funcType, icon } = iconInfo;
       // 下拉菜单按钮点击
       if (funcType === IconFuncTypeEnum.dropDown) {
@@ -71,13 +71,13 @@ export class EventManeger {
     });
 
     // 下拉菜单内容点击
-    this.table.listen(TABLE_EVENT_TYPE.DROPDOWNMENU_CLICK, () => {
+    this.table.on(TABLE_EVENT_TYPE.DROPDOWNMENU_CLICK, () => {
       stateManeger.hideMenu();
     });
 
     // 处理textStick
     if (checkHaveTextStick(this.table)) {
-      this.table.listen(TABLE_EVENT_TYPE.SCROLL, e => {
+      this.table.on(TABLE_EVENT_TYPE.SCROLL, e => {
         handleTextStick(this.table);
       });
     }
@@ -86,7 +86,7 @@ export class EventManeger {
     bindMediaClick(this.table);
 
     // 双击自动列宽
-    this.table.listen(TABLE_EVENT_TYPE.DBLCLICK_CELL, e => {
+    this.table.on(TABLE_EVENT_TYPE.DBLCLICK_CELL, e => {
       if (this.table._canResizeColumn(e.col, e.row)) {
         this.table.scenegraph.updateAutoColWidth(e.col);
       }

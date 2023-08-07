@@ -124,7 +124,7 @@ export interface IBaseTableProtected {
   //   left: number;
   //   top: number;
   // };
-  disposables?: { dispose: () => void }[] | null;
+  releaseList?: { release: () => void }[] | null;
   theme: TableTheme;
   transpose?: boolean; //是否转置
   // autoRowHeight?: boolean; //是否自动撑开高度 对于设置了autoWrapText的multilineText的列生效
@@ -159,7 +159,7 @@ export interface IBaseTableProtected {
   sortState: SortState | SortState[];
 
   dataSource: DataSource | CachedDataSource;
-  records?: any[] | null;
+  records?: any;
   allowRangePaste: boolean;
   //重新思考逻辑：如果为false，行高按设置的rowHeight；如果设置为true，则按lineHeight及是否自动换行综合计算行高 2021.11.19 by：lff
 
@@ -283,10 +283,7 @@ export interface BaseTableConstructorOptions {
    * 传入用户实例化的数据对象 目前不完善
    */
   dataSource?: DataSource;
-  /**
-   * 数据集合
-   */
-  records?: any[];
+
   /** 开启自动换行 默认false */
   autoWrapText?: boolean;
   /** 单元格中可显示最大字符数 默认200 */
@@ -351,8 +348,7 @@ export interface BaseTableAPI {
   globalDropDownMenu?: MenuListItem[];
   /** 设置的全局自定义渲染函数 */
   customRender?: ICustomRender;
-  /** 表格数据 */
-  records: any[] | null;
+
   /** 表格数据管理对象 */
   dataSource: DataSourceAPI;
   /** 设置的表格主题 */
@@ -376,7 +372,7 @@ export interface BaseTableAPI {
   /** 当列宽度不能占满容器时，是否需要自动拉宽来填充容器的宽度。默认false */
   autoFillWidth: boolean;
 
-  listen: <TYPE extends keyof TableEventHandlersEventArgumentMap>(
+  on: <TYPE extends keyof TableEventHandlersEventArgumentMap>(
     type: TYPE,
     listener: TableEventListener<TYPE> //(event: TableEventHandlersEventArgumentMap[TYPE]) => TableEventHandlersReturnMap[TYPE]
   ) => EventListenerId;
@@ -407,7 +403,7 @@ export interface BaseTableAPI {
   _setFrozenColCount: (count: number) => void;
   _updateSize: () => void;
 
-  invalidate: () => void;
+  render: () => void;
   throttleInvalidate: () => void;
   getRowHeight: (row: number) => number;
   setRowHeight: (row: number, height: number, clearCache?: boolean) => void;
@@ -437,8 +433,8 @@ export interface BaseTableAPI {
   getColsWidth: (startCol: number, endCol: number) => number;
   getRowsHeight: (startRow: number, endRow: number) => number;
 
-  dispose: () => void;
-  addDisposable: (disposable: { dispose: () => void }) => void;
+  release: () => void;
+  addReleaseObj: (releaseObj: { release: () => void }) => void;
   _getCellStyle: (col: number, row: number) => FullExtendStyle;
   clearCellStyleCache: () => void;
 
@@ -451,7 +447,7 @@ export interface BaseTableAPI {
   getAllRowsHeight: () => number;
   getAllColsWidth: () => number;
 
-  unlisten: (id: EventListenerId) => void;
+  off: (id: EventListenerId) => void;
   getBodyField: (col: number, row: number) => FieldDef | undefined;
   getRecordByRowCol: (col: number, row: number) => MaybePromiseOrUndefined;
   getRecordIndexByRow: (col: number, row: number) => number;
@@ -548,15 +544,25 @@ export interface BaseTableAPI {
   //#endregion  tableAPI
 }
 export interface ListTableProtected extends IBaseTableProtected {
+  /** 表格数据 */
+  records: any[] | null;
   columns: ColumnsDefine;
   layoutMap: SimpleHeaderLayoutMap;
 }
 
 export interface PivotTableProtected extends IBaseTableProtected {
+  /** 表格数据 */
+  records: any[] | null;
   layoutMap: PivotHeaderLayoutMap | PivotLayoutMap;
   dataConfig?: IDataConfig;
   /**
    * 透视表 传入数据是透视后的嵌套层级结构 还是需要进行汇总计算的平坦数据
    */
   enableDataAnalysis?: boolean;
+}
+export interface PivotChartProtected extends IBaseTableProtected {
+  /** 表格数据 */
+  records: any[] | Record<string, any[]>;
+  layoutMap: PivotHeaderLayoutMap | PivotLayoutMap;
+  dataConfig?: IDataConfig;
 }
