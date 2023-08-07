@@ -124,7 +124,7 @@ export interface IBaseTableProtected {
   //   left: number;
   //   top: number;
   // };
-  disposables?: { dispose: () => void }[] | null;
+  releaseList?: { release: () => void }[] | null;
   theme: TableTheme;
   transpose?: boolean; //是否转置
   // autoRowHeight?: boolean; //是否自动撑开高度 对于设置了autoWrapText的multilineText的列生效
@@ -372,7 +372,7 @@ export interface BaseTableAPI {
   /** 当列宽度不能占满容器时，是否需要自动拉宽来填充容器的宽度。默认false */
   autoFillWidth: boolean;
 
-  listen: <TYPE extends keyof TableEventHandlersEventArgumentMap>(
+  on: <TYPE extends keyof TableEventHandlersEventArgumentMap>(
     type: TYPE,
     listener: TableEventListener<TYPE> //(event: TableEventHandlersEventArgumentMap[TYPE]) => TableEventHandlersReturnMap[TYPE]
   ) => EventListenerId;
@@ -403,7 +403,7 @@ export interface BaseTableAPI {
   _setFrozenColCount: (count: number) => void;
   _updateSize: () => void;
 
-  invalidate: () => void;
+  render: () => void;
   throttleInvalidate: () => void;
   getRowHeight: (row: number) => number;
   setRowHeight: (row: number, height: number, clearCache?: boolean) => void;
@@ -432,8 +432,8 @@ export interface BaseTableAPI {
   getColsWidth: (startCol: number, endCol: number) => number;
   getRowsHeight: (startRow: number, endRow: number) => number;
 
-  dispose: () => void;
-  addDisposable: (disposable: { dispose: () => void }) => void;
+  release: () => void;
+  addReleaseObj: (releaseObj: { release: () => void }) => void;
   _getCellStyle: (col: number, row: number) => FullExtendStyle;
   clearCellStyleCache: () => void;
 
@@ -446,7 +446,7 @@ export interface BaseTableAPI {
   getAllRowsHeight: () => number;
   getAllColsWidth: () => number;
 
-  unlisten: (id: EventListenerId) => void;
+  off: (id: EventListenerId) => void;
   getBodyField: (col: number, row: number) => FieldDef | undefined;
   getRecordByRowCol: (col: number, row: number) => MaybePromiseOrUndefined;
   getRecordIndexByRow: (col: number, row: number) => number;

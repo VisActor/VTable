@@ -169,9 +169,9 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
 
     // this.hasMedia = null; // 避免重复绑定
     // 清空目前数据
-    if (internalProps.disposables) {
-      internalProps.disposables.forEach(disposable => disposable?.dispose?.());
-      internalProps.disposables = null;
+    if (internalProps.releaseList) {
+      internalProps.releaseList.forEach(releaseObj => releaseObj?.release?.());
+      internalProps.releaseList = null;
     }
     // // 恢复selection状态
     // internalProps.selection.range = range;
@@ -185,7 +185,7 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
       this._resetFrozenColCount();
       // 生成单元格场景树
       this.scenegraph.createSceneGraph();
-      this.invalidate();
+      this.render();
     }
 
     this.pivotSortState = [];
@@ -202,7 +202,7 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
 
     //原表头绑定的事件 解除掉
     if (internalProps.headerEvents) {
-      internalProps.headerEvents.forEach((id: number) => this.unlisten(id));
+      internalProps.headerEvents.forEach((id: number) => this.off(id));
     }
     const records = this.options.records ?? this.internalProps.records;
     if (this.options.enableDataAnalysis) {
@@ -427,7 +427,7 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
     this.internalProps.dataConfig.sortRules = sortRules;
     this.dataset.updateSortRules(sortRules);
     (this.internalProps.layoutMap as PivotLayoutMap).updateDataset(this.dataset);
-    this.invalidate();
+    this.render();
   }
   updatePivotSortState(
     pivotSortStateConfig: {

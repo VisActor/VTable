@@ -436,7 +436,7 @@ export function createTable() {
       // 只为了方便控制太调试用，不要拷贝
       (window as any).tableInstance = tableInstance;
 
-      tableInstance.listen('mouseenter_cell', args => {
+      tableInstance.on('mouseenter_cell', args => {
         const { col, row } = args;
         const rect = tableInstance.getVisibleCellRangeRelativeRect({ col, row });
         tableInstance.showTooltip(col, row, {

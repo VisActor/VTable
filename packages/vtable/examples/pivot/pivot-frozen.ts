@@ -496,7 +496,7 @@ export function createTable() {
   window.tableInstance = instance;
 
   const { PIVOT_SORT_CLICK } = VTable.PivotTable.EVENT_TYPE;
-  instance.listen(PIVOT_SORT_CLICK, e => {
+  instance.on(PIVOT_SORT_CLICK, e => {
     const order = e.order === 'asc' ? 'desc' : e.order === 'desc' ? 'normal' : 'asc';
     instance.updatePivotSortState([{ dimensions: e.dimensionInfo, order }]);
   });

@@ -176,7 +176,7 @@ export function createTable() {
   });
 
   let hoverIconKey;
-  instance.listen('mousemove_cell', args => {
+  instance.on('mousemove_cell', args => {
     if (args.targetIcon) {
       const key = `${args.col}-${args.row}-${args.targetIcon?.name}`;
       if (args.targetIcon?.name === 'Avatar' && hoverIconKey !== key) {

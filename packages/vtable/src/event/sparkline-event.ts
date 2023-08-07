@@ -23,7 +23,7 @@ export function bindSparklineHoverEvent(table: BaseTableAPI) {
     return;
   }
 
-  table.listen(TABLE_EVENT_TYPE.MOUSEMOVE_CELL, (e: MousePointerCellEvent) => {
+  table.on(TABLE_EVENT_TYPE.MOUSEMOVE_CELL, (e: MousePointerCellEvent) => {
     const { col, row, x, y } = e;
     const type = table.getBodyColumnType(col, row);
     if (type !== 'sparkline') {
@@ -32,7 +32,7 @@ export function bindSparklineHoverEvent(table: BaseTableAPI) {
     table.stateManeger.updateSparklineHoverPose(col, row, x, y);
   });
 
-  table.listen(TABLE_EVENT_TYPE.MOUSELEAVE_TABLE, (e: MousePointerCellEvent) => {
+  table.on(TABLE_EVENT_TYPE.MOUSELEAVE_TABLE, (e: MousePointerCellEvent) => {
     table.stateManeger.updateSparklineHoverPose(-1, -1, 0, 0);
   });
 }

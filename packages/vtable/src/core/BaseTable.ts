@@ -90,6 +90,7 @@ import { TableLegend } from '../components/legend/legend';
 import { CartesianAxis } from '../components/axis/axis';
 import { DataSet } from '@visactor/vdataset';
 import { Title } from '../components/title/title';
+import type { Chart } from '../scenegraph/graphic/chart';
 const { toBoxArray } = utilStyle;
 const { isTouchEvent } = event;
 const rangeReg = /^\$(\d+)\$(\d+)$/;
@@ -332,7 +333,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     this.bodyStyleCache = new Map();
   }
   /** 节流绘制 */
-  throttleInvalidate = throttle2(this.invalidate.bind(this), 200);
+  throttleInvalidate = throttle2(this.render.bind(this), 200);
   /**
    * Get parent element.
    * @returns {HTMLElement} parent element container
@@ -1543,7 +1544,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
   /**
    * 重绘表格
    */
-  invalidate(): void {
+  render(): void {
     this.scenegraph.renderSceneGraph();
   }
   /**
@@ -1668,32 +1669,35 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
   }
   /**
    * 添加析构逻辑
-   * @param disposable
+   * @param releaseObj
    */
-  addDisposable(disposable: { dispose: () => void }): void {
-    if (!disposable || !disposable.dispose || typeof disposable.dispose !== 'function') {
-      throw new Error('not disposable!');
+  addReleaseObj(releaseObj: { release: () => void }): void {
+    if (!releaseObj || !releaseObj.release || typeof releaseObj.release !== 'function') {
+      throw new Error('not releaseObj!');
     }
-    const disposables = (this.internalProps.disposables = this.internalProps.disposables || []);
-    disposables.push(disposable);
+    const releaseList = (this.internalProps.releaseList = this.internalProps.releaseList || []);
+    releaseList.push(releaseObj);
+  }
+  private dispose() {
+    this.release();
   }
   /**
    * Dispose the table instance.
    * @returns {void}
    */
-  dispose(): void {
+  release(): void {
     const internalProps = this.internalProps;
-    internalProps.tooltipHandler?.dispose?.();
-    internalProps.menuHandler?.dispose?.();
+    internalProps.tooltipHandler?.release?.();
+    internalProps.menuHandler?.release?.();
     IconCache.clearAll();
 
-    super.dispose?.();
-    internalProps.handler?.dispose?.();
-    // internalProps.scrollable?.dispose?.();
-    internalProps.focusControl?.dispose?.();
-    if (internalProps.disposables) {
-      internalProps.disposables.forEach(disposable => disposable?.dispose?.());
-      internalProps.disposables = null;
+    super.release?.();
+    internalProps.handler?.release?.();
+    // internalProps.scrollable?.release?.();
+    internalProps.focusControl?.release?.();
+    if (internalProps.releaseList) {
+      internalProps.releaseList.forEach(releaseObj => releaseObj?.release?.());
+      internalProps.releaseList = null;
     }
 
     this.scenegraph.stage.release();
@@ -1815,14 +1819,15 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     internalProps.limitMaxAutoWidth = options.limitMaxAutoWidth ?? 450;
     // 生成scenegraph
     this.dataSet = new DataSet();
+    internalProps.legends?.release();
+    internalProps.title?.release();
+    internalProps.layoutMap.release();
     this.scenegraph.clearCells();
     this.stateManeger.initState();
 
     this._updateSize();
     // this.stateManeger = new StateManeger(this);
     // this.eventManeger = new EventManeger(this);
-    this.internalProps.legends?.dispose();
-    this.internalProps.title?.dispose();
 
     if (options.legends) {
       internalProps.legends = new TableLegend(options.legends, this);
@@ -2218,7 +2223,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
       this.refreshRowColCount();
       // 生成单元格场景树
       this.scenegraph.createSceneGraph();
-      this.invalidate();
+      this.render();
     }
   }
   get allowFrozenColCount(): number {
@@ -2259,7 +2264,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     this.refreshRowColCount();
     // 生成单元格场景树
     this.scenegraph.createSceneGraph();
-    this.invalidate();
+    this.render();
   }
   /**
    * Get the autoWrapText.
@@ -2280,7 +2285,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
       //后面如果修改是否转置
       this.refreshHeader();
       // if (this.internalProps.autoRowHeight) this.computeRowsHeight();
-      this.invalidate();
+      this.render();
     }
   }
 
@@ -2529,7 +2534,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
 
     // 生成单元格场景树
     this.scenegraph.createSceneGraph();
-    this.invalidate();
+    this.render();
     console.log('setRecords cost time:', (typeof window !== 'undefined' ? window.performance.now() : 0) - time);
   }
   /**
@@ -2952,7 +2957,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
       const top = this.getRowsHeight(0, cellAddr.row - 1);
       this.scrollTop = Math.min(top - frozenHeight, this.getAllRowsHeight() - drawRange.height);
     }
-    this.invalidate();
+    this.render();
   }
 
   /**获取选中区域的内容 作为复制内容 */
@@ -3174,5 +3179,16 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
       }
       return false;
     });
+  }
+  /** 获取当前hover单元格的图表实例。这个方法hover实时获取有点缺陷：鼠标hover到单元格上触发了 chart.ts中的activate方法 但此时this.stateManeger.hover?.cellPos?.col还是-1 */
+  _getActiveChartInstance() {
+    // 根据hover的单元格位置 获取单元格实例 拿到chart图元
+    const cellGroup = this.scenegraph.getCell(
+      this.stateManeger.hover?.cellPos?.col,
+      this.stateManeger.hover?.cellPos?.row
+    );
+    return cellGroup?.getChildren()?.[0]?.type === 'chart'
+      ? (cellGroup.getChildren()[0] as Chart).activeChartInstance
+      : null;
   }
 }

@@ -93,7 +93,7 @@ export class MenuContainer {
   get rootElement() {
     return this._rootElement;
   }
-  dispose(): void {
+  release(): void {
     this.unbindFromCell();
 
     const rootElement = this._rootElement;
@@ -101,7 +101,7 @@ export class MenuContainer {
       rootElement.parentElement.removeChild(rootElement);
     }
 
-    this._handler.dispose();
+    this._handler.release();
     delete this._rootElement;
     // delete this._messageElement;
   }

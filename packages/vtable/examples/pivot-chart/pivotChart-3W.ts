@@ -72,7 +72,28 @@ export function createTable() {
                   opacity: 0.2
                 }
               }
-            }
+            },
+            scales: [
+              {
+                id: 'color',
+                type: 'ordinal',
+                domain: ['公司', '小型企业', '消费者'],
+                range: [
+                  '#2E62F1',
+                  '#4DC36A',
+                  '#FF8406',
+                  '#FFCC00',
+                  '#4F44CF',
+                  '#5AC8FA',
+                  '#003A8C',
+                  '#B08AE2',
+                  '#FF6341',
+                  '#98DD62',
+                  '#07A199',
+                  '#87DBDD'
+                ]
+              }
+            ]
           },
           style: {
             padding: 1
@@ -139,6 +160,27 @@ export function createTable() {
             axes: [
               { orient: 'left', visible: true, label: { visible: true } },
               { orient: 'bottom', visible: true }
+            ],
+            scales: [
+              {
+                id: 'color',
+                type: 'ordinal',
+                domain: ['公司', '小型企业', '消费者'],
+                range: [
+                  '#2E62F1',
+                  '#4DC36A',
+                  '#FF8406',
+                  '#FFCC00',
+                  '#4F44CF',
+                  '#5AC8FA',
+                  '#003A8C',
+                  '#B08AE2',
+                  '#FF6341',
+                  '#98DD62',
+                  '#07A199',
+                  '#87DBDD'
+                ]
+              }
             ]
           },
           style: {
@@ -194,7 +236,28 @@ export function createTable() {
                   opacity: 0.2
                 }
               }
-            }
+            },
+            scales: [
+              {
+                id: 'color',
+                type: 'ordinal',
+                domain: ['公司', '小型企业', '消费者'],
+                range: [
+                  '#2E62F1',
+                  '#4DC36A',
+                  '#FF8406',
+                  '#FFCC00',
+                  '#4F44CF',
+                  '#5AC8FA',
+                  '#003A8C',
+                  '#B08AE2',
+                  '#FF6341',
+                  '#98DD62',
+                  '#07A199',
+                  '#87DBDD'
+                ]
+              }
+            ]
           },
           style: {
             padding: 1
@@ -227,10 +290,10 @@ export function createTable() {
       };
 
       const tableInstance = new VTable.PivotChart(option);
-      tableInstance.listenChart('click', args => {
+      tableInstance.onVChartEvent('click', args => {
         console.log('listenChart click', args);
       });
-      tableInstance.listenChart('mouseover', args => {
+      tableInstance.onVChartEvent('mouseover', args => {
         console.log('listenChart mouseover', args);
       });
       window.tableInstance = tableInstance;

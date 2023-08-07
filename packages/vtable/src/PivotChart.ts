@@ -48,7 +48,7 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
 
   _selectedDataItemsInChart: any[] = [];
   _selectedDimensionInChart: { key: string; value: string }[] = [];
-  _chartEventMap: Record<string, AnyFunction> = {};
+  _chartEventMap: Record<string, { query?: any; callback: AnyFunction }> = {};
 
   _axes: ITableAxisOption[];
   constructor(options: PivotChartConstructorOptions) {
@@ -193,9 +193,9 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
 
     // this.hasMedia = null; // 避免重复绑定
     // 清空目前数据
-    if (internalProps.disposables) {
-      internalProps.disposables.forEach(disposable => disposable?.dispose?.());
-      internalProps.disposables = null;
+    if (internalProps.releaseList) {
+      internalProps.releaseList.forEach(releaseObj => releaseObj?.release?.());
+      internalProps.releaseList = null;
     }
     // // 恢复selection状态
     // internalProps.selection.range = range;
@@ -209,7 +209,7 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
       this._resetFrozenColCount();
       // 生成单元格场景树
       this.scenegraph.createSceneGraph();
-      this.invalidate();
+      this.render();
     }
 
     return new Promise(resolve => {
@@ -222,7 +222,7 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
 
     //原表头绑定的事件 解除掉
     if (internalProps.headerEvents) {
-      internalProps.headerEvents.forEach((id: number) => this.unlisten(id));
+      internalProps.headerEvents.forEach((id: number) => this.off(id));
     }
     internalProps.layoutMap = new PivotLayoutMap(this, this.dataset);
 
@@ -376,7 +376,7 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
     this.internalProps.dataConfig.sortRules = sortRules;
     this.dataset.updateSortRules(sortRules);
     (this.internalProps.layoutMap as PivotLayoutMap).updateDataset(this.dataset);
-    this.invalidate();
+    this.render();
   }
   updatePivotSortState(
     pivotSortStateConfig: {
@@ -821,41 +821,35 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
       }
     });
   }
-  /** 获取当前hover单元格的图表实例。这个方法hover实时获取有点缺陷：鼠标hover到单元格上触发了 chart.ts中的activate方法 但此时this.stateManeger.hover?.cellPos?.col还是-1 */
-  _getActiveChartInstance() {
-    // 根据hover的单元格位置 获取单元格实例 拿到chart图元
-    const cellGroup = this.scenegraph.getCell(
-      this.stateManeger.hover?.cellPos?.col,
-      this.stateManeger.hover?.cellPos?.row
-    );
-    return cellGroup?.getChildren()?.[0]?.type === 'chart'
-      ? (cellGroup.getChildren()[0] as Chart).activeChartInstance
-      : null;
-  }
+
   /**
    * 监听vchart事件
    * @param type vchart事件类型
    * @param listener vchart事件监听器
    * @returns 事件监听器id
    */
-  listenChart(type: string, listener: AnyFunction): void {
-    // this.internalProps.layoutMap.columnObjects.forEach((indicatorObj: IndicatorData) => {
-    //   indicatorObj.chartInstance.on(type, listener);
-    // });
-    this._chartEventMap[type] = listener;
+  onVChartEvent(type: string, callback: AnyFunction): void;
+  onVChartEvent(type: string, query: any, callback: AnyFunction): void;
+  onVChartEvent(type: string, query?: any, callback?: AnyFunction): void {
+    if (query) {
+      this._chartEventMap[type] = { callback, query };
+    } else {
+      this._chartEventMap[type] = { callback };
+    }
   }
 
-  unlistenChart(type: string): void {
-    // this.internalProps.layoutMap.columnObjects.forEach((indicatorObj: IndicatorData) => {
-    //   indicatorObj.chartInstance.off(type);
-    // });
+  offVChartEvent(type: string): void {
     delete this._chartEventMap[type];
   }
   /** 给activeChartInstance逐个绑定chart用户监听事件 */
   _bindChartEvent(activeChartInstance: any) {
     if (activeChartInstance) {
       for (const key in this._chartEventMap) {
-        activeChartInstance.on(key, this._chartEventMap[key]);
+        if (this._chartEventMap[key].query) {
+          activeChartInstance.on(key, this._chartEventMap[key].query, this._chartEventMap[key].callback);
+        } else {
+          activeChartInstance.on(key, this._chartEventMap[key].callback);
+        }
       }
     }
   }
@@ -865,7 +859,7 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
     this.dataset.updateFilterRules(filterRules);
     clearChartCacheImage(this.scenegraph);
     updateChartData(this.scenegraph);
-    this.invalidate();
+    this.render();
   }
   /** 设置图例的选择状态。设置完后同步图表的状态需要配合updateFilterRules接口使用 */
   setLegendSelected(selectedData: (string | number)[]) {
@@ -912,7 +906,7 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
       });
       chartInstance.updateDataSync(dataId, data);
       position = chartInstance.convertDatumToPosition(datum);
-      this.invalidate();
+      this.render();
     }
     return position
       ? { x: Math.round(position.x + cellPosition.bounds.x1), y: Math.round(position.y + cellPosition.bounds.y1) }

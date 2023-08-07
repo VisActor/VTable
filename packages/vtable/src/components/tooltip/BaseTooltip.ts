@@ -9,10 +9,10 @@ export abstract class BaseTooltip {
   constructor(table: BaseTableAPI) {
     this._table = table;
   }
-  dispose(): void {
+  release(): void {
     this.unbindTooltipElement();
     if (this._tooltipElement) {
-      this._tooltipElement.dispose?.();
+      this._tooltipElement.release?.();
     }
     this._tooltipElement = undefined;
   }

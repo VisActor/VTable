@@ -43,7 +43,7 @@ export class FocusInput extends EventTarget {
   get input(): HTMLInputElement {
     return this._input;
   }
-  dispose(): void {
+  release(): void {
     // document.removeChild(this._input);
   }
 }

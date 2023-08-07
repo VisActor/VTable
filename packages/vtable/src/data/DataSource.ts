@@ -537,8 +537,8 @@ export class DataSource extends EventTarget implements DataSourceAPI {
     }
     return []; //this.currentIndexedData || [];
   }
-  dispose(): void {
-    super.dispose?.();
+  release(): void {
+    super.release?.();
   }
   clearSortedMap() {
     this.currentIndexedData && (this.currentIndexedData.length = 0);
