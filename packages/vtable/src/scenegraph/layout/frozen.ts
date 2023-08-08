@@ -132,23 +132,61 @@ function moveColumnFromCornerHeaderToColHeader(scene: Scenegraph) {
 export function dealRightFrozen(distRightFrozenCol: number, scene: Scenegraph) {
   const { table, proxy, rightTopCornerGroup, rightFrozenGroup, bodyGroup, colHeaderGroup } = scene;
   // const distRightFrozenCol = scene.table.rightFrozenColCount;
-  const currentRightFrozenCol =
-    scene.bottomFrozenGroup?.firstChild?.childrenCount ?? scene.leftBottomCornerGroup?.firstChild?.childrenCount ?? 0;
+  const currentRightFrozenCol = scene.table.rightFrozenColCount;
   if (distRightFrozenCol > currentRightFrozenCol) {
-    for (let col = table.colCount - currentRightFrozenCol; col < table.colCount - distRightFrozenCol; col--) {
+    for (let col = table.colCount - currentRightFrozenCol - 1; col >= table.colCount - distRightFrozenCol; col--) {
       const colGroup = scene.getColGroup(col);
       rightFrozenGroup.insertBefore(colGroup, rightFrozenGroup.firstChild);
       const headerColGroup = scene.getColGroup(col, true);
       rightTopCornerGroup.insertBefore(headerColGroup, rightTopCornerGroup.firstChild);
     }
+    // reset cell y
+    let x = 0;
+    rightFrozenGroup.forEachChildren((columnGroup: Group) => {
+      columnGroup.setAttribute('x', x);
+      x += columnGroup.attribute.width;
+    });
+    x = 0;
+    rightTopCornerGroup.forEachChildren((columnGroup: Group) => {
+      columnGroup.setAttribute('x', x);
+      x += columnGroup.attribute.width;
+    });
   } else if (distRightFrozenCol < currentRightFrozenCol) {
-    for (let col = table.colCount - distRightFrozenCol; col < table.colCount - currentRightFrozenCol; col--) {
+    for (let col = table.colCount - currentRightFrozenCol; col < table.colCount - distRightFrozenCol; col++) {
       const colGroup = scene.getColGroup(col);
+      colGroup.setAttribute('x', bodyGroup.lastChild.attribute.x + table.getColWidth(bodyGroup.lastChild.col));
       bodyGroup.appendChild(colGroup);
-      const headerColGroup = scene.getColGroup(col, true);
+      const headerColGroup = scene.getColGroupInRightTopCorner(col);
+      colGroup.setAttribute(
+        'x',
+        colHeaderGroup.lastChild.attribute.x + table.getColWidth(colHeaderGroup.lastChild.col)
+      );
       colHeaderGroup.appendChild(headerColGroup);
     }
+    // reset cell y
+    let x = 0;
+    rightFrozenGroup.forEachChildren((columnGroup: Group) => {
+      columnGroup.setAttribute('x', x);
+      x += columnGroup.attribute.width;
+    });
+    x = 0;
+    rightTopCornerGroup.forEachChildren((columnGroup: Group) => {
+      columnGroup.setAttribute('x', x);
+      x += columnGroup.attribute.width;
+    });
   }
+
+  // reset right width
+  rightFrozenGroup.setAttribute('width', table.getColsWidth(table.colCount - distRightFrozenCol, table.colCount - 1));
+  rightTopCornerGroup.setAttribute(
+    'width',
+    table.getColsWidth(table.colCount - distRightFrozenCol, table.colCount - 1)
+  );
+
+  table.internalProps.rightFrozenColCount = distRightFrozenCol;
+  scene.updateContainer();
+  scene.component.updateScrollBar();
+  scene.updateNextFrame();
 }
 
 export function dealBottomFrozen(distBottomFrozenRow: number, scene: Scenegraph) {
