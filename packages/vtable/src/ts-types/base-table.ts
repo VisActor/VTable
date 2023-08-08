@@ -76,7 +76,7 @@ export interface IBaseTableProtected {
   /**表头默认行高 可以按逐行设置 如果没有就取defaultRowHeight */
   defaultHeaderRowHeight: number | number[];
   defaultColWidth: number;
-  defaultHeaderColWidth: number | number[];
+  defaultHeaderColWidth: (number | 'auto') | (number | 'auto')[];
   // font?: string;
   // underlayBackgroundColor?: string;
   keyboardOptions?: TableKeyboardOptions;
@@ -200,7 +200,7 @@ export interface BaseTableConstructorOptions {
    */
   defaultColWidth?: number;
   /** 行表头默认列宽 可以按逐列设置 如果没有就取defaultColWidth */
-  defaultHeaderColWidth?: number | number[];
+  defaultHeaderColWidth?: (number | 'auto') | (number | 'auto')[];
   /** 快捷键功能设置 */
   keyboardOptions?: TableKeyboardOptions;
   /**
@@ -326,7 +326,7 @@ export interface BaseTableAPI {
   /** 当前表格默认列宽 */
   defaultColWidth: number;
   /** 当前表格默认表头列宽 */
-  defaultHeaderColWidth: number | number[];
+  defaultHeaderColWidth: (number | 'auto') | (number | 'auto')[];
   /** 当前表格快捷键设置 */
   keyboardOptions: TableKeyboardOptions | null;
   /**
@@ -408,6 +408,7 @@ export interface BaseTableAPI {
   getRowHeight: (row: number) => number;
   setRowHeight: (row: number, height: number, clearCache?: boolean) => void;
   getColWidth: (col: number) => number;
+  getColWidthDefine: (col: number) => string | number;
   setColWidth: (col: number, width: number | string, clearCache?: boolean, skipCheckFrozen?: boolean) => void;
   _getColContentWidth: (col: number) => number;
   _setColContentWidth: (col: number, width: number | string, clearCache?: boolean) => void;

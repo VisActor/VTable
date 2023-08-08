@@ -4,7 +4,7 @@ import type { PivotChart } from '../../PivotChart';
 import type { ITableAxisOption } from '../../ts-types/component/axis';
 import type { PivotHeaderLayoutMap } from '../pivot-header-layout';
 import type { SimpleHeaderLayoutMap } from '../simple-header-layout';
-import { getAxisOption } from './get-axis-config';
+import { checkZeroAlign, getAxisOption } from './get-axis-config';
 
 export function getRawChartSpec(col: number, row: number, layout: PivotLayoutMap | PivotHeaderLayoutMap): any {
   const paths = layout.getCellHeaderPaths(col, row);
@@ -42,25 +42,37 @@ export function getChartAxes(col: number, row: number, layout: PivotLayoutMap): 
       if (isArray(key)) {
         key = key[0];
       }
-      // const data = layout.dataset.collectedValues[key];
-      const data = layout.dataset.collectedValues[key + '_align']
-        ? layout.dataset.collectedValues[key + '_align']
+
+      const isZeroAlign = checkZeroAlign(col, row, index === 0 ? 'bottom' : 'top', layout);
+
+      const data = layout.dataset.collectedValues[key + (isZeroAlign ? '_align' : '')]
+        ? layout.dataset.collectedValues[key + (isZeroAlign ? '_align' : '')]
         : layout.dataset.collectedValues[key];
-      const range =
-        data[layout.getColKeysPath()[colIndex][Math.max(0, layout.columnHeaderLevelCount - 1 - layout.topAxesCount)]];
+      const range = data[
+        layout.getColKeysPath()[colIndex][Math.max(0, layout.columnHeaderLevelCount - 1 - layout.topAxesCount)]
+      ] as { max?: number; min?: number };
 
       const axisOption = getAxisOption(col, row, index === 0 ? 'bottom' : 'top', layout);
+      if (axisOption?.zero) {
+        range.min = Math.min(range.min, 0);
+        range.max = Math.max(range.max, 0);
+      }
       axes.push(
-        merge({}, axisOption, {
-          type: 'linear',
-          orient: index === 0 ? 'bottom' : 'top',
-          // visible: true,
-          label: { visible: false },
-          title: { visible: false },
-          range,
-          seriesIndex: index,
-          height: -1
-        })
+        merge(
+          {
+            range
+          },
+          axisOption,
+          {
+            type: 'linear',
+            orient: index === 0 ? 'bottom' : 'top',
+            // visible: true,
+            label: { visible: false },
+            title: { visible: false },
+            seriesIndex: index,
+            height: -1
+          }
+        )
       );
     });
 
@@ -76,20 +88,25 @@ export function getChartAxes(col: number, row: number, layout: PivotLayoutMap): 
 
     const axisOption = getAxisOption(col, row, 'left', layout);
     axes.push(
-      merge({}, axisOption, {
-        type: 'band',
-        orient: 'left',
-        // visible: true,
-        label: { visible: false, space: 0 },
-        domainLine: { visible: false },
-        tick: { visible: false },
-        subTick: { visible: false },
-        title: { visible: false },
-        // height: -1,
-        width: -1,
-        // autoIndent: false,
-        domain: Array.from(domain)
-      })
+      merge(
+        {
+          domain: Array.from(domain)
+        },
+        axisOption,
+        {
+          type: 'band',
+          orient: 'left',
+          // visible: true,
+          label: { visible: false, space: 0 },
+          domainLine: { visible: false },
+          tick: { visible: false },
+          subTick: { visible: false },
+          title: { visible: false },
+          // height: -1,
+          width: -1
+          // autoIndent: false,
+        }
+      )
     );
   } else {
     const indicatorKeys = layout.getIndicatorKeyInChartSpec(col, row);
@@ -98,25 +115,38 @@ export function getChartAxes(col: number, row: number, layout: PivotLayoutMap): 
       if (isArray(key)) {
         key = key[0];
       }
-      const data = layout.dataset.collectedValues[key + '_align']
-        ? layout.dataset.collectedValues[key + '_align']
+
+      const isZeroAlign = checkZeroAlign(col, row, index === 0 ? 'left' : 'right', layout);
+
+      const data = layout.dataset.collectedValues[key + (isZeroAlign ? '_align' : '')]
+        ? layout.dataset.collectedValues[key + (isZeroAlign ? '_align' : '')]
         : layout.dataset.collectedValues[key];
-      const range =
-        data[layout.getRowKeysPath()[rowIndex][Math.max(0, layout.rowHeaderLevelCount - 1 - layout.leftAxesCount)]];
+      const range = data[
+        layout.getRowKeysPath()[rowIndex][Math.max(0, layout.rowHeaderLevelCount - 1 - layout.leftAxesCount)]
+      ] as { max?: number; min?: number };
 
       const axisOption = getAxisOption(col, row, index === 0 ? 'left' : 'right', layout);
+      if (axisOption?.zero) {
+        range.min = Math.min(range.min, 0);
+        range.max = Math.max(range.max, 0);
+      }
       axes.push(
-        merge({}, axisOption, {
-          type: 'linear',
-          orient: index === 0 ? 'left' : 'right',
-          // visible: true,
-          label: { visible: false },
-          title: { visible: false },
-          range,
-          seriesIndex: index,
-          width: -1
-          // grid: index === 0 ? undefined : { visible: false }
-        })
+        merge(
+          {
+            range
+          },
+          axisOption,
+          {
+            type: 'linear',
+            orient: index === 0 ? 'left' : 'right',
+            // visible: true,
+            label: { visible: false },
+            title: { visible: false },
+            seriesIndex: index,
+            width: -1
+            // grid: index === 0 ? undefined : { visible: false }
+          }
+        )
       );
     });
 
@@ -132,19 +162,24 @@ export function getChartAxes(col: number, row: number, layout: PivotLayoutMap): 
 
     const axisOption = getAxisOption(col, row, 'bottom', layout);
     axes.push(
-      merge({}, axisOption, {
-        type: 'band',
-        orient: 'bottom',
-        visible: true,
-        label: { visible: false, space: 0 },
-        domainLine: { visible: false },
-        tick: { visible: false },
-        subTick: { visible: false },
-        title: { visible: false },
-        height: -1,
-        // autoIndent: false,
-        domain: Array.from(domain)
-      })
+      merge(
+        {
+          domain: Array.from(domain)
+        },
+        axisOption,
+        {
+          type: 'band',
+          orient: 'bottom',
+          visible: true,
+          label: { visible: false, space: 0 },
+          domainLine: { visible: false },
+          tick: { visible: false },
+          subTick: { visible: false },
+          title: { visible: false },
+          height: -1
+          // autoIndent: false,
+        }
+      )
     );
   }
   return axes;

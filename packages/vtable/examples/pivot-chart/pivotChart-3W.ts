@@ -299,7 +299,7 @@ export function createTable() {
       window.tableInstance = tableInstance;
 
       bindDebugTool(tableInstance.scenegraph.stage as any, {
-        customGrapicKeys: ['role', '_updateTag']
+        customGrapicKeys: ['role', 'row']
       });
     });
 }

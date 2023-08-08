@@ -46,7 +46,7 @@ export class CartesianAxis {
     this.type = option.type ?? 'band';
     this.inverse = 'inverse' in option ? !!option.inverse : false;
     if (option.type === 'band') {
-      this.data = option.data;
+      this.data = option.domain;
     }
 
     this.initScale();
@@ -190,8 +190,7 @@ export class CartesianAxis {
 
   updateScaleRange() {
     const { width, height } = this.getLayoutRect();
-    // const inverse = this.option.inverse;
-    const inverse = false;
+    const inverse = (this.option as any).inverse || false;
     let newRange: [number, number] = [0, 0];
     if (isXAxis(this.orient)) {
       if (isValidNumber(width)) {

@@ -939,6 +939,24 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
     }
     return false;
   }
+  isLeftBottomCorner(col: number, row: number): boolean {
+    if (col < this.rowHeaderLevelCount && row >= this.rowCount - this.bottomFrozenRowCount) {
+      return true;
+    }
+    return false;
+  }
+  isRightTopCorner(col: number, row: number): boolean {
+    if (col >= this.colCount - this.rightFrozenColCount && row < this.columnHeaderLevelCount) {
+      return true;
+    }
+    return false;
+  }
+  isRightBottomCorner(col: number, row: number): boolean {
+    if (col >= this.colCount - this.rightFrozenColCount && row >= this.rowCount - this.bottomFrozenRowCount) {
+      return true;
+    }
+    return false;
+  }
   getColumnHeaderRange(): CellRange {
     return {
       start: { col: this.rowHeaderLevelCount, row: 0 },
