@@ -74,7 +74,7 @@ export class BubbleTooltipElement {
     }
     return false;
   }
-  dispose(): void {
+  release(): void {
     this.unbindFromCell();
 
     const rootElement = this._rootElement;
@@ -82,7 +82,7 @@ export class BubbleTooltipElement {
       rootElement.parentElement.removeChild(rootElement);
     }
 
-    this._handler?.dispose?.();
+    this._handler?.release?.();
     delete this._rootElement;
     delete this._messageElement;
   }

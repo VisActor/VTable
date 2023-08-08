@@ -98,7 +98,7 @@ export function createTable() {
     order: 'desc'
   });
 
-  instance.listen('click_cell', args => {
+  instance.on('click_cell', args => {
     const { col, row } = args;
     const rect = instance.getVisibleCellRangeRelativeRect({ col, row });
     if (col === 0 && row === 0) {

@@ -212,7 +212,7 @@ export class EventHandler {
 
     this.listeners = {};
   }
-  dispose(): void {
+  release(): void {
     if (Env.mode === 'node') {
       return;
     }

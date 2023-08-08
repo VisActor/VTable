@@ -9391,19 +9391,19 @@ export function createTable() {
   };
 
   const tableInstance = new VTable.PivotChart(option);
-  tableInstance.listenChart('click', args => {
+  tableInstance.onVChartEvent('click', args => {
     console.log('listenChart click', args);
   });
-  tableInstance.listenChart('mouseover', args => {
+  tableInstance.onVChartEvent('mouseover', args => {
     console.log('listenChart mouseover', args);
   });
 
   const { MOUSEENTER_AXIS, MOUSELEAVE_AXIS } = VTable.ListTable.EVENT_TYPE;
 
-  tableInstance.listen(MOUSEENTER_AXIS, args => {
+  tableInstance.on(MOUSEENTER_AXIS, args => {
     console.log('axis enter', args.axisPosition, args);
   });
-  tableInstance.listen(MOUSELEAVE_AXIS, args => {
+  tableInstance.on(MOUSELEAVE_AXIS, args => {
     console.log('axis leave', args.axisPosition, args);
   });
 

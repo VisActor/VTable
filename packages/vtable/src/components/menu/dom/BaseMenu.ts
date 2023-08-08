@@ -10,10 +10,10 @@ export abstract class BaseMenu {
   constructor(table: BaseTableAPI) {
     this._table = table;
   }
-  dispose(): void {
+  release(): void {
     this.unbindMenuElement();
     if (this._menuElement) {
-      this._menuElement.dispose();
+      this._menuElement.release();
     }
     this._menuElement = undefined;
   }

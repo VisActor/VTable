@@ -494,9 +494,16 @@ export class StateManeger {
       }
     }
     detaX = Math.ceil(detaX);
-    this.table.scenegraph.updateColWidth(this.columnResize.col, detaX);
     if (this.table.widthMode === 'adaptive' && this.columnResize.col < this.table.colCount - 1) {
+      // in adaptive mode, the right column width can not be negative
+      const rightColWidth = this.table.getColWidth(this.columnResize.col + 1);
+      if (rightColWidth - detaX < 0) {
+        detaX = rightColWidth;
+      }
+      this.table.scenegraph.updateColWidth(this.columnResize.col, detaX);
       this.table.scenegraph.updateColWidth(this.columnResize.col + 1, -detaX);
+    } else {
+      this.table.scenegraph.updateColWidth(this.columnResize.col, detaX);
     }
     this.columnResize.x = xInTable;
 

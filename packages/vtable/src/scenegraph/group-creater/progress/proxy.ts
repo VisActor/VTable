@@ -1,3 +1,4 @@
+import { isNumber } from '@visactor/vutils';
 import type { BaseTableAPI } from '../../../ts-types/base-table';
 import { Group } from '../../graphic/group';
 import { computeColsWidth } from '../../layout/compute-col-width';
@@ -52,6 +53,11 @@ export class SceneProxy {
 
   constructor(table: BaseTableAPI) {
     this.table = table;
+
+    if (this.table.isPivotChart()) {
+      this.rowLimit = 100;
+      this.colLimit = 100;
+    }
 
     if (this.table.internalProps.transpose) {
       this.mode = 'row';
@@ -646,11 +652,17 @@ export class SceneProxy {
         return cellGroup;
       }
       const cellGroup = this.table.scenegraph.getCell(col, row, getShadow);
-      cellGroup.row && this.cellCache.set(col, cellGroup);
+      // cellGroup.row && this.cellCache.set(col, cellGroup);
+      if (cellGroup.col === col && cellGroup.row) {
+        this.cellCache.set(col, cellGroup);
+      }
       return cellGroup;
     }
     const cellGroup = this.table.scenegraph.getCell(col, row, getShadow);
-    cellGroup.row && this.cellCache.set(col, cellGroup);
+    // cellGroup.row && this.cellCache.set(col, cellGroup);
+    if (cellGroup.col === col && cellGroup.row) {
+      this.cellCache.set(col, cellGroup);
+    }
     return cellGroup;
   }
 }

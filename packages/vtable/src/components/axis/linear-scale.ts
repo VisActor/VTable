@@ -26,6 +26,11 @@ export class LinearAxisScale {
   setExtraAttrFromSpec(nice: boolean, zero: boolean, range: Required<IRange>, expand?: IRange) {
     this.nice = nice;
     this.zero = zero;
+    // this.domain = range;
+    if (this.zero) {
+      range.min = Math.min(range.min, 0);
+      range.max = Math.max(range.max, 0);
+    }
     this.domain = range;
     this.expand = expand;
   }

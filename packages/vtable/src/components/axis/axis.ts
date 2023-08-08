@@ -39,14 +39,14 @@ export class CartesianAxis {
     this.width = width;
     this.height = height;
     // this.option = cloneDeep(option);
-    this.option = merge({}, option, commonAxis);
+    this.option = merge({}, commonAxis, option);
 
     this.orient = option.orient ?? 'left';
     this.visible = option.visible ?? true;
     this.type = option.type ?? 'band';
     this.inverse = 'inverse' in option ? !!option.inverse : false;
     if (option.type === 'band') {
-      this.data = option.data;
+      this.data = option.domain;
     }
 
     this.initScale();
@@ -190,8 +190,7 @@ export class CartesianAxis {
 
   updateScaleRange() {
     const { width, height } = this.getLayoutRect();
-    // const inverse = this.option.inverse;
-    const inverse = false;
+    const inverse = (this.option as any).inverse || false;
     let newRange: [number, number] = [0, 0];
     if (isXAxis(this.orient)) {
       if (isValidNumber(width)) {

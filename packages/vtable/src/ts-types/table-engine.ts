@@ -92,6 +92,10 @@ export interface IPagerConf {
 export type HeaderValues = Map<any, any>;
 export interface ListTableConstructorOptions extends BaseTableConstructorOptions {
   /**
+   * 数据集合
+   */
+  records?: any[];
+  /**
    * 是否显示表头
    */
   showHeader?: boolean;
@@ -129,6 +133,10 @@ export interface ListTableAPI extends BaseTableAPI {
   isPivotTable: () => false;
 }
 export interface PivotTableConstructorOptions extends BaseTableConstructorOptions {
+  /**
+   * 数据集合
+   */
+  records?: any[];
   /**
    * 调整列宽的生效范围：'column' | 'indicator' | 'all' | 'indicatorGroup'，单列|按指标|所有列|属于同一维度值的多个指标
    */
@@ -196,6 +204,10 @@ export interface PivotTableConstructorOptions extends BaseTableConstructorOption
 }
 export interface PivotChartConstructorOptions extends BaseTableConstructorOptions {
   /**
+   * 数据集合, 平坦数据集合。另外一种特殊方式是传入分组后的数据，分组依据为指标
+   */
+  records?: any[] | Record<string, any[]>;
+  /**
    * 调整列宽的生效范围：'column' | 'indicator' | 'all' | 'indicatorGroup'，单列|按指标|所有列|属于同一维度值的多个指标
    */
   columnResizeType?: 'column' | 'indicator' | 'all' | 'indicatorGroup';
@@ -241,6 +253,7 @@ export interface PivotChartConstructorOptions extends BaseTableConstructorOption
   axes: ITableAxisOption[];
 }
 export interface PivotTableAPI extends BaseTableAPI {
+  records?: any;
   options: PivotTableConstructorOptions;
   // internalProps: PivotTableProtected;
   pivotSortState: PivotSortState[];
@@ -250,7 +263,8 @@ export interface PivotTableAPI extends BaseTableAPI {
   toggleHierarchyState: (col: number, row: number) => void;
 }
 export interface PivotChartAPI extends BaseTableAPI {
-  options: PivotTableConstructorOptions;
+  records?: any | Record<string, any[]>;
+  options: PivotChartConstructorOptions;
   // internalProps: PivotTableProtected;
   isListTable: () => false;
   isPivotTable: () => true;

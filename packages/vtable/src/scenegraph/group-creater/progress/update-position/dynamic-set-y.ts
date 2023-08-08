@@ -73,7 +73,7 @@ async function moveCell(count: number, direction: 'up' | 'down', screenTopRow: n
     proxy.rowStart = direction === 'up' ? proxy.rowStart + count : proxy.rowStart - count;
     proxy.rowEnd = direction === 'up' ? proxy.rowEnd + count : proxy.rowEnd - count;
 
-    checkFirstRowMerge(distStartRow, proxy);
+    checkFirstRowMerge(syncTopRow, proxy);
 
     updateRowContent(syncTopRow, syncBottomRow, proxy);
     if (proxy.table.heightMode === 'autoHeight') {
@@ -125,7 +125,7 @@ async function moveCell(count: number, direction: 'up' | 'down', screenTopRow: n
     proxy.rowStart = distStartRow;
     proxy.rowEnd = distEndRow;
 
-    checkFirstRowMerge(distStartRow, proxy);
+    checkFirstRowMerge(syncTopRow, proxy);
 
     updateRowContent(syncTopRow, syncBottomRow, proxy);
     console.log(
@@ -193,7 +193,7 @@ function updateCellGroupPosition(colGroup: Group, direction: 'up' | 'down', prox
     proxy.updateCellGroupPosition(
       cellGroup,
       (colGroup.lastChild as Group).row + 1,
-      (colGroup.lastChild as Group).attribute.y + (colGroup.lastChild as Group).attribute.height
+      (colGroup.lastChild as Group).attribute.y + proxy.table.getRowHeight((colGroup.lastChild as Group).row) // (colGroup.lastChild as Group).attribute.height
     );
     colGroup.appendChild(cellGroup);
   } else {
@@ -201,7 +201,7 @@ function updateCellGroupPosition(colGroup: Group, direction: 'up' | 'down', prox
     proxy.updateCellGroupPosition(
       cellGroup,
       (colGroup.firstChild as Group).row - 1,
-      (colGroup.firstChild as Group).attribute.y - cellGroup.attribute.height
+      (colGroup.firstChild as Group).attribute.y - proxy.table.getRowHeight((cellGroup as Group).row) // cellGroup.attribute.height
     );
     colGroup.insertBefore(cellGroup, colGroup.firstChild);
   }

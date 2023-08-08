@@ -637,6 +637,24 @@ export class PivotLayoutMap implements LayoutMapAPI {
     }
     return false;
   }
+  isLeftBottomCorner(col: number, row: number): boolean {
+    if (col < this.rowHeaderLevelCount && row >= this.rowCount - this.bottomFrozenRowCount) {
+      return true;
+    }
+    return false;
+  }
+  isRightTopCorner(col: number, row: number): boolean {
+    if (col >= this.colCount - this.rightFrozenColCount && row < this.columnHeaderLevelCount) {
+      return true;
+    }
+    return false;
+  }
+  isRightBottomCorner(col: number, row: number): boolean {
+    if (col >= this.colCount - this.rightFrozenColCount && row >= this.rowCount - this.bottomFrozenRowCount) {
+      return true;
+    }
+    return false;
+  }
   /**
    * 是否为行表头，不包含角头
    * @param col
@@ -1444,6 +1462,26 @@ export class PivotLayoutMap implements LayoutMapAPI {
     const barWidth = this._chartItemSpanSize || 25;
     return (collectedValues?.length ?? 0) * (barWidth + barWidth / 3);
   }
+  /** 获取某一图表列的最优高度，计算逻辑是根据图表的yField的维度值个数 * barWidth */
+  getOptimunHeightForChart(row: number) {
+    const path = this.getCellHeaderPaths(this.rowHeaderLevelCount, row).rowHeaderPaths;
+    let collectedValues: any;
+    for (const key in this.dataset.collectValuesBy) {
+      if (this.dataset.collectValuesBy[key].type === 'yField' && !this.dataset.collectValuesBy[key].range) {
+        collectedValues =
+          this.dataset.collectedValues[key][
+            path
+              .map(pathObj => {
+                return pathObj.value;
+              })
+              .join(this.dataset.stringJoinChar)
+          ];
+        break;
+      }
+    }
+    const barWidth = this._chartItemSpanSize || 25;
+    return (collectedValues?.length ?? 0) * (barWidth + barWidth / 3);
+  }
   /**
    *  获取图表对应的指标值
    * */
@@ -1540,4 +1578,11 @@ export class PivotLayoutMap implements LayoutMapAPI {
     return false;
   }
   //#endregion
+  release() {
+    const activeChartInstance = (this._table as PivotChart)._getActiveChartInstance();
+    activeChartInstance?.release();
+    this._indicatorObjects.forEach(indicatorObject => {
+      indicatorObject.chartInstance?.release();
+    });
+  }
 }

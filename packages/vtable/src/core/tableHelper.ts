@@ -44,7 +44,7 @@ export function _dealWithUpdateDataSource(table: BaseTableAPI, fn: (table: BaseT
       if (table.dataSource.enableHierarchyState) {
         table.refreshRowColCount();
       }
-      table.invalidate();
+      table.render();
     })
   ];
 }
@@ -58,7 +58,7 @@ export function _setRecords(table: BaseTableAPI, records: any[] = []): void {
       table.pagerConf,
       (table.options as any).hierarchyExpandLevel ?? (table.hasHierarchyTreeHeader?.() ? 1 : undefined)
     ));
-    table.addDisposable(newDataSource);
+    table.addReleaseObj(newDataSource);
   });
 }
 
@@ -69,7 +69,7 @@ export function _setDataSource(table: BaseTableAPI, dataSource: DataSource): voi
         table.internalProps.dataSource = dataSource;
       } else {
         const newDataSource = (table.internalProps.dataSource = new CachedDataSource(dataSource));
-        table.addDisposable(newDataSource);
+        table.addReleaseObj(newDataSource);
       }
     } else {
       table.internalProps.dataSource = DataSource.EMPTY;

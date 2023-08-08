@@ -15,12 +15,12 @@ interface IChartGraphicAttribute extends IGroupGraphicAttribute {
   ClassType: any;
   chartInstance: any;
   cellPadding: number[];
-  viewBox: {
-    x1: number;
-    y1: number;
-    x2: number;
-    y2: number;
-  };
+  // viewBox: {
+  //   x1: number;
+  //   y1: number;
+  //   x2: number;
+  //   y2: number;
+  // };
 }
 
 export const CHART_NUMBER_TYPE = genNumberType();
@@ -43,7 +43,15 @@ export class Chart extends Group {
         renderCanvas: params.canvas,
         mode: 'desktop-browser',
         canvasControled: false,
-        viewBox: params.viewBox,
+        viewBox: { x1: 0, x2: 0, y1: 0, y2: 0 },
+        // viewBox: params.viewBox,
+        // viewBox: this.getViewBox(),
+        // viewBox: {
+        //   x1: params.cellPadding[3],
+        //   x2: params.width - params.cellPadding[1],
+        //   y1: params.cellPadding[0],
+        //   y2: params.height - params.cellPadding[2]
+        // },
         interactive: false,
         animation: false
       });
@@ -65,7 +73,8 @@ export class Chart extends Group {
     this.active = true;
     // this.chart = new TestChart(this.attribute.spec);
     // const ctx = this.attribute.canvas.getContext('2d');
-    const { x1, y1, x2, y2 } = this.attribute.viewBox;
+    // const { x1, y1, x2, y2 } = this.attribute.viewBox;
+    const { x1, y1, x2, y2 } = this.getViewBox();
     //获取渲染区域的bound 考虑被表头遮住部分的情况
     const tableBound = table.scenegraph.tableGroup.globalAABBBounds;
     const bodyBound = new Bounds();
@@ -140,5 +149,22 @@ export class Chart extends Group {
   /** 更新图表对应数据 */
   updateData(data: any) {
     this.attribute.data = data;
+  }
+
+  getViewBox(): {
+    x1: number;
+    y1: number;
+    x2: number;
+    y2: number;
+  } {
+    const cellGroup = this.parent as Group;
+    const padding = this.attribute.cellPadding;
+    const table = (this.stage as any).table as BaseTableAPI;
+    return {
+      x1: Math.ceil(cellGroup.globalAABBBounds.x1 + padding[3] + table.scrollLeft),
+      x2: Math.ceil(cellGroup.globalAABBBounds.x1 + cellGroup.attribute.width - padding[1] + table.scrollLeft),
+      y1: Math.ceil(cellGroup.globalAABBBounds.y1 + padding[0] + table.scrollTop),
+      y2: Math.ceil(cellGroup.globalAABBBounds.y1 + cellGroup.attribute.height - padding[2] + table.scrollTop)
+    };
   }
 }

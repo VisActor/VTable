@@ -372,7 +372,12 @@ export class Scenegraph {
 
     if (cell && cell.role === 'shadow-cell' && !getShadow) {
       const range = this.table.getCellRange(col, row);
-      cell = this.getCell(range.start.col, range.start.row);
+      if (range.start.col === col && range.start.row === row) {
+        // 理论上不会出现这种情况，但是在PivotChart会偶先，这里处理避免进入死循环
+        // do nothing
+      } else {
+        cell = this.getCell(range.start.col, range.start.row);
+      }
     }
 
     return cell || emptyGroup;
@@ -1025,7 +1030,7 @@ export class Scenegraph {
    */
   dealHeightMode() {
     const table = this.table;
-    // 处理adaptive宽度
+    // 处理adaptive高度
     if (table.heightMode === 'adaptive') {
       table._clearRowRangeHeightsMap();
       // const canvasWidth = table.internalProps.canvas.width;

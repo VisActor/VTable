@@ -84,7 +84,7 @@ export class Title {
     return this._titleComponent;
   }
 
-  dispose(): void {
+  release(): void {
     this.table.scenegraph.stage.defaultLayer.removeChild(this._titleComponent);
     this._titleComponent = null;
   }

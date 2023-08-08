@@ -1,6 +1,7 @@
 // import { FederatedPointerEvent } from '@visactor/vrender';
 import type { FederatedPointerEvent, IEventTarget } from '@visactor/vrender';
 import { RichText } from '@visactor/vrender';
+import type { MousePointerCellEvent } from '../ts-types';
 import { IconFuncTypeEnum } from '../ts-types';
 import type { StateManeger } from '../state/state';
 import type { Group } from '../scenegraph/graphic/group';
@@ -16,7 +17,7 @@ import { bindTableGroupListener } from './listener/table-group';
 import { bindScrollBarListener } from './listener/scroll-bar';
 import { bindContainerDomListener } from './listener/container-dom';
 import { bindTouchListener } from './listener/touch';
-import type { SceneEvent } from './util';
+import { getCellEventArgsSet, type SceneEvent } from './util';
 import { bindAxisClickEvent } from './pivot-chart/axis-click';
 import { bindAxisHoverEvent } from './pivot-chart/axis-hover';
 
@@ -54,7 +55,7 @@ export class EventManeger {
     const stateManeger: StateManeger = this.table.stateManeger;
 
     // 图标点击
-    this.table.listen(TABLE_EVENT_TYPE.ICON_CLICK, iconInfo => {
+    this.table.on(TABLE_EVENT_TYPE.ICON_CLICK, iconInfo => {
       const { col, row, x, y, funcType, icon } = iconInfo;
       // 下拉菜单按钮点击
       if (funcType === IconFuncTypeEnum.dropDown) {
@@ -71,13 +72,13 @@ export class EventManeger {
     });
 
     // 下拉菜单内容点击
-    this.table.listen(TABLE_EVENT_TYPE.DROPDOWNMENU_CLICK, () => {
+    this.table.on(TABLE_EVENT_TYPE.DROPDOWNMENU_CLICK, () => {
       stateManeger.hideMenu();
     });
 
     // 处理textStick
     if (checkHaveTextStick(this.table)) {
-      this.table.listen(TABLE_EVENT_TYPE.SCROLL, e => {
+      this.table.on(TABLE_EVENT_TYPE.SCROLL, e => {
         handleTextStick(this.table);
       });
     }
@@ -86,9 +87,17 @@ export class EventManeger {
     bindMediaClick(this.table);
 
     // 双击自动列宽
-    this.table.listen(TABLE_EVENT_TYPE.DBLCLICK_CELL, e => {
-      if (this.table._canResizeColumn(e.col, e.row)) {
-        this.table.scenegraph.updateAutoColWidth(e.col);
+    this.table.on(TABLE_EVENT_TYPE.DBLCLICK_CELL, (e: MousePointerCellEvent) => {
+      if (e.federatedEvent) {
+        const eventArgsSet = getCellEventArgsSet(e.federatedEvent as any);
+        const resizeCol = this.table.scenegraph.getResizeColAt(
+          eventArgsSet.abstractPos.x,
+          eventArgsSet.abstractPos.y,
+          eventArgsSet.eventArgs?.targetCell
+        );
+        if (this.table._canResizeColumn(resizeCol.col, resizeCol.row) && resizeCol.col >= 0) {
+          this.table.scenegraph.updateAutoColWidth(resizeCol.col);
+        }
       }
     });
 
@@ -206,7 +215,7 @@ export class EventManeger {
   }
 
   dealColumnResize(xInTable: number, yInTable: number) {
-    this.table.stateManeger.updateResizeCol(xInTable, xInTable);
+    this.table.stateManeger.updateResizeCol(xInTable, yInTable);
   }
 
   chechColumnMover(eventArgsSet: SceneEvent): boolean {

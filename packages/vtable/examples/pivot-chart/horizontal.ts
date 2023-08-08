@@ -1,6 +1,8 @@
 /* eslint-disable */
 import * as VTable from '../../src';
 import VChart from '@visactor/vchart';
+import { bindDebugTool } from '../../src/scenegraph/debug-tool';
+
 const Table_CONTAINER_DOM_ID = 'vTable';
 VTable.register.chartModule('vchart', VChart);
 export function createTable() {
@@ -9308,4 +9310,8 @@ export function createTable() {
 
   const tableInstance = new VTable.PivotChart(option);
   window.tableInstance = tableInstance;
+
+  bindDebugTool(tableInstance.scenegraph.stage as any, {
+    customGrapicKeys: ['role', '_updateTag']
+  });
 }

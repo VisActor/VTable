@@ -124,7 +124,7 @@ export function createTable() {
         yField: '230417171050011',
         seriesField: '230417171050030',
         axes: [
-          { orient: 'left', visible: true, label: { visible: true } },
+          { orient: 'left', visible: true, label: { visible: true }, title: { visible: true } },
           { orient: 'bottom', visible: true }
         ],
         bar: {
@@ -207,7 +207,7 @@ export function createTable() {
           }
         ],
         axes: [
-          { orient: 'left', visible: true, label: { visible: true } },
+          { orient: 'left', visible: true, label: { visible: true }, title: { visible: true } },
           { orient: 'bottom', visible: true }
         ]
       }
@@ -237,7 +237,7 @@ export function createTable() {
         yField: '230707112948009',
         seriesField: '230417171050030',
         axes: [
-          { orient: 'left', visible: true, label: { visible: true } },
+          { orient: 'left', visible: true, label: { visible: true }, title: { visible: true } },
           { orient: 'bottom', visible: true }
         ],
         line: {
@@ -9263,7 +9263,7 @@ export function createTable() {
     defaultRowHeight: 200,
     defaultHeaderRowHeight: 30,
     defaultColWidth: 280,
-    defaultHeaderColWidth: [80, 50],
+    defaultHeaderColWidth: [80, 'auto'],
 
     corner: {
       titleOnDimension: 'row',
@@ -9307,10 +9307,10 @@ export function createTable() {
   };
 
   const tableInstance = new VTable.PivotChart(option);
-  tableInstance.listenChart('click', args => {
+  tableInstance.onVChartEvent('click', args => {
     console.log('listenChart click', args);
   });
-  tableInstance.listenChart('mouseover', args => {
+  tableInstance.onVChartEvent('mouseover', args => {
     console.log('listenChart mouseover', args);
   });
   window.tableInstance = tableInstance;
