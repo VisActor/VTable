@@ -56,16 +56,21 @@ export function getChartAxes(col: number, row: number, layout: PivotLayoutMap): 
         range.max = Math.max(range.max, 0);
       }
       axes.push(
-        merge({}, axisOption, {
-          type: 'linear',
-          orient: index === 0 ? 'bottom' : 'top',
-          // visible: true,
-          label: { visible: false },
-          title: { visible: false },
-          range,
-          seriesIndex: index,
-          height: -1
-        })
+        merge(
+          {
+            range
+          },
+          axisOption,
+          {
+            type: 'linear',
+            orient: index === 0 ? 'bottom' : 'top',
+            // visible: true,
+            label: { visible: false },
+            title: { visible: false },
+            seriesIndex: index,
+            height: -1
+          }
+        )
       );
     });
 
@@ -81,20 +86,25 @@ export function getChartAxes(col: number, row: number, layout: PivotLayoutMap): 
 
     const axisOption = getAxisOption(col, row, 'left', layout);
     axes.push(
-      merge({}, axisOption, {
-        type: 'band',
-        orient: 'left',
-        // visible: true,
-        label: { visible: false, space: 0 },
-        domainLine: { visible: false },
-        tick: { visible: false },
-        subTick: { visible: false },
-        title: { visible: false },
-        // height: -1,
-        width: -1,
-        // autoIndent: false,
-        domain: Array.from(domain)
-      })
+      merge(
+        {
+          domain: Array.from(domain)
+        },
+        axisOption,
+        {
+          type: 'band',
+          orient: 'left',
+          // visible: true,
+          label: { visible: false, space: 0 },
+          domainLine: { visible: false },
+          tick: { visible: false },
+          subTick: { visible: false },
+          title: { visible: false },
+          // height: -1,
+          width: -1
+          // autoIndent: false,
+        }
+      )
     );
   } else {
     const indicatorKeys = layout.getIndicatorKeyInChartSpec(col, row);
@@ -116,17 +126,22 @@ export function getChartAxes(col: number, row: number, layout: PivotLayoutMap): 
         range.max = Math.max(range.max, 0);
       }
       axes.push(
-        merge({}, axisOption, {
-          type: 'linear',
-          orient: index === 0 ? 'left' : 'right',
-          // visible: true,
-          label: { visible: false },
-          title: { visible: false },
-          range,
-          seriesIndex: index,
-          width: -1
-          // grid: index === 0 ? undefined : { visible: false }
-        })
+        merge(
+          {
+            range
+          },
+          axisOption,
+          {
+            type: 'linear',
+            orient: index === 0 ? 'left' : 'right',
+            // visible: true,
+            label: { visible: false },
+            title: { visible: false },
+            seriesIndex: index,
+            width: -1
+            // grid: index === 0 ? undefined : { visible: false }
+          }
+        )
       );
     });
 
@@ -142,19 +157,24 @@ export function getChartAxes(col: number, row: number, layout: PivotLayoutMap): 
 
     const axisOption = getAxisOption(col, row, 'bottom', layout);
     axes.push(
-      merge({}, axisOption, {
-        type: 'band',
-        orient: 'bottom',
-        visible: true,
-        label: { visible: false, space: 0 },
-        domainLine: { visible: false },
-        tick: { visible: false },
-        subTick: { visible: false },
-        title: { visible: false },
-        height: -1,
-        // autoIndent: false,
-        domain: Array.from(domain)
-      })
+      merge(
+        {
+          domain: Array.from(domain)
+        },
+        axisOption,
+        {
+          type: 'band',
+          orient: 'bottom',
+          visible: true,
+          label: { visible: false, space: 0 },
+          domainLine: { visible: false },
+          tick: { visible: false },
+          subTick: { visible: false },
+          title: { visible: false },
+          height: -1
+          // autoIndent: false,
+        }
+      )
     );
   }
   return axes;

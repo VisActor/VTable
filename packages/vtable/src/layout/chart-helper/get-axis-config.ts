@@ -37,14 +37,19 @@ export function getAxisConfigInPivotChart(col: number, row: number, layout: Pivo
         return;
       }
       // 顶部副指标轴
-      return merge({}, axisOption, {
-        orient: 'top',
-        type: 'linear',
-        range: range,
-        label: {
-          flush: true
+      return merge(
+        {
+          range: range
+        },
+        axisOption,
+        {
+          orient: 'top',
+          type: 'linear',
+          label: {
+            flush: true
+          }
         }
-      });
+      );
     } else if (
       row === layout.rowCount - layout.bottomFrozenRowCount &&
       col >= layout.rowHeaderLevelCount &&
@@ -81,13 +86,13 @@ export function getAxisConfigInPivotChart(col: number, row: number, layout: Pivo
             visible: true,
             text: (indicatorInfo as any)?.caption,
             autoRotate: true
-          }
+          },
+          range: range
         },
         axisOption,
         {
           orient: 'bottom',
           type: 'linear',
-          range: range,
           label: {
             flush: true
           }
@@ -113,11 +118,16 @@ export function getAxisConfigInPivotChart(col: number, row: number, layout: Pivo
         return;
       }
       // 左侧维度轴
-      return merge({}, axisOption, {
-        orient: 'left',
-        type: 'band',
-        domain: Array.from(domain).reverse()
-      });
+      return merge(
+        {
+          domain: Array.from(domain).reverse()
+        },
+        axisOption,
+        {
+          orient: 'left',
+          type: 'band'
+        }
+      );
     }
   } else {
     if (
@@ -156,13 +166,13 @@ export function getAxisConfigInPivotChart(col: number, row: number, layout: Pivo
             visible: true,
             text: (indicatorInfo as any)?.caption,
             autoRotate: true
-          }
+          },
+          range: range
         },
         axisOption,
         {
           orient: 'left',
           type: 'linear',
-          range: range,
           label: {
             flush: true
           }
@@ -195,14 +205,19 @@ export function getAxisConfigInPivotChart(col: number, row: number, layout: Pivo
         return;
       }
       // 右侧副指标轴
-      return merge({}, axisOption, {
-        orient: 'right',
-        type: 'linear',
-        range: range,
-        label: {
-          flush: true
+      return merge(
+        {
+          range: range
+        },
+        axisOption,
+        {
+          orient: 'right',
+          type: 'linear',
+          label: {
+            flush: true
+          }
         }
-      });
+      );
     } else if (
       row === layout.rowCount - layout.bottomFrozenRowCount &&
       col >= layout.rowHeaderLevelCount &&
@@ -225,11 +240,16 @@ export function getAxisConfigInPivotChart(col: number, row: number, layout: Pivo
         return;
       }
       // 底部维度轴
-      return merge({}, axisOption, {
-        orient: 'bottom',
-        type: 'band',
-        domain: Array.from(domain)
-      });
+      return merge(
+        {
+          domain: Array.from(domain)
+        },
+        axisOption,
+        {
+          orient: 'bottom',
+          type: 'band'
+        }
+      );
     }
   }
 
