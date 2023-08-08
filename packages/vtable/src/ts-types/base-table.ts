@@ -72,6 +72,8 @@ export interface IBaseTableProtected {
   allowFrozenColCount: number;
 
   frozenRowCount: number;
+  rightFrozenColCount: number;
+  bottomFrozenRowCount: number;
   defaultRowHeight: number;
   /**表头默认行高 可以按逐行设置 如果没有就取defaultRowHeight */
   defaultHeaderRowHeight: number | number[];

@@ -31,7 +31,7 @@ import { handleTextStick } from './stick-text';
 import { computeRowsHeight } from './layout/compute-row-height';
 import { emptyGroup } from './utils/empty-group';
 import { updateChartSize, updateChartState } from './refresh-node/update-chart';
-import { dealFrozen, resetFrozen } from './layout/frozen';
+import { dealBottomFrozen, dealFrozen, dealRightFrozen, resetFrozen } from './layout/frozen';
 import { createCornerCell } from './style/corner-cell';
 import { initSceneGraph } from './group-creater/init-scenegraph';
 
@@ -1274,6 +1274,21 @@ export class Scenegraph {
     this.resetFrozen();
     this.dealFrozen();
     this.component.updateScrollBar();
+  }
+
+  dealWidthRightFrozen(rightFrozenColCount: number) {
+    if (this.clear) {
+      this.table.internalProps.rightFrozenColCount = rightFrozenColCount;
+      return;
+    }
+    dealRightFrozen(rightFrozenColCount, this);
+  }
+  dealWidthBottomFrozen(bottomFrozenRowCount: number) {
+    if (this.clear) {
+      this.table.internalProps.bottomFrozenRowCount = bottomFrozenRowCount;
+      return;
+    }
+    dealBottomFrozen(bottomFrozenRowCount, this);
   }
 
   updateBorderSizeAndPosition() {

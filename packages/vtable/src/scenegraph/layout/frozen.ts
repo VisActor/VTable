@@ -1,4 +1,5 @@
 import { Group } from '../graphic/group';
+import { createColGroup } from '../group-creater/column';
 import type { Scenegraph } from '../scenegraph';
 
 export function dealFrozen(scene: Scenegraph) {
@@ -126,4 +127,102 @@ function moveColumnFromCornerHeaderToColHeader(scene: Scenegraph) {
       scene.cornerHeaderGroup.attribute.width - headerColumn.attribute.width
     );
   }
+}
+
+export function dealRightFrozen(distRightFrozenCol: number, scene: Scenegraph) {
+  const { table, proxy, rightTopCornerGroup, rightFrozenGroup, bodyGroup, colHeaderGroup } = scene;
+  // const distRightFrozenCol = scene.table.rightFrozenColCount;
+  const currentRightFrozenCol =
+    scene.bottomFrozenGroup?.firstChild?.childrenCount ?? scene.leftBottomCornerGroup?.firstChild?.childrenCount ?? 0;
+  if (distRightFrozenCol > currentRightFrozenCol) {
+    for (let col = table.colCount - currentRightFrozenCol; col < table.colCount - distRightFrozenCol; col--) {
+      const colGroup = scene.getColGroup(col);
+      rightFrozenGroup.insertBefore(colGroup, rightFrozenGroup.firstChild);
+      const headerColGroup = scene.getColGroup(col, true);
+      rightTopCornerGroup.insertBefore(headerColGroup, rightTopCornerGroup.firstChild);
+    }
+  } else if (distRightFrozenCol < currentRightFrozenCol) {
+    for (let col = table.colCount - distRightFrozenCol; col < table.colCount - currentRightFrozenCol; col--) {
+      const colGroup = scene.getColGroup(col);
+      bodyGroup.appendChild(colGroup);
+      const headerColGroup = scene.getColGroup(col, true);
+      colHeaderGroup.appendChild(headerColGroup);
+    }
+  }
+}
+
+export function dealBottomFrozen(distBottomFrozenRow: number, scene: Scenegraph) {
+  const { table, proxy, bottomFrozenGroup, leftBottomCornerGroup } = scene;
+  if (!bottomFrozenGroup.childrenCount) {
+    // init bottom
+    if (!proxy.table.isPivotChart()) {
+      // create left bottom frozen
+      createColGroup(
+        leftBottomCornerGroup,
+        0,
+        0,
+        0, // colStart
+        proxy.table.rowHeaderLevelCount - 1, // colEnd
+        0, // rowStart
+        -1, // rowEnd
+        'rowHeader', // isHeader
+        proxy.table
+      );
+    }
+    // create bottomFrozenGroup
+    createColGroup(
+      bottomFrozenGroup,
+      0,
+      0,
+      proxy.colStart, // colStart
+      proxy.colEnd, // colEnd
+      0, // rowStart
+      -1, // rowEnd
+      'body', // isHeader
+      proxy.table
+    );
+  }
+  const currentBottomFrozenRow = scene.table.bottomFrozenRowCount;
+  if (distBottomFrozenRow > currentBottomFrozenRow) {
+    for (let col = proxy.colStart; col <= proxy.colEnd; col++) {
+      const bottomFrozenColumnGroup = scene.getColGroupInLeftBottomCorner(col) || scene.getColGroupInBottom(col);
+      // move cell
+      for (let row = table.rowCount - currentBottomFrozenRow - 1; row >= table.rowCount - distBottomFrozenRow; row--) {
+        const cellGroup = scene.getCell(col, row);
+        bottomFrozenColumnGroup.insertBefore(cellGroup, bottomFrozenColumnGroup.firstChild);
+      }
+      // reset cell y
+      let y = 0;
+      bottomFrozenColumnGroup.forEachChildren((cellGroup: Group) => {
+        cellGroup.setAttribute('y', y);
+        y += cellGroup.attribute.height;
+      });
+    }
+  } else if (distBottomFrozenRow < currentBottomFrozenRow) {
+    for (let col = proxy.colStart; col <= proxy.colEnd; col++) {
+      const columnGroup = scene.getColGroup(col);
+      for (let row = table.rowCount - currentBottomFrozenRow; row < table.rowCount - distBottomFrozenRow; row++) {
+        const cellGroup = scene.getCell(col, row);
+        cellGroup.setAttribute('y', columnGroup.lastChild.attribute.y + table.getRowHeight(columnGroup.lastChild.row));
+        columnGroup.appendChild(cellGroup);
+      }
+      // reset cell y
+      const bottomFrozenColumnGroup = scene.getColGroupInLeftBottomCorner(col) || scene.getColGroupInBottom(col);
+      let y = 0;
+      bottomFrozenColumnGroup.forEachChildren((cellGroup: Group) => {
+        cellGroup.setAttribute('y', y);
+        y += cellGroup.attribute.height;
+      });
+    }
+  }
+  // reset bottom height
+  bottomFrozenGroup.setAttribute(
+    'height',
+    table.getRowsHeight(table.rowCount - distBottomFrozenRow, table.rowCount - 1)
+  );
+
+  table.internalProps.bottomFrozenRowCount = distBottomFrozenRow;
+  scene.updateContainer();
+  scene.component.updateScrollBar();
+  scene.updateNextFrame();
 }
