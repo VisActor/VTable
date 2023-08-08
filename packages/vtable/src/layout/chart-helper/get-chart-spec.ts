@@ -4,7 +4,7 @@ import type { PivotChart } from '../../PivotChart';
 import type { ITableAxisOption } from '../../ts-types/component/axis';
 import type { PivotHeaderLayoutMap } from '../pivot-header-layout';
 import type { SimpleHeaderLayoutMap } from '../simple-header-layout';
-import { getAxisOption } from './get-axis-config';
+import { checkZeroAlign, getAxisOption } from './get-axis-config';
 
 export function getRawChartSpec(col: number, row: number, layout: PivotLayoutMap | PivotHeaderLayoutMap): any {
   const paths = layout.getCellHeaderPaths(col, row);
@@ -42,9 +42,11 @@ export function getChartAxes(col: number, row: number, layout: PivotLayoutMap): 
       if (isArray(key)) {
         key = key[0];
       }
-      // const data = layout.dataset.collectedValues[key];
-      const data = layout.dataset.collectedValues[key + '_align']
-        ? layout.dataset.collectedValues[key + '_align']
+
+      const isZeroAlign = checkZeroAlign(col, row, index === 0 ? 'bottom' : 'top', layout);
+
+      const data = layout.dataset.collectedValues[key + (isZeroAlign ? '_align' : '')]
+        ? layout.dataset.collectedValues[key + (isZeroAlign ? '_align' : '')]
         : layout.dataset.collectedValues[key];
       const range = data[
         layout.getColKeysPath()[colIndex][Math.max(0, layout.columnHeaderLevelCount - 1 - layout.topAxesCount)]
@@ -113,8 +115,11 @@ export function getChartAxes(col: number, row: number, layout: PivotLayoutMap): 
       if (isArray(key)) {
         key = key[0];
       }
-      const data = layout.dataset.collectedValues[key + '_align']
-        ? layout.dataset.collectedValues[key + '_align']
+
+      const isZeroAlign = checkZeroAlign(col, row, index === 0 ? 'left' : 'right', layout);
+
+      const data = layout.dataset.collectedValues[key + (isZeroAlign ? '_align' : '')]
+        ? layout.dataset.collectedValues[key + (isZeroAlign ? '_align' : '')]
         : layout.dataset.collectedValues[key];
       const range = data[
         layout.getRowKeysPath()[rowIndex][Math.max(0, layout.rowHeaderLevelCount - 1 - layout.leftAxesCount)]

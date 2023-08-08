@@ -24,9 +24,11 @@ export function getAxisConfigInPivotChart(col: number, row: number, layout: Pivo
       if (!defaultKey) {
         return undefined;
       }
+
+      const isZeroAlign = checkZeroAlign(col, row, 'top', layout);
       // const data = layout.dataset.collectedValues[defaultKey];
-      const data = layout.dataset.collectedValues[defaultKey + '_align']
-        ? layout.dataset.collectedValues[defaultKey + '_align']
+      const data = layout.dataset.collectedValues[defaultKey + (isZeroAlign ? '_align' : '')]
+        ? layout.dataset.collectedValues[defaultKey + (isZeroAlign ? '_align' : '')]
         : layout.dataset.collectedValues[defaultKey];
       const index = layout.getRecordIndexByCol(col);
       const range =
@@ -60,9 +62,11 @@ export function getAxisConfigInPivotChart(col: number, row: number, layout: Pivo
       if (isArray(defaultKey)) {
         defaultKey = defaultKey[0];
       }
-      // const data = layout.dataset.collectedValues[defaultKey];
-      const data = layout.dataset.collectedValues[defaultKey + '_align']
-        ? layout.dataset.collectedValues[defaultKey + '_align']
+
+      const isZeroAlign = checkZeroAlign(col, row, 'bottom', layout);
+
+      const data = layout.dataset.collectedValues[defaultKey + (isZeroAlign ? '_align' : '')]
+        ? layout.dataset.collectedValues[defaultKey + (isZeroAlign ? '_align' : '')]
         : layout.dataset.collectedValues[defaultKey];
       const index = layout.getRecordIndexByCol(col);
       const range =
@@ -140,9 +144,11 @@ export function getAxisConfigInPivotChart(col: number, row: number, layout: Pivo
       if (isArray(defaultKey)) {
         defaultKey = defaultKey[0];
       }
-      // const data = layout.dataset.collectedValues[defaultKey];
-      const data = layout.dataset.collectedValues[defaultKey + '_align']
-        ? layout.dataset.collectedValues[defaultKey + '_align']
+
+      const isZeroAlign = checkZeroAlign(col, row, 'left', layout);
+
+      const data = layout.dataset.collectedValues[defaultKey + (isZeroAlign ? '_align' : '')]
+        ? layout.dataset.collectedValues[defaultKey + (isZeroAlign ? '_align' : '')]
         : layout.dataset.collectedValues[defaultKey];
       const index = layout.getRecordIndexByRow(row);
       const range =
@@ -192,9 +198,11 @@ export function getAxisConfigInPivotChart(col: number, row: number, layout: Pivo
       if (!defaultKey) {
         return undefined;
       }
-      // const data = layout.dataset.collectedValues[defaultKey];
-      const data = layout.dataset.collectedValues[defaultKey + '_align']
-        ? layout.dataset.collectedValues[defaultKey + '_align']
+
+      const isZeroAlign = checkZeroAlign(col, row, 'right', layout);
+
+      const data = layout.dataset.collectedValues[defaultKey + (isZeroAlign ? '_align' : '')]
+        ? layout.dataset.collectedValues[defaultKey + (isZeroAlign ? '_align' : '')]
         : layout.dataset.collectedValues[defaultKey];
       const index = layout.getRecordIndexByRow(row);
       const range =
@@ -270,4 +278,46 @@ export function getAxisOption(col: number, row: number, orient: string, layout: 
     return axisOption.orient === orient;
   });
   return axisOption;
+}
+
+export function checkZeroAlign(col: number, row: number, orient: string, layout: PivotLayoutMap) {
+  // check condition:
+  // 1. two axes and one set sync
+  // 2. axisId in sync is another
+  const orients: string[] = [];
+  if (orient === 'left' || orient === 'right') {
+    orients.push('left', 'right');
+  } else if (orient === 'top' || orient === 'bottom') {
+    orients.push('top', 'bottom');
+  }
+  const spec = layout.getRawChartSpec(col, row);
+  let axesSpec;
+  if (spec && isArray(spec.axes)) {
+    axesSpec = spec.axes;
+  } else {
+    axesSpec = (layout._table as PivotChart).pivotChartAxes as ITableAxisOption[];
+  }
+  if (isArray(axesSpec)) {
+    const axes: any[] = [];
+    axesSpec.forEach((axis: any) => {
+      if (orients.includes(axis.orient)) {
+        axes.push(axis);
+      }
+    });
+    for (let i = 0; i < axes.length; i++) {
+      const axis = axes[i];
+      if (
+        axis.sync &&
+        axis.sync.zeroAlign &&
+        axis.sync.axisId &&
+        axes.find(axisSync => {
+          return axisSync.id === axis.sync.axisId;
+        })
+      ) {
+        return true;
+      }
+    }
+  }
+
+  return false;
 }
