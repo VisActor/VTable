@@ -425,7 +425,7 @@ export const menus = [
       },
       {
         path: 'business',
-        name: 'aeolusTestPerformanceMoreColumn'
+        name: 'testPerformanceMoreColumn'
       }
     ]
   },
