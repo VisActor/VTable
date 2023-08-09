@@ -154,12 +154,15 @@ export function dealRightFrozen(distRightFrozenCol: number, scene: Scenegraph) {
   } else if (distRightFrozenCol < currentRightFrozenCol) {
     for (let col = table.colCount - currentRightFrozenCol; col < table.colCount - distRightFrozenCol; col++) {
       const colGroup = scene.getColGroup(col);
-      colGroup.setAttribute('x', bodyGroup.lastChild.attribute.x + table.getColWidth(bodyGroup.lastChild.col));
+      colGroup.setAttribute(
+        'x',
+        (bodyGroup.lastChild as Group).attribute.x + table.getColWidth((bodyGroup.lastChild as Group).col)
+      );
       bodyGroup.appendChild(colGroup);
       const headerColGroup = scene.getColGroupInRightTopCorner(col);
       colGroup.setAttribute(
         'x',
-        colHeaderGroup.lastChild.attribute.x + table.getColWidth(colHeaderGroup.lastChild.col)
+        (colHeaderGroup.lastChild as Group).attribute.x + table.getColWidth((colHeaderGroup.lastChild as Group).col)
       );
       colHeaderGroup.appendChild(headerColGroup);
     }
@@ -241,7 +244,10 @@ export function dealBottomFrozen(distBottomFrozenRow: number, scene: Scenegraph)
       const columnGroup = scene.getColGroup(col);
       for (let row = table.rowCount - currentBottomFrozenRow; row < table.rowCount - distBottomFrozenRow; row++) {
         const cellGroup = scene.getCell(col, row);
-        cellGroup.setAttribute('y', columnGroup.lastChild.attribute.y + table.getRowHeight(columnGroup.lastChild.row));
+        cellGroup.setAttribute(
+          'y',
+          (columnGroup.lastChild as Group).attribute.y + table.getRowHeight((columnGroup.lastChild as Group).row)
+        );
         columnGroup.appendChild(cellGroup);
       }
       // reset cell y
