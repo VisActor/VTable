@@ -413,6 +413,10 @@ export const menus = [
       {
         path: 'frozen',
         name: 'pivot-table-bottom-frozen'
+      },
+      {
+        path: 'frozen',
+        name: 'pivot-table-both-frozen'
       }
     ]
   },

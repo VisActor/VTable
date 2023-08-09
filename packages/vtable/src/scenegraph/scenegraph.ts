@@ -431,6 +431,13 @@ export class Scenegraph {
     return undefined;
   }
 
+  getColGroupInRightBottomCorner(col: number): Group | undefined {
+    if (this.table.rightFrozenColCount > 0 && this.table.bottomFrozenRowCount > 0) {
+      return this.rightBottomCornerGroup.getColGroup(col) as Group;
+    }
+    return undefined;
+  }
+
   /**
    * @description: 获取指定行列位置的cell的宽高，主要处理merge情况
    * @param {number} col

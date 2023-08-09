@@ -98,11 +98,7 @@ function moveColumnFromRowHeaderToBody(scene: Scenegraph) {
       ? scene.rowHeaderGroup.lastChild
       : (scene.rowHeaderGroup.lastChild?._prev as Group);
   if (column) {
-    if (scene.bodyGroup.firstChild) {
-      scene.bodyGroup.insertBefore(column, scene.bodyGroup.firstChild);
-    } else {
-      scene.bodyGroup.appendChild(column);
-    }
+    insertBefore(scene.bodyGroup, column, scene.bodyGroup.firstChild as Group);
     // 更新容器宽度
     scene.bodyGroup.setAttribute('width', scene.bodyGroup.attribute.width + column.attribute.width);
     scene.rowHeaderGroup.setAttribute('width', scene.rowHeaderGroup.attribute.width - column.attribute.width);
@@ -116,11 +112,7 @@ function moveColumnFromCornerHeaderToColHeader(scene: Scenegraph) {
       ? scene.cornerHeaderGroup.lastChild
       : (scene.cornerHeaderGroup.lastChild?._prev as Group);
   if (headerColumn) {
-    if (scene.colHeaderGroup.firstChild) {
-      scene.colHeaderGroup.insertBefore(headerColumn, scene.colHeaderGroup.firstChild);
-    } else {
-      scene.bodyGroup.appendChild(headerColumn);
-    }
+    insertBefore(scene.colHeaderGroup, headerColumn, scene.colHeaderGroup.firstChild as Group);
     scene.colHeaderGroup.setAttribute('width', scene.colHeaderGroup.attribute.width + headerColumn.attribute.width);
     scene.cornerHeaderGroup.setAttribute(
       'width',
@@ -130,15 +122,26 @@ function moveColumnFromCornerHeaderToColHeader(scene: Scenegraph) {
 }
 
 export function dealRightFrozen(distRightFrozenCol: number, scene: Scenegraph) {
-  const { table, proxy, rightTopCornerGroup, rightFrozenGroup, bodyGroup, colHeaderGroup } = scene;
+  const {
+    table,
+    proxy,
+    rightTopCornerGroup,
+    rightFrozenGroup,
+    rightBottomCornerGroup,
+    bottomFrozenGroup,
+    bodyGroup,
+    colHeaderGroup
+  } = scene;
   // const distRightFrozenCol = scene.table.rightFrozenColCount;
   const currentRightFrozenCol = scene.table.rightFrozenColCount;
   if (distRightFrozenCol > currentRightFrozenCol) {
     for (let col = table.colCount - currentRightFrozenCol - 1; col >= table.colCount - distRightFrozenCol; col--) {
       const colGroup = scene.getColGroup(col);
-      rightFrozenGroup.insertBefore(colGroup, rightFrozenGroup.firstChild);
+      insertBefore(rightFrozenGroup, colGroup, rightFrozenGroup.firstChild as Group);
       const headerColGroup = scene.getColGroup(col, true);
-      rightTopCornerGroup.insertBefore(headerColGroup, rightTopCornerGroup.firstChild);
+      insertBefore(rightTopCornerGroup, headerColGroup, rightTopCornerGroup.firstChild as Group);
+      const bottomColGroup = scene.getColGroupInBottom(col);
+      insertBefore(rightBottomCornerGroup, bottomColGroup, rightBottomCornerGroup.firstChild as Group);
     }
     // reset cell y
     let x = 0;
@@ -148,6 +151,11 @@ export function dealRightFrozen(distRightFrozenCol: number, scene: Scenegraph) {
     });
     x = 0;
     rightTopCornerGroup.forEachChildren((columnGroup: Group) => {
+      columnGroup.setAttribute('x', x);
+      x += columnGroup.attribute.width;
+    });
+    x = 0;
+    rightBottomCornerGroup.forEachChildren((columnGroup: Group) => {
       columnGroup.setAttribute('x', x);
       x += columnGroup.attribute.width;
     });
@@ -160,11 +168,18 @@ export function dealRightFrozen(distRightFrozenCol: number, scene: Scenegraph) {
       );
       bodyGroup.appendChild(colGroup);
       const headerColGroup = scene.getColGroupInRightTopCorner(col);
-      colGroup.setAttribute(
+      headerColGroup.setAttribute(
         'x',
         (colHeaderGroup.lastChild as Group).attribute.x + table.getColWidth((colHeaderGroup.lastChild as Group).col)
       );
       colHeaderGroup.appendChild(headerColGroup);
+      const bottomColGroup = scene.getColGroupInRightBottomCorner(col);
+      bottomColGroup.setAttribute(
+        'x',
+        (bottomFrozenGroup.lastChild as Group).attribute.x +
+          table.getColWidth((bottomFrozenGroup.lastChild as Group).col)
+      );
+      bottomFrozenGroup.appendChild(bottomColGroup);
     }
     // reset cell y
     let x = 0;
@@ -177,11 +192,20 @@ export function dealRightFrozen(distRightFrozenCol: number, scene: Scenegraph) {
       columnGroup.setAttribute('x', x);
       x += columnGroup.attribute.width;
     });
+    x = 0;
+    rightBottomCornerGroup.forEachChildren((columnGroup: Group) => {
+      columnGroup.setAttribute('x', x);
+      x += columnGroup.attribute.width;
+    });
   }
 
   // reset right width
   rightFrozenGroup.setAttribute('width', table.getColsWidth(table.colCount - distRightFrozenCol, table.colCount - 1));
   rightTopCornerGroup.setAttribute(
+    'width',
+    table.getColsWidth(table.colCount - distRightFrozenCol, table.colCount - 1)
+  );
+  rightBottomCornerGroup.setAttribute(
     'width',
     table.getColsWidth(table.colCount - distRightFrozenCol, table.colCount - 1)
   );
@@ -231,7 +255,8 @@ export function dealBottomFrozen(distBottomFrozenRow: number, scene: Scenegraph)
       // move cell
       for (let row = table.rowCount - currentBottomFrozenRow - 1; row >= table.rowCount - distBottomFrozenRow; row--) {
         const cellGroup = scene.getCell(col, row, true);
-        bottomFrozenColumnGroup.insertBefore(cellGroup, bottomFrozenColumnGroup.firstChild);
+        // bottomFrozenColumnGroup.insertBefore(cellGroup, bottomFrozenColumnGroup.firstChild);
+        insertBefore(bottomFrozenColumnGroup, cellGroup, bottomFrozenColumnGroup.firstChild as Group);
       }
       // reset cell y
       let y = 0;
@@ -246,7 +271,8 @@ export function dealBottomFrozen(distBottomFrozenRow: number, scene: Scenegraph)
       // move cell
       for (let row = table.rowCount - currentBottomFrozenRow - 1; row >= table.rowCount - distBottomFrozenRow; row--) {
         const cellGroup = scene.getCell(col, row, true);
-        bottomFrozenColumnGroup.insertBefore(cellGroup, bottomFrozenColumnGroup.firstChild);
+        // bottomFrozenColumnGroup.insertBefore(cellGroup, bottomFrozenColumnGroup.firstChild);
+        insertBefore(bottomFrozenColumnGroup, cellGroup, bottomFrozenColumnGroup.firstChild as Group);
       }
       // reset cell y
       let y = 0;
@@ -309,4 +335,15 @@ export function dealBottomFrozen(distBottomFrozenRow: number, scene: Scenegraph)
   scene.updateContainer();
   scene.component.updateScrollBar();
   scene.updateNextFrame();
+}
+
+function insertBefore(container: Group, newNode: Group, targetGroup: Group) {
+  if (!newNode || !container) {
+    return;
+  }
+  if (targetGroup) {
+    container.insertBefore(newNode, targetGroup);
+  } else {
+    container.appendChild(newNode);
+  }
 }

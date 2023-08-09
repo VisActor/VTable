@@ -15,8 +15,7 @@ export async function createGroupForFirstScreen(
   yOrigin: number,
   proxy: SceneProxy
 ) {
-  const leftBottomCornerGroup = proxy.table.scenegraph.leftBottomCornerGroup;
-  const rightTopCornerGroup = proxy.table.scenegraph.rightTopCornerGroup;
+  const { leftBottomCornerGroup, rightTopCornerGroup, rightBottomCornerGroup } = proxy.table.scenegraph;
 
   // compute parameters
   proxy.setParamsForRow();
@@ -151,6 +150,21 @@ export async function createGroupForFirstScreen(
       proxy.table.colCount - 1, // colEnd
       proxy.table.columnHeaderLevelCount, // rowStart
       Math.min(proxy.firstScreenRowLimit, proxy.table.rowCount - 1 - proxy.table.bottomFrozenRowCount), // rowEnd
+      'body', // isHeader
+      proxy.table
+    );
+  }
+
+  if (proxy.table.bottomFrozenRowCount > 0 && proxy.table.rightFrozenColCount > 0) {
+    // create right bottom frozen Group
+    createColGroup(
+      rightBottomCornerGroup,
+      xOrigin,
+      yOrigin,
+      proxy.table.colCount - 1 - proxy.table.rightFrozenColCount + 1, // colStart
+      proxy.table.colCount - 1, // colEnd
+      proxy.table.rowCount - 1 - proxy.table.bottomFrozenRowCount + 1, // rowStart
+      proxy.table.rowCount - 1, // rowEnd
       'body', // isHeader
       proxy.table
     );

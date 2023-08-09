@@ -62,11 +62,6 @@ export function initSceneGraph(scene: Scenegraph) {
       rightBottomCornerGroup,
       scene.table.theme.cornerRightBottomCellStyle || scene.table.theme.cornerHeaderStyle
     );
-  } else {
-    createCornerCell(
-      rightBottomCornerGroup,
-      scene.table.theme.cornerRightBottomCellStyle || scene.table.theme.cornerHeaderStyle
-    );
   }
 
   scene.tableGroup.addChild(bodyGroup);
