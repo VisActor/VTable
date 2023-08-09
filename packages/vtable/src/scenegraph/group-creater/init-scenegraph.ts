@@ -46,7 +46,7 @@ export function initSceneGraph(scene: Scenegraph) {
   scene.rightBottomCornerGroup = rightBottomCornerGroup;
 
   const leftBottomCornerGroup = createContainerGroup(0, 0);
-  leftBottomCornerGroup.role = 'corner-right-top-header';
+  leftBottomCornerGroup.role = 'corner-left-bottom-header';
   scene.leftBottomCornerGroup = leftBottomCornerGroup;
 
   if (scene.table.isPivotChart()) {
