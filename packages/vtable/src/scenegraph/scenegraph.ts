@@ -362,6 +362,13 @@ export class Scenegraph {
       col < this.table.frozenColCount
     ) {
       cell = this.leftBottomCornerGroup.getColGroup(col)?.getRowGroup(row);
+    } else if (
+      this.table.rightFrozenColCount > 0 &&
+      this.table.bottomFrozenRowCount > 0 &&
+      col >= this.table.colCount - this.table.rightFrozenColCount &&
+      row >= this.table.rowCount - this.table.bottomFrozenRowCount
+    ) {
+      cell = this.rightBottomCornerGroup.getColGroup(col)?.getRowGroup(row);
     } else if (this.table.rightFrozenColCount > 0 && col > this.table.colCount - 1 - this.table.rightFrozenColCount) {
       cell = this.rightFrozenGroup.getColGroup(col)?.getRowGroup(row);
     } else if (this.table.bottomFrozenRowCount > 0 && row > this.table.rowCount - 1 - this.table.bottomFrozenRowCount) {

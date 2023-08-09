@@ -81,7 +81,7 @@ export function createTable() {
   const tableInstance = new VTable.ListTable(option);
   (window as any).tableInstance = tableInstance;
 
-  bindDebugTool(tableInstance.scenegraph.stage as any, {
-    customGrapicKeys: ['role', 'col', 'row']
-  });
+  // bindDebugTool(tableInstance.scenegraph.stage as any, {
+  //   customGrapicKeys: ['role', 'col', 'row']
+  // });
 }

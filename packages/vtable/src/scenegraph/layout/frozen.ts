@@ -217,7 +217,7 @@ export function dealRightFrozen(distRightFrozenCol: number, scene: Scenegraph) {
 }
 
 export function dealBottomFrozen(distBottomFrozenRow: number, scene: Scenegraph) {
-  const { table, proxy, bottomFrozenGroup, leftBottomCornerGroup } = scene;
+  const { table, proxy, bottomFrozenGroup, leftBottomCornerGroup, rightBottomCornerGroup } = scene;
   if (!bottomFrozenGroup.childrenCount) {
     // init bottom
     if (!proxy.table.isPivotChart()) {
@@ -227,11 +227,22 @@ export function dealBottomFrozen(distBottomFrozenRow: number, scene: Scenegraph)
         0,
         0,
         0, // colStart
-        proxy.table.rowHeaderLevelCount - 1, // colEnd
+        table.rowHeaderLevelCount - 1, // colEnd
         0, // rowStart
         -1, // rowEnd
         'rowHeader', // isHeader
-        proxy.table
+        table
+      );
+      createColGroup(
+        rightBottomCornerGroup,
+        0,
+        0,
+        table.colCount - table.rightFrozenColCount, // colStart
+        table.colCount - 1, // colEnd
+        0, // rowStart
+        -1, // rowEnd
+        'body', // isHeader
+        table
       );
     }
     // create bottomFrozenGroup
@@ -244,12 +255,12 @@ export function dealBottomFrozen(distBottomFrozenRow: number, scene: Scenegraph)
       0, // rowStart
       -1, // rowEnd
       'body', // isHeader
-      proxy.table
+      table
     );
   }
   const currentBottomFrozenRow = scene.table.bottomFrozenRowCount;
   if (distBottomFrozenRow > currentBottomFrozenRow) {
-    // row header
+    // row header -> left bottom
     for (let col = 0; col < table.rowHeaderLevelCount; col++) {
       const bottomFrozenColumnGroup = scene.getColGroupInLeftBottomCorner(col);
       // move cell
@@ -265,7 +276,7 @@ export function dealBottomFrozen(distBottomFrozenRow: number, scene: Scenegraph)
         y += table.getRowHeight(cellGroup.row);
       });
     }
-    // body
+    // body -> bottom
     for (let col = proxy.colStart; col <= proxy.colEnd; col++) {
       const bottomFrozenColumnGroup = scene.getColGroupInBottom(col);
       // move cell
@@ -280,9 +291,31 @@ export function dealBottomFrozen(distBottomFrozenRow: number, scene: Scenegraph)
         cellGroup.setAttribute('y', y);
         y += table.getRowHeight(cellGroup.row);
       });
+    }
+    if (table.rightFrozenColCount > 0) {
+      // right -> right bottom
+      for (let col = table.colCount - table.rightFrozenColCount; col < table.colCount; col++) {
+        const bottomFrozenColumnGroup = scene.getColGroupInRightBottomCorner(col);
+        // move cell
+        for (
+          let row = table.rowCount - currentBottomFrozenRow - 1;
+          row >= table.rowCount - distBottomFrozenRow;
+          row--
+        ) {
+          const cellGroup = scene.getCell(col, row, true);
+          // bottomFrozenColumnGroup.insertBefore(cellGroup, bottomFrozenColumnGroup.firstChild);
+          insertBefore(bottomFrozenColumnGroup, cellGroup, bottomFrozenColumnGroup.firstChild as Group);
+        }
+        // reset cell y
+        let y = 0;
+        bottomFrozenColumnGroup.forEachChildren((cellGroup: Group) => {
+          cellGroup.setAttribute('y', y);
+          y += table.getRowHeight(cellGroup.row);
+        });
+      }
     }
   } else if (distBottomFrozenRow < currentBottomFrozenRow) {
-    // row header
+    // left bottom -> row header
     for (let col = 0; col < table.rowHeaderLevelCount; col++) {
       const columnGroup = scene.getColGroup(col);
       for (let row = table.rowCount - currentBottomFrozenRow; row < table.rowCount - distBottomFrozenRow; row++) {
@@ -301,7 +334,7 @@ export function dealBottomFrozen(distBottomFrozenRow: number, scene: Scenegraph)
         y += table.getRowHeight(cellGroup.row);
       });
     }
-    // body
+    // bottom -> body
     for (let col = proxy.colStart; col <= proxy.colEnd; col++) {
       const columnGroup = scene.getColGroup(col);
       for (let row = table.rowCount - currentBottomFrozenRow; row < table.rowCount - distBottomFrozenRow; row++) {
@@ -319,6 +352,27 @@ export function dealBottomFrozen(distBottomFrozenRow: number, scene: Scenegraph)
         cellGroup.setAttribute('y', y);
         y += table.getRowHeight(cellGroup.row);
       });
+    }
+    if (table.rightFrozenColCount > 0) {
+      // right bottom -> right
+      for (let col = table.colCount - table.rightFrozenColCount; col < table.colCount; col++) {
+        const columnGroup = scene.getColGroup(col);
+        for (let row = table.rowCount - currentBottomFrozenRow; row < table.rowCount - distBottomFrozenRow; row++) {
+          const cellGroup = scene.getCell(col, row, true);
+          cellGroup.setAttribute(
+            'y',
+            (columnGroup.lastChild as Group).attribute.y + table.getRowHeight((columnGroup.lastChild as Group).row)
+          );
+          columnGroup.appendChild(cellGroup);
+        }
+        // reset cell y
+        const bottomFrozenColumnGroup = scene.getColGroupInRightBottomCorner(col);
+        let y = 0;
+        bottomFrozenColumnGroup.forEachChildren((cellGroup: Group) => {
+          cellGroup.setAttribute('y', y);
+          y += table.getRowHeight(cellGroup.row);
+        });
+      }
     }
   }
   // reset bottom height
@@ -327,6 +381,10 @@ export function dealBottomFrozen(distBottomFrozenRow: number, scene: Scenegraph)
     table.getRowsHeight(table.rowCount - distBottomFrozenRow, table.rowCount - 1)
   );
   leftBottomCornerGroup.setAttribute(
+    'height',
+    table.getRowsHeight(table.rowCount - distBottomFrozenRow, table.rowCount - 1)
+  );
+  rightBottomCornerGroup.setAttribute(
     'height',
     table.getRowsHeight(table.rowCount - distBottomFrozenRow, table.rowCount - 1)
   );
