@@ -147,65 +147,6 @@ export class SceneProxy {
       this
     );
   }
-
-  async createColGroupForFirstScreen(
-    rowHeaderGroup: Group,
-    bodyGroup: Group,
-    xOrigin: number,
-    yOrigin: number,
-    table: BaseTableAPI
-  ) {
-    this.setParamsForRow();
-    this.setParamsForColumn();
-
-    // compute row height in first screen
-    computeRowsHeight(table, this.table.columnHeaderLevelCount, Math.min(this.firstScreenRowLimit, table.rowCount - 1));
-
-    // 生成首屏单元格
-    // rowHeader
-    createColGroup(
-      rowHeaderGroup,
-      xOrigin,
-      yOrigin,
-      0, // colStart
-      table.rowHeaderLevelCount - 1, // colEnd
-      table.columnHeaderLevelCount, // rowStart
-      table.rowCount - 1, // rowEnd
-      'rowHeader', // isHeader
-      table,
-      this.firstScreenRowLimit
-    );
-    // body
-    createColGroup(
-      bodyGroup,
-      xOrigin,
-      yOrigin,
-      table.rowHeaderLevelCount, // colStart
-      table.colCount - 1, // colEnd
-      table.columnHeaderLevelCount, // rowStart
-      table.rowCount - 1, // rowEnd
-      'body', // isHeader
-      table,
-      this.firstScreenRowLimit
-    );
-
-    // 更新row信息
-    if (!bodyGroup.firstChild) {
-      // 无数据
-      this.currentRow = this.totalRow;
-      this.rowEnd = this.currentRow;
-      this.rowUpdatePos = this.rowEnd;
-      this.referenceRow = Math.floor((this.rowEnd - this.rowStart) / 2);
-    } else {
-      this.currentRow = (bodyGroup.firstChild as Group)?.rowNumber ?? this.totalRow;
-      this.rowEnd = this.currentRow;
-      this.rowUpdatePos = this.rowEnd;
-      this.referenceRow = Math.floor((this.rowEnd - this.rowStart) / 2);
-      // 开始异步任务
-      await this.progress();
-    }
-  }
-
   // async progress() {
   //   if (this.rowUpdatePos < this.rowEnd) {
   //     console.log('progress rowUpdatePos', this.rowUpdatePos);
@@ -263,7 +204,7 @@ export class SceneProxy {
   createRowCellGroup(onceCount: number) {
     const endRow = Math.min(this.totalRow, this.currentRow + onceCount);
     // compute rows height
-    computeRowsHeight(this.table, this.currentRow + 1, endRow);
+    computeRowsHeight(this.table, this.currentRow + 1, endRow, false);
 
     if (this.table.rowHeaderLevelCount) {
       // create row header row cellGroup
@@ -466,7 +407,7 @@ export class SceneProxy {
     const distRow = Math.min(this.bodyBottomRow, this.rowUpdatePos + count);
     // console.log('updateCellGroups', this.rowUpdatePos, distRow);
     if (this.table.heightMode === 'autoHeight') {
-      computeRowsHeight(this.table, this.rowUpdatePos, distRow);
+      computeRowsHeight(this.table, this.rowUpdatePos, distRow, false);
     }
 
     updateRowContent(this.rowUpdatePos, distRow, this);
@@ -568,9 +509,9 @@ export class SceneProxy {
       syncBottomRow = Math.min(this.bodyBottomRow, this.screenTopRow + this.screenRowCount * 3);
     }
     console.log('sort更新同步范围', syncTopRow, syncBottomRow);
-    if (this.table.heightMode === 'autoHeight') {
-      computeRowsHeight(this.table, syncTopRow, syncBottomRow);
-    }
+
+    computeRowsHeight(this.table, syncTopRow, syncBottomRow);
+
     for (let col = this.bodyLeftCol; col <= this.bodyRightCol; col++) {
       for (let row = syncTopRow; row <= syncBottomRow; row++) {
         // const cellGroup = this.table.scenegraph.getCell(col, row);

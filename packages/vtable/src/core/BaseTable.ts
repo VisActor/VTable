@@ -3051,7 +3051,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     return cellInfoArray;
   }
   /** 计算字体的宽度接口 */
-  measureText(text: string, font: { fontSize: number; fontFamily: string }): ITextSize {
+  measureText(text: string, font: { fontSize: number; fontWeight: string | number; fontFamily: string }): ITextSize {
     return textMeasure.measureText(text, font);
   }
   measureTextBounds(attributes: IWrapTextGraphicAttribute): ITextSize {

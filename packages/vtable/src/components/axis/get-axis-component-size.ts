@@ -23,6 +23,7 @@ export function computeAxisConpomentWidth(config: ICellAxisOption, table: BaseTa
           labelWidth,
           table.measureText(text, {
             fontSize: attribute.label?.style?.fontSize,
+            fontWeight: attribute.label?.style?.fontWeight,
             fontFamily: attribute.label?.style?.fontFamily
           }).width
         );
@@ -40,6 +41,7 @@ export function computeAxisConpomentWidth(config: ICellAxisOption, table: BaseTa
           labelWidth,
           table.measureText(text, {
             fontSize: attribute.label?.style?.fontSize,
+            fontWeight: attribute.label?.style?.fontWeight,
             fontFamily: attribute.label?.style?.fontFamily
           }).width + 2
         );
@@ -55,12 +57,14 @@ export function computeAxisConpomentWidth(config: ICellAxisOption, table: BaseTa
       titleWidth =
         table.measureText(attribute.title.text as string, {
           fontSize: attribute.title?.style?.fontSize,
+          fontWeight: attribute.title?.style?.fontWeight,
           fontFamily: attribute.title?.style?.fontFamily
         }).height + 2;
     } else {
       titleWidth =
         table.measureText(attribute.title.text as string, {
           fontSize: attribute.title?.style?.fontSize,
+          fontWeight: attribute.title?.style?.fontWeight,
           fontFamily: attribute.title?.style?.fontFamily
         }).width + 2;
     }

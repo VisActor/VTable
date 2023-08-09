@@ -24,7 +24,9 @@ export const initTextMeasure = (
         fontSize: DEFAULT_TEXT_FONT_SIZE
       },
       getTextBounds: useNaiveCanvas ? undefined : getTextBounds,
-      specialCharSet: `-/: .,@%'"~${TextMeasure.ALPHABET_CHAR_SET}${TextMeasure.ALPHABET_CHAR_SET.toUpperCase()}`,
+      specialCharSet: `{}()//&-/: .,@%'"~${
+        TextMeasure.ALPHABET_CHAR_SET
+      }${TextMeasure.ALPHABET_CHAR_SET.toUpperCase()}`,
       ...(option ?? {})
     },
     textSpec
@@ -33,8 +35,8 @@ export const initTextMeasure = (
 
 const fastTextMeasureCache: Map<string, TextMeasure<ITextGraphicAttribute>> = new Map();
 
-function getFastTextMeasure(fontSize: number, fontFamily: string) {
-  const key = `${fontSize}-${fontFamily}`;
+function getFastTextMeasure(fontSize: number, fontWeight: string | number, fontFamily: string) {
+  const key = `${fontSize}-${fontWeight}-${fontFamily}`;
   const cache = fastTextMeasureCache.get(key);
   if (cache) {
     return cache;
@@ -42,7 +44,8 @@ function getFastTextMeasure(fontSize: number, fontFamily: string) {
   const fastTextMeasure = initTextMeasure({
     // 16px sans-serif
     fontSize,
-    fontFamily
+    fontFamily,
+    fontWeight
   });
   fastTextMeasureCache.set(key, fastTextMeasure);
   return fastTextMeasure;
@@ -55,8 +58,8 @@ export class TextMeasureTool {
    * @param options
    */
   measureText(text: string, options: ITextGraphicAttribute): ITextSize {
-    const { fontSize, fontFamily } = options;
-    const fastTextMeasure = getFastTextMeasure(fontSize, fontFamily);
+    const { fontSize, fontFamily, fontWeight } = options;
+    const fastTextMeasure = getFastTextMeasure(fontSize, fontWeight, fontFamily);
     const textMeasure = fastTextMeasure.measure(text);
     return textMeasure;
   }
@@ -67,8 +70,8 @@ export class TextMeasureTool {
    * @param options
    */
   measureTextWidth(text: string, options: ITextGraphicAttribute): number {
-    const { fontSize, fontFamily = 'sans-serif' } = options;
-    const fastTextMeasure = getFastTextMeasure(fontSize, fontFamily);
+    const { fontSize, fontFamily = 'sans-serif', fontWeight = 'normal' } = options;
+    const fastTextMeasure = getFastTextMeasure(fontSize, fontWeight, fontFamily);
     const textMeasure = fastTextMeasure.measure(text);
     return textMeasure.width;
   }

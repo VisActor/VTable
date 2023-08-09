@@ -21,20 +21,26 @@ const utilRichTextMark = new RichText({
   textConfig: []
 });
 
-export function computeRowsHeight(table: BaseTableAPI, rowStart?: number, rowEnd?: number): void {
+export function computeRowsHeight(
+  table: BaseTableAPI,
+  rowStart?: number,
+  rowEnd?: number,
+  isClearRowRangeHeightsMap: boolean = true
+): void {
   const time = typeof window !== 'undefined' ? window.performance.now() : 0;
   if (table.heightMode === 'autoHeight' || table.heightMode === 'adaptive') {
     rowStart = rowStart ?? 0;
     rowEnd = rowEnd ?? table.rowCount - 1;
 
     // clear rowRangeHeightsMap
-    if (rowStart === 0 && rowEnd === table.rowCount - 1) {
+    if ((rowStart === 0 && rowEnd === table.rowCount - 1) || isClearRowRangeHeightsMap) {
       table._clearRowRangeHeightsMap();
-    } else {
-      for (let row = rowStart; row <= rowEnd; row++) {
-        table._clearRowRangeHeightsMap(row);
-      }
     }
+    // else {
+    // for (let row = rowStart; row <= rowEnd; row++) {
+    //   table._clearRowRangeHeightsMap(row);
+    // }
+    // }
 
     // compute header row in column header row
     for (let row = rowStart; row < table.columnHeaderLevelCount; row++) {
@@ -49,7 +55,7 @@ export function computeRowsHeight(table: BaseTableAPI, rowStart?: number, rowEnd
     // compute body row
     if (
       !table.internalProps.transpose &&
-      !(table.isPivotTable() && (table.internalProps.layoutMap as PivotHeaderLayoutMap).indicatorsAsCol) &&
+      !(table.isPivotTable() && !(table.internalProps.layoutMap as PivotHeaderLayoutMap).indicatorsAsCol) &&
       checkFixedStyleAndNoWrap(table)
     ) {
       // check fixed style and no wrap situation, fill all row width single compute
@@ -64,13 +70,13 @@ export function computeRowsHeight(table: BaseTableAPI, rowStart?: number, rowEnd
       // check fixed style and no wrap situation, just compute 0-table.rowHeaderLevelCount column(the column after row header) in ervey row
       // in traspose table and row indicator pivot table
       for (let row = Math.max(rowStart, table.columnHeaderLevelCount); row <= rowEnd; row++) {
-        table._clearRowRangeHeightsMap(row);
+        // table._clearRowRangeHeightsMap(row);//注释掉 注意有无缓存问题
         const height = computeRowHeight(row, 0, table.rowHeaderLevelCount, table);
         table.setRowHeight(row, height);
       }
     } else {
       for (let row = Math.max(rowStart, table.columnHeaderLevelCount); row <= rowEnd; row++) {
-        table._clearRowRangeHeightsMap(row);
+        // table._clearRowRangeHeightsMap(row); //注释掉 注意有无缓存问题
         const height = computeRowHeight(row, 0, table.colCount - 1, table);
         table.setRowHeight(row, height);
       }
@@ -98,7 +104,7 @@ export function computeRowsHeight(table: BaseTableAPI, rowStart?: number, rowEnd
     }
   }
 
-  console.log('computeRowsHeight  time:', (typeof window !== 'undefined' ? window.performance.now() : 0) - time);
+  // console.log('computeRowsHeight  time:', (typeof window !== 'undefined' ? window.performance.now() : 0) - time, rowStart, rowEnd);
 }
 
 export function computeRowHeight(row: number, startCol: number, endCol: number, table: BaseTableAPI): number {
@@ -134,6 +140,10 @@ export function computeRowHeight(row: number, startCol: number, endCol: number, 
 function checkFixedStyleAndNoWrap(table: BaseTableAPI): boolean {
   const { layoutMap } = table.internalProps;
   const row = table.columnHeaderLevelCount;
+  //设置了全局自动换行的话 不能复用高度计算
+  if (table.internalProps.autoWrapText) {
+    return false;
+  }
   for (let col = 0; col < table.colCount; col++) {
     const isHeader = layoutMap.isHeader(col, row);
     const cellDefine = isHeader ? layoutMap.getHeader(col, row) : layoutMap.getBody(col, row);

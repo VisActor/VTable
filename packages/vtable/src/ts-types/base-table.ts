@@ -520,7 +520,10 @@ export interface BaseTableAPI {
 
   showTooltip: (col: number, row: number, tooltipOptions?: TooltipOptions) => void;
 
-  measureText: (text: string, font: { fontSize: number; fontFamily: string }) => ITextSize;
+  measureText: (
+    text: string,
+    font: { fontSize: number; fontWeight?: string | number; fontFamily: string }
+  ) => ITextSize;
   measureTextBounds: (attributes: IWrapTextGraphicAttribute) => ITextSize;
 
   _canResizeColumn: (col: number, row: number) => boolean;

@@ -38,7 +38,7 @@ export function updateAutoRow(
   if (direction === 'up') {
     for (let col = colStart; col <= colEnd; col++) {
       for (let row = rowStart; row <= rowEnd; row++) {
-        const cellGroup = table.scenegraph.getCell(col, row);
+        const cellGroup = table.scenegraph.highPerformanceGetCell(col, row);
         if (!cellGroup.row) {
           continue;
         }
@@ -55,7 +55,7 @@ export function updateAutoRow(
   } else {
     for (let col = colStart; col <= colEnd; col++) {
       for (let row = rowEnd; row >= rowStart; row--) {
-        const cellGroup = table.scenegraph.getCell(col, row);
+        const cellGroup = table.scenegraph.highPerformanceGetCell(col, row);
         if (!cellGroup.row) {
           continue;
         }

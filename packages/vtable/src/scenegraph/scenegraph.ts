@@ -778,9 +778,9 @@ export class Scenegraph {
 
   resize() {
     this.recalculateColWidths();
-    if (this.table.heightMode === 'autoHeight') {
-      this.recalculateRowHeights();
-    }
+
+    this.recalculateRowHeights();
+
     this.dealWidthMode();
     this.dealHeightMode();
     this.dealFrozen();
@@ -1535,9 +1535,8 @@ export class Scenegraph {
 
     // update column width and row height
     this.recalculateColWidths();
-    if (this.table.heightMode === 'autoHeight') {
-      this.recalculateRowHeights();
-    }
+
+    this.recalculateRowHeights();
 
     // check frozen status
     this.table.stateManeger.checkFrozen();

@@ -418,6 +418,14 @@ export const menus = [
       {
         path: 'business',
         name: 'roadmap'
+      },
+      {
+        path: 'business',
+        name: 'aeolusTestPerformance'
+      },
+      {
+        path: 'business',
+        name: 'aeolusTestPerformanceMoreColumn'
       }
     ]
   },
