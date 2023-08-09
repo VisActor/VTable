@@ -311,7 +311,8 @@ function computeTextHeight(col: number, row: number, table: BaseTableAPI): numbe
       fontSize,
       fontStyle,
       fontWeight,
-      fontFamily
+      fontFamily,
+      lineHeight
     });
     maxHeight = utilTextMark.AABBBounds.height();
   } else {

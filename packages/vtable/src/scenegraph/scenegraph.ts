@@ -820,11 +820,15 @@ export class Scenegraph {
    */
   updateContainerHeight(row: number, detaY: number) {
     // 更新table/header/border高度
-    if (row < this.frozenRowCount) {
+    if (row < this.table.frozenRowCount) {
       this.colHeaderGroup.setDeltaHeight(detaY);
       this.cornerHeaderGroup.setDeltaHeight(detaY);
       this.rowHeaderGroup.setDeltaY(detaY);
       this.bodyGroup.setDeltaY(detaY);
+    } else if (row >= this.table.rowCount - this.table.bottomFrozenRowCount) {
+      this.leftBottomCornerGroup.setDeltaHeight(detaY);
+      this.bottomFrozenGroup.setDeltaHeight(detaY);
+      this.rightBottomCornerGroup.setDeltaHeight(detaY);
     } else {
       this.rowHeaderGroup.setDeltaHeight(detaY);
       this.bodyGroup.setDeltaHeight(detaY);

@@ -127,17 +127,27 @@ function updateColunmWidth(
 
   if (needRerangeRow) {
     let newTotalHeight = 0;
+    let colGroup;
+    let oldContainerHeight;
+    let row;
     for (let col = 0; col < scene.table.colCount; col++) {
       // const colGroup = scene.getColGroup(col, true);
-      let colGroup;
       if (mode === 'col-corner') {
+        row = 0;
         colGroup = scene.getColGroup(col, true);
+        oldContainerHeight = scene.colHeaderGroup.attribute.height ?? 0;
       } else if (mode === 'row-body') {
+        row = scene.table.frozenRowCount;
         colGroup = scene.getColGroup(col, false);
+        oldContainerHeight = scene.bodyGroup.attribute.height ?? 0;
       } else if (mode === 'bottom') {
+        row = scene.table.rowCount - scene.table.bottomFrozenRowCount;
         colGroup = scene.getColGroupInBottom(col);
+        oldContainerHeight = scene.bottomFrozenGroup.attribute.height ?? 0;
       } else if (mode === 'left-bottom') {
+        row = scene.table.rowCount - scene.table.bottomFrozenRowCount;
         colGroup = scene.getColGroupInLeftBottomCorner(col);
+        oldContainerHeight = scene.leftBottomCornerGroup.attribute.height ?? 0;
       }
       let y = 0;
       colGroup.forEachChildren((cellGroup: Group) => {
@@ -150,7 +160,7 @@ function updateColunmWidth(
       });
       newTotalHeight = y;
     }
-    scene.updateContainerHeight(0, newTotalHeight - (scene.colHeaderGroup.attribute.height ?? 0));
+    scene.updateContainerHeight(row, newTotalHeight - oldContainerHeight);
   }
 }
 
