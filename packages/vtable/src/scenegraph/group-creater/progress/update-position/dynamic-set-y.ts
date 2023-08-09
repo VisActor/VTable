@@ -107,7 +107,7 @@ async function moveCell(
         direction
       );
 
-      const cellGroup = proxy.table.scenegraph.getCell(proxy.bodyLeftCol, screenTopRow, true);
+      const cellGroup = proxy.table.scenegraph.highPerformanceGetCell(proxy.bodyLeftCol, screenTopRow, true);
       // console.log('screenTopRow: ', screenTopRow);
       const delaY =
         screenTopY - (cellGroup.attribute.y + proxy.table.getFrozenRowsHeight() + proxy.table.scenegraph.proxy.deltaY);
