@@ -1196,11 +1196,12 @@ export function createTable() {
         }
       ]
     },
-    defaultHeaderRowHeight: 18,
+    defaultHeaderRowHeight: 50,
     indicatorTitle: ' ',
     corner: {
       titleOnDimension: 'row'
     },
+    axes: [{ orient: 'bottom', visible: true, title: { visible: true, text: 'aaa' } }],
     autoWrapText: true,
     theme: {
       bodyStyle: {
