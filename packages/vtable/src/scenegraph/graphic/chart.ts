@@ -65,6 +65,12 @@ export class Chart extends Group {
     //   this.deactivate();
     // });
   }
+
+  // onBeforeAttributeUpdate() {
+  //   if (arguments[2] === y) {
+  //     debugger;
+  //   }
+  // }
   /**
    * 激活该图表元素
    * @param table
