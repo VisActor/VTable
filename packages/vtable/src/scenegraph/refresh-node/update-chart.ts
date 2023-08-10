@@ -71,7 +71,7 @@ export function clearChartCacheImage(scenegraph: Scenegraph) {
       cellNode.children.forEach((node: Chart) => {
         if ((node as any).type === 'chart') {
           node.cacheCanvas = null;
-          node.addUpdateBoundTag();
+          // node.addUpdateBoundTag();
         }
       });
     });
@@ -95,7 +95,7 @@ export function updateChartData(scenegraph: Scenegraph) {
           const chartSpec = node.attribute.spec;
           chartSpec.axes = newAxes;
           node.setAttribute('spec', chartSpec);
-          node.addUpdateBoundTag();
+          // node.addUpdateBoundTag();
         }
       });
     });

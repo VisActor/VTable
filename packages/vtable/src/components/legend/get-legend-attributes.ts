@@ -55,7 +55,7 @@ const defaultLegendSpec = {
       }
     }
   },
-  allowAllCanceled: false,
+  allowAllCanceled: true,
   visible: true
 };
 

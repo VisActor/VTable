@@ -531,6 +531,7 @@ export class Dataset {
     this.collectedValues = {};
     this.processRecords();
     this.processCollectedValuesWithSumBy();
+    this.processCollectedValuesWithSortBy();
 
     if (this.dataConfig.isPivotChart) {
       // 处理PivotChart双轴图0值对齐
@@ -1010,8 +1011,8 @@ export class Dataset {
       this.collectedValues[indicator2 + '_align'] = {};
 
       for (const key in collectedValue1) {
-        const range1 = collectedValue1[key];
-        const range2 = collectedValue2[key];
+        const range1 = collectedValue1?.[key] ?? { min: 0, max: 1 };
+        const range2 = collectedValue2?.[key] ?? { min: 0, max: 1 };
 
         const newRanges = getNewRangeToAlign(
           range1 as { min: number; max: number },
