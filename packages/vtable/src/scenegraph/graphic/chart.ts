@@ -53,7 +53,8 @@ export class Chart extends Group {
         //   y2: params.height - params.cellPadding[2]
         // },
         interactive: false,
-        animation: false
+        animation: false,
+        autoFit: false
       });
       this.chartInstance.renderSync();
     } else {
@@ -106,6 +107,7 @@ export class Chart extends Group {
       },
       animation: false,
       interactive: true,
+      autoFit: false,
       beforeRender: (stage: any) => {
         const ctx = stage.window.getContext();
         ctx.inuse = true;
