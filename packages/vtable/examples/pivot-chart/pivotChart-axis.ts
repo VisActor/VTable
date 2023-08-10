@@ -226,6 +226,7 @@ export function createTable() {
         ],
         axes: [
           { orient: 'left', visible: true, label: { visible: true } },
+          { orient: 'right', visible: true, label: { visible: true }, title: { visible: true, text: 'aaaa' } },
           { orient: 'bottom', visible: true }
         ]
       },
@@ -9370,7 +9371,11 @@ export function createTable() {
     // }
     axes: [
       {
-        orient: 'bottom'
+        orient: 'bottom',
+        title: {
+          visible: true,
+          text: 'bbbbb'
+        }
         // visible: false
       },
       {
