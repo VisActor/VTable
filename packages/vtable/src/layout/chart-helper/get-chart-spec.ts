@@ -162,7 +162,7 @@ export function getChartAxes(col: number, row: number, layout: PivotLayoutMap): 
       layout.dataset.cacheCollectedValues[columnDimensionKey] || layout.dataset.collectedValues[columnDimensionKey];
     const recordCol = layout.getRecordIndexByCol(col);
     const colPath = layout.getColKeysPath()[recordCol];
-    const domain = (data?.[colPath[colPath.length - 1]] as Set<string>) ?? [];
+    const domain: string[] | Set<string> = (data?.[colPath[colPath.length - 1]] as Set<string>) ?? [];
 
     const axisOption = getAxisOption(col, row, 'bottom', layout);
     axes.push(
