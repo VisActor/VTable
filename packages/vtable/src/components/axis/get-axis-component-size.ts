@@ -19,6 +19,9 @@ export function computeAxisConpomentWidth(config: ICellAxisOption, table: BaseTa
     if (attribute.type === 'band') {
       const domain = attribute.domain;
       domain.forEach((text: string) => {
+        if (attribute.label.formatMethod) {
+          text = attribute.label.formatMethod(text);
+        }
         labelWidth = Math.max(
           labelWidth,
           table.measureText(text, {
@@ -36,6 +39,9 @@ export function computeAxisConpomentWidth(config: ICellAxisOption, table: BaseTa
       const maxString = formatDecimal(maxNumber);
       // 这里测量的是预估的最大最小range，与实际现实的label可能不同
       [minString, maxString].forEach(text => {
+        if (attribute.label.formatMethod) {
+          text = attribute.label.formatMethod(text);
+        }
         labelWidth = Math.max(
           labelWidth,
           table.measureText(text, {
@@ -51,7 +57,7 @@ export function computeAxisConpomentWidth(config: ICellAxisOption, table: BaseTa
   // title
   let titleWidth = 0;
   if (attribute.title.visible && attribute.title.text) {
-    if (attribute.title.autoRotate) {
+    if ((config.orient === 'left' || config.orient === 'right') && attribute.title.autoRotate) {
       titleWidth =
         table.measureText(attribute.title.text as string, {
           fontSize: attribute.title?.style?.fontSize,
