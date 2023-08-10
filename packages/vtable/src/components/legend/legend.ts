@@ -162,7 +162,7 @@ export class TableLegend {
     };
   }
   release() {
-    this.table.scenegraph.stage.defaultLayer.removeChild(this.legendComponent);
+    this.legendComponent && this.table.scenegraph.stage.defaultLayer.removeChild(this.legendComponent);
     this.legendComponent = null;
   }
 }

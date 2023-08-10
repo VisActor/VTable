@@ -441,5 +441,14 @@ export const menus = [
         name: 'unitTestPivotChart'
       }
     ]
+  },
+  {
+    menu: 'fs',
+    children: [
+      {
+        path: 'fs',
+        name: 'update-option'
+      }
+    ]
   }
 ];
