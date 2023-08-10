@@ -37,6 +37,10 @@ export const menus = [
       {
         path: 'list',
         name: 'list-height-adaptive'
+      },
+      {
+        path: 'list',
+        name: 'list-100w'
       }
     ]
   },
