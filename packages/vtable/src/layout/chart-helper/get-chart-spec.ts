@@ -6,6 +6,8 @@ import type { PivotHeaderLayoutMap } from '../pivot-header-layout';
 import type { SimpleHeaderLayoutMap } from '../simple-header-layout';
 import { checkZeroAlign, getAxisOption } from './get-axis-config';
 
+const NO_AXISID_FRO_VTABLE = 'NO_AXISID_FRO_VTABLE';
+
 export function getRawChartSpec(col: number, row: number, layout: PivotLayoutMap | PivotHeaderLayoutMap): any {
   const paths = layout.getCellHeaderPaths(col, row);
   let indicatorObj;
@@ -70,7 +72,9 @@ export function getChartAxes(col: number, row: number, layout: PivotLayoutMap): 
             label: { visible: false },
             title: { visible: false },
             seriesIndex: index,
-            height: -1
+            height: -1,
+
+            sync: { axisId: NO_AXISID_FRO_VTABLE } // hack for fs
           }
         )
       );
@@ -143,8 +147,10 @@ export function getChartAxes(col: number, row: number, layout: PivotLayoutMap): 
             label: { visible: false },
             title: { visible: false },
             seriesIndex: index,
-            width: -1
+            width: -1,
             // grid: index === 0 ? undefined : { visible: false }
+
+            sync: { axisId: NO_AXISID_FRO_VTABLE } // hack for fs
           }
         )
       );
