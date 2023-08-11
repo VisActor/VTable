@@ -148,8 +148,12 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
 
   headerStyleCache: any;
   bodyStyleCache: any;
-  constructor(options: BaseTableConstructorOptions = {}) {
+  container: HTMLElement;
+  constructor(container: HTMLElement, options: BaseTableConstructorOptions = {}) {
     super();
+    if (!container) {
+      throw new Error("vtable's container is undefined");
+    }
     const {
       // rowCount = 0,
       // colCount = 0,
@@ -163,7 +167,6 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
       heightMode = 'standard',
       autoFillWidth = false,
       keyboardOptions,
-      parentElement,
       // disableRowHeaderColumnResize,
       columnResizeMode,
       dragHeaderMode,
@@ -178,7 +181,9 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
       customRender,
       pixelRatio = defaultPixelRatio
     } = options;
+    this.container = container;
     this.options = options;
+    this.options.container = container;
     this._widthMode = widthMode;
     this._heightMode = heightMode;
     this._autoFillWidth = autoFillWidth;
@@ -260,10 +265,10 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
 
     // internalProps.element.appendChild(internalProps.scrollable.getElement());
 
-    if (parentElement) {
+    if (container) {
       //先清空
-      parentElement.innerHTML = '';
-      parentElement.appendChild(internalProps.element);
+      container.innerHTML = '';
+      container.appendChild(internalProps.element);
       this._updateSize();
     } else {
       this._updateSize();
@@ -335,11 +340,11 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
   /** 节流绘制 */
   throttleInvalidate = throttle2(this.render.bind(this), 200);
   /**
-   * Get parent element.
-   * @returns {HTMLElement} parent element container
+   * Get table container.
+   * @returns {HTMLElement} table container
    */
-  getParentElement(): HTMLElement {
-    return this.options.parentElement;
+  getContainer(): HTMLElement {
+    return this.container;
   }
   /**
    * 获取表格创建的DOM根节点

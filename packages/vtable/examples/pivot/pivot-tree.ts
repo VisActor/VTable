@@ -8,7 +8,7 @@ export function createTable() {
     .then(res => res.json())
     .then(data => {
       const option: VTable.PivotTableConstructorOptions = {
-        parentElement: document.getElementById(Table_CONTAINER_DOM_ID),
+        container: document.getElementById(Table_CONTAINER_DOM_ID),
         records: data,
         menu: {
           contextMenuItems: ['复制单元格内容', '查询详情']

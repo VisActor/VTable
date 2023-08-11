@@ -9219,7 +9219,7 @@ function createTable(containerDom) {
     columns,
     indicators,
     indicatorsAsCol: false,
-    parentElement: containerDom,
+    container: containerDom,
     records,
     defaultRowHeight: 200,
     defaultHeaderRowHeight: 50,

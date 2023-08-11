@@ -26,7 +26,6 @@ link: '/guide/theme_and_style/style'
     .then((data) => {
 
 const option = {
-        parentElement: document.getElementById(CONTAINER_ID),
         records: data,
         "rowTree": [{
             "dimensionKey": "City",
@@ -471,7 +470,7 @@ const option = {
         },
         widthMode: 'standard'
       };
-const tableInstance = new VTable.PivotTable(option);
+const tableInstance = new VTable.PivotTable(document.getElementById(CONTAINER_ID),option);
 window['tableInstance'] = tableInstance;
     })
 ```

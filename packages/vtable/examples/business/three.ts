@@ -10860,7 +10860,7 @@ export function createTable() {
       enableRowHighlight: false,
       enableSingalCellHighlight: true
     },
-    parentElement: document.getElementById(Table_CONTAINER_DOM_ID)
+    container: document.getElementById(Table_CONTAINER_DOM_ID)
   };
   const instance = new VTable.PivotTable(options);
 

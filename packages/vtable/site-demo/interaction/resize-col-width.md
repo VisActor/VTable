@@ -30,7 +30,6 @@ link: '/guide/interaction_and_event/resize_column_width'
     .then((data) => {
 
 const option = {
-  parentElement: document.getElementById(CONTAINER_ID),
   columnResizeMode:'header',
   records:data,
   "rowTree": [
@@ -370,7 +369,7 @@ const option = {
     //columnResizeType:'all',
   widthMode:'standard'
 };
-const tableInstance = new VTable.PivotTable(option);
+const tableInstance = new VTable.PivotTable(document.getElementById(CONTAINER_ID),option);
 window['tableInstance'] = tableInstance;
     })
 ```

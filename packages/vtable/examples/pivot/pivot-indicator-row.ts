@@ -7,7 +7,7 @@ export function createTable() {
     .then(res => res.json())
     .then(data => {
       const option: VTable.PivotTableConstructorOptions = {
-        parentElement: document.getElementById(Table_CONTAINER_DOM_ID),
+        container: document.getElementById(Table_CONTAINER_DOM_ID),
         records: data,
         indicatorTitle: '指标名称',
         menu: {

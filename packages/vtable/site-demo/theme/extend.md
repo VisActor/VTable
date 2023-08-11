@@ -24,7 +24,6 @@ link: '/guide/theme_and_style/theme'
     .then((data) => {
 
 const option = {
-  parentElement: document.getElementById(CONTAINER_ID),
   records:data,
   "rowTree": [
         {
@@ -182,7 +181,7 @@ const option = {
       }
     })
 };
-const tableInstance = new VTable.PivotTable(option);
+const tableInstance = new VTable.PivotTable(document.getElementById(CONTAINER_ID),option);
 window['tableInstance'] = tableInstance;
     })
 ```
