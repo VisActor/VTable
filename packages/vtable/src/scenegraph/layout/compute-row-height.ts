@@ -11,6 +11,8 @@ import { getQuadProps } from '../utils/padding';
 import { getCellRect } from './compute-col-width';
 import { dealWithRichTextIcon } from '../utils/text-icon-layout';
 import type { PivotLayoutMap } from '../../layout/pivot-layout';
+import { getAxisConfigInPivotChart } from '../../layout/chart-helper/get-axis-config';
+import { computeAxisConpomentHeight } from '../../components/axis/get-axis-component-size';
 
 const utilTextMark = new WrapText({
   autoWrapText: true
@@ -104,7 +106,11 @@ export function computeRowsHeight(table: BaseTableAPI, rowStart?: number, rowEnd
 export function computeRowHeight(row: number, startCol: number, endCol: number, table: BaseTableAPI): number {
   let maxHeight = 0;
   // 如果是透视图
-  if (table.isPivotChart() && row >= table.columnHeaderLevelCount) {
+  if (
+    table.isPivotChart() &&
+    row >= table.columnHeaderLevelCount &&
+    row < table.rowCount - table.bottomFrozenRowCount
+  ) {
     if ((table.internalProps.layoutMap as PivotLayoutMap).indicatorsAsCol) {
       //并且指标是以列展示 计算行高需要根据y轴的值域范围
       const optimunHeight = (table.internalProps.layoutMap as PivotLayoutMap).getOptimunHeightForChart(row);
@@ -122,6 +128,19 @@ export function computeRowHeight(row: number, startCol: number, endCol: number, 
     if (typeof customHeight === 'number') {
       maxHeight = Math.max(customHeight, maxHeight);
       continue;
+    }
+
+    // Axis component height calculation
+    if (table.isPivotChart()) {
+      const layout = table.internalProps.layoutMap as PivotLayoutMap;
+      const axisConfig = getAxisConfigInPivotChart(col, row, layout);
+      if (axisConfig) {
+        const axisWidth = computeAxisConpomentHeight(axisConfig, table);
+        if (typeof axisWidth === 'number') {
+          maxHeight = Math.max(axisWidth, maxHeight);
+          continue;
+        }
+      }
     }
 
     // text height calculation
@@ -311,7 +330,8 @@ function computeTextHeight(col: number, row: number, table: BaseTableAPI): numbe
       fontSize,
       fontStyle,
       fontWeight,
-      fontFamily
+      fontFamily,
+      lineHeight
     });
     maxHeight = utilTextMark.AABBBounds.height();
   } else {
