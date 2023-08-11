@@ -1278,7 +1278,7 @@ export function createTable() {
     },
     legends: {
       id: 'legend',
-      orient: 'bottom',
+      orient: 'top',
       position: 'middle',
       layoutType: 'normal',
       visible: true,
@@ -1351,7 +1351,7 @@ export function createTable() {
       padding: [16, 0, 0, 0]
     },
     title: {
-      text: '',
+      text: 'title',
       align: 'center',
       orient: 'top',
       textStyle: {

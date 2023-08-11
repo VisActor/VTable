@@ -12,7 +12,7 @@ import { getCellRect } from './compute-col-width';
 import { dealWithRichTextIcon } from '../utils/text-icon-layout';
 import type { PivotLayoutMap } from '../../layout/pivot-layout';
 import { getAxisConfigInPivotChart } from '../../layout/chart-helper/get-axis-config';
-import { computeAxisConpomentHeight } from '../../components/axis/get-axis-component-size';
+import { computeAxisComponentHeight } from '../../components/axis/get-axis-component-size';
 
 const utilTextMark = new WrapText({
   autoWrapText: true
@@ -135,7 +135,7 @@ export function computeRowHeight(row: number, startCol: number, endCol: number, 
       const layout = table.internalProps.layoutMap as PivotLayoutMap;
       const axisConfig = getAxisConfigInPivotChart(col, row, layout);
       if (axisConfig) {
-        const axisWidth = computeAxisConpomentHeight(axisConfig, table);
+        const axisWidth = computeAxisComponentHeight(axisConfig, table);
         if (typeof axisWidth === 'number') {
           maxHeight = Math.max(axisWidth, maxHeight);
           continue;

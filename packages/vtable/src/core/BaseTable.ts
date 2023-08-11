@@ -359,6 +359,9 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     if (this.internalProps.legends) {
       this.internalProps.legends.resize();
     }
+    if (this.internalProps.title) {
+      this.internalProps.title.resize();
+    }
     this.scenegraph.resize();
   }
 

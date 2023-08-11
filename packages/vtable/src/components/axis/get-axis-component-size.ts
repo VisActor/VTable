@@ -8,7 +8,7 @@ import { commonAxis } from './get-axis-attributes';
  * @param {ICellAxisOption} config
  * @return {*}
  */
-export function computeAxisConpomentWidth(config: ICellAxisOption, table: BaseTableAPI) {
+export function computeAxisComponentWidth(config: ICellAxisOption, table: BaseTableAPI) {
   const attribute = merge({}, commonAxis, config);
   // tick
   const tickWidth = attribute.tick.width ?? 4;
@@ -81,7 +81,7 @@ export function computeAxisConpomentWidth(config: ICellAxisOption, table: BaseTa
  * @param {ICellAxisOption} config
  * @return {*}
  */
-export function computeAxisConpomentHeight(config: ICellAxisOption, table: BaseTableAPI) {
+export function computeAxisComponentHeight(config: ICellAxisOption, table: BaseTableAPI) {
   const attribute = merge({}, commonAxis, config);
   // tick
   const tickHeight = attribute.tick.width ?? 4;
