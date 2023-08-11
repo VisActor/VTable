@@ -9,7 +9,7 @@ import { getProp } from '../utils/get-prop';
 import type { BaseTableAPI } from '../../ts-types/base-table';
 import type { PivotLayoutMap } from '../../layout/pivot-layout';
 import { getAxisConfigInPivotChart } from '../../layout/chart-helper/get-axis-config';
-import { computeAxisConpomentWidth } from '../../components/axis/get-axis-component-size';
+import { computeAxisComponentWidth } from '../../components/axis/get-axis-component-size';
 
 export function computeColsWidth(table: BaseTableAPI, colStart?: number, colEnd?: number, update?: boolean): void {
   colStart = colStart ?? 0;
@@ -241,7 +241,7 @@ function computeAutoColWidth(
       const layout = table.internalProps.layoutMap as PivotLayoutMap;
       const axisConfig = getAxisConfigInPivotChart(col, row, layout);
       if (axisConfig) {
-        const axisWidth = computeAxisConpomentWidth(axisConfig, table);
+        const axisWidth = computeAxisComponentWidth(axisConfig, table);
         if (typeof axisWidth === 'number') {
           maxWidth = Math.max(axisWidth, maxWidth);
           continue;

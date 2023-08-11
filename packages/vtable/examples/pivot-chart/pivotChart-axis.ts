@@ -225,7 +225,17 @@ export function createTable() {
           }
         ],
         axes: [
-          { orient: 'left', visible: true, label: { visible: true } },
+          {
+            orient: 'left',
+            visible: true,
+            label: {
+              visible: true,
+              formatMethod(text, datum) {
+                return text + 'aaaaaaaaa';
+              }
+            }
+          },
+          { orient: 'right', visible: true, label: { visible: true }, title: { visible: true, text: 'aaaa' } },
           { orient: 'bottom', visible: true }
         ]
       },
@@ -9279,7 +9289,7 @@ export function createTable() {
     defaultRowHeight: 200,
     defaultHeaderRowHeight: 50,
     defaultColWidth: 280,
-    defaultHeaderColWidth: 100,
+    defaultHeaderColWidth: [100, 'auto'],
     indicatorTitle: '指标',
     corner: {
       titleOnDimension: 'row',
@@ -9370,7 +9380,11 @@ export function createTable() {
     // }
     axes: [
       {
-        orient: 'bottom'
+        orient: 'bottom',
+        title: {
+          visible: true,
+          text: 'bbbbb'
+        }
         // visible: false
       },
       {

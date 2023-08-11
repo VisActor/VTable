@@ -268,6 +268,12 @@ export class Scenegraph {
     this.cornerHeaderGroup.clear();
     this.bodyGroup.clear();
 
+    this.bottomFrozenGroup.clear();
+    this.rightFrozenGroup.clear();
+    this.rightTopCellGroup.clear();
+    this.rightBottomCellGroup.clear();
+    this.leftBottomCellGroup.clear();
+
     this.colHeaderGroup.setAttributes({
       x: 0,
       y: 0,

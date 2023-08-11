@@ -11,6 +11,8 @@ import { getQuadProps } from '../utils/padding';
 import { getCellRect } from './compute-col-width';
 import { dealWithRichTextIcon } from '../utils/text-icon-layout';
 import type { PivotLayoutMap } from '../../layout/pivot-layout';
+import { getAxisConfigInPivotChart } from '../../layout/chart-helper/get-axis-config';
+import { computeAxisComponentHeight } from '../../components/axis/get-axis-component-size';
 
 const utilTextMark = new WrapText({
   autoWrapText: true
@@ -126,6 +128,19 @@ export function computeRowHeight(row: number, startCol: number, endCol: number, 
     if (typeof customHeight === 'number') {
       maxHeight = Math.max(customHeight, maxHeight);
       continue;
+    }
+
+    // Axis component height calculation
+    if (table.isPivotChart()) {
+      const layout = table.internalProps.layoutMap as PivotLayoutMap;
+      const axisConfig = getAxisConfigInPivotChart(col, row, layout);
+      if (axisConfig) {
+        const axisWidth = computeAxisComponentHeight(axisConfig, table);
+        if (typeof axisWidth === 'number') {
+          maxHeight = Math.max(axisWidth, maxHeight);
+          continue;
+        }
+      }
     }
 
     // text height calculation
@@ -315,7 +330,8 @@ function computeTextHeight(col: number, row: number, table: BaseTableAPI): numbe
       fontSize,
       fontStyle,
       fontWeight,
-      fontFamily
+      fontFamily,
+      lineHeight
     });
     maxHeight = utilTextMark.AABBBounds.height();
   } else {
