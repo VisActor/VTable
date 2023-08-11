@@ -15,7 +15,7 @@ function generateLineData1(count) {
 
 export function createTable() {
   const option: VTable.PivotTableConstructorOptions = {
-    parentElement: document.getElementById(Table_CONTAINER_DOM_ID),
+    container: document.getElementById(Table_CONTAINER_DOM_ID),
     theme: {
       headerStyle: {
         frameStyle: {

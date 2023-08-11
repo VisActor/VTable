@@ -31,7 +31,6 @@ function getColor(min, max, n) {
   return `rgb(${red},${green},255)`;
 }
 const option = {
-  parentElement: document.getElementById(CONTAINER_ID),
   columnResizeType: 'all',
   records: [
     {
@@ -234,7 +233,7 @@ const option = {
   },
 };
 
-const tableInstance = new VTable.PivotTable(option);
+const tableInstance = new VTable.PivotTable(document.getElementById(CONTAINER_ID),option);
 window['tableInstance'] = tableInstance;
 ```
 

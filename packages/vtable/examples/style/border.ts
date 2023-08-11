@@ -272,7 +272,7 @@ export function createTable() {
   ];
 
   const option: VTable.TYPES.ListTableConstructorOptions = {
-    parentElement: document.getElementById(Table_CONTAINER_DOM_ID),
+    container: document.getElementById(Table_CONTAINER_DOM_ID),
     header, //关联表头定义
     frozenColCount: 0, //冻结列
     allowFrozenColCount: 5, //最多允许冻结的列数，设置5列显示冻结图标

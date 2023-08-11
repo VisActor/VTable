@@ -214,7 +214,7 @@
 //     },
 //     indicatorTitle: '指标名称',
 //     // indicatorsAsCol: false,
-//     parentElement: document.getElementById(Table_CONTAINER_DOM_ID),
+//     container: document.getElementById(Table_CONTAINER_DOM_ID),
 //     records: [
 //       {
 //         '行 ID': '1',

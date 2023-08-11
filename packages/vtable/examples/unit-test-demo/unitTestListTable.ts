@@ -928,7 +928,7 @@ export function createTable() {
   ];
   //初始化表格
   const tableInstance = new ListTable({
-    parentElement: document.getElementById(Table_CONTAINER_DOM_ID),
+    container: document.getElementById(Table_CONTAINER_DOM_ID),
     columns,
     records,
     defaultColWidth: 150,

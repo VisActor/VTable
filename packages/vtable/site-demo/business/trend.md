@@ -619,10 +619,9 @@ const option = {
       },
     },
     defaultColWidth: 200,
-    parentElement: document.getElementById(CONTAINER_ID),
     columnResizeType: 'indicatorGroup',
   };
-const tableInstance = new VTable.PivotTable(option);
+const tableInstance = new VTable.PivotTable(document.getElementById(CONTAINER_ID),option);
 window['tableInstance'] = tableInstance;
 ```
 

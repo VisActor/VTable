@@ -132,11 +132,12 @@ order: 9-6
     }
   ];
   const option = {
-    parentElement:document.getElementById(CONTAINER_ID),
+    container:document.getElementById(CONTAINER_ID),
     columns: [
       {
         field: 'month',
         caption: '',
+        // width: 'auto',
         style: {
           textAlign: 'center',
           color: 'white',
@@ -217,7 +218,6 @@ order: 9-6
             },
             headerIcon: ['milestone'],
             caption: 'BASIC\nFUNCTION',
-            width: 'auto',
             style: {
               borderLineWidth: 2,
               borderColor: ''
@@ -263,7 +263,6 @@ order: 9-6
             },
 
             caption: '',
-            width: 'auto',
             style: {
               borderLineWidth: 2,
               borderColor: ''
@@ -276,11 +275,9 @@ order: 9-6
           }
         ]
       },
-
       {
         field: '',
         caption: ' ',
-        width: 100,
         style: {
           borderLineWidth: 0
         }
@@ -331,7 +328,7 @@ order: 9-6
       {
         field: '',
         caption: ' ',
-        width: 100,
+       
         style: {
           borderLineWidth: 0
         }
@@ -382,7 +379,6 @@ order: 9-6
       {
         field: '',
         caption: ' ',
-        width: 100,
         style: {
           borderLineWidth: 0
         }
@@ -453,7 +449,7 @@ order: 9-6
     columnResizeMode: 'none'
   };
 
-  const tableInstance = new VTable.ListTable(option);
+  const tableInstance = new VTable.ListTable(document.getElementById(CONTAINER_ID),option);
 window['tableInstance'] = tableInstance;
 ```
 
