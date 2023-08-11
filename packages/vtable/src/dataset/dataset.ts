@@ -1010,7 +1010,8 @@ export class Dataset {
       this.collectedValues[indicator1 + '_align'] = {};
       this.collectedValues[indicator2 + '_align'] = {};
 
-      for (const key in collectedValue1) {
+      const toAlignCollectedValue = collectedValue1 || collectedValue2;
+      for (const key in toAlignCollectedValue) {
         const range1 = collectedValue1?.[key] ?? { min: 0, max: 1 };
         const range2 = collectedValue2?.[key] ?? { min: 0, max: 1 };
 

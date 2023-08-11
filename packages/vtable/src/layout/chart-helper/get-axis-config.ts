@@ -69,9 +69,9 @@ export function getAxisConfigInPivotChart(col: number, row: number, layout: Pivo
         ? layout.dataset.collectedValues[defaultKey + (isZeroAlign ? '_align' : '')]
         : layout.dataset.collectedValues[defaultKey];
       const index = layout.getRecordIndexByCol(col);
-      const range = data
-        ? data[layout.getColKeysPath()[index][Math.max(0, layout.columnHeaderLevelCount - 1 - layout.topAxesCount)]]
-        : { min: 0, max: 1 };
+      const range = data?.[
+        layout.getColKeysPath()[index][Math.max(0, layout.columnHeaderLevelCount - 1 - layout.topAxesCount)]
+      ] ?? { min: 0, max: 1 };
       let indicatorInfo = null;
       indicatorKeys.forEach(key => {
         const info = layout.getIndicatorInfo(key);
@@ -152,9 +152,9 @@ export function getAxisConfigInPivotChart(col: number, row: number, layout: Pivo
         ? layout.dataset.collectedValues[defaultKey + (isZeroAlign ? '_align' : '')]
         : layout.dataset.collectedValues[defaultKey];
       const index = layout.getRecordIndexByRow(row);
-      const range = data
-        ? data[layout.getRowKeysPath()[index][Math.max(0, layout.rowHeaderLevelCount - 1 - layout.leftAxesCount)]]
-        : { min: 0, max: 1 };
+      const range = data?.[
+        layout.getRowKeysPath()[index][Math.max(0, layout.rowHeaderLevelCount - 1 - layout.leftAxesCount)]
+      ] ?? { min: 0, max: 1 };
       let indicatorInfo = null;
       indicatorKeys.forEach(key => {
         const info = layout.getIndicatorInfo(key);
@@ -207,9 +207,9 @@ export function getAxisConfigInPivotChart(col: number, row: number, layout: Pivo
         ? layout.dataset.collectedValues[defaultKey + (isZeroAlign ? '_align' : '')]
         : layout.dataset.collectedValues[defaultKey];
       const index = layout.getRecordIndexByRow(row);
-      const range = data
-        ? data[layout.getRowKeysPath()[index][Math.max(0, layout.rowHeaderLevelCount - 1 - layout.leftAxesCount)]]
-        : { min: 0, max: 1 };
+      const range = data?.[
+        layout.getRowKeysPath()[index][Math.max(0, layout.rowHeaderLevelCount - 1 - layout.leftAxesCount)]
+      ] ?? { min: 0, max: 1 };
 
       const axisOption = getAxisOption(col, row, 'right', layout);
       if (axisOption?.visible === false) {
