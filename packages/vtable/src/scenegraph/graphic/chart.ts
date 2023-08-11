@@ -53,7 +53,8 @@ export class Chart extends Group {
         //   y2: params.height - params.cellPadding[2]
         // },
         interactive: false,
-        animation: false
+        animation: false,
+        autoFit: false
       });
       this.chartInstance.renderSync();
     } else {
@@ -65,6 +66,12 @@ export class Chart extends Group {
     //   this.deactivate();
     // });
   }
+
+  // onBeforeAttributeUpdate() {
+  //   if (arguments[2] === y) {
+  //     debugger;
+  //   }
+  // }
   /**
    * 激活该图表元素
    * @param table
@@ -100,6 +107,7 @@ export class Chart extends Group {
       },
       animation: false,
       interactive: true,
+      autoFit: false,
       beforeRender: (stage: any) => {
         const ctx = stage.window.getContext();
         ctx.inuse = true;

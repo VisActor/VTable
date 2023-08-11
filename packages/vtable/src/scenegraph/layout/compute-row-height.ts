@@ -104,7 +104,11 @@ export function computeRowsHeight(table: BaseTableAPI, rowStart?: number, rowEnd
 export function computeRowHeight(row: number, startCol: number, endCol: number, table: BaseTableAPI): number {
   let maxHeight = 0;
   // 如果是透视图
-  if (table.isPivotChart() && row >= table.columnHeaderLevelCount) {
+  if (
+    table.isPivotChart() &&
+    row >= table.columnHeaderLevelCount &&
+    row < table.rowCount - table.bottomFrozenRowCount
+  ) {
     if ((table.internalProps.layoutMap as PivotLayoutMap).indicatorsAsCol) {
       //并且指标是以列展示 计算行高需要根据y轴的值域范围
       const optimunHeight = (table.internalProps.layoutMap as PivotLayoutMap).getOptimunHeightForChart(row);

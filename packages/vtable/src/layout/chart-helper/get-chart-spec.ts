@@ -48,9 +48,9 @@ export function getChartAxes(col: number, row: number, layout: PivotLayoutMap): 
       const data = layout.dataset.collectedValues[key + (isZeroAlign ? '_align' : '')]
         ? layout.dataset.collectedValues[key + (isZeroAlign ? '_align' : '')]
         : layout.dataset.collectedValues[key];
-      const range = data[
+      const range = (data?.[
         layout.getColKeysPath()[colIndex][Math.max(0, layout.columnHeaderLevelCount - 1 - layout.topAxesCount)]
-      ] as { max?: number; min?: number };
+      ] as { max?: number; min?: number }) ?? { min: 0, max: 1 };
 
       const axisOption = getAxisOption(col, row, index === 0 ? 'bottom' : 'top', layout);
       if (axisOption?.zero) {
@@ -121,9 +121,9 @@ export function getChartAxes(col: number, row: number, layout: PivotLayoutMap): 
       const data = layout.dataset.collectedValues[key + (isZeroAlign ? '_align' : '')]
         ? layout.dataset.collectedValues[key + (isZeroAlign ? '_align' : '')]
         : layout.dataset.collectedValues[key];
-      const range = data[
+      const range = (data?.[
         layout.getRowKeysPath()[rowIndex][Math.max(0, layout.rowHeaderLevelCount - 1 - layout.leftAxesCount)]
-      ] as { max?: number; min?: number };
+      ] as { max?: number; min?: number }) ?? { min: 0, max: 1 };
 
       const axisOption = getAxisOption(col, row, index === 0 ? 'left' : 'right', layout);
       if (axisOption?.zero) {
@@ -158,7 +158,7 @@ export function getChartAxes(col: number, row: number, layout: PivotLayoutMap): 
       layout.dataset.cacheCollectedValues[columnDimensionKey] || layout.dataset.collectedValues[columnDimensionKey];
     const recordCol = layout.getRecordIndexByCol(col);
     const colPath = layout.getColKeysPath()[recordCol];
-    const domain = data[colPath[colPath.length - 1]] as Set<string>;
+    const domain: string[] | Set<string> = (data?.[colPath[colPath.length - 1]] as Set<string>) ?? [];
 
     const axisOption = getAxisOption(col, row, 'bottom', layout);
     axes.push(
