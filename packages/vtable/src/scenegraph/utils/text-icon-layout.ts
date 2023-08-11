@@ -605,7 +605,7 @@ export function updateCellContentHeight(
 
   // 更新y方向位置
   cellGroup.forEachChildren((child: any) => {
-    if (child.type === 'rect') {
+    if (child.type === 'rect' || child.type === 'chart') {
       // do nothing
     } else if (child.name === 'mark') {
       child.setAttribute('y', 0);

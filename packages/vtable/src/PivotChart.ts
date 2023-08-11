@@ -901,12 +901,15 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
         }
       });
 
-      chartInstance.updateViewBox({
-        x1: viewBox.x1 - (chartNode.getRootNode() as any).table.scrollLeft,
-        x2: viewBox.x2 - (chartNode.getRootNode() as any).table.scrollLeft,
-        y1: viewBox.y1 - (chartNode.getRootNode() as any).table.scrollTop,
-        y2: viewBox.y2 - (chartNode.getRootNode() as any).table.scrollTop
-      });
+      chartInstance.updateViewBox(
+        {
+          x1: viewBox.x1 - (chartNode.getRootNode() as any).table.scrollLeft,
+          x2: viewBox.x2 - (chartNode.getRootNode() as any).table.scrollLeft,
+          y1: viewBox.y1 - (chartNode.getRootNode() as any).table.scrollTop,
+          y2: viewBox.y2 - (chartNode.getRootNode() as any).table.scrollTop
+        },
+        false
+      );
       chartInstance.updateDataSync(dataId, data);
       position = chartInstance.convertDatumToPosition(datum);
       this.render();

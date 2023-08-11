@@ -47,15 +47,15 @@
     "ci": "ts-node --transpileOnly --skipProject ./scripts/trigger-test.ts"
   },
   "dependencies": {
-    "@visactor/vrender": "~0.13.0",
-    "@visactor/vrender-components": "~0.13.0",
+    "@visactor/vrender": "0.13.10",
+    "@visactor/vrender-components": "0.13.11",
     "@visactor/vutils": "~0.13.3",
     "@visactor/vscale": "~0.13.3",
     "@visactor/vdataset": "~0.13.3",
     "cssfontparser": "^1.2.1"
   },
   "devDependencies": {
-    "@visactor/vchart": "1.1.0-beta.10",
+    "@visactor/vchart": "1.2.0",
     "@internal/bundler": "workspace:*",
     "@internal/eslint-config": "workspace:*",
     "@internal/ts-config": "workspace:*",
