@@ -73,6 +73,7 @@ export class CartesianAxis {
       this.updateScaleRange();
     }
   }
+
   initData() {
     registerDataSetInstanceParser(this.table.dataSet, 'scale', scaleParser);
     registerDataSetInstanceTransform(this.table.dataSet, 'ticks', ticks);
@@ -123,6 +124,20 @@ export class CartesianAxis {
     attrs.verticalFactor = this.orient === 'top' || this.orient === 'right' ? -1 : 1;
     this.component = new LineAxis(merge({}, axisStylrAttrs, attrs));
     this.component.setAttributes(this.setLayoutStartPosition({ x: 0, y: 0 }));
+    (this.component as any).originAxis = this;
+  }
+
+  resize(width: number, height: number) {
+    this.width = width;
+    this.height = height;
+    this.updateScaleRange();
+    this.computeData();
+    const axisStylrAttrs = getAxisAttributes(this.option);
+    const attrs = this.getUpdateAttribute();
+    attrs.verticalFactor = this.orient === 'top' || this.orient === 'right' ? -1 : 1;
+    this.component.setAttributes(merge({}, axisStylrAttrs, attrs));
+    this.component.setAttributes(this.setLayoutStartPosition({ x: 0, y: 0 }));
+    this.overlap();
   }
 
   overlap() {
