@@ -40,7 +40,7 @@ export function updateRowHeight(scene: Scenegraph, row: number, detaY: number) {
   } else {
     rowStart = row + 1;
     // rowEnd = scene.table.rowCount - 1;
-    rowEnd = scene.bodyRowEnd;
+    rowEnd = scene.bodyRowEnd - scene.table.bottomFrozenRowCount;
   }
 
   // 更新以下行位置

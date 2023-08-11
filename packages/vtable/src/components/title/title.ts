@@ -30,7 +30,39 @@ export class Title {
       // title.on('*', (event: any, type: string) => this._delegateEvent(title as unknown as INode, event, type));
     }
     // update table size
+    this._adjustTableSize(this._titleComponent.attribute);
+    return this._titleComponent;
+  }
 
+  resize() {
+    if (!this._titleComponent) {
+      return;
+    }
+    const padding = getQuadProps(this._titleOption.padding ?? 10);
+    const realWidth = this._titleOption.width ?? this.table.tableNoFrameWidth - padding[1] - padding[3];
+    this._titleComponent.setAttributes({
+      x:
+        this._titleOption.x ?? this._titleOption.orient === 'right'
+          ? this.table.tableX + this.table.tableNoFrameWidth
+          : this.table.tableX,
+      y:
+        this._titleOption.y ?? this._titleOption.orient === 'bottom'
+          ? this.table.tableY + this.table.tableNoFrameHeight
+          : this.table.tableY,
+      width: realWidth,
+      textStyle: {
+        width: realWidth,
+        ...this._titleOption.textStyle
+      },
+      subtextStyle: {
+        width: realWidth,
+        ...this._titleOption.subtextStyle
+      }
+    });
+    this._adjustTableSize(this._titleComponent.attribute);
+  }
+
+  _adjustTableSize(attrs: TitleAttrs) {
     // 调整位置
     let width = isFinite(this._titleComponent.AABBBounds.width()) ? this._titleComponent.AABBBounds.width() : 0;
     const height = isFinite(this._titleComponent.AABBBounds.height()) ? this._titleComponent.AABBBounds.height() : 0;
@@ -81,7 +113,6 @@ export class Title {
             : this.table.tableY
       });
     }
-    return this._titleComponent;
   }
 
   release(): void {

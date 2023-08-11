@@ -158,6 +158,9 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
     this.setCustomStateNameToSpec();
     // 更新protectedSpace
     internalProps.dataConfig = {};
+
+    this._axes = isArray(options.axes) ? options.axes : [];
+
     //TODO 这里需要加上判断 dataConfig是否有配置变化
     if (options.rows || options.columns) {
       const rowKeys = options.rows.reduce((keys, rowObj) => {

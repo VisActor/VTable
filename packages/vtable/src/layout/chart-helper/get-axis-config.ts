@@ -89,8 +89,8 @@ export function getAxisConfigInPivotChart(col: number, row: number, layout: Pivo
         {
           title: {
             visible: true,
-            text: (indicatorInfo as any)?.caption,
-            autoRotate: true
+            text: (indicatorInfo as any)?.caption
+            // autoRotate: true
           },
           range: range
         },
@@ -125,7 +125,10 @@ export function getAxisConfigInPivotChart(col: number, row: number, layout: Pivo
       // 左侧维度轴
       return merge(
         {
-          domain: Array.from(domain).reverse()
+          domain: Array.from(domain).reverse(),
+          title: {
+            autoRotate: true
+          }
         },
         axisOption,
         {
@@ -218,7 +221,10 @@ export function getAxisConfigInPivotChart(col: number, row: number, layout: Pivo
       // 右侧副指标轴
       return merge(
         {
-          range: range
+          range: range,
+          title: {
+            autoRotate: true
+          }
         },
         axisOption,
         {

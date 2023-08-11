@@ -42,6 +42,23 @@ export class TableLegend {
     this.legendComponent = legend;
     this.table.scenegraph.stage.defaultLayer.appendChild(legend);
 
+    this.adjustTableSize(attrs);
+  }
+
+  resize() {
+    if (!this.legendComponent) {
+      return;
+    }
+
+    this.legendComponent.setAttributes({
+      width: this.table.tableNoFrameWidth,
+      height: this.table.tableNoFrameHeight
+    });
+
+    this.adjustTableSize(this.legendComponent.attribute);
+  }
+
+  adjustTableSize(attrs: any) {
     // 调整位置
     let width = isFinite(this.legendComponent.AABBBounds.width()) ? this.legendComponent.AABBBounds.width() : 0;
     let height = isFinite(this.legendComponent.AABBBounds.height()) ? this.legendComponent.AABBBounds.height() : 0;
@@ -162,7 +179,7 @@ export class TableLegend {
     };
   }
   release() {
-    this.table.scenegraph.stage.defaultLayer.removeChild(this.legendComponent);
+    this.legendComponent && this.table.scenegraph.stage.defaultLayer.removeChild(this.legendComponent);
     this.legendComponent = null;
   }
 }
