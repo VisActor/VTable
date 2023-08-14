@@ -173,6 +173,9 @@ function updateColGroupPosition(colGroup: Group, newCol: number, x: number) {
 }
 
 function updateColGroupContent(colGroup: Group, proxy: SceneProxy) {
+  if (!colGroup) {
+    return;
+  }
   // colGroup.forEachChildren((cellGroup: Group) => {
   //   proxy.updateCellGroupContent(cellGroup);
   // });

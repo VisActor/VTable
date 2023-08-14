@@ -42,6 +42,7 @@ export class WrapText extends Text {
       textBaseline = textTheme.textBaseline,
       fontSize = textTheme.fontSize,
       fontFamily = textTheme.fontFamily,
+      fontWeight = textTheme.fontWeight,
       stroke = textTheme.stroke,
       lineHeight = attribute.lineHeight ?? attribute.fontSize ?? textTheme.fontSize,
       lineWidth = textTheme.lineWidth
@@ -78,7 +79,7 @@ export class WrapText extends Text {
       this.cache.clipedWidth = width;
       // todo 计算原本的宽度
     } else {
-      width = textMeasure.measureTextWidth(text.toString(), { fontSize, fontFamily });
+      width = textMeasure.measureTextWidth(text.toString(), { fontSize, fontFamily, fontWeight });
       this.cache.clipedText = text.toString();
       this.cache.clipedWidth = width;
     }
@@ -105,6 +106,7 @@ export class WrapText extends Text {
     const {
       fontFamily = textTheme.fontFamily,
       textAlign = textTheme.textAlign,
+      fontWeight = textTheme.fontWeight,
       textBaseline = textTheme.textBaseline,
       fontSize = textTheme.fontSize,
       lineHeight = this.attribute.lineHeight ?? this.attribute.fontSize ?? textTheme.fontSize,
@@ -192,7 +194,7 @@ export class WrapText extends Text {
           if (str !== '' && clip.str === '') {
             // 宽度限制不足一个字符，至少截取一个字符
             clip.str = str.substring(0, 1);
-            clip.width = textMeasure.measureTextWidth(clip.str, { fontSize, fontFamily });
+            clip.width = textMeasure.measureTextWidth(clip.str, { fontSize, fontFamily, fontWeight });
           }
 
           linesLayout.push({

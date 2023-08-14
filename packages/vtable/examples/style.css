@@ -29,7 +29,7 @@ body p {
 .container .sidebar {
   width: 200px;
   /* height: 100%; */
-  border-right: 1px solid rgba(0, 0, 0, 0.06);
+  /* border-right: 1px solid rgba(0, 0, 0, 0.06); */
 }
 
 .container .sidebar > div {
@@ -71,7 +71,7 @@ body p {
 
 .container .content {
   flex: 1;
-  margin: 0 1em;
+  /* margin: 0 1em; */
   /* height: 100%; */
   min-width: 500px;
 }
@@ -87,7 +87,7 @@ body p {
   /* height: 500px; */
   height: calc(100% - 2em);
   width: 100%;
-  margin: 1em 0em;
+  /* margin: 1em 0em; */
 }
 
 pre {

@@ -875,21 +875,6 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     }
   }
   /**
-   * 批量设置行高 这个值只可设置在computeRowsHeight函数中
-   * @param rowStart 起始行
-   * @param rowEnd 结束行号
-   * @param height 统一高度值
-   */
-  fillRowsHeight(rowStart: number, rowEnd: number, rowHeight: number): void {
-    for (let row = rowStart; row <= rowEnd; row++) {
-      this.rowHeightsMap.put(row, Math.round(rowHeight));
-      this._rowRangeHeightsMap.set(
-        `$0$${row}`,
-        Math.round((this._rowRangeHeightsMap.get(`$0$${row - 1}`) ?? 0) + rowHeight)
-      ); //按照逻辑这里去缓存值$0$${row - 1} 一定是有的（除第一行外）
-    }
-  }
-  /**
    * 获取指定行范围的总高度
    * @param startCol
    * @param endCol
@@ -3062,7 +3047,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     return cellInfoArray;
   }
   /** 计算字体的宽度接口 */
-  measureText(text: string, font: { fontSize: number; fontFamily: string }): ITextSize {
+  measureText(text: string, font: { fontSize: number; fontWeight: string | number; fontFamily: string }): ITextSize {
     return textMeasure.measureText(text, font);
   }
   measureTextBounds(attributes: IWrapTextGraphicAttribute): ITextSize {

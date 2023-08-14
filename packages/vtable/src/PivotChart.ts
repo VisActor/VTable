@@ -844,10 +844,10 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
   onVChartEvent(type: string, callback: AnyFunction): void;
   onVChartEvent(type: string, query: any, callback: AnyFunction): void;
   onVChartEvent(type: string, query?: any, callback?: AnyFunction): void {
-    if (query) {
-      this._chartEventMap[type] = { callback, query };
+    if (typeof query === 'function') {
+      this._chartEventMap[type] = { callback: query };
     } else {
-      this._chartEventMap[type] = { callback };
+      this._chartEventMap[type] = { callback, query };
     }
   }
 
