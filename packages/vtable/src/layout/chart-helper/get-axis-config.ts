@@ -31,9 +31,9 @@ export function getAxisConfigInPivotChart(col: number, row: number, layout: Pivo
         ? layout.dataset.collectedValues[defaultKey + (isZeroAlign ? '_align' : '')]
         : layout.dataset.collectedValues[defaultKey];
       const index = layout.getRecordIndexByCol(col);
-      const range =
-        data[layout.getColKeysPath()[index][Math.max(0, layout.columnHeaderLevelCount - 1 - layout.topAxesCount)]];
-
+      const range = data
+        ? data[layout.getColKeysPath()[index][Math.max(0, layout.columnHeaderLevelCount - 1 - layout.topAxesCount)]]
+        : { max: 1, min: 0 };
       const axisOption = getAxisOption(col, row, 'top', layout);
       if (axisOption?.visible === false) {
         return;
@@ -69,8 +69,9 @@ export function getAxisConfigInPivotChart(col: number, row: number, layout: Pivo
         ? layout.dataset.collectedValues[defaultKey + (isZeroAlign ? '_align' : '')]
         : layout.dataset.collectedValues[defaultKey];
       const index = layout.getRecordIndexByCol(col);
-      const range =
-        data[layout.getColKeysPath()[index][Math.max(0, layout.columnHeaderLevelCount - 1 - layout.topAxesCount)]];
+      const range = data?.[
+        layout.getColKeysPath()[index][Math.max(0, layout.columnHeaderLevelCount - 1 - layout.topAxesCount)]
+      ] ?? { min: 0, max: 1 };
       let indicatorInfo = null;
       indicatorKeys.forEach(key => {
         const info = layout.getIndicatorInfo(key);
@@ -88,8 +89,8 @@ export function getAxisConfigInPivotChart(col: number, row: number, layout: Pivo
         {
           title: {
             visible: true,
-            text: (indicatorInfo as any)?.caption,
-            autoRotate: true
+            text: (indicatorInfo as any)?.caption
+            // autoRotate: true
           },
           range: range
         },
@@ -124,7 +125,10 @@ export function getAxisConfigInPivotChart(col: number, row: number, layout: Pivo
       // 左侧维度轴
       return merge(
         {
-          domain: Array.from(domain).reverse()
+          domain: Array.from(domain).reverse(),
+          title: {
+            autoRotate: true
+          }
         },
         axisOption,
         {
@@ -151,8 +155,9 @@ export function getAxisConfigInPivotChart(col: number, row: number, layout: Pivo
         ? layout.dataset.collectedValues[defaultKey + (isZeroAlign ? '_align' : '')]
         : layout.dataset.collectedValues[defaultKey];
       const index = layout.getRecordIndexByRow(row);
-      const range =
-        data[layout.getRowKeysPath()[index][Math.max(0, layout.rowHeaderLevelCount - 1 - layout.leftAxesCount)]];
+      const range = data?.[
+        layout.getRowKeysPath()[index][Math.max(0, layout.rowHeaderLevelCount - 1 - layout.leftAxesCount)]
+      ] ?? { min: 0, max: 1 };
       let indicatorInfo = null;
       indicatorKeys.forEach(key => {
         const info = layout.getIndicatorInfo(key);
@@ -205,8 +210,9 @@ export function getAxisConfigInPivotChart(col: number, row: number, layout: Pivo
         ? layout.dataset.collectedValues[defaultKey + (isZeroAlign ? '_align' : '')]
         : layout.dataset.collectedValues[defaultKey];
       const index = layout.getRecordIndexByRow(row);
-      const range =
-        data[layout.getRowKeysPath()[index][Math.max(0, layout.rowHeaderLevelCount - 1 - layout.leftAxesCount)]];
+      const range = data?.[
+        layout.getRowKeysPath()[index][Math.max(0, layout.rowHeaderLevelCount - 1 - layout.leftAxesCount)]
+      ] ?? { min: 0, max: 1 };
 
       const axisOption = getAxisOption(col, row, 'right', layout);
       if (axisOption?.visible === false) {
@@ -215,7 +221,10 @@ export function getAxisConfigInPivotChart(col: number, row: number, layout: Pivo
       // 右侧副指标轴
       return merge(
         {
-          range: range
+          range: range,
+          title: {
+            autoRotate: true
+          }
         },
         axisOption,
         {
@@ -241,7 +250,7 @@ export function getAxisConfigInPivotChart(col: number, row: number, layout: Pivo
 
       const recordCol = layout.getRecordIndexByCol(col);
       const colPath = layout.getColKeysPath()[recordCol];
-      const domain = data[colPath[colPath.length - 1]] as Array<string>;
+      const domain = (data?.[colPath[colPath.length - 1]] as Array<string>) ?? [];
 
       const axisOption = getAxisOption(col, row, 'bottom', layout);
       if (axisOption?.visible === false) {

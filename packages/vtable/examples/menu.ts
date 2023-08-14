@@ -37,6 +37,10 @@ export const menus = [
       {
         path: 'list',
         name: 'list-height-adaptive'
+      },
+      {
+        path: 'list',
+        name: 'list-100w'
       }
     ]
   },
@@ -443,6 +447,15 @@ export const menus = [
       {
         path: 'unit-test-demo',
         name: 'unitTestPivotChart'
+      }
+    ]
+  },
+  {
+    menu: 'fs',
+    children: [
+      {
+        path: 'fs',
+        name: 'update-option'
       }
     ]
   }

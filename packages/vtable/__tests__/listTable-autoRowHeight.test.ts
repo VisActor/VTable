@@ -80,7 +80,7 @@ describe('listTable init test', () => {
     autoWrapText: true
   };
 
-  option.parentElement = containerDom;
+  option.container = containerDom;
   option.records = records;
   const listTable = new ListTable(option);
   // listTable.computeColsWidth();

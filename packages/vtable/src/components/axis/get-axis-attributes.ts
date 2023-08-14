@@ -76,7 +76,7 @@ export const commonAxis = {
   },
   label: {
     visible: true,
-    space: 0,
+    space: 1, // hack: VChart中为0，为了方便fs调试暂时改为1
     style: {
       fontSize: THEME_CONSTANTS.LABEL_FONT_SIZE,
       fill: '#89909D',

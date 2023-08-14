@@ -79,7 +79,7 @@ describe('listTable init test', () => {
     allowFrozenColCount: 5
   };
 
-  option.parentElement = containerDom;
+  option.container = containerDom;
   option.records = records;
   const listTable = new ListTable(option);
   test('listTable getCellOverflowText', () => {

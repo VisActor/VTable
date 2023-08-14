@@ -30,7 +30,7 @@ import { updateRow } from './layout/update-row';
 import { handleTextStick } from './stick-text';
 import { computeRowsHeight } from './layout/compute-row-height';
 import { emptyGroup } from './utils/empty-group';
-import { updateChartSize, updateChartState } from './refresh-node/update-chart';
+import { clearChartCacheImage, updateChartSize, updateChartState } from './refresh-node/update-chart';
 import { dealFrozen, resetFrozen } from './layout/frozen';
 import { createCornerCell } from './style/corner-cell';
 
@@ -267,6 +267,12 @@ export class Scenegraph {
     this.rowHeaderGroup.clear();
     this.cornerHeaderGroup.clear();
     this.bodyGroup.clear();
+
+    this.bottomFrozenGroup.clear();
+    this.rightFrozenGroup.clear();
+    this.rightTopCellGroup.clear();
+    this.rightBottomCellGroup.clear();
+    this.leftBottomCellGroup.clear();
 
     this.colHeaderGroup.setAttributes({
       x: 0,
@@ -787,7 +793,9 @@ export class Scenegraph {
     this.updateTableSize();
     this.updateBorderSizeAndPosition();
     this.component.updateScrollBar();
-
+    if (this.table.widthMode === 'adaptive' || this.table.heightMode === 'adaptive') {
+      this.updateChartSize(this.table.rowHeaderLevelCount);
+    }
     // this.stage.window.resize(width, height);
     this.updateNextFrame();
   }

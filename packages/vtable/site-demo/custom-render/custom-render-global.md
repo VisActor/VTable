@@ -20,7 +20,6 @@ link: '/guide/custom_define/custom_render'
 ```javascript livedemo template=vtable
 
   const option = {
-    parentElement: document.getElementById(CONTAINER_ID),
     columns:[
       {
         field: 'type',
@@ -85,7 +84,7 @@ link: '/guide/custom_define/custom_render'
       },
     ],
     defaultRowHeight:80,
-    autoRowHeight:true,
+    heightMode:'autoHeight',
     widthMode:'standard',
     autoWrapText:true,
     customRender(args){
@@ -169,7 +168,7 @@ link: '/guide/custom_define/custom_render'
       }
   };
 
-const tableInstance = new VTable.ListTable(option);
+const tableInstance = new VTable.ListTable(document.getElementById(CONTAINER_ID),option);
 window['tableInstance'] = tableInstance;
 ```
 

@@ -31,6 +31,7 @@ export class SceneProxy {
   rowUpdatePos: number; // 异步任务目前更新到的行的row number
   rowUpdateDirection: 'up' | 'down'; // 当前行更新的方向
   screenTopRow: number = 0; // 当前屏幕范围内显示的第一行的row number
+  deltaY: number = 0;
 
   colLimit = 1000;
   bodyLeftCol: number; // table body部分的第一列col number
@@ -56,6 +57,10 @@ export class SceneProxy {
 
     if (this.table.isPivotChart()) {
       this.rowLimit = 100;
+      this.colLimit = 100;
+    } else if (this.table.heightMode === 'autoHeight') {
+      this.rowLimit = 100;
+    } else if (this.table.widthMode === 'autoWidth') {
       this.colLimit = 100;
     }
 

@@ -51,8 +51,18 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
   _chartEventMap: Record<string, { query?: any; callback: AnyFunction }> = {};
 
   _axes: ITableAxisOption[];
-  constructor(options: PivotChartConstructorOptions) {
-    super(options);
+  constructor(options: PivotChartConstructorOptions);
+  constructor(container: HTMLElement, options: PivotChartConstructorOptions);
+  constructor(container?: HTMLElement | PivotChartConstructorOptions, options?: PivotChartConstructorOptions) {
+    if (!(container instanceof HTMLElement)) {
+      options = container as PivotChartConstructorOptions;
+      if ((container as PivotChartConstructorOptions).container) {
+        container = (container as PivotChartConstructorOptions).container;
+      } else {
+        container = null;
+      }
+    }
+    super(container as HTMLElement, options);
     if ((options as any).layout) {
       //TODO hack处理之前的demo都是定义到layout上的 所以这里直接并到options中
       Object.assign(options, (options as any).layout);
@@ -148,6 +158,9 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
     this.setCustomStateNameToSpec();
     // 更新protectedSpace
     internalProps.dataConfig = {};
+
+    this._axes = isArray(options.axes) ? options.axes : [];
+
     //TODO 这里需要加上判断 dataConfig是否有配置变化
     if (options.rows || options.columns) {
       const rowKeys = options.rows.reduce((keys, rowObj) => {
@@ -898,12 +911,15 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
         }
       });
 
-      chartInstance.updateViewBox({
-        x1: viewBox.x1 - (chartNode.getRootNode() as any).table.scrollLeft,
-        x2: viewBox.x2 - (chartNode.getRootNode() as any).table.scrollLeft,
-        y1: viewBox.y1 - (chartNode.getRootNode() as any).table.scrollTop,
-        y2: viewBox.y2 - (chartNode.getRootNode() as any).table.scrollTop
-      });
+      chartInstance.updateViewBox(
+        {
+          x1: viewBox.x1 - (chartNode.getRootNode() as any).table.scrollLeft,
+          x2: viewBox.x2 - (chartNode.getRootNode() as any).table.scrollLeft,
+          y1: viewBox.y1 - (chartNode.getRootNode() as any).table.scrollTop,
+          y2: viewBox.y2 - (chartNode.getRootNode() as any).table.scrollTop
+        },
+        false
+      );
       chartInstance.updateDataSync(dataId, data);
       position = chartInstance.convertDatumToPosition(datum);
       this.render();

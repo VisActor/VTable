@@ -461,7 +461,7 @@ describe('pivotTable init test', () => {
     autoWrapText: true
   };
 
-  option.parentElement = containerDom;
+  option.container = containerDom;
   option.records = records;
   const pivotTable = new PivotTable(option);
 

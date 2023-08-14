@@ -79,7 +79,6 @@ order: 2-3
 
 
 const option = {
-  parentElement: document.getElementById(CONTAINER_ID),
   records,
   defaultRowHeight:200,
   defaultHeaderRowHeight:50,
@@ -236,7 +235,7 @@ const option = {
     },
     dragHeaderMode: 'all'
 };
-const tableInstance = new VTable.PivotTable(option);
+const tableInstance = new VTable.PivotTable(document.getElementById(CONTAINER_ID),option);
 window['tableInstance'] = tableInstance;
 ```
 

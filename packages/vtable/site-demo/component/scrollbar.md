@@ -82,7 +82,6 @@ link: '/guide/interaction_and_event/scroll'
   ];
 
   const option = {
-    parentElement: document.getElementById(CONTAINER_ID),
     records:data,
     columns,
     widthMode:'standard',
@@ -96,7 +95,7 @@ link: '/guide/interaction_and_event/scroll'
       }
     })
   };
-  const tableInstance = new VTable.ListTable(option);
+  const tableInstance = new VTable.ListTable(document.getElementById(CONTAINER_ID),option);
   window['tableInstance'] = tableInstance;
       })
 ```

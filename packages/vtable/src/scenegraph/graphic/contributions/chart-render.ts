@@ -82,12 +82,15 @@ export class DefaultCanvasChartRender implements IGraphicRender {
           chartAxis.updateScaleDomain();
         }
       });
-      chartInstance.updateViewBox({
-        x1: viewBox.x1 - (chart.getRootNode() as any).table.scrollLeft,
-        x2: viewBox.x2 - (chart.getRootNode() as any).table.scrollLeft,
-        y1: viewBox.y1 - (chart.getRootNode() as any).table.scrollTop,
-        y2: viewBox.y2 - (chart.getRootNode() as any).table.scrollTop
-      });
+      chartInstance.updateViewBox(
+        {
+          x1: viewBox.x1 - (chart.getRootNode() as any).table.scrollLeft,
+          x2: viewBox.x2 - (chart.getRootNode() as any).table.scrollLeft,
+          y1: viewBox.y1 - (chart.getRootNode() as any).table.scrollTop,
+          y2: viewBox.y2 - (chart.getRootNode() as any).table.scrollTop
+        },
+        false
+      );
       if (typeof dataId === 'string') {
         chartInstance.updateDataSync(dataId, data ?? []);
       } else {
