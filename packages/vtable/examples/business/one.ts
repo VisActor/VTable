@@ -4014,7 +4014,7 @@ export function createTable() {
       enableSingalCellHighlight: true
     },
     showHeader: true,
-    parentElement: document.getElementById(Table_CONTAINER_DOM_ID)
+    container: document.getElementById(Table_CONTAINER_DOM_ID)
   };
   const instance = new ListTable(options);
 

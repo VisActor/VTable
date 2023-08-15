@@ -350,6 +350,9 @@ function resetRowHeight(scene: Scenegraph, row: number) {
   // 获取高度
   for (let col = 0; col < scene.table.colCount; col++) {
     const cell = scene.highPerformanceGetCell(col, row);
+    if (cell.role === 'empty') {
+      return;
+    }
     let cellHeight = getCleanCellHeight(cell, scene);
     const mergeInfo = getCellMergeInfo(scene.table, col, row);
     if (mergeInfo && mergeInfo.end.row - mergeInfo.start.row) {
@@ -362,6 +365,9 @@ function resetRowHeight(scene: Scenegraph, row: number) {
   for (let col = 0; col < scene.table.colCount; col++) {
     let distHeight = maxHeight;
     const cell = scene.highPerformanceGetCell(col, row);
+    if (cell.role === 'empty') {
+      return;
+    }
     const mergeInfo = getCellMergeInfo(scene.table, col, row);
     if (mergeInfo && mergeInfo.end.row - mergeInfo.start.row) {
       for (let rowIndex = mergeInfo.start.row; rowIndex <= mergeInfo.end.row; rowIndex++) {

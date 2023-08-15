@@ -1,3 +1,4 @@
+import { isValid } from '../../../../tools/util';
 import type { Group } from '../../../graphic/group';
 import { computeRowsHeight } from '../../../layout/compute-row-height';
 import type { SceneProxy } from '../proxy';
@@ -74,9 +75,7 @@ async function moveCell(
 
     // const syncTopRow = Math.max(proxy.bodyTopRow, screenTopRow - proxy.screenRowCount * 1);
     // const syncBottomRow = Math.min(proxy.bodyBottomRow, screenTopRow + proxy.screenRowCount * 2);
-    if (proxy.table.heightMode === 'autoHeight') {
-      computeRowsHeight(proxy.table, syncTopRow, syncBottomRow);
-    }
+    computeRowsHeight(proxy.table, syncTopRow, syncBottomRow);
 
     proxy.rowStart = direction === 'up' ? proxy.rowStart + count : proxy.rowStart - count;
     proxy.rowEnd = direction === 'up' ? proxy.rowEnd + count : proxy.rowEnd - count;
@@ -127,10 +126,10 @@ async function moveCell(
       syncTopRow = Math.max(proxy.bodyTopRow, screenTopRow - proxy.screenRowCount * 1);
       syncBottomRow = Math.min(proxy.bodyBottomRow, screenTopRow + proxy.screenRowCount * 2);
     }
-    // console.log('更新同步范围', syncTopRow, syncBottomRow);
-    if (proxy.table.heightMode === 'autoHeight') {
-      computeRowsHeight(proxy.table, syncTopRow, syncBottomRow);
-    }
+    //console.log('更新同步范围', syncTopRow, syncBottomRow);
+
+    computeRowsHeight(proxy.table, syncTopRow, syncBottomRow);
+
     proxy.rowStart = distStartRow;
     proxy.rowEnd = distEndRow;
 

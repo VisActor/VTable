@@ -30,8 +30,18 @@ export class ListTable extends BaseTable implements ListTableAPI {
   declare options: ListTableConstructorOptions;
   showHeader = true;
   // eslint-disable-next-line default-param-last
-  constructor(options: ListTableConstructorOptions = {}) {
-    super(options);
+  constructor(options: ListTableConstructorOptions);
+  constructor(container: HTMLElement, options: ListTableConstructorOptions);
+  constructor(container?: HTMLElement | ListTableConstructorOptions, options?: ListTableConstructorOptions) {
+    if (!(container instanceof HTMLElement)) {
+      options = container as ListTableConstructorOptions;
+      if ((container as ListTableConstructorOptions).container) {
+        container = (container as ListTableConstructorOptions).container;
+      } else {
+        container = null;
+      }
+    }
+    super(container as HTMLElement, options);
 
     const internalProps = this.internalProps;
     //分页配置

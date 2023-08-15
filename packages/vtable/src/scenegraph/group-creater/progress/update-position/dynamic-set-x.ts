@@ -144,6 +144,16 @@ function updateColGroupPosition(colGroup: Group, newCol: number, x: number) {
 }
 
 function updateColGroupContent(colGroup: Group, proxy: SceneProxy) {
+  if (!colGroup) {
+    return;
+  }
+  // colGroup.forEachChildren((cellGroup: Group) => {
+  //   proxy.updateCellGroupContent(cellGroup);
+  // });
+  // for (let row = (colGroup.firstChild as Group).row; row <= (colGroup.lastChild as Group).row; row++) {
+  //   const cellGroup = proxy.highPerformanceGetCell(colGroup.col, row);
+  //   proxy.updateCellGroupContent(cellGroup);
+  // }
   let cellGroup = colGroup.firstChild;
   while (cellGroup) {
     const newCellGroup = proxy.updateCellGroupContent(cellGroup as Group);

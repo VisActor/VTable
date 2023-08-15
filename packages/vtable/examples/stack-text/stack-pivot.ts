@@ -442,7 +442,7 @@ export function createTable() {
     },
     indicatorTitle: '指标名称',
     // indicatorsAsCol: false,
-    parentElement: document.getElementById(Table_CONTAINER_DOM_ID),
+    container: document.getElementById(Table_CONTAINER_DOM_ID),
     records,
     theme,
     showFrozenIcon: false, //显示VTable内置冻结列图标

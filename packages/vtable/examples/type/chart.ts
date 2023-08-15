@@ -429,7 +429,7 @@ export function createTable() {
     records.push(record);
   }
   const option = {
-    parentElement: document.getElementById(Table_CONTAINER_DOM_ID),
+    container: document.getElementById(Table_CONTAINER_DOM_ID),
     records,
     defaultRowHeight: 200,
     defaultHeaderRowHeight: 50,

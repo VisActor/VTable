@@ -1450,7 +1450,7 @@ export function createTable() {
         textStick: true
       }
     },
-    parentElement: document.getElementById(Table_CONTAINER_DOM_ID),
+    container: document.getElementById(Table_CONTAINER_DOM_ID),
     records,
     showFrozenIcon: false, //显示VTable内置冻结列图标
     widthMode: 'autoWidth', // 宽度模式：standard 标准模式； adaptive 自动填满容器

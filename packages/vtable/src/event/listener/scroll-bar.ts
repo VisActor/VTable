@@ -64,11 +64,17 @@ export function bindScrollBarListener(eventManeger: EventManeger) {
 
   // 监听滚动条组件scroll事件
   scenegraph.component.vScrollBar.addEventListener('scroll', (e: any) => {
+    if (stateManeger.interactionState !== InteractionState.scrolling) {
+      stateManeger.updateInteractionState(InteractionState.scrolling);
+    }
     const ratio = e.detail.value[0] / (1 - e.detail.value[1] + e.detail.value[0]);
     throttleVerticalWheel(ratio, e);
   });
 
   scenegraph.component.hScrollBar.addEventListener('scroll', (e: any) => {
+    if (stateManeger.interactionState !== InteractionState.scrolling) {
+      stateManeger.updateInteractionState(InteractionState.scrolling);
+    }
     const ratio = e.detail.value[0] / (1 - e.detail.value[1] + e.detail.value[0]);
     throttleHorizontalWheel(ratio);
   });

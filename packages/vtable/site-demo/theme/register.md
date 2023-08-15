@@ -56,7 +56,6 @@ fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American
   .then((res) => res.json())
   .then((data) => {
   const option = {
-    parentElement: document.getElementById(CONTAINER_ID),
     records:data,
     "rowTree": [
         {
@@ -186,7 +185,7 @@ fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American
     widthMode:'standard',
     theme:'themeRegisterOne'
   };
-  const tableInstance = new VTable.PivotTable(option);
+  const tableInstance = new VTable.PivotTable(document.getElementById(CONTAINER_ID),option);
   window['tableInstance'] = tableInstance;
 })
 ```
