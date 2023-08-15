@@ -56,7 +56,7 @@ import type { PivotHeaderLayoutMap } from '../layout/pivot-header-layout';
 import { TooltipHandler } from '../components/tooltip/TooltipHandler';
 import type { CachedDataSource, DataSource } from '../data';
 import type { IWrapTextGraphicAttribute } from '@visactor/vrender';
-import { isBoolean, type ITextSize } from '@visactor/vutils';
+import { isBoolean, isFunction, type ITextSize } from '@visactor/vutils';
 import { WrapText } from '../scenegraph/graphic/text';
 import { textMeasure } from '../scenegraph/utils/measure-text';
 import { getProp } from '../scenegraph/utils/get-prop';
@@ -2639,7 +2639,9 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
       styleClass,
       this.options.autoWrapText
     );
-    this.bodyStyleCache.set(cacheKey, cacheStyle);
+    if (!isFunction(style)) {
+      this.bodyStyleCache.set(cacheKey, cacheStyle);
+    }
     return cacheStyle;
   }
   clearCellStyleCache() {

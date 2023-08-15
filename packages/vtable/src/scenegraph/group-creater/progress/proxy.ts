@@ -33,7 +33,7 @@ export class SceneProxy {
   screenTopRow: number = 0; // 当前屏幕范围内显示的第一行的row number
   deltaY: number = 0;
 
-  colLimit = 1000;
+  colLimit = 100;
   bodyLeftCol: number; // table body部分的第一列col number
   bodyRightCol: number; // table body部分的最后一列col number
   totalCol: number; // 渐进完成最后一列的col number
@@ -49,6 +49,7 @@ export class SceneProxy {
   referenceCol: number; // 当前维护的部分中间一列的col number，认为referenceCol对应当前屏幕显示范围的第一列
   screenLeftCol: number = 0; // 当前屏幕范围内显示的第一列的col number
   colUpdateDirection: 'left' | 'right'; // 当前列更新方向
+  deltaX: number = 0;
 
   cellCache: Map<number, Group> = new Map(); // 单元格位置快速查找缓存
 
@@ -349,6 +350,15 @@ export class SceneProxy {
     const endCol = Math.min(this.totalCol, this.currentCol + onceCount);
     computeColsWidth(this.table, this.currentCol + 1, endCol);
 
+    // update last merge cell
+    for (let row = 0; row < this.table.rowCount; row++) {
+      const cellGroup = this.highPerformanceGetCell(this.currentCol, row);
+      if (isNumber(cellGroup.mergeCol) && cellGroup.mergeCol > this.currentCol) {
+        this.table.scenegraph.updateCellContent(cellGroup.col, cellGroup.row);
+      }
+    }
+
+    // create column
     if (this.table.columnHeaderLevelCount) {
       // create colGroup
       const lastColumnGroup = (
@@ -393,7 +403,6 @@ export class SceneProxy {
         this.table
       );
     }
-
     // create colGroup
     const lastColumnGroup = (
       this.table.scenegraph.bodyGroup.lastChild instanceof Group

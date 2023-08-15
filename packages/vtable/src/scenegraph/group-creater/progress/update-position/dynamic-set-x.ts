@@ -1,9 +1,9 @@
 import type { BaseTableAPI } from '../../../../ts-types/base-table';
 import type { Group } from '../../../graphic/group';
 import { computeColsWidth } from '../../../layout/compute-col-width';
-import { getCellMergeInfo } from '../../../utils/get-cell-merge';
-import { updateCell } from '../../cell-helper';
 import type { SceneProxy } from '../proxy';
+import { updateAutoColumn } from './update-auto-column';
+import { checkFirstColMerge, getFirstChild, getLastChild } from './util';
 
 export async function dynamicSetX(x: number, proxy: SceneProxy) {
   const screenLeft = (proxy.table as BaseTableAPI).getTargetColAt(
@@ -12,27 +12,34 @@ export async function dynamicSetX(x: number, proxy: SceneProxy) {
   if (!screenLeft) {
     return;
   }
-
-  proxy.screenLeftCol = screenLeft.col;
+  const screenLeftCol = screenLeft.col;
+  const screenLeftX = screenLeft.left;
+  proxy.screenLeftCol = screenLeftCol;
   const deltaCol = proxy.screenLeftCol - proxy.referenceCol;
 
   if (deltaCol > 0) {
     // 向右滚动，左部column group移到右部
-    proxy.table.scenegraph.setBodyAndColHeaderX(-x);
-    await moveColumn(deltaCol, 'left', proxy.screenLeftCol, proxy);
+    moveColumn(deltaCol, 'left', proxy.screenLeftCol, screenLeftX, proxy);
+    proxy.table.scenegraph.setBodyAndColHeaderX(-x + proxy.deltaX);
   } else if (deltaCol < 0) {
     // 向左滚动，右部cell group移到左部
-    proxy.table.scenegraph.setBodyAndColHeaderX(-x);
-    await moveColumn(-deltaCol, 'right', proxy.screenLeftCol, proxy);
+    moveColumn(-deltaCol, 'right', proxy.screenLeftCol, screenLeftX, proxy);
+    proxy.table.scenegraph.setBodyAndColHeaderX(-x + proxy.deltaX);
   } else {
     // 不改变row，更新body group范围
-    proxy.table.scenegraph.setBodyAndColHeaderX(-x);
+    proxy.table.scenegraph.setBodyAndColHeaderX(-x + proxy.deltaX);
   }
 
   proxy.table.scenegraph.updateNextFrame();
 }
 
-async function moveColumn(count: number, direction: 'left' | 'right', screenLeftCol: number, proxy: SceneProxy) {
+async function moveColumn(
+  count: number,
+  direction: 'left' | 'right',
+  screenLeftCol: number,
+  screenLeftX: number,
+  proxy: SceneProxy
+) {
   // 限制count范围
   if (direction === 'left' && proxy.colEnd + count > proxy.bodyRightCol) {
     count = proxy.bodyRightCol - proxy.colEnd;
@@ -40,7 +47,9 @@ async function moveColumn(count: number, direction: 'left' | 'right', screenLeft
     count = proxy.colStart - proxy.bodyLeftCol;
   }
 
-  const bodyGroup = proxy.table.scenegraph.bodyGroup;
+  if (count <= 0) {
+    return;
+  }
 
   // 两种更新模式
   // 1. count < colEnd - colStart：从顶/底部移动count数量的单元格到底/顶部
@@ -53,56 +62,36 @@ async function moveColumn(count: number, direction: 'left' | 'right', screenLeft
     const distEndCol = direction === 'left' ? proxy.colEnd + count : proxy.colStart - 1;
     // update column width
     computeColsWidth(proxy.table, distStartCol, distEndCol);
-
-    // console.log('move', startCol, endCol, direction);
-    // for (let col = startCol; col <= endCol; col++) {
-    //   if (direction === 'left') {
-    //     const colGroup = bodyGroup.firstChild as Group;
-    //     updateColGroupPosition(
-    //       colGroup,
-    //       (bodyGroup.lastChild as Group).col + 1,
-    //       (bodyGroup.lastChild as Group).attribute.x + (bodyGroup.lastChild as Group).attribute.width
-    //     );
-    //     bodyGroup.appendChild(colGroup);
-    //   } else {
-    //     const colGroup = bodyGroup.lastChild as Group;
-    //     updateColGroupPosition(
-    //       colGroup,
-    //       (bodyGroup.firstChild as Group).col - 1,
-    //       (bodyGroup.firstChild as Group).attribute.x - proxy.table.getColWidth((bodyGroup.firstChild as Group).col - 1)
-    //     );
-    //     bodyGroup.insertBefore(colGroup, bodyGroup.firstChild);
-    //   }
-    // }
     updatePartColPosition(startCol, endCol, direction, proxy);
 
-    // 更新同步范围
-    const syncLeftCol = Math.max(proxy.bodyLeftCol, screenLeftCol - proxy.screenColCount * 1);
-    const syncRightCol = Math.min(proxy.bodyRightCol, screenLeftCol + proxy.screenColCount * 2);
-    // for (let col = syncLeftCol; col <= syncRightCol; col++) {
-    //   const colGroup = proxy.table.scenegraph.getColGroup(col);
-    //   updateColGroupContent(colGroup, proxy);
-    // }
+    const syncLeftCol = distStartCol;
+    const syncRightCol = distEndCol;
 
     proxy.colStart = direction === 'left' ? proxy.colStart + count : proxy.colStart - count;
     proxy.colEnd = direction === 'left' ? proxy.colEnd + count : proxy.colEnd - count;
-    checkFirstColMerge(distStartCol, proxy);
+
+    checkFirstColMerge(distStartCol, true, proxy);
     updateColContent(syncLeftCol, syncRightCol, proxy);
+
+    updateAutoColumn(
+      syncLeftCol, // colStart
+      syncRightCol, // colEnd
+      proxy.table,
+      direction
+    );
+
+    const colGroup = proxy.table.scenegraph.getColGroup(screenLeftCol);
+    const deltaX =
+      screenLeftX - (colGroup.attribute.x + proxy.table.getFrozenColsWidth() + proxy.table.scenegraph.proxy.deltaX);
+    proxy.table.scenegraph.proxy.deltaX += deltaX;
 
     proxy.currentCol = direction === 'left' ? proxy.currentCol + count : proxy.currentCol - count;
     proxy.totalCol = direction === 'left' ? proxy.totalCol + count : proxy.totalCol - count;
     proxy.referenceCol = proxy.colStart + Math.floor((proxy.colEnd - proxy.colStart) / 2);
     proxy.colUpdatePos = distStartCol;
     proxy.colUpdateDirection = direction;
-    // console.log('col move end proxy', proxy.colStart, proxy.colEnd);
-    // console.log(
-    //   'col move end cell col',
-    //   (proxy.table as any).scenegraph.bodyGroup.firstChild.col,
-    //   (proxy.table as any).scenegraph.bodyGroup.lastChild.col
-    // );
-    // console.log('sync', proxy.referenceCol, proxy.colStart, proxy.colEnd);
 
-    proxy.table.scenegraph.stage.render();
+    proxy.table.scenegraph.updateNextFrame();
 
     // 开始异步任务
     await proxy.progress();
@@ -113,50 +102,32 @@ async function moveColumn(count: number, direction: 'left' | 'right', screenLeft
     // update column width
     computeColsWidth(proxy.table, distStartCol, distEndCol);
     const distStartColY = proxy.table.getColsWidth(proxy.bodyLeftCol, distStartCol - 1);
-    console.log('distStartColY', proxy.bodyLeftCol, distStartCol - 1, distStartColY);
-
-    // bodyGroup.forEachChildren((colGroup: Group, index) => {
-    //   if (colGroup.type === 'group') {
-    //     updateColGroupPosition(
-    //       colGroup,
-    //       direction === 'left' ? colGroup.col + count : colGroup.col - count,
-    //       // (bodyGroup.lastChild as Group).attribute.x + (bodyGroup.lastChild as Group).attribute.width
-    //       index === 0 // row === proxy.rowStart
-    //         ? distStartColY
-    //         : (colGroup._prev as Group).attribute.x + proxy.table.getColWidth((colGroup._prev as Group).col)
-    //     );
-    //   }
-    // });
 
     // 更新同步范围
     updateAllColPosition(distStartColY, count, direction, proxy);
-    const syncLeftCol = Math.max(proxy.bodyLeftCol, screenLeftCol - proxy.screenRowCount * 1);
-    const syncRightCol = Math.min(proxy.bodyRightCol, screenLeftCol + proxy.screenRowCount * 2);
-    // console.log('更新同步范围col', syncLeftCol, syncRightCol);
-    // for (let col = syncLeftCol; col <= syncRightCol; col++) {
-    //   const colGroup = proxy.table.scenegraph.getColGroup(col);
-    //   updateColGroupContent(colGroup, proxy);
-    // }
+    const syncLeftCol = distStartCol;
+    const syncRightCol = distEndCol;
 
     proxy.colStart = distStartCol;
     proxy.colEnd = distEndCol;
-    checkFirstColMerge(distStartCol, proxy);
+    checkFirstColMerge(distStartCol, false, proxy);
     updateColContent(syncLeftCol, syncRightCol, proxy);
+
+    updateAutoColumn(
+      syncLeftCol, // colStart
+      syncRightCol, // colEnd
+      proxy.table,
+      distEndCol > proxy.bodyRightCol - (proxy.colEnd - proxy.colStart + 1) ? 'right' : 'left' // 跳转到右侧时，从右向左对齐
+    );
+    proxy.table.scenegraph.proxy.deltaX = 0;
 
     proxy.currentCol = direction === 'left' ? proxy.currentCol + count : proxy.currentCol - count;
     proxy.totalCol = direction === 'left' ? proxy.totalCol + count : proxy.totalCol - count;
     proxy.referenceCol = proxy.colStart + Math.floor((proxy.colEnd - proxy.colStart) / 2);
     proxy.colUpdatePos = proxy.colStart;
     proxy.colUpdateDirection = distEndCol > proxy.bodyRightCol - (proxy.colEnd - proxy.colStart + 1) ? 'right' : 'left';
-    // console.log('sync', proxy.referenceCol, proxy.colStart, proxy.colEnd);
-    // console.log('move total end proxy col', proxy.colStart, proxy.colEnd);
-    // console.log(
-    //   'move total end cell col',
-    //   (proxy.table as any).scenegraph.bodyGroup.firstChild.row,
-    //   (proxy.table as any).scenegraph.bodyGroup.lastChild.row
-    // );
-    // proxy.table.scenegraph.stage.render();
 
+    proxy.table.scenegraph.updateNextFrame();
     await proxy.progress();
   }
 }
@@ -173,19 +144,13 @@ function updateColGroupPosition(colGroup: Group, newCol: number, x: number) {
 }
 
 function updateColGroupContent(colGroup: Group, proxy: SceneProxy) {
-  // colGroup.forEachChildren((cellGroup: Group) => {
-  //   proxy.updateCellGroupContent(cellGroup);
-  // });
-  // for (let row = (colGroup.firstChild as Group).row; row <= (colGroup.lastChild as Group).row; row++) {
-  //   const cellGroup = proxy.highPerformanceGetCell(colGroup.col, row);
-  //   proxy.updateCellGroupContent(cellGroup);
-  // }
   let cellGroup = colGroup.firstChild;
   while (cellGroup) {
     const newCellGroup = proxy.updateCellGroupContent(cellGroup as Group);
     cellGroup = newCellGroup._next;
   }
   colGroup.needUpdate = false;
+  colGroup.setAttribute('width', proxy.table.getColWidth(colGroup.col));
 }
 
 function updatePartColPosition(startCol: number, endCol: number, direction: 'left' | 'right', proxy: SceneProxy) {
@@ -194,30 +159,30 @@ function updatePartColPosition(startCol: number, endCol: number, direction: 'lef
       updateColPosition(proxy.table.scenegraph.bodyGroup, direction, proxy);
     }
     if (proxy.table.scenegraph.colHeaderGroup.childrenCount > 0) {
-      updateColPosition(proxy.table.scenegraph.bodyGroup, direction, proxy);
+      updateColPosition(proxy.table.scenegraph.colHeaderGroup, direction, proxy);
     }
     if (proxy.table.scenegraph.bottomFrozenGroup.childrenCount > 0) {
-      updateColPosition(proxy.table.scenegraph.bodyGroup, direction, proxy);
+      updateColPosition(proxy.table.scenegraph.bottomFrozenGroup, direction, proxy);
     }
   }
 }
 
 function updateColPosition(containerGroup: Group, direction: 'left' | 'right', proxy: SceneProxy) {
   if (direction === 'left') {
-    const colGroup = containerGroup.firstChild as Group;
-    updateColGroupPosition(
-      colGroup,
-      (containerGroup.lastChild as Group).col + 1,
-      (containerGroup.lastChild as Group).attribute.x + (containerGroup.lastChild as Group).attribute.width
-    );
+    const colGroup = getFirstChild(containerGroup);
+    const lastChild = getLastChild(containerGroup);
+    updateColGroupPosition(colGroup, lastChild.col + 1, lastChild.attribute.x + proxy.table.getColWidth(lastChild.col));
     containerGroup.appendChild(colGroup);
+    if (containerGroup.border) {
+      containerGroup.appendChild(containerGroup.border);
+    }
   } else {
-    const colGroup = containerGroup.lastChild as Group;
+    const colGroup = getLastChild(containerGroup);
+    const firstChild = getFirstChild(containerGroup);
     updateColGroupPosition(
       colGroup,
-      (containerGroup.firstChild as Group).col - 1,
-      (containerGroup.firstChild as Group).attribute.x -
-        proxy.table.getColWidth((containerGroup.firstChild as Group).col - 1)
+      firstChild.col - 1,
+      firstChild.attribute.x - proxy.table.getColWidth(firstChild.col - 1)
     );
     containerGroup.insertBefore(colGroup, containerGroup.firstChild);
   }
@@ -226,13 +191,13 @@ function updateColPosition(containerGroup: Group, direction: 'left' | 'right', p
 export function updateColContent(syncLeftCol: number, syncRightCol: number, proxy: SceneProxy) {
   for (let col = syncLeftCol; col <= syncRightCol; col++) {
     const colGroup = proxy.table.scenegraph.getColGroup(col);
-    updateColGroupContent(colGroup, proxy);
+    colGroup && updateColGroupContent(colGroup, proxy);
 
     const colHeaderColGroup = proxy.table.scenegraph.getColGroup(col, true);
-    updateColGroupContent(colHeaderColGroup, proxy);
+    colHeaderColGroup && updateColGroupContent(colHeaderColGroup, proxy);
 
     const bottomColGroup = proxy.table.scenegraph.getColGroupInBottom(col);
-    updateColGroupContent(bottomColGroup, proxy);
+    bottomColGroup && updateColGroupContent(bottomColGroup, proxy);
   }
 }
 
@@ -273,37 +238,4 @@ function updateAllColPosition(distStartColY: number, count: number, direction: '
       );
     }
   });
-}
-
-function checkFirstColMerge(col: number, proxy: SceneProxy) {
-  for (let row = 0; row < proxy.table.rowCount; row++) {
-    if (
-      (row >= proxy.table.columnHeaderLevelCount && row < proxy.rowStart) ||
-      (row > proxy.rowEnd && row < proxy.table.rowCount - proxy.table.bottomFrozenRowCount)
-    ) {
-      continue;
-    }
-
-    const range = getCellMergeInfo(proxy.table, col, row);
-    if (range && range.start.row !== row) {
-      // 在row的位置添加range.start.row单元格
-      const oldCellGroup = proxy.highPerformanceGetCell(col, row, true);
-      const newCellGroup = updateCell(range.start.col, range.start.row, proxy.table, true);
-
-      newCellGroup.col = col;
-      newCellGroup.row = row;
-      newCellGroup.setAttribute('x', proxy.table.getColsWidth(proxy.table.rowHeaderLevelCount, range.start.col - 1));
-
-      oldCellGroup.parent.insertAfter(newCellGroup, oldCellGroup);
-      oldCellGroup.parent.removeChild(oldCellGroup);
-
-      oldCellGroup.needUpdate = false;
-      newCellGroup.needUpdate = false;
-
-      // update cache
-      if (proxy.cellCache.get(col)) {
-        proxy.cellCache.set(col, newCellGroup);
-      }
-    }
-  }
 }

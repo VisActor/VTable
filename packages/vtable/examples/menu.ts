@@ -213,6 +213,10 @@ export const menus = [
       {
         path: 'pivot',
         name: 'pivot-basic-updateOption'
+      },
+      {
+        path: 'pivot',
+        name: 'pivot-column-pref'
       }
     ]
   },
