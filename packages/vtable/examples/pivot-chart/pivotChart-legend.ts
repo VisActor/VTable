@@ -10356,6 +10356,8 @@ export function createTable() {
     }
   ];
   const option: VTable.PivotTableConstructorOptions = {
+    // renderChartAsync:true,
+    renderChartAsyncBatchCount: 50,
     columnTree,
     rowTree,
     rows,
