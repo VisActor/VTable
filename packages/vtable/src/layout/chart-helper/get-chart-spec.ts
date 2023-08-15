@@ -6,6 +6,8 @@ import type { PivotHeaderLayoutMap } from '../pivot-header-layout';
 import type { SimpleHeaderLayoutMap } from '../simple-header-layout';
 import { checkZeroAlign, getAxisOption } from './get-axis-config';
 
+const NO_AXISID_FRO_VTABLE = 'NO_AXISID_FRO_VTABLE';
+
 export function getRawChartSpec(col: number, row: number, layout: PivotLayoutMap | PivotHeaderLayoutMap): any {
   const paths = layout.getCellHeaderPaths(col, row);
   let indicatorObj;
@@ -48,9 +50,9 @@ export function getChartAxes(col: number, row: number, layout: PivotLayoutMap): 
       const data = layout.dataset.collectedValues[key + (isZeroAlign ? '_align' : '')]
         ? layout.dataset.collectedValues[key + (isZeroAlign ? '_align' : '')]
         : layout.dataset.collectedValues[key];
-      const range = data[
+      const range = (data?.[
         layout.getColKeysPath()[colIndex][Math.max(0, layout.columnHeaderLevelCount - 1 - layout.topAxesCount)]
-      ] as { max?: number; min?: number };
+      ] as { max?: number; min?: number }) ?? { min: 0, max: 1 };
 
       const axisOption = getAxisOption(col, row, index === 0 ? 'bottom' : 'top', layout);
       if (axisOption?.zero) {
@@ -70,7 +72,9 @@ export function getChartAxes(col: number, row: number, layout: PivotLayoutMap): 
             label: { visible: false },
             title: { visible: false },
             seriesIndex: index,
-            height: -1
+            height: -1,
+
+            sync: { axisId: NO_AXISID_FRO_VTABLE } // hack for fs
           }
         )
       );
@@ -81,7 +85,9 @@ export function getChartAxes(col: number, row: number, layout: PivotLayoutMap): 
       rowDimensionKey = rowDimensionKey[0];
     }
     const data =
-      layout.dataset.cacheCollectedValues[rowDimensionKey] || layout.dataset.collectedValues[rowDimensionKey];
+      layout.dataset.cacheCollectedValues[rowDimensionKey] ||
+      layout.dataset.collectedValues[rowDimensionKey] ||
+      ([] as string[]);
     const recordRow = layout.getRecordIndexByRow(row);
     const rowPath = layout.getRowKeysPath()[recordRow];
     const domain = data[rowPath[rowPath.length - 1]] as Set<string>;
@@ -121,9 +127,9 @@ export function getChartAxes(col: number, row: number, layout: PivotLayoutMap): 
       const data = layout.dataset.collectedValues[key + (isZeroAlign ? '_align' : '')]
         ? layout.dataset.collectedValues[key + (isZeroAlign ? '_align' : '')]
         : layout.dataset.collectedValues[key];
-      const range = data[
+      const range = (data?.[
         layout.getRowKeysPath()[rowIndex][Math.max(0, layout.rowHeaderLevelCount - 1 - layout.leftAxesCount)]
-      ] as { max?: number; min?: number };
+      ] as { max?: number; min?: number }) ?? { min: 0, max: 1 };
 
       const axisOption = getAxisOption(col, row, index === 0 ? 'left' : 'right', layout);
       if (axisOption?.zero) {
@@ -143,8 +149,10 @@ export function getChartAxes(col: number, row: number, layout: PivotLayoutMap): 
             label: { visible: false },
             title: { visible: false },
             seriesIndex: index,
-            width: -1
+            width: -1,
             // grid: index === 0 ? undefined : { visible: false }
+
+            sync: { axisId: NO_AXISID_FRO_VTABLE } // hack for fs
           }
         )
       );
@@ -155,10 +163,12 @@ export function getChartAxes(col: number, row: number, layout: PivotLayoutMap): 
       columnDimensionKey = columnDimensionKey[0];
     }
     const data =
-      layout.dataset.cacheCollectedValues[columnDimensionKey] || layout.dataset.collectedValues[columnDimensionKey];
+      layout.dataset.cacheCollectedValues[columnDimensionKey] ||
+      layout.dataset.collectedValues[columnDimensionKey] ||
+      ([] as string[]);
     const recordCol = layout.getRecordIndexByCol(col);
     const colPath = layout.getColKeysPath()[recordCol];
-    const domain = data[colPath[colPath.length - 1]] as Set<string>;
+    const domain: string[] | Set<string> = (data?.[colPath[colPath.length - 1]] as Set<string>) ?? [];
 
     const axisOption = getAxisOption(col, row, 'bottom', layout);
     axes.push(

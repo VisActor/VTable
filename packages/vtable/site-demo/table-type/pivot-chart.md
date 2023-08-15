@@ -345,7 +345,6 @@ link: '/guide/table_type/Pivot_Chart/pivot_chart_useage'
         columns,
         indicators,
         indicatorsAsCol: false,
-        parentElement: document.getElementById(CONTAINER_ID),
         records: data,
         defaultRowHeight: 200,
         defaultHeaderRowHeight: 50,
@@ -431,7 +430,7 @@ link: '/guide/table_type/Pivot_Chart/pivot_chart_useage'
         }
       };
 
-      const tableInstance = new VTable.PivotChart(option);
+      const tableInstance = new VTable.PivotChart(document.getElementById(CONTAINER_ID),option);
       tableInstance.onVChartEvent('click', args => {
         console.log('listenChart click', args);
       });

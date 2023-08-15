@@ -17,7 +17,7 @@ export function createTable() {
         },
         'Category'
       ];
-      const rows = [
+      const rows: (VTable.IDimension | string)[] = [
         {
           dimensionKey: 'Order Year',
           dimensionTitle: 'Order Year',
@@ -28,7 +28,7 @@ export function createTable() {
         },
         'Ship Mode'
       ];
-      const indicators: VTable.TYPES.IIndicator[] = [
+      const indicators: VTable.TYPES.IChartIndicator[] = [
         {
           indicatorKey: 'Quantity',
           caption: 'Quantity',
@@ -330,7 +330,6 @@ export function createTable() {
         columns,
         indicators,
         indicatorsAsCol: false,
-        parentElement: document.getElementById(Table_CONTAINER_DOM_ID),
         records: data,
         defaultRowHeight: 131,
         defaultHeaderRowHeight: 50,
@@ -414,10 +413,11 @@ export function createTable() {
           frameStyle: {
             borderLineWidth: 0
           }
-        }
+        },
+        renderChartAsync: true
       };
 
-      const tableInstance = new VTable.PivotChart(option);
+      const tableInstance = new VTable.PivotChart(document.getElementById(Table_CONTAINER_DOM_ID)!, option);
       tableInstance.onVChartEvent('click', args => {
         console.log('listenChart click', args);
       });

@@ -56,7 +56,7 @@ import type { PivotHeaderLayoutMap } from '../layout/pivot-header-layout';
 import { TooltipHandler } from '../components/tooltip/TooltipHandler';
 import type { CachedDataSource, DataSource } from '../data';
 import type { IWrapTextGraphicAttribute } from '@visactor/vrender';
-import { isBoolean, type ITextSize } from '@visactor/vutils';
+import { isBoolean, isFunction, type ITextSize } from '@visactor/vutils';
 import { WrapText } from '../scenegraph/graphic/text';
 import { textMeasure } from '../scenegraph/utils/measure-text';
 import { getProp } from '../scenegraph/utils/get-prop';
@@ -91,6 +91,7 @@ import { CartesianAxis } from '../components/axis/axis';
 import { DataSet } from '@visactor/vdataset';
 import { Title } from '../components/title/title';
 import type { Chart } from '../scenegraph/graphic/chart';
+import { setBatchRenderChartCount } from '../scenegraph/graphic/contributions/chart-render-helper';
 const { toBoxArray } = utilStyle;
 const { isTouchEvent } = event;
 const rangeReg = /^\$(\d+)\$(\d+)$/;
@@ -148,8 +149,12 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
 
   headerStyleCache: any;
   bodyStyleCache: any;
-  constructor(options: BaseTableConstructorOptions = {}) {
+  container: HTMLElement;
+  constructor(container: HTMLElement, options: BaseTableConstructorOptions = {}) {
     super();
+    if (!container) {
+      throw new Error("vtable's container is undefined");
+    }
     const {
       // rowCount = 0,
       // colCount = 0,
@@ -163,7 +168,6 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
       heightMode = 'standard',
       autoFillWidth = false,
       keyboardOptions,
-      parentElement,
       // disableRowHeaderColumnResize,
       columnResizeMode,
       dragHeaderMode,
@@ -176,9 +180,13 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
       menu,
       select: click,
       customRender,
-      pixelRatio = defaultPixelRatio
+      pixelRatio = defaultPixelRatio,
+      renderChartAsync,
+      renderChartAsyncBatchCount
     } = options;
+    this.container = container;
     this.options = options;
+    this.options.container = container;
     this._widthMode = widthMode;
     this._heightMode = heightMode;
     this._autoFillWidth = autoFillWidth;
@@ -234,6 +242,8 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
 
     internalProps.columnResizeMode = columnResizeMode;
     internalProps.dragHeaderMode = dragHeaderMode;
+    internalProps.renderChartAsync = renderChartAsync;
+    setBatchRenderChartCount(renderChartAsyncBatchCount);
 
     /////
     internalProps._rowHeightsMap = new NumberMap();
@@ -260,10 +270,10 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
 
     // internalProps.element.appendChild(internalProps.scrollable.getElement());
 
-    if (parentElement) {
+    if (container) {
       //先清空
-      parentElement.innerHTML = '';
-      parentElement.appendChild(internalProps.element);
+      container.innerHTML = '';
+      container.appendChild(internalProps.element);
       this._updateSize();
     } else {
       this._updateSize();
@@ -335,11 +345,11 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
   /** 节流绘制 */
   throttleInvalidate = throttle2(this.render.bind(this), 200);
   /**
-   * Get parent element.
-   * @returns {HTMLElement} parent element container
+   * Get table container.
+   * @returns {HTMLElement} table container
    */
-  getParentElement(): HTMLElement {
-    return this.options.parentElement;
+  getContainer(): HTMLElement {
+    return this.container;
   }
   /**
    * 获取表格创建的DOM根节点
@@ -356,6 +366,12 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
 
   resize() {
     this._updateSize();
+    if (this.internalProps.legends) {
+      this.internalProps.legends.resize();
+    }
+    if (this.internalProps.title) {
+      this.internalProps.title.resize();
+    }
     this.scenegraph.resize();
   }
 
@@ -878,21 +894,6 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     // 清楚影响缓存
     if (clearCache) {
       this._clearRowRangeHeightsMap(row);
-    }
-  }
-  /**
-   * 批量设置行高 这个值只可设置在computeRowsHeight函数中
-   * @param rowStart 起始行
-   * @param rowEnd 结束行号
-   * @param height 统一高度值
-   */
-  fillRowsHeight(rowStart: number, rowEnd: number, rowHeight: number): void {
-    for (let row = rowStart; row <= rowEnd; row++) {
-      this.rowHeightsMap.put(row, Math.round(rowHeight));
-      this._rowRangeHeightsMap.set(
-        `$0$${row}`,
-        Math.round((this._rowRangeHeightsMap.get(`$0$${row - 1}`) ?? 0) + rowHeight)
-      ); //按照逻辑这里去缓存值$0$${row - 1} 一定是有的（除第一行外）
     }
   }
   /**
@@ -1676,7 +1677,9 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
       widthMode,
       heightMode,
       autoFillWidth,
-      customRender
+      customRender,
+      renderChartAsync,
+      renderChartAsyncBatchCount
     } = options;
     if (pixelRatio && pixelRatio !== this.internalProps.pixelRatio) {
       this.internalProps.pixelRatio = pixelRatio;
@@ -1731,6 +1734,8 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
 
     internalProps.columnResizeMode = columnResizeMode;
     internalProps.dragHeaderMode = dragHeaderMode;
+    internalProps.renderChartAsync = renderChartAsync;
+    setBatchRenderChartCount(renderChartAsyncBatchCount);
 
     internalProps.cellTextOverflows = {};
     internalProps._rowHeightsMap = new NumberMap();
@@ -2650,7 +2655,9 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
       styleClass,
       this.options.autoWrapText
     );
-    this.bodyStyleCache.set(cacheKey, cacheStyle);
+    if (!isFunction(style)) {
+      this.bodyStyleCache.set(cacheKey, cacheStyle);
+    }
     return cacheStyle;
   }
   clearCellStyleCache() {
@@ -3073,7 +3080,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     return cellInfoArray;
   }
   /** 计算字体的宽度接口 */
-  measureText(text: string, font: { fontSize: number; fontFamily: string }): ITextSize {
+  measureText(text: string, font: { fontSize: number; fontWeight: string | number; fontFamily: string }): ITextSize {
     return textMeasure.measureText(text, font);
   }
   measureTextBounds(attributes: IWrapTextGraphicAttribute): ITextSize {

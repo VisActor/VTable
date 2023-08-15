@@ -5,7 +5,7 @@ const Table_CONTAINER_DOM_ID = 'vTable';
 
 export function createTable() {
   const option: VTable.PivotTableConstructorOptions = {
-    parentElement: document.getElementById(Table_CONTAINER_DOM_ID),
+    container: document.getElementById(Table_CONTAINER_DOM_ID),
     columns: [
       {
         dimensionKey: '221205165418024',

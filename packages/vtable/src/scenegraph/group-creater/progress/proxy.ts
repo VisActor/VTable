@@ -31,8 +31,9 @@ export class SceneProxy {
   rowUpdatePos: number; // 异步任务目前更新到的行的row number
   rowUpdateDirection: 'up' | 'down'; // 当前行更新的方向
   screenTopRow: number = 0; // 当前屏幕范围内显示的第一行的row number
+  deltaY: number = 0;
 
-  colLimit = 1000;
+  colLimit = 100;
   bodyLeftCol: number; // table body部分的第一列col number
   bodyRightCol: number; // table body部分的最后一列col number
   totalCol: number; // 渐进完成最后一列的col number
@@ -48,6 +49,7 @@ export class SceneProxy {
   referenceCol: number; // 当前维护的部分中间一列的col number，认为referenceCol对应当前屏幕显示范围的第一列
   screenLeftCol: number = 0; // 当前屏幕范围内显示的第一列的col number
   colUpdateDirection: 'left' | 'right'; // 当前列更新方向
+  deltaX: number = 0;
 
   cellCache: Map<number, Group> = new Map(); // 单元格位置快速查找缓存
 
@@ -56,6 +58,10 @@ export class SceneProxy {
 
     if (this.table.isPivotChart()) {
       this.rowLimit = 100;
+      this.colLimit = 100;
+    } else if (this.table.heightMode === 'autoHeight') {
+      this.rowLimit = 100;
+    } else if (this.table.widthMode === 'autoWidth') {
       this.colLimit = 100;
     }
 
@@ -147,65 +153,6 @@ export class SceneProxy {
       this
     );
   }
-
-  async createColGroupForFirstScreen(
-    rowHeaderGroup: Group,
-    bodyGroup: Group,
-    xOrigin: number,
-    yOrigin: number,
-    table: BaseTableAPI
-  ) {
-    this.setParamsForRow();
-    this.setParamsForColumn();
-
-    // compute row height in first screen
-    computeRowsHeight(table, this.table.columnHeaderLevelCount, Math.min(this.firstScreenRowLimit, table.rowCount - 1));
-
-    // 生成首屏单元格
-    // rowHeader
-    createColGroup(
-      rowHeaderGroup,
-      xOrigin,
-      yOrigin,
-      0, // colStart
-      table.rowHeaderLevelCount - 1, // colEnd
-      table.columnHeaderLevelCount, // rowStart
-      table.rowCount - 1, // rowEnd
-      'rowHeader', // isHeader
-      table,
-      this.firstScreenRowLimit
-    );
-    // body
-    createColGroup(
-      bodyGroup,
-      xOrigin,
-      yOrigin,
-      table.rowHeaderLevelCount, // colStart
-      table.colCount - 1, // colEnd
-      table.columnHeaderLevelCount, // rowStart
-      table.rowCount - 1, // rowEnd
-      'body', // isHeader
-      table,
-      this.firstScreenRowLimit
-    );
-
-    // 更新row信息
-    if (!bodyGroup.firstChild) {
-      // 无数据
-      this.currentRow = this.totalRow;
-      this.rowEnd = this.currentRow;
-      this.rowUpdatePos = this.rowEnd;
-      this.referenceRow = Math.floor((this.rowEnd - this.rowStart) / 2);
-    } else {
-      this.currentRow = (bodyGroup.firstChild as Group)?.rowNumber ?? this.totalRow;
-      this.rowEnd = this.currentRow;
-      this.rowUpdatePos = this.rowEnd;
-      this.referenceRow = Math.floor((this.rowEnd - this.rowStart) / 2);
-      // 开始异步任务
-      await this.progress();
-    }
-  }
-
   // async progress() {
   //   if (this.rowUpdatePos < this.rowEnd) {
   //     console.log('progress rowUpdatePos', this.rowUpdatePos);
@@ -263,7 +210,7 @@ export class SceneProxy {
   createRowCellGroup(onceCount: number) {
     const endRow = Math.min(this.totalRow, this.currentRow + onceCount);
     // compute rows height
-    computeRowsHeight(this.table, this.currentRow + 1, endRow);
+    computeRowsHeight(this.table, this.currentRow + 1, endRow, false);
 
     if (this.table.rowHeaderLevelCount) {
       // create row header row cellGroup
@@ -344,6 +291,15 @@ export class SceneProxy {
     const endCol = Math.min(this.totalCol, this.currentCol + onceCount);
     computeColsWidth(this.table, this.currentCol + 1, endCol);
 
+    // update last merge cell
+    for (let row = 0; row < this.table.rowCount; row++) {
+      const cellGroup = this.highPerformanceGetCell(this.currentCol, row);
+      if (isNumber(cellGroup.mergeCol) && cellGroup.mergeCol > this.currentCol) {
+        this.table.scenegraph.updateCellContent(cellGroup.col, cellGroup.row);
+      }
+    }
+
+    // create column
     if (this.table.columnHeaderLevelCount) {
       // create colGroup
       const lastColumnGroup = (
@@ -388,7 +344,6 @@ export class SceneProxy {
         this.table
       );
     }
-
     // create colGroup
     const lastColumnGroup = (
       this.table.scenegraph.bodyGroup.lastChild instanceof Group
@@ -466,7 +421,7 @@ export class SceneProxy {
     const distRow = Math.min(this.bodyBottomRow, this.rowUpdatePos + count);
     // console.log('updateCellGroups', this.rowUpdatePos, distRow);
     if (this.table.heightMode === 'autoHeight') {
-      computeRowsHeight(this.table, this.rowUpdatePos, distRow);
+      computeRowsHeight(this.table, this.rowUpdatePos, distRow, false);
     }
 
     updateRowContent(this.rowUpdatePos, distRow, this);
@@ -568,9 +523,9 @@ export class SceneProxy {
       syncBottomRow = Math.min(this.bodyBottomRow, this.screenTopRow + this.screenRowCount * 3);
     }
     console.log('sort更新同步范围', syncTopRow, syncBottomRow);
-    if (this.table.heightMode === 'autoHeight') {
-      computeRowsHeight(this.table, syncTopRow, syncBottomRow);
-    }
+
+    computeRowsHeight(this.table, syncTopRow, syncBottomRow);
+
     for (let col = this.bodyLeftCol; col <= this.bodyRightCol; col++) {
       for (let row = syncTopRow; row <= syncBottomRow; row++) {
         // const cellGroup = this.table.scenegraph.getCell(col, row);

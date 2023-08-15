@@ -15,6 +15,7 @@ import { getCellHoverColor } from '../../../state/hover/is-cell-hover';
 import type { BaseTableAPI } from '../../../ts-types/base-table';
 import { getQuadProps } from '../../utils/padding';
 import { getCellMergeInfo } from '../../utils/get-cell-merge';
+import { InteractionState } from '../../../ts-types';
 
 // const highlightDash: number[] = [];
 
@@ -676,10 +677,12 @@ export class AdjustColorGroupBeforeRenderContribution implements IGroupRenderCon
     // 处理hover颜色
     if ((group as Group).role === 'cell') {
       const table = (group.stage as any).table as BaseTableAPI;
-      const hoverColor = getCellHoverColor(group as Group, table);
-      if (hoverColor) {
-        (group as any).oldColor = group.attribute.fill;
-        group.attribute.fill = hoverColor;
+      if (table.stateManeger.interactionState !== InteractionState.scrolling) {
+        const hoverColor = getCellHoverColor(group as Group, table);
+        if (hoverColor) {
+          (group as any).oldColor = group.attribute.fill;
+          group.attribute.fill = hoverColor;
+        }
       }
     }
   }

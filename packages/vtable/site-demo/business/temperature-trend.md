@@ -446,7 +446,6 @@ order: 9-5
     records.push(record);
   }
   const option = {
-    parentElement: document.getElementById(CONTAINER_ID),
     records,
     defaultRowHeight: 150,
     defaultHeaderRowHeight: 50,
@@ -700,7 +699,7 @@ order: 9-5
       }
     })
   };
-  const tableInstance = new VTable.PivotTable(option);
+  const tableInstance = new VTable.PivotTable(document.getElementById(CONTAINER_ID),option);
   window.tableInstance = tableInstance;
 ```
 

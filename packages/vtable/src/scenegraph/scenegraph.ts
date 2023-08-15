@@ -30,8 +30,8 @@ import { updateRow } from './layout/update-row';
 import { handleTextStick } from './stick-text';
 import { computeRowsHeight } from './layout/compute-row-height';
 import { emptyGroup } from './utils/empty-group';
-import { updateChartSize, updateChartState } from './refresh-node/update-chart';
 import { dealBottomFrozen, dealFrozen, dealRightFrozen, resetFrozen } from './layout/frozen';
+import { clearChartCacheImage, updateChartSize, updateChartState } from './refresh-node/update-chart';
 import { createCornerCell } from './style/corner-cell';
 import { initSceneGraph } from './group-creater/init-scenegraph';
 
@@ -165,6 +165,12 @@ export class Scenegraph {
     this.rowHeaderGroup.clear();
     this.cornerHeaderGroup.clear();
     this.bodyGroup.clear();
+
+    this.bottomFrozenGroup.clear();
+    this.rightFrozenGroup.clear();
+    this.rightTopCellGroup.clear();
+    this.rightBottomCellGroup.clear();
+    this.leftBottomCellGroup.clear();
 
     this.colHeaderGroup.setAttributes({
       x: 0,
@@ -716,16 +722,18 @@ export class Scenegraph {
 
   resize() {
     this.recalculateColWidths();
-    if (this.table.heightMode === 'autoHeight') {
-      this.recalculateRowHeights();
-    }
+
+    this.recalculateRowHeights();
+
     this.dealWidthMode();
     this.dealHeightMode();
     this.dealFrozen();
     this.updateTableSize();
     this.updateBorderSizeAndPosition();
     this.component.updateScrollBar();
-
+    if (this.table.widthMode === 'adaptive' || this.table.heightMode === 'adaptive') {
+      this.updateChartSize(this.table.rowHeaderLevelCount);
+    }
     // this.stage.window.resize(width, height);
     this.updateNextFrame();
   }
@@ -1492,9 +1500,8 @@ export class Scenegraph {
 
     // update column width and row height
     this.recalculateColWidths();
-    if (this.table.heightMode === 'autoHeight') {
-      this.recalculateRowHeights();
-    }
+
+    this.recalculateRowHeights();
 
     // check frozen status
     this.table.stateManeger.checkFrozen();

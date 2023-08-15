@@ -250,7 +250,7 @@ export interface PivotChartConstructorOptions extends BaseTableConstructorOption
   /** 指标标题 用于显示到角头的值*/
   indicatorTitle?: string;
 
-  axes: ITableAxisOption[];
+  axes?: ITableAxisOption[];
 }
 export interface PivotTableAPI extends BaseTableAPI {
   records?: any;

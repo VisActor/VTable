@@ -37,6 +37,10 @@ export const menus = [
       {
         path: 'list',
         name: 'list-height-adaptive'
+      },
+      {
+        path: 'list',
+        name: 'list-100w'
       }
     ]
   },
@@ -213,6 +217,10 @@ export const menus = [
       {
         path: 'pivot',
         name: 'pivot-basic-updateOption'
+      },
+      {
+        path: 'pivot',
+        name: 'pivot-column-pref'
       }
     ]
   },
@@ -451,6 +459,14 @@ export const menus = [
       {
         path: 'business',
         name: 'roadmap'
+      },
+      {
+        path: 'business',
+        name: 'aeolusTestPerformance'
+      },
+      {
+        path: 'business',
+        name: 'testPerformanceMoreColumn'
       }
     ]
   },
@@ -468,6 +484,15 @@ export const menus = [
       {
         path: 'unit-test-demo',
         name: 'unitTestPivotChart'
+      }
+    ]
+  },
+  {
+    menu: 'fs',
+    children: [
+      {
+        path: 'fs',
+        name: 'update-option'
       }
     ]
   }

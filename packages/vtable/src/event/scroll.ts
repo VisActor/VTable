@@ -1,4 +1,5 @@
 import type { StateManeger } from '../state/state';
+import { InteractionState } from '../ts-types';
 
 export function handleWhell(event: WheelEvent, state: StateManeger) {
   let { deltaX, deltaY } = event;
@@ -9,6 +10,11 @@ export function handleWhell(event: WheelEvent, state: StateManeger) {
     deltaY = 0;
   }
   const [optimizedDeltaX, optimizedDeltaY] = optimizeScrollXY(deltaX, deltaY, { horizontal: 1, vertical: 1 });
+  if (optimizedDeltaX || optimizedDeltaY) {
+    if (state.interactionState !== InteractionState.scrolling) {
+      state.updateInteractionState(InteractionState.scrolling);
+    }
+  }
 
   if (optimizedDeltaX) {
     state.setScrollLeft(state.scroll.horizontalBarPos + optimizedDeltaX);
@@ -18,7 +24,7 @@ export function handleWhell(event: WheelEvent, state: StateManeger) {
     state.setScrollTop(state.scroll.verticalBarPos + optimizedDeltaY);
     state.showVerticalScrollBar(true);
   }
-
+  state.resetInteractionState();
   if (
     event.cancelable &&
     ((deltaY !== 0 && isVerticalScrollable(deltaY, state)) || (deltaX !== 0 && isHorizontalScrollable(deltaX, state)))

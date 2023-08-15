@@ -35,8 +35,18 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
   flatDataToObjects?: FlatDataToObjects; //数据处理对象 聚合后的flat数据 转成便于查询的行列二维数组
   // drillMenu: Menu; //上卷下钻的按钮
   // eslint-disable-next-line default-param-last
-  constructor(options: PivotTableConstructorOptions) {
-    super(options);
+  constructor(options: PivotTableConstructorOptions);
+  constructor(container: HTMLElement, options: PivotTableConstructorOptions);
+  constructor(container?: HTMLElement | PivotTableConstructorOptions, options?: PivotTableConstructorOptions) {
+    if (!(container instanceof HTMLElement)) {
+      options = container as PivotTableConstructorOptions;
+      if ((container as PivotTableConstructorOptions).container) {
+        container = (container as PivotTableConstructorOptions).container;
+      } else {
+        container = null;
+      }
+    }
+    super(container as HTMLElement, options);
     if ((options as any).layout) {
       //TODO hack处理之前的demo都是定义到layout上的 所以这里直接并到options中
       Object.assign(options, (options as any).layout);

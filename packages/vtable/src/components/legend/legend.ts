@@ -42,6 +42,23 @@ export class TableLegend {
     this.legendComponent = legend;
     this.table.scenegraph.stage.defaultLayer.appendChild(legend);
 
+    this.adjustTableSize(attrs);
+  }
+
+  resize() {
+    if (!this.legendComponent) {
+      return;
+    }
+
+    this.legendComponent.setAttributes({
+      width: this.table.tableNoFrameWidth,
+      height: this.table.tableNoFrameHeight
+    });
+
+    this.adjustTableSize(this.legendComponent.attribute);
+  }
+
+  adjustTableSize(attrs: any) {
     // 调整位置
     let width = isFinite(this.legendComponent.AABBBounds.width()) ? this.legendComponent.AABBBounds.width() : 0;
     let height = isFinite(this.legendComponent.AABBBounds.height()) ? this.legendComponent.AABBBounds.height() : 0;
@@ -134,20 +151,22 @@ export class TableLegend {
     if (this.legendComponent) {
       this.legendComponent.addEventListener(LegendEvent.legendItemClick, (e: any) => {
         const selectedData = get(e, 'detail.currentSelected');
-        this.table.scenegraph.updateNextFrame();
         this.table.fireListeners(TABLE_EVENT_TYPE.LEGEND_ITEM_CLICK, { model: this, value: selectedData, event: e });
       });
 
       this.legendComponent.addEventListener(LegendEvent.legendItemHover, (e: any) => {
         const detail = get(e, 'detail');
-        this.table.scenegraph.updateNextFrame();
         this.table.fireListeners(TABLE_EVENT_TYPE.LEGEND_ITEM_HOVER, { model: this, value: detail, event: e });
       });
 
       this.legendComponent.addEventListener(LegendEvent.legendItemUnHover, (e: any) => {
         const detail = get(e, 'detail');
-        this.table.scenegraph.updateNextFrame();
         this.table.fireListeners(TABLE_EVENT_TYPE.LEGEND_ITEM_UNHOVER, { model: this, value: detail, event: e });
+      });
+
+      // wait for vrender-vcomponent version update
+      this.legendComponent.addEventListener('legendItemAttributeUpdate', (e: any) => {
+        this.table.scenegraph.updateNextFrame();
       });
     }
   }
@@ -162,7 +181,7 @@ export class TableLegend {
     };
   }
   release() {
-    this.table.scenegraph.stage.defaultLayer.removeChild(this.legendComponent);
+    this.legendComponent && this.table.scenegraph.stage.defaultLayer.removeChild(this.legendComponent);
     this.legendComponent = null;
   }
 }

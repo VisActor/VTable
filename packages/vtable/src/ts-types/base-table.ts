@@ -176,6 +176,11 @@ export interface IBaseTableProtected {
 
   title?: Title;
   legends?: TableLegend;
+
+  //是否开启图表异步渲染
+  renderChartAsync?: boolean;
+  // // 开启图表异步渲染 每批次渐进渲染图表个数
+  // renderChartAsyncBatchCount?: number;
 }
 export interface BaseTableConstructorOptions {
   // /** 指定表格的行数 */
@@ -209,9 +214,9 @@ export interface BaseTableConstructorOptions {
   /** 快捷键功能设置 */
   keyboardOptions?: TableKeyboardOptions;
   /**
-   * Canvas parent element
+   * Canvas container
    */
-  parentElement?: HTMLElement | null;
+  container?: HTMLElement | null;
 
   /**
    * 调整列宽 可操作范围。'all' | 'none' | 'header' | 'body'; 整列间隔线|禁止调整|只能在表头处间隔线|只能在body间隔线
@@ -307,6 +312,10 @@ export interface BaseTableConstructorOptions {
 
   legends?: ITableLegendOption;
   title?: ITitle;
+  //是否开启图表异步渲染
+  renderChartAsync?: boolean;
+  // 开启图表异步渲染 每批次渐进渲染图表个数
+  renderChartAsyncBatchCount?: number;
 }
 export interface BaseTableAPI {
   /** 表格的行数 */
@@ -402,7 +411,7 @@ export interface BaseTableAPI {
     isAddScroll?: boolean
   ) => { x: number; y: number; inTable: boolean };
   getElement: () => HTMLElement;
-  getParentElement: () => HTMLElement;
+  getContainer: () => HTMLElement;
 
   setFrozenColCount: (count: number) => void;
   _setFrozenColCount: (count: number) => void;
@@ -525,7 +534,10 @@ export interface BaseTableAPI {
 
   showTooltip: (col: number, row: number, tooltipOptions?: TooltipOptions) => void;
 
-  measureText: (text: string, font: { fontSize: number; fontFamily: string }) => ITextSize;
+  measureText: (
+    text: string,
+    font: { fontSize: number; fontWeight?: string | number; fontFamily: string }
+  ) => ITextSize;
   measureTextBounds: (attributes: IWrapTextGraphicAttribute) => ITextSize;
 
   _canResizeColumn: (col: number, row: number) => boolean;

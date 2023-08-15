@@ -1,6 +1,7 @@
 /* eslint-disable */
 import * as VTable from '../../src';
 import VChart from '@visactor/vchart';
+import { bindDebugTool } from '../../src/scenegraph/debug-tool';
 const Table_CONTAINER_DOM_ID = 'vTable';
 VTable.register.chartModule('vchart', VChart);
 export function createTable() {
@@ -96,6 +97,24 @@ export function createTable() {
           value: '技术'
         }
       ]
+    },
+    {
+      dimensionKey: '230417171050031',
+      value: '中国',
+      children: [
+        {
+          dimensionKey: '230417171050028',
+          value: '办公用品'
+        },
+        {
+          dimensionKey: '230417171050028',
+          value: '家具'
+        },
+        {
+          dimensionKey: '230417171050028',
+          value: '技术'
+        }
+      ]
     }
   ];
   const columns: (VTable.IDimension | string)[] = [
@@ -165,6 +184,7 @@ export function createTable() {
             }
           }
         },
+        axes: [{ orient: 'left', visible: true, label: { visible: true } }],
         // brush: {
         //   brushType: 'rect',
         //   brushLinkSeriesIndex: [1, 2],
@@ -178,10 +198,6 @@ export function createTable() {
         xField: ['230417170554008'],
         yField: '230713183656009',
         seriesField: '20001',
-        axes: [
-          { orient: 'left', visible: false, label: { visible: true } },
-          { orient: 'bottom', visible: false }
-        ],
         bar: {
           state: {
             selected: {
@@ -383,7 +399,7 @@ export function createTable() {
           }
         ],
         axes: [
-          { orient: 'left', visible: false, label: { visible: true } },
+          { orient: 'left', visible: true, label: { visible: true } },
           { orient: 'bottom', visible: false }
         ],
         scales: [
@@ -473,7 +489,7 @@ export function createTable() {
         yField: '230707112948009',
         seriesField: '20001',
         axes: [
-          { orient: 'left', visible: false, label: { visible: true } },
+          { orient: 'left', visible: true, label: { visible: true } },
           { orient: 'bottom', visible: false }
         ],
         scales: [
@@ -10341,15 +10357,17 @@ export function createTable() {
     }
   ];
   const option: VTable.PivotTableConstructorOptions = {
+    // renderChartAsync:true,
+    renderChartAsyncBatchCount: 50,
     columnTree,
     rowTree,
     rows,
     columns,
     indicators,
     indicatorsAsCol: false,
-    parentElement: document.getElementById(Table_CONTAINER_DOM_ID),
+    container: document.getElementById(Table_CONTAINER_DOM_ID),
     records,
-    defaultRowHeight: 200,
+    defaultRowHeight: 50,
     defaultHeaderRowHeight: 50,
     defaultColWidth: 280,
     defaultHeaderColWidth: 100,
@@ -10456,7 +10474,9 @@ export function createTable() {
       position: 'start',
       maxRow: 1,
       padding: [50, 0, 0, 0]
-    }
+    },
+    widthMode: 'adaptive',
+    heightMode: 'adaptive'
     // hover: {
     //   disableHeaderHover:false,
     //   disableHover: true
@@ -10529,4 +10549,6 @@ export function createTable() {
     console.log('getChartDatumPosition', position);
   }, 3000);
   window.tableInstance = tableInstance;
+
+  bindDebugTool(tableInstance.scenegraph.stage, {});
 }

@@ -35,6 +35,7 @@ import type { TooltipOptions } from '../ts-types/tooltip';
 import { getIconAndPositionFromTarget } from '../scenegraph/utils/icon';
 import type { BaseTableAPI } from '../ts-types/base-table';
 import { isObject, isString, isValid } from '../tools/util';
+import { debounce } from '../tools/debounce';
 
 export class StateManeger {
   table: BaseTableAPI;
@@ -135,7 +136,10 @@ export class StateManeger {
   };
   _clearVerticalScrollBar: any;
   _clearHorizontalScrollBar: any;
-
+  // 供滚动重置为default使用
+  resetInteractionState = debounce(() => {
+    this.updateInteractionState(InteractionState.default);
+  }, 100);
   // _x: number = 0;
   constructor(table: BaseTableAPI) {
     this.table = table;

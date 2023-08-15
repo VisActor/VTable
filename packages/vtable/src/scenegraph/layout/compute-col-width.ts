@@ -9,9 +9,10 @@ import { getProp } from '../utils/get-prop';
 import type { BaseTableAPI } from '../../ts-types/base-table';
 import type { PivotLayoutMap } from '../../layout/pivot-layout';
 import { getAxisConfigInPivotChart } from '../../layout/chart-helper/get-axis-config';
-import { computeAxisConpomentWidth } from '../../components/axis/get-axis-component-size';
+import { computeAxisComponentWidth } from '../../components/axis/get-axis-component-size';
 
 export function computeColsWidth(table: BaseTableAPI, colStart?: number, colEnd?: number, update?: boolean): void {
+  const time = typeof window !== 'undefined' ? window.performance.now() : 0;
   colStart = colStart ?? 0;
   colEnd = colEnd ?? table.colCount - 1;
   // table._clearColRangeWidthsMap();
@@ -118,6 +119,7 @@ export function computeColsWidth(table: BaseTableAPI, colStart?: number, colEnd?
       }
     }
   }
+  // console.log('computeColsWidth  time:', (typeof window !== 'undefined' ? window.performance.now() : 0) - time, colStart, colEnd);
 }
 
 /**
@@ -241,7 +243,7 @@ function computeAutoColWidth(
       const layout = table.internalProps.layoutMap as PivotLayoutMap;
       const axisConfig = getAxisConfigInPivotChart(col, row, layout);
       if (axisConfig) {
-        const axisWidth = computeAxisConpomentWidth(axisConfig, table);
+        const axisWidth = computeAxisComponentWidth(axisConfig, table);
         if (typeof axisWidth === 'number') {
           maxWidth = Math.max(axisWidth, maxWidth);
           continue;
@@ -428,14 +430,15 @@ function computeTextWidth(col: number, row: number, table: BaseTableAPI): number
 
   const fontSize = getProp('fontSize', actStyle, col, row, table);
   const fontFamily = getProp('fontFamily', actStyle, col, row, table);
-
+  const fontWeight = getProp('fontWeight', actStyle, col, row, table);
   const lines = validToString(cellValue).split('\n') || [];
   if (lines.length >= 1) {
     // eslint-disable-next-line no-loop-func
     lines.forEach((line: string) => {
       const width = table.measureText(line.slice(0, table.options.maxCharactersNumber || 200), {
         fontSize,
-        fontFamily
+        fontFamily,
+        fontWeight
       }).width;
       maxWidth = Math.max(
         // 最大字符上限控制测量的字符

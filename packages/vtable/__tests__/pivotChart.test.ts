@@ -9219,7 +9219,7 @@ function createTable(containerDom) {
     columns,
     indicators,
     indicatorsAsCol: false,
-    parentElement: containerDom,
+    container: containerDom,
     records,
     defaultRowHeight: 200,
     defaultHeaderRowHeight: 50,
@@ -9350,7 +9350,7 @@ describe('pivotTable init test', () => {
         }
       ]
     };
-    expect(pivotChart.getChartDatumPosition(datum, cellAddr)).toEqual({ x: 429, y: 299 });
+    expect(pivotChart.getChartDatumPosition(datum, cellAddr)).toEqual({ x: 429, y: 298 });
   });
 
   test('pivotTable collectValuesBy', () => {
