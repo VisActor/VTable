@@ -168,9 +168,9 @@ export class Scenegraph {
 
     this.bottomFrozenGroup.clear();
     this.rightFrozenGroup.clear();
-    this.rightTopCellGroup.clear();
-    this.rightBottomCellGroup.clear();
-    this.leftBottomCellGroup.clear();
+    this.rightTopCornerGroup.clear();
+    this.rightBottomCornerGroup.clear();
+    this.leftBottomCornerGroup.clear();
 
     this.colHeaderGroup.setAttributes({
       x: 0,
