@@ -12,6 +12,13 @@ import { ContributionProvider, getTheme, IGroupRenderContribution, createImage }
 import { inject, injectable, named } from 'inversify';
 import type { Chart } from '../chart';
 import { CHART_NUMBER_TYPE } from '../chart';
+import {
+  IsHandlingChartQueue,
+  chartRenderKeys,
+  chartRenderQueueList,
+  renderChart,
+  startRenderChartQueue
+} from './chart-render-helper';
 
 export const ChartRender = Symbol.for('ChartRender');
 export const ChartRenderContribution = Symbol.for('ChartRenderContribution');
@@ -67,47 +74,18 @@ export class DefaultCanvasChartRender implements IGraphicRender {
         }
       }
     } else {
-      // console.log('viewBox', viewBox);
-      const { axes } = chart.attribute;
-      axes.forEach((axis: any, index: number) => {
-        if (axis.type === 'linear') {
-          const chartAxis = chartInstance._chart._components[index];
-          chartAxis._domain = {
-            min: axis.range?.min ?? 0,
-            max: axis.range?.max ?? 0
-          };
-        } else if (axis.type === 'band') {
-          const chartAxis = chartInstance._chart._components[index];
-          chartAxis._spec.domain = axis.domain.slice(0);
-          chartAxis.updateScaleDomain();
+      if ((chart.getRootNode() as any).table.internalProps.renderChartAsync) {
+        if (chartRenderKeys.indexOf(`${chart.parent.col}+${chart.parent.row}`) === -1) {
+          chartRenderKeys.push(`${chart.parent.col}+${chart.parent.row}`);
+          chartRenderQueueList.push(chart);
         }
-      });
-      chartInstance.updateViewBox(
-        {
-          x1: viewBox.x1 - (chart.getRootNode() as any).table.scrollLeft,
-          x2: viewBox.x2 - (chart.getRootNode() as any).table.scrollLeft,
-          y1: viewBox.y1 - (chart.getRootNode() as any).table.scrollTop,
-          y2: viewBox.y2 - (chart.getRootNode() as any).table.scrollTop
-        },
-        false
-      );
-      if (typeof dataId === 'string') {
-        chartInstance.updateDataSync(dataId, data ?? []);
+        //判断是否已经开启渲染队列
+        if (!IsHandlingChartQueue()) {
+          startRenderChartQueue((chart.getRootNode() as any).table);
+        }
       } else {
-        for (const dataIdStr in dataId) {
-          const dataIdAndField = dataId[dataIdStr];
-          chartInstance.updateDataSync(
-            dataIdStr,
-            dataIdAndField
-              ? data?.filter((item: any) => {
-                  return item.hasOwnProperty(dataIdAndField);
-                }) ?? []
-              : data ?? []
-          );
-        }
+        renderChart(chart);
       }
-      const sg = chartInstance.getStage();
-      chart.cacheCanvas = sg.toCanvas(); // 截图空白问题 因为开启了动画 首屏截图是无数据的TODO
     }
   }
 
@@ -143,25 +121,7 @@ export class DefaultCanvasChartRender implements IGraphicRender {
       this.drawShape(chart, context, 0, 0, drawContext);
     }
 
-    // 绘制子元素的时候要添加scroll
-    const chartAttribute = getTheme(chart, params?.theme).group;
-    const { scrollX = chartAttribute.scrollX, scrollY = chartAttribute.scrollY } = chart.attribute;
-    if (scrollX || scrollY) {
-      context.translate(scrollX, scrollY);
-    }
-    let p: any;
-    if (params && params.drawingCb) {
-      p = params.drawingCb();
-    }
-    if (p && p.then) {
-      p.then(() => {
-        if (clip) {
-          context.restore();
-        } else {
-          context.highPerformanceRestore();
-        }
-      });
-    } else if (clip) {
+    if (clip) {
       context.restore();
     } else {
       context.highPerformanceRestore();

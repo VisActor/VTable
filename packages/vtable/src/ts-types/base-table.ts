@@ -174,6 +174,11 @@ export interface IBaseTableProtected {
 
   title?: Title;
   legends?: TableLegend;
+
+  //是否开启图表异步渲染
+  renderChartAsync?: boolean;
+  // // 开启图表异步渲染 每批次渐进渲染图表个数
+  // renderChartAsyncBatchCount?: number;
 }
 export interface BaseTableConstructorOptions {
   // /** 指定表格的行数 */
@@ -302,6 +307,10 @@ export interface BaseTableConstructorOptions {
 
   legends?: ITableLegendOption;
   title?: ITitle;
+  //是否开启图表异步渲染
+  renderChartAsync?: boolean;
+  // 开启图表异步渲染 每批次渐进渲染图表个数
+  renderChartAsyncBatchCount?: number;
 }
 export interface BaseTableAPI {
   /** 表格的行数 */

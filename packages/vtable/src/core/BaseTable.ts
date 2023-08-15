@@ -91,6 +91,7 @@ import { CartesianAxis } from '../components/axis/axis';
 import { DataSet } from '@visactor/vdataset';
 import { Title } from '../components/title/title';
 import type { Chart } from '../scenegraph/graphic/chart';
+import { setBatchRenderChartCount } from '../scenegraph/graphic/contributions/chart-render-helper';
 const { toBoxArray } = utilStyle;
 const { isTouchEvent } = event;
 const rangeReg = /^\$(\d+)\$(\d+)$/;
@@ -179,7 +180,9 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
       menu,
       select: click,
       customRender,
-      pixelRatio = defaultPixelRatio
+      pixelRatio = defaultPixelRatio,
+      renderChartAsync,
+      renderChartAsyncBatchCount
     } = options;
     this.container = container;
     this.options = options;
@@ -239,6 +242,8 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
 
     internalProps.columnResizeMode = columnResizeMode;
     internalProps.dragHeaderMode = dragHeaderMode;
+    internalProps.renderChartAsync = renderChartAsync;
+    setBatchRenderChartCount(renderChartAsyncBatchCount);
 
     /////
     internalProps._rowHeightsMap = new NumberMap();
@@ -1655,7 +1660,9 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
       widthMode,
       heightMode,
       autoFillWidth,
-      customRender
+      customRender,
+      renderChartAsync,
+      renderChartAsyncBatchCount
     } = options;
     if (pixelRatio && pixelRatio !== this.internalProps.pixelRatio) {
       this.internalProps.pixelRatio = pixelRatio;
@@ -1710,6 +1717,8 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
 
     internalProps.columnResizeMode = columnResizeMode;
     internalProps.dragHeaderMode = dragHeaderMode;
+    internalProps.renderChartAsync = renderChartAsync;
+    setBatchRenderChartCount(renderChartAsyncBatchCount);
 
     internalProps.cellTextOverflows = {};
     internalProps._rowHeightsMap = new NumberMap();
