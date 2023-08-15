@@ -54,7 +54,7 @@ export function createChartCellGroup(
     cellGroup.role = 'cell';
     cellGroup.col = col;
     cellGroup.row = row;
-    columnGroup.addChild(cellGroup);
+    columnGroup?.addChild(cellGroup);
   }
   cellGroup.AABBBounds.width(); // TODO 需要底层VRender修改
   // chart

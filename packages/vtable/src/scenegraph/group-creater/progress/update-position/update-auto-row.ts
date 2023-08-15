@@ -9,31 +9,6 @@ export function updateAutoRow(
   table: BaseTableAPI,
   direction: 'up' | 'down' = 'up'
 ) {
-  // // 获取行高
-  // for (let row = rowStart; row <= rowEnd; row++) {
-  //   let maxRowHeight = 0;
-  //   for (let col = colStart; col <= colEnd; col++) {
-  //     const cellGroup = table.scenegraph.highPerformanceGetCell(col, row);
-  //     if (!cellGroup.row) {
-  //       continue;
-  //     }
-  //     // const contentHeight = cellGroup.getContentHeight();
-  //     const text = (cellGroup.getChildByName('text') as WrapText) || cellGroup.getChildByName('content');
-  //     const headerStyle = table._getCellStyle(col, row);
-  //     const padding = getQuadProps(getProp('padding', headerStyle, col, row, table));
-  //     const height = text.AABBBounds.height() + (padding[0] + padding[2]);
-  //     maxRowHeight = Math.max(maxRowHeight, height);
-  //     (cellGroup as any).needUpdateForAutoRowHeight = false;
-  //   }
-  //   // updateRowHeight(table.scenegraph, row, table.getRowHeight(row) - maxRowHeight);
-  //   for (let col = colStart; col <= colEnd; col++) {
-  //     const cellGroup = table.scenegraph.highPerformanceGetCell(col, row);
-  //     updateCellHeightForColumn(table.scenegraph, cellGroup, col, row, maxRowHeight, 0, false);
-  //   }
-
-  //   table.setRowHeight(row, maxRowHeight, true);
-  // }
-
   // 更新y位置
   if (direction === 'up') {
     for (let col = colStart; col <= colEnd; col++) {
@@ -78,7 +53,8 @@ export function updateAutoRow(
   const totalActualBodyRowCount = Math.min(
     table.scenegraph.proxy.rowLimit,
     table.scenegraph.proxy.bodyBottomRow - table.scenegraph.proxy.bodyTopRow + 1
-  ); // 渐进加载总row数量
+  );
+  // 渐进加载总row数量
   const totalBodyHeight = table.getRowsHeight(
     table.columnHeaderLevelCount,
     table.columnHeaderLevelCount + totalActualBodyRowCount

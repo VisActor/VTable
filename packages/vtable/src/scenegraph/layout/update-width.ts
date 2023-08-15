@@ -319,6 +319,8 @@ function updateCellWidth(
       cellGroup.appendChild(axis.component);
       axis.overlap();
     }
+  } else if (cell.firstChild?.name === 'axis') {
+    (cell.firstChild as any)?.originAxis.resize(cell.attribute.width, cell.attribute.height);
   } else {
     // 处理文字
     const style = scene.table._getCellStyle(col, row);

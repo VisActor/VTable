@@ -151,20 +151,22 @@ export class TableLegend {
     if (this.legendComponent) {
       this.legendComponent.addEventListener(LegendEvent.legendItemClick, (e: any) => {
         const selectedData = get(e, 'detail.currentSelected');
-        this.table.scenegraph.updateNextFrame();
         this.table.fireListeners(TABLE_EVENT_TYPE.LEGEND_ITEM_CLICK, { model: this, value: selectedData, event: e });
       });
 
       this.legendComponent.addEventListener(LegendEvent.legendItemHover, (e: any) => {
         const detail = get(e, 'detail');
-        this.table.scenegraph.updateNextFrame();
         this.table.fireListeners(TABLE_EVENT_TYPE.LEGEND_ITEM_HOVER, { model: this, value: detail, event: e });
       });
 
       this.legendComponent.addEventListener(LegendEvent.legendItemUnHover, (e: any) => {
         const detail = get(e, 'detail');
-        this.table.scenegraph.updateNextFrame();
         this.table.fireListeners(TABLE_EVENT_TYPE.LEGEND_ITEM_UNHOVER, { model: this, value: detail, event: e });
+      });
+
+      // wait for vrender-vcomponent version update
+      this.legendComponent.addEventListener('legendItemAttributeUpdate', (e: any) => {
+        this.table.scenegraph.updateNextFrame();
       });
     }
   }

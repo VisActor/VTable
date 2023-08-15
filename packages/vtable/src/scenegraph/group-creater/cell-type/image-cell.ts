@@ -66,7 +66,7 @@ export function createImageCellGroup(
   cellGroup.role = 'cell';
   cellGroup.col = col;
   cellGroup.row = row;
-  columnGroup.addChild(cellGroup);
+  columnGroup?.addChild(cellGroup);
 
   // image
   const value = table.getCellValue(col, row);
