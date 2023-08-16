@@ -3,7 +3,6 @@ import { genNumberType, Group } from '@visactor/vrender';
 import { Bounds, cloneDeep } from '@visactor/vutils';
 import type { BaseTableAPI } from '../../ts-types/base-table';
 import type { PivotChart } from '../../PivotChart';
-import { clearChartCacheImage, updateChartSize } from '../refresh-node/update-chart';
 import type { PivotLayoutMap } from '../../layout/pivot-layout';
 
 interface IChartGraphicAttribute extends IGroupGraphicAttribute {

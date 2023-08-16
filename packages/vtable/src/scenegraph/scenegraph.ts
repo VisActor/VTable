@@ -30,7 +30,7 @@ import { updateRow } from './layout/update-row';
 import { handleTextStick } from './stick-text';
 import { computeRowsHeight } from './layout/compute-row-height';
 import { emptyGroup } from './utils/empty-group';
-import { clearChartCacheImage, updateChartSize, updateChartState } from './refresh-node/update-chart';
+import { updateChartSize, updateChartState } from './refresh-node/update-chart';
 import { dealFrozen, resetFrozen } from './layout/frozen';
 import { createCornerCell } from './style/corner-cell';
 

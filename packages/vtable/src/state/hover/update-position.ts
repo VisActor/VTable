@@ -76,8 +76,7 @@ export function updateHoverPosition(state: StateManeger, col: number, row: numbe
   if (col === -1 || row === -1) {
     cellPos.col = -1;
     cellPos.row = -1;
-
-    if (updateScenegraph) {
+    if (updateScenegraph && (prevHoverCellCol !== col || prevHoverCellRow !== row)) {
       state.table.scenegraph.updateNextFrame();
     }
     return;

@@ -1383,7 +1383,7 @@ export class PivotLayoutMap implements LayoutMapAPI {
               return true;
             });
             return !!match;
-          } else if ((this._table as PivotChart)._selectedDimensionInChart.length) {
+          } else if ((this._table as PivotChart)._selectedDimensionInChart?.length) {
             // 判断维度点击
             const match = (this._table as PivotChart)._selectedDimensionInChart.every(item => {
               if (datum[item.key] !== item.value) {
@@ -1408,7 +1408,7 @@ export class PivotLayoutMap implements LayoutMapAPI {
               return true;
             });
             return !match;
-          } else if ((this._table as PivotChart)._selectedDimensionInChart.length) {
+          } else if ((this._table as PivotChart)._selectedDimensionInChart?.length) {
             // 判断维度点击
             const match = (this._table as PivotChart)._selectedDimensionInChart.every(item => {
               if (datum[item.key] !== item.value) {
