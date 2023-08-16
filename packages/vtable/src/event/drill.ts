@@ -28,6 +28,9 @@ export function bindDrillEvent(table: BaseTableAPI) {
       table.stateManeger.updateDrillState(undefined, undefined, false, false, -1, -1);
     }
   });
+  table.on(TABLE_EVENT_TYPE.MOUSELEAVE_TABLE, (e: MousePointerCellEvent) => {
+    table.stateManeger.updateDrillState(undefined, undefined, false, false, -1, -1);
+  });
 }
 
 export function drillClick(table: BaseTableAPI) {
