@@ -155,7 +155,7 @@ export async function createGroupForFirstScreen(
     );
   }
 
-  if (proxy.table.bottomFrozenRowCount > 0 && proxy.table.rightFrozenColCount > 0) {
+  if (proxy.table.bottomFrozenRowCount > 0 && proxy.table.rightFrozenColCount > 0 && !proxy.table.isPivotChart()) {
     // create right bottom frozen Group
     createColGroup(
       rightBottomCornerGroup,
