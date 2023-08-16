@@ -2690,10 +2690,10 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
       }
     }
 
-    if (this.rightFrozenColCount && col >= this.colCount - this.rightFrozenColCount - 1) {
-      // right frozen columns can not resize temply
-      return false;
-    }
+    // if (this.rightFrozenColCount && col >= this.colCount - this.rightFrozenColCount - 1) {
+    //   // right frozen columns can not resize temply
+    //   return false;
+    // }
 
     const limit = this.colWidthsLimit[col];
     if (!limit || !limit.min || !limit.max) {
