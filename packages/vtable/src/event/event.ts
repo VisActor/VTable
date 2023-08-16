@@ -9,7 +9,7 @@ import { TABLE_EVENT_TYPE } from '../core/TABLE_EVENT_TYPE';
 import type { Icon } from '../scenegraph/graphic/icon';
 import { checkCellInSelect } from '../state/common/check-in-select';
 import { bindMediaClick } from './media-click';
-import { bindDrillEvent, drillClick } from './drill';
+import { bindDrillEvent, checkHaveDrill, drillClick } from './drill';
 import { bindSparklineHoverEvent } from './sparkline-event';
 import type { BaseTableAPI } from '../ts-types/base-table';
 import { checkHaveTextStick, handleTextStick } from '../scenegraph/stick-text';
@@ -20,6 +20,7 @@ import { bindTouchListener } from './listener/touch';
 import { getCellEventArgsSet, type SceneEvent } from './util';
 import { bindAxisClickEvent } from './pivot-chart/axis-click';
 import { bindAxisHoverEvent } from './pivot-chart/axis-hover';
+import type { PivotTable } from '../PivotTable';
 
 export class EventManeger {
   table: BaseTableAPI;
@@ -102,7 +103,7 @@ export class EventManeger {
     });
 
     // drill icon
-    if (this.table.isPivotTable()) {
+    if (this.table.isPivotTable() && checkHaveDrill(this.table as PivotTable)) {
       bindDrillEvent(this.table);
     }
 
