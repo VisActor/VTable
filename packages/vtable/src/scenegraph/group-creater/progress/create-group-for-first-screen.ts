@@ -15,6 +15,8 @@ export async function createGroupForFirstScreen(
   yOrigin: number,
   proxy: SceneProxy
 ) {
+  const { leftBottomCornerGroup, rightTopCornerGroup, rightBottomCornerGroup } = proxy.table.scenegraph;
+
   // compute parameters
   proxy.setParamsForRow();
   proxy.setParamsForColumn();
@@ -96,6 +98,20 @@ export async function createGroupForFirstScreen(
   );
 
   if (proxy.table.bottomFrozenRowCount > 0) {
+    if (!proxy.table.isPivotChart()) {
+      // create left bottom frozen
+      createColGroup(
+        leftBottomCornerGroup,
+        xOrigin,
+        yOrigin,
+        0, // colStart
+        proxy.table.rowHeaderLevelCount - 1, // colEnd
+        proxy.table.rowCount - 1 - proxy.table.bottomFrozenRowCount + 1, // rowStart
+        proxy.table.rowCount - 1, // rowEnd
+        'rowHeader', // isHeader
+        proxy.table
+      );
+    }
     // create bottomFrozenGroup
     createColGroup(
       bottomFrozenGroup,
@@ -108,24 +124,23 @@ export async function createGroupForFirstScreen(
       'body', // isHeader
       proxy.table
     );
-    // proxy.table.scenegraph.bottomFrozenGroup.setAttribute(
-    //   'y',
-    //   proxy.table.tableNoFrameHeight - proxy.table.scenegraph.bottomFrozenGroup.attribute.height
-    // );
-    // proxy.table.scenegraph.leftBottomCellGroup.setAttributes({
-    //   visible: true,
-    //   y: proxy.table.tableNoFrameHeight - proxy.table.scenegraph.bottomFrozenGroup.attribute.height,
-    //   height: proxy.table.scenegraph.bottomFrozenGroup.attribute.height,
-    //   width: proxy.table.getFrozenColsWidth()
-    // });
-    // proxy.table.scenegraph.rightBottomCellGroup.setAttributes({
-    //   visible: true,
-    //   y: proxy.table.tableNoFrameHeight - proxy.table.scenegraph.bottomFrozenGroup.attribute.height,
-    //   height: proxy.table.scenegraph.bottomFrozenGroup.attribute.height
-    // });
   }
 
   if (proxy.table.rightFrozenColCount > 0) {
+    if (!proxy.table.isPivotChart()) {
+      // create right top frozen Group
+      createColGroup(
+        rightTopCornerGroup,
+        xOrigin,
+        yOrigin,
+        proxy.table.colCount - 1 - proxy.table.rightFrozenColCount + 1, // colStart
+        proxy.table.colCount - 1, // colEnd
+        0, // rowStart
+        proxy.table.columnHeaderLevelCount - 1, // rowEnd
+        'columnHeader', // isHeader
+        proxy.table
+      );
+    }
     // create rightFrozenGroup
     createColGroup(
       rightFrozenGroup,
@@ -138,21 +153,21 @@ export async function createGroupForFirstScreen(
       'body', // isHeader
       proxy.table
     );
-    // proxy.table.scenegraph.rightFrozenGroup.setAttribute(
-    //   'x',
-    //   proxy.table.tableNoFrameWidth - proxy.table.scenegraph.rightFrozenGroup.attribute.width
-    // );
-    // proxy.table.scenegraph.rightTopCellGroup.setAttributes({
-    //   visible: true,
-    //   x: proxy.table.tableNoFrameWidth - proxy.table.scenegraph.rightFrozenGroup.attribute.width,
-    //   width: proxy.table.scenegraph.rightFrozenGroup.attribute.width,
-    //   height: proxy.table.getFrozenRowsHeight()
-    // });
-    // proxy.table.scenegraph.rightBottomCellGroup.setAttributes({
-    //   visible: true,
-    //   x: proxy.table.tableNoFrameWidth - proxy.table.scenegraph.rightFrozenGroup.attribute.width,
-    //   width: proxy.table.scenegraph.rightFrozenGroup.attribute.width
-    // });
+  }
+
+  if (proxy.table.bottomFrozenRowCount > 0 && proxy.table.rightFrozenColCount > 0 && !proxy.table.isPivotChart()) {
+    // create right bottom frozen Group
+    createColGroup(
+      rightBottomCornerGroup,
+      xOrigin,
+      yOrigin,
+      proxy.table.colCount - 1 - proxy.table.rightFrozenColCount + 1, // colStart
+      proxy.table.colCount - 1, // colEnd
+      proxy.table.rowCount - 1 - proxy.table.bottomFrozenRowCount + 1, // rowStart
+      proxy.table.rowCount - 1, // rowEnd
+      'body', // isHeader
+      proxy.table
+    );
   }
 
   // create bodyGroup

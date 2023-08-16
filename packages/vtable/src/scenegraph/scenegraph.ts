@@ -2,7 +2,7 @@ import type { IStage, IRect, ITextCache } from '@visactor/vrender';
 import { createStage, createRect, IContainPointMode, container } from '@visactor/vrender';
 import { type CellAddress, type CellType, type ColumnIconOption, type SortOrder, IconFuncTypeEnum } from '../ts-types';
 import { isArray, isString } from '@visactor/vutils';
-import { Group } from './graphic/group';
+import type { Group } from './graphic/group';
 import type { Icon } from './graphic/icon';
 import type { WrapText } from './graphic/text';
 import { getCellMergeInfo } from './utils/get-cell-merge';
@@ -30,9 +30,10 @@ import { updateRow } from './layout/update-row';
 import { handleTextStick } from './stick-text';
 import { computeRowsHeight } from './layout/compute-row-height';
 import { emptyGroup } from './utils/empty-group';
+import { dealBottomFrozen, dealFrozen, dealRightFrozen, resetFrozen } from './layout/frozen';
 import { updateChartSize, updateChartState } from './refresh-node/update-chart';
-import { dealFrozen, resetFrozen } from './layout/frozen';
 import { createCornerCell } from './style/corner-cell';
+import { initSceneGraph } from './group-creater/init-scenegraph';
 
 container.load(splitModule);
 
@@ -59,9 +60,9 @@ export class Scenegraph {
   bodyGroup: Group; // 内容Group
   rightFrozenGroup: Group; // 右侧冻结列Group
   bottomFrozenGroup: Group; // 下侧冻结行Group
-  rightTopCellGroup: Group; // 右上角占位单元格Group，只在有右侧冻结列时使用
-  leftBottomCellGroup: Group; // 左下角占位单元格Group,只在有下侧冻结行时使用
-  rightBottomCellGroup: Group; // 右下角占位单元格Group,只在有右侧下侧都有冻结行时使用
+  rightTopCornerGroup: Group; // 右上角占位单元格Group，只在有右侧冻结列时使用
+  leftBottomCornerGroup: Group; // 左下角占位单元格Group,只在有下侧冻结行时使用
+  rightBottomCornerGroup: Group; // 右下角占位单元格Group,只在有右侧下侧都有冻结行时使用
   componentGroup: Group; // 表格外组件Group
   /** 所有选中区域对应的选框组件 */
   selectedRangeComponents: Map<string, { rect: IRect; role: CellType }>;
@@ -148,110 +149,7 @@ export class Scenegraph {
     this.isPivot = this.table.isPivotTable();
     this.transpose = (this.table.options as any).transpose; // 初始化时this.table.transpose还未赋值
 
-    const width = this.table.tableNoFrameWidth;
-    const height = this.table.tableNoFrameHeight;
-
-    this.tableGroup = new Group({ x: 0, y: 0, width, height, clip: true, pickable: false });
-    this.tableGroup.role = 'table';
-
-    const colHeaderGroup = new Group({
-      x: 0,
-      y: 0,
-      width: 0,
-      height: 0,
-      clip: false,
-      pickable: false
-    });
-    colHeaderGroup.role = 'col-header';
-    this.colHeaderGroup = colHeaderGroup;
-
-    const cornerHeaderGroup = new Group({
-      x: 0,
-      y: 0,
-      width: 0,
-      height: 0,
-      clip: false,
-      pickable: false
-    });
-    cornerHeaderGroup.role = 'corner-header';
-    this.cornerHeaderGroup = cornerHeaderGroup;
-
-    const rowHeaderGroup = new Group({
-      x: 0,
-      y: 0,
-      width: 0,
-      height: 0,
-      clip: false,
-      pickable: false
-    });
-    rowHeaderGroup.role = 'row-header';
-    this.rowHeaderGroup = rowHeaderGroup;
-
-    const bodyGroup = new Group({
-      x: 0,
-      y: 0,
-      width,
-      height: 0,
-      clip: false,
-      pickable: false
-    });
-    bodyGroup.role = 'body';
-    this.bodyGroup = bodyGroup;
-
-    const rightFrozenGroup = new Group({
-      x: 0,
-      y: 0,
-      width,
-      height: 0,
-      clip: false,
-      pickable: false
-    });
-    rightFrozenGroup.role = 'right-frozen';
-    this.rightFrozenGroup = rightFrozenGroup;
-
-    const bottomFrozenGroup = new Group({
-      x: 0,
-      y: 0,
-      width,
-      height: 0,
-      clip: false,
-      pickable: false
-    });
-    bottomFrozenGroup.role = 'bottom-frozen';
-    this.bottomFrozenGroup = bottomFrozenGroup;
-
-    const componentGroup = new Group({
-      x: 0,
-      y: 0,
-      width: 0,
-      height: 0,
-      clip: false,
-      pickable: false,
-      childrenPickable: true
-    });
-    componentGroup.role = 'component';
-    this.componentGroup = componentGroup;
-
-    this.rightTopCellGroup = createCornerCell(
-      this.table.theme.cornerRightTopCellStyle || this.table.theme.cornerHeaderStyle
-    );
-    this.leftBottomCellGroup = createCornerCell(
-      this.table.theme.cornerLeftBottomCellStyle || this.table.theme.cornerHeaderStyle
-    );
-    this.rightBottomCellGroup = createCornerCell(
-      this.table.theme.cornerRightBottomCellStyle || this.table.theme.cornerHeaderStyle
-    );
-
-    this.tableGroup.addChild(bodyGroup);
-    this.tableGroup.addChild(rightFrozenGroup);
-    this.tableGroup.addChild(bottomFrozenGroup);
-    this.tableGroup.addChild(rowHeaderGroup);
-    this.tableGroup.addChild(colHeaderGroup);
-    this.tableGroup.addChild(this.rightBottomCellGroup);
-    this.tableGroup.addChild(this.rightTopCellGroup);
-    this.tableGroup.addChild(this.leftBottomCellGroup);
-    this.tableGroup.addChild(cornerHeaderGroup);
-    this.tableGroup.addChild(componentGroup);
+    initSceneGraph(this);
   }
 
   /**
@@ -270,9 +168,9 @@ export class Scenegraph {
 
     this.bottomFrozenGroup.clear();
     this.rightFrozenGroup.clear();
-    this.rightTopCellGroup.clear();
-    this.rightBottomCellGroup.clear();
-    this.leftBottomCellGroup.clear();
+    this.rightTopCornerGroup.clear();
+    this.rightBottomCornerGroup.clear();
+    this.leftBottomCornerGroup.clear();
 
     this.colHeaderGroup.setAttributes({
       x: 0,
@@ -310,21 +208,21 @@ export class Scenegraph {
       width: 0,
       height: 0
     });
-    this.rightTopCellGroup.setAttributes({
+    this.rightTopCornerGroup.setAttributes({
       x: 0,
       y: 0,
       width: 0,
       height: 0,
       visible: false
     });
-    this.leftBottomCellGroup.setAttributes({
+    this.leftBottomCornerGroup.setAttributes({
       x: 0,
       y: 0,
       width: 0,
       height: 0,
       visible: false
     });
-    this.rightTopCellGroup.setAttributes({
+    this.rightBottomCornerGroup.setAttributes({
       x: 0,
       y: 0,
       width: 0,
@@ -458,7 +356,26 @@ export class Scenegraph {
     // 因此在获取cell时需要区别hasFrozen时机
     // const colGroup = row < this.frozenRowCount ? this.colHeaderGroup : this.cornerHeaderGroup;
     let cell;
-    if (this.table.rightFrozenColCount > 0 && col > this.table.colCount - 1 - this.table.rightFrozenColCount) {
+    if (
+      this.table.rightFrozenColCount > 0 &&
+      col >= this.table.colCount - this.table.rightFrozenColCount &&
+      row < this.table.frozenRowCount
+    ) {
+      cell = this.rightBottomCornerGroup.getColGroup(col)?.getRowGroup(row);
+    } else if (
+      this.table.bottomFrozenRowCount > 0 &&
+      row >= this.table.rowCount - this.table.bottomFrozenRowCount &&
+      col < this.table.frozenColCount
+    ) {
+      cell = this.leftBottomCornerGroup.getColGroup(col)?.getRowGroup(row);
+    } else if (
+      this.table.rightFrozenColCount > 0 &&
+      this.table.bottomFrozenRowCount > 0 &&
+      col >= this.table.colCount - this.table.rightFrozenColCount &&
+      row >= this.table.rowCount - this.table.bottomFrozenRowCount
+    ) {
+      cell = this.rightBottomCornerGroup.getColGroup(col)?.getRowGroup(row);
+    } else if (this.table.rightFrozenColCount > 0 && col > this.table.colCount - 1 - this.table.rightFrozenColCount) {
       cell = this.rightFrozenGroup.getColGroup(col)?.getRowGroup(row);
     } else if (this.table.bottomFrozenRowCount > 0 && row > this.table.rowCount - 1 - this.table.bottomFrozenRowCount) {
       cell = this.bottomFrozenGroup.getColGroup(col)?.getRowGroup(row);
@@ -509,6 +426,27 @@ export class Scenegraph {
   getColGroupInBottom(col: number): Group | undefined {
     if (this.table.bottomFrozenRowCount > 0) {
       return this.bottomFrozenGroup.getColGroup(col) as Group;
+    }
+    return undefined;
+  }
+
+  getColGroupInLeftBottomCorner(col: number): Group | undefined {
+    if (this.table.bottomFrozenRowCount > 0) {
+      return this.leftBottomCornerGroup.getColGroup(col) as Group;
+    }
+    return undefined;
+  }
+
+  getColGroupInRightTopCorner(col: number): Group | undefined {
+    if (this.table.rightFrozenColCount > 0) {
+      return this.rightTopCornerGroup.getColGroup(col) as Group;
+    }
+    return undefined;
+  }
+
+  getColGroupInRightBottomCorner(col: number): Group | undefined {
+    if (this.table.rightFrozenColCount > 0 && this.table.bottomFrozenRowCount > 0) {
+      return this.rightBottomCornerGroup.getColGroup(col) as Group;
     }
     return undefined;
   }
@@ -806,7 +744,7 @@ export class Scenegraph {
         this.table.tableNoFrameWidth,
         Math.max(this.colHeaderGroup.attribute.width, this.bodyGroup.attribute.width, 0) +
           Math.max(this.cornerHeaderGroup.attribute.width, this.rowHeaderGroup.attribute.width, 0) +
-          this.rightBottomCellGroup.attribute.width
+          this.rightBottomCornerGroup.attribute.width
       ),
       height: Math.min(
         this.table.tableNoFrameHeight,
@@ -828,13 +766,13 @@ export class Scenegraph {
         'y',
         this.tableGroup.attribute.height - this.bottomFrozenGroup.attribute.height
       );
-      this.leftBottomCellGroup.setAttributes({
+      this.leftBottomCornerGroup.setAttributes({
         visible: true,
         y: this.tableGroup.attribute.height - this.bottomFrozenGroup.attribute.height,
         height: this.bottomFrozenGroup.attribute.height,
         width: this.table.getFrozenColsWidth()
       });
-      this.rightBottomCellGroup.setAttributes({
+      this.rightBottomCornerGroup.setAttributes({
         visible: true,
         y: this.tableGroup.attribute.height - this.bottomFrozenGroup.attribute.height,
         height: this.bottomFrozenGroup.attribute.height
@@ -843,13 +781,13 @@ export class Scenegraph {
 
     if (this.table.rightFrozenColCount > 0) {
       this.rightFrozenGroup.setAttribute('x', this.tableGroup.attribute.width - this.rightFrozenGroup.attribute.width);
-      this.rightTopCellGroup.setAttributes({
+      this.rightTopCornerGroup.setAttributes({
         visible: true,
         x: this.tableGroup.attribute.width - this.rightFrozenGroup.attribute.width,
         width: this.rightFrozenGroup.attribute.width,
         height: this.table.getFrozenRowsHeight()
       });
-      this.rightBottomCellGroup.setAttributes({
+      this.rightBottomCornerGroup.setAttributes({
         visible: true,
         x: this.tableGroup.attribute.width - this.rightFrozenGroup.attribute.width,
         width: this.rightFrozenGroup.attribute.width
@@ -890,11 +828,15 @@ export class Scenegraph {
    */
   updateContainerHeight(row: number, detaY: number) {
     // 更新table/header/border高度
-    if (row < this.frozenRowCount) {
+    if (row < this.table.frozenRowCount) {
       this.colHeaderGroup.setDeltaHeight(detaY);
       this.cornerHeaderGroup.setDeltaHeight(detaY);
       this.rowHeaderGroup.setDeltaY(detaY);
       this.bodyGroup.setDeltaY(detaY);
+    } else if (row >= this.table.rowCount - this.table.bottomFrozenRowCount) {
+      this.leftBottomCornerGroup.setDeltaHeight(detaY);
+      this.bottomFrozenGroup.setDeltaHeight(detaY);
+      this.rightBottomCornerGroup.setDeltaHeight(detaY);
     } else {
       this.rowHeaderGroup.setDeltaHeight(detaY);
       this.bodyGroup.setDeltaHeight(detaY);
@@ -1358,6 +1300,21 @@ export class Scenegraph {
     this.resetFrozen();
     this.dealFrozen();
     this.component.updateScrollBar();
+  }
+
+  dealWidthRightFrozen(rightFrozenColCount: number) {
+    if (this.clear) {
+      this.table.internalProps.rightFrozenColCount = rightFrozenColCount;
+      return;
+    }
+    dealRightFrozen(rightFrozenColCount, this);
+  }
+  dealWidthBottomFrozen(bottomFrozenRowCount: number) {
+    if (this.clear) {
+      this.table.internalProps.bottomFrozenRowCount = bottomFrozenRowCount;
+      return;
+    }
+    dealBottomFrozen(bottomFrozenRowCount, this);
   }
 
   updateBorderSizeAndPosition() {

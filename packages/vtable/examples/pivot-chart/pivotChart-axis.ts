@@ -9297,80 +9297,80 @@ export function createTable() {
         autoWrapText: true
       }
     },
-    // theme: VTable.themes.ARCO.extends({
-    //   selectionStyle: {
-    //     cellBgColor: ''
-    //   }
-    // }),
-    theme: {
-      bodyStyle: {
-        borderColor: 'gray',
-        borderLineWidth: [1, 0, 0, 1]
-      },
-      headerStyle: {
-        borderColor: 'gray',
-        borderLineWidth: [0, 0, 1, 1],
-        hover: {
-          cellBgColor: '#CCE0FF'
-        }
-      },
-      rowHeaderStyle: {
-        borderColor: 'gray',
-        borderLineWidth: [1, 1, 0, 0],
-        hover: {
-          cellBgColor: '#CCE0FF'
-        }
-      },
-      cornerHeaderStyle: {
-        borderColor: 'gray',
-        borderLineWidth: [0, 1, 1, 0],
-        hover: {
-          cellBgColor: ''
-        }
-      },
-      cornerRightTopCellStyle: {
-        borderColor: 'gray',
-        borderLineWidth: [0, 0, 1, 1],
-        hover: {
-          cellBgColor: ''
-        }
-      },
-      cornerLeftBottomCellStyle: {
-        borderColor: 'gray',
-        borderLineWidth: [1, 1, 0, 0],
-        hover: {
-          cellBgColor: ''
-        }
-      },
-      cornerRightBottomCellStyle: {
-        borderColor: 'gray',
-        borderLineWidth: [1, 0, 0, 1],
-        hover: {
-          cellBgColor: ''
-        }
-      },
-      rightFrozenStyle: {
-        borderColor: 'gray',
-        borderLineWidth: [1, 0, 1, 1],
-        hover: {
-          cellBgColor: ''
-        }
-      },
-      bottomFrozenStyle: {
-        borderColor: 'gray',
-        borderLineWidth: [1, 1, 0, 1],
-        hover: {
-          cellBgColor: ''
-        }
-      },
+    theme: VTable.themes.ARCO.extends({
       selectionStyle: {
-        cellBgColor: '',
-        cellBorderColor: ''
-      },
-      frameStyle: {
-        borderLineWidth: 0
+        cellBgColor: ''
       }
-    },
+    }),
+    // theme: {
+    //   bodyStyle: {
+    //     borderColor: 'gray',
+    //     borderLineWidth: [1, 0, 0, 1]
+    //   },
+    //   headerStyle: {
+    //     borderColor: 'gray',
+    //     borderLineWidth: [0, 0, 1, 1],
+    //     hover: {
+    //       cellBgColor: '#CCE0FF'
+    //     }
+    //   },
+    //   rowHeaderStyle: {
+    //     borderColor: 'gray',
+    //     borderLineWidth: [1, 1, 0, 0],
+    //     hover: {
+    //       cellBgColor: '#CCE0FF'
+    //     }
+    //   },
+    //   cornerHeaderStyle: {
+    //     borderColor: 'gray',
+    //     borderLineWidth: [0, 1, 1, 0],
+    //     hover: {
+    //       cellBgColor: ''
+    //     }
+    //   },
+    //   cornerRightTopCellStyle: {
+    //     borderColor: 'gray',
+    //     borderLineWidth: [0, 0, 1, 1],
+    //     hover: {
+    //       cellBgColor: ''
+    //     }
+    //   },
+    //   cornerLeftBottomCellStyle: {
+    //     borderColor: 'gray',
+    //     borderLineWidth: [1, 1, 0, 0],
+    //     hover: {
+    //       cellBgColor: ''
+    //     }
+    //   },
+    //   cornerRightBottomCellStyle: {
+    //     borderColor: 'gray',
+    //     borderLineWidth: [1, 0, 0, 1],
+    //     hover: {
+    //       cellBgColor: ''
+    //     }
+    //   },
+    //   rightFrozenStyle: {
+    //     borderColor: 'gray',
+    //     borderLineWidth: [1, 0, 1, 1],
+    //     hover: {
+    //       cellBgColor: ''
+    //     }
+    //   },
+    //   bottomFrozenStyle: {
+    //     borderColor: 'gray',
+    //     borderLineWidth: [1, 1, 0, 1],
+    //     hover: {
+    //       cellBgColor: ''
+    //     }
+    //   },
+    //   selectionStyle: {
+    //     cellBgColor: '',
+    //     cellBorderColor: ''
+    //   },
+    //   frameStyle: {
+    //     borderLineWidth: 0
+    //   }
+    // },
     // hover: {
     //   disableHeaderHover:false,
     //   disableHover: true

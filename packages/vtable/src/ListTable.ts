@@ -304,12 +304,17 @@ export class ListTable extends BaseTable implements ListTableAPI {
         (table.internalProps.dataSource?.length ?? 0) * layoutMap.bodyRowCount + layoutMap.headerLevelCount;
       table.frozenRowCount = 0;
       table.frozenColCount = layoutMap.headerLevelCount;
+
+      table.rightFrozenColCount = this.options.rightFrozenColCount ?? 0;
     } else {
       table.colCount = layoutMap.colCount ?? 0;
       table.rowCount =
         (table.internalProps.dataSource?.length ?? 0) * layoutMap.bodyRowCount + layoutMap.headerLevelCount;
       table.frozenColCount = table.options.frozenColCount ?? 0; //TODO
       table.frozenRowCount = layoutMap.headerLevelCount;
+
+      table.bottomFrozenRowCount = this.options.bottomFrozenRowCount ?? 0;
+      table.rightFrozenColCount = this.options.rightFrozenColCount ?? 0;
     }
   }
 

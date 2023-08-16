@@ -123,8 +123,8 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
   eventManeger?: EventManeger;
   _pixelRatio: number;
 
-  bottomFrozenRowCount: number = 0;
-  rightFrozenColCount: number = 0;
+  // bottomFrozenRowCount: number = 0;
+  // rightFrozenColCount: number = 0;
 
   static get EVENT_TYPE(): typeof TABLE_EVENT_TYPE {
     return TABLE_EVENT_TYPE;
@@ -472,6 +472,23 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     this.internalProps.frozenRowCount = frozenRowCount;
     // this.options.frozenRowCount = frozenRowCount;
   }
+
+  get rightFrozenColCount(): number {
+    return this.internalProps.rightFrozenColCount ?? 0;
+  }
+
+  set rightFrozenColCount(rightFrozenColCount: number) {
+    this.scenegraph.dealWidthRightFrozen(rightFrozenColCount);
+  }
+
+  get bottomFrozenRowCount(): number {
+    return this.internalProps.bottomFrozenRowCount ?? 0;
+  }
+
+  set bottomFrozenRowCount(bottomFrozenRowCount: number) {
+    this.scenegraph.dealWidthBottomFrozen(bottomFrozenRowCount);
+  }
+
   /**
    * Get the default row height.
    *
@@ -2672,6 +2689,11 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
         return false;
       }
     }
+
+    // if (this.rightFrozenColCount && col >= this.colCount - this.rightFrozenColCount - 1) {
+    //   // right frozen columns can not resize temply
+    //   return false;
+    // }
 
     const limit = this.colWidthsLimit[col];
     if (!limit || !limit.min || !limit.max) {
