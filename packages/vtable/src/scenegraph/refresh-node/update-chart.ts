@@ -1,3 +1,4 @@
+import { isEqual } from '@visactor/vutils';
 import type { PivotChart } from '../../PivotChart';
 import { CartesianAxis } from '../../components/axis/axis';
 import type { PivotLayoutMap } from '../../layout/pivot-layout';
@@ -146,7 +147,7 @@ export function updateChartState(scenegraph: Scenegraph, datum: any) {
       newSelectedDataItemsInChart.push(selectedState);
     }
     //避免无效的更新
-    if (!compareArrays((table as PivotChart)._selectedDataItemsInChart, newSelectedDataItemsInChart)) {
+    if (!isEqual((table as PivotChart)._selectedDataItemsInChart, newSelectedDataItemsInChart)) {
       (table as PivotChart)._selectedDataItemsInChart = newSelectedDataItemsInChart;
       (table.internalProps.layoutMap as PivotLayoutMap).updateDataStateToChartInstance();
       // 清楚chart缓存图片
