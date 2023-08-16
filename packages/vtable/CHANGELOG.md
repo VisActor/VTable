@@ -1,6 +1,46 @@
 # Change Log - @visactor/vtable
 
-This log was last generated on Wed, 26 Jul 2023 03:47:00 GMT and should not be manually modified.
+This log was last generated on Wed, 16 Aug 2023 04:16:18 GMT and should not be manually modified.
+
+## 0.10.0
+Wed, 16 Aug 2023 04:16:18 GMT
+
+### Minor changes
+
+- feat: handle legend event to reset chart
+
+
+- feat: add api getChartDatumPosition
+
+
+- feat: add right and bottom frozen function
+
+### Patches
+
+- refactor: last column to resize width is inflexibility #136
+
+
+- refactor: delete widthMode:standard-aeolus and add option of autoFillWidth
+
+
+- refactor: use barWidth to compute chart column width #185
+
+
+- refactor: widthMode set adaptive , compute body column to adaptive lefted container space #187
+
+
+- fix: use updateOption can‘t modify hover highlight mode correctly #189
+
+
+- refactor: compute optimize height for chart by axis tick count #196
+
+
+- refactor: sort collectedValues by data.field.domain
+
+
+- feat: add listenChart Event
+
+
 
 ## 0.9.2
 Wed, 26 Jul 2023 03:47:00 GMT
