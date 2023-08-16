@@ -12,6 +12,9 @@ export function bindAxisClickEvent(table: BaseTableAPI) {
   }
 
   table.scenegraph.tableGroup.addEventListener('click', (e: FederatedPointerEvent) => {
+    if (table.stateManeger.columnMove.moving || table.stateManeger.columnResize.resizing) {
+      return;
+    }
     if (e.target.name === 'axis-label') {
       const eventArgsSet: SceneEvent = getCellEventArgsSet(e);
       const { col, row } = eventArgsSet.eventArgs;
@@ -52,7 +55,7 @@ export function bindAxisClickEvent(table: BaseTableAPI) {
       // 清除chart缓存图片
       clearChartCacheImage(table.scenegraph);
       table.scenegraph.updateNextFrame();
-    } else if ((table as PivotChart)._selectedDimensionInChart) {
+    } else if ((table as PivotChart)._selectedDimensionInChart?.length) {
       (table as PivotChart)._selectedDimensionInChart.length = 0;
       const layout = table.internalProps.layoutMap as PivotLayoutMap;
       layout.updateDataStateToChartInstance();

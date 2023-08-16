@@ -31,7 +31,7 @@ import { handleTextStick } from './stick-text';
 import { computeRowsHeight } from './layout/compute-row-height';
 import { emptyGroup } from './utils/empty-group';
 import { dealBottomFrozen, dealFrozen, dealRightFrozen, resetFrozen } from './layout/frozen';
-import { clearChartCacheImage, updateChartSize, updateChartState } from './refresh-node/update-chart';
+import { updateChartSize, updateChartState } from './refresh-node/update-chart';
 import { createCornerCell } from './style/corner-cell';
 import { initSceneGraph } from './group-creater/init-scenegraph';
 
