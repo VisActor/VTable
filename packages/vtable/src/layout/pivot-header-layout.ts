@@ -33,6 +33,7 @@ import { IndicatorDimensionKeyPlaceholder } from '../tools/global';
 import { diffCellAddress } from '../tools/diff-cell';
 import type { ILinkDimension } from '../ts-types/pivot-table/dimension/link-dimension';
 import type { IImageDimension } from '../ts-types/pivot-table/dimension/image-dimension';
+import { getChartDataId, getRawChartSpec } from './chart-helper/get-chart-spec';
 interface IPivotLayoutBaseHeadNode {
   id: number;
   // dimensionKey: string;
@@ -542,7 +543,7 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
             field: indicatorInfo.indicatorKey,
             fieldFormat: indicatorInfo?.format,
             columnType: indicatorInfo?.columnType ?? 'text',
-            chartType: 'chartType' in indicatorInfo ? indicatorInfo.chartType : null,
+            chartModule: 'chartModule' in indicatorInfo ? indicatorInfo.chartModule : null,
             chartSpec: 'chartSpec' in indicatorInfo ? indicatorInfo.chartSpec : null,
             sparklineSpec: 'sparklineSpec' in indicatorInfo ? indicatorInfo.sparklineSpec : null,
             style: indicatorInfo?.style,
@@ -773,9 +774,6 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
     }
     return results;
   }
-  get columnWidths(): WidthData[] {
-    return this._columnWidths;
-  }
 
   private setColumnWidths() {
     const returnWidths: WidthData[] = new Array(this.colCount).fill(undefined);
@@ -828,6 +826,12 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
     this._columnWidths = returnWidths;
   }
 
+  get columnWidths(): WidthData[] {
+    return this._columnWidths;
+  }
+  getColumnWidthDefined(col: number): WidthData {
+    return this._columnWidths[col];
+  }
   get showHeader(): boolean {
     return this._showHeader;
   }
@@ -889,6 +893,12 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
     if (row < this.columnHeaderLevelCount) {
       return true;
     }
+    if (col >= this.colCount - this.rightFrozenColCount) {
+      return true;
+    }
+    if (row >= this.rowCount - this.bottomFrozenRowCount) {
+      return true;
+    }
     return false;
   }
   isCornerHeader(col: number, row: number): boolean {
@@ -905,6 +915,44 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
   }
   isRowHeader(col: number, row: number): boolean {
     if (col < this.rowHeaderLevelCount && row >= this.columnHeaderLevelCount) {
+      return true;
+    }
+    return false;
+  }
+  isRightFrozenColumn(col: number, row: number): boolean {
+    if (
+      col >= this.colCount - this.rightFrozenColCount &&
+      row >= this.columnHeaderLevelCount &&
+      row < this.rowCount - this.bottomFrozenRowCount
+    ) {
+      return true;
+    }
+    return false;
+  }
+  isBottomFrozenRow(col: number, row: number): boolean {
+    if (
+      col >= this.rowHeaderLevelCount &&
+      row >= this.rowCount - this.bottomFrozenRowCount &&
+      col < this.colCount - this.rightFrozenColCount
+    ) {
+      return true;
+    }
+    return false;
+  }
+  isLeftBottomCorner(col: number, row: number): boolean {
+    if (col < this.rowHeaderLevelCount && row >= this.rowCount - this.bottomFrozenRowCount) {
+      return true;
+    }
+    return false;
+  }
+  isRightTopCorner(col: number, row: number): boolean {
+    if (col >= this.colCount - this.rightFrozenColCount && row < this.columnHeaderLevelCount) {
+      return true;
+    }
+    return false;
+  }
+  isRightBottomCorner(col: number, row: number): boolean {
+    if (col >= this.colCount - this.rightFrozenColCount && row >= this.rowCount - this.bottomFrozenRowCount) {
       return true;
     }
     return false;
@@ -978,13 +1026,47 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
     return 0;
   }
   get colCount(): number {
-    return this.columnDimensionTree.tree.size + this.rowHeaderLevelCount;
+    return this.columnDimensionTree.tree.size + this.rowHeaderLevelCount + this.rightFrozenColCount;
   }
   get rowCount(): number {
-    return this.rowDimensionTree.tree.size + this.columnHeaderLevelCount;
+    return this.rowDimensionTree.tree.size + this.columnHeaderLevelCount + this.bottomFrozenRowCount;
   }
   get bodyRowCount() {
     return this.rowDimensionTree.tree.size;
+  }
+  get bottomFrozenRowCount(): number {
+    // return 0;
+    if (this.showHeader && this.showColumnHeader) {
+      if (this.indicatorsAsCol && !this.hideIndicatorName) {
+        // 查询指标是否有multiIndicator
+        return this.indicatorsDefine.find(indicator => {
+          return (indicator as any)?.multiIndicator;
+        })
+          ? 1
+          : 0;
+      }
+      // 查询维度是否有multiDimension
+      return this.getDimension(this.colDimensionKeys[this.colDimensionKeys.length - 1], 'column')?.multiDimension
+        ? 1
+        : 0;
+    }
+    return 0;
+  }
+  get rightFrozenColCount(): number {
+    // return 0;
+    if (this.showHeader && this.showColumnHeader) {
+      if (!this.indicatorsAsCol && !this.hideIndicatorName) {
+        // 查询指标是否有multiIndicator
+        return this.indicatorsDefine.find(indicator => {
+          return (indicator as any)?.multiIndicator;
+        })
+          ? 1
+          : 0;
+      }
+      // 查询维度是否有multiDimension
+      return this.getDimension(this.rowDimensionKeys[this.rowDimensionKeys.length - 1], 'row')?.multiDimension ? 1 : 0;
+    }
+    return 0;
   }
   get headerObjects(): HeaderData[] {
     return this._headerObjects;
@@ -1000,6 +1082,10 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
         return this._columnHeaderCellIds[row][col - this.rowHeaderLevelCount];
       } else if (this.isRowHeader(col, row)) {
         return this._rowHeaderCellIds[row - this.columnHeaderLevelCount]?.[col];
+      } else if (this.isRightFrozenColumn(col, row)) {
+        return this._rowHeaderCellIds[row - this.columnHeaderLevelCount][this.rowHeaderLevelCount - 1];
+      } else if (this.isBottomFrozenRow(col, row)) {
+        return this._columnHeaderCellIds[this.columnHeaderLevelCount - 1]?.[col - this.rowHeaderLevelCount];
       }
     }
     return undefined;
@@ -1160,11 +1246,15 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
   getRecordIndexByRow(row: number): number {
     if (row < this.columnHeaderLevelCount) {
       return -1;
+    } else if (row >= this.rowCount - this.bottomFrozenRowCount) {
+      return -1;
     }
     return row - this.columnHeaderLevelCount;
   }
   getRecordIndexByCol(col: number): number {
     if (col < this.rowHeaderLevelCount) {
+      return -1;
+    } else if (col >= this.colCount - this.rightFrozenColCount) {
       return -1;
     }
     return col - this.rowHeaderLevelCount;
@@ -1704,12 +1794,11 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
    * @returns
    */
   getCellAdressByHeaderPath(
-    dimensionPaths:
-      | {
-          colHeaderPaths: IDimensionInfo[];
-          rowHeaderPaths: IDimensionInfo[];
-        }
-      | IDimensionInfo[]
+    dimensionPaths: // | {
+    //     colHeaderPaths: IDimensionInfo[];
+    //     rowHeaderPaths: IDimensionInfo[];
+    //   }
+    IPivotTableCellHeaderPaths | IDimensionInfo[]
   ): CellAddress | undefined {
     let colHeaderPaths;
     let rowHeaderPaths;
@@ -1766,9 +1855,10 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
         for (let j = 0; j < colArr.length; j++) {
           const dimension = colArr[j];
           if (
-            ((isValid(colDimension.dimensionKey) && dimension.dimensionKey === colDimension.dimensionKey) ||
-              (isValid(colDimension.indicatorKey) && dimension.indicatorKey === colDimension.indicatorKey)) &&
-            dimension.value === colDimension.value
+            (!isValid(colDimension.indicatorKey) &&
+              dimension.dimensionKey === colDimension.dimensionKey &&
+              dimension.value === colDimension.value) ||
+            (isValid(colDimension.indicatorKey) && dimension.indicatorKey === colDimension.indicatorKey)
           ) {
             colArr = dimension.children;
             if (needLowestLevel && !colArr) {
@@ -1790,7 +1880,9 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
         for (let j = 0; j < rowArr.length; j++) {
           const dimension = rowArr[j];
           if (
-            ((isValid(rowDimension.dimensionKey) && dimension.dimensionKey === rowDimension.dimensionKey) ||
+            ((!isValid(rowDimension.indicatorKey) &&
+              dimension.dimensionKey === rowDimension.dimensionKey &&
+              dimension.value === rowDimension.value) ||
               (isValid(rowDimension.indicatorKey) && dimension.indicatorKey === rowDimension.indicatorKey)) &&
             dimension.value === rowDimension.value
           ) {
@@ -1858,5 +1950,40 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
       indicatorObj = this._indicators.find(indicator => indicator.indicatorKey === indicatorKey);
     }
     return indicatorObj?.chartInstance;
+  }
+
+  getDimension(dimensionKey: string, type: 'column' | 'row'): any {
+    if (type === 'column') {
+      return this.columnsDefine?.find(dimension =>
+        typeof dimension === 'string' ? false : dimension.dimensionKey === dimensionKey
+      );
+    } else if (type === 'row') {
+      return this.rowsDefine?.find(dimension =>
+        typeof dimension === 'string' ? false : dimension.dimensionKey === dimensionKey
+      );
+    }
+  }
+
+  getAxisConfigInPivotChart(col: number, row: number): any {
+    return undefined;
+  }
+  isEmpty(col: number, row: number) {
+    return false;
+  }
+  getChartAxes(col: number, row: number): any[] {
+    return [];
+  }
+  getRawChartSpec(col: number, row: number): any {
+    return getRawChartSpec(col, row, this);
+  }
+  getChartDataId(col: number, row: number): any {
+    return getChartDataId(col, row, this);
+  }
+  release() {
+    const activeChartInstance = (this._table as PivotTable)._getActiveChartInstance();
+    activeChartInstance?.release();
+    this._indicators.forEach(indicatorObject => {
+      indicatorObject.chartInstance?.release();
+    });
   }
 }

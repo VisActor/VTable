@@ -52,7 +52,7 @@ VTable.register.icon('message', {
 
 export function createTable() {
   const option: VTable.ListTableConstructorOptions = {
-    parentElement: document.getElementById(Table_CONTAINER_DOM_ID),
+    container: document.getElementById(Table_CONTAINER_DOM_ID),
     columns: [
       {
         field: 'bloggerId',

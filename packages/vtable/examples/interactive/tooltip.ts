@@ -31,7 +31,7 @@ export function createTable() {
     }
   ];
   const option: VTable.ListTableConstructorOptions = {
-    parentElement: document.getElementById(Table_CONTAINER_DOM_ID),
+    container: document.getElementById(Table_CONTAINER_DOM_ID),
     columns: [
       {
         field: 'progress',
@@ -98,7 +98,7 @@ export function createTable() {
     order: 'desc'
   });
 
-  instance.listen('click_cell', args => {
+  instance.on('click_cell', args => {
     const { col, row } = args;
     const rect = instance.getVisibleCellRangeRelativeRect({ col, row });
     if (col === 0 && row === 0) {

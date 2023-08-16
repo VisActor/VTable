@@ -129,16 +129,6 @@ export function createColGroup(
   let heightMax = 0;
   for (let i = colStart; i <= colEnd; i++) {
     const col = i;
-
-    // 宽度模式
-    // const { width: defineWidth } = layoutMap.columnWidths?.[col] || { width: defaultColWidth };
-    // const width = table.getColWidth(col);
-    // const colWidth: number | 'auto' =
-    //   defineWidth === 'auto' ||
-    //   table.scenegraph.transpose ||
-    //   (table.widthMode === 'autoWidth' && !defineWidth)
-    //     ? 'auto'
-    //     : width;
     const colWidth = table.getColWidth(col);
 
     const columnGroup = new Group({

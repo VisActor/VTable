@@ -451,7 +451,7 @@ export class DataSource extends EventTarget implements DataSourceAPI {
       if (orderedData && orderedData.length > 0) {
         this.currentIndexedData = orderedData;
         this.updatePagerData();
-        this.fireListeners(EVENT_TYPE.CHANGE_ORDER);
+        this.fireListeners(EVENT_TYPE.CHANGE_ORDER, null);
         return;
       }
     }
@@ -492,7 +492,7 @@ export class DataSource extends EventTarget implements DataSourceAPI {
     }
     filedMap[order] = sortedIndexArray;
     this.updatePagerData();
-    this.fireListeners(EVENT_TYPE.CHANGE_ORDER);
+    this.fireListeners(EVENT_TYPE.CHANGE_ORDER, null);
   }
   /**
    * 当节点折叠或者展开时 将排序缓存清空（非当前排序规则的缓存）
@@ -537,8 +537,8 @@ export class DataSource extends EventTarget implements DataSourceAPI {
     }
     return []; //this.currentIndexedData || [];
   }
-  dispose(): void {
-    super.dispose?.();
+  release(): void {
+    super.release?.();
   }
   clearSortedMap() {
     this.currentIndexedData && (this.currentIndexedData.length = 0);

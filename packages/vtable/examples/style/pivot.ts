@@ -1450,7 +1450,7 @@ export function createTable() {
         textStick: true
       }
     },
-    parentElement: document.getElementById(Table_CONTAINER_DOM_ID),
+    container: document.getElementById(Table_CONTAINER_DOM_ID),
     records,
     showFrozenIcon: false, //显示VTable内置冻结列图标
     widthMode: 'autoWidth', // 宽度模式：standard 标准模式； adaptive 自动填满容器
@@ -1462,7 +1462,7 @@ export function createTable() {
   const instance = new PivotTable(option);
 
   const { PIVOT_SORT_CLICK } = VTable.PivotTable.EVENT_TYPE;
-  instance.listen(PIVOT_SORT_CLICK, e => {
+  instance.on(PIVOT_SORT_CLICK, e => {
     const order = e.order === 'asc' ? 'desc' : e.order === 'desc' ? 'normal' : 'asc';
     instance.updatePivotSortState([{ dimensions: e.dimensionInfo, order }]);
   });

@@ -4,6 +4,7 @@
  * @license
  */
 
+import { isNil, isNumber, isString } from '@visactor/vutils';
 import { array } from './helper';
 
 const TYPE_PAREN = 0;
@@ -301,4 +302,27 @@ export function toPx(value: string | number, context: CalcContext): number {
     return toPxInternal(value.trim(), context);
   }
   return value - 0;
+}
+
+export type IPercent = `${number}%`;
+
+export function couldBeValidNumber(v: any) {
+  if (isNil(v)) {
+    return false;
+  }
+  if (isNumber(v)) {
+    return true;
+  }
+  // eslint-disable-next-line no-self-compare
+  return +v === +v;
+}
+
+export function isPercent(v: any): v is IPercent {
+  if (!isString(v)) {
+    return false;
+  }
+  if (!v.endsWith('%')) {
+    return false;
+  }
+  return couldBeValidNumber(v.substring(0, v.length - 1));
 }

@@ -26,6 +26,8 @@ import type { BaseTableAPI, PivotTableProtected } from '../../ts-types/base-tabl
 import { getStyleTheme } from '../../core/tableHelper';
 import { isPromise } from '../../tools/helper';
 import { dealPromiseData } from '../utils/deal-promise-data';
+import { CartesianAxis } from '../../components/axis/axis';
+import type { PivotLayoutMap } from '../../layout/pivot-layout';
 
 export function createCell(
   type: ColumnTypeOption,
@@ -107,7 +109,7 @@ export function createCell(
     }
 
     if (customLayout || customRender) {
-      const { autoRowHeight } = table.internalProps;
+      // const { autoRowHeight } = table.internalProps;
       const customResult = dealWithCustom(
         customLayout,
         customRender,
@@ -116,7 +118,7 @@ export function createCell(
         table.getColWidth(col),
         table.getRowHeight(row),
         false,
-        autoRowHeight,
+        table.heightMode === 'autoHeight',
         table
       );
       customElementsGroup = customResult.elementsGroup;
@@ -144,6 +146,63 @@ export function createCell(
       cellGroup.mergeCol = range.end.col;
       cellGroup.mergeRow = range.end.row;
     }
+
+    const axisConfig = table.internalProps.layoutMap.getAxisConfigInPivotChart(col, row);
+    if (axisConfig) {
+      const axis = new CartesianAxis(axisConfig, cellGroup.attribute.width, cellGroup.attribute.height, table);
+      cellGroup.clear();
+      cellGroup.appendChild(axis.component);
+      axis.overlap();
+    } else if (table.internalProps.layoutMap.isEmpty(col, row)) {
+      cellGroup.clear();
+    }
+
+    // if ((define as any)?.isAxis && cellType === 'columnHeader') {
+    //   cellGroup.setAttribute('clip', false);
+    //   const axis = new CartesianAxis(
+    //     {
+    //       orient: 'top',
+    //       type: 'band',
+    //       data: ['A', 'B', 'C'],
+    //       title: {
+    //         visible: true,
+    //         text: 'X Axis'
+    //       }
+    //     },
+    //     cellGroup.attribute.width,
+    //     cellGroup.attribute.height,
+    //     table
+    //   );
+    //   cellGroup.clear();
+    //   // axis.component.setAttribute('y', 40);
+    //   cellGroup.appendChild(axis.component);
+    // } else if ((define as any)?.isAxis && cellType === 'rowHeader') {
+    //   cellGroup.setAttribute('clip', false);
+    //   const axis = new CartesianAxis(
+    //     {
+    //       orient: 'left',
+    //       type: 'linear',
+    //       range: { min: 0, max: 30 },
+    //       label: {
+    //         flush: true
+    //       },
+    //       grid: {
+    //         visible: true
+    //       },
+    //       title: {
+    //         visible: true,
+    //         text: 'Y Axis'
+    //       }
+    //     },
+    //     cellGroup.attribute.width,
+    //     cellGroup.attribute.height,
+    //     table
+    //   );
+    //   cellGroup.clear();
+    //   // axis.component.setAttribute('x', 80);
+    //   cellGroup.appendChild(axis.component);
+    //   axis.overlap();
+    // }
   } else if (type === 'image') {
     // 创建图片单元格
     cellGroup = createImageCellGroup(
@@ -193,9 +252,12 @@ export function createCell(
       table.getRowHeight(row),
       padding,
       table.getCellValue(col, row),
-      (define as ChartColumnDefine).chartType,
-      (define as ChartColumnDefine).chartSpec,
+      (define as ChartColumnDefine).chartModule,
+      table.isPivotChart()
+        ? (table.internalProps.layoutMap as PivotLayoutMap).getChartSpec(col, row)
+        : (define as ChartColumnDefine).chartSpec,
       chartInstance,
+      (table.internalProps.layoutMap as PivotLayoutMap)?.getChartDataId(col, row) ?? 'data',
       table,
       cellTheme
     );
@@ -236,7 +298,11 @@ export function createCell(
       table
     );
     // 进度图插入到文字前，绘制在文字下
-    cellGroup.insertBefore(progressBarGroup, cellGroup.firstChild);
+    if (cellGroup.firstChild) {
+      cellGroup.insertBefore(progressBarGroup, cellGroup.firstChild);
+    } else {
+      cellGroup.appendChild(progressBarGroup);
+    }
   } else if (type === 'sparkline') {
     cellGroup = createSparkLineCellGroup(
       null,
@@ -259,6 +325,10 @@ export function createCell(
 export function updateCell(col: number, row: number, table: BaseTableAPI, addNew?: boolean) {
   // const oldCellGroup = table.scenegraph.getCell(col, row, true);
   const oldCellGroup = table.scenegraph.highPerformanceGetCell(col, row, true);
+
+  if (!addNew && oldCellGroup.role === 'empty') {
+    return undefined;
+  }
 
   const type = table.isHeader(col, row)
     ? table._getHeaderLayoutMap(col, row).headerType
@@ -294,6 +364,9 @@ export function updateCell(col: number, row: number, table: BaseTableAPI, addNew
     if (!addNew) {
       oldCellGroup.parent.insertAfter(newCellGroup, oldCellGroup);
       oldCellGroup.parent.removeChild(oldCellGroup);
+
+      // update merge cell
+      updateCell(range.start.col, range.start.row, table, false);
     }
   } else {
     const mayHaveIcon = cellType !== 'body' ? true : !!define?.icon || !!define?.tree;

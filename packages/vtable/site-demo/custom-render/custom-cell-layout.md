@@ -33,7 +33,7 @@ VTable.register.icon('favorite',{
   cursor: 'pointer',
   tooltip:{
     placement:VTable.TYPES.Placement.top,
-    title:'关注博主',
+    title:'follow',
     style:{
       font:'10px Arial',
       bgColor:'white',
@@ -54,7 +54,7 @@ VTable.register.icon('message',{
   cursor: 'pointer',
   tooltip:{
     placement:VTable.TYPES.Placement.top,
-    title:'发消息',
+    title:'send message',
     style:{
       font:'10px Arial',
       bgColor:'white',
@@ -66,16 +66,15 @@ VTable.register.icon('message',{
 })
 
   const option = {
-    parentElement: document.getElementById(CONTAINER_ID),
     columns:[
       {
         field: 'bloggerId',
-        caption:'序号'
+        caption:'order number'
       }, 
       {
         field: 'bloggerName',
-        caption:'主播昵称',
-        width:'260',
+        caption:'anchor nickname',
+        width:330,
          style:{
         fontFamily:'Arial',
         fontWeight:500
@@ -190,7 +189,7 @@ VTable.register.icon('message',{
     },
     {
       field: 'fansCount',
-      caption:'粉丝数',
+      caption:'fansCount',
       fieldFormat(rec){
         return rec.fansCount + 'w'
       },
@@ -202,7 +201,7 @@ VTable.register.icon('message',{
     }, 
     {
       field: 'worksCount',
-      caption:'作品数',
+      caption:'worksCount',
       style:{
         fontFamily:'Arial',
         fontSize:12,
@@ -211,7 +210,7 @@ VTable.register.icon('message',{
     }, 
     {
       field: 'viewCount',
-      caption:'播放量',
+      caption:'viewCount',
       fieldFormat(rec){
         return rec.fansCount + 'w'
       },
@@ -223,7 +222,7 @@ VTable.register.icon('message',{
     }, 
     {
       field: 'viewCount',
-      caption:'播放量',
+      caption:'viewCount',
       fieldFormat(rec){
         return rec.fansCount + 'w'
       },
@@ -235,83 +234,83 @@ VTable.register.icon('message',{
     }, 
     {
       field: '',
-      caption:'操作',
+      caption:'operation',
       width:100,
       icon:['favorite','message']
     }, 
     ],
-    records:[
+   records:[
   {
-    'bloggerId':1,
-    "bloggerName": "虚拟主播小花",
+    'bloggerId': 1,
+    "bloggerName": "Virtual Anchor Xiaohua",
     "bloggerAvatar": "https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/custom-render/flower.jpg",
-    "introduction": "大家好，我是虚拟主播小花。喜欢游戏、动漫和美食的小仙女，希望通过直播和大家分享快乐时光。",
+    "introduction": "Hi everyone, I am Xiaohua, the virtual host. I am a little fairy who likes games, animation and food. I hope to share happy moments with you through live broadcast.",
     "fansCount": 400,
     "worksCount": 10,
     "viewCount": 5,
-    "city": "梦幻之都",
-    "tags": ["游戏", "动漫", "美食"]
+    "city": "Dream City",
+    "tags": ["game", "anime", "food"]
     },
     {
-      'bloggerId':2,
-    "bloggerName": "虚拟主播小狼",
-    "bloggerAvatar":"https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/custom-render/wolf.jpg",
-    "introduction": "大家好，我是虚拟主播小狼。喜欢音乐、旅行和摄影的小狼人，希望通过直播和大家一起探索世界的美好。",
+      'bloggerId': 2,
+    "bloggerName": "Virtual anchor little wolf",
+    "bloggerAvatar": "https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/custom-render/wolf.jpg",
+    "introduction": "Hello everyone, I am the virtual anchor Little Wolf. I like music, travel and photography, and I hope to explore the beauty of the world with you through live broadcast.",
     "fansCount": 800,
     "worksCount": 20,
     "viewCount": 15,
-    "city": "音乐之城",
-    "tags": ["音乐", "旅行", "摄影"]
+    "city": "City of Music",
+    "tags": ["music", "travel", "photography"]
     },
     {
-      'bloggerId':3,
-    "bloggerName": "虚拟主播小兔",
+      'bloggerId': 3,
+    "bloggerName": "Virtual anchor bunny",
     "bloggerAvatar": "https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/custom-render/rabbit.jpg",
-    "introduction": "大家好，我是虚拟主播小兔。喜欢绘画、手工和美妆的小可爱，希望通过直播和大家一起分享创意和时尚。",
+    "introduction": "Hello everyone, I am the virtual anchor Xiaotu. I like painting, handicrafts and beauty makeup. I hope to share creativity and fashion with you through live broadcast.",
     "fansCount": 600,
     "worksCount": 15,
     "viewCount": 10,
-    "city": "艺术之都",
-    "tags": ["绘画", "手工", "美妆"]
+    "city": "City of Art",
+    "tags": ["painting", "handmade", "beauty makeup"]
     },
     {
-      'bloggerId':4,
-    "bloggerName": "虚拟主播小猫",
+      'bloggerId': 4,
+    "bloggerName": "Virtual anchor kitten",
     "bloggerAvatar": "https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/custom-render/cat.jpg",
-    "introduction": "大家好，我是虚拟主播小猫。喜欢舞蹈、健身和烹饪的小懒猫，希望通过直播和大家一起健康快乐地生活。",
+    "introduction": "Hello everyone, I am the virtual host Kitty. I am a lazy cat who likes dancing, fitness and cooking. I hope to live a healthy and happy life with everyone through the live broadcast.",
     "fansCount": 1000,
     "worksCount": 30,
     "viewCount": 20,
-    "city": "健康之城",
-    "tags": ["舞蹈", "健身", "烹饪"]
+    "city": "Health City",
+    "tags": ["dance", "fitness", "cooking"]
     },
     {
-      'bloggerId':5,
-    "bloggerName": "虚拟主播小熊",
-    "bloggerAvatar":"https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/custom-render/bear.jpg",
-    "introduction": "大家好，我是虚拟主播小熊。喜欢电影、读书和哲学的小智者，希望通过直播和大家一起探索人生的意义。",
+      'bloggerId': 5,
+    "bloggerName": "Virtual anchor Bear",
+    "bloggerAvatar": "https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/custom-render/bear.jpg",
+    "introduction": "Hello everyone, I am the virtual host Xiaoxiong. A little wise man who likes movies, reading and philosophy, I hope to explore the meaning of life with you through live broadcast.",
     "fansCount": 1200,
     "worksCount": 25,
     "viewCount": 18,
-    "city": "智慧之城",
-    "tags": ["电影", "文学"]
+    "city": "City of Wisdom",
+    "tags": ["Movie", "Literature"]
     },
     {
-      'bloggerId':6,
-    "bloggerName": "虚拟主播小鸟",
+      'bloggerId': 6,
+    "bloggerName": "Virtual anchor bird",
     "bloggerAvatar": "https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/custom-render/bird.jpeg",
-    "introduction": "大家好，我是虚拟主播小鸟。喜欢唱歌、表演和综艺的小嗨鸟，希望通过直播和大家一起嗨翻天。",
+    "introduction": "Hello everyone, I am the virtual anchor Xiaoniao. I like singing, acting and variety shows. I hope to be happy with everyone through the live broadcast.",
     "fansCount": 900,
     "worksCount": 12,
     "viewCount": 8,
-    "city": "快乐之城",
-    "tags": ["音乐", "表演", "综艺"]
+    "city": "Happy City",
+    "tags": ["music", "performance", "variety"]
     }
     ],
     defaultRowHeight:80
   };
   
-const tableInstance = new VTable.ListTable(option);
+const tableInstance = new VTable.ListTable(document.getElementById(CONTAINER_ID),option);
 window['tableInstance'] = tableInstance;
 ```
 

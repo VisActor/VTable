@@ -1,13 +1,13 @@
 ---
 category: examples
 group: Custom
-title: 单元格自定义内容
+title: 全局单元格自定义内容
 cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/custom-render-global.png
 order: 7-3
 link: '/guide/custom_define/custom_render'
 ---
 
-# 单元格自定义内容
+# 全局单元格自定义内容
 
 通过全局配置项customRender，设置自定义函数
 
@@ -20,19 +20,18 @@ link: '/guide/custom_define/custom_render'
 ```javascript livedemo template=vtable
 
   const option = {
-    parentElement: document.getElementById(CONTAINER_ID),
     columns:[
       {
         field: 'type',
         caption:'',
-        width:70,
+        width:170,
         headerStyle:{
-          bgColor:'#4991e3'
+          bgColor:'#a23be1'
         },
         style:{
           fontFamily:'Arial',
           fontWeight:600,
-          bgColor:'#4991e3',
+          bgColor:'#a23be1',
           fontSize:26,
           padding:20,
           lineHeight:32,
@@ -41,25 +40,25 @@ link: '/guide/custom_define/custom_render'
       }, 
       {
         field: 'urgency',
-        caption:'紧急',
-        width:'300',
+        caption:'urgency',
+        width:400,
         headerStyle:{
           lineHeight:50,
           fontSize:26,
           fontWeight:600,
-          bgColor:'#4991e3',
+          bgColor:'#a23be1',
           color:'white',
           textAlign:'center'
         },
-      
+
     },
     {
       field: 'not_urgency',
-      caption:'不紧急',
-      width:'260',
+      caption:'not urgency',
+      width:400,
       headerStyle:{
           lineHeight:50,
-          bgColor:'#4991e3',
+          bgColor:'#a23be1',
           color:'white',
           textAlign:'center',
           fontSize:26,
@@ -74,18 +73,18 @@ link: '/guide/custom_define/custom_render'
     ],
     records:[
       {
-        'type':'重要',
-        "urgency": ['危机','迫切问题','在限定时间内容必须完成的任务'],
-        "not_urgency": ['预防性措施','发展关系','明确新的发展机会','制定长期目标'],
+        'type': 'important',
+        "urgency": ['crisis','urgent problem','tasks that must be completed within a limited time'],
+        "not_urgency": ['preventive measures','development relationship','identify new development opportunities','establish long-term goals'],
       },
       {
-        'type':'不重要',
-        "urgency": ['接待访客','某些电话、报告，信件等','迫切需要解决的事务','公共活动'],
-        "not_urgency": ['琐碎忙碌的工作','某些信件','某些电话','消磨时间的活动','某些令人愉悦的活动'],
+        'type': 'Not\nimportant',
+        "urgency": ['Receive visitors','Certain calls, reports, letters, etc','Urgent matters','Public activities'],
+        "not_urgency": ['Trivial busy work','Some letters','Some phone calls','Time-killing activities','Some pleasant activities'],
       },
     ],
     defaultRowHeight:80,
-    autoRowHeight:true,
+    heightMode:'autoHeight',
     widthMode:'standard',
     autoWrapText:true,
     customRender(args){
@@ -99,10 +98,10 @@ link: '/guide/custom_define/custom_render'
         let maxWidth=0;
         elements.push({
             type: 'rect',
-            fill: '#4991e3',
+            fill: '#a23be1',
             x: left+20,
-            y: top-15,
-            width: row===1?160:180,
+            y: top-20,
+            width: 300,
             height:28
           });
           elements.push({
@@ -110,10 +109,10 @@ link: '/guide/custom_define/custom_render'
             fill: 'white',
             fontSize: 20,
             fontWeight: 500, 
-            baseline: 'top',
-            text:col===1?( row===1? '重要且紧急':'不重要但紧急'):(row===1? '重要不紧急':'不重要不紧急'),
+            textBaseline: 'middle',
+            text:col===1?( row===1? 'important & urgency':'not important but urgency'):(row===1? 'important but not urgency':'not important & not urgency'),
             x: left+50,
-            y: top,
+            y: top-5,
           });
         dataValue.forEach((
           item,i
@@ -152,12 +151,12 @@ link: '/guide/custom_define/custom_render'
           }
           elements.push({
             type: 'text',
-            color: 'blue',
+            fill: 'blue',
             font: '14px sans-serif',
             baseline: 'top',
             text: item,
-            x: left+6,
-            y: top,
+            x: left+10,
+            y: top+5,
           });
           maxWidth=Math.max(maxWidth, table.measureText(item,{fontSize:"15",}).width);
         })
@@ -168,8 +167,8 @@ link: '/guide/custom_define/custom_render'
         }
       }
   };
-  
-const tableInstance = new VTable.ListTable(option);
+
+const tableInstance = new VTable.ListTable(document.getElementById(CONTAINER_ID),option);
 window['tableInstance'] = tableInstance;
 ```
 

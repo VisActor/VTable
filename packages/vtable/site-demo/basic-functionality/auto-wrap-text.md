@@ -18,67 +18,66 @@ link: '/guide/basic_function/auto_wrap_text'
 ## 代码演示
 
 ```javascript livedemo template=vtable
-  fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American_Superstore_list100.json')
+  fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American_Superstore_data.json')
     .then((res) => res.json())
     .then((data) => {
 
 const columns =[
     {
-        "field": "230517143221027",
+        "field": "Order ID",
         "caption": "Order ID",
     },
     {
-        "field": "230517143221030",
+        "field": "Customer ID",
         "caption": "Customer ID",
     },
     {
-        "field": "230517143221032",
+        "field": "Product Name",
         "caption": "Product Name",
     },
     {
-        "field": "230517143221023",
+        "field": "Category",
         "caption": "Category",
     },
     {
-        "field": "230517143221034",
+        "field": "Sub-Category",
         "caption": "Sub-Category",
     },
     {
-        "field": "230517143221037",
+        "field": "Region",
         "caption": "Region",
     },
     {
-        "field": "230517143221024",
+        "field": "City",
         "caption": "City",
     },
     {
-        "field": "230517143221029",
+        "field": "Order Date",
         "caption": "Order Date",
     },
     {
-        "field": "230517143221042",
+        "field": "Quantity",
         "caption": "Quantity",
     },
     {
-        "field": "230517143221040",
+        "field": "Sales",
         "caption": "Sales",
     },
     {
-        "field": "230517143221041",
+        "field": "Profit",
         "caption": "Profit",
     }
 ];
 
 const option = {
-  parentElement: document.getElementById(CONTAINER_ID),
   records:data,
   columns,
   widthMode:'standard',
   autoWrapText:true,
-  autoRowHeight:true,
+  heightMode:'autoHeight',
   defaultColWidth:150,
 };
-const tableInstance = new VTable.ListTable(option);
+const tableInstance = new VTable.ListTable(document.getElementById(CONTAINER_ID),option);
 window['tableInstance'] = tableInstance;
     })
 ```

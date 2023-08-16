@@ -1,4 +1,5 @@
 import type { StateManeger } from '../state/state';
+import { InteractionState } from '../ts-types';
 
 export function handleWhell(event: WheelEvent, state: StateManeger) {
   let { deltaX, deltaY } = event;
@@ -9,6 +10,11 @@ export function handleWhell(event: WheelEvent, state: StateManeger) {
     deltaY = 0;
   }
   const [optimizedDeltaX, optimizedDeltaY] = optimizeScrollXY(deltaX, deltaY, { horizontal: 1, vertical: 1 });
+  if (optimizedDeltaX || optimizedDeltaY) {
+    if (state.interactionState !== InteractionState.scrolling) {
+      state.updateInteractionState(InteractionState.scrolling);
+    }
+  }
 
   if (optimizedDeltaX) {
     state.setScrollLeft(state.scroll.horizontalBarPos + optimizedDeltaX);
@@ -18,7 +24,7 @@ export function handleWhell(event: WheelEvent, state: StateManeger) {
     state.setScrollTop(state.scroll.verticalBarPos + optimizedDeltaY);
     state.showVerticalScrollBar(true);
   }
-
+  state.resetInteractionState();
   if (
     event.cancelable &&
     ((deltaY !== 0 && isVerticalScrollable(deltaY, state)) || (deltaX !== 0 && isHorizontalScrollable(deltaX, state)))
@@ -46,14 +52,22 @@ function optimizeScrollXY(x: number, y: number, ratio: ScrollSpeedRatio): [numbe
   const deltaX = angle <= 1 / ANGLE ? 0 : x;
   const deltaY = angle > ANGLE ? 0 : y;
 
-  return [Math.ceil(deltaX * ratio.horizontal), Math.ceil(deltaY * ratio.vertical)];
+  return [Math.ceil(deltaX * (ratio.horizontal ?? 0)), Math.ceil(deltaY * (ratio.vertical ?? 0))];
 }
 
 export function isVerticalScrollable(deltaY: number, state: StateManeger) {
+  const totalHeight = state.table.getAllRowsHeight() - state.table.scenegraph.height;
+  if (totalHeight === 0) {
+    return false;
+  }
   return !isScrollToTop(deltaY, state) && !isScrollToBottom(deltaY, state);
 }
 
 export function isHorizontalScrollable(deltaX: number, state: StateManeger) {
+  const totalWidth = state.table.getAllColsWidth() - state.table.scenegraph.width;
+  if (totalWidth === 0) {
+    return false;
+  }
   return !isScrollToLeft(deltaX, state) && !isScrollToRight(deltaX, state);
 }
 

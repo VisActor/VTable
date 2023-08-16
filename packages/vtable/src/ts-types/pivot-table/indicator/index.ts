@@ -16,3 +16,5 @@ export type ColumnIndicator =
   | ITextColumnIndicator;
 
 export type IIndicator = HeaderIndicator & ColumnIndicator;
+
+export type IChartIndicator = HeaderIndicator & IChartColumnIndicator;

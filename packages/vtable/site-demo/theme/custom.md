@@ -19,89 +19,88 @@ link: '/guide/theme_and_style/theme'
 
 ```javascript livedemo template=vtable
 
-  fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American_Superstore_pivot.json')
+  fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American_Superstore_Pivot_data.json')
     .then((res) => res.json())
     .then((data) => {
 
 const option = {
-  parentElement: document.getElementById(CONTAINER_ID),
   records:data,
   "rowTree": [
         {
-            "dimensionKey": "230517143221047",
+            "dimensionKey": "City",
             "value": "Aberdeen"
         },
         {
-            "dimensionKey": "230517143221047",
+            "dimensionKey": "City",
             "value": "Abilene"
         },
         {
-            "dimensionKey": "230517143221047",
+            "dimensionKey": "City",
             "value": "Bowling Green"
         },
         {
-            "dimensionKey": "230517143221047",
+            "dimensionKey": "City",
             "value": "Boynton Beach"
         },
         {
-            "dimensionKey": "230517143221047",
+            "dimensionKey": "City",
             "value": "Bozeman"
         },
         {
-            "dimensionKey": "230517143221047",
+            "dimensionKey": "City",
             "value": "Brentwood"
         }
     ],
     "columnTree": [
         {
-            "dimensionKey": "230517143221023",
+            "dimensionKey": "Category",
             "value": "Office Supplies",
             "children": [
                 {
-                    "indicatorKey": "230517143221042"
+                    "indicatorKey": "Quantity"
                 },
                 {
-                    "indicatorKey": "230517143221040"
+                    "indicatorKey": "Sales"
                 },
                 {
-                    "indicatorKey": "230517143221041"
+                    "indicatorKey": "Profit"
                 }
             ]
         },
         {
-            "dimensionKey": "230517143221023",
+            "dimensionKey": "Category",
             "value": "Technology",
             "children": [
                 {
-                    "indicatorKey": "230517143221042"
+                    "indicatorKey": "Quantity"
                 },
                 {
-                    "indicatorKey": "230517143221040"
+                    "indicatorKey": "Sales"
                 },
                 {
-                    "indicatorKey": "230517143221041"
+                    "indicatorKey": "Profit"
                 }
             ]
         },
         {
-            "dimensionKey": "230517143221023",
+            "dimensionKey": "Category",
             "value": "Furniture",
             "children": [
                 {
-                    "indicatorKey": "230517143221042"
+                    "indicatorKey": "Quantity"
                 },
                 {
-                    "indicatorKey": "230517143221040"
+                    "indicatorKey": "Sales"
                 },
                 {
-                    "indicatorKey": "230517143221041"
+                    "indicatorKey": "Profit"
                 }
             ]
         }
     ],
     "rows": [
         {
-            "dimensionKey": "230517143221047",
+            "dimensionKey": "City",
             "dimensionTitle": "City",
             "headerStyle": {
                 "textStick": true
@@ -111,7 +110,7 @@ const option = {
     ],
     "columns": [
         {
-            "dimensionKey": "230517143221023",
+            "dimensionKey": "Category",
             "dimensionTitle": "Category",
             "headerStyle": {
                 "textStick": true
@@ -121,24 +120,28 @@ const option = {
     ],
     "indicators": [
                 {
-                    "indicatorKey": "230517143221042",
+                    "indicatorKey": "Quantity",
                     "caption": "Quantity",
                     "width": "auto",
                     "showSort": false,
                 },
                 {
-                    "indicatorKey": "230517143221040",
+                    "indicatorKey": "Sales",
                     "caption": "Sales",
                     "width": "auto",
                     "showSort": false,
-                    "format":(rec)=>{return Number(rec['230517143221040']).toFixed(2)}
+                    "format":(rec)=>{
+                       if(rec)
+                      return '$'+Number(rec['Sales']).toFixed(2);
+                      else return '--';
+                    }
                 },
                 {
-                    "indicatorKey": "230517143221041",
+                    "indicatorKey": "Profit",
                     "caption": "Profit",
                     "width": "auto",
                     "showSort": false,
-                    "format":(rec)=>{return Number(rec['230517143221041']).toFixed(2)}
+                    "format":(rec)=>{return Number(rec['Profit']).toFixed(2)}
                 }
             ],
     "corner": {
@@ -172,7 +175,7 @@ const option = {
       }
     }
 };
-const tableInstance = new VTable.PivotTable(option);
+const tableInstance = new VTable.PivotTable(document.getElementById(CONTAINER_ID),option);
 window['tableInstance'] = tableInstance;
     })
 ```

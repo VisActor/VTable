@@ -53,7 +53,7 @@ const handleClick = (e: { target: any }, isInit?: boolean) => {
       }
 
       if (window.tableInstance) {
-        window.tableInstance.dispose();
+        window.tableInstance.release();
         document.getElementById('vTable').innerHTML = null;
       }
 
@@ -96,7 +96,7 @@ const createSidebar = (node: HTMLDivElement) => {
 
   node.innerHTML = `
     <div>
-      <p class="sidebar-title">图表列表</p>
+      <p class="sidebar-title"></p>
       <div class="menu-list">
         ${specsHtml.join('')}
       </div>

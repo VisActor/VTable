@@ -66,6 +66,11 @@ export class TableTheme implements ITableThemeDefine {
   private _defaultStyle: RequiredTableThemeDefine['defaultStyle'] | null = null;
   private _header: ITableThemeDefine['headerStyle'] | null = null;
   private _cornerHeader: ITableThemeDefine['cornerHeaderStyle'] | null = null;
+  private _cornerRightTopCell: ITableThemeDefine['cornerRightTopCellStyle'] | null = null;
+  private _cornerLeftBottomCell: ITableThemeDefine['cornerLeftBottomCellStyle'] | null = null;
+  private _cornerRightBottomCell: ITableThemeDefine['cornerRightBottomCellStyle'] | null = null;
+  private _rightFrozen: ITableThemeDefine['rightFrozenStyle'] | null = null;
+  private _bottomFrozen: ITableThemeDefine['bottomFrozenStyle'] | null = null;
   private _rowHeader: ITableThemeDefine['rowHeaderStyle'] | null = null;
   private _body: ITableThemeDefine['bodyStyle'] | null = null;
   private _scroll: ITableThemeDefine['scrollStyle'] | null = null;
@@ -270,6 +275,93 @@ export class TableTheme implements ITableThemeDefine {
       this._cornerHeader = this.getStyle(header);
     }
     return this._cornerHeader;
+  }
+  get cornerRightTopCellStyle(): ITableThemeDefine['cornerRightTopCellStyle'] {
+    if (!this._cornerRightTopCell) {
+      const { obj, superTheme } = this.internalTheme;
+      if (!superTheme.cornerRightTopCellStyle || !obj.cornerRightTopCellStyle) {
+        return this._cornerRightTopCell;
+      }
+      // const header = getProp(obj, superTheme, ["header"]);
+      const header: ThemeStyle = ingoreNoneValueMerge(
+        {},
+        this.defaultStyle,
+        superTheme.cornerRightTopCellStyle,
+        obj.cornerRightTopCellStyle // ?? obj.headerStyle
+      );
+      this._cornerRightTopCell = this.getStyle(header);
+    }
+    return this._cornerRightTopCell;
+  }
+  get cornerLeftBottomCellStyle(): ITableThemeDefine['cornerLeftBottomCellStyle'] {
+    if (!this._cornerLeftBottomCell) {
+      const { obj, superTheme } = this.internalTheme;
+      if (!superTheme.cornerLeftBottomCellStyle || !obj.cornerLeftBottomCellStyle) {
+        return this._cornerLeftBottomCell;
+      }
+      // const header = getProp(obj, superTheme, ["header"]);
+      const header: ThemeStyle = ingoreNoneValueMerge(
+        {},
+        this.defaultStyle,
+        superTheme.cornerLeftBottomCellStyle,
+        obj.cornerLeftBottomCellStyle // ?? obj.headerStyle
+      );
+      this._cornerLeftBottomCell = this.getStyle(header);
+    }
+    return this._cornerLeftBottomCell;
+  }
+  get cornerRightBottomCellStyle(): ITableThemeDefine['cornerRightBottomCellStyle'] {
+    if (!this._cornerRightBottomCell) {
+      const { obj, superTheme } = this.internalTheme;
+      if (!superTheme.cornerRightBottomCellStyle || !obj.cornerRightBottomCellStyle) {
+        return this._cornerRightBottomCell;
+      }
+      // const header = getProp(obj, superTheme, ["header"]);
+      const header: ThemeStyle = ingoreNoneValueMerge(
+        {},
+        this.defaultStyle,
+        superTheme.cornerRightBottomCellStyle,
+        obj.cornerRightBottomCellStyle // ?? obj.headerStyle
+      );
+      this._cornerRightBottomCell = this.getStyle(header);
+    }
+    return this._cornerRightBottomCell;
+  }
+  get rightFrozenStyle(): ITableThemeDefine['rightFrozenStyle'] {
+    if (!this._rightFrozen) {
+      const { obj, superTheme } = this.internalTheme;
+      if (!superTheme.rightFrozenStyle || !obj.rightFrozenStyle) {
+        return this._rightFrozen;
+      }
+      // const header = getProp(obj, superTheme, ["header"]);
+      const header: ThemeStyle = ingoreNoneValueMerge(
+        {},
+        this.defaultStyle,
+        this.rowHeaderStyle,
+        superTheme.rightFrozenStyle,
+        obj.rightFrozenStyle // ?? obj.headerStyle
+      );
+      this._rightFrozen = this.getStyle(header);
+    }
+    return this._rightFrozen;
+  }
+  get bottomFrozenStyle(): ITableThemeDefine['bottomFrozenStyle'] {
+    if (!this._bottomFrozen) {
+      const { obj, superTheme } = this.internalTheme;
+      if (!superTheme.bottomFrozenStyle || !obj.bottomFrozenStyle) {
+        return this._bottomFrozen;
+      }
+      // const header = getProp(obj, superTheme, ["header"]);
+      const header: ThemeStyle = ingoreNoneValueMerge(
+        {},
+        this.defaultStyle,
+        this.headerStyle,
+        superTheme.bottomFrozenStyle,
+        obj.bottomFrozenStyle // ?? obj.headerStyle
+      );
+      this._bottomFrozen = this.getStyle(header);
+    }
+    return this._bottomFrozen;
   }
   get rowHeaderStyle(): ITableThemeDefine['rowHeaderStyle'] {
     if (!this._rowHeader) {

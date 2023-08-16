@@ -8,7 +8,8 @@ import type {
   IThemeAttribute,
   IRectRenderContribution,
   IGroup,
-  IGroupGraphicAttribute
+  IGroupGraphicAttribute,
+  IDrawContext
 } from '@visactor/vrender';
 import { BaseRenderContributionTime } from '@visactor/vrender';
 import { renderStroke } from './group-contribution-render';
@@ -28,6 +29,7 @@ export class SplitRectBeforeRenderContribution implements IRectRenderContributio
     fVisible: boolean,
     sVisible: boolean,
     rectAttribute: Required<IRectGraphicAttribute>,
+    drawContext: IDrawContext,
     fillCb?: (
       ctx: IContext2d,
       markAttribute: Partial<IMarkAttribute & IGraphicAttribute>,
@@ -73,6 +75,7 @@ export class SplitRectAfterRenderContribution implements IRectRenderContribution
     fVisible: boolean,
     sVisible: boolean,
     rectAttribute: Required<IRectGraphicAttribute>,
+    drawContext: IDrawContext,
     fillCb?: (
       ctx: IContext2d,
       markAttribute: Partial<IMarkAttribute & IGraphicAttribute>,

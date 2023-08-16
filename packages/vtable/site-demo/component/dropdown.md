@@ -50,7 +50,7 @@ order: 8-2
             tooltip: {
               style: { arrowMark: true,font:10,bgColor:'white',color:'black' },
               // 气泡框，按钮的的解释信息
-              title: '选择排序',
+              title: 'sort data',
               placement: VTable.TYPES.Placement.right,
             },
           },
@@ -77,20 +77,20 @@ order: 8-2
   //   }
   // );
 
-  fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American_Superstore_list100.json')
+  fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American_Superstore_data.json')
     .then((res) => res.json())
     .then((data) => {
 
 const columns =[
     {
-        "field": "230517143221027",
+        "field": "Order ID",
         "caption": "Order ID",
         "width": "auto",
         icon: 'order',
         dropDownMenu: [
-          '默认',
+          'default',
         {
-          text: '按利润',
+          text: 'by Profit',
           icon: {
             svg: '<svg width="14" height="14" viewBox="0 0 96 96" fill="none" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" clip-rule="evenodd" d="M71 89.0005L54 71.9719L54 60L67.004 73.025L67.0032 25L75.0032 25L75.004 73.017L88 60V71.9719L71 89.0005ZM48 81V89H8V81H48ZM48 45V53H8V45H48ZM88 9V17H8V9H88Z" fill="#2e2f32" fill-opacity="0.9"></path></svg>',
             // svg: "https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/order.svg",
@@ -107,54 +107,53 @@ const columns =[
       ],
     },
     {
-        "field": "230517143221030",
+        "field": "Customer ID",
         "caption": "Customer ID",
         "width": "auto"
     },
     {
-        "field": "230517143221032",
+        "field": "Product Name",
         "caption": "Product Name",
         "width": "auto"
     },
     {
-        "field": "230517143221023",
+        "field": "Category",
         "caption": "Category",
         "width": "auto"
     },
     {
-        "field": "230517143221034",
+        "field": "Sub-Category",
         "caption": "Sub-Category",
         "width": "auto"
     },
     {
-        "field": "230517143221037",
+        "field": "Region",
         "caption": "Region",
         "width": "auto"
     },
     {
-        "field": "230517143221024",
+        "field": "City",
         "caption": "City",
         "width": "auto"
     },
     {
-        "field": "230517143221029",
+        "field": "Order Date",
         "caption": "Order Date",
         "width": "auto"
     },
 ];
 
 const option = {
-  parentElement: document.getElementById(CONTAINER_ID),
   records:data,
   columns,
   widthMode:'standard',
   allowFrozenColCount: 3,
   frozenColCount: 1,
 };
-const tableInstance = new VTable.ListTable(option);
+const tableInstance = new VTable.ListTable(document.getElementById(CONTAINER_ID),option);
 window['tableInstance'] = tableInstance;
 
-tableInstance.listen('click_cell', (args) => {
+tableInstance.on('click_cell', (args) => {
         const { col, row, targetIcon } = args;
         if(col===0&&row>=1&&targetIcon?.name==='order'){
           const { left, top, width, height, bottom, right } = targetIcon.position;
@@ -162,10 +161,10 @@ tableInstance.listen('click_cell', (args) => {
         content: [
           {
             type: 'title',
-            text: '操作',
+            text: 'action',
           },
           {
-            text: '删除',
+            text: 'delete',
             menuKey: 'delete',
             // icon: {
             //   svg:  "https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/order.svg",
@@ -177,7 +176,7 @@ tableInstance.listen('click_cell', (args) => {
             },
           },
           {
-            text: '修改',
+            text: 'modify',
                 menuKey: 'modify',
                 icon:{
                   width:15,
@@ -186,7 +185,7 @@ tableInstance.listen('click_cell', (args) => {
                 }
           },
           {
-            text: '聚合',
+            text: 'aggregation',
             menuKey: 'aggregation',
             icon:{
               width:15,
@@ -195,11 +194,11 @@ tableInstance.listen('click_cell', (args) => {
             },
             children:[
               {
-                text: '平均',
+                text: 'average',
                 menuKey: 'average',
               },
               {
-                text: '求和',
+                text: 'sum',
                 menuKey: 'sum',
               }
             ]
@@ -218,7 +217,7 @@ tableInstance.listen('click_cell', (args) => {
       });
         }
     });
-  tableInstance.listen('dropdownmenu_click', (args) => {
+  tableInstance.on('dropdownmenu_click', (args) => {
     console.log('dropdownmenu_click',args);
     tableInstance.setDropDownMenuHighlight([args]);
   })

@@ -94,179 +94,179 @@ export class Style extends EventTarget implements ColumnStyle {
   }
   set color(color: ColorPropertyDefine | undefined) {
     this._color = color;
-    this.doChangeStyle();
+    // this.doChangeStyle();
   }
   get fontSize(): FontSizePropertyDefine | undefined {
     return this._fontSize;
   }
   set fontSize(fontSize: FontSizePropertyDefine | undefined) {
     this._fontSize = fontSize;
-    this.doChangeStyle();
+    // this.doChangeStyle();
   }
   get fontFamily(): FontFamilyPropertyDefine | undefined {
     return this._fontFamily;
   }
   set fontFamily(fontFamily: FontFamilyPropertyDefine | undefined) {
     this._fontFamily = fontFamily;
-    this.doChangeStyle();
+    // this.doChangeStyle();
   }
   get fontWeight(): FontWeightPropertyDefine | undefined {
     return this._fontWeight;
   }
   set fontWeight(fontWeight: FontWeightPropertyDefine | undefined) {
     this._fontWeight = fontWeight;
-    this.doChangeStyle();
+    // this.doChangeStyle();
   }
   get fontVariant(): FontVariantPropertyDefine | undefined {
     return this._fontVariant;
   }
   set fontVariant(fontVariant: FontVariantPropertyDefine | undefined) {
     this._fontVariant = fontVariant;
-    this.doChangeStyle();
+    // this.doChangeStyle();
   }
   get fontStyle(): FontStylePropertyDefine | undefined {
     return this._fontStyle;
   }
   set fontStyle(fontStyle: FontStylePropertyDefine | undefined) {
     this._fontStyle = fontStyle;
-    this.doChangeStyle();
+    // this.doChangeStyle();
   }
   get padding(): PaddingsPropertyDefine | undefined {
     return this._padding;
   }
   set padding(padding: PaddingsPropertyDefine | undefined) {
     this._padding = padding;
-    this.doChangeStyle();
+    // this.doChangeStyle();
   }
   get textOverflow(): TextOverflow | undefined {
     return this._textOverflow;
   }
   set textOverflow(textOverflow: TextOverflow | undefined) {
     this._textOverflow = textOverflow;
-    this.doChangeStyle();
+    // this.doChangeStyle();
   }
   get bgColor(): ColorPropertyDefine | undefined {
     return this._bgColor;
   }
   set bgColor(bgColor: ColorPropertyDefine | undefined) {
     this._bgColor = bgColor;
-    this.doChangeStyle();
+    // this.doChangeStyle();
   }
   get borderColor(): ColorsPropertyDefine | undefined {
     return this._borderColor;
   }
   set borderColor(borderColor: ColorsPropertyDefine | undefined) {
     this._borderColor = borderColor;
-    this.doChangeStyle();
+    // this.doChangeStyle();
   }
   get textStick(): boolean {
     return this._textStick;
   }
   set textStick(textStick: boolean) {
     this._textStick = textStick;
-    this.doChangeStyle();
+    // this.doChangeStyle();
   }
   get textAlign(): TextAlignType | undefined {
     return this._textAlign;
   }
   set textAlign(textAlign: TextAlignType | undefined) {
     this._textAlign = textAlign;
-    this.doChangeStyle();
+    // this.doChangeStyle();
   }
   get textBaseline(): TextBaselineType | undefined {
     return this._textBaseline;
   }
   set textBaseline(textBaseline: TextBaselineType | undefined) {
     this._textBaseline = textBaseline;
-    this.doChangeStyle();
+    // this.doChangeStyle();
   }
   get lineHeight(): number | undefined {
     return this._lineHeight;
   }
   set lineHeight(lineHeight: number | undefined) {
     this._lineHeight = lineHeight;
-    this.doChangeStyle();
+    // this.doChangeStyle();
   }
   get underline(): UnderlinePropertyDefine | undefined {
     return this._underline;
   }
   set underline(underline: UnderlinePropertyDefine | undefined) {
     this._underline = underline;
-    this.doChangeStyle();
+    // this.doChangeStyle();
   }
   get underlineColor(): ColorPropertyDefine | undefined {
     return this._underlineColor;
   }
   set underlineColor(underlineColor: ColorPropertyDefine | undefined) {
     this._underlineColor = underlineColor;
-    this.doChangeStyle();
+    // this.doChangeStyle();
   }
   get underlineDash(): LineDashPropertyDefine | undefined {
     return this._underlineDash;
   }
   set underlineDash(underlineDash: LineDashPropertyDefine | undefined) {
     this._underlineDash = underlineDash;
-    this.doChangeStyle();
+    // this.doChangeStyle();
   }
   get lineThrough(): LineThroughPropertyDefine | undefined {
     return this._lineThrough;
   }
   set lineThrough(lineThrough: LineThroughPropertyDefine | undefined) {
     this._lineThrough = lineThrough;
-    this.doChangeStyle();
+    // this.doChangeStyle();
   }
   get lineThroughColor(): ColorPropertyDefine | undefined {
     return this._lineThroughColor;
   }
   set lineThroughColor(lineThroughColor: ColorPropertyDefine | undefined) {
     this._lineThroughColor = lineThroughColor;
-    this.doChangeStyle();
+    // this.doChangeStyle();
   }
   get lineThroughDash(): LineDashPropertyDefine | undefined {
     return this._lineThroughDash;
   }
   set lineThroughDash(lineThroughDash: LineDashPropertyDefine | undefined) {
     this._lineThroughDash = lineThroughDash;
-    this.doChangeStyle();
+    // this.doChangeStyle();
   }
   get linkColor(): ColorPropertyDefine | undefined {
     return this._linkColor;
   }
   set linkColor(linkColor: ColorPropertyDefine | undefined) {
     this._linkColor = linkColor;
-    this.doChangeStyle();
+    // this.doChangeStyle();
   }
   get cursor(): CursorPropertyDefine | undefined {
     return this._cursor;
   }
   set cursor(cursor: CursorPropertyDefine | undefined) {
     this._cursor = cursor;
-    this.doChangeStyle();
+    // this.doChangeStyle();
   }
   get borderLineWidth(): LineWidthsPropertyDefine | undefined {
     return this._borderLineWidth;
   }
   set borderLineWidth(borderLineWidth: LineWidthsPropertyDefine | undefined) {
     this._borderLineWidth = borderLineWidth;
-    this.doChangeStyle();
+    // this.doChangeStyle();
   }
   get borderLineDash(): LineDashsPropertyDefine | undefined {
     return this._borderLineDash;
   }
   set borderLineDash(borderLineDash: LineDashsPropertyDefine | undefined) {
     this._borderLineDash = borderLineDash;
-    this.doChangeStyle();
+    // this.doChangeStyle();
   }
   get marked(): MarkedPropertyDefine | undefined {
     return this._marked;
   }
   set marked(marked: MarkedPropertyDefine | undefined) {
     this._marked = marked;
-    this.doChangeStyle();
+    // this.doChangeStyle();
   }
-  doChangeStyle(): void {
-    this.fireListeners(STYLE_EVENT_TYPE.CHANGE_STYLE);
-  }
+  // doChangeStyle(): void {
+  //   this.fireListeners(STYLE_EVENT_TYPE.CHANGE_STYLE, null);
+  // }
   clone(): Style {
     return new Style(this, null);
   }

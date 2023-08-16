@@ -1,7 +1,7 @@
 import * as VTable from '../../src';
 import VChart from '@visactor/vchart';
 const Table_CONTAINER_DOM_ID = 'vTable';
-VTable.register.chartType('vchart', VChart);
+VTable.register.chartModule('vchart', VChart);
 export function createTable() {
   const temperatureList = {
     东北: {
@@ -429,7 +429,7 @@ export function createTable() {
     records.push(record);
   }
   const option = {
-    parentElement: document.getElementById(Table_CONTAINER_DOM_ID),
+    container: document.getElementById(Table_CONTAINER_DOM_ID),
     records,
     defaultRowHeight: 200,
     defaultHeaderRowHeight: 50,
@@ -437,7 +437,7 @@ export function createTable() {
       {
         indicatorKey: 'dayTrendChart',
         columnType: 'chart',
-        chartType: 'vchart',
+        chartModule: 'vchart',
         width: 500,
         chartSpec: {
           type: 'common',
@@ -468,7 +468,7 @@ export function createTable() {
       {
         indicatorKey: 'monthTrendChart',
         columnType: 'chart',
-        chartType: 'vchart',
+        chartModule: 'vchart',
         width: 500,
         chartSpec: {
           type: 'common',
@@ -560,7 +560,7 @@ export function createTable() {
       {
         indicatorKey: 'yearTrendChart',
         columnType: 'chart',
-        chartType: 'vchart',
+        chartModule: 'vchart',
         width: 500,
         chartSpec: {
           type: 'common',

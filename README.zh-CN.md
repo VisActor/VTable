@@ -1,6 +1,9 @@
 <div align="center">
-  <a href="" target="_blank">
-    <img alt="VisActor Logo" width="200" src="https://github.com/VisActor/.github/blob/main/profile/500_200.svg"/>
+  <a href="https://github.com/VisActor#gh-light-mode-only" target="_blank">
+    <img alt="VisActor Logo" width="200" src="https://github.com/VisActor/.github/blob/main/profile/logo_500_200_light.svg"/>
+  </a>
+  <a href="https://github.com/VisActor#gh-dark-mode-only" target="_blank">
+    <img alt="VisActor Logo" width="200" src="https://github.com/VisActor/.github/blob/main/profile/logo_500_200_dark.svg"/>
   </a>
 </div>
 
@@ -71,27 +74,28 @@ yarn add @visactor/vtable
 ## 快速上手
 
 ```javascript
+// this demo you can run on codesanbox https://codesandbox.io/s/vtable-simple-demo-g8q738
 import * as VTable from '@visactor/vtable';
 
 const columns =[
     {
-        "field": "230517143221027",
+        "field": "Order ID",
         "caption": "Order ID",
     },
     {
-        "field": "230517143221030",
+        "field": "Customer ID",
         "caption": "Customer ID",
     },
     {
-        "field": "230517143221032",
+        "field": "Product Name",
         "caption": "Product Name",
     },
     {
-        "field": "230517143221040",
+        "field": "Sales",
         "caption": "Sales",
     },
     {
-        "field": "230517143221041",
+        "field": "Profit",
         "caption": "Profit",
     }
 ];
@@ -100,18 +104,18 @@ const option = {
   parentElement: document.getElementById(CONTAINER_ID),
   records:[
     {
-      "230517143221027": "CA-2018-156720",
-      "230517143221030": "JM-15580",
-      "230517143221032": "Bagged Rubber Bands",
-      "230517143221040": "3.024",
-      "230517143221041": "-0.605"
+      "Order ID": "CA-2018-156720",
+      "Customer ID": "JM-15580",
+      "Product Name": "Bagged Rubber Bands",
+      "Sales": "3.024",
+      "Profit": "-0.605"
     },
     {
-      "230517143221027": "CA-2018-115427",
-      "230517143221030": "EB-13975",
-      "230517143221032": "GBC Binding covers",
-      "230517143221040": "20.72",
-      "230517143221041": "6.475"
+      "Order ID": "CA-2018-115427",
+      "Customer ID": "EB-13975",
+      "Product Name": "GBC Binding covers",
+      "Sales": "20.72",
+      "Profit": "6.475"
     },
     // ...
   ],
@@ -124,7 +128,26 @@ const tableInstance = new VTable.ListTable(option);
 ##
 
 [更多 demo 和详细教程](https://visactor.io/vtable)
+## ⌨️ 开发
 
+首先，全局安装 [@microsoft/rush](https://rushjs.io/pages/intro/get_started/)
+
+```bash
+$ npm i --global @microsoft/rush
+```
+
+接着将代码 clone 至本地：
+
+```bash
+# clone
+$ git clone git@github.com:VisActor/VTable.git
+$ cd VTable
+# install dependencies
+$ rush update
+# start vtable demo
+$ cd packages/vtable
+$ rushx demo
+```
 # 相关链接
 
 - [官网](https://visactor.io/vtable)

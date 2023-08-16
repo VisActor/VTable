@@ -55,7 +55,7 @@ export function createCellGroup(
   if (cellTheme?.text?.textBaseline) {
     textBaseline = cellTheme?.text?.textBaseline;
   }
-  // const { autoRowHeight } = table.internalProps;
+  const autoRowHeight = table.heightMode === 'autoHeight';
   const autoColWidth = colWidth === 'auto';
   const autoWrapText = headerStyle.autoWrapText ?? table.internalProps.autoWrapText;
   const lineClamp = headerStyle.lineClamp;
@@ -81,7 +81,7 @@ export function createCellGroup(
   cellGroup.role = 'cell';
   cellGroup.col = col;
   cellGroup.row = row;
-  columnGroup.addChild(cellGroup);
+  columnGroup?.addChild(cellGroup);
   if (customElementsGroup) {
     cellGroup.appendChild(customElementsGroup);
   }
@@ -98,8 +98,7 @@ export function createCellGroup(
       textStr,
       padding as any,
       autoColWidth,
-      // autoRowHeight,
-      false,
+      autoRowHeight,
       autoWrapText,
       typeof lineClamp === 'number' ? lineClamp : undefined,
       // autoColWidth ? 0 : colWidth,

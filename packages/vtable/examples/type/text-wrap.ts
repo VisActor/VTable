@@ -13,7 +13,7 @@ export function createTable() {
     });
   }
   const option: VTable.ListTableConstructorOptions = {
-    parentElement: document.getElementById(Table_CONTAINER_DOM_ID),
+    container: document.getElementById(Table_CONTAINER_DOM_ID),
     columns: [
       {
         field: 'progress',
@@ -76,7 +76,7 @@ export function createTable() {
     widthMode: 'standard',
     allowFrozenColCount: 2,
     defaultRowHeight: 50,
-    autoRowHeight: true,
+    heightMode: 'autoHeight',
     // theme: {},
     hover: {
       // isShowTooltip: true, //当hover到未展示全的文本上时是否需要出现提示框

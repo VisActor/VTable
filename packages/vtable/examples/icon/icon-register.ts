@@ -280,7 +280,7 @@ export function createTable() {
     }
   ];
   const option: VTable.ListTableConstructorOptions = {
-    parentElement: document.getElementById(Table_CONTAINER_DOM_ID),
+    container: document.getElementById(Table_CONTAINER_DOM_ID),
     columns: [
       {
         field: 'progress',
@@ -419,12 +419,12 @@ export function createTable() {
       renderMode: 'html',
       isShowOverflowTextTooltip: false
     },
-    autoRowHeight: true
+    heightMode: 'autoHeight'
   };
 
   const instance = new ListTable(option);
 
-  instance.listen('click_cell', args => {
+  instance.on('click_cell', args => {
     console.log('click_cell', args);
     const { col, row, targetIcon } = args;
     if (targetIcon) {
@@ -514,7 +514,7 @@ export function createTable() {
   });
   // instance.setRecords(personsDataSource);
 
-  instance.listen('click_cell', args => {
+  instance.on('click_cell', args => {
     console.log('click_cell', args);
     const { col, row, targetIcon } = args;
     if (targetIcon) {

@@ -1,6 +1,6 @@
 import { icons as iconPlugins } from './plugins/icons';
 import { themes as themePlugins } from './plugins/themes';
-import { chartTypes as chartTypePlugins } from './plugins/chartTypes';
+import { chartTypes as chartTypePlugins } from './plugins/chartModules';
 import type { ColumnIconOption, ITableThemeDefine } from './ts-types';
 
 function register(obj: { [key: string]: any }, name: string, value: any): any {
@@ -21,20 +21,20 @@ export function icon(name: string, icon?: ColumnIconOption): ColumnIconOption {
   }
   return iconPlugins[name];
 }
-export function chartType(name: string, chartType?: any): any {
-  if (chartType !== null && chartType !== undefined) {
-    return register(chartTypePlugins, name, chartType);
+export function chartModule(name: string, chartModule?: any): any {
+  if (chartModule !== null && chartModule !== undefined) {
+    return register(chartTypePlugins, name, chartModule);
   }
   return chartTypePlugins[name];
 }
-// 清理注册的全局theme icon chartType
+// 清理注册的全局theme icon chartModule
 function clear(obj: any) {
   for (const key in obj) {
     delete obj[key];
   }
 }
 /**
- * 清理注册的全局theme icon chartType
+ * 清理注册的全局theme icon chartModule
  */
 export function clearAll() {
   clear(themePlugins);

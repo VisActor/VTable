@@ -6,7 +6,7 @@ const Table_CONTAINER_DOM_ID = 'vTable';
 export function createTable() {
   const options = {
     enableDataAnalysis: false,
-    autoRowHeight: true,
+    heightMode: 'autoHeight',
     widthMode: 'standard',
     disableColumnResize: false,
     autoWrapText: false,
@@ -10860,7 +10860,7 @@ export function createTable() {
       enableRowHighlight: false,
       enableSingalCellHighlight: true
     },
-    parentElement: document.getElementById(Table_CONTAINER_DOM_ID)
+    container: document.getElementById(Table_CONTAINER_DOM_ID)
   };
   const instance = new VTable.PivotTable(options);
 

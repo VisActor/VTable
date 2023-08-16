@@ -61,7 +61,7 @@ export function bindContainerDomListener(eventManeger: EventManeger) {
     e.preventDefault();
   });
 
-  handler.on(table.getParentElement(), 'resize', () => {
+  handler.on(table.getContainer(), 'resize', () => {
     table.resize();
   });
 }

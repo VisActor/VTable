@@ -12,14 +12,14 @@ order: 2-3
 
 ## 关键配置
 
-- `VTable.register.chartType('vchart', VChart)` 注册绘制图表的图表库 目前支持VChart
+- `VTable.register.chartModule('vchart', VChart)` 注册绘制图表的图表库 目前支持VChart
 - `columnType: 'chart'` 指定类型chart
-- `columnType: 'vchart'` 指定注册的图表库名称
+- `chartModule: 'vchart'` 指定注册的图表库名称
 - `chartSpec: {}` 图表spec
 ## 代码演示
 
 ```javascript livedemo template=vtable
-  VTable.register.chartType('vchart', VChart);
+  VTable.register.chartModule('vchart', VChart);
   const records = [];
   for (let i = 1; i <= 10; i++) {
     for (let j = 1; j <= 10; j++) {
@@ -79,7 +79,6 @@ order: 2-3
 
 
 const option = {
-  parentElement: document.getElementById(CONTAINER_ID),
   records,
   defaultRowHeight:200,
   defaultHeaderRowHeight:50,
@@ -92,7 +91,7 @@ const option = {
           // bgColor: 'yellow',
         },
         columnType: 'chart',
-        chartType: 'vchart',
+        chartModule: 'vchart',
         width: 300,
         chartSpec: {
           type: 'common',
@@ -121,7 +120,7 @@ const option = {
           color: 'green',
         },
         columnType: 'chart',
-        chartType: 'vchart',
+        chartModule: 'vchart',
         width: 300,
         chartSpec: {
           type: 'common',
@@ -236,7 +235,7 @@ const option = {
     },
     dragHeaderMode: 'all'
 };
-const tableInstance = new VTable.PivotTable(option);
+const tableInstance = new VTable.PivotTable(document.getElementById(CONTAINER_ID),option);
 window['tableInstance'] = tableInstance;
 ```
 

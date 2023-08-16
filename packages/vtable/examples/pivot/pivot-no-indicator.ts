@@ -5,7 +5,7 @@ const Table_CONTAINER_DOM_ID = 'vTable';
 
 export function createTable() {
   const option: VTable.PivotTableConstructorOptions = {
-    parentElement: document.getElementById(Table_CONTAINER_DOM_ID),
+    container: document.getElementById(Table_CONTAINER_DOM_ID),
     columns: [
       {
         dimensionKey: '221205165418024',
@@ -243,7 +243,7 @@ export function createTable() {
   const instance = new PivotTable(option);
 
   const { PIVOT_SORT_CLICK } = VTable.PivotTable.EVENT_TYPE;
-  instance.listen(PIVOT_SORT_CLICK, e => {
+  instance.on(PIVOT_SORT_CLICK, e => {
     const order = e.order === 'asc' ? 'desc' : e.order === 'desc' ? 'normal' : 'asc';
     instance.updatePivotSortState([{ dimensions: e.dimensionInfo, order }]);
   });

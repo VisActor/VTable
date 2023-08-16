@@ -1,6 +1,4 @@
 /* eslint-disable sort-imports */
-
-// export { version } from '../../package.json';
 import * as TYPES from './ts-types';
 import * as core from './core';
 import * as data from './data';
@@ -20,11 +18,13 @@ import type {
   GroupColumnDefine,
   ListTableConstructorOptions,
   PivotTableConstructorOptions,
+  PivotChartConstructorOptions,
   IHeaderTreeDefine,
   IDimension
 } from './ts-types';
 import { ListTable } from './ListTable';
 import { PivotTable } from './PivotTable';
+import { PivotChart } from './PivotChart';
 import type { MousePointerCellEvent } from './ts-types/events';
 import * as CustomLayout from './render/layout';
 export const version = __VERSION__;
@@ -42,6 +42,8 @@ export {
   ListTableConstructorOptions,
   PivotTable,
   PivotTableConstructorOptions,
+  PivotChartConstructorOptions,
+  PivotChart,
   IHeaderTreeDefine,
   IDimension,
   ColumnsDefine,

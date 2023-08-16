@@ -19,75 +19,74 @@ link: '/guide/table_type/List_table/list_table_define_and_generate'
 
 ```javascript livedemo template=vtable
 
-  fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American_Superstore_list100.json')
+  fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American_Superstore_data.json')
     .then((res) => res.json())
     .then((data) => {
 
 const columns =[
     {
-        "field": "230517143221027",
+        "field": "Order ID",
         "caption": "Order ID",
         "width": "auto"
     },
     {
-        "field": "230517143221030",
+        "field": "Customer ID",
         "caption": "Customer ID",
         "width": "auto"
     },
     {
-        "field": "230517143221032",
+        "field": "Product Name",
         "caption": "Product Name",
         "width": "auto"
     },
     {
-        "field": "230517143221023",
+        "field": "Category",
         "caption": "Category",
         "width": "auto"
     },
     {
-        "field": "230517143221034",
+        "field": "Sub-Category",
         "caption": "Sub-Category",
         "width": "auto"
     },
     {
-        "field": "230517143221037",
+        "field": "Region",
         "caption": "Region",
         "width": "auto"
     },
     {
-        "field": "230517143221024",
+        "field": "City",
         "caption": "City",
         "width": "auto"
     },
     {
-        "field": "230517143221029",
+        "field": "Order Date",
         "caption": "Order Date",
         "width": "auto"
     },
     {
-        "field": "230517143221042",
+        "field": "Quantity",
         "caption": "Quantity",
         "width": "auto"
     },
     {
-        "field": "230517143221040",
+        "field": "Sales",
         "caption": "Sales",
         "width": "auto"
     },
     {
-        "field": "230517143221041",
+        "field": "Profit",
         "caption": "Profit",
         "width": "auto"
     }
 ];
 
 const option = {
-  parentElement: document.getElementById(CONTAINER_ID),
   records:data,
   columns,
   widthMode:'standard'
 };
-const tableInstance = new VTable.ListTable(option);
+const tableInstance = new VTable.ListTable(document.getElementById(CONTAINER_ID),option);
 window['tableInstance'] = tableInstance;
     })
 ```

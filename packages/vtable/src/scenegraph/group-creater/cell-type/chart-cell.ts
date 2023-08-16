@@ -1,6 +1,6 @@
 import { Group } from '../../graphic/group';
 import { Chart } from '../../graphic/chart';
-import * as registerChartTypes from '../../../chartType';
+import * as registerChartTypes from '../../../chartModule';
 import { getFunctionalProp } from '../../utils/get-prop';
 import { isValid } from '../../../tools/util';
 import type { BaseTableAPI } from '../../../ts-types/base-table';
@@ -16,15 +16,16 @@ export function createChartCellGroup(
   height: number,
   padding: number[],
   dataValue: string,
-  chartType: any,
+  chartModule: any,
   chartSpec: any,
   chartInstance: any,
+  dataId: string | Record<string, string>,
   table: BaseTableAPI,
   cellTheme: IThemeSpec
 ) {
   // 获取注册的chart图表类型
   const registerCharts = registerChartTypes.get();
-  const ClassType = registerCharts[chartType];
+  const ClassType = registerCharts[chartModule];
   const headerStyle = table._getCellStyle(col, row); // to be fixed
   const functionalPadding = getFunctionalProp('padding', headerStyle, col, row, table);
   if (isValid(functionalPadding)) {
@@ -53,7 +54,7 @@ export function createChartCellGroup(
     cellGroup.role = 'cell';
     cellGroup.col = col;
     cellGroup.row = row;
-    columnGroup.addChild(cellGroup);
+    columnGroup?.addChild(cellGroup);
   }
   cellGroup.AABBBounds.width(); // TODO 需要底层VRender修改
   // chart
@@ -67,15 +68,16 @@ export function createChartCellGroup(
     width: width - padding[3] - padding[1],
     height: height - padding[2] - padding[0],
     chartInstance,
-    dataId: 'data',
+    dataId,
     data: table.getCellValue(col, row),
     cellPadding: padding,
-    viewBox: {
-      x1: Math.ceil(cellGroup.globalAABBBounds.x1 + padding[3] + table.scrollLeft),
-      x2: Math.ceil(cellGroup.globalAABBBounds.x1 + width - padding[1] + table.scrollLeft),
-      y1: Math.ceil(cellGroup.globalAABBBounds.y1 + padding[0] + table.scrollTop),
-      y2: Math.ceil(cellGroup.globalAABBBounds.y1 + height - padding[2] + table.scrollTop)
-    }
+    // viewBox: {
+    //   x1: Math.ceil(cellGroup.globalAABBBounds.x1 + padding[3] + table.scrollLeft),
+    //   x2: Math.ceil(cellGroup.globalAABBBounds.x1 + width - padding[1] + table.scrollLeft),
+    //   y1: Math.ceil(cellGroup.globalAABBBounds.y1 + padding[0] + table.scrollTop),
+    //   y2: Math.ceil(cellGroup.globalAABBBounds.y1 + height - padding[2] + table.scrollTop)
+    // },
+    axes: table.internalProps.layoutMap.getChartAxes(col, row)
     // clipRect: {
     //   left: cellGroup.globalAABBBounds.x1 + (table as any).tableX + padding[3],
     //   top: cellGroup.globalAABBBounds.y1 + (table as any).tableY + padding[0],

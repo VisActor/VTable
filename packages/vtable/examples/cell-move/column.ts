@@ -4,7 +4,7 @@ const Table_CONTAINER_DOM_ID = 'vTable';
 
 export function createTable() {
   const option: VTable.ListTableConstructorOptions = {
-    parentElement: document.getElementById(Table_CONTAINER_DOM_ID),
+    container: document.getElementById(Table_CONTAINER_DOM_ID),
     columns: [
       {
         field: 'p',
@@ -214,14 +214,14 @@ export function createTable() {
     // theme: VTable.themes.SIMPLIFY,
     // defaultRowHeight: 100,
     // autoWrapText: false,
-    // autoRowHeight: true,
+    // heightMode: 'autoHeight',
   };
 
   const instance = new ListTable(option);
 
   const { MOUSELEAVE_TABLE } = VTable.ListTable.EVENT_TYPE;
 
-  instance.listen(MOUSELEAVE_TABLE, (...args) => console.log(MOUSELEAVE_TABLE, args));
+  instance.on(MOUSELEAVE_TABLE, (...args) => console.log(MOUSELEAVE_TABLE, args));
 
   VTable.bindDebugTool(instance.scenegraph.stage as any, {
     customGrapicKeys: ['role', '_updateTag']

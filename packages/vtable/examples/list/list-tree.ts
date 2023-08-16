@@ -173,7 +173,7 @@ export function createTable() {
     }
   ];
   const option: VTable.ListTableConstructorOptions = {
-    parentElement: document.getElementById(Table_CONTAINER_DOM_ID),
+    container: document.getElementById(Table_CONTAINER_DOM_ID),
     columns: [
       {
         field: '类别',
@@ -215,7 +215,7 @@ export function createTable() {
   const instance = new ListTable(option);
 
   const { TREE_HIERARCHY_STATE_CHANGE } = VTable.ListTable.EVENT_TYPE;
-  instance.listen(TREE_HIERARCHY_STATE_CHANGE, args => {
+  instance.on(TREE_HIERARCHY_STATE_CHANGE, args => {
     console.log(TREE_HIERARCHY_STATE_CHANGE, args);
     // TODO 调用接口插入设置子节点的数据
     if (args.hierarchyState === VTable.TYPES.HierarchyState.expand && !Array.isArray(args.originData.children)) {
