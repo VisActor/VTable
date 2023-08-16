@@ -84,6 +84,7 @@ export interface IBaseTableProtected {
   // disableRowHeaderColumnResize?: boolean;
   // 列宽调整模式（全列调整；全列不可调整；仅表头单元格可调整；仅内容单元格可调整）
   columnResizeMode?: 'all' | 'none' | 'header' | 'body';
+  columnResizeType?: 'column' | 'indicator' | 'all' | 'indicatorGroup';
   /** 控制拖拽表头移动位置顺序开关 */
   dragHeaderMode?: 'all' | 'none' | 'column' | 'row';
 

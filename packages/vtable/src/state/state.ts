@@ -36,6 +36,7 @@ import { getIconAndPositionFromTarget } from '../scenegraph/utils/icon';
 import type { BaseTableAPI } from '../ts-types/base-table';
 import { isObject, isString, isValid } from '../tools/util';
 import { debounce } from '../tools/debounce';
+import { updateResizeColumn } from './resize/update-resize-column';
 
 export class StateManeger {
   table: BaseTableAPI;
@@ -466,60 +467,7 @@ export class StateManeger {
     this.table.scenegraph.updateNextFrame();
   }
   updateResizeCol(xInTable: number, yInTable: number) {
-    xInTable = Math.ceil(xInTable);
-    yInTable = Math.ceil(yInTable);
-    let detaX = xInTable - this.columnResize.x;
-    // table.getColWidth会使用Math.round，因此这里直接跳过小于1px的修改
-    if (Math.abs(detaX) < 1) {
-      return;
-    }
-
-    // 检查minWidth/maxWidth
-    // getColWidth会进行Math.round，所以先从colWidthsMap获取：
-    // 如果是数值，直接使用；如果不是，则通过getColWidth获取像素值
-    let widthCache = (this.table as any).colWidthsMap.get(this.columnResize.col);
-    if (typeof widthCache === 'number') {
-      widthCache = widthCache;
-    } else {
-      widthCache = this.table.getColWidth(this.columnResize.col);
-    }
-    let width = widthCache;
-    width += detaX;
-    const minWidth = this.table.getMinColWidth(this.columnResize.col);
-    const maxWidth = this.table.getMaxColWidth(this.columnResize.col);
-
-    if (width < minWidth || width > maxWidth) {
-      if (widthCache === minWidth || widthCache === maxWidth) {
-        return;
-      } else if (widthCache - minWidth > maxWidth - widthCache) {
-        detaX = maxWidth - widthCache;
-      } else {
-        detaX = minWidth - widthCache;
-      }
-    }
-    detaX = Math.ceil(detaX);
-    if (this.table.widthMode === 'adaptive' && this.columnResize.col < this.table.colCount - 1) {
-      // in adaptive mode, the right column width can not be negative
-      const rightColWidth = this.table.getColWidth(this.columnResize.col + 1);
-      if (rightColWidth - detaX < 0) {
-        detaX = rightColWidth;
-      }
-      this.table.scenegraph.updateColWidth(this.columnResize.col, detaX);
-      this.table.scenegraph.updateColWidth(this.columnResize.col + 1, -detaX);
-    } else {
-      this.table.scenegraph.updateColWidth(this.columnResize.col, detaX);
-    }
-    this.columnResize.x = xInTable;
-
-    this.table.scenegraph.component.updateResizeCol(this.columnResize.col, yInTable);
-    if (
-      this.columnResize.col < this.table.frozenColCount &&
-      !this.table.isPivotTable() &&
-      !(this.table as ListTable).transpose
-    ) {
-      this.table.scenegraph.component.setFrozenColumnShadow(this.table.frozenColCount - 1);
-    }
-    this.table.scenegraph.updateNextFrame();
+    updateResizeColumn(xInTable, yInTable, this);
   }
   startMoveCol(col: number, row: number, x: number, y: number) {
     startMoveCol(col, row, x, y, this);

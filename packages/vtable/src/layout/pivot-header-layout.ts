@@ -1986,4 +1986,62 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
       indicatorObject.chartInstance?.release();
     });
   }
+
+  getHeadNode(dimensions: IDimensionInfo[]) {
+    if (!Array.isArray(dimensions)) {
+      return undefined;
+    }
+    let rowArr = this.rowTree;
+    let rowDimension;
+    let colArr = this.columnTree;
+    let colDimension;
+    for (let i = 0; i < dimensions.length; i++) {
+      const highlightDimension = dimensions[i];
+      if (
+        (highlightDimension.isPivotCorner || !highlightDimension.value) && //判断角头： isPivotCorner或者 没有维度值
+        i === dimensions.length - 1
+      ) {
+        // 判断角表头位置
+        return undefined;
+      }
+      // 判断级别，找到distDimension
+      let isCol = false;
+      for (let j = 0; j < colArr.length; j++) {
+        const dimension = colArr[j];
+        if (
+          ((isValid(highlightDimension.dimensionKey) && dimension.dimensionKey === highlightDimension.dimensionKey) ||
+            (isValid(highlightDimension.indicatorKey) && dimension.indicatorKey === highlightDimension.indicatorKey)) &&
+          dimension.value === highlightDimension.value
+        ) {
+          colArr = dimension.children;
+          colDimension = dimension;
+          isCol = true;
+          break;
+        }
+      }
+      if (isCol) {
+        continue;
+      }
+      for (let k = 0; k < rowArr.length; k++) {
+        const dimension = rowArr[k];
+        if (
+          ((isValid(highlightDimension.dimensionKey) && dimension.dimensionKey === highlightDimension.dimensionKey) ||
+            (isValid(highlightDimension.indicatorKey) && dimension.indicatorKey === highlightDimension.indicatorKey)) &&
+          dimension.value === highlightDimension.value
+        ) {
+          rowArr = dimension.children;
+          rowDimension = dimension;
+          break;
+        }
+      }
+    }
+
+    // 通过dimension获取col和row
+    if (rowDimension) {
+      return rowDimension;
+    } else if (colDimension) {
+      return colDimension;
+    }
+    return undefined;
+  }
 }

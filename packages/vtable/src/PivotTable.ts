@@ -51,6 +51,7 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
       //TODO hack处理之前的demo都是定义到layout上的 所以这里直接并到options中
       Object.assign(options, (options as any).layout);
     }
+    this.internalProps.columnResizeType = options.columnResizeType ?? 'column';
     this.internalProps.dataConfig = options.dataConfig;
     this.internalProps.enableDataAnalysis = options.enableDataAnalysis;
     if (this.internalProps.enableDataAnalysis && (options.rows || options.columns)) {
