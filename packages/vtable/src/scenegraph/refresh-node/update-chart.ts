@@ -2,7 +2,6 @@ import { isEqual } from '@visactor/vutils';
 import type { PivotChart } from '../../PivotChart';
 import { CartesianAxis } from '../../components/axis/axis';
 import type { PivotLayoutMap } from '../../layout/pivot-layout';
-import { compareArrays } from '../../tools/util';
 import type { BaseTableAPI } from '../../ts-types/base-table';
 import type { Chart } from '../graphic/chart';
 import type { Group } from '../graphic/group';
