@@ -114,7 +114,7 @@ export function createTable() {
         },
         cornerDescription: '地区维度',
         headerStyle: {
-          textAlign: 'right',
+          textAlign: 'left',
           borderColor: 'blue',
           color: 'gray',
           textStick: true,
@@ -470,12 +470,20 @@ export function createTable() {
     columnHeaderTitle: {
       title: true,
       headerStyle: {
+        textAlign: 'center',
         textStick: true
+      }
+    },
+    rowHeaderTitle: {
+      title: true,
+      headerStyle: {
+        textStick: true,
+        textBaseline: 'bottom'
       }
     },
     indicatorTitle: '指标名称',
     // indicatorsAsCol: false,
-    parentElement: document.getElementById(Table_CONTAINER_DOM_ID),
+    container: document.getElementById(Table_CONTAINER_DOM_ID),
     records,
     theme,
     showFrozenIcon: false, //显示VTable内置冻结列图标
@@ -491,15 +499,10 @@ export function createTable() {
   const instance = new PivotTable(option);
 
   const { PIVOT_SORT_CLICK } = VTable.PivotTable.EVENT_TYPE;
-  instance.listen(PIVOT_SORT_CLICK, e => {
+  instance.on(PIVOT_SORT_CLICK, e => {
     const order = e.order === 'asc' ? 'desc' : e.order === 'desc' ? 'normal' : 'asc';
     instance.updatePivotSortState([{ dimensions: e.dimensionInfo, order }]);
   });
-
-  VTable.bindDebugTool(instance.scenegraph.stage as any, {
-    customGrapicKeys: ['role', '_updateTag']
-  });
-
   // 只为了方便控制太调试用，不要拷贝
   (window as any).tableInstance = instance;
 }

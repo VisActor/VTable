@@ -86,7 +86,7 @@ export class MenuHandler {
     this.bindEvent();
   }
 
-  dispose() {
+  release() {
     // do nothing
   }
 
@@ -307,16 +307,6 @@ export class MenuHandler {
   }
 
   bindEvent() {
-    // // 监听showMenu自定义事件
-    // this._table.listen(DG_EVENT_TYPE.SHOW_MENU, (e) => {
-    //   const { x, y, col, row, type } = e;
-    //   this.attach(x, y, col, row, type);
-    // });
-    // // 监听hideMenu自定义事件
-    // this._table.listen(DG_EVENT_TYPE.HIDE_MENU, () => {
-    //   this.detach();
-    // });
-
     // 监听菜单内容click
     this._menuInstance.addEventListener('click', (e: FederatedEvent) => {
       const { target } = e;

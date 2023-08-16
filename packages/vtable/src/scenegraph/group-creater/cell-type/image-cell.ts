@@ -66,7 +66,7 @@ export function createImageCellGroup(
   cellGroup.role = 'cell';
   cellGroup.col = col;
   cellGroup.row = row;
-  columnGroup.addChild(cellGroup);
+  columnGroup?.addChild(cellGroup);
 
   // image
   const value = table.getCellValue(col, row);
@@ -75,7 +75,7 @@ export function createImageCellGroup(
     y: padding[0],
     width: width - padding[1] - padding[3],
     height: height - padding[0] - padding[2],
-    image: value ?? (regedIcons.damage_pic as any).svg,
+    image: value, //?? (regedIcons.damage_pic as any).svg,
     cursor: 'pointer' as Cursor
   });
   image.name = 'image';
@@ -197,7 +197,7 @@ export function updateImageCellContentWhileResize(cellGroup: Group, col: number,
   const image = cellGroup.getChildByName('image') as Image;
   const originImage =
     (typeof image.attribute.image !== 'string' && image.attribute.image) ||
-    image.resources.get(image.attribute.image).data;
+    image.resources?.get(image.attribute.image).data;
 
   if (!originImage) {
     return;

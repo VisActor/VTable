@@ -1,22 +1,25 @@
 import type { GraphicType, IGroupGraphicAttribute } from '@visactor/vrender';
 import { genNumberType, Group } from '@visactor/vrender';
-import { Bounds } from '@visactor/vutils';
+import { Bounds, cloneDeep } from '@visactor/vutils';
 import type { BaseTableAPI } from '../../ts-types/base-table';
+import type { PivotChart } from '../../PivotChart';
+import type { PivotLayoutMap } from '../../layout/pivot-layout';
 
 interface IChartGraphicAttribute extends IGroupGraphicAttribute {
   canvas: HTMLCanvasElement;
-  dataId: string;
+  dataId: string | Record<string, string>; //如果是spec外层的dataId,则是string,否则通过series获取到的是Record<string, string> <dataId, series-chart的指标key用于过滤数据>
   data: any;
   spec: any;
+  axes: any;
   ClassType: any;
   chartInstance: any;
   cellPadding: number[];
-  viewBox: {
-    x1: number;
-    y1: number;
-    x2: number;
-    y2: number;
-  };
+  // viewBox: {
+  //   x1: number;
+  //   y1: number;
+  //   x2: number;
+  //   y2: number;
+  // };
 }
 
 export const CHART_NUMBER_TYPE = genNumberType();
@@ -35,14 +38,22 @@ export class Chart extends Group {
 
     // 创建chart
     if (!params.chartInstance) {
-      const ctx = params.canvas.getContext('2d');
-      this.chartInstance = new params.ClassType(params.spec, {
+      params.chartInstance = this.chartInstance = new params.ClassType(params.spec, {
         renderCanvas: params.canvas,
         mode: 'desktop-browser',
         canvasControled: false,
-        viewBox: params.viewBox,
+        viewBox: { x1: 0, x2: 0, y1: 0, y2: 0 },
+        // viewBox: params.viewBox,
+        // viewBox: this.getViewBox(),
+        // viewBox: {
+        //   x1: params.cellPadding[3],
+        //   x2: params.width - params.cellPadding[1],
+        //   y1: params.cellPadding[0],
+        //   y2: params.height - params.cellPadding[2]
+        // },
         interactive: false,
-        animation: false
+        animation: false,
+        autoFit: false
       });
       this.chartInstance.renderSync();
     } else {
@@ -54,6 +65,12 @@ export class Chart extends Group {
     //   this.deactivate();
     // });
   }
+
+  // onBeforeAttributeUpdate() {
+  //   if (arguments[2] === y) {
+  //     debugger;
+  //   }
+  // }
   /**
    * 激活该图表元素
    * @param table
@@ -62,14 +79,15 @@ export class Chart extends Group {
     this.active = true;
     // this.chart = new TestChart(this.attribute.spec);
     // const ctx = this.attribute.canvas.getContext('2d');
-    const { x1, y1, x2, y2 } = this.attribute.viewBox;
+    // const { x1, y1, x2, y2 } = this.attribute.viewBox;
+    const { x1, y1, x2, y2 } = this.getViewBox();
     //获取渲染区域的bound 考虑被表头遮住部分的情况
     const tableBound = table.scenegraph.tableGroup.globalAABBBounds;
     const bodyBound = new Bounds();
     bodyBound.x1 = tableBound.x1 + table.getFrozenColsWidth();
-    bodyBound.x2 = tableBound.x2;
+    bodyBound.x2 = tableBound.x2 - table.getRightFrozenColsWidth();
     bodyBound.y1 = tableBound.y1 + table.getFrozenRowsHeight();
-    bodyBound.y2 = tableBound.y2;
+    bodyBound.y2 = tableBound.y2 - table.getBottomFrozenRowsHeight();
     const clipBound = bodyBound.intersect({
       x1: x1 - table.scrollLeft,
       x2: x2 - table.scrollLeft,
@@ -88,6 +106,7 @@ export class Chart extends Group {
       },
       animation: false,
       interactive: true,
+      autoFit: false,
       beforeRender: (stage: any) => {
         const ctx = stage.window.getContext();
         ctx.inuse = true;
@@ -104,7 +123,26 @@ export class Chart extends Group {
     });
     // this.activeChartInstance.updateData('data', this.attribute.data);
     this.activeChartInstance.renderSync();
+
+    (table.internalProps.layoutMap as any)?.updateDataStateToActiveChartInstance?.(this.activeChartInstance);
+    this.activeChartInstance.on('click', (params: any) => {
+      console.log('click captured', params);
+      if (Chart.temp) {
+        table.scenegraph.updateChartState(params?.datum);
+      }
+    });
+    this.activeChartInstance.on('brushEnd', (params: any) => {
+      console.log('brushEnd captured', params);
+      table.scenegraph.updateChartState(params?.value?.inBrushData);
+      Chart.temp = 0;
+      setTimeout(() => {
+        Chart.temp = 1;
+      }, 0);
+    });
+    (table as PivotChart)._bindChartEvent?.(this.activeChartInstance);
+    console.log('active');
   }
+  static temp: number = 1;
   /**
    * 图表失去焦点
    * @param table
@@ -113,5 +151,27 @@ export class Chart extends Group {
     this.active = false;
     this.activeChartInstance.release();
     this.activeChartInstance = null;
+    console.log('deactivate');
+  }
+  /** 更新图表对应数据 */
+  updateData(data: any) {
+    this.attribute.data = data;
+  }
+
+  getViewBox(): {
+    x1: number;
+    y1: number;
+    x2: number;
+    y2: number;
+  } {
+    const cellGroup = this.parent as Group;
+    const padding = this.attribute.cellPadding;
+    const table = (this.stage as any).table as BaseTableAPI;
+    return {
+      x1: Math.ceil(cellGroup.globalAABBBounds.x1 + padding[3] + table.scrollLeft),
+      x2: Math.ceil(cellGroup.globalAABBBounds.x1 + cellGroup.attribute.width - padding[1] + table.scrollLeft),
+      y1: Math.ceil(cellGroup.globalAABBBounds.y1 + padding[0] + table.scrollTop),
+      y2: Math.ceil(cellGroup.globalAABBBounds.y1 + cellGroup.attribute.height - padding[2] + table.scrollTop)
+    };
   }
 }

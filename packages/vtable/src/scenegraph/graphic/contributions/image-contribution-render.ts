@@ -6,7 +6,8 @@ import type {
   IMarkAttribute,
   IGraphicAttribute,
   IThemeAttribute,
-  IImageRenderContribution
+  IImageRenderContribution,
+  IDrawContext
 } from '@visactor/vrender';
 import { BaseRenderContributionTime } from '@visactor/vrender';
 
@@ -29,6 +30,7 @@ export class BeforeImageRenderContribution implements IImageRenderContribution {
     fVisible: boolean,
     sVisible: boolean,
     imageAttribute: Required<IImageGraphicAttribute>,
+    drawContext: IDrawContext,
     fillCb?: (
       ctx: IContext2d,
       markAttribute: Partial<IMarkAttribute & IGraphicAttribute>,
@@ -71,6 +73,7 @@ export class AfterImageRenderContribution implements IImageRenderContribution {
     fVisible: boolean,
     sVisible: boolean,
     imageAttribute: Required<IImageGraphicAttribute>,
+    drawContext: IDrawContext,
     fillCb?: (
       ctx: IContext2d,
       markAttribute: Partial<IMarkAttribute & IGraphicAttribute>,

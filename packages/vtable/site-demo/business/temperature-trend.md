@@ -12,14 +12,14 @@ order: 9-5
 
 ## 关键配置
 
-- `VTable.register.chartType('vchart', VChart)` 注册绘制图表的图表库 目前支持VChart
+- `VTable.register.chartModule('vchart', VChart)` 注册绘制图表的图表库 目前支持VChart
 - `columnType: 'chart'` 指定类型chart
-- `chartType: 'vchart'` 指定注册的图表库名称
+- `chartModule: 'vchart'` 指定注册的图表库名称
 - `chartSpec: {}` 图表spec
 ## 代码演示
 
 ```javascript livedemo template=vtable
-  VTable.register.chartType('vchart', VChart);
+  VTable.register.chartModule('vchart', VChart);
   const temperatureList = {
     "North East": {
       year: {
@@ -446,7 +446,6 @@ order: 9-5
     records.push(record);
   }
   const option = {
-    parentElement: document.getElementById(CONTAINER_ID),
     records,
     defaultRowHeight: 150,
     defaultHeaderRowHeight: 50,
@@ -454,7 +453,7 @@ order: 9-5
       {
         indicatorKey: 'dayTrendChart',
         columnType: 'chart',
-        chartType: 'vchart',
+        chartModule: 'vchart',
         width: 400,
         chartSpec: {
           type: 'common',
@@ -462,7 +461,7 @@ order: 9-5
             {
               type: 'line',
               data: {
-                id: 'data',
+                id: 'data1',
                 transforms: [
                   {
                     type: 'fold',
@@ -485,7 +484,7 @@ order: 9-5
       {
         indicatorKey: 'monthTrendChart',
         columnType: 'chart',
-        chartType: 'vchart',
+        chartModule: 'vchart',
         width: 500,
         chartSpec: {
           type: 'common',
@@ -493,7 +492,7 @@ order: 9-5
             {
               type: 'area',
               data: {
-                id: 'data',
+                id: 'data2',
                 transforms: [
                   {
                     type: 'fold',
@@ -577,12 +576,12 @@ order: 9-5
       {
         indicatorKey: 'yearTrendChart',
         columnType: 'chart',
-        chartType: 'vchart',
+        chartModule: 'vchart',
         width: 350,
         chartSpec: {
           type: 'common',
           data: {
-            id: 'data',
+            id: 'data3',
             transforms: [
               {
                 type: 'fold',
@@ -700,7 +699,7 @@ order: 9-5
       }
     })
   };
-  const tableInstance = new VTable.PivotTable(option);
+  const tableInstance = new VTable.PivotTable(document.getElementById(CONTAINER_ID),option);
   window.tableInstance = tableInstance;
 ```
 

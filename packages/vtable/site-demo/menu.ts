@@ -30,6 +30,10 @@ export const menus = [
       {
         path: 'table-type',
         name: 'transpose-table'
+      },
+      {
+        path: 'table-type',
+        name: 'pivot-chart'
       }
     ]
   },
@@ -72,6 +76,14 @@ export const menus = [
       {
         path: 'basic-functionality',
         name: 'width-mode-autoWidth'
+      },
+      {
+        path: 'basic-functionality',
+        name: 'height-mode-adaptive'
+      },
+      {
+        path: 'basic-functionality',
+        name: 'height-mode-autoHeight'
       },
       {
         path: 'basic-functionality',

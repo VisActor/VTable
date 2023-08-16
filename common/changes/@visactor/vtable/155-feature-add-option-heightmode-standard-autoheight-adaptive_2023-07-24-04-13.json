@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "comment": "refactor: delete widthMode:standard-aeolus and add option of autoFillWidth\n\n",
+      "type": "patch",
+      "packageName": "@visactor/vtable"
+    }
+  ],
+  "packageName": "@visactor/vtable",
+  "email": "892739385@qq.com"
+}

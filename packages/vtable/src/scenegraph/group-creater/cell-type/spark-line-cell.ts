@@ -46,7 +46,7 @@ export function createSparkLineCellGroup(
     cellGroup.role = 'cell';
     cellGroup.col = col;
     cellGroup.row = row;
-    columnGroup.addChild(cellGroup);
+    columnGroup?.addChild(cellGroup);
   }
 
   // chart

@@ -6,7 +6,7 @@ export function createTable() {
     .then(res => res.json())
     .then(data => {
       const option: VTable.PivotTableConstructorOptions = {
-        parentElement: document.getElementById(Table_CONTAINER_DOM_ID),
+        container: document.getElementById(Table_CONTAINER_DOM_ID),
         records: data,
         menu: {
           contextMenuItems: ['复制单元格内容', '查询详情']
@@ -426,18 +426,17 @@ export function createTable() {
         corner: {
           titleOnDimension: 'row',
           headerStyle: {
-            textStick: true,
             bgColor: '#356b9c',
             color: '#00ffff'
           }
         },
-        widthMode: 'standard'
+        widthMode: 'adaptive'
       };
       const tableInstance = new VTable.PivotTable(option);
       // 只为了方便控制太调试用，不要拷贝
       (window as any).tableInstance = tableInstance;
 
-      tableInstance.listen('mouseenter_cell', args => {
+      tableInstance.on('mouseenter_cell', args => {
         const { col, row } = args;
         const rect = tableInstance.getVisibleCellRangeRelativeRect({ col, row });
         tableInstance.showTooltip(col, row, {

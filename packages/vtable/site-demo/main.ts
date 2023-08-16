@@ -55,7 +55,7 @@ const handleClick = (e: { target: any }, isInit?: boolean) => {
       }
 
       if (window.tableInstance) {
-        window.tableInstance.dispose();
+        window.tableInstance.release();
         document.getElementById('VTable').innerHTML = null;
       }
 

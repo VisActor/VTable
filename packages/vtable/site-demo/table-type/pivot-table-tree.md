@@ -23,7 +23,6 @@ link: '/guide/table_type/Pivot_table/pivot_table_tree'
     .then((data) => {
 
 const option = {
-  parentElement: document.getElementById(CONTAINER_ID),
   records:data,
   "rowTree": [
     {
@@ -252,7 +251,7 @@ const option = {
   rowExpandLevel:1,
   dragHeaderMode:'all'
 };
-const tableInstance = new VTable.PivotTable(option);
+const tableInstance = new VTable.PivotTable(document.getElementById(CONTAINER_ID),option);
 window['tableInstance'] = tableInstance;
     })
 ```

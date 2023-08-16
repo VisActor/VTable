@@ -150,6 +150,7 @@ function resetRowNumberAndY(scene: Scenegraph) {
     //   y+= cellGroup.attribute.height;
     // });
     rowIndex = (colGroup.firstChild as Group)?.row;
+    const rowStart = rowIndex;
     y = 0;
     colGroup.forEachChildren((cellGroup: Group) => {
       cellGroup.row = rowIndex;
@@ -161,6 +162,12 @@ function resetRowNumberAndY(scene: Scenegraph) {
       y += cellGroup.attribute.height;
     });
     newTotalHeight = y;
+
+    // const rowCount = rowIndex - rowStart;
+    // if (col === 0 && scene.proxy.rowEnd - scene.proxy.rowStart + 1 !== rowCount) {
+    //   scene.proxy.rowEnd = scene.proxy.rowStart + rowCount - 1;
+    //   scene.proxy.referenceRow = scene.proxy.rowStart + Math.floor((scene.proxy.rowEnd - scene.proxy.rowStart) / 2);
+    // }
   }
 
   // update table size

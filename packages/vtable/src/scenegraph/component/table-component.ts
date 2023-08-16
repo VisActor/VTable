@@ -236,13 +236,15 @@ export class TableComponent {
     const totalWidth = this.table.getAllColsWidth();
     const frozenRowsHeight = this.table.getFrozenRowsHeight();
     const frozenColsWidth = this.table.getFrozenColsWidth();
+    const bottomFrozenRowsHeight = this.table.getBottomFrozenRowsHeight();
+    const rightFrozenColsWidth = this.table.getRightFrozenColsWidth();
     if (totalWidth > tableWidth) {
       const y = Math.min(tableHeight, totalHeight);
       const rangeEnd = Math.max(0.05, (tableWidth - frozenColsWidth) / (totalWidth - frozenColsWidth));
       this.hScrollBar.setAttributes({
         x: frozenColsWidth + (!this.table.theme.scrollStyle.hoverOn ? this.table.scenegraph.tableGroup.attribute.x : 0),
         y: y - (this.table.theme.scrollStyle.hoverOn ? width : -this.table.scenegraph.tableGroup.attribute.y),
-        width: tableWidth - frozenColsWidth,
+        width: tableWidth - frozenColsWidth - rightFrozenColsWidth,
         range: [0, rangeEnd],
         visible: visible === 'always'
       });
@@ -270,7 +272,7 @@ export class TableComponent {
         x: x - (this.table.theme.scrollStyle.hoverOn ? width : -this.table.scenegraph.tableGroup.attribute.x),
         y:
           frozenRowsHeight + (!this.table.theme.scrollStyle.hoverOn ? this.table.scenegraph.tableGroup.attribute.y : 0),
-        height: tableHeight - frozenRowsHeight,
+        height: tableHeight - frozenRowsHeight - bottomFrozenRowsHeight,
         range: [0, rangeEnd],
         visible: visible === 'always'
       });

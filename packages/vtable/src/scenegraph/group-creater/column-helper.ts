@@ -86,6 +86,11 @@ export function createComplexColumn(
     if (cellTheme.text.textBaseline) {
       textBaseline = cellTheme.text.textBaseline;
     }
+
+    // enable clip body
+    if (cellType !== 'body' && !cellTheme.group.fill) {
+      cellTheme.group.fill = '#fff';
+    }
     // margin = getProp('margin', headerStyle, col, 0, table)
 
     let cellWidth = colWidth;
@@ -145,7 +150,7 @@ export function createComplexColumn(
       cellGroup.row = row;
       cellGroup.mergeCol = range.start.col;
       cellGroup.mergeRow = range.start.row;
-      columnGroup.addChild(cellGroup);
+      columnGroup?.addChild(cellGroup);
       columnGroup.updateColumnRowNumber(row);
       columnGroup.updateColumnHeight(height);
       range = table.getCellRange(col, row);

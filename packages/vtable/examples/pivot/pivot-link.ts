@@ -11,7 +11,7 @@ export function createTable() {
     [100, animalImageUrl, flowerVideoUrl, 500, animalImageUrl, flowerVideoUrl]
   ];
   const option: VTable.PivotTableConstructorOptions = {
-    parentElement: document.getElementById(Table_CONTAINER_DOM_ID),
+    container: document.getElementById(Table_CONTAINER_DOM_ID),
     columnTree: [
       {
         dimensionKey: '地区',

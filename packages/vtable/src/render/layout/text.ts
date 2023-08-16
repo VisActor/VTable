@@ -73,6 +73,7 @@ export class Text extends BaseElement {
   getSize(table: BaseTableAPI) {
     const { width, height } = table.measureText(this.text, {
       fontSize: this.fontSize,
+      fontWeight: this.fontWeight,
       fontFamily: this.fontFamily
     });
     this.width = width;

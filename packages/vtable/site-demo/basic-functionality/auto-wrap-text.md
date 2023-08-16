@@ -70,15 +70,14 @@ const columns =[
 ];
 
 const option = {
-  parentElement: document.getElementById(CONTAINER_ID),
   records:data,
   columns,
   widthMode:'standard',
   autoWrapText:true,
-  autoRowHeight:true,
+  heightMode:'autoHeight',
   defaultColWidth:150,
 };
-const tableInstance = new VTable.ListTable(option);
+const tableInstance = new VTable.ListTable(document.getElementById(CONTAINER_ID),option);
 window['tableInstance'] = tableInstance;
     })
 ```

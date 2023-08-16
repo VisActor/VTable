@@ -8,8 +8,7 @@ export function createTable() {
     {
       progress: 100,
       id: 1,
-      name: 'a',
-      link: animalImageUrl
+      name: 'a'
     },
     {
       progress: 80,
@@ -37,7 +36,7 @@ export function createTable() {
     }
   ];
   const option: VTable.ListTableConstructorOptions = {
-    parentElement: document.getElementById(Table_CONTAINER_DOM_ID),
+    container: document.getElementById(Table_CONTAINER_DOM_ID),
     columns: [
       {
         field: 'progress',
@@ -105,9 +104,9 @@ export function createTable() {
     order: 'desc'
   });
 
-  VTable.bindDebugTool(instance.scenegraph.stage as any, {
-    customGrapicKeys: ['role', '_updateTag']
-  });
+  // VTable.bindDebugTool(instance.scenegraph.stage as any, {
+  //   customGrapicKeys: ['role', '_updateTag']
+  // });
 
   // 只为了方便控制太调试用，不要拷贝
   (window as any).tableInstance = instance;

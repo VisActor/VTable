@@ -2,7 +2,7 @@ import type { IImageGraphicAttribute } from '@visactor/vrender';
 import { Image } from '@visactor/vrender';
 import type { IIconBase } from '../../ts-types';
 
-interface IIconGraphicAttribute extends IImageGraphicAttribute {
+export interface IIconGraphicAttribute extends IImageGraphicAttribute {
   backgroundWidth?: number;
   backgroundHeight?: number;
   backgroundColor?: string;
@@ -14,6 +14,7 @@ interface IIconGraphicAttribute extends IImageGraphicAttribute {
   marginLeft?: number;
   marginRight?: number;
   shape?: 'circle' | 'square';
+  interactive?: boolean;
 }
 
 export class Icon extends Image {

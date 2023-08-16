@@ -17,7 +17,7 @@ import type {
 import { HierarchyState } from './ts-types';
 import { PivotHeaderLayoutMap } from './layout/pivot-header-layout';
 import { getField } from './data/DataSource';
-import { PivoLayoutMap } from './layout/pivot-layout';
+import { PivotLayoutMap } from './layout/pivot-layout';
 import { FlatDataToObjects } from './dataset/flatDataToObject';
 import { PIVOT_TABLE_EVENT_TYPE } from './ts-types/pivot-table/PIVOT_TABLE_EVENT_TYPE';
 import { cellInRange, emptyFn } from './tools/helper';
@@ -35,8 +35,18 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
   flatDataToObjects?: FlatDataToObjects; //数据处理对象 聚合后的flat数据 转成便于查询的行列二维数组
   // drillMenu: Menu; //上卷下钻的按钮
   // eslint-disable-next-line default-param-last
-  constructor(options: PivotTableConstructorOptions) {
-    super(options);
+  constructor(options: PivotTableConstructorOptions);
+  constructor(container: HTMLElement, options: PivotTableConstructorOptions);
+  constructor(container?: HTMLElement | PivotTableConstructorOptions, options?: PivotTableConstructorOptions) {
+    if (!(container instanceof HTMLElement)) {
+      options = container as PivotTableConstructorOptions;
+      if ((container as PivotTableConstructorOptions).container) {
+        container = (container as PivotTableConstructorOptions).container;
+      } else {
+        container = null;
+      }
+    }
+    super(container as HTMLElement, options);
     if ((options as any).layout) {
       //TODO hack处理之前的demo都是定义到layout上的 所以这里直接并到options中
       Object.assign(options, (options as any).layout);
@@ -96,7 +106,9 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
   isPivotTable(): true {
     return true;
   }
-
+  isPivotChart(): false {
+    return false;
+  }
   _canResizeColumn(col: number, row: number): boolean {
     const ifCan = super._canResizeColumn(col, row);
     if (ifCan) {
@@ -167,13 +179,13 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
 
     // this.hasMedia = null; // 避免重复绑定
     // 清空目前数据
-    if (internalProps.disposables) {
-      internalProps.disposables.forEach(disposable => disposable?.dispose?.());
-      internalProps.disposables = null;
+    if (internalProps.releaseList) {
+      internalProps.releaseList.forEach(releaseObj => releaseObj?.release?.());
+      internalProps.releaseList = null;
     }
     // // 恢复selection状态
     // internalProps.selection.range = range;
-    this._updateSize();
+    // this._updateSize();
     // 传入新数据
     if (options.dataSource) {
       _setDataSource(this, options.dataSource);
@@ -181,6 +193,9 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
       this.setRecords(options.records as any, undefined);
     } else {
       this._resetFrozenColCount();
+      // 生成单元格场景树
+      this.scenegraph.createSceneGraph();
+      this.render();
     }
 
     this.pivotSortState = [];
@@ -197,16 +212,16 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
 
     //原表头绑定的事件 解除掉
     if (internalProps.headerEvents) {
-      internalProps.headerEvents.forEach((id: number) => this.unlisten(id));
+      internalProps.headerEvents.forEach((id: number) => this.off(id));
     }
-
+    const records = this.options.records ?? this.internalProps.records;
     if (this.options.enableDataAnalysis) {
-      internalProps.layoutMap = new PivoLayoutMap(this, this.dataset);
+      internalProps.layoutMap = new PivotLayoutMap(this, this.dataset);
     } else if (Array.isArray(this.options.columnTree) || Array.isArray(this.options.rowTree)) {
       internalProps.layoutMap = new PivotHeaderLayoutMap(this);
       //判断如果数据是二维数组 则标识已经分析过 直接从二维数组挨个读取渲染即可
       //不是二维数组 对应是个object json对象 则表示flat数据，需要对应行列维度进行转成方便数据查询的行列树结构
-      if (this.options.records?.[0]?.constructor !== Array) {
+      if (records?.[0]?.constructor !== Array) {
         this.flatDataToObjects = new FlatDataToObjects(
           {
             rows: internalProps.layoutMap.rowDimensionKeys,
@@ -215,7 +230,7 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
             indicatorsAsCol: internalProps.layoutMap.indicatorsAsCol,
             indicatorDimensionKey: internalProps.layoutMap.indicatorDimensionKey
           },
-          this.options.records
+          records
         );
       }
     }
@@ -248,8 +263,11 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
     table.rowCount = layoutMap.rowCount ?? 0;
     table.frozenColCount = layoutMap.rowHeaderLevelCount; //TODO
     table.frozenRowCount = layoutMap.headerLevelCount;
+
+    table.bottomFrozenRowCount = this.options.bottomFrozenRowCount ?? 0;
+    table.rightFrozenColCount = this.options.rightFrozenColCount ?? 0;
   }
-  protected getSortFuncFromHeaderOption(
+  protected _getSortFuncFromHeaderOption(
     columns: undefined,
     field: FieldDef,
     fieldKey?: FieldKeyDef
@@ -317,7 +335,7 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
       const aggregator = this.dataset.getAggregator(
         rowKey[rowKey.length - 1],
         colKey[colKey.length - 1],
-        (this.internalProps.layoutMap as PivoLayoutMap).getIndicatorName(col, row)
+        (this.internalProps.layoutMap as PivotLayoutMap).getIndicatorKey(col, row)
       );
       return aggregator.formatValue ? aggregator.formatValue() : '';
     } else if (this.flatDataToObjects) {
@@ -353,7 +371,7 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
       const aggregator = this.dataset.getAggregator(
         rowKey[rowKey.length - 1],
         colKey[colKey.length - 1],
-        (this.internalProps.layoutMap as PivoLayoutMap).getIndicatorName(col, row)
+        (this.internalProps.layoutMap as PivotLayoutMap).getIndicatorKey(col, row)
       );
       return aggregator.value ? aggregator.value() : undefined;
       // return ''
@@ -389,7 +407,7 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
       const aggregator = this.dataset.getAggregator(
         rowKey[rowKey.length - 1],
         colKey[colKey.length - 1],
-        (this.internalProps.layoutMap as PivoLayoutMap).getIndicatorName(col, row)
+        (this.internalProps.layoutMap as PivotLayoutMap).getIndicatorKey(col, row)
       );
       return aggregator.records;
       // return ''
@@ -418,8 +436,8 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
   updateSortRules(sortRules: SortRules) {
     this.internalProps.dataConfig.sortRules = sortRules;
     this.dataset.updateSortRules(sortRules);
-    (this.internalProps.layoutMap as PivoLayoutMap).updateDataset(this.dataset);
-    this.invalidate();
+    (this.internalProps.layoutMap as PivotLayoutMap).updateDataset(this.dataset);
+    this.render();
   }
   updatePivotSortState(
     pivotSortStateConfig: {
@@ -480,13 +498,13 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
       if (moveContext.moveType === 'column') {
         // 是扁平数据结构 需要将二维数组this.records进行调整
         if (this.options.records?.[0]?.constructor === Array) {
-          for (let row = 0; row < this.records.length; row++) {
-            const sourceColumns = (this.records[row] as unknown as number[]).splice(
+          for (let row = 0; row < this.internalProps.records.length; row++) {
+            const sourceColumns = (this.internalProps.records[row] as unknown as number[]).splice(
               moveContext.sourceIndex - this.rowHeaderLevelCount,
               moveContext.moveSize
             );
             sourceColumns.unshift((moveContext.targetIndex as any) - this.rowHeaderLevelCount, 0 as any);
-            Array.prototype.splice.apply(this.records[row] as unknown as number[], sourceColumns);
+            Array.prototype.splice.apply(this.internalProps.records[row] as unknown as number[], sourceColumns);
           }
         }
         //colWidthsMap 中存储着每列的宽度 根据移动 sourceCol targetCol 调整其中的位置
@@ -505,12 +523,12 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
       } else if (moveContext.moveType === 'row') {
         // 是扁平数据结构 需要将二维数组this.records进行调整
         if (this.options.records?.[0]?.constructor === Array) {
-          const sourceRows = (this.records as unknown as number[]).splice(
+          const sourceRows = (this.internalProps.records as unknown as number[]).splice(
             moveContext.sourceIndex - this.columnHeaderLevelCount,
             moveContext.moveSize
           );
           sourceRows.unshift((moveContext.targetIndex as any) - this.columnHeaderLevelCount, 0 as any);
-          Array.prototype.splice.apply(this.records, sourceRows);
+          Array.prototype.splice.apply(this.internalProps.records, sourceRows);
         }
         //colWidthsMap 中存储着每列的宽度 根据移动 sourceCol targetCol 调整其中的位置
         this.rowHeightsMap.adjustOrder(moveContext.sourceIndex, moveContext.targetIndex, moveContext.moveSize);

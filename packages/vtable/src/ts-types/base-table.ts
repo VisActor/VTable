@@ -1,7 +1,7 @@
 import type { ITextSize } from '@visactor/vutils';
 import type { RectProps, MaybePromiseOrUndefined, ICellHeaderPaths, CellInfo } from './common';
 import type {
-  AnyListener,
+  TableEventListener,
   TableEventHandlersEventArgumentMap,
   TableEventHandlersReturnMap,
   EventListenerId,
@@ -30,6 +30,7 @@ import type {
   FieldFormat,
   FullExtendStyle,
   HeaderValues,
+  HeightModeDef,
   HierarchyState,
   IDataConfig,
   IPagerConf,
@@ -42,16 +43,21 @@ import type { TooltipOptions } from './tooltip';
 import type { IWrapTextGraphicAttribute } from '../scenegraph/graphic/text';
 import type { ICustomLayout } from './customLayout';
 import type { CachedDataSource, DataSource } from '../data';
-import type { MenuHandler } from '../menu/dom/MenuHandler';
+import type { MenuHandler } from '../components/menu/dom/MenuHandler';
 import type { PivotHeaderLayoutMap } from '../layout/pivot-header-layout';
 import type { SimpleHeaderLayoutMap } from '../layout';
-import type { PivoLayoutMap } from '../layout/pivot-layout';
-import type { TooltipHandler } from '../tooltip/TooltipHandler';
+import type { PivotLayoutMap } from '../layout/pivot-layout';
+import type { TooltipHandler } from '../components/tooltip/TooltipHandler';
 import type { BodyHelper } from '../body-helper/body-helper';
 import type { HeaderHelper } from '../header-helper/header-helper';
 import type { EventHandler } from '../event/EventHandler';
 import type { NumberMap } from '../tools/NumberMap';
 import type { FocusInput } from '../core/FouseInput';
+import type { ITableLegendOption } from './component/legend';
+import type { TableLegend } from '../components/legend/legend';
+import type { DataSet } from '@visactor/vdataset';
+import type { Title } from '../components/title/title';
+import type { ITitle } from './component/title';
 
 export interface IBaseTableProtected {
   element: HTMLElement;
@@ -66,11 +72,13 @@ export interface IBaseTableProtected {
   allowFrozenColCount: number;
 
   frozenRowCount: number;
+  rightFrozenColCount: number;
+  bottomFrozenRowCount: number;
   defaultRowHeight: number;
   /**表头默认行高 可以按逐行设置 如果没有就取defaultRowHeight */
   defaultHeaderRowHeight: number | number[];
   defaultColWidth: number;
-  defaultHeaderColWidth: number | number[];
+  defaultHeaderColWidth: (number | 'auto') | (number | 'auto')[];
   // font?: string;
   // underlayBackgroundColor?: string;
   keyboardOptions?: TableKeyboardOptions;
@@ -118,10 +126,10 @@ export interface IBaseTableProtected {
   //   left: number;
   //   top: number;
   // };
-  disposables?: { dispose: () => void }[] | null;
+  releaseList?: { release: () => void }[] | null;
   theme: TableTheme;
   transpose?: boolean; //是否转置
-  autoRowHeight?: boolean; //是否自动撑开高度 对于设置了autoWrapText的multilineText的列生效
+  // autoRowHeight?: boolean; //是否自动撑开高度 对于设置了autoWrapText的multilineText的列生效
   pixelRatio?: number;
   /** 下拉菜单的相关配置。消失时机：显示后点击菜单区域外自动消失*/
   menu: {
@@ -145,7 +153,7 @@ export interface IBaseTableProtected {
 
   dataSourceEventIds?: EventListenerId[];
   headerEvents?: EventListenerId[];
-  layoutMap: PivotHeaderLayoutMap | SimpleHeaderLayoutMap | PivoLayoutMap;
+  layoutMap: PivotHeaderLayoutMap | SimpleHeaderLayoutMap | PivotLayoutMap;
   headerValues?: HeaderValues;
   tooltipHandler: TooltipHandler;
 
@@ -153,7 +161,7 @@ export interface IBaseTableProtected {
   sortState: SortState | SortState[];
 
   dataSource: DataSource | CachedDataSource;
-  records?: any[] | null;
+  records?: any;
   allowRangePaste: boolean;
   //重新思考逻辑：如果为false，行高按设置的rowHeight；如果设置为true，则按lineHeight及是否自动换行综合计算行高 2021.11.19 by：lff
 
@@ -165,6 +173,14 @@ export interface IBaseTableProtected {
    * 计算列宽时 指定最大列宽 可设置boolean或者具体的值 默认为450
    */
   limitMaxAutoWidth?: boolean | number;
+
+  title?: Title;
+  legends?: TableLegend;
+
+  //是否开启图表异步渲染
+  renderChartAsync?: boolean;
+  // // 开启图表异步渲染 每批次渐进渲染图表个数
+  // renderChartAsyncBatchCount?: number;
 }
 export interface BaseTableConstructorOptions {
   // /** 指定表格的行数 */
@@ -176,6 +192,9 @@ export interface BaseTableConstructorOptions {
    * 当前需要冻结的列数 基本表格生效
    */
   frozenColCount?: number;
+  rightFrozenColCount?: number;
+  bottomFrozenRowCount?: number;
+
   // /** 待实现 TODO */
   // frozenRowCount?: number;
   /** 可冻结列数，表示前多少列会出现冻结操作按钮 基本表格生效 */
@@ -191,13 +210,13 @@ export interface BaseTableConstructorOptions {
    */
   defaultColWidth?: number;
   /** 行表头默认列宽 可以按逐列设置 如果没有就取defaultColWidth */
-  defaultHeaderColWidth?: number | number[];
+  defaultHeaderColWidth?: (number | 'auto') | (number | 'auto')[];
   /** 快捷键功能设置 */
   keyboardOptions?: TableKeyboardOptions;
   /**
-   * Canvas parent element
+   * Canvas container
    */
-  parentElement?: HTMLElement | null;
+  container?: HTMLElement | null;
 
   /**
    * 调整列宽 可操作范围。'all' | 'none' | 'header' | 'body'; 整列间隔线|禁止调整|只能在表头处间隔线|只能在body间隔线
@@ -259,9 +278,13 @@ export interface BaseTableConstructorOptions {
    */
   theme?: ITableThemeDefine;
   /** 宽度模式 */
-  widthMode?: 'standard' | 'adaptive' | 'autoWidth' | 'standard-aeolus';
-  /** 行高是否根据内容来计算 */
-  autoRowHeight?: boolean;
+  widthMode?: 'standard' | 'adaptive' | 'autoWidth';
+  /** 高度模式 */
+  heightMode?: 'standard' | 'adaptive' | 'autoHeight';
+  /** 当列宽度不能占满容器时，是否需要自动拉宽来填充容器的宽度。默认false */
+  autoFillWidth?: boolean;
+  // /** 行高是否根据内容来计算 */
+  // autoRowHeight?: boolean;
   /** 设备的像素比 不配的话默认获取window.devicePixelRatio */
   pixelRatio?: number;
   /** 自定义渲染 函数形式*/
@@ -270,10 +293,7 @@ export interface BaseTableConstructorOptions {
    * 传入用户实例化的数据对象 目前不完善
    */
   dataSource?: DataSource;
-  /**
-   * 数据集合
-   */
-  records?: any[];
+
   /** 开启自动换行 默认false */
   autoWrapText?: boolean;
   /** 单元格中可显示最大字符数 默认200 */
@@ -289,6 +309,13 @@ export interface BaseTableConstructorOptions {
 
   // maximum number of data items maintained in table instance
   maintainedDataCount?: number;
+
+  legends?: ITableLegendOption;
+  title?: ITitle;
+  //是否开启图表异步渲染
+  renderChartAsync?: boolean;
+  // 开启图表异步渲染 每批次渐进渲染图表个数
+  renderChartAsyncBatchCount?: number;
 }
 export interface BaseTableAPI {
   /** 表格的行数 */
@@ -303,6 +330,9 @@ export interface BaseTableAPI {
   frozenRowCount: number;
   /** 表格的冻结列数 包括表头在内 */
   frozenColCount: number;
+
+  bottomFrozenRowCount: number;
+  rightFrozenColCount: number;
   /** 当前表格默认表头行高 */
   defaultHeaderRowHeight: number | number[];
   /** 当前表格默认行高 */
@@ -310,7 +340,7 @@ export interface BaseTableAPI {
   /** 当前表格默认列宽 */
   defaultColWidth: number;
   /** 当前表格默认表头列宽 */
-  defaultHeaderColWidth: number | number[];
+  defaultHeaderColWidth: (number | 'auto') | (number | 'auto')[];
   /** 当前表格快捷键设置 */
   keyboardOptions: TableKeyboardOptions | null;
   /**
@@ -332,8 +362,7 @@ export interface BaseTableAPI {
   globalDropDownMenu?: MenuListItem[];
   /** 设置的全局自定义渲染函数 */
   customRender?: ICustomRender;
-  /** 表格数据 */
-  records: any[] | null;
+
   /** 表格数据管理对象 */
   dataSource: DataSourceAPI;
   /** 设置的表格主题 */
@@ -352,13 +381,18 @@ export interface BaseTableAPI {
   tableY: number;
   /** 表格宽度模式 */
   widthMode: WidthModeDef;
+  /** 表格宽度模式 */
+  heightMode: HeightModeDef;
+  /** 当列宽度不能占满容器时，是否需要自动拉宽来填充容器的宽度。默认false */
+  autoFillWidth: boolean;
 
-  listen: (<TYPE extends keyof TableEventHandlersEventArgumentMap>(
+  on: <TYPE extends keyof TableEventHandlersEventArgumentMap>(
     type: TYPE,
-    listener: (...event: TableEventHandlersEventArgumentMap[TYPE]) => TableEventHandlersReturnMap[TYPE]
-  ) => EventListenerId) &
-    ((type: string, listener: AnyListener) => EventListenerId);
+    listener: TableEventListener<TYPE> //(event: TableEventHandlersEventArgumentMap[TYPE]) => TableEventHandlersReturnMap[TYPE]
+  ) => EventListenerId;
+  // &(<T extends keyof TableEventHandlersEventArgumentMap>(type: string, listener: AnyListener<T>) => EventListenerId);
 
+  dataSet: DataSet;
   /** 场景树对象 */
   scenegraph: Scenegraph;
   /** 状态管理模块 */
@@ -375,19 +409,20 @@ export interface BaseTableAPI {
   _getMouseAbstractPoint: (
     evt: TouchEvent | MouseEvent | undefined,
     isAddScroll?: boolean
-  ) => { x: number; y: number } | null;
+  ) => { x: number; y: number; inTable: boolean };
   getElement: () => HTMLElement;
-  getParentElement: () => HTMLElement;
+  getContainer: () => HTMLElement;
 
   setFrozenColCount: (count: number) => void;
   _setFrozenColCount: (count: number) => void;
   _updateSize: () => void;
 
-  invalidate: () => void;
+  render: () => void;
   throttleInvalidate: () => void;
   getRowHeight: (row: number) => number;
   setRowHeight: (row: number, height: number, clearCache?: boolean) => void;
   getColWidth: (col: number) => number;
+  getColWidthDefine: (col: number) => string | number;
   setColWidth: (col: number, width: number | string, clearCache?: boolean, skipCheckFrozen?: boolean) => void;
   _getColContentWidth: (col: number) => number;
   _setColContentWidth: (col: number, width: number | string, clearCache?: boolean) => void;
@@ -412,19 +447,21 @@ export interface BaseTableAPI {
   getColsWidth: (startCol: number, endCol: number) => number;
   getRowsHeight: (startRow: number, endRow: number) => number;
 
-  dispose: () => void;
-  addDisposable: (disposable: { dispose: () => void }) => void;
+  release: () => void;
+  addReleaseObj: (releaseObj: { release: () => void }) => void;
   _getCellStyle: (col: number, row: number) => FullExtendStyle;
   clearCellStyleCache: () => void;
 
   getFrozenRowsHeight: () => number;
   getFrozenColsWidth: () => number;
+  getBottomFrozenRowsHeight: () => number;
+  getRightFrozenColsWidth: () => number;
   selectCell: (col: number, row: number) => void;
 
   getAllRowsHeight: () => number;
   getAllColsWidth: () => number;
 
-  unlisten: (id: EventListenerId) => void;
+  off: (id: EventListenerId) => void;
   getBodyField: (col: number, row: number) => FieldDef | undefined;
   getRecordByRowCol: (col: number, row: number) => MaybePromiseOrUndefined;
   getRecordIndexByRow: (col: number, row: number) => number;
@@ -446,7 +483,7 @@ export interface BaseTableAPI {
   getBodyColumnType: (col: number, row: number) => ColumnTypeOption;
   fireListeners: <TYPE extends keyof TableEventHandlersEventArgumentMap>(
     type: TYPE,
-    ...event: TableEventHandlersEventArgumentMap[TYPE]
+    event: TableEventHandlersEventArgumentMap[TYPE]
   ) => TableEventHandlersReturnMap[TYPE][];
 
   //更新分页
@@ -497,7 +534,10 @@ export interface BaseTableAPI {
 
   showTooltip: (col: number, row: number, tooltipOptions?: TooltipOptions) => void;
 
-  measureText: (text: string, font: { fontSize: number; fontFamily: string }) => ITextSize;
+  measureText: (
+    text: string,
+    font: { fontSize: number; fontWeight?: string | number; fontFamily: string }
+  ) => ITextSize;
   measureTextBounds: (attributes: IWrapTextGraphicAttribute) => ITextSize;
 
   _canResizeColumn: (col: number, row: number) => boolean;
@@ -506,7 +546,7 @@ export interface BaseTableAPI {
   getCustomLayout: (col: number, row: number) => ICustomLayout;
   isListTable: () => boolean;
   isPivotTable: (() => boolean) & (() => boolean);
-
+  isPivotChart: (() => boolean) & (() => boolean);
   _clearColRangeWidthsMap: (col?: number) => void;
   _clearRowRangeHeightsMap: (row?: number) => void;
 
@@ -521,15 +561,25 @@ export interface BaseTableAPI {
   //#endregion  tableAPI
 }
 export interface ListTableProtected extends IBaseTableProtected {
+  /** 表格数据 */
+  records: any[] | null;
   columns: ColumnsDefine;
   layoutMap: SimpleHeaderLayoutMap;
 }
 
 export interface PivotTableProtected extends IBaseTableProtected {
-  layoutMap: PivotHeaderLayoutMap | PivoLayoutMap;
+  /** 表格数据 */
+  records: any[] | null;
+  layoutMap: PivotHeaderLayoutMap | PivotLayoutMap;
   dataConfig?: IDataConfig;
   /**
    * 透视表 传入数据是透视后的嵌套层级结构 还是需要进行汇总计算的平坦数据
    */
   enableDataAnalysis?: boolean;
+}
+export interface PivotChartProtected extends IBaseTableProtected {
+  /** 表格数据 */
+  records: any[] | Record<string, any[]>;
+  layoutMap: PivotHeaderLayoutMap | PivotLayoutMap;
+  dataConfig?: IDataConfig;
 }

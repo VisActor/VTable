@@ -101,7 +101,7 @@ export function createTable(container) {
     }
   ];
   const option: VTable.ListTableConstructorOptions = {
-    parentElement: container,
+    container: container,
     columns,
     records,
     showFrozenIcon: true, //显示VTable内置冻结列图标

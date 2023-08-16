@@ -35,6 +35,7 @@ import type { TooltipOptions } from '../ts-types/tooltip';
 import { getIconAndPositionFromTarget } from '../scenegraph/utils/icon';
 import type { BaseTableAPI } from '../ts-types/base-table';
 import { isObject, isString, isValid } from '../tools/util';
+import { debounce } from '../tools/debounce';
 
 export class StateManeger {
   table: BaseTableAPI;
@@ -77,6 +78,7 @@ export class StateManeger {
   };
   columnResize: {
     col: number;
+    /** x坐标是相对table内坐标 */
     x: number;
     resizing: boolean;
   };
@@ -127,26 +129,33 @@ export class StateManeger {
     col: number;
     row: number;
   };
+  // 当鼠标hover到迷你图上时存储行列值，好在鼠标移动到其他单元格时清理Sparkline的高亮状态
   sparkLine: {
     col: number;
     row: number;
   };
   _clearVerticalScrollBar: any;
   _clearHorizontalScrollBar: any;
-
+  // 供滚动重置为default使用
+  resetInteractionState = debounce(() => {
+    this.updateInteractionState(InteractionState.default);
+  }, 100);
   // _x: number = 0;
   constructor(table: BaseTableAPI) {
     this.table = table;
     this.initState();
-    this.setHoverState();
-    this.setSelectState();
-    this.setFrozenState();
 
     this.updateVerticalScrollBar = this.updateVerticalScrollBar.bind(this);
     this.updateHorizontalScrollBar = this.updateHorizontalScrollBar.bind(this);
   }
 
   initState() {
+    this._initState();
+    this.setHoverState();
+    this.setSelectState();
+    this.setFrozenState();
+  }
+  _initState() {
     this.interactionState = InteractionState.default;
     this.select = {
       highlightScope: HighlightScope.single,
@@ -456,10 +465,10 @@ export class StateManeger {
 
     this.table.scenegraph.updateNextFrame();
   }
-  updateResizeCol(x: number, y: number) {
-    x = Math.ceil(x);
-    y = Math.ceil(y);
-    let detaX = x - this.columnResize.x;
+  updateResizeCol(xInTable: number, yInTable: number) {
+    xInTable = Math.ceil(xInTable);
+    yInTable = Math.ceil(yInTable);
+    let detaX = xInTable - this.columnResize.x;
     // table.getColWidth会使用Math.round，因此这里直接跳过小于1px的修改
     if (Math.abs(detaX) < 1) {
       return;
@@ -489,13 +498,20 @@ export class StateManeger {
       }
     }
     detaX = Math.ceil(detaX);
-    this.table.scenegraph.updateColWidth(this.columnResize.col, detaX);
     if (this.table.widthMode === 'adaptive' && this.columnResize.col < this.table.colCount - 1) {
+      // in adaptive mode, the right column width can not be negative
+      const rightColWidth = this.table.getColWidth(this.columnResize.col + 1);
+      if (rightColWidth - detaX < 0) {
+        detaX = rightColWidth;
+      }
+      this.table.scenegraph.updateColWidth(this.columnResize.col, detaX);
       this.table.scenegraph.updateColWidth(this.columnResize.col + 1, -detaX);
+    } else {
+      this.table.scenegraph.updateColWidth(this.columnResize.col, detaX);
     }
-    this.columnResize.x = x;
+    this.columnResize.x = xInTable;
 
-    this.table.scenegraph.component.updateResizeCol(this.columnResize.col, y);
+    this.table.scenegraph.component.updateResizeCol(this.columnResize.col, yInTable);
     if (
       this.columnResize.col < this.table.frozenColCount &&
       !this.table.isPivotTable() &&
@@ -745,7 +761,7 @@ export class StateManeger {
 
   hideMenu() {
     this.table.fireListeners(TABLE_EVENT_TYPE.DROPDOWN_MENU_CLEAR, null);
-    this.table.fireListeners(TABLE_EVENT_TYPE.HIDE_MENU);
+    this.table.fireListeners(TABLE_EVENT_TYPE.HIDE_MENU, null);
     this.menu.isShow = false;
     this.table.scenegraph.component.menu.detach();
     if (this.residentHoverIcon) {

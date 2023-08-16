@@ -23,7 +23,6 @@ link: '/guide/interaction_and_event/drag_header'
     .then((data) => {
 
 const option = {
-  parentElement: document.getElementById(CONTAINER_ID),
   records:data,
   "rowTree": [
         {
@@ -363,7 +362,7 @@ const option = {
   widthMode:'standard',
   dragHeaderMode: 'column'
 };
-const tableInstance = new VTable.PivotTable(option);
+const tableInstance = new VTable.PivotTable(document.getElementById(CONTAINER_ID),option);
 window['tableInstance'] = tableInstance;
     })
 ```

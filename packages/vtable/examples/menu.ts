@@ -12,6 +12,10 @@ export const menus = [
       },
       {
         path: 'list',
+        name: 'list-transpose-autoFillWidth'
+      },
+      {
+        path: 'list',
         name: 'list-tree'
       },
       {
@@ -21,6 +25,22 @@ export const menus = [
       {
         path: 'list',
         name: 'list-chart'
+      },
+      {
+        path: 'list',
+        name: 'list-updateOption'
+      },
+      {
+        path: 'list',
+        name: 'list-title'
+      },
+      {
+        path: 'list',
+        name: 'list-height-adaptive'
+      },
+      {
+        path: 'list',
+        name: 'list-100w'
       }
     ]
   },
@@ -34,6 +54,79 @@ export const menus = [
       {
         path: 'pivot',
         name: 'pivot-tree'
+      }
+    ]
+  },
+  {
+    menu: '透视图',
+    children: [
+      {
+        path: 'pivot-chart',
+        name: 'aeolus'
+      },
+      {
+        path: 'pivot-chart',
+        name: 'pivotChart_site_demo'
+      },
+      {
+        path: 'pivot-chart',
+        name: 'pivotChart'
+      },
+      {
+        path: 'pivot-chart',
+        name: 'pivotChart-horizontal'
+      },
+      {
+        path: 'pivot-chart',
+        name: 'horizontal'
+      },
+      {
+        path: 'pivot-chart',
+        name: 'horizontal-hideHeader'
+      },
+      {
+        path: 'pivot-chart',
+        name: 'pivotChart-headerTitle'
+      },
+      {
+        path: 'pivot-chart',
+        name: 'pivotChart-legend'
+      },
+      {
+        path: 'pivot-chart',
+        name: 'pivotChart-hideHeader'
+      },
+      {
+        path: 'pivot-chart',
+        name: 'pivotChart-fromDataId'
+      },
+      {
+        path: 'pivot-chart',
+        name: 'pivotChart-updateOption'
+      },
+      {
+        path: 'pivot-chart',
+        name: 'pivotChart-3W'
+      },
+      {
+        path: 'pivot-chart',
+        name: 'pivotChart-axis'
+      },
+      {
+        path: 'pivot-chart',
+        name: 'pivotChart-adaptive'
+      },
+      {
+        path: 'pivot-chart',
+        name: 'pivotChart-no-columns'
+      },
+      {
+        path: 'pivot-chart',
+        name: 'pivotChart-no-dimensions'
+      },
+      {
+        path: 'pivot-chart',
+        name: 'pivotChart-records'
       }
     ]
   },
@@ -83,6 +176,10 @@ export const menus = [
       },
       {
         path: 'pivot',
+        name: 'pivot-adaptive'
+      },
+      {
+        path: 'pivot',
         name: 'pivot-no-indicator'
       },
       {
@@ -103,7 +200,27 @@ export const menus = [
       },
       {
         path: 'pivot',
-        name: 'pivot-chart'
+        name: 'trend'
+      },
+      {
+        path: 'pivot',
+        name: 'pivot-dataset'
+      },
+      {
+        path: 'pivot',
+        name: 'pivot-indicator-row'
+      },
+      {
+        path: 'pivot',
+        name: 'pivot-frozen'
+      },
+      {
+        path: 'pivot',
+        name: 'pivot-basic-updateOption'
+      },
+      {
+        path: 'pivot',
+        name: 'pivot-column-pref'
       }
     ]
   },
@@ -227,6 +344,10 @@ export const menus = [
       {
         path: 'auto-size',
         name: 'auto-height'
+      },
+      {
+        path: 'auto-size',
+        name: 'adaptive-width'
       }
     ]
   },
@@ -266,6 +387,48 @@ export const menus = [
     ]
   },
   {
+    menu: 'components',
+    children: [
+      {
+        path: 'components',
+        name: 'legend'
+      },
+      {
+        path: 'components',
+        name: 'axis'
+      }
+    ]
+  },
+  {
+    menu: 'frozen',
+    children: [
+      {
+        path: 'frozen',
+        name: 'list-table-bottom-frozen'
+      },
+      {
+        path: 'frozen',
+        name: 'list-table-transpose-right-frozen'
+      },
+      {
+        path: 'frozen',
+        name: 'list-table-right-frozen'
+      },
+      {
+        path: 'frozen',
+        name: 'pivot-table-right-frozen'
+      },
+      {
+        path: 'frozen',
+        name: 'pivot-table-bottom-frozen'
+      },
+      {
+        path: 'frozen',
+        name: 'pivot-table-both-frozen'
+      }
+    ]
+  },
+  {
     menu: '调试使用',
     children: [
       {
@@ -296,11 +459,19 @@ export const menus = [
       {
         path: 'business',
         name: 'roadmap'
+      },
+      {
+        path: 'business',
+        name: 'aeolusTestPerformance'
+      },
+      {
+        path: 'business',
+        name: 'testPerformanceMoreColumn'
       }
     ]
   },
   {
-    menu: '测试用例',
+    menu: '测试用例（勿修改demo内容）',
     children: [
       {
         path: 'unit-test-demo',
@@ -309,6 +480,19 @@ export const menus = [
       {
         path: 'unit-test-demo',
         name: 'unitTestListTable'
+      },
+      {
+        path: 'unit-test-demo',
+        name: 'unitTestPivotChart'
+      }
+    ]
+  },
+  {
+    menu: 'fs',
+    children: [
+      {
+        path: 'fs',
+        name: 'update-option'
       }
     ]
   }

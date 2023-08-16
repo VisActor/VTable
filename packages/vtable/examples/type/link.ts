@@ -37,7 +37,7 @@ export function createTable() {
     }
   ];
   const option: VTable.ListTableConstructorOptions = {
-    parentElement: document.getElementById(Table_CONTAINER_DOM_ID),
+    container: document.getElementById(Table_CONTAINER_DOM_ID),
     columns: [
       {
         field: 'progress',
@@ -94,7 +94,7 @@ export function createTable() {
     showFrozenIcon: true, //显示VTable内置冻结列图标
     widthMode: 'standard',
     allowFrozenColCount: 2,
-    autoRowHeight: true
+    heightMode: 'autoHeight'
   };
 
   const instance = new ListTable(option);

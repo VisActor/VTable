@@ -144,17 +144,16 @@ const columns =[
 ];
 
 const option = {
-  parentElement: document.getElementById(CONTAINER_ID),
   records:data,
   columns,
   widthMode:'standard',
   allowFrozenColCount: 3,
   frozenColCount: 1,
 };
-const tableInstance = new VTable.ListTable(option);
+const tableInstance = new VTable.ListTable(document.getElementById(CONTAINER_ID),option);
 window['tableInstance'] = tableInstance;
 
-tableInstance.listen('click_cell', (args) => {
+tableInstance.on('click_cell', (args) => {
         const { col, row, targetIcon } = args;
         if(col===0&&row>=1&&targetIcon?.name==='order'){
           const { left, top, width, height, bottom, right } = targetIcon.position;
@@ -218,7 +217,7 @@ tableInstance.listen('click_cell', (args) => {
       });
         }
     });
-  tableInstance.listen('dropdownmenu_click', (args) => {
+  tableInstance.on('dropdownmenu_click', (args) => {
     console.log('dropdownmenu_click',args);
     tableInstance.setDropDownMenuHighlight([args]);
   })

@@ -81,7 +81,6 @@ const columns =[
 ];
 
 const option = {
-  parentElement: document.getElementById(CONTAINER_ID),
   records:data,
   columns,
   widthMode:'standard',
@@ -89,11 +88,11 @@ const option = {
     contextMenuItems:["复制单元格内容",'查询详情']
   },
 };
-const tableInstance = new VTable.ListTable(option);
+const tableInstance = new VTable.ListTable(document.getElementById(CONTAINER_ID),option);
 window['tableInstance'] = tableInstance;
 
 
-tableInstance.listen('dropdownmenu_click', (args) => {
+tableInstance.on('dropdownmenu_click', (args) => {
   console.log('dropdownmenu_click',args);
 })
     })
