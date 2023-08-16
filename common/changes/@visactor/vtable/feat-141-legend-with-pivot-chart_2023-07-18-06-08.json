@@ -2,7 +2,7 @@
   "changes": [
     {
       "comment": "feat: handle legend event to reset chart\n\n",
-      "type": "patch",
+      "type": "minor",
       "packageName": "@visactor/vtable"
     }
   ],
