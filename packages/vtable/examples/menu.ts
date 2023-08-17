@@ -62,6 +62,10 @@ export const menus = [
     children: [
       {
         path: 'pivot-chart',
+        name: 'aeolus'
+      },
+      {
+        path: 'pivot-chart',
         name: 'pivotChart_site_demo'
       },
       {
@@ -213,6 +217,10 @@ export const menus = [
       {
         path: 'pivot',
         name: 'pivot-basic-updateOption'
+      },
+      {
+        path: 'pivot',
+        name: 'pivot-column-pref'
       }
     ]
   },
@@ -388,6 +396,35 @@ export const menus = [
       {
         path: 'components',
         name: 'axis'
+      }
+    ]
+  },
+  {
+    menu: 'frozen',
+    children: [
+      {
+        path: 'frozen',
+        name: 'list-table-bottom-frozen'
+      },
+      {
+        path: 'frozen',
+        name: 'list-table-transpose-right-frozen'
+      },
+      {
+        path: 'frozen',
+        name: 'list-table-right-frozen'
+      },
+      {
+        path: 'frozen',
+        name: 'pivot-table-right-frozen'
+      },
+      {
+        path: 'frozen',
+        name: 'pivot-table-bottom-frozen'
+      },
+      {
+        path: 'frozen',
+        name: 'pivot-table-both-frozen'
       }
     ]
   },

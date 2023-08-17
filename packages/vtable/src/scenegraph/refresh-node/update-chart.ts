@@ -1,3 +1,4 @@
+import { isEqual } from '@visactor/vutils';
 import type { PivotChart } from '../../PivotChart';
 import { CartesianAxis } from '../../components/axis/axis';
 import type { PivotLayoutMap } from '../../layout/pivot-layout';
@@ -119,7 +120,8 @@ export function updateChartState(scenegraph: Scenegraph, datum: any) {
       //避免无效的更新
       return;
     }
-    (table as PivotChart)._selectedDataItemsInChart = [];
+    // (table as PivotChart)._selectedDataItemsInChart = [];
+    const newSelectedDataItemsInChart = [];
     if (Array.isArray(datum)) {
       datum.forEach((dataItem: any) => {
         if (dataItem && dataItem.key !== 0 && Object.keys(dataItem).length > 0) {
@@ -130,7 +132,7 @@ export function updateChartState(scenegraph: Scenegraph, datum: any) {
               selectedState[itemKey] = dataItem[itemKey];
             }
           }
-          (table as PivotChart)._selectedDataItemsInChart.push(selectedState);
+          newSelectedDataItemsInChart.push(selectedState);
         }
       });
     } else if (datum && datum.key !== 0 && Object.keys(datum).length > 0) {
@@ -141,16 +143,16 @@ export function updateChartState(scenegraph: Scenegraph, datum: any) {
           selectedState[itemKey] = datum[itemKey];
         }
       }
-      (table as PivotChart)._selectedDataItemsInChart.push(selectedState);
+      newSelectedDataItemsInChart.push(selectedState);
     }
     //避免无效的更新
-    if ((table as PivotChart)._selectedDataItemsInChart.length === 0 && preSelectItemsCount === 0) {
-      return;
+    if (!isEqual((table as PivotChart)._selectedDataItemsInChart, newSelectedDataItemsInChart)) {
+      (table as PivotChart)._selectedDataItemsInChart = newSelectedDataItemsInChart;
+      (table.internalProps.layoutMap as PivotLayoutMap).updateDataStateToChartInstance();
+      // 清楚chart缓存图片
+      clearChartCacheImage(scenegraph);
+      table.scenegraph.updateNextFrame();
     }
-
-    (table.internalProps.layoutMap as PivotLayoutMap).updateDataStateToChartInstance();
-    // 清楚chart缓存图片
-    clearChartCacheImage(scenegraph);
   }
 }
 

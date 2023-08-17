@@ -56,7 +56,7 @@ import type { PivotHeaderLayoutMap } from '../layout/pivot-header-layout';
 import { TooltipHandler } from '../components/tooltip/TooltipHandler';
 import type { CachedDataSource, DataSource } from '../data';
 import type { IWrapTextGraphicAttribute } from '@visactor/vrender';
-import { isBoolean, type ITextSize } from '@visactor/vutils';
+import { isBoolean, isFunction, type ITextSize } from '@visactor/vutils';
 import { WrapText } from '../scenegraph/graphic/text';
 import { textMeasure } from '../scenegraph/utils/measure-text';
 import { getProp } from '../scenegraph/utils/get-prop';
@@ -123,8 +123,8 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
   eventManeger?: EventManeger;
   _pixelRatio: number;
 
-  bottomFrozenRowCount: number = 0;
-  rightFrozenColCount: number = 0;
+  // bottomFrozenRowCount: number = 0;
+  // rightFrozenColCount: number = 0;
 
   static get EVENT_TYPE(): typeof TABLE_EVENT_TYPE {
     return TABLE_EVENT_TYPE;
@@ -472,6 +472,23 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     this.internalProps.frozenRowCount = frozenRowCount;
     // this.options.frozenRowCount = frozenRowCount;
   }
+
+  get rightFrozenColCount(): number {
+    return this.internalProps.rightFrozenColCount ?? 0;
+  }
+
+  set rightFrozenColCount(rightFrozenColCount: number) {
+    this.scenegraph.dealWidthRightFrozen(rightFrozenColCount);
+  }
+
+  get bottomFrozenRowCount(): number {
+    return this.internalProps.bottomFrozenRowCount ?? 0;
+  }
+
+  set bottomFrozenRowCount(bottomFrozenRowCount: number) {
+    this.scenegraph.dealWidthBottomFrozen(bottomFrozenRowCount);
+  }
+
   /**
    * Get the default row height.
    *
@@ -2638,7 +2655,9 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
       styleClass,
       this.options.autoWrapText
     );
-    this.bodyStyleCache.set(cacheKey, cacheStyle);
+    if (!isFunction(style)) {
+      this.bodyStyleCache.set(cacheKey, cacheStyle);
+    }
     return cacheStyle;
   }
   clearCellStyleCache() {
@@ -2670,6 +2689,11 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
         return false;
       }
     }
+
+    // if (this.rightFrozenColCount && col >= this.colCount - this.rightFrozenColCount - 1) {
+    //   // right frozen columns can not resize temply
+    //   return false;
+    // }
 
     const limit = this.colWidthsLimit[col];
     if (!limit || !limit.min || !limit.max) {

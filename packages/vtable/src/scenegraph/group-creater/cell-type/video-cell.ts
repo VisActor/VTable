@@ -65,7 +65,7 @@ export function createVideoCellGroup(
   cellGroup.role = 'cell';
   cellGroup.col = col;
   cellGroup.row = row;
-  columnGroup.addChild(cellGroup);
+  columnGroup?.addChild(cellGroup);
 
   // video
   const value = table.getCellValue(col, row);

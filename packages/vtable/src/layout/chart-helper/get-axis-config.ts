@@ -112,11 +112,11 @@ export function getAxisConfigInPivotChart(col: number, row: number, layout: Pivo
       if (isArray(rowDimensionKey)) {
         rowDimensionKey = rowDimensionKey[0];
       }
-      const data = layout.dataset.collectedValues[rowDimensionKey];
+      const data = layout.dataset.collectedValues[rowDimensionKey] ?? ([] as string[]);
 
       const recordRow = layout.getRecordIndexByRow(row);
       const rowPath = layout.getRowKeysPath()[recordRow];
-      const domain = data[rowPath[rowPath.length - 1]] as Array<string>;
+      const domain = (data[rowPath[rowPath.length - 1]] as Array<string>) ?? [];
 
       const axisOption = getAxisOption(col, row, 'left', layout);
       if (axisOption?.visible === false) {
@@ -246,7 +246,7 @@ export function getAxisConfigInPivotChart(col: number, row: number, layout: Pivo
       if (isArray(columnDimensionKey)) {
         columnDimensionKey = columnDimensionKey[0];
       }
-      const data = layout.dataset.collectedValues[columnDimensionKey];
+      const data = layout.dataset.collectedValues[columnDimensionKey] ?? ([] as string[]);
 
       const recordCol = layout.getRecordIndexByCol(col);
       const colPath = layout.getColKeysPath()[recordCol];

@@ -85,7 +85,9 @@ export function getChartAxes(col: number, row: number, layout: PivotLayoutMap): 
       rowDimensionKey = rowDimensionKey[0];
     }
     const data =
-      layout.dataset.cacheCollectedValues[rowDimensionKey] || layout.dataset.collectedValues[rowDimensionKey];
+      layout.dataset.cacheCollectedValues[rowDimensionKey] ||
+      layout.dataset.collectedValues[rowDimensionKey] ||
+      ([] as string[]);
     const recordRow = layout.getRecordIndexByRow(row);
     const rowPath = layout.getRowKeysPath()[recordRow];
     const domain = data[rowPath[rowPath.length - 1]] as Set<string>;
@@ -161,7 +163,9 @@ export function getChartAxes(col: number, row: number, layout: PivotLayoutMap): 
       columnDimensionKey = columnDimensionKey[0];
     }
     const data =
-      layout.dataset.cacheCollectedValues[columnDimensionKey] || layout.dataset.collectedValues[columnDimensionKey];
+      layout.dataset.cacheCollectedValues[columnDimensionKey] ||
+      layout.dataset.collectedValues[columnDimensionKey] ||
+      ([] as string[]);
     const recordCol = layout.getRecordIndexByCol(col);
     const colPath = layout.getColKeysPath()[recordCol];
     const domain: string[] | Set<string> = (data?.[colPath[colPath.length - 1]] as Set<string>) ?? [];

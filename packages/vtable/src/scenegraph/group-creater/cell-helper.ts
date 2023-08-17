@@ -364,6 +364,9 @@ export function updateCell(col: number, row: number, table: BaseTableAPI, addNew
     if (!addNew) {
       oldCellGroup.parent.insertAfter(newCellGroup, oldCellGroup);
       oldCellGroup.parent.removeChild(oldCellGroup);
+
+      // update merge cell
+      updateCell(range.start.col, range.start.row, table, false);
     }
   } else {
     const mayHaveIcon = cellType !== 'body' ? true : !!define?.icon || !!define?.tree;

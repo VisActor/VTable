@@ -1,10 +1,10 @@
 import type { IRectGraphicAttribute } from '@visactor/vrender';
 import type { ThemeStyle } from '../../ts-types';
-import { Group } from '../graphic/group';
+import type { Group } from '../graphic/group';
 import { getStroke } from './frame-border';
 import { getQuadProps } from '../utils/padding';
 
-export function createCornerCell(frameTheme: ThemeStyle) {
+export function createCornerCell(cellGroup: Group, frameTheme: ThemeStyle) {
   const { bgColor, borderColor, borderLineWidth, borderLineDash } = frameTheme;
 
   const rectAttributes: IRectGraphicAttribute = {
@@ -28,7 +28,8 @@ export function createCornerCell(frameTheme: ThemeStyle) {
     (rectAttributes as any).lineWidth = 1;
   }
 
-  const cornerCellGroup = new Group(rectAttributes);
-  cornerCellGroup.role = 'corner-frozen';
-  return cornerCellGroup;
+  // const cornerCellGroup = new Group(rectAttributes);
+  cellGroup.setAttributes(rectAttributes);
+  cellGroup.role = 'corner-frozen';
+  return cellGroup;
 }

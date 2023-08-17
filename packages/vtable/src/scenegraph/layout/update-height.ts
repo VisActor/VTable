@@ -215,6 +215,8 @@ export function updateCellHeight(
     );
   } else if (type === 'image' || type === 'video') {
     updateImageCellContentWhileResize(cell, col, row, scene.table);
+  } else if (cell.firstChild?.name === 'axis') {
+    (cell.firstChild as any)?.originAxis.resize(cell.attribute.width, cell.attribute.height);
   } else {
     // 处理文字
     const style = scene.table._getCellStyle(col, row);
