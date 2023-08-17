@@ -206,7 +206,12 @@ export class EventManeger {
         // this.table.stateManeger.updateResizeCol(resizeCol.col, eventArgsSet.abstractPos.x, first);
         // this._col = resizeCol.col;
         if (update) {
-          this.table.stateManeger.startResizeCol(resizeCol.col, eventArgsSet.abstractPos.x, eventArgsSet.abstractPos.y);
+          this.table.stateManeger.startResizeCol(
+            resizeCol.col,
+            eventArgsSet.abstractPos.x,
+            eventArgsSet.abstractPos.y,
+            resizeCol.rightFrozen
+          );
         }
         return true;
       }
