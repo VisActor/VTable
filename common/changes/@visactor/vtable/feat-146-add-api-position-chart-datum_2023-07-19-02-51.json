@@ -2,7 +2,7 @@
   "changes": [
     {
       "comment": "feat: add api getChartDatumPosition\n\n",
-      "type": "patch",
+      "type": "minor",
       "packageName": "@visactor/vtable"
     }
   ],

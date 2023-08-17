@@ -3,7 +3,7 @@
     {
       "packageName": "@visactor/vtable",
       "comment": "feat: add right and bottom frozen function",
-      "type": "patch"
+      "type": "minor"
     }
   ],
   "packageName": "@visactor/vtable"
