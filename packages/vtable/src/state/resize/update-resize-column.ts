@@ -6,7 +6,7 @@ import type { StateManeger } from '../state';
 export function updateResizeColumn(xInTable: number, yInTable: number, state: StateManeger) {
   xInTable = Math.ceil(xInTable);
   yInTable = Math.ceil(yInTable);
-  let detaX = xInTable - state.columnResize.x;
+  let detaX = state.columnResize.isRightFrozen ? state.columnResize.x - xInTable : xInTable - state.columnResize.x;
   // table.getColWidth会使用Math.round，因此这里直接跳过小于1px的修改
   if (Math.abs(detaX) < 1) {
     return;
@@ -36,7 +36,12 @@ export function updateResizeColumn(xInTable: number, yInTable: number, state: St
   }
   detaX = Math.ceil(detaX);
 
-  if (state.table.internalProps.columnResizeType === 'indicator') {
+  if (
+    state.columnResize.col < state.table.rowHeaderLevelCount ||
+    state.columnResize.col >= state.table.colCount - state.table.rightFrozenColCount
+  ) {
+    updateResizeColForColumn(detaX, state);
+  } else if (state.table.internalProps.columnResizeType === 'indicator') {
     updateResizeColForIndicator(detaX, state);
   } else if (state.table.internalProps.columnResizeType === 'indicatorGroup') {
     updateResizeColForIndicatorGroup(detaX, state);
@@ -61,13 +66,16 @@ export function updateResizeColumn(xInTable: number, yInTable: number, state: St
   state.columnResize.x = xInTable;
 
   // update resize column component
-  state.table.scenegraph.component.updateResizeCol(state.columnResize.col, yInTable);
+  state.table.scenegraph.component.updateResizeCol(state.columnResize.col, yInTable, state.columnResize.isRightFrozen);
   if (
     state.columnResize.col < state.table.frozenColCount &&
     !state.table.isPivotTable() &&
     !(state.table as ListTable).transpose
   ) {
-    state.table.scenegraph.component.setFrozenColumnShadow(state.table.frozenColCount - 1);
+    state.table.scenegraph.component.setFrozenColumnShadow(
+      state.table.frozenColCount - 1,
+      state.columnResize.isRightFrozen
+    );
   }
 
   // stage rerender

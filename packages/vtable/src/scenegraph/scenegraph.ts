@@ -34,6 +34,7 @@ import { dealBottomFrozen, dealFrozen, dealRightFrozen, resetFrozen } from './la
 import { updateChartSize, updateChartState } from './refresh-node/update-chart';
 import { createCornerCell } from './style/corner-cell';
 import { initSceneGraph } from './group-creater/init-scenegraph';
+import { updateContainerChildrenX } from './utils/update-container';
 
 container.load(splitModule);
 
@@ -1162,30 +1163,26 @@ export class Scenegraph {
 
   updateContainer() {
     // 更新各列x&col
-    let cornerX = 0;
-    this.cornerHeaderGroup.forEachChildrenSkipChild((column: Group, index) => {
-      column.setAttribute('x', cornerX);
-      cornerX += column.attribute.width;
-    });
-    let rowHeaderX = 0;
-    this.rowHeaderGroup.forEachChildrenSkipChild((column: Group, index) => {
-      column.setAttribute('x', rowHeaderX);
-      rowHeaderX += column.attribute.width;
-    });
-    let colHeaderX = 0;
-    this.colHeaderGroup.forEachChildrenSkipChild((column: Group, index) => {
-      column.setAttribute('x', colHeaderX);
-      colHeaderX += column.attribute.width;
-    });
-    let bodyX = 0;
-    this.bodyGroup.forEachChildrenSkipChild((column: Group, index) => {
-      column.setAttribute('x', bodyX);
-      bodyX += column.attribute.width;
-    });
+    const cornerX = updateContainerChildrenX(this.cornerHeaderGroup);
+    const rowHeaderX = updateContainerChildrenX(this.rowHeaderGroup);
+    const colHeaderX = updateContainerChildrenX(this.colHeaderGroup);
+    const bodyX = updateContainerChildrenX(this.bodyGroup);
+    const rightX = updateContainerChildrenX(this.rightFrozenGroup);
+    updateContainerChildrenX(this.bottomFrozenGroup);
+    updateContainerChildrenX(this.leftBottomCornerGroup);
+    updateContainerChildrenX(this.rightTopCornerGroup);
+    updateContainerChildrenX(this.rightBottomCornerGroup);
+
     // 更新容器
     this.cornerHeaderGroup.setDeltaWidth(cornerX - this.cornerHeaderGroup.attribute.width);
+    this.leftBottomCornerGroup.setDeltaWidth(cornerX - this.leftBottomCornerGroup.attribute.width);
     this.colHeaderGroup.setDeltaWidth(colHeaderX - this.colHeaderGroup.attribute.width);
+    this.rightFrozenGroup.setDeltaWidth(colHeaderX - this.rightFrozenGroup.attribute.width);
     this.rowHeaderGroup.setDeltaWidth(rowHeaderX - this.rowHeaderGroup.attribute.width);
+    this.bottomFrozenGroup.setDeltaWidth(rowHeaderX - this.bottomFrozenGroup.attribute.width);
+    this.rightFrozenGroup.setDeltaWidth(rightX - this.rightFrozenGroup.attribute.width);
+    this.rightTopCornerGroup.setDeltaWidth(rightX - this.rightTopCornerGroup.attribute.width);
+    this.rightBottomCornerGroup.setDeltaWidth(rightX - this.rightBottomCornerGroup.attribute.width);
     this.bodyGroup.setDeltaWidth(bodyX - this.bodyGroup.attribute.width);
 
     this.colHeaderGroup.setAttribute('x', this.cornerHeaderGroup.attribute.width);
@@ -1272,15 +1269,32 @@ export class Scenegraph {
     abstractY: number,
     cellGroup?: Group,
     offset = ResizeColumnHotSpotSize / 2
-  ): { col: number; row: number; x?: number } {
+  ): { col: number; row: number; x?: number; rightFrozen?: boolean } {
     if (!cellGroup) {
       // to do: 处理最后一列外调整列宽
     } else {
+      let cell: { col: number; row: number; x?: number; rightFrozen?: boolean };
       if (abstractX < cellGroup.globalAABBBounds.x1 + offset) {
-        return { col: cellGroup.col - 1, row: cellGroup.row, x: cellGroup.globalAABBBounds.x1 };
+        cell = { col: cellGroup.col - 1, row: cellGroup.row, x: cellGroup.globalAABBBounds.x1 };
+      } else if (cellGroup.globalAABBBounds.x2 - offset < abstractX) {
+        cell = { col: cellGroup.col, row: cellGroup.row, x: cellGroup.globalAABBBounds.x2 };
       }
-      if (cellGroup.globalAABBBounds.x2 - offset < abstractX) {
-        return { col: cellGroup.col, row: cellGroup.row, x: cellGroup.globalAABBBounds.x2 };
+      if (
+        cell &&
+        this.table.rightFrozenColCount > 0 &&
+        cell.col === this.table.colCount - this.table.rightFrozenColCount - 1 &&
+        this.table.tableNoFrameWidth -
+          this.table.getFrozenColsWidth() -
+          this.table.getRightFrozenColsWidth() +
+          this.table.scrollLeft <
+          this.bodyGroup.attribute.width
+      ) {
+        // 有右侧冻结列，并且横向没有滚动到最右侧时，右侧冻结列左侧调整对只对右侧冻结列生效
+        cell.col = cell.col + 1;
+        cell.rightFrozen = true;
+      }
+      if (cell) {
+        return cell;
       }
     }
     return { col: -1, row: -1 };

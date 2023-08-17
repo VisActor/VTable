@@ -82,6 +82,7 @@ export class StateManeger {
     /** x坐标是相对table内坐标 */
     x: number;
     resizing: boolean;
+    isRightFrozen?: boolean;
   };
   columnMove: {
     colSource: number;
@@ -454,12 +455,13 @@ export class StateManeger {
     this.table.scenegraph.component.hideResizeCol();
     this.table.scenegraph.updateNextFrame();
   }
-  startResizeCol(col: number, x: number, y: number) {
+  startResizeCol(col: number, x: number, y: number, isRightFrozen?: boolean) {
     this.columnResize.resizing = true;
     this.columnResize.col = col;
     this.columnResize.x = x;
+    this.columnResize.isRightFrozen = isRightFrozen;
 
-    this.table.scenegraph.component.showResizeCol(col, y);
+    this.table.scenegraph.component.showResizeCol(col, y, isRightFrozen);
 
     // 调整列宽期间清空选中清空
     this.table.stateManeger.updateSelectPos(-1, -1);
