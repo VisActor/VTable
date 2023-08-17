@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vtable",
+      "comment": "feat: add columnResizeType config",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@visactor/vtable"
+}
