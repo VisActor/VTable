@@ -130,6 +130,7 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
     super.updateOption(options);
 
     // 更新protectedSpace
+    internalProps.columnResizeType = options.columnResizeType ?? 'column';
     internalProps.dataConfig = options.dataConfig;
     internalProps.enableDataAnalysis = options.enableDataAnalysis;
 

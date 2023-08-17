@@ -91,7 +91,11 @@ function updateResizeColForColumn(detaX: number, state: StateManeger) {
 function updateResizeColForAll(detaX: number, state: StateManeger) {
   // 全列调整
   const layout = state.table.internalProps.layoutMap as PivotHeaderLayoutMap;
-  for (let col = state.table.options.frozenColCount; col < state.table.colCount; col++) {
+  for (
+    let col = state.table.options.frozenColCount;
+    col < state.table.colCount - state.table.rightFrozenColCount;
+    col++
+  ) {
     // 是否禁止调整列宽disableColumnResize 对应canResizeColumn的逻辑判断
     if (!(state.table.internalProps.transpose || (state.table.isPivotTable() && !layout.indicatorsAsCol))) {
       const cellDefine = layout.getBody(col, state.table.columnHeaderLevelCount);
@@ -106,16 +110,33 @@ function updateResizeColForAll(detaX: number, state: StateManeger) {
 
 function updateResizeColForIndicator(detaX: number, state: StateManeger) {
   const layout = state.table.internalProps.layoutMap as PivotHeaderLayoutMap;
-  const resizeIndicatorKey = layout.getIndicatorKey(state.columnResize.col, state.table.columnHeaderLevelCount);
-  for (let col = state.table.rowHeaderLevelCount; col < state.table.colCount; col++) {
+  let resizeIndicatorKey;
+  let resizeDimensionKey;
+  let resizeDimensionValue;
+  if (layout.indicatorsAsCol) {
+    resizeIndicatorKey = layout.getIndicatorKey(state.columnResize.col, state.table.columnHeaderLevelCount);
+  } else {
+    const headerPaths = layout.getCellHeaderPaths(state.columnResize.col, state.table.columnHeaderLevelCount - 1);
+    const headerPath = headerPaths.colHeaderPaths[headerPaths.colHeaderPaths.length - 1];
+    resizeDimensionKey = headerPath.dimensionKey;
+    resizeDimensionValue = headerPath.value;
+  }
+  for (let col = state.table.rowHeaderLevelCount; col < state.table.colCount - state.table.rightFrozenColCount; col++) {
     const indicatorKey = layout.getIndicatorKey(col, state.table.columnHeaderLevelCount);
-    if (indicatorKey === resizeIndicatorKey) {
+    if (layout.indicatorsAsCol && indicatorKey === resizeIndicatorKey) {
       state.table.scenegraph.updateColWidth(col, detaX);
+    } else if (!layout.indicatorsAsCol) {
+      const headerPaths = layout.getCellHeaderPaths(col, state.table.columnHeaderLevelCount - 1);
+      const headerPath = headerPaths?.colHeaderPaths[headerPaths.colHeaderPaths.length - 1];
+      if (headerPath && resizeDimensionKey === headerPath.dimensionKey && resizeDimensionValue === headerPath.value) {
+        state.table.scenegraph.updateColWidth(col, detaX);
+      }
     }
   }
 }
 
 function updateResizeColForIndicatorGroup(detaX: number, state: StateManeger) {
+  // not support for PivotChart temply
   const layout = state.table.internalProps.layoutMap as PivotHeaderLayoutMap;
   //通过getCellHeaderPaths接口获取列表头最后一层指标维度的path
   const headerPaths = layout.getCellHeaderPaths(state.columnResize.col, state.table.columnHeaderLevelCount);

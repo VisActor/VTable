@@ -68,6 +68,7 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
       Object.assign(options, (options as any).layout);
     }
     this.setCustomStateNameToSpec();
+    this.internalProps.columnResizeType = options.columnResizeType ?? 'column';
     this.internalProps.dataConfig = { isPivotChart: true };
     this._axes = isArray(options.axes) ? options.axes : [];
 
@@ -157,6 +158,7 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
 
     this.setCustomStateNameToSpec();
     // 更新protectedSpace
+    internalProps.columnResizeType = options.columnResizeType ?? 'column';
     internalProps.dataConfig = {};
 
     this._axes = isArray(options.axes) ? options.axes : [];
