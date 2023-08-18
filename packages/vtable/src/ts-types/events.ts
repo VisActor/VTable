@@ -178,7 +178,7 @@ export interface TableEventHandlersReturnMap {
   resize_column: void;
   resize_column_end: void;
   change_header_position: void;
-  sort_click: void;
+  sort_click: boolean;
   freeze_click: void;
   dropdownmenu_click: void;
   copydata: string;
