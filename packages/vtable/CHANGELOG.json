@@ -2,6 +2,50 @@
   "name": "@visactor/vtable",
   "entries": [
     {
+      "version": "0.10.0",
+      "tag": "@visactor/vtable_v0.10.0",
+      "date": "Wed, 16 Aug 2023 04:16:18 GMT",
+      "comments": {
+        "patch": [
+          {
+            "comment": "refactor: last column to resize width is inflexibility #136\n\n"
+          },
+          {
+            "comment": "refactor: delete widthMode:standard-aeolus and add option of autoFillWidth\n\n"
+          },
+          {
+            "comment": "refactor: use barWidth to compute chart column width #185\n\n"
+          },
+          {
+            "comment": "refactor: widthMode set adaptive , compute body column to adaptive lefted container space #187\n\n"
+          },
+          {
+            "comment": "fix: use updateOption can‘t modify hover highlight mode correctly #189\n\n"
+          },
+          {
+            "comment": "refactor: compute optimize height for chart by axis tick count #196\n\n"
+          },
+          {
+            "comment": "refactor: sort collectedValues by data.field.domain\n\n"
+          },
+          {
+            "comment": "feat: add listenChart Event\n\n"
+          }
+        ],
+        "minor": [
+          {
+            "comment": "feat: handle legend event to reset chart\n\n"
+          },
+          {
+            "comment": "feat: add api getChartDatumPosition\n\n"
+          },
+          {
+            "comment": "feat: add right and bottom frozen function"
+          }
+        ]
+      }
+    },
+    {
       "version": "0.9.2",
       "tag": "@visactor/vtable_v0.9.2",
       "date": "Wed, 26 Jul 2023 03:47:00 GMT",
