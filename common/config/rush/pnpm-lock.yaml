@@ -23,7 +23,7 @@ importers:
       '@visactor/vchart': 1.2.1-alpha.3
       '@visactor/vdataset': ~0.13.3
       '@visactor/vrender': 0.15.0-alpha.0
-      '@visactor/vrender-components': 0.13.11
+      '@visactor/vrender-components': 0.14.2-alpha.0
       '@visactor/vscale': ~0.13.3
       '@visactor/vutils': ~0.13.3
       '@vitejs/plugin-react': 3.1.0
@@ -63,7 +63,7 @@ importers:
     dependencies:
       '@visactor/vdataset': 0.13.4
       '@visactor/vrender': 0.15.0-alpha.0
-      '@visactor/vrender-components': 0.13.11
+      '@visactor/vrender-components': 0.14.2-alpha.0
       '@visactor/vscale': 0.13.3
       '@visactor/vutils': 0.13.3
       cssfontparser: 1.2.1
@@ -2786,6 +2786,16 @@ packages:
       '@visactor/vscale': 0.13.3
       '@visactor/vutils': 0.13.3
       inversify: 6.0.1
+    dev: true
+
+  /@visactor/vrender-components/0.14.2-alpha.0:
+    resolution: {integrity: sha512-QFsQwZNIGfZiLs397bf/nV61k6EwA2Zg7zU5R6x33XrBywcBU68AdF/fv84nl8ngngZoIa3435kRZhJmIw3x0w==}
+    dependencies:
+      '@visactor/vrender': 0.15.0-alpha.0
+      '@visactor/vscale': 0.15.7
+      '@visactor/vutils': 0.15.7
+      inversify: 6.0.1
+    dev: false
 
   /@visactor/vrender/0.13.10:
     resolution: {integrity: sha512-jCUI9V5iSfDfNrsXVPnTjy30rPqELtSPwnyKnYw6OvKGDJN+P7fgM+4O5ghZlf+W4+hr/bwSsKMgnd56bOiFEA==}
@@ -2794,6 +2804,7 @@ packages:
       color-convert: 2.0.1
       core-js: 3.31.1
       inversify: 6.0.1
+    dev: true
 
   /@visactor/vrender/0.15.0-alpha.0:
     resolution: {integrity: sha512-RpUDAzPJjc1tRhVv/aL8jpKroVxRcj3wniPKK4wZU3sTtpLrPdO88828ocECiZRBZgmwEwjkb0xOXKw16LLEZg==}
@@ -2815,6 +2826,12 @@ packages:
     dependencies:
       '@visactor/vutils': 0.13.3
     dev: true
+
+  /@visactor/vscale/0.15.7:
+    resolution: {integrity: sha512-Jj3J4B6FT4sbWgUR+eoF1Qu+PPukwiVcSEix1rbNcCkLPXQzKkRXVXojDwscNSALdmSpnrHjw8VNIQpnHP/uyw==}
+    dependencies:
+      '@visactor/vutils': 0.15.7
+    dev: false
 
   /@visactor/vutils/0.13.3:
     resolution: {integrity: sha512-lCFiuUHwqz/0RCvIYa79ycduCLAILWaXddPOjxEd3VRX9CCoWMUmRtM3gF5JxtK2pK6Mu7hW7LaMSuWFw+0Kkw==}
