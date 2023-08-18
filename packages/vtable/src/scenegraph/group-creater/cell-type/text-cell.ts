@@ -128,8 +128,8 @@ export function createCellGroup(
   }
   if (customElementsGroup) {
     cellGroup.setAttributes({
-      width: Math.max(cellGroup.attribute.width, customElementsGroup.attribute.width),
-      height: Math.max(cellGroup.attribute.height, customElementsGroup.attribute.height)
+      width: Math.max(cellGroup.attribute.width, customElementsGroup.attribute.width ?? 0),
+      height: Math.max(cellGroup.attribute.height, customElementsGroup.attribute.height ?? 0)
     });
   }
   return cellGroup;

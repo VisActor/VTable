@@ -93,7 +93,8 @@ export class Scenegraph {
       height: table.canvas.height,
       disableDirtyBounds: false,
       background: table.theme.underlayBackgroundColor,
-      dpr: table.internalProps.pixelRatio
+      dpr: table.internalProps.pixelRatio,
+      enableLayout: true
     });
 
     this.stage.defaultLayer.setTheme({

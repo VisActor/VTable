@@ -387,6 +387,15 @@ export const menus = [
     ]
   },
   {
+    menu: 'custom-layout-jsx',
+    children: [
+      {
+        path: 'custom-layout-jsx',
+        name: 'test'
+      }
+    ]
+  },
+  {
     menu: 'components',
     children: [
       {

@@ -57,7 +57,11 @@ const handleClick = (e: { target: any }, isInit?: boolean) => {
         document.getElementById('vTable').innerHTML = null;
       }
 
-      import(`./${path}/${name}.ts`)
+      let fileType = 'ts';
+      if (path === 'custom-layout-jsx') {
+        fileType = 'jsx';
+      }
+      import(`./${path}/${name}.${fileType}`)
         .then(module => {
           // eslint-disable-next-line no-console
           console.info('%c %s', 'color: #1890ff;font-weight: bold', `当前 demo 路径：./examples/${path}/${name}.md`);

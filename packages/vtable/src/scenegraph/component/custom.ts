@@ -1,5 +1,13 @@
 import type { Cursor } from '@visactor/vrender';
-import { createArc, createCircle, createLine, createRect, TextAlignType, TextBaselineType } from '@visactor/vrender';
+import {
+  createArc,
+  createCircle,
+  createLine,
+  createRect,
+  TextAlignType,
+  TextBaselineType,
+  Group as VGroup
+} from '@visactor/vrender';
 import { isFunction, isString, isValid } from '../../tools/util';
 import type { ICustomLayout, ICustomRender, ICustomRenderElement, ICustomRenderElements } from '../../ts-types';
 import { Group } from '../graphic/group';
@@ -23,6 +31,8 @@ export function dealWithCustom(
   let expectedWidth: number;
   let expectedHeight: number;
   let customElements;
+  let elementsGroup: Group;
+
   if (typeof customLayout === 'function') {
     const arg = {
       col,
@@ -42,7 +52,11 @@ export function dealWithCustom(
     const customRenderObj = customLayout(arg);
     // expectedWidth = customRenderObj.expectedWidth;
     // expectedHeight = customRenderObj.expectedHeight;
-    customElements = customRenderObj.rootContainer.getElements(undefined, false, false);
+    if (customRenderObj.rootContainer instanceof VGroup) {
+      elementsGroup = customRenderObj.rootContainer;
+    } else {
+      customElements = customRenderObj.rootContainer.getElements(undefined, false, false);
+    }
     renderDefault = customRenderObj.renderDefault;
   } else if (typeof customRender === 'function') {
     const arg = {
@@ -74,7 +88,6 @@ export function dealWithCustom(
     renderDefault = customRender.renderDefault;
   }
 
-  let elementsGroup: Group;
   if (customElements) {
     const value = table.getCellValue(col, row);
     elementsGroup = adjustElementToGroup(
