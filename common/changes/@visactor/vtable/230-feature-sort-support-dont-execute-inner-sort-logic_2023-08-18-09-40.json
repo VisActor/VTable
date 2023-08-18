@@ -1,7 +1,7 @@
 {
   "changes": [
     {
-      "comment": "docs: update changlog of rush\n\n",
+      "comment": "feat: sort support don't execute inner sort logic #230\n\n",
       "type": "patch",
       "packageName": "@visactor/vtable"
     }
