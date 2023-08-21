@@ -83,13 +83,6 @@ export class ListTable extends BaseTable implements ListTableAPI {
     return this.internalProps.sortState;
   }
   /**
-   * Sets the sort state.
-   * If `null` to set, the sort state is initialized.
-   */
-  set sortState(sortState: SortState | SortState[]) {
-    this.internalProps.sortState = sortState;
-  }
-  /**
    * Gets the define of the header.
    */
   get columns(): ColumnsDefine {
