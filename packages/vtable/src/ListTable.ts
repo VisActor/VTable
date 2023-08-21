@@ -547,7 +547,12 @@ export class ListTable extends BaseTable implements ListTableAPI {
     }
     return undefined;
   }
-  updateSortState(sortState: SortState[] | SortState | null) {
+  /**
+   * 更新排序状态
+   * @param sortState 要设置的排序状态
+   * @param executeSort 是否执行内部排序逻辑，设置false将只更新图标状态
+   */
+  updateSortState(sortState: SortState[] | SortState | null, executeSort: boolean = true) {
     if (!sortState) {
       // 解除排序状态
       if (this.internalProps.sortState) {
@@ -573,7 +578,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
     } else {
       ({ order, field, fieldKey } = this.internalProps.sortState as SortState);
     }
-    if (field) {
+    if (field && executeSort) {
       const sortFunc = this._getSortFuncFromHeaderOption(this.internalProps.columns, field, fieldKey);
       let hd;
       if (fieldKey) {

@@ -1045,10 +1045,6 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
           ? 1
           : 0;
       }
-      // 查询维度是否有multiDimension
-      return this.getDimension(this.colDimensionKeys[this.colDimensionKeys.length - 1], 'column')?.multiDimension
-        ? 1
-        : 0;
     }
     return 0;
   }
@@ -1063,8 +1059,6 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
           ? 1
           : 0;
       }
-      // 查询维度是否有multiDimension
-      return this.getDimension(this.rowDimensionKeys[this.rowDimensionKeys.length - 1], 'row')?.multiDimension ? 1 : 0;
     }
     return 0;
   }

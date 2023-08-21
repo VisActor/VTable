@@ -439,6 +439,10 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
     (this.internalProps.layoutMap as PivotLayoutMap).updateDataset(this.dataset);
     this.render();
   }
+  /**
+   * 更新排序状态
+   * @param pivotSortStateConfig.dimensions 排序状态维度对应关系；pivotSortStateConfig.order 排序状态
+   */
   updatePivotSortState(
     pivotSortStateConfig: {
       dimensions: IDimensionInfo[];
