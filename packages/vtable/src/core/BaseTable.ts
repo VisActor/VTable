@@ -2434,7 +2434,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
 
     //重复逻辑抽取updateWidthHeight
     if (sort !== undefined) {
-      (this as any).sortState = sort;
+      this.internalProps.sortState = sort;
       this.stateManeger.setSortState((this as any).sortState as SortState);
     }
     if (records) {
