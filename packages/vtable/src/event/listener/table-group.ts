@@ -5,14 +5,15 @@ import type { SceneEvent } from '../util';
 import { getCellEventArgsSet } from '../util';
 import { TABLE_EVENT_TYPE } from '../../core/TABLE_EVENT_TYPE';
 import type { Group } from '../../scenegraph/graphic/group';
-import { isValid } from '@visactor/vutils';
+import { isValid, last } from '@visactor/vutils';
 import { getIconAndPositionFromTarget } from '../../scenegraph/utils/icon';
 import { cellInRanges } from '../../tools/helper';
 import { Rect } from '../../tools/Rect';
 import type { EventManeger } from '../event';
 import type { BaseTableAPI } from '../../ts-types/base-table';
 import type { IIconGraphicAttribute } from '../../scenegraph/graphic/icon';
-
+// PointerMove敏感度太高了 记录下上一个鼠标位置 在接收到PointerMove事件时做判断 是否到到触发框选或者移动表头操作的标准，防止误触
+let LastPointerXY: { x: number; y: number };
 export function bindTableGroupListener(eventManeger: EventManeger) {
   const table = eventManeger.table;
   const stateManeger = table.stateManeger;
@@ -39,7 +40,10 @@ export function bindTableGroupListener(eventManeger: EventManeger) {
     }
   });
   table.scenegraph.tableGroup.addEventListener('pointermove', (e: FederatedPointerEvent) => {
-    // console.log('scenegraph pointermove',e.type);
+    // console.log('scenegraph pointermove', e.pageX, e.pageY);
+    const lastX = LastPointerXY.x;
+    const lastY = LastPointerXY.y;
+    LastPointerXY = { x: e.x, y: e.y };
     // const eventArgsSet: SceneEvent = (table as any).getCellEventArgsSet(e);
     if (eventManeger.touchSetTimeout) {
       clearTimeout(eventManeger.touchSetTimeout);
@@ -50,7 +54,10 @@ export function bindTableGroupListener(eventManeger: EventManeger) {
     if (stateManeger.interactionState === InteractionState.scrolling) {
       return;
     }
-    if (stateManeger.interactionState === InteractionState.grabing) {
+    if (
+      stateManeger.interactionState === InteractionState.grabing &&
+      Math.abs(lastX - e.x) + Math.abs(lastY - e.y) >= 1
+    ) {
       if (stateManeger.isResizeCol()) {
         /* do nothing */
       } else if (stateManeger.isMoveCol()) {
@@ -247,6 +254,7 @@ export function bindTableGroupListener(eventManeger: EventManeger) {
   });
 
   table.scenegraph.tableGroup.addEventListener('pointerdown', (e: FederatedPointerEvent) => {
+    LastPointerXY = { x: e.x, y: e.y };
     if (e.button !== 0) {
       // 只处理左键
       return;

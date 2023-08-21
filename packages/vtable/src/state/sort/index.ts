@@ -61,7 +61,7 @@ export function dealSort(col: number, row: number, table: ListTableAPI) {
     return;
   }
 
-  table.sortState = tableState; // 目前不支持多级排序 所以这里 直接赋值为单个sortState TODO优化（如果支持多级排序的话）
+  table.internalProps.sortState = tableState; // 目前不支持多级排序 所以这里 直接赋值为单个sortState TODO优化（如果支持多级排序的话）
   table.stateManeger.setSortState(tableState);
   if (headerC?.sort) {
     executeSort(tableState, table, headerC);
