@@ -41,8 +41,8 @@ export function bindTableGroupListener(eventManeger: EventManeger) {
   });
   table.scenegraph.tableGroup.addEventListener('pointermove', (e: FederatedPointerEvent) => {
     // console.log('scenegraph pointermove', e.pageX, e.pageY);
-    const lastX = LastPointerXY.x;
-    const lastY = LastPointerXY.y;
+    const lastX = LastPointerXY?.x ?? e.x;
+    const lastY = LastPointerXY?.y ?? e.y;
     LastPointerXY = { x: e.x, y: e.y };
     // const eventArgsSet: SceneEvent = (table as any).getCellEventArgsSet(e);
     if (eventManeger.touchSetTimeout) {
