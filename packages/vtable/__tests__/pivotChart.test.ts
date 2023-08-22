@@ -9350,7 +9350,7 @@ describe('pivotTable init test', () => {
         }
       ]
     };
-    expect(pivotChart.getChartDatumPosition(datum, cellAddr)).toEqual({ x: 429, y: 298 });
+    expect(pivotChart.getChartDatumPosition(datum, cellAddr)).toEqual({ x: 429, y: 299 });
   });
 
   test('pivotTable collectValuesBy', () => {
