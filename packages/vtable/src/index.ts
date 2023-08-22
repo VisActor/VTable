@@ -28,21 +28,8 @@ import { PivotChart } from './PivotChart';
 import type { MousePointerCellEvent } from './ts-types/events';
 import * as CustomLayout from './render/layout';
 
-export {
-  VGroup,
-  VSymbol,
-  VRect,
-  VArc,
-  VArea,
-  VCircle,
-  VGlyph,
-  VImage,
-  VLine,
-  VPath,
-  VPolygon,
-  VText,
-  jsx
-} from '@visactor/vrender';
+export * from './render/jsx';
+
 export const version = __VERSION__;
 /**
  * @namespace VTable

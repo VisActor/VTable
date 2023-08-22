@@ -1,5 +1,5 @@
 import * as VTable from '../../src';
-import { VGroup, VSymbol, VRect, VImage, VText, jsx } from '../../src';
+import { VGroup, VSymbol, VRect, VImage, VText, VTag, jsx } from '../../src';
 import { bindDebugTool } from '../../src/scenegraph/debug-tool';
 import { IconPosition } from '../../src/ts-types';
 import { bearImageUrl, birdImageUrl, catImageUrl, flowerImageUrl, rabbitImageUrl, wolfImageUrl } from '../resource-url';
@@ -24,7 +24,8 @@ export function createTable() {
           const record = table.getRecordByRowCol(col, row);
 
           const container = (
-            <VGroup id="container" attribute={{
+            <VGroup attribute={{
+              id: "container",
               width,
               height,
               display: 'flex',
@@ -32,7 +33,8 @@ export function createTable() {
               justifyContent: 'flex-start',
               alignContent: 'center'
             }}>
-              <VGroup id="container-left" attribute={{
+              <VGroup attribute={{
+                id: "container-left",
                 width: 60,
                 height,
                 fill: 'red',
@@ -41,7 +43,8 @@ export function createTable() {
                 justifyContent: 'space-around',
                 alignItems: 'center'
               }}>
-                <VImage id="icon0" attribute={{
+                <VImage attribute={{
+                  id: "icon0",
                   width: 50,
                   height: 50,
                   image: record.bloggerAvatar,
@@ -49,6 +52,7 @@ export function createTable() {
                 }}></VImage>
               </VGroup>
               <VGroup id="container-right" attribute={{
+                id: "container-right",
                 width: width - 60,
                 height,
                 fill: 'yellow',
@@ -58,7 +62,8 @@ export function createTable() {
                 justifyContent: 'space-around',
                 alignItems: 'center'
               }}>
-                <VGroup id="container-right-top" attribute={{
+                <VGroup attribute={{
+                  id: "container-right-top",
                   fill: 'red',
                   opacity: 0.1,
                   width: width - 60,
@@ -68,22 +73,25 @@ export function createTable() {
                   justifyContent: 'flex-start',
                   alignItems: 'center'                  
                 }}>
-                  <VText id="bloggerName" attribute={{
+                  <VText attribute={{
+                    id: "bloggerName",
                     text: record.bloggerName,
                     fontSize: 13,
                     fontFamily: 'sans-serif',
                     fill: 'black',
                     textAlign: 'left',
                     textBaseline: 'top',
-                    // boundsPadding: [0, 0, 0, 10]
+                    boundsPadding: [0, 0, 0, 10]
                   }}></VText>
-                  <VImage id="location-icon" attribute={{
+                  <VImage attribute={{
+                    id: "location-icon",
                     width: 15,
                     height: 15,
                     image: '<svg t="1684484908497" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="2429" width="200" height="200"><path d="M512 512a136.533333 136.533333 0 1 1 136.533333-136.533333 136.533333 136.533333 0 0 1-136.533333 136.533333z m0-219.272533a81.92 81.92 0 1 0 81.92 81.92 81.92 81.92 0 0 0-81.92-81.92z" fill="#0073FF" p-id="2430"></path><path d="M512 831.214933a27.306667 27.306667 0 0 1-19.2512-8.055466l-214.493867-214.357334a330.5472 330.5472 0 1 1 467.490134 0l-214.357334 214.357334a27.306667 27.306667 0 0 1-19.387733 8.055466z m0-732.091733a275.933867 275.933867 0 0 0-195.106133 471.04L512 765.269333l195.106133-195.106133A275.933867 275.933867 0 0 0 512 99.1232z" fill="#0073FF" p-id="2431"></path><path d="M514.321067 979.490133c-147.456 0-306.107733-37.000533-306.107734-118.3744 0-45.602133 51.746133-81.92 145.681067-102.4a27.306667 27.306667 0 1 1 11.605333 53.384534c-78.370133 17.066667-102.673067 41.915733-102.673066 49.015466 0 18.432 88.064 63.761067 251.4944 63.761067s251.4944-45.192533 251.4944-63.761067c0-7.3728-25.258667-32.768-106.496-49.834666a27.306667 27.306667 0 1 1 11.195733-53.384534c96.6656 20.343467 150.186667 56.9344 150.186667 103.2192-0.273067 80.964267-158.9248 118.3744-306.3808 118.3744z" fill="#0073FF" p-id="2432"></path></svg>',
-                    // boundsPadding: [0, 0, 0, 10],
+                    boundsPadding: [0, 0, 0, 10],
                   }}></VImage>
-                  <VText id="locationName" attribute={{
+                  <VText attribute={{
+                    id: "locationName",
                     text: record.city,
                     fontSize: 11,
                     fontFamily: 'sans-serif',
@@ -92,7 +100,8 @@ export function createTable() {
                     textBaseline: 'top'         
                   }}></VText>
                 </VGroup>
-                <VGroup id="container-right-bottom" attribute={{
+                <VGroup attribute={{
+                  id: "container-right-bottom",
                   fill: 'green',
                   opacity: 0.1,     
                   width: width - 60,
@@ -105,14 +114,32 @@ export function createTable() {
                   {
                     record?.tags?.length ? (
                       record.tags.map((str, i) => (
-                        <VText attribute={{
+                        // <VText attribute={{
+                        //   text: str,
+                        //   fontSize: 10,
+                        //   fontFamily: 'sans-serif',
+                        //   fill: 'rgb(51, 101, 238)',
+                        //   textAlign: 'left',
+                        //   textBaseline: 'rop',
+                        // boundsPadding: [0, 0, 0, 10],
+                        // }}></VText>
+                        <VTag attribute={{
                           text: str,
-                          fontSize: 10,
-                          fontFamily: 'sans-serif',
-                          fill: 'rgb(51, 101, 238)',
-                          textAlign: 'left',
-                          textBaseline: 'rop'
-                        }}></VText>
+                          textStyle: {
+                            fontSize: 10,
+                            fontFamily: 'sans-serif',
+                            fill: 'rgb(51, 101, 238)',
+                            // textAlign: 'left',
+                            // textBaseline: 'rop',
+                          },
+                          panel: {
+                            visible: true,
+                            fill: '#e6fffb',
+                            lineWidth: 1,
+                            cornerRadius: 4
+                          },
+                          boundsPadding: [0, 0, 0, 10],
+                        }}></VTag>
                       ))
                     ) : null
                   }

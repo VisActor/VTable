@@ -391,7 +391,11 @@ export const menus = [
     children: [
       {
         path: 'custom-layout-jsx',
-        name: 'test'
+        name: 'list'
+      },
+      {
+        path: 'custom-layout-jsx',
+        name: 'pivot'
       }
     ]
   },
