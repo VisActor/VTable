@@ -21,11 +21,11 @@ importers:
       '@types/react': 16.9.49
       '@types/react-dom': 16.9.8
       '@visactor/vchart': 1.2.1-alpha.3
-      '@visactor/vdataset': ~0.13.3
+      '@visactor/vdataset': ~0.15.7
       '@visactor/vrender': 0.13.10
       '@visactor/vrender-components': 0.13.11
-      '@visactor/vscale': ~0.13.3
-      '@visactor/vutils': ~0.13.3
+      '@visactor/vscale': ~0.15.7
+      '@visactor/vutils': ~0.15.7
       '@vitejs/plugin-react': 3.1.0
       axios: ~1.4.0
       chai: 4.3.4
@@ -61,11 +61,11 @@ importers:
       vite: 3.2.6
       vite-plugin-markdown: ^2.1.0
     dependencies:
-      '@visactor/vdataset': 0.13.4
+      '@visactor/vdataset': 0.15.7
       '@visactor/vrender': 0.13.10
       '@visactor/vrender-components': 0.13.11
-      '@visactor/vscale': 0.13.3
-      '@visactor/vutils': 0.13.3
+      '@visactor/vscale': 0.15.7
+      '@visactor/vutils': 0.15.7
       cssfontparser: 1.2.1
     devDependencies:
       '@babel/core': 7.20.12
@@ -2708,6 +2708,29 @@ packages:
       simple-statistics: 7.8.3
       simplify-geojson: 1.0.5
       topojson-client: 3.1.0
+    dev: true
+
+  /@visactor/vdataset/0.15.7:
+    resolution: {integrity: sha512-FZzYUQnTNCuvQihwQQPhouWD1YvkI5HMFTeOuKPmLl7S89TXEjler7bXYcMop/C9Lu30UXMefHTEUkrHCwIoLQ==}
+    dependencies:
+      '@turf/flatten': 6.5.0
+      '@turf/helpers': 6.5.0
+      '@turf/rewind': 6.5.0
+      '@visactor/vutils': 0.15.7
+      d3-dsv: 3.0.1
+      d3-geo: 1.12.1
+      d3-hexbin: 0.2.2
+      d3-hierarchy: 3.1.2
+      eventemitter3: 4.0.7
+      geobuf: 3.0.2
+      geojson-dissolve: 3.1.0
+      path-browserify: 1.0.1
+      pbf: 3.2.1
+      point-at-length: 1.1.0
+      simple-statistics: 7.8.3
+      simplify-geojson: 1.0.5
+      topojson-client: 3.1.0
+    dev: false
 
   /@visactor/vgrammar-coordinate/0.5.6:
     resolution: {integrity: sha512-LyzuTiTp9YX89/5ZAEGJmPj/IcsVmeWWAfQHlB+cT6RvZnYxuWmHxt6xiuVPW6ZAPluSfnI0Fr74s0QmQVIcAw==}
@@ -2783,7 +2806,7 @@ packages:
     resolution: {integrity: sha512-haf/ptddjX3i6O/oZ2B+1I8MF72cjOQZV6kC4hH5cuPbkz4Jth77zef4Xj4dyngzgGbLCjFY6PKx78oS3rpT8w==}
     dependencies:
       '@visactor/vrender': 0.13.10
-      '@visactor/vscale': 0.13.3
+      '@visactor/vscale': 0.13.4
       '@visactor/vutils': 0.13.3
       inversify: 6.0.1
 
@@ -2795,16 +2818,16 @@ packages:
       core-js: 3.31.1
       inversify: 6.0.1
 
-  /@visactor/vscale/0.13.3:
-    resolution: {integrity: sha512-iVPguZ0uVSlOSfPWZaZmfp9hCeIxb67kCWgY+yVYEhzKTdnZLfNqxUarFhdqx2P9wNiAGjxhUJBNEenkndW5hg==}
-    dependencies:
-      '@visactor/vutils': 0.13.3
-
   /@visactor/vscale/0.13.4:
     resolution: {integrity: sha512-UeyPYN+vAmvI+CURCfRN1s+peKeFDGxdblTJCgvZj/bho1oJF6WeI/mqAOquLeCT4+Y3f3SYoqIqDL5nSHJkZw==}
     dependencies:
       '@visactor/vutils': 0.13.3
-    dev: true
+
+  /@visactor/vscale/0.15.7:
+    resolution: {integrity: sha512-Jj3J4B6FT4sbWgUR+eoF1Qu+PPukwiVcSEix1rbNcCkLPXQzKkRXVXojDwscNSALdmSpnrHjw8VNIQpnHP/uyw==}
+    dependencies:
+      '@visactor/vutils': 0.15.7
+    dev: false
 
   /@visactor/vutils/0.13.3:
     resolution: {integrity: sha512-lCFiuUHwqz/0RCvIYa79ycduCLAILWaXddPOjxEd3VRX9CCoWMUmRtM3gF5JxtK2pK6Mu7hW7LaMSuWFw+0Kkw==}
@@ -2812,6 +2835,14 @@ packages:
       '@turf/helpers': 6.5.0
       '@turf/invariant': 6.5.0
       eventemitter3: 4.0.7
+
+  /@visactor/vutils/0.15.7:
+    resolution: {integrity: sha512-f+IoDJpOys6TVFR6HoVsCTb0hI3GnEIsECzrNDFMmca/POP4oZ24rC/bCkyNGF/FUqAckynvQLv6q9IdMuyzVQ==}
+    dependencies:
+      '@turf/helpers': 6.5.0
+      '@turf/invariant': 6.5.0
+      eventemitter3: 4.0.7
+    dev: false
 
   /@vitejs/plugin-react/3.1.0_vite@3.2.6:
     resolution: {integrity: sha512-AfgcRL8ZBhAlc3BFdigClmTUMISmmzHn7sB2h9U1odvc5U/MjWXsAaz18b/WoppUTDBzxOJwo2VdClfUcItu9g==}
