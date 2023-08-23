@@ -20,9 +20,8 @@ export function createTable() {
     {
       field: 'id',
       caption: 'ID',
-      width: '50%',
-      sort: true,
-      maxWidth: 300
+      width: 120,
+      sort: true
     },
     {
       field: 'email1',

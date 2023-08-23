@@ -138,9 +138,8 @@ export function computeColWidth(
   table: BaseTableAPI,
   forceCompute: boolean
 ): number {
-  const { layoutMap, transpose } = table.internalProps;
-  // const ctx = _getInitContext.call(table);
-  const width = getColWidthDefinedWidthResizedWidth(col, table);
+  // const { layoutMap, transpose } = table.internalProps;
+  // let { width } = layoutMap?.getColumnWidthDefined(col) ?? {};
 
   // if (transpose) {
   //   // 转置模式
@@ -195,6 +194,7 @@ export function computeColWidth(
   //     return table.getColWidth(col);
   //   }
   // }
+  const width = getColWidthDefinedWidthResizedWidth(col, table);
   if (typeof width === 'number') {
     return width;
   } else if (width !== 'auto' && typeof width === 'string') {
