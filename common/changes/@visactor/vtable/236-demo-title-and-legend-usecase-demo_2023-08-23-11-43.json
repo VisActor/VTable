@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "comment": "fix: when set max Width value for column to resize column width occur error #241\n\n",
+      "type": "patch",
+      "packageName": "@visactor/vtable"
+    }
+  ],
+  "packageName": "@visactor/vtable",
+  "email": "892739385@qq.com"
+}
