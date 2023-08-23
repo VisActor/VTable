@@ -249,6 +249,9 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     internalProps._rowHeightsMap = new NumberMap();
     internalProps._rowRangeHeightsMap = new Map();
     internalProps._colRangeWidthsMap = new Map();
+
+    internalProps._widthResizedColMap = new Set();
+
     this.colWidthsMap = new NumberMap();
     this.colContentWidthsMap = new NumberMap();
     this.colWidthsLimit = {};
@@ -1773,6 +1776,9 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     internalProps._rowHeightsMap = new NumberMap();
     internalProps._rowRangeHeightsMap = new Map();
     internalProps._colRangeWidthsMap = new Map();
+
+    internalProps._widthResizedColMap = new Set();
+
     this.colWidthsMap = new NumberMap();
     this.colContentWidthsMap = new NumberMap();
     this.colWidthsLimit = {};

@@ -237,22 +237,33 @@ export class SimpleHeaderLayoutMap implements LayoutMapAPI {
       let width: string | number = 0;
       let maxWidth: string | number;
       let minWidth: string | number;
-      let isAuto;
-      this.columnObjects.forEach((obj, index) => {
-        if (typeof obj.width === 'number') {
-          width = Math.max(obj.width, <number>width);
-        } else if (obj.width === 'auto') {
-          isAuto = true;
+      if (col >= this.rowHeaderLevelCount) {
+        let isAuto;
+        this.columnObjects.forEach((obj, index) => {
+          if (typeof obj.width === 'number') {
+            width = Math.max(obj.width, <number>width);
+          } else if (obj.width === 'auto') {
+            isAuto = true;
+          }
+          if (typeof obj.minWidth === 'number') {
+            minWidth = Math.max(obj.minWidth, <number>minWidth);
+          }
+          if (typeof obj.maxWidth === 'number') {
+            maxWidth = Math.max(obj.maxWidth, <number>maxWidth);
+          }
+        });
+        width = width > 0 ? width : isAuto ? 'auto' : undefined;
+        return { width, minWidth, maxWidth };
+      }
+      if (this.isRowHeader(col, 0)) {
+        const defaultWidth = Array.isArray(this._table.defaultHeaderColWidth)
+          ? this._table.defaultHeaderColWidth[col] ?? this._table.defaultColWidth
+          : this._table.defaultHeaderColWidth;
+        if (defaultWidth === 'auto') {
+          return { width: 'auto' };
         }
-        if (typeof obj.minWidth === 'number') {
-          minWidth = Math.max(obj.minWidth, <number>minWidth);
-        }
-        if (typeof obj.maxWidth === 'number') {
-          maxWidth = Math.max(obj.maxWidth, <number>maxWidth);
-        }
-      });
-      width = width > 0 ? width : isAuto ? 'auto' : undefined;
-      return { width, minWidth, maxWidth };
+        return { width: defaultWidth };
+      }
     }
     return this._columns[col];
   }

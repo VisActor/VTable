@@ -953,7 +953,7 @@ export function createTable() {
     hash: '76db920edb2907307b83ff2c51a2c67c'
   };
 
-  const tableInstance = new VTable.PivotChart(option);
+  const tableInstance = new VTable.PivotChart(document.getElementById(Table_CONTAINER_DOM_ID), option);
   tableInstance.listenChart('click', args => {
     console.log('listenChart click', args);
   });

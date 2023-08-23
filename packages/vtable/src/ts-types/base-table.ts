@@ -111,6 +111,8 @@ export interface IBaseTableProtected {
   _rowRangeHeightsMap: Map<string, number>; //存储指定行范围的总高度
   _colRangeWidthsMap: Map<string, number>; //存储指定列范围的总宽度
 
+  _widthResizedColMap: Set<number>; //记录下被手动调整过列宽的列号
+
   bodyHelper: BodyHelper;
   headerHelper: HeaderHelper;
 
@@ -423,6 +425,7 @@ export interface BaseTableAPI {
   getRowHeight: (row: number) => number;
   setRowHeight: (row: number, height: number, clearCache?: boolean) => void;
   getColWidth: (col: number) => number;
+  getColWidthDefined: (col: number) => string | number;
   getColWidthDefine: (col: number) => string | number;
   setColWidth: (col: number, width: number | string, clearCache?: boolean, skipCheckFrozen?: boolean) => void;
   _getColContentWidth: (col: number) => number;

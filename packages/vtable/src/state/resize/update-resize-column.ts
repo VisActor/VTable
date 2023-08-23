@@ -91,8 +91,12 @@ function updateResizeColForColumn(detaX: number, state: StateManeger) {
     }
     state.table.scenegraph.updateColWidth(state.columnResize.col, detaX);
     state.table.scenegraph.updateColWidth(state.columnResize.col + 1, -detaX);
+
+    state.table.internalProps._widthResizedColMap.add(state.columnResize.col);
+    state.table.internalProps._widthResizedColMap.add(state.columnResize.col + 1);
   } else {
     state.table.scenegraph.updateColWidth(state.columnResize.col, detaX);
+    state.table.internalProps._widthResizedColMap.add(state.columnResize.col);
   }
 }
 
@@ -113,6 +117,7 @@ function updateResizeColForAll(detaX: number, state: StateManeger) {
     }
     // state.table.setColWidth(col, afterSize);
     state.table.scenegraph.updateColWidth(col, detaX);
+    state.table.internalProps._widthResizedColMap.add(col);
   }
 }
 
@@ -133,11 +138,13 @@ function updateResizeColForIndicator(detaX: number, state: StateManeger) {
     const indicatorKey = layout.getIndicatorKey(col, state.table.columnHeaderLevelCount);
     if (layout.indicatorsAsCol && indicatorKey === resizeIndicatorKey) {
       state.table.scenegraph.updateColWidth(col, detaX);
+      state.table.internalProps._widthResizedColMap.add(col);
     } else if (!layout.indicatorsAsCol) {
       const headerPaths = layout.getCellHeaderPaths(col, state.table.columnHeaderLevelCount - 1);
       const headerPath = headerPaths?.colHeaderPaths[headerPaths.colHeaderPaths.length - 1];
       if (headerPath && resizeDimensionKey === headerPath.dimensionKey && resizeDimensionValue === headerPath.value) {
         state.table.scenegraph.updateColWidth(col, detaX);
+        state.table.internalProps._widthResizedColMap.add(col);
       }
     }
   }
@@ -170,5 +177,6 @@ function updateResizeColForIndicatorGroup(detaX: number, state: StateManeger) {
     //   prevWidth + (prevWidth / totalColWidth) * moveX // 计算diff比例
     // );
     state.table.scenegraph.updateColWidth(col, (prevWidth / totalColWidth) * moveX);
+    state.table.internalProps._widthResizedColMap.add(col);
   }
 }
