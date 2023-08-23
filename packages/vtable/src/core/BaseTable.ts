@@ -1002,24 +1002,24 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
    * @returns {string|number} width definition
    * @private
    */
-  getColWidthDefine(col: number): string | number {
-    const width = this.colWidthsMap.get(col);
-    if (typeof width === 'number' && width <= 0) {
-      // adaptive模式下，宽度可能为0
-      return 0;
-    } else if (width) {
-      return width;
-    } else if (this.isRowHeader(col, 0) || this.isCornerHeader(col, 0)) {
-      return Array.isArray(this.defaultHeaderColWidth)
-        ? this.defaultHeaderColWidth[col] ?? this.defaultColWidth
-        : this.defaultHeaderColWidth;
-    } else if (this.isRightFrozenColumn(col, this.columnHeaderLevelCount)) {
-      return Array.isArray(this.defaultHeaderColWidth)
-        ? this.defaultHeaderColWidth[this.rowHeaderLevelCount - this.rightFrozenColCount] ?? this.defaultColWidth
-        : this.defaultHeaderColWidth;
-    }
-    return this.defaultColWidth;
-  }
+  // getColWidthDefine(col: number): string | number {
+  //   const width = this.colWidthsMap.get(col);
+  //   if (typeof width === 'number' && width <= 0) {
+  //     // adaptive模式下，宽度可能为0
+  //     return 0;
+  //   } else if (width) {
+  //     return width;
+  //   } else if (this.isRowHeader(col, 0) || this.isCornerHeader(col, 0)) {
+  //     return Array.isArray(this.defaultHeaderColWidth)
+  //       ? this.defaultHeaderColWidth[col] ?? this.defaultColWidth
+  //       : this.defaultHeaderColWidth;
+  //   } else if (this.isRightFrozenColumn(col, this.columnHeaderLevelCount)) {
+  //     return Array.isArray(this.defaultHeaderColWidth)
+  //       ? this.defaultHeaderColWidth[this.rowHeaderLevelCount - this.rightFrozenColCount] ?? this.defaultColWidth
+  //       : this.defaultHeaderColWidth;
+  //   }
+  //   return this.defaultColWidth;
+  // }
 
   /**
    * 根据列号 获取该列宽度
@@ -1027,7 +1027,8 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
    * @return {number} column width
    */
   getColWidth(col: number): number {
-    const width = this.getColWidthDefine(col);
+    // const width = this.getColWidthDefine(col);
+    const width = this.colWidthsMap.get(col);
     if (
       (this.widthMode === 'adaptive' && typeof width === 'number') ||
       ((this as any).transpose && typeof width === 'number')
