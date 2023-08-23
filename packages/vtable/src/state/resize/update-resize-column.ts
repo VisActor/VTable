@@ -15,12 +15,12 @@ export function updateResizeColumn(xInTable: number, yInTable: number, state: St
   // 检查minWidth/maxWidth
   // getColWidth会进行Math.round，所以先从colWidthsMap获取：
   // 如果是数值，直接使用；如果不是，则通过getColWidth获取像素值
-  let widthCache = (state.table as any).colWidthsMap.get(state.columnResize.col);
-  if (typeof widthCache === 'number') {
-    widthCache = widthCache;
-  } else {
-    widthCache = state.table.getColWidth(state.columnResize.col);
-  }
+  // let widthCache = (state.table as any).colWidthsMap.get(state.columnResize.col);
+  // if (typeof widthCache === 'number') {
+  //   widthCache = widthCache;
+  // } else {
+  const widthCache = state.table.getColWidth(state.columnResize.col);
+  // }
   let width = widthCache;
   width += detaX;
   const minWidth = state.table.getMinColWidth(state.columnResize.col);
