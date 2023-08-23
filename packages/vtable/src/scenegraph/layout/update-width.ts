@@ -2,6 +2,7 @@ import type { ProgressBarStyle } from '../../body-helper/style/ProgressBarStyle'
 import { CartesianAxis } from '../../components/axis/axis';
 import { getStyleTheme } from '../../core/tableHelper';
 import type { IProgressbarColumnBodyDefine } from '../../ts-types/list-table/define/progressbar-define';
+import { dealWithCustom } from '../component/custom';
 import type { Group } from '../graphic/group';
 import type { Icon } from '../graphic/icon';
 import { updateImageCellContentWhileResize } from '../group-creater/cell-type/image-cell';
@@ -280,18 +281,64 @@ function updateCellWidth(
   } else if (cell.firstChild?.name === 'axis') {
     (cell.firstChild as any)?.originAxis.resize(cell.attribute.width, cell.attribute.height);
   } else {
-    // 处理文字
-    const style = scene.table._getCellStyle(col, row);
-    isHeightChange = updateCellContentWidth(
-      cellGroup,
-      distWidth,
-      detaX,
-      autoRowHeight,
-      getQuadProps(style.padding as number),
-      style.textAlign,
-      style.textBaseline,
-      scene
-    );
+    let renderDefault = true;
+    const customContainer = cell.getChildByName('custom-container') as Group;
+    if (customContainer) {
+      let customElementsGroup;
+      customContainer.removeAllChild();
+      cell.removeChild(customContainer);
+
+      let customRender;
+      let customLayout;
+      const cellType = scene.table.getCellType(col, row);
+      if (cellType !== 'body') {
+        const define = scene.table.getHeaderDefine(col, row);
+        customRender = define?.headerCustomRender;
+        customLayout = define?.headerCustomLayout;
+      } else {
+        const define = scene.table.getBodyColumnDefine(col, row);
+        customRender = define?.customRender || scene.table.customRender;
+        customLayout = define?.customLayout;
+      }
+
+      if (customLayout || customRender) {
+        // const { autoRowHeight } = table.internalProps;
+        const customResult = dealWithCustom(
+          customLayout,
+          customRender,
+          col,
+          row,
+          scene.table.getColWidth(col),
+          scene.table.getRowHeight(row),
+          false,
+          scene.table.heightMode === 'autoHeight',
+          scene.table
+        );
+        customElementsGroup = customResult.elementsGroup;
+        renderDefault = customResult.renderDefault;
+      }
+
+      if (cell.childrenCount > 0) {
+        cell.insertBefore(customElementsGroup, cell.firstChild);
+      } else {
+        cell.appendChild(customElementsGroup);
+      }
+    }
+
+    if (renderDefault) {
+      // 处理文字
+      const style = scene.table._getCellStyle(col, row);
+      isHeightChange = updateCellContentWidth(
+        cellGroup,
+        distWidth,
+        detaX,
+        autoRowHeight,
+        getQuadProps(style.padding as number),
+        style.textAlign,
+        style.textBaseline,
+        scene
+      );
+    }
   }
 
   return isHeightChange;

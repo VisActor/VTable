@@ -54,7 +54,8 @@ export function dealWithCustom(
     // expectedHeight = customRenderObj.expectedHeight;
     if (customRenderObj.rootContainer instanceof VGroup) {
       elementsGroup = customRenderObj.rootContainer;
-    } else {
+      elementsGroup.name = 'custom-container';
+    } else if (customRenderObj.rootContainer) {
       customElements = customRenderObj.rootContainer.getElements(undefined, false, false);
     }
     renderDefault = customRenderObj.renderDefault;

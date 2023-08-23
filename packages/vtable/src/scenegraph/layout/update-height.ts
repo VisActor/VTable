@@ -234,7 +234,7 @@ export function updateCellHeight(
     // 处理自定义渲染
     const customContainer = cell.getChildByName('custom-container') as Group;
     if (customContainer) {
-      customContainer.clear();
+      customContainer.removeAllChild();
       cell.removeChild(customContainer);
 
       let customRender;

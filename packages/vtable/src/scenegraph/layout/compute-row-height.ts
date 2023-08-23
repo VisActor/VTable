@@ -1,4 +1,4 @@
-import { RichText } from '@visactor/vrender';
+import { RichText, Group as VGroup } from '@visactor/vrender';
 import type { PivotHeaderLayoutMap } from '../../layout/pivot-header-layout';
 import { validToString } from '../../tools/util';
 import type { ColumnIconOption } from '../../ts-types';
@@ -271,9 +271,16 @@ function computeCustomRenderHeight(col: number, row: number, table: BaseTableAPI
     if (customLayout) {
       // 处理customLayout
       const customLayoutObj = customLayout(arg);
-      customLayoutObj.rootContainer.isRoot = true;
-      const size = customLayoutObj.rootContainer.getContentSize();
-      height = size.height ?? 0;
+      if (customLayoutObj.rootContainer instanceof VGroup) {
+        height = (customLayoutObj.rootContainer as VGroup).AABBBounds.height() ?? 0;
+        // height = (customLayoutObj.rootContainer as VGroup).attribute.height ?? 0;
+      } else if (customLayoutObj.rootContainer) {
+        customLayoutObj.rootContainer.isRoot = true;
+        const size = customLayoutObj.rootContainer.getContentSize();
+        height = size.height ?? 0;
+      } else {
+        height = 0;
+      }
     } else if (typeof customRender === 'function') {
       // 处理customRender
       const customRenderObj = customRender(arg);

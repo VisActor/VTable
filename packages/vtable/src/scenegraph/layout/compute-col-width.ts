@@ -10,6 +10,7 @@ import type { BaseTableAPI } from '../../ts-types/base-table';
 import type { PivotLayoutMap } from '../../layout/pivot-layout';
 import { getAxisConfigInPivotChart } from '../../layout/chart-helper/get-axis-config';
 import { computeAxisComponentWidth } from '../../components/axis/get-axis-component-size';
+import { Group as VGroup } from '@visactor/vrender';
 
 export function computeColsWidth(table: BaseTableAPI, colStart?: number, colEnd?: number, update?: boolean): void {
   const time = typeof window !== 'undefined' ? window.performance.now() : 0;
@@ -40,7 +41,7 @@ export function computeColsWidth(table: BaseTableAPI, colStart?: number, colEnd?
     ) {
       const temp = table.internalProps.layoutMap.showHeader;
       table.internalProps.layoutMap.showHeader = true;
-      maxWidth = computeColWidth(col, 0, table.internalProps.layoutMap.headerLevelCount, table, false);
+      maxWidth = computeColWidth(col, 0, table.internalProps.layoutMap.headerLevelCount, table, update);
       table.internalProps.layoutMap.showHeader = temp;
     } else if (
       !table.internalProps.transpose &&
@@ -51,10 +52,10 @@ export function computeColsWidth(table: BaseTableAPI, colStart?: number, colEnd?
         table.internalProps.layoutMap.getBodyRange().start.row,
         table.internalProps.layoutMap.getBodyRange().end.row,
         table,
-        false
+        update
       );
     } else {
-      maxWidth = computeColWidth(col, 0, table.rowCount - 1, table, false);
+      maxWidth = computeColWidth(col, 0, table.rowCount - 1, table, update);
     }
 
     table._setColContentWidth(col, maxWidth);
@@ -355,9 +356,16 @@ function computeCustomRenderWidth(col: number, row: number, table: BaseTableAPI)
     if (customLayout) {
       // 处理customLayout
       const customLayoutObj = customLayout(arg);
-      customLayoutObj.rootContainer.isRoot = true;
-      const size = customLayoutObj.rootContainer.getContentSize();
-      width = size.width ?? 0;
+      if (customLayoutObj.rootContainer instanceof VGroup) {
+        width = (customLayoutObj.rootContainer as VGroup).AABBBounds.width() ?? 0;
+        // width = (customLayoutObj.rootContainer as VGroup).attribute.width ?? 0;
+      } else if (customLayoutObj.rootContainer) {
+        customLayoutObj.rootContainer.isRoot = true;
+        const size = customLayoutObj.rootContainer.getContentSize();
+        width = size.width ?? 0;
+      } else {
+        width = 0;
+      }
     } else if (typeof customRender === 'function') {
       // 处理customRender
       const customRenderObj = customRender(arg);

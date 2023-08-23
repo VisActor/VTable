@@ -59,7 +59,7 @@ const handleClick = (e: { target: any }, isInit?: boolean) => {
 
       let fileType = 'ts';
       if (path === 'custom-layout-jsx') {
-        fileType = 'jsx';
+        fileType = 'tsx';
       }
       import(`./${path}/${name}.${fileType}`)
         .then(module => {
