@@ -446,6 +446,27 @@ export const menus = [
     ]
   },
   {
+    menu: 'updateOption',
+    children: [
+      {
+        path: 'updateOption',
+        name: 'update-autoWrapText'
+      },
+      {
+        path: 'updateOption',
+        name: 'update-columns'
+      },
+      {
+        path: 'updateOption',
+        name: 'update-widthMode'
+      },
+      {
+        path: 'updateOption',
+        name: 'update-heightMode'
+      }
+    ]
+  },
+  {
     menu: '业务方',
     children: [
       {

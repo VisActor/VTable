@@ -643,6 +643,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
   set widthMode(widthMode: WidthModeDef) {
     if (widthMode !== this._widthMode) {
       this._widthMode = widthMode;
+      this.options.widthMode = widthMode;
     }
   }
   get heightMode(): HeightModeDef {
@@ -651,6 +652,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
   set heightMode(heightMode: HeightModeDef) {
     if (heightMode !== this._heightMode) {
       this._heightMode = heightMode;
+      this.options.heightMode = heightMode;
     }
   }
   get autoFillWidth(): boolean {
@@ -1845,6 +1847,17 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     this.clearRowHeightCache();
   }
   /**
+   * 重新创建场景树并重新渲染
+   */
+  clearScenegraphRerender() {
+    this.refreshHeader();
+    this.scenegraph.clearCells();
+    this.headerStyleCache = new Map();
+    this.bodyStyleCache = new Map();
+    this.scenegraph.createSceneGraph();
+    this.render();
+  }
+  /**
    * 获取固定行总高
    * @returns
    */
@@ -2253,17 +2266,22 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
    * Set the autoWrapText
    */
   set autoWrapText(autoWrapText: boolean) {
+    this.internalProps.autoWrapText = autoWrapText;
+    this.options.autoWrapText = autoWrapText;
+  }
+  updateAutoWrapText(autoWrapText: boolean) {
     if (this.internalProps.autoWrapText === autoWrapText) {
       return;
     }
     this.internalProps.autoWrapText = autoWrapText;
     this.options.autoWrapText = autoWrapText;
-    if (this.internalProps.layoutMap) {
-      //后面如果修改是否转置
-      this.refreshHeader();
-      // if (this.internalProps.autoRowHeight) this.computeRowsHeight();
-      this.render();
-    }
+    // if (this.heightMode === 'autoHeight' || this.heightMode === 'adaptive') {
+    this.scenegraph.clearCells();
+    this.headerStyleCache = new Map();
+    this.bodyStyleCache = new Map();
+    this.scenegraph.createSceneGraph();
+    this.render();
+    // }
   }
 
   /**
@@ -2271,6 +2289,10 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
    */
   get theme(): TableTheme {
     return this.internalProps.theme;
+  }
+  set theme(theme: TableTheme) {
+    this.internalProps.theme = themes.of(theme ?? themes.DEFAULT);
+    this.options.theme = theme;
   }
   /**
    * 设置主题
