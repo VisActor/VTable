@@ -1362,7 +1362,7 @@ export function createTable() {
     },
     hash: '92b01dab92f6715a50c38888c7444e59'
   };
-  option.parentElement = document.getElementById(Table_CONTAINER_DOM_ID);
+  option.container = document.getElementById(Table_CONTAINER_DOM_ID);
 
   const tableInstance = new VTable.PivotChart(option);
 
