@@ -553,7 +553,8 @@ export interface BaseTableAPI {
   isPivotChart: (() => boolean) & (() => boolean);
   _clearColRangeWidthsMap: (col?: number) => void;
   _clearRowRangeHeightsMap: (row?: number) => void;
-
+  clearRowHeightCache: () => void;
+  clearColWidthCache: () => void;
   toggleHierarchyState: (col: number, row: number) => void;
 
   resize: () => void;

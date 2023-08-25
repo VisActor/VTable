@@ -723,9 +723,16 @@ export class Scenegraph {
   }
 
   resize() {
-    this.recalculateColWidths();
-
-    this.recalculateRowHeights();
+    if (this.table.widthMode === 'adaptive') {
+      this.recalculateColWidths();
+    }
+    if (this.table.heightMode === 'adaptive') {
+      this.recalculateRowHeights();
+    } else if (this.table.widthMode === 'adaptive') {
+      this.table.clearRowHeightCache();
+      computeRowsHeight(this.table, 0, this.table.columnHeaderLevelCount - 1);
+      computeRowsHeight(this.table, this.proxy.rowStart, this.proxy.rowEnd);
+    }
 
     this.dealWidthMode();
     this.dealHeightMode();
