@@ -563,6 +563,8 @@ export interface BaseTableAPI {
 
   getTargetColAt: (absoluteX: number) => { col: number; left: number; right: number; width: number } | null;
   getTargetRowAt: (absoluteY: number) => { row: number; top: number; bottom: number; height: number } | null;
+
+  renderWithRecreateCells: () => void;
   //#endregion  tableAPI
 }
 export interface ListTableProtected extends IBaseTableProtected {

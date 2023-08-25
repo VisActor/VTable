@@ -1849,7 +1849,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
   /**
    * 重新创建场景树并重新渲染
    */
-  clearScenegraphRerender() {
+  renderWithRecreateCells() {
     this.refreshHeader();
     this.scenegraph.clearCells();
     this.headerStyleCache = new Map();

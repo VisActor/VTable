@@ -80,7 +80,7 @@ export function createTable() {
   const tableInstance = new VTable.ListTable(option);
   setTimeout(() => {
     tableInstance.widthMode = 'adaptive';
-    tableInstance.clearScenegraphRerender();
+    tableInstance.renderWithRecreateCells();
   }, 2000);
 
   (window as any).tableInstance = tableInstance;

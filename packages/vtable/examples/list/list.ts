@@ -15,7 +15,7 @@ const generatePersons = count => {
 };
 
 export function createTable() {
-  const records = generatePersons(1000);
+  const records = generatePersons(1000000);
   const columns: VTable.ColumnsDefine = [
     {
       field: 'id',
@@ -73,10 +73,10 @@ export function createTable() {
   const option = {
     container: document.getElementById(Table_CONTAINER_DOM_ID),
     records,
-    columns,
-    autoWrapText: true,
-    heightMode: 'autoHeight',
-    widthMode: 'adaptive'
+    columns
+    // autoWrapText: true,
+    // heightMode: 'autoHeight',
+    // widthMode: 'adaptive'
   };
   const tableInstance = new VTable.ListTable(option);
   (window as any).tableInstance = tableInstance;
