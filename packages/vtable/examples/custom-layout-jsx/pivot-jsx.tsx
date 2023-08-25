@@ -593,6 +593,24 @@ function customLayout(args: VTable.TYPES.CustomRenderFunctionArg) {
             boundsPadding: [10, 0, 0, 0],
             cursor: 'pointer'
           }}
+          stateProxy={(stateName: string) => {
+            if (stateName === 'hover') {
+              return {
+                background: {
+                  fill: '#ccc',
+                  cornerRadius: 5,
+                  expandX: 2,
+                  expandY: 2
+                }
+              };
+            }
+          }}
+          onMouseEnter={event => {
+            event.currentTarget.addState('hover', true, true);
+          }}
+          onMouseLeave={event => {
+            event.currentTarget.removeState('hover', true);
+          }}
         ></VImage>
       </VGroup>
       <VGroup
