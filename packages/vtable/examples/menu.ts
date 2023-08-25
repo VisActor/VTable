@@ -395,6 +395,14 @@ export const menus = [
       },
       {
         path: 'components',
+        name: 'legend2'
+      },
+      {
+        path: 'components',
+        name: 'legend3'
+      },
+      {
+        path: 'components',
         name: 'axis'
       }
     ]

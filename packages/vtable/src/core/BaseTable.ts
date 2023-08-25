@@ -249,6 +249,9 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     internalProps._rowHeightsMap = new NumberMap();
     internalProps._rowRangeHeightsMap = new Map();
     internalProps._colRangeWidthsMap = new Map();
+
+    internalProps._widthResizedColMap = new Set();
+
     this.colWidthsMap = new NumberMap();
     this.colContentWidthsMap = new NumberMap();
     this.colWidthsLimit = {};
@@ -544,7 +547,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     this.options.defaultHeaderColWidth = defaultHeaderColWidth;
   }
   /**
-   * Get the columns width.
+   * Get the columns width.  但这个可能和看到的宽度不一致 获取某一列的宽度请使用接口 getColWidth(1) 这个接口会根据maxWidth minWidth进行调整
    */
   get colWidthsMap(): NumberMap<string | number> {
     return this.internalProps._colWidthsMap;
@@ -806,18 +809,17 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     //特殊处理 先尝试获取startCol->endCol-1的行高
     const cachedLowerColWidth = this._colRangeWidthsMap.get(`$${startCol}$${endCol - 1}`);
     if (cachedLowerColWidth !== null && cachedLowerColWidth !== undefined) {
-      const width = this.colWidthsMap.get(endCol);
-      let adjustW;
-      if (width) {
-        adjustW =
-          this.widthMode === 'adaptive' || (this as any).transpose
-            ? Number(width)
-            : this._adjustColWidth(endCol, this._colWidthDefineToPxWidth(width));
-      } else {
-        // adjustW = 0;
-        // use default column width if no width in colWidthsMap
-        adjustW = this.getColWidth(endCol);
-      }
+      // const width = this.colWidthsMap.get(endCol);
+      // let adjustW;
+      // if (width) {
+      //   adjustW =
+      //     this.widthMode === 'adaptive' || (this as any).transpose
+      //       ? Number(width)
+      //       : this._adjustColWidth(endCol, this._colWidthDefineToPxWidth(width));
+      // } else {
+      // use default column width if no width in colWidthsMap
+      const adjustW = this.getColWidth(endCol);
+      // }
       const addWidth = cachedLowerColWidth + adjustW;
       // 合法地址存入缓存
       if (startCol >= 0 && endCol >= 0 && !Number.isNaN(addWidth)) {
@@ -831,22 +833,22 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
       w += this.getColWidth(col);
     }
 
-    this.colWidthsMap.each(startCol, endCol, (width, col) => {
-      // adaptive模式下，不受max min配置影响，直接使用width
-      w +=
-        (this.widthMode === 'adaptive' || (this as any).transpose
-          ? Number(width)
-          : this._adjustColWidth(col, this._colWidthDefineToPxWidth(width))) - this.getColWidth(col);
-    });
-    for (let col = startCol; col <= endCol; col++) {
-      if (this.colWidthsMap.has(col)) {
-        continue;
-      }
-      const adj = this._adjustColWidth(col, this.internalProps.defaultColWidth as number);
-      if (adj !== this.internalProps.defaultColWidth) {
-        w += adj - (this.internalProps.defaultColWidth as number);
-      }
-    }
+    // this.colWidthsMap.each(startCol, endCol, (width, col) => {
+    //   // adaptive模式下，不受max min配置影响，直接使用width
+    //   w +=
+    //     (this.widthMode === 'adaptive' || (this as any).transpose
+    //       ? Number(width)
+    //       : this._adjustColWidth(col, this._colWidthDefineToPxWidth(width))) - this.getColWidth(col);
+    // });
+    // for (let col = startCol; col <= endCol; col++) {
+    //   if (this.colWidthsMap.has(col)) {
+    //     continue;
+    //   }
+    //   const adj = this._adjustColWidth(col, this.internalProps.defaultColWidth as number);
+    //   if (adj !== this.internalProps.defaultColWidth) {
+    //     w += adj - (this.internalProps.defaultColWidth as number);
+    //   }
+    // }
 
     // 合法地址存入缓存
     if (startCol >= 0 && endCol >= 0) {
@@ -967,8 +969,13 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
    * @returns {string|number} width definition
    * @private
    */
-  getColWidthDefine(col: number): string | number {
-    const width = this.colWidthsMap.get(col);
+  getColWidthDefined(col: number): string | number {
+    const { layoutMap } = this.internalProps;
+    // const ctx = _getInitContext.call(table);
+    if (this.widthMode === 'autoWidth') {
+      return 'auto';
+    }
+    const { width } = layoutMap?.getColumnWidthDefined(col) ?? {};
     if (typeof width === 'number' && width <= 0) {
       // adaptive模式下，宽度可能为0
       return 0;
@@ -979,12 +986,40 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
         ? this.defaultHeaderColWidth[col] ?? this.defaultColWidth
         : this.defaultHeaderColWidth;
     } else if (this.isRightFrozenColumn(col, this.columnHeaderLevelCount)) {
-      return Array.isArray(this.defaultHeaderColWidth)
-        ? this.defaultHeaderColWidth[this.rowHeaderLevelCount - this.rightFrozenColCount] ?? this.defaultColWidth
-        : this.defaultHeaderColWidth;
+      if (this.isPivotTable()) {
+        return Array.isArray(this.defaultHeaderColWidth)
+          ? this.defaultHeaderColWidth[this.rowHeaderLevelCount - this.rightFrozenColCount] ?? this.defaultColWidth
+          : this.defaultHeaderColWidth;
+      }
+      return this.defaultColWidth;
     }
     return this.defaultColWidth;
   }
+
+  /**
+   * 根据列号获取列宽定义
+   * @param {number} col column number
+   * @returns {string|number} width definition
+   * @private
+   */
+  // getColWidthDefine(col: number): string | number {
+  //   const width = this.colWidthsMap.get(col);
+  //   if (typeof width === 'number' && width <= 0) {
+  //     // adaptive模式下，宽度可能为0
+  //     return 0;
+  //   } else if (width) {
+  //     return width;
+  //   } else if (this.isRowHeader(col, 0) || this.isCornerHeader(col, 0)) {
+  //     return Array.isArray(this.defaultHeaderColWidth)
+  //       ? this.defaultHeaderColWidth[col] ?? this.defaultColWidth
+  //       : this.defaultHeaderColWidth;
+  //   } else if (this.isRightFrozenColumn(col, this.columnHeaderLevelCount)) {
+  //     return Array.isArray(this.defaultHeaderColWidth)
+  //       ? this.defaultHeaderColWidth[this.rowHeaderLevelCount - this.rightFrozenColCount] ?? this.defaultColWidth
+  //       : this.defaultHeaderColWidth;
+  //   }
+  //   return this.defaultColWidth;
+  // }
 
   /**
    * 根据列号 获取该列宽度
@@ -992,7 +1027,8 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
    * @return {number} column width
    */
   getColWidth(col: number): number {
-    const width = this.getColWidthDefine(col);
+    // const width = this.getColWidthDefine(col);
+    const width = this.colWidthsMap.get(col);
     if (
       (this.widthMode === 'adaptive' && typeof width === 'number') ||
       ((this as any).transpose && typeof width === 'number')
@@ -1741,6 +1777,9 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     internalProps._rowHeightsMap = new NumberMap();
     internalProps._rowRangeHeightsMap = new Map();
     internalProps._colRangeWidthsMap = new Map();
+
+    internalProps._widthResizedColMap = new Set();
+
     this.colWidthsMap = new NumberMap();
     this.colContentWidthsMap = new NumberMap();
     this.colWidthsLimit = {};
@@ -1802,6 +1841,8 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     }
     this.headerStyleCache = new Map();
     this.bodyStyleCache = new Map();
+    this.clearColWidthCache();
+    this.clearRowHeightCache();
   }
   /**
    * 获取固定行总高
@@ -2234,14 +2275,14 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
   /**
    * 设置主题
    */
-  set theme(theme: TableTheme) {
-    const t = themes.of(theme);
-    this.internalProps.theme = t ? t : themes.DEFAULT;
+  updateTheme(theme: TableTheme) {
+    this.internalProps.theme = themes.of(theme ?? themes.DEFAULT);
     this.options.theme = theme;
-    // this._updateSize();
-    // this._resetFrozenColCount();
-    // this.invalidate();
-    this.resize();
+    this.scenegraph.clearCells();
+    this.headerStyleCache = new Map();
+    this.bodyStyleCache = new Map();
+    this.scenegraph.createSceneGraph();
+    this.render();
   }
 
   /**
@@ -2662,6 +2703,20 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
   }
   clearCellStyleCache() {
     this.headerStyleCache.clear();
+  }
+  /**
+   * 清除行高度缓存对象
+   */
+  clearRowHeightCache() {
+    this.internalProps._rowHeightsMap.clear();
+    this._clearRowRangeHeightsMap();
+  }
+  /**
+   * 清除列宽度缓存对象
+   */
+  clearColWidthCache() {
+    this.internalProps._colWidthsMap.clear();
+    this._clearColRangeWidthsMap();
   }
   /**
    * 该列是否可调整列宽

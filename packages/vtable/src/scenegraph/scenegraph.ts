@@ -703,6 +703,7 @@ export class Scenegraph {
     this.table.isPivotChart() && updateChartState(this, datum);
   }
   updateAutoColWidth(col: number) {
+    this.table.internalProps._widthResizedColMap.delete(col);
     const oldWidth = this.table.getColWidth(col);
     const newWidth = computeColWidth(col, 0, this.table.rowCount - 1, this.table, true);
     if (newWidth !== oldWidth) {
