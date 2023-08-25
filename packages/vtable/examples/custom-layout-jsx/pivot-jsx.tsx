@@ -1,5 +1,6 @@
 /* eslint-disable */
 // @ts-ignore
+import React from 'react';
 import * as VTable from '../../src';
 import { VGroup, VSymbol, VRect, VImage, VText, VTag, jsx } from '../../src';
 import { bindDebugTool } from '../../src/scenegraph/debug-tool';
@@ -500,7 +501,11 @@ export function createTable() {
         rowHierarchyIndent: 20,
         defaultHeaderColWidth: 'auto',
         heightMode: 'autoHeight',
-        defaultRowHeight: 50
+        defaultRowHeight: 50,
+        select: {
+          disableHeaderSelect: true
+        },
+        dragHeaderMode: 'none'
       };
       const instance = new PivotTable(document.getElementById(Table_CONTAINER_DOM_ID), option);
       bindDebugTool(instance.scenegraph.stage, {
@@ -508,6 +513,8 @@ export function createTable() {
       });
       // 只为了方便控制太调试用，不要拷贝
       window.tableInstance = instance;
+
+      bindEvent(instance);
     });
 }
 
@@ -583,7 +590,8 @@ function customLayout(args: VTable.TYPES.CustomRenderFunctionArg) {
             image: hierarchyState === 'collapse' ? collapseRight : collapseDown,
             width: 18,
             height: 15,
-            boundsPadding: [10, 0, 0, 0]
+            boundsPadding: [10, 0, 0, 0],
+            cursor: 'pointer'
           }}
         ></VImage>
       </VGroup>
@@ -697,11 +705,13 @@ function customLayout(args: VTable.TYPES.CustomRenderFunctionArg) {
                   ></VTag>
                   <VImage
                     attribute={{
+                      id: `cross-${index}`,
                       width: 10,
                       height: 10,
                       image:
                         '<svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" clip-rule="evenodd" d="M6 11L11 6L24 19L37 6L42 11L29 24L42 37L37 42L24 29L11 42L6 37L19 24L6 11Z" fill="#9b9b9b" stroke="#9b9b9b" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"/></svg>',
-                      boundsPadding: [0, 0, 0, 5]
+                      boundsPadding: [0, 0, 0, 5],
+                      cursor: 'pointer'
                     }}
                   ></VImage>
                 </VGroup>
@@ -729,7 +739,8 @@ function customLayout(args: VTable.TYPES.CustomRenderFunctionArg) {
                 '<svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M30 4H18V18H4V30H18V44H30V30H44V18H30V4Z" fill="rgb(51, 101, 238)" stroke="rgb(51, 101, 238)" stroke-width="1" stroke-linejoin="round"/></svg>',
               width: 16,
               height: 16,
-              boundsPadding: [12, 0, 0, 5]
+              boundsPadding: [12, 0, 0, 5],
+              cursor: 'pointer'
             }}
           ></VImage>
         ) : null}
@@ -741,7 +752,8 @@ function customLayout(args: VTable.TYPES.CustomRenderFunctionArg) {
           </svg>`,
             width: 16,
             height: 16,
-            boundsPadding: [8, 0, 0, 5]
+            boundsPadding: [8, 0, 0, 5],
+            cursor: 'pointer'
           }}
         ></VImage>
       </VGroup>
@@ -754,4 +766,47 @@ function customLayout(args: VTable.TYPES.CustomRenderFunctionArg) {
     rootContainer: container,
     renderDefault: false
   };
+}
+
+function bindEvent(table) {
+  const { CLICK_CELL, DROPDOWNMENU_CLICK } = VTable.ListTable.EVENT_TYPE;
+  table.addEventListener(CLICK_CELL, (...args) => {
+    if (args[0].target) {
+      const target = args[0].target;
+      const id = target?.attribute?.id;
+      if (id === 'hierarchy') {
+        table.toggleHierarchyState(args[0].col, args[0].row);
+        const hierarchyState = table.getHierarchyState(args[0].col, args[0].row);
+        const image = hierarchyState === 'collapse' ? collapseRight : collapseDown;
+        target.setAttribute('image', image);
+        target.loadImage(image);
+      } else if (id === 'add') {
+        const define = table.getHeaderDefine(args[0].col, args[0].row);
+        // eslint-disable-next-line prefer-template, no-alert
+        alert('Add:' + JSON.stringify(define));
+        // clickAdd(args[0].col, args[0].row);
+      } else if (id === 'filter') {
+        const define = table.getHeaderDefine(args[0].col, args[0].row);
+        // eslint-disable-next-line prefer-template, no-alert
+        alert('Filter:' + JSON.stringify(define));
+        // clickFilter(args[0].col, args[0].row, 'rows');
+      } else if (id === 'filter-row') {
+        const define = table.getHeaderDefine(args[0].col, args[0].row);
+        // eslint-disable-next-line prefer-template, no-alert
+        alert('Filter:' + JSON.stringify(define));
+        // clickFilter(args[0].col, args[0].row, 'columns');
+      } else if (typeof id === 'string' && id.startsWith('cross')) {
+        // eslint-disable-next-line prefer-template, no-alert
+        alert('Cross:' + id + '-' + args[0].col + '/' + args[0].row);
+        // clickCross(id, args[0].col, args[0].row);
+      } else if (id === 'more-indicator') {
+        // table.showDropDownMenu(args[0].col, args[0].row);
+      } else if (id === 'more') {
+        // table.showDropDownMenu(args[0].col, args[0].row);
+      } else if (id === 'row-down') {
+        // clickRowDown(args[0].event, args[0].col, args[0].row);
+      }
+    }
+    console.log(CLICK_CELL, args);
+  });
 }
