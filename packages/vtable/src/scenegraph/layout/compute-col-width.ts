@@ -472,13 +472,13 @@ function computeTextWidth(col: number, row: number, table: BaseTableAPI): number
   return maxWidth;
 }
 
-export function getCellRect(col: number, row: number, table: BaseTableAPI) {
+function getCellRect(col: number, row: number, table: BaseTableAPI) {
   return {
     left: 0,
     top: 0,
     right: table.getColWidth(col),
     bottom: table.getRowHeight(row),
-    width: table.getColWidth(col),
-    height: table.getRowHeight(row)
+    width: 0,
+    height: 0
   };
 }

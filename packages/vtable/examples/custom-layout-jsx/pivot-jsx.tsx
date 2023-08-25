@@ -9,6 +9,13 @@ import { supermarketJson } from '../resource-url/json';
 const PivotTable = VTable.PivotTable;
 const Table_CONTAINER_DOM_ID = 'vTable';
 
+const collapseRight = `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none">
+        <path d="M5.81235 11.3501C5.48497 11.612 5 11.3789 5 10.9597L5 5.04031C5 4.62106 5.48497 4.38797 5.81235 4.64988L9.51196 7.60957C9.76216 7.80973 9.76216 8.19027 9.51196 8.39044L5.81235 11.3501Z" fill="#141414" fill-opacity="0.65"/>
+      </svg>`;
+const collapseDown = `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none">
+<path d="M4.64988 6.81235C4.38797 6.48497 4.62106 6 5.04031 6L10.9597 6C11.3789 6 11.612 6.48497 11.3501 6.81235L8.39043 10.512C8.19027 10.7622 7.80973 10.7622 7.60957 10.512L4.64988 6.81235Z" fill="#141414" fill-opacity="0.65"/>
+</svg>`;
+
 export function createTable() {
   fetch(supermarketJson)
     .then(res => res.json())
@@ -534,6 +541,7 @@ function customLayout(args: VTable.TYPES.CustomRenderFunctionArg) {
   const { height, width } = args.rect;
   // const width = 300;
   // const height = 100;
+  const hierarchyState = table.getHierarchyState(col, row);
   const path = table.internalProps.layoutMap.getCellHeaderPathsWidthTreeNode(col, row);
   const rowPathLength = path.rowHeaderPaths.length;
   const children = path.rowHeaderPaths[rowPathLength - 1].children;
@@ -572,8 +580,7 @@ function customLayout(args: VTable.TYPES.CustomRenderFunctionArg) {
         <VImage
           attribute={{
             id: 'hierarchy',
-            image:
-              '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M5.81235 11.3501C5.48497 11.612 5 11.3789 5 10.9597L5 5.04031C5 4.62106 5.48497 4.38797 5.81235 4.64988L9.51196 7.60957C9.76216 7.80973 9.76216 8.19027 9.51196 8.39044L5.81235 11.3501Z" fill="#141414" fill-opacity="0.65"/></svg>',
+            image: hierarchyState === 'collapse' ? collapseRight : collapseDown,
             width: 18,
             height: 15,
             boundsPadding: [10, 0, 0, 0]
@@ -656,6 +663,7 @@ function customLayout(args: VTable.TYPES.CustomRenderFunctionArg) {
               width: width - leftContainerWidth - 40 - 50,
               height: height - 30,
               display: 'flex',
+              // alignItems: 'center',
               fill: '#008',
               opacity: 0.1
             }}
@@ -668,7 +676,8 @@ function customLayout(args: VTable.TYPES.CustomRenderFunctionArg) {
                     display: 'flex',
                     flexWrap: 'nowrap',
                     alignItems: 'center',
-                    boundsPadding: [5, 0, 0, 10]
+                    // alignContent: 'center',
+                    boundsPadding: [5, 5, 5, 10]
                   }}
                 >
                   <VTag
@@ -691,7 +700,8 @@ function customLayout(args: VTable.TYPES.CustomRenderFunctionArg) {
                       width: 10,
                       height: 10,
                       image:
-                        '<svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" clip-rule="evenodd" d="M6 11L11 6L24 19L37 6L42 11L29 24L42 37L37 42L24 29L11 42L6 37L19 24L6 11Z" fill="#9b9b9b" stroke="#9b9b9b" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"/></svg>'
+                        '<svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" clip-rule="evenodd" d="M6 11L11 6L24 19L37 6L42 11L29 24L42 37L37 42L24 29L11 42L6 37L19 24L6 11Z" fill="#9b9b9b" stroke="#9b9b9b" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+                      boundsPadding: [0, 0, 0, 5]
                     }}
                   ></VImage>
                 </VGroup>

@@ -8,7 +8,6 @@ import type { ColumnData, TextColumnDefine } from '../../ts-types/list-table/lay
 import { WrapText } from '../graphic/text';
 import { getProp } from '../utils/get-prop';
 import { getQuadProps } from '../utils/padding';
-import { getCellRect } from './compute-col-width';
 import { dealWithRichTextIcon } from '../utils/text-icon-layout';
 import type { PivotLayoutMap } from '../../layout/pivot-layout';
 import { getAxisConfigInPivotChart } from '../../layout/chart-helper/get-axis-config';
@@ -405,4 +404,15 @@ function computeTextHeight(col: number, row: number, table: BaseTableAPI): numbe
   }
 
   return (Math.max(maxHeight, iconHeight) + padding[0] + padding[2]) / spanRow;
+}
+
+function getCellRect(col: number, row: number, table: BaseTableAPI) {
+  return {
+    left: 0,
+    top: 0,
+    right: table.getColWidth(col),
+    bottom: table.getRowHeight(row),
+    width: table.getColWidth(col),
+    height: 0
+  };
 }

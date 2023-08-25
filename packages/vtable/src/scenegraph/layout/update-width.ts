@@ -13,6 +13,7 @@ import { getCellMergeInfo } from '../utils/get-cell-merge';
 import { getProp } from '../utils/get-prop';
 import { getQuadProps } from '../utils/padding';
 import { updateCellContentWidth } from '../utils/text-icon-layout';
+import { computeRowHeight, computeRowsHeight } from './compute-row-height';
 import { updateCellHeightForRow } from './update-height';
 // import { updateAutoRowHeight } from './auto-height';
 
@@ -24,6 +25,8 @@ import { updateCellHeightForRow } from './update-height';
  * @return {*}
  */
 export function updateColWidth(scene: Scenegraph, col: number, detaX: number) {
+  scene.table.setColWidth(col, scene.table.getColWidth(col) + detaX, true);
+
   const autoRowHeight = scene.table.heightMode === 'autoHeight';
   // deal width corner header or column header
   const colOrCornerHeaderColumn = scene.getColGroup(col, true) as Group;
@@ -86,8 +89,6 @@ export function updateColWidth(scene: Scenegraph, col: number, detaX: number) {
       }
     });
   }
-
-  scene.table.setColWidth(col, rowHeaderOrBodyColumn.attribute.width, true);
 }
 
 function updateColunmWidth(
@@ -316,6 +317,7 @@ function updateCellWidth(
         );
         customElementsGroup = customResult.elementsGroup;
         renderDefault = customResult.renderDefault;
+        isHeightChange = true;
       }
 
       if (cell.childrenCount > 0) {
@@ -351,20 +353,21 @@ function updateCellWidth(
  * @return {*}
  */
 function resetRowHeight(scene: Scenegraph, row: number) {
-  let maxHeight = 0;
+  // let maxHeight = 0;
   // 获取高度
-  for (let col = 0; col < scene.table.colCount; col++) {
-    const cell = scene.highPerformanceGetCell(col, row);
-    if (cell.role === 'empty') {
-      return;
-    }
-    let cellHeight = getCleanCellHeight(cell, scene);
-    const mergeInfo = getCellMergeInfo(scene.table, col, row);
-    if (mergeInfo && mergeInfo.end.row - mergeInfo.start.row) {
-      cellHeight = cellHeight / (mergeInfo.end.row - mergeInfo.start.row + 1);
-    }
-    maxHeight = Math.max(maxHeight, cellHeight);
-  }
+  const maxHeight = computeRowHeight(row, 0, scene.table.colCount - 1, scene.table);
+  // for (let col = 0; col < scene.table.colCount; col++) {
+  //   const cell = scene.highPerformanceGetCell(col, row);
+  //   if (cell.role === 'empty') {
+  //     return;
+  //   }
+  //   let cellHeight = scene.table.getRowHeight(row);
+  //   const mergeInfo = getCellMergeInfo(scene.table, col, row);
+  //   if (mergeInfo && mergeInfo.end.row - mergeInfo.start.row) {
+  //     cellHeight = cellHeight / (mergeInfo.end.row - mergeInfo.start.row + 1);
+  //   }
+  //   maxHeight = Math.max(maxHeight, cellHeight);
+  // }
 
   // 更新高度
   for (let col = 0; col < scene.table.colCount; col++) {

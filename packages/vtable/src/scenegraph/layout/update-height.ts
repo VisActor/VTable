@@ -218,22 +218,10 @@ export function updateCellHeight(
   } else if (cell.firstChild?.name === 'axis') {
     (cell.firstChild as any)?.originAxis.resize(cell.attribute.width, cell.attribute.height);
   } else {
-    // 处理文字
-    const style = scene.table._getCellStyle(col, row);
-    updateCellContentHeight(
-      cell,
-      distHeight,
-      detaY,
-      // scene.table.internalProps.autoRowHeight,
-      scene.table.heightMode === 'autoHeight',
-      getQuadProps(style.padding as number),
-      style.textAlign,
-      style.textBaseline
-    );
-
-    // 处理自定义渲染
+    let renderDefault = true;
     const customContainer = cell.getChildByName('custom-container') as Group;
     if (customContainer) {
+      let customElementsGroup;
       customContainer.removeAllChild();
       cell.removeChild(customContainer);
 
@@ -249,22 +237,80 @@ export function updateCellHeight(
         customRender = define?.customRender || scene.table.customRender;
         customLayout = define?.customLayout;
       }
-      const customResult = dealWithCustom(
-        customLayout,
-        customRender,
-        col,
-        row,
-        cell.attribute.width,
-        cell.attribute.height,
-        false,
-        false,
-        scene.table
-      );
+
+      if (customLayout || customRender) {
+        // const { autoRowHeight } = table.internalProps;
+        const customResult = dealWithCustom(
+          customLayout,
+          customRender,
+          col,
+          row,
+          scene.table.getColWidth(col),
+          scene.table.getRowHeight(row),
+          false,
+          scene.table.heightMode === 'autoHeight',
+          scene.table
+        );
+        customElementsGroup = customResult.elementsGroup;
+        renderDefault = customResult.renderDefault;
+      }
+
       if (cell.childrenCount > 0) {
-        cell.insertBefore(customResult.elementsGroup, cell.firstChild);
+        cell.insertBefore(customElementsGroup, cell.firstChild);
       } else {
-        cell.appendChild(customResult.elementsGroup);
+        cell.appendChild(customElementsGroup);
       }
     }
+
+    if (renderDefault) {
+      // 处理文字
+      const style = scene.table._getCellStyle(col, row);
+      updateCellContentHeight(
+        cell,
+        distHeight,
+        detaY,
+        // scene.table.internalProps.autoRowHeight,
+        scene.table.heightMode === 'autoHeight',
+        getQuadProps(style.padding as number),
+        style.textAlign,
+        style.textBaseline
+      );
+    }
+
+    // // 处理自定义渲染
+    // const customContainer = cell.getChildByName('custom-container') as Group;
+    // if (customContainer) {
+    //   customContainer.removeAllChild();
+    //   cell.removeChild(customContainer);
+
+    //   let customRender;
+    //   let customLayout;
+    //   const cellType = scene.table.getCellType(col, row);
+    //   if (cellType !== 'body') {
+    //     const define = scene.table.getHeaderDefine(col, row);
+    //     customRender = define?.headerCustomRender;
+    //     customLayout = define?.headerCustomLayout;
+    //   } else {
+    //     const define = scene.table.getBodyColumnDefine(col, row);
+    //     customRender = define?.customRender || scene.table.customRender;
+    //     customLayout = define?.customLayout;
+    //   }
+    //   const customResult = dealWithCustom(
+    //     customLayout,
+    //     customRender,
+    //     col,
+    //     row,
+    //     cell.attribute.width,
+    //     cell.attribute.height,
+    //     false,
+    //     false,
+    //     scene.table
+    //   );
+    //   if (cell.childrenCount > 0) {
+    //     cell.insertBefore(customResult.elementsGroup, cell.firstChild);
+    //   } else {
+    //     cell.appendChild(customResult.elementsGroup);
+    //   }
+    // }
   }
 }
