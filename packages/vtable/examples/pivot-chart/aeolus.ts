@@ -873,9 +873,10 @@ export function createTable() {
           style: {
             fontSize: 12,
             fill: '#6F6F6F',
-            angle: 0,
+            angle: 45,
             fontWeight: 'normal'
           },
+          // containerAlign: 'bottom',
           minGap: 4,
           flush: true
         },
