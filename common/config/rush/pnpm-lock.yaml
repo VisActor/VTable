@@ -22,8 +22,8 @@ importers:
       '@types/react-dom': 16.9.8
       '@visactor/vchart': 1.2.1-alpha.3
       '@visactor/vdataset': ~0.13.3
-      '@visactor/vrender': 0.13.10
-      '@visactor/vrender-components': 0.13.11
+      '@visactor/vrender': 0.15.0-alpha.4
+      '@visactor/vrender-components': 0.14.6-alpha.4
       '@visactor/vscale': ~0.13.3
       '@visactor/vutils': ~0.13.3
       '@vitejs/plugin-react': 3.1.0
@@ -62,8 +62,8 @@ importers:
       vite-plugin-markdown: ^2.1.0
     dependencies:
       '@visactor/vdataset': 0.13.4
-      '@visactor/vrender': 0.13.10
-      '@visactor/vrender-components': 0.13.11
+      '@visactor/vrender': 0.15.0-alpha.4
+      '@visactor/vrender-components': 0.14.6-alpha.4
       '@visactor/vscale': 0.13.3
       '@visactor/vutils': 0.13.3
       cssfontparser: 1.2.1
@@ -2783,9 +2783,19 @@ packages:
     resolution: {integrity: sha512-haf/ptddjX3i6O/oZ2B+1I8MF72cjOQZV6kC4hH5cuPbkz4Jth77zef4Xj4dyngzgGbLCjFY6PKx78oS3rpT8w==}
     dependencies:
       '@visactor/vrender': 0.13.10
-      '@visactor/vscale': 0.13.3
+      '@visactor/vscale': 0.13.4
       '@visactor/vutils': 0.13.3
       inversify: 6.0.1
+    dev: true
+
+  /@visactor/vrender-components/0.14.6-alpha.4:
+    resolution: {integrity: sha512-U2FBdPbbXZN3TS+EvsFGZaYQx3yQFuTGfUUGkApPNiDcjBQ9/sbD6XrVXXRHQdlQl93pT6UMfnTDZ63P/e5HNQ==}
+    dependencies:
+      '@visactor/vrender': 0.15.0-alpha.4
+      '@visactor/vscale': 0.15.7
+      '@visactor/vutils': 0.15.7
+      inversify: 6.0.1
+    dev: false
 
   /@visactor/vrender/0.13.10:
     resolution: {integrity: sha512-jCUI9V5iSfDfNrsXVPnTjy30rPqELtSPwnyKnYw6OvKGDJN+P7fgM+4O5ghZlf+W4+hr/bwSsKMgnd56bOiFEA==}
@@ -2794,11 +2804,23 @@ packages:
       color-convert: 2.0.1
       core-js: 3.31.1
       inversify: 6.0.1
+    dev: true
+
+  /@visactor/vrender/0.15.0-alpha.4:
+    resolution: {integrity: sha512-kBol0qH71Bka/btU9CjbiQJYZCQY4d8sp3yxtBJw9iKWHLW4rEeGaPniMn6jtwUhDqo2uIYhjxkJfRsIlszFcA==}
+    dependencies:
+      '@visactor/vutils': 0.15.7
+      color-convert: 2.0.1
+      core-js: 3.31.1
+      fast-xml-parser: 4.2.7
+      inversify: 6.0.1
+    dev: false
 
   /@visactor/vscale/0.13.3:
     resolution: {integrity: sha512-iVPguZ0uVSlOSfPWZaZmfp9hCeIxb67kCWgY+yVYEhzKTdnZLfNqxUarFhdqx2P9wNiAGjxhUJBNEenkndW5hg==}
     dependencies:
       '@visactor/vutils': 0.13.3
+    dev: false
 
   /@visactor/vscale/0.13.4:
     resolution: {integrity: sha512-UeyPYN+vAmvI+CURCfRN1s+peKeFDGxdblTJCgvZj/bho1oJF6WeI/mqAOquLeCT4+Y3f3SYoqIqDL5nSHJkZw==}
@@ -2806,12 +2828,26 @@ packages:
       '@visactor/vutils': 0.13.3
     dev: true
 
+  /@visactor/vscale/0.15.7:
+    resolution: {integrity: sha512-Jj3J4B6FT4sbWgUR+eoF1Qu+PPukwiVcSEix1rbNcCkLPXQzKkRXVXojDwscNSALdmSpnrHjw8VNIQpnHP/uyw==}
+    dependencies:
+      '@visactor/vutils': 0.15.7
+    dev: false
+
   /@visactor/vutils/0.13.3:
     resolution: {integrity: sha512-lCFiuUHwqz/0RCvIYa79ycduCLAILWaXddPOjxEd3VRX9CCoWMUmRtM3gF5JxtK2pK6Mu7hW7LaMSuWFw+0Kkw==}
     dependencies:
       '@turf/helpers': 6.5.0
       '@turf/invariant': 6.5.0
       eventemitter3: 4.0.7
+
+  /@visactor/vutils/0.15.7:
+    resolution: {integrity: sha512-f+IoDJpOys6TVFR6HoVsCTb0hI3GnEIsECzrNDFMmca/POP4oZ24rC/bCkyNGF/FUqAckynvQLv6q9IdMuyzVQ==}
+    dependencies:
+      '@turf/helpers': 6.5.0
+      '@turf/invariant': 6.5.0
+      eventemitter3: 4.0.7
+    dev: false
 
   /@vitejs/plugin-react/3.1.0_vite@3.2.6:
     resolution: {integrity: sha512-AfgcRL8ZBhAlc3BFdigClmTUMISmmzHn7sB2h9U1odvc5U/MjWXsAaz18b/WoppUTDBzxOJwo2VdClfUcItu9g==}
@@ -5367,6 +5403,13 @@ packages:
 
   /fast-levenshtein/2.0.6:
     resolution: {integrity: sha512-DCXu6Ifhqcks7TZKY3Hxp3y6qphY5SJZmrWMDrKcERSOXWQdMhU9Ig/PYrzyw/ul9jOIyh0N4M0tbC5hodg8dw==}
+
+  /fast-xml-parser/4.2.7:
+    resolution: {integrity: sha512-J8r6BriSLO1uj2miOk1NW0YVm8AGOOu3Si2HQp/cSmo6EA4m3fcwu2WKjJ4RK9wMLBtg69y1kS8baDiQBR41Ig==}
+    hasBin: true
+    dependencies:
+      strnum: 1.0.5
+    dev: false
 
   /fastq/1.15.0:
     resolution: {integrity: sha512-wBrocU2LCXXa+lWBt8RoIRD89Fi8OdABODa/kEnyeyjS5aZO5/GNvI5sEINADqP/h8M29UHTHUb53sUu5Ihqdw==}
@@ -10541,6 +10584,10 @@ packages:
     dependencies:
       acorn: 8.10.0
     dev: true
+
+  /strnum/1.0.5:
+    resolution: {integrity: sha512-J8bbNyKKXl5qYcR36TIO8W3mVGVHrmmxsd5PAItGkmyzwJvybiw2IVq5nqd0i4LSNSkB/sx9VHllbfFdr9k1JA==}
+    dev: false
 
   /style-inject/0.3.0:
     resolution: {integrity: sha512-IezA2qp+vcdlhJaVm5SOdPPTUu0FCEqfNSli2vRuSIBbu5Nq5UvygTk/VzeCqfLz2Atj3dVII5QBKGZRZ0edzw==}

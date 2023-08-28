@@ -32,7 +32,6 @@ import { computeRowsHeight } from './layout/compute-row-height';
 import { emptyGroup } from './utils/empty-group';
 import { dealBottomFrozen, dealFrozen, dealRightFrozen, resetFrozen } from './layout/frozen';
 import { updateChartSize, updateChartState } from './refresh-node/update-chart';
-import { createCornerCell } from './style/corner-cell';
 import { initSceneGraph } from './group-creater/init-scenegraph';
 import { updateContainerChildrenX } from './utils/update-container';
 
@@ -102,6 +101,9 @@ export class Scenegraph {
         boundsPadding: 0,
         strokeBoundsBuffer: 0,
         lineJoin: 'round'
+      },
+      text: {
+        ignoreBuf: true
       }
     });
     this.initSceneGraph();

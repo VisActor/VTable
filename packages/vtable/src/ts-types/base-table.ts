@@ -542,7 +542,6 @@ export interface BaseTableAPI {
     text: string,
     font: { fontSize: number; fontWeight?: string | number; fontFamily: string }
   ) => ITextSize;
-  measureTextBounds: (attributes: IWrapTextGraphicAttribute) => ITextSize;
 
   _canResizeColumn: (col: number, row: number) => boolean;
 
