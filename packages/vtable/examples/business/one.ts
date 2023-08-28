@@ -1,7 +1,7 @@
 /* eslint-disable */
 import * as VTable from '../../src';
 const ListTable = VTable.ListTable;
-const Table_CONTAINER_DOM_ID = 'vTable';
+const CONTAINER_ID = 'vTable';
 function fieldFormat(num) {
   // 将数字转换为字符串
   const str = num.toFixed(2).toString();
@@ -4014,7 +4014,7 @@ export function createTable() {
       enableSingalCellHighlight: true
     },
     showHeader: true,
-    container: document.getElementById(Table_CONTAINER_DOM_ID)
+    container: document.getElementById(CONTAINER_ID)
   };
   const instance = new ListTable(options);
 

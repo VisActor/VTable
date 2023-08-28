@@ -1,5 +1,5 @@
 import VChart from '@visactor/vchart';
-const Table_CONTAINER_DOM_ID = 'vTable';
+const CONTAINER_ID = 'vTable';
 
 export function createTable() {
   const spec = {
@@ -105,7 +105,7 @@ export function createTable() {
     }
   };
 
-  const vchart = new VChart(spec, { dom: Table_CONTAINER_DOM_ID, animation: false });
+  const vchart = new VChart(spec, { dom: CONTAINER_ID, animation: false });
   vchart.renderSync();
   setTimeout(() => {
     const canvas1 = vchart.getStage().toCanvas();

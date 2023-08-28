@@ -1,6 +1,6 @@
 import * as VTable from '../../src';
 import { bindDebugTool } from '../../src/scenegraph/debug-tool';
-const Table_CONTAINER_DOM_ID = 'vTable';
+const CONTAINER_ID = 'vTable';
 
 function generateRandomString(length) {
   let result = '';
@@ -169,7 +169,7 @@ export function createTable() {
     }
   ];
   const option: VTable.TYPES.ListTableConstructorOptions = {
-    container: document.getElementById(Table_CONTAINER_DOM_ID),
+    container: document.getElementById(CONTAINER_ID),
     records,
     columns,
     heightMode: 'autoHeight',
@@ -177,8 +177,4 @@ export function createTable() {
   };
   const tableInstance = new VTable.ListTable(option);
   (window as any).tableInstance = tableInstance;
-
-  bindDebugTool(tableInstance.scenegraph.stage as any, {
-    customGrapicKeys: ['role', 'row', 'col']
-  });
 }

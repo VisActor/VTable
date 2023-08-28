@@ -97,7 +97,6 @@ const columns =[
 ];
 
 const option = {
-  parentElement: document.getElementById(Table_CONTAINER_DOM_ID),
   records:[
       {
       "Order ID": "CA-2018-156720",
@@ -118,7 +117,7 @@ const option = {
   columns,
   widthMode:'standard'
 };
-const tableInstance = new VTable.ListTable(option);
+const tableInstance = new VTable.ListTable(document.getElementById(CONTAINER_ID), option);
 
 
 

@@ -1,7 +1,7 @@
 import * as VTable from '../../src';
 import { animal1ImageUrl, animal2ImageUrl, animal3ImageUrl, animal4ImageUrl, animalImageUrl } from '../resource-url';
 const ListTable = VTable.ListTable;
-const Table_CONTAINER_DOM_ID = 'vTable';
+const CONTAINER_ID = 'vTable';
 
 export function createTable() {
   const personsDataSource = [
@@ -36,7 +36,7 @@ export function createTable() {
     }
   ];
   const option: VTable.ListTableConstructorOptions = {
-    container: document.getElementById(Table_CONTAINER_DOM_ID),
+    container: document.getElementById(CONTAINER_ID),
     columns: [
       {
         field: 'progress',

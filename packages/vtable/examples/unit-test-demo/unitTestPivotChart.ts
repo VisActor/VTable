@@ -1,7 +1,7 @@
 /* eslint-disable */
 import * as VTable from '../../src';
 import VChart from '@visactor/vchart';
-const Table_CONTAINER_DOM_ID = 'vTable';
+const CONTAINER_ID = 'vTable';
 VTable.register.chartModule('vchart', VChart);
 export function createTable() {
   const rowTree = [
@@ -9209,7 +9209,7 @@ export function createTable() {
       '230713150305018': '利润'
     }
   ];
-  const containerDom: HTMLElement = document.getElementById(Table_CONTAINER_DOM_ID);
+  const containerDom: HTMLElement = document.getElementById(CONTAINER_ID);
 
   containerDom.style.position = 'relative';
   containerDom.style.width = '500px';
@@ -9222,7 +9222,7 @@ export function createTable() {
     columns,
     indicators,
     indicatorsAsCol: false,
-    container: document.getElementById(Table_CONTAINER_DOM_ID),
+    container: document.getElementById(CONTAINER_ID),
     records,
     defaultRowHeight: 200,
     defaultHeaderRowHeight: 50,
