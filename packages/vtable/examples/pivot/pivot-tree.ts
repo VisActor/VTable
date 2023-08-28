@@ -1,14 +1,14 @@
 import * as VTable from '../../src';
 import { bindDebugTool } from '../../src/scenegraph/debug-tool';
 const PivotTable = VTable.PivotTable;
-const Table_CONTAINER_DOM_ID = 'vTable';
+const CONTAINER_ID = 'vTable';
 
 export function createTable() {
   fetch(window.location.origin + '/pivot/supermarket-flat.json')
     .then(res => res.json())
     .then(data => {
       const option: VTable.PivotTableConstructorOptions = {
-        container: document.getElementById(Table_CONTAINER_DOM_ID),
+        container: document.getElementById(CONTAINER_ID),
         records: data,
         menu: {
           contextMenuItems: ['复制单元格内容', '查询详情']
@@ -437,10 +437,6 @@ export function createTable() {
       const tableInstance = new PivotTable(option);
       // 只为了方便控制太调试用，不要拷贝
       (window as any).tableInstance = tableInstance;
-
-      bindDebugTool(tableInstance.scenegraph.stage as any, {
-        customGrapicKeys: ['role', '_updateTag']
-      });
     })
     // eslint-disable-next-line no-console
     .catch(e => console.log(e));

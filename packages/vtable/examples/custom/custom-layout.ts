@@ -2,7 +2,7 @@ import * as VTable from '../../src';
 import { IconPosition } from '../../src/ts-types';
 import { bearImageUrl, birdImageUrl, catImageUrl, flowerImageUrl, rabbitImageUrl, wolfImageUrl } from '../resource-url';
 const ListTable = VTable.ListTable;
-const Table_CONTAINER_DOM_ID = 'vTable';
+const CONTAINER_ID = 'vTable';
 VTable.register.icon('location', {
   type: 'svg',
   name: 'location',
@@ -52,7 +52,7 @@ VTable.register.icon('message', {
 
 export function createTable() {
   const option: VTable.ListTableConstructorOptions = {
-    container: document.getElementById(Table_CONTAINER_DOM_ID),
+    container: document.getElementById(CONTAINER_ID),
     columns: [
       {
         field: 'bloggerId',

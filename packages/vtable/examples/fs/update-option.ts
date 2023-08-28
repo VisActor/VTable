@@ -2,7 +2,7 @@
 import * as VTable from '../../src';
 import VChart from '@visactor/vchart';
 import { bindDebugTool } from '../../src/scenegraph/debug-tool';
-const Table_CONTAINER_DOM_ID = 'vTable';
+const CONTAINER_ID = 'vTable';
 VTable.register.chartModule('vchart', VChart);
 export function createTable() {
   const option = {
@@ -1362,7 +1362,7 @@ export function createTable() {
     },
     hash: '92b01dab92f6715a50c38888c7444e59'
   };
-  option.container = document.getElementById(Table_CONTAINER_DOM_ID);
+  option.container = document.getElementById(CONTAINER_ID);
 
   const tableInstance = new VTable.PivotChart(option);
 

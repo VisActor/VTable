@@ -1,7 +1,7 @@
 /* eslint-disable */
 import * as VTable from '../../src';
 import VChart from '@visactor/vchart';
-const Table_CONTAINER_DOM_ID = 'vTable';
+const CONTAINER_ID = 'vTable';
 VTable.register.chartModule('vchart', VChart);
 export function createTable() {
   fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American_Superstore_Pivot_Chart_data.json')
@@ -418,7 +418,7 @@ export function createTable() {
         renderChartAsync: true
       };
 
-      const tableInstance = new VTable.PivotChart(document.getElementById(Table_CONTAINER_DOM_ID)!, option);
+      const tableInstance = new VTable.PivotChart(document.getElementById(CONTAINER_ID)!, option);
       tableInstance.onVChartEvent('click', args => {
         console.log('listenChart click', args);
       });

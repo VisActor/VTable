@@ -3,7 +3,7 @@ category: examples
 group: Component
 title: title
 cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/tooltip.png
-order: 8-4
+order: 8-5
 ---
 
 # title

@@ -2,7 +2,7 @@ import * as VTable from '../../src';
 import { bindDebugTool } from '../../src/scenegraph/debug-tool';
 import { animalImageUrl, flowerVideoUrl } from '../resource-url';
 const PivotTable = VTable.PivotTable;
-const Table_CONTAINER_DOM_ID = 'vTable';
+const CONTAINER_ID = 'vTable';
 
 export function createTable() {
   const data = [
@@ -146,7 +146,7 @@ export function createTable() {
     }
   ];
   const option: VTable.PivotTableConstructorOptions = {
-    container: document.getElementById(Table_CONTAINER_DOM_ID),
+    container: document.getElementById(CONTAINER_ID),
     records: data,
     menu: {
       contextMenuItems: ['复制单元格内容', '查询详情']

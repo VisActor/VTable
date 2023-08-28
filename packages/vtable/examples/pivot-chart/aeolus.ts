@@ -1,11 +1,11 @@
 /* eslint-disable */
 import * as VTable from '../../src';
 import VChart from '@visactor/vchart';
-const Table_CONTAINER_DOM_ID = 'vTable';
+const CONTAINER_ID = 'vTable';
 VTable.register.chartModule('vchart', VChart);
 export function createTable() {
   const option: VTable.PivotChartConstructorOptions = {
-    parentElement: document.getElementById(Table_CONTAINER_DOM_ID),
+    container: document.getElementById(CONTAINER_ID),
     widthMode: 'adaptive',
     heightMode: 'adaptive',
     columnTree: [
@@ -953,7 +953,7 @@ export function createTable() {
     hash: '76db920edb2907307b83ff2c51a2c67c'
   };
 
-  const tableInstance = new VTable.PivotChart(document.getElementById(Table_CONTAINER_DOM_ID), option);
+  const tableInstance = new VTable.PivotChart(document.getElementById(CONTAINER_ID), option);
   tableInstance.listenChart('click', args => {
     console.log('listenChart click', args);
   });
