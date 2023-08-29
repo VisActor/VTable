@@ -98,7 +98,7 @@ const records = [
 const columns = [
   {
     field: 'name',
-    caption: 'name',
+    title: 'name',
     columnType: 'link',
     templateLink: 'https://www.google.com.hk/search?q={name}',
     linkJump: true,
@@ -106,27 +106,27 @@ const columns = [
   },
   {
     field: 'introduction',
-    caption: 'introduction',
+    title: 'introduction',
     columnType: 'text',
     width:200
   },
   {
     field: 'image',
-    caption: 'bird image',
+    title: 'bird image',
     columnType: 'image',
     width:150,
     // imageSizing : 'keep-aspect-ratio',
   },
   {
     field: 'vedio',
-    caption: 'bird video',
+    title: 'bird video',
     columnType: 'video',
     width:150,
     // imageSizing : 'keep-aspect-ratio',
   },
   {
     field: 'YoY',
-    caption: 'count Year-over-Year',
+    title: 'count Year-over-Year',
     columnType: 'progressbar',
     width:200,
     fieldFormat(){
@@ -142,7 +142,7 @@ const columns = [
   },
   {
     field: 'QoQ',
-    caption: 'count Quarter-over-Quarter',
+    title: 'count Quarter-over-Quarter',
     fieldFormat(rec){return rec['QoQ']+'%'},
     style:{
       textAlign:'center'
@@ -173,7 +173,7 @@ const columns = [
   },
   {
     field: 'trend',
-    caption: 'bird count',
+    title: 'bird count',
     columnType: 'sparkline',
     width:300,
     sparklineSpec: {

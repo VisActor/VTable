@@ -217,6 +217,10 @@ export const menus = [
       {
         path: 'pivot',
         name: 'pivot-column-pref'
+      },
+      {
+        path: 'pivot',
+        name: 'pivot-indicator-middle'
       }
     ]
   },

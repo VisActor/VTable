@@ -56,11 +56,11 @@ export function createTable() {
     columns: [
       {
         field: 'bloggerId',
-        caption: '序号'
+        title: '序号'
       },
       {
         field: 'bloggerName',
-        caption: '主播昵称',
+        title: '主播昵称',
         width: '260',
         customLayout: (args: VTable.TYPES.CustomRenderFunctionArg) => {
           const { table, row, col, rect } = args;
@@ -175,7 +175,7 @@ export function createTable() {
       },
       {
         field: 'fansCount',
-        caption: '粉丝数',
+        title: '粉丝数',
         fieldFormat(rec) {
           return rec.fansCount + 'w';
         },
@@ -187,7 +187,7 @@ export function createTable() {
       },
       {
         field: 'worksCount',
-        caption: '作品数',
+        title: '作品数',
         style: {
           fontFamily: 'Arial',
           fontSize: 12,
@@ -196,7 +196,7 @@ export function createTable() {
       },
       {
         field: 'viewCount',
-        caption: '播放量',
+        title: '播放量',
         fieldFormat(rec) {
           return rec.fansCount + 'w';
         },
@@ -208,7 +208,7 @@ export function createTable() {
       },
       {
         field: 'viewCount',
-        caption: '播放量',
+        title: '播放量',
         fieldFormat(rec) {
           return rec.fansCount + 'w';
         },
@@ -220,7 +220,7 @@ export function createTable() {
       },
       {
         field: '',
-        caption: '操作',
+        title: '操作',
         width: 100,
         icon: ['favorite', 'message']
       }

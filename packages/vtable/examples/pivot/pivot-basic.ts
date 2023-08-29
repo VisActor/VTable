@@ -112,7 +112,7 @@ export function createTable() {
     columns: [
       {
         dimensionKey: '地区',
-        dimensionTitle: '地区',
+        title: '地区',
         headerFormat(value) {
           return `${value}地区`;
         },
@@ -143,7 +143,7 @@ export function createTable() {
       },
       {
         dimensionKey: '邮寄方式',
-        dimensionTitle: '邮寄方式11',
+        title: '邮寄方式11',
         headerFormat(value) {
           return `${value}邮寄方式`;
         },
@@ -173,7 +173,7 @@ export function createTable() {
     rows: [
       {
         dimensionKey: '类别',
-        dimensionTitle: '类别',
+        title: '类别',
         drillUp: true,
         width: 'auto',
         headerStyle: {
@@ -187,7 +187,7 @@ export function createTable() {
       },
       {
         dimensionKey: '子类别',
-        dimensionTitle: '子类别',
+        title: '子类别',
         headerStyle: {
           textAlign: 'center',
           color: 'blue',
@@ -201,7 +201,7 @@ export function createTable() {
     indicators: [
       {
         indicatorKey: '1',
-        caption: '销售额',
+        title: '销售额',
         format(rec) {
           return `${rec.dataValue}%`;
         },
@@ -234,7 +234,7 @@ export function createTable() {
       },
       {
         indicatorKey: '2',
-        caption: '利润',
+        title: '利润',
         format(rec) {
           // if (rec.rowDimensions[0].value === '东北') return `${rec.dataValue}%`;
           return rec.dataValue;
@@ -313,12 +313,10 @@ export function createTable() {
             value: '一级',
             children: [
               {
-                // dimensionKey: '指标名称',
                 indicatorKey: '1',
                 value: '销售额'
               },
               {
-                // dimensionKey: '指标名称',
                 indicatorKey: '2',
                 value: '利润'
               }
@@ -329,12 +327,10 @@ export function createTable() {
             value: '二级',
             children: [
               {
-                // dimensionKey: '指标名称',
                 indicatorKey: '1',
                 value: '销售额'
               },
               {
-                // dimensionKey: '指标名称',
                 indicatorKey: '2',
                 value: '利润'
               }

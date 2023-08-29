@@ -106,8 +106,8 @@ export class HeaderHelper {
       icons.push(...dropDownStateIcons);
     }
 
-    const { captionIcon, headerIcon } = this._table._getHeaderLayoutMap(col, row);
-    captionIcon && icons.push(captionIcon);
+    const { headerIcon } = this._table._getHeaderLayoutMap(col, row);
+    // captionIcon && icons.push(captionIcon);
 
     const hierarchyIcon = this.getHierarchyIcon(col, row);
     if (hierarchyIcon) {

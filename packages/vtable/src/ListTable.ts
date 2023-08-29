@@ -155,8 +155,8 @@ export class ListTable extends BaseTable implements ListTableAPI {
   getCellValue(col: number, row: number): FieldData {
     const table = this;
     if (table.internalProps.layoutMap.isHeader(col, row)) {
-      const { caption } = table.internalProps.layoutMap.getHeader(col, row);
-      return typeof caption === 'function' ? caption() : caption;
+      const { title } = table.internalProps.layoutMap.getHeader(col, row);
+      return typeof title === 'function' ? title() : title;
     }
     const { field, fieldFormat } = table.internalProps.layoutMap.getBody(col, row);
     return table.getFieldData(fieldFormat || field, col, row);
@@ -165,8 +165,8 @@ export class ListTable extends BaseTable implements ListTableAPI {
   getCellOriginValue(col: number, row: number): FieldData {
     const table = this;
     if (table.internalProps.layoutMap.isHeader(col, row)) {
-      const { caption } = table.internalProps.layoutMap.getHeader(col, row);
-      return typeof caption === 'function' ? caption() : caption;
+      const { title } = table.internalProps.layoutMap.getHeader(col, row);
+      return typeof title === 'function' ? title() : title;
     }
     const { field } = table.internalProps.layoutMap.getBody(col, row);
     return table.getFieldData(field, col, row);

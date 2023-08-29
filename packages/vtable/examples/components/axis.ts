@@ -1214,35 +1214,35 @@ export function createTable() {
     rows: [
       {
         dimensionKey: '221026124726017',
-        dimensionTitle: '省/自治区'
+        title: '省/自治区'
       },
       {
         dimensionKey: '221026124726011',
-        dimensionTitle: '城市',
+        title: '城市',
         isAxis: true
       }
     ],
     columns: [
       {
         dimensionKey: '221026124726008',
-        dimensionTitle: '类别'
+        title: '类别'
       },
       {
         dimensionKey: '221026124726016',
-        dimensionTitle: '指标名称 '
+        title: '指标名称 '
       }
     ],
     indicators: [
       {
         indicatorKey: '221026124726014',
-        caption: '销售额',
+        title: '销售额',
         width: 100,
         showSort: false,
         isAxis: true
       },
       {
         indicatorKey: '221026124726015',
-        caption: '数量',
+        title: '数量',
         width: 100,
         showSort: false,
         isAxis: true

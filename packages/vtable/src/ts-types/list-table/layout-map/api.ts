@@ -43,11 +43,8 @@ export type {
  */
 export interface HeaderData extends WidthData {
   id: LayoutObjectId;
-  caption?: string | (() => string);
-  /** @deprecated
-   * 已废除该配置 标题中显示图标 现在请使用headerIcon进行配置
-   */
-  captionIcon?: ColumnIconOption;
+  title?: string | (() => string);
+  // captionIcon?: ColumnIconOption;
   headerIcon?:
     | string
     | ColumnIconOption

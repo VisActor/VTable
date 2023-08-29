@@ -26,57 +26,57 @@ data=data.slice(0,10);
 const columns =[
     {
         "field": "230517143221027",
-        "caption": "Order ID",
+        "title": "Order ID",
         "width": "auto"
     },
     {
         "field": "230517143221030",
-        "caption": "Customer ID",
+        "title": "Customer ID",
         "width": "auto"
     },
     {
         "field": "230517143221032",
-        "caption": "Product Name",
+        "title": "Product Name",
         "width": "auto"
     },
     {
         "field": "230517143221023",
-        "caption": "Category",
+        "title": "Category",
         "width": "auto"
     },
     {
         "field": "230517143221034",
-        "caption": "Sub-Category",
+        "title": "Sub-Category",
         "width": "auto"
     },
     {
         "field": "230517143221037",
-        "caption": "Region",
+        "title": "Region",
         "width": "auto"
     },
     {
         "field": "230517143221024",
-        "caption": "City",
+        "title": "City",
         "width": "auto"
     },
     {
         "field": "230517143221029",
-        "caption": "Order Date",
+        "title": "Order Date",
         "width": "auto"
     },
     {
         "field": "230517143221042",
-        "caption": "Quantity",
+        "title": "Quantity",
         "width": "auto"
     },
     {
         "field": "230517143221040",
-        "caption": "Sales",
+        "title": "Sales",
         "width": "auto"
     },
     {
         "field": "230517143221041",
-        "caption": "Profit",
+        "title": "Profit",
         "width": "auto"
     }
 ];

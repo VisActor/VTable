@@ -181,7 +181,7 @@ const option = {
     rows:[
       {
         dimensionKey: 'order_data',
-        dimensionTitle: 'Order Data',
+        title: 'Order Data',
         headerStyle: {
           textStick: true,
         },
@@ -192,7 +192,7 @@ const option = {
     columns:[
       {
         dimensionKey: 'time',
-        dimensionTitle: 'Quarter',
+        title: 'Quarter',
         width: '200',
         showSort: false,
         headerStyle: {
@@ -210,7 +210,7 @@ const option = {
       },
       {
         dimensionKey: 'year',
-        dimensionTitle: 'Year',
+        title: 'Year',
         width: '200',
         showSort: false,
         headerStyle: {
@@ -238,7 +238,7 @@ const option = {
       },
       {
         indicatorKey: 'ratio',
-        caption: '环比',
+        title: '环比',
         width: 'auto',
         format: (rec) => {
           if (rec?.ratio) return rec?.ratio * 100 + '%';
@@ -279,7 +279,7 @@ const option = {
       },
       {
         indicatorKey: 'lineData',
-        caption: 'Trend ',
+        title: 'Trend ',
         width: '300',
         columnType: 'sparkline',
         sparklineSpec: {

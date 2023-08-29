@@ -385,7 +385,7 @@ describe('pivotTable init test', () => {
   const rows = [
     {
       dimensionKey: '地区',
-      dimensionTitle: '地区',
+      title: '地区',
       headerStyle: {
         textStick: true,
         color: 'red',
@@ -396,7 +396,7 @@ describe('pivotTable init test', () => {
     },
     {
       dimensionKey: '省/自治区',
-      dimensionTitle: '省/自治区',
+      title: '省/自治区',
       width: 'auto',
       showSort: false,
       headerStyle: {
@@ -416,7 +416,7 @@ describe('pivotTable init test', () => {
   const columns = [
     {
       dimensionKey: '子类别',
-      dimensionTitle: '子类别',
+      title: '子类别',
       headerStyle: {
         textStick: true
       },

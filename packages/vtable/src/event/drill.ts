@@ -18,7 +18,7 @@ export function bindDrillEvent(table: BaseTableAPI) {
     if (dimension?.drillDown || dimension?.drillUp) {
       table.stateManeger.updateDrillState(
         dimension.dimensionKey,
-        dimension.dimensionTitle,
+        dimension.title,
         dimension.drillDown,
         dimension.drillUp,
         col,
