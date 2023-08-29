@@ -225,10 +225,6 @@ export const menus = [
     children: [
       {
         path: 'pivot-analysis',
-        name: 'pivot-dataset'
-      },
-      {
-        path: 'pivot-analysis',
         name: 'pivot-analysis'
       },
       {
