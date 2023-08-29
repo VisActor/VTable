@@ -2,6 +2,7 @@ import * as columnStyleContents from '../body-helper/style';
 import * as headerStyleContents from '../header-helper/style';
 import { importStyle } from './style';
 import * as style from '../tools/style';
+import { AABBBounds } from '@visactor/vutils';
 import type {
   CellAddress,
   CellRange,
@@ -3160,13 +3161,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
   measureText(text: string, font: { fontSize: number; fontWeight: string | number; fontFamily: string }): ITextSize {
     return textMeasure.measureText(text, font);
   }
-  measureTextBounds(attributes: IWrapTextGraphicAttribute): ITextSize {
-    const text = new WrapText(attributes);
-    return {
-      width: text.AABBBounds.width(),
-      height: text.AABBBounds.height()
-    };
-  }
+
   /** 获取单元格上定义的自定义渲染配置 */
   getCustomRender(col: number, row: number): ICustomRender {
     let customRender;
@@ -3210,5 +3205,59 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     return cellGroup?.getChildren()?.[0]?.type === 'chart'
       ? (cellGroup.getChildren()[0] as Chart).activeChartInstance
       : null;
+  }
+
+  /**
+   * 判断单元格是否在显示区域
+   * @param col
+   * @param row
+   */
+  cellIsInVisualView(col: number, row: number) {
+    const drawRange = this.getDrawRange();
+    const rect = this.getCellRelativeRect(col, row);
+
+    if (col < this.frozenColCount && row < this.frozenRowCount) {
+      return true;
+    }
+    if (
+      rect.top >= drawRange.top &&
+      rect.bottom <= drawRange.bottom &&
+      rect.left >= drawRange.left &&
+      rect.right <= drawRange.right
+    ) {
+      return true;
+    }
+    return false;
+  }
+  /**
+   * 导出表格图片
+   * @returns base64图片
+   */
+  exportImg() {
+    const c = this.scenegraph.stage.toCanvas();
+    return c.toDataURL();
+  }
+
+  /**
+   * 导出某个单元格图片
+   * @returns base64图片
+   */
+  exportCellImg(col: number, row: number) {
+    const isInView = this.cellIsInVisualView(col, row);
+    if (!isInView) {
+      this.scrollToCell({ col, row });
+    }
+    const cellRect = this.getCellRelativeRect(col, row);
+    const c = this.scenegraph.stage.toCanvas(
+      false,
+      new AABBBounds().set(
+        cellRect.left + this.tableX + 1,
+        cellRect.top + this.tableY + 1,
+        cellRect.right + this.tableX,
+        cellRect.bottom + this.tableY
+      )
+    );
+    // return c.toDataURL('image/jpeg', 0.5);
+    return c.toDataURL();
   }
 }

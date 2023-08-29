@@ -15,7 +15,8 @@ import { getAxisConfigInPivotChart } from '../../layout/chart-helper/get-axis-co
 import { computeAxisComponentHeight } from '../../components/axis/get-axis-component-size';
 
 const utilTextMark = new WrapText({
-  autoWrapText: true
+  ignoreBuf: true
+  // autoWrapText: true
 });
 const utilRichTextMark = new RichText({
   width: 0,
