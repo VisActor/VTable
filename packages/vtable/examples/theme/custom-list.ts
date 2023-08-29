@@ -1,6 +1,6 @@
 import * as VTable from '../../src';
 const ListTable = VTable.ListTable;
-const Table_CONTAINER_DOM_ID = 'vTable';
+const CONTAINER_ID = 'vTable';
 
 function DEFAULT_BG_COLOR(args) {
   const { row, table } = args;
@@ -43,7 +43,7 @@ export function createTable() {
     }
   ];
   const option: VTable.ListTableConstructorOptions = {
-    container: document.getElementById(Table_CONTAINER_DOM_ID),
+    container: document.getElementById(CONTAINER_ID),
     columns: [
       {
         field: 'progress',

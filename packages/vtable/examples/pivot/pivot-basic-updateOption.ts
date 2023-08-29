@@ -1,7 +1,7 @@
 import * as VTable from '../../src';
 import { bindDebugTool } from '../../src/scenegraph/debug-tool';
 const PivotTable = VTable.PivotTable;
-const Table_CONTAINER_DOM_ID = 'vTable';
+const CONTAINER_ID = 'vTable';
 
 function generatePivotDataSource(num, colCount) {
   const array = new Array(num);
@@ -476,7 +476,7 @@ export function createTable() {
     },
     indicatorTitle: '指标名称',
     // indicatorsAsCol: false,
-    container: document.getElementById(Table_CONTAINER_DOM_ID),
+    container: document.getElementById(CONTAINER_ID),
     records,
     theme,
     showFrozenIcon: false, //显示VTable内置冻结列图标

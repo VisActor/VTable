@@ -21,7 +21,7 @@
 //   return `rgb(${red},${green},${green})`;
 // }
 // const PivotTable = VTable.PivotTable;
-// const Table_CONTAINER_DOM_ID = 'vTable';
+// const CONTAINER_ID = 'vTable';
 
 // export function createTable() {
 //   const option: VTable.PivotTableConstructorOptions = {
@@ -214,7 +214,7 @@
 //     },
 //     indicatorTitle: '指标名称',
 //     // indicatorsAsCol: false,
-//     container: document.getElementById(Table_CONTAINER_DOM_ID),
+//     container: document.getElementById(CONTAINER_ID),
 //     records: [
 //       {
 //         '行 ID': '1',

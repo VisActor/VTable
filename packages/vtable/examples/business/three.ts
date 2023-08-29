@@ -1,7 +1,7 @@
 /* eslint-disable */
 import * as VTable from '../../src';
 
-const Table_CONTAINER_DOM_ID = 'vTable';
+const CONTAINER_ID = 'vTable';
 
 export function createTable() {
   const options = {
@@ -10860,7 +10860,7 @@ export function createTable() {
       enableRowHighlight: false,
       enableSingalCellHighlight: true
     },
-    container: document.getElementById(Table_CONTAINER_DOM_ID)
+    container: document.getElementById(CONTAINER_ID)
   };
   const instance = new VTable.PivotTable(options);
 

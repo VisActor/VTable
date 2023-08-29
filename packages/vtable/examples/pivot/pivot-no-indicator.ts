@@ -1,11 +1,11 @@
 import * as VTable from '../../src';
 import { bindDebugTool } from '../../src/scenegraph/debug-tool';
 const PivotTable = VTable.PivotTable;
-const Table_CONTAINER_DOM_ID = 'vTable';
+const CONTAINER_ID = 'vTable';
 
 export function createTable() {
   const option: VTable.PivotTableConstructorOptions = {
-    container: document.getElementById(Table_CONTAINER_DOM_ID),
+    container: document.getElementById(CONTAINER_ID),
     columns: [
       {
         dimensionKey: '221205165418024',

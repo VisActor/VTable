@@ -1,6 +1,6 @@
 import * as VTable from '../../src';
 const PivotTable = VTable.PivotTable;
-const Table_CONTAINER_DOM_ID = 'vTable';
+const CONTAINER_ID = 'vTable';
 
 function generateLineData1(count) {
   // const count = Math.floor(Math.random() * 50);
@@ -15,7 +15,7 @@ function generateLineData1(count) {
 
 export function createTable() {
   const option: VTable.PivotTableConstructorOptions = {
-    container: document.getElementById(Table_CONTAINER_DOM_ID),
+    container: document.getElementById(CONTAINER_ID),
     theme: {
       headerStyle: {
         frameStyle: {

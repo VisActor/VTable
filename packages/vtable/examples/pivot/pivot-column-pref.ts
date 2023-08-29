@@ -2,7 +2,7 @@
 import * as VTable from '../../src';
 import { bindDebugTool } from '../../src/scenegraph/debug-tool';
 const PivotTable = VTable.PivotTable;
-const Table_CONTAINER_DOM_ID = 'vTable';
+const CONTAINER_ID = 'vTable';
 
 export function createTable() {
   fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/performanceMoreColumn.json')
@@ -219,7 +219,7 @@ export function createTable() {
           enableRowHighlight: false,
           enableSingalCellHighlight: true
         },
-        container: document.getElementById(Table_CONTAINER_DOM_ID)
+        container: document.getElementById(CONTAINER_ID)
       };
       const t0 = window.performance.now();
       const instance = new PivotTable(option);

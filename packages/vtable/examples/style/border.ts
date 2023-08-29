@@ -1,7 +1,7 @@
 import * as VTable from '../../src';
 import { bindDebugTool } from '../../src/scenegraph/debug-tool';
 const ListTable = VTable.ListTable;
-const Table_CONTAINER_DOM_ID = 'vTable';
+const CONTAINER_ID = 'vTable';
 
 export function createTable() {
   const personsDataSource = [
@@ -272,7 +272,7 @@ export function createTable() {
   ];
 
   const option: VTable.TYPES.ListTableConstructorOptions = {
-    container: document.getElementById(Table_CONTAINER_DOM_ID),
+    container: document.getElementById(CONTAINER_ID),
     header, //关联表头定义
     frozenColCount: 0, //冻结列
     allowFrozenColCount: 5, //最多允许冻结的列数，设置5列显示冻结图标

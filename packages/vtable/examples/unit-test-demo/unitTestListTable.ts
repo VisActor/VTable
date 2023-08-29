@@ -1,6 +1,6 @@
 import * as VTable from '../../src';
 const ListTable = VTable.ListTable;
-const Table_CONTAINER_DOM_ID = 'vTable';
+const CONTAINER_ID = 'vTable';
 export function createTable() {
   const records = [
     {
@@ -928,7 +928,7 @@ export function createTable() {
   ];
   //初始化表格
   const tableInstance = new ListTable({
-    container: document.getElementById(Table_CONTAINER_DOM_ID),
+    container: document.getElementById(CONTAINER_ID),
     columns,
     records,
     defaultColWidth: 150,

@@ -1,6 +1,6 @@
 import * as VTable from '../../src';
 import { bindDebugTool } from '../../src/scenegraph/debug-tool';
-const Table_CONTAINER_DOM_ID = 'vTable';
+const CONTAINER_ID = 'vTable';
 export function createTable() {
   function getColor(min, max, n) {
     if (max === min) {
@@ -220,6 +220,6 @@ export function createTable() {
     }
   };
 
-  const tableInstance = new VTable.PivotTable(document.getElementById(Table_CONTAINER_DOM_ID), option);
+  const tableInstance = new VTable.PivotTable(document.getElementById(CONTAINER_ID), option);
   window.tableInstance = tableInstance;
 }

@@ -1,6 +1,6 @@
 import * as VTable from '../../src';
 import { bindDebugTool } from '../../src/scenegraph/debug-tool';
-const Table_CONTAINER_DOM_ID = 'vTable';
+const CONTAINER_ID = 'vTable';
 export function createTable() {
   fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American_Superstore_data.json')
     .then(res => res.json())
@@ -119,7 +119,7 @@ export function createTable() {
           padding: 10
         }
       };
-      const tableInstance = new VTable.ListTable(document.getElementById(Table_CONTAINER_DOM_ID), option);
+      const tableInstance = new VTable.ListTable(document.getElementById(CONTAINER_ID), option);
       window.tableInstance = tableInstance;
       const { LEGEND_ITEM_CLICK } = VTable.ListTable.EVENT_TYPE;
       tableInstance.on(LEGEND_ITEM_CLICK, args => {

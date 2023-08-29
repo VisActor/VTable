@@ -1,5 +1,5 @@
 import * as VTable from '../../src';
-const Table_CONTAINER_DOM_ID = 'vTable';
+const CONTAINER_ID = 'vTable';
 const generatePersons = count => {
   return Array.from(new Array(count)).map((_, i) => ({
     id: i + 1,
@@ -71,7 +71,7 @@ export function createTable() {
     }
   ];
   const option = {
-    container: document.getElementById(Table_CONTAINER_DOM_ID),
+    container: document.getElementById(CONTAINER_ID),
     records,
     columns
   };
@@ -79,7 +79,7 @@ export function createTable() {
   (window as any).tableInstance = tableInstance;
   setTimeout(() => {
     const option1 = {
-      //container: document.getElementById(Table_CONTAINER_DOM_ID),
+      //container: document.getElementById(CONTAINER_ID),
       // records,
       columns,
       // widthMode: 'autoWidth',
