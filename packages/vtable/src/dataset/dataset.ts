@@ -126,9 +126,7 @@ export class Dataset {
     this.colSubTotalLabel = this.totals?.column?.subTotalLabel ?? '小计';
     this.rowGrandTotalLabel = this.totals?.row?.grandTotalLabel ?? '总计';
     this.rowSubTotalLabel = this.totals?.row?.subTotalLabel ?? '小计';
-    this.collectValuesBy = this.dataConfig?.collectValuesBy ?? {
-      '230417170554008': { by: ['230417171050031', '230417171050028'] }
-    };
+    this.collectValuesBy = this.dataConfig?.collectValuesBy;
     // for (let i = 0; i < this.indicators.length; i++) {
     //   this.indicatorStatistics.push({
     //     max: new this.aggregators[AggregationType.MAX](this.indicators[i]),
@@ -208,7 +206,7 @@ export class Dataset {
       const t8 = typeof window !== 'undefined' ? window.performance.now() : 0;
       console.log('TreeToArr:', t8 - t7);
 
-      if (this.dataConfig.isPivotChart) {
+      if (this.dataConfig?.isPivotChart) {
         // 处理PivotChart双轴图0值对齐
         this.dealWithZeroAlign();
 
@@ -533,7 +531,7 @@ export class Dataset {
     this.processCollectedValuesWithSumBy();
     this.processCollectedValuesWithSortBy();
 
-    if (this.dataConfig.isPivotChart) {
+    if (this.dataConfig?.isPivotChart) {
       // 处理PivotChart双轴图0值对齐
       this.dealWithZeroAlign();
     }

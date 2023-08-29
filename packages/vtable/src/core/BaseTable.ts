@@ -117,7 +117,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
   canvasWidth?: number;
   canvasHeight?: number;
 
-  dataSet: DataSet;
+  _vDataSet: DataSet;
   scenegraph: Scenegraph;
   stateManeger?: StateManeger;
   eventManeger?: EventManeger;
@@ -293,7 +293,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     internalProps.limitMaxAutoWidth = options.limitMaxAutoWidth ?? 450;
 
     // 生成scenegraph
-    this.dataSet = new DataSet();
+    this._vDataSet = new DataSet();
     this.scenegraph = new Scenegraph(this);
     this.stateManeger = new StateManeger(this);
     this.eventManeger = new EventManeger(this);
@@ -1793,7 +1793,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     internalProps.allowFrozenColCount = options.allowFrozenColCount ?? internalProps.colCount;
     internalProps.limitMaxAutoWidth = options.limitMaxAutoWidth ?? 450;
     // 生成scenegraph
-    this.dataSet = new DataSet();
+    this._vDataSet = new DataSet();
     internalProps.legends?.release();
     internalProps.title?.release();
     internalProps.layoutMap.release();
