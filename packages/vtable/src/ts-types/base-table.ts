@@ -552,7 +552,8 @@ export interface BaseTableAPI {
   isPivotChart: (() => boolean) & (() => boolean);
   _clearColRangeWidthsMap: (col?: number) => void;
   _clearRowRangeHeightsMap: (row?: number) => void;
-
+  clearRowHeightCache: () => void;
+  clearColWidthCache: () => void;
   toggleHierarchyState: (col: number, row: number) => void;
 
   resize: () => void;
@@ -561,6 +562,8 @@ export interface BaseTableAPI {
 
   getTargetColAt: (absoluteX: number) => { col: number; left: number; right: number; width: number } | null;
   getTargetRowAt: (absoluteY: number) => { row: number; top: number; bottom: number; height: number } | null;
+
+  renderWithRecreateCells: () => void;
   //#endregion  tableAPI
 }
 export interface ListTableProtected extends IBaseTableProtected {

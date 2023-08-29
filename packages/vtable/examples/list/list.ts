@@ -74,6 +74,9 @@ export function createTable() {
     container: document.getElementById(CONTAINER_ID),
     records,
     columns
+    // autoWrapText: true,
+    // heightMode: 'autoHeight',
+    // widthMode: 'adaptive'
   };
   const tableInstance = new VTable.ListTable(option);
   (window as any).tableInstance = tableInstance;

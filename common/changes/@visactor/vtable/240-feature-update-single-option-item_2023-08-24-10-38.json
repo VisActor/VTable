@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "comment": "feat: add api for updateAutoWrapText widthMode heightMode #240\n\n",
+      "type": "patch",
+      "packageName": "@visactor/vtable"
+    }
+  ],
+  "packageName": "@visactor/vtable",
+  "email": "892739385@qq.com"
+}
