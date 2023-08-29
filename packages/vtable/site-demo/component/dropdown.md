@@ -3,7 +3,7 @@ category: examples
 group: Component
 title: 下拉菜单
 cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/dropdown.png
-order: 8-2
+order: 8-3
 ---
 
 # 下拉菜单

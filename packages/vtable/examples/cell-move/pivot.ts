@@ -1,7 +1,7 @@
 import * as VTable from '../../src';
 import { generatePivotDataSource } from '../util/pivot-data';
 const PivotTable = VTable.PivotTable;
-const Table_CONTAINER_DOM_ID = 'vTable';
+const CONTAINER_ID = 'vTable';
 
 export function createTable() {
   const option = {
@@ -450,7 +450,7 @@ export function createTable() {
     },
     indicatorTitle: 'zhibiaomingc'
   };
-  option.parentElement = document.getElementById(Table_CONTAINER_DOM_ID);
+  option.container = document.getElementById(CONTAINER_ID);
   const instance = new PivotTable(option);
 
   VTable.bindDebugTool(instance.scenegraph.stage as any, {

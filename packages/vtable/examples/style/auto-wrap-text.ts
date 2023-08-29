@@ -1,6 +1,6 @@
 import * as VTable from '../../src';
 const PivotTable = VTable.PivotTable;
-const Table_CONTAINER_DOM_ID = 'vTable';
+const CONTAINER_ID = 'vTable';
 
 function generatePivotDataSource(num, colCount) {
   const array = new Array(num);
@@ -454,7 +454,7 @@ export function createTable() {
       //   hoverBgColor: '#EEE'
       // }
     },
-    container: document.getElementById(Table_CONTAINER_DOM_ID),
+    container: document.getElementById(CONTAINER_ID),
     records,
     showFrozenIcon: false, //显示VTable内置冻结列图标
     // widthMode: 'autoWidth', // 宽度模式：standard 标准模式； adaptive 自动填满容器

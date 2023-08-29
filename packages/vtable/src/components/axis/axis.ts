@@ -75,12 +75,12 @@ export class CartesianAxis {
   }
 
   initData() {
-    registerDataSetInstanceParser(this.table.dataSet, 'scale', scaleParser);
-    registerDataSetInstanceTransform(this.table.dataSet, 'ticks', ticks);
+    registerDataSetInstanceParser(this.table._vDataSet, 'scale', scaleParser);
+    registerDataSetInstanceTransform(this.table._vDataSet, 'ticks', ticks);
 
     const label = this.option.label || {};
     const tick = this.option.tick || {};
-    const tickData = new DataView(this.table.dataSet)
+    const tickData = new DataView(this.table._vDataSet)
       .parse(this.scale._scale, {
         type: 'scale'
       })

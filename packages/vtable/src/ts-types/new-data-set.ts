@@ -84,6 +84,8 @@ export interface SortByRule {
 export interface SortByIndicatorRule {
   /**排序维度 */
   sortField: string;
+  /**升序降序 ASC or DESC*/
+  sortType?: SortType;
   /**排序根据某个指标值 */
   sortByIndicator?: string;
   /**如果按指标值排序，还需要指定另外一个（行或列）方向的底层维度成员具体值。例如按照办公用品下的纸张 ['办公用品', '纸张'] */
@@ -168,7 +170,9 @@ export interface IDataConfig {
   totals?: Totals; //小计或总计；
   // indicatorsAsCol?: boolean;
   // hideIndicatorName?: boolean;
-
+  /**
+   * 目前mappding还不太好用  不建议使用  建议先用style
+   */
   mappingRules?: MappingRules;
   derivedFieldRules?: DerivedFieldRules;
 

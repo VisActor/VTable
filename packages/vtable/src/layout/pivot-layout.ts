@@ -473,7 +473,7 @@ export class PivotLayoutMap implements LayoutMapAPI {
         this._headerObjectMap[indicatorKey] = {
           id: indicatorKey,
           field: this.indicatorDimensionKey,
-          caption: indicatorInfo.caption ?? indicatorKey,
+          caption: indicatorInfo?.caption ?? indicatorKey,
           style: indicatorInfo?.headerStyle, //?? indicatorDimensionInfo?.headerStyle,
           define: {
             field: this.indicatorDimensionKey,
@@ -543,9 +543,9 @@ export class PivotLayoutMap implements LayoutMapAPI {
         ),
         fieldFormat: indicatorInfo?.format,
         columnType: indicatorInfo?.columnType ?? 'text',
-        chartModule: indicatorInfo && ('chartModule' in indicatorInfo ? indicatorInfo.chartModule : null),
-        chartSpec: indicatorInfo && ('chartSpec' in indicatorInfo ? indicatorInfo.chartSpec : null),
-        sparklineSpec: 'sparklineSpec' in indicatorInfo ? indicatorInfo.sparklineSpec : null,
+        chartModule: indicatorInfo && ('chartModule' in indicatorInfo ? indicatorInfo?.chartModule : null),
+        chartSpec: indicatorInfo && ('chartSpec' in indicatorInfo ? indicatorInfo?.chartSpec : null),
+        sparklineSpec: indicatorInfo && ('sparklineSpec' in indicatorInfo ? indicatorInfo?.sparklineSpec : null),
         style: indicatorInfo?.style,
         icon: indicatorInfo?.icon,
         width: indicatorInfo?.width,

@@ -204,10 +204,6 @@ export const menus = [
       },
       {
         path: 'pivot',
-        name: 'pivot-dataset'
-      },
-      {
-        path: 'pivot',
         name: 'pivot-indicator-row'
       },
       {
@@ -221,6 +217,39 @@ export const menus = [
       {
         path: 'pivot',
         name: 'pivot-column-pref'
+      }
+    ]
+  },
+  {
+    menu: 'pivot-analysis',
+    children: [
+      {
+        path: 'pivot-analysis',
+        name: 'pivot-analysis'
+      },
+      {
+        path: 'pivot-analysis',
+        name: 'pivot-analysis-total'
+      },
+      {
+        path: 'pivot-analysis',
+        name: 'pivot-analysis-more-data'
+      },
+      {
+        path: 'pivot-analysis',
+        name: 'pivot-analysis-filter'
+      },
+      {
+        path: 'pivot-analysis',
+        name: 'pivot-analysis-mapping'
+      },
+      {
+        path: 'pivot-analysis',
+        name: 'pivot-analysis-sort'
+      },
+      {
+        path: 'pivot-analysis',
+        name: 'pivot-analysis-aggregationRules'
       }
     ]
   },

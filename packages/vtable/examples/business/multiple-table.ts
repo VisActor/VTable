@@ -15,10 +15,10 @@ const generatePersons = count => {
 };
 
 const ListTable = VTable.ListTable;
-const Table_CONTAINER_DOM_ID = 'vTable';
+const CONTAINER_ID = 'vTable';
 
-const container = document.getElementById(Table_CONTAINER_DOM_ID)!;
-// const parent = container.parentElement;
+const container = document.getElementById(CONTAINER_ID)!;
+// const parent = container.container;
 const container1 = document.createElement('div');
 container.appendChild(container1);
 const container2 = document.createElement('div');

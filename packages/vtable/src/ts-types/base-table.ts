@@ -395,7 +395,7 @@ export interface BaseTableAPI {
   ) => EventListenerId;
   // &(<T extends keyof TableEventHandlersEventArgumentMap>(type: string, listener: AnyListener<T>) => EventListenerId);
 
-  dataSet: DataSet;
+  _vDataSet: DataSet;
   /** 场景树对象 */
   scenegraph: Scenegraph;
   /** 状态管理模块 */

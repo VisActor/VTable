@@ -1,13 +1,13 @@
 import * as VTable from '../../src';
 const ListTable = VTable.ListTable;
-const Table_CONTAINER_DOM_ID = 'vTable';
+const CONTAINER_ID = 'vTable';
 
 export function createTable() {
   fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American_Superstore_Pivot_data.json')
     .then(res => res.json())
     .then(data => {
       const option: VTable.PivotTableConstructorOptions = {
-        container: document.getElementById(Table_CONTAINER_DOM_ID),
+        container: document.getElementById(CONTAINER_ID),
         records: data,
         indicatorTitle: '指标名称',
         menu: {

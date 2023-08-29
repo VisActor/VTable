@@ -2,7 +2,7 @@
 import * as VTable from '../../src';
 import VChart from '@visactor/vchart';
 import { bindDebugTool } from '../../src/scenegraph/debug-tool';
-const Table_CONTAINER_DOM_ID = 'vTable';
+const CONTAINER_ID = 'vTable';
 VTable.register.chartModule('vchart', VChart);
 export function createTable() {
   const rowTree = [
@@ -9284,7 +9284,7 @@ export function createTable() {
     columns,
     indicators,
     indicatorsAsCol: false,
-    container: document.getElementById(Table_CONTAINER_DOM_ID),
+    container: document.getElementById(CONTAINER_ID),
     records,
     defaultRowHeight: 200,
     defaultHeaderRowHeight: 50,

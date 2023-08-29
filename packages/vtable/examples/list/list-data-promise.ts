@@ -1,5 +1,5 @@
 import * as VTable from '../../src';
-const Table_CONTAINER_DOM_ID = 'vTable';
+const CONTAINER_ID = 'vTable';
 const generatePersons = i => {
   return {
     id: i + 1,
@@ -108,7 +108,7 @@ export function createTable() {
     }
   ];
   const option = {
-    container: document.getElementById(Table_CONTAINER_DOM_ID),
+    container: document.getElementById(CONTAINER_ID),
     // records,
     columns,
 

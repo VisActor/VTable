@@ -1,6 +1,6 @@
 import * as VTable from '../../src';
 const PivotTable = VTable.PivotTable;
-const Table_CONTAINER_DOM_ID = 'vTable';
+const CONTAINER_ID = 'vTable';
 export function createTable(el: any, v: any) {
   const rowTree = [
     {
@@ -438,7 +438,7 @@ export function createTable(el: any, v: any) {
   ];
   //初始化表格
   const tableInstance = new PivotTable({
-    container: document.getElementById(Table_CONTAINER_DOM_ID),
+    container: document.getElementById(CONTAINER_ID),
     rowTree,
     columnTree,
     rows,
