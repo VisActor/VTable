@@ -56,11 +56,11 @@ export function computeAxisComponentWidth(config: ICellAxisOption, table: BaseTa
   let titleWidth = 0;
   if (attribute.title.visible && attribute.title.text) {
     const { width, height } = table.measureText(attribute.title.text, {
-      fontSize: attribute.label?.style?.fontSize,
-      fontWeight: attribute.label?.style?.fontWeight,
-      fontFamily: attribute.label?.style?.fontFamily
+      fontSize: attribute.title?.style?.fontSize,
+      fontWeight: attribute.title?.style?.fontWeight,
+      fontFamily: attribute.title?.style?.fontFamily
     });
-    const size = getSizeAfterResize(width, height, attribute.label?.style?.angle);
+    const size = getSizeAfterResize(width, height, attribute.title?.style?.angle);
     if ((config.orient === 'left' || config.orient === 'right') && attribute.title.autoRotate) {
       titleWidth = size.height + 2;
     } else {
@@ -128,11 +128,11 @@ export function computeAxisComponentHeight(config: ICellAxisOption, table: BaseT
   let titleHeight = 0;
   if (attribute.title.visible && attribute.title.text) {
     const { width, height } = table.measureText(attribute.title.text, {
-      fontSize: attribute.label?.style?.fontSize,
-      fontWeight: attribute.label?.style?.fontWeight,
-      fontFamily: attribute.label?.style?.fontFamily
+      fontSize: attribute.title?.style?.fontSize,
+      fontWeight: attribute.title?.style?.fontWeight,
+      fontFamily: attribute.title?.style?.fontFamily
     });
-    const size = getSizeAfterResize(width, height, attribute.label?.style?.angle);
+    const size = getSizeAfterResize(width, height, attribute.title?.style?.angle);
     if ((config.orient === 'bottom' || config.orient === 'top') && attribute.title.autoRotate) {
       titleHeight = size.width + 2;
     } else {
