@@ -170,7 +170,9 @@ export interface IDataConfig {
   totals?: Totals; //小计或总计；
   // indicatorsAsCol?: boolean;
   // hideIndicatorName?: boolean;
-
+  /**
+   * 目前mappding还不太好用  不建议使用  建议先用style
+   */
   mappingRules?: MappingRules;
   derivedFieldRules?: DerivedFieldRules;
 
