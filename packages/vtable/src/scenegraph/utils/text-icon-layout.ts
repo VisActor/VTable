@@ -85,6 +85,7 @@ export function createCellContent(
         textBaseline: 'top',
         autoWrapText,
         lineClamp,
+        wordBreak: 'break-word',
         // widthLimit: autoColWidth ? -1 : colWidth - (padding[1] + padding[3]),
         heightLimit: autoRowHeight ? -1 : cellHeight - (padding[0] + padding[2]),
         pickable: false,
@@ -187,7 +188,8 @@ export function createCellContent(
         heightLimit: autoRowHeight ? -1 : cellHeight - (padding[0] + padding[2]),
         pickable: false,
         autoWrapText,
-        lineClamp
+        lineClamp,
+        wordBreak: 'break-word'
       };
       const wrapText = new WrapText(cellTheme.text ? (Object.assign({}, cellTheme.text, attribute) as any) : attribute);
       wrapText.name = 'text';
