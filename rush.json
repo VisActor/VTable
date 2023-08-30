@@ -5,7 +5,7 @@
   "nodeSupportedVersionRange": ">=14.15.0 <15.0.0 || >=16.13.0 <17.0.0 || >=18.15.0 <19.0.0",
   "suppressNodeLtsWarning": true,
   "ensureConsistentVersions": true,
-  "projectFolderMinDepth": 2,
+  "projectFolderMinDepth": 1,
   "projectFolderMaxDepth": 2,
   "allowMostlyStandardPackageNames": false,
   "repository": {
@@ -20,7 +20,8 @@
   "allowedProjectTags": [
     "tool",
     "share",
-    "package"
+    "package",
+    "doc"
   ],
   "projects": [
     {
@@ -30,6 +31,14 @@
         "package"
       ],
       "shouldPublish": true
+    },
+    {
+      "packageName": "@internal/docs",
+      "projectFolder": "docs",
+      "tags": [
+        "doc"
+      ],
+      "shouldPublish": false
     },
     {
       "packageName": "@internal/bundler",

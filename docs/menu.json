@@ -1,0 +1,29 @@
+[
+  {
+    "menu": "demos",
+    "type": "markdown"
+  },
+  {
+    "menu": "examples",
+    "type": "markdown"
+  },
+  {
+    "menu": "tutorials",
+    "type": "markdown"
+  },
+  {
+    "menu": "options",
+    "type": "markdown-template",
+    "entry": "options",
+    "sections": [
+      "PivotTable.indicators",
+      "PivotTable.rows",
+      ".columns",
+      ".elements"
+    ]
+  },
+  {
+    "menu": "api",
+    "type": "markdown"
+  }
+]

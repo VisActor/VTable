@@ -2,6 +2,15 @@
   "version": "0.1.0",
   "configurations": [
     {
+      "name": "generate documents",
+      "port": 9229,
+      "program": "${workspaceFolder}/docs/libs/template-parse/build.js",
+      "args": ["--env", "dev", "--watch"],
+      "request": "launch",
+      "skipFiles": ["<node_internals>/**"],
+      "type": "pwa-node"
+    },
+    {
       "name": "unit test",
       "type": "pwa-node",
       "request": "launch",

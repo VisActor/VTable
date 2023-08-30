@@ -1,0 +1,354 @@
+{
+  "menu": "scripts",
+  "children": [
+    {
+      "path": "Getting_Started",
+      "title": {
+        "zh": "快速上手",
+        "en": "Getting Started"
+      },
+      "children": [
+        {
+          "path": "The_structure_of_the_table",
+          "title": {
+            "zh": "表格的构成",
+            "en": "The structure of the table"
+          }
+        },
+        {
+          "path": "Getting_Started",
+          "title": {
+            "zh": "快速上手",
+            "en": "Getting_Started"
+          }
+        }
+      ]
+    },
+    {
+      "path": "table_type",
+      "title": {
+        "zh": "表形态",
+        "en": "table type"
+      },
+      "children": [
+        {
+          "path": "List_table",
+          "title": {
+            "zh": "基本表格",
+            "en": "List table"
+          },
+          "children": [
+            {
+              "path": "List_table_overview",
+              "title": {
+                "zh": "概述",
+                "en": "List table overview"
+              }
+            },
+            {
+              "path": "list_table_define_and_generate",
+              "title": {
+                "zh": "使用",
+                "en": "list table define and generate"
+              }
+            },
+            {
+              "path": "list_table_transpose",
+              "title": {
+                "zh": "表格转置",
+                "en": "list table transpose"
+              }
+            },
+            {
+              "path": "tree_list",
+              "title": {
+                "zh": "树形结构",
+                "en": "tree list"
+              }
+            }
+          ]
+        },
+        {
+          "path": "Pivot_table",
+          "title": {
+            "zh": "透视表格",
+            "en": "Pivot table"
+          },
+          "children": [
+            {
+              "path": "pivot_table_overview",
+              "title": {
+                "zh": "概述",
+                "en": "pivot table overview"
+              }
+            },
+            {
+              "path": "pivot_table_useage",
+              "title": {
+                "zh": "使用",
+                "en": "pivot table useage"
+              }
+            },
+            {
+              "path": "pivot_table_tree",
+              "title": {
+                "zh": "树形结构",
+                "en": "pivot table tree"
+              }
+            }
+          ]
+        },
+        {
+          "path": "pivot_chart",
+          "title": {
+            "zh": "透视组合图表"
+          }
+        }
+      ]
+    },
+    {
+      "path": "column_type",
+      "title": {
+        "zh": "单元格类型",
+        "en": "column type"
+      },
+      "children": [
+        {
+          "path": "columnType",
+          "title": {
+            "zh": "单元格类型",
+            "en": "columnType"
+          }
+        },
+        {
+          "path": "text",
+          "title": {
+            "zh": "文本",
+            "en": "text"
+          }
+        },
+        {
+          "path": "link",
+          "title": {
+            "zh": "超链接",
+            "en": "link"
+          }
+        },
+        {
+          "path": "image_video",
+          "title": {
+            "zh": "多媒体",
+            "en": "image video"
+          }
+        },
+        {
+          "path": "progressbar",
+          "title": {
+            "zh": "数据条",
+            "en": "progressbar"
+          }
+        },
+        {
+          "path": "sparkline",
+          "title": {
+            "zh": "迷你图",
+            "en": "sparkline"
+          }
+        },
+        {
+          "path": "chart",
+          "title": {
+            "zh": "图表"
+          }
+        }
+      ]
+    },
+    {
+      "path": "theme_and_style",
+      "title": {
+        "zh": "主题与样式",
+        "en": "theme and style"
+      },
+      "children": [
+        {
+          "path": "theme",
+          "title": {
+            "zh": "主题",
+            "en": "theme"
+          }
+        },
+        {
+          "path": "style",
+          "title": {
+            "zh": "样式",
+            "en": "style"
+          }
+        }
+      ]
+    },
+    {
+      "path": "interaction",
+      "title": {
+        "zh": "交互",
+        "en": "interaction"
+      },
+      "children": [
+        {
+          "path": "select",
+          "title": {
+            "zh": "选择",
+            "en": "select"
+          }
+        },
+        {
+          "path": "hover_cell",
+          "title": {
+            "zh": "hover",
+            "en": "hover_cell"
+          }
+        },
+        {
+          "path": "resize_column_width",
+          "title": {
+            "zh": "调整列宽",
+            "en": "resize column width"
+          }
+        },
+        {
+          "path": "drag_header",
+          "title": {
+            "zh": "拖拽表头换位",
+            "en": "drag header"
+          }
+        },
+        {
+          "path": "scroll",
+          "title": {
+            "zh": "滚动",
+            "en": "scroll"
+          }
+        }
+      ]
+    },
+    {
+      "path": "Event",
+      "title": {
+        "zh": "事件",
+        "en": "Event"
+      },
+      "children": [
+        {
+          "path": "event_list",
+          "title": {
+            "zh": "事件列表",
+            "en": "event list"
+          }
+        }
+      ]
+    },
+    {
+      "path": "custom_define",
+      "title": {
+        "zh": "自定义",
+        "en": "custom define"
+      },
+      "children": [
+        {
+          "path": "custom_icon",
+          "title": {
+            "zh": "自定义icon",
+            "en": "custom_icon"
+          }
+        },
+        {
+          "path": "custom_layout",
+          "title": {
+            "zh": "单元格自定义布局",
+            "en": "custom_layout"
+          }
+        },
+        {
+          "path": "custom_render",
+          "title": {
+            "zh": "单元格自定义渲染",
+            "en": "custom_render"
+          }
+        }
+      ]
+    },
+    {
+      "path": "data",
+      "title": {
+        "zh": "数据",
+        "en": "data"
+      },
+      "children": [
+        {
+          "path": "data_format",
+          "title": {
+            "zh": "数据格式",
+            "en": "data_format"
+          }
+        }
+      ]
+    },
+    {
+      "path": "basic_function",
+      "title": {
+        "zh": "基础功能",
+        "en": "basic function"
+      },
+      "children": [
+        {
+          "path": "sort",
+          "title": {
+            "zh": "排序",
+            "en": "sort"
+          }
+        },
+        {
+          "path": "frozen_column",
+          "title": {
+            "zh": "冻结",
+            "en": "frozen column"
+          }
+        },
+        {
+          "path": "row_height_column_width",
+          "title": {
+            "zh": "行高列宽",
+            "en": "row height column width"
+          }
+        },
+        {
+          "path": "auto_wrap_text",
+          "title": {
+            "zh": "自动换行",
+            "en": "auto wrap text"
+          }
+        }
+      ]
+    },
+    {
+      "path": "components",
+      "title": {
+        "zh": "常用组件",
+        "en": "components"
+      },
+      "children": [
+        {
+          "path": "tooltip",
+          "title": {
+            "zh": "tooltip"
+          }
+        },
+        {
+          "path": "dropdown",
+          "title": {
+            "zh": "dropdown下拉菜单"
+          }
+        }
+      ]
+    }
+  ]
+}
