@@ -1,9 +1,5 @@
 [
   {
-    "menu": "demos",
-    "type": "markdown"
-  },
-  {
     "menu": "examples",
     "type": "markdown"
   },
@@ -20,22 +16,22 @@
       "PivotTable.rows",
       ".columns",
       ".elements"
+    ],
+    "arrayKeys": [
+      "type",
+      "columnType",
+      "headerType"
     ]
   },
   {
     "menu": "api",
     "type": "markdown-template",
-    "entry": "options",
+    "entry": "api",
     "sections": [
       "PivotTable.indicators",
       "PivotTable.rows",
       ".columns",
       ".elements"
     ]
-  },
-  {
-    "menu": "api",
-    "type": "markdown-template",
-    "entry": "api"
   }
 ]

@@ -35,7 +35,7 @@ export function OptionDocument(props: IProps) {
     props.getOutline().then(outline => {
       setOutline(outline);
     });
-  }, [language]);
+  }, [language, pathName]);
 
   useEffect(() => {
     props.getDescription(pathName).then(description => {

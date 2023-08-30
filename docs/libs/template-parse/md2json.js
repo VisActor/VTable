@@ -8,6 +8,7 @@
  */
 
 const fs = require('fs');
+const nodePath = require('path');
 const marked = require('marked');
 const etpl = require('./etpl');
 const globby = require('globby');
@@ -53,7 +54,6 @@ async function convert(opts) {
       delete Object.prototype[key];
     });
   }
-
   try {
     // Render tpl
     etplEngine.compile(mdTpls.join('\n'));
@@ -86,8 +86,26 @@ async function convert(opts) {
     for (const name in topLevel) {
       if (componentNameParsed.length > 1) {
         newProperties[name] = topLevel[name];
-        const secondLevel = topLevel[name].properties;
-        const secondNewProps = (topLevel[name].properties = {});
+        let secondLevel = topLevel[name].properties;
+        let secondNewProps = (topLevel[name].properties = {});
+
+        const secondLevelFromItem =
+          topLevel[name].items && topLevel[name].items.anyOf && topLevel[name].items.anyOf.length
+            ? topLevel[name].items.anyOf.find(entry => {
+                return entry && entry.properties && !!entry.properties[componentNameParsed[1]];
+              })
+            : null;
+
+        if (!secondLevel || !secondLevel[componentNameParsed[1]]) {
+          if (secondLevelFromItem) {
+            secondLevel = secondLevelFromItem.properties;
+            secondNewProps = secondLevelFromItem.properties = {};
+          } else if (topLevel[name].items && topLevel[name].items.properties) {
+            secondLevel = topLevel[name].items.properties;
+            secondNewProps = topLevel[name].items.properties = {};
+          }
+        }
+
         for (const secondName in secondLevel) {
           makeOptionArr(secondName, componentNameParsed[1], secondNewProps, secondLevel);
         }
@@ -101,7 +119,7 @@ async function convert(opts) {
       const nmParsed = nm.split('.');
       if (nmParsed[0] === cptName) {
         newProps[cptName] = newProps[cptName] || {
-          type: 'Array',
+          type: level[nm].type || 'Array',
           items: {
             anyOf: []
           }
@@ -156,7 +174,6 @@ function mdToJsonSchema(mdStr, maxDepth, imagePath, entry) {
 
   let currentLevel = 0;
   const result = {
-    $schema: 'https://echarts.apache.org/doc/json-schema',
     option: {
       type: 'Object',
       properties: {}
@@ -321,9 +338,11 @@ function mdToJsonSchema(mdStr, maxDepth, imagePath, entry) {
   mdStr
     .split(new RegExp('(?:^|\n) *(?:#{1,' + maxDepth + '}) *(?:[^#][^\n]+)', 'g'))
     .slice(1)
-    .forEach(move);
+    .forEach((section, idx) => {
+      move(section, idx, mdStr);
+    });
 
-  function move(section, idx) {
+  function move(section, idx, allMdStr) {
     var text = headers[idx].text;
     var parts = /(.*)\(([\w\|\*]*)\)(\s*=\s*(.*))*/.exec(text);
     var key;
@@ -407,6 +426,8 @@ function mdToJsonSchema(mdStr, maxDepth, imagePath, entry) {
       stacks.push(current);
     } else if (level > currentLevel) {
       if (level - currentLevel > 1) {
+        fs.writeFileSync(nodePath.resolve(__dirname, 'debug.log'), allMdStr);
+
         throw new Error(
           text + '\n标题层级 "' + repeat('#', level) + '" 不能直接跟在标题层级 "' + repeat('#', currentLevel) + '"后'
         );

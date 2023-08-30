@@ -7,7 +7,19 @@
  * @license
  */
 
-function traverse(schema, rootName, cb) {
+function parseTypeValueOfArrayItem(schema, arrayItemKeys) {
+  const typeKey = arrayItemKeys.find(key => {
+    return !!(schema.properties && schema.properties[key] && schema.properties[key].default);
+  });
+
+  if (typeKey) {
+    return { key: typeKey, value: schema.properties[typeKey].default.replace(/'/g, '') };
+  }
+
+  return null;
+}
+
+function traverse(schema, rootName, arrayItemKeys, cb) {
   function innerTraverse(schemaNode, path, noCallback) {
     if (!noCallback) {
       cb(path, schemaNode);
@@ -16,9 +28,9 @@ function traverse(schema, rootName, cb) {
     if (schemaNode.items) {
       if (schemaNode.items.anyOf) {
         schemaNode.items.anyOf.forEach(itemSchema => {
-          let typeValue = itemSchema.properties && itemSchema.properties.type && itemSchema.properties.type.default;
-          if (typeValue) {
-            innerTraverse(itemSchema, path ? path + '-' + typeValue.replace(/'/g, '') : typeValue, false);
+          let res = parseTypeValueOfArrayItem(itemSchema, arrayItemKeys);
+          if (res) {
+            innerTraverse(itemSchema, path ? path + '-' + res.value.replace(/'/g, '') : res.value, false);
           }
         });
       } else {
@@ -38,7 +50,7 @@ function traverse(schema, rootName, cb) {
 
 module.exports.traverse = traverse;
 
-function convertToTree(rootSchema, rootNode) {
+function convertToTree(rootSchema, rootNode, arrayItemKeys) {
   function createNodeBase(schema) {
     let schemaType = schema.type;
     // Simplify type
@@ -66,8 +78,12 @@ function convertToTree(rootSchema, rootNode) {
 
   function createArrayItemNode(schema, parentNode) {
     let childNode = createNodeBase(schema, parentNode);
-    if (schema.properties && schema.properties.type && schema.properties.type.default) {
-      childNode.arrayItemType = schema.properties.type.default.replace(/'/g, '');
+    const res = parseTypeValueOfArrayItem(schema, arrayItemKeys);
+
+    if (res) {
+      childNode.arrayItemType = res.value;
+      childNode.arrayItemTypeKey = res.key;
+      childNode.arrayParentType = parentNode.type;
     } else {
       console.error('schema', schema);
       throw new Error('Some thing wrong happens');
@@ -130,10 +146,10 @@ function convertToTree(rootSchema, rootNode) {
   return processRecursively(rootSchema, rootNode, 0);
 }
 
-module.exports.extractOptionKeys = function (schema) {
+module.exports.extractOptionKeys = function (schema, arrayItemKeys) {
   const keysRepeatCount = {};
   const keysList = [];
-  traverse(schema, '', (schemaPath, schemaNode) => {
+  traverse(schema, '', arrayItemKeys, (schemaPath, schemaNode) => {
     if (!schemaPath) {
       return;
     }
@@ -162,17 +178,28 @@ module.exports.extractOptionKeys = function (schema) {
 //   "series-line": {"data"},
 //   "series-bar": {"data"}
 // }
-module.exports.extractDesc = function (schema, docName) {
+module.exports.extractDesc = function (schema, docName, arrayItemKeys) {
   let descriptionsMap = {};
   let propWithUIControlCount = 0;
   let propTotalCount = 0;
-  traverse(schema, docName, (schemaPath, schemaNode) => {
+  traverse(schema, docName, arrayItemKeys, (schemaPath, schemaNode) => {
     if (schemaNode.description) {
       // Extract component level path
       let parts = schemaPath.split('.');
       let divider = parts.length > 2 ? 2 : 1;
       let partionKey = parts.slice(0, divider).join('.');
       let subKey = parts.slice(divider).join('.');
+
+      // 支持三级展开页面
+      if (parts.length > 3) {
+        if (parts[1].includes('-') && parts[2].includes('-')) {
+          partionKey = `${parts[0]}.${parts[1]}-${parts[2].split('-')[1]}`;
+          subKey = parts.slice(3).join('.');
+        } else if (parts[2].includes('-')) {
+          partionKey = `${parts[0]}.${parts[1]}-${parts[2]}`;
+          subKey = parts.slice(3).join('.');
+        }
+      }
 
       descriptionsMap[partionKey] = descriptionsMap[partionKey] || {};
       descriptionsMap[partionKey][subKey] = {
@@ -193,7 +220,7 @@ module.exports.extractDesc = function (schema, docName) {
   );
 
   return {
-    outline: convertToTree(schema.option, {}),
+    outline: convertToTree(schema.option, {}, arrayItemKeys),
     descriptions: descriptionsMap
   };
 };
