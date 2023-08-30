@@ -431,7 +431,7 @@ The perspective combination diagram combines the vchart chart library to render 
         }
       };
 
-      const tableInstance = new VTable.PivotChart(document.getElementById(CONTAINER_ID),option);
+      tableInstance =  new VTable.PivotChart(document.getElementById(CONTAINER_ID),option);
       tableInstance.onVChartEvent('click', args => {
         console.log('listenChart click', args);
       });

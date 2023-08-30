@@ -441,7 +441,7 @@ This example shows the main R & D roadmap that follows VTable
     columnResizeMode: 'none'
   };
 
-  const tableInstance = new VTable.ListTable(document.getElementById(CONTAINER_ID), option);
+  const tableInstance =  new VTable.ListTable(document.getElementById(CONTAINER_ID), option);
 window['tableInstance'] = tableInstance;
 ```
 

@@ -59,6 +59,6 @@ const {
     DROPDOWNMENU_CLICK,
     CONTEXTMENU_CELL,
   } = VTable.ListGrid.EVENT_TYPE;
-  const vtableInstance =new ListGrid(options);
-  vtableInstance.listen(CLICK_CELL, (...args) => console.log(CLICK_CELL, args));
+  const tableInstance =new ListGrid(options);
+  tableInstance.listen(CLICK_CELL, (...args) => console.log(CLICK_CELL, args));
 ```

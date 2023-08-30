@@ -378,7 +378,7 @@ const option = {
 };
 
 // 创建 VTable 实例
-const vtableInstance = new VTable.ListTable(document.getElementById(CONTAINER_ID), option);
+const tableInstance = new VTable.ListTable(document.getElementById(CONTAINER_ID), option);
 
 tableInstance.on('sort_click', args => {
     const sortState = Date.now() % 3 === 0 ? 'desc' : Date.now() % 3 === 1 ? 'asc' : 'normal';

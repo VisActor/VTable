@@ -19,6 +19,7 @@ link: '/guide/theme_and_style/theme'
 
 ```javascript livedemo template=vtable
 
+let  tableInstance;
   fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American_Superstore_Pivot_data.json')
     .then((res) => res.json())
     .then((data) => {
@@ -175,7 +176,7 @@ const option = {
       }
     }
 };
-const tableInstance = new VTable.PivotTable(document.getElementById(CONTAINER_ID),option);
+tableInstance = new VTable.PivotTable(document.getElementById(CONTAINER_ID),option);
 window['tableInstance'] = tableInstance;
     })
 ```

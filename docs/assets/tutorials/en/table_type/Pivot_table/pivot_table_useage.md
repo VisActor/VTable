@@ -996,7 +996,7 @@ const option = {
   widthMode:'standard',
   rowHierarchyIndent: 20
 };
-const tableInstance = new PivotTable(option);
+const tableInstance = new VTable.PivotTable(option);
 
 
 ```

@@ -58,7 +58,7 @@ Example:
      {"name": "wang_wu","age": 40,"sex": "male","phone": "3456789","address": "beijing fengtai"}
     ]
 }
-const vtableInstance = new ListTable(option);
+const tableInstance = new ListTable(option);
 
 ```
 
@@ -159,7 +159,7 @@ const option = {
   ],
   defaultHeaderColWidth:100
 }
-const vtableInstance = new PivotTable(option);
+const tableInstance = new VTable.PivotTable(option);
 
 ```
 
@@ -249,7 +249,7 @@ const option = {
   ],
   defaultHeaderColWidth:100
 }
-const vtableInstance = new PivotTable(option);
+const tableInstance = new VTable.PivotTable(option);
 
 ```
 

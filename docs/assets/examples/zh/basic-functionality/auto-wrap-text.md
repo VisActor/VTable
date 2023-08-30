@@ -18,6 +18,7 @@ link: '/guide/basic_function/auto_wrap_text'
 ## 代码演示
 
 ```javascript livedemo template=vtable
+let  tableInstance;
   fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American_Superstore_data.json')
     .then((res) => res.json())
     .then((data) => {
@@ -77,7 +78,7 @@ const option = {
   heightMode:'autoHeight',
   defaultColWidth:150,
 };
-const tableInstance = new VTable.ListTable(document.getElementById(CONTAINER_ID),option);
+tableInstance = new VTable.ListTable(document.getElementById(CONTAINER_ID),option);
 window['tableInstance'] = tableInstance;
     })
 ```

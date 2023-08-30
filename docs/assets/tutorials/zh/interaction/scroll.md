@@ -21,6 +21,7 @@ VTable 提供了丰富的滚动样式配置项，用户可以按照自己的需�
 下面我们通过示例来展示这些配置的效果：
 
 ```javascript livedemo   template=vtable
+let  tableInstance;
 fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American_Superstore_data.json')
     .then((res) => res.json())
     .then((data) => {
@@ -95,7 +96,7 @@ fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American
         }
       }
   };
-  const tableInstance = new VTable.ListTable(document.getElementById(CONTAINER_ID), option);
+  tableInstance =  new VTable.ListTable(document.getElementById(CONTAINER_ID), option);
   window['tableInstance'] = tableInstance;
 })
 

@@ -62,7 +62,7 @@ const option = {
     { "name": "wang_wu", "age": 40, "sex": "male", "phone": "3456789", "address": "beijing fengtai", "link": 'https://www.google.com.hk' }
   ]
 }
-const vtableInstance = new VTable.ListTable(document.getElementById(CONTAINER_ID), option);
+const tableInstance = new VTable.ListTable(document.getElementById(CONTAINER_ID), option);
 
 ```
 

@@ -17,6 +17,7 @@ link: '/guide/table_type/List_table/tree_list'
 ## 代码演示
 
 ```javascript livedemo template=vtable
+let  tableInstance;
   fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/company_struct.json')
     .then((res) => res.json())
     .then((data) => {
@@ -77,7 +78,7 @@ const option = {
   widthMode:'standard',
 
 };
-const tableInstance = new VTable.ListTable(document.getElementById(CONTAINER_ID),option);
+tableInstance = new VTable.ListTable(document.getElementById(CONTAINER_ID),option);
 window['tableInstance'] = tableInstance;
     })
 ```

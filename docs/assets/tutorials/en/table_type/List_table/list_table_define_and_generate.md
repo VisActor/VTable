@@ -65,7 +65,7 @@ Here is a simple example of how to use a basic table to present data:
         // ...
     ],
 }
-const vtableInstance = new ListTable(option);
+const tableInstance = new ListTable(option);
 
 ```
 

@@ -7,13 +7,13 @@
 具体使用方式：
 
 ```
-  const vtableInstance =new VTable.ListGrid(options);
+  const tableInstance =new VTable.ListGrid(options);
 
   const {
       CLICK_CELL
     } = VTable.ListTable.EVENT_TYPE;
 
-  vtableInstance.on(CLICK_CELL, (args) => console.log(CLICK_CELL, args));
+  tableInstance.on(CLICK_CELL, (args) => console.log(CLICK_CELL, args));
 ```
 
 支持的事件类型：

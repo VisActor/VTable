@@ -132,7 +132,6 @@ order: 9-6
     }
   ];
   const option = {
-    container:document.getElementById(CONTAINER_ID),
     columns: [
       {
         field: 'month',
@@ -449,7 +448,7 @@ order: 9-6
     columnResizeMode: 'none'
   };
 
-  const tableInstance = new VTable.ListTable(document.getElementById(CONTAINER_ID),option);
+  const tableInstance =  new VTable.ListTable(document.getElementById(CONTAINER_ID),option);
 window['tableInstance'] = tableInstance;
 ```
 

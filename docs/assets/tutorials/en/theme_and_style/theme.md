@@ -64,35 +64,35 @@ VTable built-in a set of default Theme /DEFAULT, a set of ARCO style, a set of d
     // 使用默认主题
     option.theme = VTable.themes.DEFAULT; 
 
-    const vtableInstance = new VTable.ListGrid(option);
+    const tableInstance = new VTable.ListGrid(option);
 
 **ARCO Theme Sample Code**
 
     // 使用默认主题
     option.theme = vTable.themes.ARCO; 
 
-    const vtableInstance = new VTable.ListGrid(option);
+    const tableInstance = new VTable.ListGrid(option);
 
 **Dark Theme Sample Code**
 
     // 使用默认主题
     option.theme = vTable.themes.DARK; 
 
-    const vtableInstance = new VTable.ListGrid(option);
+    const tableInstance = new VTable.ListGrid(option);
 
 **Vivid Theme Sample Code**
 
     // 使用默认主题
     option.theme = vTable.themes.BRIGHT; 
 
-    const vtableInstance = new VTable.ListGrid(option);
+    const tableInstance = new VTable.ListGrid(option);
 
 **Minimalist Theme Sample Code**
 
     // 使用默认主题
     option.theme = vTable.themes.SIMPLIFY; 
 
-    const vtableInstance = new VTable.ListGrid(option);
+    const tableInstance = new VTable.ListGrid(option);
 
 ## Custom Theme
 
@@ -106,7 +106,7 @@ Such as extending for DEFAULT
 
 option.theme = vTable.themes.DEFAULT.extends({ headerStyle:{ color: 'red')})
 
-const vtableInstance = new vTable.ListGrid(option);
+const tableInstance = new vTable.ListGrid(option);
 ```
 
 **Full Custom Theme**
@@ -1205,7 +1205,7 @@ const option = {
         }
     };
     
-    const vtableInstance = new PivotTable(option);
+    const tableInstance = new VTable.PivotTable(option);
 ```
 
 In short, in VTable, by flexibly using Theme configuration items, we can easily create an exclusive data table style that meets our needs. Please refer to this tutorial to make reasonable configurations based on actual scenarios, and give full play to VTable's powerful Theme customization capabilities.

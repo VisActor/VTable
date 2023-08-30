@@ -17,7 +17,7 @@ order: 8-6
 ## 代码演示
 
 ```javascript livedemo template=vtable
-
+let  tableInstance;
  fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American_Superstore_data.json')
     .then(res => res.json())
     .then(data => {
@@ -135,7 +135,7 @@ order: 8-6
           padding: 10
         }
       };
-      const tableInstance = new VTable.ListTable(document.getElementById(CONTAINER_ID), option);
+      tableInstance =  new VTable.ListTable(document.getElementById(CONTAINER_ID), option);
       window.tableInstance = tableInstance;
       const { LEGEND_ITEM_CLICK } = VTable.ListTable.EVENT_TYPE;
       tableInstance.on(LEGEND_ITEM_CLICK, args => {

@@ -19,7 +19,7 @@ link: '/guide/theme_and_style/theme'
 ## 代码演示
 
 ```javascript livedemo template=vtable
-
+let  tableInstance;
 VTable.register.theme('themeRegisterOne',{
       defaultStyle:{
         borderLineWidth:0,
@@ -185,7 +185,7 @@ fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American
     widthMode:'standard',
     theme:'themeRegisterOne'
   };
-  const tableInstance = new VTable.PivotTable(document.getElementById(CONTAINER_ID),option);
+  tableInstance =  new VTable.PivotTable(document.getElementById(CONTAINER_ID),option);
   window['tableInstance'] = tableInstance;
 })
 ```

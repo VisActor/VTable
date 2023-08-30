@@ -30,7 +30,7 @@ Use cases such as:
 ## example
 
 ```javascript livedemo template=vtable
-
+let  tableInstance;
 fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American_Superstore_data.json')
     .then((res) => res.json())
     .then((data) => {
@@ -182,7 +182,7 @@ const option = {
       ]
     }
 };
-const tableInstance = new VTable.ListTable(option);
+tableInstance = new VTable.ListTable(option);
 window['tableInstance'] = tableInstance;
     })
 ```
@@ -197,7 +197,7 @@ This example is configured with defaultHeaderMenuItems, when the mouse hover to 
       );
 
 ```javascript livedemo template=vtable
-
+let  tableInstance;
 fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American_Superstore_data.json')
     .then((res) => res.json())
     .then((data) => {
@@ -361,7 +361,7 @@ container: document.getElementById(CONTAINER_ID),
       contextMenuItems: ['复制', '粘贴'],
     }
 };
-const tableInstance = new VTable.ListTable(option);
+tableInstance = new VTable.ListTable(option);
 window['tableInstance'] = tableInstance;
     })
 ```
@@ -401,7 +401,7 @@ Subsequent clicks to switch states are available through the interface:
 In the example below, the drop-down menu is only configured on the first column:
 
 ```javascript livedemo template=vtable
-
+let  tableInstance;
 fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American_Superstore_data.json')
     .then((res) => res.json())
     .then((data) => {
@@ -543,7 +543,7 @@ const option = {
   widthMode:'standard',
   theme:VTable.themes.DEFAULT
 };
-const tableInstance = new VTable.ListTable(option);
+tableInstance = new VTable.ListTable(option);
 window['tableInstance'] = tableInstance;
     })
 

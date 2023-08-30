@@ -54,7 +54,7 @@ const option = {
     defaultHeaderColWidth:120,
     transpose:true
 }
-const vtableInstance = new VTable.ListTable(document.getElementById(CONTAINER_ID), option);
+const tableInstance = new VTable.ListTable(document.getElementById(CONTAINER_ID), option);
 ```
 
 在上面的示例中，通过将 `transpose` 参数设置为 `true`，启用了表格转置功能。请根据实际情况和需求，灵活运用表格转置来展示和分析您的数据。

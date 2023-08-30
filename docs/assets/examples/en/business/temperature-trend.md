@@ -700,7 +700,7 @@ Show the temperature trends of different regions in the day, month and year.
       }
     })
   };
-  const tableInstance = new VTable.PivotTable(document.getElementById(CONTAINER_ID), option);
+  const tableInstance =  new VTable.PivotTable(document.getElementById(CONTAINER_ID), option);
   window.tableInstance = tableInstance;
 ```
 

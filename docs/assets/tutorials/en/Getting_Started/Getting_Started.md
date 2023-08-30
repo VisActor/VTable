@@ -381,7 +381,7 @@ const option = {
 };
 
 // 创建 vchart 实例
-const vtableInstance = new VTable.ListTable(option);
+const tableInstance = new VTable.ListTable(option);
 ```
 
 At this point, you have successfully drawn a simple table!

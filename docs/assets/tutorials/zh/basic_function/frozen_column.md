@@ -301,6 +301,6 @@ const option = {
 };
 
 // 创建 VTable 实例
-const vtableInstance = new VTable.ListTable(document.getElementById(CONTAINER_ID), option);
+const tableInstance = new VTable.ListTable(document.getElementById(CONTAINER_ID), option);
 
 ```

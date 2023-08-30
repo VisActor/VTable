@@ -22,6 +22,7 @@ link: '/guide/table_type/Pivot_Chart/pivot_chart_useage'
 
 ```javascript livedemo template=vtable
   VTable.register.chartModule('vchart', VChart);
+  let  tableInstance;
  fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American_Superstore_Pivot_Chart_data.json')
     .then(res => res.json())
     .then(data => {
@@ -430,7 +431,7 @@ link: '/guide/table_type/Pivot_Chart/pivot_chart_useage'
         }
       };
 
-      const tableInstance = new VTable.PivotChart(document.getElementById(CONTAINER_ID),option);
+      tableInstance =  new VTable.PivotChart(document.getElementById(CONTAINER_ID),option);
       tableInstance.onVChartEvent('click', args => {
         console.log('listenChart click', args);
       });

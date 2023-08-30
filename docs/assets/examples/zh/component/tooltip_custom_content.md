@@ -20,6 +20,7 @@ order: 8-2
 
 ```javascript livedemo template=vtable
 const container=document.getElementById(CONTAINER_ID);
+debugger
 const popup = document.createElement('div');
 Object.assign(popup.style, {
   position: 'fixed',
@@ -53,7 +54,8 @@ function hideTooltip() {
     document.body.removeChild(popup);
   }
 }
-    fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American_Superstore_Pivot2_data.json')
+  let  tableInstance;
+  fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American_Superstore_Pivot2_data.json')
     .then(res => res.json())
     .then(data => {
       const option = {
@@ -290,7 +292,7 @@ function hideTooltip() {
         rowExpandLevel: 1,
         dragHeaderMode: 'all'
       };
-      const tableInstance = new VTable.PivotTable(document.getElementById(CONTAINER_ID), option);
+      tableInstance =  new VTable.PivotTable(container, option);
       window.tableInstance = tableInstance;
       tableInstance.on('mouseenter_cell', args => {
         const { cellRange, col, row } = args;

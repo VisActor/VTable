@@ -21,6 +21,7 @@ In order to keep these key information columns visible throughout the horizontal
 
 ```javascript livedemo template=vtable
 
+let  tableInstance;
   fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American_Superstore_data.json')
     .then((res) => res.json())
     .then((data) => {
@@ -92,7 +93,7 @@ const option = {
   frozenColCount: 1,
   showFrozenIcon: true
 };
-const tableInstance = new VTable.ListTable(option);
+tableInstance = new VTable.ListTable(option);
 window['tableInstance'] = tableInstance;
     })
 ```

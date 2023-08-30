@@ -31,7 +31,7 @@ Configure headerStyle in each item of columns. If it is in the pivot table, it c
       ...
     ];
 
-    const vtableInstance = new VTable.ListGrid(option);
+    const tableInstance = new VTable.ListGrid(option);
 
 ![image](https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/0a2e223bdcd7410c08f6a6a0b.png)
 
@@ -58,7 +58,7 @@ Configure style in each item of columns. If it is in the pivot table, it corresp
       ...
     ];
 
-    const vtableInstance = new VTable.ListGrid(option);
+    const tableInstance = new VTable.ListGrid(option);
 
 ![image](https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/a2c7623458257d15626270908.png)
 

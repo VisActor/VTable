@@ -167,7 +167,7 @@ export function Markdown() {
 
   useEffect(() => {
     const menuPath = `/assets/${assetDirectory}/menu.json`;
-    fetch(menuPath)
+  fetch(menuPath)
       .then(response => response.json())
       .then(menu => {
         const menuItems = menu.children as IMenuItem[];
@@ -189,7 +189,7 @@ export function Markdown() {
       setContent('');
     } else {
       const docPath = `/assets/${assetDirectory}/${language}/${docFullPath}.md`;
-      fetch(docPath)
+  fetch(docPath)
         .then(response => response.text())
         .then(text => {
           let processedText = text;

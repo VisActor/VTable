@@ -1002,7 +1002,7 @@ const option = {
   widthMode:'standard',
   rowHierarchyIndent: 20
 };
-const tableInstance = new PivotTable(option);
+const tableInstance = new VTable.PivotTable(option);
 ```
 
 It can be seen that the pivot table tree structure display function can clearly present the hierarchical relationship of data, which is convenient for users to perform data analytics.

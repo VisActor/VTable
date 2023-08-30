@@ -64,35 +64,35 @@ VTable 中内置一套默认主题/DEFAULT，一套ARCO风格，一套暗黑主�
     // 使用默认主题
     option.theme = VTable.themes.DEFAULT; 
 
-    const vtableInstance = new VTable.ListGrid(option);
+    const tableInstance = new VTable.ListGrid(option);
 
 **ARCO主题示例代码**
 
     // 使用默认主题
     option.theme = vTable.themes.ARCO; 
 
-    const vtableInstance = new VTable.ListGrid(option);
+    const tableInstance = new VTable.ListGrid(option);
 
 **暗黑主题示例代码**
 
     // 使用默认主题
     option.theme = vTable.themes.DARK; 
 
-    const vtableInstance = new VTable.ListGrid(option);
+    const tableInstance = new VTable.ListGrid(option);
 
 **鲜明主题示例代码**
 
     // 使用默认主题
     option.theme = vTable.themes.BRIGHT; 
 
-    const vtableInstance = new VTable.ListGrid(option);
+    const tableInstance = new VTable.ListGrid(option);
 
 **极简主题示例代码**
 
     // 使用默认主题
     option.theme = vTable.themes.SIMPLIFY; 
 
-    const vtableInstance = new VTable.ListGrid(option);
+    const tableInstance = new VTable.ListGrid(option);
 
 ## 自定义主题
 
@@ -106,7 +106,7 @@ VTable 中内置一套默认主题/DEFAULT，一套ARCO风格，一套暗黑主�
 
 option.theme = vTable.themes.DEFAULT.extends({ headerStyle:{ color: 'red')})
 
-const vtableInstance = new vTable.ListGrid(option);
+const tableInstance = new vTable.ListGrid(option);
 ```
 
 **全量自定义主题**
@@ -1204,6 +1204,6 @@ const option = {
         }
     };
     
-    const vtableInstance = new PivotTable(document.getElementById(CONTAINER_ID), option);
+    const tableInstance = new VTable.PivotTable(document.getElementById(CONTAINER_ID), option);
 ```
 总之，在VTable中，通过灵活运用主题配置项，我们可以轻松打造出专属的、符合需求的数据表格样式。请参照本教程，结合实际场景进行合理配置，发挥VTable强大的主题定制能力。

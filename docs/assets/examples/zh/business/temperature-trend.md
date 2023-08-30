@@ -699,7 +699,7 @@ order: 9-5
       }
     })
   };
-  const tableInstance = new VTable.PivotTable(document.getElementById(CONTAINER_ID),option);
+  const tableInstance =  new VTable.PivotTable(document.getElementById(CONTAINER_ID),option);
   window.tableInstance = tableInstance;
 ```
 

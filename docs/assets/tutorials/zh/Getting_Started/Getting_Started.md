@@ -380,7 +380,7 @@ const option = {
 };
 
 // 创建 VTable 实例
-const vtableInstance = new VTable.ListTable(document.getElementById(CONTAINER_ID), option);
+const tableInstance = new VTable.ListTable(document.getElementById(CONTAINER_ID), option);
 ```
 
 至此，你已经成功绘制出了一个简单的表格！

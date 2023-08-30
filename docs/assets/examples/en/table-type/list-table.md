@@ -19,6 +19,7 @@ Basic table
 
 ```javascript livedemo template=vtable
 
+let  tableInstance;
   fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American_Superstore_data.json')
     .then((res) => res.json())
     .then((data) => {
@@ -86,7 +87,7 @@ const option = {
   columns,
   widthMode:'standard'
 };
-const tableInstance = new VTable.ListTable(document.getElementById(CONTAINER_ID), option);
+tableInstance = new VTable.ListTable(document.getElementById(CONTAINER_ID), option);
 window['tableInstance'] = tableInstance;
     })
 ```

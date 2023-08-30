@@ -56,7 +56,7 @@ const option = {
     defaultHeaderColWidth:120,
     transpose:true
 }
-const vtableInstance = new ListTable(option);
+const tableInstance = new ListTable(option);
 ```
 
 In the above example, by `transpose` Parameters are set to `true`, the table transpose function is enabled. Please flexibly use table transpose to display and analyze your data according to the actual situation and needs.

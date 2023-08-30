@@ -56,7 +56,7 @@
      {"name": "wang_wu","age": 40,"sex": "male","phone": "3456789","address": "beijing fengtai"}
     ]
 }
-const vtableInstance = new VTable.ListTable(document.getElementById(CONTAINER_ID), option);
+const tableInstance = new VTable.ListTable(document.getElementById(CONTAINER_ID), option);
 
 ```
 
@@ -153,7 +153,7 @@ const option = {
   ],
   defaultHeaderColWidth:100
 }
-const vtableInstance = new VTable.PivotTable(document.getElementById(CONTAINER_ID), option);
+const tableInstance = new VTable.PivotTable(document.getElementById(CONTAINER_ID), option);
 
 ```
 同时records数据格式还支持按逐个单元格对应配置：
@@ -239,7 +239,7 @@ const option = {
   ],
   defaultHeaderColWidth:100
 }
-const vtableInstance = new VTable.PivotTable(document.getElementById(CONTAINER_ID), option);
+const tableInstance = new VTable.PivotTable(document.getElementById(CONTAINER_ID), option);
 
 ```
 ## 总结

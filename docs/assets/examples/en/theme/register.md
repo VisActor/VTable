@@ -185,7 +185,7 @@ fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American
     widthMode:'standard',
     theme:'themeRegisterOne'
   };
-  const tableInstance = new VTable.PivotTable(document.getElementById(CONTAINER_ID), option);
+  tableInstance =  new VTable.PivotTable(document.getElementById(CONTAINER_ID), option);
   window['tableInstance'] = tableInstance;
 })
 ```

@@ -18,6 +18,7 @@ order: 4-6
 
 ```javascript livedemo template=vtable
 
+let  tableInstance;
   fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American_Superstore_data.json')
     .then((res) => res.json())
     .then((data) => {
@@ -88,7 +89,7 @@ const option = {
     contextMenuItems:["复制单元格内容",'查询详情']
   },
 };
-const tableInstance = new VTable.ListTable(document.getElementById(CONTAINER_ID),option);
+tableInstance = new VTable.ListTable(document.getElementById(CONTAINER_ID),option);
 window['tableInstance'] = tableInstance;
 
 

@@ -135,7 +135,7 @@ In this example, the background color of the cell is mapped by the category Dime
           padding: 10
         }
       };
-      const tableInstance = new VTable.ListTable(document.getElementById(CONTAINER_ID), option);
+      tableInstance =  new VTable.ListTable(document.getElementById(CONTAINER_ID), option);
       window.tableInstance = tableInstance;
       const { LEGEND_ITEM_CLICK } = VTable.ListTable.EVENT_TYPE;
       tableInstance.on(LEGEND_ITEM_CLICK, args => {
