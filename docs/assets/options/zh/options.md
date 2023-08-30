@@ -1,4 +1,4 @@
-{{target: option}}
+{{target: options}}
 
 {{import: table-listTable}}
 

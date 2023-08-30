@@ -24,6 +24,7 @@ importers:
       globby: 11.1.0
       highlight.js: ^11.8.0
       htmlparser2: ^4.1.0
+      lodash: 4.17.21
       markdown-it: ^13.0.0
       marked: ^0.3.19
       react: ^18.0.0
@@ -38,6 +39,7 @@ importers:
       '@visactor/vtable': link:../packages/vtable
       axios: 1.4.0
       highlight.js: 11.8.0
+      lodash: 4.17.21
       markdown-it: 13.0.1
       react: 18.2.0
       react-dom: 18.2.0_react@18.2.0
@@ -3001,7 +3003,7 @@ packages:
       '@babel/plugin-transform-react-jsx-source': 7.22.5_@babel+core@7.20.12
       magic-string: 0.27.0
       react-refresh: 0.14.0
-      vite: 3.2.6_ti6m7uzy63fyedj36vu25kam44
+      vite: 3.2.6
     transitivePeerDependencies:
       - supports-color
     dev: true
