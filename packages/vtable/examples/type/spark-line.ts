@@ -656,7 +656,7 @@ export function createTable() {
     columns: [
       {
         field: 'id',
-        caption: 'ID',
+        title: 'ID',
         sort: (v1, v2, order) => {
           if (order === 'desc') {
             return v1 === v2 ? 0 : v1 > v2 ? -1 : 1;
@@ -667,13 +667,13 @@ export function createTable() {
       },
       {
         field: 'lineData',
-        caption: '这是一个折线图1',
+        title: '这是一个折线图1',
         width: 250,
         columnType: 'sparkline'
       },
       {
         field: 'lineData2',
-        caption: '这是一个折线图2',
+        title: '这是一个折线图2',
         width: 250,
         columnType: 'sparkline',
         sparklineSpec: Object.assign({}, baseSpec, {
@@ -701,14 +701,14 @@ export function createTable() {
       },
       {
         field: 'lineData2',
-        caption: '这是一个折线图3',
+        title: '这是一个折线图3',
         width: 250,
         columnType: 'sparkline',
         sparklineSpec: specFieldString
       },
       {
         field: 'lineData2',
-        caption: '这是一个折线图4',
+        title: '这是一个折线图4',
         width: 250,
         columnType: 'sparkline',
         sparklineSpec: {

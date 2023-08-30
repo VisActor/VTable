@@ -508,11 +508,10 @@ export class SimpleHeaderLayoutMap implements LayoutMapAPI {
     column.forEach((hd: ColumnDefine) => {
       const col = this._columns.length;
       const id = seqId++;
-      const { captionIcon } = hd;
       const cell: HeaderData = {
         id,
-        caption: hd.caption,
-        captionIcon,
+        title: hd.title ?? (hd as any).caption,
+        // captionIcon,
         headerIcon: hd.headerIcon,
         field: (hd as ColumnDefine).field,
         fieldKey: (hd as ColumnDefine)?.fieldKey,

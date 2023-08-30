@@ -47,7 +47,7 @@ export function createTable() {
         fieldFormat(rec) {
           return `已完成${rec.progress}%`;
         },
-        caption: 'progress',
+        title: 'progress',
         description: '这是一个标题的详细描述',
         captionIcon: {
           type: 'svg',
@@ -64,7 +64,7 @@ export function createTable() {
       {
         field: 'personid',
         fieldKey: 'personid999',
-        caption: 'ID',
+        title: 'ID',
         width: 'auto',
         sort: (v1, v2, order) => {
           if (order === 'desc') {
@@ -79,7 +79,7 @@ export function createTable() {
         fieldFormat(rec) {
           return `这是第${rec.personid}号`;
         },
-        caption: 'ID说明',
+        title: 'ID说明',
         description: '这是一个ID详细描述',
         width: 150,
         sort: (v1, v2, order) => {
@@ -90,7 +90,7 @@ export function createTable() {
         }
       },
       {
-        caption: 'Name',
+        title: 'Name',
         headerStyle: {
           textAlign: 'center',
           fontFamily: 'sans-serif',
@@ -100,7 +100,7 @@ export function createTable() {
         columns: [
           {
             field: 'fname',
-            caption: 'First Name',
+            title: 'First Name',
             fieldKey: 'fnamehh',
             width: '20%',
             minWidth: 150,
@@ -128,7 +128,7 @@ export function createTable() {
           {
             field: 'lname',
             fieldKey: 'lname',
-            caption: 'Last Name',
+            title: 'Last Name',
             width: '20%',
             minWidth: 150
           }
@@ -137,7 +137,7 @@ export function createTable() {
       {
         field: 'email',
         fieldKey: 'email',
-        caption: `it is this person's y y i Email ya
+        title: `it is this person's y y i Email ya
   haha`,
         width: 150,
         minWidth: 50,
@@ -162,7 +162,7 @@ export function createTable() {
             rec.birthday = isNaN(parseInt(date.toString(), 10)) ? val : date;
           }
         },
-        caption: 'Birthday',
+        title: 'Birthday',
         width: 100
       }
     ],

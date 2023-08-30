@@ -10,7 +10,7 @@ export function createTable() {
         rows: [
           {
             dimensionKey: 'State',
-            dimensionTitle: 'State',
+            title: 'State',
             headerStyle: {
               textStick: true,
               bgColor(arg: VTable.TYPES.StylePropertyFunctionArg) {
@@ -23,7 +23,7 @@ export function createTable() {
           },
           {
             dimensionKey: 'City',
-            dimensionTitle: 'City',
+            title: 'City',
             headerStyle: {
               bgColor(arg: VTable.TYPES.StylePropertyFunctionArg) {
                 if (arg.dataValue === 'Sub Totals') {
@@ -38,7 +38,7 @@ export function createTable() {
         indicators: [
           {
             indicatorKey: 'Sales',
-            caption: 'Sales',
+            title: 'Sales',
             headerStyle: {
               bgColor(arg: VTable.TYPES.StylePropertyFunctionArg) {
                 const rowHeaderPaths = arg.cellHeaderPaths.rowHeaderPaths;
@@ -65,7 +65,7 @@ export function createTable() {
           },
           {
             indicatorKey: 'Profit',
-            caption: 'Profit',
+            title: 'Profit',
             headerStyle: {
               bgColor(arg: VTable.TYPES.StylePropertyFunctionArg) {
                 const rowHeaderPaths = arg.cellHeaderPaths.rowHeaderPaths;

@@ -21,7 +21,7 @@ export function createTable() {
     columns: [
       {
         field: 'value',
-        caption: 'icon',
+        title: 'icon',
         width: 120,
         style: {
           color: data => {
@@ -53,13 +53,13 @@ export function createTable() {
       },
       {
         field: 'percent',
-        caption: 'percent',
+        title: 'percent',
         width: 120,
         columnType: 'progressbar'
       },
       {
         field: 'percent',
-        caption: 'percent2',
+        title: 'percent2',
         width: 120,
         columnType: 'progressbar',
         style: {
@@ -70,7 +70,7 @@ export function createTable() {
       },
       {
         field: 'percent',
-        caption: 'percent3',
+        title: 'percent3',
         width: 120,
         columnType: 'progressbar',
         style: {
@@ -87,7 +87,7 @@ export function createTable() {
       },
       {
         field: 'percent',
-        caption: 'percent4',
+        title: 'percent4',
         width: 120,
         columnType: 'progressbar',
         style: {
@@ -97,7 +97,7 @@ export function createTable() {
       },
       {
         field: 'value',
-        caption: 'axis',
+        title: 'axis',
         width: 100,
         columnType: 'progressbar',
         min: -10,

@@ -37,7 +37,7 @@ import { getChartDataId, getRawChartSpec } from './chart-helper/get-chart-spec';
 interface IPivotLayoutBaseHeadNode {
   id: number;
   // dimensionKey: string;
-  // // dimensionTitle: string;
+  // // title: string;
   // indicatorKey?: string;
   value: string;
   children: IPivotLayoutHeadNode[] | undefined;
@@ -71,7 +71,7 @@ class DimensionTree {
   tree: IPivotLayoutHeadNode = {
     id: 0,
     dimensionKey: '',
-    // dimensionTitle: '',
+    // title: '',
     value: '',
     children: [],
     level: -1,
@@ -376,14 +376,14 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
         this._columnHeaderCellIds.unshift(firstRowIds);
         const cell: HeaderData = {
           id,
-          caption:
+          title:
             typeof this.columnHeaderTitle.title === 'string'
               ? this.columnHeaderTitle.title
               : (this.columnsDefine.reduce((title: string, value) => {
                   if (typeof value === 'string') {
                     return title;
                   }
-                  return title + (title ? `/${value.dimensionTitle}` : `${value.dimensionTitle}`);
+                  return title + (title ? `/${value.title}` : `${value.title}`);
                 }, '') as string),
           field: undefined,
           headerType: this.columnHeaderTitle.headerType ?? 'text',
@@ -419,14 +419,14 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
       this._rowHeaderCellIds.unshift(firstColIds);
       const cell: HeaderData = {
         id,
-        caption:
+        title:
           typeof this.rowHeaderTitle.title === 'string'
             ? this.rowHeaderTitle.title
             : (this.rowsDefine.reduce((title: string, value) => {
                 if (typeof value === 'string') {
                   return title;
                 }
-                return title + (title ? `/${value.dimensionTitle}` : `${value.dimensionTitle}`);
+                return title + (title ? `/${value.title}` : `${value.title}`);
               }, '') as string),
         field: undefined,
         headerType: this.rowHeaderTitle.headerType ?? 'text',
@@ -500,11 +500,11 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
         if (hd.indicatorKey) {
           return indicator.indicatorKey === hd.indicatorKey;
         }
-        return indicator.caption === hd.value;
+        return indicator.title === hd.value;
       }) as IIndicator;
       const cell: HeaderData = {
         id,
-        caption: hd.value ?? indicatorInfo.caption,
+        title: hd.value ?? indicatorInfo.title,
         field: hd.dimensionKey,
         style:
           typeof (indicatorInfo ?? dimensionInfo)?.headerStyle === 'function'
@@ -629,7 +629,7 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
 
       const cell: HeaderData = {
         id,
-        caption: hd.value,
+        title: hd.value,
         field: hd.dimensionKey,
         //如果不是整棵树的叶子节点，都靠左显示
         style:
@@ -710,8 +710,7 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
 
         const cell: HeaderData = {
           id,
-          caption:
-            dimensionKey === this.indicatorDimensionKey ? this.indicatorTitle : dimensionInfo?.dimensionTitle ?? '',
+          title: dimensionKey === this.indicatorDimensionKey ? this.indicatorTitle : dimensionInfo?.title ?? '',
           field: '维度名称',
           style: this.cornerSetting.headerStyle,
           headerType: this.cornerSetting.headerType ?? 'text',
@@ -722,7 +721,7 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
           },
           dropDownMenu: dimensionInfo?.cornerDropDownMenu,
           pivotInfo: {
-            value: dimensionInfo?.dimensionTitle ?? '',
+            value: dimensionInfo?.title ?? '',
             dimensionKey,
             isPivotCorner: true
             // customInfo: dimensionInfo?.customInfo
@@ -751,7 +750,7 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
       const id = ++seqId;
       const cell: HeaderData = {
         id,
-        caption: '',
+        title: '',
         field: '维度名称',
         style: this.cornerSetting.headerStyle,
         headerType: this.cornerSetting.headerType ?? 'text',
@@ -1321,8 +1320,7 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
       } = {};
       colHeaderPath.dimensionKey = colHeader.dimensionKey;
       colHeaderPath.indicatorKey = colHeader.indicatorKey;
-      colHeaderPath.value =
-        colHeader.value ?? this.getIndicatorInfoByIndicatorKey(colHeader.indicatorKey)?.caption ?? '';
+      colHeaderPath.value = colHeader.value ?? this.getIndicatorInfoByIndicatorKey(colHeader.indicatorKey)?.title ?? '';
       headerPaths.colHeaderPaths.push(colHeaderPath);
     });
 
@@ -1334,8 +1332,7 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
       } = {};
       rowHeaderPath.dimensionKey = rowHeader.dimensionKey;
       rowHeaderPath.indicatorKey = rowHeader.indicatorKey;
-      rowHeaderPath.value =
-        rowHeader.value ?? this.getIndicatorInfoByIndicatorKey(rowHeader.indicatorKey)?.caption ?? '';
+      rowHeaderPath.value = rowHeader.value ?? this.getIndicatorInfoByIndicatorKey(rowHeader.indicatorKey)?.title ?? '';
       headerPaths.rowHeaderPaths.push(rowHeaderPath);
     });
     return headerPaths;
@@ -1433,14 +1430,14 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
       this._rowHeaderCellIds.unshift(firstColIds);
       const cell: HeaderData = {
         id,
-        caption:
+        title:
           typeof this.rowHeaderTitle.title === 'string'
             ? this.rowHeaderTitle.title
             : (this.rowsDefine.reduce((title: string, value) => {
                 if (typeof value === 'string') {
                   return title;
                 }
-                return title + (title ? `/${value.dimensionTitle}` : `${value.dimensionTitle}`);
+                return title + (title ? `/${value.title}` : `${value.title}`);
               }, '') as string),
         field: undefined,
         headerType: this.rowHeaderTitle.headerType ?? 'text',

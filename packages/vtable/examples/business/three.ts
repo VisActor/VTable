@@ -10176,7 +10176,7 @@ export function createTable() {
     rows: [
       {
         dimensionKey: '230519175534023',
-        dimensionTitle: '地区',
+        title: '地区',
         headerStyle: {
           textStick: true
         },
@@ -10301,7 +10301,7 @@ export function createTable() {
       },
       {
         dimensionKey: '230519175534021',
-        dimensionTitle: '邮寄方式',
+        title: '邮寄方式',
         headerStyle: {
           textStick: true
         },
@@ -10428,7 +10428,7 @@ export function createTable() {
     columns: [
       {
         dimensionKey: '230519175534024',
-        dimensionTitle: '类别',
+        title: '类别',
         headerStyle: {
           textStick: true
         },
@@ -10553,7 +10553,7 @@ export function createTable() {
       },
       {
         dimensionKey: '230519175534025',
-        dimensionTitle: '细分',
+        title: '细分',
         headerStyle: {
           textStick: true
         },
@@ -10678,7 +10678,7 @@ export function createTable() {
       },
       {
         dimensionKey: 'group-9e3c333e-1bb1-44a9-bb3a-7363b2b682af-1',
-        dimensionTitle: '指标分组',
+        title: '指标分组',
         drillDown: false,
         drillUp: false,
         showSort: false,
@@ -10686,7 +10686,7 @@ export function createTable() {
       },
       {
         dimensionKey: '230531142327010',
-        dimensionTitle: '指标名称 ',
+        title: '指标名称 ',
 
         showSort: false,
         drillDown: false,
@@ -10729,7 +10729,7 @@ export function createTable() {
     indicators: [
       {
         indicatorKey: '230519175534020',
-        caption: '销售额',
+        title: '销售额',
         width: 'auto',
         showSort: false
       },

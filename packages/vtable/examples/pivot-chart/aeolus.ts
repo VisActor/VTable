@@ -60,19 +60,19 @@ export function createTable() {
     columns: [
       {
         dimensionKey: '230801225625009',
-        dimensionTitle: '细分'
+        title: '细分'
       }
     ],
     rows: [
       {
         dimensionKey: '230801230643014',
-        dimensionTitle: '类别'
+        title: '类别'
       }
     ],
     indicators: [
       {
         indicatorKey: '230731170311027',
-        caption: '',
+        title: '',
         width: 'auto',
         columnType: 'chart',
         chartModule: 'vchart',

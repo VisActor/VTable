@@ -265,7 +265,7 @@ export function createTable() {
         columns: [
           {
             dimensionKey: 'City',
-            dimensionTitle: 'City',
+            title: 'City',
             headerStyle: {
               textStick: true,
               bgColor: '#356b9c',
@@ -277,7 +277,7 @@ export function createTable() {
         rows: [
           {
             dimensionKey: 'Category',
-            dimensionTitle: 'Category',
+            title: 'Category',
             headerStyle: {
               textStick: true
             },
@@ -285,7 +285,7 @@ export function createTable() {
           },
           {
             dimensionKey: 'Category',
-            dimensionTitle: 'Category',
+            title: 'Category',
             headerStyle: {
               textStick: true
             },
@@ -295,7 +295,7 @@ export function createTable() {
         indicators: [
           {
             indicatorKey: 'Quantity',
-            caption: 'Quantity',
+            title: 'Quantity',
             width: 'auto',
             showSort: false,
             style: {
@@ -310,7 +310,7 @@ export function createTable() {
           },
           {
             indicatorKey: 'Sales',
-            caption: 'Sales',
+            title: 'Sales',
             width: 'auto',
             showSort: false,
             format: rec => {
@@ -327,7 +327,7 @@ export function createTable() {
           },
           {
             indicatorKey: 'Profit',
-            caption: 'Profit',
+            title: 'Profit',
             width: 'auto',
             showSort: false,
             format: rec => {

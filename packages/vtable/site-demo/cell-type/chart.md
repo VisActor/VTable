@@ -85,7 +85,7 @@ const option = {
   indicators: [
     {
         indicatorKey: 'lineChart',
-        caption: 'Sales trend chart',
+        title: 'Sales trend chart',
         headerStyle: {
           color: 'blue',
           // bgColor: 'yellow',
@@ -115,7 +115,7 @@ const option = {
     },
       {
         indicatorKey: 'areaChart',
-        caption: 'Profit trend chart',
+        title: 'Profit trend chart',
         headerStyle: {
           color: 'green',
         },

@@ -169,7 +169,7 @@ export function createTable() {
     rows: [
       {
         dimensionKey: '220922103859014',
-        dimensionTitle: 'Area',
+        title: 'Area',
         width: 'auto',
         showSort: false,
         headerType: 'link',
@@ -180,7 +180,7 @@ export function createTable() {
     columns: [
       {
         dimensionKey: '220922103859015',
-        dimensionTitle: 'Category',
+        title: 'Category',
         headerStyle: {
           textAlign: 'right'
         },

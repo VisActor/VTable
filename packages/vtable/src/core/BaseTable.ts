@@ -2586,7 +2586,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
       row,
       field: this.getHeaderField(col, row),
       cellHeaderPaths: this.internalProps.layoutMap.getCellHeaderPaths(col, row),
-      caption: colDef.caption,
+      title: colDef.title,
       columnType: colDef.columnType
         ? typeof colDef.columnType === 'string'
           ? colDef.columnType

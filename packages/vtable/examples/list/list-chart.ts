@@ -7,7 +7,7 @@ export function createTable() {
   const columns = [
     {
       field: 'personid',
-      caption: 'personid',
+      title: 'personid',
       description: '这是一个标题的详细描述',
       sort: true,
       width: 80,
@@ -18,7 +18,7 @@ export function createTable() {
     },
     {
       field: 'areaChart',
-      caption: 'vchart area',
+      title: 'vchart area',
       width: '320',
       columnType: 'chart',
       chartModule: 'vchart',
@@ -99,7 +99,7 @@ export function createTable() {
     },
     {
       field: 'lineChart',
-      caption: 'vchart line',
+      title: 'vchart line',
       width: '320',
       columnType: 'chart',
       chartModule: 'vchart',
@@ -173,7 +173,7 @@ export function createTable() {
     },
     {
       field: 'barChart',
-      caption: 'vchart line',
+      title: 'vchart line',
       width: '320',
       columnType: 'chart',
       chartModule: 'vchart',
@@ -222,7 +222,7 @@ export function createTable() {
     },
     {
       field: 'scatterChart',
-      caption: 'vchart line',
+      title: 'vchart line',
       width: '320',
       columnType: 'chart',
       chartModule: 'vchart',
@@ -258,7 +258,7 @@ export function createTable() {
     },
     {
       field: 'areaChart',
-      caption: 'vchart area',
+      title: 'vchart area',
       width: '320',
       columnType: 'chart',
       chartModule: 'vchart',
@@ -343,7 +343,7 @@ export function createTable() {
     },
     {
       field: 'lineChart',
-      caption: 'vchart line',
+      title: 'vchart line',
       width: '320',
       columnType: 'chart',
       chartModule: 'vchart',
@@ -417,7 +417,7 @@ export function createTable() {
     },
     {
       field: 'barChart',
-      caption: 'vchart line',
+      title: 'vchart line',
       width: '320',
       columnType: 'chart',
       chartModule: 'vchart',
@@ -466,7 +466,7 @@ export function createTable() {
     },
     {
       field: 'scatterChart',
-      caption: 'vchart line',
+      title: 'vchart line',
       width: '320',
       columnType: 'chart',
       chartModule: 'vchart',
