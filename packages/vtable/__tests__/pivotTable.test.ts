@@ -426,7 +426,7 @@ describe('pivotTable init test', () => {
   const indicators = [
     {
       indicatorKey: '利润',
-      caption: '利润',
+      title: '利润',
       width: 'auto',
       style: {
         borderColor: 'red',
@@ -440,7 +440,7 @@ describe('pivotTable init test', () => {
     },
     {
       indicatorKey: '销售额',
-      caption: '销售额',
+      title: '销售额',
       width: 'auto'
     }
   ];
