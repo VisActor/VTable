@@ -27,7 +27,11 @@ export function computeAxisComponentWidth(config: ICellAxisOption, table: BaseTa
           fontWeight: attribute.label?.style?.fontWeight,
           fontFamily: attribute.label?.style?.fontFamily
         });
-        labelWidth = Math.max(labelWidth, getSizeAfterResize(width, height, attribute.label?.style?.angle).width);
+        const widthLimit = attribute.label?.style?.maxLineWidth || Infinity;
+        labelWidth = Math.max(
+          labelWidth,
+          getSizeAfterResize(Math.min(width, widthLimit), height, attribute.label?.style?.angle).width
+        );
       });
     } else {
       const range = attribute.range;
@@ -46,7 +50,11 @@ export function computeAxisComponentWidth(config: ICellAxisOption, table: BaseTa
           fontWeight: attribute.label?.style?.fontWeight,
           fontFamily: attribute.label?.style?.fontFamily
         });
-        labelWidth = Math.max(labelWidth, getSizeAfterResize(width, height, attribute.label?.style?.angle).width + 2);
+        const widthLimit = attribute.label?.style?.maxLineWidth || Infinity;
+        labelWidth = Math.max(
+          labelWidth,
+          getSizeAfterResize(Math.min(width, widthLimit), height, attribute.label?.style?.angle).width + 2
+        );
       });
     }
     labelWidth += attribute.label.space ?? 4;
@@ -60,7 +68,8 @@ export function computeAxisComponentWidth(config: ICellAxisOption, table: BaseTa
       fontWeight: attribute.title?.style?.fontWeight,
       fontFamily: attribute.title?.style?.fontFamily
     });
-    const size = getSizeAfterResize(width, height, attribute.title?.style?.angle);
+    const widthLimit = attribute.label?.style?.maxLineWidth || Infinity;
+    const size = getSizeAfterResize(Math.min(width, widthLimit), height, attribute.title?.style?.angle);
     if ((config.orient === 'left' || config.orient === 'right') && attribute.title.autoRotate) {
       titleWidth = size.height + 2;
     } else {
@@ -96,7 +105,11 @@ export function computeAxisComponentHeight(config: ICellAxisOption, table: BaseT
           fontWeight: attribute.label?.style?.fontWeight,
           fontFamily: attribute.label?.style?.fontFamily
         });
-        labelHeight = Math.max(labelHeight, getSizeAfterResize(width, height, attribute.label?.style?.angle).height);
+        const widthLimit = attribute.label?.style?.maxLineWidth || Infinity;
+        labelHeight = Math.max(
+          labelHeight,
+          getSizeAfterResize(Math.min(width, widthLimit), height, attribute.label?.style?.angle).height
+        );
       });
     } else {
       const range = attribute.range;
@@ -115,9 +128,10 @@ export function computeAxisComponentHeight(config: ICellAxisOption, table: BaseT
           fontWeight: attribute.label?.style?.fontWeight,
           fontFamily: attribute.label?.style?.fontFamily
         });
+        const widthLimit = attribute.label?.style?.maxLineWidth || Infinity;
         labelHeight = Math.max(
           labelHeight,
-          getSizeAfterResize(width, height, attribute.label?.style?.angle).height + 2
+          getSizeAfterResize(Math.min(width, widthLimit), height, attribute.label?.style?.angle).height + 2
         );
       });
     }
@@ -132,7 +146,8 @@ export function computeAxisComponentHeight(config: ICellAxisOption, table: BaseT
       fontWeight: attribute.title?.style?.fontWeight,
       fontFamily: attribute.title?.style?.fontFamily
     });
-    const size = getSizeAfterResize(width, height, attribute.title?.style?.angle);
+    const widthLimit = attribute.label?.style?.maxLineWidth || Infinity;
+    const size = getSizeAfterResize(Math.min(width, widthLimit), height, attribute.title?.style?.angle);
     if ((config.orient === 'bottom' || config.orient === 'top') && attribute.title.autoRotate) {
       titleHeight = size.width + 2;
     } else {

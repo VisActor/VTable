@@ -390,7 +390,7 @@ export function createTable() {
               domainLine: {
                 visible: true,
                 style: {
-                  lineWidth: 1,
+                  lineWidth: 5,
                   stroke: '#f9868c'
                 }
               },
@@ -413,7 +413,9 @@ export function createTable() {
                   fontSize: 16,
                   fill: '#f7555d',
                   angle: 0,
-                  fontWeight: 'normal'
+                  fontWeight: 'normal',
+                  // direction: 'vertical',
+                  maxLineWidth: 40
                 },
                 autoHide: true,
                 autoHideMethod: 'greedy'
