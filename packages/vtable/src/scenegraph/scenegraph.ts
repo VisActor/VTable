@@ -35,7 +35,36 @@ import { updateChartSize, updateChartState } from './refresh-node/update-chart';
 import { createCornerCell } from './style/corner-cell';
 import { initSceneGraph } from './group-creater/init-scenegraph';
 import { updateContainerChildrenX } from './utils/update-container';
+// import { loadPoptip } from '@visactor/vrender-components';
 
+// // VChart poptip theme
+// loadPoptip({
+//   visible: true,
+//   position: 'auto',
+//   padding: 8,
+//   titleStyle: {
+//     fontSize: 12,
+//     fontWeight: 'bold',
+//     fill: '#4E5969'
+//   },
+//   contentStyle: {
+//     fontSize: 12,
+//     fill: '#4E5969'
+//   },
+//   panel: {
+//     visible: true,
+//     fill: '#fff',
+//     stroke: '#ffffff',
+//     lineWidth: 0,
+//     cornerRadius: 3,
+//     shadowBlur: 12,
+//     shadowOffsetX: 0,
+//     shadowOffsetY: 4,
+//     shadowColor: 'rgba(0, 0, 0, 0.1)',
+//     size: 0,
+//     space: 12
+//   }
+// });
 container.load(splitModule);
 
 export type MergeMap = Map<
@@ -94,7 +123,9 @@ export class Scenegraph {
       height: table.canvas.height,
       disableDirtyBounds: false,
       background: table.theme.underlayBackgroundColor,
-      dpr: table.internalProps.pixelRatio
+      dpr: table.internalProps.pixelRatio,
+      pluginList: table.isPivotChart() ? ['poptipForText'] : undefined
+      // autoRender: true
     });
 
     this.stage.defaultLayer.setTheme({

@@ -38,10 +38,10 @@ export function getAxisConfigInPivotChart(col: number, row: number, layout: Pivo
       if (axisOption?.visible === false) {
         return;
       }
-      if (isNumber(axisOption.min)) {
+      if (isNumber(axisOption?.min)) {
         (range as any).min = axisOption.min;
       }
-      if (isNumber(axisOption.max)) {
+      if (isNumber(axisOption?.max)) {
         (range as any).max = axisOption.max;
       }
       // 顶部副指标轴
@@ -90,10 +90,10 @@ export function getAxisConfigInPivotChart(col: number, row: number, layout: Pivo
       if (axisOption?.visible === false) {
         return;
       }
-      if (isNumber(axisOption.min)) {
+      if (isNumber(axisOption?.min)) {
         (range as any).min = axisOption.min;
       }
-      if (isNumber(axisOption.max)) {
+      if (isNumber(axisOption?.max)) {
         (range as any).max = axisOption.max;
       }
       // 底侧指标轴
@@ -182,10 +182,10 @@ export function getAxisConfigInPivotChart(col: number, row: number, layout: Pivo
       if (axisOption?.visible === false) {
         return;
       }
-      if (isNumber(axisOption.min)) {
+      if (isNumber(axisOption?.min)) {
         (range as any).min = axisOption.min;
       }
-      if (isNumber(axisOption.max)) {
+      if (isNumber(axisOption?.max)) {
         (range as any).max = axisOption.max;
       }
       // 左侧指标轴
@@ -236,10 +236,10 @@ export function getAxisConfigInPivotChart(col: number, row: number, layout: Pivo
       if (axisOption?.visible === false) {
         return;
       }
-      if (isNumber(axisOption.min)) {
+      if (isNumber(axisOption?.min)) {
         (range as any).min = axisOption.min;
       }
-      if (isNumber(axisOption.max)) {
+      if (isNumber(axisOption?.max)) {
         (range as any).max = axisOption.max;
       }
       // 右侧副指标轴
