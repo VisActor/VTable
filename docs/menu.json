@@ -24,6 +24,18 @@
   },
   {
     "menu": "api",
-    "type": "markdown"
+    "type": "markdown-template",
+    "entry": "options",
+    "sections": [
+      "PivotTable.indicators",
+      "PivotTable.rows",
+      ".columns",
+      ".elements"
+    ]
+  },
+  {
+    "menu": "api",
+    "type": "markdown-template",
+    "entry": "api"
   }
 ]
