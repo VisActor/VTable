@@ -61,7 +61,7 @@
 - 对象形式
 - 函数形式
 
-具体参数说明可参考API说明[customRender](https://visactor-site.gf.bytedance.net/vtable/option/ListTable#customRender.elements)
+具体参数说明可参考API说明[customRender](https://visactor.io/vtable/option/ListTable#customRender.elements)
 
 从上述示例效果图中可以看出`urgency`和`not urgency`这两列的布局是一致的，所以我这里采用全局设置的方式。
 ``` javascript livedemo  template=vtable
