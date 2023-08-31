@@ -15,7 +15,8 @@
       "PivotTable.indicators",
       "PivotTable.rows",
       ".columns",
-      ".elements"
+      ".elements",
+      ".customRender.elements"
     ],
     "arrayKeys": [
       "type",
@@ -26,12 +27,6 @@
   {
     "menu": "api",
     "type": "markdown-template",
-    "entry": "api",
-    "sections": [
-      "PivotTable.indicators",
-      "PivotTable.rows",
-      ".columns",
-      ".elements"
-    ]
+    "entry": "api"
   }
 ]
