@@ -34,11 +34,11 @@ ${prefix} background (Object)
 
 是否描边框。
 
-#${prefix} strokeColor (string)
+#${prefix} stroke (string)
 
 描边颜色。
 
-#${prefix} fillColor (string)
+#${prefix} fill (string)
 
 填充颜色。
 

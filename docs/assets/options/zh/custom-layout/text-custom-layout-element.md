@@ -18,6 +18,6 @@ ${prefix} fontFamily (string)
 
 字体族名。
 
-${prefix} fillColor (string)
+${prefix} fill (string)
 
 填充颜色。

@@ -26,10 +26,10 @@ ${prefix}lineWidth (number)
 
 边框宽度。
 
-${prefix}fillColor (string)
+${prefix}fill (string)
 
 填充颜色。
 
-${prefix}strokeColor (string)
+${prefix}stroke (string)
 
 描边颜色。

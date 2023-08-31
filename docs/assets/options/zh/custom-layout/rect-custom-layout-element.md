@@ -24,10 +24,10 @@ ${prefix} cornerRadius (number)
 
 边框圆角半径。
 
-${prefix} fillColor (string)
+${prefix} fill (string)
 
 填充颜色。
 
-${prefix} strokeColor (string)
+${prefix} stroke (string)
 
 描边颜色。

@@ -18,10 +18,10 @@ ${prefix} lineWidth (number)
 
 Border width.
 
-${prefix} fillColor (string)
+${prefix} fill (string)
 
 Fill color.
 
-${prefix} strokeColor (string)
+${prefix} stroke (string)
 
 Stroke color.

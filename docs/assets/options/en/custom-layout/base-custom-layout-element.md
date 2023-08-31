@@ -34,11 +34,11 @@ Whether to fill the background color.
 
 Whether to stroke the border.
 
-#${prefix} strokeColor (string)
+#${prefix} stroke (string)
 
 Stroke color.
 
-#${prefix} fillColor (string)
+#${prefix} fill (string)
 
 Fill color.
 

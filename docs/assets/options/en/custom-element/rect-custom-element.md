@@ -22,11 +22,11 @@ ${prefix} height (number | string | ((value: string) => number | string))
 
 Rectangle height, can be a number, string, or a function that returns a number or string.
 
-${prefix} strokeColor (string | ((value: string) => string))
+${prefix} stroke (string | ((value: string) => string))
 
 Rectangle stroke color, can be a string or a function that returns a string.
 
-${prefix} fillColor (string | ((value: string) => string))
+${prefix} fill (string | ((value: string) => string))
 
 Rectangle fill color, can be a string or a function that returns a string.
 

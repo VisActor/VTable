@@ -22,11 +22,11 @@ ${prefix} height (number | string | ((value: string) => number | string))
 
 矩形高度，可以是数字、字符串或返回数字或字符串的函数。
 
-${prefix} strokeColor (string | ((value: string) => string))
+${prefix} stroke (string | ((value: string) => string))
 
 矩形描边颜色，可以是字符串或返回字符串的函数。
 
-${prefix} fillColor (string | ((value: string) => string))
+${prefix} fill (string | ((value: string) => string))
 
 矩形填充颜色，可以是字符串或返回字符串的函数。
 

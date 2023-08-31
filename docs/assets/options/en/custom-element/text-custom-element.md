@@ -16,11 +16,11 @@ ${prefix} text (string | ((value: string) => string))
 
 Text content, can be a string or a function that returns a string.
 
-${prefix} strokeColor (string | ((value: string) => string))
+${prefix} stroke (string | ((value: string) => string))
 
 Text stroke color, can be a string or a function that returns a string.
 
-${prefix} fillColor (string | ((value: string) => string))
+${prefix} fill (string | ((value: string) => string))
 
 Text fill color, can be a string or a function that returns a string.
 
@@ -100,7 +100,7 @@ ${prefix} background (Object)
 
 Text background.
 
-#${prefix} fillColor (string)
+#${prefix} fill (string)
 
 Background color.
 

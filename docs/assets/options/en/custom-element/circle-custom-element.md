@@ -16,10 +16,10 @@ ${prefix} radius (number | string | ((value: string) => number | string))
 
 Circle radius, can be a number, string, or a function that returns a number or string.
 
-${prefix} strokeColor (string | ((value: string) => string))
+${prefix} stroke (string | ((value: string) => string))
 
 Circle stroke color, can be a string or a function that returns a string.
 
-${prefix} fillColor (string | ((value: string) => string))
+${prefix} fill (string | ((value: string) => string))
 
 Circle fill color, can be a string or a function that returns a string.

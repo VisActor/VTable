@@ -24,10 +24,10 @@ ${prefix} endAngle (number | ((value: string) => number))
 
 Arc ending angle, can be a number or a function that returns a number.
 
-${prefix} strokeColor (string | ((value: string) => string))
+${prefix} stroke (string | ((value: string) => string))
 
 Arc stroke color, can be a string or a function that returns a string.
 
-${prefix} fillColor (string | ((value: string) => string))
+${prefix} fill (string | ((value: string) => string))
 
 Arc fill color, can be a string or a function that returns a string.

@@ -18,6 +18,6 @@ ${prefix} fontFamily (string)
 
 Font family name.
 
-${prefix} fillColor (string)
+${prefix} fill (string)
 
 Fill color.

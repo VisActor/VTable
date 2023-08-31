@@ -28,7 +28,7 @@ CustomLayout实现代码如下：
           text: '全部',
           fontSize: 32,
           fontFamily: 'sans-serif',
-          fillColor: 'black',
+          fill: 'black',
           marginBottom: 10,
           marginLeft: 10,
         });
@@ -38,7 +38,7 @@ CustomLayout实现代码如下：
         const rect0 = new VTable.CustomLayout.Rect({
           width: 30,
           height: 30,
-          fillColor: 'black',
+          fill: 'black',
           cornerRadius: 10,
         });
 
@@ -46,7 +46,7 @@ CustomLayout实现代码如下：
           text: '分组',
           fontSize: 28,
           fontFamily: 'sans-serif',
-          fillColor: 'black',
+          fill: 'black',
           marginLeft: 10,
           marginRight: 5,
           marginTop: 5,
@@ -57,9 +57,9 @@ CustomLayout实现代码如下：
           text: '文字2',
           fontSize: 16,
           fontFamily: 'sans-serif',
-          fillColor: 'rgb(51, 101, 238)',
+          fill: 'rgb(51, 101, 238)',
           background: {
-            fillColor: 'rgb(220, 240, 252)',
+            fill: 'rgb(220, 240, 252)',
             cornerRadius: 5,
             expendX: 5,
             expendY: 5,
@@ -70,7 +70,7 @@ CustomLayout实现代码如下：
 
         const circle2 = new VTable.CustomLayout.Circle({
           radius: 10,
-          fillColor: '#999',
+          fill: '#999',
         });
 
         // 分组
@@ -225,17 +225,17 @@ Basic custom primitive, currently supports four primitive of rect circle text ic
 
 | Primitive Types | Basic Properties |
 |:----|:----|
-| rect | width, height, strokeColor, fillColor, lineWidth, cornerRadius |
-| circle | radius, radian, strokeColor, fillColor, lineWidth |
-| text | text, fontSize, fontFamily, fillColor |
+| rect | width, height, stroke, fill, lineWidth, cornerRadius |
+| circle | radius, radian, stroke, fill, lineWidth |
+| text | text, fontSize, fontFamily, fill |
 | icons | svg, width, height |
 
 In addition to basic properties, hover styles and background styles are supported
 
 *   The hover style is the same as the base style, and the hovered element will display the corresponding style
 *   Text and icon support to configure background styles
-    *   strokeColor
-    *   fillColor
+    *   stroke
+    *   fill
     *   lineWidth
     *   cornerRadius
     *   Expenditure X
@@ -319,7 +319,7 @@ All primitive base classes
 | marginRight | number | right margin |
 | marginTop | number | upper margin |
 | marginBottom | number | lower margin |
-| background | {fill?: boolean; stroke?: boolean; strokeColor?: string; fillColor?: string; lineWidth?: number; cornerRadius?: number; expendX?: number; expendY?: number;} | Background fill style |
+| background | {fill?: boolean; stroke?: boolean; stroke?: string; fill?: string; lineWidth?: number; cornerRadius?: number; expendX?: number; expendY?: number;} | Background fill style |
 
 ### Rect
 
@@ -331,8 +331,8 @@ Rectangular primitive
 | height | number | rectangle height |
 | lineWidth | number | stroke width |
 | Radians | numbers | radians |
-| fillColor | string | fill color |
-| strokeColor | string | Stroke Color |
+| fill | string | fill color |
+| stroke | string | Stroke Color |
 
 ### Circle
 
@@ -343,8 +343,8 @@ circular primitive
 | radius | number | radius |
 | radian | number | circle angle |
 | lineWidth | number | stroke width |
-| fillColor | string | fill color |
-| strokeColor | string | Stroke Color |
+| fill | string | fill color |
+| stroke | string | Stroke Color |
 
 ### Text
 
@@ -355,7 +355,7 @@ Text primitive
 | text | string | text content |
 | fontSize | string | font size |
 | fontFamily | string | font |
-| fillColor | string | text color |
+| fill | string | text color |
 
 ### Icon
 

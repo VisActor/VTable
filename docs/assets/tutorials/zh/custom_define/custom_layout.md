@@ -28,7 +28,7 @@ CustomLayout实现代码如下：
           text: '全部',
           fontSize: 32,
           fontFamily: 'sans-serif',
-          fillColor: 'black',
+          fill: 'black',
           marginBottom: 10,
           marginLeft: 10,
         });
@@ -38,7 +38,7 @@ CustomLayout实现代码如下：
         const rect0 = new VTable.CustomLayout.Rect({
           width: 30,
           height: 30,
-          fillColor: 'black',
+          fill: 'black',
           cornerRadius: 10,
         });
 
@@ -46,7 +46,7 @@ CustomLayout实现代码如下：
           text: '分组',
           fontSize: 28,
           fontFamily: 'sans-serif',
-          fillColor: 'black',
+          fill: 'black',
           marginLeft: 10,
           marginRight: 5,
           marginTop: 5,
@@ -57,9 +57,9 @@ CustomLayout实现代码如下：
           text: '文字2',
           fontSize: 16,
           fontFamily: 'sans-serif',
-          fillColor: 'rgb(51, 101, 238)',
+          fill: 'rgb(51, 101, 238)',
           background: {
-            fillColor: 'rgb(220, 240, 252)',
+            fill: 'rgb(220, 240, 252)',
             cornerRadius: 5,
             expendX: 5,
             expendY: 5,
@@ -70,7 +70,7 @@ CustomLayout实现代码如下：
 
         const circle2 = new VTable.CustomLayout.Circle({
           radius: 10,
-          fillColor: '#999',
+          fill: '#999',
         });
 
         // 分组
@@ -225,17 +225,17 @@ customLayout函数返回一个对象，其中`rootContainer`为自定义渲染�
 
 |图元类型|基础属性|
 |:----|:----|
-|rect|width, height, strokeColor, fillColor, lineWidth, cornerRadius|
-|circle|radius, radian, strokeColor, fillColor, lineWidth|
-|text|text, fontSize, fontFamily, fillColor|
+|rect|width, height, stroke, fill, lineWidth, cornerRadius|
+|circle|radius, radian, stroke, fill, lineWidth|
+|text|text, fontSize, fontFamily, fill|
 |icon|svg, width, height |
 
 在基础属性外，支持hover样式和背景样式
 
 *   hover样式和基础样式相同，被hover的元素会展示相应的样式
 *   text和icon支持配置背景样式
-    *   strokeColor
-    *   fillColor
+    *   stroke
+    *   fill
     *   lineWidth
     *   cornerRadius
     *   expendX
@@ -319,7 +319,7 @@ customLayout函数返回一个对象，其中`rootContainer`为自定义渲染�
 |marginRight|number|右侧margin|
 |marginTop|number|上部margin|
 |marginBottom|number|下部margin|
-|background|{ fill?: boolean; stroke?: boolean; strokeColor?: string; fillColor?: string; lineWidth?: number; cornerRadius?: number; expendX?: number; expendY?: number;}|背景填充样式|
+|background|{ fill?: boolean; stroke?: boolean; stroke?: string; fill?: string; lineWidth?: number; cornerRadius?: number; expendX?: number; expendY?: number;}|背景填充样式|
 
 ### Rect
 
@@ -331,8 +331,8 @@ customLayout函数返回一个对象，其中`rootContainer`为自定义渲染�
 |height|number|矩形高度|
 |lineWidth|number|描边宽度|
 |cornerRadius|number|角弧度|
-|fillColor|string|填充颜色|
-|strokeColor|string|描边颜色|
+|fill|string|填充颜色|
+|stroke|string|描边颜色|
 
 ### Circle
 
@@ -343,8 +343,8 @@ customLayout函数返回一个对象，其中`rootContainer`为自定义渲染�
 |radius|number|半径|
 |radian|number|圆角度|
 |lineWidth|number|描边宽度|
-|fillColor|string|填充颜色|
-|strokeColor|string|描边颜色|
+|fill|string|填充颜色|
+|stroke|string|描边颜色|
 
 ### Text
 
@@ -355,7 +355,7 @@ customLayout函数返回一个对象，其中`rootContainer`为自定义渲染�
 |text|string|文字内容|
 |fontSize|string|字号|
 |fontFamily|string|字体|
-|fillColor|string|文字颜色|
+|fill|string|文字颜色|
 
 ### Icon
 

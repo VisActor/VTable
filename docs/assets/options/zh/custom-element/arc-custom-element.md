@@ -24,10 +24,10 @@ ${prefix} endAngle (number | ((value: string) => number))
 
 圆弧结束角度，可以是数字或返回数字的函数。
 
-${prefix} strokeColor (string | ((value: string) => string))
+${prefix} stroke (string | ((value: string) => string))
 
 圆弧描边颜色，可以是字符串或返回字符串的函数。
 
-${prefix} fillColor (string | ((value: string) => string))
+${prefix} fill (string | ((value: string) => string))
 
 圆弧填充颜色，可以是字符串或返回字符串的函数。

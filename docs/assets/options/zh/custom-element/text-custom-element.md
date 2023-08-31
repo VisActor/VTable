@@ -16,11 +16,11 @@ ${prefix} text (string | ((value: string) => string))
 
 文本内容，可以是字符串或返回字符串的函数。
 
-${prefix} strokeColor (string | ((value: string) => string))
+${prefix} stroke (string | ((value: string) => string))
 
 文本描边颜色，可以是字符串或返回字符串的函数。
 
-${prefix} fillColor (string | ((value: string) => string))
+${prefix} fill (string | ((value: string) => string))
 
 文本填充颜色，可以是字符串或返回字符串的函数。
 
@@ -100,7 +100,7 @@ ${prefix} background (Object)
 
 文本背景。
 
-#${prefix} fillColor (string)
+#${prefix} fill (string)
 
 背景颜色。
 
