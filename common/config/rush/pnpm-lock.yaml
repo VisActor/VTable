@@ -2786,6 +2786,16 @@ packages:
       '@visactor/vscale': 0.15.7
       '@visactor/vutils': 0.15.7
       inversify: 6.0.1
+    dev: true
+
+  /@visactor/vrender-components/0.14.6-alpha.7:
+    resolution: {integrity: sha512-KtT2NGNOMrbDP4U1ZVNSudblXEMMj9HpGwlkGSCNdxmJOsNSOg+t1qePIrUstwknLYY4MS8a6KLlaAx2z9jepw==}
+    dependencies:
+      '@visactor/vrender': 0.15.0-alpha.7
+      '@visactor/vscale': 0.15.7
+      '@visactor/vutils': 0.15.7
+      inversify: 6.0.1
+    dev: false
 
   /@visactor/vrender/0.14.5:
     resolution: {integrity: sha512-qSK8M2cpip4G3jhJhB0HbseTFSGQa3cBf+m82fo4+uPInlPIaHn6Q+weLViUWxGiZFbkVYx9O08/zxXam2DUKw==}
@@ -2816,6 +2826,14 @@ packages:
       '@turf/helpers': 6.5.0
       '@turf/invariant': 6.5.0
       eventemitter3: 4.0.7
+
+  /@visactor/vutils/0.15.7:
+    resolution: {integrity: sha512-f+IoDJpOys6TVFR6HoVsCTb0hI3GnEIsECzrNDFMmca/POP4oZ24rC/bCkyNGF/FUqAckynvQLv6q9IdMuyzVQ==}
+    dependencies:
+      '@turf/helpers': 6.5.0
+      '@turf/invariant': 6.5.0
+      eventemitter3: 4.0.7
+    dev: false
 
   /@vitejs/plugin-react/3.1.0_vite@3.2.6:
     resolution: {integrity: sha512-AfgcRL8ZBhAlc3BFdigClmTUMISmmzHn7sB2h9U1odvc5U/MjWXsAaz18b/WoppUTDBzxOJwo2VdClfUcItu9g==}

@@ -9,7 +9,7 @@ export interface IBasicDimension {
   /** 维度的唯一标识 对应数据集的字段名称 */
   dimensionKey: string; //
   /** 维度名称 角头可配置显示维度名称 */
-  dimensionTitle: string;
+  title: string;
   /** 维度值的format */
   headerFormat?: FieldFormat;
   /** 定义表头上的icon */

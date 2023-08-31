@@ -10,7 +10,7 @@ export function createTable() {
       const columns: (VTable.IDimension | string)[] = [
         {
           dimensionKey: 'Region',
-          dimensionTitle: '',
+          title: '',
           headerStyle: {
             textStick: true
           }
@@ -20,7 +20,7 @@ export function createTable() {
       const rows: (VTable.IDimension | string)[] = [
         {
           dimensionKey: 'Order Year',
-          dimensionTitle: 'Order Year',
+          title: 'Order Year',
           headerStyle: {
             textBaseline: 'top',
             textStick: true
@@ -31,7 +31,7 @@ export function createTable() {
       const indicators: VTable.TYPES.IChartIndicator[] = [
         {
           indicatorKey: 'Quantity',
-          caption: 'Quantity',
+          title: 'Quantity',
           width: 'auto',
           columnType: 'chart',
           chartModule: 'vchart',
@@ -140,7 +140,7 @@ export function createTable() {
         },
         {
           indicatorKey: 'Sales',
-          caption: 'Sales & Profit',
+          title: 'Sales & Profit',
           columnType: 'chart',
           chartModule: 'vchart',
           chartSpec: {

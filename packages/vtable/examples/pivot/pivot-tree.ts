@@ -65,7 +65,7 @@ export function createTable() {
           },
           {
             dimensionKey: '220524114340021',
-            //dimensionTitle: '220524114340021',
+            //title: '220524114340021',
             value: '家具',
             children: [
               {
@@ -85,7 +85,7 @@ export function createTable() {
           },
           {
             dimensionKey: '220524114340021',
-            //dimensionTitle: '220524114340021',
+            //title: '220524114340021',
             value: '餐饮',
             children: [
               {
@@ -105,7 +105,7 @@ export function createTable() {
           },
           {
             dimensionKey: '220524114340021',
-            //dimensionTitle: '220524114340021',
+            //title: '220524114340021',
             value: '技术',
             children: [
               {
@@ -273,7 +273,7 @@ export function createTable() {
         rows: [
           {
             dimensionKey: '220524114340021',
-            dimensionTitle: '类别-细分-邮寄方式',
+            title: '类别-细分-邮寄方式',
             headerFormat(value) {
               return `${value}`;
             },
@@ -290,7 +290,7 @@ export function createTable() {
           },
           {
             dimensionKey: '220524114340022',
-            dimensionTitle: '子类别',
+            title: '子类别',
             headerStyle: {
               textAlign: 'left',
               color: 'blue',
@@ -300,7 +300,7 @@ export function createTable() {
           },
           {
             dimensionKey: '220524114340023',
-            dimensionTitle: '邮寄方式',
+            title: '邮寄方式',
             headerStyle: {
               textAlign: 'left',
               color: 'white',
@@ -312,7 +312,7 @@ export function createTable() {
         columns: [
           {
             dimensionKey: '220524114340020',
-            dimensionTitle: '地区',
+            title: '地区',
             headerFormat(value) {
               return `${value}地区`;
             },
@@ -347,13 +347,13 @@ export function createTable() {
           },
           {
             dimensionKey: '220524114340031',
-            dimensionTitle: '省份'
+            title: '省份'
           }
         ],
         indicators: [
           {
             indicatorKey: '220524114340013',
-            caption: '销售额',
+            title: '销售额',
             width: 'auto',
             format(record) {
               // if (rec.rowDimensions[0].value === '东北') return `${rec.dataValue}%`;
@@ -386,7 +386,7 @@ export function createTable() {
           },
           {
             indicatorKey: '220524114340014',
-            caption: '利润',
+            title: '利润',
             format(record) {
               // if (rec.rowDimensions[0].value === '东北') return `${rec.dataValue}%`;
               if (!record?.['220524114340014']) {

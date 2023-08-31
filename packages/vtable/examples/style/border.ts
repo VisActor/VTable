@@ -118,7 +118,7 @@ export function createTable() {
         fontSize: 12,
         fontWeight: 'bold'
       },
-      caption: 'progress',
+      title: 'progress',
       description: '这是一个标题的详细描述',
       width: 'calc(20% - 20px)',
       dropDownMenu: [
@@ -155,7 +155,7 @@ export function createTable() {
       ]
     },
     {
-      caption: 'Name',
+      title: 'Name',
       headerStyle: {
         textAlign: 'center',
         fontFamily: 'sans-serif',
@@ -165,7 +165,7 @@ export function createTable() {
       columns: [
         {
           field: 'fname',
-          caption: 'First Name',
+          title: 'First Name',
           width: '20%',
           minWidth: 150,
           headerStyle: {
@@ -191,7 +191,7 @@ export function createTable() {
         {
           field: 'lname',
           // fieldKey: 'lname',
-          caption: 'Last Name',
+          title: 'Last Name',
           width: '20%',
           minWidth: 150
         }
@@ -199,8 +199,8 @@ export function createTable() {
     },
     {
       field: 'email',
-      caption: 'email',
-      // caption: `it is this person's y y i Email ya haha`,
+      title: 'email',
+      // title: `it is this person's y y i Email ya haha`,
       // width: 'calc(50% - 505px - 20px)',
       // minWidth: 350,
       width: 200,
@@ -264,7 +264,7 @@ export function createTable() {
           rec.birthday = isNaN(parseInt(date.toString(), 10)) ? val : date;
         }
       },
-      caption: 'Birthday',
+      title: 'Birthday',
       width: 150
       // columnType: 'default',
       // headerType: 'default',

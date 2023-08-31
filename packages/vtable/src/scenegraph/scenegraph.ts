@@ -32,7 +32,6 @@ import { computeRowsHeight } from './layout/compute-row-height';
 import { emptyGroup } from './utils/empty-group';
 import { dealBottomFrozen, dealFrozen, dealRightFrozen, resetFrozen } from './layout/frozen';
 import { updateChartSize, updateChartState } from './refresh-node/update-chart';
-import { createCornerCell } from './style/corner-cell';
 import { initSceneGraph } from './group-creater/init-scenegraph';
 import { updateContainerChildrenX } from './utils/update-container';
 // import { loadPoptip } from '@visactor/vrender-components';
@@ -133,6 +132,9 @@ export class Scenegraph {
         boundsPadding: 0,
         strokeBoundsBuffer: 0,
         lineJoin: 'round'
+      },
+      text: {
+        ignoreBuf: true
       }
     });
     this.initSceneGraph();
@@ -750,13 +752,22 @@ export class Scenegraph {
   }
 
   recalculateRowHeights() {
-    computeRowsHeight(this.table, 0, this.table.rowCount - 1);
+    computeRowsHeight(this.table, 0, this.table.rowCount - 1, true, true);
   }
 
   resize() {
-    this.recalculateColWidths();
-
-    this.recalculateRowHeights();
+    if (this.table.widthMode === 'adaptive') {
+      this.recalculateColWidths();
+    }
+    if (this.table.heightMode === 'adaptive') {
+      this.recalculateRowHeights();
+    }
+    // widthMode === 'adaptive' 时，computeColsWidth()中已经有高度更新计算
+    // else if (this.table.widthMode === 'adaptive') {
+    //   this.table.clearRowHeightCache();
+    //   computeRowsHeight(this.table, 0, this.table.columnHeaderLevelCount - 1);
+    //   computeRowsHeight(this.table, this.proxy.rowStart, this.proxy.rowEnd);
+    // }
 
     this.dealWidthMode();
     this.dealHeightMode();
@@ -1472,14 +1483,9 @@ export class Scenegraph {
     if (this.isPivot) {
       // 透视表外部处理排序
     } else if (this.transpose) {
-      setTimeout(() => {
-        // 清空单元格内容
-        this.clearCells();
-        // 生成单元格场景树
-        this.createSceneGraph();
-      }, 10);
+      this.proxy.sortCellHorizontal();
     } else {
-      this.proxy.sortCell();
+      this.proxy.sortCellVertical();
     }
   }
 

@@ -178,20 +178,20 @@ export function createTable() {
       {
         field: '类别',
         tree: true,
-        caption: '类别',
+        title: '类别',
         width: 'auto',
         sort: true
       },
       {
         field: '销售额',
-        caption: '销售额',
+        title: '销售额',
         width: 'auto',
         sort: true
         // tree: true,
       },
       {
         field: '利润',
-        caption: '利润',
+        title: '利润',
         width: 'auto',
         sort: true
       }

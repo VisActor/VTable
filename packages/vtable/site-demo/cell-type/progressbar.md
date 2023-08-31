@@ -71,7 +71,7 @@ const records = [
 const columns = [
  {
        field: 'YoY',
-    caption: 'count Year-over-Year',
+    title: 'count Year-over-Year',
     columnType: 'progressbar',
      width:200,
       fieldFormat(rec){
@@ -82,7 +82,7 @@ const columns = [
   },
   {
        field: 'YoY',
-    caption: 'count Year-over-Year',
+    title: 'count Year-over-Year',
     columnType: 'progressbar',
      width:200,
       style: {
@@ -98,7 +98,7 @@ const columns = [
     },
  {
     field: 'YoY',
-    caption: 'count Year-over-Year',
+    title: 'count Year-over-Year',
     columnType: 'progressbar',
     width:200,
     fieldFormat(){
@@ -118,7 +118,7 @@ const columns = [
   },
   {
     field: 'YoY',
-    caption: 'count Year-over-Year',
+    title: 'count Year-over-Year',
     columnType: 'progressbar',
     width:200,
     fieldFormat(){
@@ -134,7 +134,7 @@ const columns = [
   },
     {
     field: 'YoY',
-    caption: 'count Year-over-Year',
+    title: 'count Year-over-Year',
     columnType: 'progressbar',
     width:200,
     barType:'negative_no_axis',
@@ -149,7 +149,7 @@ const columns = [
   },
   {
     field: 'YoY',
-    caption: 'count Year-over-Year',
+    title: 'count Year-over-Year',
     columnType: 'progressbar',
     width:200,
     barType:'negative_no_axis',

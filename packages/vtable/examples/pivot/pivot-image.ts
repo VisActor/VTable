@@ -60,26 +60,26 @@ export function createTable() {
     rowTree: [
       {
         dimensionKey: '类别',
-        //dimensionTitle: '类别',
+        //title: '类别',
         value: '办公用品',
         children: [
           {
-            dimensionKey: '子类别', //dimensionTitle: '子类别',
+            dimensionKey: '子类别', //title: '子类别',
             // value: '电脑',
             value: animalImageUrl
           },
           {
-            dimensionKey: '子类别', //dimensionTitle: '子类别',
+            dimensionKey: '子类别', //title: '子类别',
             // value: '装订机',
             value: animalImageUrl
           },
           {
-            dimensionKey: '子类别', //dimensionTitle: '子类别',
+            dimensionKey: '子类别', //title: '子类别',
             // value: '签字笔',
             value: animalImageUrl
           },
           {
-            dimensionKey: '子类别', //dimensionTitle: '子类别',
+            dimensionKey: '子类别', //title: '子类别',
             // // value: '标签',
             value: animalImageUrl
           }
@@ -89,7 +89,7 @@ export function createTable() {
     columns: [
       {
         dimensionKey: '地区',
-        dimensionTitle: '地区',
+        title: '地区',
         headerStyle: {
           textAlign: 'center',
           padding: 2
@@ -98,7 +98,7 @@ export function createTable() {
       },
       {
         dimensionKey: '邮寄方式',
-        dimensionTitle: '邮寄方式',
+        title: '邮寄方式',
         headerStyle: {
           textAlign: 'center'
         }
@@ -107,7 +107,7 @@ export function createTable() {
     rows: [
       {
         dimensionKey: '类别',
-        dimensionTitle: '类别',
+        title: '类别',
         headerStyle: {
           color: 'red',
           textAlign: 'center'
@@ -115,7 +115,7 @@ export function createTable() {
       },
       {
         dimensionKey: '子类别',
-        dimensionTitle: '子类别',
+        title: '子类别',
         headerStyle: {
           textAlign: 'center',
           padding: 2
@@ -129,7 +129,7 @@ export function createTable() {
     indicators: [
       {
         indicatorKey: '1',
-        caption: '销售额',
+        title: '销售额',
         // format(rec) { return rec + 4000 },
         style: { textAlign: 'center', color: 'red' },
         headerStyle: { textAlign: 'center' },
@@ -139,7 +139,7 @@ export function createTable() {
       },
       {
         indicatorKey: '2',
-        caption: '图片',
+        title: '图片',
         // format(rec) { return rec + 4000 },
         // bodyStyle: { textAlign: 'center' as any, color: 'red' },
         columnType: 'image',
@@ -155,7 +155,7 @@ export function createTable() {
       },
       {
         indicatorKey: '3',
-        caption: '视频',
+        title: '视频',
         // format(rec) { return rec + 4000 },
         // bodyStyle: { textAlign: 'center' as any, color: 'red' },
         columnType: 'video',

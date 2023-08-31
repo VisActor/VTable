@@ -101,7 +101,7 @@ export function getAxisConfigInPivotChart(col: number, row: number, layout: Pivo
         {
           title: {
             visible: true,
-            text: (indicatorInfo as any)?.caption
+            text: (indicatorInfo as any)?.title
             // autoRotate: true
           },
           range: range
@@ -193,7 +193,7 @@ export function getAxisConfigInPivotChart(col: number, row: number, layout: Pivo
         {
           title: {
             visible: true,
-            text: (indicatorInfo as any)?.caption,
+            text: (indicatorInfo as any)?.title,
             autoRotate: true
           },
           range: range

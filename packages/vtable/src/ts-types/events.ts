@@ -151,7 +151,7 @@ export interface TableEventHandlersEventArgumentMap {
 }
 export interface DrillMenuEventInfo {
   dimensionKey: string | number;
-  dimensionTitle: string;
+  title: string;
   drillDown: boolean;
   drillUp: boolean;
   col: number;

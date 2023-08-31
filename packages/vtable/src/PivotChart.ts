@@ -326,8 +326,8 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
 
   getCellValue(col: number, row: number): FieldData {
     if (this.internalProps.layoutMap.isHeader(col, row)) {
-      const { caption, fieldFormat } = this.internalProps.layoutMap.getHeader(col, row);
-      return typeof fieldFormat === 'function' ? fieldFormat(caption) : caption;
+      const { title, fieldFormat } = this.internalProps.layoutMap.getHeader(col, row);
+      return typeof fieldFormat === 'function' ? fieldFormat(title) : title;
     }
     if (this.dataset) {
       const colKey = this.dataset.colKeysPath[this.internalProps.layoutMap.getRecordIndexByCol(col)] ?? [];
@@ -346,8 +346,8 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
   getCellOriginValue(col: number, row: number): FieldData {
     const table = this;
     if (table.internalProps.layoutMap.isHeader(col, row)) {
-      const { caption } = table.internalProps.layoutMap.getHeader(col, row);
-      return typeof caption === 'function' ? caption() : caption;
+      const { title } = table.internalProps.layoutMap.getHeader(col, row);
+      return typeof title === 'function' ? title() : title;
     }
     if (this.dataset) {
       const colKey = this.dataset.colKeysPath[this.internalProps.layoutMap.getRecordIndexByCol(col)] ?? [];

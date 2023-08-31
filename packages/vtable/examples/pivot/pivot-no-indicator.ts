@@ -9,7 +9,7 @@ export function createTable() {
     columns: [
       {
         dimensionKey: '221205165418024',
-        dimensionTitle: '子类别',
+        title: '子类别',
         width: 'auto',
         showSort: false,
         drillDown: false,
@@ -22,7 +22,7 @@ export function createTable() {
     rows: [
       {
         dimensionKey: '221205165418035',
-        dimensionTitle: '邮寄方式',
+        title: '邮寄方式',
         headerStyle: {
           textAlign: 'right'
         },

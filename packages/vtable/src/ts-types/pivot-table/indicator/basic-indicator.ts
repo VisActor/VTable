@@ -8,7 +8,7 @@ import type { CellInfo } from '../../common';
 export interface IBasicHeaderIndicator {
   // 单种指标属性配置
   indicatorKey: string; // 指标的唯一标识 用处对应到具体数据查询阶段 flat数据
-  caption?: string; // 指标名
+  title?: string; // 指标名
   // headerType?: HeaderTypeOption | null; //指标表头类型
   // headerStyle?: HeaderStyleOption | null; //指标名称在表头部分显示类型
   headerIcon?: (string | ColumnIconOption)[] | ((args: CellInfo) => (string | ColumnIconOption)[]);

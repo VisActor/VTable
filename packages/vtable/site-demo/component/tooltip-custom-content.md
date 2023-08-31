@@ -210,19 +210,19 @@ function hideTooltip() {
         rows: [
           {
             dimensionKey: 'Category',
-            dimensionTitle: 'Catogery',
+            title: 'Catogery',
             width: 'auto'
           },
           {
             dimensionKey: 'Sub-Category',
-            dimensionTitle: 'Sub-Catogery',
+            title: 'Sub-Catogery',
             width: 'auto'
           }
         ],
         columns: [
           {
             dimensionKey: 'Region',
-            dimensionTitle: 'Region',
+            title: 'Region',
             headerStyle: {
               textStick: true
             },
@@ -232,7 +232,7 @@ function hideTooltip() {
         indicators: [
           {
             indicatorKey: 'Sales',
-            caption: 'Sales',
+            title: 'Sales',
             width: 'auto',
             showSort: false,
             headerStyle: {
@@ -256,7 +256,7 @@ function hideTooltip() {
           },
           {
             indicatorKey: 'Profit',
-            caption: 'Profit',
+            title: 'Profit',
             width: 'auto',
             showSort: false,
             headerStyle: {

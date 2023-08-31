@@ -36,7 +36,6 @@ export function createCell(
   col: number,
   row: number,
   colWidth: number,
-  bgColorFunc: Function,
   cellWidth: number,
   cellHeight: number,
   columnGroup: Group,
@@ -49,6 +48,21 @@ export function createCell(
   range: CellRange,
   cellTheme: IThemeSpec
 ): Group {
+  let bgColorFunc: Function;
+  // 判断是否有mapping  遍历dataset中mappingRules
+  if ((table.internalProps as PivotTableProtected)?.dataConfig?.mappingRules && !table.isHeader(col, row)) {
+    (table.internalProps as PivotTableProtected)?.dataConfig?.mappingRules?.forEach(
+      (mappingRule: MappingRule, i: number) => {
+        if (
+          mappingRule.bgColor &&
+          (table.internalProps.layoutMap as PivotLayoutMap).getIndicatorKey(col, row) ===
+            mappingRule.bgColor.indicatorKey
+        ) {
+          bgColorFunc = mappingRule.bgColor.mapping;
+        }
+      }
+    );
+  }
   let cellGroup: Group;
   if (type === 'text' || type === 'link') {
     if (type === 'link') {
@@ -378,10 +392,14 @@ export function updateCell(col: number, row: number, table: BaseTableAPI, addNew
 
     let bgColorFunc: Function;
     // 判断是否有mapping  遍历dataset中mappingRules
-    if ((table.internalProps as PivotTableProtected)?.dataConfig?.mappingRules && cellType === 'body') {
+    if ((table.internalProps as PivotTableProtected)?.dataConfig?.mappingRules && !table.isHeader(col, row)) {
       (table.internalProps as PivotTableProtected)?.dataConfig?.mappingRules?.forEach(
         (mappingRule: MappingRule, i: number) => {
-          if (mappingRule.bgColor) {
+          if (
+            mappingRule.bgColor &&
+            (table.internalProps.layoutMap as PivotLayoutMap).getIndicatorKey(col, row) ===
+              mappingRule.bgColor.indicatorKey
+          ) {
             bgColorFunc = mappingRule.bgColor.mapping;
           }
         }
@@ -491,7 +509,6 @@ function updateCellContent(
     col,
     row,
     table.getColWidth(col),
-    bgColorFunc,
     cellWidth,
     cellHeight,
     // oldCellGroup.parent,

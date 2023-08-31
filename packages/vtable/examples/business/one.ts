@@ -17,7 +17,7 @@ export function createTable() {
     columns: [
       {
         field: '230117170143063',
-        caption: '城市',
+        title: '城市',
         dataType: 'dimension',
         showSort: false,
         style: {
@@ -122,12 +122,12 @@ export function createTable() {
       },
       {
         field: 'group-90b737f0-36cb-4c17-891f-ef463f47f7de-1',
-        caption: '分组1',
+        title: '分组1',
         columns: [
           {
             firstRow: 10165.890029907227,
             field: '230117170143061',
-            caption: '销售额',
+            title: '销售额',
             dataType: 'measure',
             showSort: false,
             style: {
@@ -234,7 +234,7 @@ export function createTable() {
           {
             firstRow: 1968.3300380706787,
             field: '230117170143062',
-            caption: '利润',
+            title: '利润',
             dataType: 'measure',
             showSort: false,
             style: {
@@ -367,12 +367,12 @@ export function createTable() {
       },
       {
         field: 'group-82d4da32-01df-4a78-86f9-369fa298864a-1',
-        caption: '分组2',
+        title: '分组2',
         columns: [
           {
             firstRow: 0.20000000298023224,
             field: '230117170143064',
-            caption: '折扣',
+            title: '折扣',
             dataType: 'measure',
             showSort: false,
             style: {
@@ -479,7 +479,7 @@ export function createTable() {
           {
             firstRow: 10165.890029907227,
             field: '230130190405007',
-            caption: '销售额',
+            title: '销售额',
             dataType: 'measure',
             showSort: false,
             style: {
@@ -612,24 +612,24 @@ export function createTable() {
       },
       {
         field: 'group-4e818f14-f5d2-4550-891d-b6ec6b6ab75a-5',
-        caption: '分组6',
+        title: '分组6',
         columns: [
           {
             field: 'group-36a79dfc-4800-4783-b357-e995455594e9-6',
-            caption: '分组7',
+            title: '分组7',
             columns: [
               {
                 field: 'group-d5ed463c-a8c0-4593-8df2-137b181073fb-8',
-                caption: '分组9',
+                title: '分组9',
                 columns: [
                   {
                     field: 'group-501d3ea9-31d5-4707-9a9c-8e2bd13150b0-9',
-                    caption: '分组10',
+                    title: '分组10',
                     columns: [
                       {
                         firstRow: 56154,
                         field: '230130190405009',
-                        caption: '行 ID',
+                        title: '行 ID',
                         dataType: 'measure',
                         showSort: false,
                         style: {
@@ -736,7 +736,7 @@ export function createTable() {
                       {
                         firstRow: 0.20000000298023224,
                         field: '230130190405008',
-                        caption: '折扣',
+                        title: '折扣',
                         dataType: 'measure',
                         showSort: false,
                         style: {
@@ -870,7 +870,7 @@ export function createTable() {
                   {
                     firstRow: 32,
                     field: '230117170143065',
-                    caption: '数量',
+                    title: '数量',
                     dataType: 'measure',
                     showSort: false,
                     style: {
@@ -1003,12 +1003,12 @@ export function createTable() {
               },
               {
                 field: 'group-2723ee01-c2a9-497c-97ee-0c91cc544ae6-7',
-                caption: '分组8',
+                title: '分组8',
                 columns: [
                   {
                     firstRow: 0.20000000298023224,
                     field: '230130190405013',
-                    caption: '折扣',
+                    title: '折扣',
                     dataType: 'measure',
                     showSort: false,
                     style: {
@@ -1115,7 +1115,7 @@ export function createTable() {
                   {
                     firstRow: 56154,
                     field: '230130190405014',
-                    caption: '行 ID',
+                    title: '行 ID',
                     dataType: 'measure',
                     showSort: false,
                     style: {
@@ -1249,7 +1249,7 @@ export function createTable() {
               {
                 firstRow: 1968.3300380706787,
                 field: '230130190405011',
-                caption: '利润',
+                title: '利润',
                 dataType: 'measure',
                 showSort: false,
                 style: {
@@ -1383,7 +1383,7 @@ export function createTable() {
           {
             firstRow: 32,
             field: '230130190405010',
-            caption: '数量',
+            title: '数量',
             dataType: 'measure',
             showSort: false,
             style: {
@@ -1517,7 +1517,7 @@ export function createTable() {
       {
         firstRow: 10165.890029907227,
         field: '230130190405012',
-        caption: '销售额',
+        title: '销售额',
         dataType: 'measure',
         showSort: false,
         style: {
@@ -1624,7 +1624,7 @@ export function createTable() {
       {
         firstRow: 32,
         field: '230130190405015',
-        caption: '数量',
+        title: '数量',
         dataType: 'measure',
         showSort: false,
         style: {
@@ -1731,7 +1731,7 @@ export function createTable() {
       {
         firstRow: 1968.3300380706787,
         field: '230130190405016',
-        caption: '利润',
+        title: '利润',
         dataType: 'measure',
         showSort: false,
         style: {
@@ -1838,7 +1838,7 @@ export function createTable() {
       {
         firstRow: 10165.890029907227,
         field: '230130190405017',
-        caption: '销售额',
+        title: '销售额',
         dataType: 'measure',
         showSort: false,
         style: {
@@ -1945,7 +1945,7 @@ export function createTable() {
       {
         firstRow: 0.20000000298023224,
         field: '230130190405018',
-        caption: '折扣',
+        title: '折扣',
         dataType: 'measure',
         showSort: false,
         style: {
@@ -2052,7 +2052,7 @@ export function createTable() {
       {
         firstRow: 56154,
         field: '230130190405019',
-        caption: '行 ID',
+        title: '行 ID',
         dataType: 'measure',
         showSort: false,
         style: {
@@ -2159,7 +2159,7 @@ export function createTable() {
       {
         firstRow: 32,
         field: '230130190405020',
-        caption: '数量',
+        title: '数量',
         dataType: 'measure',
         showSort: false,
         style: {
@@ -2265,12 +2265,12 @@ export function createTable() {
       },
       {
         field: 'group-2c7d4276-831a-4454-bc83-be442f9f813f-4',
-        caption: '分组5',
+        title: '分组5',
         columns: [
           {
             firstRow: 10165.890029907227,
             field: '230130190405022',
-            caption: '销售额',
+            title: '销售额',
             dataType: 'measure',
             showSort: false,
             style: {
@@ -2377,7 +2377,7 @@ export function createTable() {
           {
             firstRow: 1968.3300380706787,
             field: '230130190405021',
-            caption: '利润',
+            title: '利润',
             dataType: 'measure',
             showSort: false,
             style: {
@@ -2511,7 +2511,7 @@ export function createTable() {
       {
         firstRow: 0.20000000298023224,
         field: '230130190405023',
-        caption: '折扣',
+        title: '折扣',
         dataType: 'measure',
         showSort: false,
         style: {
@@ -2617,12 +2617,12 @@ export function createTable() {
       },
       {
         field: 'group-0c5d99f8-6f86-46cf-bc18-82db22da0c0b-3',
-        caption: '分组4',
+        title: '分组4',
         columns: [
           {
             firstRow: 56154,
             field: '230130190405024',
-            caption: '行 ID',
+            title: '行 ID',
             dataType: 'measure',
             showSort: false,
             style: {
@@ -2756,7 +2756,7 @@ export function createTable() {
       {
         firstRow: 1968.3300380706787,
         field: '230130190405026',
-        caption: '利润',
+        title: '利润',
         dataType: 'measure',
         showSort: false,
         style: {
@@ -2862,16 +2862,16 @@ export function createTable() {
       },
       {
         field: 'group-c3b09346-e9b0-4d5b-921d-afdf0a5f3289-2',
-        caption: '分组3',
+        title: '分组3',
         columns: [
           {
             field: 'group-6e0c321e-f8a3-474c-a22c-91372a9cc902-11',
-            caption: '分组12',
+            title: '分组12',
             columns: [
               {
                 firstRow: 10165.890029907227,
                 field: '230130190405027',
-                caption: '销售额',
+                title: '销售额',
                 dataType: 'measure',
                 showSort: false,
                 style: {
@@ -2978,7 +2978,7 @@ export function createTable() {
               {
                 firstRow: 1968.3300380706787,
                 field: '230130190405031',
-                caption: '利润',
+                title: '利润',
                 dataType: 'measure',
                 showSort: false,
                 style: {
@@ -3085,7 +3085,7 @@ export function createTable() {
               {
                 firstRow: 32,
                 field: '230130190405025',
-                caption: '数量',
+                title: '数量',
                 dataType: 'measure',
                 showSort: false,
                 style: {
@@ -3218,12 +3218,12 @@ export function createTable() {
           },
           {
             field: 'group-a5f11fe3-404e-4577-abd8-ec78bd210461-10',
-            caption: '分组11',
+            title: '分组11',
             columns: [
               {
                 firstRow: 0.20000000298023224,
                 field: '230130190405028',
-                caption: '折扣',
+                title: '折扣',
                 dataType: 'measure',
                 showSort: false,
                 style: {
@@ -3384,7 +3384,7 @@ export function createTable() {
       {
         firstRow: 56154,
         field: '230130190405029',
-        caption: '行 ID',
+        title: '行 ID',
         dataType: 'measure',
         showSort: false,
         style: {
@@ -3491,7 +3491,7 @@ export function createTable() {
       {
         firstRow: 32,
         field: '230130190405030',
-        caption: '数量',
+        title: '数量',
         dataType: 'measure',
         showSort: false,
         style: {

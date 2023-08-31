@@ -24,7 +24,7 @@ link: '/guide/table_type/List_table/tree_list'
 const columns =[
     {
         "field": "group",
-        "caption": "department",
+        "title": "department",
         "width": "auto",
          tree: true,
          fieldFormat(rec){
@@ -33,7 +33,7 @@ const columns =[
     },
     {
         "field": "total_children",
-        "caption": "memebers count",
+        "title": "memebers count",
         "width": "auto",
         fieldFormat(rec){
           if(rec?.['position']){
@@ -44,7 +44,7 @@ const columns =[
     },
     {
         "field": "monthly_expense",
-        "caption": "monthly expense",
+        "title": "monthly expense",
         "width": "auto",
         fieldFormat(rec){
           if(rec?.['salary']){
@@ -55,17 +55,17 @@ const columns =[
     },
     {
         "field": "new_hires_this_month",
-        "caption": "new hires this month",
+        "title": "new hires this month",
         "width": "auto"
     },
     {
         "field": "resignations_this_month",
-        "caption": "resignations this month",
+        "title": "resignations this month",
         "width": "auto"
     },
     {
         "field": "complaints_and_suggestions",
-        "caption": "recived complaints counts",
+        "title": "recived complaints counts",
         "width": "auto"
     },
    

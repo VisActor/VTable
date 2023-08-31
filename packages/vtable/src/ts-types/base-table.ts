@@ -395,7 +395,7 @@ export interface BaseTableAPI {
   ) => EventListenerId;
   // &(<T extends keyof TableEventHandlersEventArgumentMap>(type: string, listener: AnyListener<T>) => EventListenerId);
 
-  dataSet: DataSet;
+  _vDataSet: DataSet;
   /** 场景树对象 */
   scenegraph: Scenegraph;
   /** 状态管理模块 */
@@ -542,7 +542,6 @@ export interface BaseTableAPI {
     text: string,
     font: { fontSize: number; fontWeight?: string | number; fontFamily: string }
   ) => ITextSize;
-  measureTextBounds: (attributes: IWrapTextGraphicAttribute) => ITextSize;
 
   _canResizeColumn: (col: number, row: number) => boolean;
 
@@ -553,7 +552,8 @@ export interface BaseTableAPI {
   isPivotChart: (() => boolean) & (() => boolean);
   _clearColRangeWidthsMap: (col?: number) => void;
   _clearRowRangeHeightsMap: (row?: number) => void;
-
+  clearRowHeightCache: () => void;
+  clearColWidthCache: () => void;
   toggleHierarchyState: (col: number, row: number) => void;
 
   resize: () => void;
@@ -562,6 +562,8 @@ export interface BaseTableAPI {
 
   getTargetColAt: (absoluteX: number) => { col: number; left: number; right: number; width: number } | null;
   getTargetRowAt: (absoluteY: number) => { row: number; top: number; bottom: number; height: number } | null;
+
+  renderWithRecreateCells: () => void;
   //#endregion  tableAPI
 }
 export interface ListTableProtected extends IBaseTableProtected {

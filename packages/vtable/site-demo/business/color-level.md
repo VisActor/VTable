@@ -182,7 +182,7 @@ const option = {
   rows:[
     {
         dimensionKey: '220922103859014',
-        dimensionTitle: 'Area',
+        title: 'Area',
         width: 'auto',
         showSort: false,
         headerType: 'link',
@@ -193,7 +193,7 @@ const option = {
   columns:[
     {
         dimensionKey: '220922103859015',
-        dimensionTitle: 'Category',
+        title: 'Category',
         headerStyle: {
           textAlign: "right",
         },

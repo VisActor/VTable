@@ -94,13 +94,20 @@ export class ListTable extends BaseTable implements ListTableAPI {
   set columns(columns: ColumnsDefine) {
     this.internalProps.columns = columns;
     this.options.columns = columns;
-    this.refreshHeader();
-    //需要异步等待其他事情都完成后再绘制
-    setTimeout(() => {
-      this.render();
-    }, 0);
   }
-
+  /**
+   * Sets the define of the column.
+   */
+  updateColumns(columns: ColumnsDefine) {
+    this.internalProps.columns = columns;
+    this.options.columns = columns;
+    this.refreshHeader();
+    this.scenegraph.clearCells();
+    this.headerStyleCache = new Map();
+    this.bodyStyleCache = new Map();
+    this.scenegraph.createSceneGraph();
+    this.render();
+  }
   /**
    *@deprecated 请使用columns
    */
@@ -148,8 +155,8 @@ export class ListTable extends BaseTable implements ListTableAPI {
   getCellValue(col: number, row: number): FieldData {
     const table = this;
     if (table.internalProps.layoutMap.isHeader(col, row)) {
-      const { caption } = table.internalProps.layoutMap.getHeader(col, row);
-      return typeof caption === 'function' ? caption() : caption;
+      const { title } = table.internalProps.layoutMap.getHeader(col, row);
+      return typeof title === 'function' ? title() : title;
     }
     const { field, fieldFormat } = table.internalProps.layoutMap.getBody(col, row);
     return table.getFieldData(fieldFormat || field, col, row);
@@ -158,8 +165,8 @@ export class ListTable extends BaseTable implements ListTableAPI {
   getCellOriginValue(col: number, row: number): FieldData {
     const table = this;
     if (table.internalProps.layoutMap.isHeader(col, row)) {
-      const { caption } = table.internalProps.layoutMap.getHeader(col, row);
-      return typeof caption === 'function' ? caption() : caption;
+      const { title } = table.internalProps.layoutMap.getHeader(col, row);
+      return typeof title === 'function' ? title() : title;
     }
     const { field } = table.internalProps.layoutMap.getBody(col, row);
     return table.getFieldData(field, col, row);
