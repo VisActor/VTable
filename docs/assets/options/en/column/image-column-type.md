@@ -2,11 +2,11 @@
 
 #${prefix} columns.image(string)
 
-Specify the column type as `'image'`, the default columnType is 'text'.
+Specify the column type as `'image'`, the default cellType is 'text'.
 
-##${prefix} columnType(string) = 'image'
+##${prefix} cellType(string) = 'image'
 
-Specify the column type as `'image'`, the default columnType is `'text'`. Other configuration options are as follows (also applicable to types with 'video'):
+Specify the column type as `'image'`, the default cellType is `'text'`. Other configuration options are as follows (also applicable to types with 'video'):
 
 {{ use: base-column-type(
     prefix = '##'+${prefix},

@@ -4,7 +4,7 @@
 
 指定列类型为`'image'`，columnType可缺省默认为'text
 
-##${prefix} columnType(string) = 'image'
+##${prefix} cellType(string) = 'image'
 
 指定列类型为`'image'`，columnType可缺省默认为`'text'`。其他配置项如下（同样适用于类型为'vidio'）：
 

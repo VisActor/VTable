@@ -8,7 +8,7 @@ VTable 提供了丰富的排序功能，用户可以轻松地按需开启、自�
 
 ## 开启排序
 
-要使用 VTable 的排序功能，需要先对表格列进行配置。在 `columns` 中，每一列的配置项需要根据 columnType（列类型）进行设置。在本教程中，我们主要关注排序相关的配置。
+要使用 VTable 的排序功能，需要先对表格列进行配置。在 `columns` 中，每一列的配置项需要根据 cellType（列类型）进行设置。在本教程中，我们主要关注排序相关的配置。
 
 以下是一个开启排序功能的例子：
 
@@ -19,13 +19,13 @@ const listTable = new ListTable({
     {
       title: '姓名',
       field: 'name',
-      columnType: 'text',
+      cellType: 'text',
       sort: true, // 使用内置默认排序逻辑
     },
     {
       title: '年龄',
       field: 'age',
-      columnType: 'text',
+      cellType: 'text',
       sort: (v1, v2, order) => {   // 使用自定义排序逻辑
           if (order === 'desc') {
             return v1 === v2 ? 0 : v1 > v2 ? -1 : 1;
@@ -52,13 +52,13 @@ const listTable = new ListTable(document.getElementById(CONTAINER_ID), {
     {
       title: '姓名',
       field: 'name',
-      columnType: 'text',
+      cellType: 'text',
       sort: (a, b) => a.localeCompare(b),
     },
     {
       title: '年龄',
       field: 'age',
-      columnType: 'text',
+      cellType: 'text',
       sort: (a, b) => parseInt(a) - parseInt(b),
     },
   ],
@@ -314,59 +314,59 @@ const records = [
 const columns =[
     {
         "field": "230517143221027",
-        "caption": "Order ID",
+        "title": "Order ID",
         "width": "auto",
         "sort":true
     },
     {
         "field": "230517143221030",
-        "caption": "Customer ID",
+        "title": "Customer ID",
         "width": "auto",
         "sort":true
     },
     {
         "field": "230517143221032",
-        "caption": "Product Name",
+        "title": "Product Name",
         "width": "auto"
     },
     {
         "field": "230517143221023",
-        "caption": "Category",
+        "title": "Category",
         "width": "auto"
     },
     {
         "field": "230517143221034",
-        "caption": "Sub-Category",
+        "title": "Sub-Category",
         "width": "auto"
     },
     {
         "field": "230517143221037",
-        "caption": "Region",
+        "title": "Region",
         "width": "auto"
     },
     {
         "field": "230517143221024",
-        "caption": "City",
+        "title": "City",
         "width": "auto"
     },
     {
         "field": "230517143221029",
-        "caption": "Order Date",
+        "title": "Order Date",
         "width": "auto"
     },
     {
         "field": "230517143221042",
-        "caption": "Quantity",
+        "title": "Quantity",
         "width": "auto"
     },
     {
         "field": "230517143221040",
-        "caption": "Sales",
+        "title": "Sales",
         "width": "auto"
     },
     {
         "field": "230517143221041",
-        "caption": "Profit",
+        "title": "Profit",
         "width": "auto"
     }
 ];

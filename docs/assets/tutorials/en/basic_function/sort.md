@@ -6,7 +6,7 @@ VTable provides rich sorting functions, users can easily open on demand, customi
 
 ## Enable sorting
 
-To use the sorting function of VTable, you need to configure the table columns first. exist `columns` The configuration items for each column need to be set according to columnType (column type). In this tutorial, we mainly focus on sorting-related configurations.
+To use the sorting function of VTable, you need to configure the table columns first. exist `columns` The configuration items for each column need to be set according to cellType (column type). In this tutorial, we mainly focus on sorting-related configurations.
 
 Here is an example of enabling sorting:
 
@@ -17,13 +17,13 @@ const listTable = new ListTable({
     {
       title: '姓名',
       field: 'name',
-      columnType: 'text',
+      cellType: 'text',
       sort: true,
     },
     {
       title: '年龄',
       field: 'age',
-      columnType: 'text',
+      cellType: 'text',
       sort: (v1, v2, order) => {
           if (order === 'desc') {
             return v1 === v2 ? 0 : v1 > v2 ? -1 : 1;
@@ -50,13 +50,13 @@ const listTable = new ListTable({
     {
       title: '姓名',
       field: 'name',
-      columnType: 'text',
+      cellType: 'text',
       sort: (a, b) => a.localeCompare(b),
     },
     {
       title: '年龄',
       field: 'age',
-      columnType: 'text',
+      cellType: 'text',
       sort: (a, b) => parseInt(a) - parseInt(b),
     },
   ],

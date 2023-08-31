@@ -13,9 +13,9 @@ About why you need to configure a name to register VChart`'vchart'`? We have pla
 
 ## Related configuration
 
-Table display type`columnType`Set to`chart`Used to generate charts.
+Table display type`cellType`Set to`chart`Used to generate charts.
 
-*   columnType: 'chart'//chart chart type
+*   cellType: 'chart'//chart chart type
 *   chartModule: 'vchart'//vchart is the name configured during registration
 *   Chart Spec :{ } // chart configuration item
 
@@ -64,7 +64,7 @@ const records = [
 const columns =[
     {
       field: 'personid',
-      caption: 'personid',
+      title: 'personid',
       description: '这是一个标题的详细描述',
       sort: true,
       width: 80,
@@ -75,9 +75,9 @@ const columns =[
     },
     {
       field: 'areaChart',
-      caption: 'vchart area',
+      title: 'vchart area',
       width: '320',
-      columnType: 'chart',
+      cellType: 'chart',
       chartModule: 'vchart',
       chartSpec: {
         type: 'area',
@@ -150,9 +150,9 @@ const columns =[
     },
     {
       field: 'areaChart',
-      caption: 'vchart line',
+      title: 'vchart line',
       width: '320',
-      columnType: 'chart',
+      cellType: 'chart',
       chartModule: 'vchart',
       chartSpec: {
         type: 'common',
@@ -213,9 +213,9 @@ const columns =[
     },
     {
       field: 'areaChart',
-      caption: 'vchart line',
+      title: 'vchart line',
       width: '320',
-      columnType: 'chart',
+      cellType: 'chart',
       chartModule: 'vchart',
       chartSpec: {
         type: 'common',
@@ -262,9 +262,9 @@ const columns =[
     },
     {
       field: 'scatterChart',
-      caption: 'vchart line',
+      title: 'vchart line',
       width: '320',
-      columnType: 'chart',
+      cellType: 'chart',
       chartModule: 'vchart',
       chartSpec: {
         type: 'common',
@@ -298,9 +298,9 @@ const columns =[
     },
     {
       field: 'areaChart',
-      caption: 'vchart area',
+      title: 'vchart area',
       width: '320',
-      columnType: 'chart',
+      cellType: 'chart',
       chartModule: 'vchart',
       chartSpec: {
         type: 'common',
@@ -378,9 +378,9 @@ const columns =[
     },
     {
       field: 'areaChart',
-      caption: 'vchart line',
+      title: 'vchart line',
       width: '320',
-      columnType: 'chart',
+      cellType: 'chart',
       chartModule: 'vchart',
       chartSpec: {
         type: 'common',
@@ -442,9 +442,9 @@ const columns =[
     },
     {
       field: 'areaChart',
-      caption: 'vchart line',
+      title: 'vchart line',
       width: '320',
-      columnType: 'chart',
+      cellType: 'chart',
       chartModule: 'vchart',
       chartSpec: {
         type: 'common',
@@ -491,9 +491,9 @@ const columns =[
     },
     {
       field: 'scatterChart',
-      caption: 'vchart line',
+      title: 'vchart line',
       width: '320',
-      columnType: 'chart',
+      cellType: 'chart',
       chartModule: 'vchart',
       chartSpec: {
         type: 'common',

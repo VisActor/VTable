@@ -23,7 +23,7 @@ Set the current custom function through the column configuration item customRend
     columns:[
       {
         field: 'type',
-        caption:'',
+        title:'',
         width:170,
         headerStyle:{
           bgColor:'#4991e3'
@@ -40,7 +40,7 @@ Set the current custom function through the column configuration item customRend
       }, 
       {
         field: 'urgency',
-        caption:'urgency',
+        title:'urgency',
         width:400,
         headerStyle:{
           lineHeight:50,
@@ -117,7 +117,7 @@ Set the current custom function through the column configuration item customRend
     },
     {
       field: 'not_urgency',
-      caption:'not urgency',
+      title:'not urgency',
       width:400,
       headerStyle:{
           lineHeight:50,

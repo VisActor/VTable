@@ -68,25 +68,25 @@ const myVTable = new ListTable({
   columns : [
         {
             "field": "订单 ID",
-            "caption": "订单 ID",
+            "title": "订单 ID",
             "sort": true,
             "width":'auto',
         },
         {
             "field": "邮寄方式",
-            "caption": "邮寄方式"
+            "title": "邮寄方式"
         },
         {
             "field": "类别",
-            "caption": "类别"
+            "title": "类别"
         },
         {
             "field": "子类别",
-            "caption": "子类别"
+            "title": "子类别"
         },
         {
             "field": "销售额",
-            "caption": "销售额"
+            "title": "销售额"
         },
     ],
     "records": [

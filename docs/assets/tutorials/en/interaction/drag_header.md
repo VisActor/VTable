@@ -52,9 +52,9 @@ Sometimes, we don't want certain columns to participate in drag-and-drop transpo
 
     const table = new VTable.ListTable({
       columns: [
-        { title: '日期', columnType: 'text', dragHeader: true },
-        { title: '销量', columnType: 'text', dragHeader: false },
-        { title: '销售额', columnType: 'text', dragHeader: true }
+        { title: '日期', cellType: 'text', dragHeader: true },
+        { title: '销量', cellType: 'text', dragHeader: false },
+        { title: '销售额', cellType: 'text', dragHeader: true }
       ]
     });
 

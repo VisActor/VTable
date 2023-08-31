@@ -32,9 +32,9 @@ Note: The above styles also apply to the hyperlinke data format content.
 
 ```javascript livedemo
 {
-  columnType: 'text',
+  cellType: 'text',
   field: 'productName',
-  caption: '商品名称',
+  title: '商品名称',
   style: {
     textAlign: 'left',
     textBaseline: 'middle',

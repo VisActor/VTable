@@ -58,16 +58,16 @@ const records = [
 const columns = [
   {
     field: 'name',
-    caption: 'name',
-    columnType: 'link',
+    title: 'name',
+    cellType: 'link',
     templateLink: 'https://www.google.com.hk/search?q={name}',
     linkJump: true,
     width:100
   },
   {
     field: 'introduction',
-    caption: 'introduction',
-    columnType: 'text',
+    title: 'introduction',
+    cellType: 'text',
     width:200,
     style: {
       autoWrapText: true,
@@ -75,8 +75,8 @@ const columns = [
   },
 {
     field: 'introduction',
-    caption: 'introduction',
-    columnType: 'text',
+    title: 'introduction',
+    cellType: 'text',
     width:200,
   },
 ];
@@ -131,16 +131,16 @@ const records = [
 const columns = [
   {
     field: 'name',
-    caption: 'name',
-    columnType: 'link',
+    title: 'name',
+    cellType: 'link',
     templateLink: 'https://www.google.com.hk/search?q={name}',
     linkJump: true,
     width:100
   },
   {
     field: 'introduction',
-    caption: 'introduction',
-    columnType: 'text',
+    title: 'introduction',
+    cellType: 'text',
     width:200,
     style: {
       autoWrapText: true,
@@ -149,8 +149,8 @@ const columns = [
   },
 {
     field: 'introduction',
-    caption: 'introduction',
-    columnType: 'text',
+    title: 'introduction',
+    cellType: 'text',
     width:200,
     style: {
       autoWrapText: true,

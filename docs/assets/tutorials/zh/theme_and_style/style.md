@@ -18,7 +18,7 @@ VTable 中单元格的style细化配置，包括单元格样式、表头单元�
      columns: [
       {
         field: 'id',
-        caption: 'ID',
+        title: 'ID',
         headerStyle: {
           bgColor: 'red',
           autoWrapText: true,
@@ -45,7 +45,7 @@ VTable 中单元格的style细化配置，包括单元格样式、表头单元�
      columns: [
       {
         field: 'id',
-        caption: 'ID',
+        title: 'ID',
         style: {
           bgColor: 'green',
           autoWrapText: true,

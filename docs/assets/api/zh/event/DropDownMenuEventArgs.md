@@ -20,10 +20,10 @@
     customInfo?: any;
 
     cellHeaderPaths?: ICellHeaderPaths;
-    cellType: CellType;
+    cellLocation: CellLocation;
   }
 ```
 
 其中：
 {{ use: ICellHeaderPaths() }}
-{{ use: CellType() }}
+{{ use: CellLocation() }}

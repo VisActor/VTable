@@ -281,8 +281,8 @@ Parameter types for event callback functions.
       row: number.
       order: 'asc' | 'desc' | 'normal'.
       dimensionInfo: IDimensionInfo[];
-      cellType: CellType.
+      cellLocation: CellLocation.
     }`
 Among them:
 {{ use: common-IDimensionInfo()}}
-{{ use: CellType()}}
+{{ use: CellLocation()}}

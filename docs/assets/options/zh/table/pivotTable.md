@@ -132,13 +132,13 @@ export interface IIndicatorHeaderNode {
 
 ## rowHeaderTitle(Object)
 
-行表头最上层增加一行来显示维度名称 可以自定义或者显示 dimensionTitle 组合名
+行表头最上层增加一行来显示维度名称 可以自定义或者显示 title 组合名
 
 {{ use: pivot-header-title( prefix = '###',) }}
 
 ## columnHeaderTitle(Object)
 
-列表头最上层增加一行来显示维度名称 可以自定义或者显示 dimensionTitle 组合名
+列表头最上层增加一行来显示维度名称 可以自定义或者显示 title 组合名
 
 {{ use: pivot-header-title( prefix = '###',) }}
 

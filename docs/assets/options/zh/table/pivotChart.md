@@ -95,7 +95,7 @@ export interface IIndicatorHeaderNode {
 
 ## indicators(Array)
 
-透视组合图中各个指标的具体配置，如样式，format，caption 等，区别透视表，这里的指标类型仅支持配置 chart 类型。
+透视组合图中各个指标的具体配置，如样式，format，title 等，区别透视表，这里的指标类型仅支持配置 chart 类型。
 
 {{ use: chart-indicator-type(
     prefix = '#') }}
@@ -123,13 +123,13 @@ export interface IIndicatorHeaderNode {
 
 ## rowHeaderTitle(Object)
 
-行表头最上层增加一行来显示维度名称 可以自定义或者显示 dimensionTitle 组合名
+行表头最上层增加一行来显示维度名称 可以自定义或者显示 title 组合名
 
 {{ use: pivot-header-title( prefix = '###',) }}
 
 ## columnHeaderTitle(Object)
 
-列表头最上层增加一行来显示维度名称 可以自定义或者显示 dimensionTitle 组合名
+列表头最上层增加一行来显示维度名称 可以自定义或者显示 title 组合名
 
 {{ use: pivot-header-title( prefix = '###',) }}
 

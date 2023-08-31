@@ -2,11 +2,11 @@
 
 #${prefix} columns.sparkline(string)
 
-Specify the column type as 'sparkline', columnType can be omitted and defaults to 'text'
+Specify the column type as 'sparkline', cellType can be omitted and defaults to 'text'
 
-##${prefix} columnType(string) = 'sparkline'
+##${prefix} cellType(string) = 'sparkline'
 
-Specify the column type as 'sparkline', columnType can be omitted and defaults to 'text'
+Specify the column type as 'sparkline', cellType can be omitted and defaults to 'text'
 
 {{ use: base-column-type(
     prefix = '##'+${prefix}

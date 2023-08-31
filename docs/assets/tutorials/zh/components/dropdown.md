@@ -37,12 +37,12 @@ fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American
 const columns =[
     {
         "field": "Order ID",
-        "caption": "Order ID",
+        "title": "Order ID",
         "width": "auto"
     },
     {
         "field": "Product Name",
-        "caption": "Product Name",
+        "title": "Product Name",
         "width": "auto",
          style: {
             textAlign: 'left',
@@ -58,42 +58,42 @@ const columns =[
     },
     {
         "field": "Category",
-        "caption": "Category",
+        "title": "Category",
         "width": "auto"
     },
     {
         "field": "Sub-Category",
-        "caption": "Sub-Category",
+        "title": "Sub-Category",
         "width": "auto"
     },
     {
         "field": "Region",
-        "caption": "Region",
+        "title": "Region",
         "width": "auto"
     },
     {
         "field": "City",
-        "caption": "City",
+        "title": "City",
         "width": "auto"
     },
     {
         "field": "Order Date",
-        "caption": "Order Date",
+        "title": "Order Date",
         "width": "auto"
     },
     {
         "field": "Quantity",
-        "caption": "Quantity",
+        "title": "Quantity",
         "width": "auto"
     },
     {
         "field": "Sales",
-        "caption": "Sales",
+        "title": "Sales",
         "width": "auto"
     },
     {
         "field": "Profit",
-        "caption": "Profit",
+        "title": "Profit",
         "width": "auto"
     }
 ];
@@ -222,12 +222,12 @@ fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American
 const columns =[
     {
         "field": "Order ID",
-        "caption": "Order ID",
+        "title": "Order ID",
         "width": "auto"
     },
     {
         "field": "Product Name",
-        "caption": "Product Name",
+        "title": "Product Name",
         "width": "auto",
          style: {
             textAlign: 'left',
@@ -243,42 +243,42 @@ const columns =[
     },
     {
         "field": "Category",
-        "caption": "Category",
+        "title": "Category",
         "width": "auto"
     },
     {
         "field": "Sub-Category",
-        "caption": "Sub-Category",
+        "title": "Sub-Category",
         "width": "auto"
     },
     {
         "field": "Region",
-        "caption": "Region",
+        "title": "Region",
         "width": "auto"
     },
     {
         "field": "City",
-        "caption": "City",
+        "title": "City",
         "width": "auto"
     },
     {
         "field": "Order Date",
-        "caption": "Order Date",
+        "title": "Order Date",
         "width": "auto"
     },
     {
         "field": "Quantity",
-        "caption": "Quantity",
+        "title": "Quantity",
         "width": "auto"
     },
     {
         "field": "Sales",
-        "caption": "Sales",
+        "title": "Sales",
         "width": "auto"
     },
     {
         "field": "Profit",
-        "caption": "Profit",
+        "title": "Profit",
         "width": "auto"
     }
 ];
@@ -407,7 +407,7 @@ fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American
 const columns =[
     {
         "field": "Order ID",
-        "caption": "Order ID",
+        "title": "Order ID",
         "width": "auto",
         dropDownMenu:[
         {
@@ -478,7 +478,7 @@ const columns =[
     },
     {
         "field": "Product Name",
-        "caption": "Product Name",
+        "title": "Product Name",
         "width": "auto",
          style: {
             textAlign: 'left',
@@ -494,42 +494,42 @@ const columns =[
     },
     {
         "field": "Category",
-        "caption": "Category",
+        "title": "Category",
         "width": "auto"
     },
     {
         "field": "Sub-Category",
-        "caption": "Sub-Category",
+        "title": "Sub-Category",
         "width": "auto"
     },
     {
         "field": "Region",
-        "caption": "Region",
+        "title": "Region",
         "width": "auto"
     },
     {
         "field": "City",
-        "caption": "City",
+        "title": "City",
         "width": "auto"
     },
     {
         "field": "Order Date",
-        "caption": "Order Date",
+        "title": "Order Date",
         "width": "auto"
     },
     {
         "field": "Quantity",
-        "caption": "Quantity",
+        "title": "Quantity",
         "width": "auto"
     },
     {
         "field": "Sales",
-        "caption": "Sales",
+        "title": "Sales",
         "width": "auto"
     },
     {
         "field": "Profit",
-        "caption": "Profit",
+        "title": "Profit",
         "width": "auto"
     }
 ];

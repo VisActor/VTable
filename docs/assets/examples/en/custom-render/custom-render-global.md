@@ -23,7 +23,7 @@ Set custom functions through the global configuration item customRender
     columns:[
       {
         field: 'type',
-        caption:'',
+        title:'',
         width:170,
         headerStyle:{
           bgColor:'#a23be1'
@@ -40,7 +40,7 @@ Set custom functions through the global configuration item customRender
       }, 
       {
         field: 'urgency',
-        caption:'urgency',
+        title:'urgency',
         width:400,
         headerStyle:{
           lineHeight:50,
@@ -54,7 +54,7 @@ Set custom functions through the global configuration item customRender
     },
     {
       field: 'not_urgency',
-      caption:'not urgency',
+      title:'not urgency',
       width:400,
       headerStyle:{
           lineHeight:50,

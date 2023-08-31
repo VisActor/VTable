@@ -304,10 +304,10 @@ icon 图标点击事件。
       row: number;
       order: 'asc' | 'desc' | 'normal';
       dimensionInfo: IDimensionInfo[];
-      cellType: CellType;
+      cellLocation: CellLocation;
     }
 ```
 
 其中：
 {{ use: common-IDimensionInfo()}}
-{{ use: CellType()}}
+{{ use: CellLocation()}}

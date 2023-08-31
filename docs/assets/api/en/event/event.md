@@ -281,11 +281,11 @@ Event callback function parameter types.
       row: number.
       order: 'asc' | 'desc' | 'normal'.
       dimensionInfo: IDimensionInfo[];
-      cellType: CellType.
+      cellLocation: CellLocation.
     }`
 Among them:
 {{ use: common-IDimensionInfo()}}
-{{ use: CellType()}}
+{{ use: CellLocation()}}
 
 ## LEGEND_ITEM_CLICK
 

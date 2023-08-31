@@ -177,19 +177,19 @@ const option = {
 "rows": [
   {
             "dimensionKey": "Category",
-            "dimensionTitle": "Catogery",
+            "title": "Catogery",
             "width": "auto",
   },
   {
             "dimensionKey": "Sub-Category",
-            "dimensionTitle": "Sub-Catogery",
+            "title": "Sub-Catogery",
             "width": "auto",
         },
     ],
     "columns": [
         {
            "dimensionKey": "Region",
-            "dimensionTitle": "Region",
+            "title": "Region",
             "headerStyle": {
                 "textStick": true
             },
@@ -199,7 +199,7 @@ const option = {
     "indicators": [
                 {
                     "indicatorKey": "Sales",
-                    "caption": "Sales",
+                    "title": "Sales",
                     "width": "auto",
                     "showSort": false,
                     "headerStyle":{
@@ -221,7 +221,7 @@ const option = {
                 },
                 {
                     "indicatorKey": "Profit",
-                    "caption": "Profit",
+                    "title": "Profit",
                     "width": "auto",
                     "showSort": false,
                     "headerStyle":{

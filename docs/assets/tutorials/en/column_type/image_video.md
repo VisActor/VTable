@@ -15,9 +15,9 @@ Example:
 
 ```javascript
 {
-  columnType: 'image',
+  cellType: 'image',
   field: 'avatar',
-  caption: '头像',
+  title: '头像',
   keepAspectRatio: true,
   imageAutoSizing: true,
 }
@@ -32,9 +32,9 @@ Image type specific configuration items in terms of style style:
 
 ```javascript
 {
-  columnType: 'image',
+  cellType: 'image',
   field: 'avatar',
-  caption: '头像',
+  title: '头像',
   keepAspectRatio: true,
   imageAutoSizing: true,
   style:{

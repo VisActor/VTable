@@ -2,11 +2,11 @@
 
 #${prefix} indicators.link(string)
 
-指定列类型为'link'，columnType 缺省的话会被默认为'text'
+指定列类型为'link'，cellType 缺省的话会被默认为'text'
 
-##${prefix} columnType(string) = 'link'
+##${prefix} cellType(string) = 'link'
 
-指定列类型为'link'，columnType 缺省的话会被默认为'text'
+指定列类型为'link'，cellType 缺省的话会被默认为'text'
 
 {{ use: base-indicator-type(
     prefix = '##'+${prefix}

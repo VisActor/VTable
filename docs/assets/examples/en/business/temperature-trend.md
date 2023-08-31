@@ -13,7 +13,7 @@ Show the temperature trends of different regions in the day, month and year.
 ## critical configuration
 
 *   `VTable.register.chartType('vchart', VChart)` Register a charting library for charting, currently supports VChart
-*   `columnType: 'chart'` Specify the type chart
+*   `cellType: 'chart'` Specify the type chart
 *   `chartType: 'vchart'` Specify the registered chart library name
 *   `chartSpec: {}` Chart specs
 
@@ -453,7 +453,7 @@ Show the temperature trends of different regions in the day, month and year.
     indicators: [
       {
         indicatorKey: 'dayTrendChart',
-        columnType: 'chart',
+        cellType: 'chart',
         chartType: 'vchart',
         width: 400,
         chartSpec: {
@@ -484,7 +484,7 @@ Show the temperature trends of different regions in the day, month and year.
       },
       {
         indicatorKey: 'monthTrendChart',
-        columnType: 'chart',
+        cellType: 'chart',
         chartType: 'vchart',
         width: 500,
         chartSpec: {
@@ -576,7 +576,7 @@ Show the temperature trends of different regions in the day, month and year.
       },
       {
         indicatorKey: 'yearTrendChart',
-        columnType: 'chart',
+        cellType: 'chart',
         chartType: 'vchart',
         width: 350,
         chartSpec: {

@@ -5,7 +5,7 @@ ${prefix} indicatorKey(string)
 
 **Required** The unique identifier of the indicator
 
-${prefix} caption(string)
+${prefix} title(string)
 
 Indicator name
 

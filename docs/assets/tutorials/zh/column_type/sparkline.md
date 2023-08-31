@@ -6,7 +6,7 @@
 
 # 迷你图支持的图表类型
 
-在VTable中，表格展示类型`columnType`设置成`sparkline`用于生成迷你图。目前，VTable提供的迷你图图表类型仅支持折线图（line），随着时间的推移，VTable将逐步丰富迷你图的图表类型，后续还将支持柱状图、面积图等多种迷你图类型。
+在VTable中，表格展示类型`cellType`设置成`sparkline`用于生成迷你图。目前，VTable提供的迷你图图表类型仅支持折线图（line），随着时间的推移，VTable将逐步丰富迷你图的图表类型，后续还将支持柱状图、面积图等多种迷你图类型。
 
 # 迷你图的sparklineSpec配置介绍
 
@@ -19,7 +19,7 @@ sparklineSpec是一个配置对象，用于设置迷你图的具体样式和行�
   columns: [
     {
       field: 'timeSeriesData',
-      columnType: 'sparkline',
+      cellType: 'sparkline',
       sparklineSpec: {
         type: 'line',
         // ...其他sparklineSpec配置
@@ -40,7 +40,7 @@ sparklineSpec是一个配置对象，用于设置迷你图的具体样式和行�
   columns: [
     {
       field: 'timeSeriesData',
-      columnType: 'sparkline',
+      cellType: 'sparkline',
       sparklineSpec: (cellInfo) => {
         return {
           type: 'line',
@@ -83,8 +83,8 @@ const records = [
 const columns = [
   {
     field: 'lineData',
-    caption: 'sparkline',
-    columnType: 'sparkline',
+    title: 'sparkline',
+    cellType: 'sparkline',
     width:300,
     sparklineSpec: {
         type: 'line',
@@ -122,8 +122,8 @@ const columns = [
   },
   {
     field: 'lineData2',
-    caption: 'sparkline 2',
-    columnType: 'sparkline',
+    title: 'sparkline 2',
+    cellType: 'sparkline',
     width:300,
     sparklineSpec: {
         type: 'line', 

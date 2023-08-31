@@ -5,7 +5,7 @@ ${prefix} indicatorKey(string)
 
 **必填**  指标的唯一标识
 
-${prefix} caption(string)
+${prefix} title(string)
 
 指标名
 

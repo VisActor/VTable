@@ -72,7 +72,7 @@ const option = {
     columns:[
       {
         field: 'type',
-        caption:'',
+        title:'',
         width:70,
         headerStyle:{
           bgColor:'#4991e3'
@@ -89,7 +89,7 @@ const option = {
       }, 
       {
         field: 'urgency',
-        caption:'紧急',
+        title:'紧急',
         width:'300',
         headerStyle:{
           lineHeight:50,
@@ -103,7 +103,7 @@ const option = {
     },
     {
       field: 'not_urgency',
-      caption:'不紧急',
+      title:'不紧急',
       width:'260',
       headerStyle:{
           lineHeight:50,

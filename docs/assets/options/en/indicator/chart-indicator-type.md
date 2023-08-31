@@ -2,11 +2,11 @@
 
 #${prefix} indicators.chart(string)
 
-Specify the column type as 'chart', columnType can be omitted and defaults to 'text'
+Specify the column type as 'chart', cellType can be omitted and defaults to 'text'
 
-##${prefix} columnType(string) = 'chart'
+##${prefix} cellType(string) = 'chart'
 
-Specify the column type as 'chart', columnType can be omitted and defaults to 'text'
+Specify the column type as 'chart', cellType can be omitted and defaults to 'text'
 
 ##${prefix} chartModule(string)
 

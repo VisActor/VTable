@@ -1,5 +1,5 @@
-{{ target: CellType }}
-CellType is defined as:
+{{ target: CellLocation }}
+CellLocation is defined as:
 ```
-type CellType = 'body' | 'rowHeader' | 'columnHeader' | 'cornerHeader';
+type CellLocation = 'body' | 'rowHeader' | 'columnHeader' | 'cornerHeader';
 ```

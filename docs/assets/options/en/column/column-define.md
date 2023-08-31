@@ -2,7 +2,7 @@
 
 #${prefix} columns
 
-Table column configuration, each column needs to set configuration items separately, and the configuration items differ slightly depending on the columnType. columnType can support: `'text' | 'link' | 'image' | 'video' | 'sparkline' | 'progressbar' | 'chart`， The specific configuration items for each columnType are as follows:
+Table column configuration, each column needs to set configuration items separately, and the configuration items differ slightly depending on the cellType. cellType can support: `'text' | 'link' | 'image' | 'video' | 'sparkline' | 'progressbar' | 'chart`， The specific configuration items for each cellType are as follows:
 
 {{ use: text-column-type(
     prefix = ${prefix}

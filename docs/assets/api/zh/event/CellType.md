@@ -1,5 +1,5 @@
-{{ target: CellType }}
+{{ target: CellLocation }}
 CellType类型定义为：
 ```
-type CellType = 'body' | 'rowHeader' | 'columnHeader' | 'cornerHeader';
+type CellLocation = 'body' | 'rowHeader' | 'columnHeader' | 'cornerHeader';
 ```

@@ -74,7 +74,7 @@ const table = VTable.ListTable({
     const table = new VTable.ListTable({
       columns: [
         {
-        caption·: 'ID',
+        title·: 'ID',
         field:'ID',
           disableHover: true // 禁用某一列表头的hover交互
         }

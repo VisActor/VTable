@@ -2,11 +2,11 @@
 
 #${prefix} indicators.progressbar(string)
 
-Specify the column type as 'progressbar', columnType can be omitted with the default as 'text'
+Specify the column type as 'progressbar', cellType can be omitted with the default as 'text'
 
-##${prefix} columnType(string) = 'progressbar'
+##${prefix} cellType(string) = 'progressbar'
 
-Specify the column type as 'progressbar', columnType can be omitted with the default as 'text'
+Specify the column type as 'progressbar', cellType can be omitted with the default as 'text'
 
 {{ use: base-indicator-type(
     prefix = '##'+${prefix},

@@ -74,7 +74,7 @@ In addition, there are special needs scenarios that only prohibit hover interact
     const table = new VTable.ListTable({
       columns: [
         {
-        caption·: 'ID',
+        title·: 'ID',
         field:'ID',
           disableHover: true // 禁用某一列表头的hover交互
         }

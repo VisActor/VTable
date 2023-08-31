@@ -2,11 +2,11 @@
 
 #${prefix} columns.progressbar(string)
 
-Specify the column type as 'progressbar', columnType can be omitted and defaults to 'text'
+Specify the column type as 'progressbar', cellType can be omitted and defaults to 'text'
 
-##${prefix} columnType(string) = 'progressbar'
+##${prefix} cellType(string) = 'progressbar'
 
-Specify the column type as 'progressbar', columnType can be omitted and defaults to 'text'
+Specify the column type as 'progressbar', cellType can be omitted and defaults to 'text'
 
 {{ use: base-column-type(
     prefix = '##'+${prefix},

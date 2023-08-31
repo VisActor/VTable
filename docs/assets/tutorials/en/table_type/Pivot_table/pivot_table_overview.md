@@ -76,25 +76,25 @@ We will take the configuration of the pivot table in the following figure as an 
         rows: [
           {
             dimensionKey: '类别',
-            dimensionTitle: '类别',
+            title: '类别',
           },
           {
             dimensionKey: '子类别',
-            dimensionTitle: '子类别',
+            title: '子类别',
           }
         ],
         columns: 
         [
           {
             dimensionKey: '地区',
-            dimensionTitle: '地区',
+            title: '地区',
             headerFormat(value) {
               return `${value}地区`;
             },
           },
           {
             dimensionKey: '邮寄方式',
-            dimensionTitle: '邮寄方式',
+            title: '邮寄方式',
             headerFormat(value) {
               return `${value}邮寄方式`;
             },
@@ -145,17 +145,17 @@ We will take the configuration of the pivot table in the following figure as an 
       indicators: [
           {
             indicatorKey: '1',
-            caption: '销售额',
+            title: '销售额',
           },
           {
             indicatorKey: '2',
-            caption: '利润',
+            title: '利润',
           }
         ],
     }
 
-In the above configuration, rowTree and columnTree are one tree respectively**Dimension tree**, the node of the tree defines the key and value, and the value is**Dimension value**Will be displayed in the header cell. The leaf node of the tree may be the name of Metirc. In the current example, Metirc is displayed as a column, which is configured in the leaf node of columnTree. The value of the Metirc node may not be configured to be displayed in the header cell using the caption defined in indicators.
+In the above configuration, rowTree and columnTree are one tree respectively**Dimension tree**, the node of the tree defines the key and value, and the value is**Dimension value**Will be displayed in the header cell. The leaf node of the tree may be the name of Metirc. In the current example, Metirc is displayed as a column, which is configured in the leaf node of columnTree. The value of the Metirc node may not be configured to be displayed in the header cell using the title defined in indicators.
 
 Rows and columns define the corresponding**Dimensions**Basic information, including title, headerStyle, format, etc.
 
-Indicators define**Metirc**Basic information, including caption, style, format, etc.
+Indicators define**Metirc**Basic information, including title, style, format, etc.

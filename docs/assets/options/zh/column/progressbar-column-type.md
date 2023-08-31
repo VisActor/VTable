@@ -2,11 +2,11 @@
 
 #${prefix} columns.progressbar(string)
 
-指定列类型为'progressbar'，columnType 缺省的话会被默认为'text'
+指定列类型为'progressbar'，cellType 缺省的话会被默认为'text'
 
-##${prefix} columnType(string) = 'progressbar'
+##${prefix} cellType(string) = 'progressbar'
 
-指定列类型为'progressbar'，columnType 缺省的话会被默认为'text'
+指定列类型为'progressbar'，cellType 缺省的话会被默认为'text'
 
 {{ use: base-column-type(
     prefix = '##'+${prefix},

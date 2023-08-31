@@ -31,25 +31,25 @@ Example:
     columns : [
         {
             "field": "name",
-            "caption": "name",
+            "title": "name",
             "sort": true,
             "width":'auto',
         },
         {
             "field": "age",
-            "caption": "age"
+            "title": "age"
         },
         {
             "field": "sex",
-            "caption": "sex"
+            "title": "sex"
         },
         {
             "field": "phone",
-            "caption": "phone"
+            "title": "phone"
         },
         {
             "field": "address",
-            "caption": "address"
+            "title": "address"
         },
     ],
     "records":[
@@ -145,7 +145,7 @@ const option = {
   ],
   "indicators": [{
     "indicatorKey": "income",
-    "caption": "income"
+    "title": "income"
   }],
   "records": [
     { "age": 30, "sex": "male", "city": "beijing", "income": 400 },
@@ -240,7 +240,7 @@ const option = {
   ],
   "indicators": [{
     "indicatorKey": "income",
-    "caption": "income"
+    "title": "income"
   }],
   records:[
     [430,650,657,325],

@@ -18,7 +18,7 @@ Configure headerStyle in each item of columns. If it is in the pivot table, it c
      columns: [
       {
         field: 'id',
-        caption: 'ID',
+        title: 'ID',
         headerStyle: {
           bgColor: 'red',
           autoWrapText: true,
@@ -45,7 +45,7 @@ Configure style in each item of columns. If it is in the pivot table, it corresp
      columns: [
       {
         field: 'id',
-        caption: 'ID',
+        title: 'ID',
         style: {
           bgColor: 'green',
           autoWrapText: true,

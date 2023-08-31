@@ -9,7 +9,7 @@ Event callback function corresponding parameter type MousePointerMultiCellEvent 
   x?: number;
   y?: number;
   ranges: CellRange[];
-  caption?: string;
+  title?: string;
   /**Dimension name */
   field?: string;
   /**Cell row header paths */
@@ -22,8 +22,8 @@ Event callback function corresponding parameter type MousePointerMultiCellEvent 
   value?: string|number;
   /**Original value */
   dataValue?: string|number;
-  cellType?: CellType;
-  columnType?: string;
+  cellLocation?: CellLocation;
+  cellType?: string;
   related?: CellAddress;
   scaleRatio?: number;
   targetIcon?: { name: string; position: RectProps; funcType: string };
@@ -36,5 +36,5 @@ Event callback function corresponding parameter type MousePointerMultiCellEvent 
 Among them:
 {{ use: CellRange() }}
 {{ use: ICellHeaderPaths() }}
-{{ use: CellType() }}
+{{ use: CellLocation() }}
 {{ use: CellInfo() }}
