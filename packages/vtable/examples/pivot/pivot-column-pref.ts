@@ -15,7 +15,7 @@ export function createTable() {
         rows: [
           {
             dimensionKey: 'job_typee6810c80_7e60_4991_9ab3_1bf46fba2cb9',
-            dimensionTitle: '职位类别',
+            title: '职位类别',
             headerStyle: {
               textStick: true
             },
@@ -26,7 +26,7 @@ export function createTable() {
           },
           {
             dimensionKey: 'job_idcb651b6d_20c2_4660_9d31_1da23111a0e6',
-            dimensionTitle: '职位名称',
+            title: '职位名称',
             headerStyle: {
               textStick: true
             },
@@ -39,7 +39,7 @@ export function createTable() {
         columns: [
           {
             dimensionKey: '__BI__col_header_id__',
-            dimensionTitle: '职位名称',
+            title: '职位名称',
             headerStyle: {
               textStick: true,
               textAlign: 'center'
@@ -50,7 +50,7 @@ export function createTable() {
           },
           {
             dimensionKey: 'job_id6b5ab4f7_597c_4d89_b79a_fe4ce3312845',
-            dimensionTitle: '职位名称',
+            title: '职位名称',
             headerStyle: {
               textStick: true
             },

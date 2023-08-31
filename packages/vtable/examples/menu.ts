@@ -204,10 +204,6 @@ export const menus = [
       },
       {
         path: 'pivot',
-        name: 'pivot-dataset'
-      },
-      {
-        path: 'pivot',
         name: 'pivot-indicator-row'
       },
       {
@@ -221,6 +217,43 @@ export const menus = [
       {
         path: 'pivot',
         name: 'pivot-column-pref'
+      },
+      {
+        path: 'pivot',
+        name: 'pivot-indicator-middle'
+      }
+    ]
+  },
+  {
+    menu: 'pivot-analysis',
+    children: [
+      {
+        path: 'pivot-analysis',
+        name: 'pivot-analysis'
+      },
+      {
+        path: 'pivot-analysis',
+        name: 'pivot-analysis-total'
+      },
+      {
+        path: 'pivot-analysis',
+        name: 'pivot-analysis-more-data'
+      },
+      {
+        path: 'pivot-analysis',
+        name: 'pivot-analysis-filter'
+      },
+      {
+        path: 'pivot-analysis',
+        name: 'pivot-analysis-mapping'
+      },
+      {
+        path: 'pivot-analysis',
+        name: 'pivot-analysis-sort'
+      },
+      {
+        path: 'pivot-analysis',
+        name: 'pivot-analysis-aggregationRules'
       }
     ]
   },
@@ -442,6 +475,27 @@ export const menus = [
       {
         path: 'test',
         name: 'vchart'
+      }
+    ]
+  },
+  {
+    menu: 'updateOption',
+    children: [
+      {
+        path: 'updateOption',
+        name: 'update-autoWrapText'
+      },
+      {
+        path: 'updateOption',
+        name: 'update-columns'
+      },
+      {
+        path: 'updateOption',
+        name: 'update-widthMode'
+      },
+      {
+        path: 'updateOption',
+        name: 'update-heightMode'
       }
     ]
   },

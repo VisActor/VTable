@@ -28,7 +28,7 @@ link: '/guide/table_type/Pivot_Chart/pivot_chart_useage'
       const columns = [
         {
           dimensionKey: 'Region',
-          dimensionTitle: 'Region',
+          title: 'Region',
           headerStyle:{
             textStick:true
           }
@@ -37,7 +37,7 @@ link: '/guide/table_type/Pivot_Chart/pivot_chart_useage'
       const rows = [
         {
           dimensionKey: 'Order Year',
-          dimensionTitle: 'Order Year',
+          title: 'Order Year',
           headerStyle:{
             textStick:true
           }
@@ -47,7 +47,7 @@ link: '/guide/table_type/Pivot_Chart/pivot_chart_useage'
       const indicators = [
         {
           indicatorKey: 'Quantity',
-          caption: 'Quantity',
+          title: 'Quantity',
           width: 'auto',
           columnType: 'chart',
           chartModule: 'vchart',
@@ -156,7 +156,7 @@ link: '/guide/table_type/Pivot_Chart/pivot_chart_useage'
         },
         {
           indicatorKey: 'Sales',
-          caption: 'Sales & Profit',
+          title: 'Sales & Profit',
           columnType: 'chart',
           chartModule: 'vchart',
           chartSpec: {

@@ -44,14 +44,14 @@ export function createTable() {
     rows: [
       {
         dimensionKey: '230810121539014',
-        dimensionTitle: '地区'
+        title: '地区'
       }
     ],
     indicators: [
       {
         indicatorKey: '0',
         width: 'auto',
-        caption: 'caption',
+        title: 'title',
         columnType: 'chart',
         chartModule: 'vchart',
         chartSpec: {
@@ -486,7 +486,7 @@ export function createTable() {
       {
         indicatorKey: '1',
         width: 'auto',
-        caption: 'caption',
+        title: 'title',
         columnType: 'chart',
         chartModule: 'vchart',
         chartSpec: {
@@ -1412,14 +1412,14 @@ export function createTable() {
       rows: [
         {
           dimensionKey: '230810121539014',
-          dimensionTitle: '地区'
+          title: '地区'
         }
       ],
       indicators: [
         {
           indicatorKey: '0',
           width: 'auto',
-          caption: 'caption',
+          title: 'title',
           columnType: 'chart',
           chartModule: 'vchart',
           chartSpec: {
@@ -1854,7 +1854,7 @@ export function createTable() {
         {
           indicatorKey: '1',
           width: 'auto',
-          caption: 'caption',
+          title: 'title',
           columnType: 'chart',
           chartModule: 'vchart',
           chartSpec: {
@@ -3486,7 +3486,7 @@ export function createTable() {
         {
           indicatorKey: '0',
           width: 'auto',
-          caption: 'caption',
+          title: 'title',
           columnType: 'chart',
           chartModule: 'vchart',
           chartSpec: {
@@ -3718,7 +3718,7 @@ export function createTable() {
         {
           indicatorKey: '1',
           width: 'auto',
-          caption: 'caption',
+          title: 'title',
           columnType: 'chart',
           chartModule: 'vchart',
           chartSpec: {
@@ -3950,7 +3950,7 @@ export function createTable() {
         {
           indicatorKey: '2',
           width: 'auto',
-          caption: 'caption',
+          title: 'title',
           columnType: 'chart',
           chartModule: 'vchart',
           chartSpec: {
@@ -4182,7 +4182,7 @@ export function createTable() {
         {
           indicatorKey: '3',
           width: 'auto',
-          caption: 'caption',
+          title: 'title',
           columnType: 'chart',
           chartModule: 'vchart',
           chartSpec: {
@@ -4414,7 +4414,7 @@ export function createTable() {
         {
           indicatorKey: '4',
           width: 'auto',
-          caption: 'caption',
+          title: 'title',
           columnType: 'chart',
           chartModule: 'vchart',
           chartSpec: {

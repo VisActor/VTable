@@ -1213,7 +1213,7 @@ export function createTable() {
     rows: [
       {
         dimensionKey: '221026124726017',
-        dimensionTitle: '省/自治区',
+        title: '省/自治区',
         headerStyle: {
           textStick: true,
           color: 'red',
@@ -1222,7 +1222,7 @@ export function createTable() {
       },
       {
         dimensionKey: '221026124726011',
-        dimensionTitle: '城市',
+        title: '城市',
         headerStyle: {
           textStick: true,
           color: '#F0F',
@@ -1239,7 +1239,7 @@ export function createTable() {
     columns: [
       {
         dimensionKey: '221026124726008',
-        dimensionTitle: '类别',
+        title: '类别',
         headerStyle: {
           textStick: true,
           color: 'red',
@@ -1365,7 +1365,7 @@ export function createTable() {
       },
       {
         dimensionKey: '221026124726016',
-        dimensionTitle: '指标名称 ',
+        title: '指标名称 ',
         headerStyle: {
           textStick: true,
           color: 'red',
@@ -1425,13 +1425,13 @@ export function createTable() {
             return false;
           }
         },
-        caption: '销售额',
+        title: '销售额',
         width: 'auto',
         showSort: false
       },
       {
         indicatorKey: '221026124726015',
-        caption: '数量',
+        title: '数量',
         width: 'auto',
         showSort: false,
         headerStyle: {

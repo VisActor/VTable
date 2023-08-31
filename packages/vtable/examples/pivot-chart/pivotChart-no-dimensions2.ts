@@ -21,7 +21,7 @@ export function createTable() {
   const indicators: VTable.TYPES.IIndicator[] = [
     {
       indicatorKey: '230713183656009',
-      caption: '数量',
+      title: '数量',
       width: 'auto',
       columnType: 'chart',
       chartModule: 'vchart',
@@ -134,7 +134,7 @@ export function createTable() {
     },
     {
       indicatorKey: '230417171050025',
-      caption: '销售额 & 利润',
+      title: '销售额 & 利润',
       columnType: 'chart',
       chartModule: 'vchart',
       chartSpec: {
@@ -327,7 +327,7 @@ export function createTable() {
     },
     {
       indicatorKey: '230707112948009',
-      caption: '折扣',
+      title: '折扣',
       width: 'auto',
       columnType: 'chart',
       chartModule: 'vchart',
@@ -10455,7 +10455,7 @@ export function createTable() {
       {
         indicatorKey: '0',
         width: 'auto',
-        caption: 'caption',
+        title: 'title',
         columnType: 'chart',
         chartModule: 'vchart',
         chartSpec: {
@@ -10492,7 +10492,7 @@ export function createTable() {
       {
         indicatorKey: '1',
         width: 'auto',
-        caption: 'caption',
+        title: 'title',
         columnType: 'chart',
         chartModule: 'vchart',
         chartSpec: {

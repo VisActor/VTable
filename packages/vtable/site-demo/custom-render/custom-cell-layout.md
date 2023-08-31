@@ -69,11 +69,11 @@ VTable.register.icon('message',{
     columns:[
       {
         field: 'bloggerId',
-        caption:'order number'
+        title:'order number'
       }, 
       {
         field: 'bloggerName',
-        caption:'anchor nickname',
+        title:'anchor nickname',
         width:330,
          style:{
         fontFamily:'Arial',
@@ -189,7 +189,7 @@ VTable.register.icon('message',{
     },
     {
       field: 'fansCount',
-      caption:'fansCount',
+      title:'fansCount',
       fieldFormat(rec){
         return rec.fansCount + 'w'
       },
@@ -201,7 +201,7 @@ VTable.register.icon('message',{
     }, 
     {
       field: 'worksCount',
-      caption:'worksCount',
+      title:'worksCount',
       style:{
         fontFamily:'Arial',
         fontSize:12,
@@ -210,7 +210,7 @@ VTable.register.icon('message',{
     }, 
     {
       field: 'viewCount',
-      caption:'viewCount',
+      title:'viewCount',
       fieldFormat(rec){
         return rec.fansCount + 'w'
       },
@@ -222,7 +222,7 @@ VTable.register.icon('message',{
     }, 
     {
       field: 'viewCount',
-      caption:'viewCount',
+      title:'viewCount',
       fieldFormat(rec){
         return rec.fansCount + 'w'
       },
@@ -234,7 +234,7 @@ VTable.register.icon('message',{
     }, 
     {
       field: '',
-      caption:'operation',
+      title:'operation',
       width:100,
       icon:['favorite','message']
     }, 

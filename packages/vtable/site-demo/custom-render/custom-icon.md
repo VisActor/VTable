@@ -114,48 +114,48 @@ VTable.register.icon('frozen',{
 const columns =[
     {
         "field": "Order ID",
-        "caption": "Order ID",
+        "title": "Order ID",
         "width": "auto",
         icon: 'order'
     },
     {
         "field": "Customer ID",
-        "caption": "Customer ID",
+        "title": "Customer ID",
         "width": "auto"
     },
     {
         "field": "Product Name",
-        "caption": "Product Name",
+        "title": "Product Name",
         "width": "auto"
     },
     {
         "field": "Category",
-        "caption": "Category",
+        "title": "Category",
         "width": "auto"
     },
     {
         "field": "Sub-Category",
-        "caption": "Sub-Category",
+        "title": "Sub-Category",
         "width": "auto"
     },
     {
         "field": "Region",
-        "caption": "Region",
+        "title": "Region",
         "width": "auto"
     },
     {
         "field": "City",
-        "caption": "City",
+        "title": "City",
         "width": "auto"
     },
     {
         "field": "Order Date",
-        "caption": "Order Date",
+        "title": "Order Date",
         "width": "auto"
     },
     {
       field: '2234',
-      caption: 'single line',
+      title: 'single line',
       width:120,
       icon: [
           {

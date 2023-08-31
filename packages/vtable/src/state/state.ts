@@ -125,7 +125,7 @@ export class StateManeger {
   };
   drill: {
     dimensionKey?: string;
-    dimensionTitle?: string;
+    title?: string;
     drillDown?: boolean;
     drillUp?: boolean;
     col: number;
@@ -877,14 +877,14 @@ export class StateManeger {
 
   updateDrillState(
     dimensionKey: string,
-    dimensionTitle: string,
+    title: string,
     drillDown: boolean,
     drillUp: boolean,
     col: number,
     row: number
   ) {
     this.drill.dimensionKey = dimensionKey;
-    this.drill.dimensionTitle = dimensionTitle;
+    this.drill.title = title;
     this.drill.drillDown = drillDown;
     this.drill.drillUp = drillUp;
     this.drill.col = col;

@@ -74,7 +74,7 @@ export function createTable() {
         fieldFormat(rec) {
           return `已完成${rec.progress}%`;
         },
-        caption: 'progress',
+        title: 'progress',
         description: '这是一个标题的详细描述',
         width: 150,
         headerIcon: [
@@ -105,7 +105,7 @@ export function createTable() {
       },
       {
         field: 'id',
-        caption: 'ID编号',
+        title: 'ID编号',
         sort: (v1, v2, order) => {
           if (order === 'desc') {
             return v1 === v2 ? 0 : v1 > v2 ? -1 : 1;
@@ -120,7 +120,7 @@ export function createTable() {
         fieldFormat(rec) {
           return `这是第${rec.id}号`;
         },
-        caption: 'ID说明',
+        title: 'ID说明',
         description: '这是一个ID详细描述',
         sort: (v1, v2, order) => {
           if (order === 'desc') {
@@ -131,7 +131,7 @@ export function createTable() {
         width: 150
       },
       {
-        caption: 'Name',
+        title: 'Name',
         headerStyle: {
           textAlign: 'center',
           fontWeight: 'bold',

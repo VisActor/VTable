@@ -172,7 +172,7 @@ export function bindTableGroupListener(eventManeger: EventManeger) {
           value: table.getCellValue(col, row),
           dataValue: table.getCellOriginValue(col, row),
           cellHeaderPaths: table.internalProps.layoutMap.getCellHeaderPaths(col, row),
-          caption: table.getBodyColumnDefine(col, row).caption,
+          title: table.getBodyColumnDefine(col, row).title,
           cellRange: table.getCellRelativeRect(col, row),
           event: e.nativeEvent,
           sparkline: {

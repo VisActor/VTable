@@ -50,18 +50,6 @@ export function createComplexColumn(
   let textAlign;
   let textBaseline;
   /** useColumnTheme 判断是否可以使用columnTheme */
-
-  let bgColorFunc: Function;
-  // 判断是否有mapping  遍历dataset中mappingRules
-  if ((table.internalProps as PivotTableProtected)?.dataConfig?.mappingRules && cellType === 'body') {
-    (table.internalProps as PivotTableProtected)?.dataConfig?.mappingRules?.forEach(
-      (mappingRule: MappingRule, i: number) => {
-        if (mappingRule.bgColor) {
-          bgColorFunc = mappingRule.bgColor.mapping;
-        }
-      }
-    );
-  }
   // insert cell into column group top
   let y = 0;
   if (columnGroup.colHeight) {
@@ -171,7 +159,6 @@ export function createComplexColumn(
             col,
             row,
             colWidth,
-            bgColorFunc,
             cellWidth,
             cellHeight,
             columnGroup,
@@ -200,7 +187,6 @@ export function createComplexColumn(
           col,
           row,
           colWidth,
-          bgColorFunc,
           cellWidth,
           cellHeight,
           columnGroup,

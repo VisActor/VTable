@@ -120,7 +120,7 @@ export function createTable() {
   const columns: (VTable.IDimension | string)[] = [
     {
       dimensionKey: '230417171050031',
-      dimensionTitle: '国家',
+      title: '国家',
       headerStyle: {
         color: 'red'
       }
@@ -131,7 +131,7 @@ export function createTable() {
   const rows = [
     {
       dimensionKey: '230417170554012',
-      dimensionTitle: '邮寄方式',
+      title: '邮寄方式',
       headerStyle: {
         color: 'red'
       }
@@ -140,7 +140,7 @@ export function createTable() {
   const indicators: VTable.TYPES.IIndicator[] = [
     {
       indicatorKey: '230713183656009',
-      caption: '数量',
+      title: '数量',
       width: 'auto',
       columnType: 'chart',
       chartModule: 'vchart',
@@ -250,7 +250,7 @@ export function createTable() {
     },
     {
       indicatorKey: '230417171050025',
-      caption: '销售额 & 利润',
+      title: '销售额 & 利润',
       columnType: 'chart',
       chartModule: 'vchart',
       chartSpec: {
@@ -443,7 +443,7 @@ export function createTable() {
     },
     {
       indicatorKey: '230707112948009',
-      caption: '折扣',
+      title: '折扣',
       width: 'auto',
       columnType: 'chart',
       chartModule: 'vchart',
