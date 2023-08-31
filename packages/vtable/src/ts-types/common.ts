@@ -1,6 +1,6 @@
 import type { ColumnTypeOption } from './column';
 import type { ColumnData } from './list-table/layout-map/api';
-import type { CellType, FieldData, FieldDef } from './table-engine';
+import type { CellLocation, FieldData, FieldDef } from './table-engine';
 
 export type MaybePromise<T> = T | Promise<T>;
 
@@ -47,8 +47,8 @@ export type CellInfo = {
   value?: FieldData;
   /**原始值 */
   dataValue?: FieldData;
-  cellType?: CellType;
-  columnType?: ColumnTypeOption;
+  cellLocation?: CellLocation;
+  cellType?: ColumnTypeOption;
 };
 
 export type ICellHeaderPaths = IListTableCellHeaderPaths | IPivotTableCellHeaderPaths;

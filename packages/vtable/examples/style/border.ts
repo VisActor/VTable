@@ -212,7 +212,7 @@ export function createTable() {
         textOverflow: 'ellipsis',
         lineClamp: 2
       },
-      // columnType: 'link',
+      // cellType: 'link',
       // headerType: 'default',
       // sort: true,
       headerIcon: [
@@ -266,7 +266,7 @@ export function createTable() {
       },
       title: 'Birthday',
       width: 150
-      // columnType: 'default',
+      // cellType: 'default',
       // headerType: 'default',
     }
   ];

@@ -136,7 +136,7 @@ describe('listTable init test', () => {
   //       rowHeaderPaths: []
   //     },
   //     caption: '省/自治区',
-  //     columnType: 'text',
+  //     cellType: 'text',
   //     originData: {
   //       '行 ID': '5',
   //       '订单 ID': 'CN-2018-2975416',

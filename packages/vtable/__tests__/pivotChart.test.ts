@@ -68,7 +68,7 @@ const indicators: VTable.TYPES.IIndicator[] = [
     indicatorKey: '230417171050011',
     title: '数量',
     width: 'auto',
-    columnType: 'chart',
+    cellType: 'chart',
     chartModule: 'vchart',
     chartSpec: {
       // type: 'common',
@@ -113,7 +113,7 @@ const indicators: VTable.TYPES.IIndicator[] = [
   {
     indicatorKey: '230417171050025',
     title: '销售额 & 利润',
-    columnType: 'chart',
+    cellType: 'chart',
     chartModule: 'vchart',
     chartSpec: {
       type: 'common',
@@ -181,7 +181,7 @@ const indicators: VTable.TYPES.IIndicator[] = [
     indicatorKey: '230707112948009',
     title: '折扣',
     width: 'auto',
-    columnType: 'chart',
+    cellType: 'chart',
     chartModule: 'vchart',
     chartSpec: {
       // type: 'common',
@@ -9677,7 +9677,7 @@ describe('pivotTable init test', () => {
         indicatorKey: '230417171050011',
         title: '数量',
         width: 'auto',
-        columnType: 'chart',
+        cellType: 'chart',
         chartModule: 'vchart',
         chartSpec: {
           // type: 'common',
@@ -9712,7 +9712,7 @@ describe('pivotTable init test', () => {
       {
         indicatorKey: '230417171050025',
         title: '销售额 & 利润',
-        columnType: 'chart',
+        cellType: 'chart',
         chartModule: 'vchart',
         chartSpec: {
           type: 'common',
@@ -9780,7 +9780,7 @@ describe('pivotTable init test', () => {
         indicatorKey: '230707112948009',
         title: '折扣',
         width: 'auto',
-        columnType: 'chart',
+        cellType: 'chart',
         chartModule: 'vchart',
         chartSpec: {
           // type: 'common',

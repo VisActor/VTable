@@ -55,13 +55,13 @@ export function createTable() {
         field: 'percent',
         title: 'percent',
         width: 120,
-        columnType: 'progressbar'
+        cellType: 'progressbar'
       },
       {
         field: 'percent',
         title: 'percent2',
         width: 120,
-        columnType: 'progressbar',
+        cellType: 'progressbar',
         style: {
           barHeight: 20,
           barBottom: 7,
@@ -72,7 +72,7 @@ export function createTable() {
         field: 'percent',
         title: 'percent3',
         width: 120,
-        columnType: 'progressbar',
+        cellType: 'progressbar',
         style: {
           barHeight: '100%',
           // barBgColor: '#aaa',
@@ -89,7 +89,7 @@ export function createTable() {
         field: 'percent',
         title: 'percent4',
         width: 120,
-        columnType: 'progressbar',
+        cellType: 'progressbar',
         style: {
           barBgColor: data => (Number(data.percentile) > 0.5 ? '#faa' : '#aaa'),
           barColor: data => (Number(data.percentile) > 0.5 ? '#f44' : '#444')
@@ -99,7 +99,7 @@ export function createTable() {
         field: 'value',
         title: 'axis',
         width: 100,
-        columnType: 'progressbar',
+        cellType: 'progressbar',
         min: -10,
         max: 20,
         barType: 'negative',

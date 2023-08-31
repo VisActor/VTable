@@ -436,7 +436,7 @@ export function createTable() {
     indicators: [
       {
         indicatorKey: 'dayTrendChart',
-        columnType: 'chart',
+        cellType: 'chart',
         chartModule: 'vchart',
         width: 500,
         chartSpec: {
@@ -467,7 +467,7 @@ export function createTable() {
       },
       {
         indicatorKey: 'monthTrendChart',
-        columnType: 'chart',
+        cellType: 'chart',
         chartModule: 'vchart',
         width: 500,
         chartSpec: {
@@ -559,7 +559,7 @@ export function createTable() {
       },
       {
         indicatorKey: 'yearTrendChart',
-        columnType: 'chart',
+        cellType: 'chart',
         chartModule: 'vchart',
         width: 500,
         chartSpec: {

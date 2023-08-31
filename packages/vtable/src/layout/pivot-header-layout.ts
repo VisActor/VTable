@@ -9,7 +9,7 @@ import type {
   ShowColumnRowType,
   ColumnIconOption,
   CellInfo,
-  CellType,
+  CellLocation,
   IHeaderTreeDefine,
   IDimension,
   IIndicator,
@@ -542,7 +542,7 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
             indicatorKey: indicatorInfo.indicatorKey,
             field: indicatorInfo.indicatorKey,
             fieldFormat: indicatorInfo?.format,
-            columnType: indicatorInfo?.columnType ?? 'text',
+            cellType: indicatorInfo?.cellType ?? (indicatorInfo as any)?.columnType ?? 'text',
             chartModule: 'chartModule' in indicatorInfo ? indicatorInfo.chartModule : null,
             chartSpec: 'chartSpec' in indicatorInfo ? indicatorInfo.chartSpec : null,
             sparklineSpec: 'sparklineSpec' in indicatorInfo ? indicatorInfo.sparklineSpec : null,
@@ -564,7 +564,7 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
             id: ++seqId,
             indicatorKey: hd.indicatorKey,
             field: hd.indicatorKey,
-            columnType: 'text',
+            cellType: 'text',
             define: Object.assign({}, <any>hd)
           });
         }
@@ -864,7 +864,7 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
   getHeaderFieldKey(col: number, row: number): undefined {
     return undefined;
   }
-  getCellType(col: number, row: number): CellType {
+  getCellLocation(col: number, row: number): CellLocation {
     if (this.isCornerHeader(col, row)) {
       return 'cornerHeader';
     } else if (this.isColumnHeader(col, row)) {
@@ -1153,7 +1153,7 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
           id: '',
           field: undefined,
           indicatorKey: undefined,
-          columnType: undefined,
+          cellType: undefined,
           define: undefined
         }
       );
@@ -1165,7 +1165,7 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
         id: '',
         field: undefined,
         indicatorKey: undefined,
-        columnType: undefined,
+        cellType: undefined,
         define: undefined
       }
     );
@@ -1445,7 +1445,7 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
         define: {
           field: '',
           headerType: 'text',
-          columnType: 'text'
+          cellType: 'text'
         }
       };
       this.rowHeaderObjs.push(cell);
