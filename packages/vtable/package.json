@@ -47,8 +47,8 @@
     "ci": "ts-node --transpileOnly --skipProject ./scripts/trigger-test.ts"
   },
   "dependencies": {
-    "@visactor/vrender": "0.15.0-alpha.9",
-    "@visactor/vrender-components": "0.14.6-alpha.9",
+    "@visactor/vrender": "0.15.0-alpha.10",
+    "@visactor/vrender-components": "0.14.6-alpha.10",
     "@visactor/vutils": "~0.15.7",
     "@visactor/vscale": "~0.15.7",
     "@visactor/vdataset": "~0.15.7",
