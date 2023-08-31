@@ -21,7 +21,7 @@ const tableInstance = new VTable.ListTable({
   columns: [
     {
       field: "orderID",
-      caption: "订单编号",
+      title: "订单编号",
       headerIcon: {
         type: 'svg', //指定svg格式图标，其他还支持path，image
         svg: `<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 12 12" fill="none">
@@ -63,7 +63,7 @@ const tableInstance = new VTable.ListTable({
   columns: [
     {
       field: "orderID",
-      caption: "订单编号",
+      title: "订单编号",
       icon: {
         type: 'image',
         src: 'avatar', // src从records中field位avator的字段中取值
@@ -121,7 +121,7 @@ const tableInstance = new VTable.PivotTable({
   columns: [
     {
       field: "orderID",
-      caption: "订单编号",
+      title: "订单编号",
       headerIcon: "order",
       icon: "order",
     },

@@ -33,55 +33,55 @@ let  tableInstance;
 const columns =[
     {
         "field": "Order ID",
-        "caption": "Order ID",
+        "title": "Order ID",
         "width": "auto",
         "sort":true
     },
     {
         "field": "Customer ID",
-        "caption": "Customer ID",
+        "title": "Customer ID",
         "width": "auto",
         "sort":true
     },
     {
         "field": "Product Name",
-        "caption": "Product Name",
+        "title": "Product Name",
         "width": "auto"
     },
     {
         "field": "Category",
-        "caption": "Category",
+        "title": "Category",
         "width": "auto"
     },
     {
         "field": "Sub-Category",
-        "caption": "Sub-Category",
+        "title": "Sub-Category",
         "width": "auto"
     },
     {
         "field": "Region",
-        "caption": "Region",
+        "title": "Region",
         "width": "auto"
     },
     {
         "field": "City",
-        "caption": "City",
+        "title": "City",
         "width": "auto"
     },
     {
         "field": "Order Date",
-        "caption": "Order Date",
+        "title": "Order Date",
         "width": "auto"
     },
     {
         "field": "Quantity",
-        "caption": "Quantity",
+        "title": "Quantity",
         "width": "auto",
         "sort":true
     },
     {
         "field": "Sales",
-        "caption": "Sales",
+        "title": "Sales",
         "width": "auto",
         "sort":(v1, v2, order) => {
         if (order === 'desc') {
@@ -92,7 +92,7 @@ const columns =[
     },
     {
         "field": "Profit",
-        "caption": "Profit",
+        "title": "Profit",
         "width": "auto",
         "sort":true
     }

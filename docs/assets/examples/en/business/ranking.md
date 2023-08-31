@@ -107,24 +107,24 @@ const records =[
 const columns =[
     {
         "field": "WordRanking",
-        "caption": "WordRanking",
+        "title": "WordRanking",
         "width": "auto"
     },
     {
         "field": "University",
-        "caption": "University",
+        "title": "University",
         "width": "auto"
     },
     {
         "field": "Country / Region",
-        "caption": "Country / Region",
+        "title": "Country / Region",
         "width": "auto"
     },
     {
         "field": "Overall Rating",
-        "caption": "Overall Rating",
+        "title": "Overall Rating",
         "width": "auto",
-        columnType: 'progressbar',
+        cellType: 'progressbar',
         style:{
           barColor:'orange',
           barHeight:'90%',
@@ -133,9 +133,9 @@ const columns =[
     },
     {
         "field": "Academic Reputation",
-        "caption": "Academic Reputation",
+        "title": "Academic Reputation",
         "width": "auto",
-        columnType: 'progressbar',
+        cellType: 'progressbar',
         style:{
           // barColor:'green',
           barHeight:'90%',
@@ -144,9 +144,9 @@ const columns =[
     },
     {
         "field": "Average Citation Rate of Papers",
-        "caption": "Average Citation Rate of Papers",
+        "title": "Average Citation Rate of Papers",
         "width": "auto",
-        columnType: 'progressbar',
+        cellType: 'progressbar',
         style:{
           barColor:'#2283C6',
           barHeight:'90%',
@@ -155,9 +155,9 @@ const columns =[
     },
     {
         "field": "H-index",
-        "caption": "H-index",
+        "title": "H-index",
         "width": "auto",
-        columnType: 'progressbar', 
+        cellType: 'progressbar', 
         style:{
           barColor:'#BCBD22',
           barHeight:'90%',
@@ -166,9 +166,9 @@ const columns =[
     },
     {
         "field": "Rank up",
-        "caption": "Rank up【unreal】",
+        "title": "Rank up【unreal】",
         "width": "auto",
-        columnType: 'progressbar',
+        cellType: 'progressbar',
         barType:'negative',
         max:4,
         min:-2,

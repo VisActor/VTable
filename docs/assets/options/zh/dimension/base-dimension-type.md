@@ -5,7 +5,7 @@ ${prefix} dimensionKey(string)
 
 **必填**  维度的唯一标识，对应数据集的字段名称
 
-${prefix} dimensionTitle(string)
+${prefix} title(string)
 
 **必填**  维度名称，角头可配置显示维度名称
 

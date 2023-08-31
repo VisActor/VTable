@@ -2,11 +2,11 @@
 
 #${prefix} columns.link(string)
 
-Specify the column type as 'link', columnType can be omitted and defaults to 'text'
+Specify the column type as 'link', cellType can be omitted and defaults to 'text'
 
-##${prefix} columnType(string) = 'link'
+##${prefix} cellType(string) = 'link'
 
-Specify the column type as 'link', columnType can be omitted and defaults to 'text'
+Specify the column type as 'link', cellType can be omitted and defaults to 'text'
 
 {{ use: base-column-type(
     prefix = '##'+${prefix}

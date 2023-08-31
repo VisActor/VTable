@@ -14,7 +14,7 @@ order: 9-4
 
 - `indicators[x].icon` 根据销售值来展示不同的icon 表示上涨和下降
 
-- `indicators[x].columnType` 设置为sparkline 来展示迷你图
+- `indicators[x].cellType` 设置为sparkline 来展示迷你图
 
 ## 代码演示
 
@@ -181,7 +181,7 @@ const option = {
     rows:[
       {
         dimensionKey: 'order_data',
-        dimensionTitle: 'Order Data',
+        title: 'Order Data',
         headerStyle: {
           textStick: true,
         },
@@ -192,7 +192,7 @@ const option = {
     columns:[
       {
         dimensionKey: 'time',
-        dimensionTitle: 'Quarter',
+        title: 'Quarter',
         width: '200',
         showSort: false,
         headerStyle: {
@@ -210,7 +210,7 @@ const option = {
       },
       {
         dimensionKey: 'year',
-        dimensionTitle: 'Year',
+        title: 'Year',
         width: '200',
         showSort: false,
         headerStyle: {
@@ -238,7 +238,7 @@ const option = {
       },
       {
         indicatorKey: 'ratio',
-        caption: '环比',
+        title: '环比',
         width: 'auto',
         format: (rec) => {
           if (rec?.ratio) return rec?.ratio * 100 + '%';
@@ -279,9 +279,9 @@ const option = {
       },
       {
         indicatorKey: 'lineData',
-        caption: 'Trend ',
+        title: 'Trend ',
         width: '300',
-        columnType: 'sparkline',
+        cellType: 'sparkline',
         sparklineSpec: {
           type: 'line',
           xField: 'x',

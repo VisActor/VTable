@@ -121,10 +121,10 @@
       },
       "children": [
         {
-          "path": "columnType",
+          "path": "cellType",
           "title": {
             "zh": "单元格类型",
-            "en": "columnType"
+            "en": "cellType"
           }
         },
         {

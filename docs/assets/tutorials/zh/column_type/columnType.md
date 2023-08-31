@@ -22,30 +22,30 @@ VTable 所支持的数据类型共有 7 种，分别为：
 
 列类型为 "text" 的列主要用于显示文本数据，是最为常见的表列类型。它具有较强的灵活性，因为可以通过设置不同的格式化函数和定制样式来对文本进行展示和处理。
 
-首先，让我们看一个 `columnType: 'text'` 的例子：
+首先，让我们看一个 `cellType: 'text'` 的例子：
 
 ```javascript
 {
-  columnType: 'text',
+  cellType: 'text',
   field: 'name',
-  caption: '姓名',
+  title: '姓名',
 }
 ```
 在这个例子中：
 
-- `columnType: 'text'` 表示当前列用于显示文本数据。
+- `cellType: 'text'` 表示当前列用于显示文本数据。
 - `field: 'name'` 指定了当前表示姓名的数据字段。
-- `caption: '姓名'` 为表头设置名为“姓名”的列标题。
+- `title: '姓名'` 为表头设置名为“姓名”的列标题。
 
-需要注意的是，如果当前列的 `columnType` 项缺省，默认为 'text' 类型。
+需要注意的是，如果当前列的 `cellType` 项缺省，默认为 'text' 类型。
 
 接下来，我们通过设置格式化函数和定制样式来对文本进行处理：
 
 ```javascript
 {
-  columnType: 'text',
+  cellType: 'text',
   field: 'name',
-  caption: '姓名',
+  title: '姓名',
   fieldFormat: (record) => record.name.toUpperCase(),
   style: {
     color: 'blue',
@@ -64,13 +64,13 @@ VTable 所支持的数据类型共有 7 种，分别为：
 
 当列类型为 "link" 时，用于显示链接类型的数据。与 "text" 类型相似，"link" 类型也具有较高的灵活性，可以通过设置不同的格式化函数、样式以及点击时的跳转地址、是否检测链接的合法性等来对链接进行显示和处理。
 
-以下展示一个 `columnType: 'link'` 的例子，并通过设置跳转地址和检测链接的合法性来对链接类型的数据进行处理：
+以下展示一个 `cellType: 'link'` 的例子，并通过设置跳转地址和检测链接的合法性来对链接类型的数据进行处理：
 
 ```javascript
 {
-  columnType: 'link',
+  cellType: 'link',
   field: 'homepage',
-  caption: '主页',
+  title: '主页',
   linkJump: true,
   linkDetect: true,
 }
@@ -92,13 +92,13 @@ VTable 所支持的数据类型共有 7 种，分别为：
 
 当列类型为 "image" 时，用于显示图片类型的数据。"image" 类型具有一定的灵活性，可以通过设置不同的图片展示方式和定制样式如保持横纵比、维持图片原尺寸等来对数据进行处理。
 
-以下展示一个 `columnType: 'image'` 的例子，我们通过设置保持横纵比和图片自动撑开单元格尺寸的属性对图片类型的数据进行处理：
+以下展示一个 `cellType: 'image'` 的例子，我们通过设置保持横纵比和图片自动撑开单元格尺寸的属性对图片类型的数据进行处理：
 
 ```javascript
 {
-  columnType: 'image',
+  cellType: 'image',
   field: 'avatar',
-  caption: '头像',
+  title: '头像',
   keepAspectRatio: true,
   imageAutoSizing: true,
 }
@@ -122,13 +122,13 @@ VTable 所支持的数据类型共有 7 种，分别为：
 
 当列类型为 "progressbar" 时，用于显示进度条类型的数据。可以通过设置进度条的类型、进度条的数据范围等对进度条数据进行处理。
 
-以下展示一个 `columnType: 'progressbar'` 的例子：
+以下展示一个 `cellType: 'progressbar'` 的例子：
 
 ```javascript
 {
-  columnType: 'progressbar',
+  cellType: 'progressbar',
   field: 'progress',
-  caption: '进度',
+  title: '进度',
   min: 0,
   max: 100,
   barType: 'default',
@@ -147,13 +147,13 @@ VTable 所支持的数据类型共有 7 种，分别为：
 
 当列类型为 "sparkline" 时，用于显示迷你图类型的数据。"sparkline" 类型具有较高的灵活性，可以通过设置迷你图具体的 spec 配置项来对迷你图的数据进行处理。
 
-以下展示一个 `columnType: 'sparkline'` 的例子：
+以下展示一个 `cellType: 'sparkline'` 的例子：
 
 ```javascript
 {
-  columnType: 'sparkline',
+  cellType: 'sparkline',
   field: 'trend',
-  caption: '趋势',
+  title: '趋势',
   sparklineSpec: {
     type: 'line',
     xField: 'x',
@@ -186,13 +186,13 @@ VTable 所支持的数据类型共有 7 种，分别为：
 
 当列类型为 "chart" 时，用于显示图表类型的数据。在使用该类型之前需要先通过VTable.chart.register注册一种图表类型，具体可以参考教程[vchart注册使用](TODO)。注册之后的使用示例：
 
-以下展示一个 `columnType: 'chart'` 的例子：
+以下展示一个 `cellType: 'chart'` 的例子：
 
 ```javascript
 {
-  columnType: 'chart',
+  cellType: 'chart',
   field: 'chartData',
-  caption: '销售趋势',
+  title: '销售趋势',
   chartType: 'vchart',
   chartSpec: {
     type: 'common',

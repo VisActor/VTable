@@ -28,19 +28,19 @@
       }
     ]
 
-如果是基本表格，表头内容是由columns中配置的caption决定。至于是显示在行表头还是列表头位置，需要看transpose是否设置了转置。如下简单配置：
+如果是基本表格，表头内容是由columns中配置的title决定。至于是显示在行表头还是列表头位置，需要看transpose是否设置了转置。如下简单配置：
 
      columns: [
        {
             "field": "Category",
-            "caption": "Category",
+            "title": "Category",
              "headerStyle": {
               color: 'red',
             },
         },
         {
             "field": "Sub Category",
-            "caption": "Sub-Category",
+            "title": "Sub-Category",
         }
     ]
 
@@ -65,8 +65,8 @@ body数据单元格是表格最主要的显示数据的部分，展示了表格�
     indicators: [
           {
             indicatorKey: 'sales',
-            caption: '销售额',
-            columnType: 'progressbar',
+            title: '销售额',
+            cellType: 'progressbar',
             format(rec) {
               return `${rec["sales"]}%`;
             },
@@ -88,16 +88,16 @@ body数据单元格是表格最主要的显示数据的部分，展示了表格�
     columns:[
         {
             "field": "230517143221027",
-            "caption": "Order ID",
-            "columnType": "link",
+            "title": "Order ID",
+            "cellType": "link",
             "style": {
                 "color": 'yellow',
             }
         },
         {
             "field": "230517143221030",
-            "caption": "Customer ID",
-            "columnType": "image",
+            "title": "Customer ID",
+            "cellType": "image",
         },
     ]
 

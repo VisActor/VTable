@@ -95,7 +95,7 @@ Row header tree, same structure as columnTree.
 
 ## indicators(Array)
 
-The specific configuration of each indicator in the perspective combination chart, such as style, format, caption, etc., is different from the pivot table. The indicator type here only supports the configuration of the chart type.
+The specific configuration of each indicator in the perspective combination chart, such as style, format, title, etc., is different from the pivot table. The indicator type here only supports the configuration of the chart type.
 
 {{ use: chart-indicator-type(
     prefix = '#') }}
@@ -123,13 +123,13 @@ Whether to show column headers.
 
 ##rowHeaderTitle(Object)
 
-Add a line to the top of the row header to display the dimension name, which can be customized or display the combination name of dimensionTitle
+Add a line to the top of the row header to display the dimension name, which can be customized or display the combination name of title
 
 {{ use: pivot-header-title( prefix = '###',) }}
 
 ## columnHeaderTitle(Object)
 
-Add a line to the top of the column header to display the dimension name, which can be customized or display the combination name of dimensionTitle
+Add a line to the top of the column header to display the dimension name, which can be customized or display the combination name of title
 
 {{ use: pivot-header-title( prefix = '###',) }}
 

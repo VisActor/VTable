@@ -13,8 +13,8 @@ VTable.register.chartModule('vchart', VChart);
 
 ## 相关配置
 
-表格展示类型`columnType`设置成`chart`用于生成图表。
-- columnType: 'chart' //chart图表类型
+表格展示类型`cellType`设置成`chart`用于生成图表。
+- cellType: 'chart' //chart图表类型
 - chartModule: 'vchart' // vchart是注册时配置的名称
 - chartSpec:{ }  //chart配置项
 
@@ -60,7 +60,7 @@ const records = [
 const columns =[
     {
       field: 'personid',
-      caption: 'personid',
+      title: 'personid',
       description: '这是一个标题的详细描述',
       sort: true,
       width: 80,
@@ -71,9 +71,9 @@ const columns =[
     },
     {
       field: 'areaChart',
-      caption: 'vchart area',
+      title: 'vchart area',
       width: '320',
-      columnType: 'chart',
+      cellType: 'chart',
       chartModule: 'vchart',
       chartSpec: {
         type: 'area',
@@ -146,9 +146,9 @@ const columns =[
     },
     {
       field: 'areaChart',
-      caption: 'vchart line',
+      title: 'vchart line',
       width: '320',
-      columnType: 'chart',
+      cellType: 'chart',
       chartModule: 'vchart',
       chartSpec: {
         type: 'common',
@@ -209,9 +209,9 @@ const columns =[
     },
     {
       field: 'areaChart',
-      caption: 'vchart line',
+      title: 'vchart line',
       width: '320',
-      columnType: 'chart',
+      cellType: 'chart',
       chartModule: 'vchart',
       chartSpec: {
         type: 'common',
@@ -258,9 +258,9 @@ const columns =[
     },
     {
       field: 'scatterChart',
-      caption: 'vchart line',
+      title: 'vchart line',
       width: '320',
-      columnType: 'chart',
+      cellType: 'chart',
       chartModule: 'vchart',
       chartSpec: {
         type: 'common',
@@ -294,9 +294,9 @@ const columns =[
     },
     {
       field: 'areaChart',
-      caption: 'vchart area',
+      title: 'vchart area',
       width: '320',
-      columnType: 'chart',
+      cellType: 'chart',
       chartModule: 'vchart',
       chartSpec: {
         type: 'common',
@@ -374,9 +374,9 @@ const columns =[
     },
     {
       field: 'areaChart',
-      caption: 'vchart line',
+      title: 'vchart line',
       width: '320',
-      columnType: 'chart',
+      cellType: 'chart',
       chartModule: 'vchart',
       chartSpec: {
         type: 'common',
@@ -438,9 +438,9 @@ const columns =[
     },
     {
       field: 'areaChart',
-      caption: 'vchart line',
+      title: 'vchart line',
       width: '320',
-      columnType: 'chart',
+      cellType: 'chart',
       chartModule: 'vchart',
       chartSpec: {
         type: 'common',
@@ -487,9 +487,9 @@ const columns =[
     },
     {
       field: 'scatterChart',
-      caption: 'vchart line',
+      title: 'vchart line',
       width: '320',
-      columnType: 'chart',
+      cellType: 'chart',
       chartModule: 'vchart',
       chartSpec: {
         type: 'common',

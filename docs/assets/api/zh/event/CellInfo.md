@@ -4,7 +4,7 @@ CellInfo类型定义为：
 {
   col: number;
   row: number;
-  caption?: string;
+  title?: string;
   /**维度名称 */
   field?: string;
   /**单元格行列表头paths */
@@ -17,7 +17,7 @@ CellInfo类型定义为：
   value?: string|number;
   /**原始值 */
   dataValue?: string|number;
-  cellType?: CellType;
-  columnType?: string;
+  cellLocation?: CellLocation;
+  cellType?: string;
 };
 ```

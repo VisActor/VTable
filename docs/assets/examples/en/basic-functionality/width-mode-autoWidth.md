@@ -26,50 +26,50 @@ let  tableInstance;
 const columns =[
     {
         "field": "Order ID",
-        "caption": "Order ID",
+        "title": "Order ID",
         "width": 100
     },
     {
         "field": "Customer ID",
-        "caption": "Customer ID",
+        "title": "Customer ID",
     },
     {
         "field": "Product Name",
-        "caption": "Product Name",
+        "title": "Product Name",
     },
     {
         "field": "Category",
-        "caption": "Category",
+        "title": "Category",
     },
     {
         "field": "Sub-Category",
-        "caption": "Sub-Category",
+        "title": "Sub-Category",
     },
     {
         "field": "Region",
-        "caption": "Region",
+        "title": "Region",
     },
     {
         "field": "City",
-        "caption": "City",
+        "title": "City",
     },
     {
         "field": "Order Date",
-        "caption": "Order Date",
+        "title": "Order Date",
     },
     {
         "field": "Quantity",
-        "caption": "Quantity",
+        "title": "Quantity",
         "width": "auto"
     },
     {
         "field": "Sales",
-        "caption": "Sales",
+        "title": "Sales",
         "width": "auto"
     },
     {
         "field": "Profit",
-        "caption": "Profit",
+        "title": "Profit",
         "width": "auto"
     }
 ];

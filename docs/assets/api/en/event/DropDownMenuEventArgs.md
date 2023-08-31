@@ -20,10 +20,10 @@ Definition of event callback function parameter type DropDownMenuEventArgs:
     customInfo?: any;
 
     cellHeaderPaths?: ICellHeaderPaths;
-    cellType: CellType;
+    cellLocation: CellLocation;
   }
 ```
 
 In which:
 {{ use: ICellHeaderPaths() }}
-{{ use: CellType() }}
+{{ use: CellLocation() }}

@@ -15,7 +15,7 @@ The perspective combination diagram combines the vchart chart library to render 
 
 *   `PivotChart` Initialize the table type using PivotChart.
 *   `VTable.register.chartModule('vchart', VChart)` Register a charting library for charting, currently supports VChart
-*   `columnType: 'chart'` Specify the type chart
+*   `cellType: 'chart'` Specify the type chart
 *   `chartModule: 'vchart'` Specify the registered chart library name
 *   `chartSpec: {}` Chart specs
 
@@ -29,7 +29,7 @@ The perspective combination diagram combines the vchart chart library to render 
       const columns = [
         {
           dimensionKey: 'Region',
-          dimensionTitle: 'Region',
+          title: 'Region',
           headerStyle:{
             textStick:true
           }
@@ -38,7 +38,7 @@ The perspective combination diagram combines the vchart chart library to render 
       const rows = [
         {
           dimensionKey: 'Order Year',
-          dimensionTitle: 'Order Year',
+          title: 'Order Year',
           headerStyle:{
             textStick:true
           }
@@ -48,9 +48,9 @@ The perspective combination diagram combines the vchart chart library to render 
       const indicators = [
         {
           indicatorKey: 'Quantity',
-          caption: 'Quantity',
+          title: 'Quantity',
           width: 'auto',
-          columnType: 'chart',
+          cellType: 'chart',
           chartModule: 'vchart',
           chartSpec: {
             // type: 'common',
@@ -157,8 +157,8 @@ The perspective combination diagram combines the vchart chart library to render 
         },
         {
           indicatorKey: 'Sales',
-          caption: 'Sales & Profit',
-          columnType: 'chart',
+          title: 'Sales & Profit',
+          cellType: 'chart',
           chartModule: 'vchart',
           chartSpec: {
             type: 'common',

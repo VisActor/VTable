@@ -77,25 +77,25 @@ VTable透视表在数据分析方面具有以下优势：
         rows: [
           {
             dimensionKey: '类别',
-            dimensionTitle: '类别',
+            title: '类别',
           },
           {
             dimensionKey: '子类别',
-            dimensionTitle: '子类别',
+            title: '子类别',
           }
         ],
         columns: 
         [
           {
             dimensionKey: '地区',
-            dimensionTitle: '地区',
+            title: '地区',
             headerFormat(value) {
               return `${value}地区`;
             },
           },
           {
             dimensionKey: '邮寄方式',
-            dimensionTitle: '邮寄方式',
+            title: '邮寄方式',
             headerFormat(value) {
               return `${value}邮寄方式`;
             },
@@ -146,17 +146,17 @@ VTable透视表在数据分析方面具有以下优势：
       indicators: [
           {
             indicatorKey: '1',
-            caption: '销售额',
+            title: '销售额',
           },
           {
             indicatorKey: '2',
-            caption: '利润',
+            title: '利润',
           }
         ],
     }
 
-在上面这份配置中，rowTree和columnTree分别是一棵**维度树**，树的结点定义了key和value，value是**维度值**会显示到表头单元格中。树的叶节点可能为指标名称，在当前的示例中指标以列展示，则配置在了columnTree的叶节点中，其中指标结点的value可不配置会使用indicators中定义的caption显示在表头单元格中。
+在上面这份配置中，rowTree和columnTree分别是一棵**维度树**，树的结点定义了key和value，value是**维度值**会显示到表头单元格中。树的叶节点可能为指标名称，在当前的示例中指标以列展示，则配置在了columnTree的叶节点中，其中指标结点的value可不配置会使用indicators中定义的title显示在表头单元格中。
 
 rows和columns定义了行表头和列表头对应的**维度**基本信息，包括title，headerStyle, format等。
 
-indicators定义了**指标**的基本信息，包括caption，style, format等。
+indicators定义了**指标**的基本信息，包括title，style, format等。

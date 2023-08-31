@@ -14,7 +14,7 @@ This example analyzes sales data at different time granularities and month-on-mo
 
 *   `indicators[x].icon` Display different icons based on sales value to indicate rise and fall
 
-*   `indicators[x].columnType` Set to sparkline to display miniatures
+*   `indicators[x].cellType` Set to sparkline to display miniatures
 
 ## Code demo
 
@@ -181,7 +181,7 @@ const option = {
     rows:[
       {
         dimensionKey: 'order_data',
-        dimensionTitle: 'Order Data',
+        title: 'Order Data',
         headerStyle: {
           textStick: true,
         },
@@ -192,7 +192,7 @@ const option = {
     columns:[
       {
         dimensionKey: 'time',
-        dimensionTitle: 'Quarter',
+        title: 'Quarter',
         width: '200',
         showSort: false,
         headerStyle: {
@@ -210,7 +210,7 @@ const option = {
       },
       {
         dimensionKey: 'year',
-        dimensionTitle: 'Year',
+        title: 'Year',
         width: '200',
         showSort: false,
         headerStyle: {
@@ -238,7 +238,7 @@ const option = {
       },
       {
         indicatorKey: 'ratio',
-        caption: '环比',
+        title: '环比',
         width: 'auto',
         format: (rec) => {
           if (rec?.ratio) return rec?.ratio * 100 + '%';
@@ -279,9 +279,9 @@ const option = {
       },
       {
         indicatorKey: 'lineData',
-        caption: 'Trend ',
+        title: 'Trend ',
         width: '300',
-        columnType: 'sparkline',
+        cellType: 'sparkline',
         sparklineSpec: {
           type: 'line',
           xField: 'x',

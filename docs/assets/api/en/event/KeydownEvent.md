@@ -13,4 +13,4 @@ The definition of KeydownEvent type is:
 {{ use: CellInfo() }}
 {{ use: ICellHeaderPaths() }}
 {{ use: RectProps() }}
-{{ use: CellType() }}
+{{ use: CellLocation() }}

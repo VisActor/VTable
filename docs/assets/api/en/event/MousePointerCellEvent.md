@@ -9,7 +9,7 @@ Definition of event callback function parameter type MousePointerCellEvent:
   x?: number;
   y?: number;
   ranges: CellRange[];
-  caption?: string;
+  title?: string;
   /**Dimension name */
   field?: string;
   /**Cell row list header paths */
@@ -22,8 +22,8 @@ Definition of event callback function parameter type MousePointerCellEvent:
   value?: string|number;
   /**Original value */
   dataValue?: string|number;
-  cellType?: CellType;
-  columnType?: string;
+  cellLocation?: CellLocation;
+  cellType?: string;
   related?: CellAddress;
   scaleRatio?: number;
   targetIcon?: { name: string; position: RectProps; funcType: string };
@@ -35,4 +35,4 @@ Definition of event callback function parameter type MousePointerCellEvent:
 Including:
 {{ use: CellRange() }}
 {{ use: ICellHeaderPaths() }}
-{{ use: CellType() }}
+{{ use: CellLocation() }}

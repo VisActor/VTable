@@ -23,16 +23,16 @@ const option = {
   columns: [
     {
       field: 'name',
-      caption: 'name',
-      columnType: 'link',
+      title: 'name',
+      cellType: 'link',
       templateLink: 'https://www.google.com.hk/search?q={name}',
       linkJump: true,
       width: 'auto'
     },
     {
       field: 'link',
-      caption: 'persional link',
-      columnType: 'link',
+      title: 'persional link',
+      cellType: 'link',
       linkJump: true,
       width: 'auto',
       fieldFormat(rec) {
@@ -41,19 +41,19 @@ const option = {
     },
     {
       "field": "age",
-      "caption": "age"
+      "title": "age"
     },
     {
       "field": "sex",
-      "caption": "sex"
+      "title": "sex"
     },
     {
       "field": "phone",
-      "caption": "phone"
+      "title": "phone"
     },
     {
       "field": "address",
-      "caption": "address"
+      "title": "address"
     },
   ],
   "records": [

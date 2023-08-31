@@ -29,7 +29,7 @@ ${prefix} minWidth(number|string)
 
 限制该列最小列宽
 
-${prefix} caption(string)
+${prefix} title(string)
 
 表头名称
 

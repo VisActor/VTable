@@ -2,11 +2,11 @@
 
 #${prefix} indicators.link(string)
 
-Specify the column type as 'link', and the default columnType is 'text' if not specified
+Specify the column type as 'link', and the default cellType is 'text' if not specified
 
-##${prefix} columnType(string) = 'link'
+##${prefix} cellType(string) = 'link'
 
-Specify the column type as 'link', and the default columnType is 'text' if not specified
+Specify the column type as 'link', and the default cellType is 'text' if not specified
 
 {{ use: base-indicator-type(
     prefix = '##'+${prefix}

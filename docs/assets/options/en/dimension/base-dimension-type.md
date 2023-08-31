@@ -4,7 +4,7 @@ ${prefix} dimensionKey(string)
 
 **Required**  Unique identifier of the dimension, corresponding to the field name of the dataset
 
-${prefix} dimensionTitle(string)
+${prefix} title(string)
 
 **Required**  Dimension name, the angle header can be configured to display the dimension name
 

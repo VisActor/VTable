@@ -6,7 +6,7 @@ A minigraph is a small chart embedded in a table, which can be used to display i
 
 # Chart Types Supported by Minicharts
 
-In VTable, the table shows the type`columnType`Set to`sparkline`Used to generate minigraphs. At present, the miniature chart types provided by VTable only support line graphs. Over time, VTable will gradually enrich the chart types of minigraphs, and will also support various miniature chart types such as bar graphs and area graphs in the future.
+In VTable, the table shows the type`cellType`Set to`sparkline`Used to generate minigraphs. At present, the miniature chart types provided by VTable only support line graphs. Over time, VTable will gradually enrich the chart types of minigraphs, and will also support various miniature chart types such as bar graphs and area graphs in the future.
 
 # Introduction to sparklineSpec configuration for miniatures
 
@@ -19,7 +19,7 @@ This configuration item can be defaulted and will use the internal default confi
   columns: [
     {
       field: 'timeSeriesData',
-      columnType: 'sparkline',
+      cellType: 'sparkline',
       sparklineSpec: {
         type: 'line',
         // ...其他sparklineSpec配置
@@ -40,7 +40,7 @@ Or:
   columns: [
     {
       field: 'timeSeriesData',
-      columnType: 'sparkline',
+      cellType: 'sparkline',
       sparklineSpec: (cellInfo) => {
         return {
           type: 'line',
@@ -84,8 +84,8 @@ const records = [
 const columns = [
   {
     field: 'lineData',
-    caption: 'sparkline',
-    columnType: 'sparkline',
+    title: 'sparkline',
+    cellType: 'sparkline',
     width:300,
     sparklineSpec: {
         type: 'line',
@@ -123,8 +123,8 @@ const columns = [
   },
   {
     field: 'lineData2',
-    caption: 'sparkline 2',
-    columnType: 'sparkline',
+    title: 'sparkline 2',
+    cellType: 'sparkline',
     width:300,
     sparklineSpec: {
         type: 'line', 

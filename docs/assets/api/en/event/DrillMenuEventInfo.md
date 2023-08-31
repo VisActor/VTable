@@ -3,7 +3,7 @@ The type definition for DrillMenuEventInfo is:
 ```
  {
   dimensionKey: string | number;
-  dimensionTitle: string;
+  title: string;
   drillDown: boolean;
   drillUp: boolean;
   col: number;

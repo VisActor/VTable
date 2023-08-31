@@ -9,7 +9,7 @@
   x?: number;
   y?: number;
   ranges: CellRange[];
-  caption?: string;
+  title?: string;
   /**维度名称 */
   field?: string;
   /**单元格行列表头paths */
@@ -22,8 +22,8 @@
   value?: string|number;
   /**原始值 */
   dataValue?: string|number;
-  cellType?: CellType;
-  columnType?: string;
+  cellLocation?: CellLocation;
+  cellType?: string;
   related?: CellAddress;
   scaleRatio?: number;
   targetIcon?: { name: string; position: RectProps; funcType: string };
@@ -38,4 +38,4 @@
 其中：
 {{ use: CellRange() }}
 {{ use: ICellHeaderPaths() }}
-{{ use: CellType() }}
+{{ use: CellLocation() }}

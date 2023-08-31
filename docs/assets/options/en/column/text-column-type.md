@@ -2,11 +2,11 @@
 
 #${prefix} columns.text(string)
 
-Specify the column type as 'text', columnType can be omitted and defaults to 'text'
+Specify the column type as 'text', cellType can be omitted and defaults to 'text'
 
-##${prefix} columnType(string) = 'text'
+##${prefix} cellType(string) = 'text'
 
-Specify the column type as 'text', columnType can be omitted and defaults to 'text'
+Specify the column type as 'text', cellType can be omitted and defaults to 'text'
 
 {{ use: base-column-type(
     prefix = '##' + ${prefix}

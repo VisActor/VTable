@@ -23,7 +23,7 @@ link: '/guide/custom_define/custom_render'
     columns:[
       {
         field: 'type',
-        caption:'',
+        title:'',
         width:170,
         headerStyle:{
           bgColor:'#a23be1'
@@ -40,7 +40,7 @@ link: '/guide/custom_define/custom_render'
       }, 
       {
         field: 'urgency',
-        caption:'urgency',
+        title:'urgency',
         width:400,
         headerStyle:{
           lineHeight:50,
@@ -54,7 +54,7 @@ link: '/guide/custom_define/custom_render'
     },
     {
       field: 'not_urgency',
-      caption:'not urgency',
+      title:'not urgency',
       width:400,
       headerStyle:{
           lineHeight:50,

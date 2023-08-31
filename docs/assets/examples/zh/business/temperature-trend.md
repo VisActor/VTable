@@ -13,7 +13,7 @@ order: 9-5
 ## 关键配置
 
 - `VTable.register.chartModule('vchart', VChart)` 注册绘制图表的图表库 目前支持VChart
-- `columnType: 'chart'` 指定类型chart
+- `cellType: 'chart'` 指定类型chart
 - `chartModule: 'vchart'` 指定注册的图表库名称
 - `chartSpec: {}` 图表spec
 ## 代码演示
@@ -452,7 +452,7 @@ order: 9-5
     indicators: [
       {
         indicatorKey: 'dayTrendChart',
-        columnType: 'chart',
+        cellType: 'chart',
         chartModule: 'vchart',
         width: 400,
         chartSpec: {
@@ -483,7 +483,7 @@ order: 9-5
       },
       {
         indicatorKey: 'monthTrendChart',
-        columnType: 'chart',
+        cellType: 'chart',
         chartModule: 'vchart',
         width: 500,
         chartSpec: {
@@ -575,7 +575,7 @@ order: 9-5
       },
       {
         indicatorKey: 'yearTrendChart',
-        columnType: 'chart',
+        cellType: 'chart',
         chartModule: 'vchart',
         width: 350,
         chartSpec: {

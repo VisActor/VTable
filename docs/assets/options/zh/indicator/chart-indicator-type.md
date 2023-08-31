@@ -2,11 +2,11 @@
 
 #${prefix} indicators.chart(string)
 
-指定列类型为'chart'，columnType 缺省的话会被默认为'text'
+指定列类型为'chart'，cellType 缺省的话会被默认为'text'
 
-##${prefix} columnType(string) = 'chart'
+##${prefix} cellType(string) = 'chart'
 
-指定列类型为'chart'，columnType 缺省的话会被默认为'text'
+指定列类型为'chart'，cellType 缺省的话会被默认为'text'
 
 ##${prefix} chartModule(string)
 

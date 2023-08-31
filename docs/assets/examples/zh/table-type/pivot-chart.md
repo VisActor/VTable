@@ -15,7 +15,7 @@ link: '/guide/table_type/Pivot_Chart/pivot_chart_useage'
 
 - `PivotChart` 初始化表格类型使用PivotChart。
 - `VTable.register.chartModule('vchart', VChart)` 注册绘制图表的图表库 目前支持VChart
-- `columnType: 'chart'` 指定类型chart
+- `cellType: 'chart'` 指定类型chart
 - `chartModule: 'vchart'` 指定注册的图表库名称
 - `chartSpec: {}` 图表spec
 ## 代码演示
@@ -29,7 +29,7 @@ link: '/guide/table_type/Pivot_Chart/pivot_chart_useage'
       const columns = [
         {
           dimensionKey: 'Region',
-          dimensionTitle: 'Region',
+          title: 'Region',
           headerStyle:{
             textStick:true
           }
@@ -38,7 +38,7 @@ link: '/guide/table_type/Pivot_Chart/pivot_chart_useage'
       const rows = [
         {
           dimensionKey: 'Order Year',
-          dimensionTitle: 'Order Year',
+          title: 'Order Year',
           headerStyle:{
             textStick:true
           }
@@ -48,9 +48,9 @@ link: '/guide/table_type/Pivot_Chart/pivot_chart_useage'
       const indicators = [
         {
           indicatorKey: 'Quantity',
-          caption: 'Quantity',
+          title: 'Quantity',
           width: 'auto',
-          columnType: 'chart',
+          cellType: 'chart',
           chartModule: 'vchart',
           chartSpec: {
             // type: 'common',
@@ -157,8 +157,8 @@ link: '/guide/table_type/Pivot_Chart/pivot_chart_useage'
         },
         {
           indicatorKey: 'Sales',
-          caption: 'Sales & Profit',
-          columnType: 'chart',
+          title: 'Sales & Profit',
+          cellType: 'chart',
           chartModule: 'vchart',
           chartSpec: {
             type: 'common',

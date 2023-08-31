@@ -13,4 +13,4 @@ KeydownEvent类型定义为：
 {{ use: CellInfo() }}
 {{ use: ICellHeaderPaths() }}
 {{ use: RectProps() }}
-{{ use: CellType() }}
+{{ use: CellLocation() }}

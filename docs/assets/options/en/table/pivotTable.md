@@ -132,13 +132,13 @@ Whether to display the column header.
 
 ## rowHeaderTitle(Object)
 
-Add a row in the row header to display the dimension name, which can be customized or display the dimensionTitle combined name
+Add a row in the row header to display the dimension name, which can be customized or display the title combined name
 
 {{ use: pivot-header-title( prefix = '###',) }}
 
 ## columnHeaderTitle(Object)
 
-Add a row in the column header to display the dimension name, which can be customized or display the dimensionTitle combined name
+Add a row in the column header to display the dimension name, which can be customized or display the title combined name
 
 {{ use: pivot-header-title( prefix = '###',) }}
 

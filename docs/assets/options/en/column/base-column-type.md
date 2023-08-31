@@ -29,7 +29,7 @@ ${prefix} minWidth(number|string)
 
 Limit the minimum column width of this column
 
-${prefix} caption(string)
+${prefix} title(string)
 
 Header name
 

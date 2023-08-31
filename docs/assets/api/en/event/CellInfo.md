@@ -4,7 +4,7 @@ CellInfo type is defined as:
 {
   col: number;
   row: number;
-  caption?: string;
+  title?: string;
   /**Dimension name */
   field?: string;
   /**Cell row header paths */
@@ -17,7 +17,7 @@ CellInfo type is defined as:
   value?: string|number;
   /**Original value */
   dataValue?: string|number;
-  cellType?: CellType;
-  columnType?: string;
+  cellLocation?: CellLocation;
+  cellType?: string;
 };
 ```

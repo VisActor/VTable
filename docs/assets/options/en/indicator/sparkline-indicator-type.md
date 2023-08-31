@@ -2,12 +2,12 @@
 
 #${prefix} indicators.sparkline(string)
 
-Specify the column type as 'sparkline', columnType can be omitted with default value 'text'
+Specify the column type as 'sparkline', cellType can be omitted with default value 'text'
 
 
-##${prefix} columnType(string) = 'sparkline'
+##${prefix} cellType(string) = 'sparkline'
 
-Specify the column type as 'sparkline', columnType can be omitted with default value 'text'
+Specify the column type as 'sparkline', cellType can be omitted with default value 'text'
 
 {{ use: base-indicator-type(
     prefix = '##'+${prefix}

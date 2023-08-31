@@ -129,7 +129,7 @@ This example shows the main R & D roadmap that follows VTable
     columns: [
       {
         field: 'month',
-        caption: '',
+        title: '',
         style: {
           textAlign: 'center',
           color: 'white',
@@ -164,13 +164,13 @@ This example shows the main R & D roadmap that follows VTable
       },
       {
         field: '',
-        caption: ' ',
+        title: ' ',
         style: {
           borderLineWidth: 0
         }
       },
       {
-        caption: 'BASIC\nFUNCTION',
+        title: 'BASIC\nFUNCTION',
         hideColumnsSubHeader: true,
         headerIcon: ['milestone'],
         columns: [
@@ -208,7 +208,7 @@ This example shows the main R & D roadmap that follows VTable
               ];
             },
             headerIcon: ['milestone'],
-            caption: 'BASIC\nFUNCTION',
+            title: 'BASIC\nFUNCTION',
             width: 'auto',
             style: {
               borderLineWidth: 2,
@@ -253,7 +253,7 @@ This example shows the main R & D roadmap that follows VTable
               ];
             },
 
-            caption: '',
+            title: '',
             width: 'auto',
             style: {
               borderLineWidth: 2,
@@ -270,7 +270,7 @@ This example shows the main R & D roadmap that follows VTable
 
       {
         field: '',
-        caption: ' ',
+        title: ' ',
         width: 100,
         style: {
           borderLineWidth: 0
@@ -278,7 +278,7 @@ This example shows the main R & D roadmap that follows VTable
       },
       {
         field: 'Visualize',
-        caption: 'VISUALIZE',
+        title: 'VISUALIZE',
         style: {
           borderLineWidth: 2,
           borderColor: ''
@@ -320,7 +320,7 @@ This example shows the main R & D roadmap that follows VTable
       },
       {
         field: '',
-        caption: ' ',
+        title: ' ',
         width: 100,
         style: {
           borderLineWidth: 0
@@ -328,7 +328,7 @@ This example shows the main R & D roadmap that follows VTable
       },
       {
         field: 'Animation',
-        caption: 'ANIMATION',
+        title: 'ANIMATION',
         style: {
           borderLineWidth: 2,
           borderColor: ''
@@ -370,7 +370,7 @@ This example shows the main R & D roadmap that follows VTable
       },
       {
         field: '',
-        caption: ' ',
+        title: ' ',
         width: 100,
         style: {
           borderLineWidth: 0
@@ -378,7 +378,7 @@ This example shows the main R & D roadmap that follows VTable
       },
       {
         field: 'Component',
-        caption: 'COMPONENT',
+        title: 'COMPONENT',
         style: {
           borderLineWidth: 2,
           borderColor: ''

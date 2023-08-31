@@ -22,31 +22,31 @@ Next, we'll cover each column type one by one.
 
 Columns with column type "text" are mainly used to display text data and are the most common type of table column. It is flexible because text can be displayed and processed by setting different formatting functions and custom styles.
 
-First, let's look at a `columnType: 'text'` Example of:
+First, let's look at a `cellType: 'text'` Example of:
 
 ```javascript
 {
-  columnType: 'text',
+  cellType: 'text',
   field: 'name',
-  caption: '姓名',
+  title: '姓名',
 }
 ```
 
 In this example:
 
-*   `columnType: 'text'` Represents the current column used to display text data.
+*   `cellType: 'text'` Represents the current column used to display text data.
 *   `field: 'name'` Specifies the data field that currently represents the name.
-*   `caption: '姓名'` Set a column header named "Name" for the header.
+*   `title: '姓名'` Set a column header named "Name" for the header.
 
-It should be noted that if the current `columnType` Item defaults, defaults to type'text '.
+It should be noted that if the current `cellType` Item defaults, defaults to type'text '.
 
 Next, we process the text by setting formatting functions and custom styles:
 
 ```javascript
 {
-  columnType: 'text',
+  cellType: 'text',
   field: 'name',
-  caption: '姓名',
+  title: '姓名',
   fieldFormat: (record) => record.name.toUpperCase(),
   style: {
     color: 'blue',
@@ -65,13 +65,13 @@ With the above settings, we can customize the columns of type "text" to a certai
 
 When the column type is "link", it is used to display the data of the link type. Similar to the "text" type, the "link" type also has high flexibility. The link can be displayed and processed by setting different formatting functions, styles, and the jump address when clicking, whether to detect the legitimacy of the link, etc.
 
-Show one below `columnType: 'link'` Example, and process the link type data by setting the jump address and detecting the legitimacy of the link:
+Show one below `cellType: 'link'` Example, and process the link type data by setting the jump address and detecting the legitimacy of the link:
 
 ```javascript
 {
-  columnType: 'link',
+  cellType: 'link',
   field: 'homepage',
-  caption: '主页',
+  title: '主页',
   linkJump: true,
   linkDetect: true,
 }
@@ -95,13 +95,13 @@ Through the above settings, we can customize the column of type "link" to meet t
 
 When the column type is "image", it is used to display the data of the picture type. The "image" type has certain flexibility, and the data can be processed by setting different image display methods and customizing styles such as maintaining the aspect ratio, maintaining the original size of the picture, etc.
 
-Show one below `columnType: 'image'` For example, we process the data of the picture type by setting the properties of maintaining the aspect ratio and the picture automatically stretching the cell size:
+Show one below `cellType: 'image'` For example, we process the data of the picture type by setting the properties of maintaining the aspect ratio and the picture automatically stretching the cell size:
 
 ```javascript
 {
-  columnType: 'image',
+  cellType: 'image',
   field: 'avatar',
-  caption: '头像',
+  title: '头像',
   keepAspectRatio: true,
   imageAutoSizing: true,
 }
@@ -124,13 +124,13 @@ When the column type is "video", it is used to display the data of the video typ
 
 When the column type is "progressbar", it is used to display the data of the progress bar type. The progress bar data can be processed by setting the type of the progress bar, the data range of the progress bar, etc.
 
-Show one below `columnType: 'progressbar'` Example of:
+Show one below `cellType: 'progressbar'` Example of:
 
 ```javascript
 {
-  columnType: 'progressbar',
+  cellType: 'progressbar',
   field: 'progress',
-  caption: '进度',
+  title: '进度',
   min: 0,
   max: 100,
   barType: 'default',
@@ -149,13 +149,13 @@ Detailed tutorial reference: TODO
 
 When the column type is "sparkline", it is used to display the data of the miniature type. The "sparkline" type has high flexibility, and the data of the miniature can be processed by setting the specific spec configuration item of the miniature.
 
-Show one below `columnType: 'sparkline'` Example of:
+Show one below `cellType: 'sparkline'` Example of:
 
 ```javascript
 {
-  columnType: 'sparkline',
+  cellType: 'sparkline',
   field: 'trend',
-  caption: '趋势',
+  title: '趋势',
   sparklineSpec: {
     type: 'line',
     xField: 'x',
@@ -189,13 +189,13 @@ Detailed tutorial reference: TODO
 
 When the column type is "chart", it is used to display the data of the chart type. Before using this type, you need to register a chart type through VTable.chart.register. For details, please refer to the tutorial.[Vchart registration](TODO)Example of use after registration:
 
-Show one below `columnType: 'chart'` Example of:
+Show one below `cellType: 'chart'` Example of:
 
 ```javascript
 {
-  columnType: 'chart',
+  cellType: 'chart',
   field: 'chartData',
-  caption: '销售趋势',
+  title: '销售趋势',
   chartType: 'vchart',
   chartSpec: {
     type: 'common',

@@ -2,11 +2,11 @@
 
 #${prefix} columns.chart(string)
 
-Specify the column type as 'chart', the columnType can be omitted and defaults to 'text'
+Specify the column type as 'chart', the cellType can be omitted and defaults to 'text'
 
-##${prefix} columnType(string) = 'chart'
+##${prefix} cellType(string) = 'chart'
 
-Specify the column type as 'chart', the columnType can be omitted and defaults to 'text'
+Specify the column type as 'chart', the cellType can be omitted and defaults to 'text'
 
 {{ use: base-column-type(
     prefix = '##'+${prefix},

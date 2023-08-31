@@ -2,11 +2,11 @@
 
 #${prefix} indicators.sparkline(string)
 
-指定列类型为'sparkline'，columnType 缺省的话会被默认为'text'
+指定列类型为'sparkline'，cellType 缺省的话会被默认为'text'
 
-##${prefix} columnType(string) = 'sparkline'
+##${prefix} cellType(string) = 'sparkline'
 
-指定列类型为'sparkline'，columnType 缺省的话会被默认为'text'
+指定列类型为'sparkline'，cellType 缺省的话会被默认为'text'
 
 {{ use: base-indicator-type(
     prefix = '##'+${prefix}

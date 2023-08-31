@@ -3,7 +3,7 @@ DrillMenuEventInfo类型定义为：
 ```
  {
   dimensionKey: string | number;
-  dimensionTitle: string;
+  title: string;
   drillDown: boolean;
   drillUp: boolean;
   col: number;

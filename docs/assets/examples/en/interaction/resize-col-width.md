@@ -285,7 +285,7 @@ const option = {
     "rows": [
         {
             "dimensionKey": "City",
-            "dimensionTitle": "City",
+            "title": "City",
             "headerStyle": {
                 "textStick": true
             },
@@ -295,7 +295,7 @@ const option = {
     "columns": [
         {
            "dimensionKey": "Category",
-            "dimensionTitle": "Category",
+            "title": "Category",
             "headerStyle": {
                 "textStick": true
             },
@@ -305,7 +305,7 @@ const option = {
     "indicators": [
                 {
                     "indicatorKey": "Quantity",
-                    "caption": "Quantity",
+                    "title": "Quantity",
                     "width": "auto",
                     "showSort": false,
                     "headerStyle":{
@@ -323,7 +323,7 @@ const option = {
                 },
                 {
                     "indicatorKey": "Sales",
-                    "caption": "Sales",
+                    "title": "Sales",
                     "width": "auto",
                     "showSort": false,
                     "headerStyle":{
@@ -344,7 +344,7 @@ const option = {
                 },
                 {
                     "indicatorKey": "Profit",
-                    "caption": "Profit",
+                    "title": "Profit",
                     "width": "auto",
                     "showSort": false,
                     "headerStyle":{

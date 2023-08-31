@@ -13,8 +13,8 @@ Combine the vchart chart library with rendering into tables to enrich visual dis
 ## critical configuration
 
 *   `VTable.register.chartType('vchart', VChart)` Register the charting library for charting, currently supports VChart
-*   `columnType: 'chart'` Specify the type chart
-*   `columnType: 'vchart'` Specify the registered chart library name
+*   `cellType: 'chart'` Specify the type chart
+*   `cellType: 'vchart'` Specify the registered chart library name
 *   `chartSpec: {}` Chart specs
 
 ## Code demo
@@ -86,12 +86,12 @@ const option = {
   indicators: [
     {
         indicatorKey: 'lineChart',
-        caption: 'Sales trend chart',
+        title: 'Sales trend chart',
         headerStyle: {
           color: 'blue',
           // bgColor: 'yellow',
         },
-        columnType: 'chart',
+        cellType: 'chart',
         chartType: 'vchart',
         width: 300,
         chartSpec: {
@@ -116,11 +116,11 @@ const option = {
     },
       {
         indicatorKey: 'areaChart',
-        caption: 'Profit trend chart',
+        title: 'Profit trend chart',
         headerStyle: {
           color: 'green',
         },
-        columnType: 'chart',
+        cellType: 'chart',
         chartType: 'vchart',
         width: 300,
         chartSpec: {

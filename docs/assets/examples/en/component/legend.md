@@ -28,22 +28,22 @@ In this example, the background color of the cell is mapped by the category Dime
       const columns = [
         {
           field: 'Order ID',
-          caption: 'Order ID',
+          title: 'Order ID',
           width: 'auto'
         },
         {
           field: 'Customer ID',
-          caption: 'Customer ID',
+          title: 'Customer ID',
           width: 'auto'
         },
         {
           field: 'Product Name',
-          caption: 'Product Name',
+          title: 'Product Name',
           width: '200'
         },
         {
           field: 'Category',
-          caption: 'Category',
+          title: 'Category',
           width: 'auto',
           style: {
             // bgColor(args) {
@@ -54,37 +54,37 @@ In this example, the background color of the cell is mapped by the category Dime
         },
         {
           field: 'Sub-Category',
-          caption: 'Sub-Category',
+          title: 'Sub-Category',
           width: 'auto'
         },
         {
           field: 'Region',
-          caption: 'Region',
+          title: 'Region',
           width: 'auto'
         },
         {
           field: 'City',
-          caption: 'City',
+          title: 'City',
           width: 'auto'
         },
         {
           field: 'Order Date',
-          caption: 'Order Date',
+          title: 'Order Date',
           width: 'auto'
         },
         {
           field: 'Quantity',
-          caption: 'Quantity',
+          title: 'Quantity',
           width: 'auto'
         },
         {
           field: 'Sales',
-          caption: 'Sales',
+          title: 'Sales',
           width: 'auto'
         },
         {
           field: 'Profit',
-          caption: 'Profit',
+          title: 'Profit',
           width: 'auto'
         }
       ];

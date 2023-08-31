@@ -19,7 +19,7 @@
     rows: [
        {
           dimensionKey: 'Order Year',
-          dimensionTitle: 'Order Year',
+          title: 'Order Year',
           headerStyle: {
             textBaseline:'top',
             textStick: true
@@ -30,7 +30,7 @@
     columns: [
         {
           dimensionKey: 'Region',
-          dimensionTitle: '',
+          title: '',
           headerStyle: {
             textStick: true
           }
@@ -40,15 +40,15 @@
     indicators: [
       {
         indicatorKey: 'Quantity',
-        caption: 'Quantity',
-        columnType:'chart',
+        title: 'Quantity',
+        cellType:'chart',
         chartModule:'vchart',
         chartSpec:{} //对应vchart的spec，具体可参考vchart官网
       },
       {
         indicatorKey: 'Sales',
-        caption: 'Sales & Profit',
-        columnType:'chart',
+        title: 'Sales & Profit',
+        cellType:'chart',
         chartModule:'vchart',
         chartSpec:{} //对应vchart的spec，具体可参考vchart官网
       }

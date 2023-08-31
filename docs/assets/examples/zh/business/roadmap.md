@@ -135,7 +135,7 @@ order: 9-6
     columns: [
       {
         field: 'month',
-        caption: '',
+        title: '',
         // width: 'auto',
         style: {
           textAlign: 'center',
@@ -171,13 +171,13 @@ order: 9-6
       },
       {
         field: '',
-        caption: ' ',
+        title: ' ',
         style: {
           borderLineWidth: 0
         }
       },
       {
-        caption: 'BASIC\nFUNCTION',
+        title: 'BASIC\nFUNCTION',
         hideColumnsSubHeader: true,
         headerIcon: ['milestone'],
         columns: [
@@ -216,7 +216,7 @@ order: 9-6
               ];
             },
             headerIcon: ['milestone'],
-            caption: 'BASIC\nFUNCTION',
+            title: 'BASIC\nFUNCTION',
             style: {
               borderLineWidth: 2,
               borderColor: ''
@@ -261,7 +261,7 @@ order: 9-6
               ];
             },
 
-            caption: '',
+            title: '',
             style: {
               borderLineWidth: 2,
               borderColor: ''
@@ -276,14 +276,14 @@ order: 9-6
       },
       {
         field: '',
-        caption: ' ',
+        title: ' ',
         style: {
           borderLineWidth: 0
         }
       },
       {
         field: 'Visualize',
-        caption: 'VISUALIZE',
+        title: 'VISUALIZE',
         style: {
           borderLineWidth: 2,
           borderColor: ''
@@ -326,7 +326,7 @@ order: 9-6
       },
       {
         field: '',
-        caption: ' ',
+        title: ' ',
        
         style: {
           borderLineWidth: 0
@@ -334,7 +334,7 @@ order: 9-6
       },
       {
         field: 'Animation',
-        caption: 'ANIMATION',
+        title: 'ANIMATION',
         style: {
           borderLineWidth: 2,
           borderColor: ''
@@ -377,14 +377,14 @@ order: 9-6
       },
       {
         field: '',
-        caption: ' ',
+        title: ' ',
         style: {
           borderLineWidth: 0
         }
       },
       {
         field: 'Component',
-        caption: 'COMPONENT',
+        title: 'COMPONENT',
         style: {
           borderLineWidth: 2,
           borderColor: ''

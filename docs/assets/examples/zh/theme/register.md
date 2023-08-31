@@ -133,7 +133,7 @@ fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American
     "rows": [
         {
             "dimensionKey": "City",
-            "dimensionTitle": "City",
+            "title": "City",
             "headerStyle": {
                 "textStick": true
             },
@@ -143,7 +143,7 @@ fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American
     "columns": [
         {
             "dimensionKey": "Category",
-            "dimensionTitle": "Category",
+            "title": "Category",
             "headerStyle": {
                 "textStick": true
             },
@@ -153,13 +153,13 @@ fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American
     "indicators": [
                 {
                     "indicatorKey": "Quantity",
-                    "caption": "Quantity",
+                    "title": "Quantity",
                     "width": "auto",
                     "showSort": false,
                 },
                 {
                     "indicatorKey": "Sales",
-                    "caption": "Sales",
+                    "title": "Sales",
                     "width": "auto",
                     "showSort": false,
                     "format":(rec)=>{
@@ -170,7 +170,7 @@ fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American
                 },
                 {
                     "indicatorKey": "Profit",
-                    "caption": "Profit",
+                    "title": "Profit",
                     "width": "auto",
                     "showSort": false,
                     "format":(rec)=>{return Number(rec['Profit']).toFixed(2)}

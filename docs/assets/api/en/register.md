@@ -83,7 +83,7 @@ const tableInstance = new VTable.PivotTable({
   columns:[
     {
       field:'orderID',
-      caption:'orderID',
+      title:'orderID',
       headerIcon:'order',
       icon:'order'，
     }

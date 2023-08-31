@@ -4,7 +4,7 @@ group: Cell Type
 title: 单元格内容类型
 cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/multi-type.png
 order: 2-1
-link: '/guide/column_type/columnType'
+link: '/guide/column_type/cellType'
 ---
 
 # 单元格内容类型
@@ -15,7 +15,7 @@ link: '/guide/column_type/columnType'
 
 headerType: 'text' | 'link' | 'image' | 'video';
 
-columnType:
+cellType:
     'text'
     | 'link'
     | 'image'
@@ -98,36 +98,36 @@ const records = [
 const columns = [
   {
     field: 'name',
-    caption: 'name',
-    columnType: 'link',
+    title: 'name',
+    cellType: 'link',
     templateLink: 'https://www.google.com.hk/search?q={name}',
     linkJump: true,
     width:100
   },
   {
     field: 'introduction',
-    caption: 'introduction',
-    columnType: 'text',
+    title: 'introduction',
+    cellType: 'text',
     width:200
   },
   {
     field: 'image',
-    caption: 'bird image',
-    columnType: 'image',
+    title: 'bird image',
+    cellType: 'image',
     width:150,
     // imageSizing : 'keep-aspect-ratio',
   },
   {
     field: 'vedio',
-    caption: 'bird video',
-    columnType: 'video',
+    title: 'bird video',
+    cellType: 'video',
     width:150,
     // imageSizing : 'keep-aspect-ratio',
   },
   {
     field: 'YoY',
-    caption: 'count Year-over-Year',
-    columnType: 'progressbar',
+    title: 'count Year-over-Year',
+    cellType: 'progressbar',
     width:200,
     fieldFormat(){
       return '';
@@ -142,7 +142,7 @@ const columns = [
   },
   {
     field: 'QoQ',
-    caption: 'count Quarter-over-Quarter',
+    title: 'count Quarter-over-Quarter',
     fieldFormat(rec){return rec['QoQ']+'%'},
     style:{
       textAlign:'center'
@@ -173,8 +173,8 @@ const columns = [
   },
   {
     field: 'trend',
-    caption: 'bird count',
-    columnType: 'sparkline',
+    title: 'bird count',
+    cellType: 'sparkline',
     width:300,
     sparklineSpec: {
         type: 'line',

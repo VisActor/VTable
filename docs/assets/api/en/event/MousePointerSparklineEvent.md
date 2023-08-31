@@ -9,7 +9,7 @@ Definition of the event callback function's corresponding argument type MousePoi
   x?: number;
   y?: number;
   ranges: CellRange[];
-  caption?: string;
+  title?: string;
   /** Dimension name */
   field?: string;
   /** Cell row header paths */
@@ -22,8 +22,8 @@ Definition of the event callback function's corresponding argument type MousePoi
   value?: string|number;
   /** Original value */
   dataValue?: string|number;
-  cellType?: CellType;
-  columnType?: string;
+  cellLocation?: CellLocation;
+  cellType?: string;
   related?: CellAddress;
   scaleRatio?: number;
   targetIcon?: { name: string; position: RectProps; funcType: string };
@@ -38,4 +38,4 @@ Definition of the event callback function's corresponding argument type MousePoi
 Among them:
 {{ use: CellRange() }}
 {{ use: ICellHeaderPaths() }}
-{{ use: CellType() }}
+{{ use: CellLocation() }}

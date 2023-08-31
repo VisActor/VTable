@@ -137,7 +137,7 @@ const records = [
 const columns =[
     {
         "field": "projectName",
-        "caption": "Project Name",
+        "title": "Project Name",
         "width": "auto",
         "style":{
           color:'#ff689d',
@@ -146,275 +146,275 @@ const columns =[
     },
     {
         "field": "startTime",
-        "caption": "Start Time",
+        "title": "Start Time",
         "width": "auto",
     },
     {
         "field": "endTime",
-        "caption": "End Time",
+        "title": "End Time",
         "width": "auto"
     },
     {
         "field": "estimateDays",
-        "caption": "Duration (days)",
+        "title": "Duration (days)",
         "width": "auto",
         "style":{
           color:'red'
         }
     },
     {
-        "caption": "Period:2023/5/1-2023/5/15",
+        "title": "Period:2023/5/1-2023/5/15",
         "headerStyle":{
           textAlign:'center'
         },
         "columns":[
           {
-            "caption": "Monday",
+            "title": "Monday",
             "width": "auto",
              "columns":[
               {
                 "field": "date1",
-                "caption": "1",
+                "title": "1",
                 "width": "auto",
                 "fieldFormat":()=>{return ''}
               },
              ]
           },
            {
-            "caption": "Tuesday",
+            "title": "Tuesday",
             "width": "auto",
              "columns":[
               {
                 "field": "date2",
-                "caption": "2",
+                "title": "2",
                 "width": "auto",
                 "fieldFormat":()=>{return ''}
               },
              ]
           },
            {
-            "caption": "Wednesday",
+            "title": "Wednesday",
             "width": "auto",
              "columns":[
               {
                 "field": "date3",
-                "caption": "3",
+                "title": "3",
                 "width": "auto",
                 "fieldFormat":()=>{return ''}
               },
              ]
           },
            {
-            "caption": "Thursday",
+            "title": "Thursday",
             "width": "auto",
              "columns":[
               {
                 "field": "date4",
-                "caption": "4",
+                "title": "4",
                 "width": "auto",
                 "fieldFormat":()=>{return ''}
               },
              ]
           },
            {
-            "caption": "Friday",
+            "title": "Friday",
             "width": "auto",
              "columns":[
               {
                 "field": "date5",
-                "caption": "5",
+                "title": "5",
                 "width": "auto",
                 "fieldFormat":()=>{return ''}
               },
              ]
           },
            {
-            "caption": "Saturday",
+            "title": "Saturday",
             "width": "auto",
              "columns":[
               {
                 "field": "date6",
-                "caption": "6",
+                "title": "6",
                 "width": "auto",
                 "fieldFormat":()=>{return ''}
               },
              ]
           },
            {
-            "caption": "Sunday",
+            "title": "Sunday",
             "width": "auto",
              "columns":[
               {
                 "field": "date7",
-                "caption": "7",
+                "title": "7",
                 "width": "auto",
                 "fieldFormat":()=>{return ''}
               },
              ]
           },
           {
-            "caption": "Monday",
+            "title": "Monday",
             "width": "auto",
              "columns":[
               {
                 "field": "date8",
-                "caption": "8",
+                "title": "8",
                 "width": "auto",
                 "fieldFormat":()=>{return ''}
               },
              ]
           },
            {
-            "caption": "Tuesday",
+            "title": "Tuesday",
             "width": "auto",
              "columns":[
               {
                 "field": "date9",
-                "caption": "9",
+                "title": "9",
                 "width": "auto",
                 "fieldFormat":()=>{return ''}
               },
              ]
           },
            {
-            "caption": "Wes day",
+            "title": "Wes day",
             "width": "auto",
              "columns":[
               {
                 "field": "date10",
-                "caption": "10",
+                "title": "10",
                 "width": "auto",
                 "fieldFormat":()=>{return ''}
               },
              ]
           },
            {
-            "caption": "Thursday",
+            "title": "Thursday",
             "width": "auto",
              "columns":[
               {
                 "field": "date11",
-                "caption": "11",
+                "title": "11",
                 "width": "auto",
                 "fieldFormat":()=>{return ''}
               },
              ]
           },
            {
-            "caption": "Friday",
+            "title": "Friday",
             "width": "auto",
              "columns":[
               {
                 "field": "date12",
-                "caption": "12",
+                "title": "12",
                 "width": "auto",
                 "fieldFormat":()=>{return ''}
               },
              ]
           },
            {
-            "caption": "Saturday",
+            "title": "Saturday",
             "width": "auto",
              "columns":[
               {
                 "field": "date13",
-                "caption": "13",
+                "title": "13",
                 "width": "auto",
                 "fieldFormat":()=>{return ''}
               },
              ]
           },
            {
-            "caption": "Sunday",
+            "title": "Sunday",
             "width": "auto",
              "columns":[
               {
                 "field": "date14",
-                "caption": "14",
+                "title": "14",
                 "width": "auto",
                 "fieldFormat":()=>{return ''}
               },
              ]
           },
            {
-            "caption": "Monday",
+            "title": "Monday",
             "width": "auto",
              "columns":[
               {
                 "field": "date15",
-                "caption": "15",
+                "title": "15",
                 "width": "auto",
                 "fieldFormat":()=>{return ''}
               },
              ]
           },
           {
-            "caption": "Tuesday",
+            "title": "Tuesday",
             "width": "auto",
              "columns":[
               {
                 "field": "date16",
-                "caption": "16",
+                "title": "16",
                 "width": "auto",
                 "fieldFormat":()=>{return ''}
               },
              ]
           },
            {
-            "caption": "Wednesday",
+            "title": "Wednesday",
             "width": "auto",
              "columns":[
               {
                 "field": "date17",
-                "caption": "17",
+                "title": "17",
                 "width": "auto",
                 "fieldFormat":()=>{return ''}
               },
              ]
           },
            {
-            "caption": "Thursday",
+            "title": "Thursday",
             "width": "auto",
              "columns":[
               {
                 "field": "date18",
-                "caption": "18",
+                "title": "18",
                 "width": "auto",
                 "fieldFormat":()=>{return ''}
               },
              ]
           },
            {
-            "caption": "Friday",
+            "title": "Friday",
             "width": "auto",
              "columns":[
               {
                 "field": "date19",
-                "caption": "19",
+                "title": "19",
                 "width": "auto",
                 "fieldFormat":()=>{return ''}
               },
              ]
           },
            {
-            "caption": "Saturday",
+            "title": "Saturday",
             "width": "auto",
              "columns":[
               {
                 "field": "date20",
-                "caption": "20",
+                "title": "20",
                 "width": "auto",
                 "fieldFormat":()=>{return ''}
               },
              ]
           },
            {
-            "caption": "Sunday",
+            "title": "Sunday",
             "width": "auto",
              "columns":[
               {
                 "field": "date21",
-                "caption": "21",
+                "title": "21",
                 "width": "auto",
                 "fieldFormat":()=>{return ''}
               },

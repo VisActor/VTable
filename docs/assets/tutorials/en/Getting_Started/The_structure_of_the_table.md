@@ -28,19 +28,19 @@ The structure of a row Dimension tree is defined as follows:
       }
     ]
 
-If it is a basic table, the content of the header is determined by the caption configured in columns. As for whether it is displayed in the row header or the list header position, you need to see whether transpose is set to transpose. The following simple configuration:
+If it is a basic table, the content of the header is determined by the title configured in columns. As for whether it is displayed in the row header or the list header position, you need to see whether transpose is set to transpose. The following simple configuration:
 
      columns: [
        {
             "field": "Category",
-            "caption": "Category",
+            "title": "Category",
              "headerStyle": {
               color: 'red',
             },
         },
         {
             "field": "Sub Category",
-            "caption": "Sub-Category",
+            "title": "Sub-Category",
         }
     ]
 
@@ -65,8 +65,8 @@ The settings of the pivot table are mainly concentrated on the indicators config
     indicators: [
           {
             indicatorKey: 'sales',
-            caption: '销售额',
-            columnType: 'progressbar',
+            title: '销售额',
+            cellType: 'progressbar',
             format(rec) {
               return `${rec["sales"]}%`;
             },
@@ -83,21 +83,21 @@ The settings of the pivot table are mainly concentrated on the indicators config
         ...
     ]
 
-The body configuration of the basic table is mainly reflected in the field, columnType and style in the columns configuration item:
+The body configuration of the basic table is mainly reflected in the field, cellType and style in the columns configuration item:
 
     columns:[
         {
             "field": "230517143221027",
-            "caption": "Order ID",
-            "columnType": "link",
+            "title": "Order ID",
+            "cellType": "link",
             "style": {
                 "color": 'yellow',
             }
         },
         {
             "field": "230517143221030",
-            "caption": "Customer ID",
-            "columnType": "image",
+            "title": "Customer ID",
+            "cellType": "image",
         },
     ]
 

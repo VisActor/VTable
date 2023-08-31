@@ -26,9 +26,9 @@ Example:
 
 ```javascript
 {
-  columnType: 'progressbar',
+  cellType: 'progressbar',
   field: 'sales_progress',
-  caption: '销售进度',
+  title: '销售进度',
   min: 0,
   max: 100,
   barType: 'default',
@@ -62,8 +62,8 @@ const records = [
 const columns = [
  {
        field: 'YoY',
-    caption: 'count Year-over-Year',
-    columnType: 'progressbar',
+    title: 'count Year-over-Year',
+    cellType: 'progressbar',
      width:200,
       fieldFormat(rec){
         debugger;
@@ -74,8 +74,8 @@ const columns = [
   },
   {
        field: 'YoY',
-    caption: 'count Year-over-Year',
-    columnType: 'progressbar',
+    title: 'count Year-over-Year',
+    cellType: 'progressbar',
      width:200,
       style: {
         barHeight: '100%',
@@ -90,8 +90,8 @@ const columns = [
     },
  {
     field: 'YoY',
-    caption: 'count Year-over-Year',
-    columnType: 'progressbar',
+    title: 'count Year-over-Year',
+    cellType: 'progressbar',
     width:200,
     fieldFormat(){
       return '';
@@ -110,8 +110,8 @@ const columns = [
   },
   {
     field: 'YoY',
-    caption: 'count Year-over-Year',
-    columnType: 'progressbar',
+    title: 'count Year-over-Year',
+    cellType: 'progressbar',
     width:200,
     fieldFormat(){
       return '';
@@ -126,8 +126,8 @@ const columns = [
   },
     {
     field: 'YoY',
-    caption: 'count Year-over-Year',
-    columnType: 'progressbar',
+    title: 'count Year-over-Year',
+    cellType: 'progressbar',
     width:200,
     barType:'negative_no_axis',
     min:-20,
@@ -141,8 +141,8 @@ const columns = [
   },
   {
     field: 'YoY',
-    caption: 'count Year-over-Year',
-    columnType: 'progressbar',
+    title: 'count Year-over-Year',
+    cellType: 'progressbar',
     width:200,
     barType:'negative_no_axis',
     min:-20,
