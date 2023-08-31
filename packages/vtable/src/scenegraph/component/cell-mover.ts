@@ -58,7 +58,7 @@ export class CellMover {
   }
 
   show(col: number, row: number, delta: number) {
-    const cellType = this.table.getCellType(col, row);
+    const cellLocation = this.table.getCellLocation(col, row);
     const mergeInfo = getCellMergeInfo(this.table, col, row);
     if (mergeInfo) {
       col = mergeInfo.start.col;
@@ -75,7 +75,7 @@ export class CellMover {
     let symbolY = 0;
     let symbolRotate = Math.PI;
     const linePoints: { x: number; y: number }[] = [];
-    if (cellType === 'columnHeader') {
+    if (cellLocation === 'columnHeader') {
       rectX = this.table.getColsWidth(0, col - 1) - this.table.stateManeger.scroll.horizontalBarPos;
       rectY = this.table.getRowsHeight(0, this.table.frozenRowCount - 1);
       rectHeight = this.table.tableNoFrameHeight;
@@ -91,7 +91,7 @@ export class CellMover {
 
       linePoints.push({ x: 0, y: 0 });
       linePoints.push({ x: 0, y: this.table.tableNoFrameHeight });
-    } else if (cellType === 'rowHeader') {
+    } else if (cellLocation === 'rowHeader') {
       rectY = this.table.getRowsHeight(0, row - 1) - this.table.stateManeger.scroll.verticalBarPos;
       rectX = this.table.getColsWidth(0, this.table.frozenColCount - 1);
       rectWidth = this.table.tableNoFrameWidth;

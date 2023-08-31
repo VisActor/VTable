@@ -1,6 +1,12 @@
 import type { IStage, IRect, ITextCache } from '@visactor/vrender';
 import { createStage, createRect, IContainPointMode, container } from '@visactor/vrender';
-import { type CellAddress, type CellType, type ColumnIconOption, type SortOrder, IconFuncTypeEnum } from '../ts-types';
+import {
+  type CellAddress,
+  type CellLocation,
+  type ColumnIconOption,
+  type SortOrder,
+  IconFuncTypeEnum
+} from '../ts-types';
 import { isArray, isString } from '@visactor/vutils';
 import type { Group } from './graphic/group';
 import type { Icon } from './graphic/icon';
@@ -65,9 +71,9 @@ export class Scenegraph {
   rightBottomCornerGroup: Group; // 右下角占位单元格Group,只在有右侧下侧都有冻结行时使用
   componentGroup: Group; // 表格外组件Group
   /** 所有选中区域对应的选框组件 */
-  selectedRangeComponents: Map<string, { rect: IRect; role: CellType }>;
+  selectedRangeComponents: Map<string, { rect: IRect; role: CellLocation }>;
   /** 当前正在选择区域对应的选框组件 为什么是map 以为可能一个选中区域会被拆分为多个rect组件 三块表头和body都分别对应不同组件*/
-  selectingRangeComponents: Map<string, { rect: IRect; role: CellType }>;
+  selectingRangeComponents: Map<string, { rect: IRect; role: CellLocation }>;
   lastSelectId: string;
   component: TableComponent;
   stage: IStage;
@@ -554,7 +560,7 @@ export class Scenegraph {
     start_Row: number,
     end_Col: number,
     end_Row: number,
-    selectRangeType: CellType,
+    selectRangeType: CellLocation,
     selectId: string, //整体区域${endRow}-${startCol}${startRow}${endCol}${endRow}作为其编号
     strokes?: boolean[]
   ) {

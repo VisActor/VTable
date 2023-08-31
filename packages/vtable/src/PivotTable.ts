@@ -638,7 +638,7 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
     const result: DropDownMenuEventInfo = {
       dimensionKey: dimensionInfos[dimensionInfos.length - 1].dimensionKey,
       value: this.getCellValue(col, row),
-      cellType: this.getCellType(col, row),
+      cellLocation: this.getCellLocation(col, row),
       isPivotCorner: this.isCornerHeader(col, row)
     };
     return result;

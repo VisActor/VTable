@@ -113,8 +113,8 @@ export function createCell(
     let renderDefault = true;
     let customRender;
     let customLayout;
-    const cellType = table.getCellType(col, row);
-    if (cellType !== 'body') {
+    const cellLocation = table.getCellLocation(col, row);
+    if (cellLocation !== 'body') {
       customRender = define?.headerCustomRender;
       customLayout = define?.headerCustomLayout;
     } else {
@@ -347,12 +347,12 @@ export function updateCell(col: number, row: number, table: BaseTableAPI, addNew
   const type = table.isHeader(col, row)
     ? table._getHeaderLayoutMap(col, row).headerType
     : table.getBodyColumnType(col, row);
-  const cellType = table.getCellType(col, row);
-  const define = cellType !== 'body' ? table.getHeaderDefine(col, row) : table.getBodyColumnDefine(col, row);
+  const cellLocation = table.getCellLocation(col, row);
+  const define = cellLocation !== 'body' ? table.getHeaderDefine(col, row) : table.getBodyColumnDefine(col, row);
 
   let isMerge;
   let range;
-  if (cellType !== 'body' || (define as TextColumnDefine)?.mergeCell) {
+  if (cellLocation !== 'body' || (define as TextColumnDefine)?.mergeCell) {
     // 只有表头或者column配置合并单元格后再进行信息获取
     range = table.getCellRange(col, row);
     isMerge = range.start.col !== range.end.col || range.start.row !== range.end.row;
@@ -383,7 +383,7 @@ export function updateCell(col: number, row: number, table: BaseTableAPI, addNew
       updateCell(range.start.col, range.start.row, table, false);
     }
   } else {
-    const mayHaveIcon = cellType !== 'body' ? true : !!define?.icon || !!define?.tree;
+    const mayHaveIcon = cellLocation !== 'body' ? true : !!define?.icon || !!define?.tree;
     const headerStyle = table._getCellStyle(col, row);
     const cellTheme = getStyleTheme(headerStyle, table, col, row, getProp).theme;
     const padding = cellTheme._vtable.padding;
@@ -408,7 +408,7 @@ export function updateCell(col: number, row: number, table: BaseTableAPI, addNew
 
     let customRender;
     let customLayout;
-    if (cellType !== 'body') {
+    if (cellLocation !== 'body') {
       customRender = define?.headerCustomRender;
       customLayout = define?.headerCustomLayout;
     } else {

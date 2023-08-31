@@ -669,13 +669,13 @@ export function createTable() {
         field: 'lineData',
         title: '这是一个折线图1',
         width: 250,
-        columnType: 'sparkline'
+        cellType: 'sparkline'
       },
       {
         field: 'lineData2',
         title: '这是一个折线图2',
         width: 250,
-        columnType: 'sparkline',
+        cellType: 'sparkline',
         sparklineSpec: Object.assign({}, baseSpec, {
           smooth: true,
           point: {
@@ -703,14 +703,14 @@ export function createTable() {
         field: 'lineData2',
         title: '这是一个折线图3',
         width: 250,
-        columnType: 'sparkline',
+        cellType: 'sparkline',
         sparklineSpec: specFieldString
       },
       {
         field: 'lineData2',
         title: '这是一个折线图4',
         width: 250,
-        columnType: 'sparkline',
+        cellType: 'sparkline',
         sparklineSpec: {
           type: 'line',
           xField: 'x',

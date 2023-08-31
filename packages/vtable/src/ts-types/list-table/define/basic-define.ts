@@ -69,7 +69,7 @@ export interface IBasicColumnBodyDefine {
     | (string | ColumnIconOption)[]
     | ((args: CellInfo & { table: BaseTableAPI }) => string | ColumnIconOption | (string | ColumnIconOption)[]);
 
-  // columnType?: ColumnTypeOption | BaseColumn<T, any> | null;
+  // cellType?: ColumnTypeOption | BaseColumn<T, any> | null;
 
   // /** 如果是绘制图表库组件的图表类型 需要将注入的组件名称 写到chartType */
   // chartModule?: string;

@@ -124,7 +124,7 @@ const columns =[
         "field": "Overall Rating",
         "title": "Overall Rating",
         "width": "auto",
-        columnType: 'progressbar',
+        cellType: 'progressbar',
         style:{
           barColor:'orange',
           barHeight:'90%',
@@ -135,7 +135,7 @@ const columns =[
         "field": "Academic Reputation",
         "title": "Academic Reputation",
         "width": "auto",
-        columnType: 'progressbar',
+        cellType: 'progressbar',
         style:{
           // barColor:'green',
           barHeight:'90%',
@@ -146,7 +146,7 @@ const columns =[
         "field": "Average Citation Rate of Papers",
         "title": "Average Citation Rate of Papers",
         "width": "auto",
-        columnType: 'progressbar',
+        cellType: 'progressbar',
         style:{
           barColor:'#2283C6',
           barHeight:'90%',
@@ -157,7 +157,7 @@ const columns =[
         "field": "H-index",
         "title": "H-index",
         "width": "auto",
-        columnType: 'progressbar', 
+        cellType: 'progressbar', 
         style:{
           barColor:'#BCBD22',
           barHeight:'90%',
@@ -168,7 +168,7 @@ const columns =[
         "field": "Rank up",
         "title": "Rank up【unreal】",
         "width": "auto",
-        columnType: 'progressbar',
+        cellType: 'progressbar',
         barType:'negative',
         max:4,
         min:-2,

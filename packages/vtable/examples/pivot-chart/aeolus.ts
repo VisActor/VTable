@@ -74,7 +74,7 @@ export function createTable() {
         indicatorKey: '230731170311027',
         title: '',
         width: 'auto',
-        columnType: 'chart',
+        cellType: 'chart',
         chartModule: 'vchart',
         style: {
           padding: 1

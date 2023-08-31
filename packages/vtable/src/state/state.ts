@@ -796,7 +796,7 @@ export class StateManeger {
         row: row,
         order: order || 'normal',
         dimensionInfo: (this.table.internalProps.layoutMap as PivotHeaderLayoutMap).getPivotDimensionInfo(col, row),
-        cellType: this.table.getCellType(col, row)
+        cellLocation: this.table.getCellLocation(col, row)
       });
       return;
     }

@@ -364,7 +364,7 @@ export function createTable() {
         },
         maxWidth: 200,
         minWidth: 10,
-        columnType: 'progressbar'
+        cellType: 'progressbar'
       },
       {
         showSort: false,
@@ -374,7 +374,7 @@ export function createTable() {
           // if (rec.rowDimensions[0].value === '东北') return `${rec.dataValue}%`;
           return rec.dataValue;
         },
-        columnType: 'progressbar'
+        cellType: 'progressbar'
       }
     ],
     records: generatePivotDataSource(19, 18),

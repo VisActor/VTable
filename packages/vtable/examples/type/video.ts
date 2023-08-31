@@ -83,7 +83,7 @@ export function createTable() {
           fontFamily: 'sans-serif'
         },
         field: 'link',
-        columnType: 'video',
+        cellType: 'video',
         width: 300,
         style: {
           padding: 1

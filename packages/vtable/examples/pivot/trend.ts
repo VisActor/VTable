@@ -301,7 +301,7 @@ export function createTable() {
         indicatorKey: 'lineData',
         title: '趋势图',
         width: 300,
-        columnType: 'sparkline',
+        cellType: 'sparkline',
         sparklineSpec: {
           type: 'line',
           xField: 'x',

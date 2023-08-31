@@ -52,7 +52,7 @@ export function createTable() {
         indicatorKey: '0',
         width: 'auto',
         title: 'title',
-        columnType: 'chart',
+        cellType: 'chart',
         chartModule: 'vchart',
         chartSpec: {
           type: 'common',
@@ -487,7 +487,7 @@ export function createTable() {
         indicatorKey: '1',
         width: 'auto',
         title: 'title',
-        columnType: 'chart',
+        cellType: 'chart',
         chartModule: 'vchart',
         chartSpec: {
           type: 'line',
@@ -1420,7 +1420,7 @@ export function createTable() {
           indicatorKey: '0',
           width: 'auto',
           title: 'title',
-          columnType: 'chart',
+          cellType: 'chart',
           chartModule: 'vchart',
           chartSpec: {
             type: 'common',
@@ -1855,7 +1855,7 @@ export function createTable() {
           indicatorKey: '1',
           width: 'auto',
           title: 'title',
-          columnType: 'chart',
+          cellType: 'chart',
           chartModule: 'vchart',
           chartSpec: {
             type: 'line',
@@ -3487,7 +3487,7 @@ export function createTable() {
           indicatorKey: '0',
           width: 'auto',
           title: 'title',
-          columnType: 'chart',
+          cellType: 'chart',
           chartModule: 'vchart',
           chartSpec: {
             type: 'bar',
@@ -3719,7 +3719,7 @@ export function createTable() {
           indicatorKey: '1',
           width: 'auto',
           title: 'title',
-          columnType: 'chart',
+          cellType: 'chart',
           chartModule: 'vchart',
           chartSpec: {
             type: 'line',
@@ -3951,7 +3951,7 @@ export function createTable() {
           indicatorKey: '2',
           width: 'auto',
           title: 'title',
-          columnType: 'chart',
+          cellType: 'chart',
           chartModule: 'vchart',
           chartSpec: {
             type: 'line',
@@ -4183,7 +4183,7 @@ export function createTable() {
           indicatorKey: '3',
           width: 'auto',
           title: 'title',
-          columnType: 'chart',
+          cellType: 'chart',
           chartModule: 'vchart',
           chartSpec: {
             type: 'line',
@@ -4415,7 +4415,7 @@ export function createTable() {
           indicatorKey: '4',
           width: 'auto',
           title: 'title',
-          columnType: 'chart',
+          cellType: 'chart',
           chartModule: 'vchart',
           chartSpec: {
             type: 'line',

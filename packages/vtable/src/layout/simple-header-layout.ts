@@ -1,7 +1,7 @@
 /* eslint-disable sort-imports */
 import type { ListTable } from '../ListTable';
 import { DefaultSparklineSpec } from '../tools/global';
-import type { CellAddress, CellRange, CellType, IListTableCellHeaderPaths, LayoutObjectId } from '../ts-types';
+import type { CellAddress, CellRange, CellLocation, IListTableCellHeaderPaths, LayoutObjectId } from '../ts-types';
 import type { ColumnsDefine, TextColumnDefine } from '../ts-types/list-table/define';
 import type {
   ColumnData,
@@ -72,7 +72,7 @@ export class SimpleHeaderLayoutMap implements LayoutMapAPI {
     }
     return false;
   }
-  getCellType(col: number, row: number): CellType {
+  getCellLocation(col: number, row: number): CellLocation {
     if (this.isHeader(col, row)) {
       if (this.transpose) {
         return 'rowHeader';
@@ -545,7 +545,7 @@ export class SimpleHeaderLayoutMap implements LayoutMapAPI {
           minWidth: colDef.minWidth,
           maxWidth: colDef.maxWidth,
           icon: colDef.icon,
-          columnType: colDef.columnType ?? 'text',
+          cellType: colDef.cellType ?? (colDef as any).columnType ?? 'text',
           chartModule: 'chartModule' in colDef ? colDef.chartModule : null, // todo: 放到对应的column对象中
           chartSpec: 'chartSpec' in colDef ? colDef.chartSpec : null, // todo: 放到对应的column对象中
           sparklineSpec: 'sparklineSpec' in colDef ? colDef.sparklineSpec : DefaultSparklineSpec, // todo: 放到对应的column对象中
