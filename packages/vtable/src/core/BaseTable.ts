@@ -32,7 +32,7 @@ import type {
   DropDownMenuEventInfo,
   HierarchyState,
   FieldKeyDef,
-  CellType,
+  CellLocation,
   LayoutObjectId,
   HeightModeDef
 } from '../ts-types';
@@ -1031,7 +1031,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
    */
   getColWidth(col: number): number {
     // const width = this.getColWidthDefine(col);
-    const width = this.colWidthsMap.get(col);
+    const width = this.colWidthsMap.get(col) ?? 0;
     if (
       (this.widthMode === 'adaptive' && typeof width === 'number') ||
       ((this as any).transpose && typeof width === 'number')
@@ -2329,7 +2329,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
   }
 
   getBodyColumnType(col: number, row: number): ColumnTypeOption {
-    return this.internalProps.layoutMap.getBody(col, row).columnType;
+    return this.internalProps.layoutMap.getBody(col, row).cellType;
   }
   /**
    * 根据行列号获取对应的字段名
@@ -2352,8 +2352,8 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     const hd = this.internalProps.layoutMap.getHeader(col, row);
     return hd?.define;
   }
-  getCellType(col: number, row: number): CellType {
-    const hdType = this.internalProps.layoutMap.getCellType(col, row);
+  getCellLocation(col: number, row: number): CellLocation {
+    const hdType = this.internalProps.layoutMap.getCellLocation(col, row);
     return hdType;
   }
   /**
@@ -2587,16 +2587,12 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
       field: this.getHeaderField(col, row),
       cellHeaderPaths: this.internalProps.layoutMap.getCellHeaderPaths(col, row),
       title: colDef.title,
-      columnType: colDef.columnType
-        ? typeof colDef.columnType === 'string'
-          ? colDef.columnType
-          : 'progressbar'
-        : 'text',
+      cellType: colDef.cellType ? (typeof colDef.cellType === 'string' ? colDef.cellType : 'progressbar') : 'text',
       originData: this.getCellOriginRecord(col, row),
       cellRange: this.getCellRangeRelativeRect({ col, row }),
       value: this.getCellValue(col, row),
       dataValue: this.getCellOriginValue(col, row),
-      cellType: this.getCellType(col, row),
+      cellLocation: this.getCellLocation(col, row),
       scaleRatio: this.canvas.getBoundingClientRect().width / this.canvas.offsetWidth
     };
   }
@@ -2702,8 +2698,8 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
       return cacheStyle;
     }
     const column = layoutMap.getBody(col, row);
-    // const styleClass = column?.columnType?.StyleClass; //BaseColumn文件
-    const styleClass = this.internalProps.bodyHelper.getStyleClass(column.columnType);
+    // const styleClass = column?.cellType?.StyleClass; //BaseColumn文件
+    const styleClass = this.internalProps.bodyHelper.getStyleClass(column.cellType);
     const style = column?.style;
     cacheStyle = <FullExtendStyle>columnStyleContents.of(
       style,
@@ -3165,7 +3161,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
   /** 获取单元格上定义的自定义渲染配置 */
   getCustomRender(col: number, row: number): ICustomRender {
     let customRender;
-    if (this.getCellType(col, row) !== 'body') {
+    if (this.getCellLocation(col, row) !== 'body') {
       const define = this.getHeaderDefine(col, row);
       customRender = define?.headerCustomRender;
     } else {
@@ -3177,7 +3173,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
   /** 获取单元格上定义的自定义布局元素配置 */
   getCustomLayout(col: number, row: number): ICustomLayout {
     let customLayout;
-    if (this.getCellType(col, row) !== 'body') {
+    if (this.getCellLocation(col, row) !== 'body') {
       const define = this.getHeaderDefine(col, row);
       customLayout = define?.headerCustomLayout;
     } else {
@@ -3189,7 +3185,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
 
   hasAutoImageColumn() {
     return (this.internalProps.layoutMap.columnObjects as ColumnData[]).find((column: ColumnData) => {
-      if (column.columnType === 'image' && (column.define as ImageColumnDefine).imageAutoSizing) {
+      if (column.cellType === 'image' && (column.define as ImageColumnDefine).imageAutoSizing) {
         return true;
       }
       return false;

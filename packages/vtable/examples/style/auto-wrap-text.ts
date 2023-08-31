@@ -348,7 +348,7 @@ export function createTable() {
           // if (rec.rowDimensions[0].value === '东北') return `${rec.dataValue}%`;
           return rec.dataValue;
         },
-        columnType: 'progressbar',
+        cellType: 'progressbar',
         // headerStyle: {
         //   bgColor(arg: VTable.TYPES.StylePropertyFunctionArg) {
         //     if (

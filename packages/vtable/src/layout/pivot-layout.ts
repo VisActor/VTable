@@ -5,7 +5,7 @@ import type { HeaderData, IndicatorData, LayoutMapAPI, WidthData } from '../ts-t
 import type {
   CellAddress,
   CellRange,
-  CellType,
+  CellLocation,
   ICornerDefine,
   IDataConfig,
   IDimension,
@@ -427,7 +427,7 @@ export class PivotLayoutMap implements LayoutMapAPI {
             define: {
               field: <string>dimensionInfo?.dimensionKey ?? this.rows[ids.length - 1],
               headerType: dimensionInfo?.headerType ?? 'text',
-              columnType: 'text'
+              cellType: 'text'
             }, //TODO 需要将define的用处 梳理清楚
             fieldFormat: dimensionInfo?.headerFormat,
             dropDownMenu: dimensionInfo?.dropDownMenu,
@@ -453,7 +453,7 @@ export class PivotLayoutMap implements LayoutMapAPI {
             define: {
               field: <string>dimensionInfo?.dimensionKey ?? this.columns[ids.length - 1],
               headerType: dimensionInfo?.headerType ?? 'text',
-              columnType: 'text'
+              cellType: 'text'
             },
             fieldFormat: dimensionInfo?.headerFormat,
             dropDownMenu: dimensionInfo?.dropDownMenu,
@@ -478,7 +478,7 @@ export class PivotLayoutMap implements LayoutMapAPI {
           define: {
             field: this.indicatorDimensionKey,
             headerType: indicatorInfo?.headerType ?? 'text',
-            columnType: 'text'
+            cellType: 'text'
           },
           // fieldFormat: indicatorDimensionInfo?.headerFormat,
           dropDownMenu: indicatorInfo?.dropDownMenu,
@@ -507,7 +507,7 @@ export class PivotLayoutMap implements LayoutMapAPI {
           define: {
             field: cornerAttrStr,
             headerType: this.cornerSetting?.headerType ?? 'text',
-            columnType: 'text'
+            cellType: 'text'
           },
           dropDownMenu: dimensionInfo?.dropDownMenu,
           headerType: this.cornerSetting?.headerType ?? 'text',
@@ -536,11 +536,15 @@ export class PivotLayoutMap implements LayoutMapAPI {
         indicatorKey: indicatorKey,
         field: indicatorKey,
         define: Object.assign(
-          { field: indicatorKey, headerType: 'text', columnType: indicatorInfo?.columnType ?? 'text' },
+          {
+            field: indicatorKey,
+            headerType: 'text',
+            cellType: indicatorInfo?.cellType ?? (indicatorInfo as any)?.columnType ?? 'text'
+          },
           indicatorInfo as any
         ),
         fieldFormat: indicatorInfo?.format,
-        columnType: indicatorInfo?.columnType ?? 'text',
+        cellType: indicatorInfo?.cellType ?? (indicatorInfo as any)?.columnType ?? 'text',
         chartModule: indicatorInfo && ('chartModule' in indicatorInfo ? indicatorInfo?.chartModule : null),
         chartSpec: indicatorInfo && ('chartSpec' in indicatorInfo ? indicatorInfo?.chartSpec : null),
         sparklineSpec: indicatorInfo && ('sparklineSpec' in indicatorInfo ? indicatorInfo?.sparklineSpec : null),
@@ -577,7 +581,7 @@ export class PivotLayoutMap implements LayoutMapAPI {
   set rowHeaderTitle(_rowHeaderTitle: ITitleDefine) {
     this._rowHeaderTitle = _rowHeaderTitle;
   }
-  getCellType(col: number, row: number): CellType {
+  getCellLocation(col: number, row: number): CellLocation {
     if (this.isCornerHeader(col, row)) {
       return 'cornerHeader';
     } else if (this.isColumnHeader(col, row)) {
@@ -983,12 +987,12 @@ export class PivotLayoutMap implements LayoutMapAPI {
   //     id: 0,
   //     indicatorKey: this.indicators[(_col - this.rowHeaderLevelCount) % (this.indicators?.length ?? 0)],
   //     field: this.indicators[(_col - this.rowHeaderLevelCount) % (this.indicators?.length ?? 0)],
-  //     columnType: indicatorInfo?.columnType ?? 'text',
+  //     cellType: indicatorInfo?.cellType ?? 'text',
   //     style: indicatorInfo?.style,
   //     define: {
   //       field: this.indicators[(_col - this.rowHeaderLevelCount) % (this.indicators?.length ?? 0)],
   //       headerType: 'text',
-  //       columnType: indicatorInfo?.columnType ?? 'text'
+  //       cellType: indicatorInfo?.cellType ?? 'text'
   //     }
   //   };
   // }
@@ -1007,7 +1011,7 @@ export class PivotLayoutMap implements LayoutMapAPI {
           id: '',
           field: undefined,
           indicatorKey: undefined,
-          columnType: undefined,
+          cellType: undefined,
           define: undefined
         }
       );
@@ -1019,7 +1023,7 @@ export class PivotLayoutMap implements LayoutMapAPI {
         id: '',
         field: undefined,
         indicatorKey: undefined,
-        columnType: undefined,
+        cellType: undefined,
         define: undefined
       }
     );

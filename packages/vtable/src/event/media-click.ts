@@ -11,7 +11,7 @@ export function bindMediaClick(table: BaseTableAPI): void {
     table.on(TABLE_EVENT_TYPE.CLICK_CELL, (e: MousePointerCellEvent) => {
       //如果目前是在某个icon上，如收起展开按钮 则不进行其他点击逻辑
       const { col, row } = e;
-      // const type = table.getBodyColumnDefine(col, row).columnType;
+      // const type = table.getBodyColumnDefine(col, row).cellType;
       let type;
       if (table.internalProps.layoutMap.isHeader(col, row)) {
         type = table.isPivotTable()
@@ -25,7 +25,7 @@ export function bindMediaClick(table: BaseTableAPI): void {
         : table.getBodyColumnDefine(col, row);
       const cellValue = table.getCellValue(col, row);
       const cellOriginValue = table.getCellOriginValue(col, row);
-      if (columnDefine.columnType === 'link') {
+      if (columnDefine.cellType === 'link') {
         const linkJump = columnDefine.linkJump !== false;
         if (!linkJump) {
           return;

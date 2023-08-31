@@ -133,7 +133,7 @@ export function createTable() {
         // format(rec) { return rec + 4000 },
         style: { textAlign: 'center', color: 'red' },
         headerStyle: { textAlign: 'center' },
-        columnType: 'link',
+        cellType: 'link',
         linkJump: false,
         linkDetect: false
       },
@@ -158,7 +158,7 @@ export function createTable() {
         title: '视频',
         // format(rec) { return rec + 4000 },
         // bodyStyle: { textAlign: 'center' as any, color: 'red' },
-        columnType: 'video',
+        cellType: 'video',
         keepAspectRatio: true,
         style: {
           textAlign: 'center',

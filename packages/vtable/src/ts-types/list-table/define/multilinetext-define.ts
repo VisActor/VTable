@@ -15,7 +15,7 @@ export interface ITextColumnBodyDefine extends IBasicColumnBodyDefine {
   /** 是否对相同内容合并单元格 **/
   mergeCell?: boolean;
   style?: ITextStyleOption | ((styleArg: StylePropertyFunctionArg) => ITextStyleOption);
-  columnType?: 'text';
+  cellType?: 'text';
 
   // 目前autoWrapText和lineClamp还在style中定义
   // autoWrapText?: boolean;

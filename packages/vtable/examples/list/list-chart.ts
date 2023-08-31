@@ -20,7 +20,7 @@ export function createTable() {
       field: 'areaChart',
       title: 'vchart area',
       width: '320',
-      columnType: 'chart',
+      cellType: 'chart',
       chartModule: 'vchart',
       chartSpec: {
         type: 'area',
@@ -101,7 +101,7 @@ export function createTable() {
       field: 'lineChart',
       title: 'vchart line',
       width: '320',
-      columnType: 'chart',
+      cellType: 'chart',
       chartModule: 'vchart',
       chartSpec: {
         type: 'common',
@@ -175,7 +175,7 @@ export function createTable() {
       field: 'barChart',
       title: 'vchart line',
       width: '320',
-      columnType: 'chart',
+      cellType: 'chart',
       chartModule: 'vchart',
       chartSpec: {
         type: 'common',
@@ -224,7 +224,7 @@ export function createTable() {
       field: 'scatterChart',
       title: 'vchart line',
       width: '320',
-      columnType: 'chart',
+      cellType: 'chart',
       chartModule: 'vchart',
       chartSpec: {
         type: 'common',
@@ -260,7 +260,7 @@ export function createTable() {
       field: 'areaChart',
       title: 'vchart area',
       width: '320',
-      columnType: 'chart',
+      cellType: 'chart',
       chartModule: 'vchart',
       chartSpec: {
         type: 'common',
@@ -345,7 +345,7 @@ export function createTable() {
       field: 'lineChart',
       title: 'vchart line',
       width: '320',
-      columnType: 'chart',
+      cellType: 'chart',
       chartModule: 'vchart',
       chartSpec: {
         type: 'common',
@@ -419,7 +419,7 @@ export function createTable() {
       field: 'barChart',
       title: 'vchart line',
       width: '320',
-      columnType: 'chart',
+      cellType: 'chart',
       chartModule: 'vchart',
       chartSpec: {
         type: 'common',
@@ -468,7 +468,7 @@ export function createTable() {
       field: 'scatterChart',
       title: 'vchart line',
       width: '320',
-      columnType: 'chart',
+      cellType: 'chart',
       chartModule: 'vchart',
       chartSpec: {
         type: 'common',

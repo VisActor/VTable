@@ -14,7 +14,7 @@ order: 9-4
 
 - `indicators[x].icon` 根据销售值来展示不同的icon 表示上涨和下降
 
-- `indicators[x].columnType` 设置为sparkline 来展示迷你图
+- `indicators[x].cellType` 设置为sparkline 来展示迷你图
 
 ## 代码演示
 
@@ -281,7 +281,7 @@ const option = {
         indicatorKey: 'lineData',
         title: 'Trend ',
         width: '300',
-        columnType: 'sparkline',
+        cellType: 'sparkline',
         sparklineSpec: {
           type: 'line',
           xField: 'x',

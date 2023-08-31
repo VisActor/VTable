@@ -15,7 +15,7 @@ export interface IImageHeaderIndicator extends IBasicHeaderIndicator {
 }
 
 export interface IImageColumnIndicator extends IBasicColumnIndicator {
-  columnType: 'image' | 'video'; // body指标值显示类型
+  cellType: 'image' | 'video'; // body指标值显示类型
   style?: IImageStyleOption | ((styleArg: StylePropertyFunctionArg) => IImageStyleOption); // body部分指标值显示样式
 
   /** 是否保持横纵比 默认false */

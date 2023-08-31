@@ -516,7 +516,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
     const result: DropDownMenuEventInfo = {
       field: this.getHeaderField(col, row),
       value: this.getCellValue(col, row),
-      cellType: this.getCellType(col, row)
+      cellLocation: this.getCellLocation(col, row)
     };
     return result;
   }

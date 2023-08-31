@@ -9,7 +9,7 @@ export function createTable() {
       {
         field: 'p',
         // fieldKey: 'progress',
-        columnType: 'text',
+        cellType: 'text',
         fieldFormat(rec) {
           return `i已完成${rec.progress}%`;
         },

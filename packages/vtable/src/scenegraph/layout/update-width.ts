@@ -167,12 +167,14 @@ function updateColunmWidth(
       }
       let y = 0;
       colGroup.forEachChildren((cellGroup: Group) => {
-        if (cellGroup.role !== 'cell') {
-          cellGroup.setAttribute('y', y);
-          return;
-        }
+        // if (cellGroup.role !== 'cell') {
+        //   cellGroup.setAttribute('y', y);
+        //   y += scene.table.getRowHeight(cellGroup.row) ?? 0;
+        //   return;
+        // }
+        // y += cellGroup.attribute.height ?? 0;
         cellGroup.setAttribute('y', y);
-        y += cellGroup.attribute.height ?? 0;
+        y += scene.table.getRowHeight(cellGroup.row) ?? 0;
       });
       newTotalHeight = y;
     }

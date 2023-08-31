@@ -1,5 +1,5 @@
 import type { ICellHeaderPaths, IDimensionInfo, RectProps } from './common';
-import type { CellType, FieldData, FieldDef } from './table-engine';
+import type { CellLocation, FieldData, FieldDef } from './table-engine';
 import type { Placement } from './table-engine';
 
 export interface DropDownMenuHighlightInfo {
@@ -88,5 +88,5 @@ export type DropDownMenuEventInfo = {
   customInfo?: any;
 
   cellHeaderPaths?: ICellHeaderPaths;
-  cellType: CellType;
+  cellLocation: CellLocation;
 };

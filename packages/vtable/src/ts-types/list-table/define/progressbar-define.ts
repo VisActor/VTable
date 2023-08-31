@@ -4,7 +4,7 @@ import type { IBasicColumnBodyDefine } from './basic-define';
 
 export interface IProgressbarColumnBodyDefine extends IBasicColumnBodyDefine {
   style?: ProgressBarStyleOption | ((styleArg: StylePropertyFunctionArg) => ProgressBarStyleOption);
-  columnType: 'progressbar';
+  cellType: 'progressbar';
   /* 进度条展示的最大最小数据值限制，从min到max为整个进度条的长度；
    * 如果barType为'negative'或'negative_no_axis'，负向进度条的总长度为长度为min到0，正向进度条的总长度为长度为0到max，
    * 例如：min为10，max为50，数据为30，进度条展示为单元格宽度的一半

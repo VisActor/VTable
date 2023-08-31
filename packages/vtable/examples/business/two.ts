@@ -116,7 +116,7 @@ export function createTable() {
             menuKey: 'visual_style'
           }
         ],
-        columnType: 'link',
+        cellType: 'link',
         linkDetect: true,
         linkJump: false
       },
@@ -221,7 +221,7 @@ export function createTable() {
             menuKey: 'visual_style'
           }
         ],
-        columnType: 'link',
+        cellType: 'link',
         linkDetect: true,
         linkJump: false
       },

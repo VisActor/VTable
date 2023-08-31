@@ -1,7 +1,7 @@
 /* eslint-disable no-undef */
 import type { IThemeSpec } from '@visactor/vrender';
 import type {
-  CellType,
+  CellLocation,
   FullExtendStyle,
   ICustomLayout,
   ICustomRender,
@@ -27,7 +27,7 @@ import { dealPromiseData } from '../utils/deal-promise-data';
  * @param mergeMap merge单元格信息
  * @param defaultRowHeight
  * @param table
- * @param cellType
+ * @param cellLocation
  * @param rowLimit
  * @param customRender
  * @param customLayout
@@ -42,7 +42,7 @@ export function createComplexColumn(
   mergeMap: MergeMap,
   defaultRowHeight: number | number[],
   table: BaseTableAPI,
-  cellType: CellType,
+  cellLocation: CellLocation,
   rowLimit?: number
 ) {
   let maxWidth = 0;
@@ -59,8 +59,8 @@ export function createComplexColumn(
 
   for (let j = rowStart; j <= rowEnd; j++) {
     const row = j;
-    const define = cellType !== 'body' ? table.getHeaderDefine(col, row) : table.getBodyColumnDefine(col, row);
-    const mayHaveIcon = cellType !== 'body' ? true : !!define?.icon || !!define?.tree;
+    const define = cellLocation !== 'body' ? table.getHeaderDefine(col, row) : table.getBodyColumnDefine(col, row);
+    const mayHaveIcon = cellLocation !== 'body' ? true : !!define?.icon || !!define?.tree;
     const headerStyle = table._getCellStyle(col, row);
     const cellTheme = getStyleTheme(headerStyle, table, col, row, getProp).theme;
     cellTheme.group.width = colWidth;
@@ -76,7 +76,7 @@ export function createComplexColumn(
     }
 
     // enable clip body
-    if (cellType !== 'body' && !cellTheme.group.fill) {
+    if (cellLocation !== 'body' && !cellTheme.group.fill) {
       cellTheme.group.fill = '#fff';
     }
     // margin = getProp('margin', headerStyle, col, 0, table)
@@ -91,7 +91,7 @@ export function createComplexColumn(
     let mergeResult;
     let range;
     let isMerge;
-    if (cellType !== 'body' || (define as TextColumnDefine)?.mergeCell) {
+    if (cellLocation !== 'body' || (define as TextColumnDefine)?.mergeCell) {
       // 只有表头或者column配置合并单元格后再进行信息获取
       range = table.getCellRange(col, row);
       isMerge = range.start.col !== range.end.col || range.start.row !== range.end.row;

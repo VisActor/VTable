@@ -228,7 +228,7 @@ export function createTable() {
           },
           barColor: 'transparent'
         },
-        columnType: 'progressbar',
+        cellType: 'progressbar',
         showSort: true
         // headerType: 'MULTILINETEXT',
       },
@@ -239,7 +239,7 @@ export function createTable() {
           // if (rec.rowDimensions[0].value === '东北') return `${rec.dataValue}%`;
           return rec.dataValue;
         },
-        columnType: 'progressbar',
+        cellType: 'progressbar',
         style: {
           barHeight: '50%',
           barBottom: 20,

@@ -37,7 +37,7 @@ export interface IBasicColumnIndicator {
   maxWidth?: number | string;
   format?: FieldFormat; // 指标值格式化
   headerFormat?: FieldFormat; // 指标名称格式化
-  // columnType?: ColumnTypeOption | BaseColumn<any, any> | null; // body指标值显示类型
+  // cellType?: ColumnTypeOption | BaseColumn<any, any> | null; // body指标值显示类型
   // style?: ColumnStyleOption | null; // body部分指标值显示样式
   icon?:
     | string

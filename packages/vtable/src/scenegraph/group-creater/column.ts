@@ -1,4 +1,4 @@
-import type { CellType } from '../../ts-types';
+import type { CellLocation } from '../../ts-types';
 import type { BaseTableAPI } from '../../ts-types/base-table';
 import { Group } from '../graphic/group';
 import { createComplexColumn } from './column-helper';
@@ -117,7 +117,7 @@ export function createColGroup(
   colEnd: number,
   rowStart: number,
   rowEnd: number,
-  cellType: CellType,
+  cellLocation: CellLocation,
   table: BaseTableAPI,
   rowLimit?: number
 ) {
@@ -149,9 +149,9 @@ export function createColGroup(
       rowStart,
       rowEnd,
       table.scenegraph.mergeMap,
-      cellType === 'columnHeader' ? defaultHeaderRowHeight ?? defaultRowHeight : defaultRowHeight,
+      cellLocation === 'columnHeader' ? defaultHeaderRowHeight ?? defaultRowHeight : defaultRowHeight,
       table,
-      cellType,
+      cellLocation,
       rowLimit
     );
     x += default2Width;

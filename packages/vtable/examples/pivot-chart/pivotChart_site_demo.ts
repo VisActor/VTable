@@ -33,7 +33,7 @@ export function createTable() {
           indicatorKey: 'Quantity',
           title: 'Quantity',
           width: 'auto',
-          columnType: 'chart',
+          cellType: 'chart',
           chartModule: 'vchart',
           chartSpec: {
             // type: 'common',
@@ -141,7 +141,7 @@ export function createTable() {
         {
           indicatorKey: 'Sales',
           title: 'Sales & Profit',
-          columnType: 'chart',
+          cellType: 'chart',
           chartModule: 'vchart',
           chartSpec: {
             type: 'common',
