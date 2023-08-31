@@ -2,6 +2,13 @@
   "menu": "scripts",
   "children": [
     {
+      "path": "introduction",
+      "title": {
+        "zh": "VTable介绍",
+        "en": "VTable introduction"
+      }
+    },
+    {
       "path": "Getting_Started",
       "title": {
         "zh": "快速上手",
