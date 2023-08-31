@@ -1450,14 +1450,9 @@ export class Scenegraph {
     if (this.isPivot) {
       // 透视表外部处理排序
     } else if (this.transpose) {
-      setTimeout(() => {
-        // 清空单元格内容
-        this.clearCells();
-        // 生成单元格场景树
-        this.createSceneGraph();
-      }, 10);
+      this.proxy.sortCellHorizontal();
     } else {
-      this.proxy.sortCell();
+      this.proxy.sortCellVertical();
     }
   }
 
