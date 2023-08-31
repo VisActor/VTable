@@ -10,6 +10,8 @@ import { createGroupForFirstScreen } from './create-group-for-first-screen';
 import { dynamicSetX, updateColContent } from './update-position/dynamic-set-x';
 import { dynamicSetY, updateRowContent } from './update-position/dynamic-set-y';
 import { updateAutoRow } from './update-position/update-auto-row';
+import { sortVertical } from './update-position/sort-vertical';
+import { sortHorizontal } from './update-position/sort-horizontal';
 
 export class SceneProxy {
   table: BaseTableAPI;
@@ -503,66 +505,12 @@ export class SceneProxy {
     return newCellGroup || cellGroup;
   }
 
-  async sortCell() {
-    for (let col = this.bodyLeftCol; col <= this.bodyRightCol; col++) {
-      for (let row = this.rowStart; row <= this.rowEnd; row++) {
-        // const cellGroup = this.table.scenegraph.getCell(col, row);
-        const cellGroup = this.highPerformanceGetCell(col, row);
-        cellGroup.needUpdate = true;
-      }
-    }
+  async sortCellVertical() {
+    await sortVertical(this);
+  }
 
-    // 更新同步范围
-    let syncTopRow;
-    let syncBottomRow;
-    if (this.table.heightMode === 'autoHeight') {
-      syncTopRow = this.rowStart;
-      syncBottomRow = this.rowEnd;
-    } else {
-      syncTopRow = Math.max(this.bodyTopRow, this.screenTopRow - this.screenRowCount * 2);
-      syncBottomRow = Math.min(this.bodyBottomRow, this.screenTopRow + this.screenRowCount * 3);
-    }
-    console.log('sort更新同步范围', syncTopRow, syncBottomRow);
-
-    computeRowsHeight(this.table, syncTopRow, syncBottomRow);
-
-    for (let col = this.bodyLeftCol; col <= this.bodyRightCol; col++) {
-      for (let row = syncTopRow; row <= syncBottomRow; row++) {
-        // const cellGroup = this.table.scenegraph.getCell(col, row);
-        const cellGroup = this.highPerformanceGetCell(col, row);
-        this.updateCellGroupContent(cellGroup);
-      }
-    }
-    console.log('updateAutoRow', this.rowEnd > this.bodyBottomRow - (this.rowEnd - this.rowStart + 1) ? 'down' : 'up');
-    if (this.table.heightMode === 'autoHeight') {
-      updateAutoRow(
-        this.bodyLeftCol, // colStart
-        this.bodyRightCol, // colEnd
-        syncTopRow, // rowStart
-        syncBottomRow, // rowEnd
-        this.table,
-        this.rowEnd > this.bodyBottomRow - (this.rowEnd - this.rowStart + 1) ? 'down' : 'up' // 跳转到底部时，从下向上对齐
-      );
-    }
-    this.rowUpdatePos = this.rowStart;
-    this.rowUpdateDirection = this.rowEnd > this.bodyBottomRow - (this.rowEnd - this.rowStart + 1) ? 'down' : 'up';
-
-    if (
-      this.rowEnd === this.table.scenegraph.proxy.bodyBottomRow &&
-      this.rowStart === this.table.scenegraph.proxy.bodyTopRow
-    ) {
-      // 全量更新，do nothing
-    } else if (this.rowEnd === this.table.scenegraph.proxy.bodyBottomRow) {
-      const totalHeight = this.table.getAllRowsHeight();
-      const top = totalHeight - this.table.scenegraph.height;
-      this.updateBody(top);
-    } else if (this.rowStart === this.table.scenegraph.proxy.bodyTopRow) {
-      this.updateBody(0);
-    }
-
-    if (this.table.heightMode !== 'autoHeight') {
-      await this.progress();
-    }
+  async sortCellHorizontal() {
+    await sortHorizontal(this);
   }
 
   highPerformanceGetCell(
