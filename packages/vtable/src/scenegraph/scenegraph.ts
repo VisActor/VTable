@@ -721,7 +721,7 @@ export class Scenegraph {
   }
 
   recalculateRowHeights() {
-    computeRowsHeight(this.table, 0, this.table.rowCount - 1);
+    computeRowsHeight(this.table, 0, this.table.rowCount - 1, true, true);
   }
 
   resize() {
@@ -730,11 +730,13 @@ export class Scenegraph {
     }
     if (this.table.heightMode === 'adaptive') {
       this.recalculateRowHeights();
-    } else if (this.table.widthMode === 'adaptive') {
-      this.table.clearRowHeightCache();
-      computeRowsHeight(this.table, 0, this.table.columnHeaderLevelCount - 1);
-      computeRowsHeight(this.table, this.proxy.rowStart, this.proxy.rowEnd);
     }
+    // widthMode === 'adaptive' 时，computeColsWidth()中已经有高度更新计算
+    // else if (this.table.widthMode === 'adaptive') {
+    //   this.table.clearRowHeightCache();
+    //   computeRowsHeight(this.table, 0, this.table.columnHeaderLevelCount - 1);
+    //   computeRowsHeight(this.table, this.proxy.rowStart, this.proxy.rowEnd);
+    // }
 
     this.dealWidthMode();
     this.dealHeightMode();
