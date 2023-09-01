@@ -14,7 +14,7 @@ export interface ITextHeaderIndicator extends IBasicHeaderIndicator {
 }
 
 export interface ITextColumnIndicator extends IBasicColumnIndicator {
-  columnType?: 'text'; // body指标值显示类型
+  cellType?: 'text'; // body指标值显示类型
   style?: ITextStyleOption | ((styleArg: StylePropertyFunctionArg) => ITextStyleOption); // body部分指标值显示样式
 
   // 目前autoWrapText和lineClamp还在style中定义

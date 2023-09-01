@@ -1,9 +1,454 @@
 import * as VTable from '../../src';
 const ListTable = VTable.ListTable;
-const Table_CONTAINER_DOM_ID = 'vTable';
+const CONTAINER_ID = 'vTable';
 
 export function createTable() {
   const personsDataSource = [
+    {
+      progress: 100,
+      id: 1,
+      name: 'a',
+      lineData: [10, 5, 7, 8, 3, 9, 4],
+      lineData2: [
+        { x: 0, y: 10 },
+        { x: 1, y: 40 },
+        { x: 2, y: 60 },
+        { x: 2.5, y: 44 },
+        { x: 3, y: 30 },
+        { x: 5, y: 20 },
+        { x: 7, y: 50 },
+        { x: 8, y: 70 }
+      ]
+    },
+    {
+      progress: 80,
+      id: 2,
+      name: 'b',
+      lineData: [7, 5, 7, 8, 3, 9, 4],
+      lineData2: [
+        { x: 0, y: 10 },
+        { x: 1, y: 40 },
+        { x: 2, y: 60 },
+        { x: 2.5, y: 44 },
+        { x: 3, y: 30 },
+        { x: 4, y: 20 },
+        { x: 5, y: 20 },
+        { x: 6, y: 60 },
+        { x: 7, y: 50 },
+        { x: 8, y: 70 }
+      ]
+    },
+    {
+      progress: 1,
+      id: 3,
+      name: 'c',
+      lineData: [1, 5, 7, 8, 3, 9, 4],
+      lineData2: [
+        { x: 0, y: 10 },
+        { x: 1, y: 40 },
+        { x: 2, y: 60 },
+        { x: 2.5, y: 44 },
+        { x: 3, y: 30 },
+        { x: 4, y: 20 },
+        { x: 5, y: 20 },
+        { x: 6, y: 60 },
+        { x: 7, y: 50 },
+        { x: 8, y: 70 }
+      ]
+    },
+    {
+      progress: 55,
+      id: 4,
+      name: 'd',
+      lineData: [-5, 5, 7, 8, 3, 9, 4],
+      lineData2: [
+        { x: 0, y: 10 },
+        { x: 1, y: 40 },
+        { x: 2, y: 60 },
+        { x: 2.5, y: 44 },
+        { x: 3, y: 30 },
+        { x: 4, y: 20 },
+        { x: 5, y: 20 },
+        { x: 6, y: 60 },
+        { x: 7, y: 50 },
+        { x: 8, y: 70 }
+      ]
+    },
+    {
+      progress: 28,
+      id: 5,
+      name: 'e',
+      total: true,
+      lineData: [4, 5, 7, 8, 3, 9, 4],
+      lineData2: [
+        { x: 0, y: 10 },
+        { x: 1, y: 40 },
+        { x: 2, y: 60 },
+        { x: 2.5, y: 44 },
+        { x: 3, y: 30 },
+        { x: 4, y: 20 },
+        { x: 5, y: 20 },
+        { x: 6, y: 60 },
+        { x: 7, y: 50 },
+        { x: 8, y: 70 }
+      ]
+    },
+    {
+      progress: 100,
+      id: 1,
+      name: 'a',
+      lineData: [10, 5, 7, 8, 3, 9, 4],
+      lineData2: [
+        { x: 0, y: 10 },
+        { x: 1, y: 40 },
+        { x: 2, y: 60 },
+        { x: 2.5, y: 44 },
+        { x: 3, y: 30 },
+        { x: 5, y: 20 },
+        { x: 7, y: 50 },
+        { x: 8, y: 70 }
+      ]
+    },
+    {
+      progress: 80,
+      id: 2,
+      name: 'b',
+      lineData: [7, 5, 7, 8, 3, 9, 4],
+      lineData2: [
+        { x: 0, y: 10 },
+        { x: 1, y: 40 },
+        { x: 2, y: 60 },
+        { x: 2.5, y: 44 },
+        { x: 3, y: 30 },
+        { x: 4, y: 20 },
+        { x: 5, y: 20 },
+        { x: 6, y: 60 },
+        { x: 7, y: 50 },
+        { x: 8, y: 70 }
+      ]
+    },
+    {
+      progress: 1,
+      id: 3,
+      name: 'c',
+      lineData: [1, 5, 7, 8, 3, 9, 4],
+      lineData2: [
+        { x: 0, y: 10 },
+        { x: 1, y: 40 },
+        { x: 2, y: 60 },
+        { x: 2.5, y: 44 },
+        { x: 3, y: 30 },
+        { x: 4, y: 20 },
+        { x: 5, y: 20 },
+        { x: 6, y: 60 },
+        { x: 7, y: 50 },
+        { x: 8, y: 70 }
+      ]
+    },
+    {
+      progress: 55,
+      id: 4,
+      name: 'd',
+      lineData: [-5, 5, 7, 8, 3, 9, 4],
+      lineData2: [
+        { x: 0, y: 10 },
+        { x: 1, y: 40 },
+        { x: 2, y: 60 },
+        { x: 2.5, y: 44 },
+        { x: 3, y: 30 },
+        { x: 4, y: 20 },
+        { x: 5, y: 20 },
+        { x: 6, y: 60 },
+        { x: 7, y: 50 },
+        { x: 8, y: 70 }
+      ]
+    },
+    {
+      progress: 28,
+      id: 5,
+      name: 'e',
+      total: true,
+      lineData: [4, 5, 7, 8, 3, 9, 4],
+      lineData2: [
+        { x: 0, y: 10 },
+        { x: 1, y: 40 },
+        { x: 2, y: 60 },
+        { x: 2.5, y: 44 },
+        { x: 3, y: 30 },
+        { x: 4, y: 20 },
+        { x: 5, y: 20 },
+        { x: 6, y: 60 },
+        { x: 7, y: 50 },
+        { x: 8, y: 70 }
+      ]
+    },
+    {
+      progress: 100,
+      id: 1,
+      name: 'a',
+      lineData: [10, 5, 7, 8, 3, 9, 4],
+      lineData2: [
+        { x: 0, y: 10 },
+        { x: 1, y: 40 },
+        { x: 2, y: 60 },
+        { x: 2.5, y: 44 },
+        { x: 3, y: 30 },
+        { x: 5, y: 20 },
+        { x: 7, y: 50 },
+        { x: 8, y: 70 }
+      ]
+    },
+    {
+      progress: 80,
+      id: 2,
+      name: 'b',
+      lineData: [7, 5, 7, 8, 3, 9, 4],
+      lineData2: [
+        { x: 0, y: 10 },
+        { x: 1, y: 40 },
+        { x: 2, y: 60 },
+        { x: 2.5, y: 44 },
+        { x: 3, y: 30 },
+        { x: 4, y: 20 },
+        { x: 5, y: 20 },
+        { x: 6, y: 60 },
+        { x: 7, y: 50 },
+        { x: 8, y: 70 }
+      ]
+    },
+    {
+      progress: 1,
+      id: 3,
+      name: 'c',
+      lineData: [1, 5, 7, 8, 3, 9, 4],
+      lineData2: [
+        { x: 0, y: 10 },
+        { x: 1, y: 40 },
+        { x: 2, y: 60 },
+        { x: 2.5, y: 44 },
+        { x: 3, y: 30 },
+        { x: 4, y: 20 },
+        { x: 5, y: 20 },
+        { x: 6, y: 60 },
+        { x: 7, y: 50 },
+        { x: 8, y: 70 }
+      ]
+    },
+    {
+      progress: 55,
+      id: 4,
+      name: 'd',
+      lineData: [-5, 5, 7, 8, 3, 9, 4],
+      lineData2: [
+        { x: 0, y: 10 },
+        { x: 1, y: 40 },
+        { x: 2, y: 60 },
+        { x: 2.5, y: 44 },
+        { x: 3, y: 30 },
+        { x: 4, y: 20 },
+        { x: 5, y: 20 },
+        { x: 6, y: 60 },
+        { x: 7, y: 50 },
+        { x: 8, y: 70 }
+      ]
+    },
+    {
+      progress: 28,
+      id: 5,
+      name: 'e',
+      total: true,
+      lineData: [4, 5, 7, 8, 3, 9, 4],
+      lineData2: [
+        { x: 0, y: 10 },
+        { x: 1, y: 40 },
+        { x: 2, y: 60 },
+        { x: 2.5, y: 44 },
+        { x: 3, y: 30 },
+        { x: 4, y: 20 },
+        { x: 5, y: 20 },
+        { x: 6, y: 60 },
+        { x: 7, y: 50 },
+        { x: 8, y: 70 }
+      ]
+    },
+    {
+      progress: 100,
+      id: 1,
+      name: 'a',
+      lineData: [10, 5, 7, 8, 3, 9, 4],
+      lineData2: [
+        { x: 0, y: 10 },
+        { x: 1, y: 40 },
+        { x: 2, y: 60 },
+        { x: 2.5, y: 44 },
+        { x: 3, y: 30 },
+        { x: 5, y: 20 },
+        { x: 7, y: 50 },
+        { x: 8, y: 70 }
+      ]
+    },
+    {
+      progress: 80,
+      id: 2,
+      name: 'b',
+      lineData: [7, 5, 7, 8, 3, 9, 4],
+      lineData2: [
+        { x: 0, y: 10 },
+        { x: 1, y: 40 },
+        { x: 2, y: 60 },
+        { x: 2.5, y: 44 },
+        { x: 3, y: 30 },
+        { x: 4, y: 20 },
+        { x: 5, y: 20 },
+        { x: 6, y: 60 },
+        { x: 7, y: 50 },
+        { x: 8, y: 70 }
+      ]
+    },
+    {
+      progress: 1,
+      id: 3,
+      name: 'c',
+      lineData: [1, 5, 7, 8, 3, 9, 4],
+      lineData2: [
+        { x: 0, y: 10 },
+        { x: 1, y: 40 },
+        { x: 2, y: 60 },
+        { x: 2.5, y: 44 },
+        { x: 3, y: 30 },
+        { x: 4, y: 20 },
+        { x: 5, y: 20 },
+        { x: 6, y: 60 },
+        { x: 7, y: 50 },
+        { x: 8, y: 70 }
+      ]
+    },
+    {
+      progress: 55,
+      id: 4,
+      name: 'd',
+      lineData: [-5, 5, 7, 8, 3, 9, 4],
+      lineData2: [
+        { x: 0, y: 10 },
+        { x: 1, y: 40 },
+        { x: 2, y: 60 },
+        { x: 2.5, y: 44 },
+        { x: 3, y: 30 },
+        { x: 4, y: 20 },
+        { x: 5, y: 20 },
+        { x: 6, y: 60 },
+        { x: 7, y: 50 },
+        { x: 8, y: 70 }
+      ]
+    },
+    {
+      progress: 28,
+      id: 5,
+      name: 'e',
+      total: true,
+      lineData: [4, 5, 7, 8, 3, 9, 4],
+      lineData2: [
+        { x: 0, y: 10 },
+        { x: 1, y: 40 },
+        { x: 2, y: 60 },
+        { x: 2.5, y: 44 },
+        { x: 3, y: 30 },
+        { x: 4, y: 20 },
+        { x: 5, y: 20 },
+        { x: 6, y: 60 },
+        { x: 7, y: 50 },
+        { x: 8, y: 70 }
+      ]
+    },
+    {
+      progress: 100,
+      id: 1,
+      name: 'a',
+      lineData: [10, 5, 7, 8, 3, 9, 4],
+      lineData2: [
+        { x: 0, y: 10 },
+        { x: 1, y: 40 },
+        { x: 2, y: 60 },
+        { x: 2.5, y: 44 },
+        { x: 3, y: 30 },
+        { x: 5, y: 20 },
+        { x: 7, y: 50 },
+        { x: 8, y: 70 }
+      ]
+    },
+    {
+      progress: 80,
+      id: 2,
+      name: 'b',
+      lineData: [7, 5, 7, 8, 3, 9, 4],
+      lineData2: [
+        { x: 0, y: 10 },
+        { x: 1, y: 40 },
+        { x: 2, y: 60 },
+        { x: 2.5, y: 44 },
+        { x: 3, y: 30 },
+        { x: 4, y: 20 },
+        { x: 5, y: 20 },
+        { x: 6, y: 60 },
+        { x: 7, y: 50 },
+        { x: 8, y: 70 }
+      ]
+    },
+    {
+      progress: 1,
+      id: 3,
+      name: 'c',
+      lineData: [1, 5, 7, 8, 3, 9, 4],
+      lineData2: [
+        { x: 0, y: 10 },
+        { x: 1, y: 40 },
+        { x: 2, y: 60 },
+        { x: 2.5, y: 44 },
+        { x: 3, y: 30 },
+        { x: 4, y: 20 },
+        { x: 5, y: 20 },
+        { x: 6, y: 60 },
+        { x: 7, y: 50 },
+        { x: 8, y: 70 }
+      ]
+    },
+    {
+      progress: 55,
+      id: 4,
+      name: 'd',
+      lineData: [-5, 5, 7, 8, 3, 9, 4],
+      lineData2: [
+        { x: 0, y: 10 },
+        { x: 1, y: 40 },
+        { x: 2, y: 60 },
+        { x: 2.5, y: 44 },
+        { x: 3, y: 30 },
+        { x: 4, y: 20 },
+        { x: 5, y: 20 },
+        { x: 6, y: 60 },
+        { x: 7, y: 50 },
+        { x: 8, y: 70 }
+      ]
+    },
+    {
+      progress: 28,
+      id: 5,
+      name: 'e',
+      total: true,
+      lineData: [4, 5, 7, 8, 3, 9, 4],
+      lineData2: [
+        { x: 0, y: 10 },
+        { x: 1, y: 40 },
+        { x: 2, y: 60 },
+        { x: 2.5, y: 44 },
+        { x: 3, y: 30 },
+        { x: 4, y: 20 },
+        { x: 5, y: 20 },
+        { x: 6, y: 60 },
+        { x: 7, y: 50 },
+        { x: 8, y: 70 }
+      ]
+    },
     {
       progress: 100,
       id: 1,
@@ -207,11 +652,11 @@ export function createTable() {
   };
 
   const option: VTable.ListTableConstructorOptions = {
-    container: document.getElementById(Table_CONTAINER_DOM_ID),
+    container: document.getElementById(CONTAINER_ID),
     columns: [
       {
         field: 'id',
-        caption: 'ID',
+        title: 'ID',
         sort: (v1, v2, order) => {
           if (order === 'desc') {
             return v1 === v2 ? 0 : v1 > v2 ? -1 : 1;
@@ -222,15 +667,15 @@ export function createTable() {
       },
       {
         field: 'lineData',
-        caption: '这是一个折线图1',
+        title: '这是一个折线图1',
         width: 250,
-        columnType: 'sparkline'
+        cellType: 'sparkline'
       },
       {
         field: 'lineData2',
-        caption: '这是一个折线图2',
+        title: '这是一个折线图2',
         width: 250,
-        columnType: 'sparkline',
+        cellType: 'sparkline',
         sparklineSpec: Object.assign({}, baseSpec, {
           smooth: true,
           point: {
@@ -256,16 +701,16 @@ export function createTable() {
       },
       {
         field: 'lineData2',
-        caption: '这是一个折线图3',
+        title: '这是一个折线图3',
         width: 250,
-        columnType: 'sparkline',
+        cellType: 'sparkline',
         sparklineSpec: specFieldString
       },
       {
         field: 'lineData2',
-        caption: '这是一个折线图4',
+        title: '这是一个折线图4',
         width: 250,
-        columnType: 'sparkline',
+        cellType: 'sparkline',
         sparklineSpec: {
           type: 'line',
           xField: 'x',
@@ -294,4 +739,21 @@ export function createTable() {
 
   // 只为了方便控制太调试用，不要拷贝
   (window as any).tableInstance = instance;
+  (window as any).exportImgs = function () {
+    const base64ImgList: string[] = [];
+    const t0 = window.performance.now();
+    const scrollTop = instance.scrollTop;
+    for (let col = 1; col <= 4; col++) {
+      for (let row = 1; row <= 30; row++) {
+        base64ImgList.push(instance.exportCellImg(col, row));
+      }
+    }
+    instance.scrollTop = scrollTop;
+    console.log('cost time', window.performance.now() - t0);
+    return base64ImgList;
+  };
+
+  // setTimeout(() => {
+  //   exportImgs();
+  // }, 5000);
 }

@@ -68,6 +68,7 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
       Object.assign(options, (options as any).layout);
     }
     this.setCustomStateNameToSpec();
+    this.internalProps.columnResizeType = options.columnResizeType ?? 'column';
     this.internalProps.dataConfig = { isPivotChart: true };
     this._axes = isArray(options.axes) ? options.axes : [];
 
@@ -157,6 +158,7 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
 
     this.setCustomStateNameToSpec();
     // 更新protectedSpace
+    internalProps.columnResizeType = options.columnResizeType ?? 'column';
     internalProps.dataConfig = {};
 
     this._axes = isArray(options.axes) ? options.axes : [];
@@ -324,8 +326,8 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
 
   getCellValue(col: number, row: number): FieldData {
     if (this.internalProps.layoutMap.isHeader(col, row)) {
-      const { caption, fieldFormat } = this.internalProps.layoutMap.getHeader(col, row);
-      return typeof fieldFormat === 'function' ? fieldFormat(caption) : caption;
+      const { title, fieldFormat } = this.internalProps.layoutMap.getHeader(col, row);
+      return typeof fieldFormat === 'function' ? fieldFormat(title) : title;
     }
     if (this.dataset) {
       const colKey = this.dataset.colKeysPath[this.internalProps.layoutMap.getRecordIndexByCol(col)] ?? [];
@@ -344,8 +346,8 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
   getCellOriginValue(col: number, row: number): FieldData {
     const table = this;
     if (table.internalProps.layoutMap.isHeader(col, row)) {
-      const { caption } = table.internalProps.layoutMap.getHeader(col, row);
-      return typeof caption === 'function' ? caption() : caption;
+      const { title } = table.internalProps.layoutMap.getHeader(col, row);
+      return typeof title === 'function' ? title() : title;
     }
     if (this.dataset) {
       const colKey = this.dataset.colKeysPath[this.internalProps.layoutMap.getRecordIndexByCol(col)] ?? [];
@@ -583,7 +585,7 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
     const result: DropDownMenuEventInfo = {
       dimensionKey: dimensionInfos[dimensionInfos.length - 1].dimensionKey,
       value: this.getCellValue(col, row),
-      cellType: this.getCellType(col, row),
+      cellLocation: this.getCellLocation(col, row),
       isPivotCorner: this.isCornerHeader(col, row)
     };
     return result;

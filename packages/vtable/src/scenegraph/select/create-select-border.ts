@@ -1,5 +1,5 @@
 import { createRect } from '@visactor/vrender';
-import type { CellType } from '../../ts-types';
+import type { CellLocation } from '../../ts-types';
 import type { Scenegraph } from '../scenegraph';
 
 export function createCellSelectBorder(
@@ -8,7 +8,7 @@ export function createCellSelectBorder(
   start_Row: number,
   end_Col: number,
   end_Row: number,
-  selectRangeType: CellType,
+  selectRangeType: CellLocation,
   selectId: string, //整体区域${endRow}-${startCol}${startRow}${endCol}${endRow}作为其编号
   strokes?: boolean[]
 ) {

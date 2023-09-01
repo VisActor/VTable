@@ -6,7 +6,7 @@ import type { IBasicColumnBodyDefine } from './basic-define';
 
 export interface ISparklineColumnBodyDefine extends IBasicColumnBodyDefine {
   style?: IStyleOption | ((styleArg: StylePropertyFunctionArg) => IStyleOption);
-  columnType: 'sparkline';
+  cellType: 'sparkline';
 
   sparklineSpec?: SparklineSpec | ((arg0: CellInfo) => SparklineSpec);
 }

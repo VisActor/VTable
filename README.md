@@ -16,10 +16,10 @@
 VTable is not just a high-performance multidimensional data analysis table, but also a grid artist that creates art between rows and columns.
 
 <p align="center">
-  <a href="">Introduction</a> •
-  <a href="">demo</a> •
-  <a href="">Tutorial</a> •
-  <a href="">API</a>•
+  <a href="https://visactor.io/vtable">Introduction</a> •
+  <a href="https://visactor.io/vtable/example">demo</a> •
+  <a href="https://visactor.io/vtable/guide/Getting_Started/Getting_Started">Tutorial</a> •
+  <a href="https://visactor.io/vtable/option/ListTable">API</a>•
 </p>
 
 ![](https://github.com/visactor/vtable/actions/workflows/bug-server.yml/badge.svg)
@@ -103,7 +103,7 @@ const columns =[
 ];
 
 const option = {
-  parentElement: document.getElementById(CONTAINER_ID),
+  container: document.getElementById(CONTAINER_ID),
   records:[
     {
       "Order ID": "CA-2018-156720",

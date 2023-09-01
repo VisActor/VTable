@@ -1,7 +1,7 @@
 /* eslint-disable */
 import * as VTable from '../../src';
 const ListTable = VTable.ListTable;
-const Table_CONTAINER_DOM_ID = 'vTable';
+const CONTAINER_ID = 'vTable';
 function fieldFormat(num) {
   // 将数字转换为字符串
   let str = num.toFixed(2).toString();
@@ -17,7 +17,7 @@ export function createTable() {
     columns: [
       {
         field: '230119143119013',
-        caption: '类别',
+        title: '类别',
         dataType: 'dimension',
         showSort: false,
         style: {
@@ -116,13 +116,13 @@ export function createTable() {
             menuKey: 'visual_style'
           }
         ],
-        columnType: 'link',
+        cellType: 'link',
         linkDetect: true,
         linkJump: false
       },
       {
         field: '230119143119014',
-        caption: '子类别',
+        title: '子类别',
         dataType: 'dimension',
         showSort: false,
         style: {
@@ -221,18 +221,18 @@ export function createTable() {
             menuKey: 'visual_style'
           }
         ],
-        columnType: 'link',
+        cellType: 'link',
         linkDetect: true,
         linkJump: false
       },
       {
         field: 'group-4c35fbcd-a7de-4d78-94bc-85cd217b5dee-1',
-        caption: '分组1',
+        title: '分组1',
         columns: [
           {
             firstRow: 287486.07971572876,
             field: '230119143119011',
-            caption: '销售额',
+            title: '销售额',
             dataType: 'measure',
             showSort: false,
             style: {
@@ -339,7 +339,7 @@ export function createTable() {
           {
             firstRow: 72505.02035200596,
             field: '230119143119012',
-            caption: '利润',
+            title: '利润',
             dataType: 'measure',
             showSort: false,
             style: {
@@ -473,7 +473,7 @@ export function createTable() {
       {
         firstRow: 0,
         field: '230119143119015',
-        caption: '折扣',
+        title: '折扣',
         dataType: 'measure',
         showSort: false,
         style: {
@@ -580,7 +580,7 @@ export function createTable() {
       {
         firstRow: 2281,
         field: '230119143119016',
-        caption: '数量',
+        title: '数量',
         dataType: 'measure',
         showSort: false,
         style: {
@@ -919,7 +919,7 @@ export function createTable() {
       enableSingalCellHighlight: true
     },
     showHeader: true,
-    container: document.getElementById(Table_CONTAINER_DOM_ID)
+    container: document.getElementById(CONTAINER_ID)
   };
   const instance = new ListTable(options);
 

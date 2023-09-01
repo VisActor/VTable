@@ -1,12 +1,12 @@
 import * as VTable from '../../src';
-const Table_CONTAINER_DOM_ID = 'vTable';
+const CONTAINER_ID = 'vTable';
 
 export function createTable() {
   fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American_Superstore_Pivot_data.json')
     .then(res => res.json())
     .then(data => {
       const option: VTable.PivotTableConstructorOptions = {
-        container: document.getElementById(Table_CONTAINER_DOM_ID),
+        container: document.getElementById(CONTAINER_ID),
         records: data,
         menu: {
           contextMenuItems: ['复制单元格内容', '查询详情']
@@ -263,7 +263,7 @@ export function createTable() {
         rows: [
           {
             dimensionKey: 'City',
-            dimensionTitle: 'City',
+            title: 'City',
             headerStyle: {
               textStick: true,
               bgColor: '#356b9c',
@@ -275,7 +275,7 @@ export function createTable() {
         columns: [
           {
             dimensionKey: 'Category',
-            dimensionTitle: 'Category',
+            title: 'Category',
             headerStyle: {
               textStick: true,
               bgColor: arg => {
@@ -293,7 +293,7 @@ export function createTable() {
           },
           {
             dimensionKey: 'Category',
-            dimensionTitle: 'Category',
+            title: 'Category',
             headerStyle: {
               textStick: true,
               bgColor: arg => {
@@ -313,7 +313,7 @@ export function createTable() {
         indicators: [
           {
             indicatorKey: 'Quantity',
-            caption: 'Quantity',
+            title: 'Quantity',
             width: 'auto',
             showSort: false,
             style: {
@@ -348,7 +348,7 @@ export function createTable() {
           },
           {
             indicatorKey: 'Sales',
-            caption: 'Sales',
+            title: 'Sales',
             width: 'auto',
             showSort: false,
             format: rec => {
@@ -388,7 +388,7 @@ export function createTable() {
           },
           {
             indicatorKey: 'Profit',
-            caption: 'Profit',
+            title: 'Profit',
             width: 'auto',
             showSort: false,
             format: rec => {

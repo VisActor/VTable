@@ -2,12 +2,12 @@
 import * as VTable from '../../src';
 import VChart from '@visactor/vchart';
 VTable.register.chartModule('vchart', VChart);
-const Table_CONTAINER_DOM_ID = 'vTable';
+const CONTAINER_ID = 'vTable';
 export function createTable() {
   const columns = [
     {
       field: 'personid',
-      caption: 'personid',
+      title: 'personid',
       description: '这是一个标题的详细描述',
       sort: true,
       width: 80,
@@ -18,9 +18,9 @@ export function createTable() {
     },
     {
       field: 'areaChart',
-      caption: 'vchart area',
+      title: 'vchart area',
       width: '320',
-      columnType: 'chart',
+      cellType: 'chart',
       chartModule: 'vchart',
       chartSpec: {
         type: 'area',
@@ -99,9 +99,9 @@ export function createTable() {
     },
     {
       field: 'lineChart',
-      caption: 'vchart line',
+      title: 'vchart line',
       width: '320',
-      columnType: 'chart',
+      cellType: 'chart',
       chartModule: 'vchart',
       chartSpec: {
         type: 'common',
@@ -173,9 +173,9 @@ export function createTable() {
     },
     {
       field: 'barChart',
-      caption: 'vchart line',
+      title: 'vchart line',
       width: '320',
-      columnType: 'chart',
+      cellType: 'chart',
       chartModule: 'vchart',
       chartSpec: {
         type: 'common',
@@ -222,9 +222,9 @@ export function createTable() {
     },
     {
       field: 'scatterChart',
-      caption: 'vchart line',
+      title: 'vchart line',
       width: '320',
-      columnType: 'chart',
+      cellType: 'chart',
       chartModule: 'vchart',
       chartSpec: {
         type: 'common',
@@ -258,9 +258,9 @@ export function createTable() {
     },
     {
       field: 'areaChart',
-      caption: 'vchart area',
+      title: 'vchart area',
       width: '320',
-      columnType: 'chart',
+      cellType: 'chart',
       chartModule: 'vchart',
       chartSpec: {
         type: 'common',
@@ -343,9 +343,9 @@ export function createTable() {
     },
     {
       field: 'lineChart',
-      caption: 'vchart line',
+      title: 'vchart line',
       width: '320',
-      columnType: 'chart',
+      cellType: 'chart',
       chartModule: 'vchart',
       chartSpec: {
         type: 'common',
@@ -417,9 +417,9 @@ export function createTable() {
     },
     {
       field: 'barChart',
-      caption: 'vchart line',
+      title: 'vchart line',
       width: '320',
-      columnType: 'chart',
+      cellType: 'chart',
       chartModule: 'vchart',
       chartSpec: {
         type: 'common',
@@ -466,9 +466,9 @@ export function createTable() {
     },
     {
       field: 'scatterChart',
-      caption: 'vchart line',
+      title: 'vchart line',
       width: '320',
-      columnType: 'chart',
+      cellType: 'chart',
       chartModule: 'vchart',
       chartSpec: {
         type: 'common',
@@ -595,7 +595,7 @@ export function createTable() {
       ]
     });
   const option = {
-    container: document.getElementById(Table_CONTAINER_DOM_ID),
+    container: document.getElementById(CONTAINER_ID),
     records,
     columns,
     transpose: false,

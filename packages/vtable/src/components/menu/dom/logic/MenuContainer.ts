@@ -59,7 +59,7 @@ export class MenuContainer {
         // dropDownIndex,
         text,
         highlight,
-        cellType: table.getCellType(col, row)
+        cellLocation: table.getCellLocation(col, row)
       });
 
       table.fireListeners(TABLE_EVENT_TYPE.DROPDOWN_MENU_CLEAR, null); // 清除菜单

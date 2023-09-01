@@ -1,11 +1,11 @@
 import * as VTable from '../../src';
 import { bindDebugTool } from '../../src/scenegraph/debug-tool';
 const ListTable = VTable.ListTable;
-const Table_CONTAINER_DOM_ID = 'vTable';
+const CONTAINER_ID = 'vTable';
 
 export function createTable() {
   const option: VTable.ListTableConstructorOptions = {
-    container: document.getElementById(Table_CONTAINER_DOM_ID),
+    container: document.getElementById(CONTAINER_ID),
     columns: [
       {
         field: 'p',
@@ -19,13 +19,13 @@ export function createTable() {
           fontSize: 12,
           fontFamily: 'sans-serif'
         },
-        caption: 'progress',
+        title: 'progress',
         description: '这是一个标题的详细描述',
         width: 'calc(20% - 20px)'
         // width: 'auto'
       },
       {
-        caption: 'Name',
+        title: 'Name',
         headerStyle: {
           textAlign: 'center',
           fontWeight: 'bold',
@@ -35,7 +35,7 @@ export function createTable() {
         columns: [
           {
             field: 'fname',
-            caption: 'First Name',
+            title: 'First Name',
             width: '20%',
             minWidth: 150,
             headerStyle: {
@@ -44,7 +44,7 @@ export function createTable() {
           },
           {
             field: 'lname',
-            caption: 'Last Name',
+            title: 'Last Name',
             width: '20%',
             minWidth: 150
           }
@@ -52,7 +52,7 @@ export function createTable() {
       },
       {
         field: 'email',
-        caption: 'email',
+        title: 'email',
         width: 200,
         headerStyle: {
           autoWrapText: true,
@@ -108,7 +108,7 @@ export function createTable() {
             rec.birthday = isNaN(parseInt(date.toString(), 10)) ? val : date;
           }
         },
-        caption: 'Birthday',
+        title: 'Birthday',
         width: 150
       }
     ],

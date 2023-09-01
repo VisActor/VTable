@@ -51,6 +51,7 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
       //TODO hack处理之前的demo都是定义到layout上的 所以这里直接并到options中
       Object.assign(options, (options as any).layout);
     }
+    this.internalProps.columnResizeType = options.columnResizeType ?? 'column';
     this.internalProps.dataConfig = options.dataConfig;
     this.internalProps.enableDataAnalysis = options.enableDataAnalysis;
     if (this.internalProps.enableDataAnalysis && (options.rows || options.columns)) {
@@ -129,6 +130,7 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
     super.updateOption(options);
 
     // 更新protectedSpace
+    internalProps.columnResizeType = options.columnResizeType ?? 'column';
     internalProps.dataConfig = options.dataConfig;
     internalProps.enableDataAnalysis = options.enableDataAnalysis;
 
@@ -326,8 +328,8 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
 
   getCellValue(col: number, row: number): FieldData {
     if (this.internalProps.layoutMap.isHeader(col, row)) {
-      const { caption, fieldFormat } = this.internalProps.layoutMap.getHeader(col, row);
-      return typeof fieldFormat === 'function' ? fieldFormat(caption) : caption;
+      const { title, fieldFormat } = this.internalProps.layoutMap.getHeader(col, row);
+      return typeof fieldFormat === 'function' ? fieldFormat(title) : title;
     }
     if (this.dataset) {
       const colKey = this.dataset.colKeysPath[this.internalProps.layoutMap.getRecordIndexByCol(col)] ?? [];
@@ -362,8 +364,8 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
   getCellOriginValue(col: number, row: number): FieldData {
     const table = this;
     if (table.internalProps.layoutMap.isHeader(col, row)) {
-      const { caption } = table.internalProps.layoutMap.getHeader(col, row);
-      return typeof caption === 'function' ? caption() : caption;
+      const { title } = table.internalProps.layoutMap.getHeader(col, row);
+      return typeof title === 'function' ? title() : title;
     }
     if (this.dataset) {
       const colKey = this.dataset.colKeysPath[this.internalProps.layoutMap.getRecordIndexByCol(col)] ?? [];
@@ -439,6 +441,10 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
     (this.internalProps.layoutMap as PivotLayoutMap).updateDataset(this.dataset);
     this.render();
   }
+  /**
+   * 更新排序状态
+   * @param pivotSortStateConfig.dimensions 排序状态维度对应关系；pivotSortStateConfig.order 排序状态
+   */
   updatePivotSortState(
     pivotSortStateConfig: {
       dimensions: IDimensionInfo[];
@@ -632,7 +638,7 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
     const result: DropDownMenuEventInfo = {
       dimensionKey: dimensionInfos[dimensionInfos.length - 1].dimensionKey,
       value: this.getCellValue(col, row),
-      cellType: this.getCellType(col, row),
+      cellLocation: this.getCellLocation(col, row),
       isPivotCorner: this.isCornerHeader(col, row)
     };
     return result;

@@ -38,7 +38,7 @@ export type FieldData = MaybePromiseOrUndefined;
 export type WidthModeDef = 'standard' | 'adaptive' | 'autoWidth';
 export type HeightModeDef = 'standard' | 'adaptive' | 'autoHeight';
 export type ShowColumnRowType = 'column' | 'row' | 'none';
-export type CellType = 'body' | 'rowHeader' | 'columnHeader' | 'cornerHeader' | 'bottomFrozen' | 'rightFrozen';
+export type CellLocation = 'body' | 'rowHeader' | 'columnHeader' | 'cornerHeader' | 'bottomFrozen' | 'rightFrozen';
 
 export interface TableKeyboardOptions {
   // moveCellOnTab?: boolean;

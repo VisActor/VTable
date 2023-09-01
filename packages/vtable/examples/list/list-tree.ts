@@ -1,6 +1,6 @@
 import * as VTable from '../../src';
 const ListTable = VTable.ListTable;
-const Table_CONTAINER_DOM_ID = 'vTable';
+const CONTAINER_ID = 'vTable';
 
 export function createTable() {
   const data = [
@@ -173,25 +173,25 @@ export function createTable() {
     }
   ];
   const option: VTable.ListTableConstructorOptions = {
-    container: document.getElementById(Table_CONTAINER_DOM_ID),
+    container: document.getElementById(CONTAINER_ID),
     columns: [
       {
         field: '类别',
         tree: true,
-        caption: '类别',
+        title: '类别',
         width: 'auto',
         sort: true
       },
       {
         field: '销售额',
-        caption: '销售额',
+        title: '销售额',
         width: 'auto',
         sort: true
         // tree: true,
       },
       {
         field: '利润',
-        caption: '利润',
+        title: '利润',
         width: 'auto',
         sort: true
       }

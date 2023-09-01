@@ -1,4 +1,4 @@
-import { isArray, merge } from '@visactor/vutils';
+import { isArray, isNumber, merge } from '@visactor/vutils';
 import type { PivotLayoutMap } from '../pivot-layout';
 import type { ITableAxisOption } from '../../ts-types/component/axis';
 import type { PivotChart } from '../../PivotChart';
@@ -37,6 +37,12 @@ export function getAxisConfigInPivotChart(col: number, row: number, layout: Pivo
       const axisOption = getAxisOption(col, row, 'top', layout);
       if (axisOption?.visible === false) {
         return;
+      }
+      if (isNumber(axisOption?.min)) {
+        (range as any).min = axisOption.min;
+      }
+      if (isNumber(axisOption?.max)) {
+        (range as any).max = axisOption.max;
       }
       // 顶部副指标轴
       return merge(
@@ -84,12 +90,18 @@ export function getAxisConfigInPivotChart(col: number, row: number, layout: Pivo
       if (axisOption?.visible === false) {
         return;
       }
+      if (isNumber(axisOption?.min)) {
+        (range as any).min = axisOption.min;
+      }
+      if (isNumber(axisOption?.max)) {
+        (range as any).max = axisOption.max;
+      }
       // 底侧指标轴
       return merge(
         {
           title: {
             visible: true,
-            text: (indicatorInfo as any)?.caption
+            text: (indicatorInfo as any)?.title
             // autoRotate: true
           },
           range: range
@@ -170,12 +182,18 @@ export function getAxisConfigInPivotChart(col: number, row: number, layout: Pivo
       if (axisOption?.visible === false) {
         return;
       }
+      if (isNumber(axisOption?.min)) {
+        (range as any).min = axisOption.min;
+      }
+      if (isNumber(axisOption?.max)) {
+        (range as any).max = axisOption.max;
+      }
       // 左侧指标轴
       return merge(
         {
           title: {
             visible: true,
-            text: (indicatorInfo as any)?.caption,
+            text: (indicatorInfo as any)?.title,
             autoRotate: true
           },
           range: range
@@ -217,6 +235,12 @@ export function getAxisConfigInPivotChart(col: number, row: number, layout: Pivo
       const axisOption = getAxisOption(col, row, 'right', layout);
       if (axisOption?.visible === false) {
         return;
+      }
+      if (isNumber(axisOption?.min)) {
+        (range as any).min = axisOption.min;
+      }
+      if (isNumber(axisOption?.max)) {
+        (range as any).max = axisOption.max;
       }
       // 右侧副指标轴
       return merge(

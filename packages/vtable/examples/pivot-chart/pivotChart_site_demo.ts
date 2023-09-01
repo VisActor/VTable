@@ -1,7 +1,7 @@
 /* eslint-disable */
 import * as VTable from '../../src';
 import VChart from '@visactor/vchart';
-const Table_CONTAINER_DOM_ID = 'vTable';
+const CONTAINER_ID = 'vTable';
 VTable.register.chartModule('vchart', VChart);
 export function createTable() {
   fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American_Superstore_Pivot_Chart_data.json')
@@ -10,7 +10,7 @@ export function createTable() {
       const columns: (VTable.IDimension | string)[] = [
         {
           dimensionKey: 'Region',
-          dimensionTitle: '',
+          title: '',
           headerStyle: {
             textStick: true
           }
@@ -20,7 +20,7 @@ export function createTable() {
       const rows: (VTable.IDimension | string)[] = [
         {
           dimensionKey: 'Order Year',
-          dimensionTitle: 'Order Year',
+          title: 'Order Year',
           headerStyle: {
             textBaseline: 'top',
             textStick: true
@@ -31,9 +31,9 @@ export function createTable() {
       const indicators: VTable.TYPES.IChartIndicator[] = [
         {
           indicatorKey: 'Quantity',
-          caption: 'Quantity',
+          title: 'Quantity',
           width: 'auto',
-          columnType: 'chart',
+          cellType: 'chart',
           chartModule: 'vchart',
           chartSpec: {
             // type: 'common',
@@ -140,8 +140,8 @@ export function createTable() {
         },
         {
           indicatorKey: 'Sales',
-          caption: 'Sales & Profit',
-          columnType: 'chart',
+          title: 'Sales & Profit',
+          cellType: 'chart',
           chartModule: 'vchart',
           chartSpec: {
             type: 'common',
@@ -337,6 +337,7 @@ export function createTable() {
         defaultHeaderColWidth: 80,
         indicatorTitle: 'indicator',
         autoWrapText: true,
+        columnResizeType: 'indicator',
         // widthMode:'adaptive',
         // heightMode:'adaptive',
         corner: {
@@ -417,7 +418,7 @@ export function createTable() {
         renderChartAsync: true
       };
 
-      const tableInstance = new VTable.PivotChart(document.getElementById(Table_CONTAINER_DOM_ID)!, option);
+      const tableInstance = new VTable.PivotChart(document.getElementById(CONTAINER_ID)!, option);
       tableInstance.onVChartEvent('click', args => {
         console.log('listenChart click', args);
       });

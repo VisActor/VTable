@@ -2,7 +2,7 @@ import type { BaseTableAPI } from '../../ts-types/base-table';
 
 export function updateDrill(col: number, row: number, drillDown: boolean, drillUp: boolean, table: BaseTableAPI) {
   // 找到当前单元格显示drill icon位置
-  const headerType = table.getCellType(col, row);
+  const headerType = table.getCellLocation(col, row);
   let x = 0;
   let y = 0;
   let visible = false;

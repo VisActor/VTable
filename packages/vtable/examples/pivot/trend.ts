@@ -1,6 +1,6 @@
 import * as VTable from '../../src';
 const PivotTable = VTable.PivotTable;
-const Table_CONTAINER_DOM_ID = 'vTable';
+const CONTAINER_ID = 'vTable';
 
 function generateLineData1(count) {
   // const count = Math.floor(Math.random() * 50);
@@ -15,7 +15,7 @@ function generateLineData1(count) {
 
 export function createTable() {
   const option: VTable.PivotTableConstructorOptions = {
-    container: document.getElementById(Table_CONTAINER_DOM_ID),
+    container: document.getElementById(CONTAINER_ID),
     theme: {
       headerStyle: {
         frameStyle: {
@@ -206,7 +206,7 @@ export function createTable() {
     columns: [
       {
         dimensionKey: 'time',
-        dimensionTitle: '季度',
+        title: '季度',
         width: '200',
         showSort: false,
         headerStyle: {
@@ -216,7 +216,7 @@ export function createTable() {
       },
       {
         dimensionKey: 'year',
-        dimensionTitle: '年度',
+        title: '年度',
         width: '200',
         showSort: false,
         headerStyle: {
@@ -225,7 +225,7 @@ export function createTable() {
       },
       {
         dimensionKey: '指标名称',
-        dimensionTitle: '指标名称',
+        title: '指标名称',
         width: '200',
         headerStyle: {
           textAlign: 'right'
@@ -235,7 +235,7 @@ export function createTable() {
     rows: [
       {
         dimensionKey: 'order_data',
-        dimensionTitle: '订单数据',
+        title: '订单数据',
         width: '100',
         showSort: false
       }
@@ -243,7 +243,7 @@ export function createTable() {
     indicators: [
       {
         indicatorKey: 'data',
-        caption: '数据',
+        title: '数据',
         width: 'auto',
         style: {
           textAlign: 'right',
@@ -253,7 +253,7 @@ export function createTable() {
       },
       {
         indicatorKey: 'ratio',
-        caption: '环比',
+        title: '环比',
         width: 'auto',
         format: rec => {
           if (rec?.ratio) {
@@ -299,9 +299,9 @@ export function createTable() {
       },
       {
         indicatorKey: 'lineData',
-        caption: '趋势图',
+        title: '趋势图',
         width: 300,
-        columnType: 'sparkline',
+        cellType: 'sparkline',
         sparklineSpec: {
           type: 'line',
           xField: 'x',

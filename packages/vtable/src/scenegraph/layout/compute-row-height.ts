@@ -15,7 +15,8 @@ import { getAxisConfigInPivotChart } from '../../layout/chart-helper/get-axis-co
 import { computeAxisComponentHeight } from '../../components/axis/get-axis-component-size';
 
 const utilTextMark = new WrapText({
-  autoWrapText: true
+  ignoreBuf: true
+  // autoWrapText: true
 });
 const utilRichTextMark = new RichText({
   width: 0,
@@ -27,9 +28,18 @@ export function computeRowsHeight(
   table: BaseTableAPI,
   rowStart?: number,
   rowEnd?: number,
-  isClearRowRangeHeightsMap: boolean = true
+  isClearRowRangeHeightsMap: boolean = true,
+  update?: boolean
 ): void {
   const time = typeof window !== 'undefined' ? window.performance.now() : 0;
+
+  const oldRowHeights = [];
+  if (update) {
+    for (let row = 0; row < table.rowCount; row++) {
+      oldRowHeights.push(table.getRowHeight(row));
+    }
+  }
+
   if (table.heightMode === 'autoHeight' || table.heightMode === 'adaptive') {
     rowStart = rowStart ?? 0;
     rowEnd = rowEnd ?? table.rowCount - 1;
@@ -121,6 +131,15 @@ export function computeRowsHeight(
     }
   }
 
+  if (update) {
+    for (let row = 0; row < table.rowCount; row++) {
+      const newRowHeight = table.getRowHeight(row);
+      if (newRowHeight !== oldRowHeights[row]) {
+        // update the row height in scenegraph
+        table.scenegraph.updateRowHeight(row, newRowHeight - oldRowHeights[row]);
+      }
+    }
+  }
   // console.log('computeRowsHeight  time:', (typeof window !== 'undefined' ? window.performance.now() : 0) - time, rowStart, rowEnd);
 }
 
@@ -305,7 +324,7 @@ function computeTextHeight(col: number, row: number, table: BaseTableAPI): numbe
   const iconInlineEnd: ColumnIconOption[] = [];
   let iconInlineEndHeight = 0;
   const define = table.getBodyColumnDefine(col, row);
-  const mayHaveIcon = table.getCellType(col, row) !== 'body' ? true : !!define?.icon || !!define?.tree;
+  const mayHaveIcon = table.getCellLocation(col, row) !== 'body' ? true : !!define?.icon || !!define?.tree;
   if (mayHaveIcon) {
     const icons = table.getCellIcons(col, row);
     icons?.forEach(icon => {
@@ -332,9 +351,12 @@ function computeTextHeight(col: number, row: number, table: BaseTableAPI): numbe
     });
   }
   let spanRow = 1;
+  let endCol = col;
   if (table.isHeader(col, row) || (table.getBodyColumnDefine(col, row) as TextColumnDefine).mergeCell) {
     const cellRange = table.getCellRange(col, row);
     spanRow = cellRange.end.row - cellRange.start.row + 1;
+    col = cellRange.start.col;
+    endCol = cellRange.end.col;
   }
 
   const padding = getQuadProps(getProp('padding', actStyle, col, row, table));
@@ -345,6 +367,8 @@ function computeTextHeight(col: number, row: number, table: BaseTableAPI): numbe
   const fontFamily = getProp('fontFamily', actStyle, col, row, table);
   const autoWrapText = getProp('autoWrapText', actStyle, col, row, table);
   const lines = validToString(cellValue).split('\n') || [];
+
+  const cellWidth = table.getColsWidth(col, endCol);
 
   if (iconInlineFront.length || iconInlineEnd.length) {
     // if (autoWrapText) {
@@ -363,7 +387,7 @@ function computeTextHeight(col: number, row: number, table: BaseTableAPI): numbe
       ...iconInlineEnd.map(icon => dealWithRichTextIcon(icon))
     ];
     utilRichTextMark.setAttributes({
-      width: table.getColWidth(col) - (padding[1] + padding[3]) - iconWidth,
+      width: cellWidth - (padding[1] + padding[3]) - iconWidth,
       height: 0,
       textConfig
     });
@@ -381,7 +405,7 @@ function computeTextHeight(col: number, row: number, table: BaseTableAPI): numbe
     //   });
     // }
   } else if (autoWrapText) {
-    const maxLineWidth = table.getColWidth(col) - (padding[1] + padding[3]) - iconWidth;
+    const maxLineWidth = cellWidth - (padding[1] + padding[3]) - iconWidth;
     utilTextMark.setAttributes({
       maxLineWidth,
       text: lines,

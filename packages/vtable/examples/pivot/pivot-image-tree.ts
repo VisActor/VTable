@@ -2,7 +2,7 @@ import * as VTable from '../../src';
 import { bindDebugTool } from '../../src/scenegraph/debug-tool';
 import { animalImageUrl, flowerVideoUrl } from '../resource-url';
 const PivotTable = VTable.PivotTable;
-const Table_CONTAINER_DOM_ID = 'vTable';
+const CONTAINER_ID = 'vTable';
 
 export function createTable() {
   const data = [
@@ -146,7 +146,7 @@ export function createTable() {
     }
   ];
   const option: VTable.PivotTableConstructorOptions = {
-    container: document.getElementById(Table_CONTAINER_DOM_ID),
+    container: document.getElementById(CONTAINER_ID),
     records: data,
     menu: {
       contextMenuItems: ['复制单元格内容', '查询详情']
@@ -252,7 +252,7 @@ export function createTable() {
     rows: [
       {
         dimensionKey: '230628150729013',
-        dimensionTitle: '视频地址/图片地址/图片地址',
+        title: '视频地址/图片地址/图片地址',
         keepAspectRatio: true,
         width: 'auto',
         cornerDropDownMenu: [
@@ -335,7 +335,7 @@ export function createTable() {
       },
       {
         dimensionKey: '230628150729024',
-        dimensionTitle: '图片地址',
+        title: '图片地址',
         keepAspectRatio: true,
         width: 'auto',
         showSort: false,
@@ -421,7 +421,7 @@ export function createTable() {
       },
       {
         dimensionKey: '230628150729031',
-        dimensionTitle: '图片地址',
+        title: '图片地址',
         keepAspectRatio: true,
         width: 'auto',
         showSort: false,
@@ -541,7 +541,7 @@ export function createTable() {
     columns: [
       {
         dimensionKey: '230628150729019',
-        dimensionTitle: '地区',
+        title: '地区',
         headerStyle: {
           textStick: true,
           textAlign: 'right'
@@ -665,7 +665,7 @@ export function createTable() {
     indicators: [
       {
         indicatorKey: '220524114340013',
-        caption: '销售额',
+        title: '销售额',
         width: 'auto',
         format(record) {
           // if (rec.rowDimensions[0].value === '东北') return `${rec.dataValue}%`;
@@ -698,7 +698,7 @@ export function createTable() {
       },
       {
         indicatorKey: '220524114340014',
-        caption: '利润',
+        title: '利润',
         format(record) {
           // if (rec.rowDimensions[0].value === '东北') return `${rec.dataValue}%`;
           if (!record?.['220524114340014']) {

@@ -3,7 +3,7 @@ category: examples
 group: Component
 title: 下拉菜单
 cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/dropdown.png
-order: 8-2
+order: 8-3
 ---
 
 # 下拉菜单
@@ -84,7 +84,7 @@ order: 8-2
 const columns =[
     {
         "field": "Order ID",
-        "caption": "Order ID",
+        "title": "Order ID",
         "width": "auto",
         icon: 'order',
         dropDownMenu: [
@@ -108,37 +108,37 @@ const columns =[
     },
     {
         "field": "Customer ID",
-        "caption": "Customer ID",
+        "title": "Customer ID",
         "width": "auto"
     },
     {
         "field": "Product Name",
-        "caption": "Product Name",
+        "title": "Product Name",
         "width": "auto"
     },
     {
         "field": "Category",
-        "caption": "Category",
+        "title": "Category",
         "width": "auto"
     },
     {
         "field": "Sub-Category",
-        "caption": "Sub-Category",
+        "title": "Sub-Category",
         "width": "auto"
     },
     {
         "field": "Region",
-        "caption": "Region",
+        "title": "Region",
         "width": "auto"
     },
     {
         "field": "City",
-        "caption": "City",
+        "title": "City",
         "width": "auto"
     },
     {
         "field": "Order Date",
-        "caption": "Order Date",
+        "title": "Order Date",
         "width": "auto"
     },
 ];

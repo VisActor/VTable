@@ -14,7 +14,7 @@ export interface IImageHeaderDefine extends IBasicHeaderDefine {
 
 export interface IImageColumnBodyDefine extends IBasicColumnBodyDefine {
   style?: IImageStyleOption | ((styleArg: StylePropertyFunctionArg) => IImageStyleOption);
-  columnType: 'image' | 'video';
+  cellType: 'image' | 'video';
 
   /** 是否保持横纵比 默认false */
   keepAspectRatio?: boolean;

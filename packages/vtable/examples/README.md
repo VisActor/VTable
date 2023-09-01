@@ -14,9 +14,7 @@ npm i --global @microsoft/rush
 
 3. 启动demo
    
-在根目录下运行：
-`rush run -p @visactor/VTable -s demo`
-or 进入到项目中
+进入到项目中
 ```shell
 cd packages/vtable/
 rushx demo

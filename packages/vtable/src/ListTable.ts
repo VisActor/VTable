@@ -83,13 +83,6 @@ export class ListTable extends BaseTable implements ListTableAPI {
     return this.internalProps.sortState;
   }
   /**
-   * Sets the sort state.
-   * If `null` to set, the sort state is initialized.
-   */
-  set sortState(sortState: SortState | SortState[]) {
-    this.internalProps.sortState = sortState;
-  }
-  /**
    * Gets the define of the header.
    */
   get columns(): ColumnsDefine {
@@ -101,13 +94,20 @@ export class ListTable extends BaseTable implements ListTableAPI {
   set columns(columns: ColumnsDefine) {
     this.internalProps.columns = columns;
     this.options.columns = columns;
-    this.refreshHeader();
-    //需要异步等待其他事情都完成后再绘制
-    setTimeout(() => {
-      this.render();
-    }, 0);
   }
-
+  /**
+   * Sets the define of the column.
+   */
+  updateColumns(columns: ColumnsDefine) {
+    this.internalProps.columns = columns;
+    this.options.columns = columns;
+    this.refreshHeader();
+    this.scenegraph.clearCells();
+    this.headerStyleCache = new Map();
+    this.bodyStyleCache = new Map();
+    this.scenegraph.createSceneGraph();
+    this.render();
+  }
   /**
    *@deprecated 请使用columns
    */
@@ -155,8 +155,8 @@ export class ListTable extends BaseTable implements ListTableAPI {
   getCellValue(col: number, row: number): FieldData {
     const table = this;
     if (table.internalProps.layoutMap.isHeader(col, row)) {
-      const { caption } = table.internalProps.layoutMap.getHeader(col, row);
-      return typeof caption === 'function' ? caption() : caption;
+      const { title } = table.internalProps.layoutMap.getHeader(col, row);
+      return typeof title === 'function' ? title() : title;
     }
     const { field, fieldFormat } = table.internalProps.layoutMap.getBody(col, row);
     return table.getFieldData(fieldFormat || field, col, row);
@@ -165,8 +165,8 @@ export class ListTable extends BaseTable implements ListTableAPI {
   getCellOriginValue(col: number, row: number): FieldData {
     const table = this;
     if (table.internalProps.layoutMap.isHeader(col, row)) {
-      const { caption } = table.internalProps.layoutMap.getHeader(col, row);
-      return typeof caption === 'function' ? caption() : caption;
+      const { title } = table.internalProps.layoutMap.getHeader(col, row);
+      return typeof title === 'function' ? title() : title;
     }
     const { field } = table.internalProps.layoutMap.getBody(col, row);
     return table.getFieldData(field, col, row);
@@ -516,7 +516,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
     const result: DropDownMenuEventInfo = {
       field: this.getHeaderField(col, row),
       value: this.getCellValue(col, row),
-      cellType: this.getCellType(col, row)
+      cellLocation: this.getCellLocation(col, row)
     };
     return result;
   }
@@ -547,7 +547,12 @@ export class ListTable extends BaseTable implements ListTableAPI {
     }
     return undefined;
   }
-  updateSortState(sortState: SortState[] | SortState | null) {
+  /**
+   * 更新排序状态
+   * @param sortState 要设置的排序状态
+   * @param executeSort 是否执行内部排序逻辑，设置false将只更新图标状态
+   */
+  updateSortState(sortState: SortState[] | SortState | null, executeSort: boolean = true) {
     if (!sortState) {
       // 解除排序状态
       if (this.internalProps.sortState) {
@@ -573,7 +578,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
     } else {
       ({ order, field, fieldKey } = this.internalProps.sortState as SortState);
     }
-    if (field) {
+    if (field && executeSort) {
       const sortFunc = this._getSortFuncFromHeaderOption(this.internalProps.columns, field, fieldKey);
       let hd;
       if (fieldKey) {

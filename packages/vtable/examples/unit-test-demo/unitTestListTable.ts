@@ -1,6 +1,6 @@
 import * as VTable from '../../src';
 const ListTable = VTable.ListTable;
-const Table_CONTAINER_DOM_ID = 'vTable';
+const CONTAINER_ID = 'vTable';
 export function createTable() {
   const records = [
     {
@@ -865,7 +865,7 @@ export function createTable() {
   const columns = [
     {
       field: '订单 ID',
-      caption: '订单 ID',
+      title: '订单 ID',
       sort: true,
       width: 'auto',
       description: '这是订单的描述信息',
@@ -876,59 +876,59 @@ export function createTable() {
     },
     {
       field: '订单日期',
-      caption: '订单日期'
+      title: '订单日期'
     },
     {
       field: '发货日期',
-      caption: '发货日期'
+      title: '发货日期'
     },
     {
       field: '客户名称',
-      caption: '客户名称',
+      title: '客户名称',
       style: {
         padding: [10, 0, 10, 60]
       }
     },
     {
       field: '邮寄方式',
-      caption: '邮寄方式'
+      title: '邮寄方式'
     },
     {
       field: '省/自治区',
-      caption: '省/自治区'
+      title: '省/自治区'
     },
     {
       field: '产品名称',
-      caption: '产品名称'
+      title: '产品名称'
     },
     {
       field: '类别',
-      caption: '类别'
+      title: '类别'
     },
     {
       field: '子类别',
-      caption: '子类别'
+      title: '子类别'
     },
     {
       field: '销售额',
-      caption: '销售额'
+      title: '销售额'
     },
     {
       field: '数量',
-      caption: '数量'
+      title: '数量'
     },
     {
       field: '折扣',
-      caption: '折扣'
+      title: '折扣'
     },
     {
       field: '利润',
-      caption: '利润'
+      title: '利润'
     }
   ];
   //初始化表格
   const tableInstance = new ListTable({
-    container: document.getElementById(Table_CONTAINER_DOM_ID),
+    container: document.getElementById(CONTAINER_ID),
     columns,
     records,
     defaultColWidth: 150,

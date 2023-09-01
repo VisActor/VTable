@@ -201,7 +201,19 @@ export const menus = [
       },
       {
         path: 'component',
+        name: 'tooltip-custom-content'
+      },
+      {
+        path: 'component',
         name: 'dropdown'
+      },
+      {
+        path: 'component',
+        name: 'title'
+      },
+      {
+        path: 'component',
+        name: 'legend'
       }
     ]
   },

@@ -22,13 +22,9 @@ export async function createGroupForFirstScreen(
   proxy.setParamsForColumn();
 
   // compute colums width in first screen
-  proxy.table.internalProps._colWidthsMap.clear();
-  proxy.table._clearColRangeWidthsMap();
   computeColsWidth(proxy.table, 0, Math.min(proxy.firstScreenColLimit, proxy.table.colCount - 1));
 
   // compute rows height in first screen
-  proxy.table.internalProps._rowHeightsMap.clear();
-  proxy.table._clearRowRangeHeightsMap();
   computeRowsHeight(proxy.table, 0, Math.min(proxy.firstScreenRowLimit, proxy.table.rowCount - 1));
 
   if (proxy.table.rightFrozenColCount > 0 && proxy.table.colCount - 1 > proxy.firstScreenColLimit) {

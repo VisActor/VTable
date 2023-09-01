@@ -20,7 +20,7 @@ export interface ILinkHeaderIndicator extends IBasicHeaderIndicator {
 }
 
 export interface ILinkColumnIndicator extends IBasicColumnIndicator {
-  columnType: 'link'; // body指标值显示类型
+  cellType: 'link'; // body指标值显示类型
   style?: ITextStyleOption | ((styleArg: StylePropertyFunctionArg) => ITextStyleOption); // body部分指标值显示样式
 
   // 目前autoWrapText和lineClamp还在style中定义

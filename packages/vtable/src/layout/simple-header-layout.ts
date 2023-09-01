@@ -1,7 +1,7 @@
 /* eslint-disable sort-imports */
 import type { ListTable } from '../ListTable';
 import { DefaultSparklineSpec } from '../tools/global';
-import type { CellAddress, CellRange, CellType, IListTableCellHeaderPaths, LayoutObjectId } from '../ts-types';
+import type { CellAddress, CellRange, CellLocation, IListTableCellHeaderPaths, LayoutObjectId } from '../ts-types';
 import type { ColumnsDefine, TextColumnDefine } from '../ts-types/list-table/define';
 import type {
   ColumnData,
@@ -72,7 +72,7 @@ export class SimpleHeaderLayoutMap implements LayoutMapAPI {
     }
     return false;
   }
-  getCellType(col: number, row: number): CellType {
+  getCellLocation(col: number, row: number): CellLocation {
     if (this.isHeader(col, row)) {
       if (this.transpose) {
         return 'rowHeader';
@@ -237,22 +237,33 @@ export class SimpleHeaderLayoutMap implements LayoutMapAPI {
       let width: string | number = 0;
       let maxWidth: string | number;
       let minWidth: string | number;
-      let isAuto;
-      this.columnObjects.forEach((obj, index) => {
-        if (typeof obj.width === 'number') {
-          width = Math.max(obj.width, <number>width);
-        } else if (obj.width === 'auto') {
-          isAuto = true;
+      if (col >= this.rowHeaderLevelCount) {
+        let isAuto;
+        this.columnObjects.forEach((obj, index) => {
+          if (typeof obj.width === 'number') {
+            width = Math.max(obj.width, <number>width);
+          } else if (obj.width === 'auto') {
+            isAuto = true;
+          }
+          if (typeof obj.minWidth === 'number') {
+            minWidth = Math.max(obj.minWidth, <number>minWidth);
+          }
+          if (typeof obj.maxWidth === 'number') {
+            maxWidth = Math.max(obj.maxWidth, <number>maxWidth);
+          }
+        });
+        width = width > 0 ? width : isAuto ? 'auto' : undefined;
+        return { width, minWidth, maxWidth };
+      }
+      if (this.isRowHeader(col, 0)) {
+        const defaultWidth = Array.isArray(this._table.defaultHeaderColWidth)
+          ? this._table.defaultHeaderColWidth[col] ?? this._table.defaultColWidth
+          : this._table.defaultHeaderColWidth;
+        if (defaultWidth === 'auto') {
+          return { width: 'auto' };
         }
-        if (typeof obj.minWidth === 'number') {
-          minWidth = Math.max(obj.minWidth, <number>minWidth);
-        }
-        if (typeof obj.maxWidth === 'number') {
-          maxWidth = Math.max(obj.maxWidth, <number>maxWidth);
-        }
-      });
-      width = width > 0 ? width : isAuto ? 'auto' : undefined;
-      return { width, minWidth, maxWidth };
+        return { width: defaultWidth };
+      }
     }
     return this._columns[col];
   }
@@ -497,11 +508,10 @@ export class SimpleHeaderLayoutMap implements LayoutMapAPI {
     column.forEach((hd: ColumnDefine) => {
       const col = this._columns.length;
       const id = seqId++;
-      const { captionIcon } = hd;
       const cell: HeaderData = {
         id,
-        caption: hd.caption,
-        captionIcon,
+        title: hd.title ?? (hd as any).caption,
+        // captionIcon,
         headerIcon: hd.headerIcon,
         field: (hd as ColumnDefine).field,
         fieldKey: (hd as ColumnDefine)?.fieldKey,
@@ -535,7 +545,7 @@ export class SimpleHeaderLayoutMap implements LayoutMapAPI {
           minWidth: colDef.minWidth,
           maxWidth: colDef.maxWidth,
           icon: colDef.icon,
-          columnType: colDef.columnType ?? 'text',
+          cellType: colDef.cellType ?? (colDef as any).columnType ?? 'text',
           chartModule: 'chartModule' in colDef ? colDef.chartModule : null, // todo: 放到对应的column对象中
           chartSpec: 'chartSpec' in colDef ? colDef.chartSpec : null, // todo: 放到对应的column对象中
           sparklineSpec: 'sparklineSpec' in colDef ? colDef.sparklineSpec : DefaultSparklineSpec, // todo: 放到对应的column对象中

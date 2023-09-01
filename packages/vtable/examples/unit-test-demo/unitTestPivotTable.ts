@@ -1,6 +1,6 @@
 import * as VTable from '../../src';
 const PivotTable = VTable.PivotTable;
-const Table_CONTAINER_DOM_ID = 'vTable';
+const CONTAINER_ID = 'vTable';
 export function createTable(el: any, v: any) {
   const rowTree = [
     {
@@ -377,7 +377,7 @@ export function createTable(el: any, v: any) {
   const rows = [
     {
       dimensionKey: '地区',
-      dimensionTitle: '地区',
+      title: '地区',
       headerStyle: {
         textStick: true,
         color: 'red',
@@ -388,7 +388,7 @@ export function createTable(el: any, v: any) {
     },
     {
       dimensionKey: '省/自治区',
-      dimensionTitle: '省/自治区',
+      title: '省/自治区',
       width: 'auto',
       showSort: false,
       headerStyle: {
@@ -408,7 +408,7 @@ export function createTable(el: any, v: any) {
   const columns = [
     {
       dimensionKey: '子类别',
-      dimensionTitle: '子类别',
+      title: '子类别',
       headerStyle: {
         textStick: true
       },
@@ -418,7 +418,7 @@ export function createTable(el: any, v: any) {
   const indicators = [
     {
       indicatorKey: '利润',
-      caption: '利润',
+      title: '利润',
       width: 'auto',
       style: {
         borderColor: 'red',
@@ -432,13 +432,13 @@ export function createTable(el: any, v: any) {
     },
     {
       indicatorKey: '销售额',
-      caption: '销售额',
+      title: '销售额',
       width: 'auto'
     }
   ];
   //初始化表格
   const tableInstance = new PivotTable({
-    container: document.getElementById(Table_CONTAINER_DOM_ID),
+    container: document.getElementById(CONTAINER_ID),
     rowTree,
     columnTree,
     rows,
