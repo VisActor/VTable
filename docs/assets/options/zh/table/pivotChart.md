@@ -142,9 +142,13 @@ export interface IIndicatorHeaderNode {
 - `indicatorGroup`: 调整同父级维度下所有指标列的宽度
 - `all`： 所有列宽都被调整
 
-## renderChartAsync(boolean) = false
+## renderChartAsync(boolean)
 
-是否开启异步渲染图表
+是否开启图表异步渲染
+
+## renderChartAsyncBatchCount(number)
+
+开启图表异步渲染，每批次渐进渲染图表个数，建议5-10个，具体可以视整体效果调整。
 
 {{ use: common-option-secondary(
       prefix = '#',

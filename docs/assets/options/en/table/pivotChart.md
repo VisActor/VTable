@@ -142,9 +142,11 @@ Adjust the effective range of column width, configurable items:
 - `indicatorGroup`: Adjust the width of all indicator columns under the same parent dimension
 - `all`: All column widths are adjusted
 
-## renderChartAsync(boolean) = false
-
+## renderChartAsync(boolean)
 Whether to enable asynchronous rendering of charts
+
+## renderChartAsyncBatchCount(number)
+Turn on asynchronous rendering of charts. The number of progressively rendered charts in each batch is recommended to be 5-10. The details can be adjusted depending on the overall effect.
 
 {{ use: common-option-secondary(
       prefix = '#',

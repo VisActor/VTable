@@ -1,17 +1,71 @@
-{{ target: api-vtable }}
+{{ target: table-methods }}
 
 # Methods
 
 ## updateOption(Function)
 
-Updating Form Configuration Items
+Update table configuration items, which will be automatically redrawn after being called.
 
 ```ts
   /**
-   * :: Update options Currently only full updates are supported
+   *Update options currently only support full updates
    * @param options
    */
   updateOption(options: BaseTableConstructorOptions) => void
+```
+If you need to update a single configuration item, please refer to the other `update**` interfaces below
+
+## updateTheme(Function)
+
+Update the table theme and it will be automatically redrawn after calling it.
+
+```ts
+  /**
+   * Update theme
+   * @param theme
+   */
+  updateTheme(theme: ITableThemeDefine) => void
+```
+use:
+```
+tableInstance.updateTheme(newTheme)
+```
+Corresponding attribute update interface（https://visactor.io/vtable/guide/basic_function/update_option）:
+```
+// will not automatically redraw after calling
+tableInstance.theme = newTheme;
+```
+## updateColumns(Function)
+
+Update the configuration information of the columns field of the table, and it will be automatically redrawn after calling
+
+```ts
+  /**
+   * Update the columns field configuration information of the table
+   * @param columns
+   */
+  updateColumns(columns: ColumnsDefine) => void
+```
+use:
+```
+tableInstance. updateColumns(newColumns)
+```
+Corresponding attribute update interface（https://visactor.io/vtable/guide/basic_function/update_option）:
+```
+// will not automatically redraw after calling
+tableInstance.columns = newColumns;
+```
+
+## renderWithRecreateCells(Function)
+Re-collect the cell objects and re-render the table. Use scenarios such as:
+
+Refresh after batch updating multiple configuration items:
+```
+tableInstance.theme = newThemeObj;
+tableInstance.widthMode = 'autoWidth';
+tableInstance.heightMode = 'autoHeight;
+tableInstance.autoWrapText = true;
+tableInstance.renderWithRecreateCells();
 ```
 
 ## release(Function)

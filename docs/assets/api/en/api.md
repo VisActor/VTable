@@ -1,6 +1,6 @@
 {{target: api}}
 
-{{ import: api-vtable }}
+{{ import: table-methods }}
 
 {{import: table-events}}
 

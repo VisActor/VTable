@@ -307,6 +307,13 @@
       },
       "children": [
         {
+          "path": "update_option",
+          "title": {
+            "zh": "更新配置",
+            "en": "update option"
+          }
+        },
+        {
           "path": "sort",
           "title": {
             "zh": "排序",

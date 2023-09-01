@@ -1,10 +1,10 @@
-{{ target: api-vtable }}
+{{ target: table-methods }}
 
 # Methods
 
 ## updateOption(Function)
 
-更新表格配置项
+更新表格配置项，调用后会自动重绘
 
 ```ts
   /**
@@ -12,6 +12,60 @@
    * @param options
    */
   updateOption(options: BaseTableConstructorOptions) => void
+```
+如果需要更新单个配置项，请参考下面其他`update**`接口
+
+## updateTheme(Function)
+
+更新表格主题，调用后会自动重绘
+
+```ts
+  /**
+   * 更新主题
+   * @param theme
+   */
+  updateTheme(theme: ITableThemeDefine) => void
+```
+使用：
+```
+tableInstance.updateTheme(newTheme)
+```
+对应属性更新接口（可参考教程：https://visactor.io/vtable/guide/basic_function/update_option）:
+```
+// 调用后不会自动重绘
+tableInstance.theme = newTheme;
+```
+## updateColumns(Function)
+
+更新表格的columns字段配置信息，调用后会自动重绘。
+
+```ts
+  /**
+   * 更新表格的columns字段配置信息
+   * @param columns
+   */
+  updateColumns(columns: ColumnsDefine) => void
+```
+使用：
+```
+tableInstance.updateColumns(newColumns)
+```
+对应属性更新接口（可参考教程：https://visactor.io/vtable/guide/basic_function/update_option）:
+```
+// 调用后不会自动重绘
+tableInstance.columns = newColumns;
+```
+
+## renderWithRecreateCells(Function)
+重新单元格对象集合并重新渲染表格，使用场景如：
+
+批量更新多个配置项后的刷新：
+```
+tableInstance.theme = newThemeObj;
+tableInstance.widthMode = 'autoWidth';
+tableInstance.heightMode = 'autoHeight;
+tableInstance.autoWrapText = true;
+tableInstance.renderWithRecreateCells();
 ```
 
 ## release(Function)
