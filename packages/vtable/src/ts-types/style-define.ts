@@ -14,7 +14,7 @@ export interface StylePropertyFunctionArg {
   /**有format的话 格式化后或者计算后的值 */
   value: string;
   /**原始值 */
-  dataValue: string;
+  dataValue: string | number;
   /** progressbar类型特有，表示当前数值在总体数据范围的比例 */
   percentile?: number;
   /** 单元格的表头路径信息 */
