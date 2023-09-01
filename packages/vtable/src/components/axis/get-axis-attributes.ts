@@ -109,6 +109,7 @@ export function getAxisAttributes(option: ICellAxisOption) {
   }
 
   return {
+    orient: spec.orient,
     select: spec.select,
     hover: spec.hover,
     line: transformAxisLineStyle(spec.domainLine),
@@ -130,7 +131,8 @@ export function getAxisAttributes(option: ICellAxisOption) {
             return spec.label.formatMethod(datum.rawValue, datum);
           }
         : null,
-      state: transformStateStyle(spec.label.state)
+      state: transformStateStyle(spec.label.state),
+      containerAlign: spec.label.containerAlign
     },
     tick: {
       visible: spec.tick.visible,

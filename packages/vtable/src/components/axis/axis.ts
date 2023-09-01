@@ -1,4 +1,4 @@
-import { isNil, isValidNumber, merge } from '@visactor/vutils';
+import { degreeToRadian, isNil, isValidNumber, merge } from '@visactor/vutils';
 import type { BaseTableAPI } from '../../ts-types/base-table';
 import type { ICellAxisOption } from '../../ts-types/component/axis';
 import { LineAxis, type LineAxisAttributes } from '@visactor/vrender-components';
@@ -236,16 +236,19 @@ export class CartesianAxis {
 
   private _getTitleLimit(isX: boolean) {
     if (this.option.title.visible && isNil(this.option.title.style?.maxLineWidth)) {
-      const angle = this.option.title.style?.angle || 0;
+      let angle = this.option.title.style?.angle || 0;
+      if (this.option.title?.autoRotate && isNil(this.option.title.angle)) {
+        angle = this.option.orient === 'left' ? -90 : 90;
+      }
       if (isX) {
         const width = this.getLayoutRect().width;
-        const cosValue = Math.abs(Math.cos(angle));
+        const cosValue = Math.abs(Math.cos(degreeToRadian(angle)));
         // VRender 接收到的limit是考虑角度计算后的宽度
         // TODO：还需要考虑angle后，高度是否太高，综合计算一个limit，比如高度不能超过图表整体高度的1/4
         return cosValue < 1e-6 ? Infinity : width / cosValue;
       }
       const height = this.getLayoutRect().height;
-      const sinValue = Math.abs(Math.sin(angle));
+      const sinValue = Math.abs(Math.sin(degreeToRadian(angle)));
 
       // TODO：还需要考虑angle后，宽度是否太宽，综合计算一个limit，比如宽度度不能超过图表整体宽度的1/4
       return sinValue < 1e-6 ? Infinity : height / sinValue;
