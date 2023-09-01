@@ -1,4 +1,5 @@
 /* eslint-disable sort-imports */
+import 'core-js/proposals/reflect-metadata'; // wait for vrender fix
 import * as TYPES from './ts-types';
 import * as core from './core';
 import * as data from './data';

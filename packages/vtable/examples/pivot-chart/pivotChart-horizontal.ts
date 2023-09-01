@@ -89,9 +89,6 @@ export function createTable() {
       chartModule: 'vchart',
       chartSpec: {
         type: 'common',
-        data: {
-          id: 'data'
-        },
         direction: 'horizontal',
         series: [
           {
@@ -111,6 +108,9 @@ export function createTable() {
                   opacity: 0.2
                 }
               }
+            },
+            data: {
+              id: 'data1'
             }
           },
           {
@@ -139,6 +139,9 @@ export function createTable() {
                   fill: '#ddd'
                 }
               }
+            },
+            data: {
+              id: 'data2'
             }
           }
         ],

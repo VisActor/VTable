@@ -53,14 +53,14 @@ export function renderChart(chart: Chart) {
       const dataIdAndField = dataId[dataIdStr];
       dataBatch.push({
         id: dataIdStr,
-        data: dataIdAndField
+        values: dataIdAndField
           ? data?.filter((item: any) => {
               return item.hasOwnProperty(dataIdAndField);
             }) ?? []
           : data ?? []
       });
-      // 判断是否有updateDataInBatchesSync 木有的话 还是循环调用updateDataSync
-      if (!chartInstance.updateDataInBatchesSync) {
+      // 判断是否有updateFullDataSync 木有的话 还是循环调用updateDataSync
+      if (!chartInstance.updateFullDataSync) {
         chartInstance.updateDataSync(
           dataIdStr,
           dataIdAndField
@@ -71,7 +71,7 @@ export function renderChart(chart: Chart) {
         );
       }
     }
-    chartInstance.updateDataInBatchesSync?.(dataBatch);
+    chartInstance.updateFullDataSync?.(dataBatch);
   }
   const sg = chartInstance.getStage();
   chart.cacheCanvas = sg.toCanvas(); // 截图空白问题 因为开启了动画 首屏截图是无数据的TODO
