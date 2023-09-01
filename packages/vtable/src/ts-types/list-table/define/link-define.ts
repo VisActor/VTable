@@ -22,7 +22,7 @@ export interface ILinkHeaderDefine extends IBasicHeaderDefine {
 
 export interface ILinkColumnBodyDefine extends IBasicColumnBodyDefine {
   style?: ITextStyleOption | ((styleArg: StylePropertyFunctionArg) => ITextStyleOption);
-  columnType: 'link';
+  cellType: 'link';
 
   // 目前autoWrapText和lineClamp还在style中定义
   // // 继承MultilineText

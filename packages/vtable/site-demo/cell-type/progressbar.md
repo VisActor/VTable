@@ -15,7 +15,7 @@ link: '/guide/column_type/progressbar'
 
 headerType: 'text' | 'link' | 'image' | 'video';
 
-columnType:
+cellType:
     'text'
     | 'link'
     | 'image'
@@ -72,7 +72,7 @@ const columns = [
  {
        field: 'YoY',
     title: 'count Year-over-Year',
-    columnType: 'progressbar',
+    cellType: 'progressbar',
      width:200,
       fieldFormat(rec){
         if(typeof rec['YoY'] === 'number')
@@ -83,7 +83,7 @@ const columns = [
   {
        field: 'YoY',
     title: 'count Year-over-Year',
-    columnType: 'progressbar',
+    cellType: 'progressbar',
      width:200,
       style: {
         barHeight: '100%',
@@ -99,7 +99,7 @@ const columns = [
  {
     field: 'YoY',
     title: 'count Year-over-Year',
-    columnType: 'progressbar',
+    cellType: 'progressbar',
     width:200,
     fieldFormat(){
       return '';
@@ -119,7 +119,7 @@ const columns = [
   {
     field: 'YoY',
     title: 'count Year-over-Year',
-    columnType: 'progressbar',
+    cellType: 'progressbar',
     width:200,
     fieldFormat(){
       return '';
@@ -135,7 +135,7 @@ const columns = [
     {
     field: 'YoY',
     title: 'count Year-over-Year',
-    columnType: 'progressbar',
+    cellType: 'progressbar',
     width:200,
     barType:'negative_no_axis',
     min:-20,
@@ -150,7 +150,7 @@ const columns = [
   {
     field: 'YoY',
     title: 'count Year-over-Year',
-    columnType: 'progressbar',
+    cellType: 'progressbar',
     width:200,
     barType:'negative_no_axis',
     min:-20,

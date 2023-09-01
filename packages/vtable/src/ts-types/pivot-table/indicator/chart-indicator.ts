@@ -4,7 +4,7 @@ import type { StylePropertyFunctionArg } from '../../style-define';
 import type { IBasicColumnIndicator } from './basic-indicator';
 
 export interface IChartColumnIndicator extends IBasicColumnIndicator {
-  columnType: 'chart'; // body指标值显示类型
+  cellType: 'chart'; // body指标值显示类型
   style?: IStyleOption | ((styleArg: StylePropertyFunctionArg) => IStyleOption); // body部分指标值显示样式
 
   chartModule?: string; // 如果是绘制图表库组件的图表类型 需要将注入的组件名称 写到chartType

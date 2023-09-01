@@ -1,18 +1,18 @@
 import type { IRect } from '@visactor/vrender';
 import type { Scenegraph } from '../scenegraph';
-import type { CellType } from '../../ts-types';
+import type { CellLocation } from '../../ts-types';
 import { getCellMergeInfo } from '../utils/get-cell-merge';
 
 export function updateAllSelectComponent(scene: Scenegraph) {
-  scene.selectingRangeComponents.forEach((selectComp: { rect: IRect; role: CellType }, key: string) => {
+  scene.selectingRangeComponents.forEach((selectComp: { rect: IRect; role: CellLocation }, key: string) => {
     updateComponent(selectComp, key, scene);
   });
-  scene.selectedRangeComponents.forEach((selectComp: { rect: IRect; role: CellType }, key: string) => {
+  scene.selectedRangeComponents.forEach((selectComp: { rect: IRect; role: CellLocation }, key: string) => {
     updateComponent(selectComp, key, scene);
   });
 }
 
-function updateComponent(selectComp: { rect: IRect; role: CellType }, key: string, scene: Scenegraph) {
+function updateComponent(selectComp: { rect: IRect; role: CellLocation }, key: string, scene: Scenegraph) {
   const [startColStr, startRowStr, endColStr, endRowStr] = key.split('-');
   const startCol = parseInt(startColStr, 10);
   const startRow = parseInt(startRowStr, 10);
@@ -183,7 +183,7 @@ export function updateCellSelectBorder(
   };
   extendSelectRange();
   //#endregion
-  scene.selectingRangeComponents.forEach((selectComp: { rect: IRect; role: CellType }, key: string) => {
+  scene.selectingRangeComponents.forEach((selectComp: { rect: IRect; role: CellLocation }, key: string) => {
     selectComp.rect.delete();
   });
   scene.selectingRangeComponents = new Map();

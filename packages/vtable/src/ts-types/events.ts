@@ -1,4 +1,4 @@
-import type { CellAddress, CellRange, CellType, FieldDef } from './table-engine';
+import type { CellAddress, CellRange, CellLocation, FieldDef } from './table-engine';
 import type { DropDownMenuEventArgs, MenuListItem, PivotInfo } from './menu';
 
 import type { AnyFunction, IDimensionInfo, RectProps, SortOrder } from './common';
@@ -122,7 +122,7 @@ export interface TableEventHandlersEventArgumentMap {
     row: number;
     order: SortOrder;
     dimensionInfo: IDimensionInfo[];
-    cellType: CellType;
+    cellLocation: CellLocation;
   };
   tree_hierarchy_state_change: {
     col: number;

@@ -4,7 +4,7 @@ group: Cell Type
 title: 单元格内容类型
 cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/multi-type.png
 order: 2-1
-link: '/guide/column_type/columnType'
+link: '/guide/column_type/cellType'
 ---
 
 # 单元格内容类型
@@ -15,7 +15,7 @@ link: '/guide/column_type/columnType'
 
 headerType: 'text' | 'link' | 'image' | 'video';
 
-columnType:
+cellType:
     'text'
     | 'link'
     | 'image'
@@ -99,7 +99,7 @@ const columns = [
   {
     field: 'name',
     title: 'name',
-    columnType: 'link',
+    cellType: 'link',
     templateLink: 'https://www.google.com.hk/search?q={name}',
     linkJump: true,
     width:100
@@ -107,27 +107,27 @@ const columns = [
   {
     field: 'introduction',
     title: 'introduction',
-    columnType: 'text',
+    cellType: 'text',
     width:200
   },
   {
     field: 'image',
     title: 'bird image',
-    columnType: 'image',
+    cellType: 'image',
     width:150,
     // imageSizing : 'keep-aspect-ratio',
   },
   {
     field: 'vedio',
     title: 'bird video',
-    columnType: 'video',
+    cellType: 'video',
     width:150,
     // imageSizing : 'keep-aspect-ratio',
   },
   {
     field: 'YoY',
     title: 'count Year-over-Year',
-    columnType: 'progressbar',
+    cellType: 'progressbar',
     width:200,
     fieldFormat(){
       return '';
@@ -174,7 +174,7 @@ const columns = [
   {
     field: 'trend',
     title: 'bird count',
-    columnType: 'sparkline',
+    cellType: 'sparkline',
     width:300,
     sparklineSpec: {
         type: 'line',

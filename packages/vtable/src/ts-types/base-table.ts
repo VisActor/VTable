@@ -22,7 +22,7 @@ import type { EventManeger } from '../event/event';
 import type {
   CellAddress,
   CellRange,
-  CellType,
+  CellLocation,
   ColumnTypeOption,
   DataSourceAPI,
   FieldData,
@@ -505,7 +505,7 @@ export interface BaseTableAPI {
   getFieldData: (field: FieldDef | FieldFormat | undefined, col: number, row: number) => FieldData;
   _hasField: (field: FieldDef, col: number, row: number) => boolean;
   getCellHeaderPaths: (col: number, row: number) => ICellHeaderPaths;
-  getCellType: (col: number, row: number) => CellType;
+  getCellLocation: (col: number, row: number) => CellLocation;
   // isHitIcon(col: number, row: number, x: number, y: number, iconType: IconFuncTypeEnum): boolean;
   getCellIcons: (col: number, row: number) => ColumnIconOption[];
 

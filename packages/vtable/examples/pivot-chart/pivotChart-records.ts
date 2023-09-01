@@ -92,7 +92,7 @@ export function createTable() {
       indicatorKey: 'Quantity',
       title: '数量',
       width: 'auto',
-      columnType: 'chart',
+      cellType: 'chart',
       chartModule: 'vchart',
       headerStyle: {
         color: 'red',
@@ -132,7 +132,7 @@ export function createTable() {
     {
       indicatorKey: 'Sales&Profit',
       title: '销售额 & 利润',
-      columnType: 'chart',
+      cellType: 'chart',
       chartModule: 'vchart',
       headerStyle: {
         color: 'red',

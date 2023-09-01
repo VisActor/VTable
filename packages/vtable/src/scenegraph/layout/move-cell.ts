@@ -14,8 +14,8 @@ export function moveHeaderPosition(
   const scene = table.scenegraph;
 
   // 判断方向
-  const cellType = table.getCellType(colTarget, rowTarget);
-  const direction = cellType === 'columnHeader' ? 'column' : cellType === 'rowHeader' ? 'row' : undefined;
+  const cellLocation = table.getCellLocation(colTarget, rowTarget);
+  const direction = cellLocation === 'columnHeader' ? 'column' : cellLocation === 'rowHeader' ? 'row' : undefined;
 
   let sourceColStart = 0;
   let sourceRowStart = 0;

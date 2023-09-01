@@ -134,8 +134,8 @@ describe('listTable init test', () => {
     expect(listTable.getCellValue(3, 5)).toEqual('万兰');
   });
 
-  test('listTable API getCellType', () => {
-    expect(listTable.getCellType(5, 3)).toEqual('body');
-    expect(listTable.getCellType(5, 0)).toEqual('columnHeader');
+  test('listTable API getCellLocation', () => {
+    expect(listTable.getCellLocation(5, 3)).toEqual('body');
+    expect(listTable.getCellLocation(5, 0)).toEqual('columnHeader');
   });
 });

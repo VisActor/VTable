@@ -134,8 +134,8 @@ export function updateCellLayout(
 
       let customRender;
       let customLayout;
-      const cellType = scene.table.getCellType(cellGroup.col, cellGroup.row);
-      if (cellType !== 'body') {
+      const cellLocation = scene.table.getCellLocation(cellGroup.col, cellGroup.row);
+      if (cellLocation !== 'body') {
         const define = scene.table.getHeaderDefine(cellGroup.col, cellGroup.row);
         customRender = define?.headerCustomRender;
         customLayout = define?.headerCustomLayout;

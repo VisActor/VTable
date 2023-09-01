@@ -181,7 +181,7 @@ export function createTable() {
         indicatorKey: '10002',
         caption: '',
         width: 'auto',
-        columnType: 'chart',
+        cellType: 'chart',
         chartModule: 'vchart',
         style: {
           padding: 1
