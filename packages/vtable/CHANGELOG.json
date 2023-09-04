@@ -2,6 +2,42 @@
   "name": "@visactor/vtable",
   "entries": [
     {
+      "version": "0.10.1",
+      "tag": "@visactor/vtable_v0.10.1",
+      "date": "Fri, 01 Sep 2023 02:36:27 GMT",
+      "comments": {
+        "patch": [
+          {
+            "comment": "refactor: wrap text should suit English word #183\n\n"
+          },
+          {
+            "comment": "feat: sort support don't execute inner sort logic #230\n\n"
+          },
+          {
+            "comment": "refactor: optimize selected interaction when click header cell then use shift keyboard #233\n\n"
+          },
+          {
+            "comment": "fix: when set max Width value for column to resize column width occur error #241\n\n"
+          },
+          {
+            "comment": "feat: add api for updateAutoWrapText widthMode heightMode #240\n\n"
+          },
+          {
+            "comment": "refactor: optimize performance when window resize Compute RowHeight ColWidth  #249\n\n"
+          },
+          {
+            "comment": "feat: add analysis for pivot table\n\n"
+          },
+          {
+            "comment": "fix: pivotTable horizontal scroll bar is abnormal when the display area is small #269\n\n"
+          },
+          {
+            "comment": "feat: add columnResizeType config"
+          }
+        ]
+      }
+    },
+    {
       "version": "0.10.0",
       "tag": "@visactor/vtable_v0.10.0",
       "date": "Wed, 16 Aug 2023 04:16:18 GMT",
