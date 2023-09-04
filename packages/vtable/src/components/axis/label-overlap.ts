@@ -20,7 +20,7 @@ export function doOverlap(axisComponent: LineAxis, axis: CartesianAxis) {
 function labelFlush(axisLabels: IText[], axis: CartesianAxis) {
   const { width, height } = axis.getLayoutRect();
   const isX = isXAxis(axis.orient);
-  const isInverse = axis.option.inverse === true;
+  const isInverse = (axis.option as any).inverse === true;
   const first = axisLabels[0];
   const last = peek(axisLabels);
 
