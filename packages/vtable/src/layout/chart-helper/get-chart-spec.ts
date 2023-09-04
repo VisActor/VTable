@@ -30,6 +30,7 @@ export function getChartSpec(col: number, row: number, layout: PivotLayoutMap): 
     chartSpec = cloneDeep(chartSpec);
     chartSpec.axes = layout.getChartAxes(col, row);
     chartSpec.padding = 0;
+    chartSpec.dataZoom = []; // Do not support datazoom temply
     return chartSpec;
   }
   return null;
@@ -71,6 +72,7 @@ export function getChartAxes(col: number, row: number, layout: PivotLayoutMap): 
             // visible: true,
             label: { visible: false },
             title: { visible: false },
+            domainLine: { visible: false },
             seriesIndex: index,
             height: -1,
 
@@ -148,6 +150,7 @@ export function getChartAxes(col: number, row: number, layout: PivotLayoutMap): 
             // visible: true,
             label: { visible: false },
             title: { visible: false },
+            domainLine: { visible: false },
             seriesIndex: index,
             width: -1,
             // grid: index === 0 ? undefined : { visible: false }

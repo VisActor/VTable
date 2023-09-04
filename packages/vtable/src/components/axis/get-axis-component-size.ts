@@ -22,13 +22,15 @@ export function computeAxisComponentWidth(config: ICellAxisOption, table: BaseTa
         if (attribute.label.formatMethod) {
           text = attribute.label.formatMethod(text);
         }
+        const { width, height } = table.measureText(text, {
+          fontSize: attribute.label?.style?.fontSize,
+          fontWeight: attribute.label?.style?.fontWeight,
+          fontFamily: attribute.label?.style?.fontFamily
+        });
+        const widthLimit = attribute.label?.style?.maxLineWidth || Infinity;
         labelWidth = Math.max(
           labelWidth,
-          table.measureText(text, {
-            fontSize: attribute.label?.style?.fontSize,
-            fontWeight: attribute.label?.style?.fontWeight,
-            fontFamily: attribute.label?.style?.fontFamily
-          }).width
+          getSizeAfterResize(Math.min(width, widthLimit), height, attribute.label?.style?.angle).width
         );
       });
     } else {
@@ -43,13 +45,15 @@ export function computeAxisComponentWidth(config: ICellAxisOption, table: BaseTa
         if (attribute.label.formatMethod) {
           text = attribute.label.formatMethod(text);
         }
+        const { width, height } = table.measureText(text, {
+          fontSize: attribute.label?.style?.fontSize,
+          fontWeight: attribute.label?.style?.fontWeight,
+          fontFamily: attribute.label?.style?.fontFamily
+        });
+        const widthLimit = attribute.label?.style?.maxLineWidth || Infinity;
         labelWidth = Math.max(
           labelWidth,
-          table.measureText(text, {
-            fontSize: attribute.label?.style?.fontSize,
-            fontWeight: attribute.label?.style?.fontWeight,
-            fontFamily: attribute.label?.style?.fontFamily
-          }).width + 2
+          getSizeAfterResize(Math.min(width, widthLimit), height, attribute.label?.style?.angle).width + 2
         );
       });
     }
@@ -59,20 +63,17 @@ export function computeAxisComponentWidth(config: ICellAxisOption, table: BaseTa
   // title
   let titleWidth = 0;
   if (attribute.title.visible && attribute.title.text) {
+    const { width, height } = table.measureText(attribute.title.text, {
+      fontSize: attribute.title?.style?.fontSize,
+      fontWeight: attribute.title?.style?.fontWeight,
+      fontFamily: attribute.title?.style?.fontFamily
+    });
+    const widthLimit = attribute.label?.style?.maxLineWidth || Infinity;
+    const size = getSizeAfterResize(Math.min(width, widthLimit), height, attribute.title?.style?.angle);
     if ((config.orient === 'left' || config.orient === 'right') && attribute.title.autoRotate) {
-      titleWidth =
-        table.measureText(attribute.title.text as string, {
-          fontSize: attribute.title?.style?.fontSize,
-          fontWeight: attribute.title?.style?.fontWeight,
-          fontFamily: attribute.title?.style?.fontFamily
-        }).height + 2;
+      titleWidth = size.height + 2;
     } else {
-      titleWidth =
-        table.measureText(attribute.title.text as string, {
-          fontSize: attribute.title?.style?.fontSize,
-          fontWeight: attribute.title?.style?.fontWeight,
-          fontFamily: attribute.title?.style?.fontFamily
-        }).width + 2;
+      titleWidth = size.width + 2;
     }
     titleWidth += attribute.title.space ?? 4;
   }
@@ -99,12 +100,15 @@ export function computeAxisComponentHeight(config: ICellAxisOption, table: BaseT
         if (attribute.label.formatMethod) {
           text = attribute.label.formatMethod(text);
         }
+        const { width, height } = table.measureText(text, {
+          fontSize: attribute.label?.style?.fontSize,
+          fontWeight: attribute.label?.style?.fontWeight,
+          fontFamily: attribute.label?.style?.fontFamily
+        });
+        const widthLimit = attribute.label?.style?.maxLineWidth || Infinity;
         labelHeight = Math.max(
           labelHeight,
-          table.measureText(text, {
-            fontSize: attribute.label?.style?.fontSize,
-            fontFamily: attribute.label?.style?.fontFamily
-          }).height
+          getSizeAfterResize(Math.min(width, widthLimit), height, attribute.label?.style?.angle).height
         );
       });
     } else {
@@ -119,12 +123,15 @@ export function computeAxisComponentHeight(config: ICellAxisOption, table: BaseT
         if (attribute.label.formatMethod) {
           text = attribute.label.formatMethod(text);
         }
+        const { width, height } = table.measureText(text, {
+          fontSize: attribute.label?.style?.fontSize,
+          fontWeight: attribute.label?.style?.fontWeight,
+          fontFamily: attribute.label?.style?.fontFamily
+        });
+        const widthLimit = attribute.label?.style?.maxLineWidth || Infinity;
         labelHeight = Math.max(
           labelHeight,
-          table.measureText(text, {
-            fontSize: attribute.label?.style?.fontSize,
-            fontFamily: attribute.label?.style?.fontFamily
-          }).height + 2
+          getSizeAfterResize(Math.min(width, widthLimit), height, attribute.label?.style?.angle).height + 2
         );
       });
     }
@@ -134,18 +141,17 @@ export function computeAxisComponentHeight(config: ICellAxisOption, table: BaseT
   // title
   let titleHeight = 0;
   if (attribute.title.visible && attribute.title.text) {
+    const { width, height } = table.measureText(attribute.title.text, {
+      fontSize: attribute.title?.style?.fontSize,
+      fontWeight: attribute.title?.style?.fontWeight,
+      fontFamily: attribute.title?.style?.fontFamily
+    });
+    const widthLimit = attribute.label?.style?.maxLineWidth || Infinity;
+    const size = getSizeAfterResize(Math.min(width, widthLimit), height, attribute.title?.style?.angle);
     if ((config.orient === 'bottom' || config.orient === 'top') && attribute.title.autoRotate) {
-      titleHeight =
-        table.measureText(attribute.title.text as string, {
-          fontSize: attribute.title?.style?.fontSize,
-          fontFamily: attribute.title?.style?.fontFamily
-        }).width + 2;
+      titleHeight = size.width + 2;
     } else {
-      titleHeight =
-        table.measureText(attribute.title.text as string, {
-          fontSize: attribute.title?.style?.fontSize,
-          fontFamily: attribute.title?.style?.fontFamily
-        }).height + 2;
+      titleHeight = size.height + 2;
     }
     titleHeight += attribute.title.space ?? 4;
   }
@@ -160,4 +166,42 @@ function formatDecimal(number: number) {
   }
 
   return Number(number.toPrecision(1)).toString(); // 避免科学计数法
+}
+
+// 计算旋转后的size
+function getSizeAfterResize(width: number, height: number, angle = 0) {
+  const theta = (angle * Math.PI) / 180; // 角度转为弧度
+  const p1 = { x: -width / 2, y: -height / 2 };
+  const p2 = { x: width / 2, y: -height / 2 };
+  const p3 = { x: width / 2, y: height / 2 };
+  const p4 = { x: -width / 2, y: height / 2 };
+
+  const p1Rotated = {
+    x: p1.x * Math.cos(theta) - p1.y * Math.sin(theta),
+    y: p1.x * Math.sin(theta) + p1.y * Math.cos(theta)
+  };
+  const p2Rotated = {
+    x: p2.x * Math.cos(theta) - p2.y * Math.sin(theta),
+    y: p2.x * Math.sin(theta) + p2.y * Math.cos(theta)
+  };
+  const p3Rotated = {
+    x: p3.x * Math.cos(theta) - p3.y * Math.sin(theta),
+    y: p3.x * Math.sin(theta) + p3.y * Math.cos(theta)
+  };
+  const p4Rotated = {
+    x: p4.x * Math.cos(theta) - p4.y * Math.sin(theta),
+    y: p4.x * Math.sin(theta) + p4.y * Math.cos(theta)
+  };
+
+  const bounds = {
+    minX: Math.min(p1Rotated.x, p2Rotated.x, p3Rotated.x, p4Rotated.x),
+    maxX: Math.max(p1Rotated.x, p2Rotated.x, p3Rotated.x, p4Rotated.x),
+    minY: Math.min(p1Rotated.y, p2Rotated.y, p3Rotated.y, p4Rotated.y),
+    maxY: Math.max(p1Rotated.y, p2Rotated.y, p3Rotated.y, p4Rotated.y)
+  };
+
+  return {
+    width: bounds.maxX - bounds.minX,
+    height: bounds.maxY - bounds.minY
+  };
 }

@@ -1,6 +1,37 @@
 # Change Log - @visactor/vtable
 
-This log was last generated on Wed, 16 Aug 2023 04:16:18 GMT and should not be manually modified.
+This log was last generated on Fri, 01 Sep 2023 02:36:27 GMT and should not be manually modified.
+
+## 0.10.1
+Fri, 01 Sep 2023 02:36:27 GMT
+
+### Patches
+
+- refactor: wrap text should suit English word #183
+
+
+- feat: sort support don't execute inner sort logic #230
+
+
+- refactor: optimize selected interaction when click header cell then use shift keyboard #233
+
+
+- fix: when set max Width value for column to resize column width occur error #241
+
+
+- feat: add api for updateAutoWrapText widthMode heightMode #240
+
+
+- refactor: optimize performance when window resize Compute RowHeight ColWidth  #249
+
+
+- feat: add analysis for pivot table
+
+
+- fix: pivotTable horizontal scroll bar is abnormal when the display area is small #269
+
+
+- feat: add columnResizeType config
 
 ## 0.10.0
 Wed, 16 Aug 2023 04:16:18 GMT
