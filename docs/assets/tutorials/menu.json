@@ -114,10 +114,10 @@
       ]
     },
     {
-      "path": "column_type",
+      "path": "cell_type",
       "title": {
         "zh": "单元格类型",
-        "en": "column type"
+        "en": "cell type"
       },
       "children": [
         {
@@ -353,13 +353,22 @@
         {
           "path": "tooltip",
           "title": {
-            "zh": "tooltip"
+            "zh": "tooltip",
+            "en": "tooltip"
           }
         },
         {
           "path": "dropdown",
           "title": {
-            "zh": "dropdown下拉菜单"
+            "zh": "dropdown下拉菜单",
+            "en": "dropdown"
+          }
+        },
+        {
+          "path": "title",
+          "title": {
+            "zh": "title",
+            "en": "title"
           }
         }
       ]
