@@ -58,7 +58,7 @@ export interface DataSourceAPI {
   hasField: (index: number, field: FieldDef) => boolean;
   sort: (field: FieldDef, order: SortOrder, orderFn: (v1: any, v2: any, order: SortOrder) => -1 | 0 | 1) => void;
   clearSortedMap: () => void;
-  updatePager: (pagerConf: IPagerConf) => void;
+  updatePager: (pagination: IPagination) => void;
   getIndexKey: (index: number) => number | number[];
   /** 数据是否为树形结构 且可以展开收起 */
   enableHierarchyState: boolean;
@@ -81,7 +81,7 @@ export interface PivotSortState {
 /**
  * 分页配置
  */
-export interface IPagerConf {
+export interface IPagination {
   /** 数据总条数 */
   totalCount?: number;
   /** 每页显示数据条数  */
@@ -117,7 +117,7 @@ export interface ListTableConstructorOptions extends BaseTableConstructorOptions
   hierarchyExpandLevel?: number;
 
   /** 分页配置 */
-  pagerConf?: IPagerConf;
+  pagination?: IPagination;
 
   /**
    * 排序状态

@@ -385,7 +385,7 @@ export function createTable() {
     enableColumnResizeOnAllRows: true, //是否可以在所有行上调整列宽
     disableColumnResize: false, //关闭调整列宽
     showFrozenIcon: false, //显示VTable内置冻结列图标
-    pagerConf: {
+    pagination: {
       //分页配置
       perPageCount: 5,
       currentPage: 0

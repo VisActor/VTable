@@ -5,7 +5,7 @@ import type {
   FieldData,
   FieldDef,
   FieldFormat,
-  IPagerConf,
+  IPagination,
   MaybePromiseOrCallOrUndefined,
   MaybePromiseOrUndefined,
   SortOrder
@@ -132,7 +132,7 @@ export class DataSource extends EventTarget implements DataSourceAPI {
   private lastOrderFn: (a: any, b: any, order: string) => number;
   private lastOrderField: FieldDef;
   protected currentIndexedData: (number | number[])[] | null = [];
-  protected pagerConf: IPagerConf;
+  protected pagination: IPagination;
   protected _currentPagerIndexedData: (number | number[])[];
   // 当前是否为层级的树形结构 排序时判断该值确实是否继续进行子节点排序
   enableHierarchyState = false;
@@ -140,7 +140,7 @@ export class DataSource extends EventTarget implements DataSourceAPI {
     return EVENT_TYPE;
   }
   protected treeDataHierarchyState: Map<number | string, HierarchyState> = new Map();
-  constructor(obj?: DataSourceParam | DataSource, pagerConf?: IPagerConf, hierarchyExpandLevel?: number) {
+  constructor(obj?: DataSourceParam | DataSource, pagination?: IPagination, hierarchyExpandLevel?: number) {
     super();
 
     this._get = obj?.get.bind(obj) || (undefined as any);
@@ -149,7 +149,7 @@ export class DataSource extends EventTarget implements DataSourceAPI {
     this.sortedIndexMap = new Map<string, ISortedMapItem>();
 
     this._currentPagerIndexedData = [];
-    this.pagerConf = pagerConf || {
+    this.pagination = pagination || {
       totalCount: this._sourceLength,
       perPageCount: this._sourceLength,
       currentPage: 0
@@ -237,8 +237,8 @@ export class DataSource extends EventTarget implements DataSourceAPI {
     }
     return childTotalLength;
   }
-  updatePager(pagerConf?: IPagerConf): void {
-    this.pagerConf = pagerConf || {
+  updatePager(pagination?: IPagination): void {
+    this.pagination = pagination || {
       totalCount: this._sourceLength,
       perPageCount: this._sourceLength,
       currentPage: 0
@@ -247,7 +247,7 @@ export class DataSource extends EventTarget implements DataSourceAPI {
   }
   protected updatePagerData(): void {
     const { currentIndexedData } = this;
-    const { perPageCount, currentPage } = this.pagerConf;
+    const { perPageCount, currentPage } = this.pagination;
     const startIndex = perPageCount * (currentPage || 0);
     const endIndex = startIndex + perPageCount;
     this._currentPagerIndexedData.length = 0;
@@ -350,7 +350,7 @@ export class DataSource extends EventTarget implements DataSourceAPI {
       this.currentIndexedData.splice(this.currentIndexedData.indexOf(indexed) + 1, childrenLength);
       this.treeDataHierarchyState.set(Array.isArray(indexed) ? indexed.join(',') : indexed, HierarchyState.collapse);
     }
-    // 变更了pagerConf所以需要更新分页数据  TODO待定 因为只关注根节点的数量的话 可能不会影响到
+    // 变更了pagerConfig所以需要更新分页数据  TODO待定 因为只关注根节点的数量的话 可能不会影响到
     this.updatePagerData();
 
     return diffCellIndices(oldIndexedData, this.currentIndexedData);
@@ -397,7 +397,7 @@ export class DataSource extends EventTarget implements DataSourceAPI {
           : [indexKey, subNodeSortedIndexArray[i]];
         this.currentIndexedData.splice(
           this.currentIndexedData.indexOf(indexKey) + childrenLength,
-          // this.pagerConf.currentPage * this.pagerConf.perPageCount +
+          // this.pagination.currentPage * this.pagination.perPageCount +
           // recordRowIndex +
           // childrenLength,
           0,

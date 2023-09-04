@@ -32,9 +32,9 @@
 
 是否显示表头。
 
-## pagerConf(IPagerConf)
+## pagination(IPagination)
 
-分页配置。IPagerConf 的具体类型如下：
+分页配置。IPagination 的具体类型如下：
 
 ### totalCount (number)
 

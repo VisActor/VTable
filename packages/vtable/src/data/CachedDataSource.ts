@@ -1,5 +1,5 @@
 import { getValueFromDeepArray } from '../tools/util';
-import type { FieldData, FieldDef, IPagerConf, MaybePromise, MaybePromiseOrUndefined } from '../ts-types';
+import type { FieldData, FieldDef, IPagination, MaybePromise, MaybePromiseOrUndefined } from '../ts-types';
 import type { DataSourceParam } from './DataSource';
 import { DataSource } from './DataSource';
 
@@ -32,7 +32,7 @@ export class CachedDataSource extends DataSource {
   static get EVENT_TYPE(): typeof DataSource.EVENT_TYPE {
     return DataSource.EVENT_TYPE;
   }
-  static ofArray(array: any[], pagerConf?: IPagerConf, hierarchyExpandLevel?: number): CachedDataSource {
+  static ofArray(array: any[], pagination?: IPagination, hierarchyExpandLevel?: number): CachedDataSource {
     return new CachedDataSource(
       {
         get: (index: number): any => {
@@ -44,12 +44,12 @@ export class CachedDataSource extends DataSource {
         length: array.length,
         source: array
       },
-      pagerConf,
+      pagination,
       hierarchyExpandLevel
     );
   }
-  constructor(opt?: DataSourceParam, pagerConf?: IPagerConf, hierarchyExpandLevel?: number) {
-    super(opt, pagerConf, hierarchyExpandLevel);
+  constructor(opt?: DataSourceParam, pagination?: IPagination, hierarchyExpandLevel?: number) {
+    super(opt, pagination, hierarchyExpandLevel);
     this._recordCache = {};
     this._fieldCache = {};
   }

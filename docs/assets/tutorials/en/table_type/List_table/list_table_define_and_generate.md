@@ -10,7 +10,7 @@ The following are the key configuration items of the basic table and their descr
 *   `frozenColCount`: Specifies the number of frozen columns.
 *   `transpose`: Whether to transpose the table, the default is false.
 *   `showHeader`: Whether to display the header, the default is true.
-*   `pagerConf`: Paging configuration, including the total number of records, the number of records per page, the current page number, etc.
+*   `pagination`: Paging configuration, including the total number of records, the number of records per page, the current page number, etc.
 *   `sortState`: Sort state, which specifies the sort by field and sort rule.
 *   `theme`: Table Theme, which can be a built-in Theme or a custom Theme.
 *   `widthMode`: The calculation mode of the table column width.

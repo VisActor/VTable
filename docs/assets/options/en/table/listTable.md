@@ -32,9 +32,9 @@ Whether to transpose, default is false
 
 Whether to display the table header.
 
-## pagerConf(IPagerConf)
+## pagination(IPagination)
 
-Pagination configuration. The specific type of IPagerConf is as follows:
+Pagination configuration. The specific type of IPagination is as follows:
 
 ### totalCount (number)
 Total number of data records.

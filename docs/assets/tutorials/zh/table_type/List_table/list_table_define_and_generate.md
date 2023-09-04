@@ -10,7 +10,7 @@
 *  `frozenColCount`：指定冻结列数。
 *   `transpose`：是否转置表格，默认为 false。
 *   `showHeader`：是否显示表头，默认为 true。
-*   `pagerConf`：分页配置，包括总记录数、每页记录数、当前页码等。
+*   `pagination`：分页配置，包括总记录数、每页记录数、当前页码等。
 *   `sortState`：排序状态，用于指定排序依据字段和排序规则。
 *   `theme`：表格主题，可以是内置主题或自定义主题。
 *   `widthMode`：表格列宽度的计算模式。
