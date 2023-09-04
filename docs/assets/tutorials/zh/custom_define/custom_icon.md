@@ -31,7 +31,7 @@ const tableInstance = new VTable.ListTable({
         height: 20,
         name: 'filter', //定义图标的名称，在内部会作为缓存的key值
         positionType: VTable.TYPES.IconPosition.absoluteRight, // 指定位置，可以在文本的前后，或者在绝对定位在单元格的左侧右侧
-        visibleTime: 'mouseover_cell', // 显示时机， 'always' | 'mouseover_cell' | 'click_cell'
+        visibleTime: 'mouseenter_cell', // 显示时机， 'always' | 'mouseenter_cell' | 'click_cell'
         hover: {
           // 热区大小
           width: 26,

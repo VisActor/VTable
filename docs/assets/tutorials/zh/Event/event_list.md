@@ -16,7 +16,6 @@
 |鼠标松开|MOUSEUP\_CELL|单元格鼠标松开事件|
 |选中状态改变|SELECTED\_CELL|单元格选中状态改变事件|
 |鼠标进入|MOUSEENTER\_CELL|鼠标进入单元格事件|
-|鼠标经过|MOUSEOVER\_CELL|鼠标经过单元格事件\[目前仅支持单元格为单元，内部元素不能触发相应的mouseover和mouseout，建议使用MOUSEENTER\_CELL]|
 |鼠标移动|MOUSEMOVE\_CELL|鼠标在某个单元格上移动事件|
 |鼠标离开|MOUSELEAVE\_CELL|鼠标离开单元格事件|
 |拖拽列宽|RESIZE\_COLUMN|列宽调整事件|
@@ -32,6 +31,11 @@
 |下钻按钮点击|DRILLMENU\_CLICK|下钻按钮点击事件|
 |透视表树形展示收起|TREE\_HIERARCHY\_STATE\_CHANGE|透视表树形结构展示收起状态改变事件|
 |按键|KEYDOWN|键盘按下事件|
+|图例项点击事件|LEGEND\_ITEM\_CLICK|鼠标点击图例中某一项|
+|图例项hover|LEGEND\_ITEM\_HOVER|鼠标hover图例中某一项|
+|图例项unhover|LEGEND\_ITEM\_UNHOVER|鼠标离开hover的图例项|
+|鼠标进入坐标轴|MOUSEENTER\_AXIS|鼠标进入坐标轴组件|
+|鼠标离开坐标轴|MOUSELEAVE\_AXIS|鼠标离开坐标轴组件|
 
 ## 事件监听方式
 
@@ -47,7 +51,6 @@ const {
     MOUSEMOVE_CELL,
     MOUSEENTER_CELL,
     MOUSELEAVE_CELL,
-    MOUSEOVER_CELL,
     MOUSEOUT_CELL,
     INPUT_CELL,
     PASTE_CELL,

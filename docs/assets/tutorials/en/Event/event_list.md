@@ -16,7 +16,6 @@ The specific return data of the event can be actually tested to observe whether 
 | mouse release | MOUSEUP\_CELL | cell mouse release event |
 | Select state change | SELECTED\_CELL | Cell select state change event |
 | mouse entry | MOUSEENTER\_CELL | mouse entry cell event |
-| Mouse over | MOUSEOVER\_CELL | Mouse over cell event \[Currently only cells are supported as cells, and internal elements cannot trigger the corresponding mouseover and mouseout. It is recommended to use MOUSEENTER\_CELL] |
 | mouse movement | MOUSEMOVE\_CELL | mouse movement event on a cell |
 | mouse leave | MOUSELEAVE\_CELL | mouse leave cell event |
 | Drag Column Width | RESIZE\_COLUMN | Column Width Adjustment Event |
@@ -32,6 +31,11 @@ The specific return data of the event can be actually tested to observe whether 
 | drill button click | DRILLMENU\_CLICK | drill button click event |
 | Pivot Table Tree Show Collapse | TREE\_HIERARCHY\_STATE\_CHANGE | Pivot Table Tree Show Collapse State Change Events |
 | Keys | KEYDOWN | Keyboard Press Events |
+|Legend item click event|LEGEND\_ITEM\_CLICK|Mouse clicks on an item in the legend|
+|Legend item hover|LEGEND\_ITEM\_HOVER|Mouse hover an item in the legend|
+|Legend item unhover|LEGEND\_ITEM\_UNHOVER|Legend item when mouse leaves hover|
+|The mouse enters the coordinate axis|MOUSEENTER\_AXIS|The mouse enters the coordinate axis component|
+|mouse leaves the axis|MOUSELEAVE\_AXIS|mouse leaves the axis component|
 
 ## Event monitoring method
 
@@ -46,7 +50,6 @@ The specific return data of the event can be actually tested to observe whether 
         MOUSEMOVE_CELL,
         MOUSEENTER_CELL,
         MOUSELEAVE_CELL,
-        MOUSEOVER_CELL,
         MOUSEOUT_CELL,
         INPUT_CELL,
         PASTE_CELL,

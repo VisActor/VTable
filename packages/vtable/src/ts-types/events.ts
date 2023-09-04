@@ -165,7 +165,7 @@ export interface TableEventHandlersReturnMap {
   mouseleave_table: void;
   mouseenter_cell: void;
   mouseleave_cell: void;
-  mouseover_cell: void;
+  // mouseover_cell: void;
   mouseout_cell: void;
   mousemove_cell: void;
   mousedown_cell: boolean;
