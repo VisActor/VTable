@@ -20,7 +20,7 @@ importers:
       '@types/offscreencanvas': 2019.6.4
       '@types/react': 16.9.49
       '@types/react-dom': 16.9.8
-      '@visactor/vchart': 1.3.0
+      '@visactor/vchart': 1.3.0-beta.0
       '@visactor/vdataset': ~0.15.7
       '@visactor/vrender': 0.15.0-alpha.10
       '@visactor/vrender-components': 0.14.6-alpha.10
@@ -83,7 +83,7 @@ importers:
       '@types/offscreencanvas': 2019.6.4
       '@types/react': 16.9.49
       '@types/react-dom': 16.9.8
-      '@visactor/vchart': 1.3.0
+      '@visactor/vchart': 1.3.0-beta.0
       '@vitejs/plugin-react': 3.1.0_vite@3.2.6
       axios: 1.4.0
       chai: 4.3.4
@@ -2664,8 +2664,8 @@ packages:
     resolution: {integrity: sha512-sL/cEvJWAnClXw0wHk85/2L0G6Sj8UB0Ctc1TEMbKSsmpRosqhwj9gWgFRZSrBr2f9tiXISwNhCPmlfqUqyb9Q==}
     dev: true
 
-  /@visactor/vchart/1.3.0:
-    resolution: {integrity: sha512-OYhn9SbaNjfMmLP1eoB8AQhRR4bTH9ataV4YTVYD59vhm2DpD55Gkocc0z+3GEEnrJcAsv9rwPrY1wQ3CsZmWg==}
+  /@visactor/vchart/1.3.0-beta.0:
+    resolution: {integrity: sha512-HaSr0G9L3DqdVGMKBkOZi+9jUTuWeF8JIHyipE0AFspfRZF4nOZReiSCs9HxrGAfunOXSphT+clsZsEkTBi1pg==}
     dependencies:
       '@visactor/vdataset': 0.15.9
       '@visactor/vgrammar': 0.6.5

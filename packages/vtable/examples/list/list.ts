@@ -74,7 +74,10 @@ export function createTable() {
   const option = {
     container: document.getElementById(CONTAINER_ID),
     records,
-    columns
+    columns,
+    tooltip: {
+      isShowOverflowTextTooltip: true
+    }
     // autoWrapText: true,
     // heightMode: 'autoHeight',
     // widthMode: 'adaptive'
