@@ -7,7 +7,6 @@ import type {
   FieldDef,
   FieldFormat,
   FieldKeyDef,
-  IPagination,
   ListTableAPI,
   ListTableConstructorOptions,
   MaybePromiseOrUndefined,

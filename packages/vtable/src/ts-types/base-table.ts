@@ -491,7 +491,7 @@ export interface BaseTableAPI {
   ) => TableEventHandlersReturnMap[TYPE][];
 
   //更新分页
-  updatePager: (cof: IPagination) => void;
+  updatePagination: (cof: IPagination) => void;
   //hover
 
   getHeaderDescription: (col: number, row: number) => string | undefined;

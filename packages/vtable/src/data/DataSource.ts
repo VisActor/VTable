@@ -237,7 +237,7 @@ export class DataSource extends EventTarget implements DataSourceAPI {
     }
     return childTotalLength;
   }
-  updatePager(pagination?: IPagination): void {
+  updatePagination(pagination?: IPagination): void {
     this.pagination = pagination || {
       totalCount: this._sourceLength,
       perPageCount: this._sourceLength,

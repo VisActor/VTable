@@ -58,7 +58,7 @@ export interface DataSourceAPI {
   hasField: (index: number, field: FieldDef) => boolean;
   sort: (field: FieldDef, order: SortOrder, orderFn: (v1: any, v2: any, order: SortOrder) => -1 | 0 | 1) => void;
   clearSortedMap: () => void;
-  updatePager: (pagination: IPagination) => void;
+  updatePagination: (pagination: IPagination) => void;
   getIndexKey: (index: number) => number | number[];
   /** 数据是否为树形结构 且可以展开收起 */
   enableHierarchyState: boolean;
@@ -201,6 +201,8 @@ export interface PivotTableConstructorOptions extends BaseTableConstructorOption
   enableDataAnalysis?: boolean;
   /** 指标标题 用于显示到角头的值*/
   indicatorTitle?: string;
+  /** 分页配置 */
+  pagination?: IPagination;
 }
 export interface PivotChartConstructorOptions extends BaseTableConstructorOptions {
   /**
