@@ -22,8 +22,8 @@ importers:
       '@types/react-dom': 16.9.8
       '@visactor/vchart': 1.3.0-beta.0
       '@visactor/vdataset': ~0.15.7
-      '@visactor/vrender': 0.15.0-alpha.10
-      '@visactor/vrender-components': 0.14.6-alpha.10
+      '@visactor/vrender': 0.15.0-alpha.13
+      '@visactor/vrender-components': 0.15.0-alpha.13
       '@visactor/vscale': ~0.15.7
       '@visactor/vutils': ~0.15.7
       '@vitejs/plugin-react': 3.1.0
@@ -63,8 +63,8 @@ importers:
       vite-plugin-markdown: ^2.1.0
     dependencies:
       '@visactor/vdataset': 0.15.9
-      '@visactor/vrender': 0.15.0-alpha.10
-      '@visactor/vrender-components': 0.14.6-alpha.10
+      '@visactor/vrender': 0.15.0-alpha.13
+      '@visactor/vrender-components': 0.15.0-alpha.13
       '@visactor/vscale': 0.15.9
       '@visactor/vutils': 0.15.9
       core-js: 3.31.1
@@ -2772,15 +2772,6 @@ packages:
       '@visactor/vutils': 0.15.9
     dev: true
 
-  /@visactor/vrender-components/0.14.6-alpha.10:
-    resolution: {integrity: sha512-B99nBg+FO/Fd+J/3zFmytAPy3ZN6ezYDxePgmFpqTaxjmHH67A2597gDgng1jwYY4nGWBuDVz1n70zmWNEPS0w==}
-    dependencies:
-      '@visactor/vrender': 0.15.0-alpha.10
-      '@visactor/vscale': 0.15.9
-      '@visactor/vutils': 0.15.9
-      inversify: 6.0.1
-    dev: false
-
   /@visactor/vrender-components/0.14.7:
     resolution: {integrity: sha512-iMOsjUszEJ8eF1L8WIDhJoEZjJAs+NMxEYSQ5EjBDbuPnbQ9GP20E0kaClnEQfRPwS4dc3q+HolUdlIwuEOrYA==}
     dependencies:
@@ -2789,6 +2780,15 @@ packages:
       '@visactor/vutils': 0.15.9
       inversify: 6.0.1
     dev: true
+
+  /@visactor/vrender-components/0.15.0-alpha.13:
+    resolution: {integrity: sha512-PrYf51oo3hpwBRtzy2dLmKTk5kIln+c6eya82DCHhHsalqVxz7wMhZ/VXGnFXipAGRzsgwNnlWDvhQCK000BAQ==}
+    dependencies:
+      '@visactor/vrender': 0.15.0-alpha.13
+      '@visactor/vscale': 0.15.9
+      '@visactor/vutils': 0.15.9
+      inversify: 6.0.1
+    dev: false
 
   /@visactor/vrender/0.14.7:
     resolution: {integrity: sha512-q4dbO0r9DaCEWt7rkPV1NdAi4FFd55MiGx3ojax1vw/3KjWBXWWJIJZPDE+vZGQPLO8+fQP7jsLOaiHYOGi+IA==}
@@ -2799,8 +2799,8 @@ packages:
       inversify: 6.0.1
     dev: true
 
-  /@visactor/vrender/0.15.0-alpha.10:
-    resolution: {integrity: sha512-px02mATtcIaW15TaUk7jeLkrdLDW8U1tLZxQ9ZrDpdzDAe2ywZz5rrQx3QG4Y35J5Q6BP7eXvB7jCMhePBdt5Q==}
+  /@visactor/vrender/0.15.0-alpha.13:
+    resolution: {integrity: sha512-R2c7KLgAxlCrC36jsGLqZjmzoA90x20hsVGT23lERS/9ViZoHgCP0UrFsa3lV2zSX9iQ7BRZnBmcfN8vENRamw==}
     dependencies:
       '@visactor/vutils': 0.15.9
       color-convert: 2.0.1
