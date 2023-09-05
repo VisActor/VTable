@@ -171,6 +171,50 @@
       ]
     },
     {
+      "path": "basic_function",
+      "title": {
+        "zh": "基础功能",
+        "en": "basic function"
+      },
+      "children": [
+        {
+          "path": "update_option",
+          "title": {
+            "zh": "更新配置",
+            "en": "update option"
+          }
+        },
+        {
+          "path": "sort",
+          "title": {
+            "zh": "排序",
+            "en": "sort"
+          }
+        },
+        {
+          "path": "frozen_column",
+          "title": {
+            "zh": "冻结",
+            "en": "frozen column"
+          }
+        },
+        {
+          "path": "row_height_column_width",
+          "title": {
+            "zh": "行高列宽",
+            "en": "row height column width"
+          }
+        },
+        {
+          "path": "auto_wrap_text",
+          "title": {
+            "zh": "自动换行",
+            "en": "auto wrap text"
+          }
+        }
+      ]
+    },
+    {
       "path": "theme_and_style",
       "title": {
         "zh": "主题与样式",
@@ -295,50 +339,6 @@
           "title": {
             "zh": "数据格式",
             "en": "data_format"
-          }
-        }
-      ]
-    },
-    {
-      "path": "basic_function",
-      "title": {
-        "zh": "基础功能",
-        "en": "basic function"
-      },
-      "children": [
-        {
-          "path": "update_option",
-          "title": {
-            "zh": "更新配置",
-            "en": "update option"
-          }
-        },
-        {
-          "path": "sort",
-          "title": {
-            "zh": "排序",
-            "en": "sort"
-          }
-        },
-        {
-          "path": "frozen_column",
-          "title": {
-            "zh": "冻结",
-            "en": "frozen column"
-          }
-        },
-        {
-          "path": "row_height_column_width",
-          "title": {
-            "zh": "行高列宽",
-            "en": "row height column width"
-          }
-        },
-        {
-          "path": "auto_wrap_text",
-          "title": {
-            "zh": "自动换行",
-            "en": "auto wrap text"
           }
         }
       ]
