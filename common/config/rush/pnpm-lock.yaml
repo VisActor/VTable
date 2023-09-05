@@ -14,7 +14,7 @@ importers:
       '@types/markdown-it': ^13.0.0
       '@types/react': ^18.0.0
       '@types/react-dom': ^18.0.0
-      '@visactor/vchart': 1.3.0-beta.10
+      '@visactor/vchart': 1.3.0-beta.9
       '@visactor/vtable': workspace:*
       '@vitejs/plugin-react': 3.1.0
       axios: ^1.4.0
@@ -35,7 +35,7 @@ importers:
       yargs: ^17.1.1
     dependencies:
       '@arco-design/web-react': 2.46.1_vnxzf5c44dqo4vncfl2mrh2gwm
-      '@visactor/vchart': 1.3.0-beta.10
+      '@visactor/vchart': 1.3.0-beta.9
       '@visactor/vtable': link:../packages/vtable
       axios: 1.5.0
       highlight.js: 11.8.0
@@ -77,7 +77,7 @@ importers:
       '@types/offscreencanvas': 2019.6.4
       '@types/react': ^18.0.0
       '@types/react-dom': ^18.0.0
-      '@visactor/vchart': 1.3.0-beta.10
+      '@visactor/vchart': 1.3.0-beta.9
       '@visactor/vdataset': ~0.15.7
       '@visactor/vrender': 0.15.0-alpha.10
       '@visactor/vrender-components': 0.14.6-alpha.10
@@ -138,7 +138,7 @@ importers:
       '@types/offscreencanvas': 2019.6.4
       '@types/react': 18.2.21
       '@types/react-dom': 18.2.7
-      '@visactor/vchart': 1.3.0-beta.10
+      '@visactor/vchart': 1.3.0-beta.9
       '@vitejs/plugin-react': 3.1.0_vite@3.2.6
       axios: 1.5.0
       chai: 4.3.4
@@ -2788,8 +2788,8 @@ packages:
     resolution: {integrity: sha512-sL/cEvJWAnClXw0wHk85/2L0G6Sj8UB0Ctc1TEMbKSsmpRosqhwj9gWgFRZSrBr2f9tiXISwNhCPmlfqUqyb9Q==}
     dev: true
 
-  /@visactor/vchart/1.3.0-beta.10:
-    resolution: {integrity: sha512-TmjEc6ugwuSw3aYtTIxP9/9KCDYg3o7wZlVksJasISkMBRf5PYUp8MclYOEQtBLbuXVz8HjPIUJd1r96NV/N/Q==}
+  /@visactor/vchart/1.3.0-beta.9:
+    resolution: {integrity: sha512-3EKHjesCYFacJd0603uytx3juRdozCtr2XsMBzh69KCV4ZFSkVtxQy1Dz7jhipsXbQfeXY5gjlK81eBRBmNpuQ==}
     dependencies:
       '@visactor/vdataset': 0.15.9
       '@visactor/vgrammar': 0.6.6
@@ -2800,7 +2800,7 @@ packages:
       '@visactor/vgrammar-wordcloud': 0.6.6
       '@visactor/vgrammar-wordcloud-shape': 0.6.6
       '@visactor/vrender': 0.14.7
-      '@visactor/vrender-components': 0.14.6-alpha.2
+      '@visactor/vrender-components': 0.14.6-alpha.10
       '@visactor/vscale': 0.15.9
       '@visactor/vutils': 0.15.9
 
@@ -2894,15 +2894,6 @@ packages:
       '@visactor/vscale': 0.15.9
       '@visactor/vutils': 0.15.9
       inversify: 6.0.1
-    dev: false
-
-  /@visactor/vrender-components/0.14.6-alpha.2:
-    resolution: {integrity: sha512-YKkvZNujWms6AfuIOZ2QuZUF7SF6ZRLsC6SRXdBBZ6joAksxITSq+ryXyhZFTiz3rsqdRuzSkPeckR5yg/HLBA==}
-    dependencies:
-      '@visactor/vrender': 0.14.5
-      '@visactor/vscale': 0.15.9
-      '@visactor/vutils': 0.15.9
-      inversify: 6.0.1
 
   /@visactor/vrender-components/0.14.7:
     resolution: {integrity: sha512-iMOsjUszEJ8eF1L8WIDhJoEZjJAs+NMxEYSQ5EjBDbuPnbQ9GP20E0kaClnEQfRPwS4dc3q+HolUdlIwuEOrYA==}
@@ -2910,14 +2901,6 @@ packages:
       '@visactor/vrender': 0.14.7
       '@visactor/vscale': 0.15.9
       '@visactor/vutils': 0.15.9
-      inversify: 6.0.1
-
-  /@visactor/vrender/0.14.5:
-    resolution: {integrity: sha512-qSK8M2cpip4G3jhJhB0HbseTFSGQa3cBf+m82fo4+uPInlPIaHn6Q+weLViUWxGiZFbkVYx9O08/zxXam2DUKw==}
-    dependencies:
-      '@visactor/vutils': 0.15.9
-      color-convert: 2.0.1
-      core-js: 3.31.1
       inversify: 6.0.1
 
   /@visactor/vrender/0.14.7:
@@ -2936,7 +2919,6 @@ packages:
       core-js: 3.31.1
       fast-xml-parser: 4.2.7
       inversify: 6.0.1
-    dev: false
 
   /@visactor/vscale/0.15.9:
     resolution: {integrity: sha512-p7RTRd6K+F5rjNC88XQqig8xuKgXlR5kgScMdKP2xhHTlwmkUdTAoJlEkagXAaGrCgnOvLTbGFrcTXRm81tKmg==}
@@ -2961,7 +2943,7 @@ packages:
       '@babel/plugin-transform-react-jsx-source': 7.22.5_@babel+core@7.20.12
       magic-string: 0.27.0
       react-refresh: 0.14.0
-      vite: 3.2.6_hl3wh7s35aps3mqbybf62k4fxq
+      vite: 3.2.6
     transitivePeerDependencies:
       - supports-color
     dev: true
@@ -5585,7 +5567,6 @@ packages:
     hasBin: true
     dependencies:
       strnum: 1.0.5
-    dev: false
 
   /fastq/1.15.0:
     resolution: {integrity: sha512-wBrocU2LCXXa+lWBt8RoIRD89Fi8OdABODa/kEnyeyjS5aZO5/GNvI5sEINADqP/h8M29UHTHUb53sUu5Ihqdw==}
@@ -10870,7 +10851,6 @@ packages:
 
   /strnum/1.0.5:
     resolution: {integrity: sha512-J8bbNyKKXl5qYcR36TIO8W3mVGVHrmmxsd5PAItGkmyzwJvybiw2IVq5nqd0i4LSNSkB/sx9VHllbfFdr9k1JA==}
-    dev: false
 
   /style-inject/0.3.0:
     resolution: {integrity: sha512-IezA2qp+vcdlhJaVm5SOdPPTUu0FCEqfNSli2vRuSIBbu5Nq5UvygTk/VzeCqfLz2Atj3dVII5QBKGZRZ0edzw==}
