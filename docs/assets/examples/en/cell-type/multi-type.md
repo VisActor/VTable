@@ -15,7 +15,7 @@ Specify the cell content type by cellType. Image video source: https://birdsofth
 
 headerType: 'text' | 'link' | 'image' | 'video';
 
-ColumnType:
+cellType:
 'Text'
 | 'link'
 | 'image'

@@ -83,7 +83,7 @@ body数据单元格是表格最主要的显示数据的部分，展示了表格�
         ...
     ]
 
-基本表格的body配置主要体现在columns配置项中的field，columnType及style上：
+基本表格的body配置主要体现在columns配置项中的field，cellType及style上：
 
     columns:[
         {

@@ -15,7 +15,7 @@ Demonstrate multiple ways to use stripe types
 
 headerType: 'text' | 'link' | 'image' | 'video';
 
-ColumnType:
+cellType:
 'Text'
 | 'link'
 | 'image'
