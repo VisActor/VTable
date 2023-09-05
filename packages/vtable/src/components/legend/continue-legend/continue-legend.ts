@@ -1,22 +1,22 @@
 import { cloneDeep, get, merge } from '@visactor/vutils';
-import type { ITableLegendOption } from '../../ts-types/component/legend';
-import type { BaseTableAPI } from '../../ts-types/base-table';
-import { DiscreteLegend, LegendEvent } from '@visactor/vrender-components';
-import { getLegendAttributes } from './get-legend-attributes';
-import { TABLE_EVENT_TYPE } from '../../core/TABLE_EVENT_TYPE';
-import { getQuadProps } from '../../scenegraph/utils/padding';
-import type { IOrientType } from '../../ts-types/component/util';
+import type { IColorTableLegendOption, ISizeTableLegendOption } from '../../../ts-types/component/legend';
+import type { BaseTableAPI } from '../../../ts-types/base-table';
+import { ColorContinuousLegend, SizeContinuousLegend, LegendEvent } from '@visactor/vrender-components';
+import { getContinuousLegendAttributes } from './get-continue-legend-attributes';
+import { TABLE_EVENT_TYPE } from '../../../core/TABLE_EVENT_TYPE';
+import { getQuadProps } from '../../../scenegraph/utils/padding';
+import type { IOrientType } from '../../../ts-types/component/util';
 
-export class TableLegend {
+export class ContinueTableLegend {
   table: BaseTableAPI;
-  option: ITableLegendOption;
+  option: IColorTableLegendOption | ISizeTableLegendOption;
   orient: IOrientType;
   visible: boolean;
   position: 'start' | 'middle' | 'end';
   selectedData: (string | number)[];
-  legendComponent: DiscreteLegend;
+  legendComponent: ColorContinuousLegend | SizeContinuousLegend;
 
-  constructor(option: ITableLegendOption, table: BaseTableAPI) {
+  constructor(option: IColorTableLegendOption | ISizeTableLegendOption, table: BaseTableAPI) {
     this.table = table;
     this.option = cloneDeep(option);
     this.orient = option.orient ?? 'left';
@@ -33,11 +33,23 @@ export class TableLegend {
       width: this.table.tableNoFrameWidth,
       height: this.table.tableNoFrameHeight
     });
-    const legend = new DiscreteLegend(
-      merge({}, attrs, {
-        defaultSelected: this.selectedData
-      })
-    );
+
+    let legend;
+    if (this.option.type === 'color') {
+      legend = new ColorContinuousLegend(
+        merge({}, attrs, {
+          slidable: true
+          // defaultSelected: this.selectedData
+        })
+      );
+    } else {
+      legend = new SizeContinuousLegend(
+        merge({}, attrs, {
+          slidable: true
+          // defaultSelected: this.selectedData
+        })
+      );
+    }
     legend.name = 'legend';
     this.legendComponent = legend;
     this.table.scenegraph.stage.defaultLayer.appendChild(legend);
@@ -132,40 +144,29 @@ export class TableLegend {
 
   getLegendAttributes(rect: any) {
     const layout = this.orient === 'bottom' || this.orient === 'top' ? 'horizontal' : 'vertical';
+    const align = layout === 'horizontal' ? 'bottom' : this.orient;
+
     const attrs = {
+      ...getContinuousLegendAttributes(this.option, rect),
       layout,
-      items: this.getLegendItems(),
+      align,
       // zIndex: this.layoutZIndex,
-      maxWidth: rect.width,
-      maxHeight: rect.height,
-      ...getLegendAttributes(this.option, rect)
+      min: this.option.min,
+      max: this.option.max,
+      value: this.option.value,
+      [this.option.type === 'color' ? 'colors' : 'sizeRange']:
+        this.option.type === 'color'
+          ? (this.option as IColorTableLegendOption).colors
+          : (this.option as ISizeTableLegendOption).sizeRange
     };
     return attrs;
   }
 
-  getLegendItems() {
-    return this.option.data;
-  }
-
   initEvent() {
     if (this.legendComponent) {
-      this.legendComponent.addEventListener(LegendEvent.legendItemClick, (e: any) => {
-        const selectedData = get(e, 'detail.currentSelected');
-        this.table.fireListeners(TABLE_EVENT_TYPE.LEGEND_ITEM_CLICK, { model: this, value: selectedData, event: e });
-      });
-
-      this.legendComponent.addEventListener(LegendEvent.legendItemHover, (e: any) => {
-        const detail = get(e, 'detail');
-        this.table.fireListeners(TABLE_EVENT_TYPE.LEGEND_ITEM_HOVER, { model: this, value: detail, event: e });
-      });
-
-      this.legendComponent.addEventListener(LegendEvent.legendItemUnHover, (e: any) => {
-        const detail = get(e, 'detail');
-        this.table.fireListeners(TABLE_EVENT_TYPE.LEGEND_ITEM_UNHOVER, { model: this, value: detail, event: e });
-      });
-
-      // wait for vrender-vcomponent version update
-      this.legendComponent.addEventListener('legendItemAttributeUpdate', (e: any) => {
+      this.legendComponent.addEventListener('change', (e: any) => {
+        const selectedData = get(e, 'detail.value');
+        this.table.fireListeners(TABLE_EVENT_TYPE.LEGEND_CHANGE, { model: this, value: selectedData, event: e });
         this.table.scenegraph.updateNextFrame();
       });
     }
