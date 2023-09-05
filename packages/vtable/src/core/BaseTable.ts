@@ -19,7 +19,7 @@ import type {
   FieldDef,
   ColumnTypeOption,
   SortState,
-  IPagerConf,
+  IPagination,
   ICustomLayout,
   CellInfo,
   CellStyle,
@@ -137,7 +137,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
 
   version = __VERSION__;
 
-  pagerConf?: IPagerConf | undefined;
+  pagination?: IPagination | undefined;
 
   /**
    * constructor
@@ -2203,14 +2203,14 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
    * 更新页码
    * @param cof 修改页码
    */
-  updatePager(cof: IPagerConf): void {
-    if (this.pagerConf) {
-      typeof cof.currentPage === 'number' && cof.currentPage >= 0 && (this.pagerConf.currentPage = cof.currentPage);
-      cof.perPageCount && (this.pagerConf.perPageCount = cof.perPageCount || this.pagerConf.perPageCount);
+  updatePagination(cof: IPagination): void {
+    if (this.pagination) {
+      typeof cof.currentPage === 'number' && cof.currentPage >= 0 && (this.pagination.currentPage = cof.currentPage);
+      cof.perPageCount && (this.pagination.perPageCount = cof.perPageCount || this.pagination.perPageCount);
       // 清空单元格内容
       this.scenegraph.clearCells();
       //数据源缓存数据更新
-      this.dataSource.updatePager(this.pagerConf);
+      this.dataSource.updatePagination(this.pagination);
       this.refreshRowColCount();
       // 生成单元格场景树
       this.scenegraph.createSceneGraph();

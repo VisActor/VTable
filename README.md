@@ -52,12 +52,12 @@ The core capabilities are as follows:
 2. Multidimensional analysis: Automatically analyzes and presents multidimensional data.
 3. Strong expressiveness: Provides flexible and powerful graphic capabilities, seamlessly integrating with charts of [VChart](https://github.com/VisActor/VChart).
 
-# Repo Intro
+# Repository Introduction
 
 This repository includes the following packages:
 
-1. vtable: VTable components
-2. vtable-docs: VTable documentation
+1. packages/vtable: The core code repository of VTable
+2. docs: Include VTable site tutorials, demos,apis and options, and also contains all Chinese and English documents.
 
 # Usage
 
@@ -131,7 +131,7 @@ const tableInstance = new VTable.ListTable(option);
 
 [More demos and detailed tutorials](https://visactor.io/vtable)
 
-## ⌨️ Development
+# ⌨️ Development
 
 First of all, please install [@microsoft/rush](https://rushjs.io/pages/intro/get_started/)
 
@@ -149,19 +149,30 @@ $ cd VTable
 $ rush update
 # start vtable demo
 $ cd packages/vtable
+# execute in file path: ./packages/vtable
 $ rushx demo
+# start site development server, execute in file path: ./
+$ rush docs
 ```
-# Related Links
+# 📖 Documents
+
+After installation & clone & update, run docs to preview VTable documents locally.
+
+```bash
+# start vtable document server. execute in file path: ./
+$ rush docs
+```
+## 🔗 Related Links
 
 - [Official website](https://visactor.io/vtable)
 
-# Ecosystem
+# 💫 Ecosystem
 
 | Project                                                     | Description                                                                            |
 | ----------------------------------------------------------- | -------------------------------------------------------------------------------------- |
 | [AI-generated Components](https://visactor.io/ai-vtable)    | AI-generated table component.                                                          |
 
-# Contribution
+# 🤝 Contribution
 
 If you would like to contribute, please read the [Code of Conduct ](./CODE_OF_CONDUCT.md) 和 [ Guide](./CONTRIBUTING.zh-CN.md) first。
 
