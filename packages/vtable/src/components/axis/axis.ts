@@ -174,11 +174,11 @@ export class CartesianAxis {
     const attrs: LineAxisAttributes = {
       start: { x: 0, y: 0 },
       end,
-      grid: {
-        type: 'line',
-        length: gridLength,
-        visible: this.option.grid.visible
-      },
+      // grid: {
+      //   type: 'line',
+      //   length: gridLength,
+      //   visible: this.option.grid.visible
+      // },
       title: {
         text: this.option.title.text,
         maxWidth: this._getTitleLimit(isX)
