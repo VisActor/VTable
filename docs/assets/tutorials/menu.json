@@ -370,6 +370,13 @@
             "zh": "title",
             "en": "title"
           }
+        },
+        {
+          "path": "legend",
+          "title": {
+            "zh": "legend",
+            "en": "legend"
+          }
         }
       ]
     }

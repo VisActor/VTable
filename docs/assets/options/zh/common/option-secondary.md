@@ -199,7 +199,20 @@ html 目前实现较完整，先默认使用 html 渲染方式。目前暂不支
 是否将 tooltip 框限制在画布区域内，默认开启。针对 renderMode:"html" 有效。
 
 #${prefix} legends
-{{ use: component-legend-discrete() }}
+
+图例配置，目前提供了三种图例类型，分别是离散图例（`'discrete'`），连续型颜色图例（`'color'`），连续型尺寸图例（`'size'`）。
+
+{{ use: component-legend-discrete(
+  prefix = ${prefix}
+)}}
+
+{{ use: component-legend-color(
+  prefix = ${prefix}
+) }}
+
+{{ use: component-legend-size(
+  prefix = ${prefix}
+) }}
 
 #${prefix} axes
 具体同 VChart 的轴配置，可支持[线性轴](https://visactor.io/vchart/option/barChart#axes-linear.type)，[离散轴](https://visactor.io/vchart/option/barChart#axes-band.type)和[时间轴](https://visactor.io/vchart/option/barChart#axes-time.type)。
