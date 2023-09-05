@@ -55,7 +55,18 @@ Corresponding attribute update interface（https://visactor.io/vtable/guide/basi
 // will not automatically redraw after calling
 tableInstance.columns = newColumns;
 ```
+## updatePagination(Function)
 
+Update page number configuration information
+
+```ts
+  /**
+   * Update page number
+   * @param pagination The information to modify the page number
+   */
+  updatePagination(pagination: IPagination): void;
+```
+Basic tables and pivot tables(enableDataAnalysis=true) are supported, but pivot charts are not supported.
 ## renderWithRecreateCells(Function)
 Re-collect the cell objects and re-render the table. Use scenarios such as:
 

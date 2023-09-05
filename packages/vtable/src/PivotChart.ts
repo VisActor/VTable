@@ -103,6 +103,7 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
       this.internalProps.dataConfig.dimensionSortArray = this._getDimensionSortArray();
       this.dataset = new Dataset(
         this.internalProps.dataConfig,
+        null,
         rowKeys,
         columnKeys,
         indicatorKeys,
@@ -195,6 +196,7 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
 
       this.dataset = new Dataset(
         this.internalProps.dataConfig,
+        null,
         rowKeys,
         columnKeys,
         indicatorKeys,
@@ -231,7 +233,9 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
       setTimeout(resolve, 0);
     });
   }
-
+  updatePagination() {
+    //void
+  }
   refreshHeader(): void {
     const internalProps = this.internalProps;
 

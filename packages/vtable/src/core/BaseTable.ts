@@ -2201,22 +2201,9 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
   abstract getCellOriginValue(col: number, row: number): FieldData;
   /**
    * 更新页码
-   * @param cof 修改页码
+   * @param pagination 要修改页码的信息
    */
-  updatePagination(cof: IPagination): void {
-    if (this.pagination) {
-      typeof cof.currentPage === 'number' && cof.currentPage >= 0 && (this.pagination.currentPage = cof.currentPage);
-      cof.perPageCount && (this.pagination.perPageCount = cof.perPageCount || this.pagination.perPageCount);
-      // 清空单元格内容
-      this.scenegraph.clearCells();
-      //数据源缓存数据更新
-      this.dataSource.updatePagination(this.pagination);
-      this.refreshRowColCount();
-      // 生成单元格场景树
-      this.scenegraph.createSceneGraph();
-      this.render();
-    }
-  }
+  abstract updatePagination(pagination: IPagination): void;
   get allowFrozenColCount(): number {
     return this.internalProps.allowFrozenColCount;
   }

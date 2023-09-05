@@ -55,7 +55,18 @@ tableInstance.updateColumns(newColumns)
 // 调用后不会自动重绘
 tableInstance.columns = newColumns;
 ```
+## updatePagination(Function)
 
+更新页码配置信息
+
+```ts
+  /**
+   * 更新页码
+   * @param pagination 要修改页码的信息
+   */
+  updatePagination(pagination: IPagination): void;
+```
+基本表格和VTable数据分析透视表(enableDataAnalysis=true)支持分页，透视组合图不支持分页。
 ## renderWithRecreateCells(Function)
 重新单元格对象集合并重新渲染表格，使用场景如：
 

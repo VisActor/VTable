@@ -18,7 +18,8 @@ import type {
   SortOrder,
   IHeaderTreeDefine,
   CollectValueBy,
-  CollectedValue
+  CollectedValue,
+  IPagination
 } from '../ts-types';
 import { AggregationType, SortType } from '../ts-types';
 import type { Aggregator } from './statistics-helper';
@@ -42,6 +43,10 @@ export class Dataset {
    * 用户配置
    */
   dataConfig: IDataConfig;
+  /**
+   * 分页配置
+   */
+  pagination: IPagination;
   /**
    * 明细数据
    */
@@ -102,8 +107,11 @@ export class Dataset {
   rows: string[];
   columns: string[];
   indicatorKeys: string[];
+  // 存储行表头path 这个是全量的 对比于分页截取的rowKeysPath；
+  private rowKeysPath_FULL: string[][];
   constructor(
     dataConfig: IDataConfig,
+    pagination: IPagination,
     rows: string[],
     columns: string[],
     indicatorKeys: string[],
@@ -113,6 +121,7 @@ export class Dataset {
   ) {
     this.registerAggregators();
     this.dataConfig = dataConfig;
+    this.pagination = pagination;
     // this.allTotal = new SumAggregator(this.indicators[0]);
     this.sortRules = this.dataConfig?.sortRules;
     this.aggregationRules = this.dataConfig?.aggregationRules;
@@ -178,9 +187,9 @@ export class Dataset {
 
       const t7 = typeof window !== 'undefined' ? window.performance.now() : 0;
       if (customRowTree) {
-        this.rowKeysPath = this.TreeToArr2(customRowTree);
+        this.rowKeysPath_FULL = this.TreeToArr2(customRowTree);
       } else {
-        this.rowKeysPath = this.TreeToArr(
+        this.rowKeysPath_FULL = this.TreeToArr(
           this.ArrToTree(
             this.rowKeys,
             this.rowsIsTotal,
@@ -214,6 +223,14 @@ export class Dataset {
         this.cacheDeminsionCollectedValues();
       }
     }
+    if (this.pagination?.perPageCount && this.pagination?.currentPage) {
+      const { perPageCount, currentPage } = this.pagination;
+      const startIndex = Math.ceil((perPageCount * (currentPage || 0)) / this.indicatorKeys.length);
+      const endIndex = startIndex + Math.ceil(perPageCount / this.indicatorKeys.length);
+      this.rowKeysPath = this.rowKeysPath_FULL.slice(startIndex, endIndex);
+    } else {
+      this.rowKeysPath = this.rowKeysPath_FULL;
+    }
   }
   //将聚合类型注册 收集到aggregators
   registerAggregator(type: string, aggregator: any) {
@@ -228,11 +245,11 @@ export class Dataset {
     this.registerAggregator(AggregationType.MIN, MinAggregator);
     this.registerAggregator(AggregationType.AVG, AvgAggregator);
   }
-  setRecords() {
+  private setRecords() {
     this.processRecords();
   }
   /**processRecord中按照collectValuesBy 收集了维度值。现在需要对有聚合需求的 处理收集维度值范围 */
-  processCollectedValuesWithSumBy() {
+  private processCollectedValuesWithSumBy() {
     for (const field in this.collectedValues) {
       if (this.collectValuesBy[field]?.sumBy) {
         for (const byKeys in this.collectedValues[field]) {
@@ -260,7 +277,7 @@ export class Dataset {
     }
   }
   /**processRecord中按照collectValuesBy 收集了维度值。现在需要对有排序需求的处理 */
-  processCollectedValuesWithSortBy() {
+  private processCollectedValuesWithSortBy() {
     for (const field in this.collectedValues) {
       if (this.collectValuesBy[field]?.sortBy) {
         for (const byKeys in this.collectedValues[field]) {
@@ -274,7 +291,7 @@ export class Dataset {
   /**
    * 处理数据,遍历所有条目，过滤和派生字段的处理有待优化TODO
    */
-  processRecords() {
+  private processRecords() {
     let isNeedFilter = false;
     if (this.dataConfig?.filterRules?.length >= 1) {
       isNeedFilter = true;
@@ -301,7 +318,7 @@ export class Dataset {
     this.rowFlatKeys = {};
     this.colFlatKeys = {};
   }
-  filterRecord(record: any) {
+  private filterRecord(record: any) {
     let isReserved = true;
     for (let i = 0; i < this.dataConfig.filterRules.length; i++) {
       const filterRule = this.dataConfig?.filterRules[i];
@@ -323,7 +340,7 @@ export class Dataset {
    * @param record
    * @returns
    */
-  processRecord(record: any, assignedIndicatorKey?: string) {
+  private processRecord(record: any, assignedIndicatorKey?: string) {
     //这个派生字段的计算位置有待确定，是否应该放到filter之前
     this.derivedFieldRules?.forEach((derivedFieldRule: DerivedFieldRule, i: number) => {
       record[derivedFieldRule.fieldName] = derivedFieldRule.derivedFunc(record);
@@ -493,7 +510,7 @@ export class Dataset {
     this.sorted = false;
     this.sortRules = sortRules;
     this.sortKeys();
-    this.rowKeysPath = this.TreeToArr(
+    this.rowKeysPath_FULL = this.TreeToArr(
       this.ArrToTree(
         this.rowKeys,
         this.rowsIsTotal,
@@ -537,6 +554,17 @@ export class Dataset {
     }
   }
 
+  updatePagination(pagination: IPagination) {
+    this.pagination = pagination;
+    if (this.pagination?.perPageCount && this.pagination?.currentPage) {
+      const { perPageCount, currentPage } = this.pagination;
+      const startIndex = Math.ceil((perPageCount * (currentPage || 0)) / this.indicatorKeys.length);
+      const endIndex = startIndex + Math.ceil(perPageCount / this.indicatorKeys.length);
+      this.rowKeysPath = this.rowKeysPath_FULL.slice(startIndex, endIndex);
+    } else {
+      this.rowKeysPath = this.rowKeysPath_FULL;
+    }
+  }
   private getAggregatorRule(indicatorKey: string): AggregationRule<AggregationType> | undefined {
     return this.aggregationRules?.find((value: AggregationRule<AggregationType>, index: number) => {
       return indicatorKey === value.indicatorKey;
