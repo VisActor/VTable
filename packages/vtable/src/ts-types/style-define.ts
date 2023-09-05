@@ -1,6 +1,7 @@
 import type { BaseTableAPI } from './base-table';
 import type { ColorsDef, ICellHeaderPaths, LineDashsDef, LineWidthsDef, PaddingsDef } from './common';
 import type { ColumnIconOption } from './icon';
+import type { FieldData } from './table-engine';
 
 // ****** TextStyle Options *******
 export type TextOverflow = string /* a char */; //设置一行的省略形式，另外还有clip。如果autoWrapText设置了自动换行，这个无效
@@ -12,9 +13,9 @@ export interface StylePropertyFunctionArg {
   /** 表格实例 */
   table: BaseTableAPI;
   /**有format的话 格式化后或者计算后的值 */
-  value: string;
+  value?: FieldData;
   /**原始值 */
-  dataValue: string;
+  dataValue?: FieldData;
   /** progressbar类型特有，表示当前数值在总体数据范围的比例 */
   percentile?: number;
   /** 单元格的表头路径信息 */
