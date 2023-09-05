@@ -7,7 +7,6 @@ import type {
   FieldDef,
   FieldFormat,
   FieldKeyDef,
-  IPagerConf,
   ListTableAPI,
   ListTableConstructorOptions,
   MaybePromiseOrUndefined,
@@ -45,7 +44,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
 
     const internalProps = this.internalProps;
     //分页配置
-    this.pagerConf = options.pagerConf;
+    this.pagination = options.pagination;
     internalProps.sortState = options.sortState;
     internalProps.columns = options.columns
       ? cloneDeep(options.columns)
@@ -212,7 +211,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
     const internalProps = this.internalProps;
     super.updateOption(options);
     //分页配置
-    this.pagerConf = options.pagerConf;
+    this.pagination = options.pagination;
     //更新protectedSpace
     this.showHeader = options.showHeader ?? true;
     internalProps.columns = options.columns

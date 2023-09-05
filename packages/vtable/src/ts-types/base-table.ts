@@ -33,7 +33,7 @@ import type {
   HeightModeDef,
   HierarchyState,
   IDataConfig,
-  IPagerConf,
+  IPagination,
   ITableThemeDefine,
   SortState,
   TableKeyboardOptions,
@@ -376,7 +376,7 @@ export interface BaseTableAPI {
   /** 存储内部用到的属性 变量等 */
   internalProps: IBaseTableProtected;
   /** 分页信息 */
-  pagerConf?: IPagerConf;
+  pagination?: IPagination;
 
   /** 表格偏移像素值 水平方向 */
   tableX: number;
@@ -491,7 +491,7 @@ export interface BaseTableAPI {
   ) => TableEventHandlersReturnMap[TYPE][];
 
   //更新分页
-  updatePager: (cof: IPagerConf) => void;
+  updatePagination: (cof: IPagination) => void;
   //hover
 
   getHeaderDescription: (col: number, row: number) => string | undefined;
