@@ -20,7 +20,7 @@ Suppose we have a list of users that contains the user's name, birthday, details
 
 ```javascript livedemo template=vtable
 const option = {
-  parentElement: document.getElementById(CONTAINER_ID),
+  container: document.getElementById(CONTAINER_ID),
   columns: [
     {
       field: 'name',

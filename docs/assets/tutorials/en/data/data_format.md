@@ -27,7 +27,7 @@ Example:
 ```javascript livedemo  template=vtable
 
  const option = {
-    parentElement: document.getElementById(CONTAINER_ID),
+    container: document.getElementById(CONTAINER_ID),
     columns : [
         {
             "field": "name",
@@ -83,7 +83,7 @@ Example:
 
 ```javascript livedemo template=vtable
 const option = {
-  parentElement: document.getElementById(CONTAINER_ID),
+  container: document.getElementById(CONTAINER_ID),
   "rowTree": [
     {
       "dimensionKey": "city",
@@ -178,7 +178,7 @@ Example of setting up records with a two-dimensional array:
 
 ```javascript livedemo template=vtable
 const option = {
-  parentElement: document.getElementById(CONTAINER_ID),
+  container: document.getElementById(CONTAINER_ID),
   "rowTree": [
     {
       "dimensionKey": "city",

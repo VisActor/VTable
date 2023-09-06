@@ -100,7 +100,6 @@ const columns =[
 
 const option = {
   container: document.getElementById(CONTAINER_ID),
-  parentElement: document.getElementById(CONTAINER_ID),
   records:data,
   columns,
   widthMode:'standard',
@@ -284,8 +283,7 @@ const columns =[
 ];
 
 const option = {
-container: document.getElementById(CONTAINER_ID),
-  parentElement: document.getElementById(CONTAINER_ID),
+  container: document.getElementById(CONTAINER_ID),
   records:data,
   columns,
   widthMode:'standard',

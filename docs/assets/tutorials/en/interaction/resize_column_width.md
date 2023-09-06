@@ -63,7 +63,7 @@ Based on the above configuration, we can implement a simple VTable example showi
 
 ```javascript livedemo  template=vtable
 const myVTable = new ListTable({
-  parentElement:  document.getElementById(CONTAINER_ID),
+  container:  document.getElementById(CONTAINER_ID),
   columnResizeMode: 'header',
   columns : [
         {

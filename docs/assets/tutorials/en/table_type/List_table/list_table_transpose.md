@@ -10,7 +10,7 @@ In ListTable, we can set `transpose `Parameters to enable the table transpose fe
 
 ```javascript livedemo template=vtable
 const option = {
-    parentElement: document.getElementById(CONTAINER_ID),
+    container: document.getElementById(CONTAINER_ID),
     columns : [
         {
             "field": "订单 ID",

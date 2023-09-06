@@ -4,7 +4,7 @@ In this section, we will introduce the core configuration items of the basic tab
 
 The following are the key configuration items of the basic table and their descriptions:
 
-*   `parentElement`: The container DOM element of the table, which needs to have width and height.
+*   `container`: The container DOM element of the table, which needs to have width and height.
 *   `records`: The data of the table, represented as an array.
 *   `columns`: Configuration of table columns, each column needs to set configuration items separately, including column type, width, title, etc. Supported column types are: 'text', 'link', 'image', 'video', 'sparkline', 'progressbar', 'chart'. The configuration items for each column type are slightly different, please flexibly add specific configurations according to the required type, you can refer to[Document](/tutorials/cell_type/cellType).
 *   `frozenColCount`: Specifies the number of frozen columns.
@@ -22,7 +22,7 @@ Here is a simple example of how to use a basic table to present data:
 ```javascript livedemo  template=vtable
 
  const option = {
-    parentElement: document.getElementById(CONTAINER_ID),
+    container: document.getElementById(CONTAINER_ID),
     columns : [
         {
             "field": "订单 ID",
