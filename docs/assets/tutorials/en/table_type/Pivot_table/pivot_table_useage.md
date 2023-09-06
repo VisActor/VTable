@@ -4,7 +4,7 @@ In this section, we will introduce the core configuration items of pivot tables 
 
 The following are the key configuration items and their descriptions for using pivot tables:
 
-*   `parentElement`: The container DOM element of the table, which needs to have width and height.
+*   `container`: The container DOM element of the table, which needs to have width and height.
 *   `records`: The data of the table, represented as an array.
 *   `indicators`: The specific configuration of each Metirc in the pivot table.
 *   `columns`: The list header corresponds to the style and format configuration of each level of Dimension.
@@ -762,7 +762,7 @@ const data=[
   }
 ];
 const option = {
-  parentElement: document.getElementById(CONTAINER_ID),
+  container: document.getElementById(CONTAINER_ID),
   records:data,
   "rowTree": [
     {

@@ -68,7 +68,7 @@ As can be seen from the above example renderings`紧急`and`不紧急`The layout
 
 ```javascript livedemo
 const option = {
-    parentElement: null,
+    container: document.getElementById(CONTAINER_ID),
     columns:[
       {
         field: 'type',

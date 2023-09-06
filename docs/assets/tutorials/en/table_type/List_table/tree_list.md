@@ -141,7 +141,7 @@ const columns =[
 ];
 
 const option = {
-  parentElement: document.getElementById(CONTAINER_ID),
+  container: document.getElementById(CONTAINER_ID),
   records,
   columns,
   widthMode:'standard'
