@@ -115,7 +115,7 @@ export function createTable() {
         records,
         widthMode: 'autoWidth', // 宽度模式：standard 标准模式； adaptive 自动填满容器
         pagination: {
-          perPageCount: 100,
+          perPageCount: 21,
           currentPage: 0
         }
       };
@@ -124,7 +124,7 @@ export function createTable() {
       window.tableInstance = instance;
       setTimeout(() => {
         instance.updatePagination({
-          perPageCount: 10,
+          perPageCount: 11,
           currentPage: 4
         });
       }, 8000);

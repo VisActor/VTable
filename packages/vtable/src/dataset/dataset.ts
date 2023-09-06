@@ -121,7 +121,6 @@ export class Dataset {
   ) {
     this.registerAggregators();
     this.dataConfig = dataConfig;
-    this.pagination = pagination;
     // this.allTotal = new SumAggregator(this.indicators[0]);
     this.sortRules = this.dataConfig?.sortRules;
     this.aggregationRules = this.dataConfig?.aggregationRules;
@@ -223,14 +222,7 @@ export class Dataset {
         this.cacheDeminsionCollectedValues();
       }
     }
-    if (this.pagination?.perPageCount && this.pagination?.currentPage) {
-      const { perPageCount, currentPage } = this.pagination;
-      const startIndex = Math.ceil((perPageCount * (currentPage || 0)) / this.indicatorKeys.length);
-      const endIndex = startIndex + Math.ceil(perPageCount / this.indicatorKeys.length);
-      this.rowKeysPath = this.rowKeysPath_FULL.slice(startIndex, endIndex);
-    } else {
-      this.rowKeysPath = this.rowKeysPath_FULL;
-    }
+    this.updatePagination(pagination);
   }
   //将聚合类型注册 收集到aggregators
   registerAggregator(type: string, aggregator: any) {
@@ -556,7 +548,11 @@ export class Dataset {
 
   updatePagination(pagination: IPagination) {
     this.pagination = pagination;
-    if (this.pagination?.perPageCount && this.pagination?.currentPage) {
+
+    if (isValid(this.pagination?.perPageCount) && isValid(this.pagination?.currentPage)) {
+      //调整perPageCount的数量 需要是indicatorKeys.length的整数倍
+      this.pagination.perPageCount =
+        Math.ceil(this.pagination.perPageCount / this.indicatorKeys.length) * this.indicatorKeys.length;
       const { perPageCount, currentPage } = this.pagination;
       const startIndex = Math.ceil((perPageCount * (currentPage || 0)) / this.indicatorKeys.length);
       const endIndex = startIndex + Math.ceil(perPageCount / this.indicatorKeys.length);
