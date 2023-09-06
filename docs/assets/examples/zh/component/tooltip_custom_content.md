@@ -4,6 +4,7 @@ group: Component
 title: tooltip custom content
 cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/tooltip-custom-content.png
 order: 8-2
+link: '/tutorials/components/tooltip'
 ---
 
 # tooltip
@@ -333,7 +334,3 @@ function hideTooltip() {
       });
     });
 ```
-
-## 相关教程
-
-[性能优化](link)

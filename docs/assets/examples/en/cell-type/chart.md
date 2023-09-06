@@ -4,6 +4,7 @@ group: Cell Type
 title: Chart Type
 cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/chart.png
 order: 2-3
+link: '/tutorials/cell_type/chart'
 ---
 
 # Chart Type
@@ -20,7 +21,7 @@ Combine the vchart chart library with rendering into tables to enrich visual dis
 ## Code demo
 
 ```javascript livedemo template=vtable
-  VTable.register.chartType('vchart', VChart);
+  VTable.register.chartModule('vchart', VChart);
   const records = [];
   for (let i = 1; i <= 10; i++) {
     for (let j = 1; j <= 10; j++) {
@@ -92,7 +93,7 @@ const option = {
           // bgColor: 'yellow',
         },
         cellType: 'chart',
-        chartType: 'vchart',
+        chartModule: 'vchart',
         width: 300,
         chartSpec: {
           type: 'common',
@@ -121,7 +122,7 @@ const option = {
           color: 'green',
         },
         cellType: 'chart',
-        chartType: 'vchart',
+        chartModule: 'vchart',
         width: 300,
         chartSpec: {
           type: 'common',
@@ -236,10 +237,6 @@ const option = {
     },
     dragHeaderMode: 'all'
 };
-const tableInstance = new VTable.PivotTable(document.getElementById(CONTAINER_ID), option);
+const tableInstance = new VTable.PivotTable(document.getElementById(CONTAINER_ID),option);
 window['tableInstance'] = tableInstance;
 ```
-
-## Related Tutorials
-
-[performance optimization](link)

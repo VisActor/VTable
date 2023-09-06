@@ -4,7 +4,7 @@ group: Basic Features
 title: frozen column
 cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/frozen-col.gif
 order: 3-3
-link: '/guide/basic_function/frozen_column'
+link: '/tutorials/basic_function/frozen_column'
 ---
 
 # Freeze column
@@ -85,7 +85,6 @@ const columns =[
 ];
 
 const option = {
-  parentElement: document.getElementById(CONTAINER_ID),
   records:data,
   columns,
   widthMode:'standard',
@@ -93,11 +92,7 @@ const option = {
   frozenColCount: 1,
   showFrozenIcon: true
 };
-tableInstance = new VTable.ListTable(option);
+tableInstance = new VTable.ListTable(document.getElementById(CONTAINER_ID),option);
 window['tableInstance'] = tableInstance;
     })
 ```
-
-## Related Tutorials
-
-[performance optimization](link)

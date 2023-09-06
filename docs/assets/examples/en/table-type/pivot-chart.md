@@ -4,7 +4,7 @@ group: table-type
 title: Pivot Chart
 cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/pivot-chart.png
 order: 1-5
-link: '/guide/table_type/Pivot_Chart/pivot_chart_useage'
+link: '/tutorials/table_type/pivot_chart'
 ---
 
 # Perspective combination diagram
@@ -442,7 +442,3 @@ The perspective combination diagram combines the vchart chart library to render 
     });
     
 ```
-
-## Related Tutorials
-
-[performance optimization](link)

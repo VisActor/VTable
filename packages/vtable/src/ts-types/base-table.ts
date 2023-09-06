@@ -54,10 +54,11 @@ import type { EventHandler } from '../event/EventHandler';
 import type { NumberMap } from '../tools/NumberMap';
 import type { FocusInput } from '../core/FouseInput';
 import type { ITableLegendOption } from './component/legend';
-import type { TableLegend } from '../components/legend/legend';
 import type { DataSet } from '@visactor/vdataset';
 import type { Title } from '../components/title/title';
 import type { ITitle } from './component/title';
+import type { DiscreteTableLegend } from '../components/legend/discrete-legend/discrete-legend';
+import type { ContinueTableLegend } from '../components/legend/continue-legend/continue-legend';
 
 export interface IBaseTableProtected {
   element: HTMLElement;
@@ -178,7 +179,7 @@ export interface IBaseTableProtected {
   limitMaxAutoWidth?: boolean | number;
 
   title?: Title;
-  legends?: TableLegend;
+  legends?: DiscreteTableLegend | ContinueTableLegend;
 
   //是否开启图表异步渲染
   renderChartAsync?: boolean;

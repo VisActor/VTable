@@ -30,4 +30,4 @@ In the example above, we set the main title to 'North American supermarket sales
 - subtextStyle: style setting for subtitle. You can use this option to set style attributes such as font size and color. In the example, we set the font size to 20 and the color to 'blue'.
 By using the above configurations, you can customize the content and style of the main and subtitles to better meet your needs and design style.
 
-Note that the above example only shows some of the configuration options for the header component! For more configuration, please go to [option description](https://visactor.io/vtable/option/ListTable#title.visible)
+Note that the above example only shows some of the configuration options for the header component! For more configuration, please go to [option description](https://visactor.io/vtable/options/ListTable#title.visible)

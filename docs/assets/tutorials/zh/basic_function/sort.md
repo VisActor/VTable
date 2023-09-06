@@ -409,4 +409,4 @@ tableInstance.on('sort_click', args => {
   }
 
 ```
-如果不希望使用内部的图标，可以使用图标自定义功能来替换，接参考教程：https://www.visactor.io/vtable/guide/custom_define/custom_icon
+如果不希望使用内部的图标，可以使用图标自定义功能来替换，接参考教程：https://www.visactor.io/vtable/tutorials/custom_define/custom_icon

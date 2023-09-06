@@ -35,7 +35,7 @@ VTable defaults to tooltip for overflow content: isShowOverflowTextTooltip defau
 ## Display tooltip custom information through the interface
 
 The interface showTooltip can actively display tooltip information, which is used as follows: (listen for cell hover events, call the interface)
-[Reference interface description](https://visactor.io/vtable/option/Methods#showTooltip)
+[Reference interface description](https://visactor.io/vtable/options/Methods#showTooltip)
 
       tableInstance.on('mouseenter_cell', (args) => {
             const { col, row, targetIcon } = args;

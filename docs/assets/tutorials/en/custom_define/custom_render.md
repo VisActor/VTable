@@ -45,10 +45,10 @@ Analyze the display content composition of each cell:
 
 So here we need to use a variety of custom primitive:
 
-*   Title corresponding to use [Text](url)type
-*   Item list text part use [Text](url)
-*   Title background rectangle to use [Rect](url)primitive
-*   List symbols (circles, rectangles, stars) correspond respectively [Circle](url), [Rect](url), [icon](url)type
+*   Title corresponding to use [Text](/options/ListTable#customRender.elements.text.type)type
+*   Item list text part use [Text](/options/ListTable#customRender.elements.text.type)
+*   Title background rectangle to use [Rect](/options/ListTable#customRender.elements.rect.type)primitive
+*   List symbols (circles, rectangles, stars) correspond respectively [Circle](/options/ListTable#customRender.elements.circle.type), [Rect](/options/ListTable#customRender.elements.rect.type), [icon](/options/ListTable#customRender.elements.icon.type)type
 
 ### How to use the custom rendering interface
 

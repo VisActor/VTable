@@ -46,10 +46,10 @@ ${prefix} headerStyle(TODO)
 
 Header cell style. Configuration items vary slightly depending on the headerType. Configurations for each headerStyle can be referred to as follows:
 
-- For headerType 'text', see [headerStyle](TODO URL with corresponding dimension)
-- For headerType 'link', see [headerStyle](url)
-- For headerType 'image', see [headerStyle](url)
-- For headerType 'video', see [headerStyle](url)
+- For headerType 'text', see [headerStyle](/options/PivotTable-columns-text#headerStyle.bgColor)
+- For headerType 'link', see [headerStyle](/options/PivotTable-columns-link#headerStyle.bgColor)
+- For headerType 'image', see [headerStyle](/options/PivotTable-columns-image#headerStyle.bgColor)
+- For headerType 'video', see [headerStyle](/options/PivotTable-columns-image#headerStyle.bgColor)
 
 ${prefix} style
 

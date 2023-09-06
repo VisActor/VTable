@@ -19,7 +19,7 @@
 
 在基本表格中，数据是以行为单位进行展示的，每一行含多个字段（列）。例如：姓名、年龄、性别、和地址。数据项中的每个对象将对应一行。
 
-根据上述 JSON 数据创建一个基本表格应配置相应的 [`ListTableConstructorOptions`](https://visactor.io/vtable/option/ListTable) 配项，并将 `records` 配置为数据源。
+根据上述 JSON 数据创建一个基本表格应配置相应的 [`ListTableConstructorOptions`](/options/ListTable#container) 配项，并将 `records` 配置为数据源。
 
  示例：
 
@@ -64,7 +64,7 @@ const tableInstance = new VTable.ListTable(document.getElementById(CONTAINER_ID)
 
 透视表格的主要目的是对数据进行多维度的展示和分析，在配置透视表格时，我们需要指定分组（行和列）维度以及指标维度。例如，我们可以将数据按照性别分组，并计算每个的人数和平均年龄。
 
-其配置项为 [`PivotTableConstructorOptions`](https://visactor.io/vtable/option/PivotTable)。与基本表格类似，我们首先使用JSON 数据作为透视表格的数据源。注意：这份数据是聚合分析之后的结果数据集
+其配置项为 [`PivotTableConstructorOptions`](https://visactor.io/vtable/options/PivotTable)。与基本表格类似，我们首先使用JSON 数据作为透视表格的数据源。注意：这份数据是聚合分析之后的结果数据集
 ```json
 [
   {"age": 30,"sex": "male","city": "北京", "income": 430},

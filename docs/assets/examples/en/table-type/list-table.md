@@ -4,7 +4,7 @@ group: table-type
 title: List Table
 cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/list-table.png
 order: 1-1
-link: '/guide/table_type/List_table/list_table_define_and_generate'
+link: '/tutorials/table_type/List_table/list_table_define_and_generate'
 ---
 
 # Basic table
@@ -91,7 +91,3 @@ tableInstance = new VTable.ListTable(document.getElementById(CONTAINER_ID), opti
 window['tableInstance'] = tableInstance;
     })
 ```
-
-## Related Tutorials
-
-[performance optimization](link)

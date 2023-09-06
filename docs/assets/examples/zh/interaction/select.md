@@ -4,7 +4,7 @@ group: Interaction
 title: 选择单元格
 cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/select.png
 order: 4-1
-link: '/guide/interaction_and_event/select'
+link: '/tutorials/interaction/select'
 ---
 
 # 选择单元格
@@ -107,7 +107,3 @@ tableInstance = new VTable.ListTable(document.getElementById(CONTAINER_ID),optio
 window['tableInstance'] = tableInstance;
     })
 ```
-
-## 相关教程
-
-[性能优化](link)

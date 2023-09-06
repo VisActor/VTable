@@ -4,7 +4,7 @@ group: table-type
 title: Pivot Table Tree
 cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/pivot-tree.png
 order: 1-5
-link: '/guide/table_type/Pivot_table/pivot_table_tree'
+link: '/tutorials/table_type/Pivot_table/pivot_table_tree'
 ---
 
 # Pivot Table
@@ -257,7 +257,3 @@ tableInstance = new VTable.PivotTable(document.getElementById(CONTAINER_ID), opt
 window['tableInstance'] = tableInstance;
     })
 ```
-
-## Related Tutorials
-
-[performance optimization](link)

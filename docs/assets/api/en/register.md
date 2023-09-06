@@ -6,7 +6,7 @@ The features that can be globally registered in the table library are theme, ico
 
 ## theme(Function)
 
-[Usage example](url):
+[Usage example](/examples/theme/register):
 
 - Register theme code as follows:
 
@@ -25,7 +25,7 @@ VTable.register.theme('themeRegisterOne',{
 function theme(name: string, theme?: ITableThemeDefine){}
 ```
 
-The structure of ITableThemeDefine can be found in [theme](/zh/option.html#ListTable.theme)
+The structure of ITableThemeDefine can be found in [theme](/options/ListTable#theme)
 
 - Usage:
 
@@ -43,7 +43,7 @@ const tableInstance = new VTable.PivotTable({
 
 By registering icons, you can display icons in the table or replace built-in function icons such as pin freeze icon.
 
-[Usage example](url):
+[Usage example](/examples/custom-render/custom-icon):
 
 - Register icon code as follows:
 
@@ -92,7 +92,7 @@ const tableInstance = new VTable.PivotTable({
 });
 ```
 
-2. After registering the icon, you can use it in customLayout. Refer to the [example](TODO).
+2. After registering the icon, you can use it in customLayout. Refer to the [example](/examples/custom-render/custom-cell-layout).
 
 - ColumnIconOption definition:
 
@@ -108,7 +108,7 @@ type ColumnIconOption = ImageIcon | SvgIcon;
 
 ## chartModule(Function)
 
-[Usage example](url):
+[Usage example](/examples/cell-type/chart):
 
 - Register chartModule code as follows:
 
@@ -122,4 +122,4 @@ VTable.register.chartModule('chartspace', ChartSpace);
 function chartModule(name: string, chartModule?: any){}
 ```
 
-In this case, chartModule is a chart component. For example, [VChart](TODO).
+In this case, chartModule is a chart component. For example, [VChart](https://visactor.io/vchart).

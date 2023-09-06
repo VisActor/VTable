@@ -4,7 +4,7 @@ group: Cell Type
 title: 单元格内容类型
 cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/multi-type.png
 order: 2-1
-link: '/guide/column_type/cellType'
+link: '/tutorials/cell_type/cellType'
 ---
 
 # 单元格内容类型
@@ -222,7 +222,3 @@ const option = {
 const tableInstance = new VTable.ListTable(document.getElementById(CONTAINER_ID),option);
 window['tableInstance'] = tableInstance;
 ```
-
-## 相关教程
-
-[性能优化](link)

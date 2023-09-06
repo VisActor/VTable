@@ -4,7 +4,7 @@ group: Custom
 title: Cell custom layout
 cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/custom-cell-layout.png
 order: 7-1
-link: '/guide/custom_define/custom_layout'
+link: '/tutorials/custom_define/custom_layout'
 ---
 
 # Cell custom layout
@@ -313,7 +313,3 @@ VTable.register.icon('message',{
 const tableInstance = new VTable.ListTable(document.getElementById(CONTAINER_ID), option);
 window['tableInstance'] = tableInstance;
 ```
-
-## Related Tutorials
-
-[performance optimization](link)

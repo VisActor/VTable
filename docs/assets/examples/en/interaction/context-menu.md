@@ -4,6 +4,7 @@ group: Interaction
 title: Right click menu
 cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/context-menu.png
 order: 4-6
+link: '/tutorials/components/dropdown'
 ---
 
 # Right click menu
@@ -98,7 +99,3 @@ tableInstance.listen('dropdownmenu_click', (args) => {
 })
     })
 ```
-
-## Related Tutorials
-
-[performance optimization](link)

@@ -37,7 +37,7 @@ VTable默认开启溢出内容的tooltip：isShowOverflowTextTooltip默认为tru
 ## 通过接口显示tooltip自定义信息
 
 接口showTooltip可主动显示tooltip信息，如下使用方式：（监听单元格hover事件，调用接口）
-[参考接口说明](https://visactor.io/vtable/option/Methods#showTooltip)
+[参考接口说明](https://visactor.io/vtable/options/Methods#showTooltip)
 ```
   tableInstance.on('mouseenter_cell', (args) => {
         const { col, row, targetIcon } = args;

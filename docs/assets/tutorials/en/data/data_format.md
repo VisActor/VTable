@@ -20,7 +20,7 @@ Next we will describe how to apply this data to basic tables and pivot tables, r
 
 In a basic table, data is presented in units of behavior, and each row contains multiple fields (columns). For example: name, age, gender, and address. Each object in the data item will correspond to a row.
 
-Creating a basic table based on the above JSON data should configure the corresponding [`ListTableConstructorOptions`](https://visactor.io/vtable/option/ListTable) Assign, and will `records` Configure as a data source.
+Creating a basic table based on the above JSON data should configure the corresponding [`ListTableConstructorOptions`](/options/ListTable#container) Assign, and will `records` Configure as a data source.
 
 Example:
 
@@ -66,7 +66,7 @@ const tableInstance = new ListTable(option);
 
 The main purpose of pivot tables is to display and analyze data in multiple Dimensions. When configuring pivot tables, we need to specify grouping (row and column) Dimensions and Metirc Dimensions. For example, we can group data by gender and calculate the number of people and average age for each.
 
-Its configuration item is [`PivotTableConstructorOptions`](https://visactor.io/vtable/option/PivotTable)Similar to the basic table, we first use JSON data as the data source for the pivot tableNote: This data is the result dataset after aggregated analysis
+Its configuration item is [`PivotTableConstructorOptions`](https://visactor.io/vtable/options/PivotTable)Similar to the basic table, we first use JSON data as the data source for the pivot tableNote: This data is the result dataset after aggregated analysis
 
 ```json
 [

@@ -4,7 +4,7 @@ group: Theme
 title: Theme -register
 cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/register.png
 order: 6-7
-link: '/guide/theme_and_style/theme'
+link: '/tutorials/theme_and_style/theme'
 ---
 
 # Form Theme -register
@@ -189,7 +189,3 @@ fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American
   window['tableInstance'] = tableInstance;
 })
 ```
-
-## Related Tutorials
-
-[performance optimization](link)

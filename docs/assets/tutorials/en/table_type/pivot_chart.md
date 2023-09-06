@@ -15,7 +15,7 @@ There are many application scenarios for perspective composite graphs in data la
 
 # Structure of Perspective Composite Diagram
 
-Structure is comparable[Pivot Table](https://visactor.io/vtable/guide/table_type/Pivot_table/pivot_table_overview)Compared with the pivot table, in addition to the list header, row header, corner header, and body, the pivot combination diagram can also configure the coordinate axis component. The four directions correspond to the upper axis, next week, left axis, and right axis respectively. At the same time, the legend component can also be configured separately.
+Structure is comparable[Pivot Table](https://visactor.io/vtable/tutorials/table_type/Pivot_table/pivot_table_overview)Compared with the pivot table, in addition to the list header, row header, corner header, and body, the pivot combination diagram can also configure the coordinate axis component. The four directions correspond to the upper axis, next week, left axis, and right axis respectively. At the same time, the legend component can also be configured separately.
 ![image](https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/c0de7ff0a101bd4cb25c8170f.png)
 
 configuration item

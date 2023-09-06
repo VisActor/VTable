@@ -15,20 +15,18 @@
       "PivotTable.indicators",
       "PivotTable.rows",
       ".columns",
-      ".elements",
-      ".customRender.elements",
       ".legends"
     ],
     "sectionMap": {
       "ListTable.columns": "ListTable-columns",
       "PivotTable.columns": "PivotTable-columns",
+      "PivotChart.columns": "PivotChart-columns",
       "PivotTable.rows": "PivotTable-rows",
       "PivotTable.indicators": "PivotTable-indicators",
-      "PivotChart.columns": "PivotChart-columns",
       "PivotChart.rows": "PivotChart-rows",
       "PivotChart.indicators": "PivotChart-indicators",
-      "ListTable.legends": "PivotChart-legends",
-      "PivotTable.legends": "PivotChart-legends",
+      "ListTable.legends": "ListTable-legends",
+      "PivotTable.legends": "PivotTable-legends",
       "PivotChart.legends": "PivotChart-legends"
     },
     "arrayKeys": [

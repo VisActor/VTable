@@ -4,6 +4,7 @@ group: Component
 title: legend
 cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/legend.png
 order: 8-6
+link: '/tutorials/components/legend'
 ---
 
 # Legend
@@ -12,7 +13,7 @@ In this example, the background color of the cell is mapped by the category Dime
 
 ## critical configuration
 
-*   `legend` Configuration table legend, please refer to: https://www.visactor.io/vtable/option/ListTable#legend
+*   `legend` Configuration table legend, please refer to: https://www.visactor.io/vtable/options/ListTable#legend
 
 ## Code Demo
 
@@ -166,7 +167,3 @@ In this example, the background color of the cell is mapped by the category Dime
       });
     });
 ```
-
-## Related Tutorials
-
-[performance optimization](link)

@@ -4,7 +4,7 @@ group: Custom
 title: Cell custom content
 cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/custom-render.png
 order: 7-4
-link: '/guide/custom_define/custom_render'
+link: '/tutorials/custom_define/custom_render'
 ---
 
 # Cell custom content
@@ -18,8 +18,7 @@ Set the current custom function through the column configuration item customRend
 ## Code demo
 
 ```javascript livedemo template=vtable
-
-  const option = {
+const option = {
     columns:[
       {
         field: 'type',
@@ -206,15 +205,11 @@ Set the current custom function through the column configuration item customRend
       },
     ],
     defaultRowHeight:80,
-    autoRowHeight:true,
+    heightMode:'autoHeight',
     widthMode:'standard',
     autoWrapText:true,
   };
   
-const tableInstance = new VTable.ListTable(document.getElementById(CONTAINER_ID), option);
+const tableInstance = new VTable.ListTable(document.getElementById(CONTAINER_ID),option);
 window['tableInstance'] = tableInstance;
 ```
-
-## Related Tutorials
-
-[performance optimization](link)

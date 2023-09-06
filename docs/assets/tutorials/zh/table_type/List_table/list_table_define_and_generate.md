@@ -6,7 +6,7 @@
 
 *   `container`：表格的容器 DOM 元素，dom容器需要提前设置好宽高。这里非必填，可以放到初始化函数的第一个参数中如`new VTable.ListTable(container, option);`
 *   `records`：表格的数据，以数组形式表示。
-*   `columns`：表格列的配置，每一列需要分别设置配置项，包括列类型、宽度、标题等。支持的列类型有：'text'、'link'、'image'、'video'、'sparkline'、'progressbar'、'chart'。每种列类型的配置项略有差别，请根据所需类型灵活添加特有配置，可参考[文档](url)。
+*   `columns`：表格列的配置，每一列需要分别设置配置项，包括列类型、宽度、标题等。支持的列类型有：'text'、'link'、'image'、'video'、'sparkline'、'progressbar'、'chart'。每种列类型的配置项略有差别，请根据所需类型灵活添加特有配置，可参考[文档](/tutorials/cell_type/cellType)。
 *  `frozenColCount`：指定冻结列数。
 *   `transpose`：是否转置表格，默认为 false。
 *   `showHeader`：是否显示表头，默认为 true。

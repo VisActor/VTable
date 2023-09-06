@@ -16,4 +16,4 @@ Specify the column type as 'text', cellType can be omitted and defaults to 'text
 
 **Exclusive configuration item for text type** Merge cells with the same content
 
-You can refer to the example: [TODO](url)
+You can refer to the example: [TODO](/examples/basic-functionality/merge)

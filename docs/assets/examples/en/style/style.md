@@ -4,7 +4,7 @@ group: Style
 title: Style
 cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/style.png
 order: 5-1
-link: '/guide/theme_and_style/style'
+link: '/tutorials/theme_and_style/style'
 ---
 
 # style
@@ -475,7 +475,3 @@ tableInstance = new VTable.PivotTable(document.getElementById(CONTAINER_ID), opt
 window['tableInstance'] = tableInstance;
     })
 ```
-
-## Related Tutorials
-
-[performance optimization](link)

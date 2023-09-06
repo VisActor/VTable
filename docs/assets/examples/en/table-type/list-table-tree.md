@@ -4,7 +4,7 @@ group: table-type
 title: List Table Tree
 cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/list-tree.png
 order: 1-2
-link: '/guide/table_type/List_table/tree_list'
+link: '/tutorials/table_type/List_table/tree_list'
 ---
 
 # Basic table tree display
@@ -83,7 +83,3 @@ tableInstance = new VTable.ListTable(document.getElementById(CONTAINER_ID), opti
 window['tableInstance'] = tableInstance;
     })
 ```
-
-## Related Tutorials
-
-[performance optimization](link)

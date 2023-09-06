@@ -215,6 +215,7 @@ html 目前实现较完整，先默认使用 html 渲染方式。目前暂不支
 ) }}
 
 #${prefix} axes
+
 具体同 VChart 的轴配置，可支持[线性轴](https://visactor.io/vchart/option/barChart#axes-linear.type)，[离散轴](https://visactor.io/vchart/option/barChart#axes-band.type)和[时间轴](https://visactor.io/vchart/option/barChart#axes-time.type)。
 
 支持四个方向的轴配置，默认上轴在列表头的最后一行，下轴在表格底部的冻结一行，左轴在行表头的最后一列，上轴在表头最右侧固定的一列。如果在 indicator 的 spec 中同时也配置了某一方位的 axes，spec 中的优先级较高。
