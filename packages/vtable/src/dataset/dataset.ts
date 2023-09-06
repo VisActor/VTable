@@ -556,11 +556,11 @@ export class Dataset {
       const { perPageCount, currentPage } = this.pagination;
       const startIndex = Math.ceil((perPageCount * (currentPage || 0)) / this.indicatorKeys.length);
       const endIndex = startIndex + Math.ceil(perPageCount / this.indicatorKeys.length);
-      this.rowKeysPath = this.rowKeysPath_FULL.slice(startIndex, endIndex);
+      this.rowKeysPath = this.rowKeysPath_FULL?.slice(startIndex, endIndex);
     } else {
       this.rowKeysPath = this.rowKeysPath_FULL;
     }
-    this.pagination.totalCount = this.rowKeysPath_FULL.length;
+    this.pagination && (this.pagination.totalCount = this.rowKeysPath_FULL?.length);
   }
   private getAggregatorRule(indicatorKey: string): AggregationRule<AggregationType> | undefined {
     return this.aggregationRules?.find((value: AggregationRule<AggregationType>, index: number) => {
