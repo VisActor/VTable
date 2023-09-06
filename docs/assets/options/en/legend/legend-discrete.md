@@ -1,56 +1,58 @@
 {{ target: component-legend-discrete }}
 
+#${prefix}  legends.discrete(string)
+
 Discrete legend configuration. Please refer to [Configuration](https://visactor.io/vchart/option/barChart#legends-discrete.type) and [Legend demo](https://visactor.io/vchart/example) in VChart
 
-### type(string) = 'discrete'
+##${prefix}  type(string) = 'discrete'
 
 **Optional**, discrete legend type declaration, optional because legend type defaults to `'discrete'`.
 
 {{ use: component-base-legend(
-  prefix = '##'
+  prefix = '#' + ${prefix} 
 ) }}
 
-### defaultSelected(Array)
+##${prefix}  defaultSelected(Array)
 
 Sets the legend item that is selected by default when the legend is initialized. The elements in the array are the names of the legend items, such as `['Legend 1', 'Legend 2']` means that the legend items named `'Legend 1'` and `'Legend 2'` are selected by default.
 
-### select(boolean) = true
+##${prefix}  select(boolean) = true
 
 Whether to enable the selection function of the legend, which is enabled by default.
 
-### selectedMode(string) = 'multiple'
+##${prefix}  selectedMode(string) = 'multiple'
 
 The selection mode of the legend, optional values: `'multiple'`, `'single'`, respectively represent multiple selection and single selection.
 
-### hover(boolean) = true
+##${prefix}  hover(boolean) = true
 
 Whether to enable hover interaction.
 
-### allowAllCanceled(boolean) = false
+##${prefix}  allowAllCanceled(boolean) = false
 
 Whether to allow unchecking all legend items, the default is not allowed, only valid when `selectedMode` is `'multiple'`.
 
-### reversed(boolean) = false
+##${prefix}  reversed(boolean) = false
 
 Whether to reverse the order of legend items, the default is not reversed.
 
-### maxWidth(number)
+##${prefix}  maxWidth(number)
 
 The maximum width of the legend as a whole, which determines whether the legend of the horizontal layout (orient property is `'left'` | `'right'`) automatically wraps.
 
-### maxRow(number)
+##${prefix}  maxRow(number)
 
 It only takes effect when `orient` is `'left'` | `'right'`, which indicates the maximum number of rows of legend items, and legend items exceeding the maximum number of rows will be hidden.
 
-### maxHeight(number)
+##${prefix}  maxHeight(number)
 
 The maximum height of the legend as a whole, which determines whether the legend of the vertical layout (orient attribute is `'top'` | `'bottom'`) automatically wraps.
 
-### maxCol(number)
+##${prefix}  maxCol(number)
 
 It only takes effect when `orient` is `'top'` | `'bottom'`, indicating the maximum number of columns of legend items, and legend items exceeding the maximum number of columns will be hidden.
 
-### item(Object)
+##${prefix}  item(Object)
 
 Legend item configuration, including graphics, text and other configurations inside the legend item.
 
@@ -58,19 +60,19 @@ Legend item configuration, including graphics, text and other configurations ins
 
 Whether to display the legend item, it is displayed by default.
 
-#### spaceCol(number)
+###${prefix}  spaceCol(number)
 
 Column spacing, horizontal spacing of legend items.
 
-#### spaceRow(number)
+###${prefix}  spaceRow(number)
 
 Row spacing, vertical spacing of legend items.
 
-#### maxWidth(number|string)
+###${prefix}  maxWidth(number|string)
 
 The maximum width of the legend item, defaults to null. Percentage can be used to indicate the proportion of the width of the display area.
 
-#### width(number|string)
+###${prefix}  width(number|string)
 
 The width of the legend item, calculated automatically by default. Percentage can be used to indicate the proportion of the width of the display area.
 
@@ -78,13 +80,13 @@ The width of the legend item, calculated automatically by default. Percentage ca
 
 The height setting of the legend item, if not set, it will be automatically calculated by default. Percentage can be used to represent the height ratio of the display area.
 
-#### padding(number|number[]|Object)
+###${prefix}  padding(number|number[]|Object)
 
 {{ use: common-padding(
   componentName='Legend item'
 ) }}
 
-#### background(Object)
+###${prefix}  background(Object)
 
 Background configuration for legend items.
 
@@ -92,7 +94,7 @@ Background configuration for legend items.
 
 Whether to show the legend item background.
 
-##### style(Object)
+####${prefix}  style(Object)
 
 Style configuration for legend item background.
 
@@ -100,7 +102,7 @@ Style configuration for legend item background.
   prefix = '#####'
 ) }}
 
-##### state(Object)
+####${prefix}  state(Object)
 
 The style configuration of the legend item background in different interaction states. Currently, the interaction states supported by the legend component are:
 
@@ -109,7 +111,7 @@ The style configuration of the legend item background in different interaction s
 - `'selectedHover'`: selected and hover state
 - `'unSelectedHover'`: unselected and hover state
 
-###### selected(Object)
+#####${prefix}  selected(Object)
 
 The style configuration of the background selected state.
 
@@ -141,7 +143,7 @@ The style configuration of background unselected and hover state.
   prefix = '######'
 ) }}
 
-#### shape(Object)
+###${prefix}  shape(Object)
 
 Configuration of the shape icon for the legend item.
 
@@ -149,11 +151,11 @@ Configuration of the shape icon for the legend item.
 
 Whether to display the shape icon of the legend item.
 
-##### space(number)
+####${prefix}  space(number)
 
 The distance between the shape and the following label.
 
-##### style(Object)
+####${prefix}  style(Object)
 
 The shape configuration for the icon.
 
@@ -161,7 +163,7 @@ The shape configuration for the icon.
   prefix = '#####'
 ) }}
 
-##### state(Object)
+####${prefix}  state(Object)
 
 The style configuration of the legend item shape in different interaction states. Currently, the interaction states supported by the legend component are:
 
@@ -170,7 +172,7 @@ The style configuration of the legend item shape in different interaction states
 - `'selectedHover'`: selected and hover state
 - `'unSelectedHover'`: unselected and hover state
 
-###### selected(Object)
+#####${prefix}  selected(Object)
 
 Legend item shape The style configuration of the selected state.
 
@@ -206,11 +208,11 @@ The legend item shape is not selected and the style configuration of the hover s
 
 Text configuration for legend entries.
 
-##### space(number)
+####${prefix}  space(number)
 
 The distance between the legend item label and the following value.
 
-##### formatMethod(Function)
+####${prefix}  formatMethod(Function)
 
 The text formatting method of the label, which can customize the display text of the label. The parameters of the function are:
 
@@ -245,7 +247,7 @@ export type LegendItemDatum = {
 };
 ```
 
-##### style(Object)
+####${prefix}  style(Object)
 
 Style configuration for legend item label.
 
@@ -253,7 +255,7 @@ Style configuration for legend item label.
   prefix = '#####'
 ) }}
 
-##### state(Object)
+####${prefix}  state(Object)
 
 The style configuration of the legend item label in different interaction states. Currently, the interaction states supported by the legend component are:
 
@@ -262,7 +264,7 @@ The style configuration of the legend item label in different interaction states
 - `'selectedHover'`: selected and hover state
 - `'unSelectedHover'`: unselected and hover state
 
-###### selected(Object)
+#####${prefix}  selected(Object)
 
 The style configuration of the selected state of the legend item label.
 
@@ -294,19 +296,19 @@ The style configuration of the legend item label unselected and hover state.
   prefix = '######'
 ) }}
 
-#### value(Object)
+###${prefix}  value(Object)
 
 The value configuration of the legend item.
 
-##### space(number)
+####${prefix}  space(number)
 
 The distance between the legend item value and the following elements.
 
-##### alignRight(boolean) = false
+####${prefix}  alignRight(boolean) = false
 
 Whether to align the value to the right side of the overall legend item, **only takes effect when setting the legend item width `itemWidth`**.
 
-##### formatMethod(Function)
+####${prefix}  formatMethod(Function)
 
 The text formatting method of value, you can customize the display text of value. The parameters of the function are:
 
@@ -341,7 +343,7 @@ export type LegendItemDatum = {
 };
 ```
 
-##### style(Object)
+####${prefix}  style(Object)
 
 Style configuration for legend item value.
 
@@ -349,7 +351,7 @@ Style configuration for legend item value.
   prefix = '#####'
 ) }}
 
-##### state(Object)
+####${prefix}  state(Object)
 
 The style configuration of the legend item value in different interaction states. Currently, the interaction states supported by the legend component are:
 
@@ -358,7 +360,7 @@ The style configuration of the legend item value in different interaction states
 - `'selectedHover'`: selected and hover state
 - `'unSelectedHover'`: unselected and hover state
 
-###### selected(Object)
+#####${prefix}  selected(Object)
 
 The style configuration of the legend item value selected state.
 
@@ -390,7 +392,7 @@ The legend item value is not selected and the style configuration of the hover s
   prefix = '######'
 ) }}
 
-#### focusIconStyle(Object)
+###${prefix}  focusIconStyle(Object)
 
 Focus button style configuration.
 
@@ -398,7 +400,7 @@ Focus button style configuration.
   prefix = '####'
 ) }}
 
-### autoPage(boolean) = true
+##${prefix}  autoPage(boolean) = true
 
 Whether to enable automatic page turning, it is enabled by default.
 
@@ -406,36 +408,36 @@ Whether to enable automatic page turning, it is enabled by default.
 
 Page turner configuration.
 
-#### layout(string)
+###${prefix}  layout(string)
 
 The layout of the page turner, optional values are `'horizontal'` and `'vertical'`. The default value logic is:
 
 - When legend `orient` is `'left'` or `'right'`, it defaults to `'vertical'`.
 - When the legend `orient` is `'top'` or `'bottom'`, it defaults to `'horizontal'`.
 
-#### defaultCurrent(number)
+###${prefix}  defaultCurrent(number)
 
 The default is the current page number.
 
-#### padding(number|number[]|Object)
+###${prefix}  padding(number|number[]|Object)
 
 {{ use: common-padding(
   componentName='Page Turner'
 ) }}
 
-#### space(number)
+###${prefix}  space(number)
 
 The spacing between the page turner and the legend.
 
-#### animation(boolean) = true
+###${prefix}  animation(boolean) = true
 
 Whether to enable animation.
 
-#### animationDuration(number) = 450
+###${prefix}  animationDuration(number) = 450
 
 Animation duration, in ms.
 
-#### animationEasing(string) = 'quadIn'
+###${prefix}  animationEasing(string) = 'quadIn'
 
 Animation easing effect.
 
@@ -447,23 +449,23 @@ Text style configuration.
   prefix = '####'
 ) }}
 
-#### handler(Object)
+###${prefix}  handler(Object)
 
 Style configuration for page turner buttons.
 
-##### space(number) = 8
+####${prefix}  space(number) = 8
 
 The distance between the button and the text content area, the default is 8.
 
-##### preShape(string)
+####${prefix}  preShape(string)
 
 Page turner previous page button shape.
 
-##### nextShape(string)
+####${prefix}  nextShape(string)
 
 Page turner next page button shape.
 
-##### style(Object)
+####${prefix}  style(Object)
 
 Style configuration for page turner buttons.
 
@@ -471,14 +473,14 @@ Style configuration for page turner buttons.
   prefix = '#####'
 ) }}
 
-##### state(Object)
+####${prefix}  state(Object)
 
 The style configuration of the page turner button in different interaction states. Currently, the interaction states supported by the page turner are:
 
 - `'hover'`: hover state
 - `'disable'`: Disabled state style
 
-###### hover(Object)
+#####${prefix}  hover(Object)
 
 Style configuration for page turner button hover state.
 
@@ -486,7 +488,7 @@ Style configuration for page turner button hover state.
   prefix = '######'
 ) }}
 
-###### disable(Object)
+#####${prefix}  disable(Object)
 
 Style configuration for the unavailable state of the page turner button.
 
@@ -494,7 +496,7 @@ Style configuration for the unavailable state of the page turner button.
   prefix = '######'
 ) }}
 
-### data(Array)
+##${prefix}  data(Array)
 
 Custom configuration for discrete legend data. `data: LegendItemDatum[]`
 

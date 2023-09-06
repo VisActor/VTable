@@ -76,6 +76,7 @@ export function createTable() {
     records,
     columns,
     legends: {
+      type: 'discrete',
       data: [
         {
           label: 'line_5',
