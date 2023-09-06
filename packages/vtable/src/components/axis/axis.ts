@@ -88,16 +88,19 @@ export class CartesianAxis {
         {
           type: 'ticks',
           options: {
+            sampling: this.option.sampling !== false, // default do sampling
             tickCount: tick.tickCount,
             forceTickCount: tick.forceTickCount,
             tickStep: tick.tickStep,
+            tickMode: tick.tickMode,
+            noDecimals: tick.noDecimals,
 
             axisOrientType: this.orient,
             coordinateType: 'cartesian',
 
             labelStyle: label.style,
             labelFormatter: label.formatMethod,
-            // labelGap: label.minGap,
+            labelGap: label.minGap,
 
             labelLastVisible: label.lastVisible,
             labelFlush: label.flush
@@ -174,11 +177,11 @@ export class CartesianAxis {
     const attrs: LineAxisAttributes = {
       start: { x: 0, y: 0 },
       end,
-      grid: {
-        type: 'line',
-        length: gridLength,
-        visible: this.option.grid.visible
-      },
+      // grid: {
+      //   type: 'line',
+      //   length: gridLength,
+      //   visible: this.option.grid.visible
+      // },
       title: {
         text: this.option.title.text,
         maxWidth: this._getTitleLimit(isX)

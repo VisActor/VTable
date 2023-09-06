@@ -561,5 +561,14 @@ export const menus = [
         name: 'update-option'
       }
     ]
+  },
+  {
+    menu: 'vchart',
+    children: [
+      {
+        path: 'vchart',
+        name: 'test'
+      }
+    ]
   }
 ];

@@ -40,37 +40,40 @@ import { dealBottomFrozen, dealFrozen, dealRightFrozen, resetFrozen } from './la
 import { updateChartSize, updateChartState } from './refresh-node/update-chart';
 import { initSceneGraph } from './group-creater/init-scenegraph';
 import { updateContainerChildrenX } from './utils/update-container';
-// import { loadPoptip } from '@visactor/vrender-components';
+import { loadPoptip, setPoptipTheme } from '@visactor/vrender-components';
 
-// // VChart poptip theme
-// loadPoptip({
-//   visible: true,
-//   position: 'auto',
-//   padding: 8,
-//   titleStyle: {
-//     fontSize: 12,
-//     fontWeight: 'bold',
-//     fill: '#4E5969'
-//   },
-//   contentStyle: {
-//     fontSize: 12,
-//     fill: '#4E5969'
-//   },
-//   panel: {
-//     visible: true,
-//     fill: '#fff',
-//     stroke: '#ffffff',
-//     lineWidth: 0,
-//     cornerRadius: 3,
-//     shadowBlur: 12,
-//     shadowOffsetX: 0,
-//     shadowOffsetY: 4,
-//     shadowColor: 'rgba(0, 0, 0, 0.1)',
-//     size: 0,
-//     space: 12
-//   }
-// });
+// VChart poptip theme
+loadPoptip();
 container.load(splitModule);
+
+const poptipStyle = {
+  visible: true,
+  position: 'auto',
+  padding: 8,
+  titleStyle: {
+    fontSize: 12,
+    fontWeight: 'bold',
+    fill: '#4E5969'
+  },
+  contentStyle: {
+    fontSize: 12,
+    fill: '#4E5969'
+  },
+  panel: {
+    visible: true,
+    fill: '#fff',
+    stroke: '#ffffff',
+    lineWidth: 0,
+    cornerRadius: 3,
+    shadowBlur: 12,
+    shadowOffsetX: 0,
+    shadowOffsetY: 4,
+    shadowColor: 'rgba(0, 0, 0, 0.1)',
+    size: 0,
+    space: 12
+  }
+  // maxWidthPercent: 0.8
+};
 
 export type MergeMap = Map<
   string,
@@ -122,6 +125,7 @@ export class Scenegraph {
     this.clear = true;
     this.mergeMap = new Map();
 
+    setPoptipTheme(poptipStyle as any);
     this.stage = createStage({
       canvas: table.canvas,
       width: table.canvas.width,

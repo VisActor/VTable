@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "comment": "feat: update vchart version\n\n",
+      "type": "patch",
+      "packageName": "@visactor/vtable"
+    }
+  ],
+  "packageName": "@visactor/vtable",
+  "email": "sunrui1992@foxmail.com"
+}
