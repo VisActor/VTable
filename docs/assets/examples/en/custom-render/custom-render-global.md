@@ -16,7 +16,6 @@ Set custom functions through the global configuration item customRender
 *   `customRender` Configure the API to return what needs to be rendered
 
 ## Code demo
-
 ```javascript livedemo template=vtable
 
   const option = {
@@ -84,7 +83,7 @@ Set custom functions through the global configuration item customRender
       },
     ],
     defaultRowHeight:80,
-    autoRowHeight:true,
+    heightMode:'autoHeight',
     widthMode:'standard',
     autoWrapText:true,
     customRender(args){
@@ -168,6 +167,6 @@ Set custom functions through the global configuration item customRender
       }
   };
 
-const tableInstance = new VTable.ListTable(document.getElementById(CONTAINER_ID), option);
+const tableInstance = new VTable.ListTable(document.getElementById(CONTAINER_ID),option);
 window['tableInstance'] = tableInstance;
 ```

@@ -18,8 +18,7 @@ Set the current custom function through the column configuration item customRend
 ## Code demo
 
 ```javascript livedemo template=vtable
-
-  const option = {
+const option = {
     columns:[
       {
         field: 'type',
@@ -206,11 +205,11 @@ Set the current custom function through the column configuration item customRend
       },
     ],
     defaultRowHeight:80,
-    autoRowHeight:true,
+    heightMode:'autoHeight',
     widthMode:'standard',
     autoWrapText:true,
   };
   
-const tableInstance = new VTable.ListTable(document.getElementById(CONTAINER_ID), option);
+const tableInstance = new VTable.ListTable(document.getElementById(CONTAINER_ID),option);
 window['tableInstance'] = tableInstance;
 ```

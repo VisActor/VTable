@@ -21,7 +21,7 @@ Combine the vchart chart library with rendering into tables to enrich visual dis
 ## Code demo
 
 ```javascript livedemo template=vtable
-  VTable.register.chartType('vchart', VChart);
+  VTable.register.chartModule('vchart', VChart);
   const records = [];
   for (let i = 1; i <= 10; i++) {
     for (let j = 1; j <= 10; j++) {
@@ -93,7 +93,7 @@ const option = {
           // bgColor: 'yellow',
         },
         cellType: 'chart',
-        chartType: 'vchart',
+        chartModule: 'vchart',
         width: 300,
         chartSpec: {
           type: 'common',
@@ -122,7 +122,7 @@ const option = {
           color: 'green',
         },
         cellType: 'chart',
-        chartType: 'vchart',
+        chartModule: 'vchart',
         width: 300,
         chartSpec: {
           type: 'common',
@@ -237,6 +237,6 @@ const option = {
     },
     dragHeaderMode: 'all'
 };
-const tableInstance = new VTable.PivotTable(document.getElementById(CONTAINER_ID), option);
+const tableInstance = new VTable.PivotTable(document.getElementById(CONTAINER_ID),option);
 window['tableInstance'] = tableInstance;
 ```
