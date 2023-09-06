@@ -560,6 +560,7 @@ export class Dataset {
     } else {
       this.rowKeysPath = this.rowKeysPath_FULL;
     }
+    this.pagination.totalCount = this.rowKeysPath_FULL.length;
   }
   private getAggregatorRule(indicatorKey: string): AggregationRule<AggregationType> | undefined {
     return this.aggregationRules?.find((value: AggregationRule<AggregationType>, index: number) => {

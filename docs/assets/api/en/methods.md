@@ -62,11 +62,28 @@ Update page number configuration information
 ```ts
   /**
    * Update page number
-   * @param pagination The information to modify the page number
+   * @param pagination The information of the page number to be modified
    */
   updatePagination(pagination: IPagination): void;
 ```
-Basic tables and pivot tables(enableDataAnalysis=true) are supported, but pivot charts are not supported.
+IPagination type define:
+```
+/**
+ *Paging configuration
+ */
+export interface IPagination {
+  /** The total number of data, this data in the pivot table will be automatically added without user input */
+  totalCount?: number;
+  /** Display number of data items per page */
+  perPageCount: number;
+  /** Display number of items per page */
+  currentPage?: number;
+}
+```
+The basic table and VTable data analysis pivot table (enableDataAnalysis=true) support paging, but the pivot combination chart does not support paging.
+
+Note! The perPageCount in the pivot table will be automatically corrected to an integer multiple of the number of indicators.
+
 ## renderWithRecreateCells(Function)
 Re-collect the cell objects and re-render the table. Use scenarios such as:
 
