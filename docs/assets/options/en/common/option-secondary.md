@@ -206,7 +206,20 @@ Replace the original hover:isShowTooltip configuration. Temporarily need to set 
 Whether to confine the tooltip box within the canvas area, default is enabled. It is valid for renderMode:"html".
 
 #${prefix} legends
-{{ use: component-legend-discrete() }}
+
+Legend configuration, currently providing three types of legends, namely discrete legend (`'discrete'`), continuous color legend (`'color'`), and continuous size legend (`'size'`).
+
+{{ use: component-legend-discrete(
+  prefix = ${prefix}
+)}}
+
+{{ use: component-legend-color(
+  prefix = ${prefix}
+) }}
+
+{{ use: component-legend-size(
+  prefix = ${prefix}
+) }}
 
 #${prefix} axes
 Specifically the same as the axis configuration of VChart, it can support [linear axis](https://visactor.io/vchart/option/barChart#axes-linear.type), [discrete axis](https://visactor.io/vchart/ option/barChart#axes-band.type) and [time axis](https://visactor.io/vchart/option/barChart#axes-time.type).
