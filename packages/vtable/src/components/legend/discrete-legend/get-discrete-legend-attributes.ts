@@ -1,7 +1,7 @@
 import { isEmpty, isValid, merge } from '@visactor/vutils';
-import type { ITableLegendOption } from '../../ts-types/component/legend';
-import { isPercent } from '../../tools/calc';
-import { transformComponentStyle, transformLegendTitleAttributes, transformToGraphic } from '../util/transform';
+import type { IDiscreteTableLegendOption } from '../../../ts-types/component/legend';
+import { isPercent } from '../../../tools/calc';
+import { transformComponentStyle, transformLegendTitleAttributes, transformToGraphic } from '../../util/transform';
 
 const defaultLegendSpec = {
   orient: 'bottom',
@@ -59,7 +59,7 @@ const defaultLegendSpec = {
   visible: true
 };
 
-export function getLegendAttributes(spec: ITableLegendOption, rect: { width: number; height: number }) {
+export function getLegendAttributes(spec: IDiscreteTableLegendOption, rect: { width: number; height: number }) {
   const {
     // 需要进行样式转换的属性
     title = {},

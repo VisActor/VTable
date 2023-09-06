@@ -16,11 +16,11 @@ const generatePersons = count => {
 };
 
 export function createTable() {
-  const records = generatePersons(1000000);
+  const records = generatePersons(100);
   const columns: VTable.ColumnsDefine = [
     {
       field: 'id',
-      title: 'ID ff',
+      title: 'ID',
       width: 120,
       sort: true
     },
@@ -71,27 +71,28 @@ export function createTable() {
       width: 150
     }
   ];
-  const option = {
+  const option: VTable.ListTableConstructorOptions = {
     container: document.getElementById(CONTAINER_ID),
     records,
     columns,
-    tooltip: {
-      isShowOverflowTextTooltip: true
+    legends: {
+      orient: 'bottom',
+      type: 'color',
+      colors: ['red', 'green'],
+      value: [0, 100],
+      max: 120,
+      min: 0
     }
-    // autoWrapText: true,
-    // heightMode: 'autoHeight',
-    // widthMode: 'adaptive'
   };
   const tableInstance = new VTable.ListTable(option);
   (window as any).tableInstance = tableInstance;
-  // tableInstance.on('sort_click', args => {
-  //   tableInstance.updateSortState(
-  //     {
-  //       field: args.field,
-  //       order: Date.now() % 3 === 0 ? 'desc' : Date.now() % 3 === 1 ? 'asc' : 'normal'
-  //     },
-  //     false
-  //   );
-  //   return false; //return false代表不执行内部排序逻辑
+
+  // bindDebugTool(tableInstance.scenegraph.stage as any, {
+  //   customGrapicKeys: ['role', '_updateTag']
   // });
+
+  const { LEGEND_CHANGE } = VTable.ListTable.EVENT_TYPE;
+  tableInstance.on(LEGEND_CHANGE, args => {
+    console.log('LEGEND_CHANGE', args);
+  });
 }

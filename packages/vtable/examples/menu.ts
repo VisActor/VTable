@@ -441,6 +441,14 @@ export const menus = [
       {
         path: 'components',
         name: 'axis'
+      },
+      {
+        path: 'components',
+        name: 'color'
+      },
+      {
+        path: 'components',
+        name: 'size'
       }
     ]
   },
@@ -559,6 +567,15 @@ export const menus = [
       {
         path: 'fs',
         name: 'update-option'
+      }
+    ]
+  },
+  {
+    menu: 'vchart',
+    children: [
+      {
+        path: 'vchart',
+        name: 'test'
       }
     ]
   }

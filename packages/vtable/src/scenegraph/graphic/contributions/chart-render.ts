@@ -48,7 +48,7 @@ export class DefaultCanvasChartRender implements IGraphicRender {
   ) {
     const groupAttribute = getTheme(chart, params?.theme).group;
 
-    const { dataId, data } = chart.attribute;
+    const { dataId, data, spec } = chart.attribute;
     const viewBox = chart.getViewBox();
     const { width = groupAttribute.width, height = groupAttribute.height } = chart.attribute;
 
@@ -60,18 +60,32 @@ export class DefaultCanvasChartRender implements IGraphicRender {
       if (typeof dataId === 'string') {
         activeChartInstance.updateDataSync(dataId, data ?? []);
       } else {
+        const dataBatch = [];
         // 如果是组合图有series系列 需要组个设置数据 这里的data包括的单元格完整数据 需要根据key过滤
         for (const dataIdStr in dataId) {
           const dataIdAndField = dataId[dataIdStr];
-          activeChartInstance.updateDataSync(
-            dataIdStr,
-            dataIdAndField
+          const series = spec.series.find((item: any) => item?.data?.id === dataIdStr);
+          dataBatch.push({
+            id: dataIdStr,
+            values: dataIdAndField
               ? data?.filter((item: any) => {
                   return item.hasOwnProperty(dataIdAndField);
                 }) ?? []
-              : data ?? []
-          );
+              : data ?? [],
+            fields: series?.data?.fields
+          });
+          if (!chartInstance.updateFullDataSync) {
+            activeChartInstance.updateDataSync(
+              dataIdStr,
+              dataIdAndField
+                ? data?.filter((item: any) => {
+                    return item.hasOwnProperty(dataIdAndField);
+                  }) ?? []
+                : data ?? []
+            );
+          }
         }
+        activeChartInstance.updateFullDataSync?.(dataBatch);
       }
     } else {
       if ((chart.getRootNode() as any).table.internalProps.renderChartAsync) {

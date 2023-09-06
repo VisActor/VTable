@@ -48,15 +48,16 @@
     "build:es": "bundle --clean -f es --ignorePostTasks"
   },
   "dependencies": {
-    "@visactor/vrender": "0.15.0-alpha.10",
-    "@visactor/vrender-components": "0.14.6-alpha.10",
+    "@visactor/vrender": "0.15.0-alpha.13",
+    "@visactor/vrender-components": "0.15.0-alpha.13",
     "@visactor/vutils": "~0.15.7",
     "@visactor/vscale": "~0.15.7",
     "@visactor/vdataset": "~0.15.7",
-    "cssfontparser": "^1.2.1"
+    "cssfontparser": "^1.2.1",
+    "core-js": "3.31.1"
   },
   "devDependencies": {
-    "@visactor/vchart": "1.3.0-beta.9",
+    "@visactor/vchart": "1.3.1-beta.1",
     "@internal/bundler": "workspace:*",
     "@internal/eslint-config": "workspace:*",
     "@internal/ts-config": "workspace:*",
