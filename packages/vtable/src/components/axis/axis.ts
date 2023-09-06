@@ -88,16 +88,19 @@ export class CartesianAxis {
         {
           type: 'ticks',
           options: {
+            sampling: this.option.sampling !== false, // default do sampling
             tickCount: tick.tickCount,
             forceTickCount: tick.forceTickCount,
             tickStep: tick.tickStep,
+            tickMode: tick.tickMode,
+            noDecimals: tick.noDecimals,
 
             axisOrientType: this.orient,
             coordinateType: 'cartesian',
 
             labelStyle: label.style,
             labelFormatter: label.formatMethod,
-            // labelGap: label.minGap,
+            labelGap: label.minGap,
 
             labelLastVisible: label.lastVisible,
             labelFlush: label.flush
