@@ -4,7 +4,7 @@ group: Interaction
 title: 右键菜单
 cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/context-menu.png
 order: 4-6
-link: '/tutorials/components/dropdown'
+link: '../guide/components/dropdown'
 ---
 
 # 右键菜单

@@ -4,7 +4,7 @@ group: Cell Type
 title: Chart Type
 cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/chart.png
 order: 2-3
-link: '/tutorials/cell_type/chart'
+link: '../guide/cell_type/chart'
 ---
 
 # Chart Type

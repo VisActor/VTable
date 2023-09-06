@@ -4,7 +4,7 @@ group: Component
 title: Drop Down Menu
 cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/dropdown.png
 order: 8-2
-link: '/tutorials/components/dropdown'
+link: '../guide/components/dropdown'
 ---
 
 # drop down menu

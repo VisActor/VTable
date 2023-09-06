@@ -4,7 +4,7 @@ group: table-type
 title:  Transpose Table
 cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/transpose.png
 order: 1-3
-link: '/tutorials/table_type/List_table/list_table_transpose'
+link: '../guide/table_type/List_table/list_table_transpose'
 ---
 
 # transpose form

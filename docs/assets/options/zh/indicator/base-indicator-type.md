@@ -46,10 +46,10 @@ ${prefix} headerStyle(TODO)
 
 表头单元格样式，配置项根据headerType不同有略微差别。每种headerStyle的配置项可参考：
 
-- headerType为'text'，对应[headerStyle](/options/PivotTable-columns-text#headerStyle.bgColor)
-- headerType为'link'，对应[headerStyle](/options/PivotTable-columns-link#headerStyle.bgColor)
-- headerType为'image'，对应[headerStyle](/options/PivotTable-columns-image#headerStyle.bgColor)
-- headerType为'video'，对应[headerStyle](/options/PivotTable-columns-image#headerStyle.bgColor)
+- headerType为'text'，对应[headerStyle](../options/PivotTable-columns-text#headerStyle.bgColor)
+- headerType为'link'，对应[headerStyle](../options/PivotTable-columns-link#headerStyle.bgColor)
+- headerType为'image'，对应[headerStyle](../options/PivotTable-columns-image#headerStyle.bgColor)
+- headerType为'video'，对应[headerStyle](../options/PivotTable-columns-image#headerStyle.bgColor)
 
 ${prefix} style
 

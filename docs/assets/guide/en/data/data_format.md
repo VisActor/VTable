@@ -1,0 +1,258 @@
+# Data sources and formats
+
+In order to better display and analyze data, we need to understand the format and meaning of tabular data in VTable. Next we will discuss the data forms of two table types in VTable: the basic table (ListTable) data source, and the pivottable (PivotTable) data source.
+
+## Data format form
+
+In VTable, the main data format we need to deal with is a JSON array. For example, the following is JSON data taking human information as an example:
+
+```json
+[
+  {"name": "zhang_san","age": 20,"sex": "","phone": "123456789","address": "beijing haidian"},
+  {"name": "li_si","age": 30,"sex": "female","phone": "23456789","address": "beijing chaoyang"},
+  {"name": "wang_wu","age": 40,"sex": "male","phone": "3456789","address": "beijing fengtai"}
+]
+```
+
+Next we will describe how to apply this data to basic tables and pivot tables, respectively.
+
+## Basic tabular data
+
+In a basic table, data is presented in units of behavior, and each row contains multiple fields (columns). For example: name, age, gender, and address. Each object in the data item will correspond to a row.
+
+Creating a basic table based on the above JSON data should configure the corresponding [`ListTableConstructorOptions`](../../options/ListTable#container) Assign, and will `records` Configure as a data source.
+
+Example:
+
+```javascript livedemo  template=vtable
+
+ const option = {
+    container: document.getElementById(CONTAINER_ID),
+    columns : [
+        {
+            "field": "name",
+            "title": "name",
+            "sort": true,
+            "width":'auto',
+        },
+        {
+            "field": "age",
+            "title": "age"
+        },
+        {
+            "field": "sex",
+            "title": "sex"
+        },
+        {
+            "field": "phone",
+            "title": "phone"
+        },
+        {
+            "field": "address",
+            "title": "address"
+        },
+    ],
+    "records":[
+     {"name": "zhang_san","age": 20,"sex": "female","phone": "123456789","address": "beijing haidian"},
+     {"name": "li_si","age": 30,"sex": "female","phone": "23456789","address": "beijing chaoyang"},
+     {"name": "wang_wu","age": 40,"sex": "male","phone": "3456789","address": "beijing fengtai"}
+    ]
+}
+const tableInstance = new ListTable(option);
+
+```
+
+## Pivot Table Data
+
+The main purpose of pivot tables is to display and analyze data in multiple Dimensions. When configuring pivot tables, we need to specify grouping (row and column) Dimensions and Metirc Dimensions. For example, we can group data by gender and calculate the number of people and average age for each.
+
+Its configuration item is [`PivotTableConstructorOptions`](https://visactor.io/vtable/options/PivotTable)Similar to the basic table, we first use JSON data as the data source for the pivot tableNote: This data is the result dataset after aggregated analysis
+
+```json
+[
+  {"age": 30,"sex": "male","city": "北京", "income": 430},
+  {"age": 30,"sex": "female","city": "上海", "income": 440},
+  {"age": 30,"sex ": "male","city": "深圳",  "income": 420},
+  {"age": 25,"sex": "male","city": "北京", "income": 400},
+  {"age": 25,"sex": "female","city": "上海", "income": 400},
+  {"age": 25,"sex ": "male","city": "深圳",  "income": 380}
+]
+```
+
+Example:
+
+```javascript livedemo template=vtable
+const option = {
+  container: document.getElementById(CONTAINER_ID),
+  "rowTree": [
+    {
+      "dimensionKey": "city",
+      "value": "beijing",
+       "children": [
+        {
+          "indicatorKey": "income",
+        },
+       ]
+    },
+    {
+      "dimensionKey": "city",
+      "value": "shanghai",
+       "children": [
+        {
+          "indicatorKey": "income",
+        },
+       ]
+    },
+    {
+      "dimensionKey": "city",
+      "value": "shenzhen",
+       "children": [
+        {
+          "indicatorKey": "income",
+        },
+       ]
+    }
+  ],
+  "columnTree": [
+    {
+      "dimensionKey": "sex",
+      "value": "male",
+      "children": [
+        {
+          "dimensionKey": "age",
+          "value": "30"
+        },
+        {
+          "dimensionKey": "age",
+          "value": "25"
+        }
+      ]
+    },
+    {
+      "dimensionKey": "sex",
+      "value": "female",
+      "children": [
+        {
+          "dimensionKey": "age",
+          "value": "30"
+        },
+        {
+          "dimensionKey": "age",
+          "value": "25"
+        }
+      ]
+    }
+  ],
+  "indicators": [{
+    "indicatorKey": "income",
+    "title": "income"
+  }],
+  "records": [
+    { "age": 30, "sex": "male", "city": "beijing", "income": 400 },
+    { "age": 30, "sex": "female", "city": "shanghai", "income": 410 },
+    { "age": 30, "sex ": "female", "city": "shenzhen", "income": 420 },
+    { "age": 25, "sex": "male", "city": "beijing", "income": 430 },
+    { "age": 30, "sex ": "male", "city": "shenzhen", "income": 440 },
+    { "age": 25, "sex": "male", "city": "shanghai", "income": 450 },
+    { "age": 25, "sex": "female", "city": "shanghai", "income": 460 },
+    { "age": 25, "sex ": "male", "city": "shenzhen", "income": 470 }
+  ],
+  defaultHeaderColWidth:100
+}
+const tableInstance = new VTable.PivotTable(option);
+
+```
+
+At the same time, the records data format also supports cell-by-cell corresponding configuration:
+
+```
+records:[
+    [430,650,657,325,456,500],
+    [300,550,557,425,406,510],
+    [430,450,607,455,560,400]
+]
+
+```
+
+Example of setting up records with a two-dimensional array:
+
+```javascript livedemo template=vtable
+const option = {
+  container: document.getElementById(CONTAINER_ID),
+  "rowTree": [
+    {
+      "dimensionKey": "city",
+      "value": "beijing",
+       "children": [
+        {
+          "indicatorKey": "income",
+        },
+       ]
+    },
+    {
+      "dimensionKey": "city",
+      "value": "shanghai",
+       "children": [
+        {
+          "indicatorKey": "income",
+        },
+       ]
+    },
+    {
+      "dimensionKey": "city",
+      "value": "shenzhen",
+       "children": [
+        {
+          "indicatorKey": "income",
+        },
+       ]
+    }
+  ],
+  "columnTree": [
+    {
+      "dimensionKey": "sex",
+      "value": "male",
+      "children": [
+        {
+          "dimensionKey": "age",
+          "value": "30"
+        },
+        {
+          "dimensionKey": "age",
+          "value": "25"
+        }
+      ]
+    },
+    {
+      "dimensionKey": "sex",
+      "value": "female",
+      "children": [
+        {
+          "dimensionKey": "age",
+          "value": "30"
+        },
+        {
+          "dimensionKey": "age",
+          "value": "25"
+        }
+      ]
+    }
+  ],
+  "indicators": [{
+    "indicatorKey": "income",
+    "title": "income"
+  }],
+  records:[
+    [430,650,657,325],
+    [300,550,557,425],
+    [430,450,607,455]
+  ],
+  defaultHeaderColWidth:100
+}
+const tableInstance = new VTable.PivotTable(option);
+
+```
+
+## summarize
+
+In this tutorial, we learned how to use tabular data in VTable. We first learned what data means in tables, and the data formats of two tables in VTable (basic table and pivot table). In order to help you better understand the correspondence between data formats and tables, we discussed the correspondence between basic tables and pivot tables respectively.

@@ -45,7 +45,7 @@
             "category": "examples",
             "group": "table-type",
             "cover": "https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/list-table.png",
-            "link": "'/tutorials/table_type/List_table/list_table_define_and_generate'",
+            "link": "'../../guide/table_type/List_table/list_table_define_and_generate'",
             "option": ""
           }
         },
@@ -61,7 +61,7 @@
             "category": "examples",
             "group": "table-type",
             "cover": "https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/list-tree.png",
-            "link": "'/tutorials/table_type/List_table/tree_list'",
+            "link": "'../../guide/table_type/List_table/tree_list'",
             "option": ""
           }
         },
@@ -77,7 +77,7 @@
             "category": "examples",
             "group": "table-type",
             "cover": "https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/transpose.png",
-            "link": "'/tutorials/table_type/List_table/list_table_transpose'",
+            "link": "'../../guide/table_type/List_table/list_table_transpose'",
             "option": ""
           }
         },
@@ -93,7 +93,7 @@
             "category": "examples",
             "group": "table-type",
             "cover": "https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/pivot-table.png",
-            "link": "'/tutorials/table_type/Pivot_table/pivot_table_useage'",
+            "link": "'../../guide/table_type/Pivot_table/pivot_table_useage'",
             "option": ""
           }
         },
@@ -109,7 +109,7 @@
             "category": "examples",
             "group": "table-type",
             "cover": "https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/pivot-tree.png",
-            "link": "'/tutorials/table_type/Pivot_table/pivot_table_tree'",
+            "link": "'../../guide/table_type/Pivot_table/pivot_table_tree'",
             "option": ""
           }
         },
@@ -125,7 +125,7 @@
             "category": "examples",
             "group": "table-type",
             "cover": "https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/pivot-chart.png",
-            "link": "'/tutorials/table_type/Pivot_Chart/pivot_chart_useage'",
+            "link": "'../../guide/table_type/Pivot_Chart/pivot_chart_useage'",
             "option": ""
           }
         }
@@ -150,7 +150,7 @@
             "category": "examples",
             "group": "Cell Type",
             "cover": "https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/multi-type.png",
-            "link": "'/tutorials/column_type/cellType'",
+            "link": "'../../guide/column_type/cellType'",
             "option": ""
           }
         },
@@ -166,7 +166,7 @@
             "category": "examples",
             "group": "Cell Type",
             "cover": "https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/progressbar.png",
-            "link": "'/tutorials/column_type/progressbar'",
+            "link": "'../../guide/column_type/progressbar'",
             "option": ""
           }
         },
@@ -207,7 +207,7 @@
             "category": "examples",
             "group": "Basic Features",
             "cover": "https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/auto-wrap-text.gif",
-            "link": "'/tutorials/basic_function/auto_wrap_text'",
+            "link": "'../../guide/basic_function/auto_wrap_text'",
             "option": ""
           }
         },
@@ -223,7 +223,7 @@
             "category": "examples",
             "group": "Basic Features",
             "cover": "https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/frozen-col.gif",
-            "link": "'/tutorials/basic_function/frozen_column'",
+            "link": "'../../guide/basic_function/frozen_column'",
             "option": ""
           }
         },
@@ -239,7 +239,7 @@
             "category": "examples",
             "group": "Basic Features",
             "cover": "https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/sort.gif",
-            "link": "'/tutorials/basic_function/sort'",
+            "link": "'../../guide/basic_function/sort'",
             "option": ""
           }
         },
@@ -271,7 +271,7 @@
             "category": "examples",
             "group": "Basic Features",
             "cover": "https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/width-mode-adaptive.png",
-            "link": "'/tutorials/basic_function/row_height_column_width'",
+            "link": "'../../guide/basic_function/row_height_column_width'",
             "option": ""
           }
         },
@@ -287,7 +287,7 @@
             "category": "examples",
             "group": "Basic Features",
             "cover": "https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/width-mode-adaptive.png",
-            "link": "'/tutorials/basic_function/row_height_column_width'",
+            "link": "'../../guide/basic_function/row_height_column_width'",
             "option": ""
           }
         },
@@ -303,7 +303,7 @@
             "category": "examples",
             "group": "Basic Features",
             "cover": "https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/width-mode-autoWidth.png",
-            "link": "'/tutorials/basic_function/row_height_column_width'",
+            "link": "'../../guide/basic_function/row_height_column_width'",
             "option": ""
           }
         }
@@ -328,7 +328,7 @@
             "category": "examples",
             "group": "Interaction",
             "cover": "https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/select.png",
-            "link": "'/tutorials/interaction_and_event/select'",
+            "link": "'../../guide/interaction_and_event/select'",
             "option": ""
           }
         },
@@ -344,7 +344,7 @@
             "category": "examples",
             "group": "Interaction",
             "cover": "https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/hover-cross.png",
-            "link": "'/tutorials/interaction_and_event/hover_cell'",
+            "link": "'../../guide/interaction_and_event/hover_cell'",
             "option": ""
           }
         },
@@ -360,7 +360,7 @@
             "category": "examples",
             "group": "Interaction",
             "cover": "https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/hover-row.png",
-            "link": "'/tutorials/interaction_and_event/hover_cell'",
+            "link": "'../../guide/interaction_and_event/hover_cell'",
             "option": ""
           }
         },
@@ -392,7 +392,7 @@
             "category": "examples",
             "group": "Interaction",
             "cover": "https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/resize-col-width.gif",
-            "link": "'/tutorials/interaction_and_event/resize_column_width'",
+            "link": "'../../guide/interaction_and_event/resize_column_width'",
             "option": ""
           }
         },
@@ -408,7 +408,7 @@
             "category": "examples",
             "group": "Interaction",
             "cover": "https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/move-header-position.gif",
-            "link": "'/tutorials/interaction_and_event/drag_header'",
+            "link": "'../../guide/interaction_and_event/drag_header'",
             "option": ""
           }
         }
@@ -433,7 +433,7 @@
             "category": "examples",
             "group": "Style",
             "cover": "https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/style.png",
-            "link": "'/tutorials/theme_and_style/style'",
+            "link": "'../../guide/theme_and_style/style'",
             "option": ""
           }
         }
@@ -458,7 +458,7 @@
             "category": "examples",
             "group": "Theme",
             "cover": "https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/arco.png",
-            "link": "'/tutorials/theme_and_style/theme'",
+            "link": "'../../guide/theme_and_style/theme'",
             "option": ""
           }
         },
@@ -474,7 +474,7 @@
             "category": "examples",
             "group": "Theme",
             "cover": "https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/bright.png",
-            "link": "'/tutorials/theme_and_style/theme'",
+            "link": "'../../guide/theme_and_style/theme'",
             "option": ""
           }
         },
@@ -490,7 +490,7 @@
             "category": "examples",
             "group": "Theme",
             "cover": "https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/custom.png",
-            "link": "'/tutorials/theme_and_style/theme'",
+            "link": "'../../guide/theme_and_style/theme'",
             "option": ""
           }
         },
@@ -506,7 +506,7 @@
             "category": "examples",
             "group": "Theme",
             "cover": "https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/dark.png",
-            "link": "'/tutorials/theme_and_style/theme'",
+            "link": "'../../guide/theme_and_style/theme'",
             "option": ""
           }
         },
@@ -522,7 +522,7 @@
             "category": "examples",
             "group": "Theme",
             "cover": "https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/default.png",
-            "link": "'/tutorials/theme_and_style/theme'",
+            "link": "'../../guide/theme_and_style/theme'",
             "option": ""
           }
         },
@@ -538,7 +538,7 @@
             "category": "examples",
             "group": "Theme",
             "cover": "https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/extend.png",
-            "link": "'/tutorials/theme_and_style/theme'",
+            "link": "'../../guide/theme_and_style/theme'",
             "option": ""
           }
         },
@@ -554,7 +554,7 @@
             "category": "examples",
             "group": "Theme",
             "cover": "https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/register.png",
-            "link": "'/tutorials/theme_and_style/theme'",
+            "link": "'../../guide/theme_and_style/theme'",
             "option": ""
           }
         },
@@ -570,7 +570,7 @@
             "category": "examples",
             "group": "Theme",
             "cover": "https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/simplify.png",
-            "link": "'/tutorials/theme_and_style/theme'",
+            "link": "'../../guide/theme_and_style/theme'",
             "option": ""
           }
         }
@@ -595,7 +595,7 @@
             "category": "examples",
             "group": "Custom",
             "cover": "https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/custom-icon.png",
-            "link": "'/tutorials/custom_define/custom_icon'",
+            "link": "'../../guide/custom_define/custom_icon'",
             "option": ""
           }
         },
@@ -611,7 +611,7 @@
             "category": "examples",
             "group": "Custom",
             "cover": "https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/custom-cell-layout.png",
-            "link": "'/tutorials/custom_define/custom_layout'",
+            "link": "'../../guide/custom_define/custom_layout'",
             "option": ""
           }
         },
@@ -627,7 +627,7 @@
             "category": "examples",
             "group": "Custom",
             "cover": "https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/custom-render-global.png",
-            "link": "'/tutorials/custom_define/custom_render'",
+            "link": "'../../guide/custom_define/custom_render'",
             "option": ""
           }
         },
@@ -643,7 +643,7 @@
             "category": "examples",
             "group": "Custom",
             "cover": "https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/custom-render.png",
-            "link": "'/tutorials/custom_define/custom_render'",
+            "link": "'../../guide/custom_define/custom_render'",
             "option": ""
           }
         }
@@ -716,7 +716,7 @@
             "category": "examples",
             "group": "Component",
             "cover": "https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/scrollbar.png",
-            "link": "'/tutorials/interaction_and_event/scroll'",
+            "link": "'../../guide/interaction_and_event/scroll'",
             "option": ""
           }
         },

@@ -4,7 +4,7 @@ group: Component
 title: legend
 cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/legend.png
 order: 8-6
-link: '/tutorials/components/legend'
+link: '../guide/components/legend'
 ---
 
 # Legend

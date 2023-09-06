@@ -4,7 +4,7 @@ group: Interaction
 title: Hover to highlight the entire line
 cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/hover-row.png
 order: 4-2
-link: '/tutorials/interaction/hover_cell'
+link: '../guide/interaction/hover_cell'
 ---
 
 # Hover to highlight the entire line

@@ -4,7 +4,7 @@ group: Basic Features
 title: 排序
 cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/sort.gif
 order: 3-2
-link: '/tutorials/basic_function/sort'
+link: '../guide/basic_function/sort'
 ---
 
 # 排序

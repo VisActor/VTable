@@ -4,7 +4,7 @@ group: Component
 title: title
 cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/title.png
 order: 8-5
-link: '/tutorials/components/title'
+link: '../guide/components/title'
 ---
 
 # Title

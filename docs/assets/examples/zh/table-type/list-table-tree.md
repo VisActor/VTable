@@ -4,7 +4,7 @@ group: table-type
 title: 基本表格树形展示
 cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/list-tree.png
 order: 1-2
-link: '/tutorials/table_type/List_table/tree_list'
+link: '../guide/table_type/List_table/tree_list'
 ---
 
 # 基本表格树形展示
