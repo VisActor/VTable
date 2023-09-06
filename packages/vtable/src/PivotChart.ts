@@ -38,6 +38,7 @@ import type { Chart } from './scenegraph/graphic/chart';
 import { clearChartCacheImage, updateChartData } from './scenegraph/refresh-node/update-chart';
 import type { ITableAxisOption } from './ts-types/component/axis';
 import { isArray } from '@visactor/vutils';
+import type { DiscreteLegend } from '@visactor/vrender-components';
 
 export class PivotChart extends BaseTable implements PivotChartAPI {
   declare internalProps: PivotChartProtected;
@@ -103,6 +104,7 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
       this.internalProps.dataConfig.dimensionSortArray = this._getDimensionSortArray();
       this.dataset = new Dataset(
         this.internalProps.dataConfig,
+        null,
         rowKeys,
         columnKeys,
         indicatorKeys,
@@ -195,6 +197,7 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
 
       this.dataset = new Dataset(
         this.internalProps.dataConfig,
+        null,
         rowKeys,
         columnKeys,
         indicatorKeys,
@@ -231,7 +234,9 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
       setTimeout(resolve, 0);
     });
   }
-
+  updatePagination() {
+    //void
+  }
   refreshHeader(): void {
     const internalProps = this.internalProps;
 
@@ -878,7 +883,7 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
   }
   /** 设置图例的选择状态。设置完后同步图表的状态需要配合updateFilterRules接口使用 */
   setLegendSelected(selectedData: (string | number)[]) {
-    this.internalProps.legends.legendComponent.setSelected(selectedData);
+    (this.internalProps.legends.legendComponent as DiscreteLegend).setSelected(selectedData);
     // this.updateFilterRules([{ filterKey: '20001', filteredValues: selectedData }]);
     // this.invalidate();
   }

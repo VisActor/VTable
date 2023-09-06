@@ -1,6 +1,18 @@
 # Change Log - @visactor/vtable
 
-This log was last generated on Fri, 01 Sep 2023 02:36:27 GMT and should not be manually modified.
+This log was last generated on Wed, 06 Sep 2023 09:18:51 GMT and should not be manually modified.
+
+## 0.10.2
+Wed, 06 Sep 2023 09:18:51 GMT
+
+### Patches
+
+- fix: updatePagination
+
+
+- feat: update vchart version
+
+
 
 ## 0.10.1
 Fri, 01 Sep 2023 02:36:27 GMT

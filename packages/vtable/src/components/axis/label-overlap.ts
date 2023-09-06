@@ -20,45 +20,88 @@ export function doOverlap(axisComponent: LineAxis, axis: CartesianAxis) {
 function labelFlush(axisLabels: IText[], axis: CartesianAxis) {
   const { width, height } = axis.getLayoutRect();
   const isX = isXAxis(axis.orient);
+  const isInverse = (axis.option as any).inverse === true;
   const first = axisLabels[0];
   const last = peek(axisLabels);
 
   if (isX) {
-    const start = 0;
-    const end = width;
-    const startBound = first.AABBBounds.x1;
-    const endBound = last.AABBBounds.x2;
-    if (startBound < start) {
-      first.setAttributes({
-        x: start,
-        textAlign: 'left'
-      });
-    }
+    if (isInverse) {
+      const start = width;
+      const end = 0;
+      const startBound = first.AABBBounds.x2;
+      const endBound = last.AABBBounds.x1;
 
-    if (endBound > end) {
-      last.setAttributes({
-        x: end,
-        textAlign: 'right'
-      });
+      if (startBound > start) {
+        first.setAttributes({
+          x: start,
+          textAlign: 'right'
+        });
+      }
+
+      if (endBound < end) {
+        last.setAttributes({
+          x: end,
+          textAlign: 'left'
+        });
+      }
+    } else {
+      const start = 0;
+      const end = width;
+      const startBound = first.AABBBounds.x1;
+      const endBound = last.AABBBounds.x2;
+      if (startBound < start) {
+        first.setAttributes({
+          x: start,
+          textAlign: 'left'
+        });
+      }
+
+      if (endBound > end) {
+        last.setAttributes({
+          x: end,
+          textAlign: 'right'
+        });
+      }
     }
   } else {
-    const start = height;
-    const end = 0;
-    const startBound = first.AABBBounds.y2;
-    const endBound = last.AABBBounds.y1;
+    if (isInverse) {
+      const startBound = first.AABBBounds.y1;
+      const endBound = last.AABBBounds.y2;
+      const start = 0;
+      const end = height;
 
-    if (startBound > start) {
-      first.setAttributes({
-        y: start,
-        textBaseline: 'bottom'
-      });
-    }
+      if (startBound < start) {
+        first.setAttributes({
+          y: start,
+          textBaseline: 'top'
+        });
+      }
 
-    if (endBound < end) {
-      last.setAttributes({
-        y: end,
-        textBaseline: 'top'
-      });
+      if (endBound > end) {
+        last.setAttributes({
+          y: end,
+          textBaseline: 'bottom'
+        });
+      }
+    } else {
+      const start = height;
+      const end = 0;
+      const startBound = first.AABBBounds.y2;
+      const endBound = last.AABBBounds.y1;
+
+      if (startBound > start) {
+        first.setAttributes({
+          y: start,
+          textBaseline: 'bottom'
+        });
+      }
+
+      if (endBound < end) {
+        last.setAttributes({
+          y: end,
+          textBaseline: 'top'
+        });
+      }
     }
   }
 }

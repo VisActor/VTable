@@ -19,7 +19,7 @@ import type {
   FieldDef,
   ColumnTypeOption,
   SortState,
-  IPagerConf,
+  IPagination,
   ICustomLayout,
   CellInfo,
   CellStyle,
@@ -87,7 +87,7 @@ import { MenuHandler } from '../components/menu/dom/MenuHandler';
 import type { BaseTableAPI, BaseTableConstructorOptions, IBaseTableProtected } from '../ts-types/base-table';
 import { FocusInput } from './FouseInput';
 import { defaultPixelRatio } from '../tools/pixel-ratio';
-import { TableLegend } from '../components/legend/legend';
+import { createLegend } from '../components/legend/create-legend';
 import { CartesianAxis } from '../components/axis/axis';
 import { DataSet } from '@visactor/vdataset';
 import { Title } from '../components/title/title';
@@ -137,7 +137,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
 
   version = __VERSION__;
 
-  pagerConf?: IPagerConf | undefined;
+  pagination?: IPagination | undefined;
 
   /**
    * constructor
@@ -300,7 +300,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     this.eventManeger = new EventManeger(this);
 
     if (options.legends) {
-      internalProps.legends = new TableLegend(options.legends, this);
+      internalProps.legends = createLegend(options.legends, this);
       this.scenegraph.tableGroup.setAttributes({
         x: this.tableX,
         y: this.tableY
@@ -1808,7 +1808,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     // this.eventManeger = new EventManeger(this);
 
     if (options.legends) {
-      internalProps.legends = new TableLegend(options.legends, this);
+      internalProps.legends = createLegend(options.legends, this);
       this.scenegraph.tableGroup.setAttributes({
         x: this.tableX,
         y: this.tableY
@@ -2201,22 +2201,9 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
   abstract getCellOriginValue(col: number, row: number): FieldData;
   /**
    * 更新页码
-   * @param cof 修改页码
+   * @param pagination 要修改页码的信息
    */
-  updatePager(cof: IPagerConf): void {
-    if (this.pagerConf) {
-      typeof cof.currentPage === 'number' && cof.currentPage >= 0 && (this.pagerConf.currentPage = cof.currentPage);
-      cof.perPageCount && (this.pagerConf.perPageCount = cof.perPageCount || this.pagerConf.perPageCount);
-      // 清空单元格内容
-      this.scenegraph.clearCells();
-      //数据源缓存数据更新
-      this.dataSource.updatePager(this.pagerConf);
-      this.refreshRowColCount();
-      // 生成单元格场景树
-      this.scenegraph.createSceneGraph();
-      this.render();
-    }
-  }
+  abstract updatePagination(pagination: IPagination): void;
   get allowFrozenColCount(): number {
     return this.internalProps.allowFrozenColCount;
   }

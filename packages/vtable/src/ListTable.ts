@@ -7,7 +7,7 @@ import type {
   FieldDef,
   FieldFormat,
   FieldKeyDef,
-  IPagerConf,
+  IPagination,
   ListTableAPI,
   ListTableConstructorOptions,
   MaybePromiseOrUndefined,
@@ -45,7 +45,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
 
     const internalProps = this.internalProps;
     //分页配置
-    this.pagerConf = options.pagerConf;
+    this.pagination = options.pagination;
     internalProps.sortState = options.sortState;
     internalProps.columns = options.columns
       ? cloneDeep(options.columns)
@@ -212,7 +212,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
     const internalProps = this.internalProps;
     super.updateOption(options);
     //分页配置
-    this.pagerConf = options.pagerConf;
+    this.pagination = options.pagination;
     //更新protectedSpace
     this.showHeader = options.showHeader ?? true;
     internalProps.columns = options.columns
@@ -249,6 +249,27 @@ export class ListTable extends BaseTable implements ListTableAPI {
     return new Promise(resolve => {
       setTimeout(resolve, 0);
     });
+  }
+  /**
+   * 更新页码
+   * @param pagination 修改页码
+   */
+  updatePagination(pagination: IPagination): void {
+    if (this.pagination) {
+      typeof pagination.currentPage === 'number' &&
+        pagination.currentPage >= 0 &&
+        (this.pagination.currentPage = pagination.currentPage);
+      pagination.perPageCount &&
+        (this.pagination.perPageCount = pagination.perPageCount || this.pagination.perPageCount);
+      // 清空单元格内容
+      this.scenegraph.clearCells();
+      //数据源缓存数据更新
+      this.dataSource.updatePagination(this.pagination);
+      this.refreshRowColCount();
+      // 生成单元格场景树
+      this.scenegraph.createSceneGraph();
+      this.render();
+    }
   }
   /** @private */
   refreshHeader(): void {

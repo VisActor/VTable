@@ -12,7 +12,8 @@ import type {
   PivotTableConstructorOptions,
   IHeaderTreeDefine,
   IDimensionInfo,
-  SortOrder
+  SortOrder,
+  IPagination
 } from './ts-types';
 import { HierarchyState } from './ts-types';
 import { PivotHeaderLayoutMap } from './layout/pivot-header-layout';
@@ -51,6 +52,8 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
       //TODO hack处理之前的demo都是定义到layout上的 所以这里直接并到options中
       Object.assign(options, (options as any).layout);
     }
+    //分页配置
+    this.pagination = options.pagination;
     this.internalProps.columnResizeType = options.columnResizeType ?? 'column';
     this.internalProps.dataConfig = options.dataConfig;
     this.internalProps.enableDataAnalysis = options.enableDataAnalysis;
@@ -80,7 +83,14 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
           }
           return keys;
         }, []) ?? [];
-      this.dataset = new Dataset(this.internalProps.dataConfig, rowKeys, columnKeys, indicatorKeys, options.records);
+      this.dataset = new Dataset(
+        this.internalProps.dataConfig,
+        this.pagination,
+        rowKeys,
+        columnKeys,
+        indicatorKeys,
+        options.records
+      );
     }
 
     this.refreshHeader();
@@ -128,7 +138,8 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
     //维护选中状态
     // const range = internalProps.selection.range; //保留原有单元格选中状态
     super.updateOption(options);
-
+    //分页配置
+    this.pagination = options.pagination;
     // 更新protectedSpace
     internalProps.columnResizeType = options.columnResizeType ?? 'column';
     internalProps.dataConfig = options.dataConfig;
@@ -174,7 +185,14 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
         }
         return keys;
       }, []);
-      this.dataset = new Dataset(internalProps.dataConfig, rowKeys, columnKeys, indicatorKeys, options.records);
+      this.dataset = new Dataset(
+        internalProps.dataConfig,
+        this.pagination,
+        rowKeys,
+        columnKeys,
+        indicatorKeys,
+        options.records
+      );
     }
     // 更新表头
     this.refreshHeader();
@@ -207,6 +225,28 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
     return new Promise(resolve => {
       setTimeout(resolve, 0);
     });
+  }
+
+  /**
+   * 更新页码
+   * @param pagination 修改页码
+   */
+  updatePagination(pagination: IPagination): void {
+    if (this.pagination) {
+      typeof pagination.currentPage === 'number' &&
+        pagination.currentPage >= 0 &&
+        (this.pagination.currentPage = pagination.currentPage);
+      pagination.perPageCount &&
+        (this.pagination.perPageCount = pagination.perPageCount || this.pagination.perPageCount);
+      // 清空单元格内容
+      this.scenegraph.clearCells();
+      //数据源缓存数据更新
+      this.dataset.updatePagination(this.pagination);
+      this.refreshHeader();
+      // 生成单元格场景树
+      this.scenegraph.createSceneGraph();
+      this.render();
+    }
   }
 
   refreshHeader(): void {

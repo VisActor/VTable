@@ -1,0 +1,863 @@
+{
+  "menu": "example",
+  "children": [
+    {
+      "path": "performance",
+      "title": {
+        "zh": "performance",
+        "en": "performance"
+      },
+      "children": [
+        {
+          "path": "100W",
+          "title": {
+            "zh": "100W条数据性能展示",
+            "en": "100W data performance display"
+          },
+          "meta": {
+            "title": "100W data performance display",
+            "keywords": "",
+            "category": "examples",
+            "group": "Performace",
+            "cover": "https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/performance.gif",
+            "link": "",
+            "option": ""
+          }
+        }
+      ]
+    },
+    {
+      "path": "table-type",
+      "title": {
+        "zh": "表格类型",
+        "en": "table-type"
+      },
+      "children": [
+        {
+          "path": "list-table",
+          "title": {
+            "zh": "基本表格",
+            "en": "List Table"
+          },
+          "meta": {
+            "title": "List Table",
+            "keywords": "",
+            "category": "examples",
+            "group": "table-type",
+            "cover": "https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/list-table.png",
+            "link": "'/tutorials/table_type/List_table/list_table_define_and_generate'",
+            "option": ""
+          }
+        },
+        {
+          "path": "list-table-tree",
+          "title": {
+            "zh": "基本表格树形展示",
+            "en": "List Table Tree"
+          },
+          "meta": {
+            "title": "List Table Tree",
+            "keywords": "",
+            "category": "examples",
+            "group": "table-type",
+            "cover": "https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/list-tree.png",
+            "link": "'/tutorials/table_type/List_table/tree_list'",
+            "option": ""
+          }
+        },
+        {
+          "path": "transpose-table",
+          "title": {
+            "zh": "转置表格",
+            "en": "Transpose Table"
+          },
+          "meta": {
+            "title": "Transpose Table",
+            "keywords": "",
+            "category": "examples",
+            "group": "table-type",
+            "cover": "https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/transpose.png",
+            "link": "'/tutorials/table_type/List_table/list_table_transpose'",
+            "option": ""
+          }
+        },
+        {
+          "path": "pivot-table",
+          "title": {
+            "zh": "透视表格",
+            "en": "Pivot Table"
+          },
+          "meta": {
+            "title": "Pivot Table",
+            "keywords": "",
+            "category": "examples",
+            "group": "table-type",
+            "cover": "https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/pivot-table.png",
+            "link": "'/tutorials/table_type/Pivot_table/pivot_table_useage'",
+            "option": ""
+          }
+        },
+        {
+          "path": "pivot-table-tree",
+          "title": {
+            "zh": "透视表格树形展示",
+            "en": "Pivot Table Tree"
+          },
+          "meta": {
+            "title": "Pivot Table Tree",
+            "keywords": "",
+            "category": "examples",
+            "group": "table-type",
+            "cover": "https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/pivot-tree.png",
+            "link": "'/tutorials/table_type/Pivot_table/pivot_table_tree'",
+            "option": ""
+          }
+        },
+        {
+          "path": "pivot-chart",
+          "title": {
+            "zh": "透视组合图",
+            "en": "Pivot Chart"
+          },
+          "meta": {
+            "title": "Pivot Chart",
+            "keywords": "",
+            "category": "examples",
+            "group": "table-type",
+            "cover": "https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/pivot-chart.png",
+            "link": "'/tutorials/table_type/Pivot_Chart/pivot_chart_useage'",
+            "option": ""
+          }
+        }
+      ]
+    },
+    {
+      "path": "cell-type",
+      "title": {
+        "zh": "单元格类型",
+        "en": "cell-type"
+      },
+      "children": [
+        {
+          "path": "multi-type",
+          "title": {
+            "zh": "单元格内容类型",
+            "en": "Cell Content Type"
+          },
+          "meta": {
+            "title": "Cell Content Type",
+            "keywords": "",
+            "category": "examples",
+            "group": "Cell Type",
+            "cover": "https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/multi-type.png",
+            "link": "'/tutorials/column_type/cellType'",
+            "option": ""
+          }
+        },
+        {
+          "path": "progressbar",
+          "title": {
+            "zh": "数据条类型",
+            "en": "Progressba Type"
+          },
+          "meta": {
+            "title": "Progressba Type",
+            "keywords": "",
+            "category": "examples",
+            "group": "Cell Type",
+            "cover": "https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/progressbar.png",
+            "link": "'/tutorials/column_type/progressbar'",
+            "option": ""
+          }
+        },
+        {
+          "path": "chart",
+          "title": {
+            "zh": "图表类型",
+            "en": "Chart Type"
+          },
+          "meta": {
+            "title": "Chart Type",
+            "keywords": "",
+            "category": "examples",
+            "group": "Cell Type",
+            "cover": "https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/chart.png",
+            "link": "",
+            "option": ""
+          }
+        }
+      ]
+    },
+    {
+      "path": "basic-functionality",
+      "title": {
+        "zh": "基础功能",
+        "en": "basic-functionality"
+      },
+      "children": [
+        {
+          "path": "auto-wrap-text",
+          "title": {
+            "zh": "自动换行",
+            "en": "Line Wrapping"
+          },
+          "meta": {
+            "title": "Line Wrapping",
+            "keywords": "",
+            "category": "examples",
+            "group": "Basic Features",
+            "cover": "https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/auto-wrap-text.gif",
+            "link": "'/tutorials/basic_function/auto_wrap_text'",
+            "option": ""
+          }
+        },
+        {
+          "path": "frozen-col",
+          "title": {
+            "zh": "冻结列",
+            "en": "frozen column"
+          },
+          "meta": {
+            "title": "frozen column",
+            "keywords": "",
+            "category": "examples",
+            "group": "Basic Features",
+            "cover": "https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/frozen-col.gif",
+            "link": "'/tutorials/basic_function/frozen_column'",
+            "option": ""
+          }
+        },
+        {
+          "path": "sort",
+          "title": {
+            "zh": "排序",
+            "en": "Sort"
+          },
+          "meta": {
+            "title": "Sort",
+            "keywords": "",
+            "category": "examples",
+            "group": "Basic Features",
+            "cover": "https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/sort.gif",
+            "link": "'/tutorials/basic_function/sort'",
+            "option": ""
+          }
+        },
+        {
+          "path": "merge",
+          "title": {
+            "zh": "合并单元格",
+            "en": "Merge Cells"
+          },
+          "meta": {
+            "title": "Merge Cells",
+            "keywords": "",
+            "category": "examples",
+            "group": "Basic Features",
+            "cover": "https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/merge.png",
+            "link": "",
+            "option": ""
+          }
+        },
+        {
+          "path": "height-mode-autoHeight",
+          "title": {
+            "zh": "适应容器高度",
+            "en": "Row Height Mode - Adapt to Content"
+          },
+          "meta": {
+            "title": "Row Height Mode - Adapt to Content",
+            "keywords": "",
+            "category": "examples",
+            "group": "Basic Features",
+            "cover": "https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/width-mode-adaptive.png",
+            "link": "'/tutorials/basic_function/row_height_column_width'",
+            "option": ""
+          }
+        },
+        {
+          "path": "width-mode-adaptive",
+          "title": {
+            "zh": "适应容器宽度",
+            "en": "Column Width Mode - Fits Container Width"
+          },
+          "meta": {
+            "title": "Column Width Mode - Fits Container Width",
+            "keywords": "",
+            "category": "examples",
+            "group": "Basic Features",
+            "cover": "https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/width-mode-adaptive.png",
+            "link": "'/tutorials/basic_function/row_height_column_width'",
+            "option": ""
+          }
+        },
+        {
+          "path": "width-mode-autoWidth",
+          "title": {
+            "zh": "列宽适应内容",
+            "en": "Column Width Mode - Adapt to Content"
+          },
+          "meta": {
+            "title": "Column Width Mode - Adapt to Content",
+            "keywords": "",
+            "category": "examples",
+            "group": "Basic Features",
+            "cover": "https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/width-mode-autoWidth.png",
+            "link": "'/tutorials/basic_function/row_height_column_width'",
+            "option": ""
+          }
+        }
+      ]
+    },
+    {
+      "path": "interaction",
+      "title": {
+        "zh": "交互能力",
+        "en": "interaction"
+      },
+      "children": [
+        {
+          "path": "select",
+          "title": {
+            "zh": "选择单元格",
+            "en": "Select cell"
+          },
+          "meta": {
+            "title": "Select cell",
+            "keywords": "",
+            "category": "examples",
+            "group": "Interaction",
+            "cover": "https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/select.png",
+            "link": "'/tutorials/interaction_and_event/select'",
+            "option": ""
+          }
+        },
+        {
+          "path": "hover-inline-cross",
+          "title": {
+            "zh": "hover行列十字高亮",
+            "en": "Hover the Line Cross Highlight"
+          },
+          "meta": {
+            "title": "Hover the Line Cross Highlight",
+            "keywords": "",
+            "category": "examples",
+            "group": "Interaction",
+            "cover": "https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/hover-cross.png",
+            "link": "'/tutorials/interaction_and_event/hover_cell'",
+            "option": ""
+          }
+        },
+        {
+          "path": "hover-inline-row",
+          "title": {
+            "zh": "hover高亮整行",
+            "en": "Hover to highlight the entire line"
+          },
+          "meta": {
+            "title": "Hover to highlight the entire line",
+            "keywords": "",
+            "category": "examples",
+            "group": "Interaction",
+            "cover": "https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/hover-row.png",
+            "link": "'/tutorials/interaction_and_event/hover_cell'",
+            "option": ""
+          }
+        },
+        {
+          "path": "context-menu",
+          "title": {
+            "zh": "右键菜单",
+            "en": "Right click menu"
+          },
+          "meta": {
+            "title": "Right click menu",
+            "keywords": "",
+            "category": "examples",
+            "group": "Interaction",
+            "cover": "https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/context-menu.png",
+            "link": "",
+            "option": ""
+          }
+        },
+        {
+          "path": "resize-col-width",
+          "title": {
+            "zh": "调整列宽",
+            "en": "Adjust column width"
+          },
+          "meta": {
+            "title": "Adjust column width",
+            "keywords": "",
+            "category": "examples",
+            "group": "Interaction",
+            "cover": "https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/resize-col-width.gif",
+            "link": "'/tutorials/interaction_and_event/resize_column_width'",
+            "option": ""
+          }
+        },
+        {
+          "path": "move-header-position",
+          "title": {
+            "zh": "移动表头位置",
+            "en": "Move header position"
+          },
+          "meta": {
+            "title": "Move header position",
+            "keywords": "",
+            "category": "examples",
+            "group": "Interaction",
+            "cover": "https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/move-header-position.gif",
+            "link": "'/tutorials/interaction_and_event/drag_header'",
+            "option": ""
+          }
+        }
+      ]
+    },
+    {
+      "path": "style",
+      "title": {
+        "zh": "style",
+        "en": "style"
+      },
+      "children": [
+        {
+          "path": "style",
+          "title": {
+            "zh": "样式",
+            "en": "Style"
+          },
+          "meta": {
+            "title": "Style",
+            "keywords": "",
+            "category": "examples",
+            "group": "Style",
+            "cover": "https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/style.png",
+            "link": "'/tutorials/theme_and_style/style'",
+            "option": ""
+          }
+        }
+      ]
+    },
+    {
+      "path": "theme",
+      "title": {
+        "zh": "theme",
+        "en": "theme"
+      },
+      "children": [
+        {
+          "path": "arco",
+          "title": {
+            "zh": "表格主题-ARCO",
+            "en": "Theme - ARCO"
+          },
+          "meta": {
+            "title": "Theme - ARCO",
+            "keywords": "",
+            "category": "examples",
+            "group": "Theme",
+            "cover": "https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/arco.png",
+            "link": "'/tutorials/theme_and_style/theme'",
+            "option": ""
+          }
+        },
+        {
+          "path": "bright",
+          "title": {
+            "zh": "表格主题-BIGTHT",
+            "en": "Theme - BIGTHT"
+          },
+          "meta": {
+            "title": "Theme - BIGTHT",
+            "keywords": "",
+            "category": "examples",
+            "group": "Theme",
+            "cover": "https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/bright.png",
+            "link": "'/tutorials/theme_and_style/theme'",
+            "option": ""
+          }
+        },
+        {
+          "path": "custom",
+          "title": {
+            "zh": "表格主题-custom",
+            "en": "Theme - custom"
+          },
+          "meta": {
+            "title": "Theme - custom",
+            "keywords": "",
+            "category": "examples",
+            "group": "Theme",
+            "cover": "https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/custom.png",
+            "link": "'/tutorials/theme_and_style/theme'",
+            "option": ""
+          }
+        },
+        {
+          "path": "dark",
+          "title": {
+            "zh": "表格主题-DARK",
+            "en": "Theme - DARK"
+          },
+          "meta": {
+            "title": "Theme - DARK",
+            "keywords": "",
+            "category": "examples",
+            "group": "Theme",
+            "cover": "https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/dark.png",
+            "link": "'/tutorials/theme_and_style/theme'",
+            "option": ""
+          }
+        },
+        {
+          "path": "default",
+          "title": {
+            "zh": "表格主题-DEFAULT",
+            "en": "Theme - DEFAULT"
+          },
+          "meta": {
+            "title": "Theme - DEFAULT",
+            "keywords": "",
+            "category": "examples",
+            "group": "Theme",
+            "cover": "https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/default.png",
+            "link": "'/tutorials/theme_and_style/theme'",
+            "option": ""
+          }
+        },
+        {
+          "path": "extend",
+          "title": {
+            "zh": "表格主题-extends",
+            "en": "Theme -extends"
+          },
+          "meta": {
+            "title": "Theme -extends",
+            "keywords": "",
+            "category": "examples",
+            "group": "Theme",
+            "cover": "https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/extend.png",
+            "link": "'/tutorials/theme_and_style/theme'",
+            "option": ""
+          }
+        },
+        {
+          "path": "register",
+          "title": {
+            "zh": "表格主题-register",
+            "en": "Theme -register"
+          },
+          "meta": {
+            "title": "Theme -register",
+            "keywords": "",
+            "category": "examples",
+            "group": "Theme",
+            "cover": "https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/register.png",
+            "link": "'/tutorials/theme_and_style/theme'",
+            "option": ""
+          }
+        },
+        {
+          "path": "simplify",
+          "title": {
+            "zh": "表格主题-SIMPLIFY",
+            "en": "Theme - SIMPLIFY"
+          },
+          "meta": {
+            "title": "Theme - SIMPLIFY",
+            "keywords": "",
+            "category": "examples",
+            "group": "Theme",
+            "cover": "https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/simplify.png",
+            "link": "'/tutorials/theme_and_style/theme'",
+            "option": ""
+          }
+        }
+      ]
+    },
+    {
+      "path": "custom-render",
+      "title": {
+        "zh": "自定义能力",
+        "en": "custom-render"
+      },
+      "children": [
+        {
+          "path": "custom-icon",
+          "title": {
+            "zh": "自定义图标",
+            "en": "Custom Icon"
+          },
+          "meta": {
+            "title": "Custom Icon",
+            "keywords": "",
+            "category": "examples",
+            "group": "Custom",
+            "cover": "https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/custom-icon.png",
+            "link": "'/tutorials/custom_define/custom_icon'",
+            "option": ""
+          }
+        },
+        {
+          "path": "custom-cell-layout",
+          "title": {
+            "zh": "单元格自定义布局",
+            "en": "Cell custom layout"
+          },
+          "meta": {
+            "title": "Cell custom layout",
+            "keywords": "",
+            "category": "examples",
+            "group": "Custom",
+            "cover": "https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/custom-cell-layout.png",
+            "link": "'/tutorials/custom_define/custom_layout'",
+            "option": ""
+          }
+        },
+        {
+          "path": "custom-render-global",
+          "title": {
+            "zh": "全局单元格自定义内容",
+            "en": "Global cell custom content"
+          },
+          "meta": {
+            "title": "Global cell custom content",
+            "keywords": "",
+            "category": "examples",
+            "group": "Custom",
+            "cover": "https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/custom-render-global.png",
+            "link": "'/tutorials/custom_define/custom_render'",
+            "option": ""
+          }
+        },
+        {
+          "path": "custom-render",
+          "title": {
+            "zh": "单元格自定义内容",
+            "en": "Cell custom content"
+          },
+          "meta": {
+            "title": "Cell custom content",
+            "keywords": "",
+            "category": "examples",
+            "group": "Custom",
+            "cover": "https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/custom-render.png",
+            "link": "'/tutorials/custom_define/custom_render'",
+            "option": ""
+          }
+        }
+      ]
+    },
+    {
+      "path": "component",
+      "title": {
+        "zh": "组件",
+        "en": "component"
+      },
+      "children": [
+        {
+          "path": "dropdown",
+          "title": {
+            "zh": "下拉菜单",
+            "en": "Drop Down Menu"
+          },
+          "meta": {
+            "title": "Drop Down Menu",
+            "keywords": "",
+            "category": "examples",
+            "group": "Component",
+            "cover": "https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/dropdown.png",
+            "link": "",
+            "option": ""
+          }
+        },
+        {
+          "path": "tooltip",
+          "title": {
+            "zh": "tooltip",
+            "en": "tooltip"
+          },
+          "meta": {
+            "title": "tooltip",
+            "keywords": "",
+            "category": "examples",
+            "group": "Component",
+            "cover": "https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/tooltip.png",
+            "link": "",
+            "option": ""
+          }
+        },
+        {
+          "path": "tooltip_custom_content",
+          "title": {
+            "zh": "tooltip custom content",
+            "en": "tooltip custom content"
+          },
+          "meta": {
+            "title": "tooltip custom content",
+            "keywords": "",
+            "category": "examples",
+            "group": "Component",
+            "cover": "https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/tooltip-custom-content.png",
+            "link": "",
+            "option": ""
+          }
+        },
+        {
+          "path": "scrollbar",
+          "title": {
+            "zh": "滚动条",
+            "en": "Scrollbar"
+          },
+          "meta": {
+            "title": "Scrollbar",
+            "keywords": "",
+            "category": "examples",
+            "group": "Component",
+            "cover": "https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/scrollbar.png",
+            "link": "'/tutorials/interaction_and_event/scroll'",
+            "option": ""
+          }
+        },
+        {
+          "path": "title",
+          "title": {
+            "zh": "title",
+            "en": "title"
+          },
+          "meta": {
+            "title": "title",
+            "keywords": "",
+            "category": "examples",
+            "group": "Component",
+            "cover": "https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/title.png",
+            "link": "",
+            "option": ""
+          }
+        },
+        {
+          "path": "legend",
+          "title": {
+            "zh": "legend",
+            "en": "legend"
+          },
+          "meta": {
+            "title": "legend",
+            "keywords": "",
+            "category": "examples",
+            "group": "Component",
+            "cover": "https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/legend.png",
+            "link": "",
+            "option": ""
+          }
+        }
+      ]
+    },
+    {
+      "path": "business",
+      "title": {
+        "zh": "业务场景",
+        "en": "business"
+      },
+      "children": [
+        {
+          "path": "color-level",
+          "title": {
+            "zh": "销售热图",
+            "en": "Sales heat map"
+          },
+          "meta": {
+            "title": "Sales heat map",
+            "keywords": "",
+            "category": "examples",
+            "group": "Business",
+            "cover": "https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/color-level.png",
+            "link": "",
+            "option": ""
+          }
+        },
+        {
+          "path": "project-schedule",
+          "title": {
+            "zh": "项目进度表",
+            "en": "Project schedule"
+          },
+          "meta": {
+            "title": "Project schedule",
+            "keywords": "",
+            "category": "examples",
+            "group": "Business",
+            "cover": "https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/project-schedule.png",
+            "link": "",
+            "option": ""
+          }
+        },
+        {
+          "path": "ranking",
+          "title": {
+            "zh": "2018年QSChina大学数学专业排名Mathematics",
+            "en": "2018 QSChina University Mathematics Major Rankings Mathematics"
+          },
+          "meta": {
+            "title": "2018 QSChina University Mathematics Major Rankings Mathematics",
+            "keywords": "",
+            "category": "examples",
+            "group": "Business",
+            "cover": "https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/ranking.png",
+            "link": "",
+            "option": ""
+          }
+        },
+        {
+          "path": "roadmap",
+          "title": {
+            "zh": "产品路线图",
+            "en": "Roadmap"
+          },
+          "meta": {
+            "title": "Roadmap",
+            "keywords": "",
+            "category": "examples",
+            "group": "Business",
+            "cover": "https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/roadmap.png",
+            "link": "",
+            "option": ""
+          }
+        },
+        {
+          "path": "temperature-trend",
+          "title": {
+            "zh": "各地年气温趋势",
+            "en": "Annual temperature trends by region"
+          },
+          "meta": {
+            "title": "Annual temperature trends by region",
+            "keywords": "",
+            "category": "examples",
+            "group": "Business",
+            "cover": "https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/temperature-trend.png",
+            "link": "",
+            "option": ""
+          }
+        },
+        {
+          "path": "trend",
+          "title": {
+            "zh": "趋势表",
+            "en": "Trend table"
+          },
+          "meta": {
+            "title": "Trend table",
+            "keywords": "",
+            "category": "examples",
+            "group": "Business",
+            "cover": "https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/trend.png",
+            "link": "",
+            "option": ""
+          }
+        }
+      ]
+    }
+  ]
+}

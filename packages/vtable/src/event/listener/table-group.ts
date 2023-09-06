@@ -77,9 +77,9 @@ export function bindTableGroupListener(eventManeger: EventManeger) {
     } else {
       stateManeger.updateCursor();
     }
-
+    const cellGoup: any = e.path.find(node => (node as any).role === 'cell');
     if ((table as any).hasListeners(TABLE_EVENT_TYPE.MOUSELEAVE_CELL)) {
-      const cellGoup = eventArgsSet?.eventArgs?.target as unknown as Group;
+      // const cellGoup = eventArgsSet?.eventArgs?.target as unknown as Group;
       if (
         cellGoup?.role === 'cell' &&
         table.stateManeger.hover.cellPos.col !== -1 &&
@@ -99,7 +99,7 @@ export function bindTableGroupListener(eventManeger: EventManeger) {
       }
     }
     if ((table as any).hasListeners(TABLE_EVENT_TYPE.MOUSEENTER_CELL)) {
-      const cellGoup = eventArgsSet?.eventArgs?.target as unknown as Group;
+      // const cellGoup = eventArgsSet?.eventArgs?.target as unknown as Group;
       if (
         cellGoup?.role === 'cell' &&
         isValid(cellGoup.col) &&

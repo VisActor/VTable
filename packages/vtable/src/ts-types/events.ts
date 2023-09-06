@@ -145,6 +145,7 @@ export interface TableEventHandlersEventArgumentMap {
   legend_item_click: { model: any; value: any; event: PointerEvent };
   legend_item_hover: { model: any; value: any; event: PointerEvent };
   legend_item_unHover: { model: any; value: any; event: PointerEvent };
+  legend_change: { model: any; value: any; event: PointerEvent };
 
   mouseenter_axis: MousePointerCellEvent & { axisPosition: 'left' | 'right' | 'top' | 'bottom' };
   mouseleave_axis: MousePointerCellEvent & { axisPosition: 'left' | 'right' | 'top' | 'bottom' };
@@ -165,7 +166,7 @@ export interface TableEventHandlersReturnMap {
   mouseleave_table: void;
   mouseenter_cell: void;
   mouseleave_cell: void;
-  mouseover_cell: void;
+  // mouseover_cell: void;
   mouseout_cell: void;
   mousemove_cell: void;
   mousedown_cell: boolean;
@@ -204,6 +205,7 @@ export interface TableEventHandlersReturnMap {
   legend_item_click: void;
   legend_item_hover: void;
   legend_item_unHover: void;
+  legend_change: void;
 
   mouseenter_axis: void;
   mouseleave_axis: void;

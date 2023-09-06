@@ -11,7 +11,10 @@ import { commonAxis } from './get-axis-attributes';
 export function computeAxisComponentWidth(config: ICellAxisOption, table: BaseTableAPI) {
   const attribute = merge({}, commonAxis, config);
   // tick
-  const tickWidth = attribute.tick.width ?? 4;
+  let tickWidth = 0;
+  if (attribute.tick.visible !== false) {
+    tickWidth = attribute.tick.width ?? 4;
+  }
 
   // text
   let labelWidth = 0;
@@ -53,7 +56,7 @@ export function computeAxisComponentWidth(config: ICellAxisOption, table: BaseTa
         const widthLimit = attribute.label?.style?.maxLineWidth || Infinity;
         labelWidth = Math.max(
           labelWidth,
-          getSizeAfterResize(Math.min(width, widthLimit), height, attribute.label?.style?.angle).width + 2
+          getSizeAfterResize(Math.min(width, widthLimit), height, attribute.label?.style?.angle).width
         );
       });
     }
@@ -71,14 +74,14 @@ export function computeAxisComponentWidth(config: ICellAxisOption, table: BaseTa
     const widthLimit = attribute.label?.style?.maxLineWidth || Infinity;
     const size = getSizeAfterResize(Math.min(width, widthLimit), height, attribute.title?.style?.angle);
     if ((config.orient === 'left' || config.orient === 'right') && attribute.title.autoRotate) {
-      titleWidth = size.height + 2;
+      titleWidth = size.height;
     } else {
-      titleWidth = size.width + 2;
+      titleWidth = size.width;
     }
     titleWidth += attribute.title.space ?? 4;
   }
 
-  return tickWidth + labelWidth + titleWidth;
+  return tickWidth + labelWidth + titleWidth + 2; // 2 is buffer
 }
 
 /**
@@ -89,7 +92,10 @@ export function computeAxisComponentWidth(config: ICellAxisOption, table: BaseTa
 export function computeAxisComponentHeight(config: ICellAxisOption, table: BaseTableAPI) {
   const attribute = merge({}, commonAxis, config);
   // tick
-  const tickHeight = attribute.tick.width ?? 4;
+  let tickHeight = 0;
+  if (attribute.tick.visible !== false) {
+    tickHeight = attribute.tick.width ?? 4;
+  }
 
   // text
   let labelHeight = 0;
@@ -131,7 +137,7 @@ export function computeAxisComponentHeight(config: ICellAxisOption, table: BaseT
         const widthLimit = attribute.label?.style?.maxLineWidth || Infinity;
         labelHeight = Math.max(
           labelHeight,
-          getSizeAfterResize(Math.min(width, widthLimit), height, attribute.label?.style?.angle).height + 2
+          getSizeAfterResize(Math.min(width, widthLimit), height, attribute.label?.style?.angle).height
         );
       });
     }
@@ -149,14 +155,14 @@ export function computeAxisComponentHeight(config: ICellAxisOption, table: BaseT
     const widthLimit = attribute.label?.style?.maxLineWidth || Infinity;
     const size = getSizeAfterResize(Math.min(width, widthLimit), height, attribute.title?.style?.angle);
     if ((config.orient === 'bottom' || config.orient === 'top') && attribute.title.autoRotate) {
-      titleHeight = size.width + 2;
+      titleHeight = size.width;
     } else {
-      titleHeight = size.height + 2;
+      titleHeight = size.height;
     }
     titleHeight += attribute.title.space ?? 4;
   }
 
-  return tickHeight + labelHeight + titleHeight;
+  return tickHeight + labelHeight + titleHeight + 2; // 2 is buffer
 }
 
 // 保留一位有效数字

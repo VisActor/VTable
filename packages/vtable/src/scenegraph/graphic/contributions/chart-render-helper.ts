@@ -18,7 +18,7 @@ export function IsHandlingChartQueue() {
   return isHandlingChartQueue;
 }
 export function renderChart(chart: Chart) {
-  const { axes, dataId, data } = chart.attribute;
+  const { axes, dataId, data, spec } = chart.attribute;
   const { chartInstance } = chart;
   const viewBox = chart.getViewBox();
   axes.forEach((axis: any, index: number) => {
@@ -51,16 +51,18 @@ export function renderChart(chart: Chart) {
     const dataBatch = [];
     for (const dataIdStr in dataId) {
       const dataIdAndField = dataId[dataIdStr];
+      const series = spec.series.find((item: any) => item?.data?.id === dataIdStr);
       dataBatch.push({
         id: dataIdStr,
-        data: dataIdAndField
+        values: dataIdAndField
           ? data?.filter((item: any) => {
               return item.hasOwnProperty(dataIdAndField);
             }) ?? []
-          : data ?? []
+          : data ?? [],
+        fields: series?.data?.fields
       });
-      // 判断是否有updateDataInBatchesSync 木有的话 还是循环调用updateDataSync
-      if (!chartInstance.updateDataInBatchesSync) {
+      // 判断是否有updateFullDataSync 木有的话 还是循环调用updateDataSync
+      if (!chartInstance.updateFullDataSync) {
         chartInstance.updateDataSync(
           dataIdStr,
           dataIdAndField
@@ -71,7 +73,7 @@ export function renderChart(chart: Chart) {
         );
       }
     }
-    chartInstance.updateDataInBatchesSync?.(dataBatch);
+    chartInstance.updateFullDataSync?.(dataBatch);
   }
   const sg = chartInstance.getStage();
   chart.cacheCanvas = sg.toCanvas(); // 截图空白问题 因为开启了动画 首屏截图是无数据的TODO

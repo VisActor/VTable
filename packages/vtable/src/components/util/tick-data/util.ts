@@ -39,8 +39,8 @@ export const convertDomainToTickData = (domain: any[], op: any): any[] => {
   const ticks = domain.map((t: number, index: number) => {
     return {
       index,
-      value: t,
-      label: op.labelFormatter ? op.labelFormatter(t) : `${t}`
+      value: t
+      // label: op.labelFormatter ? op.labelFormatter(t) : `${t}`
     };
   });
   return ticks;
@@ -204,6 +204,11 @@ export function getAxisLabelOffset(axisSpec: any) {
   return labelOffset;
 }
 
+/**
+ * 计算对应角度下的角度轴标签定位属性
+ * @param angle 弧度角，需要注意是逆时针计算的
+ * @returns
+ */
 export function angleLabelOrientAttribute(angle: number) {
   let align: any = 'center';
   let baseline: any = 'middle';
@@ -231,6 +236,10 @@ export function angleLabelOrientAttribute(angle: number) {
   return { align, baseline };
 }
 
+/**
+ * 角度标准化处理
+ * @param angle 弧度角
+ */
 export function normalizeAngle(angle: number): number {
   while (angle < 0) {
     angle += Math.PI * 2;

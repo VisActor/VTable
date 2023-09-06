@@ -97,3 +97,6 @@ packages/vtable-docs/public/*.html
 
 # git-hook
 common/scripts/pre-commit
+
+# generated documents
+docs/public/documents

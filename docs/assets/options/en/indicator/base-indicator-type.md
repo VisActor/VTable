@@ -1,0 +1,155 @@
+
+{{ target: base-indicator-type }}
+
+${prefix} indicatorKey(string)
+
+**Required** The unique identifier of the indicator
+
+${prefix} title(string)
+
+Indicator name
+
+${prefix} format(FieldFormat)
+
+Indicator value formatting
+{{ use: common-field-format(
+  prefix = ${prefix}
+  ) }}
+
+${prefix} headerFormat(FieldFormat)
+
+Dimension value format
+{{ use: common-field-format(
+  prefix = ${prefix}
+  ) }}
+
+${prefix} width(number|string)
+
+Width specification of the indicator column. If the indicator is displayed in rows, this configuration is not applied.
+Width specification can be a specific value, 'auto', or a percentage such as '20%'.
+If 'auto' is specified, the column width will be adjusted automatically based on the length of the text in the entire column;
+If a percentage is specified, the current column width will be adjusted according to the total width of the table;
+
+${prefix} maxWidth(number|string)
+
+Maximum width of the indicator column
+
+${prefix} minWidth(number|string)
+
+Minimum width of the indicator column
+
+${prefix} headerType(string) = 'text'
+
+Specify the header type, options: `'text'|'link'|'image'|'video'`, default `'text'`.
+
+${prefix} headerStyle(TODO)
+
+Header cell style. Configuration items vary slightly depending on the headerType. Configurations for each headerStyle can be referred to as follows:
+
+- For headerType 'text', see [headerStyle](/options/PivotTable-columns-text#headerStyle.bgColor)
+- For headerType 'link', see [headerStyle](/options/PivotTable-columns-link#headerStyle.bgColor)
+- For headerType 'image', see [headerStyle](/options/PivotTable-columns-image#headerStyle.bgColor)
+- For headerType 'video', see [headerStyle](/options/PivotTable-columns-image#headerStyle.bgColor)
+
+${prefix} style
+
+Body cell style, type declaration:
+```
+style?: IStyleOption | ((styleArg: StylePropertyFunctionArg) => IStyleOption);
+```
+{{ use: common-StylePropertyFunctionArg() }}
+
+IStyleOption type structure is as follows:
+
+{{ use: common-style(
+  prefix = ${prefix},
+  isImage = ${isImage},
+  isProgressbar = ${isProgressbar},
+) }}
+
+${prefix} headerIcon(string|Object|Array|Function)
+
+Header cell icon configuration
+
+```
+  headerIcon?:
+    | string
+    | ColumnIconOption
+    | (string | ColumnIconOption)[]
+    | ((args: CellInfo) => string | ColumnIconOption | (string | ColumnIconOption)[]);
+```
+
+ColumnIconOption can refer to [definition](/en/option.html#PivotTable-indicators-text.icon.ColumnIconOption_definition：)
+
+${prefix} icon(string|Object|Array|Funciton)
+
+Body cell icon configuration.
+
+```
+icon?:
+    | string
+    | ColumnIconOption
+    | (string | ColumnIconOption)[]
+    | ((args: CellInfo) => string | ColumnIconOption | (string | ColumnIconOption)[]);
+```
+#${prefix}ColumnIconOption_definition：
+```
+type ColumnIconOption = ImageIcon | SvgIcon;
+```
+#${prefix}ImageIcon(Object)
+{{ use: image-icon(  prefix = '##' + ${prefix}) }}
+
+#${prefix}SvgIcon(Object)
+{{ use: svg-icon(  prefix = '##' + ${prefix}) }}
+
+${prefix} headerCustomRender(Function|Object)
+Custom rendering content definition for the indicator name header
+
+${prefix} headerCustomLayout(Function)
+
+Custom layout elements for the indicator name header cell.
+
+```
+(args: CustomRenderFunctionArg) => ICustomLayoutObj;
+```
+{{ use: common-CustomRenderFunctionArg() }}
+
+{{ use: custom-layout(
+    prefix =  '#'+${prefix},
+) }}
+
+${prefix} customRender(Function|Object)
+
+Custom rendering content definition for the indicator value body cell, either in function or object form. The type is `ICustomRenderFuc | ICustomRenderObj`.
+
+The ICustomRenderFuc is defined as follows:
+```
+ type ICustomRenderFuc = (args: CustomRenderFunctionArg) => ICustomRenderObj;
+```
+{{ use: common-CustomRenderFunctionArg() }}
+
+{{ use: common-custom-render-object(
+  prefix = '#' + ${prefix},
+) }}
+
+${prefix} customLayout(Function)
+
+Custom layout elements for the indicator value body cell.
+
+```
+(args: CustomRenderFunctionArg) => ICustomLayoutObj;
+```
+{{ use: common-CustomRenderFunctionArg() }}
+
+{{ use: custom-layout(
+    prefix =  '#'+${prefix},
+) }}
+
+${prefix} dropDownMenu(Array)
+Dropdown menu item configuration. Dropdown menu items can be first-level menu items or second-level menu items, and only one configuration is required. The specific type is MenuListItem[].
+
+${prefix} showSort(boolean)
+Whether to display the sorting icon, no data sorting logic
+
+${prefix} disableColumnResize(boolean)
+Whether to disable column width adjustment. If it is a transposed table or the indicator is specified in the row direction of the pivot table, this configuration does not take effect.
