@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "comment": "fix: updatePagination\n\n",
+      "type": "patch",
+      "packageName": "@visactor/vtable"
+    }
+  ],
+  "packageName": "@visactor/vtable",
+  "email": "892739385@qq.com"
+}

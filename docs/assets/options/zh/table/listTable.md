@@ -34,15 +34,23 @@
 
 ## pagination(IPagination)
 
-分页配置。IPagination 的具体类型如下：
+分页配置。
+
+基本表格和VTable数据分析透视表(enableDataAnalysis=true)支持分页，透视组合图不支持分页。
+
+IPagination 的具体类型如下：
 
 ### totalCount (number)
 
 数据总条数。
 
+非必传！透视表中这个字段VTable会自动补充，帮助用户获取到总共数据条数
+
 ### perPageCount (number)
 
 每页显示数据条数。
+
+注意! 透视表中perPageCount会自动修正为指标数量的整数倍。
 
 ### currentPage (number)
 

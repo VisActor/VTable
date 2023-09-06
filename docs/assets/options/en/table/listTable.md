@@ -34,13 +34,23 @@ Whether to display the table header.
 
 ## pagination(IPagination)
 
-Pagination configuration. The specific type of IPagination is as follows:
+Pagination configuration.
+
+The basic table and VTable data analysis pivot table (enableDataAnalysis=true) support paging, but the pivot combination chart does not support paging.
+
+The specific types of IPagination are as follows:
 
 ### totalCount (number)
-Total number of data records.
+
+The total number of data items.
+
+Not required! This field VTable in the pivot table will be automatically supplemented to help users obtain the total number of data items
 
 ### perPageCount (number)
-Number of data records displayed per page.
+
+Display the number of data items per page.
+
+Note! The perPageCount in the pivot table will be automatically corrected to an integer multiple of the number of indicators.
 
 ### currentPage (number)
 Current page number.

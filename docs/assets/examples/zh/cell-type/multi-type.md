@@ -9,7 +9,7 @@ link: '/guide/column_type/cellType'
 
 # 单元格内容类型
 
-通过columnType指定单元格内容类型。图片视频来源：https://birdsoftheworld.org/bow/home
+通过cellType指定单元格内容类型。图片视频来源：https://birdsoftheworld.org/bow/home
 
 ## 关键配置
 

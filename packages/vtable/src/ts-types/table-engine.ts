@@ -82,7 +82,7 @@ export interface PivotSortState {
  * 分页配置
  */
 export interface IPagination {
-  /** 数据总条数 */
+  /** 数据总条数 透视表中这个数据会自动加上 不需用户传入*/
   totalCount?: number;
   /** 每页显示数据条数  */
   perPageCount: number;
