@@ -87,7 +87,7 @@ import { MenuHandler } from '../components/menu/dom/MenuHandler';
 import type { BaseTableAPI, BaseTableConstructorOptions, IBaseTableProtected } from '../ts-types/base-table';
 import { FocusInput } from './FouseInput';
 import { defaultPixelRatio } from '../tools/pixel-ratio';
-import { TableLegend } from '../components/legend/legend';
+import { createLegend } from '../components/legend/create-legend';
 import { CartesianAxis } from '../components/axis/axis';
 import { DataSet } from '@visactor/vdataset';
 import { Title } from '../components/title/title';
@@ -300,7 +300,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     this.eventManeger = new EventManeger(this);
 
     if (options.legends) {
-      internalProps.legends = new TableLegend(options.legends, this);
+      internalProps.legends = createLegend(options.legends, this);
       this.scenegraph.tableGroup.setAttributes({
         x: this.tableX,
         y: this.tableY
@@ -1808,7 +1808,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     // this.eventManeger = new EventManeger(this);
 
     if (options.legends) {
-      internalProps.legends = new TableLegend(options.legends, this);
+      internalProps.legends = createLegend(options.legends, this);
       this.scenegraph.tableGroup.setAttributes({
         x: this.tableX,
         y: this.tableY

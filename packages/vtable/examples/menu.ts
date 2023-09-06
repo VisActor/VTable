@@ -441,6 +441,14 @@ export const menus = [
       {
         path: 'components',
         name: 'axis'
+      },
+      {
+        path: 'components',
+        name: 'color'
+      },
+      {
+        path: 'components',
+        name: 'size'
       }
     ]
   },
