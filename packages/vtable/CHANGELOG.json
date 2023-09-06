@@ -2,6 +2,21 @@
   "name": "@visactor/vtable",
   "entries": [
     {
+      "version": "0.10.2",
+      "tag": "@visactor/vtable_v0.10.2",
+      "date": "Wed, 06 Sep 2023 09:18:51 GMT",
+      "comments": {
+        "patch": [
+          {
+            "comment": "fix: updatePagination\n\n"
+          },
+          {
+            "comment": "feat: update vchart version\n\n"
+          }
+        ]
+      }
+    },
+    {
       "version": "0.10.1",
       "tag": "@visactor/vtable_v0.10.1",
       "date": "Fri, 01 Sep 2023 02:36:27 GMT",
