@@ -4,7 +4,7 @@ group: Basic Features
 title: Line Wrapping
 cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/auto-wrap-text.gif
 order: 3-1
-link: '/guide/basic_function/auto_wrap_text'
+link: '/tutorials/basic_function/auto_wrap_text'
 ---
 
 # line wrapping
@@ -82,7 +82,3 @@ tableInstance = new VTable.ListTable(document.getElementById(CONTAINER_ID), opti
 window['tableInstance'] = tableInstance;
     })
 ```
-
-## Related Tutorials
-
-[performance optimization](link)

@@ -4,6 +4,7 @@ group: Component
 title: legend
 cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/legend.png
 order: 8-6
+link: '/tutorials/components/legend'
 ---
 
 # legend
@@ -12,7 +13,7 @@ order: 8-6
 
 ## 关键配置
 
-- `legend` 配置表格图例，具体可参考：https://www.visactor.io/vtable/option/ListTable#legend
+- `legend` 配置表格图例，具体可参考：https://www.visactor.io/vtable/options/ListTable#legend
 
 ## 代码演示
 
@@ -166,7 +167,3 @@ let  tableInstance;
       });
     });
 ```
-
-## 相关教程
-
-[性能优化](link)

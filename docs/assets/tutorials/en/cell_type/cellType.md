@@ -187,7 +187,7 @@ Detailed tutorial reference: TODO
 
 ## Chart
 
-When the column type is "chart", it is used to display the data of the chart type. Before using this type, you need to register a chart type through VTable.chart.register. For details, please refer to the tutorial.[Vchart registration](TODO)Example of use after registration:
+When the column type is "chart", it is used to display the data of the chart type. Before using this type, you need to register a chart type through VTable.chart.register. For details, please refer to the tutorial.[Vchart registration](/tutorials/cell_type/chart)Example of use after registration:
 
 Show one below `cellType: 'chart'` Example of:
 
@@ -227,6 +227,6 @@ Show one below `cellType: 'chart'` Example of:
 In this example:
 
 *   `chartType: 'vchart'` Use the chart library component built into VTable, registered under the name vchart
-*   `chartSpec` The chart type and specific configuration items are set, and the specific configuration items need to be referred to.[VChart](TODO).
+*   `chartSpec` The chart type and specific configuration items are set, and the specific configuration items need to be referred to.[VChart](https://visactor.io/vchart).
 
 Detailed tutorial reference: TODO

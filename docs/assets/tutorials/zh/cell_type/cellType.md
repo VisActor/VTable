@@ -184,7 +184,7 @@ VTable 所支持的数据类型共有 7 种，分别为：
 
 ## chart
 
-当列类型为 "chart" 时，用于显示图表类型的数据。在使用该类型之前需要先通过VTable.chart.register注册一种图表类型，具体可以参考教程[vchart注册使用](TODO)。注册之后的使用示例：
+当列类型为 "chart" 时，用于显示图表类型的数据。在使用该类型之前需要先通过VTable.chart.register注册一种图表类型，具体可以参考教程[vchart注册使用](/tutorials/cell_type/chart)。注册之后的使用示例：
 
 以下展示一个 `cellType: 'chart'` 的例子：
 
@@ -224,6 +224,6 @@ VTable 所支持的数据类型共有 7 种，分别为：
 在这个例子中：
 
 - `chartType: 'vchart'` 使用 VTable 内置的图表库组件，注册名称为vchart
-- `chartSpec` 设置了图表类型和具体的配置项，具体配置项需要参考[VChart](TODO)。
+- `chartSpec` 设置了图表类型和具体的配置项，具体配置项需要参考[VChart](https://visactor.io/vchart)。
 
 详细教程参考：TODO

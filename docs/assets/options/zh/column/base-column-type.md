@@ -37,10 +37,10 @@ ${prefix} headerStyle(IStyleOption|Function)
 
 表头单元格样式，配置项根据 headerType 不同有略微差别。每种 headerStyle 的配置项可参考：
 
-- headerType 为'text'，对应[headerStyle](url TODO 用 dimension 中对应的)
-- headerType 为'link'，对应[headerStyle](url)
-- headerType 为'image'，对应[headerStyle](url)
-- headerType 为'video'，对应[headerStyle](url)
+- headerType 为'text'，对应[headerStyle](/options/PivotTable-columns-text#headerStyle.bgColor)
+- headerType 为'link'，对应[headerStyle](/options/PivotTable-columns-link#headerStyle.bgColor)
+- headerType 为'image'，对应[headerStyle](/options/PivotTable-columns-image#headerStyle.bgColor)
+- headerType 为'video'，对应[headerStyle](/options/PivotTable-columns-image#headerStyle.bgColor)
 
 ${prefix} style
 
@@ -210,4 +210,4 @@ ${prefix} tree (boolean)
 }
 ```
 
-可参考示例：[TODO](url)
+可参考示例：[TODO](https://github.com/VisActor/VTable/pull/291)

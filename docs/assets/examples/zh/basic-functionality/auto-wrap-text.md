@@ -4,7 +4,7 @@ group: Basic Features
 title: 自动换行
 cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/auto-wrap-text.gif
 order: 3-1
-link: '/guide/basic_function/auto_wrap_text'
+link: '/tutorials/basic_function/auto_wrap_text'
 ---
 
 # 自动换行
@@ -82,7 +82,3 @@ tableInstance = new VTable.ListTable(document.getElementById(CONTAINER_ID),optio
 window['tableInstance'] = tableInstance;
     })
 ```
-
-## 相关教程
-
-[性能优化](link)

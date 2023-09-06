@@ -2,7 +2,7 @@
 
 In this article, we will learn how to customize and beautify the presentation of data tables with the theme Theme in VTable.
 
-Theme controls the appearance of the table, makes the table more aesthetic, and has some help for data analytics. It should be noted that: Theme theme is to set the style of the table from the whole, and can also be used through[style](url)To style each column separately.
+Theme controls the appearance of the table, makes the table more aesthetic, and has some help for data analytics. It should be noted that: Theme theme is to set the style of the table from the whole, and can also be used through[style](/tutorials/theme_and_style/style)To style each column separately.
 
 Theme supports setting the static styles of modules such as table header, body and outer border. The settings include: font, font size, color, background color, cell dividing line thickness and color; it also supports dynamic style configuration of each interaction effect module of cells. For example: mouse suspension or style configuration of each cell when selected. For details, please check the configuration items.
 

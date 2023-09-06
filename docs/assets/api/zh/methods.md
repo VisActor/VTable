@@ -30,7 +30,7 @@
 ```
 tableInstance.updateTheme(newTheme)
 ```
-对应属性更新接口（可参考教程：https://visactor.io/vtable/guide/basic_function/update_option）:
+对应属性更新接口（可参考教程：https://visactor.io/vtable/tutorials/basic_function/update_option）:
 ```
 // 调用后不会自动重绘
 tableInstance.theme = newTheme;
@@ -50,7 +50,7 @@ tableInstance.theme = newTheme;
 ```
 tableInstance.updateColumns(newColumns)
 ```
-对应属性更新接口（可参考教程：https://visactor.io/vtable/guide/basic_function/update_option）:
+对应属性更新接口（可参考教程：https://visactor.io/vtable/tutorials/basic_function/update_option）:
 ```
 // 调用后不会自动重绘
 tableInstance.columns = newColumns;

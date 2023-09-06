@@ -4,7 +4,7 @@ group: Theme
 title: Theme - custom
 cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/custom.png
 order: 6-6
-link: '/guide/theme_and_style/theme'
+link: '/tutorials/theme_and_style/theme'
 ---
 
 # Form Theme -custom
@@ -180,7 +180,3 @@ tableInstance = new VTable.PivotTable(document.getElementById(CONTAINER_ID), opt
 window['tableInstance'] = tableInstance;
     })
 ```
-
-## Related Tutorials
-
-[performance optimization](link)

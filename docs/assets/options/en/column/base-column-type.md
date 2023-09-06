@@ -37,10 +37,10 @@ ${prefix} headerStyle(IStyleOption|Function)
 
 Header cell style, configuration options are slightly different depending on the headerType. The configuration options for each headerStyle can be referred to:
 
-- When headerType is 'text', it corresponds to [headerStyle](url TODO used in dimension)
-- When headerType is 'link', it corresponds to [headerStyle](url)
-- When headerType is 'image', it corresponds to [headerStyle](url)
-- When headerType is 'video', it corresponds to [headerStyle](url)
+- When headerType is 'text', it corresponds to [headerStyle](/options/PivotTable-columns-text#headerStyle.bgColor)
+- When headerType is 'link', it corresponds to [headerStyle](/options/PivotTable-columns-link#headerStyle.bgColor)
+- When headerType is 'image', it corresponds to [headerStyle](/options/PivotTable-columns-image#headerStyle.bgColor)
+- When headerType is 'video', it corresponds to [headerStyle](/options/PivotTable-columns-image#headerStyle.bgColor)
 
 ${prefix} style
 
@@ -200,4 +200,4 @@ Whether to display this column as a tree structure, which needs to be combined w
     ]
 }
 ```
-Please refer to the example: [TODO](url)
+Please refer to the example: [TODO](https://github.com/VisActor/VTable/pull/291)

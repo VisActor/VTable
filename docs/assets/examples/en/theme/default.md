@@ -4,7 +4,7 @@ group: Theme
 title: Theme - DEFAULT
 cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/default.png
 order: 6-0
-link: '/guide/theme_and_style/theme'
+link: '/tutorials/theme_and_style/theme'
 ---
 
 # Form Theme - DEFAULT
@@ -92,7 +92,3 @@ tableInstance = new VTable.ListTable(document.getElementById(CONTAINER_ID), opti
 window['tableInstance'] = tableInstance;
     })
 ```
-
-## Related Tutorials
-
-[performance optimization](link)

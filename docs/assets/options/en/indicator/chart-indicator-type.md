@@ -12,7 +12,7 @@ Specify the column type as 'chart', cellType can be omitted and defaults to 'tex
 
 **Exclusive configuration options for chart type**
 
-Corresponds to the injected chart library component name
+Corresponding to the name of the injected chart library component, the injection method can refer to [tutorial](/tutorials/cell_type/chart). Currently only supports injecting VChart charting library!
 
 ##${prefix} chartSpec(any|Function)
 

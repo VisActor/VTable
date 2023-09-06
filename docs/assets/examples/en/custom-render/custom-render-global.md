@@ -4,7 +4,7 @@ group: Custom
 title: Global cell custom content
 cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/custom-render-global.png
 order: 7-3
-link: '/guide/custom_define/custom_render'
+link: '/tutorials/custom_define/custom_render'
 ---
 
 # Global cell custom content
@@ -171,7 +171,3 @@ Set custom functions through the global configuration item customRender
 const tableInstance = new VTable.ListTable(document.getElementById(CONTAINER_ID), option);
 window['tableInstance'] = tableInstance;
 ```
-
-## Related Tutorials
-
-[performance optimization](link)

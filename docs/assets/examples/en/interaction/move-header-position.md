@@ -4,7 +4,7 @@ group: Interaction
 title: Move header position
 cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/move-header-position.gif
 order: 4-5
-link: '/guide/interaction_and_event/drag_header'
+link: '/tutorials/interaction/drag_header'
 ---
 
 # Move header position
@@ -367,7 +367,3 @@ tableInstance = new VTable.PivotTable(document.getElementById(CONTAINER_ID), opt
 window['tableInstance'] = tableInstance;
     })
 ```
-
-## Related Tutorials
-
-[performance optimization](link)

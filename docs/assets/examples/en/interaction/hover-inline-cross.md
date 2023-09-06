@@ -4,7 +4,7 @@ group: Interaction
 title: Hover the Line Cross Highlight
 cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/hover-cross.png
 order: 4-3
-link: '/guide/interaction_and_event/hover_cell'
+link: '/tutorials/interaction/hover_cell'
 ---
 
 # Hover the line cross highlight
@@ -111,7 +111,3 @@ tableInstance = new VTable.ListTable(document.getElementById(CONTAINER_ID), opti
 window['tableInstance'] = tableInstance;
     })
 ```
-
-## Related Tutorials
-
-[performance optimization](link)

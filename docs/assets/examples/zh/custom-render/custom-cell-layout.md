@@ -4,7 +4,7 @@ group: Custom
 title: 单元格自定义布局
 cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/custom-cell-layout.png
 order: 7-1
-link: '/guide/custom_define/custom_layout'
+link: '/tutorials/custom_define/custom_layout'
 ---
 
 # 单元格自定义布局
@@ -314,6 +314,3 @@ const tableInstance = new VTable.ListTable(document.getElementById(CONTAINER_ID)
 window['tableInstance'] = tableInstance;
 ```
 
-## 相关教程
-
-[性能优化](link)

@@ -4,7 +4,7 @@ group: Interaction
 title: Adjust column width
 cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/resize-col-width.gif
 order: 4-4
-link: '/guide/interaction_and_event/resize_column_width'
+link: '/interaction/resize_column_width'
 ---
 
 # Adjust column width
@@ -374,7 +374,3 @@ tableInstance = new VTable.PivotTable(document.getElementById(CONTAINER_ID), opt
 window['tableInstance'] = tableInstance;
     })
 ```
-
-## Related Tutorials
-
-[performance optimization](link)

@@ -4,7 +4,7 @@ group: Theme
 title: Theme - SIMPLIFY
 cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/simplify.png
 order: 6-4
-link: '/guide/theme_and_style/theme'
+link: '/tutorials/theme_and_style/theme'
 ---
 
 # Form Theme - SIMPLIFY
@@ -92,7 +92,3 @@ tableInstance = new VTable.ListTable(document.getElementById(CONTAINER_ID), opti
 window['tableInstance'] = tableInstance;
     })
 ```
-
-## Related Tutorials
-
-[performance optimization](link)

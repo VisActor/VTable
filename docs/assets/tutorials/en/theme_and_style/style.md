@@ -1,6 +1,6 @@
 # Style Style Introduction
 
-The table style configuration provides flexibility and customization, enabling users to design and beautify the table presentation according to the business data type of each column. If you need to consider the style from the table as a whole, you can use it[Theme](url).
+The table style configuration provides flexibility and customization, enabling users to design and beautify the table presentation according to the business data type of each column. If you need to consider the style from the table as a whole, you can use it[Theme](/tutorials/theme_and_style/theme).
 
 This document describes how to use style and headerStyle to configure table styles to help users better understand and use these features.
 

@@ -4,6 +4,7 @@ group: Interaction
 title: 右键菜单
 cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/context-menu.png
 order: 4-6
+link: '/tutorials/components/dropdown'
 ---
 
 # 右键菜单
@@ -99,6 +100,3 @@ tableInstance.on('dropdownmenu_click', (args) => {
     })
 ```
 
-## 相关教程
-
-[性能优化](link)

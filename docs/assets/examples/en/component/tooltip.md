@@ -4,6 +4,7 @@ group: Component
 title: tooltip
 cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/tooltip.png
 order: 8-1
+link: '/tutorials/components/tooltip'
 ---
 
 # Tooltip
@@ -114,6 +115,3 @@ const columns =[
 })
 ```
 
-## Related Tutorials
-
-[performance optimization](link)

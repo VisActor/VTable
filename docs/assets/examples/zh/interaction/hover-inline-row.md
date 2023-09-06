@@ -4,7 +4,7 @@ group: Interaction
 title: hover高亮整行
 cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/hover-row.png
 order: 4-2
-link: '/guide/interaction_and_event/hover_cell'
+link: '/tutorials/interaction/hover_cell'
 ---
 
 # hover高亮整行
@@ -94,7 +94,3 @@ tableInstance = new VTable.ListTable(document.getElementById(CONTAINER_ID),optio
 window['tableInstance'] = tableInstance;
     })
 ```
-
-## 相关教程
-
-[性能优化](link)

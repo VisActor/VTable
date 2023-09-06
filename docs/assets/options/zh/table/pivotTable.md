@@ -99,7 +99,7 @@ export interface IIndicatorHeaderNode {
 
 层级维度结构显示形式，平铺还是树形结构。
 
-[平铺示例](url) [树形示例](url)
+[平铺示例](/examples/table-type/pivot-table) [树形示例](examples/table-type/pivot-table-tree)
 
 ## rowExpandLevel(number)
 

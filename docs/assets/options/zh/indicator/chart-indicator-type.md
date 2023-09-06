@@ -12,7 +12,7 @@
 
 **chart 类型专属配置项**
 
-对应注入的图表库组件名称，注入方式可以参考[教程](TODO)。目前仅支持注入 VChart 图表库！
+对应注入的图表库组件名称，注入方式可以参考[教程](/tutorials/cell_type/chart)。目前仅支持注入 VChart 图表库！
 
 ##${prefix} chartSpec(any|Function)
 

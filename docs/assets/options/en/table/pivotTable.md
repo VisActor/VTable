@@ -99,7 +99,7 @@ Row header tree, with a structure similar to columnTree.
 
 Hierarchy display style for dimensional structure, flat or tree.
 
-[Flat Example](url) [Tree Example](url)
+[Flat Example](examples/table-type/pivot-table) [Tree Example](examples/table-type/pivot-table-tree)
 
 ## rowExpandLevel(number)
 

@@ -4,7 +4,7 @@ group: Interaction
 title: hover行列十字高亮
 cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/hover-cross.png
 order: 4-3
-link: '/guide/interaction_and_event/hover_cell'
+link: '/tutorials/interaction/hover_cell'
 ---
 
 # hover行列十字高亮
@@ -111,7 +111,3 @@ tableInstance = new VTable.ListTable(document.getElementById(CONTAINER_ID),optio
 window['tableInstance'] = tableInstance;
     })
 ```
-
-## 相关教程
-
-[性能优化](link)

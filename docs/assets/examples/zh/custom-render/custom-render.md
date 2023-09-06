@@ -4,7 +4,7 @@ group: Custom
 title: 单元格自定义内容
 cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/custom-render.png
 order: 7-4
-link: '/guide/custom_define/custom_render'
+link: '/tutorials/custom_define/custom_render'
 ---
 
 # 单元格自定义内容
@@ -215,6 +215,3 @@ const tableInstance = new VTable.ListTable(document.getElementById(CONTAINER_ID)
 window['tableInstance'] = tableInstance;
 ```
 
-## 相关教程
-
-[性能优化](link)

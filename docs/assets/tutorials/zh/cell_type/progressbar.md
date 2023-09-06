@@ -37,7 +37,7 @@ progressbar 数据条类型在配置中的特有配置项如下：
 
 ## progressbar数据条的style样式配置介绍
 
-progressbar 数据条类型在样式 `style` 方面有很多专属配置项如：barColor，barHeight，barAxisColor，barMarkXXX等，请通过下面的示例及[数据条api](TODO)来详细了解各项配置的使用：
+progressbar 数据条类型在样式 `style` 方面有很多专属配置项如：barColor，barHeight，barAxisColor，barMarkXXX等，请通过下面的示例及[数据条api](/options/ListTable-columns-progressbar)来详细了解各项配置的使用：
 
 示例：
 ```javascript livedemo template=vtable

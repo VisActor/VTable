@@ -4,7 +4,7 @@ group: Basic Features
 title: Sort
 cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/sort.gif
 order: 3-2
-link: '/guide/basic_function/sort'
+link: '/tutorials/basic_function/sort'
 ---
 
 # sort
@@ -111,7 +111,3 @@ tableInstance = new VTable.ListTable(document.getElementById(CONTAINER_ID), opti
 window['tableInstance'] = tableInstance;
     })
 ```
-
-## Related Tutorials
-
-[performance optimization](link)

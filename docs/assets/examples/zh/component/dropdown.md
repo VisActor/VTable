@@ -4,6 +4,7 @@ group: Component
 title: 下拉菜单
 cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/dropdown.png
 order: 8-3
+link: '/tutorials/components/dropdown'
 ---
 
 # 下拉菜单
@@ -226,7 +227,3 @@ tableInstance.on('click_cell', (args) => {
 
 
 ```
-
-## 相关教程
-
-[性能优化](link)

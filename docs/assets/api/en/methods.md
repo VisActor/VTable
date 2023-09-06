@@ -30,7 +30,7 @@ use:
 ```
 tableInstance.updateTheme(newTheme)
 ```
-Corresponding attribute update interface（https://visactor.io/vtable/guide/basic_function/update_option）:
+Corresponding attribute update interface（https://visactor.io/vtable/tutorials/basic_function/update_option）:
 ```
 // will not automatically redraw after calling
 tableInstance.theme = newTheme;
@@ -50,7 +50,7 @@ use:
 ```
 tableInstance. updateColumns(newColumns)
 ```
-Corresponding attribute update interface（https://visactor.io/vtable/guide/basic_function/update_option）:
+Corresponding attribute update interface（https://visactor.io/vtable/tutorials/basic_function/update_option）:
 ```
 // will not automatically redraw after calling
 tableInstance.columns = newColumns;

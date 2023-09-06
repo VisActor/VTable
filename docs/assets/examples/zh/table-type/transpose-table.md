@@ -4,7 +4,7 @@ group: table-type
 title: 转置表格
 cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/transpose.png
 order: 1-3
-link: '/guide/table_type/List_table/list_table_transpose'
+link: '/tutorials/table_type/List_table/list_table_transpose'
 ---
 
 # 转置表格
@@ -94,7 +94,3 @@ tableInstance = new VTable.ListTable(document.getElementById(CONTAINER_ID),optio
 window['tableInstance'] = tableInstance;
     })
 ```
-
-## 相关教程
-
-[性能优化](link)

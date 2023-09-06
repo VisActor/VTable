@@ -4,7 +4,7 @@ group: Cell Type
 title: 数据条类型
 cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/progressbar.png
 order: 2-2
-link: '/guide/column_type/progressbar'
+link: '/tutorials/cell_type/progressbar'
 ---
 
 # 数据条类型
@@ -169,7 +169,3 @@ const option = {
 const tableInstance = new VTable.ListTable(document.getElementById(CONTAINER_ID),option);
 window['tableInstance'] = tableInstance;
 ```
-
-## 相关教程
-
-[性能优化](link)

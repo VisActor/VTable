@@ -4,7 +4,7 @@ group: Theme
 title: Theme -extends
 cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/extend.png
 order: 6-5
-link: '/guide/theme_and_style/theme'
+link: '/tutorials/theme_and_style/theme'
 ---
 
 # Table Theme -extends
@@ -186,7 +186,3 @@ tableInstance = new VTable.PivotTable(document.getElementById(CONTAINER_ID), opt
 window['tableInstance'] = tableInstance;
     })
 ```
-
-## Related Tutorials
-
-[performance optimization](link)

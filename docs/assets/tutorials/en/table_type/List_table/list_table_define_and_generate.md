@@ -6,7 +6,7 @@ The following are the key configuration items of the basic table and their descr
 
 *   `parentElement`: The container DOM element of the table, which needs to have width and height.
 *   `records`: The data of the table, represented as an array.
-*   `columns`: Configuration of table columns, each column needs to set configuration items separately, including column type, width, title, etc. Supported column types are: 'text', 'link', 'image', 'video', 'sparkline', 'progressbar', 'chart'. The configuration items for each column type are slightly different, please flexibly add specific configurations according to the required type, you can refer to[Document](url).
+*   `columns`: Configuration of table columns, each column needs to set configuration items separately, including column type, width, title, etc. Supported column types are: 'text', 'link', 'image', 'video', 'sparkline', 'progressbar', 'chart'. The configuration items for each column type are slightly different, please flexibly add specific configurations according to the required type, you can refer to[Document](/tutorials/cell_type/cellType).
 *   `frozenColCount`: Specifies the number of frozen columns.
 *   `transpose`: Whether to transpose the table, the default is false.
 *   `showHeader`: Whether to display the header, the default is true.

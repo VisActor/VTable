@@ -9,7 +9,7 @@
 4. 数据探索和发现：透视组合图可以用来探索和发现数据中的规律和趋势。通过将数据按照不同的属性进行分组，并将每个分组的数据以一定的形式呈现，使得用户可以更全面地了解数据之间的关系，从而发现数据中的规律和趋势。
 5. 数据报告和展示：透视组合图可以用来展示数据报告。通过将数据按照不同的属性进行分组，并将每个分组的数据以一定的形式呈现，可以使得数据报告更加易于理解和呈现。
 # 透视组合图的结构
-结构可对比[透视表](https://visactor.io/vtable/guide/table_type/Pivot_table/pivot_table_overview)。相比透视表，透视组合图除了有列表头，行标头，角表头，body之外，还可以配置坐标轴组件，四个方向分别对应上轴，下周，左轴，右轴，同时还可以单独配置图例组件。
+结构可对比[透视表](https://visactor.io/vtable/tutorials/table_type/Pivot_table/pivot_table_overview)。相比透视表，透视组合图除了有列表头，行标头，角表头，body之外，还可以配置坐标轴组件，四个方向分别对应上轴，下周，左轴，右轴，同时还可以单独配置图例组件。
 ![image](https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/c0de7ff0a101bd4cb25c8170f.png)
 
 配置项

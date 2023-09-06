@@ -4,7 +4,7 @@ group: Theme
 title: 表格主题-SIMPLIFY
 cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/simplify.png
 order: 6-4
-link: '/guide/theme_and_style/theme'
+link: '/tutorials/theme_and_style/theme'
 ---
 
 # 表格主题-SIMPLIFY
@@ -92,7 +92,3 @@ tableInstance = new VTable.ListTable(document.getElementById(CONTAINER_ID),optio
 window['tableInstance'] = tableInstance;
     })
 ```
-
-## 相关教程
-
-[性能优化](link)
