@@ -2,7 +2,7 @@
 
 #${prefix} columns
 
-表格列配置，每一列需要分别设置配置项，配置项根据columnType不同有略微差别，columnType可支持：`'text' | 'link' | 'image' | 'video' | 'sparkline' | 'progressbar' | 'chart`， 每种columnType的配置项具体如下：
+表格列配置，每一列需要分别设置配置项，配置项根据cellType不同有略微差别，cellType可支持：`'text' | 'link' | 'image' | 'video' | 'sparkline' | 'progressbar' | 'chart`， 每种cellType的配置项具体如下：
 
 
 {{ use: text-column-type(

@@ -55,7 +55,34 @@ tableInstance.updateColumns(newColumns)
 // 调用后不会自动重绘
 tableInstance.columns = newColumns;
 ```
+## updatePagination(Function)
 
+更新页码配置信息
+
+```ts
+  /**
+   * 更新页码
+   * @param pagination 要修改页码的信息
+   */
+  updatePagination(pagination: IPagination): void;
+```
+其中类型：
+```
+/**
+ * 分页配置
+ */
+export interface IPagination {
+  /** 数据总条数 透视表中这个数据会自动加上 不需用户传入*/
+  totalCount?: number;
+  /** 每页显示数据条数  */
+  perPageCount: number;
+  /** 每页显示条数 */
+  currentPage?: number;
+}
+```
+基本表格和VTable数据分析透视表(enableDataAnalysis=true)支持分页，透视组合图不支持分页。
+
+注意! 透视表中perPageCount会自动修正为指标数量的整数倍。
 ## renderWithRecreateCells(Function)
 重新单元格对象集合并重新渲染表格，使用场景如：
 

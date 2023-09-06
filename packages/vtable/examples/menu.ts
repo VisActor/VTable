@@ -254,6 +254,10 @@ export const menus = [
       {
         path: 'pivot-analysis',
         name: 'pivot-analysis-aggregationRules'
+      },
+      {
+        path: 'pivot-analysis',
+        name: 'pivot-analysis-pagination'
       }
     ]
   },
