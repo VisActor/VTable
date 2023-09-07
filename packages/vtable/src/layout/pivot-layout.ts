@@ -1143,13 +1143,15 @@ export class PivotLayoutMap implements LayoutMapAPI {
     const recordRow = this.getRecordIndexByRow(row);
     let colPath;
     let rowPath;
-    let colHeaderPaths;
-    let rowHeaderPaths;
+    let colHeaderPaths: string[];
+    let rowHeaderPaths: string[];
     if (recordCol >= 0) {
       colPath = this.colKeysPath[recordCol];
       colHeaderPaths = colPath?.[colPath.length - 1]?.split(this.dataset.stringJoinChar);
       if (colHeaderPaths && this.showColumnHeader && row < this.columns.length - 1) {
         colHeaderPaths = colHeaderPaths.slice(0, row + 1);
+      } else if (!colHeaderPaths) {
+        colHeaderPaths = [];
       }
     }
     if (recordRow >= 0) {
@@ -1157,6 +1159,8 @@ export class PivotLayoutMap implements LayoutMapAPI {
       rowHeaderPaths = rowPath?.[rowPath.length - 1]?.split(this.dataset.stringJoinChar);
       if (rowHeaderPaths && this.showRowHeader && col < this.rows.length - 1) {
         rowHeaderPaths = rowHeaderPaths.slice(0, col + 1);
+      } else if (!rowHeaderPaths) {
+        rowHeaderPaths = [];
       }
     }
     if (colHeaderPaths && this.indicatorsAsCol && col >= this.rowHeaderLevelCount) {
