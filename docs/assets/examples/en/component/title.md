@@ -13,7 +13,7 @@ In this example, the main subheadings of the table are configured and styled sep
 
 ## critical configuration
 
-*   `title` Configure the table title, please refer to: https://www.visactor.io/vtable/options/ListTable#title
+*   `title` Configure the table title, please refer to: https://www.visactor.io/vtable/option/ListTable#title
 
 ## Code Demo
 

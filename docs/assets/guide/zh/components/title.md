@@ -30,4 +30,4 @@ title: {
 - subtextStyle：副标题的样式设置。可以通过该选项设置字体大小、颜色等样式属性。在示例中，我们将字体大小设置为20，颜色设置为'blue'。
 通过使用以上配置，您可以定制主副标题的内容和样式，使其更符合您的需求和设计风格。
 
-请注意，以上示例仅展示了标题组件的一部分配置选项！更多配置可以转至[option说明](https://visactor.io/vtable/options/ListTable#title.visible)
+请注意，以上示例仅展示了标题组件的一部分配置选项！更多配置可以转至[option说明](https://visactor.io/vtable/option/ListTable#title.visible)

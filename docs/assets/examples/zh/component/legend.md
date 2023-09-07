@@ -13,7 +13,7 @@ link: '../guide/components/legend'
 
 ## 关键配置
 
-- `legend` 配置表格图例，具体可参考：https://www.visactor.io/vtable/options/ListTable#legend
+- `legend` 配置表格图例，具体可参考：https://www.visactor.io/vtable/option/ListTable#legend
 
 ## 代码演示
 

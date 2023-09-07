@@ -74,4 +74,4 @@ legends: {
 - max：形状图例的最大值
 - min：形状图例的最小值
 
-请注意，以上示例仅展示了图例组件的一部分配置选项！更多配置可以转至[option说明](https://visactor.io/vtable/options/PivotChart#legends-discrete.type)
+请注意，以上示例仅展示了图例组件的一部分配置选项！更多配置可以转至[option说明](https://visactor.io/vtable/option/PivotChart#legends-discrete.type)

@@ -45,10 +45,10 @@
 
 所以这里我们需要用到多种自定义图元：
 
-- 标题对应使用 [text](../../options/ListTable#customRender.elements.text.type)类型
-- 事项列表文字部分使用 [text](../../options/ListTable#customRender.elements.text.type)
-- 标题背景矩形使用 [rect](../../options/ListTable#customRender.elements.rect.type)图元
-- 列表符号（圆形，矩形，星行）分别对应 [circle](../../options/ListTable#customRender.elements.circle.type)， [rect](../../options/ListTable#customRender.elements.rect.type)， [icon](../../options/ListTable#customRender.elements.icon.type)类型
+- 标题对应使用 [text](../../option/ListTable#customRender.elements.text.type)类型
+- 事项列表文字部分使用 [text](../../option/ListTable#customRender.elements.text.type)
+- 标题背景矩形使用 [rect](../../option/ListTable#customRender.elements.rect.type)图元
+- 列表符号（圆形，矩形，星行）分别对应 [circle](../../option/ListTable#customRender.elements.circle.type)， [rect](../../option/ListTable#customRender.elements.rect.type)， [icon](../../option/ListTable#customRender.elements.icon.type)类型
 
 ### 如何使用自定义渲染接口
 
@@ -61,7 +61,7 @@
 - 对象形式
 - 函数形式
 
-具体参数说明可参考API说明[customRender](https://visactor.io/vtable/options/ListTable#customRender.elements)
+具体参数说明可参考API说明[customRender](https://visactor.io/vtable/option/ListTable#customRender.elements)
 
 从上述示例效果图中可以看出`urgency`和`not urgency`这两列的布局是一致的，所以我这里采用全局设置的方式。
 ``` javascript livedemo  template=vtable

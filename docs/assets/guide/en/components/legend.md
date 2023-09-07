@@ -74,4 +74,4 @@ The following configuration is used in the shape legend:
 - max: the maximum value of the shape legend
 - min: the minimum value of the shape legend
 
-Note that the above example only shows some of the configuration options for the legend component! For more configuration, go to [option description](https://visactor.io/vtable/options/PivotChart#legends-discrete.type)
+Note that the above example only shows some of the configuration options for the legend component! For more configuration, go to [option description](https://visactor.io/vtable/option/PivotChart#legends-discrete.type)

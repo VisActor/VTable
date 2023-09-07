@@ -8,9 +8,9 @@
     "type": "markdown"
   },
   {
-    "menu": "options",
+    "menu": "option",
     "type": "markdown-template",
-    "entry": "options",
+    "entry": "option",
     "sections": [
       "PivotTable.indicators",
       "PivotTable.rows",

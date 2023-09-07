@@ -38,7 +38,7 @@ Example:
 
 ## Introduction to style style configuration of progressbar data strips
 
-Progressbar stripe type in style `style` There are many exclusive configuration items such as: barColor, barHeight, barAxisColor, barMarkXXX, etc. Please pass the following examples and[Data Bar API](../../options/ListTable-columns-progressbar)To learn more about the use of each configuration:
+Progressbar stripe type in style `style` There are many exclusive configuration items such as: barColor, barHeight, barAxisColor, barMarkXXX, etc. Please pass the following examples and[Data Bar API](../../option/ListTable-columns-progressbar)To learn more about the use of each configuration:
 
 Example:
 

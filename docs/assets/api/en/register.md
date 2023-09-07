@@ -25,7 +25,7 @@ VTable.register.theme('themeRegisterOne',{
 function theme(name: string, theme?: ITableThemeDefine){}
 ```
 
-The structure of ITableThemeDefine can be found in [theme](../options/ListTable#theme)
+The structure of ITableThemeDefine can be found in [theme](../option/ListTable#theme)
 
 - Usage:
 

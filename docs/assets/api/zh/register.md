@@ -25,7 +25,7 @@ VTable.register.theme('themeRegisterOne',{
 function theme(name: string, theme?: ITableThemeDefine){}
 ```
 
-ITableThemeDefine 的结构可参考[theme](../options/ListTable#theme)
+ITableThemeDefine 的结构可参考[theme](../option/ListTable#theme)
 
 - 使用方式：
 

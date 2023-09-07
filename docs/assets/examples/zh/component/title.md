@@ -13,7 +13,7 @@ link: '../guide/components/title'
 
 ## 关键配置
 
-- `title` 配置表格标题 具体可参考：https://www.visactor.io/vtable/options/ListTable#title
+- `title` 配置表格标题 具体可参考：https://www.visactor.io/vtable/option/ListTable#title
 
 ## 代码演示
 

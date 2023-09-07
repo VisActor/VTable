@@ -99,4 +99,4 @@ In the example above, the lower horizontal discrete axis and the left vertical c
     - fontWeight: text thickness.
 
 
-Please note that the above example only shows a subset of the axis component's configuration options! For more configuration, please go to [option description](https://visactor.io/vtable/options/PivotChart#axes)
+Please note that the above example only shows a subset of the axis component's configuration options! For more configuration, please go to [option description](https://visactor.io/vtable/option/PivotChart#axes)

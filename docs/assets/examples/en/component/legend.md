@@ -13,7 +13,7 @@ In this example, the background color of the cell is mapped by the category Dime
 
 ## critical configuration
 
-*   `legend` Configuration table legend, please refer to: https://www.visactor.io/vtable/options/ListTable#legend
+*   `legend` Configuration table legend, please refer to: https://www.visactor.io/vtable/option/ListTable#legend
 
 ## Code Demo
 

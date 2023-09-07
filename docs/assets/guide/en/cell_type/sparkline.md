@@ -55,7 +55,7 @@ Or:
 }
 ```
 
-Currently,[sparklineSpec](../../options/ListTable-columns-sparkline#sparklineSpec.type)For specific configurable content, please refer to the api.
+Currently,[sparklineSpec](../../option/ListTable-columns-sparkline#sparklineSpec.type)For specific configurable content, please refer to the api.
 
 ## example
 
