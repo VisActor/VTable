@@ -67,8 +67,8 @@ export function updateChartHover(col: number, row: number, x: number, y: number,
               { x: 0, y: max },
               { x: 0, y: min }
             ],
-            lineWidth: line.hover.strokeWidth,
-            stroke: line.hover.stroke
+            lineWidth: line.hover?.strokeWidth,
+            stroke: line.hover?.stroke
           });
           highlightLine.name = 'highlight-line';
           sparkline.addChild(highlightLine);
