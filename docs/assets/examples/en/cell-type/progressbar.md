@@ -4,7 +4,7 @@ group: Cell Type
 title: Progressba Type
 cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/progressbar.png
 order: 2-2
-link: '/tutorials/cell_type/progressbar'
+link: '../guide/cell_type/progressbar'
 ---
 
 # Data Bar Type

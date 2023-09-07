@@ -4,7 +4,7 @@ group: Interaction
 title: Move header position
 cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/move-header-position.gif
 order: 4-5
-link: '/tutorials/interaction/drag_header'
+link: '../guide/interaction/drag_header'
 ---
 
 # Move header position

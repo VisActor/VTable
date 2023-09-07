@@ -4,7 +4,7 @@ group: Interaction
 title: Right click menu
 cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/context-menu.png
 order: 4-6
-link: '/tutorials/components/dropdown'
+link: '../guide/components/dropdown'
 ---
 
 # Right click menu

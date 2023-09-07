@@ -4,7 +4,7 @@ group: Custom
 title: 单元格自定义内容
 cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/custom-render.png
 order: 7-4
-link: '/tutorials/custom_define/custom_render'
+link: '../guide/custom_define/custom_render'
 ---
 
 # 单元格自定义内容

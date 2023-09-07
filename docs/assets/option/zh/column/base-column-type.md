@@ -1,0 +1,213 @@
+{{ target: base-column-type }}
+
+${prefix} headerType(string) = 'text'
+
+指定表头类型，可选：`'text'|'link'|'image'|'video'`，默认 `'text'`。
+
+${prefix} field(string)
+
+**必填** 指定表头字段，对应数据源属性
+
+${prefix} fieldFormat(FieldFormat)
+
+配置数据格式化
+{{ use: common-field-format(
+  prefix = ${prefix}
+  ) }}
+
+${prefix} width(number|string)
+
+列宽指定，可为具体数值，或者'auto',再或者百分比如'20%'。
+如果指定'auto',则会根据整列文本长度自动调整列宽；
+如果指定百分比，则会根据表格总宽度调整当前列宽；
+
+${prefix} maxWidth(number|string)
+
+限制该列最大列宽
+
+${prefix} minWidth(number|string)
+
+限制该列最小列宽
+
+${prefix} title(string)
+
+表头名称
+
+${prefix} headerStyle(IStyleOption|Function)
+
+表头单元格样式，配置项根据 headerType 不同有略微差别。每种 headerStyle 的配置项可参考：
+
+- headerType 为'text'，对应[headerStyle](../option/PivotTable-columns-text#headerStyle.bgColor)
+- headerType 为'link'，对应[headerStyle](../option/PivotTable-columns-link#headerStyle.bgColor)
+- headerType 为'image'，对应[headerStyle](../option/PivotTable-columns-image#headerStyle.bgColor)
+- headerType 为'video'，对应[headerStyle](../option/PivotTable-columns-image#headerStyle.bgColor)
+
+${prefix} style
+
+body 单元格样式，类型声明：
+
+```
+style?: IStyleOption | ((styleArg: StylePropertyFunctionArg) => IStyleOption);
+```
+
+{{ use: common-StylePropertyFunctionArg() }}
+
+IStyleOption 类型结构如下：
+
+{{ use: common-style(
+  prefix = ${prefix},
+  isImage = ${isImage},
+  isProgressbar = ${isProgressbar},
+) }}
+
+${prefix} headerIcon(string|Object|Array)
+
+表头单元格图标配置。可配置类型有：
+
+```
+string | ColumnIconOption | (string | ColumnIconOption)[];
+```
+
+ColumnIconOption 具体配置可参考[定义](/zh/option.html#ListTable-columns-text.icon.ColumnIconOption定义：)
+
+${prefix} icon(string|Object|Array|Funciton)
+
+body 单元格图标配置。
+
+```
+icon?:
+    | string
+    | ColumnIconOption
+    | (string | ColumnIconOption)[]
+    | ((args: CellInfo) => string | ColumnIconOption | (string | ColumnIconOption)[]);
+```
+
+#${prefix}ColumnIconOption 定义：
+
+```
+type ColumnIconOption = ImageIcon | SvgIcon;
+```
+
+#${prefix}ImageIcon(Object)
+{{ use: image-icon(  prefix = '##' + ${prefix}) }}
+
+#${prefix}SvgIcon(Object)
+{{ use: svg-icon(  prefix = '##' + ${prefix}) }}
+
+${prefix} sort(boolean|Function)
+
+是否支持排序，也可以定义函数来指定排序规则
+
+${prefix} showSort(boolean)
+
+是否显示 sort 排序 icon，无真正的排序逻辑。如果设置了 sort 字段 则可以省略这个
+
+${prefix} disableHover(bolean)
+该列不支持 hover 交互行为
+
+${prefix} disableSelect(boolean)
+该列不支持选中
+
+${prefix} disableHeaderHover(bolean)
+该列表头不支持 hover 交互行为
+
+${prefix} disableHeaderSelect(boolean)
+该列表头不支持选中
+
+${prefix} description(string)
+表头 hover 时的描述信息 会以 tooltip 形式展示出来
+
+${prefix} dropDownMenu(Array)
+下拉菜单项配置。下拉菜单项可以是一级菜单项或者二级菜单项，只要有一个配置即可。具体类型为 MenuListItem[]。
+{{ use: common-menu-list-item() }}
+
+${prefix} headerCustomRender(Function|Object)
+
+表头单元格自定义渲染，函数形式或者对象形式。类型为：`ICustomRenderFuc | ICustomRenderObj`。
+
+其中 ICustomRenderFuc 定义为：
+
+```
+ type ICustomRenderFuc = (args: CustomRenderFunctionArg) => ICustomRenderObj;
+```
+
+{{ use: common-CustomRenderFunctionArg() }}
+
+{{ use: common-custom-render-object(
+  prefix = '#' + ${prefix},
+) }}
+
+${prefix} headerCustomLayout(Function)
+表头单元格自定义布局元素定义，该自定义形式适合内容复杂布局的单元格。
+
+```
+(args: CustomRenderFunctionArg) => ICustomLayoutObj;
+```
+
+{{ use: common-CustomRenderFunctionArg() }}
+
+{{ use: custom-layout(
+    prefix =  '#'+${prefix},
+) }}
+
+${prefix} customRender(Function|Object)
+body 单元格表头单元格自定义渲染，函数形式或者对象形式。类型为：`ICustomRenderFuc | ICustomRenderObj`。
+
+其中 ICustomRenderFuc 定义为：
+
+```
+ type ICustomRenderFuc = (args: CustomRenderFunctionArg) => ICustomRenderObj;
+```
+
+{{ use: common-CustomRenderFunctionArg() }}
+
+{{ use: common-custom-render-object(
+  prefix = '#' + ${prefix},
+) }}
+
+${prefix} customLayout(Function)
+
+body 单元格自定义布局元素定义，该自定义形式适合内容复杂布局的单元格。
+
+```
+(args: CustomRenderFunctionArg) => ICustomLayoutObj;
+```
+
+{{ use: common-CustomRenderFunctionArg() }}
+
+{{ use: custom-layout(
+    prefix =  '#'+${prefix},
+) }}
+
+${prefix} dragHeader(boolean)
+是否可以拖拽表头
+
+${prefix} columnWidthComputeMode(string)
+列宽计算模式:`'normal' | 'only-header' | 'only-body'`，only-header 只考虑表头的内容 only-body 只考虑 body 的内容 normal 能被显示出来的所有内容
+
+${prefix} disableColumnResize(boolean)
+是否禁用调整列宽,如果是转置表格或者是透视表的指标是行方向指定 那该配置不生效
+
+${prefix} tree (boolean)
+该列是否展示为树形结构，需要结合 records 数据结构才能实现，需要展开的节点配置`children`来容纳子节点数据。如：
+
+```
+{
+    "department": "Human Resources Department",
+    "monthly_expense": "$45000",
+    "children": [
+      {
+        "group": "Recruiting Group",
+        "monthly_expense": "$25000",
+        "children": [
+          {
+            "name": "John Smith",
+            "position": "Recruiting Manager",
+            "salary": "$8000"
+          },
+      }
+    ]
+}
+```
+
+可参考示例：[TODO](https://github.com/VisActor/VTable/pull/291)

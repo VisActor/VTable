@@ -4,7 +4,7 @@ group: Interaction
 title: Hover the Line Cross Highlight
 cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/hover-cross.png
 order: 4-3
-link: '/tutorials/interaction/hover_cell'
+link: '../guide/interaction/hover_cell'
 ---
 
 # Hover the line cross highlight

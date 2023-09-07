@@ -4,7 +4,7 @@ group: Theme
 title: Theme - SIMPLIFY
 cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/simplify.png
 order: 6-4
-link: '/tutorials/theme_and_style/theme'
+link: '../guide/theme_and_style/theme'
 ---
 
 # Form Theme - SIMPLIFY

@@ -4,7 +4,7 @@ group: Interaction
 title: hover行列十字高亮
 cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/hover-cross.png
 order: 4-3
-link: '/tutorials/interaction/hover_cell'
+link: '../guide/interaction/hover_cell'
 ---
 
 # hover行列十字高亮

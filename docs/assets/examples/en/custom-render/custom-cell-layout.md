@@ -4,7 +4,7 @@ group: Custom
 title: Cell custom layout
 cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/custom-cell-layout.png
 order: 7-1
-link: '/tutorials/custom_define/custom_layout'
+link: '../guide/custom_define/custom_layout'
 ---
 
 # Cell custom layout

@@ -4,7 +4,7 @@ group: Basic Features
 title: 冻结列
 cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/frozen-col.gif
 order: 3-3
-link: '/tutorials/basic_function/frozen_column'
+link: '../guide/basic_function/frozen_column'
 ---
 
 # 冻结列

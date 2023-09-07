@@ -4,7 +4,7 @@ group: Theme
 title: 表格主题-extends
 cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/extend.png
 order: 6-5
-link: '/tutorials/theme_and_style/theme'
+link: '../guide/theme_and_style/theme'
 ---
 
 # 表格主题-extends

@@ -4,7 +4,7 @@ group: Style
 title: 样式
 cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/style.png
 order: 5-1
-link: '/tutorials/theme_and_style/style'
+link: '../guide/theme_and_style/style'
 ---
 
 # 样式

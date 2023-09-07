@@ -4,7 +4,7 @@ group: Basic Features
 title: Column Width Mode - Adapt to Content
 cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/width-mode-autoWidth.png
 order: 3-6
-link: '/tutorials/basic_function/row_height_column_width'
+link: '../guide/basic_function/row_height_column_width'
 ---
 
 # Column Width Mode - Adapt to Content

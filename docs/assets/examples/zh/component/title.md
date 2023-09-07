@@ -4,7 +4,7 @@ group: Component
 title: title
 cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/title.png
 order: 8-5
-link: '/tutorials/components/title'
+link: '../guide/components/title'
 ---
 
 # title
@@ -13,7 +13,7 @@ link: '/tutorials/components/title'
 
 ## 关键配置
 
-- `title` 配置表格标题 具体可参考：https://www.visactor.io/vtable/options/ListTable#title
+- `title` 配置表格标题 具体可参考：https://www.visactor.io/vtable/option/ListTable#title
 
 ## 代码演示
 

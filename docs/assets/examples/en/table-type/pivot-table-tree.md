@@ -4,7 +4,7 @@ group: table-type
 title: Pivot Table Tree
 cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/pivot-tree.png
 order: 1-5
-link: '/tutorials/table_type/Pivot_table/pivot_table_tree'
+link: '../guide/table_type/Pivot_table/pivot_table_tree'
 ---
 
 # Pivot Table
