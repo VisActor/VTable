@@ -157,6 +157,10 @@ export class HeaderHelper {
       // 透视表和转置模式不显示冻结按钮
       return null;
     }
+
+    if (this._table.rightFrozenColCount && col >= this._table.colCount - this._table.rightFrozenColCount) {
+      return null;
+    }
     const headerC = this._table.getHeaderDefine(col, row) as any;
     if (headerC.columns && headerC.columns.length > 0) {
       return null;

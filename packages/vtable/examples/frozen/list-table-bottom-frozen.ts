@@ -71,11 +71,12 @@ export function createTable() {
       width: 150
     }
   ];
-  const option = {
+  const option: VTable.TYPES.ListTableConstructorOptions = {
     container: document.getElementById(CONTAINER_ID),
     records,
     columns,
-    bottomFrozenRowCount: 2
+    bottomFrozenRowCount: 2,
+    frozenColCount: 2
   };
   const tableInstance = new VTable.ListTable(option);
   (window as any).tableInstance = tableInstance;
