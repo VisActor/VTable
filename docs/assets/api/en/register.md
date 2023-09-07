@@ -101,9 +101,15 @@ type ColumnIconOption = ImageIcon | SvgIcon;
 ```
 
 ###ImageIcon(Object)
+
+register image resource.
+
 {{ use: image-icon(  prefix = '####') }}
 
 ###SvgIcon(Object)
+
+register svg resource.
+
 {{ use: svg-icon(  prefix = '####') }}
 
 ## chartModule(Function)

@@ -101,9 +101,15 @@ type ColumnIconOption = ImageIcon | SvgIcon;
 ```
 
 ###ImageIcon(Object)
+
+注册图片资源的icon
+
 {{ use: image-icon(  prefix = '####') }}
 
 ###SvgIcon(Object)
+
+注册svg资源的icon
+
 {{ use: svg-icon(  prefix = '####') }}
 
 ## chartModule(Function)
