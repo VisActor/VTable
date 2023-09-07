@@ -117,7 +117,7 @@ export class DatasetForPivotTable {
     this.colSubTotalLabel = this.totals?.column?.subTotalLabel ?? '小计';
     this.rowGrandTotalLabel = this.totals?.row?.grandTotalLabel ?? '总计';
     this.rowSubTotalLabel = this.totals?.row?.subTotalLabel ?? '小计';
-    // for (let i = 0; i < this.indicators.length; i++) {
+    // for (let i = 0; i < this.indicators?.length; i++) {
     //   this.indicatorStatistics.push({
     //     max: new this.aggregators[AggregationType.MAX](this.indicators[i]),
     //     min: new this.aggregators[AggregationType.MIN](this.indicators[i]),
@@ -271,7 +271,7 @@ export class DatasetForPivotTable {
       }
       //如有需要显示总计 或者columns配置空
       // if (this.totals?.row?.showGrandTotals || !(this.dataConfig?.columns?.length > 0))
-      //   for (let i = 0; i < this.indicators.length; i++) {
+      //   for (let i = 0; i < this.indicators?.length; i++) {
       //     if (!this.rowTotals[flatRowKey][i]) {
       //       const aggRule = this.getAggregatorRule(this.indicators[i]);
       //       this.rowTotals[flatRowKey][i] = new this.aggregators[
@@ -288,7 +288,7 @@ export class DatasetForPivotTable {
       }
       //如有需要显示总计 或者rows配置空
       // if (this.totals?.column?.showGrandTotals || !(this.dataConfig?.rows?.length > 0))
-      //   for (let i = 0; i < this.indicators.length; i++) {
+      //   for (let i = 0; i < this.indicators?.length; i++) {
       //     if (!this.colTotals[flatColKey][i]) {
       //       const aggRule = this.getAggregatorRule(this.indicators[i]);
       //       this.colTotals[flatColKey][i] = new this.aggregators[

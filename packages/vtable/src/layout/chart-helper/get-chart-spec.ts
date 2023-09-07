@@ -130,7 +130,7 @@ export function getChartAxes(col: number, row: number, layout: PivotLayoutMap): 
         ? layout.dataset.collectedValues[key + (isZeroAlign ? '_align' : '')]
         : layout.dataset.collectedValues[key];
       const range = (data?.[
-        layout.getRowKeysPath()[rowIndex][Math.max(0, layout.rowHeaderLevelCount - 1 - layout.leftAxesCount)]
+        layout.getRowKeysPath()[rowIndex]?.[Math.max(0, layout.rowHeaderLevelCount - 1 - layout.leftAxesCount)] ?? ''
       ] as { max?: number; min?: number }) ?? { min: 0, max: 1 };
 
       const axisOption = getAxisOption(col, row, index === 0 ? 'left' : 'right', layout);
@@ -171,7 +171,7 @@ export function getChartAxes(col: number, row: number, layout: PivotLayoutMap): 
       ([] as string[]);
     const recordCol = layout.getRecordIndexByCol(col);
     const colPath = layout.getColKeysPath()[recordCol];
-    const domain: string[] | Set<string> = (data?.[colPath[colPath.length - 1]] as Set<string>) ?? [];
+    const domain: string[] | Set<string> = (data?.[colPath?.[colPath?.length - 1] ?? ''] as Set<string>) ?? [];
 
     const axisOption = getAxisOption(col, row, 'bottom', layout);
     axes.push(

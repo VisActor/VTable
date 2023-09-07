@@ -536,8 +536,8 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
         if (indicatorInfo.customRender) {
           hd.customRender = indicatorInfo.customRender;
         }
-        if (!isValid(this._indicators.find(indicator => indicator.indicatorKey === indicatorInfo.indicatorKey))) {
-          this._indicators.push({
+        if (!isValid(this._indicators?.find(indicator => indicator.indicatorKey === indicatorInfo.indicatorKey))) {
+          this._indicators?.push({
             id: ++seqId,
             indicatorKey: indicatorInfo.indicatorKey,
             field: indicatorInfo.indicatorKey,
@@ -559,8 +559,8 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
         }
       } else if (hd.indicatorKey) {
         //兼容当某个指标没有设置在dimension.indicators中
-        if (!isValid(this._indicators.find(indicator => indicator.indicatorKey === hd.indicatorKey))) {
-          this._indicators.push({
+        if (!isValid(this._indicators?.find(indicator => indicator.indicatorKey === hd.indicatorKey))) {
+          this._indicators?.push({
             id: ++seqId,
             indicatorKey: hd.indicatorKey,
             field: hd.indicatorKey,
@@ -806,7 +806,7 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
       let maxWidth: string | number;
       let minWidth: string | number;
       let isAuto;
-      this._indicators.forEach((obj, index) => {
+      this._indicators?.forEach((obj, index) => {
         if (typeof obj.width === 'number') {
           width = Math.max(obj.width, <number>width);
         } else if (obj.width === 'auto') {
@@ -1148,7 +1148,7 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
     if (this.indicatorsAsCol) {
       const indicatorKey = paths.colHeaderPaths.find(colPath => colPath.indicatorKey)?.indicatorKey;
       return (
-        this._indicators.find(indicator => indicator.indicatorKey === indicatorKey) ??
+        this._indicators?.find(indicator => indicator.indicatorKey === indicatorKey) ??
         this._indicators[0] ?? {
           id: '',
           field: undefined,
@@ -1160,7 +1160,7 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
     }
     const indicatorKey = paths.rowHeaderPaths.find(rowPath => rowPath.indicatorKey)?.indicatorKey;
     return (
-      this._indicators.find(indicator => indicator.indicatorKey === indicatorKey) ??
+      this._indicators?.find(indicator => indicator.indicatorKey === indicatorKey) ??
       this._indicators[0] ?? {
         id: '',
         field: undefined,
@@ -1603,13 +1603,13 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
 
   getIndicatorKey(col: number, row: number) {
     // let indicator;
-    // if (this._indicators.length === 1) indicator = this._indicators[0];
+    // if (this._indicators?.length === 1) indicator = this._indicators[0];
     // else if (this.indicatorsAsCol) {
     //   const bodyCol = col - this.rowHeaderLevelCount;
-    //   indicator = this._indicators[bodyCol % this._indicators.length];
+    //   indicator = this._indicators[bodyCol % this._indicators?.length];
     // } else {
     //   const bodyRow = row - this.columnHeaderLevelCount;
-    //   indicator = this._indicators[bodyRow % this._indicators.length];
+    //   indicator = this._indicators[bodyRow % this._indicators?.length];
     // }
 
     // return indicator?.indicatorKey;
@@ -1922,10 +1922,10 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
     let indicatorObj;
     if (this.indicatorsAsCol) {
       const indicatorKey = paths.colHeaderPaths.find(colPath => colPath.indicatorKey)?.indicatorKey;
-      indicatorObj = this._indicators.find(indicator => indicator.indicatorKey === indicatorKey);
+      indicatorObj = this._indicators?.find(indicator => indicator.indicatorKey === indicatorKey);
     } else {
       const indicatorKey = paths.rowHeaderPaths.find(rowPath => rowPath.indicatorKey)?.indicatorKey;
-      indicatorObj = this._indicators.find(indicator => indicator.indicatorKey === indicatorKey);
+      indicatorObj = this._indicators?.find(indicator => indicator.indicatorKey === indicatorKey);
     }
     indicatorObj && (indicatorObj.chartInstance = chartInstance);
   }
@@ -1935,10 +1935,10 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
     let indicatorObj;
     if (this.indicatorsAsCol) {
       const indicatorKey = paths.colHeaderPaths.find(colPath => colPath.indicatorKey)?.indicatorKey;
-      indicatorObj = this._indicators.find(indicator => indicator.indicatorKey === indicatorKey);
+      indicatorObj = this._indicators?.find(indicator => indicator.indicatorKey === indicatorKey);
     } else {
       const indicatorKey = paths.rowHeaderPaths.find(rowPath => rowPath.indicatorKey)?.indicatorKey;
-      indicatorObj = this._indicators.find(indicator => indicator.indicatorKey === indicatorKey);
+      indicatorObj = this._indicators?.find(indicator => indicator.indicatorKey === indicatorKey);
     }
     return indicatorObj?.chartInstance;
   }
@@ -1973,7 +1973,7 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
   release() {
     const activeChartInstance = (this._table as PivotTable)._getActiveChartInstance();
     activeChartInstance?.release();
-    this._indicators.forEach(indicatorObject => {
+    this._indicators?.forEach(indicatorObject => {
       indicatorObject.chartInstance?.release();
     });
   }

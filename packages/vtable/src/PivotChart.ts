@@ -72,47 +72,46 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
     this.internalProps.columnResizeType = options.columnResizeType ?? 'column';
     this.internalProps.dataConfig = { isPivotChart: true };
     this._axes = isArray(options.axes) ? options.axes : [];
-
-    if (options.rows || options.columns) {
-      const rowKeys = options.rows.reduce((keys, rowObj) => {
+    const rowKeys =
+      options.rows?.reduce((keys, rowObj) => {
         if (typeof rowObj === 'string') {
           keys.push(rowObj);
         } else {
           keys.push(rowObj.dimensionKey);
         }
         return keys;
-      }, []);
-      const columnKeys = options.columns.reduce((keys, columnObj) => {
+      }, []) ?? [];
+    const columnKeys =
+      options.columns?.reduce((keys, columnObj) => {
         if (typeof columnObj === 'string') {
           keys.push(columnObj);
         } else {
           keys.push(columnObj.dimensionKey);
         }
         return keys;
-      }, []);
-      const indicatorKeys =
-        options.indicators?.reduce((keys, indicatorObj) => {
-          if (typeof indicatorObj === 'string') {
-            keys.push(indicatorObj);
-          } else {
-            keys.push(indicatorObj.indicatorKey);
-          }
-          return keys;
-        }, []) ?? [];
-      this.internalProps.dataConfig.collectValuesBy = this._generateCollectValuesConfig(columnKeys, rowKeys);
-      this.internalProps.dataConfig.aggregationRules = this._generateAggregationRules();
-      this.internalProps.dataConfig.dimensionSortArray = this._getDimensionSortArray();
-      this.dataset = new Dataset(
-        this.internalProps.dataConfig,
-        null,
-        rowKeys,
-        columnKeys,
-        indicatorKeys,
-        options.records,
-        options.columnTree,
-        options.rowTree
-      );
-    }
+      }, []) ?? [];
+    const indicatorKeys =
+      options.indicators?.reduce((keys, indicatorObj) => {
+        if (typeof indicatorObj === 'string') {
+          keys.push(indicatorObj);
+        } else {
+          keys.push(indicatorObj.indicatorKey);
+        }
+        return keys;
+      }, []) ?? [];
+    this.internalProps.dataConfig.collectValuesBy = this._generateCollectValuesConfig(columnKeys, rowKeys);
+    this.internalProps.dataConfig.aggregationRules = this._generateAggregationRules();
+    this.internalProps.dataConfig.dimensionSortArray = this._getDimensionSortArray();
+    this.dataset = new Dataset(
+      this.internalProps.dataConfig,
+      null,
+      rowKeys,
+      columnKeys,
+      indicatorKeys,
+      options.records,
+      options.columnTree,
+      options.rowTree
+    );
 
     this.refreshHeader();
     if (options.dataSource) {
@@ -183,7 +182,7 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
         }
         return keys;
       }, []);
-      const indicatorKeys = options.indicators.reduce((keys, indicatorObj) => {
+      const indicatorKeys = options.indicators?.reduce((keys, indicatorObj) => {
         if (typeof indicatorObj === 'string') {
           keys.push(indicatorObj);
         } else {
@@ -608,7 +607,7 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
     const option = this.options;
     const collectValuesBy: Record<string, CollectValueBy> = {};
 
-    for (let i = 0, len = option.indicators.length; i < len; i++) {
+    for (let i = 0, len = option.indicators?.length; i < len; i++) {
       if (typeof option.indicators[i] !== 'string' && (option.indicators[i] as IChartColumnIndicator).chartSpec) {
         if (option.indicatorsAsCol === false) {
           const indicatorDefine = option.indicators[i] as IIndicator;
@@ -761,7 +760,7 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
   private _generateAggregationRules() {
     const aggregationRules: AggregationRules = [];
     // indicatorFromChartSpec = true;
-    this.options.indicators.forEach((indicator: IIndicator | string) => {
+    this.options.indicators?.forEach((indicator: IIndicator | string) => {
       if (typeof indicator === 'string') {
         aggregationRules.push({
           indicatorKey: indicator, //field转为指标key
@@ -828,7 +827,7 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
         delete spec.area.state.selected_reverse;
       }
     };
-    this.options.indicators.forEach((indicator: string | IIndicator) => {
+    this.options.indicators?.forEach((indicator: string | IIndicator) => {
       if ((indicator as IChartColumnIndicator).chartSpec) {
         const spec = (indicator as IChartColumnIndicator).chartSpec;
         if (spec.series) {
