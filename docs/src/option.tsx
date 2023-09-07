@@ -13,7 +13,7 @@ export function Option() {
 
   const location = useLocation();
   const { pathname: pathName } = location;
-  const assetDirectory = pathName.split('/')[1];
+  const assetDirectory = pathName.split('/')[2];
 
   const menuConfig = menu.find(menuItem => menuItem.menu === assetDirectory);
 
@@ -54,7 +54,7 @@ export function Option() {
       </Layout.Header>
       <Layout style={{ height: 'calc(100vh - 48px)', marginTop: '48px' }}>
         <OptionDocument
-          baseUrl={`/${assetDirectory}`}
+          baseUrl={`/vtable/${assetDirectory}`}
           getOutline={getOutline}
           getDescription={getDescription}
           outlineStyle={{ maxHeight: 'calc(100vh - 48px)' }}

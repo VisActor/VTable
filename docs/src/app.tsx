@@ -8,7 +8,7 @@ import { Option } from './option';
 const menuRoutes: RouteObject[] = menu.map(menuItem => {
   if (menuItem.type === 'markdown-template') {
     return {
-      path: `/${menuItem.menu}`,
+      path: `/vtable/${menuItem.menu}`,
       element: <Option />,
       children: [
         {
@@ -19,7 +19,7 @@ const menuRoutes: RouteObject[] = menu.map(menuItem => {
     };
   }
   return {
-    path: `/${menuItem.menu}`,
+    path: `/vtable/${menuItem.menu}`,
     element: <Markdown />,
     children: [
       {
@@ -33,7 +33,7 @@ const menuRoutes: RouteObject[] = menu.map(menuItem => {
 const router = createBrowserRouter([
   {
     path: '/',
-    element: <Navigate replace to="/examples" />
+    element: <Navigate replace to="/vtable/examples" />
   },
   ...menuRoutes
 ]);

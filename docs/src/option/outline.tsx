@@ -85,6 +85,9 @@ export function recordOutline(node: IOptionOutlineNode | null, map: Record<strin
 
 function getOutlineTextNode(node: IOptionOutlineNode) {
   if (node.prop) {
+    if (node.isArray) {
+      return `${node.prop}: [...]`;
+    }
     return node.children ? `${node.prop}: {...}` : `${node.prop}${node.default != null ? `: ${node.default}` : ''}`;
   } else {
     return node.children ? `${node.children[0].prop}=${node.children[0].default}` : '{...}';
