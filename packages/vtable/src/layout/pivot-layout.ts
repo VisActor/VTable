@@ -920,7 +920,7 @@ export class PivotLayoutMap implements LayoutMapAPI {
         if (this.indicatorsAsCol) {
           return this.indicatorKeys[(col - this.rowHeaderLevelCount) % this.indicatorKeys.length];
         }
-        return this.convertColKeys[this.convertColKeys.length - 1][
+        return this.convertColKeys[this.convertColKeys.length - 1]?.[
           Math.floor((col - this.rowHeaderLevelCount) / this.indicatorKeys.length)
         ];
       }

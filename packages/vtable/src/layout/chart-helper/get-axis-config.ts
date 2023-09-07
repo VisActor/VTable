@@ -120,7 +120,7 @@ export function getAxisConfigInPivotChart(col: number, row: number, layout: Pivo
       row >= layout.columnHeaderLevelCount &&
       row < layout.rowCount - layout.bottomFrozenRowCount
     ) {
-      let rowDimensionKey = layout.getDimensionKeyInChartSpec(layout.rowHeaderLevelCount, row)[0];
+      let rowDimensionKey = layout.getDimensionKeyInChartSpec(layout.rowHeaderLevelCount, row)?.[0];
       if (isArray(rowDimensionKey)) {
         rowDimensionKey = rowDimensionKey[0];
       }
@@ -168,7 +168,7 @@ export function getAxisConfigInPivotChart(col: number, row: number, layout: Pivo
         : layout.dataset.collectedValues[defaultKey];
       const index = layout.getRecordIndexByRow(row);
       const range = data?.[
-        layout.getRowKeysPath()[index][Math.max(0, layout.rowHeaderLevelCount - 1 - layout.leftAxesCount)]
+        layout.getRowKeysPath()[index]?.[Math.max(0, layout.rowHeaderLevelCount - 1 - layout.leftAxesCount)] ?? ''
       ] ?? { min: 0, max: 1 };
       let indicatorInfo = null;
       indicatorKeys.forEach(key => {
@@ -229,7 +229,7 @@ export function getAxisConfigInPivotChart(col: number, row: number, layout: Pivo
         : layout.dataset.collectedValues[defaultKey];
       const index = layout.getRecordIndexByRow(row);
       const range = data?.[
-        layout.getRowKeysPath()[index][Math.max(0, layout.rowHeaderLevelCount - 1 - layout.leftAxesCount)]
+        layout.getRowKeysPath()[index]?.[Math.max(0, layout.rowHeaderLevelCount - 1 - layout.leftAxesCount)] ?? ''
       ] ?? { min: 0, max: 1 };
 
       const axisOption = getAxisOption(col, row, 'right', layout);
@@ -266,7 +266,7 @@ export function getAxisConfigInPivotChart(col: number, row: number, layout: Pivo
     ) {
       // const indicatorKeys = layout.getIndicatorKeyInChartSpec(col, row);
 
-      let columnDimensionKey = layout.getDimensionKeyInChartSpec(col, layout.columnHeaderLevelCount)[0];
+      let columnDimensionKey = layout.getDimensionKeyInChartSpec(col, layout.columnHeaderLevelCount)?.[0];
       if (isArray(columnDimensionKey)) {
         columnDimensionKey = columnDimensionKey[0];
       }
@@ -274,7 +274,7 @@ export function getAxisConfigInPivotChart(col: number, row: number, layout: Pivo
 
       const recordCol = layout.getRecordIndexByCol(col);
       const colPath = layout.getColKeysPath()[recordCol];
-      const domain = (data?.[colPath[colPath.length - 1]] as Array<string>) ?? [];
+      const domain = (data?.[colPath?.[colPath?.length - 1]] as Array<string>) ?? [];
 
       const axisOption = getAxisOption(col, row, 'bottom', layout);
       if (axisOption?.visible === false) {

@@ -66,6 +66,10 @@ export const menus = [
       },
       {
         path: 'pivot-chart',
+        name: 'noDimension-updateOption'
+      },
+      {
+        path: 'pivot-chart',
         name: 'pivotChart_site_demo'
       },
       {

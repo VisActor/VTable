@@ -123,7 +123,7 @@ export class FlatDataToObjects {
       }
     }
 
-    this.dataConfig.indicators.forEach((indicatorKey: string | number) => {
+    this.dataConfig.indicators?.forEach((indicatorKey: string | number) => {
       const recordValue: string | number = record[indicatorKey];
       // const indicatorName = this.dataConfig.indicators[indicatorKey];
       if (recordValue !== undefined) {
