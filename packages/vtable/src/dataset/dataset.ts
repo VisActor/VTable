@@ -463,16 +463,16 @@ export class Dataset {
         //加入聚合结果 考虑field为数组的情况
         else if (aggRule?.field) {
           if (typeof aggRule?.field === 'string') {
-            isValid(record[aggRule?.field]) && this.tree[flatRowKey]?.[flatColKey]?.[i].push(record);
+            aggRule?.field in record && this.tree[flatRowKey]?.[flatColKey]?.[i].push(record);
           } else {
             const isPush = aggRule?.field.find((field: string) => {
-              return record[field];
+              return field in record;
             });
             isPush && this.tree[flatRowKey]?.[flatColKey]?.[i].push(record);
           }
         } else {
           //push融合了计算过程
-          isValid(record[this.indicatorKeys[i]]) && this.tree[flatRowKey]?.[flatColKey]?.[i].push(record);
+          this.indicatorKeys[i] in record && this.tree[flatRowKey]?.[flatColKey]?.[i].push(record);
         }
       }
     }
