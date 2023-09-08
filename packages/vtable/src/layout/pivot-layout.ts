@@ -894,7 +894,7 @@ export class PivotLayoutMap implements LayoutMapAPI {
           return this.rowShowAttrs[col];
         }
       } else if (this.isColumnHeader(col, row)) {
-        if (row < this.colShowAttrs.length + (this.columnHeaderTitle ? 1 : 0)) {
+        if (row < this.columns.length + (this.columnHeaderTitle ? 1 : 0)) {
           return (
             this.convertColKeys[row]?.[
               this.indicatorsAsCol
@@ -905,7 +905,7 @@ export class PivotLayoutMap implements LayoutMapAPI {
         }
         return this.indicatorKeys[(col - this.rowHeaderLevelCount) % this.indicatorKeys.length];
       } else if (this.isRowHeader(col, row)) {
-        if (col < this.rowShowAttrs.length + (this.rowHeaderTitle ? 1 : 0)) {
+        if (col < this.rows.length + (this.rowHeaderTitle ? 1 : 0)) {
           return (
             this.rowKeysPath[
               !this.indicatorsAsCol
@@ -913,6 +913,9 @@ export class PivotLayoutMap implements LayoutMapAPI {
                 : row - this.columnHeaderLevelCount
             ]?.[col] ?? `rowHeaderAxis-${col}-${row}`
           );
+        }
+        if (this.indicatorsAsCol && col === this.rowHeaderLevelCount - 1) {
+          return `rowHeaderAxis-${col}-${row}`;
         }
         return this.indicatorKeys[(row - this.columnHeaderLevelCount) % this.indicatorKeys.length];
       } else if (this.isRightFrozenColumn(col, row)) {
