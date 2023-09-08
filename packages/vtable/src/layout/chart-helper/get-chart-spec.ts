@@ -52,10 +52,14 @@ export function getChartAxes(col: number, row: number, layout: PivotLayoutMap): 
         ? layout.dataset.collectedValues[key + (isZeroAlign ? '_align' : '')]
         : layout.dataset.collectedValues[key];
       const range = (data?.[
-        layout.getColKeysPath()[colIndex][Math.max(0, layout.columnHeaderLevelCount - 1 - layout.topAxesCount)]
+        layout.getColKeysPath()?.[colIndex]?.[Math.max(0, layout.columnHeaderLevelCount - 1 - layout.topAxesCount)]
       ] as { max?: number; min?: number }) ?? { min: 0, max: 1 };
 
-      const axisOption = getAxisOption(col, row, index === 0 ? 'bottom' : 'top', layout);
+      const { axisOption, isPercent } = getAxisOption(col, row, index === 0 ? 'bottom' : 'top', layout);
+      if (isPercent) {
+        (range as any).min = 0;
+        (range as any).max = 1;
+      }
       if (axisOption?.zero) {
         range.min = Math.min(range.min, 0);
         range.max = Math.max(range.max, 0);
@@ -94,7 +98,7 @@ export function getChartAxes(col: number, row: number, layout: PivotLayoutMap): 
     const rowPath = layout.getRowKeysPath()[recordRow];
     const domain = data[rowPath[rowPath.length - 1]] as Set<string>;
 
-    const axisOption = getAxisOption(col, row, 'left', layout);
+    const { axisOption, isPercent } = getAxisOption(col, row, 'left', layout);
     axes.push(
       merge(
         {
@@ -133,7 +137,11 @@ export function getChartAxes(col: number, row: number, layout: PivotLayoutMap): 
         layout.getRowKeysPath()[rowIndex]?.[Math.max(0, layout.rowHeaderLevelCount - 1 - layout.leftAxesCount)] ?? ''
       ] as { max?: number; min?: number }) ?? { min: 0, max: 1 };
 
-      const axisOption = getAxisOption(col, row, index === 0 ? 'left' : 'right', layout);
+      const { axisOption, isPercent } = getAxisOption(col, row, index === 0 ? 'left' : 'right', layout);
+      if (isPercent) {
+        (range as any).min = 0;
+        (range as any).max = 1;
+      }
       if (axisOption?.zero) {
         range.min = Math.min(range.min, 0);
         range.max = Math.max(range.max, 0);
@@ -173,7 +181,7 @@ export function getChartAxes(col: number, row: number, layout: PivotLayoutMap): 
     const colPath = layout.getColKeysPath()[recordCol];
     const domain: string[] | Set<string> = (data?.[colPath?.[colPath?.length - 1] ?? ''] as Set<string>) ?? [];
 
-    const axisOption = getAxisOption(col, row, 'bottom', layout);
+    const { axisOption, isPercent } = getAxisOption(col, row, 'bottom', layout);
     axes.push(
       merge(
         {
