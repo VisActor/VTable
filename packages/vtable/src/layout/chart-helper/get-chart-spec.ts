@@ -60,7 +60,7 @@ export function getChartAxes(col: number, row: number, layout: PivotLayoutMap): 
         (range as any).min = 0;
         (range as any).max = 1;
       }
-      if (axisOption?.zero) {
+      if (axisOption?.zero || range.min === range.max) {
         range.min = Math.min(range.min, 0);
         range.max = Math.max(range.max, 0);
       }
@@ -142,7 +142,7 @@ export function getChartAxes(col: number, row: number, layout: PivotLayoutMap): 
         (range as any).min = 0;
         (range as any).max = 1;
       }
-      if (axisOption?.zero) {
+      if (axisOption?.zero || range.min === range.max) {
         range.min = Math.min(range.min, 0);
         range.max = Math.max(range.max, 0);
       }
