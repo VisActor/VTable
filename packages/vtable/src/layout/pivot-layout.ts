@@ -953,7 +953,7 @@ export class PivotLayoutMap implements LayoutMapAPI {
   }
   getHeader(col: number, row: number): HeaderData {
     let id = this.getCellId(col, row) as string;
-    if (id.toString().startsWith('rowHeaderAxis')) {
+    if (id?.toString().startsWith('rowHeaderAxis')) {
       id = 'rowHeaderEmpty';
       // } else if (id.toString().startsWith('colHeaderAxis')) {
     }
