@@ -131,6 +131,10 @@ export const menus = [
       {
         path: 'pivot-chart',
         name: 'pivotChart-records'
+      },
+      {
+        path: 'pivot-chart',
+        name: 'percent-horizontal-bar'
       }
     ]
   },

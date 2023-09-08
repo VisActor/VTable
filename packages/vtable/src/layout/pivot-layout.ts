@@ -895,20 +895,27 @@ export class PivotLayoutMap implements LayoutMapAPI {
         }
       } else if (this.isColumnHeader(col, row)) {
         if (row < this.columns.length + (this.columnHeaderTitle ? 1 : 0)) {
-          return this.convertColKeys[row][
-            this.indicatorsAsCol
-              ? Math.floor((col - this.rowHeaderLevelCount) / this.indicatorKeys.length)
-              : col - this.rowHeaderLevelCount
-          ];
+          return (
+            this.convertColKeys[row]?.[
+              this.indicatorsAsCol
+                ? Math.floor((col - this.rowHeaderLevelCount) / this.indicatorKeys.length)
+                : col - this.rowHeaderLevelCount
+            ] ?? `colHeaderAxis-${col}-${row}`
+          );
         }
         return this.indicatorKeys[(col - this.rowHeaderLevelCount) % this.indicatorKeys.length];
       } else if (this.isRowHeader(col, row)) {
         if (col < this.rows.length + (this.rowHeaderTitle ? 1 : 0)) {
-          return this.rowKeysPath[
-            !this.indicatorsAsCol
-              ? Math.floor((row - this.columnHeaderLevelCount) / this.indicatorKeys.length)
-              : row - this.columnHeaderLevelCount
-          ][col];
+          return (
+            this.rowKeysPath[
+              !this.indicatorsAsCol
+                ? Math.floor((row - this.columnHeaderLevelCount) / this.indicatorKeys.length)
+                : row - this.columnHeaderLevelCount
+            ]?.[col] ?? `rowHeaderAxis-${col}-${row}`
+          );
+        }
+        if (this.indicatorsAsCol && col === this.rowHeaderLevelCount - 1) {
+          return `rowHeaderAxis-${col}-${row}`;
         }
         return this.indicatorKeys[(row - this.columnHeaderLevelCount) % this.indicatorKeys.length];
       } else if (this.isRightFrozenColumn(col, row)) {
@@ -945,8 +952,12 @@ export class PivotLayoutMap implements LayoutMapAPI {
     return this.indicatorKeys[bodyRow % this.indicatorKeys.length];
   }
   getHeader(col: number, row: number): HeaderData {
-    const id = this.getCellId(col, row);
-    return this._headerObjectMap[id as number]! ?? EMPTY_HEADER;
+    let id = this.getCellId(col, row) as string;
+    if (id?.toString().startsWith('rowHeaderAxis')) {
+      id = 'rowHeaderEmpty';
+      // } else if (id.toString().startsWith('colHeaderAxis')) {
+    }
+    return this._headerObjectMap[id as number | string]! ?? EMPTY_HEADER;
   }
   getHeaderField(col: number, row: number) {
     const id = this.getCellId(col, row);

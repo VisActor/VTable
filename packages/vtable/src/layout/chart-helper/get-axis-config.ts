@@ -36,6 +36,7 @@ export function getAxisConfigInPivotChart(col: number, row: number, layout: Pivo
             layout.getColKeysPath()[index][Math.max(0, layout.columnHeaderLevelCount - 1 - layout.topAxesCount)]
           ] as { min: number; max: number })
         : { max: 1, min: 0 };
+      const { axisOption, isPercent } = getAxisOption(col, row + 1, 'top', layout);
       if (range.min === range.max) {
         if (range.min > 0) {
           range.min = 0;
@@ -43,9 +44,12 @@ export function getAxisConfigInPivotChart(col: number, row: number, layout: Pivo
           range.max = 0;
         }
       }
-      const axisOption = getAxisOption(col, row, 'top', layout);
       if (axisOption?.visible === false) {
         return;
+      }
+      if (isPercent) {
+        (range as any).min = 0;
+        (range as any).max = 1;
       }
       if (isNumber(axisOption?.min)) {
         (range as any).min = axisOption.min;
@@ -85,7 +89,7 @@ export function getAxisConfigInPivotChart(col: number, row: number, layout: Pivo
         : layout.dataset.collectedValues[defaultKey];
       const index = layout.getRecordIndexByCol(col);
       const range = (data?.[
-        layout.getColKeysPath()[index][Math.max(0, layout.columnHeaderLevelCount - 1 - layout.topAxesCount)]
+        layout.getColKeysPath()?.[index]?.[Math.max(0, layout.columnHeaderLevelCount - 1 - layout.topAxesCount)]
       ] as { min: number; max: number }) ?? { min: 0, max: 1 };
       if (range.min === range.max) {
         if (range.min > 0) {
@@ -102,9 +106,13 @@ export function getAxisConfigInPivotChart(col: number, row: number, layout: Pivo
         }
       });
 
-      const axisOption = getAxisOption(col, row, 'bottom', layout);
+      const { axisOption, isPercent } = getAxisOption(col, row - 1, 'bottom', layout);
       if (axisOption?.visible === false) {
         return;
+      }
+      if (isPercent) {
+        (range as any).min = 0;
+        (range as any).max = 1;
       }
       if (isNumber(axisOption?.min)) {
         (range as any).min = axisOption.min;
@@ -146,7 +154,7 @@ export function getAxisConfigInPivotChart(col: number, row: number, layout: Pivo
       const rowPath = layout.getRowKeysPath()[recordRow];
       const domain = (data[rowPath[rowPath.length - 1]] as Array<string>) ?? [];
 
-      const axisOption = getAxisOption(col, row, 'left', layout);
+      const { axisOption, isPercent } = getAxisOption(col + 1, row, 'left', layout);
       if (axisOption?.visible === false) {
         return;
       }
@@ -201,9 +209,13 @@ export function getAxisConfigInPivotChart(col: number, row: number, layout: Pivo
         }
       });
 
-      const axisOption = getAxisOption(col, row, 'left', layout);
+      const { axisOption, isPercent } = getAxisOption(col + 1, row, 'left', layout);
       if (axisOption?.visible === false) {
         return;
+      }
+      if (isPercent) {
+        (range as any).min = 0;
+        (range as any).max = 1;
       }
       if (isNumber(axisOption?.min)) {
         (range as any).min = axisOption.min;
@@ -254,6 +266,8 @@ export function getAxisConfigInPivotChart(col: number, row: number, layout: Pivo
       const range = (data?.[
         layout.getRowKeysPath()[index]?.[Math.max(0, layout.rowHeaderLevelCount - 1 - layout.leftAxesCount)] ?? ''
       ] as { min: number; max: number }) ?? { min: 0, max: 1 };
+
+      const { axisOption, isPercent } = getAxisOption(col - 1, row, 'right', layout);
       if (range.min === range.max) {
         if (range.min > 0) {
           range.min = 0;
@@ -261,9 +275,12 @@ export function getAxisConfigInPivotChart(col: number, row: number, layout: Pivo
           range.max = 0;
         }
       }
-      const axisOption = getAxisOption(col, row, 'right', layout);
       if (axisOption?.visible === false) {
         return;
+      }
+      if (isPercent) {
+        (range as any).min = 0;
+        (range as any).max = 1;
       }
       if (isNumber(axisOption?.min)) {
         (range as any).min = axisOption.min;
@@ -305,7 +322,7 @@ export function getAxisConfigInPivotChart(col: number, row: number, layout: Pivo
       const colPath = layout.getColKeysPath()[recordCol];
       const domain = (data?.[colPath?.[colPath?.length - 1] ?? ''] as Array<string>) ?? [];
 
-      const axisOption = getAxisOption(col, row, 'bottom', layout);
+      const { axisOption, isPercent } = getAxisOption(col, row - 1, 'bottom', layout);
       if (axisOption?.visible === false) {
         return;
       }
@@ -333,13 +350,19 @@ export function getAxisOption(col: number, row: number, orient: string, layout: 
       return axis.orient === orient;
     });
     if (axisOption) {
-      return axisOption;
+      return {
+        axisOption,
+        isPercent: spec.percent
+      };
     }
   }
   const axisOption = ((layout._table as PivotChart).pivotChartAxes as ITableAxisOption[]).find(axisOption => {
     return axisOption.orient === orient;
   });
-  return axisOption;
+  return {
+    axisOption,
+    isPercent: false
+  };
 }
 
 export function checkZeroAlign(col: number, row: number, orient: string, layout: PivotLayoutMap) {
