@@ -56,7 +56,7 @@ export function getChartAxes(col: number, row: number, layout: PivotLayoutMap): 
       ] as { max?: number; min?: number }) ?? { min: 0, max: 1 };
 
       const axisOption = getAxisOption(col, row, index === 0 ? 'bottom' : 'top', layout);
-      if (axisOption?.zero) {
+      if (axisOption?.zero || range.min === range.max) {
         range.min = Math.min(range.min, 0);
         range.max = Math.max(range.max, 0);
       }
@@ -134,7 +134,7 @@ export function getChartAxes(col: number, row: number, layout: PivotLayoutMap): 
       ] as { max?: number; min?: number }) ?? { min: 0, max: 1 };
 
       const axisOption = getAxisOption(col, row, index === 0 ? 'left' : 'right', layout);
-      if (axisOption?.zero) {
+      if (axisOption?.zero || range.min === range.max) {
         range.min = Math.min(range.min, 0);
         range.max = Math.max(range.max, 0);
       }
