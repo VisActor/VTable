@@ -34,7 +34,8 @@ import type {
   FieldKeyDef,
   CellLocation,
   LayoutObjectId,
-  HeightModeDef
+  HeightModeDef,
+  ITableThemeDefine
 } from '../ts-types';
 import type { ColumnIconOption } from '../ts-types';
 import { event, style as utilStyle } from '../tools/helper';
@@ -2285,7 +2286,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
   /**
    * 设置主题
    */
-  updateTheme(theme: TableTheme) {
+  updateTheme(theme: ITableThemeDefine) {
     this.internalProps.theme = themes.of(theme ?? themes.DEFAULT);
     this.options.theme = theme;
     this.scenegraph.clearCells();

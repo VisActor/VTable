@@ -101,7 +101,43 @@ describe('listTable init test', () => {
     expect(listTable.getScrollLeft()).toBe(601);
     expect(listTable.getScrollTop()).toBe(802);
   });
+  test('listTable updateTheme', () => {
+    listTable.heightMode = 'autoHeight';
+    listTable.updateTheme({
+      bodyStyle: {
+        fontFamily: 'Calibri',
+        fontSize: 28,
+        color: 'red'
+      }
+    });
+    listTable.scrollToCell({ col: 6, row: 16 });
 
+    expect(listTable.getScrollLeft()).toBe(901);
+    expect(listTable.getScrollTop()).toBe(720);
+    expect(listTable.getCellStyle(6, 16)).toStrictEqual({
+      textAlign: 'left',
+      textBaseline: 'middle',
+      bgColor: '#FFF',
+      color: 'red',
+      fontFamily: 'Calibri',
+      fontSize: 28,
+      fontStyle: undefined,
+      fontVariant: undefined,
+      fontWeight: null,
+      lineHeight: 28,
+      autoWrapText: false,
+      lineClamp: 'auto',
+      textOverflow: 'ellipsis',
+      borderColor: '#000',
+      borderLineWidth: 1,
+      borderLineDash: [],
+      underline: false,
+      underlineWidth: undefined,
+      lineThrough: false,
+      lineThroughLineWidth: undefined,
+      padding: [10, 16, 10, 16]
+    });
+  });
   test('listTable updateOption records&autoWidth&widthMode', () => {
     columns.shift();
     const recordDeleted = records.slice(10, 30);
