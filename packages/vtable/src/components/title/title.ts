@@ -116,7 +116,7 @@ export class Title {
   }
 
   release(): void {
-    this.table.scenegraph.stage.defaultLayer.removeChild(this._titleComponent);
+    this._titleComponent && this.table.scenegraph.stage.defaultLayer.removeChild(this._titleComponent);
     this._titleComponent = null;
   }
   private _getTitleAttrs() {

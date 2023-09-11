@@ -129,6 +129,8 @@ export class LinearAxisScale {
         this._scale.niceMax(tickCount);
       } else if (isNil(this.domain?.min) && isValid(this.domain?.max)) {
         this._scale.niceMin(tickCount);
+      } else {
+        // this._scale.niceMin(tickCount);
       }
     }
   }

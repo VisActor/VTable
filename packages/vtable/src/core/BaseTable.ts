@@ -2624,11 +2624,17 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
         return cacheStyle;
       }
       const hd = layoutMap.getHeader(col, row);
-      if (!hd || hd.isEmpty) {
+      if (
+        (!hd || hd.isEmpty) &&
+        (layoutMap.isLeftBottomCorner(col, row) ||
+          layoutMap.isRightBottomCorner(col, row) ||
+          layoutMap.isCornerHeader(col, row) ||
+          layoutMap.isRightTopCorner(col, row))
+      ) {
         return EMPTY_STYLE;
       }
 
-      const styleClass = this.internalProps.headerHelper.getStyleClass(hd.headerType);
+      const styleClass = this.internalProps.headerHelper.getStyleClass(hd?.headerType || 'text');
       if (layoutMap.isBottomFrozenRow(col, row) && this.theme.bottomFrozenStyle) {
         cacheStyle = <FullExtendStyle>headerStyleContents.of(
           {},
@@ -2661,7 +2667,8 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
         );
       } else {
         // const styleClass = hd.headerType.StyleClass; //BaseHeader文件
-        const { style } = hd;
+        // const { style } = hd;
+        const style = hd?.style || {};
         cacheStyle = <FullExtendStyle>headerStyleContents.of(
           style,
           layoutMap.isColumnHeader(col, row) || layoutMap.isBottomFrozenRow(col, row)
