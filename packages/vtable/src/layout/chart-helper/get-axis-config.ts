@@ -155,7 +155,7 @@ export function getAxisConfigInPivotChart(col: number, row: number, layout: Pivo
 
       const recordRow = layout.getRecordIndexByRow(row);
       const rowPath = layout.getRowKeysPath()[recordRow];
-      const domain = (data[rowPath[rowPath.length - 1]] as Array<string>) ?? [];
+      const domain = (data[rowPath?.[rowPath?.length - 1] ?? ''] as Array<string>) ?? [];
 
       const { axisOption, isPercent } = getAxisOption(col + 1, row, 'left', layout);
       if (axisOption?.visible === false) {

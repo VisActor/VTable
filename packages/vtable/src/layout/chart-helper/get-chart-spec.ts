@@ -97,13 +97,13 @@ export function getChartAxes(col: number, row: number, layout: PivotLayoutMap): 
       ([] as string[]);
     const recordRow = layout.getRecordIndexByRow(row);
     const rowPath = layout.getRowKeysPath()[recordRow];
-    const domain = data[rowPath[rowPath.length - 1]] as Set<string>;
+    const domain = data[rowPath?.[rowPath?.length - 1] ?? ''] as Set<string>;
 
     const { axisOption, isPercent } = getAxisOption(col, row, 'left', layout);
     axes.push(
       merge(
         {
-          domain: Array.from(domain)
+          domain: Array.from(domain ?? [])
         },
         axisOption,
         {
