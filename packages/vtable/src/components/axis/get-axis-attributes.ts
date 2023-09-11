@@ -1,4 +1,4 @@
-import { degreeToRadian, isNil, merge } from '@visactor/vutils';
+import { degreeToRadian, isNil, merge, pickWithout } from '@visactor/vutils';
 import { transformAxisLineStyle, transformStateStyle, transformToGraphic } from '../util/transform';
 import type { ICellAxisOption } from '../../ts-types/component/axis';
 
@@ -108,15 +108,14 @@ export function getAxisAttributes(option: ICellAxisOption) {
     }
   }
 
+  const labelSpec = pickWithout(spec.label, ['style', 'formatMethod', 'state']);
+
   return {
     orient: spec.orient,
     select: spec.select,
     hover: spec.hover,
     line: transformAxisLineStyle(spec.domainLine),
     label: {
-      visible: spec.label.visible,
-      space: spec.label.space,
-      inside: spec.label.inside,
       style:
         // isFunction(spec.label.style)
         //   ? (datum: Datum, index: number) => {
@@ -132,7 +131,7 @@ export function getAxisAttributes(option: ICellAxisOption) {
           }
         : null,
       state: transformStateStyle(spec.label.state),
-      containerAlign: spec.label.containerAlign
+      ...labelSpec
     },
     tick: {
       visible: spec.tick.visible,
@@ -148,7 +147,8 @@ export function getAxisAttributes(option: ICellAxisOption) {
         //     }
         //   :
         transformToGraphic(spec.tick.style),
-      state: transformStateStyle(spec.tick.state)
+      state: transformStateStyle(spec.tick.state),
+      dataFilter: spec.tick.dataFilter
     },
     subTick: {
       visible: spec.subTick.visible,

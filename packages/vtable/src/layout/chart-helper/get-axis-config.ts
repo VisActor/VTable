@@ -48,8 +48,8 @@ export function getAxisConfigInPivotChart(col: number, row: number, layout: Pivo
         return;
       }
       if (isPercent) {
-        (range as any).min = 0;
-        (range as any).max = 1;
+        (range as any).min = (range as any).min < 0 ? -1 : 0;
+        (range as any).max = (range as any).max > 0 ? 1 : 0;
       }
       if (isNumber(axisOption?.min)) {
         (range as any).min = axisOption.min;
@@ -88,9 +88,12 @@ export function getAxisConfigInPivotChart(col: number, row: number, layout: Pivo
         ? layout.dataset.collectedValues[defaultKey + (isZeroAlign ? '_align' : '')]
         : layout.dataset.collectedValues[defaultKey];
       const index = layout.getRecordIndexByCol(col);
-      const range = (data?.[
-        layout.getColKeysPath()?.[index]?.[Math.max(0, layout.columnHeaderLevelCount - 1 - layout.topAxesCount)]
-      ] as { min: number; max: number }) ?? { min: 0, max: 1 };
+      const range = merge(
+        {},
+        (data?.[
+          layout.getColKeysPath()?.[index]?.[Math.max(0, layout.columnHeaderLevelCount - 1 - layout.topAxesCount)]
+        ] as { min: number; max: number }) ?? { min: 0, max: 1 }
+      );
       if (range.min === range.max) {
         if (range.min > 0) {
           range.min = 0;
@@ -111,8 +114,8 @@ export function getAxisConfigInPivotChart(col: number, row: number, layout: Pivo
         return;
       }
       if (isPercent) {
-        (range as any).min = 0;
-        (range as any).max = 1;
+        (range as any).min = (range as any).min < 0 ? -1 : 0;
+        (range as any).max = (range as any).max > 0 ? 1 : 0;
       }
       if (isNumber(axisOption?.min)) {
         (range as any).min = axisOption.min;
@@ -191,9 +194,12 @@ export function getAxisConfigInPivotChart(col: number, row: number, layout: Pivo
         ? layout.dataset.collectedValues[defaultKey + (isZeroAlign ? '_align' : '')]
         : layout.dataset.collectedValues[defaultKey];
       const index = layout.getRecordIndexByRow(row);
-      const range = (data?.[
-        layout.getRowKeysPath()[index]?.[Math.max(0, layout.rowHeaderLevelCount - 1 - layout.leftAxesCount)] ?? ''
-      ] as { min: number; max: number }) ?? { min: 0, max: 1 };
+      const range = merge(
+        {},
+        (data?.[
+          layout.getRowKeysPath()[index]?.[Math.max(0, layout.rowHeaderLevelCount - 1 - layout.leftAxesCount)] ?? ''
+        ] as { min: number; max: number }) ?? { min: 0, max: 1 }
+      );
       if (range.min === range.max) {
         if (range.min > 0) {
           range.min = 0;
@@ -214,8 +220,8 @@ export function getAxisConfigInPivotChart(col: number, row: number, layout: Pivo
         return;
       }
       if (isPercent) {
-        (range as any).min = 0;
-        (range as any).max = 1;
+        (range as any).min = (range as any).min < 0 ? -1 : 0;
+        (range as any).max = (range as any).max > 0 ? 1 : 0;
       }
       if (isNumber(axisOption?.min)) {
         (range as any).min = axisOption.min;
@@ -263,9 +269,12 @@ export function getAxisConfigInPivotChart(col: number, row: number, layout: Pivo
         ? layout.dataset.collectedValues[defaultKey + (isZeroAlign ? '_align' : '')]
         : layout.dataset.collectedValues[defaultKey];
       const index = layout.getRecordIndexByRow(row);
-      const range = (data?.[
-        layout.getRowKeysPath()[index]?.[Math.max(0, layout.rowHeaderLevelCount - 1 - layout.leftAxesCount)] ?? ''
-      ] as { min: number; max: number }) ?? { min: 0, max: 1 };
+      const range = merge(
+        {},
+        (data?.[
+          layout.getRowKeysPath()[index]?.[Math.max(0, layout.rowHeaderLevelCount - 1 - layout.leftAxesCount)] ?? ''
+        ] as { min: number; max: number }) ?? { min: 0, max: 1 }
+      );
 
       const { axisOption, isPercent } = getAxisOption(col - 1, row, 'right', layout);
       if (range.min === range.max) {
@@ -279,8 +288,8 @@ export function getAxisConfigInPivotChart(col: number, row: number, layout: Pivo
         return;
       }
       if (isPercent) {
-        (range as any).min = 0;
-        (range as any).max = 1;
+        (range as any).min = (range as any).min < 0 ? -1 : 0;
+        (range as any).max = (range as any).max > 0 ? 1 : 0;
       }
       if (isNumber(axisOption?.min)) {
         (range as any).min = axisOption.min;

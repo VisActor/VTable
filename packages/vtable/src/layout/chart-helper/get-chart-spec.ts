@@ -1,7 +1,5 @@
 import { cloneDeep, isArray, merge } from '@visactor/vutils';
 import type { PivotLayoutMap } from '../pivot-layout';
-import type { PivotChart } from '../../PivotChart';
-import type { ITableAxisOption } from '../../ts-types/component/axis';
 import type { PivotHeaderLayoutMap } from '../pivot-header-layout';
 import type { SimpleHeaderLayoutMap } from '../simple-header-layout';
 import { checkZeroAlign, getAxisOption } from './get-axis-config';
@@ -51,14 +49,17 @@ export function getChartAxes(col: number, row: number, layout: PivotLayoutMap): 
       const data = layout.dataset.collectedValues[key + (isZeroAlign ? '_align' : '')]
         ? layout.dataset.collectedValues[key + (isZeroAlign ? '_align' : '')]
         : layout.dataset.collectedValues[key];
-      const range = (data?.[
-        layout.getColKeysPath()?.[colIndex]?.[Math.max(0, layout.columnHeaderLevelCount - 1 - layout.topAxesCount)]
-      ] as { max?: number; min?: number }) ?? { min: 0, max: 1 };
+      const range = merge(
+        {},
+        (data?.[
+          layout.getColKeysPath()?.[colIndex]?.[Math.max(0, layout.columnHeaderLevelCount - 1 - layout.topAxesCount)]
+        ] as { max?: number; min?: number }) ?? { min: 0, max: 1 }
+      );
 
       const { axisOption, isPercent } = getAxisOption(col, row, index === 0 ? 'bottom' : 'top', layout);
       if (isPercent) {
-        (range as any).min = 0;
-        (range as any).max = 1;
+        (range as any).min = (range as any).min < 0 ? -1 : 0;
+        (range as any).max = (range as any).max > 0 ? 1 : 0;
       }
       if (axisOption?.zero || range.min === range.max) {
         range.min = Math.min(range.min, 0);
@@ -133,14 +134,17 @@ export function getChartAxes(col: number, row: number, layout: PivotLayoutMap): 
       const data = layout.dataset.collectedValues[key + (isZeroAlign ? '_align' : '')]
         ? layout.dataset.collectedValues[key + (isZeroAlign ? '_align' : '')]
         : layout.dataset.collectedValues[key];
-      const range = (data?.[
-        layout.getRowKeysPath()[rowIndex]?.[Math.max(0, layout.rowHeaderLevelCount - 1 - layout.leftAxesCount)] ?? ''
-      ] as { max?: number; min?: number }) ?? { min: 0, max: 1 };
+      const range = merge(
+        {},
+        (data?.[
+          layout.getRowKeysPath()[rowIndex]?.[Math.max(0, layout.rowHeaderLevelCount - 1 - layout.leftAxesCount)] ?? ''
+        ] as { max?: number; min?: number }) ?? { min: 0, max: 1 }
+      );
 
       const { axisOption, isPercent } = getAxisOption(col, row, index === 0 ? 'left' : 'right', layout);
       if (isPercent) {
-        (range as any).min = 0;
-        (range as any).max = 1;
+        (range as any).min = (range as any).min < 0 ? -1 : 0;
+        (range as any).max = (range as any).max > 0 ? 1 : 0;
       }
       if (axisOption?.zero || range.min === range.max) {
         range.min = Math.min(range.min, 0);
