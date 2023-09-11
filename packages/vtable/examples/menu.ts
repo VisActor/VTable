@@ -176,6 +176,10 @@ export const menus = [
     children: [
       {
         path: 'pivot',
+        name: 'pivot-size-legend'
+      },
+      {
+        path: 'pivot',
         name: 'pivot-basic'
       },
       {
