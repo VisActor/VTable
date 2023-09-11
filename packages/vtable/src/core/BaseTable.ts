@@ -2175,10 +2175,11 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     this.stateManeger.endSelectCells();
   }
   /**
-   * 选中单元格区域
+   * 选中单元格区域，可设置多个区域同时选中
    * @param cellRanges: CellRange[]
    */
   selectCells(cellRanges: CellRange[]) {
+    const { scrollLeft, scrollTop } = this;
     cellRanges.forEach((cellRange: CellRange, index: number) => {
       this.stateManeger.updateSelectPos(cellRange.start.col, cellRange.start.row, false, index >= 1);
       this.stateManeger.updateInteractionState(InteractionState.grabing);
@@ -2186,6 +2187,9 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
       this.stateManeger.endSelectCells(false);
       this.stateManeger.updateInteractionState(InteractionState.default);
     });
+    // 选择后 会自动滚动到所选区域最后一行一列的位置 这里再设置回滚动前位置
+    this.setScrollTop(scrollTop);
+    this.setScrollLeft(scrollLeft);
   }
   abstract isListTable(): boolean;
   abstract isPivotTable(): boolean;

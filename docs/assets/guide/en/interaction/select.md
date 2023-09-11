@@ -15,6 +15,22 @@ In addition to clicking on a single cell, VTable also supports mouse box selecti
 
 As shown in the image above, the user selects multiple cells by dragging the mouse.
 
+## Call interface selection
+A certain business scenario, such as linkage selection with other modules, is not a manual mouse-triggered selection. The selection can be completed with the help of the interface.
+### Single cell selection
+
+Usage is as follows:
+```
+// Select cells in 4 columns and 5 rows
+tableInstance.selectCell(4,5);
+```
+### Cell range selected
+
+Call the interface selectCells, the usage is as follows:
+```
+// Two ranges in the table: from column 1, row 2 to column 4, row 2 and from column 3, row 5 to column 7, row 8
+tableInstance.selectCells([{start:{col:1,row:2},end:{col:4,row:2}},{start:{col:3,row:5},end:{col:7 ,row:8}}]);
+```
 ## Select style
 
 When one or more cells are selected, VTable applies specific styles to enable the user to identify the selected cells. can be passed `theme.selectionStyle` Configure the selected style.
