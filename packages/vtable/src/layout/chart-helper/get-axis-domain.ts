@@ -10,6 +10,11 @@ import { DEFAULT_CONTINUOUS_TICK_COUNT } from '../../components/util/tick-data/c
  * @return {*}
  */
 export function getAxisDomainRangeAndLabels(min: number, max: number, axisOption: any, skipTick?: boolean) {
+  if (axisOption?.zero) {
+    min = Math.min(min, 0);
+    max = Math.max(max, 0);
+  }
+
   const scale = new LinearScale();
   scale.domain([min, max], !!axisOption?.nice);
 
@@ -34,7 +39,7 @@ export function getAxisDomainRangeAndLabels(min: number, max: number, axisOption
     scaleTicks = scale.ticks(axisOption?.tickCount ?? DEFAULT_CONTINUOUS_TICK_COUNT, {
       noDecimals: axisOption?.tick?.noDecimals
     });
-    console.log(scaleTicks);
+    // console.log(scaleTicks);
   }
 
   return {
