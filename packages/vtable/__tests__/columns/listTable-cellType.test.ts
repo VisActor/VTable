@@ -257,5 +257,8 @@ fruit and seeds. They are also highly intelligent and social, and are considered
   const listTable = new ListTable(containerDom, option);
   test('listTable-progressBar getAllRowsHeight', () => {
     expect(listTable.getAllRowsHeight()).toBe(960);
+    expect(listTable.scenegraph.getCell(2, 2).children[0].type).toBe('image');
+    expect(listTable.scenegraph.getCell(3, 2).children[0].type).toBe('image');
+    expect(listTable.scenegraph.getCell(6, 2).children[0].name).toBe('sparkline');
   });
 });

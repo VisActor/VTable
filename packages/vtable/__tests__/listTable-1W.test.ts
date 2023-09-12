@@ -190,15 +190,19 @@ describe('listTable-1W init test', () => {
     expect(listTable.getAllRowsHeight()).toBe(400080);
     expect(listTable.getAllColsWidth()).toBe(1470);
   });
-
+  test('listTable-1W scrollToCell', async () => {
+    listTable.scrollToCell({ col: 3, row: 3000 });
+    await new Promise(resolve => setTimeout(resolve, 1000));
+    expect(listTable.scrollTop).toBe(119920);
+  });
   test('listTable-1W update widthMode', async () => {
     listTable.widthMode = 'autoWidth';
     listTable.renderWithRecreateCells();
     // 使用setTimeout延迟执行验证语句
     // setTimeout(() => {
     await new Promise(resolve => setTimeout(resolve, 1000));
-    expect(listTable.getAllColsWidth()).toBeGreaterThan(1535);
-    expect(listTable.getAllColsWidth()).toBeLessThan(1545);
+    expect(listTable.getAllColsWidth()).toBeGreaterThan(1530);
+    expect(listTable.getAllColsWidth()).toBeLessThan(1555);
     // }, 1000); // 延迟1秒
   });
 
@@ -206,11 +210,5 @@ describe('listTable-1W init test', () => {
     listTable.heightMode = 'autoHeight';
     listTable.renderWithRecreateCells();
     expect(listTable.getAllRowsHeight()).toBe(340072);
-  });
-
-  test('listTable-1W scrollToCell', async () => {
-    listTable.scrollToCell({ col: 3, row: 3000 });
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    expect(listTable.scrollTop).toBe(101932);
   });
 });

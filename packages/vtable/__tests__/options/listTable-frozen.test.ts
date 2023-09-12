@@ -4,7 +4,7 @@ import records from '../data/marketsales.json';
 import { ListTable } from '../../src/ListTable';
 import { createDiv } from '../dom';
 global.__VERSION__ = 'none';
-describe('listTable-title init test', () => {
+describe('listTable-frozen init test', () => {
   const containerDom: HTMLElement = createDiv();
   containerDom.style.position = 'relative';
   containerDom.style.width = '1000px';
@@ -77,23 +77,17 @@ describe('listTable-title init test', () => {
     columns,
     defaultColWidth: 150,
     allowFrozenColCount: 5,
-    title: {
-      text: 'dsagf',
-      align: 'right',
-      subtext: '这是一个子标题\ndsag反馈第三个国际服大教室',
-      orient: 'top',
-      padding: 40
-    }
+    frozenColCount: 2
   };
 
   option.container = containerDom;
   option.records = records;
   const listTable = new ListTable(option);
-  test('listTable-title getCell', () => {
-    const cell01AABB = listTable.scenegraph.getCell(0, 1).AABBBounds;
-    expect(cell01AABB.x1).toBe(-0.5);
-    expect(cell01AABB.y1).toBe(-0.5);
-    expect(cell01AABB.x2).toBe(151.5);
-    expect(cell01AABB.y2).toBe(40.5);
+  test('listTable frozenColCount', () => {
+    expect(listTable.frozenColCount).toBe(2);
+  });
+  test('listTable frozenColCount set', () => {
+    listTable.frozenColCount = 4;
+    expect(listTable.frozenColCount).toBe(4);
   });
 });

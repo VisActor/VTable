@@ -234,7 +234,7 @@ const option = {
     }
   },
   legends: {
-      orient: 'bottom',
+      orient: 'top',
       position: 'start',
       type: 'color',
       colors: ['rgb(235,235,255)', 'rgb(35,35,255)'],

@@ -1,6 +1,6 @@
 // @ts-nocheck
 // 有问题可对照demo unitTestPivotTable
-import records from './marketsales.json';
+import records from './data/marketsales.json';
 import { PivotTable } from '../src/PivotTable';
 import * as VTable from '../src/index';
 import { createDiv } from './dom';

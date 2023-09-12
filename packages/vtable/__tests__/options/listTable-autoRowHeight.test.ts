@@ -1,6 +1,6 @@
 // @ts-nocheck
 // 有问题可对照demo unitTestListTable
-import records from '../marketsales.json';
+import records from '../data/marketsales.json';
 import { ListTable } from '../../src/ListTable';
 import { createDiv, removeDom } from '../dom';
 global.__VERSION__ = 'none';

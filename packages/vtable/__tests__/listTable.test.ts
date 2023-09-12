@@ -1,6 +1,6 @@
 // @ts-nocheck
 // 有问题可对照demo unitTestListTable
-import records from './marketsales.json';
+import records from './data/marketsales.json';
 import { ListTable } from '../src/ListTable';
 import { createDiv } from './dom';
 global.__VERSION__ = 'none';
@@ -149,7 +149,8 @@ describe('listTable init test', () => {
       heightMode: 'autoHeight',
       autoWrapText: true,
       widthMode: 'autoWidth',
-      limitMaxAutoWidth: 170
+      limitMaxAutoWidth: 170,
+      dragHeaderMode: 'all'
     };
     listTable.updateOption(option1);
     expect(listTable.rowCount).toBe(21);
@@ -158,6 +159,35 @@ describe('listTable init test', () => {
     expect(listTable.getColWidth(0)).toBe(122);
     expect(listTable.getColWidth(5)).toBe(170);
   });
+  test('listTable selectCell', () => {
+    listTable.selectCell(4, 5);
+    expect(listTable.stateManeger?.select.ranges).toEqual([
+      {
+        start: {
+          col: 4,
+          row: 5
+        },
+        end: {
+          col: 4,
+          row: 5
+        }
+      }
+    ]);
+    const scrollTop = listTable.scrollTop;
+    listTable.selectCells([
+      { start: { col: 1, row: 3 }, end: { col: 4, row: 6 } },
+      { start: { col: 0, row: 4 }, end: { col: 7, row: 4 } },
+      { start: { col: 4, row: 36 }, end: { col: 7, row: 36 } }
+    ]);
+
+    expect(listTable.stateManeger?.select.ranges).toEqual([
+      { start: { col: 1, row: 3 }, end: { col: 4, row: 6 } },
+      { start: { col: 0, row: 4 }, end: { col: 7, row: 4 } },
+      { start: { col: 4, row: 36 }, end: { col: 7, row: 36 } }
+    ]);
+    expect(listTable.getScrollTop()).toBe(scrollTop);
+  });
+
   // test('listTable API getAllCells', () => {
   //   expect(JSON.parse(JSON.stringify(listTable.getCellInfo(5, 5)))).toEqual({
   //     col: 5,
