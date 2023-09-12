@@ -54,8 +54,8 @@ export function getAxisConfigInPivotChart(col: number, row: number, layout: Pivo
         (range as any).max = (range as any).max > 0 ? 1 : 0;
       }
       const { range: niceRange, ticks } = getAxisDomainRangeAndLabels(range.min, range.max, axisOption);
-      range.min = niceRange[0];
-      range.max = niceRange[1];
+      range.min = !isNaN(niceRange[0]) ? niceRange[0] : 0;
+      range.max = !isNaN(niceRange[1]) ? niceRange[1] : 1;
 
       if (isNumber(axisOption?.min)) {
         (range as any).min = axisOption.min;
@@ -126,8 +126,8 @@ export function getAxisConfigInPivotChart(col: number, row: number, layout: Pivo
         (range as any).max = (range as any).max > 0 ? 1 : 0;
       }
       const { range: niceRange, ticks } = getAxisDomainRangeAndLabels(range.min, range.max, axisOption);
-      range.min = niceRange[0];
-      range.max = niceRange[1];
+      range.min = !isNaN(niceRange[0]) ? niceRange[0] : 0;
+      range.max = !isNaN(niceRange[1]) ? niceRange[1] : 1;
 
       if (isNumber(axisOption?.min)) {
         (range as any).min = axisOption.min;
@@ -238,8 +238,8 @@ export function getAxisConfigInPivotChart(col: number, row: number, layout: Pivo
         (range as any).max = (range as any).max > 0 ? 1 : 0;
       }
       const { range: niceRange, ticks } = getAxisDomainRangeAndLabels(range.min, range.max, axisOption);
-      range.min = niceRange[0];
-      range.max = niceRange[1];
+      range.min = !isNaN(niceRange[0]) ? niceRange[0] : 0;
+      range.max = !isNaN(niceRange[1]) ? niceRange[1] : 1;
 
       if (isNumber(axisOption?.min)) {
         (range as any).min = axisOption.min;
@@ -312,8 +312,8 @@ export function getAxisConfigInPivotChart(col: number, row: number, layout: Pivo
         (range as any).max = (range as any).max > 0 ? 1 : 0;
       }
       const { range: niceRange, ticks } = getAxisDomainRangeAndLabels(range.min, range.max, axisOption);
-      range.min = niceRange[0];
-      range.max = niceRange[1];
+      range.min = !isNaN(niceRange[0]) ? niceRange[0] : 0;
+      range.max = !isNaN(niceRange[1]) ? niceRange[1] : 1;
 
       if (isNumber(axisOption?.min)) {
         (range as any).min = axisOption.min;
