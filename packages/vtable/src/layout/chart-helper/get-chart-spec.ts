@@ -81,11 +81,11 @@ export function getChartAxes(col: number, row: number, layout: PivotLayoutMap): 
             type: 'linear',
             orient: index === 0 ? 'bottom' : 'top',
             // visible: true,
-            // label: { visible: false },
+            label: { visible: false },
             title: { visible: false },
             domainLine: { visible: false },
             seriesIndex: index,
-            // height: -1,
+            height: -1,
 
             sync: { axisId: NO_AXISID_FRO_VTABLE } // hack for fs
           }
@@ -171,11 +171,11 @@ export function getChartAxes(col: number, row: number, layout: PivotLayoutMap): 
             type: 'linear',
             orient: index === 0 ? 'left' : 'right',
             // visible: true,
-            // label: { visible: false },
+            label: { visible: false },
             title: { visible: false },
             domainLine: { visible: false },
             seriesIndex: index,
-            // width: -1,
+            width: -1,
             // grid: index === 0 ? undefined : { visible: false }
 
             sync: { axisId: NO_AXISID_FRO_VTABLE } // hack for fs
