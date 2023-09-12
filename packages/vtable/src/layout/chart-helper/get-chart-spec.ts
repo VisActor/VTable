@@ -3,6 +3,7 @@ import type { PivotLayoutMap } from '../pivot-layout';
 import type { PivotHeaderLayoutMap } from '../pivot-header-layout';
 import type { SimpleHeaderLayoutMap } from '../simple-header-layout';
 import { checkZeroAlign, getAxisOption } from './get-axis-config';
+import { getAxisDomainRangeAndLabels } from './get-axis-domain';
 
 const NO_AXISID_FRO_VTABLE = 'NO_AXISID_FRO_VTABLE';
 
@@ -16,7 +17,6 @@ export function getRawChartSpec(col: number, row: number, layout: PivotLayoutMap
     const indicatorKey = paths.rowHeaderPaths.find(rowPath => rowPath.indicatorKey)?.indicatorKey;
     indicatorObj = layout.columnObjects.find(indicator => indicator.indicatorKey === indicatorKey);
   }
-  // const indicatorKeys: string[] = [];
   const chartSpec = indicatorObj?.chartSpec;
 
   return chartSpec;
@@ -44,7 +44,7 @@ export function getChartAxes(col: number, row: number, layout: PivotLayoutMap): 
         key = key[0];
       }
 
-      const isZeroAlign = checkZeroAlign(col, row, index === 0 ? 'bottom' : 'top', layout);
+      const { axisOption, isPercent, isZeroAlign } = getAxisOption(col, row, index === 0 ? 'bottom' : 'top', layout);
 
       const data = layout.dataset.collectedValues[key + (isZeroAlign ? '_align' : '')]
         ? layout.dataset.collectedValues[key + (isZeroAlign ? '_align' : '')]
@@ -56,7 +56,12 @@ export function getChartAxes(col: number, row: number, layout: PivotLayoutMap): 
         ] as { max?: number; min?: number }) ?? { min: 0, max: 1 }
       );
 
-      const { axisOption, isPercent } = getAxisOption(col, row, index === 0 ? 'bottom' : 'top', layout);
+      if (axisOption?.nice) {
+        const { ticks } = getAxisDomainRangeAndLabels(range.min, range.max, axisOption);
+        range.min = ticks[0];
+        range.max = ticks[ticks.length - 1];
+      }
+
       if (isPercent) {
         (range as any).min = (range as any).min < 0 ? -1 : 0;
         (range as any).max = (range as any).max > 0 ? 1 : 0;
@@ -129,7 +134,7 @@ export function getChartAxes(col: number, row: number, layout: PivotLayoutMap): 
         key = key[0];
       }
 
-      const isZeroAlign = checkZeroAlign(col, row, index === 0 ? 'left' : 'right', layout);
+      const { axisOption, isPercent, isZeroAlign } = getAxisOption(col, row, index === 0 ? 'left' : 'right', layout);
 
       const data = layout.dataset.collectedValues[key + (isZeroAlign ? '_align' : '')]
         ? layout.dataset.collectedValues[key + (isZeroAlign ? '_align' : '')]
@@ -141,7 +146,12 @@ export function getChartAxes(col: number, row: number, layout: PivotLayoutMap): 
         ] as { max?: number; min?: number }) ?? { min: 0, max: 1 }
       );
 
-      const { axisOption, isPercent } = getAxisOption(col, row, index === 0 ? 'left' : 'right', layout);
+      if (axisOption?.nice) {
+        const { ticks } = getAxisDomainRangeAndLabels(range.min, range.max, axisOption);
+        range.min = ticks[0];
+        range.max = ticks[ticks.length - 1];
+      }
+
       if (isPercent) {
         (range as any).min = (range as any).min < 0 ? -1 : 0;
         (range as any).max = (range as any).max > 0 ? 1 : 0;

@@ -1,4 +1,4 @@
-import { merge } from '@visactor/vutils';
+import { isArray, merge } from '@visactor/vutils';
 import type { BaseTableAPI } from '../../ts-types/base-table';
 import type { ICellAxisOption } from '../../ts-types/component/axis';
 import { commonAxis } from './get-axis-attributes';
@@ -37,14 +37,20 @@ export function computeAxisComponentWidth(config: ICellAxisOption, table: BaseTa
         );
       });
     } else {
-      const range = attribute.range;
-      const minNumber = Math.abs(range.min) > 1 ? Math.round(range.min) : range.min;
-      const maxNumber = Math.abs(range.max) > 1 ? Math.round(range.max) : range.max;
-      // abs>1取整保留两位有效数字，abs<1保留一位有效数字
-      const minString = formatDecimal(minNumber);
-      const maxString = formatDecimal(maxNumber);
-      // 这里测量的是预估的最大最小range，与实际现实的label可能不同
-      [minString, maxString].forEach(text => {
+      let ticks: string[];
+      if (isArray((config as any).__ticksForVTable)) {
+        ticks = (config as any).__ticksForVTable;
+      } else {
+        const range = attribute.range;
+        const minNumber = Math.abs(range.min) > 1 ? Math.round(range.min) : range.min;
+        const maxNumber = Math.abs(range.max) > 1 ? Math.round(range.max) : range.max;
+        // abs>1取整保留两位有效数字，abs<1保留一位有效数字
+        const minString = formatDecimal(minNumber);
+        const maxString = formatDecimal(maxNumber);
+        // 这里测量的是预估的最大最小range，与实际现实的label可能不同
+        ticks = [minString, maxString];
+      }
+      ticks.forEach(text => {
         if (attribute.label.formatMethod) {
           text = attribute.label.formatMethod(text);
         }
@@ -118,14 +124,20 @@ export function computeAxisComponentHeight(config: ICellAxisOption, table: BaseT
         );
       });
     } else {
-      const range = attribute.range;
-      const minNumber = Math.abs(range.min) > 1 ? Math.round(range.min) : range.min;
-      const maxNumber = Math.abs(range.max) > 1 ? Math.round(range.max) : range.max;
-      // abs>1取整保留两位有效数字，abs<1保留一位有效数字
-      const minString = formatDecimal(minNumber);
-      const maxString = formatDecimal(maxNumber);
-      // 这里测量的是预估的最大最小range，与实际现实的label可能不同
-      [minString, maxString].forEach(text => {
+      let ticks: string[];
+      if (isArray((config as any).__ticksForVTable)) {
+        ticks = (config as any).__ticksForVTable;
+      } else {
+        const range = attribute.range;
+        const minNumber = Math.abs(range.min) > 1 ? Math.round(range.min) : range.min;
+        const maxNumber = Math.abs(range.max) > 1 ? Math.round(range.max) : range.max;
+        // abs>1取整保留两位有效数字，abs<1保留一位有效数字
+        const minString = formatDecimal(minNumber);
+        const maxString = formatDecimal(maxNumber);
+        // 这里测量的是预估的最大最小range，与实际现实的label可能不同
+        ticks = [minString, maxString];
+      }
+      ticks.forEach(text => {
         if (attribute.label.formatMethod) {
           text = attribute.label.formatMethod(text);
         }
