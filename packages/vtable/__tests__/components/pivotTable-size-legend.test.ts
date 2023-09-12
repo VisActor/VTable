@@ -297,17 +297,18 @@ describe('listTable-size-legend init test', () => {
       min: 0
     }
   };
-  const listTable = new VTable.PivotTable(containerDom, option);
+  const pivotTable = new VTable.PivotTable(containerDom, option);
 
   test('listTable-size-legend getDrawRange', () => {
-    const drawRange = listTable.getDrawRange();
+    const drawRange = pivotTable.getDrawRange();
     expect(drawRange.left).toBe(1);
     expect(drawRange.right).toBe(566);
     expect(drawRange.top).toBe(58);
     expect(drawRange.bottom).toBe(799);
   });
   test('listTable-size-legend node', () => {
-    const layerChild = listTable.scenegraph.stage.children[0].children;
+    const layerChild = pivotTable.scenegraph.stage.children[0].children;
     expect(layerChild[layerChild.length - 1].name).toBe('legend');
   });
+  pivotTable.release();
 });

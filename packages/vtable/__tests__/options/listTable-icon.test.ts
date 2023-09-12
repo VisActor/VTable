@@ -449,4 +449,5 @@ describe('listTable-icon init test', () => {
     expect(moreAABBBounds.x2).toBe(114);
     expect(moreAABBBounds.y2).toBe(43);
   });
+  listTable.release();
 });

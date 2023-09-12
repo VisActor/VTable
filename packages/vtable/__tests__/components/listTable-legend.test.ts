@@ -154,4 +154,5 @@ describe('listTable-legend init test', () => {
     );
     expect(listTable.getCellStyle(0, 2).bgColor).toBe('rgba(255, 127, 14, .2)');
   });
+  listTable.release();
 });

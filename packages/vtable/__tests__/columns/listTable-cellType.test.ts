@@ -3,7 +3,7 @@
 import { ListTable } from '../../src/ListTable';
 import { createDiv } from '../dom';
 global.__VERSION__ = 'none';
-describe('listTable-title init test', () => {
+describe('listTable-cellType init test', () => {
   const containerDom: HTMLElement = createDiv();
   containerDom.style.position = 'relative';
   containerDom.style.width = '1000px';
@@ -255,10 +255,24 @@ fruit and seeds. They are also highly intelligent and social, and are considered
     defaultRowHeight: 120
   };
   const listTable = new ListTable(containerDom, option);
-  test('listTable-progressBar getAllRowsHeight', () => {
+  test('listTable-cellType getAllRowsHeight', () => {
     expect(listTable.getAllRowsHeight()).toBe(960);
     expect(listTable.scenegraph.getCell(2, 2).children[0].type).toBe('image');
     expect(listTable.scenegraph.getCell(3, 2).children[0].type).toBe('image');
     expect(listTable.scenegraph.getCell(6, 2).children[0].name).toBe('sparkline');
   });
+  test('listTable-cellType sparkLine hover', () => {
+    listTable.stateManeger.updateSparklineHoverPose(6, 2, 1088, 210);
+
+    expect(listTable.stateManeger.sparkLine).toEqual({
+      col: 6,
+      row: 2
+    });
+    listTable.stateManeger.updateSparklineHoverPose(5, 2, 850, 210);
+    expect(listTable.stateManeger.sparkLine).toEqual({
+      col: -1,
+      row: -1
+    });
+  });
+  listTable.release();
 });

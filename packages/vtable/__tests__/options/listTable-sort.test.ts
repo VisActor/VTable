@@ -4,7 +4,7 @@ import records from '../data/marketsales.json';
 import { ListTable } from '../../src/ListTable';
 import { createDiv } from '../dom';
 global.__VERSION__ = 'none';
-describe('listTable-frozen init test', () => {
+describe('listTable init test', () => {
   const containerDom: HTMLElement = createDiv();
   containerDom.style.position = 'relative';
   containerDom.style.width = '1000px';
@@ -77,18 +77,20 @@ describe('listTable-frozen init test', () => {
     columns,
     defaultColWidth: 150,
     allowFrozenColCount: 5,
-    frozenColCount: 2
+    sortState: {
+      field: '订单 ID',
+      order: 'desc'
+    }
   };
 
   option.container = containerDom;
   option.records = records;
   const listTable = new ListTable(option);
-  test('listTable frozenColCount', () => {
-    expect(listTable.frozenColCount).toBe(2);
+  test('listTable getCellValue', () => {
+    expect(listTable.getCellValue(6, 3)).toBe('Sauder 书架, 金属');
   });
-  test('listTable frozenColCount set', () => {
-    listTable.frozenColCount = 4;
-    expect(listTable.frozenColCount).toBe(4);
-  });
-  listTable.release();
+
+  setTimeout(() => {
+    listTable.release();
+  }, 1000);
 });

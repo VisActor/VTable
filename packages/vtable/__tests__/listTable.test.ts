@@ -82,6 +82,9 @@ describe('listTable init test', () => {
   option.container = containerDom;
   option.records = records;
   const listTable = new ListTable(option);
+  test('listTable getCellValue', () => {
+    expect(listTable.getCellValue(6, 3)).toBe('Cardinal 孔加固材料, 回收');
+  });
   test('listTable getCellOverflowText', () => {
     expect(listTable.getCellOverflowText(6, 3)).toBe('Cardinal 孔加固材料, 回收');
   });
@@ -187,7 +190,17 @@ describe('listTable init test', () => {
     ]);
     expect(listTable.getScrollTop()).toBe(scrollTop);
   });
-
+  test('listTable measureTextWidth', () => {
+    const measureTextWdith = listTable.measureText("家里方大化工撒个福建师大看哈 fdsfgj! *-+&5%#.,'.，。、", {
+      fontFamily: 'Arial',
+      fontSize: 15,
+      fontWeight: 'bold'
+    });
+    expect(measureTextWdith).toEqual({
+      width: 390.0501427283655,
+      height: 15
+    });
+  });
   // test('listTable API getAllCells', () => {
   //   expect(JSON.parse(JSON.stringify(listTable.getCellInfo(5, 5)))).toEqual({
   //     col: 5,
@@ -239,4 +252,7 @@ describe('listTable init test', () => {
   //     scaleRatio: 1
   //   });
   // });
+  setTimeout(() => {
+    listTable.release();
+  }, 1000);
 });

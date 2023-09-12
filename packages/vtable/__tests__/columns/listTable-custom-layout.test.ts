@@ -317,4 +317,5 @@ describe('listTable-custom-layout init test', () => {
     expect(rectBound.top).toBe(160);
     expect(rectBound.bottom).toBe(240);
   });
+  listTable.release();
 });

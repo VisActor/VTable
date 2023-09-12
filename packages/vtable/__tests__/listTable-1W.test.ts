@@ -211,4 +211,7 @@ describe('listTable-1W init test', () => {
     listTable.renderWithRecreateCells();
     expect(listTable.getAllRowsHeight()).toBe(340072);
   });
+  setTimeout(() => {
+    listTable.release();
+  }, 1000);
 });

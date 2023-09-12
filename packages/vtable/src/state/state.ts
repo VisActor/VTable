@@ -897,10 +897,16 @@ export class StateManeger {
     if (this.sparkLine.col !== -1 && this.sparkLine.row !== -1) {
       clearChartHover(this.sparkLine.col, this.sparkLine.row, this.table);
     }
+    let isUpdated = false;
     if (col !== -1 && row !== -1) {
-      updateChartHover(col, row, x, y, this.table);
+      isUpdated = updateChartHover(col, row, x, y, this.table);
     }
-    this.sparkLine.col = col;
-    this.sparkLine.row = row;
+    if (isUpdated) {
+      this.sparkLine.col = col;
+      this.sparkLine.row = row;
+    } else {
+      this.sparkLine.col = -1;
+      this.sparkLine.row = -1;
+    }
   }
 }

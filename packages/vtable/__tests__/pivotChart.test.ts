@@ -9862,4 +9862,7 @@ describe('pivotTable init test', () => {
     pivotChart.updateOption(option1);
     expect(pivotChart.getChartDatumPosition(datum, cellAddr)).toEqual({ x: 429, y: 233 });
   });
+  setTimeout(() => {
+    pivotChart.release();
+  }, 1000);
 });
