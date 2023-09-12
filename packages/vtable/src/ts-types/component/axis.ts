@@ -12,6 +12,7 @@ export type ICellAxisOption = Omit<ICartesianAxisSpec, 'type'> &
           min: number;
           max: number;
         };
+        __ticksForVTable?: number[];
       }
   );
 

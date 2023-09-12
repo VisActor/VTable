@@ -13,6 +13,7 @@ import type { IBaseScale } from '@visactor/vscale';
 import { ticks } from '../util/tick-data';
 import { LinearAxisScale } from './linear-scale';
 import { doOverlap } from './label-overlap';
+import { getQuadProps } from '../../scenegraph/utils/padding';
 
 const DEFAULT_BAND_INNER_PADDING = 0.1;
 const DEFAULT_BAND_OUTER_PADDING = 0.3;
@@ -148,7 +149,10 @@ export class CartesianAxis {
   }
 
   getLayoutRect() {
+    // const padding = getQuadProps(this.table.theme.bodyStyle.padding as number);
     return {
+      // width: this.width - (this.orient === 'top' || this.orient === 'bottom' ? padding[3] + padding[1] : 0),
+      // height: this.height - (this.orient === 'left' || this.orient === 'right' ? padding[0] + padding[2] : 0)
       width: this.width,
       height: this.height
     };
