@@ -149,10 +149,12 @@ export class CartesianAxis {
   }
 
   getLayoutRect() {
-    const padding = getQuadProps(this.table.theme.bodyStyle.padding as number);
+    // const padding = getQuadProps(this.table.theme.bodyStyle.padding as number);
     return {
-      width: this.width - (this.orient === 'top' || this.orient === 'bottom' ? padding[3] + padding[1] : 0),
-      height: this.height - (this.orient === 'left' || this.orient === 'right' ? padding[0] + padding[2] : 0)
+      // width: this.width - (this.orient === 'top' || this.orient === 'bottom' ? padding[3] + padding[1] : 0),
+      // height: this.height - (this.orient === 'left' || this.orient === 'right' ? padding[0] + padding[2] : 0)
+      width: this.width,
+      height: this.height
     };
   }
 
