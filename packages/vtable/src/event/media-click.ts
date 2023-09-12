@@ -11,14 +11,13 @@ export function bindMediaClick(table: BaseTableAPI): void {
     table.on(TABLE_EVENT_TYPE.CLICK_CELL, (e: MousePointerCellEvent) => {
       //如果目前是在某个icon上，如收起展开按钮 则不进行其他点击逻辑
       const { col, row } = e;
-      // const type = table.getBodyColumnDefine(col, row).cellType;
-      let type;
+      let cellType;
       if (table.internalProps.layoutMap.isHeader(col, row)) {
-        type = table.isPivotTable()
+        cellType = table.isPivotTable()
           ? table._getHeaderLayoutMap(col, row).headerType
           : table.getHeaderDefine(col, row).headerType;
       } else {
-        type = table.getBodyColumnType(col, row);
+        cellType = table.getBodyColumnType(col, row);
       }
       const columnDefine = table.isHeader(col, row)
         ? table.getHeaderDefine(col, row)
@@ -59,7 +58,7 @@ export function bindMediaClick(table: BaseTableAPI): void {
           return;
         }
         window.open(url);
-      } else if (type === 'image') {
+      } else if (cellType === 'image') {
         // 点击图片，打开放大图片
 
         // 开启蒙版
@@ -97,7 +96,7 @@ export function bindMediaClick(table: BaseTableAPI): void {
         overlay.appendChild(image);
 
         document.body.appendChild(overlay);
-      } else if (type === 'video') {
+      } else if (cellType === 'video') {
         // 点击视频，弹出播放窗口
 
         // 开启蒙版

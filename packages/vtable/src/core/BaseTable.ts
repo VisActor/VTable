@@ -2330,7 +2330,8 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
   }
 
   getBodyColumnType(col: number, row: number): ColumnTypeOption {
-    return this.internalProps.layoutMap.getBody(col, row).cellType;
+    const cellType = this.internalProps.layoutMap.getBody(col, row).cellType;
+    return getProp('cellType', { cellType }, col, row, this);
   }
   /**
    * 根据行列号获取对应的字段名
