@@ -52,7 +52,8 @@ export function getChartAxes(col: number, row: number, layout: PivotLayoutMap): 
       const range = merge(
         {},
         (data?.[
-          layout.getColKeysPath()?.[colIndex]?.[Math.max(0, layout.columnHeaderLevelCount - 1 - layout.topAxesCount)]
+          layout.getColKeysPath()?.[colIndex]?.[Math.max(0, layout.columnHeaderLevelCount - 1 - layout.topAxesCount)] ??
+            ''
         ] as { max?: number; min?: number }) ?? { min: 0, max: 1 }
       );
 

@@ -99,7 +99,7 @@ export function getAxisConfigInPivotChart(col: number, row: number, layout: Pivo
       const range = merge(
         {},
         (data?.[
-          layout.getColKeysPath()?.[index]?.[Math.max(0, layout.columnHeaderLevelCount - 1 - layout.topAxesCount)]
+          layout.getColKeysPath()?.[index]?.[Math.max(0, layout.columnHeaderLevelCount - 1 - layout.topAxesCount)] ?? ''
         ] as { min: number; max: number }) ?? { min: 0, max: 1 }
       );
       if (range.min === range.max) {
