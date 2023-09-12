@@ -1,4 +1,4 @@
-import { cloneDeep, isArray, merge } from '@visactor/vutils';
+import { cloneDeep, isArray, isNumber, merge } from '@visactor/vutils';
 import type { PivotLayoutMap } from '../pivot-layout';
 import type { PivotHeaderLayoutMap } from '../pivot-header-layout';
 import type { SimpleHeaderLayoutMap } from '../simple-header-layout';
@@ -69,7 +69,12 @@ export function getChartAxes(col: number, row: number, layout: PivotLayoutMap): 
         range.min = ticks[0];
         range.max = ticks[ticks.length - 1];
       }
-
+      if (isNumber(axisOption?.min)) {
+        (range as any).min = axisOption.min;
+      }
+      if (isNumber(axisOption?.max)) {
+        (range as any).max = axisOption.max;
+      }
       axes.push(
         merge(
           {
@@ -159,6 +164,12 @@ export function getChartAxes(col: number, row: number, layout: PivotLayoutMap): 
         range.min = ticks[0];
         range.max = ticks[ticks.length - 1];
         tickCount = ticks.length;
+      }
+      if (isNumber(axisOption?.min)) {
+        (range as any).min = axisOption.min;
+      }
+      if (isNumber(axisOption?.max)) {
+        (range as any).max = axisOption.max;
       }
       axes.push(
         merge(
