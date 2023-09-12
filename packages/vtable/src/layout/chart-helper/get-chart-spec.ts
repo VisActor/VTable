@@ -56,13 +56,6 @@ export function getChartAxes(col: number, row: number, layout: PivotLayoutMap): 
             ''
         ] as { max?: number; min?: number }) ?? { min: 0, max: 1 }
       );
-
-      if (axisOption?.nice) {
-        const { ticks } = getAxisDomainRangeAndLabels(range.min, range.max, axisOption);
-        range.min = ticks[0];
-        range.max = ticks[ticks.length - 1];
-      }
-
       if (isPercent) {
         (range as any).min = (range as any).min < 0 ? -1 : 0;
         (range as any).max = (range as any).max > 0 ? 1 : 0;
@@ -71,6 +64,12 @@ export function getChartAxes(col: number, row: number, layout: PivotLayoutMap): 
         range.min = Math.min(range.min, 0);
         range.max = Math.max(range.max, 0);
       }
+      if (axisOption?.nice) {
+        const { ticks } = getAxisDomainRangeAndLabels(range.min, range.max, axisOption);
+        range.min = ticks[0];
+        range.max = ticks[ticks.length - 1];
+      }
+
       axes.push(
         merge(
           {
@@ -146,13 +145,6 @@ export function getChartAxes(col: number, row: number, layout: PivotLayoutMap): 
           layout.getRowKeysPath()[rowIndex]?.[Math.max(0, layout.rowHeaderLevelCount - 1 - layout.leftAxesCount)] ?? ''
         ] as { max?: number; min?: number }) ?? { min: 0, max: 1 }
       );
-
-      if (axisOption?.nice) {
-        const { ticks } = getAxisDomainRangeAndLabels(range.min, range.max, axisOption);
-        range.min = ticks[0];
-        range.max = ticks[ticks.length - 1];
-      }
-
       if (isPercent) {
         (range as any).min = (range as any).min < 0 ? -1 : 0;
         (range as any).max = (range as any).max > 0 ? 1 : 0;
@@ -160,6 +152,13 @@ export function getChartAxes(col: number, row: number, layout: PivotLayoutMap): 
       if (axisOption?.zero || range.min === range.max) {
         range.min = Math.min(range.min, 0);
         range.max = Math.max(range.max, 0);
+      }
+      let tickCount;
+      if (axisOption?.nice) {
+        const { ticks } = getAxisDomainRangeAndLabels(range.min, range.max, axisOption);
+        range.min = ticks[0];
+        range.max = ticks[ticks.length - 1];
+        tickCount = ticks.length;
       }
       axes.push(
         merge(
