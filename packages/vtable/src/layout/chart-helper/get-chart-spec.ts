@@ -158,12 +158,10 @@ export function getChartAxes(col: number, row: number, layout: PivotLayoutMap): 
         range.min = Math.min(range.min, 0);
         range.max = Math.max(range.max, 0);
       }
-      let tickCount;
       if (axisOption?.nice) {
         const { ticks } = getAxisDomainRangeAndLabels(range.min, range.max, axisOption);
         range.min = ticks[0];
         range.max = ticks[ticks.length - 1];
-        tickCount = ticks.length;
       }
       if (isNumber(axisOption?.min)) {
         (range as any).min = axisOption.min;
@@ -182,6 +180,7 @@ export function getChartAxes(col: number, row: number, layout: PivotLayoutMap): 
             orient: index === 0 ? 'left' : 'right',
             // visible: true,
             label: { visible: false },
+            // label: { flush: true },
             title: { visible: false },
             domainLine: { visible: false },
             seriesIndex: index,
