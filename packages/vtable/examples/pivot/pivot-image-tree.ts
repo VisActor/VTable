@@ -748,7 +748,7 @@ export function createTable() {
   };
   const tableInstance = new PivotTable(option);
   // 只为了方便控制太调试用，不要拷贝
-  (window as any).tableInstance = tableInstance;
+  window.tableInstance = tableInstance;
 
   bindDebugTool(tableInstance.scenegraph.stage as any, {
     customGrapicKeys: ['role', '_updateTag']

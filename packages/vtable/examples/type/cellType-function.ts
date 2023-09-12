@@ -147,6 +147,7 @@ export function createTable() {
         }
         return 'text';
       },
+      linkJump: true,
       width: 150
       // imageSizing : 'keep-aspect-ratio',
     },
@@ -262,5 +263,5 @@ export function createTable() {
   });
 
   // 只为了方便控制太调试用，不要拷贝
-  (window as any).tableInstance = instance;
+  window.tableInstance = instance;
 }

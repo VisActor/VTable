@@ -3194,7 +3194,10 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
 
   hasAutoImageColumn() {
     return (this.internalProps.layoutMap.columnObjects as ColumnData[]).find((column: ColumnData) => {
-      if (column.cellType === 'image' && (column.define as ImageColumnDefine).imageAutoSizing) {
+      if (
+        (column.cellType === 'image' || typeof column.cellType === 'function') &&
+        (column.define as ImageColumnDefine).imageAutoSizing
+      ) {
         return true;
       }
       return false;

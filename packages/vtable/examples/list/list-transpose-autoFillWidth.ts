@@ -73,5 +73,5 @@ export function createTable() {
     autoFillWidth: true
   };
   const tableInstance = new VTable.ListTable(option);
-  (window as any).tableInstance = tableInstance;
+  window.tableInstance = tableInstance;
 }

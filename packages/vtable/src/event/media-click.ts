@@ -1,7 +1,7 @@
 import { TABLE_EVENT_TYPE } from '../core/TABLE_EVENT_TYPE';
 import { Env } from '../tools/env';
 import { regUrl } from '../tools/global';
-import type { MousePointerCellEvent } from '../ts-types';
+import type { LinkColumnDefine, MousePointerCellEvent } from '../ts-types';
 import type { BaseTableAPI } from '../ts-types/base-table';
 
 export function bindMediaClick(table: BaseTableAPI): void {
@@ -24,15 +24,15 @@ export function bindMediaClick(table: BaseTableAPI): void {
         : table.getBodyColumnDefine(col, row);
       const cellValue = table.getCellValue(col, row);
       const cellOriginValue = table.getCellOriginValue(col, row);
-      if (columnDefine.cellType === 'link') {
-        const linkJump = columnDefine.linkJump !== false;
+      if (cellType === 'link') {
+        const linkJump = (columnDefine as LinkColumnDefine).linkJump !== false;
         if (!linkJump) {
           return;
         }
 
         // 点击链接，打开相应页面
-        const templateLink = columnDefine.templateLink;
-        const linkDetect = columnDefine.linkDetect !== false;
+        const templateLink = (columnDefine as LinkColumnDefine).templateLink;
+        const linkDetect = (columnDefine as LinkColumnDefine).linkDetect !== false;
         let url;
         if (templateLink) {
           // 如果有模板链接，使用模板

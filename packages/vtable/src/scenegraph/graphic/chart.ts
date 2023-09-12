@@ -126,13 +126,11 @@ export class Chart extends Group {
 
     (table.internalProps.layoutMap as any)?.updateDataStateToActiveChartInstance?.(this.activeChartInstance);
     this.activeChartInstance.on('click', (params: any) => {
-      console.log('click captured', params);
       if (Chart.temp) {
         table.scenegraph.updateChartState(params?.datum);
       }
     });
     this.activeChartInstance.on('brushEnd', (params: any) => {
-      console.log('brushEnd captured', params);
       table.scenegraph.updateChartState(params?.value?.inBrushData);
       Chart.temp = 0;
       setTimeout(() => {
@@ -140,7 +138,6 @@ export class Chart extends Group {
       }, 0);
     });
     (table as PivotChart)._bindChartEvent?.(this.activeChartInstance);
-    console.log('active');
   }
   static temp: number = 1;
   /**
@@ -151,7 +148,6 @@ export class Chart extends Group {
     this.active = false;
     this.activeChartInstance.release();
     this.activeChartInstance = null;
-    console.log('deactivate');
   }
   /** 更新图表对应数据 */
   updateData(data: any) {
