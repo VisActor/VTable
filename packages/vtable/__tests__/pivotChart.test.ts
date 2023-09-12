@@ -1,6 +1,6 @@
 // @ts-nocheck
 // 有问题可对照demo unitTestPivotTable
-import records from './marketsales.json';
+import records from './data/marketsales.json';
 import * as VTable from '../src/index';
 import VChart from '@visactor/vchart';
 import { createDiv } from './dom';
@@ -9862,4 +9862,7 @@ describe('pivotTable init test', () => {
     pivotChart.updateOption(option1);
     expect(pivotChart.getChartDatumPosition(datum, cellAddr)).toEqual({ x: 429, y: 233 });
   });
+  setTimeout(() => {
+    pivotChart.release();
+  }, 1000);
 });

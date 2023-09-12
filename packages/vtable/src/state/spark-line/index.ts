@@ -24,13 +24,13 @@ export function clearChartHover(col: number, row: number, table: BaseTableAPI) {
   table.scenegraph.updateNextFrame();
 }
 
-export function updateChartHover(col: number, row: number, x: number, y: number, table: BaseTableAPI) {
+export function updateChartHover(col: number, row: number, x: number, y: number, table: BaseTableAPI): boolean {
   const cellGroup = table.scenegraph.getCell(col, row);
   const sparkline = cellGroup.getChildByName('sparkline');
   const line = sparkline?.getChildByName('sparkline-line');
   const symbol = sparkline?.getChildByName('sparkline-symbol-group');
   if (!line) {
-    return;
+    return false;
   }
   const bandwidth = (line as any).bandwidth;
   const min = (line as any).min;
@@ -119,4 +119,5 @@ export function updateChartHover(col: number, row: number, x: number, y: number,
     };
     table.fireListeners(TABLE_EVENT_TYPE.MOUSEOVER_CHART_SYMBOL, eventInfo);
   }
+  return true;
 }
