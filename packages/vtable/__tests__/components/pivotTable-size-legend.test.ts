@@ -297,12 +297,12 @@ describe('listTable-size-legend init test', () => {
       min: 0
     }
   };
-  const listTable = new VTable.ListTable(containerDom, option);
+  const listTable = new VTable.PivotTable(containerDom, option);
 
   test('listTable-size-legend getDrawRange', () => {
     const drawRange = listTable.getDrawRange();
     expect(drawRange.left).toBe(1);
-    expect(drawRange.right).toBe(106);
+    expect(drawRange.right).toBe(566);
     expect(drawRange.top).toBe(58);
     expect(drawRange.bottom).toBe(799);
   });

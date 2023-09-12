@@ -237,15 +237,15 @@ describe('listTable-color-legend init test', () => {
       min: 100000
     }
   };
-  const listTable = new VTable.ListTable(containerDom, option);
+  const listTable = new VTable.PivotTable(containerDom, option);
 
   test('listTable-color-legend getDrawRange', async () => {
     await new Promise(resolve => setTimeout(resolve, 1000));
     const drawRange = listTable.getDrawRange();
     expect(drawRange.left).toBe(0);
-    expect(drawRange.right).toBe(80);
+    expect(drawRange.right).toBe(738);
     expect(drawRange.top).toBe(53);
-    expect(drawRange.bottom).toBe(800);
+    expect(drawRange.bottom).toBe(333);
   });
   test('listTable-color-legend node', () => {
     const layerChild = listTable.scenegraph.stage.children[0].children;
