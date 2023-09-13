@@ -566,6 +566,9 @@ export interface BaseTableAPI {
 
   renderWithRecreateCells: () => void;
   //#endregion  tableAPI
+
+  _adjustColWidth: (col: number, orgWidth: number) => number;
+  _colWidthDefineToPxWidth: (width: string | number) => number;
 }
 export interface ListTableProtected extends IBaseTableProtected {
   /** 表格数据 */
