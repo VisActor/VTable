@@ -185,7 +185,7 @@ describe('listTable-1W init test', () => {
   });
   test('listTable-1W scrollToCell', async () => {
     listTable.scrollToCell({ col: 3, row: 3000 });
-    await new Promise(resolve => setTimeout(resolve, 1000));
+    // await new Promise(resolve => setTimeout(resolve, 1000));
     expect(listTable.scrollTop).toBe(119920);
   });
   test('listTable-1W update widthMode', async () => {
@@ -193,7 +193,7 @@ describe('listTable-1W init test', () => {
     listTable.renderWithRecreateCells();
     // 使用setTimeout延迟执行验证语句
     // setTimeout(() => {
-    await new Promise(resolve => setTimeout(resolve, 1000));
+    // await new Promise(resolve => setTimeout(resolve, 1000));
     expect(listTable.getAllColsWidth()).toBe(1386);
     // }, 1000); // 延迟1秒
   });
