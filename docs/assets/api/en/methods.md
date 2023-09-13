@@ -116,6 +116,31 @@ Listen to VChart chart events
 
 Unlisten to VChart chart events
 
+## selectCell(Function)
+
+Select a cell
+
+```
+  /**
+   * The effect of selecting a cell is the same as that of a cell selected by the mouse.
+   * @param col
+   * @param row
+   */
+  selectCell(col: number, row: number): void
+```
+
+## selectCells(Function)
+
+Select one or more cell ranges
+
+```
+  /**
+   * Select a cell area, and you can set multiple areas to be selected at the same time
+   * @param cellRanges: CellRange[]
+   */
+  selectCells(cellRanges: CellRange[]): void
+```
+
 ## getCellStyle(Function)
 
 Getting the style of a cell

@@ -342,6 +342,15 @@ icon 图标点击事件。
    { model: any; value: any; event: PointerEvent };
 ```
 
+## LEGEND_CHANGE
+
+颜色图例，尺寸图例，用户操作图例范围后触发该事件。**图例专有事件**
+
+事件回调函数的参数类型:
+
+```
+   { model: any; value: any; event: PointerEvent };
+```
 ## MOUSEENTER_AXIS
 
 鼠标进入到坐标轴上事件。**坐标轴专有事件**

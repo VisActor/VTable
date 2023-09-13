@@ -316,6 +316,15 @@ The parameter type of the event callback function:
 ```
    { model: any; value: any; event: PointerEvent };
 ```
+## LEGEND_CHANGE
+
+Color legend, size legend, this event is triggered after the user operates the legend range. **Legend exclusive event**
+
+Parameter types of event callback function:
+
+```
+   { model: any; value: any; event: PointerEvent };
+```
 
 ## MOUSEENTER_AXIS
 

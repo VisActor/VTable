@@ -114,6 +114,30 @@ tableInstance.renderWithRecreateCells();
 ## offVChartEvent(Function)
 
 解除监听 VChart 图表事件
+## selectCell(Function)
+
+选中某个单元格
+
+```
+  /**
+   * 选中单元格  和鼠标选中单元格效果一致
+   * @param col
+   * @param row
+   */
+  selectCell(col: number, row: number): void
+```
+
+## selectCells(Function)
+
+选中一个或者多个单元格区域
+
+```
+  /**
+   * 选中单元格区域，可设置多个区域同时选中
+   * @param cellRanges: CellRange[]
+   */
+  selectCells(cellRanges: CellRange[]): void
+```
 
 ## getCellStyle(Function)
 

@@ -3,38 +3,40 @@ import * as headerStyleContents from '../header-helper/style';
 import { importStyle } from './style';
 import * as style from '../tools/style';
 import { AABBBounds } from '@visactor/vutils';
-import type {
-  CellAddress,
-  CellRange,
-  TableEventHandlersEventArgumentMap,
-  TableEventHandlersReturnMap,
-  TableKeyboardOptions,
-  DropDownMenuHighlightInfo,
-  MenuListItem,
-  WidthModeDef,
-  ICustomRender,
-  ICellHeaderPaths,
-  HeaderData,
-  FullExtendStyle,
-  FieldDef,
-  ColumnTypeOption,
-  SortState,
-  IPagination,
-  ICustomLayout,
-  CellInfo,
-  CellStyle,
-  MenuInstanceType,
-  DropDownMenuOptions,
-  FieldFormat,
-  FieldData,
-  MaybePromiseOrUndefined,
-  MousePointerCellEvent,
-  DropDownMenuEventInfo,
-  HierarchyState,
-  FieldKeyDef,
-  CellLocation,
-  LayoutObjectId,
-  HeightModeDef
+import {
+  type CellAddress,
+  type CellRange,
+  type TableEventHandlersEventArgumentMap,
+  type TableEventHandlersReturnMap,
+  type TableKeyboardOptions,
+  type DropDownMenuHighlightInfo,
+  type MenuListItem,
+  type WidthModeDef,
+  type ICustomRender,
+  type ICellHeaderPaths,
+  type HeaderData,
+  type FullExtendStyle,
+  type FieldDef,
+  type ColumnTypeOption,
+  type SortState,
+  type IPagination,
+  type ICustomLayout,
+  type CellInfo,
+  type CellStyle,
+  type MenuInstanceType,
+  type DropDownMenuOptions,
+  type FieldFormat,
+  type FieldData,
+  type MaybePromiseOrUndefined,
+  type MousePointerCellEvent,
+  type DropDownMenuEventInfo,
+  type HierarchyState,
+  type FieldKeyDef,
+  type CellLocation,
+  type LayoutObjectId,
+  type HeightModeDef,
+  type ITableThemeDefine,
+  InteractionState
 } from '../ts-types';
 import type { ColumnIconOption } from '../ts-types';
 import { event, style as utilStyle } from '../tools/helper';
@@ -56,9 +58,7 @@ import { HeaderHelper } from '../header-helper/header-helper';
 import type { PivotHeaderLayoutMap } from '../layout/pivot-header-layout';
 import { TooltipHandler } from '../components/tooltip/TooltipHandler';
 import type { CachedDataSource, DataSource } from '../data';
-import type { IWrapTextGraphicAttribute } from '@visactor/vrender';
 import { isBoolean, isFunction, type ITextSize } from '@visactor/vutils';
-import { WrapText } from '../scenegraph/graphic/text';
 import { textMeasure } from '../scenegraph/utils/measure-text';
 import { getProp } from '../scenegraph/utils/get-prop';
 import type {
@@ -80,7 +80,6 @@ import {
   _toPxWidth,
   createRootElement,
   getStyleTheme,
-  isAutoDefine,
   updateRootElementPadding
 } from './tableHelper';
 import { MenuHandler } from '../components/menu/dom/MenuHandler';
@@ -88,7 +87,6 @@ import type { BaseTableAPI, BaseTableConstructorOptions, IBaseTableProtected } f
 import { FocusInput } from './FouseInput';
 import { defaultPixelRatio } from '../tools/pixel-ratio';
 import { createLegend } from '../components/legend/create-legend';
-import { CartesianAxis } from '../components/axis/axis';
 import { DataSet } from '@visactor/vdataset';
 import { Title } from '../components/title/title';
 import type { Chart } from '../scenegraph/graphic/chart';
@@ -2176,7 +2174,23 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     this.stateManeger.updateSelectPos(col, row);
     this.stateManeger.endSelectCells();
   }
-
+  /**
+   * 选中单元格区域，可设置多个区域同时选中
+   * @param cellRanges: CellRange[]
+   */
+  selectCells(cellRanges: CellRange[]) {
+    const { scrollLeft, scrollTop } = this;
+    cellRanges.forEach((cellRange: CellRange, index: number) => {
+      this.stateManeger.updateSelectPos(cellRange.start.col, cellRange.start.row, false, index >= 1);
+      this.stateManeger.updateInteractionState(InteractionState.grabing);
+      this.stateManeger.updateSelectPos(cellRange.end.col, cellRange.end.row, false, index >= 1);
+      this.stateManeger.endSelectCells(false);
+      this.stateManeger.updateInteractionState(InteractionState.default);
+    });
+    // 选择后 会自动滚动到所选区域最后一行一列的位置 这里再设置回滚动前位置
+    this.setScrollTop(scrollTop);
+    this.setScrollLeft(scrollLeft);
+  }
   abstract isListTable(): boolean;
   abstract isPivotTable(): boolean;
   abstract isPivotChart(): boolean;
@@ -2285,7 +2299,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
   /**
    * 设置主题
    */
-  updateTheme(theme: TableTheme) {
+  updateTheme(theme: ITableThemeDefine) {
     this.internalProps.theme = themes.of(theme ?? themes.DEFAULT);
     this.options.theme = theme;
     this.scenegraph.clearCells();

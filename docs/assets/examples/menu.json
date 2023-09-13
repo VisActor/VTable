@@ -751,6 +751,38 @@
             "link": "",
             "option": ""
           }
+        },
+        {
+          "path": "legend-color",
+          "title": {
+            "zh": "颜色图例",
+            "en": "legend-color"
+          },
+          "meta": {
+            "title": "color legend",
+            "keywords": "",
+            "category": "examples",
+            "group": "Component",
+            "cover": "https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/color-legend.png",
+            "link": "",
+            "option": ""
+          }
+        },
+        {
+          "path": "legend-size",
+          "title": {
+            "zh": "尺寸图例",
+            "en": "legend-size"
+          },
+          "meta": {
+            "title": "size legend",
+            "keywords": "",
+            "category": "examples",
+            "group": "Component",
+            "cover": "https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/size-legend.png",
+            "link": "",
+            "option": ""
+          }
         }
       ]
     },
