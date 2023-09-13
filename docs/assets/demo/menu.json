@@ -322,6 +322,22 @@
             "link": "'../../guide/basic_function/row_height_column_width'",
             "option": ""
           }
+        },
+        {
+          "path": "export-image",
+          "title": {
+            "zh": "导出图片",
+            "en": "export image"
+          },
+          "meta": {
+            "title": "",
+            "keywords": "",
+            "category": "demo",
+            "group": "Basic Features",
+            "cover": "https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/width-mode-autoWidth.png",
+            "link": "'../../guide/basic_function/row_height_column_width'",
+            "option": ""
+          }
         }
       ]
     },
