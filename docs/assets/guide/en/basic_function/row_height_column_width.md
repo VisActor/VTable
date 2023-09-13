@@ -130,3 +130,13 @@ In VTable, the calculation mode of table column width can be configured as `stan
 *   AutoWidth mode (autoWidth): In automatic width mode, the column width is automatically calculated based on the contents of the column header and body cells, ignoring the set `width` Properties and `defaultColWidth`.
 
 So far, we have introduced the calculation functions of table row height and column width in VTable, including row height, column width configuration, and table width mode. By mastering these functions, you can more conveniently display and analyze data in VTable, and realize various practical needs.
+
+# Row height mode
+
+The calculation mode of table row height `heightMode` can also be configured as `standard` (standard mode), `adaptive` (adaptive container width mode) or `autoHeight` (automatic row height mode).
+
+- Standard mode (standard): Use `defaultRowHeight` and `defaultHeaderRowHeight` as the row height.
+- Adaptive container height mode (adaptive): Use the height of the container to allocate the height of each row.
+- Automatic line height mode (autoHeight): Automatically calculate line height based on content, based on fontSize and lineHeight. The related configuration item `autoWrapText` automatically wraps lines, and can calculate the line height based on the multi-line text content after line wrapping.
+
+So far, we have introduced the table row height and column width calculation function in VTable, including row height, column width configuration, and table width mode. By mastering these functions, you can display and analyze data in VTable more conveniently to meet various practical needs.
