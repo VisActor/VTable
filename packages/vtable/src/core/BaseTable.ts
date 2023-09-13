@@ -149,6 +149,8 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
   headerStyleCache: any;
   bodyStyleCache: any;
   container: HTMLElement;
+  isReleased: boolean = false;
+
   constructor(container: HTMLElement, options: BaseTableConstructorOptions = {}) {
     super();
     if (!container) {
@@ -1675,6 +1677,8 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     if (parentElement) {
       parentElement.removeChild(internalProps.element);
     }
+
+    this.isReleased = true;
   }
 
   fireListeners<TYPE extends keyof TableEventHandlersEventArgumentMap>(

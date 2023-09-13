@@ -390,6 +390,8 @@ export interface BaseTableAPI {
   /** 当列宽度不能占满容器时，是否需要自动拉宽来填充容器的宽度。默认false */
   autoFillWidth: boolean;
 
+  isReleased: boolean;
+
   on: <TYPE extends keyof TableEventHandlersEventArgumentMap>(
     type: TYPE,
     listener: TableEventListener<TYPE> //(event: TableEventHandlersEventArgumentMap[TYPE]) => TableEventHandlersReturnMap[TYPE]
