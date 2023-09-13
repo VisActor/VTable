@@ -1,7 +1,7 @@
 import { TABLE_EVENT_TYPE } from '../core/TABLE_EVENT_TYPE';
 import { Env } from '../tools/env';
 import { regUrl } from '../tools/global';
-import type { MousePointerCellEvent } from '../ts-types';
+import type { LinkColumnDefine, MousePointerCellEvent } from '../ts-types';
 import type { BaseTableAPI } from '../ts-types/base-table';
 
 export function bindMediaClick(table: BaseTableAPI): void {
@@ -11,29 +11,28 @@ export function bindMediaClick(table: BaseTableAPI): void {
     table.on(TABLE_EVENT_TYPE.CLICK_CELL, (e: MousePointerCellEvent) => {
       //如果目前是在某个icon上，如收起展开按钮 则不进行其他点击逻辑
       const { col, row } = e;
-      // const type = table.getBodyColumnDefine(col, row).cellType;
-      let type;
+      let cellType;
       if (table.internalProps.layoutMap.isHeader(col, row)) {
-        type = table.isPivotTable()
+        cellType = table.isPivotTable()
           ? table._getHeaderLayoutMap(col, row).headerType
           : table.getHeaderDefine(col, row).headerType;
       } else {
-        type = table.getBodyColumnType(col, row);
+        cellType = table.getBodyColumnType(col, row);
       }
       const columnDefine = table.isHeader(col, row)
         ? table.getHeaderDefine(col, row)
         : table.getBodyColumnDefine(col, row);
       const cellValue = table.getCellValue(col, row);
       const cellOriginValue = table.getCellOriginValue(col, row);
-      if (columnDefine.cellType === 'link') {
-        const linkJump = columnDefine.linkJump !== false;
+      if (cellType === 'link') {
+        const linkJump = (columnDefine as LinkColumnDefine).linkJump !== false;
         if (!linkJump) {
           return;
         }
 
         // 点击链接，打开相应页面
-        const templateLink = columnDefine.templateLink;
-        const linkDetect = columnDefine.linkDetect !== false;
+        const templateLink = (columnDefine as LinkColumnDefine).templateLink;
+        const linkDetect = (columnDefine as LinkColumnDefine).linkDetect !== false;
         let url;
         if (templateLink) {
           // 如果有模板链接，使用模板
@@ -59,7 +58,7 @@ export function bindMediaClick(table: BaseTableAPI): void {
           return;
         }
         window.open(url);
-      } else if (type === 'image') {
+      } else if (cellType === 'image') {
         // 点击图片，打开放大图片
 
         // 开启蒙版
@@ -97,7 +96,7 @@ export function bindMediaClick(table: BaseTableAPI): void {
         overlay.appendChild(image);
 
         document.body.appendChild(overlay);
-      } else if (type === 'video') {
+      } else if (cellType === 'video') {
         // 点击视频，弹出播放窗口
 
         // 开启蒙版

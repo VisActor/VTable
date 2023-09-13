@@ -83,7 +83,7 @@ export function createTable() {
     // widthMode: 'adaptive'
   };
   const tableInstance = new VTable.ListTable(option);
-  (window as any).tableInstance = tableInstance;
+  window.tableInstance = tableInstance;
   // tableInstance.on('sort_click', args => {
   //   tableInstance.updateSortState(
   //     {

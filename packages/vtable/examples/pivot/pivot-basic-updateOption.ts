@@ -491,7 +491,7 @@ export function createTable() {
 
   const instance = new PivotTable(option);
   window.tableInstance = instance;
-  (window as any).tableInstance = instance;
+  window.tableInstance = instance;
   setTimeout(() => {
     const option1: VTable.PivotTableConstructorOptions = {
       columnHeaderTitle: {

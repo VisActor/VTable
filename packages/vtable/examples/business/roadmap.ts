@@ -440,5 +440,5 @@ export function createTable() {
 
   const instance = new ListTable(option);
 
-  (window as any).tableInstance = instance;
+  window.tableInstance = instance;
 }

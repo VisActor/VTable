@@ -116,5 +116,5 @@ export function createTable() {
   };
   const tableInstance = new VTable.ListTable(option);
   tableInstance.dataSource = dataSource;
-  (window as any).tableInstance = tableInstance;
+  window.tableInstance = tableInstance;
 }

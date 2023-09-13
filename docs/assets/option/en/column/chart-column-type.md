@@ -1,4 +1,4 @@
-{{ target: chart-column-type }}
+{{ target: chart-cell-type }}
 
 #${prefix} columns.chart(string)
 
@@ -8,7 +8,7 @@ Specify the column type as 'chart', the cellType can be omitted and defaults to 
 
 Specify the column type as 'chart', the cellType can be omitted and defaults to 'text'
 
-{{ use: base-column-type(
+{{ use: base-cell-type(
     prefix = '##'+${prefix},
 ) }}
 

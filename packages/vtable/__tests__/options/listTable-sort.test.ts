@@ -90,7 +90,7 @@ describe('listTable init test', () => {
     expect(listTable.getCellValue(6, 3)).toBe('Sauder 书架, 金属');
   });
 
-  setTimeout(() => {
-    listTable.release();
-  }, 1000);
+  // setTimeout(() => {
+  //   listTable.release();
+  // }, 1000);
 });

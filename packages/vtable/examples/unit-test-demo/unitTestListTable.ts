@@ -939,7 +939,7 @@ export function createTable() {
     //   isShowOverflowTextTooltip:true
     // }
   });
-  (window as any).tableInstance = tableInstance;
+  window.tableInstance = tableInstance;
 
   // setTimeout(() => {
   //   columns.shift();

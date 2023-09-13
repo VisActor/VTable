@@ -1,4 +1,4 @@
-{{ target: base-column-type }}
+{{ target: base-cell-type }}
 
 ${prefix} headerType(string) = 'text'
 

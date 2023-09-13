@@ -252,7 +252,7 @@ describe('listTable init test', () => {
   //     scaleRatio: 1
   //   });
   // });
-  setTimeout(() => {
-    listTable.release();
-  }, 1000);
+  // setTimeout(() => {
+  //   listTable.release();
+  // }, 1000);
 });

@@ -143,6 +143,10 @@ export const menus = [
     children: [
       {
         path: 'type',
+        name: 'cellType-function'
+      },
+      {
+        path: 'type',
         name: 'text'
       },
       {
@@ -209,6 +213,10 @@ export const menus = [
       {
         path: 'pivot',
         name: 'pivot-link'
+      },
+      {
+        path: 'pivot',
+        name: 'pivot-link-cellType-function'
       },
       {
         path: 'pivot',

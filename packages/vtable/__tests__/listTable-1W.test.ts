@@ -1,6 +1,7 @@
 // @ts-nocheck
 // 有问题可对照demo unitTestListTable
 import { ListTable } from '../src/ListTable';
+import * as VTable from '../src/index';
 import { createDiv } from './dom';
 global.__VERSION__ = 'none';
 describe('listTable-1W init test', () => {
@@ -8,14 +9,7 @@ describe('listTable-1W init test', () => {
   containerDom.style.position = 'relative';
   containerDom.style.width = '1000px';
   containerDom.style.height = '800px';
-  function generateRandomString(length) {
-    let result = '';
-    const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
-    for (let i = 0; i < length; i++) {
-      result += characters.charAt(Math.floor(Math.random() * characters.length));
-    }
-    return result;
-  }
+
   function generateRandomHobbies() {
     const hobbies = [
       'Reading books',
@@ -97,8 +91,8 @@ describe('listTable-1W init test', () => {
 
   const generatePersons = count => {
     return Array.from(new Array(count)).map((_, i) => {
-      const first = generateRandomString(10);
-      const last = generateRandomString(4);
+      const first = 'felisgh';
+      const last = 'jonn';
       return {
         id: i + 1,
         email1: `${first}_${last}@xxx.com`,
@@ -177,11 +171,41 @@ describe('listTable-1W init test', () => {
   ];
   const option = {
     records,
-    columns
+    columns,
+    theme: VTable.themes.DEFAULT.extends({
+      defaultStyle: { fontFamily: 'Arial' },
+      headerStyle: { fontFamily: 'Arial' },
+      bodyStyle: { fontFamily: 'Arial' }
+    })
     // widthMode:"autoWidth",
     // heightMode:'autoHeight'
   };
   const listTable = new ListTable(containerDom, option);
+  test('listTable-1W getCellStyle', () => {
+    expect(listTable.getCellStyle(5, 5)).toEqual({
+      autoWrapText: false,
+      bgColor: '#FDFDFD',
+      borderColor: '#E1E4E8',
+      borderLineDash: [],
+      borderLineWidth: 1,
+      color: '#000',
+      fontFamily: 'Arial',
+      fontSize: 14,
+      fontStyle: undefined,
+      fontVariant: undefined,
+      fontWeight: null,
+      lineClamp: 'auto',
+      lineHeight: 14,
+      lineThrough: false,
+      lineThroughLineWidth: undefined,
+      padding: [10, 16, 10, 16],
+      textAlign: 'left',
+      textBaseline: 'middle',
+      textOverflow: 'ellipsis',
+      underline: false,
+      underlineWidth: undefined
+    });
+  });
   test('listTable-1W getRowHeight colWidth', () => {
     expect(listTable.getRowHeight(3)).toBe(40);
     expect(listTable.getColWidth(3)).toBe(100);
@@ -192,7 +216,7 @@ describe('listTable-1W init test', () => {
   });
   test('listTable-1W scrollToCell', async () => {
     listTable.scrollToCell({ col: 3, row: 3000 });
-    await new Promise(resolve => setTimeout(resolve, 1000));
+    // await new Promise(resolve => setTimeout(resolve, 1000));
     expect(listTable.scrollTop).toBe(119920);
   });
   test('listTable-1W update widthMode', async () => {
@@ -200,9 +224,8 @@ describe('listTable-1W init test', () => {
     listTable.renderWithRecreateCells();
     // 使用setTimeout延迟执行验证语句
     // setTimeout(() => {
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    expect(listTable.getAllColsWidth()).toBeGreaterThan(1530);
-    expect(listTable.getAllColsWidth()).toBeLessThan(1555);
+    // await new Promise(resolve => setTimeout(resolve, 1000));
+    expect(listTable.getAllColsWidth()).toBe(1355);
     // }, 1000); // 延迟1秒
   });
 
@@ -211,7 +234,4 @@ describe('listTable-1W init test', () => {
     listTable.renderWithRecreateCells();
     expect(listTable.getAllRowsHeight()).toBe(340072);
   });
-  setTimeout(() => {
-    listTable.release();
-  }, 1000);
 });

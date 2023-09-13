@@ -1,4 +1,4 @@
-{{ target: link-column-type }}
+{{ target: link-cell-type }}
 
 #${prefix} columns.link(string)
 
@@ -8,7 +8,7 @@ Specify the column type as 'link', cellType can be omitted and defaults to 'text
 
 Specify the column type as 'link', cellType can be omitted and defaults to 'text'
 
-{{ use: base-column-type(
+{{ use: base-cell-type(
     prefix = '##'+${prefix}
 ) }}
 

@@ -2330,7 +2330,8 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
   }
 
   getBodyColumnType(col: number, row: number): ColumnTypeOption {
-    return this.internalProps.layoutMap.getBody(col, row).cellType;
+    const cellType = this.internalProps.layoutMap.getBody(col, row).cellType;
+    return getProp('cellType', { cellType }, col, row, this);
   }
   /**
    * 根据行列号获取对应的字段名
@@ -3193,7 +3194,10 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
 
   hasAutoImageColumn() {
     return (this.internalProps.layoutMap.columnObjects as ColumnData[]).find((column: ColumnData) => {
-      if (column.cellType === 'image' && (column.define as ImageColumnDefine).imageAutoSizing) {
+      if (
+        (column.cellType === 'image' || typeof column.cellType === 'function') &&
+        (column.define as ImageColumnDefine).imageAutoSizing
+      ) {
         return true;
       }
       return false;
@@ -3234,7 +3238,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     return false;
   }
   /**
-   * 导出表格图片
+   * 导出表格中当前可视区域的图片
    * @returns base64图片
    */
   exportImg() {
@@ -3248,6 +3252,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
    */
   exportCellImg(col: number, row: number) {
     const isInView = this.cellIsInVisualView(col, row);
+    const { scrollTop, scrollLeft } = this;
     if (!isInView) {
       this.scrollToCell({ col, row });
     }
@@ -3261,7 +3266,50 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
         cellRect.bottom + this.tableY
       )
     );
+    if (!isInView) {
+      this.setScrollTop(scrollTop);
+      this.setScrollLeft(scrollLeft);
+    }
     // return c.toDataURL('image/jpeg', 0.5);
     return c.toDataURL();
+  }
+
+  /**
+   * 导出某一片区域的图片
+   * @returns base64图片
+   */
+  exportCellRangeImg(cellRange: CellRange) {
+    const { scrollTop, scrollLeft } = this;
+    const minCol = Math.min(cellRange.start.col, cellRange.end.col);
+    const minRow = Math.min(cellRange.start.row, cellRange.end.row);
+    const maxCol = Math.max(cellRange.start.col, cellRange.end.col);
+    const maxRow = Math.max(cellRange.start.row, cellRange.end.row);
+    const isInView = this.cellIsInVisualView(minCol, minRow);
+    const isMaxCellInView = this.cellIsInVisualView(maxCol, maxRow);
+    // 判断如果超出可视区域 做移动
+    if (!isInView || !isMaxCellInView) {
+      this.scrollToCell({ col: minCol, row: minRow });
+    }
+
+    const cellRect = this.getCellRangeRelativeRect({
+      start: { col: minCol, row: minRow },
+      end: { col: maxCol, row: maxRow }
+    });
+    const c = this.scenegraph.stage.toCanvas(
+      false,
+      new AABBBounds().set(
+        cellRect.left + this.tableX + 1,
+        cellRect.top + this.tableY + 1,
+        cellRect.right + this.tableX,
+        cellRect.bottom + this.tableY
+      )
+    );
+    const base64Image = c.toDataURL();
+    // 前面做的移动需要再复原
+    if (!isInView || !isMaxCellInView) {
+      this.setScrollTop(scrollTop);
+      this.setScrollLeft(scrollLeft);
+    }
+    return base64Image;
   }
 }
