@@ -194,7 +194,7 @@ export function Markdown() {
         .then(text => {
           let processedText = text;
           // remove meta info for examples
-          if (assetDirectory === 'examples') {
+          if (assetDirectory === 'demo') {
             processedText = processedText.replace(/---(.|\n)*---/, '').trim();
           }
           // Hack: process all livedemo code to livedemo language and replace these after

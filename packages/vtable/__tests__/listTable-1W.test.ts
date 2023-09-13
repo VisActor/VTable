@@ -8,14 +8,7 @@ describe('listTable-1W init test', () => {
   containerDom.style.position = 'relative';
   containerDom.style.width = '1000px';
   containerDom.style.height = '800px';
-  function generateRandomString(length) {
-    let result = '';
-    const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
-    for (let i = 0; i < length; i++) {
-      result += characters.charAt(Math.floor(Math.random() * characters.length));
-    }
-    return result;
-  }
+
   function generateRandomHobbies() {
     const hobbies = [
       'Reading books',
@@ -97,8 +90,8 @@ describe('listTable-1W init test', () => {
 
   const generatePersons = count => {
     return Array.from(new Array(count)).map((_, i) => {
-      const first = generateRandomString(10);
-      const last = generateRandomString(4);
+      const first = 'felisgh';
+      const last = 'jonn';
       return {
         id: i + 1,
         email1: `${first}_${last}@xxx.com`,
@@ -201,8 +194,7 @@ describe('listTable-1W init test', () => {
     // 使用setTimeout延迟执行验证语句
     // setTimeout(() => {
     await new Promise(resolve => setTimeout(resolve, 1000));
-    expect(listTable.getAllColsWidth()).toBeGreaterThan(1530);
-    expect(listTable.getAllColsWidth()).toBeLessThan(1555);
+    expect(listTable.getAllColsWidth()).toBe(1386);
     // }, 1000); // 延迟1秒
   });
 
@@ -211,7 +203,5 @@ describe('listTable-1W init test', () => {
     listTable.renderWithRecreateCells();
     expect(listTable.getAllRowsHeight()).toBe(340072);
   });
-  setTimeout(() => {
-    listTable.release();
-  }, 1000);
+  listTable.release();
 });

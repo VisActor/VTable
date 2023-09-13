@@ -6,7 +6,7 @@
 
 ## theme(Function)
 
-[使用示例](../examples/theme/register):
+[使用示例](../demo/theme/register):
 
 - 注册 theme 代码如下：
 
@@ -43,7 +43,7 @@ const tableInstance = new VTable.PivotTable({
 
 通过注册 icon 可以在表格中显示图标，或者替换内置的功能图标如 pin 冻结图标。
 
-[使用示例](../examples/custom-render/custom-icon)：
+[使用示例](../demo/custom-render/custom-icon)：
 
 - 注册 icon 代码如下：
 
@@ -92,7 +92,7 @@ const tableInstance = new VTable.PivotTable({
 });
 ```
 
-2. 注册好icon 之后在 customLayout 中使用可参考[示例](../examples/custom-render/custom-cell-layout)
+2. 注册好icon 之后在 customLayout 中使用可参考[示例](../demo/custom-render/custom-cell-layout)
 
 - ColumnIconOption 定义：
 
@@ -114,7 +114,7 @@ type ColumnIconOption = ImageIcon | SvgIcon;
 
 ## chartModule(Function)
 
-[使用示例](../examples/cell-type/chart)：
+[使用示例](../demo/cell-type/chart)：
 
 - 注册 chartModule 代码如下：
 

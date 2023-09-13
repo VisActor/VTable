@@ -8,4 +8,4 @@
 
 指定该列或该行单元格类型为自定义函数。
 
-具体使用可才开示例：[混用单元格](../examples/cell-type/composite-cellType)
+具体使用可才开示例：[混用单元格](../demo/cell-type/composite-cellType)

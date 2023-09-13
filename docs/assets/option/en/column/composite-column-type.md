@@ -8,4 +8,4 @@ Specify the column or row cell type as a custom function.
 
 Specify the column or row cell type as a custom function.
 
-Specific usage examples can be found: [Composite Cells](../examples/cell-type/composite-cellType)
+Specific usage examples can be found: [Composite Cells](../demo/cell-type/composite-cellType)
