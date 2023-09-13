@@ -1,6 +1,7 @@
 // @ts-nocheck
 // 有问题可对照demo unitTestListTable
 import { ListTable } from '../src/ListTable';
+import * as VTable from '../src/index';
 import { createDiv } from './dom';
 global.__VERSION__ = 'none';
 describe('listTable-1W init test', () => {
@@ -170,11 +171,41 @@ describe('listTable-1W init test', () => {
   ];
   const option = {
     records,
-    columns
+    columns,
+    theme: VTable.themes.DEFAULT.extends({
+      defaultStyle: { fontFamily: 'Arial' },
+      headerStyle: { fontFamily: 'Arial' },
+      bodyStyle: { fontFamily: 'Arial' }
+    })
     // widthMode:"autoWidth",
     // heightMode:'autoHeight'
   };
   const listTable = new ListTable(containerDom, option);
+  test('listTable-1W getCellStyle', () => {
+    expect(listTable.getCellStyle(5, 5)).toEqual({
+      autoWrapText: false,
+      bgColor: '#FDFDFD',
+      borderColor: '#E1E4E8',
+      borderLineDash: [],
+      borderLineWidth: 1,
+      color: '#000',
+      fontFamily: 'Arial',
+      fontSize: 14,
+      fontStyle: undefined,
+      fontVariant: undefined,
+      fontWeight: null,
+      lineClamp: 'auto',
+      lineHeight: 14,
+      lineThrough: false,
+      lineThroughLineWidth: undefined,
+      padding: [10, 16, 10, 16],
+      textAlign: 'left',
+      textBaseline: 'middle',
+      textOverflow: 'ellipsis',
+      underline: false,
+      underlineWidth: undefined
+    });
+  });
   test('listTable-1W getRowHeight colWidth', () => {
     expect(listTable.getRowHeight(3)).toBe(40);
     expect(listTable.getColWidth(3)).toBe(100);
@@ -194,7 +225,7 @@ describe('listTable-1W init test', () => {
     // 使用setTimeout延迟执行验证语句
     // setTimeout(() => {
     // await new Promise(resolve => setTimeout(resolve, 1000));
-    expect(listTable.getAllColsWidth()).toBe(1386);
+    expect(listTable.getAllColsWidth()).toBe(1355);
     // }, 1000); // 延迟1秒
   });
 
