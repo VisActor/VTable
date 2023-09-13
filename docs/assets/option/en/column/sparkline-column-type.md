@@ -1,4 +1,4 @@
-{{ target: sparkline-column-type }}
+{{ target: sparkline-cell-type }}
 
 #${prefix} columns.sparkline(string)
 
@@ -8,7 +8,7 @@ Specify the column type as 'sparkline', cellType can be omitted and defaults to 
 
 Specify the column type as 'sparkline', cellType can be omitted and defaults to 'text'
 
-{{ use: base-column-type(
+{{ use: base-cell-type(
     prefix = '##'+${prefix}
 ) }}
 

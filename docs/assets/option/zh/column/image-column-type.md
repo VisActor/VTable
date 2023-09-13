@@ -1,14 +1,14 @@
-{{ target: image-column-type }}
+{{ target: image-cell-type }}
 
 #${prefix} columns.image(string)
 
-指定列类型为`'image'`，cellType 缺省的话会被默认为'text'
+指定该列或该行单元格类型为`'image'`，cellType 缺省的话会被默认为'text'
 
 ##${prefix} cellType(string) = 'image'
 
-指定列类型为`'image'`，cellType 可缺省默认为`'text'`。其他配置项如下（同样适用于类型为'vidio'）：
+指定该列或该行单元格类型为`'image'`，cellType 可缺省默认为`'text'`。其他配置项如下（同样适用于类型为'vidio'）：
 
-{{ use: base-column-type(
+{{ use: base-cell-type(
     prefix = '##'+${prefix},
     isImage = true
 ) }}

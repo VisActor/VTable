@@ -4,30 +4,34 @@
 
 Table column configuration, each column needs to set configuration items separately, and the configuration items differ slightly depending on the cellType. cellType can support: `'text' | 'link' | 'image' | 'video' | 'sparkline' | 'progressbar' | 'chart`， The specific configuration items for each cellType are as follows:
 
-{{ use: text-column-type(
+{{ use: text-cell-type(
     prefix = ${prefix}
 ) }}
 
-{{ use: link-column-type(
+{{ use: link-cell-type(
     prefix = ${prefix}
 ) }}
 
-{{ use: image-column-type(
+{{ use: image-cell-type(
     prefix = ${prefix}
 ) }}
 
-{{ use: video-column-type(
+{{ use: video-cell-type(
     prefix = ${prefix}
 ) }}
 
-{{ use: progressbar-column-type(
+{{ use: progressbar-cell-type(
     prefix = ${prefix}
 ) }}
 
-{{ use: sparkline-column-type(
+{{ use: sparkline-cell-type(
     prefix = ${prefix}
 ) }}
 
-{{ use: chart-column-type(
+{{ use: chart-cell-type(
+    prefix = ${prefix}
+) }}
+
+{{ use: composite-cell-type(
     prefix = ${prefix}
 ) }}

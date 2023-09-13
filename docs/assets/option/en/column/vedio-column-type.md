@@ -1,4 +1,4 @@
-{{ target: video-column-type }}
+{{ target: video-cell-type }}
 
 #${prefix} columns.video(string)
 

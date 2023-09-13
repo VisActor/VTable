@@ -1,4 +1,4 @@
-{{ target: text-column-type }}
+{{ target: text-cell-type }}
 
 #${prefix} columns.text(string)
 
@@ -8,7 +8,7 @@ Specify the column type as 'text', cellType can be omitted and defaults to 'text
 
 Specify the column type as 'text', cellType can be omitted and defaults to 'text'
 
-{{ use: base-column-type(
+{{ use: base-cell-type(
     prefix = '##' + ${prefix}
 ) }}
 

@@ -1,4 +1,4 @@
-{{ target: progressbar-column-type }}
+{{ target: progressbar-cell-type }}
 
 #${prefix} columns.progressbar(string)
 
@@ -8,7 +8,7 @@ Specify the column type as 'progressbar', cellType can be omitted and defaults t
 
 Specify the column type as 'progressbar', cellType can be omitted and defaults to 'text'
 
-{{ use: base-column-type(
+{{ use: base-cell-type(
     prefix = '##'+${prefix},
     isProgressbar = true
 ) }}
