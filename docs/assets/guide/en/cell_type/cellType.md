@@ -114,7 +114,6 @@ In this example:
 
 Through the above settings, we can customize the columns of the "image" type to meet the needs of data display.
 
-Detailed tutorial reference: TODO
 
 ## Video
 
@@ -143,7 +142,6 @@ In this example:
 *   `max: 100` Represents the maximum data for the scope of the progress bar display.
 *   `barType: 'default'` represent**Progress Bar Type**Is the default type.
 
-Detailed tutorial reference: TODO
 
 ## Sparkline
 
@@ -183,7 +181,6 @@ In this example:
 
 *   `sparklineSpec` The type of miniature and specific configuration items are set.
 
-Detailed tutorial reference: TODO
 
 ## Chart
 
@@ -229,4 +226,30 @@ In this example:
 *   `chartType: 'vchart'` Use the chart library component built into VTable, registered under the name vchart
 *   `chartSpec` The chart type and specific configuration items are set, and the specific configuration items need to be referred to.[VChart](https://visactor.io/vchart).
 
-Detailed tutorial reference: TODO
+## Composite cellType
+
+In some demand scenarios, it may be expected to display different data types in different data situations or in different rows and columns. The above cellType writing method clearly specifies what type a column must be (the transposed table specifies what type a row must be). We Supports cellType function customization, and can specify different types according to demand logic:
+
+The following shows an example of `cellType: ()=>{}`: (Please refer to [Example](https://visactor.io/vtable/demo/cell-type/composite-cellType))
+ 
+```javascript
+{
+    field: 'image',
+    title: 'bird image',
+    cellType(args){
+      if(args.row%3===1)
+        return 'image';
+      else if(args.row%3===2)
+        return 'link';
+      return 'text'
+    },
+    fieldFormat(record){
+      debugger
+      if(record.name===='Magpie')
+        return 'Magpie's access address:'+record.image;
+      return record.image;
+    },
+    width:'auto',
+    keepAspectRatio:true,
+  }
+```
