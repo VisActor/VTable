@@ -221,11 +221,14 @@ describe('listTable-color-legend init test', () => {
     hideIndicatorName: true,
     theme: {
       defaultStyle: {
-        borderLineWidth: 0
+        borderLineWidth: 0,
+        fontFamily: 'Arial'
       },
       bodyStyle: {
-        color: 'white'
-      }
+        color: 'white',
+        fontFamily: 'Arial'
+      },
+      headerStyle: { fontFamily: 'Arial' }
     },
     legends: {
       orient: 'top',
@@ -243,7 +246,7 @@ describe('listTable-color-legend init test', () => {
     // await new Promise(resolve => setTimeout(resolve, 1000));
     const drawRange = pivotTable.getDrawRange();
     expect(drawRange.left).toBe(0);
-    expect(drawRange.right).toBe(738);
+    expect(drawRange.right).toBe(734);
     expect(drawRange.top).toBe(53);
     expect(drawRange.bottom).toBe(333);
   });
