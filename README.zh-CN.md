@@ -54,8 +54,8 @@ VTable 是 VisActor 可视化体系中的表格组件库，基于可视化渲染
 
 本仓库包含如下 package
 
-1. vtable 表格组件
-2. vtable-docs: 教程文档
+1. packages/vtable：表格组件代码
+2. docs: 教程文档
 
 # Usage使用
 
@@ -101,7 +101,7 @@ const columns =[
 ];
 
 const option = {
-  parentElement: document.getElementById(CONTAINER_ID),
+  container: document.getElementById(CONTAINER_ID),
   records:[
     {
       "Order ID": "CA-2018-156720",
@@ -128,7 +128,7 @@ const tableInstance = new VTable.ListTable(option);
 ##
 
 [更多 demo 和详细教程](https://visactor.io/vtable)
-## ⌨️ 开发
+# ⌨️ 开发
 
 首先，全局安装 [@microsoft/rush](https://rushjs.io/pages/intro/get_started/)
 
@@ -146,19 +146,30 @@ $ cd VTable
 $ rush update
 # start vtable demo
 $ cd packages/vtable
+# execute in file path: ./packages/vtable
 $ rushx demo
+# start site development server, execute in file path: ./
+$ rush docs
 ```
-# 相关链接
+# 📖 Documents
+
+安装并且更新依赖后，可以执行 docs 命令，开启 VTable 的本地文档预览
+
+```bash
+# start vtable document server. execute in file path: ./
+$ rush docs
+```
+# 🔗 相关链接
 
 - [官网](https://visactor.io/vtable)
 
-# 生态
+# 💫 生态
 
 | 项目                                             | 介绍                                                                      |
 | ------------------------------------------------ | ------------------------------------------------------------------------- |
 | [智能生成组件](https://visactor.io/ai-vtable)    | 基于 AI 的智能表格生成组件                                                |                                                        |
 
-# 参与贡献
+# 🤝 参与贡献
 
 如想参与贡献，请先阅读 [行为准则](./CODE_OF_CONDUCT.md) 和 [贡献指南](./CONTRIBUTING.zh-CN.md)。
 

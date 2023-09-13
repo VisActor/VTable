@@ -66,6 +66,10 @@ export const menus = [
       },
       {
         path: 'pivot-chart',
+        name: 'noDimension-updateOption'
+      },
+      {
+        path: 'pivot-chart',
         name: 'pivotChart_site_demo'
       },
       {
@@ -127,6 +131,10 @@ export const menus = [
       {
         path: 'pivot-chart',
         name: 'pivotChart-records'
+      },
+      {
+        path: 'pivot-chart',
+        name: 'percent-horizontal-bar'
       }
     ]
   },
@@ -172,6 +180,10 @@ export const menus = [
     children: [
       {
         path: 'pivot',
+        name: 'pivot-size-legend'
+      },
+      {
+        path: 'pivot',
         name: 'pivot-basic'
       },
       {
@@ -204,10 +216,6 @@ export const menus = [
       },
       {
         path: 'pivot',
-        name: 'pivot-dataset'
-      },
-      {
-        path: 'pivot',
         name: 'pivot-indicator-row'
       },
       {
@@ -221,6 +229,47 @@ export const menus = [
       {
         path: 'pivot',
         name: 'pivot-column-pref'
+      },
+      {
+        path: 'pivot',
+        name: 'pivot-indicator-middle'
+      }
+    ]
+  },
+  {
+    menu: 'pivot-analysis',
+    children: [
+      {
+        path: 'pivot-analysis',
+        name: 'pivot-analysis'
+      },
+      {
+        path: 'pivot-analysis',
+        name: 'pivot-analysis-total'
+      },
+      {
+        path: 'pivot-analysis',
+        name: 'pivot-analysis-more-data'
+      },
+      {
+        path: 'pivot-analysis',
+        name: 'pivot-analysis-filter'
+      },
+      {
+        path: 'pivot-analysis',
+        name: 'pivot-analysis-mapping'
+      },
+      {
+        path: 'pivot-analysis',
+        name: 'pivot-analysis-sort'
+      },
+      {
+        path: 'pivot-analysis',
+        name: 'pivot-analysis-aggregationRules'
+      },
+      {
+        path: 'pivot-analysis',
+        name: 'pivot-analysis-pagination'
       }
     ]
   },
@@ -408,7 +457,23 @@ export const menus = [
       },
       {
         path: 'components',
+        name: 'legend2'
+      },
+      {
+        path: 'components',
+        name: 'legend3'
+      },
+      {
+        path: 'components',
         name: 'axis'
+      },
+      {
+        path: 'components',
+        name: 'color'
+      },
+      {
+        path: 'components',
+        name: 'size'
       }
     ]
   },
@@ -447,6 +512,27 @@ export const menus = [
       {
         path: 'test',
         name: 'vchart'
+      }
+    ]
+  },
+  {
+    menu: 'updateOption',
+    children: [
+      {
+        path: 'updateOption',
+        name: 'update-autoWrapText'
+      },
+      {
+        path: 'updateOption',
+        name: 'update-columns'
+      },
+      {
+        path: 'updateOption',
+        name: 'update-widthMode'
+      },
+      {
+        path: 'updateOption',
+        name: 'update-heightMode'
       }
     ]
   },
@@ -506,6 +592,15 @@ export const menus = [
       {
         path: 'fs',
         name: 'update-option'
+      }
+    ]
+  },
+  {
+    menu: 'vchart',
+    children: [
+      {
+        path: 'vchart',
+        name: 'test'
       }
     ]
   }

@@ -12,8 +12,9 @@ export function startMoveCol(col: number, row: number, x: number, y: number, sta
   state.columnMove.x = x - state.table.tableX;
   state.columnMove.y = y - state.table.tableY;
 
-  const cellType = state.table.getCellType(col, row);
-  const delta = cellType === 'columnHeader' ? state.columnMove.x : cellType === 'rowHeader' ? state.columnMove.y : 0;
+  const cellLocation = state.table.getCellLocation(col, row);
+  const delta =
+    cellLocation === 'columnHeader' ? state.columnMove.x : cellLocation === 'rowHeader' ? state.columnMove.y : 0;
 
   state.table.scenegraph.component.showMoveCol(col, row, delta);
 
@@ -54,14 +55,14 @@ export function updateMoveCol(col: number, row: number, x: number, y: number, st
   let backX;
   let lineY;
   let backY;
-  const cellType = state.table.getCellType(col, row);
-  if (cellType === 'columnHeader') {
+  const cellLocation = state.table.getCellLocation(col, row);
+  if (cellLocation === 'columnHeader') {
     (backX = state.columnMove.x),
       (lineX =
         state.columnMove.colTarget >= state.columnMove.colSource
           ? state.table.getColsWidth(0, state.columnMove.colTarget)
           : state.table.getColsWidth(0, state.columnMove.colTarget - 1));
-  } else if (cellType === 'rowHeader') {
+  } else if (cellLocation === 'rowHeader') {
     (backY = state.columnMove.y),
       (lineY =
         state.columnMove.rowTarget >= state.columnMove.rowSource

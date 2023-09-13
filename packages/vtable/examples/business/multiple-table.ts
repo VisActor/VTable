@@ -15,10 +15,10 @@ const generatePersons = count => {
 };
 
 const ListTable = VTable.ListTable;
-const Table_CONTAINER_DOM_ID = 'vTable';
+const CONTAINER_ID = 'vTable';
 
-const container = document.getElementById(Table_CONTAINER_DOM_ID)!;
-// const parent = container.parentElement;
+const container = document.getElementById(CONTAINER_ID)!;
+// const parent = container.container;
 const container1 = document.createElement('div');
 container.appendChild(container1);
 const container2 = document.createElement('div');
@@ -49,54 +49,54 @@ export function createTable(container) {
   const columns: VTable.ColumnsDefine = [
     {
       field: 'id',
-      caption: 'ID',
+      title: 'ID',
       width: 120,
       sort: true
     },
     {
       field: 'email1',
-      caption: 'email',
+      title: 'email',
       width: 200,
       sort: true
     },
     {
-      caption: 'full name',
+      title: 'full name',
       columns: [
         {
           field: 'name',
-          caption: 'First Name',
+          title: 'First Name',
           width: 200
         },
         {
           field: 'name',
-          caption: 'Last Name',
+          title: 'Last Name',
           width: 200
         }
       ]
     },
     {
       field: 'date1',
-      caption: 'birthday',
+      title: 'birthday',
       width: 200
     },
     {
       field: 'sex',
-      caption: 'sex',
+      title: 'sex',
       width: 100
     },
     {
       field: 'tel',
-      caption: 'telephone',
+      title: 'telephone',
       width: 150
     },
     {
       field: 'work',
-      caption: 'job',
+      title: 'job',
       width: 200
     },
     {
       field: 'city',
-      caption: 'city',
+      title: 'city',
       width: 150
     }
   ];

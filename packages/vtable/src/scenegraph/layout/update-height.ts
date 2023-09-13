@@ -227,8 +227,8 @@ export function updateCellHeight(
 
       let customRender;
       let customLayout;
-      const cellType = scene.table.getCellType(col, row);
-      if (cellType !== 'body') {
+      const cellLocation = scene.table.getCellLocation(col, row);
+      if (cellLocation !== 'body') {
         const define = scene.table.getHeaderDefine(col, row);
         customRender = define?.headerCustomRender;
         customLayout = define?.headerCustomLayout;

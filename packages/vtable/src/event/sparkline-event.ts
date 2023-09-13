@@ -10,12 +10,12 @@ export function bindSparklineHoverEvent(table: BaseTableAPI) {
   if (table.isPivotTable()) {
     const layoutMap = table.internalProps.layoutMap as PivotLayoutMap;
     hasSparkLine = layoutMap.indicatorsDefine.some(indicator => {
-      return typeof indicator !== 'string' && indicator.columnType === 'sparkline';
+      return typeof indicator !== 'string' && indicator.cellType === 'sparkline';
     });
   } else {
     const layoutMap = table.internalProps.layoutMap as SimpleHeaderLayoutMap;
     hasSparkLine = layoutMap.columnObjects.some(column => {
-      return column.columnType === 'sparkline';
+      return column.cellType === 'sparkline';
     });
   }
 

@@ -28,26 +28,31 @@ export function updateColWidth(scene: Scenegraph, col: number, detaX: number) {
   scene.table.setColWidth(col, scene.table.getColWidth(col) + detaX, true);
 
   const autoRowHeight = scene.table.heightMode === 'autoHeight';
-  // deal width corner header or column header
+  // deal with corner header or column header
   const colOrCornerHeaderColumn = scene.getColGroup(col, true) as Group;
   if (colOrCornerHeaderColumn) {
     updateColunmWidth(colOrCornerHeaderColumn, detaX, autoRowHeight, 'col-corner', scene);
   }
-  // deal width row header or body or right frozen cells
+  // deal with row header or body or right frozen cells
   const rowHeaderOrBodyColumn = scene.getColGroup(col) as Group;
   if (rowHeaderOrBodyColumn) {
     updateColunmWidth(rowHeaderOrBodyColumn, detaX, autoRowHeight, 'row-body', scene);
   }
 
   const leftBottomColumn = scene.getColGroupInLeftBottomCorner(col);
-  // deal width left bottom frozen cells
+  // deal with left bottom frozen cells
   if (leftBottomColumn) {
     updateColunmWidth(leftBottomColumn, detaX, autoRowHeight, 'left-bottom', scene);
   }
-  // deal width bottom frozen cells
+  // deal with bottom frozen cells
   const bottomColumn = scene.getColGroupInBottom(col);
   if (bottomColumn) {
     updateColunmWidth(bottomColumn, detaX, autoRowHeight, 'bottom', scene);
+  }
+  // deal with right bottom frozen cells
+  const rightBottomColumn = scene.getColGroupInRightBottomCorner(col);
+  if (rightBottomColumn) {
+    updateColunmWidth(bottomColumn, detaX, autoRowHeight, 'right-bottom', scene);
   }
 
   // 更新剩余列位置
@@ -89,13 +94,22 @@ export function updateColWidth(scene: Scenegraph, col: number, detaX: number) {
       }
     });
   }
+  if (rightBottomColumn) {
+    scene.rightBottomCornerGroup.forEachChildrenSkipChild((column: Group, index) => {
+      if (column.col > col) {
+        column.setAttribute('x', column.attribute.x + detaX);
+      }
+    });
+  }
+
+  scene.table.setColWidth(col, rowHeaderOrBodyColumn.attribute.width, true);
 }
 
 function updateColunmWidth(
   columnGroup: Group,
   detaX: number,
   autoRowHeight: boolean,
-  mode: 'col-corner' | 'row-body' | 'bottom' | 'left-bottom',
+  mode: 'col-corner' | 'row-body' | 'bottom' | 'left-bottom' | 'right-bottom',
   scene: Scenegraph
 ) {
   let needRerangeRow = false;
@@ -150,15 +164,21 @@ function updateColunmWidth(
         row = scene.table.rowCount - scene.table.bottomFrozenRowCount;
         colGroup = scene.getColGroupInLeftBottomCorner(col);
         oldContainerHeight = scene.leftBottomCornerGroup.attribute.height ?? 0;
+      } else if (mode === 'right-bottom') {
+        row = scene.table.rowCount - scene.table.bottomFrozenRowCount;
+        colGroup = scene.getColGroupInRightBottomCorner(col);
+        oldContainerHeight = scene.rightBottomCornerGroup.attribute.height ?? 0;
       }
       let y = 0;
       colGroup.forEachChildren((cellGroup: Group) => {
-        if (cellGroup.role !== 'cell') {
-          cellGroup.setAttribute('y', y);
-          return;
-        }
+        // if (cellGroup.role !== 'cell') {
+        //   cellGroup.setAttribute('y', y);
+        //   y += scene.table.getRowHeight(cellGroup.row) ?? 0;
+        //   return;
+        // }
+        // y += cellGroup.attribute.height ?? 0;
         cellGroup.setAttribute('y', y);
-        y += cellGroup.attribute.height ?? 0;
+        y += scene.table.getRowHeight(cellGroup.row) ?? 0;
       });
       newTotalHeight = y;
     }

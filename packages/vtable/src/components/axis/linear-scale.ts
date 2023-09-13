@@ -52,6 +52,8 @@ export class LinearAxisScale {
       this.nice && this._scale.niceMax(tickCount);
     } else if (isNil(this.domain?.min) && isValid(this.domain?.max)) {
       this.nice && this._scale.niceMin(tickCount);
+    } else {
+      this.nice && this._scale.nice(tickCount);
     }
   }
   dataToPosition(values: any[]): number {
@@ -129,6 +131,8 @@ export class LinearAxisScale {
         this._scale.niceMax(tickCount);
       } else if (isNil(this.domain?.min) && isValid(this.domain?.max)) {
         this._scale.niceMin(tickCount);
+      } else {
+        this._scale.nice(tickCount);
       }
     }
   }

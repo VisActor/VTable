@@ -1,7 +1,7 @@
 import * as VTable from '../../src';
 import { generatePivotDataSource } from '../util/pivot-data';
 const PivotTable = VTable.PivotTable;
-const Table_CONTAINER_DOM_ID = 'vTable';
+const CONTAINER_ID = 'vTable';
 
 export function createTable() {
   const option = {
@@ -10,21 +10,21 @@ export function createTable() {
     columnTree: [
       {
         dimensionKey: '地区',
-        //dimensionTitle: '地区',
+        //title: '地区',
         value: '东北',
         children: [
           {
             dimensionKey: '邮寄方式',
-            //dimensionTitle: '邮寄方式',
+            //title: '邮寄方式',
             value: '一级',
             children: [
               {
-                //dimensionTitle: '指标名称',
+                //title: '指标名称',
                 indicatorKey: '1',
                 value: '销售额'
               },
               {
-                //dimensionTitle: '指标名称',
+                //title: '指标名称',
                 indicatorKey: '2',
                 value: '利润'
               }
@@ -32,16 +32,16 @@ export function createTable() {
           },
           {
             dimensionKey: '邮寄方式',
-            //dimensionTitle: '邮寄方式',
+            //title: '邮寄方式',
             value: '二级',
             children: [
               {
-                //dimensionTitle: '指标名称',
+                //title: '指标名称',
                 indicatorKey: '1',
                 value: '销售额'
               },
               {
-                //dimensionTitle: '指标名称',
+                //title: '指标名称',
                 indicatorKey: '2',
                 value: '利润'
               }
@@ -49,16 +49,16 @@ export function createTable() {
           },
           {
             dimensionKey: '邮寄方式',
-            //dimensionTitle: '邮寄方式',
+            //title: '邮寄方式',
             value: '三级',
             children: [
               {
-                //dimensionTitle: '指标名称',
+                //title: '指标名称',
                 indicatorKey: '1',
                 value: '销售额'
               },
               {
-                //dimensionTitle: '指标名称',
+                //title: '指标名称',
                 indicatorKey: '2',
                 value: '利润'
               }
@@ -68,21 +68,21 @@ export function createTable() {
       },
       {
         dimensionKey: '地区',
-        //dimensionTitle: '地区',
+        //title: '地区',
         value: '华北',
         children: [
           {
             dimensionKey: '邮寄方式',
-            //dimensionTitle: '邮寄方式',
+            //title: '邮寄方式',
             value: '一级',
             children: [
               {
-                //dimensionTitle: '指标名称',
+                //title: '指标名称',
                 indicatorKey: '1',
                 value: '销售额'
               },
               {
-                //dimensionTitle: '指标名称',
+                //title: '指标名称',
                 indicatorKey: '2',
                 value: '利润'
               }
@@ -90,16 +90,16 @@ export function createTable() {
           },
           {
             dimensionKey: '邮寄方式',
-            //dimensionTitle: '邮寄方式',
+            //title: '邮寄方式',
             value: '二级',
             children: [
               {
-                //dimensionTitle: '指标名称',
+                //title: '指标名称',
                 indicatorKey: '1',
                 value: '销售额'
               },
               {
-                //dimensionTitle: '指标名称',
+                //title: '指标名称',
                 indicatorKey: '2',
                 value: '利润'
               }
@@ -107,16 +107,16 @@ export function createTable() {
           },
           {
             dimensionKey: '邮寄方式',
-            //dimensionTitle: '邮寄方式',
+            //title: '邮寄方式',
             value: '三级',
             children: [
               {
-                //dimensionTitle: '指标名称',
+                //title: '指标名称',
                 indicatorKey: '1',
                 value: '销售额'
               },
               {
-                //dimensionTitle: '指标名称',
+                //title: '指标名称',
                 indicatorKey: '2',
                 value: '利润'
               }
@@ -126,21 +126,21 @@ export function createTable() {
       },
       {
         dimensionKey: '地区',
-        //dimensionTitle: '地区',
+        //title: '地区',
         value: '中南',
         children: [
           {
             dimensionKey: '邮寄方式',
-            //dimensionTitle: '邮寄方式',
+            //title: '邮寄方式',
             value: '一级',
             children: [
               {
-                //dimensionTitle: '指标名称',
+                //title: '指标名称',
                 indicatorKey: '1',
                 value: '销售额'
               },
               {
-                //dimensionTitle: '指标名称',
+                //title: '指标名称',
                 indicatorKey: '2',
                 value: '利润'
               }
@@ -148,16 +148,16 @@ export function createTable() {
           },
           {
             dimensionKey: '邮寄方式',
-            //dimensionTitle: '邮寄方式',
+            //title: '邮寄方式',
             value: '二级',
             children: [
               {
-                //dimensionTitle: '指标名称',
+                //title: '指标名称',
                 indicatorKey: '1',
                 value: '销售额'
               },
               {
-                //dimensionTitle: '指标名称',
+                //title: '指标名称',
                 indicatorKey: '2',
                 value: '利润'
               }
@@ -165,16 +165,16 @@ export function createTable() {
           },
           {
             dimensionKey: '邮寄方式',
-            //dimensionTitle: '邮寄方式',
+            //title: '邮寄方式',
             value: '三级',
             children: [
               {
-                //dimensionTitle: '指标名称',
+                //title: '指标名称',
                 indicatorKey: '1',
                 value: '销售额'
               },
               {
-                //dimensionTitle: '指标名称',
+                //title: '指标名称',
                 indicatorKey: '2',
                 value: '利润'
               }
@@ -186,109 +186,109 @@ export function createTable() {
     rowTree: [
       {
         dimensionKey: '类别',
-        //dimensionTitle: '类别',
+        //title: '类别',
         value: '办公用品',
         children: [
           {
-            dimensionKey: '子类别', //dimensionTitle: '子类别',
+            dimensionKey: '子类别', //title: '子类别',
             value: '电脑'
           },
           {
             dimensionKey: '子类别',
-            //dimensionTitle: '子类别',
+            //title: '子类别',
             value: '装订机'
           },
           {
             dimensionKey: '子类别',
-            //dimensionTitle: '子类别',
+            //title: '子类别',
             value: '签字笔'
           },
           {
-            dimensionKey: '子类别', //dimensionTitle: '子类别',
+            dimensionKey: '子类别', //title: '子类别',
             value: '标签'
           },
           {
             dimensionKey: '子类别',
-            //dimensionTitle: '子类别',
+            //title: '子类别',
             value: '收纳柜'
           },
           {
-            dimensionKey: '子类别', //dimensionTitle: '子类别',
+            dimensionKey: '子类别', //title: '子类别',
             value: '纸张'
           },
           {
-            dimensionKey: '子类别', //dimensionTitle: '子类别',
+            dimensionKey: '子类别', //title: '子类别',
             value: '电灯'
           }
         ]
       },
       {
         dimensionKey: '类别',
-        //dimensionTitle: '类别',
+        //title: '类别',
         value: '家具',
         children: [
           {
-            dimensionKey: '子类别', //dimensionTitle: '子类别',
+            dimensionKey: '子类别', //title: '子类别',
             value: '衣柜'
           },
           {
-            dimensionKey: '子类别', //dimensionTitle: '子类别',
+            dimensionKey: '子类别', //title: '子类别',
             value: '沙发'
           },
           {
-            dimensionKey: '子类别', //dimensionTitle: '子类别',
+            dimensionKey: '子类别', //title: '子类别',
             value: '餐桌'
           },
           {
-            dimensionKey: '子类别', //dimensionTitle: '子类别',
+            dimensionKey: '子类别', //title: '子类别',
             value: '椅子'
           },
           {
-            dimensionKey: '子类别', //dimensionTitle: '子类别',
+            dimensionKey: '子类别', //title: '子类别',
             value: '桌子'
           }
         ]
       },
       {
         dimensionKey: '类别',
-        //dimensionTitle: '类别',
+        //title: '类别',
         value: '餐饮',
         children: [
           {
-            dimensionKey: '子类别', //dimensionTitle: '子类别',
+            dimensionKey: '子类别', //title: '子类别',
             value: '锅具'
           },
           {
             dimensionKey: '子类别',
-            //dimensionTitle: '子类别',
+            //title: '子类别',
             value: '油盐酱醋'
           },
           {
-            dimensionKey: '子类别', //dimensionTitle: '子类别',
+            dimensionKey: '子类别', //title: '子类别',
             value: '米面'
           }
         ]
       },
       {
         dimensionKey: '类别',
-        //dimensionTitle: '类别',
+        //title: '类别',
         value: '技术',
         children: [
           {
-            dimensionKey: '子类别', //dimensionTitle: '子类别',
+            dimensionKey: '子类别', //title: '子类别',
             value: '设备'
           },
           {
-            dimensionKey: '子类别', //dimensionTitle: '子类别',
+            dimensionKey: '子类别', //title: '子类别',
             value: '配件'
           },
           {
-            dimensionKey: '子类别', //dimensionTitle: '子类别',
+            dimensionKey: '子类别', //title: '子类别',
             value: '电话'
           },
           {
             dimensionKey: '子类别',
-            //dimensionTitle: '子类别',
+            //title: '子类别',
             value: '复印机'
           }
         ]
@@ -310,7 +310,7 @@ export function createTable() {
     rows: [
       {
         dimensionKey: '类别',
-        dimensionTitle: '类别',
+        title: '类别',
         cornerDescription: '这是类别维度的提示信息',
         drillUp: true,
         // width: 'auto',
@@ -320,14 +320,14 @@ export function createTable() {
       },
       {
         dimensionKey: '子类别',
-        dimensionTitle: '子类别'
+        title: '子类别'
         // headerType: 'multilinetext',
       }
     ],
     columns: [
       {
         dimensionKey: '地区',
-        dimensionTitle: '地区',
+        title: '地区',
         description(args) {
           if (args.dataValue === '东北') {
             return '东北东北的提示';
@@ -342,7 +342,7 @@ export function createTable() {
       },
       {
         dimensionKey: '邮寄方式',
-        dimensionTitle: '邮寄方式11',
+        title: '邮寄方式11',
         showSort: true,
         headerFormat(value) {
           return `${value}邮寄方式`;
@@ -358,23 +358,23 @@ export function createTable() {
       {
         showSort: true,
         indicatorKey: '1',
-        caption: '销售额',
+        title: '销售额',
         format(rec) {
           return `${rec.dataValue}%`;
         },
         maxWidth: 200,
         minWidth: 10,
-        columnType: 'progressbar'
+        cellType: 'progressbar'
       },
       {
         showSort: false,
         indicatorKey: '2',
-        caption: '利润',
+        title: '利润',
         format(rec) {
           // if (rec.rowDimensions[0].value === '东北') return `${rec.dataValue}%`;
           return rec.dataValue;
         },
-        columnType: 'progressbar'
+        cellType: 'progressbar'
       }
     ],
     records: generatePivotDataSource(19, 18),
@@ -385,7 +385,7 @@ export function createTable() {
     enableColumnResizeOnAllRows: true, //是否可以在所有行上调整列宽
     disableColumnResize: false, //关闭调整列宽
     showFrozenIcon: false, //显示VTable内置冻结列图标
-    pagerConf: {
+    pagination: {
       //分页配置
       perPageCount: 5,
       currentPage: 0
@@ -450,7 +450,7 @@ export function createTable() {
     },
     indicatorTitle: 'zhibiaomingc'
   };
-  option.parentElement = document.getElementById(Table_CONTAINER_DOM_ID);
+  option.container = document.getElementById(CONTAINER_ID);
   const instance = new PivotTable(option);
 
   VTable.bindDebugTool(instance.scenegraph.stage as any, {

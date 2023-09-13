@@ -2,6 +2,101 @@
   "name": "@visactor/vtable",
   "entries": [
     {
+      "version": "0.10.2",
+      "tag": "@visactor/vtable_v0.10.2",
+      "date": "Wed, 06 Sep 2023 09:18:51 GMT",
+      "comments": {
+        "patch": [
+          {
+            "comment": "fix: updatePagination\n\n"
+          },
+          {
+            "comment": "feat: update vchart version\n\n"
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.10.1",
+      "tag": "@visactor/vtable_v0.10.1",
+      "date": "Fri, 01 Sep 2023 02:36:27 GMT",
+      "comments": {
+        "patch": [
+          {
+            "comment": "refactor: wrap text should suit English word #183\n\n"
+          },
+          {
+            "comment": "feat: sort support don't execute inner sort logic #230\n\n"
+          },
+          {
+            "comment": "refactor: optimize selected interaction when click header cell then use shift keyboard #233\n\n"
+          },
+          {
+            "comment": "fix: when set max Width value for column to resize column width occur error #241\n\n"
+          },
+          {
+            "comment": "feat: add api for updateAutoWrapText widthMode heightMode #240\n\n"
+          },
+          {
+            "comment": "refactor: optimize performance when window resize Compute RowHeight ColWidth  #249\n\n"
+          },
+          {
+            "comment": "feat: add analysis for pivot table\n\n"
+          },
+          {
+            "comment": "fix: pivotTable horizontal scroll bar is abnormal when the display area is small #269\n\n"
+          },
+          {
+            "comment": "feat: add columnResizeType config"
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.10.0",
+      "tag": "@visactor/vtable_v0.10.0",
+      "date": "Wed, 16 Aug 2023 04:16:18 GMT",
+      "comments": {
+        "patch": [
+          {
+            "comment": "refactor: last column to resize width is inflexibility #136\n\n"
+          },
+          {
+            "comment": "refactor: delete widthMode:standard-aeolus and add option of autoFillWidth\n\n"
+          },
+          {
+            "comment": "refactor: use barWidth to compute chart column width #185\n\n"
+          },
+          {
+            "comment": "refactor: widthMode set adaptive , compute body column to adaptive lefted container space #187\n\n"
+          },
+          {
+            "comment": "fix: use updateOption can‘t modify hover highlight mode correctly #189\n\n"
+          },
+          {
+            "comment": "refactor: compute optimize height for chart by axis tick count #196\n\n"
+          },
+          {
+            "comment": "refactor: sort collectedValues by data.field.domain\n\n"
+          },
+          {
+            "comment": "feat: add listenChart Event\n\n"
+          }
+        ],
+        "minor": [
+          {
+            "comment": "feat: handle legend event to reset chart\n\n"
+          },
+          {
+            "comment": "feat: add api getChartDatumPosition\n\n"
+          },
+          {
+            "comment": "feat: add right and bottom frozen function"
+          }
+        ]
+      }
+    },
+    {
       "version": "0.9.2",
       "tag": "@visactor/vtable_v0.9.2",
       "date": "Wed, 26 Jul 2023 03:47:00 GMT",

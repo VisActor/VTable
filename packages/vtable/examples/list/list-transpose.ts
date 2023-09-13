@@ -1,5 +1,5 @@
 import * as VTable from '../../src';
-const Table_CONTAINER_DOM_ID = 'vTable';
+const CONTAINER_ID = 'vTable';
 const generatePersons = count => {
   return Array.from(new Array(count)).map((_, i) => ({
     id: i + 1,
@@ -19,52 +19,52 @@ export function createTable() {
   const columns: VTable.ColumnsDefine = [
     {
       field: 'id',
-      caption: 'ID',
+      title: 'ID',
       sort: true,
       width: 'auto'
     },
     {
       field: 'email1',
-      caption: 'email',
+      title: 'email',
       sort: true
     },
     {
-      caption: 'full name',
+      title: 'full name',
       columns: [
         {
           field: 'name',
-          caption: 'First Name'
+          title: 'First Name'
         },
         {
           field: 'name',
-          caption: 'Last Name'
+          title: 'Last Name'
         }
       ]
     },
     {
       field: 'date1',
-      caption: 'birthday'
+      title: 'birthday'
       // width: 200
     },
     {
       field: 'sex',
-      caption: 'sex'
+      title: 'sex'
     },
     {
       field: 'tel',
-      caption: 'telephone'
+      title: 'telephone'
     },
     {
       field: 'work',
-      caption: 'job'
+      title: 'job'
     },
     {
       field: 'city',
-      caption: 'city'
+      title: 'city'
     }
   ];
   const option: VTable.ListTableConstructorOptions = {
-    container: document.getElementById(Table_CONTAINER_DOM_ID),
+    container: document.getElementById(CONTAINER_ID),
     records,
     columns,
     widthMode: 'standard',

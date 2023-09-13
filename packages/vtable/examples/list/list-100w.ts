@@ -1,6 +1,6 @@
 import * as VTable from '../../src';
 import { bindDebugTool } from '../../src/scenegraph/debug-tool';
-const Table_CONTAINER_DOM_ID = 'vTable';
+const CONTAINER_ID = 'vTable';
 
 function generateRandomString(length) {
   let result = '';
@@ -111,65 +111,65 @@ export function createTable() {
   const columns = [
     {
       field: 'id',
-      caption: 'ID',
+      title: 'ID',
       width: 80,
       sort: true
     },
     {
       field: 'email1',
-      caption: 'email',
+      title: 'email',
       width: 250,
       sort: true
     },
     {
       field: 'full name',
-      caption: 'Full name',
+      title: 'Full name',
       columns: [
         {
           field: 'name',
-          caption: 'First Name',
+          title: 'First Name',
           width: 120
         },
         {
           field: 'lastName',
-          caption: 'Last Name',
+          title: 'Last Name',
           width: 100
         }
       ]
     },
     {
       field: 'hobbies',
-      caption: 'hobbies',
+      title: 'hobbies',
       width: 200
     },
     {
       field: 'birthday',
-      caption: 'birthday',
+      title: 'birthday',
       width: 120
     },
     {
       field: 'sex',
-      caption: 'sex',
+      title: 'sex',
       width: 100
     },
     {
       field: 'tel',
-      caption: 'telephone',
+      title: 'telephone',
       width: 150
     },
     {
       field: 'work',
-      caption: 'job',
+      title: 'job',
       width: 200
     },
     {
       field: 'city',
-      caption: 'city',
+      title: 'city',
       width: 150
     }
   ];
   const option: VTable.TYPES.ListTableConstructorOptions = {
-    container: document.getElementById(Table_CONTAINER_DOM_ID),
+    container: document.getElementById(CONTAINER_ID),
     records,
     columns,
     heightMode: 'autoHeight',
@@ -177,8 +177,4 @@ export function createTable() {
   };
   const tableInstance = new VTable.ListTable(option);
   (window as any).tableInstance = tableInstance;
-
-  bindDebugTool(tableInstance.scenegraph.stage as any, {
-    customGrapicKeys: ['role', 'row', 'col']
-  });
 }

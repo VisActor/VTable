@@ -1,6 +1,6 @@
 import * as VTable from '../../src';
 const PivotTable = VTable.PivotTable;
-const Table_CONTAINER_DOM_ID = 'vTable';
+const CONTAINER_ID = 'vTable';
 
 function generatePivotDataSource(num, colCount) {
   const array = new Array(num);
@@ -105,7 +105,7 @@ export function createTable() {
     columns: [
       {
         dimensionKey: '地区',
-        dimensionTitle: '地区',
+        title: '地区',
         headerFormat(value) {
           return `${value}地区`;
         },
@@ -136,7 +136,7 @@ export function createTable() {
       },
       {
         dimensionKey: '邮寄方式',
-        dimensionTitle: '邮寄方式11',
+        title: '邮寄方式11',
         headerFormat(value) {
           return `${value}邮寄方式`;
         },
@@ -166,7 +166,7 @@ export function createTable() {
     rows: [
       {
         dimensionKey: '类别',
-        dimensionTitle: '类别',
+        title: '类别',
         drillUp: true,
         width: 'auto',
         headerStyle: {
@@ -180,7 +180,7 @@ export function createTable() {
       },
       {
         dimensionKey: '子类别',
-        dimensionTitle: '子类别',
+        title: '子类别',
         headerStyle: {
           textAlign: 'center',
           color: 'blue',
@@ -194,7 +194,7 @@ export function createTable() {
     indicators: [
       {
         indicatorKey: '1',
-        caption: '销售额',
+        title: '销售额',
         format(rec) {
           return `${rec.dataValue}%`;
         },
@@ -221,18 +221,18 @@ export function createTable() {
           },
           barColor: 'transparent'
         },
-        columnType: 'progressbar',
+        cellType: 'progressbar',
         showSort: true
         // headerType: 'MULTILINETEXT',
       },
       {
         indicatorKey: '2',
-        caption: '利润',
+        title: '利润',
         format(rec) {
           // if (rec.rowDimensions[0].value === '东北') return `${rec.dataValue}%`;
           return rec.dataValue;
         },
-        columnType: 'progressbar',
+        cellType: 'progressbar',
         style: {
           barHeight: '50%',
           barBottom: 20,
@@ -483,7 +483,7 @@ export function createTable() {
     },
     indicatorTitle: '指标名称',
     // indicatorsAsCol: false,
-    container: document.getElementById(Table_CONTAINER_DOM_ID),
+    container: document.getElementById(CONTAINER_ID),
     records,
     theme,
     showFrozenIcon: false, //显示VTable内置冻结列图标

@@ -18,7 +18,7 @@ export function bindDrillEvent(table: BaseTableAPI) {
     if (dimension?.drillDown || dimension?.drillUp) {
       table.stateManeger.updateDrillState(
         dimension.dimensionKey,
-        dimension.dimensionTitle,
+        dimension.title,
         dimension.drillDown,
         dimension.drillUp,
         col,
@@ -27,6 +27,9 @@ export function bindDrillEvent(table: BaseTableAPI) {
     } else {
       table.stateManeger.updateDrillState(undefined, undefined, false, false, -1, -1);
     }
+  });
+  table.on(TABLE_EVENT_TYPE.MOUSELEAVE_TABLE, (e: MousePointerCellEvent) => {
+    table.stateManeger.updateDrillState(undefined, undefined, false, false, -1, -1);
   });
 }
 

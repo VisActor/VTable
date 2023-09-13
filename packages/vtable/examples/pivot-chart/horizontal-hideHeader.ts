@@ -1,7 +1,7 @@
 /* eslint-disable */
 import * as VTable from '../../src';
 import VChart from '@visactor/vchart';
-const Table_CONTAINER_DOM_ID = 'vTable';
+const CONTAINER_ID = 'vTable';
 VTable.register.chartModule('vchart', VChart);
 export function createTable() {
   const rowTree = [
@@ -101,7 +101,7 @@ export function createTable() {
   const columns: (VTable.IDimension | string)[] = [
     {
       dimensionKey: '230417171050031',
-      dimensionTitle: '国家',
+      title: '国家',
       headerStyle: {
         color: 'red'
       }
@@ -112,7 +112,7 @@ export function createTable() {
   const rows = [
     {
       dimensionKey: '230417170554012',
-      dimensionTitle: '邮寄方式',
+      title: '邮寄方式',
       headerStyle: {
         color: 'red'
       }
@@ -121,9 +121,9 @@ export function createTable() {
   const indicators: VTable.TYPES.IIndicator[] = [
     {
       indicatorKey: '230417171050011',
-      caption: '数量',
+      title: '数量',
       width: 'auto',
-      columnType: 'chart',
+      cellType: 'chart',
       chartModule: 'vchart',
       chartSpec: {
         // type: 'common',
@@ -168,14 +168,11 @@ export function createTable() {
     },
     {
       indicatorKey: '230417171050025',
-      caption: '销售额 & 利润',
-      columnType: 'chart',
+      title: '销售额 & 利润',
+      cellType: 'chart',
       chartModule: 'vchart',
       chartSpec: {
         type: 'common',
-        data: {
-          id: 'data'
-        },
         direction: 'horizontal',
         series: [
           {
@@ -195,6 +192,9 @@ export function createTable() {
                   opacity: 0.2
                 }
               }
+            },
+            data: {
+              id: 'data1'
             }
           },
           {
@@ -223,6 +223,9 @@ export function createTable() {
                   fill: '#ddd'
                 }
               }
+            },
+            data: {
+              id: 'data2'
             }
           }
         ],
@@ -237,9 +240,9 @@ export function createTable() {
     },
     {
       indicatorKey: '230707112948009',
-      caption: '折扣',
+      title: '折扣',
       width: 'auto',
-      columnType: 'chart',
+      cellType: 'chart',
       chartModule: 'vchart',
       chartSpec: {
         // type: 'common',
@@ -9277,7 +9280,7 @@ export function createTable() {
     columns,
     indicators,
     indicatorsAsCol: true,
-    container: document.getElementById(Table_CONTAINER_DOM_ID),
+    container: document.getElementById(CONTAINER_ID),
     records,
     defaultRowHeight: 200,
     defaultHeaderRowHeight: 50,

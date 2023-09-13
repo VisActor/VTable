@@ -1,6 +1,12 @@
 import type { IStage, IRect, ITextCache } from '@visactor/vrender';
 import { createStage, createRect, IContainPointMode, container } from '@visactor/vrender';
-import { type CellAddress, type CellType, type ColumnIconOption, type SortOrder, IconFuncTypeEnum } from '../ts-types';
+import {
+  type CellAddress,
+  type CellLocation,
+  type ColumnIconOption,
+  type SortOrder,
+  IconFuncTypeEnum
+} from '../ts-types';
 import { isArray, isString } from '@visactor/vutils';
 import type { Group } from './graphic/group';
 import type { Icon } from './graphic/icon';
@@ -32,10 +38,42 @@ import { computeRowsHeight } from './layout/compute-row-height';
 import { emptyGroup } from './utils/empty-group';
 import { dealBottomFrozen, dealFrozen, dealRightFrozen, resetFrozen } from './layout/frozen';
 import { updateChartSize, updateChartState } from './refresh-node/update-chart';
-import { createCornerCell } from './style/corner-cell';
 import { initSceneGraph } from './group-creater/init-scenegraph';
+import { updateContainerChildrenX } from './utils/update-container';
+import { loadPoptip, setPoptipTheme } from '@visactor/vrender-components';
 
+// VChart poptip theme
+loadPoptip();
 container.load(splitModule);
+
+const poptipStyle = {
+  visible: true,
+  position: 'auto',
+  padding: 8,
+  titleStyle: {
+    fontSize: 12,
+    fontWeight: 'bold',
+    fill: '#4E5969'
+  },
+  contentStyle: {
+    fontSize: 12,
+    fill: '#4E5969'
+  },
+  panel: {
+    visible: true,
+    fill: '#fff',
+    stroke: '#ffffff',
+    lineWidth: 0,
+    cornerRadius: 3,
+    shadowBlur: 12,
+    shadowOffsetX: 0,
+    shadowOffsetY: 4,
+    shadowColor: 'rgba(0, 0, 0, 0.1)',
+    size: 0,
+    space: 12
+  }
+  // maxWidthPercent: 0.8
+};
 
 export type MergeMap = Map<
   string,
@@ -65,9 +103,9 @@ export class Scenegraph {
   rightBottomCornerGroup: Group; // 右下角占位单元格Group,只在有右侧下侧都有冻结行时使用
   componentGroup: Group; // 表格外组件Group
   /** 所有选中区域对应的选框组件 */
-  selectedRangeComponents: Map<string, { rect: IRect; role: CellType }>;
+  selectedRangeComponents: Map<string, { rect: IRect; role: CellLocation }>;
   /** 当前正在选择区域对应的选框组件 为什么是map 以为可能一个选中区域会被拆分为多个rect组件 三块表头和body都分别对应不同组件*/
-  selectingRangeComponents: Map<string, { rect: IRect; role: CellType }>;
+  selectingRangeComponents: Map<string, { rect: IRect; role: CellLocation }>;
   lastSelectId: string;
   component: TableComponent;
   stage: IStage;
@@ -87,6 +125,7 @@ export class Scenegraph {
     this.clear = true;
     this.mergeMap = new Map();
 
+    setPoptipTheme(poptipStyle as any);
     this.stage = createStage({
       canvas: table.canvas,
       width: table.canvas.width,
@@ -94,7 +133,9 @@ export class Scenegraph {
       disableDirtyBounds: false,
       background: table.theme.underlayBackgroundColor,
       dpr: table.internalProps.pixelRatio,
-      enableLayout: true
+      enableLayout: true,
+      pluginList: table.isPivotChart() ? ['poptipForText'] : undefined
+      // autoRender: true
     });
 
     this.stage.defaultLayer.setTheme({
@@ -102,6 +143,9 @@ export class Scenegraph {
         boundsPadding: 0,
         strokeBoundsBuffer: 0,
         lineJoin: 'round'
+      },
+      text: {
+        ignoreBuf: true
       }
     });
     this.initSceneGraph();
@@ -552,7 +596,7 @@ export class Scenegraph {
     start_Row: number,
     end_Col: number,
     end_Row: number,
-    selectRangeType: CellType,
+    selectRangeType: CellLocation,
     selectId: string, //整体区域${endRow}-${startCol}${startRow}${endCol}${endRow}作为其编号
     strokes?: boolean[]
   ) {
@@ -703,6 +747,7 @@ export class Scenegraph {
     this.table.isPivotChart() && updateChartState(this, datum);
   }
   updateAutoColWidth(col: number) {
+    this.table.internalProps._widthResizedColMap.delete(col);
     const oldWidth = this.table.getColWidth(col);
     const newWidth = computeColWidth(col, 0, this.table.rowCount - 1, this.table, true);
     if (newWidth !== oldWidth) {
@@ -718,13 +763,22 @@ export class Scenegraph {
   }
 
   recalculateRowHeights() {
-    computeRowsHeight(this.table, 0, this.table.rowCount - 1);
+    computeRowsHeight(this.table, 0, this.table.rowCount - 1, true, true);
   }
 
   resize() {
-    this.recalculateColWidths();
-
-    this.recalculateRowHeights();
+    if (this.table.widthMode === 'adaptive') {
+      this.recalculateColWidths();
+    }
+    if (this.table.heightMode === 'adaptive') {
+      this.recalculateRowHeights();
+    }
+    // widthMode === 'adaptive' 时，computeColsWidth()中已经有高度更新计算
+    // else if (this.table.widthMode === 'adaptive') {
+    //   this.table.clearRowHeightCache();
+    //   computeRowsHeight(this.table, 0, this.table.columnHeaderLevelCount - 1);
+    //   computeRowsHeight(this.table, this.proxy.rowStart, this.proxy.rowEnd);
+    // }
 
     this.dealWidthMode();
     this.dealHeightMode();
@@ -1163,30 +1217,26 @@ export class Scenegraph {
 
   updateContainer() {
     // 更新各列x&col
-    let cornerX = 0;
-    this.cornerHeaderGroup.forEachChildrenSkipChild((column: Group, index) => {
-      column.setAttribute('x', cornerX);
-      cornerX += column.attribute.width;
-    });
-    let rowHeaderX = 0;
-    this.rowHeaderGroup.forEachChildrenSkipChild((column: Group, index) => {
-      column.setAttribute('x', rowHeaderX);
-      rowHeaderX += column.attribute.width;
-    });
-    let colHeaderX = 0;
-    this.colHeaderGroup.forEachChildrenSkipChild((column: Group, index) => {
-      column.setAttribute('x', colHeaderX);
-      colHeaderX += column.attribute.width;
-    });
-    let bodyX = 0;
-    this.bodyGroup.forEachChildrenSkipChild((column: Group, index) => {
-      column.setAttribute('x', bodyX);
-      bodyX += column.attribute.width;
-    });
+    const cornerX = updateContainerChildrenX(this.cornerHeaderGroup);
+    const rowHeaderX = updateContainerChildrenX(this.rowHeaderGroup);
+    const colHeaderX = updateContainerChildrenX(this.colHeaderGroup);
+    const bodyX = updateContainerChildrenX(this.bodyGroup);
+    const rightX = updateContainerChildrenX(this.rightFrozenGroup);
+    updateContainerChildrenX(this.bottomFrozenGroup);
+    updateContainerChildrenX(this.leftBottomCornerGroup);
+    updateContainerChildrenX(this.rightTopCornerGroup);
+    updateContainerChildrenX(this.rightBottomCornerGroup);
+
     // 更新容器
     this.cornerHeaderGroup.setDeltaWidth(cornerX - this.cornerHeaderGroup.attribute.width);
+    this.leftBottomCornerGroup.setDeltaWidth(cornerX - this.leftBottomCornerGroup.attribute.width);
     this.colHeaderGroup.setDeltaWidth(colHeaderX - this.colHeaderGroup.attribute.width);
+    this.rightFrozenGroup.setDeltaWidth(colHeaderX - this.rightFrozenGroup.attribute.width);
     this.rowHeaderGroup.setDeltaWidth(rowHeaderX - this.rowHeaderGroup.attribute.width);
+    this.bottomFrozenGroup.setDeltaWidth(rowHeaderX - this.bottomFrozenGroup.attribute.width);
+    this.rightFrozenGroup.setDeltaWidth(rightX - this.rightFrozenGroup.attribute.width);
+    this.rightTopCornerGroup.setDeltaWidth(rightX - this.rightTopCornerGroup.attribute.width);
+    this.rightBottomCornerGroup.setDeltaWidth(rightX - this.rightBottomCornerGroup.attribute.width);
     this.bodyGroup.setDeltaWidth(bodyX - this.bodyGroup.attribute.width);
 
     this.colHeaderGroup.setAttribute('x', this.cornerHeaderGroup.attribute.width);
@@ -1273,15 +1323,32 @@ export class Scenegraph {
     abstractY: number,
     cellGroup?: Group,
     offset = ResizeColumnHotSpotSize / 2
-  ): { col: number; row: number; x?: number } {
+  ): { col: number; row: number; x?: number; rightFrozen?: boolean } {
     if (!cellGroup) {
       // to do: 处理最后一列外调整列宽
     } else {
+      let cell: { col: number; row: number; x?: number; rightFrozen?: boolean };
       if (abstractX < cellGroup.globalAABBBounds.x1 + offset) {
-        return { col: cellGroup.col - 1, row: cellGroup.row, x: cellGroup.globalAABBBounds.x1 };
+        cell = { col: cellGroup.col - 1, row: cellGroup.row, x: cellGroup.globalAABBBounds.x1 };
+      } else if (cellGroup.globalAABBBounds.x2 - offset < abstractX) {
+        cell = { col: cellGroup.col, row: cellGroup.row, x: cellGroup.globalAABBBounds.x2 };
       }
-      if (cellGroup.globalAABBBounds.x2 - offset < abstractX) {
-        return { col: cellGroup.col, row: cellGroup.row, x: cellGroup.globalAABBBounds.x2 };
+      if (
+        cell &&
+        this.table.rightFrozenColCount > 0 &&
+        cell.col === this.table.colCount - this.table.rightFrozenColCount - 1 &&
+        this.table.tableNoFrameWidth -
+          this.table.getFrozenColsWidth() -
+          this.table.getRightFrozenColsWidth() +
+          this.table.scrollLeft <
+          this.bodyGroup.attribute.width
+      ) {
+        // 有右侧冻结列，并且横向没有滚动到最右侧时，右侧冻结列左侧调整对只对右侧冻结列生效
+        cell.col = cell.col + 1;
+        cell.rightFrozen = true;
+      }
+      if (cell) {
+        return cell;
       }
     }
     return { col: -1, row: -1 };
@@ -1427,14 +1494,9 @@ export class Scenegraph {
     if (this.isPivot) {
       // 透视表外部处理排序
     } else if (this.transpose) {
-      setTimeout(() => {
-        // 清空单元格内容
-        this.clearCells();
-        // 生成单元格场景树
-        this.createSceneGraph();
-      }, 10);
+      this.proxy.sortCellHorizontal();
     } else {
-      this.proxy.sortCell();
+      this.proxy.sortCellVertical();
     }
   }
 

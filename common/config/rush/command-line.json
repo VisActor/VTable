@@ -90,6 +90,13 @@
       "description": "Run this command to start VTable development server",
       "safeForSimultaneousRushProcesses": true,
       "shellCommand": "ts-node common/autoinstallers/lint/change-all.ts"
+    },
+    {
+      "commandKind": "global",
+      "name": "docs",
+      "summary": "Start the document development server",
+      "description": "Run this command to start document development server",
+      "shellCommand": "rush run -p @visactor/table -s build:es && rush run -p @internal/docs -s start"
     }
   ],
   "parameters": [

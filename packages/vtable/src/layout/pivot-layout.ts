@@ -5,7 +5,7 @@ import type { HeaderData, IndicatorData, LayoutMapAPI, WidthData } from '../ts-t
 import type {
   CellAddress,
   CellRange,
-  CellType,
+  CellLocation,
   ICornerDefine,
   IDataConfig,
   IDimension,
@@ -163,18 +163,18 @@ export class PivotLayoutMap implements LayoutMapAPI {
     //#region 处理headerTitle
     if (this.rowHeaderTitle) {
       const cell_id = 'rowHeaderTitle';
-      const caption =
+      const title =
         typeof this.rowHeaderTitle.title === 'string'
           ? this.rowHeaderTitle.title
           : (this.rowsDefine.reduce((title: string, value) => {
               if (typeof value === 'string') {
                 return title;
               }
-              return title + (title ? `/${value.dimensionTitle}` : `${value.dimensionTitle}`);
+              return title + (title ? `/${value.title}` : `${value.title}`);
             }, '') as string);
-      this._headerObjectMap[caption] = {
-        id: caption,
-        caption,
+      this._headerObjectMap[title] = {
+        id: title,
+        title,
         field: cell_id,
         headerType: this.rowHeaderTitle.headerType ?? 'text',
         style: this.rowHeaderTitle.headerStyle,
@@ -184,7 +184,7 @@ export class PivotLayoutMap implements LayoutMapAPI {
       };
       this._headerObjectMap[cell_id] = {
         id: cell_id,
-        caption: '',
+        title: '',
         field: cell_id,
         headerType: this.cornerSetting.headerType ?? 'text',
         style: this.cornerSetting.headerStyle,
@@ -192,27 +192,27 @@ export class PivotLayoutMap implements LayoutMapAPI {
           // id:
         }
       };
-      this._headerObjects.push(this._headerObjectMap[caption]);
+      this._headerObjects.push(this._headerObjectMap[title]);
       this._headerObjects.push(this._headerObjectMap[cell_id]);
       this.rowShowAttrs.unshift(cell_id);
       this.rowKeysPath.forEach((rowKey, index) => {
-        rowKey.unshift(caption);
+        rowKey.unshift(title);
       });
     }
     if (this.columnHeaderTitle) {
       const cell_id = 'columnHeaderTitleCell';
-      const caption =
+      const title =
         typeof this.columnHeaderTitle.title === 'string'
           ? this.columnHeaderTitle.title
           : (this.columnsDefine.reduce((title: string, value) => {
               if (typeof value === 'string') {
                 return title;
               }
-              return title + (title ? `/${value.dimensionTitle}` : `${value.dimensionTitle}`);
+              return title + (title ? `/${value.title}` : `${value.title}`);
             }, '') as string);
-      this._headerObjectMap[caption] = {
-        id: caption,
-        caption,
+      this._headerObjectMap[title] = {
+        id: title,
+        title,
         field: cell_id,
         headerType: this.columnHeaderTitle.headerType ?? 'text',
         style: this.columnHeaderTitle.headerStyle,
@@ -222,7 +222,7 @@ export class PivotLayoutMap implements LayoutMapAPI {
       };
       this._headerObjectMap[cell_id] = {
         id: cell_id,
-        caption: '',
+        title: '',
         field: cell_id,
         headerType: this.cornerSetting.headerType ?? 'text',
         style: this.cornerSetting.headerStyle,
@@ -230,11 +230,11 @@ export class PivotLayoutMap implements LayoutMapAPI {
           // id:
         }
       };
-      this._headerObjects.push(this._headerObjectMap[caption]);
+      this._headerObjects.push(this._headerObjectMap[title]);
       this._headerObjects.push(this._headerObjectMap[cell_id]);
       this.colShowAttrs.unshift(cell_id);
       this.colKeysPath.forEach((columnKey, index) => {
-        columnKey.unshift(caption);
+        columnKey.unshift(title);
       });
     }
 
@@ -276,7 +276,7 @@ export class PivotLayoutMap implements LayoutMapAPI {
         const cell_id = 'rowHeaderEmpty';
         this._headerObjectMap[cell_id] = {
           id: cell_id,
-          caption: '',
+          title: '',
           field: cell_id,
           headerType: this.cornerSetting.headerType ?? 'text',
           style: this.cornerSetting.headerStyle,
@@ -395,7 +395,7 @@ export class PivotLayoutMap implements LayoutMapAPI {
         return indicator.indicatorKey === indicatorKey;
       }
       if (indicatorValue) {
-        return indicator.caption === indicatorValue;
+        return indicator.title === indicatorValue;
       }
       return false;
     }) as IIndicator;
@@ -422,12 +422,12 @@ export class PivotLayoutMap implements LayoutMapAPI {
           this._headerObjectMap[rowKey[j]] = {
             id: rowKey[j],
             field: <string>dimensionInfo?.dimensionKey ?? this.rows[ids.length - 1],
-            caption: <string>ids[ids.length - 1],
+            title: <string>ids[ids.length - 1],
             style: dimensionInfo?.headerStyle,
             define: {
               field: <string>dimensionInfo?.dimensionKey ?? this.rows[ids.length - 1],
               headerType: dimensionInfo?.headerType ?? 'text',
-              columnType: 'text'
+              cellType: 'text'
             }, //TODO 需要将define的用处 梳理清楚
             fieldFormat: dimensionInfo?.headerFormat,
             dropDownMenu: dimensionInfo?.dropDownMenu,
@@ -448,12 +448,12 @@ export class PivotLayoutMap implements LayoutMapAPI {
           this._headerObjectMap[colKey[j]] = {
             id: colKey[j],
             field: <string>dimensionInfo?.dimensionKey ?? this.columns[ids.length - 1],
-            caption: <string>ids[ids.length - 1],
+            title: <string>ids[ids.length - 1],
             style: dimensionInfo?.headerStyle,
             define: {
               field: <string>dimensionInfo?.dimensionKey ?? this.columns[ids.length - 1],
               headerType: dimensionInfo?.headerType ?? 'text',
-              columnType: 'text'
+              cellType: 'text'
             },
             fieldFormat: dimensionInfo?.headerFormat,
             dropDownMenu: dimensionInfo?.dropDownMenu,
@@ -473,12 +473,12 @@ export class PivotLayoutMap implements LayoutMapAPI {
         this._headerObjectMap[indicatorKey] = {
           id: indicatorKey,
           field: this.indicatorDimensionKey,
-          caption: indicatorInfo.caption ?? indicatorKey,
+          title: indicatorInfo?.title ?? indicatorKey,
           style: indicatorInfo?.headerStyle, //?? indicatorDimensionInfo?.headerStyle,
           define: {
             field: this.indicatorDimensionKey,
             headerType: indicatorInfo?.headerType ?? 'text',
-            columnType: 'text'
+            cellType: 'text'
           },
           // fieldFormat: indicatorDimensionInfo?.headerFormat,
           dropDownMenu: indicatorInfo?.dropDownMenu,
@@ -501,15 +501,13 @@ export class PivotLayoutMap implements LayoutMapAPI {
         this._headerObjectMap[cornerAttrStr] = {
           id: cornerAttrStr,
           field: cornerAttrStr,
-          caption:
-            cornerAttrStr === this.indicatorDimensionKey
-              ? this.indicatorTitle
-              : dimensionInfo?.dimensionTitle ?? cornerAttrStr,
+          title:
+            cornerAttrStr === this.indicatorDimensionKey ? this.indicatorTitle : dimensionInfo?.title ?? cornerAttrStr,
           style: this.cornerSetting?.headerStyle,
           define: {
             field: cornerAttrStr,
             headerType: this.cornerSetting?.headerType ?? 'text',
-            columnType: 'text'
+            cellType: 'text'
           },
           dropDownMenu: dimensionInfo?.dropDownMenu,
           headerType: this.cornerSetting?.headerType ?? 'text',
@@ -538,14 +536,18 @@ export class PivotLayoutMap implements LayoutMapAPI {
         indicatorKey: indicatorKey,
         field: indicatorKey,
         define: Object.assign(
-          { field: indicatorKey, headerType: 'text', columnType: indicatorInfo?.columnType ?? 'text' },
+          {
+            field: indicatorKey,
+            headerType: 'text',
+            cellType: indicatorInfo?.cellType ?? (indicatorInfo as any)?.columnType ?? 'text'
+          },
           indicatorInfo as any
         ),
         fieldFormat: indicatorInfo?.format,
-        columnType: indicatorInfo?.columnType ?? 'text',
-        chartModule: indicatorInfo && ('chartModule' in indicatorInfo ? indicatorInfo.chartModule : null),
-        chartSpec: indicatorInfo && ('chartSpec' in indicatorInfo ? indicatorInfo.chartSpec : null),
-        sparklineSpec: 'sparklineSpec' in indicatorInfo ? indicatorInfo.sparklineSpec : null,
+        cellType: indicatorInfo?.cellType ?? (indicatorInfo as any)?.columnType ?? 'text',
+        chartModule: indicatorInfo && ('chartModule' in indicatorInfo ? indicatorInfo?.chartModule : null),
+        chartSpec: indicatorInfo && ('chartSpec' in indicatorInfo ? indicatorInfo?.chartSpec : null),
+        sparklineSpec: indicatorInfo && ('sparklineSpec' in indicatorInfo ? indicatorInfo?.sparklineSpec : null),
         style: indicatorInfo?.style,
         icon: indicatorInfo?.icon,
         width: indicatorInfo?.width,
@@ -579,7 +581,7 @@ export class PivotLayoutMap implements LayoutMapAPI {
   set rowHeaderTitle(_rowHeaderTitle: ITitleDefine) {
     this._rowHeaderTitle = _rowHeaderTitle;
   }
-  getCellType(col: number, row: number): CellType {
+  getCellLocation(col: number, row: number): CellLocation {
     if (this.isCornerHeader(col, row)) {
       return 'cornerHeader';
     } else if (this.isColumnHeader(col, row)) {
@@ -893,20 +895,27 @@ export class PivotLayoutMap implements LayoutMapAPI {
         }
       } else if (this.isColumnHeader(col, row)) {
         if (row < this.columns.length + (this.columnHeaderTitle ? 1 : 0)) {
-          return this.convertColKeys[row][
-            this.indicatorsAsCol
-              ? Math.floor((col - this.rowHeaderLevelCount) / this.indicatorKeys.length)
-              : col - this.rowHeaderLevelCount
-          ];
+          return (
+            this.convertColKeys[row]?.[
+              this.indicatorsAsCol
+                ? Math.floor((col - this.rowHeaderLevelCount) / this.indicatorKeys.length)
+                : col - this.rowHeaderLevelCount
+            ] ?? `colHeaderAxis-${col}-${row}`
+          );
         }
         return this.indicatorKeys[(col - this.rowHeaderLevelCount) % this.indicatorKeys.length];
       } else if (this.isRowHeader(col, row)) {
         if (col < this.rows.length + (this.rowHeaderTitle ? 1 : 0)) {
-          return this.rowKeysPath[
-            !this.indicatorsAsCol
-              ? Math.floor((row - this.columnHeaderLevelCount) / this.indicatorKeys.length)
-              : row - this.columnHeaderLevelCount
-          ][col];
+          return (
+            this.rowKeysPath[
+              !this.indicatorsAsCol
+                ? Math.floor((row - this.columnHeaderLevelCount) / this.indicatorKeys.length)
+                : row - this.columnHeaderLevelCount
+            ]?.[col] ?? `rowHeaderAxis-${col}-${row}`
+          );
+        }
+        if (this.indicatorsAsCol && col === this.rowHeaderLevelCount - 1) {
+          return `rowHeaderAxis-${col}-${row}`;
         }
         return this.indicatorKeys[(row - this.columnHeaderLevelCount) % this.indicatorKeys.length];
       } else if (this.isRightFrozenColumn(col, row)) {
@@ -918,7 +927,7 @@ export class PivotLayoutMap implements LayoutMapAPI {
         if (this.indicatorsAsCol) {
           return this.indicatorKeys[(col - this.rowHeaderLevelCount) % this.indicatorKeys.length];
         }
-        return this.convertColKeys[this.convertColKeys.length - 1][
+        return this.convertColKeys[this.convertColKeys.length - 1]?.[
           Math.floor((col - this.rowHeaderLevelCount) / this.indicatorKeys.length)
         ];
       }
@@ -943,8 +952,12 @@ export class PivotLayoutMap implements LayoutMapAPI {
     return this.indicatorKeys[bodyRow % this.indicatorKeys.length];
   }
   getHeader(col: number, row: number): HeaderData {
-    const id = this.getCellId(col, row);
-    return this._headerObjectMap[id as number]! ?? EMPTY_HEADER;
+    let id = this.getCellId(col, row) as string;
+    if (id?.toString().startsWith('rowHeaderAxis')) {
+      id = 'rowHeaderEmpty';
+      // } else if (id.toString().startsWith('colHeaderAxis')) {
+    }
+    return this._headerObjectMap[id as number | string]! ?? EMPTY_HEADER;
   }
   getHeaderField(col: number, row: number) {
     const id = this.getCellId(col, row);
@@ -985,12 +998,12 @@ export class PivotLayoutMap implements LayoutMapAPI {
   //     id: 0,
   //     indicatorKey: this.indicators[(_col - this.rowHeaderLevelCount) % (this.indicators?.length ?? 0)],
   //     field: this.indicators[(_col - this.rowHeaderLevelCount) % (this.indicators?.length ?? 0)],
-  //     columnType: indicatorInfo?.columnType ?? 'text',
+  //     cellType: indicatorInfo?.cellType ?? 'text',
   //     style: indicatorInfo?.style,
   //     define: {
   //       field: this.indicators[(_col - this.rowHeaderLevelCount) % (this.indicators?.length ?? 0)],
   //       headerType: 'text',
-  //       columnType: indicatorInfo?.columnType ?? 'text'
+  //       cellType: indicatorInfo?.cellType ?? 'text'
   //     }
   //   };
   // }
@@ -1009,7 +1022,7 @@ export class PivotLayoutMap implements LayoutMapAPI {
           id: '',
           field: undefined,
           indicatorKey: undefined,
-          columnType: undefined,
+          cellType: undefined,
           define: undefined
         }
       );
@@ -1021,7 +1034,7 @@ export class PivotLayoutMap implements LayoutMapAPI {
         id: '',
         field: undefined,
         indicatorKey: undefined,
-        columnType: undefined,
+        cellType: undefined,
         define: undefined
       }
     );
@@ -1141,13 +1154,15 @@ export class PivotLayoutMap implements LayoutMapAPI {
     const recordRow = this.getRecordIndexByRow(row);
     let colPath;
     let rowPath;
-    let colHeaderPaths;
-    let rowHeaderPaths;
+    let colHeaderPaths: string[];
+    let rowHeaderPaths: string[];
     if (recordCol >= 0) {
       colPath = this.colKeysPath[recordCol];
       colHeaderPaths = colPath?.[colPath.length - 1]?.split(this.dataset.stringJoinChar);
       if (colHeaderPaths && this.showColumnHeader && row < this.columns.length - 1) {
         colHeaderPaths = colHeaderPaths.slice(0, row + 1);
+      } else if (!colHeaderPaths) {
+        colHeaderPaths = [];
       }
     }
     if (recordRow >= 0) {
@@ -1155,6 +1170,8 @@ export class PivotLayoutMap implements LayoutMapAPI {
       rowHeaderPaths = rowPath?.[rowPath.length - 1]?.split(this.dataset.stringJoinChar);
       if (rowHeaderPaths && this.showRowHeader && col < this.rows.length - 1) {
         rowHeaderPaths = rowHeaderPaths.slice(0, col + 1);
+      } else if (!rowHeaderPaths) {
+        rowHeaderPaths = [];
       }
     }
     if (colHeaderPaths && this.indicatorsAsCol && col >= this.rowHeaderLevelCount) {
@@ -1169,7 +1186,7 @@ export class PivotLayoutMap implements LayoutMapAPI {
           return {
             dimensionKey: !indicatorObject ? this.colShowAttrs[index] : undefined,
             indicatorKey: indicatorObject ? key : undefined,
-            value: !indicatorObject ? key : (indicatorObject.define.caption as string)
+            value: !indicatorObject ? key : (indicatorObject.define.title as string)
           };
         }) ?? [],
       rowHeaderPaths:
@@ -1178,7 +1195,7 @@ export class PivotLayoutMap implements LayoutMapAPI {
           return {
             dimensionKey: !indicatorObject ? this.rowShowAttrs[index] : undefined,
             indicatorKey: indicatorObject ? key : undefined,
-            value: !indicatorObject ? key : (indicatorObject.define.caption as string)
+            value: !indicatorObject ? key : (indicatorObject.define.title as string)
           };
         }) ?? []
     };

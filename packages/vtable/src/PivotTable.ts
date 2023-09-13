@@ -12,7 +12,8 @@ import type {
   PivotTableConstructorOptions,
   IHeaderTreeDefine,
   IDimensionInfo,
-  SortOrder
+  SortOrder,
+  IPagination
 } from './ts-types';
 import { HierarchyState } from './ts-types';
 import { PivotHeaderLayoutMap } from './layout/pivot-header-layout';
@@ -51,25 +52,30 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
       //TODO hack处理之前的demo都是定义到layout上的 所以这里直接并到options中
       Object.assign(options, (options as any).layout);
     }
+    //分页配置
+    this.pagination = options.pagination;
+    this.internalProps.columnResizeType = options.columnResizeType ?? 'column';
     this.internalProps.dataConfig = options.dataConfig;
     this.internalProps.enableDataAnalysis = options.enableDataAnalysis;
-    if (this.internalProps.enableDataAnalysis && (options.rows || options.columns)) {
-      const rowKeys = options.rows.reduce((keys, rowObj) => {
-        if (typeof rowObj === 'string') {
-          keys.push(rowObj);
-        } else {
-          keys.push(rowObj.dimensionKey);
-        }
-        return keys;
-      }, []);
-      const columnKeys = options.columns.reduce((keys, columnObj) => {
-        if (typeof columnObj === 'string') {
-          keys.push(columnObj);
-        } else {
-          keys.push(columnObj.dimensionKey);
-        }
-        return keys;
-      }, []);
+    if (this.internalProps.enableDataAnalysis) {
+      const rowKeys =
+        options.rows?.reduce((keys, rowObj) => {
+          if (typeof rowObj === 'string') {
+            keys.push(rowObj);
+          } else {
+            keys.push(rowObj.dimensionKey);
+          }
+          return keys;
+        }, []) ?? [];
+      const columnKeys =
+        options.columns?.reduce((keys, columnObj) => {
+          if (typeof columnObj === 'string') {
+            keys.push(columnObj);
+          } else {
+            keys.push(columnObj.dimensionKey);
+          }
+          return keys;
+        }, []) ?? [];
       const indicatorKeys =
         options.indicators?.reduce((keys, indicatorObj) => {
           if (typeof indicatorObj === 'string') {
@@ -79,7 +85,14 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
           }
           return keys;
         }, []) ?? [];
-      this.dataset = new Dataset(this.internalProps.dataConfig, rowKeys, columnKeys, indicatorKeys, options.records);
+      this.dataset = new Dataset(
+        this.internalProps.dataConfig,
+        this.pagination,
+        rowKeys,
+        columnKeys,
+        indicatorKeys,
+        options.records
+      );
     }
 
     this.refreshHeader();
@@ -127,8 +140,10 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
     //维护选中状态
     // const range = internalProps.selection.range; //保留原有单元格选中状态
     super.updateOption(options);
-
+    //分页配置
+    this.pagination = options.pagination;
     // 更新protectedSpace
+    internalProps.columnResizeType = options.columnResizeType ?? 'column';
     internalProps.dataConfig = options.dataConfig;
     internalProps.enableDataAnalysis = options.enableDataAnalysis;
 
@@ -164,7 +179,7 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
         }
         return keys;
       }, []);
-      const indicatorKeys = options.indicators.reduce((keys, indicatorObj) => {
+      const indicatorKeys = options.indicators?.reduce((keys, indicatorObj) => {
         if (typeof indicatorObj === 'string') {
           keys.push(indicatorObj);
         } else {
@@ -172,7 +187,14 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
         }
         return keys;
       }, []);
-      this.dataset = new Dataset(internalProps.dataConfig, rowKeys, columnKeys, indicatorKeys, options.records);
+      this.dataset = new Dataset(
+        internalProps.dataConfig,
+        this.pagination,
+        rowKeys,
+        columnKeys,
+        indicatorKeys,
+        options.records
+      );
     }
     // 更新表头
     this.refreshHeader();
@@ -205,6 +227,28 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
     return new Promise(resolve => {
       setTimeout(resolve, 0);
     });
+  }
+
+  /**
+   * 更新页码
+   * @param pagination 修改页码
+   */
+  updatePagination(pagination: IPagination): void {
+    if (this.pagination) {
+      typeof pagination.currentPage === 'number' &&
+        pagination.currentPage >= 0 &&
+        (this.pagination.currentPage = pagination.currentPage);
+      pagination.perPageCount &&
+        (this.pagination.perPageCount = pagination.perPageCount || this.pagination.perPageCount);
+      // 清空单元格内容
+      this.scenegraph.clearCells();
+      //数据源缓存数据更新
+      this.dataset.updatePagination(this.pagination);
+      this.refreshHeader();
+      // 生成单元格场景树
+      this.scenegraph.createSceneGraph();
+      this.render();
+    }
   }
 
   refreshHeader(): void {
@@ -326,8 +370,8 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
 
   getCellValue(col: number, row: number): FieldData {
     if (this.internalProps.layoutMap.isHeader(col, row)) {
-      const { caption, fieldFormat } = this.internalProps.layoutMap.getHeader(col, row);
-      return typeof fieldFormat === 'function' ? fieldFormat(caption) : caption;
+      const { title, fieldFormat } = this.internalProps.layoutMap.getHeader(col, row);
+      return typeof fieldFormat === 'function' ? fieldFormat(title) : title;
     }
     if (this.dataset) {
       const colKey = this.dataset.colKeysPath[this.internalProps.layoutMap.getRecordIndexByCol(col)] ?? [];
@@ -362,8 +406,8 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
   getCellOriginValue(col: number, row: number): FieldData {
     const table = this;
     if (table.internalProps.layoutMap.isHeader(col, row)) {
-      const { caption } = table.internalProps.layoutMap.getHeader(col, row);
-      return typeof caption === 'function' ? caption() : caption;
+      const { title } = table.internalProps.layoutMap.getHeader(col, row);
+      return typeof title === 'function' ? title() : title;
     }
     if (this.dataset) {
       const colKey = this.dataset.colKeysPath[this.internalProps.layoutMap.getRecordIndexByCol(col)] ?? [];
@@ -439,6 +483,10 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
     (this.internalProps.layoutMap as PivotLayoutMap).updateDataset(this.dataset);
     this.render();
   }
+  /**
+   * 更新排序状态
+   * @param pivotSortStateConfig.dimensions 排序状态维度对应关系；pivotSortStateConfig.order 排序状态
+   */
   updatePivotSortState(
     pivotSortStateConfig: {
       dimensions: IDimensionInfo[];
@@ -632,7 +680,7 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
     const result: DropDownMenuEventInfo = {
       dimensionKey: dimensionInfos[dimensionInfos.length - 1].dimensionKey,
       value: this.getCellValue(col, row),
-      cellType: this.getCellType(col, row),
+      cellLocation: this.getCellLocation(col, row),
       isPivotCorner: this.isCornerHeader(col, row)
     };
     return result;

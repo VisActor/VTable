@@ -80,8 +80,8 @@ export class BodyHelper {
 
     return iconArr;
   }
-  getStyleClass(columnType: 'text' | 'link' | 'image' | 'video' | 'chart' | 'sparkline' | 'progressbar' | 'chart') {
-    switch (columnType) {
+  getStyleClass(cellType: 'text' | 'link' | 'image' | 'video' | 'chart' | 'sparkline' | 'progressbar' | 'chart') {
+    switch (cellType) {
       case 'text':
         return TextStyle;
       case 'image':

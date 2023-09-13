@@ -8,7 +8,7 @@ import type { CellInfo } from '../../common';
 export interface IBasicHeaderIndicator {
   // 单种指标属性配置
   indicatorKey: string; // 指标的唯一标识 用处对应到具体数据查询阶段 flat数据
-  caption?: string; // 指标名
+  title?: string; // 指标名
   // headerType?: HeaderTypeOption | null; //指标表头类型
   // headerStyle?: HeaderStyleOption | null; //指标名称在表头部分显示类型
   headerIcon?: (string | ColumnIconOption)[] | ((args: CellInfo) => (string | ColumnIconOption)[]);
@@ -37,7 +37,7 @@ export interface IBasicColumnIndicator {
   maxWidth?: number | string;
   format?: FieldFormat; // 指标值格式化
   headerFormat?: FieldFormat; // 指标名称格式化
-  // columnType?: ColumnTypeOption | BaseColumn<any, any> | null; // body指标值显示类型
+  // cellType?: ColumnTypeOption | BaseColumn<any, any> | null; // body指标值显示类型
   // style?: ColumnStyleOption | null; // body部分指标值显示样式
   icon?:
     | string

@@ -36,6 +36,7 @@ import { getIconAndPositionFromTarget } from '../scenegraph/utils/icon';
 import type { BaseTableAPI } from '../ts-types/base-table';
 import { isObject, isString, isValid } from '../tools/util';
 import { debounce } from '../tools/debounce';
+import { updateResizeColumn } from './resize/update-resize-column';
 
 export class StateManeger {
   table: BaseTableAPI;
@@ -81,6 +82,7 @@ export class StateManeger {
     /** x坐标是相对table内坐标 */
     x: number;
     resizing: boolean;
+    isRightFrozen?: boolean;
   };
   columnMove: {
     colSource: number;
@@ -123,7 +125,7 @@ export class StateManeger {
   };
   drill: {
     dimensionKey?: string;
-    dimensionTitle?: string;
+    title?: string;
     drillDown?: boolean;
     drillUp?: boolean;
     col: number;
@@ -428,7 +430,7 @@ export class StateManeger {
   isSelecting(): boolean {
     return this.select.selecting;
   }
-  endSelectCells() {
+  endSelectCells(fireListener: boolean = true) {
     this.select.selecting = false;
     if (this.select.ranges.length === 0) {
       return;
@@ -438,11 +440,12 @@ export class StateManeger {
     // 触发SELECTED_CELL
     const lastCol = this.select.ranges[this.select.ranges.length - 1].end.col;
     const lastRow = this.select.ranges[this.select.ranges.length - 1].end.row;
-    this.table.fireListeners(TABLE_EVENT_TYPE.SELECTED_CELL, {
-      ranges: this.select.ranges,
-      col: lastCol,
-      row: lastRow
-    });
+    fireListener &&
+      this.table.fireListeners(TABLE_EVENT_TYPE.SELECTED_CELL, {
+        ranges: this.select.ranges,
+        col: lastCol,
+        row: lastRow
+      });
   }
   endResizeCol() {
     setTimeout(() => {
@@ -453,12 +456,13 @@ export class StateManeger {
     this.table.scenegraph.component.hideResizeCol();
     this.table.scenegraph.updateNextFrame();
   }
-  startResizeCol(col: number, x: number, y: number) {
+  startResizeCol(col: number, x: number, y: number, isRightFrozen?: boolean) {
     this.columnResize.resizing = true;
     this.columnResize.col = col;
     this.columnResize.x = x;
+    this.columnResize.isRightFrozen = isRightFrozen;
 
-    this.table.scenegraph.component.showResizeCol(col, y);
+    this.table.scenegraph.component.showResizeCol(col, y, isRightFrozen);
 
     // 调整列宽期间清空选中清空
     this.table.stateManeger.updateSelectPos(-1, -1);
@@ -466,60 +470,7 @@ export class StateManeger {
     this.table.scenegraph.updateNextFrame();
   }
   updateResizeCol(xInTable: number, yInTable: number) {
-    xInTable = Math.ceil(xInTable);
-    yInTable = Math.ceil(yInTable);
-    let detaX = xInTable - this.columnResize.x;
-    // table.getColWidth会使用Math.round，因此这里直接跳过小于1px的修改
-    if (Math.abs(detaX) < 1) {
-      return;
-    }
-
-    // 检查minWidth/maxWidth
-    // getColWidth会进行Math.round，所以先从colWidthsMap获取：
-    // 如果是数值，直接使用；如果不是，则通过getColWidth获取像素值
-    let widthCache = (this.table as any).colWidthsMap.get(this.columnResize.col);
-    if (typeof widthCache === 'number') {
-      widthCache = widthCache;
-    } else {
-      widthCache = this.table.getColWidth(this.columnResize.col);
-    }
-    let width = widthCache;
-    width += detaX;
-    const minWidth = this.table.getMinColWidth(this.columnResize.col);
-    const maxWidth = this.table.getMaxColWidth(this.columnResize.col);
-
-    if (width < minWidth || width > maxWidth) {
-      if (widthCache === minWidth || widthCache === maxWidth) {
-        return;
-      } else if (widthCache - minWidth > maxWidth - widthCache) {
-        detaX = maxWidth - widthCache;
-      } else {
-        detaX = minWidth - widthCache;
-      }
-    }
-    detaX = Math.ceil(detaX);
-    if (this.table.widthMode === 'adaptive' && this.columnResize.col < this.table.colCount - 1) {
-      // in adaptive mode, the right column width can not be negative
-      const rightColWidth = this.table.getColWidth(this.columnResize.col + 1);
-      if (rightColWidth - detaX < 0) {
-        detaX = rightColWidth;
-      }
-      this.table.scenegraph.updateColWidth(this.columnResize.col, detaX);
-      this.table.scenegraph.updateColWidth(this.columnResize.col + 1, -detaX);
-    } else {
-      this.table.scenegraph.updateColWidth(this.columnResize.col, detaX);
-    }
-    this.columnResize.x = xInTable;
-
-    this.table.scenegraph.component.updateResizeCol(this.columnResize.col, yInTable);
-    if (
-      this.columnResize.col < this.table.frozenColCount &&
-      !this.table.isPivotTable() &&
-      !(this.table as ListTable).transpose
-    ) {
-      this.table.scenegraph.component.setFrozenColumnShadow(this.table.frozenColCount - 1);
-    }
-    this.table.scenegraph.updateNextFrame();
+    updateResizeColumn(xInTable, yInTable, this);
   }
   startMoveCol(col: number, row: number, x: number, y: number) {
     startMoveCol(col, row, x, y, this);
@@ -846,7 +797,7 @@ export class StateManeger {
         row: row,
         order: order || 'normal',
         dimensionInfo: (this.table.internalProps.layoutMap as PivotHeaderLayoutMap).getPivotDimensionInfo(col, row),
-        cellType: this.table.getCellType(col, row)
+        cellLocation: this.table.getCellLocation(col, row)
       });
       return;
     }
@@ -927,14 +878,14 @@ export class StateManeger {
 
   updateDrillState(
     dimensionKey: string,
-    dimensionTitle: string,
+    title: string,
     drillDown: boolean,
     drillUp: boolean,
     col: number,
     row: number
   ) {
     this.drill.dimensionKey = dimensionKey;
-    this.drill.dimensionTitle = dimensionTitle;
+    this.drill.title = title;
     this.drill.drillDown = drillDown;
     this.drill.drillUp = drillUp;
     this.drill.col = col;
@@ -946,10 +897,16 @@ export class StateManeger {
     if (this.sparkLine.col !== -1 && this.sparkLine.row !== -1) {
       clearChartHover(this.sparkLine.col, this.sparkLine.row, this.table);
     }
+    let isUpdated = false;
     if (col !== -1 && row !== -1) {
-      updateChartHover(col, row, x, y, this.table);
+      isUpdated = updateChartHover(col, row, x, y, this.table);
     }
-    this.sparkLine.col = col;
-    this.sparkLine.row = row;
+    if (isUpdated) {
+      this.sparkLine.col = col;
+      this.sparkLine.row = row;
+    } else {
+      this.sparkLine.col = -1;
+      this.sparkLine.row = -1;
+    }
   }
 }

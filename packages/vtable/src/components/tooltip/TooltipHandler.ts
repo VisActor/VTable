@@ -200,6 +200,9 @@ export class TooltipHandler {
         this._unbindFromCell();
       }
     });
+    table.on(TABLE_EVENT_TYPE.MOUSELEAVE_TABLE, e => {
+      this._unbindFromCell();
+    });
     table.on(TABLE_EVENT_TYPE.SCROLL, e => {
       const info = this._attachInfo;
       if (info?.tooltipOptions && info?.range?.start) {

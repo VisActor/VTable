@@ -9,11 +9,11 @@ import type { BaseTableAPI } from '../../base-table';
 // eslint-disable-next-line no-unused-vars
 export interface IBasicHeaderDefine {
   // 表头的标题
-  caption?: string | (() => string); //支持图文混合
+  title?: string | (() => string); //支持图文混合
   /** @deprecated
    * 已废除该配置 标题中显示图标 现在请使用headerIcon进行配置
    */
-  captionIcon?: ColumnIconOption;
+  // captionIcon?: ColumnIconOption;
   /** 表头Icon配置 */
   headerIcon?: string | ColumnIconOption | (string | ColumnIconOption)[];
   // | ((args: CellInfo) => string | ColumnIconOption | (string | ColumnIconOption)[]);
@@ -69,7 +69,7 @@ export interface IBasicColumnBodyDefine {
     | (string | ColumnIconOption)[]
     | ((args: CellInfo & { table: BaseTableAPI }) => string | ColumnIconOption | (string | ColumnIconOption)[]);
 
-  // columnType?: ColumnTypeOption | BaseColumn<T, any> | null;
+  // cellType?: ColumnTypeOption | BaseColumn<T, any> | null;
 
   // /** 如果是绘制图表库组件的图表类型 需要将注入的组件名称 写到chartType */
   // chartModule?: string;

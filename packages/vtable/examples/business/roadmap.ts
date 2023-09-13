@@ -1,6 +1,6 @@
 import * as VTable from '../../src';
 const ListTable = VTable.ListTable;
-const Table_CONTAINER_DOM_ID = 'vTable';
+const CONTAINER_ID = 'vTable';
 
 export function createTable() {
   // 注册里程碑的icon 小旗帜
@@ -120,11 +120,11 @@ export function createTable() {
     }
   ];
   const option: VTable.ListTableConstructorOptions = {
-    container: document.getElementById(Table_CONTAINER_DOM_ID),
+    container: document.getElementById(CONTAINER_ID),
     columns: [
       {
         field: 'month',
-        caption: '',
+        title: '',
         style: {
           textAlign: 'center',
           color: 'white',
@@ -159,13 +159,13 @@ export function createTable() {
       },
       {
         field: '',
-        caption: ' ',
+        title: ' ',
         style: {
           borderLineWidth: 1
         }
       },
       {
-        caption: 'BASIC\nFUNCTION',
+        title: 'BASIC\nFUNCTION',
         hideColumnsSubHeader: true,
         headerIcon: ['milestone'],
         columns: [
@@ -204,7 +204,7 @@ export function createTable() {
               ];
             },
             headerIcon: ['milestone'],
-            caption: 'BASIC\nFUNCTION',
+            title: 'BASIC\nFUNCTION',
             width: 'auto',
             style: {
               borderLineWidth: 1,
@@ -250,7 +250,7 @@ export function createTable() {
               ];
             },
 
-            caption: '',
+            title: '',
             width: 'auto',
             style: {
               borderLineWidth: 1,
@@ -267,14 +267,14 @@ export function createTable() {
 
       {
         field: '',
-        caption: ' ',
+        title: ' ',
         style: {
           borderLineWidth: 1
         }
       },
       {
         field: 'Visualize',
-        caption: 'VISUALIZE',
+        title: 'VISUALIZE',
         style: {
           borderLineWidth: 1,
           borderColor: '#000'
@@ -317,14 +317,14 @@ export function createTable() {
       },
       {
         field: '',
-        caption: ' ',
+        title: ' ',
         style: {
           borderLineWidth: 1
         }
       },
       {
         field: 'Animation',
-        caption: 'ANIMATION',
+        title: 'ANIMATION',
         style: {
           borderLineWidth: 1,
           borderColor: '#000'
@@ -367,14 +367,14 @@ export function createTable() {
       },
       {
         field: '',
-        caption: ' ',
+        title: ' ',
         style: {
           borderLineWidth: 1
         }
       },
       {
         field: 'Component',
-        caption: 'COMPONENT',
+        title: 'COMPONENT',
         style: {
           borderLineWidth: 1,
           borderColor: '#000'

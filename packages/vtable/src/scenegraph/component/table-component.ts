@@ -316,10 +316,10 @@ export class TableComponent {
    * @param {number} y
    * @return {*}
    */
-  showResizeCol(col: number, y: number) {
+  showResizeCol(col: number, y: number, isRightFrozen?: boolean) {
     // this.columnResizeLine.attribute.visible = false;
     // 基准线
-    const colX = getColX(col, this.table);
+    const colX = getColX(col, this.table, isRightFrozen);
     this.columnResizeLine.setAttributes({
       visible: true,
       x: colX,
@@ -354,9 +354,9 @@ export class TableComponent {
    * @param {number} y 标签显示的y坐标
    * @return {*}
    */
-  updateResizeCol(col: number, y: number) {
+  updateResizeCol(col: number, y: number, isRightFrozen?: boolean) {
     // 基准线
-    const colX = getColX(col, this.table);
+    const colX = getColX(col, this.table, isRightFrozen);
     // this.columnResizeLine.setAttribute('x', x);
     this.columnResizeLine.setAttributes({
       x: colX,
@@ -414,13 +414,14 @@ export class TableComponent {
    * @param {number} col
    * @return {*}
    */
-  setFrozenColumnShadow(col: number) {
+  setFrozenColumnShadow(col: number, isRightFrozen?: boolean) {
     if (col < 0) {
       this.frozenShadowLine.setAttributes({
         visible: false
       });
     } else {
-      const colX = this.table.getColsWidth(0, col);
+      // const colX = this.table.getColsWidth(0, col);
+      const colX = getColX(col, this.table, isRightFrozen);
       this.frozenShadowLine.setAttributes({
         visible: true,
         x: colX,

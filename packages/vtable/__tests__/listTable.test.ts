@@ -1,6 +1,6 @@
 // @ts-nocheck
 // 有问题可对照demo unitTestListTable
-import records from './marketsales.json';
+import records from './data/marketsales.json';
 import { ListTable } from '../src/ListTable';
 import { createDiv } from './dom';
 global.__VERSION__ = 'none';
@@ -82,6 +82,9 @@ describe('listTable init test', () => {
   option.container = containerDom;
   option.records = records;
   const listTable = new ListTable(option);
+  test('listTable getCellValue', () => {
+    expect(listTable.getCellValue(6, 3)).toBe('Cardinal 孔加固材料, 回收');
+  });
   test('listTable getCellOverflowText', () => {
     expect(listTable.getCellOverflowText(6, 3)).toBe('Cardinal 孔加固材料, 回收');
   });
@@ -101,7 +104,43 @@ describe('listTable init test', () => {
     expect(listTable.getScrollLeft()).toBe(601);
     expect(listTable.getScrollTop()).toBe(802);
   });
+  test('listTable updateTheme', () => {
+    listTable.heightMode = 'autoHeight';
+    listTable.updateTheme({
+      bodyStyle: {
+        fontFamily: 'Calibri',
+        fontSize: 28,
+        color: 'red'
+      }
+    });
+    listTable.scrollToCell({ col: 6, row: 16 });
 
+    expect(listTable.getScrollLeft()).toBe(901);
+    expect(listTable.getScrollTop()).toBe(720);
+    expect(listTable.getCellStyle(6, 16)).toStrictEqual({
+      textAlign: 'left',
+      textBaseline: 'middle',
+      bgColor: '#FFF',
+      color: 'red',
+      fontFamily: 'Calibri',
+      fontSize: 28,
+      fontStyle: undefined,
+      fontVariant: undefined,
+      fontWeight: null,
+      lineHeight: 28,
+      autoWrapText: false,
+      lineClamp: 'auto',
+      textOverflow: 'ellipsis',
+      borderColor: '#000',
+      borderLineWidth: 1,
+      borderLineDash: [],
+      underline: false,
+      underlineWidth: undefined,
+      lineThrough: false,
+      lineThroughLineWidth: undefined,
+      padding: [10, 16, 10, 16]
+    });
+  });
   test('listTable updateOption records&autoWidth&widthMode', () => {
     columns.shift();
     const recordDeleted = records.slice(10, 30);
@@ -113,7 +152,8 @@ describe('listTable init test', () => {
       heightMode: 'autoHeight',
       autoWrapText: true,
       widthMode: 'autoWidth',
-      limitMaxAutoWidth: 170
+      limitMaxAutoWidth: 170,
+      dragHeaderMode: 'all'
     };
     listTable.updateOption(option1);
     expect(listTable.rowCount).toBe(21);
@@ -121,6 +161,45 @@ describe('listTable init test', () => {
     expect(listTable.getScrollTop()).toBe(0);
     expect(listTable.getColWidth(0)).toBe(122);
     expect(listTable.getColWidth(5)).toBe(170);
+  });
+  test('listTable selectCell', () => {
+    listTable.selectCell(4, 5);
+    expect(listTable.stateManeger?.select.ranges).toEqual([
+      {
+        start: {
+          col: 4,
+          row: 5
+        },
+        end: {
+          col: 4,
+          row: 5
+        }
+      }
+    ]);
+    const scrollTop = listTable.scrollTop;
+    listTable.selectCells([
+      { start: { col: 1, row: 3 }, end: { col: 4, row: 6 } },
+      { start: { col: 0, row: 4 }, end: { col: 7, row: 4 } },
+      { start: { col: 4, row: 36 }, end: { col: 7, row: 36 } }
+    ]);
+
+    expect(listTable.stateManeger?.select.ranges).toEqual([
+      { start: { col: 1, row: 3 }, end: { col: 4, row: 6 } },
+      { start: { col: 0, row: 4 }, end: { col: 7, row: 4 } },
+      { start: { col: 4, row: 36 }, end: { col: 7, row: 36 } }
+    ]);
+    expect(listTable.getScrollTop()).toBe(scrollTop);
+  });
+  test('listTable measureTextWidth', () => {
+    const measureTextWdith = listTable.measureText("家里方大化工撒个福建师大看哈 fdsfgj! *-+&5%#.,'.，。、", {
+      fontFamily: 'Arial',
+      fontSize: 15,
+      fontWeight: 'bold'
+    });
+    expect(measureTextWdith).toEqual({
+      width: 390.0501427283655,
+      height: 15
+    });
   });
   // test('listTable API getAllCells', () => {
   //   expect(JSON.parse(JSON.stringify(listTable.getCellInfo(5, 5)))).toEqual({
@@ -136,7 +215,7 @@ describe('listTable init test', () => {
   //       rowHeaderPaths: []
   //     },
   //     caption: '省/自治区',
-  //     columnType: 'text',
+  //     cellType: 'text',
   //     originData: {
   //       '行 ID': '5',
   //       '订单 ID': 'CN-2018-2975416',
@@ -173,4 +252,7 @@ describe('listTable init test', () => {
   //     scaleRatio: 1
   //   });
   // });
+  setTimeout(() => {
+    listTable.release();
+  }, 1000);
 });

@@ -20,43 +20,55 @@ export const continuousTicks = (scale: ContinuousScale, op: any): any[] => {
   if (!isContinuous(scale.type)) {
     return convertDomainToTickData(scale.domain(), op);
   }
-  const { tickCount, forceTickCount, tickStep } = op;
+  // if range is so small
+  const range = scale.range();
+  const rangeSize = Math.abs(range[range.length - 1] - range[0]);
+  if (rangeSize < 2) {
+    return convertDomainToTickData([scale.domain()[0]], op);
+  }
+
+  const { tickCount, forceTickCount, tickStep, noDecimals = false } = op;
 
   let scaleTicks: number[];
   if (isValid(tickStep)) {
     scaleTicks = (scale as LinearScale).stepTicks(tickStep);
   } else if (isValid(forceTickCount)) {
     scaleTicks = (scale as LinearScale).forceTicks(forceTickCount);
+  } else if (op.tickMode === 'd3') {
+    scaleTicks = (scale as LinearScale).d3Ticks(tickCount ?? DEFAULT_CONTINUOUS_TICK_COUNT, { noDecimals });
   } else {
-    scaleTicks = (scale as LinearScale).ticks(tickCount ?? DEFAULT_CONTINUOUS_TICK_COUNT);
+    scaleTicks = (scale as LinearScale).ticks(tickCount ?? DEFAULT_CONTINUOUS_TICK_COUNT, { noDecimals });
   }
 
-  // 判断重叠
-  if (op.coordinateType === 'cartesian' || (op.coordinateType === 'polar' && op.axisOrientType === 'radius')) {
-    const { labelGap = 4, labelFlush } = op as any;
-    let items = getCartesianLabelBounds(scale, scaleTicks, op as any).map(
-      (bounds, i) =>
-        ({
-          AABBBounds: bounds,
-          value: scaleTicks[i]
-        } as ILabelItem<number>)
-    );
-    while (items.length >= 3 && hasOverlap(items, labelGap)) {
-      items = methods.parity(items);
-    }
-    const ticks = items.map(item => item.value);
-
-    if (ticks.length < 3 && labelFlush) {
-      if (ticks.length > 1) {
-        ticks.pop();
+  if (op.sampling) {
+    // 判断重叠
+    if (op.coordinateType === 'cartesian' || (op.coordinateType === 'polar' && op.axisOrientType === 'radius')) {
+      const { labelGap = 4, labelFlush } = op as any;
+      let items = getCartesianLabelBounds(scale, scaleTicks, op as any).map(
+        (bounds, i) =>
+          ({
+            AABBBounds: bounds,
+            value: scaleTicks[i]
+          } as ILabelItem<number>)
+      );
+      while (items.length >= 3 && hasOverlap(items, labelGap)) {
+        items = methods.parity(items);
       }
-      if (peek(ticks) !== peek(scaleTicks)) {
-        ticks.push(peek(scaleTicks));
-      }
-    }
+      const ticks = items.map(item => item.value);
 
-    scaleTicks = ticks;
+      if (ticks.length < 3 && labelFlush) {
+        if (ticks.length > 1) {
+          ticks.pop();
+        }
+        if (peek(ticks) !== peek(scaleTicks)) {
+          ticks.push(peek(scaleTicks));
+        }
+      }
+
+      scaleTicks = ticks;
+    }
   }
+
   return convertDomainToTickData(scaleTicks, op);
 };
 

@@ -1,6 +1,6 @@
 import type { ColumnTypeOption } from './column';
 import type { ColumnData } from './list-table/layout-map/api';
-import type { CellType, FieldData, FieldDef } from './table-engine';
+import type { CellLocation, FieldData, FieldDef } from './table-engine';
 
 export type MaybePromise<T> = T | Promise<T>;
 
@@ -34,7 +34,7 @@ export type SortOption = boolean | ((v1: any, v2: any, order: SortOrder) => -1 |
 export type CellInfo = {
   col: number;
   row: number;
-  caption?: string | (() => string) | undefined;
+  title?: string | (() => string) | undefined;
   /**维度名称 */
   field?: FieldDef;
   /**单元格行列表头paths */
@@ -47,19 +47,19 @@ export type CellInfo = {
   value?: FieldData;
   /**原始值 */
   dataValue?: FieldData;
-  cellType?: CellType;
-  columnType?: ColumnTypeOption;
+  cellLocation?: CellLocation;
+  cellType?: ColumnTypeOption;
 };
 
 export type ICellHeaderPaths = IListTableCellHeaderPaths | IPivotTableCellHeaderPaths;
 export type IListTableCellHeaderPaths = {
   readonly colHeaderPaths?: {
     field: FieldDef;
-    // caption: string | (() => string) | undefined;
+    // title: string | (() => string) | undefined;
   }[];
   readonly rowHeaderPaths?: {
     field: FieldDef;
-    // caption: string | (() => string) | undefined;
+    // title: string | (() => string) | undefined;
   }[];
 };
 export type IPivotTableCellHeaderPaths = {

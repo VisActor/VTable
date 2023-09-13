@@ -1,6 +1,6 @@
 import { TABLE_EVENT_TYPE } from '../../core/TABLE_EVENT_TYPE';
 import { defaultOrderFn } from '../../tools/util';
-import type { HeaderData, HeaderDefine, ListTableAPI, SortState } from '../../ts-types';
+import type { ColumnDefine, HeaderData, HeaderDefine, ListTableAPI, SortState } from '../../ts-types';
 import type { BaseTableAPI } from '../../ts-types/base-table';
 
 /**
@@ -35,7 +35,7 @@ export function dealSort(col: number, row: number, table: ListTableAPI) {
     range1 && (isTargetCell = isTarget(col, row, range1.col, range1.row, table));
   }
 
-  const headerC = table.getHeaderDefine(col, row) as any;
+  const headerC = table.getHeaderDefine(col, row) as ColumnDefine;
   //当前排序规则是该表头field 且 表头设置了sort规则 需要转变sort的状态
   if (tableState && isTargetCell && headerC?.sort) {
     tableState.order = tableState.order === 'asc' ? 'desc' : tableState.order === 'desc' ? 'normal' : 'asc';
@@ -55,7 +55,13 @@ export function dealSort(col: number, row: number, table: ListTableAPI) {
       order: 'normal'
     };
   }
-  table.sortState = tableState; // 目前不支持多级排序 所以这里 直接赋值为单个sortState TODO优化（如果支持多级排序的话）
+  // 如果用户监听SORT_CLICK事件的回调函数返回false 则不执行内部排序逻辑
+  const sortEventReturns = table.fireListeners(TABLE_EVENT_TYPE.SORT_CLICK, tableState);
+  if (sortEventReturns.includes(false)) {
+    return;
+  }
+
+  table.internalProps.sortState = tableState; // 目前不支持多级排序 所以这里 直接赋值为单个sortState TODO优化（如果支持多级排序的话）
   table.stateManeger.setSortState(tableState);
   if (headerC?.sort) {
     executeSort(tableState, table, headerC);
@@ -63,7 +69,6 @@ export function dealSort(col: number, row: number, table: ListTableAPI) {
   table.scenegraph.sortCell();
   // 排序后，清除选中效果
   table.stateManeger.updateSelectPos(-1, -1);
-  table.fireListeners(TABLE_EVENT_TYPE.SORT_CLICK, tableState);
 }
 
 function executeSort(newState: SortState, table: BaseTableAPI, headerDefine: HeaderDefine): void {

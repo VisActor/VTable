@@ -5,7 +5,7 @@ import { default as MarkdownIt } from 'markdown-it';
 // window.VTable = VTable;
 // window.PivotTable = PivotTable;
 // window.PivotTable = PivotTable;
-// window.Table_CONTAINER_DOM_ID = 'vTable';
+// window.CONTAINER_ID = 'vTable';
 
 const md = new MarkdownIt();
 

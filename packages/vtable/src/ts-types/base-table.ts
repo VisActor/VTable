@@ -22,7 +22,7 @@ import type { EventManeger } from '../event/event';
 import type {
   CellAddress,
   CellRange,
-  CellType,
+  CellLocation,
   ColumnTypeOption,
   DataSourceAPI,
   FieldData,
@@ -33,7 +33,7 @@ import type {
   HeightModeDef,
   HierarchyState,
   IDataConfig,
-  IPagerConf,
+  IPagination,
   ITableThemeDefine,
   SortState,
   TableKeyboardOptions,
@@ -54,10 +54,11 @@ import type { EventHandler } from '../event/EventHandler';
 import type { NumberMap } from '../tools/NumberMap';
 import type { FocusInput } from '../core/FouseInput';
 import type { ITableLegendOption } from './component/legend';
-import type { TableLegend } from '../components/legend/legend';
 import type { DataSet } from '@visactor/vdataset';
 import type { Title } from '../components/title/title';
 import type { ITitle } from './component/title';
+import type { DiscreteTableLegend } from '../components/legend/discrete-legend/discrete-legend';
+import type { ContinueTableLegend } from '../components/legend/continue-legend/continue-legend';
 
 export interface IBaseTableProtected {
   element: HTMLElement;
@@ -86,6 +87,7 @@ export interface IBaseTableProtected {
   // disableRowHeaderColumnResize?: boolean;
   // 列宽调整模式（全列调整；全列不可调整；仅表头单元格可调整；仅内容单元格可调整）
   columnResizeMode?: 'all' | 'none' | 'header' | 'body';
+  columnResizeType?: 'column' | 'indicator' | 'all' | 'indicatorGroup';
   /** 控制拖拽表头移动位置顺序开关 */
   dragHeaderMode?: 'all' | 'none' | 'column' | 'row';
 
@@ -109,6 +111,8 @@ export interface IBaseTableProtected {
 
   _rowRangeHeightsMap: Map<string, number>; //存储指定行范围的总高度
   _colRangeWidthsMap: Map<string, number>; //存储指定列范围的总宽度
+
+  _widthResizedColMap: Set<number>; //记录下被手动调整过列宽的列号
 
   bodyHelper: BodyHelper;
   headerHelper: HeaderHelper;
@@ -175,7 +179,7 @@ export interface IBaseTableProtected {
   limitMaxAutoWidth?: boolean | number;
 
   title?: Title;
-  legends?: TableLegend;
+  legends?: DiscreteTableLegend | ContinueTableLegend;
 
   //是否开启图表异步渲染
   renderChartAsync?: boolean;
@@ -373,7 +377,7 @@ export interface BaseTableAPI {
   /** 存储内部用到的属性 变量等 */
   internalProps: IBaseTableProtected;
   /** 分页信息 */
-  pagerConf?: IPagerConf;
+  pagination?: IPagination;
 
   /** 表格偏移像素值 水平方向 */
   tableX: number;
@@ -392,7 +396,7 @@ export interface BaseTableAPI {
   ) => EventListenerId;
   // &(<T extends keyof TableEventHandlersEventArgumentMap>(type: string, listener: AnyListener<T>) => EventListenerId);
 
-  dataSet: DataSet;
+  _vDataSet: DataSet;
   /** 场景树对象 */
   scenegraph: Scenegraph;
   /** 状态管理模块 */
@@ -422,7 +426,8 @@ export interface BaseTableAPI {
   getRowHeight: (row: number) => number;
   setRowHeight: (row: number, height: number, clearCache?: boolean) => void;
   getColWidth: (col: number) => number;
-  getColWidthDefine: (col: number) => string | number;
+  getColWidthDefined: (col: number) => string | number;
+  // getColWidthDefine: (col: number) => string | number;
   setColWidth: (col: number, width: number | string, clearCache?: boolean, skipCheckFrozen?: boolean) => void;
   _getColContentWidth: (col: number) => number;
   _setColContentWidth: (col: number, width: number | string, clearCache?: boolean) => void;
@@ -457,7 +462,7 @@ export interface BaseTableAPI {
   getBottomFrozenRowsHeight: () => number;
   getRightFrozenColsWidth: () => number;
   selectCell: (col: number, row: number) => void;
-
+  selectCells: (cellRanges: CellRange[]) => void;
   getAllRowsHeight: () => number;
   getAllColsWidth: () => number;
 
@@ -487,7 +492,7 @@ export interface BaseTableAPI {
   ) => TableEventHandlersReturnMap[TYPE][];
 
   //更新分页
-  updatePager: (cof: IPagerConf) => void;
+  updatePagination: (cof: IPagination) => void;
   //hover
 
   getHeaderDescription: (col: number, row: number) => string | undefined;
@@ -501,7 +506,7 @@ export interface BaseTableAPI {
   getFieldData: (field: FieldDef | FieldFormat | undefined, col: number, row: number) => FieldData;
   _hasField: (field: FieldDef, col: number, row: number) => boolean;
   getCellHeaderPaths: (col: number, row: number) => ICellHeaderPaths;
-  getCellType: (col: number, row: number) => CellType;
+  getCellLocation: (col: number, row: number) => CellLocation;
   // isHitIcon(col: number, row: number, x: number, y: number, iconType: IconFuncTypeEnum): boolean;
   getCellIcons: (col: number, row: number) => ColumnIconOption[];
 
@@ -538,7 +543,6 @@ export interface BaseTableAPI {
     text: string,
     font: { fontSize: number; fontWeight?: string | number; fontFamily: string }
   ) => ITextSize;
-  measureTextBounds: (attributes: IWrapTextGraphicAttribute) => ITextSize;
 
   _canResizeColumn: (col: number, row: number) => boolean;
 
@@ -549,7 +553,8 @@ export interface BaseTableAPI {
   isPivotChart: (() => boolean) & (() => boolean);
   _clearColRangeWidthsMap: (col?: number) => void;
   _clearRowRangeHeightsMap: (row?: number) => void;
-
+  clearRowHeightCache: () => void;
+  clearColWidthCache: () => void;
   toggleHierarchyState: (col: number, row: number) => void;
 
   resize: () => void;
@@ -558,6 +563,8 @@ export interface BaseTableAPI {
 
   getTargetColAt: (absoluteX: number) => { col: number; left: number; right: number; width: number } | null;
   getTargetRowAt: (absoluteY: number) => { row: number; top: number; bottom: number; height: number } | null;
+
+  renderWithRecreateCells: () => void;
   //#endregion  tableAPI
 }
 export interface ListTableProtected extends IBaseTableProtected {

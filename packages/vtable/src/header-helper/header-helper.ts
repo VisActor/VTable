@@ -106,8 +106,8 @@ export class HeaderHelper {
       icons.push(...dropDownStateIcons);
     }
 
-    const { captionIcon, headerIcon } = this._table._getHeaderLayoutMap(col, row);
-    captionIcon && icons.push(captionIcon);
+    const { headerIcon } = this._table._getHeaderLayoutMap(col, row);
+    // captionIcon && icons.push(captionIcon);
 
     const hierarchyIcon = this.getHierarchyIcon(col, row);
     if (hierarchyIcon) {
@@ -155,6 +155,10 @@ export class HeaderHelper {
     // this.showFrozenIconIcon = undefined;
     if (this._table.isPivotTable() || (this._table as ListTable).transpose) {
       // 透视表和转置模式不显示冻结按钮
+      return null;
+    }
+
+    if (this._table.rightFrozenColCount && col >= this._table.colCount - this._table.rightFrozenColCount) {
       return null;
     }
     const headerC = this._table.getHeaderDefine(col, row) as any;

@@ -1,7 +1,7 @@
 /* eslint-disable */
 import * as VTable from '../../src';
 import VChart from '@visactor/vchart';
-const Table_CONTAINER_DOM_ID = 'vTable';
+const CONTAINER_ID = 'vTable';
 VTable.register.chartModule('vchart', VChart);
 export function createTable() {
   const rowTree = [
@@ -21,9 +21,9 @@ export function createTable() {
   const indicators: VTable.TYPES.IIndicator[] = [
     {
       indicatorKey: '230713183656009',
-      caption: '数量',
+      title: '数量',
       width: 'auto',
-      columnType: 'chart',
+      cellType: 'chart',
       chartModule: 'vchart',
       chartSpec: {
         // type: 'common',
@@ -134,8 +134,8 @@ export function createTable() {
     },
     {
       indicatorKey: '230417171050025',
-      caption: '销售额 & 利润',
-      columnType: 'chart',
+      title: '销售额 & 利润',
+      cellType: 'chart',
       chartModule: 'vchart',
       chartSpec: {
         type: 'common',
@@ -327,9 +327,9 @@ export function createTable() {
     },
     {
       indicatorKey: '230707112948009',
-      caption: '折扣',
+      title: '折扣',
       width: 'auto',
-      columnType: 'chart',
+      cellType: 'chart',
       chartModule: 'vchart',
       chartSpec: {
         // type: 'common',
@@ -10247,7 +10247,7 @@ export function createTable() {
     columns,
     indicators,
     indicatorsAsCol: false,
-    container: document.getElementById(Table_CONTAINER_DOM_ID),
+    container: document.getElementById(CONTAINER_ID),
     records,
     defaultRowHeight: 200,
     defaultHeaderRowHeight: 50,
@@ -10366,7 +10366,7 @@ export function createTable() {
     // }
   };
   const option1 = {
-    container: document.getElementById(Table_CONTAINER_DOM_ID),
+    container: document.getElementById(CONTAINER_ID),
     rowTree: [
       {
         dimensionKey: '',
@@ -10455,8 +10455,8 @@ export function createTable() {
       {
         indicatorKey: '0',
         width: 'auto',
-        caption: 'caption',
-        columnType: 'chart',
+        title: 'title',
+        cellType: 'chart',
         chartModule: 'vchart',
         chartSpec: {
           xField: '230804115238020',
@@ -10492,8 +10492,8 @@ export function createTable() {
       {
         indicatorKey: '1',
         width: 'auto',
-        caption: 'caption',
-        columnType: 'chart',
+        title: 'title',
+        cellType: 'chart',
         chartModule: 'vchart',
         chartSpec: {
           xField: '230804115238020',
