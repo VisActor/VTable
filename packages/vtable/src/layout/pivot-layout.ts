@@ -1602,4 +1602,8 @@ export class PivotLayoutMap implements LayoutMapAPI {
       indicatorObject.chartInstance?.release();
     });
   }
+
+  clearCellRangeMap() {
+    // do nothing
+  }
 }

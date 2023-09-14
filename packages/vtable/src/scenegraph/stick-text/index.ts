@@ -40,7 +40,7 @@ export function handleTextStick(table: BaseTableAPI) {
         adjustCellContentHorizontalLayout(
           cellGroup,
           frozenColsWidth + table.tableX,
-          table.tableNoFrameWidth - table.getRightFrozenColsWidth()
+          table.tableNoFrameWidth - table.getRightFrozenColsWidth() + table.tableX
         );
         changedCells.push({ col, row });
       }
@@ -62,7 +62,7 @@ export function handleTextStick(table: BaseTableAPI) {
         adjustCellContentVerticalLayout(
           cellGroup,
           frozenRowsHeight + table.tableY,
-          table.tableNoFrameHeight - table.getBottomFrozenRowsHeight()
+          table.tableNoFrameHeight - table.getBottomFrozenRowsHeight() + table.tableY
         );
         changedCells.push({ col, row });
       }
@@ -77,13 +77,13 @@ export function handleTextStick(table: BaseTableAPI) {
         adjustCellContentVerticalLayout(
           cellGroup,
           frozenRowsHeight + table.tableY,
-          table.tableNoFrameHeight - table.getBottomFrozenRowsHeight()
+          table.tableNoFrameHeight - table.getBottomFrozenRowsHeight() + table.tableY
         );
         // adjust cell Horizontal
         adjustCellContentHorizontalLayout(
           cellGroup,
           frozenColsWidth + table.tableX,
-          table.tableNoFrameWidth - table.getRightFrozenColsWidth()
+          table.tableNoFrameWidth - table.getRightFrozenColsWidth() + table.tableX
         );
         changedCells.push({ col, row });
       }

@@ -12,7 +12,7 @@ import type { Scenegraph } from '../scenegraph';
 import { getCellMergeInfo } from './get-cell-merge';
 import { getHierarchyOffset } from './get-hierarchy-offset';
 import type { BaseTableAPI } from '../../ts-types/base-table';
-import { isNumber } from '@visactor/vutils';
+import { isNil, isNumber, isValid } from '@visactor/vutils';
 
 /**
  * @description: 创建单元格内容
@@ -71,7 +71,7 @@ export function createCellContent(
   let absoluteRightIconWidth = 0;
 
   if (!Array.isArray(icons) || icons.length === 0) {
-    if (textStr) {
+    if (isValid(textStr)) {
       // 没有icon，cellGroup只添加WrapText
       const text = convertInternal(textStr).replace(/\r?\n/g, '\n').replace(/\r/g, '\n').split('\n');
 

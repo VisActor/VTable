@@ -314,5 +314,6 @@ export function createTable() {
           })
         );
       });
+      bindDebugTool(instance.scenegraph.stage, {});
     });
 }

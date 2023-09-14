@@ -66,6 +66,10 @@ export function dealSort(col: number, row: number, table: ListTableAPI) {
   if (headerC?.sort) {
     executeSort(tableState, table, headerC);
   }
+
+  // clear cell range cache
+  table.internalProps.layoutMap.clearCellRangeMap();
+
   table.scenegraph.sortCell();
   // 排序后，清除选中效果
   table.stateManeger.updateSelectPos(-1, -1);
