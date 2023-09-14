@@ -443,7 +443,8 @@ export function bindTableGroupListener(eventManeger: EventManeger) {
                 position: position,
                 funcType: (icon as any).attribute.funcType
               }
-            : undefined
+            : undefined,
+          target: eventArgsSet?.eventArgs?.target
         };
         if (cellInRanges(table.stateManeger.select.ranges, col, row)) {
           // 用户右键点击已经选中的区域
@@ -548,7 +549,8 @@ export function bindTableGroupListener(eventManeger: EventManeger) {
               position: position,
               funcType: (icon as any).attribute.funcType
             }
-          : undefined
+          : undefined,
+        target: eventArgsSet?.eventArgs?.target
       };
       table.fireListeners(TABLE_EVENT_TYPE.DBLCLICK_CELL, cellsEvent);
     }

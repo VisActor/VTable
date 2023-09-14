@@ -285,7 +285,7 @@ export function updateCellHeight(
 
     //   let customRender;
     //   let customLayout;
-    //   const cellType = scene.table.getCellType(col, row);
+    //   const cellType = scene.table.getCellLocation(col, row);
     //   if (cellType !== 'body') {
     //     const define = scene.table.getHeaderDefine(col, row);
     //     customRender = define?.headerCustomRender;
