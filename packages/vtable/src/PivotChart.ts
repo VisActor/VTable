@@ -899,7 +899,6 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
   getChartDatumPosition(datum: any, cellHeaderPaths: IPivotTableCellHeaderPaths): { x: number; y: number } {
     const cellAddr = this.getCellAddressByHeaderPaths(cellHeaderPaths);
     const cellPosition = this.getCellRelativeRect(cellAddr.col, cellAddr.row);
-    console.log(cellPosition);
     const cellGroup = this.scenegraph.getCell(cellAddr.col, cellAddr.row);
     let position;
     const chartNode: Chart = cellGroup?.getChildren()?.[0] as Chart;

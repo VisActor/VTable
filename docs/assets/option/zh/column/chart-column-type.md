@@ -1,14 +1,14 @@
-{{ target: chart-column-type }}
+{{ target: chart-cell-type }}
 
 #${prefix} columns.chart(string)
 
-指定列类型为'chart'，cellType 缺省的话会被默认为'text'
+指定该列或该行单元格类型为'chart'，cellType 缺省的话会被默认为'text'
 
 ##${prefix} cellType(string) = 'chart'
 
-指定列类型为'chart'，cellType 缺省的话会被默认为'text'
+指定该列或该行单元格类型为'chart'，cellType 缺省的话会被默认为'text'
 
-{{ use: base-column-type(
+{{ use: base-cell-type(
     prefix = '##'+${prefix},
 ) }}
 

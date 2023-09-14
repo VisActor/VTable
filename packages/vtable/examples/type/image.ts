@@ -82,7 +82,13 @@ export function createTable() {
           fontFamily: 'sans-serif'
         },
         field: 'link',
-        columnType: 'image',
+        // cellType: 'image',
+        cellType(args) {
+          if (args.row % 2 === 1) {
+            return 'image';
+          }
+          return 'link';
+        },
         width: 300,
         style: {
           padding: 1
@@ -109,5 +115,5 @@ export function createTable() {
   // });
 
   // 只为了方便控制太调试用，不要拷贝
-  (window as any).tableInstance = instance;
+  window.tableInstance = instance;
 }

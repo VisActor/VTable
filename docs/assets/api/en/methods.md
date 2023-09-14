@@ -400,3 +400,39 @@ Get the position of a certain primitive on the chart
    */
   getChartDatumPosition(datum:any,cellHeaderPaths:IPivotTableCellHeaderPaths):{x:number,y:number}
 ```
+
+## exportImg(Function)
+
+Export a picture of the currently visible area in the table.
+
+```
+  /**
+   * Export pictures of the currently visible area in the table
+   * @returns base64 picture
+   */
+  exportImg(): string
+```
+
+## exportCellImg(Function)
+
+Export a cell picture
+
+```
+ /**
+   * Export a cell picture
+   * @returns base64 picture
+   */
+  exportCellImg(col: number, row: number): string
+```
+
+## exportCellRangeImg(Function)
+
+Export a picture of a certain cell range
+
+```
+ /**
+   * Export pictures of a certain area
+   * @returns base64 picture
+   */
+  exportCellRangeImg(cellRange: CellRange): string
+```

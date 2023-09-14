@@ -35,6 +35,9 @@ Whether to automatically wrap text
 #${prefix} autoFillWidth(boolean) = false
 The configuration item autoFillWidth is used to control whether to automatically fill the container width. Different from the effect of `adaptive` adaptive container of width mode `widthMode`, autoFillWidth controls that only when the number of columns is small, the table can automatically fill the width of the container, but when the number of columns exceeds the container, according to the actual situation A scroll bar can appear to set the column width.
 
+#${prefix} autoFillHeight(boolean) = false
+The configuration item autoFillHeight is used to control whether to automatically fill the container height. Different from the effect of `adaptive` adaptive container of height mode `heightMode`, autoFillHeight controls that only when the number of rows is small, the table can automatically fill the height of the container, but when the number of rows exceeds the container, according to the actual situation A scroll bar can appear to set the row height.
+
 #${prefix} maxCharactersNumber(number) = 200
 
 The maximum number of characters that can be displayed in a cell, default is 200
