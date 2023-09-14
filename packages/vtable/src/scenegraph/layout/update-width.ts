@@ -329,8 +329,8 @@ function updateCellWidth(
           customRender,
           col,
           row,
-          scene.table.getColWidth(col),
-          scene.table.getRowHeight(row),
+          cellGroup.attribute.width,
+          cellGroup.attribute.height,
           false,
           scene.table.heightMode === 'autoHeight',
           scene.table

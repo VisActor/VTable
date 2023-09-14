@@ -245,8 +245,8 @@ export function updateCellHeight(
           customRender,
           col,
           row,
-          scene.table.getColWidth(col),
-          scene.table.getRowHeight(row),
+          cell.attribute.width,
+          cell.attribute.height,
           false,
           scene.table.heightMode === 'autoHeight',
           scene.table

@@ -535,7 +535,7 @@ export interface BaseTableAPI {
   getCopyValue: () => string;
 
   getSelectedCellInfos: () => CellInfo[][];
-  getCellInfo: (col: number, row: number) => MousePointerCellEvent;
+  getCellInfo: (col: number, row: number) => Omit<MousePointerCellEvent, 'target'>;
 
   showTooltip: (col: number, row: number, tooltipOptions?: TooltipOptions) => void;
 

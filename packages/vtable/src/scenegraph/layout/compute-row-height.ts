@@ -272,11 +272,11 @@ function computeCustomRenderHeight(col: number, row: number, table: BaseTableAPI
   const customRender = table.getCustomRender(col, row);
   const customLayout = table.getCustomLayout(col, row);
   if (customRender || customLayout) {
-    let spanCol = 1;
+    let spanRow = 1;
     let height = 0;
     if (table.isHeader(col, row) || (table.getBodyColumnDefine(col, row) as TextColumnDefine).mergeCell) {
       const cellRange = table.getCellRange(col, row);
-      spanCol = cellRange.end.col - cellRange.start.col + 1;
+      spanRow = cellRange.end.row - cellRange.start.row + 1;
     }
     const arg = {
       col,
@@ -306,7 +306,7 @@ function computeCustomRenderHeight(col: number, row: number, table: BaseTableAPI
     } else {
       height = customRender?.expectedHeight ?? 0;
     }
-    return height / spanCol;
+    return height / spanRow;
   }
   return undefined;
 }

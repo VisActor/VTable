@@ -2580,7 +2580,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     return this.internalProps.layoutMap?.isBottomFrozenRow(col, row);
   }
   /** 获取单元格的基本信息 目前主要组织单元格信息给事件传递给用户的参数使用 */
-  getCellInfo(col: number, row: number): MousePointerCellEvent {
+  getCellInfo(col: number, row: number): Omit<MousePointerCellEvent, 'target'> {
     const colDef = this.isHeader(col, row) ? this.getHeaderDefine(col, row) : this.getBodyColumnDefine(col, row);
     return {
       col,
