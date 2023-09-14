@@ -30,7 +30,7 @@ use:
 ```
 tableInstance.updateTheme(newTheme)
 ```
-Corresponding attribute update interface（https://visactor.io/vtable/tutorials/basic_function/update_option）:
+Corresponding attribute update interface（https://visactor.io/vtable/guide/basic_function/update_option）:
 ```
 // will not automatically redraw after calling
 tableInstance.theme = newTheme;
@@ -50,7 +50,7 @@ use:
 ```
 tableInstance. updateColumns(newColumns)
 ```
-Corresponding attribute update interface（https://visactor.io/vtable/tutorials/basic_function/update_option）:
+Corresponding attribute update interface（https://visactor.io/vtable/guide/basic_function/update_option）:
 ```
 // will not automatically redraw after calling
 tableInstance.columns = newColumns;
@@ -115,6 +115,31 @@ Listen to VChart chart events
 ## offVChartEvent(Function)
 
 Unlisten to VChart chart events
+
+## selectCell(Function)
+
+Select a cell
+
+```
+  /**
+   * The effect of selecting a cell is the same as that of a cell selected by the mouse.
+   * @param col
+   * @param row
+   */
+  selectCell(col: number, row: number): void
+```
+
+## selectCells(Function)
+
+Select one or more cell ranges
+
+```
+  /**
+   * Select a cell area, and you can set multiple areas to be selected at the same time
+   * @param cellRanges: CellRange[]
+   */
+  selectCells(cellRanges: CellRange[]): void
+```
 
 ## getCellStyle(Function)
 
@@ -374,4 +399,40 @@ Get the position of a certain primitive on the chart
    * @returns The coordinate position of the primitive on the entire table (relative to the visual coordinates of the upper left corner of the table)
    */
   getChartDatumPosition(datum:any,cellHeaderPaths:IPivotTableCellHeaderPaths):{x:number,y:number}
+```
+
+## exportImg(Function)
+
+Export a picture of the currently visible area in the table.
+
+```
+  /**
+   * Export pictures of the currently visible area in the table
+   * @returns base64 picture
+   */
+  exportImg(): string
+```
+
+## exportCellImg(Function)
+
+Export a cell picture
+
+```
+ /**
+   * Export a cell picture
+   * @returns base64 picture
+   */
+  exportCellImg(col: number, row: number): string
+```
+
+## exportCellRangeImg(Function)
+
+Export a picture of a certain cell range
+
+```
+ /**
+   * Export pictures of a certain area
+   * @returns base64 picture
+   */
+  exportCellRangeImg(cellRange: CellRange): string
 ```

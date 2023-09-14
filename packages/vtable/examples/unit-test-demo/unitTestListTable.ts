@@ -932,14 +932,15 @@ export function createTable() {
     columns,
     records,
     defaultColWidth: 150,
-    allowFrozenColCount: 5,
+    allowFrozenColCount: 5
     // heightMode: 'autoHeight',
-    autoWrapText: true
+    // autoWrapText: true
     // tooltip:{
     //   isShowOverflowTextTooltip:true
     // }
   });
-  (window as any).tableInstance = tableInstance;
+  window.tableInstance = tableInstance;
+
   // setTimeout(() => {
   //   columns.shift();
   //   const f = records.slice(10, 30);

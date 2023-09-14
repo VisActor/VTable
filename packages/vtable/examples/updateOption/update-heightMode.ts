@@ -83,5 +83,5 @@ export function createTable() {
     tableInstance.renderWithRecreateCells();
   }, 2000);
 
-  (window as any).tableInstance = tableInstance;
+  window.tableInstance = tableInstance;
 }

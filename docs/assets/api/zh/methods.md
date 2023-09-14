@@ -30,7 +30,7 @@
 ```
 tableInstance.updateTheme(newTheme)
 ```
-对应属性更新接口（可参考教程：https://visactor.io/vtable/tutorials/basic_function/update_option）:
+对应属性更新接口（可参考教程：https://visactor.io/vtable/guide/basic_function/update_option）:
 ```
 // 调用后不会自动重绘
 tableInstance.theme = newTheme;
@@ -50,7 +50,7 @@ tableInstance.theme = newTheme;
 ```
 tableInstance.updateColumns(newColumns)
 ```
-对应属性更新接口（可参考教程：https://visactor.io/vtable/tutorials/basic_function/update_option）:
+对应属性更新接口（可参考教程：https://visactor.io/vtable/guide/basic_function/update_option）:
 ```
 // 调用后不会自动重绘
 tableInstance.columns = newColumns;
@@ -114,6 +114,30 @@ tableInstance.renderWithRecreateCells();
 ## offVChartEvent(Function)
 
 解除监听 VChart 图表事件
+## selectCell(Function)
+
+选中某个单元格
+
+```
+  /**
+   * 选中单元格  和鼠标选中单元格效果一致
+   * @param col
+   * @param row
+   */
+  selectCell(col: number, row: number): void
+```
+
+## selectCells(Function)
+
+选中一个或者多个单元格区域
+
+```
+  /**
+   * 选中单元格区域，可设置多个区域同时选中
+   * @param cellRanges: CellRange[]
+   */
+  selectCells(cellRanges: CellRange[]): void
+```
 
 ## getCellStyle(Function)
 
@@ -247,7 +271,8 @@ tableInstance.renderWithRecreateCells();
 
 ## scrollToCell(Function)
 
-滚动到具体某个单元格位置
+滚动到具体某个单元格位置。
+col或者row可以为空，为空的话也就是只移动x方向或者y方向。
 
 ```
   /**
@@ -372,5 +397,41 @@ use case: 点击图例项后 更新过滤规则 来更新图表
    * @param cellHeaderPaths 单元格的header路径
    * @returns 图元在整个表格上的坐标位置（相对表格左上角视觉坐标）
    */
-  getChartDatumPosition(datum:any,cellHeaderPaths:IPivotTableCellHeaderPaths):{x:number,y:number}
+  getChartDatumPosition(datum:any,cellHeaderPaths:IPivotTableCellHeaderPaths): {x:number,y:number}
+```
+
+## exportImg(Function)
+
+导出表格中当前可视区域的图片。
+
+```
+  /**
+   * 导出表格中当前可视区域的图片
+   * @returns base64图片
+   */
+  exportImg(): string
+```
+
+## exportCellImg(Function)
+
+导出某个单元格图片
+
+```
+ /**
+   * 导出某个单元格图片
+   * @returns base64图片
+   */
+  exportCellImg(col: number, row: number): string
+```
+
+## exportCellRangeImg(Function)
+
+导出某一片单元格区域的图片
+
+```
+ /**
+   * 导出某一片区域的图片
+   * @returns base64图片
+   */
+  exportCellRangeImg(cellRange: CellRange): string
 ```

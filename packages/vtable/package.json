@@ -1,6 +1,6 @@
 {
   "name": "@visactor/vtable",
-  "version": "0.10.2",
+  "version": "0.11.0",
   "description": "canvas table width high performance",
   "keywords": [
     "grid",
@@ -48,8 +48,8 @@
     "build:es": "bundle --clean -f es --ignorePostTasks"
   },
   "dependencies": {
-    "@visactor/vrender": "0.15.0-alpha.13",
-    "@visactor/vrender-components": "0.15.0-alpha.13",
+    "@visactor/vrender": "0.15.1",
+    "@visactor/vrender-components": "0.15.1",
     "@visactor/vutils": "~0.15.7",
     "@visactor/vscale": "~0.15.7",
     "@visactor/vdataset": "~0.15.7",
@@ -57,7 +57,7 @@
     "core-js": "3.31.1"
   },
   "devDependencies": {
-    "@visactor/vchart": "1.3.1-beta.1",
+    "@visactor/vchart": "1.3.1",
     "@internal/bundler": "workspace:*",
     "@internal/eslint-config": "workspace:*",
     "@internal/ts-config": "workspace:*",

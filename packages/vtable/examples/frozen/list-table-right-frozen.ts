@@ -75,10 +75,11 @@ export function createTable() {
     container: document.getElementById(CONTAINER_ID),
     records,
     columns,
-    rightFrozenColCount: 2
+    rightFrozenColCount: 2,
+    allowFrozenColCount: 10
   };
   const tableInstance = new VTable.ListTable(option);
-  (window as any).tableInstance = tableInstance;
+  window.tableInstance = tableInstance;
 
   // bindDebugTool(tableInstance.scenegraph.stage as any, {
   //   customGrapicKeys: ['role', 'col', 'row']

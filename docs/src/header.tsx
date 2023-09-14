@@ -42,7 +42,7 @@ export function Header() {
         ></div>
         {menu.map(menuItem => {
           return (
-            <div className="navigator-link" key={menuItem.menu} onClick={() => navigate(`/${menuItem.menu}`)}>
+            <div className="navigator-link" key={menuItem.menu} onClick={() => navigate(`/vtable/${menuItem.menu}`)}>
               <a>{menuItem.menu}</a>
             </div>
           );

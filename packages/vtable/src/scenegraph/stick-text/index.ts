@@ -40,7 +40,7 @@ export function handleTextStick(table: BaseTableAPI) {
         adjustCellContentHorizontalLayout(
           cellGroup,
           frozenColsWidth + table.tableX,
-          table.tableNoFrameWidth - table.getRightFrozenColsWidth()
+          table.tableNoFrameWidth - table.getRightFrozenColsWidth() + table.tableX
         );
         changedCells.push({ col, row });
       }
@@ -62,7 +62,7 @@ export function handleTextStick(table: BaseTableAPI) {
         adjustCellContentVerticalLayout(
           cellGroup,
           frozenRowsHeight + table.tableY,
-          table.tableNoFrameHeight - table.getBottomFrozenRowsHeight()
+          table.tableNoFrameHeight - table.getBottomFrozenRowsHeight() + table.tableY
         );
         changedCells.push({ col, row });
       }
@@ -77,13 +77,13 @@ export function handleTextStick(table: BaseTableAPI) {
         adjustCellContentVerticalLayout(
           cellGroup,
           frozenRowsHeight + table.tableY,
-          table.tableNoFrameHeight - table.getBottomFrozenRowsHeight()
+          table.tableNoFrameHeight - table.getBottomFrozenRowsHeight() + table.tableY
         );
         // adjust cell Horizontal
         adjustCellContentHorizontalLayout(
           cellGroup,
           frozenColsWidth + table.tableX,
-          table.tableNoFrameWidth - table.getRightFrozenColsWidth()
+          table.tableNoFrameWidth - table.getRightFrozenColsWidth() + table.tableX
         );
         changedCells.push({ col, row });
       }
@@ -156,17 +156,14 @@ export function checkHaveTextStick(table: BaseTableAPI) {
   for (let i = 0; i < headerObjects.length; i++) {
     const header = headerObjects[i];
     if (header && (header.style as ITextStyleOption)?.textStick) {
-      console.log('checkHaveTextStick', true);
       return true;
     }
   }
   for (let i = 0; i < columnObjects.length; i++) {
     const column = columnObjects[i];
     if (column && (column.style as ITextStyleOption)?.textStick) {
-      console.log('checkHaveTextStick', true);
       return true;
     }
   }
-  console.log('checkHaveTextStick', false);
   return false;
 }

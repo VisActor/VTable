@@ -57,23 +57,25 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
     this.internalProps.columnResizeType = options.columnResizeType ?? 'column';
     this.internalProps.dataConfig = options.dataConfig;
     this.internalProps.enableDataAnalysis = options.enableDataAnalysis;
-    if (this.internalProps.enableDataAnalysis && (options.rows || options.columns)) {
-      const rowKeys = options.rows.reduce((keys, rowObj) => {
-        if (typeof rowObj === 'string') {
-          keys.push(rowObj);
-        } else {
-          keys.push(rowObj.dimensionKey);
-        }
-        return keys;
-      }, []);
-      const columnKeys = options.columns.reduce((keys, columnObj) => {
-        if (typeof columnObj === 'string') {
-          keys.push(columnObj);
-        } else {
-          keys.push(columnObj.dimensionKey);
-        }
-        return keys;
-      }, []);
+    if (this.internalProps.enableDataAnalysis) {
+      const rowKeys =
+        options.rows?.reduce((keys, rowObj) => {
+          if (typeof rowObj === 'string') {
+            keys.push(rowObj);
+          } else {
+            keys.push(rowObj.dimensionKey);
+          }
+          return keys;
+        }, []) ?? [];
+      const columnKeys =
+        options.columns?.reduce((keys, columnObj) => {
+          if (typeof columnObj === 'string') {
+            keys.push(columnObj);
+          } else {
+            keys.push(columnObj.dimensionKey);
+          }
+          return keys;
+        }, []) ?? [];
       const indicatorKeys =
         options.indicators?.reduce((keys, indicatorObj) => {
           if (typeof indicatorObj === 'string') {
@@ -177,7 +179,7 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
         }
         return keys;
       }, []);
-      const indicatorKeys = options.indicators.reduce((keys, indicatorObj) => {
+      const indicatorKeys = options.indicators?.reduce((keys, indicatorObj) => {
         if (typeof indicatorObj === 'string') {
           keys.push(indicatorObj);
         } else {

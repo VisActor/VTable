@@ -112,5 +112,5 @@ export function createTable(container) {
   const instance = new ListTable(option);
 
   // 只为了方便控制太调试用，不要拷贝
-  (window as any).tableInstance = instance;
+  window.tableInstance = instance;
 }

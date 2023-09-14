@@ -219,7 +219,7 @@ export class SceneProxy {
       let maxHeight = 0;
       for (let col = 0; col < this.table.rowHeaderLevelCount; col++) {
         const colGroup = this.table.scenegraph.getColGroup(col);
-        const cellType = 'rowHeader';
+        const cellLocation = 'rowHeader';
         const { height } = createComplexColumn(
           colGroup,
           col,
@@ -229,7 +229,7 @@ export class SceneProxy {
           this.table.scenegraph.mergeMap,
           this.table.internalProps.defaultRowHeight,
           this.table,
-          cellType
+          cellLocation
         );
         maxHeight = Math.max(maxHeight, height);
         this.table.scenegraph.rowHeaderGroup.setAttribute('height', maxHeight);
@@ -241,7 +241,7 @@ export class SceneProxy {
       let maxHeight = 0;
       for (let col = this.table.colCount - this.table.rightFrozenColCount; col < this.table.colCount; col++) {
         const colGroup = this.table.scenegraph.getColGroup(col);
-        const cellType = 'rowHeader';
+        const cellLocation = 'rowHeader';
         const { height } = createComplexColumn(
           colGroup,
           col,
@@ -251,7 +251,7 @@ export class SceneProxy {
           this.table.scenegraph.mergeMap,
           this.table.internalProps.defaultRowHeight,
           this.table,
-          cellType
+          cellLocation
         );
         maxHeight = Math.max(maxHeight, height);
         this.table.scenegraph.rightFrozenGroup.setAttribute('height', maxHeight);
@@ -262,7 +262,7 @@ export class SceneProxy {
     let maxHeight = 0;
     for (let col = this.bodyLeftCol; col <= this.bodyRightCol; col++) {
       const colGroup = this.table.scenegraph.getColGroup(col);
-      const cellType = 'body';
+      const cellLocation = 'body';
       const { height } = createComplexColumn(
         colGroup,
         col,
@@ -272,7 +272,7 @@ export class SceneProxy {
         this.table.scenegraph.mergeMap,
         this.table.internalProps.defaultRowHeight,
         this.table,
-        cellType
+        cellLocation
       );
       maxHeight = Math.max(maxHeight, height);
     }

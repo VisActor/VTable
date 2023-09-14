@@ -1,4 +1,5 @@
 import type { Either } from '../../../tools/helper';
+import type { ICompositeColumnBodyDefine } from './Composite-define';
 import type { IChartColumnBodyDefine } from './chart-define';
 import type { IImageColumnBodyDefine, IImageHeaderDefine } from './image-define';
 import type { ILinkColumnBodyDefine, ILinkHeaderDefine } from './link-define';
@@ -21,6 +22,7 @@ export type ImageColumnDefine = IImageColumnBodyDefine & HeaderDefine;
 export type SparklineColumnDefine = ISparklineColumnBodyDefine & HeaderDefine;
 export type ProgressbarColumnDefine = IProgressbarColumnBodyDefine & HeaderDefine;
 export type ChartColumnDefine = IChartColumnBodyDefine & HeaderDefine;
+export type CompositeColumnDefine = ICompositeColumnBodyDefine & HeaderDefine;
 // export type GroupColumnDefine = IChartColumnBodyDefine & HeaderDefine;
 export type GroupColumnDefine = HeaderDefine & {
   columns: ColumnsDefine;
@@ -32,7 +34,8 @@ export type ColumnDefine = Either<
   | SparklineColumnDefine
   | ProgressbarColumnDefine
   | ChartColumnDefine
-  | TextColumnDefine,
+  | TextColumnDefine
+  | CompositeColumnDefine,
   GroupColumnDefine
 >;
 

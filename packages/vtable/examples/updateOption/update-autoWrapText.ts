@@ -82,5 +82,5 @@ export function createTable() {
     tableInstance.updateAutoWrapText(true);
   }, 2000);
 
-  (window as any).tableInstance = tableInstance;
+  window.tableInstance = tableInstance;
 }

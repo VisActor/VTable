@@ -6,7 +6,7 @@ The features that can be globally registered in the table library are theme, ico
 
 ## theme(Function)
 
-[Usage example](/examples/theme/register):
+[Usage example](../demo/theme/register):
 
 - Register theme code as follows:
 
@@ -25,7 +25,7 @@ VTable.register.theme('themeRegisterOne',{
 function theme(name: string, theme?: ITableThemeDefine){}
 ```
 
-The structure of ITableThemeDefine can be found in [theme](/options/ListTable#theme)
+The structure of ITableThemeDefine can be found in [theme](../option/ListTable#theme)
 
 - Usage:
 
@@ -43,7 +43,7 @@ const tableInstance = new VTable.PivotTable({
 
 By registering icons, you can display icons in the table or replace built-in function icons such as pin freeze icon.
 
-[Usage example](/examples/custom-render/custom-icon):
+[Usage example](../demo/custom-render/custom-icon):
 
 - Register icon code as follows:
 
@@ -92,7 +92,7 @@ const tableInstance = new VTable.PivotTable({
 });
 ```
 
-2. After registering the icon, you can use it in customLayout. Refer to the [example](/examples/custom-render/custom-cell-layout).
+2. After registering the icon, you can use it in customLayout. Refer to the [example](../demo/custom-render/custom-cell-layout).
 
 - ColumnIconOption definition:
 
@@ -101,14 +101,20 @@ type ColumnIconOption = ImageIcon | SvgIcon;
 ```
 
 ###ImageIcon(Object)
+
+register image resource.
+
 {{ use: image-icon(  prefix = '####') }}
 
 ###SvgIcon(Object)
+
+register svg resource.
+
 {{ use: svg-icon(  prefix = '####') }}
 
 ## chartModule(Function)
 
-[Usage example](/examples/cell-type/chart):
+[Usage example](../demo/cell-type/chart):
 
 - Register chartModule code as follows:
 

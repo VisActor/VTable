@@ -16,6 +16,10 @@ export const menus = [
       },
       {
         path: 'list',
+        name: 'list-transpose-autoFillHeight'
+      },
+      {
+        path: 'list',
         name: 'list-tree'
       },
       {
@@ -63,6 +67,10 @@ export const menus = [
       {
         path: 'pivot-chart',
         name: 'aeolus'
+      },
+      {
+        path: 'pivot-chart',
+        name: 'noDimension-updateOption'
       },
       {
         path: 'pivot-chart',
@@ -127,12 +135,20 @@ export const menus = [
       {
         path: 'pivot-chart',
         name: 'pivotChart-records'
+      },
+      {
+        path: 'pivot-chart',
+        name: 'percent-horizontal-bar'
       }
     ]
   },
   {
     menu: '单元格类型',
     children: [
+      {
+        path: 'type',
+        name: 'cellType-function'
+      },
       {
         path: 'type',
         name: 'text'
@@ -172,6 +188,10 @@ export const menus = [
     children: [
       {
         path: 'pivot',
+        name: 'pivot-size-legend'
+      },
+      {
+        path: 'pivot',
         name: 'pivot-basic'
       },
       {
@@ -197,6 +217,10 @@ export const menus = [
       {
         path: 'pivot',
         name: 'pivot-link'
+      },
+      {
+        path: 'pivot',
+        name: 'pivot-link-cellType-function'
       },
       {
         path: 'pivot',

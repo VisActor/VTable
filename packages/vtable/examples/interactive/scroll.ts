@@ -189,5 +189,5 @@ export function createTable() {
   // tableInstance.scrollToCell({ col: 1, row: 10 });
 
   // 只为了方便控制太调试用，不要拷贝
-  (window as any).tableInstance = instance;
+  window.tableInstance = instance;
 }

@@ -11,12 +11,14 @@ export function dealFrozen(scene: Scenegraph) {
     for (let i = 0; i < scene.table.frozenColCount - scene.table.rowHeaderLevelCount; i++) {
       moveColumnFromBodyToRowHeader(scene);
       moveColumnFromColHeaderToCornerHeader(scene);
+      moveColumnFromBottomToLeftBottomCorner(scene);
     }
   } else if (scene.table.frozenColCount < scene.table.rowHeaderLevelCount) {
     // move columnGroup from rowHeaderGroup into bodyGroup(from cornerHeaderGroup into colHeaderGroup)
     for (let i = 0; i < scene.table.rowHeaderLevelCount - scene.table.frozenColCount; i++) {
       moveColumnFromRowHeaderToBody(scene);
       moveColumnFromCornerHeaderToColHeader(scene);
+      moveColumnFromLeftBottomCornerToBottom(scene);
     }
   }
   scene.bodyGroup.setAttribute('x', scene.rowHeaderGroup.attribute.width);
@@ -41,6 +43,7 @@ export function resetFrozen(scene: Scenegraph) {
     for (let i = 0; i < scene.frozenColCount - scene.table.rowHeaderLevelCount; i++) {
       moveColumnFromRowHeaderToBody(scene);
       moveColumnFromCornerHeaderToColHeader(scene);
+      moveColumnFromLeftBottomCornerToBottom(scene);
     }
   } else if (scene.frozenColCount < scene.table.rowHeaderLevelCount) {
     // move columnGroup from bodyGroup into rowHeaderGroup(from colHeaderGroup into cornerHeaderGroup)
@@ -50,6 +53,7 @@ export function resetFrozen(scene: Scenegraph) {
     for (let i = 0; i < scene.table.rowHeaderLevelCount - scene.frozenColCount; i++) {
       moveColumnFromBodyToRowHeader(scene);
       moveColumnFromColHeaderToCornerHeader(scene);
+      moveColumnFromBottomToLeftBottomCorner(scene);
     }
   }
   scene.bodyGroup.setAttribute('x', scene.rowHeaderGroup.attribute.width);
@@ -117,6 +121,36 @@ function moveColumnFromCornerHeaderToColHeader(scene: Scenegraph) {
     scene.cornerHeaderGroup.setAttribute(
       'width',
       scene.cornerHeaderGroup.attribute.width - headerColumn.attribute.width
+    );
+  }
+}
+
+function moveColumnFromBottomToLeftBottomCorner(scene: Scenegraph) {
+  // deal with bottomFrozenGroup
+  const column = scene.bottomFrozenGroup.firstChild instanceof Group ? scene.bottomFrozenGroup.firstChild : null;
+  if (column) {
+    scene.leftBottomCornerGroup.appendChild(column);
+    // update container width
+    scene.leftBottomCornerGroup.setAttribute(
+      'width',
+      scene.leftBottomCornerGroup.attribute.width + column.attribute.width
+    );
+    scene.bottomFrozenGroup.setAttribute('width', scene.bottomFrozenGroup.attribute.width - column.attribute.width);
+  }
+}
+
+function moveColumnFromLeftBottomCornerToBottom(scene: Scenegraph) {
+  const column =
+    scene.leftBottomCornerGroup.lastChild instanceof Group
+      ? scene.leftBottomCornerGroup.lastChild
+      : (scene.leftBottomCornerGroup.lastChild?._prev as Group);
+  if (column) {
+    insertBefore(scene.bottomFrozenGroup, column, scene.bottomFrozenGroup.firstChild as Group);
+    // 更新容器宽度
+    scene.bottomFrozenGroup.setAttribute('width', scene.bottomFrozenGroup.attribute.width + column.attribute.width);
+    scene.leftBottomCornerGroup.setAttribute(
+      'width',
+      scene.leftBottomCornerGroup.attribute.width - column.attribute.width
     );
   }
 }

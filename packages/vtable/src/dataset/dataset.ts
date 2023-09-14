@@ -135,7 +135,7 @@ export class Dataset {
     this.rowGrandTotalLabel = this.totals?.row?.grandTotalLabel ?? '总计';
     this.rowSubTotalLabel = this.totals?.row?.subTotalLabel ?? '小计';
     this.collectValuesBy = this.dataConfig?.collectValuesBy;
-    // for (let i = 0; i < this.indicators.length; i++) {
+    // for (let i = 0; i < this.indicators?.length; i++) {
     //   this.indicatorStatistics.push({
     //     max: new this.aggregators[AggregationType.MAX](this.indicators[i]),
     //     min: new this.aggregators[AggregationType.MIN](this.indicators[i]),
@@ -154,6 +154,9 @@ export class Dataset {
       const dimensionIndex = this.columns.indexOf(dimension);
       this.colsIsTotal[dimensionIndex] = true;
     }
+    this.rowKeysPath = [];
+    this.rowKeysPath_FULL = [];
+    this.colKeysPath = [];
     if (records) {
       //处理数据
       this.records = records;
@@ -408,7 +411,7 @@ export class Dataset {
       }
       //如有需要显示总计 或者columns配置空
       // if (this.totals?.row?.showGrandTotals || !(this.dataConfig?.columns?.length > 0))
-      //   for (let i = 0; i < this.indicators.length; i++) {
+      //   for (let i = 0; i < this.indicators?.length; i++) {
       //     if (!this.rowTotals[flatRowKey][i]) {
       //       const aggRule = this.getAggregatorRule(this.indicators[i]);
       //       this.rowTotals[flatRowKey][i] = new this.aggregators[
@@ -425,7 +428,7 @@ export class Dataset {
       }
       //如有需要显示总计 或者rows配置空
       // if (this.totals?.column?.showGrandTotals || !(this.dataConfig?.rows?.length > 0))
-      //   for (let i = 0; i < this.indicators.length; i++) {
+      //   for (let i = 0; i < this.indicators?.length; i++) {
       //     if (!this.colTotals[flatColKey][i]) {
       //       const aggRule = this.getAggregatorRule(this.indicators[i]);
       //       this.colTotals[flatColKey][i] = new this.aggregators[
@@ -460,16 +463,16 @@ export class Dataset {
         //加入聚合结果 考虑field为数组的情况
         else if (aggRule?.field) {
           if (typeof aggRule?.field === 'string') {
-            isValid(record[aggRule?.field]) && this.tree[flatRowKey]?.[flatColKey]?.[i].push(record);
+            aggRule?.field in record && this.tree[flatRowKey]?.[flatColKey]?.[i].push(record);
           } else {
             const isPush = aggRule?.field.find((field: string) => {
-              return record[field];
+              return field in record;
             });
             isPush && this.tree[flatRowKey]?.[flatColKey]?.[i].push(record);
           }
         } else {
           //push融合了计算过程
-          isValid(record[this.indicatorKeys[i]]) && this.tree[flatRowKey]?.[flatColKey]?.[i].push(record);
+          this.indicatorKeys[i] in record && this.tree[flatRowKey]?.[flatColKey]?.[i].push(record);
         }
       }
     }

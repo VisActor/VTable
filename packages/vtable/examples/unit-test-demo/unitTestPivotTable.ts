@@ -1314,7 +1314,7 @@ export function createTable(el: any, v: any) {
       }
     ]
   });
-  (window as any).tableInstance = tableInstance;
+  window.tableInstance = tableInstance;
 
   // setTimeout(() => {
   //   indicators[0].format = rec => {

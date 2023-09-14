@@ -72,47 +72,46 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
     this.internalProps.columnResizeType = options.columnResizeType ?? 'column';
     this.internalProps.dataConfig = { isPivotChart: true };
     this._axes = isArray(options.axes) ? options.axes : [];
-
-    if (options.rows || options.columns) {
-      const rowKeys = options.rows.reduce((keys, rowObj) => {
+    const rowKeys =
+      options.rows?.reduce((keys, rowObj) => {
         if (typeof rowObj === 'string') {
           keys.push(rowObj);
         } else {
           keys.push(rowObj.dimensionKey);
         }
         return keys;
-      }, []);
-      const columnKeys = options.columns.reduce((keys, columnObj) => {
+      }, []) ?? [];
+    const columnKeys =
+      options.columns?.reduce((keys, columnObj) => {
         if (typeof columnObj === 'string') {
           keys.push(columnObj);
         } else {
           keys.push(columnObj.dimensionKey);
         }
         return keys;
-      }, []);
-      const indicatorKeys =
-        options.indicators?.reduce((keys, indicatorObj) => {
-          if (typeof indicatorObj === 'string') {
-            keys.push(indicatorObj);
-          } else {
-            keys.push(indicatorObj.indicatorKey);
-          }
-          return keys;
-        }, []) ?? [];
-      this.internalProps.dataConfig.collectValuesBy = this._generateCollectValuesConfig(columnKeys, rowKeys);
-      this.internalProps.dataConfig.aggregationRules = this._generateAggregationRules();
-      this.internalProps.dataConfig.dimensionSortArray = this._getDimensionSortArray();
-      this.dataset = new Dataset(
-        this.internalProps.dataConfig,
-        null,
-        rowKeys,
-        columnKeys,
-        indicatorKeys,
-        options.records,
-        options.columnTree,
-        options.rowTree
-      );
-    }
+      }, []) ?? [];
+    const indicatorKeys =
+      options.indicators?.reduce((keys, indicatorObj) => {
+        if (typeof indicatorObj === 'string') {
+          keys.push(indicatorObj);
+        } else {
+          keys.push(indicatorObj.indicatorKey);
+        }
+        return keys;
+      }, []) ?? [];
+    this.internalProps.dataConfig.collectValuesBy = this._generateCollectValuesConfig(columnKeys, rowKeys);
+    this.internalProps.dataConfig.aggregationRules = this._generateAggregationRules();
+    this.internalProps.dataConfig.dimensionSortArray = this._getDimensionSortArray();
+    this.dataset = new Dataset(
+      this.internalProps.dataConfig,
+      null,
+      rowKeys,
+      columnKeys,
+      indicatorKeys,
+      options.records,
+      options.columnTree,
+      options.rowTree
+    );
 
     this.refreshHeader();
     if (options.dataSource) {
@@ -183,7 +182,7 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
         }
         return keys;
       }, []);
-      const indicatorKeys = options.indicators.reduce((keys, indicatorObj) => {
+      const indicatorKeys = options.indicators?.reduce((keys, indicatorObj) => {
         if (typeof indicatorObj === 'string') {
           keys.push(indicatorObj);
         } else {
@@ -608,7 +607,7 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
     const option = this.options;
     const collectValuesBy: Record<string, CollectValueBy> = {};
 
-    for (let i = 0, len = option.indicators.length; i < len; i++) {
+    for (let i = 0, len = option.indicators?.length; i < len; i++) {
       if (typeof option.indicators[i] !== 'string' && (option.indicators[i] as IChartColumnIndicator).chartSpec) {
         if (option.indicatorsAsCol === false) {
           const indicatorDefine = option.indicators[i] as IIndicator;
@@ -639,7 +638,7 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
               collectValuesBy[yField] = {
                 by: rowKeys,
                 range: chartSeries.direction !== 'horizontal', // direction默认为'vertical'
-                sumBy: chartSeries.stack !== false && columnKeys.concat(xField), // 逻辑严谨的话 这个concat的值也需要结合 chartSeries.direction来判断是xField还是yField
+                sumBy: chartSeries.stack !== false && columnKeys.concat(chartSeries?.xField), // 逻辑严谨的话 这个concat的值也需要结合 chartSeries.direction来判断是xField还是yField
                 sortBy:
                   chartSeries.direction === 'horizontal'
                     ? chartSeries?.data?.fields?.[yField]?.domain ??
@@ -667,7 +666,9 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
             collectValuesBy[yField] = {
               by: rowKeys,
               range: (option.indicators[i] as IChartColumnIndicator).chartSpec.direction !== 'horizontal', // direction默认为'vertical'
-              sumBy: (indicatorDefine as IChartColumnIndicator).chartSpec.stack !== false && columnKeys.concat(xField), // 逻辑严谨的话 这个concat的值也需要结合 chartSeries.direction来判断是xField还是yField
+              sumBy:
+                (indicatorDefine as IChartColumnIndicator).chartSpec.stack !== false &&
+                columnKeys.concat((indicatorDefine as IChartColumnIndicator).chartSpec?.xField), // 逻辑严谨的话 这个concat的值也需要结合 chartSeries.direction来判断是xField还是yField
               sortBy:
                 (indicatorDefine as IChartColumnIndicator).chartSpec.direction === 'horizontal'
                   ? (indicatorDefine as IChartColumnIndicator).chartSpec?.data?.fields?.[yField]?.domain
@@ -703,7 +704,7 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
               collectValuesBy[xField] = {
                 by: columnKeys,
                 range: chartSeries.direction === 'horizontal', // direction默认为'vertical'
-                sumBy: chartSeries.stack !== false && rowKeys.concat(yField),
+                sumBy: chartSeries.stack !== false && rowKeys.concat(chartSeries?.yField),
                 sortBy:
                   chartSeries.direction !== 'horizontal'
                     ? chartSeries?.data?.fields?.[xField]?.domain ??
@@ -731,7 +732,9 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
             collectValuesBy[xField] = {
               by: columnKeys,
               range: (option.indicators[i] as IChartColumnIndicator).chartSpec.direction === 'horizontal', // direction默认为'vertical'
-              sumBy: (indicatorDefine as IChartColumnIndicator).chartSpec.stack !== false && rowKeys.concat(yField),
+              sumBy:
+                (indicatorDefine as IChartColumnIndicator).chartSpec.stack !== false &&
+                rowKeys.concat((indicatorDefine as IChartColumnIndicator).chartSpec?.yField),
               sortBy:
                 (indicatorDefine as IChartColumnIndicator).chartSpec.direction !== 'horizontal'
                   ? (indicatorDefine as IChartColumnIndicator).chartSpec?.data?.fields?.[xField]?.domain
@@ -761,7 +764,7 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
   private _generateAggregationRules() {
     const aggregationRules: AggregationRules = [];
     // indicatorFromChartSpec = true;
-    this.options.indicators.forEach((indicator: IIndicator | string) => {
+    this.options.indicators?.forEach((indicator: IIndicator | string) => {
       if (typeof indicator === 'string') {
         aggregationRules.push({
           indicatorKey: indicator, //field转为指标key
@@ -828,7 +831,7 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
         delete spec.area.state.selected_reverse;
       }
     };
-    this.options.indicators.forEach((indicator: string | IIndicator) => {
+    this.options.indicators?.forEach((indicator: string | IIndicator) => {
       if ((indicator as IChartColumnIndicator).chartSpec) {
         const spec = (indicator as IChartColumnIndicator).chartSpec;
         if (spec.series) {
@@ -896,7 +899,6 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
   getChartDatumPosition(datum: any, cellHeaderPaths: IPivotTableCellHeaderPaths): { x: number; y: number } {
     const cellAddr = this.getCellAddressByHeaderPaths(cellHeaderPaths);
     const cellPosition = this.getCellRelativeRect(cellAddr.col, cellAddr.row);
-    console.log(cellPosition);
     const cellGroup = this.scenegraph.getCell(cellAddr.col, cellAddr.row);
     let position;
     const chartNode: Chart = cellGroup?.getChildren()?.[0] as Chart;

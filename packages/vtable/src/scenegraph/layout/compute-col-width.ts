@@ -198,7 +198,8 @@ export function computeColWidth(
   if (typeof width === 'number') {
     return width;
   } else if (width !== 'auto' && typeof width === 'string') {
-    return calc.toPx(width, table.internalProps.calcWidthContext);
+    // return calc.toPx(width, table.internalProps.calcWidthContext);
+    return table._adjustColWidth(col, table._colWidthDefineToPxWidth(width));
   }
   return computeAutoColWidth(width, col, startRow, endRow, forceCompute, table);
 }

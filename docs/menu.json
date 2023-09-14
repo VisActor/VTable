@@ -1,16 +1,16 @@
 [
   {
-    "menu": "examples",
+    "menu": "demo",
     "type": "markdown"
   },
   {
-    "menu": "tutorials",
+    "menu": "guide",
     "type": "markdown"
   },
   {
-    "menu": "options",
+    "menu": "option",
     "type": "markdown-template",
-    "entry": "options",
+    "entry": "option",
     "sections": [
       "PivotTable.indicators",
       "PivotTable.rows",

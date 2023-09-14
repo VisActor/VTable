@@ -76,7 +76,7 @@ export function createTable() {
     columns
   };
   const tableInstance = new VTable.ListTable(option);
-  (window as any).tableInstance = tableInstance;
+  window.tableInstance = tableInstance;
   setTimeout(() => {
     const option1 = {
       //container: document.getElementById(CONTAINER_ID),

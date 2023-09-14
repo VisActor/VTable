@@ -895,20 +895,27 @@ export class PivotLayoutMap implements LayoutMapAPI {
         }
       } else if (this.isColumnHeader(col, row)) {
         if (row < this.columns.length + (this.columnHeaderTitle ? 1 : 0)) {
-          return this.convertColKeys[row][
-            this.indicatorsAsCol
-              ? Math.floor((col - this.rowHeaderLevelCount) / this.indicatorKeys.length)
-              : col - this.rowHeaderLevelCount
-          ];
+          return (
+            this.convertColKeys[row]?.[
+              this.indicatorsAsCol
+                ? Math.floor((col - this.rowHeaderLevelCount) / this.indicatorKeys.length)
+                : col - this.rowHeaderLevelCount
+            ] ?? `colHeaderAxis-${col}-${row}`
+          );
         }
         return this.indicatorKeys[(col - this.rowHeaderLevelCount) % this.indicatorKeys.length];
       } else if (this.isRowHeader(col, row)) {
         if (col < this.rows.length + (this.rowHeaderTitle ? 1 : 0)) {
-          return this.rowKeysPath[
-            !this.indicatorsAsCol
-              ? Math.floor((row - this.columnHeaderLevelCount) / this.indicatorKeys.length)
-              : row - this.columnHeaderLevelCount
-          ][col];
+          return (
+            this.rowKeysPath[
+              !this.indicatorsAsCol
+                ? Math.floor((row - this.columnHeaderLevelCount) / this.indicatorKeys.length)
+                : row - this.columnHeaderLevelCount
+            ]?.[col] ?? `rowHeaderAxis-${col}-${row}`
+          );
+        }
+        if (this.indicatorsAsCol && col === this.rowHeaderLevelCount - 1) {
+          return `rowHeaderAxis-${col}-${row}`;
         }
         return this.indicatorKeys[(row - this.columnHeaderLevelCount) % this.indicatorKeys.length];
       } else if (this.isRightFrozenColumn(col, row)) {
@@ -920,7 +927,7 @@ export class PivotLayoutMap implements LayoutMapAPI {
         if (this.indicatorsAsCol) {
           return this.indicatorKeys[(col - this.rowHeaderLevelCount) % this.indicatorKeys.length];
         }
-        return this.convertColKeys[this.convertColKeys.length - 1][
+        return this.convertColKeys[this.convertColKeys.length - 1]?.[
           Math.floor((col - this.rowHeaderLevelCount) / this.indicatorKeys.length)
         ];
       }
@@ -945,8 +952,12 @@ export class PivotLayoutMap implements LayoutMapAPI {
     return this.indicatorKeys[bodyRow % this.indicatorKeys.length];
   }
   getHeader(col: number, row: number): HeaderData {
-    const id = this.getCellId(col, row);
-    return this._headerObjectMap[id as number]! ?? EMPTY_HEADER;
+    let id = this.getCellId(col, row) as string;
+    if (id?.toString().startsWith('rowHeaderAxis')) {
+      id = 'rowHeaderEmpty';
+      // } else if (id.toString().startsWith('colHeaderAxis')) {
+    }
+    return this._headerObjectMap[id as number | string]! ?? EMPTY_HEADER;
   }
   getHeaderField(col: number, row: number) {
     const id = this.getCellId(col, row);
@@ -1143,13 +1154,15 @@ export class PivotLayoutMap implements LayoutMapAPI {
     const recordRow = this.getRecordIndexByRow(row);
     let colPath;
     let rowPath;
-    let colHeaderPaths;
-    let rowHeaderPaths;
+    let colHeaderPaths: string[];
+    let rowHeaderPaths: string[];
     if (recordCol >= 0) {
       colPath = this.colKeysPath[recordCol];
       colHeaderPaths = colPath?.[colPath.length - 1]?.split(this.dataset.stringJoinChar);
       if (colHeaderPaths && this.showColumnHeader && row < this.columns.length - 1) {
         colHeaderPaths = colHeaderPaths.slice(0, row + 1);
+      } else if (!colHeaderPaths) {
+        colHeaderPaths = [];
       }
     }
     if (recordRow >= 0) {
@@ -1157,6 +1170,8 @@ export class PivotLayoutMap implements LayoutMapAPI {
       rowHeaderPaths = rowPath?.[rowPath.length - 1]?.split(this.dataset.stringJoinChar);
       if (rowHeaderPaths && this.showRowHeader && col < this.rows.length - 1) {
         rowHeaderPaths = rowHeaderPaths.slice(0, col + 1);
+      } else if (!rowHeaderPaths) {
+        rowHeaderPaths = [];
       }
     }
     if (colHeaderPaths && this.indicatorsAsCol && col >= this.rowHeaderLevelCount) {
@@ -1586,5 +1601,9 @@ export class PivotLayoutMap implements LayoutMapAPI {
     this._indicatorObjects.forEach(indicatorObject => {
       indicatorObject.chartInstance?.release();
     });
+  }
+
+  clearCellRangeMap() {
+    // do nothing
   }
 }
