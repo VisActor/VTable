@@ -679,9 +679,8 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
    * 根据设置的列宽配置 计算列宽值
    * @param {string|number} width width definition
    * @returns {number} the pixels of width
-   * @private
    */
-  private _colWidthDefineToPxWidth(width: string | number): number {
+  _colWidthDefineToPxWidth(width: string | number): number {
     if (width === 'auto') {
       // hack for defaultWidht support 'auto'
       return 0;
@@ -724,7 +723,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     return result as never;
   }
 
-  private _adjustColWidth(col: number, orgWidth: number): number {
+  _adjustColWidth(col: number, orgWidth: number): number {
     const limits = this._getColWidthLimits(col);
     return Math.max(_applyColWidthLimits(limits, orgWidth), 0);
   }
