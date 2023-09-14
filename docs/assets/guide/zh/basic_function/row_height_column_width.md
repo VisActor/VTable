@@ -81,6 +81,14 @@ const table = new VTable.ListTable({
 });
 ```
 
+## 行高撑满容器：autoFillHeight
+配置项 autoFillHeight，用于控制是否自动撑满容器高度。区别于高度模式`heightMode`的`adaptive`的自适应容器的效果，autoFillHeight 控制的是只有当行数较少的时候，表格可以自动撑满容器高度，但是当行数超过容器的时候根据真实情况来定行高可出现滚动条。
+```javascript
+const table = new VTable.ListTable({
+  autoFillHeight: true
+});
+```
+
 # 列宽计算模式
 
 在 VTable 中，表格列宽度的计算模式`widthMode`可以配置为 `standard`（标准模式）、`adaptive`（自适应容器宽度模式）或 `autoWidth`（自动列宽模式）。[demo示例](https://visactor.io/vtable/demo/basic-functionality/width-mode-autoWidth)

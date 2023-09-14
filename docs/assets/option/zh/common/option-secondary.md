@@ -35,6 +35,9 @@
 #${prefix} autoFillWidth(boolean) = false
 配置项 autoFillWidth，用于控制是否自动撑满容器宽度。区别于宽度模式`widthMode`的`adaptive`的自适应容器的效果，autoFillWidth 控制的是只有当列数较少的时候，表格可以自动撑满容器宽度，但是当列数超过容器的时候根据真实情况来定列宽可出现滚动条。
 
+#${prefix} autoFillHeight(boolean) = false
+配置项 autoFillHeight，用于控制是否自动撑满容器高度。区别于高度模式`heightMode`的`adaptive`的自适应容器的效果，autoFillHeight 控制的是只有当行数较少的时候，表格可以自动撑满容器高度，但是当行数超过容器的时候根据真实情况来定行高可出现滚动条。
+
 #${prefix} maxCharactersNumber(number) = 200
 
 单元格中可显示最大字符数 默认 200

@@ -16,6 +16,10 @@ export const menus = [
       },
       {
         path: 'list',
+        name: 'list-transpose-autoFillHeight'
+      },
+      {
+        path: 'list',
         name: 'list-tree'
       },
       {

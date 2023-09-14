@@ -287,6 +287,8 @@ export interface BaseTableConstructorOptions {
   heightMode?: 'standard' | 'adaptive' | 'autoHeight';
   /** 当列宽度不能占满容器时，是否需要自动拉宽来填充容器的宽度。默认false */
   autoFillWidth?: boolean;
+  /** 当行高度不能占满容器时，是否需要自动拉高来填充容器的高度。默认false */
+  autoFillHeight?: boolean;
   // /** 行高是否根据内容来计算 */
   // autoRowHeight?: boolean;
   /** 设备的像素比 不配的话默认获取window.devicePixelRatio */
@@ -389,6 +391,8 @@ export interface BaseTableAPI {
   heightMode: HeightModeDef;
   /** 当列宽度不能占满容器时，是否需要自动拉宽来填充容器的宽度。默认false */
   autoFillWidth: boolean;
+  /** 当行高度不能占满容器时，是否需要自动拉高来填充容器的高度。默认false */
+  autoFillHeight?: boolean;
 
   on: <TYPE extends keyof TableEventHandlersEventArgumentMap>(
     type: TYPE,
