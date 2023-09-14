@@ -111,6 +111,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
   _widthMode: WidthModeDef;
   _heightMode: HeightModeDef;
   _autoFillWidth: boolean;
+  _autoFillHeight: boolean;
   customRender?: ICustomRender;
 
   canvasWidth?: number;
@@ -166,6 +167,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
       widthMode = 'standard',
       heightMode = 'standard',
       autoFillWidth = false,
+      autoFillHeight = false,
       keyboardOptions,
       // disableRowHeaderColumnResize,
       columnResizeMode,
@@ -189,6 +191,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     this._widthMode = widthMode;
     this._heightMode = heightMode;
     this._autoFillWidth = autoFillWidth;
+    this._autoFillHeight = autoFillHeight;
     this.customRender = customRender;
     this.padding = { top: 0, right: 0, left: 0, bottom: 0 };
     if (padding) {
@@ -660,6 +663,14 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
   set autoFillWidth(autoFillWidth: boolean) {
     if (autoFillWidth !== this._autoFillWidth) {
       this._autoFillWidth = autoFillWidth;
+    }
+  }
+  get autoFillHeight(): boolean {
+    return this._autoFillHeight;
+  }
+  set autoFillHeight(autoFillHeight: boolean) {
+    if (autoFillHeight !== this._autoFillHeight) {
+      this._autoFillHeight = autoFillHeight;
     }
   }
   /**
@@ -1714,6 +1725,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
       widthMode,
       heightMode,
       autoFillWidth,
+      autoFillHeight,
       customRender,
       renderChartAsync,
       renderChartAsyncBatchCount
@@ -1753,6 +1765,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     this.widthMode = widthMode ?? 'standard';
     this.heightMode = heightMode ?? 'standard';
     this.autoFillWidth = autoFillWidth ?? false;
+    this.autoFillHeight = autoFillHeight ?? false;
     this.customRender = customRender;
     // 更新protectedSpace
     const internalProps: IBaseTableProtected = this.internalProps;
