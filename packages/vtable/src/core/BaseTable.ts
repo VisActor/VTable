@@ -111,6 +111,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
   _widthMode: WidthModeDef;
   _heightMode: HeightModeDef;
   _autoFillWidth: boolean;
+  _autoFillHeight: boolean;
   customRender?: ICustomRender;
 
   canvasWidth?: number;
@@ -149,6 +150,8 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
   headerStyleCache: any;
   bodyStyleCache: any;
   container: HTMLElement;
+  isReleased: boolean = false;
+
   constructor(container: HTMLElement, options: BaseTableConstructorOptions = {}) {
     super();
     if (!container) {
@@ -166,6 +169,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
       widthMode = 'standard',
       heightMode = 'standard',
       autoFillWidth = false,
+      autoFillHeight = false,
       keyboardOptions,
       // disableRowHeaderColumnResize,
       columnResizeMode,
@@ -189,6 +193,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     this._widthMode = widthMode;
     this._heightMode = heightMode;
     this._autoFillWidth = autoFillWidth;
+    this._autoFillHeight = autoFillHeight;
     this.customRender = customRender;
     this.padding = { top: 0, right: 0, left: 0, bottom: 0 };
     if (padding) {
@@ -662,13 +667,20 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
       this._autoFillWidth = autoFillWidth;
     }
   }
+  get autoFillHeight(): boolean {
+    return this._autoFillHeight;
+  }
+  set autoFillHeight(autoFillHeight: boolean) {
+    if (autoFillHeight !== this._autoFillHeight) {
+      this._autoFillHeight = autoFillHeight;
+    }
+  }
   /**
    * 根据设置的列宽配置 计算列宽值
    * @param {string|number} width width definition
    * @returns {number} the pixels of width
-   * @private
    */
-  private _colWidthDefineToPxWidth(width: string | number): number {
+  _colWidthDefineToPxWidth(width: string | number): number {
     if (width === 'auto') {
       // hack for defaultWidht support 'auto'
       return 0;
@@ -711,7 +723,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     return result as never;
   }
 
-  private _adjustColWidth(col: number, orgWidth: number): number {
+  _adjustColWidth(col: number, orgWidth: number): number {
     const limits = this._getColWidthLimits(col);
     return Math.max(_applyColWidthLimits(limits, orgWidth), 0);
   }
@@ -1675,6 +1687,8 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     if (parentElement) {
       parentElement.removeChild(internalProps.element);
     }
+
+    this.isReleased = true;
   }
 
   fireListeners<TYPE extends keyof TableEventHandlersEventArgumentMap>(
@@ -1714,6 +1728,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
       widthMode,
       heightMode,
       autoFillWidth,
+      autoFillHeight,
       customRender,
       renderChartAsync,
       renderChartAsyncBatchCount
@@ -1753,6 +1768,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     this.widthMode = widthMode ?? 'standard';
     this.heightMode = heightMode ?? 'standard';
     this.autoFillWidth = autoFillWidth ?? false;
+    this.autoFillHeight = autoFillHeight ?? false;
     this.customRender = customRender;
     // 更新protectedSpace
     const internalProps: IBaseTableProtected = this.internalProps;
@@ -2330,7 +2346,8 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
   }
 
   getBodyColumnType(col: number, row: number): ColumnTypeOption {
-    return this.internalProps.layoutMap.getBody(col, row).cellType;
+    const cellType = this.internalProps.layoutMap.getBody(col, row).cellType;
+    return getProp('cellType', { cellType }, col, row, this);
   }
   /**
    * 根据行列号获取对应的字段名
@@ -3193,7 +3210,10 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
 
   hasAutoImageColumn() {
     return (this.internalProps.layoutMap.columnObjects as ColumnData[]).find((column: ColumnData) => {
-      if (column.cellType === 'image' && (column.define as ImageColumnDefine).imageAutoSizing) {
+      if (
+        (column.cellType === 'image' || typeof column.cellType === 'function') &&
+        (column.define as ImageColumnDefine).imageAutoSizing
+      ) {
         return true;
       }
       return false;
@@ -3234,7 +3254,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     return false;
   }
   /**
-   * 导出表格图片
+   * 导出表格中当前可视区域的图片
    * @returns base64图片
    */
   exportImg() {
@@ -3248,6 +3268,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
    */
   exportCellImg(col: number, row: number) {
     const isInView = this.cellIsInVisualView(col, row);
+    const { scrollTop, scrollLeft } = this;
     if (!isInView) {
       this.scrollToCell({ col, row });
     }
@@ -3261,7 +3282,50 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
         cellRect.bottom + this.tableY
       )
     );
+    if (!isInView) {
+      this.setScrollTop(scrollTop);
+      this.setScrollLeft(scrollLeft);
+    }
     // return c.toDataURL('image/jpeg', 0.5);
     return c.toDataURL();
+  }
+
+  /**
+   * 导出某一片区域的图片
+   * @returns base64图片
+   */
+  exportCellRangeImg(cellRange: CellRange) {
+    const { scrollTop, scrollLeft } = this;
+    const minCol = Math.min(cellRange.start.col, cellRange.end.col);
+    const minRow = Math.min(cellRange.start.row, cellRange.end.row);
+    const maxCol = Math.max(cellRange.start.col, cellRange.end.col);
+    const maxRow = Math.max(cellRange.start.row, cellRange.end.row);
+    const isInView = this.cellIsInVisualView(minCol, minRow);
+    const isMaxCellInView = this.cellIsInVisualView(maxCol, maxRow);
+    // 判断如果超出可视区域 做移动
+    if (!isInView || !isMaxCellInView) {
+      this.scrollToCell({ col: minCol, row: minRow });
+    }
+
+    const cellRect = this.getCellRangeRelativeRect({
+      start: { col: minCol, row: minRow },
+      end: { col: maxCol, row: maxRow }
+    });
+    const c = this.scenegraph.stage.toCanvas(
+      false,
+      new AABBBounds().set(
+        cellRect.left + this.tableX + 1,
+        cellRect.top + this.tableY + 1,
+        cellRect.right + this.tableX,
+        cellRect.bottom + this.tableY
+      )
+    );
+    const base64Image = c.toDataURL();
+    // 前面做的移动需要再复原
+    if (!isInView || !isMaxCellInView) {
+      this.setScrollTop(scrollTop);
+      this.setScrollLeft(scrollLeft);
+    }
+    return base64Image;
   }
 }

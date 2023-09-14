@@ -171,7 +171,7 @@ export function createCell(
       cellGroup.clear();
     }
 
-    // if ((define as any)?.isAxis && cellType === 'columnHeader') {
+    // if ((define as any)?.isAxis && cellLocation === 'columnHeader') {
     //   cellGroup.setAttribute('clip', false);
     //   const axis = new CartesianAxis(
     //     {
@@ -190,7 +190,7 @@ export function createCell(
     //   cellGroup.clear();
     //   // axis.component.setAttribute('y', 40);
     //   cellGroup.appendChild(axis.component);
-    // } else if ((define as any)?.isAxis && cellType === 'rowHeader') {
+    // } else if ((define as any)?.isAxis && cellLocation === 'rowHeader') {
     //   cellGroup.setAttribute('clip', false);
     //   const axis = new CartesianAxis(
     //     {

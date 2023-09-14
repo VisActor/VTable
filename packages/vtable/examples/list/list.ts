@@ -21,7 +21,8 @@ export function createTable() {
     {
       field: 'id',
       title: 'ID ff',
-      width: 120,
+      width: '1%',
+      minWidth: 200,
       sort: true
     },
     {
@@ -77,13 +78,13 @@ export function createTable() {
     columns,
     tooltip: {
       isShowOverflowTextTooltip: true
-    }
+    },
     // autoWrapText: true,
     // heightMode: 'autoHeight',
-    // widthMode: 'adaptive'
+    widthMode: 'adaptive'
   };
   const tableInstance = new VTable.ListTable(option);
-  (window as any).tableInstance = tableInstance;
+  window.tableInstance = tableInstance;
   // tableInstance.on('sort_click', args => {
   //   tableInstance.updateSortState(
   //     {

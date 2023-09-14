@@ -738,7 +738,7 @@ export function createTable() {
   // });
 
   // 只为了方便控制太调试用，不要拷贝
-  (window as any).tableInstance = instance;
+  window.tableInstance = instance;
   (window as any).exportImgs = function () {
     const base64ImgList: string[] = [];
     const t0 = window.performance.now();

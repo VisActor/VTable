@@ -248,7 +248,6 @@ export function bindTableGroupListener(eventManeger: EventManeger) {
   });
 
   table.scenegraph.tableGroup.addEventListener('pointerupoutside', (e: FederatedPointerEvent) => {
-    console.log('pointerupoutside');
     // pointerup中的逻辑 resize column size 当鼠标在外部松开也应该响应
     if (stateManeger.isResizeCol()) {
       endResizeCol(table);
@@ -461,7 +460,6 @@ export function bindTableGroupListener(eventManeger: EventManeger) {
   });
 
   table.scenegraph.tableGroup.addEventListener('click', (e: FederatedPointerEvent) => {
-    console.log('click', e.clone());
     if (table.stateManeger.columnResize.resizing || table.stateManeger.columnMove.moving) {
       return;
     }
@@ -502,14 +500,12 @@ export function bindTableGroupListener(eventManeger: EventManeger) {
 
   // click outside
   table.scenegraph.stage.addEventListener('click', (e: FederatedPointerEvent) => {
-    console.log('stage click');
     const target = e.target;
     if (
       target &&
       !target.isDescendantsOf(table.scenegraph.tableGroup) &&
       (target as any) !== table.scenegraph.tableGroup
     ) {
-      console.log('pointerup outside table');
       stateManeger.updateInteractionState(InteractionState.default);
       eventManeger.dealTableHover();
       eventManeger.dealTableSelect();

@@ -98,7 +98,6 @@ describe('listTable-autoRowHeight init test', () => {
   });
 
   test('listTable-autoRowHeight API getCellStyle', () => {
-    console.log('ffffff:', listTable.getCellStyle(3, 3));
     expect(listTable.getCellStyle(3, 3)).toEqual({
       textAlign: 'left',
       textBaseline: 'middle',

@@ -1,4 +1,5 @@
 import type { IChartColumnIndicator } from './chart-indicator';
+import type { ICompositeColumnIndicator } from './composite-indicator';
 import type { IImageColumnIndicator, IImageHeaderIndicator } from './image-indicator';
 import type { ILinkColumnIndicator, ILinkHeaderIndicator } from './link-indicator';
 import type { ITextColumnIndicator, ITextHeaderIndicator } from './multilinetext-indicator';
@@ -13,7 +14,8 @@ export type ColumnIndicator =
   | ISparklineColumnIndicator
   | IProgressbarColumnIndicator
   | IChartColumnIndicator
-  | ITextColumnIndicator;
+  | ITextColumnIndicator
+  | ICompositeColumnIndicator;
 
 export type IIndicator = HeaderIndicator & ColumnIndicator;
 

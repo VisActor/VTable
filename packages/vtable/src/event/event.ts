@@ -53,6 +53,10 @@ export class EventManeger {
   }
 
   bindSelfEvent() {
+    if (this.table.isReleased) {
+      return;
+    }
+
     const stateManeger: StateManeger = this.table.stateManeger;
 
     // 图标点击

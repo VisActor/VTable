@@ -2035,4 +2035,8 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
     }
     return undefined;
   }
+
+  clearCellRangeMap() {
+    this._cellRangeMap.clear();
+  }
 }

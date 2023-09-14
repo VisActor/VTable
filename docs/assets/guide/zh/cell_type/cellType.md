@@ -111,7 +111,7 @@ VTable 所支持的数据类型共有 7 种，分别为：
 
 通过以上设置，我们能够对 "image" 类型的列进行定制，以满足数据展示的需求。
 
-详细教程参考：TODO
+详细教程参考：https://visactor.io/vtable/guide/cell_type/image_video
 
 ## video
 
@@ -141,7 +141,7 @@ VTable 所支持的数据类型共有 7 种，分别为：
 - `max: 100` 表示进度条展示范围的最大数据。
 - `barType: 'default'` 表示**进度条类型**为 default 类型。
 
-详细教程参考：TODO
+详细教程参考：https://visactor.io/vtable/guide/cell_type/progressbar
 
 ## sparkline
 
@@ -180,7 +180,7 @@ VTable 所支持的数据类型共有 7 种，分别为：
 在这个例子中：
 - `sparklineSpec` 设置了迷你图的类型和具体的配置项。
 
-详细教程参考：TODO
+详细教程参考：https://visactor.io/vtable/guide/cell_type/sparkline
 
 ## chart
 
@@ -226,4 +226,32 @@ VTable 所支持的数据类型共有 7 种，分别为：
 - `chartType: 'vchart'` 使用 VTable 内置的图表库组件，注册名称为vchart
 - `chartSpec` 设置了图表类型和具体的配置项，具体配置项需要参考[VChart](https://visactor.io/vchart)。
 
-详细教程参考：TODO
+详细教程参考：https://visactor.io/vtable/guide/cell_type/chart
+
+## 类型混合使用
+
+某些需求场景中可能期望在不同的数据情况下或者不同的行列中展示不同的数据类型，上述cellType的写法明确指定了一列必须是什么类型（转置表中指定一行必须是什么类型），我们支持了cellType函数自定义的方式，可以根据需求逻辑指定不同的类型：
+
+以下展示一个 `cellType: ()=>{}` 的例子：(可参考[示例](https://visactor.io/vtable/demo/cell-type/composite-cellType))
+ 
+```javascript
+{
+    field: 'image',
+    title: 'bird image',
+    cellType(args){
+      if(args.row%3===1)
+        return 'image';
+      else if(args.row%3===2)
+        return 'link';
+      return 'text'
+    },
+    fieldFormat(record){
+      debugger
+      if(record.name==='Magpie')
+        return 'Magpie 的访问地址：'+record.image;
+      return record.image;
+    },
+    width:'auto',
+    keepAspectRatio:true,
+  }
+```

@@ -609,6 +609,9 @@ export class ListTable extends BaseTable implements ListTableAPI {
       }
       if (hd?.define?.sort) {
         this.dataSource.sort(hd.field, order, sortFunc);
+
+        // clear cell range cache
+        this.internalProps.layoutMap.clearCellRangeMap();
         this.scenegraph.sortCell();
       }
     }

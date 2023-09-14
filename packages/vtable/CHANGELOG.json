@@ -2,6 +2,32 @@
   "name": "@visactor/vtable",
   "entries": [
     {
+      "version": "0.11.0",
+      "tag": "@visactor/vtable_v0.11.0",
+      "date": "Thu, 14 Sep 2023 06:45:59 GMT",
+      "comments": {
+        "patch": [
+          {
+            "comment": "fix: indicators/customRender data mapping exception #292\n\n"
+          },
+          {
+            "comment": "feat: add api selectCells #300\n\n"
+          },
+          {
+            "comment": "fix: when rows is [], pivot-chart display exception #319\n\n"
+          },
+          {
+            "comment": "fix: get axis domain with blank columns\n\n"
+          }
+        ],
+        "minor": [
+          {
+            "comment": "feat: add cellType function define to support different type can show one column #320"
+          }
+        ]
+      }
+    },
+    {
       "version": "0.10.2",
       "tag": "@visactor/vtable_v0.10.2",
       "date": "Wed, 06 Sep 2023 09:18:51 GMT",

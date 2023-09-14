@@ -110,7 +110,7 @@ describe('listTable-tooltip init test', () => {
       }
     });
   });
-  setTimeout(() => {
-    listTable.release();
-  }, 1000);
+  // setTimeout(() => {
+  //   listTable.release();
+  // }, 1000);
 });

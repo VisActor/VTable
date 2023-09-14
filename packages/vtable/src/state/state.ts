@@ -838,8 +838,6 @@ export class StateManeger {
     const cellGroup = this.table.scenegraph.getCell(this.sort.col, this.sort.row);
     const iconMark = cellGroup.getChildByName(name, true);
 
-    // 更新cell
-    this.table.scenegraph.sortCell();
     // 更新icon
     this.table.scenegraph.updateSortIcon(
       this.sort.col,

@@ -16,6 +16,10 @@ export const menus = [
       },
       {
         path: 'list',
+        name: 'list-transpose-autoFillHeight'
+      },
+      {
+        path: 'list',
         name: 'list-tree'
       },
       {
@@ -143,6 +147,10 @@ export const menus = [
     children: [
       {
         path: 'type',
+        name: 'cellType-function'
+      },
+      {
+        path: 'type',
         name: 'text'
       },
       {
@@ -209,6 +217,10 @@ export const menus = [
       {
         path: 'pivot',
         name: 'pivot-link'
+      },
+      {
+        path: 'pivot',
+        name: 'pivot-link-cellType-function'
       },
       {
         path: 'pivot',

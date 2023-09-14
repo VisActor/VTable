@@ -125,5 +125,5 @@ export function createTable() {
     ]);
   }, 2000);
 
-  (window as any).tableInstance = tableInstance;
+  window.tableInstance = tableInstance;
 }

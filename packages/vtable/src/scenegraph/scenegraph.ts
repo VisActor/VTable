@@ -1133,6 +1133,26 @@ export class Scenegraph {
         }
         this.setRowHeight(row, rowHeight);
       }
+    } else if (table.autoFillHeight) {
+      const canvasHeight = table.tableNoFrameHeight;
+      let actualHeight = 0;
+      let actualHeaderHeight = 0;
+      for (let row = 0; row < table.rowCount; row++) {
+        const rowHeight = table.getRowHeight(row);
+        if (row < table.frozenRowCount || row >= table.rowCount - table.bottomFrozenRowCount) {
+          actualHeaderHeight += rowHeight;
+        }
+
+        actualHeight += rowHeight;
+      }
+
+      // 如果内容高度小于canvas高度，执行adaptive放大
+      if (actualHeight < canvasHeight && actualHeight - actualHeaderHeight > 0) {
+        const factor = (canvasHeight - actualHeaderHeight) / (actualHeight - actualHeaderHeight);
+        for (let row = table.frozenRowCount; row < table.rowCount - table.bottomFrozenRowCount; row++) {
+          this.setRowHeight(row, table.getRowHeight(row) * factor);
+        }
+      }
     }
   }
 
