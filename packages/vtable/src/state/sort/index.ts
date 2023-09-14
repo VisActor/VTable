@@ -67,8 +67,8 @@ export function dealSort(col: number, row: number, table: ListTableAPI) {
     executeSort(tableState, table, headerC);
   }
 
-  // cleat cell range cache
-  table.internalProps.layoutMap.cleatCellRangeMap();
+  // clear cell range cache
+  table.internalProps.layoutMap.clearCellRangeMap();
 
   table.scenegraph.sortCell();
   // 排序后，清除选中效果

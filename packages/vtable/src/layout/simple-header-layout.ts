@@ -775,7 +775,7 @@ export class SimpleHeaderLayoutMap implements LayoutMapAPI {
     });
   }
 
-  cleatCellRangeMap() {
+  clearCellRangeMap() {
     this._cellRangeMap.clear();
   }
 }

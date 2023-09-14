@@ -1603,7 +1603,7 @@ export class PivotLayoutMap implements LayoutMapAPI {
     });
   }
 
-  cleatCellRangeMap() {
+  clearCellRangeMap() {
     // do nothing
   }
 }
