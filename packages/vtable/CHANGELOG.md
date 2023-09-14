@@ -1,6 +1,28 @@
 # Change Log - @visactor/vtable
 
-This log was last generated on Wed, 06 Sep 2023 09:18:51 GMT and should not be manually modified.
+This log was last generated on Thu, 14 Sep 2023 06:46:00 GMT and should not be manually modified.
+
+## 0.11.0
+Thu, 14 Sep 2023 06:45:59 GMT
+
+### Minor changes
+
+- feat: add cellType function define to support different type can show one column #320
+
+### Patches
+
+- fix: indicators/customRender data mapping exception #292
+
+
+- feat: add api selectCells #300
+
+
+- fix: when rows is [], pivot-chart display exception #319
+
+
+- fix: get axis domain with blank columns
+
+
 
 ## 0.10.2
 Wed, 06 Sep 2023 09:18:51 GMT
