@@ -32,11 +32,12 @@ export function computeRowsHeight(
 ): void {
   const time = typeof window !== 'undefined' ? window.performance.now() : 0;
 
-  const oldRowHeights = [];
+  const oldRowHeights: number[] = [];
   const newHeights: number[] = [];
   if (update) {
     for (let row = 0; row < table.rowCount; row++) {
-      oldRowHeights.push(table.getRowHeight(row));
+      // oldRowHeights.push(table.getRowHeight(row));
+      oldRowHeights[row] = table.getRowHeight(row);
     }
   }
 
@@ -181,7 +182,7 @@ export function computeRowsHeight(
 
   if (update) {
     for (let row = 0; row < table.rowCount; row++) {
-      const newRowHeight = newHeights[row];
+      const newRowHeight = newHeights[row] ?? table.getRowHeight(row);
       if (newRowHeight !== oldRowHeights[row]) {
         // update the row height in scenegraph
         table.scenegraph.updateRowHeight(row, newRowHeight - oldRowHeights[row]);

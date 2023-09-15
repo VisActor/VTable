@@ -26,11 +26,11 @@ export function computeColsWidth(table: BaseTableAPI, colStart?: number, colEnd?
     //   }
   }
 
-  const oldColWidths = [];
+  const oldColWidths: number[] = [];
   const newWidths: number[] = [];
   if (update) {
     for (let col = 0; col < table.colCount; col++) {
-      oldColWidths.push(table.getColWidth(col));
+      oldColWidths[col] = table.getColWidth(col);
     }
   }
   for (let col = colStart; col <= colEnd; col++) {
@@ -130,7 +130,7 @@ export function computeColsWidth(table: BaseTableAPI, colStart?: number, colEnd?
 
   if (update) {
     for (let col = 0; col < table.colCount; col++) {
-      const newColWidth = newWidths[col];
+      const newColWidth = newWidths[col] ?? table.getColWidth(col);
       if (newColWidth !== oldColWidths[col]) {
         // update the column width in scenegraph
         table.scenegraph.updateColWidth(col, newColWidth - oldColWidths[col]);
