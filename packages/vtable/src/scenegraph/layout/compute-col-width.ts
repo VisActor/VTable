@@ -27,6 +27,7 @@ export function computeColsWidth(table: BaseTableAPI, colStart?: number, colEnd?
   }
 
   const oldColWidths = [];
+  const newWidths: number[] = [];
   if (update) {
     for (let col = 0; col < table.colCount; col++) {
       oldColWidths.push(table.getColWidth(col));
@@ -64,8 +65,13 @@ export function computeColsWidth(table: BaseTableAPI, colStart?: number, colEnd?
     if (oldWidth !== maxWidth) {
       table._clearColRangeWidthsMap(col);
     }
-    table.setColWidth(col, maxWidth, false, true);
+    if (update) {
+      newWidths[col] = maxWidth;
+    } else {
+      table.setColWidth(col, maxWidth, false, true);
+    }
   }
+
   // 处理adaptive宽度
   if (table.widthMode === 'adaptive') {
     table._clearColRangeWidthsMap();
@@ -73,18 +79,25 @@ export function computeColsWidth(table: BaseTableAPI, colStart?: number, colEnd?
     const totalDrawWidth = table.tableNoFrameWidth - table.getFrozenColsWidth() - table.getRightFrozenColsWidth();
     let actualWidth = 0;
     for (let col = table.frozenColCount; col < table.colCount - table.rightFrozenColCount; col++) {
-      actualWidth += table.getColWidth(col);
+      actualWidth += update ? newWidths[col] : table.getColWidth(col);
     }
     const factor = totalDrawWidth / actualWidth;
     for (let col = table.frozenColCount; col < table.colCount - table.rightFrozenColCount; col++) {
       let colWidth;
       if (col === table.colCount - table.rightFrozenColCount - 1) {
         colWidth =
-          totalDrawWidth - table.getColsWidth(table.frozenColCount, table.colCount - table.rightFrozenColCount - 2);
+          totalDrawWidth -
+          (update
+            ? newWidths.reduce((acr, cur) => acr + cur) - newWidths[newWidths.length - 1]
+            : table.getColsWidth(table.frozenColCount, table.colCount - table.rightFrozenColCount - 2));
       } else {
-        colWidth = Math.round(table.getColWidth(col) * factor);
+        colWidth = Math.round((update ? newWidths[col] : table.getColWidth(col)) * factor);
       }
-      table.setColWidth(col, colWidth, false, true);
+      if (update) {
+        newWidths[col] = colWidth;
+      } else {
+        table.setColWidth(col, colWidth, false, true);
+      }
     }
   } else if (table.autoFillWidth) {
     // 处理风神列宽特殊逻辑
@@ -93,7 +106,7 @@ export function computeColsWidth(table: BaseTableAPI, colStart?: number, colEnd?
     let actualWidth = 0;
     let actualHeaderWidth = 0;
     for (let col = 0; col < table.colCount; col++) {
-      const colWidth = table.getColWidth(col);
+      const colWidth = update ? newWidths[col] : table.getColWidth(col);
       if (col < table.frozenColCount || col >= table.colCount - table.rightFrozenColCount) {
         actualHeaderWidth += colWidth;
       }
@@ -105,7 +118,11 @@ export function computeColsWidth(table: BaseTableAPI, colStart?: number, colEnd?
     if (actualWidth < canvasWidth && actualWidth - actualHeaderWidth > 0) {
       const factor = (canvasWidth - actualHeaderWidth) / (actualWidth - actualHeaderWidth);
       for (let col = table.frozenColCount; col < table.colCount - table.rightFrozenColCount; col++) {
-        table.setColWidth(col, table.getColWidth(col) * factor, false, true);
+        if (update) {
+          newWidths[col] = newWidths[col] * factor;
+        } else {
+          table.setColWidth(col, table.getColWidth(col) * factor, false, true);
+        }
       }
     }
   }
@@ -113,7 +130,7 @@ export function computeColsWidth(table: BaseTableAPI, colStart?: number, colEnd?
 
   if (update) {
     for (let col = 0; col < table.colCount; col++) {
-      const newColWidth = table.getColWidth(col);
+      const newColWidth = newWidths[col];
       if (newColWidth !== oldColWidths[col]) {
         // update the column width in scenegraph
         table.scenegraph.updateColWidth(col, newColWidth - oldColWidths[col]);

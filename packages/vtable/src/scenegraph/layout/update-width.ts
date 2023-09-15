@@ -102,7 +102,7 @@ export function updateColWidth(scene: Scenegraph, col: number, detaX: number) {
     });
   }
 
-  scene.table.setColWidth(col, rowHeaderOrBodyColumn.attribute.width, true);
+  // scene.table.setColWidth(col, rowHeaderOrBodyColumn.attribute.width, true);
 }
 
 function updateColunmWidth(

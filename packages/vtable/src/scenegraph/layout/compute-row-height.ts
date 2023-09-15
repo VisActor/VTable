@@ -33,6 +33,7 @@ export function computeRowsHeight(
   const time = typeof window !== 'undefined' ? window.performance.now() : 0;
 
   const oldRowHeights = [];
+  const newHeights: number[] = [];
   if (update) {
     for (let row = 0; row < table.rowCount; row++) {
       oldRowHeights.push(table.getRowHeight(row));
@@ -56,7 +57,11 @@ export function computeRowsHeight(
     // compute header row in column header row
     for (let row = rowStart; row < table.columnHeaderLevelCount; row++) {
       const height = computeRowHeight(row, 0, table.colCount - 1, table);
-      table.setRowHeight(row, height);
+      if (update) {
+        newHeights[row] = height;
+      } else {
+        table.setRowHeight(row, height);
+      }
     }
 
     if (rowEnd < table.columnHeaderLevelCount) {
@@ -79,7 +84,11 @@ export function computeRowsHeight(
       //底部冻结的行行高需要单独计算
       for (let row = table.rowCount - table.bottomFrozenRowCount; row <= rowEnd; row++) {
         const height = computeRowHeight(row, 0, table.colCount - 1, table);
-        table.setRowHeight(row, height);
+        if (update) {
+          newHeights[row] = height;
+        } else {
+          table.setRowHeight(row, height);
+        }
       }
     } else if (
       // 以行展示
@@ -97,17 +106,28 @@ export function computeRowsHeight(
         } else {
           height = computeRowHeight(row, 0, table.colCount - 1, table);
         }
-        table.setRowHeight(row, height);
+        // table.setRowHeight(row, height);
+        if (update) {
+          newHeights[row] = height;
+        } else {
+          table.setRowHeight(row, height);
+        }
       }
     } else {
       // 以列展示 需要逐行计算情况
       for (let row = Math.max(rowStart, table.columnHeaderLevelCount); row <= rowEnd; row++) {
         // table._clearRowRangeHeightsMap(row); //注释掉 注意有无缓存问题
         const height = computeRowHeight(row, 0, table.colCount - 1, table);
-        table.setRowHeight(row, height);
+        // table.setRowHeight(row, height);
+        if (update) {
+          newHeights[row] = height;
+        } else {
+          table.setRowHeight(row, height);
+        }
       }
     }
   }
+
   // 处理adaptive高度
   if (table.heightMode === 'adaptive') {
     table._clearRowRangeHeightsMap();
@@ -115,7 +135,7 @@ export function computeRowsHeight(
     const totalDrawHeight = table.tableNoFrameHeight - table.getFrozenRowsHeight() - table.getBottomFrozenRowsHeight();
     let actualHeight = 0;
     for (let row = table.frozenRowCount; row < table.rowCount - table.bottomFrozenRowCount; row++) {
-      actualHeight += table.getRowHeight(row);
+      actualHeight += update ? newHeights[row] : table.getRowHeight(row);
     }
     const factor = totalDrawHeight / actualHeight;
     for (let row = table.frozenRowCount; row < table.rowCount - table.bottomFrozenRowCount; row++) {
@@ -124,9 +144,13 @@ export function computeRowsHeight(
         rowHeight =
           totalDrawHeight - table.getRowsHeight(table.frozenRowCount, table.rowCount - table.bottomFrozenRowCount - 2);
       } else {
-        rowHeight = Math.round(table.getRowHeight(row) * factor);
+        rowHeight = Math.round((update ? newHeights[row] : table.getRowHeight(row)) * factor);
       }
-      table.setRowHeight(row, rowHeight, false);
+      if (update) {
+        newHeights[row] = rowHeight;
+      } else {
+        table.setRowHeight(row, rowHeight, false);
+      }
     }
   } else if (table.autoFillHeight) {
     table._clearRowRangeHeightsMap();
@@ -134,7 +158,7 @@ export function computeRowsHeight(
     let actualHeight = 0;
     let actualHeaderHeight = 0;
     for (let row = 0; row < table.rowCount; row++) {
-      const rowHeight = table.getRowHeight(row);
+      const rowHeight = update ? newHeights[row] : table.getRowHeight(row);
       if (row < table.frozenRowCount || row >= table.rowCount - table.bottomFrozenRowCount) {
         actualHeaderHeight += rowHeight;
       }
@@ -146,14 +170,18 @@ export function computeRowsHeight(
     if (actualHeight < canvasHeight && actualHeight - actualHeaderHeight > 0) {
       const factor = (canvasHeight - actualHeaderHeight) / (actualHeight - actualHeaderHeight);
       for (let row = table.frozenRowCount; row < table.rowCount - table.bottomFrozenRowCount; row++) {
-        table.setRowHeight(row, table.getRowHeight(row) * factor);
+        if (update) {
+          newHeights[row] = newHeights[row] * factor;
+        } else {
+          table.setRowHeight(row, table.getRowHeight(row) * factor);
+        }
       }
     }
   }
 
   if (update) {
     for (let row = 0; row < table.rowCount; row++) {
-      const newRowHeight = table.getRowHeight(row);
+      const newRowHeight = newHeights[row];
       if (newRowHeight !== oldRowHeights[row]) {
         // update the row height in scenegraph
         table.scenegraph.updateRowHeight(row, newRowHeight - oldRowHeights[row]);
@@ -440,7 +468,8 @@ function computeTextHeight(col: number, row: number, table: BaseTableAPI): numbe
       fontStyle,
       fontWeight,
       fontFamily,
-      lineHeight
+      lineHeight,
+      wordBreak: 'break-word'
     });
     maxHeight = utilTextMark.AABBBounds.height();
   } else {

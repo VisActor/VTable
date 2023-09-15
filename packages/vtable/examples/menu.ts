@@ -307,6 +307,10 @@ export const menus = [
       {
         path: 'interactive',
         name: 'tooltip'
+      },
+      {
+        path: 'interactive',
+        name: 'resize-container'
       }
     ]
   },

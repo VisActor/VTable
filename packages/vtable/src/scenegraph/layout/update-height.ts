@@ -13,6 +13,9 @@ import { updateImageCellContentWhileResize } from '../group-creater/cell-type/im
 import { getStyleTheme } from '../../core/tableHelper';
 
 export function updateRowHeight(scene: Scenegraph, row: number, detaY: number) {
+  // 更新table行高存储
+  scene.table.setRowHeight(row, scene.table.getRowHeight(row) + detaY, true);
+
   for (let col = 0; col < scene.table.colCount; col++) {
     const cell = scene.getCell(col, row);
     const mergeInfo = getCellMergeInfo(scene.table, col, row);
@@ -56,9 +59,6 @@ export function updateRowHeight(scene: Scenegraph, row: number, detaY: number) {
       cellGroup.setAttribute('y', cellGroup.attribute.y + detaY);
     }
   }
-
-  // 更新table行高存储
-  scene.table.setRowHeight(row, scene.table.getRowHeight(row) + detaY, true);
 }
 
 /**
