@@ -71,9 +71,9 @@ export function getChartAxes(col: number, row: number, layout: PivotLayoutMap): 
         range.max = Math.max(range.max, 0);
       }
       if (axisOption?.nice) {
-        const { ticks } = getAxisDomainRangeAndLabels(range.min, range.max, axisOption);
-        range.min = ticks[0];
-        range.max = ticks[ticks.length - 1];
+        const { range: axisRange } = getAxisDomainRangeAndLabels(range.min, range.max, axisOption);
+        range.min = axisRange[0];
+        range.max = axisRange[1];
       }
       if (isNumber(axisOption?.min)) {
         (range as any).min = axisOption.min;
@@ -165,9 +165,9 @@ export function getChartAxes(col: number, row: number, layout: PivotLayoutMap): 
         range.max = Math.max(range.max, 0);
       }
       if (axisOption?.nice) {
-        const { ticks } = getAxisDomainRangeAndLabels(range.min, range.max, axisOption);
-        range.min = ticks[0];
-        range.max = ticks[ticks.length - 1];
+        const { range: axisRange } = getAxisDomainRangeAndLabels(range.min, range.max, axisOption);
+        range.min = axisRange[0];
+        range.max = axisRange[1];
       }
       if (isNumber(axisOption?.min)) {
         (range as any).min = axisOption.min;
