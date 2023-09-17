@@ -45,7 +45,6 @@ VTable 遵循[语义化版本控制](https://semver.org/lang/zh-CN/)。我们发
 
 ## 你的第一个 Pull Request
 
-`
 如果你还不清楚怎么在 GitHub 上提 Pull Request ，可以阅读下面这篇文章来学习：[如何优雅地在 GitHub 上贡献代码](https://segmentfault.com/a/1190000000736629)
 
 为了能帮助你开始你的第一次尝试，我们用[good first issues](todo)标记了一些比较容易修复的 bug 和小功能。这些 issue 可以很好地作为你的首次尝试。
@@ -79,4 +78,3 @@ VisActor 团队会关注所有的 pull request，我们会 review 以及合并�
 3. `rush test` 运行所有项目的 test 脚本
 4. `rush run -p <project_name> -s <script>` 运行指定项目的指定脚本，eg. `rush run -p @visactor/vtable -s start`
 5. `rush prettier --dir <project_relative_path> --ext <file_type>` 格式化指定项目的源代码，eg. `rush prettier --dir packages/vtable --ext ts`
-
