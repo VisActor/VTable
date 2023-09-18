@@ -26,6 +26,12 @@ export function getChartSpec(col: number, row: number, layout: PivotLayoutMap): 
   let chartSpec = layout.getRawChartSpec(col, row);
   if (chartSpec) {
     chartSpec = cloneDeep(chartSpec);
+    chartSpec.sortDataByAxis = true;
+    if (isArray(chartSpec.series)) {
+      chartSpec.series.forEach((serie: any) => {
+        serie.sortDataByAxis = true;
+      });
+    }
     chartSpec.axes = layout.getChartAxes(col, row);
     chartSpec.padding = 0;
     chartSpec.dataZoom = []; // Do not support datazoom temply

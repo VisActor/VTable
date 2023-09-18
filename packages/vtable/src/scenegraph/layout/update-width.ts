@@ -2,6 +2,7 @@ import type { ProgressBarStyle } from '../../body-helper/style/ProgressBarStyle'
 import { CartesianAxis } from '../../components/axis/axis';
 import { getStyleTheme } from '../../core/tableHelper';
 import type { IProgressbarColumnBodyDefine } from '../../ts-types/list-table/define/progressbar-define';
+import { dealWithCustom } from '../component/custom';
 import type { Group } from '../graphic/group';
 import type { Icon } from '../graphic/icon';
 import { updateImageCellContentWhileResize } from '../group-creater/cell-type/image-cell';
@@ -12,6 +13,7 @@ import { getCellMergeInfo } from '../utils/get-cell-merge';
 import { getProp } from '../utils/get-prop';
 import { getQuadProps } from '../utils/padding';
 import { updateCellContentWidth } from '../utils/text-icon-layout';
+import { computeRowHeight, computeRowsHeight } from './compute-row-height';
 import { updateCellHeightForRow } from './update-height';
 // import { updateAutoRowHeight } from './auto-height';
 
@@ -23,6 +25,8 @@ import { updateCellHeightForRow } from './update-height';
  * @return {*}
  */
 export function updateColWidth(scene: Scenegraph, col: number, detaX: number) {
+  scene.table.setColWidth(col, scene.table.getColWidth(col) + detaX, true);
+
   const autoRowHeight = scene.table.heightMode === 'autoHeight';
   // deal with corner header or column header
   const colOrCornerHeaderColumn = scene.getColGroup(col, true) as Group;
@@ -98,7 +102,7 @@ export function updateColWidth(scene: Scenegraph, col: number, detaX: number) {
     });
   }
 
-  scene.table.setColWidth(col, rowHeaderOrBodyColumn.attribute.width, true);
+  // scene.table.setColWidth(col, rowHeaderOrBodyColumn.attribute.width, true);
 }
 
 function updateColunmWidth(
@@ -298,18 +302,65 @@ function updateCellWidth(
   } else if (cell.firstChild?.name === 'axis') {
     (cell.firstChild as any)?.originAxis.resize(cell.attribute.width, cell.attribute.height);
   } else {
-    // 处理文字
-    const style = scene.table._getCellStyle(col, row);
-    isHeightChange = updateCellContentWidth(
-      cellGroup,
-      distWidth,
-      detaX,
-      autoRowHeight,
-      getQuadProps(style.padding as number),
-      style.textAlign,
-      style.textBaseline,
-      scene
-    );
+    let renderDefault = true;
+    const customContainer = cell.getChildByName('custom-container') as Group;
+    if (customContainer) {
+      let customElementsGroup;
+      customContainer.removeAllChild();
+      cell.removeChild(customContainer);
+
+      let customRender;
+      let customLayout;
+      const cellType = scene.table.getCellLocation(col, row);
+      if (cellType !== 'body') {
+        const define = scene.table.getHeaderDefine(col, row);
+        customRender = define?.headerCustomRender;
+        customLayout = define?.headerCustomLayout;
+      } else {
+        const define = scene.table.getBodyColumnDefine(col, row);
+        customRender = define?.customRender || scene.table.customRender;
+        customLayout = define?.customLayout;
+      }
+
+      if (customLayout || customRender) {
+        // const { autoRowHeight } = table.internalProps;
+        const customResult = dealWithCustom(
+          customLayout,
+          customRender,
+          col,
+          row,
+          cellGroup.attribute.width,
+          cellGroup.attribute.height,
+          false,
+          scene.table.heightMode === 'autoHeight',
+          scene.table
+        );
+        customElementsGroup = customResult.elementsGroup;
+        renderDefault = customResult.renderDefault;
+        isHeightChange = true;
+      }
+
+      if (cell.childrenCount > 0) {
+        cell.insertBefore(customElementsGroup, cell.firstChild);
+      } else {
+        cell.appendChild(customElementsGroup);
+      }
+    }
+
+    if (renderDefault) {
+      // 处理文字
+      const style = scene.table._getCellStyle(col, row);
+      isHeightChange = updateCellContentWidth(
+        cellGroup,
+        distWidth,
+        detaX,
+        autoRowHeight,
+        getQuadProps(style.padding as number),
+        style.textAlign,
+        style.textBaseline,
+        scene
+      );
+    }
   }
 
   return isHeightChange;
@@ -322,20 +373,21 @@ function updateCellWidth(
  * @return {*}
  */
 function resetRowHeight(scene: Scenegraph, row: number) {
-  let maxHeight = 0;
+  // let maxHeight = 0;
   // 获取高度
-  for (let col = 0; col < scene.table.colCount; col++) {
-    const cell = scene.highPerformanceGetCell(col, row);
-    if (cell.role === 'empty') {
-      return;
-    }
-    let cellHeight = getCleanCellHeight(cell, scene);
-    const mergeInfo = getCellMergeInfo(scene.table, col, row);
-    if (mergeInfo && mergeInfo.end.row - mergeInfo.start.row) {
-      cellHeight = cellHeight / (mergeInfo.end.row - mergeInfo.start.row + 1);
-    }
-    maxHeight = Math.max(maxHeight, cellHeight);
-  }
+  const maxHeight = computeRowHeight(row, 0, scene.table.colCount - 1, scene.table);
+  // for (let col = 0; col < scene.table.colCount; col++) {
+  //   const cell = scene.highPerformanceGetCell(col, row);
+  //   if (cell.role === 'empty') {
+  //     return;
+  //   }
+  //   let cellHeight = scene.table.getRowHeight(row);
+  //   const mergeInfo = getCellMergeInfo(scene.table, col, row);
+  //   if (mergeInfo && mergeInfo.end.row - mergeInfo.start.row) {
+  //     cellHeight = cellHeight / (mergeInfo.end.row - mergeInfo.start.row + 1);
+  //   }
+  //   maxHeight = Math.max(maxHeight, cellHeight);
+  // }
 
   // 更新高度
   for (let col = 0; col < scene.table.colCount; col++) {

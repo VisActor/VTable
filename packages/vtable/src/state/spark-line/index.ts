@@ -103,7 +103,7 @@ export function updateChartHover(col: number, row: number, x: number, y: number,
   table.scenegraph.updateNextFrame();
 
   if (chartPoint) {
-    const eventInfo: MousePointerSparklineEvent = {
+    const eventInfo: Omit<MousePointerSparklineEvent, 'target'> = {
       col,
       row,
       field: table.getHeaderField(col, row),
@@ -117,7 +117,7 @@ export function updateChartHover(col: number, row: number, x: number, y: number,
       },
       scaleRatio: table.canvas.getBoundingClientRect().width / table.canvas.offsetWidth
     };
-    table.fireListeners(TABLE_EVENT_TYPE.MOUSEOVER_CHART_SYMBOL, eventInfo);
+    table.fireListeners(TABLE_EVENT_TYPE.MOUSEOVER_CHART_SYMBOL, eventInfo as MousePointerSparklineEvent);
   }
   return true;
 }

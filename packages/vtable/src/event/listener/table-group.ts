@@ -94,7 +94,8 @@ export function bindTableGroupListener(eventManeger: EventManeger) {
             row: table.stateManeger.hover.cellPos.row
           }),
           scaleRatio: table.canvas.getBoundingClientRect().width / table.canvas.offsetWidth,
-          event: e.nativeEvent
+          event: e.nativeEvent,
+          target: eventArgsSet?.eventArgs?.target
         });
       }
     }
@@ -114,7 +115,8 @@ export function bindTableGroupListener(eventManeger: EventManeger) {
             row: cellGoup.row
           }),
           scaleRatio: table.canvas.getBoundingClientRect().width / table.canvas.offsetWidth,
-          event: e.nativeEvent
+          event: e.nativeEvent,
+          target: eventArgsSet?.eventArgs?.target
         });
       }
     }
@@ -144,7 +146,8 @@ export function bindTableGroupListener(eventManeger: EventManeger) {
               position: position,
               funcType: (icon as any).attribute.funcType
             }
-          : undefined
+          : undefined,
+        target: eventArgsSet?.eventArgs?.target
       });
     }
   });
@@ -178,7 +181,8 @@ export function bindTableGroupListener(eventManeger: EventManeger) {
           sparkline: {
             pointData: undefined // chartPoint.pointData,
           },
-          scaleRatio: table.canvas.getBoundingClientRect().width / table.canvas.offsetWidth
+          scaleRatio: table.canvas.getBoundingClientRect().width / table.canvas.offsetWidth,
+          target: eventArgsSet?.eventArgs?.target
         };
         table.fireListeners(TABLE_EVENT_TYPE.MOUSEOVER_CHART_SYMBOL, eventInfo);
       }
@@ -237,7 +241,8 @@ export function bindTableGroupListener(eventManeger: EventManeger) {
       table.fireListeners(TABLE_EVENT_TYPE.MOUSELEAVE_TABLE, {
         col: -1,
         row: -1,
-        event: e.nativeEvent
+        event: e.nativeEvent,
+        target: undefined
       });
     }
   });
@@ -338,7 +343,8 @@ export function bindTableGroupListener(eventManeger: EventManeger) {
         table.fireListeners(TABLE_EVENT_TYPE.MOUSEDOWN_CELL, {
           col: eventArgsSet.eventArgs.col,
           row: eventArgsSet.eventArgs.row,
-          event: e.nativeEvent
+          event: e.nativeEvent,
+          target: eventArgsSet?.eventArgs?.target
         });
       }
     }
@@ -377,7 +383,8 @@ export function bindTableGroupListener(eventManeger: EventManeger) {
             cells: [],
             col: (eventArgsSet.eventArgs.target as unknown as Group).col,
             row: (eventArgsSet.eventArgs.target as unknown as Group).row,
-            scaleRatio: table.canvas.getBoundingClientRect().width / table.canvas.offsetWidth
+            scaleRatio: table.canvas.getBoundingClientRect().width / table.canvas.offsetWidth,
+            target: eventArgsSet?.eventArgs?.target
           };
 
           cellsEvent.cells = table.getSelectedCellInfos();
@@ -395,7 +402,8 @@ export function bindTableGroupListener(eventManeger: EventManeger) {
         table.fireListeners(TABLE_EVENT_TYPE.MOUSEUP_CELL, {
           col: eventArgsSet.eventArgs.col,
           row: eventArgsSet.eventArgs.row,
-          event: e.nativeEvent
+          event: e.nativeEvent,
+          target: eventArgsSet?.eventArgs?.target
         });
       }
     }
@@ -435,7 +443,8 @@ export function bindTableGroupListener(eventManeger: EventManeger) {
                 position: position,
                 funcType: (icon as any).attribute.funcType
               }
-            : undefined
+            : undefined,
+          target: eventArgsSet?.eventArgs?.target
         };
         if (cellInRanges(table.stateManeger.select.ranges, col, row)) {
           // 用户右键点击已经选中的区域
@@ -482,7 +491,8 @@ export function bindTableGroupListener(eventManeger: EventManeger) {
               position: position,
               funcType: (icon as any).attribute.funcType
             }
-          : undefined
+          : undefined,
+        target: eventArgsSet?.eventArgs?.target
       };
 
       table.fireListeners(TABLE_EVENT_TYPE.CLICK_CELL, cellsEvent);
@@ -539,7 +549,8 @@ export function bindTableGroupListener(eventManeger: EventManeger) {
               position: position,
               funcType: (icon as any).attribute.funcType
             }
-          : undefined
+          : undefined,
+        target: eventArgsSet?.eventArgs?.target
       };
       table.fireListeners(TABLE_EVENT_TYPE.DBLCLICK_CELL, cellsEvent);
     }

@@ -307,6 +307,10 @@ export const menus = [
       {
         path: 'interactive',
         name: 'tooltip'
+      },
+      {
+        path: 'interactive',
+        name: 'resize-container'
       }
     ]
   },
@@ -444,6 +448,19 @@ export const menus = [
       {
         path: 'custom',
         name: 'custom-layout'
+      }
+    ]
+  },
+  {
+    menu: 'custom-layout-jsx',
+    children: [
+      {
+        path: 'custom-layout-jsx',
+        name: 'list-jsx'
+      },
+      {
+        path: 'custom-layout-jsx',
+        name: 'pivot-jsx'
       }
     ]
   },
