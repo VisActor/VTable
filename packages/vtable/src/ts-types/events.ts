@@ -53,7 +53,7 @@ export type MousePointerMultiCellEvent = MousePointerCellEvent & {
   // menuKey?: string;
 };
 
-export type MousePointerSparklineEvent = MousePointerCellEvent & {
+export type MousePointerSparklineEvent = Omit<MousePointerCellEvent, 'target'> & {
   sparkline: {
     pointData: any;
   };

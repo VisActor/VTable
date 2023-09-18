@@ -81,7 +81,13 @@ export function computeRowsHeight(
       // check fixed style and no wrap situation, fill all row width single compute
       // traspose table and row indicator pivot table cannot use single row height
       const height = computeRowHeight(table.columnHeaderLevelCount, 0, table.colCount - 1, table);
-      fillRowsHeight(height, table.columnHeaderLevelCount, table.rowCount - 1 - table.bottomFrozenRowCount, table);
+      fillRowsHeight(
+        height,
+        table.columnHeaderLevelCount,
+        table.rowCount - 1 - table.bottomFrozenRowCount,
+        table,
+        update ? newHeights : undefined
+      );
       //底部冻结的行行高需要单独计算
       for (let row = table.rowCount - table.bottomFrozenRowCount; row <= rowEnd; row++) {
         const height = computeRowHeight(row, 0, table.colCount - 1, table);
@@ -143,7 +149,15 @@ export function computeRowsHeight(
       let rowHeight;
       if (row === table.rowCount - table.bottomFrozenRowCount - 1) {
         rowHeight =
-          totalDrawHeight - table.getRowsHeight(table.frozenRowCount, table.rowCount - table.bottomFrozenRowCount - 2);
+          totalDrawHeight -
+          (update
+            ? newHeights.reduce((acr, cur, index) => {
+                if (index >= table.frozenRowCount && index !== newHeights.length - 1) {
+                  return acr + cur;
+                }
+                return acr;
+              }, 0)
+            : table.getRowsHeight(table.frozenRowCount, table.rowCount - table.bottomFrozenRowCount - 2));
       } else {
         rowHeight = Math.round((update ? newHeights[row] : table.getRowHeight(row)) * factor);
       }
@@ -305,9 +319,19 @@ function checkFixedStyleAndNoWrapForTranspose(table: BaseTableAPI, row: number):
   return true;
 }
 
-function fillRowsHeight(height: number, startRow: number, endRow: number, table: BaseTableAPI) {
+function fillRowsHeight(
+  height: number,
+  startRow: number,
+  endRow: number,
+  table: BaseTableAPI,
+  newHeights: number[] | undefined
+) {
   for (let row = startRow; row <= endRow; row++) {
-    table.setRowHeight(row, height);
+    if (newHeights) {
+      newHeights[row] = height;
+    } else {
+      table.setRowHeight(row, height);
+    }
   }
 }
 

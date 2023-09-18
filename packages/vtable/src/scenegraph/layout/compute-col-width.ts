@@ -88,7 +88,12 @@ export function computeColsWidth(table: BaseTableAPI, colStart?: number, colEnd?
         colWidth =
           totalDrawWidth -
           (update
-            ? newWidths.reduce((acr, cur) => acr + cur) - newWidths[newWidths.length - 1]
+            ? newWidths.reduce((acr, cur, index) => {
+                if (index >= table.rowHeaderLevelCount && index !== newWidths.length - 1) {
+                  return acr + cur;
+                }
+                return acr;
+              }, 0)
             : table.getColsWidth(table.frozenColCount, table.colCount - table.rightFrozenColCount - 2));
       } else {
         colWidth = Math.round((update ? newWidths[col] : table.getColWidth(col)) * factor);

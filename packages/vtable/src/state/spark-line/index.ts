@@ -103,7 +103,7 @@ export function updateChartHover(col: number, row: number, x: number, y: number,
   table.scenegraph.updateNextFrame();
 
   if (chartPoint) {
-    const eventInfo: MousePointerSparklineEvent = {
+    const eventInfo: Omit<MousePointerSparklineEvent, 'target'> = {
       col,
       row,
       field: table.getHeaderField(col, row),
