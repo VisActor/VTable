@@ -154,16 +154,14 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
       (this.internalProps.layoutMap as PivotHeaderLayoutMap).rowExpandLevel === options?.rowExpandLevel
     ) {
       const beforeRowDimensions = (this.internalProps.layoutMap as PivotHeaderLayoutMap).rowDimensionTree.tree.children;
-      (this.internalProps.layoutMap as PivotHeaderLayoutMap).rowTree.forEach(
-        (node: IHeaderTreeDefine, index: number) => {
-          const beforeRowDimension = beforeRowDimensions.find(
-            item => item.dimensionKey === node.dimensionKey && item.value === node.value
-          );
-          if (beforeRowDimension) {
-            this.syncHierarchyState(beforeRowDimension, node);
-          }
+      this.options.rowTree?.forEach((node: IHeaderTreeDefine, index: number) => {
+        const beforeRowDimension = beforeRowDimensions.find(
+          item => item.dimensionKey === node.dimensionKey && item.value === node.value
+        );
+        if (beforeRowDimension) {
+          this.syncHierarchyState(beforeRowDimension, node);
         }
-      );
+      });
     }
 
     //TODO 这里需要加上判断 dataConfig是否有配置变化
