@@ -138,6 +138,8 @@ export class StateManeger {
   };
   _clearVerticalScrollBar: any;
   _clearHorizontalScrollBar: any;
+
+  fastScrolling: boolean = false;
   // 供滚动重置为default使用
   resetInteractionState = debounce(() => {
     this.updateInteractionState(InteractionState.default);
