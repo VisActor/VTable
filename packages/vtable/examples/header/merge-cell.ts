@@ -58,7 +58,7 @@ export function createTable() {
           return v1 === v2 ? 0 : v1 > v2 ? 1 : -1;
         },
         width: 100,
-        mergeCell: true
+        mergeCell: false
       },
       {
         field: 'id',
@@ -108,12 +108,13 @@ export function createTable() {
         },
         field: 'name',
         width: 150,
-        mergeCell: true
+        mergeCell: false
       }
     ],
     showFrozenIcon: true, //显示VTable内置冻结列图标
     widthMode: 'standard',
-    allowFrozenColCount: 2
+    allowFrozenColCount: 2,
+    heightMode: 'adaptive'
   };
 
   const instance = new ListTable(option);

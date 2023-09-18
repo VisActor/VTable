@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "comment": "fix: loss tree HierarchyState when call updateOption #339\n\n",
+      "type": "patch",
+      "packageName": "@visactor/vtable"
+    }
+  ],
+  "packageName": "@visactor/vtable",
+  "email": "892739385@qq.com"
+}

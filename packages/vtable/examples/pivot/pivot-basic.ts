@@ -477,7 +477,8 @@ export function createTable() {
     theme,
     showFrozenIcon: false, //显示VTable内置冻结列图标
     allowFrozenColCount: 2,
-    widthMode: 'autoWidth', // 宽度模式：standard 标准模式； adaptive 自动填满容器
+    heightMode: 'adaptive',
+    widthMode: 'adaptive', // 宽度模式：standard 标准模式； adaptive 自动填满容器
     defaultRowHeight: 80,
     columnResizeType: 'indicator', // 'column' | 'indicator' | 'all'
     tooltip: {

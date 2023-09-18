@@ -68,6 +68,7 @@ export class ResizeObserver {
   }
 
   callBack = () => {
+    // console.trace('resize callback');
     const newSize = this.getSize();
     if (newSize.width === this.lastSize.width && newSize.height === this.lastSize.height) {
       return;
