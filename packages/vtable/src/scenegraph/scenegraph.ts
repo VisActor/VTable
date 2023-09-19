@@ -851,6 +851,7 @@ export class Scenegraph {
   }
 
   updateRowHeight(row: number, detaY: number) {
+    detaY = Math.round(detaY);
     updateRowHeight(this, row, detaY);
     this.updateContainerHeight(row, detaY);
   }
