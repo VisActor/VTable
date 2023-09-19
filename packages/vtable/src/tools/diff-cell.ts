@@ -2,13 +2,13 @@ import type { PivotHeaderLayoutMap } from '../layout/pivot-header-layout';
 import type { CellAddress } from '../ts-types';
 
 export function diffCellAddress(
-  oldCellIdsArr: number[][],
-  newCellIdsArr: number[][],
+  oldCellIds: number[],
+  newCellIds: number[],
   oldRowHeaderCellPositons: CellAddress[],
   layout: PivotHeaderLayoutMap
 ) {
-  const oldCellIds = oldCellIdsArr.map(oldCellId => oldCellId[0]);
-  const newCellIds = newCellIdsArr.map(oldCellId => oldCellId[0]);
+  // const oldCellIds = oldCellIdsArr.map(oldCellId => oldCellId[0]);
+  // const newCellIds = newCellIdsArr.map(oldCellId => oldCellId[0]);
   const addCellPositions = [];
   const removeCellPositions = [];
   // diff two array elements
