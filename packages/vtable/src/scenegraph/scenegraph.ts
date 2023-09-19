@@ -729,7 +729,7 @@ export class Scenegraph {
    * @return {*}
    */
   updateColWidth(col: number, detaX: number) {
-    updateColWidth(this, col, detaX);
+    updateColWidth(this, col, Math.round(detaX));
     // this.updateContainerWidth(col, detaX);
     this.updateContainer();
   }
@@ -851,6 +851,7 @@ export class Scenegraph {
   }
 
   updateRowHeight(row: number, detaY: number) {
+    detaY = Math.round(detaY);
     updateRowHeight(this, row, detaY);
     this.updateContainerHeight(row, detaY);
   }
