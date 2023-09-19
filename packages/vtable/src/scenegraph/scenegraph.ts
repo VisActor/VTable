@@ -133,6 +133,7 @@ export class Scenegraph {
       disableDirtyBounds: false,
       background: table.theme.underlayBackgroundColor,
       dpr: table.internalProps.pixelRatio,
+      enableLayout: true,
       pluginList: table.isPivotChart() ? ['poptipForText'] : undefined
       // autoRender: true
     });

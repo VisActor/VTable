@@ -106,7 +106,7 @@ export class Chart extends Group {
       },
       animation: false,
       interactive: true,
-      autoFit: false,
+      autoFit: false, //控制当容器变化大小时vchart实例不应响应事件进行内部处理
       beforeRender: (stage: any) => {
         const ctx = stage.window.getContext();
         ctx.inuse = true;

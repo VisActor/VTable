@@ -129,8 +129,8 @@ export function createCell(
         customRender,
         col,
         row,
-        table.getColWidth(col),
-        table.getRowHeight(row),
+        cellWidth,
+        cellHeight,
         false,
         table.heightMode === 'autoHeight',
         table

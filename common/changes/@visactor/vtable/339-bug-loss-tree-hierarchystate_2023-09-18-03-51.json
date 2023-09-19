@@ -1,7 +1,7 @@
 {
   "changes": [
     {
-      "comment": "fix: indicators/customRender data mapping exception #292\n\n",
+      "comment": "fix: loss tree HierarchyState when call updateOption #339\n\n",
       "type": "patch",
       "packageName": "@visactor/vtable"
     }

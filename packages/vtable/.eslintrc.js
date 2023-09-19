@@ -2,7 +2,10 @@ require('@rushstack/eslint-patch/modern-module-resolution');
 
 module.exports = {
   extends: ['@internal/eslint-config/profile/lib'],
-  parserOptions: { tsconfigRootDir: __dirname, project: './tscofig.eslint.json' },
+  parserOptions: {
+    tsconfigRootDir: __dirname,
+    project: './tscofig.eslint.json'
+  },
   env: {
     browser: true,
     es2021: true,
@@ -25,7 +28,7 @@ module.exports = {
       }
     }
   ],
-  ignorePatterns: ['scripts/**', 'bundler.config.js'],
+  ignorePatterns: ['scripts/**', 'bundler.config.js', '*.tsx'],
   rules: {
     'prettier/prettier': ['warn'],
     // 强制使用 Unix 换行符： \n
