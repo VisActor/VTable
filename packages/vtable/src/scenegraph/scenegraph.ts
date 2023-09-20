@@ -1577,9 +1577,9 @@ export class Scenegraph {
     this.findAndUpdateIcon(cellGroup, [IconFuncTypeEnum.collapse, IconFuncTypeEnum.expand], iconConfig);
   }
 
-  updateRow(removeCells: CellAddress[], addCells: CellAddress[]) {
+  updateRow(removeCells: CellAddress[], addCells: CellAddress[], updateCells: CellAddress[] = []) {
     // add or move rows
-    updateRow(removeCells, addCells, this.table);
+    updateRow(removeCells, addCells, updateCells, this.table);
 
     // update column width and row height
     this.recalculateColWidths();

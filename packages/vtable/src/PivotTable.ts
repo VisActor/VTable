@@ -271,7 +271,7 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
       if (records?.[0]?.constructor !== Array) {
         this.flatDataToObjects = new FlatDataToObjects(
           {
-            rows: internalProps.layoutMap.rowDimensionKeys,
+            rows: internalProps.layoutMap.rowDimensionKeys.concat(internalProps.layoutMap._extensionRowDimensionKeys),
             columns: internalProps.layoutMap.colDimensionKeys,
             indicators: internalProps.layoutMap.indicatorKeys,
             indicatorsAsCol: internalProps.layoutMap.indicatorsAsCol,
@@ -623,7 +623,7 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
     // this.invalidate();
     this.clearCellStyleCache();
     this.scenegraph.updateHierarchyIcon(col, row);
-    this.scenegraph.updateRow(result.removeCellPositions, result.addCellPositions);
+    this.scenegraph.updateRow(result.removeCellPositions, result.addCellPositions, result.updateCellPositions);
   }
   /**
    * 通过表头的维度值路径来计算单元格位置  getCellAddressByHeaderPaths接口更强大一些 不限表头 不限参数格式

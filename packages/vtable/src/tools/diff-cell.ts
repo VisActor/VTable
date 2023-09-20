@@ -1,31 +1,41 @@
 import type { PivotHeaderLayoutMap } from '../layout/pivot-header-layout';
 import type { CellAddress } from '../ts-types';
+import type { LayoutObjectId } from '../ts-types/base-table';
 
 export function diffCellAddress(
+  col: number,
   oldCellIds: number[],
   newCellIds: number[],
   oldRowHeaderCellPositons: CellAddress[],
   layout: PivotHeaderLayoutMap
 ) {
+  const columnHeaderStart = layout.columnHeaderLevelCount;
   // const oldCellIds = oldCellIdsArr.map(oldCellId => oldCellId[0]);
   // const newCellIds = newCellIdsArr.map(oldCellId => oldCellId[0]);
   const addCellPositions = [];
   const removeCellPositions = [];
+  // const updateCellIds: Set<LayoutObjectId> = new Set();
   // diff two array elements
   for (let i = 0; i < oldCellIds.length; i++) {
     if (!newCellIds.includes(oldCellIds[i])) {
+      // updateCellIds.add(layout.getParentCellId(oldRowHeaderCellPositons[i].col, oldRowHeaderCellPositons[i].row));
       removeCellPositions.push(oldRowHeaderCellPositons[i]);
     }
   }
   for (let i = 0; i < newCellIds.length; i++) {
     if (!oldCellIds.includes(newCellIds[i])) {
-      addCellPositions.push(layout.getHeaderCellAdress(newCellIds[i]));
+      const newCellAddr = { col, row: columnHeaderStart + i }; // layout.getHeaderCellAdressById(newCellIds[i]);
+      // updateCellIds.add(layout.getParentCellId(newCellAddr.col, newCellAddr.row));
+      addCellPositions.push(newCellAddr);
     }
   }
 
   return {
     addCellPositions,
     removeCellPositions
+    // updateCellPositions: Array.from(updateCellIds).map(cellId => {
+    //   return layout.getCellAddressByCellId(cellId);
+    // })
   };
 }
 

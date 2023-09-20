@@ -966,7 +966,7 @@ export class PivotLayoutMap implements LayoutMapAPI {
   getHeaderFieldKey(col: number, row: number): undefined {
     return undefined;
   }
-  getHeaderCellAdress(id: number): CellAddress | undefined {
+  getHeaderCellAdressById(id: number): CellAddress | undefined {
     return undefined;
   }
   getHeaderCellAddressByField(field: string): CellAddress | undefined {
@@ -1039,18 +1039,18 @@ export class PivotLayoutMap implements LayoutMapAPI {
       }
     );
   }
-  getBodyLayoutRangeById(id: LayoutObjectId): CellRange {
-    for (let col = 0; col < (this.colCount ?? 0); col++) {
-      if (id === this.columnObjects[col].id) {
-        return {
-          start: { col, row: 0 },
-          end: { col, row: 0 }
-        };
-      }
-    }
+  // getBodyLayoutRangeById(id: LayoutObjectId): CellRange {
+  //   for (let col = 0; col < (this.colCount ?? 0); col++) {
+  //     if (id === this.columnObjects[col].id) {
+  //       return {
+  //         start: { col, row: 0 },
+  //         end: { col, row: 0 }
+  //       };
+  //     }
+  //   }
 
-    throw new Error(`can not found body layout @id=${id as number}`);
-  }
+  //   throw new Error(`can not found body layout @id=${id as number}`);
+  // }
   /**
    * 这个结果直接影响合并单元格
    * 目前body部分 都按不合并

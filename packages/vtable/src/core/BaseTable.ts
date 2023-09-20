@@ -2451,7 +2451,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
       hd = layoutMap.headerObjects.find((col: any) => col && col.field === sortState.field);
     }
     if (hd) {
-      const headercell = layoutMap.getHeaderCellAdress(hd.id as number);
+      const headercell = layoutMap.getHeaderCellAdressById(hd.id as number);
       return headercell;
     }
     return undefined;

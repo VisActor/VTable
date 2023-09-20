@@ -1,7 +1,7 @@
 import type { RectProps, MaybePromiseOrUndefined, IDimensionInfo, SortOrder } from './common';
 import type { SvgIcon } from './icon';
 export type { HeaderData } from './list-table/layout-map/api';
-export type LayoutObjectId = number | string;
+export type LayoutObjectId = number;
 import type { Rect } from '../tools/Rect';
 import type { BaseTableAPI, BaseTableConstructorOptions } from './base-table';
 import type { IDataConfig } from './new-data-set';
