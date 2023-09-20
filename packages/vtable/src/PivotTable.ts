@@ -154,11 +154,14 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
       (this.internalProps.layoutMap as PivotHeaderLayoutMap).rowExpandLevel === options?.rowExpandLevel
     ) {
       const beforeRowDimensions = (this.internalProps.layoutMap as PivotHeaderLayoutMap).rowDimensionTree.tree.children;
-      (this.internalProps.layoutMap as PivotHeaderLayoutMap).rowTree.forEach(
-        (node: IHeaderTreeDefine, index: number) => {
-          this.syncHierarchyState(beforeRowDimensions[index], node);
+      this.options.rowTree?.forEach((node: IHeaderTreeDefine, index: number) => {
+        const beforeRowDimension = beforeRowDimensions.find(
+          item => item.dimensionKey === node.dimensionKey && item.value === node.value
+        );
+        if (beforeRowDimension) {
+          this.syncHierarchyState(beforeRowDimension, node);
         }
-      );
+      });
     }
 
     //TODO 这里需要加上判断 dataConfig是否有配置变化
@@ -335,7 +338,12 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
         targetNode.hierarchyState ?? (targetNode?.children ? sourceNode.hierarchyState : undefined);
       targetNode?.children?.forEach((targetChildNode: IHeaderTreeDefine, index: number) => {
         if (sourceNode?.children?.[index] && targetChildNode) {
-          this.syncHierarchyState(sourceNode.children[index], targetChildNode);
+          const beforeRowDimension = sourceNode.children.find(
+            (item: any) => item.dimensionKey === targetChildNode.dimensionKey && item.value === targetChildNode.value
+          );
+          if (beforeRowDimension) {
+            this.syncHierarchyState(beforeRowDimension, targetChildNode);
+          }
         }
       });
     }
