@@ -59,7 +59,7 @@ import type { PivotHeaderLayoutMap } from '../layout/pivot-header-layout';
 import { TooltipHandler } from '../components/tooltip/TooltipHandler';
 import type { CachedDataSource, DataSource } from '../data';
 import { isBoolean, isFunction, type ITextSize } from '@visactor/vutils';
-import { textMeasure } from '../scenegraph/utils/measure-text';
+import { textMeasure } from '../scenegraph/utils/text-measure';
 import { getProp } from '../scenegraph/utils/get-prop';
 import type {
   ColumnData,
