@@ -48,7 +48,7 @@ import renderServiceModule from './utils/render-service';
 loadPoptip();
 container.load(splitModule);
 container.load(textMeasureModule);
-container.load(renderServiceModule);
+// container.load(renderServiceModule);
 
 const poptipStyle = {
   visible: true,

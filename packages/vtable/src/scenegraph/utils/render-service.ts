@@ -22,7 +22,7 @@ export class RenderServiceForVTable extends DefaultRenderService {
         // } else {
         //   // do nothing
         // }
-        g.stage.dirtyBounds.empty();
+        g.stage.dirtyBounds?.empty();
       } else {
         this._prepare(g, updateBounds);
       }
