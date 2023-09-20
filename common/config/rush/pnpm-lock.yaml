@@ -219,6 +219,7 @@ importers:
       '@rollup/plugin-json': 4.1.0
       '@rollup/plugin-node-resolve': 15.0.2
       '@rollup/plugin-replace': 5.0.2
+      '@rollup/plugin-strip': 3.0.2
       '@rollup/plugin-terser': 0.4.1
       '@rollup/plugin-typescript': 11.1.0
       '@rollup/plugin-url': 8.0.1
@@ -291,6 +292,7 @@ importers:
       '@rollup/plugin-json': 4.1.0_rollup@3.20.5
       '@rollup/plugin-node-resolve': 15.0.2_rollup@3.20.5
       '@rollup/plugin-replace': 5.0.2_rollup@3.20.5
+      '@rollup/plugin-strip': 3.0.2_rollup@3.20.5
       '@rollup/plugin-terser': 0.4.1_rollup@3.20.5
       '@rollup/plugin-typescript': 11.1.0_ivokygnvpraqsbyfg47pib5bri
       '@rollup/plugin-url': 8.0.1_rollup@3.20.5
@@ -2302,6 +2304,21 @@ packages:
         optional: true
     dependencies:
       '@rollup/pluginutils': 5.0.4_rollup@3.20.5
+      magic-string: 0.27.0
+      rollup: 3.20.5
+    dev: false
+
+  /@rollup/plugin-strip/3.0.2_rollup@3.20.5:
+    resolution: {integrity: sha512-L8Whin/DB5XsLE586+xcud6yX/pMVUlfalA999uAsC+dtwmBHSiUwtAxMl3eVvykX3N5BhdeAjStqDlzMmfUXw==}
+    engines: {node: '>=14.0.0'}
+    peerDependencies:
+      rollup: ^1.20.0||^2.0.0||^3.0.0
+    peerDependenciesMeta:
+      rollup:
+        optional: true
+    dependencies:
+      '@rollup/pluginutils': 5.0.4_rollup@3.20.5
+      estree-walker: 2.0.2
       magic-string: 0.27.0
       rollup: 3.20.5
     dev: false
