@@ -1,4 +1,3 @@
-import { injectable } from 'inversify';
 import type {
   IImage,
   IContext2d,
@@ -9,7 +8,7 @@ import type {
   IImageRenderContribution,
   IDrawContext
 } from '@visactor/vrender';
-import { BaseRenderContributionTime } from '@visactor/vrender';
+import { BaseRenderContributionTime, injectable } from '@visactor/vrender';
 
 /**
  * @description: image支持绘制部分形状

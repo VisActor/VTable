@@ -3,7 +3,8 @@ import {
   DefaultTextStyle,
   getTextBounds,
   DefaultTextMeasureContribution,
-  TextMeasureContribution
+  TextMeasureContribution,
+  ContainerModule
 } from '@visactor/vrender';
 // eslint-disable-next-line max-len
 // import {
@@ -12,7 +13,6 @@ import {
 // } from '@visactor/vrender/es/core/contributions/textMeasure/textMeasure-contribution';
 import type { ITextMeasureOption } from '@visactor/vutils';
 import { TextMeasure } from '@visactor/vutils';
-import { ContainerModule } from 'inversify';
 
 export default new ContainerModule((bind, unbind, isBound, rebind) => {
   bind(FastTextMeasureContribution).toSelf().inSingletonScope();

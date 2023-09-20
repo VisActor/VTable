@@ -1,5 +1,5 @@
 import type { IStage, IRect, ITextCache } from '@visactor/vrender';
-import { createStage, createRect, IContainPointMode, container } from '@visactor/vrender';
+import { createStage, createRect, IContainPointMode, container, loadCanvasPicker, vglobal } from '@visactor/vrender';
 import {
   type CellAddress,
   type CellLocation,
@@ -130,6 +130,7 @@ export class Scenegraph {
     this.mergeMap = new Map();
 
     setPoptipTheme(poptipStyle as any);
+    vglobal.setEnv('browser');
     this.stage = createStage({
       canvas: table.canvas,
       width: table.canvas.width,

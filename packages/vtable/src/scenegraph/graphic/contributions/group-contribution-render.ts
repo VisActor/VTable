@@ -1,4 +1,3 @@
-import { injectable } from 'inversify';
 import type {
   IGroup,
   IContext2d,
@@ -9,7 +8,7 @@ import type {
   IGroupRenderContribution,
   IDrawContext
 } from '@visactor/vrender';
-import { BaseRenderContributionTime } from '@visactor/vrender';
+import { BaseRenderContributionTime, injectable } from '@visactor/vrender';
 import type { Group } from '../group';
 import { getCellHoverColor } from '../../../state/hover/is-cell-hover';
 import type { BaseTableAPI } from '../../../ts-types/base-table';

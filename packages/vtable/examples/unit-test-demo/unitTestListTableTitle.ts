@@ -1,14 +1,13 @@
-// @ts-nocheck
-// 有问题可对照demo unitTestListTable
-import records from '../data/marketsales.json';
-import { ListTable } from '../../src/ListTable';
-import { createDiv } from '../dom';
-global.__VERSION__ = 'none';
-describe('listTable-title init test', () => {
-  const containerDom: HTMLElement = createDiv();
-  containerDom.style.position = 'relative';
+import * as VTable from '../../src';
+import records from './marketsales.json';
+const ListTable = VTable.ListTable;
+const CONTAINER_ID = 'vTable';
+export function createTable() {
+  const containerDom: HTMLElement = document.getElementById(CONTAINER_ID) as HTMLElement;
+  // containerDom.style.position = 'relative';
   containerDom.style.width = '1000px';
   containerDom.style.height = '800px';
+
   const columns = [
     {
       field: '订单 ID',
@@ -88,13 +87,22 @@ describe('listTable-title init test', () => {
 
   option.container = containerDom;
   option.records = records;
-  const listTable = new ListTable(option);
-  test('listTable-title getCell', () => {
-    const cell01AABB = listTable.scenegraph.getCell(0, 1).AABBBounds;
-    expect(cell01AABB.x1).toBe(0);
-    expect(cell01AABB.y1).toBe(0);
-    expect(cell01AABB.x2).toBe(151);
-    expect(cell01AABB.y2).toBe(40);
-  });
-  listTable.release();
-});
+  const tableInstance = new ListTable(option);
+
+  window.tableInstance = tableInstance;
+
+  // setTimeout(() => {
+  //   columns.shift();
+  //   const f = records.slice(10, 30);
+  //   const option1: VTable.TYPES.ListTableConstructorOptions = {
+  //     columns,
+  //     records: f,
+  //     defaultColWidth: 150,
+  //     allowFrozenColCount: 5,
+  //     heightMode: 'autoHeight',
+  //     autoWrapText: true,
+  //     widthMode: 'autoWidth'
+  //   };
+  //   tableInstance.updateOption(option1);
+  // }, 3000);
+}

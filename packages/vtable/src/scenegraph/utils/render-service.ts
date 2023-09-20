@@ -1,8 +1,7 @@
 import type { IGraphic } from '@visactor/vrender';
-import { DefaultRenderService, RenderService } from '@visactor/vrender';
+import { ContainerModule, DefaultRenderService, RenderService } from '@visactor/vrender';
 import type { BaseTableAPI } from '../../ts-types/base-table';
 import { InteractionState } from '../../ts-types';
-import { ContainerModule } from 'inversify';
 
 export default new ContainerModule((bind, unbind, isBound, rebind) => {
   bind(RenderServiceForVTable).toSelf();
