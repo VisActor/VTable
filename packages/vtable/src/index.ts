@@ -28,8 +28,8 @@ import { PivotChart } from './PivotChart';
 import type { MousePointerCellEvent } from './ts-types/events';
 import * as CustomLayout from './render/layout';
 
-import { container, loadCanvasPicker } from '@visactor/vrender';
-loadCanvasPicker(container);
+// import { container, loadCanvasPicker } from '@visactor/vrender';
+// loadCanvasPicker(container);
 
 export * from './render/jsx';
 
