@@ -14,7 +14,6 @@ import Alias from '@rollup/plugin-alias';
 import postcss from 'rollup-plugin-postcss';
 import * as path from 'path';
 import { Config } from './config';
-import strip from '@rollup/plugin-strip';
 
 function getExternal(
   rawPackageJson: RawPackageJson,
@@ -53,20 +52,6 @@ export function getRollupOptions(
       }),
       postcss({
         extensions: ['.css']
-      }),
-      strip({
-        // set this to `false` if you don't want to
-        // remove debugger statements
-        debugger: true,
-        include: ['**/*.js', '**/*.ts'],
-
-        // defaults to `[ 'console.*', 'assert.*' ]`
-        functions: ['console.*', 'assert.*'],
-        labels: ['unittest'],
-
-        // set this to `false` if you're not using sourcemaps –
-        // defaults to `true`
-        sourceMap: true
       }),
       url({
         limit: 8192, // 小于 8kb 的图片将被转换为 base64

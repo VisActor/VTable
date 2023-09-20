@@ -9,7 +9,6 @@ import through2 from 'through2';
 import { minify } from 'terser';
 import gulpIF from 'gulp-if';
 import gulpMatch from 'gulp-match';
-// import stripDebug from 'gulp-strip-debug';
 import { DebugCompile, DebugConfig } from '../logic/debug';
 import { alias } from '../logic/alias';
 
@@ -152,7 +151,6 @@ export function compile(
             next();
           })
         )
-        // .pipe(stripDebug())
         .pipe(gulp.dest(outputPath)),
       tsResult.js.pipe(gulpIF(sourceMap, gulpSourceMaps.write('.'))).pipe(gulp.dest(outputPath)),
       tsResult.dts.pipe(gulp.dest(outputPath))

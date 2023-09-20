@@ -219,7 +219,6 @@ importers:
       '@rollup/plugin-json': 4.1.0
       '@rollup/plugin-node-resolve': 15.0.2
       '@rollup/plugin-replace': 5.0.2
-      '@rollup/plugin-strip': 3.0.2
       '@rollup/plugin-terser': 0.4.1
       '@rollup/plugin-typescript': 11.1.0
       '@rollup/plugin-url': 8.0.1
@@ -234,7 +233,6 @@ importers:
       '@types/gulp-if': 0.0.34
       '@types/gulp-match': 1.1.2
       '@types/gulp-sourcemaps': 0.0.35
-      '@types/gulp-strip-debug': 1.1.32
       '@types/less': 3.0.3
       '@types/lodash': 4.14.182
       '@types/merge2': 1.4.0
@@ -261,7 +259,6 @@ importers:
       gulp-match: 1.1.0
       gulp-replace: 1.1.4
       gulp-sourcemaps: 3.0.0
-      gulp-strip-debug: 5.0.0
       gulp-typescript: 6.0.0-alpha.1
       less: 4.1.3
       lodash: 4.17.21
@@ -294,7 +291,6 @@ importers:
       '@rollup/plugin-json': 4.1.0_rollup@3.20.5
       '@rollup/plugin-node-resolve': 15.0.2_rollup@3.20.5
       '@rollup/plugin-replace': 5.0.2_rollup@3.20.5
-      '@rollup/plugin-strip': 3.0.2_rollup@3.20.5
       '@rollup/plugin-terser': 0.4.1_rollup@3.20.5
       '@rollup/plugin-typescript': 11.1.0_ivokygnvpraqsbyfg47pib5bri
       '@rollup/plugin-url': 8.0.1_rollup@3.20.5
@@ -312,7 +308,6 @@ importers:
       gulp-match: 1.1.0
       gulp-replace: 1.1.4
       gulp-sourcemaps: 3.0.0
-      gulp-strip-debug: 5.0.0_gulp@4.0.2
       gulp-typescript: 6.0.0-alpha.1_typescript@4.9.5
       less: 4.1.3
       lodash: 4.17.21
@@ -340,7 +335,6 @@ importers:
       '@types/gulp-if': 0.0.34
       '@types/gulp-match': 1.1.2
       '@types/gulp-sourcemaps': 0.0.35
-      '@types/gulp-strip-debug': 1.1.32
       '@types/less': 3.0.3
       '@types/lodash': 4.14.182
       '@types/merge2': 1.4.0
@@ -2312,21 +2306,6 @@ packages:
       rollup: 3.20.5
     dev: false
 
-  /@rollup/plugin-strip/3.0.2_rollup@3.20.5:
-    resolution: {integrity: sha512-L8Whin/DB5XsLE586+xcud6yX/pMVUlfalA999uAsC+dtwmBHSiUwtAxMl3eVvykX3N5BhdeAjStqDlzMmfUXw==}
-    engines: {node: '>=14.0.0'}
-    peerDependencies:
-      rollup: ^1.20.0||^2.0.0||^3.0.0
-    peerDependenciesMeta:
-      rollup:
-        optional: true
-    dependencies:
-      '@rollup/pluginutils': 5.0.4_rollup@3.20.5
-      estree-walker: 2.0.2
-      magic-string: 0.27.0
-      rollup: 3.20.5
-    dev: false
-
   /@rollup/plugin-terser/0.4.1_rollup@3.20.5:
     resolution: {integrity: sha512-aKS32sw5a7hy+fEXVy+5T95aDIwjpGHCTv833HXVtyKMDoVS7pBr5K3L9hEQoNqbJFjfANPrNpIXlTQ7is00eA==}
     engines: {node: '>=14.0.0'}
@@ -2611,12 +2590,6 @@ packages:
     dependencies:
       '@types/node': 20.5.9
       '@types/vinyl': 2.0.7
-    dev: true
-
-  /@types/gulp-strip-debug/1.1.32:
-    resolution: {integrity: sha512-idYh9JZXi59V04HkERHeRtXKHphZumaFQfGmyz/D390AHCoWoexPe8d2oBTdBhW75fxSzo/JDEddQ23giFlWxA==}
-    dependencies:
-      '@types/node': 20.5.9
     dev: true
 
   /@types/gulp/4.0.10:
@@ -5044,11 +5017,6 @@ packages:
       object.defaults: 1.1.0
     dev: false
 
-  /easy-transform-stream/1.0.0:
-    resolution: {integrity: sha512-kIEXvPNtqUQ/lrgkULIP0/l2m88Ahlk2ySZhmuLdRidXBIEPyHuDgDt04b9DvnCy+nIQDjpygVft+Op3PZFUQg==}
-    engines: {node: '>=14.16'}
-    dev: false
-
   /ecc-jsbn/0.1.2:
     resolution: {integrity: sha512-eh9O+hwRHNbG4BLTjEl3nw044CkGm5X6LoaCf7LPp7UU8Qrt47JYNi6nPX8xjW97TKGKm1ouctg0QSpZe9qrnw==}
     dependencies:
@@ -6542,24 +6510,6 @@ packages:
       source-map: 0.6.1
       strip-bom-string: 1.0.0
       through2: 2.0.5
-    dev: false
-
-  /gulp-strip-debug/5.0.0_gulp@4.0.2:
-    resolution: {integrity: sha512-Kco0xp9kc7fOuruPsL/f708QKeetmDdo6MKGML841WVpRIbuFVNOJnW6rF3mvAUv7A1e6GNKVKICylMgIutSQA==}
-    engines: {node: '>=14.16'}
-    peerDependencies:
-      gulp: '>=4'
-    peerDependenciesMeta:
-      gulp:
-        optional: true
-    dependencies:
-      '@babel/core': 7.20.12
-      easy-transform-stream: 1.0.0
-      gulp: 4.0.2
-      plugin-error: 2.0.1
-      strip-debug: 7.0.0
-    transitivePeerDependencies:
-      - supports-color
     dev: false
 
   /gulp-typescript/6.0.0-alpha.1_typescript@4.9.5:
@@ -9568,13 +9518,6 @@ packages:
       extend-shallow: 3.0.2
     dev: false
 
-  /plugin-error/2.0.1:
-    resolution: {integrity: sha512-zMakqvIDyY40xHOvzXka0kUvf40nYIuwRE8dWhti2WtjQZ31xAgBZBhxsK7vK3QbRXS1Xms/LO7B5cuAsfB2Gg==}
-    engines: {node: '>=10.13.0'}
-    dependencies:
-      ansi-colors: 1.1.0
-    dev: false
-
   /pn/1.1.0:
     resolution: {integrity: sha512-2qHaIQr2VLRFoxe2nASzsV6ef4yOOH+Fi9FBOVH6cqeSgUnoyySPZkxzLuzd+RYOQTRpROA0ztTMqxROKSb/nA==}
     dev: true
@@ -11257,13 +11200,6 @@ packages:
     resolution: {integrity: sha512-3xurFv5tEgii33Zi8Jtp55wEIILR9eh34FAW00PZf+JnSsTmV/ioewSgQl97JHvgjoRGwPShsWm+IdrxB35d0w==}
     engines: {node: '>=8'}
     dev: true
-
-  /strip-debug/7.0.0:
-    resolution: {integrity: sha512-RX5z3LmGD9850X/kdblmrcZDEIXtP36Dy2uSKQRLKZDGW6bZT4s++JZk2v6MsWh5+kiXrq1BuEl1dZZ59Qr5mA==}
-    engines: {node: '>=14.16'}
-    dependencies:
-      '@types/babel__core': 7.20.0
-    dev: false
 
   /strip-eof/1.0.0:
     resolution: {integrity: sha512-7FCwGGmx8mD5xQd3RPUvnSpUXHM3BWuzjtpD4TXsfcZ9EL4azvVVUscFYwD9nx8Kh+uCBC00XBtAykoMHwTh8Q==}
