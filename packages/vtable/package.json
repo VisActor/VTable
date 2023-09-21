@@ -48,8 +48,8 @@
     "build:es": "bundle --clean -f es --ignorePostTasks"
   },
   "dependencies": {
-    "@visactor/vrender": "0.15.1",
-    "@visactor/vrender-components": "0.15.1",
+    "@visactor/vrender": "0.15.3",
+    "@visactor/vrender-components": "0.15.3",
     "@visactor/vutils": "~0.15.7",
     "@visactor/vscale": "~0.15.7",
     "@visactor/vdataset": "~0.15.7",
