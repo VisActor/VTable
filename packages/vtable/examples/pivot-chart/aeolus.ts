@@ -219,7 +219,7 @@ export function createTable() {
                 }
               },
               title: {
-                visible: false,
+                visible: true,
                 space: 5,
                 text: '省/自治区',
                 style: {
@@ -238,7 +238,7 @@ export function createTable() {
                   fill: '#6F6F6F',
                   angle: 0,
                   fontWeight: 'normal',
-                  direction: 'horizontal'
+                  direction: 'vertical'
                 },
                 autoHide: true,
                 autoHideMethod: 'greedy',
