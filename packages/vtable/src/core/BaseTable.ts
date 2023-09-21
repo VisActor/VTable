@@ -886,6 +886,10 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     if (this.rowHeightsMap.get(row)) {
       return this.rowHeightsMap.get(row);
     }
+    return this.getDefaultRowHeight(row);
+  }
+
+  getDefaultRowHeight(row: number) {
     if (this.isColumnHeader(0, row) || this.isCornerHeader(0, row)) {
       return Array.isArray(this.defaultHeaderRowHeight)
         ? this.defaultHeaderRowHeight[row] ?? this.internalProps.defaultRowHeight
