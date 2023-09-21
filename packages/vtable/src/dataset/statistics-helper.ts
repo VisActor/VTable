@@ -9,8 +9,15 @@ export abstract class Aggregator {
   field?: string | string[];
   formatFun?: any;
   _formatedValue?: any;
-  constructor(dimension: string | string[], formatFun?: any, isRecord?: boolean) {
+  needSplitPositiveAndNegativeForSum?: boolean = false;
+  constructor(
+    dimension: string | string[],
+    formatFun?: any,
+    isRecord?: boolean,
+    needSplitPositiveAndNegative?: boolean
+  ) {
     this.field = dimension;
+    this.needSplitPositiveAndNegativeForSum = needSplitPositiveAndNegative ?? false;
     this.formatFun = formatFun;
     this.isRecord = isRecord ?? this.isRecord;
   }
@@ -58,6 +65,8 @@ export class RecordAggregator extends Aggregator {
 export class SumAggregator extends Aggregator {
   type: string = AggregationType.SUM;
   sum = 0;
+  positiveSum = 0;
+  nagetiveSum = 0;
   declare field?: string;
   push(record: any): void {
     if (this.isRecord) {
@@ -68,13 +77,35 @@ export class SumAggregator extends Aggregator {
       }
     }
     if (record.className === 'Aggregator') {
-      this.sum += record.value();
+      const value = record.value();
+      this.sum += value;
+      if (this.needSplitPositiveAndNegativeForSum) {
+        if (value > 0) {
+          this.positiveSum += value;
+        } else if (value < 0) {
+          this.nagetiveSum += value;
+        }
+      }
     } else if (!isNaN(parseFloat(record[this.field]))) {
-      this.sum += parseFloat(record[this.field]);
+      const value = parseFloat(record[this.field]);
+      this.sum += value;
+      if (this.needSplitPositiveAndNegativeForSum) {
+        if (value > 0) {
+          this.positiveSum += value;
+        } else if (value < 0) {
+          this.nagetiveSum += value;
+        }
+      }
     }
   }
   value() {
     return this.sum;
+  }
+  positiveValue() {
+    return this.positiveSum;
+  }
+  negativeValue() {
+    return this.nagetiveSum;
   }
   reset() {
     this.records = [];
