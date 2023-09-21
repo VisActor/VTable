@@ -1471,10 +1471,10 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
         // TODO 需要写成通用方法 且考虑多层级的ExtensionRowTree
         const row_pathIds = this._rowHeaderCellIds[recordRow];
         const pathIds = [];
-        let firstTreeCellId = row_pathIds[0];
+        let firstTreeCellId: LayoutObjectId = row_pathIds[0];
         pathIds.push(firstTreeCellId);
         while (true) {
-          const hd = this._headerObjectMap[firstTreeCellId];
+          const hd: HeaderData = this._headerObjectMap[firstTreeCellId];
           if (hd.parentCellId) {
             pathIds.unshift(hd.parentCellId);
             firstTreeCellId = hd.parentCellId;
@@ -1485,11 +1485,11 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
         rowPath = this.rowDimensionTree.getTreePathByCellIds(pathIds);
 
         const extensionTree = this._rowHeaderExtensionTree[row_pathIds[0]];
-        let secondTreeCellId = row_pathIds[1];
+        let secondTreeCellId: LayoutObjectId = row_pathIds[1];
         const secondTreePathIds = [];
         secondTreePathIds.push(secondTreeCellId);
         while (true) {
-          const hd = this._headerObjectMap[secondTreeCellId];
+          const hd: HeaderData = this._headerObjectMap[secondTreeCellId];
           if (hd.parentCellId) {
             secondTreePathIds.unshift(hd.parentCellId);
             secondTreeCellId = hd.parentCellId;
