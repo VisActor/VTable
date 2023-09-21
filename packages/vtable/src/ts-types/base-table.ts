@@ -430,6 +430,7 @@ export interface BaseTableAPI {
   render: () => void;
   throttleInvalidate: () => void;
   getRowHeight: (row: number) => number;
+  getDefaultRowHeight: (row: number) => number;
   setRowHeight: (row: number, height: number, clearCache?: boolean) => void;
   getColWidth: (col: number) => number;
   getColWidthDefined: (col: number) => string | number;
