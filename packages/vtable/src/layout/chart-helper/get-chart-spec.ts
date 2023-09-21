@@ -62,6 +62,12 @@ export function getChartAxes(col: number, row: number, layout: PivotLayoutMap): 
             ''
         ] as { max?: number; min?: number }) ?? { min: 0, max: 1 }
       );
+      if (range.positiveMax && range.positiveMax > range.max) {
+        range.max = range.positiveMax;
+      }
+      if (range.negativeMin && range.negativeMin < range.min) {
+        range.min = range.negativeMin;
+      }
       if (isPercent) {
         (range as any).min = (range as any).min < 0 ? -1 : 0;
         (range as any).max = (range as any).max > 0 ? 1 : 0;
@@ -156,6 +162,12 @@ export function getChartAxes(col: number, row: number, layout: PivotLayoutMap): 
           layout.getRowKeysPath()[rowIndex]?.[Math.max(0, layout.rowHeaderLevelCount - 1 - layout.leftAxesCount)] ?? ''
         ] as { max?: number; min?: number }) ?? { min: 0, max: 1 }
       );
+      if (range.positiveMax && range.positiveMax > range.max) {
+        range.max = range.positiveMax;
+      }
+      if (range.negativeMin && range.negativeMin < range.min) {
+        range.min = range.negativeMin;
+      }
       if (isPercent) {
         (range as any).min = (range as any).min < 0 ? -1 : 0;
         (range as any).max = (range as any).max > 0 ? 1 : 0;

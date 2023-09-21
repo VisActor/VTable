@@ -110,7 +110,8 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
       indicatorKeys,
       options.records,
       options.columnTree,
-      options.rowTree
+      options.rowTree,
+      true
     );
 
     this.refreshHeader();
@@ -202,7 +203,8 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
         indicatorKeys,
         options.records ?? this.internalProps.records,
         options.columnTree,
-        options.rowTree
+        options.rowTree,
+        true
       );
     }
     // 更新表头
