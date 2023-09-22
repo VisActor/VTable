@@ -58,11 +58,22 @@ export class EventTarget {
     return id;
   }
 
-  off(id: EventListenerId): void {
-    if (!this.listenersData) {
-      return;
+  off(type: string, listener: TableEventListener<keyof TableEventHandlersEventArgumentMap>): void;
+  off(id: EventListenerId): void;
+  off(
+    idOrType: EventListenerId | string,
+    listener?: TableEventListener<keyof TableEventHandlersEventArgumentMap>
+  ): void {
+    if (listener) {
+      const type = idOrType as string;
+      this.removeEventListener(type, listener);
+    } else {
+      const id = idOrType as EventListenerId;
+      if (!this.listenersData) {
+        return;
+      }
+      this.listenersData.listenerData[id]?.remove();
     }
-    this.listenersData.listenerData[id].remove();
   }
 
   addEventListener<TYPE extends keyof TableEventHandlersEventArgumentMap>(
