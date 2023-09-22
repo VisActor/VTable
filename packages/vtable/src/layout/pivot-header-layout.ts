@@ -1588,7 +1588,7 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
       this._headerObjects[id] = cell;
     }
     this._rowHeaderCellIds = transpose(this._rowHeaderCellIds);
-    if (this.rowHierarchyType === 'tree') {
+    if (this.rowHierarchyType === 'tree' && this.extensionRows?.length >= 1) {
       this.generateExtensionRowTree();
     }
     colIndex = 0;
