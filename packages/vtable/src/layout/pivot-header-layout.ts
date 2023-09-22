@@ -439,7 +439,7 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
     // if (typeof this.showRowHeader !== 'boolean') {
     if (this.rowHeaderTitle) {
       const id = ++seqId;
-      const firstColIds = Array(this.rowCount - this.columnHeaderLevelCount).fill(id);
+      const firstColIds = Array(this._rowHeaderCellIds[0]?.length ?? this.rowDimensionTree.tree.size).fill(id);
       this._rowHeaderCellIds.unshift(firstColIds);
       const cell: HeaderData = {
         id,
