@@ -4,6 +4,7 @@ import type { LayoutObjectId } from '../ts-types/base-table';
 
 export function diffCellAddress(
   col: number,
+  row: number,
   oldCellIds: number[],
   newCellIds: number[],
   oldRowHeaderCellPositons: CellAddress[],
@@ -29,13 +30,21 @@ export function diffCellAddress(
       addCellPositions.push(newCellAddr);
     }
   }
-
+  let parentId = layout.getParentCellId(col, row);
+  let parentCellAddress = layout.getRowHeaderCellAddressByCellId(parentId);
+  const updateCellPositions = [];
+  updateCellPositions.push(parentCellAddress);
+  while (parentId) {
+    parentId = layout.getParentCellId(parentCellAddress.col, parentCellAddress.row);
+    if (parentId) {
+      parentCellAddress = layout.getRowHeaderCellAddressByCellId(parentId);
+      updateCellPositions.push(parentCellAddress);
+    }
+  }
   return {
     addCellPositions,
-    removeCellPositions
-    // updateCellPositions: Array.from(updateCellIds).map(cellId => {
-    //   return layout.getCellAddressByCellId(cellId);
-    // })
+    removeCellPositions,
+    updateCellPositions
   };
 }
 

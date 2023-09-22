@@ -203,6 +203,8 @@ export interface PivotTableConstructorOptions extends BaseTableConstructorOption
   indicatorTitle?: string;
   /** 分页配置 */
   pagination?: IPagination;
+
+  extensionRows?: IExtensionRowDefine[];
 }
 export interface PivotChartConstructorOptions extends BaseTableConstructorOptions {
   /**
@@ -329,6 +331,8 @@ export interface IIndicatorHeaderNode {
    * 指标名称 如：“销售额”，“例如”， 对应到单元格显示的值。可不填，不填的话 从indicators的对应配置中取值显示
    */
   value?: string;
+  /** 维度成员下的子维度树结构 */
+  children?: IHeaderTreeDefine[] | null;
 }
 export interface IDimensionHeaderNode {
   /**
@@ -341,4 +345,9 @@ export interface IDimensionHeaderNode {
   children?: IHeaderTreeDefine[] | null;
   /** 折叠状态 TODO */
   hierarchyState?: HierarchyState;
+}
+
+export interface IExtensionRowDefine {
+  rows: (IDimension | string)[];
+  rowTree: IHeaderTreeDefine[] | ((args: [{ dimensionKey: string | number; value: string }]) => IHeaderTreeDefine[]);
 }

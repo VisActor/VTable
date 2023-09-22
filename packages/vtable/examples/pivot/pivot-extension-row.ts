@@ -734,7 +734,7 @@ const records = [
     '230829195748017': 'Corporate',
     region: '东北',
     province: '黑龙江',
-    yeart: '2018'
+    year: '2018'
   },
   {
     '10002': '186',
@@ -747,7 +747,7 @@ const records = [
     '230829195748017': 'Corporate',
     region: '东北',
     province: '黑龙江',
-    yeart: '2018',
+    year: '2018',
     quarter: '2018Q1'
   },
   {
@@ -760,7 +760,7 @@ const records = [
     '230829195748012': 'First Class',
     '230829195748017': 'Corporate',
     region: '东北',
-    yeart: '2018',
+    year: '2018',
     quarter: '2018Q2'
   },
   {
@@ -773,7 +773,7 @@ const records = [
     '230829195748012': 'First Class',
     '230829195748017': 'Corporate',
     region: '东北',
-    yeart: '2018',
+    year: '2018',
     quarter: '2018Q3'
   },
   {
@@ -785,7 +785,7 @@ const records = [
     '230829195748012': 'First Class',
     '230829195748017': 'Corporate',
     region: '东北',
-    yeart: '2018'
+    year: '2018'
   },
   {
     '10002': '1860000186',
@@ -796,7 +796,7 @@ const records = [
     '230829195748012': 'Same Day',
     '230829195748017': 'Corporate',
     region: '东北',
-    yeart: '2018'
+    year: '2018'
   },
   {
     '10002': '1860000186',
@@ -807,7 +807,7 @@ const records = [
     '230829195748012': 'Same Day',
     '230829195748017': 'Corporate',
     region: '东北',
-    yeart: '2018',
+    year: '2018',
     quarter: '2018Q3'
   },
   {
@@ -820,7 +820,7 @@ const records = [
     '230829195748017': 'Corporate',
     region: '东北',
     province: '黑龙江',
-    yeart: '2018'
+    year: '2018'
   },
   {
     '10002': '1860000186',
@@ -832,7 +832,7 @@ const records = [
     '230829195748017': 'Corporate',
     region: '东北',
     province: '黑龙江',
-    yeart: '2018'
+    year: '2018'
   },
   {
     '10002': '39',
@@ -6226,7 +6226,7 @@ const records = [
   }
 ];
 export function createTable() {
-  const option = {
+  const option: VTable.PivotTableConstructorOptions = {
     rowHierarchyType: 'tree',
     enableDataAnalysis: false,
     autoRowHeight: true,
@@ -6339,7 +6339,6 @@ export function createTable() {
         value: 'Corporate',
         children: [
           {
-            dimensionKey: '230509142919071',
             value: 'Quantity',
             children: [
               {
@@ -6362,7 +6361,6 @@ export function createTable() {
             indicatorKey: '230509142919067'
           },
           {
-            dimensionKey: '230509142919071',
             value: 'Sales',
             children: [
               {
@@ -6385,8 +6383,8 @@ export function createTable() {
             indicatorKey: '230509142919066'
           },
           {
-            dimensionKey: '230509142919071',
             value: 'Profit',
+            indicatorKey: '230509142919069',
             children: [
               {
                 dimensionKey: '230829195748012',
@@ -6404,8 +6402,7 @@ export function createTable() {
                 dimensionKey: '230829195748012',
                 value: 'Standard Class'
               }
-            ],
-            indicatorKey: '230509142919069'
+            ]
           }
         ]
       },
@@ -6414,7 +6411,6 @@ export function createTable() {
         value: 'Home Office',
         children: [
           {
-            dimensionKey: '230509142919071',
             value: 'Quantity',
             children: [
               {
@@ -6437,7 +6433,6 @@ export function createTable() {
             indicatorKey: '230509142919067'
           },
           {
-            dimensionKey: '230509142919071',
             value: 'Sales',
             children: [
               {
@@ -6460,7 +6455,6 @@ export function createTable() {
             indicatorKey: '230509142919066'
           },
           {
-            dimensionKey: '230509142919071',
             value: 'Profit',
             children: [
               {
@@ -6489,7 +6483,6 @@ export function createTable() {
         value: 'Consumer',
         children: [
           {
-            dimensionKey: '230509142919071',
             value: 'Quantity',
             children: [
               {
@@ -6512,7 +6505,6 @@ export function createTable() {
             indicatorKey: '230509142919067'
           },
           {
-            dimensionKey: '230509142919071',
             value: 'Sales',
             children: [
               {
@@ -6535,7 +6527,6 @@ export function createTable() {
             indicatorKey: '230509142919066'
           },
           {
-            dimensionKey: '230509142919071',
             value: 'Profit',
             children: [
               {
@@ -7255,7 +7246,98 @@ export function createTable() {
         showSort: false
       }
     ],
-
+    extensionRows: [
+      //扩展的行表头维度组，因为可能扩展多个所以这里是个数组形式
+      {
+        rows: [
+          {
+            dimensionKey: 'region',
+            title: 'region',
+            headerStyle: { color: 'red', textStick: true }
+          },
+          { dimensionKey: 'province', title: 'region', headerStyle: { color: 'purple' } }
+        ],
+        rowTree: [
+          {
+            dimensionKey: 'region',
+            value: '东北',
+            children: [
+              { dimensionKey: 'province', value: '黑龙江' },
+              { dimensionKey: 'province', value: '吉林' }
+            ]
+          },
+          {
+            dimensionKey: 'region',
+            value: '华北',
+            children: [{ dimensionKey: 'province', value: '河北' }]
+          }
+        ]
+      },
+      {
+        rows: [
+          { dimensionKey: 'year', title: 'region', headerStyle: { color: 'pink' } },
+          { dimensionKey: 'quarter', title: 'region', headerStyle: { color: 'green' } }
+        ],
+        rowTree: [
+          {
+            dimensionKey: 'year',
+            value: '2018',
+            children: [
+              { dimensionKey: 'quarter', value: '2018Q1' },
+              { dimensionKey: 'quarter', value: '2018Q2' }
+            ]
+          }
+        ]
+      }
+      //   (args) {
+      //     if (true) {
+      //       return [
+      //         {
+      //           dimensionKey: 'region',
+      //           value: '东北',
+      //           children: [
+      //             { dimensionKey: 'province', value: '黑龙江' },
+      //             { dimensionKey: 'province', value: '吉林' }
+      //           ]
+      //         },
+      //         {
+      //           dimensionKey: 'region',
+      //           value: '华北',
+      //           children: [{ dimensionKey: 'province', value: '河北' }]
+      //         }
+      //       ];
+      //     }
+      //     return [
+      //       {
+      //         dimensionKey: 'region',
+      //         value: '东北',
+      //         children: [
+      //           { dimensionKey: 'province', value: '黑龙江' },
+      //           { dimensionKey: 'province', value: '吉林' }
+      //         ]
+      //       }
+      //     ];
+      //   }
+      // }
+      // {
+      //   rows: ['year', 'quarter'],
+      //   rowTree: [
+      //     {
+      //       dimensionKey: 'year',
+      //       value: '2018',
+      //       children: [
+      //         { dimensionKey: 'quarter', value: '2018Q1' },
+      //         { dimensionKey: 'quarter', value: '2018Q2' }
+      //       ]
+      //     }
+      //     // {
+      //     //   dimensionKey: 'region',
+      //     //   value: '华北',
+      //     //   children: [{ dimensionKey: 'province', value: '河北' }]
+      //     // }
+      //   ]
+      // }
+    ],
     corner: {
       titleOnDimension: 'row',
       headerStyle: {
