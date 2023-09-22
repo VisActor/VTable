@@ -384,17 +384,6 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
     );
     this.colDimensionKeys = this.columnDimensionTree.dimensionKeys.valueArr();
     this.rowDimensionKeys = this.rowDimensionTree.dimensionKeys.valueArr();
-
-    this.cornerHeaderObjs =
-      this.cornerSetting.titleOnDimension === 'column'
-        ? this._addCornerHeaders(
-            this.columnHeaderTitle ? [''].concat(this.colDimensionKeys as any) : this.colDimensionKeys
-          )
-        : this.cornerSetting.titleOnDimension === 'row'
-        ? this._addCornerHeaders(
-            this.rowHeaderTitle ? [''].concat(this.rowDimensionKeys as any) : this.rowDimensionKeys
-          )
-        : this._addCornerHeaders(null);
     //生成列表头单元格
     if (this.columnDimensionTree.tree.children) {
       this.columnHeaderObjs = this._addHeaders(
@@ -494,6 +483,36 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
         });
         this._extensionRowDimensionKeys.push(rowKeys);
       });
+    }
+    //生成cornerHeaderObjs及_cornerHeaderCellIds
+    if (this.cornerSetting.titleOnDimension === 'column') {
+      this.cornerHeaderObjs = this._addCornerHeaders(
+        this.columnHeaderTitle ? [''].concat(this.colDimensionKeys as any) : this.colDimensionKeys,
+        this.columnsDefine
+      );
+    } else if (this.cornerSetting.titleOnDimension === 'row') {
+      if (this.rowHierarchyType === 'tree' && this.extensionRows?.length >= 1) {
+        // 如果是有扩展类
+        const rowTreeFirstKey = [];
+        rowTreeFirstKey.push(this.rowDimensionKeys[0]);
+        this._extensionRowDimensionKeys.forEach(extensionRowKeys => {
+          rowTreeFirstKey.push(extensionRowKeys[0]);
+        });
+        const extensionRowDimensions = this.extensionRows.reduce((dimensions, cur) => {
+          return dimensions.concat(cur.rows);
+        }, []);
+        this.cornerHeaderObjs = this._addCornerHeaders(
+          this.rowHeaderTitle ? [''].concat(rowTreeFirstKey as any) : rowTreeFirstKey,
+          this.rowsDefine.concat(extensionRowDimensions)
+        );
+      } else {
+        this.cornerHeaderObjs = this._addCornerHeaders(
+          this.rowHeaderTitle ? [''].concat(this.rowDimensionKeys as any) : this.rowDimensionKeys,
+          this.rowsDefine
+        );
+      }
+    } else {
+      this.cornerHeaderObjs = this._addCornerHeaders(null, undefined);
     }
     colIndex = 0;
     this._headerObjectMap = this._headerObjects.reduce((o, e) => {
@@ -754,19 +773,21 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
     });
     return results;
   }
-  private _addCornerHeaders(dimensionKeys: (string | number)[] | null) {
+  private _addCornerHeaders(dimensionKeys: (string | number)[] | null, dimensions: (string | IDimension)[]) {
     const results: HeaderData[] = [];
     if (dimensionKeys) {
       dimensionKeys.forEach((dimensionKey: string, key: number) => {
         const id = ++seqId;
-        const dimensionInfo: IDimension =
-          (this.rowsDefine?.find(dimension =>
-            typeof dimension === 'string' ? false : dimension.dimensionKey === dimensionKey
-          ) as IDimension) ??
-          (this.columnsDefine?.find(dimension =>
-            typeof dimension === 'string' ? false : dimension.dimensionKey === dimensionKey
-          ) as IDimension);
-
+        // const dimensionInfo: IDimension =
+        //   (this.rowsDefine?.find(dimension =>
+        //     typeof dimension === 'string' ? false : dimension.dimensionKey === dimensionKey
+        //   ) as IDimension) ??
+        //   (this.columnsDefine?.find(dimension =>
+        //     typeof dimension === 'string' ? false : dimension.dimensionKey === dimensionKey
+        //   ) as IDimension);
+        const dimensionInfo: IDimension = dimensions.find(dimension =>
+          typeof dimension === 'string' ? false : dimension.dimensionKey === dimensionKey
+        ) as IDimension;
         const cell: HeaderData = {
           id,
           title: dimensionKey === this.indicatorDimensionKey ? this.indicatorTitle : dimensionInfo?.title ?? '',
@@ -841,9 +862,12 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
         colIndex = 0;
         let tree;
         if (typeof extensionRow.rowTree === 'function') {
-          tree = (extensionRow.rowTree as Function)([
-            { dimensionKey: this._headerObjects[key].field, value: this._headerObjects[key].title }
-          ]);
+          const fullCellIds = this.findFullCellIds(row_ids);
+          tree = (extensionRow.rowTree as Function)(
+            fullCellIds.map(id => {
+              return { dimensionKey: this._headerObjects[id].field, value: this._headerObjects[id].title };
+            })
+          );
         } else {
           // 需要clone一份 否则跟DimensionTree有引用关系
           tree = cloneDeep(extensionRow.rowTree);
@@ -1481,6 +1505,38 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
       return false;
     }) as IIndicator;
     return indicatorInfo;
+  }
+  /**
+   *
+   * @param row_pathIds 当前_rowHeaderCellIds 可能只存储了一列id如：
+   * [
+   *   [47],
+   *   [50]
+   * ]
+   * 但实际可能是有两三层或更多，所以全路径dimensionPath的话应该对应更多
+   * [
+   *   [47, 48, 49]
+   *   [50, 51, 52]
+   * ]
+   * @returns 返回对应每一层维度对应的headerId, [47]为参数的话 返回 [47, 48, 49]
+   */
+  private findFullCellIds(row_pathIds: LayoutObjectId[]) {
+    const pathIds = []; // pathIds记录寻找当前树需要匹配的cellId
+    for (let level = 0; level < row_pathIds.length; level++) {
+      let cellId: LayoutObjectId = row_pathIds[level]; //row_pathIds中每个值对应了pathIds的一个节点cellId
+      pathIds.push(cellId);
+      while (true) {
+        const hd: HeaderData = this._headerObjectMap[cellId];
+        if (hd?.parentCellId) {
+          // 将parentCellId加入pathIds
+          pathIds.unshift(hd.parentCellId);
+          cellId = hd.parentCellId;
+        } else {
+          break;
+        }
+      }
+    }
+    return pathIds;
   }
   getHeaderDimension(col: number, row: number): IDimension | undefined {
     if (this.isHeader(col, row)) {

@@ -6551,7 +6551,7 @@ export function createTable() {
         ]
       }
     ],
-    columns: [
+    rows: [
       {
         dimensionKey: '230509142919061',
         title: 'Category',
@@ -6873,7 +6873,7 @@ export function createTable() {
         linkJump: false
       }
     ],
-    rows: [
+    columns: [
       {
         dimensionKey: '230829195748017',
         title: 'Segment',
@@ -7255,7 +7255,7 @@ export function createTable() {
             title: 'region',
             headerStyle: { color: 'red', textStick: true }
           },
-          { dimensionKey: 'province', title: 'region', headerStyle: { color: 'purple' } }
+          { dimensionKey: 'province', title: 'province', headerStyle: { color: 'purple' } }
         ],
         rowTree: [
           {
@@ -7275,19 +7275,34 @@ export function createTable() {
       },
       {
         rows: [
-          { dimensionKey: 'year', title: 'region', headerStyle: { color: 'pink' } },
-          { dimensionKey: 'quarter', title: 'region', headerStyle: { color: 'green' } }
+          { dimensionKey: 'year', title: 'year', headerStyle: { color: 'pink' } },
+          { dimensionKey: 'quarter', title: 'quarter', headerStyle: { color: 'green' } }
         ],
-        rowTree: [
-          {
-            dimensionKey: 'year',
-            value: '2018',
-            children: [
-              { dimensionKey: 'quarter', value: '2018Q1' },
-              { dimensionKey: 'quarter', value: '2018Q2' }
-            ]
+        rowTree(args) {
+          // debugger;
+          if (args[1]?.value === '黑龙江') {
+            return [
+              {
+                dimensionKey: 'year',
+                value: '2019',
+                children: [
+                  { dimensionKey: 'quarter', value: '2019Q2' },
+                  { dimensionKey: 'quarter', value: '2019Q3' }
+                ]
+              }
+            ];
           }
-        ]
+          return [
+            {
+              dimensionKey: 'year',
+              value: '2018',
+              children: [
+                { dimensionKey: 'quarter', value: '2018Q1' },
+                { dimensionKey: 'quarter', value: '2018Q2' }
+              ]
+            }
+          ];
+        }
       }
       //   (args) {
       //     if (true) {

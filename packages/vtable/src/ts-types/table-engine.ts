@@ -349,5 +349,5 @@ export interface IDimensionHeaderNode {
 
 export interface IExtensionRowDefine {
   rows: (IDimension | string)[];
-  rowTree: IHeaderTreeDefine[] | ((args: [{ dimensionKey: string | number; value: string }]) => IHeaderTreeDefine[]);
+  rowTree: IHeaderTreeDefine[] | ((args: { dimensionKey: string | number; value: string }[]) => IHeaderTreeDefine[]);
 }
