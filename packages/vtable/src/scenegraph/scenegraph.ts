@@ -767,10 +767,10 @@ export class Scenegraph {
   }
 
   resize() {
-    if (this.table.widthMode === 'adaptive') {
+    if (this.table.widthMode === 'adaptive' || this.table.autoFillWidth) {
       this.recalculateColWidths();
     }
-    if (this.table.heightMode === 'adaptive') {
+    if (this.table.heightMode === 'adaptive' || this.table.autoFillHeight) {
       this.recalculateRowHeights();
     }
     // widthMode === 'adaptive' 时，computeColsWidth()中已经有高度更新计算
@@ -786,7 +786,12 @@ export class Scenegraph {
     this.updateTableSize();
     this.updateBorderSizeAndPosition();
     this.component.updateScrollBar();
-    if (this.table.widthMode === 'adaptive' || this.table.heightMode === 'adaptive') {
+    if (
+      this.table.widthMode === 'adaptive' ||
+      this.table.heightMode === 'adaptive' ||
+      this.table.autoFillWidth ||
+      this.table.autoFillHeight
+    ) {
       this.updateChartSize(this.table.rowHeaderLevelCount);
     }
     // this.stage.window.resize(width, height);
