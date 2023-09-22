@@ -72,6 +72,7 @@ export class EventManeger {
       } else if (funcType === IconFuncTypeEnum.drillDown) {
         drillClick(this.table);
       } else if (funcType === IconFuncTypeEnum.collapse || funcType === IconFuncTypeEnum.expand) {
+        this.table.stateManeger.updateSelectPos(-1, -1);
         this.table.toggleHierarchyState(col, row);
       }
     });
