@@ -47,7 +47,7 @@ export interface TableKeyboardOptions {
 
   /** 开启快捷键全选 默认：false */
   selectAllOnCtrlA?: boolean;
-  /** 快捷键复制 */
+  /** 快捷键复制  默认不开启*/
   copySelected?: boolean; //这个copy是和浏览器的快捷键一致的
 }
 export interface DataSourceAPI {
