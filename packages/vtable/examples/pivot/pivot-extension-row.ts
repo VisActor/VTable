@@ -6270,7 +6270,7 @@ export function createTable() {
       },
       {
         dimensionKey: '230509142919061',
-        value: 'Office Supplies',
+        value: 'Office',
         children: [
           {
             dimensionKey: '230509142919065',
@@ -7253,9 +7253,10 @@ export function createTable() {
           {
             dimensionKey: 'region',
             title: 'region',
-            headerStyle: { color: 'red', textStick: true }
+            headerStyle: { color: 'red', textStick: true },
+            width: '200'
           },
-          { dimensionKey: 'province', title: 'province', headerStyle: { color: 'purple' } }
+          { dimensionKey: 'province', title: 'province', headerStyle: { color: 'purple' }, width: 300 }
         ],
         rowTree: [
           {
@@ -7275,8 +7276,8 @@ export function createTable() {
       },
       {
         rows: [
-          { dimensionKey: 'year', title: 'year', headerStyle: { color: 'pink' } },
-          { dimensionKey: 'quarter', title: 'quarter', headerStyle: { color: 'green' } }
+          { dimensionKey: 'year', title: 'year', headerStyle: { color: 'pink' }, width: 'auto' },
+          { dimensionKey: 'quarter', title: 'quarter', headerStyle: { color: 'green' }, width: 'auto' }
         ],
         rowTree(args) {
           // debugger;

@@ -337,10 +337,10 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
   _rowHeaderExtensionTree: any = {};
 
   /**
-   * 行表头对应的维度key集合
+   * 扩展行表头对应的维度key集合
    */
   _extensionRowDimensionKeys: string[][] = [];
-
+  fullRowDimensionKeys: string[] = [];
   // _extensionRowHeaderCellIds
   constructor(table: PivotTable) {
     this._table = table;
@@ -384,6 +384,7 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
     );
     this.colDimensionKeys = this.columnDimensionTree.dimensionKeys.valueArr();
     this.rowDimensionKeys = this.rowDimensionTree.dimensionKeys.valueArr();
+    this.fullRowDimensionKeys = this.fullRowDimensionKeys.concat(this.rowDimensionKeys);
     //生成列表头单元格
     if (this.columnDimensionTree.tree.children) {
       this.columnHeaderObjs = this._addHeaders(
@@ -482,6 +483,7 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
           }
         });
         this._extensionRowDimensionKeys.push(rowKeys);
+        this.fullRowDimensionKeys = this.fullRowDimensionKeys.concat(rowKeys);
       });
     }
     //生成cornerHeaderObjs及_cornerHeaderCellIds
@@ -492,7 +494,7 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
       );
     } else if (this.cornerSetting.titleOnDimension === 'row') {
       if (this.rowHierarchyType === 'tree' && this.extensionRows?.length >= 1) {
-        // 如果是有扩展类
+        // 如果是有扩展行维度
         const rowTreeFirstKey = [];
         rowTreeFirstKey.push(this.rowDimensionKeys[0]);
         this._extensionRowDimensionKeys.forEach(extensionRowKeys => {
@@ -903,17 +905,56 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
       if (this.rowHeaderTitle) {
         returnWidths[0] = {};
       }
-      this.rowDimensionKeys.forEach((objKey, index) => {
-        const dimension = this.rowsDefine?.find(dimension =>
-          typeof dimension === 'string' ? false : dimension.dimensionKey === objKey
-        ) as IDimension;
-        dimension &&
-          (returnWidths[index + (this.rowHeaderTitle ? 1 : 0)] = {
-            width: dimension.width,
-            minWidth: dimension.minWidth,
-            maxWidth: dimension.maxWidth
-          });
-      });
+      if (this.rowHierarchyType === 'tree') {
+        const mainDimensionFirstRowKey = this.rowDimensionKeys[0];
+        if (mainDimensionFirstRowKey) {
+          const dimension = this.rowsDefine?.find(dimension =>
+            typeof dimension === 'string' ? false : dimension.dimensionKey === mainDimensionFirstRowKey
+          ) as IDimension;
+          dimension &&
+            (returnWidths[0 + (this.rowHeaderTitle ? 1 : 0)] = {
+              width: dimension.width,
+              minWidth: dimension.minWidth,
+              maxWidth: dimension.maxWidth
+            });
+        }
+        this._extensionRowDimensionKeys?.forEach((extensionRowDimensionKeys, index) => {
+          const curDimensionFirstRowKey = extensionRowDimensionKeys[0];
+          if (curDimensionFirstRowKey) {
+            const dimension = this.extensionRows[index].rows?.find((dimension: string | IDimension) =>
+              typeof dimension === 'string' ? false : dimension.dimensionKey === curDimensionFirstRowKey
+            ) as IDimension;
+            dimension &&
+              (returnWidths[index + 1 + (this.rowHeaderTitle ? 1 : 0)] = {
+                width: dimension.width,
+                minWidth: dimension.minWidth,
+                maxWidth: dimension.maxWidth
+              });
+          }
+        });
+        // const _headerCellIds = this._rowHeaderCellIds[0];
+        // _headerCellIds.forEach((cellId, index) => {
+        //   const headerDefine = this._headerObjectMap[cellId];
+        //   headerDefine &&
+        //     (returnWidths[index + (this.rowHeaderTitle ? 1 : 0)] = {
+        //       width: headerDefine.width,
+        //       minWidth: headerDefine.minWidth,
+        //       maxWidth: headerDefine.maxWidth
+        //     });
+        // });
+      } else {
+        this.rowDimensionKeys.forEach((objKey, index) => {
+          const dimension = this.rowsDefine?.find(dimension =>
+            typeof dimension === 'string' ? false : dimension.dimensionKey === objKey
+          ) as IDimension;
+          dimension &&
+            (returnWidths[index + (this.rowHeaderTitle ? 1 : 0)] = {
+              width: dimension.width,
+              minWidth: dimension.minWidth,
+              maxWidth: dimension.maxWidth
+            });
+        });
+      }
     }
     if (this.indicatorsAsCol) {
       for (let i = this.rowHeaderLevelCount; i < this.colCount; i++) {
@@ -2022,7 +2063,11 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
     IPivotTableCellHeaderPaths | IDimensionInfo[]
   ): CellAddress | undefined {
     let colHeaderPaths;
-    let rowHeaderPaths;
+    let rowHeaderPaths: {
+      dimensionKey?: string;
+      indicatorKey?: string;
+      value?: string;
+    }[];
     if (Array.isArray(dimensionPaths)) {
       if (dimensionPaths.length > this.rowDimensionKeys.length + this.colDimensionKeys.length) {
         //如果传入的path长度比行列维度层级多的话 无法匹配
@@ -2052,8 +2097,8 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
     });
     rowHeaderPaths?.sort((a, b) => {
       return (
-        this.rowDimensionKeys.indexOf(a.dimensionKey ?? this.indicatorDimensionKey) -
-        this.rowDimensionKeys.indexOf(b.dimensionKey ?? this.indicatorDimensionKey)
+        this.fullRowDimensionKeys.indexOf(a.dimensionKey ?? this.indicatorDimensionKey) -
+        this.fullRowDimensionKeys.indexOf(b.dimensionKey ?? this.indicatorDimensionKey)
       );
     });
     let needLowestLevel = false; // needLowestLevel来标记是否需要 提供到最底层的维度层级信息
@@ -2093,34 +2138,67 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
       }
     }
     // 按照rowHeaderPaths维度层级寻找到底层维度值节点
-    if (rowHeaderPaths) {
-      for (let i = 0; i < rowHeaderPaths.length; i++) {
-        const rowDimension = rowHeaderPaths[i];
-        // 判断级别，找到distDimension
-        // let isCol = false;
-        for (let j = 0; j < rowArr.length; j++) {
-          const dimension = rowArr[j];
-          if (
-            ((!isValid(rowDimension.indicatorKey) &&
-              dimension.dimensionKey === rowDimension.dimensionKey &&
-              dimension.value === rowDimension.value) ||
-              (isValid(rowDimension.indicatorKey) && dimension.indicatorKey === rowDimension.indicatorKey)) &&
-            dimension.value === rowDimension.value
-          ) {
-            rowArr = dimension.children;
-            if (needLowestLevel && !rowArr) {
-              rowDimensionFinded = dimension;
-            } else if (!needLowestLevel) {
-              rowDimensionFinded = dimension;
+    if (rowHeaderPaths?.length >= 1) {
+      if (this.rowHierarchyType === 'tree') {
+        // 先根据最后一个path获取到所有匹配该维度的pathCellIds
+        const rowDimension = rowHeaderPaths[rowHeaderPaths.length - 1];
+        const cellIDs: LayoutObjectId[] = this.headerObjects
+          .filter((hd: HeaderData) => {
+            return (
+              (hd?.field === rowDimension.dimensionKey || hd?.field === rowDimension.indicatorKey) &&
+              hd?.title === rowDimension.value
+            );
+          })
+          .map((hd: HeaderData) => {
+            return hd.id;
+          });
+
+        const findedCellIdPaths = this._rowHeaderCellIds.filter(rowHdCellIDs => {
+          return cellIDs.indexOf(rowHdCellIDs[rowHdCellIDs.length - 1]) >= 0;
+        });
+        // 从上述过程中找到的pathCellIds中找到正确匹配完整路径rowHeaderPaths的一个  然后计算row行号
+        const findedCellIdPath = findedCellIdPaths.find(pathIds => {
+          const fullCellIds = this.findFullCellIds(pathIds);
+          return (
+            fullCellIds.length === rowHeaderPaths.length &&
+            fullCellIds.every(id => {
+              const curHd = this._headerObjectMap[id];
+              return rowHeaderPaths.find(rowDimensionPath => {
+                return rowDimensionPath.dimensionKey === curHd.field && rowDimensionPath.value === curHd.title;
+              });
+            })
+          );
+        });
+        row = this._rowHeaderCellIds.indexOf(findedCellIdPath) + this.columnHeaderLevelCount;
+      } else {
+        for (let i = 0; i < rowHeaderPaths.length; i++) {
+          const rowDimension = rowHeaderPaths[i];
+          // 判断级别，找到distDimension
+          // let isCol = false;
+          for (let j = 0; j < rowArr.length; j++) {
+            const dimension = rowArr[j];
+            if (
+              ((!isValid(rowDimension.indicatorKey) &&
+                dimension.dimensionKey === rowDimension.dimensionKey &&
+                dimension.value === rowDimension.value) ||
+                (isValid(rowDimension.indicatorKey) && dimension.indicatorKey === rowDimension.indicatorKey)) &&
+              dimension.value === rowDimension.value
+            ) {
+              rowArr = dimension.children;
+              if (needLowestLevel && !rowArr) {
+                rowDimensionFinded = dimension;
+              } else if (!needLowestLevel) {
+                rowDimensionFinded = dimension;
+              }
+              break;
             }
-            break;
           }
         }
       }
     }
     // 如果是body单元格 需要找到行列对应的维度值节点
     if (needLowestLevel) {
-      if (!rowDimensionFinded || !colDimensionFinded) {
+      if ((!rowDimensionFinded && !isValid(row)) || !colDimensionFinded) {
         return undefined;
       }
     }

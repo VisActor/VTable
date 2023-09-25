@@ -271,9 +271,7 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
       if (records?.[0]?.constructor !== Array) {
         this.flatDataToObjects = new FlatDataToObjects(
           {
-            rows: internalProps.layoutMap.rowDimensionKeys.concat(
-              [].concat(...internalProps.layoutMap._extensionRowDimensionKeys)
-            ),
+            rows: internalProps.layoutMap.fullRowDimensionKeys,
             columns: internalProps.layoutMap.colDimensionKeys,
             indicators: internalProps.layoutMap.indicatorKeys,
             indicatorsAsCol: internalProps.layoutMap.indicatorsAsCol,
