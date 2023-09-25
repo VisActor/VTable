@@ -237,7 +237,7 @@ tableInstance.renderWithRecreateCells();
 
 ## getCellAddress(Function)
 
-根据数据和 field 属性字段名称获取 body 中某条数据的行列号
+根据数据和 field 属性字段名称获取 body 中某条数据的行列号。目前仅支持基本表格ListTable
 
 ```
   /**

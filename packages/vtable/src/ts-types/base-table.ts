@@ -304,8 +304,8 @@ export interface BaseTableConstructorOptions {
   autoWrapText?: boolean;
   /** 单元格中可显示最大字符数 默认200 */
   maxCharactersNumber?: number; //
-  /** toolip最大字符数 */
-  maxTooltipCharactersNumber?: number;
+  // /** toolip最大字符数 */
+  // maxTooltipCharactersNumber?: number;
   /** 最大可操作条目数 如copy操作可复制出最大数据条目数 */
   maxOperatableRecordCount?: number;
   /**

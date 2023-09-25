@@ -187,11 +187,11 @@ export interface PivotTableConstructorOptions extends BaseTableConstructorOption
    */
   showRowHeader?: boolean;
   /**
-   * 列表头增加一行来显示维度名称 可以自定义或者显示dimensionTitle组合名
+   * 列表头增加一行来显示维度名称 可以自定义或者显示dimension.title组合名
    */
   columnHeaderTitle?: ITitleDefine;
   /**
-   * 行表头的增加一列来显示维度名称 可以自定义或者显示dimensionTitle组合名
+   * 行表头的增加一列来显示维度名称 可以自定义或者显示dimension.title组合名
    */
   rowHeaderTitle?: ITitleDefine;
   //#endregion
@@ -244,11 +244,11 @@ export interface PivotChartConstructorOptions extends BaseTableConstructorOption
    */
   showRowHeader?: boolean;
   /**
-   * 列表头增加一行来显示维度名称 可以自定义或者显示dimensionTitle组合名
+   * 列表头增加一行来显示维度名称 可以自定义或者显示dimension.title组合名
    */
   columnHeaderTitle?: ITitleDefine;
   /**
-   * 行表头的增加一列来显示维度名称 可以自定义或者显示dimensionTitle组合名
+   * 行表头的增加一列来显示维度名称 可以自定义或者显示dimension.title组合名
    */
   rowHeaderTitle?: ITitleDefine;
   /** 指标标题 用于显示到角头的值*/
