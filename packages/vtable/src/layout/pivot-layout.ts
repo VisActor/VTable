@@ -106,13 +106,17 @@ export class PivotLayoutMap implements LayoutMapAPI {
   // dimensions: IDimension[];
   cornerSetting: ICornerDefine;
   _table: PivotTable | PivotChart;
-
+  /**层级维度结构显示形式 */
+  rowHierarchyType?: 'grid' | 'tree';
+  //#region pivotChart专有
   hasTwoIndicatorAxes: boolean;
   /** 图表spec中barWidth的收集 */
   _chartItemSpanSize: number;
+  //#endregion
   constructor(table: PivotTable | PivotChart, dataset: Dataset) {
     this._table = table;
     this._chartItemSpanSize = 0;
+    this.rowHierarchyType = (table.options as PivotTable).rowHierarchyType;
     this.rowTree = table.options.rowTree;
     this.columnTree = table.options.columnTree;
     this.rowsDefine = table.options.rows ?? [];
@@ -767,6 +771,12 @@ export class PivotLayoutMap implements LayoutMapAPI {
   get rowHeaderLevelCount(): number {
     const rowLevelCount = this.rowShowAttrs.length;
     if (this.showRowHeader) {
+      if (this.rowHierarchyType === 'tree') {
+        if (this.rowHeaderTitle) {
+          return 2;
+        }
+        return 1;
+      }
       const count = this.indicatorsAsCol
         ? rowLevelCount
         : this.hideIndicatorName //设置隐藏表头，且表头最下面一级就是指标维度 则-1

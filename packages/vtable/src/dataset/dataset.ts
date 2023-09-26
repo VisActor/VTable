@@ -109,6 +109,7 @@ export class Dataset {
   indicatorKeys: string[];
   // 存储行表头path 这个是全量的 对比于分页截取的rowKeysPath；
   private rowKeysPath_FULL: string[][];
+  rowHierarchyType: 'grid' | 'tree';
   constructor(
     dataConfig: IDataConfig,
     pagination: IPagination,
@@ -116,11 +117,13 @@ export class Dataset {
     columns: string[],
     indicatorKeys: string[],
     records: any[] | Record<string, any[]>,
+    rowHierarchyType?: 'grid' | 'tree',
     customColTree?: IHeaderTreeDefine[],
     customRowTree?: IHeaderTreeDefine[]
   ) {
     this.registerAggregators();
     this.dataConfig = dataConfig;
+    this.rowHierarchyType = rowHierarchyType ?? 'grid';
     // this.allTotal = new SumAggregator(this.indicators[0]);
     this.sortRules = this.dataConfig?.sortRules;
     this.aggregationRules = this.dataConfig?.aggregationRules;
@@ -191,15 +194,27 @@ export class Dataset {
       if (customRowTree) {
         this.rowKeysPath_FULL = this.TreeToArr2(customRowTree);
       } else {
-        this.rowKeysPath_FULL = this.TreeToArr(
-          this.ArrToTree(
-            this.rowKeys,
-            this.rowsIsTotal,
-            this?.totals?.row?.showGrandTotals, // || this.columns.length === 0, //todo  这里原有逻辑暂时注释掉
-            this.rowGrandTotalLabel,
-            this.rowSubTotalLabel
-          )
-        );
+        if (this.rowHierarchyType) {
+          this.rowKeysPath_FULL = this.TreeToArr3(
+            this.ArrToTree(
+              this.rowKeys,
+              [],
+              this?.totals?.row?.showGrandTotals, // || this.columns.length === 0, //todo  这里原有逻辑暂时注释掉
+              this.rowGrandTotalLabel,
+              this.rowSubTotalLabel
+            )
+          );
+        } else {
+          this.rowKeysPath_FULL = this.TreeToArr(
+            this.ArrToTree(
+              this.rowKeys,
+              this.rowsIsTotal,
+              this?.totals?.row?.showGrandTotals, // || this.columns.length === 0, //todo  这里原有逻辑暂时注释掉
+              this.rowGrandTotalLabel,
+              this.rowSubTotalLabel
+            )
+          );
+        }
       }
       if (customColTree) {
         this.colKeysPath = this.TreeToArr2(customColTree);
@@ -1004,6 +1019,7 @@ export class Dataset {
     tree.forEach((treeNode: any) => getPath(treeNode, []));
     return result;
   }
+  // 用户传入的自定义树 path由树形结构的节点value组成
   private TreeToArr2(tree: any) {
     const result: any[] = []; // 结果
     function getPath(node: any, arr: any) {
@@ -1013,6 +1029,24 @@ export class Dataset {
         node.children?.forEach((childItem: any) => getPath(childItem, [...arr]));
       } else {
         result.push(arr);
+      }
+    }
+    tree.forEach((treeNode: any) => getPath(treeNode, []));
+    return result;
+  }
+
+  //将树形结构转为二维数组 值为node.id 处理rowHierarchyType是tree的情况
+  private TreeToArr3(tree: any) {
+    const result: any[] = []; // 结果
+    function getPath(node: any, arr: any) {
+      // arr.push(node.id);
+      arr = node.id;
+      result.push([node.id]);
+      if (node.children.length > 0) {
+        // 存在多个节点就递归
+        node.children?.forEach((childItem: any) => getPath(childItem, [...arr]));
+      } else {
+        // result.push(arr);
       }
     }
     tree.forEach((treeNode: any) => getPath(treeNode, []));

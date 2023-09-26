@@ -176,6 +176,7 @@ export interface IDataConfig {
   mappingRules?: MappingRules;
   derivedFieldRules?: DerivedFieldRules;
 
+  // PivotChart逻辑新增
   collectValuesBy?: Record<string, CollectValueBy>;
   isPivotChart?: boolean;
   dimensionSortArray?: string[];

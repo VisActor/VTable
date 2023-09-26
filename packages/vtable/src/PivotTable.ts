@@ -91,7 +91,8 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
         rowKeys,
         columnKeys,
         indicatorKeys,
-        options.records
+        options.records,
+        options.rowHierarchyType
       );
     }
 
@@ -196,7 +197,8 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
         rowKeys,
         columnKeys,
         indicatorKeys,
-        options.records
+        options.records,
+        options.rowHierarchyType
       );
     }
     // 更新表头
