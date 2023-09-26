@@ -899,14 +899,24 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
    * @returns 图元在整个表格上的坐标位置（相对表格左上角视觉坐标）
    */
   getChartDatumPosition(datum: any, cellHeaderPaths: IPivotTableCellHeaderPaths): { x: number; y: number } {
+    const { chartInstance, bounds } = this.getChartInstance(cellHeaderPaths);
+    if (chartInstance) {
+      const position = chartInstance.convertDatumToPosition(datum);
+      return position ? { x: Math.round(position.x + bounds.x1), y: Math.round(position.y + bounds.y1) } : null;
+    }
+    return null;
+  }
+
+  getChartInstance(cellHeaderPaths: IPivotTableCellHeaderPaths) {
     const cellAddr = this.getCellAddressByHeaderPaths(cellHeaderPaths);
     const cellPosition = this.getCellRelativeRect(cellAddr.col, cellAddr.row);
     const cellGroup = this.scenegraph.getCell(cellAddr.col, cellAddr.row);
-    let position;
+    // let position;
+    let chartInstance: any;
     const chartNode: Chart = cellGroup?.getChildren()?.[0] as Chart;
     if (chartNode.attribute.chartInstance) {
-      const chartInstance = chartNode.attribute.chartInstance;
-      const { dataId, data, axes } = chartNode.attribute;
+      chartInstance = chartNode.attribute.chartInstance;
+      const { dataId, data, axes, spec } = chartNode.attribute;
       const viewBox = chartNode.getViewBox();
       axes.forEach((axis: any, index: number) => {
         if (axis.type === 'linear') {
@@ -929,15 +939,50 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
           y1: viewBox.y1 - (chartNode.getRootNode() as any).table.scrollTop,
           y2: viewBox.y2 - (chartNode.getRootNode() as any).table.scrollTop
         },
+        false,
         false
       );
-      chartInstance.updateDataSync(dataId, data);
-      position = chartInstance.convertDatumToPosition(datum);
+      // chartInstance.updateDataSync(dataId, data);
+      if (typeof dataId === 'string') {
+        chartInstance.updateDataSync(dataId, data ?? []);
+      } else {
+        const dataBatch = [];
+        for (const dataIdStr in dataId) {
+          const dataIdAndField = dataId[dataIdStr];
+          const series = spec.series.find((item: any) => item?.data?.id === dataIdStr);
+          dataBatch.push({
+            id: dataIdStr,
+            values: dataIdAndField
+              ? data?.filter((item: any) => {
+                  return item.hasOwnProperty(dataIdAndField);
+                }) ?? []
+              : data ?? [],
+            fields: series?.data?.fields
+          });
+          // 判断是否有updateFullDataSync 木有的话 还是循环调用updateDataSync
+          if (!chartInstance.updateFullDataSync) {
+            chartInstance.updateDataSync(
+              dataIdStr,
+              dataIdAndField
+                ? data?.filter((item: any) => {
+                    return item.hasOwnProperty(dataIdAndField);
+                  }) ?? []
+                : data ?? []
+            );
+          }
+        }
+        chartInstance.updateFullDataSync?.(dataBatch);
+      }
+      // position = chartInstance.convertDatumToPosition(datum);
       this.render();
     }
-    return position
-      ? { x: Math.round(position.x + cellPosition.bounds.x1), y: Math.round(position.y + cellPosition.bounds.y1) }
-      : null;
+    return {
+      chartInstance,
+      bounds: cellPosition.bounds
+    };
+    // return position
+    //   ? { x: Math.round(position.x + cellPosition.bounds.x1), y: Math.round(position.y + cellPosition.bounds.y1) }
+    //   : null;
   }
 
   _getDimensionSortArray(): string[] | undefined {

@@ -134,7 +134,10 @@ export class Scenegraph {
       background: table.theme.underlayBackgroundColor,
       dpr: table.internalProps.pixelRatio,
       enableLayout: true,
-      pluginList: table.isPivotChart() ? ['poptipForText'] : undefined
+      pluginList: table.isPivotChart() ? ['poptipForText'] : undefined,
+      afterRender: () => {
+        this.table.fireListeners('after_stage_render', null);
+      }
       // autoRender: true
     });
 
