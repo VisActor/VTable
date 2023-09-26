@@ -1613,6 +1613,34 @@ export class Scenegraph {
       return false;
     });
   }
+
+  getColumnGroupX(col: number) {
+    if (col < this.table.rowHeaderLevelCount) {
+      // row header
+      return this.table.getColsWidth(0, col - 1);
+    } else if (col < this.table.colCount - this.table.rightFrozenColCount) {
+      // body
+      return this.table.getColsWidth(this.table.rowHeaderLevelCount, col - 1);
+    } else if (col < this.table.colCount) {
+      // right frozen
+      return this.table.getColsWidth(this.table.colCount - this.table.bottomFrozenRowCount, col - 1);
+    }
+    return 0;
+  }
+
+  getCellGroupY(row: number) {
+    if (row < this.table.columnHeaderLevelCount) {
+      // column header
+      return this.table.getRowsHeight(0, row - 1);
+    } else if (row < this.table.rowCount - this.table.bottomFrozenRowCount) {
+      // body
+      return this.table.getRowsHeight(this.table.columnHeaderLevelCount, row - 1);
+    } else if (row < this.table.rowCount) {
+      // bottom frozen
+      return this.table.getRowsHeight(this.table.rowCount - this.table.bottomFrozenRowCount, row - 1);
+    }
+    return 0;
+  }
 }
 
 function showIcon(scene: Scenegraph, cellGroup: Group, visibleTime: 'mouseenter_cell' | 'click_cell') {
