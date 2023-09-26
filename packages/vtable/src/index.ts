@@ -28,7 +28,7 @@ import { PivotTable } from './PivotTable';
 import { PivotChart } from './PivotChart';
 import type { MousePointerCellEvent } from './ts-types/events';
 import * as CustomLayout from './render/layout';
-
+export { getDataCellPath } from './tools/get-data-path';
 export * from './render/jsx';
 
 export const version = __VERSION__;

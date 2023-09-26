@@ -809,5 +809,8 @@ export function createTable() {
     const point = chartInstance.getChart().getAllSeries()[0].getRegion().getLayoutStartPoint();
     const rect = chartInstance.getChart().getAllSeries()[0].getMarkInName('bar').getProduct().elements;
     console.log(point, rect, bounds);
+
+    const path1 = VTable.getDataCellPath(option, targetData);
+    console.log(path, path1);
   };
 }
