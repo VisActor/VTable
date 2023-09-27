@@ -1,4 +1,4 @@
-import type { TextAlignType, TextBaselineType } from '@visactor/vrender';
+import type { TextAlignType, TextBaselineType } from '../../ts-types';
 import type { BaseTableAPI } from '../../ts-types/base-table';
 import type { ElementOptions } from './element';
 import { BaseElement } from './element';
