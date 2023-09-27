@@ -1,7 +1,7 @@
-import type { TextAlignType, TextBaselineType } from '@visactor/vrender';
 import type { FieldData } from './table-engine';
 import type { RectProps } from './common';
 import type { BaseTableAPI } from './base-table';
+import type { TextAlignType, TextBaselineType } from './style-define';
 export interface CustomRenderFunctionArg {
   row: number;
   col: number;

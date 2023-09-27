@@ -1,13 +1,5 @@
 import type { Cursor } from '@visactor/vrender';
-import {
-  createArc,
-  createCircle,
-  createLine,
-  createRect,
-  TextAlignType,
-  TextBaselineType,
-  Group as VGroup
-} from '@visactor/vrender';
+import { createArc, createCircle, createLine, createRect, Group as VGroup } from '@visactor/vrender';
 import { isFunction, isString, isValid } from '../../tools/util';
 import type { ICustomLayout, ICustomRender, ICustomRenderElement, ICustomRenderElements } from '../../ts-types';
 import { Group } from '../graphic/group';
