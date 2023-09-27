@@ -265,6 +265,10 @@ export const menus = [
       },
       {
         path: 'pivot-analysis',
+        name: 'pivot-analysis-tree'
+      },
+      {
+        path: 'pivot-analysis',
         name: 'pivot-analysis-total'
       },
       {
@@ -603,6 +607,10 @@ export const menus = [
       {
         path: 'unit-test-demo',
         name: 'unitTestListTable'
+      },
+      {
+        path: 'unit-test-demo',
+        name: 'unitTestPivotAnalysis'
       },
       {
         path: 'unit-test-demo',

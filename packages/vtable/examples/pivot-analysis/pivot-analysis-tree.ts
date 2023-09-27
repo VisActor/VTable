@@ -1,54 +1,25 @@
-// @ts-nocheck
-// 有问题可对照demo unitTestPivotTable
-import records from './data/marketsales.json';
-import { PivotTable } from '../src/PivotTable';
-import * as VTable from '../src/index';
-import { createDiv } from './dom';
-global.__VERSION__ = 'none';
-function getColor(min: number, max: number, n: any) {
-  if (max === min) {
-    if (n > 0) {
-      return 'rgb(255,0,0)';
-    }
-    return 'rgb(255,255,255)';
-  }
-  if (n === '') {
-    return 'rgb(255,255,255)';
-  }
-  const c = Math.max(0.1, (n - min) / (max - min));
-  const red = 255;
-  const green = (1 - c) * 255;
-  return `rgb(${red},${green},${green})`;
-}
+import * as VTable from '../../src';
+const PivotTable = VTable.PivotTable;
+const CONTAINER_ID = 'vTable';
 
-function getColor2(min: number, max: number, n: any) {
-  if (max === min) {
-    if (n > 0) {
-      return 'rgb(0,255,0)';
-    }
-    return 'rgb(255,255,255)';
-  }
-  if (n === '') {
-    return 'rgb(255,255,255)';
-  }
-  const c = Math.max(0.1, (n - min) / (max - min));
-  const green = 255;
-  const red = (1 - c) * 255;
-  return `rgb(${red},${green},${green})`;
-}
-describe('pivotTable-analysis init test', () => {
-  const containerDom: HTMLElement = createDiv();
-  containerDom.style.position = 'relative';
-  containerDom.style.width = '500px';
-  containerDom.style.height = '500px';
-
+export function createTable() {
   const option: VTable.PivotTableConstructorOptions = {
-    rows: ['province', 'city'],
-    columns: ['category', 'sub_category'],
+    rows: ['province', 'city', 'category'],
+    columns: ['sub_category'],
     indicators: ['sales', 'number'],
     enableDataAnalysis: true,
     indicatorTitle: '指标名称',
-    indicatorsAsCol: false,
+    indicatorsAsCol: true,
+    rowHierarchyType: 'tree',
+    dataConfig: {
+      totals: {
+        row: {
+          showGrandTotals: false,
+          showSubTotals: false,
+          subTotalsDimensions: ['province']
+        }
+      }
+    },
     corner: { titleOnDimension: 'row' },
     records: [
       {
@@ -308,74 +279,12 @@ describe('pivotTable-analysis init test', () => {
         sub_category: '纸张'
       }
     ],
-    dataConfig: {
-      filterRules: [
-        {
-          filterFunc: (record: Record<string, any>) => {
-            return record.province !== '四川省' || record.category !== '家具';
-          }
-        }
-      ],
-      sortRules: [
-        {
-          sortField: 'city',
-          sortByIndicator: 'sales',
-          sortType: VTable.TYPES.SortType.DESC,
-          query: ['办公用品', '笔']
-        } as VTable.TYPES.SortByIndicatorRule
-      ],
-      mappingRules: [
-        {
-          bgColor: {
-            indicatorKey: 'sales',
-            mapping(table, value) {
-              const max: number =
-                table.dataset.indicatorStatistics[table.dataset.indicatorKeys.indexOf('sales')].max.value();
-              const min: number =
-                table.dataset.indicatorStatistics[table.dataset.indicatorKeys.indexOf('sales')].min.value();
-              return getColor(min, max, value);
-            }
-          }
-        },
-        {
-          bgColor: {
-            indicatorKey: 'number',
-            mapping(table, value) {
-              const max: number =
-                table.dataset.indicatorStatistics[table.dataset.indicatorKeys.indexOf('number')].max.value();
-              const min: number =
-                table.dataset.indicatorStatistics[table.dataset.indicatorKeys.indexOf('number')].min.value();
-              return getColor2(min, max, value);
-            }
-          }
-        }
-      ],
-      totals: {
-        row: {
-          showGrandTotals: true,
-          showSubTotals: true,
-          subTotalsDimensions: ['province'],
-          grandTotalLabel: '行总计',
-          subTotalLabel: '小计'
-        },
-        column: {
-          showGrandTotals: true,
-          showSubTotals: true,
-          subTotalsDimensions: ['category'],
-          grandTotalLabel: '列总计',
-          subTotalLabel: '小计'
-        }
-      }
-    },
     widthMode: 'autoWidth' // 宽度模式：standard 标准模式； adaptive 自动填满容器
   };
-  const pivotTable = new PivotTable(containerDom, option);
 
-  test('pivotTable-analysis init', () => {
-    expect(pivotTable.rowCount).toBe(24);
-  });
-  test('pivotTable-analysis cellValue', () => {
-    expect(pivotTable.getCellValue(4, 4)).toBe(999);
-  });
-  pivotTable.release();
-});
+  const instance = new PivotTable(document.getElementById(CONTAINER_ID)!, option);
+  window.tableInstance = instance;
+
+  // 只为了方便控制太调试用，不要拷贝
+  window.tableInstance = instance;
+}

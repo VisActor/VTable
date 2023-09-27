@@ -109,6 +109,7 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
       columnKeys,
       indicatorKeys,
       options.records,
+      undefined,
       options.columnTree,
       options.rowTree
     );
@@ -201,6 +202,7 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
         columnKeys,
         indicatorKeys,
         options.records ?? this.internalProps.records,
+        undefined,
         options.columnTree,
         options.rowTree
       );

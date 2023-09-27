@@ -194,7 +194,7 @@ export class Dataset {
       if (customRowTree) {
         this.rowKeysPath_FULL = this.TreeToArr2(customRowTree);
       } else {
-        if (this.rowHierarchyType) {
+        if (this.rowHierarchyType === 'tree') {
           this.rowKeysPath_FULL = this.TreeToArr3(
             this.ArrToTree(
               this.rowKeys,

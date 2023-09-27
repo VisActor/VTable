@@ -1,10 +1,6 @@
-// @ts-nocheck
-// 有问题可对照demo unitTestPivotTable
-import records from './data/marketsales.json';
-import { PivotTable } from '../src/PivotTable';
-import * as VTable from '../src/index';
-import { createDiv } from './dom';
-global.__VERSION__ = 'none';
+import * as VTable from '../../src';
+const PivotTable = VTable.PivotTable;
+const CONTAINER_ID = 'vTable';
 function getColor(min: number, max: number, n: any) {
   if (max === min) {
     if (n > 0) {
@@ -36,12 +32,7 @@ function getColor2(min: number, max: number, n: any) {
   const red = (1 - c) * 255;
   return `rgb(${red},${green},${green})`;
 }
-describe('pivotTable-analysis init test', () => {
-  const containerDom: HTMLElement = createDiv();
-  containerDom.style.position = 'relative';
-  containerDom.style.width = '500px';
-  containerDom.style.height = '500px';
-
+export function createTable(el: any, v: any) {
   const option: VTable.PivotTableConstructorOptions = {
     rows: ['province', 'city'],
     columns: ['category', 'sub_category'],
@@ -369,13 +360,30 @@ describe('pivotTable-analysis init test', () => {
     },
     widthMode: 'autoWidth' // 宽度模式：standard 标准模式； adaptive 自动填满容器
   };
-  const pivotTable = new PivotTable(containerDom, option);
+  //初始化表格
+  const tableInstance = new PivotTable(document.getElementById(CONTAINER_ID)!, option);
+  window.tableInstance = tableInstance;
 
-  test('pivotTable-analysis init', () => {
-    expect(pivotTable.rowCount).toBe(24);
-  });
-  test('pivotTable-analysis cellValue', () => {
-    expect(pivotTable.getCellValue(4, 4)).toBe(999);
-  });
-  pivotTable.release();
-});
+  // setTimeout(() => {
+  //   indicators[0].format = rec => {
+  //     return rec?.['利润'] ?? '0' + '元';
+  //   };
+  //   const option1 = {
+  //     rowTree,
+  //     columnTree,
+  //     rows,
+  //     columns,
+  //     indicators,
+  //     corner: {
+  //       titleOnDimension: 'row'
+  //     },
+  //     showColumnHeader: true,
+  //     showRowHeader: true,
+  //     hideIndicatorName: true,
+  //     defaultColWidth: 150,
+  //     heightMode: 'autoHeight',
+  //     autoWrapText: true
+  //   };
+  //   tableInstance.updateOption(option1);
+  // }, 3000);
+}
