@@ -1,4 +1,3 @@
-import type { TextAlignType, TextBaselineType } from '@visactor/vrender';
 import type { LineWidthsPropertyDefine } from '..';
 import { PaddingPropertyDefine } from '..';
 import type {
@@ -20,7 +19,9 @@ import type {
   FontFamilyPropertyDefine,
   FontWeightPropertyDefine,
   FontVariantPropertyDefine,
-  FontStylePropertyDefine
+  FontStylePropertyDefine,
+  TextAlignType,
+  TextBaselineType
 } from '../style-define';
 import type { ThemeStyle } from '../theme';
 //这个style是在绘制里面的内容时用到的，用不到borderColor和borderLineWidth，所以和IStyleOption有些不一致
