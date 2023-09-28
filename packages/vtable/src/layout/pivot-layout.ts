@@ -110,9 +110,11 @@ export class PivotLayoutMap implements LayoutMapAPI {
   hasTwoIndicatorAxes: boolean;
   /** 图表spec中barWidth的收集 */
   _chartItemSpanSize: number;
+  _chartItemBandSize: number;
   constructor(table: PivotTable | PivotChart, dataset: Dataset) {
     this._table = table;
     this._chartItemSpanSize = 0;
+    this._chartItemBandSize = 0;
     this.rowTree = table.options.rowTree;
     this.columnTree = table.options.columnTree;
     this.rowsDefine = table.options.rows ?? [];
@@ -250,9 +252,16 @@ export class PivotLayoutMap implements LayoutMapAPI {
         return false;
       });
       this._chartItemSpanSize = 0;
+      this._chartItemBandSize = 0;
       this._indicatorObjects.find(indicatorObject => {
         if (indicatorObject.chartSpec?.barWidth) {
           this._chartItemSpanSize = indicatorObject.chartSpec?.barWidth;
+        }
+        const bandAxisConfig = indicatorObject.chartSpec.axes.find((axis: any) => {
+          return axis.type === 'band';
+        });
+        if (bandAxisConfig?.bandSize) {
+          this._chartItemBandSize = bandAxisConfig?.bandSize;
         }
         if (this._chartItemSpanSize > 0) {
           return true;
@@ -266,9 +275,9 @@ export class PivotLayoutMap implements LayoutMapAPI {
           }
           return false;
         });
-        if (this._chartItemSpanSize > 0) {
-          return true;
-        }
+        // if (this._chartItemSpanSize > 0) {
+        //   return true;
+        // }
         return false;
       });
 
@@ -1476,6 +1485,9 @@ export class PivotLayoutMap implements LayoutMapAPI {
         break;
       }
     }
+    if (this._chartItemBandSize) {
+      return (collectedValues?.length ?? 0) * this._chartItemBandSize;
+    }
     const barWidth = this._chartItemSpanSize || 25;
     return (collectedValues?.length ?? 0) * (barWidth + barWidth / 3);
   }
@@ -1495,6 +1507,9 @@ export class PivotLayoutMap implements LayoutMapAPI {
           ];
         break;
       }
+    }
+    if (this._chartItemBandSize) {
+      return (collectedValues?.length ?? 0) * this._chartItemBandSize;
     }
     const barWidth = this._chartItemSpanSize || 25;
     return (collectedValues?.length ?? 0) * (barWidth + barWidth / 3);
