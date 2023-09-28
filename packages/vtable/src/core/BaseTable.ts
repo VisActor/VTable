@@ -309,13 +309,13 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
         y: this.tableY
       });
     }
-    if (options.title) {
-      internalProps.title = new Title(options.title, this);
-      this.scenegraph.tableGroup.setAttributes({
-        x: this.tableX,
-        y: this.tableY
-      });
-    }
+    // if (options.title) {
+    //   internalProps.title = new Title(options.title, this);
+    //   this.scenegraph.tableGroup.setAttributes({
+    //     x: this.tableX,
+    //     y: this.tableY
+    //   });
+    // }
 
     //原有的toolTip提示框处理，主要在文字绘制不全的时候 出来全文本提示信息 需要加个字段设置是否有效
     internalProps.tooltip = Object.assign(
@@ -1832,13 +1832,13 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
         y: this.tableY
       });
     }
-    if (options.title) {
-      internalProps.title = new Title(options.title, this);
-      this.scenegraph.tableGroup.setAttributes({
-        x: this.tableX,
-        y: this.tableY
-      });
-    }
+    // if (options.title) {
+    //   internalProps.title = new Title(options.title, this);
+    //   this.scenegraph.tableGroup.setAttributes({
+    //     x: this.tableX,
+    //     y: this.tableY
+    //   });
+    // }
     internalProps.tooltip = Object.assign(
       {
         renderMode: 'html',
