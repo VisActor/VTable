@@ -6,7 +6,8 @@ import { createDataset } from './create-dataset';
 
 export function getDataCellPath(
   options: PivotChartConstructorOptions,
-  data: Object
+  data: Object,
+  compareFunc?: (a: any, b: any) => boolean
 ): IPivotTableCellHeaderPaths | undefined {
   // mock dataset
   const dataset = createDataset(options);
@@ -42,7 +43,14 @@ export function getDataCellPath(
         colKey[colKey.length - 1],
         (layoutMap as PivotLayoutMap).getIndicatorKey(col, row)
       );
-      const result = compareData(aggregator.value ? aggregator.value() : undefined, data, col, row, layoutMap);
+      const result = compareData(
+        aggregator.value ? aggregator.value() : undefined,
+        data,
+        col,
+        row,
+        layoutMap,
+        compareFunc
+      );
       if (result) {
         return result;
       }
@@ -51,13 +59,24 @@ export function getDataCellPath(
   return undefined;
 }
 
-function compareData(data1: Object[], data2: Object, col: number, row: number, layoutMap: PivotLayoutMap) {
+function compareData(
+  data1: Object[],
+  data2: Object,
+  col: number,
+  row: number,
+  layoutMap: PivotLayoutMap,
+  compareFunc?: (a: any, b: any) => boolean
+) {
   if (isArray(data1)) {
     for (let i = 0; i < data1.length; i++) {
-      if (JSON.stringify(data1[i]) === JSON.stringify(data2)) {
+      if (compareFunc ? compareFunc(data1[i], data2) : defaultCompare(data1[i], data2)) {
         return layoutMap.getCellHeaderPaths(col, row);
       }
     }
   }
   return undefined;
+}
+
+function defaultCompare(a: any, b: any) {
+  return JSON.stringify(a) === JSON.stringify(b);
 }
