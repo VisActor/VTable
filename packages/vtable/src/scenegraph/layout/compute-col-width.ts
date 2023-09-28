@@ -252,7 +252,7 @@ function computeAutoColWidth(
     deltaRow = Math.ceil((endRow - startRow) / 5000);
   }
   // 如果是透视图
-  if (table.isPivotChart() && col >= table.rowHeaderLevelCount) {
+  if (table.isPivotChart() && col >= table.rowHeaderLevelCount && col < table.colCount - table.rightFrozenColCount) {
     if (!(table.internalProps.layoutMap as PivotLayoutMap).indicatorsAsCol) {
       //并且指标是以行展示 计算列宽需要根据x轴的值域范围
       const optimunWidth = (table.internalProps.layoutMap as PivotLayoutMap).getOptimunWidthForChart(col);

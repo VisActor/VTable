@@ -41,10 +41,13 @@ import { updateChartSize, updateChartState } from './refresh-node/update-chart';
 import { initSceneGraph } from './group-creater/init-scenegraph';
 import { updateContainerChildrenX } from './utils/update-container';
 import { loadPoptip, setPoptipTheme } from '@visactor/vrender-components';
+import { contextModule } from './context/module';
 
 // VChart poptip theme
 loadPoptip();
 container.load(splitModule);
+// container.load(contextModule);
+// console.log(container);
 
 const poptipStyle = {
   visible: true,
@@ -134,7 +137,10 @@ export class Scenegraph {
       background: table.theme.underlayBackgroundColor,
       dpr: table.internalProps.pixelRatio,
       enableLayout: true,
-      pluginList: table.isPivotChart() ? ['poptipForText'] : undefined
+      pluginList: table.isPivotChart() ? ['poptipForText'] : undefined,
+      afterRender: () => {
+        this.table.fireListeners('after_stage_render', null);
+      }
       // autoRender: true
     });
 
@@ -800,6 +806,8 @@ export class Scenegraph {
 
   updateTableSize() {
     this.tableGroup.setAttributes({
+      x: this.table.tableX,
+      y: this.table.tableY,
       width: Math.min(
         this.table.tableNoFrameWidth,
         Math.max(this.colHeaderGroup.attribute.width, this.bodyGroup.attribute.width, 0) +
@@ -816,6 +824,8 @@ export class Scenegraph {
 
     if (this.tableGroup.border) {
       this.tableGroup.border.setAttributes({
+        x: this.table.tableX - this.tableGroup.border.attribute.lineWidth / 2,
+        y: this.table.tableY - this.tableGroup.border.attribute.lineWidth / 2,
         width: this.tableGroup.attribute.width + this.tableGroup.border.attribute.lineWidth,
         height: this.tableGroup.attribute.height + this.tableGroup.border.attribute.lineWidth
       });

@@ -36,7 +36,7 @@ export function createTable() {
     columns,
     title: {
       text: 'dsagf',
-      align: 'right',
+      align: 'center',
       subtext: '这是一个子标题\ndsag反馈第三个国际服大教室',
       orient: 'top',
       padding: 40

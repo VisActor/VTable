@@ -33,11 +33,19 @@ export function getAxisConfigInPivotChart(col: number, row: number, layout: Pivo
         ? layout.dataset.collectedValues[defaultKey + (isZeroAlign ? '_align' : '')]
         : layout.dataset.collectedValues[defaultKey];
       const index = layout.getRecordIndexByCol(col);
-      const range: { min: number; max: number } = data
-        ? (data[
-            layout.getColKeysPath()[index][Math.max(0, layout.columnHeaderLevelCount - 1 - layout.topAxesCount)]
-          ] as { min: number; max: number })
-        : { max: 1, min: 0 };
+
+      const range = merge(
+        {},
+        (data?.[
+          layout.getColKeysPath()?.[index]?.[Math.max(0, layout.columnHeaderLevelCount - 1 - layout.topAxesCount)] ?? ''
+        ] as { min: number; max: number }) ?? { min: 0, max: 1 }
+      );
+      if (range.positiveMax && range.positiveMax > range.max) {
+        range.max = range.positiveMax;
+      }
+      if (range.negativeMin && range.negativeMin < range.min) {
+        range.min = range.negativeMin;
+      }
       // const { axisOption, isPercent } = getAxisOption(col, row + 1, 'top', layout);
       if (range.min === range.max) {
         if (range.min > 0) {
@@ -102,6 +110,12 @@ export function getAxisConfigInPivotChart(col: number, row: number, layout: Pivo
           layout.getColKeysPath()?.[index]?.[Math.max(0, layout.columnHeaderLevelCount - 1 - layout.topAxesCount)] ?? ''
         ] as { min: number; max: number }) ?? { min: 0, max: 1 }
       );
+      if (range.positiveMax && range.positiveMax > range.max) {
+        range.max = range.positiveMax;
+      }
+      if (range.negativeMin && range.negativeMin < range.min) {
+        range.min = range.negativeMin;
+      }
       if (range.min === range.max) {
         if (range.min > 0) {
           range.min = 0;
@@ -214,6 +228,12 @@ export function getAxisConfigInPivotChart(col: number, row: number, layout: Pivo
           layout.getRowKeysPath()[index]?.[Math.max(0, layout.rowHeaderLevelCount - 1 - layout.leftAxesCount)] ?? ''
         ] as { min: number; max: number }) ?? { min: 0, max: 1 }
       );
+      if (range.positiveMax && range.positiveMax > range.max) {
+        range.max = range.positiveMax;
+      }
+      if (range.negativeMin && range.negativeMin < range.min) {
+        range.min = range.negativeMin;
+      }
       if (range.min === range.max) {
         if (range.min > 0) {
           range.min = 0;
@@ -295,7 +315,12 @@ export function getAxisConfigInPivotChart(col: number, row: number, layout: Pivo
           layout.getRowKeysPath()[index]?.[Math.max(0, layout.rowHeaderLevelCount - 1 - layout.leftAxesCount)] ?? ''
         ] as { min: number; max: number }) ?? { min: 0, max: 1 }
       );
-
+      if (range.positiveMax && range.positiveMax > range.max) {
+        range.max = range.positiveMax;
+      }
+      if (range.negativeMin && range.negativeMin < range.min) {
+        range.min = range.negativeMin;
+      }
       // const { axisOption, isPercent } = getAxisOption(col - 1, row, 'right', layout);
       if (range.min === range.max) {
         if (range.min > 0) {

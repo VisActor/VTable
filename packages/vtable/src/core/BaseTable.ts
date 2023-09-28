@@ -2,7 +2,7 @@ import * as columnStyleContents from '../body-helper/style';
 import * as headerStyleContents from '../header-helper/style';
 import { importStyle } from './style';
 import * as style from '../tools/style';
-import { AABBBounds } from '@visactor/vutils';
+import { AABBBounds, isNumber } from '@visactor/vutils';
 import {
   type CellAddress,
   type CellRange,
@@ -309,13 +309,13 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
         y: this.tableY
       });
     }
-    if (options.title) {
-      internalProps.title = new Title(options.title, this);
-      this.scenegraph.tableGroup.setAttributes({
-        x: this.tableX,
-        y: this.tableY
-      });
-    }
+    // if (options.title) {
+    //   internalProps.title = new Title(options.title, this);
+    //   this.scenegraph.tableGroup.setAttributes({
+    //     x: this.tableX,
+    //     y: this.tableY
+    //   });
+    // }
 
     //原有的toolTip提示框处理，主要在文字绘制不全的时候 出来全文本提示信息 需要加个字段设置是否有效
     internalProps.tooltip = Object.assign(
@@ -514,13 +514,13 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
    * Get the default row height.
    *
    */
-  get defaultHeaderRowHeight(): number | number[] {
+  get defaultHeaderRowHeight(): (number | 'auto') | (number | 'auto')[] {
     return this.internalProps.defaultHeaderRowHeight;
   }
   /**
    * Set the default row height.
    */
-  set defaultHeaderRowHeight(defaultHeaderRowHeight: number | number[]) {
+  set defaultHeaderRowHeight(defaultHeaderRowHeight: (number | 'auto') | (number | 'auto')[]) {
     this.internalProps.defaultHeaderRowHeight = defaultHeaderRowHeight;
     this.options.defaultHeaderRowHeight = defaultHeaderRowHeight;
   }
@@ -886,7 +886,11 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     if (this.rowHeightsMap.get(row)) {
       return this.rowHeightsMap.get(row);
     }
-    return this.getDefaultRowHeight(row);
+    const defaultHeight = this.getDefaultRowHeight(row);
+    if (isNumber(defaultHeight)) {
+      return defaultHeight;
+    }
+    return this.defaultRowHeight;
   }
 
   getDefaultRowHeight(row: number) {
@@ -897,8 +901,9 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     }
     if (this.isBottomFrozenRow(this.rowHeaderLevelCount, row)) {
       return Array.isArray(this.defaultHeaderRowHeight)
-        ? this.defaultHeaderRowHeight[this.columnHeaderLevelCount - this.bottomFrozenRowCount] ??
-            this.internalProps.defaultRowHeight
+        ? this.defaultHeaderRowHeight[
+            this.columnHeaderLevelCount > 0 ? this.columnHeaderLevelCount - this.bottomFrozenRowCount : 0
+          ] ?? this.internalProps.defaultRowHeight
         : this.defaultHeaderRowHeight;
     }
     return this.internalProps.defaultRowHeight;
@@ -934,9 +939,11 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
         cachedLowerRowHeight +
           (this.rowHeightsMap.get(endRow) ??
             (this.isColumnHeader(0, endRow) || this.isCornerHeader(0, endRow)
-              ? Array.isArray(this.defaultHeaderRowHeight)
-                ? this.defaultHeaderRowHeight[endRow] ?? this.internalProps.defaultRowHeight
-                : this.defaultHeaderRowHeight
+              ? Array.isArray(this.defaultHeaderRowHeight) && isNumber(this.defaultHeaderRowHeight[endRow])
+                ? (this.defaultHeaderRowHeight[endRow] as number)
+                : isNumber(this.defaultHeaderRowHeight)
+                ? (this.defaultHeaderRowHeight as number)
+                : this.internalProps.defaultRowHeight
               : this.internalProps.defaultRowHeight))
       );
       if (startRow >= 0 && endRow >= 0) {
@@ -1832,13 +1839,13 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
         y: this.tableY
       });
     }
-    if (options.title) {
-      internalProps.title = new Title(options.title, this);
-      this.scenegraph.tableGroup.setAttributes({
-        x: this.tableX,
-        y: this.tableY
-      });
-    }
+    // if (options.title) {
+    //   internalProps.title = new Title(options.title, this);
+    //   this.scenegraph.tableGroup.setAttributes({
+    //     x: this.tableX,
+    //     y: this.tableY
+    //   });
+    // }
     internalProps.tooltip = Object.assign(
       {
         renderMode: 'html',

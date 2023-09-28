@@ -91,7 +91,14 @@ export class Dataset {
   indicatorStatistics: { max: Aggregator; min: Aggregator; total: Aggregator }[] = [];
 
   aggregators: {
-    [key: string]: { new (dimension: string | string[], formatFun?: any, isRecord?: boolean): Aggregator };
+    [key: string]: {
+      new (
+        dimension: string | string[],
+        formatFun?: any,
+        isRecord?: boolean,
+        needSplitPositiveAndNegative?: boolean
+      ): Aggregator;
+    };
   } = {};
 
   stringJoinChar = String.fromCharCode(0);
@@ -102,6 +109,7 @@ export class Dataset {
   private colSubTotalLabel: string;
   private rowGrandTotalLabel: string;
   private rowSubTotalLabel: string;
+  private needSplitPositiveAndNegative?: boolean;
   collectValuesBy: Record<string, CollectValueBy>; //收集维度值，field收集维度，by按什么进行分组收集
   collectedValues: Record<string, Record<string, CollectedValue>> = {};
   cacheCollectedValues: Record<string, Record<string, CollectedValue>> = {};
@@ -126,7 +134,8 @@ export class Dataset {
     records: any[] | Record<string, any[]>,
     rowHierarchyType?: 'grid' | 'tree',
     customColTree?: IHeaderTreeDefine[],
-    customRowTree?: IHeaderTreeDefine[]
+    customRowTree?: IHeaderTreeDefine[],
+    needSplitPositiveAndNegative?: boolean
   ) {
     this.registerAggregators();
     this.dataConfig = dataConfig;
@@ -147,6 +156,7 @@ export class Dataset {
     this.rowGrandTotalLabel = this.totals?.row?.grandTotalLabel ?? '总计';
     this.rowSubTotalLabel = this.totals?.row?.subTotalLabel ?? '小计';
     this.collectValuesBy = this.dataConfig?.collectValuesBy;
+    this.needSplitPositiveAndNegative = needSplitPositiveAndNegative ?? false;
     // for (let i = 0; i < this.indicators?.length; i++) {
     //   this.indicatorStatistics.push({
     //     max: new this.aggregators[AggregationType.MAX](this.indicators[i]),
@@ -300,19 +310,52 @@ export class Dataset {
           const min = Object.values(this.collectedValues[field][byKeys]).reduce((acc, cur) => {
             return cur.value() < acc ? cur.value() : acc;
           }, Number.MAX_SAFE_INTEGER);
+          let positiveMax;
+          let negativeMin;
+          if (this.needSplitPositiveAndNegative) {
+            positiveMax = Object.values(this.collectedValues[field][byKeys]).reduce((acc, cur) => {
+              return cur.positiveValue() > acc ? cur.positiveValue() : acc;
+            }, Number.MIN_SAFE_INTEGER);
+            negativeMin = Object.values(this.collectedValues[field][byKeys]).reduce((acc, cur) => {
+              return cur.negativeValue() < acc ? cur.negativeValue() : acc;
+            }, Number.MAX_SAFE_INTEGER);
+          }
+
           this.collectedValues[field][byKeys] = {};
           (
             this.collectedValues[field][byKeys] as {
               max: number;
               min: number;
+              positiveMax?: number;
+              negativeMin?: number;
             }
           ).max = max;
           (
             this.collectedValues[field][byKeys] as {
               max: number;
               min: number;
+              positiveMax?: number;
+              negativeMin?: number;
             }
           ).min = min;
+          if (this.needSplitPositiveAndNegative) {
+            (
+              this.collectedValues[field][byKeys] as {
+                max: number;
+                min: number;
+                positiveMax?: number;
+                negativeMin?: number;
+              }
+            ).positiveMax = positiveMax;
+            (
+              this.collectedValues[field][byKeys] as {
+                max: number;
+                min: number;
+                positiveMax?: number;
+                negativeMin?: number;
+              }
+            ).negativeMin = negativeMin;
+          }
         }
       }
     }
@@ -421,7 +464,12 @@ export class Dataset {
         if (this.collectValuesBy[field].sumBy) {
           const sumByKeys = this.collectValuesBy[field].sumBy.map(byField => record[byField]).join(this.stringJoinChar);
           if (!this.collectedValues[field][collectKeys][sumByKeys]) {
-            this.collectedValues[field][collectKeys][sumByKeys] = new this.aggregators[AggregationType.SUM](field);
+            this.collectedValues[field][collectKeys][sumByKeys] = new this.aggregators[AggregationType.SUM](
+              field,
+              undefined,
+              undefined,
+              this.needSplitPositiveAndNegative
+            );
           }
           this.collectedValues[field][collectKeys][sumByKeys].push(record);
         } else if (this.collectValuesBy[field].range) {
