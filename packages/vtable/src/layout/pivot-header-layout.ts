@@ -630,8 +630,8 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
   }
   private generateExtensionRowTree() {
     this.extensionRows.forEach((extensionRow, indexP) => {
-      const old_rowHeaderCellIds = this._rowHeaderCellIds;
-      this._rowHeaderCellIds = [];
+      const old_rowHeaderCellIds = this._rowHeaderCellIds_FULL;
+      this._rowHeaderCellIds_FULL = [];
       old_rowHeaderCellIds.forEach((row_ids: number[], index) => {
         const key = row_ids[row_ids.length - 1];
         colIndex = 0;
@@ -667,7 +667,7 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
           extensionRow.rows
         );
         for (let i = 0; i < extensionRowTreeHeaderIds[0].length; i++) {
-          this._rowHeaderCellIds.push(row_ids.concat(extensionRowTreeHeaderIds[0][i]));
+          this._rowHeaderCellIds_FULL.push(row_ids.concat(extensionRowTreeHeaderIds[0][i]));
         }
       });
     });
@@ -1412,7 +1412,7 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
    * @param row
    */
   toggleHierarchyState(col: number, row: number) {
-    const oldRowHeaderCellIds = this._rowHeaderCellIds.slice(0);
+    const oldRowHeaderCellIds = this._rowHeaderCellIds_FULL.slice(0);
     const oldRowHeaderCellPositons = oldRowHeaderCellIds.map((id, row) => {
       return { col, row: row + this.columnHeaderLevelCount };
     });
@@ -1421,9 +1421,9 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
       (<any>hd.define).hierarchyState === HierarchyState.collapse ? HierarchyState.expand : HierarchyState.collapse;
     //过程类似构造函数处理过程
     this.rowDimensionTree.reset(this.rowDimensionTree.tree.children, true);
-    this._rowHeaderCellIds = [];
+    this._rowHeaderCellIds_FULL = [];
     this.rowHeaderObjs = this._addHeadersForTreeMode(
-      this._rowHeaderCellIds,
+      this._rowHeaderCellIds_FULL,
       0,
       this.rowDimensionTree.tree.children,
       [],
@@ -1435,7 +1435,7 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
     if (this.rowHeaderTitle) {
       const id = ++sharedVar.seqId;
       const firstColIds = Array(this.rowCount - this.columnHeaderLevelCount).fill(id);
-      this._rowHeaderCellIds.unshift(firstColIds);
+      this._rowHeaderCellIds_FULL.unshift(firstColIds);
       const cell: HeaderData = {
         id,
         title:
@@ -1459,7 +1459,7 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
       this.rowHeaderObjs.push(cell);
       this._headerObjects[id] = cell;
     }
-    this._rowHeaderCellIds = transpose(this._rowHeaderCellIds);
+    this._rowHeaderCellIds_FULL = transpose(this._rowHeaderCellIds_FULL);
     if (this.rowHierarchyType === 'tree' && this.extensionRows?.length >= 1) {
       this.generateExtensionRowTree();
     }
@@ -1478,10 +1478,11 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
       col,
       row,
       oldRowHeaderCellIds.map(oldCellId => oldCellId[col]),
-      this._rowHeaderCellIds.map(newCellId => newCellId[col]),
+      this._rowHeaderCellIds_FULL.map(newCellId => newCellId[col]),
       oldRowHeaderCellPositons,
       this
     );
+    this._rowHeaderCellIds = this._rowHeaderCellIds_FULL;
 
     return diffCell;
   }

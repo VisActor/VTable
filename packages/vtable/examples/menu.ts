@@ -615,6 +615,10 @@ export const menus = [
       {
         path: 'unit-test-demo',
         name: 'unitTestPivotChart'
+      },
+      {
+        path: 'unit-test-demo',
+        name: 'unitTestPivotTree'
       }
     ]
   },
