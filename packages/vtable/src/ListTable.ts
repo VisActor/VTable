@@ -21,6 +21,7 @@ import { _setDataSource } from './core/tableHelper';
 import { BaseTable } from './core';
 import type { ListTableProtected } from './ts-types/base-table';
 import { TABLE_EVENT_TYPE } from './core/TABLE_EVENT_TYPE';
+import { Title } from './components/title/title';
 
 export class ListTable extends BaseTable implements ListTableAPI {
   declare internalProps: ListTableProtected;
@@ -65,6 +66,10 @@ export class ListTable extends BaseTable implements ListTableAPI {
       this.setRecords(options.records as any, internalProps.sortState);
     } else {
       this.setRecords([]);
+    }
+    if (options.title) {
+      internalProps.title = new Title(options.title, this);
+      this.scenegraph.updateTableSize();
     }
   }
   isListTable(): true {
@@ -245,7 +250,10 @@ export class ListTable extends BaseTable implements ListTableAPI {
       this.scenegraph.createSceneGraph();
       this.render();
     }
-
+    if (options.title) {
+      internalProps.title = new Title(options.title, this);
+      this.scenegraph.updateTableSize();
+    }
     return new Promise(resolve => {
       setTimeout(resolve, 0);
     });

@@ -39,6 +39,7 @@ import { clearChartCacheImage, updateChartData } from './scenegraph/refresh-node
 import type { ITableAxisOption } from './ts-types/component/axis';
 import { isArray } from '@visactor/vutils';
 import type { DiscreteLegend } from '@visactor/vrender-components';
+import { Title } from './components/title/title';
 
 export class PivotChart extends BaseTable implements PivotChartAPI {
   declare internalProps: PivotChartProtected;
@@ -121,6 +122,10 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
       this.setRecords(options.records as any, this.internalProps.sortState);
     } else {
       this.setRecords([]);
+    }
+    if (options.title) {
+      this.internalProps.title = new Title(options.title, this);
+      this.scenegraph.updateTableSize();
     }
   }
   static get EVENT_TYPE(): typeof PIVOT_CHART_EVENT_TYPE {
@@ -230,7 +235,10 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
       this.scenegraph.createSceneGraph();
       this.render();
     }
-
+    if (options.title) {
+      this.internalProps.title = new Title(options.title, this);
+      this.scenegraph.updateTableSize();
+    }
     return new Promise(resolve => {
       setTimeout(resolve, 0);
     });
