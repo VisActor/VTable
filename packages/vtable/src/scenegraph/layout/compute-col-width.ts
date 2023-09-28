@@ -257,7 +257,8 @@ function computeAutoColWidth(
       //并且指标是以行展示 计算列宽需要根据x轴的值域范围
       const optimunWidth = (table.internalProps.layoutMap as PivotLayoutMap).getOptimunWidthForChart(col);
       if (optimunWidth > 0) {
-        return optimunWidth;
+        const padding = getQuadProps(table.theme.bodyStyle.padding as any);
+        return optimunWidth + padding[1] + padding[3];
       }
     } else {
       //直接拿表头的默认列宽
