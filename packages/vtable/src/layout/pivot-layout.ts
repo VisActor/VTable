@@ -264,7 +264,7 @@ export class PivotLayoutMap implements LayoutMapAPI {
         if (indicatorObject.chartSpec?.barWidth) {
           this._chartItemSpanSize = indicatorObject.chartSpec?.barWidth;
         }
-        const bandAxisConfig = indicatorObject.chartSpec.axes.find((axis: any) => {
+        const bandAxisConfig = indicatorObject.chartSpec?.axes?.find((axis: any) => {
           return axis.type === 'band';
         });
         if (bandAxisConfig?.bandSize) {
