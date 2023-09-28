@@ -806,6 +806,8 @@ export class Scenegraph {
 
   updateTableSize() {
     this.tableGroup.setAttributes({
+      x: this.table.tableX,
+      y: this.table.tableY,
       width: Math.min(
         this.table.tableNoFrameWidth,
         Math.max(this.colHeaderGroup.attribute.width, this.bodyGroup.attribute.width, 0) +
@@ -822,6 +824,8 @@ export class Scenegraph {
 
     if (this.tableGroup.border) {
       this.tableGroup.border.setAttributes({
+        x: this.table.tableX - this.tableGroup.border.attribute.lineWidth / 2,
+        y: this.table.tableY - this.tableGroup.border.attribute.lineWidth / 2,
         width: this.tableGroup.attribute.width + this.tableGroup.border.attribute.lineWidth,
         height: this.tableGroup.attribute.height + this.tableGroup.border.attribute.lineWidth
       });
