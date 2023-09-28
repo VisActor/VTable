@@ -50,7 +50,10 @@ export function createDataset(options: PivotChartConstructorOptions) {
     rowKeys,
     columnKeys,
     indicatorKeys,
+    options.indicators,
+    options.indicatorsAsCol ?? true,
     options.records,
+    undefined,
     options.columnTree,
     options.rowTree,
     true
