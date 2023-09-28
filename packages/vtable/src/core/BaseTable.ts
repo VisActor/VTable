@@ -514,13 +514,13 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
    * Get the default row height.
    *
    */
-  get defaultHeaderRowHeight(): number | number[] {
+  get defaultHeaderRowHeight(): (number | 'auto') | (number | 'auto')[] {
     return this.internalProps.defaultHeaderRowHeight;
   }
   /**
    * Set the default row height.
    */
-  set defaultHeaderRowHeight(defaultHeaderRowHeight: number | number[]) {
+  set defaultHeaderRowHeight(defaultHeaderRowHeight: (number | 'auto') | (number | 'auto')[]) {
     this.internalProps.defaultHeaderRowHeight = defaultHeaderRowHeight;
     this.options.defaultHeaderRowHeight = defaultHeaderRowHeight;
   }
@@ -897,8 +897,9 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     }
     if (this.isBottomFrozenRow(this.rowHeaderLevelCount, row)) {
       return Array.isArray(this.defaultHeaderRowHeight)
-        ? this.defaultHeaderRowHeight[this.columnHeaderLevelCount - this.bottomFrozenRowCount] ??
-            this.internalProps.defaultRowHeight
+        ? this.defaultHeaderRowHeight[
+            this.columnHeaderLevelCount > 0 ? this.columnHeaderLevelCount - this.bottomFrozenRowCount : 0
+          ] ?? this.internalProps.defaultRowHeight
         : this.defaultHeaderRowHeight;
     }
     return this.internalProps.defaultRowHeight;
