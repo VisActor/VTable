@@ -24,6 +24,8 @@ import { cloneDeep } from '@visactor/vutils';
 import { getAxisConfigInPivotChart } from './chart-helper/get-axis-config';
 import { getChartAxes, getChartDataId, getChartSpec, getRawChartSpec } from './chart-helper/get-chart-spec';
 import type { ITableAxisOption } from '../ts-types/component/axis';
+import type { TextStyle } from '../body-helper/style';
+import { getQuadProps } from '../scenegraph/utils/padding';
 /**
  * 简化配置，包含数据处理的 布局辅助计算类
  */
@@ -111,6 +113,7 @@ export class PivotLayoutMap implements LayoutMapAPI {
   /** 图表spec中barWidth的收集 */
   _chartItemSpanSize: number;
   _chartItemBandSize: number;
+  _chartPadding?: number | number[];
   constructor(table: PivotTable | PivotChart, dataset: Dataset) {
     this._table = table;
     this._chartItemSpanSize = 0;
@@ -253,7 +256,11 @@ export class PivotLayoutMap implements LayoutMapAPI {
       });
       this._chartItemSpanSize = 0;
       this._chartItemBandSize = 0;
+      // this._chartPadding ;
       this._indicatorObjects.find(indicatorObject => {
+        if ((indicatorObject?.style as TextStyle)?.padding) {
+          this._chartPadding = (indicatorObject.style as TextStyle).padding as number;
+        }
         if (indicatorObject.chartSpec?.barWidth) {
           this._chartItemSpanSize = indicatorObject.chartSpec?.barWidth;
         }
@@ -1485,11 +1492,16 @@ export class PivotLayoutMap implements LayoutMapAPI {
         break;
       }
     }
+    let width;
     if (this._chartItemBandSize) {
-      return (collectedValues?.length ?? 0) * this._chartItemBandSize;
+      width = (collectedValues?.length ?? 0) * this._chartItemBandSize;
+    } else {
+      const barWidth = this._chartItemSpanSize || 25;
+      width = (collectedValues?.length ?? 0) * (barWidth + barWidth / 3);
     }
-    const barWidth = this._chartItemSpanSize || 25;
-    return (collectedValues?.length ?? 0) * (barWidth + barWidth / 3);
+
+    const padding = getQuadProps(this._chartPadding ?? (this._table.theme.bodyStyle.padding as number) ?? 0);
+    return width + padding[1] + padding[3];
   }
   /** 获取某一图表列的最优高度，计算逻辑是根据图表的yField的维度值个数 * barWidth */
   getOptimunHeightForChart(row: number) {
@@ -1508,11 +1520,15 @@ export class PivotLayoutMap implements LayoutMapAPI {
         break;
       }
     }
+    let height;
     if (this._chartItemBandSize) {
-      return (collectedValues?.length ?? 0) * this._chartItemBandSize;
+      height = (collectedValues?.length ?? 0) * this._chartItemBandSize;
+    } else {
+      const barWidth = this._chartItemSpanSize || 25;
+      height = (collectedValues?.length ?? 0) * (barWidth + barWidth / 3);
     }
-    const barWidth = this._chartItemSpanSize || 25;
-    return (collectedValues?.length ?? 0) * (barWidth + barWidth / 3);
+    const padding = getQuadProps(this._chartPadding ?? (this._table.theme.bodyStyle.padding as number) ?? 0);
+    return height + padding[0] + padding[2];
   }
   /**
    *  获取图表对应的指标值

@@ -2,7 +2,7 @@ import * as columnStyleContents from '../body-helper/style';
 import * as headerStyleContents from '../header-helper/style';
 import { importStyle } from './style';
 import * as style from '../tools/style';
-import { AABBBounds } from '@visactor/vutils';
+import { AABBBounds, isNumber } from '@visactor/vutils';
 import {
   type CellAddress,
   type CellRange,
@@ -886,7 +886,11 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     if (this.rowHeightsMap.get(row)) {
       return this.rowHeightsMap.get(row);
     }
-    return this.getDefaultRowHeight(row);
+    const defaultHeight = this.getDefaultRowHeight(row);
+    if (isNumber(defaultHeight)) {
+      return defaultHeight;
+    }
+    return this.defaultRowHeight;
   }
 
   getDefaultRowHeight(row: number) {
@@ -935,9 +939,11 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
         cachedLowerRowHeight +
           (this.rowHeightsMap.get(endRow) ??
             (this.isColumnHeader(0, endRow) || this.isCornerHeader(0, endRow)
-              ? Array.isArray(this.defaultHeaderRowHeight)
-                ? this.defaultHeaderRowHeight[endRow] ?? this.internalProps.defaultRowHeight
-                : this.defaultHeaderRowHeight
+              ? Array.isArray(this.defaultHeaderRowHeight) && isNumber(this.defaultHeaderRowHeight[endRow])
+                ? (this.defaultHeaderRowHeight[endRow] as number)
+                : isNumber(this.defaultHeaderRowHeight)
+                ? (this.defaultHeaderRowHeight as number)
+                : this.internalProps.defaultRowHeight
               : this.internalProps.defaultRowHeight))
       );
       if (startRow >= 0 && endRow >= 0) {
