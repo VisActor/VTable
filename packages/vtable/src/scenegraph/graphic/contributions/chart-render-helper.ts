@@ -1,5 +1,7 @@
+import type { IStage } from '@visactor/vrender';
 import { isValid } from '../../../tools/util';
 import type { Chart } from '../chart';
+import { Bounds } from '@visactor/vutils';
 export const cancelRenderChartQueue = false;
 export const chartRenderKeys: string[] = [];
 export const chartRenderQueueList: Chart[] = [];
@@ -76,7 +78,20 @@ export function renderChart(chart: Chart) {
     chartInstance.updateFullDataSync?.(dataBatch);
   }
   const sg = chartInstance.getStage();
-  chart.cacheCanvas = sg.toCanvas(); // 截图空白问题 因为开启了动画 首屏截图是无数据的TODO
+  cacheStageCanvas(sg, chart);
+  // chart.cacheCanvas = sg.toCanvas();
+
+  // debugger;
+  // chart.cacheCanvas[] = sg.toCanvas(fullImage, viewBox);
+  // chart.cacheCanvas = sg.toCanvas(false, {
+  //   x1: 0,
+  //   y1: 0,
+  //   x2: 500,
+  //   y2: 300,
+  //   width: () => 500,
+  //   height: () => 300
+  // });
+  // 截图空白问题 因为开启了动画 首屏截图是无数据的TODO
 }
 
 export function startRenderChartQueue(table: any) {
@@ -106,4 +121,41 @@ export function startRenderChartQueue(table: any) {
   } else {
     isHandlingChartQueue = false;
   }
+}
+
+const cacheCanvasSizeLimit = 2000;
+function cacheStageCanvas(stage: IStage, chart: Chart) {
+  const { viewWidth, viewHeight } = stage;
+  if (viewWidth < cacheCanvasSizeLimit && viewHeight < cacheCanvasSizeLimit) {
+    chart.cacheCanvas = stage.toCanvas();
+    return;
+  }
+
+  const rows = Math.ceil(viewHeight / cacheCanvasSizeLimit);
+  const columns = Math.ceil(viewWidth / cacheCanvasSizeLimit);
+
+  const cacheCanvas = [];
+  for (let row = 0; row < rows; row++) {
+    for (let col = 0; col < columns; col++) {
+      const startX = col * cacheCanvasSizeLimit;
+      const startY = row * cacheCanvasSizeLimit;
+      const endX = startX + cacheCanvasSizeLimit > viewWidth ? viewWidth : startX + cacheCanvasSizeLimit;
+      const endY = startY + cacheCanvasSizeLimit > viewHeight ? viewHeight : startY + cacheCanvasSizeLimit;
+      const width = endX - startX;
+      const height = endY - startY;
+      const bounds = new Bounds();
+      bounds.setValue(startX, startY, endX, endY);
+
+      const canvas = stage.toCanvas(false, bounds);
+      cacheCanvas.push({
+        canvas,
+        x: startX,
+        y: startY,
+        width,
+        height
+      });
+    }
+  }
+
+  chart.cacheCanvas = cacheCanvas;
 }

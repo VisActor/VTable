@@ -30,7 +30,7 @@ export class Chart extends Group {
   chartInstance: any;
   activeChartInstance: any;
   active: boolean;
-  cacheCanvas: HTMLCanvasElement; // HTMLCanvasElement
+  cacheCanvas: HTMLCanvasElement | { x: number; y: number; width: number; height: number; canvas: HTMLCanvasElement }[]; // HTMLCanvasElement
 
   constructor(params: IChartGraphicAttribute) {
     super(params);
@@ -95,6 +95,7 @@ export class Chart extends Group {
       y2: y2 - table.scrollTop
     });
     this.activeChartInstance = new this.attribute.ClassType(this.attribute.spec, {
+      // disableDirtyBounds: true,
       renderCanvas: this.attribute.canvas,
       mode: 'desktop-browser',
       canvasControled: false,
