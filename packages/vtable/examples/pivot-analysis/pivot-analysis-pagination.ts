@@ -116,18 +116,19 @@ export function createTable() {
         widthMode: 'autoWidth', // 宽度模式：standard 标准模式； adaptive 自动填满容器
         pagination: {
           perPageCount: 21,
-          currentPage: 0
-        }
+          currentPage: 1
+        },
+        dragHeaderMode: 'all'
       };
 
       const instance = new PivotTable(document.getElementById(CONTAINER_ID)!, option);
       window.tableInstance = instance;
-      setTimeout(() => {
-        instance.updatePagination({
-          perPageCount: 11,
-          currentPage: 4
-        });
-      }, 8000);
+      // setTimeout(() => {
+      //   instance.updatePagination({
+      //     perPageCount: 21,
+      //     currentPage: 1
+      //   });
+      // }, 8000);
 
       // 只为了方便控制太调试用，不要拷贝
       window.tableInstance = instance;

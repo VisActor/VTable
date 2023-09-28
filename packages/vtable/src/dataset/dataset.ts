@@ -19,7 +19,8 @@ import type {
   IHeaderTreeDefine,
   CollectValueBy,
   CollectedValue,
-  IPagination
+  IPagination,
+  IIndicator
 } from '../ts-types';
 import { AggregationType, SortType } from '../ts-types';
 import type { Aggregator } from './statistics-helper';
@@ -109,13 +110,19 @@ export class Dataset {
   indicatorKeys: string[];
   // 存储行表头path 这个是全量的 对比于分页截取的rowKeysPath；
   private rowKeysPath_FULL: string[][];
+  colHeaderTree: any[];
+  rowHeaderTree: any[];
   rowHierarchyType: 'grid' | 'tree';
+  indicators: (string | IIndicator)[];
+  indicatorsAsCol: boolean;
   constructor(
     dataConfig: IDataConfig,
     pagination: IPagination,
     rows: string[],
     columns: string[],
     indicatorKeys: string[],
+    indicators: (string | IIndicator)[],
+    indicatorsAsCol: boolean,
     records: any[] | Record<string, any[]>,
     rowHierarchyType?: 'grid' | 'tree',
     customColTree?: IHeaderTreeDefine[],
@@ -133,6 +140,8 @@ export class Dataset {
     this.rows = rows;
     this.columns = columns;
     this.indicatorKeys = indicatorKeys;
+    this.indicatorsAsCol = indicatorsAsCol;
+    this.indicators = indicators;
     this.colGrandTotalLabel = this.totals?.column?.grandTotalLabel ?? '总计';
     this.colSubTotalLabel = this.totals?.column?.subTotalLabel ?? '小计';
     this.rowGrandTotalLabel = this.totals?.row?.grandTotalLabel ?? '总计';
@@ -194,40 +203,62 @@ export class Dataset {
       if (customRowTree) {
         this.rowKeysPath_FULL = this.TreeToArr2(customRowTree);
       } else {
+        // if (this.rowHierarchyType === 'tree') {
+        // this.rowKeysPath_FULL = this.TreeToArr3(
+        //   this.ArrToTree(
+        //     this.rowKeys,
+        //     [],
+        //     this?.totals?.row?.showGrandTotals, // || this.columns.length === 0, //todo  这里原有逻辑暂时注释掉
+        //     this.rowGrandTotalLabel,
+        //     this.rowSubTotalLabel
+        //   )
+        // );
         if (this.rowHierarchyType === 'tree') {
-          this.rowKeysPath_FULL = this.TreeToArr3(
-            this.ArrToTree(
-              this.rowKeys,
-              [],
-              this?.totals?.row?.showGrandTotals, // || this.columns.length === 0, //todo  这里原有逻辑暂时注释掉
-              this.rowGrandTotalLabel,
-              this.rowSubTotalLabel
-            )
-          );
+          this.rowHeaderTree = this.ArrToTree1(this.rowKeys, this.rows, indicatorsAsCol ? undefined : indicators);
         } else {
-          this.rowKeysPath_FULL = this.TreeToArr(
-            this.ArrToTree(
-              this.rowKeys,
-              this.rowsIsTotal,
-              this?.totals?.row?.showGrandTotals, // || this.columns.length === 0, //todo  这里原有逻辑暂时注释掉
-              this.rowGrandTotalLabel,
-              this.rowSubTotalLabel
-            )
+          this.rowHeaderTree = this.ArrToTree(
+            this.rowKeys,
+            this.rows,
+            indicatorsAsCol ? undefined : indicators,
+            this.rowsIsTotal,
+            this?.totals?.row?.showGrandTotals || this.columns.length === 0,
+            this.rowGrandTotalLabel,
+            this.rowSubTotalLabel
           );
         }
+        // } else {
+        // this.rowKeysPath_FULL = this.TreeToArr(
+        //   this.ArrToTree(
+        //     this.rowKeys,
+        //     this.rowsIsTotal,
+        //     this?.totals?.row?.showGrandTotals, // || this.columns.length === 0, //todo  这里原有逻辑暂时注释掉
+        //     this.rowGrandTotalLabel,
+        //     this.rowSubTotalLabel
+        //   )
+        // );
+        // }
       }
       if (customColTree) {
         this.colKeysPath = this.TreeToArr2(customColTree);
       } else {
-        this.colKeysPath = this.TreeToArr(
-          this.ArrToTree(
-            this.colKeys,
-            this.colsIsTotal,
-            this.totals?.column?.showGrandTotals, // || this.rows.length === 0,//todo  这里原有逻辑暂时注释掉
-            this.colGrandTotalLabel,
-            this.colSubTotalLabel
-          )
+        this.colHeaderTree = this.ArrToTree(
+          this.colKeys,
+          this.columns,
+          indicatorsAsCol ? indicators : undefined,
+          this.colsIsTotal,
+          this.totals?.column?.showGrandTotals, // || this.rows.length === 0,//todo  这里原有逻辑暂时注释掉
+          this.colGrandTotalLabel,
+          this.colSubTotalLabel
         );
+        // this.colKeysPath = this.TreeToArr(
+        //   this.ArrToTree(
+        //     this.colKeys,
+        //     this.colsIsTotal,
+        //     this.totals?.column?.showGrandTotals, // || this.rows.length === 0,//todo  这里原有逻辑暂时注释掉
+        //     this.colGrandTotalLabel,
+        //     this.colSubTotalLabel
+        //   )
+        // );
       }
       const t8 = typeof window !== 'undefined' ? window.performance.now() : 0;
       console.log('TreeToArr:', t8 - t7);
@@ -523,6 +554,8 @@ export class Dataset {
     this.rowKeysPath_FULL = this.TreeToArr(
       this.ArrToTree(
         this.rowKeys,
+        this.rows,
+        this.indicatorsAsCol ? undefined : this.indicators,
         this.rowsIsTotal,
         this?.totals?.row?.showGrandTotals || this.columns.length === 0,
         this.rowGrandTotalLabel,
@@ -532,6 +565,8 @@ export class Dataset {
     this.colKeysPath = this.TreeToArr(
       this.ArrToTree(
         this.colKeys,
+        this.columns,
+        this.indicatorsAsCol ? this.indicators : undefined,
         this.colsIsTotal,
         this.totals?.column?.showGrandTotals || this.rows.length === 0,
         this.colGrandTotalLabel,
@@ -830,7 +865,10 @@ export class Dataset {
           const dimensionIndex = that.columns.indexOf(dimension);
           if (dimensionIndex >= 0) {
             const colTotalKey = colKey.slice(0, dimensionIndex + 1);
-            colTotalKey.push(that.totals?.column?.subTotalLabel ?? '小计');
+            if (this.rowHierarchyType === 'grid') {
+              // 如果是tree的情况则不追加小计单元格值
+              colTotalKey.push(that.totals?.column?.subTotalLabel ?? '小计');
+            }
             const flatColTotalKey = colTotalKey.join(this.stringJoinChar);
             if (!this.tree[flatRowKey][flatColTotalKey]) {
               this.tree[flatRowKey][flatColTotalKey] = [];
@@ -870,7 +908,10 @@ export class Dataset {
             const dimensionIndex = that.rows.indexOf(dimension);
             if (dimensionIndex >= 0) {
               const rowTotalKey = rowKey.slice(0, dimensionIndex + 1);
-              rowTotalKey.push(that.totals?.row?.subTotalLabel ?? '小计');
+              if (this.rowHierarchyType === 'grid') {
+                // 如果是tree的情况则不追加小计单元格值
+                rowTotalKey.push(that.totals?.row?.subTotalLabel ?? '小计');
+              }
               const flatRowTotalKey = rowTotalKey.join(this.stringJoinChar);
               if (!this.tree[flatRowTotalKey]) {
                 this.tree[flatRowTotalKey] = {};
@@ -924,11 +965,74 @@ export class Dataset {
   /**
    * 将rowKeys和colKeys 转为树形结构
    * @param arr
+   * @returns
+   */
+  private ArrToTree1(arr: string[][], rows: string[], indicators: (string | IIndicator)[]) {
+    /**
+     *
+     * @param {string} s 父级id
+     * @param {number} n 需转换数字
+     */
+    // const getId = (pId: any, curId: any) => `${pId}$${curId}`;
+    const result: any[] = []; // 结果
+    const concatStr = this.stringJoinChar; // 连接符(随便写，保证key唯一性就OK)
+    const map = new Map(); // 存储根节点 主要提升性能
+    function addList(list: any) {
+      const path: any[] = []; // 路径
+      let node: any; // 当前节点
+      list.forEach((value: any, index: number) => {
+        path.push(value);
+        const flatKey = path.join(concatStr);
+        //id的值可以每次生成一个新的 这里用的path作为id 方便layout对象获取
+        let item: { value: string; dimensionKey: string; children: any[] } = map.get(flatKey); // 当前节点
+        if (!item) {
+          item = {
+            value,
+            // id: flatKey, //getId(node?.id ?? '', (node?.children?.length ?? result.length) + 1),
+            dimensionKey: rows[index],
+            //树的叶子节点补充指标
+            children:
+              index === list.length - 1 && indicators?.length >= 1
+                ? indicators.map(indicator => {
+                    if (typeof indicator === 'string') {
+                      return {
+                        indicatorKey: indicator,
+                        value: indicator
+                      };
+                    }
+                    return {
+                      indicatorKey: indicator.indicatorKey,
+                      value: indicator.title
+                    };
+                  })
+                : []
+          };
+
+          map.set(flatKey, item); // 存储路径对应的节点
+          if (node) {
+            node.children.push(item);
+          } else {
+            result.push(item);
+          }
+        }
+        node = item; // 更新当前节点
+      });
+    }
+
+    arr.forEach(item => addList(item));
+
+    return result;
+  }
+  /**
+   * 将rowKeys和colKeys 转为树形结构
+   * @param arr
    * @param subTotalFlags 标志小计的维度
    * @returns
    */
   private ArrToTree(
     arr: string[][],
+    rows: string[],
+    indicators: (string | IIndicator)[],
     subTotalFlags: boolean[],
     isGrandTotal: boolean,
     grandTotalLabel: string,
@@ -950,19 +1054,52 @@ export class Dataset {
         path.push(value);
         const flatKey = path.join(concatStr);
         //id的值可以每次生成一个新的 这里用的path作为id 方便layout对象获取
-        let item: { id: string; children: any[] } = map.get(flatKey); // 当前节点
+        let item: { value: string; dimensionKey: string; children: any[] } = map.get(flatKey); // 当前节点
         if (!item) {
           item = {
-            // name: value,
-            id: flatKey, //getId(node?.id ?? '', (node?.children?.length ?? result.length) + 1),
-            children: []
+            value,
+            dimensionKey: rows[index],
+            // id: flatKey, //getId(node?.id ?? '', (node?.children?.length ?? result.length) + 1),
+            //树的叶子节点补充指标
+            children:
+              index === list.length - 1 && indicators?.length >= 1
+                ? indicators.map(indicator => {
+                    if (typeof indicator === 'string') {
+                      return {
+                        indicatorKey: indicator,
+                        value: indicator
+                      };
+                    }
+                    return {
+                      indicatorKey: indicator.indicatorKey,
+                      value: indicator.title
+                    };
+                  })
+                : []
           };
           if (subTotalFlags[index]) {
             let curChild = item.children;
             for (let i = index; i < list.length - 1; i++) {
-              const totalChild: { id: string; children: any[] } = {
-                id: `${flatKey}${concatStr}${subTotalLabel}`, // getId(item?.id, 1),
-                children: []
+              const totalChild: { value: string; dimensionKey: string; children: any[] } = {
+                value: subTotalLabel,
+                dimensionKey: rows[index + 1],
+                // id: `${flatKey}${concatStr}${subTotalLabel}`, // getId(item?.id, 1),
+                //树的叶子节点补充指标
+                children:
+                  index + 1 === list.length - 1 && indicators?.length >= 1
+                    ? indicators.map(indicator => {
+                        if (typeof indicator === 'string') {
+                          return {
+                            indicatorKey: indicator,
+                            value: indicator
+                          };
+                        }
+                        return {
+                          indicatorKey: indicator.indicatorKey,
+                          value: indicator.title
+                        };
+                      })
+                    : []
               };
               curChild.push(totalChild);
               curChild = totalChild.children;
@@ -987,19 +1124,48 @@ export class Dataset {
     arr.forEach(item => addList(item));
     //最后将总计的节点加上
     if (isGrandTotal) {
-      const node: { id: string; children: any[] } = {
-        id: grandTotalLabel, // getId(item?.id, 1),
-        children: []
+      const node: { value: string; dimensionKey: string; children: any[]; rowSpan: number } = {
+        value: grandTotalLabel, // getId(item?.id, 1),
+        dimensionKey: rows[0],
+        rowSpan: subTotalFlags.length,
+        children:
+          indicators?.map(indicator => {
+            if (typeof indicator === 'string') {
+              return {
+                indicatorKey: indicator,
+                value: indicator
+              };
+            }
+            return {
+              indicatorKey: indicator.indicatorKey,
+              value: indicator.title
+            };
+          }) ?? []
       };
-      let curChild = node.children;
-      for (let i = 1; i < subTotalFlags.length; i++) {
-        const totalChild: { id: string; children: any[] } = {
-          id: grandTotalLabel, // getId(item?.id, 1),
-          children: []
-        };
-        curChild.push(totalChild);
-        curChild = totalChild.children;
-      }
+      // let curChild = node.children;
+      // for (let i = 1; i < subTotalFlags.length; i++) {
+      //   const totalChild: { value: string; dimensionKey: string; children: any[] } = {
+      //     value: grandTotalLabel, // getId(item?.id, 1),
+      //     dimensionKey: rows[i],
+      //     children:
+      //       i === subTotalFlags.length - 1 && indicators?.length >= 1
+      //         ? indicators.map(indicator => {
+      //             if (typeof indicator === 'string') {
+      //               return {
+      //                 indicatorKey: indicator,
+      //                 value: indicator
+      //               };
+      //             }
+      //             return {
+      //               indicatorKey: indicator.indicatorKey,
+      //               value: indicator.title
+      //             };
+      //           })
+      //         : []
+      //   };
+      //   curChild.push(totalChild);
+      //   curChild = totalChild.children;
+      // }
       result.push(node);
     }
     return result;

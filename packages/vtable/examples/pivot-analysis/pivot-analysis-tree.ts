@@ -14,9 +14,9 @@ export function createTable() {
     dataConfig: {
       totals: {
         row: {
-          showGrandTotals: false,
-          showSubTotals: false,
-          subTotalsDimensions: ['province']
+          showGrandTotals: true,
+          showSubTotals: true,
+          subTotalsDimensions: ['province', 'city']
         }
       }
     },
