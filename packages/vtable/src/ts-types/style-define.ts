@@ -6,6 +6,8 @@ import type { FieldData } from './table-engine';
 // ****** TextStyle Options *******
 export type TextOverflow = string /* a char */; //设置一行的省略形式，另外还有clip。如果autoWrapText设置了自动换行，这个无效
 export type LineClamp = number | 'auto'; //设置单元格显示的行数，如果不设置的话 默认全部展示直到超过了显示范围，会截断暂时文本，如果设置了auto，显示不了的文本会出现省略号
+export type TextAlignType = 'center' | 'end' | 'left' | 'right' | 'start'; // 设置单元格内文字的水平对齐方式
+export type TextBaselineType = 'alphabetic' | 'bottom' | 'middle' | 'top'; // 设置单元格内文字的垂直对齐方式
 
 export interface StylePropertyFunctionArg {
   row: number;

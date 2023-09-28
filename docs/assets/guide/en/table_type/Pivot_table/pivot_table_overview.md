@@ -32,7 +32,7 @@ VTable pivot tables have the following advantages in data analytics:
 
 *   **Flexible layout**: Pivot tables are flexible and dynamic, and users can adjust the arrangement of rows, columns and values as needed.
 
-*   **Custom style**: You can use Dimension or Metirc to define different display styles respectively.
+*   **Custom style**: You can give or define different display styles respectively to dimension or indicator.
 
 ## Pivot Table Basic Concepts
 

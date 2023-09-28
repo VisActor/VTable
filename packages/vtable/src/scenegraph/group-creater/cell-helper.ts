@@ -514,7 +514,7 @@ function updateCellContent(
     // oldCellGroup.parent,
     addNew ? table.scenegraph.getColGroup(col) : oldCellGroup.parent,
     // oldCellGroup.attribute.y,
-    addNew ? 0 : oldCellGroup.attribute.y,
+    addNew ? 0 : table.scenegraph.getCellGroupY(row), // y
     padding,
     textAlign,
     textBaseline,

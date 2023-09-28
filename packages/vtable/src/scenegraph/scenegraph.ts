@@ -729,7 +729,7 @@ export class Scenegraph {
    * @return {*}
    */
   updateColWidth(col: number, detaX: number) {
-    updateColWidth(this, col, detaX);
+    updateColWidth(this, col, Math.round(detaX));
     // this.updateContainerWidth(col, detaX);
     this.updateContainer();
   }
@@ -767,10 +767,10 @@ export class Scenegraph {
   }
 
   resize() {
-    if (this.table.widthMode === 'adaptive') {
+    if (this.table.widthMode === 'adaptive' || this.table.autoFillWidth) {
       this.recalculateColWidths();
     }
-    if (this.table.heightMode === 'adaptive') {
+    if (this.table.heightMode === 'adaptive' || this.table.autoFillHeight) {
       this.recalculateRowHeights();
     }
     // widthMode === 'adaptive' 时，computeColsWidth()中已经有高度更新计算
@@ -786,7 +786,12 @@ export class Scenegraph {
     this.updateTableSize();
     this.updateBorderSizeAndPosition();
     this.component.updateScrollBar();
-    if (this.table.widthMode === 'adaptive' || this.table.heightMode === 'adaptive') {
+    if (
+      this.table.widthMode === 'adaptive' ||
+      this.table.heightMode === 'adaptive' ||
+      this.table.autoFillWidth ||
+      this.table.autoFillHeight
+    ) {
       this.updateChartSize(this.table.rowHeaderLevelCount);
     }
     // this.stage.window.resize(width, height);
@@ -851,6 +856,7 @@ export class Scenegraph {
   }
 
   updateRowHeight(row: number, detaY: number) {
+    detaY = Math.round(detaY);
     updateRowHeight(this, row, detaY);
     this.updateContainerHeight(row, detaY);
   }
@@ -1603,6 +1609,34 @@ export class Scenegraph {
       }
       return false;
     });
+  }
+
+  getColumnGroupX(col: number) {
+    if (col < this.table.rowHeaderLevelCount) {
+      // row header
+      return this.table.getColsWidth(0, col - 1);
+    } else if (col < this.table.colCount - this.table.rightFrozenColCount) {
+      // body
+      return this.table.getColsWidth(this.table.rowHeaderLevelCount, col - 1);
+    } else if (col < this.table.colCount) {
+      // right frozen
+      return this.table.getColsWidth(this.table.colCount - this.table.bottomFrozenRowCount, col - 1);
+    }
+    return 0;
+  }
+
+  getCellGroupY(row: number) {
+    if (row < this.table.columnHeaderLevelCount) {
+      // column header
+      return this.table.getRowsHeight(0, row - 1);
+    } else if (row < this.table.rowCount - this.table.bottomFrozenRowCount) {
+      // body
+      return this.table.getRowsHeight(this.table.columnHeaderLevelCount, row - 1);
+    } else if (row < this.table.rowCount) {
+      // bottom frozen
+      return this.table.getRowsHeight(this.table.rowCount - this.table.bottomFrozenRowCount, row - 1);
+    }
+    return 0;
   }
 }
 

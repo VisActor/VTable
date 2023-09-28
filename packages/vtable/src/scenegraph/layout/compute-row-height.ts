@@ -152,7 +152,7 @@ export function computeRowsHeight(
           totalDrawHeight -
           (update
             ? newHeights.reduce((acr, cur, index) => {
-                if (index >= table.frozenRowCount && index !== newHeights.length - 1) {
+                if (index >= table.frozenRowCount && index <= table.rowCount - table.bottomFrozenRowCount - 2) {
                   return acr + cur;
                 }
                 return acr;
@@ -222,7 +222,7 @@ export function computeRowHeight(row: number, startCol: number, endCol: number, 
       }
     } else {
       //直接拿默认行高
-      return table.getRowHeight(row);
+      return table.getDefaultRowHeight(row);
     }
   }
   for (let col = startCol; col <= endCol; col++) {

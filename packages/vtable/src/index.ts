@@ -21,7 +21,9 @@ import type {
   PivotTableConstructorOptions,
   PivotChartConstructorOptions,
   IHeaderTreeDefine,
-  IDimension
+  IDimension,
+  TextAlignType,
+  TextBaselineType
 } from './ts-types';
 import { ListTable } from './ListTable';
 import { PivotTable } from './PivotTable';
@@ -59,6 +61,8 @@ export {
   ProgressbarColumnDefine,
   TextColumnDefine,
   GroupColumnDefine,
+  TextAlignType,
+  TextBaselineType,
   themes,
   data,
   MousePointerCellEvent,

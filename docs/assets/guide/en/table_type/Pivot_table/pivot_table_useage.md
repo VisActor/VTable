@@ -11,7 +11,7 @@ The following are the key configuration items and their descriptions for using p
 *   `rows`: The row header corresponds to the style and format configuration of each level of Dimension.
 *   `columnTree`: List header Dimension tree.
 *   `rowTree`: Row header Dimension tree.
-*   Tree or tiled
+*   `rowHierarchyType`： Show as tree or grid.
 *   `showRowHeader`: Whether to display the row header, the default is true. n
 *   `showColumnHeader`: Whether to display the list header, the default is true.
 *   `corner`: The configuration and style of the corner header are customized.
