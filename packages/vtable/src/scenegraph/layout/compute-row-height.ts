@@ -240,8 +240,7 @@ export function computeRowHeight(row: number, startCol: number, endCol: number, 
       //并且指标是以列展示 计算行高需要根据y轴的值域范围
       const optimunHeight = (table.internalProps.layoutMap as PivotLayoutMap).getOptimunHeightForChart(row);
       if (optimunHeight > 0) {
-        const padding = getQuadProps(table.theme.bodyStyle.padding as any);
-        return optimunHeight + padding[0] + padding[2];
+        return optimunHeight;
       }
     } else {
       //直接拿默认行高
