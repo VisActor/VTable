@@ -9,12 +9,7 @@ export function createTable() {
   const option = {
     widthMode: 'adaptive',
     heightMode: 'adaptive',
-    columnTree: [
-      {
-        dimensionKey: 0,
-        value: ''
-      }
-    ],
+    columnTree: [],
     rowTree: [
       {
         dimensionKey: '230907193703050',

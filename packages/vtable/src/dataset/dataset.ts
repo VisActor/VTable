@@ -1,5 +1,5 @@
 import { isArray } from '@visactor/vutils';
-import { isValid } from '../tools/util';
+import { cloneDeep, isValid } from '../tools/util';
 import type {
   FilterRules,
   IDataConfig,
@@ -211,7 +211,12 @@ export class Dataset {
 
       const t7 = typeof window !== 'undefined' ? window.performance.now() : 0;
       if (customRowTree) {
-        this.rowKeysPath_FULL = this.TreeToArr2(customRowTree);
+        // this.rowKeysPath_FULL = this.TreeToArr2(customRowTree);
+        if (!indicatorsAsCol) {
+          customRowTree = this._adjustCustomTree(cloneDeep(customRowTree));
+        }
+
+        this.rowHeaderTree = customRowTree;
       } else {
         // if (this.rowHierarchyType === 'tree') {
         // this.rowKeysPath_FULL = this.TreeToArr3(
@@ -249,7 +254,11 @@ export class Dataset {
         // }
       }
       if (customColTree) {
-        this.colKeysPath = this.TreeToArr2(customColTree);
+        // this.colKeysPath = this.TreeToArr2(customColTree);
+        if (indicatorsAsCol) {
+          customColTree = this._adjustCustomTree(cloneDeep(customColTree));
+        }
+        this.colHeaderTree = customColTree;
       } else {
         this.colHeaderTree = this.ArrToTree(
           this.colKeys,
@@ -1325,6 +1334,28 @@ export class Dataset {
         }
       }
     }
+  }
+
+  private _adjustCustomTree(customTree: IHeaderTreeDefine[]) {
+    const checkNode = (nodes: IHeaderTreeDefine[], isHasIndicator: boolean) => {
+      nodes.forEach((node: IHeaderTreeDefine) => {
+        if (!node.indicatorKey && !isHasIndicator && !node.children?.length) {
+          node.children = this.indicators.map((indicator: IIndicator): { indicatorKey: string; value: string } => {
+            return { indicatorKey: indicator.indicatorKey, value: indicator.title ?? indicator.indicatorKey };
+          });
+        } else if (node.children) {
+          checkNode(node.children, isHasIndicator || !!node.indicatorKey);
+        }
+      });
+    };
+    if (customTree?.length) {
+      checkNode(customTree, false);
+    } else {
+      customTree = this.indicators.map((indicator: IIndicator): { indicatorKey: string; value: string } => {
+        return { indicatorKey: indicator.indicatorKey, value: indicator.title ?? indicator.indicatorKey };
+      });
+    }
+    return customTree;
   }
 }
 

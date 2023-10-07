@@ -46,7 +46,6 @@ import type { CachedDataSource, DataSource } from '../data';
 import type { MenuHandler } from '../components/menu/dom/MenuHandler';
 import type { PivotHeaderLayoutMap } from '../layout/pivot-header-layout';
 import type { SimpleHeaderLayoutMap } from '../layout';
-import type { PivotLayoutMap } from '../layout/pivot-layout';
 import type { TooltipHandler } from '../components/tooltip/TooltipHandler';
 import type { BodyHelper } from '../body-helper/body-helper';
 import type { HeaderHelper } from '../header-helper/header-helper';
@@ -157,7 +156,7 @@ export interface IBaseTableProtected {
 
   dataSourceEventIds?: EventListenerId[];
   headerEvents?: EventListenerId[];
-  layoutMap: PivotHeaderLayoutMap | SimpleHeaderLayoutMap | PivotLayoutMap;
+  layoutMap: SimpleHeaderLayoutMap | PivotHeaderLayoutMap;
   headerValues?: HeaderValues;
   tooltipHandler: TooltipHandler;
 
@@ -587,7 +586,7 @@ export interface ListTableProtected extends IBaseTableProtected {
 export interface PivotTableProtected extends IBaseTableProtected {
   /** 表格数据 */
   records: any[] | null;
-  layoutMap: PivotHeaderLayoutMap | PivotLayoutMap;
+  layoutMap: PivotHeaderLayoutMap;
   dataConfig?: IDataConfig;
   /**
    * 透视表 传入数据是透视后的嵌套层级结构 还是需要进行汇总计算的平坦数据
@@ -597,6 +596,6 @@ export interface PivotTableProtected extends IBaseTableProtected {
 export interface PivotChartProtected extends IBaseTableProtected {
   /** 表格数据 */
   records: any[] | Record<string, any[]>;
-  layoutMap: PivotHeaderLayoutMap | PivotLayoutMap;
+  layoutMap: PivotHeaderLayoutMap;
   dataConfig?: IDataConfig;
 }

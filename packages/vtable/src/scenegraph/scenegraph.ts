@@ -41,7 +41,7 @@ import { updateChartSize, updateChartState } from './refresh-node/update-chart';
 import { initSceneGraph } from './group-creater/init-scenegraph';
 import { updateContainerChildrenX } from './utils/update-container';
 import { loadPoptip, setPoptipTheme } from '@visactor/vrender-components';
-import { contextModule } from './context/module';
+// import { contextModule } from './context/module';
 
 // VChart poptip theme
 loadPoptip();

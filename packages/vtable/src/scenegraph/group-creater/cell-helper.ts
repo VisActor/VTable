@@ -27,7 +27,8 @@ import { getStyleTheme } from '../../core/tableHelper';
 import { isPromise } from '../../tools/helper';
 import { dealPromiseData } from '../utils/deal-promise-data';
 import { CartesianAxis } from '../../components/axis/axis';
-import type { PivotLayoutMap } from '../../layout/pivot-layout';
+// import type { PivotLayoutMap } from '../../layout/pivot-layout';
+import type { PivotHeaderLayoutMap } from '../../layout/pivot-header-layout';
 
 export function createCell(
   type: ColumnTypeOption,
@@ -55,7 +56,7 @@ export function createCell(
       (mappingRule: MappingRule, i: number) => {
         if (
           mappingRule.bgColor &&
-          (table.internalProps.layoutMap as PivotLayoutMap).getIndicatorKey(col, row) ===
+          (table.internalProps.layoutMap as PivotHeaderLayoutMap).getIndicatorKey(col, row) ===
             mappingRule.bgColor.indicatorKey
         ) {
           bgColorFunc = mappingRule.bgColor.mapping;
@@ -268,10 +269,10 @@ export function createCell(
       table.getCellValue(col, row),
       (define as ChartColumnDefine).chartModule,
       table.isPivotChart()
-        ? (table.internalProps.layoutMap as PivotLayoutMap).getChartSpec(col, row)
+        ? (table.internalProps.layoutMap as PivotHeaderLayoutMap).getChartSpec(col, row)
         : (define as ChartColumnDefine).chartSpec,
       chartInstance,
-      (table.internalProps.layoutMap as PivotLayoutMap)?.getChartDataId(col, row) ?? 'data',
+      (table.internalProps.layoutMap as PivotHeaderLayoutMap)?.getChartDataId(col, row) ?? 'data',
       table,
       cellTheme
     );
@@ -397,7 +398,7 @@ export function updateCell(col: number, row: number, table: BaseTableAPI, addNew
         (mappingRule: MappingRule, i: number) => {
           if (
             mappingRule.bgColor &&
-            (table.internalProps.layoutMap as PivotLayoutMap).getIndicatorKey(col, row) ===
+            (table.internalProps.layoutMap as PivotHeaderLayoutMap).getIndicatorKey(col, row) ===
               mappingRule.bgColor.indicatorKey
           ) {
             bgColorFunc = mappingRule.bgColor.mapping;

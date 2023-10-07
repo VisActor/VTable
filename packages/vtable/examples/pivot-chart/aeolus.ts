@@ -23,12 +23,7 @@ export function createTable() {
         value: '消费者'
       }
     ],
-    rowTree: [
-      {
-        dimensionKey: 0,
-        value: ''
-      }
-    ],
+    rowTree: [],
     columns: [
       {
         dimensionKey: '230921113854022',

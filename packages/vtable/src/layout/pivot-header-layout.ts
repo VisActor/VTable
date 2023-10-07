@@ -26,14 +26,20 @@ import type {
 } from '../ts-types/list-table/layout-map/api';
 // import { EmptyDataCache } from './utils';
 import type { PivotTable } from '../PivotTable';
+import type { PivotChart } from '../PivotChart';
 import { IndicatorDimensionKeyPlaceholder } from '../tools/global';
 import { diffCellAddress } from '../tools/diff-cell';
 import type { ILinkDimension } from '../ts-types/pivot-table/dimension/link-dimension';
 import type { IImageDimension } from '../ts-types/pivot-table/dimension/image-dimension';
-import { getChartDataId, getRawChartSpec } from './chart-helper/get-chart-spec';
+import { getChartAxes, getChartDataId, getChartSpec, getRawChartSpec } from './chart-helper/get-chart-spec';
 import type { IPivotLayoutHeadNode } from './pivot-layout-helper';
 import { DimensionTree } from './pivot-layout-helper';
 import type { Dataset } from '../dataset/dataset';
+import { isArray } from '@visactor/vutils';
+import type { TextStyle } from '../body-helper/style';
+import type { ITableAxisOption } from '../ts-types/component/axis';
+import { getQuadProps } from '../scenegraph/utils/padding';
+import { getAxisConfigInPivotChart } from './chart-helper/get-axis-config';
 
 export const sharedVar = { seqId: 0 };
 let colIndex = 0;
@@ -87,7 +93,7 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
   private _cellRangeMap: Map<string, CellRange>; //存储单元格的行列号范围 针对解决是否为合并单元格情况
   // 缓存行号列号对应的headerPath,注意树形结构展开需要清除！ 需要注意当表头位置拖拽后 这个缓存的行列号已不准确 进行重置
   private _CellHeaderPathMap: Map<string, IPivotTableCellHeaderPaths>;
-  _table: PivotTable;
+  _table: PivotTable | PivotChart;
   extensionRows: IExtensionRowDefine[];
   _rowHeaderExtensionTree: any = {};
 
@@ -97,6 +103,7 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
   _extensionRowDimensionKeys: string[][] = [];
   fullRowDimensionKeys: string[] = [];
 
+  dataset: Dataset;
   /**
    * 分页配置
    */
@@ -104,11 +111,21 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
   currentPageStartIndex: number;
   currentPageEndIndex: number;
   // _extensionRowHeaderCellIds
-  constructor(table: PivotTable, dataset: Dataset) {
+  //#region pivotChart专有
+  hasTwoIndicatorAxes: boolean;
+  /** 图表spec中barWidth的收集 */
+  _chartItemSpanSize: number;
+  _chartPaddingInner: number;
+  _chartPaddingOuter: number;
+  _chartItemBandSize: number;
+  _chartPadding?: number | number[];
+  //#endregion
+  constructor(table: PivotTable | PivotChart, dataset: Dataset) {
     this._table = table;
-    if (table.options.rowHierarchyType === 'tree') {
-      this.extensionRows = table.options.extensionRows;
+    if ((table as PivotTable).options.rowHierarchyType === 'tree') {
+      this.extensionRows = (table as PivotTable).options.extensionRows;
     }
+    this.dataset = dataset;
     this._cellRangeMap = new Map();
     this._CellHeaderPathMap = new Map();
     // this.showHeader = showHeader;
@@ -119,20 +136,37 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
     this.columnsDefine = table.options.columns ?? [];
     this.indicatorsDefine = table.options.indicators ?? [];
     this.indicatorTitle = table.options.indicatorTitle;
-    // this.indicatorsAsCol = table.options.indicatorsAsCol ?? true;
+    this.indicatorsAsCol = table.options.indicatorsAsCol ?? true;
     this.hideIndicatorName = table.options.hideIndicatorName ?? false;
     this.showRowHeader = table.options.showRowHeader ?? true;
     this.showColumnHeader = table.options.showColumnHeader ?? true;
     this.rowHeaderTitle = table.options.rowHeaderTitle;
     this.columnHeaderTitle = table.options.columnHeaderTitle;
-    this.rowHierarchyType = table.options.rowHierarchyType ?? 'grid';
-    this.rowExpandLevel = table.options.rowExpandLevel ?? 1;
-    this.rowHierarchyIndent = table.options.rowHierarchyIndent ?? 20;
+    this.rowHierarchyType = (table as PivotTable).options.rowHierarchyType ?? 'grid';
+    this.rowExpandLevel = (table as PivotTable).options.rowExpandLevel ?? 1;
+    this.rowHierarchyIndent = (table as PivotTable).options.rowHierarchyIndent ?? 20;
     this.cornerSetting = table.options.corner ?? { titleOnDimension: 'column' };
 
     if (dataset) {
-      this.rowTree = dataset.rowHeaderTree;
-      this.columnTree = dataset.colHeaderTree;
+      this.rowTree = cloneDeep(dataset.rowHeaderTree);
+      this.columnTree = cloneDeep(dataset.colHeaderTree);
+      if (this.indicatorsAsCol) {
+        const supplyAxisNode = (nodes: IHeaderTreeDefine[]) => {
+          nodes.forEach((node: IHeaderTreeDefine) => {
+            if (node.children?.length) {
+              supplyAxisNode(node.children);
+            } else {
+              node.children = [
+                {
+                  dimensionKey: 'axis',
+                  value: ''
+                }
+              ];
+            }
+          });
+        };
+        supplyAxisNode(this.rowTree);
+      }
     }
     // 收集指标所有key
     this.indicatorsDefine?.forEach(indicator => {
@@ -232,12 +266,12 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
     }
     // }
 
-    this.indicatorsAsCol = !isValid(this.rowDimensionKeys.find(key => key === this.indicatorDimensionKey));
+    // this.indicatorsAsCol = !isValid(this.rowDimensionKeys.find(key => key === this.indicatorDimensionKey));
     //  this.colAttrs[this.colAttrs.length-1]===this.indicatorDimensionKey&&this.colAttrs.pop();
     //  this.rowAttrs[this.rowAttrs.length-1]===this.indicatorDimensionKey&&this.rowAttrs.pop();
 
     this._rowHeaderCellIds_FULL = transpose(this._rowHeaderCellIds_FULL);
-    if (table.options.rowHierarchyType === 'tree' && this.extensionRows?.length >= 1) {
+    if ((table as PivotTable).options.rowHierarchyType === 'tree' && this.extensionRows?.length >= 1) {
       this.generateExtensionRowTree();
 
       this.extensionRows.forEach(extensionRow => {
@@ -296,7 +330,86 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
     } else {
       this._indicatorShowType = 'none';
     }
-    this.setPagination(table.options.pagination);
+    this.setPagination((table as PivotTable).options.pagination);
+
+    if (this._table.isPivotChart()) {
+      this.hasTwoIndicatorAxes = this._indicators.some(indicatorObject => {
+        if (
+          indicatorObject.chartSpec &&
+          indicatorObject.chartSpec.series &&
+          indicatorObject.chartSpec.series.length > 1
+        ) {
+          return true;
+        }
+        return false;
+      });
+      this._chartItemSpanSize = 0;
+      this._chartItemBandSize = 0;
+      // this._chartPadding ;
+      this._indicators.find(indicatorObject => {
+        if ((indicatorObject?.style as TextStyle)?.padding) {
+          this._chartPadding = (indicatorObject.style as TextStyle).padding as number;
+        }
+        if (indicatorObject.chartSpec?.barWidth) {
+          this._chartItemSpanSize = indicatorObject.chartSpec?.barWidth;
+        }
+        const bandAxisConfig = indicatorObject.chartSpec?.axes?.find((axis: any) => {
+          return axis.type === 'band';
+        });
+        if (bandAxisConfig?.bandSize) {
+          this._chartItemBandSize = bandAxisConfig?.bandSize;
+          this._chartPaddingInner =
+            (isArray(bandAxisConfig.paddingInner) ? bandAxisConfig.paddingInner[0] : bandAxisConfig.paddingInner) ?? 0;
+          this._chartPaddingOuter =
+            (isArray(bandAxisConfig.paddingOuter) ? bandAxisConfig.paddingOuter[0] : bandAxisConfig.paddingOuter) ?? 0;
+        }
+        if (this._chartItemSpanSize > 0) {
+          return true;
+        }
+        indicatorObject.chartSpec.series?.find((seriesObject: any) => {
+          if (seriesObject.barWidth) {
+            this._chartItemSpanSize = seriesObject.barWidth;
+          }
+          if (this._chartItemSpanSize > 0) {
+            return true;
+          }
+          return false;
+        });
+        // if (this._chartItemSpanSize > 0) {
+        //   return true;
+        // }
+        return false;
+      });
+
+      // if (this.indicatorsAsCol) {
+      //   const cell_id = 'rowHeaderEmpty';
+      //   this._headerObjectMap[cell_id] = {
+      //     id: cell_id,
+      //     title: '',
+      //     field: cell_id,
+      //     headerType: this.cornerSetting.headerType ?? 'text',
+      //     style: this.cornerSetting.headerStyle,
+      //     define: <any>{
+      //       // id:
+      //     }
+      //   };
+      //   this._headerObjects.push(this._headerObjectMap[cell_id]);
+      //   // this.rowShowAttrs.push(cell_id);
+
+      //   // deal with sub indicator axis
+
+      //   if (!this.hasTwoIndicatorAxes) {
+      //     // this.colShowAttrs.pop();
+      //   }
+      // } else {
+      //   const axisOption = ((this._table as PivotChart).pivotChartAxes as ITableAxisOption[]).find(axisOption => {
+      //     return axisOption.orient === 'left';
+      //   });
+      //   if (axisOption?.visible === false) {
+      //     // this.rowShowAttrs.pop();
+      //   }
+      // }
+    }
 
     this.setColumnWidths();
   }
@@ -565,6 +678,8 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
               ? this.indicatorTitle
               : dimensionInfo
               ? dimensionInfo.title
+              : dimensionKey === 'axis'
+              ? ''
               : dimensionKey,
           field: '维度名称',
           style: this.cornerSetting.headerStyle,
@@ -925,6 +1040,9 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
   }
   get columnHeaderLevelCount(): number {
     if (this.showHeader && this.showColumnHeader) {
+      if (this.indicatorsAsCol && !this.colDimensionKeys?.length && !this.hasTwoIndicatorAxes) {
+        return 0;
+      }
       let count = this.indicatorsAsCol
         ? this.hideIndicatorName //设置隐藏表头，且表头最下面一级就是指标维度 则-1
           ? this.colDimensionKeys[this.colDimensionKeys.length - 1] === this.indicatorDimensionKey
@@ -948,55 +1066,105 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
         }
         return 1 + extensionRowCount;
       }
+      // let count = this.indicatorsAsCol
+      //   ? this.rowDimensionTree.totalLevel
+      //   : this.hideIndicatorName //设置隐藏表头，且表头最下面一级就是指标维度 则-1
+      //   ? this.rowDimensionKeys[this.rowDimensionKeys.length - 1] === this.indicatorDimensionKey
+      //     ? this.rowDimensionTree.totalLevel - 1
+      //     : this.rowDimensionTree.totalLevel
+      //   : this.rowDimensionTree.totalLevel;
+      // if (this.rowHeaderTitle) {
+      //   count += 1;
+      // }
+      const rowLevelCount = this.rowDimensionKeys.length;
       let count = this.indicatorsAsCol
-        ? this.rowDimensionTree.totalLevel
+        ? rowLevelCount
         : this.hideIndicatorName //设置隐藏表头，且表头最下面一级就是指标维度 则-1
         ? this.rowDimensionKeys[this.rowDimensionKeys.length - 1] === this.indicatorDimensionKey
-          ? this.rowDimensionTree.totalLevel - 1
-          : this.rowDimensionTree.totalLevel
-        : this.rowDimensionTree.totalLevel;
+          ? rowLevelCount - 1
+          : rowLevelCount
+        : rowLevelCount;
       if (this.rowHeaderTitle) {
         count += 1;
       }
+      // if (this._table.isPivotChart()&&this.indicatorsAsCol) {
+      //   count+=1;
+      // }
       return count;
     }
-    return 0;
+    // return 0;
+    return this.indicatorsAsCol ? 0 : this.hideIndicatorName ? 0 : 1;
   }
   get colCount(): number {
     return this.columnDimensionTree.tree.size + this.rowHeaderLevelCount + this.rightFrozenColCount;
   }
   get rowCount(): number {
     // return this.rowDimensionTree.tree.size + this.columnHeaderLevelCount + this.bottomFrozenRowCount;
-    return this._rowHeaderCellIds.length + this.columnHeaderLevelCount + this.bottomFrozenRowCount;
+    return Math.max(this._rowHeaderCellIds.length, 1) + this.columnHeaderLevelCount + this.bottomFrozenRowCount;
   }
   get bodyRowCount() {
     return this.rowDimensionTree.tree.size;
   }
   get bottomFrozenRowCount(): number {
+    // // return 0;
+    // if (this.showHeader && this.showColumnHeader) {
+    //   if (this.indicatorsAsCol && !this.hideIndicatorName) {
+    //     // 查询指标是否有multiIndicator
+    //     return this.indicatorsDefine.find(indicator => {
+    //       return (indicator as any)?.multiIndicator;
+    //     })
+    //       ? 1
+    //       : 0;
+    //   }
+    // }
     // return 0;
-    if (this.showHeader && this.showColumnHeader) {
-      if (this.indicatorsAsCol && !this.hideIndicatorName) {
-        // 查询指标是否有multiIndicator
-        return this.indicatorsDefine.find(indicator => {
-          return (indicator as any)?.multiIndicator;
-        })
-          ? 1
-          : 0;
-      }
+    //上面是原有逻辑
+    //下面是pivot-layout中逻辑
+    if (!this._table.isPivotChart()) {
+      return 0;
     }
-    return 0;
+    const axisOption = ((this._table as PivotChart).pivotChartAxes as ITableAxisOption[]).find(axisOption => {
+      return axisOption.orient === 'bottom';
+    });
+    if (axisOption?.visible === false) {
+      return 0;
+    }
+    if (this.indicatorsAsCol) {
+      // 指标在列上，指标及其对应坐标轴显示在底部，下侧冻结行数为1
+      return 1;
+    }
+    return 1; // 指标在行上，维度对应坐标轴显示在底部，下侧冻结行数为1
   }
   get rightFrozenColCount(): number {
+    // // return 0;
+    // if (this.showHeader && this.showColumnHeader) {
+    //   if (!this.indicatorsAsCol && !this.hideIndicatorName) {
+    //     // 查询指标是否有multiIndicator
+    //     return this.indicatorsDefine.find(indicator => {
+    //       return (indicator as any)?.multiIndicator;
+    //     })
+    //       ? 1
+    //       : 0;
+    //   }
+    // }
     // return 0;
-    if (this.showHeader && this.showColumnHeader) {
-      if (!this.indicatorsAsCol && !this.hideIndicatorName) {
-        // 查询指标是否有multiIndicator
-        return this.indicatorsDefine.find(indicator => {
-          return (indicator as any)?.multiIndicator;
-        })
-          ? 1
-          : 0;
-      }
+    //上面是原有逻辑
+    //下面是pivot-layout中逻辑
+    if (!this._table.isPivotChart()) {
+      return 0;
+    }
+    const axisOption = ((this._table as PivotChart).pivotChartAxes as ITableAxisOption[]).find(axisOption => {
+      return axisOption.orient === 'right';
+    });
+    if (axisOption?.visible === false) {
+      return 0;
+    }
+
+    if (this.indicatorsAsCol) {
+      return 0; // 指标在列上，没有图表需要显示右轴
+    } else if (this.hasTwoIndicatorAxes) {
+      // 查找指标，判断是否有双轴情况，如果有，则右侧冻结列数为1
+      return 1;
     }
     return 0;
   }
@@ -1190,6 +1358,9 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
       return -1;
     }
     return row - this.columnHeaderLevelCount;
+    // return this.indicatorsAsCol
+    //   ? row - this.columnHeaderLevelCount
+    //   : Math.floor((row - this.columnHeaderLevelCount) / this.indicatorKeys.length);
   }
   getRecordIndexByCol(col: number): number {
     if (col < this.rowHeaderLevelCount) {
@@ -1298,15 +1469,18 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
     });
 
     headerPathsWidthNode.rowHeaderPaths?.forEach((rowHeader: any) => {
-      const rowHeaderPath: {
-        dimensionKey?: string;
-        indicatorKey?: string;
-        value?: string;
-      } = {};
-      rowHeaderPath.dimensionKey = rowHeader.dimensionKey;
-      rowHeaderPath.indicatorKey = rowHeader.indicatorKey;
-      rowHeaderPath.value = rowHeader.value ?? this.getIndicatorInfoByIndicatorKey(rowHeader.indicatorKey)?.title ?? '';
-      headerPaths.rowHeaderPaths.push(rowHeaderPath);
+      if (rowHeader.dimensionKey !== 'axis') {
+        const rowHeaderPath: {
+          dimensionKey?: string;
+          indicatorKey?: string;
+          value?: string;
+        } = {};
+        rowHeaderPath.dimensionKey = rowHeader.dimensionKey;
+        rowHeaderPath.indicatorKey = rowHeader.indicatorKey;
+        rowHeaderPath.value =
+          rowHeader.value ?? this.getIndicatorInfoByIndicatorKey(rowHeader.indicatorKey)?.title ?? '';
+        headerPaths.rowHeaderPaths.push(rowHeaderPath);
+      }
     });
     return headerPaths;
   }
@@ -2047,13 +2221,22 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
   }
 
   getAxisConfigInPivotChart(col: number, row: number): any {
-    return undefined;
+    return getAxisConfigInPivotChart(col, row, this);
   }
   isEmpty(col: number, row: number) {
+    if (!this._table.isPivotChart()) {
+      return false;
+    }
+    if (col > this.colCount - this.rightFrozenColCount - 1 || row > this.rowCount - this.bottomFrozenRowCount - 1) {
+      return true;
+    }
+    if (this.hasTwoIndicatorAxes && this.indicatorsAsCol && row === this.columnHeaderLevelCount - 1) {
+      return true;
+    }
     return false;
   }
   getChartAxes(col: number, row: number): any[] {
-    return [];
+    return getChartAxes(col, row, this);
   }
   getRawChartSpec(col: number, row: number): any {
     return getRawChartSpec(col, row, this);
@@ -2157,4 +2340,306 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
     this._cellRangeMap.clear();
     this._CellHeaderPathMap = new Map();
   }
+
+  /**
+   *  获取图表对应的指标值
+   * */
+  getDimensionKeyInChartSpec(_col: number, _row: number) {
+    // const paths = this.getCellHeaderPaths(_col, _row);
+    // let indicatorObj;
+    // if (this.indicatorsAsCol) {
+    //   const indicatorKey = paths.colHeaderPaths.find(colPath => colPath.indicatorKey)?.indicatorKey;
+    //   indicatorObj = this._indicatorObjects.find(indicator => indicator.indicatorKey === indicatorKey);
+    // } else {
+    //   const indicatorKey = paths.rowHeaderPaths.find(rowPath => rowPath.indicatorKey)?.indicatorKey;
+    //   indicatorObj = this._indicatorObjects.find(indicator => indicator.indicatorKey === indicatorKey);
+    // }
+    // const chartSpec = indicatorObj?.chartSpec;
+    const chartSpec = this.getRawChartSpec(_col, _row);
+    const dimensionKeys: string[] = [];
+    if (chartSpec) {
+      if (this.indicatorsAsCol === false) {
+        dimensionKeys.push(chartSpec.xField ?? chartSpec?.series[0]?.xField);
+      } else {
+        dimensionKeys.push(chartSpec.yField ?? chartSpec?.series[0]?.yField);
+      }
+      return dimensionKeys;
+    }
+    return null;
+  }
+  getChartSpec(col: number, row: number): any {
+    return getChartSpec(col, row, this);
+  }
+  /** 将_selectedDataItemsInChart保存的数据状态同步到各个图表实例中 */
+  _generateChartState() {
+    const state = {
+      vtable_selected: {
+        filter: (datum: any) => {
+          if ((this._table as PivotChart)._selectedDataItemsInChart.length >= 1) {
+            const match = (this._table as PivotChart)._selectedDataItemsInChart.find(item => {
+              for (const itemKey in item) {
+                if (item[itemKey] !== datum[itemKey]) {
+                  return false;
+                }
+              }
+              return true;
+            });
+            return !!match;
+          } else if ((this._table as PivotChart)._selectedDimensionInChart?.length) {
+            // 判断维度点击
+            const match = (this._table as PivotChart)._selectedDimensionInChart.every(item => {
+              if (datum[item.key] !== item.value) {
+                return false;
+              }
+              return true;
+            });
+            return !!match;
+          }
+          return false;
+        }
+      },
+      vtable_selected_reverse: {
+        filter: (datum: any) => {
+          if ((this._table as PivotChart)._selectedDataItemsInChart.length >= 1) {
+            const match = (this._table as PivotChart)._selectedDataItemsInChart.find(item => {
+              for (const itemKey in item) {
+                if (item[itemKey] !== datum[itemKey]) {
+                  return false;
+                }
+              }
+              return true;
+            });
+            return !match;
+          } else if ((this._table as PivotChart)._selectedDimensionInChart?.length) {
+            // 判断维度点击
+            const match = (this._table as PivotChart)._selectedDimensionInChart.every(item => {
+              if (datum[item.key] !== item.value) {
+                return false;
+              }
+              return true;
+            });
+            return !match;
+          }
+          return false;
+        }
+      }
+    };
+    return state;
+  }
+  updateDataStateToChartInstance(activeChartInstance?: any): void {
+    if (!activeChartInstance) {
+      activeChartInstance = (this._table as PivotChart)._getActiveChartInstance();
+    }
+    const state = this._generateChartState();
+    this._indicators.forEach((_indicatorObject: IndicatorData) => {
+      const chartInstance = _indicatorObject.chartInstance;
+      chartInstance.updateState(state);
+    });
+    activeChartInstance?.updateState(state);
+  }
+  updateDataStateToActiveChartInstance(activeChartInstance?: any): void {
+    if (!activeChartInstance) {
+      activeChartInstance = (this._table as PivotChart)._getActiveChartInstance();
+    }
+    const state = this._generateChartState();
+    activeChartInstance?.updateState(state);
+  }
+
+  /**
+   *  获取图表对应的指标值
+   * */
+  getIndicatorKeyInChartSpec(_col: number, _row: number) {
+    // const paths = this.getCellHeaderPaths(_col, _row);
+    // let indicatorObj;
+    // if (this.indicatorsAsCol) {
+    //   const indicatorKey = paths.colHeaderPaths.find(colPath => colPath.indicatorKey)?.indicatorKey;
+    //   indicatorObj = this._indicatorObjects.find(indicator => indicator.indicatorKey === indicatorKey);
+    // } else {
+    //   const indicatorKey = paths.rowHeaderPaths.find(rowPath => rowPath.indicatorKey)?.indicatorKey;
+    //   indicatorObj = this._indicatorObjects.find(indicator => indicator.indicatorKey === indicatorKey);
+    // }
+    // const chartSpec = indicatorObj?.chartSpec;
+    const chartSpec = this.getRawChartSpec(_col, _row);
+    const indicatorKeys: string[] = [];
+    if (chartSpec) {
+      if (this.indicatorsAsCol === false) {
+        if (chartSpec.series) {
+          chartSpec.series.forEach((chartSeries: any) => {
+            const yField = chartSeries.yField;
+            indicatorKeys.push(yField);
+          });
+        } else {
+          indicatorKeys.push(chartSpec.yField);
+        }
+      } else {
+        if (chartSpec.series) {
+          chartSpec.series.forEach((chartSeries: any) => {
+            const xField = chartSeries.xField;
+            indicatorKeys.push(xField);
+          });
+        } else {
+          indicatorKeys.push(chartSpec.xField);
+        }
+      }
+      return indicatorKeys;
+    }
+    return null;
+  }
+  /** 获取某一图表列的最优高度，计算逻辑是根据图表的yField的维度值个数 * barWidth */
+  getOptimunHeightForChart(row: number) {
+    const path = this.getCellHeaderPaths(this.rowHeaderLevelCount, row).rowHeaderPaths;
+    let collectedValues: any;
+    for (const key in this.dataset.collectValuesBy) {
+      if (this.dataset.collectValuesBy[key].type === 'yField' && !this.dataset.collectValuesBy[key].range) {
+        collectedValues =
+          this.dataset.collectedValues[key][
+            path
+              .map(pathObj => {
+                return pathObj.value;
+              })
+              .join(this.dataset.stringJoinChar)
+          ];
+        break;
+      }
+    }
+    let height;
+    if (this._chartItemBandSize) {
+      // height = (collectedValues?.length ?? 0) * this._chartItemBandSize;
+      height = scaleWholeRangeSize(
+        collectedValues?.length ?? 0,
+        this._chartItemBandSize,
+        this._chartPaddingInner,
+        this._chartPaddingOuter
+      );
+    } else {
+      const barWidth = this._chartItemSpanSize || 25;
+      height = (collectedValues?.length ?? 0) * (barWidth + barWidth / 3);
+    }
+    const padding = getQuadProps(this._chartPadding ?? (this._table.theme.bodyStyle.padding as number) ?? 0);
+    return height + padding[0] + padding[2];
+  }
+  /** 获取某一图表列的最优宽度，计算逻辑是根据图表的xField的维度值个数 * barWidth */
+  getOptimunWidthForChart(col: number) {
+    const path = this.getCellHeaderPaths(col, this.columnHeaderLevelCount).colHeaderPaths;
+    let collectedValues: any;
+    for (const key in this.dataset.collectValuesBy) {
+      if (this.dataset.collectValuesBy[key].type === 'xField' && !this.dataset.collectValuesBy[key].range) {
+        collectedValues =
+          this.dataset.collectedValues[key][
+            path
+              .map(pathObj => {
+                return pathObj.value;
+              })
+              .join(this.dataset.stringJoinChar)
+          ];
+        break;
+      }
+    }
+    let width;
+    if (this._chartItemBandSize) {
+      // width = (collectedValues?.length ?? 0) * this._chartItemBandSize;
+      width = scaleWholeRangeSize(
+        collectedValues?.length ?? 0,
+        this._chartItemBandSize,
+        this._chartPaddingInner,
+        this._chartPaddingOuter
+      );
+    } else {
+      const barWidth = this._chartItemSpanSize || 25;
+      width = (collectedValues?.length ?? 0) * (barWidth + barWidth / 3);
+    }
+
+    const padding = getQuadProps(this._chartPadding ?? (this._table.theme.bodyStyle.padding as number) ?? 0);
+    return width + padding[1] + padding[3];
+  }
+
+  get leftAxesCount(): number {
+    if (!this._table.isPivotChart()) {
+      return 0;
+    }
+    const axisOption = ((this._table as PivotChart).pivotChartAxes as ITableAxisOption[]).find(axisOption => {
+      return axisOption.orient === 'left';
+    });
+    if (axisOption?.visible === false) {
+      return 0;
+    }
+    if (this.indicatorsAsCol) {
+      return 1; // 左侧维度轴
+    }
+    return 1; // 左侧主指标轴
+  }
+  get topAxesCount(): number {
+    if (!this._table.isPivotChart()) {
+      return 0;
+    }
+    const axisOption = ((this._table as PivotChart).pivotChartAxes as ITableAxisOption[]).find(axisOption => {
+      return axisOption.orient === 'top';
+    });
+    if (axisOption?.visible === false) {
+      return 0;
+    }
+    if (this.indicatorsAsCol && this.hasTwoIndicatorAxes) {
+      return 1; // 顶部副指标
+    }
+    return 0; // 顶部无轴
+  }
+  get rightAxesCount(): number {
+    return this.rightFrozenColCount;
+  }
+  get bottomAxesCount(): number {
+    return this.bottomFrozenRowCount;
+  }
+  getColKeysPath(col: number) {
+    const index = !this.indicatorsAsCol
+      ? col - this.rowHeaderLevelCount
+      : Math.floor((col - this.rowHeaderLevelCount) / this.indicatorKeys.length);
+    const colKey = this.dataset.colKeys[index];
+    return colKey?.join(this.dataset.stringJoinChar);
+  }
+  getRowKeysPath(row: number) {
+    const index = this.indicatorsAsCol
+      ? row - this.columnHeaderLevelCount
+      : Math.floor((row - this.columnHeaderLevelCount) / this.indicatorKeys.length);
+    const rowKey = this.dataset.rowKeys[index];
+    return rowKey?.join(this.dataset.stringJoinChar);
+  }
+
+  getIndicatorInfo(indicatorKey: string, indicatorValue = '') {
+    const indicatorInfo = this.indicatorsDefine?.find(indicator => {
+      if (typeof indicator === 'string') {
+        return false;
+      }
+      if (indicatorKey) {
+        return indicator.indicatorKey === indicatorKey;
+      }
+      if (indicatorValue) {
+        return indicator.title === indicatorValue;
+      }
+      return false;
+    }) as IIndicator;
+    return indicatorInfo;
+  }
+}
+/** 计算 scale 的实际 range 长度 */
+function scaleWholeRangeSize(count: number, bandwidth: number, paddingInner: number, paddingOuter: number) {
+  if (paddingInner === 1) {
+    paddingInner = 0; // 保护
+    // FIXME: vscale 同样需要加保护，目前这里加了保护以后，在 paddingInner为 1 的情况还是会崩溃
+  }
+  const space = bandSpace(count, paddingInner, paddingOuter);
+  const step = bandwidth / (1 - paddingInner);
+  const wholeSize = space * step;
+  return wholeSize;
+}
+
+function bandSpace(count: number, paddingInner: number, paddingOuter: number): number {
+  let space;
+  // count 等于 1 时需要特殊处理，否则 step 会超出 range 范围
+  // 计算公式: step = paddingOuter * step * 2 + paddingInner * step + bandwidth
+  if (count === 1) {
+    space = count + paddingOuter * 2;
+  } else {
+    space = count - paddingInner + paddingOuter * 2;
+  }
+  return count ? (space > 0 ? space : 1) : 0;
 }
