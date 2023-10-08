@@ -134,7 +134,7 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
     }
     if (options.title) {
       this.internalProps.title = new Title(options.title, this);
-      this.scenegraph.updateTableSize();
+      this.scenegraph.resize();
     }
   }
   static get EVENT_TYPE(): typeof PIVOT_CHART_EVENT_TYPE {
@@ -256,7 +256,7 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
     }
     if (options.title) {
       this.internalProps.title = new Title(options.title, this);
-      this.scenegraph.updateTableSize();
+      this.scenegraph.resize();
     }
     return new Promise(resolve => {
       setTimeout(resolve, 0);

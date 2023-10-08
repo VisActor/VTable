@@ -70,7 +70,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
     }
     if (options.title) {
       internalProps.title = new Title(options.title, this);
-      this.scenegraph.updateTableSize();
+      this.scenegraph.resize();
     }
   }
   isListTable(): true {
@@ -253,7 +253,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
     }
     if (options.title) {
       internalProps.title = new Title(options.title, this);
-      this.scenegraph.updateTableSize();
+      this.scenegraph.resize();
     }
     return new Promise(resolve => {
       setTimeout(resolve, 0);
