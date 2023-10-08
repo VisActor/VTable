@@ -10,6 +10,7 @@ export function createTable() {
         container: document.getElementById(CONTAINER_ID),
         records: data,
         indicatorTitle: '指标名称',
+        indicatorsAsCol: false,
         menu: {
           contextMenuItems: ['复制单元格内容', '查询详情']
         },
