@@ -46,7 +46,7 @@ export function createDataset(options: PivotChartConstructorOptions) {
 
   const dataset = new Dataset(
     dataConfig,
-    null,
+    // null,
     rowKeys,
     columnKeys,
     indicatorKeys,

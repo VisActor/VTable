@@ -19,7 +19,6 @@ import type {
   IHeaderTreeDefine,
   CollectValueBy,
   CollectedValue,
-  IPagination,
   IIndicator
 } from '../ts-types';
 import { AggregationType, SortType } from '../ts-types';
@@ -44,10 +43,10 @@ export class Dataset {
    * 用户配置
    */
   dataConfig: IDataConfig;
-  /**
-   * 分页配置
-   */
-  pagination: IPagination;
+  // /**
+  //  * 分页配置
+  //  */
+  // pagination: IPagination;
   /**
    * 明细数据
    */
@@ -125,7 +124,7 @@ export class Dataset {
   indicatorsAsCol: boolean;
   constructor(
     dataConfig: IDataConfig,
-    pagination: IPagination,
+    // pagination: IPagination,
     rows: string[],
     columns: string[],
     indicatorKeys: string[],
@@ -157,13 +156,6 @@ export class Dataset {
     this.rowSubTotalLabel = this.totals?.row?.subTotalLabel ?? '小计';
     this.collectValuesBy = this.dataConfig?.collectValuesBy;
     this.needSplitPositiveAndNegative = needSplitPositiveAndNegative ?? false;
-    // for (let i = 0; i < this.indicators?.length; i++) {
-    //   this.indicatorStatistics.push({
-    //     max: new this.aggregators[AggregationType.MAX](this.indicators[i]),
-    //     min: new this.aggregators[AggregationType.MIN](this.indicators[i]),
-    //     total: new this.aggregators[AggregationType.SUM](this.indicators[i]),
-    //   });
-    // }
     this.rowsIsTotal = new Array(this.rows.length).fill(false);
     this.colsIsTotal = new Array(this.columns.length).fill(false);
     for (let i = 0, len = this.totals?.row?.subTotalsDimensions?.length; i < len; i++) {
@@ -211,23 +203,12 @@ export class Dataset {
 
       const t7 = typeof window !== 'undefined' ? window.performance.now() : 0;
       if (customRowTree) {
-        // this.rowKeysPath_FULL = this.TreeToArr2(customRowTree);
         if (!indicatorsAsCol) {
           customRowTree = this._adjustCustomTree(customRowTree);
         }
 
         this.rowHeaderTree = customRowTree;
       } else {
-        // if (this.rowHierarchyType === 'tree') {
-        // this.rowKeysPath_FULL = this.TreeToArr3(
-        //   this.ArrToTree(
-        //     this.rowKeys,
-        //     [],
-        //     this?.totals?.row?.showGrandTotals, // || this.columns.length === 0, //todo  这里原有逻辑暂时注释掉
-        //     this.rowGrandTotalLabel,
-        //     this.rowSubTotalLabel
-        //   )
-        // );
         if (this.rowHierarchyType === 'tree') {
           this.rowHeaderTree = this.ArrToTree1(this.rowKeys, this.rows, indicatorsAsCol ? undefined : indicators);
         } else {
@@ -241,20 +222,8 @@ export class Dataset {
             this.rowSubTotalLabel
           );
         }
-        // } else {
-        // this.rowKeysPath_FULL = this.TreeToArr(
-        //   this.ArrToTree(
-        //     this.rowKeys,
-        //     this.rowsIsTotal,
-        //     this?.totals?.row?.showGrandTotals, // || this.columns.length === 0, //todo  这里原有逻辑暂时注释掉
-        //     this.rowGrandTotalLabel,
-        //     this.rowSubTotalLabel
-        //   )
-        // );
-        // }
       }
       if (customColTree) {
-        // this.colKeysPath = this.TreeToArr2(customColTree);
         if (indicatorsAsCol) {
           customColTree = this._adjustCustomTree(customColTree);
         }
@@ -269,15 +238,6 @@ export class Dataset {
           this.colGrandTotalLabel,
           this.colSubTotalLabel
         );
-        // this.colKeysPath = this.TreeToArr(
-        //   this.ArrToTree(
-        //     this.colKeys,
-        //     this.colsIsTotal,
-        //     this.totals?.column?.showGrandTotals, // || this.rows.length === 0,//todo  这里原有逻辑暂时注释掉
-        //     this.colGrandTotalLabel,
-        //     this.colSubTotalLabel
-        //   )
-        // );
       }
       const t8 = typeof window !== 'undefined' ? window.performance.now() : 0;
       console.log('TreeToArr:', t8 - t7);
@@ -290,7 +250,7 @@ export class Dataset {
         this.cacheDeminsionCollectedValues();
       }
     }
-    this.updatePagination(pagination);
+    // this.updatePagination(pagination);
   }
   //将聚合类型注册 收集到aggregators
   registerAggregator(type: string, aggregator: any) {
@@ -656,22 +616,22 @@ export class Dataset {
     }
   }
 
-  updatePagination(pagination: IPagination) {
-    this.pagination = pagination;
+  // updatePagination(pagination: IPagination) {
+  //   this.pagination = pagination;
 
-    if (isValid(this.pagination?.perPageCount) && isValid(this.pagination?.currentPage)) {
-      //调整perPageCount的数量 需要是indicatorKeys.length的整数倍
-      this.pagination.perPageCount =
-        Math.ceil(this.pagination.perPageCount / this.indicatorKeys.length) * this.indicatorKeys.length;
-      const { perPageCount, currentPage } = this.pagination;
-      const startIndex = Math.ceil((perPageCount * (currentPage || 0)) / this.indicatorKeys.length);
-      const endIndex = startIndex + Math.ceil(perPageCount / this.indicatorKeys.length);
-      this.rowKeysPath = this.rowKeysPath_FULL?.slice(startIndex, endIndex);
-    } else {
-      this.rowKeysPath = this.rowKeysPath_FULL;
-    }
-    this.pagination && (this.pagination.totalCount = this.rowKeysPath_FULL?.length);
-  }
+  //   if (isValid(this.pagination?.perPageCount) && isValid(this.pagination?.currentPage)) {
+  //     //调整perPageCount的数量 需要是indicatorKeys.length的整数倍
+  //     this.pagination.perPageCount =
+  //       Math.ceil(this.pagination.perPageCount / this.indicatorKeys.length) * this.indicatorKeys.length;
+  //     const { perPageCount, currentPage } = this.pagination;
+  //     const startIndex = Math.ceil((perPageCount * (currentPage || 0)) / this.indicatorKeys.length);
+  //     const endIndex = startIndex + Math.ceil(perPageCount / this.indicatorKeys.length);
+  //     this.rowKeysPath = this.rowKeysPath_FULL?.slice(startIndex, endIndex);
+  //   } else {
+  //     this.rowKeysPath = this.rowKeysPath_FULL;
+  //   }
+  //   this.pagination && (this.pagination.totalCount = this.rowKeysPath_FULL?.length);
+  // }
   private getAggregatorRule(indicatorKey: string): AggregationRule<AggregationType> | undefined {
     return this.aggregationRules?.find((value: AggregationRule<AggregationType>, index: number) => {
       return indicatorKey === value.indicatorKey;
@@ -1199,30 +1159,7 @@ export class Dataset {
             };
           }) ?? []
       };
-      // let curChild = node.children;
-      // for (let i = 1; i < subTotalFlags.length; i++) {
-      //   const totalChild: { value: string; dimensionKey: string; children: any[] } = {
-      //     value: grandTotalLabel, // getId(item?.id, 1),
-      //     dimensionKey: rows[i],
-      //     children:
-      //       i === subTotalFlags.length - 1 && indicators?.length >= 1
-      //         ? indicators.map(indicator => {
-      //             if (typeof indicator === 'string') {
-      //               return {
-      //                 indicatorKey: indicator,
-      //                 value: indicator
-      //               };
-      //             }
-      //             return {
-      //               indicatorKey: indicator.indicatorKey,
-      //               value: indicator.title
-      //             };
-      //           })
-      //         : []
-      //   };
-      //   curChild.push(totalChild);
-      //   curChild = totalChild.children;
-      // }
+
       result.push(node);
     }
     return result;
@@ -1242,40 +1179,6 @@ export class Dataset {
     tree.forEach((treeNode: any) => getPath(treeNode, []));
     return result;
   }
-  // 用户传入的自定义树 path由树形结构的节点value组成
-  private TreeToArr2(tree: any) {
-    const result: any[] = []; // 结果
-    function getPath(node: any, arr: any) {
-      arr.push(arr.length > 0 ? [arr[arr.length - 1], node.value].join(String.fromCharCode(0)) : node.value);
-      if (node.children?.length > 0 && !node.children[0].indicatorKey) {
-        // 存在多个节点就递归
-        node.children?.forEach((childItem: any) => getPath(childItem, [...arr]));
-      } else {
-        result.push(arr);
-      }
-    }
-    tree.forEach((treeNode: any) => getPath(treeNode, []));
-    return result;
-  }
-
-  //将树形结构转为二维数组 值为node.id 处理rowHierarchyType是tree的情况
-  private TreeToArr3(tree: any) {
-    const result: any[] = []; // 结果
-    function getPath(node: any, arr: any) {
-      // arr.push(node.id);
-      arr = node.id;
-      result.push([node.id]);
-      if (node.children.length > 0) {
-        // 存在多个节点就递归
-        node.children?.forEach((childItem: any) => getPath(childItem, [...arr]));
-      } else {
-        // result.push(arr);
-      }
-    }
-    tree.forEach((treeNode: any) => getPath(treeNode, []));
-    return result;
-  }
-
   private dealWithZeroAlign() {
     const indicatorsToAlign = [];
     for (let i = 0; i < this.aggregationRules.length; i++) {

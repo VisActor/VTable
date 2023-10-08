@@ -95,7 +95,7 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
         }, []) ?? [];
       this.dataset = new Dataset(
         this.internalProps.dataConfig,
-        this.pagination,
+        // this.pagination,
         rowKeys,
         columnKeys,
         // options.indicatorsAsCol === false ? rowKeys.concat(IndicatorDimensionKeyPlaceholder) : rowKeys,
@@ -217,7 +217,7 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
       }, []);
       this.dataset = new Dataset(
         internalProps.dataConfig,
-        this.pagination,
+        // this.pagination,
         rowKeys,
         columnKeys,
         indicatorKeys,
@@ -545,7 +545,7 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
     return undefined;
   }
   /**
-   * 全量更新排序规则  TODO test
+   * 全量更新排序规则 TODO  待完善
    * @param sortRules
    */
   updateSortRules(sortRules: SortRules) {
