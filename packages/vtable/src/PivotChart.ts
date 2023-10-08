@@ -111,7 +111,7 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
     this.internalProps.dataConfig.dimensionSortArray = this._getDimensionSortArray();
     this.dataset = new Dataset(
       this.internalProps.dataConfig,
-      null,
+      // null,
       rowKeys,
       columnKeys,
       indicatorKeys,
@@ -218,7 +218,7 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
 
       this.dataset = new Dataset(
         this.internalProps.dataConfig,
-        null,
+        // null,
         rowKeys,
         columnKeys,
         indicatorKeys,
@@ -431,15 +431,15 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
     return undefined;
   }
   /**
-   * 全量更新排序规则
+   * 全量更新排序规则 TODO  待完善
    * @param sortRules
    */
-  // updateSortRules(sortRules: SortRules) {
-  //   this.internalProps.dataConfig.sortRules = sortRules;
-  //   this.dataset.updateSortRules(sortRules);
-  //   (this.internalProps.layoutMap as PivotHeaderLayoutMap).updateDataset(this.dataset);
-  //   this.render();
-  // }
+  updateSortRules(sortRules: SortRules) {
+    this.internalProps.dataConfig.sortRules = sortRules;
+    this.dataset.updateSortRules(sortRules);
+    (this.internalProps.layoutMap as PivotHeaderLayoutMap).updateDataset(this.dataset);
+    this.render();
+  }
   updatePivotSortState(
     pivotSortStateConfig: {
       dimensions: IDimensionInfo[];

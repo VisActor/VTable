@@ -148,8 +148,8 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
     this.cornerSetting = table.options.corner ?? { titleOnDimension: 'column' };
 
     if (dataset) {
-      this.rowTree = cloneDeep(dataset.rowHeaderTree);
-      this.columnTree = cloneDeep(dataset.colHeaderTree);
+      this.rowTree = dataset.rowHeaderTree;
+      this.columnTree = dataset.colHeaderTree;
       if (this.indicatorsAsCol) {
         const supplyAxisNode = (nodes: IHeaderTreeDefine[]) => {
           nodes.forEach((node: IHeaderTreeDefine) => {
@@ -1919,7 +1919,7 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
           targetIndex = targetCellRange.start.col;
         }
         //如果操作列和目标地址col一样 则不执行其他逻辑
-        if (targetIndex === sourceCellRange.end.col) {
+        if (targetIndex === sourceCellRange.end.col - this.rowHeaderLevelCount) {
           return null;
         }
         // 逐行将每一行的source id 移动到目标地址targetCol处
@@ -1971,7 +1971,10 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
         }
 
         //如果操作列和目标地址col一样 则不执行其他逻辑
-        if (targetIndex === source.row || targetIndex === sourceCellRange.end.row) {
+        if (
+          targetIndex === source.row - this.columnHeaderLevelCount ||
+          targetIndex === sourceCellRange.end.row - this.columnHeaderLevelCount
+        ) {
           return null;
         }
 
@@ -1986,7 +1989,7 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
         // 表头id _rowHeaderCellIds_FULL进行调整
         // 从header id的二维数组中取出需要操作的source ids
         const sourceIds_FULL = this._rowHeaderCellIds_FULL.splice(
-          sourceCellRange.start.row + this.currentPageStartIndex - this.columnHeaderLevelCount,
+          sourceCellRange.start.row + this.currentPageStartIndex,
           moveSize
         );
         sourceIds_FULL.unshift(targetIndex as any, 0 as any);
@@ -2269,8 +2272,8 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
       this._rowHeaderCellIds = this._rowHeaderCellIds_FULL?.slice(this.currentPageStartIndex, this.currentPageEndIndex);
     } else {
       this.currentPageStartIndex = 0;
-      this.currentPageEndIndex = this._rowHeaderCellIds_FULL.length - 1;
-      this._rowHeaderCellIds = this._rowHeaderCellIds_FULL;
+      this.currentPageEndIndex = this._rowHeaderCellIds_FULL.length;
+      this._rowHeaderCellIds = this._rowHeaderCellIds_FULL?.slice(this.currentPageStartIndex, this.currentPageEndIndex);
     }
     this.pagination && (this.pagination.totalCount = this._rowHeaderCellIds_FULL?.length);
   }
@@ -2622,6 +2625,46 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
       return false;
     }) as IIndicator;
     return indicatorInfo;
+  }
+
+  updateDataset(dataset: Dataset) {
+    // this.dataset = dataset;
+    // if (dataset) {
+    //   this.rowTree = dataset.rowHeaderTree;
+    //   this.columnTree = dataset.colHeaderTree;
+    //   if (this.indicatorsAsCol) {
+    //     const supplyAxisNode = (nodes: IHeaderTreeDefine[]) => {
+    //       nodes.forEach((node: IHeaderTreeDefine) => {
+    //         if (node.children?.length) {
+    //           supplyAxisNode(node.children);
+    //         } else {
+    //           node.children = [
+    //             {
+    //               dimensionKey: 'axis',
+    //               value: ''
+    //             }
+    //           ];
+    //         }
+    //       });
+    //     };
+    //     supplyAxisNode(this.rowTree);
+    //   }
+    // }
+    // // 收集指标所有key
+    // this.indicatorsDefine?.forEach(indicator => {
+    //   // this.indicatorKeys[indicator.indicatorKey] = indicator.value;
+    //   if (typeof indicator === 'string') {
+    //     this.indicatorKeys.push(indicator);
+    //   } else {
+    //     this.indicatorKeys.push(indicator.indicatorKey);
+    //   }
+    // });
+    // this.columnDimensionTree = new DimensionTree((this.columnTree as IPivotLayoutHeadNode[]) ?? []);
+    // this.rowDimensionTree = new DimensionTree(
+    //   (this.rowTree as IPivotLayoutHeadNode[]) ?? [],
+    //   this.rowHierarchyType,
+    //   this.rowHierarchyType === 'tree' ? this.rowExpandLevel : undefined
+    // );
   }
 }
 /** 计算 scale 的实际 range 长度 */
