@@ -459,22 +459,22 @@ export function createTable() {
             }
           },
           invalidType: 'break',
-          animation: false,
-          brush: {
-            inBrush: {
-              style: {
-                fillOpacity: 1,
-                stroke: '#58595B',
-                lineWidth: 1
-              }
-            },
-            outOfBrush: {
-              style: {
-                fillOpacity: 0.3,
-                strokeWidth: 0.3
-              }
-            }
-          }
+          animation: false
+          // brush: {
+          //   inBrush: {
+          //     style: {
+          //       fillOpacity: 1,
+          //       stroke: '#58595B',
+          //       lineWidth: 1
+          //     }
+          //   },
+          //   outOfBrush: {
+          //     style: {
+          //       fillOpacity: 0.3,
+          //       strokeWidth: 0.3
+          //     }
+          //   }
+          // }
         }
       }
     ],
@@ -2330,4 +2330,15 @@ export function createTable() {
   window.tableInstance = tableInstance;
 
   bindDebugTool(tableInstance.scenegraph.stage, {});
+
+  tableInstance.onVChartEvent(
+    'pointerup',
+    {
+      level: 'mark',
+      source: 'chart'
+    },
+    args => {
+      console.log('listenChart click', args);
+    }
+  );
 }

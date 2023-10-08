@@ -49,7 +49,7 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
 
   _selectedDataItemsInChart: any[] = [];
   _selectedDimensionInChart: { key: string; value: string }[] = [];
-  _chartEventMap: Record<string, { query?: any; callback: AnyFunction }> = {};
+  _chartEventMap: Record<string, { query?: any; callback: AnyFunction }[]> = {};
 
   _axes: ITableAxisOption[];
   constructor(options: PivotChartConstructorOptions);
@@ -897,25 +897,34 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
   onVChartEvent(type: string, callback: AnyFunction): void;
   onVChartEvent(type: string, query: any, callback: AnyFunction): void;
   onVChartEvent(type: string, query?: any, callback?: AnyFunction): void {
+    if (!this._chartEventMap[type]) {
+      this._chartEventMap[type] = [];
+    }
     if (typeof query === 'function') {
-      this._chartEventMap[type] = { callback: query };
+      this._chartEventMap[type].push({ callback: query });
     } else {
-      this._chartEventMap[type] = { callback, query };
+      this._chartEventMap[type].push({ callback, query });
     }
   }
 
-  offVChartEvent(type: string): void {
-    delete this._chartEventMap[type];
+  offVChartEvent(type: string, callback: AnyFunction): void {
+    // delete this._chartEventMap[type];
+    if (!this._chartEventMap[type]) {
+      return;
+    }
+    this._chartEventMap[type] = this._chartEventMap[type].filter(e => e.callback !== callback);
   }
   /** 给activeChartInstance逐个绑定chart用户监听事件 */
   _bindChartEvent(activeChartInstance: any) {
     if (activeChartInstance) {
       for (const key in this._chartEventMap) {
-        if (this._chartEventMap[key].query) {
-          activeChartInstance.on(key, this._chartEventMap[key].query, this._chartEventMap[key].callback);
-        } else {
-          activeChartInstance.on(key, this._chartEventMap[key].callback);
-        }
+        (this._chartEventMap[key] || []).forEach(e => {
+          if (e.query) {
+            activeChartInstance.on(key, e.query, e.callback);
+          } else {
+            activeChartInstance.on(key, e.callback);
+          }
+        });
       }
     }
   }
