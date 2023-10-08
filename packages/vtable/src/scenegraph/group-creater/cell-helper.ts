@@ -28,6 +28,7 @@ import { isPromise } from '../../tools/helper';
 import { dealPromiseData } from '../utils/deal-promise-data';
 import { CartesianAxis } from '../../components/axis/axis';
 import type { PivotLayoutMap } from '../../layout/pivot-layout';
+import { createCheckboxCellGroup } from './cell-type/checkbox-cell';
 
 export function createCell(
   type: ColumnTypeOption,
@@ -328,6 +329,23 @@ export function createCell(
       cellWidth,
       cellHeight,
       padding,
+      table,
+      cellTheme
+    );
+  } else if (type === 'checkbox') {
+    cellGroup = createCheckboxCellGroup(
+      null,
+      columnGroup,
+      0,
+      y,
+      col,
+      row,
+      colWidth,
+      cellWidth,
+      cellHeight,
+      padding,
+      textAlign,
+      textBaseline,
       table,
       cellTheme
     );

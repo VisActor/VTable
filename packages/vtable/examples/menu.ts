@@ -184,6 +184,10 @@ export const menus = [
       {
         path: 'type',
         name: 'chart'
+      },
+      {
+        path: 'type',
+        name: 'checkbox'
       }
     ]
   },
