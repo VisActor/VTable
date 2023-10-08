@@ -1308,17 +1308,18 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
   //   throw new Error(`can not found body layout @id=${id as number}`);
   // }
   getCellRange(col: number, row: number): CellRange {
-    if (col === -1 || row === -1) {
-      return {
-        start: { col, row },
-        end: { col, row }
-      };
+    const result: CellRange = { start: { col, row }, end: { col, row } };
+    if (!this.isHeader(col, row) || col === -1 || row === -1 || this.isIndicatorHeader(col, row)) {
+      return result;
+    }
+
+    if (this.isRightFrozenColumn(col, row) || this.isBottomFrozenRow(col, row)) {
+      return result;
     }
     // if (this._cellRangeMap.has(`$${col}$${row}`)) return this._cellRangeMap.get(`$${col}$${row}`);
     if (this._cellRangeMap.has(`${col}-${row}`)) {
       return this._cellRangeMap.get(`${col}-${row}`);
     }
-    const result: CellRange = { start: { col, row }, end: { col, row } };
     if (this.isHeader(col, row) && col !== -1 && row !== -1) {
       //in header
       const id = this.getCellId(col, row);
