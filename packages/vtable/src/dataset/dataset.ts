@@ -1010,7 +1010,7 @@ export class Dataset {
             //树的叶子节点补充指标
             children:
               index === list.length - 1 && indicators?.length >= 1
-                ? indicators.map(indicator => {
+                ? indicators?.map(indicator => {
                     if (typeof indicator === 'string') {
                       return {
                         indicatorKey: indicator,
@@ -1080,7 +1080,7 @@ export class Dataset {
             //树的叶子节点补充指标
             children:
               index === list.length - 1 && indicators?.length >= 1
-                ? indicators.map(indicator => {
+                ? indicators?.map(indicator => {
                     if (typeof indicator === 'string') {
                       return {
                         indicatorKey: indicator,
@@ -1104,7 +1104,7 @@ export class Dataset {
                 //树的叶子节点补充指标
                 children:
                   index + 1 === list.length - 1 && indicators?.length >= 1
-                    ? indicators.map(indicator => {
+                    ? indicators?.map(indicator => {
                         if (typeof indicator === 'string') {
                           return {
                             indicatorKey: indicator,
@@ -1139,8 +1139,8 @@ export class Dataset {
     }
     if (arr?.length) {
       arr.forEach(item => addList(item));
-    } else {
-      result = this.indicators.map((indicator: IIndicator): { indicatorKey: string; value: string } => {
+    } else if (indicators) {
+      result = indicators?.map((indicator: IIndicator): { indicatorKey: string; value: string } => {
         return { indicatorKey: indicator.indicatorKey, value: indicator.title ?? indicator.indicatorKey };
       });
     }
@@ -1248,7 +1248,7 @@ export class Dataset {
     const checkNode = (nodes: IHeaderTreeDefine[], isHasIndicator: boolean) => {
       nodes.forEach((node: IHeaderTreeDefine) => {
         if (!node.indicatorKey && !isHasIndicator && !node.children?.length) {
-          node.children = this.indicators.map((indicator: IIndicator): { indicatorKey: string; value: string } => {
+          node.children = this.indicators?.map((indicator: IIndicator): { indicatorKey: string; value: string } => {
             return { indicatorKey: indicator.indicatorKey, value: indicator.title ?? indicator.indicatorKey };
           });
         } else if (node.children) {
@@ -1259,7 +1259,7 @@ export class Dataset {
     if (customTree?.length) {
       checkNode(customTree, false);
     } else {
-      customTree = this.indicators.map((indicator: IIndicator): { indicatorKey: string; value: string } => {
+      customTree = this.indicators?.map((indicator: IIndicator): { indicatorKey: string; value: string } => {
         return { indicatorKey: indicator.indicatorKey, value: indicator.title ?? indicator.indicatorKey };
       });
     }

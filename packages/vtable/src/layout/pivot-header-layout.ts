@@ -165,7 +165,16 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
             }
           });
         };
-        supplyAxisNode(this.rowTree);
+        if (this.rowTree?.length) {
+          supplyAxisNode(this.rowTree);
+        } else {
+          this.rowTree = [
+            {
+              dimensionKey: 'axis',
+              value: ''
+            }
+          ];
+        }
       }
     }
     // 收集指标所有key
@@ -1044,7 +1053,12 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
   }
   get columnHeaderLevelCount(): number {
     if (this.showHeader && this.showColumnHeader) {
-      if (this.indicatorsAsCol && !this.colDimensionKeys?.length && !this.hasTwoIndicatorAxes) {
+      if (
+        this._table.isPivotChart() &&
+        this.indicatorsAsCol &&
+        !this.dataset?.colKeys?.length &&
+        !this.hasTwoIndicatorAxes
+      ) {
         return 0;
       }
       let count = this.indicatorsAsCol
