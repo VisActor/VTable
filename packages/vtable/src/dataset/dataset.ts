@@ -1061,7 +1061,7 @@ export class Dataset {
      * @param {number} n 需转换数字
      */
     // const getId = (pId: any, curId: any) => `${pId}$${curId}`;
-    const result: any[] = []; // 结果
+    let result: any[] = []; // 结果
     const concatStr = this.stringJoinChar; // 连接符(随便写，保证key唯一性就OK)
     const map = new Map(); // 存储根节点 主要提升性能
     function addList(list: any) {
@@ -1137,10 +1137,15 @@ export class Dataset {
         node = item; // 更新当前节点
       });
     }
-
-    arr.forEach(item => addList(item));
+    if (arr?.length) {
+      arr.forEach(item => addList(item));
+    } else {
+      result = this.indicators.map((indicator: IIndicator): { indicatorKey: string; value: string } => {
+        return { indicatorKey: indicator.indicatorKey, value: indicator.title ?? indicator.indicatorKey };
+      });
+    }
     //最后将总计的节点加上
-    if (isGrandTotal) {
+    if (isGrandTotal && arr?.length) {
       const node: { value: string; dimensionKey: string; children: any[]; rowSpan: number } = {
         value: grandTotalLabel, // getId(item?.id, 1),
         dimensionKey: rows[0],
