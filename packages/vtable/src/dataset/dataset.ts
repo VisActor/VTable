@@ -1,5 +1,5 @@
 import { isArray } from '@visactor/vutils';
-import { cloneDeep, isValid } from '../tools/util';
+import { isValid } from '../tools/util';
 import type {
   FilterRules,
   IDataConfig,
@@ -213,7 +213,7 @@ export class Dataset {
       if (customRowTree) {
         // this.rowKeysPath_FULL = this.TreeToArr2(customRowTree);
         if (!indicatorsAsCol) {
-          customRowTree = this._adjustCustomTree(cloneDeep(customRowTree));
+          customRowTree = this._adjustCustomTree(customRowTree);
         }
 
         this.rowHeaderTree = customRowTree;
@@ -256,7 +256,7 @@ export class Dataset {
       if (customColTree) {
         // this.colKeysPath = this.TreeToArr2(customColTree);
         if (indicatorsAsCol) {
-          customColTree = this._adjustCustomTree(cloneDeep(customColTree));
+          customColTree = this._adjustCustomTree(customColTree);
         }
         this.colHeaderTree = customColTree;
       } else {

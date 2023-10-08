@@ -26,6 +26,7 @@ import { _setDataSource } from './core/tableHelper';
 import { BaseTable } from './core/BaseTable';
 import type { PivotTableProtected } from './ts-types/base-table';
 import { Title } from './components/title/title';
+import { cloneDeep } from '@visactor/vutils';
 
 export class PivotTable extends BaseTable implements PivotTableAPI {
   declare internalProps: PivotTableProtected;
@@ -52,10 +53,17 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
       //TODO hack处理之前的demo都是定义到layout上的 所以这里直接并到options中
       Object.assign(options, (options as any).layout);
     }
+    this.internalProps.columns = cloneDeep(options.columns);
+    this.internalProps.rows = cloneDeep(options.rows);
+    this.internalProps.indicators = cloneDeep(options.indicators);
+    this.internalProps.columnTree =
+      options.indicatorsAsCol && !options.columns?.length && !options.columnTree ? [] : cloneDeep(options.columnTree);
+    this.internalProps.rowTree =
+      !options.indicatorsAsCol && !options.rows?.length && !options.rowTree ? [] : cloneDeep(options.rowTree);
     //分页配置
     this.pagination = options.pagination;
     this.internalProps.columnResizeType = options.columnResizeType ?? 'column';
-    this.internalProps.dataConfig = options.dataConfig;
+    this.internalProps.dataConfig = cloneDeep(options.dataConfig);
     this.internalProps.enableDataAnalysis = options.enableDataAnalysis;
     if (this.internalProps.enableDataAnalysis) {
       const rowKeys =
@@ -149,11 +157,19 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
     //维护选中状态
     // const range = internalProps.selection.range; //保留原有单元格选中状态
     super.updateOption(options);
+    this.internalProps.columns = cloneDeep(options.columns);
+    this.internalProps.rows = cloneDeep(options.rows);
+    this.internalProps.indicators = cloneDeep(options.indicators);
+    this.internalProps.columnTree =
+      options.indicatorsAsCol && !options.columns?.length && !options.columnTree ? [] : cloneDeep(options.columnTree);
+    this.internalProps.rowTree =
+      !options.indicatorsAsCol && !options.rows?.length && !options.rowTree ? [] : cloneDeep(options.rowTree);
+
     //分页配置
     this.pagination = options.pagination;
     // 更新protectedSpace
     internalProps.columnResizeType = options.columnResizeType ?? 'column';
-    internalProps.dataConfig = options.dataConfig;
+    internalProps.dataConfig = cloneDeep(options.dataConfig);
     internalProps.enableDataAnalysis = options.enableDataAnalysis;
 
     //维护tree树形结构的展开状态

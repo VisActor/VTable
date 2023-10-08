@@ -18,7 +18,7 @@ export function getAxisConfigInPivotChart(col: number, row: number, layout: Pivo
       col < layout.colCount - layout.rightFrozenColCount
     ) {
       const indicatorKeys = layout.getIndicatorKeyInChartSpec(col, layout.columnHeaderLevelCount - 1);
-      let defaultKey = indicatorKeys[1];
+      let defaultKey = indicatorKeys?.[1];
       if (isArray(defaultKey)) {
         defaultKey = defaultKey[0];
       }
@@ -87,7 +87,7 @@ export function getAxisConfigInPivotChart(col: number, row: number, layout: Pivo
       col < layout.colCount - layout.rightFrozenColCount
     ) {
       const indicatorKeys = layout.getIndicatorKeyInChartSpec(col, row);
-      let defaultKey = indicatorKeys[0];
+      let defaultKey = indicatorKeys?.[0];
       if (isArray(defaultKey)) {
         defaultKey = defaultKey[0];
       }
@@ -114,7 +114,7 @@ export function getAxisConfigInPivotChart(col: number, row: number, layout: Pivo
         }
       }
       let indicatorInfo = null;
-      indicatorKeys.forEach(key => {
+      indicatorKeys?.forEach(key => {
         const info = layout.getIndicatorInfo(key);
         if (info) {
           indicatorInfo = info;
@@ -199,7 +199,7 @@ export function getAxisConfigInPivotChart(col: number, row: number, layout: Pivo
       row < layout.rowCount - layout.bottomFrozenRowCount
     ) {
       const indicatorKeys = layout.getIndicatorKeyInChartSpec(col, row);
-      let defaultKey = indicatorKeys[0];
+      let defaultKey = indicatorKeys?.[0];
       if (isArray(defaultKey)) {
         defaultKey = defaultKey[0];
       }
@@ -226,7 +226,7 @@ export function getAxisConfigInPivotChart(col: number, row: number, layout: Pivo
         }
       }
       let indicatorInfo = null;
-      indicatorKeys.forEach(key => {
+      indicatorKeys?.forEach(key => {
         const info = layout.getIndicatorInfo(key);
         if (info) {
           indicatorInfo = info;

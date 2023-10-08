@@ -37,7 +37,10 @@ import type {
   ITableThemeDefine,
   SortState,
   TableKeyboardOptions,
-  WidthModeDef
+  WidthModeDef,
+  IHeaderTreeDefine,
+  IDimension,
+  IIndicator
 } from '.';
 import type { TooltipOptions } from './tooltip';
 import type { IWrapTextGraphicAttribute } from '../scenegraph/graphic/text';
@@ -592,10 +595,29 @@ export interface PivotTableProtected extends IBaseTableProtected {
    * 透视表 传入数据是透视后的嵌套层级结构 还是需要进行汇总计算的平坦数据
    */
   enableDataAnalysis?: boolean;
+
+  columnTree?: IHeaderTreeDefine[];
+  /** 行表头维度结构 */
+  rowTree?: IHeaderTreeDefine[];
+  /** 定义行上各个维度具体配置项和样式定义 */
+  rows?: (IDimension | string)[]; // (string | IDimension)[]; 后续支持数据分析的透视表 支持string配置
+  /** 定义列上各个维度具体配置项和样式定义 */
+  columns?: (IDimension | string)[]; // (string | IDimension)[];
+  /** 定义指标具体配置项和样式定义 包含表头和body的定义*/
+  indicators?: (IIndicator | string)[]; // (string | IIndicator)[];
 }
 export interface PivotChartProtected extends IBaseTableProtected {
   /** 表格数据 */
   records: any[] | Record<string, any[]>;
   layoutMap: PivotHeaderLayoutMap;
   dataConfig?: IDataConfig;
+  columnTree?: IHeaderTreeDefine[];
+  /** 行表头维度结构 */
+  rowTree?: IHeaderTreeDefine[];
+  /** 定义行上各个维度具体配置项和样式定义 */
+  rows?: (IDimension | string)[]; // (string | IDimension)[]; 后续支持数据分析的透视表 支持string配置
+  /** 定义列上各个维度具体配置项和样式定义 */
+  columns?: (IDimension | string)[]; // (string | IDimension)[];
+  /** 定义指标具体配置项和样式定义 包含表头和body的定义*/
+  indicators?: (IIndicator | string)[]; // (string | IIndicator)[];
 }

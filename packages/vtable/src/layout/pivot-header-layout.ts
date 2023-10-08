@@ -1,5 +1,5 @@
 /* eslint-disable sort-imports */
-import { cloneDeep, isValid, transpose } from '../tools/util';
+import { isValid, transpose } from '../tools/util';
 import type {
   CellAddress,
   CellRange,
@@ -35,7 +35,7 @@ import { getChartAxes, getChartDataId, getChartSpec, getRawChartSpec } from './c
 import type { IPivotLayoutHeadNode } from './pivot-layout-helper';
 import { DimensionTree } from './pivot-layout-helper';
 import type { Dataset } from '../dataset/dataset';
-import { isArray } from '@visactor/vutils';
+import { cloneDeep, isArray } from '@visactor/vutils';
 import type { TextStyle } from '../body-helper/style';
 import type { ITableAxisOption } from '../ts-types/component/axis';
 import { getQuadProps } from '../scenegraph/utils/padding';
@@ -130,11 +130,11 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
     this._CellHeaderPathMap = new Map();
     // this.showHeader = showHeader;
     // this.pivotLayout = pivotLayoutObj;
-    this.rowTree = table.options.rowTree;
-    this.columnTree = table.options.columnTree;
-    this.rowsDefine = table.options.rows ?? [];
-    this.columnsDefine = table.options.columns ?? [];
-    this.indicatorsDefine = table.options.indicators ?? [];
+    this.rowTree = table.internalProps.rowTree;
+    this.columnTree = table.internalProps.columnTree;
+    this.rowsDefine = table.internalProps.rows ?? [];
+    this.columnsDefine = table.internalProps.columns ?? [];
+    this.indicatorsDefine = table.internalProps.indicators ?? [];
     this.indicatorTitle = table.options.indicatorTitle;
     this.indicatorsAsCol = table.options.indicatorsAsCol ?? true;
     this.hideIndicatorName = table.options.hideIndicatorName ?? false;

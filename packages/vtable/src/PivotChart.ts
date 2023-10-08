@@ -36,7 +36,7 @@ import type { IChartColumnIndicator } from './ts-types/pivot-table/indicator/cha
 import type { Chart } from './scenegraph/graphic/chart';
 import { clearChartCacheImage, updateChartData } from './scenegraph/refresh-node/update-chart';
 import type { ITableAxisOption } from './ts-types/component/axis';
-import { isArray } from '@visactor/vutils';
+import { cloneDeep, isArray } from '@visactor/vutils';
 import type { DiscreteLegend } from '@visactor/vrender-components';
 import { Title } from './components/title/title';
 
@@ -68,6 +68,13 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
       //TODO hack处理之前的demo都是定义到layout上的 所以这里直接并到options中
       Object.assign(options, (options as any).layout);
     }
+    this.internalProps.columns = cloneDeep(options.columns);
+    this.internalProps.rows = cloneDeep(options.rows);
+    this.internalProps.indicators = cloneDeep(options.indicators);
+    this.internalProps.columnTree =
+      options.indicatorsAsCol && !options.columns?.length && !options.columnTree ? [] : cloneDeep(options.columnTree);
+    this.internalProps.rowTree =
+      !options.indicatorsAsCol && !options.rows?.length && !options.rowTree ? [] : cloneDeep(options.rowTree);
     this.setCustomStateNameToSpec();
     this.internalProps.columnResizeType = options.columnResizeType ?? 'column';
     this.internalProps.dataConfig = { isPivotChart: true };
@@ -108,12 +115,12 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
       rowKeys,
       columnKeys,
       indicatorKeys,
-      options.indicators,
+      this.internalProps.indicators,
       options.indicatorsAsCol ?? true,
       options.records,
       undefined,
-      options.indicatorsAsCol && !options.columns?.length ? options.columnTree ?? [] : options.columnTree, // TODO lff 优化
-      !options.indicatorsAsCol && !options.rows?.length ? options.rowTree ?? [] : options.rowTree,
+      this.internalProps.columnTree, //传递自定义树形结构会在dataset中补充指标节点children
+      this.internalProps.rowTree,
       true
     );
 
@@ -164,6 +171,13 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
     //维护选中状态
     // const range = internalProps.selection.range; //保留原有单元格选中状态
     super.updateOption(options);
+    this.internalProps.columns = cloneDeep(options.columns);
+    this.internalProps.rows = cloneDeep(options.rows);
+    this.internalProps.indicators = cloneDeep(options.indicators);
+    this.internalProps.columnTree =
+      options.indicatorsAsCol && !options.columns?.length && !options.columnTree ? [] : cloneDeep(options.columnTree);
+    this.internalProps.rowTree =
+      !options.indicatorsAsCol && !options.rows?.length && !options.rowTree ? [] : cloneDeep(options.rowTree);
 
     this.setCustomStateNameToSpec();
     // 更新protectedSpace
@@ -208,12 +222,12 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
         rowKeys,
         columnKeys,
         indicatorKeys,
-        options.indicators,
+        this.internalProps.indicators,
         options.indicatorsAsCol ?? true,
         options.records ?? this.internalProps.records,
         undefined,
-        options.indicatorsAsCol && !options.columns?.length ? options.columnTree ?? [] : options.columnTree,
-        !options.indicatorsAsCol && !options.rows?.length ? options.rowTree ?? [] : options.rowTree,
+        this.internalProps.columnTree,
+        this.internalProps.rowTree,
         true
       );
     }
