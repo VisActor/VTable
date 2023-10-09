@@ -1,5 +1,4 @@
 /* eslint-disable sort-imports */
-import 'core-js/proposals/reflect-metadata'; // wait for vrender fix
 import * as TYPES from './ts-types';
 import * as core from './core';
 import * as data from './data';
@@ -30,6 +29,10 @@ import { PivotTable } from './PivotTable';
 import { PivotChart } from './PivotChart';
 import type { MousePointerCellEvent } from './ts-types/events';
 import * as CustomLayout from './render/layout';
+
+// import { container, loadCanvasPicker } from '@visactor/vrender';
+// loadCanvasPicker(container);
+
 export { getDataCellPath } from './tools/get-data-path';
 export * from './render/jsx';
 

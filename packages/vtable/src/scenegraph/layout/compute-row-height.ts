@@ -173,7 +173,7 @@ export function computeRowsHeight(
           totalDrawHeight -
           (update
             ? newHeights.reduce((acr, cur, index) => {
-                if (index >= table.frozenRowCount && index <= table.rowCount - table.bottomFrozenRowCount - 2) {
+                if (index >= table.frozenRowCount && index < newHeights.length - table.bottomFrozenRowCount - 1) {
                   return acr + cur;
                 }
                 return acr;

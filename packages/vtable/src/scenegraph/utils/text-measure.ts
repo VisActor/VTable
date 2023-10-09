@@ -1,16 +1,23 @@
+import type { ITextGraphicAttribute, TextOptionsType } from '@visactor/vrender';
+import {
+  DefaultTextStyle,
+  getTextBounds,
+  DefaultTextMeasureContribution,
+  TextMeasureContribution,
+  ContainerModule
+} from '@visactor/vrender';
+// eslint-disable-next-line max-len
+// import {
+//   DefaultTextMeasureContribution,
+//   TextMeasureContribution
+// } from '@visactor/vrender/es/core/contributions/textMeasure/textMeasure-contribution';
 import type { ITextMeasureOption, ITextSize } from '@visactor/vutils';
-// eslint-disable-next-line no-duplicate-imports
 import { TextMeasure } from '@visactor/vutils';
-import type { ITextGraphicAttribute } from '@visactor/vrender';
-import { getTextBounds } from '@visactor/vrender';
-// import type { ITextMarkSpec } from '../typings';
-// import { DEFAULT_TEXT_FONT_FAMILY, DEFAULT_TEXT_FONT_SIZE } from '../theme';
 
-export const DEFAULT_TEXT_FONT_FAMILY =
-  // eslint-disable-next-line max-len
-  'PingFang SC,Microsoft Yahei,system-ui,-apple-system,segoe ui,Roboto,Helvetica,Arial,sans-serif, apple color emoji,segoe ui emoji,segoe ui symbol';
-
-export const DEFAULT_TEXT_FONT_SIZE = 11;
+export default new ContainerModule((bind, unbind, isBound, rebind) => {
+  bind(FastTextMeasureContribution).toSelf().inSingletonScope();
+  rebind(TextMeasureContribution).toService(FastTextMeasureContribution);
+});
 
 export const initTextMeasure = (
   textSpec?: ITextGraphicAttribute,
@@ -20,13 +27,13 @@ export const initTextMeasure = (
   return new TextMeasure<ITextGraphicAttribute>(
     {
       defaultFontParams: {
-        fontFamily: DEFAULT_TEXT_FONT_FAMILY,
-        fontSize: DEFAULT_TEXT_FONT_SIZE
+        fontFamily: DefaultTextStyle.fontFamily,
+        fontSize: DefaultTextStyle.fontSize
       },
       getTextBounds: useNaiveCanvas ? undefined : getTextBounds,
-      specialCharSet: `{}()//&-/: .,@%'"~${
+      specialCharSet: `{}()//&-/: .,@%'"~…${
         TextMeasure.ALPHABET_CHAR_SET
-      }${TextMeasure.ALPHABET_CHAR_SET.toUpperCase()}`,
+      }${TextMeasure.ALPHABET_CHAR_SET.toUpperCase()}0123456789`,
       ...(option ?? {})
     },
     textSpec
@@ -35,8 +42,13 @@ export const initTextMeasure = (
 
 const fastTextMeasureCache: Map<string, TextMeasure<ITextGraphicAttribute>> = new Map();
 
-function getFastTextMeasure(fontSize: number, fontWeight: string | number, fontFamily: string) {
-  const key = `${fontSize}-${fontWeight}-${fontFamily}`;
+function getFastTextMeasure(
+  fontSize: number,
+  fontWeight: string | number,
+  fontFamily: string,
+  fontStyle: string = 'normal'
+) {
+  const key = `${fontSize}-${fontWeight}-${fontFamily}-${fontStyle}`;
   const cache = fastTextMeasureCache.get(key);
   if (cache) {
     return cache;
@@ -45,10 +57,50 @@ function getFastTextMeasure(fontSize: number, fontWeight: string | number, fontF
     // 16px sans-serif
     fontSize,
     fontFamily,
-    fontWeight
+    fontWeight,
+    fontStyle
   });
   fastTextMeasureCache.set(key, fastTextMeasure);
   return fastTextMeasure;
+}
+
+export class FastTextMeasureContribution extends DefaultTextMeasureContribution {
+  /**
+   * 获取text宽度，measureText.width
+   * @param text
+   * @param options
+   */
+  measureTextWidth(text: string, options: TextOptionsType): number {
+    // if (!this.context) {
+    //   return this.estimate(text, options).width;
+    // }
+    // this.context.setTextStyleWithoutAlignBaseline(options);
+    // const textMeasure = this.context.measureText(text);
+    // return textMeasure.width;
+
+    const { fontSize, fontFamily = 'sans-serif', fontWeight = 'normal', fontStyle = 'normal' } = options;
+    const fastTextMeasure = getFastTextMeasure(fontSize, fontWeight, fontFamily, fontStyle);
+    const textMeasure = fastTextMeasure.measure(text);
+    return textMeasure.width;
+  }
+
+  /**
+   * 获取text测量对象
+   * @param text
+   * @param options
+   */
+  measureText(text: string, options: TextOptionsType): TextMetrics | { width: number } {
+    // if (!this.context) {
+    //   return this.estimate(text, options);
+    // }
+    // this.context.setTextStyleWithoutAlignBaseline(options);
+    // return this.context.measureText(text);
+
+    const { fontSize, fontFamily = 'sans-serif', fontWeight = 'normal', fontStyle = 'normal' } = options;
+    const fastTextMeasure = getFastTextMeasure(fontSize, fontWeight, fontFamily, fontStyle);
+    const textMeasure = fastTextMeasure.measure(text);
+    return textMeasure;
+  }
 }
 
 export class TextMeasureTool {
@@ -58,8 +110,8 @@ export class TextMeasureTool {
    * @param options
    */
   measureText(text: string, options: ITextGraphicAttribute): ITextSize {
-    const { fontSize, fontFamily, fontWeight } = options;
-    const fastTextMeasure = getFastTextMeasure(fontSize, fontWeight, fontFamily);
+    const { fontSize, fontFamily = 'sans-serif', fontWeight = 'normal', fontStyle = 'normal' } = options;
+    const fastTextMeasure = getFastTextMeasure(fontSize, fontWeight, fontFamily, fontStyle);
     const textMeasure = fastTextMeasure.measure(text);
     return textMeasure;
   }
@@ -70,8 +122,8 @@ export class TextMeasureTool {
    * @param options
    */
   measureTextWidth(text: string, options: ITextGraphicAttribute): number {
-    const { fontSize, fontFamily = 'sans-serif', fontWeight = 'normal' } = options;
-    const fastTextMeasure = getFastTextMeasure(fontSize, fontWeight, fontFamily);
+    const { fontSize, fontFamily = 'sans-serif', fontWeight = 'normal', fontStyle = 'normal' } = options;
+    const fastTextMeasure = getFastTextMeasure(fontSize, fontWeight, fontFamily, fontStyle);
     const textMeasure = fastTextMeasure.measure(text);
     return textMeasure.width;
   }

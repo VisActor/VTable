@@ -88,7 +88,7 @@ export function computeColsWidth(table: BaseTableAPI, colStart?: number, colEnd?
           totalDrawWidth -
           (update
             ? newWidths.reduce((acr, cur, index) => {
-                if (index >= table.rowHeaderLevelCount && index <= table.colCount - table.rightFrozenColCount - 2) {
+                if (index >= table.rowHeaderLevelCount && index < newWidths.length - table.rightFrozenColCount - 1) {
                   return acr + cur;
                 }
                 return acr;

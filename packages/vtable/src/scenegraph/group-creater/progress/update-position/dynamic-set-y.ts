@@ -30,7 +30,7 @@ export async function dynamicSetY(y: number, proxy: SceneProxy) {
     proxy.updateBody(y - proxy.deltaY);
   }
 
-  proxy.table.scenegraph.updateNextFrame();
+  // proxy.table.scenegraph.updateNextFrame();
 }
 
 async function moveCell(

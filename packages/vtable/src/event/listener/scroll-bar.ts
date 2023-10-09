@@ -33,11 +33,13 @@ export function bindScrollBarListener(eventManeger: EventManeger) {
     }
   });
   scenegraph.component.vScrollBar.addEventListener('pointerup', () => {
+    stateManeger.fastScrolling = false;
     if (stateManeger.interactionState === InteractionState.scrolling) {
       stateManeger.updateInteractionState(InteractionState.default);
     }
   });
   scenegraph.component.vScrollBar.addEventListener('pointerupoutside', () => {
+    stateManeger.fastScrolling = false;
     if (stateManeger.interactionState === InteractionState.scrolling) {
       stateManeger.updateInteractionState(InteractionState.default);
     }
@@ -49,11 +51,13 @@ export function bindScrollBarListener(eventManeger: EventManeger) {
     }
   });
   scenegraph.component.hScrollBar.addEventListener('pointerup', () => {
+    stateManeger.fastScrolling = false;
     if (stateManeger.interactionState === InteractionState.scrolling) {
       stateManeger.updateInteractionState(InteractionState.default);
     }
   });
   scenegraph.component.hScrollBar.addEventListener('pointerupoutside', () => {
+    stateManeger.fastScrolling = false;
     if (stateManeger.interactionState === InteractionState.scrolling) {
       stateManeger.updateInteractionState(InteractionState.default);
     }
@@ -64,6 +68,7 @@ export function bindScrollBarListener(eventManeger: EventManeger) {
 
   // 监听滚动条组件scroll事件
   scenegraph.component.vScrollBar.addEventListener('scroll', (e: any) => {
+    stateManeger.fastScrolling = true;
     if (stateManeger.interactionState !== InteractionState.scrolling) {
       stateManeger.updateInteractionState(InteractionState.scrolling);
     }
@@ -72,6 +77,7 @@ export function bindScrollBarListener(eventManeger: EventManeger) {
   });
 
   scenegraph.component.hScrollBar.addEventListener('scroll', (e: any) => {
+    stateManeger.fastScrolling = true;
     if (stateManeger.interactionState !== InteractionState.scrolling) {
       stateManeger.updateInteractionState(InteractionState.scrolling);
     }
