@@ -2,7 +2,7 @@
   "changes": [
     {
       "comment": "docs: add docs about multi tree to pivot table\n\n",
-      "type": "patch",
+      "type": "minor",
       "packageName": "@visactor/vtable"
     }
   ],
