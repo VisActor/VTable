@@ -79,6 +79,9 @@ export interface TableEventHandlersEventArgumentMap {
     scrollHeight: number;
     viewWidth: number;
     viewHeight: number;
+    scrollDirection: 'horizontal' | 'vertical';
+    scrollRatioX?: number;
+    scrollRatioY?: number;
   };
   resize_column: { col: number; colWidth: number };
   resize_column_end: { col: number; columns: number[] };
@@ -150,6 +153,8 @@ export interface TableEventHandlersEventArgumentMap {
 
   mouseenter_axis: MousePointerCellEvent & { axisPosition: 'left' | 'right' | 'top' | 'bottom' };
   mouseleave_axis: MousePointerCellEvent & { axisPosition: 'left' | 'right' | 'top' | 'bottom' };
+
+  after_stage_render: null;
 }
 export interface DrillMenuEventInfo {
   dimensionKey: string | number;
@@ -210,4 +215,6 @@ export interface TableEventHandlersReturnMap {
 
   mouseenter_axis: void;
   mouseleave_axis: void;
+
+  after_stage_render: void;
 }

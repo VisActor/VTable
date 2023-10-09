@@ -299,7 +299,7 @@ export class SimpleHeaderLayoutMap implements LayoutMapAPI {
       (this.transpose ? this._columns[row] && this._columns[row].field : this._columns[col] && this._columns[col].field)
     );
   }
-  getHeaderCellAdress(id: number): CellAddress | undefined {
+  getHeaderCellAdressById(id: number): CellAddress | undefined {
     for (let i = 0; i < this._headerCellIds.length; i++) {
       const row = this._headerCellIds[i];
       for (let j = 0; j < row.length; j++) {
@@ -316,7 +316,7 @@ export class SimpleHeaderLayoutMap implements LayoutMapAPI {
   /** 根据field获取表头cell位置 */
   getHeaderCellAddressByField(field: string): CellAddress | undefined {
     const hd = this.headerObjects.find((col: any) => col && col.field === field);
-    return this.getHeaderCellAdress(hd.id as number);
+    return this.getHeaderCellAdressById(hd.id as number);
   }
   getBody(col: number, _row: number): ColumnData {
     return this.transpose ? this._columns[_row] : this._columns[col];

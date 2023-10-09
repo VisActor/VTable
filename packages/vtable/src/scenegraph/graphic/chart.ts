@@ -1,9 +1,8 @@
 import type { GraphicType, IGroupGraphicAttribute } from '@visactor/vrender';
 import { genNumberType, Group } from '@visactor/vrender';
-import { Bounds, cloneDeep } from '@visactor/vutils';
+import { Bounds } from '@visactor/vutils';
 import type { BaseTableAPI } from '../../ts-types/base-table';
 import type { PivotChart } from '../../PivotChart';
-import type { PivotLayoutMap } from '../../layout/pivot-layout';
 
 interface IChartGraphicAttribute extends IGroupGraphicAttribute {
   canvas: HTMLCanvasElement;
@@ -30,7 +29,7 @@ export class Chart extends Group {
   chartInstance: any;
   activeChartInstance: any;
   active: boolean;
-  cacheCanvas: HTMLCanvasElement; // HTMLCanvasElement
+  cacheCanvas: HTMLCanvasElement | { x: number; y: number; width: number; height: number; canvas: HTMLCanvasElement }[]; // HTMLCanvasElement
 
   constructor(params: IChartGraphicAttribute) {
     super(params);
@@ -95,6 +94,7 @@ export class Chart extends Group {
       y2: y2 - table.scrollTop
     });
     this.activeChartInstance = new this.attribute.ClassType(this.attribute.spec, {
+      // disableDirtyBounds: true,
       renderCanvas: this.attribute.canvas,
       mode: 'desktop-browser',
       canvasControled: false,

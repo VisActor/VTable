@@ -32,7 +32,7 @@ export function createTable() {
           indicatorKey: '230713183656009'
         },
         {
-          value: '销售额',
+          // value: '销售额',
           indicatorKey: '230417171050025'
         },
         {

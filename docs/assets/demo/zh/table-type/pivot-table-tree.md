@@ -7,9 +7,9 @@ order: 1-5
 link: '../guide/table_type/Pivot_table/pivot_table_tree'
 ---
 
-# 透视表格
+# 透视表格树形展示
 
-透视表格
+透视表格树形展示
 
 ## 关键配置
 

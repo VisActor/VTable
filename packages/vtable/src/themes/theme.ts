@@ -31,7 +31,9 @@ import type {
   FontFamilyPropertyDefine,
   FontWeightPropertyDefine,
   FontVariantPropertyDefine,
-  FontStylePropertyDefine
+  FontStylePropertyDefine,
+  TextAlignType,
+  TextBaselineType
 } from '../ts-types';
 import { getChainSafe } from '../tools/helper';
 import { changeColor, ingoreNoneValueMerge, merge } from '../tools/util';
@@ -45,7 +47,6 @@ import {
   DEFAULTFONTFAMILY,
   DEFAULTFONTSIZE
 } from '../tools/global';
-import type { TextAlignType, TextBaselineType } from '@visactor/vrender';
 //private symbol
 // const _ = getSymbol();
 

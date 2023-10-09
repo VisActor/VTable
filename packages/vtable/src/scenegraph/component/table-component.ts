@@ -480,7 +480,8 @@ export class TableComponent {
   updateHorizontalScrollBarPos(leftRatio: number) {
     const range = this.hScrollBar.attribute.range;
     const size = range[1] - range[0];
-    this.hScrollBar.setAttribute('range', [leftRatio, leftRatio + size]);
+    const range0 = leftRatio * (1 - size);
+    this.hScrollBar.setAttribute('range', [range0, range0 + size]);
     const bounds = this.hScrollBar.AABBBounds && this.hScrollBar.globalAABBBounds;
     (this.hScrollBar as any)._viewPosition = {
       x: bounds.x1,

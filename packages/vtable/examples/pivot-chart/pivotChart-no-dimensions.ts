@@ -4,18 +4,8 @@ import VChart from '@visactor/vchart';
 const CONTAINER_ID = 'vTable';
 VTable.register.chartModule('vchart', VChart);
 export function createTable() {
-  const rowTree = [
-    {
-      dimensionKey: '',
-      value: ''
-    }
-  ];
-  const columnTree = [
-    {
-      dimensionKey: '',
-      value: ''
-    }
-  ];
+  const rowTree = [];
+  const columnTree = [];
   const columns: (VTable.IDimension | string)[] = [];
   const rows = [];
   const indicators: VTable.TYPES.IIndicator[] = [

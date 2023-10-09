@@ -7,36 +7,64 @@ const CONTAINER_ID = 'vTable';
 VTable.register.chartModule('vchart', VChart);
 export function createTable() {
   const option = {
-    rowTree: [
-      {
-        dimensionKey: '',
-        value: ''
-      }
-    ],
-    columnTree: [
-      {
-        dimensionKey: '',
-        value: ''
-      }
-    ],
-    rows: [],
-    columns: [],
-    defaultRowHeight: 200,
-    defaultHeaderRowHeight: 30,
-    defaultColWidth: 280,
-    defaultHeaderColWidth: [80, 50],
-    indicatorTitle: 'indicator',
-    corner: {
-      titleOnDimension: 'row',
-      headerStyle: {
-        autoWrapText: true,
-        padding: 0
-      }
-    },
     widthMode: 'adaptive',
     heightMode: 'adaptive',
-    autoWrapText: true,
-    seriesField: '20001',
+    columnTree: [
+      {
+        dimensionKey: '231007205939033',
+        value: '一级'
+      },
+      {
+        dimensionKey: '231007205939033',
+        value: '二级'
+      },
+      {
+        dimensionKey: '231007205939033',
+        value: '当日'
+      },
+      {
+        dimensionKey: '231007205939033',
+        value: '标准级'
+      }
+    ],
+    rowTree: [
+      {
+        dimensionKey: '231007205939027',
+        value: '东北'
+      },
+      {
+        dimensionKey: '231007205939027',
+        value: '中南'
+      },
+      {
+        dimensionKey: '231007205939027',
+        value: '华东'
+      },
+      {
+        dimensionKey: '231007205939027',
+        value: '华北'
+      },
+      {
+        dimensionKey: '231007205939027',
+        value: '西北'
+      },
+      {
+        dimensionKey: '231007205939027',
+        value: '西南'
+      }
+    ],
+    columns: [
+      {
+        dimensionKey: '231007205939033',
+        title: '邮寄方式'
+      }
+    ],
+    rows: [
+      {
+        dimensionKey: '231007205939027',
+        title: '地区'
+      }
+    ],
     axes: [
       {
         type: 'band',
@@ -46,6 +74,7 @@ export function createTable() {
         grid: {
           visible: false,
           style: {
+            zIndex: 150,
             stroke: '#DADCDD',
             lineWidth: 1,
             lineDash: [4, 2]
@@ -62,205 +91,60 @@ export function createTable() {
         },
         title: {
           visible: false,
-          text: '类别',
+          space: 5,
+          text: '细分',
           style: {
             fontSize: 12,
             fill: '#363839',
             fontWeight: 'normal'
           }
         },
+        sampling: false,
+        zIndex: 200,
         label: {
           visible: true,
+          space: 8,
           style: {
             fontSize: 12,
             fill: '#6F6F6F',
             angle: 0,
-            fontWeight: 'normal'
+            fontWeight: 'normal',
+            direction: 'horizontal'
           },
-          minGap: 4,
+          autoHide: true,
+          autoHideMethod: 'greedy',
           flush: true
         },
         hover: true,
         background: {
-          visible: false,
+          visible: true,
           state: {
             hover: {
               fillOpacity: 0.08,
               fill: '#141414'
+            },
+            hover_reverse: {
+              fillOpacity: 0.08,
+              fill: '#141414'
             }
           }
-        }
+        },
+        paddingInner: [0.15, 0.1],
+        paddingOuter: [0.075, 0.1]
       }
     ],
-    records: {
-      '0': [
-        {
-          '10001': '销售额',
-          '10003': '230810121242018',
-          '20001': '销售额',
-          '010002': '5734340.8279953',
-          '230810121242018': '5734340.8279953',
-          '230810121242024': '家具'
-        },
-        {
-          '10001': '销售额',
-          '10003': '230810121242018',
-          '20001': '销售额',
-          '010002': '4865589.799788475',
-          '230810121242018': '4865589.799788475',
-          '230810121242024': '办公用品'
-        },
-        {
-          '10001': '销售额',
-          '10003': '230810121242018',
-          '20001': '销售额',
-          '010002': '5469023.505149841',
-          '230810121242018': '5469023.505149841',
-          '230810121242024': '技术'
-        }
-      ],
-      '1': [
-        {
-          '10001': '利润',
-          '10003': '230810121242021',
-          '20001': '利润',
-          '110002': '638735.6293110773',
-          '230810121242021': '638735.6293110773',
-          '230810121242024': '家具'
-        },
-        {
-          '10001': '利润',
-          '10003': '230810121242021',
-          '20001': '利润',
-          '110002': '757640.3536444083',
-          '230810121242021': '757640.3536444083',
-          '230810121242024': '办公用品'
-        },
-        {
-          '10001': '利润',
-          '10003': '230810121242021',
-          '20001': '利润',
-          '110002': '751162.94417274',
-          '230810121242021': '751162.94417274',
-          '230810121242024': '技术'
-        }
-      ]
-    },
-    indicatorsAsCol: true,
     indicators: [
       {
         indicatorKey: '0',
         width: 'auto',
-        caption: 'caption',
-        columnType: 'chart',
+        title: '',
+        cellType: 'chart',
         chartModule: 'vchart',
         chartSpec: {
-          type: 'bar',
-          xField: ['010002'],
-          yField: ['230810121242024', '10001'],
-          stack: false,
-          label: {
-            visible: false,
-            overlap: {
-              hideOnHit: true,
-              clampForce: true
-            },
-            style: {
-              fontSize: 12,
-              fontWeight: 'normal',
-              fill: null,
-              strokeOpacity: 1
-            },
-            position: 'inside',
-            smartInvert: false
-          },
-          area: {
-            style: {
-              curveType: {
-                type: 'ordinal',
-                field: '20001',
-                range: ['linear'],
-                domain: ['销售额', '利润']
-              }
-            }
-          },
-          line: {
-            style: {
-              curveType: {
-                type: 'ordinal',
-                field: '20001',
-                range: ['linear'],
-                domain: ['销售额', '利润']
-              },
-              lineWidth: {
-                type: 'ordinal',
-                field: '20001',
-                range: [3],
-                domain: ['销售额', '利润']
-              },
-              lineDash: {
-                type: 'ordinal',
-                field: '20001',
-                range: [[0, 0]],
-                domain: ['销售额', '利润']
-              }
-            }
-          },
-          point: {
-            style: {
-              shape: {
-                type: 'ordinal',
-                field: '20001',
-                range: ['circle'],
-                domain: ['销售额', '利润']
-              },
-              size: {
-                type: 'ordinal',
-                field: '20001',
-                range: [8],
-                domain: ['销售额', '利润']
-              },
-              fill: {
-                field: '20001',
-                type: 'ordinal',
-                range: ['#2E62F1', '#4DC36A'],
-                specified: {},
-                domain: ['销售额', '利润']
-              },
-              stroke: {
-                field: '20001',
-                type: 'ordinal',
-                range: ['#2E62F1', '#4DC36A'],
-                specified: {},
-                domain: ['销售额', '利润']
-              },
-              strokeOpacity: {
-                type: 'ordinal',
-                field: '20001',
-                range: [1],
-                domain: ['销售额', '利润']
-              },
-              fillOpacity: {
-                type: 'ordinal',
-                field: '20001',
-                range: [1],
-                domain: ['销售额', '利润']
-              }
-            },
-            state: {
-              hover: {
-                lineWidth: 2,
-                fillOpacity: 1,
-                strokeOpacity: 1,
-                scaleX: 1.5,
-                scaleY: 1.5
-              }
-            }
-          },
-          direction: 'horizontal',
+          type: 'common',
           axes: [
             {
-              id: '0',
+              id: 'main-0',
               type: 'linear',
               tick: {
                 visible: false,
@@ -269,9 +153,11 @@ export function createTable() {
                 }
               },
               niceType: 'accurateFirst',
+              zIndex: 200,
               grid: {
                 visible: true,
                 style: {
+                  zIndex: 150,
                   stroke: '#DADCDD',
                   lineWidth: 1,
                   lineDash: [4, 2]
@@ -289,20 +175,30 @@ export function createTable() {
               title: {
                 visible: true,
                 text: '销售额',
+                space: 8,
                 style: {
                   fontSize: 12,
                   fill: '#363839',
                   fontWeight: 'normal'
                 }
               },
+              sampling: false,
               label: {
                 visible: true,
+                space: 4,
+                flush: true,
+                padding: 0,
                 style: {
                   fontSize: 12,
+                  maxLineWidth: 174,
                   fill: '#6F6F6F',
                   angle: 0,
-                  fontWeight: 'normal'
-                }
+                  fontWeight: 'normal',
+                  dy: -1,
+                  direction: 'horizontal'
+                },
+                autoHide: true,
+                autoHideMethod: 'greedy'
               },
               hover: false,
               background: {
@@ -311,168 +207,22 @@ export function createTable() {
                   hover: {
                     fillOpacity: 0.08,
                     fill: '#141414'
+                  },
+                  hover_reverse: {
+                    fillOpacity: 0.08,
+                    fill: '#141414'
                   }
                 }
               },
               zero: true,
-              nice: true
-            }
-          ],
-          data: {
-            sortIndex: 0,
-            id: 'data',
-            fields: {
-              '10001': {
-                alias: '指标名称 '
-              },
-              '20001': {
-                alias: '图例项 ',
-                domain: ['销售额', '利润'],
-                lockStatisticsByDomain: true
-              },
-              '110002': {
-                alias: '指标值 '
-              },
-              '010002': {
-                alias: '指标值 '
-              },
-              '230810121242018': {
-                alias: '销售额'
-              },
-              '230810121242021': {
-                alias: '利润'
-              },
-              '230810121242024': {
-                alias: '类别',
-                domain: ['办公用品', '技术', '家具'],
-                lockStatisticsByDomain: true,
-                sortIndex: 0
-              }
-            }
-          },
-          seriesField: '20001',
-          color: {
-            field: '20001',
-            type: 'ordinal',
-            range: ['#2E62F1', '#4DC36A'],
-            specified: {},
-            domain: ['销售额', '利润']
-          }
-        }
-      },
-      {
-        indicatorKey: '1',
-        width: 'auto',
-        caption: 'caption',
-        columnType: 'chart',
-        chartModule: 'vchart',
-        chartSpec: {
-          type: 'line',
-          xField: ['110002'],
-          yField: ['230810121242024', '10001'],
-          stack: false,
-          label: {
-            visible: false,
-            overlap: {
-              hideOnHit: true,
-              clampForce: true
-            },
-            style: {
-              fontSize: 12,
-              fontWeight: 'normal',
-              fill: null,
-              strokeOpacity: 1
-            },
-            position: 'inside',
-            smartInvert: false
-          },
-          area: {
-            style: {
-              curveType: {
-                type: 'ordinal',
-                field: '20001',
-                range: ['linear'],
-                domain: ['销售额', '利润']
-              }
-            }
-          },
-          line: {
-            style: {
-              curveType: {
-                type: 'ordinal',
-                field: '20001',
-                range: ['linear'],
-                domain: ['销售额', '利润']
-              },
-              lineWidth: {
-                type: 'ordinal',
-                field: '20001',
-                range: [3],
-                domain: ['销售额', '利润']
-              },
-              lineDash: {
-                type: 'ordinal',
-                field: '20001',
-                range: [[0, 0]],
-                domain: ['销售额', '利润']
-              }
-            }
-          },
-          point: {
-            style: {
-              shape: {
-                type: 'ordinal',
-                field: '20001',
-                range: ['circle'],
-                domain: ['销售额', '利润']
-              },
-              size: {
-                type: 'ordinal',
-                field: '20001',
-                range: [8],
-                domain: ['销售额', '利润']
-              },
-              fill: {
-                field: '20001',
-                type: 'ordinal',
-                range: ['#2E62F1', '#4DC36A'],
-                specified: {},
-                domain: ['销售额', '利润']
-              },
-              stroke: {
-                field: '20001',
-                type: 'ordinal',
-                range: ['#2E62F1', '#4DC36A'],
-                specified: {},
-                domain: ['销售额', '利润']
-              },
-              strokeOpacity: {
-                type: 'ordinal',
-                field: '20001',
-                range: [1],
-                domain: ['销售额', '利润']
-              },
-              fillOpacity: {
-                type: 'ordinal',
-                field: '20001',
-                range: [1],
-                domain: ['销售额', '利润']
+              sync: {
+                axisId: 'sub-0',
+                zeroAlign: true,
+                tickAlign: false
               }
             },
-            state: {
-              hover: {
-                lineWidth: 2,
-                fillOpacity: 1,
-                strokeOpacity: 1,
-                scaleX: 1.5,
-                scaleY: 1.5
-              }
-            }
-          },
-          direction: 'horizontal',
-          axes: [
             {
-              id: '1',
+              id: 'sub-0',
               type: 'linear',
               tick: {
                 visible: false,
@@ -481,15 +231,17 @@ export function createTable() {
                 }
               },
               niceType: 'accurateFirst',
+              zIndex: 200,
               grid: {
-                visible: true,
+                visible: false,
                 style: {
+                  zIndex: 150,
                   stroke: '#DADCDD',
                   lineWidth: 1,
                   lineDash: [4, 2]
                 }
               },
-              orient: 'bottom',
+              orient: 'top',
               visible: true,
               domainLine: {
                 visible: true,
@@ -501,26 +253,40 @@ export function createTable() {
               title: {
                 visible: true,
                 text: '利润',
+                space: 8,
                 style: {
                   fontSize: 12,
                   fill: '#363839',
                   fontWeight: 'normal'
                 }
               },
+              sampling: false,
               label: {
                 visible: true,
+                space: 4,
+                flush: true,
+                padding: 0,
                 style: {
                   fontSize: 12,
+                  maxLineWidth: 174,
                   fill: '#6F6F6F',
                   angle: 0,
-                  fontWeight: 'normal'
-                }
+                  fontWeight: 'normal',
+                  dy: -1,
+                  direction: 'horizontal'
+                },
+                autoHide: true,
+                autoHideMethod: 'greedy'
               },
               hover: false,
               background: {
                 visible: true,
                 state: {
                   hover: {
+                    fillOpacity: 0.08,
+                    fill: '#141414'
+                  },
+                  hover_reverse: {
                     fillOpacity: 0.08,
                     fill: '#141414'
                   }
@@ -530,37 +296,360 @@ export function createTable() {
               nice: true
             }
           ],
-          data: {
-            sortIndex: 1,
-            id: 'data',
-            fields: {
-              '10001': {
-                alias: '指标名称 '
+          stackInverse: false,
+          series: [
+            {
+              type: 'bar',
+              yField: ['231007205939042', '10001'],
+              xField: '010011',
+              seriesField: '20001',
+              direction: 'horizontal',
+              data: {
+                id: 'main-data',
+                fields: {
+                  '10001': {
+                    alias: '指标名称 '
+                  },
+                  '20001': {
+                    alias: '图例项 ',
+                    domain: ['销售额', '利润'],
+                    sortIndex: 0,
+                    lockStatisticsByDomain: true
+                  },
+                  '010011': {
+                    alias: '指标值(主轴) '
+                  },
+                  '010012': {
+                    alias: '指标值(次轴) '
+                  },
+                  '231007205939013': {
+                    alias: '销售额'
+                  },
+                  '231007205939019': {
+                    alias: '利润'
+                  },
+                  '231007205939027': {
+                    alias: '地区'
+                  },
+                  '231007205939033': {
+                    alias: '邮寄方式'
+                  },
+                  '231007205939042': {
+                    alias: '细分',
+                    sortIndex: 0
+                  }
+                }
               },
-              '20001': {
-                alias: '图例项 ',
-                domain: ['销售额', '利润'],
-                lockStatisticsByDomain: true
+              stackInverse: false,
+              line: {
+                style: {
+                  curveType: {
+                    type: 'ordinal',
+                    field: '20001',
+                    range: ['linear'],
+                    domain: ['销售额', '利润']
+                  },
+                  lineWidth: {
+                    type: 'ordinal',
+                    field: '20001',
+                    range: [3],
+                    domain: ['销售额', '利润']
+                  },
+                  lineDash: {
+                    type: 'ordinal',
+                    field: '20001',
+                    range: [[0, 0]],
+                    domain: ['销售额', '利润']
+                  }
+                }
               },
-              '110002': {
-                alias: '指标值 '
+              area: {
+                style: {
+                  curveType: {
+                    type: 'ordinal',
+                    field: '20001',
+                    range: ['linear'],
+                    domain: ['销售额', '利润']
+                  }
+                }
               },
-              '010002': {
-                alias: '指标值 '
+              point: {
+                style: {
+                  shape: {
+                    type: 'ordinal',
+                    field: '20001',
+                    range: ['circle'],
+                    domain: ['销售额', '利润']
+                  },
+                  size: {
+                    type: 'ordinal',
+                    field: '20001',
+                    range: [7.0898154036220635],
+                    domain: ['销售额', '利润']
+                  },
+                  strokeOpacity: {
+                    type: 'ordinal',
+                    field: '20001',
+                    range: [1],
+                    domain: ['销售额', '利润']
+                  },
+                  fillOpacity: {
+                    type: 'ordinal',
+                    field: '20001',
+                    range: [1],
+                    domain: ['销售额', '利润']
+                  }
+                },
+                state: {
+                  hover: {
+                    lineWidth: 2,
+                    fillOpacity: 1,
+                    strokeOpacity: 1,
+                    scaleX: 1.5,
+                    scaleY: 1.5
+                  }
+                }
               },
-              '230810121242018': {
-                alias: '销售额'
+              invalidType: 'break',
+              hover: {
+                enable: true
               },
-              '230810121242021': {
-                alias: '利润'
+              select: {
+                enable: true
               },
-              '230810121242024': {
-                alias: '类别',
-                domain: ['办公用品', '技术', '家具'],
-                lockStatisticsByDomain: true,
-                sortIndex: 0
+              bar: {
+                state: {
+                  hover: {
+                    cursor: 'pointer',
+                    fillOpacity: 0.8,
+                    stroke: '#58595B',
+                    lineWidth: 1,
+                    zIndex: 500
+                  },
+                  selected: {
+                    cursor: 'pointer',
+                    fillOpacity: 1,
+                    stroke: '#58595B',
+                    lineWidth: 1
+                  },
+                  selected_reverse: {
+                    fillOpacity: 0.3,
+                    strokeWidth: 0.3
+                  }
+                }
+              },
+              label: {
+                visible: false,
+                overlap: {
+                  hideOnHit: true,
+                  avoidBaseMark: false,
+                  strategy: [
+                    {
+                      type: 'moveY',
+                      offset: [
+                        -20, -19, -18, -17, -16, -15, -14, -13, -12, -11, -10, -9, -8, -7, -6, -5, -4, -3, -2, -1, 0, 1,
+                        2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20
+                      ]
+                    },
+                    {
+                      type: 'moveX',
+                      offset: [
+                        -20, -19, -18, -17, -16, -15, -14, -13, -12, -11, -10, -9, -8, -7, -6, -5, -4, -3, -2, -1, 0, 1,
+                        2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20
+                      ]
+                    }
+                  ],
+                  clampForce: true
+                },
+                style: {
+                  fontSize: 12,
+                  fontWeight: 'normal',
+                  zIndex: 400,
+                  fill: null,
+                  strokeOpacity: 1
+                },
+                position: 'inside',
+                smartInvert: false
+              }
+            },
+            {
+              type: 'line',
+              yField: ['231007205939042', '10001'],
+              xField: '010012',
+              seriesField: '20001',
+              direction: 'horizontal',
+              data: {
+                sortIndex: 0,
+                id: 'sub-data',
+                fields: {
+                  '10001': {
+                    alias: '指标名称 '
+                  },
+                  '20001': {
+                    alias: '图例项 ',
+                    domain: ['销售额', '利润'],
+                    sortIndex: 0,
+                    lockStatisticsByDomain: true
+                  },
+                  '010011': {
+                    alias: '指标值(主轴) '
+                  },
+                  '010012': {
+                    alias: '指标值(次轴) '
+                  },
+                  '231007205939013': {
+                    alias: '销售额'
+                  },
+                  '231007205939019': {
+                    alias: '利润'
+                  },
+                  '231007205939027': {
+                    alias: '地区'
+                  },
+                  '231007205939033': {
+                    alias: '邮寄方式'
+                  },
+                  '231007205939042': {
+                    alias: '细分',
+                    sortIndex: 0
+                  }
+                }
+              },
+              stackInverse: false,
+              line: {
+                style: {
+                  curveType: {
+                    type: 'ordinal',
+                    field: '20001',
+                    range: ['linear'],
+                    domain: ['销售额', '利润']
+                  },
+                  lineWidth: {
+                    type: 'ordinal',
+                    field: '20001',
+                    range: [3],
+                    domain: ['销售额', '利润']
+                  },
+                  lineDash: {
+                    type: 'ordinal',
+                    field: '20001',
+                    range: [[0, 0]],
+                    domain: ['销售额', '利润']
+                  }
+                }
+              },
+              area: {
+                style: {
+                  curveType: {
+                    type: 'ordinal',
+                    field: '20001',
+                    range: ['linear'],
+                    domain: ['销售额', '利润']
+                  }
+                }
+              },
+              point: {
+                style: {
+                  shape: {
+                    type: 'ordinal',
+                    field: '20001',
+                    range: ['circle'],
+                    domain: ['销售额', '利润']
+                  },
+                  size: {
+                    type: 'ordinal',
+                    field: '20001',
+                    range: [7.0898154036220635],
+                    domain: ['销售额', '利润']
+                  },
+                  strokeOpacity: {
+                    type: 'ordinal',
+                    field: '20001',
+                    range: [1],
+                    domain: ['销售额', '利润']
+                  },
+                  fillOpacity: {
+                    type: 'ordinal',
+                    field: '20001',
+                    range: [1],
+                    domain: ['销售额', '利润']
+                  }
+                },
+                state: {
+                  hover: {
+                    lineWidth: 2,
+                    fillOpacity: 1,
+                    strokeOpacity: 1,
+                    scaleX: 1.5,
+                    scaleY: 1.5
+                  }
+                }
+              },
+              invalidType: 'break',
+              hover: {
+                enable: true
+              },
+              select: {
+                enable: true
+              },
+              bar: {
+                state: {
+                  hover: {
+                    cursor: 'pointer',
+                    fillOpacity: 0.8,
+                    stroke: '#58595B',
+                    lineWidth: 1,
+                    zIndex: 500
+                  },
+                  selected: {
+                    cursor: 'pointer',
+                    fillOpacity: 1,
+                    stroke: '#58595B',
+                    lineWidth: 1
+                  },
+                  selected_reverse: {
+                    fillOpacity: 0.3,
+                    strokeWidth: 0.3
+                  }
+                }
+              },
+              label: {
+                visible: false,
+                overlap: {
+                  hideOnHit: true,
+                  avoidBaseMark: false,
+                  strategy: [
+                    {
+                      type: 'moveY',
+                      offset: [
+                        -20, -19, -18, -17, -16, -15, -14, -13, -12, -11, -10, -9, -8, -7, -6, -5, -4, -3, -2, -1, 0, 1,
+                        2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20
+                      ]
+                    },
+                    {
+                      type: 'moveX',
+                      offset: [
+                        -20, -19, -18, -17, -16, -15, -14, -13, -12, -11, -10, -9, -8, -7, -6, -5, -4, -3, -2, -1, 0, 1,
+                        2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20
+                      ]
+                    }
+                  ],
+                  clampForce: true
+                },
+                style: {
+                  fontSize: 12,
+                  fontWeight: 'normal',
+                  zIndex: 400,
+                  fill: null,
+                  strokeOpacity: 1
+                },
+                position: 'inside',
+                smartInvert: false
               }
             }
+          ],
+          tooltip: {
+            handler: {}
           },
           seriesField: '20001',
           color: {
@@ -569,811 +658,1471 @@ export function createTable() {
             range: ['#2E62F1', '#4DC36A'],
             specified: {},
             domain: ['销售额', '利润']
-          }
-        }
-      }
-    ],
-    theme: {
-      bodyStyle: {
-        borderColor: 'rgba(0,4,20,0.2)',
-        borderLineWidth: [0, 0, 2, 0],
-        padding: [0, 0, 1, 0]
-      },
-      headerStyle: {
-        borderColor: 'rgba(0,4,20,0.2)',
-        fontSize: 12,
-        color: '#333333',
-        textAlign: 'center',
-        borderLineWidth: 0,
-        hover: {
-          cellBgColor: 'rgba(20, 20, 20, 0.08)'
-        }
-      },
-      rowHeaderStyle: {
-        borderColor: 'rgba(0,4,20,0.2)',
-        fontSize: 12,
-        color: '#333333',
-        borderLineWidth: 0,
-        hover: {
-          cellBgColor: 'rgba(20, 20, 20, 0.08)'
-        }
-      },
-      cornerHeaderStyle: {
-        borderColor: 'rgba(0,4,20,0.2)',
-        textAlign: 'center',
-        fontSize: 12,
-        color: '#333333',
-        fontWeight: 'bold',
-        borderLineWidth: [0, 0, 0, 0],
-        hover: {
-          cellBgColor: ''
-        }
-      },
-      cornerRightTopCellStyle: {
-        borderColor: 'rgba(0,4,20,0.2)',
-        borderLineWidth: 0,
-        hover: {
-          cellBgColor: ''
-        }
-      },
-      cornerLeftBottomCellStyle: {
-        borderColor: 'rgba(0,4,20,0.2)',
-        borderLineWidth: 0,
-        hover: {
-          cellBgColor: ''
-        }
-      },
-      cornerRightBottomCellStyle: {
-        borderColor: 'rgba(0,4,20,0.2)',
-        borderLineWidth: 0,
-        hover: {
-          cellBgColor: ''
-        }
-      },
-      rightFrozenStyle: {
-        borderColor: 'rgba(0,4,20,0.2)',
-        borderLineWidth: 0,
-        hover: {
-          cellBgColor: ''
-        }
-      },
-      bottomFrozenStyle: {
-        borderColor: 'rgba(0,4,20,0.2)',
-        borderLineWidth: 0,
-        hover: {
-          cellBgColor: 'rgba(20, 20, 20, 0.08)'
-        }
-      },
-      selectionStyle: {
-        cellBgColor: '',
-        cellBorderColor: ''
-      },
-      frameStyle: {
-        borderLineWidth: 0
-      }
-    },
-    legends: {
-      id: 'legend',
-      orient: 'bottom',
-      position: 'middle',
-      layoutType: 'normal',
-      visible: true,
-      hover: false,
-      maxRow: 1,
-      title: {
-        textStyle: {
-          fontSize: 12,
-          fill: '#6F6F6F'
-        }
-      },
-      item: {
-        spaceRow: 0,
-        spaceCol: 0,
-        padding: {
-          top: 4,
-          bottom: 4,
-          left: 4,
-          right: 22
-        },
-        background: {
-          style: {
-            fillOpacity: 0.001
-          }
-        },
-        label: {
-          style: {
-            fontSize: 12,
-            fill: '#6F6F6F'
-          }
-        },
-        shape: {
-          style: {
-            symbolType: 'square'
-          }
-        }
-      },
-      pager: {
-        textStyle: {},
-        handler: {
-          style: {},
-          state: {
-            disable: {}
-          }
-        }
-      },
-      data: [
-        {
-          label: '销售额',
-          shape: {
-            fill: '#2E62F1',
-            symbolType: 'square'
-          }
-        },
-        {
-          label: '利润',
-          shape: {
-            fill: '#4DC36A',
-            symbolType: 'square'
-          }
-        }
-      ],
-      padding: [16, 0, 0, 0]
-    },
-    hash: 'cc764d3439655437e6ac84d62e55ec37'
-  };
-  const option2 = {
-    rowTree: [
-      {
-        dimensionKey: '',
-        value: ''
-      }
-    ],
-    columnTree: [
-      {
-        dimensionKey: '',
-        value: ''
-      }
-    ],
-    rows: [],
-    columns: [],
-    defaultRowHeight: 200,
-    defaultHeaderRowHeight: 30,
-    defaultColWidth: 280,
-    defaultHeaderColWidth: [80, 50],
-    indicatorTitle: 'indicator',
-    corner: {
-      titleOnDimension: 'row',
-      headerStyle: {
-        autoWrapText: true,
-        padding: 0
-      }
-    },
-    widthMode: 'adaptive',
-    heightMode: 'adaptive',
-    autoWrapText: true,
-    seriesField: '20001',
-    axes: [
-      {
-        type: 'band',
-        tick: {
-          visible: false
-        },
-        grid: {
-          visible: true,
-          style: {
-            stroke: '#DADCDD',
-            lineWidth: 1,
-            lineDash: [4, 2]
-          }
-        },
-        orient: 'left',
-        visible: true,
-        domainLine: {
-          visible: true,
-          style: {
-            lineWidth: 1,
-            stroke: '#989999'
-          }
-        },
-        title: {
-          visible: false,
-          text: '类别',
-          style: {
-            fontSize: 12,
-            fill: '#363839',
-            fontWeight: 'normal'
-          }
-        },
-        label: {
-          visible: true,
-          style: {
-            fontSize: 12,
-            fill: '#6F6F6F',
-            angle: 0,
-            fontWeight: 'normal'
           },
-          minGap: 4,
-          flush: true
-        },
-        hover: true,
-        background: {
-          visible: false,
-          state: {
-            hover: {
-              fillOpacity: 0.08,
-              fill: '#141414'
-            }
+          crosshair: {
+            yField: {
+              visible: true
+            },
+            gridZIndex: 100
           }
         }
       }
     ],
+    indicatorsAsCol: true,
     records: {
       '0': [
         {
           '10001': '销售额',
-          '10003': '230810121242018',
+          '10003': '231007205939013',
           '20001': '销售额',
-          '010002': '5734340.8279953',
-          '230810121242018': '5734340.8279953',
-          '230810121242024': '家具'
+          '010011': '91632.74378585815',
+          '231007205939013': '91632.74378585815',
+          '231007205939027': '东北',
+          '231007205939033': '一级',
+          '231007205939042': '小型企业'
         },
         {
           '10001': '销售额',
-          '10003': '230810121242018',
+          '10003': '231007205939013',
           '20001': '销售额',
-          '010002': '4865589.799788475',
-          '230810121242018': '4865589.799788475',
-          '230810121242024': '办公用品'
+          '010011': '72462.31294822693',
+          '231007205939013': '72462.31294822693',
+          '231007205939027': '东北',
+          '231007205939033': '一级',
+          '231007205939042': '公司'
         },
         {
           '10001': '销售额',
-          '10003': '230810121242018',
+          '10003': '231007205939013',
           '20001': '销售额',
-          '010002': '5469023.505149841',
-          '230810121242018': '5469023.505149841',
-          '230810121242024': '技术'
-        }
-      ],
-      '1': [
-        {
-          '10001': '利润',
-          '10003': '230810121242021',
-          '20001': '利润',
-          '110002': '638735.6293110773',
-          '230810121242021': '638735.6293110773',
-          '230810121242024': '家具'
+          '010011': '205638.39855575562',
+          '231007205939013': '205638.39855575562',
+          '231007205939027': '东北',
+          '231007205939033': '一级',
+          '231007205939042': '消费者'
         },
         {
           '10001': '利润',
-          '10003': '230810121242021',
+          '10003': '231007205939019',
           '20001': '利润',
-          '110002': '757640.3536444083',
-          '230810121242021': '757640.3536444083',
-          '230810121242024': '办公用品'
+          '010012': '8209.684229254723',
+          '231007205939019': '8209.684229254723',
+          '231007205939027': '东北',
+          '231007205939033': '一级',
+          '231007205939042': '小型企业'
         },
         {
           '10001': '利润',
-          '10003': '230810121242021',
+          '10003': '231007205939019',
           '20001': '利润',
-          '110002': '751162.94417274',
-          '230810121242021': '751162.94417274',
-          '230810121242024': '技术'
+          '010012': '-9968.70678460598',
+          '231007205939019': '-9968.70678460598',
+          '231007205939027': '东北',
+          '231007205939033': '一级',
+          '231007205939042': '公司'
+        },
+        {
+          '10001': '利润',
+          '10003': '231007205939019',
+          '20001': '利润',
+          '010012': '23148.67789876461',
+          '231007205939019': '23148.67789876461',
+          '231007205939027': '东北',
+          '231007205939033': '一级',
+          '231007205939042': '消费者'
+        },
+        {
+          '10001': '销售额',
+          '10003': '231007205939013',
+          '20001': '销售额',
+          '010011': '218729.47815704346',
+          '231007205939013': '218729.47815704346',
+          '231007205939027': '东北',
+          '231007205939033': '二级',
+          '231007205939042': '小型企业'
+        },
+        {
+          '10001': '销售额',
+          '10003': '231007205939013',
+          '20001': '销售额',
+          '010011': '297018.0998764038',
+          '231007205939013': '297018.0998764038',
+          '231007205939027': '东北',
+          '231007205939033': '二级',
+          '231007205939042': '公司'
+        },
+        {
+          '10001': '销售额',
+          '10003': '231007205939013',
+          '20001': '销售额',
+          '010011': '361646.07036590576',
+          '231007205939013': '361646.07036590576',
+          '231007205939027': '东北',
+          '231007205939033': '二级',
+          '231007205939042': '消费者'
+        },
+        {
+          '10001': '利润',
+          '10003': '231007205939019',
+          '20001': '利润',
+          '010012': '36329.91491898894',
+          '231007205939019': '36329.91491898894',
+          '231007205939027': '东北',
+          '231007205939033': '二级',
+          '231007205939042': '小型企业'
+        },
+        {
+          '10001': '利润',
+          '10003': '231007205939019',
+          '20001': '利润',
+          '010012': '30730.258500926197',
+          '231007205939019': '30730.258500926197',
+          '231007205939027': '东北',
+          '231007205939033': '二级',
+          '231007205939042': '公司'
+        },
+        {
+          '10001': '利润',
+          '10003': '231007205939019',
+          '20001': '利润',
+          '010012': '65648.26831912994',
+          '231007205939019': '65648.26831912994',
+          '231007205939027': '东北',
+          '231007205939033': '二级',
+          '231007205939042': '消费者'
+        },
+        {
+          '10001': '销售额',
+          '10003': '231007205939013',
+          '20001': '销售额',
+          '010011': '36169.74920654297',
+          '231007205939013': '36169.74920654297',
+          '231007205939027': '东北',
+          '231007205939033': '当日',
+          '231007205939042': '公司'
+        },
+        {
+          '10001': '销售额',
+          '10003': '231007205939013',
+          '20001': '销售额',
+          '010011': '5859.672012329102',
+          '231007205939013': '5859.672012329102',
+          '231007205939027': '东北',
+          '231007205939033': '当日',
+          '231007205939042': '小型企业'
+        },
+        {
+          '10001': '销售额',
+          '10003': '231007205939013',
+          '20001': '销售额',
+          '010011': '42663.43223762512',
+          '231007205939013': '42663.43223762512',
+          '231007205939027': '东北',
+          '231007205939033': '当日',
+          '231007205939042': '消费者'
+        },
+        {
+          '10001': '利润',
+          '10003': '231007205939019',
+          '20001': '利润',
+          '010012': '3601.4090779945254',
+          '231007205939019': '3601.4090779945254',
+          '231007205939027': '东北',
+          '231007205939033': '当日',
+          '231007205939042': '公司'
+        },
+        {
+          '10001': '利润',
+          '10003': '231007205939019',
+          '20001': '利润',
+          '010012': '1527.7919974327087',
+          '231007205939019': '1527.7919974327087',
+          '231007205939027': '东北',
+          '231007205939033': '当日',
+          '231007205939042': '小型企业'
+        },
+        {
+          '10001': '利润',
+          '10003': '231007205939019',
+          '20001': '利润',
+          '010012': '2619.2321443259716',
+          '231007205939019': '2619.2321443259716',
+          '231007205939027': '东北',
+          '231007205939033': '当日',
+          '231007205939042': '消费者'
+        },
+        {
+          '10001': '销售额',
+          '10003': '231007205939013',
+          '20001': '销售额',
+          '010011': '892690.1672286987',
+          '231007205939013': '892690.1672286987',
+          '231007205939027': '东北',
+          '231007205939033': '标准级',
+          '231007205939042': '公司'
+        },
+        {
+          '10001': '销售额',
+          '10003': '231007205939013',
+          '20001': '销售额',
+          '010011': '596729.512298584',
+          '231007205939013': '596729.512298584',
+          '231007205939027': '东北',
+          '231007205939033': '标准级',
+          '231007205939042': '小型企业'
+        },
+        {
+          '10001': '销售额',
+          '10003': '231007205939013',
+          '20001': '销售额',
+          '010011': '1253335.922384262',
+          '231007205939013': '1253335.922384262',
+          '231007205939027': '东北',
+          '231007205939033': '标准级',
+          '231007205939042': '消费者'
+        },
+        {
+          '10001': '利润',
+          '10003': '231007205939019',
+          '20001': '利润',
+          '010012': '119231.88052585721',
+          '231007205939019': '119231.88052585721',
+          '231007205939027': '东北',
+          '231007205939033': '标准级',
+          '231007205939042': '公司'
+        },
+        {
+          '10001': '利润',
+          '10003': '231007205939019',
+          '20001': '利润',
+          '010012': '72080.21132314205',
+          '231007205939019': '72080.21132314205',
+          '231007205939027': '东北',
+          '231007205939033': '标准级',
+          '231007205939042': '小型企业'
+        },
+        {
+          '10001': '利润',
+          '10003': '231007205939019',
+          '20001': '利润',
+          '010012': '64261.88404896855',
+          '231007205939019': '64261.88404896855',
+          '231007205939027': '东北',
+          '231007205939033': '标准级',
+          '231007205939042': '消费者'
+        },
+        {
+          '10001': '销售额',
+          '10003': '231007205939013',
+          '20001': '销售额',
+          '010011': '424247.19460392',
+          '231007205939013': '424247.19460392',
+          '231007205939027': '中南',
+          '231007205939033': '一级',
+          '231007205939042': '消费者'
+        },
+        {
+          '10001': '销售额',
+          '10003': '231007205939013',
+          '20001': '销售额',
+          '010011': '315935.85774993896',
+          '231007205939013': '315935.85774993896',
+          '231007205939027': '中南',
+          '231007205939033': '一级',
+          '231007205939042': '公司'
+        },
+        {
+          '10001': '销售额',
+          '10003': '231007205939013',
+          '20001': '销售额',
+          '010011': '152998.05923461914',
+          '231007205939013': '152998.05923461914',
+          '231007205939027': '中南',
+          '231007205939033': '一级',
+          '231007205939042': '小型企业'
+        },
+        {
+          '10001': '利润',
+          '10003': '231007205939019',
+          '20001': '利润',
+          '010012': '62186.8935675323',
+          '231007205939019': '62186.8935675323',
+          '231007205939027': '中南',
+          '231007205939033': '一级',
+          '231007205939042': '消费者'
+        },
+        {
+          '10001': '利润',
+          '10003': '231007205939019',
+          '20001': '利润',
+          '010012': '23254.519455254078',
+          '231007205939019': '23254.519455254078',
+          '231007205939027': '中南',
+          '231007205939033': '一级',
+          '231007205939042': '公司'
+        },
+        {
+          '10001': '利润',
+          '10003': '231007205939019',
+          '20001': '利润',
+          '010012': '20345.261895656586',
+          '231007205939019': '20345.261895656586',
+          '231007205939027': '中南',
+          '231007205939033': '一级',
+          '231007205939042': '小型企业'
+        },
+        {
+          '10001': '销售额',
+          '10003': '231007205939013',
+          '20001': '销售额',
+          '010011': '905258.2611846924',
+          '231007205939013': '905258.2611846924',
+          '231007205939027': '中南',
+          '231007205939033': '二级',
+          '231007205939042': '公司'
+        },
+        {
+          '10001': '销售额',
+          '10003': '231007205939013',
+          '20001': '销售额',
+          '010011': '828540.2269821167',
+          '231007205939013': '828540.2269821167',
+          '231007205939027': '中南',
+          '231007205939033': '二级',
+          '231007205939042': '消费者'
+        },
+        {
+          '10001': '销售额',
+          '10003': '231007205939013',
+          '20001': '销售额',
+          '010011': '234719.71617507935',
+          '231007205939013': '234719.71617507935',
+          '231007205939027': '中南',
+          '231007205939033': '二级',
+          '231007205939042': '小型企业'
+        },
+        {
+          '10001': '利润',
+          '10003': '231007205939019',
+          '20001': '利润',
+          '010012': '219316.3613575697',
+          '231007205939019': '219316.3613575697',
+          '231007205939027': '中南',
+          '231007205939033': '二级',
+          '231007205939042': '公司'
+        },
+        {
+          '10001': '利润',
+          '10003': '231007205939019',
+          '20001': '利润',
+          '010012': '34275.56936597824',
+          '231007205939019': '34275.56936597824',
+          '231007205939027': '中南',
+          '231007205939033': '二级',
+          '231007205939042': '消费者'
+        },
+        {
+          '10001': '利润',
+          '10003': '231007205939019',
+          '20001': '利润',
+          '010012': '44686.095789313316',
+          '231007205939019': '44686.095789313316',
+          '231007205939027': '中南',
+          '231007205939033': '二级',
+          '231007205939042': '小型企业'
+        },
+        {
+          '10001': '销售额',
+          '10003': '231007205939013',
+          '20001': '销售额',
+          '010011': '164647.26682662964',
+          '231007205939013': '164647.26682662964',
+          '231007205939027': '中南',
+          '231007205939033': '当日',
+          '231007205939042': '消费者'
+        },
+        {
+          '10001': '销售额',
+          '10003': '231007205939013',
+          '20001': '销售额',
+          '010011': '32323.725555419922',
+          '231007205939013': '32323.725555419922',
+          '231007205939027': '中南',
+          '231007205939033': '当日',
+          '231007205939042': '小型企业'
+        },
+        {
+          '10001': '销售额',
+          '10003': '231007205939013',
+          '20001': '销售额',
+          '010011': '129782.19744873047',
+          '231007205939013': '129782.19744873047',
+          '231007205939027': '中南',
+          '231007205939033': '当日',
+          '231007205939042': '公司'
+        },
+        {
+          '10001': '利润',
+          '10003': '231007205939019',
+          '20001': '利润',
+          '010012': '25355.5262773633',
+          '231007205939019': '25355.5262773633',
+          '231007205939027': '中南',
+          '231007205939033': '当日',
+          '231007205939042': '消费者'
+        },
+        {
+          '10001': '利润',
+          '10003': '231007205939019',
+          '20001': '利润',
+          '010012': '7929.564987182617',
+          '231007205939019': '7929.564987182617',
+          '231007205939027': '中南',
+          '231007205939033': '当日',
+          '231007205939042': '小型企业'
+        },
+        {
+          '10001': '利润',
+          '10003': '231007205939019',
+          '20001': '利润',
+          '010012': '23080.777436599135',
+          '231007205939019': '23080.777436599135',
+          '231007205939027': '中南',
+          '231007205939033': '当日',
+          '231007205939042': '公司'
+        },
+        {
+          '10001': '销售额',
+          '10003': '231007205939013',
+          '20001': '销售额',
+          '010011': '1044203.0293369293',
+          '231007205939013': '1044203.0293369293',
+          '231007205939027': '中南',
+          '231007205939033': '标准级',
+          '231007205939042': '公司'
+        },
+        {
+          '10001': '销售额',
+          '10003': '231007205939013',
+          '20001': '销售额',
+          '010011': '936088.0733413696',
+          '231007205939013': '936088.0733413696',
+          '231007205939027': '中南',
+          '231007205939033': '标准级',
+          '231007205939042': '小型企业'
+        },
+        {
+          '10001': '销售额',
+          '10003': '231007205939013',
+          '20001': '销售额',
+          '010011': '1546698.3660182953',
+          '231007205939013': '1546698.3660182953',
+          '231007205939027': '中南',
+          '231007205939033': '标准级',
+          '231007205939042': '消费者'
+        },
+        {
+          '10001': '利润',
+          '10003': '231007205939019',
+          '20001': '利润',
+          '010012': '140999.88738318533',
+          '231007205939019': '140999.88738318533',
+          '231007205939027': '中南',
+          '231007205939033': '标准级',
+          '231007205939042': '公司'
+        },
+        {
+          '10001': '利润',
+          '10003': '231007205939019',
+          '20001': '利润',
+          '010012': '170277.2965707183',
+          '231007205939019': '170277.2965707183',
+          '231007205939027': '中南',
+          '231007205939033': '标准级',
+          '231007205939042': '小型企业'
+        },
+        {
+          '10001': '利润',
+          '10003': '231007205939019',
+          '20001': '利润',
+          '010012': '289777.39252268523',
+          '231007205939019': '289777.39252268523',
+          '231007205939027': '中南',
+          '231007205939033': '标准级',
+          '231007205939042': '消费者'
+        },
+        {
+          '10001': '销售额',
+          '10003': '231007205939013',
+          '20001': '销售额',
+          '010011': '266562.65858078003',
+          '231007205939013': '266562.65858078003',
+          '231007205939027': '华东',
+          '231007205939033': '一级',
+          '231007205939042': '公司'
+        },
+        {
+          '10001': '销售额',
+          '10003': '231007205939013',
+          '20001': '销售额',
+          '010011': '614768.4497489929',
+          '231007205939013': '614768.4497489929',
+          '231007205939027': '华东',
+          '231007205939033': '一级',
+          '231007205939042': '消费者'
+        },
+        {
+          '10001': '销售额',
+          '10003': '231007205939013',
+          '20001': '销售额',
+          '010011': '408656.2486896515',
+          '231007205939013': '408656.2486896515',
+          '231007205939027': '华东',
+          '231007205939033': '一级',
+          '231007205939042': '小型企业'
+        },
+        {
+          '10001': '利润',
+          '10003': '231007205939019',
+          '20001': '利润',
+          '010012': '11863.320181548595',
+          '231007205939019': '11863.320181548595',
+          '231007205939027': '华东',
+          '231007205939033': '一级',
+          '231007205939042': '公司'
+        },
+        {
+          '10001': '利润',
+          '10003': '231007205939019',
+          '20001': '利润',
+          '010012': '89524.98816204071',
+          '231007205939019': '89524.98816204071',
+          '231007205939027': '华东',
+          '231007205939033': '一级',
+          '231007205939042': '消费者'
+        },
+        {
+          '10001': '利润',
+          '10003': '231007205939019',
+          '20001': '利润',
+          '010012': '70975.54757523537',
+          '231007205939019': '70975.54757523537',
+          '231007205939027': '华东',
+          '231007205939033': '一级',
+          '231007205939042': '小型企业'
+        },
+        {
+          '10001': '销售额',
+          '10003': '231007205939013',
+          '20001': '销售额',
+          '010011': '977990.985490799',
+          '231007205939013': '977990.985490799',
+          '231007205939027': '华东',
+          '231007205939033': '二级',
+          '231007205939042': '消费者'
+        },
+        {
+          '10001': '销售额',
+          '10003': '231007205939013',
+          '20001': '销售额',
+          '010011': '926682.1150970459',
+          '231007205939013': '926682.1150970459',
+          '231007205939027': '华东',
+          '231007205939033': '二级',
+          '231007205939042': '公司'
+        },
+        {
+          '10001': '销售额',
+          '10003': '231007205939013',
+          '20001': '销售额',
+          '010011': '204445.94906806946',
+          '231007205939013': '204445.94906806946',
+          '231007205939027': '华东',
+          '231007205939033': '二级',
+          '231007205939042': '小型企业'
+        },
+        {
+          '10001': '利润',
+          '10003': '231007205939019',
+          '20001': '利润',
+          '010012': '210470.52726888657',
+          '231007205939019': '210470.52726888657',
+          '231007205939027': '华东',
+          '231007205939033': '二级',
+          '231007205939042': '消费者'
+        },
+        {
+          '10001': '利润',
+          '10003': '231007205939019',
+          '20001': '利润',
+          '010012': '147076.4384984076',
+          '231007205939019': '147076.4384984076',
+          '231007205939027': '华东',
+          '231007205939033': '二级',
+          '231007205939042': '公司'
+        },
+        {
+          '10001': '利润',
+          '10003': '231007205939019',
+          '20001': '利润',
+          '010012': '32530.567819982767',
+          '231007205939019': '32530.567819982767',
+          '231007205939027': '华东',
+          '231007205939033': '二级',
+          '231007205939042': '小型企业'
+        },
+        {
+          '10001': '销售额',
+          '10003': '231007205939013',
+          '20001': '销售额',
+          '010011': '101765.71948623657',
+          '231007205939013': '101765.71948623657',
+          '231007205939027': '华东',
+          '231007205939033': '当日',
+          '231007205939042': '消费者'
+        },
+        {
+          '10001': '销售额',
+          '10003': '231007205939013',
+          '20001': '销售额',
+          '010011': '87432.49179840088',
+          '231007205939013': '87432.49179840088',
+          '231007205939027': '华东',
+          '231007205939033': '当日',
+          '231007205939042': '小型企业'
+        },
+        {
+          '10001': '销售额',
+          '10003': '231007205939013',
+          '20001': '销售额',
+          '010011': '152626.8793296814',
+          '231007205939013': '152626.8793296814',
+          '231007205939027': '华东',
+          '231007205939033': '当日',
+          '231007205939042': '公司'
+        },
+        {
+          '10001': '利润',
+          '10003': '231007205939019',
+          '20001': '利润',
+          '010012': '18896.080198287964',
+          '231007205939019': '18896.080198287964',
+          '231007205939027': '华东',
+          '231007205939033': '当日',
+          '231007205939042': '消费者'
+        },
+        {
+          '10001': '利润',
+          '10003': '231007205939019',
+          '20001': '利润',
+          '010012': '11269.272097229958',
+          '231007205939019': '11269.272097229958',
+          '231007205939027': '华东',
+          '231007205939033': '当日',
+          '231007205939042': '小型企业'
+        },
+        {
+          '10001': '利润',
+          '10003': '231007205939019',
+          '20001': '利润',
+          '010012': '10687.879983186722',
+          '231007205939019': '10687.879983186722',
+          '231007205939027': '华东',
+          '231007205939033': '当日',
+          '231007205939042': '公司'
+        },
+        {
+          '10001': '销售额',
+          '10003': '231007205939013',
+          '20001': '销售额',
+          '010011': '2023647.2937908173',
+          '231007205939013': '2023647.2937908173',
+          '231007205939027': '华东',
+          '231007205939033': '标准级',
+          '231007205939042': '消费者'
+        },
+        {
+          '10001': '销售额',
+          '10003': '231007205939013',
+          '20001': '销售额',
+          '010011': '756964.5161571503',
+          '231007205939013': '756964.5161571503',
+          '231007205939027': '华东',
+          '231007205939033': '标准级',
+          '231007205939042': '小型企业'
+        },
+        {
+          '10001': '销售额',
+          '10003': '231007205939013',
+          '20001': '销售额',
+          '010011': '1402949.7646903992',
+          '231007205939013': '1402949.7646903992',
+          '231007205939027': '华东',
+          '231007205939033': '标准级',
+          '231007205939042': '公司'
+        },
+        {
+          '10001': '利润',
+          '10003': '231007205939019',
+          '20001': '利润',
+          '010012': '202713.3587152362',
+          '231007205939019': '202713.3587152362',
+          '231007205939027': '华东',
+          '231007205939033': '标准级',
+          '231007205939042': '消费者'
+        },
+        {
+          '10001': '利润',
+          '10003': '231007205939019',
+          '20001': '利润',
+          '010012': '74250.59667167068',
+          '231007205939019': '74250.59667167068',
+          '231007205939027': '华东',
+          '231007205939033': '标准级',
+          '231007205939042': '小型企业'
+        },
+        {
+          '10001': '利润',
+          '10003': '231007205939019',
+          '20001': '利润',
+          '010012': '93220.23265296221',
+          '231007205939019': '93220.23265296221',
+          '231007205939027': '华东',
+          '231007205939033': '标准级',
+          '231007205939042': '公司'
+        },
+        {
+          '10001': '销售额',
+          '10003': '231007205939013',
+          '20001': '销售额',
+          '010011': '182968.14864349365',
+          '231007205939013': '182968.14864349365',
+          '231007205939027': '华北',
+          '231007205939033': '一级',
+          '231007205939042': '消费者'
+        },
+        {
+          '10001': '销售额',
+          '10003': '231007205939013',
+          '20001': '销售额',
+          '010011': '57325.982006073',
+          '231007205939013': '57325.982006073',
+          '231007205939027': '华北',
+          '231007205939033': '一级',
+          '231007205939042': '公司'
+        },
+        {
+          '10001': '销售额',
+          '10003': '231007205939013',
+          '20001': '销售额',
+          '010011': '106812.80461502075',
+          '231007205939013': '106812.80461502075',
+          '231007205939027': '华北',
+          '231007205939033': '一级',
+          '231007205939042': '小型企业'
+        },
+        {
+          '10001': '利润',
+          '10003': '231007205939019',
+          '20001': '利润',
+          '010012': '26181.44898223877',
+          '231007205939019': '26181.44898223877',
+          '231007205939027': '华北',
+          '231007205939033': '一级',
+          '231007205939042': '消费者'
+        },
+        {
+          '10001': '利润',
+          '10003': '231007205939019',
+          '20001': '利润',
+          '010012': '13720.042139291763',
+          '231007205939019': '13720.042139291763',
+          '231007205939027': '华北',
+          '231007205939033': '一级',
+          '231007205939042': '公司'
+        },
+        {
+          '10001': '利润',
+          '10003': '231007205939019',
+          '20001': '利润',
+          '010012': '7154.784081935883',
+          '231007205939019': '7154.784081935883',
+          '231007205939027': '华北',
+          '231007205939033': '一级',
+          '231007205939042': '小型企业'
+        },
+        {
+          '10001': '销售额',
+          '10003': '231007205939013',
+          '20001': '销售额',
+          '010011': '224449.79303359985',
+          '231007205939013': '224449.79303359985',
+          '231007205939027': '华北',
+          '231007205939033': '二级',
+          '231007205939042': '公司'
+        },
+        {
+          '10001': '销售额',
+          '10003': '231007205939013',
+          '20001': '销售额',
+          '010011': '519928.86284065247',
+          '231007205939013': '519928.86284065247',
+          '231007205939027': '华北',
+          '231007205939033': '二级',
+          '231007205939042': '消费者'
+        },
+        {
+          '10001': '销售额',
+          '10003': '231007205939013',
+          '20001': '销售额',
+          '010011': '63609.79108810425',
+          '231007205939013': '63609.79108810425',
+          '231007205939027': '华北',
+          '231007205939033': '二级',
+          '231007205939042': '小型企业'
+        },
+        {
+          '10001': '利润',
+          '10003': '231007205939019',
+          '20001': '利润',
+          '010012': '54168.35233962536',
+          '231007205939019': '54168.35233962536',
+          '231007205939027': '华北',
+          '231007205939033': '二级',
+          '231007205939042': '公司'
+        },
+        {
+          '10001': '利润',
+          '10003': '231007205939019',
+          '20001': '利润',
+          '010012': '53217.16528916359',
+          '231007205939019': '53217.16528916359',
+          '231007205939027': '华北',
+          '231007205939033': '二级',
+          '231007205939042': '消费者'
+        },
+        {
+          '10001': '利润',
+          '10003': '231007205939019',
+          '20001': '利润',
+          '010012': '14651.370790958405',
+          '231007205939019': '14651.370790958405',
+          '231007205939027': '华北',
+          '231007205939033': '二级',
+          '231007205939042': '小型企业'
+        },
+        {
+          '10001': '销售额',
+          '10003': '231007205939013',
+          '20001': '销售额',
+          '010011': '70779.71556472778',
+          '231007205939013': '70779.71556472778',
+          '231007205939027': '华北',
+          '231007205939033': '当日',
+          '231007205939042': '消费者'
+        },
+        {
+          '10001': '销售额',
+          '10003': '231007205939013',
+          '20001': '销售额',
+          '010011': '20837.627975463867',
+          '231007205939013': '20837.627975463867',
+          '231007205939027': '华北',
+          '231007205939033': '当日',
+          '231007205939042': '小型企业'
+        },
+        {
+          '10001': '销售额',
+          '10003': '231007205939013',
+          '20001': '销售额',
+          '010011': '39521.0202255249',
+          '231007205939013': '39521.0202255249',
+          '231007205939027': '华北',
+          '231007205939033': '当日',
+          '231007205939042': '公司'
+        },
+        {
+          '10001': '利润',
+          '10003': '231007205939019',
+          '20001': '利润',
+          '010012': '12348.75596857071',
+          '231007205939019': '12348.75596857071',
+          '231007205939027': '华北',
+          '231007205939033': '当日',
+          '231007205939042': '消费者'
+        },
+        {
+          '10001': '利润',
+          '10003': '231007205939019',
+          '20001': '利润',
+          '010012': '2055.508020401001',
+          '231007205939019': '2055.508020401001',
+          '231007205939027': '华北',
+          '231007205939033': '当日',
+          '231007205939042': '小型企业'
+        },
+        {
+          '10001': '利润',
+          '10003': '231007205939019',
+          '20001': '利润',
+          '010012': '13119.539881706238',
+          '231007205939019': '13119.539881706238',
+          '231007205939027': '华北',
+          '231007205939033': '当日',
+          '231007205939042': '公司'
+        },
+        {
+          '10001': '销售额',
+          '10003': '231007205939013',
+          '20001': '销售额',
+          '010011': '617688.5733385086',
+          '231007205939013': '617688.5733385086',
+          '231007205939027': '华北',
+          '231007205939033': '标准级',
+          '231007205939042': '公司'
+        },
+        {
+          '10001': '销售额',
+          '10003': '231007205939013',
+          '20001': '销售额',
+          '010011': '1245798.9791164398',
+          '231007205939013': '1245798.9791164398',
+          '231007205939027': '华北',
+          '231007205939033': '标准级',
+          '231007205939042': '消费者'
+        },
+        {
+          '10001': '销售额',
+          '10003': '231007205939013',
+          '20001': '销售额',
+          '010011': '464346.7063102722',
+          '231007205939013': '464346.7063102722',
+          '231007205939027': '华北',
+          '231007205939033': '标准级',
+          '231007205939042': '小型企业'
+        },
+        {
+          '10001': '利润',
+          '10003': '231007205939019',
+          '20001': '利润',
+          '010012': '132568.27413728833',
+          '231007205939019': '132568.27413728833',
+          '231007205939027': '华北',
+          '231007205939033': '标准级',
+          '231007205939042': '公司'
+        },
+        {
+          '10001': '利润',
+          '10003': '231007205939019',
+          '20001': '利润',
+          '010012': '194008.10875433683',
+          '231007205939019': '194008.10875433683',
+          '231007205939027': '华北',
+          '231007205939033': '标准级',
+          '231007205939042': '消费者'
+        },
+        {
+          '10001': '利润',
+          '10003': '231007205939019',
+          '20001': '利润',
+          '010012': '100780.56787729263',
+          '231007205939019': '100780.56787729263',
+          '231007205939027': '华北',
+          '231007205939033': '标准级',
+          '231007205939042': '小型企业'
+        },
+        {
+          '10001': '销售额',
+          '10003': '231007205939013',
+          '20001': '销售额',
+          '010011': '8788.248062133789',
+          '231007205939013': '8788.248062133789',
+          '231007205939027': '西北',
+          '231007205939033': '一级',
+          '231007205939042': '小型企业'
+        },
+        {
+          '10001': '销售额',
+          '10003': '231007205939013',
+          '20001': '销售额',
+          '010011': '47122.01157569885',
+          '231007205939013': '47122.01157569885',
+          '231007205939027': '西北',
+          '231007205939033': '一级',
+          '231007205939042': '消费者'
+        },
+        {
+          '10001': '销售额',
+          '10003': '231007205939013',
+          '20001': '销售额',
+          '010011': '12042.267990112305',
+          '231007205939013': '12042.267990112305',
+          '231007205939027': '西北',
+          '231007205939033': '一级',
+          '231007205939042': '公司'
+        },
+        {
+          '10001': '利润',
+          '10003': '231007205939019',
+          '20001': '利润',
+          '010012': '2820.3279762268066',
+          '231007205939019': '2820.3279762268066',
+          '231007205939027': '西北',
+          '231007205939033': '一级',
+          '231007205939042': '小型企业'
+        },
+        {
+          '10001': '利润',
+          '10003': '231007205939019',
+          '20001': '利润',
+          '010012': '3616.171950787306',
+          '231007205939019': '3616.171950787306',
+          '231007205939027': '西北',
+          '231007205939033': '一级',
+          '231007205939042': '消费者'
+        },
+        {
+          '10001': '利润',
+          '10003': '231007205939019',
+          '20001': '利润',
+          '010012': '2324.308027982712',
+          '231007205939019': '2324.308027982712',
+          '231007205939027': '西北',
+          '231007205939033': '一级',
+          '231007205939042': '公司'
+        },
+        {
+          '10001': '销售额',
+          '10003': '231007205939013',
+          '20001': '销售额',
+          '010011': '27772.527755737305',
+          '231007205939013': '27772.527755737305',
+          '231007205939027': '西北',
+          '231007205939033': '二级',
+          '231007205939042': '小型企业'
+        },
+        {
+          '10001': '销售额',
+          '10003': '231007205939013',
+          '20001': '销售额',
+          '010011': '86590.42042541504',
+          '231007205939013': '86590.42042541504',
+          '231007205939027': '西北',
+          '231007205939033': '二级',
+          '231007205939042': '公司'
+        },
+        {
+          '10001': '销售额',
+          '10003': '231007205939013',
+          '20001': '销售额',
+          '010011': '364681.6584625244',
+          '231007205939013': '364681.6584625244',
+          '231007205939027': '西北',
+          '231007205939033': '二级',
+          '231007205939042': '消费者'
+        },
+        {
+          '10001': '利润',
+          '10003': '231007205939019',
+          '20001': '利润',
+          '010012': '-3066.671887397766',
+          '231007205939019': '-3066.671887397766',
+          '231007205939027': '西北',
+          '231007205939033': '二级',
+          '231007205939042': '小型企业'
+        },
+        {
+          '10001': '利润',
+          '10003': '231007205939019',
+          '20001': '利润',
+          '010012': '9626.39992904663',
+          '231007205939019': '9626.39992904663',
+          '231007205939027': '西北',
+          '231007205939033': '二级',
+          '231007205939042': '公司'
+        },
+        {
+          '10001': '利润',
+          '10003': '231007205939019',
+          '20001': '利润',
+          '010012': '69530.9995931387',
+          '231007205939019': '69530.9995931387',
+          '231007205939027': '西北',
+          '231007205939033': '二级',
+          '231007205939042': '消费者'
+        },
+        {
+          '10001': '销售额',
+          '10003': '231007205939013',
+          '20001': '销售额',
+          '010011': '29065.540283203125',
+          '231007205939013': '29065.540283203125',
+          '231007205939027': '西北',
+          '231007205939033': '当日',
+          '231007205939042': '公司'
+        },
+        {
+          '10001': '销售额',
+          '10003': '231007205939013',
+          '20001': '销售额',
+          '010011': '5126.100051879883',
+          '231007205939013': '5126.100051879883',
+          '231007205939027': '西北',
+          '231007205939033': '当日',
+          '231007205939042': '小型企业'
+        },
+        {
+          '10001': '销售额',
+          '10003': '231007205939013',
+          '20001': '销售额',
+          '010011': '7096.600036621094',
+          '231007205939013': '7096.600036621094',
+          '231007205939027': '西北',
+          '231007205939033': '当日',
+          '231007205939042': '消费者'
+        },
+        {
+          '10001': '利润',
+          '10003': '231007205939019',
+          '20001': '利润',
+          '010012': '9769.899898529053',
+          '231007205939019': '9769.899898529053',
+          '231007205939027': '西北',
+          '231007205939033': '当日',
+          '231007205939042': '公司'
+        },
+        {
+          '10001': '利润',
+          '10003': '231007205939019',
+          '20001': '利润',
+          '010012': '1721.5800495147705',
+          '231007205939019': '1721.5800495147705',
+          '231007205939027': '西北',
+          '231007205939033': '当日',
+          '231007205939042': '小型企业'
+        },
+        {
+          '10001': '利润',
+          '10003': '231007205939019',
+          '20001': '利润',
+          '010012': '1382.7799935340881',
+          '231007205939019': '1382.7799935340881',
+          '231007205939027': '西北',
+          '231007205939033': '当日',
+          '231007205939042': '消费者'
+        },
+        {
+          '10001': '销售额',
+          '10003': '231007205939013',
+          '20001': '销售额',
+          '010011': '242001.53650283813',
+          '231007205939013': '242001.53650283813',
+          '231007205939027': '西北',
+          '231007205939033': '标准级',
+          '231007205939042': '公司'
+        },
+        {
+          '10001': '销售额',
+          '10003': '231007205939013',
+          '20001': '销售额',
+          '010011': '779159.1707401276',
+          '231007205939013': '779159.1707401276',
+          '231007205939027': '西北',
+          '231007205939033': '标准级',
+          '231007205939042': '消费者'
+        },
+        {
+          '10001': '销售额',
+          '10003': '231007205939013',
+          '20001': '销售额',
+          '010011': '81443.15208053589',
+          '231007205939013': '81443.15208053589',
+          '231007205939027': '西北',
+          '231007205939033': '标准级',
+          '231007205939042': '小型企业'
+        },
+        {
+          '10001': '利润',
+          '10003': '231007205939019',
+          '20001': '利润',
+          '010012': '49989.99621677399',
+          '231007205939019': '49989.99621677399',
+          '231007205939027': '西北',
+          '231007205939033': '标准级',
+          '231007205939042': '公司'
+        },
+        {
+          '10001': '利润',
+          '10003': '231007205939019',
+          '20001': '利润',
+          '010012': '145161.88007301837',
+          '231007205939019': '145161.88007301837',
+          '231007205939027': '西北',
+          '231007205939033': '标准级',
+          '231007205939042': '消费者'
+        },
+        {
+          '10001': '利润',
+          '10003': '231007205939019',
+          '20001': '利润',
+          '010012': '10053.371599197388',
+          '231007205939019': '10053.371599197388',
+          '231007205939027': '西北',
+          '231007205939033': '标准级',
+          '231007205939042': '小型企业'
+        },
+        {
+          '10001': '销售额',
+          '10003': '231007205939013',
+          '20001': '销售额',
+          '010011': '77602.83940696716',
+          '231007205939013': '77602.83940696716',
+          '231007205939027': '西南',
+          '231007205939033': '一级',
+          '231007205939042': '消费者'
+        },
+        {
+          '10001': '销售额',
+          '10003': '231007205939013',
+          '20001': '销售额',
+          '010011': '387562.70444107056',
+          '231007205939013': '387562.70444107056',
+          '231007205939027': '西南',
+          '231007205939033': '一级',
+          '231007205939042': '公司'
+        },
+        {
+          '10001': '销售额',
+          '10003': '231007205939013',
+          '20001': '销售额',
+          '010011': '27165.04006576538',
+          '231007205939013': '27165.04006576538',
+          '231007205939027': '西南',
+          '231007205939033': '一级',
+          '231007205939042': '小型企业'
+        },
+        {
+          '10001': '利润',
+          '10003': '231007205939019',
+          '20001': '利润',
+          '010012': '4013.800047159195',
+          '231007205939019': '4013.800047159195',
+          '231007205939027': '西南',
+          '231007205939033': '一级',
+          '231007205939042': '消费者'
+        },
+        {
+          '10001': '利润',
+          '10003': '231007205939019',
+          '20001': '利润',
+          '010012': '111004.45678149164',
+          '231007205939019': '111004.45678149164',
+          '231007205939027': '西南',
+          '231007205939033': '一级',
+          '231007205939042': '公司'
+        },
+        {
+          '10001': '利润',
+          '10003': '231007205939019',
+          '20001': '利润',
+          '010012': '1471.259955406189',
+          '231007205939019': '1471.259955406189',
+          '231007205939027': '西南',
+          '231007205939033': '一级',
+          '231007205939042': '小型企业'
+        },
+        {
+          '10001': '销售额',
+          '10003': '231007205939013',
+          '20001': '销售额',
+          '010011': '325055.6368751526',
+          '231007205939013': '325055.6368751526',
+          '231007205939027': '西南',
+          '231007205939033': '二级',
+          '231007205939042': '公司'
+        },
+        {
+          '10001': '销售额',
+          '10003': '231007205939013',
+          '20001': '销售额',
+          '010011': '185214.540681839',
+          '231007205939013': '185214.540681839',
+          '231007205939027': '西南',
+          '231007205939033': '二级',
+          '231007205939042': '消费者'
+        },
+        {
+          '10001': '销售额',
+          '10003': '231007205939013',
+          '20001': '销售额',
+          '010011': '104162.9118270874',
+          '231007205939013': '104162.9118270874',
+          '231007205939027': '西南',
+          '231007205939033': '二级',
+          '231007205939042': '小型企业'
+        },
+        {
+          '10001': '利润',
+          '10003': '231007205939019',
+          '20001': '利润',
+          '010012': '-54927.3206884861',
+          '231007205939019': '-54927.3206884861',
+          '231007205939027': '西南',
+          '231007205939033': '二级',
+          '231007205939042': '公司'
+        },
+        {
+          '10001': '利润',
+          '10003': '231007205939019',
+          '20001': '利润',
+          '010012': '15297.94021654129',
+          '231007205939019': '15297.94021654129',
+          '231007205939027': '西南',
+          '231007205939033': '二级',
+          '231007205939042': '消费者'
+        },
+        {
+          '10001': '利润',
+          '10003': '231007205939019',
+          '20001': '利润',
+          '010012': '16260.13226890564',
+          '231007205939019': '16260.13226890564',
+          '231007205939027': '西南',
+          '231007205939033': '二级',
+          '231007205939042': '小型企业'
+        },
+        {
+          '10001': '销售额',
+          '10003': '231007205939013',
+          '20001': '销售额',
+          '010011': '14919.716171264648',
+          '231007205939013': '14919.716171264648',
+          '231007205939027': '西南',
+          '231007205939033': '当日',
+          '231007205939042': '消费者'
+        },
+        {
+          '10001': '销售额',
+          '10003': '231007205939013',
+          '20001': '销售额',
+          '010011': '6339.059997558594',
+          '231007205939013': '6339.059997558594',
+          '231007205939027': '西南',
+          '231007205939033': '当日',
+          '231007205939042': '小型企业'
+        },
+        {
+          '10001': '销售额',
+          '10003': '231007205939013',
+          '20001': '销售额',
+          '010011': '12947.703983306885',
+          '231007205939013': '12947.703983306885',
+          '231007205939027': '西南',
+          '231007205939033': '当日',
+          '231007205939042': '公司'
+        },
+        {
+          '10001': '利润',
+          '10003': '231007205939019',
+          '20001': '利润',
+          '010012': '1458.996036529541',
+          '231007205939019': '1458.996036529541',
+          '231007205939027': '西南',
+          '231007205939033': '当日',
+          '231007205939042': '消费者'
+        },
+        {
+          '10001': '利润',
+          '10003': '231007205939019',
+          '20001': '利润',
+          '010012': '1576.5399687290192',
+          '231007205939019': '1576.5399687290192',
+          '231007205939027': '西南',
+          '231007205939033': '当日',
+          '231007205939042': '小型企业'
+        },
+        {
+          '10001': '利润',
+          '10003': '231007205939019',
+          '20001': '利润',
+          '010012': '-3322.95596408844',
+          '231007205939019': '-3322.95596408844',
+          '231007205939027': '西南',
+          '231007205939033': '当日',
+          '231007205939042': '公司'
+        },
+        {
+          '10001': '销售额',
+          '10003': '231007205939013',
+          '20001': '销售额',
+          '010011': '1204227.8824615479',
+          '231007205939013': '1204227.8824615479',
+          '231007205939027': '西南',
+          '231007205939033': '标准级',
+          '231007205939042': '消费者'
+        },
+        {
+          '10001': '销售额',
+          '10003': '231007205939013',
+          '20001': '销售额',
+          '010011': '92957.95600891113',
+          '231007205939013': '92957.95600891113',
+          '231007205939027': '西南',
+          '231007205939033': '标准级',
+          '231007205939042': '小型企业'
+        },
+        {
+          '10001': '销售额',
+          '10003': '231007205939013',
+          '20001': '销售额',
+          '010011': '441748.4975013733',
+          '231007205939013': '441748.4975013733',
+          '231007205939027': '西南',
+          '231007205939033': '标准级',
+          '231007205939042': '公司'
+        },
+        {
+          '10001': '利润',
+          '10003': '231007205939019',
+          '20001': '利润',
+          '010012': '69104.53230498731',
+          '231007205939019': '69104.53230498731',
+          '231007205939027': '西南',
+          '231007205939033': '标准级',
+          '231007205939042': '消费者'
+        },
+        {
+          '10001': '利润',
+          '10003': '231007205939019',
+          '20001': '利润',
+          '010012': '3825.1358011960983',
+          '231007205939019': '3825.1358011960983',
+          '231007205939027': '西南',
+          '231007205939033': '标准级',
+          '231007205939042': '小型企业'
+        },
+        {
+          '10001': '利润',
+          '10003': '231007205939019',
+          '20001': '利润',
+          '010012': '66464.21639585495',
+          '231007205939019': '66464.21639585495',
+          '231007205939027': '西南',
+          '231007205939033': '标准级',
+          '231007205939042': '公司'
         }
       ]
     },
-    indicatorsAsCol: true,
-    indicators: [
-      {
-        indicatorKey: '0',
-        width: 'auto',
-        caption: 'caption',
-        columnType: 'chart',
-        chartModule: 'vchart',
-        chartSpec: {
-          type: 'bar',
-          xField: ['010002'],
-          yField: ['230810121242024', '10001'],
-          stack: false,
-          label: {
-            visible: false,
-            overlap: {
-              hideOnHit: true,
-              clampForce: true
-            },
-            style: {
-              fontSize: 12,
-              fontWeight: 'normal',
-              fill: null,
-              strokeOpacity: 1
-            },
-            position: 'inside',
-            smartInvert: false
-          },
-          area: {
-            style: {
-              curveType: {
-                type: 'ordinal',
-                field: '20001',
-                range: ['linear'],
-                domain: ['销售额', '利润']
-              }
-            }
-          },
-          line: {
-            style: {
-              curveType: {
-                type: 'ordinal',
-                field: '20001',
-                range: ['linear'],
-                domain: ['销售额', '利润']
-              },
-              lineWidth: {
-                type: 'ordinal',
-                field: '20001',
-                range: [3],
-                domain: ['销售额', '利润']
-              },
-              lineDash: {
-                type: 'ordinal',
-                field: '20001',
-                range: [[0, 0]],
-                domain: ['销售额', '利润']
-              }
-            }
-          },
-          point: {
-            style: {
-              shape: {
-                type: 'ordinal',
-                field: '20001',
-                range: ['circle'],
-                domain: ['销售额', '利润']
-              },
-              size: {
-                type: 'ordinal',
-                field: '20001',
-                range: [8],
-                domain: ['销售额', '利润']
-              },
-              fill: {
-                field: '20001',
-                type: 'ordinal',
-                range: ['#2E62F1', '#4DC36A'],
-                specified: {},
-                domain: ['销售额', '利润']
-              },
-              stroke: {
-                field: '20001',
-                type: 'ordinal',
-                range: ['#2E62F1', '#4DC36A'],
-                specified: {},
-                domain: ['销售额', '利润']
-              },
-              strokeOpacity: {
-                type: 'ordinal',
-                field: '20001',
-                range: [1],
-                domain: ['销售额', '利润']
-              },
-              fillOpacity: {
-                type: 'ordinal',
-                field: '20001',
-                range: [1],
-                domain: ['销售额', '利润']
-              }
-            },
-            state: {
-              hover: {
-                lineWidth: 2,
-                fillOpacity: 1,
-                strokeOpacity: 1,
-                scaleX: 1.5,
-                scaleY: 1.5
-              }
-            }
-          },
-          direction: 'horizontal',
-          axes: [
-            {
-              id: '0',
-              type: 'linear',
-              tick: {
-                visible: false,
-                style: {
-                  stroke: 'rgba(255, 255, 255, 0)'
-                }
-              },
-              niceType: 'accurateFirst',
-              grid: {
-                visible: true,
-                style: {
-                  stroke: '#DADCDD',
-                  lineWidth: 1,
-                  lineDash: [4, 2]
-                }
-              },
-              orient: 'bottom',
-              visible: true,
-              domainLine: {
-                visible: true,
-                style: {
-                  lineWidth: 1,
-                  stroke: 'rgba(255, 255, 255, 0)'
-                }
-              },
-              title: {
-                visible: true,
-                text: '销售额',
-                style: {
-                  fontSize: 12,
-                  fill: '#363839',
-                  fontWeight: 'normal'
-                }
-              },
-              label: {
-                visible: true,
-                style: {
-                  fontSize: 12,
-                  fill: '#6F6F6F',
-                  angle: 0,
-                  fontWeight: 'normal'
-                }
-              },
-              hover: false,
-              background: {
-                visible: true,
-                state: {
-                  hover: {
-                    fillOpacity: 0.08,
-                    fill: '#141414'
-                  }
-                }
-              },
-              zero: true,
-              nice: true
-            }
-          ],
-          data: {
-            sortIndex: 0,
-            id: 'data',
-            fields: {
-              '10001': {
-                alias: '指标名称 '
-              },
-              '20001': {
-                alias: '图例项 ',
-                domain: ['销售额', '利润'],
-                lockStatisticsByDomain: true
-              },
-              '110002': {
-                alias: '指标值 '
-              },
-              '010002': {
-                alias: '指标值 '
-              },
-              '230810121242018': {
-                alias: '销售额'
-              },
-              '230810121242021': {
-                alias: '利润'
-              },
-              '230810121242024': {
-                alias: '类别',
-                domain: ['办公用品', '技术', '家具'],
-                lockStatisticsByDomain: true,
-                sortIndex: 0
-              }
-            }
-          },
-          seriesField: '20001',
-          color: {
-            field: '20001',
-            type: 'ordinal',
-            range: ['#2E62F1', '#4DC36A'],
-            specified: {},
-            domain: ['销售额', '利润']
-          }
-        }
-      },
-      {
-        indicatorKey: '1',
-        width: 'auto',
-        caption: 'caption',
-        columnType: 'chart',
-        chartModule: 'vchart',
-        chartSpec: {
-          type: 'line',
-          xField: ['110002'],
-          yField: ['230810121242024', '10001'],
-          stack: false,
-          label: {
-            visible: false,
-            overlap: {
-              hideOnHit: true,
-              clampForce: true
-            },
-            style: {
-              fontSize: 12,
-              fontWeight: 'normal',
-              fill: null,
-              strokeOpacity: 1
-            },
-            position: 'inside',
-            smartInvert: false
-          },
-          area: {
-            style: {
-              curveType: {
-                type: 'ordinal',
-                field: '20001',
-                range: ['linear'],
-                domain: ['销售额', '利润']
-              }
-            }
-          },
-          line: {
-            style: {
-              curveType: {
-                type: 'ordinal',
-                field: '20001',
-                range: ['linear'],
-                domain: ['销售额', '利润']
-              },
-              lineWidth: {
-                type: 'ordinal',
-                field: '20001',
-                range: [3],
-                domain: ['销售额', '利润']
-              },
-              lineDash: {
-                type: 'ordinal',
-                field: '20001',
-                range: [[0, 0]],
-                domain: ['销售额', '利润']
-              }
-            }
-          },
-          point: {
-            style: {
-              shape: {
-                type: 'ordinal',
-                field: '20001',
-                range: ['circle'],
-                domain: ['销售额', '利润']
-              },
-              size: {
-                type: 'ordinal',
-                field: '20001',
-                range: [8],
-                domain: ['销售额', '利润']
-              },
-              fill: {
-                field: '20001',
-                type: 'ordinal',
-                range: ['#2E62F1', '#4DC36A'],
-                specified: {},
-                domain: ['销售额', '利润']
-              },
-              stroke: {
-                field: '20001',
-                type: 'ordinal',
-                range: ['#2E62F1', '#4DC36A'],
-                specified: {},
-                domain: ['销售额', '利润']
-              },
-              strokeOpacity: {
-                type: 'ordinal',
-                field: '20001',
-                range: [1],
-                domain: ['销售额', '利润']
-              },
-              fillOpacity: {
-                type: 'ordinal',
-                field: '20001',
-                range: [1],
-                domain: ['销售额', '利润']
-              }
-            },
-            state: {
-              hover: {
-                lineWidth: 2,
-                fillOpacity: 1,
-                strokeOpacity: 1,
-                scaleX: 1.5,
-                scaleY: 1.5
-              }
-            }
-          },
-          direction: 'horizontal',
-          axes: [
-            {
-              id: '1',
-              type: 'linear',
-              tick: {
-                visible: false,
-                style: {
-                  stroke: 'rgba(255, 255, 255, 0)'
-                }
-              },
-              niceType: 'accurateFirst',
-              grid: {
-                visible: true,
-                style: {
-                  stroke: '#DADCDD',
-                  lineWidth: 1,
-                  lineDash: [4, 2]
-                }
-              },
-              orient: 'bottom',
-              visible: true,
-              domainLine: {
-                visible: true,
-                style: {
-                  lineWidth: 1,
-                  stroke: 'rgba(255, 255, 255, 0)'
-                }
-              },
-              title: {
-                visible: true,
-                text: '利润',
-                style: {
-                  fontSize: 12,
-                  fill: '#363839',
-                  fontWeight: 'normal'
-                }
-              },
-              label: {
-                visible: true,
-                style: {
-                  fontSize: 12,
-                  fill: '#6F6F6F',
-                  angle: 0,
-                  fontWeight: 'normal'
-                }
-              },
-              hover: false,
-              background: {
-                visible: true,
-                state: {
-                  hover: {
-                    fillOpacity: 0.08,
-                    fill: '#141414'
-                  }
-                }
-              },
-              zero: true,
-              nice: true
-            }
-          ],
-          data: {
-            sortIndex: 1,
-            id: 'data',
-            fields: {
-              '10001': {
-                alias: '指标名称 '
-              },
-              '20001': {
-                alias: '图例项 ',
-                domain: ['销售额', '利润'],
-                lockStatisticsByDomain: true
-              },
-              '110002': {
-                alias: '指标值 '
-              },
-              '010002': {
-                alias: '指标值 '
-              },
-              '230810121242018': {
-                alias: '销售额'
-              },
-              '230810121242021': {
-                alias: '利润'
-              },
-              '230810121242024': {
-                alias: '类别',
-                domain: ['办公用品', '技术', '家具'],
-                lockStatisticsByDomain: true,
-                sortIndex: 0
-              }
-            }
-          },
-          seriesField: '20001',
-          color: {
-            field: '20001',
-            type: 'ordinal',
-            range: ['#2E62F1', '#4DC36A'],
-            specified: {},
-            domain: ['销售额', '利润']
-          }
-        }
-      }
-    ],
-    theme: {
-      bodyStyle: {
-        borderColor: 'rgba(0,4,20,0.2)',
-        borderLineWidth: [0, 0, 2, 0],
-        padding: [0, 0, 1, 0]
-      },
-      headerStyle: {
-        borderColor: 'rgba(0,4,20,0.2)',
-        fontSize: 12,
-        color: '#333333',
-        textAlign: 'center',
-        borderLineWidth: 0,
-        hover: {
-          cellBgColor: 'rgba(20, 20, 20, 0.08)'
-        }
-      },
-      rowHeaderStyle: {
-        borderColor: 'rgba(0,4,20,0.2)',
-        fontSize: 12,
-        color: '#333333',
-        borderLineWidth: 0,
-        hover: {
-          cellBgColor: 'rgba(20, 20, 20, 0.08)'
-        }
-      },
-      cornerHeaderStyle: {
-        borderColor: 'rgba(0,4,20,0.2)',
-        textAlign: 'center',
-        fontSize: 12,
-        color: '#333333',
-        fontWeight: 'bold',
-        borderLineWidth: [0, 0, 0, 0],
-        hover: {
-          cellBgColor: ''
-        }
-      },
-      cornerRightTopCellStyle: {
-        borderColor: 'rgba(0,4,20,0.2)',
-        borderLineWidth: 0,
-        hover: {
-          cellBgColor: ''
-        }
-      },
-      cornerLeftBottomCellStyle: {
-        borderColor: 'rgba(0,4,20,0.2)',
-        borderLineWidth: 0,
-        hover: {
-          cellBgColor: ''
-        }
-      },
-      cornerRightBottomCellStyle: {
-        borderColor: 'rgba(0,4,20,0.2)',
-        borderLineWidth: 0,
-        hover: {
-          cellBgColor: ''
-        }
-      },
-      rightFrozenStyle: {
-        borderColor: 'rgba(0,4,20,0.2)',
-        borderLineWidth: 0,
-        hover: {
-          cellBgColor: ''
-        }
-      },
-      bottomFrozenStyle: {
-        borderColor: 'rgba(0,4,20,0.2)',
-        borderLineWidth: 0,
-        hover: {
-          cellBgColor: 'rgba(20, 20, 20, 0.08)'
-        }
-      },
-      selectionStyle: {
-        cellBgColor: '',
-        cellBorderColor: ''
-      },
-      frameStyle: {
-        borderLineWidth: 0
-      }
-    },
+    defaultHeaderColWidth: [80, 'auto'],
+    indicatorTitle: '',
+    autoWrapText: true,
     legends: {
-      id: 'legend',
+      type: 'discrete',
+      id: 'legend-discrete',
       orient: 'bottom',
       position: 'middle',
       layoutType: 'normal',
       visible: true,
-      hover: false,
       maxRow: 1,
       title: {
         textStyle: {
@@ -1381,16 +2130,23 @@ export function createTable() {
           fill: '#6F6F6F'
         }
       },
+      layoutLevel: 50,
       item: {
+        focus: true,
+        focusIconStyle: {
+          size: 14
+        },
+        maxWidth: 400,
         spaceRow: 0,
         spaceCol: 0,
         padding: {
-          top: 4,
-          bottom: 4,
-          left: 4,
-          right: 22
+          top: 1,
+          bottom: 1,
+          left: 1,
+          right: 1
         },
         background: {
+          visible: false,
           style: {
             fillOpacity: 0.001
           }
@@ -1403,19 +2159,26 @@ export function createTable() {
         },
         shape: {
           style: {
+            lineWidth: 0,
             symbolType: 'square'
           }
         }
       },
       pager: {
+        layout: 'horizontal',
+        padding: 0,
         textStyle: {},
+        space: 0,
         handler: {
+          preShape: 'triangleLeft',
+          nextShape: 'triangleRight',
           style: {},
           state: {
             disable: {}
           }
         }
       },
+      padding: [16, 0, 0, 0],
       data: [
         {
           label: '销售额',
@@ -1431,10 +2194,96 @@ export function createTable() {
             symbolType: 'square'
           }
         }
-      ],
-      padding: [16, 0, 0, 0]
+      ]
     },
-    hash: 'cc764d3439655437e6ac84d62e55ec37'
+    corner: {
+      titleOnDimension: 'none'
+    },
+    theme: {
+      bodyStyle: {
+        borderColor: 'rgba(0,4,20,0.2)',
+        borderLineWidth: [1, 0, 0, 1],
+        padding: 1
+      },
+      headerStyle: {
+        borderColor: 'rgba(0,4,20,0.2)',
+        fontSize: 12,
+        color: '#333333',
+        textAlign: 'center',
+        borderLineWidth: [0, 0, 1, 1],
+        padding: [4, 0, 4, 0],
+        hover: {
+          cellBgColor: '#eceded'
+        }
+      },
+      rowHeaderStyle: {
+        borderColor: 'rgba(0,4,20,0.2)',
+        fontSize: 12,
+        color: '#333333',
+        padding: [0, 0, 0, 4],
+        borderLineWidth: [1, 1, 0, 0],
+        hover: {
+          cellBgColor: '#eceded'
+        }
+      },
+      cornerHeaderStyle: {
+        borderColor: 'rgba(0,4,20,0.2)',
+        textAlign: 'center',
+        fontSize: 12,
+        color: '#333333',
+        fontWeight: 'bold',
+        borderLineWidth: [0, 1, 1, 0],
+        padding: 0,
+        hover: {
+          cellBgColor: ''
+        }
+      },
+      cornerRightTopCellStyle: {
+        borderColor: 'rgba(0,4,20,0.2)',
+        borderLineWidth: [0, 0, 1, 1],
+        padding: 0,
+        hover: {
+          cellBgColor: ''
+        }
+      },
+      cornerLeftBottomCellStyle: {
+        borderColor: 'rgba(0,4,20,0.2)',
+        borderLineWidth: [1, 0, 0, 0],
+        hover: {
+          cellBgColor: ''
+        }
+      },
+      cornerRightBottomCellStyle: {
+        borderColor: 'rgba(0,4,20,0.2)',
+        borderLineWidth: [1, 0, 0, 1],
+        hover: {
+          cellBgColor: ''
+        }
+      },
+      rightFrozenStyle: {
+        borderColor: 'rgba(0,4,20,0.2)',
+        borderLineWidth: [1, 0, 1, 1],
+        hover: {
+          cellBgColor: '#eceded'
+        }
+      },
+      bottomFrozenStyle: {
+        borderColor: 'rgba(0,4,20,0.2)',
+        borderLineWidth: [1, 0, 0, 1],
+        padding: 0,
+        hover: {
+          cellBgColor: '#eceded'
+        }
+      },
+      selectionStyle: {
+        cellBgColor: '',
+        cellBorderColor: ''
+      },
+      frameStyle: {
+        borderLineWidth: 0
+      }
+    },
+    hash: '364113c2664303341e8ab9f4dc0e448a'
   };
   const tableInstance = new VTable.PivotChart(document.getElementById(CONTAINER_ID), option);
   // tableInstance.listenChart('click', args => {
@@ -1446,4 +2295,15 @@ export function createTable() {
   window.tableInstance = tableInstance;
 
   bindDebugTool(tableInstance.scenegraph.stage, {});
+
+  tableInstance.onVChartEvent(
+    'pointerup',
+    {
+      level: 'mark',
+      source: 'chart'
+    },
+    args => {
+      console.log('listenChart click', args);
+    }
+  );
 }

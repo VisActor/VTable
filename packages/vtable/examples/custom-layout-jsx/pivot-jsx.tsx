@@ -339,7 +339,7 @@ const option: VTable.PivotTableConstructorOptions = {
     },
     {
       dimensionKey: '220524114340022',
-      dimensionTitle: '细分',
+      title: '细分',
       dragHeader: true,
       headerStyle: {
         textAlign: 'left'
@@ -355,7 +355,7 @@ const option: VTable.PivotTableConstructorOptions = {
   rows: [
     {
       dimensionKey: '220524114340020',
-      dimensionTitle: '地区',
+      title: '地区',
       // headerFormat(value) {
       //   return `${value}地区`;
       // },
@@ -391,12 +391,12 @@ const option: VTable.PivotTableConstructorOptions = {
     },
     {
       dimensionKey: '220524114340031',
-      dimensionTitle: '省份',
+      title: '省份',
       dragHeader: false
     },
     {
       dimensionKey: '220524114340023',
-      dimensionTitle: '邮寄方式',
+      title: '邮寄方式',
       headerStyle: {
         textAlign: 'left',
         // color: 'white',
@@ -408,7 +408,7 @@ const option: VTable.PivotTableConstructorOptions = {
     },
     {
       dimensionKey: '220524114340024',
-      dimensionTitle: '子类别',
+      title: '子类别',
       headerStyle: {
         textAlign: 'left',
         // color: 'white',

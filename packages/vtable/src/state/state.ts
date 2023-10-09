@@ -531,7 +531,9 @@ export class StateManeger {
       scrollHeight: this.table.theme.scrollStyle?.width,
       scrollWidth: this.table.theme.scrollStyle?.width,
       viewHeight: this.table.tableNoFrameHeight,
-      viewWidth: this.table.tableNoFrameWidth
+      viewWidth: this.table.tableNoFrameWidth,
+      scrollDirection: 'vertical',
+      scrollRatioY: yRatio
     });
   }
   updateHorizontalScrollBar(xRatio: number) {
@@ -548,7 +550,9 @@ export class StateManeger {
       scrollHeight: this.table.theme.scrollStyle?.width,
       scrollWidth: this.table.theme.scrollStyle?.width,
       viewHeight: this.table.tableNoFrameHeight,
-      viewWidth: this.table.tableNoFrameWidth
+      viewWidth: this.table.tableNoFrameWidth,
+      scrollDirection: 'horizontal',
+      scrollRatioX: xRatio
     });
   }
   setScrollTop(top: number) {
@@ -562,7 +566,8 @@ export class StateManeger {
     this.table.scenegraph.setY(-top);
 
     // 更新scrollbar位置
-    this.table.scenegraph.component.updateVerticalScrollBarPos(top / (totalHeight - this.table.scenegraph.height));
+    const yRatio = top / (totalHeight - this.table.scenegraph.height);
+    this.table.scenegraph.component.updateVerticalScrollBarPos(yRatio);
     // 滚动期间清空选中清空
     this.table.stateManeger.updateHoverPos(-1, -1);
     // this.table.stateManeger.updateSelectPos(-1, -1);
@@ -572,7 +577,9 @@ export class StateManeger {
       scrollHeight: this.table.theme.scrollStyle?.width,
       scrollWidth: this.table.theme.scrollStyle?.width,
       viewHeight: this.table.tableNoFrameHeight,
-      viewWidth: this.table.tableNoFrameWidth
+      viewWidth: this.table.tableNoFrameWidth,
+      scrollDirection: 'vertical',
+      scrollRatioY: yRatio
     });
   }
   setScrollLeft(left: number) {
@@ -588,7 +595,8 @@ export class StateManeger {
     this.table.scenegraph.setX(-left);
 
     // 更新scrollbar位置
-    this.table.scenegraph.component.updateHorizontalScrollBarPos(left / (totalWidth - frozenWidth));
+    const xRatio = left / (totalWidth - this.table.scenegraph.width);
+    this.table.scenegraph.component.updateHorizontalScrollBarPos(xRatio);
 
     // 滚动期间清空选中清空
     this.table.stateManeger.updateHoverPos(-1, -1);
@@ -599,7 +607,9 @@ export class StateManeger {
       scrollHeight: this.table.theme.scrollStyle?.width,
       scrollWidth: this.table.theme.scrollStyle?.width,
       viewHeight: this.table.tableNoFrameHeight,
-      viewWidth: this.table.tableNoFrameWidth
+      viewWidth: this.table.tableNoFrameWidth,
+      scrollDirection: 'horizontal',
+      scrollRatioX: xRatio
     });
   }
   hideVerticalScrollBar() {

@@ -1,31 +1,50 @@
 import type { PivotHeaderLayoutMap } from '../layout/pivot-header-layout';
 import type { CellAddress } from '../ts-types';
+import type { LayoutObjectId } from '../ts-types/base-table';
 
 export function diffCellAddress(
-  oldCellIdsArr: number[][],
-  newCellIdsArr: number[][],
+  col: number,
+  row: number,
+  oldCellIds: number[],
+  newCellIds: number[],
   oldRowHeaderCellPositons: CellAddress[],
   layout: PivotHeaderLayoutMap
 ) {
-  const oldCellIds = oldCellIdsArr.map(oldCellId => oldCellId[0]);
-  const newCellIds = newCellIdsArr.map(oldCellId => oldCellId[0]);
+  const columnHeaderStart = layout.columnHeaderLevelCount;
+  // const oldCellIds = oldCellIdsArr.map(oldCellId => oldCellId[0]);
+  // const newCellIds = newCellIdsArr.map(oldCellId => oldCellId[0]);
   const addCellPositions = [];
   const removeCellPositions = [];
+  // const updateCellIds: Set<LayoutObjectId> = new Set();
   // diff two array elements
   for (let i = 0; i < oldCellIds.length; i++) {
     if (!newCellIds.includes(oldCellIds[i])) {
+      // updateCellIds.add(layout.getParentCellId(oldRowHeaderCellPositons[i].col, oldRowHeaderCellPositons[i].row));
       removeCellPositions.push(oldRowHeaderCellPositons[i]);
     }
   }
   for (let i = 0; i < newCellIds.length; i++) {
     if (!oldCellIds.includes(newCellIds[i])) {
-      addCellPositions.push(layout.getHeaderCellAdress(newCellIds[i]));
+      const newCellAddr = { col, row: columnHeaderStart + i }; // layout.getHeaderCellAdressById(newCellIds[i]);
+      // updateCellIds.add(layout.getParentCellId(newCellAddr.col, newCellAddr.row));
+      addCellPositions.push(newCellAddr);
     }
   }
-
+  let parentId = layout.getParentCellId(col, row);
+  let parentCellAddress = layout.getRowHeaderCellAddressByCellId(parentId);
+  const updateCellPositions = [];
+  updateCellPositions.push(parentCellAddress);
+  while (parentId) {
+    parentId = layout.getParentCellId(parentCellAddress.col, parentCellAddress.row);
+    if (parentId) {
+      parentCellAddress = layout.getRowHeaderCellAddressByCellId(parentId);
+      updateCellPositions.push(parentCellAddress);
+    }
+  }
   return {
     addCellPositions,
-    removeCellPositions
+    removeCellPositions,
+    updateCellPositions
   };
 }
 

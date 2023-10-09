@@ -116,6 +116,8 @@ export interface TableEvents {
 
   MOUSEENTER_AXIS: 'mouseenter_axis';
   MOUSELEAVE_AXIS: 'mouseleave_axis';
+
+  AFTER_STAGE_RENDER: 'after_stage_render';
 }
 /**
  * Table event types
@@ -159,5 +161,7 @@ export const TABLE_EVENT_TYPE: TableEvents = {
   LEGEND_CHANGE: 'legend_change',
 
   MOUSEENTER_AXIS: 'mouseenter_axis',
-  MOUSELEAVE_AXIS: 'mouseleave_axis'
+  MOUSELEAVE_AXIS: 'mouseleave_axis',
+
+  AFTER_STAGE_RENDER: 'after_stage_render'
 } as TableEvents;
