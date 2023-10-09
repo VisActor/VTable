@@ -1,5 +1,5 @@
 import type { IStage, IRect, ITextCache } from '@visactor/vrender';
-import { createStage, createRect, IContainPointMode, container, loadCanvasPicker, vglobal } from '@visactor/vrender';
+import { createStage, createRect, IContainPointMode, container, vglobal } from '@visactor/vrender';
 import {
   type CellAddress,
   type CellLocation,
