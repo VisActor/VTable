@@ -179,7 +179,7 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
       (this.internalProps.layoutMap as PivotHeaderLayoutMap).rowExpandLevel === options?.rowExpandLevel
     ) {
       const beforeRowDimensions = (this.internalProps.layoutMap as PivotHeaderLayoutMap).rowDimensionTree.tree.children;
-      this.options.rowTree?.forEach((node: IHeaderTreeDefine, index: number) => {
+      this.internalProps.rowTree?.forEach((node: IHeaderTreeDefine, index: number) => {
         const beforeRowDimension = beforeRowDimensions.find(
           item => item.dimensionKey === node.dimensionKey && item.value === node.value
         );
@@ -313,7 +313,7 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
     const records = this.options.records ?? this.internalProps.records;
     if (this.options.enableDataAnalysis) {
       internalProps.layoutMap = new PivotHeaderLayoutMap(this, this.dataset);
-    } else if (Array.isArray(this.options.columnTree) || Array.isArray(this.options.rowTree)) {
+    } else if (Array.isArray(this.internalProps.columnTree) || Array.isArray(this.internalProps.rowTree)) {
       internalProps.layoutMap = new PivotHeaderLayoutMap(this, null);
       //判断如果数据是二维数组 则标识已经分析过 直接从二维数组挨个读取渲染即可
       //不是二维数组 对应是个object json对象 则表示flat数据，需要对应行列维度进行转成方便数据查询的行列树结构

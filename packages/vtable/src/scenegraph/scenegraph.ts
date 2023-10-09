@@ -292,6 +292,7 @@ export class Scenegraph {
       (this.tableGroup.parent as Group).removeChild((this.tableGroup as any).border);
       delete (this.tableGroup as any).border;
     }
+    this.proxy?.release();
   }
 
   /**

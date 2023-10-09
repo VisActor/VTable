@@ -15,6 +15,7 @@ import { sortHorizontal } from './update-position/sort-horizontal';
 
 export class SceneProxy {
   table: BaseTableAPI;
+  isRelease: boolean = false;
   mode: 'column' | 'row' | 'pivot' = 'column';
 
   rowLimit = 1000;
@@ -171,6 +172,9 @@ export class SceneProxy {
   async progress() {
     return new Promise<void>((resolve, reject) => {
       setTimeout(async () => {
+        if (this.isRelease) {
+          return;
+        }
         if (this.colUpdatePos < this.colEnd) {
           await this.updateColCellGroupsAsync();
           await this.progress();
@@ -567,6 +571,10 @@ export class SceneProxy {
       this.cellCache.set(col, cellGroup);
     }
     return cellGroup;
+  }
+
+  release() {
+    this.isRelease = true;
   }
 }
 
