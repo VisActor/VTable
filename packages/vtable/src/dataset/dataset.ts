@@ -523,6 +523,7 @@ export class Dataset {
                   if (typeof indicator !== 'string') {
                     return indicator.indicatorKey === this.indicatorKeys[i];
                   }
+                  return false;
                 }) as IIndicator
               )?.format
           );
@@ -562,6 +563,7 @@ export class Dataset {
                     if (typeof indicator !== 'string') {
                       return indicator.indicatorKey === this.indicatorKeys[i];
                     }
+                    return false;
                   }) as IIndicator
                 )?.format
             )
@@ -918,6 +920,7 @@ export class Dataset {
                         if (typeof indicator !== 'string') {
                           return indicator.indicatorKey === this.indicatorKeys[i];
                         }
+                        return false;
                       }) as IIndicator
                     )?.format
                 );
@@ -944,6 +947,7 @@ export class Dataset {
                       if (typeof indicator !== 'string') {
                         return indicator.indicatorKey === this.indicatorKeys[i];
                       }
+                      return false;
                     }) as IIndicator
                   )?.format
               );
@@ -984,6 +988,7 @@ export class Dataset {
                             if (typeof indicator !== 'string') {
                               return indicator.indicatorKey === this.indicatorKeys[i];
                             }
+                            return false;
                           }) as IIndicator
                         )?.format
                     );
@@ -1016,6 +1021,7 @@ export class Dataset {
                         if (typeof indicator !== 'string') {
                           return indicator.indicatorKey === this.indicatorKeys[i];
                         }
+                        return false;
                       }) as IIndicator
                     )?.format
                 );
