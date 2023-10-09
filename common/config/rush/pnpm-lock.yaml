@@ -82,7 +82,7 @@ importers:
       '@visactor/vrender': 0.16.0
       '@visactor/vrender-components': 0.16.0
       '@visactor/vscale': ~0.15.7
-      '@visactor/vutils': ~0.15.7
+      '@visactor/vutils': 0.16.1
       '@vitejs/plugin-react': 3.1.0
       axios: ^1.4.0
       chai: 4.3.4
@@ -122,7 +122,7 @@ importers:
       '@visactor/vrender': 0.16.0
       '@visactor/vrender-components': 0.16.0
       '@visactor/vscale': 0.15.14
-      '@visactor/vutils': 0.15.11
+      '@visactor/vutils': 0.16.1
       cssfontparser: 1.2.1
     devDependencies:
       '@babel/core': 7.20.12
@@ -3159,14 +3159,6 @@ packages:
       '@visactor/vscale': 0.16.1
       '@visactor/vutils': 0.16.1
 
-  /@visactor/vutils/0.15.11:
-    resolution: {integrity: sha512-siHDMxBD5YHtmraat4NrbG3g6kiLDzx+mpxHkXfrH9MgkLDfy70nI8hbJKwGXGusvTZzStB6AB6D0nGxnKQv6A==}
-    dependencies:
-      '@turf/helpers': 6.5.0
-      '@turf/invariant': 6.5.0
-      eventemitter3: 4.0.7
-    dev: false
-
   /@visactor/vutils/0.15.14:
     resolution: {integrity: sha512-mZuJhXdDZqq5arqc/LfEmWOY6l7ErK1MurO8bR3vESxeCaQ18pN36iit15K2IMQVJuKZPnZ2ksw8+a1irXi/8A==}
     dependencies:
@@ -3193,7 +3185,7 @@ packages:
       '@babel/plugin-transform-react-jsx-source': 7.22.5_@babel+core@7.20.12
       magic-string: 0.27.0
       react-refresh: 0.14.0
-      vite: 3.2.6
+      vite: 3.2.6_bey24emwuvidhf4fiqele7nite
     transitivePeerDependencies:
       - supports-color
     dev: true
