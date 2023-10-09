@@ -9284,10 +9284,10 @@ export function createTable() {
 
   const tableInstance = new VTable.PivotChart(option);
   tableInstance.onVChartEvent('click', args => {
-    console.log('listenChart click', args);
+    console.log('onVChartEvent click', args);
   });
   tableInstance.onVChartEvent('mouseover', args => {
-    console.log('listenChart mouseover', args);
+    console.log('onVChartEvent mouseover', args);
   });
   window.tableInstance = tableInstance;
 }

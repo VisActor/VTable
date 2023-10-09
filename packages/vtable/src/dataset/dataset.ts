@@ -517,7 +517,14 @@ export class Dataset {
         if (!this.tree[flatRowKey]?.[flatColKey]?.[i]) {
           this.tree[flatRowKey][flatColKey][i] = new this.aggregators[aggRule?.aggregationType ?? AggregationType.SUM](
             aggRule?.field ?? this.indicatorKeys[i],
-            aggRule?.formatFun
+            aggRule?.formatFun ??
+              (
+                this.indicators?.find((indicator: string | IIndicator) => {
+                  if (typeof indicator !== 'string') {
+                    return indicator.indicatorKey === this.indicatorKeys[i];
+                  }
+                }) as IIndicator
+              )?.format
           );
         }
         if (assignedIndicatorKey) {
@@ -549,7 +556,14 @@ export class Dataset {
             min: new this.aggregators[AggregationType.MIN](this.indicatorKeys[i]),
             total: new this.aggregators[aggRule?.aggregationType ?? AggregationType.SUM](
               aggRule?.field ?? this.indicatorKeys[i],
-              aggRule?.formatFun
+              aggRule?.formatFun ??
+                (
+                  this.indicators?.find((indicator: string | IIndicator) => {
+                    if (typeof indicator !== 'string') {
+                      return indicator.indicatorKey === this.indicatorKeys[i];
+                    }
+                  }) as IIndicator
+                )?.format
             )
           };
         }
@@ -896,7 +910,17 @@ export class Dataset {
                 const aggRule = this.getAggregatorRule(this.indicatorKeys[i]);
                 this.tree[flatRowKey][flatColTotalKey][i] = new this.aggregators[
                   aggRule?.aggregationType ?? AggregationType.SUM
-                ](aggRule?.field ?? this.indicatorKeys[i], aggRule?.formatFun);
+                ](
+                  aggRule?.field ?? this.indicatorKeys[i],
+                  aggRule?.formatFun ??
+                    (
+                      this.indicators?.find((indicator: string | IIndicator) => {
+                        if (typeof indicator !== 'string') {
+                          return indicator.indicatorKey === this.indicatorKeys[i];
+                        }
+                      }) as IIndicator
+                    )?.format
+                );
               }
               this.tree[flatRowKey][flatColTotalKey][i].push(that.tree[flatRowKey]?.[flatColKey]?.[i]);
             }
@@ -912,7 +936,17 @@ export class Dataset {
               const aggRule = this.getAggregatorRule(this.indicatorKeys[i]);
               this.tree[flatRowKey][flatColTotalKey][i] = new this.aggregators[
                 aggRule?.aggregationType ?? AggregationType.SUM
-              ](aggRule?.field ?? this.indicatorKeys[i], aggRule?.formatFun);
+              ](
+                aggRule?.field ?? this.indicatorKeys[i],
+                aggRule?.formatFun ??
+                  (
+                    this.indicators?.find((indicator: string | IIndicator) => {
+                      if (typeof indicator !== 'string') {
+                        return indicator.indicatorKey === this.indicatorKeys[i];
+                      }
+                    }) as IIndicator
+                  )?.format
+              );
             }
             this.tree[flatRowKey][flatColTotalKey][i].push(that.tree[flatRowKey]?.[flatColKey]?.[i]);
           }
@@ -942,7 +976,17 @@ export class Dataset {
                     const aggRule = this.getAggregatorRule(this.indicatorKeys[i]);
                     this.tree[flatRowTotalKey][flatColKey][i] = new this.aggregators[
                       aggRule?.aggregationType ?? AggregationType.SUM
-                    ](aggRule?.field ?? this.indicatorKeys[i], aggRule?.formatFun);
+                    ](
+                      aggRule?.field ?? this.indicatorKeys[i],
+                      aggRule?.formatFun ??
+                        (
+                          this.indicators?.find((indicator: string | IIndicator) => {
+                            if (typeof indicator !== 'string') {
+                              return indicator.indicatorKey === this.indicatorKeys[i];
+                            }
+                          }) as IIndicator
+                        )?.format
+                    );
                   }
                   this.tree[flatRowTotalKey][flatColKey][i].push(that.tree[flatRowKey]?.[flatColKey]?.[i]);
                 }
@@ -964,7 +1008,17 @@ export class Dataset {
                 const aggRule = this.getAggregatorRule(this.indicatorKeys[i]);
                 this.tree[flatRowTotalKey][flatColKey][i] = new this.aggregators[
                   aggRule?.aggregationType ?? AggregationType.SUM
-                ](aggRule?.field ?? this.indicatorKeys[i], aggRule?.formatFun);
+                ](
+                  aggRule?.field ?? this.indicatorKeys[i],
+                  aggRule?.formatFun ??
+                    (
+                      this.indicators?.find((indicator: string | IIndicator) => {
+                        if (typeof indicator !== 'string') {
+                          return indicator.indicatorKey === this.indicatorKeys[i];
+                        }
+                      }) as IIndicator
+                    )?.format
+                );
               }
               this.tree[flatRowTotalKey][flatColKey][i].push(that.tree[flatRowKey]?.[flatColKey]?.[i]);
             }

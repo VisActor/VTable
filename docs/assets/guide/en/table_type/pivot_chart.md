@@ -13,13 +13,11 @@ There are many application scenarios for perspective composite graphs in data la
 4.  Data Exploration and Discovery: Perspective composite diagrams can be used to explore and discover patterns and trends in data. By grouping data according to different attributes and presenting each grouped data in a certain form, users can gain a more comprehensive understanding of the relationship between data, thereby discovering patterns and trends in data.
 5.  Data reporting and presentation: Perspective composite diagrams can be used to present data reports. Data reports can be made easier to understand and present by grouping data according to different attributes and presenting each grouped data in a certain form.
 
-# Structure of Perspective Composite Diagram
-
-Structure is comparable[Pivot Table](https://visactor.io/vtable/guide/table_type/Pivot_table/pivot_table_overview)Compared with the pivot table, in addition to the list header, row header, corner header, and body, the pivot combination diagram can also configure the coordinate axis component. The four directions correspond to the upper axis, next week, left axis, and right axis respectively. At the same time, the legend component can also be configured separately.
+# The structure of the perspective combination chart
+The structure can be compared to [**pivot table**](../table_type/Pivot_table/pivot_table_overview). Compared with the pivot table, in addition to the column header, row header, corner header, and body, the perspective combination chart can also be configured with [**axis components**](../components/axes) in the four directions. Corresponds to the upper axis, next week, left axis, and right axis, and can also be configured separately [**Legend component**](../components/legend).
 ![image](https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/c0de7ff0a101bd4cb25c8170f.png)
 
-configuration item
-The following configuration details:
+The specific relevant configurations are as follows:
 
     {
         rows: [
@@ -149,11 +147,145 @@ Corresponding to the schematic structure of the perspective combination diagram 
 
 # Chart Events
 
-If you want to listen to the events of the chart chart, you can use listenChart to implement it. Vtable makes a simple event proxy. The supported event types and callbacks are still the same as those of vchart. For details, please refer to[VChart event](https://visactor.io/vchart/api/API/event)
+If you want to monitor chart events, you can use onVChartEvent. vtable has made a simple event proxy. The supported event types and callbacks are still consistent with vchart. For details, please refer to [VChart Event](https://visactor.io/ vchart/api/API/event)
+```    
+     tableInstance.onVChartEvent('click', args => {
+        console.log('onVChartEvent click', args);
+      });
+      tableInstance.onVChartEvent('mouseover', args => {
+        console.log('onVChartEvent mouseover', args);
+      });
+```
 
-         tableInstance.listenChart('click', args => {
-            console.log('listenChart click', args);
-          });
-          tableInstance.listenChart('mouseover', args => {
-            console.log('listenChart mouseover', args);
-          });
+# Legend configuration and legend linkage
+How to achieve the linkage effect between table legend and chart?
+
+![image](https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/guide/legend-chart.gif)
+## Legend configuration
+You can refer to the table [Legend Tutorial] (../components/legend) to configure the legend displayed outside the table.
+The configuration in the above picture is as follows:
+```
+     legends: {
+      orient: 'bottom',
+      type: 'discrete',
+      data: [
+        {
+          label: 'Consumer-Quantity',
+          shape: {
+            fill: '#2E62F1',
+            symbolType: 'circle'
+          }
+        },
+        {
+          label: 'Consumer-Quantity',
+          shape: {
+            fill: '#4DC36A',
+            symbolType: 'square'
+          }
+        },
+         {
+          label: 'Home Office-Quantity',
+          shape: {
+            fill: '#FF8406',
+            symbolType: 'square'
+          }
+        },
+        {
+          label: 'Consumer-Sales',
+          shape: {
+            fill: '#FFCC00',
+            symbolType: 'square'
+          }
+        },
+        {
+          label: 'Consumer-Sales',
+          shape: {
+            fill: '#4F44CF',
+            symbolType: 'square'
+          }
+        },
+         {
+          label: 'Home Office-Sales',
+          shape: {
+            fill: '#5AC8FA',
+            symbolType: 'square'
+          }
+        },
+        {
+          label: 'Consumer-Profit',
+          shape: {
+            fill: '#003A8C',
+            symbolType: 'square'
+          }
+        },
+        {
+          label: 'Consumer-Profit',
+          shape: {
+            fill: '#B08AE2',
+            symbolType: 'square'
+          }
+        },
+         {
+          label: 'Home Office-Profit',
+          shape: {
+            fill: '#FF6341',
+            symbolType: 'square'
+          }
+        }
+      ]
+    }
+```
+
+This configuration configures the color and shape of each item of the legend, as well as the label value.
+
+Because the color values need to be explicitly set in this configuration, the color mapping rules also need to be specified in the spec of the configuration chart. Please refer to [color configuration method](https://visactor.io/vchart/option/barChart#color).
+
+In the example above, we added the following configuration to the chartSpec to ensure that the colors in the chart and the legend are consistent:
+```
+scales: [
+              {
+                id: 'color',
+                type: 'ordinal',
+                domain: [
+                  'Consumer-Quantity',
+                  'Corporate-Quantity',
+                  'Home Office-Quantity',
+                  'Consumer-Sales',
+                  'Corporate-Sales',
+                  'Home Office-Sales',
+                  'Consumer-Profit',
+                  'Corporate-Profit',
+                  'Home Office-Profit'
+                ],
+                range: [
+                  '#2E62F1',
+                  '#4DC36A',
+                  '#FF8406',
+                  '#FFCC00',
+                  '#4F44CF',
+                  '#5AC8FA',
+                  '#003A8C',
+                  '#B08AE2',
+                  '#FF6341',
+                  '#98DD62',
+                  '#07A199',
+                  '#87DBDD'
+                ]
+              }
+            ]
+```
+## Legend linkage
+Use the event `LEGEND_ITEM_CLICK` to monitor legend item clicks, and call the VTable interface `updateFilterRules` to process the data display filtered chart.
+
+```
+      const { LEGEND_ITEM_CLICK } = VTable.ListTable.EVENT_TYPE;
+      tableInstance.on(LEGEND_ITEM_CLICK, args => {
+        console.log('LEGEND_ITEM_CLICK', args);
+        tableInstance.updateFilterRules([
+          {
+            filterKey: 'Segment-Indicator',
+            filteredValues: args.value
+          }
+        ]);
+      });
+```

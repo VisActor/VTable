@@ -150,7 +150,7 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
     if (dataset) {
       this.rowTree = dataset.rowHeaderTree;
       this.columnTree = dataset.colHeaderTree;
-      if (this.indicatorsAsCol) {
+      if (this.indicatorsAsCol && this._table.isPivotChart()) {
         const supplyAxisNode = (nodes: IHeaderTreeDefine[]) => {
           nodes.forEach((node: IHeaderTreeDefine) => {
             if (node.children?.length) {
