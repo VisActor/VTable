@@ -62,14 +62,14 @@ export class Dataset {
   colKeys: string[][] = [];
   //行表头的每行对应的表头键值
   rowKeys: string[][] = [];
-  /**
-   * 对应dataset中的rowKeys，行表头的每行表头键值，包含小计总计
-   */
-  rowKeysPath: string[][];
-  /**
-   * 对应dataset中的colKeys，列表头的每列表头键值，包含小计总计
-   */
-  colKeysPath: string[][];
+  // /**
+  //  * 对应dataset中的rowKeys，行表头的每行表头键值，包含小计总计
+  //  */
+  // rowKeysPath: string[][];
+  // /**
+  //  * 对应dataset中的colKeys，列表头的每列表头键值，包含小计总计
+  //  */
+  // colKeysPath: string[][];
   // allTotal: SumAggregator;
   rowOrder = 'key_a_to_z';
   colOrder = 'key_a_to_z';
@@ -115,8 +115,8 @@ export class Dataset {
   rows: string[];
   columns: string[];
   indicatorKeys: string[];
-  // 存储行表头path 这个是全量的 对比于分页截取的rowKeysPath；
-  private rowKeysPath_FULL: string[][];
+  // // 存储行表头path 这个是全量的 对比于分页截取的rowKeysPath；
+  // private rowKeysPath_FULL: string[][];
   colHeaderTree: any[];
   rowHeaderTree: any[];
   rowHierarchyType: 'grid' | 'tree';
@@ -168,9 +168,9 @@ export class Dataset {
       const dimensionIndex = this.columns.indexOf(dimension);
       this.colsIsTotal[dimensionIndex] = true;
     }
-    this.rowKeysPath = [];
-    this.rowKeysPath_FULL = [];
-    this.colKeysPath = [];
+    // this.rowKeysPath = [];
+    // this.rowKeysPath_FULL = [];
+    // this.colKeysPath = [];
     if (records) {
       //处理数据
       this.records = records;
@@ -561,6 +561,7 @@ export class Dataset {
     }
   }
   /**
+   *  TODO 需要完善TreeToArr这里的逻辑
    * 全量更新排序规则 对数据重新排序 生成行列paths
    * @param sortRules
    */
@@ -568,28 +569,28 @@ export class Dataset {
     this.sorted = false;
     this.sortRules = sortRules;
     this.sortKeys();
-    this.rowKeysPath_FULL = this.TreeToArr(
-      this.ArrToTree(
-        this.rowKeys,
-        this.rows,
-        this.indicatorsAsCol ? undefined : this.indicators,
-        this.rowsIsTotal,
-        this?.totals?.row?.showGrandTotals || this.columns.length === 0,
-        this.rowGrandTotalLabel,
-        this.rowSubTotalLabel
-      )
-    );
-    this.colKeysPath = this.TreeToArr(
-      this.ArrToTree(
-        this.colKeys,
-        this.columns,
-        this.indicatorsAsCol ? this.indicators : undefined,
-        this.colsIsTotal,
-        this.totals?.column?.showGrandTotals || this.rows.length === 0,
-        this.colGrandTotalLabel,
-        this.colSubTotalLabel
-      )
-    );
+    // this.rowKeysPath_FULL = this.TreeToArr(
+    //   this.ArrToTree(
+    //     this.rowKeys,
+    //     this.rows,
+    //     this.indicatorsAsCol ? undefined : this.indicators,
+    //     this.rowsIsTotal,
+    //     this?.totals?.row?.showGrandTotals || this.columns.length === 0,
+    //     this.rowGrandTotalLabel,
+    //     this.rowSubTotalLabel
+    //   )
+    // );
+    // this.colKeysPath = this.TreeToArr(
+    //   this.ArrToTree(
+    //     this.colKeys,
+    //     this.columns,
+    //     this.indicatorsAsCol ? this.indicators : undefined,
+    //     this.colsIsTotal,
+    //     this.totals?.column?.showGrandTotals || this.rows.length === 0,
+    //     this.colGrandTotalLabel,
+    //     this.colSubTotalLabel
+    //   )
+    // );
   }
   /** 更新过滤规则 修改tree数据及收集的value */
   updateFilterRules(filterRules: FilterRules, isResetTree: boolean = false) {

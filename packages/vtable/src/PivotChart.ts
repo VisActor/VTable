@@ -418,8 +418,13 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
       return undefined;
     }
     if (this.dataset) {
-      const colKeys = this.dataset.colKeysPath[this.internalProps.layoutMap.getRecordIndexByCol(col)] ?? [];
-      const rowKeys = this.dataset.rowKeysPath[this.internalProps.layoutMap.getRecordIndexByRow(row)] ?? [];
+      const cellDimensionPath = this.internalProps.layoutMap.getCellHeaderPaths(col, row);
+      const colKeys = cellDimensionPath.colHeaderPaths.map((colPath: any) => {
+        return colPath.indicatorKey ?? colPath.value;
+      });
+      const rowKeys = cellDimensionPath.rowHeaderPaths.map((rowPath: any) => {
+        return rowPath.indicatorKey ?? rowPath.value;
+      });
       const aggregator = this.dataset.getAggregator(
         !this.internalProps.layoutMap.indicatorsAsCol ? rowKeys.slice(0, -1) : rowKeys,
         this.internalProps.layoutMap.indicatorsAsCol ? colKeys.slice(0, -1) : colKeys,

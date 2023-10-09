@@ -36,8 +36,16 @@ export function getDataCellPath(
       if (layoutMap.isHeader(col, row)) {
         continue;
       }
-      const colKey = dataset.colKeysPath[layoutMap.getRecordIndexByCol(col)] ?? [];
-      const rowKey = dataset.rowKeysPath[layoutMap.getRecordIndexByRow(row)] ?? [];
+      // const colKey = dataset.colKeysPath[layoutMap.getRecordIndexByCol(col)] ?? [];
+      // const rowKey = dataset.rowKeysPath[layoutMap.getRecordIndexByRow(row)] ?? [];
+
+      const cellDimensionPath = layoutMap.getCellHeaderPaths(col, row);
+      const colKey = cellDimensionPath.colHeaderPaths.map((colPath: any) => {
+        return colPath.indicatorKey ?? colPath.value;
+      });
+      const rowKey = cellDimensionPath.rowHeaderPaths.map((rowPath: any) => {
+        return rowPath.indicatorKey ?? rowPath.value;
+      });
       const aggregator = dataset.getAggregator(
         rowKey[rowKey.length - 1],
         colKey[colKey.length - 1],
