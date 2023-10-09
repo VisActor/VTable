@@ -161,25 +161,29 @@ export function computeRowsHeight(
   if (table.heightMode === 'adaptive') {
     table._clearRowRangeHeightsMap();
     // const canvasWidth = table.internalProps.canvas.width;
-    const totalDrawHeight = table.tableNoFrameHeight - table.getFrozenRowsHeight() - table.getBottomFrozenRowsHeight();
+    const totalDrawHeight =
+      table.tableNoFrameHeight -
+      (table.isListTable() ? 0 : table.getFrozenRowsHeight() + table.getBottomFrozenRowsHeight());
+    const startRow = table.isListTable() ? 0 : table.frozenRowCount;
+    const endRow = table.isListTable() ? table.rowCount : table.rowCount - table.bottomFrozenRowCount;
     let actualHeight = 0;
-    for (let row = table.frozenRowCount; row < table.rowCount - table.bottomFrozenRowCount; row++) {
+    for (let row = startRow; row < endRow; row++) {
       actualHeight += update ? newHeights[row] : table.getRowHeight(row);
     }
     const factor = totalDrawHeight / actualHeight;
-    for (let row = table.frozenRowCount; row < table.rowCount - table.bottomFrozenRowCount; row++) {
+    for (let row = startRow; row < endRow; row++) {
       let rowHeight;
-      if (row === table.rowCount - table.bottomFrozenRowCount - 1) {
+      if (row === endRow - 1) {
         rowHeight =
           totalDrawHeight -
           (update
             ? newHeights.reduce((acr, cur, index) => {
-                if (index >= table.frozenRowCount && index <= table.rowCount - table.bottomFrozenRowCount - 2) {
+                if (index >= startRow && index <= endRow - 2) {
                   return acr + cur;
                 }
                 return acr;
               }, 0)
-            : table.getRowsHeight(table.frozenRowCount, table.rowCount - table.bottomFrozenRowCount - 2));
+            : table.getRowsHeight(startRow, endRow - 2));
       } else {
         rowHeight = Math.round((update ? newHeights[row] : table.getRowHeight(row)) * factor);
       }

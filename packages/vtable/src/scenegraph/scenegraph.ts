@@ -788,6 +788,7 @@ export class Scenegraph {
 
     this.dealWidthMode();
     this.dealHeightMode();
+    this.resetFrozen();
     this.dealFrozen();
     this.updateTableSize();
     this.updateBorderSizeAndPosition();
@@ -1027,6 +1028,7 @@ export class Scenegraph {
     this.dealWidthMode();
     this.dealHeightMode();
     // 处理冻结
+    this.resetFrozen();
     this.dealFrozen();
 
     // 处理frame border
