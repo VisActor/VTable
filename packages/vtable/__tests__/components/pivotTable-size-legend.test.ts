@@ -295,14 +295,26 @@ describe('listTable-size-legend init test', () => {
       value: [0, 10000],
       max: 10000,
       min: 0
-    }
+    },
+    theme: VTable.themes.DEFAULT.extends({
+      defaultStyle: {
+        // borderLineWidth: 0,
+        fontFamily: 'Arial'
+      },
+      bodyStyle: {
+        // color: 'white',
+        fontFamily: 'Arial'
+      },
+      headerStyle: { fontFamily: 'Arial' },
+      rowHeaderStyle: { fontFamily: 'Arial' }
+    })
   };
   const pivotTable = new VTable.PivotTable(containerDom, option);
 
   test('listTable-size-legend getDrawRange', () => {
     const drawRange = pivotTable.getDrawRange();
     expect(drawRange.left).toBe(1);
-    expect(drawRange.right).toBe(568);
+    expect(drawRange.right).toBe(566);
     expect(drawRange.top).toBe(58);
     expect(drawRange.bottom).toBe(799);
   });
