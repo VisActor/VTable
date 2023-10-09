@@ -115,6 +115,7 @@ export type ColumnStyleOption =
   | ITextStyleOption
   | IImageStyleOption
   | ProgressBarStyleOption
+  | CheckboxStyleOption
   | ((styleArg: StylePropertyFunctionArg) => IStyleOption | ITextStyleOption | IImageStyleOption);
 
 export type HeaderStyleOption =
@@ -175,4 +176,9 @@ export interface ProgressBarStyleOption extends IStyleOption {
   barMarkWidth?: number;
   // 进度条标记位置
   barMarkPosition?: 'right' | 'bottom';
+}
+
+export interface CheckboxStyleOption extends ITextStyleOption {
+  checked?: boolean | ((args: StylePropertyFunctionArg) => boolean);
+  disable?: boolean | ((args: StylePropertyFunctionArg) => boolean);
 }

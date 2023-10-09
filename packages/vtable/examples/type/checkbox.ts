@@ -49,7 +49,19 @@ export function createTable() {
         field: 'percent',
         title: 'checkbox',
         width: 120,
+        cellType: 'checkbox',
+        style: {
+          disable: true
+        }
+      },
+      {
+        field: 'check',
+        title: 'checkbox',
+        width: 120,
         cellType: 'checkbox'
+        // style: {
+        //   disable: true
+        // }
       }
     ],
     showFrozenIcon: true, //显示VTable内置冻结列图标
@@ -61,13 +73,13 @@ export function createTable() {
 
   //设置表格数据
   instance.setRecords([
-    { percent: '100%', value: 20 },
-    { percent: '80%', value: 18 },
-    { percent: '60%', value: 16 },
-    { percent: '40%', value: 14 },
-    { percent: '20%', value: 12 },
-    { percent: '0%', value: 10 },
-    { percent: '0%', value: -10 }
+    { percent: '100%', value: 20, check: { text: 'unchecked', checked: false, disable: false } },
+    { percent: '80%', value: 18, check: { text: 'checked', checked: true, disable: false } },
+    { percent: '60%', value: 16, check: { text: 'disable', checked: true, disable: true } },
+    { percent: '40%', value: 14, check: { text: 'disable', checked: false, disable: true } },
+    { percent: '20%', value: 12, check: { text: 'checked', checked: false, disable: false } },
+    { percent: '0%', value: 10, check: { text: 'checked', checked: false, disable: false } },
+    { percent: '0%', value: -10, check: { text: 'checked', checked: false, disable: false } }
   ]);
 
   bindDebugTool(instance.scenegraph.stage as any, {

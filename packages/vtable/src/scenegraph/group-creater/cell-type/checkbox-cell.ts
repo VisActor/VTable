@@ -3,11 +3,12 @@ import { createLine, createSymbol } from '@visactor/vrender';
 import { PointScale, LinearScale } from '@visactor/vscale';
 import { isValid } from '../../../tools/util';
 import { Group } from '../../graphic/group';
-import type { CellInfo, SparklineSpec } from '../../../ts-types';
+import type { CellInfo, CheckboxStyleOption, SparklineSpec } from '../../../ts-types';
 import type { BaseTableAPI } from '../../../ts-types/base-table';
 import { isObject } from '@visactor/vutils';
 import { CheckBox } from '@visactor/vrender-components';
 import { getHierarchyOffset } from '../../utils/get-hierarchy-offset';
+import { getOrApply } from '../../../tools/helper';
 
 export function createCheckboxCellGroup(
   cellGroup: Group | null,
@@ -91,20 +92,39 @@ function createCheckbox(
   cellTheme: IThemeSpec,
   table: BaseTableAPI
 ) {
-  const value = table.getCellValue(col, row) as string | { text: string; checked: boolean; disabled: boolean };
-  let isChecked = false;
-  let isDisabled = false;
+  const value = table.getCellValue(col, row) as string | { text: string; checked: boolean; disable: boolean };
+  const dataValue = table.getCellOriginValue(col, row);
+  let isChecked;
+  let isDisabled;
   let text = value as string;
   if (isObject(value)) {
-    isChecked = !!value.checked;
-    isDisabled = !!value.disabled;
+    isChecked = value.checked;
+    isDisabled = value.disable;
     text = value.text;
   }
 
   const hierarchyOffset = getHierarchyOffset(col, row, table);
-  const cellStyle = table._getCellStyle(col, row); // to be fixed
+  const cellStyle = table._getCellStyle(col, row) as CheckboxStyleOption; // to be fixed
   const autoWrapText = cellStyle.autoWrapText ?? table.internalProps.autoWrapText;
-  const lineClamp = cellStyle.lineClamp;
+  const { lineClamp, checked, disable } = cellStyle;
+
+  const globalChecked = getOrApply(checked as any, {
+    col,
+    row,
+    table,
+    context: null,
+    value,
+    dataValue
+  });
+  const globalDisable = getOrApply(disable as any, {
+    col,
+    row,
+    table,
+    context: null,
+    value,
+    dataValue
+  });
+
   const autoColWidth = colWidth === 'auto';
   const autoRowHeight = table.heightMode === 'autoHeight';
 
@@ -128,8 +148,8 @@ function createCheckbox(
     x: 0,
     y: 0,
     text: testAttribute,
-    checked: isChecked,
-    disabled: isDisabled
+    checked: isChecked ?? globalChecked ?? false,
+    disabled: isDisabled ?? globalDisable ?? false
   });
   checkbox.name = 'text';
 
