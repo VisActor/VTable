@@ -1,11 +1,11 @@
 import { isEqual } from '@visactor/vutils';
 import type { PivotChart } from '../../PivotChart';
 import { CartesianAxis } from '../../components/axis/axis';
-import type { PivotLayoutMap } from '../../layout/pivot-layout';
 import type { BaseTableAPI } from '../../ts-types/base-table';
 import type { Chart } from '../graphic/chart';
 import type { Group } from '../graphic/group';
 import type { Scenegraph } from '../scenegraph';
+import type { PivotHeaderLayoutMap } from '../../layout/pivot-header-layout';
 
 /** 供调整列宽后更新chart使用 */
 export function updateChartSize(scenegraph: Scenegraph, col: number) {
@@ -148,7 +148,7 @@ export function updateChartState(scenegraph: Scenegraph, datum: any) {
     //避免无效的更新
     if (!isEqual((table as PivotChart)._selectedDataItemsInChart, newSelectedDataItemsInChart)) {
       (table as PivotChart)._selectedDataItemsInChart = newSelectedDataItemsInChart;
-      (table.internalProps.layoutMap as PivotLayoutMap).updateDataStateToChartInstance();
+      (table.internalProps.layoutMap as PivotHeaderLayoutMap).updateDataStateToChartInstance();
       // 清楚chart缓存图片
       clearChartCacheImage(scenegraph);
       table.scenegraph.updateNextFrame();

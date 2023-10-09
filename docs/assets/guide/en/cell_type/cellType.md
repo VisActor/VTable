@@ -193,7 +193,7 @@ Show one below `cellType: 'chart'` Example of:
   cellType: 'chart',
   field: 'chartData',
   title: '销售趋势',
-  chartType: 'vchart',
+  chartModule: 'vchart',
   chartSpec: {
     type: 'common',
     series: [
@@ -223,7 +223,7 @@ Show one below `cellType: 'chart'` Example of:
 
 In this example:
 
-*   `chartType: 'vchart'` Use the chart library component built into VTable, registered under the name vchart
+*   `chartModule: 'vchart'` Use the chart library component built into VTable, registered under the name vchart
 *   `chartSpec` The chart type and specific configuration items are set, and the specific configuration items need to be referred to.[VChart](https://visactor.io/vchart).
 
 ## Composite cellType

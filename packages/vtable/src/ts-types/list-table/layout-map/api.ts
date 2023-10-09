@@ -87,6 +87,9 @@ export interface HeaderData extends WidthData {
 
   // header内容为空
   isEmpty?: boolean;
+
+  /** 记录当前表头节点的上级表头结点的cellId */
+  parentCellId?: LayoutObjectId;
 }
 
 export interface WidthData {
@@ -228,8 +231,8 @@ interface LayoutMapAPI {
   getCellId: (col: number, row: number) => LayoutObjectId;
   getCellRange: (col: number, row: number) => CellRange;
   // getCellRangeTranspose(col: number, row: number): CellRange;
-  getBodyLayoutRangeById: (id: LayoutObjectId) => CellRange;
-  getHeaderCellAdress: (id: number) => CellAddress | undefined;
+  // getBodyLayoutRangeById: (id: LayoutObjectId) => CellRange;
+  getHeaderCellAdressById: (id: number) => CellAddress | undefined;
   getHeaderCellAddressByField: (field: string) => CellAddress | undefined;
   getRecordIndexByRow: (col: number, row: number) => number;
   getRecordStartRowByRecordIndex: (index: number) => number;

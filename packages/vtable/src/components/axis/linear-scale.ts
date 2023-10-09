@@ -24,7 +24,8 @@ export class LinearAxisScale {
   }
 
   setExtraAttrFromSpec(nice: boolean, zero: boolean, range: Required<IRange>, expand?: IRange) {
-    this.nice = nice;
+    // this.nice = nice;
+    this.nice = false; // nice deal in getAxisDomainRangeAndLabels()
     this.zero = zero;
     // this.domain = range;
     if (this.zero) {

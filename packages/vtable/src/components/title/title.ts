@@ -39,11 +39,13 @@ export class Title {
       return;
     }
     const padding = getQuadProps(this._titleOption.padding ?? 10);
-    const realWidth = this._titleOption.width ?? this.table.tableNoFrameWidth - padding[1] - padding[3];
+    const realWidth =
+      this._titleOption.width ??
+      Math.min(this.table.tableNoFrameWidth, this.table.getDrawRange().width) - padding[1] - padding[3];
     this._titleComponent.setAttributes({
       x:
         this._titleOption.x ?? this._titleOption.orient === 'right'
-          ? this.table.tableX + this.table.tableNoFrameWidth
+          ? this.table.tableX + Math.min(this.table.tableNoFrameWidth, this.table.getDrawRange().width)
           : this.table.tableX,
       y:
         this._titleOption.y ?? this._titleOption.orient === 'bottom'
@@ -64,31 +66,31 @@ export class Title {
 
   _adjustTableSize(attrs: TitleAttrs) {
     // 调整位置
-    let width = isFinite(this._titleComponent.AABBBounds.width()) ? this._titleComponent.AABBBounds.width() : 0;
+    const width = isFinite(this._titleComponent.AABBBounds.width()) ? this._titleComponent.AABBBounds.width() : 0;
     const height = isFinite(this._titleComponent.AABBBounds.height()) ? this._titleComponent.AABBBounds.height() : 0;
-    const rectWidth = this.table.tableNoFrameWidth;
-    const rectHeight = this.table.tableNoFrameHeight;
-    const padding = getQuadProps((attrs.padding as number | number[]) ?? this._titleOption.padding ?? 10);
+    // const rectWidth = this.table.tableNoFrameWidth;
+    // const rectHeight = this.table.tableNoFrameHeight;
+    // const padding = getQuadProps((attrs.padding as number | number[]) ?? this._titleOption.padding ?? 10);
 
-    let x = 0;
-    let y = 0;
-    if (this._titleOption.orient === 'left') {
-      x = padding[3];
-      y = 0;
-      // width += padding[1] + padding[3];
-    } else if (this._titleOption.orient === 'top') {
-      x = 0;
-      y = padding[0];
-      // height += padding[0] + padding[2];
-    } else if (this._titleOption.orient === 'right') {
-      x = rectWidth - width - padding[1];
-      y = 0;
-      width += padding[1] + padding[3];
-    } else if (this._titleOption.orient === 'bottom') {
-      x = 0;
-      y = rectHeight - height - padding[2];
-      // height += padding[0] + padding[2];
-    }
+    // let x = 0;
+    // let y = 0;
+    // if (this._titleOption.orient === 'left') {
+    //   x = padding[3];
+    //   y = 0;
+    //   // width += padding[1] + padding[3];
+    // } else if (this._titleOption.orient === 'top') {
+    //   x = 0;
+    //   y = padding[0];
+    //   // height += padding[0] + padding[2];
+    // } else if (this._titleOption.orient === 'right') {
+    //   x = rectWidth - width - padding[1];
+    //   y = 0;
+    //   width += padding[1] + padding[3];
+    // } else if (this._titleOption.orient === 'bottom') {
+    //   x = 0;
+    //   y = rectHeight - height - padding[2];
+    //   // height += padding[0] + padding[2];
+    // }
     if (this._titleOption.orient === 'left') {
       this.table.tableNoFrameWidth = this.table.tableNoFrameWidth - Math.ceil(width);
       this.table.tableX += Math.ceil(width);
@@ -121,13 +123,15 @@ export class Title {
   }
   private _getTitleAttrs() {
     const padding = getQuadProps(this._titleOption.padding ?? 10);
-    const realWidth = this._titleOption.width ?? this.table.tableNoFrameWidth - padding[1] - padding[3];
+    const realWidth =
+      this._titleOption.width ??
+      Math.min(this.table.tableNoFrameWidth, this.table.getDrawRange().width) - padding[1] - padding[3];
     return {
       text: this._titleOption.text ?? '',
       subtext: this._titleOption.subtext ?? '',
       x:
         this._titleOption.x ?? this._titleOption.orient === 'right'
-          ? this.table.tableX + this.table.tableNoFrameWidth
+          ? this.table.tableX + Math.min(this.table.tableNoFrameWidth, this.table.getDrawRange().width)
           : this.table.tableX,
       y:
         this._titleOption.y ?? this._titleOption.orient === 'bottom'

@@ -7,11 +7,17 @@ import type { Scenegraph } from '../scenegraph';
 /**
  * add and remove rows in scenegraph
  */
-export function updateRow(removeCells: CellAddress[], addCells: CellAddress[], table: BaseTableAPI) {
+export function updateRow(
+  removeCells: CellAddress[],
+  addCells: CellAddress[],
+  updateCells: CellAddress[],
+  table: BaseTableAPI
+) {
   const scene = table.scenegraph;
   // deduplication
   const removeRows = deduplication(removeCells.map(cell => cell.row)).sort((a, b) => a - b);
   const addRows = deduplication(addCells.map(cell => cell.row)).sort((a, b) => a - b);
+  // const updateRows = deduplication(updateCells.map(cell => cell.row)).sort((a, b) => a - b);
 
   // remove cells
   removeRows.forEach(row => {
@@ -25,6 +31,12 @@ export function updateRow(removeCells: CellAddress[], addCells: CellAddress[], t
   // add cells
   addRows.forEach(row => {
     addRow(row, scene);
+  });
+
+  // add cells
+  updateCells.forEach(cell => {
+    // updateRowAttr(row, scene);
+    cell && updateCell(cell.col, cell.row, scene.table, false);
   });
 
   // reset attribute y and row number in CellGroup
@@ -62,6 +74,10 @@ function removeRow(row: number, scene: Scenegraph) {
       colGroup.removeChild(cellGroup);
     }
   }
+  // TODO 需要整体更新proxy的状态
+  scene.proxy.rowEnd--;
+  scene.proxy.bodyBottomRow--;
+  scene.proxy.totalRow--;
 }
 
 function addRow(row: number, scene: Scenegraph) {
@@ -101,6 +117,10 @@ function addRow(row: number, scene: Scenegraph) {
       rowIndex++;
     });
   }
+  // TODO 需要整体更新proxy的状态
+  scene.proxy.rowEnd++;
+  scene.proxy.bodyBottomRow++;
+  scene.proxy.totalRow++;
 }
 
 // array deduplication

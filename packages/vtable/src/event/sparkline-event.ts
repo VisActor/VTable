@@ -1,6 +1,6 @@
 import { TABLE_EVENT_TYPE } from '../core/TABLE_EVENT_TYPE';
 import type { SimpleHeaderLayoutMap } from '../layout';
-import type { PivotLayoutMap } from '../layout/pivot-layout';
+import type { PivotHeaderLayoutMap } from '../layout/pivot-header-layout';
 import type { MousePointerCellEvent } from '../ts-types';
 import type { BaseTableAPI } from '../ts-types/base-table';
 
@@ -8,7 +8,7 @@ export function bindSparklineHoverEvent(table: BaseTableAPI) {
   // 判断是否有sparkline 类型
   let hasSparkLine = false;
   if (table.isPivotTable()) {
-    const layoutMap = table.internalProps.layoutMap as PivotLayoutMap;
+    const layoutMap = table.internalProps.layoutMap as PivotHeaderLayoutMap;
     hasSparkLine = layoutMap.indicatorsDefine.some(indicator => {
       return typeof indicator !== 'string' && indicator.cellType === 'sparkline';
     });

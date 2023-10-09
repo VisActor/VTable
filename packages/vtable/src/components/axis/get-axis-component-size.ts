@@ -31,10 +31,9 @@ export function computeAxisComponentWidth(config: ICellAxisOption, table: BaseTa
           fontFamily: attribute.label?.style?.fontFamily
         });
         const widthLimit = attribute.label?.style?.maxLineWidth || Infinity;
-        labelWidth = Math.max(
-          labelWidth,
-          getSizeAfterResize(Math.min(width, widthLimit), height, attribute.label?.style?.angle).width
-        );
+        const angel =
+          (attribute.label?.style?.angle ?? 0) + (attribute.label?.style?.direction === 'vertical' ? 90 : 0);
+        labelWidth = Math.max(labelWidth, getSizeAfterResize(Math.min(width, widthLimit), height, angel).width);
       });
     } else {
       let ticks: string[];
@@ -60,10 +59,9 @@ export function computeAxisComponentWidth(config: ICellAxisOption, table: BaseTa
           fontFamily: attribute.label?.style?.fontFamily
         });
         const widthLimit = attribute.label?.style?.maxLineWidth || Infinity;
-        labelWidth = Math.max(
-          labelWidth,
-          getSizeAfterResize(Math.min(width, widthLimit), height, attribute.label?.style?.angle).width
-        );
+        const angle =
+          (attribute.label?.style?.angle ?? 0) + (attribute.label?.style?.direction === 'vertical' ? 90 : 0);
+        labelWidth = Math.max(labelWidth, getSizeAfterResize(Math.min(width, widthLimit), height, angle).width);
       });
     }
     labelWidth += attribute.label.space ?? 4;
@@ -118,10 +116,9 @@ export function computeAxisComponentHeight(config: ICellAxisOption, table: BaseT
           fontFamily: attribute.label?.style?.fontFamily
         });
         const widthLimit = attribute.label?.style?.maxLineWidth || Infinity;
-        labelHeight = Math.max(
-          labelHeight,
-          getSizeAfterResize(Math.min(width, widthLimit), height, attribute.label?.style?.angle).height
-        );
+        const angle =
+          (attribute.label?.style?.angle ?? 0) + (attribute.label?.style?.direction === 'vertical' ? 90 : 0);
+        labelHeight = Math.max(labelHeight, getSizeAfterResize(Math.min(width, widthLimit), height, angle).height);
       });
     } else {
       let ticks: string[];
@@ -147,10 +144,9 @@ export function computeAxisComponentHeight(config: ICellAxisOption, table: BaseT
           fontFamily: attribute.label?.style?.fontFamily
         });
         const widthLimit = attribute.label?.style?.maxLineWidth || Infinity;
-        labelHeight = Math.max(
-          labelHeight,
-          getSizeAfterResize(Math.min(width, widthLimit), height, attribute.label?.style?.angle).height
-        );
+        const angle =
+          (attribute.label?.style?.angle ?? 0) + (attribute.label?.style?.direction === 'vertical' ? 90 : 0);
+        labelHeight = Math.max(labelHeight, getSizeAfterResize(Math.min(width, widthLimit), height, angle).height);
       });
     }
     labelHeight += attribute.label.space ?? 4;

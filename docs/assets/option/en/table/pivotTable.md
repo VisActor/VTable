@@ -101,6 +101,8 @@ Hierarchy display style for dimensional structure, flat or tree.
 
 [Flat Example](../demo/table-type/pivot-table) [Tree Example](../demo/table-type/pivot-table-tree)
 
+{{ use: extension-rows-dimension-define( prefix = '#',) }}
+
 ## rowExpandLevel(number)
 
 Initial expansion level. In addition to configuring the expansion level of the unified node here, you can also set the expansion status of each node with the configuration item `hierarchyState`.

@@ -11,7 +11,7 @@
 *   `rows`：行表头对应各级维度的样式及format配置。
 *   `columnTree`：列表头维度树。
 *   `rowTree`：行表头维度树。
-* 树形还是平铺
+*   `rowHierarchyType`：树形层级展示还是平铺展示。
 *   `showRowHeader`：是否显示行表头，默认为 true。n
 *   `showColumnHeader`：是否显示列表头，默认为 true。
 *   `corner`：角表头各项配置及样式自定义。

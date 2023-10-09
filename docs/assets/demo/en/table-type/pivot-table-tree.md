@@ -7,9 +7,9 @@ order: 1-5
 link: '../guide/table_type/Pivot_table/pivot_table_tree'
 ---
 
-# Pivot Table
+# Pivot Table Tree Hierarchy
 
-Pivot Table
+Pivot Table  Tree Hierarchy
 
 ## critical configuration
 
