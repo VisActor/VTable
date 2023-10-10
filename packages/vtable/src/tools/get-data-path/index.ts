@@ -15,6 +15,7 @@ export function getDataCellPath(
   // mock pivotChart
   const mockTable = {
     options,
+    internalProps: options,
     isPivotChart: () => true,
     pivotChartAxes: [] as any[],
     _selectedDataItemsInChart: [] as any[],
@@ -40,17 +41,24 @@ export function getDataCellPath(
       // const rowKey = dataset.rowKeysPath[layoutMap.getRecordIndexByRow(row)] ?? [];
 
       const cellDimensionPath = layoutMap.getCellHeaderPaths(col, row);
-      const colKey = cellDimensionPath.colHeaderPaths.map((colPath: any) => {
+      const colKeys = cellDimensionPath.colHeaderPaths.map((colPath: any) => {
         return colPath.indicatorKey ?? colPath.value;
       });
-      const rowKey = cellDimensionPath.rowHeaderPaths.map((rowPath: any) => {
+      const rowKeys = cellDimensionPath.rowHeaderPaths.map((rowPath: any) => {
         return rowPath.indicatorKey ?? rowPath.value;
       });
+      // const aggregator = dataset.getAggregator(
+      //   rowKey[rowKey.length - 1],
+      //   colKey[colKey.length - 1],
+      //   (layoutMap as PivotHeaderLayoutMap).getIndicatorKey(col, row)
+      // );
+
       const aggregator = dataset.getAggregator(
-        rowKey[rowKey.length - 1],
-        colKey[colKey.length - 1],
+        !layoutMap.indicatorsAsCol ? rowKeys.slice(0, -1) : rowKeys,
+        layoutMap.indicatorsAsCol ? colKeys.slice(0, -1) : colKeys,
         (layoutMap as PivotHeaderLayoutMap).getIndicatorKey(col, row)
       );
+
       const result = compareData(
         aggregator.value ? aggregator.value() : undefined,
         data,
