@@ -1,7 +1,7 @@
 import { LinearScale } from '@visactor/vscale';
-import { isNil, isValid } from '@visactor/vutils';
-import { DEFAULT_CONTINUOUS_TICK_COUNT } from '../../components/util/tick-data/config';
+import { isFunction, isNil, isNumber, isValid } from '@visactor/vutils';
 
+const DEFAULT_CONTINUOUS_TICK_COUNT = 5;
 /**
  * @description: get axis nice domain and tick label text
  * @param {number} min
@@ -43,7 +43,7 @@ export function getAxisDomainRangeAndLabels(
   delete (scale as any)._niceType; // ensure scaleTicks consistent in `measurement`, `component label` and `chart`
   let scaleTicks;
   if (!skipTick) {
-    scaleTicks = scale.ticks(axisOption?.tickCount ?? DEFAULT_CONTINUOUS_TICK_COUNT, {
+    scaleTicks = scale.ticks(isNumber(axisOption?.tickCount) ? axisOption?.tickCount : DEFAULT_CONTINUOUS_TICK_COUNT, {
       noDecimals: axisOption?.tick?.noDecimals
     });
     // console.log(scaleTicks);

@@ -81,8 +81,9 @@ importers:
       '@visactor/vdataset': ~0.15.7
       '@visactor/vrender': 0.16.1
       '@visactor/vrender-components': 0.16.1
-      '@visactor/vscale': ~0.15.7
+      '@visactor/vscale': 0.16.0
       '@visactor/vutils': 0.16.1
+      '@visactor/vutils-extension': 1.4.2-alpha.0
       '@vitejs/plugin-react': 3.1.0
       axios: ^1.4.0
       chai: 4.3.4
@@ -121,8 +122,9 @@ importers:
       '@visactor/vdataset': 0.15.14
       '@visactor/vrender': 0.16.1
       '@visactor/vrender-components': 0.16.1
-      '@visactor/vscale': 0.15.14
+      '@visactor/vscale': 0.16.0
       '@visactor/vutils': 0.16.1
+      '@visactor/vutils-extension': 1.4.2-alpha.0
       cssfontparser: 1.2.1
     devDependencies:
       '@babel/core': 7.20.12
@@ -3067,7 +3069,7 @@ packages:
     dependencies:
       '@visactor/vrender-core': 0.16.1
       '@visactor/vrender-kits': 0.16.1
-      '@visactor/vscale': 0.16.1
+      '@visactor/vscale': 0.16.0
       '@visactor/vutils': 0.16.1
     dev: false
 
@@ -3112,10 +3114,10 @@ packages:
       '@visactor/vrender-kits': 0.16.1
     dev: false
 
-  /@visactor/vscale/0.15.14:
-    resolution: {integrity: sha512-ttGdvS49APcO23WFfsbq9zyQ1y767LjqchPPL78KOrd4UjhYQXRCdeqz7K4A57e333R37oLnPfSuIVFz9qJGYw==}
+  /@visactor/vscale/0.16.0:
+    resolution: {integrity: sha512-WssJ7170st7d5NaloL2syVs4npZvjzYQfAY05rfYVVJ5Zqt2Bpo3edV41jkbmMrdpVU9Mt0XoZqhJQrOI2U8PQ==}
     dependencies:
-      '@visactor/vutils': 0.15.14
+      '@visactor/vutils': 0.16.0
     dev: false
 
   /@visactor/vscale/0.16.1:
@@ -3130,8 +3132,24 @@ packages:
       '@visactor/vscale': 0.16.1
       '@visactor/vutils': 0.16.1
 
+  /@visactor/vutils-extension/1.4.2-alpha.0:
+    resolution: {integrity: sha512-VtftnfIzRjQaDoPKLlilW5XZ5+PlAraIuIOdvpe6WgH+m0GSAw4zZ5PREuyxaDNP6tdLZ616h4i/uprdQHbh8w==}
+    dependencies:
+      '@visactor/vrender': 0.15.5
+      '@visactor/vscale': 0.16.1
+      '@visactor/vutils': 0.16.1
+    dev: false
+
   /@visactor/vutils/0.15.14:
     resolution: {integrity: sha512-mZuJhXdDZqq5arqc/LfEmWOY6l7ErK1MurO8bR3vESxeCaQ18pN36iit15K2IMQVJuKZPnZ2ksw8+a1irXi/8A==}
+    dependencies:
+      '@turf/helpers': 6.5.0
+      '@turf/invariant': 6.5.0
+      eventemitter3: 4.0.7
+    dev: false
+
+  /@visactor/vutils/0.16.0:
+    resolution: {integrity: sha512-YvURVSm3uc3k98wS0YvzkWTE+CbLMVznxESmnBLABrnvqSgG2UJB6LIN72ZMrAPiu8o6i5yn5ABo2Gdr9rBcnQ==}
     dependencies:
       '@turf/helpers': 6.5.0
       '@turf/invariant': 6.5.0
