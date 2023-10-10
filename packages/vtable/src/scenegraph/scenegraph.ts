@@ -1030,8 +1030,8 @@ export class Scenegraph {
     //   updateAutoRowHeight(this);
     // }
 
-    this.dealWidthMode();
-    this.dealHeightMode();
+    // this.dealWidthMode();
+    // this.dealHeightMode();
     // 处理冻结
     this.dealFrozen();
 
