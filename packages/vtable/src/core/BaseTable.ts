@@ -965,6 +965,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     // autoRowHeight || all rows in header, use accumulation
     if (
       this.heightMode === 'standard' &&
+      !this.autoFillHeight &&
       this.internalProps.layoutMap &&
       endRow >= this.columnHeaderLevelCount &&
       !this.bottomFrozenRowCount &&
