@@ -173,7 +173,7 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
     super.updateOption(options);
     this.internalProps.columns = cloneDeep(options.columns);
     this.internalProps.rows = cloneDeep(options.rows);
-    this.internalProps.indicators = cloneDeep(options.indicators);
+    this.internalProps.indicators = !options.indicators?.length ? [] : cloneDeep(options.indicators);
     this.internalProps.columnTree =
       options.indicatorsAsCol && !options.columns?.length && !options.columnTree ? [] : cloneDeep(options.columnTree);
     this.internalProps.rowTree =
