@@ -13,7 +13,7 @@ The main configuration parameters displayed by the pivot table tree structure:
 *   rowExpandLevel: Set the default Expand level;
 *   rowHierarchyIndent: Sets the indent distance of the child-level Dimension value compared to the position of the parent-level Dimension value in the cell.
 *   HierarchyState: Sets the collapsed state of the node, which is configured in the node of rowTree or columnTree.
-* extensionRows: special tree structure display, set this tree when you need to display a multi-column tree structure. have to be aware of is:
+*   extensionRows: special tree structure display, set this tree when you need to display a multi-column tree structure. have to be aware of is:
     * rowExpandLevel only works on the outer main tree rowTree, and does not take effect on the trees in extensionRows.
     * For this kind of multi-column tree structure, the ability to drag and move the header is not supported.
     * After updateOption is called, maintenance of the collapsed and expanded state of non-rowTree nodes is not supported.
@@ -1010,7 +1010,9 @@ const tableInstance = new VTable.PivotTable(option);
 
 It can be seen that the pivot table tree structure display function can clearly present the hierarchical relationship of data, which is convenient for users to perform data analytics.
 
-## Multi-layer tree structure configuration code example
+## Multi-columns tree structure configuration code example
+A common requirement for pivot tables is a one-layer tree structure, but some special businesses want a multi-layer structure to present data, such as the desire to see the sales of different regions under different categories.
+
 Key configuration items:
 ```
     extensionRows: [
