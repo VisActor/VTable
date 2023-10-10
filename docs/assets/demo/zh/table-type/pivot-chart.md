@@ -3,7 +3,7 @@ category: examples
 group: table-type
 title: 透视组合图
 cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/pivot-chart.png
-order: 1-5
+order: 1-8
 link: '../guide/table_type/pivot_chart'
 ---
 
@@ -22,7 +22,6 @@ link: '../guide/table_type/pivot_chart'
 
 ```javascript livedemo template=vtable
   VTable.register.chartModule('vchart', VChart);
-  let  tableInstance;
  fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American_Superstore_Pivot_Chart_data.json')
     .then(res => res.json())
     .then(data => {
@@ -352,6 +351,7 @@ link: '../guide/table_type/pivot_chart'
         defaultColWidth: 280,
         defaultHeaderColWidth: 100,
         indicatorTitle: '指标',
+        autoWrapText: true,
         // widthMode:'adaptive',
         // heightMode:'adaptive',
         corner: {
@@ -359,6 +359,75 @@ link: '../guide/table_type/pivot_chart'
           headerStyle: {
             autoWrapText: true
           }
+        },
+        legends: {
+          orient: 'bottom',
+          type: 'discrete',
+          data: [
+            {
+              label: 'Consumer-Quantity',
+              shape: {
+                fill: '#2E62F1',
+                symbolType: 'circle'
+              }
+            },
+            {
+              label: 'Consumer-Quantity',
+              shape: {
+                fill: '#4DC36A',
+                symbolType: 'square'
+              }
+            },
+            {
+              label: 'Home Office-Quantity',
+              shape: {
+                fill: '#FF8406',
+                symbolType: 'square'
+              }
+            },
+            {
+              label: 'Consumer-Sales',
+              shape: {
+                fill: '#FFCC00',
+                symbolType: 'square'
+              }
+            },
+            {
+              label: 'Consumer-Sales',
+              shape: {
+                fill: '#4F44CF',
+                symbolType: 'square'
+              }
+            },
+            {
+              label: 'Home Office-Sales',
+              shape: {
+                fill: '#5AC8FA',
+                symbolType: 'square'
+              }
+            },
+            {
+              label: 'Consumer-Profit',
+              shape: {
+                fill: '#003A8C',
+                symbolType: 'square'
+              }
+            },
+            {
+              label: 'Consumer-Profit',
+              shape: {
+                fill: '#B08AE2',
+                symbolType: 'square'
+              }
+            },
+            {
+              label: 'Home Office-Profit',
+              shape: {
+                fill: '#FF6341',
+                symbolType: 'square'
+              }
+            }
+          ]
         },
         theme: {
           bodyStyle: {
@@ -432,11 +501,21 @@ link: '../guide/table_type/pivot_chart'
       };
 
       tableInstance =  new VTable.PivotChart(document.getElementById(CONTAINER_ID),option);
+      const { LEGEND_ITEM_CLICK } = VTable.ListTable.EVENT_TYPE;
+      tableInstance.on(LEGEND_ITEM_CLICK, args => {
+        console.log('LEGEND_ITEM_CLICK', args);
+        tableInstance.updateFilterRules([
+          {
+            filterKey: 'Segment-Indicator',
+            filteredValues: args.value
+          }
+        ]);
+      });
       tableInstance.onVChartEvent('click', args => {
-        console.log('listenChart click', args);
+        console.log('onVChartEvent click', args);
       });
       tableInstance.onVChartEvent('mouseover', args => {
-        console.log('listenChart mouseover', args);
+        console.log('onVChartEvent mouseover', args);
       });
       window.tableInstance = tableInstance;
     });

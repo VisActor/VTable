@@ -13,7 +13,12 @@ Pivot Table
 
 ## critical configuration
 
-*   `PivotTable`
+- `PivotTable`
+- `columnTree`
+- `rowTree`
+- `columns` Optional Configure, dimension styles, etc.
+- `rows`Optional Configure, dimension styles, etc.
+- `indicators`
 
 ## Code demo
 

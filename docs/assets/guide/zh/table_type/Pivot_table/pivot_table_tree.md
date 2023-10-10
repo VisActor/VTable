@@ -1010,6 +1010,8 @@ const tableInstance = new VTable.PivotTable(document.getElementById(CONTAINER_ID
 
 可以看到，透视表树形结构展示功能能够清晰地呈现数据的层次关系，方便用户进行数据分析。
 ## 多层树结构配置代码示例
+透视表常见需求是一层树形结构就可以搞定，但某些特殊业务想要多层级结构来展示数据，如期望可以看到不同类别下不同区域的销售情况。
+
 关键配置项：
 ```
     extensionRows: [
