@@ -203,34 +203,35 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
         this.columnDimensionTree.tree.children,
         []
       );
-      // if (typeof this.showColumnHeader !== 'boolean') {
-      if (this.columnHeaderTitle) {
-        const id = ++sharedVar.seqId;
-        const firstRowIds = Array(this.colCount - this.rowHeaderLevelCount).fill(id);
-        this._columnHeaderCellIds.unshift(firstRowIds);
-        const cell: HeaderData = {
-          id,
-          title:
-            typeof this.columnHeaderTitle.title === 'string'
-              ? this.columnHeaderTitle.title
-              : (this.columnsDefine.reduce((title: string, value) => {
-                  if (typeof value === 'string') {
-                    return title;
-                  }
-                  return title + (title ? `/${value.title}` : `${value.title}`);
-                }, '') as string),
-          field: undefined,
-          headerType: this.columnHeaderTitle.headerType ?? 'text',
-          style: this.columnHeaderTitle.headerStyle,
-          define: <any>{
-            id
-          }
-        };
-        this.columnHeaderObjs.push(cell);
-        this._headerObjects[id] = cell;
-      }
-      // }
     }
+    // if (typeof this.showColumnHeader !== 'boolean') {
+    if (this.columnHeaderTitle) {
+      const id = ++sharedVar.seqId;
+      const firstRowIds = Array(this.colCount - this.rowHeaderLevelCount).fill(id);
+      this._columnHeaderCellIds.unshift(firstRowIds);
+      const cell: HeaderData = {
+        id,
+        title:
+          typeof this.columnHeaderTitle.title === 'string'
+            ? this.columnHeaderTitle.title
+            : (this.columnsDefine.reduce((title: string, value) => {
+                if (typeof value === 'string') {
+                  return title;
+                }
+                return title + (title ? `/${value.title}` : `${value.title}`);
+              }, '') as string),
+        field: undefined,
+        headerType: this.columnHeaderTitle.headerType ?? 'text',
+        style: this.columnHeaderTitle.headerStyle,
+        define: <any>{
+          id
+        }
+      };
+      this.columnHeaderObjs.push(cell);
+      this._headerObjects[id] = cell;
+    }
+    // }
+
     colIndex = 0;
     //生成行表头单元格
     if (this.rowDimensionTree.tree.children?.length >= 1) {
