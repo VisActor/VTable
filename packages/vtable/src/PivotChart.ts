@@ -912,12 +912,16 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
     }
   }
 
-  offVChartEvent(type: string, callback: AnyFunction): void {
+  offVChartEvent(type: string, callback?: AnyFunction): void {
     // delete this._chartEventMap[type];
     if (!this._chartEventMap[type]) {
       return;
     }
-    this._chartEventMap[type] = this._chartEventMap[type].filter(e => e.callback !== callback);
+    if (callback) {
+      this._chartEventMap[type] = this._chartEventMap[type].filter(e => e.callback !== callback);
+    } else {
+      this._chartEventMap[type] = [];
+    }
   }
   /** 给activeChartInstance逐个绑定chart用户监听事件 */
   _bindChartEvent(activeChartInstance: any) {
