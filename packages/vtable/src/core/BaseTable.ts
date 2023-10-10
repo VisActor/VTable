@@ -1548,8 +1548,8 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
   _toRelativeRect(absoluteRect: Rect): Rect {
     const rect = absoluteRect.copy();
     const visibleRect = this.getVisibleRect();
-    rect.offsetLeft(-visibleRect.left);
-    rect.offsetTop(-visibleRect.top);
+    rect.offsetLeft(this.tableX - visibleRect.left);
+    rect.offsetTop(this.tableY - visibleRect.top);
     return rect;
   }
 
