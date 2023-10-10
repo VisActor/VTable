@@ -29,7 +29,7 @@ export function getDataCellPath(
   };
 
   // mock layoutMap
-  const layoutMap = new PivotHeaderLayoutMap(mockTable as PivotChart, dataset);
+  const layoutMap = new PivotHeaderLayoutMap(mockTable as unknown as PivotChart, dataset);
 
   // compare data
   for (let col = 0; col < layoutMap.colCount; col++) {
