@@ -50,14 +50,14 @@
   "dependencies": {
     "@visactor/vrender": "0.16.1",
     "@visactor/vrender-components": "0.16.1",
-    "@visactor/vutils-extension": "1.4.2-alpha.0",
+    "@visactor/vutils-extension": "1.5.1-alpha.0",
     "@visactor/vutils": "0.16.1",
     "@visactor/vscale": "0.16.0",
     "@visactor/vdataset": "~0.15.7",
     "cssfontparser": "^1.2.1"
   },
   "devDependencies": {
-    "@visactor/vchart": "1.4.1",
+    "@visactor/vchart": "1.5.1-alpha.0",
     "@internal/bundler": "workspace:*",
     "@internal/eslint-config": "workspace:*",
     "@internal/ts-config": "workspace:*",
