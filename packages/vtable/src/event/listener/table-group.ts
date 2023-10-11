@@ -316,6 +316,7 @@ export function bindTableGroupListener(eventManeger: EventManeger) {
             // console.log('DRAG_SELECT_START');
           }
         }, 500);
+        // 这里处理成hover  这样移动端 当点击到带有下拉菜单dropdown的单元格时 那个icon才能绘制出来。可以测试example的menu示例
         eventManeger.dealTableHover(eventArgsSet);
       } else {
         // 处理列宽调整
