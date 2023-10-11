@@ -34,6 +34,7 @@ export function getAxisDomainRangeAndLabels(min: number, max: number, axisOption
     }
   }
 
+  delete (scale as any)._niceType; // ensure scaleTicks consistent in `measurement`, `component label` and `chart`
   let scaleTicks;
   if (!skipTick) {
     scaleTicks = scale.ticks(axisOption?.tickCount ?? DEFAULT_CONTINUOUS_TICK_COUNT, {

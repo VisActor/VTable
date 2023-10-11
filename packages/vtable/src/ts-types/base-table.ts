@@ -77,7 +77,7 @@ export interface IBaseTableProtected {
   bottomFrozenRowCount: number;
   defaultRowHeight: number;
   /**表头默认行高 可以按逐行设置 如果没有就取defaultRowHeight */
-  defaultHeaderRowHeight: number | number[];
+  defaultHeaderRowHeight: (number | 'auto') | (number | 'auto')[];
   defaultColWidth: number;
   defaultHeaderColWidth: (number | 'auto') | (number | 'auto')[];
   // font?: string;
@@ -208,7 +208,7 @@ export interface BaseTableConstructorOptions {
    */
   defaultRowHeight?: number;
   /** 列表头默认行高 可以按逐行设置 如果没有就取defaultRowHeight */
-  defaultHeaderRowHeight?: number | number[];
+  defaultHeaderRowHeight?: (number | 'auto') | (number | 'auto')[];
   /**
    * 默认列宽. 默认 80
    */
@@ -340,7 +340,7 @@ export interface BaseTableAPI {
   bottomFrozenRowCount: number;
   rightFrozenColCount: number;
   /** 当前表格默认表头行高 */
-  defaultHeaderRowHeight: number | number[];
+  defaultHeaderRowHeight: (number | 'auto') | (number | 'auto')[];
   /** 当前表格默认行高 */
   defaultRowHeight: number;
   /** 当前表格默认列宽 */
@@ -430,6 +430,7 @@ export interface BaseTableAPI {
   render: () => void;
   throttleInvalidate: () => void;
   getRowHeight: (row: number) => number;
+  getDefaultRowHeight: (row: number) => number | 'auto';
   setRowHeight: (row: number, height: number, clearCache?: boolean) => void;
   getColWidth: (col: number) => number;
   getColWidthDefined: (col: number) => string | number;

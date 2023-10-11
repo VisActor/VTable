@@ -26,6 +26,7 @@ import { Dataset } from './dataset/dataset';
 import { _setDataSource } from './core/tableHelper';
 import { BaseTable } from './core/BaseTable';
 import type { PivotTableProtected } from './ts-types/base-table';
+import { Title } from './components/title/title';
 
 export class PivotTable extends BaseTable implements PivotTableAPI {
   declare internalProps: PivotTableProtected;
@@ -108,6 +109,10 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
       this.setRecords(options.records as any, this.internalProps.sortState);
     } else {
       this.setRecords([]);
+    }
+    if (options.title) {
+      this.internalProps.title = new Title(options.title, this);
+      this.scenegraph.updateTableSize();
     }
   }
   static get EVENT_TYPE(): typeof PIVOT_TABLE_EVENT_TYPE {
@@ -222,7 +227,10 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
       this.scenegraph.createSceneGraph();
       this.render();
     }
-
+    if (options.title) {
+      this.internalProps.title = new Title(options.title, this);
+      this.scenegraph.updateTableSize();
+    }
     this.pivotSortState = [];
     if (options.pivotSortState) {
       this.updatePivotSortState(options.pivotSortState);

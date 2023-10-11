@@ -76,25 +76,29 @@ export function computeColsWidth(table: BaseTableAPI, colStart?: number, colEnd?
   if (table.widthMode === 'adaptive') {
     table._clearColRangeWidthsMap();
     // const canvasWidth = table.internalProps.canvas.width;
-    const totalDrawWidth = table.tableNoFrameWidth - table.getFrozenColsWidth() - table.getRightFrozenColsWidth();
+    const rowHeaderWidth = table.getColsWidth(0, table.rowHeaderLevelCount - 1);
+    const rightHeaderWidth = table.isPivotChart() ? table.getRightFrozenColsWidth() : 0;
+    const totalDrawWidth = table.tableNoFrameWidth - rowHeaderWidth - rightHeaderWidth;
+    const startCol = table.rowHeaderLevelCount;
+    const endCol = table.isPivotChart() ? table.colCount - table.rightFrozenColCount : table.colCount;
     let actualWidth = 0;
-    for (let col = table.frozenColCount; col < table.colCount - table.rightFrozenColCount; col++) {
+    for (let col = startCol; col < endCol; col++) {
       actualWidth += update ? newWidths[col] : table.getColWidth(col);
     }
     const factor = totalDrawWidth / actualWidth;
-    for (let col = table.frozenColCount; col < table.colCount - table.rightFrozenColCount; col++) {
+    for (let col = startCol; col < endCol; col++) {
       let colWidth;
-      if (col === table.colCount - table.rightFrozenColCount - 1) {
+      if (col === endCol - 1) {
         colWidth =
           totalDrawWidth -
           (update
             ? newWidths.reduce((acr, cur, index) => {
-                if (index >= table.rowHeaderLevelCount && index !== newWidths.length - 1) {
+                if (index >= startCol && index <= endCol - 2) {
                   return acr + cur;
                 }
                 return acr;
               }, 0)
-            : table.getColsWidth(table.frozenColCount, table.colCount - table.rightFrozenColCount - 2));
+            : table.getColsWidth(startCol, endCol - 2));
       } else {
         colWidth = Math.round((update ? newWidths[col] : table.getColWidth(col)) * factor);
       }
@@ -252,7 +256,7 @@ function computeAutoColWidth(
     deltaRow = Math.ceil((endRow - startRow) / 5000);
   }
   // 如果是透视图
-  if (table.isPivotChart() && col >= table.rowHeaderLevelCount) {
+  if (table.isPivotChart() && col >= table.rowHeaderLevelCount && col < table.colCount - table.rightFrozenColCount) {
     if (!(table.internalProps.layoutMap as PivotLayoutMap).indicatorsAsCol) {
       //并且指标是以行展示 计算列宽需要根据x轴的值域范围
       const optimunWidth = (table.internalProps.layoutMap as PivotLayoutMap).getOptimunWidthForChart(col);

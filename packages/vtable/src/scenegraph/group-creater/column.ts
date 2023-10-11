@@ -1,3 +1,4 @@
+import { isNumber } from '@visactor/vutils';
 import type { CellLocation } from '../../ts-types';
 import type { BaseTableAPI } from '../../ts-types/base-table';
 import { Group } from '../graphic/group';
@@ -149,7 +150,7 @@ export function createColGroup(
       rowStart,
       rowEnd,
       table.scenegraph.mergeMap,
-      cellLocation === 'columnHeader' ? defaultHeaderRowHeight ?? defaultRowHeight : defaultRowHeight,
+      cellLocation === 'columnHeader' && isNumber(defaultHeaderRowHeight) ? defaultHeaderRowHeight : defaultRowHeight,
       table,
       cellLocation,
       rowLimit

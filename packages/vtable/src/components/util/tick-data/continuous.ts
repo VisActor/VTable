@@ -29,6 +29,7 @@ export const continuousTicks = (scale: ContinuousScale, op: any): any[] => {
 
   const { tickCount, forceTickCount, tickStep, noDecimals = false } = op;
 
+  delete (scale as any)._niceType; // ensure scaleTicks consistent in `measurement`, `component label` and `chart`
   let scaleTicks: number[];
   if (isValid(tickStep)) {
     scaleTicks = (scale as LinearScale).stepTicks(tickStep);

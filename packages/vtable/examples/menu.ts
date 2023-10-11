@@ -139,6 +139,10 @@ export const menus = [
       {
         path: 'pivot-chart',
         name: 'percent-horizontal-bar'
+      },
+      {
+        path: 'pivot-chart',
+        name: 'pivot-chart-event'
       }
     ]
   },
@@ -186,6 +190,10 @@ export const menus = [
   {
     menu: 'pivot',
     children: [
+      {
+        path: 'pivot',
+        name: 'pivot-different-dimension'
+      },
       {
         path: 'pivot',
         name: 'pivot-size-legend'

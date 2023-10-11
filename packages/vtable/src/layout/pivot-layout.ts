@@ -20,10 +20,12 @@ import type {
 import type { PivotTable } from '../PivotTable';
 import { IndicatorDimensionKeyPlaceholder } from '../tools/global';
 import type { PivotChart } from '../PivotChart';
-import { cloneDeep } from '@visactor/vutils';
+import { cloneDeep, isArray } from '@visactor/vutils';
 import { getAxisConfigInPivotChart } from './chart-helper/get-axis-config';
 import { getChartAxes, getChartDataId, getChartSpec, getRawChartSpec } from './chart-helper/get-chart-spec';
 import type { ITableAxisOption } from '../ts-types/component/axis';
+import type { TextStyle } from '../body-helper/style';
+import { getQuadProps } from '../scenegraph/utils/padding';
 /**
  * 简化配置，包含数据处理的 布局辅助计算类
  */
@@ -110,9 +112,14 @@ export class PivotLayoutMap implements LayoutMapAPI {
   hasTwoIndicatorAxes: boolean;
   /** 图表spec中barWidth的收集 */
   _chartItemSpanSize: number;
+  _chartPaddingInner: number;
+  _chartPaddingOuter: number;
+  _chartItemBandSize: number;
+  _chartPadding?: number | number[];
   constructor(table: PivotTable | PivotChart, dataset: Dataset) {
     this._table = table;
     this._chartItemSpanSize = 0;
+    this._chartItemBandSize = 0;
     this.rowTree = table.options.rowTree;
     this.columnTree = table.options.columnTree;
     this.rowsDefine = table.options.rows ?? [];
@@ -250,9 +257,24 @@ export class PivotLayoutMap implements LayoutMapAPI {
         return false;
       });
       this._chartItemSpanSize = 0;
+      this._chartItemBandSize = 0;
+      // this._chartPadding ;
       this._indicatorObjects.find(indicatorObject => {
+        if ((indicatorObject?.style as TextStyle)?.padding) {
+          this._chartPadding = (indicatorObject.style as TextStyle).padding as number;
+        }
         if (indicatorObject.chartSpec?.barWidth) {
           this._chartItemSpanSize = indicatorObject.chartSpec?.barWidth;
+        }
+        const bandAxisConfig = indicatorObject.chartSpec?.axes?.find((axis: any) => {
+          return axis.type === 'band';
+        });
+        if (bandAxisConfig?.bandSize) {
+          this._chartItemBandSize = bandAxisConfig?.bandSize;
+          this._chartPaddingInner =
+            (isArray(bandAxisConfig.paddingInner) ? bandAxisConfig.paddingInner[0] : bandAxisConfig.paddingInner) ?? 0;
+          this._chartPaddingOuter =
+            (isArray(bandAxisConfig.paddingOuter) ? bandAxisConfig.paddingOuter[0] : bandAxisConfig.paddingOuter) ?? 0;
         }
         if (this._chartItemSpanSize > 0) {
           return true;
@@ -266,9 +288,9 @@ export class PivotLayoutMap implements LayoutMapAPI {
           }
           return false;
         });
-        if (this._chartItemSpanSize > 0) {
-          return true;
-        }
+        // if (this._chartItemSpanSize > 0) {
+        //   return true;
+        // }
         return false;
       });
 
@@ -1476,8 +1498,22 @@ export class PivotLayoutMap implements LayoutMapAPI {
         break;
       }
     }
-    const barWidth = this._chartItemSpanSize || 25;
-    return (collectedValues?.length ?? 0) * (barWidth + barWidth / 3);
+    let width;
+    if (this._chartItemBandSize) {
+      // width = (collectedValues?.length ?? 0) * this._chartItemBandSize;
+      width = scaleWholeRangeSize(
+        collectedValues?.length ?? 0,
+        this._chartItemBandSize,
+        this._chartPaddingInner,
+        this._chartPaddingOuter
+      );
+    } else {
+      const barWidth = this._chartItemSpanSize || 25;
+      width = (collectedValues?.length ?? 0) * (barWidth + barWidth / 3);
+    }
+
+    const padding = getQuadProps(this._chartPadding ?? (this._table.theme.bodyStyle.padding as number) ?? 0);
+    return width + padding[1] + padding[3];
   }
   /** 获取某一图表列的最优高度，计算逻辑是根据图表的yField的维度值个数 * barWidth */
   getOptimunHeightForChart(row: number) {
@@ -1496,8 +1532,21 @@ export class PivotLayoutMap implements LayoutMapAPI {
         break;
       }
     }
-    const barWidth = this._chartItemSpanSize || 25;
-    return (collectedValues?.length ?? 0) * (barWidth + barWidth / 3);
+    let height;
+    if (this._chartItemBandSize) {
+      // height = (collectedValues?.length ?? 0) * this._chartItemBandSize;
+      height = scaleWholeRangeSize(
+        collectedValues?.length ?? 0,
+        this._chartItemBandSize,
+        this._chartPaddingInner,
+        this._chartPaddingOuter
+      );
+    } else {
+      const barWidth = this._chartItemSpanSize || 25;
+      height = (collectedValues?.length ?? 0) * (barWidth + barWidth / 3);
+    }
+    const padding = getQuadProps(this._chartPadding ?? (this._table.theme.bodyStyle.padding as number) ?? 0);
+    return height + padding[0] + padding[2];
   }
   /**
    *  获取图表对应的指标值
@@ -1606,4 +1655,30 @@ export class PivotLayoutMap implements LayoutMapAPI {
   clearCellRangeMap() {
     // do nothing
   }
+}
+
+// FIXME: 等 vscale 暴露这两个方法后，删掉这两个方法
+
+/** 计算 scale 的实际 range 长度 */
+function scaleWholeRangeSize(count: number, bandwidth: number, paddingInner: number, paddingOuter: number) {
+  if (paddingInner === 1) {
+    paddingInner = 0; // 保护
+    // FIXME: vscale 同样需要加保护，目前这里加了保护以后，在 paddingInner为 1 的情况还是会崩溃
+  }
+  const space = bandSpace(count, paddingInner, paddingOuter);
+  const step = bandwidth / (1 - paddingInner);
+  const wholeSize = space * step;
+  return wholeSize;
+}
+
+function bandSpace(count: number, paddingInner: number, paddingOuter: number): number {
+  let space;
+  // count 等于 1 时需要特殊处理，否则 step 会超出 range 范围
+  // 计算公式: step = paddingOuter * step * 2 + paddingInner * step + bandwidth
+  if (count === 1) {
+    space = count + paddingOuter * 2;
+  } else {
+    space = count - paddingInner + paddingOuter * 2;
+  }
+  return count ? (space > 0 ? space : 1) : 0;
 }
