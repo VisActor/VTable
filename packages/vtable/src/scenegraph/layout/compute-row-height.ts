@@ -372,7 +372,7 @@ function computeCustomRenderHeight(col: number, row: number, table: BaseTableAPI
   if (customRender || customLayout) {
     let spanRow = 1;
     let height = 0;
-    if (table.isHeader(col, row) || (table.getBodyColumnDefine(col, row) as TextColumnDefine).mergeCell) {
+    if (table.isHeader(col, row) || (table.getBodyColumnDefine(col, row) as TextColumnDefine)?.mergeCell) {
       const cellRange = table.getCellRange(col, row);
       spanRow = cellRange.end.row - cellRange.start.row + 1;
     }
@@ -456,7 +456,7 @@ function computeTextHeight(col: number, row: number, table: BaseTableAPI): numbe
   }
   let spanRow = 1;
   let endCol = col;
-  if (table.isHeader(col, row) || (table.getBodyColumnDefine(col, row) as TextColumnDefine).mergeCell) {
+  if (table.isHeader(col, row) || (table.getBodyColumnDefine(col, row) as TextColumnDefine)?.mergeCell) {
     const cellRange = table.getCellRange(col, row);
     spanRow = cellRange.end.row - cellRange.start.row + 1;
     col = cellRange.start.col;
