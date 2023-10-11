@@ -698,10 +698,10 @@ export class Scenegraph {
         content: icon.tooltip.title,
         referencePosition: {
           rect: {
-            left: left - this.table.tableX,
-            right: right - this.table.tableX,
-            top: top - this.table.tableY,
-            bottom: bottom - this.table.tableY,
+            left: left,
+            right: right,
+            top: top,
+            bottom: bottom,
             width: icon.globalAABBBounds.width(),
             height: icon.globalAABBBounds.height()
           },
@@ -1031,8 +1031,8 @@ export class Scenegraph {
     //   updateAutoRowHeight(this);
     // }
 
-    this.dealWidthMode();
-    this.dealHeightMode();
+    // this.dealWidthMode();
+    // this.dealHeightMode();
     // 处理冻结
     this.resetFrozen();
     this.dealFrozen();

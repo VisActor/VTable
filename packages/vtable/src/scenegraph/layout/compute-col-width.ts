@@ -371,7 +371,7 @@ function computeCustomRenderWidth(col: number, row: number, table: BaseTableAPI)
   if (customRender || customLayout) {
     let spanCol = 1;
     let width = 0;
-    if (table.isHeader(col, row) || (table.getBodyColumnDefine(col, row) as TextColumnDefine).mergeCell) {
+    if (table.isHeader(col, row) || (table.getBodyColumnDefine(col, row) as TextColumnDefine)?.mergeCell) {
       const cellRange = table.getCellRange(col, row);
       spanCol = cellRange.end.col - cellRange.start.col + 1;
     }
@@ -458,7 +458,7 @@ function computeTextWidth(col: number, row: number, table: BaseTableAPI): number
     });
   }
   let spanCol = 1;
-  if (table.isHeader(col, row) || (table.getBodyColumnDefine(col, row) as TextColumnDefine).mergeCell) {
+  if (table.isHeader(col, row) || (table.getBodyColumnDefine(col, row) as TextColumnDefine)?.mergeCell) {
     const cellRange = table.getCellRange(col, row);
     spanCol = cellRange.end.col - cellRange.start.col + 1;
   }

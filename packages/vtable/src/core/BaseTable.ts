@@ -965,6 +965,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     // autoRowHeight || all rows in header, use accumulation
     if (
       this.heightMode === 'standard' &&
+      !this.autoFillHeight &&
       this.internalProps.layoutMap &&
       endRow >= this.columnHeaderLevelCount &&
       !this.bottomFrozenRowCount &&
@@ -1547,8 +1548,8 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
   _toRelativeRect(absoluteRect: Rect): Rect {
     const rect = absoluteRect.copy();
     const visibleRect = this.getVisibleRect();
-    rect.offsetLeft(-visibleRect.left);
-    rect.offsetTop(-visibleRect.top);
+    rect.offsetLeft(this.tableX - visibleRect.left);
+    rect.offsetTop(this.tableY - visibleRect.top);
     return rect;
   }
 
@@ -1973,8 +1974,8 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     const originHeight = this.canvas.offsetHeight || currentHeight;
     const heightRatio = currentHeight / originHeight;
 
-    const x = (clientX - rect.left) / widthRatio + (isAddScroll ? table.scrollLeft : 0) - table.tableX;
-    const y = (clientY - rect.top) / heightRatio + (isAddScroll ? table.scrollTop : 0) - table.tableY;
+    const x = (clientX - rect.left) / widthRatio + (isAddScroll ? table.scrollLeft : 0);
+    const y = (clientY - rect.top) / heightRatio + (isAddScroll ? table.scrollTop : 0);
     return { x, y, inTable };
   }
   getTheme() {
@@ -2615,8 +2616,8 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
       row,
       field: this.getHeaderField(col, row),
       cellHeaderPaths: this.internalProps.layoutMap.getCellHeaderPaths(col, row),
-      title: colDef.title,
-      cellType: colDef.cellType ? (typeof colDef.cellType === 'string' ? colDef.cellType : 'progressbar') : 'text',
+      title: colDef?.title,
+      cellType: colDef?.cellType ? (typeof colDef.cellType === 'string' ? colDef.cellType : 'progressbar') : 'text',
       originData: this.getCellOriginRecord(col, row),
       cellRange: this.getCellRangeRelativeRect({ col, row }),
       value: this.getCellValue(col, row),

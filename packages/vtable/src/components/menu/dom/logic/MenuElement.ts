@@ -497,11 +497,11 @@ export class MenuElement {
       let rootElementLeft;
       let rootElementTop;
       if (position) {
-        rootElementLeft = position.x + (table as any).tableX;
-        rootElementTop = position.y + (table as any).tableY;
+        rootElementLeft = position.x;
+        rootElementTop = position.y;
       } else if (referencePosition) {
-        rootElementLeft = referencePosition.rect.right - rootElementWidth + (table as any).tableX;
-        rootElementTop = referencePosition.rect.bottom + (table as any).tableY;
+        rootElementLeft = referencePosition.rect.right - rootElementWidth;
+        rootElementTop = referencePosition.rect.bottom;
       }
       //  rootElementLeft = position.x - rootElementWidth;
       // let leftStyle = rootElementLeft;

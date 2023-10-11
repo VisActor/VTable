@@ -137,7 +137,10 @@ export class Title {
         this._titleOption.y ?? this._titleOption.orient === 'bottom'
           ? this.table.tableY + this.table.tableNoFrameHeight
           : this.table.tableY,
-      width: realWidth,
+      width:
+        this._titleOption.orient === 'top' || this._titleOption.orient === 'bottom'
+          ? realWidth
+          : this._titleOption.height,
       height: this._titleOption.height,
       minWidth: this._titleOption.minWidth,
       maxWidth: this._titleOption.maxWidth,

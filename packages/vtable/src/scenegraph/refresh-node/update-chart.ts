@@ -72,7 +72,7 @@ export function clearChartCacheImage(scenegraph: Scenegraph) {
       cellNode.children.forEach((node: Chart) => {
         if ((node as any).type === 'chart') {
           node.cacheCanvas = null;
-          // node.addUpdateBoundTag();
+          node.addUpdateBoundTag();
         }
       });
     });

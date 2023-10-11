@@ -173,7 +173,7 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
     super.updateOption(options);
     this.internalProps.columns = cloneDeep(options.columns);
     this.internalProps.rows = cloneDeep(options.rows);
-    this.internalProps.indicators = cloneDeep(options.indicators);
+    this.internalProps.indicators = !options.indicators?.length ? [] : cloneDeep(options.indicators);
     this.internalProps.columnTree =
       options.indicatorsAsCol && !options.columns?.length && !options.columnTree ? [] : cloneDeep(options.columnTree);
     this.internalProps.rowTree =
@@ -812,7 +812,7 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
   private _generateAggregationRules() {
     const aggregationRules: AggregationRules = [];
     // indicatorFromChartSpec = true;
-    this.options.indicators?.forEach((indicator: IIndicator | string) => {
+    this.internalProps.indicators?.forEach((indicator: IIndicator | string) => {
       if (typeof indicator === 'string') {
         aggregationRules.push({
           indicatorKey: indicator, //field转为指标key
@@ -879,7 +879,7 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
         delete spec.area.state.selected_reverse;
       }
     };
-    this.options.indicators?.forEach((indicator: string | IIndicator) => {
+    this.internalProps.indicators?.forEach((indicator: string | IIndicator) => {
       if ((indicator as IChartColumnIndicator).chartSpec) {
         const spec = (indicator as IChartColumnIndicator).chartSpec;
         if (spec.series) {
@@ -912,12 +912,16 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
     }
   }
 
-  offVChartEvent(type: string, callback: AnyFunction): void {
+  offVChartEvent(type: string, callback?: AnyFunction): void {
     // delete this._chartEventMap[type];
     if (!this._chartEventMap[type]) {
       return;
     }
-    this._chartEventMap[type] = this._chartEventMap[type].filter(e => e.callback !== callback);
+    if (callback) {
+      this._chartEventMap[type] = this._chartEventMap[type].filter(e => e.callback !== callback);
+    } else {
+      this._chartEventMap[type] = [];
+    }
   }
   /** 给activeChartInstance逐个绑定chart用户监听事件 */
   _bindChartEvent(activeChartInstance: any) {
@@ -1031,8 +1035,8 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
       // position = chartInstance.convertDatumToPosition(datum);
       this.render();
     }
-    cellPosition.offsetLeft(this.tableX);
-    cellPosition.offsetTop(this.tableY);
+    // cellPosition.offsetLeft(this.tableX);
+    // cellPosition.offsetTop(this.tableY);
     return {
       chartInstance,
       bounds: cellPosition.bounds

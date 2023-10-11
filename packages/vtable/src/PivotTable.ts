@@ -159,7 +159,7 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
     super.updateOption(options);
     this.internalProps.columns = cloneDeep(options.columns);
     this.internalProps.rows = cloneDeep(options.rows);
-    this.internalProps.indicators = cloneDeep(options.indicators);
+    this.internalProps.indicators = !options.indicators?.length ? [] : cloneDeep(options.indicators);
     this.internalProps.columnTree =
       options.indicatorsAsCol && !options.columns?.length && !options.columnTree ? [] : cloneDeep(options.columnTree);
     this.internalProps.rowTree =
@@ -518,15 +518,15 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
     }
     if (this.dataset) {
       const cellDimensionPath = this.internalProps.layoutMap.getCellHeaderPaths(col, row);
-      const colKey = cellDimensionPath.colHeaderPaths.map((colPath: any) => {
+      const colKeys = cellDimensionPath.colHeaderPaths.map((colPath: any) => {
         return colPath.indicatorKey ?? colPath.value;
       });
-      const rowKey = cellDimensionPath.rowHeaderPaths.map((rowPath: any) => {
+      const rowKeys = cellDimensionPath.rowHeaderPaths.map((rowPath: any) => {
         return rowPath.indicatorKey ?? rowPath.value;
       });
       const aggregator = this.dataset.getAggregator(
-        rowKey[rowKey.length - 1],
-        colKey[colKey.length - 1],
+        !this.internalProps.layoutMap.indicatorsAsCol ? rowKeys.slice(0, -1) : rowKeys,
+        this.internalProps.layoutMap.indicatorsAsCol ? colKeys.slice(0, -1) : colKeys,
         (this.internalProps.layoutMap as PivotHeaderLayoutMap).getIndicatorKey(col, row)
       );
       return aggregator.records;
