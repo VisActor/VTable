@@ -13,7 +13,7 @@ Combine the vchart chart library with rendering into tables to enrich visual dis
 
 ## critical configuration
 
-*   `VTable.register.chartType('vchart', VChart)` Register the charting library for charting, currently supports VChart
+*   `VTable.register.chartModule('vchart', VChart)` Register the charting library for charting, currently supports VChart
 *   `cellType: 'chart'` Specify the type chart
 *   `cellType: 'vchart'` Specify the registered chart library name
 *   `chartSpec: {}` Chart specs

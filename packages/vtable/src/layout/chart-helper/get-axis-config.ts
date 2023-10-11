@@ -1,10 +1,10 @@
 import { isArray, isNumber, merge } from '@visactor/vutils';
-import type { PivotLayoutMap } from '../pivot-layout';
+import type { PivotHeaderLayoutMap } from '../pivot-header-layout';
 import type { ITableAxisOption } from '../../ts-types/component/axis';
 import type { PivotChart } from '../../PivotChart';
 import { getAxisDomainRangeAndLabels } from './get-axis-domain';
 
-export function getAxisConfigInPivotChart(col: number, row: number, layout: PivotLayoutMap): any {
+export function getAxisConfigInPivotChart(col: number, row: number, layout: PivotHeaderLayoutMap): any {
   if (!layout._table.isPivotChart()) {
     return undefined;
   }
@@ -18,7 +18,7 @@ export function getAxisConfigInPivotChart(col: number, row: number, layout: Pivo
       col < layout.colCount - layout.rightFrozenColCount
     ) {
       const indicatorKeys = layout.getIndicatorKeyInChartSpec(col, layout.columnHeaderLevelCount - 1);
-      let defaultKey = indicatorKeys[1];
+      let defaultKey = indicatorKeys?.[1];
       if (isArray(defaultKey)) {
         defaultKey = defaultKey[0];
       }
@@ -32,12 +32,15 @@ export function getAxisConfigInPivotChart(col: number, row: number, layout: Pivo
       const data = layout.dataset.collectedValues[defaultKey + (isZeroAlign ? '_align' : '')]
         ? layout.dataset.collectedValues[defaultKey + (isZeroAlign ? '_align' : '')]
         : layout.dataset.collectedValues[defaultKey];
-      const index = layout.getRecordIndexByCol(col);
-      const range: { min: number; max: number } = data
-        ? (data[
-            layout.getColKeysPath()[index][Math.max(0, layout.columnHeaderLevelCount - 1 - layout.topAxesCount)]
-          ] as { min: number; max: number })
-        : { max: 1, min: 0 };
+      const colPath = layout.getColKeysPath(col);
+
+      const range = merge({}, (data?.[colPath ?? ''] as { min: number; max: number }) ?? { min: 0, max: 1 });
+      if (range.positiveMax && range.positiveMax > range.max) {
+        range.max = range.positiveMax;
+      }
+      if (range.negativeMin && range.negativeMin < range.min) {
+        range.min = range.negativeMin;
+      }
       // const { axisOption, isPercent } = getAxisOption(col, row + 1, 'top', layout);
       if (range.min === range.max) {
         if (range.min > 0) {
@@ -53,7 +56,7 @@ export function getAxisConfigInPivotChart(col: number, row: number, layout: Pivo
         (range as any).min = (range as any).min < 0 ? -1 : 0;
         (range as any).max = (range as any).max > 0 ? 1 : 0;
       }
-      const { range: niceRange, ticks } = getAxisDomainRangeAndLabels(range.min, range.max, axisOption);
+      const { range: niceRange, ticks } = getAxisDomainRangeAndLabels(range.min, range.max, axisOption, isZeroAlign);
       range.min = !isNaN(niceRange[0]) ? niceRange[0] : 0;
       range.max = !isNaN(niceRange[1]) ? niceRange[1] : 1;
 
@@ -84,7 +87,7 @@ export function getAxisConfigInPivotChart(col: number, row: number, layout: Pivo
       col < layout.colCount - layout.rightFrozenColCount
     ) {
       const indicatorKeys = layout.getIndicatorKeyInChartSpec(col, row);
-      let defaultKey = indicatorKeys[0];
+      let defaultKey = indicatorKeys?.[0];
       if (isArray(defaultKey)) {
         defaultKey = defaultKey[0];
       }
@@ -95,13 +98,14 @@ export function getAxisConfigInPivotChart(col: number, row: number, layout: Pivo
       const data = layout.dataset.collectedValues[defaultKey + (isZeroAlign ? '_align' : '')]
         ? layout.dataset.collectedValues[defaultKey + (isZeroAlign ? '_align' : '')]
         : layout.dataset.collectedValues[defaultKey];
-      const index = layout.getRecordIndexByCol(col);
-      const range = merge(
-        {},
-        (data?.[
-          layout.getColKeysPath()?.[index]?.[Math.max(0, layout.columnHeaderLevelCount - 1 - layout.topAxesCount)] ?? ''
-        ] as { min: number; max: number }) ?? { min: 0, max: 1 }
-      );
+      const colPath = layout.getColKeysPath(col);
+      const range = merge({}, (data?.[colPath ?? ''] as { min: number; max: number }) ?? { min: 0, max: 1 });
+      if (range.positiveMax && range.positiveMax > range.max) {
+        range.max = range.positiveMax;
+      }
+      if (range.negativeMin && range.negativeMin < range.min) {
+        range.min = range.negativeMin;
+      }
       if (range.min === range.max) {
         if (range.min > 0) {
           range.min = 0;
@@ -110,7 +114,7 @@ export function getAxisConfigInPivotChart(col: number, row: number, layout: Pivo
         }
       }
       let indicatorInfo = null;
-      indicatorKeys.forEach(key => {
+      indicatorKeys?.forEach(key => {
         const info = layout.getIndicatorInfo(key);
         if (info) {
           indicatorInfo = info;
@@ -125,7 +129,7 @@ export function getAxisConfigInPivotChart(col: number, row: number, layout: Pivo
         (range as any).min = (range as any).min < 0 ? -1 : 0;
         (range as any).max = (range as any).max > 0 ? 1 : 0;
       }
-      const { range: niceRange, ticks } = getAxisDomainRangeAndLabels(range.min, range.max, axisOption);
+      const { range: niceRange, ticks } = getAxisDomainRangeAndLabels(range.min, range.max, axisOption, isZeroAlign);
       range.min = !isNaN(niceRange[0]) ? niceRange[0] : 0;
       range.max = !isNaN(niceRange[1]) ? niceRange[1] : 1;
 
@@ -166,9 +170,8 @@ export function getAxisConfigInPivotChart(col: number, row: number, layout: Pivo
       }
       const data = layout.dataset.collectedValues[rowDimensionKey] ?? ([] as string[]);
 
-      const recordRow = layout.getRecordIndexByRow(row);
-      const rowPath = layout.getRowKeysPath()[recordRow];
-      const domain = (data[rowPath?.[rowPath?.length - 1] ?? ''] as Array<string>) ?? [];
+      const rowPath = layout.getRowKeysPath(row);
+      const domain = (data[rowPath ?? ''] as Array<string>) ?? [];
 
       const { axisOption, isPercent } = getAxisOption(col + 1, row, 'left', layout);
       if (axisOption?.visible === false) {
@@ -196,7 +199,7 @@ export function getAxisConfigInPivotChart(col: number, row: number, layout: Pivo
       row < layout.rowCount - layout.bottomFrozenRowCount
     ) {
       const indicatorKeys = layout.getIndicatorKeyInChartSpec(col, row);
-      let defaultKey = indicatorKeys[0];
+      let defaultKey = indicatorKeys?.[0];
       if (isArray(defaultKey)) {
         defaultKey = defaultKey[0];
       }
@@ -207,13 +210,14 @@ export function getAxisConfigInPivotChart(col: number, row: number, layout: Pivo
       const data = layout.dataset.collectedValues[defaultKey + (isZeroAlign ? '_align' : '')]
         ? layout.dataset.collectedValues[defaultKey + (isZeroAlign ? '_align' : '')]
         : layout.dataset.collectedValues[defaultKey];
-      const index = layout.getRecordIndexByRow(row);
-      const range = merge(
-        {},
-        (data?.[
-          layout.getRowKeysPath()[index]?.[Math.max(0, layout.rowHeaderLevelCount - 1 - layout.leftAxesCount)] ?? ''
-        ] as { min: number; max: number }) ?? { min: 0, max: 1 }
-      );
+      const rowPath = layout.getRowKeysPath(row);
+      const range = merge({}, (data?.[rowPath ?? ''] as { min: number; max: number }) ?? { min: 0, max: 1 });
+      if (range.positiveMax && range.positiveMax > range.max) {
+        range.max = range.positiveMax;
+      }
+      if (range.negativeMin && range.negativeMin < range.min) {
+        range.min = range.negativeMin;
+      }
       if (range.min === range.max) {
         if (range.min > 0) {
           range.min = 0;
@@ -222,7 +226,7 @@ export function getAxisConfigInPivotChart(col: number, row: number, layout: Pivo
         }
       }
       let indicatorInfo = null;
-      indicatorKeys.forEach(key => {
+      indicatorKeys?.forEach(key => {
         const info = layout.getIndicatorInfo(key);
         if (info) {
           indicatorInfo = info;
@@ -237,7 +241,7 @@ export function getAxisConfigInPivotChart(col: number, row: number, layout: Pivo
         (range as any).min = (range as any).min < 0 ? -1 : 0;
         (range as any).max = (range as any).max > 0 ? 1 : 0;
       }
-      const { range: niceRange, ticks } = getAxisDomainRangeAndLabels(range.min, range.max, axisOption);
+      const { range: niceRange, ticks } = getAxisDomainRangeAndLabels(range.min, range.max, axisOption, isZeroAlign);
       range.min = !isNaN(niceRange[0]) ? niceRange[0] : 0;
       range.max = !isNaN(niceRange[1]) ? niceRange[1] : 1;
 
@@ -273,7 +277,7 @@ export function getAxisConfigInPivotChart(col: number, row: number, layout: Pivo
       row < layout.rowCount - layout.bottomFrozenRowCount
     ) {
       const indicatorKeys = layout.getIndicatorKeyInChartSpec(layout.rowHeaderLevelCount - 1, row);
-      let defaultKey = indicatorKeys[1];
+      let defaultKey = indicatorKeys?.[1];
       if (isArray(defaultKey)) {
         defaultKey = defaultKey[0];
       }
@@ -288,14 +292,14 @@ export function getAxisConfigInPivotChart(col: number, row: number, layout: Pivo
       const data = layout.dataset.collectedValues[defaultKey + (isZeroAlign ? '_align' : '')]
         ? layout.dataset.collectedValues[defaultKey + (isZeroAlign ? '_align' : '')]
         : layout.dataset.collectedValues[defaultKey];
-      const index = layout.getRecordIndexByRow(row);
-      const range = merge(
-        {},
-        (data?.[
-          layout.getRowKeysPath()[index]?.[Math.max(0, layout.rowHeaderLevelCount - 1 - layout.leftAxesCount)] ?? ''
-        ] as { min: number; max: number }) ?? { min: 0, max: 1 }
-      );
-
+      const rowPath = layout.getRowKeysPath(row);
+      const range = merge({}, (data?.[rowPath ?? ''] as { min: number; max: number }) ?? { min: 0, max: 1 });
+      if (range.positiveMax && range.positiveMax > range.max) {
+        range.max = range.positiveMax;
+      }
+      if (range.negativeMin && range.negativeMin < range.min) {
+        range.min = range.negativeMin;
+      }
       // const { axisOption, isPercent } = getAxisOption(col - 1, row, 'right', layout);
       if (range.min === range.max) {
         if (range.min > 0) {
@@ -311,7 +315,7 @@ export function getAxisConfigInPivotChart(col: number, row: number, layout: Pivo
         (range as any).min = (range as any).min < 0 ? -1 : 0;
         (range as any).max = (range as any).max > 0 ? 1 : 0;
       }
-      const { range: niceRange, ticks } = getAxisDomainRangeAndLabels(range.min, range.max, axisOption);
+      const { range: niceRange, ticks } = getAxisDomainRangeAndLabels(range.min, range.max, axisOption, isZeroAlign);
       range.min = !isNaN(niceRange[0]) ? niceRange[0] : 0;
       range.max = !isNaN(niceRange[1]) ? niceRange[1] : 1;
 
@@ -352,9 +356,8 @@ export function getAxisConfigInPivotChart(col: number, row: number, layout: Pivo
       }
       const data = layout.dataset.collectedValues[columnDimensionKey] ?? ([] as string[]);
 
-      const recordCol = layout.getRecordIndexByCol(col);
-      const colPath = layout.getColKeysPath()[recordCol];
-      const domain = (data?.[colPath?.[colPath?.length - 1] ?? ''] as Array<string>) ?? [];
+      const colPath = layout.getColKeysPath(col);
+      const domain = (data?.[colPath ?? ''] as Array<string>) ?? [];
 
       const { axisOption, isPercent } = getAxisOption(col, row - 1, 'bottom', layout);
       if (axisOption?.visible === false) {
@@ -377,7 +380,7 @@ export function getAxisConfigInPivotChart(col: number, row: number, layout: Pivo
   return undefined;
 }
 
-export function getAxisOption(col: number, row: number, orient: string, layout: PivotLayoutMap) {
+export function getAxisOption(col: number, row: number, orient: string, layout: PivotHeaderLayoutMap) {
   const spec = layout.getRawChartSpec(col, row);
   if (spec && isArray(spec.axes)) {
     const axisOption = spec.axes.find((axis: any) => {
@@ -401,7 +404,7 @@ export function getAxisOption(col: number, row: number, orient: string, layout: 
   };
 }
 
-export function checkZeroAlign(spec: any, orient: string, layout: PivotLayoutMap) {
+export function checkZeroAlign(spec: any, orient: string, layout: PivotHeaderLayoutMap) {
   // check condition:
   // 1. two axes and one set sync
   // 2. axisId in sync is another

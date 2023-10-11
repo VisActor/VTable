@@ -8,8 +8,15 @@ import type {
   IRenderService,
   IThemeAttribute
 } from '@visactor/vrender';
-import { ContributionProvider, getTheme, IGroupRenderContribution, createImage } from '@visactor/vrender';
-import { inject, injectable, named } from 'inversify';
+import {
+  ContributionProvider,
+  getTheme,
+  IGroupRenderContribution,
+  createImage,
+  inject,
+  injectable,
+  named
+} from '@visactor/vrender';
 import type { Chart } from '../chart';
 import { CHART_NUMBER_TYPE } from '../chart';
 import {
@@ -19,6 +26,7 @@ import {
   renderChart,
   startRenderChartQueue
 } from './chart-render-helper';
+import { isArray } from '@visactor/vutils';
 
 export const ChartRender = Symbol.for('ChartRender');
 export const ChartRenderContribution = Symbol.for('ChartRenderContribution');
@@ -55,7 +63,14 @@ export class DefaultCanvasChartRender implements IGraphicRender {
     const { chartInstance, active, cacheCanvas, activeChartInstance } = chart;
     // console.log('render chart', chart.parent.col, chart.parent.row, viewBox, cacheCanvas);
     if (!active && cacheCanvas) {
-      context.drawImage(cacheCanvas, x, y, width, height);
+      if (isArray(cacheCanvas)) {
+        cacheCanvas.forEach(singleCacheCanvas => {
+          const { x, y, width, height, canvas } = singleCacheCanvas;
+          context.drawImage(canvas, x, y, width, height);
+        });
+      } else {
+        context.drawImage(cacheCanvas, x, y, width, height);
+      }
     } else if (activeChartInstance) {
       if (typeof dataId === 'string') {
         activeChartInstance.updateDataSync(dataId, data ?? []);

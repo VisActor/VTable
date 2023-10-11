@@ -419,7 +419,11 @@ export function createTable() {
       renderMode: 'html',
       isShowOverflowTextTooltip: false
     },
-    heightMode: 'autoHeight'
+    heightMode: 'autoHeight',
+    title: {
+      text: 'title',
+      orient: 'top'
+    }
   };
 
   const instance = new ListTable(option);

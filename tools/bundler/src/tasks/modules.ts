@@ -113,8 +113,8 @@ export function compile(
             const _contents = await minify(file.contents.toString(encoding), {
               compress: {
                 unused: true,
-                drop_debugger: false,
-                drop_console: false,
+                drop_debugger: true,
+                drop_console: true,
                 dead_code: true,
                 global_defs: {},
                 passes: 1

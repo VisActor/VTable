@@ -13,8 +13,17 @@ export function checkFirstRowMerge(row: number, proxy: SceneProxy) {
     ) {
       continue;
     }
+
     const range = getCellMergeInfo(proxy.table, col, row);
-    if (range && range.start.row !== row) {
+    // 清除之前mock的Merge cell
+    range && clearHadMergedRow(range.start.row, range.end.row, col, proxy);
+
+    // 重新生成mock的Merge cell
+    if (
+      range &&
+      range.start.row !== row &&
+      proxy.highPerformanceGetCell(range.start.col, range.start.row, true).role !== 'cell'
+    ) {
       // 在row的位置添加range.start.row单元格
       const oldCellGroup = proxy.highPerformanceGetCell(col, row, true);
       const newCellGroup = updateCell(range.start.col, range.start.row, proxy.table, true);
@@ -50,10 +59,14 @@ export function checkFirstColMerge(col: number, scrolling: boolean, proxy: Scene
     }
 
     const range = getCellMergeInfo(proxy.table, col, row);
-    if (range && range.start.col !== col) {
-      if (scrolling && checkHasColMerge(range.start.col, range.end.col, row, proxy)) {
-        continue;
-      }
+    // 清除之前mock的Merge cell
+    range && clearHadMergedColumn(range.start.col, range.end.col, row, proxy);
+
+    if (
+      range &&
+      range.start.col !== col &&
+      proxy.highPerformanceGetCell(range.start.col, range.start.row, true).role !== 'cell'
+    ) {
       // 在col的位置添加range.start.col单元格
       const oldCellGroup = proxy.highPerformanceGetCell(col, row, true);
       const newCellGroup = updateCell(range.start.col, range.start.row, proxy.table, true);
@@ -75,6 +88,36 @@ export function checkFirstColMerge(col: number, scrolling: boolean, proxy: Scene
       if (proxy.cellCache.get(col)) {
         proxy.cellCache.set(col, newCellGroup);
       }
+    }
+  }
+}
+
+function clearHadMergedRow(rowStart: number, rowEnd: number, col: number, proxy: SceneProxy) {
+  for (let row = rowStart; row <= rowEnd; row++) {
+    const cellGroup = proxy.highPerformanceGetCell(col, row, true);
+    if (cellGroup.role !== 'shadow-cell' && cellGroup.role !== 'empty' && cellGroup.row !== rowStart) {
+      cellGroup.role = 'shadow-cell';
+      cellGroup.setAttributes({
+        width: 0,
+        height: proxy.table.getRowHeight(cellGroup.row),
+        y: proxy.table.getRowsHeight(proxy.table.columnHeaderLevelCount, cellGroup.row - 1)
+      });
+      cellGroup.clear();
+    }
+  }
+}
+
+function clearHadMergedColumn(colStart: number, colEnd: number, row: number, proxy: SceneProxy) {
+  for (let col = colStart; col <= colEnd; col++) {
+    const cellGroup = proxy.highPerformanceGetCell(col, row, true);
+    if (cellGroup.role !== 'shadow-cell' && cellGroup.role !== 'empty' && cellGroup.row !== colStart) {
+      cellGroup.role = 'shadow-cell';
+      cellGroup.setAttributes({
+        width: 0,
+        height: proxy.table.getRowHeight(cellGroup.row),
+        y: proxy.table.getRowsHeight(proxy.table.columnHeaderLevelCount, cellGroup.row - 1)
+      });
+      cellGroup.clear();
     }
   }
 }

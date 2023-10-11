@@ -101,6 +101,7 @@ export interface IIndicatorHeaderNode {
 
 [平铺示例](../demo/table-type/pivot-table) [树形示例](../demo/table-type/pivot-table-tree)
 
+{{ use: extension-rows-dimension-define( prefix = '#',) }}
 ## rowExpandLevel(number)
 
 初始化展开层数。除了这里可以配置统一节点的展开层数，还可以结合配置项`hierarchyState`设置每个结点的展开状态。

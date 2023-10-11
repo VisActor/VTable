@@ -2,7 +2,7 @@ import type { FederatedPointerEvent } from '@visactor/vrender';
 import type { BaseTableAPI } from '../../ts-types/base-table';
 import type { SceneEvent } from '../util';
 import { getCellEventArgsSet } from '../util';
-import type { PivotLayoutMap } from '../../layout/pivot-layout';
+import type { PivotHeaderLayoutMap } from '../../layout/pivot-header-layout';
 import type { PivotChart } from '../../PivotChart';
 import { clearChartCacheImage } from '../../scenegraph/refresh-node/update-chart';
 
@@ -18,7 +18,7 @@ export function bindAxisClickEvent(table: BaseTableAPI) {
     if (e.target.name === 'axis-label') {
       const eventArgsSet: SceneEvent = getCellEventArgsSet(e);
       const { col, row } = eventArgsSet.eventArgs;
-      const layout = table.internalProps.layoutMap as PivotLayoutMap;
+      const layout = table.internalProps.layoutMap as PivotHeaderLayoutMap;
       let dimensionKey;
       let dimensions: {
         dimensionKey?: string;
@@ -57,7 +57,7 @@ export function bindAxisClickEvent(table: BaseTableAPI) {
       table.scenegraph.updateNextFrame();
     } else if ((table as PivotChart)._selectedDimensionInChart?.length) {
       (table as PivotChart)._selectedDimensionInChart.length = 0;
-      const layout = table.internalProps.layoutMap as PivotLayoutMap;
+      const layout = table.internalProps.layoutMap as PivotHeaderLayoutMap;
       layout.updateDataStateToChartInstance();
       // 清除chart缓存图片
       clearChartCacheImage(table.scenegraph);

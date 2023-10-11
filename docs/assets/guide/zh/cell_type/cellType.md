@@ -193,7 +193,7 @@ VTable 所支持的数据类型共有 7 种，分别为：
   cellType: 'chart',
   field: 'chartData',
   title: '销售趋势',
-  chartType: 'vchart',
+  chartModule: 'vchart',
   chartSpec: {
     type: 'common',
     series: [
@@ -223,7 +223,7 @@ VTable 所支持的数据类型共有 7 种，分别为：
 
 在这个例子中：
 
-- `chartType: 'vchart'` 使用 VTable 内置的图表库组件，注册名称为vchart
+- `chartModule: 'vchart'` 使用 VTable 内置的图表库组件，注册名称为vchart
 - `chartSpec` 设置了图表类型和具体的配置项，具体配置项需要参考[VChart](https://visactor.io/vchart)。
 
 详细教程参考：https://visactor.io/vtable/guide/cell_type/chart

@@ -30,7 +30,7 @@ export async function dynamicSetY(y: number, proxy: SceneProxy) {
     proxy.updateBody(y - proxy.deltaY);
   }
 
-  proxy.table.scenegraph.updateNextFrame();
+  // proxy.table.scenegraph.updateNextFrame();
 }
 
 async function moveCell(
@@ -54,8 +54,6 @@ async function moveCell(
     // 计算更新区域
     const startRow = direction === 'up' ? proxy.rowStart : proxy.rowEnd - count + 1;
     const endRow = direction === 'up' ? proxy.rowStart + count - 1 : proxy.rowEnd;
-    // console.log('move', startRow, endRow, direction);
-    updatePartRowPosition(startRow, endRow, direction, proxy);
     const distStartRow = direction === 'up' ? proxy.rowEnd + 1 : proxy.rowStart - count;
     const distEndRow = direction === 'up' ? proxy.rowEnd + count : proxy.rowStart - 1;
 
@@ -77,11 +75,14 @@ async function moveCell(
     // const syncBottomRow = Math.min(proxy.bodyBottomRow, screenTopRow + proxy.screenRowCount * 2);
     computeRowsHeight(proxy.table, syncTopRow, syncBottomRow);
 
+    // console.log('move', startRow, endRow, direction);
+    updatePartRowPosition(startRow, endRow, direction, proxy);
+
     proxy.rowStart = direction === 'up' ? proxy.rowStart + count : proxy.rowStart - count;
     proxy.rowEnd = direction === 'up' ? proxy.rowEnd + count : proxy.rowEnd - count;
 
-    checkFirstRowMerge(syncTopRow, proxy);
     updateRowContent(syncTopRow, syncBottomRow, proxy);
+    checkFirstRowMerge(syncTopRow, proxy);
 
     if (proxy.table.heightMode === 'autoHeight') {
       updateAutoRow(
@@ -113,10 +114,7 @@ async function moveCell(
     const distStartRow = direction === 'up' ? proxy.rowStart + count : proxy.rowStart - count;
     const distEndRow = direction === 'up' ? proxy.rowEnd + count : proxy.rowEnd - count;
     const distStartRowY = proxy.table.getRowsHeight(proxy.bodyTopRow, distStartRow - 1);
-    // 更新distStartRow位置的merge单元格，避免distStartRow位置不是merge的起始位置造成的空白
 
-    // 更新同步范围
-    updateAllRowPosition(distStartRowY, count, direction, proxy);
     let syncTopRow;
     let syncBottomRow;
     if (proxy.table.heightMode === 'autoHeight') {
@@ -129,6 +127,9 @@ async function moveCell(
     //console.log('更新同步范围', syncTopRow, syncBottomRow);
 
     computeRowsHeight(proxy.table, syncTopRow, syncBottomRow);
+
+    // 更新同步范围
+    updateAllRowPosition(distStartRowY, count, direction, proxy);
 
     proxy.rowStart = distStartRow;
     proxy.rowEnd = distEndRow;

@@ -83,6 +83,13 @@ export class NumberMap<T> {
       }
     }
   }
+  del(key: number): void {
+    delete this._vals[key];
+    const index = this._keys.indexOf(key);
+    if (index !== -1) {
+      this._keys.splice(index, 1); // 使用 splice() 方法删除指定索引位置的元素
+    }
+  }
   put(key: number, value: T): void {
     if (!(key in this._vals)) {
       this._keys.push(key);

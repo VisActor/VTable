@@ -1,4 +1,4 @@
-import { RichText } from '@visactor/vrender';
+import { RichText, Group as VGroup } from '@visactor/vrender';
 import type { PivotHeaderLayoutMap } from '../../layout/pivot-header-layout';
 import { validToString } from '../../tools/util';
 import type { ColumnIconOption } from '../../ts-types';
@@ -8,11 +8,10 @@ import type { ColumnData, TextColumnDefine } from '../../ts-types/list-table/lay
 import { WrapText } from '../graphic/text';
 import { getProp } from '../utils/get-prop';
 import { getQuadProps } from '../utils/padding';
-import { getCellRect } from './compute-col-width';
 import { dealWithRichTextIcon } from '../utils/text-icon-layout';
-import type { PivotLayoutMap } from '../../layout/pivot-layout';
 import { getAxisConfigInPivotChart } from '../../layout/chart-helper/get-axis-config';
 import { computeAxisComponentHeight } from '../../components/axis/get-axis-component-size';
+import { isArray, isNumber } from '@visactor/vutils';
 
 const utilTextMark = new WrapText({
   ignoreBuf: true
@@ -33,14 +32,23 @@ export function computeRowsHeight(
 ): void {
   const time = typeof window !== 'undefined' ? window.performance.now() : 0;
 
-  const oldRowHeights = [];
+  const oldRowHeights: number[] = [];
+  const newHeights: number[] = [];
   if (update) {
     for (let row = 0; row < table.rowCount; row++) {
-      oldRowHeights.push(table.getRowHeight(row));
+      // oldRowHeights.push(table.getRowHeight(row));
+      oldRowHeights[row] = table.getRowHeight(row);
     }
   }
 
-  if (table.heightMode === 'autoHeight' || table.heightMode === 'adaptive') {
+  table.defaultHeaderRowHeight;
+  table.defaultHeaderColWidth;
+  const isDefaultHeaderHasAuto =
+    table.defaultHeaderRowHeight === 'auto' ||
+    (isArray(table.defaultHeaderRowHeight) && table.defaultHeaderRowHeight.some(item => item === 'auto'));
+  const isAllRowsAuto = table.heightMode === 'autoHeight' || table.heightMode === 'adaptive';
+
+  if (isAllRowsAuto || isDefaultHeaderHasAuto) {
     rowStart = rowStart ?? 0;
     rowEnd = rowEnd ?? table.rowCount - 1;
 
@@ -56,78 +64,133 @@ export function computeRowsHeight(
 
     // compute header row in column header row
     for (let row = rowStart; row < table.columnHeaderLevelCount; row++) {
-      const height = computeRowHeight(row, 0, table.colCount - 1, table);
-      table.setRowHeight(row, height);
+      if (isAllRowsAuto || table.getDefaultRowHeight(row) === 'auto') {
+        const height = computeRowHeight(row, 0, table.colCount - 1, table);
+        if (update) {
+          newHeights[row] = height;
+        } else {
+          table.setRowHeight(row, height);
+        }
+      }
     }
 
-    if (rowEnd < table.columnHeaderLevelCount) {
-      return;
+    // compute bottom frozen row
+    for (let row = table.rowCount - table.bottomFrozenRowCount; row <= rowEnd; row++) {
+      if (isAllRowsAuto || table.getDefaultRowHeight(row) === 'auto') {
+        const height = computeRowHeight(row, 0, table.colCount - 1, table);
+        if (update) {
+          newHeights[row] = height;
+        } else {
+          table.setRowHeight(row, height);
+        }
+      }
     }
 
-    // compute body row
-    if (
-      // 以列展示 且符合只需要计算第一行其他行可复用行高的条条件
-      !(
+    if (rowEnd < table.columnHeaderLevelCount || !isAllRowsAuto) {
+      // do nothing
+    } else {
+      // compute body row
+      if (
+        // 以列展示 且符合只需要计算第一行其他行可复用行高的条条件
+        !(
+          table.internalProps.transpose ||
+          (table.isPivotTable() && !(table.internalProps.layoutMap as PivotHeaderLayoutMap).indicatorsAsCol)
+        ) &&
+        checkFixedStyleAndNoWrap(table)
+      ) {
+        // check fixed style and no wrap situation, fill all row width single compute
+        // traspose table and row indicator pivot table cannot use single row height
+        const height = computeRowHeight(table.columnHeaderLevelCount, 0, table.colCount - 1, table);
+        fillRowsHeight(
+          height,
+          table.columnHeaderLevelCount,
+          table.rowCount - 1 - table.bottomFrozenRowCount,
+          table,
+          update ? newHeights : undefined
+        );
+        //底部冻结的行行高需要单独计算
+        for (let row = table.rowCount - table.bottomFrozenRowCount; row <= rowEnd; row++) {
+          const height = computeRowHeight(row, 0, table.colCount - 1, table);
+          if (update) {
+            newHeights[row] = height;
+          } else {
+            table.setRowHeight(row, height);
+          }
+        }
+      } else if (
+        // 以行展示
         table.internalProps.transpose ||
         (table.isPivotTable() && !(table.internalProps.layoutMap as PivotHeaderLayoutMap).indicatorsAsCol)
-      ) &&
-      checkFixedStyleAndNoWrap(table)
-    ) {
-      // check fixed style and no wrap situation, fill all row width single compute
-      // traspose table and row indicator pivot table cannot use single row height
-      const height = computeRowHeight(table.columnHeaderLevelCount, 0, table.colCount - 1, table);
-      fillRowsHeight(height, table.columnHeaderLevelCount, table.rowCount - 1 - table.bottomFrozenRowCount, table);
-      //底部冻结的行行高需要单独计算
-      for (let row = table.rowCount - table.bottomFrozenRowCount; row <= rowEnd; row++) {
-        const height = computeRowHeight(row, 0, table.colCount - 1, table);
-        table.setRowHeight(row, height);
-      }
-    } else if (
-      // 以行展示
-      table.internalProps.transpose ||
-      (table.isPivotTable() && !(table.internalProps.layoutMap as PivotHeaderLayoutMap).indicatorsAsCol)
-    ) {
-      // check fixed style and no wrap situation, just compute 0-table.rowHeaderLevelCount column(the column after row header) in ervey row
-      // in traspose table and row indicator pivot table
-      for (let row = Math.max(rowStart, table.columnHeaderLevelCount); row <= rowEnd; row++) {
-        // table._clearRowRangeHeightsMap(row);//注释掉 注意有无缓存问题
-        let height;
-        if (checkFixedStyleAndNoWrapForTranspose(table, row)) {
-          // 以行展示 只计算到body第一列样式的情况即可
-          height = computeRowHeight(row, 0, table.rowHeaderLevelCount, table);
-        } else {
-          height = computeRowHeight(row, 0, table.colCount - 1, table);
+      ) {
+        // check fixed style and no wrap situation, just compute 0-table.rowHeaderLevelCount column(the column after row header) in ervey row
+        // in traspose table and row indicator pivot table
+        for (let row = Math.max(rowStart, table.columnHeaderLevelCount); row <= rowEnd; row++) {
+          // table._clearRowRangeHeightsMap(row);//注释掉 注意有无缓存问题
+          let height;
+          if (checkFixedStyleAndNoWrapForTranspose(table, row)) {
+            // 以行展示 只计算到body第一列样式的情况即可
+            height = computeRowHeight(row, 0, table.rowHeaderLevelCount, table);
+          } else {
+            height = computeRowHeight(row, 0, table.colCount - 1, table);
+          }
+          // table.setRowHeight(row, height);
+          if (update) {
+            newHeights[row] = height;
+          } else {
+            table.setRowHeight(row, height);
+          }
         }
-        table.setRowHeight(row, height);
-      }
-    } else {
-      // 以列展示 需要逐行计算情况
-      for (let row = Math.max(rowStart, table.columnHeaderLevelCount); row <= rowEnd; row++) {
-        // table._clearRowRangeHeightsMap(row); //注释掉 注意有无缓存问题
-        const height = computeRowHeight(row, 0, table.colCount - 1, table);
-        table.setRowHeight(row, height);
+      } else {
+        // 以列展示 需要逐行计算情况
+        for (let row = Math.max(rowStart, table.columnHeaderLevelCount); row <= rowEnd; row++) {
+          // table._clearRowRangeHeightsMap(row); //注释掉 注意有无缓存问题
+          const height = computeRowHeight(row, 0, table.colCount - 1, table);
+          // table.setRowHeight(row, height);
+          if (update) {
+            newHeights[row] = height;
+          } else {
+            table.setRowHeight(row, height);
+          }
+        }
       }
     }
   }
+
   // 处理adaptive高度
   if (table.heightMode === 'adaptive') {
     table._clearRowRangeHeightsMap();
     // const canvasWidth = table.internalProps.canvas.width;
-    const totalDrawHeight = table.tableNoFrameHeight - table.getFrozenRowsHeight() - table.getBottomFrozenRowsHeight();
+    const columnHeaderHeight = table.getRowsHeight(0, table.columnHeaderLevelCount - 1);
+    const bottomHeaderHeight = table.isPivotChart() ? table.getBottomFrozenRowsHeight() : 0;
+    const totalDrawHeight = table.tableNoFrameHeight - columnHeaderHeight - bottomHeaderHeight;
+    const startRow = table.columnHeaderLevelCount;
+    const endRow = table.isPivotChart() ? table.rowCount - table.bottomFrozenRowCount : table.rowCount;
     let actualHeight = 0;
-    for (let row = table.frozenRowCount; row < table.rowCount - table.bottomFrozenRowCount; row++) {
-      actualHeight += table.getRowHeight(row);
+    for (let row = startRow; row < endRow; row++) {
+      actualHeight += update ? newHeights[row] : table.getRowHeight(row);
     }
     const factor = totalDrawHeight / actualHeight;
-    for (let row = table.frozenRowCount; row < table.rowCount - table.bottomFrozenRowCount; row++) {
+    for (let row = startRow; row < endRow; row++) {
       let rowHeight;
-      if (row === table.rowCount - table.bottomFrozenRowCount - 1) {
+      if (row === endRow - 1) {
         rowHeight =
-          totalDrawHeight - table.getRowsHeight(table.frozenRowCount, table.rowCount - table.bottomFrozenRowCount - 2);
+          totalDrawHeight -
+          (update
+            ? newHeights.reduce((acr, cur, index) => {
+                if (index >= startRow && index <= endRow - 2) {
+                  return acr + cur;
+                }
+                return acr;
+              }, 0)
+            : table.getRowsHeight(startRow, endRow - 2));
       } else {
-        rowHeight = Math.round(table.getRowHeight(row) * factor);
+        rowHeight = Math.round((update ? newHeights[row] : table.getRowHeight(row)) * factor);
       }
-      table.setRowHeight(row, rowHeight, false);
+      if (update) {
+        newHeights[row] = rowHeight;
+      } else {
+        table.setRowHeight(row, rowHeight, false);
+      }
     }
   } else if (table.autoFillHeight) {
     table._clearRowRangeHeightsMap();
@@ -135,7 +198,7 @@ export function computeRowsHeight(
     let actualHeight = 0;
     let actualHeaderHeight = 0;
     for (let row = 0; row < table.rowCount; row++) {
-      const rowHeight = table.getRowHeight(row);
+      const rowHeight = update ? newHeights[row] : table.getRowHeight(row);
       if (row < table.frozenRowCount || row >= table.rowCount - table.bottomFrozenRowCount) {
         actualHeaderHeight += rowHeight;
       }
@@ -147,14 +210,18 @@ export function computeRowsHeight(
     if (actualHeight < canvasHeight && actualHeight - actualHeaderHeight > 0) {
       const factor = (canvasHeight - actualHeaderHeight) / (actualHeight - actualHeaderHeight);
       for (let row = table.frozenRowCount; row < table.rowCount - table.bottomFrozenRowCount; row++) {
-        table.setRowHeight(row, table.getRowHeight(row) * factor);
+        if (update) {
+          newHeights[row] = newHeights[row] * factor;
+        } else {
+          table.setRowHeight(row, table.getRowHeight(row) * factor);
+        }
       }
     }
   }
 
   if (update) {
     for (let row = 0; row < table.rowCount; row++) {
-      const newRowHeight = table.getRowHeight(row);
+      const newRowHeight = newHeights[row] ?? table.getRowHeight(row);
       if (newRowHeight !== oldRowHeights[row]) {
         // update the row height in scenegraph
         table.scenegraph.updateRowHeight(row, newRowHeight - oldRowHeights[row]);
@@ -172,15 +239,18 @@ export function computeRowHeight(row: number, startCol: number, endCol: number, 
     row >= table.columnHeaderLevelCount &&
     row < table.rowCount - table.bottomFrozenRowCount
   ) {
-    if ((table.internalProps.layoutMap as PivotLayoutMap).indicatorsAsCol) {
+    if ((table.internalProps.layoutMap as PivotHeaderLayoutMap).indicatorsAsCol) {
       //并且指标是以列展示 计算行高需要根据y轴的值域范围
-      const optimunHeight = (table.internalProps.layoutMap as PivotLayoutMap).getOptimunHeightForChart(row);
+      const optimunHeight = (table.internalProps.layoutMap as PivotHeaderLayoutMap).getOptimunHeightForChart(row);
       if (optimunHeight > 0) {
         return optimunHeight;
       }
     } else {
       //直接拿默认行高
-      return table.getRowHeight(row);
+      const defaultHeight = table.getDefaultRowHeight(row);
+      if (isNumber(defaultHeight)) {
+        return defaultHeight;
+      }
     }
   }
   for (let col = startCol; col <= endCol; col++) {
@@ -193,7 +263,7 @@ export function computeRowHeight(row: number, startCol: number, endCol: number, 
 
     // Axis component height calculation
     if (table.isPivotChart()) {
-      const layout = table.internalProps.layoutMap as PivotLayoutMap;
+      const layout = table.internalProps.layoutMap as PivotHeaderLayoutMap;
       const axisConfig = getAxisConfigInPivotChart(col, row, layout);
       if (axisConfig) {
         const axisWidth = computeAxisComponentHeight(axisConfig, table);
@@ -216,7 +286,7 @@ function checkFixedStyleAndNoWrap(table: BaseTableAPI): boolean {
   const row = table.columnHeaderLevelCount;
   //设置了全局自动换行的话 不能复用高度计算
   if (
-    table.internalProps.autoWrapText &&
+    (table.internalProps.autoWrapText || table.isPivotChart()) &&
     (table.options.heightMode === 'autoHeight' || table.options.heightMode === 'adaptive')
   ) {
     return false;
@@ -277,9 +347,19 @@ function checkFixedStyleAndNoWrapForTranspose(table: BaseTableAPI, row: number):
   return true;
 }
 
-function fillRowsHeight(height: number, startRow: number, endRow: number, table: BaseTableAPI) {
+function fillRowsHeight(
+  height: number,
+  startRow: number,
+  endRow: number,
+  table: BaseTableAPI,
+  newHeights: number[] | undefined
+) {
   for (let row = startRow; row <= endRow; row++) {
-    table.setRowHeight(row, height);
+    if (newHeights) {
+      newHeights[row] = height;
+    } else {
+      table.setRowHeight(row, height);
+    }
   }
 }
 
@@ -294,11 +374,11 @@ function computeCustomRenderHeight(col: number, row: number, table: BaseTableAPI
   const customRender = table.getCustomRender(col, row);
   const customLayout = table.getCustomLayout(col, row);
   if (customRender || customLayout) {
-    let spanCol = 1;
+    let spanRow = 1;
     let height = 0;
-    if (table.isHeader(col, row) || (table.getBodyColumnDefine(col, row) as TextColumnDefine).mergeCell) {
+    if (table.isHeader(col, row) || (table.getBodyColumnDefine(col, row) as TextColumnDefine)?.mergeCell) {
       const cellRange = table.getCellRange(col, row);
-      spanCol = cellRange.end.col - cellRange.start.col + 1;
+      spanRow = cellRange.end.row - cellRange.start.row + 1;
     }
     const arg = {
       col,
@@ -311,9 +391,16 @@ function computeCustomRenderHeight(col: number, row: number, table: BaseTableAPI
     if (customLayout) {
       // 处理customLayout
       const customLayoutObj = customLayout(arg);
-      customLayoutObj.rootContainer.isRoot = true;
-      const size = customLayoutObj.rootContainer.getContentSize();
-      height = size.height ?? 0;
+      if (customLayoutObj.rootContainer instanceof VGroup) {
+        height = (customLayoutObj.rootContainer as VGroup).AABBBounds.height() ?? 0;
+        // height = (customLayoutObj.rootContainer as VGroup).attribute.height ?? 0;
+      } else if (customLayoutObj.rootContainer) {
+        customLayoutObj.rootContainer.isRoot = true;
+        const size = customLayoutObj.rootContainer.getContentSize();
+        height = size.height ?? 0;
+      } else {
+        height = 0;
+      }
     } else if (typeof customRender === 'function') {
       // 处理customRender
       const customRenderObj = customRender(arg);
@@ -321,7 +408,7 @@ function computeCustomRenderHeight(col: number, row: number, table: BaseTableAPI
     } else {
       height = customRender?.expectedHeight ?? 0;
     }
-    return height / spanCol;
+    return height / spanRow;
   }
   return undefined;
 }
@@ -373,7 +460,7 @@ function computeTextHeight(col: number, row: number, table: BaseTableAPI): numbe
   }
   let spanRow = 1;
   let endCol = col;
-  if (table.isHeader(col, row) || (table.getBodyColumnDefine(col, row) as TextColumnDefine).mergeCell) {
+  if (table.isHeader(col, row) || (table.getBodyColumnDefine(col, row) as TextColumnDefine)?.mergeCell) {
     const cellRange = table.getCellRange(col, row);
     spanRow = cellRange.end.row - cellRange.start.row + 1;
     col = cellRange.start.col;
@@ -434,7 +521,8 @@ function computeTextHeight(col: number, row: number, table: BaseTableAPI): numbe
       fontStyle,
       fontWeight,
       fontFamily,
-      lineHeight
+      lineHeight,
+      wordBreak: 'break-word'
     });
     maxHeight = utilTextMark.AABBBounds.height();
   } else {
@@ -443,4 +531,15 @@ function computeTextHeight(col: number, row: number, table: BaseTableAPI): numbe
   }
 
   return (Math.max(maxHeight, iconHeight) + padding[0] + padding[2]) / spanRow;
+}
+
+function getCellRect(col: number, row: number, table: BaseTableAPI) {
+  return {
+    left: 0,
+    top: 0,
+    right: table.getColWidth(col),
+    bottom: table.getRowHeight(row),
+    width: table.getColWidth(col),
+    height: 0
+  };
 }

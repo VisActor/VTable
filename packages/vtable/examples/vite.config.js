@@ -1,4 +1,5 @@
 const { plugin: mdPlugin, Mode } = require('vite-plugin-markdown');
+const react = require('@vitejs/plugin-react');
 
 module.exports = {
   server: {
@@ -11,5 +12,20 @@ module.exports = {
     __VERSION__: JSON.stringify(require('../package.json').version)
   },
   resolve: {},
-  plugins: [mdPlugin({ mode: [Mode.HTML, Mode.MARKDOWN, Mode.TOC, Mode.REACT] })]
+  plugins: [
+    mdPlugin({ mode: [Mode.HTML, Mode.MARKDOWN, Mode.TOC, Mode.REACT] }),
+    react({
+      babel: {
+        plugins: [
+          [
+            '@babel/plugin-transform-react-jsx',
+            {
+              pragma: 'jsx',
+              pragmaFrag: 'Fragment'
+            }
+          ]
+        ]
+      }
+    })
+  ]
 };

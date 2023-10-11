@@ -16,11 +16,13 @@ import type {
 } from './ts-types';
 import { HierarchyState } from './ts-types';
 import { SimpleHeaderLayoutMap } from './layout';
-import { cloneDeep, isValid } from './tools/util';
+import { isValid } from './tools/util';
 import { _setDataSource } from './core/tableHelper';
 import { BaseTable } from './core';
 import type { ListTableProtected } from './ts-types/base-table';
 import { TABLE_EVENT_TYPE } from './core/TABLE_EVENT_TYPE';
+import { Title } from './components/title/title';
+import { cloneDeep } from '@visactor/vutils';
 
 export class ListTable extends BaseTable implements ListTableAPI {
   declare internalProps: ListTableProtected;
@@ -66,6 +68,10 @@ export class ListTable extends BaseTable implements ListTableAPI {
     } else {
       this.setRecords([]);
     }
+    if (options.title) {
+      internalProps.title = new Title(options.title, this);
+      this.scenegraph.resize();
+    }
   }
   isListTable(): true {
     return true;
@@ -82,24 +88,24 @@ export class ListTable extends BaseTable implements ListTableAPI {
   get sortState(): SortState | SortState[] {
     return this.internalProps.sortState;
   }
-  /**
-   * Gets the define of the header.
-   */
-  get columns(): ColumnsDefine {
-    return this.internalProps.columns;
-  }
-  /**
-   * Sets the define of the column.
-   */
-  set columns(columns: ColumnsDefine) {
-    this.internalProps.columns = columns;
-    this.options.columns = columns;
-  }
+  // /**
+  //  * Gets the define of the header.
+  //  */
+  // get columns(): ColumnsDefine {
+  //   return this.internalProps.columns;
+  // }
+  // /**
+  //  * Sets the define of the column.
+  //  */
+  // set columns(columns: ColumnsDefine) {
+  //   this.internalProps.columns = columns;
+  //   this.options.columns = columns;
+  // }
   /**
    * Sets the define of the column.
    */
   updateColumns(columns: ColumnsDefine) {
-    this.internalProps.columns = columns;
+    this.internalProps.columns = cloneDeep(columns);
     this.options.columns = columns;
     this.refreshHeader();
     this.scenegraph.clearCells();
@@ -245,7 +251,10 @@ export class ListTable extends BaseTable implements ListTableAPI {
       this.scenegraph.createSceneGraph();
       this.render();
     }
-
+    if (options.title) {
+      internalProps.title = new Title(options.title, this);
+      this.scenegraph.resize();
+    }
     return new Promise(resolve => {
       setTimeout(resolve, 0);
     });

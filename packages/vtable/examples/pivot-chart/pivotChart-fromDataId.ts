@@ -32,7 +32,7 @@ export function createTable() {
           indicatorKey: '230713183656009'
         },
         {
-          value: '销售额',
+          // value: '销售额',
           indicatorKey: '230417171050025'
         },
         {
@@ -10415,10 +10415,10 @@ export function createTable() {
 
   const tableInstance = new VTable.PivotChart(option);
   tableInstance.onVChartEvent('click', args => {
-    console.log('listenChart click', args);
+    console.log('onVChartEvent click', args);
   });
   tableInstance.onVChartEvent('mouseover', args => {
-    console.log('listenChart mouseover', args);
+    console.log('onVChartEvent mouseover', args);
   });
   const { LEGEND_ITEM_CLICK, LEGEND_ITEM_HOVER, LEGEND_ITEM_UNHOVER } = VTable.ListTable.EVENT_TYPE;
   tableInstance.on(LEGEND_ITEM_CLICK, args => {

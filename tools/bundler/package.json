@@ -38,6 +38,7 @@
     "@rollup/plugin-typescript": "11.1.0",
     "@rollup/plugin-url": "8.0.1",
     "@rollup/plugin-json": "4.1.0",
+    "@rollup/plugin-strip": "3.0.2",
     "@trufflesuite/spinnies": "0.1.1",
     "autoprefixer": "10.4.13",
     "babel-plugin-import": "1.13.6",

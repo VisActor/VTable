@@ -139,6 +139,10 @@ export const menus = [
       {
         path: 'pivot-chart',
         name: 'percent-horizontal-bar'
+      },
+      {
+        path: 'pivot-chart',
+        name: 'pivot-chart-event'
       }
     ]
   },
@@ -186,6 +190,10 @@ export const menus = [
   {
     menu: 'pivot',
     children: [
+      {
+        path: 'pivot',
+        name: 'pivot-different-dimension'
+      },
       {
         path: 'pivot',
         name: 'pivot-size-legend'
@@ -245,6 +253,14 @@ export const menus = [
       {
         path: 'pivot',
         name: 'pivot-indicator-middle'
+      },
+      {
+        path: 'pivot',
+        name: 'pivot-extension-row'
+      },
+      {
+        path: 'pivot',
+        name: 'pivot-extension-row2'
       }
     ]
   },
@@ -254,6 +270,10 @@ export const menus = [
       {
         path: 'pivot-analysis',
         name: 'pivot-analysis'
+      },
+      {
+        path: 'pivot-analysis',
+        name: 'pivot-analysis-tree'
       },
       {
         path: 'pivot-analysis',
@@ -307,6 +327,10 @@ export const menus = [
       {
         path: 'interactive',
         name: 'tooltip'
+      },
+      {
+        path: 'interactive',
+        name: 'resize-container'
       }
     ]
   },
@@ -448,6 +472,19 @@ export const menus = [
     ]
   },
   {
+    menu: 'custom-layout-jsx',
+    children: [
+      {
+        path: 'custom-layout-jsx',
+        name: 'list-jsx'
+      },
+      {
+        path: 'custom-layout-jsx',
+        name: 'pivot-jsx'
+      }
+    ]
+  },
+  {
     menu: 'components',
     children: [
       {
@@ -581,7 +618,19 @@ export const menus = [
       },
       {
         path: 'unit-test-demo',
+        name: 'unitTestPivotAnalysis'
+      },
+      {
+        path: 'unit-test-demo',
         name: 'unitTestPivotChart'
+      },
+      {
+        path: 'unit-test-demo',
+        name: 'unitTestListTableTitle'
+      },
+      {
+        path: 'unit-test-demo',
+        name: 'unitTestPivotTree'
       }
     ]
   },

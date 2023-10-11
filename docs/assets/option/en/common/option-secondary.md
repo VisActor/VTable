@@ -42,10 +42,6 @@ The configuration item autoFillHeight is used to control whether to automaticall
 
 The maximum number of characters that can be displayed in a cell, default is 200
 
-#${prefix} maxToolipCharactersNumber(number)
-
-Maximum character count for tooltip
-
 #${prefix} maxOperatableRecordCount(number)
 
 Maximum number of operable records, such as the maximum number of data entries that can be copied in a copy operation

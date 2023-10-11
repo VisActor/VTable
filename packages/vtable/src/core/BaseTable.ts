@@ -2,7 +2,7 @@ import * as columnStyleContents from '../body-helper/style';
 import * as headerStyleContents from '../header-helper/style';
 import { importStyle } from './style';
 import * as style from '../tools/style';
-import { AABBBounds } from '@visactor/vutils';
+import { AABBBounds, isNumber } from '@visactor/vutils';
 import {
   type CellAddress,
   type CellRange,
@@ -59,7 +59,7 @@ import type { PivotHeaderLayoutMap } from '../layout/pivot-header-layout';
 import { TooltipHandler } from '../components/tooltip/TooltipHandler';
 import type { CachedDataSource, DataSource } from '../data';
 import { isBoolean, isFunction, type ITextSize } from '@visactor/vutils';
-import { textMeasure } from '../scenegraph/utils/measure-text';
+import { textMeasure } from '../scenegraph/utils/text-measure';
 import { getProp } from '../scenegraph/utils/get-prop';
 import type {
   ColumnData,
@@ -309,13 +309,13 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
         y: this.tableY
       });
     }
-    if (options.title) {
-      internalProps.title = new Title(options.title, this);
-      this.scenegraph.tableGroup.setAttributes({
-        x: this.tableX,
-        y: this.tableY
-      });
-    }
+    // if (options.title) {
+    //   internalProps.title = new Title(options.title, this);
+    //   this.scenegraph.tableGroup.setAttributes({
+    //     x: this.tableX,
+    //     y: this.tableY
+    //   });
+    // }
 
     //原有的toolTip提示框处理，主要在文字绘制不全的时候 出来全文本提示信息 需要加个字段设置是否有效
     internalProps.tooltip = Object.assign(
@@ -514,13 +514,13 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
    * Get the default row height.
    *
    */
-  get defaultHeaderRowHeight(): number | number[] {
+  get defaultHeaderRowHeight(): (number | 'auto') | (number | 'auto')[] {
     return this.internalProps.defaultHeaderRowHeight;
   }
   /**
    * Set the default row height.
    */
-  set defaultHeaderRowHeight(defaultHeaderRowHeight: number | number[]) {
+  set defaultHeaderRowHeight(defaultHeaderRowHeight: (number | 'auto') | (number | 'auto')[]) {
     this.internalProps.defaultHeaderRowHeight = defaultHeaderRowHeight;
     this.options.defaultHeaderRowHeight = defaultHeaderRowHeight;
   }
@@ -886,6 +886,14 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     if (this.rowHeightsMap.get(row)) {
       return this.rowHeightsMap.get(row);
     }
+    const defaultHeight = this.getDefaultRowHeight(row);
+    if (isNumber(defaultHeight)) {
+      return defaultHeight;
+    }
+    return this.defaultRowHeight;
+  }
+
+  getDefaultRowHeight(row: number) {
     if (this.isColumnHeader(0, row) || this.isCornerHeader(0, row)) {
       return Array.isArray(this.defaultHeaderRowHeight)
         ? this.defaultHeaderRowHeight[row] ?? this.internalProps.defaultRowHeight
@@ -893,8 +901,9 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     }
     if (this.isBottomFrozenRow(this.rowHeaderLevelCount, row)) {
       return Array.isArray(this.defaultHeaderRowHeight)
-        ? this.defaultHeaderRowHeight[this.columnHeaderLevelCount - this.bottomFrozenRowCount] ??
-            this.internalProps.defaultRowHeight
+        ? this.defaultHeaderRowHeight[
+            this.columnHeaderLevelCount > 0 ? this.columnHeaderLevelCount - this.bottomFrozenRowCount : 0
+          ] ?? this.internalProps.defaultRowHeight
         : this.defaultHeaderRowHeight;
     }
     return this.internalProps.defaultRowHeight;
@@ -930,9 +939,11 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
         cachedLowerRowHeight +
           (this.rowHeightsMap.get(endRow) ??
             (this.isColumnHeader(0, endRow) || this.isCornerHeader(0, endRow)
-              ? Array.isArray(this.defaultHeaderRowHeight)
-                ? this.defaultHeaderRowHeight[endRow] ?? this.internalProps.defaultRowHeight
-                : this.defaultHeaderRowHeight
+              ? Array.isArray(this.defaultHeaderRowHeight) && isNumber(this.defaultHeaderRowHeight[endRow])
+                ? (this.defaultHeaderRowHeight[endRow] as number)
+                : isNumber(this.defaultHeaderRowHeight)
+                ? (this.defaultHeaderRowHeight as number)
+                : this.internalProps.defaultRowHeight
               : this.internalProps.defaultRowHeight))
       );
       if (startRow >= 0 && endRow >= 0) {
@@ -954,6 +965,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     // autoRowHeight || all rows in header, use accumulation
     if (
       this.heightMode === 'standard' &&
+      !this.autoFillHeight &&
       this.internalProps.layoutMap &&
       endRow >= this.columnHeaderLevelCount &&
       !this.bottomFrozenRowCount &&
@@ -1536,8 +1548,8 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
   _toRelativeRect(absoluteRect: Rect): Rect {
     const rect = absoluteRect.copy();
     const visibleRect = this.getVisibleRect();
-    rect.offsetLeft(-visibleRect.left);
-    rect.offsetTop(-visibleRect.top);
+    rect.offsetLeft(this.tableX - visibleRect.left);
+    rect.offsetTop(this.tableY - visibleRect.top);
     return rect;
   }
 
@@ -1828,13 +1840,13 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
         y: this.tableY
       });
     }
-    if (options.title) {
-      internalProps.title = new Title(options.title, this);
-      this.scenegraph.tableGroup.setAttributes({
-        x: this.tableX,
-        y: this.tableY
-      });
-    }
+    // if (options.title) {
+    //   internalProps.title = new Title(options.title, this);
+    //   this.scenegraph.tableGroup.setAttributes({
+    //     x: this.tableX,
+    //     y: this.tableY
+    //   });
+    // }
     internalProps.tooltip = Object.assign(
       {
         renderMode: 'html',
@@ -1962,8 +1974,8 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     const originHeight = this.canvas.offsetHeight || currentHeight;
     const heightRatio = currentHeight / originHeight;
 
-    const x = (clientX - rect.left) / widthRatio + (isAddScroll ? table.scrollLeft : 0) - table.tableX;
-    const y = (clientY - rect.top) / heightRatio + (isAddScroll ? table.scrollTop : 0) - table.tableY;
+    const x = (clientX - rect.left) / widthRatio + (isAddScroll ? table.scrollLeft : 0);
+    const y = (clientY - rect.top) / heightRatio + (isAddScroll ? table.scrollTop : 0);
     return { x, y, inTable };
   }
   getTheme() {
@@ -2451,7 +2463,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
       hd = layoutMap.headerObjects.find((col: any) => col && col.field === sortState.field);
     }
     if (hd) {
-      const headercell = layoutMap.getHeaderCellAdress(hd.id as number);
+      const headercell = layoutMap.getHeaderCellAdressById(hd.id as number);
       return headercell;
     }
     return undefined;
@@ -2597,15 +2609,15 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     return this.internalProps.layoutMap?.isBottomFrozenRow(col, row);
   }
   /** 获取单元格的基本信息 目前主要组织单元格信息给事件传递给用户的参数使用 */
-  getCellInfo(col: number, row: number): MousePointerCellEvent {
+  getCellInfo(col: number, row: number): Omit<MousePointerCellEvent, 'target'> {
     const colDef = this.isHeader(col, row) ? this.getHeaderDefine(col, row) : this.getBodyColumnDefine(col, row);
     return {
       col,
       row,
       field: this.getHeaderField(col, row),
       cellHeaderPaths: this.internalProps.layoutMap.getCellHeaderPaths(col, row),
-      title: colDef.title,
-      cellType: colDef.cellType ? (typeof colDef.cellType === 'string' ? colDef.cellType : 'progressbar') : 'text',
+      title: colDef?.title,
+      cellType: colDef?.cellType ? (typeof colDef.cellType === 'string' ? colDef.cellType : 'progressbar') : 'text',
       originData: this.getCellOriginRecord(col, row),
       cellRange: this.getCellRangeRelativeRect({ col, row }),
       value: this.getCellValue(col, row),

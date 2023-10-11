@@ -4,7 +4,7 @@ import type { DropDownMenuEventArgs, MenuListItem, PivotInfo } from './menu';
 import type { AnyFunction, IDimensionInfo, RectProps, SortOrder } from './common';
 import type { IconFuncTypeEnum, CellInfo, HierarchyState } from '.';
 import type { Icon } from '../scenegraph/graphic/icon';
-import type { FederatedPointerEvent } from '@visactor/vrender';
+import type { FederatedPointerEvent, IEventTarget } from '@visactor/vrender';
 
 export type KeyboardEventListener = (e: KeyboardEvent) => void;
 export type TableEventListener<TYPE extends keyof TableEventHandlersEventArgumentMap> = (
@@ -45,6 +45,7 @@ export type MousePointerCellEvent = CellAddress &
     targetIcon?: { name: string; position: RectProps; funcType: string };
     event?: MouseEvent | PointerEvent | TouchEvent;
     federatedEvent?: FederatedPointerEvent;
+    target: IEventTarget | undefined;
   };
 // 多单元格的事件传出参数 需要将当前鼠标处的单元格的信息FocusedCellInfo也带着
 export type MousePointerMultiCellEvent = MousePointerCellEvent & {
@@ -78,6 +79,9 @@ export interface TableEventHandlersEventArgumentMap {
     scrollHeight: number;
     viewWidth: number;
     viewHeight: number;
+    scrollDirection: 'horizontal' | 'vertical';
+    scrollRatioX?: number;
+    scrollRatioY?: number;
   };
   resize_column: { col: number; colWidth: number };
   resize_column_end: { col: number; columns: number[] };
@@ -149,6 +153,8 @@ export interface TableEventHandlersEventArgumentMap {
 
   mouseenter_axis: MousePointerCellEvent & { axisPosition: 'left' | 'right' | 'top' | 'bottom' };
   mouseleave_axis: MousePointerCellEvent & { axisPosition: 'left' | 'right' | 'top' | 'bottom' };
+
+  after_stage_render: null;
 }
 export interface DrillMenuEventInfo {
   dimensionKey: string | number;
@@ -209,4 +215,6 @@ export interface TableEventHandlersReturnMap {
 
   mouseenter_axis: void;
   mouseleave_axis: void;
+
+  after_stage_render: void;
 }

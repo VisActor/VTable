@@ -2,6 +2,35 @@
   "name": "@visactor/vtable",
   "entries": [
     {
+      "version": "0.12.0",
+      "tag": "@visactor/vtable_v0.12.0",
+      "date": "Wed, 11 Oct 2023 09:34:42 GMT",
+      "comments": {
+        "patch": [
+          {
+            "comment": "fix: the width and height of the container is changed, chart display exception. #338\n\n"
+          },
+          {
+            "comment": "fix: chart shake when after resize container #344\n\n"
+          },
+          {
+            "comment": "fix: the width or height of the container change large，pivotChart display exception. #350\n\n"
+          },
+          {
+            "comment": "fix: loss tree HierarchyState when call updateOption #339\n\n"
+          },
+          {
+            "comment": "fix: mobile test fix problems #357\n\n"
+          }
+        ],
+        "minor": [
+          {
+            "comment": "docs: add docs about multi tree to pivot table\n\n"
+          }
+        ]
+      }
+    },
+    {
       "version": "0.11.0",
       "tag": "@visactor/vtable_v0.11.0",
       "date": "Thu, 14 Sep 2023 06:45:59 GMT",
@@ -106,7 +135,7 @@
             "comment": "refactor: sort collectedValues by data.field.domain\n\n"
           },
           {
-            "comment": "feat: add listenChart Event\n\n"
+            "comment": "feat: add onVChartEvent Event\n\n"
           }
         ],
         "minor": [

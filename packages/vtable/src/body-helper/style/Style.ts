@@ -17,11 +17,12 @@ import type {
   FontFamilyPropertyDefine,
   FontWeightPropertyDefine,
   FontVariantPropertyDefine,
-  FontStylePropertyDefine
+  FontStylePropertyDefine,
+  TextAlignType,
+  TextBaselineType
 } from '../../ts-types';
 let defaultStyle: Style;
 import { EventTarget } from '../../event/EventTarget';
-import type { TextAlignType, TextBaselineType } from '@visactor/vrender';
 const STYLE_EVENT_TYPE = {
   CHANGE_STYLE: 'change_style' as const
 };

@@ -15,7 +15,9 @@ import { sortHorizontal } from './update-position/sort-horizontal';
 
 export class SceneProxy {
   table: BaseTableAPI;
+  isRelease: boolean = false;
   mode: 'column' | 'row' | 'pivot' = 'column';
+  isProgressing: boolean;
 
   rowLimit = 1000;
   currentRow = 0; // 目前渐进生成的row number
@@ -169,8 +171,16 @@ export class SceneProxy {
   //   }
   // }
   async progress() {
+    if (this.isProgressing) {
+      return;
+    }
+    this.isProgressing = true;
     return new Promise<void>((resolve, reject) => {
       setTimeout(async () => {
+        this.isProgressing = false;
+        if (this.isRelease) {
+          return;
+        }
         if (this.colUpdatePos < this.colEnd) {
           await this.updateColCellGroupsAsync();
           await this.progress();
@@ -189,7 +199,7 @@ export class SceneProxy {
           await this.progress();
         }
         resolve();
-      }, 0);
+      }, 16);
     });
   }
 
@@ -197,7 +207,7 @@ export class SceneProxy {
     if (!this.taskRowCount) {
       return;
     }
-    console.log('createRow', this.currentRow, this.currentRow + this.taskRowCount);
+    // console.log('createRow', this.currentRow, this.currentRow + this.taskRowCount);
     this.createRowCellGroup(this.taskRowCount);
   }
 
@@ -205,7 +215,7 @@ export class SceneProxy {
     if (!this.taskColCount) {
       return;
     }
-    console.log('createCol', this.currentCol, this.currentCol + this.taskColCount);
+    // console.log('createCol', this.currentCol, this.currentCol + this.taskColCount);
     this.createColGroup(this.taskRowCount);
   }
 
@@ -567,6 +577,10 @@ export class SceneProxy {
       this.cellCache.set(col, cellGroup);
     }
     return cellGroup;
+  }
+
+  release() {
+    this.isRelease = true;
   }
 }
 
