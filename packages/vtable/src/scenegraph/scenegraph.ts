@@ -1023,14 +1023,6 @@ export class Scenegraph {
    * @return {*}
    */
   afterScenegraphCreated() {
-    // 对齐auto列宽
-    // updateAutoColWidth(this);
-    // 对齐autoWrapText
-    // const { autoRowHeight } = this.table.internalProps;
-    // if (autoRowHeight) {
-    //   updateAutoRowHeight(this);
-    // }
-
     // this.dealWidthMode();
     // this.dealHeightMode();
     // 处理冻结
