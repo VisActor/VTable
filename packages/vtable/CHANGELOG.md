@@ -1,6 +1,33 @@
 # Change Log - @visactor/vtable
 
-This log was last generated on Thu, 14 Sep 2023 06:46:00 GMT and should not be manually modified.
+This log was last generated on Wed, 11 Oct 2023 09:34:42 GMT and should not be manually modified.
+
+## 0.12.0
+Wed, 11 Oct 2023 09:34:42 GMT
+
+### Minor changes
+
+- docs: add docs about multi tree to pivot table
+
+
+
+### Patches
+
+- fix: the width and height of the container is changed, chart display exception. #338
+
+
+- fix: chart shake when after resize container #344
+
+
+- fix: the width or height of the container change large，pivotChart display exception. #350
+
+
+- fix: loss tree HierarchyState when call updateOption #339
+
+
+- fix: mobile test fix problems #357
+
+
 
 ## 0.11.0
 Thu, 14 Sep 2023 06:45:59 GMT
