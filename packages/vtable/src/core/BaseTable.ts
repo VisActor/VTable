@@ -2566,6 +2566,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     this.scenegraph.createSceneGraph();
 
     if (this.internalProps.title && !this.internalProps.title.isReleased) {
+      this._updateSize();
       this.internalProps.title.resize();
       this.scenegraph.resize();
     }

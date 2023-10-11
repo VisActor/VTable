@@ -39,8 +39,6 @@ export class Title {
     if (!this._titleComponent) {
       return;
     }
-    this.table.tableX = 0;
-    this.table.tableY = 0;
     const padding = getQuadProps(this._titleOption.padding ?? 10);
     const realWidth =
       this._titleOption.width ??
