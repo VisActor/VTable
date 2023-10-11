@@ -47,7 +47,7 @@ export interface TableKeyboardOptions {
 
   /** 开启快捷键全选 默认：false */
   selectAllOnCtrlA?: boolean;
-  /** 快捷键复制 */
+  /** 快捷键复制  默认不开启*/
   copySelected?: boolean; //这个copy是和浏览器的快捷键一致的
 }
 export interface DataSourceAPI {
@@ -187,11 +187,11 @@ export interface PivotTableConstructorOptions extends BaseTableConstructorOption
    */
   showRowHeader?: boolean;
   /**
-   * 列表头增加一行来显示维度名称 可以自定义或者显示dimensionTitle组合名
+   * 列表头增加一行来显示维度名称 可以自定义或者显示dimension.title组合名
    */
   columnHeaderTitle?: ITitleDefine;
   /**
-   * 行表头的增加一列来显示维度名称 可以自定义或者显示dimensionTitle组合名
+   * 行表头的增加一列来显示维度名称 可以自定义或者显示dimension.title组合名
    */
   rowHeaderTitle?: ITitleDefine;
   //#endregion
@@ -203,6 +203,8 @@ export interface PivotTableConstructorOptions extends BaseTableConstructorOption
   indicatorTitle?: string;
   /** 分页配置 */
   pagination?: IPagination;
+
+  extensionRows?: IExtensionRowDefine[];
 }
 export interface PivotChartConstructorOptions extends BaseTableConstructorOptions {
   /**
@@ -242,11 +244,11 @@ export interface PivotChartConstructorOptions extends BaseTableConstructorOption
    */
   showRowHeader?: boolean;
   /**
-   * 列表头增加一行来显示维度名称 可以自定义或者显示dimensionTitle组合名
+   * 列表头增加一行来显示维度名称 可以自定义或者显示dimension.title组合名
    */
   columnHeaderTitle?: ITitleDefine;
   /**
-   * 行表头的增加一列来显示维度名称 可以自定义或者显示dimensionTitle组合名
+   * 行表头的增加一列来显示维度名称 可以自定义或者显示dimension.title组合名
    */
   rowHeaderTitle?: ITitleDefine;
   /** 指标标题 用于显示到角头的值*/
@@ -329,6 +331,8 @@ export interface IIndicatorHeaderNode {
    * 指标名称 如：“销售额”，“例如”， 对应到单元格显示的值。可不填，不填的话 从indicators的对应配置中取值显示
    */
   value?: string;
+  /** 维度成员下的子维度树结构 */
+  children?: IHeaderTreeDefine[] | null;
 }
 export interface IDimensionHeaderNode {
   /**
@@ -341,4 +345,9 @@ export interface IDimensionHeaderNode {
   children?: IHeaderTreeDefine[] | null;
   /** 折叠状态 TODO */
   hierarchyState?: HierarchyState;
+}
+
+export interface IExtensionRowDefine {
+  rows: (IDimension | string)[];
+  rowTree: IHeaderTreeDefine[] | ((args: { dimensionKey: string | number; value: string }[]) => IHeaderTreeDefine[]);
 }

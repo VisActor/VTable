@@ -1,6 +1,7 @@
 /* eslint-disable */
 import * as VTable from '../../src';
 import VChart from '@visactor/vchart';
+import { bindDebugTool } from '../../src/scenegraph/debug-tool';
 const CONTAINER_ID = 'vTable';
 VTable.register.chartModule('vchart', VChart);
 export function createTable() {
@@ -9310,10 +9311,12 @@ export function createTable() {
 
   const tableInstance = new VTable.PivotChart(option);
   tableInstance.onVChartEvent('click', args => {
-    console.log('listenChart click', args);
+    console.log('onVChartEvent click', args);
   });
   tableInstance.onVChartEvent('mouseover', args => {
-    console.log('listenChart mouseover', args);
+    console.log('onVChartEvent mouseover', args);
   });
   window.tableInstance = tableInstance;
+
+  bindDebugTool(tableInstance.scenegraph.stage, {});
 }

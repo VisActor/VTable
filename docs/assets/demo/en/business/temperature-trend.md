@@ -12,15 +12,15 @@ Show the temperature trends of different regions in the day, month and year.
 
 ## critical configuration
 
-*   `VTable.register.chartType('vchart', VChart)` Register a charting library for charting, currently supports VChart
+*   `VTable.register.chartModule('vchart', VChart)` Register a charting library for charting, currently supports VChart
 *   `cellType: 'chart'` Specify the type chart
-*   `chartType: 'vchart'` Specify the registered chart library name
+*   `chartModule: 'vchart'` Specify the registered chart library name
 *   `chartSpec: {}` Chart specs
 
 ## Code demo
 
 ```javascript livedemo template=vtable
-  VTable.register.chartType('vchart', VChart);
+  VTable.register.chartModule('vchart', VChart);
   const temperatureList = {
     "North East": {
       year: {
@@ -454,7 +454,7 @@ Show the temperature trends of different regions in the day, month and year.
       {
         indicatorKey: 'dayTrendChart',
         cellType: 'chart',
-        chartType: 'vchart',
+        chartModule: 'vchart',
         width: 400,
         chartSpec: {
           type: 'common',
@@ -485,7 +485,7 @@ Show the temperature trends of different regions in the day, month and year.
       {
         indicatorKey: 'monthTrendChart',
         cellType: 'chart',
-        chartType: 'vchart',
+        chartModule: 'vchart',
         width: 500,
         chartSpec: {
           type: 'common',
@@ -577,7 +577,7 @@ Show the temperature trends of different regions in the day, month and year.
       {
         indicatorKey: 'yearTrendChart',
         cellType: 'chart',
-        chartType: 'vchart',
+        chartModule: 'vchart',
         width: 350,
         chartSpec: {
           type: 'common',

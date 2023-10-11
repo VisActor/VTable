@@ -6,7 +6,7 @@ const CONTAINER_ID = 'vTable';
 export function createTable() {
   const option: VTable.PivotTableConstructorOptions = {
     container: document.getElementById(CONTAINER_ID),
-    columns: [
+    rows: [
       {
         dimensionKey: '221205165418024',
         title: '子类别',
@@ -19,7 +19,7 @@ export function createTable() {
         linkJump: false
       }
     ],
-    rows: [
+    columns: [
       {
         dimensionKey: '221205165418035',
         title: '邮寄方式',

@@ -138,6 +138,8 @@ export class StateManeger {
   };
   _clearVerticalScrollBar: any;
   _clearHorizontalScrollBar: any;
+
+  fastScrolling: boolean = false;
   // 供滚动重置为default使用
   resetInteractionState = debounce(() => {
     this.updateInteractionState(InteractionState.default);
@@ -321,9 +323,14 @@ export class StateManeger {
     if (this.interactionState === mode) {
       return;
     }
+    const oldState = this.interactionState;
     this.interactionState = mode;
     // 处理mode 更新后逻辑
-    // ......
+    if (oldState === InteractionState.scrolling && mode === InteractionState.default) {
+      // this.table.scenegraph.stage.disableDirtyBounds();
+      // this.table.scenegraph.stage.render();
+      // this.table.scenegraph.stage.enableDirtyBounds();
+    }
   }
 
   updateHoverhighlightScope(mode: HighlightScope) {

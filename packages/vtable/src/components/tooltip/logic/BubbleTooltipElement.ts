@@ -238,12 +238,12 @@ export class BubbleTooltipElement {
       this._triangleElement.style.top = '-5px';
     } else if (referencePosition) {
       let placement = referencePosition.placement ?? Placement.bottom;
-      const referenceXMiddle = referencePosition.rect.left + referencePosition.rect.width / 2 + (table as any).tableX;
-      const referenceYMiddle = referencePosition.rect.top + referencePosition.rect.height / 2 + (table as any).tableY;
-      const referenceTop = referencePosition.rect.top + (table as any).tableY;
-      const referenceBottom = referencePosition.rect.bottom + (table as any).tableY;
-      const referenceLeft = referencePosition.rect.left + (table as any).tableX;
-      const referenceRight = referencePosition.rect.right + (table as any).tableX;
+      const referenceXMiddle = referencePosition.rect.left + referencePosition.rect.width / 2;
+      const referenceYMiddle = referencePosition.rect.top + referencePosition.rect.height / 2;
+      const referenceTop = referencePosition.rect.top;
+      const referenceBottom = referencePosition.rect.bottom;
+      const referenceLeft = referencePosition.rect.left;
+      const referenceRight = referencePosition.rect.right;
 
       let callCount = 0;
       /** 根据placement计算弹出框的位置 躲避策略[dom的这块先去除 dom可以超出显示]：根据顺时针方向依次检测placement */

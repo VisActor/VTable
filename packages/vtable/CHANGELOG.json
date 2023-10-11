@@ -106,7 +106,7 @@
             "comment": "refactor: sort collectedValues by data.field.domain\n\n"
           },
           {
-            "comment": "feat: add listenChart Event\n\n"
+            "comment": "feat: add onVChartEvent Event\n\n"
           }
         ],
         "minor": [

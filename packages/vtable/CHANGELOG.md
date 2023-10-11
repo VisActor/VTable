@@ -103,7 +103,7 @@ Wed, 16 Aug 2023 04:16:18 GMT
 - refactor: sort collectedValues by data.field.domain
 
 
-- feat: add listenChart Event
+- feat: add onVChartEvent Event
 
 
 

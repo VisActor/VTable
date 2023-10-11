@@ -1,4 +1,5 @@
 import * as VTable from '../../src';
+import { bindDebugTool } from '../../src/scenegraph/debug-tool';
 const ListTable = VTable.ListTable;
 const CONTAINER_ID = 'vTable';
 
@@ -156,6 +157,10 @@ export function createTable() {
           menuKey: '升序排序1'
         }
       ]
+    },
+    title: {
+      text: 'title',
+      orient: 'left'
     }
   };
 
@@ -167,9 +172,9 @@ export function createTable() {
     order: 'desc'
   });
 
-  // VTable.bindDebugTool(instance.scenegraph.stage as any, {
-  //   customGrapicKeys: ['role', '_updateTag'],
-  // });
+  bindDebugTool(instance.scenegraph.stage as any, {
+    customGrapicKeys: ['role', '_updateTag']
+  });
 
   // instance.showDropDownMenu(col, row, {
   //   content: ['a', 'b']

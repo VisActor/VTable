@@ -13,6 +13,10 @@
 *   rowExpandLevel：设置默认展开层数；
 *   rowHierarchyIndent：设置子层级维度值相比父级维度值在单元格中位置的缩进距离。
 *   hierarchyState：设置节点的折叠状态，该项在rowTree或者columnTree的节点中进行配置。
+*   extensionRows：特殊的树形结构展示，需要展示多列树形结构的情况下设置该树形。需要注意的是：
+    * rowExpandLevel只对外层主树rowTree起作用，对extensionRows中的树不生效。
+    * 针对这种多列的树形结构，拖拽移动表头能力不支持。
+    * updateOption调用后，非rowTree节点收起展开的状态的维护不支持。
 
 ## 示例
 
@@ -21,7 +25,7 @@
 1.  首先设置 rowHierarchyType 为 'tree'，表示行表头采用树形结构;
 2.  设置 rowExpandLevel 为 2，表示默认展开两层；
 3.  设置 rowHierarchyIndent 为 20，表示每一层的缩进距离为 20 像素；
-4.  如有特殊节点状态要求，可以通过设置rowTree中某个节点属性 hierarchyState为‘expand’或者‘collapse’。
+4.  如有特殊节点状态要求，可以通过设置rowTree中某个节点属性 hierarchyState为`expand`或者`collapse`。
 
 然后，以下是完整的配置示例代码及效果：
 
@@ -1005,5 +1009,73 @@ const tableInstance = new VTable.PivotTable(document.getElementById(CONTAINER_ID
 ```
 
 可以看到，透视表树形结构展示功能能够清晰地呈现数据的层次关系，方便用户进行数据分析。
+## 多层树结构配置代码示例
+透视表常见需求是一层树形结构就可以搞定，但某些特殊业务想要多层级结构来展示数据，如期望可以看到不同类别下不同区域的销售情况。
+
+关键配置项：
+```
+    extensionRows: [
+      //扩展的行表头维度组，因为可能扩展多个所以这里是个数组形式
+      {
+        rows: [
+          {
+            dimensionKey: 'region',
+            title: 'region',
+            headerStyle: { color: 'red', textStick: true },
+            width: '200'
+          },
+          { dimensionKey: 'province', title: 'province', headerStyle: { color: 'purple' }, width: 300 }
+        ],
+        rowTree: [
+          {
+            dimensionKey: 'region',
+            value: '东北',
+            children: [
+              { dimensionKey: 'province', value: '黑龙江' },
+              { dimensionKey: 'province', value: '吉林' }
+            ]
+          },
+          {
+            dimensionKey: 'region',
+            value: '华北',
+            children: [{ dimensionKey: 'province', value: '河北' }]
+          }
+        ]
+      },
+      {
+        rows: [
+          { dimensionKey: 'year', title: 'year', headerStyle: { color: 'pink' }, width: 'auto' },
+          'quarter'
+        ],
+        rowTree(args) {
+          if (args[1]?.value === '黑龙江') {
+            return [
+              {
+                dimensionKey: 'year',
+                value: '2019',
+                children: [
+                  { dimensionKey: 'quarter', value: '2019Q2' },
+                  { dimensionKey: 'quarter', value: '2019Q3' }
+                ]
+              }
+            ];
+          }
+          return [
+            {
+              dimensionKey: 'year',
+              value: '2018',
+              children: [
+                { dimensionKey: 'quarter', value: '2018Q1' },
+                { dimensionKey: 'quarter', value: '2018Q2' }
+              ]
+            }
+          ];
+        }
+      }
+    ],
+```
+呈现结果如下图：
+
+![image](https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/guide/multi-tree.jpeg)
 
 本教程到此结束，希望能帮助您更好地掌握透视表树形结构展功能的使用方法！

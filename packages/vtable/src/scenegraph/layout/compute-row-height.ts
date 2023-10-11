@@ -9,7 +9,6 @@ import { WrapText } from '../graphic/text';
 import { getProp } from '../utils/get-prop';
 import { getQuadProps } from '../utils/padding';
 import { dealWithRichTextIcon } from '../utils/text-icon-layout';
-import type { PivotLayoutMap } from '../../layout/pivot-layout';
 import { getAxisConfigInPivotChart } from '../../layout/chart-helper/get-axis-config';
 import { computeAxisComponentHeight } from '../../components/axis/get-axis-component-size';
 import { isArray, isNumber } from '@visactor/vutils';
@@ -161,25 +160,29 @@ export function computeRowsHeight(
   if (table.heightMode === 'adaptive') {
     table._clearRowRangeHeightsMap();
     // const canvasWidth = table.internalProps.canvas.width;
-    const totalDrawHeight = table.tableNoFrameHeight - table.getFrozenRowsHeight() - table.getBottomFrozenRowsHeight();
+    const columnHeaderHeight = table.getRowsHeight(0, table.columnHeaderLevelCount - 1);
+    const bottomHeaderHeight = table.isPivotChart() ? table.getBottomFrozenRowsHeight() : 0;
+    const totalDrawHeight = table.tableNoFrameHeight - columnHeaderHeight - bottomHeaderHeight;
+    const startRow = table.columnHeaderLevelCount;
+    const endRow = table.isPivotChart() ? table.rowCount - table.bottomFrozenRowCount : table.rowCount;
     let actualHeight = 0;
-    for (let row = table.frozenRowCount; row < table.rowCount - table.bottomFrozenRowCount; row++) {
+    for (let row = startRow; row < endRow; row++) {
       actualHeight += update ? newHeights[row] : table.getRowHeight(row);
     }
     const factor = totalDrawHeight / actualHeight;
-    for (let row = table.frozenRowCount; row < table.rowCount - table.bottomFrozenRowCount; row++) {
+    for (let row = startRow; row < endRow; row++) {
       let rowHeight;
-      if (row === table.rowCount - table.bottomFrozenRowCount - 1) {
+      if (row === endRow - 1) {
         rowHeight =
           totalDrawHeight -
           (update
             ? newHeights.reduce((acr, cur, index) => {
-                if (index >= table.frozenRowCount && index <= table.rowCount - table.bottomFrozenRowCount - 2) {
+                if (index >= startRow && index <= endRow - 2) {
                   return acr + cur;
                 }
                 return acr;
               }, 0)
-            : table.getRowsHeight(table.frozenRowCount, table.rowCount - table.bottomFrozenRowCount - 2));
+            : table.getRowsHeight(startRow, endRow - 2));
       } else {
         rowHeight = Math.round((update ? newHeights[row] : table.getRowHeight(row)) * factor);
       }
@@ -236,9 +239,9 @@ export function computeRowHeight(row: number, startCol: number, endCol: number, 
     row >= table.columnHeaderLevelCount &&
     row < table.rowCount - table.bottomFrozenRowCount
   ) {
-    if ((table.internalProps.layoutMap as PivotLayoutMap).indicatorsAsCol) {
+    if ((table.internalProps.layoutMap as PivotHeaderLayoutMap).indicatorsAsCol) {
       //并且指标是以列展示 计算行高需要根据y轴的值域范围
-      const optimunHeight = (table.internalProps.layoutMap as PivotLayoutMap).getOptimunHeightForChart(row);
+      const optimunHeight = (table.internalProps.layoutMap as PivotHeaderLayoutMap).getOptimunHeightForChart(row);
       if (optimunHeight > 0) {
         return optimunHeight;
       }
@@ -260,7 +263,7 @@ export function computeRowHeight(row: number, startCol: number, endCol: number, 
 
     // Axis component height calculation
     if (table.isPivotChart()) {
-      const layout = table.internalProps.layoutMap as PivotLayoutMap;
+      const layout = table.internalProps.layoutMap as PivotHeaderLayoutMap;
       const axisConfig = getAxisConfigInPivotChart(col, row, layout);
       if (axisConfig) {
         const axisWidth = computeAxisComponentHeight(axisConfig, table);
@@ -283,7 +286,7 @@ function checkFixedStyleAndNoWrap(table: BaseTableAPI): boolean {
   const row = table.columnHeaderLevelCount;
   //设置了全局自动换行的话 不能复用高度计算
   if (
-    table.internalProps.autoWrapText &&
+    (table.internalProps.autoWrapText || table.isPivotChart()) &&
     (table.options.heightMode === 'autoHeight' || table.options.heightMode === 'adaptive')
   ) {
     return false;
@@ -373,7 +376,7 @@ function computeCustomRenderHeight(col: number, row: number, table: BaseTableAPI
   if (customRender || customLayout) {
     let spanRow = 1;
     let height = 0;
-    if (table.isHeader(col, row) || (table.getBodyColumnDefine(col, row) as TextColumnDefine).mergeCell) {
+    if (table.isHeader(col, row) || (table.getBodyColumnDefine(col, row) as TextColumnDefine)?.mergeCell) {
       const cellRange = table.getCellRange(col, row);
       spanRow = cellRange.end.row - cellRange.start.row + 1;
     }
@@ -457,7 +460,7 @@ function computeTextHeight(col: number, row: number, table: BaseTableAPI): numbe
   }
   let spanRow = 1;
   let endCol = col;
-  if (table.isHeader(col, row) || (table.getBodyColumnDefine(col, row) as TextColumnDefine).mergeCell) {
+  if (table.isHeader(col, row) || (table.getBodyColumnDefine(col, row) as TextColumnDefine)?.mergeCell) {
     const cellRange = table.getCellRange(col, row);
     spanRow = cellRange.end.row - cellRange.start.row + 1;
     col = cellRange.start.col;

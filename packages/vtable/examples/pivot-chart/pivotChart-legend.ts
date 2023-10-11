@@ -145,6 +145,9 @@ export function createTable() {
       cellType: 'chart',
       chartModule: 'vchart',
       chartSpec: {
+        tooltip: {
+          throttleInterval: 0
+        },
         // type: 'common',
         stack: true,
         type: 'bar',
@@ -254,6 +257,9 @@ export function createTable() {
       cellType: 'chart',
       chartModule: 'vchart',
       chartSpec: {
+        tooltip: {
+          throttleInterval: 0
+        },
         type: 'common',
         padding: { left: 0, right: 0, top: 3, bottom: 3 },
         // data: {
@@ -448,6 +454,9 @@ export function createTable() {
       cellType: 'chart',
       chartModule: 'vchart',
       chartSpec: {
+        tooltip: {
+          throttleInterval: 0
+        },
         // type: 'common',
         stack: true,
         type: 'area',
@@ -10488,10 +10497,10 @@ export function createTable() {
 
   const tableInstance = new VTable.PivotChart(option);
   tableInstance.onVChartEvent('click', args => {
-    console.log('listenChart click', args);
+    console.log('onVChartEvent click', args);
   });
   tableInstance.onVChartEvent('mouseover', args => {
-    console.log('listenChart mouseover', args);
+    console.log('onVChartEvent mouseover', args);
   });
   const { LEGEND_ITEM_CLICK, LEGEND_ITEM_HOVER, LEGEND_ITEM_UNHOVER } = VTable.ListTable.EVENT_TYPE;
   tableInstance.on(LEGEND_ITEM_CLICK, args => {
@@ -10510,45 +10519,45 @@ export function createTable() {
     console.log('LEGEND_ITEM_UNHOVER', args);
   });
 
-  setTimeout(() => {
-    const datum = {
-      '10001': '数量',
-      '10002': '111',
-      '10003': '230713183656009',
-      '20001': '公司-数量',
-      '230417170554008': '配件',
-      '230417170554012': '一级',
-      '230417171050028': '技术',
-      '230417171050031': '中国',
-      '230713183656009': '111',
-      '230717170834024': '公司'
-    };
-    const cellAddr = {
-      colHeaderPaths: [
-        {
-          dimensionKey: '230417171050031',
-          value: '中国'
-        },
-        {
-          dimensionKey: '230417171050028',
-          value: '技术'
-        }
-      ],
-      rowHeaderPaths: [
-        {
-          dimensionKey: '230417170554012',
-          value: '一级'
-        },
-        {
-          indicatorKey: '230713183656009',
-          value: '数量'
-        }
-      ]
-    };
-    const position = tableInstance.getChartDatumPosition(datum, cellAddr);
-    console.log('getChartDatumPosition', position);
-  }, 3000);
+  // setTimeout(() => {
+  //   const datum = {
+  //     '10001': '数量',
+  //     '10002': '111',
+  //     '10003': '230713183656009',
+  //     '20001': '公司-数量',
+  //     '230417170554008': '配件',
+  //     '230417170554012': '一级',
+  //     '230417171050028': '技术',
+  //     '230417171050031': '中国',
+  //     '230713183656009': '111',
+  //     '230717170834024': '公司'
+  //   };
+  //   const cellAddr = {
+  //     colHeaderPaths: [
+  //       {
+  //         dimensionKey: '230417171050031',
+  //         value: '中国'
+  //       },
+  //       {
+  //         dimensionKey: '230417171050028',
+  //         value: '技术'
+  //       }
+  //     ],
+  //     rowHeaderPaths: [
+  //       {
+  //         dimensionKey: '230417170554012',
+  //         value: '一级'
+  //       },
+  //       {
+  //         indicatorKey: '230713183656009',
+  //         value: '数量'
+  //       }
+  //     ]
+  //   };
+  //   const position = tableInstance.getChartDatumPosition(datum, cellAddr);
+  //   console.log('getChartDatumPosition', position);
+  // }, 3000);
   window.tableInstance = tableInstance;
 
-  bindDebugTool(tableInstance.scenegraph.stage, {});
+  // bindDebugTool(tableInstance.scenegraph.stage, {});
 }

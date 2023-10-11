@@ -28,46 +28,6 @@ export function createTable() {
       title: 'email',
       width: 200,
       sort: true
-    },
-    {
-      title: 'full name',
-      columns: [
-        {
-          field: 'name',
-          title: 'First Name',
-          width: 200
-        },
-        {
-          field: 'name',
-          title: 'Last Name',
-          width: 200
-        }
-      ]
-    },
-    {
-      field: 'date1',
-      title: 'birthday',
-      width: 200
-    },
-    {
-      field: 'sex',
-      title: 'sex',
-      width: 100
-    },
-    {
-      field: 'tel',
-      title: 'telephone',
-      width: 150
-    },
-    {
-      field: 'work',
-      title: 'job',
-      width: 200
-    },
-    {
-      field: 'city',
-      title: 'city',
-      width: 150
     }
   ];
   const option: VTable.ListTableConstructorOptions = {
@@ -179,6 +139,14 @@ export function createTable() {
 
   setTimeout(() => {
     delete option.legends;
-    tableInstance.updateOption(option);
+    (option.title = {
+      text: 'dsagf',
+      align: 'right',
+      subtext:
+        '这是一个子标题\ndsag反馈第三个国际服大教室这是一个子标题\ndsag反馈第三个国际服大教室这是一个子标题\ndsag反馈第三个国际服大教室这是一个子标题\ndsag反馈第三个国际服大教室',
+      orient: 'top',
+      padding: 40
+    }),
+      tableInstance.updateOption(option);
   }, 6000);
 }
