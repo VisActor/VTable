@@ -1,5 +1,5 @@
 import type { IStage, IRect, ITextCache } from '@visactor/vrender';
-import { createStage, createRect, IContainPointMode, container } from '@visactor/vrender';
+import { createStage, createRect, IContainPointMode, container, vglobal } from '@visactor/vrender';
 import {
   type CellAddress,
   type CellLocation,
@@ -41,11 +41,15 @@ import { updateChartSize, updateChartState } from './refresh-node/update-chart';
 import { initSceneGraph } from './group-creater/init-scenegraph';
 import { updateContainerChildrenX } from './utils/update-container';
 import { loadPoptip, setPoptipTheme } from '@visactor/vrender-components';
-import { contextModule } from './context/module';
+import textMeasureModule from './utils/text-measure';
+import renderServiceModule from './utils/render-service';
+// import { contextModule } from './context/module';
 
 // VChart poptip theme
 loadPoptip();
 container.load(splitModule);
+container.load(textMeasureModule);
+// container.load(renderServiceModule);
 // container.load(contextModule);
 // console.log(container);
 
@@ -129,6 +133,7 @@ export class Scenegraph {
     this.mergeMap = new Map();
 
     setPoptipTheme(poptipStyle as any);
+    vglobal.setEnv('browser');
     this.stage = createStage({
       canvas: table.canvas,
       width: table.canvas.width,
@@ -292,6 +297,7 @@ export class Scenegraph {
       (this.tableGroup.parent as Group).removeChild((this.tableGroup as any).border);
       delete (this.tableGroup as any).border;
     }
+    this.proxy?.release();
   }
 
   /**
@@ -692,10 +698,10 @@ export class Scenegraph {
         content: icon.tooltip.title,
         referencePosition: {
           rect: {
-            left: left - this.table.tableX,
-            right: right - this.table.tableX,
-            top: top - this.table.tableY,
-            bottom: bottom - this.table.tableY,
+            left: left,
+            right: right,
+            top: top,
+            bottom: bottom,
             width: icon.globalAABBBounds.width(),
             height: icon.globalAABBBounds.height()
           },
@@ -1017,16 +1023,8 @@ export class Scenegraph {
    * @return {*}
    */
   afterScenegraphCreated() {
-    // 对齐auto列宽
-    // updateAutoColWidth(this);
-    // 对齐autoWrapText
-    // const { autoRowHeight } = this.table.internalProps;
-    // if (autoRowHeight) {
-    //   updateAutoRowHeight(this);
-    // }
-
-    this.dealWidthMode();
-    this.dealHeightMode();
+    // this.dealWidthMode();
+    // this.dealHeightMode();
     // 处理冻结
     this.resetFrozen();
     this.dealFrozen();
@@ -1595,9 +1593,9 @@ export class Scenegraph {
     this.findAndUpdateIcon(cellGroup, [IconFuncTypeEnum.collapse, IconFuncTypeEnum.expand], iconConfig);
   }
 
-  updateRow(removeCells: CellAddress[], addCells: CellAddress[]) {
+  updateRow(removeCells: CellAddress[], addCells: CellAddress[], updateCells: CellAddress[] = []) {
     // add or move rows
-    updateRow(removeCells, addCells, this.table);
+    updateRow(removeCells, addCells, updateCells, this.table);
 
     // update column width and row height
     this.recalculateColWidths();

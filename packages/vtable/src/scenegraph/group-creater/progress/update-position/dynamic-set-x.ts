@@ -94,7 +94,7 @@ async function moveColumn(
     proxy.table.scenegraph.updateNextFrame();
 
     // 开始异步任务
-    await proxy.progress();
+    // await proxy.progress();
   } else {
     const distStartCol = direction === 'left' ? proxy.colStart + count : proxy.colStart - count;
     const distEndCol = direction === 'left' ? proxy.colEnd + count : proxy.colEnd - count;
@@ -128,7 +128,7 @@ async function moveColumn(
     proxy.colUpdateDirection = distEndCol > proxy.bodyRightCol - (proxy.colEnd - proxy.colStart + 1) ? 'right' : 'left';
 
     proxy.table.scenegraph.updateNextFrame();
-    await proxy.progress();
+    // await proxy.progress();
   }
 }
 

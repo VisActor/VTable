@@ -1,4 +1,3 @@
-import { injectable } from 'inversify';
 import type {
   IRect,
   IContext2d,
@@ -11,7 +10,7 @@ import type {
   IGroupGraphicAttribute,
   IDrawContext
 } from '@visactor/vrender';
-import { BaseRenderContributionTime } from '@visactor/vrender';
+import { BaseRenderContributionTime, injectable } from '@visactor/vrender';
 import { renderStroke } from './group-contribution-render';
 
 @injectable()

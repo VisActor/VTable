@@ -8,8 +8,15 @@ import type {
   IRenderService,
   IThemeAttribute
 } from '@visactor/vrender';
-import { ContributionProvider, getTheme, IGroupRenderContribution, createImage } from '@visactor/vrender';
-import { inject, injectable, named } from 'inversify';
+import {
+  ContributionProvider,
+  getTheme,
+  IGroupRenderContribution,
+  createImage,
+  inject,
+  injectable,
+  named
+} from '@visactor/vrender';
 import type { Chart } from '../chart';
 import { CHART_NUMBER_TYPE } from '../chart';
 import {

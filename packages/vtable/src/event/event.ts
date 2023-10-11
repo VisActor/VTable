@@ -72,6 +72,7 @@ export class EventManeger {
       } else if (funcType === IconFuncTypeEnum.drillDown) {
         drillClick(this.table);
       } else if (funcType === IconFuncTypeEnum.collapse || funcType === IconFuncTypeEnum.expand) {
+        this.table.stateManeger.updateSelectPos(-1, -1);
         this.table.toggleHierarchyState(col, row);
       }
     });
@@ -164,7 +165,11 @@ export class EventManeger {
 
     if (eventArgs) {
       // 注意：如果启用下面这句代码逻辑 则在点击选中单元格时失效hover效果。但是会导致chart实例的click事件失效，所以先特殊处理这个逻辑
-      if (!this.table.isPivotChart() && eventArgsSet?.eventArgs?.target.type !== 'chart') {
+      if (
+        !this.table.isPivotChart() &&
+        eventArgsSet?.eventArgs?.target.type !== 'chart' &&
+        eventArgs.event.pointerType !== 'touch'
+      ) {
         this.table.stateManeger.updateHoverPos(-1, -1);
       }
 

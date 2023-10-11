@@ -37,7 +37,10 @@ import type {
   ITableThemeDefine,
   SortState,
   TableKeyboardOptions,
-  WidthModeDef
+  WidthModeDef,
+  IHeaderTreeDefine,
+  IDimension,
+  IIndicator
 } from '.';
 import type { TooltipOptions } from './tooltip';
 import type { IWrapTextGraphicAttribute } from '../scenegraph/graphic/text';
@@ -46,7 +49,6 @@ import type { CachedDataSource, DataSource } from '../data';
 import type { MenuHandler } from '../components/menu/dom/MenuHandler';
 import type { PivotHeaderLayoutMap } from '../layout/pivot-header-layout';
 import type { SimpleHeaderLayoutMap } from '../layout';
-import type { PivotLayoutMap } from '../layout/pivot-layout';
 import type { TooltipHandler } from '../components/tooltip/TooltipHandler';
 import type { BodyHelper } from '../body-helper/body-helper';
 import type { HeaderHelper } from '../header-helper/header-helper';
@@ -157,7 +159,7 @@ export interface IBaseTableProtected {
 
   dataSourceEventIds?: EventListenerId[];
   headerEvents?: EventListenerId[];
-  layoutMap: PivotHeaderLayoutMap | SimpleHeaderLayoutMap | PivotLayoutMap;
+  layoutMap: SimpleHeaderLayoutMap | PivotHeaderLayoutMap;
   headerValues?: HeaderValues;
   tooltipHandler: TooltipHandler;
 
@@ -304,8 +306,8 @@ export interface BaseTableConstructorOptions {
   autoWrapText?: boolean;
   /** 单元格中可显示最大字符数 默认200 */
   maxCharactersNumber?: number; //
-  /** toolip最大字符数 */
-  maxTooltipCharactersNumber?: number;
+  // /** toolip最大字符数 */
+  // maxTooltipCharactersNumber?: number;
   /** 最大可操作条目数 如copy操作可复制出最大数据条目数 */
   maxOperatableRecordCount?: number;
   /**
@@ -587,16 +589,35 @@ export interface ListTableProtected extends IBaseTableProtected {
 export interface PivotTableProtected extends IBaseTableProtected {
   /** 表格数据 */
   records: any[] | null;
-  layoutMap: PivotHeaderLayoutMap | PivotLayoutMap;
+  layoutMap: PivotHeaderLayoutMap;
   dataConfig?: IDataConfig;
   /**
    * 透视表 传入数据是透视后的嵌套层级结构 还是需要进行汇总计算的平坦数据
    */
   enableDataAnalysis?: boolean;
+
+  columnTree?: IHeaderTreeDefine[];
+  /** 行表头维度结构 */
+  rowTree?: IHeaderTreeDefine[];
+  /** 定义行上各个维度具体配置项和样式定义 */
+  rows?: (IDimension | string)[]; // (string | IDimension)[]; 后续支持数据分析的透视表 支持string配置
+  /** 定义列上各个维度具体配置项和样式定义 */
+  columns?: (IDimension | string)[]; // (string | IDimension)[];
+  /** 定义指标具体配置项和样式定义 包含表头和body的定义*/
+  indicators?: (IIndicator | string)[]; // (string | IIndicator)[];
 }
 export interface PivotChartProtected extends IBaseTableProtected {
   /** 表格数据 */
   records: any[] | Record<string, any[]>;
-  layoutMap: PivotHeaderLayoutMap | PivotLayoutMap;
+  layoutMap: PivotHeaderLayoutMap;
   dataConfig?: IDataConfig;
+  columnTree?: IHeaderTreeDefine[];
+  /** 行表头维度结构 */
+  rowTree?: IHeaderTreeDefine[];
+  /** 定义行上各个维度具体配置项和样式定义 */
+  rows?: (IDimension | string)[]; // (string | IDimension)[]; 后续支持数据分析的透视表 支持string配置
+  /** 定义列上各个维度具体配置项和样式定义 */
+  columns?: (IDimension | string)[]; // (string | IDimension)[];
+  /** 定义指标具体配置项和样式定义 包含表头和body的定义*/
+  indicators?: (IIndicator | string)[]; // (string | IIndicator)[];
 }

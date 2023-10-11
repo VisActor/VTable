@@ -7,75 +7,19 @@ export function createTable() {
   const rowTree = [
     {
       dimensionKey: '230417170554012',
-      value: '一级',
-      children: [
-        {
-          value: '数量',
-          indicatorKey: '230713183656009'
-        },
-        {
-          value: '销售额',
-          indicatorKey: '230417171050025'
-        },
-        {
-          value: '折扣',
-          indicatorKey: '230707112948009'
-        }
-      ]
+      value: '一级'
     },
     {
       dimensionKey: '230417170554012',
-      value: '二级',
-      children: [
-        {
-          value: '数量',
-          indicatorKey: '230713183656009'
-        },
-        {
-          value: '销售额',
-          indicatorKey: '230417171050025'
-        },
-        {
-          value: '折扣',
-          indicatorKey: '230707112948009'
-        }
-      ]
+      value: '二级'
     },
     {
       dimensionKey: '230417170554012',
-      value: '当日',
-      children: [
-        {
-          value: '数量',
-          indicatorKey: '230713183656009'
-        },
-        {
-          value: '销售额',
-          indicatorKey: '230417171050025'
-        },
-        {
-          value: '折扣',
-          indicatorKey: '230707112948009'
-        }
-      ]
+      value: '当日'
     },
     {
       dimensionKey: '230417170554012',
-      value: '标准级',
-      children: [
-        {
-          value: '数量',
-          indicatorKey: '230713183656009'
-        },
-        {
-          value: '销售额',
-          indicatorKey: '230417171050025'
-        },
-        {
-          value: '折扣',
-          indicatorKey: '230707112948009'
-        }
-      ]
+      value: '标准级'
     }
   ];
   const columnTree = [
@@ -10470,10 +10414,10 @@ export function createTable() {
 
   const tableInstance = new VTable.PivotChart(option);
   tableInstance.onVChartEvent('click', args => {
-    console.log('listenChart click', args);
+    console.log('onVChartEvent click', args);
   });
   tableInstance.onVChartEvent('mouseover', args => {
-    console.log('listenChart mouseover', args);
+    console.log('onVChartEvent mouseover', args);
   });
   const { LEGEND_ITEM_CLICK, LEGEND_ITEM_HOVER, LEGEND_ITEM_UNHOVER } = VTable.ListTable.EVENT_TYPE;
   tableInstance.on(LEGEND_ITEM_CLICK, args => {

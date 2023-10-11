@@ -239,7 +239,7 @@ Get the path to the row list header
 
 ## getCellAddress(Function)
 
-Get the row and column number of a piece of data in the body based on the data and field attribute field names.
+Get the row and column number of a piece of data in the body based on the data and field attribute field names. Currently only the basic table ListTable is supported.
 
 ```
   /**

@@ -1,11 +1,11 @@
-import { ContainerModule } from 'inversify';
 import {
   GraphicRender,
   GroupRenderContribution,
   ImageRenderContribution,
   RectRenderContribution,
   SplitRectBeforeRenderContribution,
-  SplitRectAfterRenderContribution
+  SplitRectAfterRenderContribution,
+  ContainerModule
 } from '@visactor/vrender';
 import { ChartRender, DefaultCanvasChartRender } from './chart-render';
 import { AfterImageRenderContribution, BeforeImageRenderContribution } from './image-contribution-render';

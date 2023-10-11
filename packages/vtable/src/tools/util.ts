@@ -101,118 +101,63 @@ export function ingoreNoneValueMerge(target: any, ...sources: any[]): any {
   return ingoreNoneValueMerge(target, ...sources);
 }
 
-export function cloneDeep(item: any) {
-  if (!item) {
-    return item;
-  } // null, undefined values check
+// 使用vutils库中的cloneDeep
+// export function cloneDeep(item: any) {
+//   if (!item) {
+//     return item;
+//   } // null, undefined values check
 
-  const types = [Number, String, Boolean];
-  let result: any;
+//   const types = [Number, String, Boolean];
+//   let result: any;
 
-  // normalizing primitives if someone did new String('aaa'), or new Number('444');
-  types.forEach(function (type) {
-    if (item instanceof type) {
-      result = type(item);
-    }
-  });
+//   // normalizing primitives if someone did new String('aaa'), or new Number('444');
+//   types.forEach(function (type) {
+//     if (item instanceof type) {
+//       result = type(item);
+//     }
+//   });
 
-  if (typeof result === 'undefined') {
-    if (Object.prototype.toString.call(item) === '[object Array]') {
-      result = [];
-      item.forEach(function (child: any, index: number) {
-        result[index] = cloneDeep(child);
-      });
-    } else if (typeof item === 'object') {
-      // testing that this is DOM
-      if (item.nodeType && typeof item.cloneNode === 'function') {
-        result = item.cloneNode(true);
-      } else if (!item.prototype) {
-        // check that this is a literal
-        if (item instanceof Date) {
-          result = new Date(item);
-        } else if (item.clone) {
-          result = item.clone();
-        } else {
-          // it is an object literal
-          result = {};
-          for (const i in item) {
-            result[i] = cloneDeep(item[i]);
-          }
-        }
-      } else {
-        // depending what you would like here,
-        // just keep the reference, or create new object
-        if (item.constructor) {
-          // would not advice to do that, reason? Read below
-          result = new item.constructor();
-        } else {
-          result = item;
-        }
-      }
-    } else {
-      result = item;
-    }
-  }
+//   if (typeof result === 'undefined') {
+//     if (Object.prototype.toString.call(item) === '[object Array]') {
+//       result = [];
+//       item.forEach(function (child: any, index: number) {
+//         result[index] = cloneDeep(child);
+//       });
+//     } else if (typeof item === 'object') {
+//       // testing that this is DOM
+//       if (item.nodeType && typeof item.cloneNode === 'function') {
+//         result = item.cloneNode(true);
+//       } else if (!item.prototype) {
+//         // check that this is a literal
+//         if (item instanceof Date) {
+//           result = new Date(item);
+//         } else if (item.clone) {
+//           result = item.clone();
+//         } else {
+//           // it is an object literal
+//           result = {};
+//           for (const i in item) {
+//             result[i] = cloneDeep(item[i]);
+//           }
+//         }
+//       } else {
+//         // depending what you would like here,
+//         // just keep the reference, or create new object
+//         if (item.constructor) {
+//           // would not advice to do that, reason? Read below
+//           result = new item.constructor();
+//         } else {
+//           result = item;
+//         }
+//       }
+//     } else {
+//       result = item;
+//     }
+//   }
 
-  return result;
-}
-/**
- *  hack 某个问题的方法 相比通用方法cloneDeep新增条件判断： item.colType !== 'progressbar'
- * @param item
- * @returns
- */
-export function _cloneDeepExceptProgressbar(item: any) {
-  if (!item) {
-    return item;
-  } // null, undefined values check
+//   return result;
+// }
 
-  const types = [Number, String, Boolean];
-  let result: any;
-  // normalizing primitives if someone did new String('aaa'), or new Number('444');
-  types.forEach(function (type) {
-    if (item instanceof type) {
-      result = type(item);
-    }
-  });
-
-  if (typeof result === 'undefined') {
-    if (Object.prototype.toString.call(item) === '[object Array]') {
-      result = [];
-      item.forEach(function (child: any, index: number) {
-        result[index] = _cloneDeepExceptProgressbar(child);
-      });
-    } else if (typeof item === 'object' && item.colType !== 'progressbar') {
-      // testing that this is DOM
-      if (item.nodeType && typeof item.cloneNode === 'function') {
-        result = item.cloneNode(true);
-      } else if (!item.prototype) {
-        // check that this is a literal
-        if (item instanceof Date) {
-          result = new Date(item);
-        } else {
-          // it is an object literal
-          result = {};
-          for (const i in item) {
-            result[i] = _cloneDeepExceptProgressbar(item[i]);
-          }
-        }
-      } else {
-        // depending what you would like here,
-        // just keep the reference, or create new object
-        if (item.constructor) {
-          // would not advice to do that, reason? Read below
-          result = new item.constructor();
-        } else {
-          result = item;
-        }
-      }
-    } else {
-      result = item;
-    }
-  }
-
-  return result;
-}
 export function convertInternal(value: unknown): string {
   if (typeof value === 'function') {
     value = value();

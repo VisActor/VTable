@@ -9,7 +9,6 @@ import { WrapText } from '../graphic/text';
 import { getProp } from '../utils/get-prop';
 import { getQuadProps } from '../utils/padding';
 import { dealWithRichTextIcon } from '../utils/text-icon-layout';
-import type { PivotLayoutMap } from '../../layout/pivot-layout';
 import { getAxisConfigInPivotChart } from '../../layout/chart-helper/get-axis-config';
 import { computeAxisComponentHeight } from '../../components/axis/get-axis-component-size';
 import { isArray, isNumber } from '@visactor/vutils';
@@ -240,9 +239,9 @@ export function computeRowHeight(row: number, startCol: number, endCol: number, 
     row >= table.columnHeaderLevelCount &&
     row < table.rowCount - table.bottomFrozenRowCount
   ) {
-    if ((table.internalProps.layoutMap as PivotLayoutMap).indicatorsAsCol) {
+    if ((table.internalProps.layoutMap as PivotHeaderLayoutMap).indicatorsAsCol) {
       //并且指标是以列展示 计算行高需要根据y轴的值域范围
-      const optimunHeight = (table.internalProps.layoutMap as PivotLayoutMap).getOptimunHeightForChart(row);
+      const optimunHeight = (table.internalProps.layoutMap as PivotHeaderLayoutMap).getOptimunHeightForChart(row);
       if (optimunHeight > 0) {
         return optimunHeight;
       }
@@ -264,7 +263,7 @@ export function computeRowHeight(row: number, startCol: number, endCol: number, 
 
     // Axis component height calculation
     if (table.isPivotChart()) {
-      const layout = table.internalProps.layoutMap as PivotLayoutMap;
+      const layout = table.internalProps.layoutMap as PivotHeaderLayoutMap;
       const axisConfig = getAxisConfigInPivotChart(col, row, layout);
       if (axisConfig) {
         const axisWidth = computeAxisComponentHeight(axisConfig, table);
@@ -287,7 +286,7 @@ function checkFixedStyleAndNoWrap(table: BaseTableAPI): boolean {
   const row = table.columnHeaderLevelCount;
   //设置了全局自动换行的话 不能复用高度计算
   if (
-    table.internalProps.autoWrapText &&
+    (table.internalProps.autoWrapText || table.isPivotChart()) &&
     (table.options.heightMode === 'autoHeight' || table.options.heightMode === 'adaptive')
   ) {
     return false;
@@ -377,7 +376,7 @@ function computeCustomRenderHeight(col: number, row: number, table: BaseTableAPI
   if (customRender || customLayout) {
     let spanRow = 1;
     let height = 0;
-    if (table.isHeader(col, row) || (table.getBodyColumnDefine(col, row) as TextColumnDefine).mergeCell) {
+    if (table.isHeader(col, row) || (table.getBodyColumnDefine(col, row) as TextColumnDefine)?.mergeCell) {
       const cellRange = table.getCellRange(col, row);
       spanRow = cellRange.end.row - cellRange.start.row + 1;
     }
@@ -461,7 +460,7 @@ function computeTextHeight(col: number, row: number, table: BaseTableAPI): numbe
   }
   let spanRow = 1;
   let endCol = col;
-  if (table.isHeader(col, row) || (table.getBodyColumnDefine(col, row) as TextColumnDefine).mergeCell) {
+  if (table.isHeader(col, row) || (table.getBodyColumnDefine(col, row) as TextColumnDefine)?.mergeCell) {
     const cellRange = table.getCellRange(col, row);
     spanRow = cellRange.end.row - cellRange.start.row + 1;
     col = cellRange.start.col;

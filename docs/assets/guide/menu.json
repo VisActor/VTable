@@ -34,7 +34,7 @@
     {
       "path": "table_type",
       "title": {
-        "zh": "表形态",
+        "zh": "表格形态",
         "en": "table type"
       },
       "children": [
@@ -94,6 +94,13 @@
               "title": {
                 "zh": "使用",
                 "en": "pivot table useage"
+              }
+            },
+            {
+              "path": "pivot_table_dataAnalysis",
+              "title": {
+                "zh": "透视数据分析",
+                "en": "pivot analysis"
               }
             },
             {
@@ -369,15 +376,22 @@
         {
           "path": "title",
           "title": {
-            "zh": "title",
+            "zh": "title标题",
             "en": "title"
           }
         },
         {
           "path": "legend",
           "title": {
-            "zh": "legend",
+            "zh": "legend图例",
             "en": "legend"
+          }
+        },
+        {
+          "path": "axes",
+          "title": {
+            "zh": "axes坐标轴",
+            "en": "axes"
           }
         }
       ]

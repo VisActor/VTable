@@ -1,8 +1,8 @@
 import { isArray } from '@visactor/vutils';
 import type { PivotChart } from '../../PivotChart';
-import { PivotLayoutMap } from '../../layout/pivot-layout';
 import type { IPivotTableCellHeaderPaths, PivotChartConstructorOptions } from '../../ts-types';
 import { createDataset } from './create-dataset';
+import { PivotHeaderLayoutMap } from '../../layout/pivot-header-layout';
 
 export function getDataCellPath(
   options: PivotChartConstructorOptions,
@@ -15,6 +15,7 @@ export function getDataCellPath(
   // mock pivotChart
   const mockTable = {
     options,
+    internalProps: options,
     isPivotChart: () => true,
     pivotChartAxes: [] as any[],
     _selectedDataItemsInChart: [] as any[],
@@ -28,7 +29,7 @@ export function getDataCellPath(
   };
 
   // mock layoutMap
-  const layoutMap = new PivotLayoutMap(mockTable as PivotChart, dataset);
+  const layoutMap = new PivotHeaderLayoutMap(mockTable as unknown as PivotChart, dataset);
 
   // compare data
   for (let col = 0; col < layoutMap.colCount; col++) {
@@ -36,13 +37,28 @@ export function getDataCellPath(
       if (layoutMap.isHeader(col, row)) {
         continue;
       }
-      const colKey = dataset.colKeysPath[layoutMap.getRecordIndexByCol(col)] ?? [];
-      const rowKey = dataset.rowKeysPath[layoutMap.getRecordIndexByRow(row)] ?? [];
+      // const colKey = dataset.colKeysPath[layoutMap.getRecordIndexByCol(col)] ?? [];
+      // const rowKey = dataset.rowKeysPath[layoutMap.getRecordIndexByRow(row)] ?? [];
+
+      const cellDimensionPath = layoutMap.getCellHeaderPaths(col, row);
+      const colKeys = cellDimensionPath.colHeaderPaths.map((colPath: any) => {
+        return colPath.indicatorKey ?? colPath.value;
+      });
+      const rowKeys = cellDimensionPath.rowHeaderPaths.map((rowPath: any) => {
+        return rowPath.indicatorKey ?? rowPath.value;
+      });
+      // const aggregator = dataset.getAggregator(
+      //   rowKey[rowKey.length - 1],
+      //   colKey[colKey.length - 1],
+      //   (layoutMap as PivotHeaderLayoutMap).getIndicatorKey(col, row)
+      // );
+
       const aggregator = dataset.getAggregator(
-        rowKey[rowKey.length - 1],
-        colKey[colKey.length - 1],
-        (layoutMap as PivotLayoutMap).getIndicatorKey(col, row)
+        !layoutMap.indicatorsAsCol ? rowKeys.slice(0, -1) : rowKeys,
+        layoutMap.indicatorsAsCol ? colKeys.slice(0, -1) : colKeys,
+        (layoutMap as PivotHeaderLayoutMap).getIndicatorKey(col, row)
       );
+
       const result = compareData(
         aggregator.value ? aggregator.value() : undefined,
         data,
@@ -64,7 +80,7 @@ function compareData(
   data2: Object,
   col: number,
   row: number,
-  layoutMap: PivotLayoutMap,
+  layoutMap: PivotHeaderLayoutMap,
   compareFunc?: (a: any, b: any) => boolean
 ) {
   if (isArray(data1)) {

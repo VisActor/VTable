@@ -9,12 +9,7 @@ export function createTable() {
   const option = {
     widthMode: 'adaptive',
     heightMode: 'adaptive',
-    columnTree: [
-      {
-        dimensionKey: 0,
-        value: ''
-      }
-    ],
+    columnTree: [],
     rowTree: [
       {
         dimensionKey: '230907193703050',
@@ -764,11 +759,11 @@ export function createTable() {
   };
 
   const tableInstance = new VTable.PivotChart(document.getElementById(CONTAINER_ID), option);
-  // tableInstance.listenChart('click', args => {
-  //   console.log('listenChart click', args);
+  // tableInstance.onVChartEvent('click', args => {
+  //   console.log('onVChartEvent click', args);
   // });
-  // tableInstance.listenChart('mouseover', args => {
-  //   console.log('listenChart mouseover', args);
+  // tableInstance.onVChartEvent('mouseover', args => {
+  //   console.log('onVChartEvent mouseover', args);
   // });
   window.tableInstance = tableInstance;
 

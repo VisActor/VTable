@@ -253,6 +253,14 @@ export const menus = [
       {
         path: 'pivot',
         name: 'pivot-indicator-middle'
+      },
+      {
+        path: 'pivot',
+        name: 'pivot-extension-row'
+      },
+      {
+        path: 'pivot',
+        name: 'pivot-extension-row2'
       }
     ]
   },
@@ -262,6 +270,10 @@ export const menus = [
       {
         path: 'pivot-analysis',
         name: 'pivot-analysis'
+      },
+      {
+        path: 'pivot-analysis',
+        name: 'pivot-analysis-tree'
       },
       {
         path: 'pivot-analysis',
@@ -606,7 +618,19 @@ export const menus = [
       },
       {
         path: 'unit-test-demo',
+        name: 'unitTestPivotAnalysis'
+      },
+      {
+        path: 'unit-test-demo',
         name: 'unitTestPivotChart'
+      },
+      {
+        path: 'unit-test-demo',
+        name: 'unitTestListTableTitle'
+      },
+      {
+        path: 'unit-test-demo',
+        name: 'unitTestPivotTree'
       }
     ]
   },

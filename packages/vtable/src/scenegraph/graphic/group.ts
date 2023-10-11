@@ -1,5 +1,8 @@
 import type { IGraphic, IColor, IRect, INode } from '@visactor/vrender';
 import { Group as VRenderGroup } from '@visactor/vrender';
+import type { BaseTableAPI } from '../../ts-types/base-table';
+import { InteractionState } from '../../ts-types';
+import type { AABBBounds } from '@visactor/vutils';
 
 export class Group extends VRenderGroup {
   role?: string;
@@ -174,6 +177,24 @@ export class Group extends VRenderGroup {
     return child;
   }
 
+  protected tryUpdateAABBBounds(): AABBBounds {
+    if (this.role === 'cell') {
+      if (!this.shouldUpdateAABBBounds()) {
+        return this._AABBBounds;
+      }
+      // application.graphicService.beforeUpdateAABBBounds(this, this.stage, true, this._AABBBounds);
+      const selfChange = this.shouldSelfChangeUpdateAABBBounds();
+      // const selfChange = true;
+      const bounds = this.doUpdateAABBBounds();
+      this.addUpdateLayoutTag();
+      // application.graphicService.afterUpdateAABBBounds(this, this.stage, this._AABBBounds, this, selfChange);
+      after(this, selfChange);
+
+      return bounds;
+    }
+    return super.tryUpdateAABBBounds();
+  }
+
   // 目前优化方案会导致合并单元格无法正常更新列宽（因为合并单元格更新bounds不会触发父节点bounds更新），暂时关闭优化方案
   // shouldUpdateAABBBoundsForRowMerge(): boolean {
 
@@ -202,38 +223,38 @@ export class Group extends VRenderGroup {
   //   // return needUpdate;
   // }
 
-  // protected doUpdateAABBBounds(): any {
-  //   // const groupTheme = getTheme(this).group;
-  //   // debugger;
-  //   if (this.role === 'cell') {
-  //     const attribute = this.attribute;
-  //     const { x, y, width, height } = attribute;
-  //     this._AABBBounds.setValue(x, y, x + width, y + height);
-  //     // 更新bounds之后需要设置父节点，否则tag丢失
-  //     this.parent && this.parent.addChildUpdateBoundTag();
-  //     this.clearUpdateBoundTag();
-  //     return this._AABBBounds;
-  //   }
-  //   return super.doUpdateAABBBounds();
-  //   // _AABBBounds
-  //   // const bounds = graphicService.updateGroupAABBBounds(
-  //   //   attribute,
-  //   //   getTheme(this).group,
-  //   //   this._AABBBounds,
-  //   //   this
-  //   // ) as AABBBounds;
+  protected doUpdateAABBBounds(): any {
+    // const groupTheme = getTheme(this).group;
+    // debugger;
+    if (this.role === 'cell') {
+      const attribute = this.attribute;
+      const { x, y, width, height } = attribute;
+      this._AABBBounds.setValue(x, y, x + width, y + height);
+      // 更新bounds之后需要设置父节点，否则tag丢失
+      this.parent && this.parent.addChildUpdateBoundTag();
+      this.clearUpdateBoundTag();
+      return this._AABBBounds;
+    }
+    return super.doUpdateAABBBounds();
+    // _AABBBounds
+    // const bounds = graphicService.updateGroupAABBBounds(
+    //   attribute,
+    //   getTheme(this).group,
+    //   this._AABBBounds,
+    //   this
+    // ) as AABBBounds;
 
-  //   // const { boundsPadding = groupTheme.boundsPadding } = attribute;
-  //   // const paddingArray = parsePadding(boundsPadding);
-  //   // if (paddingArray) {
-  //   //   bounds.expand(paddingArray);
-  //   // }
-  //   // // 更新bounds之后需要设置父节点，否则tag丢失
-  //   // this.parent && this.parent.addChildUpdateBoundTag();
-  //   // this.clearUpdateBoundTag();
+    // const { boundsPadding = groupTheme.boundsPadding } = attribute;
+    // const paddingArray = parsePadding(boundsPadding);
+    // if (paddingArray) {
+    //   bounds.expand(paddingArray);
+    // }
+    // // 更新bounds之后需要设置父节点，否则tag丢失
+    // this.parent && this.parent.addChildUpdateBoundTag();
+    // this.clearUpdateBoundTag();
 
-  //   // this.emit('AAABBBoundsChange');
-  // }
+    // this.emit('AAABBBoundsChange');
+  }
 
   // update column group row number
   updateColumnRowNumber(row: number) {
@@ -252,4 +273,15 @@ export class Group extends VRenderGroup {
       this.colHeight += cellHeight;
     }
   }
+}
+
+function after(group: Group, selfChange: boolean) {
+  if (!(group.stage && group.stage.renderCount)) {
+    return;
+  }
+  // group的子元素导致的bounds更新不用做dirtyBounds
+  if (group.isContainer && !selfChange) {
+    return;
+  }
+  group.stage.dirty(group.globalAABBBounds);
 }

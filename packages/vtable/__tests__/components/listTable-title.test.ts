@@ -91,10 +91,10 @@ describe('listTable-title init test', () => {
   const listTable = new ListTable(option);
   test('listTable-title getCell', () => {
     const cell01AABB = listTable.scenegraph.getCell(0, 1).AABBBounds;
-    expect(cell01AABB.x1).toBe(-0.5);
-    expect(cell01AABB.y1).toBe(-0.5);
-    expect(cell01AABB.x2).toBe(151.5);
-    expect(cell01AABB.y2).toBe(40.5);
+    expect(cell01AABB.x1).toBe(0);
+    expect(cell01AABB.y1).toBe(0);
+    expect(cell01AABB.x2).toBe(151);
+    expect(cell01AABB.y2).toBe(40);
   });
   listTable.release();
 });

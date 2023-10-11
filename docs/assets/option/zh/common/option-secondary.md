@@ -42,10 +42,6 @@
 
 单元格中可显示最大字符数 默认 200
 
-#${prefix} maxToolipCharactersNumber(number)
-
-tool 最大字符数 fff
-
 #${prefix} maxOperatableRecordCount(number)
 
 最大可操作的记录数 如 copy 操作可复制出最大数据条目数

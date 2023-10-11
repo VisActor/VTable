@@ -1,5 +1,4 @@
 import type { SimpleHeaderLayoutMap } from '../../layout';
-import type { PivotHeaderLayoutMap } from '../../layout/pivot-header-layout';
 import type { TextColumnDefine } from '../../ts-types';
 import { HierarchyState, IconPosition } from '../../ts-types';
 import * as calc from '../../tools/calc';
@@ -7,7 +6,7 @@ import { validToString } from '../../tools/util';
 import { getQuadProps } from '../utils/padding';
 import { getProp } from '../utils/get-prop';
 import type { BaseTableAPI } from '../../ts-types/base-table';
-import type { PivotLayoutMap } from '../../layout/pivot-layout';
+import type { PivotHeaderLayoutMap } from '../../layout/pivot-header-layout';
 import { getAxisConfigInPivotChart } from '../../layout/chart-helper/get-axis-config';
 import { computeAxisComponentWidth } from '../../components/axis/get-axis-component-size';
 import { Group as VGroup } from '@visactor/vrender';
@@ -257,9 +256,9 @@ function computeAutoColWidth(
   }
   // 如果是透视图
   if (table.isPivotChart() && col >= table.rowHeaderLevelCount && col < table.colCount - table.rightFrozenColCount) {
-    if (!(table.internalProps.layoutMap as PivotLayoutMap).indicatorsAsCol) {
+    if (!(table.internalProps.layoutMap as PivotHeaderLayoutMap).indicatorsAsCol) {
       //并且指标是以行展示 计算列宽需要根据x轴的值域范围
-      const optimunWidth = (table.internalProps.layoutMap as PivotLayoutMap).getOptimunWidthForChart(col);
+      const optimunWidth = (table.internalProps.layoutMap as PivotHeaderLayoutMap).getOptimunWidthForChart(col);
       if (optimunWidth > 0) {
         return optimunWidth;
       }
@@ -272,7 +271,7 @@ function computeAutoColWidth(
   for (let row = startRow; row <= endRow; row += deltaRow) {
     // 判断透视图轴组件
     if (table.isPivotChart()) {
-      const layout = table.internalProps.layoutMap as PivotLayoutMap;
+      const layout = table.internalProps.layoutMap as PivotHeaderLayoutMap;
       const axisConfig = getAxisConfigInPivotChart(col, row, layout);
       if (axisConfig) {
         const axisWidth = computeAxisComponentWidth(axisConfig, table);
@@ -372,7 +371,7 @@ function computeCustomRenderWidth(col: number, row: number, table: BaseTableAPI)
   if (customRender || customLayout) {
     let spanCol = 1;
     let width = 0;
-    if (table.isHeader(col, row) || (table.getBodyColumnDefine(col, row) as TextColumnDefine).mergeCell) {
+    if (table.isHeader(col, row) || (table.getBodyColumnDefine(col, row) as TextColumnDefine)?.mergeCell) {
       const cellRange = table.getCellRange(col, row);
       spanCol = cellRange.end.col - cellRange.start.col + 1;
     }
@@ -459,7 +458,7 @@ function computeTextWidth(col: number, row: number, table: BaseTableAPI): number
     });
   }
   let spanCol = 1;
-  if (table.isHeader(col, row) || (table.getBodyColumnDefine(col, row) as TextColumnDefine).mergeCell) {
+  if (table.isHeader(col, row) || (table.getBodyColumnDefine(col, row) as TextColumnDefine)?.mergeCell) {
     const cellRange = table.getCellRange(col, row);
     spanCol = cellRange.end.col - cellRange.start.col + 1;
   }
