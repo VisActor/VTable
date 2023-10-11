@@ -156,6 +156,10 @@ export function createTable() {
           menuKey: '升序排序1'
         }
       ]
+    },
+    title: {
+      text: 'title',
+      orient: 'top'
     }
   };
 

@@ -1974,8 +1974,8 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     const originHeight = this.canvas.offsetHeight || currentHeight;
     const heightRatio = currentHeight / originHeight;
 
-    const x = (clientX - rect.left) / widthRatio + (isAddScroll ? table.scrollLeft : 0) - table.tableX;
-    const y = (clientY - rect.top) / heightRatio + (isAddScroll ? table.scrollTop : 0) - table.tableY;
+    const x = (clientX - rect.left) / widthRatio + (isAddScroll ? table.scrollLeft : 0);
+    const y = (clientY - rect.top) / heightRatio + (isAddScroll ? table.scrollTop : 0);
     return { x, y, inTable };
   }
   getTheme() {
