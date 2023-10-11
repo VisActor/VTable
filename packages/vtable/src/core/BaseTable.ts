@@ -2564,6 +2564,12 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
 
     // 生成单元格场景树
     this.scenegraph.createSceneGraph();
+
+    if (this.internalProps.title && !this.internalProps.title.isReleased) {
+      this.internalProps.title.resize();
+      this.scenegraph.resize();
+    }
+
     this.render();
     console.log('setRecords cost time:', (typeof window !== 'undefined' ? window.performance.now() : 0) - time);
   }
