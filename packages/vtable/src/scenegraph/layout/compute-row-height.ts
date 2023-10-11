@@ -161,11 +161,11 @@ export function computeRowsHeight(
   if (table.heightMode === 'adaptive') {
     table._clearRowRangeHeightsMap();
     // const canvasWidth = table.internalProps.canvas.width;
-    const totalDrawHeight =
-      table.tableNoFrameHeight -
-      (table.isListTable() ? 0 : table.getFrozenRowsHeight() + table.getBottomFrozenRowsHeight());
-    const startRow = table.isListTable() ? 0 : table.frozenRowCount;
-    const endRow = table.isListTable() ? table.rowCount : table.rowCount - table.bottomFrozenRowCount;
+    const columnHeaderHeight = table.getRowsHeight(0, table.columnHeaderLevelCount - 1);
+    const bottomHeaderHeight = table.isPivotChart() ? table.getBottomFrozenRowsHeight() : 0;
+    const totalDrawHeight = table.tableNoFrameHeight - columnHeaderHeight - bottomHeaderHeight;
+    const startRow = table.columnHeaderLevelCount;
+    const endRow = table.isPivotChart() ? table.rowCount - table.bottomFrozenRowCount : table.rowCount;
     let actualHeight = 0;
     for (let row = startRow; row < endRow; row++) {
       actualHeight += update ? newHeights[row] : table.getRowHeight(row);
