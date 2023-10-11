@@ -93,6 +93,10 @@ export function createTable() {
             hover: {
               fillOpacity: 0.08,
               fill: '#141414'
+            },
+            hover_reverse: {
+              fillOpacity: 0.08,
+              fill: '#141414'
             }
           }
         },
@@ -260,15 +264,12 @@ export function createTable() {
             {
               type: 'linear',
               tick: {
-                visible: false,
-                style: {
-                  stroke: 'rgba(255, 255, 255, 0)'
-                }
+                visible: false
               },
               niceType: 'accurateFirst',
               zIndex: 200,
               grid: {
-                visible: true,
+                visible: false,
                 style: {
                   zIndex: 150,
                   stroke: '#DADCDD',
@@ -282,7 +283,7 @@ export function createTable() {
                 visible: true,
                 style: {
                   lineWidth: 1,
-                  stroke: 'rgba(255, 255, 255, 0)'
+                  stroke: '#989999'
                 }
               },
               title: {
@@ -318,6 +319,10 @@ export function createTable() {
                 visible: true,
                 state: {
                   hover: {
+                    fillOpacity: 0.08,
+                    fill: '#141414'
+                  },
+                  hover_reverse: {
                     fillOpacity: 0.08,
                     fill: '#141414'
                   }
@@ -2253,7 +2258,7 @@ export function createTable() {
         borderLineWidth: [0, 0, 1, 1],
         padding: [4, 0, 4, 0],
         hover: {
-          cellBgColor: 'rgba(20, 20, 20, 0.08)'
+          cellBgColor: '#eceded'
         }
       },
       rowHeaderStyle: {
@@ -2263,7 +2268,7 @@ export function createTable() {
         padding: [0, 0, 0, 4],
         borderLineWidth: [1, 1, 0, 0],
         hover: {
-          cellBgColor: 'rgba(20, 20, 20, 0.08)'
+          cellBgColor: '#eceded'
         }
       },
       cornerHeaderStyle: {
@@ -2312,7 +2317,7 @@ export function createTable() {
         borderLineWidth: [1, 0, 0, 1],
         padding: 0,
         hover: {
-          cellBgColor: 'rgba(20, 20, 20, 0.08)'
+          cellBgColor: '#eceded'
         }
       },
       selectionStyle: {
