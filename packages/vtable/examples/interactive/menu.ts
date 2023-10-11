@@ -1,4 +1,5 @@
 import * as VTable from '../../src';
+import { bindDebugTool } from '../../src/scenegraph/debug-tool';
 const ListTable = VTable.ListTable;
 const CONTAINER_ID = 'vTable';
 
@@ -159,7 +160,7 @@ export function createTable() {
     },
     title: {
       text: 'title',
-      orient: 'top'
+      orient: 'left'
     }
   };
 
@@ -171,9 +172,9 @@ export function createTable() {
     order: 'desc'
   });
 
-  // VTable.bindDebugTool(instance.scenegraph.stage as any, {
-  //   customGrapicKeys: ['role', '_updateTag'],
-  // });
+  bindDebugTool(instance.scenegraph.stage as any, {
+    customGrapicKeys: ['role', '_updateTag']
+  });
 
   // instance.showDropDownMenu(col, row, {
   //   content: ['a', 'b']
