@@ -18,10 +18,12 @@ export function bindTableGroupListener(eventManeger: EventManeger) {
   const table = eventManeger.table;
   const stateManeger = table.stateManeger;
   document.body.addEventListener('pointermove', (e: FederatedPointerEvent) => {
-    if (eventManeger.touchSetTimeout) {
-      clearTimeout(eventManeger.touchSetTimeout);
-      eventManeger.touchSetTimeout = undefined;
-    }
+    // 注释掉。因为： 这里pointermove太敏感了 点击快的时候 可能动了1px这里也会执行到 就影响到下面选中不触发的问题。下面pointermove就有这段逻辑，这里先去掉
+    // if (eventManeger.touchSetTimeout) {
+    //   clearTimeout(eventManeger.touchSetTimeout);
+    //   console.log('eventManeger.touchSetTimeout', eventManeger.touchSetTimeout);
+    //   eventManeger.touchSetTimeout = undefined;
+    // }
     // const eventArgsSet = getCellEventArgsSet(e);
     const { x, y } = table._getMouseAbstractPoint(e, false);
     if (stateManeger.interactionState === InteractionState.scrolling) {
@@ -46,6 +48,7 @@ export function bindTableGroupListener(eventManeger: EventManeger) {
     LastPointerXY = { x: e.x, y: e.y };
     // const eventArgsSet: SceneEvent = (table as any).getCellEventArgsSet(e);
     if (eventManeger.touchSetTimeout) {
+      // 移动端事件特殊处理
       clearTimeout(eventManeger.touchSetTimeout);
       eventManeger.touchSetTimeout = undefined;
     }
@@ -286,6 +289,7 @@ export function bindTableGroupListener(eventManeger: EventManeger) {
       : undefined;
     if (!hitIcon || (hitIcon.attribute as IIconGraphicAttribute).interactive === false) {
       if (e.pointerType === 'touch') {
+        // 移动端事件特殊处理
         eventManeger.touchEnd = false;
         eventManeger.touchSetTimeout = setTimeout(() => {
           eventManeger.isTouchdown = false;
@@ -312,6 +316,7 @@ export function bindTableGroupListener(eventManeger: EventManeger) {
             // console.log('DRAG_SELECT_START');
           }
         }, 500);
+        eventManeger.dealTableHover(eventArgsSet);
       } else {
         // 处理列宽调整
         if (eventManeger.checkColumnResize(eventArgsSet, true)) {
@@ -460,7 +465,7 @@ export function bindTableGroupListener(eventManeger: EventManeger) {
     }
   });
 
-  table.scenegraph.tableGroup.addEventListener('click', (e: FederatedPointerEvent) => {
+  table.scenegraph.tableGroup.addEventListener('pointertap', (e: FederatedPointerEvent) => {
     if (table.stateManeger.columnResize.resizing || table.stateManeger.columnMove.moving) {
       return;
     }
@@ -469,38 +474,50 @@ export function bindTableGroupListener(eventManeger: EventManeger) {
     if (!eventArgsSet?.eventArgs) {
       return;
     }
-    const { col, row } = eventArgsSet.eventArgs;
-    if ((table as any).hasListeners(TABLE_EVENT_TYPE.CLICK_CELL)) {
-      const cellInfo = table.getCellInfo(col, row);
-      let icon;
-      let position;
-      if (eventArgsSet.eventArgs?.target) {
-        const iconInfo = getIconAndPositionFromTarget(eventArgsSet.eventArgs?.target);
-        if (iconInfo) {
-          icon = iconInfo.icon;
-          position = iconInfo.position;
+    if (eventManeger.touchSetTimeout || e.pointerType !== 'touch') {
+      // 通过这个变量判断非drag鼠标拖拽状态，就不再增加其他变量isDrag了（touchSetTimeout如果拖拽过会变成undefined pointermove事件有置为undefined）
+      if (e.pointerType === 'touch') {
+        // 移动端事件特殊处理
+        const eventArgsSet: SceneEvent = getCellEventArgsSet(e);
+        if (eventManeger.touchSetTimeout) {
+          clearTimeout(eventManeger.touchSetTimeout);
+          eventManeger.dealTableSelect(eventArgsSet);
+          eventManeger.touchSetTimeout = undefined;
         }
       }
-      const cellsEvent: MousePointerMultiCellEvent = {
-        ...cellInfo,
-        event: e.nativeEvent,
-        cells: [],
-        targetIcon: icon
-          ? {
-              name: icon.name,
-              position: position,
-              funcType: (icon as any).attribute.funcType
-            }
-          : undefined,
-        target: eventArgsSet?.eventArgs?.target
-      };
+      if ((table as any).hasListeners(TABLE_EVENT_TYPE.CLICK_CELL)) {
+        const { col, row } = eventArgsSet.eventArgs;
+        const cellInfo = table.getCellInfo(col, row);
+        let icon;
+        let position;
+        if (eventArgsSet.eventArgs?.target) {
+          const iconInfo = getIconAndPositionFromTarget(eventArgsSet.eventArgs?.target);
+          if (iconInfo) {
+            icon = iconInfo.icon;
+            position = iconInfo.position;
+          }
+        }
+        const cellsEvent: MousePointerMultiCellEvent = {
+          ...cellInfo,
+          event: e.nativeEvent,
+          cells: [],
+          targetIcon: icon
+            ? {
+                name: icon.name,
+                position: position,
+                funcType: (icon as any).attribute.funcType
+              }
+            : undefined,
+          target: eventArgsSet?.eventArgs?.target
+        };
 
-      table.fireListeners(TABLE_EVENT_TYPE.CLICK_CELL, cellsEvent);
+        table.fireListeners(TABLE_EVENT_TYPE.CLICK_CELL, cellsEvent);
+      }
     }
   });
 
   // click outside
-  table.scenegraph.stage.addEventListener('click', (e: FederatedPointerEvent) => {
+  table.scenegraph.stage.addEventListener('pointertap', (e: FederatedPointerEvent) => {
     const target = e.target;
     if (
       target &&
