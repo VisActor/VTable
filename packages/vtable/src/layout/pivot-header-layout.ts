@@ -297,6 +297,20 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
         this.fullRowDimensionKeys = this.fullRowDimensionKeys.concat(rowKeys);
       });
     }
+
+    if (this._table.isPivotChart()) {
+      this.hasTwoIndicatorAxes = this._indicators.some(indicatorObject => {
+        if (
+          indicatorObject.chartSpec &&
+          indicatorObject.chartSpec.series &&
+          indicatorObject.chartSpec.series.length > 1
+        ) {
+          return true;
+        }
+        return false;
+      });
+    }
+
     //生成cornerHeaderObjs及_cornerHeaderCellIds
     if (this.cornerSetting.titleOnDimension === 'column') {
       this.cornerHeaderObjs = this._addCornerHeaders(
@@ -343,16 +357,6 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
     this.setPagination((table as PivotTable).options.pagination);
 
     if (this._table.isPivotChart()) {
-      this.hasTwoIndicatorAxes = this._indicators.some(indicatorObject => {
-        if (
-          indicatorObject.chartSpec &&
-          indicatorObject.chartSpec.series &&
-          indicatorObject.chartSpec.series.length > 1
-        ) {
-          return true;
-        }
-        return false;
-      });
       this._chartItemSpanSize = 0;
       this._chartItemBandSize = 0;
       // this._chartPadding ;
