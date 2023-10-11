@@ -155,6 +155,8 @@ export interface TableEventHandlersEventArgumentMap {
   mouseleave_axis: MousePointerCellEvent & { axisPosition: 'left' | 'right' | 'top' | 'bottom' };
 
   after_stage_render: null;
+
+  checkbox_state_change: MousePointerCellEvent & { checked: boolean };
 }
 export interface DrillMenuEventInfo {
   dimensionKey: string | number;
@@ -217,4 +219,5 @@ export interface TableEventHandlersReturnMap {
   mouseleave_axis: void;
 
   after_stage_render: void;
+  checkbox_state_change: void;
 }

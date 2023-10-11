@@ -86,6 +86,11 @@ export function createTable() {
     // customGrapicKeys: ['role', '_updateTag'],
   });
 
+  const { CHECKBOX_STATE_CHANGE } = VTable.ListTable.EVENT_TYPE;
+  instance.on(CHECKBOX_STATE_CHANGE, e => {
+    console.log(e.col, e.row, e.checked);
+  });
+
   // 只为了方便控制太调试用，不要拷贝
   window.tableInstance = instance;
 }

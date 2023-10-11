@@ -151,7 +151,7 @@ function createCheckbox(
     checked: isChecked ?? globalChecked ?? false,
     disabled: isDisabled ?? globalDisable ?? false
   });
-  checkbox.name = 'text';
+  checkbox.name = 'checkbox';
 
   return checkbox;
 }

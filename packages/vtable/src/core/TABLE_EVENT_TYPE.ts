@@ -118,6 +118,8 @@ export interface TableEvents {
   MOUSELEAVE_AXIS: 'mouseleave_axis';
 
   AFTER_STAGE_RENDER: 'after_stage_render';
+
+  CHECKBOX_STATE_CHANGE: 'checkbox_state_change';
 }
 /**
  * Table event types
@@ -163,5 +165,7 @@ export const TABLE_EVENT_TYPE: TableEvents = {
   MOUSEENTER_AXIS: 'mouseenter_axis',
   MOUSELEAVE_AXIS: 'mouseleave_axis',
 
-  AFTER_STAGE_RENDER: 'after_stage_render'
+  AFTER_STAGE_RENDER: 'after_stage_render',
+
+  CHECKBOX_STATE_CHANGE: 'checkbox_state_change'
 } as TableEvents;
