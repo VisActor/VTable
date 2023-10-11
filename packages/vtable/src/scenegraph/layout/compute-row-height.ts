@@ -160,25 +160,29 @@ export function computeRowsHeight(
   if (table.heightMode === 'adaptive') {
     table._clearRowRangeHeightsMap();
     // const canvasWidth = table.internalProps.canvas.width;
-    const totalDrawHeight = table.tableNoFrameHeight - table.getFrozenRowsHeight() - table.getBottomFrozenRowsHeight();
+    const columnHeaderHeight = table.getRowsHeight(0, table.columnHeaderLevelCount - 1);
+    const bottomHeaderHeight = table.isPivotChart() ? table.getBottomFrozenRowsHeight() : 0;
+    const totalDrawHeight = table.tableNoFrameHeight - columnHeaderHeight - bottomHeaderHeight;
+    const startRow = table.columnHeaderLevelCount;
+    const endRow = table.isPivotChart() ? table.rowCount - table.bottomFrozenRowCount : table.rowCount;
     let actualHeight = 0;
-    for (let row = table.frozenRowCount; row < table.rowCount - table.bottomFrozenRowCount; row++) {
+    for (let row = startRow; row < endRow; row++) {
       actualHeight += update ? newHeights[row] : table.getRowHeight(row);
     }
     const factor = totalDrawHeight / actualHeight;
-    for (let row = table.frozenRowCount; row < table.rowCount - table.bottomFrozenRowCount; row++) {
+    for (let row = startRow; row < endRow; row++) {
       let rowHeight;
-      if (row === table.rowCount - table.bottomFrozenRowCount - 1) {
+      if (row === endRow - 1) {
         rowHeight =
           totalDrawHeight -
           (update
             ? newHeights.reduce((acr, cur, index) => {
-                if (index >= table.frozenRowCount && index < newHeights.length - table.bottomFrozenRowCount - 1) {
+                if (index >= startRow && index <= endRow - 2) {
                   return acr + cur;
                 }
                 return acr;
               }, 0)
-            : table.getRowsHeight(table.frozenRowCount, table.rowCount - table.bottomFrozenRowCount - 2));
+            : table.getRowsHeight(startRow, endRow - 2));
       } else {
         rowHeight = Math.round((update ? newHeights[row] : table.getRowHeight(row)) * factor);
       }
