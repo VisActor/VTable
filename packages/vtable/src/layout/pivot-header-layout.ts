@@ -1076,6 +1076,9 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
       if (this.columnHeaderTitle) {
         count += 1;
       }
+      if (this._table.isPivotChart() && this.indicatorsAsCol && !this.hasTwoIndicatorAxes) {
+        count -= 1;
+      }
       return count;
     }
     return 0;
