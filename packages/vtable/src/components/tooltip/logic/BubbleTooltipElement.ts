@@ -106,32 +106,44 @@ export class BubbleTooltipElement {
   _canBindToCell(table: BaseTableAPI, col: number, row: number): boolean {
     const rect = table.getCellRangeRelativeRect({ col, row });
     const element = table.getElement();
-    const { bottom, left, right } = rect;
-    const { frozenRowCount, frozenColCount } = table;
-    if (row >= frozenRowCount && frozenRowCount > 0) {
-      const frozenRect = table.getCellRangeRelativeRect({ col, row: frozenRowCount - 1 });
-      if (bottom < frozenRect.bottom) {
-        // 范围外
-        return false;
-      }
-    } else if (bottom < 0) {
+    const { bottom, left, right, top } = rect;
+    // const { frozenRowCount, frozenColCount } = table;
+    // if (row >= frozenRowCount && frozenRowCount > 0) {
+    //   const frozenRect = table.getCellRangeRelativeRect({ col, row: frozenRowCount - 1 });
+    //   if (bottom < frozenRect.bottom) {
+    //     // 范围外
+    //     return false;
+    //   }
+    // } else if (bottom < 0) {
+    //   // 范围外
+    //   return false;
+    // }
+    // if (col >= frozenColCount && frozenColCount > 0) {
+    //   const frozenRect = table.getCellRangeRelativeRect({ col: frozenColCount - 1, row });
+    //   if (right < frozenRect.right) {
+    //     //整个是被冻结列盖住的 不需要提示toolTip
+    //     return false;
+    //   }
+    // } else if (left < 0) {
+    //   return false;
+    // }
+
+    if (table.isFrozenCell(col, row)) {
+      return true;
+    } else if (
+      bottom < table.getFrozenRowsHeight() ||
+      right < table.getFrozenColsWidth() ||
+      left > table.tableNoFrameWidth - table.getRightFrozenColsWidth() ||
+      top > table.tableNoFrameHeight - table.getBottomFrozenRowsHeight()
+    ) {
       // 范围外
       return false;
     }
-    if (col >= frozenColCount && frozenColCount > 0) {
-      const frozenRect = table.getCellRangeRelativeRect({ col: frozenColCount - 1, row });
-      if (right < frozenRect.right) {
-        //整个是被冻结列盖住的 不需要提示toolTip
-        return false;
-      }
-    } else if (left < 0) {
-      return false;
-    }
     const { offsetHeight, offsetWidth } = element;
-    if (offsetHeight < bottom) {
+    if (top > offsetHeight) {
       return false;
     }
-    if (offsetWidth < left) {
+    if (left > offsetWidth) {
       return false;
     }
     return true;

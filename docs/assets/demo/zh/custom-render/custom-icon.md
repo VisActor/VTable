@@ -205,5 +205,18 @@ const option = {
 };
 tableInstance = new VTable.ListTable(document.getElementById(CONTAINER_ID),option);
 window['tableInstance'] = tableInstance;
+
+tableInstance.on('click_cell', args => {
+    console.log('click_cell', args);
+    const { col, row, targetIcon } = args;
+    if(targetIcon){
+      if (targetIcon.name === 'edit') {
+        window?.alert?.('编辑第 '+( row-tableInstance.columnHeaderLevelCount+1)+' 条数据');
+      }else if(targetIcon.name === 'delete'){
+        data.splice(row-tableInstance.columnHeaderLevelCount,1);
+        tableInstance.setRecords(data);
+      }
+    }
+})
     })
 ```
