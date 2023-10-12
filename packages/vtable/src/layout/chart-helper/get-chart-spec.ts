@@ -111,7 +111,7 @@ export function getChartAxes(col: number, row: number, layout: PivotHeaderLayout
       layout.dataset.cacheCollectedValues[rowDimensionKey] ||
       layout.dataset.collectedValues[rowDimensionKey] ||
       ([] as string[]);
-    const rowPath = layout.getRowKeysPath(row);
+    const rowPath = layout.getRowKeysPath(col, row);
     const domain = data[rowPath ?? ''] as Set<string>;
 
     const { axisOption, isPercent } = getAxisOption(col, row, 'left', layout);
@@ -138,7 +138,7 @@ export function getChartAxes(col: number, row: number, layout: PivotHeaderLayout
     );
   } else {
     const indicatorKeys = layout.getIndicatorKeyInChartSpec(col, row);
-    const rowPath = layout.getRowKeysPath(row);
+    const rowPath = layout.getRowKeysPath(col, row);
     indicatorKeys.forEach((key, index) => {
       if (isArray(key)) {
         key = key[0];

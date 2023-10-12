@@ -170,7 +170,7 @@ export function getAxisConfigInPivotChart(col: number, row: number, layout: Pivo
       }
       const data = layout.dataset.collectedValues[rowDimensionKey] ?? ([] as string[]);
 
-      const rowPath = layout.getRowKeysPath(row);
+      const rowPath = layout.getRowKeysPath(col, row);
       const domain = (data[rowPath ?? ''] as Array<string>) ?? [];
 
       const { axisOption, isPercent } = getAxisOption(col + 1, row, 'left', layout);
@@ -210,7 +210,7 @@ export function getAxisConfigInPivotChart(col: number, row: number, layout: Pivo
       const data = layout.dataset.collectedValues[defaultKey + (isZeroAlign ? '_align' : '')]
         ? layout.dataset.collectedValues[defaultKey + (isZeroAlign ? '_align' : '')]
         : layout.dataset.collectedValues[defaultKey];
-      const rowPath = layout.getRowKeysPath(row);
+      const rowPath = layout.getRowKeysPath(col, row);
       const range = merge({}, (data?.[rowPath ?? ''] as { min: number; max: number }) ?? { min: 0, max: 1 });
       if (range.positiveMax && range.positiveMax > range.max) {
         range.max = range.positiveMax;
@@ -292,7 +292,7 @@ export function getAxisConfigInPivotChart(col: number, row: number, layout: Pivo
       const data = layout.dataset.collectedValues[defaultKey + (isZeroAlign ? '_align' : '')]
         ? layout.dataset.collectedValues[defaultKey + (isZeroAlign ? '_align' : '')]
         : layout.dataset.collectedValues[defaultKey];
-      const rowPath = layout.getRowKeysPath(row);
+      const rowPath = layout.getRowKeysPath(col, row);
       const range = merge({}, (data?.[rowPath ?? ''] as { min: number; max: number }) ?? { min: 0, max: 1 });
       if (range.positiveMax && range.positiveMax > range.max) {
         range.max = range.positiveMax;
