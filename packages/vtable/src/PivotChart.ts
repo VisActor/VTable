@@ -182,7 +182,7 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
     this.setCustomStateNameToSpec();
     // 更新protectedSpace
     internalProps.columnResizeType = options.columnResizeType ?? 'column';
-    internalProps.dataConfig = {};
+    internalProps.dataConfig = { isPivotChart: true };
 
     this._axes = isArray(options.axes) ? options.axes : [];
 
