@@ -2626,11 +2626,11 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
     // const colKey = this.dataset.colKeys[index];
     const path = this.getCellHeaderPaths(col, row);
     const colKey: string[] = [];
-    if (path.colHeaderPaths.length) {
+    if (!this.indicatorsAsCol && path.colHeaderPaths.length) {
       path.colHeaderPaths.forEach(path => {
         colKey.push(path.value);
       });
-    } else if (path.rowHeaderPaths.length) {
+    } else if (this.indicatorsAsCol && path.rowHeaderPaths.length) {
       path.rowHeaderPaths.forEach(path => {
         colKey.push(path.value);
       });
