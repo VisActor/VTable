@@ -50,18 +50,15 @@ export function createTable() {
         title: 'checkbox',
         width: 120,
         cellType: 'checkbox',
-        style: {
-          disable: true
-        }
+        disable: true,
+        checked: true
       },
       {
         field: 'check',
         title: 'checkbox',
         width: 120,
         cellType: 'checkbox'
-        // style: {
-        //   disable: true
-        // }
+        // disable: true
       }
     ],
     showFrozenIcon: true, //显示VTable内置冻结列图标

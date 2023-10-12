@@ -3,7 +3,7 @@ import { createLine, createSymbol } from '@visactor/vrender';
 import { PointScale, LinearScale } from '@visactor/vscale';
 import { isValid } from '../../../tools/util';
 import { Group } from '../../graphic/group';
-import type { CellInfo, CheckboxStyleOption, SparklineSpec } from '../../../ts-types';
+import type { CellInfo, CheckboxColumnDefine, CheckboxStyleOption, SparklineSpec } from '../../../ts-types';
 import type { BaseTableAPI } from '../../../ts-types/base-table';
 import { isObject } from '@visactor/vutils';
 import { CheckBox } from '@visactor/vrender-components';
@@ -24,7 +24,8 @@ export function createCheckboxCellGroup(
   textAlign: CanvasTextAlign,
   textBaseline: CanvasTextBaseline,
   table: BaseTableAPI,
-  cellTheme: IThemeSpec
+  cellTheme: IThemeSpec,
+  define: CheckboxColumnDefine
 ) {
   // cell
   if (!cellGroup) {
@@ -54,7 +55,7 @@ export function createCheckboxCellGroup(
   }
 
   // chart
-  const checkboxComponent = createCheckbox(col, row, colWidth, width, height, padding, cellTheme, table);
+  const checkboxComponent = createCheckbox(col, row, colWidth, width, height, padding, cellTheme, define, table);
   if (checkboxComponent) {
     cellGroup.appendChild(checkboxComponent);
   }
@@ -90,6 +91,7 @@ function createCheckbox(
   cellHeight: number,
   padding: number[],
   cellTheme: IThemeSpec,
+  define: CheckboxColumnDefine,
   table: BaseTableAPI
 ) {
   const value = table.getCellValue(col, row) as string | { text: string; checked: boolean; disable: boolean };
@@ -106,7 +108,8 @@ function createCheckbox(
   const hierarchyOffset = getHierarchyOffset(col, row, table);
   const cellStyle = table._getCellStyle(col, row) as CheckboxStyleOption; // to be fixed
   const autoWrapText = cellStyle.autoWrapText ?? table.internalProps.autoWrapText;
-  const { lineClamp, checked, disable } = cellStyle;
+  const { lineClamp } = cellStyle;
+  const { checked, disable } = define;
 
   const globalChecked = getOrApply(checked as any, {
     col,

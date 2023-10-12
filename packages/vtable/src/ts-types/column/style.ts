@@ -178,7 +178,4 @@ export interface ProgressBarStyleOption extends IStyleOption {
   barMarkPosition?: 'right' | 'bottom';
 }
 
-export interface CheckboxStyleOption extends ITextStyleOption {
-  checked?: boolean | ((args: StylePropertyFunctionArg) => boolean);
-  disable?: boolean | ((args: StylePropertyFunctionArg) => boolean);
-}
+export type CheckboxStyleOption = ITextStyleOption;

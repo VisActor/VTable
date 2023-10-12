@@ -4,6 +4,7 @@ import { regUrl } from '../../tools/global';
 import type {
   CellRange,
   ChartColumnDefine,
+  CheckboxColumnDefine,
   ColumnDefine,
   ColumnTypeOption,
   ICustomRender,
@@ -348,7 +349,8 @@ export function createCell(
       textAlign,
       textBaseline,
       table,
-      cellTheme
+      cellTheme,
+      define as CheckboxColumnDefine
     );
   }
 
