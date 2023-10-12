@@ -54,7 +54,7 @@ export function getChartAxes(col: number, row: number, layout: PivotHeaderLayout
       const data = layout.dataset.collectedValues[key + (isZeroAlign ? '_align' : '')]
         ? layout.dataset.collectedValues[key + (isZeroAlign ? '_align' : '')]
         : layout.dataset.collectedValues[key];
-      const colPath = layout.getColKeysPath(col);
+      const colPath = layout.getColKeysPath(col, row);
       const range = merge({}, (data?.[colPath ?? ''] as { max?: number; min?: number }) ?? { min: 0, max: 1 });
       if (range.positiveMax && range.positiveMax > range.max) {
         range.max = range.positiveMax;
@@ -208,7 +208,7 @@ export function getChartAxes(col: number, row: number, layout: PivotHeaderLayout
       layout.dataset.cacheCollectedValues[columnDimensionKey] ||
       layout.dataset.collectedValues[columnDimensionKey] ||
       ([] as string[]);
-    const colPath = layout.getColKeysPath(col);
+    const colPath = layout.getColKeysPath(col, row);
     const domain: string[] | Set<string> = (data?.[colPath ?? ''] as Set<string>) ?? [];
 
     const { axisOption, isPercent } = getAxisOption(col, row, 'bottom', layout);

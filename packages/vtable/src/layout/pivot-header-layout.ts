@@ -2619,11 +2619,22 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
   get bottomAxesCount(): number {
     return this.bottomFrozenRowCount;
   }
-  getColKeysPath(col: number) {
-    const index = !this.indicatorsAsCol
-      ? col - this.rowHeaderLevelCount
-      : Math.floor((col - this.rowHeaderLevelCount) / this.indicatorKeys.length);
-    const colKey = this.dataset.colKeys[index];
+  getColKeysPath(col: number, row: number) {
+    // const index = !this.indicatorsAsCol
+    //   ? col - this.rowHeaderLevelCount
+    //   : Math.floor((col - this.rowHeaderLevelCount) / this.indicatorKeys.length);
+    // const colKey = this.dataset.colKeys[index];
+    const path = this.getCellHeaderPaths(col, row);
+    const colKey: string[] = [];
+    if (path.colHeaderPaths.length) {
+      path.colHeaderPaths.forEach(path => {
+        colKey.push(path.value);
+      });
+    } else if (path.rowHeaderPaths.length) {
+      path.rowHeaderPaths.forEach(path => {
+        colKey.push(path.value);
+      });
+    }
     return colKey?.join(this.dataset.stringJoinChar);
   }
   getRowKeysPath(row: number) {
