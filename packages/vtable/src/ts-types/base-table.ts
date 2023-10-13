@@ -578,6 +578,12 @@ export interface BaseTableAPI {
 
   _adjustColWidth: (col: number, orgWidth: number) => number;
   _colWidthDefineToPxWidth: (width: string | number) => number;
+  isFrozenColumn: (col: number, row?: number) => boolean;
+  isLeftFrozenColumn: (col: number, row?: number) => boolean;
+  isRightFrozenColumn: (col: number, row?: number) => boolean;
+  isFrozenRow: (col: number, row?: number) => boolean;
+  isTopFrozenRow: (col: number, row?: number) => boolean;
+  isBottomFrozenRow: (col: number, row?: number) => boolean;
 }
 export interface ListTableProtected extends IBaseTableProtected {
   /** 表格数据 */

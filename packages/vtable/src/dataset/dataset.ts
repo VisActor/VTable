@@ -217,7 +217,9 @@ export class Dataset {
             this.rows,
             indicatorsAsCol ? undefined : indicators,
             this.rowsIsTotal,
-            this?.totals?.row?.showGrandTotals || this.columns.length === 0,
+            this?.totals?.row?.showGrandTotals ||
+              (!indicatorsAsCol && this.columns.length === 0) ||
+              (indicatorsAsCol && this.rows.length === 0),
             this.rowGrandTotalLabel,
             this.rowSubTotalLabel
           );

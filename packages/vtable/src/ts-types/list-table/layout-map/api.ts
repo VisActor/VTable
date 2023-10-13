@@ -239,6 +239,11 @@ interface LayoutMapAPI {
   /** 从定义中获取一列配置项width的定义值 */
   getColumnWidthDefined: (col: number) => WidthData;
   release: () => void;
+
+  isFrozenColumn: (col: number, row?: number) => boolean;
+  isRightFrozenColumn: (col: number, row?: number) => boolean;
+  isFrozenRow: (col: number, row?: number) => boolean;
+  isBottomFrozenRow: (col: number, row?: number) => boolean;
 }
 
 export type { LayoutMapAPI };

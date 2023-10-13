@@ -1241,7 +1241,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     return new Rect(Math.round(absoluteLeft), Math.round(absoluteTop), Math.round(width), Math.round(height));
   }
   /**
-   * 获取的位置是相对表格显示界面的左上角 情况滚动情况 如单元格已经滚出表格上方 则这个单元格的x将为负值
+   * 获取的位置是相对表格显示界面的左上角 情况滚动情况 如单元格已经滚出表格上方 则这个单元格的y将为负值
    * @param {number} col index of column, of the cell
    * @param {number} row index of row, of the cell
    * @returns {Rect} the rect of the cell.
@@ -1405,9 +1405,8 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     row: boolean;
     col: boolean;
   } | null {
-    const { frozenRowCount, frozenColCount } = this.internalProps;
-    const isFrozenRow = (frozenRowCount > 0 && row < frozenRowCount) || this.isBottomFrozenRow(col, row);
-    const isFrozenCol = (frozenColCount > 0 && col < frozenColCount) || this.isRightFrozenColumn(col, row);
+    const isFrozenRow = this.isFrozenRow(row) || this.isBottomFrozenRow(row);
+    const isFrozenCol = this.isFrozenRow(col) || this.isRightFrozenColumn(col);
     if (isFrozenRow || isFrozenCol) {
       return {
         row: isFrozenRow,
@@ -2607,12 +2606,59 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
   isCornerHeader(col: number, row: number): boolean {
     return this.internalProps.layoutMap?.isCornerHeader(col, row);
   }
-  /** 判断单元格是否属于角表头部分 */
-  isRightFrozenColumn(col: number, row: number): boolean {
+  /**
+   * 是否属于冻结左侧列
+   * @param col
+   * @param row 不传的话 只需要判断col，传入row的话非冻结角头部分的才返回true
+   * @returns
+   */
+  isFrozenColumn(col: number, row?: number): boolean {
+    return this.internalProps.layoutMap?.isFrozenColumn(col, row);
+  }
+  /**
+   * 是否属于冻结左侧列
+   * @param col
+   * @param row 不传的话 只需要判断col，传入row的话非冻结角头部分的才返回true
+   * @returns
+   */
+  isLeftFrozenColumn(col: number, row?: number): boolean {
+    return this.internalProps.layoutMap?.isFrozenColumn(col, row);
+  }
+  /**
+   * 是否属于右侧冻结列
+   * @param col
+   * @param row 不传的话 只需要判断col，传入row的话非冻结角头部分的才返回true
+   * @returns
+   */
+  isRightFrozenColumn(col: number, row?: number): boolean {
     return this.internalProps.layoutMap?.isRightFrozenColumn(col, row);
   }
-  /** 判断单元格是否属于角表头部分 */
-  isBottomFrozenRow(col: number, row: number): boolean {
+
+  /**
+   * 是否属于冻结顶部行
+   * @param col 只传入col一个值的话 会被当做row
+   * @param row 不传的话只需要判断col（其实会当做row）；传入两个值的话非冻结角头部分的才返回true
+   * @returns
+   */
+  isFrozenRow(col: number, row?: number): boolean {
+    return this.internalProps.layoutMap?.isFrozenRow(col, row);
+  }
+  /**
+   * 是否属于冻结顶部行
+   * @param col 只传入col一个值的话 会被当做row
+   * @param row 不传的话只需要判断col（其实会当做row）；传入两个值的话非冻结角头部分的才返回true
+   * @returns
+   */
+  isTopFrozenRow(col: number, row?: number): boolean {
+    return this.internalProps.layoutMap?.isFrozenRow(col, row);
+  }
+  /**
+   * 是否属于冻结底部行
+   * @param col 只传入col一个值的话 会被当做row
+   * @param row 不传的话只需要判断col（其实会当做row）；传入两个值的话非冻结角头部分的才返回true
+   * @returns
+   */
+  isBottomFrozenRow(col: number, row?: number): boolean {
     return this.internalProps.layoutMap?.isBottomFrozenRow(col, row);
   }
   /** 获取单元格的基本信息 目前主要组织单元格信息给事件传递给用户的参数使用 */
