@@ -1,6 +1,7 @@
 /* eslint-disable sort-imports */
 import type { ListTable } from '../ListTable';
 import { DefaultSparklineSpec } from '../tools/global';
+import { isValid } from '../tools/util';
 import type { CellAddress, CellRange, CellLocation, IListTableCellHeaderPaths, LayoutObjectId } from '../ts-types';
 import type { ColumnsDefine, TextColumnDefine } from '../ts-types/list-table/define';
 import type {
@@ -81,29 +82,97 @@ export class SimpleHeaderLayoutMap implements LayoutMapAPI {
     }
     return 'body';
   }
+  isRowHeader(col: number, row: number): boolean {
+    if (this.transpose && col < this.headerLevelCount) {
+      return true;
+    }
+    return false;
+  }
   isColumnHeader(col: number, row: number): boolean {
     if (!this.transpose && row < this.headerLevelCount) {
       return true;
     }
     return false;
   }
-  isRightFrozenColumn(col: number, row: number): boolean {
-    if (
-      col >= this.colCount - this.rightFrozenColCount &&
-      row >= this.columnHeaderLevelCount &&
-      row < this.rowCount - this.bottomFrozenRowCount
-    ) {
-      return true;
+  /**
+   * 是否属于冻结左侧列
+   * @param col
+   * @param row 不传的话 只需要判断col，传入row的话非冻结角头部分的才返回true
+   * @returns
+   */
+  isFrozenColumn(col: number, row?: number): boolean {
+    if (isValid(row)) {
+      if (col < this.frozenColCount && row >= this.frozenRowCount && row < this.rowCount - this.bottomFrozenRowCount) {
+        return true;
+      }
+    } else {
+      if (this.frozenColCount > 0 && col < this.frozenColCount) {
+        return true;
+      }
     }
     return false;
   }
-  isBottomFrozenRow(col: number, row: number): boolean {
-    if (
-      col >= this.rowHeaderLevelCount &&
-      row >= this.rowCount - this.bottomFrozenRowCount &&
-      col < this.colCount - this.rightFrozenColCount
-    ) {
-      return true;
+  /**
+   * 是否属于右侧冻结列
+   * @param col
+   * @param row 不传的话 只需要判断col，传入row的话非冻结角头部分的才返回true
+   * @returns
+   */
+  isRightFrozenColumn(col: number, row?: number): boolean {
+    if (isValid(row)) {
+      if (
+        col >= this.colCount - this.rightFrozenColCount &&
+        row >= this.frozenRowCount &&
+        row < this.rowCount - this.bottomFrozenRowCount
+      ) {
+        return true;
+      }
+    } else {
+      if (this.rightFrozenColCount > 0 && col >= this.colCount - this.rightFrozenColCount) {
+        return true;
+      }
+    }
+    return false;
+  }
+  /**
+   * 是否属于冻结顶部行
+   * @param col 只传入col一个值的话 会被当做row
+   * @param row 不传的话只需要判断col（其实会当做row）；传入两个值的话非冻结角头部分的才返回true
+   * @returns
+   */
+  isFrozenRow(col: number, row?: number): boolean {
+    if (isValid(row)) {
+      if (row < this.frozenRowCount && col >= this.frozenColCount && col < this.colCount - this.rightFrozenColCount) {
+        return true;
+      }
+    } else {
+      row = col;
+      if (this.frozenRowCount > 0 && row < this.frozenRowCount) {
+        return true;
+      }
+    }
+    return false;
+  }
+  /**
+   * 是否属于冻结底部行
+   * @param col 只传入col一个值的话 会被当做row
+   * @param row 不传的话只需要判断col（其实会当做row）；传入两个值的话非冻结角头部分的才返回true
+   * @returns
+   */
+  isBottomFrozenRow(col: number, row?: number): boolean {
+    if (isValid(row)) {
+      if (
+        row >= this.rowCount - this.bottomFrozenRowCount &&
+        col >= this.frozenColCount &&
+        col < this.colCount - this.rightFrozenColCount
+      ) {
+        return true;
+      }
+    } else {
+      row = col;
+      if (this.frozenRowCount > 0 && row >= this.rowCount - this.bottomFrozenRowCount) {
+        return true;
+      }
     }
     return false;
   }
@@ -128,12 +197,7 @@ export class SimpleHeaderLayoutMap implements LayoutMapAPI {
   isCornerHeader(col: number, row: number): boolean {
     return false;
   }
-  isRowHeader(col: number, row: number): boolean {
-    if (this.transpose && col < this.headerLevelCount) {
-      return true;
-    }
-    return false;
-  }
+
   getColumnHeaderRange(): CellRange {
     if (this.transpose) {
       return {
@@ -199,11 +263,17 @@ export class SimpleHeaderLayoutMap implements LayoutMapAPI {
   get rowHeaderLevelCount(): number {
     return this.transpose ? this.headerLevelCount : 0;
   }
+  get frozenColCount(): number {
+    return this._table.internalProps.frozenColCount ?? 0;
+  }
+  get frozenRowCount(): number {
+    return this._table.internalProps.frozenRowCount ?? 0;
+  }
   get bottomFrozenRowCount(): number {
-    return 0;
+    return this._table.internalProps.bottomFrozenRowCount ?? 0;
   }
   get rightFrozenColCount(): number {
-    return 0;
+    return this._table.internalProps.rightFrozenColCount ?? 0;
   }
   get colCount(): number | undefined {
     //标准表格 列数是由表头定义的field决定的；如果是转置表格，这个值么有地方用到，而且是由数据量决定的，在listTable中有定义这个值

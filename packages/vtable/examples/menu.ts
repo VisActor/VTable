@@ -631,6 +631,10 @@ export const menus = [
       {
         path: 'unit-test-demo',
         name: 'unitTestPivotTree'
+      },
+      {
+        path: 'unit-test-demo',
+        name: 'pivotTable-color-legend'
       }
     ]
   },

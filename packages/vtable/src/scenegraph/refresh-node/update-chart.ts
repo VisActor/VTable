@@ -14,7 +14,7 @@ export function updateChartSize(scenegraph: Scenegraph, col: number) {
     const columnGroup = scenegraph.getColGroup(c);
     // const chartInstance = (columnGroup.attribute as any)?.chartInstance;
     // if (chartInstance) {
-    columnGroup.getChildren().forEach((cellNode: Group) => {
+    columnGroup.getChildren()?.forEach((cellNode: Group) => {
       const width = scenegraph.table.getColWidth(cellNode.col);
       const height = scenegraph.table.getRowHeight(cellNode.row);
 
@@ -68,7 +68,7 @@ export function clearChartCacheImage(scenegraph: Scenegraph) {
   // 将调整列宽的后面的面也都一起需要调整viewbox。  TODO：columnResizeType支持后需要根据变化的列去调整，范围可能变多或者变少
   for (let c = scenegraph.proxy.colStart; c <= scenegraph.proxy.colEnd; c++) {
     const columnGroup = scenegraph.getColGroup(c);
-    columnGroup.getChildren().forEach((cellNode: Group) => {
+    columnGroup.getChildren()?.forEach((cellNode: Group) => {
       cellNode.children.forEach((node: Chart) => {
         if ((node as any).type === 'chart') {
           node.cacheCanvas = null;
@@ -85,7 +85,7 @@ export function updateChartData(scenegraph: Scenegraph) {
   // 将调整列宽的后面的面也都一起需要调整viewbox。  TODO：columnResizeType支持后需要根据变化的列去调整，范围可能变多或者变少
   for (let c = scenegraph.proxy.colStart; c <= scenegraph.proxy.colEnd; c++) {
     const columnGroup = scenegraph.getColGroup(c);
-    columnGroup.getChildren().forEach((cellNode: Group) => {
+    columnGroup.getChildren()?.forEach((cellNode: Group) => {
       const col = cellNode.col;
       const row = cellNode.row;
       cellNode.children.forEach((node: Chart) => {
