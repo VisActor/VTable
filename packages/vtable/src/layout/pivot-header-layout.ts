@@ -1145,6 +1145,9 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
       if (this.columnHeaderTitle) {
         count += 1;
       }
+      if (this._table.isPivotChart() && this.indicatorsAsCol && !this.hasTwoIndicatorAxes) {
+        count -= 1;
+      }
       return count;
     }
     return 0;
@@ -2686,18 +2689,36 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
   get bottomAxesCount(): number {
     return this.bottomFrozenRowCount;
   }
-  getColKeysPath(col: number) {
-    const index = !this.indicatorsAsCol
-      ? col - this.rowHeaderLevelCount
-      : Math.floor((col - this.rowHeaderLevelCount) / this.indicatorKeys.length);
-    const colKey = this.dataset.colKeys[index];
+  getColKeysPath(col: number, row: number) {
+    // const index = !this.indicatorsAsCol
+    //   ? col - this.rowHeaderLevelCount
+    //   : Math.floor((col - this.rowHeaderLevelCount) / this.indicatorKeys.length);
+    // const colKey = this.dataset.colKeys[index];
+    const path = this.getCellHeaderPaths(col, row);
+    const colKey: string[] = [];
+    if (path.colHeaderPaths.length) {
+      path.colHeaderPaths.forEach(path => {
+        if (path.dimensionKey) {
+          colKey.push(path.value);
+        }
+      });
+    }
     return colKey?.join(this.dataset.stringJoinChar);
   }
-  getRowKeysPath(row: number) {
-    const index = this.indicatorsAsCol
-      ? row - this.columnHeaderLevelCount
-      : Math.floor((row - this.columnHeaderLevelCount) / this.indicatorKeys.length);
-    const rowKey = this.dataset.rowKeys[index];
+  getRowKeysPath(col: number, row: number) {
+    // const index = this.indicatorsAsCol
+    //   ? row - this.columnHeaderLevelCount
+    //   : Math.floor((row - this.columnHeaderLevelCount) / this.indicatorKeys.length);
+    // const rowKey = this.dataset.rowKeys[index];
+    const path = this.getCellHeaderPaths(col, row);
+    const rowKey: string[] = [];
+    if (path.rowHeaderPaths.length) {
+      path.rowHeaderPaths.forEach(path => {
+        if (path.dimensionKey) {
+          rowKey.push(path.value);
+        }
+      });
+    }
     return rowKey?.join(this.dataset.stringJoinChar);
   }
 
