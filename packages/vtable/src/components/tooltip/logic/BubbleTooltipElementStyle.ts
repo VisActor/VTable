@@ -2,7 +2,7 @@ import { Env } from '../../../tools/env';
 
 export function importStyle() {
   if (Env.mode === 'node') {
-    return -1;
+    return;
   }
   const styleElement = document.createElement('style');
   styleElement.id = 'vtable-tooltip-styleSheet';

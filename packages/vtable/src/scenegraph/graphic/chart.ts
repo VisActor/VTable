@@ -41,7 +41,7 @@ export class Chart extends Group {
     if (!params.chartInstance) {
       params.chartInstance = this.chartInstance = new params.ClassType(params.spec, {
         renderCanvas: params.canvas,
-        mode: (this.attribute.mode = 'node' ? 'node' : 'desktop-browser'),
+        mode: this.attribute.mode === 'node' ? 'node' : 'desktop-browser',
         modeParams: this.attribute.modeParams,
         canvasControled: false,
         viewBox: { x1: 0, x2: 0, y1: 0, y2: 0 },
