@@ -12,7 +12,7 @@ link: '../guide/components/dropdown'
 In this example, the dropDownMenu is configured in the first column of columns, and when hovered to the header cell, a drop-down menu is displayed for further operation.
 At the same time through monitoring`click_cell`Event, when the mouse clicks the order icon in the first column, the interface showDropDownMenu is called to display the drop-down menu. To continue the operation according to the item clicked on the drop-down menu, you can listen to the event dropdownmenu\_click.
 
-## critical configuration
+## Key Configurations
 
 *   `dropDownMenu`  Configure the drop-down menu at the header to display the content. After configuration, hover to the header cell to display the content. You can configure it separately or globally according to the header.
 

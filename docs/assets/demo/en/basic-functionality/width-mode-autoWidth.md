@@ -11,7 +11,7 @@ link: '../guide/basic_function/row_height_column_width'
 
 Specifies the width size of all columns by content width.
 
-## critical configuration
+## Key Configurations
 
 *   `widthMode: 'autoWidth'`
 

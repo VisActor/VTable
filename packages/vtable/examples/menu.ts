@@ -281,6 +281,14 @@ export const menus = [
       },
       {
         path: 'pivot-analysis',
+        name: 'pivot-analysis-totalData'
+      },
+      {
+        path: 'pivot-analysis',
+        name: 'pivot-analysis-totalData-tree'
+      },
+      {
+        path: 'pivot-analysis',
         name: 'pivot-analysis-more-data'
       },
       {
@@ -631,6 +639,10 @@ export const menus = [
       {
         path: 'unit-test-demo',
         name: 'unitTestPivotTree'
+      },
+      {
+        path: 'unit-test-demo',
+        name: 'pivotTable-color-legend'
       }
     ]
   },

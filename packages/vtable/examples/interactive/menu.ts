@@ -160,7 +160,9 @@ export function createTable() {
     },
     title: {
       text: 'title',
-      orient: 'left'
+      orient: 'top'
+      // verticalAlign: 'bottom'
+      // padding: 0
     }
   };
 

@@ -11,7 +11,7 @@ link: '../guide/theme_and_style/theme'
 
 Extend and modify based on a certain Theme built into the component
 
-## critical configuration
+## Key Configurations
 
 *   `VTable.themes.ARCO.extends` Configure Theme Name or Customize Theme Style
 
