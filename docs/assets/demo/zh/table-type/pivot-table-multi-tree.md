@@ -9,7 +9,7 @@ link: '../guide/table_type/Pivot_table/pivot_table_multi_tree'
 
 # 透视表多列树形展示
 
-透视表格多列树形展示
+透视表格多列树形展示。多列属于特殊的树形展示结构，需要依赖业务方传入rowTree，columnTree和extensionRows。
 
 ## 关键配置
 

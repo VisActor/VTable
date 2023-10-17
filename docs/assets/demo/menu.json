@@ -98,6 +98,22 @@
           }
         },
         {
+          "path": "pivot-analysis-table-tree",
+          "title": {
+            "zh": "透视分析表格树形展示",
+            "en": "Pivot Analysis Tree Table"
+          },
+          "meta": {
+            "title": "Pivot Analysis Tree Table",
+            "keywords": "",
+            "category": "demo",
+            "group": "table-type",
+            "cover": "https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/pivot-analysis-table-tree.png",
+            "link": "'../../guide/table_type/Pivot_table/pivot_table_useage'",
+            "option": ""
+          }
+        },
+        {
           "path": "pivot-table",
           "title": {
             "zh": "透视表格（自定义表头结构）",
@@ -116,7 +132,7 @@
         {
           "path": "pivot-table-tree",
           "title": {
-            "zh": "透视表树形展示",
+            "zh": "透视表树形展示（自定义表头结构）",
             "en": "Pivot Table Tree"
           },
           "meta": {

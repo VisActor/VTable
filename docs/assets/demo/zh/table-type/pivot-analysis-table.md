@@ -59,9 +59,6 @@ records:data,
                   "headerStyle":{
                     fontWeight: "normal",
                   },
-                   "format":(rec)=>{
-                    return '$'+Number(rec).toFixed(2)
-                  },
                    style:{
                     padding:[16,28,16,28],
                     color(args){
@@ -79,7 +76,7 @@ records:data,
                   "headerStyle":{
                     fontWeight: "normal",
                   },
-                  "format":(rec)=>{return '$'+Number(rec?.['Sales']).toFixed(2)},
+                  "format":(rec)=>{return '$'+Number(rec).toFixed(2)},
                   style:{
                     padding:[16,28,16,28],
                     color(args){

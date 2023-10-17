@@ -9,7 +9,7 @@ link: '../guide/table_type/Pivot_table/pivot_table_multi_tree'
 
 # Pivot Table Multiple Tree
 
-Pivot Table Multiple Tree
+Pivot table multi-column tree display. Multiple columns belong to a special tree display structure and require the business party to pass in rowTree, columnTree and extensionRows.
 
 ## critical configuration
 

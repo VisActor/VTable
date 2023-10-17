@@ -7,13 +7,14 @@ Order: 1-4
 link: '../guide/table_type/Pivot_table/pivot_table_useage'
 ---
 
-# Pivot analysis table
+# Pivot analysis tree table
 
-Pivot analysis table
+Pivot analysis tree table
 
 ## Key configuration
 
 - `PivotTable`
+- `rowHierarchyType` Set the hierarchical presentation to`tree`, defaults to tiling mode`grid`.
 - `columns` 
 - `rows`
 - `indicators`
@@ -24,7 +25,7 @@ Pivot analysis table
 ```javascript livedemo template=vtable
 
 let  tableInstance;
-  fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American_Superstore_Pivot_data.json')
+  fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American_Superstore_Pivot_Chart_data.json')
     .then((res) => res.json())
     .then((data) => {
 
@@ -32,8 +33,16 @@ const option = {
 records:data,
   "rows": [
       {
-          "dimensionKey": "City",
-          "title": "City",
+         "dimensionKey": "Category",
+          "title": "Category",
+          "headerStyle": {
+              "textStick": true
+          },
+          "width": "auto",
+      },
+      {
+         "dimensionKey": "Sub-Category",
+          "title": "Category",
           "headerStyle": {
               "textStick": true
           },
@@ -42,8 +51,16 @@ records:data,
   ],
   "columns": [
       {
-         "dimensionKey": "Category",
-          "title": "Category",
+         "dimensionKey": "Region",
+          "title": "Region",
+          "headerStyle": {
+              "textStick": true
+          },
+          "width": "auto",
+      },
+       {
+         "dimensionKey": "Segment",
+          "title": "Segment",
           "headerStyle": {
               "textStick": true
           },
@@ -117,9 +134,17 @@ records:data,
         sortField: 'Category',
         sortBy: ['Office Supplies', 'Technology','Furniture']
       }
-    ]
+    ],
+    totals: {
+        row: {
+          showSubTotals: true,
+          subTotalsDimensions: ['Category'],
+          subTotalLabel: 'subtotal'
+        }
+      }
   },
   enableDataAnalysis: true,
+  rowHierarchyType: 'tree',
   widthMode:'standard'
 };
 tableInstance = new VTable.PivotTable(document.getElementById(CONTAINER_ID),option);
