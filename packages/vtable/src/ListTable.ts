@@ -23,6 +23,7 @@ import type { ListTableProtected } from './ts-types/base-table';
 import { TABLE_EVENT_TYPE } from './core/TABLE_EVENT_TYPE';
 import { Title } from './components/title/title';
 import { cloneDeep } from '@visactor/vutils';
+import { Env } from './tools/env';
 
 export class ListTable extends BaseTable implements ListTableAPI {
   declare internalProps: ListTableProtected;
@@ -35,7 +36,10 @@ export class ListTable extends BaseTable implements ListTableAPI {
   constructor(options: ListTableConstructorOptions);
   constructor(container: HTMLElement, options: ListTableConstructorOptions);
   constructor(container?: HTMLElement | ListTableConstructorOptions, options?: ListTableConstructorOptions) {
-    if (!(container instanceof HTMLElement)) {
+    if (Env.mode === 'node') {
+      options = container as ListTableConstructorOptions;
+      container = null;
+    } else if (!(container instanceof HTMLElement)) {
       options = container as ListTableConstructorOptions;
       if ((container as ListTableConstructorOptions).container) {
         container = (container as ListTableConstructorOptions).container;

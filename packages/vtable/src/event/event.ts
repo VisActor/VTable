@@ -21,6 +21,7 @@ import { getCellEventArgsSet, type SceneEvent } from './util';
 import { bindAxisClickEvent } from './pivot-chart/axis-click';
 import { bindAxisHoverEvent } from './pivot-chart/axis-hover';
 import type { PivotTable } from '../PivotTable';
+import { Env } from '../tools/env';
 
 export class EventManeger {
   table: BaseTableAPI;
@@ -38,6 +39,9 @@ export class EventManeger {
   touchMove: boolean; // is touch listener working, use to disable document touch scrolling function
   constructor(table: BaseTableAPI) {
     this.table = table;
+    if (Env.mode === 'node') {
+      return;
+    }
     this.bindOuterEvent();
     setTimeout(() => {
       this.bindSelfEvent();
