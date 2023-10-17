@@ -2,7 +2,7 @@ In this section, we will introduce the core configuration items of the basic tab
 
 ## Core configuration
 
-The following are the key configuration items of the basic table and their descriptions:
+The following are the Key Configurations items of the basic table and their descriptions:
 
 *   `container`: The container DOM element of the table, which needs to have width and height.
 *   `records`: The data of the table, represented as an array.

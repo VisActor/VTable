@@ -10,7 +10,7 @@ Order: 3-4
 
 Export image of the visible area of the table, or export a picture of a certain area or cells
 
-## Key configuration
+## Key Configurations
 
  - `exportImg`
  - `exportCellImg`

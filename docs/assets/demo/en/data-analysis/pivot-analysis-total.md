@@ -10,7 +10,7 @@ link: '../guide/table_type/Pivot_table/pivot_table_dataAnalysis'
 
 To summarize table data in pivot analysis, configure totals in dataConfig to set the total subtotal of the row and column dimensions.
 
-## Key configuration
+## Key Configurations
 
 - `PivotTable`
 - `columns`

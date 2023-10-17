@@ -11,7 +11,7 @@ link: '../guide/table_type/Pivot_table/pivot_table_useage'
 
 Pivot Table
 
-## critical configuration
+## Key Configurations
 
 - `PivotTable`
 - `columnTree`

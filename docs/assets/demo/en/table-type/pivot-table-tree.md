@@ -13,7 +13,7 @@ Pivot table tree display, this example passes in the custom header tree structur
 
 It should be noted that indicatorsAsCol cannot be set to false, because it is currently not supported that indicators are placed on the row header when displayed as the header of a tree structure.
 
-## critical configuration
+## Key Configurations
 
 - `PivotTable`
 - `rowHierarchyType` Set the hierarchical presentation to`tree`, defaults to tiling mode`grid`.
