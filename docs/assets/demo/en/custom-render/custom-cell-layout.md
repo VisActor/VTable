@@ -11,7 +11,7 @@ link: '../guide/custom_define/custom_layout'
 
 Customize cell content to achieve image and text mixing effects
 
-## Key Configurationss
+## Key Configurations
 
 *   `customLayout` Configure the API to return what needs to be rendered
 

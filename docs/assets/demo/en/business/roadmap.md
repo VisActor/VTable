@@ -10,7 +10,7 @@ order: 9-6
 
 This example shows the main R & D roadmap that follows VTable
 
-## Key Configurationss
+## Key Configurations
 
 ## Code demo
 

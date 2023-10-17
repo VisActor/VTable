@@ -11,7 +11,7 @@ link: '../guide/theme_and_style/theme'
 
 Align Theme styles of arco-design
 
-## Key Configurationss
+## Key Configurations
 
 *   `theme` Configure Theme Name or Customize Theme Style
 

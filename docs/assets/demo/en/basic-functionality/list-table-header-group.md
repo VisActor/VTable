@@ -10,7 +10,7 @@ link: '../guide/table-type/list-table'
 
 Configure columns as a nested multi-layer structure to achieve multi-layer header grouping effects
 
-## Key Configurationss
+## Key Configurations
 
 *   columns
 

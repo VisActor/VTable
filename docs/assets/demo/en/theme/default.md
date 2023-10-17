@@ -11,7 +11,7 @@ link: '../guide/theme_and_style/theme'
 
 VTable Default Theme Style
 
-## Key Configurationss
+## Key Configurations
 
 *   `theme` Configure Theme Name or Customize Theme Style
 

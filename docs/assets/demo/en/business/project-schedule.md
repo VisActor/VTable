@@ -10,7 +10,7 @@ order: 9-2
 
 In this example, the overall schedule is highlighted by setting the background color, and the entire row of background colors is generated according to the length of the project duration, and the attention to the project with a longer total duration is strengthened through the color level visual effect.
 
-## Key Configurationss
+## Key Configurations
 
 \-`theme.bgColor` Set the background color according to the conditions through the function definition
 

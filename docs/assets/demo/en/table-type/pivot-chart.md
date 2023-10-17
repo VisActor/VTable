@@ -10,7 +10,7 @@ link: '../guide/table_type/pivot_chart'
 
 The perspective combination diagram combines the vchart chart library to render into the table, enriching the visual display form and improving the rendering performance.
 
-## Key Configurationss
+## Key Configurations
 
 *   `PivotChart` Initialize the table type using PivotChart.
 *   `VTable.register.chartModule('vchart', VChart)` Register a charting library for charting, currently supports VChart

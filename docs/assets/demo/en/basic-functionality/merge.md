@@ -10,7 +10,7 @@ order: 3-4
 
 Automatically merge cells with the same content through configuration
 
-## Key Configurationss
+## Key Configurations
 
 *   `merge`  Merge adjacent cells with the same content in the same column
 

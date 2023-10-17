@@ -11,7 +11,7 @@ link: '../guide/theme_and_style/theme'
 
 Register a custom theme globally
 
-## Key Configurationss
+## Key Configurations
 
 *   `VTable.register.theme` Registering themes globally
 *   `theme: xxx` Specify the name of the registered theme

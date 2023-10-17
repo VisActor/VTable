@@ -11,7 +11,7 @@ link: '../guide/table_type/List_table/list_table_transpose'
 
 transpose form
 
-## Key Configurationss
+## Key Configurations
 
 *   `transpose` Configure whether to transpose, the default is false
 

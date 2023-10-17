@@ -11,7 +11,7 @@ link: '../guide/interaction/drag_header'
 
 Click the header to select a row or column, and drag and drop to move.
 
-## Key Configurationss
+## Key Configurations
 
 *   `dragHeaderMode` Drag and drop the entire row or column of the header to change the position, and optional configuration items:`'all' | 'none' | 'header' | 'body'`, the default is`none`
 

@@ -10,7 +10,7 @@ order: 9-1
 
 This example shows how to implement a sales heat map by changing the background color according to the color level configuration function.
 
-## Key Configurationss
+## Key Configurations
 
 *   `indicators[x].style.bgColor` Configure the background color of a Metirc content
 

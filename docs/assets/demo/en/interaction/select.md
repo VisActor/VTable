@@ -11,7 +11,7 @@ link: '../guide/interaction/select'
 
 Select the cell, press and hold ctrl or shift multiple selection, or open shortcut for ctrlA all selection.
 
-## Key Configurationss
+## Key Configurations
 
 *   `keyboardOptions: {
         selectAllOnCtrlA: true,

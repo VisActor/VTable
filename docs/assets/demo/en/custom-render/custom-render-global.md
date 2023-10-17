@@ -11,7 +11,7 @@ link: '../guide/custom_define/custom_render'
 
 Set custom functions through the global configuration item customRender
 
-## Key Configurationss
+## Key Configurations
 
 *   `customRender` Configure the API to return what needs to be rendered
 
