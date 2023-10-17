@@ -63,6 +63,8 @@ export function createChartCellGroup(
     x: padding[3],
     y: padding[0],
     canvas: table.canvas,
+    mode: table.options.mode,
+    modeParams: table.options.modeParams,
     spec: chartSpec,
     ClassType,
     width: width - padding[3] - padding[1],
