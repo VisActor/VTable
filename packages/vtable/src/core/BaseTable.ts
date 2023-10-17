@@ -134,7 +134,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
    */
   readonly options: BaseTableConstructorOptions;
 
-  // version = __VERSION__;
+  version = __VERSION__;
 
   pagination?: IPagination | undefined;
 

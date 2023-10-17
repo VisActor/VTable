@@ -36,7 +36,7 @@ import * as CustomLayout from './render/layout';
 export { getDataCellPath } from './tools/get-data-path';
 export * from './render/jsx';
 
-// export const version = __VERSION__;
+export const version = __VERSION__;
 /**
  * @namespace VTable
  */
