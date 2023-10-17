@@ -16,17 +16,63 @@ export function createTable() {
         row: {
           showGrandTotals: true,
           showSubTotals: true,
-          subTotalsDimensions: ['province', 'city']
+          subTotalsDimensions: ['province'],
+          grandTotalLabel: '行总计',
+          subTotalLabel: '小计'
         },
         column: {
           showGrandTotals: true,
           showSubTotals: true,
-          subTotalsDimensions: ['category']
+          subTotalsDimensions: ['category'],
+          grandTotalLabel: '列总计',
+          subTotalLabel: '小计'
         }
       }
     },
     corner: { titleOnDimension: 'row' },
     records: [
+      {
+        sales: 11111,
+        number: 22222
+      },
+      {
+        sales: 88,
+        number: 77,
+        province: '浙江省',
+        category: '家具'
+      },
+      {
+        sales: 5,
+        number: 6,
+        province: '浙江省'
+      },
+      {
+        sales: 55,
+        number: 66,
+        city: '舟山市',
+        province: '浙江省'
+      },
+      {
+        sales: 8888,
+        number: 7777,
+        province: '浙江省',
+        category: '家具',
+        sub_category: '桌子'
+      },
+
+      {
+        sales: 888,
+        number: 777,
+
+        category: '家具',
+        sub_category: '桌子'
+      },
+      {
+        sales: 3,
+        number: 4,
+
+        category: '家具'
+      },
       {
         sales: 891,
         number: 7789,

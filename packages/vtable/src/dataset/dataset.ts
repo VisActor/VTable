@@ -122,6 +122,8 @@ export class Dataset {
   rowHierarchyType: 'grid' | 'tree';
   indicators: (string | IIndicator)[];
   indicatorsAsCol: boolean;
+  // 记录用户传入的汇总数据
+  totalRecordsTree: Record<string, Record<string, Aggregator[]>> = {};
   constructor(
     dataConfig: IDataConfig,
     // pagination: IPagination,
@@ -210,7 +212,15 @@ export class Dataset {
         this.rowHeaderTree = customRowTree;
       } else {
         if (this.rowHierarchyType === 'tree') {
-          this.rowHeaderTree = this.ArrToTree1(this.rowKeys, this.rows, indicatorsAsCol ? undefined : indicators);
+          this.rowHeaderTree = this.ArrToTree1(
+            this.rowKeys,
+            this.rows,
+            indicatorsAsCol ? undefined : indicators,
+            this?.totals?.row?.showGrandTotals ||
+              (!indicatorsAsCol && this.columns.length === 0) ||
+              (indicatorsAsCol && this.rows.length === 0),
+            this.rowGrandTotalLabel
+          );
         } else {
           this.rowHeaderTree = this.ArrToTree(
             this.rowKeys,
@@ -400,18 +410,6 @@ export class Dataset {
     this.derivedFieldRules?.forEach((derivedFieldRule: DerivedFieldRule, i: number) => {
       record[derivedFieldRule.fieldName] = derivedFieldRule.derivedFunc(record);
     });
-    const colKey = [];
-    const rowKey = [];
-
-    for (let l = 0, len1 = this.rows.length; l < len1; l++) {
-      const rowAttr = this.rows[l];
-      rowKey.push(record[rowAttr]);
-    }
-    for (let n = 0, len2 = this.columns.length; n < len2; n++) {
-      const colAttr = this.columns[n];
-      colKey.push(record[colAttr]);
-    }
-
     //#region 按照collectValuesBy 收集维度值
     for (const field in this.collectValuesBy) {
       if (record[field]) {
@@ -459,49 +457,127 @@ export class Dataset {
       }
     }
     //#endregion
+
+    //#region 收集rowKey colKey
+    const colKey = [];
+    const rowKey = [];
+
+    let isToTalRecord = false;
+    for (let l = 0, len1 = this.rows.length; l < len1; l++) {
+      const rowAttr = this.rows[l];
+      if (rowAttr in record) {
+        rowKey.push(record[rowAttr]);
+      } else {
+        //如果数据中缺失某个维度的值 可以认为是用户传入的汇总数据
+        if (
+          this.dataConfig?.totals?.row?.showGrandTotals &&
+          l === 0 &&
+          !this.rows.find((rk: string) => {
+            // 判断没有其他字段在record中 例如rows中维度有省份和城市，当前在判断省份 数据中确实省份自动 可以认为是行总计的前提是城市也不应该存在
+            return rk in record;
+          })
+        ) {
+          rowKey.push(this.rowGrandTotalLabel);
+          isToTalRecord = true;
+          break;
+        } else if (
+          this.dataConfig?.totals?.row?.showSubTotals &&
+          this.dataConfig?.totals?.row?.subTotalsDimensions.indexOf(this.rows[l - 1]) >= 0
+        ) {
+          if (this.rowHierarchyType === 'grid') {
+            //如果是tree的话 不附加标签'小计'
+            rowKey.push(this.rowSubTotalLabel);
+          }
+          isToTalRecord = true;
+          break;
+        }
+      }
+    }
+    for (let n = 0, len2 = this.columns.length; n < len2; n++) {
+      const colAttr = this.columns[n];
+      if (colAttr in record) {
+        colKey.push(record[colAttr]);
+      } else {
+        //如果数据中缺失某个维度的值 可以认为是用户传入的汇总数据
+        if (
+          this.dataConfig?.totals?.column?.showGrandTotals &&
+          n === 0 &&
+          !this.columns.find((ck: string) => {
+            // 判断没有其他字段在record中
+            return ck in record;
+          })
+        ) {
+          colKey.push(this.colGrandTotalLabel);
+          isToTalRecord = true;
+          break;
+        } else if (
+          this.dataConfig?.totals?.column?.showSubTotals &&
+          this.dataConfig?.totals?.column?.subTotalsDimensions.indexOf(this.columns[n - 1]) >= 0
+        ) {
+          colKey.push(this.colSubTotalLabel);
+          isToTalRecord = true;
+          break;
+        }
+      }
+    }
+    //#endregion
+
     // this.allTotal.push(record);
 
     const flatRowKey = rowKey.join(this.stringJoinChar);
     const flatColKey = colKey.join(this.stringJoinChar);
 
+    //#region 收集用户传入的汇总数据到totalRecordsTree
+    //该条数据为汇总数据
+    if (isToTalRecord) {
+      if (!this.totalRecordsTree[flatRowKey]) {
+        this.totalRecordsTree[flatRowKey] = {};
+      }
+      if (!this.totalRecordsTree[flatRowKey][flatColKey]) {
+        this.totalRecordsTree[flatRowKey][flatColKey] = [];
+      }
+
+      for (let i = 0; i < this.indicatorKeys.length; i++) {
+        const aggRule = this.getAggregatorRule(this.indicatorKeys[i]);
+        if (!this.totalRecordsTree[flatRowKey]?.[flatColKey]?.[i]) {
+          this.totalRecordsTree[flatRowKey][flatColKey][i] = new this.aggregators[
+            aggRule?.aggregationType ?? AggregationType.SUM
+          ](
+            aggRule?.field ?? this.indicatorKeys[i],
+            aggRule?.formatFun ??
+              (
+                this.indicators?.find((indicator: string | IIndicator) => {
+                  if (typeof indicator !== 'string') {
+                    return indicator.indicatorKey === this.indicatorKeys[i];
+                  }
+                  return false;
+                }) as IIndicator
+              )?.format
+          );
+        }
+
+        //push融合了计算过程
+        this.indicatorKeys[i] in record && this.totalRecordsTree[flatRowKey]?.[flatColKey]?.[i].push(record);
+      }
+      return;
+    }
+    //#endregion
+
     // 此方法判断效率很低
     // if (this.rowKeys.indexOf(rowKey) === -1) this.rowKeys.push(rowKey);
     // if (this.colKeys.indexOf(colKey) === -1) this.colKeys.push(colKey);
 
-    // rowTotals colTotals原本汇总的每行每列的总计，当columns或者rows不配置的时候 可以用这个值展示，现在放到了tree上 'total'作为默认键值
     if (rowKey.length !== 0) {
       if (!this.rowFlatKeys[flatRowKey]) {
         this.rowKeys.push(rowKey);
         this.rowFlatKeys[flatRowKey] = 1;
       }
-      //如有需要显示总计 或者columns配置空
-      // if (this.totals?.row?.showGrandTotals || !(this.dataConfig?.columns?.length > 0))
-      //   for (let i = 0; i < this.indicators?.length; i++) {
-      //     if (!this.rowTotals[flatRowKey][i]) {
-      //       const aggRule = this.getAggregatorRule(this.indicators[i]);
-      //       this.rowTotals[flatRowKey][i] = new this.aggregators[
-      //         aggRule?.aggregationType ?? AggregationType.SUM
-      //       ](aggRule?.field ?? this.indicators[i], aggRule?.formatFun);
-      //     }
-      //     this.rowTotals[flatRowKey][i].push(record);
-      //   }
     }
     if (colKey.length !== 0) {
       if (!this.colFlatKeys[flatColKey]) {
         this.colKeys.push(colKey);
         this.colFlatKeys[flatColKey] = 1;
       }
-      //如有需要显示总计 或者rows配置空
-      // if (this.totals?.column?.showGrandTotals || !(this.dataConfig?.rows?.length > 0))
-      //   for (let i = 0; i < this.indicators?.length; i++) {
-      //     if (!this.colTotals[flatColKey][i]) {
-      //       const aggRule = this.getAggregatorRule(this.indicators[i]);
-      //       this.colTotals[flatColKey][i] = new this.aggregators[
-      //         aggRule?.aggregationType ?? AggregationType.SUM
-      //       ](aggRule?.field ?? this.indicators[i], aggRule?.formatFun);
-      //     }
-      //     this.colTotals[flatColKey][i].push(record);
-      //   }
     }
 
     //组织树结构： 行-列-单元格  行key为flatRowKey如’山东青岛‘  列key为flatColKey如’家具椅子‘
@@ -634,23 +710,6 @@ export class Dataset {
       this.dealWithZeroAlign();
     }
   }
-
-  // updatePagination(pagination: IPagination) {
-  //   this.pagination = pagination;
-
-  //   if (isValid(this.pagination?.perPageCount) && isValid(this.pagination?.currentPage)) {
-  //     //调整perPageCount的数量 需要是indicatorKeys.length的整数倍
-  //     this.pagination.perPageCount =
-  //       Math.ceil(this.pagination.perPageCount / this.indicatorKeys.length) * this.indicatorKeys.length;
-  //     const { perPageCount, currentPage } = this.pagination;
-  //     const startIndex = Math.ceil((perPageCount * (currentPage || 0)) / this.indicatorKeys.length);
-  //     const endIndex = startIndex + Math.ceil(perPageCount / this.indicatorKeys.length);
-  //     this.rowKeysPath = this.rowKeysPath_FULL?.slice(startIndex, endIndex);
-  //   } else {
-  //     this.rowKeysPath = this.rowKeysPath_FULL;
-  //   }
-  //   this.pagination && (this.pagination.totalCount = this.rowKeysPath_FULL?.length);
-  // }
   private getAggregatorRule(indicatorKey: string): AggregationRule<AggregationType> | undefined {
     return this.aggregationRules?.find((value: AggregationRule<AggregationType>, index: number) => {
       return indicatorKey === value.indicatorKey;
@@ -895,17 +954,26 @@ export class Dataset {
        * @param flatColKey
        */
       const colCompute = (flatRowKey: string, flatColKey: string) => {
+        if (this.totalRecordsTree?.[flatRowKey]?.[flatColKey]) {
+          // 利用汇总数据替换
+          this.tree[flatRowKey][flatColKey] = this.totalRecordsTree?.[flatRowKey]?.[flatColKey];
+          return;
+        }
         const colKey = flatColKey.split(this.stringJoinChar);
         for (let i = 0, len = that.totals?.column?.subTotalsDimensions?.length; i < len; i++) {
           const dimension = that.totals.column.subTotalsDimensions[i];
           const dimensionIndex = that.columns.indexOf(dimension);
           if (dimensionIndex >= 0) {
             const colTotalKey = colKey.slice(0, dimensionIndex + 1);
-            if (this.rowHierarchyType === 'grid') {
-              // 如果是tree的情况则不追加小计单元格值
-              colTotalKey.push(that.totals?.column?.subTotalLabel ?? '小计');
-            }
+            // if (this.rowHierarchyType === 'grid') {
+            colTotalKey.push(that.totals?.column?.subTotalLabel ?? '小计');
+            // }
             const flatColTotalKey = colTotalKey.join(this.stringJoinChar);
+            if (this.totalRecordsTree?.[flatRowKey]?.[flatColTotalKey]) {
+              // 利用汇总数据替换
+              this.tree[flatRowKey][flatColTotalKey] = this.totalRecordsTree?.[flatRowKey]?.[flatColTotalKey];
+              return;
+            }
             if (!this.tree[flatRowKey][flatColTotalKey]) {
               this.tree[flatRowKey][flatColTotalKey] = [];
             }
@@ -933,6 +1001,11 @@ export class Dataset {
         }
         if (that.totals?.column?.showGrandTotals || this.rows.length === 0) {
           const flatColTotalKey = that.colGrandTotalLabel;
+          if (this.totalRecordsTree?.[flatRowKey]?.[flatColTotalKey]) {
+            // 利用汇总数据替换
+            this.tree[flatRowKey][flatColTotalKey] = this.totalRecordsTree?.[flatRowKey]?.[flatColTotalKey];
+            return;
+          }
           if (!this.tree[flatRowKey][flatColTotalKey]) {
             this.tree[flatRowKey][flatColTotalKey] = [];
           }
@@ -1047,7 +1120,13 @@ export class Dataset {
    * @param arr
    * @returns
    */
-  private ArrToTree1(arr: string[][], rows: string[], indicators: (string | IIndicator)[]) {
+  private ArrToTree1(
+    arr: string[][],
+    rows: string[],
+    indicators: (string | IIndicator)[],
+    isGrandTotal: boolean,
+    grandTotalLabel: string
+  ) {
     /**
      *
      * @param {string} s 父级id
@@ -1100,7 +1179,9 @@ export class Dataset {
     }
 
     arr.forEach(item => addList(item));
-
+    if (isGrandTotal) {
+      addList([grandTotalLabel]);
+    }
     return result;
   }
   /**
