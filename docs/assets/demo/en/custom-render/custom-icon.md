@@ -11,7 +11,7 @@ link: '../guide/custom_define/custom_icon'
 
 Display icon content in cells
 
-## critical configuration
+## Key Configurationss
 
 *   `VTable.register.icon`  Registered custom icons can be used with columns \[x] .icon or columns \[x] .headerIcon. Or reset the internal icon
 

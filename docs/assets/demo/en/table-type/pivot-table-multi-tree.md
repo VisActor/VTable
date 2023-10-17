@@ -10,7 +10,7 @@ link: '../guide/table_type/Pivot_table/pivot_table_multi_tree'
 
 Pivot table multi-column tree display. Multiple columns belong to a special tree display structure and require the business party to pass in rowTree, columnTree and extensionRows.
 
-## critical configuration
+## Key Configurationss
 
 * `rowHierarchyType` Set the hierarchical presentation to`tree`, defaults to tiling mode`grid`.
 * `extensionRows` sets the extension row header, which takes effect when the option `rowHierarchyType` is `tree`.

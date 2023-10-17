@@ -11,7 +11,7 @@ link: '../guide/theme_and_style/theme'
 
 Custom Theme
 
-## critical configuration
+## Key Configurationss
 
 *   `theme` Configure Theme Name or Customize Theme Style
 

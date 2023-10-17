@@ -50,22 +50,6 @@
           }
         },
         {
-          "path": "list-table-header-group",
-          "title": {
-            "zh": "基本表格-表头分支",
-            "en": "List Table - Header Group"
-          },
-          "meta": {
-            "title": "List Table Header Group",
-            "keywords": "",
-            "category": "demo",
-            "group": "table-type",
-            "cover": "https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/list-table-header-group.png",
-            "link": "'../../guide/table_type/List_table/list_table_define_and_generate'",
-            "option": ""
-          }
-        },
-        {
           "path": "list-table-tree",
           "title": {
             "zh": "基本表格树形展示",
@@ -275,6 +259,13 @@
         "en": "basic-functionality"
       },
       "children": [
+        {
+          "path": "list-table-header-group",
+          "title": {
+            "zh": "基本表格表头分组",
+            "en": "List Table - Header Group"
+          }
+        },
         {
           "path": "auto-wrap-text",
           "title": {

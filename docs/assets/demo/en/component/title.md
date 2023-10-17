@@ -11,7 +11,7 @@ link: '../guide/components/title'
 
 In this example, the main subheadings of the table are configured and styled separately.
 
-## critical configuration
+## Key Configurationss
 
 *   `title` Configure the table title, please refer to: https://www.visactor.io/vtable/option/ListTable#title
 

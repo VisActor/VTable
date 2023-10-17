@@ -11,7 +11,7 @@ link: '../guide/interaction/hover_cell'
 
 Hover over a cell and highlight the entire row and column of the cell.
 
-## critical configuration
+## Key Configurationss
 
 *   `hover` Configure highlighting mode
 

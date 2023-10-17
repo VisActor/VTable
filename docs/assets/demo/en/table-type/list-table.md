@@ -11,7 +11,7 @@ link: '../guide/table_type/List_table/list_table_define_and_generate'
 
 Basic table
 
-## critical configuration
+## Key Configurationss
 
 \-`ListTable`
 

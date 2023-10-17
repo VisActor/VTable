@@ -11,7 +11,7 @@ link: '../guide/basic_function/row_height_column_width'
 
 Table row height fits container height
 
-## critical configuration
+## Key Configurationss
 
 *   `heightMode: 'adaptive'`
 

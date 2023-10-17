@@ -11,7 +11,7 @@ link: '/interaction/resize_column_width'
 
 The mouse style for adjusting the column width appears when the mouse is placed on the column spacer, and the column width can be adjusted by dragging.
 
-## critical configuration
+## Key Configurationss
 
 *   `columnResizeMode: 'all' | 'none' | 'header' | 'body'` Specify the Region where the column width can be adjusted
 *   `columnResizeType: 'column' | 'indicator' | 'all' | 'indicatorGroup'` Adjust the effective range of the column width, configurable items:

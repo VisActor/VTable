@@ -11,7 +11,7 @@ link: '../guide/basic_function/auto_wrap_text'
 
 Auto-wrap is turned on. When the column width changes, the text will automatically calculate the display content according to the width. When using this function, you need to enable autoRowHeight to display the wrapped text.
 
-## critical configuration
+## Key Configurationss
 
 *   'AutoWrapText: true 'Enable line wrapping
 

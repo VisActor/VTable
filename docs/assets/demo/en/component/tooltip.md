@@ -12,7 +12,7 @@ link: '../guide/components/tooltip'
 In this example, tooltip.isShowOverflowTextTooltip is configured to be true, and it will be prompted when the text that cannot be omitted is hover.
 At the same time through monitoring`mouseenter_cell`Event, when the mouse moves into the cell that meets the prompt condition \[first column order number], the interface showTooltip is called to display the prompt information.
 
-## critical configuration
+## Key Configurationss
 
 \-`tooltip.isShowOverflowTextTooltip` Enable the prompt for long omitted text
 

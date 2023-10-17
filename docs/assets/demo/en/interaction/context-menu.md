@@ -11,7 +11,7 @@ link: '../guide/components/dropdown'
 
 Right-click pop-up menu, if you need to click on the drop-down menu to continue the operation, you can listen to the event dropdownmenu\_click.
 
-## critical configuration
+## Key Configurationss
 
 *   `menu.contextMenuItems` Configure the relevant function drop-down menu that appears after right-clicking
 

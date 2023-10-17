@@ -10,7 +10,7 @@ order: 9-4
 
 This example analyzes sales data at different time granularities and month-on-month ratios, and uses a mini-line chart to show product sales trends from 2020-2021.
 
-## critical configuration
+## Key Configurationss
 
 *   `indicators[x].icon` Display different icons based on sales value to indicate rise and fall
 

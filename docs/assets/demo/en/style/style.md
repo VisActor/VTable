@@ -11,7 +11,7 @@ link: '../guide/theme_and_style/style'
 
 In this example, the styles of the header and body are configured by configuring headerStyle and style, respectively. All PivotTable columns with the same Dimension Category are set to the same background color, and Quantity, Sales and Profit in Metirc are set to different font colors.
 
-## critical configuration
+## Key Configurationss
 
 \-`headerStyle` Configure the header style of a Dimension
 

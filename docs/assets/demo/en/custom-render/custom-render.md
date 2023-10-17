@@ -11,7 +11,7 @@ link: '../guide/custom_define/custom_render'
 
 Set the current custom function through the column configuration item customRender
 
-## critical configuration
+## Key Configurationss
 
 *   `customRender` Configure the API to return what needs to be rendered
 
