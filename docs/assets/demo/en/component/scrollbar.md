@@ -11,7 +11,7 @@ link: '../guide/interaction/scroll'
 
 This example fighter has scrollbar configurable styles.
 
-## critical configuration
+## Key Configurations
 
 *   `theme.scrollStyle` Set the style of the scroll bar
 

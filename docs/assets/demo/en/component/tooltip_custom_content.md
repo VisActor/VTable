@@ -11,7 +11,7 @@ link: '../guide/components/tooltip'
 
 By listening`mouseenter_cell`Event, move the mouse into the cell to prompt the Dimension and Metirc information of the cell. By listening`mouseleave_cell`Event, the mouse leaves the cell to make the prompt box disappear.
 
-## critical configuration
+## Key Configurations
 
 *   `mouseenter_cell` event
 *   `mouseleave_cell` event

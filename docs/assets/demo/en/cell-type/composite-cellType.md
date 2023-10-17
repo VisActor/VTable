@@ -11,7 +11,7 @@ link: '../guide/cell_type/cellType'
 
 Specify the cell content type through the function form of cellType. Image source: https://birdsoftheworld.org/bow/home
 
-## Key configuration
+## Key Configurations
 
 cellType: (arg: CellInfo) => ColumnTypeOption;
 

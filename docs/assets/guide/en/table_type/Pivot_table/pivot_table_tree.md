@@ -1014,7 +1014,7 @@ It can be seen that the pivot table tree structure display function can clearly 
 ## Multi-columns tree structure configuration code example
 A common requirement for pivot tables is a one-layer tree structure, but some special businesses want a multi-layer structure to present data, such as the desire to see the sales of different regions under different categories.
 
-Key configuration items:
+Key Configurations items:
 ```
     extensionRows: [
       //The expanded row header dimension group, because it may be expanded to multiple, so here is an array form

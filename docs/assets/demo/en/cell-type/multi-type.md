@@ -11,7 +11,7 @@ link: '../guide/cell_type/cellType'
 
 Specify the cell content type by cellType. Image video source: https://birdsoftheworld.org/bow/home
 
-## critical configuration
+## Key Configurations
 
 headerType: 'text' | 'link' | 'image' | 'video';
 

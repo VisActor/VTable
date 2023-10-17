@@ -10,7 +10,7 @@ link: '../guide/table_type/Pivot_table/pivot_table_dataAnalysis'
 
 Pivot analysis tree table
 
-## Key configuration
+## Key Configurations
 
 - `PivotTable`
 - `rowHierarchyType` Set the hierarchical presentation to`tree`, defaults to tiling mode`grid`.

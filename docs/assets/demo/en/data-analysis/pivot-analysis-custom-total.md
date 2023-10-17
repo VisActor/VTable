@@ -10,7 +10,7 @@ link: '../guide/table_type/Pivot_table/pivot_table_dataAnalysis'
 
 Pivot analysis table data summary, if summary data is passed in the data source record, the table will give priority to using the user-input value as the summary value.
 
-## Key configuration
+## Key Configurations
 
 - `PivotTable`
 - `columns`

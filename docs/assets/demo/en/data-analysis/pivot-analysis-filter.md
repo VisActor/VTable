@@ -10,7 +10,7 @@ link: '../guide/table_type/Pivot_table/pivot_table_dataAnalysis'
 
 To perform pivot analysis table data data filtering rules, configure filterRules in dataConfig.
 
-## Key configuration
+## Key Configurations
 
 - `PivotTable`
 - `columns`

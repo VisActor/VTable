@@ -11,7 +11,7 @@ link: '../guide/cell_type/progressbar'
 
 Demonstrate multiple ways to use stripe types
 
-## critical configuration
+## Key Configurations
 
 headerType: 'text' | 'link' | 'image' | 'video';
 

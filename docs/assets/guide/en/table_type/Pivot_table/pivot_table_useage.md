@@ -2,7 +2,7 @@ In this section, we will introduce the core configuration items of pivot tables 
 
 ## Core configuration
 
-The following are the key configuration items and their descriptions for using pivot tables:
+The following are the Key Configurations items and their descriptions for using pivot tables:
 
 *   `container`: The container DOM element of the table, which needs to have width and height.
 *   `records`: The data of the table, represented as an array.

@@ -10,7 +10,7 @@ link: '../guide/table_type/Pivot_table/pivot_table_dataAnalysis'
 
 The pivot table is sorted according to the dimension value of a certain dimension. SortRules can be configured in dataConfig. Multiple sorting rules can be configured. The one configured first has a higher priority.
 
-## Key configuration
+## Key Configurations
 
 - `PivotTable`
 - `columns`
