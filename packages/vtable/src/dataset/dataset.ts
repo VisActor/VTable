@@ -954,6 +954,7 @@ export class Dataset {
        * @param flatColKey
        */
       const colCompute = (flatRowKey: string, flatColKey: string) => {
+        console.log('totalStatistics', flatRowKey);
         if (this.totalRecordsTree?.[flatRowKey]?.[flatColKey]) {
           // 利用汇总数据替换
           this.tree[flatRowKey][flatColKey] = this.totalRecordsTree?.[flatRowKey]?.[flatColKey];
@@ -1037,7 +1038,7 @@ export class Dataset {
           for (let i = 0, len = that.totals?.row?.subTotalsDimensions?.length; i < len; i++) {
             const dimension = that.totals.row.subTotalsDimensions[i];
             const dimensionIndex = that.rows.indexOf(dimension);
-            if (dimensionIndex >= 0) {
+            if (dimensionIndex >= 0 && dimensionIndex < that.rows.length - 1) {
               const rowTotalKey = rowKey.slice(0, dimensionIndex + 1);
               if (this.rowHierarchyType === 'grid') {
                 // 如果是tree的情况则不追加小计单元格值
@@ -1050,26 +1051,26 @@ export class Dataset {
               }
               if (!this.tree[flatRowTotalKey][flatColKey]) {
                 this.tree[flatRowTotalKey][flatColKey] = [];
-                for (let i = 0; i < this.indicatorKeys.length; i++) {
-                  if (!this.tree[flatRowTotalKey][flatColKey][i]) {
-                    const aggRule = this.getAggregatorRule(this.indicatorKeys[i]);
-                    this.tree[flatRowTotalKey][flatColKey][i] = new this.aggregators[
-                      aggRule?.aggregationType ?? AggregationType.SUM
-                    ](
-                      aggRule?.field ?? this.indicatorKeys[i],
-                      aggRule?.formatFun ??
-                        (
-                          this.indicators?.find((indicator: string | IIndicator) => {
-                            if (typeof indicator !== 'string') {
-                              return indicator.indicatorKey === this.indicatorKeys[i];
-                            }
-                            return false;
-                          }) as IIndicator
-                        )?.format
-                    );
-                  }
-                  this.tree[flatRowTotalKey][flatColKey][i].push(that.tree[flatRowKey]?.[flatColKey]?.[i]);
+              }
+              for (let i = 0; i < this.indicatorKeys.length; i++) {
+                if (!this.tree[flatRowTotalKey][flatColKey][i]) {
+                  const aggRule = this.getAggregatorRule(this.indicatorKeys[i]);
+                  this.tree[flatRowTotalKey][flatColKey][i] = new this.aggregators[
+                    aggRule?.aggregationType ?? AggregationType.SUM
+                  ](
+                    aggRule?.field ?? this.indicatorKeys[i],
+                    aggRule?.formatFun ??
+                      (
+                        this.indicators?.find((indicator: string | IIndicator) => {
+                          if (typeof indicator !== 'string') {
+                            return indicator.indicatorKey === this.indicatorKeys[i];
+                          }
+                          return false;
+                        }) as IIndicator
+                      )?.format
+                  );
                 }
+                this.tree[flatRowTotalKey][flatColKey][i].push(that.tree[flatRowKey]?.[flatColKey]?.[i]);
               }
             }
           }
