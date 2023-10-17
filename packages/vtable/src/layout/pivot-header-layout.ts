@@ -297,6 +297,20 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
         this.fullRowDimensionKeys = this.fullRowDimensionKeys.concat(rowKeys);
       });
     }
+
+    if (this._table.isPivotChart()) {
+      this.hasTwoIndicatorAxes = this._indicators.some(indicatorObject => {
+        if (
+          indicatorObject.chartSpec &&
+          indicatorObject.chartSpec.series &&
+          indicatorObject.chartSpec.series.length > 1
+        ) {
+          return true;
+        }
+        return false;
+      });
+    }
+
     //生成cornerHeaderObjs及_cornerHeaderCellIds
     if (this.cornerSetting.titleOnDimension === 'column') {
       this.cornerHeaderObjs = this._addCornerHeaders(
@@ -343,16 +357,6 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
     this.setPagination((table as PivotTable).options.pagination);
 
     if (this._table.isPivotChart()) {
-      this.hasTwoIndicatorAxes = this._indicators.some(indicatorObject => {
-        if (
-          indicatorObject.chartSpec &&
-          indicatorObject.chartSpec.series &&
-          indicatorObject.chartSpec.series.length > 1
-        ) {
-          return true;
-        }
-        return false;
-      });
       this._chartItemSpanSize = 0;
       this._chartItemBandSize = 0;
       // this._chartPadding ;
@@ -466,7 +470,7 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
       }) as IIndicator;
       const cell: HeaderData = {
         id,
-        title: hd.value ?? indicatorInfo.title,
+        title: hd.value ?? indicatorInfo?.title,
         field: hd.dimensionKey,
         style:
           typeof (indicatorInfo ?? dimensionInfo)?.headerStyle === 'function'
@@ -984,23 +988,85 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
     }
     return false;
   }
-  isRightFrozenColumn(col: number, row: number): boolean {
-    if (
-      col >= this.colCount - this.rightFrozenColCount &&
-      row >= this.columnHeaderLevelCount &&
-      row < this.rowCount - this.bottomFrozenRowCount
-    ) {
-      return true;
+  /**
+   * 是否属于冻结左侧列
+   * @param col
+   * @param row 不传的话 只需要判断col，传入row的话非冻结角头部分的才返回true
+   * @returns
+   */
+  isFrozenColumn(col: number, row?: number): boolean {
+    if (isValid(row)) {
+      if (col < this.frozenColCount && row >= this.frozenRowCount && row < this.rowCount - this.bottomFrozenRowCount) {
+        return true;
+      }
+    } else {
+      if (this.frozenColCount > 0 && col < this.frozenColCount) {
+        return true;
+      }
     }
     return false;
   }
-  isBottomFrozenRow(col: number, row: number): boolean {
-    if (
-      col >= this.rowHeaderLevelCount &&
-      row >= this.rowCount - this.bottomFrozenRowCount &&
-      col < this.colCount - this.rightFrozenColCount
-    ) {
-      return true;
+  /**
+   * 是否属于右侧冻结列
+   * @param col
+   * @param row 不传的话 只需要判断col，传入row的话非冻结角头部分的才返回true
+   * @returns
+   */
+  isRightFrozenColumn(col: number, row?: number): boolean {
+    if (isValid(row)) {
+      if (
+        col >= this.colCount - this.rightFrozenColCount &&
+        row >= this.frozenRowCount &&
+        row < this.rowCount - this.bottomFrozenRowCount
+      ) {
+        return true;
+      }
+    } else {
+      if (this.rightFrozenColCount > 0 && col >= this.colCount - this.rightFrozenColCount) {
+        return true;
+      }
+    }
+    return false;
+  }
+  /**
+   * 是否属于冻结顶部行
+   * @param col 只传入col一个值的话 会被当做row
+   * @param row 不传的话只需要判断col（其实会当做row）；传入两个值的话非冻结角头部分的才返回true
+   * @returns
+   */
+  isFrozenRow(col: number, row?: number): boolean {
+    if (isValid(row)) {
+      if (row < this.frozenRowCount && col >= this.frozenColCount && col < this.colCount - this.rightFrozenColCount) {
+        return true;
+      }
+    } else {
+      row = col;
+      if (this.frozenRowCount > 0 && row < this.frozenRowCount) {
+        return true;
+      }
+    }
+    return false;
+  }
+  /**
+   * 是否属于冻结底部行
+   * @param col 只传入col一个值的话 会被当做row
+   * @param row 不传的话只需要判断col（其实会当做row）；传入两个值的话非冻结角头部分的才返回true
+   * @returns
+   */
+  isBottomFrozenRow(col: number, row?: number): boolean {
+    if (isValid(row)) {
+      if (
+        row >= this.rowCount - this.bottomFrozenRowCount &&
+        col >= this.frozenColCount &&
+        col < this.colCount - this.rightFrozenColCount
+      ) {
+        return true;
+      }
+    } else {
+      row = col;
+      if (this.frozenRowCount > 0 && row >= this.rowCount - this.bottomFrozenRowCount) {
+        return true;
+      }
     }
     return false;
   }
@@ -1022,6 +1088,7 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
     }
     return false;
   }
+
   getColumnHeaderRange(): CellRange {
     return {
       start: { col: this.rowHeaderLevelCount, row: 0 },
@@ -1049,6 +1116,12 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
   resetCellIds() {
     // for (let row = 0; row < this.columnHeaderLevelCount; row++) {}
   }
+  get frozenColCount(): number {
+    return this._table.internalProps.frozenColCount ?? 0;
+  }
+  get frozenRowCount(): number {
+    return this._table.internalProps.frozenRowCount ?? 0;
+  }
   get headerLevelCount(): number {
     return this.columnHeaderLevelCount;
   }
@@ -1071,6 +1144,9 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
         : this.columnDimensionTree.totalLevel;
       if (this.columnHeaderTitle) {
         count += 1;
+      }
+      if (this._table.isPivotChart() && this.indicatorsAsCol && !this.hasTwoIndicatorAxes) {
+        count -= 1;
       }
       return count;
     }
@@ -1119,7 +1195,7 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
   }
   get rowCount(): number {
     // return this.rowDimensionTree.tree.size + this.columnHeaderLevelCount + this.bottomFrozenRowCount;
-    return Math.max(this._rowHeaderCellIds.length, 1) + this.columnHeaderLevelCount + this.bottomFrozenRowCount;
+    return (this._rowHeaderCellIds?.length ?? 0) + this.columnHeaderLevelCount + this.bottomFrozenRowCount;
   }
   get bodyRowCount() {
     return this.rowDimensionTree.tree.size;
@@ -1310,7 +1386,8 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
   // }
   getCellRange(col: number, row: number): CellRange {
     const result: CellRange = { start: { col, row }, end: { col, row } };
-    if (!this.isHeader(col, row) || col === -1 || row === -1 || this.isIndicatorHeader(col, row)) {
+    if (!this.isHeader(col, row) || col === -1 || row === -1) {
+      // || this.isIndicatorHeader(col, row)// 为什么加想不想来了 但是如果加上指标属于合并单元格的情况就会有问题了
       return result;
     }
 
@@ -2612,18 +2689,36 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
   get bottomAxesCount(): number {
     return this.bottomFrozenRowCount;
   }
-  getColKeysPath(col: number) {
-    const index = !this.indicatorsAsCol
-      ? col - this.rowHeaderLevelCount
-      : Math.floor((col - this.rowHeaderLevelCount) / this.indicatorKeys.length);
-    const colKey = this.dataset.colKeys[index];
+  getColKeysPath(col: number, row: number) {
+    // const index = !this.indicatorsAsCol
+    //   ? col - this.rowHeaderLevelCount
+    //   : Math.floor((col - this.rowHeaderLevelCount) / this.indicatorKeys.length);
+    // const colKey = this.dataset.colKeys[index];
+    const path = this.getCellHeaderPaths(col, row);
+    const colKey: string[] = [];
+    if (path.colHeaderPaths.length) {
+      path.colHeaderPaths.forEach(path => {
+        if (path.dimensionKey) {
+          colKey.push(path.value);
+        }
+      });
+    }
     return colKey?.join(this.dataset.stringJoinChar);
   }
-  getRowKeysPath(row: number) {
-    const index = this.indicatorsAsCol
-      ? row - this.columnHeaderLevelCount
-      : Math.floor((row - this.columnHeaderLevelCount) / this.indicatorKeys.length);
-    const rowKey = this.dataset.rowKeys[index];
+  getRowKeysPath(col: number, row: number) {
+    // const index = this.indicatorsAsCol
+    //   ? row - this.columnHeaderLevelCount
+    //   : Math.floor((row - this.columnHeaderLevelCount) / this.indicatorKeys.length);
+    // const rowKey = this.dataset.rowKeys[index];
+    const path = this.getCellHeaderPaths(col, row);
+    const rowKey: string[] = [];
+    if (path.rowHeaderPaths.length) {
+      path.rowHeaderPaths.forEach(path => {
+        if (path.dimensionKey) {
+          rowKey.push(path.value);
+        }
+      });
+    }
     return rowKey?.join(this.dataset.stringJoinChar);
   }
 

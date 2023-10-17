@@ -165,7 +165,7 @@ export class EventHandler {
     if (id == null) {
       return;
     }
-    const obj = this.listeners[id];
+    const obj = this.listeners?.[id];
     if (!obj) {
       return;
     }
@@ -217,6 +217,6 @@ export class EventHandler {
       return;
     }
     this.clear();
-    (this as any).listeners = null;
+    (this as any).listeners = {};
   }
 }

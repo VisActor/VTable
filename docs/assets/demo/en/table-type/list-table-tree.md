@@ -11,7 +11,7 @@ link: '../guide/table_type/List_table/tree_list'
 
 Basic table tree display, open the tree mode of a certain column, and cooperate with the tree structure children of the data source.
 
-## critical configuration
+## Key Configurations
 
 *   Tree: true Set on a column to turn on tree display
 

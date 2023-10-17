@@ -10,7 +10,7 @@ order: 9-3
 
 In this example, the styles of the header and body are configured by configuring headerStyle and style, respectively. All pivot columns with the same Dimension Category are set to the same background color, and Quantity, Sales and Profit in Metirc are set to different font colors. Data source: https://www.university-list.net/zhongguo/paiming/dx-100034.html
 
-## critical configuration
+## Key Configurations
 
 \-`headerStyle` Configure the header style of a Dimension
 

@@ -8,6 +8,7 @@ import { isEqual } from '@visactor/vutils';
 export class Title {
   table: BaseTableAPI;
   _titleOption: ITitle;
+  isReleased: boolean = false;
   private _titleComponent: TitleComponents;
   private _cacheAttrs: TitleAttrs;
   constructor(titleOption: ITitle, table: BaseTableAPI) {
@@ -42,6 +43,9 @@ export class Title {
     const realWidth =
       this._titleOption.width ??
       Math.min(this.table.tableNoFrameWidth, this.table.getDrawRange().width) - padding[1] - padding[3];
+    const realHeight =
+      this._titleOption.height ??
+      Math.min(this.table.tableNoFrameHeight, this.table.getDrawRange().height) - padding[0] - padding[2];
     this._titleComponent.setAttributes({
       x:
         this._titleOption.x ?? this._titleOption.orient === 'right'
@@ -51,7 +55,15 @@ export class Title {
         this._titleOption.y ?? this._titleOption.orient === 'bottom'
           ? this.table.tableY + this.table.tableNoFrameHeight
           : this.table.tableY,
-      width: realWidth,
+      // width: realWidth,
+      width:
+        this._titleOption.orient === 'top' || this._titleOption.orient === 'bottom'
+          ? realWidth
+          : this._titleOption.width,
+      height:
+        this._titleOption.orient === 'left' || this._titleOption.orient === 'right'
+          ? realHeight
+          : this._titleOption.height,
       textStyle: {
         width: realWidth,
         ...this._titleOption.textStyle
@@ -120,12 +132,16 @@ export class Title {
   release(): void {
     this._titleComponent && this.table.scenegraph.stage.defaultLayer.removeChild(this._titleComponent);
     this._titleComponent = null;
+    this.isReleased = true;
   }
   private _getTitleAttrs() {
     const padding = getQuadProps(this._titleOption.padding ?? 10);
     const realWidth =
       this._titleOption.width ??
       Math.min(this.table.tableNoFrameWidth, this.table.getDrawRange().width) - padding[1] - padding[3];
+    const realHeight =
+      this._titleOption.height ??
+      Math.min(this.table.tableNoFrameHeight, this.table.getDrawRange().height) - padding[0] - padding[2];
     return {
       text: this._titleOption.text ?? '',
       subtext: this._titleOption.subtext ?? '',
@@ -140,8 +156,11 @@ export class Title {
       width:
         this._titleOption.orient === 'top' || this._titleOption.orient === 'bottom'
           ? realWidth
+          : this._titleOption.width,
+      height:
+        this._titleOption.orient === 'left' || this._titleOption.orient === 'right'
+          ? realHeight
           : this._titleOption.height,
-      height: this._titleOption.height,
       minWidth: this._titleOption.minWidth,
       maxWidth: this._titleOption.maxWidth,
       minHeight: this._titleOption.minHeight,

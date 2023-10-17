@@ -3,15 +3,14 @@ category: examples
 group: table-type
 title: Pivot analysis table
 cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/pivot-table.png
-Order: 1-4
-link: '../guide/table_type/Pivot_table/pivot_table_useage'
+link: '../guide/table_type/Pivot_table/pivot_table_dataAnalysis'
 ---
 
 # Pivot analysis table
 
 Pivot analysis table
 
-## Key configuration
+## Key Configurations
 
 - `PivotTable`
 - `columns` 
@@ -19,7 +18,7 @@ Pivot analysis table
 - `indicators`
 - `enableDataAnalysis` turns on pivot data analysis
 - `dataConfig` configures data rules, optional configuration items
-## 代码演示
+##  Code demo
 
 ```javascript livedemo template=vtable
 
@@ -59,9 +58,6 @@ records:data,
                   "headerStyle":{
                     fontWeight: "normal",
                   },
-                   "format":(rec)=>{
-                    return '$'+Number(rec).toFixed(2)
-                  },
                    style:{
                     padding:[16,28,16,28],
                     color(args){
@@ -79,7 +75,7 @@ records:data,
                   "headerStyle":{
                     fontWeight: "normal",
                   },
-                  "format":(rec)=>{return '$'+Number(rec?.['Sales']).toFixed(2)},
+                  "format":(rec)=>{return '$'+Number(rec).toFixed(2)},
                   style:{
                     padding:[16,28,16,28],
                     color(args){

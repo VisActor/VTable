@@ -15,7 +15,7 @@ const option={
   rows:['region','province'], //行维度
   columns:['year','quarter'], //列维度
   indicators:['sales','profit'], //指标
-  records:[ //数据源
+  records:[ //数据源 如果传入了汇总数据则使用用户传入数据
     {
       region:'东北',
       province:'黑龙江',

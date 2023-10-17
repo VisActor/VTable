@@ -11,7 +11,7 @@ link: '../guide/basic_function/frozen_column'
 
 In order to keep these key information columns visible throughout the horizontal scroll, we need to "freeze" these columns.
 
-## critical configuration
+## Key Configurations
 
 *   `allowFrozenColCount`  Optional to freeze the first few columns, the default is 0
 *   `frozenColCount`  Initial number of frozen columns, default 0

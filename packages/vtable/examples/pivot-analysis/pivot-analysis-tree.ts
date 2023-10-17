@@ -4,8 +4,8 @@ const CONTAINER_ID = 'vTable';
 
 export function createTable() {
   const option: VTable.PivotTableConstructorOptions = {
-    rows: ['province', 'city', 'category'],
-    columns: ['sub_category'],
+    rows: ['province', 'city'],
+    columns: ['category', 'sub_category'],
     indicators: ['sales', 'number'],
     enableDataAnalysis: true,
     indicatorTitle: '指标名称',
@@ -17,6 +17,11 @@ export function createTable() {
           showGrandTotals: true,
           showSubTotals: true,
           subTotalsDimensions: ['province', 'city']
+        },
+        column: {
+          showGrandTotals: true,
+          showSubTotals: true,
+          subTotalsDimensions: ['category']
         }
       }
     },

@@ -9,6 +9,7 @@ By default, the row headers of a pivot table are displayed tiled. If the row hea
 
 The main configuration parameters displayed by the pivot table tree structure:
 
+*   indicatorsAsCol: Whether the indicator is displayed as the column header. The default is true. Note: Under the tree display setting, only true is supported here, that is, the indicator must be displayed as columns;
 *   rowHierarchyType: Set the display form of the row header hierarchy Dimension structure, and set it to'tree 'to realize tree display;
 *   rowExpandLevel: Set the default Expand level;
 *   rowHierarchyIndent: Sets the indent distance of the child-level Dimension value compared to the position of the parent-level Dimension value in the cell.
@@ -1013,7 +1014,7 @@ It can be seen that the pivot table tree structure display function can clearly 
 ## Multi-columns tree structure configuration code example
 A common requirement for pivot tables is a one-layer tree structure, but some special businesses want a multi-layer structure to present data, such as the desire to see the sales of different regions under different categories.
 
-Key configuration items:
+Key Configurations items:
 ```
     extensionRows: [
       //The expanded row header dimension group, because it may be expanded to multiple, so here is an array form
