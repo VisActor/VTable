@@ -6,7 +6,7 @@ cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/pivot-
 link: '../guide/table_type/Pivot_table/pivot_table_dataAnalysis'
 ---
 
-# Pivot analysis data filtering
+# Derived Field
 
 To pivot analysis table data data filtering rules, configure derivedFieldRules in dataConfig.
 
