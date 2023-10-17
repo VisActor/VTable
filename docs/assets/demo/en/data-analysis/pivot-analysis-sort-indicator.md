@@ -1,29 +1,29 @@
 ---
 category: examples
-group: table-type
-title: Pivot analysis table
-cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/pivot-table.png
+group: data-analysis
+title: Sort Indicator
+cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/pivot-analysis-sort-indicator.png
 link: '../guide/table_type/Pivot_table/pivot_table_dataAnalysis'
 ---
 
-# Pivot analysis table
+# Pivot analysis table is sorted by indicator value
 
-Pivot analysis table
+The pivot table is sorted according to the dimension value of a certain dimension. SortRules can be configured in dataConfig. Multiple sorting rules can be configured. The one configured first has a higher priority.
 
 ## Key configuration
 
 - `PivotTable`
-- `columns` 
+- `columns`
 - `rows`
 - `indicators`
 - `enableDataAnalysis` turns on pivot data analysis
 - `dataConfig` configures data rules, optional configuration items
-##  Code demo
+## Code demo
 
 ```javascript livedemo template=vtable
 
 let  tableInstance;
-  fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American_Superstore_Pivot_data.json')
+  fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American_Superstore_Pivot_Chart_data.json')
     .then((res) => res.json())
     .then((data) => {
 
@@ -31,8 +31,22 @@ const option = {
 records:data,
   "rows": [
       {
-          "dimensionKey": "City",
-          "title": "City",
+         "dimensionKey": "Category",
+          "title": "Category",
+          "headerStyle": {
+              "textStick": true,
+              bgColor(arg) {
+                if (arg.dataValue === 'Row Totals') {
+                  return '#ff9900';
+                }
+                return '#ECF1F5';
+              }
+          },
+          "width": "auto",
+      },
+      {
+         "dimensionKey": "Sub-Category",
+          "title": "Sub-Catogery",
           "headerStyle": {
               "textStick": true
           },
@@ -41,8 +55,16 @@ records:data,
   ],
   "columns": [
       {
-         "dimensionKey": "Category",
-          "title": "Category",
+         "dimensionKey": "Region",
+          "title": "Region",
+          "headerStyle": {
+              "textStick": true
+          },
+          "width": "auto",
+      },
+       {
+         "dimensionKey": "Segment",
+          "title": "Segment",
           "headerStyle": {
               "textStick": true
           },
@@ -64,6 +86,15 @@ records:data,
                       if(args.dataValue>=0)
                       return 'black';
                       return 'red'
+                    },
+                    bgColor(arg) {
+                      const rowHeaderPaths = arg.cellHeaderPaths.rowHeaderPaths;
+                      if (rowHeaderPaths?.[1]?.value === 'Sub Totals') {
+                        return '#ba54ba';
+                      } else if (rowHeaderPaths?.[0]?.value === 'Row Totals') {
+                        return '#ff9900';
+                      }
+                      return undefined;
                     }
                    }
               },
@@ -82,6 +113,15 @@ records:data,
                       if(args.dataValue>=0)
                       return 'black';
                       return 'red'
+                    },
+                     bgColor(arg) {
+                      const rowHeaderPaths = arg.cellHeaderPaths.rowHeaderPaths;
+                      if (rowHeaderPaths?.[1]?.value === 'Sub Totals') {
+                        return '#ba54ba';
+                      } else if (rowHeaderPaths?.[0]?.value === 'Row Totals') {
+                        return '#ff9900';
+                      }
+                      return undefined;
                     }
                    }
               },
@@ -100,6 +140,15 @@ records:data,
                       if(args.dataValue>=0)
                       return 'black';
                       return 'red'
+                    },
+                     bgColor(arg) {
+                      const rowHeaderPaths = arg.cellHeaderPaths.rowHeaderPaths;
+                      if (rowHeaderPaths?.[1]?.value === 'Sub Totals') {
+                        return '#ba54ba';
+                      } else if (rowHeaderPaths?.[0]?.value === 'Row Totals') {
+                        return '#ff9900';
+                      }
+                      return undefined;
                     }
                    }
               }
@@ -113,10 +162,16 @@ records:data,
   dataConfig: {
     sortRules: [
       {
-        sortField: 'Category',
-        sortBy: ['Office Supplies', 'Technology','Furniture']
+        sortField: 'Sub-Category',
+          sortByIndicator: 'Sales',
+          sortType: VTable.TYPES.SortType.DESC,
+          query: ['East', 'Consumer']
+      },
+      {
+        sortField: 'Region',
+        sortBy: ['East', 'Central']
       }
-    ]
+    ],
   },
   enableDataAnalysis: true,
   widthMode:'standard'

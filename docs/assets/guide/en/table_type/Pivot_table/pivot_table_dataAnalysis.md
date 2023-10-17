@@ -15,7 +15,7 @@ const option={
   rows:['region','province'], //row dimensions
   columns:['year','quarter'], //column dimensions
   indicators:['sales','profit'], //Indicators
-  records:[ //数据源
+  records:[ //Data source。 If summary data is passed in, use user incoming data
     {
       region:'东北',
       province:'黑龙江',

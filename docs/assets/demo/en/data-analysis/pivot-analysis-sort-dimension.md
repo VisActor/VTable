@@ -1,29 +1,29 @@
 ---
 category: examples
-group: table-type
-title: 透视分析表格
-cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/pivot-table.png
+group: data-analysis
+title: Sort Dimension
+cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/pivot-analysis-sort-dimension.png
 link: '../guide/table_type/Pivot_table/pivot_table_dataAnalysis'
 ---
 
-# 透视分析表格
+# Sort dimension values of pivot analysis table
 
-透视分析表格
+The pivot table is sorted according to the dimension value of a certain dimension. SortRules can be configured in dataConfig. Multiple sorting rules can be configured. The one configured first has a higher priority.
 
-## 关键配置
+## Key configuration
 
 - `PivotTable`
-- `columns` 
+- `columns`
 - `rows`
 - `indicators`
-- `enableDataAnalysis` 开启透视数据分析
-- `dataConfig` 配置数据规则，可选配置项
-## 代码演示
+- `enableDataAnalysis` turns on pivot data analysis
+- `dataConfig` configures data rules, optional configuration items
+## Code demo
 
 ```javascript livedemo template=vtable
 
 let  tableInstance;
-  fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American_Superstore_Pivot_data.json')
+  fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American_Superstore_Pivot_Chart_data.json')
     .then((res) => res.json())
     .then((data) => {
 
@@ -31,8 +31,16 @@ const option = {
 records:data,
   "rows": [
       {
-          "dimensionKey": "City",
-          "title": "City",
+         "dimensionKey": "Category",
+          "title": "Category",
+          "headerStyle": {
+              "textStick": true
+          },
+          "width": "auto",
+      },
+      {
+         "dimensionKey": "Sub-Category",
+          "title": "Sub-Catogery",
           "headerStyle": {
               "textStick": true
           },
@@ -41,8 +49,16 @@ records:data,
   ],
   "columns": [
       {
-         "dimensionKey": "Category",
-          "title": "Category",
+         "dimensionKey": "Region",
+          "title": "Region",
+          "headerStyle": {
+              "textStick": true
+          },
+          "width": "auto",
+      },
+       {
+         "dimensionKey": "Segment",
+          "title": "Segment",
           "headerStyle": {
               "textStick": true
           },
@@ -115,8 +131,12 @@ records:data,
       {
         sortField: 'Category',
         sortBy: ['Office Supplies', 'Technology','Furniture']
+      },
+      {
+        sortField: 'Sub-Category',
+        sortBy: ['Chairs', 'Tables','Labels', 'Art', 'Paper', 'Appliances']
       }
-    ]
+    ],
   },
   enableDataAnalysis: true,
   widthMode:'standard'

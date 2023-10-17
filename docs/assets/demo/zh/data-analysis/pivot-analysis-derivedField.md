@@ -1,14 +1,14 @@
 ---
 category: examples
-group: table-type
-title: 透视分析表格
-cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/pivot-table.png
+group: data-analysis
+title: 派生字段
+cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/pivot-analysis-derivedField.png
 link: '../guide/table_type/Pivot_table/pivot_table_dataAnalysis'
 ---
 
-# 透视分析表格
+# 透视分析数据过滤
 
-透视分析表格
+透视分析表格数据数据过滤规则，在dataConfig中配置derivedFieldRules。
 
 ## 关键配置
 
@@ -23,7 +23,7 @@ link: '../guide/table_type/Pivot_table/pivot_table_dataAnalysis'
 ```javascript livedemo template=vtable
 
 let  tableInstance;
-  fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American_Superstore_Pivot_data.json')
+  fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American_Superstore_data.json')
     .then((res) => res.json())
     .then((data) => {
 
@@ -31,8 +31,16 @@ const option = {
 records:data,
   "rows": [
       {
-          "dimensionKey": "City",
-          "title": "City",
+         "dimensionKey": "Category",
+          "title": "Category",
+          "headerStyle": {
+              "textStick": true
+          },
+          "width": "auto",
+      },
+      {
+         "dimensionKey": "Sub-Category",
+          "title": "Sub-Catogery",
           "headerStyle": {
               "textStick": true
           },
@@ -41,8 +49,16 @@ records:data,
   ],
   "columns": [
       {
-         "dimensionKey": "Category",
-          "title": "Category",
+         "dimensionKey": "Year",
+          "title": "Year",
+          "headerStyle": {
+              "textStick": true
+          },
+          "width": "auto",
+      },
+       {
+         "dimensionKey": "Month",
+          "title": "Month",
           "headerStyle": {
               "textStick": true
           },
@@ -111,12 +127,22 @@ records:data,
       }
   },
   dataConfig: {
+    derivedFieldRules: [
+      {
+        fieldName: 'Year',
+        derivedFunc: VTable.DataStatistics.dateFormat('Order Date', '%y', true),
+      },
+      {
+        fieldName: 'Month',
+        derivedFunc: VTable.DataStatistics.dateFormat('Order Date', '%n', true),
+      }
+    ],
     sortRules: [
       {
-        sortField: 'Category',
-        sortBy: ['Office Supplies', 'Technology','Furniture']
-      }
-    ]
+        sortField: 'Month',
+        sortBy: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+      },
+    ],
   },
   enableDataAnalysis: true,
   widthMode:'standard'

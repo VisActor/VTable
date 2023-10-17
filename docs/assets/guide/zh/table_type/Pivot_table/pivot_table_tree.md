@@ -8,7 +8,7 @@
 ## 配置项
 
 透视表树形结构展示的主要配置参数：
-
+*   indicatorsAsCol：指标是否作为列表头展示，默认为true；注意：树形展示的设置下，这里只支持设置为true，也就是指标必须显示在列表头上；
 *   rowHierarchyType：设置行表头层级维度结构的显示形式，将其设置为 'tree' 来实现树形展示；
 *   rowExpandLevel：设置默认展开层数；
 *   rowHierarchyIndent：设置子层级维度值相比父级维度值在单元格中位置的缩进距离。

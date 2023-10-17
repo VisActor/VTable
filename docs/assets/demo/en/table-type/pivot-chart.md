@@ -3,7 +3,6 @@ category: examples
 group: table-type
 title: Pivot Chart
 cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/pivot-chart.png
-order: 1-5
 link: '../guide/table_type/pivot_chart'
 ---
 

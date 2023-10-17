@@ -9,11 +9,19 @@ link: '../guide/table_type/Pivot_table/pivot_table_tree'
 
 # 透视表格树形展示
 
-透视表格树形展示
+透视表格树形展示，该示例传入了自定义表头树结构rowTree和columnTree，设置rowHierarchyType为tree。
+
+需要注意的是indicatorsAsCol不能设置为false，因为目前不支持当展示为tree结构的表头时指标在行表头上。
 
 ## 关键配置
 
+- `PivotTable`
 - `rowHierarchyType` 将层级展示设置为`tree`，默认为平铺模式`grid`。
+- `columnTree`
+- `rowTree`
+- `columns` 可选 配置维度的样式等
+- `rows`可选 配置维度的样式等
+- `indicators`
 ## 代码演示
 
 ```javascript livedemo template=vtable

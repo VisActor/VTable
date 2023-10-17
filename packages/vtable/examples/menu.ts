@@ -281,6 +281,14 @@ export const menus = [
       },
       {
         path: 'pivot-analysis',
+        name: 'pivot-analysis-totalData'
+      },
+      {
+        path: 'pivot-analysis',
+        name: 'pivot-analysis-totalData-tree'
+      },
+      {
+        path: 'pivot-analysis',
         name: 'pivot-analysis-more-data'
       },
       {
