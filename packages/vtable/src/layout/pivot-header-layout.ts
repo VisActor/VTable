@@ -1383,7 +1383,8 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
   // }
   getCellRange(col: number, row: number): CellRange {
     const result: CellRange = { start: { col, row }, end: { col, row } };
-    if (!this.isHeader(col, row) || col === -1 || row === -1 || this.isIndicatorHeader(col, row)) {
+    if (!this.isHeader(col, row) || col === -1 || row === -1) {
+      // || this.isIndicatorHeader(col, row)
       return result;
     }
 
