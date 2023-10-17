@@ -2,9 +2,8 @@
 category: examples
 group: table-type
 title: 透视分析表格
-cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/pivot-table.png
-order: 1-4
-link: '../guide/table_type/Pivot_table/pivot_table_useage'
+cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/pivot-analysis-table-tree.png
+link: '../guide/table_type/Pivot_table/pivot_table_dataAnalysis'
 ---
 
 # 透视分析表格树形展示
@@ -42,7 +41,7 @@ records:data,
       },
       {
          "dimensionKey": "Sub-Category",
-          "title": "Category",
+          "title": "Sub-Catogery",
           "headerStyle": {
               "textStick": true
           },

@@ -1,25 +1,24 @@
 ---
 category: examples
-group: table-type
-title: Pivot analysis tree table
-cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/pivot-analysis-table-tree.png
+group: data-analysis
+title: Pivot Analysis Total
+cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/pivot-analysis-total.png
 link: '../guide/table_type/Pivot_table/pivot_table_dataAnalysis'
 ---
 
-# Pivot analysis tree table
+# Pivot Analysis - Subtotal Total
 
-Pivot analysis tree table
+To summarize table data in pivot analysis, configure totals in dataConfig to set the total subtotal of the row and column dimensions.
 
 ## Key configuration
 
 - `PivotTable`
-- `rowHierarchyType` Set the hierarchical presentation to`tree`, defaults to tiling mode`grid`.
-- `columns` 
+- `columns`
 - `rows`
 - `indicators`
 - `enableDataAnalysis` turns on pivot data analysis
 - `dataConfig` configures data rules, optional configuration items
-##  Code demo
+## Code demo
 
 ```javascript livedemo template=vtable
 
@@ -35,7 +34,13 @@ records:data,
          "dimensionKey": "Category",
           "title": "Category",
           "headerStyle": {
-              "textStick": true
+              "textStick": true,
+              bgColor(arg) {
+                if (arg.dataValue === 'Row Totals') {
+                  return '#ff9900';
+                }
+                return '#ECF1F5';
+              }
           },
           "width": "auto",
       },
@@ -43,7 +48,13 @@ records:data,
          "dimensionKey": "Sub-Category",
           "title": "Sub-Catogery",
           "headerStyle": {
-              "textStick": true
+              "textStick": true,
+              bgColor(arg) {
+                if (arg.dataValue === 'Sub Totals') {
+                  return '#ba54ba';
+                }
+                return '#ECF1F5';
+              }
           },
           "width": "auto",
       },
@@ -81,6 +92,15 @@ records:data,
                       if(args.dataValue>=0)
                       return 'black';
                       return 'red'
+                    },
+                    bgColor(arg) {
+                      const rowHeaderPaths = arg.cellHeaderPaths.rowHeaderPaths;
+                      if (rowHeaderPaths?.[1]?.value === 'Sub Totals') {
+                        return '#ba54ba';
+                      } else if (rowHeaderPaths?.[0]?.value === 'Row Totals') {
+                        return '#ff9900';
+                      }
+                      return undefined;
                     }
                    }
               },
@@ -99,6 +119,15 @@ records:data,
                       if(args.dataValue>=0)
                       return 'black';
                       return 'red'
+                    },
+                     bgColor(arg) {
+                      const rowHeaderPaths = arg.cellHeaderPaths.rowHeaderPaths;
+                      if (rowHeaderPaths?.[1]?.value === 'Sub Totals') {
+                        return '#ba54ba';
+                      } else if (rowHeaderPaths?.[0]?.value === 'Row Totals') {
+                        return '#ff9900';
+                      }
+                      return undefined;
                     }
                    }
               },
@@ -117,6 +146,15 @@ records:data,
                       if(args.dataValue>=0)
                       return 'black';
                       return 'red'
+                    },
+                     bgColor(arg) {
+                      const rowHeaderPaths = arg.cellHeaderPaths.rowHeaderPaths;
+                      if (rowHeaderPaths?.[1]?.value === 'Sub Totals') {
+                        return '#ba54ba';
+                      } else if (rowHeaderPaths?.[0]?.value === 'Row Totals') {
+                        return '#ff9900';
+                      }
+                      return undefined;
                     }
                    }
               }
@@ -128,22 +166,24 @@ records:data,
       }
   },
   dataConfig: {
-    sortRules: [
-      {
-        sortField: 'Category',
-        sortBy: ['Office Supplies', 'Technology','Furniture']
-      }
-    ],
     totals: {
         row: {
+          showGrandTotals: true,
           showSubTotals: true,
           subTotalsDimensions: ['Category'],
-          subTotalLabel: 'subtotal'
+          grandTotalLabel: 'Row Totals',
+          subTotalLabel: 'Sub Totals'
+        },
+        column: {
+          showGrandTotals: true,
+          showSubTotals: true,
+          subTotalsDimensions: ['Region'],
+          grandTotalLabel: 'Column Totals',
+          subTotalLabel: 'Sub Totals'
         }
-      }
+      },
   },
   enableDataAnalysis: true,
-  rowHierarchyType: 'tree',
   widthMode:'standard'
 };
 tableInstance = new VTable.PivotTable(document.getElementById(CONTAINER_ID),option);
