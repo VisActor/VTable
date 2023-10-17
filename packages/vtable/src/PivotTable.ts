@@ -27,6 +27,7 @@ import { BaseTable } from './core/BaseTable';
 import type { PivotTableProtected } from './ts-types/base-table';
 import { Title } from './components/title/title';
 import { cloneDeep } from '@visactor/vutils';
+import { Env } from './tools/env';
 
 export class PivotTable extends BaseTable implements PivotTableAPI {
   declare internalProps: PivotTableProtected;
@@ -40,7 +41,10 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
   constructor(options: PivotTableConstructorOptions);
   constructor(container: HTMLElement, options: PivotTableConstructorOptions);
   constructor(container?: HTMLElement | PivotTableConstructorOptions, options?: PivotTableConstructorOptions) {
-    if (!(container instanceof HTMLElement)) {
+    if (Env.mode === 'node') {
+      options = container as PivotTableConstructorOptions;
+      container = null;
+    } else if (!(container instanceof HTMLElement)) {
       options = container as PivotTableConstructorOptions;
       if ((container as PivotTableConstructorOptions).container) {
         container = (container as PivotTableConstructorOptions).container;
