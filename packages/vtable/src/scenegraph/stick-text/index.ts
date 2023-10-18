@@ -31,6 +31,9 @@ export function handleTextStick(table: BaseTableAPI) {
     table.getAllColsWidth() > table.tableNoFrameWidth
       ? table.getColAt(scrollLeft + table.tableNoFrameWidth - 1).col
       : table.colCount - 1;
+  if (colEnd < 0 || rowEnd < 0) {
+    return;
+  }
   // 列表头单元格
   for (let row = 0; row < frozenRowCount; row++) {
     for (let col = colStart; col <= colEnd; col++) {
