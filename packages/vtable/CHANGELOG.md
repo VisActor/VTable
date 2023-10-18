@@ -1,6 +1,18 @@
 # Change Log - @visactor/vtable
 
-This log was last generated on Tue, 17 Oct 2023 11:39:37 GMT and should not be manually modified.
+This log was last generated on Wed, 18 Oct 2023 11:47:45 GMT and should not be manually modified.
+
+## 0.12.2
+Wed, 18 Oct 2023 11:47:45 GMT
+
+### Patches
+
+- docs: add option to all demos
+
+
+- fix: init listtable with blank columns occur error #405
+
+
 
 ## 0.12.1
 Tue, 17 Oct 2023 11:39:37 GMT
