@@ -12,6 +12,10 @@ This example shows the main R & D roadmap that follows VTable
 
 ## Key Configurations
 
+- register.icon
+- headerIcon
+- icon
+
 ## Code demo
 
 ```javascript livedemo template=vtable

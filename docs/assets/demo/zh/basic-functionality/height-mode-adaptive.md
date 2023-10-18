@@ -5,6 +5,7 @@ title: 适应容器高度
 cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/width-mode-adaptive.png
 order: 3-5
 link: '../guide/basic_function/row_height_column_width'
+option: ListTable#heightMode
 ---
 
 # 行高模式-适应容器高度

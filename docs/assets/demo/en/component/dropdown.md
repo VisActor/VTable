@@ -5,6 +5,7 @@ title: Drop Down Menu
 cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/dropdown.png
 order: 8-2
 link: '../guide/components/dropdown'
+option: ListTable-columns-text#dropDownMenu
 ---
 
 # drop down menu

@@ -209,5 +209,5 @@ ${prefix} tree (boolean)
     ]
 }
 ```
-
-可参考示例：[TODO](https://github.com/VisActor/VTable/pull/291)
+${prefix} columns (Array)
+同上层的列配置数组，嵌套结构来描述列分组关系。

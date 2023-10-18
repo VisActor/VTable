@@ -4,9 +4,10 @@ group: data-analysis
 title: 派生字段
 cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/pivot-analysis-derivedField.png
 link: '../guide/table_type/Pivot_table/pivot_table_dataAnalysis'
+option: PivotTable#dataConfig.derivedFieldRules
 ---
 
-# 透视分析数据过滤
+# 派生字段
 
 透视分析表格数据数据过滤规则，在dataConfig中配置derivedFieldRules。
 

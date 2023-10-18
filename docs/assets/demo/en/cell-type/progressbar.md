@@ -5,6 +5,7 @@ title: Progressba Type
 cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/progressbar.png
 order: 2-2
 link: '../guide/cell_type/progressbar'
+option: ListTable-columns-progressbar#cellType
 ---
 
 # Data Bar Type

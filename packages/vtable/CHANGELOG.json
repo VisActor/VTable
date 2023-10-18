@@ -2,6 +2,21 @@
   "name": "@visactor/vtable",
   "entries": [
     {
+      "version": "0.12.2",
+      "tag": "@visactor/vtable_v0.12.2",
+      "date": "Wed, 18 Oct 2023 11:47:45 GMT",
+      "comments": {
+        "patch": [
+          {
+            "comment": "docs: add option to all demos\n\n"
+          },
+          {
+            "comment": "fix: init listtable with blank columns occur error #405\n\n"
+          }
+        ]
+      }
+    },
+    {
       "version": "0.12.1",
       "tag": "@visactor/vtable_v0.12.1",
       "date": "Tue, 17 Oct 2023 11:39:37 GMT",

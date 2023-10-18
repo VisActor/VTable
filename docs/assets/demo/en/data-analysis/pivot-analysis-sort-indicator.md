@@ -4,6 +4,7 @@ group: data-analysis
 title: Sort Indicator
 cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/pivot-analysis-sort-indicator.png
 link: '../guide/table_type/Pivot_table/pivot_table_dataAnalysis'
+option: PivotTable#dataConfig.sortRules
 ---
 
 # Pivot analysis table is sorted by indicator value

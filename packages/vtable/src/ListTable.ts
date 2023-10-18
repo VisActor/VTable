@@ -159,6 +159,9 @@ export class ListTable extends BaseTable implements ListTableAPI {
   }
   /** 获取单元格展示值 */
   getCellValue(col: number, row: number): FieldData {
+    if (col === -1 || row === -1) {
+      return null;
+    }
     const table = this;
     if (table.internalProps.layoutMap.isHeader(col, row)) {
       const { title } = table.internalProps.layoutMap.getHeader(col, row);
@@ -169,6 +172,9 @@ export class ListTable extends BaseTable implements ListTableAPI {
   }
   /** 获取单元格展示数据的原始值 */
   getCellOriginValue(col: number, row: number): FieldData {
+    if (col === -1 || row === -1) {
+      return null;
+    }
     const table = this;
     if (table.internalProps.layoutMap.isHeader(col, row)) {
       const { title } = table.internalProps.layoutMap.getHeader(col, row);

@@ -5,6 +5,7 @@ title: Theme - DEFAULT
 cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/default.png
 order: 6-0
 link: '../guide/theme_and_style/theme'
+option: ListTable#theme.bodyStyle.bgColor
 ---
 
 # Form Theme - DEFAULT

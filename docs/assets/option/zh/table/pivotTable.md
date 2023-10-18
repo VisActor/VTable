@@ -49,6 +49,158 @@
 ]
 ```
 
+## enableDataAnalysis(boolean)
+透视表是否开启数据分析。
+
+如果传入的数据records是明细数据，需要VTable做聚合分析则开启该配置。
+
+如传入数据是经过聚合好的，为了提升性能这里设置为false，同时要求传入columnTree和rowTree。
+## dataConfig(IDataConfig)
+数据分析相关配置 enableDataAnalysis开启后该配置才会有效。
+```
+/**
+ * 数据处理配置
+ */
+export interface IDataConfig {
+  aggregationRules?: AggregationRules; //按照行列维度聚合值计算规则；
+  sortRules?: SortRules; //排序规则；
+  filterRules?: FilterRules; //过滤规则；
+  totals?: Totals; //小计或总计；
+  /**
+   * 目前mappding还不太好用  不建议使用  建议先用style
+   */
+  mappingRules?: MappingRules;
+  derivedFieldRules?: DerivedFieldRules;
+}
+```
+
+### aggregationRules(AggregationRules)
+求指标的聚合方式；具体AggregationRules的定义如下：
+```
+export type AggregationRules = AggregationRule<AggregationType>[];
+
+export interface AggregationRule<T extends AggregationType> {
+  /** 区别于field 重新起个key值，供配置indicators使用 */
+  indicatorKey: string;
+  // 可以收集单个字段的聚合结果，或者收集多个字段的聚合结果
+  field: T extends AggregationType.RECORD ? string[] | string : string;
+  aggregationType: T;
+  /**计算结果格式化 */
+  formatFun?: (num: number) => string;
+}
+```
+其中AggregationType聚合方式有如下6种，最常用的是SUM。RECORD类型主要是给透视图内部使用的。
+```
+export enum AggregationType {
+  RECORD = 'RECORD',
+  SUM = 'SUM',
+  MIN = 'MIN',
+  MAX = 'MAX',
+  AVG = 'AVG',
+  COUNT = 'COUNT'
+}
+```
+### sortRules(SortRules)
+排序规则配置，具体定义如下：
+```
+export type SortRules = SortRule[];
+export type SortRule = SortTypeRule | SortByRule | SortByIndicatorRule | SortFuncRule;
+```
+其中排序规则支持四种方式：
+1. SortTypeRule: 根据字段排序，如根据年份升序排列:`{"sortField": "Year", "sortType": "ASC"}`。
+```
+//1. 指定排序类型
+export interface SortTypeRule {
+  /**排序维度 */
+  sortField: string;
+  /**升序降序 ASC or DESC*/
+  sortType?: SortType;
+}
+```
+2. SortByRule:按维度成员指定排序，如根据地区维度值排列:`{"sortField": "Region", "sortBy": ["华南","华中","华北","中南","西南"]}`。
+```
+//2. 按维度成员指定排序
+export interface SortByRule {
+  /**排序维度 */
+  sortField: string;
+  /**根据指定具体顺序排序 */
+  sortBy?: string[];
+}
+```
+3. SortByIndicatorRule:根据指标值排序，如根据类别办公用下销售金额降序来排列地区维度值:`{sortField:'Region',sortByIndicator: "Sales", sortType: "DESC",query:['办公用品']}`。
+```
+//3. 按指标值排序
+export interface SortByIndicatorRule {
+  /**排序维度 */
+  sortField: string;
+  /**升序降序 ASC or DESC*/
+  sortType?: SortType;
+  /**排序根据某个指标值 */
+  sortByIndicator?: string;
+  /**如果按指标值排序，还需要指定另外一个（行或列）方向的底层维度成员具体值。例如按照办公用品下的纸张 ['办公用品', '纸张'] */
+  query?: string[];
+}
+```
+4. SortFuncRule: 支持通过函数自定义排序规则，如根据计算后的指标值排序:`{"sortField": "Region", sortFunc: (a, b) => a.sales - b.sales}`。
+```
+//4. 自定义排序方法function
+export interface SortFuncRule {
+  /**排序维度 */
+  sortField: string;
+  /**自定义排序函数 */
+  sortFunc?: (a: any, b: any) => number;
+}
+```
+### filterRules(FilterRules)
+数据过滤规则，具体类型定义：
+```
+export type FilterRules = FilterRule[];
+```
+过滤规则可设置多重，只有每一项过滤规则都满足的情况下数据才会被保留。
+```
+//#region 过滤规则
+export interface FilterRule {
+  filterKey?: string;
+  filteredValues?: unknown[];
+  filterFunc?: (row: Record<string, any>) => boolean;
+}
+```
+### totals(Totals)
+设置汇总，小计总计。
+```
+export interface Totals {
+  row?: Total;
+  column?: Total;
+}
+```
+
+行或列方法分别设置汇总规则：
+```
+export interface Total {
+  // 是否显示总计
+  showGrandTotals: boolean;
+  // 是否显示小计
+  showSubTotals: boolean;
+  // 小计汇总维度定义
+  subTotalsDimensions?: string[];
+  // 默认'总计'
+  grandTotalLabel?: string;
+  // 默认'小计'
+  subTotalLabel?: string;
+}
+```
+### derivedFieldRules(DerivedFieldRules)
+增加派生字段
+```
+export type DerivedFieldRules = DerivedFieldRule[];
+```
+具体作用是为源数据生产新字段的方式，由用户自定义，这个功能主要是给每条数据新增了一个字段，这个字段可以用到其他数据规则中，如sort或者作为指标或者作为columns中的某一次维度。
+```
+export interface DerivedFieldRule {
+  fieldName?: string;
+  derivedFunc?: (record: Record<string, any>) => any;
+}
+```
 ## columnTree(Array)
 
 列表头树，类型为:`IDimensionHeaderNode|IIndicatorHeaderNode[]`。其中 IDimensionHeaderNode 指的是维度非指标的维度值节点，IIndicatorHeaderNode 指的是指标名称节点。

@@ -5,6 +5,7 @@ title: hover行列十字高亮
 cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/hover-cross.png
 order: 4-3
 link: '../guide/interaction/hover_cell'
+option: ListTable#hover.highlightMode('cross'%7C'column'%7C'row'%7C'cell')%20=%20'cross'
 ---
 
 # hover行列十字高亮

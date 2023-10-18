@@ -48,7 +48,158 @@ Currently, it supports incoming flattened data formats, taking the sales of larg
   }
 ]
 ```
+## enableDataAnalysis(boolean)
+Whether the pivot table enables data analysis.
 
+If the incoming data records are detailed data and VTable is required for aggregate analysis, enable this configuration.
+
+If the incoming data is aggregated, in order to improve performance, it is set to false and columnTree and rowTree are required to be passed in.
+## dataConfig(IDataConfig)
+Data analysis related configuration This configuration will be effective only after enableDataAnalysis is turned on.
+```
+/**
+ * Data processing configuration
+ */
+export interface IDataConfig {
+  aggregationRules?: AggregationRules; //Aggregation value calculation rules according to row and column dimensions;
+  sortRules?: SortRules; //Sort rules;
+  filterRules?: FilterRules; //Filter rules;
+  totals?: Totals; //Subtotal or total;
+  /**
+   * At present, mapping is not easy to use. It is not recommended to use it. It is recommended to use style first.
+   */
+  mappingRules?: MappingRules;
+  derivedFieldRules?: DerivedFieldRules;
+}
+```
+
+### aggregationRules(AggregationRules)
+Find the aggregation method of indicators; the specific definition of AggregationRules is as follows:
+```
+export type AggregationRules = AggregationRule<AggregationType>[];
+
+export interface AggregationRule<T extends AggregationType> {
+  /** Different from field, re-create the key value for use by configuring indicators */
+  indicatorKey: string;
+  // You can collect the aggregate results of a single field, or collect the aggregate results of multiple fields
+  field: T extends AggregationType.RECORD ? string[] | string : string;
+  aggregationType: T;
+  /**Formatting calculation results */
+  formatFun?: (num: number) => string;
+}
+```
+Among them, the AggregationType aggregation methods include the following 6 types, the most commonly used one is SUM. The RECORD type is mainly used internally by perspectives.
+```
+export enum AggregationType {
+  RECORD = 'RECORD',
+  SUM = 'SUM',
+  MIN = 'MIN',
+  MAX = 'MAX',
+  AVG = 'AVG',
+  COUNT = 'COUNT'
+}
+```
+### sortRules(SortRules)
+Sorting rule configuration, specifically defined as follows:
+```
+export type SortRules = SortRule[];
+export type SortRule = SortTypeRule | SortByRule | SortByIndicatorRule | SortFuncRule;
+```
+The sorting rules support four methods:
+1. SortTypeRule: Sort by field, such as ascending order by year: `{"sortField": "Year", "sortType": "ASC"}`.
+```
+//1. Specify the sorting type
+export interface SortTypeRule {
+  /**Sort dimensions */
+  sortField: string;
+  /**Ascending order Descending order ASC or DESC*/
+  sortType?: SortType;
+}
+```
+2. SortByRule: Sort by dimension members specified, such as sorting by region dimension value: `{"sortField": "Region", "sortBy": ["South China", "Central China", "North China", "Central South", "Southwest China" "]}`.
+```
+//2. Sort by dimension member specification
+export interface SortByRule {
+  /**Sort dimensions */
+  sortField: string;
+  /** Sort according to the specified order */
+  sortBy?: string[];
+}
+```
+3. SortByIndicatorRule: Sort according to the indicator value, such as sorting the regional dimension values in descending order according to the sales amount under the category office supplies: `{sortField:'Region',sortByIndicator: "Sales", sortType: "DESC",query:['Office supplies ']}`.
+```
+//3. Sort by indicator value
+export interface SortByIndicatorRule {
+  /**Sort dimensions */
+  sortField: string;
+  /**Ascending order Descending order ASC or DESC*/
+  sortType?: SortType;
+  /** Sort according to a certain indicator value */
+  sortByIndicator?: string;
+  /**If you sort by indicator value, you also need to specify the specific value of the underlying dimension member in another (row or column) direction. For example, according to the paper under office supplies ['office supplies', 'paper'] */
+  query?: string[];
+}
+```
+4. SortFuncRule: supports custom sorting rules through functions, such as sorting based on calculated indicator values: `{"sortField": "Region", sortFunc: (a, b) => a.sales - b.sales}`.
+```
+//4. Custom sorting method function
+export interface SortFuncRule {
+  /**Sort dimensions */
+  sortField: string;
+  /**Custom sorting function */
+  sortFunc?: (a: any, b: any) => number;
+}
+```
+### filterRules(FilterRules)
+Data filtering rules, specific type definition:
+```
+export type FilterRules = FilterRule[];
+```
+Multiple filtering rules can be set, and data will be retained only if each filtering rule is met.
+```
+//#region filter rules
+export interface FilterRule {
+  filterKey?: string;
+  filteredValues?: unknown[];
+  filterFunc?: (row: Record<string, any>) => boolean;
+}
+```
+### totals(Totals)
+Set up totals, subtotals, and grand totals.
+```
+export interface Totals {
+  row?: Total;
+  column?: Total;
+}
+```
+
+Row or column methods set summary rules respectively:
+```
+export interface Total {
+  // Whether to display the total
+  showGrandTotals: boolean;
+  // Whether to display subtotals
+  showSubTotals: boolean;
+  // Subtotal summary dimension definition
+  subTotalsDimensions?: string[];
+  //Default 'total'
+  grandTotalLabel?: string;
+  //Default 'Subtotal'
+  subTotalLabel?: string;
+}
+```
+### derivedFieldRules(DerivedFieldRules)
+Add derived fields
+```
+export type DerivedFieldRules = DerivedFieldRule[];
+```
+The specific function is to generate new fields for source data, which is customized by the user. This function mainly adds a new field to each piece of data. This field can be used in other data rules, such as sort or as indicators or columns. of a certain dimension.
+```
+export interface DerivedFieldRule {
+  fieldName?: string;
+  derivedFunc?: (record: Record<string, any>) => any;
+}
+```
 ## columnTree(Array)
 
 Column header tree, type: `IDimensionHeaderNode|IIndicatorHeaderNode[]`. Among them, IDimensionHeaderNode refers to the dimension value node of non-indicator dimensions, and IIndicatorHeaderNode refers to the indicator name node.

@@ -4,6 +4,7 @@ group: data-analysis
 title: Custom Total
 cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/pivot-analysis-custom-total.png
 link: '../guide/table_type/Pivot_table/pivot_table_dataAnalysis'
+option: PivotTable#dataConfig.totals
 ---
 
 # Pivot analysis table—customized summary data

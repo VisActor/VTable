@@ -101,10 +101,12 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
         // options.indicatorsAsCol === false ? rowKeys.concat(IndicatorDimensionKeyPlaceholder) : rowKeys,
         // options.indicatorsAsCol !== false ? columnKeys.concat(IndicatorDimensionKeyPlaceholder) : columnKeys,
         indicatorKeys,
-        options.indicators,
+        this.internalProps.indicators,
         options.indicatorsAsCol ?? true,
         options.records,
-        options.rowHierarchyType
+        options.rowHierarchyType,
+        this.internalProps.columnTree, //传递自定义树形结构会在dataset中补充指标节点children
+        this.internalProps.rowTree
       );
     }
 
@@ -221,10 +223,12 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
         rowKeys,
         columnKeys,
         indicatorKeys,
-        options.indicators,
+        this.internalProps.indicators,
         options.indicatorsAsCol ?? true,
         options.records,
-        options.rowHierarchyType
+        options.rowHierarchyType,
+        this.internalProps.columnTree, //传递自定义树形结构会在dataset中补充指标节点children
+        this.internalProps.rowTree
       );
     }
     // 更新表头
