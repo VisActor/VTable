@@ -310,6 +310,10 @@ export const menus = [
       {
         path: 'pivot-analysis',
         name: 'pivot-analysis-pagination'
+      },
+      {
+        path: 'pivot-analysis',
+        name: 'pivot-analysis-field'
       }
     ]
   },
