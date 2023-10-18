@@ -791,6 +791,13 @@
             "zh": "派生字段",
             "en": "Derived Field"
           }
+        },
+        {
+          "path": "pivot-analysis-aggregation",
+          "title": {
+            "zh": "指标聚合方式",
+            "en": "Indicator Aggregation Type"
+          }
         }
       ]
     },
