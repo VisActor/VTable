@@ -137,7 +137,7 @@ fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American
     tableInstance = new VTable.PivotTable(document.getElementById(CONTAINER_ID), option);
     window.tableInstance = tableInstance;
 
-    bindDebugTool(tableInstance.scenegraph.stage, {});
+    bindDebugTool(tableInstance.scenegraph.stage, { customGrapicKeys: ['col', 'row'] });
   })
   .catch(e => {
     console.error(e);
