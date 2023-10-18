@@ -5,6 +5,7 @@ title: Theme - custom
 cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/custom.png
 order: 6-6
 link: '../guide/theme_and_style/theme'
+option: ListTable#theme.bodyStyle.bgColor
 ---
 
 # Form Theme -custom

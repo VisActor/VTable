@@ -5,6 +5,7 @@ title: Select cell
 cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/select.png
 order: 4-1
 link: '../guide/interaction/select'
+option: keyboardOptions.selectAllOnCtrlA
 ---
 
 # Select cell

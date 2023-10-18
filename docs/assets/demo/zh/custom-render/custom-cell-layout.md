@@ -3,8 +3,8 @@ category: examples
 group: Custom
 title: 单元格自定义布局
 cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/custom-cell-layout.png
-order: 7-1
 link: '../guide/custom_define/custom_layout'
+option: ListTable-columns-text#customLayout.renderDefault
 ---
 
 # 单元格自定义布局

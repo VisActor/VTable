@@ -4,6 +4,7 @@ group: data-analysis
 title: 数据过滤
 cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/pivot-analysis-filter.png
 link: '../guide/table_type/Pivot_table/pivot_table_dataAnalysis'
+option: PivotTable#dataConfig.filterRules
 ---
 
 # 透视分析数据过滤

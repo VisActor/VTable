@@ -4,6 +4,7 @@ group: table-type
 title: Pivot Chart
 cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/pivot-chart.png
 link: '../guide/table_type/pivot_chart'
+option: PivotChart-indicators-chart#cellType
 ---
 
 # Perspective combination diagram

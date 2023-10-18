@@ -1,21 +1,20 @@
 ---
 category: examples
-group: Business
-title: 销售热图
-cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/color-level.png
-order: 9-1
-option: PivotTable-indicators-text#style.bgColor
+group: Component
+title: Color legend
+cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/color-legend.png
+option: ListTable-legends-color#type
 ---
 
-# 销售热图
+# Color legend
 
-该示例展示如何根据色阶配置函数改变背景色来实现一张销售热力图。
+This example shows the configuration and application scenarios of the color legend
 
-## 关键配置
+## Key Configurations
 
-- `indicators[x].style.bgColor` 配置某个指标内容的背景色
+*   `legend` Configuration table legend, please refer to: https://www.visactor.io/vtable/option/ListTable#legend
 
-## 代码演示
+## Code demo
 
 ```javascript livedemo template=vtable
 function getColor(min, max, n) {
@@ -213,7 +212,6 @@ const option = {
               return Math.round(rec['220922103859011']);
             },
             style: {
-              color: "white",
               bgColor: (args) => {
                 return getColor(100000,2000000,args.dataValue)
               },
@@ -231,11 +229,48 @@ const option = {
     defaultStyle:{
       borderLineWidth: 0,
     },
+    bodyStyle:{
+       color: "white",
+    }
   },
+  legends: {
+      orient: 'top',
+      position: 'start',
+      type: 'color',
+      colors: ['rgb(235,235,255)', 'rgb(35,35,255)'],
+      value: [100000, 2000000],
+      max: 2000000,
+      min: 100000
+    }
 };
 
 const tableInstance = new VTable.PivotTable(document.getElementById(CONTAINER_ID),option);
 window['tableInstance'] = tableInstance;
+
+  const { LEGEND_CHANGE } = VTable.ListTable.EVENT_TYPE;
+
+  // 监听图例范围的改变，将所需范围外的数据变化颜色
+  tableInstance.on(LEGEND_CHANGE, args => {
+      const size = args.value;
+      tableInstance.updateTheme(
+      {
+        defaultStyle:{
+          borderLineWidth: 0,
+        },
+        bodyStyle: {
+          color(args) {
+                const value = Number(args.dataValue);
+                if (value < size[0] ) {
+                  return 'red';
+                }else if( value > size[1]){
+                  return '#4dfa40';
+                }
+                return 'white';
+              }
+            }
+          }
+        );
+  });
 ```
 
 ## 相关教程

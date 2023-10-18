@@ -5,6 +5,7 @@ title: 移动表头位置
 cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/move-header-position.gif
 order: 4-5
 link: '../guide/interaction/drag_header'
+option: ListTable#dragHeaderMode
 ---
 
 # 移动表头位置

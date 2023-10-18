@@ -195,9 +195,13 @@ export interface PivotTableConstructorOptions extends BaseTableConstructorOption
    */
   rowHeaderTitle?: ITitleDefine;
   //#endregion
-  /** 数据分析相关配置 ———有数据分析的透视表才需要配置这个 */
+  /** 数据分析相关配置 enableDataAnalysis开启后该配置才会有效 */
   dataConfig?: IDataConfig;
-  /** 是否开始数据分析 ———有数据分析的透视表才需要配置这个 */
+  /**
+   * 透视表是否开启数据分析
+   * 如果传入数据是明细数据需要聚合分析则开启
+   * 如传入数据是经过聚合好的为了提升性能这里设置为false，同时需要传入columnTree和rowTree
+   */
   enableDataAnalysis?: boolean;
   /** 指标标题 用于显示到角头的值*/
   indicatorTitle?: string;

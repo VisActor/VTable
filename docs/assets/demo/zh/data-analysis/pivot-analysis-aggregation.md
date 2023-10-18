@@ -4,6 +4,7 @@ group: data-analysis
 title: 指标聚合方式
 cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/pivot-analysis-aggregation.png
 link: '../guide/table_type/Pivot_table/pivot_table_dataAnalysis'
+option: PivotTable#dataConfig.aggregationRules
 ---
 
 # 指标聚合方式

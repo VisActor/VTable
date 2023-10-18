@@ -3,8 +3,8 @@ category: examples
 group: Basic Features
 title: frozen column
 cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/frozen-col.gif
-order: 3-3
 link: '../guide/basic_function/frozen_column'
+option: ListTable#frozenColCount
 ---
 
 # Freeze column

@@ -4,6 +4,7 @@ group: data-analysis
 title: Indicator Aggregation Type
 cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/pivot-analysis-aggregation.png
 link: '../guide/table_type/Pivot_table/pivot_table_dataAnalysis'
+option: PivotTable#dataConfig.aggregationRules
 ---
 
 # Indicator Aggregation Type

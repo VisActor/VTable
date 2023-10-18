@@ -4,6 +4,7 @@ group: data-analysis
 title: 指标值排序
 cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/pivot-analysis-sort-indicator.png
 link: '../guide/table_type/Pivot_table/pivot_table_dataAnalysis'
+option: PivotTable#dataConfig.sortRules
 ---
 
 # 透视分析表按指标值排序

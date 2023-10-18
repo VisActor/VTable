@@ -3,7 +3,6 @@ category: examples
 group: Basic Features
 title: Export image
 cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/export-image.png
-Order: 3-4
 ---
 
 #Export Image
