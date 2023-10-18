@@ -4,6 +4,7 @@ group: data-analysis
 title: 自定义排序
 cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/pivot-analysis-sort-func.png
 link: '../guide/table_type/Pivot_table/pivot_table_dataAnalysis'
+option: PivotTable#dataConfig.sortRules
 ---
 
 # 透视分析表自定义排序

@@ -5,6 +5,7 @@ title: Global cell custom content
 cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/custom-render-global.png
 order: 7-3
 link: '../guide/custom_define/custom_render'
+option: ListTable#customRender.elements
 ---
 
 # Global cell custom content

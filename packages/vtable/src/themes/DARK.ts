@@ -111,7 +111,7 @@ export default {
     hoverBgColor: '#EEE'
   },
   selectionStyle: {
-    cellBgColor: '#29364D',
+    cellBgColor: 'rgba(255, 255, 255, 0.1)',
     // inlineColumnBgColor: "#82b2f5",
     cellBorderColor: '#4284FF',
     cellBorderLineWidth: 2

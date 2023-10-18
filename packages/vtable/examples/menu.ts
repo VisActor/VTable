@@ -45,6 +45,10 @@ export const menus = [
       {
         path: 'list',
         name: 'list-100w'
+      },
+      {
+        path: 'list',
+        name: 'list-no-columns'
       }
     ]
   },

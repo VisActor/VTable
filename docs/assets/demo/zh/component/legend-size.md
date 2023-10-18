@@ -3,7 +3,7 @@ category: examples
 group: Component
 title: 尺寸图例
 cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/size-legend.png
-order: 9-1
+option: ListTable-legends-size#type
 ---
 
 # 尺寸图例

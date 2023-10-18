@@ -3,7 +3,7 @@ category: examples
 group: Component
 title: 颜色图例
 cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/color-legend.png
-order: 9-1
+option: ListTable-legends-color#type
 ---
 
 # 颜色图例
