@@ -73,7 +73,7 @@ const option = {
           "width": "auto",
       },
   ],
-  indicators: ['TotalSales', 'OrderCount', 'AveragePrice'],
+  indicators: ['TotalSales', 'OrderCount', 'AverageOrderSales'],
   "corner": {
       "titleOnDimension": "row",
       "headerStyle": {
@@ -96,7 +96,7 @@ const option = {
           formatFun: countNumberFormat
         },
         {
-          indicatorKey: 'AveragePrice', //指标名称
+          indicatorKey: 'AverageOrderSales', //指标名称
           field: 'Sales', //指标依据字段
           aggregationType: VTable.TYPES.AggregationType.AVG, //计算类型
           formatFun: sumNumberFormat
