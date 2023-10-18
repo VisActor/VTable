@@ -70,8 +70,8 @@ async function moveColumn(
     proxy.colStart = direction === 'left' ? proxy.colStart + count : proxy.colStart - count;
     proxy.colEnd = direction === 'left' ? proxy.colEnd + count : proxy.colEnd - count;
 
-    checkFirstColMerge(distStartCol, true, proxy);
     updateColContent(syncLeftCol, syncRightCol, proxy);
+    checkFirstColMerge(distStartCol, proxy);
 
     updateAutoColumn(
       syncLeftCol, // colStart
@@ -110,8 +110,8 @@ async function moveColumn(
 
     proxy.colStart = distStartCol;
     proxy.colEnd = distEndCol;
-    checkFirstColMerge(distStartCol, false, proxy);
     updateColContent(syncLeftCol, syncRightCol, proxy);
+    checkFirstColMerge(distStartCol, proxy);
 
     updateAutoColumn(
       syncLeftCol, // colStart
