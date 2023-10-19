@@ -82,7 +82,7 @@ export async function createGroupForFirstScreen(
     table.frozenColCount - 1, // colEnd
     table.columnHeaderLevelCount, // rowStart
     Math.min(proxy.firstScreenRowLimit, table.rowCount - 1 - table.bottomFrozenRowCount), // rowEnd
-    table.isListTable() ? 'body' : 'rowHeader', // isHeader
+    table.isListTable() && !table.internalProps.transpose ? 'body' : 'rowHeader', // isHeader
     table
   );
 
