@@ -38,19 +38,19 @@ export function dealFrozen(scene: Scenegraph) {
 }
 
 export function resetFrozen(scene: Scenegraph) {
-  if (scene.frozenColCount > scene.table.rowHeaderLevelCount) {
+  if (scene.frozenColCount > scene.table.frozenColCount) {
     // move columnGroup from rowHeaderGroup into bodyGroup(from cornerHeaderGroup into colHeaderGroup)
-    for (let i = 0; i < scene.frozenColCount - scene.table.rowHeaderLevelCount; i++) {
+    for (let i = 0; i < scene.frozenColCount - scene.table.frozenColCount; i++) {
       moveColumnFromRowHeaderToBody(scene);
       moveColumnFromCornerHeaderToColHeader(scene);
       moveColumnFromLeftBottomCornerToBottom(scene);
     }
-  } else if (scene.frozenColCount < scene.table.rowHeaderLevelCount) {
+  } else if (scene.frozenColCount < scene.table.frozenColCount) {
     // move columnGroup from bodyGroup into rowHeaderGroup(from colHeaderGroup into cornerHeaderGroup)
     scene.rowHeaderGroup.setAttribute('height', scene.bodyGroup.attribute.height);
     scene.rowHeaderGroup.setAttribute('y', scene.bodyGroup.attribute.y);
     scene.cornerHeaderGroup.setAttribute('height', scene.colHeaderGroup.attribute.height);
-    for (let i = 0; i < scene.table.rowHeaderLevelCount - scene.frozenColCount; i++) {
+    for (let i = 0; i < scene.table.frozenColCount - scene.frozenColCount; i++) {
       moveColumnFromBodyToRowHeader(scene);
       moveColumnFromColHeaderToCornerHeader(scene);
       moveColumnFromBottomToLeftBottomCorner(scene);
@@ -68,7 +68,7 @@ export function resetFrozen(scene: Scenegraph) {
   scene.hasFrozen = true;
 
   // scene.frozenColCount = scene.rowHeaderGroup.childrenCount;
-  scene.frozenColCount = scene.table.rowHeaderLevelCount;
+  scene.frozenColCount = scene.table.frozenColCount;
   scene.frozenRowCount = scene.colHeaderGroup.firstChild?.childrenCount ?? 0;
 }
 
@@ -261,7 +261,7 @@ export function dealBottomFrozen(distBottomFrozenRow: number, scene: Scenegraph)
         0,
         0,
         0, // colStart
-        table.rowHeaderLevelCount - 1, // colEnd
+        table.frozenColCount - 1, // colEnd
         0, // rowStart
         -1, // rowEnd
         'rowHeader', // isHeader
@@ -295,7 +295,7 @@ export function dealBottomFrozen(distBottomFrozenRow: number, scene: Scenegraph)
   const currentBottomFrozenRow = scene.table.bottomFrozenRowCount;
   if (distBottomFrozenRow > currentBottomFrozenRow) {
     // row header -> left bottom
-    for (let col = 0; col < table.rowHeaderLevelCount; col++) {
+    for (let col = 0; col < table.frozenColCount; col++) {
       const bottomFrozenColumnGroup = scene.getColGroupInLeftBottomCorner(col);
       // move cell
       for (let row = table.rowCount - currentBottomFrozenRow - 1; row >= table.rowCount - distBottomFrozenRow; row--) {

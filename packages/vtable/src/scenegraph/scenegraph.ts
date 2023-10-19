@@ -318,7 +318,8 @@ export class Scenegraph {
    */
   createSceneGraph() {
     this.clear = false;
-    this.frozenColCount = this.table.rowHeaderLevelCount;
+    // this.frozenColCount = this.table.rowHeaderLevelCount;
+    this.frozenColCount = this.table.frozenColCount;
     this.frozenRowCount = this.table.columnHeaderLevelCount;
 
     this.proxy = new SceneProxy(this.table);
@@ -796,7 +797,7 @@ export class Scenegraph {
     this.dealWidthMode();
     this.dealHeightMode();
     this.resetFrozen();
-    this.dealFrozen();
+    // this.dealFrozen();
     this.updateTableSize();
     this.updateBorderSizeAndPosition();
     this.component.updateScrollBar();
@@ -1027,8 +1028,13 @@ export class Scenegraph {
     // this.dealWidthMode();
     // this.dealHeightMode();
     // 处理冻结
-    this.resetFrozen();
-    this.dealFrozen();
+    // this.resetFrozen();
+    // this.dealFrozen();
+
+    if (!this.isPivot && !this.transpose) {
+      this.component.setFrozenColumnShadow(this.table.frozenColCount - 1);
+    }
+    this.table.stateManeger.checkFrozen();
 
     // 处理frame border
     this.createFrameBorder();
@@ -1403,7 +1409,7 @@ export class Scenegraph {
       return;
     }
     this.resetFrozen();
-    this.dealFrozen();
+    // this.dealFrozen();
     this.component.updateScrollBar();
   }
 

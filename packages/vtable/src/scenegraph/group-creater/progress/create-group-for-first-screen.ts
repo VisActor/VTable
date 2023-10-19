@@ -15,43 +15,36 @@ export async function createGroupForFirstScreen(
   yOrigin: number,
   proxy: SceneProxy
 ) {
-  const { leftBottomCornerGroup, rightTopCornerGroup, rightBottomCornerGroup } = proxy.table.scenegraph;
+  const { table } = proxy;
+  const { leftBottomCornerGroup, rightTopCornerGroup, rightBottomCornerGroup } = table.scenegraph;
 
   // compute parameters
   proxy.setParamsForRow();
   proxy.setParamsForColumn();
 
   // compute colums width in first screen
-  computeColsWidth(proxy.table, 0, Math.min(proxy.firstScreenColLimit, proxy.table.colCount - 1));
+  computeColsWidth(table, 0, Math.min(proxy.firstScreenColLimit, table.colCount - 1));
 
   // compute rows height in first screen
-  computeRowsHeight(proxy.table, 0, Math.min(proxy.firstScreenRowLimit, proxy.table.rowCount - 1));
+  computeRowsHeight(table, 0, Math.min(proxy.firstScreenRowLimit, table.rowCount - 1));
 
-  if (proxy.table.rightFrozenColCount > 0 && proxy.table.colCount - 1 > proxy.firstScreenColLimit) {
+  if (table.rightFrozenColCount > 0 && table.colCount - 1 > proxy.firstScreenColLimit) {
     // compute right frozen row height
-    computeColsWidth(
-      proxy.table,
-      proxy.table.colCount - 1 - proxy.table.rightFrozenColCount + 1,
-      proxy.table.colCount - 1
-    );
+    computeColsWidth(table, table.colCount - 1 - table.rightFrozenColCount + 1, table.colCount - 1);
   }
-  if (proxy.table.bottomFrozenRowCount > 0 && proxy.table.rowCount - 1 > proxy.firstScreenRowLimit) {
+  if (table.bottomFrozenRowCount > 0 && table.rowCount - 1 > proxy.firstScreenRowLimit) {
     // compute bottom frozen row height
-    computeColsWidth(
-      proxy.table,
-      proxy.table.rowCount - 1 - proxy.table.bottomFrozenRowCount + 1,
-      proxy.table.rowCount - 1
-    );
+    computeColsWidth(table, table.rowCount - 1 - table.bottomFrozenRowCount + 1, table.rowCount - 1);
   }
 
   // update colHeaderGroup rowHeaderGroup bodyGroup position
-  proxy.table.scenegraph.colHeaderGroup.setAttribute('x', proxy.table.getFrozenColsWidth());
-  proxy.table.scenegraph.rowHeaderGroup.setAttribute('y', proxy.table.getFrozenRowsHeight());
-  proxy.table.scenegraph.bottomFrozenGroup.setAttribute('x', proxy.table.getFrozenColsWidth());
-  proxy.table.scenegraph.rightFrozenGroup.setAttribute('y', proxy.table.getFrozenRowsHeight());
-  proxy.table.scenegraph.bodyGroup.setAttributes({
-    x: proxy.table.getFrozenColsWidth(),
-    y: proxy.table.getFrozenRowsHeight()
+  table.scenegraph.colHeaderGroup.setAttribute('x', table.getFrozenColsWidth());
+  table.scenegraph.rowHeaderGroup.setAttribute('y', table.getFrozenRowsHeight());
+  table.scenegraph.bottomFrozenGroup.setAttribute('x', table.getFrozenColsWidth());
+  table.scenegraph.rightFrozenGroup.setAttribute('y', table.getFrozenRowsHeight());
+  table.scenegraph.bodyGroup.setAttributes({
+    x: table.getFrozenColsWidth(),
+    y: table.getFrozenRowsHeight()
   });
 
   // create cornerHeaderGroup
@@ -60,11 +53,11 @@ export async function createGroupForFirstScreen(
     xOrigin,
     yOrigin,
     0, // colStart
-    proxy.table.rowHeaderLevelCount - 1, // colEnd
+    table.frozenColCount - 1, // colEnd
     0, // rowStart
-    proxy.table.columnHeaderLevelCount - 1, // rowEnd
-    'cornerHeader', // CellType
-    proxy.table
+    table.columnHeaderLevelCount - 1, // rowEnd
+    table.isListTable() ? 'columnHeader' : 'cornerHeader', // CellType
+    table
   );
 
   // create colHeaderGroup
@@ -72,12 +65,12 @@ export async function createGroupForFirstScreen(
     colHeaderGroup,
     xOrigin,
     yOrigin,
-    proxy.table.rowHeaderLevelCount, // colStart
-    Math.min(proxy.firstScreenColLimit, proxy.table.colCount - 1 - proxy.table.rightFrozenColCount), // colEnd
+    table.frozenColCount, // colStart
+    Math.min(proxy.firstScreenColLimit, table.colCount - 1 - table.rightFrozenColCount), // colEnd
     0, // rowStart
-    proxy.table.columnHeaderLevelCount - 1, // rowEnd
+    table.columnHeaderLevelCount - 1, // rowEnd
     'columnHeader', // isHeader
-    proxy.table
+    table
   );
 
   // create rowHeaderGroup
@@ -86,26 +79,26 @@ export async function createGroupForFirstScreen(
     xOrigin,
     yOrigin,
     0, // colStart
-    proxy.table.rowHeaderLevelCount - 1, // colEnd
-    proxy.table.columnHeaderLevelCount, // rowStart
-    Math.min(proxy.firstScreenRowLimit, proxy.table.rowCount - 1 - proxy.table.bottomFrozenRowCount), // rowEnd
-    'rowHeader', // isHeader
-    proxy.table
+    table.frozenColCount - 1, // colEnd
+    table.columnHeaderLevelCount, // rowStart
+    Math.min(proxy.firstScreenRowLimit, table.rowCount - 1 - table.bottomFrozenRowCount), // rowEnd
+    table.isListTable() ? 'body' : 'rowHeader', // isHeader
+    table
   );
 
-  if (proxy.table.bottomFrozenRowCount > 0) {
-    if (!proxy.table.isPivotChart()) {
+  if (table.bottomFrozenRowCount > 0) {
+    if (!table.isPivotChart()) {
       // create left bottom frozen
       createColGroup(
         leftBottomCornerGroup,
         xOrigin,
         yOrigin,
         0, // colStart
-        proxy.table.rowHeaderLevelCount - 1, // colEnd
-        proxy.table.rowCount - 1 - proxy.table.bottomFrozenRowCount + 1, // rowStart
-        proxy.table.rowCount - 1, // rowEnd
-        'rowHeader', // isHeader
-        proxy.table
+        table.frozenColCount - 1, // colEnd
+        table.rowCount - 1 - table.bottomFrozenRowCount + 1, // rowStart
+        table.rowCount - 1, // rowEnd
+        table.isListTable() ? 'body' : 'rowHeader', // isHeader
+        table
       );
     }
     // create bottomFrozenGroup
@@ -113,28 +106,28 @@ export async function createGroupForFirstScreen(
       bottomFrozenGroup,
       xOrigin,
       yOrigin,
-      proxy.table.rowHeaderLevelCount, // colStart
-      Math.min(proxy.firstScreenColLimit, proxy.table.colCount - 1 - proxy.table.rightFrozenColCount), // colEnd
-      proxy.table.rowCount - 1 - proxy.table.bottomFrozenRowCount + 1, // rowStart
-      proxy.table.rowCount - 1, // rowEnd
-      'body', // isHeader
-      proxy.table
+      table.frozenColCount, // colStart
+      Math.min(proxy.firstScreenColLimit, table.colCount - 1 - table.rightFrozenColCount), // colEnd
+      table.rowCount - 1 - table.bottomFrozenRowCount + 1, // rowStart
+      table.rowCount - 1, // rowEnd
+      table.isPivotChart() ? 'rowHeader' : 'body', // isHeader
+      table
     );
   }
 
-  if (proxy.table.rightFrozenColCount > 0) {
-    if (!proxy.table.isPivotChart()) {
+  if (table.rightFrozenColCount > 0) {
+    if (!table.isPivotChart()) {
       // create right top frozen Group
       createColGroup(
         rightTopCornerGroup,
         xOrigin,
         yOrigin,
-        proxy.table.colCount - 1 - proxy.table.rightFrozenColCount + 1, // colStart
-        proxy.table.colCount - 1, // colEnd
+        table.colCount - 1 - table.rightFrozenColCount + 1, // colStart
+        table.colCount - 1, // colEnd
         0, // rowStart
-        proxy.table.columnHeaderLevelCount - 1, // rowEnd
+        table.columnHeaderLevelCount - 1, // rowEnd
         'columnHeader', // isHeader
-        proxy.table
+        table
       );
     }
     // create rightFrozenGroup
@@ -142,27 +135,27 @@ export async function createGroupForFirstScreen(
       rightFrozenGroup,
       xOrigin,
       yOrigin,
-      proxy.table.colCount - 1 - proxy.table.rightFrozenColCount + 1, // colStart
-      proxy.table.colCount - 1, // colEnd
-      proxy.table.columnHeaderLevelCount, // rowStart
-      Math.min(proxy.firstScreenRowLimit, proxy.table.rowCount - 1 - proxy.table.bottomFrozenRowCount), // rowEnd
-      'body', // isHeader
-      proxy.table
+      table.colCount - 1 - table.rightFrozenColCount + 1, // colStart
+      table.colCount - 1, // colEnd
+      table.columnHeaderLevelCount, // rowStart
+      Math.min(proxy.firstScreenRowLimit, table.rowCount - 1 - table.bottomFrozenRowCount), // rowEnd
+      table.isPivotChart() ? 'rowHeader' : 'body', // isHeader
+      table
     );
   }
 
-  if (proxy.table.bottomFrozenRowCount > 0 && proxy.table.rightFrozenColCount > 0 && !proxy.table.isPivotChart()) {
+  if (table.bottomFrozenRowCount > 0 && table.rightFrozenColCount > 0 && !table.isPivotChart()) {
     // create right bottom frozen Group
     createColGroup(
       rightBottomCornerGroup,
       xOrigin,
       yOrigin,
-      proxy.table.colCount - 1 - proxy.table.rightFrozenColCount + 1, // colStart
-      proxy.table.colCount - 1, // colEnd
-      proxy.table.rowCount - 1 - proxy.table.bottomFrozenRowCount + 1, // rowStart
-      proxy.table.rowCount - 1, // rowEnd
+      table.colCount - 1 - table.rightFrozenColCount + 1, // colStart
+      table.colCount - 1, // colEnd
+      table.rowCount - 1 - table.bottomFrozenRowCount + 1, // rowStart
+      table.rowCount - 1, // rowEnd
       'body', // isHeader
-      proxy.table
+      table
     );
   }
 
@@ -171,12 +164,12 @@ export async function createGroupForFirstScreen(
     bodyGroup,
     xOrigin,
     yOrigin,
-    proxy.table.rowHeaderLevelCount, // colStart
-    Math.min(proxy.firstScreenColLimit, proxy.table.colCount - 1 - proxy.table.rightFrozenColCount), // colEnd
-    proxy.table.columnHeaderLevelCount, // rowStart
-    Math.min(proxy.firstScreenRowLimit, proxy.table.rowCount - 1 - proxy.table.bottomFrozenRowCount), // rowEnd
+    table.frozenColCount, // colStart
+    Math.min(proxy.firstScreenColLimit, table.colCount - 1 - table.rightFrozenColCount), // colEnd
+    table.columnHeaderLevelCount, // rowStart
+    Math.min(proxy.firstScreenRowLimit, table.rowCount - 1 - table.bottomFrozenRowCount), // rowEnd
     'body', // isHeader
-    proxy.table
+    table
   );
 
   // update progress information
