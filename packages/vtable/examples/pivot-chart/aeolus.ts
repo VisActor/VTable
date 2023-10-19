@@ -1427,10 +1427,10 @@ export function createTable() {
     hash: '1dcb9dc2d848ceaf060295843bfceeaf'
   };
   const tableInstance = new VTable.PivotChart(document.getElementById(CONTAINER_ID), option);
-  // tableInstance.listenChart('click', args => {
+  // tableInstance.onVChartEvent('click', args => {
   //   console.log('listenChart click', args);
   // });
-  // tableInstance.listenChart('mouseover', args => {
+  // tableInstance.onVChartEvent('mouseover', args => {
   //   console.log('listenChart mouseover', args);
   // });
   window.tableInstance = tableInstance;
