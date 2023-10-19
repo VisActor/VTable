@@ -72,6 +72,10 @@ export class ListTable extends BaseTable implements ListTableAPI {
       internalProps.title = new Title(options.title, this);
       this.scenegraph.resize();
     }
+    //为了确保用户监听得到这个事件 这里做了异步 确保vtable实例已经初始化完成
+    setTimeout(() => {
+      this.fireListeners(TABLE_EVENT_TYPE.INITIALIZED, null);
+    }, 0);
   }
   isListTable(): true {
     return true;
@@ -112,7 +116,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
     this.headerStyleCache = new Map();
     this.bodyStyleCache = new Map();
     this.scenegraph.createSceneGraph();
-    this.render();
+    this.renderAsync();
   }
   /**
    *@deprecated 请使用columns
@@ -128,9 +132,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
     this.options.header = header;
     this.refreshHeader();
     //需要异步等待其他事情都完成后再绘制
-    setTimeout(() => {
-      this.render();
-    }, 0);
+    this.renderAsync();
   }
   /**
    * Get the transpose.
@@ -154,7 +156,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
 
       // 转置后为行布局，列宽只支持依据该列所有内容自适应宽度
       this._resetFrozenColCount();
-      this.render();
+      this.renderAsync();
     }
   }
   /** 获取单元格展示值 */
@@ -283,7 +285,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
       this.refreshRowColCount();
       // 生成单元格场景树
       this.scenegraph.createSceneGraph();
-      this.render();
+      this.renderAsync();
     }
   }
   /** @private */

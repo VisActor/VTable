@@ -144,7 +144,8 @@ export class Scenegraph {
       enableLayout: true,
       pluginList: table.isPivotChart() ? ['poptipForText'] : undefined,
       afterRender: () => {
-        this.table.fireListeners('after_stage_render', null);
+        this.table.fireListeners('after_render', null);
+        // console.trace('after_render');
       }
       // autoRender: true
     });
