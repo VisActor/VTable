@@ -58,6 +58,8 @@ export class StateManeger {
     // cellPosEnd: CellPosition;
     singleStyle?: boolean; // select当前单元格是否使用单独样式
     disableHeader?: boolean; // 是否禁用表头select
+    /** 点击表头单元格时连带body整行或整列选中 或仅选中当前单元格，默认或整行或整列选中*/
+    headerSelectMode?: 'inline' | 'cell';
     selecting: boolean;
   };
   hover: {
@@ -264,9 +266,13 @@ export class StateManeger {
     const {
       // enableRowHighlight,
       // enableColumnHighlight,
+      /** 点击表头单元格时连带body整行或整列选中 或仅选中当前单元格，默认或整行或整列选中*/
+      headerSelectMode,
       disableSelect,
       disableHeaderSelect
     } = this.table.options?.select ?? {
+      /** 点击表头单元格时连带body整行或整列选中 或仅选中当前单元格，默认或整行或整列选中*/
+      headerSelectMode: 'inline',
       disableSelect: false,
       disableHeaderSelect: false
     };
@@ -286,6 +292,7 @@ export class StateManeger {
 
     this.select.singleStyle = !disableSelect;
     this.select.disableHeader = disableHeaderSelect;
+    this.select.headerSelectMode = headerSelectMode;
   }
 
   isSelected(col: number, row: number): boolean {
