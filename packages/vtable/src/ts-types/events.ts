@@ -218,4 +218,5 @@ export interface TableEventHandlersReturnMap {
   mouseleave_axis: void;
 
   after_render: void;
+  initialized: void;
 }
