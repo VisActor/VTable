@@ -5,11 +5,13 @@
 When using VTable for data analytics, individual cells can be selected with a mouse click. Once a cell is selected, you can manipulate the cell or get the corresponding data. By default, VTable allows click-to-select cells.
 
 ![image](https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/48c337ece11d289fc4644a20d.png)
+
 As shown above, after clicking on cell (2,3), the cell is selected.
 
+Clicking on the header cell will select the entire row or column by default. If you only want to select the current cell, you can set select.headerSelectMode to 'cell'.
 ## Mouse box selection
 
-In addition to clicking on a single cell, VTable also supports mouse box selection, which can select multiple cells by dragging the mouse. This feature allows the user to select multiple cells at once. By default, VTable has mouse box selection turned on.
+In addition to clicking on a single cell, VTable also supports mouse box selection, which can select multiple cells by dragging the mouse. This feature allows the user to select multiple cells at once (Hold down ctrl or shift to make multiple selections). By default, VTable has mouse box selection turned on.
 
 ![image](https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/eb08aeafba39ab34c8a08c60f.png)
 

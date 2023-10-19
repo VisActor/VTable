@@ -254,6 +254,8 @@ export interface BaseTableConstructorOptions {
   };
   /** 选择单元格交互配置 */
   select?: {
+    /** 点击表头单元格时连带body整行或整列选中 或仅选中当前单元格，默认或整行或整列选中*/
+    headerSelectMode?: 'inline' | 'cell';
     /** 不响应鼠标select交互 */
     disableSelect?: boolean;
     /** 单独设置表头不响应鼠标select交互 */
