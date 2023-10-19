@@ -80,7 +80,8 @@ export class SceneProxy {
   }
 
   setParamsForColumn() {
-    this.bodyLeftCol = this.table.rowHeaderLevelCount;
+    // this.bodyLeftCol = this.table.rowHeaderLevelCount;
+    this.bodyLeftCol = this.table.frozenColCount;
     // this.bodyRightCol = this.table.colCount - 1;
     this.bodyRightCol = this.table.colCount - 1 - this.table.rightFrozenColCount;
 
@@ -224,12 +225,12 @@ export class SceneProxy {
     // compute rows height
     computeRowsHeight(this.table, this.currentRow + 1, endRow, false);
 
-    if (this.table.rowHeaderLevelCount) {
+    if (this.table.frozenColCount) {
       // create row header row cellGroup
       let maxHeight = 0;
-      for (let col = 0; col < this.table.rowHeaderLevelCount; col++) {
+      for (let col = 0; col < this.table.frozenColCount; col++) {
         const colGroup = this.table.scenegraph.getColGroup(col);
-        const cellLocation = 'rowHeader';
+        const cellLocation = this.table.isListTable() ? 'body' : 'rowHeader';
         const { height } = createComplexColumn(
           colGroup,
           col,
@@ -251,7 +252,7 @@ export class SceneProxy {
       let maxHeight = 0;
       for (let col = this.table.colCount - this.table.rightFrozenColCount; col < this.table.colCount; col++) {
         const colGroup = this.table.scenegraph.getColGroup(col);
-        const cellLocation = 'rowHeader';
+        const cellLocation = this.table.isListTable() ? 'body' : 'rowHeader';
         const { height } = createComplexColumn(
           colGroup,
           col,
@@ -272,6 +273,9 @@ export class SceneProxy {
     let maxHeight = 0;
     for (let col = this.bodyLeftCol; col <= this.bodyRightCol; col++) {
       const colGroup = this.table.scenegraph.getColGroup(col);
+      if (!colGroup) {
+        continue;
+      }
       const cellLocation = 'body';
       const { height } = createComplexColumn(
         colGroup,
