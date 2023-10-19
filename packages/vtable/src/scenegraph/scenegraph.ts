@@ -1035,6 +1035,7 @@ export class Scenegraph {
       this.component.setFrozenColumnShadow(this.table.frozenColCount - 1);
     }
     this.table.stateManeger.checkFrozen();
+    this.updateContainer();
 
     // 处理frame border
     this.createFrameBorder();
