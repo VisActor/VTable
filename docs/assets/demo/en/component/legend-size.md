@@ -1,20 +1,20 @@
 ---
 category: examples
 group: Component
-title: 尺寸图例
+title: Size legend
 cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/size-legend.png
 option: ListTable-legends-size#type
 ---
 
-# 尺寸图例
+# Size legend
 
-该示例展示了尺寸图例的配置及应用场景
+This example shows the configuration and application scenarios of the size legend
 
-## 关键配置
+## Key Configurations
 
-- `legend` 配置表格图例，具体可参考：https://www.visactor.io/vtable/option/ListTable#legend
+*   `legend` Configuration table legend, please refer to: https://www.visactor.io/vtable/option/ListTable#legend
 
-## 代码演示
+## Code Demo
 
 ```javascript livedemo template=vtable
 let tableInstance;

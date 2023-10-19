@@ -5,6 +5,7 @@ title: List Table Tree
 cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/list-tree.png
 order: 1-2
 link: '../guide/table_type/List_table/tree_list'
+option: ListTable-columns-text#tree
 ---
 
 # Basic table tree display

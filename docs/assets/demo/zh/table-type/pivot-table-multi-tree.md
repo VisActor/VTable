@@ -4,6 +4,7 @@ group: table-type
 title: 透视表多列树形展示
 cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/pivot-multi-tree.png
 link: '../guide/table_type/Pivot_table/pivot_table_multi_tree'
+option: PivotTable#extensionRows(IExtensionRowDefine%5B%5D)
 ---
 
 # 透视表多列树形展示

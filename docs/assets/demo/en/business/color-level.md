@@ -4,6 +4,7 @@ group: Business
 title: Sales heat map
 cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/color-level.png
 order: 9-1
+option: PivotTable-indicators-text#style.bgColor
 ---
 
 # Sales heat map

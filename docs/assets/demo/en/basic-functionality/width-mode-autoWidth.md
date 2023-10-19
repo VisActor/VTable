@@ -5,6 +5,7 @@ title: Column Width Mode - Adapt to Content
 cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/width-mode-autoWidth.png
 order: 3-6
 link: '../guide/basic_function/row_height_column_width'
+option: ListTable#widthMode
 ---
 
 # Column Width Mode - Adapt to Content

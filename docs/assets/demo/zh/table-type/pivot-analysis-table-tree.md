@@ -4,6 +4,7 @@ group: table-type
 title: 透视分析表格
 cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/pivot-analysis-table-tree.png
 link: '../guide/table_type/Pivot_table/pivot_table_dataAnalysis'
+option: PivotTable#rowHierarchyType('grid'%20%7C%20'tree')
 ---
 
 # 透视分析表格树形展示

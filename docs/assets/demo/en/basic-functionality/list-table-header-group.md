@@ -4,6 +4,7 @@ group: Basic Features
 title: List Table - Header Group
 cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/list-table-header-group.png
 link: '../guide/table-type/list-table'
+option: ListTable-columns-text#columns
 ---
 
 # List Table - Header Group

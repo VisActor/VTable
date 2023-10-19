@@ -4,6 +4,7 @@ group: table-type
 title: Pivot analysis tree table
 cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/pivot-analysis-table-tree.png
 link: '../guide/table_type/Pivot_table/pivot_table_dataAnalysis'
+option: PivotTable#rowHierarchyType('grid'%20%7C%20'tree')
 ---
 
 # Pivot analysis tree table

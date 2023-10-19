@@ -4,6 +4,7 @@ group: data-analysis
 title: 自定义小计总计
 cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/pivot-analysis-custom-total.png
 link: '../guide/table_type/Pivot_table/pivot_table_dataAnalysis'
+option: PivotTable#dataConfig.totals
 ---
 
 # 透视分析表格——自定义汇总数据
