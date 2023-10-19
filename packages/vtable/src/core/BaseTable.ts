@@ -1534,10 +1534,16 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
   }
 
   /**
-   * 重绘表格
+   * 重绘表格(同步绘制)
    */
   render(): void {
     this.scenegraph.renderSceneGraph();
+  }
+  /**
+   * 异步重绘表格
+   */
+  renderAsync(): void {
+    this.scenegraph.updateNextFrame();
   }
   /**
    * 转换成视觉相对table左上角的坐标 如滚动超出表格上方 y将为负值

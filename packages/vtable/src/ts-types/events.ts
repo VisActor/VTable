@@ -154,7 +154,8 @@ export interface TableEventHandlersEventArgumentMap {
   mouseenter_axis: MousePointerCellEvent & { axisPosition: 'left' | 'right' | 'top' | 'bottom' };
   mouseleave_axis: MousePointerCellEvent & { axisPosition: 'left' | 'right' | 'top' | 'bottom' };
 
-  after_stage_render: null;
+  after_render: null;
+  initialized: null;
 }
 export interface DrillMenuEventInfo {
   dimensionKey: string | number;
@@ -216,5 +217,6 @@ export interface TableEventHandlersReturnMap {
   mouseenter_axis: void;
   mouseleave_axis: void;
 
-  after_stage_render: void;
+  after_render: void;
+  initialized: void;
 }
