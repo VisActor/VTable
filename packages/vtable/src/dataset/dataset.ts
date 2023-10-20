@@ -1,5 +1,4 @@
 import { isArray } from '@visactor/vutils';
-import { isValid } from '../tools/util';
 import type {
   FilterRules,
   IDataConfig,

@@ -16,7 +16,7 @@ import type {
 } from './ts-types';
 import { HierarchyState } from './ts-types';
 import { SimpleHeaderLayoutMap } from './layout';
-import { isValid } from './tools/util';
+import { isValid } from '@visactor/vutils';
 import { _setDataSource } from './core/tableHelper';
 import { BaseTable } from './core';
 import type { ListTableProtected } from './ts-types/base-table';

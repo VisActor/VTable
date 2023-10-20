@@ -1,4 +1,4 @@
-import { isValid } from '../tools/util';
+import { isValid } from '@visactor/vutils';
 
 const indexFirst = (arr: number[], elm: number): number => {
   let low = 0;

@@ -26,7 +26,7 @@ import type { ListTable } from '../ListTable';
 import { PIVOT_TABLE_EVENT_TYPE } from '../ts-types/pivot-table/PIVOT_TABLE_EVENT_TYPE';
 import type { PivotHeaderLayoutMap } from '../layout/pivot-header-layout';
 import { TABLE_EVENT_TYPE } from '../core/TABLE_EVENT_TYPE';
-import { Bounds } from '@visactor/vutils';
+import { Bounds, isObject, isString, isValid } from '@visactor/vutils';
 import { updateDrill } from './drill';
 import { clearChartHover, updateChartHover } from './spark-line';
 import { endMoveCol, startMoveCol, updateMoveCol } from './cell-move';
@@ -34,7 +34,6 @@ import type { FederatedEvent } from '@visactor/vrender';
 import type { TooltipOptions } from '../ts-types/tooltip';
 import { getIconAndPositionFromTarget } from '../scenegraph/utils/icon';
 import type { BaseTableAPI } from '../ts-types/base-table';
-import { isObject, isString, isValid } from '../tools/util';
 import { debounce } from '../tools/debounce';
 import { updateResizeColumn } from './resize/update-resize-column';
 
@@ -791,7 +790,7 @@ export class StateManeger {
           if (dropDownMenu) {
             for (let i = 0; i < dropDownMenu.length; i++) {
               const item: any = dropDownMenu[i];
-              if (isObject(item) && (item.menuKey || item.text) === (menuKey || '') && i === index) {
+              if (isObject(item) && ((item as any).menuKey || (item as any).text) === (menuKey || '') && i === index) {
                 // return i === index;
                 return true;
               } else if (isString(item) && item === menuKey && i === index) {

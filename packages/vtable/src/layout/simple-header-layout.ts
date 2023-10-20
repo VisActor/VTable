@@ -1,7 +1,7 @@
 /* eslint-disable sort-imports */
+import { isValid } from '@visactor/vutils';
 import type { ListTable } from '../ListTable';
 import { DefaultSparklineSpec } from '../tools/global';
-import { isValid } from '../tools/util';
 import type { CellAddress, CellRange, CellLocation, IListTableCellHeaderPaths, LayoutObjectId } from '../ts-types';
 import type { ColumnsDefine, TextColumnDefine } from '../ts-types/list-table/define';
 import type {
