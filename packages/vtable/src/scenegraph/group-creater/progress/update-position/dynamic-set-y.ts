@@ -64,10 +64,12 @@ async function moveCell(
       syncBottomRow = distEndRow;
     } else {
       const topRow = Math.max(proxy.bodyTopRow, screenTopRow - proxy.screenRowCount * 1);
-      const BottomRow = Math.min(proxy.bodyBottomRow, screenTopRow + proxy.screenRowCount * 2);
+      const bottomRow = Math.min(proxy.bodyBottomRow, screenTopRow + proxy.screenRowCount * 2);
       // get coincide of distStartRow&distEndRow and topRow&BottomRow
-      syncTopRow = Math.max(distStartRow, topRow);
-      syncBottomRow = Math.min(distEndRow, BottomRow);
+      // syncTopRow = Math.max(distStartRow, topRow);
+      // syncBottomRow = Math.min(distEndRow, bottomRow);
+      syncTopRow = topRow;
+      syncBottomRow = bottomRow;
     }
 
     // const syncTopRow = Math.max(proxy.bodyTopRow, screenTopRow - proxy.screenRowCount * 1);
@@ -102,7 +104,7 @@ async function moveCell(
     proxy.currentRow = direction === 'up' ? proxy.currentRow + count : proxy.currentRow - count;
     proxy.totalRow = direction === 'up' ? proxy.totalRow + count : proxy.totalRow - count;
     proxy.referenceRow = proxy.rowStart + Math.floor((proxy.rowEnd - proxy.rowStart) / 2);
-    proxy.rowUpdatePos = distStartRow;
+    proxy.rowUpdatePos = Math.min(proxy.rowUpdatePos, distStartRow);
     proxy.rowUpdateDirection = direction;
 
     proxy.table.scenegraph.updateNextFrame();
@@ -163,7 +165,7 @@ async function moveCell(
 
 function updatePartRowPosition(startRow: number, endRow: number, direction: 'up' | 'down', proxy: SceneProxy) {
   // row header group
-  for (let col = 0; col < proxy.table.rowHeaderLevelCount; col++) {
+  for (let col = 0; col < proxy.table.frozenColCount; col++) {
     const colGroup = proxy.table.scenegraph.getColGroup(col);
     for (let row = startRow; row <= endRow; row++) {
       updateCellGroupPosition(colGroup, direction, proxy);
@@ -207,7 +209,7 @@ function updateCellGroupPosition(colGroup: Group, direction: 'up' | 'down', prox
 
 function updateAllRowPosition(distStartRowY: number, count: number, direction: 'up' | 'down', proxy: SceneProxy) {
   // row header group
-  for (let col = 0; col < proxy.table.rowHeaderLevelCount; col++) {
+  for (let col = 0; col < proxy.table.frozenColCount; col++) {
     const colGroup = proxy.table.scenegraph.getColGroup(col);
     colGroup?.forEachChildren((cellGroup: Group, index) => {
       // 这里使用colGroup变量而不是for proxy.rowStart to proxy.rowEndproxy.rowEnd是因为在更新内可能出现row号码重复的情况
@@ -252,7 +254,7 @@ function updateAllRowPosition(distStartRowY: number, count: number, direction: '
 
 export function updateRowContent(syncTopRow: number, syncBottomRow: number, proxy: SceneProxy) {
   // row header group
-  for (let col = 0; col < proxy.table.rowHeaderLevelCount; col++) {
+  for (let col = 0; col < proxy.table.frozenColCount; col++) {
     for (let row = syncTopRow; row <= syncBottomRow; row++) {
       // const cellGroup = proxy.table.scenegraph.getCell(col, row);
       const cellGroup = proxy.highPerformanceGetCell(col, row, true);

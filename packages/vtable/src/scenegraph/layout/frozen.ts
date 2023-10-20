@@ -56,6 +56,12 @@ export function resetFrozen(scene: Scenegraph) {
       moveColumnFromBottomToLeftBottomCorner(scene);
     }
   }
+
+  // scene.frozenColCount = scene.rowHeaderGroup.childrenCount;
+  scene.frozenColCount = scene.table.frozenColCount;
+  scene.frozenRowCount = scene.colHeaderGroup.firstChild?.childrenCount ?? 0;
+  scene.proxy.colStart = scene.table.frozenColCount;
+
   scene.bodyGroup.setAttribute('x', scene.rowHeaderGroup.attribute.width);
   scene.colHeaderGroup.setAttribute('x', scene.cornerHeaderGroup.attribute.width);
 
@@ -66,10 +72,6 @@ export function resetFrozen(scene: Scenegraph) {
     scene.component.setFrozenColumnShadow(scene.table.frozenColCount - 1);
   }
   scene.hasFrozen = true;
-
-  // scene.frozenColCount = scene.rowHeaderGroup.childrenCount;
-  scene.frozenColCount = scene.table.frozenColCount;
-  scene.frozenRowCount = scene.colHeaderGroup.firstChild?.childrenCount ?? 0;
 }
 
 function moveColumnFromBodyToRowHeader(scene: Scenegraph) {

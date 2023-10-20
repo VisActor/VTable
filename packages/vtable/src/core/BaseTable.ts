@@ -2566,6 +2566,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
       _setRecords(this, records);
     }
 
+    this.internalProps.frozenColCount = this.options.frozenColCount || this.rowHeaderLevelCount;
     // 生成单元格场景树
     this.scenegraph.createSceneGraph();
 
