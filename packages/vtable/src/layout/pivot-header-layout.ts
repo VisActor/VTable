@@ -1,5 +1,5 @@
 /* eslint-disable sort-imports */
-import { isValid, transpose } from '../tools/util';
+import { transpose } from '../tools/util';
 import type {
   CellAddress,
   CellRange,
@@ -35,7 +35,7 @@ import { getChartAxes, getChartDataId, getChartSpec, getRawChartSpec } from './c
 import type { IPivotLayoutHeadNode } from './pivot-layout-helper';
 import { DimensionTree } from './pivot-layout-helper';
 import type { Dataset } from '../dataset/dataset';
-import { cloneDeep, isArray } from '@visactor/vutils';
+import { cloneDeep, isArray, isValid } from '@visactor/vutils';
 import type { TextStyle } from '../body-helper/style';
 import type { ITableAxisOption } from '../ts-types/component/axis';
 import { getQuadProps } from '../scenegraph/utils/padding';

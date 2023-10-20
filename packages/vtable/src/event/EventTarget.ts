@@ -9,7 +9,7 @@ import type {
   TableEventHandlersEventArgumentMap,
   TableEventHandlersReturnMap
 } from '../ts-types';
-import { isValid } from '../tools/util';
+import { isValid } from '@visactor/vutils';
 
 let idCount = 1;
 

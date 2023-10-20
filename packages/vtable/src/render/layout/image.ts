@@ -1,7 +1,5 @@
-import { isString } from '../../tools/util';
 import type { ElementOptions } from './element';
 import { BaseElement } from './element';
-import * as registerIcons from '../../icons';
 import type { ColumnIconOption } from '../../ts-types';
 
 type ImageOptions = {

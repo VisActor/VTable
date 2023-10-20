@@ -1,4 +1,3 @@
-import { isValid } from '../../../../tools/util';
 import type { Group } from '../../../graphic/group';
 import { computeRowsHeight } from '../../../layout/compute-row-height';
 import type { SceneProxy } from '../proxy';
