@@ -780,12 +780,16 @@ export class Scenegraph {
   }
 
   resize() {
-    // if (this.table.widthMode === 'adaptive' || this.table.autoFillWidth) {
-    //   this.recalculateColWidths();
-    // }
-    // if (this.table.heightMode === 'adaptive' || this.table.autoFillHeight) {
-    //   this.recalculateRowHeights();
-    // }
+    if (this.table.internalProps._widthResizedColMap.size === 0) {
+      //如果没有手动调整过行高列宽 则重新计算一遍并重新分配
+      if (this.table.widthMode === 'adaptive' || this.table.autoFillWidth) {
+        this.recalculateColWidths();
+      }
+
+      if (this.table.heightMode === 'adaptive' || this.table.autoFillHeight) {
+        this.recalculateRowHeights();
+      }
+    }
     // // widthMode === 'adaptive' 时，computeColsWidth()中已经有高度更新计算
     // // else if (this.table.widthMode === 'adaptive') {
     // //   this.table.clearRowHeightCache();
