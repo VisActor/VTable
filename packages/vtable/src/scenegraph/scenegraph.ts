@@ -780,18 +780,18 @@ export class Scenegraph {
   }
 
   resize() {
-    if (this.table.widthMode === 'adaptive' || this.table.autoFillWidth) {
-      this.recalculateColWidths();
-    }
-    if (this.table.heightMode === 'adaptive' || this.table.autoFillHeight) {
-      this.recalculateRowHeights();
-    }
-    // widthMode === 'adaptive' 时，computeColsWidth()中已经有高度更新计算
-    // else if (this.table.widthMode === 'adaptive') {
-    //   this.table.clearRowHeightCache();
-    //   computeRowsHeight(this.table, 0, this.table.columnHeaderLevelCount - 1);
-    //   computeRowsHeight(this.table, this.proxy.rowStart, this.proxy.rowEnd);
+    // if (this.table.widthMode === 'adaptive' || this.table.autoFillWidth) {
+    //   this.recalculateColWidths();
     // }
+    // if (this.table.heightMode === 'adaptive' || this.table.autoFillHeight) {
+    //   this.recalculateRowHeights();
+    // }
+    // // widthMode === 'adaptive' 时，computeColsWidth()中已经有高度更新计算
+    // // else if (this.table.widthMode === 'adaptive') {
+    // //   this.table.clearRowHeightCache();
+    // //   computeRowsHeight(this.table, 0, this.table.columnHeaderLevelCount - 1);
+    // //   computeRowsHeight(this.table, this.proxy.rowStart, this.proxy.rowEnd);
+    // // }
 
     this.dealWidthMode();
     this.dealHeightMode();
