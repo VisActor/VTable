@@ -38,7 +38,7 @@ export class SceneProxy {
   deltaY: number = 0;
 
   colLimit = 100;
-  bodyLeftCol: number; // table body部分的第一列col number
+  // bodyLeftCol: number; // table body部分的第一列col number
   bodyRightCol: number; // table body部分的最后一列col number
   totalCol: number; // 渐进完成最后一列的col number
   colStart: number; // 当前维护的部分第一列的col number
@@ -79,10 +79,12 @@ export class SceneProxy {
     }
   }
 
+  get bodyLeftCol(): number {
+    return this.table.frozenColCount;
+  }
+
   setParamsForColumn() {
-    // this.bodyLeftCol = this.table.rowHeaderLevelCount;
-    this.bodyLeftCol = this.table.frozenColCount;
-    // this.bodyRightCol = this.table.colCount - 1;
+    // this.bodyLeftCol = this.table.frozenColCount;
     this.bodyRightCol = this.table.colCount - 1 - this.table.rightFrozenColCount;
 
     // compute the column info about progress creation
@@ -550,7 +552,7 @@ export class SceneProxy {
     }
 
     if (
-      col >= this.table.rowHeaderLevelCount && // not row header
+      col >= this.table.frozenColCount && // not row header
       col < this.table.colCount - this.table.rightFrozenColCount && // not right frozen
       (col < this.colStart || col > this.colEnd) // not in proxy col range
     ) {
