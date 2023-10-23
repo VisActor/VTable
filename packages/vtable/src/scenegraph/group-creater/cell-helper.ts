@@ -347,7 +347,7 @@ export function updateCell(col: number, row: number, table: BaseTableAPI, addNew
   const cellTheme = getStyleTheme(cellStyle, table, col, row, getProp).theme;
 
   // fast method for text
-  if (canUseFastUpdate(col, row, oldCellGroup, autoWrapText, table)) {
+  if (!addNew && canUseFastUpdate(col, row, oldCellGroup, autoWrapText, table)) {
     // update group
     const cellWidth = table.getColWidth(col);
     const cellHeight = table.getRowHeight(row);
