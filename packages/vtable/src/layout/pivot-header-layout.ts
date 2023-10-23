@@ -1195,7 +1195,7 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
   }
   get rowCount(): number {
     return (
-      ((Array.isArray(this.dataset.records) ? this.dataset.records.length > 0 : true) && this._indicators?.length > 0 // 有展示的body值的情况 需要展示body row  否则只有表头
+      ((Array.isArray(this._table.records) ? this._table.records.length > 0 : true) && this._indicators?.length > 0 // 有展示的body值的情况 需要展示body row  否则只有表头
         ? this.rowDimensionTree.tree.size //兼容bugserver: https://bugserver.cn.goofy.app/case?product=VTable&fileid=65364a57173c354c242a7c4f
         : this._rowHeaderCellIds?.length ?? 0) + //兼容 bugserver：https://bugserver.cn.goofy.app/case?product=VTable&fileid=6527ac0695c0cdbd788cf17d
       this.columnHeaderLevelCount +
