@@ -16,7 +16,7 @@ const generatePersons = count => {
 };
 
 export function createTable() {
-  const records = generatePersons(100);
+  const records = generatePersons(1000000);
   const columns: VTable.ColumnsDefine = [
     {
       field: 'id',
@@ -70,6 +70,231 @@ export function createTable() {
       field: 'city',
       title: 'city',
       width: 150
+    },
+    {
+      field: 'date1',
+      title: 'birthday',
+      width: 200
+    },
+    {
+      field: 'sex',
+      title: 'sex',
+      width: 100
+    },
+    {
+      field: 'tel',
+      title: 'telephone',
+      width: 150
+    },
+    {
+      field: 'work',
+      title: 'job',
+      width: 200
+    },
+    {
+      field: 'city',
+      title: 'city',
+      width: 150
+    },
+    {
+      field: 'date1',
+      title: 'birthday',
+      width: 200
+    },
+    {
+      field: 'sex',
+      title: 'sex',
+      width: 100
+    },
+    {
+      field: 'tel',
+      title: 'telephone',
+      width: 150
+    },
+    {
+      field: 'work',
+      title: 'job',
+      width: 200
+    },
+    {
+      field: 'city',
+      title: 'city',
+      width: 150
+    },
+    {
+      field: 'date1',
+      title: 'birthday',
+      width: 200
+    },
+    {
+      field: 'sex',
+      title: 'sex',
+      width: 100
+    },
+    {
+      field: 'tel',
+      title: 'telephone',
+      width: 150
+    },
+    {
+      field: 'work',
+      title: 'job',
+      width: 200
+    },
+    {
+      field: 'city',
+      title: 'city',
+      width: 150
+    },
+    {
+      field: 'date1',
+      title: 'birthday',
+      width: 200
+    },
+    {
+      field: 'sex',
+      title: 'sex',
+      width: 100
+    },
+    {
+      field: 'tel',
+      title: 'telephone',
+      width: 150
+    },
+    {
+      field: 'work',
+      title: 'job',
+      width: 200
+    },
+    {
+      field: 'city',
+      title: 'city',
+      width: 150
+    },
+    {
+      field: 'date1',
+      title: 'birthday',
+      width: 200
+    },
+    {
+      field: 'sex',
+      title: 'sex',
+      width: 100
+    },
+    {
+      field: 'tel',
+      title: 'telephone',
+      width: 150
+    },
+    {
+      field: 'work',
+      title: 'job',
+      width: 200
+    },
+    {
+      field: 'city',
+      title: 'city',
+      width: 150
+    },
+    {
+      field: 'date1',
+      title: 'birthday',
+      width: 200
+    },
+    {
+      field: 'sex',
+      title: 'sex',
+      width: 100
+    },
+    {
+      field: 'tel',
+      title: 'telephone',
+      width: 150
+    },
+    {
+      field: 'work',
+      title: 'job',
+      width: 200
+    },
+    {
+      field: 'city',
+      title: 'city',
+      width: 150
+    },
+    {
+      field: 'date1',
+      title: 'birthday',
+      width: 200
+    },
+    {
+      field: 'sex',
+      title: 'sex',
+      width: 100
+    },
+    {
+      field: 'tel',
+      title: 'telephone',
+      width: 150
+    },
+    {
+      field: 'work',
+      title: 'job',
+      width: 200
+    },
+    {
+      field: 'city',
+      title: 'city',
+      width: 150
+    },
+    {
+      field: 'date1',
+      title: 'birthday',
+      width: 200
+    },
+    {
+      field: 'sex',
+      title: 'sex',
+      width: 100
+    },
+    {
+      field: 'tel',
+      title: 'telephone',
+      width: 150
+    },
+    {
+      field: 'work',
+      title: 'job',
+      width: 200
+    },
+    {
+      field: 'city',
+      title: 'city',
+      width: 150
+    },
+    {
+      field: 'date1',
+      title: 'birthday',
+      width: 200
+    },
+    {
+      field: 'sex',
+      title: 'sex',
+      width: 100
+    },
+    {
+      field: 'tel',
+      title: 'telephone',
+      width: 150
+    },
+    {
+      field: 'work',
+      title: 'job',
+      width: 200
+    },
+    {
+      field: 'city',
+      title: 'city',
+      width: 150
     }
   ];
   const option = {
@@ -78,11 +303,13 @@ export function createTable() {
     columns,
     tooltip: {
       isShowOverflowTextTooltip: true
-    },
-    frozenColCount: 2,
+    }
+    // maintainedDataCount: 200,
+    // frozenColCount: 2,
+    // rightFrozenColumnCount: 1
     // autoWrapText: true,
     // heightMode: 'autoHeight',
-    widthMode: 'adaptive'
+    // widthMode: 'adaptive'
   };
   const tableInstance = new VTable.ListTable(option);
   window.tableInstance = tableInstance;
