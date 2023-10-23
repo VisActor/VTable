@@ -52,8 +52,8 @@ export function bindTouchListener(eventManeger: EventManeger) {
 
       if (
         e.cancelable &&
-        ((deltaY !== 0 && isVerticalScrollable(deltaY, stateManeger)) ||
-          (deltaX !== 0 && isHorizontalScrollable(deltaX, stateManeger)))
+        ((Math.abs(deltaY) >= Math.abs(deltaX) && deltaY !== 0 && isVerticalScrollable(deltaY, stateManeger)) ||
+          (Math.abs(deltaY) <= Math.abs(deltaX) && deltaX !== 0 && isHorizontalScrollable(deltaX, stateManeger)))
       ) {
         e.preventDefault();
       }
