@@ -1194,8 +1194,8 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
     return this.columnDimensionTree.tree.size + this.rowHeaderLevelCount + this.rightFrozenColCount;
   }
   get rowCount(): number {
-    // return this.rowDimensionTree.tree.size + this.columnHeaderLevelCount + this.bottomFrozenRowCount;
-    return (this._rowHeaderCellIds?.length ?? 0) + this.columnHeaderLevelCount + this.bottomFrozenRowCount;
+    return this.rowDimensionTree.tree.size + this.columnHeaderLevelCount + this.bottomFrozenRowCount;
+    // return (this._rowHeaderCellIds?.length ?? 0) + this.columnHeaderLevelCount + this.bottomFrozenRowCount;
   }
   get bodyRowCount() {
     return this.rowDimensionTree.tree.size;
