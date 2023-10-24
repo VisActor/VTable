@@ -93,7 +93,7 @@ export function getAxisConfigInPivotChart(col: number, row: number, layout: Pivo
         axisOption,
         {
           orient: 'top',
-          type: axisOption.type || 'linear',
+          type: axisOption?.type || 'linear',
           label: {
             flush: true
           },
@@ -187,7 +187,7 @@ export function getAxisConfigInPivotChart(col: number, row: number, layout: Pivo
         axisOption,
         {
           orient: 'bottom',
-          type: axisOption.type || 'linear',
+          type: axisOption?.type || 'linear',
           label: {
             flush: true
           },
@@ -313,7 +313,7 @@ export function getAxisConfigInPivotChart(col: number, row: number, layout: Pivo
         axisOption,
         {
           orient: 'left',
-          type: axisOption.type || 'linear',
+          type: axisOption?.type || 'linear',
           label: {
             flush: true
           },
@@ -399,7 +399,7 @@ export function getAxisConfigInPivotChart(col: number, row: number, layout: Pivo
         axisOption,
         {
           orient: 'right',
-          type: axisOption.type || 'linear',
+          type: axisOption?.type || 'linear',
           label: {
             flush: true
           },

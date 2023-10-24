@@ -28,12 +28,12 @@ export function getAxisDomainRangeAndLabels(
   }
 
   let scale;
-  if (axisOption.type === 'log') {
+  if (axisOption?.type === 'log') {
     scale = new LogScale();
-    scale.base(axisOption.base ?? 10);
-  } else if (axisOption.type === 'symlog') {
+    scale.base(axisOption?.base ?? 10);
+  } else if (axisOption?.type === 'symlog') {
     scale = new SymlogScale();
-    scale.constant(axisOption.constant ?? 10);
+    scale.constant(axisOption?.constant ?? 10);
   } else {
     scale = new LinearScale();
   }
