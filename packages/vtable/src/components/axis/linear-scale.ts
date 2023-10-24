@@ -1,4 +1,4 @@
-import { LinearScale } from '@visactor/vscale';
+import { LinearScale, LogScale, SymlogScale } from '@visactor/vscale';
 import { isNil, isValid, maxInArray, minInArray } from '@visactor/vutils';
 
 const e10 = Math.sqrt(50);
@@ -8,8 +8,8 @@ const e2 = Math.sqrt(2);
 type IRange = { max?: number; min?: number };
 export class LinearAxisScale {
   protected _extend: { [key: string]: number } = {};
-  _scale: LinearScale;
-  _scales: LinearScale[];
+  _scale: LinearScale | LogScale | SymlogScale;
+  _scales: (LinearScale | LogScale | SymlogScale)[];
   nice: boolean;
   zero: boolean;
   domain: Required<IRange>;
@@ -17,13 +17,28 @@ export class LinearAxisScale {
   forceTickCount?: number;
   tickCount?: number;
   niceType?: 'tickCountFirst' | 'accurateFirst';
+  type?: 'linear' | 'time' | 'log' | 'symlog';
 
-  constructor() {
-    this._scale = new LinearScale();
+  constructor(type?: 'linear' | 'time' | 'log' | 'symlog') {
+    this.type = type ?? 'linear';
+    if (type === 'log') {
+      this._scale = new LogScale();
+    } else if (type === 'symlog') {
+      this._scale = new SymlogScale();
+    } else {
+      this._scale = new LinearScale();
+    }
     this._scales = [this._scale];
   }
 
-  setExtraAttrFromSpec(nice: boolean, zero: boolean, range: Required<IRange>, expand?: IRange) {
+  setExtraAttrFromSpec(
+    nice: boolean,
+    zero: boolean,
+    range: Required<IRange>,
+    expand?: IRange,
+    base?: number,
+    constant?: number
+  ) {
     // this.nice = nice;
     this.nice = false; // nice deal in getAxisDomainRangeAndLabels()
     this.zero = zero;
@@ -34,12 +49,41 @@ export class LinearAxisScale {
     }
     this.domain = range;
     this.expand = expand;
+
+    if (this.type === 'log') {
+      (this._scale as LogScale).base(base ?? 10);
+    } else if (this.type === 'symlog') {
+      (this._scale as SymlogScale).constant(constant ?? 10);
+    }
   }
 
   transformScaleDomain() {
-    this.setScaleNice();
+    if (this.type === 'symlog' || this.type === 'log') {
+      // do nothing
+    } else {
+      this.setScaleNice();
+    }
   }
+
   setScaleNice() {
+    if (this.type === 'log') {
+      this.setLogScaleNice();
+    } else {
+      this.setLinearScaleNice();
+    }
+  }
+
+  setLogScaleNice() {
+    if (isNil(this.domain?.min) && isNil(this.domain?.max)) {
+      this.nice && this._scale.nice();
+    } else if (isValid(this.domain?.min) && isNil(this.domain?.max)) {
+      this.nice && this._scale.niceMax();
+    } else if (isNil(this.domain?.min) && isValid(this.domain?.max)) {
+      this.nice && this._scale.niceMin();
+    }
+  }
+
+  setLinearScaleNice() {
     let tickCount = this.forceTickCount ?? this.tickCount ?? 10;
     // 如果配置了精度优先，那么最低是10
     // 否则就直接使用tickCount即可

@@ -370,7 +370,7 @@ export function createTable() {
               paddingOuter: 0.175
             },
             {
-              type: 'linear',
+              type: 'symlog',
               tick: {
                 visible: false,
                 tickMode: 'd3',
