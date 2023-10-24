@@ -11,7 +11,7 @@ import { createElement } from '../../../../tools/dom';
 import { importStyle } from './MenuElementStyle';
 import { TABLE_EVENT_TYPE } from '../../../../core/TABLE_EVENT_TYPE';
 import { cellInRange } from '../../../../tools/helper';
-import { isValid } from '../../../../tools/util';
+import { isValid } from '@visactor/vutils';
 import type { PivotHeaderLayoutMap } from '../../../../layout/pivot-header-layout';
 import { regUrl } from '../../../../tools/global';
 import type { BaseTableAPI } from '../../../../ts-types/base-table';
@@ -446,22 +446,15 @@ export class MenuElement {
     const rect = table.getCellRangeRelativeRect({ col, row });
     const element = table.getElement();
     const { top, bottom, left, right } = rect;
-    const { frozenRowCount, frozenColCount } = table;
-    if (row >= frozenRowCount && frozenRowCount > 0) {
-      const frozenRect = table.getCellRangeRelativeRect({ col, row: frozenRowCount - 1 });
-      if (bottom < frozenRect.bottom) {
-        return false;
-      }
-    } else if (bottom < 0) {
-      return false;
-    }
-    if (col >= frozenColCount && frozenColCount > 0) {
-      const frozenRect = table.getCellRangeRelativeRect({ col: frozenColCount - 1, row });
-      if (right < frozenRect.right) {
-        //整个是被冻结列盖住的 不需要提示toolTip
-        return false;
-      }
-    } else if (right < 0) {
+    if (table.isFrozenCell(col, row)) {
+      return true;
+    } else if (
+      bottom < table.getFrozenRowsHeight() ||
+      right < table.getFrozenColsWidth() ||
+      left > table.tableNoFrameWidth - table.getRightFrozenColsWidth() ||
+      top > table.tableNoFrameHeight - table.getBottomFrozenRowsHeight()
+    ) {
+      // 范围外
       return false;
     }
     const { offsetHeight, offsetWidth } = element;

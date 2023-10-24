@@ -3,8 +3,8 @@ category: examples
 group: table-type
 title: 透视组合图
 cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/pivot-chart.png
-order: 1-8
 link: '../guide/table_type/pivot_chart'
+option: PivotChart-indicators-chart#cellType
 ---
 
 # 透视组合图

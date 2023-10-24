@@ -4,13 +4,14 @@ group: Business
 title: Sales heat map
 cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/color-level.png
 order: 9-1
+option: PivotTable-indicators-text#style.bgColor
 ---
 
 # Sales heat map
 
 This example shows how to implement a sales heat map by changing the background color according to the color level configuration function.
 
-## critical configuration
+## Key Configurations
 
 *   `indicators[x].style.bgColor` Configure the background color of a Metirc content
 

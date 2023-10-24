@@ -5,6 +5,7 @@ title: 右键菜单
 cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/context-menu.png
 order: 4-6
 link: '../guide/components/dropdown'
+option: ListTable#menu.contextMenuItems
 ---
 
 # 右键菜单

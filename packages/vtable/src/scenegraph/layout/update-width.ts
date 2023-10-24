@@ -363,7 +363,7 @@ function updateCellWidth(
     }
   }
 
-  return isHeightChange;
+  return autoRowHeight ? isHeightChange : false;
 }
 
 /**

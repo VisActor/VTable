@@ -36,6 +36,8 @@
 |图例项unhover|LEGEND\_ITEM\_UNHOVER|鼠标离开hover的图例项|
 |鼠标进入坐标轴|MOUSEENTER\_AXIS|鼠标进入坐标轴组件|
 |鼠标离开坐标轴|MOUSELEAVE\_AXIS|鼠标离开坐标轴组件|
+|生命周期事件：完成初始化|INITIALIZED|生命周期事件：成功初始化完成后触发|
+|渲染完成|AFTER\_RENDER|每次渲染完成触发|
 
 ## 事件监听方式
 
@@ -63,5 +65,5 @@ const {
     CONTEXTMENU_CELL,
   } = VTable.ListGrid.EVENT_TYPE;
   const tableInstance =new ListGrid(options);
-  tableInstance.listen(CLICK_CELL, (...args) => console.log(CLICK_CELL, args));
+  tableInstance.on(CLICK_CELL, (...args) => console.log(CLICK_CELL, args));
 ```

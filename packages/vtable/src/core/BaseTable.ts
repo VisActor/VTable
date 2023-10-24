@@ -2,7 +2,6 @@ import * as columnStyleContents from '../body-helper/style';
 import * as headerStyleContents from '../header-helper/style';
 import { importStyle } from './style';
 import * as style from '../tools/style';
-import { AABBBounds, isNumber } from '@visactor/vutils';
 import {
   type CellAddress,
   type CellRange,
@@ -47,7 +46,7 @@ import { EventTarget } from '../event/EventTarget';
 import { NumberMap } from '../tools/NumberMap';
 import { Rect } from '../tools/Rect';
 import type { TableTheme } from '../themes/theme';
-import { defaultOrderFn, isValid, throttle2 } from '../tools/util';
+import { defaultOrderFn, throttle2 } from '../tools/util';
 import themes from '../themes';
 import { Env } from '../tools/env';
 import { Scenegraph } from '../scenegraph/scenegraph';
@@ -58,7 +57,7 @@ import { HeaderHelper } from '../header-helper/header-helper';
 import type { PivotHeaderLayoutMap } from '../layout/pivot-header-layout';
 import { TooltipHandler } from '../components/tooltip/TooltipHandler';
 import type { CachedDataSource, DataSource } from '../data';
-import { isBoolean, isFunction, type ITextSize } from '@visactor/vutils';
+import { AABBBounds, isNumber, isBoolean, isFunction, type ITextSize, isValid } from '@visactor/vutils';
 import { textMeasure } from '../scenegraph/utils/text-measure';
 import { getProp } from '../scenegraph/utils/get-prop';
 import type {
@@ -1053,7 +1052,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
    */
   getColWidth(col: number): number {
     // const width = this.getColWidthDefine(col);
-    const width = this.colWidthsMap.get(col) ?? 0;
+    const width = this.colWidthsMap.get(col) ?? this.defaultColWidth;
     if (
       (this.widthMode === 'adaptive' && typeof width === 'number') ||
       ((this as any).transpose && typeof width === 'number')
@@ -1241,7 +1240,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     return new Rect(Math.round(absoluteLeft), Math.round(absoluteTop), Math.round(width), Math.round(height));
   }
   /**
-   * 获取的位置是相对表格显示界面的左上角 情况滚动情况 如单元格已经滚出表格上方 则这个单元格的x将为负值
+   * 获取的位置是相对表格显示界面的左上角 情况滚动情况 如单元格已经滚出表格上方 则这个单元格的y将为负值
    * @param {number} col index of column, of the cell
    * @param {number} row index of row, of the cell
    * @returns {Rect} the rect of the cell.
@@ -1405,9 +1404,8 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     row: boolean;
     col: boolean;
   } | null {
-    const { frozenRowCount, frozenColCount } = this.internalProps;
-    const isFrozenRow = (frozenRowCount > 0 && row < frozenRowCount) || this.isBottomFrozenRow(col, row);
-    const isFrozenCol = (frozenColCount > 0 && col < frozenColCount) || this.isRightFrozenColumn(col, row);
+    const isFrozenRow = this.isFrozenRow(row) || this.isBottomFrozenRow(row);
+    const isFrozenCol = this.isFrozenRow(col) || this.isRightFrozenColumn(col);
     if (isFrozenRow || isFrozenCol) {
       return {
         row: isFrozenRow,
@@ -1535,10 +1533,16 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
   }
 
   /**
-   * 重绘表格
+   * 重绘表格(同步绘制)
    */
   render(): void {
     this.scenegraph.renderSceneGraph();
+  }
+  /**
+   * 异步重绘表格
+   */
+  renderAsync(): void {
+    this.scenegraph.updateNextFrame();
   }
   /**
    * 转换成视觉相对table左上角的坐标 如滚动超出表格上方 y将为负值
@@ -2562,6 +2566,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
       _setRecords(this, records);
     }
 
+    this.internalProps.frozenColCount = this.options.frozenColCount || this.rowHeaderLevelCount;
     // 生成单元格场景树
     this.scenegraph.createSceneGraph();
 
@@ -2607,12 +2612,59 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
   isCornerHeader(col: number, row: number): boolean {
     return this.internalProps.layoutMap?.isCornerHeader(col, row);
   }
-  /** 判断单元格是否属于角表头部分 */
-  isRightFrozenColumn(col: number, row: number): boolean {
+  /**
+   * 是否属于冻结左侧列
+   * @param col
+   * @param row 不传的话 只需要判断col，传入row的话非冻结角头部分的才返回true
+   * @returns
+   */
+  isFrozenColumn(col: number, row?: number): boolean {
+    return this.internalProps.layoutMap?.isFrozenColumn(col, row);
+  }
+  /**
+   * 是否属于冻结左侧列
+   * @param col
+   * @param row 不传的话 只需要判断col，传入row的话非冻结角头部分的才返回true
+   * @returns
+   */
+  isLeftFrozenColumn(col: number, row?: number): boolean {
+    return this.internalProps.layoutMap?.isFrozenColumn(col, row);
+  }
+  /**
+   * 是否属于右侧冻结列
+   * @param col
+   * @param row 不传的话 只需要判断col，传入row的话非冻结角头部分的才返回true
+   * @returns
+   */
+  isRightFrozenColumn(col: number, row?: number): boolean {
     return this.internalProps.layoutMap?.isRightFrozenColumn(col, row);
   }
-  /** 判断单元格是否属于角表头部分 */
-  isBottomFrozenRow(col: number, row: number): boolean {
+
+  /**
+   * 是否属于冻结顶部行
+   * @param col 只传入col一个值的话 会被当做row
+   * @param row 不传的话只需要判断col（其实会当做row）；传入两个值的话非冻结角头部分的才返回true
+   * @returns
+   */
+  isFrozenRow(col: number, row?: number): boolean {
+    return this.internalProps.layoutMap?.isFrozenRow(col, row);
+  }
+  /**
+   * 是否属于冻结顶部行
+   * @param col 只传入col一个值的话 会被当做row
+   * @param row 不传的话只需要判断col（其实会当做row）；传入两个值的话非冻结角头部分的才返回true
+   * @returns
+   */
+  isTopFrozenRow(col: number, row?: number): boolean {
+    return this.internalProps.layoutMap?.isFrozenRow(col, row);
+  }
+  /**
+   * 是否属于冻结底部行
+   * @param col 只传入col一个值的话 会被当做row
+   * @param row 不传的话只需要判断col（其实会当做row）；传入两个值的话非冻结角头部分的才返回true
+   * @returns
+   */
+  isBottomFrozenRow(col: number, row?: number): boolean {
     return this.internalProps.layoutMap?.isBottomFrozenRow(col, row);
   }
   /** 获取单元格的基本信息 目前主要组织单元格信息给事件传递给用户的参数使用 */

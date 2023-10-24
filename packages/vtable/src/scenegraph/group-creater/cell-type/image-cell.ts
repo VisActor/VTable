@@ -9,7 +9,7 @@ import { calcKeepAspectRatioSize } from '../../utils/keep-aspect-ratio';
 import { calcStartPosition } from '../../utils/cell-pos';
 import type { Scenegraph } from '../../scenegraph';
 import { getProp, getFunctionalProp } from '../../utils/get-prop';
-import { isValid } from '../../../tools/util';
+import { isValid } from '@visactor/vutils';
 import { getQuadProps } from '../../utils/padding';
 
 const regedIcons = icons.get();

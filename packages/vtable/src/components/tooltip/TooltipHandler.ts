@@ -126,16 +126,26 @@ export class TooltipHandler {
           return;
         }
       }
-      if (table.internalProps.tooltip?.isShowOverflowTextTooltip) {
-        const overflowText = table.getCellOverflowText(col, row);
-        const headerDescription = table.getHeaderDescription(col, row);
+      let tooltipOption;
+      const headerDescription = table.getHeaderDescription(col, row);
+      if (headerDescription) {
         const rect = table.getCellRangeRelativeRect({ col, row });
-        let tooltipOption;
+        tooltipOption = {
+          content: headerDescription,
+          referencePosition: {
+            placement: Placement.bottom,
+            rect
+          },
+          style: { arrowMark: false }
+        };
+      } else if (table.internalProps.tooltip?.isShowOverflowTextTooltip) {
+        const overflowText = table.getCellOverflowText(col, row);
+        const rect = table.getCellRangeRelativeRect({ col, row });
         if (overflowText) {
           tooltipOption = {
             content: headerDescription
               ? `${headerDescription}
-  ${overflowText}`
+    ${overflowText}`
               : overflowText,
             referencePosition: {
               placement: Placement.bottom,
@@ -144,19 +154,9 @@ export class TooltipHandler {
             style: { arrowMark: false }
           };
         }
-        if (headerDescription) {
-          tooltipOption = {
-            content: headerDescription,
-            referencePosition: {
-              placement: Placement.bottom,
-              rect
-            },
-            style: { arrowMark: false }
-          };
-        }
-        if (tooltipOption) {
-          this._bindToCell(e.col, e.row, tooltipOption);
-        }
+      }
+      if (tooltipOption) {
+        this._bindToCell(e.col, e.row, tooltipOption);
       }
     });
     table.on(TABLE_EVENT_TYPE.MOUSEMOVE_CELL, e => {

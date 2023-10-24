@@ -344,10 +344,15 @@ The mouse leaves the axis event. **Axis-specific events**
 
 The parameter type of the event callback function:
 Same as **MOUSEENTER_AXIS**
+## INITIALIZED
+Triggered after successful initialization is completed
 
-##onVChartEvent
+## AFTER_RENDER	
+Triggered after each rendering is completed
 
-Listen to vchart events, specific event types can refer to (VChart events)[ff]
+## onVChartEvent
+
+Listen to vchart events, specific event types can refer to [VChart Events](https://visactor.io/vchart/api/API/event)
 
 ```
   /**

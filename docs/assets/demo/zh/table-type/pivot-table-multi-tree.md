@@ -3,13 +3,13 @@ category: examples
 group: table-type
 title: 透视表多列树形展示
 cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/pivot-multi-tree.png
-order: 1-7
 link: '../guide/table_type/Pivot_table/pivot_table_multi_tree'
+option: PivotTable#extensionRows(IExtensionRowDefine%5B%5D)
 ---
 
 # 透视表多列树形展示
 
-透视表格多列树形展示
+透视表格多列树形展示。多列属于特殊的树形展示结构，需要依赖业务方传入rowTree，columnTree和extensionRows。
 
 ## 关键配置
 

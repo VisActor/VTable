@@ -3,14 +3,14 @@ category: examples
 group: Basic Features
 title: Merge Cells
 cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/merge.png
-order: 3-4
+option: ListTable-columns-text#mergeCell
 ---
 
 # Merge cells
 
 Automatically merge cells with the same content through configuration
 
-## critical configuration
+## Key Configurations
 
 *   `merge`  Merge adjacent cells with the same content in the same column
 

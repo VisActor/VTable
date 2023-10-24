@@ -10,7 +10,11 @@ order: 9-6
 
 This example shows the main R & D roadmap that follows VTable
 
-## critical configuration
+## Key Configurations
+
+- register.icon
+- headerIcon
+- icon
 
 ## Code demo
 

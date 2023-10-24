@@ -5,15 +5,24 @@ title: Pivot Table Tree
 cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/pivot-tree.png
 order: 1-5
 link: '../guide/table_type/Pivot_table/pivot_table_tree'
+option: PivotTable#rowHierarchyType('grid'%20%7C%20'tree')
 ---
 
 # Pivot Table Tree Hierarchy
 
-Pivot Table  Tree Hierarchy
+Pivot table tree display, this example passes in the custom header tree structure rowTree and columnTree, and sets rowHierarchyType to tree.
 
-## critical configuration
+It should be noted that indicatorsAsCol cannot be set to false, because it is currently not supported that indicators are placed on the row header when displayed as the header of a tree structure.
 
-*   `rowHierarchyType` Set the hierarchical presentation to`tree`, defaults to tiling mode`grid`.
+## Key Configurations
+
+- `PivotTable`
+- `rowHierarchyType` Set the hierarchical presentation to`tree`, defaults to tiling mode`grid`.
+- `columnTree`
+- `rowTree`
+- `columns` Optional Configure, dimension styles, etc.
+- `rows`Optional Configure, dimension styles, etc.
+- `indicators`
 
 ## Code demo
 

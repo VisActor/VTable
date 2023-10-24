@@ -5,13 +5,14 @@ title: Custom function specifies cell type
 cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/cellType-function.png
 Order: 2-1
 link: '../guide/cell_type/cellType'
+option: ListTable-columns-function#cellType
 ---
 
 # Cell content type
 
 Specify the cell content type through the function form of cellType. Image source: https://birdsoftheworld.org/bow/home
 
-## Key configuration
+## Key Configurations
 
 cellType: (arg: CellInfo) => ColumnTypeOption;
 

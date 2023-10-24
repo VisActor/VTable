@@ -3,15 +3,15 @@ category: examples
 group: Component
 title: legend
 cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/legend.png
-order: 8-6
 link: '../guide/components/legend'
+option: ListTable-legends-discrete#type
 ---
 
 # Legend
 
 In this example, the background color of the cell is mapped by the category Dimension value to generate a legend item, and the click event of the legend item is listened for to highlight the cell content.
 
-## critical configuration
+## Key Configurations
 
 *   `legend` Configuration table legend, please refer to: https://www.visactor.io/vtable/option/ListTable#legend
 

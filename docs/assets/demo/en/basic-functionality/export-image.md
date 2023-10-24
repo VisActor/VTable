@@ -3,14 +3,13 @@ category: examples
 group: Basic Features
 title: Export image
 cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/export-image.png
-Order: 3-4
 ---
 
 #Export Image
 
 Export image of the visible area of the table, or export a picture of a certain area or cells
 
-## Key configuration
+## Key Configurations
 
  - `exportImg`
  - `exportCellImg`

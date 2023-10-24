@@ -3,8 +3,8 @@ category: examples
 group: table-type
 title: 透视分析表格
 cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/pivot-table.png
-order: 1-4
-link: '../guide/table_type/Pivot_table/pivot_table_useage'
+link: '../guide/table_type/Pivot_table/pivot_table_dataAnalysis'
+option: PivotTable#enableDataAnalysis
 ---
 
 # 透视分析表格
@@ -59,9 +59,6 @@ records:data,
                   "headerStyle":{
                     fontWeight: "normal",
                   },
-                   "format":(rec)=>{
-                    return '$'+Number(rec).toFixed(2)
-                  },
                    style:{
                     padding:[16,28,16,28],
                     color(args){
@@ -79,7 +76,7 @@ records:data,
                   "headerStyle":{
                     fontWeight: "normal",
                   },
-                  "format":(rec)=>{return '$'+Number(rec?.['Sales']).toFixed(2)},
+                  "format":(rec)=>{return '$'+Number(rec).toFixed(2)},
                   style:{
                     padding:[16,28,16,28],
                     color(args){

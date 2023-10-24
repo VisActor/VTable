@@ -4,6 +4,7 @@ group: Business
 title: 销售热图
 cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/color-level.png
 order: 9-1
+option: PivotTable-indicators-text#style.bgColor
 ---
 
 # 销售热图

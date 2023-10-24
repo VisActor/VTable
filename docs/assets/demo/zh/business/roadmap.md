@@ -12,6 +12,10 @@ order: 9-6
 
 ## 关键配置
 
+- register.icon
+- headerIcon
+- icon
+
 ## 代码演示
 
 ```javascript livedemo template=vtable

@@ -5,13 +5,14 @@ title: Move header position
 cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/move-header-position.gif
 order: 4-5
 link: '../guide/interaction/drag_header'
+option: ListTable#dragHeaderMode
 ---
 
 # Move header position
 
 Click the header to select a row or column, and drag and drop to move.
 
-## critical configuration
+## Key Configurations
 
 *   `dragHeaderMode` Drag and drop the entire row or column of the header to change the position, and optional configuration items:`'all' | 'none' | 'header' | 'body'`, the default is`none`
 

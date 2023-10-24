@@ -5,6 +5,7 @@ title: Drop Down Menu
 cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/dropdown.png
 order: 8-2
 link: '../guide/components/dropdown'
+option: ListTable-columns-text#dropDownMenu
 ---
 
 # drop down menu
@@ -12,7 +13,7 @@ link: '../guide/components/dropdown'
 In this example, the dropDownMenu is configured in the first column of columns, and when hovered to the header cell, a drop-down menu is displayed for further operation.
 At the same time through monitoring`click_cell`Event, when the mouse clicks the order icon in the first column, the interface showDropDownMenu is called to display the drop-down menu. To continue the operation according to the item clicked on the drop-down menu, you can listen to the event dropdownmenu\_click.
 
-## critical configuration
+## Key Configurations
 
 *   `dropDownMenu`  Configure the drop-down menu at the header to display the content. After configuration, hover to the header cell to display the content. You can configure it separately or globally according to the header.
 
@@ -155,7 +156,7 @@ const option = {
 tableInstance = new VTable.ListTable(document.getElementById(CONTAINER_ID), option);
 window['tableInstance'] = tableInstance;
 
-tableInstance.listen('click_cell', (args) => {
+tableInstance.on('click_cell', (args) => {
         const { col, row, targetIcon } = args;
         if(col===0&&row>=1&&targetIcon?.name==='order'){
           const { left, top, width, height, bottom, right } = targetIcon.position;
@@ -219,7 +220,7 @@ tableInstance.listen('click_cell', (args) => {
       });
         }
     });
-  tableInstance.listen('dropdownmenu_click', (args) => {
+  tableInstance.on('dropdownmenu_click', (args) => {
     console.log('dropdownmenu_click',args);
     tableInstance.setDropDownMenuHighlight([args]);
   })

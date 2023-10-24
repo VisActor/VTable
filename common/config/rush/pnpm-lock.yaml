@@ -14,7 +14,7 @@ importers:
       '@types/markdown-it': ^13.0.0
       '@types/react': ^18.0.0
       '@types/react-dom': ^18.0.0
-      '@visactor/vchart': 1.5.1-alpha.0
+      '@visactor/vchart': 1.4.3
       '@visactor/vtable': workspace:*
       '@vitejs/plugin-react': 3.1.0
       axios: ^1.4.0
@@ -35,7 +35,7 @@ importers:
       yargs: ^17.1.1
     dependencies:
       '@arco-design/web-react': 2.46.1_5ifijlhiwgyo26nyk4gkpsvy4e
-      '@visactor/vchart': 1.5.1-alpha.0
+      '@visactor/vchart': 1.4.3
       '@visactor/vtable': link:../packages/vtable
       axios: 1.5.1
       highlight.js: 11.8.0
@@ -77,7 +77,7 @@ importers:
       '@types/offscreencanvas': 2019.6.4
       '@types/react': ^18.0.0
       '@types/react-dom': ^18.0.0
-      '@visactor/vchart': 1.5.1-alpha.0
+      '@visactor/vchart': 1.4.3
       '@visactor/vdataset': ~0.15.7
       '@visactor/vrender': 0.16.2
       '@visactor/vrender-components': 0.16.2
@@ -140,7 +140,7 @@ importers:
       '@types/offscreencanvas': 2019.6.4
       '@types/react': 18.2.25
       '@types/react-dom': 18.2.10
-      '@visactor/vchart': 1.5.1-alpha.0
+      '@visactor/vchart': 1.4.3
       '@vitejs/plugin-react': 3.1.0_vite@3.2.6
       axios: 1.5.1
       chai: 4.3.4
@@ -2098,6 +2098,7 @@ packages:
     cpu: [arm]
     os: [android]
     requiresBuild: true
+    dev: false
     optional: true
 
   /@resvg/resvg-js-android-arm64/2.4.1:
@@ -2106,6 +2107,7 @@ packages:
     cpu: [arm64]
     os: [android]
     requiresBuild: true
+    dev: false
     optional: true
 
   /@resvg/resvg-js-darwin-arm64/2.4.1:
@@ -2114,6 +2116,7 @@ packages:
     cpu: [arm64]
     os: [darwin]
     requiresBuild: true
+    dev: false
     optional: true
 
   /@resvg/resvg-js-darwin-x64/2.4.1:
@@ -2122,6 +2125,7 @@ packages:
     cpu: [x64]
     os: [darwin]
     requiresBuild: true
+    dev: false
     optional: true
 
   /@resvg/resvg-js-linux-arm-gnueabihf/2.4.1:
@@ -2130,6 +2134,7 @@ packages:
     cpu: [arm]
     os: [linux]
     requiresBuild: true
+    dev: false
     optional: true
 
   /@resvg/resvg-js-linux-arm64-gnu/2.4.1:
@@ -2138,6 +2143,7 @@ packages:
     cpu: [arm64]
     os: [linux]
     requiresBuild: true
+    dev: false
     optional: true
 
   /@resvg/resvg-js-linux-arm64-musl/2.4.1:
@@ -2146,6 +2152,7 @@ packages:
     cpu: [arm64]
     os: [linux]
     requiresBuild: true
+    dev: false
     optional: true
 
   /@resvg/resvg-js-linux-x64-gnu/2.4.1:
@@ -2154,6 +2161,7 @@ packages:
     cpu: [x64]
     os: [linux]
     requiresBuild: true
+    dev: false
     optional: true
 
   /@resvg/resvg-js-linux-x64-musl/2.4.1:
@@ -2162,6 +2170,7 @@ packages:
     cpu: [x64]
     os: [linux]
     requiresBuild: true
+    dev: false
     optional: true
 
   /@resvg/resvg-js-win32-arm64-msvc/2.4.1:
@@ -2170,6 +2179,7 @@ packages:
     cpu: [arm64]
     os: [win32]
     requiresBuild: true
+    dev: false
     optional: true
 
   /@resvg/resvg-js-win32-ia32-msvc/2.4.1:
@@ -2178,6 +2188,7 @@ packages:
     cpu: [ia32]
     os: [win32]
     requiresBuild: true
+    dev: false
     optional: true
 
   /@resvg/resvg-js-win32-x64-msvc/2.4.1:
@@ -2186,6 +2197,7 @@ packages:
     cpu: [x64]
     os: [win32]
     requiresBuild: true
+    dev: false
     optional: true
 
   /@resvg/resvg-js/2.4.1:
@@ -2204,6 +2216,7 @@ packages:
       '@resvg/resvg-js-win32-arm64-msvc': 2.4.1
       '@resvg/resvg-js-win32-ia32-msvc': 2.4.1
       '@resvg/resvg-js-win32-x64-msvc': 2.4.1
+    dev: false
 
   /@rollup/plugin-alias/5.0.0_rollup@3.20.5:
     resolution: {integrity: sha512-l9hY5chSCjuFRPsnRm16twWBiSApl2uYFLsepQYwtBuAxNMQ/1dJqADld40P0Jkqm65GRTLy/AC6hnpVebtLsA==}
@@ -2938,23 +2951,22 @@ packages:
     resolution: {integrity: sha512-sL/cEvJWAnClXw0wHk85/2L0G6Sj8UB0Ctc1TEMbKSsmpRosqhwj9gWgFRZSrBr2f9tiXISwNhCPmlfqUqyb9Q==}
     dev: true
 
-  /@visactor/vchart/1.5.1-alpha.0:
-    resolution: {integrity: sha512-sQJAo4hoId5nI7AElFLipuiMtjsUWtDp7NjEPtvRrRPEntpJUonbMkmK/PdISWq7/46zprtkPZEKIwWFeaXGGA==}
+  /@visactor/vchart/1.4.3:
+    resolution: {integrity: sha512-9sXXR8uCWYfEhLQAXD/119EBIwXhBxjLfDX5xlqjwATJp9IF1jPxtA+nNiyvQ1Lbi2Qg3vRk7dcWuTmcj42F0A==}
     dependencies:
       '@visactor/vdataset': 0.16.1
-      '@visactor/vgrammar-core': 0.7.7-alpha.2
-      '@visactor/vgrammar-hierarchy': 0.7.7-alpha.2
-      '@visactor/vgrammar-projection': 0.7.7-alpha.2
-      '@visactor/vgrammar-sankey': 0.7.7-alpha.2
-      '@visactor/vgrammar-util': 0.7.7-alpha.2
-      '@visactor/vgrammar-wordcloud': 0.7.7-alpha.2
-      '@visactor/vgrammar-wordcloud-shape': 0.7.7-alpha.2
-      '@visactor/vrender-components': 0.16.2
-      '@visactor/vrender-core': 0.16.1
-      '@visactor/vrender-kits': 0.16.1
+      '@visactor/vgrammar-core': 0.7.7
+      '@visactor/vgrammar-hierarchy': 0.7.7
+      '@visactor/vgrammar-projection': 0.7.7
+      '@visactor/vgrammar-sankey': 0.7.7
+      '@visactor/vgrammar-util': 0.7.7
+      '@visactor/vgrammar-wordcloud': 0.7.7
+      '@visactor/vgrammar-wordcloud-shape': 0.7.7
+      '@visactor/vrender': 0.15.7
+      '@visactor/vrender-components': 0.15.7
       '@visactor/vscale': 0.16.1
       '@visactor/vutils': 0.16.1
-      '@visactor/vutils-extension': 1.5.1-alpha.0
+      '@visactor/vutils-extension': 1.4.3
 
   /@visactor/vdataset/0.15.14:
     resolution: {integrity: sha512-uPRUJAcldwEUezQnXUIB5IwFyMhktgc9YyObm0fFtBEf9P+zln+d/cW1jIN8H2oTIaTyAryDCzZ3MDWTI8jOqg==}
@@ -2999,73 +3011,76 @@ packages:
       simplify-geojson: 1.0.5
       topojson-client: 3.1.0
 
-  /@visactor/vgrammar-coordinate/0.7.7-alpha.2:
-    resolution: {integrity: sha512-vDjwlbS1glN63Vbu+uZKHQrP3eGQ3c650P+PCrS5zenwgmYquwI7FfGPdfl7OuK/w6n2q8v97tmaHIOSEhGRnw==}
+  /@visactor/vgrammar-coordinate/0.7.7:
+    resolution: {integrity: sha512-MkWyjxuQuciBZTa2iq/KSZec0ud0xFo0fp1eQOQAqCIMrcUHkl5mEAyjr4jCLp2VMsHRJuu4n70n0nATiM23dw==}
     dependencies:
-      '@visactor/vgrammar-util': 0.7.7-alpha.2
+      '@visactor/vgrammar-util': 0.7.7
       '@visactor/vutils': 0.16.1
 
-  /@visactor/vgrammar-core/0.7.7-alpha.2:
-    resolution: {integrity: sha512-1ALjENE9XU2dheyXBSVO5zwcMEnEgNxRRbzCnbJZK0w8MoCl5OBHEkpDEvuE3TOiz9iPU4pyePJzUtnGvjgtMg==}
+  /@visactor/vgrammar-core/0.7.7:
+    resolution: {integrity: sha512-ny50xQar9MHpBD17rQPRFPpXW2wB1FYBm9B/vvX+SHFC0SNre1gY3dNO5k8InCglFD3vVYaOOrp4j44WPwMKNg==}
     dependencies:
       '@visactor/vdataset': 0.16.1
-      '@visactor/vgrammar-coordinate': 0.7.7-alpha.2
-      '@visactor/vgrammar-util': 0.7.7-alpha.2
-      '@visactor/vrender-components': 0.16.2
-      '@visactor/vrender-core': 0.16.1
-      '@visactor/vrender-kits': 0.16.1
+      '@visactor/vgrammar-coordinate': 0.7.7
+      '@visactor/vgrammar-util': 0.7.7
+      '@visactor/vrender': 0.15.7
+      '@visactor/vrender-components': 0.15.7
       '@visactor/vscale': 0.16.0
       '@visactor/vutils': 0.16.1
 
-  /@visactor/vgrammar-hierarchy/0.7.7-alpha.2:
-    resolution: {integrity: sha512-87AVIRbX9c7s5dV5DZ3cgCmFgSswoa4iOQ260cyhuKVNEVKt6iQ+KMwDiozqYO5R519XwI3HHYS5GMGJVrbHjw==}
+  /@visactor/vgrammar-hierarchy/0.7.7:
+    resolution: {integrity: sha512-nQABa3XCIbdhGNszMfiGOYVOlDrgGvLGhhOimThfQMJxHV/Wk7ePjgOaXlS1M32JMEvFLBllGlC7QgJpDAx9dw==}
     dependencies:
-      '@visactor/vgrammar-core': 0.7.7-alpha.2
-      '@visactor/vgrammar-util': 0.7.7-alpha.2
-      '@visactor/vrender-core': 0.16.1
-      '@visactor/vrender-kits': 0.16.1
+      '@visactor/vgrammar-core': 0.7.7
+      '@visactor/vgrammar-util': 0.7.7
+      '@visactor/vrender': 0.15.7
       '@visactor/vutils': 0.16.1
 
-  /@visactor/vgrammar-projection/0.7.7-alpha.2:
-    resolution: {integrity: sha512-tV1CuQxfrOzj8Oo/f8gTkohgZ8+NJeww7AcH9CLywuHOI0sbS8UZIzXICGVfynxfjf/sjQ3WUj3cdBAFeTSipA==}
+  /@visactor/vgrammar-projection/0.7.7:
+    resolution: {integrity: sha512-afe2HfWnONFD7d3V8EdSEdff9RYNNdZdsB69z73zEI217rY6wmpnWGJnx1xk3Oiv/1DiIqqQP+1gmctW4LQ1Zg==}
     dependencies:
-      '@visactor/vgrammar-core': 0.7.7-alpha.2
-      '@visactor/vgrammar-util': 0.7.7-alpha.2
+      '@visactor/vgrammar-core': 0.7.7
+      '@visactor/vgrammar-util': 0.7.7
       '@visactor/vutils': 0.16.1
       d3-geo: 1.12.1
 
-  /@visactor/vgrammar-sankey/0.7.7-alpha.2:
-    resolution: {integrity: sha512-O9KAaoFvqqXNlmm8ACSsnN2YIWpU4ubd/WON+gARANk+BxxGmlCmaHwHJnxqaKGGBBiBgqFzNKKzFATK2wYhhg==}
+  /@visactor/vgrammar-sankey/0.7.7:
+    resolution: {integrity: sha512-qETx+3xo8ebOH579klD/fJgALYjKS6tQAWr75SGB0DopPwrSniqt3dIVYUFbRCv/FQHcVBmERw7mtXapcGelHw==}
     dependencies:
-      '@visactor/vgrammar-core': 0.7.7-alpha.2
-      '@visactor/vgrammar-util': 0.7.7-alpha.2
-      '@visactor/vrender-core': 0.16.1
-      '@visactor/vrender-kits': 0.16.1
+      '@visactor/vgrammar-core': 0.7.7
+      '@visactor/vgrammar-util': 0.7.7
+      '@visactor/vrender': 0.15.7
       '@visactor/vutils': 0.16.1
 
-  /@visactor/vgrammar-util/0.7.7-alpha.2:
-    resolution: {integrity: sha512-X8YMDTCeVl6sp7N4s3S2fszO7/4LWh8JpTfeqJ4KIajawXynu17b6YTGASjX83ci+tF1QHLHCoITyYM8ar784w==}
+  /@visactor/vgrammar-util/0.7.7:
+    resolution: {integrity: sha512-FQIbJeP4iDqKFGpWntW5lNtdn6m12q+fx7e86UH6mL15+dwxNkgLnycgcud1CDhpu2kvn4rU2zssBXjl6zvOuw==}
     dependencies:
       '@visactor/vutils': 0.16.1
 
-  /@visactor/vgrammar-wordcloud-shape/0.7.7-alpha.2:
-    resolution: {integrity: sha512-PS0MwHG5rDnbg9Rapo8SV3mC38tWd7+uYTcO33qXw/cVgHouTqtOuYvSLclSw8X/Y+Y+eJe1clBaPO6GPx7xfw==}
+  /@visactor/vgrammar-wordcloud-shape/0.7.7:
+    resolution: {integrity: sha512-OuIr2r754rdL8h7PPvQxkUL9LMUlKyNluPSMIY0QLrSg0JFoB3Uh8hSLnXJtjbK/n3OVw3obfSzbvhkQuFytWg==}
     dependencies:
-      '@visactor/vgrammar-core': 0.7.7-alpha.2
-      '@visactor/vgrammar-util': 0.7.7-alpha.2
-      '@visactor/vrender-core': 0.16.1
-      '@visactor/vrender-kits': 0.16.1
+      '@visactor/vgrammar-core': 0.7.7
+      '@visactor/vgrammar-util': 0.7.7
+      '@visactor/vrender': 0.15.7
       '@visactor/vscale': 0.16.0
       '@visactor/vutils': 0.16.1
 
-  /@visactor/vgrammar-wordcloud/0.7.7-alpha.2:
-    resolution: {integrity: sha512-QjWOv/utkHhatob+2khwr6KOACfeWLNS6X5yolamxs54O7Hzoi+ABO9B+NyuIkk2IlI1iH9H8TBKrsy2NkW6iw==}
+  /@visactor/vgrammar-wordcloud/0.7.7:
+    resolution: {integrity: sha512-KZFMLB2X+WiKra5X1AljcEZUXDQB2h5q7FKKUG83g/24ODoNiw2X9JLKb8Y0kMl+dyHW/Kiudi1pO2cF9a0ayQ==}
     dependencies:
-      '@visactor/vgrammar-core': 0.7.7-alpha.2
-      '@visactor/vgrammar-util': 0.7.7-alpha.2
-      '@visactor/vrender-core': 0.16.1
-      '@visactor/vrender-kits': 0.16.1
+      '@visactor/vgrammar-core': 0.7.7
+      '@visactor/vgrammar-util': 0.7.7
+      '@visactor/vrender': 0.15.7
       '@visactor/vutils': 0.16.1
+
+  /@visactor/vrender-components/0.15.7:
+    resolution: {integrity: sha512-ISCI2SjluFt7d1zyWFSBMRIyZF94xEFnhNm5BBj62LHPTRVHu09ApuKTMwHnL9O2s4zjhhFi9TP/CQ3qeHYNZA==}
+    dependencies:
+      '@visactor/vrender': 0.15.7
+      '@visactor/vscale': 0.16.0
+      '@visactor/vutils': 0.16.1
+      inversify: 6.0.1
 
   /@visactor/vrender-components/0.16.2:
     resolution: {integrity: sha512-brMRZK/TDCE9GgNMxZrJYrCtK9Adnfg8gBT6mv57JFXfN3ja8cItUbU6kG1Ws62h1K2zNil/9Fv0+gXwEupvlg==}
@@ -3074,18 +3089,21 @@ packages:
       '@visactor/vrender-kits': 0.16.2
       '@visactor/vscale': 0.16.0
       '@visactor/vutils': 0.16.1
+    dev: false
 
   /@visactor/vrender-core/0.16.1:
     resolution: {integrity: sha512-ZyxA3yAZZmpibID97uBWqqmI2n1zG2y21OE2+IA3nbSGyd1HgbZ1jo6kjj3BldLLxCUvoXDwpEpNlLwlOg9frw==}
     dependencies:
       '@visactor/vutils': 0.16.1
       color-convert: 2.0.1
+    dev: false
 
   /@visactor/vrender-core/0.16.2:
     resolution: {integrity: sha512-UORyqO+d9hQ+nr5QQoWtEszpDShAYCnSvJXfjQrym0VBTSIgbP1b9D3oLLx+XIO6J46NOgGeK2QHKolCyethVw==}
     dependencies:
       '@visactor/vutils': 0.16.1
       color-convert: 2.0.1
+    dev: false
 
   /@visactor/vrender-kits/0.16.1:
     resolution: {integrity: sha512-vjOXLuQ2QSGzQc5JV41D2ohHjTMRTwzt/7wITAawQYdk0XQPRG8nmsY83BvfzDkOuhfNlsXyC3RxMsfS0eAXMg==}
@@ -3094,6 +3112,7 @@ packages:
       '@visactor/vrender-core': 0.16.1
       '@visactor/vutils': 0.16.1
       roughjs: 4.5.2
+    dev: false
 
   /@visactor/vrender-kits/0.16.2:
     resolution: {integrity: sha512-Ni9yYmrUmcSyZjei9XK9YK1u/kbKHM2hFakv4E3iBCwIHSinEqsbS/b8Nyx6vTdCLn36yBijpONlkAAtPXFJag==}
@@ -3102,6 +3121,16 @@ packages:
       '@visactor/vrender-core': 0.16.2
       '@visactor/vutils': 0.16.1
       roughjs: 4.5.2
+    dev: false
+
+  /@visactor/vrender/0.15.7:
+    resolution: {integrity: sha512-COsDhJSII0lcmbF605i7a+7wbb+rMIiAIScvJ5WZKPjsWvu8Pnqbafn5Az8dgkO4OJsabeOLjeXZmr6NK8AdCQ==}
+    dependencies:
+      '@visactor/vutils': 0.16.1
+      color-convert: 2.0.1
+      core-js: 3.31.1
+      fast-xml-parser: 4.2.7
+      inversify: 6.0.1
 
   /@visactor/vrender/0.16.2:
     resolution: {integrity: sha512-BHN3VczeWZSROM/wU+q7xlCqz+dfESPZGlwFD3CvpRWe05B/L2Aw1NhW0LZrEmIWhoSYQPdhDanaZhGqTSCfQw==}
@@ -3120,6 +3149,13 @@ packages:
     dependencies:
       '@visactor/vutils': 0.16.1
 
+  /@visactor/vutils-extension/1.4.3:
+    resolution: {integrity: sha512-ChFU1u+2DZ27P/OKmX2L5Cf50L8AjDQ9ii83v4jF20e1V82I2XO+kyCHrO5iQ9cHM94uoWPKs6+adtY2YGhWpQ==}
+    dependencies:
+      '@visactor/vrender': 0.15.7
+      '@visactor/vscale': 0.16.1
+      '@visactor/vutils': 0.16.1
+
   /@visactor/vutils-extension/1.5.1-alpha.0:
     resolution: {integrity: sha512-4qtND+1Djatb5zVzAAbRX+WAKveO2SgEyJhnTzL/gWv7Elc+QYP06VmPaQy6ZnLHmxx6bsnZn1yFitz6fifmig==}
     dependencies:
@@ -3127,6 +3163,7 @@ packages:
       '@visactor/vrender-kits': 0.16.1
       '@visactor/vscale': 0.16.1
       '@visactor/vutils': 0.16.1
+    dev: false
 
   /@visactor/vutils/0.15.14:
     resolution: {integrity: sha512-mZuJhXdDZqq5arqc/LfEmWOY6l7ErK1MurO8bR3vESxeCaQ18pN36iit15K2IMQVJuKZPnZ2ksw8+a1irXi/8A==}
@@ -4473,6 +4510,10 @@ packages:
     resolution: {integrity: sha512-0w4LcLXsVEuNkIqwjjf9rjCoPhK8uqA4tMRh4Ge26vfLtUutshn+aRJU21I9LCJlh2QQHfisNToLjw1XEJLTWw==}
     dependencies:
       browserslist: 4.22.1
+
+  /core-js/3.31.1:
+    resolution: {integrity: sha512-2sKLtfq1eFST7l7v62zaqXacPc7uG8ZAya8ogijLhTtaKNcpzpB4TMoTw2Si+8GYKRwFPMMtUT0263QFWFfqyQ==}
+    requiresBuild: true
 
   /core-util-is/1.0.2:
     resolution: {integrity: sha512-3lqz5YjWTYnW6dlDa5TLaTCcShfar1e40rmcJVwCBJC6mWlFuj0eCHIElmG1g5kyuJ/GD+8Wn4FFCcz4gJPfaQ==}
@@ -5840,6 +5881,12 @@ packages:
   /fast-levenshtein/2.0.6:
     resolution: {integrity: sha512-DCXu6Ifhqcks7TZKY3Hxp3y6qphY5SJZmrWMDrKcERSOXWQdMhU9Ig/PYrzyw/ul9jOIyh0N4M0tbC5hodg8dw==}
 
+  /fast-xml-parser/4.2.7:
+    resolution: {integrity: sha512-J8r6BriSLO1uj2miOk1NW0YVm8AGOOu3Si2HQp/cSmo6EA4m3fcwu2WKjJ4RK9wMLBtg69y1kS8baDiQBR41Ig==}
+    hasBin: true
+    dependencies:
+      strnum: 1.0.5
+
   /fastq/1.15.0:
     resolution: {integrity: sha512-wBrocU2LCXXa+lWBt8RoIRD89Fi8OdABODa/kEnyeyjS5aZO5/GNvI5sEINADqP/h8M29UHTHUb53sUu5Ihqdw==}
     dependencies:
@@ -6833,7 +6880,6 @@ packages:
 
   /inversify/6.0.1:
     resolution: {integrity: sha512-B3ex30927698TJENHR++8FfEaJGqoWOgI6ZY5Ht/nLUsFCwHn6akbwtnUAPCgUepAnTpe2qHxhDNjoKLyz6rgQ==}
-    dev: true
 
   /invert-kv/1.0.0:
     resolution: {integrity: sha512-xgs2NH9AE66ucSq4cNG1nhSFghr5l6tdL15Pk+jl46bmmBapgoaY/AacXyaDznAqmGL99TiLSQgO/XazFSKYeQ==}
@@ -9337,6 +9383,7 @@ packages:
 
   /path-data-parser/0.1.0:
     resolution: {integrity: sha512-NOnmBpt5Y2RWbuv0LMzsayp3lVylAHLPUTut412ZA3l+C4uw4ZVkQbjShYCQ8TCpUMdPapr4YjUqLYD6v68j+w==}
+    dev: false
 
   /path-dirname/1.0.2:
     resolution: {integrity: sha512-ALzNPpyNq9AqXMBjeymIjFDAkAFH06mHJH/cSBHAgU0s4vfpBn6b2nf8tiRLvagKD8RbTpq2FKTBg7cl9l3c7Q==}
@@ -9533,12 +9580,14 @@ packages:
 
   /points-on-curve/0.2.0:
     resolution: {integrity: sha512-0mYKnYYe9ZcqMCWhUjItv/oHjvgEsfKvnUTg8sAtnHr3GVy7rGkXCb6d5cSyqrWqL4k81b9CPg3urd+T7aop3A==}
+    dev: false
 
   /points-on-path/0.2.1:
     resolution: {integrity: sha512-25ClnWWuw7JbWZcgqY/gJ4FQWadKxGWk+3kR/7kD0tCaDtPPMj7oHu2ToLaVhfpnHrZzYby2w6tUA0eOIuUg8g==}
     dependencies:
       path-data-parser: 0.1.0
       points-on-curve: 0.2.0
+    dev: false
 
   /posix-character-classes/0.1.1:
     resolution: {integrity: sha512-xTgYBc3fuo7Yt7JbiuFxSYGToMoz8fLoE6TC9Wx1P/u+LfeThMOAqmuyECnlBaaJb+u1m9hHiXUEtwW4OzfUJg==}
@@ -10616,6 +10665,7 @@ packages:
       path-data-parser: 0.1.0
       points-on-curve: 0.2.0
       points-on-path: 0.2.1
+    dev: false
 
   /rsvp/4.8.5:
     resolution: {integrity: sha512-nfMOlASu9OnRJo1mbEk2cz0D56a1MBNrJ7orjRZQG10XDyuvwksKbuXNp6qa+kbn839HwjwhBzhFmdsaEAfauA==}
@@ -11228,6 +11278,9 @@ packages:
     dependencies:
       acorn: 8.10.0
     dev: true
+
+  /strnum/1.0.5:
+    resolution: {integrity: sha512-J8bbNyKKXl5qYcR36TIO8W3mVGVHrmmxsd5PAItGkmyzwJvybiw2IVq5nqd0i4LSNSkB/sx9VHllbfFdr9k1JA==}
 
   /style-inject/0.3.0:
     resolution: {integrity: sha512-IezA2qp+vcdlhJaVm5SOdPPTUu0FCEqfNSli2vRuSIBbu5Nq5UvygTk/VzeCqfLz2Atj3dVII5QBKGZRZ0edzw==}

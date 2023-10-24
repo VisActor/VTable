@@ -1,4 +1,4 @@
-import { isValid } from '../../tools/util';
+import { isValid } from '@visactor/vutils';
 import type { StylePropertyFunctionArg } from '../../ts-types';
 import type { BaseTableAPI } from '../../ts-types/base-table';
 

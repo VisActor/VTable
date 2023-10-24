@@ -5,13 +5,14 @@ title: Chart Type
 cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/chart.png
 order: 2-3
 link: '../guide/cell_type/chart'
+option: ListTable-columns-chart#cellType
 ---
 
 # Chart Type
 
 Combine the vchart chart library with rendering into tables to enrich visual display forms and improve multi-chart rendering performance.
 
-## critical configuration
+## Key Configurations
 
 *   `VTable.register.chartModule('vchart', VChart)` Register the charting library for charting, currently supports VChart
 *   `cellType: 'chart'` Specify the type chart

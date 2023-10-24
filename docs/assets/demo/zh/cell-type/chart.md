@@ -5,6 +5,7 @@ title: 图表类型
 cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/chart.png
 order: 2-3
 link: '../guide/cell_type/chart'
+option: ListTable-columns-chart#cellType
 ---
 
 # 图表类型

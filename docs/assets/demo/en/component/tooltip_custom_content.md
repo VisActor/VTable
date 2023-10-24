@@ -3,7 +3,6 @@ category: examples
 group: Component
 title: tooltip custom content
 cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/tooltip-custom-content.png
-order: 8-2
 link: '../guide/components/tooltip'
 ---
 
@@ -11,7 +10,7 @@ link: '../guide/components/tooltip'
 
 By listening`mouseenter_cell`Event, move the mouse into the cell to prompt the Dimension and Metirc information of the cell. By listening`mouseleave_cell`Event, the mouse leaves the cell to make the prompt box disappear.
 
-## critical configuration
+## Key Configurations
 
 *   `mouseenter_cell` event
 *   `mouseleave_cell` event

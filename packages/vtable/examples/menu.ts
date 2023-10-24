@@ -45,6 +45,10 @@ export const menus = [
       {
         path: 'list',
         name: 'list-100w'
+      },
+      {
+        path: 'list',
+        name: 'list-no-columns'
       }
     ]
   },
@@ -285,6 +289,14 @@ export const menus = [
       },
       {
         path: 'pivot-analysis',
+        name: 'pivot-analysis-totalData'
+      },
+      {
+        path: 'pivot-analysis',
+        name: 'pivot-analysis-totalData-tree'
+      },
+      {
+        path: 'pivot-analysis',
         name: 'pivot-analysis-more-data'
       },
       {
@@ -306,6 +318,10 @@ export const menus = [
       {
         path: 'pivot-analysis',
         name: 'pivot-analysis-pagination'
+      },
+      {
+        path: 'pivot-analysis',
+        name: 'pivot-analysis-field'
       }
     ]
   },
@@ -635,6 +651,10 @@ export const menus = [
       {
         path: 'unit-test-demo',
         name: 'unitTestPivotTree'
+      },
+      {
+        path: 'unit-test-demo',
+        name: 'pivotTable-color-legend'
       }
     ]
   },

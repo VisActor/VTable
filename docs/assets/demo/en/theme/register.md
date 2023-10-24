@@ -5,13 +5,14 @@ title: Theme -register
 cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/register.png
 order: 6-7
 link: '../guide/theme_and_style/theme'
+option: ListTable#theme.bodyStyle.bgColor
 ---
 
 # Form Theme -register
 
 Register a custom theme globally
 
-## critical configuration
+## Key Configurations
 
 *   `VTable.register.theme` Registering themes globally
 *   `theme: xxx` Specify the name of the registered theme

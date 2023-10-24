@@ -5,11 +5,13 @@
 在使用 VTable 进行数据分析时，可以通过鼠标点击选择单个单元格。选择某个单元格后，可以对该单元进行操作或获取应数据。默认情况下，VTable 允许点击选择单元格。
 
 ![image](https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/48c337ece11d289fc4644a20d.png)
+
 如上图所示，点击单元格 (2, 3) 后，该单元格被选中。
 
+点击表头单元格的行为默认会选中整行或者整列，如果只想选中当前单元格可以设置select.headerSelectMode为'cell'。
 ## 鼠标框选
 
-除了点击单个单元格外，VTable 还支持鼠标框选，可以通过拖动鼠标选择多个单元格。此功能允许用户一次性选择并多个单元格。默认情况下，VTable 开启了鼠标框选功能。
+除了点击单个单元格外，VTable 还支持鼠标框选，可以通过拖动鼠标选择多个单元格。此功能允许用户一次性选择并多个单元格(按住ctrl或者shift进行多选)。默认情况下，VTable 开启了鼠标框选功能。
 
 ![image](https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/eb08aeafba39ab34c8a08c60f.png)
 
