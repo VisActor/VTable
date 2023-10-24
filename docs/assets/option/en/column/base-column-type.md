@@ -200,4 +200,5 @@ Whether to display this column as a tree structure, which needs to be combined w
     ]
 }
 ```
-Please refer to the example: [TODO](https://github.com/VisActor/VTable/pull/291)
+${prefix} columns (Array)
+Configure arrays with upper columns, nesting structures to describe column grouping relationships.

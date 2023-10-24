@@ -5,13 +5,14 @@ title: Theme - ARCO
 cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/arco.png
 order: 6-1
 link: '../guide/theme_and_style/theme'
+option: ListTable#theme.bodyStyle.bgColor
 ---
 
 # Form Theme - ARCO
 
 Align Theme styles of arco-design
 
-## critical configuration
+## Key Configurations
 
 *   `theme` Configure Theme Name or Customize Theme Style
 

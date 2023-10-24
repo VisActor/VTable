@@ -15,7 +15,7 @@ const option={
   rows:['region','province'], //行维度
   columns:['year','quarter'], //列维度
   indicators:['sales','profit'], //指标
-  records:[ //数据源
+  records:[ //数据源 如果传入了汇总数据则使用用户传入数据
     {
       region:'东北',
       province:'黑龙江',
@@ -57,7 +57,9 @@ export interface IDataConfig {
 }
 ```
 dataConfig 应用举例：
-### 1. 数据汇总规则
+### 1. 数据汇总规则 
+[option说明](../../../option/PivotTable#dataConfig.totals)
+配置示例：
 ```
 dataConfig: {
       totals: {
@@ -78,9 +80,10 @@ dataConfig: {
       }
     },
 ```
-
+具体示例：https://visactor.io/vtable/demo/data-analysis/pivot-analysis-total
 ### 2. 排序规则
-
+[option说明](../../../option/PivotTable#dataConfig.sortRules)
+配置示例：
 ```
     sortRules: [
         {
@@ -92,8 +95,10 @@ dataConfig: {
       ]
 
 ```
-
+具体示例：https://visactor.io/vtable/demo/data-analysis/pivot-analysis-sort-dimension
 ### 3. 过滤规则
+[option说明](../../../option/PivotTable#dataConfig.filterRules)
+配置示例：
 ```
 filterRules: [
         {
@@ -103,8 +108,50 @@ filterRules: [
         }
       ]
 ```
-
-
+具体示例：https://visactor.io/vtable/demo/data-analysis/pivot-analysis-filter
+### 4. 聚合方式
+[option说明](../../../option/PivotTable#dataConfig.aggregationRules)
+配置示例：
+```
+    aggregationRules: [
+        //做聚合计算的依据，如销售额如果没有配置则默认按聚合sum计算结果显示单元格内容
+        {
+          indicatorKey: 'TotalSales', //指标名称
+          field: 'Sales', //指标依据字段
+          aggregationType: VTable.TYPES.AggregationType.SUM, //计算类型
+          formatFun: sumNumberFormat
+        },
+        {
+          indicatorKey: 'OrderCount', //指标名称
+          field: 'Sales', //指标依据字段
+          aggregationType: VTable.TYPES.AggregationType.COUNT, //计算类型
+          formatFun: countNumberFormat
+        },
+        {
+          indicatorKey: 'AverageOrderSales', //指标名称
+          field: 'Sales', //指标依据字段
+          aggregationType: VTable.TYPES.AggregationType.AVG, //计算类型
+          formatFun: sumNumberFormat
+        }
+      ]
+```
+具体示例：https://visactor.io/vtable/demo/data-analysis/pivot-analysis-aggregation
+### 5. 派生字段
+[option说明](../../../option/PivotTable#dataConfig.derivedFieldRules)
+配置示例：
+```
+    derivedFieldRules: [
+      {
+        fieldName: 'Year',
+        derivedFunc: VTable.DataStatistics.dateFormat('Order Date', '%y', true),
+      },
+      {
+        fieldName: 'Month',
+        derivedFunc: VTable.DataStatistics.dateFormat('Order Date', '%n', true),
+      }
+    ]
+```
+具体示例：https://visactor.io/vtable/demo/data-analysis/pivot-analysis-derivedField
 ## 数据分析过程
 依赖配置：维度，指标及dataConfig。
 ### 遍历数据的流程：

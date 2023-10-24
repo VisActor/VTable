@@ -5,13 +5,14 @@ title: List Table Tree
 cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/list-tree.png
 order: 1-2
 link: '../guide/table_type/List_table/tree_list'
+option: ListTable-columns-text#tree
 ---
 
 # Basic table tree display
 
 Basic table tree display, open the tree mode of a certain column, and cooperate with the tree structure children of the data source.
 
-## critical configuration
+## Key Configurations
 
 *   Tree: true Set on a column to turn on tree display
 

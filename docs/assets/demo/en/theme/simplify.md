@@ -5,13 +5,14 @@ title: Theme - SIMPLIFY
 cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/simplify.png
 order: 6-4
 link: '../guide/theme_and_style/theme'
+option: ListTable#theme.bodyStyle.bgColor
 ---
 
 # Form Theme - SIMPLIFY
 
 Simple Theme
 
-## critical configuration
+## Key Configurations
 
 *   `theme` Configure Theme Name or Customize Theme Style
 

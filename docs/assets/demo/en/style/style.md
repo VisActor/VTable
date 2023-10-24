@@ -5,13 +5,14 @@ title: Style
 cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/style.png
 order: 5-1
 link: '../guide/theme_and_style/style'
+option: ListTable-columns-text#style.bgColor
 ---
 
 # style
 
 In this example, the styles of the header and body are configured by configuring headerStyle and style, respectively. All PivotTable columns with the same Dimension Category are set to the same background color, and Quantity, Sales and Profit in Metirc are set to different font colors.
 
-## critical configuration
+## Key Configurations
 
 \-`headerStyle` Configure the header style of a Dimension
 

@@ -3,15 +3,15 @@ category: examples
 group: Component
 title: Scrollbar
 cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/scrollbar.png
-order: 8-3
 link: '../guide/interaction/scroll'
+option: ListTable#theme.scrollStyle.scrollRailColor
 ---
 
 # scroll bar
 
 This example fighter has scrollbar configurable styles.
 
-## critical configuration
+## Key Configurations
 
 *   `theme.scrollStyle` Set the style of the scroll bar
 

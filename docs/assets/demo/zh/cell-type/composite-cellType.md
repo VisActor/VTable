@@ -5,6 +5,7 @@ title: 自定义函数指定单元格类型
 cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/cellType-function.png
 order: 2-1
 link: '../guide/cell_type/cellType'
+option: ListTable-columns-function#cellType
 ---
 
 # 单元格内容类型

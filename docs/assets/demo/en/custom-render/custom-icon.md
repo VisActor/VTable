@@ -3,7 +3,6 @@ category: examples
 group: Custom
 title: Custom Icon
 cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/custom-icon.png
-order: 7-2
 link: '../guide/custom_define/custom_icon'
 ---
 
@@ -11,7 +10,7 @@ link: '../guide/custom_define/custom_icon'
 
 Display icon content in cells
 
-## critical configuration
+## Key Configurations
 
 *   `VTable.register.icon`  Registered custom icons can be used with columns \[x] .icon or columns \[x] .headerIcon. Or reset the internal icon
 

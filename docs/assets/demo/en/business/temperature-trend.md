@@ -10,7 +10,7 @@ order: 9-5
 
 Show the temperature trends of different regions in the day, month and year.
 
-## critical configuration
+## Key Configurations
 
 *   `VTable.register.chartModule('vchart', VChart)` Register a charting library for charting, currently supports VChart
 *   `cellType: 'chart'` Specify the type chart

@@ -3,8 +3,8 @@ category: examples
 group: Component
 title: tooltip
 cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/tooltip.png
-order: 8-1
 link: '../guide/components/tooltip'
+option: ListTable#tooltip.isShowOverflowTextTooltip
 ---
 
 # Tooltip
@@ -12,7 +12,7 @@ link: '../guide/components/tooltip'
 In this example, tooltip.isShowOverflowTextTooltip is configured to be true, and it will be prompted when the text that cannot be omitted is hover.
 At the same time through monitoring`mouseenter_cell`Event, when the mouse moves into the cell that meets the prompt condition \[first column order number], the interface showTooltip is called to display the prompt information.
 
-## critical configuration
+## Key Configurations
 
 \-`tooltip.isShowOverflowTextTooltip` Enable the prompt for long omitted text
 
@@ -95,7 +95,7 @@ const columns =[
   };
   tableInstance =  new VTable.ListTable(document.getElementById(CONTAINER_ID), option);
   window['tableInstance'] = tableInstance;
-  tableInstance.listen('mouseenter_cell', (args) => {
+  tableInstance.on('mouseenter_cell', (args) => {
         const { col, row, targetIcon } = args;
         if(col===0&&row>=1){
           const rect = tableInstance.getVisibleCellRangeRelativeRect({ col, row });

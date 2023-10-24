@@ -5,13 +5,14 @@ title: Line Wrapping
 cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/auto-wrap-text.gif
 order: 3-1
 link: '../guide/basic_function/auto_wrap_text'
+option: ListTable#autoWrapText
 ---
 
 # line wrapping
 
 Auto-wrap is turned on. When the column width changes, the text will automatically calculate the display content according to the width. When using this function, you need to enable autoRowHeight to display the wrapped text.
 
-## critical configuration
+## Key Configurations
 
 *   'AutoWrapText: true 'Enable line wrapping
 

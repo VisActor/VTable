@@ -495,7 +495,7 @@ export function checkZeroAlign(spec: any, orient: string, layout: PivotHeaderLay
   return false;
 }
 
-function getAxisRange(
+export function getAxisRange(
   collectedValues: Record<string, Record<string, CollectedValue>>,
   indicatorKeys: string[],
   isZeroAlign: boolean,
@@ -516,7 +516,10 @@ function getAxisRange(
     }
     return null;
   }
-  const defaultKey = indicatorKeys?.[seriesId];
+  let defaultKey = indicatorKeys?.[seriesId];
+  if (isArray(defaultKey)) {
+    defaultKey = defaultKey[0];
+  }
   if (!defaultKey) {
     return null;
   }

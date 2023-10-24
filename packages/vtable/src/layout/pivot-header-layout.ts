@@ -1,5 +1,5 @@
 /* eslint-disable sort-imports */
-import { isValid, transpose } from '../tools/util';
+import { transpose } from '../tools/util';
 import type {
   CellAddress,
   CellRange,
@@ -35,7 +35,7 @@ import { getChartAxes, getChartDataId, getChartSpec, getRawChartSpec } from './c
 import type { IPivotLayoutHeadNode } from './pivot-layout-helper';
 import { DimensionTree } from './pivot-layout-helper';
 import type { Dataset } from '../dataset/dataset';
-import { cloneDeep, isArray } from '@visactor/vutils';
+import { cloneDeep, isArray, isValid } from '@visactor/vutils';
 import type { TextStyle } from '../body-helper/style';
 import type { ITableAxisOption } from '../ts-types/component/axis';
 import { getQuadProps } from '../scenegraph/utils/padding';
@@ -470,7 +470,7 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
       }) as IIndicator;
       const cell: HeaderData = {
         id,
-        title: hd.value ?? indicatorInfo.title,
+        title: hd.value ?? indicatorInfo?.title,
         field: hd.dimensionKey,
         style:
           typeof (indicatorInfo ?? dimensionInfo)?.headerStyle === 'function'
@@ -1386,7 +1386,8 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
   // }
   getCellRange(col: number, row: number): CellRange {
     const result: CellRange = { start: { col, row }, end: { col, row } };
-    if (!this.isHeader(col, row) || col === -1 || row === -1 || this.isIndicatorHeader(col, row)) {
+    if (!this.isHeader(col, row) || col === -1 || row === -1) {
+      // || this.isIndicatorHeader(col, row)// 为什么加想不想来了 但是如果加上指标属于合并单元格的情况就会有问题了
       return result;
     }
 

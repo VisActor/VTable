@@ -1,6 +1,37 @@
 # Change Log - @visactor/vtable
 
-This log was last generated on Wed, 11 Oct 2023 09:34:42 GMT and should not be manually modified.
+This log was last generated on Wed, 18 Oct 2023 11:47:45 GMT and should not be manually modified.
+
+## 0.12.2
+Wed, 18 Oct 2023 11:47:45 GMT
+
+### Patches
+
+- docs: add option to all demos
+
+
+- fix: init listtable with blank columns occur error #405
+
+
+
+## 0.12.1
+Tue, 17 Oct 2023 11:39:37 GMT
+
+### Patches
+
+- feat: support use custom data as summary data #400
+
+
+- fix: analysis pivot tree summary value is wrong
+
+
+- docs: add analysis rules demos
+
+
+- fix: when set description can show not to consider tooltip.isShowOverflowTextTooltip #407
+
+
+- fix: fix axis zero align error in updateOption()
 
 ## 0.12.0
 Wed, 11 Oct 2023 09:34:42 GMT

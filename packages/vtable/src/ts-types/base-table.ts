@@ -254,6 +254,8 @@ export interface BaseTableConstructorOptions {
   };
   /** 选择单元格交互配置 */
   select?: {
+    /** 点击表头单元格时连带body整行或整列选中 或仅选中当前单元格，默认或整行或整列选中*/
+    headerSelectMode?: 'inline' | 'cell';
     /** 不响应鼠标select交互 */
     disableSelect?: boolean;
     /** 单独设置表头不响应鼠标select交互 */
@@ -608,12 +610,15 @@ export interface PivotTableProtected extends IBaseTableProtected {
   layoutMap: PivotHeaderLayoutMap;
   dataConfig?: IDataConfig;
   /**
-   * 透视表 传入数据是透视后的嵌套层级结构 还是需要进行汇总计算的平坦数据
+   * 透视表是否开启数据分析
+   * 如果传入数据是明细数据需要聚合分析则开启
+   * 如传入数据是经过聚合好的为了提升性能这里设置为false，同时需要传入columnTree和rowTree
    */
   enableDataAnalysis?: boolean;
 
+  /** 列表头树型结构 */
   columnTree?: IHeaderTreeDefine[];
-  /** 行表头维度结构 */
+  /** 行表头树型结构 */
   rowTree?: IHeaderTreeDefine[];
   /** 定义行上各个维度具体配置项和样式定义 */
   rows?: (IDimension | string)[]; // (string | IDimension)[]; 后续支持数据分析的透视表 支持string配置

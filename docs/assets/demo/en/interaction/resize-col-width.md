@@ -5,13 +5,14 @@ title: Adjust column width
 cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/resize-col-width.gif
 order: 4-4
 link: '/interaction/resize_column_width'
+option: ListTable#columnResizeMode
 ---
 
 # Adjust column width
 
 The mouse style for adjusting the column width appears when the mouse is placed on the column spacer, and the column width can be adjusted by dragging.
 
-## critical configuration
+## Key Configurations
 
 *   `columnResizeMode: 'all' | 'none' | 'header' | 'body'` Specify the Region where the column width can be adjusted
 *   `columnResizeType: 'column' | 'indicator' | 'all' | 'indicatorGroup'` Adjust the effective range of the column width, configurable items:

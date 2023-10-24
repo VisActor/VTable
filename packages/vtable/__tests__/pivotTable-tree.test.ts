@@ -8,7 +8,7 @@ global.__VERSION__ = 'none';
 describe('pivotTableTree init test', () => {
   const containerDom: HTMLElement = createDiv();
   containerDom.style.position = 'relative';
-  containerDom.style.width = '500px';
+  containerDom.style.width = '700px';
   containerDom.style.height = '500px';
 
   const option = {

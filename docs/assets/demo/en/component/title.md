@@ -3,15 +3,15 @@ category: examples
 group: Component
 title: title
 cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/title.png
-order: 8-5
 link: '../guide/components/title'
+option: ListTable#title.visible
 ---
 
 # Title
 
 In this example, the main subheadings of the table are configured and styled separately.
 
-## critical configuration
+## Key Configurations
 
 *   `title` Configure the table title, please refer to: https://www.visactor.io/vtable/option/ListTable#title
 

@@ -11,7 +11,7 @@ import { createElement } from '../../../../tools/dom';
 import { importStyle } from './MenuElementStyle';
 import { TABLE_EVENT_TYPE } from '../../../../core/TABLE_EVENT_TYPE';
 import { cellInRange } from '../../../../tools/helper';
-import { isValid } from '../../../../tools/util';
+import { isValid } from '@visactor/vutils';
 import type { PivotHeaderLayoutMap } from '../../../../layout/pivot-header-layout';
 import { regUrl } from '../../../../tools/global';
 import type { BaseTableAPI } from '../../../../ts-types/base-table';

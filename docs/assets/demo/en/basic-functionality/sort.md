@@ -5,13 +5,14 @@ title: Sort
 cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/sort.gif
 order: 3-2
 link: '../guide/basic_function/sort'
+option: ListTable-columns-text#sort
 ---
 
 # sort
 
 In this example, the columns \["Order ID", "Customer ID", "Quantity", "Sales", "Profit"] are all sorted, click the sorting button to switch the sorting rules, and the sorting results are cached internally. In the case of a large number, the sorting results can be quickly presented.
 
-## critical configuration
+## Key Configurations
 
 *   `columns[x].sort` Set to true to sort by default rules, or set the function form to specify the sorting rules
         sort: (v1: any, v2: any, order: 'desc'|'asc'|'normal') => {

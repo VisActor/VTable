@@ -3,8 +3,8 @@ category: examples
 group: Component
 title: 滚动条
 cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/scrollbar.png
-order: 8-4
 link: '../guide/interaction/scroll'
+option: ListTable#theme.scrollStyle.scrollRailColor
 ---
 
 # 滚动条

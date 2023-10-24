@@ -76,7 +76,7 @@ export function updateSelectPosition(
   } else if (interactionState === InteractionState.default) {
     const currentRange = state.select.ranges[state.select.ranges.length - 1];
     if (isShift && currentRange) {
-      if (table.isColumnHeader(col, row)) {
+      if (state.select.headerSelectMode !== 'cell' && table.isColumnHeader(col, row)) {
         const startCol = Math.min(currentRange.start.col, currentRange.end.col, col);
         const endCol = Math.max(currentRange.start.col, currentRange.end.col, col);
         const startRow = Math.min(currentRange.start.row, currentRange.end.row, row);
@@ -84,7 +84,7 @@ export function updateSelectPosition(
 
         currentRange.start = { col: startCol, row: startRow };
         currentRange.end = { col: endCol, row: endRow };
-      } else if (table.isRowHeader(col, row)) {
+      } else if (state.select.headerSelectMode !== 'cell' && table.isRowHeader(col, row)) {
         const startCol = Math.min(currentRange.start.col, currentRange.end.col, col);
         const endCol = table.colCount - 1;
         const startRow = Math.min(currentRange.start.row, currentRange.end.row, row);
@@ -122,12 +122,12 @@ export function updateSelectPosition(
         state.select.ranges = [];
         scenegraph.deleteAllSelectBorder();
       }
-      if (table.isColumnHeader(col, row)) {
+      if (state.select.headerSelectMode !== 'cell' && table.isColumnHeader(col, row)) {
         state.select.ranges.push({
           start: { col, row },
           end: { col, row: table.rowCount - 1 }
         });
-      } else if (table.isRowHeader(col, row)) {
+      } else if (state.select.headerSelectMode !== 'cell' && table.isRowHeader(col, row)) {
         state.select.ranges.push({
           start: { col, row },
           end: { col: table.colCount - 1, row }

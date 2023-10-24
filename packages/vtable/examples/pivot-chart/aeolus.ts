@@ -12,87 +12,19 @@ export function createTable() {
     columnTree: [],
     rowTree: [
       {
-        dimensionKey: '231010205143009',
-        value: '一级',
-        children: [
-          {
-            dimensionKey: '231010171607024',
-            value: '公司'
-          },
-          {
-            dimensionKey: '231010171607024',
-            value: '小型企业'
-          },
-          {
-            dimensionKey: '231010171607024',
-            value: '消费者'
-          }
-        ]
+        dimensionKey: '230222193538950',
+        value: '抖极'
       },
       {
-        dimensionKey: '231010205143009',
-        value: '二级',
-        children: [
-          {
-            dimensionKey: '231010171607024',
-            value: '公司'
-          },
-          {
-            dimensionKey: '231010171607024',
-            value: '小型企业'
-          },
-          {
-            dimensionKey: '231010171607024',
-            value: '消费者'
-          }
-        ]
-      },
-      {
-        dimensionKey: '231010205143009',
-        value: '当日',
-        children: [
-          {
-            dimensionKey: '231010171607024',
-            value: '公司'
-          },
-          {
-            dimensionKey: '231010171607024',
-            value: '小型企业'
-          },
-          {
-            dimensionKey: '231010171607024',
-            value: '消费者'
-          }
-        ]
-      },
-      {
-        dimensionKey: '231010205143009',
-        value: '标准级',
-        children: [
-          {
-            dimensionKey: '231010171607024',
-            value: '公司'
-          },
-          {
-            dimensionKey: '231010171607024',
-            value: '小型企业'
-          },
-          {
-            dimensionKey: '231010171607024',
-            value: '消费者'
-          }
-        ]
+        dimensionKey: '230222193538950',
+        value: '抖极/抖音'
       }
     ],
     columns: [],
     rows: [
       {
-        dimensionKey: '231010205143009',
-        title: '邮寄方式'
-      },
-      {
-        dimensionKey: '231010171607024',
-        title: '细分'
+        dimensionKey: '230222193538950',
+        title: 'APP'
       }
     ],
     axes: [
@@ -110,7 +42,7 @@ export function createTable() {
             lineDash: [4, 2]
           }
         },
-        orient: 'left',
+        orient: 'bottom',
         visible: true,
         domainLine: {
           visible: true,
@@ -122,7 +54,7 @@ export function createTable() {
         title: {
           visible: false,
           space: 5,
-          text: '地区',
+          text: 'p_date',
           style: {
             fontSize: 12,
             fill: '#363839',
@@ -133,17 +65,17 @@ export function createTable() {
         zIndex: 200,
         label: {
           visible: true,
-          space: 8,
+          space: 4,
           style: {
             fontSize: 12,
             fill: '#6F6F6F',
-            angle: 0,
+            angle: 90,
             fontWeight: 'normal',
             direction: 'horizontal'
           },
           autoHide: true,
           autoHideMethod: 'greedy',
-          flush: true
+          flush: false
         },
         hover: true,
         background: {
@@ -159,34 +91,225 @@ export function createTable() {
             }
           }
         },
-        paddingInner: [0.15, 0.1],
-        paddingOuter: [0.075, 0.1]
+        paddingInner: 0.36249999999999993,
+        paddingOuter: 0.175
+      },
+      {
+        type: 'linear',
+        tick: {
+          visible: false,
+          tickMode: 'd3',
+          style: {
+            stroke: 'rgba(255, 255, 255, 0)'
+          }
+        },
+        niceType: 'accurateFirst',
+        zIndex: 200,
+        grid: {
+          visible: true,
+          style: {
+            zIndex: 150,
+            stroke: '#DADCDD',
+            lineWidth: 1,
+            lineDash: [4, 2]
+          }
+        },
+        orient: 'left',
+        visible: true,
+        domainLine: {
+          visible: true,
+          style: {
+            lineWidth: 1,
+            stroke: 'rgba(255, 255, 255, 0)'
+          }
+        },
+        title: {
+          visible: false,
+          text: '商城渗透率',
+          space: 8,
+          style: {
+            fontSize: 12,
+            fill: '#363839',
+            fontWeight: 'normal'
+          }
+        },
+        sampling: false,
+        label: {
+          visible: true,
+          space: 6,
+          flush: true,
+          padding: 0,
+          style: {
+            fontSize: 12,
+            maxLineWidth: 174,
+            fill: '#6F6F6F',
+            angle: 0,
+            fontWeight: 'normal',
+            dy: -1,
+            direction: 'horizontal'
+          },
+          autoHide: true,
+          autoHideMethod: 'greedy'
+        },
+        hover: true,
+        background: {
+          visible: true,
+          state: {
+            hover: {
+              fillOpacity: 0.08,
+              fill: '#141414'
+            },
+            hover_reverse: {
+              fillOpacity: 0.08,
+              fill: '#141414'
+            }
+          }
+        },
+        zero: false,
+        nice: true
       }
     ],
     indicators: [
       {
-        indicatorKey: '0',
-        width: 'auto',
+        indicatorKey: '10002',
         title: '',
+        width: 'auto',
         cellType: 'chart',
         chartModule: 'vchart',
+        style: {
+          padding: [1, 1, 0, 1]
+        },
         chartSpec: {
-          type: 'common',
+          type: 'line',
+          xField: ['230222193539240'],
+          yField: ['10002'],
+          direction: 'vertical',
+          sortDataByAxis: true,
+          seriesField: '20001',
+          padding: 0,
+          labelLayout: 'region',
+          data: {
+            id: 'data',
+            fields: {
+              '10001': {
+                alias: '指标名称 '
+              },
+              '10002': {
+                alias: '指标值 '
+              },
+              '20001': {
+                alias: '图例项 ',
+                domain: ['抖极', '抖极/抖音'],
+                sortIndex: 0,
+                lockStatisticsByDomain: true
+              },
+              '230222193538536': {
+                alias: 'APP'
+              },
+              '230222193538917': {
+                alias: '商城渗透率'
+              },
+              '230222193538950': {
+                alias: 'APP'
+              },
+              '230222193539240': {
+                alias: 'p_date',
+                domain: [
+                  '2023-08-01',
+                  '2023-08-02',
+                  '2023-08-03',
+                  '2023-08-04',
+                  '2023-08-05',
+                  '2023-08-06',
+                  '2023-08-07',
+                  '2023-08-08',
+                  '2023-08-09',
+                  '2023-08-10',
+                  '2023-08-11',
+                  '2023-08-12',
+                  '2023-08-13',
+                  '2023-08-14',
+                  '2023-08-15',
+                  '2023-08-16',
+                  '2023-08-17',
+                  '2023-08-18',
+                  '2023-08-19',
+                  '2023-08-20',
+                  '2023-08-21',
+                  '2023-08-22',
+                  '2023-08-23',
+                  '2023-08-24',
+                  '2023-08-25',
+                  '2023-08-26',
+                  '2023-08-27',
+                  '2023-08-28',
+                  '2023-08-29',
+                  '2023-08-30',
+                  '2023-08-31',
+                  '2023-09-01',
+                  '2023-09-02',
+                  '2023-09-03',
+                  '2023-09-04',
+                  '2023-09-05',
+                  '2023-09-06',
+                  '2023-09-07',
+                  '2023-09-08',
+                  '2023-09-09',
+                  '2023-09-10',
+                  '2023-09-11',
+                  '2023-09-12',
+                  '2023-09-13',
+                  '2023-09-14',
+                  '2023-09-15',
+                  '2023-09-16',
+                  '2023-09-17',
+                  '2023-09-18',
+                  '2023-09-19',
+                  '2023-09-20',
+                  '2023-09-21',
+                  '2023-09-22',
+                  '2023-09-23',
+                  '2023-09-24',
+                  '2023-09-25',
+                  '2023-09-26',
+                  '2023-09-27',
+                  '2023-09-28',
+                  '2023-09-29',
+                  '2023-09-30',
+                  '2023-10-01',
+                  '2023-10-02',
+                  '2023-10-03',
+                  '2023-10-04',
+                  '2023-10-05',
+                  '2023-10-06',
+                  '2023-10-07',
+                  '2023-10-08',
+                  '2023-10-09',
+                  '2023-10-10',
+                  '2023-10-11',
+                  '2023-10-12',
+                  '2023-10-13',
+                  '2023-10-14',
+                  '2023-10-15',
+                  '2023-10-16',
+                  '2023-10-17',
+                  '2023-10-18',
+                  '2023-10-19'
+                ],
+                sortIndex: 0,
+                lockStatisticsByDomain: true
+              }
+            }
+          },
+          stackInverse: true,
           axes: [
             {
-              id: 'main-0',
-              type: 'linear',
+              type: 'band',
               tick: {
-                visible: false,
-                tickMode: 'd3',
-                style: {
-                  stroke: 'rgba(255, 255, 255, 0)'
-                }
+                visible: false
               },
-              niceType: 'accurateFirst',
-              zIndex: 200,
               grid: {
-                visible: true,
+                visible: false,
                 style: {
                   zIndex: 150,
                   stroke: '#DADCDD',
@@ -200,13 +323,13 @@ export function createTable() {
                 visible: true,
                 style: {
                   lineWidth: 1,
-                  stroke: 'rgba(255, 255, 255, 0)'
+                  stroke: '#989999'
                 }
               },
               title: {
-                visible: true,
-                text: '利润',
-                space: 8,
+                visible: false,
+                space: 5,
+                text: 'p_date',
                 style: {
                   fontSize: 12,
                   fill: '#363839',
@@ -214,22 +337,20 @@ export function createTable() {
                 }
               },
               sampling: false,
+              zIndex: 200,
               label: {
                 visible: true,
                 space: 4,
-                flush: true,
-                padding: 0,
                 style: {
                   fontSize: 12,
-                  maxLineWidth: 174,
                   fill: '#6F6F6F',
-                  angle: 0,
+                  angle: 90,
                   fontWeight: 'normal',
-                  dy: -1,
                   direction: 'horizontal'
                 },
                 autoHide: true,
-                autoHideMethod: 'greedy'
+                autoHideMethod: 'greedy',
+                flush: false
               },
               hover: false,
               background: {
@@ -245,15 +366,10 @@ export function createTable() {
                   }
                 }
               },
-              zero: true,
-              sync: {
-                axisId: 'sub-0',
-                zeroAlign: true,
-                tickAlign: false
-              }
+              paddingInner: 0.36249999999999993,
+              paddingOuter: 0.175
             },
             {
-              id: 'sub-0',
               type: 'linear',
               tick: {
                 visible: false,
@@ -265,7 +381,7 @@ export function createTable() {
               niceType: 'accurateFirst',
               zIndex: 200,
               grid: {
-                visible: false,
+                visible: true,
                 style: {
                   zIndex: 150,
                   stroke: '#DADCDD',
@@ -273,7 +389,7 @@ export function createTable() {
                   lineDash: [4, 2]
                 }
               },
-              orient: 'top',
+              orient: 'left',
               visible: true,
               domainLine: {
                 visible: true,
@@ -283,8 +399,8 @@ export function createTable() {
                 }
               },
               title: {
-                visible: true,
-                text: '利润',
+                visible: false,
+                text: '商城渗透率',
                 space: 8,
                 style: {
                   fontSize: 12,
@@ -295,7 +411,7 @@ export function createTable() {
               sampling: false,
               label: {
                 visible: true,
-                space: 4,
+                space: 6,
                 flush: true,
                 padding: 0,
                 style: {
@@ -324,383 +440,149 @@ export function createTable() {
                   }
                 }
               },
-              zero: true,
+              zero: false,
               nice: true
             }
           ],
-          stackInverse: false,
-          series: [
-            {
-              type: 'bar',
-              yField: ['231010112314020', '10001'],
-              xField: '10011',
-              seriesField: '20001',
-              direction: 'horizontal',
-              data: {
-                id: 'main-data',
-                fields: {
-                  '10001': {
-                    alias: '指标名称 '
-                  },
-                  '10011': {
-                    alias: '指标值(主轴) '
-                  },
-                  '10012': {
-                    alias: '指标值(次轴) '
-                  },
-                  '20001': {
-                    alias: '图例项 ',
-                    domain: ['利润'],
-                    sortIndex: 0,
-                    lockStatisticsByDomain: true
-                  },
-                  '231010112314020': {
-                    alias: '地区',
-                    domain: ['中南', '华东', '华北', '地区-dongbei', '西北', '西南'],
-                    sortIndex: 0,
-                    lockStatisticsByDomain: true
-                  },
-                  '231010171607024': {
-                    alias: '细分'
-                  },
-                  '231010190513015': {
-                    alias: '利润'
-                  },
-                  '231010205143009': {
-                    alias: '邮寄方式'
-                  },
-                  '231010205143014': {
-                    alias: '利润'
-                  }
-                }
-              },
-              stackInverse: false,
-              line: {
-                style: {
-                  curveType: {
-                    type: 'ordinal',
-                    field: '20001',
-                    range: ['linear'],
-                    domain: ['利润']
-                  },
-                  lineWidth: {
-                    type: 'ordinal',
-                    field: '20001',
-                    range: [3],
-                    domain: ['利润']
-                  },
-                  lineDash: {
-                    type: 'ordinal',
-                    field: '20001',
-                    range: [[0, 0]],
-                    domain: ['利润']
-                  }
-                }
-              },
-              area: {
-                style: {
-                  curveType: {
-                    type: 'ordinal',
-                    field: '20001',
-                    range: ['linear'],
-                    domain: ['利润']
-                  }
-                }
-              },
-              point: {
-                style: {
-                  shape: {
-                    type: 'ordinal',
-                    field: '20001',
-                    range: ['circle'],
-                    domain: ['利润']
-                  },
-                  size: {
-                    type: 'ordinal',
-                    field: '20001',
-                    range: [7.0898154036220635],
-                    domain: ['利润']
-                  },
-                  strokeOpacity: {
-                    type: 'ordinal',
-                    field: '20001',
-                    range: [1],
-                    domain: ['利润']
-                  },
-                  fillOpacity: {
-                    type: 'ordinal',
-                    field: '20001',
-                    range: [1],
-                    domain: ['利润']
-                  }
-                },
-                state: {
-                  hover: {
-                    lineWidth: 2,
-                    fillOpacity: 1,
-                    strokeOpacity: 1,
-                    scaleX: 1.5,
-                    scaleY: 1.5
-                  }
-                }
-              },
-              invalidType: 'break',
-              hover: {
-                enable: true
-              },
-              select: {
-                enable: true
-              },
-              bar: {
-                state: {
-                  hover: {
-                    cursor: 'pointer',
-                    fillOpacity: 0.8,
-                    stroke: '#58595B',
-                    lineWidth: 1,
-                    zIndex: 500
-                  },
-                  selected: {
-                    cursor: 'pointer',
-                    fillOpacity: 1,
-                    stroke: '#58595B',
-                    lineWidth: 1
-                  },
-                  selected_reverse: {
-                    fillOpacity: 0.3,
-                    strokeWidth: 0.3
-                  }
-                }
-              },
-              label: {
-                visible: false,
-                overlap: {
-                  hideOnHit: true,
-                  avoidBaseMark: false,
-                  strategy: [
-                    {
-                      type: 'moveY',
-                      offset: [
-                        -20, -19, -18, -17, -16, -15, -14, -13, -12, -11, -10, -9, -8, -7, -6, -5, -4, -3, -2, -1, 0, 1,
-                        2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20
-                      ]
-                    },
-                    {
-                      type: 'moveX',
-                      offset: [
-                        -20, -19, -18, -17, -16, -15, -14, -13, -12, -11, -10, -9, -8, -7, -6, -5, -4, -3, -2, -1, 0, 1,
-                        2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20
-                      ]
-                    }
-                  ],
-                  clampForce: true
-                },
-                style: {
-                  fontSize: 12,
-                  fontWeight: 'normal',
-                  zIndex: 400,
-                  fill: '#363839',
-                  stroke: 'rgba(255, 255, 255, 0.8)',
-                  lineWidth: 2,
-                  strokeOpacity: 1
-                },
-                position: 'outside',
-                smartInvert: false
-              }
-            },
-            {
-              type: 'line',
-              yField: ['231010112314020', '10001'],
-              xField: '10012',
-              seriesField: '20001',
-              direction: 'horizontal',
-              data: {
-                sortIndex: 0,
-                id: 'sub-data',
-                fields: {
-                  '10001': {
-                    alias: '指标名称 '
-                  },
-                  '10011': {
-                    alias: '指标值(主轴) '
-                  },
-                  '10012': {
-                    alias: '指标值(次轴) '
-                  },
-                  '20001': {
-                    alias: '图例项 ',
-                    domain: ['利润'],
-                    sortIndex: 0,
-                    lockStatisticsByDomain: true
-                  },
-                  '231010112314020': {
-                    alias: '地区',
-                    domain: ['中南', '华东', '华北', '地区-dongbei', '西北', '西南'],
-                    sortIndex: 0,
-                    lockStatisticsByDomain: true
-                  },
-                  '231010171607024': {
-                    alias: '细分'
-                  },
-                  '231010190513015': {
-                    alias: '利润'
-                  },
-                  '231010205143009': {
-                    alias: '邮寄方式'
-                  },
-                  '231010205143014': {
-                    alias: '利润'
-                  }
-                }
-              },
-              stackInverse: false,
-              line: {
-                style: {
-                  curveType: {
-                    type: 'ordinal',
-                    field: '20001',
-                    range: ['linear'],
-                    domain: ['利润']
-                  },
-                  lineWidth: {
-                    type: 'ordinal',
-                    field: '20001',
-                    range: [3],
-                    domain: ['利润']
-                  },
-                  lineDash: {
-                    type: 'ordinal',
-                    field: '20001',
-                    range: [[0, 0]],
-                    domain: ['利润']
-                  }
-                }
-              },
-              area: {
-                style: {
-                  curveType: {
-                    type: 'ordinal',
-                    field: '20001',
-                    range: ['linear'],
-                    domain: ['利润']
-                  }
-                }
-              },
-              point: {
-                style: {
-                  shape: {
-                    type: 'ordinal',
-                    field: '20001',
-                    range: ['circle'],
-                    domain: ['利润']
-                  },
-                  size: {
-                    type: 'ordinal',
-                    field: '20001',
-                    range: [7.0898154036220635],
-                    domain: ['利润']
-                  },
-                  strokeOpacity: {
-                    type: 'ordinal',
-                    field: '20001',
-                    range: [1],
-                    domain: ['利润']
-                  },
-                  fillOpacity: {
-                    type: 'ordinal',
-                    field: '20001',
-                    range: [1],
-                    domain: ['利润']
-                  }
-                },
-                state: {
-                  hover: {
-                    lineWidth: 2,
-                    fillOpacity: 1,
-                    strokeOpacity: 1,
-                    scaleX: 1.5,
-                    scaleY: 1.5
-                  }
-                }
-              },
-              invalidType: 'break',
-              hover: {
-                enable: true
-              },
-              select: {
-                enable: true
-              },
-              bar: {
-                state: {
-                  hover: {
-                    cursor: 'pointer',
-                    fillOpacity: 0.8,
-                    stroke: '#58595B',
-                    lineWidth: 1,
-                    zIndex: 500
-                  },
-                  selected: {
-                    cursor: 'pointer',
-                    fillOpacity: 1,
-                    stroke: '#58595B',
-                    lineWidth: 1
-                  },
-                  selected_reverse: {
-                    fillOpacity: 0.3,
-                    strokeWidth: 0.3
-                  }
-                }
-              },
-              label: {
-                visible: false,
-                overlap: {
-                  hideOnHit: true,
-                  avoidBaseMark: false,
-                  strategy: [
-                    {
-                      type: 'moveY',
-                      offset: [
-                        -20, -19, -18, -17, -16, -15, -14, -13, -12, -11, -10, -9, -8, -7, -6, -5, -4, -3, -2, -1, 0, 1,
-                        2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20
-                      ]
-                    },
-                    {
-                      type: 'moveX',
-                      offset: [
-                        -20, -19, -18, -17, -16, -15, -14, -13, -12, -11, -10, -9, -8, -7, -6, -5, -4, -3, -2, -1, 0, 1,
-                        2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20
-                      ]
-                    }
-                  ],
-                  clampForce: true
-                },
-                style: {
-                  fontSize: 12,
-                  fontWeight: 'normal',
-                  zIndex: 400,
-                  fill: '#363839',
-                  stroke: 'rgba(255, 255, 255, 0.8)',
-                  lineWidth: 2,
-                  strokeOpacity: 1
-                },
-                position: 'outside',
-                smartInvert: false
-              }
-            }
-          ],
-          tooltip: {
-            handler: {}
-          },
-          seriesField: '20001',
           color: {
             field: '20001',
             type: 'ordinal',
-            range: ['#2E62F1'],
+            range: ['#2E62F1', '#4DC36A'],
             specified: {},
-            domain: ['利润']
+            domain: ['抖极', '抖极/抖音']
           },
+          label: {
+            visible: false,
+            overlap: {
+              hideOnHit: true,
+              avoidBaseMark: false,
+              strategy: [
+                {
+                  type: 'moveY',
+                  offset: [
+                    -20, -19, -18, -17, -16, -15, -14, -13, -12, -11, -10, -9, -8, -7, -6, -5, -4, -3, -2, -1, 0, 1, 2,
+                    3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20
+                  ]
+                },
+                {
+                  type: 'moveX',
+                  offset: [
+                    -20, -19, -18, -17, -16, -15, -14, -13, -12, -11, -10, -9, -8, -7, -6, -5, -4, -3, -2, -1, 0, 1, 2,
+                    3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20
+                  ]
+                }
+              ],
+              clampForce: true
+            },
+            style: {
+              fontSize: 12,
+              fontWeight: 'normal',
+              zIndex: 400,
+              fill: '#363839',
+              stroke: 'rgba(255, 255, 255, 0.8)',
+              lineWidth: 2,
+              strokeOpacity: 1
+            },
+            position: 'top',
+            smartInvert: false
+          },
+          // tooltip: {
+          //   handler: {},
+          // },
+          point: {
+            style: {
+              shape: {
+                type: 'ordinal',
+                field: '20001',
+                range: ['circle'],
+                domain: ['抖极', '抖极/抖音']
+              },
+              size: {
+                type: 'ordinal',
+                field: '20001',
+                range: [7.0898154036220635],
+                domain: ['抖极', '抖极/抖音']
+              },
+              fill: {
+                field: '20001',
+                type: 'ordinal',
+                range: ['#2E62F1', '#4DC36A'],
+                specified: {},
+                domain: ['抖极', '抖极/抖音']
+              },
+              stroke: {
+                field: '20001',
+                type: 'ordinal',
+                range: ['#2E62F1', '#4DC36A'],
+                specified: {},
+                domain: ['抖极', '抖极/抖音']
+              },
+              strokeOpacity: {
+                type: 'ordinal',
+                field: '20001',
+                range: [1],
+                domain: ['抖极', '抖极/抖音']
+              },
+              fillOpacity: {
+                type: 'ordinal',
+                field: '20001',
+                range: [1],
+                domain: ['抖极', '抖极/抖音']
+              }
+            },
+            state: {
+              hover: {
+                lineWidth: 2,
+                fillOpacity: 1,
+                strokeOpacity: 1,
+                scaleX: 1.5,
+                scaleY: 1.5
+              }
+            }
+          },
+          seriesMark: 'point',
+          line: {
+            style: {
+              curveType: {
+                type: 'ordinal',
+                field: '20001',
+                range: ['linear'],
+                domain: ['抖极', '抖极/抖音']
+              },
+              lineWidth: {
+                type: 'ordinal',
+                field: '20001',
+                range: [3],
+                domain: ['抖极', '抖极/抖音']
+              },
+              lineDash: {
+                type: 'ordinal',
+                field: '20001',
+                range: [[0, 0]],
+                domain: ['抖极', '抖极/抖音']
+              }
+            }
+          },
+          region: [
+            {
+              clip: true
+            }
+          ],
+          background: 'rgba(255, 255, 255, 0)',
+          area: {
+            style: {
+              curveType: {
+                type: 'ordinal',
+                field: '20001',
+                range: ['linear'],
+                domain: ['抖极', '抖极/抖音']
+              }
+            }
+          },
+          invalidType: 'break',
+          animation: false,
           crosshair: {
-            yField: {
+            xField: {
               visible: true
             },
             gridZIndex: 100
@@ -708,1527 +590,1612 @@ export function createTable() {
         }
       }
     ],
-    indicatorsAsCol: true,
-    records: {
-      '0': [
-        {
-          '10001': '利润',
-          '10003': '231010190513015',
-          '10011': '29552.69842272997',
-          '20001': '利润',
-          '231010112314020': '中南',
-          '231010171607024': '公司',
-          '231010190513015': '29552.69842272997',
-          '231010205143009': '一级'
-        },
-        {
-          '10001': '利润',
-          '10003': '231010190513015',
-          '10011': '14869.259436711669',
-          '20001': '利润',
-          '231010112314020': '西南',
-          '231010171607024': '公司',
-          '231010190513015': '14869.259436711669',
-          '231010205143009': '一级'
-        },
-        {
-          '10001': '利润',
-          '10003': '231010190513015',
-          '10011': '13720.042139291763',
-          '20001': '利润',
-          '231010112314020': '华北',
-          '231010171607024': '公司',
-          '231010190513015': '13720.042139291763',
-          '231010205143009': '一级'
-        },
-        {
-          '10001': '利润',
-          '10003': '231010190513015',
-          '10011': '10807.019856154919',
-          '20001': '利润',
-          '231010112314020': '华东',
-          '231010171607024': '公司',
-          '231010190513015': '10807.019856154919',
-          '231010205143009': '一级'
-        },
-        {
-          '10001': '利润',
-          '10003': '231010190513015',
-          '10011': '1502.228010892868',
-          '20001': '利润',
-          '231010112314020': '西北',
-          '231010171607024': '公司',
-          '231010190513015': '1502.228010892868',
-          '231010205143009': '一级'
-        },
-        {
-          '10001': '利润',
-          '10003': '231010190513015',
-          '10011': '-10060.35078561306',
-          '20001': '利润',
-          '231010112314020': '地区-dongbei',
-          '231010171607024': '公司',
-          '231010190513015': '-10060.35078561306',
-          '231010205143009': '一级'
-        },
-        {
-          '10001': '利润',
-          '10003': '231010205143014',
-          '10012': '29552.69842272997',
-          '20001': '利润',
-          '231010112314020': '中南',
-          '231010171607024': '公司',
-          '231010205143009': '一级',
-          '231010205143014': '29552.69842272997'
-        },
-        {
-          '10001': '利润',
-          '10003': '231010205143014',
-          '10012': '14869.259436711669',
-          '20001': '利润',
-          '231010112314020': '西南',
-          '231010171607024': '公司',
-          '231010205143009': '一级',
-          '231010205143014': '14869.259436711669'
-        },
-        {
-          '10001': '利润',
-          '10003': '231010205143014',
-          '10012': '13720.042139291763',
-          '20001': '利润',
-          '231010112314020': '华北',
-          '231010171607024': '公司',
-          '231010205143009': '一级',
-          '231010205143014': '13720.042139291763'
-        },
-        {
-          '10001': '利润',
-          '10003': '231010205143014',
-          '10012': '10807.019856154919',
-          '20001': '利润',
-          '231010112314020': '华东',
-          '231010171607024': '公司',
-          '231010205143009': '一级',
-          '231010205143014': '10807.019856154919'
-        },
-        {
-          '10001': '利润',
-          '10003': '231010205143014',
-          '10012': '1502.228010892868',
-          '20001': '利润',
-          '231010112314020': '西北',
-          '231010171607024': '公司',
-          '231010205143009': '一级',
-          '231010205143014': '1502.228010892868'
-        },
-        {
-          '10001': '利润',
-          '10003': '231010205143014',
-          '10012': '-10060.35078561306',
-          '20001': '利润',
-          '231010112314020': '地区-dongbei',
-          '231010171607024': '公司',
-          '231010205143009': '一级',
-          '231010205143014': '-10060.35078561306'
-        },
-        {
-          '10001': '利润',
-          '10003': '231010190513015',
-          '10011': '21340.899931192398',
-          '20001': '利润',
-          '231010112314020': '华东',
-          '231010171607024': '小型企业',
-          '231010190513015': '21340.899931192398',
-          '231010205143009': '一级'
-        },
-        {
-          '10001': '利润',
-          '10003': '231010190513015',
-          '10011': '15056.691901683807',
-          '20001': '利润',
-          '231010112314020': '中南',
-          '231010171607024': '小型企业',
-          '231010190513015': '15056.691901683807',
-          '231010205143009': '一级'
-        },
-        {
-          '10001': '利润',
-          '10003': '231010190513015',
-          '10011': '5877.844171881676',
-          '20001': '利润',
-          '231010112314020': '地区-dongbei',
-          '231010171607024': '小型企业',
-          '231010190513015': '5877.844171881676',
-          '231010205143009': '一级'
-        },
-        {
-          '10001': '利润',
-          '10003': '231010190513015',
-          '10011': '5169.304051876068',
-          '20001': '利润',
-          '231010112314020': '华北',
-          '231010171607024': '小型企业',
-          '231010190513015': '5169.304051876068',
-          '231010205143009': '一级'
-        },
-        {
-          '10001': '利润',
-          '10003': '231010190513015',
-          '10011': '2820.3279762268066',
-          '20001': '利润',
-          '231010112314020': '西北',
-          '231010171607024': '小型企业',
-          '231010190513015': '2820.3279762268066',
-          '231010205143009': '一级'
-        },
-        {
-          '10001': '利润',
-          '10003': '231010190513015',
-          '10011': '1471.259955406189',
-          '20001': '利润',
-          '231010112314020': '西南',
-          '231010171607024': '小型企业',
-          '231010190513015': '1471.259955406189',
-          '231010205143009': '一级'
-        },
-        {
-          '10001': '利润',
-          '10003': '231010205143014',
-          '10012': '21340.899931192398',
-          '20001': '利润',
-          '231010112314020': '华东',
-          '231010171607024': '小型企业',
-          '231010205143009': '一级',
-          '231010205143014': '21340.899931192398'
-        },
-        {
-          '10001': '利润',
-          '10003': '231010205143014',
-          '10012': '15056.691901683807',
-          '20001': '利润',
-          '231010112314020': '中南',
-          '231010171607024': '小型企业',
-          '231010205143009': '一级',
-          '231010205143014': '15056.691901683807'
-        },
-        {
-          '10001': '利润',
-          '10003': '231010205143014',
-          '10012': '5877.844171881676',
-          '20001': '利润',
-          '231010112314020': '地区-dongbei',
-          '231010171607024': '小型企业',
-          '231010205143009': '一级',
-          '231010205143014': '5877.844171881676'
-        },
-        {
-          '10001': '利润',
-          '10003': '231010205143014',
-          '10012': '5169.304051876068',
-          '20001': '利润',
-          '231010112314020': '华北',
-          '231010171607024': '小型企业',
-          '231010205143009': '一级',
-          '231010205143014': '5169.304051876068'
-        },
-        {
-          '10001': '利润',
-          '10003': '231010205143014',
-          '10012': '2820.3279762268066',
-          '20001': '利润',
-          '231010112314020': '西北',
-          '231010171607024': '小型企业',
-          '231010205143009': '一级',
-          '231010205143014': '2820.3279762268066'
-        },
-        {
-          '10001': '利润',
-          '10003': '231010205143014',
-          '10012': '1471.259955406189',
-          '20001': '利润',
-          '231010112314020': '西南',
-          '231010171607024': '小型企业',
-          '231010205143009': '一级',
-          '231010205143014': '1471.259955406189'
-        },
-        {
-          '10001': '利润',
-          '10003': '231010190513015',
-          '10011': '64387.98809123039',
-          '20001': '利润',
-          '231010112314020': '华东',
-          '231010171607024': '消费者',
-          '231010190513015': '64387.98809123039',
-          '231010205143009': '一级'
-        },
-        {
-          '10001': '利润',
-          '10003': '231010190513015',
-          '10011': '48468.23799917102',
-          '20001': '利润',
-          '231010112314020': '中南',
-          '231010171607024': '消费者',
-          '231010190513015': '48468.23799917102',
-          '231010205143009': '一级'
-        },
-        {
-          '10001': '利润',
-          '10003': '231010190513015',
-          '10011': '22280.20186841488',
-          '20001': '利润',
-          '231010112314020': '地区-dongbei',
-          '231010171607024': '消费者',
-          '231010190513015': '22280.20186841488',
-          '231010205143009': '一级'
-        },
-        {
-          '10001': '利润',
-          '10003': '231010190513015',
-          '10011': '20700.868910312653',
-          '20001': '利润',
-          '231010112314020': '华北',
-          '231010171607024': '消费者',
-          '231010190513015': '20700.868910312653',
-          '231010205143009': '一级'
-        },
-        {
-          '10001': '利润',
-          '10003': '231010190513015',
-          '10011': '4222.623946420848',
-          '20001': '利润',
-          '231010112314020': '西北',
-          '231010171607024': '消费者',
-          '231010190513015': '4222.623946420848',
-          '231010205143009': '一级'
-        },
-        {
-          '10001': '利润',
-          '10003': '231010190513015',
-          '10011': '4093.964047908783',
-          '20001': '利润',
-          '231010112314020': '西南',
-          '231010171607024': '消费者',
-          '231010190513015': '4093.964047908783',
-          '231010205143009': '一级'
-        },
-        {
-          '10001': '利润',
-          '10003': '231010205143014',
-          '10012': '64387.98809123039',
-          '20001': '利润',
-          '231010112314020': '华东',
-          '231010171607024': '消费者',
-          '231010205143009': '一级',
-          '231010205143014': '64387.98809123039'
-        },
-        {
-          '10001': '利润',
-          '10003': '231010205143014',
-          '10012': '48468.23799917102',
-          '20001': '利润',
-          '231010112314020': '中南',
-          '231010171607024': '消费者',
-          '231010205143009': '一级',
-          '231010205143014': '48468.23799917102'
-        },
-        {
-          '10001': '利润',
-          '10003': '231010205143014',
-          '10012': '22280.20186841488',
-          '20001': '利润',
-          '231010112314020': '地区-dongbei',
-          '231010171607024': '消费者',
-          '231010205143009': '一级',
-          '231010205143014': '22280.20186841488'
-        },
-        {
-          '10001': '利润',
-          '10003': '231010205143014',
-          '10012': '20700.868910312653',
-          '20001': '利润',
-          '231010112314020': '华北',
-          '231010171607024': '消费者',
-          '231010205143009': '一级',
-          '231010205143014': '20700.868910312653'
-        },
-        {
-          '10001': '利润',
-          '10003': '231010205143014',
-          '10012': '4222.623946420848',
-          '20001': '利润',
-          '231010112314020': '西北',
-          '231010171607024': '消费者',
-          '231010205143009': '一级',
-          '231010205143014': '4222.623946420848'
-        },
-        {
-          '10001': '利润',
-          '10003': '231010205143014',
-          '10012': '4093.964047908783',
-          '20001': '利润',
-          '231010112314020': '西南',
-          '231010171607024': '消费者',
-          '231010205143009': '一级',
-          '231010205143014': '4093.964047908783'
-        },
-        {
-          '10001': '利润',
-          '10003': '231010190513015',
-          '10011': '39134.7112814188',
-          '20001': '利润',
-          '231010112314020': '中南',
-          '231010171607024': '公司',
-          '231010190513015': '39134.7112814188',
-          '231010205143009': '二级'
-        },
-        {
-          '10001': '利润',
-          '10003': '231010190513015',
-          '10011': '39131.42789667845',
-          '20001': '利润',
-          '231010112314020': '华东',
-          '231010171607024': '公司',
-          '231010190513015': '39131.42789667845',
-          '231010205143009': '二级'
-        },
-        {
-          '10001': '利润',
-          '10003': '231010190513015',
-          '10011': '34600.132201075554',
-          '20001': '利润',
-          '231010112314020': '华北',
-          '231010171607024': '公司',
-          '231010190513015': '34600.132201075554',
-          '231010205143009': '二级'
-        },
-        {
-          '10001': '利润',
-          '10003': '231010190513015',
-          '10011': '24406.01051365584',
-          '20001': '利润',
-          '231010112314020': '地区-dongbei',
-          '231010171607024': '公司',
-          '231010190513015': '24406.01051365584',
-          '231010205143009': '二级'
-        },
-        {
-          '10001': '利润',
-          '10003': '231010190513015',
-          '10011': '1774.9199981689453',
-          '20001': '利润',
-          '231010112314020': '西北',
-          '231010171607024': '公司',
-          '231010190513015': '1774.9199981689453',
-          '231010205143009': '二级'
-        },
-        {
-          '10001': '利润',
-          '10003': '231010190513015',
-          '10011': '-1690.0240671634674',
-          '20001': '利润',
-          '231010112314020': '西南',
-          '231010171607024': '公司',
-          '231010190513015': '-1690.0240671634674',
-          '231010205143009': '二级'
-        },
-        {
-          '10001': '利润',
-          '10003': '231010205143014',
-          '10012': '39134.7112814188',
-          '20001': '利润',
-          '231010112314020': '中南',
-          '231010171607024': '公司',
-          '231010205143009': '二级',
-          '231010205143014': '39134.7112814188'
-        },
-        {
-          '10001': '利润',
-          '10003': '231010205143014',
-          '10012': '39131.42789667845',
-          '20001': '利润',
-          '231010112314020': '华东',
-          '231010171607024': '公司',
-          '231010205143009': '二级',
-          '231010205143014': '39131.42789667845'
-        },
-        {
-          '10001': '利润',
-          '10003': '231010205143014',
-          '10012': '34600.132201075554',
-          '20001': '利润',
-          '231010112314020': '华北',
-          '231010171607024': '公司',
-          '231010205143009': '二级',
-          '231010205143014': '34600.132201075554'
-        },
-        {
-          '10001': '利润',
-          '10003': '231010205143014',
-          '10012': '24406.01051365584',
-          '20001': '利润',
-          '231010112314020': '地区-dongbei',
-          '231010171607024': '公司',
-          '231010205143009': '二级',
-          '231010205143014': '24406.01051365584'
-        },
-        {
-          '10001': '利润',
-          '10003': '231010205143014',
-          '10012': '1774.9199981689453',
-          '20001': '利润',
-          '231010112314020': '西北',
-          '231010171607024': '公司',
-          '231010205143009': '二级',
-          '231010205143014': '1774.9199981689453'
-        },
-        {
-          '10001': '利润',
-          '10003': '231010205143014',
-          '10012': '-1690.0240671634674',
-          '20001': '利润',
-          '231010112314020': '西南',
-          '231010171607024': '公司',
-          '231010205143009': '二级',
-          '231010205143014': '-1690.0240671634674'
-        },
-        {
-          '10001': '利润',
-          '10003': '231010190513015',
-          '10011': '36975.93182075024',
-          '20001': '利润',
-          '231010112314020': '中南',
-          '231010171607024': '小型企业',
-          '231010190513015': '36975.93182075024',
-          '231010205143009': '二级'
-        },
-        {
-          '10001': '利润',
-          '10003': '231010190513015',
-          '10011': '23235.631998449564',
-          '20001': '利润',
-          '231010112314020': '华东',
-          '231010171607024': '小型企业',
-          '231010190513015': '23235.631998449564',
-          '231010205143009': '二级'
-        },
-        {
-          '10001': '利润',
-          '10003': '231010190513015',
-          '10011': '14651.370790958405',
-          '20001': '利润',
-          '231010112314020': '华北',
-          '231010171607024': '小型企业',
-          '231010190513015': '14651.370790958405',
-          '231010205143009': '二级'
-        },
-        {
-          '10001': '利润',
-          '10003': '231010190513015',
-          '10011': '12670.811906427145',
-          '20001': '利润',
-          '231010112314020': '地区-dongbei',
-          '231010171607024': '小型企业',
-          '231010190513015': '12670.811906427145',
-          '231010205143009': '二级'
-        },
-        {
-          '10001': '利润',
-          '10003': '231010190513015',
-          '10011': '4730.656059741974',
-          '20001': '利润',
-          '231010112314020': '西南',
-          '231010171607024': '小型企业',
-          '231010190513015': '4730.656059741974',
-          '231010205143009': '二级'
-        },
-        {
-          '10001': '利润',
-          '10003': '231010190513015',
-          '10011': '-3066.671887397766',
-          '20001': '利润',
-          '231010112314020': '西北',
-          '231010171607024': '小型企业',
-          '231010190513015': '-3066.671887397766',
-          '231010205143009': '二级'
-        },
-        {
-          '10001': '利润',
-          '10003': '231010205143014',
-          '10012': '36975.93182075024',
-          '20001': '利润',
-          '231010112314020': '中南',
-          '231010171607024': '小型企业',
-          '231010205143009': '二级',
-          '231010205143014': '36975.93182075024'
-        },
-        {
-          '10001': '利润',
-          '10003': '231010205143014',
-          '10012': '23235.631998449564',
-          '20001': '利润',
-          '231010112314020': '华东',
-          '231010171607024': '小型企业',
-          '231010205143009': '二级',
-          '231010205143014': '23235.631998449564'
-        },
-        {
-          '10001': '利润',
-          '10003': '231010205143014',
-          '10012': '14651.370790958405',
-          '20001': '利润',
-          '231010112314020': '华北',
-          '231010171607024': '小型企业',
-          '231010205143009': '二级',
-          '231010205143014': '14651.370790958405'
-        },
-        {
-          '10001': '利润',
-          '10003': '231010205143014',
-          '10012': '12670.811906427145',
-          '20001': '利润',
-          '231010112314020': '地区-dongbei',
-          '231010171607024': '小型企业',
-          '231010205143009': '二级',
-          '231010205143014': '12670.811906427145'
-        },
-        {
-          '10001': '利润',
-          '10003': '231010205143014',
-          '10012': '4730.656059741974',
-          '20001': '利润',
-          '231010112314020': '西南',
-          '231010171607024': '小型企业',
-          '231010205143009': '二级',
-          '231010205143014': '4730.656059741974'
-        },
-        {
-          '10001': '利润',
-          '10003': '231010205143014',
-          '10012': '-3066.671887397766',
-          '20001': '利润',
-          '231010112314020': '西北',
-          '231010171607024': '小型企业',
-          '231010205143009': '二级',
-          '231010205143014': '-3066.671887397766'
-        },
-        {
-          '10001': '利润',
-          '10003': '231010190513015',
-          '10011': '82380.8867816925',
-          '20001': '利润',
-          '231010112314020': '华东',
-          '231010171607024': '消费者',
-          '231010190513015': '82380.8867816925',
-          '231010205143009': '二级'
-        },
-        {
-          '10001': '利润',
-          '10003': '231010190513015',
-          '10011': '50585.779735803604',
-          '20001': '利润',
-          '231010112314020': '中南',
-          '231010171607024': '消费者',
-          '231010190513015': '50585.779735803604',
-          '231010205143009': '二级'
-        },
-        {
-          '10001': '利润',
-          '10003': '231010190513015',
-          '10011': '44140.46036553383',
-          '20001': '利润',
-          '231010112314020': '华北',
-          '231010171607024': '消费者',
-          '231010190513015': '44140.46036553383',
-          '231010205143009': '二级'
-        },
-        {
-          '10001': '利润',
-          '10003': '231010190513015',
-          '10011': '43945.29997563362',
-          '20001': '利润',
-          '231010112314020': '地区-dongbei',
-          '231010171607024': '消费者',
-          '231010190513015': '43945.29997563362',
-          '231010205143009': '二级'
-        },
-        {
-          '10001': '利润',
-          '10003': '231010190513015',
-          '10011': '17045.55988186598',
-          '20001': '利润',
-          '231010112314020': '西北',
-          '231010171607024': '消费者',
-          '231010190513015': '17045.55988186598',
-          '231010205143009': '二级'
-        },
-        {
-          '10001': '利润',
-          '10003': '231010190513015',
-          '10011': '11236.2601313591',
-          '20001': '利润',
-          '231010112314020': '西南',
-          '231010171607024': '消费者',
-          '231010190513015': '11236.2601313591',
-          '231010205143009': '二级'
-        },
-        {
-          '10001': '利润',
-          '10003': '231010205143014',
-          '10012': '82380.8867816925',
-          '20001': '利润',
-          '231010112314020': '华东',
-          '231010171607024': '消费者',
-          '231010205143009': '二级',
-          '231010205143014': '82380.8867816925'
-        },
-        {
-          '10001': '利润',
-          '10003': '231010205143014',
-          '10012': '50585.779735803604',
-          '20001': '利润',
-          '231010112314020': '中南',
-          '231010171607024': '消费者',
-          '231010205143009': '二级',
-          '231010205143014': '50585.779735803604'
-        },
-        {
-          '10001': '利润',
-          '10003': '231010205143014',
-          '10012': '44140.46036553383',
-          '20001': '利润',
-          '231010112314020': '华北',
-          '231010171607024': '消费者',
-          '231010205143009': '二级',
-          '231010205143014': '44140.46036553383'
-        },
-        {
-          '10001': '利润',
-          '10003': '231010205143014',
-          '10012': '43945.29997563362',
-          '20001': '利润',
-          '231010112314020': '地区-dongbei',
-          '231010171607024': '消费者',
-          '231010205143009': '二级',
-          '231010205143014': '43945.29997563362'
-        },
-        {
-          '10001': '利润',
-          '10003': '231010205143014',
-          '10012': '17045.55988186598',
-          '20001': '利润',
-          '231010112314020': '西北',
-          '231010171607024': '消费者',
-          '231010205143009': '二级',
-          '231010205143014': '17045.55988186598'
-        },
-        {
-          '10001': '利润',
-          '10003': '231010205143014',
-          '10012': '11236.2601313591',
-          '20001': '利润',
-          '231010112314020': '西南',
-          '231010171607024': '消费者',
-          '231010205143009': '二级',
-          '231010205143014': '11236.2601313591'
-        },
-        {
-          '10001': '利润',
-          '10003': '231010190513015',
-          '10011': '22255.897431716323',
-          '20001': '利润',
-          '231010112314020': '中南',
-          '231010171607024': '公司',
-          '231010190513015': '22255.897431716323',
-          '231010205143009': '当日'
-        },
-        {
-          '10001': '利润',
-          '10003': '231010190513015',
-          '10011': '18356.99584555626',
-          '20001': '利润',
-          '231010112314020': '华东',
-          '231010171607024': '公司',
-          '231010190513015': '18356.99584555626',
-          '231010205143009': '当日'
-        },
-        {
-          '10001': '利润',
-          '10003': '231010190513015',
-          '10011': '13119.539881706238',
-          '20001': '利润',
-          '231010112314020': '华北',
-          '231010171607024': '公司',
-          '231010190513015': '13119.539881706238',
-          '231010205143009': '当日'
-        },
-        {
-          '10001': '利润',
-          '10003': '231010190513015',
-          '10011': '5692.119945526123',
-          '20001': '利润',
-          '231010112314020': '西北',
-          '231010171607024': '公司',
-          '231010190513015': '5692.119945526123',
-          '231010205143009': '当日'
-        },
-        {
-          '10001': '利润',
-          '10003': '231010190513015',
-          '10011': '3108.4690698310733',
-          '20001': '利润',
-          '231010112314020': '地区-dongbei',
-          '231010171607024': '公司',
-          '231010190513015': '3108.4690698310733',
-          '231010205143009': '当日'
-        },
-        {
-          '10001': '利润',
-          '10003': '231010190513015',
-          '10011': '-3322.95596408844',
-          '20001': '利润',
-          '231010112314020': '西南',
-          '231010171607024': '公司',
-          '231010190513015': '-3322.95596408844',
-          '231010205143009': '当日'
-        },
-        {
-          '10001': '利润',
-          '10003': '231010205143014',
-          '10012': '22255.897431716323',
-          '20001': '利润',
-          '231010112314020': '中南',
-          '231010171607024': '公司',
-          '231010205143009': '当日',
-          '231010205143014': '22255.897431716323'
-        },
-        {
-          '10001': '利润',
-          '10003': '231010205143014',
-          '10012': '18356.99584555626',
-          '20001': '利润',
-          '231010112314020': '华东',
-          '231010171607024': '公司',
-          '231010205143009': '当日',
-          '231010205143014': '18356.99584555626'
-        },
-        {
-          '10001': '利润',
-          '10003': '231010205143014',
-          '10012': '13119.539881706238',
-          '20001': '利润',
-          '231010112314020': '华北',
-          '231010171607024': '公司',
-          '231010205143009': '当日',
-          '231010205143014': '13119.539881706238'
-        },
-        {
-          '10001': '利润',
-          '10003': '231010205143014',
-          '10012': '5692.119945526123',
-          '20001': '利润',
-          '231010112314020': '西北',
-          '231010171607024': '公司',
-          '231010205143009': '当日',
-          '231010205143014': '5692.119945526123'
-        },
-        {
-          '10001': '利润',
-          '10003': '231010205143014',
-          '10012': '3108.4690698310733',
-          '20001': '利润',
-          '231010112314020': '地区-dongbei',
-          '231010171607024': '公司',
-          '231010205143009': '当日',
-          '231010205143014': '3108.4690698310733'
-        },
-        {
-          '10001': '利润',
-          '10003': '231010205143014',
-          '10012': '-3322.95596408844',
-          '20001': '利润',
-          '231010112314020': '西南',
-          '231010171607024': '公司',
-          '231010205143009': '当日',
-          '231010205143014': '-3322.95596408844'
-        },
-        {
-          '10001': '利润',
-          '10003': '231010190513015',
-          '10011': '11269.272097229958',
-          '20001': '利润',
-          '231010112314020': '华东',
-          '231010171607024': '小型企业',
-          '231010190513015': '11269.272097229958',
-          '231010205143009': '当日'
-        },
-        {
-          '10001': '利润',
-          '10003': '231010190513015',
-          '10011': '6759.164978027344',
-          '20001': '利润',
-          '231010112314020': '中南',
-          '231010171607024': '小型企业',
-          '231010190513015': '6759.164978027344',
-          '231010205143009': '当日'
-        },
-        {
-          '10001': '利润',
-          '10003': '231010190513015',
-          '10011': '2055.508020401001',
-          '20001': '利润',
-          '231010112314020': '华北',
-          '231010171607024': '小型企业',
-          '231010190513015': '2055.508020401001',
-          '231010205143009': '当日'
-        },
-        {
-          '10001': '利润',
-          '10003': '231010190513015',
-          '10011': '1721.5800495147705',
-          '20001': '利润',
-          '231010112314020': '西北',
-          '231010171607024': '小型企业',
-          '231010190513015': '1721.5800495147705',
-          '231010205143009': '当日'
-        },
-        {
-          '10001': '利润',
-          '10003': '231010190513015',
-          '10011': '1248.3519949913025',
-          '20001': '利润',
-          '231010112314020': '地区-dongbei',
-          '231010171607024': '小型企业',
-          '231010190513015': '1248.3519949913025',
-          '231010205143009': '当日'
-        },
-        {
-          '10001': '利润',
-          '10003': '231010190513015',
-          '10011': '577.4999907016754',
-          '20001': '利润',
-          '231010112314020': '西南',
-          '231010171607024': '小型企业',
-          '231010190513015': '577.4999907016754',
-          '231010205143009': '当日'
-        },
-        {
-          '10001': '利润',
-          '10003': '231010205143014',
-          '10012': '11269.272097229958',
-          '20001': '利润',
-          '231010112314020': '华东',
-          '231010171607024': '小型企业',
-          '231010205143009': '当日',
-          '231010205143014': '11269.272097229958'
-        },
-        {
-          '10001': '利润',
-          '10003': '231010205143014',
-          '10012': '6759.164978027344',
-          '20001': '利润',
-          '231010112314020': '中南',
-          '231010171607024': '小型企业',
-          '231010205143009': '当日',
-          '231010205143014': '6759.164978027344'
-        },
-        {
-          '10001': '利润',
-          '10003': '231010205143014',
-          '10012': '2055.508020401001',
-          '20001': '利润',
-          '231010112314020': '华北',
-          '231010171607024': '小型企业',
-          '231010205143009': '当日',
-          '231010205143014': '2055.508020401001'
-        },
-        {
-          '10001': '利润',
-          '10003': '231010205143014',
-          '10012': '1721.5800495147705',
-          '20001': '利润',
-          '231010112314020': '西北',
-          '231010171607024': '小型企业',
-          '231010205143009': '当日',
-          '231010205143014': '1721.5800495147705'
-        },
-        {
-          '10001': '利润',
-          '10003': '231010205143014',
-          '10012': '1248.3519949913025',
-          '20001': '利润',
-          '231010112314020': '地区-dongbei',
-          '231010171607024': '小型企业',
-          '231010205143009': '当日',
-          '231010205143014': '1248.3519949913025'
-        },
-        {
-          '10001': '利润',
-          '10003': '231010205143014',
-          '10012': '577.4999907016754',
-          '20001': '利润',
-          '231010112314020': '西南',
-          '231010171607024': '小型企业',
-          '231010205143009': '当日',
-          '231010205143014': '577.4999907016754'
-        },
-        {
-          '10001': '利润',
-          '10003': '231010190513015',
-          '10011': '18896.080198287964',
-          '20001': '利润',
-          '231010112314020': '华东',
-          '231010171607024': '消费者',
-          '231010190513015': '18896.080198287964',
-          '231010205143009': '当日'
-        },
-        {
-          '10001': '利润',
-          '10003': '231010190513015',
-          '10011': '16592.814119160175',
-          '20001': '利润',
-          '231010112314020': '中南',
-          '231010171607024': '消费者',
-          '231010190513015': '16592.814119160175',
-          '231010205143009': '当日'
-        },
-        {
-          '10001': '利润',
-          '10003': '231010190513015',
-          '10011': '10673.79599237442',
-          '20001': '利润',
-          '231010112314020': '华北',
-          '231010171607024': '消费者',
-          '231010190513015': '10673.79599237442',
-          '231010205143009': '当日'
-        },
-        {
-          '10001': '利润',
-          '10003': '231010190513015',
-          '10011': '2528.400135964155',
-          '20001': '利润',
-          '231010112314020': '地区-dongbei',
-          '231010171607024': '消费者',
-          '231010190513015': '2528.400135964155',
-          '231010205143009': '当日'
-        },
-        {
-          '10001': '利润',
-          '10003': '231010190513015',
-          '10011': '1458.996036529541',
-          '20001': '利润',
-          '231010112314020': '西南',
-          '231010171607024': '消费者',
-          '231010190513015': '1458.996036529541',
-          '231010205143009': '当日'
-        },
-        {
-          '10001': '利润',
-          '10003': '231010190513015',
-          '10011': '1382.7799935340881',
-          '20001': '利润',
-          '231010112314020': '西北',
-          '231010171607024': '消费者',
-          '231010190513015': '1382.7799935340881',
-          '231010205143009': '当日'
-        },
-        {
-          '10001': '利润',
-          '10003': '231010205143014',
-          '10012': '18896.080198287964',
-          '20001': '利润',
-          '231010112314020': '华东',
-          '231010171607024': '消费者',
-          '231010205143009': '当日',
-          '231010205143014': '18896.080198287964'
-        },
-        {
-          '10001': '利润',
-          '10003': '231010205143014',
-          '10012': '16592.814119160175',
-          '20001': '利润',
-          '231010112314020': '中南',
-          '231010171607024': '消费者',
-          '231010205143009': '当日',
-          '231010205143014': '16592.814119160175'
-        },
-        {
-          '10001': '利润',
-          '10003': '231010205143014',
-          '10012': '10673.79599237442',
-          '20001': '利润',
-          '231010112314020': '华北',
-          '231010171607024': '消费者',
-          '231010205143009': '当日',
-          '231010205143014': '10673.79599237442'
-        },
-        {
-          '10001': '利润',
-          '10003': '231010205143014',
-          '10012': '2528.400135964155',
-          '20001': '利润',
-          '231010112314020': '地区-dongbei',
-          '231010171607024': '消费者',
-          '231010205143009': '当日',
-          '231010205143014': '2528.400135964155'
-        },
-        {
-          '10001': '利润',
-          '10003': '231010205143014',
-          '10012': '1458.996036529541',
-          '20001': '利润',
-          '231010112314020': '西南',
-          '231010171607024': '消费者',
-          '231010205143009': '当日',
-          '231010205143014': '1458.996036529541'
-        },
-        {
-          '10001': '利润',
-          '10003': '231010205143014',
-          '10012': '1382.7799935340881',
-          '20001': '利润',
-          '231010112314020': '西北',
-          '231010171607024': '消费者',
-          '231010205143009': '当日',
-          '231010205143014': '1382.7799935340881'
-        },
-        {
-          '10001': '利润',
-          '10003': '231010190513015',
-          '10011': '118087.98317557573',
-          '20001': '利润',
-          '231010112314020': '华东',
-          '231010171607024': '公司',
-          '231010190513015': '118087.98317557573',
-          '231010205143009': '标准级'
-        },
-        {
-          '10001': '利润',
-          '10003': '231010190513015',
-          '10011': '106918.77745839208',
-          '20001': '利润',
-          '231010112314020': '中南',
-          '231010171607024': '公司',
-          '231010190513015': '106918.77745839208',
-          '231010205143009': '标准级'
-        },
-        {
-          '10001': '利润',
-          '10003': '231010190513015',
-          '10011': '105005.49484279752',
-          '20001': '利润',
-          '231010112314020': '华北',
-          '231010171607024': '公司',
-          '231010190513015': '105005.49484279752',
-          '231010205143009': '标准级'
-        },
-        {
-          '10001': '利润',
-          '10003': '231010190513015',
-          '10011': '39524.19761827588',
-          '20001': '利润',
-          '231010112314020': '地区-dongbei',
-          '231010171607024': '公司',
-          '231010190513015': '39524.19761827588',
-          '231010205143009': '标准级'
-        },
-        {
-          '10001': '利润',
-          '10003': '231010190513015',
-          '10011': '35121.29611492157',
-          '20001': '利润',
-          '231010112314020': '西北',
-          '231010171607024': '公司',
-          '231010190513015': '35121.29611492157',
-          '231010205143009': '标准级'
-        },
-        {
-          '10001': '利润',
-          '10003': '231010190513015',
-          '10011': '20351.74444913864',
-          '20001': '利润',
-          '231010112314020': '西南',
-          '231010171607024': '公司',
-          '231010190513015': '20351.74444913864',
-          '231010205143009': '标准级'
-        },
-        {
-          '10001': '利润',
-          '10003': '231010205143014',
-          '10012': '118087.98317557573',
-          '20001': '利润',
-          '231010112314020': '华东',
-          '231010171607024': '公司',
-          '231010205143009': '标准级',
-          '231010205143014': '118087.98317557573'
-        },
-        {
-          '10001': '利润',
-          '10003': '231010205143014',
-          '10012': '106918.77745839208',
-          '20001': '利润',
-          '231010112314020': '中南',
-          '231010171607024': '公司',
-          '231010205143009': '标准级',
-          '231010205143014': '106918.77745839208'
-        },
-        {
-          '10001': '利润',
-          '10003': '231010205143014',
-          '10012': '105005.49484279752',
-          '20001': '利润',
-          '231010112314020': '华北',
-          '231010171607024': '公司',
-          '231010205143009': '标准级',
-          '231010205143014': '105005.49484279752'
-        },
-        {
-          '10001': '利润',
-          '10003': '231010205143014',
-          '10012': '39524.19761827588',
-          '20001': '利润',
-          '231010112314020': '地区-dongbei',
-          '231010171607024': '公司',
-          '231010205143009': '标准级',
-          '231010205143014': '39524.19761827588'
-        },
-        {
-          '10001': '利润',
-          '10003': '231010205143014',
-          '10012': '35121.29611492157',
-          '20001': '利润',
-          '231010112314020': '西北',
-          '231010171607024': '公司',
-          '231010205143009': '标准级',
-          '231010205143014': '35121.29611492157'
-        },
-        {
-          '10001': '利润',
-          '10003': '231010205143014',
-          '10012': '20351.74444913864',
-          '20001': '利润',
-          '231010112314020': '西南',
-          '231010171607024': '公司',
-          '231010205143009': '标准级',
-          '231010205143014': '20351.74444913864'
-        },
-        {
-          '10001': '利润',
-          '10003': '231010190513015',
-          '10011': '88442.71798437834',
-          '20001': '利润',
-          '231010112314020': '中南',
-          '231010171607024': '小型企业',
-          '231010190513015': '88442.71798437834',
-          '231010205143009': '标准级'
-        },
-        {
-          '10001': '利润',
-          '10003': '231010190513015',
-          '10011': '53928.448032945395',
-          '20001': '利润',
-          '231010112314020': '华东',
-          '231010171607024': '小型企业',
-          '231010190513015': '53928.448032945395',
-          '231010205143009': '标准级'
-        },
-        {
-          '10001': '利润',
-          '10003': '231010190513015',
-          '10011': '50717.0440325737',
-          '20001': '利润',
-          '231010112314020': '华北',
-          '231010171607024': '小型企业',
-          '231010190513015': '50717.0440325737',
-          '231010205143009': '标准级'
-        },
-        {
-          '10001': '利润',
-          '10003': '231010190513015',
-          '10011': '44391.907398581505',
-          '20001': '利润',
-          '231010112314020': '地区-dongbei',
-          '231010171607024': '小型企业',
-          '231010190513015': '44391.907398581505',
-          '231010205143009': '标准级'
-        },
-        {
-          '10001': '利润',
-          '10003': '231010190513015',
-          '10011': '6468.615869402885',
-          '20001': '利润',
-          '231010112314020': '西南',
-          '231010171607024': '小型企业',
-          '231010190513015': '6468.615869402885',
-          '231010205143009': '标准级'
-        },
-        {
-          '10001': '利润',
-          '10003': '231010190513015',
-          '10011': '3964.4918270111084',
-          '20001': '利润',
-          '231010112314020': '西北',
-          '231010171607024': '小型企业',
-          '231010190513015': '3964.4918270111084',
-          '231010205143009': '标准级'
-        },
-        {
-          '10001': '利润',
-          '10003': '231010205143014',
-          '10012': '88442.71798437834',
-          '20001': '利润',
-          '231010112314020': '中南',
-          '231010171607024': '小型企业',
-          '231010205143009': '标准级',
-          '231010205143014': '88442.71798437834'
-        },
-        {
-          '10001': '利润',
-          '10003': '231010205143014',
-          '10012': '53928.448032945395',
-          '20001': '利润',
-          '231010112314020': '华东',
-          '231010171607024': '小型企业',
-          '231010205143009': '标准级',
-          '231010205143014': '53928.448032945395'
-        },
-        {
-          '10001': '利润',
-          '10003': '231010205143014',
-          '10012': '50717.0440325737',
-          '20001': '利润',
-          '231010112314020': '华北',
-          '231010171607024': '小型企业',
-          '231010205143009': '标准级',
-          '231010205143014': '50717.0440325737'
-        },
-        {
-          '10001': '利润',
-          '10003': '231010205143014',
-          '10012': '44391.907398581505',
-          '20001': '利润',
-          '231010112314020': '地区-dongbei',
-          '231010171607024': '小型企业',
-          '231010205143009': '标准级',
-          '231010205143014': '44391.907398581505'
-        },
-        {
-          '10001': '利润',
-          '10003': '231010205143014',
-          '10012': '6468.615869402885',
-          '20001': '利润',
-          '231010112314020': '西南',
-          '231010171607024': '小型企业',
-          '231010205143009': '标准级',
-          '231010205143014': '6468.615869402885'
-        },
-        {
-          '10001': '利润',
-          '10003': '231010205143014',
-          '10012': '3964.4918270111084',
-          '20001': '利润',
-          '231010112314020': '西北',
-          '231010171607024': '小型企业',
-          '231010205143009': '标准级',
-          '231010205143014': '3964.4918270111084'
-        },
-        {
-          '10001': '利润',
-          '10003': '231010190513015',
-          '10011': '210141.89068495482',
-          '20001': '利润',
-          '231010112314020': '中南',
-          '231010171607024': '消费者',
-          '231010190513015': '210141.89068495482',
-          '231010205143009': '标准级'
-        },
-        {
-          '10001': '利润',
-          '10003': '231010190513015',
-          '10011': '145396.04913766682',
-          '20001': '利润',
-          '231010112314020': '华东',
-          '231010171607024': '消费者',
-          '231010190513015': '145396.04913766682',
-          '231010205143009': '标准级'
-        },
-        {
-          '10001': '利润',
-          '10003': '231010190513015',
-          '10011': '116499.65626353025',
-          '20001': '利润',
-          '231010112314020': '华北',
-          '231010171607024': '消费者',
-          '231010190513015': '116499.65626353025',
-          '231010205143009': '标准级'
-        },
-        {
-          '10001': '利润',
-          '10003': '231010190513015',
-          '10011': '52270.36535333097',
-          '20001': '利润',
-          '231010112314020': '地区-dongbei',
-          '231010171607024': '消费者',
-          '231010190513015': '52270.36535333097',
-          '231010205143009': '标准级'
-        },
-        {
-          '10001': '利润',
-          '10003': '231010190513015',
-          '10011': '37391.45208977163',
-          '20001': '利润',
-          '231010112314020': '西南',
-          '231010171607024': '消费者',
-          '231010190513015': '37391.45208977163',
-          '231010205143009': '标准级'
-        },
-        {
-          '10001': '利润',
-          '10003': '231010190513015',
-          '10011': '26372.219661466777',
-          '20001': '利润',
-          '231010112314020': '西北',
-          '231010171607024': '消费者',
-          '231010190513015': '26372.219661466777',
-          '231010205143009': '标准级'
-        },
-        {
-          '10001': '利润',
-          '10003': '231010205143014',
-          '10012': '210141.89068495482',
-          '20001': '利润',
-          '231010112314020': '中南',
-          '231010171607024': '消费者',
-          '231010205143009': '标准级',
-          '231010205143014': '210141.89068495482'
-        },
-        {
-          '10001': '利润',
-          '10003': '231010205143014',
-          '10012': '145396.04913766682',
-          '20001': '利润',
-          '231010112314020': '华东',
-          '231010171607024': '消费者',
-          '231010205143009': '标准级',
-          '231010205143014': '145396.04913766682'
-        },
-        {
-          '10001': '利润',
-          '10003': '231010205143014',
-          '10012': '116499.65626353025',
-          '20001': '利润',
-          '231010112314020': '华北',
-          '231010171607024': '消费者',
-          '231010205143009': '标准级',
-          '231010205143014': '116499.65626353025'
-        },
-        {
-          '10001': '利润',
-          '10003': '231010205143014',
-          '10012': '52270.36535333097',
-          '20001': '利润',
-          '231010112314020': '地区-dongbei',
-          '231010171607024': '消费者',
-          '231010205143009': '标准级',
-          '231010205143014': '52270.36535333097'
-        },
-        {
-          '10001': '利润',
-          '10003': '231010205143014',
-          '10012': '37391.45208977163',
-          '20001': '利润',
-          '231010112314020': '西南',
-          '231010171607024': '消费者',
-          '231010205143009': '标准级',
-          '231010205143014': '37391.45208977163'
-        },
-        {
-          '10001': '利润',
-          '10003': '231010205143014',
-          '10012': '26372.219661466777',
-          '20001': '利润',
-          '231010112314020': '西北',
-          '231010171607024': '消费者',
-          '231010205143009': '标准级',
-          '231010205143014': '26372.219661466777'
-        }
-      ]
-    },
+    indicatorsAsCol: false,
+    records: [
+      {
+        '10001': '商城渗透率',
+        '10002': '0.2318117582940963',
+        '10003': '230222193538917',
+        '20001': '抖极',
+        '230222193538536': '抖极',
+        '230222193538917': '0.2318117582940963',
+        '230222193538950': '抖极',
+        '230222193539240': '2023-09-19'
+      },
+      {
+        '10001': '商城渗透率',
+        '10002': '0.22217248185563748',
+        '10003': '230222193538917',
+        '20001': '抖极',
+        '230222193538536': '抖极',
+        '230222193538917': '0.22217248185563748',
+        '230222193538950': '抖极',
+        '230222193539240': '2023-09-08'
+      },
+      {
+        '10001': '商城渗透率',
+        '10002': '0.2065198017099237',
+        '10003': '230222193538917',
+        '20001': '抖极',
+        '230222193538536': '抖极',
+        '230222193538917': '0.2065198017099237',
+        '230222193538950': '抖极',
+        '230222193539240': '2023-09-05'
+      },
+      {
+        '10001': '商城渗透率',
+        '10002': '0.23864837584655121',
+        '10003': '230222193538917',
+        '20001': '抖极',
+        '230222193538536': '抖极',
+        '230222193538917': '0.23864837584655121',
+        '230222193538950': '抖极',
+        '230222193539240': '2023-10-18'
+      },
+      {
+        '10001': '商城渗透率',
+        '10002': '0.2366173476231954',
+        '10003': '230222193538917',
+        '20001': '抖极',
+        '230222193538536': '抖极',
+        '230222193538917': '0.2366173476231954',
+        '230222193538950': '抖极',
+        '230222193539240': '2023-10-08'
+      },
+      {
+        '10001': '商城渗透率',
+        '10002': '0.23871157098628473',
+        '10003': '230222193538917',
+        '20001': '抖极',
+        '230222193538536': '抖极',
+        '230222193538917': '0.23871157098628473',
+        '230222193538950': '抖极',
+        '230222193539240': '2023-09-25'
+      },
+      {
+        '10001': '商城渗透率',
+        '10002': '0.17261296013784208',
+        '10003': '230222193538917',
+        '20001': '抖极',
+        '230222193538536': '抖极',
+        '230222193538917': '0.17261296013784208',
+        '230222193538950': '抖极',
+        '230222193539240': '2023-08-04'
+      },
+      {
+        '10001': '商城渗透率',
+        '10002': '0.20277901511130775',
+        '10003': '230222193538917',
+        '20001': '抖极',
+        '230222193538536': '抖极',
+        '230222193538917': '0.20277901511130775',
+        '230222193538950': '抖极',
+        '230222193539240': '2023-08-25'
+      },
+      {
+        '10001': '商城渗透率',
+        '10002': '0.23731970696103855',
+        '10003': '230222193538917',
+        '20001': '抖极',
+        '230222193538536': '抖极',
+        '230222193538917': '0.23731970696103855',
+        '230222193538950': '抖极',
+        '230222193539240': '2023-10-10'
+      },
+      {
+        '10001': '商城渗透率',
+        '10002': '0.2256556412458524',
+        '10003': '230222193538917',
+        '20001': '抖极',
+        '230222193538536': '抖极',
+        '230222193538917': '0.2256556412458524',
+        '230222193538950': '抖极',
+        '230222193539240': '2023-09-11'
+      },
+      {
+        '10001': '商城渗透率',
+        '10002': '0.20129971287672108',
+        '10003': '230222193538917',
+        '20001': '抖极',
+        '230222193538536': '抖极',
+        '230222193538917': '0.20129971287672108',
+        '230222193538950': '抖极',
+        '230222193539240': '2023-08-19'
+      },
+      {
+        '10001': '商城渗透率',
+        '10002': '0.23425990892248685',
+        '10003': '230222193538917',
+        '20001': '抖极',
+        '230222193538536': '抖极',
+        '230222193538917': '0.23425990892248685',
+        '230222193538950': '抖极',
+        '230222193539240': '2023-10-13'
+      },
+      {
+        '10001': '商城渗透率',
+        '10002': '0.18949483573507225',
+        '10003': '230222193538917',
+        '20001': '抖极',
+        '230222193538536': '抖极',
+        '230222193538917': '0.18949483573507225',
+        '230222193538950': '抖极',
+        '230222193539240': '2023-08-10'
+      },
+      {
+        '10001': '商城渗透率',
+        '10002': '0.1991680214913069',
+        '10003': '230222193538917',
+        '20001': '抖极',
+        '230222193538536': '抖极',
+        '230222193538917': '0.1991680214913069',
+        '230222193538950': '抖极',
+        '230222193539240': '2023-08-14'
+      },
+      {
+        '10001': '商城渗透率',
+        '10002': '0.20100354328269168',
+        '10003': '230222193538917',
+        '20001': '抖极',
+        '230222193538536': '抖极',
+        '230222193538917': '0.20100354328269168',
+        '230222193538950': '抖极',
+        '230222193539240': '2023-08-15'
+      },
+      {
+        '10001': '商城渗透率',
+        '10002': '0.2268284960212396',
+        '10003': '230222193538917',
+        '20001': '抖极',
+        '230222193538536': '抖极',
+        '230222193538917': '0.2268284960212396',
+        '230222193538950': '抖极',
+        '230222193539240': '2023-09-15'
+      },
+      {
+        '10001': '商城渗透率',
+        '10002': '0.23659004198574798',
+        '10003': '230222193538917',
+        '20001': '抖极',
+        '230222193538536': '抖极',
+        '230222193538917': '0.23659004198574798',
+        '230222193538950': '抖极',
+        '230222193539240': '2023-10-14'
+      },
+      {
+        '10001': '商城渗透率',
+        '10002': '0.2034183233284108',
+        '10003': '230222193538917',
+        '20001': '抖极',
+        '230222193538536': '抖极',
+        '230222193538917': '0.2034183233284108',
+        '230222193538950': '抖极',
+        '230222193539240': '2023-08-29'
+      },
+      {
+        '10001': '商城渗透率',
+        '10002': '0.2261126870186753',
+        '10003': '230222193538917',
+        '20001': '抖极',
+        '230222193538536': '抖极',
+        '230222193538917': '0.2261126870186753',
+        '230222193538950': '抖极',
+        '230222193539240': '2023-09-29'
+      },
+      {
+        '10001': '商城渗透率',
+        '10002': '0.2310907001874962',
+        '10003': '230222193538917',
+        '20001': '抖极',
+        '230222193538536': '抖极',
+        '230222193538917': '0.2310907001874962',
+        '230222193538950': '抖极',
+        '230222193539240': '2023-10-04'
+      },
+      {
+        '10001': '商城渗透率',
+        '10002': '0.2010290479612299',
+        '10003': '230222193538917',
+        '20001': '抖极',
+        '230222193538536': '抖极',
+        '230222193538917': '0.2010290479612299',
+        '230222193538950': '抖极',
+        '230222193539240': '2023-09-01'
+      },
+      {
+        '10001': '商城渗透率',
+        '10002': '0.22678566971228734',
+        '10003': '230222193538917',
+        '20001': '抖极',
+        '230222193538536': '抖极',
+        '230222193538917': '0.22678566971228734',
+        '230222193538950': '抖极',
+        '230222193539240': '2023-09-12'
+      },
+      {
+        '10001': '商城渗透率',
+        '10002': '0.23646583873623994',
+        '10003': '230222193538917',
+        '20001': '抖极',
+        '230222193538536': '抖极',
+        '230222193538917': '0.23646583873623994',
+        '230222193538950': '抖极',
+        '230222193539240': '2023-10-17'
+      },
+      {
+        '10001': '商城渗透率',
+        '10002': '0.23906000041934092',
+        '10003': '230222193538917',
+        '20001': '抖极',
+        '230222193538536': '抖极',
+        '230222193538917': '0.23906000041934092',
+        '230222193538950': '抖极',
+        '230222193539240': '2023-09-23'
+      },
+      {
+        '10001': '商城渗透率',
+        '10002': '0.2309453430633655',
+        '10003': '230222193538917',
+        '20001': '抖极',
+        '230222193538536': '抖极',
+        '230222193538917': '0.2309453430633655',
+        '230222193538950': '抖极',
+        '230222193539240': '2023-09-20'
+      },
+      {
+        '10001': '商城渗透率',
+        '10002': '0.17180859490711836',
+        '10003': '230222193538917',
+        '20001': '抖极',
+        '230222193538536': '抖极',
+        '230222193538917': '0.17180859490711836',
+        '230222193538950': '抖极',
+        '230222193539240': '2023-08-07'
+      },
+      {
+        '10001': '商城渗透率',
+        '10002': '0.20212395425160293',
+        '10003': '230222193538917',
+        '20001': '抖极',
+        '230222193538536': '抖极',
+        '230222193538917': '0.20212395425160293',
+        '230222193538950': '抖极',
+        '230222193539240': '2023-08-22'
+      },
+      {
+        '10001': '商城渗透率',
+        '10002': '0.22679773667675554',
+        '10003': '230222193538917',
+        '20001': '抖极',
+        '230222193538536': '抖极',
+        '230222193538917': '0.22679773667675554',
+        '230222193538950': '抖极',
+        '230222193539240': '2023-09-14'
+      },
+      {
+        '10001': '商城渗透率',
+        '10002': '0.20031514485735427',
+        '10003': '230222193538917',
+        '20001': '抖极',
+        '230222193538536': '抖极',
+        '230222193538917': '0.20031514485735427',
+        '230222193538950': '抖极',
+        '230222193539240': '2023-08-16'
+      },
+      {
+        '10001': '商城渗透率',
+        '10002': '0.20052374219233174',
+        '10003': '230222193538917',
+        '20001': '抖极',
+        '230222193538536': '抖极',
+        '230222193538917': '0.20052374219233174',
+        '230222193538950': '抖极',
+        '230222193539240': '2023-08-13'
+      },
+      {
+        '10001': '商城渗透率',
+        '10002': '0.22777522966911345',
+        '10003': '230222193538917',
+        '20001': '抖极',
+        '230222193538536': '抖极',
+        '230222193538917': '0.22777522966911345',
+        '230222193538950': '抖极',
+        '230222193539240': '2023-09-18'
+      },
+      {
+        '10001': '商城渗透率',
+        '10002': '0.20081965364805346',
+        '10003': '230222193538917',
+        '20001': '抖极',
+        '230222193538536': '抖极',
+        '230222193538917': '0.20081965364805346',
+        '230222193538950': '抖极',
+        '230222193539240': '2023-08-31'
+      },
+      {
+        '10001': '商城渗透率',
+        '10002': '0.23231437566898297',
+        '10003': '230222193538917',
+        '20001': '抖极',
+        '230222193538536': '抖极',
+        '230222193538917': '0.23231437566898297',
+        '230222193538950': '抖极',
+        '230222193539240': '2023-10-05'
+      },
+      {
+        '10001': '商城渗透率',
+        '10002': '0.22866654336895842',
+        '10003': '230222193538917',
+        '20001': '抖极',
+        '230222193538536': '抖极',
+        '230222193538917': '0.22866654336895842',
+        '230222193538950': '抖极',
+        '230222193539240': '2023-09-28'
+      },
+      {
+        '10001': '商城渗透率',
+        '10002': '0.2033633303362314',
+        '10003': '230222193538917',
+        '20001': '抖极',
+        '230222193538536': '抖极',
+        '230222193538917': '0.2033633303362314',
+        '230222193538950': '抖极',
+        '230222193539240': '2023-08-30'
+      },
+      {
+        '10001': '商城渗透率',
+        '10002': '0.199131540838565',
+        '10003': '230222193538917',
+        '20001': '抖极',
+        '230222193538536': '抖极',
+        '230222193538917': '0.199131540838565',
+        '230222193538950': '抖极',
+        '230222193539240': '2023-08-17'
+      },
+      {
+        '10001': '商城渗透率',
+        '10002': '0.1981296710590386',
+        '10003': '230222193538917',
+        '20001': '抖极',
+        '230222193538536': '抖极',
+        '230222193538917': '0.1981296710590386',
+        '230222193538950': '抖极',
+        '230222193539240': '2023-08-12'
+      },
+      {
+        '10001': '商城渗透率',
+        '10002': '0.2313945149213188',
+        '10003': '230222193538917',
+        '20001': '抖极',
+        '230222193538536': '抖极',
+        '230222193538917': '0.2313945149213188',
+        '230222193538950': '抖极',
+        '230222193539240': '2023-09-17'
+      },
+      {
+        '10001': '商城渗透率',
+        '10002': '0.2370206168342279',
+        '10003': '230222193538917',
+        '20001': '抖极',
+        '230222193538536': '抖极',
+        '230222193538917': '0.2370206168342279',
+        '230222193538950': '抖极',
+        '230222193539240': '2023-10-16'
+      },
+      {
+        '10001': '商城渗透率',
+        '10002': '0.2264348645971501',
+        '10003': '230222193538917',
+        '20001': '抖极',
+        '230222193538536': '抖极',
+        '230222193538917': '0.2264348645971501',
+        '230222193538950': '抖极',
+        '230222193539240': '2023-09-13'
+      },
+      {
+        '10001': '商城渗透率',
+        '10002': '0.2319618686995096',
+        '10003': '230222193538917',
+        '20001': '抖极',
+        '230222193538536': '抖极',
+        '230222193538917': '0.2319618686995096',
+        '230222193538950': '抖极',
+        '230222193539240': '2023-10-01'
+      },
+      {
+        '10001': '商城渗透率',
+        '10002': '0.17303231859015752',
+        '10003': '230222193538917',
+        '20001': '抖极',
+        '230222193538536': '抖极',
+        '230222193538917': '0.17303231859015752',
+        '230222193538950': '抖极',
+        '230222193539240': '2023-08-02'
+      },
+      {
+        '10001': '商城渗透率',
+        '10002': '0.2082174941177632',
+        '10003': '230222193538917',
+        '20001': '抖极',
+        '230222193538536': '抖极',
+        '230222193538917': '0.2082174941177632',
+        '230222193538950': '抖极',
+        '230222193539240': '2023-08-27'
+      },
+      {
+        '10001': '商城渗透率',
+        '10002': '0.20578520757421845',
+        '10003': '230222193538917',
+        '20001': '抖极',
+        '230222193538536': '抖极',
+        '230222193538917': '0.20578520757421845',
+        '230222193538950': '抖极',
+        '230222193539240': '2023-09-03'
+      },
+      {
+        '10001': '商城渗透率',
+        '10002': '0.23041559227499897',
+        '10003': '230222193538917',
+        '20001': '抖极',
+        '230222193538536': '抖极',
+        '230222193538917': '0.23041559227499897',
+        '230222193538950': '抖极',
+        '230222193539240': '2023-10-02'
+      },
+      {
+        '10001': '商城渗透率',
+        '10002': '0.23570515247616877',
+        '10003': '230222193538917',
+        '20001': '抖极',
+        '230222193538536': '抖极',
+        '230222193538917': '0.23570515247616877',
+        '230222193538950': '抖极',
+        '230222193539240': '2023-09-26'
+      },
+      {
+        '10001': '商城渗透率',
+        '10002': '0.1740721485275524',
+        '10003': '230222193538917',
+        '20001': '抖极',
+        '230222193538536': '抖极',
+        '230222193538917': '0.1740721485275524',
+        '230222193538950': '抖极',
+        '230222193539240': '2023-08-05'
+      },
+      {
+        '10001': '商城渗透率',
+        '10002': '0.20278439749084207',
+        '10003': '230222193538917',
+        '20001': '抖极',
+        '230222193538536': '抖极',
+        '230222193538917': '0.20278439749084207',
+        '230222193538950': '抖极',
+        '230222193539240': '2023-08-24'
+      },
+      {
+        '10001': '商城渗透率',
+        '10002': '0.21672314321808755',
+        '10003': '230222193538917',
+        '20001': '抖极',
+        '230222193538536': '抖极',
+        '230222193538917': '0.21672314321808755',
+        '230222193538950': '抖极',
+        '230222193539240': '2023-09-06'
+      },
+      {
+        '10001': '商城渗透率',
+        '10002': '0.2352826489483675',
+        '10003': '230222193538917',
+        '20001': '抖极',
+        '230222193538536': '抖极',
+        '230222193538917': '0.2352826489483675',
+        '230222193538950': '抖极',
+        '230222193539240': '2023-10-07'
+      },
+      {
+        '10001': '商城渗透率',
+        '10002': '0.22805986560481253',
+        '10003': '230222193538917',
+        '20001': '抖极',
+        '230222193538536': '抖极',
+        '230222193538917': '0.22805986560481253',
+        '230222193538950': '抖极',
+        '230222193539240': '2023-09-16'
+      },
+      {
+        '10001': '商城渗透率',
+        '10002': '0.19466149321838902',
+        '10003': '230222193538917',
+        '20001': '抖极',
+        '230222193538536': '抖极',
+        '230222193538917': '0.19466149321838902',
+        '230222193538950': '抖极',
+        '230222193539240': '2023-08-11'
+      },
+      {
+        '10001': '商城渗透率',
+        '10002': '0.24023619871260474',
+        '10003': '230222193538917',
+        '20001': '抖极',
+        '230222193538536': '抖极',
+        '230222193538917': '0.24023619871260474',
+        '230222193538950': '抖极',
+        '230222193539240': '2023-10-15'
+      },
+      {
+        '10001': '商城渗透率',
+        '10002': '0.16992801130296434',
+        '10003': '230222193538917',
+        '20001': '抖极',
+        '230222193538536': '抖极',
+        '230222193538917': '0.16992801130296434',
+        '230222193538950': '抖极',
+        '230222193539240': '2023-08-08'
+      },
+      {
+        '10001': '商城渗透率',
+        '10002': '0.2250487871068522',
+        '10003': '230222193538917',
+        '20001': '抖极',
+        '230222193538536': '抖极',
+        '230222193538917': '0.2250487871068522',
+        '230222193538950': '抖极',
+        '230222193539240': '2023-09-07'
+      },
+      {
+        '10001': '商城渗透率',
+        '10002': '0.20187611223255222',
+        '10003': '230222193538917',
+        '20001': '抖极',
+        '230222193538536': '抖极',
+        '230222193538917': '0.20187611223255222',
+        '230222193538950': '抖极',
+        '230222193539240': '2023-08-23'
+      },
+      {
+        '10001': '商城渗透率',
+        '10002': '0.1754704830752902',
+        '10003': '230222193538917',
+        '20001': '抖极',
+        '230222193538536': '抖极',
+        '230222193538917': '0.1754704830752902',
+        '230222193538950': '抖极',
+        '230222193539240': '2023-08-06'
+      },
+      {
+        '10001': '商城渗透率',
+        '10002': '0.20130341152950187',
+        '10003': '230222193538917',
+        '20001': '抖极',
+        '230222193538536': '抖极',
+        '230222193538917': '0.20130341152950187',
+        '230222193538950': '抖极',
+        '230222193539240': '2023-09-04'
+      },
+      {
+        '10001': '商城渗透率',
+        '10002': '0.23455592376966233',
+        '10003': '230222193538917',
+        '20001': '抖极',
+        '230222193538536': '抖极',
+        '230222193538917': '0.23455592376966233',
+        '230222193538950': '抖极',
+        '230222193539240': '2023-10-06'
+      },
+      {
+        '10001': '商城渗透率',
+        '10002': '0.23379125299783915',
+        '10003': '230222193538917',
+        '20001': '抖极',
+        '230222193538536': '抖极',
+        '230222193538917': '0.23379125299783915',
+        '230222193538950': '抖极',
+        '230222193539240': '2023-09-27'
+      },
+      {
+        '10001': '商城渗透率',
+        '10002': '0.22640764742366154',
+        '10003': '230222193538917',
+        '20001': '抖极',
+        '230222193538536': '抖极',
+        '230222193538917': '0.22640764742366154',
+        '230222193538950': '抖极',
+        '230222193539240': '2023-09-09'
+      },
+      {
+        '10001': '商城渗透率',
+        '10002': '0.23413176847680775',
+        '10003': '230222193538917',
+        '20001': '抖极',
+        '230222193538536': '抖极',
+        '230222193538917': '0.23413176847680775',
+        '230222193538950': '抖极',
+        '230222193539240': '2023-09-22'
+      },
+      {
+        '10001': '商城渗透率',
+        '10002': '0.1756200872092219',
+        '10003': '230222193538917',
+        '20001': '抖极',
+        '230222193538536': '抖极',
+        '230222193538917': '0.1756200872092219',
+        '230222193538950': '抖极',
+        '230222193539240': '2023-08-09'
+      },
+      {
+        '10001': '商城渗透率',
+        '10002': '0.22902070741226982',
+        '10003': '230222193538917',
+        '20001': '抖极',
+        '230222193538536': '抖极',
+        '230222193538917': '0.22902070741226982',
+        '230222193538950': '抖极',
+        '230222193539240': '2023-09-30'
+      },
+      {
+        '10001': '商城渗透率',
+        '10002': '0.2421416963772006',
+        '10003': '230222193538917',
+        '20001': '抖极',
+        '230222193538536': '抖极',
+        '230222193538917': '0.2421416963772006',
+        '230222193538950': '抖极',
+        '230222193539240': '2023-10-19'
+      },
+      {
+        '10001': '商城渗透率',
+        '10002': '0.17382371800432558',
+        '10003': '230222193538917',
+        '20001': '抖极',
+        '230222193538536': '抖极',
+        '230222193538917': '0.17382371800432558',
+        '230222193538950': '抖极',
+        '230222193539240': '2023-08-03'
+      },
+      {
+        '10001': '商城渗透率',
+        '10002': '0.1737502106176051',
+        '10003': '230222193538917',
+        '20001': '抖极',
+        '230222193538536': '抖极',
+        '230222193538917': '0.1737502106176051',
+        '230222193538950': '抖极',
+        '230222193539240': '2023-08-01'
+      },
+      {
+        '10001': '商城渗透率',
+        '10002': '0.24549107596232694',
+        '10003': '230222193538917',
+        '20001': '抖极',
+        '230222193538536': '抖极',
+        '230222193538917': '0.24549107596232694',
+        '230222193538950': '抖极',
+        '230222193539240': '2023-09-24'
+      },
+      {
+        '10001': '商城渗透率',
+        '10002': '0.20209126657690388',
+        '10003': '230222193538917',
+        '20001': '抖极',
+        '230222193538536': '抖极',
+        '230222193538917': '0.20209126657690388',
+        '230222193538950': '抖极',
+        '230222193539240': '2023-08-21'
+      },
+      {
+        '10001': '商城渗透率',
+        '10002': '0.23321608876983443',
+        '10003': '230222193538917',
+        '20001': '抖极',
+        '230222193538536': '抖极',
+        '230222193538917': '0.23321608876983443',
+        '230222193538950': '抖极',
+        '230222193539240': '2023-09-21'
+      },
+      {
+        '10001': '商城渗透率',
+        '10002': '0.23591602268497',
+        '10003': '230222193538917',
+        '20001': '抖极',
+        '230222193538536': '抖极',
+        '230222193538917': '0.23591602268497',
+        '230222193538950': '抖极',
+        '230222193539240': '2023-10-11'
+      },
+      {
+        '10001': '商城渗透率',
+        '10002': '0.229293133422245',
+        '10003': '230222193538917',
+        '20001': '抖极',
+        '230222193538536': '抖极',
+        '230222193538917': '0.229293133422245',
+        '230222193538950': '抖极',
+        '230222193539240': '2023-10-03'
+      },
+      {
+        '10001': '商城渗透率',
+        '10002': '0.23446840989666698',
+        '10003': '230222193538917',
+        '20001': '抖极',
+        '230222193538536': '抖极',
+        '230222193538917': '0.23446840989666698',
+        '230222193538950': '抖极',
+        '230222193539240': '2023-10-12'
+      },
+      {
+        '10001': '商城渗透率',
+        '10002': '0.20381735609603377',
+        '10003': '230222193538917',
+        '20001': '抖极',
+        '230222193538536': '抖极',
+        '230222193538917': '0.20381735609603377',
+        '230222193538950': '抖极',
+        '230222193539240': '2023-09-02'
+      },
+      {
+        '10001': '商城渗透率',
+        '10002': '0.2365559510040793',
+        '10003': '230222193538917',
+        '20001': '抖极',
+        '230222193538536': '抖极',
+        '230222193538917': '0.2365559510040793',
+        '230222193538950': '抖极',
+        '230222193539240': '2023-10-09'
+      },
+      {
+        '10001': '商城渗透率',
+        '10002': '0.19902777636013919',
+        '10003': '230222193538917',
+        '20001': '抖极',
+        '230222193538536': '抖极',
+        '230222193538917': '0.19902777636013919',
+        '230222193538950': '抖极',
+        '230222193539240': '2023-08-18'
+      },
+      {
+        '10001': '商城渗透率',
+        '10002': '0.2295089166249945',
+        '10003': '230222193538917',
+        '20001': '抖极',
+        '230222193538536': '抖极',
+        '230222193538917': '0.2295089166249945',
+        '230222193538950': '抖极',
+        '230222193539240': '2023-09-10'
+      },
+      {
+        '10001': '商城渗透率',
+        '10002': '0.2062298147614055',
+        '10003': '230222193538917',
+        '20001': '抖极',
+        '230222193538536': '抖极',
+        '230222193538917': '0.2062298147614055',
+        '230222193538950': '抖极',
+        '230222193539240': '2023-08-26'
+      },
+      {
+        '10001': '商城渗透率',
+        '10002': '0.20370473233142222',
+        '10003': '230222193538917',
+        '20001': '抖极',
+        '230222193538536': '抖极',
+        '230222193538917': '0.20370473233142222',
+        '230222193538950': '抖极',
+        '230222193539240': '2023-08-20'
+      },
+      {
+        '10001': '商城渗透率',
+        '10002': '0.20353446669960187',
+        '10003': '230222193538917',
+        '20001': '抖极',
+        '230222193538536': '抖极',
+        '230222193538917': '0.20353446669960187',
+        '230222193538950': '抖极',
+        '230222193539240': '2023-08-28'
+      },
+      {
+        '10001': '商城渗透率',
+        '10002': '0.7546229646346796',
+        '10003': '230222193538917',
+        '20001': '抖极/抖音',
+        '230222193538536': '抖极/抖音',
+        '230222193538917': '0.7546229646346796',
+        '230222193538950': '抖极/抖音',
+        '230222193539240': '2023-09-05'
+      },
+      {
+        '10001': '商城渗透率',
+        '10002': '0.8808953600427452',
+        '10003': '230222193538917',
+        '20001': '抖极/抖音',
+        '230222193538536': '抖极/抖音',
+        '230222193538917': '0.8808953600427452',
+        '230222193538950': '抖极/抖音',
+        '230222193539240': '2023-09-27'
+      },
+      {
+        '10001': '商城渗透率',
+        '10002': '0.7359305265330341',
+        '10003': '230222193538917',
+        '20001': '抖极/抖音',
+        '230222193538536': '抖极/抖音',
+        '230222193538917': '0.7359305265330341',
+        '230222193538950': '抖极/抖音',
+        '230222193539240': '2023-08-25'
+      },
+      {
+        '10001': '商城渗透率',
+        '10002': '0.7122024823558044',
+        '10003': '230222193538917',
+        '20001': '抖极/抖音',
+        '230222193538536': '抖极/抖音',
+        '230222193538917': '0.7122024823558044',
+        '230222193538950': '抖极/抖音',
+        '230222193539240': '2023-08-11'
+      },
+      {
+        '10001': '商城渗透率',
+        '10002': '0.8686998566434446',
+        '10003': '230222193538917',
+        '20001': '抖极/抖音',
+        '230222193538536': '抖极/抖音',
+        '230222193538917': '0.8686998566434446',
+        '230222193538950': '抖极/抖音',
+        '230222193539240': '2023-10-12'
+      },
+      {
+        '10001': '商城渗透率',
+        '10002': '0.876874087411286',
+        '10003': '230222193538917',
+        '20001': '抖极/抖音',
+        '230222193538536': '抖极/抖音',
+        '230222193538917': '0.876874087411286',
+        '230222193538950': '抖极/抖音',
+        '230222193539240': '2023-10-06'
+      },
+      {
+        '10001': '商城渗透率',
+        '10002': '0.7243895041172977',
+        '10003': '230222193538917',
+        '20001': '抖极/抖音',
+        '230222193538536': '抖极/抖音',
+        '230222193538917': '0.7243895041172977',
+        '230222193538950': '抖极/抖音',
+        '230222193539240': '2023-08-19'
+      },
+      {
+        '10001': '商城渗透率',
+        '10002': '0.6322938644335722',
+        '10003': '230222193538917',
+        '20001': '抖极/抖音',
+        '230222193538536': '抖极/抖音',
+        '230222193538917': '0.6322938644335722',
+        '230222193538950': '抖极/抖音',
+        '230222193539240': '2023-08-05'
+      },
+      {
+        '10001': '商城渗透率',
+        '10002': '0.6274694292257582',
+        '10003': '230222193538917',
+        '20001': '抖极/抖音',
+        '230222193538536': '抖极/抖音',
+        '230222193538917': '0.6274694292257582',
+        '230222193538950': '抖极/抖音',
+        '230222193539240': '2023-08-07'
+      },
+      {
+        '10001': '商城渗透率',
+        '10002': '0.8857798296859495',
+        '10003': '230222193538917',
+        '20001': '抖极/抖音',
+        '230222193538536': '抖极/抖音',
+        '230222193538917': '0.8857798296859495',
+        '230222193538950': '抖极/抖音',
+        '230222193539240': '2023-10-04'
+      },
+      {
+        '10001': '商城渗透率',
+        '10002': '0.7366245672272722',
+        '10003': '230222193538917',
+        '20001': '抖极/抖音',
+        '230222193538536': '抖极/抖音',
+        '230222193538917': '0.7366245672272722',
+        '230222193538950': '抖极/抖音',
+        '230222193539240': '2023-08-15'
+      },
+      {
+        '10001': '商城渗透率',
+        '10002': '0.8860424450326317',
+        '10003': '230222193538917',
+        '20001': '抖极/抖音',
+        '230222193538536': '抖极/抖音',
+        '230222193538917': '0.8860424450326317',
+        '230222193538950': '抖极/抖音',
+        '230222193539240': '2023-09-25'
+      },
+      {
+        '10001': '商城渗透率',
+        '10002': '0.8850207226961051',
+        '10003': '230222193538917',
+        '20001': '抖极/抖音',
+        '230222193538536': '抖极/抖音',
+        '230222193538917': '0.8850207226961051',
+        '230222193538950': '抖极/抖音',
+        '230222193539240': '2023-10-07'
+      },
+      {
+        '10001': '商城渗透率',
+        '10002': '0.8649845807027654',
+        '10003': '230222193538917',
+        '20001': '抖极/抖音',
+        '230222193538536': '抖极/抖音',
+        '230222193538917': '0.8649845807027654',
+        '230222193538950': '抖极/抖音',
+        '230222193539240': '2023-10-14'
+      },
+      {
+        '10001': '商城渗透率',
+        '10002': '0.7343330406940715',
+        '10003': '230222193538917',
+        '20001': '抖极/抖音',
+        '230222193538536': '抖极/抖音',
+        '230222193538917': '0.7343330406940715',
+        '230222193538950': '抖极/抖音',
+        '230222193539240': '2023-08-26'
+      },
+      {
+        '10001': '商城渗透率',
+        '10002': '0.725961849128294',
+        '10003': '230222193538917',
+        '20001': '抖极/抖音',
+        '230222193538536': '抖极/抖音',
+        '230222193538917': '0.725961849128294',
+        '230222193538950': '抖极/抖音',
+        '230222193539240': '2023-08-17'
+      },
+      {
+        '10001': '商城渗透率',
+        '10002': '0.7241660623640319',
+        '10003': '230222193538917',
+        '20001': '抖极/抖音',
+        '230222193538536': '抖极/抖音',
+        '230222193538917': '0.7241660623640319',
+        '230222193538950': '抖极/抖音',
+        '230222193539240': '2023-08-13'
+      },
+      {
+        '10001': '商城渗透率',
+        '10002': '0.7316154339087715',
+        '10003': '230222193538917',
+        '20001': '抖极/抖音',
+        '230222193538536': '抖极/抖音',
+        '230222193538917': '0.7316154339087715',
+        '230222193538950': '抖极/抖音',
+        '230222193539240': '2023-08-14'
+      },
+      {
+        '10001': '商城渗透率',
+        '10002': '0.8312474265304364',
+        '10003': '230222193538917',
+        '20001': '抖极/抖音',
+        '230222193538536': '抖极/抖音',
+        '230222193538917': '0.8312474265304364',
+        '230222193538950': '抖极/抖音',
+        '230222193539240': '2023-09-14'
+      },
+      {
+        '10001': '商城渗透率',
+        '10002': '0.8626584563924208',
+        '10003': '230222193538917',
+        '20001': '抖极/抖音',
+        '230222193538536': '抖极/抖音',
+        '230222193538917': '0.8626584563924208',
+        '230222193538950': '抖极/抖音',
+        '230222193539240': '2023-10-15'
+      },
+      {
+        '10001': '商城渗透率',
+        '10002': '0.8707284476659172',
+        '10003': '230222193538917',
+        '20001': '抖极/抖音',
+        '230222193538536': '抖极/抖音',
+        '230222193538917': '0.8707284476659172',
+        '230222193538950': '抖极/抖音',
+        '230222193539240': '2023-10-16'
+      },
+      {
+        '10001': '商城渗透率',
+        '10002': '0.7161234024877561',
+        '10003': '230222193538917',
+        '20001': '抖极/抖音',
+        '230222193538536': '抖极/抖音',
+        '230222193538917': '0.7161234024877561',
+        '230222193538950': '抖极/抖音',
+        '230222193539240': '2023-08-18'
+      },
+      {
+        '10001': '商城渗透率',
+        '10002': '0.865362397227174',
+        '10003': '230222193538917',
+        '20001': '抖极/抖音',
+        '230222193538536': '抖极/抖音',
+        '230222193538917': '0.865362397227174',
+        '230222193538950': '抖极/抖音',
+        '230222193539240': '2023-09-24'
+      },
+      {
+        '10001': '商城渗透率',
+        '10002': '0.832832306147395',
+        '10003': '230222193538917',
+        '20001': '抖极/抖音',
+        '230222193538536': '抖极/抖音',
+        '230222193538917': '0.832832306147395',
+        '230222193538950': '抖极/抖音',
+        '230222193539240': '2023-09-16'
+      },
+      {
+        '10001': '商城渗透率',
+        '10002': '0.8749132425324904',
+        '10003': '230222193538917',
+        '20001': '抖极/抖音',
+        '230222193538536': '抖极/抖音',
+        '230222193538917': '0.8749132425324904',
+        '230222193538950': '抖极/抖音',
+        '230222193539240': '2023-09-26'
+      },
+      {
+        '10001': '商城渗透率',
+        '10002': '0.8283935592884683',
+        '10003': '230222193538917',
+        '20001': '抖极/抖音',
+        '230222193538536': '抖极/抖音',
+        '230222193538917': '0.8283935592884683',
+        '230222193538950': '抖极/抖音',
+        '230222193539240': '2023-09-15'
+      },
+      {
+        '10001': '商城渗透率',
+        '10002': '0.8413418794914673',
+        '10003': '230222193538917',
+        '20001': '抖极/抖音',
+        '230222193538536': '抖极/抖音',
+        '230222193538917': '0.8413418794914673',
+        '230222193538950': '抖极/抖音',
+        '230222193539240': '2023-09-17'
+      },
+      {
+        '10001': '商城渗透率',
+        '10002': '0.7417291469171622',
+        '10003': '230222193538917',
+        '20001': '抖极/抖音',
+        '230222193538536': '抖极/抖音',
+        '230222193538917': '0.7417291469171622',
+        '230222193538950': '抖极/抖音',
+        '230222193539240': '2023-09-04'
+      },
+      {
+        '10001': '商城渗透率',
+        '10002': '0.7327930774872933',
+        '10003': '230222193538917',
+        '20001': '抖极/抖音',
+        '230222193538536': '抖极/抖音',
+        '230222193538917': '0.7327930774872933',
+        '230222193538950': '抖极/抖音',
+        '230222193539240': '2023-08-23'
+      },
+      {
+        '10001': '商城渗透率',
+        '10002': '0.7282383553840975',
+        '10003': '230222193538917',
+        '20001': '抖极/抖音',
+        '230222193538536': '抖极/抖音',
+        '230222193538917': '0.7282383553840975',
+        '230222193538950': '抖极/抖音',
+        '230222193539240': '2023-08-16'
+      },
+      {
+        '10001': '商城渗透率',
+        '10002': '0.8708809578372066',
+        '10003': '230222193538917',
+        '20001': '抖极/抖音',
+        '230222193538536': '抖极/抖音',
+        '230222193538917': '0.8708809578372066',
+        '230222193538950': '抖极/抖音',
+        '230222193539240': '2023-10-17'
+      },
+      {
+        '10001': '商城渗透率',
+        '10002': '0.7914497227480662',
+        '10003': '230222193538917',
+        '20001': '抖极/抖音',
+        '230222193538536': '抖极/抖音',
+        '230222193538917': '0.7914497227480662',
+        '230222193538950': '抖极/抖音',
+        '230222193539240': '2023-09-06'
+      },
+      {
+        '10001': '商城渗透率',
+        '10002': '0.7184655354493447',
+        '10003': '230222193538917',
+        '20001': '抖极/抖音',
+        '230222193538536': '抖极/抖音',
+        '230222193538917': '0.7184655354493447',
+        '230222193538950': '抖极/抖音',
+        '230222193539240': '2023-08-12'
+      },
+      {
+        '10001': '商城渗透率',
+        '10002': '0.6368235414002689',
+        '10003': '230222193538917',
+        '20001': '抖极/抖音',
+        '230222193538536': '抖极/抖音',
+        '230222193538917': '0.6368235414002689',
+        '230222193538950': '抖极/抖音',
+        '230222193539240': '2023-08-03'
+      },
+      {
+        '10001': '商城渗透率',
+        '10002': '0.8760626741793771',
+        '10003': '230222193538917',
+        '20001': '抖极/抖音',
+        '230222193538536': '抖极/抖音',
+        '230222193538917': '0.8760626741793771',
+        '230222193538950': '抖极/抖音',
+        '230222193539240': '2023-10-01'
+      },
+      {
+        '10001': '商城渗透率',
+        '10002': '0.8849466309186563',
+        '10003': '230222193538917',
+        '20001': '抖极/抖音',
+        '230222193538536': '抖极/抖音',
+        '230222193538917': '0.8849466309186563',
+        '230222193538950': '抖极/抖音',
+        '230222193539240': '2023-10-09'
+      },
+      {
+        '10001': '商城渗透率',
+        '10002': '0.8581010710975644',
+        '10003': '230222193538917',
+        '20001': '抖极/抖音',
+        '230222193538536': '抖极/抖音',
+        '230222193538917': '0.8581010710975644',
+        '230222193538950': '抖极/抖音',
+        '230222193539240': '2023-09-20'
+      },
+      {
+        '10001': '商城渗透率',
+        '10002': '0.8236398708889023',
+        '10003': '230222193538917',
+        '20001': '抖极/抖音',
+        '230222193538536': '抖极/抖音',
+        '230222193538917': '0.8236398708889023',
+        '230222193538950': '抖极/抖音',
+        '230222193539240': '2023-09-08'
+      },
+      {
+        '10001': '商城渗透率',
+        '10002': '0.6296941712365406',
+        '10003': '230222193538917',
+        '20001': '抖极/抖音',
+        '230222193538536': '抖极/抖音',
+        '230222193538917': '0.6296941712365406',
+        '230222193538950': '抖极/抖音',
+        '230222193539240': '2023-08-02'
+      },
+      {
+        '10001': '商城渗透率',
+        '10002': '0.8659725475573574',
+        '10003': '230222193538917',
+        '20001': '抖极/抖音',
+        '230222193538536': '抖极/抖音',
+        '230222193538917': '0.8659725475573574',
+        '230222193538950': '抖极/抖音',
+        '230222193539240': '2023-09-22'
+      },
+      {
+        '10001': '商城渗透率',
+        '10002': '0.884450679739481',
+        '10003': '230222193538917',
+        '20001': '抖极/抖音',
+        '230222193538536': '抖极/抖音',
+        '230222193538917': '0.884450679739481',
+        '230222193538950': '抖极/抖音',
+        '230222193539240': '2023-10-03'
+      },
+      {
+        '10001': '商城渗透率',
+        '10002': '0.7246333355902257',
+        '10003': '230222193538917',
+        '20001': '抖极/抖音',
+        '230222193538536': '抖极/抖音',
+        '230222193538917': '0.7246333355902257',
+        '230222193538950': '抖极/抖音',
+        '230222193539240': '2023-08-30'
+      },
+      {
+        '10001': '商城渗透率',
+        '10002': '0.8842913102566153',
+        '10003': '230222193538917',
+        '20001': '抖极/抖音',
+        '230222193538536': '抖极/抖音',
+        '230222193538917': '0.8842913102566153',
+        '230222193538950': '抖极/抖音',
+        '230222193539240': '2023-10-02'
+      },
+      {
+        '10001': '商城渗透率',
+        '10002': '0.7402620853325078',
+        '10003': '230222193538917',
+        '20001': '抖极/抖音',
+        '230222193538536': '抖极/抖音',
+        '230222193538917': '0.7402620853325078',
+        '230222193538950': '抖极/抖音',
+        '230222193539240': '2023-08-29'
+      },
+      {
+        '10001': '商城渗透率',
+        '10002': '0.6282238761926621',
+        '10003': '230222193538917',
+        '20001': '抖极/抖音',
+        '230222193538536': '抖极/抖音',
+        '230222193538917': '0.6282238761926621',
+        '230222193538950': '抖极/抖音',
+        '230222193539240': '2023-08-01'
+      },
+      {
+        '10001': '商城渗透率',
+        '10002': '0.833253571724829',
+        '10003': '230222193538917',
+        '20001': '抖极/抖音',
+        '230222193538536': '抖极/抖音',
+        '230222193538917': '0.833253571724829',
+        '230222193538950': '抖极/抖音',
+        '230222193539240': '2023-09-11'
+      },
+      {
+        '10001': '商城渗透率',
+        '10002': '0.8663559182013446',
+        '10003': '230222193538917',
+        '20001': '抖极/抖音',
+        '230222193538536': '抖极/抖音',
+        '230222193538917': '0.8663559182013446',
+        '230222193538950': '抖极/抖音',
+        '230222193539240': '2023-09-21'
+      },
+      {
+        '10001': '商城渗透率',
+        '10002': '0.8826076973121915',
+        '10003': '230222193538917',
+        '20001': '抖极/抖音',
+        '230222193538536': '抖极/抖音',
+        '230222193538917': '0.8826076973121915',
+        '230222193538950': '抖极/抖音',
+        '230222193539240': '2023-10-05'
+      },
+      {
+        '10001': '商城渗透率',
+        '10002': '0.7377842969744838',
+        '10003': '230222193538917',
+        '20001': '抖极/抖音',
+        '230222193538536': '抖极/抖音',
+        '230222193538917': '0.7377842969744838',
+        '230222193538950': '抖极/抖音',
+        '230222193539240': '2023-08-28'
+      },
+      {
+        '10001': '商城渗透率',
+        '10002': '0.8799597096270254',
+        '10003': '230222193538917',
+        '20001': '抖极/抖音',
+        '230222193538536': '抖极/抖音',
+        '230222193538917': '0.8799597096270254',
+        '230222193538950': '抖极/抖音',
+        '230222193539240': '2023-09-23'
+      },
+      {
+        '10001': '商城渗透率',
+        '10002': '0.8736580018791107',
+        '10003': '230222193538917',
+        '20001': '抖极/抖音',
+        '230222193538536': '抖极/抖音',
+        '230222193538917': '0.8736580018791107',
+        '230222193538950': '抖极/抖音',
+        '230222193539240': '2023-10-18'
+      },
+      {
+        '10001': '商城渗透率',
+        '10002': '0.8231528168020219',
+        '10003': '230222193538917',
+        '20001': '抖极/抖音',
+        '230222193538536': '抖极/抖音',
+        '230222193538917': '0.8231528168020219',
+        '230222193538950': '抖极/抖音',
+        '230222193539240': '2023-09-09'
+      },
+      {
+        '10001': '商城渗透率',
+        '10002': '0.7399187891258704',
+        '10003': '230222193538917',
+        '20001': '抖极/抖音',
+        '230222193538536': '抖极/抖音',
+        '230222193538917': '0.7399187891258704',
+        '230222193538950': '抖极/抖音',
+        '230222193539240': '2023-08-27'
+      },
+      {
+        '10001': '商城渗透率',
+        '10002': '0.8764569348690208',
+        '10003': '230222193538917',
+        '20001': '抖极/抖音',
+        '230222193538536': '抖极/抖音',
+        '230222193538917': '0.8764569348690208',
+        '230222193538950': '抖极/抖音',
+        '230222193539240': '2023-10-19'
+      },
+      {
+        '10001': '商城渗透率',
+        '10002': '0.8240297423571524',
+        '10003': '230222193538917',
+        '20001': '抖极/抖音',
+        '230222193538536': '抖极/抖音',
+        '230222193538917': '0.8240297423571524',
+        '230222193538950': '抖极/抖音',
+        '230222193539240': '2023-09-10'
+      },
+      {
+        '10001': '商城渗透率',
+        '10002': '0.8204224790244495',
+        '10003': '230222193538917',
+        '20001': '抖极/抖音',
+        '230222193538536': '抖极/抖音',
+        '230222193538917': '0.8204224790244495',
+        '230222193538950': '抖极/抖音',
+        '230222193539240': '2023-09-07'
+      },
+      {
+        '10001': '商城渗透率',
+        '10002': '0.7339764499189375',
+        '10003': '230222193538917',
+        '20001': '抖极/抖音',
+        '230222193538536': '抖极/抖音',
+        '230222193538917': '0.7339764499189375',
+        '230222193538950': '抖极/抖音',
+        '230222193539240': '2023-08-24'
+      },
+      {
+        '10001': '商城渗透率',
+        '10002': '0.8818393738194361',
+        '10003': '230222193538917',
+        '20001': '抖极/抖音',
+        '230222193538536': '抖极/抖音',
+        '230222193538917': '0.8818393738194361',
+        '230222193538950': '抖极/抖音',
+        '230222193539240': '2023-10-10'
+      },
+      {
+        '10001': '商城渗透率',
+        '10002': '0.7297888844899786',
+        '10003': '230222193538917',
+        '20001': '抖极/抖音',
+        '230222193538536': '抖极/抖音',
+        '230222193538917': '0.7297888844899786',
+        '230222193538950': '抖极/抖音',
+        '230222193539240': '2023-08-31'
+      },
+      {
+        '10001': '商城渗透率',
+        '10002': '0.885710757305164',
+        '10003': '230222193538917',
+        '20001': '抖极/抖音',
+        '230222193538536': '抖极/抖音',
+        '230222193538917': '0.885710757305164',
+        '230222193538950': '抖极/抖音',
+        '230222193539240': '2023-10-08'
+      },
+      {
+        '10001': '商城渗透率',
+        '10002': '0.8739902914484162',
+        '10003': '230222193538917',
+        '20001': '抖极/抖音',
+        '230222193538536': '抖极/抖音',
+        '230222193538917': '0.8739902914484162',
+        '230222193538950': '抖极/抖音',
+        '230222193539240': '2023-09-30'
+      },
+      {
+        '10001': '商城渗透率',
+        '10002': '0.8668584666910091',
+        '10003': '230222193538917',
+        '20001': '抖极/抖音',
+        '230222193538536': '抖极/抖音',
+        '230222193538917': '0.8668584666910091',
+        '230222193538950': '抖极/抖音',
+        '230222193539240': '2023-10-13'
+      },
+      {
+        '10001': '商城渗透率',
+        '10002': '0.7302895609881791',
+        '10003': '230222193538917',
+        '20001': '抖极/抖音',
+        '230222193538536': '抖极/抖音',
+        '230222193538917': '0.7302895609881791',
+        '230222193538950': '抖极/抖音',
+        '230222193539240': '2023-08-20'
+      },
+      {
+        '10001': '商城渗透率',
+        '10002': '0.8526022499928435',
+        '10003': '230222193538917',
+        '20001': '抖极/抖音',
+        '230222193538536': '抖极/抖音',
+        '230222193538917': '0.8526022499928435',
+        '230222193538950': '抖极/抖音',
+        '230222193539240': '2023-09-19'
+      },
+      {
+        '10001': '商城渗透率',
+        '10002': '0.6286079774441242',
+        '10003': '230222193538917',
+        '20001': '抖极/抖音',
+        '230222193538536': '抖极/抖音',
+        '230222193538917': '0.6286079774441242',
+        '230222193538950': '抖极/抖音',
+        '230222193539240': '2023-08-08'
+      },
+      {
+        '10001': '商城渗透率',
+        '10002': '0.7372141331842955',
+        '10003': '230222193538917',
+        '20001': '抖极/抖音',
+        '230222193538536': '抖极/抖音',
+        '230222193538917': '0.7372141331842955',
+        '230222193538950': '抖极/抖音',
+        '230222193539240': '2023-08-22'
+      },
+      {
+        '10001': '商城渗透率',
+        '10002': '0.883691756837258',
+        '10003': '230222193538917',
+        '20001': '抖极/抖音',
+        '230222193538536': '抖极/抖音',
+        '230222193538917': '0.883691756837258',
+        '230222193538950': '抖极/抖音',
+        '230222193539240': '2023-10-11'
+      },
+      {
+        '10001': '商城渗透率',
+        '10002': '0.7313610909767345',
+        '10003': '230222193538917',
+        '20001': '抖极/抖音',
+        '230222193538536': '抖极/抖音',
+        '230222193538917': '0.7313610909767345',
+        '230222193538950': '抖极/抖音',
+        '230222193539240': '2023-09-01'
+      },
+      {
+        '10001': '商城渗透率',
+        '10002': '0.8227987476582422',
+        '10003': '230222193538917',
+        '20001': '抖极/抖音',
+        '230222193538536': '抖极/抖音',
+        '230222193538917': '0.8227987476582422',
+        '230222193538950': '抖极/抖音',
+        '230222193539240': '2023-09-13'
+      },
+      {
+        '10001': '商城渗透率',
+        '10002': '0.8571021262009334',
+        '10003': '230222193538917',
+        '20001': '抖极/抖音',
+        '230222193538536': '抖极/抖音',
+        '230222193538917': '0.8571021262009334',
+        '230222193538950': '抖极/抖音',
+        '230222193539240': '2023-09-28'
+      },
+      {
+        '10001': '商城渗透率',
+        '10002': '0.7333618378329722',
+        '10003': '230222193538917',
+        '20001': '抖极/抖音',
+        '230222193538536': '抖极/抖音',
+        '230222193538917': '0.7333618378329722',
+        '230222193538950': '抖极/抖音',
+        '230222193539240': '2023-09-02'
+      },
+      {
+        '10001': '商城渗透率',
+        '10002': '0.849026702435392',
+        '10003': '230222193538917',
+        '20001': '抖极/抖音',
+        '230222193538536': '抖极/抖音',
+        '230222193538917': '0.849026702435392',
+        '230222193538950': '抖极/抖音',
+        '230222193539240': '2023-09-18'
+      },
+      {
+        '10001': '商城渗透率',
+        '10002': '0.8620804392130766',
+        '10003': '230222193538917',
+        '20001': '抖极/抖音',
+        '230222193538536': '抖极/抖音',
+        '230222193538917': '0.8620804392130766',
+        '230222193538950': '抖极/抖音',
+        '230222193539240': '2023-09-29'
+      },
+      {
+        '10001': '商城渗透率',
+        '10002': '0.8293572831883245',
+        '10003': '230222193538917',
+        '20001': '抖极/抖音',
+        '230222193538536': '抖极/抖音',
+        '230222193538917': '0.8293572831883245',
+        '230222193538950': '抖极/抖音',
+        '230222193539240': '2023-09-12'
+      },
+      {
+        '10001': '商城渗透率',
+        '10002': '0.7387730849526256',
+        '10003': '230222193538917',
+        '20001': '抖极/抖音',
+        '230222193538536': '抖极/抖音',
+        '230222193538917': '0.7387730849526256',
+        '230222193538950': '抖极/抖音',
+        '230222193539240': '2023-09-03'
+      },
+      {
+        '10001': '商城渗透率',
+        '10002': '0.6542260177971903',
+        '10003': '230222193538917',
+        '20001': '抖极/抖音',
+        '230222193538536': '抖极/抖音',
+        '230222193538917': '0.6542260177971903',
+        '230222193538950': '抖极/抖音',
+        '230222193539240': '2023-08-09'
+      },
+      {
+        '10001': '商城渗透率',
+        '10002': '0.6324733831422756',
+        '10003': '230222193538917',
+        '20001': '抖极/抖音',
+        '230222193538536': '抖极/抖音',
+        '230222193538917': '0.6324733831422756',
+        '230222193538950': '抖极/抖音',
+        '230222193539240': '2023-08-04'
+      },
+      {
+        '10001': '商城渗透率',
+        '10002': '0.7364577993984468',
+        '10003': '230222193538917',
+        '20001': '抖极/抖音',
+        '230222193538536': '抖极/抖音',
+        '230222193538917': '0.7364577993984468',
+        '230222193538950': '抖极/抖音',
+        '230222193539240': '2023-08-21'
+      },
+      {
+        '10001': '商城渗透率',
+        '10002': '0.6985245260895055',
+        '10003': '230222193538917',
+        '20001': '抖极/抖音',
+        '230222193538536': '抖极/抖音',
+        '230222193538917': '0.6985245260895055',
+        '230222193538950': '抖极/抖音',
+        '230222193539240': '2023-08-10'
+      },
+      {
+        '10001': '商城渗透率',
+        '10002': '0.6286031042128603',
+        '10003': '230222193538917',
+        '20001': '抖极/抖音',
+        '230222193538536': '抖极/抖音',
+        '230222193538917': '0.6286031042128603',
+        '230222193538950': '抖极/抖音',
+        '230222193539240': '2023-08-06'
+      }
+    ],
     defaultHeaderColWidth: [80, 'auto'],
     indicatorTitle: '',
     autoWrapText: true,
-    legends: {
-      type: 'discrete',
-      id: 'legend-discrete',
-      orient: 'bottom',
-      position: 'middle',
-      layoutType: 'normal',
-      visible: true,
-      maxRow: 1,
-      title: {
-        textStyle: {
-          fontSize: 12,
-          fill: '#6F6F6F'
-        }
-      },
-      layoutLevel: 50,
-      item: {
-        focus: true,
-        focusIconStyle: {
-          size: 14
-        },
-        maxWidth: 400,
-        spaceRow: 0,
-        spaceCol: 0,
-        padding: {
-          top: 1,
-          bottom: 1,
-          left: 1,
-          right: 1
-        },
-        background: {
-          visible: false,
-          style: {
-            fillOpacity: 0.001
-          }
-        },
-        label: {
-          style: {
-            fontSize: 12,
-            fill: '#6F6F6F'
-          }
-        },
-        shape: {
-          style: {
-            lineWidth: 0,
-            symbolType: 'square'
-          }
-        }
-      },
-      pager: {
-        layout: 'horizontal',
-        padding: 0,
-        textStyle: {},
-        space: 0,
-        handler: {
-          preShape: 'triangleLeft',
-          nextShape: 'triangleRight',
-          style: {},
-          state: {
-            disable: {}
-          }
-        }
-      },
-      padding: [16, 0, 0, 0],
-      data: [
-        {
-          label: '利润',
-          shape: {
-            fill: '#2E62F1',
-            symbolType: 'square'
-          }
-        }
-      ]
-    },
     corner: {
       titleOnDimension: 'row'
     },
@@ -2327,13 +2294,13 @@ export function createTable() {
         borderLineWidth: 0
       }
     },
-    hash: 'e94612b10563c64c15c15d727af9e2f1'
+    hash: '568656966c360f7834320c684da98649'
   };
   const tableInstance = new VTable.PivotChart(document.getElementById(CONTAINER_ID), option);
-  // tableInstance.listenChart('click', args => {
+  // tableInstance.onVChartEvent('click', args => {
   //   console.log('listenChart click', args);
   // });
-  // tableInstance.listenChart('mouseover', args => {
+  // tableInstance.onVChartEvent('mouseover', args => {
   //   console.log('listenChart mouseover', args);
   // });
   window.tableInstance = tableInstance;

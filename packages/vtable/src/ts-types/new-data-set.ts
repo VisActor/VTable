@@ -160,25 +160,27 @@ export type DerivedFieldRules = DerivedFieldRule[];
  * 数据处理配置
  */
 export interface IDataConfig {
-  // rows: string[]; //行维度字段数组；
-  // columns: string[]; //列维度字段数组；
   aggregationRules?: AggregationRules; //按照行列维度聚合值计算规则；
-  // indicators?: string[]; //具体展示指标；
-  // descriptions?: any[]; //字段标题及描述信息；
   sortRules?: SortRules; //排序规则；
   filterRules?: FilterRules; //过滤规则；
   totals?: Totals; //小计或总计；
-  // indicatorsAsCol?: boolean;
-  // hideIndicatorName?: boolean;
   /**
    * 目前mappding还不太好用  不建议使用  建议先用style
    */
   mappingRules?: MappingRules;
   derivedFieldRules?: DerivedFieldRules;
 
-  // PivotChart逻辑新增
+  /**
+   * PivotChart专有  请忽略
+   */
   collectValuesBy?: Record<string, CollectValueBy>;
+  /**
+   * PivotChart专有  请忽略
+   */
   isPivotChart?: boolean;
+  /**
+   * PivotChart专有  请忽略
+   */
   dimensionSortArray?: string[];
 }
 

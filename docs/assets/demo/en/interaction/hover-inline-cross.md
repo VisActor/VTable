@@ -5,13 +5,14 @@ title: Hover the Line Cross Highlight
 cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/hover-cross.png
 order: 4-3
 link: '../guide/interaction/hover_cell'
+option: ListTable#hover.highlightMode('cross'%7C'column'%7C'row'%7C'cell')%20=%20'cross'
 ---
 
 # Hover the line cross highlight
 
 Hover over a cell and highlight the entire row and column of the cell.
 
-## critical configuration
+## Key Configurations
 
 *   `hover` Configure highlighting mode
 

@@ -15,7 +15,7 @@ const option={
   rows:['region','province'], //row dimensions
   columns:['year','quarter'], //column dimensions
   indicators:['sales','profit'], //Indicators
-  records:[ //数据源
+  records:[ //Data source。 If summary data is passed in, use user incoming data
     {
       region:'东北',
       province:'黑龙江',
@@ -56,7 +56,9 @@ export interface IDataConfig {
 }
 ```
 dataConfig application example:
-### 1. Data aggregation rules
+### 1. Totals
+[option description](../../../option/PivotTable#dataConfig.totals)
+Configuration example:
 ```
 dataConfig: {
       totals: {
@@ -64,45 +66,91 @@ dataConfig: {
           showGrandTotals: true,
           showSubTotals: true,
           subTotalsDimensions: ['province'],
-          grandTotalLabel: '行总计',
-          subTotalLabel: '小计'
+          grandTotalLabel: 'row total',
+          subTotalLabel: 'Subtotal'
         },
         column: {
           showGrandTotals: true,
           showSubTotals: true,
           subTotalsDimensions: ['quarter'],
-          grandTotalLabel: '列总计',
-          subTotalLabel: '小计'
+          grandTotalLabel: 'column total',
+          subTotalLabel: 'Subtotal'
         }
       }
     },
 ```
-
-### 2. Sort Rule
-
+Online demo：https://visactor.io/vtable/demo/data-analysis/pivot-analysis-total
+### 2. Sorting rules
+[option description](../../../option/PivotTable#dataConfig.sortRules)
+Configuration example:
 ```
     sortRules: [
         {
           sortField: 'city',
           sortByIndicator: 'sales',
           sortType: VTable.TYPES.SortType.DESC,
-          query: ['办公用品', '笔']
+          query: ['office supplies', 'pen']
         } as VTable.TYPES.SortByIndicatorRule
       ]
 
 ```
-
-### 3. Filter Rule
+Online demo：https://visactor.io/vtable/demo/data-analysis/pivot-analysis-sort-dimension
+### 3. Filter rules
+[option description](../../../option/PivotTable#dataConfig.filterRules)
+Configuration example:
 ```
 filterRules: [
         {
           filterFunc: (record: Record<string, any>) => {
-            return record.province !== '四川省' || record.category !== '家具';
+            return record.province !== 'Sichuan Province' || record.category !== 'Furniture';
           }
         }
       ]
 ```
-
+Online demo：https://visactor.io/vtable/demo/data-analysis/pivot-analysis-filter
+### 4. Aggregation method
+[option description](../../../option/PivotTable#dataConfig.aggregationRules)
+Configuration example:
+```
+    aggregationRules: [
+        //The basis for doing aggregate calculations, such as sales. If there is no configuration, the cell content will be displayed by default based on the aggregate sum calculation result.
+        {
+          indicatorKey: 'TotalSales', //Indicator name
+          field: 'Sales', //Indicator based on field
+          aggregationType: VTable.TYPES.AggregationType.SUM, //Calculation type
+          formatFun: sumNumberFormat
+        },
+        {
+          indicatorKey: 'OrderCount', //Indicator name
+          field: 'Sales', //Indicator based on field
+          aggregationType: VTable.TYPES.AggregationType.COUNT, //Computation type
+          formatFun: countNumberFormat
+        },
+        {
+          indicatorKey: 'AverageOrderSales', //Indicator name
+          field: 'Sales', //Indicator based on field
+          aggregationType: VTable.TYPES.AggregationType.AVG, //Computation type
+          formatFun: sumNumberFormat
+        }
+      ]
+```
+Online demo：https://visactor.io/vtable/demo/data-analysis/pivot-analysis-aggregation
+### 5. Derive Field
+[option description](../../../option/PivotTable#dataConfig.derivedFieldRules)
+Configuration example:
+```
+    derivedFieldRules: [
+      {
+        fieldName: 'Year',
+        derivedFunc: VTable.DataStatistics.dateFormat('Order Date', '%y', true),
+      },
+      {
+        fieldName: 'Month',
+        derivedFunc: VTable.DataStatistics.dateFormat('Order Date', '%n', true),
+      }
+    ]
+```
+Online demo：https://visactor.io/vtable/demo/data-analysis/pivot-analysis-derivedField
 ## Data analysis process
 Dependent configuration: dimensions, indicators and dataConfig.
 ### The process of traversing data:

@@ -2,7 +2,6 @@ import * as columnStyleContents from '../body-helper/style';
 import * as headerStyleContents from '../header-helper/style';
 import { importStyle } from './style';
 import * as style from '../tools/style';
-import { AABBBounds, isNumber } from '@visactor/vutils';
 import {
   type CellAddress,
   type CellRange,
@@ -47,7 +46,7 @@ import { EventTarget } from '../event/EventTarget';
 import { NumberMap } from '../tools/NumberMap';
 import { Rect } from '../tools/Rect';
 import type { TableTheme } from '../themes/theme';
-import { defaultOrderFn, isValid, throttle2 } from '../tools/util';
+import { defaultOrderFn, throttle2 } from '../tools/util';
 import themes from '../themes';
 import { Env } from '../tools/env';
 import { Scenegraph } from '../scenegraph/scenegraph';
@@ -58,7 +57,7 @@ import { HeaderHelper } from '../header-helper/header-helper';
 import type { PivotHeaderLayoutMap } from '../layout/pivot-header-layout';
 import { TooltipHandler } from '../components/tooltip/TooltipHandler';
 import type { CachedDataSource, DataSource } from '../data';
-import { isBoolean, isFunction, type ITextSize } from '@visactor/vutils';
+import { AABBBounds, isNumber, isBoolean, isFunction, type ITextSize, isValid } from '@visactor/vutils';
 import { textMeasure } from '../scenegraph/utils/text-measure';
 import { getProp } from '../scenegraph/utils/get-prop';
 import type {
@@ -1051,7 +1050,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
    */
   getColWidth(col: number): number {
     // const width = this.getColWidthDefine(col);
-    const width = this.colWidthsMap.get(col) ?? 0;
+    const width = this.colWidthsMap.get(col) ?? this.defaultColWidth;
     if (
       (this.widthMode === 'adaptive' && typeof width === 'number') ||
       ((this as any).transpose && typeof width === 'number')
@@ -1532,10 +1531,16 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
   }
 
   /**
-   * 重绘表格
+   * 重绘表格(同步绘制)
    */
   render(): void {
     this.scenegraph.renderSceneGraph();
+  }
+  /**
+   * 异步重绘表格
+   */
+  renderAsync(): void {
+    this.scenegraph.updateNextFrame();
   }
   /**
    * 转换成视觉相对table左上角的坐标 如滚动超出表格上方 y将为负值
@@ -2559,6 +2564,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
       _setRecords(this, records);
     }
 
+    this.internalProps.frozenColCount = this.options.frozenColCount || this.rowHeaderLevelCount;
     // 生成单元格场景树
     this.scenegraph.createSceneGraph();
 

@@ -5,13 +5,14 @@ title: Right click menu
 cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/context-menu.png
 order: 4-6
 link: '../guide/components/dropdown'
+option: ListTable#menu.contextMenuItems
 ---
 
 # Right click menu
 
 Right-click pop-up menu, if you need to click on the drop-down menu to continue the operation, you can listen to the event dropdownmenu\_click.
 
-## critical configuration
+## Key Configurations
 
 *   `menu.contextMenuItems` Configure the relevant function drop-down menu that appears after right-clicking
 
@@ -94,7 +95,7 @@ tableInstance = new VTable.ListTable(document.getElementById(CONTAINER_ID), opti
 window['tableInstance'] = tableInstance;
 
 
-tableInstance.listen('dropdownmenu_click', (args) => {
+tableInstance.on('dropdownmenu_click', (args) => {
   console.log('dropdownmenu_click',args);
 })
     })

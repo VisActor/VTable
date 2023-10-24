@@ -5,6 +5,7 @@ title: 下拉菜单
 cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/dropdown.png
 order: 8-3
 link: '../guide/components/dropdown'
+option: ListTable-columns-text#dropDownMenu
 ---
 
 # 下拉菜单

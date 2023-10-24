@@ -49,7 +49,7 @@ export function checkFirstRowMerge(row: number, proxy: SceneProxy) {
   }
 }
 
-export function checkFirstColMerge(col: number, scrolling: boolean, proxy: SceneProxy) {
+export function checkFirstColMerge(col: number, proxy: SceneProxy) {
   for (let row = 0; row < proxy.table.rowCount; row++) {
     if (
       (row >= proxy.table.columnHeaderLevelCount && row < proxy.rowStart) ||
@@ -77,6 +77,12 @@ export function checkFirstColMerge(col: number, scrolling: boolean, proxy: Scene
         'x',
         proxy.table.getColsWidth(proxy.table.rowHeaderLevelCount, range.start.col - 1) - oldCellGroup.parent.attribute.x
       );
+      newCellGroup.setAttributes({
+        x:
+          proxy.table.getColsWidth(proxy.table.rowHeaderLevelCount, range.start.col - 1) -
+          oldCellGroup.parent.attribute.x,
+        y: proxy.table.getRowsHeight(0, range.start.row - 1) - oldCellGroup.parent.attribute.y
+      });
 
       oldCellGroup.parent.insertAfter(newCellGroup, oldCellGroup);
       oldCellGroup.parent.removeChild(oldCellGroup);
@@ -100,7 +106,8 @@ function clearHadMergedRow(rowStart: number, rowEnd: number, col: number, proxy:
       cellGroup.setAttributes({
         width: 0,
         height: proxy.table.getRowHeight(cellGroup.row),
-        y: proxy.table.getRowsHeight(proxy.table.columnHeaderLevelCount, cellGroup.row - 1)
+        y: proxy.table.getRowsHeight(proxy.table.columnHeaderLevelCount, cellGroup.row - 1),
+        x: 0
       });
       cellGroup.clear();
     }
@@ -110,12 +117,13 @@ function clearHadMergedRow(rowStart: number, rowEnd: number, col: number, proxy:
 function clearHadMergedColumn(colStart: number, colEnd: number, row: number, proxy: SceneProxy) {
   for (let col = colStart; col <= colEnd; col++) {
     const cellGroup = proxy.highPerformanceGetCell(col, row, true);
-    if (cellGroup.role !== 'shadow-cell' && cellGroup.role !== 'empty' && cellGroup.row !== colStart) {
+    if (cellGroup.role !== 'shadow-cell' && cellGroup.role !== 'empty' && cellGroup.col !== colStart) {
       cellGroup.role = 'shadow-cell';
       cellGroup.setAttributes({
         width: 0,
         height: proxy.table.getRowHeight(cellGroup.row),
-        y: proxy.table.getRowsHeight(proxy.table.columnHeaderLevelCount, cellGroup.row - 1)
+        y: proxy.table.getRowsHeight(0, cellGroup.row - 1),
+        x: 0
       });
       cellGroup.clear();
     }

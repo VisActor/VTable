@@ -1,4 +1,4 @@
-import { isValid } from '../tools/util';
+import { isValid } from '@visactor/vutils';
 import type { FullExtendStyle, HeaderStyleOption, StylePropertyFunctionArg } from '../ts-types';
 import { TextHeaderStyle } from './style/MultilineTextHeaderStyle';
 // import { SortHeaderStyle } from "./style/SortHeaderStyle";

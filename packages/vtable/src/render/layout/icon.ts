@@ -1,4 +1,4 @@
-import { isString } from '../../tools/util';
+import { isString } from '@visactor/vutils';
 import type { ElementOptions } from './element';
 import { BaseElement } from './element';
 import * as registerIcons from '../../icons';
