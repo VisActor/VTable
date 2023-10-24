@@ -78,15 +78,15 @@ export default {
       endColor: '#CBDCFE'
     }
   },
-  menuStyle: {
-    color: '#000',
-    highlightColor: '#2E68CF',
-    // font: '12px sans-serif',
-    fontSize: 12,
-    fontFamily: 'sans-serif',
-    highlightFont: '12px sans-serif',
-    hoverBgColor: '#EEE'
-  },
+  // menuStyle: {
+  //   color: '#000',
+  //   highlightColor: '#2E68CF',
+  //   fontSize: 12,
+  //   fontFamily: 'Arial,sans-serif',
+  //   highlightFontSize: 12,
+  //   highlightFontFamily: 'Arial,sans-serif',
+  //   hoverBgColor: '#EEE'
+  // },
   selectionStyle: {
     cellBgColor: 'rgba(0, 0, 255,0.1)'
   }

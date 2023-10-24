@@ -51,7 +51,7 @@ export class Text extends BaseElement {
     super(options);
     this.text = options.text;
     this.fontSize = options.fontSize || 12;
-    this.fontFamily = options.fontFamily || 'sans-serif';
+    this.fontFamily = options.fontFamily || 'Arial,sans-serif';
     this.fill = options.color || options.fill || 'black';
     this.textBaseline = options.textBaseline || 'top';
     this.textAlign = options.textAlign || 'left';
