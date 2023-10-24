@@ -153,7 +153,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
 
   constructor(container: HTMLElement, options: BaseTableConstructorOptions = {}) {
     super();
-    if (!container) {
+    if (!container && options.mode !== 'node') {
       throw new Error("vtable's container is undefined");
     }
     const {
@@ -184,7 +184,12 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
       customRender,
       pixelRatio = defaultPixelRatio,
       renderChartAsync,
-      renderChartAsyncBatchCount
+      renderChartAsyncBatchCount,
+
+      mode,
+      modeParams,
+      canvasWidth,
+      canvasHeight
     } = options;
     this.container = container;
     this.options = options;
@@ -211,6 +216,8 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
 
     this.tableNoFrameWidth = 0;
     this.tableNoFrameHeight = 0;
+    this.canvasWidth = canvasWidth;
+    this.canvasHeight = canvasHeight;
 
     const internalProps = (this.internalProps = {} as IBaseTableProtected);
     // style.initDocument(scrollBar);
@@ -223,16 +230,16 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     //设置是否自动撑开的配置
     // internalProps.autoRowHeight = options.autoRowHeight ?? false;
 
+    if (Env.mode !== 'node') {
+      internalProps.element = createRootElement(this.padding);
+      internalProps.focusControl = new FocusInput(this, internalProps.element);
+      internalProps.canvas = document.createElement('canvas');
+      internalProps.element.appendChild(internalProps.canvas);
+      internalProps.context = internalProps.canvas.getContext('2d')!;
+    }
+
     internalProps.handler = new EventHandler();
-    internalProps.element = createRootElement(this.padding);
-    internalProps.focusControl = new FocusInput(this, internalProps.element);
-
     internalProps.pixelRatio = pixelRatio;
-    internalProps.canvas = document.createElement('canvas');
-    internalProps.element.appendChild(internalProps.canvas);
-
-    internalProps.context = internalProps.canvas.getContext('2d')!;
-
     internalProps.frozenColCount = frozenColCount;
 
     internalProps.defaultRowHeight = defaultRowHeight;
@@ -248,11 +255,9 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     internalProps.renderChartAsync = renderChartAsync;
     setBatchRenderChartCount(renderChartAsyncBatchCount);
 
-    /////
     internalProps._rowHeightsMap = new NumberMap();
     internalProps._rowRangeHeightsMap = new Map();
     internalProps._colRangeWidthsMap = new Map();
-
     internalProps._widthResizedColMap = new Set();
 
     this.colWidthsMap = new NumberMap();
@@ -262,6 +267,9 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     internalProps.calcWidthContext = {
       _: internalProps,
       get full(): number {
+        if (Env.mode === 'node') {
+          return canvasWidth / (pixelRatio ?? 1);
+        }
         return this._.canvas.width / ((this._.context as any).pixelRatio ?? window.devicePixelRatio);
       }
       // get em(): number {
@@ -271,10 +279,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
 
     internalProps.cellTextOverflows = {};
     internalProps.focusedTable = false;
-
     internalProps.theme = themes.of(options.theme ?? themes.DEFAULT); //原来在listTable文件中
-
-    // internalProps.element.appendChild(internalProps.scrollable.getElement());
 
     if (container) {
       //先清空
@@ -308,13 +313,6 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
         y: this.tableY
       });
     }
-    // if (options.title) {
-    //   internalProps.title = new Title(options.title, this);
-    //   this.scenegraph.tableGroup.setAttributes({
-    //     x: this.tableX,
-    //     y: this.tableY
-    //   });
-    // }
 
     //原有的toolTip提示框处理，主要在文字绘制不全的时候 出来全文本提示信息 需要加个字段设置是否有效
     internalProps.tooltip = Object.assign(
@@ -3398,5 +3396,35 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
       this.setScrollLeft(scrollLeft);
     }
     return base64Image;
+  }
+
+  /**
+   * 目前仅支持 node 环境，用于 node 端的图片导出
+   * @returns
+   */
+  getImageBuffer(type: string = 'image/png') {
+    if (this.options.mode !== 'node') {
+      console.error(new TypeError('getImageBuffer() now only support node environment.'));
+      return;
+    }
+    const stage = this.scenegraph.stage;
+    if (stage) {
+      const contentWidth = this.tableX + this.getAllColsWidth();
+      const contentHeight = this.tableY + this.getAllRowsHeight();
+      if (contentWidth >= this.canvasWidth && contentHeight >= this.canvasHeight) {
+        stage.render();
+        const buffer = stage.window.getImageBuffer(type);
+        return buffer;
+      }
+      const newCanvas = this.scenegraph.stage.toCanvas(
+        false,
+        new AABBBounds().set(0, 0, Math.min(this.canvasWidth, contentWidth), Math.min(this.canvasHeight, contentHeight))
+      );
+      const buffer = (newCanvas as any).toBuffer(type);
+      return buffer;
+    }
+    console.error(new ReferenceError(`stage is not defined`));
+
+    return null;
   }
 }

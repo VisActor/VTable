@@ -1,4 +1,9 @@
+import { Env } from '../tools/env';
+
 export function importStyle() {
+  if (Env.mode === 'node') {
+    return;
+  }
   const styleElement = document.createElement('style');
   styleElement.id = 'vtable-style-styleSheet';
   styleElement.textContent = `

@@ -326,6 +326,12 @@ export interface BaseTableConstructorOptions {
   renderChartAsync?: boolean;
   // 开启图表异步渲染 每批次渐进渲染图表个数
   renderChartAsyncBatchCount?: number;
+
+  // for nodejs
+  mode?: 'node' | 'broswer';
+  modeParams?: any;
+  canvasWidth?: number;
+  canvasHeight?: number;
 }
 export interface BaseTableAPI {
   /** 表格的行数 */
@@ -417,6 +423,10 @@ export interface BaseTableAPI {
   rowHeaderLevelCount: number;
   /** 列表头的层数 */
   columnHeaderLevelCount: number;
+
+  canvasWidth?: number;
+  canvasHeight?: number;
+
   /** 获取表格绘制的范围 不包括frame的宽度 */
   getDrawRange: () => Rect;
   /** 将鼠标坐标值 转换成表格坐标系中的坐标位置 */

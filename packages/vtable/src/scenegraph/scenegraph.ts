@@ -43,6 +43,7 @@ import { updateContainerChildrenX } from './utils/update-container';
 import { loadPoptip, setPoptipTheme } from '@visactor/vrender-components';
 import textMeasureModule from './utils/text-measure';
 import renderServiceModule from './utils/render-service';
+import { Env } from '../tools/env';
 // import { contextModule } from './context/module';
 
 // VChart poptip theme
@@ -133,11 +134,21 @@ export class Scenegraph {
     this.mergeMap = new Map();
 
     setPoptipTheme(poptipStyle as any);
-    vglobal.setEnv('browser');
+    let width;
+    let height;
+    if (Env.mode === 'node') {
+      vglobal.setEnv('node', table.options.modeParams);
+      width = table.canvasWidth;
+      height = table.canvasHeight;
+    } else {
+      vglobal.setEnv('browser');
+      width = table.canvas.width;
+      height = table.canvas.height;
+    }
     this.stage = createStage({
       canvas: table.canvas,
-      width: table.canvas.width,
-      height: table.canvas.height,
+      width,
+      height,
       disableDirtyBounds: false,
       background: table.theme.underlayBackgroundColor,
       dpr: table.internalProps.pixelRatio,
