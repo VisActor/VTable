@@ -50,7 +50,10 @@ export class BubbleTooltipElement {
         (messageElement.style.backgroundColor = tooltipInstanceInfo?.style?.bgColor);
       tooltipInstanceInfo?.style?.bgColor && (triangle.style.backgroundColor = tooltipInstanceInfo?.style?.bgColor);
       triangle.style.display = tooltipInstanceInfo?.style?.arrowMark === true ? 'block' : 'none';
-      tooltipInstanceInfo?.style?.font && (messageElement.style.font = tooltipInstanceInfo?.style?.font);
+      tooltipInstanceInfo?.style?.fontSize &&
+        (messageElement.style.fontSize = (tooltipInstanceInfo?.style?.fontSize ?? 12) + 'px');
+      tooltipInstanceInfo?.style?.fontFamily &&
+        (messageElement.style.fontFamily = tooltipInstanceInfo?.style?.fontFamily);
       tooltipInstanceInfo?.style?.color && (messageElement.style.color = tooltipInstanceInfo?.style?.color);
       tooltipInstanceInfo?.style?.padding &&
         (messageElement.style.padding = `${tooltipInstanceInfo?.style?.padding.join('px ')}px`);
