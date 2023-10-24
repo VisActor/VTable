@@ -8,6 +8,7 @@ import { ImageStyle } from './style/ImageStyle';
 import type { BaseTableAPI } from '../ts-types/base-table';
 import * as icons from '../tools/icons';
 import { obj } from '../tools/helper';
+import { CheckboxStyle } from './style/CheckboxStyle';
 export class BodyHelper {
   expandIcon: SvgIcon;
   collapseIcon: SvgIcon;
@@ -80,7 +81,9 @@ export class BodyHelper {
 
     return iconArr;
   }
-  getStyleClass(cellType: 'text' | 'link' | 'image' | 'video' | 'chart' | 'sparkline' | 'progressbar' | 'chart') {
+  getStyleClass(
+    cellType: 'text' | 'link' | 'image' | 'video' | 'chart' | 'sparkline' | 'progressbar' | 'chart' | 'checkbox'
+  ) {
     switch (cellType) {
       case 'text':
         return TextStyle;
@@ -96,6 +99,8 @@ export class BodyHelper {
         return Style;
       case 'progressbar':
         return ProgressBarStyle;
+      case 'checkbox':
+        return CheckboxStyle;
     }
   }
   getCellIconFromRecordValue(icon: ColumnIconOption, col: number, row: number): ColumnIconOption;

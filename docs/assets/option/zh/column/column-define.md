@@ -33,6 +33,10 @@
     prefix = ${prefix}
 ) }}
 
+{{ use: checkbox-cell-type(
+    prefix = ${prefix}
+) }}
+
 {{ use: composite-cell-type(
     prefix = ${prefix}
 ) }}

@@ -154,6 +154,7 @@ export interface TableEventHandlersEventArgumentMap {
   mouseenter_axis: MousePointerCellEvent & { axisPosition: 'left' | 'right' | 'top' | 'bottom' };
   mouseleave_axis: MousePointerCellEvent & { axisPosition: 'left' | 'right' | 'top' | 'bottom' };
 
+  checkbox_state_change: MousePointerCellEvent & { checked: boolean };
   after_render: null;
   initialized: null;
 }
@@ -217,6 +218,7 @@ export interface TableEventHandlersReturnMap {
   mouseenter_axis: void;
   mouseleave_axis: void;
 
+  checkbox_state_change: void;
   after_render: void;
   initialized: void;
 }

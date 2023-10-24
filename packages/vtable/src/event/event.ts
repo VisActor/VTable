@@ -168,6 +168,10 @@ export class EventManeger {
     const { eventArgs } = eventArgsSet;
 
     if (eventArgs) {
+      if (eventArgs.target.name === 'checkbox') {
+        return false;
+      }
+
       // // 注意：如果启用下面这句代码逻辑 则在点击选中单元格时失效hover效果。但是会导致chart实例的click事件失效，所以先特殊处理这个逻辑
       // if (
       //   !this.table.isPivotChart() &&
