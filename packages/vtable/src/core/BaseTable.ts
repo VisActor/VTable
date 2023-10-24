@@ -3399,4 +3399,9 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     }
     return base64Image;
   }
+
+  exportCanvas() {
+    const c = this.scenegraph.stage.toCanvas();
+    return c;
+  }
 }
