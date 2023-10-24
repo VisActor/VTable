@@ -75,9 +75,15 @@ export function getAxisConfigInPivotChart(col: number, row: number, layout: Pivo
 
       if (isNumber(axisOption?.min)) {
         range.min = axisOption.min;
+        if (range.min > 0) {
+          axisOption.zero = false;
+        }
       }
       if (isNumber(axisOption?.max)) {
         range.max = axisOption.max;
+        if (range.max < 0) {
+          axisOption.zero = false;
+        }
       }
       // 顶部副指标轴
       return merge(
@@ -87,7 +93,7 @@ export function getAxisConfigInPivotChart(col: number, row: number, layout: Pivo
         axisOption,
         {
           orient: 'top',
-          type: 'linear',
+          type: axisOption.type || 'linear',
           label: {
             flush: true
           },
@@ -157,10 +163,16 @@ export function getAxisConfigInPivotChart(col: number, row: number, layout: Pivo
       range.max = !isNaN(niceRange[1]) ? niceRange[1] : 1;
 
       if (isNumber(axisOption?.min)) {
-        (range as any).min = axisOption.min;
+        range.min = axisOption.min;
+        if (range.min > 0) {
+          axisOption.zero = false;
+        }
       }
       if (isNumber(axisOption?.max)) {
-        (range as any).max = axisOption.max;
+        range.max = axisOption.max;
+        if (range.max < 0) {
+          axisOption.zero = false;
+        }
       }
       // 底侧指标轴
       return merge(
@@ -175,7 +187,7 @@ export function getAxisConfigInPivotChart(col: number, row: number, layout: Pivo
         axisOption,
         {
           orient: 'bottom',
-          type: 'linear',
+          type: axisOption.type || 'linear',
           label: {
             flush: true
           },
@@ -278,9 +290,15 @@ export function getAxisConfigInPivotChart(col: number, row: number, layout: Pivo
 
       if (isNumber(axisOption?.min)) {
         range.min = axisOption.min;
+        if (range.min > 0) {
+          axisOption.zero = false;
+        }
       }
       if (isNumber(axisOption?.max)) {
         range.max = axisOption.max;
+        if (range.max < 0) {
+          axisOption.zero = false;
+        }
       }
       // 左侧指标轴
       return merge(
@@ -295,7 +313,7 @@ export function getAxisConfigInPivotChart(col: number, row: number, layout: Pivo
         axisOption,
         {
           orient: 'left',
-          type: 'linear',
+          type: axisOption.type || 'linear',
           label: {
             flush: true
           },
@@ -359,10 +377,16 @@ export function getAxisConfigInPivotChart(col: number, row: number, layout: Pivo
       range.max = !isNaN(niceRange[1]) ? niceRange[1] : 1;
 
       if (isNumber(axisOption?.min)) {
-        (range as any).min = axisOption.min;
+        range.min = axisOption.min;
+        if (range.min > 0) {
+          axisOption.zero = false;
+        }
       }
       if (isNumber(axisOption?.max)) {
-        (range as any).max = axisOption.max;
+        range.max = axisOption.max;
+        if (range.max < 0) {
+          axisOption.zero = false;
+        }
       }
       // 右侧副指标轴
       return merge(
@@ -375,7 +399,7 @@ export function getAxisConfigInPivotChart(col: number, row: number, layout: Pivo
         axisOption,
         {
           orient: 'right',
-          type: 'linear',
+          type: axisOption.type || 'linear',
           label: {
             flush: true
           },
