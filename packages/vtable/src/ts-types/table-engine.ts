@@ -355,3 +355,5 @@ export interface IExtensionRowDefine {
   rows: (IDimension | string)[];
   rowTree: IHeaderTreeDefine[] | ((args: { dimensionKey: string | number; value: string }[]) => IHeaderTreeDefine[]);
 }
+
+export type StickCell = { col: number; row: number; dx: number; dy: number };

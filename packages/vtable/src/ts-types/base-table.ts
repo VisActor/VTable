@@ -40,7 +40,8 @@ import type {
   WidthModeDef,
   IHeaderTreeDefine,
   IDimension,
-  IIndicator
+  IIndicator,
+  StickCell
 } from '.';
 import type { TooltipOptions } from './tooltip';
 import type { IWrapTextGraphicAttribute } from '../scenegraph/graphic/text';
@@ -187,6 +188,8 @@ export interface IBaseTableProtected {
   renderChartAsync?: boolean;
   // // 开启图表异步渲染 每批次渐进渲染图表个数
   // renderChartAsyncBatchCount?: number;
+
+  stick: { changedCells: StickCell[] };
 }
 export interface BaseTableConstructorOptions {
   // /** 指定表格的行数 */
