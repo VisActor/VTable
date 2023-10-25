@@ -157,10 +157,6 @@ export function createCell(
       renderDefault,
       cellTheme
     );
-    if (isMerge) {
-      cellGroup.mergeCol = range.end.col;
-      cellGroup.mergeRow = range.end.row;
-    }
 
     const axisConfig = table.internalProps.layoutMap.getAxisConfigInPivotChart(col, row);
     if (axisConfig) {

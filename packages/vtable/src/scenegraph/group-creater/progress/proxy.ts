@@ -303,10 +303,10 @@ export class SceneProxy {
     const endCol = Math.min(this.totalCol, this.currentCol + onceCount);
     computeColsWidth(this.table, this.currentCol + 1, endCol);
 
-    // update last merge cell
+    // update last merge cell size
     for (let row = 0; row < this.table.rowCount; row++) {
       const cellGroup = this.highPerformanceGetCell(this.currentCol, row);
-      if (isNumber(cellGroup.mergeCol) && cellGroup.mergeCol > this.currentCol) {
+      if (isNumber(cellGroup.mergeStartCol) && cellGroup.mergeStartCol > this.currentCol) {
         this.table.scenegraph.updateCellContent(cellGroup.col, cellGroup.row);
       }
     }

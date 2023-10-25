@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "comment": "feat: refactor merge cell strategy",
+      "type": "patch",
+      "packageName": "@visactor/vtable"
+    }
+  ],
+  "packageName": "@visactor/vtable",
+  "email": "sunrui1992@foxmail.com"
+}

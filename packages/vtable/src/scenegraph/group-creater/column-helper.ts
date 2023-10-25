@@ -1,22 +1,15 @@
 /* eslint-disable no-undef */
-import type { IThemeSpec } from '@visactor/vrender';
-import type {
-  CellLocation,
-  FullExtendStyle,
-  ICustomLayout,
-  ICustomRender,
-  MappingRule,
-  TextColumnDefine
-} from '../../ts-types';
-import { Group } from '../graphic/group';
+import type { IGraphic, IThemeSpec } from '@visactor/vrender';
+import type { CellLocation, CellRange, TextColumnDefine } from '../../ts-types';
+import type { Group } from '../graphic/group';
 import { getProp, getRawProp } from '../utils/get-prop';
 import type { MergeMap } from '../scenegraph';
-import type { PivotHeaderLayoutMap } from '../../layout/pivot-header-layout';
 import { createCell } from './cell-helper';
-import type { BaseTableAPI, PivotTableProtected } from '../../ts-types/base-table';
+import type { BaseTableAPI } from '../../ts-types/base-table';
 import { getStyleTheme } from '../../core/tableHelper';
 import { isPromise } from '../../tools/helper';
 import { dealPromiseData } from '../utils/deal-promise-data';
+import { isArray } from '@visactor/vutils';
 /**
  * 创建复合列 同一列支持创建不同类型单元格
  * @param columnGroup 列Group
@@ -45,7 +38,6 @@ export function createComplexColumn(
   cellLocation: CellLocation,
   rowLimit?: number
 ) {
-  let maxWidth = 0;
   let padding;
   let textAlign;
   let textBaseline;
@@ -116,71 +108,21 @@ export function createComplexColumn(
             cellWidth,
             cellHeight
           });
+        } else {
+          cellWidth = mergeResult.cellWidth;
+          cellHeight = mergeResult.cellHeight;
         }
       }
     }
 
-    // let cellWidth = 0;
-    // let cellHeight = 0;
-    if (mergeResult) {
-      const height = mergeResult.cellHeight / (range.end.row - range.start.row + 1);
-      // 已有Merge单元格，使用空Group占位
-      const cellGroup = new Group({
-        x: 0,
-        y,
-        width: 0,
-        height,
-        visible: false,
-        pickable: false
-      });
-      cellGroup.role = 'shadow-cell';
-      cellGroup.col = col;
-      cellGroup.row = row;
-      cellGroup.mergeCol = range.start.col;
-      cellGroup.mergeRow = range.start.row;
-      columnGroup?.addChild(cellGroup);
-      columnGroup.updateColumnRowNumber(row);
-      columnGroup.updateColumnHeight(height);
-      range = table.getCellRange(col, row);
-      y += height;
-      maxWidth = Math.max(maxWidth, mergeResult.cellWidth);
-    } else {
-      // deal with promise data
-      const value = table.getCellValue(col, row);
-      if (isPromise(value)) {
-        dealPromiseData(
-          value,
-          table,
-          createCell.bind(
-            null,
-            type,
-            define,
-            table,
-            col,
-            row,
-            colWidth,
-            cellWidth,
-            cellHeight,
-            columnGroup,
-            y,
-            padding,
-            textAlign,
-            textBaseline,
-            mayHaveIcon,
-            isMerge,
-            range,
-            cellTheme
-          )
-        );
-        columnGroup.updateColumnRowNumber(row);
-        // const height = table.getRowHeight(row);
-        const height = isMerge
-          ? table.getRowHeight(row) / (range.end.row - range.start.row + 1)
-          : table.getRowHeight(row);
-        columnGroup.updateColumnHeight(height);
-        y += height;
-      } else {
-        const cellGroup = createCell(
+    // deal with promise data
+    const value = table.getCellValue(col, row);
+    if (isPromise(value)) {
+      dealPromiseData(
+        value,
+        table,
+        createCell.bind(
+          null,
           type,
           define,
           table,
@@ -198,14 +140,51 @@ export function createComplexColumn(
           isMerge,
           range,
           cellTheme
-        );
-        columnGroup.updateColumnRowNumber(row);
-        // const height = cellGroup.attribute.height;
-        const height = isMerge
-          ? cellGroup.attribute.height / (range.end.row - range.start.row + 1)
-          : cellGroup.attribute.height;
-        columnGroup.updateColumnHeight(height);
-        y += height;
+        )
+      );
+      columnGroup.updateColumnRowNumber(row);
+      // const height = table.getRowHeight(row);
+      const height = isMerge
+        ? table.getRowHeight(row) / (range.end.row - range.start.row + 1)
+        : table.getRowHeight(row);
+      columnGroup.updateColumnHeight(height);
+      y += height;
+    } else {
+      const cellGroup = createCell(
+        type,
+        define,
+        table,
+        col,
+        row,
+        colWidth,
+        cellWidth,
+        cellHeight,
+        columnGroup,
+        y,
+        padding,
+        textAlign,
+        textBaseline,
+        mayHaveIcon,
+        isMerge,
+        range,
+        cellTheme
+      );
+      columnGroup.updateColumnRowNumber(row);
+      // // const height = cellGroup.attribute.height;
+      // const height = isMerge
+      //   ? cellGroup.attribute.height / (range.end.row - range.start.row + 1)
+      //   : cellGroup.attribute.height;
+      // columnGroup.updateColumnHeight(height);
+      // y += height;
+      if (isMerge) {
+        const rangeHeight = table.getRowHeight(row);
+        const rangeWidth = table.getColWidth(col);
+        resizeCellGroup(cellGroup, rangeWidth, rangeHeight, range, table);
+        columnGroup.updateColumnHeight(rangeHeight);
+        y += rangeHeight;
+      } else {
+        columnGroup.updateColumnHeight(cellGroup.attribute.height);
+        y += cellGroup.attribute.height;
       }
     }
     if (rowLimit && row > rowLimit) {
@@ -245,4 +224,51 @@ export function getColumnGroupTheme(
   columnTheme.group.width = colWidth;
   columnTheme.group.height = 0;
   return { theme: columnTheme, hasFunctionPros };
+}
+
+function resizeCellGroup(
+  cellGroup: Group,
+  rangeWidth: number,
+  rangeHeight: number,
+  range: CellRange,
+  table: BaseTableAPI
+) {
+  const { col, row } = cellGroup;
+  const dx = -table.getColsWidth(range.start.col, col - 1);
+  const dy = -table.getRowsHeight(range.start.row, row - 1);
+
+  cellGroup.forEachChildren((child: IGraphic) => {
+    child.setAttributes({
+      dx,
+      dy
+    });
+  });
+
+  const lineWidth = cellGroup.attribute.lineWidth;
+  const isLineWidthArray = isArray(lineWidth);
+  const newLineWidth = [0, 0, 0, 0];
+
+  if (col === range.start.col) {
+    newLineWidth[3] = isLineWidthArray ? lineWidth[3] : lineWidth;
+  }
+  if (row === range.start.row) {
+    newLineWidth[0] = isLineWidthArray ? lineWidth[0] : lineWidth;
+  }
+  if (col === range.end.col) {
+    newLineWidth[1] = isLineWidthArray ? lineWidth[1] : lineWidth;
+  }
+  if (row === range.end.row) {
+    newLineWidth[2] = isLineWidthArray ? lineWidth[2] : lineWidth;
+  }
+
+  cellGroup.setAttributes({
+    width: rangeWidth,
+    height: rangeHeight,
+    strokeArrayWidth: newLineWidth
+  } as any);
+
+  cellGroup.mergeStartCol = range.start.col;
+  cellGroup.mergeStartRow = range.start.row;
+  cellGroup.mergeEndCol = range.end.col;
+  cellGroup.mergeEndRow = range.end.row;
 }
