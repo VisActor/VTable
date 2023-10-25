@@ -11,6 +11,9 @@ import type { IProgressbarColumnBodyDefine } from '../../ts-types/list-table/def
 import { dealWithCustom } from '../component/custom';
 import { updateImageCellContentWhileResize } from '../group-creater/cell-type/image-cell';
 import { getStyleTheme } from '../../core/tableHelper';
+import { isMergeCellGroup } from '../utils/is-merge-cell-group';
+import type { BaseTableAPI } from '../../ts-types/base-table';
+import { resizeCellGroup } from '../group-creater/column-helper';
 
 export function updateRowHeight(scene: Scenegraph, row: number, detaY: number) {
   // 更新table行高存储
@@ -48,15 +51,11 @@ export function updateRowHeight(scene: Scenegraph, row: number, detaY: number) {
 
   // 更新以下行位置
   for (let rowIndex = rowStart; rowIndex <= rowEnd; rowIndex++) {
-    // if (rowIndex === 2) debugger;
     for (let colIndex = 0; colIndex < scene.table.colCount; colIndex++) {
       const cellGroup = scene.getCell(colIndex, rowIndex);
-      const mergeInfo = getCellMergeInfo(scene.table, colIndex, rowIndex);
-      if (mergeInfo && (mergeInfo.start.col !== colIndex || mergeInfo.start.row !== rowIndex)) {
-        continue;
+      if (cellGroup.role === 'cell') {
+        cellGroup.setAttribute('y', cellGroup.attribute.y + detaY);
       }
-
-      cellGroup.setAttribute('y', cellGroup.attribute.y + detaY);
     }
   }
 }
@@ -75,35 +74,12 @@ export function updateCellHeightForRow(
   isHeader: boolean
   // autoRowHeight: boolean
 ) {
-  let cellGroup;
-  let distHeight;
   const mergeInfo = getCellMergeInfo(scene.table, col, row);
   // TO BE FIXED 这里使用横向和纵向来判断单元格merge情况，目前没有横纵都merge的情况，
-  // 如果有这里的逻辑要修改
-  if (mergeInfo && mergeInfo.end.col - mergeInfo.start.col && mergeInfo.start.col === col) {
-    // 更新横向merge cell height，只更新一次
-    const mergeCell = scene.getCell(mergeInfo.start.col, mergeInfo.start.row);
-    const mergeCellheight = mergeCell.attribute.height;
-    mergeCell.setAttribute('height', mergeCellheight + detaY);
 
-    cellGroup = mergeCell;
-    distHeight = mergeCell.attribute.height;
-  } else if (mergeInfo) {
-    // 更新纵向merge cell width
-    cell.setAttribute('height', height + detaY);
-
-    cellGroup = cell;
-    distHeight = height + detaY;
-  } else if (!mergeInfo) {
-    cell.setAttribute('height', height + detaY);
-    cellGroup = cell;
-    distHeight = height + detaY;
-    // cell.setTheme({
-    //   rect: {
-    //     height: cell.attribute.height,
-    //   },
-    // });
-  }
+  cell.setAttribute('height', height + detaY);
+  const cellGroup = cell;
+  const distHeight = height + detaY;
 
   if (!cellGroup) {
     // 合并单元格非主单元格，不处理
@@ -111,6 +87,12 @@ export function updateCellHeightForRow(
   }
 
   updateCellHeight(scene, cellGroup, col, row, distHeight, detaY, isHeader);
+
+  if (mergeInfo) {
+    const rangeHeight = scene.table.getRowHeight(row);
+    const rangeWidth = scene.table.getColWidth(col);
+    resizeCellGroup(cellGroup, rangeWidth, rangeHeight, mergeInfo, scene.table);
+  }
 }
 
 export function updateCellHeightForColumn(
@@ -122,37 +104,16 @@ export function updateCellHeightForColumn(
   detaY: number,
   isHeader: boolean
 ) {
-  let cellGroup;
-  // let distHeight;
   const mergeInfo = getCellMergeInfo(scene.table, col, row);
-  if (mergeInfo && mergeInfo.end.row - mergeInfo.start.row) {
-    cell = scene.getCell(mergeInfo.start.col, mergeInfo.start.row);
-    if (row === mergeInfo.start.row) {
-      // 初始化高度
-      (cell as any)._tempHeight = height;
-      return;
-    } else if (row === mergeInfo.end.row) {
-      cell.setAttribute('height', (cell as any)._tempHeight + height);
-      cellGroup = cell;
-      height = cell.attribute.height;
-      // updateCellHeight(scene, cellGroup, col, row, cell.attribute.height, 0, isHeader);
-    } else {
-      // 累加高度
-      (cell as any)._tempHeight += height;
-      return;
-    }
-  } else if (mergeInfo) {
-    cell = scene.getCell(mergeInfo.start.col, mergeInfo.start.row);
-    cell.setAttribute('height', height);
-    cellGroup = cell;
-
-    // const rect = cell.firstChild as Rect;
-    // rect.setAttribute('height', cell.attribute.height);
-  } else {
-    cell.setAttribute('height', height);
-    cellGroup = cell;
-  }
+  cell.setAttribute('height', height);
+  const cellGroup = cell;
   updateCellHeight(scene, cellGroup, col, row, height, 0, isHeader);
+
+  if (mergeInfo) {
+    const rangeHeight = scene.table.getRowHeight(row);
+    const rangeWidth = scene.table.getColWidth(col);
+    resizeCellGroup(cellGroup, rangeWidth, rangeHeight, mergeInfo, scene.table);
+  }
 }
 
 export function updateCellHeight(
@@ -265,7 +226,7 @@ export function updateCellHeight(
     if (renderDefault) {
       // 处理文字
       const style = scene.table._getCellStyle(col, row);
-      updateCellContentHeight(
+      updateMergeCellContentHeight(
         cell,
         distHeight,
         detaY,
@@ -273,44 +234,35 @@ export function updateCellHeight(
         scene.table.heightMode === 'autoHeight',
         getQuadProps(style.padding as number),
         style.textAlign,
-        style.textBaseline
+        style.textBaseline,
+        scene.table
       );
     }
+  }
+}
 
-    // // 处理自定义渲染
-    // const customContainer = cell.getChildByName('custom-container') as Group;
-    // if (customContainer) {
-    //   customContainer.removeAllChild();
-    //   cell.removeChild(customContainer);
-
-    //   let customRender;
-    //   let customLayout;
-    //   const cellType = scene.table.getCellLocation(col, row);
-    //   if (cellType !== 'body') {
-    //     const define = scene.table.getHeaderDefine(col, row);
-    //     customRender = define?.headerCustomRender;
-    //     customLayout = define?.headerCustomLayout;
-    //   } else {
-    //     const define = scene.table.getBodyColumnDefine(col, row);
-    //     customRender = define?.customRender || scene.table.customRender;
-    //     customLayout = define?.customLayout;
-    //   }
-    //   const customResult = dealWithCustom(
-    //     customLayout,
-    //     customRender,
-    //     col,
-    //     row,
-    //     cell.attribute.width,
-    //     cell.attribute.height,
-    //     false,
-    //     false,
-    //     scene.table
-    //   );
-    //   if (cell.childrenCount > 0) {
-    //     cell.insertBefore(customResult.elementsGroup, cell.firstChild);
-    //   } else {
-    //     cell.appendChild(customResult.elementsGroup);
-    //   }
-    // }
+function updateMergeCellContentHeight(
+  cellGroup: Group,
+  distHeight: number,
+  detaY: number,
+  autoRowHeight: boolean,
+  padding: [number, number, number, number],
+  textAlign: CanvasTextAlign,
+  textBaseline: CanvasTextBaseline,
+  table: BaseTableAPI
+) {
+  if (isMergeCellGroup(cellGroup)) {
+    distHeight = 0;
+    for (let row = cellGroup.mergeStartRow; row <= cellGroup.mergeEndRow; row++) {
+      distHeight += table.getRowHeight(row);
+    }
+    for (let col = cellGroup.mergeStartCol; col <= cellGroup.mergeEndCol; col++) {
+      for (let row = cellGroup.mergeStartRow; row <= cellGroup.mergeEndRow; row++) {
+        const singleCellGroup = table.scenegraph.getCell(col, row);
+        updateCellContentHeight(singleCellGroup, distHeight, detaY, autoRowHeight, padding, textAlign, textBaseline);
+      }
+    }
+  } else {
+    updateCellContentHeight(cellGroup, distHeight, detaY, autoRowHeight, padding, textAlign, textBaseline);
   }
 }

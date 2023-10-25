@@ -13,6 +13,7 @@ import { getCellMergeInfo } from './get-cell-merge';
 import { getHierarchyOffset } from './get-hierarchy-offset';
 import type { BaseTableAPI } from '../../ts-types/base-table';
 import { isNil, isNumber, isValid } from '@visactor/vutils';
+import { isMergeCellGroup } from './is-merge-cell-group';
 
 /**
  * @description: 创建单元格内容
@@ -597,9 +598,15 @@ export function updateCellContentHeight(
   const textMark = cellGroup.getChildByName('text');
 
   if (textMark instanceof WrapText && !autoRowHeight) {
-    textMark.setAttribute('heightLimit', newHeight);
+    textMark.setAttributes({
+      heightLimit: newHeight,
+      dy: 0
+    } as any);
   } else if (textMark instanceof RichText && !autoRowHeight) {
-    textMark.setAttribute('height', newHeight);
+    textMark.setAttributes({
+      height: newHeight,
+      dy: 0
+    });
   } else if (cellGroup.getChildByName('content')) {
     const cellContent = cellGroup.getChildByName('content') as CellContent;
     cellContent.updateHeight(newHeight);

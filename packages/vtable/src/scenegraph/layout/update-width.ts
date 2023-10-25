@@ -373,57 +373,19 @@ function updateCellWidth(
  * @return {*}
  */
 function resetRowHeight(scene: Scenegraph, row: number) {
-  // let maxHeight = 0;
   // 获取高度
   const maxHeight = computeRowHeight(row, 0, scene.table.colCount - 1, scene.table);
-  // for (let col = 0; col < scene.table.colCount; col++) {
-  //   const cell = scene.highPerformanceGetCell(col, row);
-  //   if (cell.role === 'empty') {
-  //     return;
-  //   }
-  //   let cellHeight = scene.table.getRowHeight(row);
-  //   const mergeInfo = getCellMergeInfo(scene.table, col, row);
-  //   if (mergeInfo && mergeInfo.end.row - mergeInfo.start.row) {
-  //     cellHeight = cellHeight / (mergeInfo.end.row - mergeInfo.start.row + 1);
-  //   }
-  //   maxHeight = Math.max(maxHeight, cellHeight);
-  // }
-
   // 更新高度
   for (let col = 0; col < scene.table.colCount; col++) {
-    let distHeight = maxHeight;
+    const distHeight = maxHeight;
     const cell = scene.highPerformanceGetCell(col, row);
     if (cell.role === 'empty') {
       return;
     }
-    const mergeInfo = getCellMergeInfo(scene.table, col, row);
-    if (mergeInfo && mergeInfo.end.row - mergeInfo.start.row) {
-      for (let rowIndex = mergeInfo.start.row; rowIndex <= mergeInfo.end.row; rowIndex++) {
-        if (rowIndex !== row) {
-          distHeight += scene.table.getRowHeight(rowIndex);
-        }
-      }
-    }
+
     updateCellHeightForRow(scene, cell, col, row, distHeight, 0, scene.table.isHeader(col, row));
   }
 
   // 更新table行高存储
   scene.table.setRowHeight(row, maxHeight, true);
-}
-
-function getCleanCellHeight(cell: Group, scene: Scenegraph) {
-  let maxHeight = 0;
-  cell.forEachChildren((child: Icon) => {
-    if (
-      child.role === 'icon-left' ||
-      child.role === 'icon-right' ||
-      child.name === 'text' ||
-      child.name === 'content'
-    ) {
-      maxHeight = Math.max(maxHeight, child.AABBBounds.height());
-    }
-  });
-
-  const padding = getQuadProps(scene.table._getCellStyle(cell.col, cell.row).padding as number);
-  return maxHeight + padding[0] + padding[2];
 }
