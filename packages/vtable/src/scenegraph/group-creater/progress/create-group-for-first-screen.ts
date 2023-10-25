@@ -173,7 +173,7 @@ export async function createGroupForFirstScreen(
   );
 
   // update progress information
-  if (!bodyGroup.firstChild) {
+  if (!bodyGroup.firstChild && !colHeaderGroup.firstChild) {
     // 无数据
     proxy.currentRow = proxy.totalRow;
     proxy.rowEnd = proxy.currentRow;
@@ -190,7 +190,8 @@ export async function createGroupForFirstScreen(
     proxy.rowUpdatePos = proxy.rowEnd;
     proxy.referenceRow = proxy.rowStart + Math.floor((proxy.rowEnd - proxy.rowStart) / 2);
 
-    proxy.currentCol = (bodyGroup.lastChild as Group)?.col ?? proxy.totalCol;
+    proxy.currentCol =
+      (bodyGroup.lastChild as Group)?.col ?? (colHeaderGroup.lastChild as Group)?.col ?? proxy.totalCol;
     proxy.colEnd = proxy.currentCol;
     proxy.colUpdatePos = proxy.colEnd;
     proxy.referenceCol = proxy.colStart + Math.floor((proxy.colEnd - proxy.colStart) / 2);
