@@ -363,11 +363,18 @@ export class SceneProxy {
       );
     }
     // create colGroup
-    const lastColumnGroup = (
-      this.table.scenegraph.bodyGroup.lastChild instanceof Group
+    let lastColumnGroup =
+      this.table.scenegraph.bodyGroup.lastChild &&
+      ((this.table.scenegraph.bodyGroup.lastChild instanceof Group
         ? this.table.scenegraph.bodyGroup.lastChild
-        : this.table.scenegraph.bodyGroup.lastChild._prev
-    ) as Group;
+        : this.table.scenegraph.bodyGroup.lastChild._prev) as Group);
+    if (!lastColumnGroup) {
+      lastColumnGroup =
+        this.table.scenegraph.colHeaderGroup.lastChild &&
+        ((this.table.scenegraph.colHeaderGroup.lastChild instanceof Group
+          ? this.table.scenegraph.colHeaderGroup.lastChild
+          : this.table.scenegraph.colHeaderGroup.lastChild._prev) as Group);
+    }
     const xOrigin = lastColumnGroup.attribute.x + lastColumnGroup.attribute.width;
     const yOrigin = lastColumnGroup.attribute.y;
     // create bodyGroup
