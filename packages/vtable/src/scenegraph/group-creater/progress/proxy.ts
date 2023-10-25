@@ -103,7 +103,7 @@ export class SceneProxy {
     // 确定首屏高度范围
     const widthLimit = this.table.tableNoFrameWidth * 5;
     this.screenColCount = Math.ceil(this.table.tableNoFrameWidth / defaultColWidth);
-    this.firstScreenColLimit = this.bodyLeftCol + Math.ceil(widthLimit / defaultColWidth);
+    this.firstScreenColLimit = this.bodyLeftCol + Math.min(this.colLimit, Math.ceil(widthLimit / defaultColWidth));
     // this.firstScreenRowLimit = this.bodyBottomRow;
 
     this.colUpdatePos = this.bodyRightCol;
@@ -132,7 +132,7 @@ export class SceneProxy {
     // 确定首屏高度范围
     const heightLimit = this.table.tableNoFrameHeight * 5;
     this.screenRowCount = Math.ceil(this.table.tableNoFrameHeight / defaultRowHeight);
-    this.firstScreenRowLimit = this.bodyTopRow + Math.ceil(heightLimit / defaultRowHeight);
+    this.firstScreenRowLimit = this.bodyTopRow + Math.min(this.rowLimit, Math.ceil(heightLimit / defaultRowHeight));
     // this.firstScreenRowLimit = this.bodyBottomRow;
 
     this.rowUpdatePos = this.bodyBottomRow;
@@ -363,11 +363,18 @@ export class SceneProxy {
       );
     }
     // create colGroup
-    const lastColumnGroup = (
-      this.table.scenegraph.bodyGroup.lastChild instanceof Group
+    let lastColumnGroup =
+      this.table.scenegraph.bodyGroup.lastChild &&
+      ((this.table.scenegraph.bodyGroup.lastChild instanceof Group
         ? this.table.scenegraph.bodyGroup.lastChild
-        : this.table.scenegraph.bodyGroup.lastChild._prev
-    ) as Group;
+        : this.table.scenegraph.bodyGroup.lastChild._prev) as Group);
+    if (!lastColumnGroup) {
+      lastColumnGroup =
+        this.table.scenegraph.colHeaderGroup.lastChild &&
+        ((this.table.scenegraph.colHeaderGroup.lastChild instanceof Group
+          ? this.table.scenegraph.colHeaderGroup.lastChild
+          : this.table.scenegraph.colHeaderGroup.lastChild._prev) as Group);
+    }
     const xOrigin = lastColumnGroup.attribute.x + lastColumnGroup.attribute.width;
     const yOrigin = lastColumnGroup.attribute.y;
     // create bodyGroup

@@ -153,10 +153,10 @@ export class Chart extends Group {
     // to avoid async render when chart is releasd
     this.activeChartInstance.updateViewBox(
       {
-        x1: -2000,
-        x2: -1000,
-        y1: -2000,
-        y2: -1000
+        x1: -1000,
+        x2: -800,
+        y1: -1000,
+        y2: -800
       },
       false,
       false
