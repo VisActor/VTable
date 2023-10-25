@@ -38,7 +38,7 @@ export class SceneProxy {
   deltaY: number = 0;
 
   colLimit = 100;
-  bodyLeftCol: number; // table body部分的第一列col number
+  // bodyLeftCol: number; // table body部分的第一列col number
   bodyRightCol: number; // table body部分的最后一列col number
   totalCol: number; // 渐进完成最后一列的col number
   colStart: number; // 当前维护的部分第一列的col number
@@ -79,9 +79,12 @@ export class SceneProxy {
     }
   }
 
+  get bodyLeftCol(): number {
+    return this.table.frozenColCount;
+  }
+
   setParamsForColumn() {
-    this.bodyLeftCol = this.table.rowHeaderLevelCount;
-    // this.bodyRightCol = this.table.colCount - 1;
+    // this.bodyLeftCol = this.table.frozenColCount;
     this.bodyRightCol = this.table.colCount - 1 - this.table.rightFrozenColCount;
 
     // compute the column info about progress creation
@@ -100,7 +103,7 @@ export class SceneProxy {
     // 确定首屏高度范围
     const widthLimit = this.table.tableNoFrameWidth * 5;
     this.screenColCount = Math.ceil(this.table.tableNoFrameWidth / defaultColWidth);
-    this.firstScreenColLimit = this.bodyLeftCol + Math.ceil(widthLimit / defaultColWidth);
+    this.firstScreenColLimit = this.bodyLeftCol + Math.min(this.colLimit, Math.ceil(widthLimit / defaultColWidth));
     // this.firstScreenRowLimit = this.bodyBottomRow;
 
     this.colUpdatePos = this.bodyRightCol;
@@ -129,7 +132,7 @@ export class SceneProxy {
     // 确定首屏高度范围
     const heightLimit = this.table.tableNoFrameHeight * 5;
     this.screenRowCount = Math.ceil(this.table.tableNoFrameHeight / defaultRowHeight);
-    this.firstScreenRowLimit = this.bodyTopRow + Math.ceil(heightLimit / defaultRowHeight);
+    this.firstScreenRowLimit = this.bodyTopRow + Math.min(this.rowLimit, Math.ceil(heightLimit / defaultRowHeight));
     // this.firstScreenRowLimit = this.bodyBottomRow;
 
     this.rowUpdatePos = this.bodyBottomRow;
@@ -224,12 +227,12 @@ export class SceneProxy {
     // compute rows height
     computeRowsHeight(this.table, this.currentRow + 1, endRow, false);
 
-    if (this.table.rowHeaderLevelCount) {
+    if (this.table.frozenColCount) {
       // create row header row cellGroup
       let maxHeight = 0;
-      for (let col = 0; col < this.table.rowHeaderLevelCount; col++) {
+      for (let col = 0; col < this.table.frozenColCount; col++) {
         const colGroup = this.table.scenegraph.getColGroup(col);
-        const cellLocation = 'rowHeader';
+        const cellLocation = this.table.isListTable() ? 'body' : 'rowHeader';
         const { height } = createComplexColumn(
           colGroup,
           col,
@@ -251,7 +254,7 @@ export class SceneProxy {
       let maxHeight = 0;
       for (let col = this.table.colCount - this.table.rightFrozenColCount; col < this.table.colCount; col++) {
         const colGroup = this.table.scenegraph.getColGroup(col);
-        const cellLocation = 'rowHeader';
+        const cellLocation = this.table.isListTable() ? 'body' : 'rowHeader';
         const { height } = createComplexColumn(
           colGroup,
           col,
@@ -272,6 +275,9 @@ export class SceneProxy {
     let maxHeight = 0;
     for (let col = this.bodyLeftCol; col <= this.bodyRightCol; col++) {
       const colGroup = this.table.scenegraph.getColGroup(col);
+      if (!colGroup) {
+        continue;
+      }
       const cellLocation = 'body';
       const { height } = createComplexColumn(
         colGroup,
@@ -357,11 +363,18 @@ export class SceneProxy {
       );
     }
     // create colGroup
-    const lastColumnGroup = (
-      this.table.scenegraph.bodyGroup.lastChild instanceof Group
+    let lastColumnGroup =
+      this.table.scenegraph.bodyGroup.lastChild &&
+      ((this.table.scenegraph.bodyGroup.lastChild instanceof Group
         ? this.table.scenegraph.bodyGroup.lastChild
-        : this.table.scenegraph.bodyGroup.lastChild._prev
-    ) as Group;
+        : this.table.scenegraph.bodyGroup.lastChild._prev) as Group);
+    if (!lastColumnGroup) {
+      lastColumnGroup =
+        this.table.scenegraph.colHeaderGroup.lastChild &&
+        ((this.table.scenegraph.colHeaderGroup.lastChild instanceof Group
+          ? this.table.scenegraph.colHeaderGroup.lastChild
+          : this.table.scenegraph.colHeaderGroup.lastChild._prev) as Group);
+    }
     const xOrigin = lastColumnGroup.attribute.x + lastColumnGroup.attribute.width;
     const yOrigin = lastColumnGroup.attribute.y;
     // create bodyGroup
@@ -546,7 +559,7 @@ export class SceneProxy {
     }
 
     if (
-      col >= this.table.rowHeaderLevelCount && // not row header
+      col >= this.table.frozenColCount && // not row header
       col < this.table.colCount - this.table.rightFrozenColCount && // not right frozen
       (col < this.colStart || col > this.colEnd) // not in proxy col range
     ) {

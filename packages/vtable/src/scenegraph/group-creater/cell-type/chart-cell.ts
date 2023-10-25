@@ -2,7 +2,7 @@ import { Group } from '../../graphic/group';
 import { Chart } from '../../graphic/chart';
 import * as registerChartTypes from '../../../chartModule';
 import { getFunctionalProp } from '../../utils/get-prop';
-import { isValid } from '../../../tools/util';
+import { isValid } from '@visactor/vutils';
 import type { BaseTableAPI } from '../../../ts-types/base-table';
 import type { IThemeSpec } from '@visactor/vrender';
 export function createChartCellGroup(
@@ -63,6 +63,8 @@ export function createChartCellGroup(
     x: padding[3],
     y: padding[0],
     canvas: table.canvas,
+    mode: table.options.mode,
+    modeParams: table.options.modeParams,
     spec: chartSpec,
     ClassType,
     width: width - padding[3] - padding[1],

@@ -1,5 +1,5 @@
 import type { FederatedPointerEvent } from '@visactor/vrender';
-import type { MousePointerMultiCellEvent, MousePointerSparklineEvent } from '../../ts-types';
+import type { MousePointerCellEvent, MousePointerMultiCellEvent, MousePointerSparklineEvent } from '../../ts-types';
 import { InteractionState } from '../../ts-types';
 import type { SceneEvent } from '../util';
 import { getCellEventArgsSet } from '../util';
@@ -572,6 +572,20 @@ export function bindTableGroupListener(eventManeger: EventManeger) {
       };
       table.fireListeners(TABLE_EVENT_TYPE.DBLCLICK_CELL, cellsEvent);
     }
+  });
+
+  table.scenegraph.tableGroup.addEventListener('checkbox_state_change', (e: FederatedPointerEvent) => {
+    const eventArgsSet: SceneEvent = getCellEventArgsSet(e);
+    const { col, row } = eventArgsSet.eventArgs;
+    const cellInfo = table.getCellInfo(col, row);
+
+    const cellsEvent: MousePointerCellEvent & { checked: boolean } = {
+      ...cellInfo,
+      event: e.nativeEvent,
+      target: eventArgsSet?.eventArgs?.target,
+      checked: (e.detail as unknown as { checked: boolean }).checked
+    };
+    table.fireListeners(TABLE_EVENT_TYPE.CHECKBOX_STATE_CHANGE, cellsEvent);
   });
 }
 

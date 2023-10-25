@@ -1,6 +1,5 @@
 // 参考konva
-import { injectable } from 'inversify';
-import type { IContext2d, EnvType } from '@visactor/vrender';
+import type { IContext2d, EnvType, injectable } from '@visactor/vrender';
 import { BrowserContext2d } from '@visactor/vrender';
 
 declare const tt: {

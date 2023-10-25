@@ -1,7 +1,6 @@
 import type { IStage } from '@visactor/vrender';
-import { isValid } from '../../../tools/util';
 import type { Chart } from '../chart';
-import { Bounds } from '@visactor/vutils';
+import { Bounds, isValid } from '@visactor/vutils';
 export const cancelRenderChartQueue = false;
 export const chartRenderKeys: string[] = [];
 export const chartRenderQueueList: Chart[] = [];

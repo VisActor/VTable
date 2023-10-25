@@ -62,4 +62,4 @@ The specific return data of the event can be actually tested to observe whether 
         CONTEXTMENU_CELL,
       } = VTable.ListGrid.EVENT_TYPE;
       const tableInstance =new ListGrid(options);
-      tableInstance.listen(CLICK_CELL, (...args) => console.log(CLICK_CELL, args));
+      tableInstance.on(CLICK_CELL, (...args) => console.log(CLICK_CELL, args));

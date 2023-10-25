@@ -1,6 +1,6 @@
 import type { Cursor } from '@visactor/vrender';
 import { createArc, createCircle, createLine, createRect, Group as VGroup } from '@visactor/vrender';
-import { isFunction, isString, isValid } from '../../tools/util';
+import { isFunction, isString, isValid } from '@visactor/vutils';
 import type { ICustomLayout, ICustomRender, ICustomRenderElement, ICustomRenderElements } from '../../ts-types';
 import { Group } from '../graphic/group';
 import { Icon } from '../graphic/icon';

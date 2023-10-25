@@ -1,7 +1,7 @@
 /* eslint-disable no-undef */
 import type { IThemeSpec } from '@visactor/vrender';
 import { createArc } from '@visactor/vrender';
-import { isValid } from '../../../tools/util';
+import { isValid } from '@visactor/vutils';
 import { Group } from '../../graphic/group';
 // import { parseFont } from '../../utils/font';
 import { getFunctionalProp } from '../../utils/get-prop';

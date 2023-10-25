@@ -36,8 +36,10 @@ export type TableFrameStyle = FrameStyle & {
 export type menuStyle = {
   color?: string;
   highlightColor?: string;
-  font?: string;
-  highlightFont?: string;
+  fontSize?: number;
+  fontFamily?: string;
+  highlightFontSize?: number;
+  highlightFontFamily?: string;
   hoverBgColor?: string;
 };
 export type ScrollStyle = {
@@ -56,7 +58,8 @@ export type ScrollStyle = {
  * 气泡框，按钮的的解释信息
  */
 export type TooltipStyle = {
-  font?: string;
+  fontFamily?: string;
+  fontSize?: number;
   color?: string;
   padding?: number[];
   bgColor?: string;

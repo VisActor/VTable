@@ -1,4 +1,5 @@
 import type { IChartColumnIndicator } from './chart-indicator';
+import type { ICheckboxColumnIndicator } from './checkbox-indicator';
 import type { ICompositeColumnIndicator } from './composite-indicator';
 import type { IImageColumnIndicator, IImageHeaderIndicator } from './image-indicator';
 import type { ILinkColumnIndicator, ILinkHeaderIndicator } from './link-indicator';
@@ -13,6 +14,7 @@ export type ColumnIndicator =
   | IImageColumnIndicator
   | ISparklineColumnIndicator
   | IProgressbarColumnIndicator
+  | ICheckboxColumnIndicator
   | IChartColumnIndicator
   | ITextColumnIndicator
   | ICompositeColumnIndicator;

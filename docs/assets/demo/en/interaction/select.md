@@ -10,7 +10,13 @@ option: keyboardOptions.selectAllOnCtrlA
 
 # Select cell
 
-Select the cell, press and hold ctrl or shift multiple selection, or open shortcut for ctrlA all selection.
+Click on a cell to make a single selection, and drag to make a brush selection.
+
+Hold down ctrl or shift to make multiple selections.
+
+Turn on the shortcut key selectAllOnCtrlA configuration to select all.
+
+Clicking on the header cell will select the entire row or column by default. If you only want to select the current cell, you can set select.headerSelectMode to 'cell'.
 
 ## Key Configurations
 
