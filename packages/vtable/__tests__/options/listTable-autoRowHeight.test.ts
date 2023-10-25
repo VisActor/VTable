@@ -104,7 +104,7 @@ describe('listTable-autoRowHeight init test', () => {
       bgColor: '#FAF9FB',
       color: '#000',
       fontSize: 14,
-      fontFamily: 'sans-serif',
+      fontFamily: 'Arial,sans-serif',
       lineHeight: 14,
       autoWrapText: true,
       lineClamp: 'auto',

@@ -1,5 +1,4 @@
 import { isArray } from '@visactor/vutils';
-import { isValid } from '../tools/util';
 import type {
   FilterRules,
   IDataConfig,
@@ -227,9 +226,7 @@ export class Dataset {
             this.rows,
             indicatorsAsCol ? undefined : indicators,
             this.rowsIsTotal,
-            this?.totals?.row?.showGrandTotals ||
-              (!indicatorsAsCol && this.columns.length === 0) ||
-              (indicatorsAsCol && this.rows.length === 0),
+            this?.totals?.row?.showGrandTotals || (indicatorsAsCol && this.rows.length === 0),
             this.rowGrandTotalLabel,
             this.rowSubTotalLabel
           );
@@ -246,7 +243,7 @@ export class Dataset {
           this.columns,
           indicatorsAsCol ? indicators : undefined,
           this.colsIsTotal,
-          this.totals?.column?.showGrandTotals, // || this.rows.length === 0,//todo  这里原有逻辑暂时注释掉
+          this.totals?.column?.showGrandTotals || (!indicatorsAsCol && this.columns.length === 0), // || this.rows.length === 0,//todo  这里原有逻辑暂时注释掉
           this.colGrandTotalLabel,
           this.colSubTotalLabel
         );

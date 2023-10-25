@@ -5,6 +5,7 @@ title: Theme - BIGTHT
 cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/bright.png
 order: 6-2
 link: '../guide/theme_and_style/theme'
+option: ListTable#theme.bodyStyle.bgColor
 ---
 
 # Form Theme - BIGTHT

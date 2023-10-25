@@ -5,6 +5,7 @@ title: Style
 cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/style.png
 order: 5-1
 link: '../guide/theme_and_style/style'
+option: ListTable-columns-text#style.bgColor
 ---
 
 # style

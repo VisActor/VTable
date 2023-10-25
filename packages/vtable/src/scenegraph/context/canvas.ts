@@ -1,5 +1,4 @@
-import { injectable } from 'inversify';
-import { type ICanvas, type CanvasConfigType, type EnvType, BrowserCanvas } from '@visactor/vrender';
+import { type ICanvas, type CanvasConfigType, type EnvType, BrowserCanvas, injectable } from '@visactor/vrender';
 import { Context2dForVTable } from './context';
 
 @injectable()

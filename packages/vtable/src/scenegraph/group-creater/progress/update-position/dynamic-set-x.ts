@@ -70,8 +70,8 @@ async function moveColumn(
     proxy.colStart = direction === 'left' ? proxy.colStart + count : proxy.colStart - count;
     proxy.colEnd = direction === 'left' ? proxy.colEnd + count : proxy.colEnd - count;
 
-    checkFirstColMerge(distStartCol, true, proxy);
     updateColContent(syncLeftCol, syncRightCol, proxy);
+    checkFirstColMerge(distStartCol, proxy);
 
     updateAutoColumn(
       syncLeftCol, // colStart
@@ -80,7 +80,8 @@ async function moveColumn(
       direction
     );
 
-    const colGroup = proxy.table.scenegraph.getColGroup(screenLeftCol);
+    const colGroup =
+      proxy.table.scenegraph.getColGroup(screenLeftCol) || proxy.table.scenegraph.getColGroup(screenLeftCol, true);
     const deltaX =
       screenLeftX - (colGroup.attribute.x + proxy.table.getFrozenColsWidth() + proxy.table.scenegraph.proxy.deltaX);
     proxy.table.scenegraph.proxy.deltaX += deltaX;
@@ -110,8 +111,8 @@ async function moveColumn(
 
     proxy.colStart = distStartCol;
     proxy.colEnd = distEndCol;
-    checkFirstColMerge(distStartCol, false, proxy);
     updateColContent(syncLeftCol, syncRightCol, proxy);
+    checkFirstColMerge(distStartCol, proxy);
 
     updateAutoColumn(
       syncLeftCol, // colStart

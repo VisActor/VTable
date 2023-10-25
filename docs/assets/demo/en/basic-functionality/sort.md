@@ -5,6 +5,7 @@ title: Sort
 cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/sort.gif
 order: 3-2
 link: '../guide/basic_function/sort'
+option: ListTable-columns-text#sort
 ---
 
 # sort

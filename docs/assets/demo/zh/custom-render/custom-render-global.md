@@ -5,6 +5,7 @@ title: 全局单元格自定义内容
 cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/custom-render-global.png
 order: 7-3
 link: '../guide/custom_define/custom_render'
+option: ListTable#customRender.elements
 ---
 
 # 全局单元格自定义内容

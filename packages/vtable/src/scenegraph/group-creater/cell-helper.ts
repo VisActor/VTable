@@ -4,6 +4,7 @@ import { regUrl } from '../../tools/global';
 import type {
   CellRange,
   ChartColumnDefine,
+  CheckboxColumnDefine,
   ColumnDefine,
   ColumnTypeOption,
   ICustomRender,
@@ -27,6 +28,7 @@ import { getStyleTheme } from '../../core/tableHelper';
 import { isPromise } from '../../tools/helper';
 import { dealPromiseData } from '../utils/deal-promise-data';
 import { CartesianAxis } from '../../components/axis/axis';
+import { createCheckboxCellGroup } from './cell-type/checkbox-cell';
 // import type { PivotLayoutMap } from '../../layout/pivot-layout';
 import type { PivotHeaderLayoutMap } from '../../layout/pivot-header-layout';
 
@@ -327,6 +329,24 @@ export function createCell(
       padding,
       table,
       cellTheme
+    );
+  } else if (type === 'checkbox') {
+    cellGroup = createCheckboxCellGroup(
+      null,
+      columnGroup,
+      0,
+      y,
+      col,
+      row,
+      colWidth,
+      cellWidth,
+      cellHeight,
+      padding,
+      textAlign,
+      textBaseline,
+      table,
+      cellTheme,
+      define as CheckboxColumnDefine
     );
   }
 

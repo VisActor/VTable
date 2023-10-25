@@ -1,7 +1,7 @@
 import type { ILine, ISymbol, IThemeSpec } from '@visactor/vrender';
 import { createLine, createSymbol } from '@visactor/vrender';
 import { PointScale, LinearScale } from '@visactor/vscale';
-import { isValid } from '../../../tools/util';
+import { isValid } from '@visactor/vutils';
 import { Group } from '../../graphic/group';
 import type { CellInfo, SparklineSpec } from '../../../ts-types';
 import type { BaseTableAPI } from '../../../ts-types/base-table';

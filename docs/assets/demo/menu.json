@@ -219,6 +219,22 @@
           }
         },
         {
+          "path": "checkbox",
+          "title": {
+            "zh": "选择框类型",
+            "en": "Checkbox Type"
+          },
+          "meta": {
+            "title": "Checkbox Type",
+            "keywords": "",
+            "category": "demo",
+            "group": "Cell Type",
+            "cover": "https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/checkbox.png",
+            "link": "'../../guide/column_type/checkbox'",
+            "option": ""
+          }
+        },
+        {
           "path": "chart",
           "title": {
             "zh": "图表类型",
@@ -790,6 +806,13 @@
           "title": {
             "zh": "派生字段",
             "en": "Derived Field"
+          }
+        },
+        {
+          "path": "pivot-analysis-aggregation",
+          "title": {
+            "zh": "指标聚合方式",
+            "en": "Indicator Aggregation Type"
           }
         }
       ]

@@ -254,6 +254,8 @@ export interface BaseTableConstructorOptions {
   };
   /** 选择单元格交互配置 */
   select?: {
+    /** 点击表头单元格时连带body整行或整列选中 或仅选中当前单元格，默认或整行或整列选中*/
+    headerSelectMode?: 'inline' | 'cell';
     /** 不响应鼠标select交互 */
     disableSelect?: boolean;
     /** 单独设置表头不响应鼠标select交互 */
@@ -324,6 +326,12 @@ export interface BaseTableConstructorOptions {
   renderChartAsync?: boolean;
   // 开启图表异步渲染 每批次渐进渲染图表个数
   renderChartAsyncBatchCount?: number;
+
+  // for nodejs
+  mode?: 'node' | 'broswer';
+  modeParams?: any;
+  canvasWidth?: number;
+  canvasHeight?: number;
 }
 export interface BaseTableAPI {
   /** 表格的行数 */
@@ -415,6 +423,10 @@ export interface BaseTableAPI {
   rowHeaderLevelCount: number;
   /** 列表头的层数 */
   columnHeaderLevelCount: number;
+
+  canvasWidth?: number;
+  canvasHeight?: number;
+
   /** 获取表格绘制的范围 不包括frame的宽度 */
   getDrawRange: () => Rect;
   /** 将鼠标坐标值 转换成表格坐标系中的坐标位置 */
@@ -598,12 +610,15 @@ export interface PivotTableProtected extends IBaseTableProtected {
   layoutMap: PivotHeaderLayoutMap;
   dataConfig?: IDataConfig;
   /**
-   * 透视表 传入数据是透视后的嵌套层级结构 还是需要进行汇总计算的平坦数据
+   * 透视表是否开启数据分析
+   * 如果传入数据是明细数据需要聚合分析则开启
+   * 如传入数据是经过聚合好的为了提升性能这里设置为false，同时需要传入columnTree和rowTree
    */
   enableDataAnalysis?: boolean;
 
+  /** 列表头树型结构 */
   columnTree?: IHeaderTreeDefine[];
-  /** 行表头维度结构 */
+  /** 行表头树型结构 */
   rowTree?: IHeaderTreeDefine[];
   /** 定义行上各个维度具体配置项和样式定义 */
   rows?: (IDimension | string)[]; // (string | IDimension)[]; 后续支持数据分析的透视表 支持string配置

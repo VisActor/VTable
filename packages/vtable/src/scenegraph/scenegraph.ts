@@ -42,7 +42,6 @@ import { initSceneGraph } from './group-creater/init-scenegraph';
 import { updateContainerChildrenX } from './utils/update-container';
 import { loadPoptip, setPoptipTheme } from '@visactor/vrender-components';
 import textMeasureModule from './utils/text-measure';
-import renderServiceModule from './utils/render-service';
 import {
   getIconByXY,
   hideClickIcon,
@@ -53,9 +52,9 @@ import {
   showHoverIcon,
   updateFrozenIcon,
   updateHierarchyIcon,
-  updateIcon,
   updateSortIcon
 } from './icon/icon-update';
+import { Env } from '../tools/env';
 // import { contextModule } from './context/module';
 
 // VChart poptip theme
@@ -146,18 +145,29 @@ export class Scenegraph {
     this.mergeMap = new Map();
 
     setPoptipTheme(poptipStyle as any);
-    vglobal.setEnv('browser');
+    let width;
+    let height;
+    if (Env.mode === 'node') {
+      vglobal.setEnv('node', table.options.modeParams);
+      width = table.canvasWidth;
+      height = table.canvasHeight;
+    } else {
+      vglobal.setEnv('browser');
+      width = table.canvas.width;
+      height = table.canvas.height;
+    }
     this.stage = createStage({
       canvas: table.canvas,
-      width: table.canvas.width,
-      height: table.canvas.height,
+      width,
+      height,
       disableDirtyBounds: false,
       background: table.theme.underlayBackgroundColor,
       dpr: table.internalProps.pixelRatio,
       enableLayout: true,
       pluginList: table.isPivotChart() ? ['poptipForText'] : undefined,
       afterRender: () => {
-        this.table.fireListeners('after_stage_render', null);
+        this.table.fireListeners('after_render', null);
+        // console.trace('after_render');
       }
       // autoRender: true
     });
@@ -330,7 +340,8 @@ export class Scenegraph {
    */
   createSceneGraph() {
     this.clear = false;
-    this.frozenColCount = this.table.rowHeaderLevelCount;
+    // this.frozenColCount = this.table.rowHeaderLevelCount;
+    this.frozenColCount = this.table.frozenColCount;
     this.frozenRowCount = this.table.columnHeaderLevelCount;
 
     this.proxy = new SceneProxy(this.table);
@@ -675,23 +686,27 @@ export class Scenegraph {
   }
 
   resize() {
-    if (this.table.widthMode === 'adaptive' || this.table.autoFillWidth) {
-      this.recalculateColWidths();
+    if (this.table.internalProps._widthResizedColMap.size === 0) {
+      //如果没有手动调整过行高列宽 则重新计算一遍并重新分配
+      if (this.table.widthMode === 'adaptive' || this.table.autoFillWidth) {
+        this.recalculateColWidths();
+      }
+
+      if (this.table.heightMode === 'adaptive' || this.table.autoFillHeight) {
+        this.recalculateRowHeights();
+      }
     }
-    if (this.table.heightMode === 'adaptive' || this.table.autoFillHeight) {
-      this.recalculateRowHeights();
-    }
-    // widthMode === 'adaptive' 时，computeColsWidth()中已经有高度更新计算
-    // else if (this.table.widthMode === 'adaptive') {
-    //   this.table.clearRowHeightCache();
-    //   computeRowsHeight(this.table, 0, this.table.columnHeaderLevelCount - 1);
-    //   computeRowsHeight(this.table, this.proxy.rowStart, this.proxy.rowEnd);
-    // }
+    // // widthMode === 'adaptive' 时，computeColsWidth()中已经有高度更新计算
+    // // else if (this.table.widthMode === 'adaptive') {
+    // //   this.table.clearRowHeightCache();
+    // //   computeRowsHeight(this.table, 0, this.table.columnHeaderLevelCount - 1);
+    // //   computeRowsHeight(this.table, this.proxy.rowStart, this.proxy.rowEnd);
+    // // }
 
     this.dealWidthMode();
     this.dealHeightMode();
     this.resetFrozen();
-    this.dealFrozen();
+    // this.dealFrozen();
     this.updateTableSize();
     this.updateBorderSizeAndPosition();
     this.component.updateScrollBar();
@@ -922,8 +937,14 @@ export class Scenegraph {
     // this.dealWidthMode();
     // this.dealHeightMode();
     // 处理冻结
-    this.resetFrozen();
-    this.dealFrozen();
+    // this.resetFrozen();
+    // this.dealFrozen();
+
+    if (!this.isPivot && !this.transpose) {
+      this.component.setFrozenColumnShadow(this.table.frozenColCount - 1);
+    }
+    this.table.stateManeger.checkFrozen();
+    this.updateContainer();
 
     // 处理frame border
     this.createFrameBorder();
@@ -1291,7 +1312,7 @@ export class Scenegraph {
       return;
     }
     this.resetFrozen();
-    this.dealFrozen();
+    // this.dealFrozen();
     this.component.updateScrollBar();
   }
 

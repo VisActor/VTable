@@ -27,7 +27,8 @@ export function handleWhell(event: WheelEvent, state: StateManeger) {
   state.resetInteractionState();
   if (
     event.cancelable &&
-    ((deltaY !== 0 && isVerticalScrollable(deltaY, state)) || (deltaX !== 0 && isHorizontalScrollable(deltaX, state)))
+    ((Math.abs(deltaY) >= Math.abs(deltaX) && deltaY !== 0 && isVerticalScrollable(deltaY, state)) ||
+      (Math.abs(deltaY) <= Math.abs(deltaX) && deltaX !== 0 && isHorizontalScrollable(deltaX, state)))
   ) {
     event.preventDefault();
   }

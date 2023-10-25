@@ -1,4 +1,4 @@
-import { isNumber } from '../../tools/util';
+import { isNumber } from '@visactor/vutils';
 import type { BaseTableAPI } from '../../ts-types/base-table';
 import type { DirectionKey } from './direction';
 import { DIRECTION_KEY } from './direction';

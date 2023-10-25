@@ -176,5 +176,8 @@ export function createTable() {
     autoWrapText: true
   };
   const tableInstance = new VTable.ListTable(option);
+  tableInstance.on('initialized', args => {
+    console.log('initialized');
+  });
   window.tableInstance = tableInstance;
 }

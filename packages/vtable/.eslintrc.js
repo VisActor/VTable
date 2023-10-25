@@ -28,7 +28,7 @@ module.exports = {
       }
     }
   ],
-  ignorePatterns: ['scripts/**', 'bundler.config.js', '*.tsx'],
+  ignorePatterns: ['scripts/**', 'nodejs/**', 'bundler.config.js', '*.tsx'],
   rules: {
     'prettier/prettier': ['warn'],
     // 强制使用 Unix 换行符： \n

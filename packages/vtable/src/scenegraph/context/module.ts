@@ -1,6 +1,5 @@
 import type { CanvasConfigType, ICanvas } from '@visactor/vrender';
-import { CanvasFactory, Context2dFactory } from '@visactor/vrender';
-import { ContainerModule } from 'inversify';
+import { CanvasFactory, Context2dFactory, ContainerModule } from '@visactor/vrender';
 import { Context2dForVTable } from './context';
 import { CanvasForVTable } from './canvas';
 

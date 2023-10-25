@@ -21,6 +21,7 @@ import { getCellEventArgsSet, type SceneEvent } from './util';
 import { bindAxisClickEvent } from './pivot-chart/axis-click';
 import { bindAxisHoverEvent } from './pivot-chart/axis-hover';
 import type { PivotTable } from '../PivotTable';
+import { Env } from '../tools/env';
 
 export class EventManeger {
   table: BaseTableAPI;
@@ -38,6 +39,9 @@ export class EventManeger {
   touchMove: boolean; // is touch listener working, use to disable document touch scrolling function
   constructor(table: BaseTableAPI) {
     this.table = table;
+    if (Env.mode === 'node') {
+      return;
+    }
     this.bindOuterEvent();
     setTimeout(() => {
       this.bindSelfEvent();
@@ -164,14 +168,18 @@ export class EventManeger {
     const { eventArgs } = eventArgsSet;
 
     if (eventArgs) {
-      // 注意：如果启用下面这句代码逻辑 则在点击选中单元格时失效hover效果。但是会导致chart实例的click事件失效，所以先特殊处理这个逻辑
-      if (
-        !this.table.isPivotChart() &&
-        eventArgsSet?.eventArgs?.target.type !== 'chart' &&
-        eventArgs.event.pointerType !== 'touch'
-      ) {
-        this.table.stateManeger.updateHoverPos(-1, -1);
+      if (eventArgs.target.name === 'checkbox') {
+        return false;
       }
+
+      // // 注意：如果启用下面这句代码逻辑 则在点击选中单元格时失效hover效果。但是会导致chart实例的click事件失效，所以先特殊处理这个逻辑
+      // if (
+      //   !this.table.isPivotChart() &&
+      //   eventArgsSet?.eventArgs?.target.type !== 'chart' &&
+      //   eventArgs.event.pointerType !== 'touch'
+      // ) {
+      //   this.table.stateManeger.updateHoverPos(-1, -1);
+      // }
 
       if (
         this.table.isPivotChart() &&

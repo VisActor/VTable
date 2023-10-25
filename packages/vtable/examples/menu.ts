@@ -49,6 +49,10 @@ export const menus = [
       {
         path: 'list',
         name: 'list-merge-cell'
+      },
+      {
+        path: 'list',
+        name: 'list-no-columns'
       }
     ]
   },
@@ -188,6 +192,10 @@ export const menus = [
       {
         path: 'type',
         name: 'chart'
+      },
+      {
+        path: 'type',
+        name: 'checkbox'
       }
     ]
   },
@@ -314,6 +322,10 @@ export const menus = [
       {
         path: 'pivot-analysis',
         name: 'pivot-analysis-pagination'
+      },
+      {
+        path: 'pivot-analysis',
+        name: 'pivot-analysis-field'
       }
     ]
   },

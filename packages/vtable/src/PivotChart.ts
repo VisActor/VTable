@@ -39,6 +39,7 @@ import type { ITableAxisOption } from './ts-types/component/axis';
 import { cloneDeep, isArray } from '@visactor/vutils';
 import type { DiscreteLegend } from '@visactor/vrender-components';
 import { Title } from './components/title/title';
+import { Env } from './tools/env';
 
 export class PivotChart extends BaseTable implements PivotChartAPI {
   declare internalProps: PivotChartProtected;
@@ -55,7 +56,10 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
   constructor(options: PivotChartConstructorOptions);
   constructor(container: HTMLElement, options: PivotChartConstructorOptions);
   constructor(container?: HTMLElement | PivotChartConstructorOptions, options?: PivotChartConstructorOptions) {
-    if (!(container instanceof HTMLElement)) {
+    if (Env.mode === 'node') {
+      options = container as PivotChartConstructorOptions;
+      container = null;
+    } else if (!(container instanceof HTMLElement)) {
       options = container as PivotChartConstructorOptions;
       if ((container as PivotChartConstructorOptions).container) {
         container = (container as PivotChartConstructorOptions).container;
@@ -945,7 +949,10 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
     updateChartData(this.scenegraph);
     this.render();
   }
-  /** 设置图例的选择状态。设置完后同步图表的状态需要配合updateFilterRules接口使用 */
+  /** 获取图例的选择状态 */
+  getLegendSelected() {
+    return (this.internalProps.legends.legendComponent as any)._getSelectedLegends().map((d: any) => d.label);
+  }
   setLegendSelected(selectedData: (string | number)[]) {
     (this.internalProps.legends.legendComponent as DiscreteLegend).setSelected(selectedData);
     // this.updateFilterRules([{ filterKey: '20001', filteredValues: selectedData }]);

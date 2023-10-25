@@ -5,6 +5,7 @@ title: Drop Down Menu
 cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/dropdown.png
 order: 8-2
 link: '../guide/components/dropdown'
+option: ListTable-columns-text#dropDownMenu
 ---
 
 # drop down menu
@@ -155,7 +156,7 @@ const option = {
 tableInstance = new VTable.ListTable(document.getElementById(CONTAINER_ID), option);
 window['tableInstance'] = tableInstance;
 
-tableInstance.listen('click_cell', (args) => {
+tableInstance.on('click_cell', (args) => {
         const { col, row, targetIcon } = args;
         if(col===0&&row>=1&&targetIcon?.name==='order'){
           const { left, top, width, height, bottom, right } = targetIcon.position;
@@ -219,7 +220,7 @@ tableInstance.listen('click_cell', (args) => {
       });
         }
     });
-  tableInstance.listen('dropdownmenu_click', (args) => {
+  tableInstance.on('dropdownmenu_click', (args) => {
     console.log('dropdownmenu_click',args);
     tableInstance.setDropDownMenuHighlight([args]);
   })
