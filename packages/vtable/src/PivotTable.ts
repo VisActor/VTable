@@ -405,14 +405,16 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
       });
     }
   }
-
-  getRecordIndexByRow(row: number): number {
-    const { layoutMap } = this.internalProps;
-    return layoutMap.getRecordIndexByRow(row);
+  getRecordIndexByCell(col: number, row: number): number {
+    return undefined;
   }
-  getRecordIndexByCol(col: number): number {
+  getBodyIndexByRow(row: number): number {
     const { layoutMap } = this.internalProps;
-    return layoutMap.getRecordIndexByCol(col);
+    return layoutMap.getBodyIndexByRow(row);
+  }
+  getBodyIndexByCol(col: number): number {
+    const { layoutMap } = this.internalProps;
+    return layoutMap.getBodyIndexByCol(col);
   }
   getFieldData(field: FieldDef | FieldFormat | undefined, col: number, row: number): FieldData {
     if (field === null || field === undefined) {
@@ -422,8 +424,8 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
     if (table.internalProps.layoutMap.isHeader(col, row)) {
       return null;
     }
-    const rowIndex = this.getRecordIndexByRow(row);
-    const colIndex = this.getRecordIndexByCol(col);
+    const rowIndex = this.getBodyIndexByRow(row);
+    const colIndex = this.getBodyIndexByCol(col);
     const dataValue = table.dataSource?.getField(rowIndex, colIndex);
     if (typeof field !== 'string') {
       //field为函数format
@@ -439,8 +441,6 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
       return typeof fieldFormat === 'function' ? fieldFormat(title) : title;
     }
     if (this.dataset) {
-      // const colKeys = this.dataset.colKeysPath[this.internalProps.layoutMap.getRecordIndexByCol(col)] ?? [];
-      // const rpwKeys = this.dataset.rowKeysPath[this.internalProps.layoutMap.getRecordIndexByRow(row)] ?? [];
       const cellDimensionPath = this.internalProps.layoutMap.getCellHeaderPaths(col, row);
       const colKeys = cellDimensionPath.colHeaderPaths.map((colPath: any) => {
         return colPath.indicatorKey ?? colPath.value;
@@ -482,8 +482,6 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
       return typeof title === 'function' ? title() : title;
     }
     if (this.dataset) {
-      // const colKey = this.dataset.colKeysPath[this.internalProps.layoutMap.getRecordIndexByCol(col)] ?? [];
-      // const rowKey = this.dataset.rowKeysPath[this.internalProps.layoutMap.getRecordIndexByRow(row)] ?? [];
       const cellDimensionPath = this.internalProps.layoutMap.getCellHeaderPaths(col, row);
       const colKeys = cellDimensionPath.colHeaderPaths.map((colPath: any) => {
         return colPath.indicatorKey ?? colPath.value;

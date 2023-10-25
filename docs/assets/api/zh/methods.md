@@ -151,7 +151,37 @@ tableInstance.renderWithRecreateCells();
    */
   getCellStyle(col: number, row: number) => CellStyle
 ```
+## getRecordByCell(Function)
 
+获取该单元格的数据项
+
+```
+  /**
+   * 根据行列号获取整条数据记录
+   * @param  {number} col col index.
+   * @param  {number} row row index.
+   * @return {object} record.
+   */
+  getRecordByCell(col: number, row: number)
+```
+
+## getCellOriginRecord(Function)
+
+获取该单元格的源数据项。
+
+如果是普通表格，会返回源数据的对象。
+
+如果是透视分析表（开启了数据分析的透视表），会返回源数据的数组。
+
+```
+  /**
+   * 根据行列号获取源数据
+   * @param  {number} col col index.
+   * @param  {number} row row index.
+   * @return {object} record or record array
+   */
+  getCellOriginRecord(col: number, row: number)
+```
 ## getAllCells(Function)
 
 获取所有单元格上下文信息

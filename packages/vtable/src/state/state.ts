@@ -6,6 +6,7 @@ import type {
   CellAddress,
   CellPosition,
   CellRange,
+  CheckboxColumnDefine,
   DropDownMenuHighlightInfo,
   IDimensionInfo,
   ListTableAPI,
@@ -141,6 +142,9 @@ export class StateManeger {
   _clearHorizontalScrollBar: any;
 
   fastScrolling: boolean = false;
+
+  checkedState: Record<string | number, boolean>[] = []; //对应原始数据列表顺序的checked状态
+  headerCheckedState: Record<string | number, boolean> = {}; //对应原始数据列表顺序的checked状态
   // 供滚动重置为default使用
   resetInteractionState = debounce(() => {
     this.updateInteractionState(InteractionState.default);
@@ -928,6 +932,96 @@ export class StateManeger {
     } else {
       this.sparkLine.col = -1;
       this.sparkLine.row = -1;
+    }
+  }
+  setCheckedState(col: number, row: number, field: string | number, checked: boolean) {
+    const recordIndex = this.table.getRecordIndexByCell(col, row);
+    if (recordIndex >= 0) {
+      const dataIndex = this.table.dataSource.getIndexKey(recordIndex) as number;
+      if (this.checkedState[dataIndex]) {
+        this.checkedState[dataIndex][field] = checked;
+      } else {
+        this.checkedState[dataIndex] = {};
+        this.checkedState[dataIndex][field] = checked;
+      }
+    }
+  }
+  setHeaderCheckedState(field: string | number, checked: boolean) {
+    this.headerCheckedState[field] = checked;
+    this.checkedState?.forEach(recordCheckState => {
+      recordCheckState[field] = checked;
+    });
+  }
+  syncCheckedState(col: number, row: number, field: string | number, checked: boolean): boolean {
+    if (this.table.isHeader(col, row)) {
+      if (isValid(this.headerCheckedState[field])) {
+        return this.headerCheckedState[field];
+      } else if (isValid(checked)) {
+        this.headerCheckedState[field] = checked;
+      } else {
+        const isAllChecked = this.checkedState.every(item => item[field] === true); //TODO 考虑加入半选状态
+        this.headerCheckedState[field] = isAllChecked;
+      }
+      return this.headerCheckedState[field];
+    }
+    const recordIndex = this.table.getRecordIndexByCell(col, row);
+    if (recordIndex >= 0) {
+      const dataIndex = this.table.dataSource.getIndexKey(recordIndex) as number;
+      if (isValid(this.checkedState[dataIndex]?.[field])) {
+        return this.checkedState[dataIndex][field];
+      }
+      if (this.checkedState[dataIndex]) {
+        this.checkedState[dataIndex][field] = checked;
+      } else {
+        this.checkedState[dataIndex] = {};
+        this.checkedState[dataIndex][field] = checked;
+      }
+    }
+    return checked;
+  }
+  syncHeaderCheckedState(field: string | number, checked: boolean): boolean {
+    if (isValid(this.headerCheckedState[field])) {
+      return this.headerCheckedState[field];
+    } else if (isValid(checked)) {
+      this.headerCheckedState[field] = checked;
+    } else {
+      const isAllChecked = this.checkedState.every(item => item[field] === true); //TODO 考虑加入半选状态
+      this.headerCheckedState[field] = isAllChecked;
+    }
+    return this.headerCheckedState[field];
+  }
+  initCheckedState(records: any[]) {
+    let isNeedInitHeaderCheckedStateFromRecord = false;
+    const checkboxCellTypeField: (string | number)[] = [];
+    this.table.internalProps.layoutMap.headerObjects.forEach((hd, index) => {
+      if (hd.headerType === 'checkbox') {
+        const headerChecked = (hd.define as CheckboxColumnDefine).checked as boolean;
+        this.headerCheckedState[hd.field as string | number] = headerChecked;
+        if (headerChecked === undefined || headerChecked === null) {
+          isNeedInitHeaderCheckedStateFromRecord = true;
+        }
+        if (hd.define.cellType === 'checkbox' && !hd.fieldFormat) {
+          checkboxCellTypeField.push(hd.field as string | number);
+        }
+      }
+    });
+
+    if (isNeedInitHeaderCheckedStateFromRecord) {
+      records.forEach((record: any, index: number) => {
+        checkboxCellTypeField.forEach(field => {
+          const value = record[field] as string | { text: string; checked: boolean; disable: boolean } | boolean;
+          let isChecked;
+          if (isObject(value)) {
+            isChecked = value.checked;
+          } else if (typeof value === 'boolean') {
+            isChecked = value;
+          }
+          if (!this.checkedState[index]) {
+            this.checkedState[index] = {};
+          }
+          this.checkedState[index][field] = isChecked;
+        });
+      });
     }
   }
 }

@@ -552,7 +552,7 @@ export class SimpleHeaderLayoutMap implements LayoutMapAPI {
       range1.end.row === range2.end.row
     );
   }
-  getRecordIndexByRow(col: number, row: number): number {
+  getRecordIndexByCell(col: number, row: number): number {
     if (this.transpose) {
       if (col < this.headerLevelCount) {
         return -1;
@@ -593,6 +593,7 @@ export class SimpleHeaderLayoutMap implements LayoutMapAPI {
         columnWidthComputeMode: hd.columnWidthComputeMode
         // iconPositionList:[]
       };
+
       results[id] = cell;
       for (let r = row - 1; r >= 0; r--) {
         this._headerCellIds[r][col] = roots[r];

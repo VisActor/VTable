@@ -58,7 +58,7 @@
     "cssfontparser": "^1.2.1"
   },
   "devDependencies": {
-    "@visactor/vchart": "1.4.3",
+    "@visactor/vchart": "1.5.1",
     "@internal/bundler": "workspace:*",
     "@internal/eslint-config": "workspace:*",
     "@internal/ts-config": "workspace:*",
@@ -105,8 +105,10 @@
     "d3-geo": "^3.0.1",
     "d3-hexbin": "^0.2.2",
     "d3-hierarchy": "^3.1.1",
-    "canvas": "^2.11.2",
     "@resvg/resvg-js": "^2.5.0"
+  },
+  "peerDependencies": {
+    "canvas": "^2.11.2"
   },
   "unpkg": "latest",
   "unpkgFiles": [

@@ -81,7 +81,7 @@ VTable.register.icon('message',{
          },
       customLayout: (args) => {
         const { table,row,col,rect } = args;
-        const record = table.getRecordByRowCol(col,row);
+        const record = table.getRecordByCell(col,row);
        const  {height, width } = rect ?? table.getCellRect(col,row);
        const percentCalc = VTable.CustomLayout.percentCalc;
 

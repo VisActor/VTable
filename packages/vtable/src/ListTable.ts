@@ -190,9 +190,9 @@ export class ListTable extends BaseTable implements ListTableAPI {
     return table.getFieldData(field, col, row);
   }
   /** @private */
-  getRecordIndexByRow(col: number, row: number): number {
+  getRecordIndexByCell(col: number, row: number): number {
     const { layoutMap } = this.internalProps;
-    return layoutMap.getRecordIndexByRow(col, row);
+    return layoutMap.getRecordIndexByCell(col, row);
   }
   /**
    *
@@ -202,7 +202,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
    */
   getCellOriginRecord(col: number, row: number): MaybePromiseOrUndefined {
     const table = this;
-    const index = table.getRecordIndexByRow(col, row);
+    const index = table.getRecordIndexByCell(col, row);
     if (index > -1) {
       return table.dataSource.get(index);
     }
@@ -368,7 +368,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
     if (table.internalProps.layoutMap.isHeader(col, row)) {
       return null;
     }
-    const index = table.getRecordIndexByRow(col, row);
+    const index = table.getRecordIndexByCell(col, row);
     return table.internalProps.dataSource.getField(index, field);
   }
   /**
@@ -504,7 +504,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
     if (!define.tree) {
       return HierarchyState.none;
     }
-    const index = this.getRecordIndexByRow(col, row);
+    const index = this.getRecordIndexByCell(col, row);
     return this.dataSource.getHierarchyState(index);
   }
   /**
@@ -529,7 +529,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
       });
     }
 
-    const index = this.getRecordIndexByRow(col, row);
+    const index = this.getRecordIndexByCell(col, row);
     const diffDataIndices = this.dataSource.toggleHierarchyState(index);
     const diffPositions = this.internalProps.layoutMap.toggleHierarchyState(diffDataIndices);
     //影响行数

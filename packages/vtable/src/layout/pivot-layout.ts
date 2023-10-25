@@ -1295,7 +1295,7 @@
 //    * @param row
 //    * @returns
 //    */
-//   getRecordIndexByRow(row: number): number {
+//   getRecordIndexByCell(row: number): number {
 //     if (row < this.columnHeaderLevelCount) {
 //       return -1;
 //     }
@@ -1332,7 +1332,7 @@
 //    */
 //   getCellHeaderPaths(col: number, row: number): IPivotTableCellHeaderPaths {
 //     const recordCol = this.getRecordIndexByCol(col);
-//     const recordRow = this.getRecordIndexByRow(row);
+//     const recordRow = this.getRecordIndexByCell(row);
 //     let colPath;
 //     let rowPath;
 //     let colHeaderPaths: string[];

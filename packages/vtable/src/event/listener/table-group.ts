@@ -585,6 +585,19 @@ export function bindTableGroupListener(eventManeger: EventManeger) {
       target: eventArgsSet?.eventArgs?.target,
       checked: (e.detail as unknown as { checked: boolean }).checked
     };
+    table.stateManeger.setCheckedState(
+      col,
+      row,
+      cellInfo.field as string | number,
+      (e.detail as unknown as { checked: boolean }).checked
+    );
+    if (table.isHeader(col, row)) {
+      table.stateManeger.setHeaderCheckedState(
+        cellInfo.field as string | number,
+        (e.detail as unknown as { checked: boolean }).checked
+      );
+      // table.scenegraph.updateCheckboxCellState();
+    }
     table.fireListeners(TABLE_EVENT_TYPE.CHECKBOX_STATE_CHANGE, cellsEvent);
   });
 }

@@ -64,7 +64,7 @@ export function createTable() {
         width: '260',
         customLayout: (args: VTable.TYPES.CustomRenderFunctionArg) => {
           const { table, row, col, rect } = args;
-          const record = table.getRecordByRowCol(col, row);
+          const record = table.getRecordByCell(col, row);
           const { height, width } = rect ?? table.getCellRect(col, row);
           const percentCalc = VTable.CustomLayout.percentCalc;
 

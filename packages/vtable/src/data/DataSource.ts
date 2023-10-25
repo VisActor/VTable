@@ -16,6 +16,7 @@ import { EventTarget } from '../event/EventTarget';
 import { getValueByPath } from '../tools/util';
 import { diffCellIndices } from '../tools/diff-cell';
 import { isValid } from '@visactor/vutils';
+import type { BaseTableAPI } from '../ts-types/base-table';
 
 /**
  * 判断字段数据是否为访问器的格式
@@ -141,6 +142,7 @@ export class DataSource extends EventTarget implements DataSourceAPI {
     return EVENT_TYPE;
   }
   protected treeDataHierarchyState: Map<number | string, HierarchyState> = new Map();
+
   constructor(obj?: DataSourceParam | DataSource, pagination?: IPagination, hierarchyExpandLevel?: number) {
     super();
 

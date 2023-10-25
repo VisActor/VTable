@@ -489,8 +489,8 @@ export interface BaseTableAPI {
 
   off: (id: EventListenerId) => void;
   getBodyField: (col: number, row: number) => FieldDef | undefined;
-  getRecordByRowCol: (col: number, row: number) => MaybePromiseOrUndefined;
-  getRecordIndexByRow: (col: number, row: number) => number;
+  getRecordByCell: (col: number, row: number) => MaybePromiseOrUndefined;
+  getRecordIndexByCell: (col: number, row: number) => number;
   getRecordStartRowByRecordIndex: (index: number) => number;
 
   getHeaderField: (col: number, row: number) => any | undefined;
