@@ -14,7 +14,7 @@ import type {
   TextColumnDefine
 } from '../../ts-types';
 import { dealWithCustom } from '../component/custom';
-import { Group } from '../graphic/group';
+import type { Group } from '../graphic/group';
 import { getProp } from '../utils/get-prop';
 import { createChartCellGroup } from './cell-type/chart-cell';
 import { createImageCellGroup } from './cell-type/image-cell';
@@ -31,6 +31,7 @@ import { CartesianAxis } from '../../components/axis/axis';
 import { createCheckboxCellGroup } from './cell-type/checkbox-cell';
 // import type { PivotLayoutMap } from '../../layout/pivot-layout';
 import type { PivotHeaderLayoutMap } from '../../layout/pivot-header-layout';
+import { resizeCellGroup } from './column-helper';
 
 export function createCell(
   type: ColumnTypeOption,
@@ -376,106 +377,61 @@ export function updateCell(col: number, row: number, table: BaseTableAPI, addNew
   }
 
   let newCellGroup;
-  if (isMerge && (col !== range.start.col || row !== range.start.row)) {
-    // 合并单元格的非起始单元格不需要绘制
-    newCellGroup = new Group({
-      x: 0,
-      y: addNew ? 0 : oldCellGroup.attribute.y,
-      width: 0,
-      height: 0,
-      visible: false,
-      pickable: false
-    });
-    newCellGroup.role = 'shadow-cell';
-    newCellGroup.col = col;
-    newCellGroup.row = row;
-    newCellGroup.mergeCol = range.start.col;
-    newCellGroup.mergeRow = range.start.row;
+  const mayHaveIcon = cellLocation !== 'body' ? true : !!define?.icon || !!define?.tree;
+  const headerStyle = table._getCellStyle(col, row);
+  const cellTheme = getStyleTheme(headerStyle, table, col, row, getProp).theme;
+  const padding = cellTheme._vtable.padding;
+  const textAlign = cellTheme._vtable.textAlign;
+  const textBaseline = cellTheme._vtable.textBaseline;
 
-    if (!addNew) {
-      oldCellGroup.parent.insertAfter(newCellGroup, oldCellGroup);
-      oldCellGroup.parent.removeChild(oldCellGroup);
-
-      // update merge cell
-      updateCell(range.start.col, range.start.row, table, false);
-    }
-  } else {
-    const mayHaveIcon = cellLocation !== 'body' ? true : !!define?.icon || !!define?.tree;
-    const headerStyle = table._getCellStyle(col, row);
-    const cellTheme = getStyleTheme(headerStyle, table, col, row, getProp).theme;
-    const padding = cellTheme._vtable.padding;
-    const textAlign = cellTheme._vtable.textAlign;
-    const textBaseline = cellTheme._vtable.textBaseline;
-
-    let bgColorFunc: Function;
-    // 判断是否有mapping  遍历dataset中mappingRules
-    if ((table.internalProps as PivotTableProtected)?.dataConfig?.mappingRules && !table.isHeader(col, row)) {
-      (table.internalProps as PivotTableProtected)?.dataConfig?.mappingRules?.forEach(
-        (mappingRule: MappingRule, i: number) => {
-          if (
-            mappingRule.bgColor &&
-            (table.internalProps.layoutMap as PivotHeaderLayoutMap).getIndicatorKey(col, row) ===
-              mappingRule.bgColor.indicatorKey
-          ) {
-            bgColorFunc = mappingRule.bgColor.mapping;
-          }
+  let bgColorFunc: Function;
+  // 判断是否有mapping  遍历dataset中mappingRules
+  if ((table.internalProps as PivotTableProtected)?.dataConfig?.mappingRules && !table.isHeader(col, row)) {
+    (table.internalProps as PivotTableProtected)?.dataConfig?.mappingRules?.forEach(
+      (mappingRule: MappingRule, i: number) => {
+        if (
+          mappingRule.bgColor &&
+          (table.internalProps.layoutMap as PivotHeaderLayoutMap).getIndicatorKey(col, row) ===
+            mappingRule.bgColor.indicatorKey
+        ) {
+          bgColorFunc = mappingRule.bgColor.mapping;
         }
-      );
-    }
+      }
+    );
+  }
 
-    let customRender;
-    let customLayout;
-    if (cellLocation !== 'body') {
-      customRender = define?.headerCustomRender;
-      customLayout = define?.headerCustomLayout;
-    } else {
-      customRender = define?.customRender || table.customRender;
-      customLayout = define?.customLayout;
-    }
+  let customRender;
+  let customLayout;
+  if (cellLocation !== 'body') {
+    customRender = define?.headerCustomRender;
+    customLayout = define?.headerCustomLayout;
+  } else {
+    customRender = define?.customRender || table.customRender;
+    customLayout = define?.customLayout;
+  }
 
-    let cellWidth;
-    let cellHeight;
-    if (range) {
-      cellWidth = table.getColsWidth(range.start.col, range.end.col);
-      cellHeight = table.getRowsHeight(range.start.row, range.end.row);
-    } else {
-      cellWidth = table.getColWidth(col);
-      cellHeight = table.getRowHeight(row);
-    }
+  let cellWidth;
+  let cellHeight;
+  if (range) {
+    cellWidth = table.getColsWidth(range.start.col, range.end.col);
+    cellHeight = table.getRowsHeight(range.start.row, range.end.row);
+  } else {
+    cellWidth = table.getColWidth(col);
+    cellHeight = table.getRowHeight(row);
+  }
 
-    // deal with promise data
-    const value = table.getCellValue(col, row);
-    if (isPromise(value)) {
-      // clear cell content sync
-      oldCellGroup.removeAllChild();
+  // deal with promise data
+  const value = table.getCellValue(col, row);
+  if (isPromise(value)) {
+    // clear cell content sync
+    oldCellGroup.removeAllChild();
 
-      // update cell content async
-      dealPromiseData(
-        value,
-        table,
-        updateCellContent.bind(
-          null,
-          type,
-          define,
-          table,
-          col,
-          row,
-          bgColorFunc,
-          cellWidth,
-          cellHeight,
-          oldCellGroup,
-          padding,
-          textAlign,
-          textBaseline,
-          mayHaveIcon,
-          isMerge,
-          range,
-          addNew,
-          cellTheme
-        )
-      );
-    } else {
-      newCellGroup = updateCellContent(
+    // update cell content async
+    dealPromiseData(
+      value,
+      table,
+      updateCellContent.bind(
+        null,
         type,
         define,
         table,
@@ -493,8 +449,34 @@ export function updateCell(col: number, row: number, table: BaseTableAPI, addNew
         range,
         addNew,
         cellTheme
-      );
-    }
+      )
+    );
+  } else {
+    newCellGroup = updateCellContent(
+      type,
+      define,
+      table,
+      col,
+      row,
+      bgColorFunc,
+      cellWidth,
+      cellHeight,
+      oldCellGroup,
+      padding,
+      textAlign,
+      textBaseline,
+      mayHaveIcon,
+      isMerge,
+      range,
+      addNew,
+      cellTheme
+    );
+  }
+
+  if (isMerge) {
+    const rangeHeight = table.getRowHeight(row);
+    const rangeWidth = table.getColWidth(col);
+    resizeCellGroup(newCellGroup, rangeWidth, rangeHeight, range, table);
   }
 
   return newCellGroup;

@@ -226,7 +226,7 @@ export function getColumnGroupTheme(
   return { theme: columnTheme, hasFunctionPros };
 }
 
-function resizeCellGroup(
+export function resizeCellGroup(
   cellGroup: Group,
   rangeWidth: number,
   rangeHeight: number,

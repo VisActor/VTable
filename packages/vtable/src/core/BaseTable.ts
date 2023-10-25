@@ -345,6 +345,8 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
 
     this.headerStyleCache = new Map();
     this.bodyStyleCache = new Map();
+
+    internalProps.stick = { changedCells: [] };
   }
   /** 节流绘制 */
   throttleInvalidate = throttle2(this.render.bind(this), 200);

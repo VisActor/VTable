@@ -71,7 +71,6 @@ async function moveColumn(
     proxy.colEnd = direction === 'left' ? proxy.colEnd + count : proxy.colEnd - count;
 
     updateColContent(syncLeftCol, syncRightCol, proxy);
-    checkFirstColMerge(distStartCol, proxy);
 
     updateAutoColumn(
       syncLeftCol, // colStart
@@ -112,7 +111,6 @@ async function moveColumn(
     proxy.colStart = distStartCol;
     proxy.colEnd = distEndCol;
     updateColContent(syncLeftCol, syncRightCol, proxy);
-    checkFirstColMerge(distStartCol, proxy);
 
     updateAutoColumn(
       syncLeftCol, // colStart
