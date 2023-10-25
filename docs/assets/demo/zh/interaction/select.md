@@ -10,7 +10,13 @@ option: keyboardOptions.selectAllOnCtrlA
 
 # 选择单元格
 
-选中单元格，按住ctrl或者shift多选，也可开启快捷键进行ctrlA全选。
+点击单元格进行单选，拖拽进行刷选。
+
+按住ctrl或者shift进行多选。
+
+开启快捷键selectAllOnCtrlA配置进行全选。
+
+点击表头单元格的行为默认会选中整行或者整列，如果只想选中当前单元格可以设置select.headerSelectMode为'cell'。
 
 ## 关键配置
 

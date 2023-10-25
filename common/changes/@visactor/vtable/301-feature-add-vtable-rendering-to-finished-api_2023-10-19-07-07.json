@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "comment": "docs: add event api\n\n",
+      "type": "patch",
+      "packageName": "@visactor/vtable"
+    }
+  ],
+  "packageName": "@visactor/vtable",
+  "email": "892739385@qq.com"
+}
