@@ -1,7 +1,7 @@
 import { isArray, merge } from '@visactor/vutils';
 import type { BaseTableAPI } from '../../ts-types/base-table';
 import type { ICellAxisOption } from '../../ts-types/component/axis';
-import { commonAxis } from './get-axis-attributes';
+import { DEFAULT_TEXT_FONT_FAMILY, DEFAULT_TEXT_FONT_SIZE, commonAxis } from './get-axis-attributes';
 
 /**
  * @description: compuational vertical axis width
@@ -26,9 +26,9 @@ export function computeAxisComponentWidth(config: ICellAxisOption, table: BaseTa
           text = attribute.label.formatMethod(text);
         }
         const { width, height } = table.measureText(text, {
-          fontSize: attribute.label?.style?.fontSize,
-          fontWeight: attribute.label?.style?.fontWeight,
-          fontFamily: attribute.label?.style?.fontFamily
+          fontSize: attribute.label?.style?.fontSize ?? DEFAULT_TEXT_FONT_SIZE,
+          fontWeight: attribute.label?.style?.fontWeight ?? 'normal',
+          fontFamily: attribute.label?.style?.fontFamily ?? DEFAULT_TEXT_FONT_FAMILY
         });
         const widthLimit = attribute.label?.style?.maxLineWidth || Infinity;
         const angel =
@@ -54,9 +54,9 @@ export function computeAxisComponentWidth(config: ICellAxisOption, table: BaseTa
           text = attribute.label.formatMethod(text);
         }
         const { width, height } = table.measureText(text, {
-          fontSize: attribute.label?.style?.fontSize,
-          fontWeight: attribute.label?.style?.fontWeight,
-          fontFamily: attribute.label?.style?.fontFamily
+          fontSize: attribute.label?.style?.fontSize ?? DEFAULT_TEXT_FONT_SIZE,
+          fontWeight: attribute.label?.style?.fontWeight ?? 'normal',
+          fontFamily: attribute.label?.style?.fontFamily ?? DEFAULT_TEXT_FONT_FAMILY
         });
         const widthLimit = attribute.label?.style?.maxLineWidth || Infinity;
         const angle =
@@ -71,9 +71,9 @@ export function computeAxisComponentWidth(config: ICellAxisOption, table: BaseTa
   let titleWidth = 0;
   if (attribute.title.visible && attribute.title.text) {
     const { width, height } = table.measureText(attribute.title.text, {
-      fontSize: attribute.title?.style?.fontSize,
-      fontWeight: attribute.title?.style?.fontWeight,
-      fontFamily: attribute.title?.style?.fontFamily
+      fontSize: attribute.title?.style?.fontSize ?? DEFAULT_TEXT_FONT_SIZE,
+      fontWeight: attribute.title?.style?.fontWeight ?? 'normal',
+      fontFamily: attribute.title?.style?.fontFamily ?? DEFAULT_TEXT_FONT_FAMILY
     });
     const widthLimit = attribute.label?.style?.maxLineWidth || Infinity;
     const size = getSizeAfterResize(Math.min(width, widthLimit), height, attribute.title?.style?.angle);
@@ -111,9 +111,9 @@ export function computeAxisComponentHeight(config: ICellAxisOption, table: BaseT
           text = attribute.label.formatMethod(text);
         }
         const { width, height } = table.measureText(text, {
-          fontSize: attribute.label?.style?.fontSize,
-          fontWeight: attribute.label?.style?.fontWeight,
-          fontFamily: attribute.label?.style?.fontFamily
+          fontSize: attribute.label?.style?.fontSize ?? DEFAULT_TEXT_FONT_SIZE,
+          fontWeight: attribute.label?.style?.fontWeight ?? 'normal',
+          fontFamily: attribute.label?.style?.fontFamily ?? DEFAULT_TEXT_FONT_FAMILY
         });
         const widthLimit = attribute.label?.style?.maxLineWidth || Infinity;
         const angle =
@@ -139,9 +139,9 @@ export function computeAxisComponentHeight(config: ICellAxisOption, table: BaseT
           text = attribute.label.formatMethod(text);
         }
         const { width, height } = table.measureText(text, {
-          fontSize: attribute.label?.style?.fontSize,
-          fontWeight: attribute.label?.style?.fontWeight,
-          fontFamily: attribute.label?.style?.fontFamily
+          fontSize: attribute.label?.style?.fontSize ?? DEFAULT_TEXT_FONT_SIZE,
+          fontWeight: attribute.label?.style?.fontWeight ?? 'normal',
+          fontFamily: attribute.label?.style?.fontFamily ?? DEFAULT_TEXT_FONT_FAMILY
         });
         const widthLimit = attribute.label?.style?.maxLineWidth || Infinity;
         const angle =
@@ -156,9 +156,9 @@ export function computeAxisComponentHeight(config: ICellAxisOption, table: BaseT
   let titleHeight = 0;
   if (attribute.title.visible && attribute.title.text) {
     const { width, height } = table.measureText(attribute.title.text, {
-      fontSize: attribute.title?.style?.fontSize,
-      fontWeight: attribute.title?.style?.fontWeight,
-      fontFamily: attribute.title?.style?.fontFamily
+      fontSize: attribute.title?.style?.fontSize ?? DEFAULT_TEXT_FONT_SIZE,
+      fontWeight: attribute.title?.style?.fontWeight ?? 'normal',
+      fontFamily: attribute.title?.style?.fontFamily ?? DEFAULT_TEXT_FONT_FAMILY
     });
     const widthLimit = attribute.label?.style?.maxLineWidth || Infinity;
     const size = getSizeAfterResize(Math.min(width, widthLimit), height, attribute.title?.style?.angle);

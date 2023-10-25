@@ -8,7 +8,7 @@ import { Icon } from '../../graphic/icon';
 import { calcStartPosition } from '../../utils/cell-pos';
 import { _adjustWidthHeight } from './image-cell';
 import { getFunctionalProp, getProp } from '../../utils/get-prop';
-import { isValid } from '../../../tools/util';
+import { isValid } from '@visactor/vutils';
 import type { BaseTableAPI } from '../../../ts-types/base-table';
 
 const regedIcons = icons.get();

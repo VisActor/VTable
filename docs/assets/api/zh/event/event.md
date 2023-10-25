@@ -370,9 +370,14 @@ icon 图标点击事件。
 事件回调函数的参数类型:
 同**MOUSEENTER_AXIS**
 
+## INITIALIZED
+成功初始化完成后触发
+## AFTER_RENDER	
+每次渲染完成后触发
+
 ## onVChartEvent
 
-监听 vchart 事件，具体事件类型可参考(VChart 事件)[ff]
+监听 vchart 事件，具体事件类型可参考[VChart 事件](https://visactor.io/vchart/api/API/event)
 
 ```
   /**

@@ -99,7 +99,7 @@ export function getChartAxes(col: number, row: number, layout: PivotHeaderLayout
           },
           axisOption,
           {
-            type: 'linear',
+            type: axisOption?.type || 'linear',
             orient: index === 0 ? 'bottom' : 'top',
             // visible: true,
             label: { visible: false },
@@ -206,7 +206,7 @@ export function getChartAxes(col: number, row: number, layout: PivotHeaderLayout
           },
           axisOption,
           {
-            type: 'linear',
+            type: axisOption?.type || 'linear',
             orient: index === 0 ? 'left' : 'right',
             // visible: true,
             label: { visible: false },

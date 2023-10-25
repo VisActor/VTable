@@ -15,11 +15,11 @@ const DEFAULT_TITLE_STYLE = {
   angle: {}
 };
 
-const DEFAULT_TEXT_FONT_FAMILY =
+export const DEFAULT_TEXT_FONT_FAMILY =
   // eslint-disable-next-line max-len
   'PingFang SC,Microsoft Yahei,system-ui,-apple-system,segoe ui,Roboto,Helvetica,Arial,sans-serif, apple color emoji,segoe ui emoji,segoe ui symbol';
 
-const DEFAULT_TEXT_FONT_SIZE = 14;
+export const DEFAULT_TEXT_FONT_SIZE = 14;
 
 const THEME_CONSTANTS = {
   FONT_FAMILY: DEFAULT_TEXT_FONT_FAMILY,
@@ -96,8 +96,8 @@ export const commonAxis = {
 };
 
 export function getAxisAttributes(option: ICellAxisOption) {
-  // const spec = merge({}, option, commonAxis);
-  const spec = option;
+  const spec = merge({}, option);
+  // const spec = option;
   let titleAngle = spec.title?.angle ?? 0;
   let titleTextStyle;
   if (spec.orient === 'left' || spec.orient === 'right') {

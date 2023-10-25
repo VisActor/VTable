@@ -13,8 +13,9 @@ import type {
 import { HierarchyState } from '../ts-types';
 import { applyChainSafe, getOrApply, obj, isPromise, emptyFn } from '../tools/helper';
 import { EventTarget } from '../event/EventTarget';
-import { getValueByPath, isValid } from '../tools/util';
+import { getValueByPath } from '../tools/util';
 import { diffCellIndices } from '../tools/diff-cell';
+import { isValid } from '@visactor/vutils';
 
 /**
  * 判断字段数据是否为访问器的格式

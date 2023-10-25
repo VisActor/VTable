@@ -1,8 +1,8 @@
 import type { SparklineSpec } from '../ts-types';
 
-export const DEFAULTFONT = '16px sans-serif'; //默认字体
+// export const DEFAULTFONT = '16px sans-serif'; //默认字体
 export const DEFAULTFONTSIZE = 16; //默认字号
-export const DEFAULTFONTFAMILY = 'sans-serif'; //默认字体
+export const DEFAULTFONTFAMILY = 'Arial,sans-serif'; //默认字体
 export const DEFAULTBGCOLOR = '#FFF'; //默认背景色
 export const DEFAULTBORDERCOLOR = '#000'; //默认边框颜色
 export const DEFAULTBORDERLINEWIDTH = 1; //默认边框线宽

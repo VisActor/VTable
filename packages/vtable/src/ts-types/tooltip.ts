@@ -21,7 +21,8 @@ export type TooltipOptions = {
   /** 设置tooltip的样式 */
   style?: {
     bgColor?: string;
-    font?: string;
+    fontSize?: number;
+    fontFamily?: string;
     color?: string;
     padding?: number[];
     arrowMark?: boolean;

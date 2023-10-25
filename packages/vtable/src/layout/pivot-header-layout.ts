@@ -1,5 +1,5 @@
 /* eslint-disable sort-imports */
-import { isValid, transpose } from '../tools/util';
+import { transpose } from '../tools/util';
 import type {
   CellAddress,
   CellRange,
@@ -35,7 +35,7 @@ import { getChartAxes, getChartDataId, getChartSpec, getRawChartSpec } from './c
 import type { IPivotLayoutHeadNode } from './pivot-layout-helper';
 import { DimensionTree } from './pivot-layout-helper';
 import type { Dataset } from '../dataset/dataset';
-import { cloneDeep, isArray } from '@visactor/vutils';
+import { cloneDeep, isArray, isValid } from '@visactor/vutils';
 import type { TextStyle } from '../body-helper/style';
 import type { ITableAxisOption } from '../ts-types/component/axis';
 import { getQuadProps } from '../scenegraph/utils/padding';
@@ -1194,8 +1194,16 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
     return this.columnDimensionTree.tree.size + this.rowHeaderLevelCount + this.rightFrozenColCount;
   }
   get rowCount(): number {
-    // return this.rowDimensionTree.tree.size + this.columnHeaderLevelCount + this.bottomFrozenRowCount;
-    return (this._rowHeaderCellIds?.length ?? 0) + this.columnHeaderLevelCount + this.bottomFrozenRowCount;
+    return (
+      ((Array.isArray(this._table.records) ? this._table.records.length > 0 : true) &&
+      this._indicators?.length > 0 && // 前两个判断条件来判断  有展示的body值的情况 需要展示body row
+      !this._rowHeaderCellIds?.length // 需要展示body值 但 _rowHeaderCellIds的长度维度为0  无rows 行表头为空
+        ? 1 //兼容bugserver: https://bugserver.cn.goofy.app/case?product=VTable&fileid=65364a57173c354c242a7c4f
+        : this._rowHeaderCellIds?.length ?? 0) + //兼容 bugserver：https://bugserver.cn.goofy.app/case?product=VTable&fileid=6527ac0695c0cdbd788cf17d
+      this.columnHeaderLevelCount +
+      this.bottomFrozenRowCount
+    );
+    // return (this._rowHeaderCellIds?.length ?? 0) + this.columnHeaderLevelCount + this.bottomFrozenRowCount;
   }
   get bodyRowCount() {
     return this.rowDimensionTree.tree.size;

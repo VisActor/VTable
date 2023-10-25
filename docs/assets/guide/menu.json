@@ -164,6 +164,13 @@
           }
         },
         {
+          "path": "checkbox",
+          "title": {
+            "zh": "选择框",
+            "en": "checkbox"
+          }
+        },
+        {
           "path": "sparkline",
           "title": {
             "zh": "迷你图",

@@ -22,6 +22,7 @@ type MenuInfo = MenuListItem[];
 
 const menuStyle = {
   fontSize: 12,
+  fontFamily: 'Arial,sans-serif',
   color: '#000',
   highlightColor: '#2E68CF',
   hoverBgColor: '#EEE',
@@ -201,6 +202,7 @@ export class MenuHandler {
         text,
         textBaseline: 'top',
         fontSize: menuStyle.fontSize,
+        fontFamily: menuStyle.fontFamily,
         pickable: false,
         maxLineWidth: menuStyle.maxLineWidth,
         ellipsis: '…'

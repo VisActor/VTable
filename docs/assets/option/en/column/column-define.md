@@ -32,6 +32,10 @@ Table column configuration, each column needs to set configuration items separat
     prefix = ${prefix}
 ) }}
 
+{{ use: checkbox-cell-type(
+    prefix = ${prefix}
+) }}
+
 {{ use: composite-cell-type(
     prefix = ${prefix}
 ) }}

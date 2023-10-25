@@ -156,7 +156,7 @@ const option = {
 tableInstance = new VTable.ListTable(document.getElementById(CONTAINER_ID), option);
 window['tableInstance'] = tableInstance;
 
-tableInstance.listen('click_cell', (args) => {
+tableInstance.on('click_cell', (args) => {
         const { col, row, targetIcon } = args;
         if(col===0&&row>=1&&targetIcon?.name==='order'){
           const { left, top, width, height, bottom, right } = targetIcon.position;
@@ -220,7 +220,7 @@ tableInstance.listen('click_cell', (args) => {
       });
         }
     });
-  tableInstance.listen('dropdownmenu_click', (args) => {
+  tableInstance.on('dropdownmenu_click', (args) => {
     console.log('dropdownmenu_click',args);
     tableInstance.setDropDownMenuHighlight([args]);
   })
