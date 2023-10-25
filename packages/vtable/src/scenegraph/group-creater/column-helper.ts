@@ -239,8 +239,8 @@ export function resizeCellGroup(
 
   cellGroup.forEachChildren((child: IGraphic) => {
     child.setAttributes({
-      dx,
-      dy
+      dx: (child.attribute.dx ?? 0) + dx,
+      dy: (child.attribute.dy ?? 0) + dy
     });
   });
 
