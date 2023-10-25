@@ -10,6 +10,7 @@ import type { PivotHeaderLayoutMap } from '../../layout/pivot-header-layout';
 import { getAxisConfigInPivotChart } from '../../layout/chart-helper/get-axis-config';
 import { computeAxisComponentWidth } from '../../components/axis/get-axis-component-size';
 import { Group as VGroup } from '@visactor/vrender';
+import { decodeReactDom } from '../component/custom';
 
 export function computeColsWidth(table: BaseTableAPI, colStart?: number, colEnd?: number, update?: boolean): void {
   const time = typeof window !== 'undefined' ? window.performance.now() : 0;
@@ -386,6 +387,9 @@ function computeCustomRenderWidth(col: number, row: number, table: BaseTableAPI)
     if (customLayout) {
       // 处理customLayout
       const customLayoutObj = customLayout(arg);
+      if (customLayoutObj.rootContainer) {
+        customLayoutObj.rootContainer = decodeReactDom(customLayoutObj.rootContainer);
+      }
       if (customLayoutObj.rootContainer instanceof VGroup) {
         width = (customLayoutObj.rootContainer as VGroup).AABBBounds.width() ?? 0;
         // width = (customLayoutObj.rootContainer as VGroup).attribute.width ?? 0;
