@@ -14,6 +14,7 @@ import { getStyleTheme } from '../../core/tableHelper';
 import { isMergeCellGroup } from '../utils/is-merge-cell-group';
 import type { BaseTableAPI } from '../../ts-types/base-table';
 import { resizeCellGroup } from '../group-creater/column-helper';
+import type { IGraphic } from '@visactor/vrender';
 
 export function updateRowHeight(scene: Scenegraph, row: number, detaY: number) {
   // 更新table行高存储
@@ -74,7 +75,6 @@ export function updateCellHeightForRow(
   isHeader: boolean
   // autoRowHeight: boolean
 ) {
-  const mergeInfo = getCellMergeInfo(scene.table, col, row);
   cell.setAttribute('height', height + detaY);
   const cellGroup = cell;
   const distHeight = height + detaY;
@@ -85,12 +85,6 @@ export function updateCellHeightForRow(
   }
 
   updateCellHeight(scene, cellGroup, col, row, distHeight, detaY, isHeader);
-
-  if (mergeInfo) {
-    const rangeHeight = scene.table.getRowHeight(row);
-    const rangeWidth = scene.table.getColWidth(col);
-    resizeCellGroup(cellGroup, rangeWidth, rangeHeight, mergeInfo, scene.table);
-  }
 }
 
 export function updateCellHeightForColumn(
@@ -102,16 +96,9 @@ export function updateCellHeightForColumn(
   detaY: number,
   isHeader: boolean
 ) {
-  const mergeInfo = getCellMergeInfo(scene.table, col, row);
   cell.setAttribute('height', height);
   const cellGroup = cell;
   updateCellHeight(scene, cellGroup, col, row, height, 0, isHeader);
-
-  if (mergeInfo) {
-    const rangeHeight = scene.table.getRowHeight(row);
-    const rangeWidth = scene.table.getColWidth(col);
-    resizeCellGroup(cellGroup, rangeWidth, rangeHeight, mergeInfo, scene.table);
-  }
 }
 
 export function updateCellHeight(
@@ -257,7 +244,31 @@ function updateMergeCellContentHeight(
     for (let col = cellGroup.mergeStartCol; col <= cellGroup.mergeEndCol; col++) {
       for (let row = cellGroup.mergeStartRow; row <= cellGroup.mergeEndRow; row++) {
         const singleCellGroup = table.scenegraph.getCell(col, row);
+        singleCellGroup.forEachChildren((child: IGraphic) => {
+          child.setAttributes({
+            dx: 0,
+            dy: 0
+          });
+        });
         updateCellContentHeight(singleCellGroup, distHeight, detaY, autoRowHeight, padding, textAlign, textBaseline);
+        const rangeHeight = table.getRowHeight(row);
+        const rangeWidth = table.getColWidth(col);
+        resizeCellGroup(
+          singleCellGroup,
+          rangeWidth,
+          rangeHeight,
+          {
+            start: {
+              col: cellGroup.mergeStartCol,
+              row: cellGroup.mergeStartRow
+            },
+            end: {
+              col: cellGroup.mergeEndCol,
+              row: cellGroup.mergeEndRow
+            }
+          },
+          table
+        );
       }
     }
   } else {
