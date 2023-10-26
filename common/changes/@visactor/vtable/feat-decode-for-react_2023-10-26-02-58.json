@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vtable",
+      "comment": "feat: add decode for react jsx customLayout",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@visactor/vtable"
+}
