@@ -21,7 +21,7 @@ export function hideHoverIcon(col: number, row: number, scene: Scenegraph) {
   updateCellRangeIcon(
     col,
     row,
-    (icon: Icon) => icon.role === 'icon' && icon.attribute.visibleTime === 'mouseenter_cell',
+    (icon: Icon) => icon.attribute.visibleTime === 'mouseenter_cell',
     (icon: Icon) => {
       icon.setAttribute('visible', false);
     },
@@ -41,7 +41,7 @@ export function showHoverIcon(col: number, row: number, scene: Scenegraph) {
   updateCellRangeIcon(
     col,
     row,
-    (icon: Icon) => icon.role === 'icon' && icon.attribute.visibleTime === 'mouseenter_cell',
+    (icon: Icon) => icon.attribute.visibleTime === 'mouseenter_cell',
     (icon: Icon) => {
       icon.setAttribute('visible', true);
     },
@@ -61,7 +61,7 @@ export function hideClickIcon(col: number, row: number, scene: Scenegraph) {
   updateCellRangeIcon(
     col,
     row,
-    (icon: Icon) => icon.role === 'icon' && icon.attribute.visibleTime === 'click_cell',
+    (icon: Icon) => icon.attribute.visibleTime === 'click_cell',
     (icon: Icon) => {
       icon.setAttribute('visible', false);
     },
@@ -81,7 +81,7 @@ export function showClickIcon(col: number, row: number, scene: Scenegraph) {
   updateCellRangeIcon(
     col,
     row,
-    (icon: Icon) => icon.role === 'icon' && icon.attribute.visibleTime === 'click_cell',
+    (icon: Icon) => icon.attribute.visibleTime === 'click_cell',
     (icon: Icon) => {
       icon.setAttribute('visible', true);
     },
@@ -102,7 +102,7 @@ export function getIconByXY(col: number, row: number, x: number, y: number, scen
   const cellGroup = scene.getCell(col, row);
   let pickMark;
   cellGroup.forEachChildren((mark: Icon) => {
-    if (mark.role === 'icon' && mark.containsPoint(x, y, IContainPointMode.GLOBAL)) {
+    if (mark.role && mark.role.startsWith('icon') && mark.containsPoint(x, y, IContainPointMode.GLOBAL)) {
       pickMark = mark;
     }
   });
