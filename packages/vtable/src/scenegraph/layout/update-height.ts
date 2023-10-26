@@ -75,8 +75,6 @@ export function updateCellHeightForRow(
   // autoRowHeight: boolean
 ) {
   const mergeInfo = getCellMergeInfo(scene.table, col, row);
-  // TO BE FIXED 这里使用横向和纵向来判断单元格merge情况，目前没有横纵都merge的情况，
-
   cell.setAttribute('height', height + detaY);
   const cellGroup = cell;
   const distHeight = height + detaY;

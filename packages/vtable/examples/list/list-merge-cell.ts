@@ -83,7 +83,7 @@ export function createTable() {
     // frozenColCount: 2,
     // autoWrapText: true,
     // heightMode: 'autoHeight',
-    widthMode: 'adaptive',
+    // widthMode: 'adaptive',
     customMergeCell: (col, row, table) => {
       if (col > 0 && col < 8 && row > 7 && row < 11) {
         return {

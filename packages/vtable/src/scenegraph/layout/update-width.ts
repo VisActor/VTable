@@ -1,6 +1,8 @@
+import type { IGraphic } from '@visactor/vrender';
 import type { ProgressBarStyle } from '../../body-helper/style/ProgressBarStyle';
 import { CartesianAxis } from '../../components/axis/axis';
 import { getStyleTheme } from '../../core/tableHelper';
+import type { BaseTableAPI } from '../../ts-types/base-table';
 import type { IProgressbarColumnBodyDefine } from '../../ts-types/list-table/define/progressbar-define';
 import { dealWithCustom } from '../component/custom';
 import type { Group } from '../graphic/group';
@@ -8,9 +10,11 @@ import type { Icon } from '../graphic/icon';
 import { updateImageCellContentWhileResize } from '../group-creater/cell-type/image-cell';
 import { createProgressBarCell } from '../group-creater/cell-type/progress-bar-cell';
 import { createSparkLineCellGroup } from '../group-creater/cell-type/spark-line-cell';
+import { resizeCellGroup } from '../group-creater/column-helper';
 import type { Scenegraph } from '../scenegraph';
 import { getCellMergeInfo } from '../utils/get-cell-merge';
 import { getProp } from '../utils/get-prop';
+import { isMergeCellGroup } from '../utils/is-merge-cell-group';
 import { getQuadProps } from '../utils/padding';
 import { updateCellContentWidth } from '../utils/text-icon-layout';
 import { computeRowHeight, computeRowsHeight } from './compute-row-height';
@@ -201,34 +205,13 @@ function updateCellWidth(
   // autoColWidth: boolean,
   autoRowHeight: boolean
 ): boolean {
-  let cellGroup;
-  let distWidth;
+  cell.setAttribute('width', width + detaX);
   const mergeInfo = getCellMergeInfo(scene.table, col, row);
-  // TO BE FIXED 这里使用横向和纵向来判断单元格merge情况，目前没有横纵都merge的情况，
-  // 如果有这里的逻辑要修改
-  if (mergeInfo && mergeInfo.end.col - mergeInfo.start.col) {
-    // 更新横向merge cell width
-    const mergeCell = scene.getCell(mergeInfo.start.col, mergeInfo.start.row);
-    const mergeCellWidth = mergeCell.attribute.width;
-    mergeCell.setAttribute('width', mergeCellWidth + detaX);
-
-    cellGroup = mergeCell;
-    distWidth = mergeCell.attribute.width;
-    col = cellGroup.col;
-    row = cellGroup.row;
-  } else if (mergeInfo && mergeInfo.start.row === row) {
-    // 更新纵向merge cell width，只更新一次
-    cell.setAttribute('width', width + detaX);
-
-    cellGroup = cell;
-    distWidth = width + detaX;
-    col = cellGroup.col;
-    row = cellGroup.row;
-  } else if (!mergeInfo) {
-    cell.setAttribute('width', width + detaX);
-    cellGroup = cell;
-    distWidth = width + detaX;
+  if (mergeInfo && mergeInfo.start.row !== row) {
+    return false;
   }
+  const cellGroup = cell;
+  const distWidth = width + detaX;
 
   if (!cellGroup) {
     // 合并单元格非主单元格，不处理
@@ -350,7 +333,7 @@ function updateCellWidth(
     if (renderDefault) {
       // 处理文字
       const style = scene.table._getCellStyle(col, row);
-      isHeightChange = updateCellContentWidth(
+      isHeightChange = updateMergeCellContentWidth(
         cellGroup,
         distWidth,
         detaX,
@@ -358,12 +341,82 @@ function updateCellWidth(
         getQuadProps(style.padding as number),
         style.textAlign,
         style.textBaseline,
-        scene
+        scene.table
       );
     }
   }
 
   return autoRowHeight ? isHeightChange : false;
+}
+
+function updateMergeCellContentWidth(
+  cellGroup: Group,
+  distWidth: number,
+  detaX: number,
+  autoRowHeight: boolean,
+  padding: [number, number, number, number],
+  textAlign: CanvasTextAlign,
+  textBaseline: CanvasTextBaseline,
+  table: BaseTableAPI
+) {
+  if (isMergeCellGroup(cellGroup)) {
+    distWidth = 0;
+    let isHeightChange = false;
+    for (let col = cellGroup.mergeStartCol; col <= cellGroup.mergeEndCol; col++) {
+      distWidth += table.getColWidth(col);
+    }
+    for (let col = cellGroup.mergeStartCol; col <= cellGroup.mergeEndCol; col++) {
+      for (let row = cellGroup.mergeStartRow; row <= cellGroup.mergeEndRow; row++) {
+        const singleCellGroup = table.scenegraph.getCell(col, row);
+        singleCellGroup.forEachChildren((child: IGraphic) => {
+          child.setAttributes({
+            dx: 0,
+            dy: 0
+          });
+        });
+        const changed = updateCellContentWidth(
+          singleCellGroup,
+          distWidth,
+          detaX,
+          autoRowHeight,
+          padding,
+          textAlign,
+          textBaseline,
+          table.scenegraph
+        );
+        const rangeHeight = table.getRowHeight(row);
+        const rangeWidth = table.getColWidth(col);
+        resizeCellGroup(
+          singleCellGroup,
+          rangeWidth,
+          rangeHeight,
+          {
+            start: {
+              col: cellGroup.mergeStartCol,
+              row: cellGroup.mergeStartRow
+            },
+            end: {
+              col: cellGroup.mergeEndCol,
+              row: cellGroup.mergeEndRow
+            }
+          },
+          table
+        );
+        isHeightChange = isHeightChange || changed;
+      }
+    }
+    return isHeightChange;
+  }
+  return updateCellContentWidth(
+    cellGroup,
+    distWidth,
+    detaX,
+    autoRowHeight,
+    padding,
+    textAlign,
+    textBaseline,
+    table.scenegraph
+  );
 }
 
 /**
