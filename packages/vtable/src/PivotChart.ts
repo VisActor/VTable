@@ -354,11 +354,11 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
     }
     const rowIndex = this.getBodyIndexByRow(row);
     const colIndex = this.getBodyIndexByCol(col);
-    const dataValue = table.dataSource?.getField(rowIndex, colIndex);
+    const dataValue = table.dataSource?.getField(rowIndex, colIndex, col, row, this);
     if (typeof field !== 'string') {
       //field为函数format
       const cellHeaderPaths = table.internalProps.layoutMap.getCellHeaderPaths(col, row);
-      return getField({ dataValue, ...cellHeaderPaths }, field, emptyFn as any);
+      return getField({ dataValue, ...cellHeaderPaths }, field, col, row, this, emptyFn as any);
     }
     return dataValue;
   }

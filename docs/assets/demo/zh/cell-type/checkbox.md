@@ -1,7 +1,7 @@
 ---
 category: examples
 group: Cell Type
-title: 选择框类型
+title: 复选框类型
 cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/checkbox.png
 order: 2-2
 link: '../guide/cell_type/checkbox'
@@ -9,7 +9,7 @@ link: '../guide/cell_type/checkbox'
 
 # 数据条类型
 
-展示选择框类型的多种使用方式
+展示复选框类型的多种使用方式
 
 ## 关键配置
 

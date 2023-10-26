@@ -369,7 +369,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
       return null;
     }
     const index = table.getRecordIndexByCell(col, row);
-    return table.internalProps.dataSource.getField(index, field);
+    return table.internalProps.dataSource.getField(index, field, col, row, this);
   }
   /**
    * 拖拽移动表头位置
@@ -637,5 +637,14 @@ export class ListTable extends BaseTable implements ListTableAPI {
       }
     }
     this.stateManeger.updateSortState(sortState as SortState);
+  }
+  /** 获取某个字段下checkbox 全部数据的选中状态 顺序对应原始传入数据records 不是对应表格展示row的状态值 */
+  getCheckboxState(field: string | number) {
+    if (isValid(field)) {
+      return this.stateManeger.checkedState.map(state => {
+        return state[field];
+      });
+    }
+    return this.stateManeger.checkedState;
   }
 }

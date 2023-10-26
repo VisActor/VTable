@@ -113,11 +113,9 @@ function createCheckbox(
   const autoWrapText = cellStyle.autoWrapText ?? table.internalProps.autoWrapText;
   const { lineClamp } = cellStyle;
   const { checked, disable } = define;
-
-  let globalChecked;
   if (isChecked === undefined || isChecked === null) {
     //isChecked无效值 取全局设置的值
-    globalChecked = getOrApply(checked as any, {
+    const globalChecked = getOrApply(checked as any, {
       col,
       row,
       table,
@@ -125,7 +123,11 @@ function createCheckbox(
       value,
       dataValue
     });
-    globalChecked = table.stateManeger.syncHeaderCheckedState(define.field as string | number, globalChecked);
+    if (table.isHeader(col, row)) {
+      isChecked = table.stateManeger.syncHeaderCheckedState(define.field as string | number, globalChecked);
+    } else {
+      isChecked = globalChecked ?? false;
+    }
   }
   const globalDisable = getOrApply(disable as any, {
     col,
@@ -154,14 +156,26 @@ function createCheckbox(
     dx: hierarchyOffset
   };
   const testAttribute = cellTheme.text ? (Object.assign({}, cellTheme.text, attribute) as any) : attribute;
-
-  const checkbox = new CheckBox({
-    x: 0,
-    y: 0,
-    text: testAttribute,
-    checked: isChecked ?? globalChecked ?? false,
-    disabled: isDisabled ?? globalDisable ?? false
-  });
+  let checkbox;
+  if (isChecked === 'indeterminate') {
+    checkbox = new CheckBox({
+      x: 0,
+      y: 0,
+      text: testAttribute,
+      checked: undefined,
+      indeterminate: true,
+      disabled: isDisabled ?? globalDisable ?? false
+    });
+  } else {
+    checkbox = new CheckBox({
+      x: 0,
+      y: 0,
+      text: testAttribute,
+      checked: isChecked,
+      indeterminate: undefined,
+      disabled: isDisabled ?? globalDisable ?? false
+    });
+  }
   checkbox.name = 'checkbox';
 
   return checkbox;

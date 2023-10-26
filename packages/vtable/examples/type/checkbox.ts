@@ -10,7 +10,8 @@ export function createTable() {
       {
         field: 'percent',
         title: 'percent',
-        width: 120
+        width: 120,
+        sort: true
       },
       {
         field: 'percent',
@@ -26,11 +27,12 @@ export function createTable() {
         width: 120,
         headerType: 'checkbox',
         cellType: 'checkbox'
-        // disable: true
+        // checked: false
       }
     ],
     showFrozenIcon: true, //显示VTable内置冻结列图标
     widthMode: 'standard'
+    // transpose: true
   };
 
   const instance = new ListTable(option);
@@ -39,14 +41,14 @@ export function createTable() {
   const data = [
     { percent: '100%', value: 20, check: { text: 'unchecked', checked: false, disable: false } },
     { percent: '80%', value: 18, check: { text: 'checked', checked: true, disable: false } },
-    { percent: '60%', value: 16, check: { text: 'disable', checked: true, disable: true } },
-    { percent: '40%', value: 14, check: { text: 'disable', checked: false, disable: true } },
     { percent: '20%', value: 12, check: { text: 'checked', checked: false, disable: false } },
     { percent: '0%', value: 10, check: { text: 'checked', checked: false, disable: false } },
+    { percent: '60%', value: 16, check: { text: 'disable', checked: true, disable: true } },
+    { percent: '40%', value: 14, check: { text: 'disable', checked: false, disable: true } },
     { percent: '0%', value: -10, check: true },
     { percent: '0%', value: -10 }
   ];
-  for (let i = 0; i < 200; i++) {
+  for (let i = 0; i < 2; i++) {
     records = records.concat(data);
   }
   //设置表格数据

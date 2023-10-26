@@ -426,11 +426,11 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
     }
     const rowIndex = this.getBodyIndexByRow(row);
     const colIndex = this.getBodyIndexByCol(col);
-    const dataValue = table.dataSource?.getField(rowIndex, colIndex);
+    const dataValue = table.dataSource?.getField(rowIndex, colIndex, col, row, this);
     if (typeof field !== 'string') {
       //field为函数format
       const cellHeaderPaths = table.internalProps.layoutMap.getCellHeaderPaths(col, row);
-      return getField({ dataValue, ...cellHeaderPaths }, field, emptyFn as any);
+      return getField({ dataValue, ...cellHeaderPaths }, field, col, row, this, emptyFn as any);
     }
     return dataValue;
   }
@@ -453,7 +453,7 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
         this.internalProps.layoutMap.indicatorsAsCol ? colKeys.slice(0, -1) : colKeys,
         (this.internalProps.layoutMap as PivotHeaderLayoutMap).getIndicatorKey(col, row)
       );
-      return aggregator.formatValue ? aggregator.formatValue() : '';
+      return aggregator.formatValue ? aggregator.formatValue(col, row, this) : '';
     } else if (this.flatDataToObjects) {
       //数据为行列树结构 根据row col获取对应的维度名称 查找到对应值
       const cellDimensionPath = this.internalProps.layoutMap.getCellHeaderPaths(col, row);
@@ -469,7 +469,9 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
         this.internalProps.layoutMap.getBody(col, row).indicatorKey
       );
       const { fieldFormat } = this.internalProps.layoutMap.getBody(col, row);
-      return typeof fieldFormat === 'function' ? fieldFormat(valueNode?.record) : valueNode?.value ?? '';
+      return typeof fieldFormat === 'function'
+        ? fieldFormat(valueNode?.record, col, row, this)
+        : valueNode?.value ?? '';
     }
     const { field, fieldFormat } = this.internalProps.layoutMap.getBody(col, row);
     return this.getFieldData(fieldFormat || field, col, row);

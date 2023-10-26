@@ -143,8 +143,14 @@ export class StateManeger {
 
   fastScrolling: boolean = false;
 
-  checkedState: Record<string | number, boolean>[] = []; //对应原始数据列表顺序的checked状态
-  headerCheckedState: Record<string | number, boolean> = {}; //对应原始数据列表顺序的checked状态
+  /**
+   * 对应原始数据列表顺序的checked状态
+   */
+  checkedState: Record<string | number, boolean>[] = [];
+  /**
+   * 对应表头checked状态
+   */
+  headerCheckedState: Record<string | number, boolean | 'indeterminate'> = {};
   // 供滚动重置为default使用
   resetInteractionState = debounce(() => {
     this.updateInteractionState(InteractionState.default);
@@ -952,15 +958,26 @@ export class StateManeger {
       recordCheckState[field] = checked;
     });
   }
-  syncCheckedState(col: number, row: number, field: string | number, checked: boolean): boolean {
+
+  //#region CheckedState 状态维护
+
+  /**
+   * 创建cell节点时同步状态 如果状态缓存有则用 如果没有则设置缓存
+   * @param col
+   * @param row
+   * @param field
+   * @param checked
+   * @returns
+   */
+  syncCheckedState(col: number, row: number, field: string | number, checked: boolean): boolean | 'indeterminate' {
     if (this.table.isHeader(col, row)) {
       if (isValid(this.headerCheckedState[field])) {
         return this.headerCheckedState[field];
       } else if (isValid(checked)) {
         this.headerCheckedState[field] = checked;
-      } else {
-        const isAllChecked = this.checkedState.every(item => item[field] === true); //TODO 考虑加入半选状态
-        this.headerCheckedState[field] = isAllChecked;
+      } else if (this.checkedState?.length > 0) {
+        const isAllChecked = this.updateHeaderCheckedState(field);
+        return isAllChecked;
       }
       return this.headerCheckedState[field];
     }
@@ -979,17 +996,29 @@ export class StateManeger {
     }
     return checked;
   }
-  syncHeaderCheckedState(field: string | number, checked: boolean): boolean {
+  /**
+   * 创建表头cell节点时同步状态 如果状态缓存有则用 如果没有则设置缓存
+   * @param col
+   * @param row
+   * @param field
+   * @param checked
+   * @returns
+   */
+  syncHeaderCheckedState(field: string | number, checked: boolean): boolean | 'indeterminate' {
     if (isValid(this.headerCheckedState[field])) {
       return this.headerCheckedState[field];
     } else if (isValid(checked)) {
       this.headerCheckedState[field] = checked;
-    } else {
-      const isAllChecked = this.checkedState.every(item => item[field] === true); //TODO 考虑加入半选状态
-      this.headerCheckedState[field] = isAllChecked;
+    } else if (this.checkedState?.length > 0) {
+      const isAllChecked = this.updateHeaderCheckedState(field);
+      return isAllChecked;
     }
     return this.headerCheckedState[field];
   }
+  /**
+   * 初始化check状态
+   * @param records
+   */
   initCheckedState(records: any[]) {
     let isNeedInitHeaderCheckedStateFromRecord = false;
     const checkboxCellTypeField: (string | number)[] = [];
@@ -998,6 +1027,7 @@ export class StateManeger {
         const headerChecked = (hd.define as CheckboxColumnDefine).checked as boolean;
         this.headerCheckedState[hd.field as string | number] = headerChecked;
         if (headerChecked === undefined || headerChecked === null) {
+          // 如果没有明确指定check的状态 则需要在下面遍历所有数据获取到节点状态 确定这个header的check状态
           isNeedInitHeaderCheckedStateFromRecord = true;
         }
         if (hd.define.cellType === 'checkbox' && !hd.fieldFormat) {
@@ -1005,7 +1035,7 @@ export class StateManeger {
         }
       }
     });
-
+    //如果没有明确指定check的状态 遍历所有数据获取到节点状态 确定这个header的check状态
     if (isNeedInitHeaderCheckedStateFromRecord) {
       records.forEach((record: any, index: number) => {
         checkboxCellTypeField.forEach(field => {
@@ -1024,4 +1054,28 @@ export class StateManeger {
       });
     }
   }
+  /**
+   * 更新header单元checked的状态，依据当前列每一个数据checked的状态。
+   * @param field
+   * @returns
+   */
+  updateHeaderCheckedState(field: string | number): boolean | 'indeterminate' {
+    const allChecked = this.checkedState.every((state: Record<string | number, boolean>) => {
+      return state[field] === true;
+    });
+    if (allChecked) {
+      this.headerCheckedState[field] = true;
+      return allChecked;
+    }
+    const allUnChecked = this.checkedState.every((state: Record<string | number, boolean>) => {
+      return state[field] === false;
+    });
+    if (allUnChecked) {
+      this.headerCheckedState[field] = false;
+      return false;
+    }
+    this.headerCheckedState[field] = 'indeterminate';
+    return 'indeterminate'; //半选状态
+  }
+  //#endregion
 }
