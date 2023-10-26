@@ -1,8 +1,12 @@
+import type { IGraphic } from '@visactor/vrender';
 import type { CellAddress } from '../../ts-types';
 import type { BaseTableAPI } from '../../ts-types/base-table';
 import type { Group } from '../graphic/group';
 import { updateCell } from '../group-creater/cell-helper';
 import type { Scenegraph } from '../scenegraph';
+import { getCellMergeInfo } from '../utils/get-cell-merge';
+import { isMergeCellGroup } from '../utils/is-merge-cell-group';
+import { resizeCellGroup } from '../group-creater/column-helper';
 
 /**
  * add and remove rows in scenegraph
@@ -36,7 +40,19 @@ export function updateRow(
   // add cells
   updateCells.forEach(cell => {
     // updateRowAttr(row, scene);
-    cell && updateCell(cell.col, cell.row, scene.table, false);
+    if (!cell) {
+      return;
+    }
+    const mergeInfo = getCellMergeInfo(scene.table, cell.col, cell.row);
+    if (mergeInfo) {
+      for (let col = mergeInfo.start.col; col <= mergeInfo.end.col; col++) {
+        for (let row = mergeInfo.start.row; row <= mergeInfo.end.row; row++) {
+          updateCell(col, row, scene.table, false);
+        }
+      }
+    } else {
+      updateCell(cell.col, cell.row, scene.table, false);
+    }
   });
 
   // reset attribute y and row number in CellGroup
@@ -153,6 +169,7 @@ function resetRowNumber(scene: Scenegraph) {
 }
 
 function resetRowNumberAndY(scene: Scenegraph) {
+  const table = scene.table;
   let newTotalHeight = 0;
   for (let col = 0; col < scene.table.colCount; col++) {
     const headerColGroup = scene.getColGroup(col, true);
@@ -180,6 +197,25 @@ function resetRowNumberAndY(scene: Scenegraph) {
       }
       cellGroup.setAttribute('y', y);
       y += cellGroup.attribute.height;
+
+      // const { col, row } = cellGroup;
+      // const mergeInfo = getCellMergeInfo(table, col, row);
+      // if (mergeInfo) {
+      //   cellGroup.mergeStartCol = mergeInfo.start.col;
+      //   cellGroup.mergeStartRow = mergeInfo.start.row;
+      //   cellGroup.mergeEndCol = mergeInfo.end.col;
+      //   cellGroup.mergeEndRow = mergeInfo.end.row;
+
+      //   const rangeHeight = table.getRowHeight(row);
+      //   const rangeWidth = table.getColWidth(col);
+      //   cellGroup.forEachChildren((child: IGraphic) => {
+      //     child.setAttributes({
+      //       dx: 0,
+      //       dy: 0
+      //     });
+      //   });
+      //   resizeCellGroup(cellGroup, rangeWidth, rangeHeight, mergeInfo, table);
+      // }
     });
     newTotalHeight = y;
 
