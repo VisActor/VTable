@@ -27,6 +27,7 @@ import { getStyleTheme } from '../../../core/tableHelper';
  */
 export function createCellGroup(
   table: BaseTableAPI,
+  value: string,
   columnGroup: Group,
   xOrigin: number,
   yOrigin: number,
@@ -86,7 +87,7 @@ export function createCellGroup(
     cellGroup.appendChild(customElementsGroup);
   }
   if (renderDefault) {
-    const textStr: string = table.getCellValue(col, row);
+    const textStr: string = value;
     let icons;
     if (mayHaveIcon) {
       icons = table.getCellIcons(col, row);

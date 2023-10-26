@@ -41,7 +41,9 @@ import type {
   IHeaderTreeDefine,
   IDimension,
   IIndicator,
-  StickCell
+  StickCell,
+  CustomMergeCell,
+  CustomMerge
 } from '.';
 import type { TooltipOptions } from './tooltip';
 import type { IWrapTextGraphicAttribute } from '../scenegraph/graphic/text';
@@ -190,6 +192,8 @@ export interface IBaseTableProtected {
   // renderChartAsyncBatchCount?: number;
 
   stick: { changedCells: StickCell[] };
+
+  customMergeCell?: CustomMergeCell;
 }
 export interface BaseTableConstructorOptions {
   // /** 指定表格的行数 */
@@ -329,6 +333,8 @@ export interface BaseTableConstructorOptions {
   renderChartAsync?: boolean;
   // 开启图表异步渲染 每批次渐进渲染图表个数
   renderChartAsyncBatchCount?: number;
+
+  customMergeCell?: CustomMergeCell;
 
   // for nodejs
   mode?: 'node' | 'broswer';
@@ -599,6 +605,8 @@ export interface BaseTableAPI {
   isFrozenRow: (col: number, row?: number) => boolean;
   isTopFrozenRow: (col: number, row?: number) => boolean;
   isBottomFrozenRow: (col: number, row?: number) => boolean;
+
+  getCustomMerge: (col: number, row: number) => undefined | (Omit<CustomMerge, 'style'> & { style?: FullExtendStyle });
 }
 export interface ListTableProtected extends IBaseTableProtected {
   /** 表格数据 */

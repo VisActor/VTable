@@ -97,8 +97,6 @@ const poptipStyle = {
 export type MergeMap = Map<
   string,
   {
-    x: number;
-    y: number;
     cellWidth: number;
     cellHeight: number;
   }

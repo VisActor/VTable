@@ -9,6 +9,7 @@ import type { Either } from '../tools/helper';
 import type { IChartIndicator, ICornerDefine, IDimension, IIndicator, ITitleDefine } from './pivot-table';
 import type { ColumnsDefine } from './list-table';
 import type { ICellAxisOption, ITableAxisOption } from './component/axis';
+import type { ITextStyleOption } from '../body-helper/style';
 
 export interface CellAddress {
   col: number;
@@ -357,3 +358,10 @@ export interface IExtensionRowDefine {
 }
 
 export type StickCell = { col: number; row: number; dx: number; dy: number };
+
+export type CustomMergeCell = (col: number, row: number, table: BaseTableAPI) => undefined | CustomMerge;
+export type CustomMerge = {
+  range: CellRange;
+  text: string;
+  style?: ITextStyleOption;
+};

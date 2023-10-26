@@ -83,7 +83,27 @@ export function createTable() {
     // frozenColCount: 2,
     // autoWrapText: true,
     // heightMode: 'autoHeight',
-    widthMode: 'adaptive'
+    widthMode: 'adaptive',
+    customMergeCell: (col, row, table) => {
+      if (col > 0 && col < 8 && row > 7 && row < 11) {
+        return {
+          text: 'long long long long long long long long long long long long long long long long long long text!',
+          range: {
+            start: {
+              col: 1,
+              row: 8
+            },
+            end: {
+              col: 7,
+              row: 10
+            }
+          },
+          style: {
+            bgColor: '#fff'
+          }
+        };
+      }
+    }
   };
   const tableInstance = new VTable.ListTable(option);
   window.tableInstance = tableInstance;

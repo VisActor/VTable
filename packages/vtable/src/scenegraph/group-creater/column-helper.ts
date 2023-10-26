@@ -53,8 +53,44 @@ export function createComplexColumn(
     const row = j;
     const define = cellLocation !== 'body' ? table.getHeaderDefine(col, row) : table.getBodyColumnDefine(col, row);
     const mayHaveIcon = cellLocation !== 'body' ? true : !!define?.icon || !!define?.tree;
-    const headerStyle = table._getCellStyle(col, row);
-    const cellTheme = getStyleTheme(headerStyle, table, col, row, getProp).theme;
+    let value = table.getCellValue(col, row);
+
+    // 处理单元格合并
+    let cellWidth = colWidth;
+    // let cellHeight = table.internalProps.autoRowHeight ? 0 : table.getRowHeight(row);
+    let cellHeight = table.getRowHeight(row);
+    let range;
+    let isMerge;
+    let customStyle;
+    if (table.internalProps.customMergeCell) {
+      const customMerge = table.getCustomMerge(col, row);
+      if (customMerge) {
+        const { range: customMergeRange, text: customMergeText, style: customMergeStyle } = customMerge;
+        range = customMergeRange;
+        isMerge = range.start.col !== range.end.col || range.start.row !== range.end.row;
+        if (isMerge) {
+          const mergeSize = dealMerge(range, mergeMap, table);
+          cellWidth = mergeSize.cellWidth;
+          cellHeight = mergeSize.cellHeight;
+        }
+        value = customMergeText;
+        customStyle = customMergeStyle;
+      }
+    }
+    if (!range && (cellLocation !== 'body' || (define as TextColumnDefine)?.mergeCell)) {
+      // 只有表头或者column配置合并单元格后再进行信息获取
+      range = table.getCellRange(col, row);
+      isMerge = range.start.col !== range.end.col || range.start.row !== range.end.row;
+      // 所有Merge单元格，只保留左上角一个真实的单元格，其他使用空Group占位
+      if (isMerge) {
+        const mergeSize = dealMerge(range, mergeMap, table);
+        cellWidth = mergeSize.cellWidth;
+        cellHeight = mergeSize.cellHeight;
+      }
+    }
+
+    const cellStyle = customStyle || table._getCellStyle(col, row);
+    const cellTheme = getStyleTheme(cellStyle, table, col, row, getProp).theme;
     cellTheme.group.width = colWidth;
     cellTheme.group.height = Array.isArray(defaultRowHeight) ? defaultRowHeight[row] : defaultRowHeight;
     if (cellTheme._vtable.padding) {
@@ -73,50 +109,11 @@ export function createComplexColumn(
     }
     // margin = getProp('margin', headerStyle, col, 0, table)
 
-    let cellWidth = colWidth;
-    // let cellHeight = table.internalProps.autoRowHeight ? 0 : table.getRowHeight(row);
-    let cellHeight = table.getRowHeight(row);
     const type =
       (table.isHeader(col, row) ? table._getHeaderLayoutMap(col, row).headerType : table.getBodyColumnType(col, row)) ||
       'text';
-    // 处理单元格合并
-    let mergeResult;
-    let range;
-    let isMerge;
-    if (cellLocation !== 'body' || (define as TextColumnDefine)?.mergeCell) {
-      // 只有表头或者column配置合并单元格后再进行信息获取
-      range = table.getCellRange(col, row);
-      isMerge = range.start.col !== range.end.col || range.start.row !== range.end.row;
-      // 所有Merge单元格，只保留左上角一个真实的单元格，其他使用空Group占位
-      if (isMerge) {
-        cellWidth = 0;
-        cellHeight = 0;
-        mergeResult = mergeMap.get(`${range.start.col},${range.start.row};${range.end.col},${range.end.row}`);
-        if (!mergeResult) {
-          for (let col = range.start.col; col <= range.end.col; col++) {
-            cellWidth += table.getColWidth(col);
-          }
-
-          // let cellHeight = 0;
-          for (let i = range.start.row; i <= range.end.row; i++) {
-            cellHeight += table.getRowHeight(i);
-          }
-
-          mergeMap.set(`${range.start.col},${range.start.row};${range.end.col},${range.end.row}`, {
-            x: 0,
-            y,
-            cellWidth,
-            cellHeight
-          });
-        } else {
-          cellWidth = mergeResult.cellWidth;
-          cellHeight = mergeResult.cellHeight;
-        }
-      }
-    }
 
     // deal with promise data
-    const value = table.getCellValue(col, row);
     if (isPromise(value)) {
       dealPromiseData(
         value,
@@ -124,6 +121,7 @@ export function createComplexColumn(
         createCell.bind(
           null,
           type,
+          value,
           define,
           table,
           col,
@@ -152,6 +150,7 @@ export function createComplexColumn(
     } else {
       const cellGroup = createCell(
         type,
+        value,
         define,
         table,
         col,
@@ -165,8 +164,6 @@ export function createComplexColumn(
         textAlign,
         textBaseline,
         mayHaveIcon,
-        isMerge,
-        range,
         cellTheme
       );
       columnGroup.updateColumnRowNumber(row);
@@ -271,4 +268,32 @@ export function resizeCellGroup(
   cellGroup.mergeStartRow = range.start.row;
   cellGroup.mergeEndCol = range.end.col;
   cellGroup.mergeEndRow = range.end.row;
+}
+
+function dealMerge(range: CellRange, mergeMap: MergeMap, table: BaseTableAPI) {
+  let cellWidth = 0;
+  let cellHeight = 0;
+  const mergeResult = mergeMap.get(`${range.start.col},${range.start.row};${range.end.col},${range.end.row}`);
+  if (!mergeResult) {
+    for (let col = range.start.col; col <= range.end.col; col++) {
+      cellWidth += table.getColWidth(col);
+    }
+
+    // let cellHeight = 0;
+    for (let i = range.start.row; i <= range.end.row; i++) {
+      cellHeight += table.getRowHeight(i);
+    }
+
+    mergeMap.set(`${range.start.col},${range.start.row};${range.end.col},${range.end.row}`, {
+      cellWidth,
+      cellHeight
+    });
+  } else {
+    cellWidth = mergeResult.cellWidth;
+    cellHeight = mergeResult.cellHeight;
+  }
+  return {
+    cellWidth,
+    cellHeight
+  };
 }

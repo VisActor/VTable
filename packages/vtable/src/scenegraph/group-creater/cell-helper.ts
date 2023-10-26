@@ -35,6 +35,7 @@ import { resizeCellGroup } from './column-helper';
 
 export function createCell(
   type: ColumnTypeOption,
+  value: string,
   define: ColumnDefine,
   table: BaseTableAPI,
   col: number,
@@ -48,8 +49,6 @@ export function createCell(
   textAlign: CanvasTextAlign,
   textBaseline: CanvasTextBaseline,
   mayHaveIcon: boolean,
-  isMerge: boolean,
-  range: CellRange,
   cellTheme: IThemeSpec
 ): Group {
   let bgColorFunc: Function;
@@ -72,7 +71,7 @@ export function createCell(
     if (type === 'link') {
       //如果是超链接 颜色按照linkColor绘制 TODO：放到方法_getCellStyle中
       // const columnDefine = table.getHeaderDefine(col, row);
-      const cellValue = table.getCellValue(col, row);
+      const cellValue = value;
       const headerStyle = table._getCellStyle(col, row);
 
       if (
@@ -144,6 +143,7 @@ export function createCell(
     }
     cellGroup = createCellGroup(
       table,
+      value,
       columnGroup,
       0,
       y,
@@ -265,7 +265,7 @@ export function createCell(
       table.getColWidth(col),
       table.getRowHeight(row),
       padding,
-      table.getCellValue(col, row),
+      value,
       (define as ChartColumnDefine).chartModule,
       table.isPivotChart()
         ? (table.internalProps.layoutMap as PivotHeaderLayoutMap).getChartSpec(col, row)
@@ -277,11 +277,11 @@ export function createCell(
     );
   } else if (type === 'progressbar') {
     const style = table._getCellStyle(col, row) as ProgressBarStyle;
-    const value = table.getCellValue(col, row);
     const dataValue = table.getCellOriginValue(col, row);
     // 创建基础文字单元格
     cellGroup = createCellGroup(
       table,
+      value,
       columnGroup,
       0,
       y,
@@ -367,9 +367,21 @@ export function updateCell(col: number, row: number, table: BaseTableAPI, addNew
     : table.getBodyColumnType(col, row);
   const cellLocation = table.getCellLocation(col, row);
   const define = cellLocation !== 'body' ? table.getHeaderDefine(col, row) : table.getBodyColumnDefine(col, row);
+  let value = table.getCellValue(col, row);
 
   let isMerge;
   let range;
+  let customStyle;
+  if (table.internalProps.customMergeCell) {
+    const customMerge = table.getCustomMerge(col, row);
+    if (customMerge) {
+      const { range: customMergeRange, text: customMergeText, style: customMergeStyle } = customMerge;
+      range = customMergeRange;
+      isMerge = range.start.col !== range.end.col || range.start.row !== range.end.row;
+      value = customMergeText;
+      customStyle = customMergeStyle;
+    }
+  }
   if (cellLocation !== 'body' || (define as TextColumnDefine)?.mergeCell) {
     // 只有表头或者column配置合并单元格后再进行信息获取
     range = table.getCellRange(col, row);
@@ -378,7 +390,7 @@ export function updateCell(col: number, row: number, table: BaseTableAPI, addNew
 
   let newCellGroup;
   const mayHaveIcon = cellLocation !== 'body' ? true : !!define?.icon || !!define?.tree;
-  const headerStyle = table._getCellStyle(col, row);
+  const headerStyle = customStyle || table._getCellStyle(col, row);
   const cellTheme = getStyleTheme(headerStyle, table, col, row, getProp).theme;
   const padding = cellTheme._vtable.padding;
   const textAlign = cellTheme._vtable.textAlign;
@@ -421,7 +433,6 @@ export function updateCell(col: number, row: number, table: BaseTableAPI, addNew
   }
 
   // deal with promise data
-  const value = table.getCellValue(col, row);
   if (isPromise(value)) {
     // clear cell content sync
     oldCellGroup.removeAllChild();
@@ -454,6 +465,7 @@ export function updateCell(col: number, row: number, table: BaseTableAPI, addNew
   } else {
     newCellGroup = updateCellContent(
       type,
+      value,
       define,
       table,
       col,
@@ -484,6 +496,7 @@ export function updateCell(col: number, row: number, table: BaseTableAPI, addNew
 
 function updateCellContent(
   type: ColumnTypeOption,
+  value: string,
   define: ColumnDefine,
   table: BaseTableAPI,
   col: number,
@@ -503,6 +516,7 @@ function updateCellContent(
 ) {
   const newCellGroup = createCell(
     type,
+    value,
     define,
     table,
     col,
@@ -518,8 +532,6 @@ function updateCellContent(
     textAlign,
     textBaseline,
     mayHaveIcon,
-    isMerge,
-    range,
     cellTheme
   );
   if (!addNew) {

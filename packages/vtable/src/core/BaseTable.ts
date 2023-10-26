@@ -347,6 +347,8 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     this.bodyStyleCache = new Map();
 
     internalProps.stick = { changedCells: [] };
+
+    internalProps.customMergeCell = options.customMergeCell;
   }
   /** 节流绘制 */
   throttleInvalidate = throttle2(this.render.bind(this), 200);
@@ -2477,8 +2479,44 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
    * 获取给定单元格的范围 如果是合并单元格,则返回合并单元格的范围
    */
   getCellRange(col: number, row: number): CellRange {
+    if (this.internalProps.customMergeCell) {
+      const customMerge = this.internalProps.customMergeCell(col, row, this);
+      if (customMerge && customMerge.range && customMerge.text) {
+        return customMerge.range;
+      }
+    }
     return this.internalProps.layoutMap.getCellRange(col, row);
   }
+
+  getCustomMerge(col: number, row: number) {
+    if (this.internalProps.customMergeCell) {
+      const customMerge = this.internalProps.customMergeCell(col, row, this);
+      if (customMerge && customMerge.range && customMerge.text) {
+        if (customMerge.style) {
+          const styleClass = this.internalProps.bodyHelper.getStyleClass('text');
+          const style = customMerge.style;
+          const fullStyle = <FullExtendStyle>columnStyleContents.of(
+            style,
+            this.theme.bodyStyle,
+            {
+              col,
+              row,
+              table: this,
+              value: this.getCellValue(col, row),
+              dataValue: this.getCellOriginValue(col, row),
+              cellHeaderPaths: this.getCellHeaderPaths(col, row)
+            },
+            styleClass,
+            this.options.autoWrapText
+          );
+          customMerge.style = fullStyle;
+        }
+        return customMerge;
+      }
+    }
+    return undefined;
+  }
+
   /**
    * 判断两个单元格是否是属于同一个合并区域
    * @param col
