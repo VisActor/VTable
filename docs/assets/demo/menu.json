@@ -221,7 +221,7 @@
         {
           "path": "checkbox",
           "title": {
-            "zh": "选择框类型",
+            "zh": "复选框类型",
             "en": "Checkbox Type"
           },
           "meta": {

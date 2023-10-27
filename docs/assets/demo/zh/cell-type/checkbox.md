@@ -1,15 +1,15 @@
 ---
 category: examples
 group: Cell Type
-title: 选择框类型
-cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/checkbox.png
-order: 2-2
+title: 复选框类型
+cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/checkbox-demo.png
 link: '../guide/cell_type/checkbox'
+option: ListTable-columns-checkbox#cellType
 ---
 
-# 数据条类型
+# 复选框类型
 
-展示选择框类型的多种使用方式
+展示复选框类型的多种使用方式
 
 ## 关键配置
 
@@ -20,23 +20,30 @@ cellType: 'checkbox';
 ```javascript livedemo template=vtable
 
 const records = [
-    { percent: '100%', value: 20, check: { text: 'unchecked', checked: false, disable: false } },
-    { percent: '80%', value: 18, check: { text: 'checked', checked: true, disable: false } },
-    { percent: '60%', value: 16, check: { text: 'disable', checked: true, disable: true } },
-    { percent: '40%', value: 14, check: { text: 'disable', checked: false, disable: true } },
-    { percent: '20%', value: 12, check: { text: 'checked', checked: false, disable: false } },
-    { percent: '0%', value: 10, check: { text: 'checked', checked: false, disable: false } },
-    { percent: '0%', value: -10, check: { text: 'checked', checked: false, disable: false } }
+    { productName: 'aaaa', price: 20, check: { text: 'unchecked', checked: false, disable: false } },
+    { productName: 'bbbb', price: 18, check: { text: 'checked', checked: true, disable: false } },
+    { productName: 'cccc', price: 16, check: { text: 'disable', checked: true, disable: true } },
+    { productName: 'cccc', price: 14, check: { text: 'disable', checked: false, disable: true } },
+    { productName: 'eeee', price: 12, check: { text: 'checked', checked: false, disable: false } },
+    { productName: 'ffff', price: 10, check: { text: 'checked', checked: false, disable: false } },
+    { productName: 'gggg', price: 10, check: { text: 'checked', checked: false, disable: false } }
   ];
 
 const columns = [
+  {
+    field: '',
+    title: '',
+    width: 60,
+    headerType: 'checkbox',
+    cellType: 'checkbox',
+  },
  {
-    field: 'percent',
-    title: 'percent',
+    field: 'productName',
+    title: 'productName',
     width: 120
   },
   {
-    field: 'percent',
+    field: 'price',
     title: 'checkbox',
     width: 120,
     cellType: 'checkbox',

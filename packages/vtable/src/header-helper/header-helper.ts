@@ -8,6 +8,7 @@ import { ImageStyle } from './style/ImageStyle';
 import { TextHeaderStyle } from './style';
 import type { ListTable } from '../ListTable';
 import type { BaseTableAPI } from '../ts-types/base-table';
+import { CheckboxStyle } from './style/CheckboxStyle';
 export class HeaderHelper {
   normalIcon: SvgIcon;
   upIcon: SvgIcon;
@@ -362,7 +363,7 @@ export class HeaderHelper {
     return false;
   }
 
-  getStyleClass(headerType: 'text' | 'image' | 'video' | 'link') {
+  getStyleClass(headerType: 'text' | 'image' | 'video' | 'link' | 'checkbox') {
     switch (headerType) {
       case 'text':
         return TextHeaderStyle;
@@ -372,6 +373,8 @@ export class HeaderHelper {
         return ImageStyle;
       case 'link':
         return TextHeaderStyle;
+      case 'checkbox':
+        return CheckboxStyle;
     }
   }
 }

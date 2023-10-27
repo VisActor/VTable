@@ -88,7 +88,7 @@ describe('listTable-legend init test', () => {
       bodyStyle: {
         bgColor(args) {
           const { row, col } = args;
-          const record = args.table.getRecordByRowCol(col, row);
+          const record = args.table.getRecordByCell(col, row);
           return colorToCategory[categorys.indexOf(record.Category)];
         }
       }
@@ -135,7 +135,7 @@ describe('listTable-legend init test', () => {
         bodyStyle: {
           color(args) {
             const { row, col } = args;
-            const record = listTable.getRecordByRowCol(col, row);
+            const record = listTable.getRecordByCell(col, row);
             if (hightArr.indexOf(record.Category) >= 0) {
               return 'black';
             }
@@ -143,7 +143,7 @@ describe('listTable-legend init test', () => {
           },
           bgColor(args) {
             const { row, col } = args;
-            const record = listTable.getRecordByRowCol(col, row);
+            const record = listTable.getRecordByCell(col, row);
             if (hightArr.indexOf(record.Category) >= 0) {
               return colorToCategory[categorys.indexOf(record.Category)];
             }

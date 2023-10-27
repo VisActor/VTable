@@ -1,5 +1,6 @@
 import { getValueFromDeepArray } from '../tools/util';
 import type { FieldData, FieldDef, IPagination, MaybePromise, MaybePromiseOrUndefined } from '../ts-types';
+import type { BaseTableAPI } from '../ts-types/base-table';
 import type { DataSourceParam } from './DataSource';
 import { DataSource } from './DataSource';
 
@@ -59,7 +60,13 @@ export class CachedDataSource extends DataSource {
     }
     return super.getOriginalRecord(index);
   }
-  protected getOriginalField<F extends FieldDef>(index: number, field: F): FieldData {
+  protected getOriginalField<F extends FieldDef>(
+    index: number,
+    field: F,
+    col?: number,
+    row?: number,
+    table?: BaseTableAPI
+  ): FieldData {
     const rowCache = this._fieldCache && this._fieldCache[index];
     if (rowCache) {
       const cache = rowCache.get(field);
@@ -67,7 +74,7 @@ export class CachedDataSource extends DataSource {
         return cache;
       }
     }
-    return super.getOriginalField(index, field);
+    return super.getOriginalField(index, field, col, row, table);
   }
 
   clearCache(): void {
