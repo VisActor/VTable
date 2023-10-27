@@ -2447,6 +2447,10 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     }
     return this.internalProps.dataSource?.get(this.getRecordIndexByCell(col, row));
   }
+  /** @deprecated 请使用getRecordByCell */
+  getRecordByRowCol(col: number, row: number) {
+    return this.getRecordByCell(col, row);
+  }
 
   /**
    * 根据数据的索引获取应该显示在body的第几行
