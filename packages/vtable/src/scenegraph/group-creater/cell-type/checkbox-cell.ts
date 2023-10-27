@@ -113,7 +113,7 @@ function createCheckbox(
   const autoWrapText = cellStyle.autoWrapText ?? table.internalProps.autoWrapText;
   const { lineClamp } = cellStyle;
   const { checked, disable } = define;
-  if (isChecked === undefined || isChecked === null) {
+  if (isChecked === undefined || isChecked === null || typeof isChecked === 'function') {
     //isChecked无效值 取全局设置的值
     const globalChecked = getOrApply(checked as any, {
       col,
@@ -123,11 +123,7 @@ function createCheckbox(
       value,
       dataValue
     });
-    if (table.isHeader(col, row)) {
-      isChecked = table.stateManeger.syncHeaderCheckedState(define.field as string | number, globalChecked);
-    } else {
-      isChecked = globalChecked ?? false;
-    }
+    isChecked = table.stateManeger.syncCheckedState(col, row, define.field as string | number, globalChecked);
   }
   const globalDisable = getOrApply(disable as any, {
     col,

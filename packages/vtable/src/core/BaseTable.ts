@@ -2243,6 +2243,10 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
   abstract getCellOriginRecord(col: number, row: number): MaybePromiseOrUndefined;
   abstract getCellValue(col: number, row: number): FieldData;
   abstract getCellOriginValue(col: number, row: number): FieldData;
+
+  abstract getTableIndexByRecordIndex(recordIndex: number): number;
+  abstract getTableIndexByField(field: FieldDef): number;
+  abstract getCellAddrByFieldRecord(field: FieldDef, recordIndex: number): CellAddress;
   /**
    * 更新页码
    * @param pagination 要修改页码的信息

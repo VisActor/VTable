@@ -194,6 +194,33 @@ export class ListTable extends BaseTable implements ListTableAPI {
     const { layoutMap } = this.internalProps;
     return layoutMap.getRecordIndexByCell(col, row);
   }
+
+  getTableIndexByRecordIndex(recordIndex: number) {
+    if (this.transpose) {
+      return this.dataSource.getTableIndex(recordIndex) + this.rowHeaderLevelCount;
+    }
+    return this.dataSource.getTableIndex(recordIndex) + this.columnHeaderLevelCount;
+  }
+  getTableIndexByField(field: FieldDef) {
+    const colObj = this.internalProps.layoutMap.columnObjects.find((col: any) => col.field === field);
+    const layoutRange = this.internalProps.layoutMap.getBodyLayoutRangeById(colObj.id);
+    if (this.transpose) {
+      return layoutRange.start.row;
+    }
+    return layoutRange.start.col;
+  }
+  /**
+   * 根据数据源中的index和field获取单元格行列号
+   * @param field
+   * @param recordIndex
+   * @returns
+   */
+  getCellAddrByFieldRecord(field: FieldDef, recordIndex: number): CellAddress {
+    if (this.transpose) {
+      return { col: this.getTableIndexByRecordIndex(recordIndex), row: this.getTableIndexByField(field) };
+    }
+    return { col: this.getTableIndexByField(field), row: this.getTableIndexByRecordIndex(recordIndex) };
+  }
   /**
    *
    * @param field 获取整体数据记录

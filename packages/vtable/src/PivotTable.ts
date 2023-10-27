@@ -408,6 +408,15 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
   getRecordIndexByCell(col: number, row: number): number {
     return undefined;
   }
+  getTableIndexByRecordIndex(recordIndex: number): number {
+    return undefined;
+  }
+  getTableIndexByField(field: FieldDef): number {
+    return undefined;
+  }
+  getCellAddrByFieldRecord(field: FieldDef, recordIndex: number): CellAddress {
+    return undefined;
+  }
   getBodyIndexByRow(row: number): number {
     const { layoutMap } = this.internalProps;
     return layoutMap.getBodyIndexByRow(row);

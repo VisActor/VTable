@@ -292,6 +292,9 @@ export class DataSource extends EventTarget implements DataSourceAPI {
   getIndexKey(index: number): number | number[] {
     return _getIndex(this.currentPagerIndexedData, index);
   }
+  getTableIndex(colOrRow: number): number {
+    return this.currentPagerIndexedData.findIndex(value => value === colOrRow);
+  }
   getField(
     index: number,
     field: FieldDef | FieldFormat | number,

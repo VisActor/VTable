@@ -7,7 +7,7 @@
 1. 复选框类型单元格的使用非常直观和灵活。用户可以根据自己的需求选择一个或多个选项，以进行特定操作或过滤数据。这种交互方式使得用户能够更加精细地控制其操作，提高了用户体验和效率。
 2. 复选框类型单元格通常使用不同的图标或颜色来表示选中和未选中的状态，提供可视化的反馈。这样用户可以轻松地识别哪些选项已经被选择，哪些选项未被选择。
 
-![image](https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/checkbox.png)
+![image](https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/guide/checkbox.png)
 
 ## checkbox复选框的专属配置项介绍
 
@@ -19,7 +19,8 @@ checkbox 复选框类型在配置中的特有配置项如下：
 示例：
 ```javascript
 {
-  cellType: 'checkbox',
+  headerType: 'checkbox', //指定表头单元格显示为复选框
+  cellType: 'checkbox',//指定body单元格显示为复选框
   field: 'check',
   checked: true,
   disbaled: false
@@ -28,7 +29,58 @@ checkbox 复选框类型在配置中的特有配置项如下：
 
 ## checkbox复选框的专属数据类型介绍
 
-checkbox 对应的数据，支持字符串或对象，其中对象中支持配置以下属性：
+checkbox 对应的数据，支持 `boolean` `string`或 `Object`，或者不设置值默认false。
+
+1.  三种类型中设置 `boolean`类型较为常见。如check字段设置如下：
+```
+const columns=[
+  {
+    headerType: 'checkbox', //指定表头单元格显示为复选框
+    cellType: 'checkbox',//指定body单元格显示为复选框
+    field: 'check',
+  }
+]
+const records = [
+  { 
+    product: 'a',
+    check: true
+  },
+  { 
+     product: 'b',
+    check: false
+  },
+  { 
+     product: 'c',
+    check: false
+  }
+]
+```
+
+2.  如果设置为 `string`类型则会将文本显示在checkbox框的右侧，复选框默认为未选择状态。如product字段设置如下：
+```
+const columns=[
+  {
+    headerType: 'checkbox', //指定表头单元格显示为复选框
+    cellType: 'checkbox',//指定body单元格显示为复选框
+    field: 'product',
+  }
+]
+const records = [
+  { 
+    product: 'a',
+  },
+  { 
+     product: 'b',
+  },
+  { 
+     product: 'c',
+  }
+]
+```
+
+3.  如果数据条目每个状态都不同，可以设置Object对象。
+
+其中Object对象中支持配置以下属性：
 
 * text: 该单元格复选框中显示的文字
 * checked: 该单元格复选框是否被选中

@@ -22,7 +22,7 @@ import { updateHoverPosition } from './hover/update-position';
 import { dealFreeze } from './frozen';
 import { dealSort } from './sort';
 import { selectEnd, updateSelectPosition } from './select/update-position';
-import { cellInRange } from '../tools/helper';
+import { cellInRange, getOrApply } from '../tools/helper';
 import type { ListTable } from '../ListTable';
 import { PIVOT_TABLE_EVENT_TYPE } from '../ts-types/pivot-table/PIVOT_TABLE_EVENT_TYPE';
 import type { PivotHeaderLayoutMap } from '../layout/pivot-header-layout';
@@ -152,7 +152,9 @@ export class StateManeger {
    */
   headerCheckedState: Record<string | number, boolean | 'indeterminate'> = {};
 
-  checkboxCellTypeFields: (string | number)[] = [];
+  _checkboxCellTypeFields: (string | number)[] = [];
+
+  _headerCheckFuncs: Record<string | number, Function> = {};
   // 供滚动重置为default使用
   resetInteractionState = debounce(() => {
     this.updateInteractionState(InteractionState.default);
@@ -975,6 +977,8 @@ export class StateManeger {
     if (this.table.isHeader(col, row)) {
       if (isValid(this.headerCheckedState[field])) {
         return this.headerCheckedState[field];
+      } else if (typeof checked === 'function') {
+        return undefined;
       } else if (isValid(checked)) {
         this.headerCheckedState[field] = checked;
       } else if (this.checkedState?.length > 0) {
@@ -1006,47 +1010,70 @@ export class StateManeger {
    * @param checked
    * @returns
    */
-  syncHeaderCheckedState(field: string | number, checked: boolean): boolean | 'indeterminate' {
-    if (isValid(this.headerCheckedState[field])) {
-      return this.headerCheckedState[field];
-    } else if (isValid(checked)) {
-      this.headerCheckedState[field] = checked;
-    } else if (this.checkedState?.length > 0) {
-      const isAllChecked = this.updateHeaderCheckedState(field);
-      return isAllChecked;
-    }
-    return this.headerCheckedState[field];
-  }
+  // syncHeaderCheckedState(field: string | number, checked: boolean): boolean | 'indeterminate' {
+  //   if (isValid(this.headerCheckedState[field])) {
+  //     return this.headerCheckedState[field];
+  //   } else if (typeof checked === 'function') {
+  //     return undefined;
+  //   } else if (isValid(checked)) {
+  //     this.headerCheckedState[field] = checked;
+  //   } else if (this.checkedState?.length > 0) {
+  //     const isAllChecked = this.updateHeaderCheckedState(field);
+  //     return isAllChecked;
+  //   }
+  //   return this.headerCheckedState[field];
+  // }
   /**
    * 初始化check状态
    * @param records
    */
   initCheckedState(records: any[]) {
     let isNeedInitHeaderCheckedStateFromRecord = false;
-    this.checkboxCellTypeFields = [];
+    this._checkboxCellTypeFields = [];
+    this._headerCheckFuncs = {};
     this.table.internalProps.layoutMap.headerObjects.forEach((hd, index) => {
       if (hd.headerType === 'checkbox') {
         const headerChecked = (hd.define as CheckboxColumnDefine).checked as boolean;
-        this.headerCheckedState[hd.field as string | number] = headerChecked;
-        if (headerChecked === undefined || headerChecked === null) {
+
+        if (headerChecked === undefined || headerChecked === null || typeof headerChecked === 'function') {
           // 如果没有明确指定check的状态 则需要在下面遍历所有数据获取到节点状态 确定这个header的check状态
           isNeedInitHeaderCheckedStateFromRecord = true;
+          if (typeof headerChecked === 'function') {
+            this._headerCheckFuncs[hd.field as string | number] = headerChecked;
+          }
+        } else {
+          this.headerCheckedState[hd.field as string | number] = headerChecked;
         }
         if (hd.define.cellType === 'checkbox' && !hd.fieldFormat) {
-          this.checkboxCellTypeFields.push(hd.field as string | number);
+          this._checkboxCellTypeFields.push(hd.field as string | number);
         }
       }
     });
     //如果没有明确指定check的状态 遍历所有数据获取到节点状态 确定这个header的check状态
     if (isNeedInitHeaderCheckedStateFromRecord) {
       records.forEach((record: any, index: number) => {
-        this.checkboxCellTypeFields.forEach(field => {
+        this._checkboxCellTypeFields.forEach(field => {
           const value = record[field] as string | { text: string; checked: boolean; disable: boolean } | boolean;
           let isChecked;
           if (isObject(value)) {
             isChecked = value.checked;
           } else if (typeof value === 'boolean') {
             isChecked = value;
+          }
+          if (isChecked === undefined || isChecked === null) {
+            const headerCheckFunc = this._headerCheckFuncs[field];
+            if (headerCheckFunc) {
+              //如果定义的checked是个函数 则需要每个都去计算这个值
+              const cellAddr = this.table.getCellAddrByFieldRecord(field, index);
+              const globalChecked = getOrApply(headerCheckFunc as any, {
+                col: cellAddr.col,
+                row: cellAddr.row,
+                table: this.table,
+                context: null,
+                value
+              });
+              isChecked = globalChecked;
+            }
           }
           if (!this.checkedState[index]) {
             this.checkedState[index] = {};
@@ -1092,7 +1119,7 @@ export class StateManeger {
   initLeftRecordsCheckState(records: any[]) {
     for (let index = this.checkedState.length; index < records.length; index++) {
       const record = records[index];
-      this.checkboxCellTypeFields.forEach(field => {
+      this._checkboxCellTypeFields.forEach(field => {
         const value = record[field] as string | { text: string; checked: boolean; disable: boolean } | boolean;
         let isChecked;
         if (isObject(value)) {

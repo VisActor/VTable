@@ -153,6 +153,68 @@ Getting the style of a cell
    */
   getCellStyle(col: number, row: number) => CellStyle
 ```
+## getRecordByCell(Function)
+
+Get the data item of this cell
+
+```
+  /**
+   * Get the entire data record based on the row and column number
+   * @param {number} col col index.
+   * @param {number} row row index.
+   * @return {object} record.
+   */
+  getRecordByCell(col: number, row: number)
+```
+## getTableIndexByRecordIndex(Function)
+Get the index row number or column number displayed in the table based on the index of the data source (related to transposition). Note: ListTable specific interface
+
+```
+  /**
+   * Get the index row number or column number displayed in the table based on the index of the data source (related to transposition). Note: ListTable specific interface
+   * @param recordIndex
+   */
+  getTableIndexByRecordIndex: (recordIndex: number) => number;
+```
+
+## getTableIndexByField(Function)
+Get the index row number or column number displayed in the table according to the field of the data source (related to transposition). Note: ListTable specific interface
+```
+  /**
+   * Get the index row number or column number displayed in the table according to the field of the data source (related to transposition). Note: ListTable specific interface
+   * @param recordIndex
+   */
+  getTableIndexByField: (field: FieldDef) => number;
+```
+## getCellAddrByFieldRecord(Function)
+
+Get the cell row and column number based on the index and field in the data source. Note: ListTable specific interface
+```
+  /**
+   * Get the cell row and column number based on the index and field in the data source. Note: ListTable specific interface
+   * @param field
+   * @param recordIndex
+   * @returns
+   */
+  getCellAddrByFieldRecord: (field: FieldDef, recordIndex: number) => CellAddress;
+```
+## getCellOriginRecord(Function)
+
+Get the source data item of this cell.
+
+If it is a normal table, the source data object will be returned.
+
+If it is a pivot analysis table (a pivot table with data analysis turned on), an array of source data will be returned.
+
+```
+  /**
+   * Get source data based on row and column numbers
+   * @param {number} col col index.
+   * @param {number} row row index.
+   * @return {object} record or record array
+   */
+  getCellOriginRecord(col: number, row: number)
+```
 
 ## getAllCells(Function)
 
@@ -269,6 +331,11 @@ For pivot table interfaces, get specific cell addresses based on the header dime
         }
       | IDimensionInfo[]
   ) => CellAddress
+```
+## getCheckboxState(Function)
+Get the selected status of all data in the checkbox under a certain field. The order corresponds to the original incoming data records. It does not correspond to the status value of the row displayed in the table.
+```
+getCheckboxState(field: string | number): Array
 ```
 
 ## scrollToCell(Function)

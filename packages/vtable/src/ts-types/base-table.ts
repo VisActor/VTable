@@ -489,7 +489,30 @@ export interface BaseTableAPI {
 
   off: (id: EventListenerId) => void;
   getBodyField: (col: number, row: number) => FieldDef | undefined;
+  /**
+   * 根据单元格获取对应的源数据
+   * @param col
+   * @param row
+   * @returns
+   */
   getRecordByCell: (col: number, row: number) => MaybePromiseOrUndefined;
+  /**
+   * 根据数据源的index 获取显示到表格中的index 行号或者列号（与转置相关）。注：ListTable特有接口
+   * @param recordIndex
+   */
+  getTableIndexByRecordIndex: (recordIndex: number) => number;
+  /**
+   * 根据数据源的field 获取显示到表格中的index 行号或者列号（与转置相关）。注：ListTable特有接口
+   * @param recordIndex
+   */
+  getTableIndexByField: (field: FieldDef) => number;
+  /**
+   * 根据数据源中的index和field获取单元格行列号。注：ListTable特有接口
+   * @param field
+   * @param recordIndex
+   * @returns
+   */
+  getCellAddrByFieldRecord: (field: FieldDef, recordIndex: number) => CellAddress;
   getRecordIndexByCell: (col: number, row: number) => number;
   getRecordStartRowByRecordIndex: (index: number) => number;
 

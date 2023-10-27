@@ -11,7 +11,13 @@ export function createTable() {
         field: '',
         headerType: 'checkbox',
         cellType: 'checkbox',
-        width: 60
+        width: 60,
+        checked(args) {
+          if (args.row === 0 || args.row === 1) {
+            return false;
+          }
+          return true;
+        }
         // checked: false
       },
       {
@@ -33,8 +39,8 @@ export function createTable() {
         title: '',
         width: 120,
         headerType: 'checkbox',
-        cellType: 'checkbox',
-        checked: false
+        cellType: 'checkbox'
+        // checked: false
       }
     ],
     showFrozenIcon: true, //显示VTable内置冻结列图标
@@ -53,9 +59,9 @@ export function createTable() {
     { percent: '60%', value: 16, check: { text: 'disable', checked: true, disable: true } },
     { percent: '40%', value: 14, check: { text: 'disable', checked: false, disable: true } },
     { percent: '0%', value: -10, check: true },
-    { percent: '0%', value: -10 }
+    { percent: '0%', value: -10, check: '选中' }
   ];
-  for (let i = 0; i < 1; i++) {
+  for (let i = 0; i < 200; i++) {
     records = records.concat(data);
   }
   //设置表格数据
