@@ -75,9 +75,9 @@ export function updateCellHeightForRow(
   isHeader: boolean
   // autoRowHeight: boolean
 ) {
-  cell.setAttribute('height', height + detaY);
+  cell.setAttribute('height', height);
   const cellGroup = cell;
-  const distHeight = height + detaY;
+  const distHeight = height;
 
   if (!cellGroup) {
     // 合并单元格非主单元格，不处理
@@ -254,8 +254,8 @@ function updateMergeCellContentHeight(
         const rangeHeight = table.getRowHeight(row);
         const rangeWidth = table.getColWidth(col);
 
-        const { height: contentHeight } = cellGroup.attribute;
-        cellGroup.contentHeight = contentHeight;
+        // const { height: contentHeight } = cellGroup.attribute;
+        singleCellGroup.contentHeight = distHeight;
 
         resizeCellGroup(
           singleCellGroup,

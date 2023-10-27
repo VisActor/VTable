@@ -387,8 +387,8 @@ function updateMergeCellContentWidth(
         const rangeHeight = table.getRowHeight(row);
         const rangeWidth = table.getColWidth(col);
 
-        const { width: contentWidth } = cellGroup.attribute;
-        cellGroup.contentWidth = contentWidth;
+        // const { width: contentWidth } = cellGroup.attribute;
+        singleCellGroup.contentWidth = distWidth;
 
         resizeCellGroup(
           singleCellGroup,
@@ -432,6 +432,9 @@ function updateMergeCellContentWidth(
 function resetRowHeight(scene: Scenegraph, row: number) {
   // 获取高度
   const maxHeight = computeRowHeight(row, 0, scene.table.colCount - 1, scene.table);
+  // 更新table行高存储
+  scene.table.setRowHeight(row, maxHeight, true);
+
   // 更新高度
   for (let col = 0; col < scene.table.colCount; col++) {
     const distHeight = maxHeight;
@@ -440,9 +443,14 @@ function resetRowHeight(scene: Scenegraph, row: number) {
       return;
     }
 
-    updateCellHeightForRow(scene, cell, col, row, distHeight, 0, scene.table.isHeader(col, row));
+    updateCellHeightForRow(
+      scene,
+      cell,
+      col,
+      row,
+      distHeight,
+      distHeight - cell.attribute.height,
+      scene.table.isHeader(col, row)
+    );
   }
-
-  // 更新table行高存储
-  scene.table.setRowHeight(row, maxHeight, true);
 }
