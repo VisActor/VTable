@@ -2,6 +2,18 @@
   "name": "@visactor/vtable",
   "entries": [
     {
+      "version": "0.13.1",
+      "tag": "@visactor/vtable_v0.13.1",
+      "date": "Fri, 27 Oct 2023 13:15:39 GMT",
+      "comments": {
+        "patch": [
+          {
+            "comment": "fix: stack default value is true\n\n"
+          }
+        ]
+      }
+    },
+    {
       "version": "0.13.0",
       "tag": "@visactor/vtable_v0.13.0",
       "date": "Wed, 25 Oct 2023 06:11:44 GMT",
