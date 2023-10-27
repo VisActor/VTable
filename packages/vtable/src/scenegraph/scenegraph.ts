@@ -742,10 +742,12 @@ export class Scenegraph {
    * @param {number} detaX 改变的宽度值
    * @return {*}
    */
-  updateColWidth(col: number, detaX: number) {
+  updateColWidth(col: number, detaX: number, skipUpdateContainer?: boolean) {
     updateColWidth(this, col, Math.round(detaX));
     // this.updateContainerWidth(col, detaX);
-    this.updateContainer();
+    if (!skipUpdateContainer) {
+      this.updateContainer();
+    }
   }
 
   /**

@@ -597,7 +597,8 @@ function canUseFastUpdate(col: number, row: number, oldCellGroup: Group, autoWra
     cellType === 'text' &&
     !autoWrapText &&
     !autoRowHeight &&
-    !mayHaveIcon
+    !mayHaveIcon &&
+    oldCellGroup.firstChild?.type === 'text'
   ) {
     return true;
   }
