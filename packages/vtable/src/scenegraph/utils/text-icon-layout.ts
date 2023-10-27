@@ -539,46 +539,45 @@ export function updateCellContentWidth(
 
   // 如果autoRowHeight && 高度改变 更新y方向位置
   if (autoRowHeight) {
-    const newHeight = Math.max(leftIconHeight, contentHeight, rightIconHeight); // + padding[0] + padding[2]
+    let newHeight = Math.max(leftIconHeight, contentHeight, rightIconHeight); // + padding[0] + padding[2]
 
     if (isCellHeightUpdate(scene, cellGroup, newHeight + padding[0] + padding[2], oldCellHeight)) {
       // cellGroup.setAttribute('height', newHeight + padding[0] + padding[2]);
       return true;
     }
 
-    // newHeight = cellGroup.attribute.height - (padding[0] + padding[2]);
+    newHeight = (cellGroup.contentHeight ?? cellGroup.attribute.height) - (padding[0] + padding[2]);
 
-    // cellGroup.forEachChildren((child: any) => {
-    //   if (child.type === 'rect' || child.type === 'chart') {
-    //     return;
-    //   }
-    //   if (child.name === 'mark') {
-    //     child.setAttribute('y', 0);
-    //   } else if (textBaseline === 'middle') {
-    //     child.setAttribute('y', padding[0] + (newHeight - child.AABBBounds.height()) / 2);
-    //   } else if (textBaseline === 'bottom') {
-    //     child.setAttribute('y', padding[0] + newHeight - child.AABBBounds.height());
-    //   } else {
-    //     child.setAttribute('y', padding[0]);
-    //   }
-    // });
+    cellGroup.forEachChildren((child: any) => {
+      if (child.type === 'rect' || child.type === 'chart') {
+        return;
+      }
+      if (child.name === 'mark') {
+        child.setAttribute('y', 0);
+      } else if (textBaseline === 'middle') {
+        child.setAttribute('y', padding[0] + (newHeight - child.AABBBounds.height()) / 2);
+      } else if (textBaseline === 'bottom') {
+        child.setAttribute('y', padding[0] + newHeight - child.AABBBounds.height());
+      } else {
+        child.setAttribute('y', padding[0]);
+      }
+    });
+  } else if (textBaseline === 'middle' || textBaseline === 'bottom') {
+    cellGroup.forEachChildren((child: any) => {
+      if (child.type === 'rect' || child.type === 'chart') {
+        return;
+      }
+      if (child.name === 'mark') {
+        child.setAttribute('y', 0);
+      } else if (textBaseline === 'middle') {
+        child.setAttribute('y', (cellGroup.attribute.height - padding[2] + padding[0] - child.AABBBounds.height()) / 2);
+      } else if (textBaseline === 'bottom') {
+        child.setAttribute('y', cellGroup.attribute.height - child.AABBBounds.height() - padding[2]);
+      } else {
+        child.setAttribute('y', padding[0]);
+      }
+    });
   }
-  // else if (textBaseline === 'middle' || textBaseline === 'bottom') {
-  //   cellGroup.forEachChildren((child: any) => {
-  //     if (child.type === 'rect' || child.type === 'chart') {
-  //       return;
-  //     }
-  //     if (child.name === 'mark') {
-  //       child.setAttribute('y', 0);
-  //     } else if (textBaseline === 'middle') {
-  //       child.setAttribute('y', (cellGroup.attribute.height - padding[2] + padding[0] - child.AABBBounds.height()) / 2);
-  //     } else if (textBaseline === 'bottom') {
-  //       child.setAttribute('y', cellGroup.attribute.height - child.AABBBounds.height() - padding[2]);
-  //     } else {
-  //       child.setAttribute('y', padding[0]);
-  //     }
-  //   });
-  // }
   return false;
 }
 

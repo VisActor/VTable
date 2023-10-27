@@ -176,6 +176,12 @@ export function createComplexColumn(
       if (isMerge) {
         const rangeHeight = table.getRowHeight(row);
         const rangeWidth = table.getColWidth(col);
+
+        const { width: contentWidth } = cellGroup.attribute;
+        const { height: contentHeight } = cellGroup.attribute;
+        cellGroup.contentWidth = contentWidth;
+        cellGroup.contentHeight = contentHeight;
+
         resizeCellGroup(cellGroup, rangeWidth, rangeHeight, range, table);
         columnGroup.updateColumnHeight(rangeHeight);
         y += rangeHeight;

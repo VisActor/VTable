@@ -488,6 +488,12 @@ export function updateCell(col: number, row: number, table: BaseTableAPI, addNew
   if (isMerge) {
     const rangeHeight = table.getRowHeight(row);
     const rangeWidth = table.getColWidth(col);
+
+    const { width: contentWidth } = newCellGroup.attribute;
+    const { height: contentHeight } = newCellGroup.attribute;
+    newCellGroup.contentWidth = contentWidth;
+    newCellGroup.contentHeight = contentHeight;
+
     resizeCellGroup(newCellGroup, rangeWidth, rangeHeight, range, table);
   }
 

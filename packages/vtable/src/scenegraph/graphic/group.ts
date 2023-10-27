@@ -12,6 +12,8 @@ export class Group extends VRenderGroup {
   mergeStartRow?: number;
   mergeEndCol?: number;
   mergeEndRow?: number;
+  contentWidth?: number;
+  contentHeight?: number;
   rowNumber?: number; // row number of the column group
   colHeight?: number; // current height of the column group
   border?: IRect; // table/header/body的border mark，挂载在这里方便更新

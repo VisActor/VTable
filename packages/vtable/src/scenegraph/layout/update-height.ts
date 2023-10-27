@@ -253,6 +253,10 @@ function updateMergeCellContentHeight(
         updateCellContentHeight(singleCellGroup, distHeight, detaY, autoRowHeight, padding, textAlign, textBaseline);
         const rangeHeight = table.getRowHeight(row);
         const rangeWidth = table.getColWidth(col);
+
+        const { height: contentHeight } = cellGroup.attribute;
+        cellGroup.contentHeight = contentHeight;
+
         resizeCellGroup(
           singleCellGroup,
           rangeWidth,

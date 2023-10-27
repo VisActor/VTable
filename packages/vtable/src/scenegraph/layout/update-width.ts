@@ -386,6 +386,10 @@ function updateMergeCellContentWidth(
         );
         const rangeHeight = table.getRowHeight(row);
         const rangeWidth = table.getColWidth(col);
+
+        const { width: contentWidth } = cellGroup.attribute;
+        cellGroup.contentWidth = contentWidth;
+
         resizeCellGroup(
           singleCellGroup,
           rangeWidth,
