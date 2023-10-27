@@ -405,14 +405,25 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
       });
     }
   }
-
-  getRecordIndexByRow(row: number): number {
-    const { layoutMap } = this.internalProps;
-    return layoutMap.getRecordIndexByRow(row);
+  getRecordIndexByCell(col: number, row: number): number {
+    return undefined;
   }
-  getRecordIndexByCol(col: number): number {
+  getTableIndexByRecordIndex(recordIndex: number): number {
+    return undefined;
+  }
+  getTableIndexByField(field: FieldDef): number {
+    return undefined;
+  }
+  getCellAddrByFieldRecord(field: FieldDef, recordIndex: number): CellAddress {
+    return undefined;
+  }
+  getBodyIndexByRow(row: number): number {
     const { layoutMap } = this.internalProps;
-    return layoutMap.getRecordIndexByCol(col);
+    return layoutMap.getBodyIndexByRow(row);
+  }
+  getBodyIndexByCol(col: number): number {
+    const { layoutMap } = this.internalProps;
+    return layoutMap.getBodyIndexByCol(col);
   }
   getFieldData(field: FieldDef | FieldFormat | undefined, col: number, row: number): FieldData {
     if (field === null || field === undefined) {
@@ -422,13 +433,13 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
     if (table.internalProps.layoutMap.isHeader(col, row)) {
       return null;
     }
-    const rowIndex = this.getRecordIndexByRow(row);
-    const colIndex = this.getRecordIndexByCol(col);
-    const dataValue = table.dataSource?.getField(rowIndex, colIndex);
+    const rowIndex = this.getBodyIndexByRow(row);
+    const colIndex = this.getBodyIndexByCol(col);
+    const dataValue = table.dataSource?.getField(rowIndex, colIndex, col, row, this);
     if (typeof field !== 'string') {
       //field为函数format
       const cellHeaderPaths = table.internalProps.layoutMap.getCellHeaderPaths(col, row);
-      return getField({ dataValue, ...cellHeaderPaths }, field, emptyFn as any);
+      return getField({ dataValue, ...cellHeaderPaths }, field, col, row, this, emptyFn as any);
     }
     return dataValue;
   }
@@ -439,8 +450,6 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
       return typeof fieldFormat === 'function' ? fieldFormat(title) : title;
     }
     if (this.dataset) {
-      // const colKeys = this.dataset.colKeysPath[this.internalProps.layoutMap.getRecordIndexByCol(col)] ?? [];
-      // const rpwKeys = this.dataset.rowKeysPath[this.internalProps.layoutMap.getRecordIndexByRow(row)] ?? [];
       const cellDimensionPath = this.internalProps.layoutMap.getCellHeaderPaths(col, row);
       const colKeys = cellDimensionPath.colHeaderPaths.map((colPath: any) => {
         return colPath.indicatorKey ?? colPath.value;
@@ -453,7 +462,7 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
         this.internalProps.layoutMap.indicatorsAsCol ? colKeys.slice(0, -1) : colKeys,
         (this.internalProps.layoutMap as PivotHeaderLayoutMap).getIndicatorKey(col, row)
       );
-      return aggregator.formatValue ? aggregator.formatValue() : '';
+      return aggregator.formatValue ? aggregator.formatValue(col, row, this) : '';
     } else if (this.flatDataToObjects) {
       //数据为行列树结构 根据row col获取对应的维度名称 查找到对应值
       const cellDimensionPath = this.internalProps.layoutMap.getCellHeaderPaths(col, row);
@@ -469,7 +478,9 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
         this.internalProps.layoutMap.getBody(col, row).indicatorKey
       );
       const { fieldFormat } = this.internalProps.layoutMap.getBody(col, row);
-      return typeof fieldFormat === 'function' ? fieldFormat(valueNode?.record) : valueNode?.value ?? '';
+      return typeof fieldFormat === 'function'
+        ? fieldFormat(valueNode?.record, col, row, this)
+        : valueNode?.value ?? '';
     }
     const { field, fieldFormat } = this.internalProps.layoutMap.getBody(col, row);
     return this.getFieldData(fieldFormat || field, col, row);
@@ -482,8 +493,6 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
       return typeof title === 'function' ? title() : title;
     }
     if (this.dataset) {
-      // const colKey = this.dataset.colKeysPath[this.internalProps.layoutMap.getRecordIndexByCol(col)] ?? [];
-      // const rowKey = this.dataset.rowKeysPath[this.internalProps.layoutMap.getRecordIndexByRow(row)] ?? [];
       const cellDimensionPath = this.internalProps.layoutMap.getCellHeaderPaths(col, row);
       const colKeys = cellDimensionPath.colHeaderPaths.map((colPath: any) => {
         return colPath.indicatorKey ?? colPath.value;

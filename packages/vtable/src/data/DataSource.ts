@@ -16,6 +16,7 @@ import { EventTarget } from '../event/EventTarget';
 import { getValueByPath } from '../tools/util';
 import { diffCellIndices } from '../tools/diff-cell';
 import { isValid } from '@visactor/vutils';
+import type { BaseTableAPI } from '../ts-types/base-table';
 
 /**
  * 判断字段数据是否为访问器的格式
@@ -66,13 +67,16 @@ function getValue(value: MaybePromiseOrCallOrUndefined, promiseCallBack: Promise
 export function getField(
   record: MaybePromiseOrUndefined,
   field: FieldDef | FieldFormat | number,
+  col: number,
+  row: number,
+  table: BaseTableAPI,
   promiseCallBack: PromiseBack
 ): FieldData {
   if (record === null) {
     return undefined;
   }
   if (isPromise(record)) {
-    return record.then((r: any) => getField(r, field, promiseCallBack));
+    return record.then((r: any) => getField(r, field, col, row, table, promiseCallBack));
   }
   const fieldGet: any = isFieldAssessor(field) ? field.get : field;
   if (fieldGet in (record as any)) {
@@ -81,7 +85,7 @@ export function getField(
     return getValue(fieldResult, promiseCallBack);
   }
   if (typeof fieldGet === 'function') {
-    const fieldResult = fieldGet(record);
+    const fieldResult = fieldGet(record, col, row, table);
     return getValue(fieldResult, promiseCallBack);
   }
   if (Array.isArray(fieldGet)) {
@@ -93,7 +97,11 @@ export function getField(
     const fieldResult = (record as any)[fieldGet];
     return getValue(fieldResult, promiseCallBack);
   }
-  const fieldResult = applyChainSafe(record, (val, name) => getField(val, name, emptyFn as any), ...fieldArray);
+  const fieldResult = applyChainSafe(
+    record,
+    (val, name) => getField(val, name, col, row, table, emptyFn as any),
+    ...fieldArray
+  );
   return getValue(fieldResult, promiseCallBack);
 }
 
@@ -141,6 +149,7 @@ export class DataSource extends EventTarget implements DataSourceAPI {
     return EVENT_TYPE;
   }
   protected treeDataHierarchyState: Map<number | string, HierarchyState> = new Map();
+
   constructor(obj?: DataSourceParam | DataSource, pagination?: IPagination, hierarchyExpandLevel?: number) {
     super();
 
@@ -283,8 +292,17 @@ export class DataSource extends EventTarget implements DataSourceAPI {
   getIndexKey(index: number): number | number[] {
     return _getIndex(this.currentPagerIndexedData, index);
   }
-  getField(index: number, field: FieldDef | FieldFormat | number): FieldData {
-    return this.getOriginalField(_getIndex(this.currentPagerIndexedData, index), field);
+  getTableIndex(colOrRow: number): number {
+    return this.currentPagerIndexedData.findIndex(value => value === colOrRow);
+  }
+  getField(
+    index: number,
+    field: FieldDef | FieldFormat | number,
+    col: number,
+    row: number,
+    table: BaseTableAPI
+  ): FieldData {
+    return this.getOriginalField(_getIndex(this.currentPagerIndexedData, index), field, col, row, table);
   }
 
   hasField(index: number, field: FieldDef): boolean {
@@ -559,13 +577,19 @@ export class DataSource extends EventTarget implements DataSourceAPI {
       this.recordPromiseCallBack(index, val);
     });
   }
-  protected getOriginalField(index: number | number[], field: FieldDef | FieldFormat | number): FieldData {
+  protected getOriginalField(
+    index: number | number[],
+    field: FieldDef | FieldFormat | number,
+    col?: number,
+    row?: number,
+    table?: BaseTableAPI
+  ): FieldData {
     if (field === null) {
       return undefined;
     }
     const record = this.getOriginalRecord(index);
     // return getField(record, field);
-    return getField(record, field, (val: any) => {
+    return getField(record, field, col, row, table, (val: any) => {
       this.fieldPromiseCallBack(index, field, val);
     });
   }

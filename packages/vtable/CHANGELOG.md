@@ -1,6 +1,15 @@
 # Change Log - @visactor/vtable
 
-This log was last generated on Wed, 25 Oct 2023 06:11:44 GMT and should not be manually modified.
+This log was last generated on Fri, 27 Oct 2023 13:15:39 GMT and should not be manually modified.
+
+## 0.13.1
+Fri, 27 Oct 2023 13:15:39 GMT
+
+### Patches
+
+- fix: stack default value is true
+
+
 
 ## 0.13.0
 Wed, 25 Oct 2023 06:11:44 GMT

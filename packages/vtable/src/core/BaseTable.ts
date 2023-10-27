@@ -2239,10 +2239,14 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
   abstract moveHeaderPosition(source: CellAddress, target: CellAddress): boolean;
   /** @private */
   abstract getFieldData(field: FieldDef | FieldFormat | undefined, col: number, row: number): FieldData;
-  abstract getRecordIndexByRow(col: number, row: number): number;
+  abstract getRecordIndexByCell(col: number, row: number): number;
   abstract getCellOriginRecord(col: number, row: number): MaybePromiseOrUndefined;
   abstract getCellValue(col: number, row: number): FieldData;
   abstract getCellOriginValue(col: number, row: number): FieldData;
+
+  abstract getTableIndexByRecordIndex(recordIndex: number): number;
+  abstract getTableIndexByField(field: FieldDef): number;
+  abstract getCellAddrByFieldRecord(field: FieldDef, recordIndex: number): CellAddress;
   /**
    * 更新页码
    * @param pagination 要修改页码的信息
@@ -2437,11 +2441,15 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
    * @param  {number} row row index.
    * @return {object} record.
    */
-  getRecordByRowCol(col: number, row: number): MaybePromiseOrUndefined {
+  getRecordByCell(col: number, row: number): MaybePromiseOrUndefined {
     if (this.internalProps.layoutMap.isHeader(col, row)) {
       return undefined;
     }
-    return this.internalProps.dataSource?.get(this.getRecordIndexByRow(col, row));
+    return this.internalProps.dataSource?.get(this.getRecordIndexByCell(col, row));
+  }
+  /** @deprecated 请使用getRecordByCell */
+  getRecordByRowCol(col: number, row: number) {
+    return this.getRecordByCell(col, row);
   }
 
   /**
@@ -2563,7 +2571,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     } else {
       _setRecords(this, records);
     }
-
+    this.stateManeger.initCheckedState(records);
     this.internalProps.frozenColCount = this.options.frozenColCount || this.rowHeaderLevelCount;
     // 生成单元格场景树
     this.scenegraph.createSceneGraph();
@@ -2583,7 +2591,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
    * @param row row position of the record, it is optional
    */
   setRecord(record: any, col?: number, row?: number) {
-    const index = this.getRecordIndexByRow(col, row);
+    const index = this.getRecordIndexByCell(col, row);
     this.dataSource.setRecord(record, index);
   }
 
@@ -2692,7 +2700,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     if (table.internalProps.layoutMap.isHeader(col, row)) {
       return false;
     }
-    const index = table.getRecordIndexByRow(col, row);
+    const index = table.getRecordIndexByCell(col, row);
     return table.internalProps.dataSource.hasField(index, field);
   }
   /**

@@ -1,14 +1,14 @@
 import type { Either } from '../../../tools/helper';
 import type { ICompositeColumnBodyDefine } from './Composite-define';
 import type { IChartColumnBodyDefine } from './chart-define';
-import type { ICheckboxColumnBodyDefine } from './checkbox-define';
+import type { ICheckboxColumnBodyDefine, ICheckboxHeaderDefine } from './checkbox-define';
 import type { IImageColumnBodyDefine, IImageHeaderDefine } from './image-define';
 import type { ILinkColumnBodyDefine, ILinkHeaderDefine } from './link-define';
 import type { ITextColumnBodyDefine, ITextHeaderDefine } from './multilinetext-define';
 import type { IProgressbarColumnBodyDefine } from './progressbar-define';
 import type { ISparklineColumnBodyDefine } from './sparkline-define';
 
-export type HeaderDefine = IImageHeaderDefine | ILinkHeaderDefine | ITextHeaderDefine;
+export type HeaderDefine = IImageHeaderDefine | ILinkHeaderDefine | ICheckboxHeaderDefine | ITextHeaderDefine;
 
 export type ColumnBodyDefine =
   | ILinkColumnBodyDefine
