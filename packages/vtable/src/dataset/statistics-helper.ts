@@ -1,5 +1,6 @@
 import type { SortOrder } from '../ts-types';
 import { AggregationType } from '../ts-types';
+import type { BaseTableAPI } from '../ts-types/base-table';
 
 export abstract class Aggregator {
   className = 'Aggregator';
@@ -29,10 +30,10 @@ export abstract class Aggregator {
   // }
   abstract push(record: any): void;
   abstract value(): any;
-  formatValue() {
+  formatValue(col?: number, row?: number, table?: BaseTableAPI) {
     if (!this._formatedValue) {
       if (this.formatFun) {
-        this._formatedValue = this.formatFun(this.value());
+        this._formatedValue = this.formatFun(this.value(), col, row, table);
       } else {
         this._formatedValue = this.value();
       }

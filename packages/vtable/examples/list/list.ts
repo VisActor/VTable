@@ -19,8 +19,16 @@ export function createTable() {
   const records = generatePersons(100);
   const columns: VTable.ColumnsDefine = [
     {
+      field: '',
+      title: '行号',
+      width: 80,
+      fieldFormat(data, col, row, table) {
+        return row - 1;
+      }
+    },
+    {
       field: 'id',
-      title: 'ID ff',
+      title: 'ID',
       width: '1%',
       minWidth: 200,
       sort: true
@@ -79,7 +87,7 @@ export function createTable() {
     tooltip: {
       isShowOverflowTextTooltip: true
     },
-    frozenColCount: 2,
+    frozenColCount: 1,
     // autoWrapText: true,
     // heightMode: 'autoHeight',
     widthMode: 'adaptive'

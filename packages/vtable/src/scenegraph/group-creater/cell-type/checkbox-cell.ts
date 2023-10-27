@@ -94,31 +94,37 @@ function createCheckbox(
   define: CheckboxColumnDefine,
   table: BaseTableAPI
 ) {
-  const value = table.getCellValue(col, row) as string | { text: string; checked: boolean; disable: boolean };
+  const value = table.getCellValue(col, row) as string | { text: string; checked: boolean; disable: boolean } | boolean;
   const dataValue = table.getCellOriginValue(col, row);
   let isChecked;
   let isDisabled;
-  let text = value as string;
+  let text = (value as string) ?? '';
   if (isObject(value)) {
     isChecked = value.checked;
     isDisabled = value.disable;
     text = value.text;
+  } else if (typeof value === 'boolean') {
+    isChecked = value;
+    text = '';
   }
-
+  isChecked = table.stateManeger.syncCheckedState(col, row, define.field as string | number, isChecked);
   const hierarchyOffset = getHierarchyOffset(col, row, table);
   const cellStyle = table._getCellStyle(col, row) as CheckboxStyleOption; // to be fixed
   const autoWrapText = cellStyle.autoWrapText ?? table.internalProps.autoWrapText;
   const { lineClamp } = cellStyle;
   const { checked, disable } = define;
-
-  const globalChecked = getOrApply(checked as any, {
-    col,
-    row,
-    table,
-    context: null,
-    value,
-    dataValue
-  });
+  if (isChecked === undefined || isChecked === null || typeof isChecked === 'function') {
+    //isChecked无效值 取全局设置的值
+    const globalChecked = getOrApply(checked as any, {
+      col,
+      row,
+      table,
+      context: null,
+      value,
+      dataValue
+    });
+    isChecked = table.stateManeger.syncCheckedState(col, row, define.field as string | number, globalChecked);
+  }
   const globalDisable = getOrApply(disable as any, {
     col,
     row,
@@ -146,14 +152,26 @@ function createCheckbox(
     dx: hierarchyOffset
   };
   const testAttribute = cellTheme.text ? (Object.assign({}, cellTheme.text, attribute) as any) : attribute;
-
-  const checkbox = new CheckBox({
-    x: 0,
-    y: 0,
-    text: testAttribute,
-    checked: isChecked ?? globalChecked ?? false,
-    disabled: isDisabled ?? globalDisable ?? false
-  });
+  let checkbox;
+  if (isChecked === 'indeterminate') {
+    checkbox = new CheckBox({
+      x: 0,
+      y: 0,
+      text: testAttribute,
+      checked: undefined,
+      indeterminate: true,
+      disabled: isDisabled ?? globalDisable ?? false
+    });
+  } else {
+    checkbox = new CheckBox({
+      x: 0,
+      y: 0,
+      text: testAttribute,
+      checked: isChecked,
+      indeterminate: undefined,
+      disabled: isDisabled ?? globalDisable ?? false
+    });
+  }
   checkbox.name = 'checkbox';
 
   return checkbox;

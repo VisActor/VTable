@@ -101,7 +101,7 @@ let  tableInstance;
           bodyStyle: {
             bgColor(args) {
               const { row, col } = args;
-              const record = args.table.getRecordByRowCol(col, row);
+              const record = args.table.getRecordByCell(col, row);
               return colorToCategory[categorys.indexOf(record.Category)];
             }
           }
@@ -146,7 +146,7 @@ let  tableInstance;
             bodyStyle: {
               color(args) {
                 const { row, col } = args;
-                const record = tableInstance.getRecordByRowCol(col, row);
+                const record = tableInstance.getRecordByCell(col, row);
                 if (highlightCategorys.indexOf(record.Category) >= 0) {
                   return 'black';
                 }
@@ -154,7 +154,7 @@ let  tableInstance;
               },
               bgColor(args) {
                 const { row, col } = args;
-                const record = tableInstance.getRecordByRowCol(col, row);
+                const record = tableInstance.getRecordByCell(col, row);
                 if (highlightCategorys.indexOf(record.Category) >= 0) {
                   return colorToCategory[categorys.indexOf(record.Category)];
                 }

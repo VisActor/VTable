@@ -37,8 +37,6 @@ export function getDataCellPath(
       if (layoutMap.isHeader(col, row)) {
         continue;
       }
-      // const colKey = dataset.colKeysPath[layoutMap.getRecordIndexByCol(col)] ?? [];
-      // const rowKey = dataset.rowKeysPath[layoutMap.getRecordIndexByRow(row)] ?? [];
 
       const cellDimensionPath = layoutMap.getCellHeaderPaths(col, row);
       const colKeys = cellDimensionPath.colHeaderPaths.map((colPath: any) => {

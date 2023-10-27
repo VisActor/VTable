@@ -21,7 +21,7 @@ export function createTable() {
         customLayout: args => {
           const { table, row, col, rect } = args;
           const { height, width } = rect ?? table.getCellRect(col, row);
-          const record = table.getRecordByRowCol(col, row);
+          const record = table.getRecordByCell(col, row);
 
           const container = (
             <VGroup
