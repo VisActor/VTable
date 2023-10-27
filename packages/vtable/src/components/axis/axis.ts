@@ -28,7 +28,7 @@ export class CartesianAxis {
   option: ICellAxisOption;
   orient: IOrientType;
   visible: boolean;
-  type: 'linear' | 'band' | 'time';
+  type: 'linear' | 'band' | 'point' | 'time' | 'log' | 'symlog';
   inverse: boolean;
   data?: any[];
   tickData: DataView;
@@ -58,7 +58,7 @@ export class CartesianAxis {
 
   initScale() {
     const option = this.option as any;
-    if (this.type === 'band') {
+    if (this.type === 'band' || this.type === 'point') {
       this.scale = new BandAxisScale();
       this.scale.bandPadding = option.bandPadding;
       this.scale.paddingInner = option.paddingInner;
@@ -66,9 +66,16 @@ export class CartesianAxis {
       this.scale.calcScales(DEFAULT_BAND_INNER_PADDING, DEFAULT_BAND_OUTER_PADDING); // 0.1 0.3
       this.scale.updateScaleDomain(this.data);
       this.updateScaleRange();
-    } else if (this.type === 'linear' || this.type === 'time') {
-      this.scale = new LinearAxisScale();
-      this.scale.setExtraAttrFromSpec(option.nice, option.zero, option.range, option.expand);
+    } else if (this.type === 'linear' || this.type === 'time' || this.type === 'log' || this.type === 'symlog') {
+      this.scale = new LinearAxisScale(this.type);
+      this.scale.setExtraAttrFromSpec(
+        option.nice,
+        option.zero,
+        option.range,
+        option.expand,
+        option.base,
+        option.constant
+      );
       this.scale.transformScaleDomain();
       this.scale.updateScaleDomain();
       this.updateScaleRange();

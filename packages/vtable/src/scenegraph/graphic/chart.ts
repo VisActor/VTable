@@ -149,6 +149,18 @@ export class Chart extends Group {
    */
   deactivate() {
     this.active = false;
+    // move active chart view box out of broswer view
+    // to avoid async render when chart is releasd
+    this.activeChartInstance.updateViewBox(
+      {
+        x1: -1000,
+        x2: -800,
+        y1: -1000,
+        y2: -800
+      },
+      false,
+      false
+    );
     this.activeChartInstance.release();
     this.activeChartInstance = null;
   }
