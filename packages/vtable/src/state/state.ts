@@ -151,6 +151,8 @@ export class StateManeger {
    * 对应表头checked状态
    */
   headerCheckedState: Record<string | number, boolean | 'indeterminate'> = {};
+
+  checkboxCellTypeFields: (string | number)[] = [];
   // 供滚动重置为default使用
   resetInteractionState = debounce(() => {
     this.updateInteractionState(InteractionState.default);
@@ -1021,7 +1023,7 @@ export class StateManeger {
    */
   initCheckedState(records: any[]) {
     let isNeedInitHeaderCheckedStateFromRecord = false;
-    const checkboxCellTypeField: (string | number)[] = [];
+    this.checkboxCellTypeFields = [];
     this.table.internalProps.layoutMap.headerObjects.forEach((hd, index) => {
       if (hd.headerType === 'checkbox') {
         const headerChecked = (hd.define as CheckboxColumnDefine).checked as boolean;
@@ -1031,14 +1033,14 @@ export class StateManeger {
           isNeedInitHeaderCheckedStateFromRecord = true;
         }
         if (hd.define.cellType === 'checkbox' && !hd.fieldFormat) {
-          checkboxCellTypeField.push(hd.field as string | number);
+          this.checkboxCellTypeFields.push(hd.field as string | number);
         }
       }
     });
     //如果没有明确指定check的状态 遍历所有数据获取到节点状态 确定这个header的check状态
     if (isNeedInitHeaderCheckedStateFromRecord) {
       records.forEach((record: any, index: number) => {
-        checkboxCellTypeField.forEach(field => {
+        this.checkboxCellTypeFields.forEach(field => {
           const value = record[field] as string | { text: string; checked: boolean; disable: boolean } | boolean;
           let isChecked;
           if (isObject(value)) {
@@ -1074,8 +1076,36 @@ export class StateManeger {
       this.headerCheckedState[field] = false;
       return false;
     }
-    this.headerCheckedState[field] = 'indeterminate';
-    return 'indeterminate'; //半选状态
+    const hasChecked = this.checkedState.find((state: Record<string | number, boolean>) => {
+      return state[field] === true;
+    });
+    if (hasChecked) {
+      this.headerCheckedState[field] = 'indeterminate';
+      return 'indeterminate'; //半选状态
+    }
+    return false;
+  }
+  /**
+   * setRecords的时候虽然调用了initCheckedState 进行了初始化 但当每个表头的checked状态都用配置了的话 初始化不会遍历全部数据
+   * @param records
+   */
+  initLeftRecordsCheckState(records: any[]) {
+    for (let index = this.checkedState.length; index < records.length; index++) {
+      const record = records[index];
+      this.checkboxCellTypeFields.forEach(field => {
+        const value = record[field] as string | { text: string; checked: boolean; disable: boolean } | boolean;
+        let isChecked;
+        if (isObject(value)) {
+          isChecked = value.checked;
+        } else if (typeof value === 'boolean') {
+          isChecked = value;
+        }
+        if (!this.checkedState[index]) {
+          this.checkedState[index] = {};
+        }
+        this.checkedState[index][field] = isChecked;
+      });
+    }
   }
   //#endregion
 }

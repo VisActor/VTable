@@ -8,6 +8,13 @@ export function createTable() {
     container: document.getElementById(CONTAINER_ID),
     columns: [
       {
+        field: '',
+        headerType: 'checkbox',
+        cellType: 'checkbox',
+        width: 60
+        // checked: false
+      },
+      {
         field: 'percent',
         title: 'percent',
         width: 120,
@@ -26,8 +33,8 @@ export function createTable() {
         title: '',
         width: 120,
         headerType: 'checkbox',
-        cellType: 'checkbox'
-        // checked: false
+        cellType: 'checkbox',
+        checked: false
       }
     ],
     showFrozenIcon: true, //显示VTable内置冻结列图标
@@ -48,7 +55,7 @@ export function createTable() {
     { percent: '0%', value: -10, check: true },
     { percent: '0%', value: -10 }
   ];
-  for (let i = 0; i < 2; i++) {
+  for (let i = 0; i < 1; i++) {
     records = records.concat(data);
   }
   //设置表格数据
