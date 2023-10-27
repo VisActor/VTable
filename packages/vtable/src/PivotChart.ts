@@ -664,13 +664,13 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
    * @returns
    */
   private _generateCollectValuesConfig(columnKeys: string[], rowKeys: string[]): Record<string, CollectValueBy> {
-    const option = this.options;
+    const indicators = this.internalProps.indicators;
     const collectValuesBy: Record<string, CollectValueBy> = {};
 
-    for (let i = 0, len = option.indicators?.length; i < len; i++) {
-      if (typeof option.indicators[i] !== 'string' && (option.indicators[i] as IChartColumnIndicator).chartSpec) {
-        if (option.indicatorsAsCol === false) {
-          const indicatorDefine = option.indicators[i] as IIndicator;
+    for (let i = 0, len = indicators?.length; i < len; i++) {
+      if (typeof indicators[i] !== 'string' && (indicators[i] as IChartColumnIndicator).chartSpec) {
+        if (this.options.indicatorsAsCol === false) {
+          const indicatorDefine = indicators[i] as IIndicator;
           //明确指定 chartSpec.stack为true
           (indicatorDefine as IChartColumnIndicator).chartSpec?.stack !== false &&
             ((indicatorDefine as IChartColumnIndicator).chartSpec.stack = true);
@@ -732,7 +732,7 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
             const yField = (indicatorDefine as IChartColumnIndicator).chartSpec.yField;
             collectValuesBy[yField] = {
               by: rowKeys,
-              range: (option.indicators[i] as IChartColumnIndicator).chartSpec.direction !== 'horizontal', // direction默认为'vertical'
+              range: (indicators[i] as IChartColumnIndicator).chartSpec.direction !== 'horizontal', // direction默认为'vertical'
               sumBy:
                 (indicatorDefine as IChartColumnIndicator).chartSpec.stack !== false &&
                 columnKeys.concat((indicatorDefine as IChartColumnIndicator).chartSpec?.xField), // 逻辑严谨的话 这个concat的值也需要结合 chartSeries.direction来判断是xField还是yField
@@ -743,7 +743,7 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
             };
           }
         } else {
-          const indicatorDefine = option.indicators[i] as IIndicator;
+          const indicatorDefine = indicators[i] as IIndicator;
           //明确指定 chartSpec.stack为true
           (indicatorDefine as IChartColumnIndicator).chartSpec?.stack !== false &&
             ((indicatorDefine as IChartColumnIndicator).chartSpec.stack = true);
@@ -805,7 +805,7 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
             const xField = (indicatorDefine as IChartColumnIndicator).chartSpec.xField;
             collectValuesBy[xField] = {
               by: columnKeys,
-              range: (option.indicators[i] as IChartColumnIndicator).chartSpec.direction === 'horizontal', // direction默认为'vertical'
+              range: (indicators[i] as IChartColumnIndicator).chartSpec.direction === 'horizontal', // direction默认为'vertical'
               sumBy:
                 (indicatorDefine as IChartColumnIndicator).chartSpec.stack !== false &&
                 rowKeys.concat((indicatorDefine as IChartColumnIndicator).chartSpec?.yField),

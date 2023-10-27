@@ -11,7 +11,7 @@
   "dependencies": {
     "@arco-design/web-react": "2.46.1",
     "@visactor/vtable": "workspace:*",
-    "@visactor/vchart": "1.5.1",
+    "@visactor/vchart": "1.5.3",
     "markdown-it": "^13.0.0",
     "highlight.js": "^11.8.0",
     "axios": "^1.4.0",
