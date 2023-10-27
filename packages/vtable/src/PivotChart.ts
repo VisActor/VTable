@@ -671,6 +671,9 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
       if (typeof option.indicators[i] !== 'string' && (option.indicators[i] as IChartColumnIndicator).chartSpec) {
         if (option.indicatorsAsCol === false) {
           const indicatorDefine = option.indicators[i] as IIndicator;
+          //明确指定 chartSpec.stack为true
+          (indicatorDefine as IChartColumnIndicator).chartSpec?.stack !== false &&
+            ((indicatorDefine as IChartColumnIndicator).chartSpec.stack = true);
           // 收集指标值的范围
           collectValuesBy[indicatorDefine.indicatorKey] = {
             by: rowKeys,
@@ -695,6 +698,7 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
               };
 
               const yField = chartSeries.yField;
+              chartSeries.stack !== false && (chartSeries.stack = true); //明确指定 chartSpec.stack为true
               collectValuesBy[yField] = {
                 by: rowKeys,
                 range: chartSeries.direction !== 'horizontal', // direction默认为'vertical'
@@ -721,6 +725,9 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
                   ? (indicatorDefine as IChartColumnIndicator).chartSpec?.data?.fields?.[xField]?.domain
                   : undefined
             };
+            //明确指定 chartSpec.stack为true
+            (indicatorDefine as IChartColumnIndicator).chartSpec?.stack !== false &&
+              ((indicatorDefine as IChartColumnIndicator).chartSpec.stack = true);
             //下面这个收集的值 应该是和收集的 collectValuesBy[indicatorDefine.indicatorKey] 相同
             const yField = (indicatorDefine as IChartColumnIndicator).chartSpec.yField;
             collectValuesBy[yField] = {
@@ -737,6 +744,9 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
           }
         } else {
           const indicatorDefine = option.indicators[i] as IIndicator;
+          //明确指定 chartSpec.stack为true
+          (indicatorDefine as IChartColumnIndicator).chartSpec?.stack !== false &&
+            ((indicatorDefine as IChartColumnIndicator).chartSpec.stack = true);
           // 收集指标值的范围
           collectValuesBy[indicatorDefine.indicatorKey] = {
             by: columnKeys,
@@ -761,6 +771,7 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
               };
 
               const xField = chartSeries.xField;
+              chartSeries.stack !== false && (chartSeries.stack = true); //明确指定 chartSpec.stack为true
               collectValuesBy[xField] = {
                 by: columnKeys,
                 range: chartSeries.direction === 'horizontal', // direction默认为'vertical'
@@ -787,6 +798,9 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
                   ? (indicatorDefine as IChartColumnIndicator).chartSpec?.data?.fields?.[yField]?.domain
                   : undefined
             };
+            //明确指定 chartSpec.stack为true
+            (indicatorDefine as IChartColumnIndicator).chartSpec?.stack !== false &&
+              ((indicatorDefine as IChartColumnIndicator).chartSpec.stack = true);
             //下面这个收集的值 应该是和收集的 collectValuesBy[indicatorDefine.indicatorKey] 相同
             const xField = (indicatorDefine as IChartColumnIndicator).chartSpec.xField;
             collectValuesBy[xField] = {
