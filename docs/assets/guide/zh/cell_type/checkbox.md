@@ -110,4 +110,14 @@ const records = [
 
 `checked`和`disable`同时支持在数据中和在`column`中配置，数据中配置的优先级高于`column`中的配置。
 
+## 通过接口获取数据选中状态
+
+获取某个字段下checkbox 全部数据的选中状态 。
+
+注意：顺序对应原始传入数据records 不是对应表格展示row的状态值
+```
+getCheckboxState(field?: string | number): Array
+```
+
+
 通过以上介绍，您已学会了如何在 VTable 表格中使用 checkbox 复选框类型进行数据展示，希望对您有所帮助。
