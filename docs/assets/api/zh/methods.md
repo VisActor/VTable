@@ -349,7 +349,33 @@ col或者row可以为空，为空的话也就是只移动x方向或者y方向。
    */
   scrollToCell(cellAddr: { col?: number; row?: number })=>void
 ```
+## toggleHierarchyState(Function)
+树形展开收起状态切换
+```
+ /**
+   * 表头切换层级状态
+   * @param col
+   * @param row
+   */
+  toggleHierarchyState(col: number, row: number) 
+```
+## getHierarchyState(Function)
+获取某个单元格树形展开or收起状态
+```
+  /**
+   * 获取层级节点收起展开的状态
+   * @param col
+   * @param row
+   * @returns
+   */
+  getHierarchyState(col: number, row: number) : HierarchyState | null;
 
+enum HierarchyState {
+  expand = 'expand',
+  collapse = 'collapse',
+  none = 'none'
+}
+```
 ## updateSortState(Function)
 
 更新排序状态，ListTable 专有

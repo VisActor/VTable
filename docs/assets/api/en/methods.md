@@ -349,6 +349,33 @@ Scroll to a specific cell location
    */
   scrollToCell(cellAddr: { col?: number; row?: number })=>void
 ```
+## toggleHierarchyState(Function)
+Tree expand and collapse state switch
+```
+ /**
+   * Header switches level status
+   * @param col
+   * @param row
+   */
+  toggleHierarchyState(col: number, row: number)
+```
+## getHierarchyState(Function)
+Get the tree-shaped expanded or collapsed status of a certain cell
+```
+  /**
+   * Get the collapsed and expanded status of hierarchical nodes
+   * @param col
+   * @param row
+   * @returns
+   */
+  getHierarchyState(col: number, row: number) : HierarchyState | null;
+
+enum HierarchyState {
+  expand = 'expand',
+  collapse = 'collapse',
+  none = 'none'
+}
+```
 
 ## updateSortState(Function)
 
