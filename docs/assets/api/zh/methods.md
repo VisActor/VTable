@@ -334,7 +334,7 @@ tableInstance.renderWithRecreateCells();
 ## getCheckboxState(Function)
 获取某个字段下checkbox 全部数据的选中状态 顺序对应原始传入数据records 不是对应表格展示row的状态值
 ```
-getCheckboxState(field: string | number): Array
+getCheckboxState(field?: string | number): Array
 ```
 
 ## scrollToCell(Function)

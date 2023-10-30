@@ -335,7 +335,7 @@ For pivot table interfaces, get specific cell addresses based on the header dime
 ## getCheckboxState(Function)
 Get the selected status of all data in the checkbox under a certain field. The order corresponds to the original incoming data records. It does not correspond to the status value of the row displayed in the table.
 ```
-getCheckboxState(field: string | number): Array
+getCheckboxState(field?: string | number): Array
 ```
 
 ## scrollToCell(Function)

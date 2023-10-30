@@ -666,7 +666,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
     this.stateManeger.updateSortState(sortState as SortState);
   }
   /** 获取某个字段下checkbox 全部数据的选中状态 顺序对应原始传入数据records 不是对应表格展示row的状态值 */
-  getCheckboxState(field: string | number) {
+  getCheckboxState(field?: string | number) {
     if (this.stateManeger.checkedState.length < this.rowCount - this.columnHeaderLevelCount) {
       this.stateManeger.initLeftRecordsCheckState(this.records);
     }
