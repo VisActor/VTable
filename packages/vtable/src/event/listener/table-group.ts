@@ -167,7 +167,11 @@ export function bindTableGroupListener(eventManeger: EventManeger) {
     const eventArgsSet = getCellEventArgsSet(e);
     const cellGoup = eventArgsSet?.eventArgs?.target as unknown as Group;
     // console.log('pointerover', cellGoup);
-    if ((table as any).hasListeners(TABLE_EVENT_TYPE.MOUSEOVER_CHART_SYMBOL) && cellGoup.type === 'symbol') {
+    if (
+      cellGoup &&
+      (table as any).hasListeners(TABLE_EVENT_TYPE.MOUSEOVER_CHART_SYMBOL) &&
+      cellGoup.type === 'symbol'
+    ) {
       const cellGroup = e.composedPath().find(p => (p as any).roll === 'cell');
       if (cellGroup) {
         const { col, row } = cellGroup as unknown as Group;
