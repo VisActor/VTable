@@ -110,4 +110,13 @@ const records = [
 
 `checked` and `disable` support configuration in both data and `column`. The priority of configuration in data is higher than the configuration in `column`.
 
+## Get the data selection status through the interface
+
+Get the selected status of all data in the checkbox under a certain field.
+
+Note: The order corresponds to the original incoming data records and does not correspond to the status value of the row displayed in the table.
+```
+getCheckboxState(field?: string | number): Array
+```
+
 Through the above introduction, you have learned how to use the checkbox checkbox type to display data in the VTable table. I hope it will be helpful to you.

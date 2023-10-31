@@ -1,21 +1,21 @@
 ---
 category: examples
 group: Business
-title: 信息查询系统
+title: Information system
 cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/information.png
 link: '../guide/custom_define/custom_icon'
 ---
 
-# 信息查询系统
+# Information system
 
-查询商品订单信息。
+Query product order information.
 
-## 关键配置
- - `headerType`及`cellType` chechbox 复选框类型
- - `getCheckboxState` 获取某个字段下checkbox的选中状态
- - `VTable.register.icon`  注册自定义的icon 可以配合columns[x].icon或者columns[x].headerIcon 使用。或者重置内部的图标
+## Key Configurations
+ - `headerType` and `cellType` checkbox checkbox type
+ - `getCheckboxState` Gets the checked state of the checkbox under a certain field
+ - `VTable.register.icon` registers a custom icon and can be used with columns[x].icon or columns[x].headerIcon. Or reset the internal icon
 
-内置功能图标名称具体有：
+The specific names of built-in function icons are:
 `
 'sort_upward',
 'sort_downward',
@@ -28,7 +28,7 @@ link: '../guide/custom_define/custom_icon'
 'expand',
 'collapse',
 `
-## 代码演示
+## Code demo
 
 ```javascript livedemo template=vtable
 
