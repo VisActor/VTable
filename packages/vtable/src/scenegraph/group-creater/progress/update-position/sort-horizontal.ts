@@ -5,13 +5,37 @@ import { updateColContent } from './dynamic-set-x';
 import { updateAutoColumn } from './update-auto-column';
 
 export async function sortHorizontal(proxy: SceneProxy) {
-  for (let col = proxy.colStart; col <= proxy.colEnd; col++) {
-    const colGroup = proxy.table.scenegraph.getColGroup(col);
-    colGroup.needUpdate = true;
-    colGroup?.forEachChildren((cellGroup: Group) => {
-      (cellGroup as any).needUpdate = true;
-    });
-  }
+  // for (let col = proxy.colStart; col <= proxy.colEnd; col++) {
+  //   const colGroup = proxy.table.scenegraph.getColGroup(col);
+  //   colGroup.needUpdate = true;
+  //   colGroup?.forEachChildren((cellGroup: Group) => {
+  //     (cellGroup as any).needUpdate = true;
+  //   });
+  // }
+  // proxy.table.scenegraph.colHeaderGroup.forEachChildren((colGroup: Group, index: number) => {
+  //   if (colGroup.type === 'group') {
+  //     colGroup.needUpdate = true;
+  //     colGroup?.forEachChildren((cellGroup: Group) => {
+  //       (cellGroup as any).needUpdate = true;
+  //     });
+  //   }
+  // });
+  proxy.table.scenegraph.bottomFrozenGroup.forEachChildren((colGroup: Group, index: number) => {
+    if (colGroup.type === 'group') {
+      colGroup.needUpdate = true;
+      colGroup?.forEachChildren((cellGroup: Group) => {
+        (cellGroup as any).needUpdate = true;
+      });
+    }
+  });
+  proxy.table.scenegraph.bodyGroup.forEachChildren((colGroup: Group, index: number) => {
+    if (colGroup.type === 'group') {
+      colGroup.needUpdate = true;
+      colGroup?.forEachChildren((cellGroup: Group) => {
+        (cellGroup as any).needUpdate = true;
+      });
+    }
+  });
 
   // 更新同步范围
   const syncLeftCol = Math.max(proxy.bodyLeftCol, proxy.screenLeftCol - proxy.screenColCount * 1);
