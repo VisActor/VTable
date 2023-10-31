@@ -852,22 +852,19 @@ export class Scenegraph {
   }
 
   resize() {
-    if (this.table.internalProps._widthResizedColMap.size === 0) {
-      //如果没有手动调整过行高列宽 则重新计算一遍并重新分配
-      if (this.table.widthMode === 'adaptive' || this.table.autoFillWidth) {
+    if (this.table.widthMode === 'adaptive' || this.table.autoFillWidth) {
+      if (this.table.internalProps._widthResizedColMap.size === 0) {
+        //如果没有手动调整过行高列宽 则重新计算一遍并重新分配
         this.recalculateColWidths();
-      }
-
-      if (this.table.heightMode === 'adaptive' || this.table.autoFillHeight) {
-        this.recalculateRowHeights();
+      } else {
+        this.dealWidthMode();
       }
     }
-    // // widthMode === 'adaptive' 时，computeColsWidth()中已经有高度更新计算
-    // // else if (this.table.widthMode === 'adaptive') {
-    // //   this.table.clearRowHeightCache();
-    // //   computeRowsHeight(this.table, 0, this.table.columnHeaderLevelCount - 1);
-    // //   computeRowsHeight(this.table, this.proxy.rowStart, this.proxy.rowEnd);
-    // // }
+
+    if (this.table.heightMode === 'adaptive' || this.table.autoFillHeight) {
+      // this.recalculateRowHeights();
+      this.dealHeightMode();
+    }
 
     // this.dealWidthMode();
     // this.dealHeightMode();
