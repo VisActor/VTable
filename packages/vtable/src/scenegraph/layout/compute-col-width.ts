@@ -138,7 +138,7 @@ export function computeColsWidth(table: BaseTableAPI, colStart?: number, colEnd?
 
   if (update) {
     for (let col = 0; col < table.colCount; col++) {
-      const newColWidth = newWidths[col] ?? table.getColWidth(col);
+      const newColWidth = table._adjustColWidth(col, newWidths[col]) ?? table.getColWidth(col);
       if (newColWidth !== oldColWidths[col]) {
         // update the column width in scenegraph
         table.scenegraph.updateColWidth(col, newColWidth - oldColWidths[col]);
@@ -311,7 +311,7 @@ function computeAutoColWidth(
     if (cellType !== 'text' && cellType !== 'link' && cellType !== 'progressbar') {
       // text&link&progressbar测量文字宽度
       // image&video&sparkline使用默认宽度
-      maxWidth = Math.max(maxWidth, table.getColWidth(col) || 0);
+      maxWidth = Math.max(maxWidth, table.getColWidthDefinedNumber(col) || 0);
       continue;
     }
 

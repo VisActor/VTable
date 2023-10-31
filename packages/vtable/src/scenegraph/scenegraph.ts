@@ -869,8 +869,8 @@ export class Scenegraph {
     // //   computeRowsHeight(this.table, this.proxy.rowStart, this.proxy.rowEnd);
     // // }
 
-    this.dealWidthMode();
-    this.dealHeightMode();
+    // this.dealWidthMode();
+    // this.dealHeightMode();
     this.resetFrozen();
     // this.dealFrozen();
     this.updateTableSize();
