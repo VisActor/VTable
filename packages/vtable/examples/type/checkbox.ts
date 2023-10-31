@@ -11,7 +11,7 @@ export function createTable() {
         field: '',
         headerType: 'checkbox',
         cellType: 'checkbox',
-        width: 60,
+        width: 'auto',
         checked(args) {
           if (args.row === 0 || args.row === 1) {
             return false;
@@ -37,14 +37,19 @@ export function createTable() {
       {
         field: 'check',
         title: '',
-        width: 120,
+        width: 'auto',
         headerType: 'checkbox',
-        cellType: 'checkbox'
+        cellType: 'checkbox',
+        style: {
+          size: 40,
+          spaceBetweenTextAndIcon: 15
+        }
         // checked: false
       }
     ],
     showFrozenIcon: true, //显示VTable内置冻结列图标
-    widthMode: 'standard'
+    widthMode: 'standard',
+    heightMode: 'autoHeight'
     // transpose: true
   };
 
