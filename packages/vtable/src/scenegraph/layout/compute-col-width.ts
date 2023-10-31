@@ -138,7 +138,9 @@ export function computeColsWidth(table: BaseTableAPI, colStart?: number, colEnd?
 
   if (update) {
     for (let col = 0; col < table.colCount; col++) {
-      const newColWidth = table._adjustColWidth(col, newWidths[col]) ?? table.getColWidth(col);
+      // newColWidth could not be in column min max range possibly
+      // const newColWidth = table._adjustColWidth(col, newWidths[col]) ?? table.getColWidth(col);
+      const newColWidth = newWidths[col] ?? table.getColWidth(col);
       if (newColWidth !== oldColWidths[col]) {
         // update the column width in scenegraph
         table.scenegraph.updateColWidth(col, newColWidth - oldColWidths[col]);
