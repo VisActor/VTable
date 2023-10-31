@@ -525,7 +525,7 @@ function updateCellContent(
 ) {
   //解决报错 getCellByCache递归调用 死循环问题
   if (oldCellGroup.row !== row || oldCellGroup.col !== col) {
-    return;
+    return null;
   }
   const newCellGroup = createCell(
     type,
