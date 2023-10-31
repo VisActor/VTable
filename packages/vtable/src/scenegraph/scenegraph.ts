@@ -862,8 +862,13 @@ export class Scenegraph {
     }
 
     if (this.table.heightMode === 'adaptive' || this.table.autoFillHeight) {
-      // this.recalculateRowHeights();
-      this.dealHeightMode();
+      // perf to be optimized:
+      // reason to use recalculateRowHeights();
+      // 1. error amplification（误差放大） in dealHeightMode when multiple resize
+      // 2. width update caused height update dose not have enlarge/reduce number,
+      // will cause scale error in dealHeightMode()
+      this.recalculateRowHeights();
+      // this.dealHeightMode();
     }
 
     // this.dealWidthMode();
