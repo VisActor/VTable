@@ -14,7 +14,9 @@ export function createTable() {
         },
         headerStyle: {
           textAlign: 'center',
-          font: 'bold 12px sans-serif'
+          fontFamily: 'sans-serif',
+          fontWeight: 'bold',
+          fontSize: 12
         },
         title: 'progress',
         description: '这是一个标题的详细描述',
@@ -24,7 +26,9 @@ export function createTable() {
         title: 'Name',
         headerStyle: {
           textAlign: 'center',
-          font: 'bold 13px sans-serif'
+          fontFamily: 'sans-serif',
+          fontWeight: 'bold',
+          fontSize: 13
         },
         columns: [
           {
