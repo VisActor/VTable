@@ -1018,6 +1018,17 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     return this.defaultColWidth;
   }
 
+  // setColWidthDefined(col: number, width: number) {
+  //   const { layoutMap } = this.internalProps;
+  //   const widthData = layoutMap?.getColumnWidthDefined(col) ?? {};
+  //   widthData.width = width;
+  // }
+
+  getColWidthDefinedNumber(col: number): number {
+    const width = this.getColWidthDefined(col);
+    return this._adjustColWidth(col, this._colWidthDefineToPxWidth(width));
+  }
+
   /**
    * 根据列号获取列宽定义
    * @param {number} col column number
