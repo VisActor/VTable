@@ -356,6 +356,13 @@
             "zh": "数据格式",
             "en": "data_format"
           }
+        },
+        {
+          "path": "async_data",
+          "title": {
+            "zh": "异步加载数据",
+            "en": "async load data"
+          }
         }
       ]
     },
