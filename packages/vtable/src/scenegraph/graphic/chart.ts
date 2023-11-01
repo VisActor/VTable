@@ -13,6 +13,8 @@ interface IChartGraphicAttribute extends IGroupGraphicAttribute {
   ClassType: any;
   chartInstance: any;
   cellPadding: number[];
+  mode: string;
+  modeParams: any;
   // viewBox: {
   //   x1: number;
   //   y1: number;
@@ -39,7 +41,8 @@ export class Chart extends Group {
     if (!params.chartInstance) {
       params.chartInstance = this.chartInstance = new params.ClassType(params.spec, {
         renderCanvas: params.canvas,
-        mode: 'desktop-browser',
+        mode: this.attribute.mode === 'node' ? 'node' : 'desktop-browser',
+        modeParams: this.attribute.modeParams,
         canvasControled: false,
         viewBox: { x1: 0, x2: 0, y1: 0, y2: 0 },
         // viewBox: params.viewBox,
@@ -146,6 +149,18 @@ export class Chart extends Group {
    */
   deactivate() {
     this.active = false;
+    // move active chart view box out of broswer view
+    // to avoid async render when chart is releasd
+    this.activeChartInstance.updateViewBox(
+      {
+        x1: -1000,
+        x2: -800,
+        y1: -1000,
+        y2: -800
+      },
+      false,
+      false
+    );
     this.activeChartInstance.release();
     this.activeChartInstance = null;
   }

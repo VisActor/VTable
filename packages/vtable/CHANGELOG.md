@@ -1,6 +1,43 @@
 # Change Log - @visactor/vtable
 
-This log was last generated on Wed, 18 Oct 2023 11:47:45 GMT and should not be manually modified.
+This log was last generated on Fri, 27 Oct 2023 13:15:39 GMT and should not be manually modified.
+
+## 0.13.1
+Fri, 27 Oct 2023 13:15:39 GMT
+
+### Patches
+
+- fix: stack default value is true
+
+
+
+## 0.13.0
+Wed, 25 Oct 2023 06:11:44 GMT
+
+### Minor changes
+
+- feat: add option headerSelectMode
+
+
+
+### Patches
+
+- feat: add initialized event #301
+
+
+- docs: add event api
+
+
+- fix: when use customlayout function, after resize col width the row height changed #427
+
+
+- fix: fix resize compute col width logic #432
+
+
+- fix: [Bug] set records blank scroll error #458
+
+
+- feat: add checkbox cell type
 
 ## 0.12.2
 Wed, 18 Oct 2023 11:47:45 GMT

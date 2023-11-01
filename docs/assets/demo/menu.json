@@ -219,6 +219,22 @@
           }
         },
         {
+          "path": "checkbox",
+          "title": {
+            "zh": "复选框类型",
+            "en": "Checkbox Type"
+          },
+          "meta": {
+            "title": "Checkbox Type",
+            "keywords": "",
+            "category": "demo",
+            "group": "Cell Type",
+            "cover": "https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/checkbox.png",
+            "link": "'../../guide/column_type/checkbox'",
+            "option": ""
+          }
+        },
+        {
           "path": "chart",
           "title": {
             "zh": "图表类型",
@@ -1039,6 +1055,13 @@
             "cover": "https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/trend.png",
             "link": "",
             "option": ""
+          }
+        },
+        {
+          "path": "information",
+          "title": {
+            "zh": "信息查询系统",
+            "en": "Information preview"
           }
         }
       ]

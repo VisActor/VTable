@@ -2,7 +2,7 @@
 
 ${prefix} headerType(string) = 'text'
 
-Specify header type, optional: `'text'|'link'|'image'|'video'`, default `'text'`.
+Specify header type, optional: `'text'|'link'|'image'|'video'|'checkbox'`, default `'text'`.
 
 ${prefix} field(string)
 

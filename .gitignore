@@ -100,3 +100,5 @@ common/scripts/pre-commit
 
 # generated documents
 docs/public/documents
+
+packages/vtable/nodejs/*.png

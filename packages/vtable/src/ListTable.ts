@@ -23,6 +23,7 @@ import type { ListTableProtected } from './ts-types/base-table';
 import { TABLE_EVENT_TYPE } from './core/TABLE_EVENT_TYPE';
 import { Title } from './components/title/title';
 import { cloneDeep } from '@visactor/vutils';
+import { Env } from './tools/env';
 
 export class ListTable extends BaseTable implements ListTableAPI {
   declare internalProps: ListTableProtected;
@@ -35,7 +36,10 @@ export class ListTable extends BaseTable implements ListTableAPI {
   constructor(options: ListTableConstructorOptions);
   constructor(container: HTMLElement, options: ListTableConstructorOptions);
   constructor(container?: HTMLElement | ListTableConstructorOptions, options?: ListTableConstructorOptions) {
-    if (!(container instanceof HTMLElement)) {
+    if (Env.mode === 'node') {
+      options = container as ListTableConstructorOptions;
+      container = null;
+    } else if (!(container instanceof HTMLElement)) {
       options = container as ListTableConstructorOptions;
       if ((container as ListTableConstructorOptions).container) {
         container = (container as ListTableConstructorOptions).container;
@@ -186,9 +190,36 @@ export class ListTable extends BaseTable implements ListTableAPI {
     return table.getFieldData(field, col, row);
   }
   /** @private */
-  getRecordIndexByRow(col: number, row: number): number {
+  getRecordIndexByCell(col: number, row: number): number {
     const { layoutMap } = this.internalProps;
-    return layoutMap.getRecordIndexByRow(col, row);
+    return layoutMap.getRecordIndexByCell(col, row);
+  }
+
+  getTableIndexByRecordIndex(recordIndex: number) {
+    if (this.transpose) {
+      return this.dataSource.getTableIndex(recordIndex) + this.rowHeaderLevelCount;
+    }
+    return this.dataSource.getTableIndex(recordIndex) + this.columnHeaderLevelCount;
+  }
+  getTableIndexByField(field: FieldDef) {
+    const colObj = this.internalProps.layoutMap.columnObjects.find((col: any) => col.field === field);
+    const layoutRange = this.internalProps.layoutMap.getBodyLayoutRangeById(colObj.id);
+    if (this.transpose) {
+      return layoutRange.start.row;
+    }
+    return layoutRange.start.col;
+  }
+  /**
+   * 根据数据源中的index和field获取单元格行列号
+   * @param field
+   * @param recordIndex
+   * @returns
+   */
+  getCellAddrByFieldRecord(field: FieldDef, recordIndex: number): CellAddress {
+    if (this.transpose) {
+      return { col: this.getTableIndexByRecordIndex(recordIndex), row: this.getTableIndexByField(field) };
+    }
+    return { col: this.getTableIndexByField(field), row: this.getTableIndexByRecordIndex(recordIndex) };
   }
   /**
    *
@@ -198,7 +229,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
    */
   getCellOriginRecord(col: number, row: number): MaybePromiseOrUndefined {
     const table = this;
-    const index = table.getRecordIndexByRow(col, row);
+    const index = table.getRecordIndexByCell(col, row);
     if (index > -1) {
       return table.dataSource.get(index);
     }
@@ -364,8 +395,8 @@ export class ListTable extends BaseTable implements ListTableAPI {
     if (table.internalProps.layoutMap.isHeader(col, row)) {
       return null;
     }
-    const index = table.getRecordIndexByRow(col, row);
-    return table.internalProps.dataSource.getField(index, field);
+    const index = table.getRecordIndexByCell(col, row);
+    return table.internalProps.dataSource.getField(index, field, col, row, this);
   }
   /**
    * 拖拽移动表头位置
@@ -500,7 +531,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
     if (!define.tree) {
       return HierarchyState.none;
     }
-    const index = this.getRecordIndexByRow(col, row);
+    const index = this.getRecordIndexByCell(col, row);
     return this.dataSource.getHierarchyState(index);
   }
   /**
@@ -525,7 +556,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
       });
     }
 
-    const index = this.getRecordIndexByRow(col, row);
+    const index = this.getRecordIndexByCell(col, row);
     const diffDataIndices = this.dataSource.toggleHierarchyState(index);
     const diffPositions = this.internalProps.layoutMap.toggleHierarchyState(diffDataIndices);
     //影响行数
@@ -633,5 +664,17 @@ export class ListTable extends BaseTable implements ListTableAPI {
       }
     }
     this.stateManeger.updateSortState(sortState as SortState);
+  }
+  /** 获取某个字段下checkbox 全部数据的选中状态 顺序对应原始传入数据records 不是对应表格展示row的状态值 */
+  getCheckboxState(field?: string | number) {
+    if (this.stateManeger.checkedState.length < this.rowCount - this.columnHeaderLevelCount) {
+      this.stateManeger.initLeftRecordsCheckState(this.records);
+    }
+    if (isValid(field)) {
+      return this.stateManeger.checkedState.map(state => {
+        return state[field];
+      });
+    }
+    return this.stateManeger.checkedState;
   }
 }

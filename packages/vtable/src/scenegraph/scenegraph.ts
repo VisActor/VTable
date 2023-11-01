@@ -1,4 +1,4 @@
-import type { IStage, IRect, ITextCache } from '@visactor/vrender';
+import type { IStage, IRect, ITextCache, INode } from '@visactor/vrender';
 import { createStage, createRect, IContainPointMode, container, vglobal } from '@visactor/vrender';
 import {
   type CellAddress,
@@ -40,9 +40,11 @@ import { dealBottomFrozen, dealFrozen, dealRightFrozen, resetFrozen } from './la
 import { updateChartSize, updateChartState } from './refresh-node/update-chart';
 import { initSceneGraph } from './group-creater/init-scenegraph';
 import { updateContainerChildrenX } from './utils/update-container';
+import type { CheckBox } from '@visactor/vrender-components';
 import { loadPoptip, setPoptipTheme } from '@visactor/vrender-components';
 import textMeasureModule from './utils/text-measure';
 import renderServiceModule from './utils/render-service';
+import { Env } from '../tools/env';
 // import { contextModule } from './context/module';
 
 // VChart poptip theme
@@ -133,11 +135,21 @@ export class Scenegraph {
     this.mergeMap = new Map();
 
     setPoptipTheme(poptipStyle as any);
-    vglobal.setEnv('browser');
+    let width;
+    let height;
+    if (Env.mode === 'node') {
+      vglobal.setEnv('node', table.options.modeParams);
+      width = table.canvasWidth;
+      height = table.canvasHeight;
+    } else {
+      vglobal.setEnv('browser');
+      width = table.canvas.width;
+      height = table.canvas.height;
+    }
     this.stage = createStage({
       canvas: table.canvas,
-      width: table.canvas.width,
-      height: table.canvas.height,
+      width,
+      height,
       disableDirtyBounds: false,
       background: table.theme.underlayBackgroundColor,
       dpr: table.internalProps.pixelRatio,
@@ -761,6 +773,65 @@ export class Scenegraph {
   /** 更新图表的高亮状态 */
   updateChartState(datum: any) {
     this.table.isPivotChart() && updateChartState(this, datum);
+  }
+
+  updateCheckboxCellState(col: number, row: number, checked: boolean) {
+    if (this.transpose) {
+      this.bodyGroup.children?.forEach((columnGroup: INode) => {
+        columnGroup
+          .getChildAt(row)
+          .getChildren()
+          .forEach((node: INode) => {
+            if (node.name === 'checkbox') {
+              (node as CheckBox).setAttribute('checked', checked);
+            }
+          });
+      });
+    } else {
+      const columnGroup = this.getColGroup(col);
+      columnGroup.children?.forEach((cellNode: INode) => {
+        cellNode.getChildren().find(node => {
+          if (node.name === 'checkbox') {
+            (node as CheckBox).setAttribute('checked', checked);
+          }
+        });
+      });
+    }
+  }
+  updateHeaderCheckboxCellState(col: number, row: number, checked: boolean | 'indeterminate') {
+    if (this.transpose) {
+      this.rowHeaderGroup.children?.forEach((columnGroup: INode) => {
+        columnGroup
+          .getChildAt(row)
+          .getChildren()
+          .forEach((node: INode) => {
+            if (node.name === 'checkbox') {
+              if (checked === 'indeterminate') {
+                (node as CheckBox).setAttribute('indeterminate', true);
+                (node as CheckBox).setAttribute('checked', undefined);
+              } else {
+                (node as CheckBox).setAttribute('indeterminate', undefined);
+                (node as CheckBox).setAttribute('checked', checked);
+              }
+            }
+          });
+      });
+    } else {
+      const columnGroup = this.getColGroup(col, true);
+      columnGroup.children?.forEach((cellNode: INode) => {
+        cellNode.getChildren().find(node => {
+          if (node.name === 'checkbox') {
+            if (checked === 'indeterminate') {
+              (node as CheckBox).setAttribute('indeterminate', true);
+              (node as CheckBox).setAttribute('checked', undefined);
+            } else {
+              (node as CheckBox).setAttribute('indeterminate', undefined);
+              (node as CheckBox).setAttribute('checked', checked);
+            }
+          }
+        });
+      });
+    }
   }
   updateAutoColWidth(col: number) {
     this.table.internalProps._widthResizedColMap.delete(col);

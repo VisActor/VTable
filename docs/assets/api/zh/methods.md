@@ -151,7 +151,69 @@ tableInstance.renderWithRecreateCells();
    */
   getCellStyle(col: number, row: number) => CellStyle
 ```
+## getRecordByCell(Function)
 
+获取该单元格的数据项
+
+```
+  /**
+   * 根据行列号获取整条数据记录
+   * @param  {number} col col index.
+   * @param  {number} row row index.
+   * @return {object} record.
+   */
+  getRecordByCell(col: number, row: number)
+```
+
+## getTableIndexByRecordIndex(Function)
+根据数据源的index 获取显示到表格中的index 行号或者列号（与转置相关）。注：ListTable特有接口
+
+```
+  /**
+   * 根据数据源的index 获取显示到表格中的index 行号或者列号（与转置相关）。注：ListTable特有接口
+   * @param recordIndex
+   */
+  getTableIndexByRecordIndex: (recordIndex: number) => number;
+```
+
+## getTableIndexByField(Function)
+根据数据源的field 获取显示到表格中的index 行号或者列号（与转置相关）。注：ListTable特有接口
+```
+  /**
+   * 根据数据源的field 获取显示到表格中的index 行号或者列号（与转置相关）。注：ListTable特有接口
+   * @param recordIndex
+   */
+  getTableIndexByField: (field: FieldDef) => number;
+```
+## getCellAddrByFieldRecord(Function)
+
+根据数据源中的index和field获取单元格行列号。注：ListTable特有接口
+```
+  /**
+   * 根据数据源中的index和field获取单元格行列号。注：ListTable特有接口
+   * @param field
+   * @param recordIndex
+   * @returns
+   */
+  getCellAddrByFieldRecord: (field: FieldDef, recordIndex: number) => CellAddress;
+```
+## getCellOriginRecord(Function)
+
+获取该单元格的源数据项。
+
+如果是普通表格，会返回源数据的对象。
+
+如果是透视分析表（开启了数据分析的透视表），会返回源数据的数组。
+
+```
+  /**
+   * 根据行列号获取源数据
+   * @param  {number} col col index.
+   * @param  {number} row row index.
+   * @return {object} record or record array
+   */
+  getCellOriginRecord(col: number, row: number)
+```
 ## getAllCells(Function)
 
 获取所有单元格上下文信息
@@ -269,6 +331,12 @@ tableInstance.renderWithRecreateCells();
   )=> CellAddress
 ```
 
+## getCheckboxState(Function)
+获取某个字段下checkbox 全部数据的选中状态 顺序对应原始传入数据records 不是对应表格展示row的状态值
+```
+getCheckboxState(field?: string | number): Array
+```
+
 ## scrollToCell(Function)
 
 滚动到具体某个单元格位置。
@@ -281,7 +349,33 @@ col或者row可以为空，为空的话也就是只移动x方向或者y方向。
    */
   scrollToCell(cellAddr: { col?: number; row?: number })=>void
 ```
+## toggleHierarchyState(Function)
+树形展开收起状态切换
+```
+ /**
+   * 表头切换层级状态
+   * @param col
+   * @param row
+   */
+  toggleHierarchyState(col: number, row: number) 
+```
+## getHierarchyState(Function)
+获取某个单元格树形展开or收起状态
+```
+  /**
+   * 获取层级节点收起展开的状态
+   * @param col
+   * @param row
+   * @returns
+   */
+  getHierarchyState(col: number, row: number) : HierarchyState | null;
 
+enum HierarchyState {
+  expand = 'expand',
+  collapse = 'collapse',
+  none = 'none'
+}
+```
 ## updateSortState(Function)
 
 更新排序状态，ListTable 专有

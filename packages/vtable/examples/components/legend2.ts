@@ -84,7 +84,7 @@ export function createTable() {
           bodyStyle: {
             bgColor(args) {
               const { row, col } = args;
-              const record = args.table.getRecordByRowCol(col, row);
+              const record = args.table.getRecordByCell(col, row);
               return colorToCategory[categorys.indexOf(record.Category)];
             }
           }
@@ -130,7 +130,7 @@ export function createTable() {
             bodyStyle: {
               color(args) {
                 const { row, col } = args;
-                const record = tableInstance.getRecordByRowCol(col, row);
+                const record = tableInstance.getRecordByCell(col, row);
                 if (highlightCategorys.indexOf(record.Category) >= 0) {
                   return 'black';
                 }
@@ -138,7 +138,7 @@ export function createTable() {
               },
               bgColor(args) {
                 const { row, col } = args;
-                const record = tableInstance.getRecordByRowCol(col, row);
+                const record = tableInstance.getRecordByCell(col, row);
                 if (highlightCategorys.indexOf(record.Category) >= 0) {
                   return colorToCategory[categorys.indexOf(record.Category)];
                 }

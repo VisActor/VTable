@@ -1,4 +1,4 @@
-import { LinearScale } from '@visactor/vscale';
+import { LinearScale, LogScale, SymlogScale } from '@visactor/vscale';
 import { isFunction, isNil, isNumber, isValid } from '@visactor/vutils';
 
 const DEFAULT_CONTINUOUS_TICK_COUNT = 5;
@@ -20,8 +20,23 @@ export function getAxisDomainRangeAndLabels(
     min = Math.min(min, 0);
     max = Math.max(max, 0);
   }
+  if (isNumber(axisOption?.min)) {
+    min = axisOption.min;
+  }
+  if (isNumber(axisOption?.max)) {
+    max = axisOption.max;
+  }
 
-  const scale = new LinearScale();
+  let scale;
+  if (axisOption?.type === 'log') {
+    scale = new LogScale();
+    scale.base(axisOption?.base ?? 10);
+  } else if (axisOption?.type === 'symlog') {
+    scale = new SymlogScale();
+    scale.constant(axisOption?.constant ?? 10);
+  } else {
+    scale = new LinearScale();
+  }
   scale.domain([min, max], !!axisOption?.nice);
 
   if (axisOption?.nice && !isZeroAlign) {

@@ -1194,8 +1194,16 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
     return this.columnDimensionTree.tree.size + this.rowHeaderLevelCount + this.rightFrozenColCount;
   }
   get rowCount(): number {
-    // return this.rowDimensionTree.tree.size + this.columnHeaderLevelCount + this.bottomFrozenRowCount;
-    return (this._rowHeaderCellIds?.length ?? 0) + this.columnHeaderLevelCount + this.bottomFrozenRowCount;
+    return (
+      ((Array.isArray(this._table.records) ? this._table.records.length > 0 : true) &&
+      this._indicators?.length > 0 && // 前两个判断条件来判断  有展示的body值的情况 需要展示body row
+      !this._rowHeaderCellIds?.length // 需要展示body值 但 _rowHeaderCellIds的长度维度为0  无rows 行表头为空
+        ? 1 //兼容bugserver: https://bugserver.cn.goofy.app/case?product=VTable&fileid=65364a57173c354c242a7c4f
+        : this._rowHeaderCellIds?.length ?? 0) + //兼容 bugserver：https://bugserver.cn.goofy.app/case?product=VTable&fileid=6527ac0695c0cdbd788cf17d
+      this.columnHeaderLevelCount +
+      this.bottomFrozenRowCount
+    );
+    // return (this._rowHeaderCellIds?.length ?? 0) + this.columnHeaderLevelCount + this.bottomFrozenRowCount;
   }
   get bodyRowCount() {
     return this.rowDimensionTree.tree.size;
@@ -1448,7 +1456,7 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
     );
   }
 
-  getRecordIndexByRow(row: number): number {
+  getBodyIndexByRow(row: number): number {
     if (row < this.columnHeaderLevelCount) {
       return -1;
     } else if (row >= this.rowCount - this.bottomFrozenRowCount) {
@@ -1459,7 +1467,7 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
     //   ? row - this.columnHeaderLevelCount
     //   : Math.floor((row - this.columnHeaderLevelCount) / this.indicatorKeys.length);
   }
-  getRecordIndexByCol(col: number): number {
+  getBodyIndexByCol(col: number): number {
     if (col < this.rowHeaderLevelCount) {
       return -1;
     } else if (col >= this.colCount - this.rightFrozenColCount) {
@@ -1470,7 +1478,9 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
   getRecordStartRowByRecordIndex(index: number): number {
     return this.columnHeaderLevelCount + index;
   }
-
+  getRecordIndexByCell(col: number, row: number): number {
+    return undefined;
+  }
   // getCellRangeTranspose(): CellRange {
   //   return { start: { col: 0, row: 0 }, end: { col: 0, row: 0 } };
   // }
@@ -1488,8 +1498,8 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
     if (this._CellHeaderPathMap.has(`${col}-${row}`)) {
       return this._CellHeaderPathMap.get(`${col}-${row}`);
     }
-    const recordCol = this.getRecordIndexByCol(col);
-    const recordRow = this.getRecordIndexByRow(row) + this.currentPageStartIndex;
+    const recordCol = this.getBodyIndexByCol(col);
+    const recordRow = this.getBodyIndexByRow(row) + this.currentPageStartIndex;
     let colPath;
     let rowPath: IPivotLayoutHeadNode[];
     if (row >= 0 && recordCol >= 0) {

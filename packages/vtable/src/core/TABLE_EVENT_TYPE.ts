@@ -116,6 +116,8 @@ export interface TableEvents {
 
   MOUSEENTER_AXIS: 'mouseenter_axis';
   MOUSELEAVE_AXIS: 'mouseleave_axis';
+
+  CHECKBOX_STATE_CHANGE: 'checkbox_state_change';
   //#region lifecircle
   /** 每次渲染完成触发 */
   AFTER_RENDER: 'after_render';
@@ -167,6 +169,7 @@ export const TABLE_EVENT_TYPE: TableEvents = {
   MOUSEENTER_AXIS: 'mouseenter_axis',
   MOUSELEAVE_AXIS: 'mouseleave_axis',
 
+  CHECKBOX_STATE_CHANGE: 'checkbox_state_change',
   AFTER_RENDER: 'after_render',
   INITIALIZED: 'initialized'
 } as TableEvents;

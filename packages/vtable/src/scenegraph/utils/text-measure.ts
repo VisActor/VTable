@@ -78,7 +78,7 @@ export class FastTextMeasureContribution extends DefaultTextMeasureContribution 
     // const textMeasure = this.context.measureText(text);
     // return textMeasure.width;
 
-    const { fontSize, fontFamily = 'sans-serif', fontWeight = 'normal', fontStyle = 'normal' } = options;
+    const { fontSize, fontFamily = 'Arial,sans-serif', fontWeight = 'normal', fontStyle = 'normal' } = options;
     const fastTextMeasure = getFastTextMeasure(fontSize, fontWeight, fontFamily, fontStyle);
     const textMeasure = fastTextMeasure.measure(text);
     return textMeasure.width;
@@ -96,7 +96,7 @@ export class FastTextMeasureContribution extends DefaultTextMeasureContribution 
     // this.context.setTextStyleWithoutAlignBaseline(options);
     // return this.context.measureText(text);
 
-    const { fontSize, fontFamily = 'sans-serif', fontWeight = 'normal', fontStyle = 'normal' } = options;
+    const { fontSize, fontFamily = 'Arial,sans-serif', fontWeight = 'normal', fontStyle = 'normal' } = options;
     const fastTextMeasure = getFastTextMeasure(fontSize, fontWeight, fontFamily, fontStyle);
     const textMeasure = fastTextMeasure.measure(text);
     return textMeasure;
@@ -110,7 +110,7 @@ export class TextMeasureTool {
    * @param options
    */
   measureText(text: string, options: ITextGraphicAttribute): ITextSize {
-    const { fontSize, fontFamily = 'sans-serif', fontWeight = 'normal', fontStyle = 'normal' } = options;
+    const { fontSize, fontFamily = 'Arial,sans-serif', fontWeight = 'normal', fontStyle = 'normal' } = options;
     const fastTextMeasure = getFastTextMeasure(fontSize, fontWeight, fontFamily, fontStyle);
     const textMeasure = fastTextMeasure.measure(text);
     return textMeasure;
@@ -122,7 +122,7 @@ export class TextMeasureTool {
    * @param options
    */
   measureTextWidth(text: string, options: ITextGraphicAttribute): number {
-    const { fontSize, fontFamily = 'sans-serif', fontWeight = 'normal', fontStyle = 'normal' } = options;
+    const { fontSize, fontFamily = 'Arial,sans-serif', fontWeight = 'normal', fontStyle = 'normal' } = options;
     const fastTextMeasure = getFastTextMeasure(fontSize, fontWeight, fontFamily, fontStyle);
     const textMeasure = fastTextMeasure.measure(text);
     return textMeasure.width;

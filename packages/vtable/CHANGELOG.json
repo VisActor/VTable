@@ -2,6 +2,50 @@
   "name": "@visactor/vtable",
   "entries": [
     {
+      "version": "0.13.1",
+      "tag": "@visactor/vtable_v0.13.1",
+      "date": "Fri, 27 Oct 2023 13:15:39 GMT",
+      "comments": {
+        "patch": [
+          {
+            "comment": "fix: stack default value is true\n\n"
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.13.0",
+      "tag": "@visactor/vtable_v0.13.0",
+      "date": "Wed, 25 Oct 2023 06:11:44 GMT",
+      "comments": {
+        "patch": [
+          {
+            "comment": "feat: add initialized event #301\n\n"
+          },
+          {
+            "comment": "docs: add event api\n\n"
+          },
+          {
+            "comment": "fix: when use customlayout function, after resize col width the row height changed #427\n\n"
+          },
+          {
+            "comment": "fix: fix resize compute col width logic #432\n\n"
+          },
+          {
+            "comment": "fix: [Bug] set records blank scroll error #458\n\n"
+          },
+          {
+            "comment": "feat: add checkbox cell type"
+          }
+        ],
+        "minor": [
+          {
+            "comment": "feat: add option headerSelectMode\n\n"
+          }
+        ]
+      }
+    },
+    {
       "version": "0.12.2",
       "tag": "@visactor/vtable_v0.12.2",
       "date": "Wed, 18 Oct 2023 11:47:45 GMT",

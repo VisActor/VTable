@@ -1,6 +1,6 @@
 {
   "name": "@visactor/vtable",
-  "version": "0.12.2",
+  "version": "0.13.1",
   "description": "canvas table width high performance",
   "keywords": [
     "grid",
@@ -45,11 +45,12 @@
     "test": "jest --silent",
     "test-cov": "jest --coverage",
     "ci": "ts-node --transpileOnly --skipProject ./scripts/trigger-test.ts",
-    "build:es": "bundle --clean -f es --ignorePostTasks"
+    "build:es": "bundle --clean -f es --ignorePostTasks",
+    "test-nodejs": "ts-node --transpileOnly --skipProject ./nodejs/index.ts"
   },
   "dependencies": {
-    "@visactor/vrender": "0.16.2",
-    "@visactor/vrender-components": "0.16.2",
+    "@visactor/vrender": "0.16.9-alpha.1",
+    "@visactor/vrender-components": "0.16.9-alpha.1",
     "@visactor/vutils-extension": "1.5.1-alpha.0",
     "@visactor/vutils": "0.16.1",
     "@visactor/vscale": "0.16.0",
@@ -57,7 +58,7 @@
     "cssfontparser": "^1.2.1"
   },
   "devDependencies": {
-    "@visactor/vchart": "1.4.3",
+    "@visactor/vchart": "1.5.3",
     "@internal/bundler": "workspace:*",
     "@internal/eslint-config": "workspace:*",
     "@internal/ts-config": "workspace:*",
@@ -103,7 +104,11 @@
     "d3-array": "3.2.3",
     "d3-geo": "^3.0.1",
     "d3-hexbin": "^0.2.2",
-    "d3-hierarchy": "^3.1.1"
+    "d3-hierarchy": "^3.1.1",
+    "@resvg/resvg-js": "^2.5.0"
+  },
+  "peerDependencies": {
+    "canvas": "^2.11.2"
   },
   "unpkg": "latest",
   "unpkgFiles": [

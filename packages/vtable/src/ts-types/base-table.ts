@@ -326,6 +326,12 @@ export interface BaseTableConstructorOptions {
   renderChartAsync?: boolean;
   // 开启图表异步渲染 每批次渐进渲染图表个数
   renderChartAsyncBatchCount?: number;
+
+  // for nodejs
+  mode?: 'node' | 'broswer';
+  modeParams?: any;
+  canvasWidth?: number;
+  canvasHeight?: number;
 }
 export interface BaseTableAPI {
   /** 表格的行数 */
@@ -417,6 +423,10 @@ export interface BaseTableAPI {
   rowHeaderLevelCount: number;
   /** 列表头的层数 */
   columnHeaderLevelCount: number;
+
+  canvasWidth?: number;
+  canvasHeight?: number;
+
   /** 获取表格绘制的范围 不包括frame的宽度 */
   getDrawRange: () => Rect;
   /** 将鼠标坐标值 转换成表格坐标系中的坐标位置 */
@@ -479,8 +489,31 @@ export interface BaseTableAPI {
 
   off: (id: EventListenerId) => void;
   getBodyField: (col: number, row: number) => FieldDef | undefined;
-  getRecordByRowCol: (col: number, row: number) => MaybePromiseOrUndefined;
-  getRecordIndexByRow: (col: number, row: number) => number;
+  /**
+   * 根据单元格获取对应的源数据
+   * @param col
+   * @param row
+   * @returns
+   */
+  getRecordByCell: (col: number, row: number) => MaybePromiseOrUndefined;
+  /**
+   * 根据数据源的index 获取显示到表格中的index 行号或者列号（与转置相关）。注：ListTable特有接口
+   * @param recordIndex
+   */
+  getTableIndexByRecordIndex: (recordIndex: number) => number;
+  /**
+   * 根据数据源的field 获取显示到表格中的index 行号或者列号（与转置相关）。注：ListTable特有接口
+   * @param recordIndex
+   */
+  getTableIndexByField: (field: FieldDef) => number;
+  /**
+   * 根据数据源中的index和field获取单元格行列号。注：ListTable特有接口
+   * @param field
+   * @param recordIndex
+   * @returns
+   */
+  getCellAddrByFieldRecord: (field: FieldDef, recordIndex: number) => CellAddress;
+  getRecordIndexByCell: (col: number, row: number) => number;
   getRecordStartRowByRecordIndex: (index: number) => number;
 
   getHeaderField: (col: number, row: number) => any | undefined;

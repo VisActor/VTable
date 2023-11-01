@@ -1,5 +1,5 @@
 import type { FederatedPointerEvent } from '@visactor/vrender';
-import type { MousePointerMultiCellEvent, MousePointerSparklineEvent } from '../../ts-types';
+import type { MousePointerCellEvent, MousePointerMultiCellEvent, MousePointerSparklineEvent } from '../../ts-types';
 import { InteractionState } from '../../ts-types';
 import type { SceneEvent } from '../util';
 import { getCellEventArgsSet } from '../util';
@@ -572,6 +572,48 @@ export function bindTableGroupListener(eventManeger: EventManeger) {
       };
       table.fireListeners(TABLE_EVENT_TYPE.DBLCLICK_CELL, cellsEvent);
     }
+  });
+
+  table.scenegraph.tableGroup.addEventListener('checkbox_state_change', (e: FederatedPointerEvent) => {
+    const eventArgsSet: SceneEvent = getCellEventArgsSet(e);
+    const { col, row } = eventArgsSet.eventArgs;
+    const cellInfo = table.getCellInfo(col, row);
+
+    const cellsEvent: MousePointerCellEvent & { checked: boolean } = {
+      ...cellInfo,
+      event: e.nativeEvent,
+      target: eventArgsSet?.eventArgs?.target,
+      checked: (e.detail as unknown as { checked: boolean }).checked
+    };
+
+    if (table.isHeader(col, row)) {
+      //点击的表头部分的checkbox 需要同时处理表头和body单元格的状态
+      table.stateManeger.setHeaderCheckedState(
+        cellInfo.field as string | number,
+        (e.detail as unknown as { checked: boolean }).checked
+      );
+      const define = table.getBodyColumnDefine(col, row);
+      if (define.cellType === 'checkbox') {
+        table.scenegraph.updateCheckboxCellState(col, row, (e.detail as unknown as { checked: boolean }).checked);
+      }
+    } else {
+      //点击的是body单元格的checkbox  处理本单元格的状态维护 同时需要检查表头是否改变状态
+      table.stateManeger.setCheckedState(
+        col,
+        row,
+        cellInfo.field as string | number,
+        (e.detail as unknown as { checked: boolean }).checked
+      );
+      const define = table.getBodyColumnDefine(col, row);
+      if (define.headerType === 'checkbox') {
+        const oldHeaderCheckedState = table.stateManeger.headerCheckedState[cellInfo.field as string | number];
+        const newHeaderCheckedState = table.stateManeger.updateHeaderCheckedState(cellInfo.field as string | number);
+        if (oldHeaderCheckedState !== newHeaderCheckedState) {
+          table.scenegraph.updateHeaderCheckboxCellState(col, row, newHeaderCheckedState);
+        }
+      }
+    }
+    table.fireListeners(TABLE_EVENT_TYPE.CHECKBOX_STATE_CHANGE, cellsEvent);
   });
 }
 

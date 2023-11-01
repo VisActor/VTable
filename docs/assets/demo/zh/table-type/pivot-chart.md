@@ -22,6 +22,7 @@ option: PivotChart-indicators-chart#cellType
 
 ```javascript livedemo template=vtable
   VTable.register.chartModule('vchart', VChart);
+  let tableInstance;
  fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American_Superstore_Pivot_Chart_data.json')
     .then(res => res.json())
     .then(data => {

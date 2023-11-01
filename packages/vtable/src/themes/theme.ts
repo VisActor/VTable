@@ -42,7 +42,6 @@ import {
   DEFAULTBORDERCOLOR,
   DEFAULTBORDERLINEDASH,
   DEFAULTBORDERLINEWIDTH,
-  DEFAULTFONT,
   DEFAULTFONTCOLOR,
   DEFAULTFONTFAMILY,
   DEFAULTFONTSIZE
@@ -452,8 +451,11 @@ export class TableTheme implements ITableThemeDefine {
       const { obj, superTheme } = this.internalTheme;
       const tooltip: TooltipStyle = ingoreNoneValueMerge({}, superTheme.tooltipStyle, obj.tooltipStyle);
       this._tooltip = {
-        get font(): string | undefined {
-          return tooltip.font ?? DEFAULTFONT;
+        get fontFamily(): string | undefined {
+          return tooltip.fontFamily ?? DEFAULTFONTFAMILY;
+        },
+        get fontSize(): number | undefined {
+          return tooltip.fontSize ?? DEFAULTFONTSIZE;
         },
         get bgColor(): string | undefined {
           return tooltip.bgColor ?? '#000';

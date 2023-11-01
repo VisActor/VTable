@@ -22,7 +22,7 @@ export interface CellRange {
   end: CellAddress;
 }
 
-export type FieldGetter = (record: any) => any;
+export type FieldGetter = (record: any, col?: number, row?: number, table?: BaseTableAPI) => any;
 export type FieldSetter = (record: any, value: any) => void;
 export interface FieldAssessor {
   get: FieldGetter;
@@ -54,7 +54,7 @@ export interface DataSourceAPI {
   clearCurrentIndexedData: () => void;
   length: number;
   get: (index: number) => MaybePromiseOrUndefined;
-  getField: <F extends FieldDef>(index: number, field: F) => FieldData;
+  getField: <F extends FieldDef>(index: number, field: F, col: number, row: number, table: BaseTableAPI) => FieldData;
   hasField: (index: number, field: FieldDef) => boolean;
   sort: (field: FieldDef, order: SortOrder, orderFn: (v1: any, v2: any, order: SortOrder) => -1 | 0 | 1) => void;
   clearSortedMap: () => void;

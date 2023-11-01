@@ -80,7 +80,8 @@ async function moveColumn(
       direction
     );
 
-    const colGroup = proxy.table.scenegraph.getColGroup(screenLeftCol);
+    const colGroup =
+      proxy.table.scenegraph.getColGroup(screenLeftCol) || proxy.table.scenegraph.getColGroup(screenLeftCol, true);
     const deltaX =
       screenLeftX - (colGroup.attribute.x + proxy.table.getFrozenColsWidth() + proxy.table.scenegraph.proxy.deltaX);
     proxy.table.scenegraph.proxy.deltaX += deltaX;
