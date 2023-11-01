@@ -1,10 +1,9 @@
 ---
 category: examples
-group: Performace
+group: performace
 title: Async Load Data
 cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/asyncData.gif
-link: '../guide/interaction/select'
-option: keyboardOptions.selectAllOnCtrlA
+link: '../guide/data/async_data'
 ---
 
 # Async Load Data
