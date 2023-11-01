@@ -181,6 +181,7 @@ export class Dataset {
       //processRecord中按照collectValuesBy 收集了维度值。现在需要对有聚合需求的sumby 处理收集维度值范围
       this.processCollectedValuesWithSumBy();
       //processRecord中按照collectValuesBy 收集了维度值。现在需要对有排序需求的处理sortby
+      this.generateCollectedValuesSortRule();
       this.processCollectedValuesWithSortBy();
       const t1 = typeof window !== 'undefined' ? window.performance.now() : 0;
       console.log('processRecords:', t1 - t0);
@@ -346,6 +347,28 @@ export class Dataset {
           this.collectedValues[field][byKeys] = (this.collectedValues[field][byKeys] as Array<string>).sort(
             (a, b) => this.collectValuesBy[field]?.sortBy.indexOf(a) - this.collectValuesBy[field]?.sortBy.indexOf(b)
           );
+        }
+      } else {
+      }
+    }
+  }
+  /**
+   * 为了轴顺序的一直  这里将收集到的轴范围我进行排序 写入sortBy
+   */
+  private generateCollectedValuesSortRule() {
+    for (const field in this.collectedValues) {
+      if (this.collectValuesBy[field] && !this.collectValuesBy[field].sortBy) {
+        let sortByRule: string[] = [];
+        for (const byKeys in this.collectedValues[field]) {
+          if (Array.isArray(this.collectedValues[field][byKeys])) {
+            // 将数组中的元素合并到数组sortByRule中
+            sortByRule.push(...(this.collectedValues[field][byKeys] as Array<string>));
+            // 使用Set和Array.from()方法去除重复值
+            sortByRule = Array.from(new Set(sortByRule));
+          }
+        }
+        if (sortByRule.length > 0) {
+          this.collectValuesBy[field].sortBy = sortByRule;
         }
       }
     }
