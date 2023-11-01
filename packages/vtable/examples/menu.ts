@@ -48,6 +48,10 @@ export const menus = [
       },
       {
         path: 'list',
+        name: 'list-more-columns'
+      },
+      {
+        path: 'list',
         name: 'list-no-columns'
       }
     ]
