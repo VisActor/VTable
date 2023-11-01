@@ -277,4 +277,5 @@ export function updateRowContent(syncTopRow: number, syncBottomRow: number, prox
       proxy.updateCellGroupContent(cellGroup);
     }
   }
+  proxy.table.scenegraph.updateNextFrame();
 }

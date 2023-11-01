@@ -23,6 +23,13 @@
             "link": "",
             "option": ""
           }
+        },
+        {
+          "path": "async-data",
+          "title": {
+            "zh": "异步加载数据源",
+            "en": "async load data"
+          }
         }
       ]
     },

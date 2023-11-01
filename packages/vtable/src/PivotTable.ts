@@ -170,7 +170,6 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
       options.indicatorsAsCol && !options.columns?.length && !options.columnTree ? [] : cloneDeep(options.columnTree);
     this.internalProps.rowTree =
       !options.indicatorsAsCol && !options.rows?.length && !options.rowTree ? [] : cloneDeep(options.rowTree);
-
     //分页配置
     this.pagination = options.pagination;
     // 更新protectedSpace
