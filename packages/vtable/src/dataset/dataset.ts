@@ -353,7 +353,7 @@ export class Dataset {
     }
   }
   /**
-   * 为了轴顺序的一直  这里将收集到的轴范围我进行排序 写入sortBy
+   * 为了轴顺序的一致  这里将收集到的轴范围进行排序 并写入sortBy。这样不同单元格的轴顺序保持一致 同时过滤数据updateFilterRules后也不影响排序
    */
   private generateCollectedValuesSortRule() {
     for (const field in this.collectedValues) {
@@ -728,6 +728,8 @@ export class Dataset {
     if (this.dataConfig?.isPivotChart) {
       // 处理PivotChart双轴图0值对齐
       this.dealWithZeroAlign();
+      // 记录PivotChart维度对应的数据
+      this.cacheDeminsionCollectedValues();
     }
   }
   private getAggregatorRule(indicatorKey: string): AggregationRule<AggregationType> | undefined {
