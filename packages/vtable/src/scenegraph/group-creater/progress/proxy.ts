@@ -18,8 +18,8 @@ export class SceneProxy {
   isRelease: boolean = false;
   mode: 'column' | 'row' | 'pivot' = 'column';
   isProgressing: boolean;
-  // isSkipProgress: any;
-  rowLimit = 1000;
+
+  rowLimit = 200;
   currentRow = 0; // 目前渐进生成的row number
   totalRow: number; // 渐进完成最后一行的row number
   yLimitTop: number; // y > yLimitTop动态更新，否则直接修改xy

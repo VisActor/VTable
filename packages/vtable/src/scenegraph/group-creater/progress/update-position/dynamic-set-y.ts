@@ -173,6 +173,9 @@ function updatePartRowPosition(startRow: number, endRow: number, direction: 'up'
   // row header group
   for (let col = 0; col < proxy.table.frozenColCount; col++) {
     const colGroup = proxy.table.scenegraph.getColGroup(col);
+    if (!colGroup) {
+      continue;
+    }
     for (let row = startRow; row <= endRow; row++) {
       updateCellGroupPosition(colGroup, direction, proxy);
     }
@@ -180,6 +183,9 @@ function updatePartRowPosition(startRow: number, endRow: number, direction: 'up'
   // right frozen group
   for (let col = proxy.table.colCount - proxy.table.rightFrozenColCount; col < proxy.table.colCount; col++) {
     const colGroup = proxy.table.scenegraph.getColGroup(col);
+    if (!colGroup) {
+      continue;
+    }
     for (let row = startRow; row <= endRow; row++) {
       updateCellGroupPosition(colGroup, direction, proxy);
     }

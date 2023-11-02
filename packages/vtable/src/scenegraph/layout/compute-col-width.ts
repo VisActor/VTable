@@ -143,9 +143,10 @@ export function computeColsWidth(table: BaseTableAPI, colStart?: number, colEnd?
       const newColWidth = newWidths[col] ?? table.getColWidth(col);
       if (newColWidth !== oldColWidths[col]) {
         // update the column width in scenegraph
-        table.scenegraph.updateColWidth(col, newColWidth - oldColWidths[col]);
+        table.scenegraph.updateColWidth(col, newColWidth - oldColWidths[col], true);
       }
     }
+    table.scenegraph.updateContainer();
   }
   // console.log('computeColsWidth  time:', (typeof window !== 'undefined' ? window.performance.now() : 0) - time, colStart, colEnd);
 }
