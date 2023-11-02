@@ -131,9 +131,11 @@ function addRow(row: number, scene: Scenegraph) {
       const cellBefore = scene.highPerformanceGetCell(col, row, true);
       if (cellBefore !== cellGroup) {
         colGroup.insertBefore(cellGroup, cellBefore);
+        cellBefore && (cellBefore.row = cellBefore.row + 1);
+        if (cellBefore !== colGroup.lastChild) {
+          colGroup.lastChild && ((colGroup.lastChild as Group).row = (colGroup.lastChild as Group).row + 1);
+        }
       }
-      cellBefore && (cellBefore.row = cellBefore.row + 1);
-      colGroup.lastChild && ((colGroup.lastChild as Group).row = (colGroup.lastChild as Group).row + 1);
     }
 
     // // reset row number
