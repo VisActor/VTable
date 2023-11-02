@@ -572,6 +572,10 @@ function updateCellContent(
   addNew: boolean,
   cellTheme?: IThemeSpec
 ) {
+  //解决报错 getCellByCache递归调用 死循环问题
+  if (oldCellGroup.row !== row || oldCellGroup.col !== col) {
+    return null;
+  }
   const newCellGroup = createCell(
     type,
     define,
@@ -593,7 +597,7 @@ function updateCellContent(
     range,
     cellTheme
   );
-  if (!addNew) {
+  if (!addNew && oldCellGroup.parent) {
     oldCellGroup.parent.insertAfter(newCellGroup, oldCellGroup);
     oldCellGroup.parent.removeChild(oldCellGroup);
 

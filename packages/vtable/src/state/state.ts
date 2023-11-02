@@ -567,7 +567,12 @@ export class StateManeger {
     const totalWidth = this.table.getAllColsWidth();
     this.scroll.horizontalBarPos = Math.ceil(xRatio * (totalWidth - this.table.scenegraph.width));
     this.table.scenegraph.setX(-this.scroll.horizontalBarPos);
-
+    // console.log(this.table.scenegraph.bodyGroup.lastChild.attribute);
+    // this.table.scenegraph.bodyGroup.lastChild.onBeforeAttributeUpdate = attr => {
+    //   if (attr.x) {
+    //     debugger;
+    //   }
+    // };
     // 滚动期间清空选中清空
     this.table.stateManeger.updateHoverPos(-1, -1);
     // this.table.stateManeger.updateSelectPos(-1, -1);

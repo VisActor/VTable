@@ -32,14 +32,14 @@ link: '../guide/custom_define/custom_icon'
 
 ```javascript livedemo template=vtable
 
-VTable.register.icon('frozen',{
+VTable.register.icon('freeze',{
       type: 'svg',
       svg:
-       "https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/frozen.svg",
+       "https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/freeze.svg",
       width: 22,
       height: 22,
-      name: 'frozen',
-      funcType: VTable.TYPES.IconFuncTypeEnum.frozen,
+      name: 'freeze',
+      funcType: VTable.TYPES.IconFuncTypeEnum.freeze,
       positionType: VTable.TYPES.IconPosition.right,
       marginRight: 0,
       hover: {
@@ -104,6 +104,15 @@ VTable.register.icon('frozen',{
         bgColor: 'rgba(101, 117, 168, 0.1)',
       },
       cursor: 'pointer',
+      tooltip: {
+        style: { 
+          bgColor:'gray',
+          fontSize:6
+        },
+        // 气泡框，按钮的的解释信息
+        title: '点击可复制',
+        placement: VTable.TYPES.Placement.top,
+      },
     }
   );
 

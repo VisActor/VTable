@@ -758,6 +758,7 @@ export class Scenegraph {
     updateColWidth(this, col, Math.round(detaX));
     // this.updateContainerWidth(col, detaX);
     if (!skipUpdateContainer) {
+      this.updateContainerAttrWidthAndX();
       this.updateContainer();
     }
   }
@@ -854,25 +855,27 @@ export class Scenegraph {
   }
 
   resize() {
-    if (this.table.internalProps._widthResizedColMap.size === 0) {
-      //如果没有手动调整过行高列宽 则重新计算一遍并重新分配
-      if (this.table.widthMode === 'adaptive' || this.table.autoFillWidth) {
+    if (this.table.widthMode === 'adaptive' || this.table.autoFillWidth) {
+      if (this.table.internalProps._widthResizedColMap.size === 0) {
+        //如果没有手动调整过行高列宽 则重新计算一遍并重新分配
         this.recalculateColWidths();
-      }
-
-      if (this.table.heightMode === 'adaptive' || this.table.autoFillHeight) {
-        this.recalculateRowHeights();
+      } else {
+        this.dealWidthMode();
       }
     }
-    // // widthMode === 'adaptive' 时，computeColsWidth()中已经有高度更新计算
-    // // else if (this.table.widthMode === 'adaptive') {
-    // //   this.table.clearRowHeightCache();
-    // //   computeRowsHeight(this.table, 0, this.table.columnHeaderLevelCount - 1);
-    // //   computeRowsHeight(this.table, this.proxy.rowStart, this.proxy.rowEnd);
-    // // }
 
-    this.dealWidthMode();
-    this.dealHeightMode();
+    if (this.table.heightMode === 'adaptive' || this.table.autoFillHeight) {
+      // perf to be optimized:
+      // reason to use recalculateRowHeights();
+      // 1. error amplification（误差放大） in dealHeightMode when multiple resize
+      // 2. width update caused height update dose not have enlarge/reduce number,
+      // will cause scale error in dealHeightMode()
+      this.recalculateRowHeights();
+      // this.dealHeightMode();
+    }
+
+    // this.dealWidthMode();
+    // this.dealHeightMode();
     this.resetFrozen();
     // this.dealFrozen();
     this.updateTableSize();
@@ -1112,6 +1115,7 @@ export class Scenegraph {
       this.component.setFrozenColumnShadow(this.table.frozenColCount - 1);
     }
     this.table.stateManeger.checkFrozen();
+    this.updateContainerAttrWidthAndX();
     this.updateContainer();
 
     // 处理frame border
@@ -1336,7 +1340,7 @@ export class Scenegraph {
     moveHeaderPosition(colSource, rowSource, colTarget, rowTarget, this.table);
   }
 
-  updateContainer() {
+  updateContainerAttrWidthAndX() {
     // 更新各列x&col
     const cornerX = updateContainerChildrenX(this.cornerHeaderGroup);
     const rowHeaderX = updateContainerChildrenX(this.rowHeaderGroup);
@@ -1351,6 +1355,7 @@ export class Scenegraph {
     // 更新容器
     this.cornerHeaderGroup.setDeltaWidth(cornerX - this.cornerHeaderGroup.attribute.width);
     this.leftBottomCornerGroup.setDeltaWidth(cornerX - this.leftBottomCornerGroup.attribute.width);
+    //TODO 可能有影响
     this.colHeaderGroup.setDeltaWidth(colHeaderX - this.colHeaderGroup.attribute.width);
     this.rightFrozenGroup.setDeltaWidth(colHeaderX - this.rightFrozenGroup.attribute.width);
     this.rowHeaderGroup.setDeltaWidth(rowHeaderX - this.rowHeaderGroup.attribute.width);
@@ -1363,7 +1368,10 @@ export class Scenegraph {
     this.colHeaderGroup.setAttribute('x', this.cornerHeaderGroup.attribute.width);
     this.bottomFrozenGroup.setAttribute('x', this.rowHeaderGroup.attribute.width);
     this.bodyGroup.setAttribute('x', this.rowHeaderGroup.attribute.width);
+  }
 
+  updateContainer() {
+    // console.trace('updateContainer');
     this.updateTableSize();
 
     // 记录滚动条原位置

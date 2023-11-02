@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "comment": "fix: getCellByCache maximum call stack size exceeded\n\n",
+      "type": "patch",
+      "packageName": "@visactor/vtable"
+    }
+  ],
+  "packageName": "@visactor/vtable",
+  "email": "892739385@qq.com"
+}

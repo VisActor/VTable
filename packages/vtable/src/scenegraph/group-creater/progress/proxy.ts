@@ -184,6 +184,12 @@ export class SceneProxy {
         if (this.isRelease) {
           return;
         }
+        // console.log('progress col', this.colUpdatePos, this.colEnd, this.currentCol, this.totalCol);
+        // console.log('progress row', this.rowUpdatePos, this.rowEnd, this.currentRow, this.totalRow);
+        // console.log('before: createRow', table.scenegraph.bodyGroup.lastChild.attribute);
+        // if (this.isSkipProgress) {
+        //   await this.progress();
+        // } else
         if (this.colUpdatePos < this.colEnd) {
           await this.updateColCellGroupsAsync();
           await this.progress();
@@ -397,6 +403,7 @@ export class SceneProxy {
     console.log('async', this.referenceCol, this.colStart, this.colEnd);
 
     // update container group size and border
+    this.table.scenegraph.updateContainerAttrWidthAndX();
     this.table.scenegraph.updateContainer();
     this.table.scenegraph.updateBorderSizeAndPosition();
   }
