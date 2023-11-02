@@ -64,7 +64,7 @@ export function resetFrozen(scene: Scenegraph) {
 
   scene.bodyGroup.setAttribute('x', scene.rowHeaderGroup.attribute.width);
   scene.colHeaderGroup.setAttribute('x', scene.cornerHeaderGroup.attribute.width);
-
+  scene.updateContainerAttrWidthAndX();
   scene.updateContainer();
   scene.updateBorderSizeAndPosition();
 
