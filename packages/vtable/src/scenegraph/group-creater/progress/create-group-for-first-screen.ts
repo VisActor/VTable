@@ -22,19 +22,32 @@ export async function createGroupForFirstScreen(
   proxy.setParamsForRow();
   proxy.setParamsForColumn();
 
+  let distCol;
+  let distRow;
+  if (table.widthMode === 'adaptive') {
+    distCol = table.colCount - 1;
+  } else {
+    distCol = Math.min(proxy.firstScreenColLimit, table.colCount - 1 - table.rightFrozenColCount);
+  }
+  if (table.heightMode === 'adaptive') {
+    distRow = table.rowCount - 1;
+  } else {
+    distRow = Math.min(proxy.firstScreenRowLimit, table.rowCount - 1 - table.bottomFrozenRowCount);
+  }
+
   // compute colums width in first screen
-  computeColsWidth(table, 0, Math.min(proxy.firstScreenColLimit, table.colCount - 1));
+  computeColsWidth(table, 0, distCol);
 
   // compute rows height in first screen
-  computeRowsHeight(table, 0, Math.min(proxy.firstScreenRowLimit, table.rowCount - 1));
+  computeRowsHeight(table, 0, distRow);
 
-  if (table.rightFrozenColCount > 0 && table.colCount - 1 > proxy.firstScreenColLimit) {
+  if (table.rightFrozenColCount > 0) {
     // compute right frozen row height
     computeColsWidth(table, table.colCount - 1 - table.rightFrozenColCount + 1, table.colCount - 1);
   }
-  if (table.bottomFrozenRowCount > 0 && table.rowCount - 1 > proxy.firstScreenRowLimit) {
+  if (table.bottomFrozenRowCount > 0) {
     // compute bottom frozen row height
-    computeColsWidth(table, table.rowCount - 1 - table.bottomFrozenRowCount + 1, table.rowCount - 1);
+    computeRowsHeight(table, table.rowCount - 1 - table.bottomFrozenRowCount + 1, table.rowCount - 1);
   }
 
   // update colHeaderGroup rowHeaderGroup bodyGroup position
@@ -66,7 +79,8 @@ export async function createGroupForFirstScreen(
     xOrigin,
     yOrigin,
     table.frozenColCount, // colStart
-    Math.min(proxy.firstScreenColLimit, table.colCount - 1 - table.rightFrozenColCount), // colEnd
+    // Math.min(proxy.firstScreenColLimit, table.colCount - 1 - table.rightFrozenColCount), // colEnd
+    distCol,
     0, // rowStart
     table.columnHeaderLevelCount - 1, // rowEnd
     'columnHeader', // isHeader
@@ -81,7 +95,8 @@ export async function createGroupForFirstScreen(
     0, // colStart
     table.frozenColCount - 1, // colEnd
     table.columnHeaderLevelCount, // rowStart
-    Math.min(proxy.firstScreenRowLimit, table.rowCount - 1 - table.bottomFrozenRowCount), // rowEnd
+    // Math.min(proxy.firstScreenRowLimit, table.rowCount - 1 - table.bottomFrozenRowCount), // rowEnd
+    distRow,
     table.isListTable() && !table.internalProps.transpose ? 'body' : 'rowHeader', // isHeader
     table
   );
@@ -107,7 +122,8 @@ export async function createGroupForFirstScreen(
       xOrigin,
       yOrigin,
       table.frozenColCount, // colStart
-      Math.min(proxy.firstScreenColLimit, table.colCount - 1 - table.rightFrozenColCount), // colEnd
+      // Math.min(proxy.firstScreenColLimit, table.colCount - 1 - table.rightFrozenColCount), // colEnd
+      distCol,
       table.rowCount - 1 - table.bottomFrozenRowCount + 1, // rowStart
       table.rowCount - 1, // rowEnd
       table.isPivotChart() ? 'rowHeader' : 'body', // isHeader
@@ -138,7 +154,8 @@ export async function createGroupForFirstScreen(
       table.colCount - 1 - table.rightFrozenColCount + 1, // colStart
       table.colCount - 1, // colEnd
       table.columnHeaderLevelCount, // rowStart
-      Math.min(proxy.firstScreenRowLimit, table.rowCount - 1 - table.bottomFrozenRowCount), // rowEnd
+      // Math.min(proxy.firstScreenRowLimit, table.rowCount - 1 - table.bottomFrozenRowCount), // rowEnd
+      distRow,
       table.isPivotChart() ? 'rowHeader' : 'body', // isHeader
       table
     );
@@ -165,9 +182,11 @@ export async function createGroupForFirstScreen(
     xOrigin,
     yOrigin,
     table.frozenColCount, // colStart
-    Math.min(proxy.firstScreenColLimit, table.colCount - 1 - table.rightFrozenColCount), // colEnd
+    // Math.min(proxy.firstScreenColLimit, table.colCount - 1 - table.rightFrozenColCount), // colEnd
+    distCol,
     table.columnHeaderLevelCount, // rowStart
-    Math.min(proxy.firstScreenRowLimit, table.rowCount - 1 - table.bottomFrozenRowCount), // rowEnd
+    // Math.min(proxy.firstScreenRowLimit, table.rowCount - 1 - table.bottomFrozenRowCount), // rowEnd
+    distRow,
     'body', // isHeader
     table
   );

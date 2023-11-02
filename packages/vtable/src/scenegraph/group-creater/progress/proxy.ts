@@ -35,6 +35,7 @@ export class SceneProxy {
   rowUpdatePos: number; // 异步任务目前更新到的行的row number
   rowUpdateDirection: 'up' | 'down'; // 当前行更新的方向
   screenTopRow: number = 0; // 当前屏幕范围内显示的第一行的row number
+  totalActualBodyRowCount: number; // 实际表格body部分的行数
   deltaY: number = 0;
 
   colLimit = 100;
@@ -53,6 +54,7 @@ export class SceneProxy {
   referenceCol: number; // 当前维护的部分中间一列的col number，认为referenceCol对应当前屏幕显示范围的第一列
   screenLeftCol: number = 0; // 当前屏幕范围内显示的第一列的col number
   colUpdateDirection: 'left' | 'right'; // 当前列更新方向
+  totalActualBodyColCount: number; // 实际表格body部分的列数
   deltaX: number = 0;
 
   cellCache: Map<number, Group> = new Map(); // 单元格位置快速查找缓存
@@ -89,6 +91,7 @@ export class SceneProxy {
 
     // compute the column info about progress creation
     const totalActualBodyColCount = Math.min(this.colLimit, this.bodyRightCol - this.bodyLeftCol + 1);
+    this.totalActualBodyColCount = totalActualBodyColCount;
     this.totalCol = this.bodyLeftCol + totalActualBodyColCount - 1; // 目标渐进完成的col
     this.colStart = this.bodyLeftCol;
     const defaultColWidth = this.table.defaultColWidth;
@@ -117,6 +120,7 @@ export class SceneProxy {
 
     // 计算渐进加载数量
     const totalActualBodyRowCount = Math.min(this.rowLimit, this.bodyBottomRow - this.bodyTopRow + 1); // 渐进加载总row数量
+    this.totalActualBodyRowCount = totalActualBodyRowCount;
     this.totalRow = this.bodyTopRow + totalActualBodyRowCount - 1; // 目标渐进完成的row
     this.rowStart = this.bodyTopRow;
     const defaultRowHeight = this.table.defaultRowHeight;
@@ -409,10 +413,12 @@ export class SceneProxy {
   }
 
   async setY(y: number) {
-    if (y < this.yLimitTop && this.rowStart === this.bodyTopRow) {
+    const yLimitTop = this.table.getRowsHeight(this.bodyTopRow, this.bodyTopRow + this.totalActualBodyRowCount) / 2;
+    const yLimitBottom = this.table.getAllRowsHeight() - yLimitTop;
+    if (y < yLimitTop && this.rowStart === this.bodyTopRow) {
       // 执行真实body group坐标修改
       this.table.scenegraph.setBodyAndRowHeaderY(-y);
-    } else if (y > this.yLimitBottom && this.rowEnd === this.bodyBottomRow) {
+    } else if (y > yLimitBottom && this.rowEnd === this.bodyBottomRow) {
       // 执行真实body group坐标修改
       this.table.scenegraph.setBodyAndRowHeaderY(-y);
     } else {
@@ -422,10 +428,12 @@ export class SceneProxy {
   }
 
   async setX(x: number) {
-    if (x < this.xLimitLeft && this.colStart === this.bodyLeftCol) {
+    const xLimitLeft = this.table.getColsWidth(this.bodyLeftCol, this.bodyLeftCol + this.totalActualBodyColCount) / 2;
+    const xLimitRight = this.table.getAllColsWidth() - xLimitLeft;
+    if (x < xLimitLeft && this.colStart === this.bodyLeftCol) {
       // 执行真实body group坐标修改
       this.table.scenegraph.setBodyAndColHeaderX(-x);
-    } else if (x > this.xLimitRight && this.colEnd === this.bodyRightCol) {
+    } else if (x > xLimitRight && this.colEnd === this.bodyRightCol) {
       // 执行真实body group坐标修改
       this.table.scenegraph.setBodyAndColHeaderX(-x);
     } else {
