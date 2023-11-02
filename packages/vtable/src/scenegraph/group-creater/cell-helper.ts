@@ -33,6 +33,7 @@ import { createCheckboxCellGroup } from './cell-type/checkbox-cell';
 import type { PivotHeaderLayoutMap } from '../../layout/pivot-header-layout';
 import { getHierarchyOffset } from '../utils/get-hierarchy-offset';
 import { getQuadProps } from '../utils/padding';
+import { convertInternal } from '../../tools/util';
 
 export function createCell(
   type: ColumnTypeOption,
@@ -387,12 +388,13 @@ export function updateCell(col: number, row: number, table: BaseTableAPI, addNew
     const textMark = oldCellGroup.getChildByName('text');
     if (textMark) {
       const text = table.getCellValue(col, row);
+      const textArr = convertInternal(text).replace(/\r?\n/g, '\n').replace(/\r/g, '\n').split('\n');
       const hierarchyOffset = getHierarchyOffset(col, row, table);
       const lineClamp = cellStyle.lineClamp;
       const padding = getQuadProps(getProp('padding', cellStyle, col, row, table)) ?? [0, 0, 0, 0];
 
       const attribute = {
-        text: text.length === 1 && !autoWrapText ? text[0] : text, // 单行(no-autoWrapText)为字符串，多行(autoWrapText)为字符串数组
+        text: textArr.length === 1 && !autoWrapText ? textArr[0] : textArr, // 单行(no-autoWrapText)为字符串，多行(autoWrapText)为字符串数组
         maxLineWidth: cellWidth - (padding[1] + padding[3] + hierarchyOffset),
         // fill: true,
         // textAlign: 'left',
