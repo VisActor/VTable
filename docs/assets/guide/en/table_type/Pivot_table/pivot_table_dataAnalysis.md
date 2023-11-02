@@ -32,9 +32,9 @@ This configuration is the simplest configuration for multidimensional tables. As
 ## Data analysis related configuration:
 |Configuration item|Type|Description|
 |:----|:----|:----|
-|rows|string[]|IDimension[]|Row dimension field array, used to parse out the corresponding dimension members|
-|columns|string[]|IDimension[]|Column dimension field array, used to parse out the corresponding dimension members|
-|indicators|string[]|IIndicator[]|Specific display indicators|
+|rows|string[] \| IDimension[]|Row dimension field array, used to parse out the corresponding dimension members|
+|columns|string[] \| IDimension[]|Column dimension field array, used to parse out the corresponding dimension members|
+|indicators|string[] \| IIndicator[]|Specific display indicators|
 |dataConfig.aggregationRules|aggregationRule[]|Aggregation value calculation rules according to row and column dimensions|
 |dataConfig.derivedFieldRules|DerivedFieldRule[]|Derived fields|
 |dataConfig.sortRules|sortRule[]|Sort rules|
