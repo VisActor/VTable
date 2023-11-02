@@ -757,6 +757,7 @@ export class Scenegraph {
   updateColWidth(col: number, detaX: number) {
     updateColWidth(this, col, Math.round(detaX));
     // this.updateContainerWidth(col, detaX);
+    this.updateContainerAttrWidthAndX();
     this.updateContainer();
   }
 
@@ -1112,6 +1113,7 @@ export class Scenegraph {
       this.component.setFrozenColumnShadow(this.table.frozenColCount - 1);
     }
     this.table.stateManeger.checkFrozen();
+    this.updateContainerAttrWidthAndX();
     this.updateContainer();
 
     // 处理frame border
@@ -1336,7 +1338,7 @@ export class Scenegraph {
     moveHeaderPosition(colSource, rowSource, colTarget, rowTarget, this.table);
   }
 
-  updateContainer() {
+  updateContainerAttrWidthAndX() {
     // 更新各列x&col
     const cornerX = updateContainerChildrenX(this.cornerHeaderGroup);
     const rowHeaderX = updateContainerChildrenX(this.rowHeaderGroup);
@@ -1351,6 +1353,7 @@ export class Scenegraph {
     // 更新容器
     this.cornerHeaderGroup.setDeltaWidth(cornerX - this.cornerHeaderGroup.attribute.width);
     this.leftBottomCornerGroup.setDeltaWidth(cornerX - this.leftBottomCornerGroup.attribute.width);
+    //TODO 可能有影响
     this.colHeaderGroup.setDeltaWidth(colHeaderX - this.colHeaderGroup.attribute.width);
     this.rightFrozenGroup.setDeltaWidth(colHeaderX - this.rightFrozenGroup.attribute.width);
     this.rowHeaderGroup.setDeltaWidth(rowHeaderX - this.rowHeaderGroup.attribute.width);
@@ -1363,7 +1366,10 @@ export class Scenegraph {
     this.colHeaderGroup.setAttribute('x', this.cornerHeaderGroup.attribute.width);
     this.bottomFrozenGroup.setAttribute('x', this.rowHeaderGroup.attribute.width);
     this.bodyGroup.setAttribute('x', this.rowHeaderGroup.attribute.width);
+  }
 
+  updateContainer() {
+    // console.trace('updateContainer');
     this.updateTableSize();
 
     // 记录滚动条原位置

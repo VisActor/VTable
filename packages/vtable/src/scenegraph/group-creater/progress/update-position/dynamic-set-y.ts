@@ -102,7 +102,10 @@ async function moveCell(
     }
 
     proxy.currentRow = direction === 'up' ? proxy.currentRow + count : proxy.currentRow - count;
-    proxy.totalRow = direction === 'up' ? proxy.totalRow + count : proxy.totalRow - count;
+    proxy.totalRow = Math.max(
+      0,
+      Math.min(proxy.table.rowCount - 1, direction === 'up' ? proxy.totalRow + count : proxy.totalRow - count)
+    );
     proxy.referenceRow = proxy.rowStart + Math.floor((proxy.rowEnd - proxy.rowStart) / 2);
     proxy.rowUpdatePos = Math.min(proxy.rowUpdatePos, distStartRow);
     proxy.rowUpdateDirection = direction;
@@ -151,7 +154,10 @@ async function moveCell(
     proxy.table.scenegraph.proxy.deltaY = 0;
 
     proxy.currentRow = direction === 'up' ? proxy.currentRow + count : proxy.currentRow - count;
-    proxy.totalRow = direction === 'up' ? proxy.totalRow + count : proxy.totalRow - count;
+    proxy.totalRow = Math.max(
+      0,
+      Math.min(proxy.table.rowCount - 1, direction === 'up' ? proxy.totalRow + count : proxy.totalRow - count)
+    );
     proxy.referenceRow = proxy.rowStart + Math.floor((proxy.rowEnd - proxy.rowStart) / 2);
     proxy.rowUpdatePos = proxy.rowStart;
     proxy.rowUpdateDirection = distEndRow > proxy.bodyBottomRow - (proxy.rowEnd - proxy.rowStart + 1) ? 'down' : 'up';
@@ -181,8 +187,10 @@ function updatePartRowPosition(startRow: number, endRow: number, direction: 'up'
   // body group
   for (let col = proxy.bodyLeftCol; col <= proxy.bodyRightCol; col++) {
     const colGroup = proxy.table.scenegraph.getColGroup(col);
-    for (let row = startRow; row <= endRow; row++) {
-      updateCellGroupPosition(colGroup, direction, proxy);
+    if (colGroup) {
+      for (let row = startRow; row <= endRow; row++) {
+        updateCellGroupPosition(colGroup, direction, proxy);
+      }
     }
   }
 }
