@@ -57,7 +57,9 @@ function removeRow(row: number, scene: Scenegraph) {
   for (let col = 0; col < scene.table.colCount; col++) {
     // const headerColGroup = scene.getColGroup(col, true);
     const colGroup = scene.getColGroup(col, false);
-
+    if (!colGroup) {
+      continue;
+    }
     // // remove cellGroup in headerColGroup
     // let headerCellGroup;
     // headerColGroup.forEachChildren((cellGroup: Group) => {
@@ -113,6 +115,10 @@ function addRow(row: number, scene: Scenegraph) {
 
     // insert cellGroup in colGroup
     const colGroup = scene.getColGroup(col);
+    if (!colGroup) {
+      continue;
+    }
+
     if (colGroup.firstChild && row < (colGroup.firstChild as Group).row) {
       colGroup.insertBefore(cellGroup, colGroup.firstChild);
       (colGroup.firstChild as Group).row = (colGroup.firstChild as Group).row + 1;
@@ -167,6 +173,9 @@ function resetRowNumber(scene: Scenegraph) {
   for (let col = 0; col < scene.table.colCount; col++) {
     const headerColGroup = scene.getColGroup(col, true);
     const colGroup = scene.getColGroup(col, false);
+    if (!headerColGroup || !colGroup) {
+      continue;
+    }
     // reset row number
     let rowIndex = (headerColGroup.firstChild as Group)?.row;
     headerColGroup.forEachChildren((cellGroup: Group) => {
@@ -186,6 +195,9 @@ function resetRowNumberAndY(scene: Scenegraph) {
   for (let col = 0; col < scene.table.colCount; col++) {
     const headerColGroup = scene.getColGroup(col, true);
     const colGroup = scene.getColGroup(col, false);
+    if (!headerColGroup || !colGroup) {
+      continue;
+    }
     // reset row number
     let rowIndex = (headerColGroup.firstChild as Group)?.row;
     let y = 0;
