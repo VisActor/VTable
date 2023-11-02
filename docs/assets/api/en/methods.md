@@ -530,3 +530,5 @@ Export a picture of a certain cell range
    */
   exportCellRangeImg(cellRange: CellRange): string
 ```
+## dataSouce(CachedDataSource)
+Set the data source for the VTable table component instance. For specific usage, please refer to [Asynchronous data loading demo](../demo/performance/async-data) and [Tutorial](../guide/data/async_data)

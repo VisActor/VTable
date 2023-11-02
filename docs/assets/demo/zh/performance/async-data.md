@@ -1,5 +1,26 @@
-import * as VTable from '../../src';
-const CONTAINER_ID = 'vTable';
+---
+category: examples
+group: performace
+title: 异步加载数据源
+cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/asyncData.gif
+link: '../guide/data/async_data'
+---
+
+# 异步加载数据
+
+为了减轻后端请求数据的压力，可以使用该方式来异步加载数据。
+
+注意：如果使用VTable内部排序的话，需要获取到全部数据才能排序，所以这个异步相当于失效，建议后端实现排序逻辑，前端仅展示排序图标。
+
+另外，如果开启自动列宽widthMode:'autoWidth'或者columns中设置了width:'auto', VTable也需要获取到列每个单元格的值才能取到最大内容宽度，所以也会导致异步失效。
+
+## 关键配置
+
+- dataSource 自定义实现获取数据逻辑
+
+## 代码演示
+
+```javascript livedemo template=vtable
 const generatePersons = i => {
   return {
     id: i + 1,
@@ -20,12 +41,12 @@ const generatePersons = i => {
  * @param num
  * @returns
  */
-const getRecordsWithAjax = (startIndex: number, num: number) => {
+const getRecordsWithAjax = (startIndex, num) => {
   // console.log('getRecordsWithAjax', startIndex, num);
   return new Promise(resolve => {
     setTimeout(() => {
       console.log('getRecordsWithAjax', startIndex, num);
-      const records: any[] = [];
+      const records = [];
       for (let i = 0; i < num; i++) {
         records.push(generatePersons(startIndex + i));
       }
@@ -34,10 +55,9 @@ const getRecordsWithAjax = (startIndex: number, num: number) => {
   });
 };
 
-export function createTable() {
-  // create DataSource
-  const loadedData = {};
-  const dataSource = new VTable.data.CachedDataSource({
+// create DataSource
+const loadedData = {};
+const dataSource = new VTable.data.CachedDataSource({
     get(index) {
       // 每一批次请求100条数据 0-99 100-199 200-299
       const loadStartIndex = Math.floor(index / 100) * 100;
@@ -46,15 +66,14 @@ export function createTable() {
         const promiseObject = getRecordsWithAjax(loadStartIndex, 100); // return Promise Object
         loadedData[loadStartIndex] = promiseObject;
       }
-      return loadedData[loadStartIndex].then((data: any) => {
+      return loadedData[loadStartIndex].then((data) => {
         return data[index - loadStartIndex]; //获取批次数据列表中的index对应数据
       });
     },
     length: 10000 //all records count
   });
-
-  const columns: VTable.ColumnsDefine = [
-    {
+const columns = [
+  {
       field: 'id',
       title: 'ID',
       width: 120
@@ -106,13 +125,11 @@ export function createTable() {
       title: 'city',
       width: 150
     }
-  ];
-  const option: VTable.ListTableConstructorOptions = {
-    container: document.getElementById(CONTAINER_ID),
-    // records,
-    columns
-  };
-  const tableInstance = new VTable.ListTable(option);
-  tableInstance.dataSource = dataSource;
-  window.tableInstance = tableInstance;
-}
+];
+const option = {
+  columns
+};
+const tableInstance = new VTable.ListTable(document.getElementById(CONTAINER_ID),option);
+tableInstance.dataSource = dataSource;
+window['tableInstance'] = tableInstance;
+```

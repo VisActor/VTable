@@ -370,7 +370,8 @@ export function createTable() {
           style: {
             bgColor: 'black',
             color: 'white',
-            font: 'normal normal normal 14px/1 STKaiti',
+            fontSize: 14,
+            fontFamily: 'STKaiti',
             arrowMark: true
           }
         });

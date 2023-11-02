@@ -1,5 +1,26 @@
-import * as VTable from '../../src';
-const CONTAINER_ID = 'vTable';
+---
+category: examples
+group: performace
+title: Async Load Data
+cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/asyncData.gif
+link: '../guide/data/async_data'
+---
+
+# Async Load Data
+
+In order to reduce the pressure on the backend to request data, you can use this method to load data asynchronously.
+
+Note: If you use VTable internal sorting, you need to obtain all the data before sorting, so this asynchronous is equivalent to invalidation. It is recommended that the backend implement sorting logic and the frontend only displays the sorting icon.
+
+In addition, if automatic column width widthMode:'autoWidth' is turned on or width:'auto' is set in columns, VTable also needs to obtain the value of each cell in the column to obtain the maximum content width, so it will also cause asynchronous failure.
+
+## Key Configurations
+
+- dataSource custom implementation of data acquisition logic
+
+## Code demo
+
+```javascript livedemo template=vtable
 const generatePersons = i => {
   return {
     id: i + 1,
@@ -20,12 +41,12 @@ const generatePersons = i => {
  * @param num
  * @returns
  */
-const getRecordsWithAjax = (startIndex: number, num: number) => {
+const getRecordsWithAjax = (startIndex, num) => {
   // console.log('getRecordsWithAjax', startIndex, num);
   return new Promise(resolve => {
     setTimeout(() => {
       console.log('getRecordsWithAjax', startIndex, num);
-      const records: any[] = [];
+      const records = [];
       for (let i = 0; i < num; i++) {
         records.push(generatePersons(startIndex + i));
       }
@@ -34,10 +55,9 @@ const getRecordsWithAjax = (startIndex: number, num: number) => {
   });
 };
 
-export function createTable() {
-  // create DataSource
-  const loadedData = {};
-  const dataSource = new VTable.data.CachedDataSource({
+// create DataSource
+const loadedData = {};
+const dataSource = new VTable.data.CachedDataSource({
     get(index) {
       // 每一批次请求100条数据 0-99 100-199 200-299
       const loadStartIndex = Math.floor(index / 100) * 100;
@@ -46,15 +66,14 @@ export function createTable() {
         const promiseObject = getRecordsWithAjax(loadStartIndex, 100); // return Promise Object
         loadedData[loadStartIndex] = promiseObject;
       }
-      return loadedData[loadStartIndex].then((data: any) => {
+      return loadedData[loadStartIndex].then((data) => {
         return data[index - loadStartIndex]; //获取批次数据列表中的index对应数据
       });
     },
     length: 10000 //all records count
   });
-
-  const columns: VTable.ColumnsDefine = [
-    {
+const columns = [
+  {
       field: 'id',
       title: 'ID',
       width: 120
@@ -106,13 +125,11 @@ export function createTable() {
       title: 'city',
       width: 150
     }
-  ];
-  const option: VTable.ListTableConstructorOptions = {
-    container: document.getElementById(CONTAINER_ID),
-    // records,
-    columns
-  };
-  const tableInstance = new VTable.ListTable(option);
-  tableInstance.dataSource = dataSource;
-  window.tableInstance = tableInstance;
-}
+];
+const option = {
+  columns
+};
+const tableInstance = new VTable.ListTable(document.getElementById(CONTAINER_ID),option);
+tableInstance.dataSource = dataSource;
+window['tableInstance'] = tableInstance;
+```
