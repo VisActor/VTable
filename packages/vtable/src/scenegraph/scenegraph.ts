@@ -757,6 +757,7 @@ export class Scenegraph {
   updateColWidth(col: number, detaX: number) {
     updateColWidth(this, col, Math.round(detaX));
     // this.updateContainerWidth(col, detaX);
+    this.updateContainerAttrWidthAndX();
     this.updateContainer();
   }
 
@@ -1112,7 +1113,7 @@ export class Scenegraph {
       this.component.setFrozenColumnShadow(this.table.frozenColCount - 1);
     }
     this.table.stateManeger.checkFrozen();
-    this.initNodeWidthAndX();
+    this.updateContainerAttrWidthAndX();
     this.updateContainer();
 
     // 处理frame border
@@ -1337,7 +1338,7 @@ export class Scenegraph {
     moveHeaderPosition(colSource, rowSource, colTarget, rowTarget, this.table);
   }
 
-  initNodeWidthAndX() {
+  updateContainerAttrWidthAndX() {
     // 更新各列x&col
     const cornerX = updateContainerChildrenX(this.cornerHeaderGroup);
     const rowHeaderX = updateContainerChildrenX(this.rowHeaderGroup);
@@ -1368,6 +1369,7 @@ export class Scenegraph {
   }
 
   updateContainer() {
+    // console.trace('updateContainer');
     this.updateTableSize();
 
     // 记录滚动条原位置

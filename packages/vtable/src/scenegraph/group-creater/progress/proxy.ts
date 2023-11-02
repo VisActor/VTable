@@ -403,7 +403,7 @@ export class SceneProxy {
     console.log('async', this.referenceCol, this.colStart, this.colEnd);
 
     // update container group size and border
-    this.table.scenegraph.initNodeWidthAndX();
+    this.table.scenegraph.updateContainerAttrWidthAndX();
     this.table.scenegraph.updateContainer();
     this.table.scenegraph.updateBorderSizeAndPosition();
   }
