@@ -184,6 +184,7 @@ function updateColPosition(containerGroup: Group, direction: 'left' | 'right', p
     const lastChild = getLastChild(containerGroup);
     updateColGroupPosition(colGroup, lastChild.col + 1, lastChild.attribute.x + proxy.table.getColWidth(lastChild.col));
     containerGroup.appendChild(colGroup);
+    // console.log('after', colGroup.col, colGroup.attribute.x, containerGroup._uid);
     if (containerGroup.border) {
       containerGroup.appendChild(containerGroup.border);
     }
