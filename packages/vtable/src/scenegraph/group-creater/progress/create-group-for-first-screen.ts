@@ -27,12 +27,12 @@ export async function createGroupForFirstScreen(
   if (table.widthMode === 'adaptive') {
     distCol = table.colCount - 1;
   } else {
-    distCol = Math.min(proxy.firstScreenColLimit, table.colCount - 1 - table.rightFrozenColCount);
+    distCol = Math.min(proxy.firstScreenColLimit, table.colCount - 1);
   }
   if (table.heightMode === 'adaptive') {
     distRow = table.rowCount - 1;
   } else {
-    distRow = Math.min(proxy.firstScreenRowLimit, table.rowCount - 1 - table.bottomFrozenRowCount);
+    distRow = Math.min(proxy.firstScreenRowLimit, table.rowCount - 1);
   }
 
   // compute colums width in first screen
@@ -41,11 +41,11 @@ export async function createGroupForFirstScreen(
   // compute rows height in first screen
   computeRowsHeight(table, 0, distRow);
 
-  if (table.rightFrozenColCount > 0) {
+  if (distCol < table.colCount - 1 - table.rightFrozenColCount) {
     // compute right frozen row height
     computeColsWidth(table, table.colCount - 1 - table.rightFrozenColCount + 1, table.colCount - 1);
   }
-  if (table.bottomFrozenRowCount > 0) {
+  if (distRow < table.rowCount - 1 - table.bottomFrozenRowCount) {
     // compute bottom frozen row height
     computeRowsHeight(table, table.rowCount - 1 - table.bottomFrozenRowCount + 1, table.rowCount - 1);
   }
@@ -80,7 +80,7 @@ export async function createGroupForFirstScreen(
     yOrigin,
     table.frozenColCount, // colStart
     // Math.min(proxy.firstScreenColLimit, table.colCount - 1 - table.rightFrozenColCount), // colEnd
-    distCol,
+    distCol - table.rightFrozenColCount,
     0, // rowStart
     table.columnHeaderLevelCount - 1, // rowEnd
     'columnHeader', // isHeader
@@ -96,7 +96,7 @@ export async function createGroupForFirstScreen(
     table.frozenColCount - 1, // colEnd
     table.columnHeaderLevelCount, // rowStart
     // Math.min(proxy.firstScreenRowLimit, table.rowCount - 1 - table.bottomFrozenRowCount), // rowEnd
-    distRow,
+    distRow - table.bottomFrozenRowCount,
     table.isListTable() && !table.internalProps.transpose ? 'body' : 'rowHeader', // isHeader
     table
   );
@@ -123,7 +123,7 @@ export async function createGroupForFirstScreen(
       yOrigin,
       table.frozenColCount, // colStart
       // Math.min(proxy.firstScreenColLimit, table.colCount - 1 - table.rightFrozenColCount), // colEnd
-      distCol,
+      distCol - table.rightFrozenColCount,
       table.rowCount - 1 - table.bottomFrozenRowCount + 1, // rowStart
       table.rowCount - 1, // rowEnd
       table.isPivotChart() ? 'rowHeader' : 'body', // isHeader
@@ -155,7 +155,7 @@ export async function createGroupForFirstScreen(
       table.colCount - 1, // colEnd
       table.columnHeaderLevelCount, // rowStart
       // Math.min(proxy.firstScreenRowLimit, table.rowCount - 1 - table.bottomFrozenRowCount), // rowEnd
-      distRow,
+      distRow - table.bottomFrozenRowCount,
       table.isPivotChart() ? 'rowHeader' : 'body', // isHeader
       table
     );
@@ -183,10 +183,10 @@ export async function createGroupForFirstScreen(
     yOrigin,
     table.frozenColCount, // colStart
     // Math.min(proxy.firstScreenColLimit, table.colCount - 1 - table.rightFrozenColCount), // colEnd
-    distCol,
+    distCol - table.rightFrozenColCount,
     table.columnHeaderLevelCount, // rowStart
     // Math.min(proxy.firstScreenRowLimit, table.rowCount - 1 - table.bottomFrozenRowCount), // rowEnd
-    distRow,
+    distRow - table.bottomFrozenRowCount,
     'body', // isHeader
     table
   );

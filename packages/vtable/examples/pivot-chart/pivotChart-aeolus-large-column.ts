@@ -7,10 +7,10 @@ const CONTAINER_ID = 'vTable';
 VTable.register.chartModule('vchart', VChart);
 export function createTable() {
   const option = {
-    // "widthMode": "adaptive",
-    // "heightMode": "adaptive",
-    widthMode: 'autoWidth',
-    heightMode: 'autoHeight',
+    widthMode: 'adaptive',
+    heightMode: 'adaptive',
+    // widthMode: 'autoWidth',
+    // heightMode: 'autoHeight',
     columnTree: [
       {
         dimensionKey: '231102144451025',
