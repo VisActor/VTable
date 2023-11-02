@@ -190,10 +190,10 @@ export class SceneProxy {
         // if (this.isSkipProgress) {
         //   await this.progress();
         // } else
-        if (this.colUpdatePos < this.colEnd) {
+        if (this.colUpdatePos <= this.colEnd) {
           await this.updateColCellGroupsAsync();
           await this.progress();
-        } else if (this.rowUpdatePos < this.rowEnd) {
+        } else if (this.rowUpdatePos <= this.rowEnd) {
           // console.log('progress rowUpdatePos', this.rowUpdatePos);
           // 先更新
           await this.updateRowCellGroupsAsync();
