@@ -196,23 +196,23 @@ export async function createGroupForFirstScreen(
     // 无数据
     proxy.currentRow = proxy.totalRow;
     proxy.rowEnd = proxy.currentRow;
-    proxy.rowUpdatePos = proxy.rowEnd;
+    proxy.rowUpdatePos = proxy.rowEnd + 1;
     proxy.referenceRow = proxy.rowStart + Math.floor((proxy.rowEnd - proxy.rowStart) / 2);
 
     proxy.currentCol = proxy.totalCol;
     proxy.colEnd = proxy.currentCol;
-    proxy.colUpdatePos = proxy.colEnd;
+    proxy.colUpdatePos = proxy.colEnd + 1;
     proxy.referenceCol = proxy.colStart + Math.floor((proxy.colEnd - proxy.colStart) / 2);
   } else {
     proxy.currentRow = (bodyGroup.firstChild as Group)?.rowNumber ?? proxy.totalRow;
     proxy.rowEnd = proxy.currentRow;
-    proxy.rowUpdatePos = proxy.rowEnd;
+    proxy.rowUpdatePos = proxy.rowEnd + 1;
     proxy.referenceRow = proxy.rowStart + Math.floor((proxy.rowEnd - proxy.rowStart) / 2);
 
     proxy.currentCol =
       (bodyGroup.lastChild as Group)?.col ?? (colHeaderGroup.lastChild as Group)?.col ?? proxy.totalCol;
     proxy.colEnd = proxy.currentCol;
-    proxy.colUpdatePos = proxy.colEnd;
+    proxy.colUpdatePos = proxy.colEnd + 1;
     proxy.referenceCol = proxy.colStart + Math.floor((proxy.colEnd - proxy.colStart) / 2);
 
     // 开始异步任务
