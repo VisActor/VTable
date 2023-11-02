@@ -7,7 +7,7 @@
 具体使用方式：
 
 ```
-  const tableInstance =new VTable.ListGrid(options);
+  const tableInstance =new VTable.ListTable(options);
 
   const {
       CLICK_CELL

@@ -31,7 +31,7 @@ VTable 中单元格的style细化配置，包括单元格样式、表头单元�
       ...
     ];
 
-    const tableInstance = new VTable.ListGrid(option);
+    const tableInstance = new VTable.ListTable(option);
 
 ![image](https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/0a2e223bdcd7410c08f6a6a0b.png)
 
@@ -58,7 +58,7 @@ VTable 中单元格的style细化配置，包括单元格样式、表头单元�
       ...
     ];
 
-    const tableInstance = new VTable.ListGrid(option);
+    const tableInstance = new VTable.ListTable(option);
 
 ![image](https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/a2c7623458257d15626270908.png)
 
