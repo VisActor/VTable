@@ -64,35 +64,35 @@ VTable built-in a set of default Theme /DEFAULT, a set of ARCO style, a set of d
     // 使用默认主题
     option.theme = VTable.themes.DEFAULT; 
 
-    const tableInstance = new VTable.ListGrid(option);
+    const tableInstance = new VTable.ListTable(option);
 
 **ARCO Theme Sample Code**
 
     // 使用默认主题
     option.theme = vTable.themes.ARCO; 
 
-    const tableInstance = new VTable.ListGrid(option);
+    const tableInstance = new VTable.ListTable(option);
 
 **Dark Theme Sample Code**
 
     // 使用默认主题
     option.theme = vTable.themes.DARK; 
 
-    const tableInstance = new VTable.ListGrid(option);
+    const tableInstance = new VTable.ListTable(option);
 
 **Vivid Theme Sample Code**
 
     // 使用默认主题
     option.theme = vTable.themes.BRIGHT; 
 
-    const tableInstance = new VTable.ListGrid(option);
+    const tableInstance = new VTable.ListTable(option);
 
 **Minimalist Theme Sample Code**
 
     // 使用默认主题
     option.theme = vTable.themes.SIMPLIFY; 
 
-    const tableInstance = new VTable.ListGrid(option);
+    const tableInstance = new VTable.ListTable(option);
 
 ## Custom Theme
 
@@ -106,14 +106,14 @@ Such as extending for DEFAULT
 
 option.theme = vTable.themes.DEFAULT.extends({ headerStyle:{ color: 'red')})
 
-const tableInstance = new vTable.ListGrid(option);
+const tableInstance = new vTable.ListTable(option);
 ```
 
 **Full Custom Theme**
 
 ```javascript livedemo template=vtable
 
-    //定义theme 类型为IListGridThemeDefine
+    //定义theme 类型为IListTableThemeDefine
     const theme =
     {
       //默认样式，如bodyStyle或者headerStyle未设置某项配置则从这里获取相应样式

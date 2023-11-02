@@ -63,7 +63,7 @@ const {
     SORT_CLICK,
     DROPDOWNMENU_CLICK,
     CONTEXTMENU_CELL,
-  } = VTable.ListGrid.EVENT_TYPE;
-  const tableInstance =new ListGrid(options);
+  } = VTable.ListTable.EVENT_TYPE;
+  const tableInstance =new ListTable(options);
   tableInstance.on(CLICK_CELL, (...args) => console.log(CLICK_CELL, args));
 ```

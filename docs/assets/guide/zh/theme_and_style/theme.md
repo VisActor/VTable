@@ -64,35 +64,35 @@ VTable 中内置一套默认主题/DEFAULT，一套ARCO风格，一套暗黑主�
     // 使用默认主题
     option.theme = VTable.themes.DEFAULT; 
 
-    const tableInstance = new VTable.ListGrid(option);
+    const tableInstance = new VTable.ListTable(option);
 
 **ARCO主题示例代码**
 
     // 使用默认主题
     option.theme = vTable.themes.ARCO; 
 
-    const tableInstance = new VTable.ListGrid(option);
+    const tableInstance = new VTable.ListTable(option);
 
 **暗黑主题示例代码**
 
     // 使用默认主题
     option.theme = vTable.themes.DARK; 
 
-    const tableInstance = new VTable.ListGrid(option);
+    const tableInstance = new VTable.ListTable(option);
 
 **鲜明主题示例代码**
 
     // 使用默认主题
     option.theme = vTable.themes.BRIGHT; 
 
-    const tableInstance = new VTable.ListGrid(option);
+    const tableInstance = new VTable.ListTable(option);
 
 **极简主题示例代码**
 
     // 使用默认主题
     option.theme = vTable.themes.SIMPLIFY; 
 
-    const tableInstance = new VTable.ListGrid(option);
+    const tableInstance = new VTable.ListTable(option);
 
 ## 自定义主题
 
@@ -106,14 +106,14 @@ VTable 中内置一套默认主题/DEFAULT，一套ARCO风格，一套暗黑主�
 
 option.theme = vTable.themes.DEFAULT.extends({ headerStyle:{ color: 'red')})
 
-const tableInstance = new vTable.ListGrid(option);
+const tableInstance = new vTable.ListTable(option);
 ```
 
 **全量自定义主题**
 
 ``` javascript livedemo template=vtable
 
-    //定义theme 类型为IListGridThemeDefine
+    //定义theme 类型为IListTableThemeDefine
     const theme =
     {
       //默认样式，如bodyStyle或者headerStyle未设置某项配置则从这里获取相应样式

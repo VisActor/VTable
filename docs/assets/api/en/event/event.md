@@ -6,7 +6,7 @@ Form event list, you can listen to the required events according to the actual n
 
 Specific ways to use it:
 ``
-const tableInstance =new VTable.ListGrid(options);
+const tableInstance =new VTable.ListTable(options);
 
 const {
 CLICK_CELL
