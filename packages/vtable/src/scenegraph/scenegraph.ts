@@ -758,7 +758,7 @@ export class Scenegraph {
     updateColWidth(this, col, Math.round(detaX));
     // this.updateContainerWidth(col, detaX);
     if (!skipUpdateContainer) {
-      this.updateContainerAttrWidthAndX();
+      // this.updateContainerAttrWidthAndX();
       this.updateContainer();
     }
   }
@@ -1115,7 +1115,7 @@ export class Scenegraph {
       this.component.setFrozenColumnShadow(this.table.frozenColCount - 1);
     }
     this.table.stateManeger.checkFrozen();
-    this.updateContainerAttrWidthAndX();
+    // this.updateContainerAttrWidthAndX();
     this.updateContainer();
 
     // 处理frame border
@@ -1342,15 +1342,36 @@ export class Scenegraph {
 
   updateContainerAttrWidthAndX() {
     // 更新各列x&col
-    const cornerX = updateContainerChildrenX(this.cornerHeaderGroup);
-    const rowHeaderX = updateContainerChildrenX(this.rowHeaderGroup);
-    const colHeaderX = updateContainerChildrenX(this.colHeaderGroup);
-    const bodyX = updateContainerChildrenX(this.bodyGroup);
-    const rightX = updateContainerChildrenX(this.rightFrozenGroup);
-    updateContainerChildrenX(this.bottomFrozenGroup);
-    updateContainerChildrenX(this.leftBottomCornerGroup);
-    updateContainerChildrenX(this.rightTopCornerGroup);
-    updateContainerChildrenX(this.rightBottomCornerGroup);
+    const cornerX = updateContainerChildrenX(this.cornerHeaderGroup, 0);
+    const rowHeaderX = updateContainerChildrenX(this.rowHeaderGroup, 0);
+    const colHeaderX = this.colHeaderGroup.hasChildNodes()
+      ? updateContainerChildrenX(
+          this.colHeaderGroup,
+          (this.colHeaderGroup.firstChild as any).col > 0
+            ? this.table.getColsWidth(this.table.frozenColCount ?? 0, (this.colHeaderGroup.firstChild as any).col - 1)
+            : 0
+        )
+      : 0;
+    const bodyX = this.bodyGroup.hasChildNodes()
+      ? updateContainerChildrenX(
+          this.bodyGroup,
+          (this.bodyGroup.firstChild as any).col > 0
+            ? this.table.getColsWidth(this.table.frozenColCount ?? 0, (this.bodyGroup.firstChild as any).col - 1)
+            : 0
+        )
+      : 0;
+    const rightX = updateContainerChildrenX(this.rightFrozenGroup, 0);
+
+    this.bottomFrozenGroup.hasChildNodes() &&
+      updateContainerChildrenX(
+        this.bottomFrozenGroup,
+        (this.bottomFrozenGroup.firstChild as any).col > 0
+          ? this.table.getColsWidth(this.table.frozenColCount ?? 0, (this.bottomFrozenGroup.firstChild as any).col - 1)
+          : 0
+      );
+    updateContainerChildrenX(this.leftBottomCornerGroup, 0);
+    updateContainerChildrenX(this.rightTopCornerGroup, 0);
+    updateContainerChildrenX(this.rightBottomCornerGroup, 0);
 
     // 更新容器
     this.cornerHeaderGroup.setDeltaWidth(cornerX - this.cornerHeaderGroup.attribute.width);
@@ -1372,6 +1393,9 @@ export class Scenegraph {
 
   updateContainer() {
     // console.trace('updateContainer');
+
+    this.updateContainerAttrWidthAndX();
+
     this.updateTableSize();
 
     // 记录滚动条原位置
