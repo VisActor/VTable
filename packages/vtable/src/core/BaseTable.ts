@@ -3197,6 +3197,9 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
   /**获取选中区域的每个单元格详情 */
   getSelectedCellInfos(): CellInfo[][] {
     const ranges = this.stateManeger.select.ranges;
+    if (!ranges.length) {
+      return [];
+    }
     let minCol = Math.min(ranges[0].start.col, ranges[0].end.col);
     let maxCol = Math.max(ranges[0].start.col, ranges[0].end.col);
     let minRow = Math.min(ranges[0].start.row, ranges[0].end.row);
