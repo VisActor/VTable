@@ -1,4 +1,6 @@
+import { VTag } from '@visactor/vrender-components';
 import * as VTable from '../../src';
+import { bindDebugTool } from '../../src/scenegraph/debug-tool';
 import { IconPosition } from '../../src/ts-types';
 import { bearImageUrl, birdImageUrl, catImageUrl, flowerImageUrl, rabbitImageUrl, wolfImageUrl } from '../resource-url';
 const ListTable = VTable.ListTable;
@@ -78,10 +80,11 @@ export function createTable() {
             showBounds: false,
             direction: 'column',
             alignContent: 'center',
-            justifyContent: 'center',
+            alignItems: 'center',
+            justifyContent: 'space-around',
             background: {
-              fill: 'blue',
-              stroke: 'red'
+              fill: 'blue'
+              // stroke: 'red'
             }
           });
           container.add(containerLeft);
@@ -91,8 +94,8 @@ export function createTable() {
             width: 50,
             height: 50,
             src: record.bloggerAvatar,
-            shape: 'circle',
-            marginLeft: 10
+            shape: 'circle'
+            // marginLeft: 10
           });
           containerLeft.add(icon0);
 
@@ -100,8 +103,8 @@ export function createTable() {
             height: percentCalc(100),
             width: 200,
             showBounds: false,
-            direction: 'column',
-            justifyContent: 'center'
+            direction: 'column'
+            // justifyContent: 'center'
           });
           container.add(containerRight);
 
@@ -109,14 +112,14 @@ export function createTable() {
             height: percentCalc(50),
             width: percentCalc(100),
             showBounds: false,
-            alignContent: 'center'
+            alignItems: 'center'
           });
 
           const containerRightBottom = new VTable.CustomLayout.Container({
             height: percentCalc(50),
             width: percentCalc(100),
             showBounds: false,
-            alignContent: 'center'
+            alignItems: 'center'
           });
 
           containerRight.add(containerRightTop);
@@ -297,7 +300,7 @@ export function createTable() {
   };
 
   const instance = new ListTable(option);
-  VTable.bindDebugTool(instance.scenegraph.stage as any, {
+  bindDebugTool(instance.scenegraph.stage as any, {
     customGrapicKeys: ['role']
   });
   // 只为了方便控制太调试用，不要拷贝

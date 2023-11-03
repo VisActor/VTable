@@ -1,6 +1,6 @@
 import type { Cursor } from '@visactor/vrender';
 import { createArc, createCircle, createLine, createRect, Group as VGroup } from '@visactor/vrender';
-import { isFunction, isString, isValid } from '@visactor/vutils';
+import { isFunction, isObject, isString, isValid } from '@visactor/vutils';
 import type { ICustomLayout, ICustomRender, ICustomRenderElement, ICustomRenderElements } from '../../ts-types';
 import { Group } from '../graphic/group';
 import { Icon } from '../graphic/icon';
@@ -90,6 +90,9 @@ export function dealWithCustom(
       value
     );
   }
+
+  // for percent calc
+  dealPercentCalc(elementsGroup);
 
   return {
     elementsGroup,
@@ -328,4 +331,26 @@ function transformString(str: string, size?: number): number {
     return (parseInt(str, 10) / 100) * size;
   }
   return parseInt(str, 10);
+}
+
+function dealPercentCalc(group: Group) {
+  group.forEachChildren((child: Group) => {
+    if (isObject(child.attribute.width) && child.attribute.width.percent) {
+      child.setAttribute(
+        'width',
+        (child.attribute.width.percent / 100) * group.attribute.width + (child.attribute.width.delta ?? 0)
+      );
+    }
+
+    if (isObject(child.attribute.height) && child.attribute.height.percent) {
+      child.setAttribute(
+        'height',
+        (child.attribute.height.percent / 100) * group.attribute.height + (child.attribute.height.delta ?? 0)
+      );
+    }
+
+    if (child.type === 'group') {
+      dealPercentCalc(child);
+    }
+  });
 }
