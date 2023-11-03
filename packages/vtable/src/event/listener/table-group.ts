@@ -255,9 +255,48 @@ export function bindTableGroupListener(eventManeger: EventManeger) {
   });
 
   table.scenegraph.tableGroup.addEventListener('pointerupoutside', (e: FederatedPointerEvent) => {
-    // pointerup中的逻辑 resize column size 当鼠标在外部松开也应该响应
+    // 同pointerup中的逻辑
     if (stateManeger.isResizeCol()) {
       endResizeCol(table);
+    } else if (stateManeger.isMoveCol()) {
+      table.stateManeger.endMoveCol();
+      if (
+        table.stateManeger.columnMove?.colSource !== -1 &&
+        table.stateManeger.columnMove?.rowSource !== -1 &&
+        table.stateManeger.columnMove?.colTarget !== -1 &&
+        table.stateManeger.columnMove?.rowTarget !== -1
+      ) {
+        // 下面触发CHANGE_HEADER_POSITION 区别于pointerup
+        if ((table as any).hasListeners(TABLE_EVENT_TYPE.CHANGE_HEADER_POSITION)) {
+          table.fireListeners(TABLE_EVENT_TYPE.CHANGE_HEADER_POSITION, {
+            target: { col: table.stateManeger.columnMove.colTarget, row: table.stateManeger.columnMove.rowTarget },
+            source: {
+              col: table.stateManeger.columnMove.colSource,
+              row: table.stateManeger.columnMove.rowSource //TODO row
+            }
+          });
+        }
+      }
+    } else if (stateManeger.isSelecting()) {
+      table.stateManeger.endSelectCells();
+      // 下面触发DRAG_SELECT_END 区别于pointerup
+      if (table.stateManeger.select?.ranges?.length) {
+        const lastCol = table.stateManeger.select.ranges[table.stateManeger.select.ranges.length - 1].end.col;
+        const lastRow = table.stateManeger.select.ranges[table.stateManeger.select.ranges.length - 1].end.row;
+
+        if ((table as any).hasListeners(TABLE_EVENT_TYPE.DRAG_SELECT_END)) {
+          const cellsEvent: MousePointerMultiCellEvent = {
+            event: e.nativeEvent,
+            cells: [],
+            col: lastCol,
+            row: lastRow,
+            scaleRatio: table.canvas.getBoundingClientRect().width / table.canvas.offsetWidth,
+            target: undefined
+          };
+          cellsEvent.cells = table.getSelectedCellInfos();
+          table.fireListeners(TABLE_EVENT_TYPE.DRAG_SELECT_END, cellsEvent);
+        }
+      }
     }
     stateManeger.updateInteractionState(InteractionState.default);
     eventManeger.dealTableHover();
