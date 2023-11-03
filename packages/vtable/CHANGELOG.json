@@ -2,6 +2,18 @@
   "name": "@visactor/vtable",
   "entries": [
     {
+      "version": "0.13.3",
+      "tag": "@visactor/vtable_v0.13.3",
+      "date": "Fri, 03 Nov 2023 10:46:41 GMT",
+      "comments": {
+        "patch": [
+          {
+            "comment": "fix: fix frozen shadow update in tree mode #525\n\n"
+          }
+        ]
+      }
+    },
+    {
       "version": "0.13.2",
       "tag": "@visactor/vtable_v0.13.2",
       "date": "Fri, 03 Nov 2023 09:55:11 GMT",
