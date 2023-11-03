@@ -1722,6 +1722,11 @@ export class Scenegraph {
     // check frozen status
     this.table.stateManeger.checkFrozen();
 
+    // update frozen shadow
+    if (!this.isPivot && !this.transpose) {
+      this.component.setFrozenColumnShadow(this.table.frozenColCount - 1);
+    }
+
     // rerender
     this.updateNextFrame();
   }
