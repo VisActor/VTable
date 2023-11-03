@@ -151,6 +151,10 @@ export const menus = [
       {
         path: 'pivot-chart',
         name: 'pivot-chart-event'
+      },
+      {
+        path: 'pivot-chart',
+        name: 'pivotChart-aeolus-large-column'
       }
     ]
   },
