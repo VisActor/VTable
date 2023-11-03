@@ -180,6 +180,12 @@ export class EventManeger {
       // ) {
       //   this.table.stateManeger.updateHoverPos(-1, -1);
       // }
+      const define = this.table.getBodyColumnDefine(eventArgs.col, eventArgs.row);
+      if (this.table.isHeader(eventArgs.col, eventArgs.row) && define?.disableHeaderSelect) {
+        return false;
+      } else if (!this.table.isHeader(eventArgs.col, eventArgs.row) && define?.disableSelect) {
+        return false;
+      }
 
       if (
         this.table.isPivotChart() &&
