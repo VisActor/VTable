@@ -1,6 +1,15 @@
 # Change Log - @visactor/vtable
 
-This log was last generated on Fri, 03 Nov 2023 09:55:11 GMT and should not be manually modified.
+This log was last generated on Fri, 03 Nov 2023 10:46:41 GMT and should not be manually modified.
+
+## 0.13.3
+Fri, 03 Nov 2023 10:46:41 GMT
+
+### Patches
+
+- fix: fix frozen shadow update in tree mode #525
+
+
 
 ## 0.13.2
 Fri, 03 Nov 2023 09:55:11 GMT
