@@ -1,18 +1,18 @@
 ---
 category: examples
 group: Business
-title: 自定义图标
-cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/custom-icon.png
-order: 7-2
+title: 信息查询系统
+cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/information.png
 link: '../guide/custom_define/custom_icon'
 ---
 
-# 自定义图标
+# 信息查询系统
 
-在单元格中显示图标内容
+查询商品订单信息。
 
 ## 关键配置
-
+ - `headerType`及`cellType` chechbox 复选框类型
+ - `getCheckboxState` 获取某个字段下checkbox的选中状态
  - `VTable.register.icon`  注册自定义的icon 可以配合columns[x].icon或者columns[x].headerIcon 使用。或者重置内部的图标
 
 内置功能图标名称具体有：
@@ -32,14 +32,14 @@ link: '../guide/custom_define/custom_icon'
 
 ```javascript livedemo template=vtable
 
-VTable.register.icon('frozen',{
+VTable.register.icon('freeze',{
       type: 'svg',
       svg:
-       "https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/frozen.svg",
+       "https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/freeze.svg",
       width: 22,
       height: 22,
-      name: 'frozen',
-      funcType: VTable.TYPES.IconFuncTypeEnum.frozen,
+      name: 'freeze',
+      funcType: VTable.TYPES.IconFuncTypeEnum.freeze,
       positionType: VTable.TYPES.IconPosition.right,
       marginRight: 0,
       hover: {
@@ -104,6 +104,15 @@ VTable.register.icon('frozen',{
         bgColor: 'rgba(101, 117, 168, 0.1)',
       },
       cursor: 'pointer',
+      tooltip: {
+        style: { 
+          bgColor:'gray',
+          fontSize:6
+        },
+        // 气泡框，按钮的的解释信息
+        title: '点击可复制',
+        placement: VTable.TYPES.Placement.top,
+      },
     }
   );
 
@@ -113,6 +122,13 @@ let  tableInstance;
     .then((data) => {
 
 const columns =[
+  {
+        "field": "",
+        "title": "",
+        width:50,
+        "cellType": "checkbox",
+        "headerType": 'checkbox'
+    },
     {
         "field": "Order ID",
         "title": "Order ID",
@@ -199,8 +215,7 @@ const option = {
   records:data,
   columns,
   widthMode:'standard',
-  allowFrozenColCount: 3,
-  frozenColCount: 1,
+  frozenColCount: 2,
   rightFrozenColCount:1
 };
 tableInstance = new VTable.ListTable(document.getElementById(CONTAINER_ID),option);
@@ -215,6 +230,9 @@ tableInstance.on('click_cell', args => {
       }else if(targetIcon.name === 'delete'){
         data.splice(row-tableInstance.columnHeaderLevelCount,1);
         tableInstance.setRecords(data);
+      }else if(targetIcon.name === 'order'){
+        const value=tableInstance.getCellValue(col,row);
+        window?.alert?.('已复制订单号： '+value);
       }
     }
 })

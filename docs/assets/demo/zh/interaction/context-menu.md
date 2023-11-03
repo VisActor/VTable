@@ -95,8 +95,8 @@ tableInstance = new VTable.ListTable(document.getElementById(CONTAINER_ID),optio
 window['tableInstance'] = tableInstance;
 
 
-tableInstance.on('dropdownmenu_click', (args) => {
-  console.log('dropdownmenu_click',args);
+tableInstance.on('dropdown_menu_click', (args) => {
+  console.log('dropdown_menu_click',args);
 })
     })
 ```

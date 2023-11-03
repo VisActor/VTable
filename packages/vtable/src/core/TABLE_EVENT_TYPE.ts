@@ -76,7 +76,7 @@ export interface TableEvents {
   /**
    * 点击下拉菜单图标事件
    */
-  DROPDOWNMENU_CLICK: 'dropdownmenu_click';
+  DROPDOWN_MENU_CLICK: 'dropdown_menu_click';
   /**
    * 鼠标经过迷你图标记事件
    */
@@ -147,7 +147,7 @@ export const TABLE_EVENT_TYPE: TableEvents = {
   SORT_CLICK: 'sort_click',
   FREEZE_CLICK: 'freeze_click',
   SCROLL: 'scroll',
-  DROPDOWNMENU_CLICK: 'dropdownmenu_click',
+  DROPDOWN_MENU_CLICK: 'dropdown_menu_click',
   MOUSEOVER_CHART_SYMBOL: 'mouseover_chart_symbol',
   DRAG_SELECT_END: 'drag_select_end',
 

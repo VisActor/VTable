@@ -56,7 +56,9 @@ export interface IIconBase {
     placement?: Placement;
     /** 气泡框的样式 不配的话会使用theme中的样式 */
     style?: {
-      font?: string;
+      // font?: string;
+      fontSize?: number;
+      fontFamily?: string;
       color?: string;
       padding?: number[];
       bgColor?: string;

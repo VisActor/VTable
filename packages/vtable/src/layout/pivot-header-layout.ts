@@ -1961,6 +1961,9 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
    * @returns boolean 是否可以移动
    */
   canMoveHeaderPosition(source: CellAddress, target: CellAddress): boolean {
+    if (source.col < 0 || source.row < 0 || target.col < 0 || target.row < 0) {
+      return false;
+    }
     // 获取操作单元格的range范围
     const sourceCellRange = this.getCellRange(source.col, source.row);
     // 获取source和target对应sourceCellRange.start.row的headerId

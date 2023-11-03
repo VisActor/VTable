@@ -1018,6 +1018,17 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     return this.defaultColWidth;
   }
 
+  // setColWidthDefined(col: number, width: number) {
+  //   const { layoutMap } = this.internalProps;
+  //   const widthData = layoutMap?.getColumnWidthDefined(col) ?? {};
+  //   widthData.width = width;
+  // }
+
+  getColWidthDefinedNumber(col: number): number {
+    const width = this.getColWidthDefined(col);
+    return this._adjustColWidth(col, this._colWidthDefineToPxWidth(width));
+  }
+
   /**
    * 根据列号获取列宽定义
    * @param {number} col column number
@@ -3080,7 +3091,10 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
   }
 
   /**获取选中区域的内容 作为复制内容 */
-  getCopyValue(): string {
+  getCopyValue(): string | null {
+    if (!this.stateManeger.select?.ranges) {
+      return null;
+    }
     const ranges = this.stateManeger.select.ranges;
     let minCol = Math.min(ranges[0].start.col, ranges[0].end.col);
     let maxCol = Math.max(ranges[0].start.col, ranges[0].end.col);
@@ -3184,8 +3198,15 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
   }
 
   /**获取选中区域的每个单元格详情 */
-  getSelectedCellInfos(): CellInfo[][] {
+  getSelectedCellInfos(): CellInfo[][] | null {
+    if (!this.stateManeger.select?.ranges) {
+      return null;
+    }
+
     const ranges = this.stateManeger.select.ranges;
+    if (!ranges.length) {
+      return [];
+    }
     let minCol = Math.min(ranges[0].start.col, ranges[0].end.col);
     let maxCol = Math.max(ranges[0].start.col, ranges[0].end.col);
     let minRow = Math.min(ranges[0].start.row, ranges[0].end.row);

@@ -322,9 +322,10 @@ export interface BaseTableConstructorOptions {
 
   legends?: ITableLegendOption;
   title?: ITitle;
-  //是否开启图表异步渲染
+
+  /** 是否开启图表异步渲染 */
   renderChartAsync?: boolean;
-  // 开启图表异步渲染 每批次渐进渲染图表个数
+  /** 开启图表异步渲染 每批次渐进渲染图表个数  默认是5个 */
   renderChartAsyncBatchCount?: number;
 
   // for nodejs
@@ -448,6 +449,8 @@ export interface BaseTableAPI {
   setRowHeight: (row: number, height: number, clearCache?: boolean) => void;
   getColWidth: (col: number) => number;
   getColWidthDefined: (col: number) => string | number;
+  // setColWidthDefined: (col: number, width: number) => void;
+  getColWidthDefinedNumber: (col: number) => number;
   // getColWidthDefine: (col: number) => string | number;
   setColWidth: (col: number, width: number | string, clearCache?: boolean, skipCheckFrozen?: boolean) => void;
   _getColContentWidth: (col: number) => number;

@@ -146,7 +146,7 @@ Adjust the effective range of column width, configurable items:
 Whether to enable asynchronous rendering of charts
 
 ## renderChartAsyncBatchCount(number)
-Turn on asynchronous rendering of charts. The number of progressively rendered charts in each batch is recommended to be 5-10. The details can be adjusted depending on the overall effect.
+Turn on asynchronous rendering of charts. The number of progressively rendered charts in each batch is recommended to be 5-10. The details can be adjusted depending on the overall effect. Default value is 5.
 
 {{ use: common-option-secondary(
       prefix = '#',

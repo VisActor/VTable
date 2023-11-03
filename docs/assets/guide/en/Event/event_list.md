@@ -58,8 +58,8 @@ The specific return data of the event can be actually tested to observe whether 
         CHANGED_VALUE,
         FREEZE_CLICK,
         SORT_CLICK,
-        DROPDOWNMENU_CLICK,
+        DROPDOWN_MENU_CLICK,
         CONTEXTMENU_CELL,
-      } = VTable.ListGrid.EVENT_TYPE;
-      const tableInstance =new ListGrid(options);
+      } = VTable.ListTable.EVENT_TYPE;
+      const tableInstance =new ListTable(options);
       tableInstance.on(CLICK_CELL, (...args) => console.log(CLICK_CELL, args));

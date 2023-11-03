@@ -21,7 +21,6 @@ link: '../guide/components/tooltip'
 
 ```javascript livedemo template=vtable
 const container=document.getElementById(CONTAINER_ID);
-debugger
 const popup = document.createElement('div');
 Object.assign(popup.style, {
   position: 'fixed',

@@ -214,4 +214,17 @@ TODO
 |下拉菜单|VTable.TYPES.IconFuncTypeEnum.dropDown|"downward"|下拉图标正常状态|
 |下拉菜单|VTable.TYPES.IconFuncTypeEnum.dropDown|"downward_hover"|下拉图标hover状态|
 
+**需要注意的是**：列表中的内置图表都有其特殊的功能，可以重置，但不能自行使用到headerIcon或者icon的定义中！如下错误用法：
+```
+  columns: [
+    {
+      field: '销售额',
+      title: '销售额',
+      width: 'auto',
+      sort: true,
+      headerIcon: 'expand' // expand 为内部关键字。如需使用请自行注册其他名称来替换到headerIcon
+    },
+  ]
+```
+
 至此，关于 VTable 中 icon 的使用方法、注册和替换功能图标的教程就全部介绍完毕。希望本教程能帮助您更好地理解和使用 VTable，打造出更加优美、实用的数据可视化表格
