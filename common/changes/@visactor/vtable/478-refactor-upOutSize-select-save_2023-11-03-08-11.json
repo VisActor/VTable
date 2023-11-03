@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "comment": "fix: event trigger selected_cell drag_select_end change_header_position\n\n",
+      "type": "patch",
+      "packageName": "@visactor/vtable"
+    }
+  ],
+  "packageName": "@visactor/vtable",
+  "email": "892739385@qq.com"
+}
