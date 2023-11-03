@@ -373,8 +373,8 @@ export function bindTableGroupListener(eventManeger: EventManeger) {
       if (stateManeger.isResizeCol()) {
         endResizeCol(table);
       } else if (stateManeger.isMoveCol()) {
-        table.stateManeger.endMoveCol();
         const eventArgsSet: SceneEvent = getCellEventArgsSet(e);
+        table.stateManeger.endMoveCol();
         if (eventArgsSet.eventArgs && (table as any).hasListeners(TABLE_EVENT_TYPE.CHANGE_HEADER_POSITION)) {
           table.fireListeners(TABLE_EVENT_TYPE.CHANGE_HEADER_POSITION, {
             target: { col: eventArgsSet.eventArgs.col, row: eventArgsSet.eventArgs.row },
