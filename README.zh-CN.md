@@ -162,6 +162,7 @@ $ rush docs
 # 🔗 相关链接
 
 - [官网](https://visactor.io/vtable)
+- [使用趋势](https://npm-compare.com/@visactor/vtable)
 
 # 💫 生态
 
