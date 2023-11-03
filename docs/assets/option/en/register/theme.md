@@ -36,7 +36,7 @@ Supported event types:
   SORT_CLICK: 'sort_click',
   FREEZE_CLICK: 'freeze_click',
   SCROLL: 'scroll',
-  DROPDOWNMENU_CLICK: 'dropdownmenu_click',
+  DROPDOWN_MENU_CLICK: 'dropdown_menu_click',
   MOUSEOVER_CHART_SYMBOL: 'mouseover_chart_symbol',
   DRAG_SELECT_END: 'drag_select_end',
   DROPDOWN_ICON_CLICK: 'dropdown_icon_click',
@@ -199,7 +199,7 @@ Event callback function parameter types.
       viewHeight: number;
     }`
 
-## DROPDOWNMENU_CLICK
+## DROPDOWN_MENU_CLICK
 
 Click the drop-down menu icon event.
 

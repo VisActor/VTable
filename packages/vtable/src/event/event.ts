@@ -82,7 +82,7 @@ export class EventManeger {
     });
 
     // 下拉菜单内容点击
-    this.table.on(TABLE_EVENT_TYPE.DROPDOWNMENU_CLICK, () => {
+    this.table.on(TABLE_EVENT_TYPE.DROPDOWN_MENU_CLICK, () => {
       stateManeger.hideMenu();
     });
 
