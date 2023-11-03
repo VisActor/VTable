@@ -261,7 +261,8 @@ export function bindTableGroupListener(eventManeger: EventManeger) {
     }
     stateManeger.updateInteractionState(InteractionState.default);
     eventManeger.dealTableHover();
-    eventManeger.dealTableSelect();
+    //点击到表格外部不需要取消选中状态
+    // eventManeger.dealTableSelect();
   });
 
   table.scenegraph.tableGroup.addEventListener('pointerdown', (e: FederatedPointerEvent) => {
@@ -487,6 +488,7 @@ export function bindTableGroupListener(eventManeger: EventManeger) {
         if (eventManeger.touchSetTimeout) {
           clearTimeout(eventManeger.touchSetTimeout);
           eventManeger.dealTableSelect(eventArgsSet);
+          stateManeger.endSelectCells();
           eventManeger.touchSetTimeout = undefined;
         }
       }
