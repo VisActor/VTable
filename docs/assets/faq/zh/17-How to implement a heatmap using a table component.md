@@ -7,7 +7,7 @@
 
 ## 解决方案
 
-推荐使用 VTable，VTable 可以灵活的设置每个单元格的背景色和 border 颜色，支持函数自定义方式实现。
+VTable 可以灵活的设置每个单元格的背景色和 border 颜色，支持函数自定义方式实现。
 官网热图例子：https://visactor.io/vtable/demo/business/color-level
 
 ## 代码示例

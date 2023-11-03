@@ -2,13 +2,13 @@
 
 ## 问题描述
 
-表格中指定一列，内容按照数据显示为进度图，并显示百分比文字。如何在表格组件中实现这个效果？
+表格中指定一列，内容按照数据显示为进度图，并显示百分比文字。如何在VTable中实现这个效果？
 
 ![image](/vtable/faq/10-0.png)
 
 ## 解决方案
 
-这里使用开源表格组件 VTable 来实现这个功能。可以通过在 `columns` 中将 `cellType` 设置为 `progressbar`，指定该列为 progressbar 类型（进度图）单元格；通过配置 `columns` 中的 `style`，可以配置进度图的样式：
+可以通过在 `columns` 中将 `cellType` 设置为 `progressbar`，指定该列为 progressbar 类型（进度图）单元格；通过配置 `columns` 中的 `style`，可以配置进度图的样式：
 
 ```javascript
 {

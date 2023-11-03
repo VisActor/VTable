@@ -6,7 +6,7 @@ When hovering the mouse over a cell, I want to display contextual information ab
 
 ## Solution
 
-One flexible approach is to listen to the `mouseenter_cell` and `mouseleave_cell` events of the VTable instance. Show or hide the custom DOM elements accordingly, and calculate the position to display the tooltip based on the `cellRange` parameter from the VTable event. They have a corresponding demo for this on their official website.https://visactor.io/vtable/demo/example/component/tooltip_custom_content
+One flexible approach is to listen to the `mouseenter_cell` and `mouseleave_cell` events of the VTable instance. Show or hide the custom DOM elements accordingly, and calculate the position to display the tooltip based on the `cellRange` parameter from the VTable event. Demo: https://visactor.io/vtable/demo/example/component/tooltip_custom_content
 
 ## Code Example
 

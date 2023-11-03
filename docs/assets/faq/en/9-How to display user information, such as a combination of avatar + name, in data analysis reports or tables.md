@@ -8,7 +8,7 @@ I would like to display both an avatar and a name in a single cell of a data rep
 
 ## Solution
 
-I recommend using the VTable component as it is lightweight and easy to use, making it straightforward to achieve the combination display of avatars and names. In VTable, there are two ways to accomplish this. The first and simplest approach is to use icons. You can directly set the icon source as the resource field. For more details, you can refer to the demo I provided. The second approach involves custom rendering, which requires familiarity with the syntax. However, it allows for more complex effects. You can find specific instructions in their official tutorial.
+In VTable, there are two ways to accomplish this. The first and simplest approach is to use icons. You can directly set the icon source as the resource field. For more details, you can refer to the demo I provided. The second approach involves custom rendering, which requires familiarity with the syntax. However, it allows for more complex effects.
 
 ## Code Example
 

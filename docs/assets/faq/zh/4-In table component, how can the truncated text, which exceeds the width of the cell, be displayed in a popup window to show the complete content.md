@@ -6,7 +6,7 @@
 
 ## 解决方案
 
-可以使用开源图表组件 VTable 来实现这个效果。VTable 可以通过配置`isShowOverflowTextTooltip`，来实现 hover 弹出 poptip 显示被省略的完整文字。
+可以通过配置`isShowOverflowTextTooltip`，来实现 hover 弹出 poptip 显示被省略的完整文字。
 
 ## 代码示例
 

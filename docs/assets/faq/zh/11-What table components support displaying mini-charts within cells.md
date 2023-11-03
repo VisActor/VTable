@@ -8,7 +8,7 @@
 
 ## 解决方案
 
-可以使用 VTable 组件来配置 columnType: "sparkline"，将单元格类型显示成迷你图。设置迷你图的具体样式可以设置 **sparklineSpec** 来实现。优势是：图和表融为一体没有割裂感，性能上体验感最佳。
+VTable 组件中配置 columnType: "sparkline"，将单元格类型显示成迷你图。设置迷你图的具体样式可以设置 **sparklineSpec** 来实现。优势是：图和表融为一体没有割裂感，性能上体验感最佳。
 
 ## 代码示例
 

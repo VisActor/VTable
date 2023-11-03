@@ -2,11 +2,11 @@
 
 ## Question Description
 
-I have a requirement where the cell content in a table may contain line breaks, and the content length may vary for cells in the same column. Additionally, the style of cells in the same row may differ. However, I want the content to be fully displayed, so I need a table component that can automatically adjust the width and height of cells based on their content. Which table component can achieve this effect?
+I have a requirement where the cell content in a table may contain line breaks, and the content length may vary for cells in the same column. Additionally, the style of cells in the same row may differ. However, I want the content to be fully displayed, so I need a table component that can automatically adjust the width and height of cells based on their content. How can I achieve this effect in VTable?
 
 ## Solution
 
-You can use the open-source charting component VTable to achieve this effect. VTable supports a configurable auto-sizing mode for width and height calculation!
+VTable supports a configurable auto-sizing mode for width and height calculation!
 
 ## Code Example
 

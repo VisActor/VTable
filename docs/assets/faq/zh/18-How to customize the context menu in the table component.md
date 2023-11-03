@@ -6,7 +6,7 @@
 
 ## 解决方案
 
-这里使用开源表格组件 VTable 来实现这个功能。在 option 中配置 menu 属性中，配置 contextMenuItems，支持两种配置模式：
+在 option 中配置 menu 属性中，配置 contextMenuItems，支持两种配置模式：
 
 1. 配置项目数组，右键表格区域会显示相同的菜单项目
 

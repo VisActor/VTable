@@ -2,13 +2,13 @@
 
 ## 问题描述
 
-表格中单元格背景按照数据不同显示为不同颜色，实现一个色阶功能。如何在表格组件中实现这个效果？
+表格中单元格背景按照数据不同显示为不同颜色，实现一个色阶功能。如何在VTable中实现这个效果？
 
 ![image](/vtable/faq/12-0.png)
 
 ## 解决方案
 
-这里使用开源表格组件 VTable 来实现这个功能。可以通过在 `columns` 中将 `style` 中的 `bgColor` 设置为函数，按照不同数据，返回不同的颜色值，来实现色阶效果：
+可以通过在 `columns` 中将 `style` 中的 `bgColor` 设置为函数，按照不同数据，返回不同的颜色值，来实现色阶效果：
 
 ```javascript
 const BG_COLOR = (args: TYPES.StylePropertyFunctionArg): string => {

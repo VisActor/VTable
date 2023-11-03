@@ -7,7 +7,7 @@
 
 ## 解决方案
 
-推荐使用 VTable，VTable 的两种表格形态基本表格 ListTable 和透视表格 PivotTable 都可以实现这种树形展示，而且用法挺简单的。
+VTable 的两种表格形态基本表格 ListTable 和透视表格 PivotTable 都可以实现这种树形展示，而且用法挺简单的。
 给你举一个基本表格展示为树形结构的例子，主要有两处配置：
 (1) 需要在列 column 上配置 tree 位 true
 (2) 需要是有 children 层级结构的数据

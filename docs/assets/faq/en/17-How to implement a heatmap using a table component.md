@@ -7,7 +7,7 @@ I would like to implement a simple heatmap using a table, where the background c
 
 ## Solution
 
-I would recommend using VTable for this purpose. VTable allows flexible customization of each cell's background color and border color, and it supports custom functions for implementation.
+VTable allows flexible customization of each cell's background color and border color, and it supports custom functions for implementation.
 You can find an example of a heatmap on the official website of VTable: https://visactor.io/vtable/demo/business/color-level
 
 ## Code Example

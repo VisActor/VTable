@@ -2,13 +2,13 @@
 
 ## Question Description
 
-The background of the cells on the table is displayed in different colors according to different data, realizing a color scale effect. How to achieve this effect on the table component?
+The background of the cells on the table is displayed in different colors according to different data, realizing a color scale effect. How to achieve this effect on VTable?
 
 ![image](/vtable/faq/12-0.png)
 
 ## Solution
 
-The open source table component VTable is used here to implement this function. You can achieve the color scale effect by setting `bgColor` in `style` as a function in `columns` and returning different color values based on different data:
+You can achieve the color scale effect by setting `bgColor` in `style` as a function in `columns` and returning different color values based on different data:
 
 ```javascript
 const BG_COLOR = (args: TYPES.StylePropertyFunctionArg): string => {

@@ -8,7 +8,7 @@ I would like to have a separate column in the sales statistics table to display 
 
 ## Solution
 
-You can use the VTable component and configure the columnType as "sparkline" to display cells as mini-charts. The specific style of the mini-charts can be set using **sparklineSpec**. The advantage is that the integration of charts and tables creates a seamless experience without a sense of detachment, providing optimal performance and user experience.
+VTable can configure the columnType as "sparkline" to display cells as mini-charts. The specific style of the mini-charts can be set using **sparklineSpec**. The advantage is that the integration of charts and tables creates a seamless experience without a sense of detachment, providing optimal performance and user experience.
 
 ## Code Example
 

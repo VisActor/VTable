@@ -2,15 +2,13 @@
 
 ## Question Description
 
-Specify the width of a column in a table, and enable automatic line wrapping based on the width limit, while allowing the height of the cells to be determined by the actual number of content lines.
-
-How can I achieve this effect on a table component?
+Specify the width of a column in a table, and enable automatic line wrapping based on the width limit, while allowing the height of the cells to be determined by the actual number of content lines.How can I achieve this effect?
 
 ![](/vtable/faq/2-0.png)
 
 ## Solution
 
-In VTable, add the following configuration to the table options.
+Add the following configuration to the table options.
 
 ```javascript
 heightMode: 'autoHeight', // the height of each row is determined by the content and will expand accordingly.

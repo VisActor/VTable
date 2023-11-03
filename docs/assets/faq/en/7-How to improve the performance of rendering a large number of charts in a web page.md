@@ -6,7 +6,7 @@ My use case involves rendering a large number of charts in bulk. However, these 
 
 ## Solution
 
-Based on your use case, I recommend using a combination of tables and charts to render a large number of charts. The VTable component is capable of achieving this. You can register VCharts to draw the charts within each table cell. It might have internal rendering optimizations, resulting in a smooth scrolling experience.
+In VTable, using VChart to draw intra cell charts and internally optimizing rendering can solve this problem. The usage method is as follows:
 
 ## Code Example
 

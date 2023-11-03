@@ -6,7 +6,7 @@ In the table component, after using the fixed column width to limit the cell wid
 
 ## Solution
 
-You can use the open-source charting component VTable to achieve this effect. VTable can configure `isShowOverflowTextTooltip` to realize hover pop-up poptip to display the complete text that has been omitted.
+VTable can configure `isShowOverflowTextTooltip` to realize hover pop-up poptip to display the complete text that has been omitted.
 
 ## Code Example
 

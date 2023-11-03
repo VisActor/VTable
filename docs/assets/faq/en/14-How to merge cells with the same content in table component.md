@@ -2,12 +2,12 @@
 
 ## Question Description
 
-If there are multiple consecutive cells of the same data in a certain column of the table, these cells will be automatically merged and the content will be displayed in the center. How to achieve this effect on the table component?
+If there are multiple consecutive cells of the same data in a certain column of the table, these cells will be automatically merged and the content will be displayed in the center. How to achieve this effect on VTable?
 ![image](/vtable/faq/14-0.png)
 
 ## Solution
 
-The open source table component VTable is used here to implement this function. You can set `mergeCell` to true in columns, and cells with the same content before and after in the column will be automatically merged:
+You can set `mergeCell` to true in columns, and cells with the same content before and after in the column will be automatically merged:
 
 ```javascript
 const columns = [

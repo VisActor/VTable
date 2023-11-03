@@ -7,7 +7,7 @@ How can we implement the display of hierarchical data in a table component on a 
 
 ## Solution
 
-It is recommended to use VTable. VTable's two table forms, the basic table ListTable and the pivot table PivotTable, can achieve this kind of tree display, and the usage is quite simple.
+VTable's two table forms, the basic table ListTable and the pivot table PivotTable, can achieve this kind of tree display, and the usage is quite simple.
 Let me give you an example of a basic table displayed as a tree structure. There are two main configurations:
 (1) You need to configure the tree bit true on the column.
 (2) It needs to be data with children hierarchical structure

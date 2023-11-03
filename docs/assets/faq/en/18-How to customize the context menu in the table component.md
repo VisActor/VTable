@@ -6,7 +6,7 @@ How to customize the context in the header part of the table component to suppor
 
 ## Solution
 
-The open source table component VTable is used here to implement this function. In the menu attribute configuration option, configure contextMenuItems, which supports two configuration modes:
+In the menu attribute configuration option, configure contextMenuItems, which supports two configuration modes:
 
 1. Configure the item array, right-clicking the table area will display the same menu items
 

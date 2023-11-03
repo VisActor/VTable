@@ -8,7 +8,7 @@
 
 ## 解决方案
 
-这里使用开源图表组件 VTable 来实现这个功能。基本表格的配置项 columns 可以配置子项`columns`。
+基本表格的配置项 columns 可以配置子项`columns`。
 
 ## 代码示例
 

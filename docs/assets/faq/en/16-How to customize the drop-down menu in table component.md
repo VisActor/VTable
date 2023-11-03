@@ -6,7 +6,7 @@ How to customize the drop-down menu in the header part of the table component to
 
 ## Solution
 
-The open source table component VTable is used here to implement this function. VTable supports two drop-down menu configuration methods:
+VTable supports two drop-down menu configuration methods:
 
 1. Configure globally
    Configuring the menu attribute in option will take effect on all headers that do not have a drop-down menu configured. The displayed menu items are configured in defaultHeaderMenuItems and support the following configurations:

@@ -2,12 +2,12 @@
 
 ## Question Description
 
-Specify a column on the table, display the content as a progress bar based on data, and display percentage text. How to achieve this effect on the table component?
+Specify a column on the table, display the content as a progress bar based on data, and display percentage text. How to achieve this effect on VTable?
 ![image](/vtable/faq/10-0.png)
 
 ## Solution
 
-The open source table component VTable is used here to implement this function. You can specify the column to be progress bar type (progress chart) cell by setting `cellType` to `progressbar` in `columns`; by configuring the `style` in `columns`, you can configure the style of the progress chart:
+You can specify the column to be progress bar type (progress chart) cell by setting `cellType` to `progressbar` in `columns`; by configuring the `style` in `columns`, you can configure the style of the progress chart:
 
 ```javascript
 {
