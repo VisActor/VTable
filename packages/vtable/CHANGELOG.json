@@ -2,6 +2,33 @@
   "name": "@visactor/vtable",
   "entries": [
     {
+      "version": "0.13.2",
+      "tag": "@visactor/vtable_v0.13.2",
+      "date": "Fri, 03 Nov 2023 09:55:11 GMT",
+      "comments": {
+        "patch": [
+          {
+            "comment": "fix: getCellByCache maximum call stack size exceeded\n\n"
+          },
+          {
+            "comment": "refactor: save select when click outside table #478\n\n"
+          },
+          {
+            "comment": "fix: event trigger selected_cell drag_select_end change_header_position\n\n"
+          },
+          {
+            "comment": "fix: axis label sort not right #503\n\n"
+          },
+          {
+            "comment": "fix: over 100 columns after init scroll right now columns attribute Xvalue error #506\n\n"
+          },
+          {
+            "comment": "feat: add decode for react jsx customLayout"
+          }
+        ]
+      }
+    },
+    {
       "version": "0.13.1",
       "tag": "@visactor/vtable_v0.13.1",
       "date": "Fri, 27 Oct 2023 13:15:39 GMT",
