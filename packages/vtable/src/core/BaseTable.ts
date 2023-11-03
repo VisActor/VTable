@@ -1414,7 +1414,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     col: boolean;
   } | null {
     const isFrozenRow = this.isFrozenRow(row) || this.isBottomFrozenRow(row);
-    const isFrozenCol = this.isFrozenRow(col) || this.isRightFrozenColumn(col);
+    const isFrozenCol = this.isFrozenColumn(col) || this.isRightFrozenColumn(col);
     if (isFrozenRow || isFrozenCol) {
       return {
         row: isFrozenRow,
