@@ -61,7 +61,7 @@ const {
     CHANGED_VALUE,
     FREEZE_CLICK,
     SORT_CLICK,
-    DROPDOWNMENU_CLICK,
+    DROPDOWN_MENU_CLICK,
     CONTEXTMENU_CELL,
   } = VTable.ListTable.EVENT_TYPE;
   const tableInstance =new ListTable(options);
