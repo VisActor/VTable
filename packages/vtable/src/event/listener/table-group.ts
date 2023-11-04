@@ -278,12 +278,15 @@ export function bindTableGroupListener(eventManeger: EventManeger) {
         }
       }
     } else if (stateManeger.isSelecting()) {
-      table.stateManeger.endSelectCells();
       // 下面触发DRAG_SELECT_END 区别于pointerup
       if (table.stateManeger.select?.ranges?.length) {
         const lastCol = table.stateManeger.select.ranges[table.stateManeger.select.ranges.length - 1].end.col;
         const lastRow = table.stateManeger.select.ranges[table.stateManeger.select.ranges.length - 1].end.row;
-
+        table.fireListeners(TABLE_EVENT_TYPE.SELECTED_CELL, {
+          ranges: table.stateManeger.select.ranges,
+          col: lastCol,
+          row: lastRow
+        });
         if ((table as any).hasListeners(TABLE_EVENT_TYPE.DRAG_SELECT_END)) {
           const cellsEvent: MousePointerMultiCellEvent = {
             event: e.nativeEvent,
@@ -568,7 +571,8 @@ export function bindTableGroupListener(eventManeger: EventManeger) {
     if (
       target &&
       !target.isDescendantsOf(table.scenegraph.tableGroup) &&
-      (target as any) !== table.scenegraph.tableGroup
+      (target as any) !== table.scenegraph.tableGroup &&
+      (target as any) !== table.scenegraph.stage
     ) {
       stateManeger.updateInteractionState(InteractionState.default);
       eventManeger.dealTableHover();
