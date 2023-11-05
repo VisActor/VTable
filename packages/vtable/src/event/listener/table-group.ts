@@ -66,7 +66,7 @@ export function bindTableGroupListener(eventManeger: EventManeger) {
       } else if (stateManeger.isMoveCol()) {
         eventManeger.dealColumnMover(eventArgsSet);
       } else {
-        eventManeger.dealTableSelect(eventArgsSet);
+        eventManeger.dealTableSelect(eventArgsSet, true);
       }
       return;
     }
