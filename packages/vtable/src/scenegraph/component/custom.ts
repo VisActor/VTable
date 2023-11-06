@@ -334,6 +334,9 @@ function transformString(str: string, size?: number): number {
 }
 
 function dealPercentCalc(group: Group) {
+  if (!group) {
+    return;
+  }
   group.forEachChildren((child: Group) => {
     if (isObject(child.attribute.width) && child.attribute.width.percent) {
       child.setAttribute(

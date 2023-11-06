@@ -1,20 +1,16 @@
-import { WrapText, type IWrapTextGraphicAttribute } from '@visactor/vrender';
-import type { BaseTableAPI } from '../../ts-types/base-table';
-import type { TagAttributes } from '@visactor/vrender-components';
+import type { IGroupGraphicAttribute } from '@visactor/vrender';
+import { Group as VGroup } from '@visactor/vrender';
 import { isArray } from '@visactor/vutils';
 
-type ITextOption = {
+type IGroupOption = {
   marginTop?: number;
   marginRight?: number;
   marginBottom?: number;
   marginLeft?: number;
-} & IWrapTextGraphicAttribute;
+} & IGroupGraphicAttribute;
 
-export class Text extends WrapText {
-  constructor(options: ITextOption) {
-    if (!options.textBaseline) {
-      options.textBaseline = 'top';
-    }
+export class Group extends VGroup {
+  constructor(options: IGroupOption) {
     const isPaddingNumber = isArray(options.boundsPadding);
     const padding = [
       options.marginTop ?? (isPaddingNumber ? options.boundsPadding[0] : options.boundsPadding) ?? 0,
@@ -29,8 +25,5 @@ export class Text extends WrapText {
     options.boundsPadding = padding;
 
     super(options);
-  }
-  getSize(table: BaseTableAPI) {
-    this.AABBBounds.width();
   }
 }

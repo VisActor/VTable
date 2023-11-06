@@ -94,8 +94,8 @@ VTable.register.icon('message',{
           width: 60,
           showBounds: false,
           direction: 'column',
-          alignContent: 'center',
-          justifyContent: 'center',
+          alignItems: 'center',
+          justifyContent: 'space-around',
         });
         container.add(containerLeft);
 
@@ -105,17 +105,15 @@ VTable.register.icon('message',{
           height: 50,
           src:record.bloggerAvatar,
           shape:'circle',
-          marginLeft:10,
         });
         containerLeft.add(icon0);
 
 
         const containerRight = new VTable.CustomLayout.Container({
           height: percentCalc(100),
-          width: 200,
+          width: percentCalc(100, -60),
           showBounds: false,
           direction: 'column',
-          justifyContent: 'center',
         });
         container.add(containerRight);
 
@@ -123,14 +121,14 @@ VTable.register.icon('message',{
           height: percentCalc(50),
           width: percentCalc(100),
           showBounds: false,
-          alignContent: 'bottom',
+          alignItems: 'flex-end',
        });
 
         const containerRightBottom = new VTable.CustomLayout.Container({
           height: percentCalc(50),
           width: percentCalc(100),
           showBounds: false,
-          alignContent: 'center',
+          alignItems: 'center',
         });
 
         containerRight.add(containerRightTop);
@@ -141,17 +139,15 @@ VTable.register.icon('message',{
           fontSize: 13,
           fontFamily: 'sans-serif',
           fill: 'black',
-          marginLeft:10
         });
-        bloggerName.getSize(table);
         containerRightTop.add(bloggerName)
 
         const location = new VTable.CustomLayout.Icon({
           id: 'location',
-          iconName: 'location',
+          image: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/location.svg',
           width: 15,
           height: 15,
-          marginLeft:10
+          boundsPadding: [0, 0, 0, 10]
         });
         containerRightTop.add(location);
 
@@ -161,24 +157,24 @@ VTable.register.icon('message',{
           fontFamily: 'sans-serif',
           fill: '#6f7070',
         });
-        bloggerName.getSize(table);
         containerRightTop.add(locationName)
 
       for(let i = 0;i < record?.tags?.length ?? 0;i++){
-        const tag = new VTable.CustomLayout.Text({
+        const tag = new VTable.CustomLayout.Tag({
           text: record.tags[i],
-          fontSize: 10,
-          fontFamily: 'sans-serif',
-          fill: 'rgb(51, 101, 238)',
-          background: {
-            fill: '#f4f4f2',
-            cornerRadius: 5,
-            expandX: 5,
-            expandY: 5,
+          textStyle: {
+            fontSize: 10,
+            fontFamily: 'sans-serif',
+            fill: 'rgb(51, 101, 238)'
           },
-          marginLeft: 5,
+          panel: {
+            visible: true,
+            fill: '#f4f4f2',
+            cornerRadius: 5
+          },
+          space: 5,
+          boundsPadding: [0, 0, 0, 5]
         });
-        tag.getSize(table);
         containerRightBottom.add(tag);
       }
         return {

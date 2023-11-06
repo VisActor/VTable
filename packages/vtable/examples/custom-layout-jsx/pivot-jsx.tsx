@@ -320,7 +320,7 @@ const rowTree = [
 const option: VTable.PivotTableConstructorOptions = {
   columnTree: clone(columnTree),
   rowTree: clone(rowTree),
-  columns: [
+  rows: [
     {
       dimensionKey: '220524114340021',
       title: '类别-细分',
@@ -352,7 +352,7 @@ const option: VTable.PivotTableConstructorOptions = {
       // headerType: 'MULTILINETEXT',
     }
   ],
-  rows: [
+  columns: [
     {
       dimensionKey: '220524114340020',
       title: '地区',

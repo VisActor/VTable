@@ -1,20 +1,17 @@
-import { WrapText, type IWrapTextGraphicAttribute } from '@visactor/vrender';
-import type { BaseTableAPI } from '../../ts-types/base-table';
 import type { TagAttributes } from '@visactor/vrender-components';
+import { Tag as VTag } from '@visactor/vrender-components';
 import { isArray } from '@visactor/vutils';
+import type { BaseTableAPI } from '../../ts-types/base-table';
 
-type ITextOption = {
+type ITagOption = {
   marginTop?: number;
   marginRight?: number;
   marginBottom?: number;
   marginLeft?: number;
-} & IWrapTextGraphicAttribute;
+} & TagAttributes;
 
-export class Text extends WrapText {
-  constructor(options: ITextOption) {
-    if (!options.textBaseline) {
-      options.textBaseline = 'top';
-    }
+export class Tag extends VTag {
+  constructor(options: ITagOption) {
     const isPaddingNumber = isArray(options.boundsPadding);
     const padding = [
       options.marginTop ?? (isPaddingNumber ? options.boundsPadding[0] : options.boundsPadding) ?? 0,

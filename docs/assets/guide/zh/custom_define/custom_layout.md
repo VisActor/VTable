@@ -13,188 +13,155 @@ VTable CustomRender支持用户自定义单元格内需要渲染需要的元素�
   <img src="https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/350c0511133d336e622523221.png" style="flex: 0 0 50%; padding: 10px;">
   <img src="https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/350c0511133d336e622523222.png" style="flex: 0 0 50%; padding: 10px;">
 </div>
-CustomLayout实现代码如下：
+CustomLayout示例代码如下：
 
-```typescript
+```tsx
 {
-    // ......
-    headerCustomLayout: (args: VTable.TYPES.CustomRenderFunctionArg) => {
-        const { grid } = args;
-        const { height, width } = args.rect;
-        const percentCalc = VTable.CustomLayout.percentCalc;  // 比例计算工具
+  customLayout: (args) => {
+    const { table, row, col, rect } = args;
+    const { height, width } = rect ?? table.getCellRect(col, row);
+    const record = table.getRecordByCell(col, row);
 
-        // 文字
-        const text0 = new VTable.CustomLayout.Text({
-          text: '全部',
-          fontSize: 32,
-          fontFamily: 'sans-serif',
-          fill: 'black',
-          marginBottom: 10,
-          marginLeft: 10,
-        });
-        text0.getSize(grid);
-
-        // 矩形
-        const rect0 = new VTable.CustomLayout.Rect({
-          width: 30,
-          height: 30,
-          fill: 'black',
-          cornerRadius: 10,
-        });
-
-        const text1 = new VTable.CustomLayout.Text({
-          text: '分组',
-          fontSize: 28,
-          fontFamily: 'sans-serif',
-          fill: 'black',
-          marginLeft: 10,
-          marginRight: 5,
-          marginTop: 5,
-        });
-        text1.getSize(grid);
-
-        const text2 = new VTable.CustomLayout.Text({
-          text: '文字2',
-          fontSize: 16,
-          fontFamily: 'sans-serif',
-          fill: 'rgb(51, 101, 238)',
-          background: {
-            fill: 'rgb(220, 240, 252)',
-            cornerRadius: 5,
-            expendX: 5,
-            expendY: 5,
-          },
-          marginRight: 5,
-        });
-        text2.getSize(grid);
-
-        const circle2 = new VTable.CustomLayout.Circle({
-          radius: 10,
-          fill: '#999',
-        });
-
-        // 分组
-        const group2 = new VTable.CustomLayout.GroupElement({
-          direction: 'row',
-          alignItems: 'center',
-          marginRight: 5,
-          marginTop: 10,
-          marginLeft: 10,
-          marginBottom: 5,
-        });
-
-        group2.add(text2);
-        group2.add(circle2);
-        
-        // 其他分组......
-        
-        // 图标
-        const icon0 = new VTable.CustomLayout.Icon({
-          id: 'icon0',
-          iconName: 'phone',
-          width: 30,
-          height: 30,
-          // svg: `<svg width="22" height="22" viewBox="0 0 12 15" fill="none" xmlns="http://www.w3.org/2000/svg" class="dp-table-action-area-icon"><path fill-rule="evenodd" clip-rule="evenodd" d="M6.00053 8.78553L2.11144 4.89645C1.91618 4.70118 1.5996 4.70118 1.40433 4.89645C1.20907 5.09171 1.20907 5.40829 1.40433 5.60355L5.64698 9.84619C5.84224 10.0415 6.15882 10.0415 6.35408 9.84619L10.5967 5.60355C10.792 5.40829 10.792 5.09171 10.5967 4.89645C10.4015 4.70118 10.0849 4.70118 9.88962 4.89645L6.00053 8.78553Z" fill="#57585A"></path></svg>`,
-          marginRight: 10,
-          marginBottom: 50,
-        });
-
-        const icon1 = new VTable.CustomLayout.Icon({
-          id: 'icon1',
-          width: 30,
-          height: 30,
-          svg: `<svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M30 4H18V18H4V30H18V44H30V30H44V18H30V4Z" fill="#3344FF" stroke="#3344FF" stroke-width="1" stroke-linejoin="round"/></svg>`,
-          marginLeft: 10,
-          marginBottom: 10,
-        });
-
-        const icon2 = new VTable.CustomLayout.Icon({
-          id: 'icon2',
-          width: 30,
-          height: 30,
-          svg: `<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 12 12" fill="none">
-          <path d="M1.29609 1C0.745635 1 0.444871 1.64195 0.797169 2.06491L4.64953 6.68988V9.81861C4.64953 9.89573 4.69727 9.9648 4.76942 9.99205L7.11236 10.877C7.27164 10.9372 7.4419 10.8195 7.4419 10.6492V6.68988L11.2239 2.06012C11.5703 1.63606 11.2685 1 10.721 1H1.29609Z" stroke="#141414" stroke-opacity="0.65" stroke-width="1.18463" stroke-linejoin="round"/>
-          </svg>`,
-          marginLeft: 10,
-          marginTop: 10,
-        });
-
-        // 左侧容器
-        const containerLeft = new VTable.CustomLayout.Container({
-          height: percentCalc(100),
-          width: 60,
-          showBounds: true,
-          direction: 'column',
-          alignContent: 'end',
-          justifyContent: 'center',
-        });
-
-        // 中央容器
-        const containerMiddle = new VTable.CustomLayout.Container({
-          height: percentCalc(100),
-          width: percentCalc(100, -60 - 60),
-          direction: 'column',
-        });
-
-        // 中上部容器
-        const containerMiddleTop = new VTable.CustomLayout.Container({
-          height: 100,
-          width: percentCalc(100),
-          showBounds: true,
-          alignContent: 'end',
-          // justifyContent: 'center',
-          // alignItems: 'center',
-        });
-
-        // 中下容器
-        const containerMiddleBottom = new VTable.CustomLayout.Container({
-          height: percentCalc(100, -100),
-          width: percentCalc(100),
-          showBounds: true,
-          alignItems: 'center',
-        });
-
-        // 右侧容器
-        const containerRight = new VTable.CustomLayout.Container({
-          height: percentCalc(100),
-          width: 60,
-          showBounds: true,
-          direction: 'column',
-          justifyContent: 'center',
-        });
-
-        // 根节点容器
-        const container = new VTable.CustomLayout.Container({
-          height,
+    const container = (
+      <VGroup
+        attribute={{
+          id: 'container',
           width,
-        });
+          height,
+          display: 'flex',
+          flexWrap: 'wrap',
+          justifyContent: 'flex-start',
+          alignContent: 'center'
+        }}
+      >
+        <VGroup
+          attribute={{
+            id: 'container-left',
+            width: 60,
+            height,
+            fill: 'red',
+            opacity: 0.1,
+            display: 'flex',
+            justifyContent: 'space-around',
+            alignItems: 'center'
+          }}
+        >
+          <VImage
+            attribute={{
+              id: 'icon0',
+              width: 50,
+              height: 50,
+              image: record.bloggerAvatar,
+              cornerRadius: 25
+            }}
+          ></VImage>
+        </VGroup>
+        <VGroup
+          id="container-right"
+          attribute={{
+            id: 'container-right',
+            width: width - 60,
+            height,
+            fill: 'yellow',
+            opacity: 0.1,
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'space-around',
+            alignItems: 'center'
+          }}
+        >
+          <VGroup
+            attribute={{
+              id: 'container-right-top',
+              fill: 'red',
+              opacity: 0.1,
+              width: width - 60,
+              height: height / 2,
+              display: 'flex',
+              flexWrap: 'wrap',
+              justifyContent: 'flex-start',
+              alignItems: 'center'
+            }}
+          >
+            <VText
+              attribute={{
+                id: 'bloggerName',
+                text: record.bloggerName,
+                fontSize: 13,
+                fontFamily: 'sans-serif',
+                fill: 'black',
+                textAlign: 'left',
+                textBaseline: 'top',
+                boundsPadding: [0, 0, 0, 10]
+              }}
+            ></VText>
+            <VImage
+              attribute={{
+                id: 'location-icon',
+                width: 15,
+                height: 15,
+                image:
+                  '<svg t="1684484908497" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="2429" width="200" height="200"><path d="M512 512a136.533333 136.533333 0 1 1 136.533333-136.533333 136.533333 136.533333 0 0 1-136.533333 136.533333z m0-219.272533a81.92 81.92 0 1 0 81.92 81.92 81.92 81.92 0 0 0-81.92-81.92z" fill="#0073FF" p-id="2430"></path><path d="M512 831.214933a27.306667 27.306667 0 0 1-19.2512-8.055466l-214.493867-214.357334a330.5472 330.5472 0 1 1 467.490134 0l-214.357334 214.357334a27.306667 27.306667 0 0 1-19.387733 8.055466z m0-732.091733a275.933867 275.933867 0 0 0-195.106133 471.04L512 765.269333l195.106133-195.106133A275.933867 275.933867 0 0 0 512 99.1232z" fill="#0073FF" p-id="2431"></path><path d="M514.321067 979.490133c-147.456 0-306.107733-37.000533-306.107734-118.3744 0-45.602133 51.746133-81.92 145.681067-102.4a27.306667 27.306667 0 1 1 11.605333 53.384534c-78.370133 17.066667-102.673067 41.915733-102.673066 49.015466 0 18.432 88.064 63.761067 251.4944 63.761067s251.4944-45.192533 251.4944-63.761067c0-7.3728-25.258667-32.768-106.496-49.834666a27.306667 27.306667 0 1 1 11.195733-53.384534c96.6656 20.343467 150.186667 56.9344 150.186667 103.2192-0.273067 80.964267-158.9248 118.3744-306.3808 118.3744z" fill="#0073FF" p-id="2432"></path></svg>',
+                boundsPadding: [0, 0, 0, 10]
+              }}
+            ></VImage>
+            <VText
+              attribute={{
+                id: 'locationName',
+                text: record.city,
+                fontSize: 11,
+                fontFamily: 'sans-serif',
+                fill: '#6f7070',
+                textAlign: 'left',
+                textBaseline: 'top'
+              }}
+            ></VText>
+          </VGroup>
+          <VGroup
+            attribute={{
+              id: 'container-right-bottom',
+              fill: 'green',
+              opacity: 0.1,
+              width: width - 60,
+              height: height / 2,
+              display: 'flex',
+              flexWrap: 'wrap',
+              justifyContent: 'flex-start',
+              alignItems: 'center'
+            }}
+          >
+            {record?.tags?.length
+              ? record.tags.map((str, i) => (
+                  <VTag
+                    attribute={{
+                      text: str,
+                      textStyle: {
+                        fontSize: 10,
+                        fontFamily: 'sans-serif',
+                        fill: 'rgb(51, 101, 238)'
+                      },
+                      panel: {
+                        visible: true,
+                        fill: '#e6fffb',
+                        lineWidth: 1,
+                        cornerRadius: 4
+                      },
+                      boundsPadding: [0, 0, 0, 10]
+                    }}
+                  ></VTag>
+                ))
+              : null}
+          </VGroup>
+        </VGroup>
+      </VGroup>
+    );
 
-        // 容器添加节点
-        container.add(containerLeft);
-        container.add(containerMiddle);
-        container.add(containerRight);
+    return {
+      rootContainer: container,
+      renderDefault: false
+    };
+  }
 
-        containerMiddle.add(containerMiddleTop);
-        containerMiddle.add(containerMiddleBottom);
-
-        containerMiddleTop.add(text0);
-        containerMiddleTop.add(rect0);
-        containerMiddleBottom.add(text1);
-        containerMiddleBottom.add(group2);
-        containerMiddleBottom.add(group3);
-        containerMiddleBottom.add(group4);
-        containerMiddleBottom.add(group5);
-        containerMiddleBottom.add(group6);
-
-        containerLeft.add(icon0);
-        containerRight.add(icon1);
-        containerRight.add(icon2);
-
-        return {
-          rootContainer: container,
-          renderDefault: false,
-        };
-      },
 }
 ```
 
@@ -215,61 +182,8 @@ const option = {
 }
 ```
 
-customLayout函数返回一个对象，其中`rootContainer`为自定义渲染内容的根节点，`renderDefault`为是否需要绘制单元格原内容的标记（与customRender一致）
-
-## 模块
-
-### Element
-
-基础的自定义图元，目前支持rect circle text icon四种图元
-
-|图元类型|基础属性|
-|:----|:----|
-|rect|width, height, stroke, fill, lineWidth, cornerRadius|
-|circle|radius, radian, stroke, fill, lineWidth|
-|text|text, fontSize, fontFamily, fill|
-|icon|svg, width, height |
-
-在基础属性外，支持hover样式和背景样式
-
-*   hover样式和基础样式相同，被hover的元素会展示相应的样式
-*   text和icon支持配置背景样式
-    *   stroke
-    *   fill
-    *   lineWidth
-    *   cornerRadius
-    *   expendX
-    *   expendY
-        其中expendX和expendX指在原先bounds外延伸的尺寸
-
-![image](https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/0a2e223bdcd7410c08f6a6a0e.jpg)
-
-图元可以配置margin属性
-
-*   marginLeft
-*   marginRight
-*   marginTop
-*   marginBottom
-    图元的margin会计算在图元所占的空间
-
-### GroupElement
-
-多个element的组合，按顺序依次摆放；可以配置子元素摆放方向，不提供折行和对齐能力
-例如下面这个按钮
-
-<div style="width:300px; height:160px;">
-  <img src="https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/350c0511133d336e622523223.png" alt="image" style="width:100%; height:100%;">
-</div>
-由两个element组成：文字（配置圆角矩形背景）、“x”icon
-其中文字和图表配置margin来进行位置调整
-
-### Container
-
-盒模型布局容器，支持元素在其中自动布局；container的子元素可以是container，也可以是groupElement和element；需要配置以下属性
-
-*   布局方向（水平或垂直）
-*   宽度/高度（可指定像素宽度或百分比宽度）
-*   对齐方式（水平左中右，垂直上中下）
+customLayout函数返回一个对象，其中`rootContainer`为自定义渲染内容的根节点，`renderDefault`为是否需要绘制单元格原内容的标记（与customRender一致）。
+`VTable`使用`VRender`提供的图元和布局能力实现`customLayout`功能，目前推荐使用JSX写法，层级结构更加清晰，[参考示例](https://codesandbox.io/s/vtable-jsx-slsg25)
 
 ## 布局能力
 
@@ -300,28 +214,93 @@ customLayout函数返回一个对象，其中`rootContainer`为自定义渲染�
   <img src="https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/45df54929d214e7453e228f2d.png" alt="image" style="width:100%; height:100%;">
 </div>
 
-其中省份按钮和城市按钮是多个element组合成的groupElement，整个container的高度由布局折行结果决定，最小高度为不换行显示为一行；最大高度为三个element都折行显示，显示为三行
+其中省份按钮和城市按钮是多个element组合而成，整个容器的高度由布局折行结果决定，最小高度为不换行显示为一行；最大高度为三个element都折行显示，显示为三行
 
 ## 自动行高列宽计算
 
 使用percentCalc方法指定百分比宽高的container，在表格指定自适应宽高时，会依据内容的宽高自动计算出可以容纳所有内容的单元格宽高，作为本单元格实际内容宽高
 
+## JSX图元
+
+### 基础图元
+
+基础的自定义图元，目前支持`VRect` `VCircle` `VText` `VImage` 
+
+|图元类型|基础属性|
+|:----|:----|
+|rect|width, height, stroke, fill, lineWidth, cornerRadius...|
+|circle|radius, startAngle, endAngle, stroke, fill, lineWidth...|
+|text|text, fontSize, fontFamily, fill...|
+|image|image, width, height |
+
+基础自定义组件，目前支持`VTag`
+|图元类型|基础属性|
+|:----|:----|
+|tag|text, textStyle, shape, padding...|
+
+背景样式
+*   Image支持配置`background`背景样式
+    *   stroke
+    *   fill
+    *   lineWidth
+    *   cornerRadius
+    *   expendX
+    *   expendY
+
+![image](https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/0a2e223bdcd7410c08f6a6a0e.jpg)
+
+图元可以配置`boundsPadding`属性，实现margin效果
+`boundsPadding: [marginLeft, marginRight, marginTop, marginBottom]`
+图元的margin会计算在图元所占的空间
+
+在基础属性外，可以使用状态更新来实现hover等交互效果：
+```tsx
+<VImage
+    attribute={{
+      id: 'row-down',
+      image: collapseDown,
+      width: 20,
+      height: 20,
+      cursor: 'pointer'
+    }}
+    stateProxy={(stateName: string) => {
+      if (stateName === 'hover') {
+        return {
+          background: {
+            fill: '#ccc',
+            cornerRadius: 5,
+            expandX: 1,
+            expandY: 1
+          }
+        };
+      }
+    }}
+    onMouseEnter={event => {
+      event.currentTarget.addState('hover', true, false);
+      event.currentTarget.stage.renderNextFrame();
+    }}
+    onMouseLeave={event => {
+      event.currentTarget.removeState('hover', false);
+      event.currentTarget.stage.renderNextFrame();
+    }}
+></VImage>
+```
+通过绑定事件，更新图元状态，实现交互更新图元样式效果。
+
+### 容器图元
+
+容器图元`VGroup`是盒模型布局容器，支持元素在其中自动布局；`VGroup`的子元素可以是`VGroup`，也可以是基础图元；布局支持配置以下属性
+
+* display: 布局模式（`flex`开启flex布局模式）
+* flexDirection: 主轴的方向
+* flexWrap: 单行显示还是多行显示
+* justifyContent: 行向轴分配内容元素之间和周围的空间规则
+* alignItems: 交叉轴上的对齐规则
+* alignContent: 主轴上的对齐规则
+
 ## API
 
-### Element
-
-所有图元基类
-
-|key|type|description|
-|:----|:----|:----|
-|id|string|id表示|
-|marginLeft|number|左侧margin|
-|marginRight|number|右侧margin|
-|marginTop|number|上部margin|
-|marginBottom|number|下部margin|
-|background|{ fill?: boolean; stroke?: boolean; stroke?: string; fill?: string; lineWidth?: number; cornerRadius?: number; expendX?: number; expendY?: number;}|背景填充样式|
-
-### Rect
+### VRect
 
 矩形图元
 
@@ -334,19 +313,20 @@ customLayout函数返回一个对象，其中`rootContainer`为自定义渲染�
 |fill|string|填充颜色|
 |stroke|string|描边颜色|
 
-### Circle
+### VCircle
 
 圆形图元
 
 |key|type|description|
 |:----|:----|:----|
 |radius|number|半径|
-|radian|number|圆角度|
+|startAngle|number|起始弧度|
+|endAngle|number|结束弧度|
 |lineWidth|number|描边宽度|
 |fill|string|填充颜色|
 |stroke|string|描边颜色|
 
-### Text
+### VText
 
 文字图元
 
@@ -357,27 +337,17 @@ customLayout函数返回一个对象，其中`rootContainer`为自定义渲染�
 |fontFamily|string|字体|
 |fill|string|文字颜色|
 
-### Icon
+### VImage
 
-图标图元
-
-|key|type|description|
-|:----|:----|:----|
-|width|number|图表宽度|
-|height|number|图表高度|
-|svg|string|svg字符串|
-|iconName|string|使用注册icon的name（与svg互斥）|
-
-### GroupElement
-
-行内分组
+图片图元
 
 |key|type|description|
 |:----|:----|:----|
-|direction|'row' | 'column'|布局方向|
-|alignItems|'start' | 'end' | 'center'|布局方向上的对齐方式|
+|width|number|图片宽度|
+|height|number|图片高度|
+|image|string | HTMLImageElement | HTMLCanvasElement|图片内容|
 
-### Container
+### VGroup
 
 容器
 
@@ -385,8 +355,42 @@ customLayout函数返回一个对象，其中`rootContainer`为自定义渲染�
 |:----|:----|:----|
 |width|number | percentCalcObj|容器宽度|
 |height|number | percentCalcObj|容器高度|
-|direction|'row' | 'column'|布局主方向|
-|justifyContent|'start' | 'end' | 'center'|布局方向上的对齐方式|
-|alignItems|'start' | 'end' | 'center'|布局交叉方向上的对齐方式|
-|alignContent|'start' | 'end' | 'center'|布局交叉方向上多根轴线的对齐方式|
-|showBounds|boolean|是否显示bounds|
+|display|'relative' \| 'flex'|布局模式（`flex`开启flex布局模式）|
+|flexDirection|'row' \| 'row-reverse' \| 'column' \| 'column-reverse'|主轴的方向|
+|flexWrap|'nowrap' \| 'wrap'|单行显示还是多行显示|
+|justifyContent|'flex-start' \| 'flex-end' \| 'center' \| 'space-between' \| 'space-around'|行向轴分配内容元素之间和周围的空间规则|
+|alignItems|'flex-start' \| 'flex-end' \| 'center'|交叉轴上的对齐规则|
+|alignContent|'flex-start' \| 'center' \| 'space-between' \| 'space-around'|主轴上的对齐规则|
+
+
+## CustomLayout图元
+旧版customLayout支持的图元，CustomLayout图元实现方式与jsx图元相同，写法有所区别，需要通过`new VTable.CustomLayout.XXX`创建图元，例如：
+```ts
+const text1 = new VTable.CustomLayout.Text({
+  text: 'text',
+  fontSize: 28,
+  fontFamily: 'sans-serif',
+  fill: 'black'
+});
+
+const container = new VTable.CustomLayout.Container({
+  height,
+  width,
+});
+containerRight.add(text1);
+
+return {
+  rootContainer: container,
+  renderDefault: false,
+};
+```
+
+常用图元与jsx图元相同，命名对照如下：
+|JSX图元|CustomLayout图元|
+|:----|:----|
+|VRect|CustomLayout.Rect|
+|VCircle|CustomLayout.Circle|
+|VText|CustomLayout.Text|
+|VImage|CustomLayout.Image|
+|VGroup|CustomLayout.Container|
+|VGroup(flexWrap: 'no-wrap')|CustomLayout.GroupElement|

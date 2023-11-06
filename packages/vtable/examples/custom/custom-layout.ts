@@ -1,4 +1,3 @@
-import { VTag } from '@visactor/vrender-components';
 import * as VTable from '../../src';
 import { bindDebugTool } from '../../src/scenegraph/debug-tool';
 import { IconPosition } from '../../src/ts-types';
@@ -154,20 +153,22 @@ export function createTable() {
           containerRightTop.add(locationName);
 
           for (let i = 0; i < record?.tags?.length ?? 0; i++) {
-            const tag = new VTable.CustomLayout.Text({
+            const tag = new VTable.CustomLayout.Tag({
               text: record.tags[i],
-              fontSize: 10,
-              fontFamily: 'sans-serif',
-              fill: 'rgb(51, 101, 238)',
-              background: {
-                fill: '#f4f4f2',
-                cornerRadius: 5,
-                expandX: 5,
-                expandY: 5
+              textStyle: {
+                fontSize: 10,
+                fontFamily: 'sans-serif',
+                fill: 'rgb(51, 101, 238)'
               },
+              panel: {
+                visible: true,
+                fill: '#f4f4f2',
+                cornerRadius: 5
+              },
+              space: 5,
               marginLeft: 5
             });
-            tag.getSize(table);
+            // tag.getSize(table);
             containerRightBottom.add(tag);
           }
           return {
@@ -303,6 +304,12 @@ export function createTable() {
   bindDebugTool(instance.scenegraph.stage as any, {
     customGrapicKeys: ['role']
   });
+
+  const { MOUSEMOVE_CELL } = VTable.ListTable.EVENT_TYPE;
+  instance.addEventListener(MOUSEMOVE_CELL, (...args) => {
+    console.log('MOUSEMOVE_CELL', args[0]?.target);
+  });
+
   // 只为了方便控制太调试用，不要拷贝
   window.tableInstance = instance;
 }
