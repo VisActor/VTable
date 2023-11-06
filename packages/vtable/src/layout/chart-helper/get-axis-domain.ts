@@ -22,6 +22,16 @@ export function getAxisDomainRangeAndLabels(
     min = Math.min(min, 0);
     max = Math.max(max, 0);
   }
+  if (axisOption?.expand) {
+    const domainMin = min;
+    const domainMax = max;
+    if (isValid(axisOption.expand.min)) {
+      min = domainMin - (domainMax - domainMin) * axisOption.expand.min;
+    }
+    if (isValid(axisOption.expand.max)) {
+      max = domainMax + (domainMax - domainMin) * axisOption.expand.max;
+    }
+  }
   if (isNumber(axisOption?.min)) {
     min = axisOption.min;
   }

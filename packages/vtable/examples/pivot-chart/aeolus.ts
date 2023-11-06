@@ -380,7 +380,10 @@ export function createTable() {
                 }
               },
               zero: true,
-              nice: true
+              nice: true,
+              expand: {
+                max: 0.1
+              }
             }
           ],
           color: {
