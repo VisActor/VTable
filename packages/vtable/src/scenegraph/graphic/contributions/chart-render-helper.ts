@@ -22,6 +22,15 @@ export function renderChart(chart: Chart) {
   const { axes, dataId, data, spec } = chart.attribute;
   const { chartInstance } = chart;
   const viewBox = chart.getViewBox();
+
+  // avoid canvas size 0
+  if (viewBox.x2 <= viewBox.x1) {
+    viewBox.x2 = viewBox.x1 + 1;
+  }
+  if (viewBox.y2 <= viewBox.y1) {
+    viewBox.y2 = viewBox.y1 + 1;
+  }
+
   axes.forEach((axis: any, index: number) => {
     if (axis.type === 'linear') {
       const chartAxis = chartInstance._chart._components[index];

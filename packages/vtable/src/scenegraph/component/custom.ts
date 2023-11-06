@@ -48,6 +48,9 @@ export function dealWithCustom(
       table
     };
     const customRenderObj = customLayout(arg);
+    if (customRenderObj.rootContainer) {
+      customRenderObj.rootContainer = decodeReactDom(customRenderObj.rootContainer);
+    }
     // expectedWidth = customRenderObj.expectedWidth;
     // expectedHeight = customRenderObj.expectedHeight;
     if (customRenderObj.rootContainer instanceof VGroup) {
@@ -366,4 +369,24 @@ function dealPercentCalc(group: VGroup) {
       dealPercentCalc(child);
     }
   });
+}
+
+// temp devode for react jsx customLayout
+export function decodeReactDom(dom: any) {
+  if (!dom.$$typeof) {
+    // not react
+    return dom;
+  }
+  const type = dom.type;
+  const { attribute, children } = dom.props;
+  const g = type({ attribute });
+  g.id = attribute.id;
+  g.name = attribute.name;
+  children &&
+    children.length &&
+    children.forEach((item: any) => {
+      const c = decodeReactDom(item);
+      g.add(c);
+    });
+  return g;
 }

@@ -84,6 +84,9 @@ export class Group extends VRenderGroup {
   }
 
   setDeltaWidth(deltaX: number) {
+    if (deltaX === 0) {
+      return;
+    }
     this.setAttribute('width', (this.attribute.width ?? 0) + deltaX);
     if (this.border) {
       this.border.setAttribute('width', this.border.attribute.width + deltaX);
@@ -91,6 +94,9 @@ export class Group extends VRenderGroup {
   }
 
   setDeltaHeight(deltaY: number) {
+    if (deltaY === 0) {
+      return;
+    }
     this.setAttribute('height', (this.attribute.height ?? 0) + deltaY);
     if (this.border) {
       this.border.setAttribute('height', this.border.attribute.height + deltaY);
@@ -98,10 +104,16 @@ export class Group extends VRenderGroup {
   }
 
   setDeltaX(deltaX: number) {
+    if (deltaX === 0) {
+      return;
+    }
     this.setAttribute('x', this.attribute.x + deltaX);
   }
 
   setDeltaY(deltaY: number) {
+    if (deltaY === 0) {
+      return;
+    }
     this.setAttribute('y', this.attribute.y + deltaY);
   }
 

@@ -22,11 +22,11 @@ Table column width calculation mode, can be 'standard' (standard mode), 'adaptiv
 
 #${prefix} heightMode('standard' | 'adaptive' | 'autoHeight') = 'standard'
 
-The calculation mode of table row height, which can be 'standard' (standard mode), 'adaptive' (adaptive container height mode) or 'autoWidth' (automatic row height mode), the default is 'standard'.
+The calculation mode of table row height, which can be 'standard' (standard mode), 'adaptive' (adaptive container height mode) or 'autoHeight' (automatic row height mode), the default is 'standard'.
 
 - 'standard': use `defaultRowHeight` and `defaultHeaderRowHeight` as row height.
 - 'adaptive': Use the height of the container to assign the height of each row.
-- 'autoWidth': Automatically calculate line height based on content, based on fontSize and lineHeight. The related collocation setting item `autoWrapText` automatically wraps the line, and the line height can be calculated according to the content of the multi-line text after the line wrap.
+- 'autoHeight': Automatically calculate line height based on content, based on fontSize and lineHeight. The related collocation setting item `autoWrapText` automatically wraps the line, and the line height can be calculated according to the content of the multi-line text after the line wrap.
 
 #${prefix} autoWrapText(boolean) = false
 

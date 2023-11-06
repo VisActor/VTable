@@ -21,7 +21,8 @@ VTable.register.icon('favorite', {
     placement: VTable.TYPES.Placement.top,
     title: '关注博主',
     style: {
-      font: '10px Arial',
+      fontFamily: 'Arial',
+      fontSize: 10,
       bgColor: 'white',
       color: '#333',
       arrowMark: true
@@ -42,7 +43,8 @@ VTable.register.icon('message', {
     placement: VTable.TYPES.Placement.top,
     title: '发消息',
     style: {
-      font: '10px Arial',
+      fontFamily: 'Arial',
+      fontSize: 10,
       bgColor: 'white',
       color: '#333',
       arrowMark: true

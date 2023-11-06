@@ -107,12 +107,10 @@ export function createTable() {
       width: 150
     }
   ];
-  const option = {
+  const option: VTable.ListTableConstructorOptions = {
     container: document.getElementById(CONTAINER_ID),
     // records,
-    columns,
-
-    dataLimit: 50
+    columns
   };
   const tableInstance = new VTable.ListTable(option);
   tableInstance.dataSource = dataSource;

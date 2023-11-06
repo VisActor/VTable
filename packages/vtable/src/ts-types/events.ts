@@ -91,7 +91,7 @@ export interface TableEventHandlersEventArgumentMap {
     order: SortOrder;
   };
   freeze_click: { col: number; row: number; fields: FieldDef[]; colCount: number };
-  dropdownmenu_click: DropDownMenuEventArgs;
+  dropdown_menu_click: DropDownMenuEventArgs;
   copydata: CellRange[];
 
   mouseover_chart_symbol: MousePointerSparklineEvent;
@@ -189,7 +189,7 @@ export interface TableEventHandlersReturnMap {
   change_header_position: void;
   sort_click: boolean;
   freeze_click: void;
-  dropdownmenu_click: void;
+  dropdown_menu_click: void;
   copydata: string;
   mouseover_chart_symbol: void;
   drag_select_end: void;

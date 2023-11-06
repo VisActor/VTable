@@ -39,5 +39,9 @@
     "menu": "api",
     "type": "markdown-template",
     "entry": "api"
+  },
+  {
+    "menu": "faq",
+    "type": "markdown"
   }
 ]

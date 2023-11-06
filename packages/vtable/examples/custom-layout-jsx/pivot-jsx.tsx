@@ -1118,7 +1118,7 @@ function customLayoutIndicator(args: VTable.TYPES.CustomRenderFunctionArg) {
 }
 
 function bindEvent(table) {
-  const { CLICK_CELL, DROPDOWNMENU_CLICK } = VTable.ListTable.EVENT_TYPE;
+  const { CLICK_CELL, DROPDOWN_MENU_CLICK } = VTable.ListTable.EVENT_TYPE;
   table.addEventListener(CLICK_CELL, (...args) => {
     if (args[0].target) {
       const target = args[0].target;

@@ -30,11 +30,8 @@ export function updateAutoColumn(
     table.scenegraph.proxy.bodyRightCol - table.scenegraph.proxy.bodyLeftCol + 1
   );
   // 渐进加载总column数量
-  const totalBodyWidth = table.getColsWidth(
-    table.rowHeaderLevelCount,
-    table.rowHeaderLevelCount + totalActualBodyColumnCount
-  );
-  const totalWidth = table.getColsWidth(table.rowHeaderLevelCount, table.colCount - 1);
+  const totalBodyWidth = table.getColsWidth(table.frozenColCount, table.frozenColCount + totalActualBodyColumnCount);
+  const totalWidth = table.getColsWidth(table.frozenColCount, table.colCount - 1);
   table.scenegraph.proxy.xLimitLeft = totalBodyWidth / 2;
   table.scenegraph.proxy.xLimitRight = totalWidth - totalBodyWidth / 2;
 }
@@ -47,7 +44,7 @@ function moveColumnGroup(colGroup: Group, table: BaseTableAPI, direction: 'left'
       x = prevCellGroup.attribute.x + table.getColWidth((colGroup._prev as Group).col);
     } else {
       // 估计位置
-      x = table.getColsWidth(table.rowHeaderLevelCount, colGroup.col - 1);
+      x = table.getColsWidth(table.frozenColCount, colGroup.col - 1);
     }
     colGroup.setAttribute('x', x);
   } else {
@@ -57,7 +54,7 @@ function moveColumnGroup(colGroup: Group, table: BaseTableAPI, direction: 'left'
       x = nextCellGroup.attribute.x - table.getColWidth(colGroup.col);
     } else {
       // 估计位置
-      x = table.getColsWidth(table.rowHeaderLevelCount, colGroup.col - 1);
+      x = table.getColsWidth(table.frozenColCount, colGroup.col - 1);
     }
     colGroup.setAttribute('x', x);
   }
