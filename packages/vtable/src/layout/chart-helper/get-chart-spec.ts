@@ -41,6 +41,7 @@ export function getChartSpec(col: number, row: number, layout: PivotHeaderLayout
 
 export function getChartAxes(col: number, row: number, layout: PivotHeaderLayoutMap): any {
   const axes = [];
+  const table = layout._table;
   if (layout.indicatorsAsCol) {
     const indicatorKeys = layout.getIndicatorKeyInChartSpec(col, row);
     // const colIndex = layout.getRecordIndexByCol(col);
@@ -82,7 +83,13 @@ export function getChartAxes(col: number, row: number, layout: PivotHeaderLayout
         range.max = Math.max(range.max, 0);
       }
       if (axisOption?.nice) {
-        const { range: axisRange } = getAxisDomainRangeAndLabels(range.min, range.max, axisOption, isZeroAlign);
+        const { range: axisRange } = getAxisDomainRangeAndLabels(
+          range.min,
+          range.max,
+          axisOption,
+          isZeroAlign,
+          table.getColWidth(col)
+        );
         range.min = axisRange[0];
         range.max = axisRange[1];
       }
@@ -189,7 +196,13 @@ export function getChartAxes(col: number, row: number, layout: PivotHeaderLayout
         range.max = Math.max(range.max, 0);
       }
       if (axisOption?.nice) {
-        const { range: axisRange } = getAxisDomainRangeAndLabels(range.min, range.max, axisOption, isZeroAlign);
+        const { range: axisRange } = getAxisDomainRangeAndLabels(
+          range.min,
+          range.max,
+          axisOption,
+          isZeroAlign,
+          table.getRowHeight(row)
+        );
         range.min = axisRange[0];
         range.max = axisRange[1];
       }

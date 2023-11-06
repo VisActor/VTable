@@ -1,5 +1,6 @@
 import { LinearScale, LogScale, SymlogScale } from '@visactor/vscale';
 import { isFunction, isNil, isNumber, isValid } from '@visactor/vutils';
+import { THEME_CONSTANTS } from '../../components/axis/get-axis-attributes';
 
 const DEFAULT_CONTINUOUS_TICK_COUNT = 5;
 /**
@@ -14,6 +15,7 @@ export function getAxisDomainRangeAndLabels(
   max: number,
   axisOption: any,
   isZeroAlign: boolean,
+  axisLength: number,
   skipTick?: boolean
 ) {
   if (axisOption?.zero) {
@@ -41,6 +43,14 @@ export function getAxisDomainRangeAndLabels(
 
   if (axisOption?.nice && !isZeroAlign) {
     let tickCount = axisOption.tick?.forceTickCount ?? axisOption.tick?.tickCount ?? 10;
+    if (isFunction(tickCount)) {
+      tickCount = tickCount({
+        axisLength,
+        labelStyle: axisOption?.label?.style ?? {
+          fontSize: THEME_CONSTANTS.LABEL_FONT_SIZE
+        }
+      });
+    }
     // 如果配置了精度优先，那么最低是10
     // 否则就直接使用tickCount即可
     if (axisOption.niceType === 'accurateFirst') {
