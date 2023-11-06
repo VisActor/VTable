@@ -16,10 +16,10 @@
 VTable，不只是一款高性能的多维数据分析表格，更是一个在行列间创作的方格艺术家。
 
 <p align="center">
-  <a href="">简介</a> •
-  <a href="">demo</a> •
-  <a href="">教程</a> •
-  <a href="">API</a>•
+  <a href="https://visactor.io/vtable">简介</a> •
+  <a href="https://visactor.io/vtable/example">demo</a> •
+  <a href="https://visactor.io/vtable/guide/Getting_Started/Getting_Started">教程</a> •
+  <a href="https://visactor.io/vtable/option/ListTable">API</a>•
 </p>
 
 ![](https://github.com/visactor/vtable/actions/workflows/bug-server.yml/badge.svg)
