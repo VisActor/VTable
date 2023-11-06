@@ -45,4 +45,8 @@ export interface ICompositeColumnBodyDefine extends IBasicColumnBodyDefine {
 
   // sparkline 特有
   sparklineSpec?: SparklineSpec | ((arg0: CellInfo) => SparklineSpec);
+
+  //checkbox
+  checked?: boolean | ((args: StylePropertyFunctionArg) => boolean);
+  disable?: boolean | ((args: StylePropertyFunctionArg) => boolean);
 }

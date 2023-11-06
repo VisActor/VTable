@@ -93,6 +93,7 @@ export function moveHeaderPosition(
   }
 
   // 更新容器尺寸
+  // scene.updateContainerAttrWidthAndX();
   scene.updateContainer();
 
   for (let col = updateColStart; col <= updateColEnd; col++) {

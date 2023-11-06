@@ -52,6 +52,10 @@ export const menus = [
       },
       {
         path: 'list',
+        name: 'list-more-columns'
+      },
+      {
+        path: 'list',
         name: 'list-no-columns'
       }
     ]
@@ -151,6 +155,10 @@ export const menus = [
       {
         path: 'pivot-chart',
         name: 'pivot-chart-event'
+      },
+      {
+        path: 'pivot-chart',
+        name: 'pivotChart-aeolus-large-column'
       }
     ]
   },

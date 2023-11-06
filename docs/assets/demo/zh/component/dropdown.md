@@ -220,8 +220,8 @@ tableInstance.on('click_cell', (args) => {
       });
         }
     });
-  tableInstance.on('dropdownmenu_click', (args) => {
-    console.log('dropdownmenu_click',args);
+  tableInstance.on('dropdown_menu_click', (args) => {
+    console.log('dropdown_menu_click',args);
     tableInstance.setDropDownMenuHighlight([args]);
   })
 })

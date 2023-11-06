@@ -552,7 +552,7 @@ export class SimpleHeaderLayoutMap implements LayoutMapAPI {
       range1.end.row === range2.end.row
     );
   }
-  getRecordIndexByRow(col: number, row: number): number {
+  getRecordIndexByCell(col: number, row: number): number {
     if (this.transpose) {
       if (col < this.headerLevelCount) {
         return -1;
@@ -593,6 +593,7 @@ export class SimpleHeaderLayoutMap implements LayoutMapAPI {
         columnWidthComputeMode: hd.columnWidthComputeMode
         // iconPositionList:[]
       };
+
       results[id] = cell;
       for (let r = row - 1; r >= 0; r--) {
         this._headerCellIds[r][col] = roots[r];
@@ -696,6 +697,9 @@ export class SimpleHeaderLayoutMap implements LayoutMapAPI {
    * @returns boolean 是否可以移动
    */
   canMoveHeaderPosition(source: CellAddress, target: CellAddress): boolean {
+    if (source.col < 0 || source.row < 0 || target.col < 0 || target.row < 0) {
+      return false;
+    }
     // 获取操作单元格的range范围
     const sourceCellRange = this.getCellRange(source.col, source.row);
     // 获取source和target对应sourceCellRange.start.row的headerId

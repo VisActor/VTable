@@ -50,7 +50,7 @@ export class MenuContainer {
         : table.getHeaderField(col, row);
 
       const highlight = table._dropDownMenuIsHighlight(col, row, dropDownIndex);
-      table.fireListeners(TABLE_EVENT_TYPE.DROPDOWNMENU_CLICK, {
+      table.fireListeners(TABLE_EVENT_TYPE.DROPDOWN_MENU_CLICK, {
         col,
         row,
         field: <string>field,

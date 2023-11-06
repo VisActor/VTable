@@ -329,9 +329,10 @@ export interface BaseTableConstructorOptions {
 
   legends?: ITableLegendOption;
   title?: ITitle;
-  //是否开启图表异步渲染
+
+  /** 是否开启图表异步渲染 */
   renderChartAsync?: boolean;
-  // 开启图表异步渲染 每批次渐进渲染图表个数
+  /** 开启图表异步渲染 每批次渐进渲染图表个数  默认是5个 */
   renderChartAsyncBatchCount?: number;
 
   customMergeCell?: CustomMergeCell;
@@ -457,6 +458,8 @@ export interface BaseTableAPI {
   setRowHeight: (row: number, height: number, clearCache?: boolean) => void;
   getColWidth: (col: number) => number;
   getColWidthDefined: (col: number) => string | number;
+  // setColWidthDefined: (col: number, width: number) => void;
+  getColWidthDefinedNumber: (col: number) => number;
   // getColWidthDefine: (col: number) => string | number;
   setColWidth: (col: number, width: number | string, clearCache?: boolean, skipCheckFrozen?: boolean) => void;
   _getColContentWidth: (col: number) => number;
@@ -498,8 +501,31 @@ export interface BaseTableAPI {
 
   off: (id: EventListenerId) => void;
   getBodyField: (col: number, row: number) => FieldDef | undefined;
-  getRecordByRowCol: (col: number, row: number) => MaybePromiseOrUndefined;
-  getRecordIndexByRow: (col: number, row: number) => number;
+  /**
+   * 根据单元格获取对应的源数据
+   * @param col
+   * @param row
+   * @returns
+   */
+  getRecordByCell: (col: number, row: number) => MaybePromiseOrUndefined;
+  /**
+   * 根据数据源的index 获取显示到表格中的index 行号或者列号（与转置相关）。注：ListTable特有接口
+   * @param recordIndex
+   */
+  getTableIndexByRecordIndex: (recordIndex: number) => number;
+  /**
+   * 根据数据源的field 获取显示到表格中的index 行号或者列号（与转置相关）。注：ListTable特有接口
+   * @param recordIndex
+   */
+  getTableIndexByField: (field: FieldDef) => number;
+  /**
+   * 根据数据源中的index和field获取单元格行列号。注：ListTable特有接口
+   * @param field
+   * @param recordIndex
+   * @returns
+   */
+  getCellAddrByFieldRecord: (field: FieldDef, recordIndex: number) => CellAddress;
+  getRecordIndexByCell: (col: number, row: number) => number;
   getRecordStartRowByRecordIndex: (index: number) => number;
 
   getHeaderField: (col: number, row: number) => any | undefined;

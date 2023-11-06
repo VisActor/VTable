@@ -166,7 +166,7 @@
         {
           "path": "checkbox",
           "title": {
-            "zh": "选择框",
+            "zh": "复选框",
             "en": "checkbox"
           }
         },
@@ -355,6 +355,13 @@
           "title": {
             "zh": "数据格式",
             "en": "data_format"
+          }
+        },
+        {
+          "path": "async_data",
+          "title": {
+            "zh": "异步加载数据",
+            "en": "async load data"
           }
         }
       ]

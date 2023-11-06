@@ -1,15 +1,38 @@
+import type { Group } from '../../../graphic/group';
 import { computeRowsHeight } from '../../../layout/compute-row-height';
 import type { SceneProxy } from '../proxy';
 import { updateRowContent } from './dynamic-set-y';
 import { updateAutoRow } from './update-auto-row';
 
 export async function sortVertical(proxy: SceneProxy) {
-  for (let col = proxy.bodyLeftCol; col <= proxy.bodyRightCol; col++) {
-    for (let row = proxy.rowStart; row <= proxy.rowEnd; row++) {
-      // const cellGroup = proxy.table.scenegraph.getCell(col, row);
-      const cellGroup = proxy.highPerformanceGetCell(col, row);
+  // for (let col = proxy.bodyLeftCol; col <= proxy.bodyRightCol; col++) {
+  //   for (let row = proxy.rowStart; row <= proxy.rowEnd; row++) {
+  //     // const cellGroup = proxy.table.scenegraph.getCell(col, row);
+  //     const cellGroup = proxy.highPerformanceGetCell(col, row);
+  //     cellGroup.needUpdate = true;
+  //   }
+  // }
+
+  // row header group
+  for (let col = 0; col < proxy.table.frozenColCount; col++) {
+    const colGroup = proxy.table.scenegraph.getColGroup(col);
+    colGroup?.forEachChildren((cellGroup: Group, index) => {
       cellGroup.needUpdate = true;
-    }
+    });
+  }
+  // right frozen group
+  for (let col = proxy.table.colCount - proxy.table.rightFrozenColCount; col < proxy.table.colCount; col++) {
+    const colGroup = proxy.table.scenegraph.getColGroup(col);
+    colGroup?.forEachChildren((cellGroup: Group, index) => {
+      cellGroup.needUpdate = true;
+    });
+  }
+  // body group
+  for (let col = proxy.bodyLeftCol; col <= proxy.bodyRightCol; col++) {
+    const colGroup = proxy.table.scenegraph.getColGroup(col);
+    colGroup?.forEachChildren((cellGroup: Group, index) => {
+      cellGroup.needUpdate = true;
+    });
   }
 
   // 更新同步范围

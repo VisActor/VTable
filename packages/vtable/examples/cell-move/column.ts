@@ -1,4 +1,5 @@
 import * as VTable from '../../src';
+import { bindDebugTool } from '../../src/scenegraph/debug-tool';
 const ListTable = VTable.ListTable;
 const CONTAINER_ID = 'vTable';
 
@@ -219,11 +220,11 @@ export function createTable() {
 
   const instance = new ListTable(option);
 
-  const { MOUSELEAVE_TABLE } = VTable.ListTable.EVENT_TYPE;
+  const { CHANGE_HEADER_POSITION } = VTable.ListTable.EVENT_TYPE;
 
-  instance.on(MOUSELEAVE_TABLE, (...args) => console.log(MOUSELEAVE_TABLE, args));
+  instance.on(CHANGE_HEADER_POSITION, (...args) => console.log(CHANGE_HEADER_POSITION, args));
 
-  VTable.bindDebugTool(instance.scenegraph.stage as any, {
+  bindDebugTool(instance.scenegraph.stage as any, {
     customGrapicKeys: ['role', '_updateTag']
   });
 

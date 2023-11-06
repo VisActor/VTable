@@ -1,6 +1,6 @@
 {
   "name": "@visactor/vtable",
-  "version": "0.12.2",
+  "version": "0.13.3",
   "description": "canvas table width high performance",
   "keywords": [
     "grid",
@@ -49,16 +49,16 @@
     "test-nodejs": "ts-node --transpileOnly --skipProject ./nodejs/index.ts"
   },
   "dependencies": {
-    "@visactor/vrender": "0.16.2",
-    "@visactor/vrender-components": "0.16.2",
+    "@visactor/vrender": "0.16.11",
+    "@visactor/vrender-components": "0.16.11",
     "@visactor/vutils-extension": "1.5.1-alpha.0",
-    "@visactor/vutils": "0.16.1",
+    "@visactor/vutils": "0.16.6",
     "@visactor/vscale": "0.16.0",
     "@visactor/vdataset": "~0.15.7",
     "cssfontparser": "^1.2.1"
   },
   "devDependencies": {
-    "@visactor/vchart": "1.5.2",
+    "@visactor/vchart": "1.5.3",
     "@internal/bundler": "workspace:*",
     "@internal/eslint-config": "workspace:*",
     "@internal/ts-config": "workspace:*",
@@ -105,7 +105,6 @@
     "d3-geo": "^3.0.1",
     "d3-hexbin": "^0.2.2",
     "d3-hierarchy": "^3.1.1",
-    "canvas": "^2.11.2",
     "@resvg/resvg-js": "^2.5.0"
   },
   "unpkg": "latest",

@@ -167,7 +167,11 @@ export function bindTableGroupListener(eventManeger: EventManeger) {
     const eventArgsSet = getCellEventArgsSet(e);
     const cellGoup = eventArgsSet?.eventArgs?.target as unknown as Group;
     // console.log('pointerover', cellGoup);
-    if ((table as any).hasListeners(TABLE_EVENT_TYPE.MOUSEOVER_CHART_SYMBOL) && cellGoup.type === 'symbol') {
+    if (
+      cellGoup &&
+      (table as any).hasListeners(TABLE_EVENT_TYPE.MOUSEOVER_CHART_SYMBOL) &&
+      cellGoup.type === 'symbol'
+    ) {
       const cellGroup = e.composedPath().find(p => (p as any).roll === 'cell');
       if (cellGroup) {
         const { col, row } = cellGroup as unknown as Group;
@@ -251,13 +255,53 @@ export function bindTableGroupListener(eventManeger: EventManeger) {
   });
 
   table.scenegraph.tableGroup.addEventListener('pointerupoutside', (e: FederatedPointerEvent) => {
-    // pointerup中的逻辑 resize column size 当鼠标在外部松开也应该响应
+    // 同pointerup中的逻辑
     if (stateManeger.isResizeCol()) {
       endResizeCol(table);
+    } else if (stateManeger.isMoveCol()) {
+      table.stateManeger.endMoveCol();
+      if (
+        table.stateManeger.columnMove?.colSource !== -1 &&
+        table.stateManeger.columnMove?.rowSource !== -1 &&
+        table.stateManeger.columnMove?.colTarget !== -1 &&
+        table.stateManeger.columnMove?.rowTarget !== -1
+      ) {
+        // 下面触发CHANGE_HEADER_POSITION 区别于pointerup
+        if ((table as any).hasListeners(TABLE_EVENT_TYPE.CHANGE_HEADER_POSITION)) {
+          table.fireListeners(TABLE_EVENT_TYPE.CHANGE_HEADER_POSITION, {
+            target: { col: table.stateManeger.columnMove.colTarget, row: table.stateManeger.columnMove.rowTarget },
+            source: {
+              col: table.stateManeger.columnMove.colSource,
+              row: table.stateManeger.columnMove.rowSource //TODO row
+            }
+          });
+        }
+      }
+    } else if (stateManeger.isSelecting()) {
+      table.stateManeger.endSelectCells();
+      // 下面触发DRAG_SELECT_END 区别于pointerup
+      if (table.stateManeger.select?.ranges?.length) {
+        const lastCol = table.stateManeger.select.ranges[table.stateManeger.select.ranges.length - 1].end.col;
+        const lastRow = table.stateManeger.select.ranges[table.stateManeger.select.ranges.length - 1].end.row;
+
+        if ((table as any).hasListeners(TABLE_EVENT_TYPE.DRAG_SELECT_END)) {
+          const cellsEvent: MousePointerMultiCellEvent = {
+            event: e.nativeEvent,
+            cells: [],
+            col: lastCol,
+            row: lastRow,
+            scaleRatio: table.canvas.getBoundingClientRect().width / table.canvas.offsetWidth,
+            target: undefined
+          };
+          cellsEvent.cells = table.getSelectedCellInfos();
+          table.fireListeners(TABLE_EVENT_TYPE.DRAG_SELECT_END, cellsEvent);
+        }
+      }
     }
     stateManeger.updateInteractionState(InteractionState.default);
     eventManeger.dealTableHover();
-    eventManeger.dealTableSelect();
+    //点击到表格外部不需要取消选中状态
+    // eventManeger.dealTableSelect();
   });
 
   table.scenegraph.tableGroup.addEventListener('pointerdown', (e: FederatedPointerEvent) => {
@@ -369,8 +413,8 @@ export function bindTableGroupListener(eventManeger: EventManeger) {
       if (stateManeger.isResizeCol()) {
         endResizeCol(table);
       } else if (stateManeger.isMoveCol()) {
-        table.stateManeger.endMoveCol();
         const eventArgsSet: SceneEvent = getCellEventArgsSet(e);
+        table.stateManeger.endMoveCol();
         if (eventArgsSet.eventArgs && (table as any).hasListeners(TABLE_EVENT_TYPE.CHANGE_HEADER_POSITION)) {
           table.fireListeners(TABLE_EVENT_TYPE.CHANGE_HEADER_POSITION, {
             target: { col: eventArgsSet.eventArgs.col, row: eventArgsSet.eventArgs.row },
@@ -483,6 +527,7 @@ export function bindTableGroupListener(eventManeger: EventManeger) {
         if (eventManeger.touchSetTimeout) {
           clearTimeout(eventManeger.touchSetTimeout);
           eventManeger.dealTableSelect(eventArgsSet);
+          stateManeger.endSelectCells();
           eventManeger.touchSetTimeout = undefined;
         }
       }
@@ -585,6 +630,34 @@ export function bindTableGroupListener(eventManeger: EventManeger) {
       target: eventArgsSet?.eventArgs?.target,
       checked: (e.detail as unknown as { checked: boolean }).checked
     };
+
+    if (table.isHeader(col, row)) {
+      //点击的表头部分的checkbox 需要同时处理表头和body单元格的状态
+      table.stateManeger.setHeaderCheckedState(
+        cellInfo.field as string | number,
+        (e.detail as unknown as { checked: boolean }).checked
+      );
+      const define = table.getBodyColumnDefine(col, row);
+      if (define.cellType === 'checkbox') {
+        table.scenegraph.updateCheckboxCellState(col, row, (e.detail as unknown as { checked: boolean }).checked);
+      }
+    } else {
+      //点击的是body单元格的checkbox  处理本单元格的状态维护 同时需要检查表头是否改变状态
+      table.stateManeger.setCheckedState(
+        col,
+        row,
+        cellInfo.field as string | number,
+        (e.detail as unknown as { checked: boolean }).checked
+      );
+      const define = table.getBodyColumnDefine(col, row);
+      if (define.headerType === 'checkbox') {
+        const oldHeaderCheckedState = table.stateManeger.headerCheckedState[cellInfo.field as string | number];
+        const newHeaderCheckedState = table.stateManeger.updateHeaderCheckedState(cellInfo.field as string | number);
+        if (oldHeaderCheckedState !== newHeaderCheckedState) {
+          table.scenegraph.updateHeaderCheckboxCellState(col, row, newHeaderCheckedState);
+        }
+      }
+    }
     table.fireListeners(TABLE_EVENT_TYPE.CHECKBOX_STATE_CHANGE, cellsEvent);
   });
 }

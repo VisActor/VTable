@@ -56,7 +56,7 @@ export interface HeaderData extends WidthData {
   fieldKey?: FieldKeyDef;
   fieldFormat?: FieldFormat;
   style?: HeaderStyleOption | ColumnStyle | null | undefined;
-  headerType: 'text' | 'link' | 'image' | 'video'; // headerType.BaseHeader;
+  headerType: 'text' | 'link' | 'image' | 'video' | 'checkbox'; // headerType.BaseHeader;
   define: ColumnDefine;
   // sortIconPosition?: RectProps;
   // freezeIconPosition?: RectProps;
@@ -234,7 +234,7 @@ interface LayoutMapAPI {
   // getBodyLayoutRangeById: (id: LayoutObjectId) => CellRange;
   getHeaderCellAdressById: (id: number) => CellAddress | undefined;
   getHeaderCellAddressByField: (field: string) => CellAddress | undefined;
-  getRecordIndexByRow: (col: number, row: number) => number;
+  getRecordIndexByCell: (col: number, row: number) => number;
   getRecordStartRowByRecordIndex: (index: number) => number;
   /** 从定义中获取一列配置项width的定义值 */
   getColumnWidthDefined: (col: number) => WidthData;

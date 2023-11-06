@@ -1022,6 +1022,17 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     return this.defaultColWidth;
   }
 
+  // setColWidthDefined(col: number, width: number) {
+  //   const { layoutMap } = this.internalProps;
+  //   const widthData = layoutMap?.getColumnWidthDefined(col) ?? {};
+  //   widthData.width = width;
+  // }
+
+  getColWidthDefinedNumber(col: number): number {
+    const width = this.getColWidthDefined(col);
+    return this._adjustColWidth(col, this._colWidthDefineToPxWidth(width));
+  }
+
   /**
    * 根据列号获取列宽定义
    * @param {number} col column number
@@ -1407,7 +1418,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     col: boolean;
   } | null {
     const isFrozenRow = this.isFrozenRow(row) || this.isBottomFrozenRow(row);
-    const isFrozenCol = this.isFrozenRow(col) || this.isRightFrozenColumn(col);
+    const isFrozenCol = this.isFrozenColumn(col) || this.isRightFrozenColumn(col);
     if (isFrozenRow || isFrozenCol) {
       return {
         row: isFrozenRow,
@@ -2243,10 +2254,14 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
   abstract moveHeaderPosition(source: CellAddress, target: CellAddress): boolean;
   /** @private */
   abstract getFieldData(field: FieldDef | FieldFormat | undefined, col: number, row: number): FieldData;
-  abstract getRecordIndexByRow(col: number, row: number): number;
+  abstract getRecordIndexByCell(col: number, row: number): number;
   abstract getCellOriginRecord(col: number, row: number): MaybePromiseOrUndefined;
   abstract getCellValue(col: number, row: number): FieldData;
   abstract getCellOriginValue(col: number, row: number): FieldData;
+
+  abstract getTableIndexByRecordIndex(recordIndex: number): number;
+  abstract getTableIndexByField(field: FieldDef): number;
+  abstract getCellAddrByFieldRecord(field: FieldDef, recordIndex: number): CellAddress;
   /**
    * 更新页码
    * @param pagination 要修改页码的信息
@@ -2441,11 +2456,15 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
    * @param  {number} row row index.
    * @return {object} record.
    */
-  getRecordByRowCol(col: number, row: number): MaybePromiseOrUndefined {
+  getRecordByCell(col: number, row: number): MaybePromiseOrUndefined {
     if (this.internalProps.layoutMap.isHeader(col, row)) {
       return undefined;
     }
-    return this.internalProps.dataSource?.get(this.getRecordIndexByRow(col, row));
+    return this.internalProps.dataSource?.get(this.getRecordIndexByCell(col, row));
+  }
+  /** @deprecated 请使用getRecordByCell */
+  getRecordByRowCol(col: number, row: number) {
+    return this.getRecordByCell(col, row);
   }
 
   /**
@@ -2603,7 +2622,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     } else {
       _setRecords(this, records);
     }
-
+    this.stateManeger.initCheckedState(records);
     this.internalProps.frozenColCount = this.options.frozenColCount || this.rowHeaderLevelCount;
     // 生成单元格场景树
     this.scenegraph.createSceneGraph();
@@ -2623,7 +2642,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
    * @param row row position of the record, it is optional
    */
   setRecord(record: any, col?: number, row?: number) {
-    const index = this.getRecordIndexByRow(col, row);
+    const index = this.getRecordIndexByCell(col, row);
     this.dataSource.setRecord(record, index);
   }
 
@@ -2732,7 +2751,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     if (table.internalProps.layoutMap.isHeader(col, row)) {
       return false;
     }
-    const index = table.getRecordIndexByRow(col, row);
+    const index = table.getRecordIndexByCell(col, row);
     return table.internalProps.dataSource.hasField(index, field);
   }
   /**
@@ -3112,7 +3131,10 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
   }
 
   /**获取选中区域的内容 作为复制内容 */
-  getCopyValue(): string {
+  getCopyValue(): string | null {
+    if (!this.stateManeger.select?.ranges) {
+      return null;
+    }
     const ranges = this.stateManeger.select.ranges;
     let minCol = Math.min(ranges[0].start.col, ranges[0].end.col);
     let maxCol = Math.max(ranges[0].start.col, ranges[0].end.col);
@@ -3216,8 +3238,15 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
   }
 
   /**获取选中区域的每个单元格详情 */
-  getSelectedCellInfos(): CellInfo[][] {
+  getSelectedCellInfos(): CellInfo[][] | null {
+    if (!this.stateManeger.select?.ranges) {
+      return null;
+    }
+
     const ranges = this.stateManeger.select.ranges;
+    if (!ranges.length) {
+      return [];
+    }
     let minCol = Math.min(ranges[0].start.col, ranges[0].end.col);
     let maxCol = Math.max(ranges[0].start.col, ranges[0].end.col);
     let minRow = Math.min(ranges[0].start.row, ranges[0].end.row);

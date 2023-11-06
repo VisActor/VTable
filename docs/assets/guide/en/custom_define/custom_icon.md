@@ -214,4 +214,16 @@ The list of resettable internal icons is as follows:
 | Drop-down menu | VTable. TYPES. IconFuncTypeEnum.dropDown | "downward" | Drop-down icon normal status |
 | dropdown menu | VTable. TYPES. IconFuncTypeEnum.dropDown | "downward\_hover" | dropdown icon hover status |
 
+**It should be noted**: The built-in charts in the list have their own special functions and can be reset, but they cannot be used in the definition of headerIcon or icon! The following incorrect usage:
+```
+  columns: [
+    {
+      field: 'Sales',
+      title: 'Sales',
+      width: 'auto',
+      sort: true,
+      headerIcon: 'expand' // expand is an internal keyword. If you need to use it, please register other names to replace headerIcon.
+    },
+  ]
+```
 At this point, the tutorial on how to use icons in VTable, register and replace function icons is all introduced. I hope this tutorial can help you better understand and use VTable, and create a more beautiful and practical data lake visualization table

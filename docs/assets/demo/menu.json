@@ -23,6 +23,13 @@
             "link": "",
             "option": ""
           }
+        },
+        {
+          "path": "async-data",
+          "title": {
+            "zh": "异步加载数据源",
+            "en": "async load data"
+          }
         }
       ]
     },
@@ -221,7 +228,7 @@
         {
           "path": "checkbox",
           "title": {
-            "zh": "选择框类型",
+            "zh": "复选框类型",
             "en": "Checkbox Type"
           },
           "meta": {
@@ -1055,6 +1062,13 @@
             "cover": "https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/trend.png",
             "link": "",
             "option": ""
+          }
+        },
+        {
+          "path": "information",
+          "title": {
+            "zh": "信息查询系统",
+            "en": "Information preview"
           }
         }
       ]

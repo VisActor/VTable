@@ -1,6 +1,74 @@
 # Change Log - @visactor/vtable
 
-This log was last generated on Wed, 18 Oct 2023 11:47:45 GMT and should not be manually modified.
+This log was last generated on Fri, 03 Nov 2023 10:46:41 GMT and should not be manually modified.
+
+## 0.13.3
+Fri, 03 Nov 2023 10:46:41 GMT
+
+### Patches
+
+- fix: fix frozen shadow update in tree mode #525
+
+
+
+## 0.13.2
+Fri, 03 Nov 2023 09:55:11 GMT
+
+### Patches
+
+- fix: getCellByCache maximum call stack size exceeded
+
+
+- refactor: save select when click outside table #478
+
+
+- fix: event trigger selected_cell drag_select_end change_header_position
+
+
+- fix: axis label sort not right #503
+
+
+- fix: over 100 columns after init scroll right now columns attribute Xvalue error #506
+
+
+- feat: add decode for react jsx customLayout
+
+## 0.13.1
+Fri, 27 Oct 2023 13:15:39 GMT
+
+### Patches
+
+- fix: stack default value is true
+
+
+
+## 0.13.0
+Wed, 25 Oct 2023 06:11:44 GMT
+
+### Minor changes
+
+- feat: add option headerSelectMode
+
+
+
+### Patches
+
+- feat: add initialized event #301
+
+
+- docs: add event api
+
+
+- fix: when use customlayout function, after resize col width the row height changed #427
+
+
+- fix: fix resize compute col width logic #432
+
+
+- fix: [Bug] set records blank scroll error #458
+
+
+- feat: add checkbox cell type
 
 ## 0.12.2
 Wed, 18 Oct 2023 11:47:45 GMT
