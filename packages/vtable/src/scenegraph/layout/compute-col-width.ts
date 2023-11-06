@@ -389,10 +389,10 @@ function computeCustomRenderWidth(col: number, row: number, table: BaseTableAPI)
       if (customLayoutObj.rootContainer instanceof VGroup) {
         width = (customLayoutObj.rootContainer as VGroup).AABBBounds.width() ?? 0;
         // width = (customLayoutObj.rootContainer as VGroup).attribute.width ?? 0;
-      } else if (customLayoutObj.rootContainer) {
-        customLayoutObj.rootContainer.isRoot = true;
-        const size = customLayoutObj.rootContainer.getContentSize();
-        width = size.width ?? 0;
+        // } else if (customLayoutObj.rootContainer) {
+        //   customLayoutObj.rootContainer.isRoot = true;
+        //   const size = customLayoutObj.rootContainer.getContentSize();
+        //   width = size.width ?? 0;
       } else {
         width = 0;
       }
