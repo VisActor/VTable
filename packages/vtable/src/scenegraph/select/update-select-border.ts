@@ -1,18 +1,18 @@
 import type { IRect } from '@visactor/vrender';
 import type { Scenegraph } from '../scenegraph';
-import type { CellLocation } from '../../ts-types';
+import type { CellSubLocation } from '../../ts-types';
 import { getCellMergeInfo } from '../utils/get-cell-merge';
 
 export function updateAllSelectComponent(scene: Scenegraph) {
-  scene.selectingRangeComponents.forEach((selectComp: { rect: IRect; role: CellLocation }, key: string) => {
+  scene.selectingRangeComponents.forEach((selectComp: { rect: IRect; role: CellSubLocation }, key: string) => {
     updateComponent(selectComp, key, scene);
   });
-  scene.selectedRangeComponents.forEach((selectComp: { rect: IRect; role: CellLocation }, key: string) => {
+  scene.selectedRangeComponents.forEach((selectComp: { rect: IRect; role: CellSubLocation }, key: string) => {
     updateComponent(selectComp, key, scene);
   });
 }
 
-function updateComponent(selectComp: { rect: IRect; role: CellLocation }, key: string, scene: Scenegraph) {
+function updateComponent(selectComp: { rect: IRect; role: CellSubLocation }, key: string, scene: Scenegraph) {
   const [startColStr, startRowStr, endColStr, endRowStr] = key.split('-');
   const startCol = parseInt(startColStr, 10);
   const startRow = parseInt(startRowStr, 10);
@@ -53,30 +53,70 @@ function updateComponent(selectComp: { rect: IRect; role: CellLocation }, key: s
   const isNearRowHeader =
     // scene.table.scrollLeft === 0 &&
     startCol === scene.table.frozenColCount;
+  const isNearRightRowHeader =
+    // scene.table.scrollLeft === 0 &&
+    endCol === scene.table.colCount - scene.table.rightFrozenColCount - 1;
   const isNearColHeader =
     // scene.table.scrollTop === 0 &&
     startRow === scene.table.frozenRowCount;
+  const isNearBottomColHeader =
+    // scene.table.scrollTop === 0 &&
+    endRow === scene.table.rowCount - scene.table.bottomFrozenRowCount - 1;
   if (
     (isNearRowHeader && selectComp.rect.attribute.stroke[3]) ||
-    (isNearColHeader && selectComp.rect.attribute.stroke[0])
+    (isNearRightRowHeader && selectComp.rect.attribute.stroke[1]) ||
+    (isNearColHeader && selectComp.rect.attribute.stroke[0]) ||
+    (isNearBottomColHeader && selectComp.rect.attribute.stroke[2])
   ) {
-    if (isNearRowHeader) {
+    if (isNearRowHeader && selectComp.rect.attribute.stroke[3]) {
       scene.tableGroup.insertAfter(
         selectComp.rect,
-        selectComp.role === 'columnHeader' ? scene.cornerHeaderGroup : scene.rowHeaderGroup
+        selectComp.role === 'columnHeader'
+          ? scene.cornerHeaderGroup
+          : selectComp.role === 'bottomFrozen'
+          ? scene.leftBottomCornerGroup
+          : scene.rowHeaderGroup
       );
     }
-    if (isNearColHeader) {
+
+    if (isNearBottomColHeader && selectComp.rect.attribute.stroke[2]) {
       scene.tableGroup.insertAfter(
         selectComp.rect,
-        selectComp.role === 'rowHeader' ? scene.cornerHeaderGroup : scene.colHeaderGroup
+        selectComp.role === 'rowHeader'
+          ? scene.leftBottomCornerGroup
+          : selectComp.role === 'rightFrozen'
+          ? scene.rightBottomCornerGroup
+          : scene.bottomFrozenGroup
       );
     }
+
+    if (isNearColHeader && selectComp.rect.attribute.stroke[0]) {
+      scene.tableGroup.insertAfter(
+        selectComp.rect,
+        selectComp.role === 'rowHeader'
+          ? scene.cornerHeaderGroup
+          : selectComp.role === 'rightFrozen'
+          ? scene.rightTopCornerGroup
+          : scene.colHeaderGroup
+      );
+    }
+    if (isNearRightRowHeader && selectComp.rect.attribute.stroke[1]) {
+      scene.tableGroup.insertAfter(
+        selectComp.rect,
+        selectComp.role === 'columnHeader'
+          ? scene.rightTopCornerGroup
+          : selectComp.role === 'bottomFrozen'
+          ? scene.rightBottomCornerGroup
+          : scene.rightFrozenGroup
+      );
+    }
+
     //#region 调整层级后 滚动情况下会出现绘制范围出界 如body的选中框 渲染在了rowheader上面，所有需要调整选中框rect的 边界
     if (
       selectComp.rect.attribute.x < scene.rowHeaderGroup.attribute.width &&
+      // selectComp.rect.attribute.x + selectComp.rect.attribute.width > scene.rowHeaderGroup.attribute.width &&
       scene.table.scrollLeft > 0 &&
-      (selectComp.role === 'body' || selectComp.role === 'columnHeader')
+      (selectComp.role === 'body' || selectComp.role === 'columnHeader' || selectComp.role === 'bottomFrozen')
     ) {
       selectComp.rect.setAttributes({
         x: selectComp.rect.attribute.x + (scene.rowHeaderGroup.attribute.width - selectComp.rect.attribute.x),
@@ -84,13 +124,32 @@ function updateComponent(selectComp: { rect: IRect; role: CellLocation }, key: s
       });
     }
     if (
+      // selectComp.rect.attribute.x < scene.rightFrozenGroup.attribute.x &&
+      selectComp.rect.attribute.x + selectComp.rect.attribute.width > scene.rightFrozenGroup.attribute.x &&
+      (selectComp.role === 'body' || selectComp.role === 'columnHeader' || selectComp.role === 'bottomFrozen')
+    ) {
+      selectComp.rect.setAttributes({
+        x: selectComp.rect.attribute.x,
+        width: scene.rightFrozenGroup.attribute.x - selectComp.rect.attribute.x
+      });
+    }
+    if (
       selectComp.rect.attribute.y < scene.colHeaderGroup.attribute.height &&
       scene.table.scrollTop > 0 &&
-      (selectComp.role === 'body' || selectComp.role === 'rowHeader')
+      (selectComp.role === 'body' || selectComp.role === 'rowHeader' || selectComp.role === 'rightFrozen')
     ) {
       selectComp.rect.setAttributes({
         y: selectComp.rect.attribute.y + (scene.colHeaderGroup.attribute.height - selectComp.rect.attribute.y),
         height: selectComp.rect.attribute.height - (scene.colHeaderGroup.attribute.height - selectComp.rect.attribute.y)
+      });
+    }
+    if (
+      selectComp.rect.attribute.y + selectComp.rect.attribute.height > scene.bottomFrozenGroup.attribute.y &&
+      (selectComp.role === 'body' || selectComp.role === 'rowHeader' || selectComp.role === 'rightFrozen')
+    ) {
+      selectComp.rect.setAttributes({
+        y: selectComp.rect.attribute.y,
+        height: scene.bottomFrozenGroup.attribute.y - selectComp.rect.attribute.y
       });
     }
     //#endregion
@@ -103,7 +162,17 @@ function updateComponent(selectComp: { rect: IRect; role: CellLocation }, key: s
         ? scene.colHeaderGroup
         : selectComp.role === 'rowHeader'
         ? scene.rowHeaderGroup
-        : scene.cornerHeaderGroup
+        : selectComp.role === 'cornerHeader'
+        ? scene.cornerHeaderGroup
+        : selectComp.role === 'rightTopCorner'
+        ? scene.rightTopCornerGroup
+        : selectComp.role === 'rightFrozen'
+        ? scene.rightFrozenGroup
+        : selectComp.role === 'leftBottomCorner'
+        ? scene.leftBottomCornerGroup
+        : selectComp.role === 'bottomFrozen'
+        ? scene.bottomFrozenGroup
+        : scene.rightBottomCornerGroup
     );
   }
   //#endregion
@@ -183,25 +252,73 @@ export function updateCellSelectBorder(
   };
   extendSelectRange();
   //#endregion
-  scene.selectingRangeComponents.forEach((selectComp: { rect: IRect; role: CellLocation }, key: string) => {
+  scene.selectingRangeComponents.forEach((selectComp: { rect: IRect; role: CellSubLocation }, key: string) => {
     selectComp.rect.delete();
   });
   scene.selectingRangeComponents = new Map();
 
   let needRowHeader = false;
+  let needRightRowHeader = false; // 右侧冻结
   let needColumnHeader = false;
+  let needBottomColumnHeader = false; // 底部冻结
   let needBody = false;
   let needCornerHeader = false;
+  let needRightTopCornerHeader = false;
+  let needRightBottomCornerHeader = false;
+  let needLeftBottomCornerHeader = false;
   if (startCol <= scene.table.frozenColCount - 1 && startRow <= scene.table.frozenRowCount - 1) {
     needCornerHeader = true;
   }
-  if (startCol <= scene.table.frozenColCount - 1 && endRow >= scene.table.frozenRowCount) {
+  if (endCol >= scene.table.colCount - scene.table.rightFrozenColCount && startRow <= scene.table.frozenRowCount - 1) {
+    needRightTopCornerHeader = true;
+  }
+
+  if (startCol <= scene.table.frozenColCount - 1 && endRow >= scene.table.rowCount - scene.table.bottomFrozenRowCount) {
+    needLeftBottomCornerHeader = true;
+  }
+
+  if (
+    endCol >= scene.table.colCount - scene.table.rightFrozenColCount &&
+    endRow >= scene.table.rowCount - scene.table.bottomFrozenRowCount
+  ) {
+    needRightBottomCornerHeader = true;
+  }
+
+  if (
+    startCol <= scene.table.frozenColCount - 1 &&
+    endRow >= scene.table.frozenRowCount &&
+    startRow <= scene.table.rowCount - scene.table.bottomFrozenRowCount - 1
+  ) {
     needRowHeader = true;
   }
-  if (startRow <= scene.table.frozenRowCount - 1 && endCol >= scene.table.frozenColCount) {
+  if (
+    endCol >= scene.table.colCount - scene.table.rightFrozenColCount &&
+    endRow >= scene.table.frozenRowCount &&
+    startRow <= scene.table.rowCount - scene.table.bottomFrozenRowCount - 1
+  ) {
+    needRightRowHeader = true;
+  }
+
+  if (
+    startRow <= scene.table.frozenRowCount - 1 &&
+    endCol >= scene.table.frozenColCount &&
+    startCol <= scene.table.colCount - scene.table.rightFrozenColCount - 1
+  ) {
     needColumnHeader = true;
   }
-  if (endCol >= scene.table.frozenColCount && endRow >= scene.table.frozenRowCount) {
+  if (
+    endRow >= scene.table.rowCount - scene.table.bottomFrozenRowCount &&
+    endCol >= scene.table.frozenColCount &&
+    startCol <= scene.table.colCount - scene.table.rightFrozenColCount - 1
+  ) {
+    needBottomColumnHeader = true;
+  }
+  if (
+    startCol <= scene.table.colCount - scene.table.rightFrozenColCount - 1 &&
+    endCol >= scene.table.frozenColCount &&
+    startRow <= scene.table.rowCount - scene.table.bottomFrozenRowCount - 1 &&
+    endRow >= scene.table.frozenRowCount
+  ) {
     needBody = true;
   }
 
@@ -220,30 +337,105 @@ export function updateCellSelectBorder(
       strokeArray
     );
   }
+  if (needRightTopCornerHeader) {
+    const cornerStartCol = Math.max(startCol, scene.table.colCount - scene.table.rightFrozenColCount);
+    const cornerEndRow = Math.min(endRow, scene.table.frozenRowCount - 1);
+    const strokeArray = [true, true, !needRightRowHeader, !needColumnHeader];
+    scene.createCellSelectBorder(
+      cornerStartCol,
+      startRow,
+      endCol,
+      cornerEndRow,
+      'rightTopCorner',
+      `${startCol}${startRow}${endCol}${endRow}`,
+      strokeArray
+    );
+  }
+
+  if (needLeftBottomCornerHeader) {
+    const cornerEndCol = Math.min(endCol, scene.table.frozenColCount - 1);
+    const cornerStartRow = Math.max(startRow, scene.table.rowCount - scene.table.bottomFrozenRowCount);
+    const strokeArray = [!needRowHeader, !needBottomColumnHeader, true, true];
+    scene.createCellSelectBorder(
+      startCol,
+      cornerStartRow,
+      cornerEndCol,
+      endRow,
+      'leftBottomCorner',
+      `${startCol}${startRow}${endCol}${endRow}`,
+      strokeArray
+    );
+  }
+  if (needRightBottomCornerHeader) {
+    const cornerStartCol = Math.max(startCol, scene.table.colCount - scene.table.rightFrozenColCount);
+    const cornerStartRow = Math.max(startRow, scene.table.rowCount - scene.table.bottomFrozenRowCount);
+    const strokeArray = [!needRightRowHeader, true, true, !needBottomColumnHeader];
+    scene.createCellSelectBorder(
+      cornerStartCol,
+      cornerStartRow,
+      endCol,
+      endRow,
+      'rightBottomCorner',
+      `${startCol}${startRow}${endCol}${endRow}`,
+      strokeArray
+    );
+  }
   if (needColumnHeader) {
     const columnHeaderStartCol = Math.max(startCol, scene.table.frozenColCount);
+    const columnHeaderEndCol = Math.min(endCol, scene.table.colCount - scene.table.rightFrozenColCount - 1);
     const columnHeaderEndRow = Math.min(endRow, scene.table.frozenRowCount - 1);
-    const strokeArray = [true, true, !needBody, !needCornerHeader];
+    const strokeArray = [true, !needRightTopCornerHeader, !needBody, !needCornerHeader];
     scene.createCellSelectBorder(
       columnHeaderStartCol,
       startRow,
-      endCol,
+      columnHeaderEndCol,
       columnHeaderEndRow,
       'columnHeader',
       `${startCol}${startRow}${endCol}${endRow}`,
       strokeArray
     );
   }
+  if (needBottomColumnHeader) {
+    const columnHeaderStartCol = Math.max(startCol, scene.table.frozenColCount);
+    const columnHeaderEndCol = Math.min(endCol, scene.table.colCount - scene.table.rightFrozenColCount - 1);
+    const columnHeaderStartRow = Math.max(startRow, scene.table.rowCount - scene.table.bottomFrozenRowCount);
+    const strokeArray = [!needBody, !needRightBottomCornerHeader, true, !needLeftBottomCornerHeader];
+    scene.createCellSelectBorder(
+      columnHeaderStartCol,
+      columnHeaderStartRow,
+      columnHeaderEndCol,
+      endRow,
+      'bottomFrozen',
+      `${startCol}${startRow}${endCol}${endRow}`,
+      strokeArray
+    );
+  }
   if (needRowHeader) {
     const columnHeaderStartRow = Math.max(startRow, scene.table.frozenRowCount);
+    const columnHeaderEndRow = Math.min(endRow, scene.table.rowCount - scene.table.bottomFrozenRowCount - 1);
     const columnHeaderEndCol = Math.min(endCol, scene.table.frozenColCount - 1);
-    const strokeArray = [!needCornerHeader, !needBody, true, true];
+    const strokeArray = [!needCornerHeader, !needBody, !needLeftBottomCornerHeader, true];
     scene.createCellSelectBorder(
       startCol,
       columnHeaderStartRow,
       columnHeaderEndCol,
-      endRow,
+      columnHeaderEndRow,
       'rowHeader',
+      `${startCol}${startRow}${endCol}${endRow}`,
+      strokeArray
+    );
+  }
+  if (needRightRowHeader) {
+    const columnHeaderStartRow = Math.max(startRow, scene.table.frozenRowCount);
+    const columnHeaderEndRow = Math.min(endRow, scene.table.rowCount - scene.table.bottomFrozenRowCount - 1);
+    const columnHeaderStartCol = Math.max(startCol, scene.table.colCount - scene.table.rightFrozenColCount);
+    const strokeArray = [!needRightTopCornerHeader, true, !needRightBottomCornerHeader, !needBody];
+    scene.createCellSelectBorder(
+      columnHeaderStartCol,
+      columnHeaderStartRow,
+      endCol,
+      columnHeaderEndRow,
+      'rightFrozen',
       `${startCol}${startRow}${endCol}${endRow}`,
       strokeArray
     );
@@ -251,12 +443,14 @@ export function updateCellSelectBorder(
   if (needBody) {
     const columnHeaderStartCol = Math.max(startCol, scene.table.frozenColCount);
     const columnHeaderStartRow = Math.max(startRow, scene.table.frozenRowCount);
-    const strokeArray = [!needColumnHeader, true, true, !needRowHeader];
+    const columnHeaderEndCol = Math.min(endCol, scene.table.colCount - scene.table.rightFrozenColCount - 1);
+    const columnHeaderEndRow = Math.min(endRow, scene.table.rowCount - scene.table.bottomFrozenRowCount - 1);
+    const strokeArray = [!needColumnHeader, !needRightRowHeader, !needBottomColumnHeader, !needRowHeader];
     scene.createCellSelectBorder(
       columnHeaderStartCol,
       columnHeaderStartRow,
-      endCol,
-      endRow,
+      columnHeaderEndCol,
+      columnHeaderEndRow,
       'body',
       `${startCol}${startRow}${endCol}${endRow}`,
       strokeArray

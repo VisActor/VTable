@@ -1,5 +1,6 @@
 import type { IStage, IRect, ITextCache, INode } from '@visactor/vrender';
 import { createStage, createRect, IContainPointMode, container, vglobal } from '@visactor/vrender';
+import type { CellSubLocation } from '../ts-types';
 import {
   type CellAddress,
   type CellLocation,
@@ -112,9 +113,9 @@ export class Scenegraph {
   rightBottomCornerGroup: Group; // 右下角占位单元格Group,只在有右侧下侧都有冻结行时使用
   componentGroup: Group; // 表格外组件Group
   /** 所有选中区域对应的选框组件 */
-  selectedRangeComponents: Map<string, { rect: IRect; role: CellLocation }>;
+  selectedRangeComponents: Map<string, { rect: IRect; role: CellSubLocation }>;
   /** 当前正在选择区域对应的选框组件 为什么是map 以为可能一个选中区域会被拆分为多个rect组件 三块表头和body都分别对应不同组件*/
-  selectingRangeComponents: Map<string, { rect: IRect; role: CellLocation }>;
+  selectingRangeComponents: Map<string, { rect: IRect; role: CellSubLocation }>;
   lastSelectId: string;
   component: TableComponent;
   stage: IStage;
@@ -432,7 +433,7 @@ export class Scenegraph {
       col >= this.table.colCount - this.table.rightFrozenColCount &&
       row < this.table.frozenRowCount
     ) {
-      cell = this.rightBottomCornerGroup.getColGroup(col)?.getRowGroup(row);
+      cell = this.rightTopCornerGroup.getColGroup(col)?.getRowGroup(row);
     } else if (
       this.table.bottomFrozenRowCount > 0 &&
       row >= this.table.rowCount - this.table.bottomFrozenRowCount &&
@@ -622,7 +623,7 @@ export class Scenegraph {
     start_Row: number,
     end_Col: number,
     end_Row: number,
-    selectRangeType: CellLocation,
+    selectRangeType: CellSubLocation,
     selectId: string, //整体区域${endRow}-${startCol}${startRow}${endCol}${endRow}作为其编号
     strokes?: boolean[]
   ) {
