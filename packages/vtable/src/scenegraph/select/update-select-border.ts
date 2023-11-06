@@ -125,6 +125,8 @@ function updateComponent(selectComp: { rect: IRect; role: CellSubLocation }, key
     }
     if (
       // selectComp.rect.attribute.x < scene.rightFrozenGroup.attribute.x &&
+      scene.rightFrozenGroup.attribute.width > 0 && // right冻结列存在的情况下
+      scene.rightFrozenGroup.attribute.height > 0 &&
       selectComp.rect.attribute.x + selectComp.rect.attribute.width > scene.rightFrozenGroup.attribute.x &&
       (selectComp.role === 'body' || selectComp.role === 'columnHeader' || selectComp.role === 'bottomFrozen')
     ) {
@@ -144,6 +146,8 @@ function updateComponent(selectComp: { rect: IRect; role: CellSubLocation }, key
       });
     }
     if (
+      scene.bottomFrozenGroup.attribute.width > 0 &&
+      scene.bottomFrozenGroup.attribute.height > 0 &&
       selectComp.rect.attribute.y + selectComp.rect.attribute.height > scene.bottomFrozenGroup.attribute.y &&
       (selectComp.role === 'body' || selectComp.role === 'rowHeader' || selectComp.role === 'rightFrozen')
     ) {
