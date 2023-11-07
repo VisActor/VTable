@@ -14,40 +14,69 @@ export function updateAllSelectComponent(scene: Scenegraph) {
 
 function updateComponent(selectComp: { rect: IRect; role: CellSubLocation }, key: string, scene: Scenegraph) {
   const [startColStr, startRowStr, endColStr, endRowStr] = key.split('-');
-  const startCol = parseInt(startColStr, 10);
-  const startRow = parseInt(startRowStr, 10);
-  const endCol = parseInt(endColStr, 10);
-  const endRow = parseInt(endRowStr, 10);
-  let cellsBounds;
-  for (let i = startCol; i <= endCol; i++) {
-    for (let j = startRow; j <= endRow; j++) {
-      const cellGroup = scene.highPerformanceGetCell(i, j);
-      if (cellGroup.role !== 'cell') {
-        continue;
-      }
-      cellGroup.AABBBounds.width(); // hack: globalAABBBounds可能不会自动更新，这里强制更新一下
-      const bounds = cellGroup.globalAABBBounds;
-      if (!cellsBounds) {
-        cellsBounds = bounds;
-      } else {
-        cellsBounds.union(bounds);
-      }
-    }
+  let startCol = parseInt(startColStr, 10);
+  let startRow = parseInt(startRowStr, 10);
+  let endCol = parseInt(endColStr, 10);
+  let endRow = parseInt(endRowStr, 10);
+  // const cellsBounds;
+  // 下面逻辑根据选中区域所属表格部分 来判断可视区域内容的选中单元格范围
+  let visibleCellRange;
+  switch (selectComp.role) {
+    case 'rowHeader':
+      visibleCellRange = scene.table.getBodyVisibleRowRange();
+      startRow = Math.max(startRow, visibleCellRange.rowStart);
+      endRow = Math.min(endRow, visibleCellRange.rowEnd);
+      break;
+    case 'columnHeader':
+      visibleCellRange = scene.table.getBodyVisibleCellRange();
+      startCol = Math.max(startCol, visibleCellRange.colStart);
+      endCol = Math.min(endCol, visibleCellRange.colEnd);
+      break;
+    case 'cornerHeader':
+      break;
+    case 'bottomFrozen':
+      visibleCellRange = scene.table.getBodyVisibleCellRange();
+      startCol = Math.max(startCol, visibleCellRange.colStart);
+      endCol = Math.min(endCol, visibleCellRange.colEnd);
+      break;
+    case 'rightFrozen':
+      visibleCellRange = scene.table.getBodyVisibleCellRange();
+      startRow = Math.max(startRow, visibleCellRange.rowStart);
+      endRow = Math.min(endRow, visibleCellRange.rowEnd);
+      break;
+    case 'rightTopCorner':
+      break;
+    case 'leftBottomCorner':
+      break;
+    case 'rightBottomCorner':
+      break;
+    default:
+      visibleCellRange = scene.table.getBodyVisibleCellRange();
+      startRow = Math.max(startRow, visibleCellRange.rowStart);
+      endRow = Math.min(endRow, visibleCellRange.rowEnd);
+      startCol = Math.max(startCol, visibleCellRange.colStart);
+      endCol = Math.min(endCol, visibleCellRange.colEnd);
+      break;
   }
-  if (!cellsBounds) {
-    // 选中区域在实际单元格区域外，不显示选择框
-    selectComp.rect.setAttributes({
-      visible: false
-    });
-  } else {
-    selectComp.rect.setAttributes({
-      x: cellsBounds.x1 - scene.tableGroup.attribute.x,
-      y: cellsBounds.y1 - scene.tableGroup.attribute.y,
-      width: cellsBounds.width(),
-      height: cellsBounds.height(),
-      visible: true
-    });
-  }
+
+  const colsWidth = scene.table.getColsWidth(startCol, endCol);
+  const rowsHeight = scene.table.getRowsHeight(startRow, endRow);
+
+  const firstCellBound = scene.highPerformanceGetCell(startCol, startRow).globalAABBBounds;
+  // if (!cellsBounds) {
+  //   // 选中区域在实际单元格区域外，不显示选择框
+  //   selectComp.rect.setAttributes({
+  //     visible: false
+  //   });
+  // } else {
+  selectComp.rect.setAttributes({
+    x: firstCellBound.x1 - scene.tableGroup.attribute.x, //坐标xy在下面的逻辑中会做适当调整
+    y: firstCellBound.y1 - scene.tableGroup.attribute.y,
+    width: colsWidth,
+    height: rowsHeight,
+    visible: true
+  });
+  // }
 
   //#region 判断是不是按着表头部分的选中框 因为绘制层级的原因 线宽会被遮住一半，因此需要动态调整层级
   const isNearRowHeader =
