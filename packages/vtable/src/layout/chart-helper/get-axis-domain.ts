@@ -51,7 +51,7 @@ export function getAxisDomainRangeAndLabels(
   }
   scale.domain([min, max], !!axisOption?.nice);
 
-  if (axisOption?.nice && !isZeroAlign) {
+  if (axisOption?.nice) {
     let tickCount = axisOption.tick?.forceTickCount ?? axisOption.tick?.tickCount ?? 10;
     if (isFunction(tickCount)) {
       tickCount = tickCount({
