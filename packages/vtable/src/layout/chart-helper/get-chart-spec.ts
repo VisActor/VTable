@@ -57,7 +57,15 @@ export function getChartAxes(col: number, row: number, layout: PivotHeaderLayout
         layout
       );
       if (isZeroAlign) {
-        const subAxisRange = getRange(col, row, index, index === 0 ? 'top' : 'bottom', indicatorKeys, colPath, layout);
+        const subAxisRange = getRange(
+          col,
+          row,
+          indicatorKeys.length - 1 - index,
+          index === 0 ? 'top' : 'bottom',
+          indicatorKeys,
+          colPath,
+          layout
+        );
 
         if (subAxisRange) {
           const { range: subRange } = subAxisRange;
@@ -83,7 +91,7 @@ export function getChartAxes(col: number, row: number, layout: PivotHeaderLayout
           axisOption,
           {
             type: axisOption?.type || 'linear',
-            orient: index === 0 ? 'top' : 'bottom',
+            orient: index === 0 ? 'bottom' : 'top',
             // visible: true,
             label: { visible: false },
             // label: { flush: true },

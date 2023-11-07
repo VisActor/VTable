@@ -778,6 +778,12 @@ export function createTable() {
                 tickMode: 'd3',
                 style: {
                   stroke: 'rgba(255, 255, 255, 0)'
+                },
+                tickCount: args => {
+                  const { axisLength, labelStyle } = args ?? {};
+                  const density = 0.2;
+                  const tickCount = Math.ceil((axisLength / ((labelStyle?.fontSize ?? 12) * 1.5)) * density);
+                  return tickCount < 2 ? 2 : tickCount;
                 }
               },
               niceType: 'accurateFirst',
@@ -842,9 +848,9 @@ export function createTable() {
                   }
                 }
               },
-              // "expand": {
-              //     "max": 0.027
-              // },
+              expand: {
+                max: 0.027
+              },
               zero: true,
               nice: true,
               seriesId: 'mainSeries'
@@ -857,6 +863,12 @@ export function createTable() {
                 tickMode: 'd3',
                 style: {
                   stroke: 'rgba(255, 255, 255, 0)'
+                },
+                tickCount: args => {
+                  const { axisLength, labelStyle } = args ?? {};
+                  const density = 0.2;
+                  const tickCount = Math.ceil((axisLength / ((labelStyle?.fontSize ?? 12) * 1.5)) * density);
+                  return tickCount < 2 ? 2 : tickCount;
                 }
               },
               niceType: 'accurateFirst',
@@ -921,9 +933,9 @@ export function createTable() {
                   }
                 }
               },
-              // "expand": {
-              //     "max": 0.027
-              // },
+              expand: {
+                max: 0.027
+              },
               zero: true,
               nice: true,
               seriesId: 'subSeries',
