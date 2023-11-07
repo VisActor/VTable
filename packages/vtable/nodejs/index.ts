@@ -1,7 +1,7 @@
-import { createListTable } from './list-table';
-import { createPivotChart } from './pivot-chart';
-import { createPivotTable } from './pivot-table';
-import { createSmallTable } from './small-table';
+import { createListTable } from './list-table.ts';
+import { createPivotChart } from './pivot-chart.ts';
+import { createPivotTable } from './pivot-table.ts';
+import { createSmallTable } from './small-table.ts';
 
 // createSmallTable();
 // createListTable();
