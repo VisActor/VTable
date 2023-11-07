@@ -409,6 +409,22 @@
           }
         }
       ]
+    },
+    {
+      "path": "cross-terminal_and_Developer_Ecology",
+      "title": {
+        "zh": "跨端与开发者生态",
+        "en": "Cross-terminal and Developer Ecology"
+      },
+      "children": [
+        {
+          "path": "vue",
+          "title": {
+            "zh": "Vue VTable",
+            "en": "Vue VTable"
+          }
+        }
+      ]
     }
   ]
 }
