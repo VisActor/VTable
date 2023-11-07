@@ -312,7 +312,9 @@ export function createTable() {
     tooltip: {
       isShowOverflowTextTooltip: true
     },
-    frozenColCount: 1
+    frozenColCount: 1,
+    bottomFrozenRowCount: 2,
+    rightFrozenColCount: 2
     // autoWrapText: true,
     // heightMode: 'autoHeight',
     // widthMode: 'adaptive'

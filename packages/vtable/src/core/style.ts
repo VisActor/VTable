@@ -70,5 +70,5 @@ export function importStyle() {
 }
 `;
 
-  document.body.appendChild(styleElement);
+  document.head.appendChild(styleElement);
 }
