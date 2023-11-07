@@ -622,6 +622,12 @@ export interface BaseTableAPI {
   isFrozenRow: (col: number, row?: number) => boolean;
   isTopFrozenRow: (col: number, row?: number) => boolean;
   isBottomFrozenRow: (col: number, row?: number) => boolean;
+  /** 获取表格body部分的显示单元格范围 */
+  getBodyVisibleCellRange: () => { rowStart: number; colStart: number; rowEnd: number; colEnd: number };
+  /** 获取表格body部分的显示列号范围 */
+  getBodyVisibleColRange: () => { colStart: number; colEnd: number };
+  /** 获取表格body部分的显示行号范围 */
+  getBodyVisibleRowRange: () => { rowStart: number; rowEnd: number };
 }
 export interface ListTableProtected extends IBaseTableProtected {
   /** 表格数据 */
