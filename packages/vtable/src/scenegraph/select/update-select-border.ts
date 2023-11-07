@@ -24,25 +24,33 @@ function updateComponent(selectComp: { rect: IRect; role: CellSubLocation }, key
   switch (selectComp.role) {
     case 'rowHeader':
       visibleCellRange = scene.table.getBodyVisibleRowRange();
-      startRow = Math.max(startRow, visibleCellRange.rowStart);
-      endRow = Math.min(endRow, visibleCellRange.rowEnd);
+      if (visibleCellRange) {
+        startRow = Math.max(startRow, visibleCellRange.rowStart);
+        endRow = Math.min(endRow, visibleCellRange.rowEnd);
+      }
       break;
     case 'columnHeader':
       visibleCellRange = scene.table.getBodyVisibleCellRange();
-      startCol = Math.max(startCol, visibleCellRange.colStart);
-      endCol = Math.min(endCol, visibleCellRange.colEnd);
+      if (visibleCellRange) {
+        startCol = Math.max(startCol, visibleCellRange.colStart);
+        endCol = Math.min(endCol, visibleCellRange.colEnd);
+      }
       break;
     case 'cornerHeader':
       break;
     case 'bottomFrozen':
       visibleCellRange = scene.table.getBodyVisibleCellRange();
-      startCol = Math.max(startCol, visibleCellRange.colStart);
-      endCol = Math.min(endCol, visibleCellRange.colEnd);
+      if (visibleCellRange) {
+        startCol = Math.max(startCol, visibleCellRange.colStart);
+        endCol = Math.min(endCol, visibleCellRange.colEnd);
+      }
       break;
     case 'rightFrozen':
       visibleCellRange = scene.table.getBodyVisibleCellRange();
-      startRow = Math.max(startRow, visibleCellRange.rowStart);
-      endRow = Math.min(endRow, visibleCellRange.rowEnd);
+      if (visibleCellRange) {
+        startRow = Math.max(startRow, visibleCellRange.rowStart);
+        endRow = Math.min(endRow, visibleCellRange.rowEnd);
+      }
       break;
     case 'rightTopCorner':
       break;
@@ -52,16 +60,17 @@ function updateComponent(selectComp: { rect: IRect; role: CellSubLocation }, key
       break;
     default:
       visibleCellRange = scene.table.getBodyVisibleCellRange();
-      startRow = Math.max(startRow, visibleCellRange.rowStart);
-      endRow = Math.min(endRow, visibleCellRange.rowEnd);
-      startCol = Math.max(startCol, visibleCellRange.colStart);
-      endCol = Math.min(endCol, visibleCellRange.colEnd);
+      if (visibleCellRange) {
+        startRow = Math.max(startRow, visibleCellRange.rowStart);
+        endRow = Math.min(endRow, visibleCellRange.rowEnd);
+        startCol = Math.max(startCol, visibleCellRange.colStart);
+        endCol = Math.min(endCol, visibleCellRange.colEnd);
+      }
       break;
   }
-
-  const colsWidth = scene.table.getColsWidth(startCol, endCol);
-  const rowsHeight = scene.table.getRowsHeight(startRow, endRow);
-
+  const cellRange = scene.table.getCellRange(startCol, startRow);
+  const colsWidth = scene.table.getColsWidth(cellRange.start.col, endCol);
+  const rowsHeight = scene.table.getRowsHeight(cellRange.start.row, endRow);
   const firstCellBound = scene.highPerformanceGetCell(startCol, startRow).globalAABBBounds;
   // if (!cellsBounds) {
   //   // 选中区域在实际单元格区域外，不显示选择框

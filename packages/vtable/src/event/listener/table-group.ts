@@ -42,7 +42,6 @@ export function bindTableGroupListener(eventManeger: EventManeger) {
     }
   });
   table.scenegraph.tableGroup.addEventListener('pointermove', (e: FederatedPointerEvent) => {
-    // console.log('scenegraph pointermove', e.pageX, e.pageY);
     const lastX = LastPointerXY?.x ?? e.x;
     const lastY = LastPointerXY?.y ?? e.y;
     LastPointerXY = { x: e.x, y: e.y };
@@ -237,7 +236,7 @@ export function bindTableGroupListener(eventManeger: EventManeger) {
   // });
   table.scenegraph.tableGroup.addEventListener('pointerleave', (e: FederatedPointerEvent) => {
     //resize 列宽 当鼠标离开table也需要继续响应
-    if (!stateManeger.isResizeCol()) {
+    if (!stateManeger.isResizeCol() && !stateManeger.isMoveCol() && !stateManeger.isSelecting()) {
       stateManeger.updateInteractionState(InteractionState.default);
       stateManeger.updateCursor();
     }
@@ -278,10 +277,12 @@ export function bindTableGroupListener(eventManeger: EventManeger) {
         }
       }
     } else if (stateManeger.isSelecting()) {
-      // 下面触发DRAG_SELECT_END 区别于pointerup
+      // 下面触发DRAG_SELECT_END 区别于pointerup 不能调用endSelectCells
+      // table.stateManeger.endSelectCells();
       if (table.stateManeger.select?.ranges?.length) {
         const lastCol = table.stateManeger.select.ranges[table.stateManeger.select.ranges.length - 1].end.col;
         const lastRow = table.stateManeger.select.ranges[table.stateManeger.select.ranges.length - 1].end.row;
+        table.stateManeger.select.selecting = false;
         table.fireListeners(TABLE_EVENT_TYPE.SELECTED_CELL, {
           ranges: table.stateManeger.select.ranges,
           col: lastCol,

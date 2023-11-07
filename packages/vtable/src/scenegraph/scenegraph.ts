@@ -553,7 +553,9 @@ export class Scenegraph {
     this.stage.renderNextFrame();
   }
   resetAllSelectComponent() {
-    updateAllSelectComponent(this);
+    if (this.table.stateManeger.select?.ranges?.length > 0) {
+      updateAllSelectComponent(this);
+    }
   }
 
   hideHoverIcon(col: number, row: number) {
