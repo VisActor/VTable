@@ -80,8 +80,8 @@ importers:
       '@types/react-dom': ^18.0.0
       '@visactor/vchart': 1.5.3
       '@visactor/vdataset': ~0.15.7
-      '@visactor/vrender': 0.16.11
-      '@visactor/vrender-components': 0.16.11
+      '@visactor/vrender': 0.16.12-alpha.1
+      '@visactor/vrender-components': 0.16.12-alpha.1
       '@visactor/vscale': 0.16.0
       '@visactor/vutils': 0.16.6
       '@visactor/vutils-extension': 1.5.1-alpha.0
@@ -121,8 +121,8 @@ importers:
       vite-plugin-markdown: ^2.1.0
     dependencies:
       '@visactor/vdataset': 0.15.14
-      '@visactor/vrender': 0.16.11
-      '@visactor/vrender-components': 0.16.11
+      '@visactor/vrender': 0.16.12-alpha.1
+      '@visactor/vrender-components': 0.16.12-alpha.1
       '@visactor/vscale': 0.16.0
       '@visactor/vutils': 0.16.6
       '@visactor/vutils-extension': 1.5.1-alpha.0
@@ -3059,7 +3059,7 @@ packages:
       '@visactor/vgrammar-util': 0.8.1
       '@visactor/vgrammar-wordcloud': 0.8.1
       '@visactor/vgrammar-wordcloud-shape': 0.8.1
-      '@visactor/vrender-components': 0.16.11
+      '@visactor/vrender-components': 0.16.12-alpha.1
       '@visactor/vrender-core': 0.16.9
       '@visactor/vrender-kits': 0.16.9
       '@visactor/vscale': 0.16.6
@@ -3121,7 +3121,7 @@ packages:
       '@visactor/vdataset': 0.16.6
       '@visactor/vgrammar-coordinate': 0.8.1
       '@visactor/vgrammar-util': 0.8.1
-      '@visactor/vrender-components': 0.16.11
+      '@visactor/vrender-components': 0.16.12-alpha.1
       '@visactor/vrender-core': 0.16.11
       '@visactor/vrender-kits': 0.16.11
       '@visactor/vscale': 0.16.6
@@ -3177,11 +3177,11 @@ packages:
       '@visactor/vrender-kits': 0.16.11
       '@visactor/vutils': 0.16.6
 
-  /@visactor/vrender-components/0.16.11:
-    resolution: {integrity: sha512-ZnZoNDKCkbNSId9fdywCG+F5DfxRgYR9IbnAYsK3sEnouRiHwfjHUG5q8G1RHG43QnhN0kSVuDI1qaocd3hYJg==}
+  /@visactor/vrender-components/0.16.12-alpha.1:
+    resolution: {integrity: sha512-KZ84OSSNeLuTs9W5aJCLwIO86sJCymgUVb4eetNsDxyidGZbA2gmLrviQVs15GOU520smSZtXGWl8IHglAkyeg==}
     dependencies:
-      '@visactor/vrender-core': 0.16.11
-      '@visactor/vrender-kits': 0.16.11
+      '@visactor/vrender-core': 0.16.12-alpha.1
+      '@visactor/vrender-kits': 0.16.12-alpha.1
       '@visactor/vscale': 0.16.0
       '@visactor/vutils': 0.16.6
 
@@ -3194,6 +3194,12 @@ packages:
 
   /@visactor/vrender-core/0.16.11:
     resolution: {integrity: sha512-GYcDfNnEv3HQRuEdhgY3WPWi5ypxVjzzgXKMFCGnyD12lIzTGQr0uYDzMHzcZOyNSVQtB+nXtqPB4ywZVicHMg==}
+    dependencies:
+      '@visactor/vutils': 0.16.6
+      color-convert: 2.0.1
+
+  /@visactor/vrender-core/0.16.12-alpha.1:
+    resolution: {integrity: sha512-LfYNV5oRxCl7wfQmdeOOV9Lxh1hzzoQTITET6+QZipmNiWHkxvfDpsK5y0ios7ynof9KyWp2igGkcrQ2caYiIg==}
     dependencies:
       '@visactor/vutils': 0.16.6
       color-convert: 2.0.1
@@ -3221,6 +3227,14 @@ packages:
       '@visactor/vutils': 0.16.6
       roughjs: 4.5.2
 
+  /@visactor/vrender-kits/0.16.12-alpha.1:
+    resolution: {integrity: sha512-SGTKWN7LYLQbhR8/Mvg1g1ZQAw5tNQSRfqjYRbY6eR74KVo4ElKCeXWL+dRSawueZa5g6h9GoQdabynKdo+ESQ==}
+    dependencies:
+      '@resvg/resvg-js': 2.4.1
+      '@visactor/vrender-core': 0.16.12-alpha.1
+      '@visactor/vutils': 0.16.6
+      roughjs: 4.5.2
+
   /@visactor/vrender-kits/0.16.9:
     resolution: {integrity: sha512-m2BpQMW3RsqBXOVPOapMWl8jf6fuxFidFI4b1YCg2iXijmhpRzyOt9ffFarxm1Wmls35OE0gX8UPAYH7lBiu2w==}
     dependencies:
@@ -3229,11 +3243,11 @@ packages:
       '@visactor/vutils': 0.16.6
       roughjs: 4.5.2
 
-  /@visactor/vrender/0.16.11:
-    resolution: {integrity: sha512-Ch0Dz8n0lhlGAwdIcvl8I5Hy5s2SDAvGXtHwNn1P1JEbzLge64gVkQLFwqQHt7VTqNzdIigTENu9t1rAQWLvPw==}
+  /@visactor/vrender/0.16.12-alpha.1:
+    resolution: {integrity: sha512-vRnT4M+YZ1t/HnSWrPAD+R+qNQB9t1tu/Kc+sVYVL1bHz+oiW9ms+3msyvIm0doLTaecgKUvgXTkKYfJJW2jog==}
     dependencies:
-      '@visactor/vrender-core': 0.16.11
-      '@visactor/vrender-kits': 0.16.11
+      '@visactor/vrender-core': 0.16.12-alpha.1
+      '@visactor/vrender-kits': 0.16.12-alpha.1
     dev: false
 
   /@visactor/vscale/0.16.0:
