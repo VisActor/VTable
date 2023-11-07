@@ -189,7 +189,8 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
       mode,
       modeParams,
       canvasWidth,
-      canvasHeight
+      canvasHeight,
+      overscrollBehavior
     } = options;
     this.container = container;
     this.options = options;
@@ -254,7 +255,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     internalProps.dragHeaderMode = dragHeaderMode;
     internalProps.renderChartAsync = renderChartAsync;
     setBatchRenderChartCount(renderChartAsyncBatchCount);
-
+    internalProps.overscrollBehavior = overscrollBehavior ?? 'auto';
     internalProps._rowHeightsMap = new NumberMap();
     internalProps._rowRangeHeightsMap = new Map();
     internalProps._colRangeWidthsMap = new Map();
@@ -1812,7 +1813,8 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
       autoFillHeight,
       customRender,
       renderChartAsync,
-      renderChartAsyncBatchCount
+      renderChartAsyncBatchCount,
+      overscrollBehavior
     } = options;
     if (pixelRatio && pixelRatio !== this.internalProps.pixelRatio) {
       this.internalProps.pixelRatio = pixelRatio;
@@ -1870,7 +1872,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     internalProps.dragHeaderMode = dragHeaderMode;
     internalProps.renderChartAsync = renderChartAsync;
     setBatchRenderChartCount(renderChartAsyncBatchCount);
-
+    internalProps.overscrollBehavior = overscrollBehavior ?? 'auto';
     internalProps.cellTextOverflows = {};
     internalProps._rowHeightsMap = new NumberMap();
     internalProps._rowRangeHeightsMap = new Map();
