@@ -409,6 +409,22 @@
           }
         }
       ]
+    },
+    {
+      "path": "Developer_Ecology",
+      "title": {
+        "zh": "开发者生态",
+        "en": "Developer Ecology"
+      },
+      "children": [
+        {
+          "path": "vue",
+          "title": {
+            "zh": "Vue VTable",
+            "en": "Vue VTable"
+          }
+        }
+      ]
     }
   ]
 }
