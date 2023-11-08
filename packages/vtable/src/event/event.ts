@@ -160,7 +160,7 @@ export class EventManeger {
     // menu自身状态实现
   }
 
-  dealTableSelect(eventArgsSet?: SceneEvent): boolean {
+  dealTableSelect(eventArgsSet?: SceneEvent, isSelectMoving?: boolean): boolean {
     if (!eventArgsSet) {
       this.table.stateManeger.updateSelectPos(-1, -1);
       return false;
@@ -181,9 +181,19 @@ export class EventManeger {
       //   this.table.stateManeger.updateHoverPos(-1, -1);
       // }
       const define = this.table.getBodyColumnDefine(eventArgs.col, eventArgs.row);
-      if (this.table.isHeader(eventArgs.col, eventArgs.row) && define?.disableHeaderSelect) {
+      if (
+        this.table.isHeader(eventArgs.col, eventArgs.row) &&
+        (define?.disableHeaderSelect || this.table.stateManeger.select?.disableHeader)
+      ) {
+        if (!isSelectMoving) {
+          // 如果是点击点表头 取消单元格选中状态
+          this.table.stateManeger.updateSelectPos(-1, -1);
+        }
         return false;
       } else if (!this.table.isHeader(eventArgs.col, eventArgs.row) && define?.disableSelect) {
+        if (!isSelectMoving) {
+          this.table.stateManeger.updateSelectPos(-1, -1);
+        }
         return false;
       }
 

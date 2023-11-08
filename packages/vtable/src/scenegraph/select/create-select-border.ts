@@ -1,5 +1,5 @@
 import { createRect } from '@visactor/vrender';
-import type { CellLocation } from '../../ts-types';
+import type { CellSubLocation } from '../../ts-types';
 import type { Scenegraph } from '../scenegraph';
 
 export function createCellSelectBorder(
@@ -8,7 +8,7 @@ export function createCellSelectBorder(
   start_Row: number,
   end_Col: number,
   end_Row: number,
-  selectRangeType: CellLocation,
+  selectRangeType: CellSubLocation,
   selectId: string, //整体区域${endRow}-${startCol}${startRow}${endCol}${endRow}作为其编号
   strokes?: boolean[]
 ) {
@@ -16,23 +16,7 @@ export function createCellSelectBorder(
   const startRow = Math.min(start_Row, end_Row);
   const endCol = Math.max(start_Col, end_Col);
   const endRow = Math.max(start_Row, end_Row);
-
-  let cellsBounds;
-  for (let i = startCol; i <= endCol; i++) {
-    for (let j = startRow; j <= endRow; j++) {
-      const cellGroup = scene.highPerformanceGetCell(i, j);
-      if (cellGroup.role === 'shadow-cell') {
-        continue;
-      }
-      cellGroup.AABBBounds.width();
-      const bounds = cellGroup.globalAABBBounds;
-      if (!cellsBounds) {
-        cellsBounds = bounds;
-      } else {
-        cellsBounds.union(bounds);
-      }
-    }
-  }
+  const firstCellBound = scene.highPerformanceGetCell(startCol, startRow).globalAABBBounds;
 
   const theme = scene.table.theme;
   // 框选外边框
@@ -49,10 +33,10 @@ export function createCellSelectBorder(
       }
       return false;
     }),
-    x: cellsBounds.x1 - scene.tableGroup.attribute.x,
-    y: cellsBounds.y1 - scene.tableGroup.attribute.y,
-    width: cellsBounds.width(),
-    height: cellsBounds.height(),
+    x: firstCellBound.x1 - scene.tableGroup.attribute.x, // 坐标xy及宽高width height 不需要这里计算具体值 update-select-border文件中updateComponent方法中有逻辑  且该方法调用时间是render
+    y: firstCellBound.y1 - scene.tableGroup.attribute.y,
+    width: 0,
+    height: 0,
     visible: true
   });
   scene.lastSelectId = selectId;
@@ -68,6 +52,16 @@ export function createCellSelectBorder(
       ? scene.colHeaderGroup
       : selectRangeType === 'rowHeader'
       ? scene.rowHeaderGroup
-      : scene.cornerHeaderGroup
+      : selectRangeType === 'cornerHeader'
+      ? scene.cornerHeaderGroup
+      : selectRangeType === 'rightTopCorner'
+      ? scene.rightTopCornerGroup
+      : selectRangeType === 'rightFrozen'
+      ? scene.rightFrozenGroup
+      : selectRangeType === 'leftBottomCorner'
+      ? scene.leftBottomCornerGroup
+      : selectRangeType === 'bottomFrozen'
+      ? scene.bottomFrozenGroup
+      : scene.rightBottomCornerGroup
   );
 }
