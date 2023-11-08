@@ -1,6 +1,24 @@
 # Change Log - @visactor/vtable
 
-This log was last generated on Fri, 03 Nov 2023 10:46:41 GMT and should not be manually modified.
+This log was last generated on Tue, 07 Nov 2023 12:09:57 GMT and should not be manually modified.
+
+## 0.13.4
+Tue, 07 Nov 2023 12:09:57 GMT
+
+### Patches
+
+- feat: add option overscrollBehavior
+
+
+- fix: drag select out tablecell getSelectCellInfos null
+
+
+- refactor: change styleElement add targetDom
+
+
+- fix: select border render error when frozen bottom row #508
+
+
 
 ## 0.13.3
 Fri, 03 Nov 2023 10:46:41 GMT

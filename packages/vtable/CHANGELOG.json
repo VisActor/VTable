@@ -2,6 +2,27 @@
   "name": "@visactor/vtable",
   "entries": [
     {
+      "version": "0.13.4",
+      "tag": "@visactor/vtable_v0.13.4",
+      "date": "Tue, 07 Nov 2023 12:09:57 GMT",
+      "comments": {
+        "patch": [
+          {
+            "comment": "feat: add option overscrollBehavior\n\n"
+          },
+          {
+            "comment": "fix: drag select out tablecell getSelectCellInfos null\n\n"
+          },
+          {
+            "comment": "refactor: change styleElement add targetDom\n\n"
+          },
+          {
+            "comment": "fix: select border render error when frozen bottom row #508\n\n"
+          }
+        ]
+      }
+    },
+    {
       "version": "0.13.3",
       "tag": "@visactor/vtable_v0.13.3",
       "date": "Fri, 03 Nov 2023 10:46:41 GMT",
