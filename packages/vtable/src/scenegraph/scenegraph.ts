@@ -1,5 +1,6 @@
 import type { IStage, IRect, ITextCache, INode } from '@visactor/vrender';
 import { createStage, createRect, IContainPointMode, container, vglobal } from '@visactor/vrender';
+import type { CellSubLocation } from '../ts-types';
 import {
   type CellAddress,
   type CellLocation,
@@ -112,9 +113,9 @@ export class Scenegraph {
   rightBottomCornerGroup: Group; // 右下角占位单元格Group,只在有右侧下侧都有冻结行时使用
   componentGroup: Group; // 表格外组件Group
   /** 所有选中区域对应的选框组件 */
-  selectedRangeComponents: Map<string, { rect: IRect; role: CellLocation }>;
+  selectedRangeComponents: Map<string, { rect: IRect; role: CellSubLocation }>;
   /** 当前正在选择区域对应的选框组件 为什么是map 以为可能一个选中区域会被拆分为多个rect组件 三块表头和body都分别对应不同组件*/
-  selectingRangeComponents: Map<string, { rect: IRect; role: CellLocation }>;
+  selectingRangeComponents: Map<string, { rect: IRect; role: CellSubLocation }>;
   lastSelectId: string;
   component: TableComponent;
   stage: IStage;
@@ -432,7 +433,7 @@ export class Scenegraph {
       col >= this.table.colCount - this.table.rightFrozenColCount &&
       row < this.table.frozenRowCount
     ) {
-      cell = this.rightBottomCornerGroup.getColGroup(col)?.getRowGroup(row);
+      cell = this.rightTopCornerGroup.getColGroup(col)?.getRowGroup(row);
     } else if (
       this.table.bottomFrozenRowCount > 0 &&
       row >= this.table.rowCount - this.table.bottomFrozenRowCount &&
@@ -552,7 +553,9 @@ export class Scenegraph {
     this.stage.renderNextFrame();
   }
   resetAllSelectComponent() {
-    updateAllSelectComponent(this);
+    if (this.table.stateManeger.select?.ranges?.length > 0) {
+      updateAllSelectComponent(this);
+    }
   }
 
   hideHoverIcon(col: number, row: number) {
@@ -622,7 +625,7 @@ export class Scenegraph {
     start_Row: number,
     end_Col: number,
     end_Row: number,
-    selectRangeType: CellLocation,
+    selectRangeType: CellSubLocation,
     selectId: string, //整体区域${endRow}-${startCol}${startRow}${endCol}${endRow}作为其编号
     strokes?: boolean[]
   ) {
@@ -754,10 +757,13 @@ export class Scenegraph {
    * @param {number} detaX 改变的宽度值
    * @return {*}
    */
-  updateColWidth(col: number, detaX: number) {
+  updateColWidth(col: number, detaX: number, skipUpdateContainer?: boolean) {
     updateColWidth(this, col, Math.round(detaX));
     // this.updateContainerWidth(col, detaX);
-    this.updateContainer();
+    if (!skipUpdateContainer) {
+      // this.updateContainerAttrWidthAndX();
+      this.updateContainer();
+    }
   }
 
   /**
@@ -1112,6 +1118,7 @@ export class Scenegraph {
       this.component.setFrozenColumnShadow(this.table.frozenColCount - 1);
     }
     this.table.stateManeger.checkFrozen();
+    // this.updateContainerAttrWidthAndX();
     this.updateContainer();
 
     // 处理frame border
@@ -1336,21 +1343,43 @@ export class Scenegraph {
     moveHeaderPosition(colSource, rowSource, colTarget, rowTarget, this.table);
   }
 
-  updateContainer() {
+  updateContainerAttrWidthAndX() {
     // 更新各列x&col
-    const cornerX = updateContainerChildrenX(this.cornerHeaderGroup);
-    const rowHeaderX = updateContainerChildrenX(this.rowHeaderGroup);
-    const colHeaderX = updateContainerChildrenX(this.colHeaderGroup);
-    const bodyX = updateContainerChildrenX(this.bodyGroup);
-    const rightX = updateContainerChildrenX(this.rightFrozenGroup);
-    updateContainerChildrenX(this.bottomFrozenGroup);
-    updateContainerChildrenX(this.leftBottomCornerGroup);
-    updateContainerChildrenX(this.rightTopCornerGroup);
-    updateContainerChildrenX(this.rightBottomCornerGroup);
+    const cornerX = updateContainerChildrenX(this.cornerHeaderGroup, 0);
+    const rowHeaderX = updateContainerChildrenX(this.rowHeaderGroup, 0);
+    const colHeaderX = this.colHeaderGroup.hasChildNodes()
+      ? updateContainerChildrenX(
+          this.colHeaderGroup,
+          (this.colHeaderGroup.firstChild as any).col > 0
+            ? this.table.getColsWidth(this.table.frozenColCount ?? 0, (this.colHeaderGroup.firstChild as any).col - 1)
+            : 0
+        )
+      : 0;
+    const bodyX = this.bodyGroup.hasChildNodes()
+      ? updateContainerChildrenX(
+          this.bodyGroup,
+          (this.bodyGroup.firstChild as any).col > 0
+            ? this.table.getColsWidth(this.table.frozenColCount ?? 0, (this.bodyGroup.firstChild as any).col - 1)
+            : 0
+        )
+      : 0;
+    const rightX = updateContainerChildrenX(this.rightFrozenGroup, 0);
+
+    this.bottomFrozenGroup.hasChildNodes() &&
+      updateContainerChildrenX(
+        this.bottomFrozenGroup,
+        (this.bottomFrozenGroup.firstChild as any).col > 0
+          ? this.table.getColsWidth(this.table.frozenColCount ?? 0, (this.bottomFrozenGroup.firstChild as any).col - 1)
+          : 0
+      );
+    updateContainerChildrenX(this.leftBottomCornerGroup, 0);
+    updateContainerChildrenX(this.rightTopCornerGroup, 0);
+    updateContainerChildrenX(this.rightBottomCornerGroup, 0);
 
     // 更新容器
     this.cornerHeaderGroup.setDeltaWidth(cornerX - this.cornerHeaderGroup.attribute.width);
     this.leftBottomCornerGroup.setDeltaWidth(cornerX - this.leftBottomCornerGroup.attribute.width);
+    //TODO 可能有影响
     this.colHeaderGroup.setDeltaWidth(colHeaderX - this.colHeaderGroup.attribute.width);
     this.rightFrozenGroup.setDeltaWidth(colHeaderX - this.rightFrozenGroup.attribute.width);
     this.rowHeaderGroup.setDeltaWidth(rowHeaderX - this.rowHeaderGroup.attribute.width);
@@ -1363,6 +1392,12 @@ export class Scenegraph {
     this.colHeaderGroup.setAttribute('x', this.cornerHeaderGroup.attribute.width);
     this.bottomFrozenGroup.setAttribute('x', this.rowHeaderGroup.attribute.width);
     this.bodyGroup.setAttribute('x', this.rowHeaderGroup.attribute.width);
+  }
+
+  updateContainer() {
+    // console.trace('updateContainer');
+
+    this.updateContainerAttrWidthAndX();
 
     this.updateTableSize();
 
@@ -1689,6 +1724,11 @@ export class Scenegraph {
 
     // check frozen status
     this.table.stateManeger.checkFrozen();
+
+    // update frozen shadow
+    if (!this.isPivot && !this.transpose) {
+      this.component.setFrozenColumnShadow(this.table.frozenColCount - 1);
+    }
 
     // rerender
     this.updateNextFrame();

@@ -1,6 +1,55 @@
 # Change Log - @visactor/vtable
 
-This log was last generated on Fri, 27 Oct 2023 13:15:39 GMT and should not be manually modified.
+This log was last generated on Tue, 07 Nov 2023 12:09:57 GMT and should not be manually modified.
+
+## 0.13.4
+Tue, 07 Nov 2023 12:09:57 GMT
+
+### Patches
+
+- feat: add option overscrollBehavior
+
+
+- fix: drag select out tablecell getSelectCellInfos null
+
+
+- refactor: change styleElement add targetDom
+
+
+- fix: select border render error when frozen bottom row #508
+
+
+
+## 0.13.3
+Fri, 03 Nov 2023 10:46:41 GMT
+
+### Patches
+
+- fix: fix frozen shadow update in tree mode #525
+
+
+
+## 0.13.2
+Fri, 03 Nov 2023 09:55:11 GMT
+
+### Patches
+
+- fix: getCellByCache maximum call stack size exceeded
+
+
+- refactor: save select when click outside table #478
+
+
+- fix: event trigger selected_cell drag_select_end change_header_position
+
+
+- fix: axis label sort not right #503
+
+
+- fix: over 100 columns after init scroll right now columns attribute Xvalue error #506
+
+
+- feat: add decode for react jsx customLayout
 
 ## 0.13.1
 Fri, 27 Oct 2023 13:15:39 GMT

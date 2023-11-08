@@ -10,6 +10,7 @@ import type { PivotHeaderLayoutMap } from '../../layout/pivot-header-layout';
 import { getAxisConfigInPivotChart } from '../../layout/chart-helper/get-axis-config';
 import { computeAxisComponentWidth } from '../../components/axis/get-axis-component-size';
 import { Group as VGroup } from '@visactor/vrender';
+import { decodeReactDom } from '../component/custom';
 
 export function computeColsWidth(table: BaseTableAPI, colStart?: number, colEnd?: number, update?: boolean): void {
   const time = typeof window !== 'undefined' ? window.performance.now() : 0;
@@ -143,9 +144,10 @@ export function computeColsWidth(table: BaseTableAPI, colStart?: number, colEnd?
       const newColWidth = newWidths[col] ?? table.getColWidth(col);
       if (newColWidth !== oldColWidths[col]) {
         // update the column width in scenegraph
-        table.scenegraph.updateColWidth(col, newColWidth - oldColWidths[col]);
+        table.scenegraph.updateColWidth(col, newColWidth - oldColWidths[col], true);
       }
     }
+    table.scenegraph.updateContainer();
   }
   // console.log('computeColsWidth  time:', (typeof window !== 'undefined' ? window.performance.now() : 0) - time, colStart, colEnd);
 }
@@ -388,6 +390,9 @@ function computeCustomRenderWidth(col: number, row: number, table: BaseTableAPI)
     if (customLayout) {
       // 处理customLayout
       const customLayoutObj = customLayout(arg);
+      if (customLayoutObj.rootContainer) {
+        customLayoutObj.rootContainer = decodeReactDom(customLayoutObj.rootContainer);
+      }
       if (customLayoutObj.rootContainer instanceof VGroup) {
         width = (customLayoutObj.rootContainer as VGroup).AABBBounds.width() ?? 0;
         // width = (customLayoutObj.rootContainer as VGroup).attribute.width ?? 0;

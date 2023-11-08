@@ -73,4 +73,15 @@ export function createTable() {
   };
   const tableInstance = new VTable.ListTable(option);
   window.tableInstance = tableInstance;
+  tableInstance.on(VTable.ListTable.EVENT_TYPE.SELECTED_CELL, arg => {
+    console.log('SELECTED_CELL', arg);
+  });
+
+  tableInstance.on(VTable.ListTable.EVENT_TYPE.CHANGE_HEADER_POSITION, arg => {
+    console.log('CHANGE_HEADER_POSITION', arg);
+  });
+
+  tableInstance.on(VTable.ListTable.EVENT_TYPE.DRAG_SELECT_END, arg => {
+    console.log('DRAG_SELECT_END', arg);
+  });
 }

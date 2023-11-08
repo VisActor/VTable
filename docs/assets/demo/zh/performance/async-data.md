@@ -1,10 +1,9 @@
 ---
 category: examples
-group: Async Data
+group: performace
 title: 异步加载数据源
 cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/asyncData.gif
-link: '../guide/interaction/select'
-option: keyboardOptions.selectAllOnCtrlA
+link: '../guide/data/async_data'
 ---
 
 # 异步加载数据

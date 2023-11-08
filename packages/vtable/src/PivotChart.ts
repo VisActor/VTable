@@ -184,6 +184,7 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
       !options.indicatorsAsCol && !options.rows?.length && !options.rowTree ? [] : cloneDeep(options.rowTree);
 
     this.setCustomStateNameToSpec();
+    this._selectedDataItemsInChart = [];
     // 更新protectedSpace
     internalProps.columnResizeType = options.columnResizeType ?? 'column';
     internalProps.dataConfig = { isPivotChart: true };
@@ -682,7 +683,7 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
             range: true,
             // 判断是否需要匹配维度值相同的进行求和计算
             sumBy:
-              (indicatorDefine as IChartColumnIndicator).chartSpec?.stack !== false &&
+              (indicatorDefine as IChartColumnIndicator).chartSpec?.stack &&
               columnKeys.concat((indicatorDefine as IChartColumnIndicator).chartSpec?.xField)
           };
           if ((indicatorDefine as IChartColumnIndicator).chartSpec.series) {
@@ -706,7 +707,7 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
               collectValuesBy[yField] = {
                 by: rowKeys,
                 range: chartSeries.direction !== 'horizontal', // direction默认为'vertical'
-                sumBy: chartSeries.stack !== false && columnKeys.concat(chartSeries?.xField), // 逻辑严谨的话 这个concat的值也需要结合 chartSeries.direction来判断是xField还是yField
+                sumBy: chartSeries.stack && columnKeys.concat(chartSeries?.xField), // 逻辑严谨的话 这个concat的值也需要结合 chartSeries.direction来判断是xField还是yField
                 sortBy:
                   chartSeries.direction === 'horizontal'
                     ? chartSeries?.data?.fields?.[yField]?.domain ??
@@ -740,7 +741,7 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
               by: rowKeys,
               range: (indicators[i] as IChartColumnIndicator).chartSpec.direction !== 'horizontal', // direction默认为'vertical'
               sumBy:
-                (indicatorDefine as IChartColumnIndicator).chartSpec.stack !== false &&
+                (indicatorDefine as IChartColumnIndicator).chartSpec.stack &&
                 columnKeys.concat((indicatorDefine as IChartColumnIndicator).chartSpec?.xField), // 逻辑严谨的话 这个concat的值也需要结合 chartSeries.direction来判断是xField还是yField
               sortBy:
                 (indicatorDefine as IChartColumnIndicator).chartSpec.direction === 'horizontal'
@@ -761,7 +762,7 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
             range: true,
             // 判断是否需要匹配维度值相同的进行求和计算
             sumBy:
-              (indicatorDefine as IChartColumnIndicator).chartSpec?.stack !== false &&
+              (indicatorDefine as IChartColumnIndicator).chartSpec?.stack &&
               rowKeys.concat((indicatorDefine as IChartColumnIndicator).chartSpec?.yField)
           };
           if ((indicatorDefine as IChartColumnIndicator).chartSpec.series) {
@@ -785,7 +786,7 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
               collectValuesBy[xField] = {
                 by: columnKeys,
                 range: chartSeries.direction === 'horizontal', // direction默认为'vertical'
-                sumBy: chartSeries.stack !== false && rowKeys.concat(chartSeries?.yField),
+                sumBy: chartSeries.stack && rowKeys.concat(chartSeries?.yField),
                 sortBy:
                   chartSeries.direction !== 'horizontal'
                     ? chartSeries?.data?.fields?.[xField]?.domain ??
@@ -819,7 +820,7 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
               by: columnKeys,
               range: (indicators[i] as IChartColumnIndicator).chartSpec.direction === 'horizontal', // direction默认为'vertical'
               sumBy:
-                (indicatorDefine as IChartColumnIndicator).chartSpec.stack !== false &&
+                (indicatorDefine as IChartColumnIndicator).chartSpec.stack &&
                 rowKeys.concat((indicatorDefine as IChartColumnIndicator).chartSpec?.yField),
               sortBy:
                 (indicatorDefine as IChartColumnIndicator).chartSpec.direction !== 'horizontal'
@@ -1009,82 +1010,85 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
 
   getChartInstance(cellHeaderPaths: IPivotTableCellHeaderPaths) {
     const cellAddr = this.getCellAddressByHeaderPaths(cellHeaderPaths);
-    const cellPosition = this.getCellRelativeRect(cellAddr.col, cellAddr.row);
-    const cellGroup = this.scenegraph.getCell(cellAddr.col, cellAddr.row);
-    // let position;
-    let chartInstance: any;
-    const chartNode: Chart = cellGroup?.getChildren()?.[0] as Chart;
-    if (chartNode.attribute.chartInstance) {
-      chartInstance = chartNode.attribute.chartInstance;
-      const { dataId, data, axes, spec } = chartNode.attribute;
-      const viewBox = chartNode.getViewBox();
-      axes.forEach((axis: any, index: number) => {
-        if (axis.type === 'linear') {
-          const chartAxis = chartInstance._chart._components[index];
-          chartAxis._domain = {
-            min: axis.range?.min ?? 0,
-            max: axis.range?.max ?? 0
-          };
-        } else if (axis.type === 'band') {
-          const chartAxis = chartInstance._chart._components[index];
-          chartAxis._spec.domain = axis.domain.slice(0);
-          chartAxis.updateScaleDomain();
-        }
-      });
+    if (cellAddr) {
+      const cellPosition = this.getCellRelativeRect(cellAddr.col, cellAddr.row);
+      const cellGroup = this.scenegraph.getCell(cellAddr.col, cellAddr.row);
+      // let position;
+      let chartInstance: any;
+      const chartNode: Chart = cellGroup?.getChildren()?.[0] as Chart;
+      if (chartNode.attribute.chartInstance) {
+        chartInstance = chartNode.attribute.chartInstance;
+        const { dataId, data, axes, spec } = chartNode.attribute;
+        const viewBox = chartNode.getViewBox();
+        axes.forEach((axis: any, index: number) => {
+          if (axis.type === 'linear') {
+            const chartAxis = chartInstance._chart._components[index];
+            chartAxis._domain = {
+              min: axis.range?.min ?? 0,
+              max: axis.range?.max ?? 0
+            };
+          } else if (axis.type === 'band') {
+            const chartAxis = chartInstance._chart._components[index];
+            chartAxis._spec.domain = axis.domain.slice(0);
+            chartAxis.updateScaleDomain();
+          }
+        });
 
-      chartInstance.updateViewBox(
-        {
-          x1: viewBox.x1 - (chartNode.getRootNode() as any).table.scrollLeft,
-          x2: viewBox.x2 - (chartNode.getRootNode() as any).table.scrollLeft,
-          y1: viewBox.y1 - (chartNode.getRootNode() as any).table.scrollTop,
-          y2: viewBox.y2 - (chartNode.getRootNode() as any).table.scrollTop
-        },
-        false,
-        false
-      );
-      // chartInstance.updateDataSync(dataId, data);
-      if (typeof dataId === 'string') {
-        chartInstance.updateDataSync(dataId, data ?? []);
-      } else {
-        const dataBatch = [];
-        for (const dataIdStr in dataId) {
-          const dataIdAndField = dataId[dataIdStr];
-          const series = spec.series.find((item: any) => item?.data?.id === dataIdStr);
-          dataBatch.push({
-            id: dataIdStr,
-            values: dataIdAndField
-              ? data?.filter((item: any) => {
-                  return item.hasOwnProperty(dataIdAndField);
-                }) ?? []
-              : data ?? [],
-            fields: series?.data?.fields
-          });
-          // 判断是否有updateFullDataSync 木有的话 还是循环调用updateDataSync
-          if (!chartInstance.updateFullDataSync) {
-            chartInstance.updateDataSync(
-              dataIdStr,
-              dataIdAndField
+        chartInstance.updateViewBox(
+          {
+            x1: viewBox.x1 - (chartNode.getRootNode() as any).table.scrollLeft,
+            x2: viewBox.x2 - (chartNode.getRootNode() as any).table.scrollLeft,
+            y1: viewBox.y1 - (chartNode.getRootNode() as any).table.scrollTop,
+            y2: viewBox.y2 - (chartNode.getRootNode() as any).table.scrollTop
+          },
+          false,
+          false
+        );
+        // chartInstance.updateDataSync(dataId, data);
+        if (typeof dataId === 'string') {
+          chartInstance.updateDataSync(dataId, data ?? []);
+        } else {
+          const dataBatch = [];
+          for (const dataIdStr in dataId) {
+            const dataIdAndField = dataId[dataIdStr];
+            const series = spec.series.find((item: any) => item?.data?.id === dataIdStr);
+            dataBatch.push({
+              id: dataIdStr,
+              values: dataIdAndField
                 ? data?.filter((item: any) => {
                     return item.hasOwnProperty(dataIdAndField);
                   }) ?? []
-                : data ?? []
-            );
+                : data ?? [],
+              fields: series?.data?.fields
+            });
+            // 判断是否有updateFullDataSync 木有的话 还是循环调用updateDataSync
+            if (!chartInstance.updateFullDataSync) {
+              chartInstance.updateDataSync(
+                dataIdStr,
+                dataIdAndField
+                  ? data?.filter((item: any) => {
+                      return item.hasOwnProperty(dataIdAndField);
+                    }) ?? []
+                  : data ?? []
+              );
+            }
           }
+          chartInstance.updateFullDataSync?.(dataBatch);
         }
-        chartInstance.updateFullDataSync?.(dataBatch);
+        // position = chartInstance.convertDatumToPosition(datum);
+        this.render();
       }
-      // position = chartInstance.convertDatumToPosition(datum);
-      this.render();
+      // cellPosition.offsetLeft(this.tableX);
+      // cellPosition.offsetTop(this.tableY);
+      return {
+        chartInstance,
+        bounds: cellPosition.bounds
+      };
+      // return position
+      //   ? { x: Math.round(position.x + cellPosition.bounds.x1), y: Math.round(position.y + cellPosition.bounds.y1) }
+      //   : null;
     }
-    // cellPosition.offsetLeft(this.tableX);
-    // cellPosition.offsetTop(this.tableY);
-    return {
-      chartInstance,
-      bounds: cellPosition.bounds
-    };
-    // return position
-    //   ? { x: Math.round(position.x + cellPosition.bounds.x1), y: Math.round(position.y + cellPosition.bounds.y1) }
-    //   : null;
+    return {};
   }
 
   _getDimensionSortArray(): string[] | undefined {
