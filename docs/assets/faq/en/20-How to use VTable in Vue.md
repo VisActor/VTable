@@ -2,9 +2,7 @@
 
 ## Question Description
 
-How to implement [pivot-chart](https://www.visactor.io/vtable/demo/table-type/pivot-chart)  in Vue
-
-![pivot-chart](/vtable/faq/20-0.png)
+VTable does not encapsulate the Vue component, so how do you VTable in Vue?
 
 ## Solution
 

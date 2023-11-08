@@ -411,10 +411,10 @@
       ]
     },
     {
-      "path": "cross-terminal_and_Developer_Ecology",
+      "path": "Developer_Ecology",
       "title": {
-        "zh": "跨端与开发者生态",
-        "en": "Cross-terminal and Developer Ecology"
+        "zh": "开发者生态",
+        "en": "Developer Ecology"
       },
       "children": [
         {

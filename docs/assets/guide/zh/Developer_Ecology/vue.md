@@ -1,16 +1,8 @@
 ## 如何在 Vue 中使用 VTable？
 
-## 问题描述
-
-VTable没有封装Vue组件，那么如何在 Vue 中VTable呢？
-
-## 解决方案
-
 在 Vue 3.x 中使用 Vtable
 
 组合式 API，具体可以[参考在线 demo](https://codesandbox.io/p/sandbox/mystifying-hamilton-3wl76r?file=%2Fsrc%2Fcomponents%2FPivotChart.vue%3A9339%2C1)
-
-不同的表格，封装方式都是类似的
 
 ## 代码示例
 
@@ -149,8 +141,3 @@ onMounted(() => {
 ## 结果展示
 
 - [在线效果参考](https://codesandbox.io/p/sandbox/wizardly-dream-ktf74n)
-
-
-## 相关文档
-
-- [GitHub](https://github.com/VisActor/VTable)
