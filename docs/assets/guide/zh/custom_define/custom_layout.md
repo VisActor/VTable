@@ -392,5 +392,5 @@ return {
 |VCircle|CustomLayout.Circle|
 |VText|CustomLayout.Text|
 |VImage|CustomLayout.Image|
-|VGroup|CustomLayout.Container|
+|VGroup|CustomLayout.Group / CustomLayout.Container|
 |VGroup(flexWrap: 'no-wrap')|CustomLayout.GroupElement|

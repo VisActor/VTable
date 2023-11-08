@@ -391,5 +391,5 @@ Commonly used primitives are the same as jsx primitives, and the naming comparis
 |VCircle|CustomLayout.Circle|
 |VText|CustomLayout.Text|
 |VImage|CustomLayout.Image|
-|VGroup|CustomLayout.Container|
+|VGroup|CustomLayout.Group / CustomLayout.Container|
 |VGroup(flexWrap: 'no-wrap')|CustomLayout.GroupElement|
