@@ -271,3 +271,10 @@ Where ICustomRenderFuc is defined as:
 {{ use: common-custom-render-object(
   prefix = '##' + ${prefix},
 ) }}
+
+## overscrollBehavior(string) = 'auto'
+Table scrolling behavior, can be set: 'auto'|'none', the default value is 'auto'.
+```
+'auto': Trigger the browser's default behavior when the table scrolls to the top or bottom;
+'none': triggers the browser's default behavior when the table scrolls to the top or bottom;
+```

@@ -194,6 +194,11 @@ export interface IBaseTableProtected {
   stick: { changedCells: StickCell[] };
 
   customMergeCell?: CustomMergeCell;
+  /**
+   * 'auto':和浏览器滚动行为一致 表格滚动到顶部/底部时 触发浏览器默认行为;
+   *  设置为 'none' 时, 表格滚动到顶部/底部时, 不再触发父容器滚动
+   * */
+  overscrollBehavior?: 'auto' | 'none';
 }
 export interface BaseTableConstructorOptions {
   // /** 指定表格的行数 */
@@ -342,6 +347,11 @@ export interface BaseTableConstructorOptions {
   modeParams?: any;
   canvasWidth?: number;
   canvasHeight?: number;
+  /**
+   * 'auto':和浏览器滚动行为一致 表格滚动到顶部/底部时 触发浏览器默认行为;
+   *  设置为 'none' 时, 表格滚动到顶部/底部时, 不再触发父容器滚动
+   * */
+  overscrollBehavior?: 'auto' | 'none';
 }
 export interface BaseTableAPI {
   /** 表格的行数 */
@@ -633,6 +643,12 @@ export interface BaseTableAPI {
   isBottomFrozenRow: (col: number, row?: number) => boolean;
 
   getCustomMerge: (col: number, row: number) => undefined | (Omit<CustomMerge, 'style'> & { style?: FullExtendStyle });
+  /** 获取表格body部分的显示单元格范围 */
+  getBodyVisibleCellRange: () => { rowStart: number; colStart: number; rowEnd: number; colEnd: number };
+  /** 获取表格body部分的显示列号范围 */
+  getBodyVisibleColRange: () => { colStart: number; colEnd: number };
+  /** 获取表格body部分的显示行号范围 */
+  getBodyVisibleRowRange: () => { rowStart: number; rowEnd: number };
 }
 export interface ListTableProtected extends IBaseTableProtected {
   /** 表格数据 */

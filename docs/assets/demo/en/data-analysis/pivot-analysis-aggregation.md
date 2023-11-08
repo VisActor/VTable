@@ -82,23 +82,24 @@ const option = {
   },
   dataConfig: {
     aggregationRules: [
-        //做聚合计算的依据，如销售额如果没有配置则默认按聚合sum计算结果显示单元格内容
+        //As the basis for aggregate calculations, if the sales amount is not configured, 
+        //the cell content will be displayed by default according to the aggregate sum calculation.
         {
-          indicatorKey: 'TotalSales', //指标名称
-          field: 'Sales', //指标依据字段
-          aggregationType: VTable.TYPES.AggregationType.SUM, //计算类型
+          indicatorKey: 'TotalSales', //Indicator name
+          field: 'Sales', //The field  which the indicator is based
+          aggregationType: VTable.TYPES.AggregationType.SUM, //Calculation type
           formatFun: sumNumberFormat
         },
         {
-          indicatorKey: 'OrderCount', //指标名称
-          field: 'Sales', //指标依据字段
-          aggregationType: VTable.TYPES.AggregationType.COUNT, //计算类型
+          indicatorKey: 'OrderCount', //Indicator name
+          field: 'Sales', //The field  which the indicator is based
+          aggregationType: VTable.TYPES.AggregationType.COUNT, //Calculation type
           formatFun: countNumberFormat
         },
         {
-          indicatorKey: 'AverageOrderSales', //指标名称
-          field: 'Sales', //指标依据字段
-          aggregationType: VTable.TYPES.AggregationType.AVG, //计算类型
+          indicatorKey: 'AverageOrderSales', //Indicator name
+          field: 'Sales', //The field  which the indicator is based
+          aggregationType: VTable.TYPES.AggregationType.AVG, //Calculation type
           formatFun: sumNumberFormat
         }
       ]

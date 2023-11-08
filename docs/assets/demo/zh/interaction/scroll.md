@@ -1,19 +1,19 @@
 ---
 category: examples
-group: Component
+group: Interaction
 title: 滚动条
-cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/scrollbar.png
+cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/scroll.gif
 link: '../guide/interaction/scroll'
-option: ListTable#theme.scrollStyle.scrollRailColor
+option: ListTable#overscrollBehavior
 ---
 
 # 滚动条
 
-该示例展示了滚动条可配样式。
+该示例展示了滚动效果，同时配置了overscrollBehavior为'none'，当在表格中滚动时禁止触发浏览器默认行为。
 
 ## 关键配置
 
-- `theme.scrollStyle` 设置滚动条的样式
+- `overscrollBehavior` 设置了'none' 当在表格中滚动时禁用浏览器默认行为
 
 ## 代码演示
 
@@ -87,14 +87,7 @@ let  tableInstance;
     columns,
     widthMode:'standard',
     frozenColCount:1,
-    theme:VTable.themes.ARCO.extends({
-      scrollStyle: {
-        visible:'always',
-        scrollSliderColor:'purple',
-        scrollRailColor:'#bac3cc',
-        hoverOn:false
-      }
-    })
+    overscrollBehavior:'none'
   };
   tableInstance =  new VTable.ListTable(document.getElementById(CONTAINER_ID),option);
   window['tableInstance'] = tableInstance;

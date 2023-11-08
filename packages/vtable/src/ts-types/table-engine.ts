@@ -39,7 +39,18 @@ export type FieldData = MaybePromiseOrUndefined;
 export type WidthModeDef = 'standard' | 'adaptive' | 'autoWidth';
 export type HeightModeDef = 'standard' | 'adaptive' | 'autoHeight';
 export type ShowColumnRowType = 'column' | 'row' | 'none';
-export type CellLocation = 'body' | 'rowHeader' | 'columnHeader' | 'cornerHeader' | 'bottomFrozen' | 'rightFrozen';
+/** 单元格所处表格哪部分 */
+export type CellLocation = 'body' | 'rowHeader' | 'columnHeader' | 'cornerHeader';
+export type CellSubLocation =
+  | 'body'
+  | 'rowHeader'
+  | 'columnHeader'
+  | 'cornerHeader'
+  | 'bottomFrozen'
+  | 'rightFrozen'
+  | 'rightTopCorner'
+  | 'leftBottomCorner'
+  | 'rightBottomCorner';
 
 export interface TableKeyboardOptions {
   // moveCellOnTab?: boolean;

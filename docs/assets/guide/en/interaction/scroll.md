@@ -114,3 +114,34 @@ table.scrollToCell({ row:20 , col: 10 });
 ```
 
 In the above example, we will scroll to the cell position with row number 20 and column number 10.
+
+## Turn off browser default behavior
+
+The browser default behavior can be turned off through the overscrollBehavior attribute of the configuration item, as shown in the following configuration instructions:
+
+```
+  /**
+   * 'auto': Trigger the browser's default behavior when the table scrolls to the top or bottom;
+   * 'none': When the table scrolls to the top or bottom, the browser's default behavior will not be triggered, that is, when the table scrolls to the boundary and continues to scroll, it will not trigger the scrolling of the parent page.
+   * */
+  overscrollBehavior?: 'auto' | 'none';
+```
+
+On a Mac computer, it sometimes appears that 'none' has been set, but the browser's default scrolling is still triggered (such as a rubber band effect or a page rollback is triggered).
+
+<div style="display: flex;">
+ <div style="width: 20%; text-align: center;">
+     <img src="https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/guide/scroll-bounce.gif" />
+  </div>
+  <div style="width: 10%; text-align: center;">
+  </div>
+  <div style="width: 20%; text-align: center;">
+     <img src="https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/guide/scroll-back.jpeg" />
+  </div>
+</div>
+
+This problem may be because the browser's default behavior is triggered outside the table, and the effect continues when scrolling in the table. In order to avoid this problem, you can set the css scroll bar style in the page body (and cooperate with VTable The overscrollBehavior is configured with two layers for restrictions):
+```
+"overscroll-behavior: none;"
+```
+For specific instructions, please refer to: https://developer.mozilla.org/zh-CN/docs/Web/CSS/overscroll-behavior
