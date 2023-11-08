@@ -1,10 +1,14 @@
 ## How to use VTable in Vue？
 
-In Vue 3.x, using VTable
+VTable is a plain JavaScript library and can be used on all frontend JavaScript Frameworks!
+
+## Use VTable In Vue 3.x
 
 Composition API， you can refer to[ the online demo ](https://codesandbox.io/p/sandbox/mystifying-hamilton-3wl76r?file=%2Fsrc%2Fcomponents%2FPivotChart.vue%3A9339%2C1)for details.
 
-
+Be careful:
+- If you must use ref to wrap the vtable instance object, please use shallowRef. Do not use ref, as it will cause performance problems!
+- In the uncertain environment of vue2, although ref is not used, vue still proxies the vtable instance object, causing certain performance problems. At this time, you can use the browser's performance tool to check what happens during the interaction within the table. If the call time related to vue.runtime.js appears, you can determine that this problem has occurred. If you have a solution or a clear cause of the problem, you can contact us. Thank you!
 ## Code Example
 
 - Composition API

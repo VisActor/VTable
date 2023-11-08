@@ -1,9 +1,14 @@
 ## 如何在 Vue 中使用 VTable？
 
-在 Vue 3.x 中使用 Vtable
+VTable 是一个纯 JavaScript 库，可以在所有前端 JavaScript 框架上使用！
+
+## 在 Vue 3.x 中使用 Vtable
 
 组合式 API，具体可以[参考在线 demo](https://codesandbox.io/p/sandbox/mystifying-hamilton-3wl76r?file=%2Fsrc%2Fcomponents%2FPivotChart.vue%3A9339%2C1)
 
+注意点：
+- 如果必须要使用ref包装vtable实例对象，请使用shallowRef，勿使用ref，会造成性能问题！
+- 在vue2中不确定的环境下，虽然没有使用ref，但vue还是代理了vtable实例对象，导致一定的性能问题，这时候可以使用浏览器的性能工具来查看如果在表格内交互过程中出现vue.runtime.js相关的调用耗时，可以判断出现了这个问题，如果你有解法或者明确问题原因可以和我们联系，感谢！
 ## 代码示例
 
 - 组合式 API
