@@ -101,7 +101,7 @@ export function dealWithCustom(
   }
 
   // for percent calc
-  dealPercentCalc(elementsGroup);
+  dealPercentCalc(elementsGroup, width, height);
 
   return {
     elementsGroup,
@@ -344,7 +344,7 @@ function transformString(str: string, size?: number): number {
   return parseInt(str, 10);
 }
 
-function dealPercentCalc(group: VGroup) {
+function dealPercentCalc(group: VGroup, parentWidth: number, parentHeight: number) {
   if (!group) {
     return;
   }
@@ -352,7 +352,7 @@ function dealPercentCalc(group: VGroup) {
     if (isObject(child.attribute.width) && (child.attribute.width as percentCalcObj).percent) {
       child.setAttribute(
         'width',
-        ((child.attribute.width as percentCalcObj).percent / 100) * group.attribute.width +
+        ((child.attribute.width as percentCalcObj).percent / 100) * parentWidth +
           ((child.attribute.width as percentCalcObj).delta ?? 0)
       );
     }
@@ -360,13 +360,13 @@ function dealPercentCalc(group: VGroup) {
     if (isObject(child.attribute.height) && (child.attribute.height as percentCalcObj).percent) {
       child.setAttribute(
         'height',
-        ((child.attribute.height as percentCalcObj).percent / 100) * group.attribute.height +
+        ((child.attribute.height as percentCalcObj).percent / 100) * parentHeight +
           ((child.attribute.height as percentCalcObj).delta ?? 0)
       );
     }
 
     if (child.type === 'group') {
-      dealPercentCalc(child);
+      dealPercentCalc(child, group.attribute.width, group.attribute.height);
     }
   });
 }
