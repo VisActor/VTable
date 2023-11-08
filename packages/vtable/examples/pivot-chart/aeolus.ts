@@ -2305,5 +2305,5 @@ export function createTable() {
   // });
   window.tableInstance = tableInstance;
 
-  bindDebugTool(tableInstance.scenegraph.stage, {});
+  bindDebugTool(tableInstance.scenegraph.stage, { customGrapicKeys: ['col', 'row'] });
 }

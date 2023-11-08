@@ -29,7 +29,7 @@ export function updateRowHeight(scene: Scenegraph, row: number, detaY: number) {
     const height = cell.attribute.height;
     // cell.setAttribute('height', height);
     // (cell.firstChild as Rect).setAttribute('height', cell.attribute.height);
-    updateCellHeightForRow(scene, cell, col, row, height, detaY, scene.table.isHeader(col, row));
+    updateCellHeightForRow(scene, cell, col, row, height + detaY, detaY, scene.table.isHeader(col, row));
 
     scene.updateCellContentWhileResize(col, row);
   }
