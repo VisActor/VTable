@@ -9285,7 +9285,8 @@ describe('pivotTable init test', () => {
           indicatorKey: '230707112948009',
           value: '折扣'
         }
-      ]
+      ],
+      cellLocation: 'body'
     });
   });
 
@@ -9311,7 +9312,8 @@ describe('pivotTable init test', () => {
             indicatorKey: '230707112948009',
             value: '折扣'
           }
-        ]
+        ],
+        cellLocation: 'body'
       })
     ).toEqual({ col: 2, row: 4 });
   });
@@ -9348,7 +9350,8 @@ describe('pivotTable init test', () => {
           indicatorKey: '230417171050011',
           value: '数量'
         }
-      ]
+      ],
+      cellLocation: 'body'
     };
     expect(pivotChart.getChartDatumPosition(datum, cellAddr)).toEqual({ x: 438, y: 305 });
   });
@@ -9643,7 +9646,8 @@ describe('pivotTable init test', () => {
           indicatorKey: '230417171050011',
           value: '数量'
         }
-      ]
+      ],
+      cellLocation: 'body'
     };
 
     const indicators1: VTable.TYPES.IIndicator[] = [
