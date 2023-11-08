@@ -27,6 +27,7 @@ export class Text extends WrapText {
         0
     ];
     options.boundsPadding = padding;
+    options.fill = options.fill ?? '#000';
 
     super(options);
   }
