@@ -128,6 +128,7 @@ function updateColunmWidth(
       cell.col,
       cell.row,
       oldColumnWidth,
+      oldColumnWidth + detaX,
       detaX,
       mode === 'row-body' ? cell.col < scene.table.rowHeaderLevelCount : true,
       autoRowHeight
@@ -199,19 +200,24 @@ function updateCellWidth(
   cell: Group,
   col: number,
   row: number,
-  width: number, // old width, not dist
+  oldWidth: number, // old width, not dist
+  distWidth: number, // old width, not dist
   detaX: number,
   isHeader: boolean,
   // autoColWidth: boolean,
   autoRowHeight: boolean
 ): boolean {
-  cell.setAttribute('width', width + detaX);
+  if (cell.attribute.width === distWidth) {
+    return false;
+  }
+
+  cell.setAttribute('width', distWidth);
   // const mergeInfo = getCellMergeInfo(scene.table, col, row);
   // if (mergeInfo && mergeInfo.start.row !== row) {
   //   return false;
   // }
   const cellGroup = cell;
-  const distWidth = width + detaX;
+  // const distWidth = width + detaX;
 
   if (!cellGroup) {
     // 合并单元格非主单元格，不处理

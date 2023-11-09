@@ -24,8 +24,10 @@ export function handleTextStick(table: BaseTableAPI) {
   const frozenRowsHeight = table.getFrozenRowsHeight();
   const frozenColsWidth = table.getFrozenColsWidth();
   // 计算非冻结
-  const { row: rowStart } = table.getRowAt(scrollTop + frozenRowsHeight + 1);
-  const { col: colStart } = table.getColAt(scrollLeft + frozenColsWidth + 1);
+  const { row: rowTop } = table.getRowAt(scrollTop + frozenRowsHeight + 1);
+  const { col: colLeft } = table.getColAt(scrollLeft + frozenColsWidth + 1);
+  const rowStart = Math.max(rowTop, table.frozenRowCount);
+  const colStart = Math.max(colLeft, table.frozenColCount);
   const rowEnd =
     table.getAllRowsHeight() > table.tableNoFrameHeight
       ? table.getRowAt(scrollTop + table.tableNoFrameHeight - 1).row
@@ -40,6 +42,9 @@ export function handleTextStick(table: BaseTableAPI) {
 
   // column header
   for (let row = 0; row < frozenRowCount; row++) {
+    if (colEnd < colStart) {
+      break;
+    }
     [colStart, colEnd].forEach((col: number) => {
       if (table._getCellStyle(col, row)?.textStick) {
         const cellGroup = table.scenegraph.getCell(col, row);
@@ -57,6 +62,9 @@ export function handleTextStick(table: BaseTableAPI) {
 
   // row header
   for (let col = 0; col < frozenColCount; col++) {
+    if (rowEnd < rowStart) {
+      break;
+    }
     [rowStart, rowEnd].forEach((row: number) => {
       if (
         table._getCellStyle(col, row)?.textStick &&
@@ -77,6 +85,9 @@ export function handleTextStick(table: BaseTableAPI) {
 
   // body
   for (let col = colStart; col <= colEnd; col++) {
+    if (rowEnd < rowStart) {
+      break;
+    }
     [rowStart, rowEnd].forEach((row: number) => {
       if (table._getCellStyle(col, row)?.textStick) {
         const cellGroup = table.scenegraph.getCell(col, row);
@@ -92,6 +103,9 @@ export function handleTextStick(table: BaseTableAPI) {
     });
   }
   for (let row = rowStart; row < rowEnd; row++) {
+    if (colEnd < colStart) {
+      break;
+    }
     [colStart, colEnd].forEach((col: number) => {
       if (table._getCellStyle(col, row)?.textStick) {
         const cellGroup = table.scenegraph.getCell(col, row);
