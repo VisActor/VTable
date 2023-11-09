@@ -206,10 +206,10 @@ function updateCellWidth(
   autoRowHeight: boolean
 ): boolean {
   cell.setAttribute('width', width + detaX);
-  const mergeInfo = getCellMergeInfo(scene.table, col, row);
-  if (mergeInfo && mergeInfo.start.row !== row) {
-    return false;
-  }
+  // const mergeInfo = getCellMergeInfo(scene.table, col, row);
+  // if (mergeInfo && mergeInfo.start.row !== row) {
+  //   return false;
+  // }
   const cellGroup = cell;
   const distWidth = width + detaX;
 
@@ -365,6 +365,11 @@ function updateMergeCellContentWidth(
     for (let col = cellGroup.mergeStartCol; col <= cellGroup.mergeEndCol; col++) {
       distWidth += table.getColWidth(col);
     }
+    let cellHeight = 0;
+    for (let row = cellGroup.mergeStartRow; row <= cellGroup.mergeEndRow; row++) {
+      cellHeight += table.getRowHeight(row);
+    }
+
     for (let col = cellGroup.mergeStartCol; col <= cellGroup.mergeEndCol; col++) {
       for (let row = cellGroup.mergeStartRow; row <= cellGroup.mergeEndRow; row++) {
         const singleCellGroup = table.scenegraph.getCell(col, row);
@@ -377,6 +382,7 @@ function updateMergeCellContentWidth(
         const changed = updateCellContentWidth(
           singleCellGroup,
           distWidth,
+          cellHeight,
           detaX,
           autoRowHeight,
           padding,
@@ -414,6 +420,7 @@ function updateMergeCellContentWidth(
   return updateCellContentWidth(
     cellGroup,
     distWidth,
+    table.getRowHeight(cellGroup.row),
     detaX,
     autoRowHeight,
     padding,

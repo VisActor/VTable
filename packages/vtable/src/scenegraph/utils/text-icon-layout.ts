@@ -466,6 +466,7 @@ export function dealWithRichTextIcon(icon: ColumnIconOption) {
 export function updateCellContentWidth(
   cellGroup: Group,
   distWidth: number,
+  cellHeight: number,
   detaX: number,
   autoRowHeight: boolean,
   padding: [number, number, number, number],
@@ -546,7 +547,7 @@ export function updateCellContentWidth(
       return true;
     }
 
-    newHeight = (cellGroup.contentHeight ?? cellGroup.attribute.height) - (padding[0] + padding[2]);
+    newHeight = (cellGroup.contentHeight ?? cellHeight) - (padding[0] + padding[2]);
 
     cellGroup.forEachChildren((child: any) => {
       if (child.type === 'rect' || child.type === 'chart') {
@@ -570,9 +571,9 @@ export function updateCellContentWidth(
       if (child.name === 'mark') {
         child.setAttribute('y', 0);
       } else if (textBaseline === 'middle') {
-        child.setAttribute('y', (cellGroup.attribute.height - padding[2] + padding[0] - child.AABBBounds.height()) / 2);
+        child.setAttribute('y', (cellHeight - padding[2] + padding[0] - child.AABBBounds.height()) / 2);
       } else if (textBaseline === 'bottom') {
-        child.setAttribute('y', cellGroup.attribute.height - child.AABBBounds.height() - padding[2]);
+        child.setAttribute('y', cellHeight - child.AABBBounds.height() - padding[2]);
       } else {
         child.setAttribute('y', padding[0]);
       }
