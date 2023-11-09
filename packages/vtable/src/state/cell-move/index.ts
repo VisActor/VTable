@@ -75,46 +75,51 @@ export function updateMoveCol(col: number, row: number, x: number, y: number, st
 }
 
 export function endMoveCol(state: StateManeger) {
-  if (!('canMoveHeaderPosition' in state.table.internalProps.layoutMap)) {
-    return;
+  if (
+    'canMoveHeaderPosition' in state.table.internalProps.layoutMap &&
+    state.columnMove.moving &&
+    state.columnMove.colSource >= 0 &&
+    state.columnMove.rowSource >= 0 &&
+    state.columnMove.colTarget >= 0 &&
+    state.columnMove.rowTarget >= 0
+  ) {
+    // 调整列顺序
+    const moveSuccess = (state.table as any).moveHeaderPosition(
+      { col: state.columnMove.colSource, row: state.columnMove.rowSource },
+      { col: state.columnMove.colTarget, row: state.columnMove.rowTarget }
+    );
+
+    // 更新状态
+    if (moveSuccess) {
+      // clear columns width and rows height cache
+      clearWidthsAndHeightsCache(
+        state.columnMove.colSource,
+        state.columnMove.rowSource,
+        state.columnMove.colTarget,
+        state.columnMove.rowTarget,
+        state.table
+      );
+
+      // clear cell style cache
+      state.table.clearCellStyleCache();
+
+      state.table.scenegraph.updateHeaderPosition(
+        state.columnMove.colSource,
+        state.columnMove.rowSource,
+        state.columnMove.colTarget,
+        state.columnMove.rowTarget
+      );
+    }
+
+    state.updateCursor();
   }
   setTimeout(() => {
     state.columnMove.moving = false;
+    delete state.columnMove.colSource;
+    delete state.columnMove.rowSource;
+    delete state.columnMove.colTarget;
+    delete state.columnMove.rowTarget;
   }, 0);
-  // 调整列顺序
-  const moveSuccess = (state.table as any).moveHeaderPosition(
-    { col: state.columnMove.colSource, row: state.columnMove.rowSource },
-    { col: state.columnMove.colTarget, row: state.columnMove.rowTarget }
-  );
-  // moveSuccess &&
-  //   state.table.selection.selectCellsMove(
-  //     state.targetCol - state.sourceCol,
-  //     state.targetRow - state.sourceRow
-  //   );
-
-  // 更新状态
-  if (moveSuccess) {
-    // clear columns width and rows height cache
-    clearWidthsAndHeightsCache(
-      state.columnMove.colSource,
-      state.columnMove.rowSource,
-      state.columnMove.colTarget,
-      state.columnMove.rowTarget,
-      state.table
-    );
-
-    // clear cell style cache
-    state.table.clearCellStyleCache();
-
-    state.table.scenegraph.updateHeaderPosition(
-      state.columnMove.colSource,
-      state.columnMove.rowSource,
-      state.columnMove.colTarget,
-      state.columnMove.rowTarget
-    );
-  }
-
-  state.updateCursor();
   state.table.scenegraph.component.hideMoveCol();
   state.table.scenegraph.updateNextFrame();
 }
