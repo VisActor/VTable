@@ -13,6 +13,7 @@ import { getAxisConfigInPivotChart } from '../../layout/chart-helper/get-axis-co
 import { computeAxisComponentHeight } from '../../components/axis/get-axis-component-size';
 import { isArray, isNumber, isObject } from '@visactor/vutils';
 import { CheckBox } from '@visactor/vrender-components';
+import { decodeReactDom } from '../component/custom';
 
 const utilTextMark = new WrapText({
   ignoreBuf: true
@@ -404,6 +405,9 @@ function computeCustomRenderHeight(col: number, row: number, table: BaseTableAPI
     if (customLayout) {
       // 处理customLayout
       const customLayoutObj = customLayout(arg);
+      if (customLayoutObj.rootContainer) {
+        customLayoutObj.rootContainer = decodeReactDom(customLayoutObj.rootContainer);
+      }
       if (customLayoutObj.rootContainer instanceof VGroup) {
         height = (customLayoutObj.rootContainer as VGroup).AABBBounds.height() ?? 0;
         // height = (customLayoutObj.rootContainer as VGroup).attribute.height ?? 0;

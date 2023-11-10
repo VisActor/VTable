@@ -189,7 +189,8 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
       mode,
       modeParams,
       canvasWidth,
-      canvasHeight
+      canvasHeight,
+      overscrollBehavior
     } = options;
     this.container = container;
     this.options = options;
@@ -254,7 +255,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     internalProps.dragHeaderMode = dragHeaderMode;
     internalProps.renderChartAsync = renderChartAsync;
     setBatchRenderChartCount(renderChartAsyncBatchCount);
-
+    internalProps.overscrollBehavior = overscrollBehavior ?? 'auto';
     internalProps._rowHeightsMap = new NumberMap();
     internalProps._rowRangeHeightsMap = new Map();
     internalProps._colRangeWidthsMap = new Map();
@@ -1018,6 +1019,17 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     return this.defaultColWidth;
   }
 
+  // setColWidthDefined(col: number, width: number) {
+  //   const { layoutMap } = this.internalProps;
+  //   const widthData = layoutMap?.getColumnWidthDefined(col) ?? {};
+  //   widthData.width = width;
+  // }
+
+  getColWidthDefinedNumber(col: number): number {
+    const width = this.getColWidthDefined(col);
+    return this._adjustColWidth(col, this._colWidthDefineToPxWidth(width));
+  }
+
   /**
    * 根据列号获取列宽定义
    * @param {number} col column number
@@ -1403,7 +1415,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     col: boolean;
   } | null {
     const isFrozenRow = this.isFrozenRow(row) || this.isBottomFrozenRow(row);
-    const isFrozenCol = this.isFrozenRow(col) || this.isRightFrozenColumn(col);
+    const isFrozenCol = this.isFrozenColumn(col) || this.isRightFrozenColumn(col);
     if (isFrozenRow || isFrozenCol) {
       return {
         row: isFrozenRow,
@@ -1596,6 +1608,62 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     }
     return count;
   }
+  /** 获取表格body部分的显示单元格范围 */
+  getBodyVisibleCellRange() {
+    const { scrollTop, scrollLeft } = this;
+    const frozenRowsHeight = this.getFrozenRowsHeight();
+    const frozenColsWidth = this.getFrozenColsWidth();
+    const bottomFrozenRowsHeight = this.getBottomFrozenRowsHeight();
+    const rightFrozenColsWidth = this.getRightFrozenColsWidth();
+    // 计算非冻结
+    const { row: rowStart } = this.getRowAt(scrollTop + frozenRowsHeight + 1);
+    const { col: colStart } = this.getColAt(scrollLeft + frozenColsWidth + 1);
+    const rowEnd =
+      this.getAllRowsHeight() > this.tableNoFrameHeight
+        ? this.getRowAt(scrollTop + this.tableNoFrameHeight - 1 - bottomFrozenRowsHeight).row
+        : this.rowCount - 1;
+    const colEnd =
+      this.getAllColsWidth() > this.tableNoFrameWidth
+        ? this.getColAt(scrollLeft + this.tableNoFrameWidth - 1 - rightFrozenColsWidth).col
+        : this.colCount - 1;
+    if (colEnd < 0 || rowEnd < 0) {
+      return null;
+    }
+    return { rowStart, colStart, rowEnd, colEnd };
+  }
+  /** 获取表格body部分的显示行号范围 */
+  getBodyVisibleRowRange() {
+    const { scrollTop } = this;
+    const frozenRowsHeight = this.getFrozenRowsHeight();
+    const bottomFrozenRowsHeight = this.getBottomFrozenRowsHeight();
+    // 计算非冻结
+    const { row: rowStart } = this.getRowAt(scrollTop + frozenRowsHeight + 1);
+    const rowEnd =
+      this.getAllRowsHeight() > this.tableNoFrameHeight
+        ? this.getRowAt(scrollTop + this.tableNoFrameHeight - 1 - bottomFrozenRowsHeight).row
+        : this.rowCount - 1;
+    if (rowEnd < 0) {
+      return null;
+    }
+    return { rowStart, rowEnd };
+  }
+  /** 获取表格body部分的显示列号范围 */
+  getBodyVisibleColRange() {
+    const { scrollLeft } = this;
+    const frozenColsWidth = this.getFrozenColsWidth();
+    const rightFrozenColsWidth = this.getRightFrozenColsWidth();
+    // 计算非冻结
+    const { col: colStart } = this.getColAt(scrollLeft + frozenColsWidth + 1);
+
+    const colEnd =
+      this.getAllColsWidth() > this.tableNoFrameWidth
+        ? this.getColAt(scrollLeft + this.tableNoFrameWidth - 1 - rightFrozenColsWidth).col
+        : this.colCount - 1;
+    if (colEnd < 0) {
+      return null;
+    }
+    return { colStart, colEnd };
+  }
   /**
    * 获取表格中完全可见的可滚动列数。不包括表头及冻结的列
    * @returns {number}
@@ -1745,7 +1813,8 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
       autoFillHeight,
       customRender,
       renderChartAsync,
-      renderChartAsyncBatchCount
+      renderChartAsyncBatchCount,
+      overscrollBehavior
     } = options;
     if (pixelRatio && pixelRatio !== this.internalProps.pixelRatio) {
       this.internalProps.pixelRatio = pixelRatio;
@@ -1803,7 +1872,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     internalProps.dragHeaderMode = dragHeaderMode;
     internalProps.renderChartAsync = renderChartAsync;
     setBatchRenderChartCount(renderChartAsyncBatchCount);
-
+    internalProps.overscrollBehavior = overscrollBehavior ?? 'auto';
     internalProps.cellTextOverflows = {};
     internalProps._rowHeightsMap = new NumberMap();
     internalProps._rowRangeHeightsMap = new Map();
@@ -3080,7 +3149,10 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
   }
 
   /**获取选中区域的内容 作为复制内容 */
-  getCopyValue(): string {
+  getCopyValue(): string | null {
+    if (!this.stateManeger.select?.ranges) {
+      return null;
+    }
     const ranges = this.stateManeger.select.ranges;
     let minCol = Math.min(ranges[0].start.col, ranges[0].end.col);
     let maxCol = Math.max(ranges[0].start.col, ranges[0].end.col);
@@ -3184,8 +3256,15 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
   }
 
   /**获取选中区域的每个单元格详情 */
-  getSelectedCellInfos(): CellInfo[][] {
+  getSelectedCellInfos(): CellInfo[][] | null {
+    if (!this.stateManeger.select?.ranges) {
+      return null;
+    }
+
     const ranges = this.stateManeger.select.ranges;
+    if (!ranges.length) {
+      return [];
+    }
     let minCol = Math.min(ranges[0].start.col, ranges[0].end.col);
     let maxCol = Math.max(ranges[0].start.col, ranges[0].end.col);
     let minRow = Math.min(ranges[0].start.row, ranges[0].end.row);

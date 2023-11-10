@@ -148,7 +148,7 @@ export interface IIndicatorHeaderNode {
 
 ## renderChartAsyncBatchCount(number)
 
-开启图表异步渲染，每批次渐进渲染图表个数，建议5-10个，具体可以视整体效果调整。
+开启图表异步渲染，每批次渐进渲染图表个数，建议5-10个，具体可以视整体效果调整。默认值5.
 
 {{ use: common-option-secondary(
       prefix = '#',

@@ -11,6 +11,7 @@ import { getAxisConfigInPivotChart } from '../../layout/chart-helper/get-axis-co
 import { computeAxisComponentWidth } from '../../components/axis/get-axis-component-size';
 import { Group as VGroup } from '@visactor/vrender';
 import { isObject } from '@visactor/vutils';
+import { decodeReactDom } from '../component/custom';
 
 export function computeColsWidth(table: BaseTableAPI, colStart?: number, colEnd?: number, update?: boolean): void {
   const time = typeof window !== 'undefined' ? window.performance.now() : 0;
@@ -139,12 +140,15 @@ export function computeColsWidth(table: BaseTableAPI, colStart?: number, colEnd?
 
   if (update) {
     for (let col = 0; col < table.colCount; col++) {
+      // newColWidth could not be in column min max range possibly
+      // const newColWidth = table._adjustColWidth(col, newWidths[col]) ?? table.getColWidth(col);
       const newColWidth = newWidths[col] ?? table.getColWidth(col);
       if (newColWidth !== oldColWidths[col]) {
         // update the column width in scenegraph
-        table.scenegraph.updateColWidth(col, newColWidth - oldColWidths[col]);
+        table.scenegraph.updateColWidth(col, newColWidth - oldColWidths[col], true);
       }
     }
+    table.scenegraph.updateContainer();
   }
   // console.log('computeColsWidth  time:', (typeof window !== 'undefined' ? window.performance.now() : 0) - time, colStart, colEnd);
 }
@@ -312,7 +316,7 @@ function computeAutoColWidth(
     if (cellType !== 'text' && cellType !== 'link' && cellType !== 'progressbar' && cellType !== 'checkbox') {
       // text&link&progressbar测量文字宽度
       // image&video&sparkline使用默认宽度
-      maxWidth = Math.max(maxWidth, table.getColWidth(col) || 0);
+      maxWidth = Math.max(maxWidth, table.getColWidthDefinedNumber(col) || 0);
       continue;
     }
 
@@ -387,6 +391,9 @@ function computeCustomRenderWidth(col: number, row: number, table: BaseTableAPI)
     if (customLayout) {
       // 处理customLayout
       const customLayoutObj = customLayout(arg);
+      if (customLayoutObj.rootContainer) {
+        customLayoutObj.rootContainer = decodeReactDom(customLayoutObj.rootContainer);
+      }
       if (customLayoutObj.rootContainer instanceof VGroup) {
         width = (customLayoutObj.rootContainer as VGroup).AABBBounds.width() ?? 0;
         // width = (customLayoutObj.rootContainer as VGroup).attribute.width ?? 0;

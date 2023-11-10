@@ -81,7 +81,12 @@ export function bindScrollBarListener(eventManeger: EventManeger) {
     if (stateManeger.interactionState !== InteractionState.scrolling) {
       stateManeger.updateInteractionState(InteractionState.scrolling);
     }
+    // stateManeger.table.scenegraph.proxy.isSkipProgress = true;
     const ratio = e.detail.value[0] / (1 - e.detail.value[1] + e.detail.value[0]);
     throttleHorizontalWheel(ratio);
+    // setTimeout(() => {
+    //   console.log('isSkipProgress', false);
+    //   stateManeger.table.scenegraph.proxy.isSkipProgress = false;
+    // }, 10);
   });
 }

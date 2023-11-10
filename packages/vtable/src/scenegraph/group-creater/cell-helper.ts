@@ -31,6 +31,9 @@ import { CartesianAxis } from '../../components/axis/axis';
 import { createCheckboxCellGroup } from './cell-type/checkbox-cell';
 // import type { PivotLayoutMap } from '../../layout/pivot-layout';
 import type { PivotHeaderLayoutMap } from '../../layout/pivot-header-layout';
+import { getHierarchyOffset } from '../utils/get-hierarchy-offset';
+import { getQuadProps } from '../utils/padding';
+import { convertInternal } from '../../tools/util';
 
 export function createCell(
   type: ColumnTypeOption,
@@ -360,6 +363,54 @@ export function createCell(
 export function updateCell(col: number, row: number, table: BaseTableAPI, addNew?: boolean) {
   // const oldCellGroup = table.scenegraph.getCell(col, row, true);
   const oldCellGroup = table.scenegraph.highPerformanceGetCell(col, row, true);
+  const cellStyle = table._getCellStyle(col, row);
+  const autoWrapText = cellStyle.autoWrapText ?? table.internalProps.autoWrapText;
+  const cellTheme = getStyleTheme(cellStyle, table, col, row, getProp).theme;
+
+  // fast method for text
+  if (!addNew && canUseFastUpdate(col, row, oldCellGroup, autoWrapText, table)) {
+    // update group
+    const cellWidth = table.getColWidth(col);
+    const cellHeight = table.getRowHeight(row);
+    oldCellGroup.setAttributes({
+      width: cellWidth,
+      height: cellHeight,
+      // 背景相关，cell背景由cellGroup绘制
+      lineWidth: cellTheme?.group?.lineWidth ?? undefined,
+      fill: cellTheme?.group?.fill ?? undefined,
+      stroke: cellTheme?.group?.stroke ?? undefined,
+      strokeArrayWidth: (cellTheme?.group as any)?.strokeArrayWidth ?? undefined,
+      strokeArrayColor: (cellTheme?.group as any)?.strokeArrayColor ?? undefined,
+      cursor: (cellTheme?.group as any)?.cursor ?? undefined
+    } as any);
+
+    // update text
+    const textMark = oldCellGroup.getChildByName('text');
+    if (textMark) {
+      const text = table.getCellValue(col, row);
+      const textArr = convertInternal(text).replace(/\r?\n/g, '\n').replace(/\r/g, '\n').split('\n');
+      const hierarchyOffset = getHierarchyOffset(col, row, table);
+      const lineClamp = cellStyle.lineClamp;
+      const padding = getQuadProps(getProp('padding', cellStyle, col, row, table)) ?? [0, 0, 0, 0];
+
+      const attribute = {
+        text: textArr.length === 1 && !autoWrapText ? textArr[0] : textArr, // 单行(no-autoWrapText)为字符串，多行(autoWrapText)为字符串数组
+        maxLineWidth: cellWidth - (padding[1] + padding[3] + hierarchyOffset),
+        // fill: true,
+        // textAlign: 'left',
+        textBaseline: 'top',
+        autoWrapText,
+        lineClamp,
+        wordBreak: 'break-word',
+        // widthLimit: autoColWidth ? -1 : colWidth - (padding[1] + padding[3]),
+        heightLimit: cellHeight - (padding[0] + padding[2]),
+        pickable: false,
+        dx: hierarchyOffset
+      };
+      textMark.setAttributes(cellTheme.text ? (Object.assign({}, cellTheme.text, attribute) as any) : attribute);
+    }
+    return oldCellGroup;
+  }
 
   if (!addNew && oldCellGroup.role === 'empty') {
     return undefined;
@@ -405,8 +456,8 @@ export function updateCell(col: number, row: number, table: BaseTableAPI, addNew
     }
   } else {
     const mayHaveIcon = cellLocation !== 'body' ? true : !!define?.icon || !!define?.tree;
-    const headerStyle = table._getCellStyle(col, row);
-    const cellTheme = getStyleTheme(headerStyle, table, col, row, getProp).theme;
+    // const headerStyle = table._getCellStyle(col, row);
+    // const cellTheme = getStyleTheme(headerStyle, table, col, row, getProp).theme;
     const padding = cellTheme._vtable.padding;
     const textAlign = cellTheme._vtable.textAlign;
     const textBaseline = cellTheme._vtable.textBaseline;
@@ -523,6 +574,10 @@ function updateCellContent(
   addNew: boolean,
   cellTheme?: IThemeSpec
 ) {
+  //解决报错 getCellByCache递归调用 死循环问题
+  if (oldCellGroup.row !== row || oldCellGroup.col !== col) {
+    return null;
+  }
   const newCellGroup = createCell(
     type,
     define,
@@ -544,7 +599,7 @@ function updateCellContent(
     range,
     cellTheme
   );
-  if (!addNew) {
+  if (!addNew && oldCellGroup.parent) {
     oldCellGroup.parent.insertAfter(newCellGroup, oldCellGroup);
     oldCellGroup.parent.removeChild(oldCellGroup);
 
@@ -554,4 +609,24 @@ function updateCellContent(
     }
   }
   return newCellGroup;
+}
+
+function canUseFastUpdate(col: number, row: number, oldCellGroup: Group, autoWrapText: boolean, table: BaseTableAPI) {
+  const define = table.getBodyColumnDefine(col, row);
+  const mayHaveIcon = !!define?.icon || !!define?.tree;
+  const cellType = table.getBodyColumnType(col, row);
+  const autoRowHeight = table.heightMode === 'autoHeight';
+
+  if (
+    !table.isHeader(col, row) &&
+    oldCellGroup.role === 'cell' &&
+    cellType === 'text' &&
+    !autoWrapText &&
+    !autoRowHeight &&
+    !mayHaveIcon &&
+    oldCellGroup.firstChild?.type === 'text'
+  ) {
+    return true;
+  }
+  return false;
 }
