@@ -183,7 +183,7 @@ const option = {
 ```
 
 customLayout函数返回一个对象，其中`rootContainer`为自定义渲染内容的根节点，`renderDefault`为是否需要绘制单元格原内容的标记（与customRender一致）。
-`VTable`使用`VRender`提供的图元和布局能力实现`customLayout`功能，目前推荐使用JSX写法，层级结构更加清晰，[参考示例](https://codesandbox.io/s/vtable-jsx-slsg25)
+`VTable`使用`VRender`提供的图元和布局能力实现`customLayout`功能，目前推荐使用JSX写法，层级结构更加清晰，[参考示例](../../demo/custom-render/custom-cell-layout-jsx)
 
 ## 布局能力
 

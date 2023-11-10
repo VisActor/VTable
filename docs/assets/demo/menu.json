@@ -733,6 +733,22 @@
           }
         },
         {
+          "path": "custom-cell-layout-jsx",
+          "title": {
+            "zh": "单元格自定义布局(JSX)",
+            "en": "Cell custom layout(JSX)"
+          },
+          "meta": {
+            "title": "Cell custom layout",
+            "keywords": "",
+            "category": "demo",
+            "group": "Custom",
+            "cover": "https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/custom-cell-layout-jsx.png",
+            "link": "'../../guide/custom_define/custom_layout'",
+            "option": ""
+          }
+        },
+        {
           "path": "custom-render-global",
           "title": {
             "zh": "全局单元格自定义内容",

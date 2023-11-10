@@ -71,22 +71,21 @@ export function createTable() {
           const { height, width } = rect ?? table.getCellRect(col, row);
           const percentCalc = VTable.CustomLayout.percentCalc;
 
-          const container = new VTable.CustomLayout.Container({
+          const container = new VTable.CustomLayout.Group({
             height,
-            width
+            width,
+            display: 'flex',
+            flexDirection: 'row'
           });
-          const containerLeft = new VTable.CustomLayout.Container({
+          const containerLeft = new VTable.CustomLayout.Group({
             height: percentCalc(100),
             width: 60,
-            showBounds: false,
+            display: 'flex',
             direction: 'column',
             alignContent: 'center',
             alignItems: 'center',
             justifyContent: 'space-around',
-            background: {
-              fill: 'blue'
-              // stroke: 'red'
-            }
+            fill: 'blue'
           });
           container.add(containerLeft);
 
@@ -100,26 +99,27 @@ export function createTable() {
           });
           containerLeft.add(icon0);
 
-          const containerRight = new VTable.CustomLayout.Container({
+          const containerRight = new VTable.CustomLayout.Group({
             height: percentCalc(100),
             width: 200,
-            showBounds: false,
+            display: 'flex',
             direction: 'column'
             // justifyContent: 'center'
           });
           container.add(containerRight);
 
-          const containerRightTop = new VTable.CustomLayout.Container({
+          const containerRightTop = new VTable.CustomLayout.Group({
+            id: 'containerRightTop',
             height: percentCalc(50),
             width: percentCalc(100),
-            showBounds: false,
+            display: 'flex',
             alignItems: 'center'
           });
 
-          const containerRightBottom = new VTable.CustomLayout.Container({
+          const containerRightBottom = new VTable.CustomLayout.Group({
             height: percentCalc(50),
             width: percentCalc(100),
-            showBounds: false,
+            display: 'flex',
             alignItems: 'center'
           });
 

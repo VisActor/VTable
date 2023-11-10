@@ -85,15 +85,17 @@ VTable.register.icon('message',{
        const  {height, width } = rect ?? table.getCellRect(col,row);
        const percentCalc = VTable.CustomLayout.percentCalc;
 
-        const container = new VTable.CustomLayout.Container({
+        const container = new VTable.CustomLayout.Group({
           height,
           width,
+          display: 'flex',
+          flexDirection: 'row',
         });
-        const containerLeft = new VTable.CustomLayout.Container({
+        const containerLeft = new VTable.CustomLayout.Group({
           height: percentCalc(100),
           width: 60,
-          showBounds: false,
-          direction: 'column',
+          display: 'flex',
+          flexDirection: 'column',
           alignItems: 'center',
           justifyContent: 'space-around',
         });
@@ -103,31 +105,31 @@ VTable.register.icon('message',{
           id: 'icon0',
           width: 50,
           height: 50,
-          src:record.bloggerAvatar,
-          shape:'circle',
+          image:record.bloggerAvatar,
+          cornerRadius: 25,
         });
         containerLeft.add(icon0);
 
 
-        const containerRight = new VTable.CustomLayout.Container({
+        const containerRight = new VTable.CustomLayout.Group({
           height: percentCalc(100),
           width: percentCalc(100, -60),
-          showBounds: false,
-          direction: 'column',
+          display: 'flex',
+          flexDirection: 'column',
         });
         container.add(containerRight);
 
-        const containerRightTop = new VTable.CustomLayout.Container({
+        const containerRightTop = new VTable.CustomLayout.Group({
           height: percentCalc(50),
           width: percentCalc(100),
-          showBounds: false,
+          display: 'flex',
           alignItems: 'flex-end',
        });
 
-        const containerRightBottom = new VTable.CustomLayout.Container({
+        const containerRightBottom = new VTable.CustomLayout.Group({
           height: percentCalc(50),
           width: percentCalc(100),
-          showBounds: false,
+          display: 'flex',
           alignItems: 'center',
         });
 

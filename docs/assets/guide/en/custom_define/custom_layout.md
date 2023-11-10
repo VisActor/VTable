@@ -183,7 +183,7 @@ const option = {
 ```
 
 The customLayout function returns an object, where `rootContainer` is the root node of the custom rendered content, and `renderDefault` is a flag indicating whether the original content of the cell needs to be drawn (consistent with customRender).
-`VTable` uses the primitives and layout capabilities provided by `VRender` to implement the `customLayout` function. Currently, it is recommended to use JSX writing method, which has a clearer hierarchical structure. [Reference example](https://codesandbox.io/s/vtable-jsx-slsg25)
+`VTable` uses the primitives and layout capabilities provided by `VRender` to implement the `customLayout` function. Currently, it is recommended to use JSX writing method, which has a clearer hierarchical structure. [Reference example](../../demo/custom-render/custom-cell-layout-jsx)
 
 ## Layout capability
 

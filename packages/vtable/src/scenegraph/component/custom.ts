@@ -366,7 +366,7 @@ function dealPercentCalc(group: VGroup, parentWidth: number, parentHeight: numbe
     }
 
     if (child.type === 'group') {
-      dealPercentCalc(child, group.attribute.width, group.attribute.height);
+      dealPercentCalc(child, child.attribute.width, child.attribute.height);
     }
   });
 }
