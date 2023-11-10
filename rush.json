@@ -63,6 +63,14 @@
         "share"
       ],
       "shouldPublish": false
+    },
+    {
+      "packageName": "@visactor/react-vtable",
+      "projectFolder": "packages/react-vtable",
+      "tags": [
+        "package"
+      ],
+      "shouldPublish": false
     }
   ]
 }

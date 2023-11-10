@@ -1,0 +1,18 @@
+{
+  "extends": "@internal/ts-config/tsconfig.base.json",
+  "include": ["src"],
+  "compilerOptions": {
+    "jsx": "react-jsx",
+    "types": ["jest", "offscreencanvas", "node"],
+    "lib": ["DOM", "ESNext"],
+    "baseUrl": "./",
+    "rootDir": "./src",
+    "strict": false,
+  },
+  "ts-node": {
+    "transpileOnly": true,
+    "compilerOptions": {
+      "module": "commonjs"
+    }
+  }
+}
