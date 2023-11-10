@@ -114,5 +114,34 @@ VTable 提供了scrollToCell接口，用于滚到指定的单元格位置。该�
 ```javascript
 table.scrollToCell({ row:20 , col: 10 });
 ```
-
 在上示例中，我们将滚动到行号为20，列号为 10 的单元格位置。
+
+## 关闭浏览器默认行为
+
+可通过配置项overscrollBehavior属性来关闭浏览器默认行为，如下配置说明：
+
+```
+  /**
+   * 'auto':表格滚动到顶部或者底部时，触发浏览器默认行为;
+   * 'none':表格滚动到顶部或者底部时, 不会触发浏览器默认行为，即表格滚动到边界继续滚动时不会触发父级页面的滚动
+   * */
+  overscrollBehavior?: 'auto' | 'none';
+```
+
+在mac电脑上 有时候会出现已经设置了'none'，但还是会触发了浏览器的默认滚动（如橡皮筋效果或者触发了页面回退）
+<div style="display: flex;">
+ <div style="width: 20%; text-align: center;">
+     <img src="https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/guide/scroll-bounce.gif" />
+  </div>
+  <div style="width: 10%; text-align: center;">
+  </div>
+  <div style="width: 20%; text-align: center;">
+     <img src="https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/guide/scroll-back.jpeg" />
+  </div>
+</div>
+
+这个问题可能是因为在表格外部触发过了浏览器的橡默认行为，转而到了表格中进行滚动时延续了这个效果，为了避免这个问题的发生可以在页面body设置css滚动条样式（同时配合VTable的overscrollBehavior配置两层进行限制）：
+```
+"overscroll-behavior: none;"
+```
+具体说明可参考：https://developer.mozilla.org/zh-CN/docs/Web/CSS/overscroll-behavior

@@ -521,6 +521,13 @@
             "link": "'../../guide/interaction_and_event/drag_header'",
             "option": ""
           }
+        },
+        {
+          "path": "scroll",
+          "title": {
+            "zh": "滚动",
+            "en": "scroll"
+          }
         }
       ]
     },
