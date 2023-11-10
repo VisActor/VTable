@@ -3,6 +3,7 @@ import type { PivotHeaderLayoutMap } from '../pivot-header-layout';
 import type { SimpleHeaderLayoutMap } from '../simple-header-layout';
 import { checkZeroAlign, getAxisOption, getAxisRange } from './get-axis-config';
 import { getAxisDomainRangeAndLabels } from './get-axis-domain';
+import { getNewRangeToAlign } from './zero-align';
 
 const NO_AXISID_FRO_VTABLE = 'NO_AXISID_FRO_VTABLE';
 
@@ -46,45 +47,35 @@ export function getChartAxes(col: number, row: number, layout: PivotHeaderLayout
     // const colIndex = layout.getRecordIndexByCol(col);
     const colPath = layout.getColKeysPath(col, row);
     indicatorKeys.forEach((key, index) => {
-      // if (isArray(key)) {
-      //   key = key[0];
-      // }
-
-      const { axisOption, isPercent, isZeroAlign, seriesIndice } = getAxisOption(
+      const { range, isZeroAlign, axisOption } = getRange(
         col,
         row,
+        index,
         index === 0 ? 'bottom' : 'top',
+        indicatorKeys,
+        colPath,
         layout
       );
-      const range = getAxisRange(
-        layout.dataset.collectedValues,
-        indicatorKeys,
-        isZeroAlign,
-        colPath,
-        seriesIndice ?? index
-      );
-      // const data = layout.dataset.collectedValues[key + (isZeroAlign ? '_align' : '')]
-      //   ? layout.dataset.collectedValues[key + (isZeroAlign ? '_align' : '')]
-      //   : layout.dataset.collectedValues[key];
-      // const range = merge({}, (data?.[colPath ?? ''] as { max?: number; min?: number }) ?? { min: 0, max: 1 });
-      // if (range.positiveMax && range.positiveMax > range.max) {
-      //   range.max = range.positiveMax;
-      // }
-      // if (range.negativeMin && range.negativeMin < range.min) {
-      //   range.min = range.negativeMin;
-      // }
-      if (isPercent) {
-        (range as any).min = (range as any).min < 0 ? -1 : 0;
-        (range as any).max = (range as any).max > 0 ? 1 : 0;
-      }
-      if (axisOption?.zero || range.min === range.max) {
-        range.min = Math.min(range.min, 0);
-        range.max = Math.max(range.max, 0);
-      }
-      if (axisOption?.nice) {
-        const { range: axisRange } = getAxisDomainRangeAndLabels(range.min, range.max, axisOption, isZeroAlign);
-        range.min = axisRange[0];
-        range.max = axisRange[1];
+      if (isZeroAlign) {
+        const subAxisRange = getRange(
+          col,
+          row,
+          indicatorKeys.length - 1 - index,
+          index === 0 ? 'top' : 'bottom',
+          indicatorKeys,
+          colPath,
+          layout
+        );
+
+        if (subAxisRange) {
+          const { range: subRange } = subAxisRange;
+
+          const align = getNewRangeToAlign(range, subRange);
+          if (align) {
+            range.min = align.range1[0];
+            range.max = align.range1[1];
+          }
+        }
       }
       if (isNumber(axisOption?.min)) {
         (range as any).min = axisOption.min;
@@ -103,6 +94,7 @@ export function getChartAxes(col: number, row: number, layout: PivotHeaderLayout
             orient: index === 0 ? 'bottom' : 'top',
             // visible: true,
             label: { visible: false },
+            // label: { flush: true },
             title: { visible: false },
             domainLine: { visible: false },
             seriesIndex: index,
@@ -151,47 +143,35 @@ export function getChartAxes(col: number, row: number, layout: PivotHeaderLayout
     const indicatorKeys = layout.getIndicatorKeyInChartSpec(col, row);
     const rowPath = layout.getRowKeysPath(col, row);
     indicatorKeys.forEach((key, index) => {
-      // if (isArray(key)) {
-      //   key = key[0];
-      // }
-
-      const { axisOption, isPercent, isZeroAlign, seriesIndice } = getAxisOption(
+      const { range, isZeroAlign, axisOption } = getRange(
         col,
         row,
+        index,
         index === 0 ? 'left' : 'right',
+        indicatorKeys,
+        rowPath,
         layout
       );
-      const range = getAxisRange(
-        layout.dataset.collectedValues,
-        indicatorKeys,
-        isZeroAlign,
-        rowPath,
-        seriesIndice ?? index
-      );
+      if (isZeroAlign) {
+        const subAxisRange = getRange(
+          col,
+          row,
+          indicatorKeys.length - 1 - index,
+          index === 0 ? 'right' : 'left',
+          indicatorKeys,
+          rowPath,
+          layout
+        );
 
-      // const data = layout.dataset.collectedValues[key + (isZeroAlign ? '_align' : '')]
-      //   ? layout.dataset.collectedValues[key + (isZeroAlign ? '_align' : '')]
-      //   : layout.dataset.collectedValues[key];
+        if (subAxisRange) {
+          const { range: subRange } = subAxisRange;
 
-      // const range = merge({}, (data?.[rowPath ?? ''] as { max?: number; min?: number }) ?? { min: 0, max: 1 });
-      // if (range.positiveMax && range.positiveMax > range.max) {
-      //   range.max = range.positiveMax;
-      // }
-      // if (range.negativeMin && range.negativeMin < range.min) {
-      //   range.min = range.negativeMin;
-      // }
-      if (isPercent) {
-        (range as any).min = (range as any).min < 0 ? -1 : 0;
-        (range as any).max = (range as any).max > 0 ? 1 : 0;
-      }
-      if (axisOption?.zero || range.min === range.max) {
-        range.min = Math.min(range.min, 0);
-        range.max = Math.max(range.max, 0);
-      }
-      if (axisOption?.nice) {
-        const { range: axisRange } = getAxisDomainRangeAndLabels(range.min, range.max, axisOption, isZeroAlign);
-        range.min = axisRange[0];
-        range.max = axisRange[1];
+          const align = getNewRangeToAlign(range, subRange);
+          if (align) {
+            range.min = align.range1[0];
+            range.max = align.range1[1];
+          }
+        }
       }
       if (isNumber(axisOption?.min)) {
         (range as any).min = axisOption.min;
@@ -199,6 +179,7 @@ export function getChartAxes(col: number, row: number, layout: PivotHeaderLayout
       if (isNumber(axisOption?.max)) {
         (range as any).max = axisOption.max;
       }
+
       axes.push(
         merge(
           {
@@ -294,4 +275,49 @@ export function getChartDataId(
     return dataIdfield;
   }
   return chartSpec.data.id;
+}
+
+function getRange(
+  col: number,
+  row: number,
+  index: number,
+  position: 'bottom' | 'top' | 'left' | 'right',
+  indicatorKeys: string[],
+  path: string,
+  layout: PivotHeaderLayoutMap
+) {
+  const { axisOption, isPercent, isZeroAlign, seriesIndice } = getAxisOption(col, row, position, layout);
+  const range = getAxisRange(layout.dataset.collectedValues, indicatorKeys, isZeroAlign, path, seriesIndice ?? index);
+
+  if (isPercent) {
+    (range as any).min = (range as any).min < 0 ? -1 : 0;
+    (range as any).max = (range as any).max > 0 ? 1 : 0;
+  }
+  if (axisOption?.zero || range.min === range.max) {
+    range.min = Math.min(range.min, 0);
+    range.max = Math.max(range.max, 0);
+  }
+  if (axisOption?.nice) {
+    const { range: axisRange } = getAxisDomainRangeAndLabels(
+      range.min,
+      range.max,
+      axisOption,
+      isZeroAlign,
+      layout._table.getColWidth(col)
+    );
+    range.min = axisRange[0];
+    range.max = axisRange[1];
+  }
+  if (isNumber(axisOption?.min)) {
+    (range as any).min = axisOption.min;
+  }
+  if (isNumber(axisOption?.max)) {
+    (range as any).max = axisOption.max;
+  }
+
+  return {
+    range,
+    isZeroAlign,
+    axisOption
+  };
 }

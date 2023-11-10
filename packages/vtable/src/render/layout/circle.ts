@@ -1,36 +1,29 @@
-import type { ElementOptions } from './element';
-import { BaseElement } from './element';
+import type { ICircleGraphicAttribute } from '@visactor/vrender';
+import { Circle as VCircle } from '@visactor/vrender';
+import { isArray } from '@visactor/vutils';
 
-type CircleOptions = {
-  radius: number;
-  radian?: number;
-  lineWidth?: number;
-  fill?: string | boolean;
-  stroke?: string | boolean;
-} & ElementOptions;
+type ICircleOption = {
+  marginTop?: number;
+  marginRight?: number;
+  marginBottom?: number;
+  marginLeft?: number;
+} & ICircleGraphicAttribute;
 
-export class Circle extends BaseElement {
-  type: 'circle' = 'circle';
-  radius: number;
-  radian: number;
-  lineWidth: number;
-  fill: string | boolean;
-  stroke: string | boolean;
+export class Circle extends VCircle {
+  constructor(options: ICircleOption) {
+    const isPaddingNumber = isArray(options.boundsPadding);
+    const padding = [
+      options.marginTop ?? (isPaddingNumber ? options.boundsPadding[0] : options.boundsPadding) ?? 0,
+      options.marginRight ?? (isPaddingNumber ? options.boundsPadding[1] : options.boundsPadding) ?? 0,
+      options.marginBottom ??
+        (isPaddingNumber ? options.boundsPadding[2] ?? options.boundsPadding[0] : options.boundsPadding) ??
+        0,
+      options.marginLeft ??
+        (isPaddingNumber ? options.boundsPadding[3] ?? options.boundsPadding[1] : options.boundsPadding) ??
+        0
+    ];
+    options.boundsPadding = padding;
 
-  constructor(options: CircleOptions) {
     super(options);
-    this.radius = options.radius;
-    this.radian = options.radian;
-    this.lineWidth = options.lineWidth;
-    this.fill = options.fill;
-    this.stroke = options.stroke;
-
-    this.width = this.radius * 2;
-    this.height = this.radius * 2;
-
-    this.initLayoutSize();
-
-    this.dx += this.radius;
-    this.dy += this.radius;
   }
 }

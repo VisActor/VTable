@@ -1,5 +1,5 @@
 import type { SimpleHeaderLayoutMap } from '../../layout';
-import type { TextColumnDefine } from '../../ts-types';
+import type { ColumnTypeOption, TextColumnDefine } from '../../ts-types';
 import { HierarchyState, IconPosition } from '../../ts-types';
 import * as calc from '../../tools/calc';
 import { validToString } from '../../tools/util';
@@ -10,6 +10,7 @@ import type { PivotHeaderLayoutMap } from '../../layout/pivot-header-layout';
 import { getAxisConfigInPivotChart } from '../../layout/chart-helper/get-axis-config';
 import { computeAxisComponentWidth } from '../../components/axis/get-axis-component-size';
 import { Group as VGroup } from '@visactor/vrender';
+import { isObject } from '@visactor/vutils';
 import { decodeReactDom } from '../component/custom';
 
 export function computeColsWidth(table: BaseTableAPI, colStart?: number, colEnd?: number, update?: boolean): void {
@@ -312,7 +313,7 @@ function computeAutoColWidth(
     const cellType = table.isHeader(col, row)
       ? table._getHeaderLayoutMap(col, row)?.headerType
       : table.getBodyColumnType(col, row);
-    if (cellType !== 'text' && cellType !== 'link' && cellType !== 'progressbar') {
+    if (cellType !== 'text' && cellType !== 'link' && cellType !== 'progressbar' && cellType !== 'checkbox') {
       // text&link&progressbar测量文字宽度
       // image&video&sparkline使用默认宽度
       maxWidth = Math.max(maxWidth, table.getColWidthDefinedNumber(col) || 0);
@@ -347,7 +348,7 @@ function computeAutoColWidth(
     }
 
     // 测量文字宽度
-    const textWidth = computeTextWidth(col, row, table);
+    const textWidth = computeTextWidth(col, row, cellType, table);
     maxWidth = Math.max(textWidth + cellHierarchyIndent, maxWidth);
   }
 
@@ -396,10 +397,10 @@ function computeCustomRenderWidth(col: number, row: number, table: BaseTableAPI)
       if (customLayoutObj.rootContainer instanceof VGroup) {
         width = (customLayoutObj.rootContainer as VGroup).AABBBounds.width() ?? 0;
         // width = (customLayoutObj.rootContainer as VGroup).attribute.width ?? 0;
-      } else if (customLayoutObj.rootContainer) {
-        customLayoutObj.rootContainer.isRoot = true;
-        const size = customLayoutObj.rootContainer.getContentSize();
-        width = size.width ?? 0;
+        // } else if (customLayoutObj.rootContainer) {
+        //   customLayoutObj.rootContainer.isRoot = true;
+        //   const size = customLayoutObj.rootContainer.getContentSize();
+        //   width = size.width ?? 0;
       } else {
         width = 0;
       }
@@ -448,7 +449,7 @@ function computeIndicatorWidth(
  * @param {BaseTableAPI} table
  * @return {*}
  */
-function computeTextWidth(col: number, row: number, table: BaseTableAPI): number {
+function computeTextWidth(col: number, row: number, cellType: ColumnTypeOption, table: BaseTableAPI): number {
   let maxWidth = 0;
   const cellValue = table.getCellValue(col, row);
   // const dataValue = table.getCellOriginValue(col, row);
@@ -476,7 +477,13 @@ function computeTextWidth(col: number, row: number, table: BaseTableAPI): number
   const fontSize = getProp('fontSize', actStyle, col, row, table);
   const fontFamily = getProp('fontFamily', actStyle, col, row, table);
   const fontWeight = getProp('fontWeight', actStyle, col, row, table);
-  const lines = validToString(cellValue).split('\n') || [];
+  let text;
+  if (cellType === 'checkbox') {
+    text = isObject(cellValue) ? (cellValue as any).text : cellValue;
+  } else {
+    text = cellValue;
+  }
+  const lines = validToString(text).split('\n') || [];
   if (lines.length >= 1) {
     // eslint-disable-next-line no-loop-func
     lines.forEach((line: string) => {
@@ -504,6 +511,16 @@ function computeTextWidth(col: number, row: number, table: BaseTableAPI): number
       typeof table.internalProps.limitMaxAutoWidth === 'number' ? table.internalProps.limitMaxAutoWidth : 450,
       maxWidth
     );
+  }
+
+  if (cellType === 'checkbox') {
+    const size = getProp('size', actStyle, col, row, table);
+    maxWidth += size;
+
+    if (text) {
+      const spaceBetweenTextAndIcon = getProp('spaceBetweenTextAndIcon', actStyle, col, row, table);
+      maxWidth += spaceBetweenTextAndIcon;
+    }
   }
 
   return maxWidth;

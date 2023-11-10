@@ -7,3 +7,5 @@ export * from './rect';
 export * from './text';
 export * from './percent-calc';
 export * from './arc';
+export * from './tag';
+export * from './group';

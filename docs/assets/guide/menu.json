@@ -227,6 +227,13 @@
             "zh": "自动换行",
             "en": "auto wrap text"
           }
+        },
+        {
+          "path": "merge_cell",
+          "title": {
+            "zh": "单元格合并",
+            "en": "cell merge"
+          }
         }
       ]
     },
@@ -406,6 +413,22 @@
           "title": {
             "zh": "axes坐标轴",
             "en": "axes"
+          }
+        }
+      ]
+    },
+    {
+      "path": "Developer_Ecology",
+      "title": {
+        "zh": "开发者生态",
+        "en": "Developer Ecology"
+      },
+      "children": [
+        {
+          "path": "vue",
+          "title": {
+            "zh": "Vue VTable",
+            "en": "Vue VTable"
           }
         }
       ]

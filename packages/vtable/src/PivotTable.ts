@@ -13,7 +13,8 @@ import type {
   IHeaderTreeDefine,
   IDimensionInfo,
   SortOrder,
-  IPagination
+  IPagination,
+  CellLocation
 } from './ts-types';
 import { HierarchyState } from './ts-types';
 import { PivotHeaderLayoutMap } from './layout/pivot-header-layout';
@@ -733,6 +734,7 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
       | {
           colHeaderPaths: IDimensionInfo[];
           rowHeaderPaths: IDimensionInfo[];
+          cellLocation: CellLocation;
         }
       | IDimensionInfo[]
   ): CellAddress {

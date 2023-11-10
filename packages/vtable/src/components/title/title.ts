@@ -14,7 +14,9 @@ export class Title {
   constructor(titleOption: ITitle, table: BaseTableAPI) {
     this.table = table;
     this._titleOption = titleOption;
-    this._titleComponent = this._createOrUpdateTitleComponent(this._getTitleAttrs());
+    if (titleOption.visible !== false) {
+      this._titleComponent = this._createOrUpdateTitleComponent(this._getTitleAttrs());
+    }
   }
 
   private _createOrUpdateTitleComponent(attrs: TitleAttrs): TitleComponents {
@@ -78,8 +80,8 @@ export class Title {
 
   _adjustTableSize(attrs: TitleAttrs) {
     // 调整位置
-    const width = isFinite(this._titleComponent.AABBBounds.width()) ? this._titleComponent.AABBBounds.width() : 0;
-    const height = isFinite(this._titleComponent.AABBBounds.height()) ? this._titleComponent.AABBBounds.height() : 0;
+    const width = isFinite(this._titleComponent?.AABBBounds.width()) ? this._titleComponent.AABBBounds.width() : 0;
+    const height = isFinite(this._titleComponent?.AABBBounds.height()) ? this._titleComponent.AABBBounds.height() : 0;
     // const rectWidth = this.table.tableNoFrameWidth;
     // const rectHeight = this.table.tableNoFrameHeight;
     // const padding = getQuadProps((attrs.padding as number | number[]) ?? this._titleOption.padding ?? 10);
@@ -135,7 +137,8 @@ export class Title {
     this.isReleased = true;
   }
   private _getTitleAttrs() {
-    const padding = getQuadProps(this._titleOption.padding ?? 10);
+    const defaultPadding = this._titleOption.text || this._titleOption.subtext ? 10 : 0;
+    const padding = getQuadProps(this._titleOption.padding ?? defaultPadding);
     const realWidth =
       this._titleOption.width ??
       Math.min(this.table.tableNoFrameWidth, this.table.getDrawRange().width) - padding[1] - padding[3];

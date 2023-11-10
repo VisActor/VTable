@@ -133,6 +133,13 @@
         "zh": "19.VTable表格组件是否可以对选中单元格内容进行复制？",
         "en": "19.Can the VTable table component copy the contents of selected cells?"
       }
+    },
+    {
+      "path": "20-How to use VTable in Vue",
+      "title": {
+        "zh": "20.如何在Vue中使用Vtable？",
+        "en": "20.How to use VTable in Vue?"
+      }
     }
   ]
 }

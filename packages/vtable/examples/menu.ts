@@ -48,6 +48,10 @@ export const menus = [
       },
       {
         path: 'list',
+        name: 'list-merge-cell'
+      },
+      {
+        path: 'list',
         name: 'list-more-columns'
       },
       {
@@ -75,6 +79,10 @@ export const menus = [
       {
         path: 'pivot-chart',
         name: 'aeolus'
+      },
+      {
+        path: 'pivot-chart',
+        name: 'bugserver'
       },
       {
         path: 'pivot-chart',

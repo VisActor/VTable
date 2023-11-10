@@ -87,8 +87,8 @@ describe('listTable-custom-layout init test', () => {
             width: 60,
             showBounds: false,
             direction: 'column',
-            alignContent: 'center',
-            justifyContent: 'center'
+            alignItems: 'center',
+            justifyContent: 'space-around'
           });
           container.add(containerLeft);
 
@@ -96,18 +96,18 @@ describe('listTable-custom-layout init test', () => {
             id: 'icon0',
             width: 50,
             height: 50,
-            src: record.bloggerAvatar,
-            shape: 'circle',
-            marginLeft: 10
+            image: record.bloggerAvatar,
+            shape: 'circle'
+            // marginLeft: 10
           });
           containerLeft.add(icon0);
 
           const containerRight = new VTable.CustomLayout.Container({
             height: percentCalc(100),
-            width: 200,
+            width: percentCalc(100 - 60),
             showBounds: false,
-            direction: 'column',
-            justifyContent: 'center'
+            direction: 'column'
+            // justifyContent: 'center'
           });
           container.add(containerRight);
 
@@ -115,7 +115,7 @@ describe('listTable-custom-layout init test', () => {
             height: percentCalc(50),
             width: percentCalc(100),
             showBounds: false,
-            alignContent: 'bottom'
+            alignItems: 'flex-end'
           });
 
           const containerRightBottom = new VTable.CustomLayout.Container({
@@ -135,15 +135,15 @@ describe('listTable-custom-layout init test', () => {
             fill: 'black',
             marginLeft: 10
           });
-          bloggerName.getSize(table);
+          // bloggerName.getSize(table);
           containerRightTop.add(bloggerName);
 
-          const location = new VTable.CustomLayout.Icon({
+          const location = new VTable.CustomLayout.Image({
             id: 'location',
-            iconName: 'location',
+            image: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/location.svg',
             width: 15,
             height: 15,
-            marginLeft: 10
+            boundsPadding: [0, 0, 0, 10]
           });
           containerRightTop.add(location);
 
@@ -153,24 +153,26 @@ describe('listTable-custom-layout init test', () => {
             fontFamily: 'sans-serif',
             fill: '#6f7070'
           });
-          bloggerName.getSize(table);
+          // bloggerName.getSize(table);
           containerRightTop.add(locationName);
 
           for (let i = 0; i < record?.tags?.length ?? 0; i++) {
-            const tag = new VTable.CustomLayout.Text({
+            const tag = new VTable.CustomLayout.Tag({
               text: record.tags[i],
-              fontSize: 10,
-              fontFamily: 'sans-serif',
-              fill: 'rgb(51, 101, 238)',
-              background: {
-                fill: '#f4f4f2',
-                cornerRadius: 5,
-                expandX: 5,
-                expandY: 5
+              textStyle: {
+                fontSize: 10,
+                fontFamily: 'sans-serif',
+                fill: 'rgb(51, 101, 238)'
               },
-              marginLeft: 5
+              panel: {
+                visible: true,
+                fill: '#f4f4f2',
+                cornerRadius: 5
+              },
+              space: 5,
+              boundsPadding: [0, 0, 0, 5]
             });
-            tag.getSize(table);
+            // tag.getSize(table);
             containerRightBottom.add(tag);
           }
           return {
@@ -310,7 +312,7 @@ describe('listTable-custom-layout init test', () => {
 
   const listTable = new ListTable(containerDom, option);
   test('listTable-custom-layout getCellOverflowText', () => {
-    expect(listTable.scenegraph.getCell(1, 2).children[0].children.length).toBe(10);
+    expect(listTable.scenegraph.getCell(1, 2).children[0].children.length).toBe(2);
     const rectBound = listTable.getCellRect(1, 2);
     expect(rectBound.left).toBe(80);
     expect(rectBound.right).toBe(410);

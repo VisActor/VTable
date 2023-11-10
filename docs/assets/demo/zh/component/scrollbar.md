@@ -9,7 +9,7 @@ option: ListTable#theme.scrollStyle.scrollRailColor
 
 # 滚动条
 
-该示例战士了滚动条可配样式。
+该示例展示了滚动条可配样式。
 
 ## 关键配置
 

@@ -1,5 +1,5 @@
 /* eslint-disable no-undef */
-import type { IThemeSpec } from '@visactor/vrender';
+import type { IThemeSpec, Group as VGroup } from '@visactor/vrender';
 import { createArc } from '@visactor/vrender';
 import { isValid } from '@visactor/vutils';
 import { Group } from '../../graphic/group';
@@ -27,6 +27,7 @@ import { getStyleTheme } from '../../../core/tableHelper';
  */
 export function createCellGroup(
   table: BaseTableAPI,
+  value: string,
   columnGroup: Group,
   xOrigin: number,
   yOrigin: number,
@@ -40,7 +41,7 @@ export function createCellGroup(
   textAlign: CanvasTextAlign,
   textBaseline: CanvasTextBaseline,
   mayHaveIcon: boolean,
-  customElementsGroup: Group,
+  customElementsGroup: VGroup,
   renderDefault: boolean,
   cellTheme: IThemeSpec
 ): Group {
@@ -86,7 +87,7 @@ export function createCellGroup(
     cellGroup.appendChild(customElementsGroup);
   }
   if (renderDefault) {
-    const textStr: string = table.getCellValue(col, row);
+    const textStr: string = value;
     let icons;
     if (mayHaveIcon) {
       icons = table.getCellIcons(col, row);
