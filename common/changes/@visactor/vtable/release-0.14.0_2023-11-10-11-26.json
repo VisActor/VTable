@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vtable",
+      "comment": "feat: add jsx support in custom layout",
+      "type": "minor"
+    }
+  ],
+  "packageName": "@visactor/vtable"
+}
