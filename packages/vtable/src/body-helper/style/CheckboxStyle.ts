@@ -1,34 +1,32 @@
-import type { CheckboxStyleOption, IStyleOption, StylePropertyFunctionArg } from '../../ts-types';
+import type { CheckboxStyleOption, IStyleOption } from '../../ts-types';
 import { Style } from './Style';
+
 let defaultStyle: CheckboxStyle;
 
 export class CheckboxStyle extends Style {
-  // private _checked: boolean | ((args: StylePropertyFunctionArg) => boolean);
-  // private _disable: boolean | ((args: StylePropertyFunctionArg) => boolean);
-
+  private _size: number;
+  private _spaceBetweenTextAndIcon: number;
   static get DEFAULT(): CheckboxStyle {
     return defaultStyle ? defaultStyle : (defaultStyle = new CheckboxStyle());
   }
-  constructor(style: CheckboxStyleOption = {}, bodyStyle: IStyleOption = {}) {
-    super(style, bodyStyle);
-    // this._checked = style.checked;
-    // this._disable = style.disable;
+  constructor(style: CheckboxStyleOption = {}, headerStyle: CheckboxStyleOption = {}) {
+    super(style, headerStyle);
+    this._size = (style.size ?? headerStyle?.size) || 14;
+    this._spaceBetweenTextAndIcon = (style.spaceBetweenTextAndIcon ?? headerStyle?.spaceBetweenTextAndIcon) || 8;
   }
-  // get checked(): boolean | ((args: StylePropertyFunctionArg) => boolean) {
-  //   return this._checked;
-  // }
-  // set checked(value: boolean | ((args: StylePropertyFunctionArg) => boolean)) {
-  //   this._checked = value;
-  //   //this.doChangeStyle();
-  // }
-  // get disable(): boolean | ((args: StylePropertyFunctionArg) => boolean) {
-  //   return this._disable;
-  // }
-  // set disable(value: boolean | ((args: StylePropertyFunctionArg) => boolean)) {
-  //   this._disable = value;
-  //   //this.doChangeStyle();
-  // }
+  get size(): number {
+    return this._size;
+  }
+  set size(size: number) {
+    this._size = size;
+  }
+  get spaceBetweenTextAndIcon(): number {
+    return this._spaceBetweenTextAndIcon;
+  }
+  set spaceBetweenTextAndIcon(spaceBetweenTextAndIcon: number) {
+    this._spaceBetweenTextAndIcon = spaceBetweenTextAndIcon;
+  }
   clone(): CheckboxStyle {
-    return new CheckboxStyle(this, null);
+    return new CheckboxStyle(this);
   }
 }

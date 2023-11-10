@@ -333,10 +333,10 @@ export function isValid(v: any): boolean {
   return true;
 }
 export function validToString(v: any) {
-  if (isUndefined(v) || isNull(v)) {
-    return '';
+  if (isString(v) || isNumber(v) || isBoolean(v)) {
+    return v.toString();
   }
-  return v.toString();
+  return '';
 }
 export function isMobile() {
   return navigator.userAgent.match(

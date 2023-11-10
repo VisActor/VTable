@@ -273,3 +273,34 @@ html 目前实现较完整，先默认使用 html 渲染方式。目前暂不支
 'auto': 表格滚动到顶部或者底部时，触发浏览器默认行为;
 'none': 表格滚动到顶部或者底部时, 触发浏览器默认行为;
 ```
+
+#${prefix} customMergeCell(Function)
+自定义单元格合并规则，传入的行列号在目标区域内时，返回合并规则：
+* text: 合并单元格内的文字
+* range: 合并的范围
+* style: 合并单元格的样式
+示例：
+
+```
+  customMergeCell: (col, row, table) => {
+    if (col > 0 && col < 8 && row > 7 && row < 11) {
+      return {
+        text: 'merge text',
+        range: {
+          start: {
+            col: 1,
+            row: 8
+          },
+          end: {
+            col: 7,
+            row: 10
+          }
+        },
+        style: {
+          bgColor: '#ccc'
+        }
+      };
+    }
+  }
+
+```

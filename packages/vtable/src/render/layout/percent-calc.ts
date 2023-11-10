@@ -3,7 +3,7 @@ export type percentCalcObj = {
   delta: number;
 };
 
-export function percentCalc(percent: number, delta = 0) {
+export function percentCalc(percent: number, delta = 0): percentCalcObj {
   return {
     percent,
     delta

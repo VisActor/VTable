@@ -278,3 +278,34 @@ Table scrolling behavior, can be set: 'auto'|'none', the default value is 'auto'
 'auto': Trigger the browser's default behavior when the table scrolls to the top or bottom;
 'none': triggers the browser's default behavior when the table scrolls to the top or bottom;
 ```
+
+#${prefix} customMergeCell(Function)
+Customize cell merging rules. When the incoming row and column numbers are within the target area, the merging rules are returned:
+* text: Merge text in cells
+* range: merged range
+* style: style of merged cells
+Example: 
+
+```
+  customMergeCell: (col, row, table) => {
+    if (col > 0 && col < 8 && row > 7 && row < 11) {
+      return {
+        text: 'merge text',
+        range: {
+          start: {
+            col: 1,
+            row: 8
+          },
+          end: {
+            col: 7,
+            row: 10
+          }
+        },
+        style: {
+          bgColor: '#ccc'
+        }
+      };
+    }
+  }
+
+```

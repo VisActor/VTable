@@ -8,7 +8,7 @@ import {
   type SortOrder,
   IconFuncTypeEnum
 } from '../ts-types';
-import { isArray, isString } from '@visactor/vutils';
+import { isArray, isString, isValid } from '@visactor/vutils';
 import type { Group } from './graphic/group';
 import type { Icon } from './graphic/icon';
 import type { WrapText } from './graphic/text';
@@ -44,7 +44,18 @@ import { updateContainerChildrenX } from './utils/update-container';
 import type { CheckBox } from '@visactor/vrender-components';
 import { loadPoptip, setPoptipTheme } from '@visactor/vrender-components';
 import textMeasureModule from './utils/text-measure';
-import renderServiceModule from './utils/render-service';
+import {
+  getIconByXY,
+  hideClickIcon,
+  hideHoverIcon,
+  setIconHoverStyle,
+  setIconNormalStyle,
+  showClickIcon,
+  showHoverIcon,
+  updateFrozenIcon,
+  updateHierarchyIcon,
+  updateSortIcon
+} from './icon/icon-update';
 import { Env } from '../tools/env';
 // import { contextModule } from './context/module';
 
@@ -88,8 +99,6 @@ const poptipStyle = {
 export type MergeMap = Map<
   string,
   {
-    x: number;
-    y: number;
     cellWidth: number;
     cellHeight: number;
   }
@@ -369,59 +378,6 @@ export class Scenegraph {
    * @param {number} row
    * @return {Group}
    */
-  getCellOld(col: number, row: number): Group {
-    // hasFrozen处理前，列表头的冻结部分在colHeaderGroup中
-    // hasFrozen处理后，列表头的冻结部分在cornerHeaderGroup中
-    // 因此在获取cell时需要区别hasFrozen时机
-    let element: Group;
-    if (this.hasFrozen && col < this.table.frozenColCount && row < this.table.frozenRowCount) {
-      element = this.cornerHeaderGroup.getChildAt(col)?.getChildAt(row) as Group;
-    } else if (row < this.table.frozenRowCount) {
-      // element = (this as any).tableGroup.children[0]?.children[col]?.children[row];
-      element = this.colHeaderGroup
-        .getChildAt(this.hasFrozen ? col - this.table.frozenColCount : col)
-        ?.getChildAt(row) as Group;
-    } else if (col < this.table.frozenColCount) {
-      // element = (this as any).tableGroup.children[1]?.children[col]?.children[
-      //   row - this.table.frozenRowCount
-      // ];
-      element = this.rowHeaderGroup.getChildAt(col)?.getChildAt(row - this.table.frozenRowCount) as Group;
-    } else {
-      // element = (this as any).tableGroup.children[2]?.children[col - this.table.frozenColCount]
-      //   ?.children[row - this.table.frozenRowCount];
-      element = this.bodyGroup
-        .getChildAt(col - this.table.frozenColCount)
-        ?.getChildAt(row - this.table.frozenRowCount) as Group;
-    }
-
-    if (element && element.role === 'shadow-cell') {
-      const range = this.table.getCellRange(col, row);
-      element = this.getCell(range.start.col, range.start.row);
-    }
-
-    return element || undefined;
-  }
-
-  getColGroupOld(col: number, isHeader = false): Group {
-    let element: Group;
-    if (col < this.frozenColCount && isHeader) {
-      element = this.cornerHeaderGroup.getChildAt(col) as Group;
-    } else if (col < this.frozenColCount) {
-      element = this.rowHeaderGroup.getChildAt(col) as Group;
-    } else if (isHeader) {
-      element = this.rowHeaderGroup.getChildAt(col - this.frozenColCount) as Group;
-    } else {
-      element = this.bodyGroup.getChildAt(col - this.frozenColCount) as Group;
-    }
-    return element || undefined;
-  }
-
-  /**
-   * @description: 获取指定行列位置的cell group
-   * @param {number} col
-   * @param {number} row
-   * @return {Group}
-   */
   getCell(col: number, row: number, getShadow?: boolean): Group {
     // hasFrozen处理前，列表头的冻结部分在colHeaderGroup中
     // hasFrozen处理后，列表头的冻结部分在cornerHeaderGroup中
@@ -559,33 +515,74 @@ export class Scenegraph {
   }
 
   hideHoverIcon(col: number, row: number) {
-    if (col === -1 || row === -1) {
-      return;
-    }
-    const cellGroup = this.getCell(col, row);
-    hideIcon(this, cellGroup, 'mouseenter_cell');
+    hideHoverIcon(col, row, this);
   }
+
   showHoverIcon(col: number, row: number) {
-    if (col === -1 || row === -1) {
-      return;
-    }
-    const cellGroup = this.getCell(col, row);
-    showIcon(this, cellGroup, 'mouseenter_cell');
+    showHoverIcon(col, row, this);
   }
+
   hideClickIcon(col: number, row: number) {
-    if (col === -1 || row === -1) {
-      return;
-    }
-    const cellGroup = this.getCell(col, row);
-    hideIcon(this, cellGroup, 'click_cell');
+    hideClickIcon(col, row, this);
   }
+
   showClickIcon(col: number, row: number) {
-    if (col === -1 || row === -1) {
-      return;
-    }
-    const cellGroup = this.getCell(col, row);
-    showIcon(this, cellGroup, 'click_cell');
+    showClickIcon(col, row, this);
   }
+
+  /**
+   * @description: 获取指定单元格指定位置的icon mark
+   * @param {number} col
+   * @param {number} row
+   * @param {number} x
+   * @param {number} y
+   * @return {*}
+   */
+  getIcon(col: number, row: number, x: number, y: number): Icon | undefined {
+    return getIconByXY(col, row, x, y, this);
+  }
+
+  /**
+   * @description: 将指定icon mark设置为Hover样式
+   * @param {Icon} icon
+   * @param {number} col
+   * @param {number} row
+   * @return {*}
+   */
+  setIconHoverStyle(icon: Icon, col: number, row: number, cellGroup: Group) {
+    setIconHoverStyle(icon, col, row, cellGroup, this);
+  }
+
+  updateSortIcon(
+    col: number,
+    row: number,
+    iconMark: Icon,
+    order: SortOrder,
+    oldSortCol: number,
+    oldSortRow: number,
+    oldIconMark: Icon | undefined
+  ) {
+    updateSortIcon(col, row, iconMark, order, oldSortCol, oldSortRow, oldIconMark, this);
+  }
+
+  updateFrozenIcon(col: number, oldFrozenCol: number) {
+    updateFrozenIcon(this);
+  }
+  updateHierarchyIcon(col: number, row: number) {
+    updateHierarchyIcon(col, row, this);
+  }
+
+  /**
+   * @description: 将指定icon mark设置为Normal样式
+   * @param {Icon} icon
+   * @param {number} col
+   * @param {number} row
+   * @return {*}
+   */
+  setIconNormalStyle(icon: Icon, col: number, row: number) {
+    setIconNormalStyle(icon, col, row, this);
+  }
+
   /**
    * 单元格失焦 失效该单元格对应的图表实例
    * @param col
@@ -644,111 +641,6 @@ export class Scenegraph {
 
   updateCellSelectBorder(newStartCol: number, newStartRow: number, newEndCol: number, newEndRow: number) {
     updateCellSelectBorder(this, newStartCol, newStartRow, newEndCol, newEndRow);
-  }
-
-  /**
-   * @description: 获取指定单元格指定位置的icon mark
-   * @param {number} col
-   * @param {number} row
-   * @param {number} x
-   * @param {number} y
-   * @return {*}
-   */
-  getIcon(col: number, row: number, x: number, y: number): Icon | undefined {
-    const cellGroup = this.getCell(col, row);
-    let pickMark;
-    cellGroup.forEachChildren((mark: Icon) => {
-      if (mark.role === 'icon' && mark.containsPoint(x, y, IContainPointMode.GLOBAL)) {
-        pickMark = mark;
-      }
-    });
-    return pickMark;
-  }
-
-  /**
-   * @description: 将指定icon mark设置为Hover样式
-   * @param {Icon} icon
-   * @param {number} col
-   * @param {number} row
-   * @return {*}
-   */
-  setIconHoverStyle(icon: Icon, col: number, row: number, cellGroup: Group) {
-    // hover展示背景
-    if (icon.attribute.backgroundColor) {
-      let iconBack = icon.parent.getChildByName('icon-back') as IRect;
-      if (iconBack) {
-        iconBack.setAttributes({
-          x: (icon.attribute.x ?? 0) + (icon.attribute.dx ?? 0) + (icon.AABBBounds.width() - icon.backgroundWidth) / 2,
-          y: (icon.attribute.y ?? 0) + (icon.AABBBounds.height() - icon.backgroundHeight) / 2,
-          width: icon.backgroundWidth,
-          height: icon.backgroundHeight,
-          fill: icon.attribute.backgroundColor,
-          cornerRadius: 5,
-          visible: true
-        });
-      } else {
-        iconBack = createRect({
-          x: (icon.attribute.x ?? 0) + (icon.attribute.dx ?? 0) + (icon.AABBBounds.width() - icon.backgroundWidth) / 2,
-          y: (icon.attribute.y ?? 0) + (icon.AABBBounds.height() - icon.backgroundHeight) / 2,
-          width: icon.backgroundWidth,
-          height: icon.backgroundHeight,
-          fill: icon.attribute.backgroundColor,
-          cornerRadius: 5,
-          pickable: false,
-          visible: true
-        }) as IRect;
-        iconBack.name = 'icon-back';
-        // cellGroup.appendChild(iconBack);
-      }
-      icon.parent.insertBefore(iconBack, icon);
-    }
-
-    // hover更换图片
-    if (icon.attribute.hoverImage && icon.attribute.image !== icon.attribute.hoverImage) {
-      icon.image = icon.attribute.hoverImage;
-    }
-
-    // hover展示tooltip
-    if (icon.tooltip) {
-      const { x1: left, x2: right, y1: top, y2: bottom } = icon.globalAABBBounds;
-      const tooltipOptions: TooltipOptions = {
-        content: icon.tooltip.title,
-        referencePosition: {
-          rect: {
-            left: left,
-            right: right,
-            top: top,
-            bottom: bottom,
-            width: icon.globalAABBBounds.width(),
-            height: icon.globalAABBBounds.height()
-          },
-          placement: icon.tooltip.placement
-        },
-        style: Object.assign({}, this.table.internalProps.theme?.tooltipStyle, icon.tooltip?.style)
-      };
-      if (!this.table.internalProps.tooltipHandler.isBinded(tooltipOptions)) {
-        this.table.showTooltip(col, row, tooltipOptions);
-      }
-    }
-  }
-
-  /**
-   * @description: 将指定icon mark设置为Normal样式
-   * @param {Icon} icon
-   * @param {number} col
-   * @param {number} row
-   * @return {*}
-   */
-  setIconNormalStyle(icon: Icon, col: number, row: number) {
-    const iconBack = icon.parent.getChildByName('icon-back') as IRect;
-    if (iconBack) {
-      iconBack.setAttribute('visible', false);
-    }
-
-    // hover更换图片
-    if (icon.attribute.hoverImage && icon.attribute.image !== icon.attribute.originImage) {
-      icon.image = icon.attribute.originImage;
-    }
   }
 
   /**
@@ -1510,13 +1402,6 @@ export class Scenegraph {
     return { col: -1, row: -1 };
   }
 
-  updateIcon(icon: Icon, iconConfig: ColumnIconOption) {
-    // 直接更新mark attribute
-    dealWithIcon(iconConfig, icon);
-    icon.name = iconConfig.name;
-    this.updateNextFrame();
-  }
-
   updateFrozen() {
     if (this.clear) {
       return;
@@ -1568,82 +1453,6 @@ export class Scenegraph {
       this.cornerHeaderGroup.appendChild(this.cornerHeaderGroup.border);
       updateFrameBorderSize(this.cornerHeaderGroup);
     }
-  }
-
-  updateSortIcon(
-    col: number,
-    row: number,
-    iconMark: Icon,
-    order: SortOrder,
-    oldSortCol: number,
-    oldSortRow: number,
-    oldIconMark: Icon | undefined
-  ) {
-    // 更新icon
-    const icon = this.table.internalProps.headerHelper.getSortIcon(order, this.table, col, row);
-    if (iconMark) {
-      this.updateIcon(iconMark, icon);
-    }
-
-    // 更新旧frozen icon
-    if (oldIconMark !== iconMark) {
-      const oldIcon = this.table.internalProps.headerHelper.getSortIcon('normal', this.table, oldSortCol, oldSortRow);
-      if (oldIconMark) {
-        this.updateIcon(oldIconMark, oldIcon);
-      } else {
-        const oldSortCell = this.getCell(oldSortCol, oldSortRow);
-        let oldIconMark;
-        oldSortCell.forEachChildren((mark: Icon) => {
-          if (mark.attribute.funcType === 'sort') {
-            oldIconMark = mark;
-            return true;
-          }
-          return false;
-        });
-        if (oldIconMark) {
-          this.updateIcon(oldIconMark, oldIcon);
-        }
-      }
-    }
-  }
-
-  updateFrozenIcon(col: number, oldFrozenCol: number) {
-    // 依据新旧冻结列确定更新范围
-    const updateCol = Math.max(col, oldFrozenCol);
-
-    // 遍历表头单元格，更新icon
-    this.colHeaderGroup.forEachChildrenSkipChild((colGroup: Group) => {
-      if (colGroup.col <= updateCol) {
-        colGroup.forEachChildren((cellGroup: Group) => {
-          cellGroup.forEachChildren((icon: Icon) => {
-            if (icon.attribute.funcType === 'frozen') {
-              const iconConfig = this.table.internalProps.headerHelper.getFrozenIcon(cellGroup.col, cellGroup.row);
-              this.updateIcon(icon, iconConfig);
-              return true;
-            }
-            return false;
-          });
-        });
-        return false;
-      }
-      return true;
-    });
-    this.cornerHeaderGroup.forEachChildrenSkipChild((colGroup: Group) => {
-      if (colGroup.col <= updateCol) {
-        colGroup.forEachChildren((cellGroup: Group) => {
-          cellGroup.forEachChildren((icon: Icon) => {
-            if (icon.attribute.funcType === 'frozen') {
-              const iconConfig = this.table.internalProps.headerHelper.getFrozenIcon(cellGroup.col, cellGroup.row);
-              this.updateIcon(icon, iconConfig);
-              return true;
-            }
-            return false;
-          });
-        });
-        return false;
-      }
-      return true;
-    });
   }
 
   sortCell() {
@@ -1702,17 +1511,6 @@ export class Scenegraph {
     this.stage.enableDirtyBounds();
   }
 
-  updateHierarchyIcon(col: number, row: number) {
-    const cellGroup = this.getCell(col, row);
-    let iconConfig;
-    if (this.table.isHeader(col, row)) {
-      iconConfig = this.table.internalProps.headerHelper.getHierarchyIcon(cellGroup.col, cellGroup.row);
-    } else {
-      iconConfig = this.table.internalProps.bodyHelper.getHierarchyIcon(cellGroup.col, cellGroup.row);
-    }
-    this.findAndUpdateIcon(cellGroup, [IconFuncTypeEnum.collapse, IconFuncTypeEnum.expand], iconConfig);
-  }
-
   updateRow(removeCells: CellAddress[], addCells: CellAddress[], updateCells: CellAddress[] = []) {
     // add or move rows
     updateRow(removeCells, addCells, updateCells, this.table);
@@ -1732,18 +1530,6 @@ export class Scenegraph {
 
     // rerender
     this.updateNextFrame();
-  }
-
-  findAndUpdateIcon(group: Group, funcTypeArr: IconFuncTypeEnum[], iconConfig: ColumnIconOption) {
-    group.forEachChildren((icon: Icon | Group) => {
-      if (icon.type === 'group') {
-        this.findAndUpdateIcon(icon, funcTypeArr, iconConfig);
-      } else if (funcTypeArr.indexOf((icon as Icon).attribute.funcType as IconFuncTypeEnum) !== -1) {
-        this.updateIcon(icon as Icon, iconConfig);
-        return true;
-      }
-      return false;
-    });
   }
 
   getColumnGroupX(col: number) {
@@ -1773,26 +1559,4 @@ export class Scenegraph {
     }
     return 0;
   }
-}
-
-function showIcon(scene: Scenegraph, cellGroup: Group, visibleTime: 'mouseenter_cell' | 'click_cell') {
-  cellGroup.forEachChildren((child: any) => {
-    if (child.type === 'group') {
-      showIcon(scene, child, visibleTime);
-    } else if (child.attribute.visibleTime === visibleTime) {
-      child.attribute.visible = true;
-      scene.updateNextFrame();
-    }
-  });
-}
-
-function hideIcon(scene: Scenegraph, cellGroup: Group, visibleTime: 'mouseenter_cell' | 'click_cell') {
-  cellGroup.forEachChildren((child: any) => {
-    if (child.type === 'group') {
-      hideIcon(scene, child, visibleTime);
-    } else if (child.attribute.visibleTime === visibleTime) {
-      child.attribute.visible = false;
-      scene.updateNextFrame();
-    }
-  });
 }

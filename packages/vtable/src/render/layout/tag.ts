@@ -1,16 +1,17 @@
-import type { ICircleGraphicAttribute } from '@visactor/vrender';
-import { Circle as VCircle } from '@visactor/vrender';
+import type { TagAttributes } from '@visactor/vrender-components';
+import { Tag as VTag } from '@visactor/vrender-components';
 import { isArray } from '@visactor/vutils';
+import type { BaseTableAPI } from '../../ts-types/base-table';
 
-type ICircleOption = {
+type ITagOption = {
   marginTop?: number;
   marginRight?: number;
   marginBottom?: number;
   marginLeft?: number;
-} & ICircleGraphicAttribute;
+} & TagAttributes;
 
-export class Circle extends VCircle {
-  constructor(options: ICircleOption) {
+export class Tag extends VTag {
+  constructor(options: ITagOption) {
     const isPaddingNumber = isArray(options.boundsPadding);
     const padding = [
       options.marginTop ?? (isPaddingNumber ? options.boundsPadding[0] : options.boundsPadding) ?? 0,
@@ -25,5 +26,8 @@ export class Circle extends VCircle {
     options.boundsPadding = padding;
 
     super(options);
+  }
+  getSize(table: BaseTableAPI) {
+    this.AABBBounds.width();
   }
 }
