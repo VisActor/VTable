@@ -227,6 +227,13 @@
             "zh": "自动换行",
             "en": "auto wrap text"
           }
+        },
+        {
+          "path": "merge_cell",
+          "title": {
+            "zh": "单元格合并",
+            "en": "cell merge"
+          }
         }
       ]
     },
