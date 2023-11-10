@@ -2,7 +2,7 @@
 category: examples
 group: Basic Features
 title: 自定义合并单元格
-cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/merge.png
+cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/custom-merge.png
 option: ListTable-columns-text#mergeCell
 ---
 

@@ -1,30 +1,37 @@
-import type { ElementOptions } from './element';
-import { BaseElement } from './element';
-import type { ColumnIconOption } from '../../ts-types';
+import type { IImageGraphicAttribute } from '@visactor/vrender';
+import { Image as VImage } from '@visactor/vrender';
+import { isArray } from '@visactor/vutils';
 
-type ImageOptions = {
-  width: number;
-  height: number;
+type IImageOptions = {
   src?: string;
   shape?: 'circle' | 'square';
-} & ElementOptions;
+  marginTop?: number;
+  marginRight?: number;
+  marginBottom?: number;
+  marginLeft?: number;
+} & IImageGraphicAttribute;
+export class Image extends VImage {
+  constructor(options: IImageOptions) {
+    if (options.src) {
+      options.image = options.src;
+    }
+    if (options.shape === 'circle') {
+      options.cornerRadius = options.width / 2;
+    }
 
-export class Image extends BaseElement {
-  declare id: string;
-  type: 'image' = 'image';
-  declare width: number;
-  declare height: number;
-  src: string;
-  cursor?: string;
-  cache?: ColumnIconOption;
-  shape?: 'circle' | 'square';
-  constructor(options: ImageOptions) {
+    const isPaddingNumber = isArray(options.boundsPadding);
+    const padding = [
+      options.marginTop ?? (isPaddingNumber ? options.boundsPadding[0] : options.boundsPadding) ?? 0,
+      options.marginRight ?? (isPaddingNumber ? options.boundsPadding[1] : options.boundsPadding) ?? 0,
+      options.marginBottom ??
+        (isPaddingNumber ? options.boundsPadding[2] ?? options.boundsPadding[0] : options.boundsPadding) ??
+        0,
+      options.marginLeft ??
+        (isPaddingNumber ? options.boundsPadding[3] ?? options.boundsPadding[1] : options.boundsPadding) ??
+        0
+    ];
+    options.boundsPadding = padding;
+
     super(options);
-    // options中的配置可以覆盖cache
-    this.width = options.width ?? this.width;
-    this.height = options.height ?? this.height;
-    this.src = options.src ?? this.src;
-    this.shape = options.shape ?? this.shape;
-    this.initLayoutSize();
   }
 }

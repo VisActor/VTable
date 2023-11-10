@@ -415,10 +415,10 @@ function computeCustomRenderHeight(col: number, row: number, table: BaseTableAPI
       if (customLayoutObj.rootContainer instanceof VGroup) {
         height = (customLayoutObj.rootContainer as VGroup).AABBBounds.height() ?? 0;
         // height = (customLayoutObj.rootContainer as VGroup).attribute.height ?? 0;
-      } else if (customLayoutObj.rootContainer) {
-        customLayoutObj.rootContainer.isRoot = true;
-        const size = customLayoutObj.rootContainer.getContentSize();
-        height = size.height ?? 0;
+        // } else if (customLayoutObj.rootContainer) {
+        //   customLayoutObj.rootContainer.isRoot = true;
+        //   const size = customLayoutObj.rootContainer.getContentSize();
+        //   height = size.height ?? 0;
       } else {
         height = 0;
       }

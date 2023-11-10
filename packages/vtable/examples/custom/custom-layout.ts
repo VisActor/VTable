@@ -1,4 +1,5 @@
 import * as VTable from '../../src';
+import { bindDebugTool } from '../../src/scenegraph/debug-tool';
 import { IconPosition } from '../../src/ts-types';
 import { bearImageUrl, birdImageUrl, catImageUrl, flowerImageUrl, rabbitImageUrl, wolfImageUrl } from '../resource-url';
 const ListTable = VTable.ListTable;
@@ -70,21 +71,21 @@ export function createTable() {
           const { height, width } = rect ?? table.getCellRect(col, row);
           const percentCalc = VTable.CustomLayout.percentCalc;
 
-          const container = new VTable.CustomLayout.Container({
+          const container = new VTable.CustomLayout.Group({
             height,
-            width
+            width,
+            display: 'flex',
+            flexDirection: 'row'
           });
-          const containerLeft = new VTable.CustomLayout.Container({
+          const containerLeft = new VTable.CustomLayout.Group({
             height: percentCalc(100),
             width: 60,
-            showBounds: false,
+            display: 'flex',
             direction: 'column',
             alignContent: 'center',
-            justifyContent: 'center',
-            background: {
-              fill: 'blue',
-              stroke: 'red'
-            }
+            alignItems: 'center',
+            justifyContent: 'space-around',
+            fill: 'blue'
           });
           container.add(containerLeft);
 
@@ -93,32 +94,33 @@ export function createTable() {
             width: 50,
             height: 50,
             src: record.bloggerAvatar,
-            shape: 'circle',
-            marginLeft: 10
+            shape: 'circle'
+            // marginLeft: 10
           });
           containerLeft.add(icon0);
 
-          const containerRight = new VTable.CustomLayout.Container({
+          const containerRight = new VTable.CustomLayout.Group({
             height: percentCalc(100),
             width: 200,
-            showBounds: false,
-            direction: 'column',
-            justifyContent: 'center'
+            display: 'flex',
+            direction: 'column'
+            // justifyContent: 'center'
           });
           container.add(containerRight);
 
-          const containerRightTop = new VTable.CustomLayout.Container({
+          const containerRightTop = new VTable.CustomLayout.Group({
+            id: 'containerRightTop',
             height: percentCalc(50),
             width: percentCalc(100),
-            showBounds: false,
-            alignContent: 'center'
+            display: 'flex',
+            alignItems: 'center'
           });
 
-          const containerRightBottom = new VTable.CustomLayout.Container({
+          const containerRightBottom = new VTable.CustomLayout.Group({
             height: percentCalc(50),
             width: percentCalc(100),
-            showBounds: false,
-            alignContent: 'center'
+            display: 'flex',
+            alignItems: 'center'
           });
 
           containerRight.add(containerRightTop);
@@ -153,20 +155,22 @@ export function createTable() {
           containerRightTop.add(locationName);
 
           for (let i = 0; i < record?.tags?.length ?? 0; i++) {
-            const tag = new VTable.CustomLayout.Text({
+            const tag = new VTable.CustomLayout.Tag({
               text: record.tags[i],
-              fontSize: 10,
-              fontFamily: 'sans-serif',
-              fill: 'rgb(51, 101, 238)',
-              background: {
-                fill: '#f4f4f2',
-                cornerRadius: 5,
-                expandX: 5,
-                expandY: 5
+              textStyle: {
+                fontSize: 10,
+                fontFamily: 'sans-serif',
+                fill: 'rgb(51, 101, 238)'
               },
+              panel: {
+                visible: true,
+                fill: '#f4f4f2',
+                cornerRadius: 5
+              },
+              space: 5,
               marginLeft: 5
             });
-            tag.getSize(table);
+            // tag.getSize(table);
             containerRightBottom.add(tag);
           }
           return {
@@ -299,9 +303,15 @@ export function createTable() {
   };
 
   const instance = new ListTable(option);
-  VTable.bindDebugTool(instance.scenegraph.stage as any, {
+  bindDebugTool(instance.scenegraph.stage as any, {
     customGrapicKeys: ['role']
   });
+
+  const { MOUSEMOVE_CELL } = VTable.ListTable.EVENT_TYPE;
+  instance.addEventListener(MOUSEMOVE_CELL, (...args) => {
+    console.log('MOUSEMOVE_CELL', args[0]?.target);
+  });
+
   // 只为了方便控制太调试用，不要拷贝
   window.tableInstance = instance;
 }

@@ -1,5 +1,5 @@
 /* eslint-disable no-undef */
-import type { IThemeSpec } from '@visactor/vrender';
+import type { IThemeSpec, Group as VGroup } from '@visactor/vrender';
 import { createArc } from '@visactor/vrender';
 import { isValid } from '@visactor/vutils';
 import { Group } from '../../graphic/group';
@@ -41,7 +41,7 @@ export function createCellGroup(
   textAlign: CanvasTextAlign,
   textBaseline: CanvasTextBaseline,
   mayHaveIcon: boolean,
-  customElementsGroup: Group,
+  customElementsGroup: VGroup,
   renderDefault: boolean,
   cellTheme: IThemeSpec
 ): Group {

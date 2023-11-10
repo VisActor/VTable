@@ -1,35 +1,29 @@
-import type { ElementOptions } from './element';
-import { BaseElement } from './element';
+import type { IRectGraphicAttribute } from '@visactor/vrender';
+import { Rect as VRect } from '@visactor/vrender';
+import { isArray } from '@visactor/vutils';
 
-type RectOptions = {
-  width: number;
-  height: number;
-  lineWidth?: number;
-  cornerRadius?: number;
-  fill?: string | boolean;
-  stroke?: string | boolean;
-} & ElementOptions;
+type IRectOption = {
+  marginTop?: number;
+  marginRight?: number;
+  marginBottom?: number;
+  marginLeft?: number;
+} & IRectGraphicAttribute;
 
-export class Rect extends BaseElement {
-  type: 'rect' = 'rect';
-  declare width: number;
-  declare height: number;
-  lineWidth: number;
-  cornerRadius: number;
-  radius: number;
-  fill: string | boolean;
-  stroke: string | boolean;
+export class Rect extends VRect {
+  constructor(options: IRectOption) {
+    const isPaddingNumber = isArray(options.boundsPadding);
+    const padding = [
+      options.marginTop ?? (isPaddingNumber ? options.boundsPadding[0] : options.boundsPadding) ?? 0,
+      options.marginRight ?? (isPaddingNumber ? options.boundsPadding[1] : options.boundsPadding) ?? 0,
+      options.marginBottom ??
+        (isPaddingNumber ? options.boundsPadding[2] ?? options.boundsPadding[0] : options.boundsPadding) ??
+        0,
+      options.marginLeft ??
+        (isPaddingNumber ? options.boundsPadding[3] ?? options.boundsPadding[1] : options.boundsPadding) ??
+        0
+    ];
+    options.boundsPadding = padding;
 
-  constructor(options: RectOptions) {
     super(options);
-    this.width = options.width;
-    this.height = options.height;
-    this.lineWidth = options.lineWidth || 0;
-    this.cornerRadius = options.cornerRadius || 0;
-    this.radius = this.cornerRadius;
-    this.fill = options.fill || '#777';
-    this.stroke = options.stroke || undefined;
-
-    this.initLayoutSize();
   }
 }

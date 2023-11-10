@@ -85,17 +85,19 @@ VTable.register.icon('message',{
        const  {height, width } = rect ?? table.getCellRect(col,row);
        const percentCalc = VTable.CustomLayout.percentCalc;
 
-        const container = new VTable.CustomLayout.Container({
+        const container = new VTable.CustomLayout.Group({
           height,
           width,
+          display: 'flex',
+          flexDirection: 'row',
         });
-        const containerLeft = new VTable.CustomLayout.Container({
+        const containerLeft = new VTable.CustomLayout.Group({
           height: percentCalc(100),
           width: 60,
-          showBounds: false,
-          direction: 'column',
-          alignContent: 'center',
-          justifyContent: 'center',
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          justifyContent: 'space-around',
         });
         container.add(containerLeft);
 
@@ -103,34 +105,32 @@ VTable.register.icon('message',{
           id: 'icon0',
           width: 50,
           height: 50,
-          src:record.bloggerAvatar,
-          shape:'circle',
-          marginLeft:10,
+          image:record.bloggerAvatar,
+          cornerRadius: 25,
         });
         containerLeft.add(icon0);
 
 
-        const containerRight = new VTable.CustomLayout.Container({
+        const containerRight = new VTable.CustomLayout.Group({
           height: percentCalc(100),
-          width: 200,
-          showBounds: false,
-          direction: 'column',
-          justifyContent: 'center',
+          width: percentCalc(100, -60),
+          display: 'flex',
+          flexDirection: 'column',
         });
         container.add(containerRight);
 
-        const containerRightTop = new VTable.CustomLayout.Container({
+        const containerRightTop = new VTable.CustomLayout.Group({
           height: percentCalc(50),
           width: percentCalc(100),
-          showBounds: false,
-          alignContent: 'bottom',
+          display: 'flex',
+          alignItems: 'flex-end',
        });
 
-        const containerRightBottom = new VTable.CustomLayout.Container({
+        const containerRightBottom = new VTable.CustomLayout.Group({
           height: percentCalc(50),
           width: percentCalc(100),
-          showBounds: false,
-          alignContent: 'center',
+          display: 'flex',
+          alignItems: 'center',
         });
 
         containerRight.add(containerRightTop);
@@ -141,17 +141,15 @@ VTable.register.icon('message',{
           fontSize: 13,
           fontFamily: 'sans-serif',
           fill: 'black',
-          marginLeft:10
         });
-        bloggerName.getSize(table);
         containerRightTop.add(bloggerName)
 
-        const location = new VTable.CustomLayout.Icon({
+        const location = new VTable.CustomLayout.Image({
           id: 'location',
-          iconName: 'location',
+          image: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/location.svg',
           width: 15,
           height: 15,
-          marginLeft:10
+          boundsPadding: [0, 0, 0, 10]
         });
         containerRightTop.add(location);
 
@@ -161,24 +159,24 @@ VTable.register.icon('message',{
           fontFamily: 'sans-serif',
           fill: '#6f7070',
         });
-        bloggerName.getSize(table);
         containerRightTop.add(locationName)
 
       for(let i = 0;i < record?.tags?.length ?? 0;i++){
-        const tag = new VTable.CustomLayout.Text({
+        const tag = new VTable.CustomLayout.Tag({
           text: record.tags[i],
-          fontSize: 10,
-          fontFamily: 'sans-serif',
-          fill: 'rgb(51, 101, 238)',
-          background: {
-            fill: '#f4f4f2',
-            cornerRadius: 5,
-            expandX: 5,
-            expandY: 5,
+          textStyle: {
+            fontSize: 10,
+            fontFamily: 'sans-serif',
+            fill: 'rgb(51, 101, 238)'
           },
-          marginLeft: 5,
+          panel: {
+            visible: true,
+            fill: '#f4f4f2',
+            cornerRadius: 5
+          },
+          space: 5,
+          boundsPadding: [0, 0, 0, 5]
         });
-        tag.getSize(table);
         containerRightBottom.add(tag);
       }
         return {
