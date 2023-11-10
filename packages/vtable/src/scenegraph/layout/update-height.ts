@@ -34,9 +34,9 @@ export function updateRowHeight(scene: Scenegraph, row: number, detaY: number) {
   let rowEnd = 0;
   // 更新header 高度
   if (row < scene.table.columnHeaderLevelCount) {
-    scene.colHeaderGroup.setAttribute('height', scene.colHeaderGroup.attribute.height + detaY);
-    scene.rowHeaderGroup.setAttribute('y', scene.colHeaderGroup.attribute.y + detaY);
-    scene.bodyGroup.setAttribute('y', scene.bodyGroup.attribute.y + detaY);
+    // scene.colHeaderGroup.setAttribute('height', scene.colHeaderGroup.attribute.height + detaY);
+    // scene.rowHeaderGroup.setAttribute('y', scene.rowHeaderGroup.attribute.y + detaY);
+    // scene.bodyGroup.setAttribute('y', scene.bodyGroup.attribute.y + detaY);
 
     rowStart = row + 1;
     rowEnd = scene.table.columnHeaderLevelCount - 1;

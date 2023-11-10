@@ -676,7 +676,8 @@ export class SimpleHeaderLayoutMap implements LayoutMapAPI {
     }
     return {
       colHeaderPaths: colPath,
-      rowHeaderPaths: rowPath
+      rowHeaderPaths: rowPath,
+      cellLocation: this.getCellLocation(col, row)
     };
   }
   private getParentCellId(col: number, row: number) {

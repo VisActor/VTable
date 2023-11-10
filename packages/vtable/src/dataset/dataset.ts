@@ -33,7 +33,7 @@ import {
   sortBy,
   typeSort
 } from './statistics-helper';
-import { getNewRangeToAlign } from './util/zero-align';
+import { getNewRangeToAlign } from '../layout/chart-helper/zero-align';
 /**
  * 数据处理模块
  */
@@ -254,7 +254,7 @@ export class Dataset {
 
       if (this.dataConfig?.isPivotChart) {
         // 处理PivotChart双轴图0值对齐
-        this.dealWithZeroAlign();
+        // this.dealWithZeroAlign();
 
         // 记录PivotChart维度对应的数据
         this.cacheDeminsionCollectedValues();
@@ -727,7 +727,7 @@ export class Dataset {
 
     if (this.dataConfig?.isPivotChart) {
       // 处理PivotChart双轴图0值对齐
-      this.dealWithZeroAlign();
+      // this.dealWithZeroAlign();
       // 记录PivotChart维度对应的数据
       this.cacheDeminsionCollectedValues();
     }
@@ -1350,50 +1350,6 @@ export class Dataset {
     }
     tree.forEach((treeNode: any) => getPath(treeNode, []));
     return result;
-  }
-  private dealWithZeroAlign() {
-    const indicatorsToAlign = [];
-    for (let i = 0; i < this.aggregationRules.length; i++) {
-      const rule = this.aggregationRules[i];
-      if (isArray(rule.field) && rule.field.length === 2) {
-        indicatorsToAlign.push(rule.field);
-      }
-    }
-
-    indicatorsToAlign.forEach(indicatorToAlign => {
-      const indicator1 = indicatorToAlign[0];
-      const indicator2 = indicatorToAlign[1];
-      const collectedValue1 = this.collectedValues[indicator1];
-      const collectedValue2 = this.collectedValues[indicator2];
-      this.collectedValues[indicator1 + '_align'] = {};
-      this.collectedValues[indicator2 + '_align'] = {};
-
-      const toAlignCollectedValue = collectedValue1 || collectedValue2;
-      for (const key in toAlignCollectedValue) {
-        const range1 = collectedValue1?.[key] ?? { min: 0, max: 1 };
-        const range2 = collectedValue2?.[key] ?? { min: 0, max: 1 };
-
-        const newRanges = getNewRangeToAlign(
-          range1 as { min: number; max: number },
-          range2 as { min: number; max: number }
-        );
-        if (!newRanges) {
-          // 没有正确完成0值对齐，直接沿用之前的range
-          this.collectedValues[indicator1 + '_align'][key] = {
-            min: (range1 as { min: number; max: number }).min,
-            max: (range1 as { min: number; max: number }).max
-          };
-          this.collectedValues[indicator2 + '_align'][key] = {
-            min: (range2 as { min: number; max: number }).min,
-            max: (range2 as { min: number; max: number }).max
-          };
-        } else {
-          const { range1: newRange1, range2: newRange2 } = newRanges;
-          this.collectedValues[indicator1 + '_align'][key] = { min: newRange1[0], max: newRange1[1] };
-          this.collectedValues[indicator2 + '_align'][key] = { min: newRange2[0], max: newRange2[1] };
-        }
-      }
-    });
   }
 
   private cacheDeminsionCollectedValues() {

@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vtable",
+      "comment": "feat: add functionial tickCount config in axis ",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@visactor/vtable"
+}

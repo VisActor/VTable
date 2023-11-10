@@ -2344,8 +2344,6 @@ export function createPivotChart() {
 
   const tableInstance = new VTable.PivotChart(option);
 
-  setTimeout(() => {
-    const buffer = tableInstance.getImageBuffer();
-    fs.writeFileSync(`${__dirname}/pivot-chart.png`, buffer);
-  }, 0);
+  const buffer = tableInstance.getImageBuffer();
+  fs.writeFileSync(`${__dirname}/pivot-chart.png`, buffer);
 }

@@ -561,7 +561,8 @@ describe('pivotTable init test', () => {
           value: '黑龙江',
           indicatorKey: undefined
         }
-      ]
+      ],
+      cellLocation: 'body'
     });
   });
 
