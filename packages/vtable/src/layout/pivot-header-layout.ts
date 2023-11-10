@@ -44,6 +44,7 @@ import { getAxisConfigInPivotChart } from './chart-helper/get-axis-config';
 export const sharedVar = { seqId: 0 };
 let colIndex = 0;
 
+const defaultDimension = { startInTotal: 0, level: 0 };
 export class PivotHeaderLayoutMap implements LayoutMapAPI {
   _showHeader = true;
   rowDimensionTree: DimensionTree;
@@ -1553,7 +1554,7 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
         );
       }
     }
-    const p = { colHeaderPaths: colPath, rowHeaderPaths: rowPath };
+    const p = { colHeaderPaths: colPath, rowHeaderPaths: rowPath, cellLocation: this.getCellLocation(col, row) };
     this._CellHeaderPathMap.set(`${col}-${row}`, p);
     return p;
   }
@@ -1561,7 +1562,8 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
     const headerPathsWidthNode = this.getCellHeaderPathsWidthTreeNode(col, row);
     const headerPaths: IPivotTableCellHeaderPaths = {
       colHeaderPaths: [],
-      rowHeaderPaths: []
+      rowHeaderPaths: [],
+      cellLocation: this.getCellLocation(col, row)
     };
     headerPathsWidthNode.colHeaderPaths?.forEach((colHeader: any) => {
       const colHeaderPath: {
@@ -2138,6 +2140,7 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
       indicatorKey?: string;
       value?: string;
     }[];
+    let forceBody = false;
     if (Array.isArray(dimensionPaths)) {
       if (dimensionPaths.length > this.rowDimensionKeys.length + this.colDimensionKeys.length) {
         //如果传入的path长度比行列维度层级多的话 无法匹配
@@ -2153,6 +2156,9 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
     } else {
       colHeaderPaths = dimensionPaths.colHeaderPaths;
       rowHeaderPaths = dimensionPaths.rowHeaderPaths;
+      if (dimensionPaths?.cellLocation === 'body' && this._table.isPivotTable()) {
+        forceBody = true;
+      }
     }
 
     if (!Array.isArray(colHeaderPaths) && !Array.isArray(rowHeaderPaths)) {
@@ -2267,26 +2273,26 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
       }
     }
     // 如果是body单元格 需要找到行列对应的维度值节点
-    if (needLowestLevel) {
+    if (!forceBody && needLowestLevel) {
       if ((!rowDimensionFinded && !isValid(row)) || !colDimensionFinded) {
         return undefined;
       }
     }
     // 通过dimension获取col和row
-    if (rowDimensionFinded) {
+    if (rowDimensionFinded || forceBody) {
       row = this.columnHeaderLevelCount;
-      const { startInTotal, level } = rowDimensionFinded as IPivotLayoutHeadNode;
-      row += startInTotal;
+      const { startInTotal, level } = (rowDimensionFinded as IPivotLayoutHeadNode) ?? defaultDimension;
+      row += startInTotal ?? 0;
       if (this.rowHierarchyType === 'grid') {
         defaultCol = this.rowHeaderTitle ? level + 1 : level;
       } else {
         defaultCol = 0;
       } //树形展示的情况下 肯定是在第0列
     }
-    if (colDimensionFinded) {
+    if (colDimensionFinded || forceBody) {
       col = this.rowHeaderLevelCount;
-      const { startInTotal, level } = colDimensionFinded as IPivotLayoutHeadNode;
-      col += startInTotal;
+      const { startInTotal, level } = (colDimensionFinded as IPivotLayoutHeadNode) ?? defaultDimension;
+      col += startInTotal ?? 0;
       defaultRow = this.columnHeaderTitle ? level + 1 : level;
     }
     if (isValid(col) || isValid(row)) {

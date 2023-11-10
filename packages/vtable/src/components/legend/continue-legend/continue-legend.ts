@@ -74,6 +74,9 @@ export class ContinueTableLegend {
     // 调整位置
     let width = isFinite(this.legendComponent.AABBBounds.width()) ? this.legendComponent.AABBBounds.width() : 0;
     let height = isFinite(this.legendComponent.AABBBounds.height()) ? this.legendComponent.AABBBounds.height() : 0;
+    if (width <= 0 || height <= 0) {
+      return;
+    }
     const rectWidth = this.table.tableNoFrameWidth;
     const rectHeight = this.table.tableNoFrameHeight;
     const padding = getQuadProps(attrs.padding ?? this.option.padding ?? 10);
