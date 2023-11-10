@@ -9,6 +9,8 @@ import { isObject } from '@visactor/vutils';
 import { CheckBox } from '@visactor/vrender-components';
 import { getHierarchyOffset } from '../../utils/get-hierarchy-offset';
 import { getOrApply } from '../../../tools/helper';
+import type { CheckboxStyle } from '../../../body-helper/style/CheckboxStyle';
+import { getProp } from '../../utils/get-prop';
 
 export function createCheckboxCellGroup(
   cellGroup: Group | null,
@@ -54,7 +56,7 @@ export function createCheckboxCellGroup(
     columnGroup?.addChild(cellGroup);
   }
 
-  // chart
+  // checkbox
   const checkboxComponent = createCheckbox(col, row, colWidth, width, height, padding, cellTheme, define, table);
   if (checkboxComponent) {
     cellGroup.appendChild(checkboxComponent);
@@ -94,6 +96,10 @@ function createCheckbox(
   define: CheckboxColumnDefine,
   table: BaseTableAPI
 ) {
+  const style = table._getCellStyle(col, row) as CheckboxStyle;
+  const size = getProp('size', style, col, row, table);
+  const spaceBetweenTextAndIcon = getProp('spaceBetweenTextAndIcon', style, col, row, table);
+
   const value = table.getCellValue(col, row) as string | { text: string; checked: boolean; disable: boolean } | boolean;
   const dataValue = table.getCellOriginValue(col, row);
   let isChecked;
@@ -139,7 +145,9 @@ function createCheckbox(
 
   const attribute = {
     text: text.length === 1 && !autoWrapText ? text[0] : text, // 单行(no-autoWrapText)为字符串，多行(autoWrapText)为字符串数组
-    maxLineWidth: autoColWidth ? Infinity : cellWidth - (padding[1] + padding[3] + hierarchyOffset),
+    maxLineWidth: autoColWidth
+      ? Infinity
+      : cellWidth - (padding[1] + padding[3] + hierarchyOffset) - size - spaceBetweenTextAndIcon,
     // fill: true,
     // textAlign: 'left',
     textBaseline: 'top',
@@ -158,6 +166,15 @@ function createCheckbox(
       x: 0,
       y: 0,
       text: testAttribute,
+      icon: {
+        width: Math.floor(size / 1.4), // icon : box => 10 : 14
+        height: Math.floor(size / 1.4)
+      },
+      box: {
+        width: size,
+        height: size
+      },
+      spaceBetweenTextAndIcon,
       checked: undefined,
       indeterminate: true,
       disabled: isDisabled ?? globalDisable ?? false
@@ -167,6 +184,15 @@ function createCheckbox(
       x: 0,
       y: 0,
       text: testAttribute,
+      icon: {
+        width: Math.floor(size / 1.4), // icon : box => 10 : 14
+        height: Math.floor(size / 1.4)
+      },
+      box: {
+        width: size,
+        height: size
+      },
+      spaceBetweenTextAndIcon,
       checked: isChecked,
       indeterminate: undefined,
       disabled: isDisabled ?? globalDisable ?? false

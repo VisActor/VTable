@@ -2723,7 +2723,8 @@ describe('pivot-header-layout test', () => {
           indicatorKey: '10002',
           value: ''
         }
-      ]
+      ],
+      cellLocation: 'rowHeader'
     });
     expect(layout.getCellHeaderPaths(2, 2)).toEqual({
       colHeaderPaths: [
@@ -2741,7 +2742,8 @@ describe('pivot-header-layout test', () => {
           indicatorKey: '10002',
           value: ''
         }
-      ]
+      ],
+      cellLocation: 'body'
     });
     expect(layout.getCellHeaderPaths(2, 4)).toEqual({
       colHeaderPaths: [
@@ -2750,7 +2752,8 @@ describe('pivot-header-layout test', () => {
           value: '地区-dongbei'
         }
       ],
-      rowHeaderPaths: []
+      rowHeaderPaths: [],
+      cellLocation: 'body'
     });
   });
 

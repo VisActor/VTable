@@ -3538,6 +3538,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
       console.error(new TypeError('getImageBuffer() now only support node environment.'));
       return;
     }
+    this.render();
     const stage = this.scenegraph.stage;
     if (stage) {
       const contentWidth = this.tableX + this.getAllColsWidth();
