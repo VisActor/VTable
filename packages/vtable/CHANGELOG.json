@@ -10,14 +10,7 @@
           {
             "comment": "feat: add jsx support in custom layout"
           }
-        ]
-      }
-    },
-    {
-      "version": "0.13.5",
-      "tag": "@visactor/vtable_v0.13.5",
-      "date": "Fri, 10 Nov 2023 10:36:39 GMT",
-      "comments": {
+        ],
         "patch": [
           {
             "comment": "feat: refactor merge cell strategy"
