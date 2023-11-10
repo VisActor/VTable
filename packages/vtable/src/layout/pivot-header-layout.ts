@@ -1554,7 +1554,7 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
         );
       }
     }
-    const p = { colHeaderPaths: colPath, rowHeaderPaths: rowPath, cellLocation: this._table.getCellLocation(col, row) };
+    const p = { colHeaderPaths: colPath, rowHeaderPaths: rowPath, cellLocation: this.getCellLocation(col, row) };
     this._CellHeaderPathMap.set(`${col}-${row}`, p);
     return p;
   }
