@@ -2,7 +2,8 @@ import { icons as iconPlugins } from './plugins/icons';
 import { themes as themePlugins } from './plugins/themes';
 import { chartTypes as chartTypePlugins } from './plugins/chartModules';
 import type { ColumnIconOption, ITableThemeDefine } from './ts-types';
-import type { IEditor } from '@visactor/vtable-editors';
+// import type { IEditor } from '@visactor/vtable-editors';
+type IEditor = any;
 import { editors } from './edit/editors';
 
 function register(obj: { [key: string]: any }, name: string, value: any): any {
