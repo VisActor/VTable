@@ -1,5 +1,8 @@
-export class BaseEditor {
+import type { IEditor } from './types';
+
+export class BaseEditor implements IEditor {
   editorType: string;
+  editorConfig: any;
   constructor() {
     this.editorType = 'base';
   }
@@ -9,7 +12,7 @@ export class BaseEditor {
   setValue(value: string) {
     // do nothing
   }
-  getEditorValue() {
+  getValue() {
     return '';
   }
   beginEditing() {

@@ -17,7 +17,7 @@ export class ListEditor extends BaseEditor {
   setValue(value: string) {
     // do nothing
   }
-  getEditorValue() {
+  getValue() {
     return this.input.value;
   }
   beginEditing() {

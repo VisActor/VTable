@@ -25,7 +25,7 @@ export class InputEditor extends BaseEditor {
   setValue(value: string) {
     this.input.value = typeof value !== 'undefined' ? value : '';
   }
-  getEditorValue() {
+  getValue() {
     return this.input.value;
   }
   beginEditing() {
