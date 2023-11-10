@@ -33,6 +33,14 @@
       "shouldPublish": true
     },
     {
+      "packageName": "@visactor/vtable-editors",
+      "projectFolder": "packages/vtable-editors",
+      "tags": [
+        "package"
+      ],
+      "shouldPublish": true
+    },
+    {
       "packageName": "@internal/docs",
       "projectFolder": "docs",
       "tags": [

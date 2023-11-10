@@ -102,3 +102,7 @@ common/scripts/pre-commit
 docs/public/documents
 
 packages/vtable/nodejs/*.png
+
+# build
+.rollup.cache/
+tsconfig.tsbuildinfo
