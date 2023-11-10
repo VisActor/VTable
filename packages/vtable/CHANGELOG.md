@@ -9,9 +9,6 @@ Fri, 10 Nov 2023 11:31:45 GMT
 
 - feat: add jsx support in custom layout
 
-## 0.13.5
-Fri, 10 Nov 2023 10:36:39 GMT
-
 ### Patches
 
 - feat: refactor merge cell strategy
