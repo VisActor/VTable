@@ -2,6 +2,18 @@
   "name": "@visactor/vtable",
   "entries": [
     {
+      "version": "0.14.0",
+      "tag": "@visactor/vtable_v0.14.0",
+      "date": "Fri, 10 Nov 2023 11:31:45 GMT",
+      "comments": {
+        "minor": [
+          {
+            "comment": "feat: add jsx support in custom layout"
+          }
+        ]
+      }
+    },
+    {
       "version": "0.13.5",
       "tag": "@visactor/vtable_v0.13.5",
       "date": "Fri, 10 Nov 2023 10:36:39 GMT",

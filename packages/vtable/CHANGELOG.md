@@ -1,6 +1,13 @@
 # Change Log - @visactor/vtable
 
-This log was last generated on Fri, 10 Nov 2023 10:36:39 GMT and should not be manually modified.
+This log was last generated on Fri, 10 Nov 2023 11:31:45 GMT and should not be manually modified.
+
+## 0.14.0
+Fri, 10 Nov 2023 11:31:45 GMT
+
+### Minor changes
+
+- feat: add jsx support in custom layout
 
 ## 0.13.5
 Fri, 10 Nov 2023 10:36:39 GMT
