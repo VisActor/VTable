@@ -9,7 +9,7 @@ option: ListTable#theme.scrollStyle.scrollRailColor
 
 # scroll bar
 
-This example fighter has scrollbar configurable styles.
+This example show scrollbar configurable styles.
 
 ## Key Configurations
 

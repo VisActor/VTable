@@ -265,3 +265,11 @@ html 目前实现较完整，先默认使用 html 渲染方式。目前暂不支
 {{ use: common-custom-render-object(
   prefix = '##' + ${prefix},
 ) }}
+
+
+## overscrollBehavior(string) = 'auto'
+表格滚动行为，可设置：'auto'|'none'，默认值为'auto'。
+```
+'auto': 表格滚动到顶部或者底部时，触发浏览器默认行为;
+'none': 表格滚动到顶部或者底部时, 触发浏览器默认行为;
+```
