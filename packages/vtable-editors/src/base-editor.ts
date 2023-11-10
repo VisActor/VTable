@@ -1,8 +1,10 @@
+import type { InputEditorConfig } from './input-editor';
+import type { ListEditorConfig } from './list-editor';
 import type { IEditor } from './types';
 
 export class BaseEditor implements IEditor {
   editorType: string;
-  editorConfig: any;
+  editorConfig: ListEditorConfig | InputEditorConfig;
   constructor() {
     this.editorType = 'base';
   }

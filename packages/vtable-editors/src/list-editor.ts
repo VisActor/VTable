@@ -5,7 +5,6 @@ export interface ListEditorConfig {
 
 export class ListEditor extends BaseEditor {
   editorType: string = 'Input';
-  editorConfig: ListEditorConfig;
   input: HTMLInputElement;
   constructor(editorConfig: ListEditorConfig) {
     super();

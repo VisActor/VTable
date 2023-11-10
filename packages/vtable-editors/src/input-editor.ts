@@ -6,7 +6,6 @@ export interface InputEditorConfig {
 
 export class InputEditor extends BaseEditor {
   editorType: string = 'Input';
-  editorConfig: InputEditorConfig;
   input: HTMLInputElement;
   constructor(editorConfig: InputEditorConfig) {
     super();
