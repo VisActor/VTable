@@ -23,7 +23,6 @@
     "eslint": "eslint --debug --fix src/",
     "build": "bundle",
     "dev": "bundle --clean -f es -w",
-    "test": "jest",
     "test-cov": "jest -w 16 --coverage",
     "test-live": "npm run test-watch __tests__/unit/",
     "test-watch": "DEBUG_MODE=1 jest --watch"
