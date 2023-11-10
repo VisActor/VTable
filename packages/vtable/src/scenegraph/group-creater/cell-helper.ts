@@ -362,10 +362,27 @@ export function updateCell(col: number, row: number, table: BaseTableAPI, addNew
   const oldCellGroup = table.scenegraph.highPerformanceGetCell(col, row, true);
   const cellStyle = table._getCellStyle(col, row);
   const autoWrapText = cellStyle.autoWrapText ?? table.internalProps.autoWrapText;
-  const cellTheme = getStyleTheme(cellStyle, table, col, row, getProp).theme;
+  const cellLocation = table.getCellLocation(col, row);
+  const define = cellLocation !== 'body' ? table.getHeaderDefine(col, row) : table.getBodyColumnDefine(col, row);
+
+  let isMerge;
+  let range;
+  if (cellLocation !== 'body' || (define as TextColumnDefine)?.mergeCell) {
+    // 只有表头或者column配置合并单元格后再进行信息获取
+    range = table.getCellRange(col, row);
+    isMerge = range.start.col !== range.end.col || range.start.row !== range.end.row;
+  }
+
+  let cellTheme = getStyleTheme(
+    cellStyle,
+    table,
+    isMerge ? range.start.col : col,
+    isMerge ? range.start.row : row,
+    getProp
+  ).theme;
 
   // fast method for text
-  if (!addNew && canUseFastUpdate(col, row, oldCellGroup, autoWrapText, table)) {
+  if (!addNew && !isMerge && canUseFastUpdate(col, row, oldCellGroup, autoWrapText, table)) {
     // update group
     const cellWidth = table.getColWidth(col);
     const cellHeight = table.getRowHeight(row);
@@ -416,12 +433,8 @@ export function updateCell(col: number, row: number, table: BaseTableAPI, addNew
   const type = table.isHeader(col, row)
     ? table._getHeaderLayoutMap(col, row).headerType
     : table.getBodyColumnType(col, row);
-  const cellLocation = table.getCellLocation(col, row);
-  const define = cellLocation !== 'body' ? table.getHeaderDefine(col, row) : table.getBodyColumnDefine(col, row);
   let value = table.getCellValue(col, row);
 
-  let isMerge;
-  let range;
   let customStyle;
   if (table.internalProps.customMergeCell) {
     const customMerge = table.getCustomMerge(col, row);
@@ -431,12 +444,8 @@ export function updateCell(col: number, row: number, table: BaseTableAPI, addNew
       isMerge = range.start.col !== range.end.col || range.start.row !== range.end.row;
       value = customMergeText;
       customStyle = customMergeStyle;
+      cellTheme = getStyleTheme(customStyle, table, range.start.col, range.start.row, getProp).theme;
     }
-  }
-  if (cellLocation !== 'body' || (define as TextColumnDefine)?.mergeCell) {
-    // 只有表头或者column配置合并单元格后再进行信息获取
-    range = table.getCellRange(col, row);
-    isMerge = range.start.col !== range.end.col || range.start.row !== range.end.row;
   }
 
   let newCellGroup;

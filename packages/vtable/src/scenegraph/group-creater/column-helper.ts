@@ -90,7 +90,13 @@ export function createComplexColumn(
     }
 
     const cellStyle = customStyle || table._getCellStyle(col, row);
-    const cellTheme = getStyleTheme(cellStyle, table, col, row, getProp).theme;
+    const cellTheme = getStyleTheme(
+      cellStyle,
+      table,
+      range ? range.start.col : col,
+      range ? range.start.row : row,
+      getProp
+    ).theme;
     cellTheme.group.width = colWidth;
     cellTheme.group.height = Array.isArray(defaultRowHeight) ? defaultRowHeight[row] : defaultRowHeight;
     if (cellTheme._vtable.padding) {
