@@ -3,12 +3,19 @@ import type { Group } from '../../scenegraph/graphic/group';
 import { getProp } from '../../scenegraph/utils/get-prop';
 import type { BaseTableAPI } from '../../ts-types/base-table';
 import { HighlightScope } from '../../ts-types';
+import { isValid } from '@visactor/vutils';
 
 export function getCellHoverColor(cellGroup: Group, table: BaseTableAPI): string | undefined {
   let colorKey;
-  if (cellGroup.role === 'cell' && typeof cellGroup.mergeCol === 'number' && typeof cellGroup.mergeRow === 'number') {
-    for (let col = cellGroup.col; col <= cellGroup.mergeCol; col++) {
-      for (let row = cellGroup.row; row <= cellGroup.mergeRow; row++) {
+  if (
+    cellGroup.role === 'cell' &&
+    isValid(cellGroup.mergeStartCol) &&
+    isValid(cellGroup.mergeStartRow) &&
+    isValid(cellGroup.mergeEndCol) &&
+    isValid(cellGroup.mergeEndRow)
+  ) {
+    for (let col = cellGroup.mergeStartCol; col <= cellGroup.mergeEndCol; col++) {
+      for (let row = cellGroup.mergeStartRow; row <= cellGroup.mergeEndRow; row++) {
         const key = isCellHover(table.stateManeger, col, row);
         if (key && (!colorKey || key === 'cellBgColor')) {
           colorKey = key;

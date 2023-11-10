@@ -2,7 +2,6 @@ import type { Group } from '../../../graphic/group';
 import { computeRowsHeight } from '../../../layout/compute-row-height';
 import type { SceneProxy } from '../proxy';
 import { updateAutoRow } from './update-auto-row';
-import { checkFirstRowMerge } from './util';
 
 export async function dynamicSetY(y: number, proxy: SceneProxy) {
   // 计算变动row range
@@ -83,7 +82,6 @@ async function moveCell(
     proxy.rowEnd = direction === 'up' ? proxy.rowEnd + count : proxy.rowEnd - count;
 
     updateRowContent(syncTopRow, syncBottomRow, proxy);
-    checkFirstRowMerge(syncTopRow, proxy);
 
     if (proxy.table.heightMode === 'autoHeight') {
       updateAutoRow(
@@ -138,7 +136,6 @@ async function moveCell(
     proxy.rowStart = distStartRow;
     proxy.rowEnd = distEndRow;
 
-    checkFirstRowMerge(syncTopRow, proxy);
     updateRowContent(syncTopRow, syncBottomRow, proxy);
 
     if (proxy.table.heightMode === 'autoHeight') {

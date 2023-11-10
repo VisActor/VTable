@@ -33,15 +33,21 @@ export function moveHeaderPosition(
       sourceColEnd = sourceMergeInfo.end.col;
       targetColStart = targetMergeInfo.start.col;
       targetColEnd = targetMergeInfo.end.col;
+
+      sourceRowStart = sourceMergeInfo.start.row;
+      targetRowStart = targetMergeInfo.start.row;
     } else {
       sourceColStart = colSource;
       sourceColEnd = colSource;
       targetColStart = colTarget;
       targetColEnd = colTarget;
+
+      sourceRowStart = rowSource;
+      targetRowStart = rowTarget;
     }
-    sourceRowStart = rowSource;
+    // sourceRowStart = rowSource;
     sourceRowEnd = table.rowCount - 1;
-    targetRowStart = rowTarget;
+    // targetRowStart = rowTarget;
     targetRowEnd = table.rowCount - 1;
   } else if (direction === 'row') {
     const sourceMergeInfo = getCellMergeInfo(table, colSource, rowSource);
@@ -51,15 +57,21 @@ export function moveHeaderPosition(
       sourceRowEnd = sourceMergeInfo.end.row;
       targetRowStart = targetMergeInfo.start.row;
       targetRowEnd = targetMergeInfo.end.row;
+
+      sourceColStart = sourceMergeInfo.start.col;
+      targetColStart = targetMergeInfo.start.col;
     } else {
       sourceRowStart = rowSource;
       sourceRowEnd = rowSource;
       targetRowStart = rowTarget;
       targetRowEnd = rowTarget;
+
+      sourceColStart = colSource;
+      targetColStart = colTarget;
     }
-    sourceColStart = colSource;
+    // sourceColStart = colSource;
     sourceColEnd = table.colCount - 1;
-    targetColStart = colTarget;
+    // targetColStart = colTarget;
     targetColEnd = table.colCount - 1;
   }
 
@@ -92,66 +104,5 @@ export function moveHeaderPosition(
     for (let row = updateRowStart; row <= updateRowEnd; row++) {
       scene.updateCellContent(col, row);
     }
-  }
-}
-
-function changeCell(colSource: number, rowSource: number, colTarget: number, rowTarget: number, table: BaseTableAPI) {
-  // 记录基础属性
-  const scene = table.scenegraph;
-  const sourceCellGroup = scene.getCell(colSource, rowSource, true);
-  const targetCellGroup = scene.getCell(colTarget, rowTarget, true);
-  if (sourceCellGroup.role === 'empty' || targetCellGroup.role === 'empty') {
-    return;
-  }
-  const sourceParent = sourceCellGroup.parent as Group;
-  const targetParent = targetCellGroup.parent as Group;
-  const { x: sourceX, y: sourceY } = sourceCellGroup.attribute;
-  const { x: targetX, y: targetY } = targetCellGroup.attribute;
-
-  // 判断merge属性
-  let sourceDeltaCol;
-  let sourceDeltaRow;
-  let targetDeltaCol;
-  let targetDeltaRow;
-  const sourceMergeCol = sourceCellGroup.mergeCol;
-  const sourceMergeRow = sourceCellGroup.mergeRow;
-  const targetMergeCol = targetCellGroup.mergeCol;
-  const targetMergeRow = targetCellGroup.mergeRow;
-  if (typeof sourceMergeCol === 'number' && typeof sourceMergeRow === 'number') {
-    sourceDeltaCol = sourceMergeCol - colSource;
-    sourceDeltaRow = sourceMergeRow - rowSource;
-  }
-  if (typeof targetMergeCol === 'number' && typeof targetMergeRow === 'number') {
-    targetDeltaCol = targetMergeCol - colTarget;
-    targetDeltaRow = targetMergeRow - rowTarget;
-  }
-
-  // 更新位置
-  targetParent.insertAfter(groupForPosition, targetCellGroup);
-  sourceParent.insertAfter(targetCellGroup, sourceCellGroup);
-  targetParent.insertAfter(sourceCellGroup, groupForPosition);
-  targetParent.removeChild(groupForPosition);
-
-  // 更新属性
-  sourceCellGroup.setAttributes({
-    x: targetX,
-    y: targetY
-  });
-  sourceCellGroup.col = colTarget;
-  sourceCellGroup.row = rowTarget;
-
-  targetCellGroup.setAttributes({
-    x: sourceX,
-    y: sourceY
-  });
-  targetCellGroup.col = colSource;
-  targetCellGroup.row = rowSource;
-  if (typeof sourceDeltaCol === 'number' && typeof sourceDeltaRow === 'number') {
-    sourceCellGroup.mergeCol = sourceCellGroup.col + sourceDeltaCol;
-    sourceCellGroup.mergeRow = sourceCellGroup.row + sourceDeltaRow;
-  }
-  if (typeof targetDeltaCol === 'number' && typeof targetDeltaRow === 'number') {
-    targetCellGroup.mergeCol = targetCellGroup.col + targetDeltaCol;
-    targetCellGroup.mergeRow = targetCellGroup.row + targetDeltaRow;
   }
 }

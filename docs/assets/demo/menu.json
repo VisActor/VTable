@@ -354,6 +354,22 @@
           }
         },
         {
+          "path": "custom-merge",
+          "title": {
+            "zh": "自定义合并单元格",
+            "en": "Custom Merge Cells"
+          },
+          "meta": {
+            "title": "Custom Merge Cells",
+            "keywords": "",
+            "category": "demo",
+            "group": "Basic Features",
+            "cover": "https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/merge.png",
+            "link": "",
+            "option": ""
+          }
+        },
+        {
           "path": "height-mode-autoHeight",
           "title": {
             "zh": "适应容器高度",
