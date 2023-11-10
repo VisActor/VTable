@@ -159,6 +159,10 @@ export function computeRowsHeight(
     }
   }
 
+  if ((rowStart === 0 && rowEnd === table.rowCount - 1) || isClearRowRangeHeightsMap) {
+    table._clearRowRangeHeightsMap();
+  }
+
   // 处理adaptive高度
   if (table.heightMode === 'adaptive') {
     table._clearRowRangeHeightsMap();

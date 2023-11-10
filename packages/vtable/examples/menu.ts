@@ -48,6 +48,10 @@ export const menus = [
       },
       {
         path: 'list',
+        name: 'list-merge-cell'
+      },
+      {
+        path: 'list',
         name: 'list-more-columns'
       },
       {

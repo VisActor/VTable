@@ -441,7 +441,7 @@ export class StateManeger {
         }
 
         this.hoverIcon.col = col;
-        this.hoverIcon.col = row;
+        this.hoverIcon.row = row;
         this.hoverIcon.icon = icon;
 
         // 更新icon样式
