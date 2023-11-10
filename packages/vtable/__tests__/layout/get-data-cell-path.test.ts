@@ -1417,7 +1417,8 @@ describe('get-data-cell-path test', () => {
           indicatorKey: '10002',
           value: ''
         }
-      ]
+      ],
+      cellLocation: 'body'
     });
   });
 });

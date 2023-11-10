@@ -78,6 +78,10 @@ export const menus = [
       },
       {
         path: 'pivot-chart',
+        name: 'bugserver'
+      },
+      {
+        path: 'pivot-chart',
         name: 'noDimension-updateOption'
       },
       {
