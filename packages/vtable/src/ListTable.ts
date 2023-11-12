@@ -24,6 +24,9 @@ import { TABLE_EVENT_TYPE } from './core/TABLE_EVENT_TYPE';
 import { Title } from './components/title/title';
 import { cloneDeep } from '@visactor/vutils';
 import { Env } from './tools/env';
+import { editor } from './register';
+import * as editors from './edit/editors';
+import { EditManeger } from './edit/edit-manager';
 
 export class ListTable extends BaseTable implements ListTableAPI {
   declare internalProps: ListTableProtected;
@@ -32,6 +35,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
    */
   declare options: ListTableConstructorOptions;
   showHeader = true;
+  editorManager: EditManeger;
   // eslint-disable-next-line default-param-last
   constructor(options: ListTableConstructorOptions);
   constructor(container: HTMLElement, options: ListTableConstructorOptions);
@@ -62,7 +66,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
     this.showHeader = options.showHeader ?? true;
 
     this.transpose = options.transpose ?? false;
-
+    this.editorManager = new EditManeger(this);
     this.refreshHeader();
 
     if (options.dataSource) {
@@ -676,5 +680,25 @@ export class ListTable extends BaseTable implements ListTableAPI {
       });
     }
     return this.stateManeger.checkedState;
+  }
+
+  /** 获取单元格对应的编辑器 */
+  getEditor(col: number, row: number) {
+    const define = this.getBodyColumnDefine(col, row);
+    const editorDefine = define?.editor ?? this.options.editor;
+
+    if (typeof editorDefine === 'function') {
+      const arg = {
+        col,
+        row,
+        dataValue: this.getCellOriginValue(col, row),
+        value: this.getCellValue(col, row) || '',
+        table: this
+      };
+      return (editorDefine as Function)(arg);
+    } else if (typeof editorDefine === 'string') {
+      return editors.get(editorDefine);
+    }
+    return editorDefine;
   }
 }

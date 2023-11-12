@@ -19,7 +19,11 @@ export class ListEditor extends BaseEditor {
   getValue() {
     return this.input.value;
   }
-  beginEditing() {
+  beginEditing(
+    container: HTMLElement,
+    rect: { top: number; left: number; width: number; height: number },
+    value?: string
+  ) {
     // do nothing
   }
   endEditing() {

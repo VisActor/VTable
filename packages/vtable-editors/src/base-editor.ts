@@ -8,7 +8,7 @@ export class BaseEditor implements IEditor {
   constructor() {
     this.editorType = 'base';
   }
-  createElement() {
+  createElement(container: HTMLElement) {
     // do nothing
   }
   setValue(value: string) {
@@ -17,9 +17,14 @@ export class BaseEditor implements IEditor {
   getValue() {
     return '';
   }
-  beginEditing() {
+  beginEditing(
+    container: HTMLElement,
+    rect: { top: number; left: number; width: number; height: number },
+    value?: string
+  ) {
     // do nothing
   }
+
   endEditing() {
     // do nothing
   }

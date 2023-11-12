@@ -1,4 +1,4 @@
-import type { RectProps, MaybePromiseOrUndefined, IDimensionInfo, SortOrder } from './common';
+import type { RectProps, MaybePromiseOrUndefined, IDimensionInfo, SortOrder, BaseCellInfo } from './common';
 import type { SvgIcon } from './icon';
 export type { HeaderData } from './list-table/layout-map/api';
 export type LayoutObjectId = number | string;
@@ -134,6 +134,7 @@ export interface ListTableConstructorOptions extends BaseTableConstructorOptions
    * 排序状态
    */
   sortState?: SortState | SortState[];
+  editor?: string | ((args: BaseCellInfo & { table: BaseTableAPI }) => string);
 }
 
 export interface ListTableAPI extends BaseTableAPI {

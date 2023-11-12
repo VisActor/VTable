@@ -61,6 +61,7 @@ import type { Title } from '../components/title/title';
 import type { ITitle } from './component/title';
 import type { DiscreteTableLegend } from '../components/legend/discrete-legend/discrete-legend';
 import type { ContinueTableLegend } from '../components/legend/continue-legend/continue-legend';
+import type { IEditor } from '@visactor/vtable-editors';
 
 export interface IBaseTableProtected {
   element: HTMLElement;
@@ -639,6 +640,10 @@ export interface BaseTableAPI {
   getBodyVisibleColRange: () => { colStart: number; colEnd: number };
   /** 获取表格body部分的显示行号范围 */
   getBodyVisibleRowRange: () => { rowStart: number; rowEnd: number };
+  //#region 编辑器相关demo
+  /** 获取单元格配置的编辑器 */
+  getEditor: (col: number, row: number) => IEditor;
+  //#endregion
 }
 export interface ListTableProtected extends IBaseTableProtected {
   /** 表格数据 */

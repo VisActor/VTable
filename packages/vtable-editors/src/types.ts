@@ -3,10 +3,14 @@ export interface IEditor {
   editorType?: string;
   /** 编辑配置 */
   editorConfig: any;
-  createElement: () => void;
+  createElement: (container: HTMLElement) => void;
   setValue: (value: string) => void;
   getValue: () => void;
-  beginEditing: () => void;
+  beginEditing: (
+    container: HTMLElement,
+    rect: { top: number; left: number; width: number; height: number },
+    value?: string
+  ) => void;
   endEditing: () => void;
   exit: () => void;
 }

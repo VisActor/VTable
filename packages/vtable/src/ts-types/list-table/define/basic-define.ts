@@ -1,5 +1,5 @@
-import type { CellInfo, SortOption } from '../../common';
-import type { ICustomRender, ICustomRenderFuc, ICustomRenderObj } from '../../customElement';
+import type { BaseCellInfo, CellInfo, SortOption } from '../../common';
+import type { ICustomRender } from '../../customElement';
 import type { ICustomLayout } from '../../customLayout';
 import type { FieldDef, FieldFormat, FieldKeyDef } from '../../table-engine';
 import type { ColumnIconOption } from '../../icon';
@@ -82,4 +82,5 @@ export interface IBasicColumnBodyDefine {
 
   customRender?: ICustomRender;
   customLayout?: ICustomLayout;
+  editor?: string | ((args: BaseCellInfo & { table: BaseTableAPI }) => string);
 }
