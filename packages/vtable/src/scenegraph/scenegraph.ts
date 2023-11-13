@@ -1,4 +1,4 @@
-import type { IStage, IRect, ITextCache, INode } from '@visactor/vrender';
+import type { IStage, IRect, ITextCache, INode, Text } from '@visactor/vrender';
 import { createStage, createRect, IContainPointMode, container, vglobal } from '@visactor/vrender';
 import type { CellSubLocation } from '../ts-types';
 import {
@@ -1772,6 +1772,14 @@ export class Scenegraph {
       return this.table.getRowsHeight(this.table.rowCount - this.table.bottomFrozenRowCount, row - 1);
     }
     return 0;
+  }
+  /** 更新场景树某个单元格的值 */
+  updateCellValue(col: number, row: number, value: string | number) {
+    const cellGroup = this.getCell(col, row);
+    const text = cellGroup.getChildByName('text', true) as unknown as WrapText;
+    if (text) {
+      text.setAttribute('text', value);
+    }
   }
 }
 

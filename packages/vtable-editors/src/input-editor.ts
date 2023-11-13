@@ -1,4 +1,5 @@
 import { BaseEditor } from './base-editor';
+import type { Placement, RectProps } from './types';
 export interface InputEditorConfig {
   max?: number;
   min?: number;
@@ -6,46 +7,47 @@ export interface InputEditorConfig {
 
 export class InputEditor extends BaseEditor {
   editorType: string = 'Input';
-  input: HTMLInputElement;
+  declare element: HTMLInputElement;
   constructor(editorConfig: InputEditorConfig) {
     super();
     this.editorConfig = editorConfig;
   }
-  createElement(container: HTMLElement) {
+  createElement() {
     const input = document.createElement('input');
     input.setAttribute('type', 'text');
     input.style.position = 'absolute';
     input.style.padding = '4px';
     input.style.width = '100%';
     input.style.boxSizing = 'border-box';
-    this.input = input;
+    this.element = input;
 
-    container.appendChild(input);
+    this.container.appendChild(input);
   }
   setValue(value: string) {
-    this.input.value = typeof value !== 'undefined' ? value : '';
+    this.element.value = typeof value !== 'undefined' ? value : '';
   }
   getValue() {
-    return this.input.value;
+    return this.element.value;
   }
-  beginEditing(
-    container: HTMLElement,
-    rect: { top: number; left: number; width: number; height: number },
-    value?: string
-  ) {
+  beginEditing(container: HTMLElement, referencePosition: { rect: RectProps; placement?: Placement }, value?: string) {
     console.log('input', 'beginEditing');
-    this.createElement(container);
+    this.container = container;
+
+    this.createElement();
     if (value) {
       this.setValue(value);
     }
-    this.adjustPosition(rect);
+    if (referencePosition?.rect) {
+      this.adjustPosition(referencePosition.rect);
+    }
+    this.element.focus();
     // do nothing
   }
-  adjustPosition(rect: { top: number; left: number; width: number; height: number }) {
-    this.input.style.top = rect.top + 'px';
-    this.input.style.left = rect.left + 'px';
-    this.input.style.width = rect.width + 'px';
-    this.input.style.height = rect.height + 'px';
+  adjustPosition(rect: RectProps) {
+    this.element.style.top = rect.top + 'px';
+    this.element.style.left = rect.left + 'px';
+    this.element.style.width = rect.width + 'px';
+    this.element.style.height = rect.height + 'px';
   }
   endEditing() {
     // do nothing
@@ -53,5 +55,12 @@ export class InputEditor extends BaseEditor {
 
   exit() {
     // do nothing
+    this.container.removeChild(this.element);
+  }
+  targetIsOnEditor(target: HTMLElement) {
+    if (target === this.element) {
+      return true;
+    }
+    return false;
   }
 }

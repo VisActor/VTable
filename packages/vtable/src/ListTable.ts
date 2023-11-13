@@ -180,7 +180,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
     const { field, fieldFormat } = table.internalProps.layoutMap.getBody(col, row);
     return table.getFieldData(fieldFormat || field, col, row);
   }
-  /** 获取单元格展示数据的原始值 */
+  /** 获取单元格展示数据的format前的值 */
   getCellOriginValue(col: number, row: number): FieldData {
     if (col === -1 || row === -1) {
       return null;
@@ -192,6 +192,19 @@ export class ListTable extends BaseTable implements ListTableAPI {
     }
     const { field } = table.internalProps.layoutMap.getBody(col, row);
     return table.getFieldData(field, col, row);
+  }
+  /** 获取单元格展示数据源最原始值 */
+  getCellRawValue(col: number, row: number): FieldData {
+    if (col === -1 || row === -1) {
+      return null;
+    }
+    const table = this;
+    if (table.internalProps.layoutMap.isHeader(col, row)) {
+      const { title } = table.internalProps.layoutMap.getHeader(col, row);
+      return typeof title === 'function' ? title() : title;
+    }
+    const { field } = table.internalProps.layoutMap.getBody(col, row);
+    return table.getRawFieldData(field, col, row);
   }
   /** @private */
   getRecordIndexByCell(col: number, row: number): number {
@@ -227,7 +240,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
   }
   /**
    *
-   * @param field 获取整体数据记录
+   * @param field 获取整体数据记录。可编辑单元格的话 对应编辑后format前
    * @param col
    * @param row
    */
@@ -236,6 +249,20 @@ export class ListTable extends BaseTable implements ListTableAPI {
     const index = table.getRecordIndexByCell(col, row);
     if (index > -1) {
       return table.dataSource.get(index);
+    }
+    return undefined;
+  }
+  /**
+   *
+   * @param field 获取整体数据记录。可编辑的话 对应编辑前
+   * @param col
+   * @param row
+   */
+  getCellRawRecord(col: number, row: number): MaybePromiseOrUndefined {
+    const table = this;
+    const index = table.getRecordIndexByCell(col, row);
+    if (index > -1) {
+      return table.dataSource.getRaw(index);
     }
     return undefined;
   }
@@ -390,7 +417,13 @@ export class ListTable extends BaseTable implements ListTableAPI {
       table.rightFrozenColCount = this.options.rightFrozenColCount ?? 0;
     }
   }
-
+  /**
+   * 获取records数据源中 字段对应的value 值是format之后的
+   * @param field
+   * @param col
+   * @param row
+   * @returns
+   */
   getFieldData(field: FieldDef | FieldFormat | undefined, col: number, row: number): FieldData {
     if (field === null) {
       return null;
@@ -401,6 +434,24 @@ export class ListTable extends BaseTable implements ListTableAPI {
     }
     const index = table.getRecordIndexByCell(col, row);
     return table.internalProps.dataSource.getField(index, field, col, row, this);
+  }
+  /**
+   * 获取records数据源中 字段对应的value 值是数据源中原始值
+   * @param field
+   * @param col
+   * @param row
+   * @returns
+   */
+  getRawFieldData(field: FieldDef | FieldFormat | undefined, col: number, row: number): FieldData {
+    if (field === null) {
+      return null;
+    }
+    const table = this;
+    if (table.internalProps.layoutMap.isHeader(col, row)) {
+      return null;
+    }
+    const index = table.getRecordIndexByCell(col, row);
+    return table.internalProps.dataSource.getRawField(index, field, col, row, this);
   }
   /**
    * 拖拽移动表头位置
@@ -700,5 +751,19 @@ export class ListTable extends BaseTable implements ListTableAPI {
       return editors.get(editorDefine);
     }
     return editorDefine;
+  }
+  changeCellValue(col: number, row: number, value: string | number | null) {
+    const recordIndex = this.getRecordIndexByCell(col, row);
+    const { field, fieldFormat } = this.internalProps.layoutMap.getBody(col, row);
+    this.dataSource.changeFieldValue(value, recordIndex, field, col, row, this);
+    const cell_value = this.getFieldData(fieldFormat || field, col, row);
+    this.scenegraph.updateCellValue(col, row, cell_value);
+    this.fireListeners(TABLE_EVENT_TYPE.CHANGE_CELL_VALUE, {
+      col,
+      row,
+      rawValue: this.getCellRawValue(col, row),
+      changedValue: this.getCellOriginValue(col, row)
+    });
+    this.scenegraph.updateNextFrame();
   }
 }

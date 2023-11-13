@@ -157,6 +157,8 @@ export interface TableEventHandlersEventArgumentMap {
   checkbox_state_change: MousePointerCellEvent & { checked: boolean };
   after_render: null;
   initialized: null;
+
+  change_cell_value: { col: number; row: number; rawValue: string | number; changedValue: string | number };
 }
 export interface DrillMenuEventInfo {
   dimensionKey: string | number;
@@ -221,4 +223,6 @@ export interface TableEventHandlersReturnMap {
   checkbox_state_change: void;
   after_render: void;
   initialized: void;
+
+  change_cell_value: void;
 }

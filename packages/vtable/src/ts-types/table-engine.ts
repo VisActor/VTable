@@ -9,6 +9,7 @@ import type { Either } from '../tools/helper';
 import type { IChartIndicator, ICornerDefine, IDimension, IIndicator, ITitleDefine } from './pivot-table';
 import type { ColumnsDefine } from './list-table';
 import type { ICellAxisOption, ITableAxisOption } from './component/axis';
+import type { IEditor } from '@visactor/vtable-editors';
 
 export interface CellAddress {
   col: number;
@@ -143,6 +144,14 @@ export interface ListTableAPI extends BaseTableAPI {
   // internalProps: ListTableProtected;
   isListTable: () => true;
   isPivotTable: () => false;
+  /** 设置单元格的value值，注意对应的是源数据的原始值，vtable实例records会做对应修改 */
+  changeCellValue: (col: number, row: number, value: string | number | null) => void;
+  //#region 编辑器相关demo
+  /** 获取单元格配置的编辑器 */
+  getEditor: (col: number, row: number) => IEditor;
+  /** 获取单元格展示数据源最原始值 */
+  getCellRawValue: (col: number, row: number) => FieldData;
+  //#endregion
 }
 export interface PivotTableConstructorOptions extends BaseTableConstructorOptions {
   /**

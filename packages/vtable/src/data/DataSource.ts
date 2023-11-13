@@ -15,8 +15,9 @@ import { applyChainSafe, getOrApply, obj, isPromise, emptyFn } from '../tools/he
 import { EventTarget } from '../event/EventTarget';
 import { getValueByPath } from '../tools/util';
 import { diffCellIndices } from '../tools/diff-cell';
-import { isValid } from '@visactor/vutils';
+import { cloneDeep, isValid } from '@visactor/vutils';
 import type { BaseTableAPI } from '../ts-types/base-table';
+import { TABLE_EVENT_TYPE } from '../core/TABLE_EVENT_TYPE';
 
 /**
  * 判断字段数据是否为访问器的格式
@@ -149,7 +150,7 @@ export class DataSource extends EventTarget implements DataSourceAPI {
     return EVENT_TYPE;
   }
   protected treeDataHierarchyState: Map<number | string, HierarchyState> = new Map();
-
+  changeValuesMap: Record<number, boolean>[] = [];
   constructor(obj?: DataSourceParam | DataSource, pagination?: IPagination, hierarchyExpandLevel?: number) {
     super();
 
@@ -289,12 +290,16 @@ export class DataSource extends EventTarget implements DataSourceAPI {
   get(index: number): MaybePromiseOrUndefined {
     return this.getOriginalRecord(_getIndex(this.currentPagerIndexedData, index));
   }
+  getRaw(index: number): MaybePromiseOrUndefined {
+    return this.getRawRecord(_getIndex(this.currentPagerIndexedData, index) as number);
+  }
   getIndexKey(index: number): number | number[] {
     return _getIndex(this.currentPagerIndexedData, index);
   }
   getTableIndex(colOrRow: number): number {
     return this.currentPagerIndexedData.findIndex(value => value === colOrRow);
   }
+  /** 获取数据源中第index位置的field字段数据。传入col row是因为后面的format函数参数使用*/
   getField(
     index: number,
     field: FieldDef | FieldFormat | number,
@@ -303,6 +308,16 @@ export class DataSource extends EventTarget implements DataSourceAPI {
     table: BaseTableAPI
   ): FieldData {
     return this.getOriginalField(_getIndex(this.currentPagerIndexedData, index), field, col, row, table);
+  }
+
+  getRawField(
+    index: number,
+    field: FieldDef | FieldFormat | number,
+    col: number,
+    row: number,
+    table: BaseTableAPI
+  ): FieldData {
+    return this.getRawFieldData(_getIndex(this.currentPagerIndexedData, index) as number, field, col, row, table);
   }
 
   hasField(index: number, field: FieldDef): boolean {
@@ -436,7 +451,36 @@ export class DataSource extends EventTarget implements DataSourceAPI {
     }
     return childrenLength;
   }
+  changeFieldValue(
+    value: FieldData,
+    index: number,
+    field: FieldDef,
+    col?: number,
+    row?: number,
+    table?: BaseTableAPI
+  ): FieldData {
+    if (field === null) {
+      return undefined;
+    }
+    if (index >= 0) {
+      const dataIndex = this.getIndexKey(index) as number;
 
+      if (!this.changeValuesMap[dataIndex]) {
+        const originRecord = this.getOriginalRecord(dataIndex);
+        this.changeValuesMap[dataIndex] = cloneDeep(originRecord);
+      }
+      if (typeof field === 'string' || typeof field === 'number') {
+        const beforeChangedValue = this.changeValuesMap[dataIndex][field]; // this.getOriginalField(index, field, col, row, table);
+        const record = this.getOriginalRecord(dataIndex);
+        if (typeof beforeChangedValue === 'number' && isAllDigits(value)) {
+          record[field] = parseFloat(value);
+        } else {
+          record[field] = value;
+        }
+      }
+    }
+    // return getField(record, field);
+  }
   /**
    * 将数据record 替换到index位置处
    * @param record
@@ -572,9 +616,17 @@ export class DataSource extends EventTarget implements DataSourceAPI {
     this.currentIndexedData = null;
     this.currentPagerIndexedData.length = 0;
   }
-  protected getOriginalRecord(index: number | number[]): MaybePromiseOrUndefined {
-    return getValue(this._get(index), (val: MaybePromiseOrUndefined) => {
-      this.recordPromiseCallBack(index, val);
+  protected getOriginalRecord(dataIndex: number | number[]): MaybePromiseOrUndefined {
+    return getValue(this._get(dataIndex), (val: MaybePromiseOrUndefined) => {
+      this.recordPromiseCallBack(dataIndex, val);
+    });
+  }
+  protected getRawRecord(dataIndex: number): MaybePromiseOrUndefined {
+    if (this.changeValuesMap?.[dataIndex as number]) {
+      return this.changeValuesMap[dataIndex as number];
+    }
+    return getValue(this._get(dataIndex), (val: MaybePromiseOrUndefined) => {
+      this.recordPromiseCallBack(dataIndex, val);
     });
   }
   protected getOriginalField(
@@ -588,6 +640,22 @@ export class DataSource extends EventTarget implements DataSourceAPI {
       return undefined;
     }
     const record = this.getOriginalRecord(index);
+    // return getField(record, field);
+    return getField(record, field, col, row, table, (val: any) => {
+      this.fieldPromiseCallBack(index, field, val);
+    });
+  }
+  protected getRawFieldData(
+    index: number,
+    field: FieldDef | FieldFormat | number,
+    col?: number,
+    row?: number,
+    table?: BaseTableAPI
+  ): FieldData {
+    if (field === null) {
+      return undefined;
+    }
+    const record = this.getRawRecord(index);
     // return getField(record, field);
     return getField(record, field, col, row, table, (val: any) => {
       this.fieldPromiseCallBack(index, field, val);
@@ -621,4 +689,9 @@ export class DataSource extends EventTarget implements DataSourceAPI {
     },
     length: 0
   });
+}
+
+function isAllDigits(str: string) {
+  const pattern = /^-?\d+(\.\d+)?$/;
+  return pattern.test(str);
 }

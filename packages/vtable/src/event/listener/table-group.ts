@@ -405,7 +405,7 @@ export function bindTableGroupListener(eventManeger: EventManeger) {
   });
 
   table.scenegraph.tableGroup.addEventListener('pointerup', (e: FederatedPointerEvent) => {
-    // console.log('pointerup');
+    // console.log('tableGroup', 'pointerup');
     if (e.button !== 0) {
       // 只处理左键
       return;
@@ -584,6 +584,7 @@ export function bindTableGroupListener(eventManeger: EventManeger) {
   });
 
   table.scenegraph.tableGroup.addEventListener('dblclick', (e: FederatedPointerEvent) => {
+    // console.log('tableGroup', 'dblclick');
     const eventArgsSet: SceneEvent = getCellEventArgsSet(e);
     const bounds = eventArgsSet.eventArgs.targetCell.globalAABBBounds;
     const { col, row } = eventArgsSet.eventArgs;

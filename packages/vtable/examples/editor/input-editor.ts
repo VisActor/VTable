@@ -13,7 +13,7 @@ export function createTable() {
       name: 'a'
     },
     {
-      progress: 80,
+      progress: 80.4,
       id: 2,
       name: 'b'
     },
@@ -98,9 +98,13 @@ export function createTable() {
     order: 'desc'
   });
 
-  bindDebugTool(instance.scenegraph.stage as any, {
-    customGrapicKeys: ['role', '_updateTag']
+  instance.on('change_cell_value', arg => {
+    console.log(arg);
   });
+
+  // bindDebugTool(instance.scenegraph.stage as any, {
+  //   customGrapicKeys: ['role', '_updateTag']
+  // });
 
   // 只为了方便控制太调试用，不要拷贝
   window.tableInstance = instance;

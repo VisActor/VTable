@@ -1,4 +1,5 @@
 import { BaseEditor } from './base-editor';
+import type { Placement, RectProps } from './types';
 export interface ListEditorConfig {
   values?: string[];
 }
@@ -19,11 +20,7 @@ export class ListEditor extends BaseEditor {
   getValue() {
     return this.input.value;
   }
-  beginEditing(
-    container: HTMLElement,
-    rect: { top: number; left: number; width: number; height: number },
-    value?: string
-  ) {
+  beginEditing(container: HTMLElement, referencePosition: { rect: RectProps; placement?: Placement }, value?: string) {
     // do nothing
   }
   endEditing() {
@@ -32,5 +29,9 @@ export class ListEditor extends BaseEditor {
 
   exit() {
     // do nothing
+  }
+  targetIsOnEditor(target: HTMLElement) {
+    //
+    return false;
   }
 }
