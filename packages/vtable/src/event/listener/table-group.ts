@@ -14,10 +14,30 @@ import type { BaseTableAPI } from '../../ts-types/base-table';
 import type { IIconGraphicAttribute } from '../../scenegraph/graphic/icon';
 // PointerMove敏感度太高了 记录下上一个鼠标位置 在接收到PointerMove事件时做判断 是否到到触发框选或者移动表头操作的标准，防止误触
 let LastPointerXY: { x: number; y: number };
+let LastBodyPointerXY: { x: number; y: number };
+let isDown = false;
+let isDraging = false;
 export function bindTableGroupListener(eventManeger: EventManeger) {
   const table = eventManeger.table;
   const stateManeger = table.stateManeger;
+  document.body.addEventListener('pointerdown', e => {
+    LastBodyPointerXY = { x: e.x, y: e.y };
+    isDown = true;
+  });
+  document.addEventListener('pointerup', e => {
+    LastBodyPointerXY = null;
+    // console.log('body pointerup', isDown, isDraging);
+    isDown = false;
+    isDraging = false;
+  });
   document.body.addEventListener('pointermove', (e: FederatedPointerEvent) => {
+    if (isDown && LastBodyPointerXY) {
+      const lastX = LastBodyPointerXY?.x ?? e.x;
+      const lastY = LastBodyPointerXY?.y ?? e.y;
+      if (Math.abs(lastX - e.x) > 1 || Math.abs(lastY - e.y) > 1) {
+        isDraging = true;
+      }
+    }
     // 注释掉。因为： 这里pointermove太敏感了 点击快的时候 可能动了1px这里也会执行到 就影响到下面选中不触发的问题。下面pointermove就有这段逻辑，这里先去掉
     // if (eventManeger.touchSetTimeout) {
     //   clearTimeout(eventManeger.touchSetTimeout);
@@ -277,17 +297,10 @@ export function bindTableGroupListener(eventManeger: EventManeger) {
         }
       }
     } else if (stateManeger.isSelecting()) {
-      // 下面触发DRAG_SELECT_END 区别于pointerup 不能调用endSelectCells
-      // table.stateManeger.endSelectCells();
       if (table.stateManeger.select?.ranges?.length) {
         const lastCol = table.stateManeger.select.ranges[table.stateManeger.select.ranges.length - 1].end.col;
         const lastRow = table.stateManeger.select.ranges[table.stateManeger.select.ranges.length - 1].end.row;
-        table.stateManeger.select.selecting = false;
-        table.fireListeners(TABLE_EVENT_TYPE.SELECTED_CELL, {
-          ranges: table.stateManeger.select.ranges,
-          col: lastCol,
-          row: lastRow
-        });
+        table.stateManeger.endSelectCells();
         if ((table as any).hasListeners(TABLE_EVENT_TYPE.DRAG_SELECT_END)) {
           const cellsEvent: MousePointerMultiCellEvent = {
             event: e.nativeEvent,
@@ -570,16 +583,22 @@ export function bindTableGroupListener(eventManeger: EventManeger) {
   table.scenegraph.stage.addEventListener('pointertap', (e: FederatedPointerEvent) => {
     const target = e.target;
     if (
+      // 如果是鼠标点击到canvas空白区域 则取消选中状态
+      !isDraging &&
       target &&
-      !target.isDescendantsOf(table.scenegraph.tableGroup) &&
-      (target as any) !== table.scenegraph.tableGroup &&
-      (target as any) !== table.scenegraph.stage
+      !target.isDescendantsOf(table.scenegraph.tableGroup)
+      // &&
+      // (target as any) !== table.scenegraph.tableGroup &&
+      // (target as any) !== table.scenegraph.stage
     ) {
       stateManeger.updateInteractionState(InteractionState.default);
       eventManeger.dealTableHover();
       eventManeger.dealTableSelect();
       stateManeger.updateCursor();
       table.scenegraph.updateChartState(null);
+    } else if (isDraging) {
+      // 如果鼠标拖拽后是否 则结束选中
+      stateManeger.endSelectCells();
     }
   });
 
