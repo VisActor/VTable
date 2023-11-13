@@ -113,5 +113,10 @@
   ],
   "publishConfig": {
     "access": "public"
+  },
+  "homepage": "https://visactor.io/vtable",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/VisActor/VTable.git"
   }
 }
