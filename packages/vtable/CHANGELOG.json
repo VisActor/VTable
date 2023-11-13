@@ -2,6 +2,18 @@
   "name": "@visactor/vtable",
   "entries": [
     {
+      "version": "0.14.1",
+      "tag": "@visactor/vtable_v0.14.1",
+      "date": "Mon, 13 Nov 2023 12:07:03 GMT",
+      "comments": {
+        "patch": [
+          {
+            "comment": "refactor: when drag to canvas blank area to end select #556\n\n"
+          }
+        ]
+      }
+    },
+    {
       "version": "0.14.0",
       "tag": "@visactor/vtable_v0.14.0",
       "date": "Fri, 10 Nov 2023 11:31:45 GMT",
