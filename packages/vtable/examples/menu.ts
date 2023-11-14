@@ -580,6 +580,14 @@ export const menus = [
       {
         path: 'editor',
         name: 'input-editor'
+      },
+      {
+        path: 'editor',
+        name: 'date-editor'
+      },
+      {
+        path: 'editor',
+        name: 'custom-date-editor'
       }
     ]
   },

@@ -1,14 +1,14 @@
-import { BaseEditor } from './base-editor';
-import type { Placement, RectProps } from './types';
+import type { IEditor, Placement, RectProps } from './types';
 export interface ListEditorConfig {
   values: string[];
 }
 
-export class ListEditor extends BaseEditor {
+export class ListEditor implements IEditor {
   editorType: string = 'Input';
   input: HTMLInputElement;
+  editorConfig: ListEditorConfig;
+  container: HTMLElement;
   constructor(editorConfig: ListEditorConfig) {
-    super();
     this.editorConfig = editorConfig;
   }
   createElement() {

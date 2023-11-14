@@ -1778,7 +1778,8 @@ export class Scenegraph {
     const cellGroup = this.getCell(col, row);
     const text = cellGroup.getChildByName('text', true) as unknown as WrapText;
     if (text) {
-      text.setAttribute('text', value);
+      const textAttributeStr = isArray(text.attribute.text) ? [value] : (value as string);
+      text.setAttribute('text', textAttributeStr);
     }
   }
 }

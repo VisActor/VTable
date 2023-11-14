@@ -59,6 +59,7 @@
     "cssfontparser": "^1.2.1"
   },
   "devDependencies": {
+    "luxon": "*",
     "@visactor/vtable-editors": "workspace:*",
     "@visactor/vchart": "1.6.0",
     "@internal/bundler": "workspace:*",

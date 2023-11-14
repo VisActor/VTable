@@ -1,15 +1,15 @@
-import { BaseEditor } from './base-editor';
-import type { Placement, RectProps } from './types';
+import type { IEditor, Placement, RectProps } from './types';
 export interface InputEditorConfig {
   max?: number;
   min?: number;
 }
 
-export class InputEditor extends BaseEditor {
+export class InputEditor implements IEditor {
   editorType: string = 'Input';
+  editorConfig: InputEditorConfig;
+  container: HTMLElement;
   declare element: HTMLInputElement;
   constructor(editorConfig: InputEditorConfig) {
-    super();
     this.editorConfig = editorConfig;
   }
   createElement() {

@@ -32,11 +32,11 @@ export class EditManeger {
     document.body.addEventListener('pointerdown', (e: PointerEvent) => {
       const target = e.target;
       if (this.editingEditor && !this.editingEditor.targetIsOnEditor(target as HTMLElement)) {
-        const changedValue = this.editingEditor.getValue();
-        (this.table as ListTableAPI).changeCellValue(this.editCell.col, this.editCell.row, changedValue);
-        this.editingEditor.exit();
-        this.editingEditor = null;
+        this.completeEdit();
       }
+    });
+    this.table.on(TABLE_EVENT_TYPE.SCROLL, e => {
+      this.completeEdit();
     });
     this.table.on(TABLE_EVENT_TYPE.KEYDOWN, e => {
       const { code } = e;
@@ -45,12 +45,17 @@ export class EditManeger {
           this.editingEditor.exit();
           this.editingEditor = null;
         } else if (code === 'Enter') {
-          const changedValue = this.editingEditor.getValue();
-          (this.table as ListTableAPI).changeCellValue(this.editCell.col, this.editCell.row, changedValue);
-          this.editingEditor.exit();
-          this.editingEditor = null;
+          this.completeEdit();
         }
       }
     });
+  }
+  completeEdit() {
+    if (this.editingEditor) {
+      const changedValue = this.editingEditor.getValue();
+      (this.table as ListTableAPI).changeCellValue(this.editCell.col, this.editCell.row, changedValue);
+      this.editingEditor.exit();
+      this.editingEditor = null;
+    }
   }
 }

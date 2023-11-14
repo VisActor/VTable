@@ -31,6 +31,106 @@ export function createTable() {
       progress: 28,
       id: 5,
       name: 'e'
+    },
+    {
+      progress: 100,
+      id: 1,
+      name: 'a'
+    },
+    {
+      progress: 80.4,
+      id: 2,
+      name: 'b'
+    },
+    {
+      progress: 1,
+      id: 3,
+      name: 'c'
+    },
+    {
+      progress: 55,
+      id: 4,
+      name: 'd'
+    },
+    {
+      progress: 28,
+      id: 5,
+      name: 'e'
+    },
+    {
+      progress: 100,
+      id: 1,
+      name: 'a'
+    },
+    {
+      progress: 80.4,
+      id: 2,
+      name: 'b'
+    },
+    {
+      progress: 1,
+      id: 3,
+      name: 'c'
+    },
+    {
+      progress: 55,
+      id: 4,
+      name: 'd'
+    },
+    {
+      progress: 28,
+      id: 5,
+      name: 'e'
+    },
+    {
+      progress: 100,
+      id: 1,
+      name: 'a'
+    },
+    {
+      progress: 80.4,
+      id: 2,
+      name: 'b'
+    },
+    {
+      progress: 1,
+      id: 3,
+      name: 'c'
+    },
+    {
+      progress: 55,
+      id: 4,
+      name: 'd'
+    },
+    {
+      progress: 28,
+      id: 5,
+      name: 'e'
+    },
+    {
+      progress: 100,
+      id: 1,
+      name: 'a'
+    },
+    {
+      progress: 80.4,
+      id: 2,
+      name: 'b'
+    },
+    {
+      progress: 1,
+      id: 3,
+      name: 'c'
+    },
+    {
+      progress: 55,
+      id: 4,
+      name: 'd'
+    },
+    {
+      progress: 28,
+      id: 5,
+      name: 'e'
     }
   ];
   const option: VTable.ListTableConstructorOptions = {

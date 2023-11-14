@@ -1,5 +1,5 @@
-import { BaseEditor } from './base-editor';
 import { InputEditor } from './input-editor';
+import { DateInputEditor } from './date-input-editor';
 import { ListEditor } from './list-editor';
-export { BaseEditor, InputEditor, ListEditor };
+export { InputEditor, DateInputEditor, ListEditor };
 export * from './types';
