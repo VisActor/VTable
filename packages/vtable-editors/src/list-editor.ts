@@ -1,7 +1,7 @@
 import { BaseEditor } from './base-editor';
 import type { Placement, RectProps } from './types';
 export interface ListEditorConfig {
-  values?: string[];
+  values: string[];
 }
 
 export class ListEditor extends BaseEditor {
