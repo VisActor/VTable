@@ -426,6 +426,9 @@ export interface BaseTableAPI {
 
   isReleased: boolean;
 
+  rowHeightsMap: NumberMap<number>;
+  colWidthsMap: NumberMap<string | number>;
+
   on: <TYPE extends keyof TableEventHandlersEventArgumentMap>(
     type: TYPE,
     listener: TableEventListener<TYPE> //(event: TableEventHandlersEventArgumentMap[TYPE]) => TableEventHandlersReturnMap[TYPE]

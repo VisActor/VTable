@@ -1515,10 +1515,10 @@ export class Scenegraph {
     // add or move rows
     updateRow(removeCells, addCells, updateCells, this.table);
 
-    // update column width and row height
-    this.recalculateColWidths();
+    // // update column width and row height
+    // this.recalculateColWidths();
 
-    this.recalculateRowHeights();
+    // this.recalculateRowHeights();
 
     // check frozen status
     this.table.stateManeger.checkFrozen();
@@ -1527,6 +1527,8 @@ export class Scenegraph {
     if (!this.isPivot && !this.transpose) {
       this.component.setFrozenColumnShadow(this.table.frozenColCount - 1);
     }
+
+    this.component.updateScrollBar();
 
     // rerender
     this.updateNextFrame();

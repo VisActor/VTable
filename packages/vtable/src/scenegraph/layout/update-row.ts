@@ -1,12 +1,9 @@
-import type { IGraphic } from '@visactor/vrender';
 import type { CellAddress } from '../../ts-types';
 import type { BaseTableAPI } from '../../ts-types/base-table';
 import { Group } from '../graphic/group';
 import { updateCell } from '../group-creater/cell-helper';
 import type { Scenegraph } from '../scenegraph';
 import { getCellMergeInfo } from '../utils/get-cell-merge';
-import { isMergeCellGroup } from '../utils/is-merge-cell-group';
-import { resizeCellGroup } from '../group-creater/column-helper';
 
 /**
  * add and remove rows in scenegraph
@@ -28,13 +25,21 @@ export function updateRow(
     removeRow(row, scene);
   });
 
+  removeRows.reverse().forEach(row => {
+    scene.table.rowHeightsMap.adjustOrder(row + 1, row, scene.table.rowHeightsMap.count() - row - 1);
+    scene.table.rowHeightsMap.del(scene.table.rowHeightsMap.count() - 1);
+  });
+
   if (removeRows.length) {
     resetRowNumber(scene);
   }
 
+  scene.table._clearRowRangeHeightsMap();
+
   // add cells
   addRows.forEach(row => {
     addRow(row, scene);
+    scene.table.rowHeightsMap.adjustOrder(row, row + 1, scene.table.rowHeightsMap.count() - row);
   });
 
   // add cells
@@ -59,7 +64,8 @@ export function updateRow(
   const newTotalHeight = resetRowNumberAndY(scene);
 
   if (addRows.length) {
-    scene.proxy.rowUpdatePos = scene.proxy.rowStart;
+    const minRow = Math.min(...addRows);
+    scene.proxy.rowUpdatePos = minRow;
     scene.proxy.rowUpdateDirection = 'up';
     scene.proxy.updateCellGroups(scene.proxy.screenRowCount * 2);
     scene.proxy.progress();
