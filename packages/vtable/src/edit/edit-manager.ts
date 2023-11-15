@@ -18,6 +18,9 @@ export class EditManeger {
       const rect = this.table.getCellRelativeRect(col, row);
       const editor = (this.table as ListTableAPI).getEditor(col, row);
       if (editor) {
+        editor.bindSuccessCallback(() => {
+          this.completeEdit();
+        });
         this.editingEditor = editor;
         this.editCell = { col, row };
         const dataValue = this.table.getCellOriginValue(col, row);

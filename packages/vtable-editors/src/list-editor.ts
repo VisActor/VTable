@@ -8,6 +8,7 @@ export class ListEditor implements IEditor {
   input: HTMLInputElement;
   editorConfig: ListEditorConfig;
   container: HTMLElement;
+  successCallback: Function;
   constructor(editorConfig: ListEditorConfig) {
     this.editorConfig = editorConfig;
   }
@@ -33,5 +34,8 @@ export class ListEditor implements IEditor {
   targetIsOnEditor(target: HTMLElement) {
     //
     return false;
+  }
+  bindSuccessCallback(success: Function) {
+    this.successCallback = success;
   }
 }

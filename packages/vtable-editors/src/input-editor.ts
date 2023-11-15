@@ -8,6 +8,7 @@ export class InputEditor implements IEditor {
   editorType: string = 'Input';
   editorConfig: InputEditorConfig;
   container: HTMLElement;
+  successCallback: Function;
   declare element: HTMLInputElement;
   constructor(editorConfig: InputEditorConfig) {
     this.editorConfig = editorConfig;
@@ -22,6 +23,12 @@ export class InputEditor implements IEditor {
     this.element = input;
 
     this.container.appendChild(input);
+
+    // 测试successCallback 调用是否正确
+    // input.ondblclick = () => {
+    //   debugger;
+    //   this.successCallback();
+    // };
   }
   setValue(value: string) {
     this.element.value = typeof value !== 'undefined' ? value : '';
@@ -62,5 +69,8 @@ export class InputEditor implements IEditor {
       return true;
     }
     return false;
+  }
+  bindSuccessCallback(success: Function) {
+    this.successCallback = success;
   }
 }
