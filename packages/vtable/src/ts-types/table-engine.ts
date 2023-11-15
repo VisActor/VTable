@@ -10,6 +10,7 @@ import type { IChartIndicator, ICornerDefine, IDimension, IIndicator, ITitleDefi
 import type { ColumnsDefine } from './list-table';
 import type { ICellAxisOption, ITableAxisOption } from './component/axis';
 import type { IEditor } from '@visactor/vtable-editors';
+import type { ITextStyleOption } from '../body-helper/style';
 
 export interface CellAddress {
   col: number;
@@ -376,3 +377,12 @@ export interface IExtensionRowDefine {
   rows: (IDimension | string)[];
   rowTree: IHeaderTreeDefine[] | ((args: { dimensionKey: string | number; value: string }[]) => IHeaderTreeDefine[]);
 }
+
+export type StickCell = { col: number; row: number; dx: number; dy: number };
+
+export type CustomMergeCell = (col: number, row: number, table: BaseTableAPI) => undefined | CustomMerge;
+export type CustomMerge = {
+  range: CellRange;
+  text: string;
+  style?: ITextStyleOption;
+};

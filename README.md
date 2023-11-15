@@ -165,6 +165,7 @@ $ rush docs
 ## 🔗 Related Links
 
 - [Official website](https://visactor.io/vtable)
+- [Usage Trend](https://npm-compare.com/@visactor/vtable)
 
 # 💫 Ecosystem
 

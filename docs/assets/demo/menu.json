@@ -354,6 +354,22 @@
           }
         },
         {
+          "path": "custom-merge",
+          "title": {
+            "zh": "自定义合并单元格",
+            "en": "Custom Merge Cells"
+          },
+          "meta": {
+            "title": "Custom Merge Cells",
+            "keywords": "",
+            "category": "demo",
+            "group": "Basic Features",
+            "cover": "https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/custom-merge.png",
+            "link": "",
+            "option": ""
+          }
+        },
+        {
           "path": "height-mode-autoHeight",
           "title": {
             "zh": "适应容器高度",
@@ -728,6 +744,22 @@
             "category": "demo",
             "group": "Custom",
             "cover": "https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/custom-cell-layout.png",
+            "link": "'../../guide/custom_define/custom_layout'",
+            "option": ""
+          }
+        },
+        {
+          "path": "custom-cell-layout-jsx",
+          "title": {
+            "zh": "单元格自定义布局(JSX)",
+            "en": "Cell custom layout(JSX)"
+          },
+          "meta": {
+            "title": "Cell custom layout",
+            "keywords": "",
+            "category": "demo",
+            "group": "Custom",
+            "cover": "https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/custom-cell-layout-jsx.png",
             "link": "'../../guide/custom_define/custom_layout'",
             "option": ""
           }

@@ -1,42 +1,29 @@
-import type { ElementOptions } from './element';
-import { BaseElement } from './element';
+import type { IArcGraphicAttribute } from '@visactor/vrender';
+import { Arc as VArc } from '@visactor/vrender';
+import { isArray } from '@visactor/vutils';
 
-type SectorOptions = {
-  radius: number;
-  startDegree?: number;
-  endDegree?: number;
-  clockWise?: boolean;
-  lineWidth?: number;
-  fill?: string | boolean;
-  stroke?: string | boolean;
-} & ElementOptions;
+type IArcOption = {
+  marginTop?: number;
+  marginRight?: number;
+  marginBottom?: number;
+  marginLeft?: number;
+} & IArcGraphicAttribute;
 
-export class Sector extends BaseElement {
-  type: 'arc' = 'arc';
-  radius: number;
-  startDegree = 0;
-  endDegree = 360;
-  clockWise = true;
-  lineWidth: number;
-  fill: string | boolean;
-  stroke: string | boolean;
+export class Arc extends VArc {
+  constructor(options: IArcOption) {
+    const isPaddingNumber = isArray(options.boundsPadding);
+    const padding = [
+      options.marginTop ?? (isPaddingNumber ? options.boundsPadding[0] : options.boundsPadding) ?? 0,
+      options.marginRight ?? (isPaddingNumber ? options.boundsPadding[1] : options.boundsPadding) ?? 0,
+      options.marginBottom ??
+        (isPaddingNumber ? options.boundsPadding[2] ?? options.boundsPadding[0] : options.boundsPadding) ??
+        0,
+      options.marginLeft ??
+        (isPaddingNumber ? options.boundsPadding[3] ?? options.boundsPadding[1] : options.boundsPadding) ??
+        0
+    ];
+    options.boundsPadding = padding;
 
-  constructor(options: SectorOptions) {
     super(options);
-    this.radius = options.radius;
-    this.startDegree = options.startDegree;
-    this.endDegree = options.endDegree;
-    this.clockWise = options.clockWise;
-    this.lineWidth = options.lineWidth;
-    this.fill = options.fill;
-    this.stroke = options.stroke;
-
-    this.width = this.radius * 2;
-    this.height = this.radius * 2;
-
-    this.initLayoutSize();
-
-    this.dx += this.radius;
-    this.dy += this.radius;
   }
 }

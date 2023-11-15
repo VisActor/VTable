@@ -1,16 +1,16 @@
-import type { ICircleGraphicAttribute } from '@visactor/vrender';
-import { Circle as VCircle } from '@visactor/vrender';
+import type { IGroupGraphicAttribute } from '@visactor/vrender';
+import { Group as VGroup } from '@visactor/vrender';
 import { isArray } from '@visactor/vutils';
 
-type ICircleOption = {
+type IGroupOption = {
   marginTop?: number;
   marginRight?: number;
   marginBottom?: number;
   marginLeft?: number;
-} & ICircleGraphicAttribute;
+} & IGroupGraphicAttribute;
 
-export class Circle extends VCircle {
-  constructor(options: ICircleOption) {
+export class Group extends VGroup {
+  constructor(options: IGroupOption) {
     const isPaddingNumber = isArray(options.boundsPadding);
     const padding = [
       options.marginTop ?? (isPaddingNumber ? options.boundsPadding[0] : options.boundsPadding) ?? 0,

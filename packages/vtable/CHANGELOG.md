@@ -1,6 +1,28 @@
 # Change Log - @visactor/vtable
 
-This log was last generated on Tue, 07 Nov 2023 12:09:57 GMT and should not be manually modified.
+This log was last generated on Mon, 13 Nov 2023 12:07:03 GMT and should not be manually modified.
+
+## 0.14.1
+Mon, 13 Nov 2023 12:07:03 GMT
+
+### Patches
+
+- refactor: when drag to canvas blank area to end select #556
+
+
+
+## 0.14.0
+Fri, 10 Nov 2023 11:31:45 GMT
+
+### Minor changes
+
+- feat: add jsx support in custom layout
+
+### Patches
+
+- feat: refactor merge cell strategy
+- feat: add functionial tickCount config in axis 
+- feat: update customLayout api
 
 ## 0.13.4
 Tue, 07 Nov 2023 12:09:57 GMT

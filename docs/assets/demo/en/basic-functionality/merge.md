@@ -12,7 +12,7 @@ Automatically merge cells with the same content through configuration
 
 ## Key Configurations
 
-*   `merge`  Merge adjacent cells with the same content in the same column
+*   `mergeCell`  Merge adjacent cells with the same content in the same column
 
 ## Code demo
 
