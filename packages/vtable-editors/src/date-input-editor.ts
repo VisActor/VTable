@@ -1,12 +1,14 @@
 import { InputEditor } from './input-editor';
+import type { IEditor } from './types';
 export interface DateInputEditorConfig {
   max?: number;
   min?: number;
 }
 
-export class DateInputEditor extends InputEditor {
+export class DateInputEditor extends InputEditor implements IEditor {
   editorType: string = 'DateInput';
   declare element: HTMLInputElement;
+  successCallback: Function;
   constructor(editorConfig: DateInputEditorConfig) {
     super(editorConfig);
     this.editorConfig = editorConfig;
@@ -22,5 +24,13 @@ export class DateInputEditor extends InputEditor {
     input.style.position = 'absolute';
     this.element = input;
     this.container.appendChild(input);
+    // 测试successCallback 调用是否正确
+    // input.ondblclick = () => {
+    //   debugger;
+    //   this.successCallback();
+    // };
+  }
+  bindSuccessCallback(success: Function) {
+    this.successCallback = success;
   }
 }

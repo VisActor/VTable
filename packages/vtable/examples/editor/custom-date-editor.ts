@@ -2,6 +2,8 @@ import * as VTable from '../../src';
 import type { IEditor, RectProps, Placement } from '@visactor/vtable-editors';
 import { DateInputEditor, InputEditor } from '@visactor/vtable-editors';
 import * as luxon from 'luxon';
+import * as Pikaday from 'pikaday';
+import '../../node_modules/pikaday/css/pikaday.css';
 const CONTAINER_ID = 'vTable';
 const date_editor = new DateInputEditor({});
 VTable.register.editor('date', date_editor);
@@ -12,29 +14,59 @@ class DateEditor implements IEditor {
   editorConfig: any;
   element: HTMLInputElement;
   container: HTMLElement;
+  successCallback: Function;
+  picker: any;
   constructor(editorConfig: any) {
     this.editorConfig = editorConfig;
   }
   beginEditing(container: HTMLElement, referencePosition: { rect: RectProps; placement?: Placement }, value?: string) {
+    const that = this;
     this.container = container;
-    const cellValue = luxon.DateTime.fromFormat(value, 'yyyy年MM月dd日').toFormat('yyyy-MM-dd');
+    // const cellValue = luxon.DateTime.fromFormat(value, 'yyyy年MM月dd日').toFormat('yyyy-MM-dd');
     const input = document.createElement('input');
 
-    input.setAttribute('type', 'date');
+    input.setAttribute('type', 'text');
 
     input.style.padding = '4px';
     input.style.width = '100%';
     input.style.boxSizing = 'border-box';
     input.style.position = 'absolute';
-    input.value = cellValue;
+    input.value = value as string;
     this.element = input;
     container.appendChild(input);
 
+    const picker = new Pikaday({
+      field: input,
+      format: 'D/M/YYYY',
+      toString(date, format) {
+        // you should do formatting based on the passed format,
+        // but we will just return 'D/M/YYYY' for simplicity
+        const day = date.getDate();
+        const month = date.getMonth() + 1;
+        const year = date.getFullYear();
+        return `${year}年${month}月${day}日`;
+      },
+      parse(dateString, format) {
+        // dateString is the result of `toString` method
+        const parts = dateString.split('/');
+        const day = parseInt(parts[0], 10);
+        const month = parseInt(parts[1], 10) - 1;
+        const year = parseInt(parts[2], 10);
+        return new Date(year, month, day);
+      },
+      onSelect: function () {
+        const date = this.getDate();
+        that.successCallback();
+      }
+    });
+    this.picker = picker;
     if (referencePosition?.rect) {
       this.adjustPosition(referencePosition.rect);
     }
-    this.element.focus();
+    this.picker.show();
+    // this.element.focus();
   }
+
   adjustPosition(rect: RectProps) {
     this.element.style.top = rect.top + 'px';
     this.element.style.left = rect.left + 'px';
@@ -42,17 +74,21 @@ class DateEditor implements IEditor {
     this.element.style.height = rect.height + 'px';
   }
   getValue() {
-    const cellValue = luxon.DateTime.fromFormat(this.element.value, 'yyyy-MM-dd').toFormat('yyyy年MM月dd日');
-    return cellValue;
+    // const cellValue = luxon.DateTime.fromFormat(this.element.value, 'yyyy-MM-dd').toFormat('yyyy年MM月dd日');
+    return this.element.value;
   }
   exit() {
+    this.picker.destroy();
     this.container.removeChild(this.element);
   }
   targetIsOnEditor(target: HTMLElement) {
-    if (target === this.element) {
+    if (target === this.element || this.picker.el.contains(target)) {
       return true;
     }
     return false;
+  }
+  bindSuccessCallback(successCallback: Function) {
+    this.successCallback = successCallback;
   }
 }
 const custom_date_editor = new DateEditor({});
@@ -183,7 +219,7 @@ export function createTable() {
     {
       field: 'email1',
       title: 'email',
-      width: 250,
+      width: 'auto',
       sort: true,
       editor: 'input'
     },
@@ -249,6 +285,27 @@ export function createTable() {
     records,
     columns,
     heightMode: 'autoHeight',
+    customMergeCell: (col, row, table) => {
+      if (col >= 0 && col <= 5 && row === 2) {
+        return {
+          text: table.getCellValue(0, 2),
+          range: {
+            start: {
+              col: 0,
+              row: 2
+            },
+            end: {
+              col: 5,
+              row: 2
+            }
+          }
+          // style: {
+          //   bgColor: 'white'
+          // }
+        };
+      }
+    },
+    theme: VTable.themes.ARCO,
     autoWrapText: true
   };
   const tableInstance = new VTable.ListTable(option);

@@ -15,6 +15,12 @@ export class EditManeger {
     this.table.on(TABLE_EVENT_TYPE.DBLCLICK_CELL, e => {
       console.log('editor-manager', 'DBLCLICK_CELL');
       const { col, row } = e;
+      const range = this.table.getCellRange(col, row);
+      const isMerge = range.start.col !== range.end.col || range.start.row !== range.end.row;
+      if (isMerge) {
+        console.warn("this is merge cell, can't be edited");
+        return;
+      }
       const rect = this.table.getCellRelativeRect(col, row);
       const editor = (this.table as ListTableAPI).getEditor(col, row);
       if (editor) {

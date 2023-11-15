@@ -4,7 +4,7 @@ export interface IEditor {
   /** 编辑配置 */
   editorConfig: any;
   container: HTMLElement;
-  successCallback: Function;
+  successCallback?: Function;
   // createElement: () => void;
   // setValue: (value: string) => void;
   getValue: () => string | number | null;
@@ -16,7 +16,7 @@ export interface IEditor {
   // endEditing: () => void;
   exit: () => void;
   targetIsOnEditor: (target: HTMLElement) => boolean;
-  bindSuccessCallback: (callback: Function) => void;
+  bindSuccessCallback?: (callback: Function) => void;
 }
 export interface RectProps {
   left: number;

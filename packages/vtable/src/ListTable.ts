@@ -758,6 +758,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
     this.dataSource.changeFieldValue(value, recordIndex, field, col, row, this);
     const cell_value = this.getFieldData(fieldFormat || field, col, row);
     this.scenegraph.updateCellValue(col, row, cell_value);
+    this.scenegraph.updateAutoColWidth(col);
     this.fireListeners(TABLE_EVENT_TYPE.CHANGE_CELL_VALUE, {
       col,
       row,
