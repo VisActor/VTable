@@ -1515,10 +1515,10 @@ export class Scenegraph {
     // add or move rows
     updateRow(removeCells, addCells, updateCells, this.table);
 
-    // // update column width and row height
-    // this.recalculateColWidths();
+    // update column width and row height
+    this.recalculateColWidths();
 
-    // this.recalculateRowHeights();
+    this.recalculateRowHeights();
 
     // check frozen status
     this.table.stateManeger.checkFrozen();
