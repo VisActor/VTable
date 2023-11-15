@@ -71,7 +71,7 @@ function updateComponent(selectComp: { rect: IRect; role: CellSubLocation }, key
   const cellRange = scene.table.getCellRange(startCol, startRow);
   const colsWidth = scene.table.getColsWidth(cellRange.start.col, endCol);
   const rowsHeight = scene.table.getRowsHeight(cellRange.start.row, endRow);
-  const firstCellBound = scene.highPerformanceGetCell(startCol, startRow).globalAABBBounds;
+  const firstCellBound = scene.highPerformanceGetCell(cellRange.start.col, cellRange.start.row).globalAABBBounds;
   // if (!cellsBounds) {
   //   // 选中区域在实际单元格区域外，不显示选择框
   //   selectComp.rect.setAttributes({
@@ -90,13 +90,13 @@ function updateComponent(selectComp: { rect: IRect; role: CellSubLocation }, key
   //#region 判断是不是按着表头部分的选中框 因为绘制层级的原因 线宽会被遮住一半，因此需要动态调整层级
   const isNearRowHeader =
     // scene.table.scrollLeft === 0 &&
-    startCol === scene.table.frozenColCount;
+    cellRange.start.col === scene.table.frozenColCount;
   const isNearRightRowHeader =
     // scene.table.scrollLeft === 0 &&
     endCol === scene.table.colCount - scene.table.rightFrozenColCount - 1;
   const isNearColHeader =
     // scene.table.scrollTop === 0 &&
-    startRow === scene.table.frozenRowCount;
+    cellRange.start.row === scene.table.frozenRowCount;
   const isNearBottomColHeader =
     // scene.table.scrollTop === 0 &&
     endRow === scene.table.rowCount - scene.table.bottomFrozenRowCount - 1;
