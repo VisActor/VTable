@@ -11,7 +11,7 @@ import { getAxisConfigInPivotChart } from '../../layout/chart-helper/get-axis-co
 import { computeAxisComponentWidth } from '../../components/axis/get-axis-component-size';
 import { Group as VGroup } from '@visactor/vrender';
 import { isObject } from '@visactor/vutils';
-import { decodeReactDom } from '../component/custom';
+import { decodeReactDom, dealPercentCalc } from '../component/custom';
 
 export function computeColsWidth(table: BaseTableAPI, colStart?: number, colEnd?: number, update?: boolean): void {
   const time = typeof window !== 'undefined' ? window.performance.now() : 0;
@@ -391,10 +391,10 @@ function computeCustomRenderWidth(col: number, row: number, table: BaseTableAPI)
     if (customLayout) {
       // 处理customLayout
       const customLayoutObj = customLayout(arg);
-      if (customLayoutObj.rootContainer) {
-        customLayoutObj.rootContainer = decodeReactDom(customLayoutObj.rootContainer);
-      }
       if (customLayoutObj.rootContainer instanceof VGroup) {
+        customLayoutObj.rootContainer = decodeReactDom(customLayoutObj.rootContainer);
+        dealPercentCalc(customLayoutObj.rootContainer, 0, table.getRowHeight(row));
+        customLayoutObj.rootContainer.setStage(table.scenegraph.stage);
         width = (customLayoutObj.rootContainer as VGroup).AABBBounds.width() ?? 0;
         // width = (customLayoutObj.rootContainer as VGroup).attribute.width ?? 0;
         // } else if (customLayoutObj.rootContainer) {
