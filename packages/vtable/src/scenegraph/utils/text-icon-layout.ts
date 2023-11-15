@@ -80,7 +80,7 @@ export function createCellContent(
 
       const attribute = {
         text: text.length === 1 && !autoWrapText ? text[0] : text, // 单行(no-autoWrapText)为字符串，多行(autoWrapText)为字符串数组
-        maxLineWidth: cellWidth - (padding[1] + padding[3] + hierarchyOffset),
+        maxLineWidth: autoColWidth ? Infinity : cellWidth - (padding[1] + padding[3] + hierarchyOffset),
         // fill: true,
         // textAlign: 'left',
         textBaseline: 'top',
@@ -88,7 +88,7 @@ export function createCellContent(
         lineClamp,
         wordBreak: 'break-word',
         // widthLimit: autoColWidth ? -1 : colWidth - (padding[1] + padding[3]),
-        heightLimit: cellHeight - (padding[0] + padding[2]),
+        heightLimit: autoRowHeight ? -1 : cellHeight - (padding[0] + padding[2]),
         pickable: false,
         dx: hierarchyOffset
       };
@@ -181,12 +181,12 @@ export function createCellContent(
       const text = convertInternal(textStr).replace(/\r?\n/g, '\n').replace(/\r/g, '\n').split('\n');
       const attribute = {
         text: text.length === 1 && !autoWrapText ? text[0] : text, // 单行(no-autoWrapText)为字符串，多行(autoWrapText)为字符串数组
-        maxLineWidth: cellWidth - (padding[1] + padding[3]) - leftIconWidth - rightIconWidth,
+        maxLineWidth: autoColWidth ? Infinity : cellWidth - (padding[1] + padding[3]) - leftIconWidth - rightIconWidth,
         // fill: true,
         // textAlign: 'left',
         textBaseline: 'top',
         // widthLimit: autoColWidth ? -1 : colWidth - (padding[1] + padding[3]),
-        heightLimit: cellHeight - (padding[0] + padding[2]),
+        heightLimit: autoRowHeight ? -1 : cellHeight - (padding[0] + padding[2]),
         pickable: false,
         autoWrapText,
         lineClamp,
