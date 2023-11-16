@@ -1,12 +1,48 @@
-/* eslint-disable */
 import * as VTable from '../../src';
-import VChart from '@visactor/vchart';
 import { bindDebugTool } from '../../src/scenegraph/debug-tool';
+// import expandIcons from './Close.svg';
+// import collapseIcons from './Open.svg';
 
+const PivotTable = VTable.PivotTable;
+
+export const expandIcon: any = {
+  type: 'svg',
+  // svg: expandIcons,
+  width: 12,
+  height: 12,
+  name: 'expand',
+  positionType: VTable.TYPES.IconPosition.contentLeft,
+  funcType: VTable.TYPES.IconFuncTypeEnum.expand,
+  hover: {
+    width: 12,
+    height: 12,
+    bgColor: 'rgba(31, 35, 41, 0.12)'
+  },
+  cursor: 'pointer'
+};
+
+export const collapseIcon: any = {
+  type: 'svg',
+  // svg: collapseIcons,
+  width: 12,
+  height: 12,
+  name: 'collapse',
+  positionType: VTable.TYPES.IconPosition.contentLeft,
+  funcType: VTable.TYPES.IconFuncTypeEnum.collapse,
+
+  hover: {
+    width: 12,
+    height: 12,
+    bgColor: 'rgba(31, 35, 41, 0.12)'
+  },
+  cursor: 'pointer'
+};
+// VTable.register.icon('expand', expandIcon);
+// VTable.register.icon('collapse', collapseIcon);
 const CONTAINER_ID = 'vTable';
-VTable.register.chartModule('vchart', VChart);
+const records = [];
 export function createTable() {
-  const option = {
+  const option: VTable.PivotTableConstructorOptions = {
     rowHierarchyType: 'tree',
     enableDataAnalysis: false,
     autoRowHeight: true,
@@ -1396,20 +1432,8 @@ export function createTable() {
         hierarchyState: 'expand',
         children: [
           {
-            value: '预算Mx',
-            indicatorKey: 'mx'
-          },
-          {
             value: '实际预估',
             indicatorKey: 'fin'
-          },
-          {
-            value: '达成度',
-            indicatorKey: 'completion'
-          },
-          {
-            value: '差异值',
-            indicatorKey: 'gap'
           }
         ]
       },
@@ -1420,20 +1444,8 @@ export function createTable() {
         hierarchyState: 'expand',
         children: [
           {
-            value: '预算Mx',
-            indicatorKey: 'mx'
-          },
-          {
             value: '实际预估',
             indicatorKey: 'fin'
-          },
-          {
-            value: '达成度',
-            indicatorKey: 'completion'
-          },
-          {
-            value: '差异值',
-            indicatorKey: 'gap'
           }
         ]
       },
@@ -1444,20 +1456,8 @@ export function createTable() {
         hierarchyState: 'expand',
         children: [
           {
-            value: '预算Mx',
-            indicatorKey: 'mx'
-          },
-          {
             value: '实际预估',
             indicatorKey: 'fin'
-          },
-          {
-            value: '达成度',
-            indicatorKey: 'completion'
-          },
-          {
-            value: '差异值',
-            indicatorKey: 'gap'
           }
         ]
       },
@@ -1468,20 +1468,8 @@ export function createTable() {
         hierarchyState: 'expand',
         children: [
           {
-            value: '预算Mx',
-            indicatorKey: 'mx'
-          },
-          {
             value: '实际预估',
             indicatorKey: 'fin'
-          },
-          {
-            value: '达成度',
-            indicatorKey: 'completion'
-          },
-          {
-            value: '差异值',
-            indicatorKey: 'gap'
           }
         ]
       },
@@ -1492,20 +1480,8 @@ export function createTable() {
         hierarchyState: 'expand',
         children: [
           {
-            value: '预算Mx',
-            indicatorKey: 'mx'
-          },
-          {
             value: '实际预估',
             indicatorKey: 'fin'
-          },
-          {
-            value: '达成度',
-            indicatorKey: 'completion'
-          },
-          {
-            value: '差异值',
-            indicatorKey: 'gap'
           }
         ]
       },
@@ -1516,20 +1492,8 @@ export function createTable() {
         hierarchyState: 'expand',
         children: [
           {
-            value: '预算Mx',
-            indicatorKey: 'mx'
-          },
-          {
             value: '实际预估',
             indicatorKey: 'fin'
-          },
-          {
-            value: '达成度',
-            indicatorKey: 'completion'
-          },
-          {
-            value: '差异值',
-            indicatorKey: 'gap'
           }
         ]
       },
@@ -1540,20 +1504,8 @@ export function createTable() {
         hierarchyState: 'expand',
         children: [
           {
-            value: '预算Mx',
-            indicatorKey: 'mx'
-          },
-          {
             value: '实际预估',
             indicatorKey: 'fin'
-          },
-          {
-            value: '达成度',
-            indicatorKey: 'completion'
-          },
-          {
-            value: '差异值',
-            indicatorKey: 'gap'
           }
         ]
       },
@@ -1564,20 +1516,8 @@ export function createTable() {
         hierarchyState: 'expand',
         children: [
           {
-            value: '预算Mx',
-            indicatorKey: 'mx'
-          },
-          {
             value: '实际预估',
             indicatorKey: 'fin'
-          },
-          {
-            value: '达成度',
-            indicatorKey: 'completion'
-          },
-          {
-            value: '差异值',
-            indicatorKey: 'gap'
           }
         ]
       },
@@ -1588,20 +1528,8 @@ export function createTable() {
         hierarchyState: 'expand',
         children: [
           {
-            value: '预算Mx',
-            indicatorKey: 'mx'
-          },
-          {
             value: '实际预估',
             indicatorKey: 'fin'
-          },
-          {
-            value: '达成度',
-            indicatorKey: 'completion'
-          },
-          {
-            value: '差异值',
-            indicatorKey: 'gap'
           }
         ]
       },
@@ -1612,20 +1540,8 @@ export function createTable() {
         hierarchyState: 'expand',
         children: [
           {
-            value: '预算Mx',
-            indicatorKey: 'mx'
-          },
-          {
             value: '实际预估',
             indicatorKey: 'fin'
-          },
-          {
-            value: '达成度',
-            indicatorKey: 'completion'
-          },
-          {
-            value: '差异值',
-            indicatorKey: 'gap'
           }
         ]
       },
@@ -1636,20 +1552,8 @@ export function createTable() {
         hierarchyState: 'expand',
         children: [
           {
-            value: '预算Mx',
-            indicatorKey: 'mx'
-          },
-          {
             value: '实际预估',
             indicatorKey: 'fin'
-          },
-          {
-            value: '达成度',
-            indicatorKey: 'completion'
-          },
-          {
-            value: '差异值',
-            indicatorKey: 'gap'
           }
         ]
       },
@@ -1660,20 +1564,8 @@ export function createTable() {
         hierarchyState: 'expand',
         children: [
           {
-            value: '预算Mx',
-            indicatorKey: 'mx'
-          },
-          {
             value: '实际预估',
             indicatorKey: 'fin'
-          },
-          {
-            value: '达成度',
-            indicatorKey: 'completion'
-          },
-          {
-            value: '差异值',
-            indicatorKey: 'gap'
           }
         ]
       }
@@ -1765,35 +1657,6 @@ export function createTable() {
     ],
     indicators: [
       {
-        indicatorKey: 'mx',
-        title: 'mx',
-        width: 'auto',
-        showSort: false,
-        minWidth: 150,
-        headerStyle: {
-          textStick: true,
-          textAlign: 'right',
-          bgColor: '#F2F3F5',
-          color: '#646A73',
-          fontSize: 12,
-          fontFamily: 'PingFang SC',
-          fontWeight: '500',
-          fontStyle: 'normal',
-          borderColor: '#DEE0E3',
-          borderLineWidth: 1,
-          lineHeight: 20
-        },
-        style: {
-          bgColor: '#FFF',
-          textAlign: 'right',
-          fontSize: 12,
-          color: '#1F2329',
-          fontWeight: 400,
-          fontStyle: 'normal',
-          fontFamily: 'SF Pro Text'
-        }
-      },
-      {
         indicatorKey: 'fin',
         title: 'fin',
         width: 'auto',
@@ -1821,66 +1684,6 @@ export function createTable() {
           fontStyle: 'normal',
           fontFamily: 'SF Pro Text'
         }
-      },
-      {
-        indicatorKey: 'completion',
-        title: 'completion',
-        width: 'auto',
-        showSort: false,
-        minWidth: 150,
-        headerStyle: {
-          textStick: true,
-          textAlign: 'right',
-          bgColor: '#F2F3F5',
-          color: '#646A73',
-          fontSize: 12,
-          fontFamily: 'PingFang SC',
-          fontWeight: '500',
-          fontStyle: 'normal',
-          borderColor: '#DEE0E3',
-          borderLineWidth: 1,
-          lineHeight: 20
-        },
-        style: {
-          bgColor: '#FFF',
-          textAlign: 'right',
-          fontSize: 12,
-          color: '#1F2329',
-          fontWeight: 400,
-          fontStyle: 'normal',
-          fontFamily: 'SF Pro Text'
-        },
-        headerIcon: 'info'
-      },
-      {
-        indicatorKey: 'gap',
-        title: 'gap',
-        width: 'auto',
-        showSort: false,
-        minWidth: 150,
-        headerStyle: {
-          textStick: true,
-          textAlign: 'right',
-          bgColor: '#F2F3F5',
-          color: '#646A73',
-          fontSize: 12,
-          fontFamily: 'PingFang SC',
-          fontWeight: '500',
-          fontStyle: 'normal',
-          borderColor: '#DEE0E3',
-          borderLineWidth: 1,
-          lineHeight: 20
-        },
-        style: {
-          bgColor: '#FFF',
-          textAlign: 'right',
-          fontSize: 12,
-          color: '#1F2329',
-          fontWeight: 400,
-          fontStyle: 'normal',
-          fontFamily: 'SF Pro Text'
-        },
-        headerIcon: 'info'
       }
     ],
     extensionRows: [
@@ -2064,16 +1867,9 @@ export function createTable() {
     },
     hideIndicatorName: false
   };
-  const tableInstance = new VTable.PivotTable(document.getElementById(CONTAINER_ID), option);
-  // tableInstance.onVChartEvent('click', args => {
-  //   console.log('listenChart click', args);
-  // });
-  // tableInstance.onVChartEvent('mouseover', args => {
-  //   console.log('listenChart mouseover', args);
-  // });
-  window.tableInstance = tableInstance;
 
-  bindDebugTool(tableInstance.scenegraph.stage, {
-    customGrapicKeys: ['col', 'row']
-  });
+  const instance = new PivotTable(document.getElementById(CONTAINER_ID)!, option);
+  window.tableInstance = instance;
+
+  bindDebugTool(instance.scenegraph.stage, { customGrapicKeys: ['col', 'row'] });
 }

@@ -156,6 +156,7 @@ function addRow(row: number, scene: Scenegraph) {
       scene.proxy.currentRow++;
 
       addRowCellGroup(row, scene);
+      return row;
     }
     return undefined;
   }
@@ -165,11 +166,12 @@ function addRow(row: number, scene: Scenegraph) {
     scene.proxy.currentRow++;
 
     addRowCellGroup(row, scene);
-  } else {
-    // update rows after
     return row;
   }
-  return undefined;
+  // update rows after
+  return row;
+
+  // return undefined;
 
   // // TODO 需要整体更新proxy的状态
   // scene.proxy.bodyBottomRow++;
