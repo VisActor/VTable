@@ -256,9 +256,10 @@ function computeAutoColWidth(
   // 处理 auto width
   let maxWidth = 0;
   let deltaRow = 1;
+  let prepareDeltaRow = 1; // 当计算完表头单元格的宽度后再采用采用逻辑，prepareDeltaRow这个值为期body部分做准备
   if (endRow - startRow > 5000) {
     // 超过5000行启动列宽自动计算采样
-    deltaRow = Math.ceil((endRow - startRow) / 5000);
+    prepareDeltaRow = Math.ceil((endRow - startRow) / 5000);
   }
   // 如果是透视图
   if (table.isPivotChart() && col >= table.rowHeaderLevelCount && col < table.colCount - table.rightFrozenColCount) {
@@ -335,6 +336,7 @@ function computeAutoColWidth(
         cellHierarchyIndent = (hd.hierarchyLevel ?? 0) * ((layoutMap as PivotHeaderLayoutMap).rowHierarchyIndent ?? 0);
       }
     } else {
+      deltaRow = prepareDeltaRow;
       // 基本表格表身body单元格 如果是树形展开 需要考虑缩进值
       // const cellHierarchyState = table.getHierarchyState(col, row);
       // if (cellHierarchyState === HierarchyState.expand || cellHierarchyState === HierarchyState.collapse) {
@@ -351,6 +353,17 @@ function computeAutoColWidth(
     // 测量文字宽度
     const textWidth = computeTextWidth(col, row, cellType, table);
     maxWidth = Math.max(textWidth + cellHierarchyIndent, maxWidth);
+    //在前面设置了采用规则的情况下，为了确保底部冻结的每一行都测到
+    if (
+      deltaRow > 1 &&
+      table.bottomFrozenRowCount > 0 &&
+      row < table.rowCount - table.bottomFrozenRowCount &&
+      row + deltaRow >= table.rowCount - table.bottomFrozenRowCount
+    ) {
+      row = table.rowCount - table.bottomFrozenRowCount - deltaRow;
+      deltaRow = 1;
+      prepareDeltaRow = 1;
+    }
   }
 
   // 处理宽度限制
