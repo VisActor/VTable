@@ -1,12 +1,10 @@
-import type { IGraphic } from '@visactor/vrender';
+import { isNumber } from '@visactor/vutils';
 import type { CellAddress } from '../../ts-types';
 import type { BaseTableAPI } from '../../ts-types/base-table';
 import { Group } from '../graphic/group';
 import { updateCell } from '../group-creater/cell-helper';
 import type { Scenegraph } from '../scenegraph';
 import { getCellMergeInfo } from '../utils/get-cell-merge';
-import { isMergeCellGroup } from '../utils/is-merge-cell-group';
-import { resizeCellGroup } from '../group-creater/column-helper';
 
 /**
  * add and remove rows in scenegraph
@@ -19,7 +17,7 @@ export function updateRow(
 ) {
   const scene = table.scenegraph;
   // deduplication
-  const removeRows = deduplication(removeCells.map(cell => cell.row)).sort((a, b) => a - b);
+  const removeRows = deduplication(removeCells.map(cell => cell.row)).sort((a, b) => b - a);
   const addRows = deduplication(addCells.map(cell => cell.row)).sort((a, b) => a - b);
   // const updateRows = deduplication(updateCells.map(cell => cell.row)).sort((a, b) => a - b);
 
@@ -28,14 +26,25 @@ export function updateRow(
     removeRow(row, scene);
   });
 
+  removeRows.forEach(row => {
+    scene.table.rowHeightsMap.adjustOrder(row + 1, row, scene.table.rowHeightsMap.count() - row - 1);
+    scene.table.rowHeightsMap.del(scene.table.rowHeightsMap.count() - 1);
+  });
+
   if (removeRows.length) {
     resetRowNumber(scene);
   }
 
+  scene.table._clearRowRangeHeightsMap();
+
   // add cells
   addRows.forEach(row => {
     addRow(row, scene);
+    scene.table.rowHeightsMap.adjustOrder(row, row + 1, scene.table.rowHeightsMap.count() - row);
   });
+
+  // reset attribute y and row number in CellGroup
+  const newTotalHeight = resetRowNumberAndY(scene);
 
   // add cells
   updateCells.forEach(cell => {
@@ -54,13 +63,13 @@ export function updateRow(
       updateCell(cell.col, cell.row, scene.table, false);
     }
   });
-
-  // reset attribute y and row number in CellGroup
-  const newTotalHeight = resetRowNumberAndY(scene);
-
   if (addRows.length) {
-    scene.proxy.rowUpdatePos = scene.proxy.rowStart;
+    const minRow = Math.min(...addRows);
+    scene.proxy.rowUpdatePos = minRow;
     scene.proxy.rowUpdateDirection = 'up';
+    scene.proxy.updateCellGroups(scene.proxy.screenRowCount * 2);
+    scene.proxy.progress();
+  } else if (removeRows.length) {
     scene.proxy.updateCellGroups(scene.proxy.screenRowCount * 2);
     scene.proxy.progress();
   }
@@ -99,14 +108,24 @@ function removeRow(row: number, scene: Scenegraph) {
       return false;
     });
     if (cellGroup) {
+      colGroup.updateColumnHeight(-(cellGroup as Group).attribute.height);
       colGroup.removeChild(cellGroup);
     }
   }
+
   // TODO 需要整体更新proxy的状态
-  scene.proxy.rowEnd--;
+  if (row <= scene.proxy.rowEnd) {
+    scene.proxy.rowEnd--;
+    scene.proxy.currentRow--;
+  }
   scene.proxy.bodyBottomRow--;
-  scene.proxy.currentRow--;
-  scene.proxy.totalRow--;
+  // scene.proxy.totalRow--;
+  const totalActualBodyRowCount = Math.min(
+    scene.proxy.rowLimit,
+    scene.proxy.bodyBottomRow - scene.proxy.bodyTopRow + 1
+  ); // 渐进加载总row数量
+  scene.proxy.totalActualBodyRowCount = totalActualBodyRowCount;
+  scene.proxy.totalRow = scene.proxy.bodyTopRow + totalActualBodyRowCount - 1; // 目标渐进完成的row
 }
 
 function addRow(row: number, scene: Scenegraph) {
@@ -168,10 +187,10 @@ function addRow(row: number, scene: Scenegraph) {
     // });
   }
   // TODO 需要整体更新proxy的状态
-  scene.proxy.rowEnd++;
   scene.proxy.bodyBottomRow++;
-  scene.proxy.currentRow++;
   scene.proxy.totalRow++;
+  scene.proxy.rowEnd++;
+  scene.proxy.currentRow++;
 }
 
 // array deduplication
@@ -195,11 +214,25 @@ function resetRowNumber(scene: Scenegraph) {
     // reset row number
     let rowIndex = (headerColGroup.firstChild as Group)?.row;
     headerColGroup.forEachChildren((cellGroup: Group) => {
+      const oldRow = cellGroup.row;
+      if (isNumber(cellGroup.mergeStartRow)) {
+        cellGroup.mergeStartRow = cellGroup.mergeStartRow - oldRow + rowIndex;
+      }
+      if (isNumber(cellGroup.mergeEndRow)) {
+        cellGroup.mergeEndRow = cellGroup.mergeEndRow - oldRow + rowIndex;
+      }
       cellGroup.row = rowIndex;
       rowIndex++;
     });
     rowIndex = (colGroup.firstChild as Group)?.row;
     colGroup.forEachChildren((cellGroup: Group) => {
+      const oldRow = cellGroup.row;
+      if (isNumber(cellGroup.mergeStartRow)) {
+        cellGroup.mergeStartRow = cellGroup.mergeStartRow - oldRow + rowIndex;
+      }
+      if (isNumber(cellGroup.mergeEndRow)) {
+        cellGroup.mergeEndRow = cellGroup.mergeEndRow - oldRow + rowIndex;
+      }
       cellGroup.row = rowIndex;
       rowIndex++;
     });
@@ -231,6 +264,13 @@ function resetRowNumberAndY(scene: Scenegraph) {
     const rowStart = rowIndex;
     y = 0;
     colGroup.forEachChildren((cellGroup: Group) => {
+      const oldRow = cellGroup.row;
+      if (isNumber(cellGroup.mergeStartRow)) {
+        cellGroup.mergeStartRow = cellGroup.mergeStartRow - oldRow + rowIndex;
+      }
+      if (isNumber(cellGroup.mergeEndRow)) {
+        cellGroup.mergeEndRow = cellGroup.mergeEndRow - oldRow + rowIndex;
+      }
       cellGroup.row = rowIndex;
       rowIndex++;
       if (cellGroup.role !== 'cell') {

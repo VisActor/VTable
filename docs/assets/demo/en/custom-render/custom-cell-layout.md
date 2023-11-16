@@ -4,7 +4,7 @@ group: Custom
 title: Cell custom layout
 cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/custom-cell-layout.png
 link: '../guide/custom_define/custom_layout'
-option: ListTable-columns-text#customLayout.renderDefault
+option: ListTable-columns-text#customLayout
 ---
 
 # Cell custom layout
@@ -90,6 +90,7 @@ VTable.register.icon('message',{
           width,
           display: 'flex',
           flexDirection: 'row',
+          flexWrap: 'nowrap'
         });
         const containerLeft = new VTable.CustomLayout.Group({
           height: percentCalc(100),
@@ -116,6 +117,7 @@ VTable.register.icon('message',{
           width: percentCalc(100, -60),
           display: 'flex',
           flexDirection: 'column',
+          flexWrap: 'nowrap'
         });
         container.add(containerRight);
 

@@ -84,13 +84,34 @@ async function moveCell(
     updateRowContent(syncTopRow, syncBottomRow, proxy);
 
     if (proxy.table.heightMode === 'autoHeight') {
+      // body group
       updateAutoRow(
         proxy.bodyLeftCol, // colStart
         proxy.bodyRightCol, // colEnd
         syncTopRow, // rowStart
         syncBottomRow, // rowEnd
         proxy.table,
-        direction
+        distEndRow > proxy.bodyBottomRow - (proxy.rowEnd - proxy.rowStart + 1) ? 'down' : 'up' // 跳转到底部时，从下向上对齐
+      );
+
+      // row header group
+      updateAutoRow(
+        0, // colStart
+        proxy.table.frozenColCount - 1, // colEnd
+        syncTopRow, // rowStart
+        syncBottomRow, // rowEnd
+        proxy.table,
+        distEndRow > proxy.bodyBottomRow - (proxy.rowEnd - proxy.rowStart + 1) ? 'down' : 'up' // 跳转到底部时，从下向上对齐
+      );
+
+      // right frozen group
+      updateAutoRow(
+        proxy.table.colCount - proxy.table.rightFrozenColCount, // colStart
+        proxy.table.colCount - 1, // colEnd
+        syncTopRow, // rowStart
+        syncBottomRow, // rowEnd
+        proxy.table,
+        distEndRow > proxy.bodyBottomRow - (proxy.rowEnd - proxy.rowStart + 1) ? 'down' : 'up' // 跳转到底部时，从下向上对齐
       );
 
       const cellGroup = proxy.table.scenegraph.highPerformanceGetCell(proxy.bodyLeftCol, screenTopRow, true);
@@ -139,9 +160,30 @@ async function moveCell(
     updateRowContent(syncTopRow, syncBottomRow, proxy);
 
     if (proxy.table.heightMode === 'autoHeight') {
+      // body group
       updateAutoRow(
         proxy.bodyLeftCol, // colStart
         proxy.bodyRightCol, // colEnd
+        syncTopRow, // rowStart
+        syncBottomRow, // rowEnd
+        proxy.table,
+        distEndRow > proxy.bodyBottomRow - (proxy.rowEnd - proxy.rowStart + 1) ? 'down' : 'up' // 跳转到底部时，从下向上对齐
+      );
+
+      // row header group
+      updateAutoRow(
+        0, // colStart
+        proxy.table.frozenColCount - 1, // colEnd
+        syncTopRow, // rowStart
+        syncBottomRow, // rowEnd
+        proxy.table,
+        distEndRow > proxy.bodyBottomRow - (proxy.rowEnd - proxy.rowStart + 1) ? 'down' : 'up' // 跳转到底部时，从下向上对齐
+      );
+
+      // right frozen group
+      updateAutoRow(
+        proxy.table.colCount - proxy.table.rightFrozenColCount, // colStart
+        proxy.table.colCount - 1, // colEnd
         syncTopRow, // rowStart
         syncBottomRow, // rowEnd
         proxy.table,
