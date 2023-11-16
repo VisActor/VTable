@@ -15,20 +15,23 @@ export async function dynamicSetY(y: number, proxy: SceneProxy) {
   const screenTopY = screenTop.top;
   proxy.screenTopRow = screenTopRow;
   const deltaRow = screenTopRow - proxy.referenceRow;
+  move(deltaRow, screenTopRow, screenTopY, y, proxy);
+  // proxy.table.scenegraph.updateNextFrame();
+}
+
+function move(deltaRow: number, screenTopRow: number, screenTopY: number, y: number, proxy: SceneProxy) {
   if (deltaRow > 0) {
     // 向下滚动，顶部cell group移到底部
-    moveCell(deltaRow, 'up', screenTopRow, screenTopY, proxy);
+    moveCell(deltaRow, 'up', screenTopRow, screenTopY, y, proxy);
     proxy.updateBody(y - proxy.deltaY);
   } else if (deltaRow < 0) {
     // 向上滚动，底部cell group移到顶部
-    moveCell(-deltaRow, 'down', screenTopRow, screenTopY, proxy);
+    moveCell(-deltaRow, 'down', screenTopRow, screenTopY, y, proxy);
     proxy.updateBody(y - proxy.deltaY);
   } else {
     // 不改变row，更新body group范围
     proxy.updateBody(y - proxy.deltaY);
   }
-
-  // proxy.table.scenegraph.updateNextFrame();
 }
 
 async function moveCell(
@@ -36,13 +39,16 @@ async function moveCell(
   direction: 'up' | 'down',
   screenTopRow: number,
   screenTopY: number,
+  y: number,
   proxy: SceneProxy
 ) {
   // 限制count范围
   if (direction === 'up' && proxy.rowEnd + count > proxy.bodyBottomRow) {
     count = proxy.bodyBottomRow - proxy.rowEnd;
+    return move(count, screenTopRow, screenTopY, y, proxy);
   } else if (direction === 'down' && proxy.rowStart - count < proxy.bodyTopRow) {
     count = proxy.rowStart - proxy.bodyTopRow;
+    return move(count, screenTopRow, screenTopY, y, proxy);
   }
 
   // 两种更新模式

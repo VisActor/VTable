@@ -94,76 +94,46 @@ export function updateRow(
 }
 
 function removeRow(row: number, scene: Scenegraph) {
-  for (let col = 0; col < scene.table.colCount; col++) {
-    // const headerColGroup = scene.getColGroup(col, true);
-    const colGroup = scene.getColGroup(col, false);
-    if (!colGroup) {
-      continue;
-    }
-    // // remove cellGroup in headerColGroup
-    // let headerCellGroup;
-    // headerColGroup.forEachChildren((cellGroup: Group) => {
-    //   if (cellGroup.row === row) {
-    //     headerCellGroup = cellGroup;
-    //     return true;
-    //   }
-    //   return false;
-    // });
-    // if (headerCellGroup) {
-    //   headerColGroup.removeChild(headerCellGroup);
-    // }
-
-    // remove cellGroup in colGroup
-    let cellGroup;
-    colGroup.forEachChildren((cell: Group) => {
-      if (cell.row === row) {
-        cellGroup = cell;
-        return true;
-      }
-      return false;
-    });
-    if (cellGroup) {
-      colGroup.updateColumnHeight(-(cellGroup as Group).attribute.height);
-      colGroup.removeChild(cellGroup);
-    }
-  }
+  removeCellGroup(row, scene);
+  const proxy = scene.proxy;
 
   // TODO 需要整体更新proxy的状态
-  if (row <= scene.proxy.rowEnd) {
-    scene.proxy.rowEnd--;
-    scene.proxy.currentRow--;
+  if (row >= proxy.rowStart && row <= proxy.rowEnd) {
+    proxy.rowEnd--;
+    proxy.currentRow--;
   }
-  scene.proxy.bodyBottomRow--;
-  // scene.proxy.totalRow--;
-  const totalActualBodyRowCount = Math.min(
-    scene.proxy.rowLimit,
-    scene.proxy.bodyBottomRow - scene.proxy.bodyTopRow + 1
-  ); // 渐进加载总row数量
-  scene.proxy.totalActualBodyRowCount = totalActualBodyRowCount;
-  scene.proxy.totalRow = scene.proxy.bodyTopRow + totalActualBodyRowCount - 1; // 目标渐进完成的row
+  proxy.bodyBottomRow--;
+  // proxy.totalRow--;
+  const totalActualBodyRowCount = Math.min(proxy.rowLimit, proxy.bodyBottomRow - proxy.bodyTopRow + 1); // 渐进加载总row数量
+  proxy.totalActualBodyRowCount = totalActualBodyRowCount;
+  proxy.totalRow = proxy.rowStart + totalActualBodyRowCount - 1; // 目标渐进完成的row
 }
 
 function addRow(row: number, scene: Scenegraph) {
   const proxy = scene.proxy;
-  scene.proxy.bodyBottomRow++;
-  scene.proxy.totalRow++;
+  proxy.bodyBottomRow++;
+  // proxy.totalRow++;
+  const totalActualBodyRowCount = Math.min(proxy.rowLimit, proxy.bodyBottomRow - proxy.bodyTopRow + 1); // 渐进加载总row数量
+  proxy.totalActualBodyRowCount = totalActualBodyRowCount;
+  proxy.totalRow = proxy.rowStart + totalActualBodyRowCount - 1; // 目标渐进完成的row
+
   if (row < proxy.rowStart) {
     return undefined;
   } else if (row > proxy.rowEnd) {
-    if (proxy.rowEnd - proxy.rowStart < scene.proxy.rowLimit) {
+    if (proxy.rowEnd - proxy.rowStart + 1 < proxy.rowLimit) {
       // can add row
-      scene.proxy.rowEnd++;
-      scene.proxy.currentRow++;
+      proxy.rowEnd++;
+      proxy.currentRow++;
 
       addRowCellGroup(row, scene);
       return row;
     }
     return undefined;
   }
-  if (proxy.rowEnd - proxy.rowStart < scene.proxy.rowLimit) {
+  if (proxy.rowEnd - proxy.rowStart + 1 < proxy.rowLimit) {
     // can add row
-    scene.proxy.rowEnd++;
-    scene.proxy.currentRow++;
+    proxy.rowEnd++;
+    proxy.currentRow++;
 
     addRowCellGroup(row, scene);
     return row;
@@ -392,5 +362,41 @@ function addRowCellGroup(row: number, scene: Scenegraph) {
     //   cellGroup.row = rowIndex;
     //   rowIndex++;
     // });
+  }
+}
+
+function removeCellGroup(row: number, scene: Scenegraph) {
+  for (let col = 0; col < scene.table.colCount; col++) {
+    // const headerColGroup = scene.getColGroup(col, true);
+    const colGroup = scene.getColGroup(col, false);
+    if (!colGroup) {
+      continue;
+    }
+    // // remove cellGroup in headerColGroup
+    // let headerCellGroup;
+    // headerColGroup.forEachChildren((cellGroup: Group) => {
+    //   if (cellGroup.row === row) {
+    //     headerCellGroup = cellGroup;
+    //     return true;
+    //   }
+    //   return false;
+    // });
+    // if (headerCellGroup) {
+    //   headerColGroup.removeChild(headerCellGroup);
+    // }
+
+    // remove cellGroup in colGroup
+    let cellGroup;
+    colGroup.forEachChildren((cell: Group) => {
+      if (cell.row === row) {
+        cellGroup = cell;
+        return true;
+      }
+      return false;
+    });
+    if (cellGroup) {
+      colGroup.updateColumnHeight(-(cellGroup as Group).attribute.height);
+      colGroup.removeChild(cellGroup);
+    }
   }
 }

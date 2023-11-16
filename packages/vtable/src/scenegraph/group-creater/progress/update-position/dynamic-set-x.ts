@@ -17,20 +17,23 @@ export async function dynamicSetX(x: number, proxy: SceneProxy) {
   proxy.screenLeftCol = screenLeftCol;
   const deltaCol = proxy.screenLeftCol - proxy.referenceCol;
 
+  move(deltaCol, screenLeftCol, screenLeftX, x, proxy);
+  proxy.table.scenegraph.updateNextFrame();
+}
+
+function move(deltaCol: number, screenLeftCol: number, screenLeftX: number, x: number, proxy: SceneProxy) {
   if (deltaCol > 0) {
     // 向右滚动，左部column group移到右部
-    moveColumn(deltaCol, 'left', proxy.screenLeftCol, screenLeftX, proxy);
+    moveColumn(deltaCol, 'left', proxy.screenLeftCol, screenLeftX, x, proxy);
     proxy.table.scenegraph.setBodyAndColHeaderX(-x + proxy.deltaX);
   } else if (deltaCol < 0) {
     // 向左滚动，右部cell group移到左部
-    moveColumn(-deltaCol, 'right', proxy.screenLeftCol, screenLeftX, proxy);
+    moveColumn(-deltaCol, 'right', proxy.screenLeftCol, screenLeftX, x, proxy);
     proxy.table.scenegraph.setBodyAndColHeaderX(-x + proxy.deltaX);
   } else {
     // 不改变row，更新body group范围
     proxy.table.scenegraph.setBodyAndColHeaderX(-x + proxy.deltaX);
   }
-
-  proxy.table.scenegraph.updateNextFrame();
 }
 
 async function moveColumn(
@@ -38,13 +41,16 @@ async function moveColumn(
   direction: 'left' | 'right',
   screenLeftCol: number,
   screenLeftX: number,
+  x: number,
   proxy: SceneProxy
 ) {
   // 限制count范围
   if (direction === 'left' && proxy.colEnd + count > proxy.bodyRightCol) {
     count = proxy.bodyRightCol - proxy.colEnd;
+    move(count, screenLeftCol, screenLeftX, x, proxy);
   } else if (direction === 'right' && proxy.colStart - count < proxy.bodyLeftCol) {
     count = proxy.colStart - proxy.bodyLeftCol;
+    move(count, screenLeftCol, screenLeftX, x, proxy);
   }
 
   if (count <= 0) {
