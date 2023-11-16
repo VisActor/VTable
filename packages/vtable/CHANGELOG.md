@@ -1,6 +1,18 @@
 # Change Log - @visactor/vtable
 
-This log was last generated on Mon, 13 Nov 2023 12:07:03 GMT and should not be manually modified.
+This log was last generated on Thu, 16 Nov 2023 04:36:53 GMT and should not be manually modified.
+
+## 0.14.2
+Thu, 16 Nov 2023 04:36:53 GMT
+
+### Patches
+
+- fix: row header select bound wrong #572
+
+
+- fix: selectHeader copy data
+
+
 
 ## 0.14.1
 Mon, 13 Nov 2023 12:07:03 GMT

@@ -2,6 +2,21 @@
   "name": "@visactor/vtable",
   "entries": [
     {
+      "version": "0.14.2",
+      "tag": "@visactor/vtable_v0.14.2",
+      "date": "Thu, 16 Nov 2023 04:36:53 GMT",
+      "comments": {
+        "patch": [
+          {
+            "comment": "fix: row header select bound wrong #572\n\n"
+          },
+          {
+            "comment": "fix: selectHeader copy data\n\n"
+          }
+        ]
+      }
+    },
+    {
       "version": "0.14.1",
       "tag": "@visactor/vtable_v0.14.1",
       "date": "Mon, 13 Nov 2023 12:07:03 GMT",
