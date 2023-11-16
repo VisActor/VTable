@@ -29,15 +29,15 @@ function updateComponent(selectComp: { rect: IRect; role: CellSubLocation }, key
     case 'rowHeader':
       visibleCellRange = scene.table.getBodyVisibleRowRange();
       if (visibleCellRange) {
-        computeRectCellRangeStartRow = Math.max(startRow, visibleCellRange.rowStart);
-        computeRectCellRangeEndRow = Math.min(endRow, visibleCellRange.rowEnd);
+        computeRectCellRangeStartRow = Math.max(startRow, visibleCellRange.rowStart - 1);
+        computeRectCellRangeEndRow = Math.min(endRow, visibleCellRange.rowEnd + 1);
       }
       break;
     case 'columnHeader':
       visibleCellRange = scene.table.getBodyVisibleCellRange();
       if (visibleCellRange) {
-        computeRectCellRangeStartCol = Math.max(startCol, visibleCellRange.colStart);
-        computeRectCellRangeEndCol = Math.min(endCol, visibleCellRange.colEnd);
+        computeRectCellRangeStartCol = Math.max(startCol, visibleCellRange.colStart - 1);
+        computeRectCellRangeEndCol = Math.min(endCol, visibleCellRange.colEnd + 1);
       }
       break;
     case 'cornerHeader':
@@ -45,15 +45,15 @@ function updateComponent(selectComp: { rect: IRect; role: CellSubLocation }, key
     case 'bottomFrozen':
       visibleCellRange = scene.table.getBodyVisibleCellRange();
       if (visibleCellRange) {
-        computeRectCellRangeStartCol = Math.max(startCol, visibleCellRange.colStart);
-        computeRectCellRangeEndCol = Math.min(endCol, visibleCellRange.colEnd);
+        computeRectCellRangeStartCol = Math.max(startCol, visibleCellRange.colStart - 1);
+        computeRectCellRangeEndCol = Math.min(endCol, visibleCellRange.colEnd + 1);
       }
       break;
     case 'rightFrozen':
       visibleCellRange = scene.table.getBodyVisibleCellRange();
       if (visibleCellRange) {
-        computeRectCellRangeStartRow = Math.max(startRow, visibleCellRange.rowStart);
-        computeRectCellRangeEndRow = Math.min(endRow, visibleCellRange.rowEnd);
+        computeRectCellRangeStartRow = Math.max(startRow, visibleCellRange.rowStart - 1);
+        computeRectCellRangeEndRow = Math.min(endRow, visibleCellRange.rowEnd + 1);
       }
       break;
     case 'rightTopCorner':
@@ -65,10 +65,10 @@ function updateComponent(selectComp: { rect: IRect; role: CellSubLocation }, key
     default:
       visibleCellRange = scene.table.getBodyVisibleCellRange();
       if (visibleCellRange) {
-        computeRectCellRangeStartRow = Math.max(startRow, visibleCellRange.rowStart);
-        computeRectCellRangeEndRow = Math.min(endRow, visibleCellRange.rowEnd);
-        computeRectCellRangeStartCol = Math.max(startCol, visibleCellRange.colStart);
-        computeRectCellRangeEndCol = Math.min(endCol, visibleCellRange.colEnd);
+        computeRectCellRangeStartRow = Math.max(startRow, visibleCellRange.rowStart - 1);
+        computeRectCellRangeEndRow = Math.min(endRow, visibleCellRange.rowEnd + 1);
+        computeRectCellRangeStartCol = Math.max(startCol, visibleCellRange.colStart - 1);
+        computeRectCellRangeEndCol = Math.min(endCol, visibleCellRange.colEnd + 1);
       }
       break;
   }
@@ -96,7 +96,7 @@ function updateComponent(selectComp: { rect: IRect; role: CellSubLocation }, key
     startCol === scene.table.frozenColCount;
   const isNearRightRowHeader =
     // scene.table.scrollLeft === 0 &&
-    endCol === scene.table.colCount - scene.table.rightFrozenColCount - 1;
+    scene.table.rightFrozenColCount > 0 && endCol === scene.table.colCount - scene.table.rightFrozenColCount - 1;
   const isNearColHeader =
     // scene.table.scrollTop === 0 &&
     startRow === scene.table.frozenRowCount;
