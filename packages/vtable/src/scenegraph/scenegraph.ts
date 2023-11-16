@@ -1528,6 +1528,8 @@ export class Scenegraph {
       this.component.setFrozenColumnShadow(this.table.frozenColCount - 1);
     }
 
+    this.component.updateScrollBar();
+
     // rerender
     this.updateNextFrame();
   }

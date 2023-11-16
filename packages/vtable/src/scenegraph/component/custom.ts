@@ -344,7 +344,7 @@ function transformString(str: string, size?: number): number {
   return parseInt(str, 10);
 }
 
-function dealPercentCalc(group: VGroup, parentWidth: number, parentHeight: number) {
+export function dealPercentCalc(group: VGroup, parentWidth: number, parentHeight: number) {
   if (!group) {
     return;
   }
