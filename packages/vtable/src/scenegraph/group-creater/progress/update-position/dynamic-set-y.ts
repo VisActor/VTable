@@ -45,10 +45,14 @@ async function moveCell(
   // 限制count范围
   if (direction === 'up' && proxy.rowEnd + count > proxy.bodyBottomRow) {
     count = proxy.bodyBottomRow - proxy.rowEnd;
-    return move(count, screenTopRow, screenTopY, y, proxy);
+    // return move(count, screenTopRow, screenTopY, y, proxy);
   } else if (direction === 'down' && proxy.rowStart - count < proxy.bodyTopRow) {
     count = proxy.rowStart - proxy.bodyTopRow;
-    return move(count, screenTopRow, screenTopY, y, proxy);
+    // return move(count, screenTopRow, screenTopY, y, proxy);
+  }
+  if (count < 0) {
+    direction = direction === 'up' ? 'down' : 'up';
+    count = -count;
   }
 
   // 两种更新模式

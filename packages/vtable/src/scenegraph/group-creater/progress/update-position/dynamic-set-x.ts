@@ -47,10 +47,14 @@ async function moveColumn(
   // 限制count范围
   if (direction === 'left' && proxy.colEnd + count > proxy.bodyRightCol) {
     count = proxy.bodyRightCol - proxy.colEnd;
-    move(count, screenLeftCol, screenLeftX, x, proxy);
+    // move(count, screenLeftCol, screenLeftX, x, proxy);
   } else if (direction === 'right' && proxy.colStart - count < proxy.bodyLeftCol) {
     count = proxy.colStart - proxy.bodyLeftCol;
-    move(count, screenLeftCol, screenLeftX, x, proxy);
+    // move(count, screenLeftCol, screenLeftX, x, proxy);
+  }
+  if (count < 0) {
+    direction = direction === 'left' ? 'right' : 'left';
+    count = -count;
   }
 
   if (count <= 0) {
