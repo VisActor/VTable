@@ -467,9 +467,28 @@ export class SceneProxy {
     updateRowContent(this.rowUpdatePos, distRow, this);
 
     if (this.table.heightMode === 'autoHeight') {
+      // body group
       updateAutoRow(
         this.bodyLeftCol, // colStart
         this.bodyRightCol, // colEnd
+        this.rowUpdatePos, // rowStart
+        distRow, // rowEnd
+        this.table,
+        this.rowUpdateDirection
+      );
+      // row header group
+      updateAutoRow(
+        0, // colStart
+        this.table.frozenColCount - 1, // colEnd
+        this.rowUpdatePos, // rowStart
+        distRow, // rowEnd
+        this.table,
+        this.rowUpdateDirection
+      );
+      // right frozen group
+      updateAutoRow(
+        this.table.colCount - this.table.rightFrozenColCount, // colStart
+        this.table.colCount - 1, // colEnd
         this.rowUpdatePos, // rowStart
         distRow, // rowEnd
         this.table,

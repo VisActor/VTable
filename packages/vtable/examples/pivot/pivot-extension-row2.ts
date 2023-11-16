@@ -426,5 +426,7 @@ export function createTable() {
       };
       const instance = new PivotTable(document.getElementById(CONTAINER_ID)!, option);
       window.tableInstance = instance;
+
+      bindDebugTool(instance.scenegraph.stage, { customGrapicKeys: ['col', 'row'] });
     });
 }

@@ -4,7 +4,7 @@ group: Custom
 title: 单元格自定义布局（JSX）
 cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/custom-cell-layout-jsx.png
 link: '../guide/custom_define/custom_layout'
-option: ListTable-columns-text#customLayout.renderDefault
+option: ListTable-columns-text#customLayout
 ---
 
 # 单元格自定义布局（JSX）
@@ -46,7 +46,7 @@ const VTag = VTable.VTag;
                 width,
                 height,
                 display: "flex",
-                flexWrap: "wrap",
+                flexWrap: "nowrap",
                 justifyContent: "flex-start",
                 alignContent: "center"
               }}
@@ -82,6 +82,7 @@ const VTag = VTable.VTag;
                   fill: "yellow",
                   opacity: 0.1,
                   display: "flex",
+                  flexWrap: "nowrap",
                   flexDirection: "column",
                   justifyContent: "space-around",
                   alignItems: "center"
