@@ -43,7 +43,7 @@ export function computeColsWidth(table: BaseTableAPI, colStart?: number, colEnd?
     ) {
       const temp = table.internalProps.layoutMap.showHeader;
       table.internalProps.layoutMap.showHeader = true;
-      maxWidth = computeColWidth(col, 0, table.internalProps.layoutMap.headerLevelCount, table, update);
+      maxWidth = computeColWidth(col, 0, table.internalProps.layoutMap.headerLevelCount, table);
       table.internalProps.layoutMap.showHeader = temp;
     } else if (
       !table.internalProps.transpose &&
@@ -53,11 +53,10 @@ export function computeColsWidth(table: BaseTableAPI, colStart?: number, colEnd?
         col,
         table.internalProps.layoutMap.getBodyRange().start.row,
         table.internalProps.layoutMap.getBodyRange().end.row,
-        table,
-        update
+        table
       );
     } else {
-      maxWidth = computeColWidth(col, 0, table.rowCount - 1, table, update);
+      maxWidth = computeColWidth(col, 0, table.rowCount - 1, table);
     }
 
     table._setColContentWidth(col, maxWidth);
@@ -167,7 +166,7 @@ export function computeColWidth(
   startRow: number,
   endRow: number,
   table: BaseTableAPI,
-  forceCompute: boolean
+  forceCompute: boolean = false //forceCompute如果设置为true 即便不是自动列宽的列也会按内容计算列宽
 ): number {
   // const { layoutMap, transpose } = table.internalProps;
   // let { width } = layoutMap?.getColumnWidthDefined(col) ?? {};
@@ -226,7 +225,9 @@ export function computeColWidth(
   //   }
   // }
   const width = getColWidthDefinedWidthResizedWidth(col, table);
-  if (typeof width === 'number') {
+  if (forceCompute && !table.internalProps.transpose) {
+    return computeAutoColWidth(width, col, startRow, endRow, forceCompute, table);
+  } else if (typeof width === 'number') {
     return width;
   } else if (width !== 'auto' && typeof width === 'string') {
     // return calc.toPx(width, table.internalProps.calcWidthContext);
@@ -305,7 +306,7 @@ function computeAutoColWidth(
     // const indicatorWidth = computeIndicatorWidth(col, row, forceCompute, table);
     // const indicatorWidth = table.internalProps.layoutMap.getColumnWidthDefined(col);
     const indicatorWidth = widthDeifne;
-    if (typeof indicatorWidth === 'number' && table.widthMode === 'standard') {
+    if (typeof indicatorWidth === 'number' && table.widthMode === 'standard' && !forceCompute) {
       maxWidth = Math.max(indicatorWidth, maxWidth);
       continue;
     }
