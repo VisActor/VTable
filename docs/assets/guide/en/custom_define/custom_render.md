@@ -10,7 +10,7 @@ In the field of data analytics, in order to display data more intuitively, we of
 
 4.  Cell custom typography layout. Arrange custom render elements arbitrarily within cells to achieve special layout requirements.
 
-In the VTable library, we can define`表格单元格内容自定义渲染`To achieve the above scenario requirements. Because it is more flexible, it can be customized and displayed according to business data, but the cost for the access party is also large, and it is necessary to calculate the location by itself.
+In the VTable library, we can define`表格单元格内容自定义渲染`To achieve the above scenario requirements. Because it is more flexible, it can be customized and displayed according to business data, but the cost for the access party is also large, and it is necessary to calculate the location by itself.(While drawing custom content, default content is allowed to be drawn according to the internal logic of VTable. Please set renderDefault to true.)
 
 ## Case study
 
