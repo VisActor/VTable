@@ -49,6 +49,24 @@ Supported event types:
    DRILLMENU_CLICK: 'drillmenu_click',
   PIVOT_SORT_CLICK: 'pivot_sort_click'
 }`
+## INITIALIZED
+Triggered after successful initialization is completed
+
+## AFTER_RENDER	
+Triggered after each rendering is completed
+
+## onVChartEvent
+
+Listen to vchart events, specific event types can refer to [VChart Events](https://visactor.io/vchart/api/API/event)
+
+```
+  /**
+   * Listen to vchart events
+   * @param type vchart event type
+   * @param listener vchart event listener
+   */
+  onVChartEvent(type: string, listener: AnyFunction): void
+```
 
 ## CLICK_CELL
 
@@ -345,21 +363,12 @@ The mouse leaves the axis event. **Axis-specific events**
 
 The parameter type of the event callback function:
 Same as **MOUSEENTER_AXIS**
-## INITIALIZED
-Triggered after successful initialization is completed
 
-## AFTER_RENDER	
-Triggered after each rendering is completed
+## COPY_DATA
+Cell content copy event. **Form-specific events**
 
-## onVChartEvent
-
-Listen to vchart events, specific event types can refer to [VChart Events](https://visactor.io/vchart/api/API/event)
+Parameter types of event callback function:
 
 ```
-  /**
-   * Listen to vchart events
-   * @param type vchart event type
-   * @param listener vchart event listener
-   */
-  onVChartEvent(type: string, listener: AnyFunction): void
+ { cellRange: CellRange[]; copyData: string };
 ```
