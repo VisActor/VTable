@@ -201,26 +201,40 @@ function resetRowNumber(scene: Scenegraph) {
     // reset row number
     let rowIndex = (headerColGroup.firstChild as Group)?.row;
     headerColGroup.forEachChildren((cellGroup: Group) => {
-      const oldRow = cellGroup.row;
-      if (isNumber(cellGroup.mergeStartRow)) {
-        cellGroup.mergeStartRow = cellGroup.mergeStartRow - oldRow + rowIndex;
-      }
-      if (isNumber(cellGroup.mergeEndRow)) {
-        cellGroup.mergeEndRow = cellGroup.mergeEndRow - oldRow + rowIndex;
-      }
+      // const oldRow = cellGroup.row;
+      // if (isNumber(cellGroup.mergeStartRow)) {
+      //   cellGroup.mergeStartRow = cellGroup.mergeStartRow - oldRow + rowIndex;
+      // }
+      // if (isNumber(cellGroup.mergeEndRow)) {
+      //   cellGroup.mergeEndRow = cellGroup.mergeEndRow - oldRow + rowIndex;
+      // }
       cellGroup.row = rowIndex;
+      const merge = getCellMergeInfo(scene.table, cellGroup.col, cellGroup.row);
+      if (merge) {
+        cellGroup.mergeStartCol = merge.start.col;
+        cellGroup.mergeStartRow = merge.start.row;
+        cellGroup.mergeEndCol = merge.end.col;
+        cellGroup.mergeEndRow = merge.end.row;
+      }
       rowIndex++;
     });
     rowIndex = (colGroup.firstChild as Group)?.row;
     colGroup.forEachChildren((cellGroup: Group) => {
-      const oldRow = cellGroup.row;
-      if (isNumber(cellGroup.mergeStartRow)) {
-        cellGroup.mergeStartRow = cellGroup.mergeStartRow - oldRow + rowIndex;
-      }
-      if (isNumber(cellGroup.mergeEndRow)) {
-        cellGroup.mergeEndRow = cellGroup.mergeEndRow - oldRow + rowIndex;
-      }
+      // const oldRow = cellGroup.row;
+      // if (isNumber(cellGroup.mergeStartRow)) {
+      //   cellGroup.mergeStartRow = cellGroup.mergeStartRow - oldRow + rowIndex;
+      // }
+      // if (isNumber(cellGroup.mergeEndRow)) {
+      //   cellGroup.mergeEndRow = cellGroup.mergeEndRow - oldRow + rowIndex;
+      // }
       cellGroup.row = rowIndex;
+      const merge = getCellMergeInfo(scene.table, cellGroup.col, cellGroup.row);
+      if (merge) {
+        cellGroup.mergeStartCol = merge.start.col;
+        cellGroup.mergeStartRow = merge.start.row;
+        cellGroup.mergeEndCol = merge.end.col;
+        cellGroup.mergeEndRow = merge.end.row;
+      }
       rowIndex++;
     });
   }
@@ -251,14 +265,21 @@ function resetRowNumberAndY(scene: Scenegraph) {
     const rowStart = rowIndex;
     y = scene.getCellGroupY(rowIndex);
     colGroup.forEachChildren((cellGroup: Group) => {
-      const oldRow = cellGroup.row;
-      if (isNumber(cellGroup.mergeStartRow)) {
-        cellGroup.mergeStartRow = cellGroup.mergeStartRow - oldRow + rowIndex;
-      }
-      if (isNumber(cellGroup.mergeEndRow)) {
-        cellGroup.mergeEndRow = cellGroup.mergeEndRow - oldRow + rowIndex;
-      }
+      // const oldRow = cellGroup.row;
+      // if (isNumber(cellGroup.mergeStartRow)) {
+      //   cellGroup.mergeStartRow = cellGroup.mergeStartRow - oldRow + rowIndex;
+      // }
+      // if (isNumber(cellGroup.mergeEndRow)) {
+      //   cellGroup.mergeEndRow = cellGroup.mergeEndRow - oldRow + rowIndex;
+      // }
       cellGroup.row = rowIndex;
+      const merge = getCellMergeInfo(scene.table, cellGroup.col, cellGroup.row);
+      if (merge) {
+        cellGroup.mergeStartCol = merge.start.col;
+        cellGroup.mergeStartRow = merge.start.row;
+        cellGroup.mergeEndCol = merge.end.col;
+        cellGroup.mergeEndRow = merge.end.row;
+      }
       rowIndex++;
       if (cellGroup.role !== 'cell') {
         return;
@@ -325,13 +346,13 @@ function addRowCellGroup(row: number, scene: Scenegraph) {
     if (colGroup.firstChild && row < (colGroup.firstChild as Group).row) {
       colGroup.insertBefore(cellGroup, colGroup.firstChild);
       (colGroup.firstChild as Group).row = (colGroup.firstChild as Group).row + 1;
-      if (
-        isNumber((colGroup.firstChild as Group).mergeStartRow) &&
-        isNumber((colGroup.firstChild as Group).mergeEndRow)
-      ) {
-        (colGroup.firstChild as Group).mergeStartRow = (colGroup.firstChild as Group).mergeStartRow + 1;
-        (colGroup.firstChild as Group).mergeEndRow = (colGroup.firstChild as Group).mergeEndRow + 1;
-      }
+      // if (
+      //   isNumber((colGroup.firstChild as Group).mergeStartRow) &&
+      //   isNumber((colGroup.firstChild as Group).mergeEndRow)
+      // ) {
+      //   (colGroup.firstChild as Group).mergeStartRow = (colGroup.firstChild as Group).mergeStartRow + 1;
+      //   (colGroup.firstChild as Group).mergeEndRow = (colGroup.firstChild as Group).mergeEndRow + 1;
+      // }
     } else if (colGroup.lastChild && row > (colGroup.lastChild as Group).row) {
       colGroup.appendChild(cellGroup);
     } else {
@@ -348,19 +369,19 @@ function addRowCellGroup(row: number, scene: Scenegraph) {
       if (cellBefore !== cellGroup) {
         colGroup.insertBefore(cellGroup, cellBefore);
         cellBefore && (cellBefore.row = cellBefore.row + 1);
-        if (isNumber(cellBefore.mergeStartRow) && isNumber(cellBefore.mergeEndRow)) {
-          cellBefore.mergeStartRow = cellBefore.mergeStartRow + 1;
-          cellBefore.mergeEndRow = cellBefore.mergeEndRow + 1;
-        }
+        // if (isNumber(cellBefore.mergeStartRow) && isNumber(cellBefore.mergeEndRow)) {
+        //   cellBefore.mergeStartRow = cellBefore.mergeStartRow + 1;
+        //   cellBefore.mergeEndRow = cellBefore.mergeEndRow + 1;
+        // }
         if (cellBefore !== colGroup.lastChild) {
           colGroup.lastChild && ((colGroup.lastChild as Group).row = (colGroup.lastChild as Group).row + 1);
-          if (
-            isNumber((colGroup.lastChild as Group).mergeStartRow) &&
-            isNumber((colGroup.lastChild as Group).mergeEndRow)
-          ) {
-            (colGroup.lastChild as Group).mergeStartRow = (colGroup.lastChild as Group).mergeStartRow + 1;
-            (colGroup.lastChild as Group).mergeEndRow = (colGroup.lastChild as Group).mergeEndRow + 1;
-          }
+          // if (
+          //   isNumber((colGroup.lastChild as Group).mergeStartRow) &&
+          //   isNumber((colGroup.lastChild as Group).mergeEndRow)
+          // ) {
+          //   (colGroup.lastChild as Group).mergeStartRow = (colGroup.lastChild as Group).mergeStartRow + 1;
+          //   (colGroup.lastChild as Group).mergeEndRow = (colGroup.lastChild as Group).mergeEndRow + 1;
+          // }
         }
       }
     }
