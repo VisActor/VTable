@@ -14,26 +14,30 @@ export function updateAllSelectComponent(scene: Scenegraph) {
 
 function updateComponent(selectComp: { rect: IRect; role: CellSubLocation }, key: string, scene: Scenegraph) {
   const [startColStr, startRowStr, endColStr, endRowStr] = key.split('-');
-  let startCol = parseInt(startColStr, 10);
-  let startRow = parseInt(startRowStr, 10);
-  let endCol = parseInt(endColStr, 10);
-  let endRow = parseInt(endRowStr, 10);
-  // const cellsBounds;
+  const startCol = parseInt(startColStr, 10);
+  const startRow = parseInt(startRowStr, 10);
+  const endCol = parseInt(endColStr, 10);
+  const endRow = parseInt(endRowStr, 10);
+  // 下面为计算选中区域使用的行列值
+  let computeRectCellRangeStartCol = startCol;
+  let computeRectCellRangeStartRow = startRow;
+  let computeRectCellRangeEndCol = endCol;
+  let computeRectCellRangeEndRow = endRow;
   // 下面逻辑根据选中区域所属表格部分 来判断可视区域内容的选中单元格范围
   let visibleCellRange;
   switch (selectComp.role) {
     case 'rowHeader':
       visibleCellRange = scene.table.getBodyVisibleRowRange();
       if (visibleCellRange) {
-        startRow = Math.max(startRow, visibleCellRange.rowStart);
-        endRow = Math.min(endRow, visibleCellRange.rowEnd);
+        computeRectCellRangeStartRow = Math.max(startRow, visibleCellRange.rowStart);
+        computeRectCellRangeEndRow = Math.min(endRow, visibleCellRange.rowEnd);
       }
       break;
     case 'columnHeader':
       visibleCellRange = scene.table.getBodyVisibleCellRange();
       if (visibleCellRange) {
-        startCol = Math.max(startCol, visibleCellRange.colStart);
-        endCol = Math.min(endCol, visibleCellRange.colEnd);
+        computeRectCellRangeStartCol = Math.max(startCol, visibleCellRange.colStart);
+        computeRectCellRangeEndCol = Math.min(endCol, visibleCellRange.colEnd);
       }
       break;
     case 'cornerHeader':
@@ -41,15 +45,15 @@ function updateComponent(selectComp: { rect: IRect; role: CellSubLocation }, key
     case 'bottomFrozen':
       visibleCellRange = scene.table.getBodyVisibleCellRange();
       if (visibleCellRange) {
-        startCol = Math.max(startCol, visibleCellRange.colStart);
-        endCol = Math.min(endCol, visibleCellRange.colEnd);
+        computeRectCellRangeStartCol = Math.max(startCol, visibleCellRange.colStart);
+        computeRectCellRangeEndCol = Math.min(endCol, visibleCellRange.colEnd);
       }
       break;
     case 'rightFrozen':
       visibleCellRange = scene.table.getBodyVisibleCellRange();
       if (visibleCellRange) {
-        startRow = Math.max(startRow, visibleCellRange.rowStart);
-        endRow = Math.min(endRow, visibleCellRange.rowEnd);
+        computeRectCellRangeStartRow = Math.max(startRow, visibleCellRange.rowStart);
+        computeRectCellRangeEndRow = Math.min(endRow, visibleCellRange.rowEnd);
       }
       break;
     case 'rightTopCorner':
@@ -61,23 +65,23 @@ function updateComponent(selectComp: { rect: IRect; role: CellSubLocation }, key
     default:
       visibleCellRange = scene.table.getBodyVisibleCellRange();
       if (visibleCellRange) {
-        startRow = Math.max(startRow, visibleCellRange.rowStart);
-        endRow = Math.min(endRow, visibleCellRange.rowEnd);
-        startCol = Math.max(startCol, visibleCellRange.colStart);
-        endCol = Math.min(endCol, visibleCellRange.colEnd);
+        computeRectCellRangeStartRow = Math.max(startRow, visibleCellRange.rowStart);
+        computeRectCellRangeEndRow = Math.min(endRow, visibleCellRange.rowEnd);
+        computeRectCellRangeStartCol = Math.max(startCol, visibleCellRange.colStart);
+        computeRectCellRangeEndCol = Math.min(endCol, visibleCellRange.colEnd);
       }
       break;
   }
-  const cellRange = scene.table.getCellRange(startCol, startRow);
-  const colsWidth = scene.table.getColsWidth(cellRange.start.col, endCol);
-  const rowsHeight = scene.table.getRowsHeight(cellRange.start.row, endRow);
-  const firstCellBound = scene.highPerformanceGetCell(cellRange.start.col, cellRange.start.row).globalAABBBounds;
-  // if (!cellsBounds) {
-  //   // 选中区域在实际单元格区域外，不显示选择框
-  //   selectComp.rect.setAttributes({
-  //     visible: false
-  //   });
-  // } else {
+  // const cellRange = scene.table.getCellRange(startCol, startRow);
+  // const colsWidth = scene.table.getColsWidth(cellRange.start.col, endCol);
+  // const rowsHeight = scene.table.getRowsHeight(cellRange.start.row, endRow);
+  const colsWidth = scene.table.getColsWidth(computeRectCellRangeStartCol, computeRectCellRangeEndCol);
+  const rowsHeight = scene.table.getRowsHeight(computeRectCellRangeStartRow, computeRectCellRangeEndRow);
+  const firstCellBound = scene.highPerformanceGetCell(
+    computeRectCellRangeStartCol,
+    computeRectCellRangeStartRow
+  ).globalAABBBounds;
+
   selectComp.rect.setAttributes({
     x: firstCellBound.x1 - scene.tableGroup.attribute.x, //坐标xy在下面的逻辑中会做适当调整
     y: firstCellBound.y1 - scene.tableGroup.attribute.y,
@@ -85,18 +89,17 @@ function updateComponent(selectComp: { rect: IRect; role: CellSubLocation }, key
     height: rowsHeight,
     visible: true
   });
-  // }
 
   //#region 判断是不是按着表头部分的选中框 因为绘制层级的原因 线宽会被遮住一半，因此需要动态调整层级
   const isNearRowHeader =
     // scene.table.scrollLeft === 0 &&
-    cellRange.start.col === scene.table.frozenColCount;
+    startCol === scene.table.frozenColCount;
   const isNearRightRowHeader =
     // scene.table.scrollLeft === 0 &&
     endCol === scene.table.colCount - scene.table.rightFrozenColCount - 1;
   const isNearColHeader =
     // scene.table.scrollTop === 0 &&
-    cellRange.start.row === scene.table.frozenRowCount;
+    startRow === scene.table.frozenRowCount;
   const isNearBottomColHeader =
     // scene.table.scrollTop === 0 &&
     endRow === scene.table.rowCount - scene.table.bottomFrozenRowCount - 1;
