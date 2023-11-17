@@ -83,7 +83,7 @@ importers:
       '@visactor/vrender': 0.16.14
       '@visactor/vrender-components': 0.16.14
       '@visactor/vscale': 0.16.0
-      '@visactor/vutils': 0.16.6
+      '@visactor/vutils': ~0.16.8
       '@visactor/vutils-extension': 1.5.1-alpha.0
       '@vitejs/plugin-react': 3.1.0
       axios: ^1.4.0
@@ -124,7 +124,7 @@ importers:
       '@visactor/vrender': 0.16.14
       '@visactor/vrender-components': 0.16.14
       '@visactor/vscale': 0.16.0
-      '@visactor/vutils': 0.16.6
+      '@visactor/vutils': 0.16.8
       '@visactor/vutils-extension': 1.5.1-alpha.0
       cssfontparser: 1.2.1
     devDependencies:
@@ -3065,7 +3065,7 @@ packages:
       '@visactor/vrender-core': 0.16.14
       '@visactor/vrender-kits': 0.16.14
       '@visactor/vscale': 0.16.8
-      '@visactor/vutils': 0.16.6
+      '@visactor/vutils': 0.16.8
       '@visactor/vutils-extension': 1.6.0
 
   /@visactor/vdataset/0.15.14:
@@ -3225,7 +3225,7 @@ packages:
       '@visactor/vrender-core': 0.16.14
       '@visactor/vrender-kits': 0.16.14
       '@visactor/vscale': 0.16.8
-      '@visactor/vutils': 0.16.6
+      '@visactor/vutils': 0.16.8
     dev: false
 
   /@visactor/vutils-extension/1.6.0:
@@ -3234,7 +3234,7 @@ packages:
       '@visactor/vrender-core': 0.16.14
       '@visactor/vrender-kits': 0.16.14
       '@visactor/vscale': 0.16.8
-      '@visactor/vutils': 0.16.6
+      '@visactor/vutils': 0.16.8
 
   /@visactor/vutils/0.15.14:
     resolution: {integrity: sha512-mZuJhXdDZqq5arqc/LfEmWOY6l7ErK1MurO8bR3vESxeCaQ18pN36iit15K2IMQVJuKZPnZ2ksw8+a1irXi/8A==}
@@ -3251,13 +3251,6 @@ packages:
       '@turf/invariant': 6.5.0
       eventemitter3: 4.0.7
     dev: false
-
-  /@visactor/vutils/0.16.6:
-    resolution: {integrity: sha512-jjWEvbaJ50mdXNx8aGYp7eXIJcN3Kcgdeygo2FsMSS6x+INAG15vxq2kycFtq+FvDk5R/5ND9+Rs1LYEWafxeA==}
-    dependencies:
-      '@turf/helpers': 6.5.0
-      '@turf/invariant': 6.5.0
-      eventemitter3: 4.0.7
 
   /@visactor/vutils/0.16.8:
     resolution: {integrity: sha512-+OwRGAAESXGNbLxQRuOe0tOOhXm0nOazlCGRUomG4PARnMM2USW2b6R0l6Yjd8bBF3ceFDMSfMBKOYdwMvhB3g==}
