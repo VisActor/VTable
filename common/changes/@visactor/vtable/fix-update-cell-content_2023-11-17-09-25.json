@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vtable",
+      "comment": "fix/fix cell role judgement in updateCellGroupContent()",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@visactor/vtable"
+}
