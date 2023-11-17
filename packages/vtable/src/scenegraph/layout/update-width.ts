@@ -402,7 +402,9 @@ function updateMergeCellContentWidth(
         const hierarchyOffset = getHierarchyOffset(singleCellGroup.col, singleCellGroup.row, table);
         if (hierarchyOffset) {
           const text = singleCellGroup.getChildByName('text');
-          if (text) {
+          const icon = singleCellGroup.getChildByName('expand') || singleCellGroup.getChildByName('collapse');
+          // icon-left deal with hierarchy offset, no need add to text dx
+          if (icon?.role !== 'icon-left' && text) {
             text.setAttribute('dx', hierarchyOffset);
           }
         }
