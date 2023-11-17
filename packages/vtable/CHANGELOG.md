@@ -1,6 +1,18 @@
 # Change Log - @visactor/vtable
 
-This log was last generated on Thu, 16 Nov 2023 04:36:53 GMT and should not be manually modified.
+This log was last generated on Fri, 17 Nov 2023 08:33:08 GMT and should not be manually modified.
+
+## 0.14.3
+Fri, 17 Nov 2023 08:33:08 GMT
+
+### Patches
+
+- refactor: add dpr argument when init vchart #570
+
+
+- fix: select_border_clip
+
+
 
 ## 0.14.2
 Thu, 16 Nov 2023 04:36:53 GMT

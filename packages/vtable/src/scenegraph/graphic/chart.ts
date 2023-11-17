@@ -15,6 +15,7 @@ interface IChartGraphicAttribute extends IGroupGraphicAttribute {
   cellPadding: number[];
   mode: string;
   modeParams: any;
+  dpr: number;
   // viewBox: {
   //   x1: number;
   //   y1: number;
@@ -45,6 +46,7 @@ export class Chart extends Group {
         modeParams: this.attribute.modeParams,
         canvasControled: false,
         viewBox: { x1: 0, x2: 0, y1: 0, y2: 0 },
+        dpr: params.dpr,
         // viewBox: params.viewBox,
         // viewBox: this.getViewBox(),
         // viewBox: {
@@ -107,6 +109,7 @@ export class Chart extends Group {
         y1: y1 - table.scrollTop,
         y2: y2 - table.scrollTop
       },
+      dpr: table.internalProps.pixelRatio,
       animation: false,
       interactive: true,
       autoFit: false, //控制当容器变化大小时vchart实例不应响应事件进行内部处理

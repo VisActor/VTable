@@ -38,8 +38,10 @@ export function updateRow(
   scene.table._clearRowRangeHeightsMap();
 
   // add cells
+  let updateAfter: number;
   addRows.forEach(row => {
-    addRow(row, scene);
+    const needUpdateAfter = addRow(row, scene);
+    updateAfter = updateAfter || needUpdateAfter;
     scene.table.rowHeightsMap.adjustOrder(row, row + 1, scene.table.rowHeightsMap.count() - row);
   });
 
@@ -63,9 +65,22 @@ export function updateRow(
       updateCell(cell.col, cell.row, scene.table, false);
     }
   });
+
+  if (isNumber(updateAfter)) {
+    for (let col = 0; col < table.colCount; col++) {
+      for (let row = updateAfter; row < table.rowCount; row++) {
+        const cellGroup = scene.highPerformanceGetCell(col, row, true);
+        cellGroup.needUpdate = true;
+      }
+    }
+    scene.proxy.rowUpdatePos = updateAfter;
+  }
+
   if (addRows.length) {
-    const minRow = Math.min(...addRows);
-    scene.proxy.rowUpdatePos = minRow;
+    if (!isNumber(updateAfter)) {
+      const minRow = Math.min(...addRows);
+      scene.proxy.rowUpdatePos = minRow;
+    }
     scene.proxy.rowUpdateDirection = 'up';
     scene.proxy.updateCellGroups(scene.proxy.screenRowCount * 2);
     scene.proxy.progress();
@@ -79,118 +94,60 @@ export function updateRow(
 }
 
 function removeRow(row: number, scene: Scenegraph) {
-  for (let col = 0; col < scene.table.colCount; col++) {
-    // const headerColGroup = scene.getColGroup(col, true);
-    const colGroup = scene.getColGroup(col, false);
-    if (!colGroup) {
-      continue;
-    }
-    // // remove cellGroup in headerColGroup
-    // let headerCellGroup;
-    // headerColGroup.forEachChildren((cellGroup: Group) => {
-    //   if (cellGroup.row === row) {
-    //     headerCellGroup = cellGroup;
-    //     return true;
-    //   }
-    //   return false;
-    // });
-    // if (headerCellGroup) {
-    //   headerColGroup.removeChild(headerCellGroup);
-    // }
-
-    // remove cellGroup in colGroup
-    let cellGroup;
-    colGroup.forEachChildren((cell: Group) => {
-      if (cell.row === row) {
-        cellGroup = cell;
-        return true;
-      }
-      return false;
-    });
-    if (cellGroup) {
-      colGroup.updateColumnHeight(-(cellGroup as Group).attribute.height);
-      colGroup.removeChild(cellGroup);
-    }
-  }
+  removeCellGroup(row, scene);
+  const proxy = scene.proxy;
 
   // TODO 需要整体更新proxy的状态
-  if (row <= scene.proxy.rowEnd) {
-    scene.proxy.rowEnd--;
-    scene.proxy.currentRow--;
+  if (row >= proxy.rowStart && row <= proxy.rowEnd) {
+    proxy.rowEnd--;
+    proxy.currentRow--;
   }
-  scene.proxy.bodyBottomRow--;
-  // scene.proxy.totalRow--;
-  const totalActualBodyRowCount = Math.min(
-    scene.proxy.rowLimit,
-    scene.proxy.bodyBottomRow - scene.proxy.bodyTopRow + 1
-  ); // 渐进加载总row数量
-  scene.proxy.totalActualBodyRowCount = totalActualBodyRowCount;
-  scene.proxy.totalRow = scene.proxy.bodyTopRow + totalActualBodyRowCount - 1; // 目标渐进完成的row
+  proxy.bodyBottomRow--;
+  // proxy.totalRow--;
+  const totalActualBodyRowCount = Math.min(proxy.rowLimit, proxy.bodyBottomRow - proxy.bodyTopRow + 1); // 渐进加载总row数量
+  proxy.totalActualBodyRowCount = totalActualBodyRowCount;
+  proxy.totalRow = proxy.rowStart + totalActualBodyRowCount - 1; // 目标渐进完成的row
 }
 
 function addRow(row: number, scene: Scenegraph) {
-  for (let col = 0; col < scene.table.colCount; col++) {
-    // create cellGroup
-    // const cellGroup = updateCell(col, row, scene.table, true);
-    const cellGroup = new Group({
-      x: 0,
-      y: 0,
-      width: scene.table.getColWidth(col),
-      height: scene.table.getRowHeight(row)
-    });
-    cellGroup.role = 'cell';
-    cellGroup.col = col;
-    cellGroup.row = row;
-    cellGroup.needUpdate = true;
+  const proxy = scene.proxy;
+  proxy.bodyBottomRow++;
+  // proxy.totalRow++;
+  const totalActualBodyRowCount = Math.min(proxy.rowLimit, proxy.bodyBottomRow - proxy.bodyTopRow + 1); // 渐进加载总row数量
+  proxy.totalActualBodyRowCount = totalActualBodyRowCount;
+  proxy.totalRow = proxy.rowStart + totalActualBodyRowCount - 1; // 目标渐进完成的row
 
-    if (!cellGroup) {
-      // TODO: deal with data promise situation
-      continue;
+  if (row < proxy.rowStart) {
+    return undefined;
+  } else if (row > proxy.rowEnd) {
+    if (proxy.rowEnd - proxy.rowStart + 1 < proxy.rowLimit) {
+      // can add row
+      proxy.rowEnd++;
+      proxy.currentRow++;
+
+      addRowCellGroup(row, scene);
+      return row;
     }
-
-    // insert cellGroup in colGroup
-    const colGroup = scene.getColGroup(col);
-    if (!colGroup) {
-      continue;
-    }
-
-    if (colGroup.firstChild && row < (colGroup.firstChild as Group).row) {
-      colGroup.insertBefore(cellGroup, colGroup.firstChild);
-      (colGroup.firstChild as Group).row = (colGroup.firstChild as Group).row + 1;
-    } else if (colGroup.lastChild && row > (colGroup.lastChild as Group).row) {
-      colGroup.appendChild(cellGroup);
-    } else {
-      // let cellBefore: Group;
-      // colGroup.forEachChildren((cellGroup: Group) => {
-      //   if (cellGroup.row === row) {
-      //     cellBefore = cellGroup;
-      //     return true;
-      //   }
-      //   return false;
-      // });
-
-      const cellBefore = scene.highPerformanceGetCell(col, row, true);
-      if (cellBefore !== cellGroup) {
-        colGroup.insertBefore(cellGroup, cellBefore);
-        cellBefore && (cellBefore.row = cellBefore.row + 1);
-        if (cellBefore !== colGroup.lastChild) {
-          colGroup.lastChild && ((colGroup.lastChild as Group).row = (colGroup.lastChild as Group).row + 1);
-        }
-      }
-    }
-
-    // // reset row number
-    // let rowIndex = (colGroup.firstChild as Group)?.row;
-    // colGroup.forEachChildren((cellGroup: Group) => {
-    //   cellGroup.row = rowIndex;
-    //   rowIndex++;
-    // });
+    return undefined;
   }
-  // TODO 需要整体更新proxy的状态
-  scene.proxy.bodyBottomRow++;
-  scene.proxy.totalRow++;
-  scene.proxy.rowEnd++;
-  scene.proxy.currentRow++;
+  if (proxy.rowEnd - proxy.rowStart + 1 < proxy.rowLimit) {
+    // can add row
+    proxy.rowEnd++;
+    proxy.currentRow++;
+
+    addRowCellGroup(row, scene);
+    return row;
+  }
+  // update rows after
+  return row;
+
+  // return undefined;
+
+  // // TODO 需要整体更新proxy的状态
+  // scene.proxy.bodyBottomRow++;
+  // scene.proxy.totalRow++;
+  // scene.proxy.rowEnd++;
+  // scene.proxy.currentRow++;
 }
 
 // array deduplication
@@ -214,26 +171,40 @@ function resetRowNumber(scene: Scenegraph) {
     // reset row number
     let rowIndex = (headerColGroup.firstChild as Group)?.row;
     headerColGroup.forEachChildren((cellGroup: Group) => {
-      const oldRow = cellGroup.row;
-      if (isNumber(cellGroup.mergeStartRow)) {
-        cellGroup.mergeStartRow = cellGroup.mergeStartRow - oldRow + rowIndex;
-      }
-      if (isNumber(cellGroup.mergeEndRow)) {
-        cellGroup.mergeEndRow = cellGroup.mergeEndRow - oldRow + rowIndex;
-      }
+      // const oldRow = cellGroup.row;
+      // if (isNumber(cellGroup.mergeStartRow)) {
+      //   cellGroup.mergeStartRow = cellGroup.mergeStartRow - oldRow + rowIndex;
+      // }
+      // if (isNumber(cellGroup.mergeEndRow)) {
+      //   cellGroup.mergeEndRow = cellGroup.mergeEndRow - oldRow + rowIndex;
+      // }
       cellGroup.row = rowIndex;
+      const merge = getCellMergeInfo(scene.table, cellGroup.col, cellGroup.row);
+      if (merge) {
+        cellGroup.mergeStartCol = merge.start.col;
+        cellGroup.mergeStartRow = merge.start.row;
+        cellGroup.mergeEndCol = merge.end.col;
+        cellGroup.mergeEndRow = merge.end.row;
+      }
       rowIndex++;
     });
     rowIndex = (colGroup.firstChild as Group)?.row;
     colGroup.forEachChildren((cellGroup: Group) => {
-      const oldRow = cellGroup.row;
-      if (isNumber(cellGroup.mergeStartRow)) {
-        cellGroup.mergeStartRow = cellGroup.mergeStartRow - oldRow + rowIndex;
-      }
-      if (isNumber(cellGroup.mergeEndRow)) {
-        cellGroup.mergeEndRow = cellGroup.mergeEndRow - oldRow + rowIndex;
-      }
+      // const oldRow = cellGroup.row;
+      // if (isNumber(cellGroup.mergeStartRow)) {
+      //   cellGroup.mergeStartRow = cellGroup.mergeStartRow - oldRow + rowIndex;
+      // }
+      // if (isNumber(cellGroup.mergeEndRow)) {
+      //   cellGroup.mergeEndRow = cellGroup.mergeEndRow - oldRow + rowIndex;
+      // }
       cellGroup.row = rowIndex;
+      const merge = getCellMergeInfo(scene.table, cellGroup.col, cellGroup.row);
+      if (merge) {
+        cellGroup.mergeStartCol = merge.start.col;
+        cellGroup.mergeStartRow = merge.start.row;
+        cellGroup.mergeEndCol = merge.end.col;
+        cellGroup.mergeEndRow = merge.end.row;
+      }
       rowIndex++;
     });
   }
@@ -262,16 +233,23 @@ function resetRowNumberAndY(scene: Scenegraph) {
     // });
     rowIndex = (colGroup.firstChild as Group)?.row;
     const rowStart = rowIndex;
-    y = 0;
+    y = scene.getCellGroupY(rowIndex);
     colGroup.forEachChildren((cellGroup: Group) => {
-      const oldRow = cellGroup.row;
-      if (isNumber(cellGroup.mergeStartRow)) {
-        cellGroup.mergeStartRow = cellGroup.mergeStartRow - oldRow + rowIndex;
-      }
-      if (isNumber(cellGroup.mergeEndRow)) {
-        cellGroup.mergeEndRow = cellGroup.mergeEndRow - oldRow + rowIndex;
-      }
+      // const oldRow = cellGroup.row;
+      // if (isNumber(cellGroup.mergeStartRow)) {
+      //   cellGroup.mergeStartRow = cellGroup.mergeStartRow - oldRow + rowIndex;
+      // }
+      // if (isNumber(cellGroup.mergeEndRow)) {
+      //   cellGroup.mergeEndRow = cellGroup.mergeEndRow - oldRow + rowIndex;
+      // }
       cellGroup.row = rowIndex;
+      const merge = getCellMergeInfo(scene.table, cellGroup.col, cellGroup.row);
+      if (merge) {
+        cellGroup.mergeStartCol = merge.start.col;
+        cellGroup.mergeStartRow = merge.start.row;
+        cellGroup.mergeEndCol = merge.end.col;
+        cellGroup.mergeEndRow = merge.end.row;
+      }
       rowIndex++;
       if (cellGroup.role !== 'cell') {
         return;
@@ -307,4 +285,118 @@ function resetRowNumberAndY(scene: Scenegraph) {
     // }
   }
   return newTotalHeight;
+}
+
+function addRowCellGroup(row: number, scene: Scenegraph) {
+  for (let col = 0; col < scene.table.colCount; col++) {
+    // create cellGroup
+    // const cellGroup = updateCell(col, row, scene.table, true);
+    const cellGroup = new Group({
+      x: 0,
+      y: 0,
+      width: scene.table.getColWidth(col),
+      height: scene.table.getRowHeight(row)
+    });
+    cellGroup.role = 'cell';
+    cellGroup.col = col;
+    cellGroup.row = row;
+    cellGroup.needUpdate = true;
+
+    if (!cellGroup) {
+      // TODO: deal with data promise situation
+      continue;
+    }
+
+    // insert cellGroup in colGroup
+    const colGroup = scene.getColGroup(col);
+    if (!colGroup) {
+      continue;
+    }
+
+    if (colGroup.firstChild && row < (colGroup.firstChild as Group).row) {
+      colGroup.insertBefore(cellGroup, colGroup.firstChild);
+      (colGroup.firstChild as Group).row = (colGroup.firstChild as Group).row + 1;
+      // if (
+      //   isNumber((colGroup.firstChild as Group).mergeStartRow) &&
+      //   isNumber((colGroup.firstChild as Group).mergeEndRow)
+      // ) {
+      //   (colGroup.firstChild as Group).mergeStartRow = (colGroup.firstChild as Group).mergeStartRow + 1;
+      //   (colGroup.firstChild as Group).mergeEndRow = (colGroup.firstChild as Group).mergeEndRow + 1;
+      // }
+    } else if (colGroup.lastChild && row > (colGroup.lastChild as Group).row) {
+      colGroup.appendChild(cellGroup);
+    } else {
+      // let cellBefore: Group;
+      // colGroup.forEachChildren((cellGroup: Group) => {
+      //   if (cellGroup.row === row) {
+      //     cellBefore = cellGroup;
+      //     return true;
+      //   }
+      //   return false;
+      // });
+
+      const cellBefore = scene.highPerformanceGetCell(col, row, true);
+      if (cellBefore !== cellGroup) {
+        colGroup.insertBefore(cellGroup, cellBefore);
+        cellBefore && (cellBefore.row = cellBefore.row + 1);
+        // if (isNumber(cellBefore.mergeStartRow) && isNumber(cellBefore.mergeEndRow)) {
+        //   cellBefore.mergeStartRow = cellBefore.mergeStartRow + 1;
+        //   cellBefore.mergeEndRow = cellBefore.mergeEndRow + 1;
+        // }
+        if (cellBefore !== colGroup.lastChild) {
+          colGroup.lastChild && ((colGroup.lastChild as Group).row = (colGroup.lastChild as Group).row + 1);
+          // if (
+          //   isNumber((colGroup.lastChild as Group).mergeStartRow) &&
+          //   isNumber((colGroup.lastChild as Group).mergeEndRow)
+          // ) {
+          //   (colGroup.lastChild as Group).mergeStartRow = (colGroup.lastChild as Group).mergeStartRow + 1;
+          //   (colGroup.lastChild as Group).mergeEndRow = (colGroup.lastChild as Group).mergeEndRow + 1;
+          // }
+        }
+      }
+    }
+
+    // // reset row number
+    // let rowIndex = (colGroup.firstChild as Group)?.row;
+    // colGroup.forEachChildren((cellGroup: Group) => {
+    //   cellGroup.row = rowIndex;
+    //   rowIndex++;
+    // });
+  }
+}
+
+function removeCellGroup(row: number, scene: Scenegraph) {
+  for (let col = 0; col < scene.table.colCount; col++) {
+    // const headerColGroup = scene.getColGroup(col, true);
+    const colGroup = scene.getColGroup(col, false);
+    if (!colGroup) {
+      continue;
+    }
+    // // remove cellGroup in headerColGroup
+    // let headerCellGroup;
+    // headerColGroup.forEachChildren((cellGroup: Group) => {
+    //   if (cellGroup.row === row) {
+    //     headerCellGroup = cellGroup;
+    //     return true;
+    //   }
+    //   return false;
+    // });
+    // if (headerCellGroup) {
+    //   headerColGroup.removeChild(headerCellGroup);
+    // }
+
+    // remove cellGroup in colGroup
+    let cellGroup;
+    colGroup.forEachChildren((cell: Group) => {
+      if (cell.row === row) {
+        cellGroup = cell;
+        return true;
+      }
+      return false;
+    });
+    if (cellGroup) {
+      colGroup.updateColumnHeight(-(cellGroup as Group).attribute.height);
+      colGroup.removeChild(cellGroup);
+    }
+  }
 }

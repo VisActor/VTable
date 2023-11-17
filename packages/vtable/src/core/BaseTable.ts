@@ -3085,7 +3085,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
       fontWeight: theme.text.fontWeight,
       fontVariant: theme.text.fontVariant,
       fontStyle: theme.text.fontStyle,
-      lineHeight: theme.text.lineHeight,
+      lineHeight: theme.text.lineHeight as number,
       autoWrapText: autoWrapText ?? false,
       lineClamp: lineClamp ?? 'auto',
       textOverflow,

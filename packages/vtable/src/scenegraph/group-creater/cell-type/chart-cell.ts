@@ -74,6 +74,7 @@ export function createChartCellGroup(
     dataId,
     data: table.getCellValue(col, row),
     cellPadding: padding,
+    dpr: table.internalProps.pixelRatio,
     // viewBox: {
     //   x1: Math.ceil(cellGroup.globalAABBBounds.x1 + padding[3] + table.scrollLeft),
     //   x2: Math.ceil(cellGroup.globalAABBBounds.x1 + width - padding[1] + table.scrollLeft),

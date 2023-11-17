@@ -15,6 +15,11 @@ export async function dynamicSetY(y: number, proxy: SceneProxy) {
   const screenTopY = screenTop.top;
   proxy.screenTopRow = screenTopRow;
   const deltaRow = screenTopRow - proxy.referenceRow;
+  move(deltaRow, screenTopRow, screenTopY, y, proxy);
+  // proxy.table.scenegraph.updateNextFrame();
+}
+
+function move(deltaRow: number, screenTopRow: number, screenTopY: number, y: number, proxy: SceneProxy) {
   if (deltaRow > 0) {
     // 向下滚动，顶部cell group移到底部
     moveCell(deltaRow, 'up', screenTopRow, screenTopY, proxy);
@@ -27,8 +32,6 @@ export async function dynamicSetY(y: number, proxy: SceneProxy) {
     // 不改变row，更新body group范围
     proxy.updateBody(y - proxy.deltaY);
   }
-
-  // proxy.table.scenegraph.updateNextFrame();
 }
 
 async function moveCell(
@@ -43,6 +46,10 @@ async function moveCell(
     count = proxy.bodyBottomRow - proxy.rowEnd;
   } else if (direction === 'down' && proxy.rowStart - count < proxy.bodyTopRow) {
     count = proxy.rowStart - proxy.bodyTopRow;
+  }
+  if (count < 0) {
+    direction = direction === 'up' ? 'down' : 'up';
+    count = -count;
   }
 
   // 两种更新模式
