@@ -2,6 +2,21 @@
   "name": "@visactor/vtable",
   "entries": [
     {
+      "version": "0.14.3",
+      "tag": "@visactor/vtable_v0.14.3",
+      "date": "Fri, 17 Nov 2023 08:33:08 GMT",
+      "comments": {
+        "patch": [
+          {
+            "comment": "refactor: add dpr argument when init vchart #570\n\n"
+          },
+          {
+            "comment": "fix: select_border_clip\n\n"
+          }
+        ]
+      }
+    },
+    {
       "version": "0.14.2",
       "tag": "@visactor/vtable_v0.14.2",
       "date": "Thu, 16 Nov 2023 04:36:53 GMT",
