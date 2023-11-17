@@ -1,4 +1,4 @@
-import { ReactVTable } from '../../../src/index';
+import { ListTable } from '../../../src';
 function App() {
   const option = {
     header: [
@@ -21,7 +21,7 @@ function App() {
     ],
     records: new Array(1000).fill(['张三', 18, '男', '🏀'])
   };
-  return <ReactVTable type="list" option={option} />;
+  return <ListTable option={option} />;
 }
 
 export default App;

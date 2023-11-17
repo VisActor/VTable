@@ -47,7 +47,9 @@
     "access": "public"
   },
   "dependencies": {
-    "@visactor/vtable": "workspace:*"
+    "@visactor/vtable": "workspace:*",
+    "@visactor/vutils": "0.16.6",
+    "react-is": "^18.2.0"
   },
   "devDependencies": {
     "@visactor/vchart": "1.6.0",
@@ -91,6 +93,7 @@
     "markdown-it": "^13.0.0",
     "node-fetch": "2.6.7",
     "form-data": "~4.0.0",
-    "axios": "^1.4.0"
+    "axios": "^1.4.0",
+    "@types/react-is": "^17.0.3"
   }
 }

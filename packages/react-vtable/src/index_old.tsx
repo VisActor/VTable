@@ -1,6 +1,8 @@
+/* eslint-disable @typescript-eslint/no-duplicate-imports */
+/* eslint-disable @typescript-eslint/consistent-type-imports */
 import { ListTable } from '@visactor/vtable';
 import type { FC } from 'react';
-import type React from 'react';
+import React from 'react';
 import { useEffect, useRef } from 'react';
 
 type Props = React.PropsWithChildren<any>;

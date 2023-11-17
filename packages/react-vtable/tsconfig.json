@@ -1,18 +1,25 @@
 {
   "extends": "@internal/ts-config/tsconfig.base.json",
-  "include": ["src"],
   "compilerOptions": {
-    "jsx": "react-jsx",
+    "jsx": "react",
     "types": ["jest", "offscreencanvas", "node"],
     "lib": ["DOM", "ESNext"],
     "baseUrl": "./",
     "rootDir": "./src",
-    "strict": false,
+    "paths": {
+      "@visactor/vtable": ["../vtable/src/index.ts"]
+    }
   },
   "ts-node": {
     "transpileOnly": true,
     "compilerOptions": {
       "module": "commonjs"
     }
-  }
+  },
+  "references": [
+    {
+      "path": "../vtable"
+    }
+  ],
+  "include": ["src"]
 }
