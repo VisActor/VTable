@@ -416,9 +416,9 @@ export function bindTableGroupListener(eventManeger: EventManeger) {
       }
     }
   });
-
+  // 注意和pointertap事件的处理 vrender中的事件系统： 是先触发pointerup 如果是点击到的场景树图元节点则会继续触发pointertap 否则不触发pointertap
   table.scenegraph.tableGroup.addEventListener('pointerup', (e: FederatedPointerEvent) => {
-    // console.log('tableGroup', 'pointerup');
+    console.log('tableGroup', 'pointerup');
     if (e.button !== 0) {
       // 只处理左键
       return;
@@ -526,8 +526,9 @@ export function bindTableGroupListener(eventManeger: EventManeger) {
       }
     }
   });
-
+  // 注意和pointerup事件的处理 vrender中的事件系统： 是先触发pointerup 如果是点击到的场景树图元节点则会继续触发pointertap 否则不触发pointertap
   table.scenegraph.tableGroup.addEventListener('pointertap', (e: FederatedPointerEvent) => {
+    console.log('tableGroup', 'pointertap');
     if (table.stateManeger.columnResize.resizing || table.stateManeger.columnMove.moving) {
       return;
     }
@@ -602,8 +603,7 @@ export function bindTableGroupListener(eventManeger: EventManeger) {
     }
   });
 
-  table.scenegraph.tableGroup.addEventListener('dblclick', (e: FederatedPointerEvent) => {
-    // console.log('tableGroup', 'dblclick');
+  function dblclickHandler(e: FederatedPointerEvent) {
     const eventArgsSet: SceneEvent = getCellEventArgsSet(e);
     const bounds = eventArgsSet.eventArgs.targetCell.globalAABBBounds;
     const { col, row } = eventArgsSet.eventArgs;
@@ -612,9 +612,6 @@ export function bindTableGroupListener(eventManeger: EventManeger) {
       new Rect(bounds.x1 + table.scrollLeft, bounds.y1 + table.scrollTop, bounds.x2 - bounds.x1, bounds.y2 - bounds.y1),
       value
     );
-    // console.log('activeElement',document.activeElement);
-    // table.getElement().focus();
-    // console.log('activeElement 2',document.activeElement);
     if ((table as any).hasListeners(TABLE_EVENT_TYPE.DBLCLICK_CELL)) {
       const cellInfo = table.getCellInfo(col, row);
       let icon;
@@ -642,6 +639,14 @@ export function bindTableGroupListener(eventManeger: EventManeger) {
       };
       table.fireListeners(TABLE_EVENT_TYPE.DBLCLICK_CELL, cellsEvent);
     }
+  }
+  table.scenegraph.tableGroup.addEventListener('dbltap', (e: FederatedPointerEvent) => {
+    console.log('tableGroup', 'dbltap');
+    dblclickHandler(e);
+  });
+  table.scenegraph.tableGroup.addEventListener('dblclick', (e: FederatedPointerEvent) => {
+    console.log('tableGroup', 'dblclick');
+    dblclickHandler(e);
   });
 
   table.scenegraph.tableGroup.addEventListener('checkbox_state_change', (e: FederatedPointerEvent) => {

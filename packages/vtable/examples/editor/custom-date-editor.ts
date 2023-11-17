@@ -110,7 +110,7 @@ function generateRandomHobbies() {
     'Hiking',
     'Traveling',
     'Photography',
-    'Playing musical instruments',
+    'Playing \n musical /n instruments',
     'Gardening',
     'Painting',
     'Writing',
@@ -208,7 +208,7 @@ const generatePersons = count => {
 };
 
 export function createTable() {
-  const records = generatePersons(100);
+  const records = generatePersons(10);
   const columns = [
     {
       field: 'id',
@@ -244,7 +244,7 @@ export function createTable() {
     {
       field: 'hobbies',
       title: 'hobbies',
-      width: 200,
+      width: 100,
       editor: 'input'
     },
     {
@@ -256,8 +256,8 @@ export function createTable() {
     {
       field: 'employedSince',
       title: 'employedSince',
-      width: 120,
-      editor: 'custom-date'
+      width: 120
+      // editor: 'custom-date'
     },
     {
       field: 'sex',
@@ -284,7 +284,7 @@ export function createTable() {
     container: document.getElementById(CONTAINER_ID),
     records,
     columns,
-    heightMode: 'autoHeight',
+    // heightMode: 'autoHeight',
     customMergeCell: (col, row, table) => {
       if (col >= 0 && col <= 5 && row === 2) {
         return {
@@ -305,8 +305,33 @@ export function createTable() {
         };
       }
     },
-    theme: VTable.themes.ARCO,
-    autoWrapText: true
+    theme: VTable.themes.ARCO.extends({
+      bodyStyle: {
+        bgColor(args) {
+          if (args.row >= 8) {
+            return '#282a2e';
+          }
+          return '#fbfbfc';
+        },
+        color(args) {
+          if (args.row >= 8) {
+            return '#e5e7ea';
+          }
+          return '#141414';
+        },
+        hover: {
+          cellBgColor(args) {
+            if (args.row >= 8) {
+              return '#29364D';
+            }
+            return '#F7F8FA';
+          }
+        }
+      }
+    }),
+    autoWrapText: true,
+    limitMaxAutoWidth: 600,
+    heightMode: 'autoHeight'
   };
   const tableInstance = new VTable.ListTable(option);
   tableInstance.on('initialized', args => {

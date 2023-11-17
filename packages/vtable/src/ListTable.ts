@@ -27,6 +27,8 @@ import { Env } from './tools/env';
 import { editor } from './register';
 import * as editors from './edit/editors';
 import { EditManeger } from './edit/edit-manager';
+import { computeColWidth } from './scenegraph/layout/compute-col-width';
+import { computeRowHeight } from './scenegraph/layout/compute-row-height';
 
 export class ListTable extends BaseTable implements ListTableAPI {
   declare internalProps: ListTableProtected;
@@ -758,7 +760,18 @@ export class ListTable extends BaseTable implements ListTableAPI {
     this.dataSource.changeFieldValue(value, recordIndex, field, col, row, this);
     const cell_value = this.getFieldData(fieldFormat || field, col, row);
     this.scenegraph.updateCellValue(col, row, cell_value);
-    this.scenegraph.updateAutoColWidth(col);
+
+    if (!this.internalProps._widthResizedColMap.has(col)) {
+      const oldWidth = this.getColWidth(col);
+      const newWidth = computeColWidth(col, 0, this.rowCount - 1, this, false);
+      if (newWidth !== oldWidth) {
+        this.scenegraph.updateColWidth(col, newWidth - oldWidth);
+      }
+    }
+    const oldHeight = this.getRowHeight(row);
+    const newHeight = computeRowHeight(row, 0, this.colCount - 1, this);
+    this.scenegraph.updateRowHeight(row, newHeight - oldHeight);
+
     this.fireListeners(TABLE_EVENT_TYPE.CHANGE_CELL_VALUE, {
       col,
       row,
