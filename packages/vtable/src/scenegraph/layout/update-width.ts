@@ -19,6 +19,7 @@ import { getQuadProps } from '../utils/padding';
 import { updateCellContentWidth } from '../utils/text-icon-layout';
 import { computeRowHeight, computeRowsHeight } from './compute-row-height';
 import { updateCellHeightForRow } from './update-height';
+import { getHierarchyOffset } from '../utils/get-hierarchy-offset';
 // import { updateAutoRowHeight } from './auto-height';
 
 /**
@@ -396,6 +397,18 @@ function updateMergeCellContentWidth(
           textBaseline,
           table.scenegraph
         );
+
+        // reset hierarchy offset
+        const hierarchyOffset = getHierarchyOffset(singleCellGroup.col, singleCellGroup.row, table);
+        if (hierarchyOffset) {
+          const text = singleCellGroup.getChildByName('text');
+          const icon = singleCellGroup.getChildByName('expand') || singleCellGroup.getChildByName('collapse');
+          // icon-left deal with hierarchy offset, no need add to text dx
+          if (icon?.role !== 'icon-left' && text) {
+            text.setAttribute('dx', hierarchyOffset);
+          }
+        }
+
         const rangeHeight = table.getRowHeight(row);
         const rangeWidth = table.getColWidth(col);
 

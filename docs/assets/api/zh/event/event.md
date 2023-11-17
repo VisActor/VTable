@@ -52,6 +52,23 @@ TABLE_EVENT_TYPE = {
   PIVOT_SORT_CLICK: 'pivot_sort_click'
 }
 ```
+## INITIALIZED
+成功初始化完成后触发
+## AFTER_RENDER	
+每次渲染完成后触发
+
+## onVChartEvent
+
+监听 vchart 事件，具体事件类型可参考[VChart 事件](https://visactor.io/vchart/api/API/event)
+
+```
+  /**
+   * 监听vchart事件
+   * @param type vchart事件类型
+   * @param listener vchart事件监听器
+   */
+  onVChartEvent(type: string, listener: AnyFunction): void
+```
 
 ## CLICK_CELL
 
@@ -370,20 +387,11 @@ icon 图标点击事件。
 事件回调函数的参数类型:
 同**MOUSEENTER_AXIS**
 
-## INITIALIZED
-成功初始化完成后触发
-## AFTER_RENDER	
-每次渲染完成后触发
+## COPY_DATA
+单元格内容复制事件。**表格专有事件**
 
-## onVChartEvent
-
-监听 vchart 事件，具体事件类型可参考[VChart 事件](https://visactor.io/vchart/api/API/event)
+事件回调函数的参数类型:
 
 ```
-  /**
-   * 监听vchart事件
-   * @param type vchart事件类型
-   * @param listener vchart事件监听器
-   */
-  onVChartEvent(type: string, listener: AnyFunction): void
+ { cellRange: CellRange[]; copyData: string };
 ```

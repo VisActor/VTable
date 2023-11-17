@@ -8,6 +8,9 @@ The specific return data of the event can be actually tested to observe whether 
 
 | Name | Event Name | Description |
 |:----|:----|:----|
+|Life cycle event: initialization completed|INITIALIZED|Life cycle event: triggered after successful initialization is completed|
+|Rendering Complete|AFTER\_RENDER|Triggered every time rendering is completed|
+|Listen to chart events|Same as the events specified in the vchart tutorial|Embed the chart in the table and use it when you need to listen to chart events. Using method `onVChartEvent` not `on`|
 | Click | CLICK\_CELL | Cell Click Event |
 | Double Click | DBLCLICK\_CELL | Cell Double Click Event |
 | Right Click | CONTEXTMENU\_CELL | Cell Right Click Event |
@@ -36,6 +39,7 @@ The specific return data of the event can be actually tested to observe whether 
 |Legend item unhover|LEGEND\_ITEM\_UNHOVER|Legend item when mouse leaves hover|
 |The mouse enters the coordinate axis|MOUSEENTER\_AXIS|The mouse enters the coordinate axis component|
 |mouse leaves the axis|MOUSELEAVE\_AXIS|mouse leaves the axis component|
+|Listen to copy|COPY\_DATA|This event is triggered when a cell is copied using the shortcut key|
 
 ## Event monitoring method
 

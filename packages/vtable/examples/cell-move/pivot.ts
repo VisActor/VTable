@@ -452,6 +452,9 @@ export function createTable() {
   };
   option.container = document.getElementById(CONTAINER_ID);
   const instance = new PivotTable(option);
+  instance.on('copy_data', e => {
+    console.log('copy_data', e);
+  });
 
   VTable.bindDebugTool(instance.scenegraph.stage as any, {
     customGrapicKeys: ['role', '_updateTag']

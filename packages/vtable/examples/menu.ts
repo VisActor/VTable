@@ -285,6 +285,10 @@ export const menus = [
       {
         path: 'pivot',
         name: 'pivot-extension-row2'
+      },
+      {
+        path: 'pivot',
+        name: 'pivot-extension-bp'
       }
     ]
   },

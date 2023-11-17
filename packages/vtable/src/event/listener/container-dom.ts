@@ -52,6 +52,10 @@ export function bindContainerDomListener(eventManeger: EventManeger) {
         } else {
           (e as any).clipboardData.setData('text/plain', data); // Chrome, Firefox
         }
+        table.fireListeners(TABLE_EVENT_TYPE.COPY_DATA, {
+          cellRange: table.stateManeger.select.ranges,
+          copyData: data
+        });
       }
     }
   });

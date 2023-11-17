@@ -44,9 +44,12 @@ export function createComplexColumn(
   /** useColumnTheme 判断是否可以使用columnTheme */
   // insert cell into column group top
   let y = 0;
-  if (columnGroup.colHeight) {
-    // insert cell into column group bottom
-    y = columnGroup.colHeight;
+  // if (columnGroup.colHeight) {
+  //   // insert cell into column group bottom
+  //   y = columnGroup.colHeight;
+  // }
+  if (columnGroup.lastChild) {
+    y = (columnGroup.lastChild as Group).attribute.y + (columnGroup.lastChild as Group).attribute.height;
   }
 
   for (let j = rowStart; j <= rowEnd; j++) {
