@@ -14,17 +14,21 @@ import {
 import type { ITextMeasureOption, ITextSize } from '@visactor/vutils';
 import { TextMeasure } from '@visactor/vutils';
 
+type ITextGraphicAttributeFroMeasure = Omit<ITextGraphicAttribute, 'lineHeight'> & {
+  lineHeight?: number;
+};
+
 export default new ContainerModule((bind, unbind, isBound, rebind) => {
   bind(FastTextMeasureContribution).toSelf().inSingletonScope();
   rebind(TextMeasureContribution).toService(FastTextMeasureContribution);
 });
 
 export const initTextMeasure = (
-  textSpec?: ITextGraphicAttribute,
+  textSpec?: ITextGraphicAttributeFroMeasure,
   option?: Partial<ITextMeasureOption>,
   useNaiveCanvas?: boolean
-): TextMeasure<ITextGraphicAttribute> => {
-  return new TextMeasure<ITextGraphicAttribute>(
+): TextMeasure<ITextGraphicAttributeFroMeasure> => {
+  return new TextMeasure<ITextGraphicAttributeFroMeasure>(
     {
       defaultFontParams: {
         fontFamily: DefaultTextStyle.fontFamily,
@@ -40,7 +44,7 @@ export const initTextMeasure = (
   );
 };
 
-const fastTextMeasureCache: Map<string, TextMeasure<ITextGraphicAttribute>> = new Map();
+const fastTextMeasureCache: Map<string, TextMeasure<ITextGraphicAttributeFroMeasure>> = new Map();
 
 function getFastTextMeasure(
   fontSize: number,

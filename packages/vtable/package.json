@@ -52,7 +52,7 @@
     "@visactor/vrender": "0.16.14",
     "@visactor/vrender-components": "0.16.14",
     "@visactor/vutils-extension": "1.5.1-alpha.0",
-    "@visactor/vutils": "0.16.6",
+    "@visactor/vutils": "~0.16.8",
     "@visactor/vscale": "0.16.0",
     "@visactor/vdataset": "~0.15.7",
     "cssfontparser": "^1.2.1"

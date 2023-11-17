@@ -114,8 +114,8 @@ function adjustElementToGroup(
   width: number,
   height: number,
   value: any
-): Group | undefined {
-  const customGroup = new Group({
+): VGroup | undefined {
+  const customGroup = new VGroup({
     x: 0,
     y: 0,
     width,
