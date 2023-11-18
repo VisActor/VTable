@@ -334,7 +334,7 @@ export interface BaseTableConstructorOptions {
    */
   limitMaxAutoWidth?: boolean | number;
   /**
-   * 限制列宽最小值。如设置为true 则拖拽改变列宽时限制列宽最小为10px，设置为false则不进行限制。默认为true
+   * 限制列宽最小值。如设置为true 则拖拽改变列宽时限制列宽最小为10px，设置为false则不进行限制。默认为10px
    */
   limitMinWidth?: boolean | number;
 
