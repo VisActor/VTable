@@ -183,6 +183,11 @@ export interface IBaseTableProtected {
    */
   limitMaxAutoWidth?: boolean | number;
 
+  /**
+   * 限制列宽最小值。
+   */
+  limitMinWidth?: number;
+
   title?: Title;
   legends?: DiscreteTableLegend | ContinueTableLegend;
 
@@ -325,9 +330,13 @@ export interface BaseTableConstructorOptions {
   /** 最大可操作条目数 如copy操作可复制出最大数据条目数 */
   maxOperatableRecordCount?: number;
   /**
-   * 计算列宽时 指定最大列宽 可设置boolean或者具体的值 默认为450
+   * 计算列宽时 指定最大列宽 可设置boolean或者具体的值 默认为450。手动拖拽列宽的话不收这个限制
    */
   limitMaxAutoWidth?: boolean | number;
+  /**
+   * 限制列宽最小值。如设置为true 则拖拽改变列宽时限制列宽最小为10px，设置为false则不进行限制。默认为true
+   */
+  limitMinWidth?: boolean | number;
 
   // maximum number of data items maintained in table instance
   maintainedDataCount?: number;
