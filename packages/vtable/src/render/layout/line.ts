@@ -95,7 +95,7 @@ export class Line {
       const element = this.children[i];
       let size;
       if (element.type === 'container') {
-        size = (element as Container).getContentSize();
+        size = (element as any).getContentSize();
       } else {
         size = {
           width: element.layoutWidth,
@@ -135,8 +135,8 @@ export class Line {
       } else {
         if (
           element.type === 'icon' &&
-          (((element as Icon).cache?.visibleTime === 'mouseenter_cell' && !isHover) ||
-            ((element as Icon).cache?.visibleTime === 'click_cell' && !isSelect))
+          (((element as any).cache?.visibleTime === 'mouseenter_cell' && !isHover) ||
+            ((element as any).cache?.visibleTime === 'click_cell' && !isSelect))
         ) {
           continue;
         }
