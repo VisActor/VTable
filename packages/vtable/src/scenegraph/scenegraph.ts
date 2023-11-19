@@ -1479,7 +1479,7 @@ export class Scenegraph {
       if (isString(text.cache.clipedText)) {
         cacheStr = text.cache.clipedText;
       } else {
-        (text.cache as ITextCache).layoutData.lines.forEach((line: any) => {
+        (text.cache as ITextCache).layoutData?.lines?.forEach((line: any) => {
           cacheStr += line.str;
         });
       }
