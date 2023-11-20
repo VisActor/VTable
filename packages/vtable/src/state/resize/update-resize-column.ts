@@ -34,6 +34,32 @@ export function updateResizeColumn(xInTable: number, yInTable: number, state: St
       detaX = minWidth - widthCache;
     }
   }
+
+  // limitMinWidth限制
+  let afterSize = state.table.getColWidth(state.columnResize.col) + detaX;
+  if (afterSize < state.table.internalProps.limitMinWidth) {
+    afterSize = state.table.internalProps.limitMinWidth;
+    detaX = afterSize - state.table.getColWidth(state.columnResize.col);
+  }
+  if (state.table.widthMode === 'adaptive' && state.columnResize.col < state.table.colCount - 1) {
+    const rightColWidthCache = state.table.getColWidth(state.columnResize.col + 1);
+    const rightColMinWidth = state.table.getMinColWidth(state.columnResize.col + 1);
+    const rightColMaxWidth = state.table.getMaxColWidth(state.columnResize.col + 1);
+    let rightColWidth = rightColWidthCache;
+    rightColWidth -= detaX;
+    if (rightColWidth < rightColMinWidth || rightColWidth > rightColMaxWidth) {
+      if (rightColWidthCache === rightColMinWidth || rightColWidthCache === rightColMaxWidth) {
+        return;
+      } else if (rightColWidthCache - rightColMinWidth > rightColMaxWidth - rightColWidthCache) {
+        detaX = rightColMaxWidth - rightColWidthCache;
+      } else {
+        detaX = rightColMinWidth - rightColWidthCache;
+      }
+    }
+    if (rightColWidth - detaX < state.table.internalProps.limitMinWidth) {
+      detaX = rightColWidth - state.table.internalProps.limitMinWidth;
+    }
+  }
   detaX = Math.ceil(detaX);
 
   if (
@@ -85,10 +111,10 @@ export function updateResizeColumn(xInTable: number, yInTable: number, state: St
 function updateResizeColForColumn(detaX: number, state: StateManeger) {
   if (state.table.widthMode === 'adaptive' && state.columnResize.col < state.table.colCount - 1) {
     // in adaptive mode, the right column width can not be negative
-    const rightColWidth = state.table.getColWidth(state.columnResize.col + 1);
-    if (rightColWidth - detaX < 0) {
-      detaX = rightColWidth;
-    }
+    // const rightColWidth = state.table.getColWidth(state.columnResize.col + 1);
+    // if (rightColWidth - detaX < 0) {
+    //   detaX = rightColWidth;
+    // }
     state.table.scenegraph.updateColWidth(state.columnResize.col, detaX);
     state.table.scenegraph.updateColWidth(state.columnResize.col + 1, -detaX);
 

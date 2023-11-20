@@ -50,6 +50,10 @@
 
 计算列宽时 指定最大列宽 可设置 boolean 或者具体的值 默认为 450
 
+#${prefix} limitMinWidth(boolean|number) = 10
+
+最小列宽限制。如设置为true 则拖拽改变列宽时限制列宽最小为10px，设置为false则不进行限制。或者直接将其设置为某个数字值。默认为10px。
+
 #${prefix} frozenColCount(number) = 0
 
 冻结列数
