@@ -1,8 +1,8 @@
 {
   "changes": [
     {
-      "comment": "refactor: add dpr argument when init vchart #570\n\n",
-      "type": "patch",
+      "comment": "feat: add column with min limit #590\nOpen\n\n",
+      "type": "minor",
       "packageName": "@visactor/vtable"
     }
   ],

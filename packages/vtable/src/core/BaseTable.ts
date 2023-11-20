@@ -190,7 +190,8 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
       modeParams,
       canvasWidth,
       canvasHeight,
-      overscrollBehavior
+      overscrollBehavior,
+      limitMinWidth
     } = options;
     this.container = container;
     this.options = options;
@@ -300,7 +301,14 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
 
     internalProps.allowFrozenColCount = options.allowFrozenColCount ?? internalProps.colCount;
     internalProps.limitMaxAutoWidth = options.limitMaxAutoWidth ?? 450;
-
+    internalProps.limitMinWidth =
+      limitMinWidth !== null && limitMinWidth !== undefined
+        ? typeof limitMinWidth === 'number'
+          ? limitMinWidth
+          : limitMinWidth
+          ? 10
+          : 0
+        : 10;
     // 生成scenegraph
     this._vDataSet = new DataSet();
     this.scenegraph = new Scenegraph(this);
@@ -1818,7 +1826,8 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
       customRender,
       renderChartAsync,
       renderChartAsyncBatchCount,
-      overscrollBehavior
+      overscrollBehavior,
+      limitMinWidth
     } = options;
     if (pixelRatio && pixelRatio !== this.internalProps.pixelRatio) {
       this.internalProps.pixelRatio = pixelRatio;
@@ -1896,6 +1905,14 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     internalProps.autoWrapText = options.autoWrapText;
     internalProps.allowFrozenColCount = options.allowFrozenColCount ?? internalProps.colCount;
     internalProps.limitMaxAutoWidth = options.limitMaxAutoWidth ?? 450;
+    internalProps.limitMinWidth =
+      limitMinWidth !== null && limitMinWidth !== undefined
+        ? typeof limitMinWidth === 'number'
+          ? limitMinWidth
+          : limitMinWidth
+          ? 10
+          : 0
+        : 10;
     // 生成scenegraph
     this._vDataSet = new DataSet();
     internalProps.legends?.release();
@@ -3085,7 +3102,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
       fontWeight: theme.text.fontWeight,
       fontVariant: theme.text.fontVariant,
       fontStyle: theme.text.fontStyle,
-      lineHeight: theme.text.lineHeight,
+      lineHeight: theme.text.lineHeight as number,
       autoWrapText: autoWrapText ?? false,
       lineClamp: lineClamp ?? 'auto',
       textOverflow,

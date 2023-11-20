@@ -17,6 +17,11 @@ export async function dynamicSetX(x: number, proxy: SceneProxy) {
   proxy.screenLeftCol = screenLeftCol;
   const deltaCol = proxy.screenLeftCol - proxy.referenceCol;
 
+  move(deltaCol, screenLeftCol, screenLeftX, x, proxy);
+  proxy.table.scenegraph.updateNextFrame();
+}
+
+function move(deltaCol: number, screenLeftCol: number, screenLeftX: number, x: number, proxy: SceneProxy) {
   if (deltaCol > 0) {
     // 向右滚动，左部column group移到右部
     moveColumn(deltaCol, 'left', proxy.screenLeftCol, screenLeftX, proxy);
@@ -29,8 +34,6 @@ export async function dynamicSetX(x: number, proxy: SceneProxy) {
     // 不改变row，更新body group范围
     proxy.table.scenegraph.setBodyAndColHeaderX(-x + proxy.deltaX);
   }
-
-  proxy.table.scenegraph.updateNextFrame();
 }
 
 async function moveColumn(
@@ -45,6 +48,10 @@ async function moveColumn(
     count = proxy.bodyRightCol - proxy.colEnd;
   } else if (direction === 'right' && proxy.colStart - count < proxy.bodyLeftCol) {
     count = proxy.colStart - proxy.bodyLeftCol;
+  }
+  if (count < 0) {
+    direction = direction === 'left' ? 'right' : 'left';
+    count = -count;
   }
 
   if (count <= 0) {
