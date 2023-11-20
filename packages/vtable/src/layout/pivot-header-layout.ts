@@ -963,10 +963,10 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
     if (row < this.columnHeaderLevelCount) {
       return true;
     }
-    if (col >= this.colCount - this.rightFrozenColCount) {
+    if (col >= this.colCount - this.rightHeaderColCount) {
       return true;
     }
-    if (row >= this.rowCount - this.bottomFrozenRowCount) {
+    if (row >= this.rowCount - this.bottomHeaderRowCount) {
       return true;
     }
     return false;
@@ -1205,9 +1205,7 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
   }
   get colCount(): number {
     return (
-      this.columnDimensionTree.tree.size +
-      this.rowHeaderLevelCount +
-      (this._table.isPivotChart() ? this.rightFrozenColCount : 0) // 小心rightFrozenColCount和colCount的循环引用 造成调用栈溢出
+      this.columnDimensionTree.tree.size + this.rowHeaderLevelCount + this.rightHeaderColCount // 小心rightFrozenColCount和colCount的循环引用 造成调用栈溢出
     );
   }
   get rowCount(): number {
@@ -1218,7 +1216,7 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
         ? 1 //兼容bugserver: https://bugserver.cn.goofy.app/case?product=VTable&fileid=65364a57173c354c242a7c4f
         : this._rowHeaderCellIds?.length ?? 0) + //兼容 bugserver：https://bugserver.cn.goofy.app/case?product=VTable&fileid=6527ac0695c0cdbd788cf17d
       this.columnHeaderLevelCount +
-      (this._table.isPivotChart() ? this.bottomFrozenRowCount : 0) // 小心bottomFrozenRowCount和rowCount的循环引用 造成调用栈溢出
+      this.bottomHeaderRowCount // 小心bottomFrozenRowCount和rowCount的循环引用 造成调用栈溢出
     );
     // return (this._rowHeaderCellIds?.length ?? 0) + this.columnHeaderLevelCount + this.bottomFrozenRowCount;
   }
@@ -1302,7 +1300,7 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
     return 0;
   }
 
-  /** 不包括冻结的行 */
+  /** 不包括冻结的行 还是不确定应不应该包括*/
   get bodyRowCount(): number | undefined {
     return this.rowCount - this.bottomFrozenRowCount - this.headerLevelCount;
   }
@@ -1498,7 +1496,7 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
   getBodyIndexByRow(row: number): number {
     if (row < this.columnHeaderLevelCount) {
       return -1;
-    } else if (row >= this.rowCount - this.bottomFrozenRowCount) {
+    } else if (row >= this.rowCount - this.bottomHeaderRowCount) {
       return -1;
     }
     return row - this.columnHeaderLevelCount;
@@ -1506,10 +1504,23 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
     //   ? row - this.columnHeaderLevelCount
     //   : Math.floor((row - this.columnHeaderLevelCount) / this.indicatorKeys.length);
   }
+  get bottomHeaderRowCount() {
+    if (this._table.isPivotChart()) {
+      return this.bottomFrozenRowCount;
+    }
+    return 0;
+  }
+
+  get rightHeaderColCount() {
+    if (this._table.isPivotChart()) {
+      return this.rightFrozenColCount;
+    }
+    return 0;
+  }
   getBodyIndexByCol(col: number): number {
     if (col < this.rowHeaderLevelCount) {
       return -1;
-    } else if (col >= this.colCount - this.rightFrozenColCount) {
+    } else if (col >= this.colCount - this.rightHeaderColCount) {
       return -1;
     }
     return col - this.rowHeaderLevelCount;
