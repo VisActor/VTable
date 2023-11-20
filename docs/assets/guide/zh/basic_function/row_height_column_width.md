@@ -73,6 +73,19 @@ const table = new VTable.ListTable({
 });
 ```
 
+## 列宽限制配置：limitMinWidth
+
+在拖拽列宽时很容易将宽度拖拽为0，这样可能造成再想将其拖拽回去有一定交互问题，或者功能限制不应该拖拽成隐藏列，这个时候可以通过配置`limitMinWidth`来限制最小列宽，如限制为最小可拖拽宽度为20。
+
+注意：如设置为true 则拖拽改变列宽时限制列宽最小为10px，设置为false则不进行限制。或者直接将其设置为某个数字值。默认为10px。
+
+```javascript
+ table = new VTable.ListTable({
+  // ...其他配置项
+  limitMinWidth: 20,
+});
+```
+
 ## 列宽撑满容器：autoFillWidth
 配置项 autoFillWidth，用于控制是否自动撑满容器宽度。区别于宽度模式`widthMode`的`adaptive`的自适应容器的效果，autoFillWidth控制的是只有当列数较少的时候，表格可以自动撑满容器宽度，但是当列数超过容器的时候根据真实情况来定列宽可出现滚动条。
 ```javascript
