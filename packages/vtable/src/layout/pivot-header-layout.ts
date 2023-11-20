@@ -1204,7 +1204,11 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
     return this.indicatorsAsCol ? 0 : this.hideIndicatorName ? 0 : 1;
   }
   get colCount(): number {
-    return this.columnDimensionTree.tree.size + this.rowHeaderLevelCount + this.rightFrozenColCount;
+    return (
+      this.columnDimensionTree.tree.size +
+      this.rowHeaderLevelCount +
+      (this._table.isPivotChart() ? this.rightFrozenColCount : 0) // 小心rightFrozenColCount和colCount的循环引用 造成调用栈溢出
+    );
   }
   get rowCount(): number {
     return (
@@ -1214,7 +1218,7 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
         ? 1 //兼容bugserver: https://bugserver.cn.goofy.app/case?product=VTable&fileid=65364a57173c354c242a7c4f
         : this._rowHeaderCellIds?.length ?? 0) + //兼容 bugserver：https://bugserver.cn.goofy.app/case?product=VTable&fileid=6527ac0695c0cdbd788cf17d
       this.columnHeaderLevelCount +
-      this.bottomFrozenRowCount
+      (this._table.isPivotChart() ? this.bottomFrozenRowCount : 0) // 小心bottomFrozenRowCount和rowCount的循环引用 造成调用栈溢出
     );
     // return (this._rowHeaderCellIds?.length ?? 0) + this.columnHeaderLevelCount + this.bottomFrozenRowCount;
   }
