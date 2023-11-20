@@ -1,6 +1,6 @@
 const { plugin: mdPlugin, Mode } = require('vite-plugin-markdown');
 const react = require('@vitejs/plugin-react');
-
+const path = require('path');
 module.exports = {
   server: {
     host: '0.0.0.0',
@@ -11,7 +11,9 @@ module.exports = {
     __DEV__: true,
     __VERSION__: JSON.stringify(require('../package.json').version)
   },
-  resolve: {},
+  resolve: {
+    alias: { '@visactor/vtable-editors': path.resolve(__dirname, '../../vtable-editors/src/index.ts') }
+  },
   plugins: [
     mdPlugin({ mode: [Mode.HTML, Mode.MARKDOWN, Mode.TOC, Mode.REACT] }),
     react({
