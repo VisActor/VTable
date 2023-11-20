@@ -24,6 +24,8 @@ import type {
 } from '../eventsUtils';
 import { bindEventsToTable, TABLE_EVENTS_KEYS, TABLE_EVENTS } from '../eventsUtils';
 
+export type IVTable = VTable.ListTable | VTable.PivotTable | VTable.PivotChart;
+
 export interface BaseTableProps extends EventsProps {
   type?: string;
   /** 上层container */
@@ -31,21 +33,30 @@ export interface BaseTableProps extends EventsProps {
   /** option */
   option?: any;
   /** 数据 */
-  records?: any[];
+  records?: any;
   /** 画布宽度 */
   width?: number;
   /** 画布高度 */
   height?: number;
+  skipFunctionDiff?: boolean;
 
   /** 表格渲染完成事件 */
-  // onReady?: (instance: VTable.BaseTableAPI, isInitial: boolean) => void;
+  onReady?: (instance: IVTable, isInitial: boolean) => void;
   /** throw error when chart run into an error */
-  // onError?: (err: Error) => void;
+  onError?: (err: Error) => void;
 }
 
 type Props = React.PropsWithChildren<BaseTableProps>;
 
-const notOptionKeys = [...REACT_PRIVATE_PROPS, ...TABLE_EVENTS_KEYS, 'option', 'container'];
+const notOptionKeys = [
+  ...REACT_PRIVATE_PROPS,
+  ...TABLE_EVENTS_KEYS,
+  'skipFunctionDiff',
+  'onError',
+  'onReady',
+  'option',
+  'container'
+];
 
 const BaseTable: React.FC<Props> = React.forwardRef((props, ref) => {
   const [updateId, setUpdateId] = useState<number>(0);
@@ -57,6 +68,7 @@ const BaseTable: React.FC<Props> = React.forwardRef((props, ref) => {
   const isUnmount = useRef<boolean>(false);
   const prevOption = useRef(pickWithout(props, notOptionKeys));
   const eventsBinded = React.useRef<BaseTableProps>(null);
+  const skipFunctionDiff = !!props.skipFunctionDiff;
 
   const parseOption = useCallback(
     (props: Props) => {
@@ -87,22 +99,34 @@ const BaseTable: React.FC<Props> = React.forwardRef((props, ref) => {
     [parseOption]
   );
 
-  // const handleTableRender = () => {
-  //   // rebind events after render
-  //   bindEventsToTable(tableContext.current.table, props, eventsBinded.current, CHART_EVENTS);
+  const handleTableRender = useCallback(() => {
+    // rebind events after render
+    bindEventsToTable(tableContext.current.table, props, eventsBinded.current, TABLE_EVENTS);
 
-  //   if (!isUnmount.current) {
-  //     setUpdateId(updateId + 1);
-  //     if (props.onReady) {
-  //       props.onReady(tableContext.current.table, updateId === 0);
-  //     }
-  //   }
-  // };
+    if (!isUnmount.current) {
+      setUpdateId(updateId + 1);
+      if (props.onReady) {
+        props.onReady(tableContext.current.table, updateId === 0);
+      }
+    }
+  }, [updateId, setUpdateId, props]);
+
+  const renderTable = useCallback(() => {
+    if (tableContext.current.table) {
+      // eslint-disable-next-line promise/catch-or-return
+      const renderPromise = tableContext.current.table.renderAsync().then(handleTableRender);
+
+      if (props.onError) {
+        renderPromise.catch(props.onError);
+      }
+    }
+  }, [handleTableRender, props]);
 
   useEffect(() => {
     if (!tableContext.current.table) {
       createTable(props);
-      // bindEventsToTable(tableContext.current.table, props, null, TABLE_EVENTS);
+      renderTable();
+      bindEventsToTable(tableContext.current.table, props, null, TABLE_EVENTS);
       tableContext.current = {
         ...tableContext.current,
         isChildrenUpdated: false
@@ -112,28 +136,39 @@ const BaseTable: React.FC<Props> = React.forwardRef((props, ref) => {
     }
 
     if (hasOption) {
-      if (!isEqual(eventsBinded.current.option, props.option)) {
+      if (!isEqual(eventsBinded.current.option, props.option, { skipFunction: skipFunctionDiff })) {
         eventsBinded.current = props;
         // eslint-disable-next-line promise/catch-or-return
         tableContext.current.table.updateOption(parseOption(props));
-        // rebind events after render
+        const updatePromise = tableContext.current.table.renderAsync().then(handleTableRender);
+
+        if (props.onError) {
+          updatePromise.catch(props.onError);
+        }
       }
       return;
     }
 
     const newOption = pickWithout(props, notOptionKeys);
 
-    if (!isEqual(newOption, prevOption.current) || tableContext.current.isChildrenUpdated) {
+    if (
+      !isEqual(newOption, prevOption.current, { skipFunction: skipFunctionDiff }) ||
+      tableContext.current.isChildrenUpdated
+    ) {
       prevOption.current = newOption;
       // eslint-disable-next-line promise/catch-or-return
       tableContext.current.table.updateOption(parseOption(props));
-      // rebind events after render
+      const updatePromise = tableContext.current.table.renderAsync().then(handleTableRender);
+
+      if (props.onError) {
+        updatePromise.catch(props.onError);
+      }
     }
     tableContext.current = {
       ...tableContext.current,
       isChildrenUpdated: false
     };
-  }, [createTable, hasOption, parseOption, props]);
+  }, [createTable, hasOption, parseOption, handleTableRender, renderTable, skipFunctionDiff, props]);
 
   useEffect(() => {
     return () => {

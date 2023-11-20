@@ -48,7 +48,7 @@
   },
   "dependencies": {
     "@visactor/vtable": "workspace:*",
-    "@visactor/vutils": "0.16.6",
+    "@visactor/vutils": "~0.16.10",
     "react-is": "^18.2.0"
   },
   "devDependencies": {

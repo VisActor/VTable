@@ -1,6 +1,5 @@
 import { ListTable } from '@visactor/vtable';
-
-type IVTable = ListTable;
+import type { IVTable } from './tables/base-table';
 
 export interface EventsProps {
   onMouseMoveCell?: () => void;

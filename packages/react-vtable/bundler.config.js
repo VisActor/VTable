@@ -11,9 +11,7 @@ module.exports = {
     treeshake: true
   },
   globals: {
-    '@visactor/vtable': 'VTable',
+    '@visactor/vtable': 'VTable'
   },
-  external: [
-    '@visactor/vtable'
-  ]
+  external: ['@visactor/vtable']
 };
