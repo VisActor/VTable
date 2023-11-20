@@ -14,16 +14,14 @@
       }
     ],
     "strict": false,
+    "paths": {
+      "@visactor/vtable-editors": ["../vtable-editors/src/index.ts"]
+    }
   },
   "ts-node": {
     "transpileOnly": true,
     "compilerOptions": {
       "module": "commonjs"
     }
-  },
-  "references": [
-    {
-      "path": "../vtable-editors"
-    }
-  ],
+  }
 }

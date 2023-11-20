@@ -4,7 +4,12 @@
     "types": ["jest", "offscreencanvas", "node"],
     "lib": ["DOM", "ESNext"],
     "baseUrl": "./",
-    "rootDir": "./"
+    "rootDir": "./",
+    "paths": {
+      "@visactor/vtable-editors": [
+        "../vtable-editors/src"
+      ]
+    }
   },
   "include": ["src", "__tests__", "examples", "site-demo"],
   "exclude": ["bugserver-config"]
