@@ -370,7 +370,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
     if (table.transpose) {
       table.rowCount = layoutMap.rowCount ?? 0;
       table.colCount =
-        (table.internalProps.dataSource?.length ?? 0) * layoutMap.bodyRowCount + layoutMap.headerLevelCount;
+        (table.internalProps.dataSource?.length ?? 0) * layoutMap.bodyRowSpanCount + layoutMap.headerLevelCount;
       table.frozenRowCount = 0;
       table.frozenColCount = layoutMap.headerLevelCount;
 
@@ -378,7 +378,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
     } else {
       table.colCount = layoutMap.colCount ?? 0;
       table.rowCount =
-        (table.internalProps.dataSource?.length ?? 0) * layoutMap.bodyRowCount + layoutMap.headerLevelCount;
+        (table.internalProps.dataSource?.length ?? 0) * layoutMap.bodyRowSpanCount + layoutMap.headerLevelCount;
       table.frozenColCount = table.options.frozenColCount ?? 0; //TODO
       table.frozenRowCount = layoutMap.headerLevelCount;
 

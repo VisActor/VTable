@@ -834,17 +834,17 @@ export class Scenegraph {
     }
 
     if (this.table.rightFrozenColCount > 0) {
-      this.rightFrozenGroup.setAttribute('x', this.tableGroup.attribute.width - this.rightFrozenGroup.attribute.width);
+      this.rightFrozenGroup.setAttribute('x', this.tableGroup.attribute.width - this.table.getRightFrozenColsWidth());
       this.rightTopCornerGroup.setAttributes({
         visible: true,
-        x: this.tableGroup.attribute.width - this.rightFrozenGroup.attribute.width,
-        width: this.rightFrozenGroup.attribute.width,
+        x: this.tableGroup.attribute.width - this.table.getRightFrozenColsWidth(),
+        width: this.table.getRightFrozenColsWidth(),
         height: this.table.getFrozenRowsHeight()
       });
       this.rightBottomCornerGroup.setAttributes({
         visible: true,
-        x: this.tableGroup.attribute.width - this.rightFrozenGroup.attribute.width,
-        width: this.rightFrozenGroup.attribute.width
+        x: this.tableGroup.attribute.width - this.table.getRightFrozenColsWidth(),
+        width: this.table.getRightFrozenColsWidth()
       });
     }
   }
@@ -984,13 +984,13 @@ export class Scenegraph {
    * @return {*}
    */
   setBodyAndColHeaderX(x: number) {
-    if (this.rowHeaderGroup.attribute.width + x === this.bodyGroup.attribute.x) {
+    if (this.table.getFrozenColsWidth() + x === this.bodyGroup.attribute.x) {
       return;
     }
-    this.bodyGroup.setAttribute('x', this.rowHeaderGroup.attribute.width + x);
-    this.colHeaderGroup.setAttribute('x', this.rowHeaderGroup.attribute.width + x);
+    this.bodyGroup.setAttribute('x', this.table.getFrozenColsWidth() + x);
+    this.colHeaderGroup.setAttribute('x', this.table.getFrozenColsWidth() + x);
     if (this.table.bottomFrozenRowCount > 0) {
-      this.bottomFrozenGroup.setAttribute('x', this.rowHeaderGroup.attribute.width + x);
+      this.bottomFrozenGroup.setAttribute('x', this.table.getFrozenColsWidth() + x);
     }
     this.updateNextFrame();
   }
@@ -1273,16 +1273,16 @@ export class Scenegraph {
     this.leftBottomCornerGroup.setDeltaWidth(cornerX - this.leftBottomCornerGroup.attribute.width);
     //TODO 可能有影响
     this.colHeaderGroup.setDeltaWidth(colHeaderX - this.colHeaderGroup.attribute.width);
-    this.rightFrozenGroup.setDeltaWidth(colHeaderX - this.rightFrozenGroup.attribute.width);
+    this.rightFrozenGroup.setDeltaWidth(colHeaderX - this.table.getRightFrozenColsWidth());
     this.rowHeaderGroup.setDeltaWidth(rowHeaderX - this.rowHeaderGroup.attribute.width);
     this.bottomFrozenGroup.setDeltaWidth(rowHeaderX - this.bottomFrozenGroup.attribute.width);
-    this.rightFrozenGroup.setDeltaWidth(rightX - this.rightFrozenGroup.attribute.width);
+    this.rightFrozenGroup.setDeltaWidth(rightX - this.table.getRightFrozenColsWidth());
     this.rightTopCornerGroup.setDeltaWidth(rightX - this.rightTopCornerGroup.attribute.width);
     this.rightBottomCornerGroup.setDeltaWidth(rightX - this.rightBottomCornerGroup.attribute.width);
     this.bodyGroup.setDeltaWidth(bodyX - this.bodyGroup.attribute.width);
 
     this.colHeaderGroup.setAttribute('x', this.cornerHeaderGroup.attribute.width);
-    this.bottomFrozenGroup.setAttribute('x', this.rowHeaderGroup.attribute.width);
+    this.bottomFrozenGroup.setAttribute('x', this.table.getFrozenColsWidth());
     this.bodyGroup.setAttribute('x', this.rowHeaderGroup.attribute.width);
   }
 

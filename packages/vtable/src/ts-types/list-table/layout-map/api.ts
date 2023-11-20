@@ -210,7 +210,7 @@ interface LayoutMapAPI {
   readonly headerLevelCount: number;
   readonly rowHeaderLevelCount: number;
   readonly columnHeaderLevelCount: number;
-  readonly bodyRowCount: number;
+  readonly bodyRowSpanCount: number;
   readonly colCount: number | undefined;
   readonly rowCount: number | undefined;
   readonly columnWidths: WidthData[];
