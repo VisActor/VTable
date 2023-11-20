@@ -1118,10 +1118,22 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
     // for (let row = 0; row < this.columnHeaderLevelCount; row++) {}
   }
   get frozenColCount(): number {
-    return this._table.internalProps.frozenColCount ?? 0;
+    if (this._table.internalProps.frozenColCount) {
+      if (this.colCount > this._table.internalProps.frozenColCount) {
+        return this._table.internalProps.frozenColCount;
+      }
+      return this.colCount;
+    }
+    return 0;
   }
   get frozenRowCount(): number {
-    return this._table.internalProps.frozenRowCount ?? 0;
+    if (this._table.internalProps.frozenRowCount) {
+      if (this.rowCount >= this._table.internalProps.frozenRowCount) {
+        return this._table.internalProps.frozenRowCount;
+      }
+      return this.rowCount;
+    }
+    return 0;
   }
   get headerLevelCount(): number {
     return this.columnHeaderLevelCount;
@@ -1206,7 +1218,7 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
     );
     // return (this._rowHeaderCellIds?.length ?? 0) + this.columnHeaderLevelCount + this.bottomFrozenRowCount;
   }
-  get bodyRowCount() {
+  get bodyRowSpanCount() {
     return this.rowDimensionTree.tree.size;
   }
   get bottomFrozenRowCount(): number {
@@ -1225,8 +1237,15 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
     //上面是原有逻辑
     //下面是pivot-layout中逻辑
     if (!this._table.isPivotChart()) {
+      if (this._table.internalProps.bottomFrozenRowCount) {
+        if (this.rowCount - this.headerLevelCount >= this._table.internalProps.bottomFrozenRowCount) {
+          return this._table.internalProps.bottomFrozenRowCount;
+        }
+        return this.rowCount - this.headerLevelCount;
+      }
       return 0;
     }
+
     const axisOption = ((this._table as PivotChart).pivotChartAxes as ITableAxisOption[]).find(axisOption => {
       return axisOption.orient === 'bottom';
     });
@@ -1255,6 +1274,12 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
     //上面是原有逻辑
     //下面是pivot-layout中逻辑
     if (!this._table.isPivotChart()) {
+      if (this._table.internalProps.rightFrozenColCount) {
+        if (this.colCount - this.rowHeaderLevelCount >= this._table.internalProps.rightFrozenColCount) {
+          return this._table.internalProps.rightFrozenColCount;
+        }
+        return this.colCount - this.rowHeaderLevelCount;
+      }
       return 0;
     }
     const axisOption = ((this._table as PivotChart).pivotChartAxes as ITableAxisOption[]).find(axisOption => {
@@ -1271,6 +1296,15 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
       return 1;
     }
     return 0;
+  }
+
+  /** 不包括冻结的行 */
+  get bodyRowCount(): number | undefined {
+    return this.rowCount - this.bottomFrozenRowCount - this.headerLevelCount;
+  }
+  /** 不包括冻结的列 */
+  get bodyColCount(): number | undefined {
+    return this.colCount - this.rightFrozenColCount - this.rowHeaderLevelCount;
   }
   get headerObjects(): HeaderData[] {
     return this._headerObjects;
