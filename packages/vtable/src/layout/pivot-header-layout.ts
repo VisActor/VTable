@@ -32,7 +32,7 @@ import { diffCellAddress } from '../tools/diff-cell';
 import type { ILinkDimension } from '../ts-types/pivot-table/dimension/link-dimension';
 import type { IImageDimension } from '../ts-types/pivot-table/dimension/image-dimension';
 import { getChartAxes, getChartDataId, getChartSpec, getRawChartSpec } from './chart-helper/get-chart-spec';
-import type { ExportTreeNode, IPivotLayoutHeadNode } from './pivot-layout-helper';
+import type { LayouTreeNode, IPivotLayoutHeadNode } from './pivot-layout-helper';
 import { DimensionTree, countLayoutTree, generateLayoutTree } from './pivot-layout-helper';
 import type { Dataset } from '../dataset/dataset';
 import { cloneDeep, isArray, isValid } from '@visactor/vutils';
@@ -2807,7 +2807,7 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
   }
   /** 获取行头树结构 */
   getLayoutRowTree() {
-    const tree: ExportTreeNode[] = [];
+    const tree: LayouTreeNode[] = [];
     const children = this.rowDimensionTree.tree.children;
     generateLayoutTree(tree, children);
     return tree;

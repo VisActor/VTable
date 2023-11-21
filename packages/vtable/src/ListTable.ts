@@ -677,4 +677,14 @@ export class ListTable extends BaseTable implements ListTableAPI {
     }
     return this.stateManeger.checkedState;
   }
+
+  /**
+   * 基本表格树形展示场景下，如果需要动态插入子节点的数据可以配合使用该接口，其他情况不适用
+   * @param col col position of the record, it is optional
+   * @param row row position of the record, it is optional
+   */
+  setRecord(record: any, col?: number, row?: number) {
+    const index = this.getRecordIndexByCell(col, row);
+    this.dataSource.setRecord(record, index);
+  }
 }

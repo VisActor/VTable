@@ -129,9 +129,10 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
     );
 
     this.refreshHeader();
-    if (options.dataSource) {
-      _setDataSource(this, options.dataSource);
-    } else if (options.records) {
+    // if (options.dataSource) {
+    //   _setDataSource(this, options.dataSource);
+    // } else
+    if (options.records) {
       this.setRecords(options.records as any, this.internalProps.sortState);
     } else {
       this.setRecords([]);
@@ -249,9 +250,10 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
     // internalProps.selection.range = range;
     // this._updateSize();
     // 传入新数据
-    if (options.dataSource) {
-      _setDataSource(this, options.dataSource);
-    } else if (options.records) {
+    // if (options.dataSource) {
+    //   _setDataSource(this, options.dataSource);
+    // }else
+    if (options.records) {
       this.setRecords(options.records as any, undefined);
     } else {
       this._resetFrozenColCount();

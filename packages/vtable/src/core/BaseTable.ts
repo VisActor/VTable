@@ -2711,16 +2711,6 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     this.render();
     console.log('setRecords cost time:', (typeof window !== 'undefined' ? window.performance.now() : 0) - time);
   }
-  /**
-   * add or update a single record, col and row is optional, but all missing will be invalid
-   * @param col col position of the record, it is optional
-   * @param row row position of the record, it is optional
-   */
-  setRecord(record: any, col?: number, row?: number) {
-    const index = this.getRecordIndexByCell(col, row);
-    this.dataSource.setRecord(record, index);
-  }
-
   setDropDownMenuHighlight(cells: DropDownMenuHighlightInfo[]): void {
     this.stateManeger.setDropDownMenuHighlight(cells);
   }

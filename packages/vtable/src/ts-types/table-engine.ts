@@ -10,6 +10,7 @@ import type { IChartIndicator, ICornerDefine, IDimension, IIndicator, ITitleDefi
 import type { ColumnsDefine } from './list-table';
 import type { ICellAxisOption, ITableAxisOption } from './component/axis';
 import type { ITextStyleOption } from '../body-helper/style';
+import type { DataSource } from '../data';
 
 export interface CellAddress {
   col: number;
@@ -107,6 +108,10 @@ export interface ListTableConstructorOptions extends BaseTableConstructorOptions
    * 数据集合
    */
   records?: any[];
+  /**
+   * 传入用户实例化的数据对象 目前不完善
+   */
+  dataSource?: DataSource;
   /**
    * 是否显示表头
    */

@@ -376,6 +376,31 @@ enum HierarchyState {
   none = 'none'
 }
 ```
+## getLayouRowTree(Function)
+** PivotTable Proprietary **
+
+Get the table row header tree structure
+```
+  /**
+   * Get the table row tree structure
+   * @returns
+   */
+  getLayouRowTree() : LayoutTreeNode[]
+```
+
+## getLayouRowTreeCount(Function)
+** PivotTable Proprietary **
+
+Get the total number of nodes occupying the table row header tree structure.
+
+Note: The logic distinguishes between flat and tree hierarchies.
+```
+  /**
+   * Get the total number of nodes occupying the table row header tree structure.
+   * @returns
+   */
+  getLayouRowTreeCount() : number
+```
 
 ## updateSortState(Function)
 

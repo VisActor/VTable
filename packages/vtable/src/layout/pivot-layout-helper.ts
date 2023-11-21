@@ -253,15 +253,15 @@ export class DimensionTree {
 }
 
 //#region 为方法getLayoutRowTree提供的类型和工具方法
-export type ExportTreeNode = {
+export type LayouTreeNode = {
   dimensionKey?: string;
   indicatorKey?: string;
   value: string;
   hierarchyState: HierarchyState;
-  children?: ExportTreeNode[];
+  children?: LayouTreeNode[];
 };
 
-export function generateLayoutTree(tree: ExportTreeNode[], children: IPivotLayoutHeadNode[]) {
+export function generateLayoutTree(tree: LayouTreeNode[], children: IPivotLayoutHeadNode[]) {
   children?.forEach((node: IPivotLayoutHeadNode) => {
     const diemnsonNode: {
       dimensionKey?: string;

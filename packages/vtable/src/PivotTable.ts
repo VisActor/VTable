@@ -29,7 +29,7 @@ import type { PivotTableProtected } from './ts-types/base-table';
 import { Title } from './components/title/title';
 import { cloneDeep } from '@visactor/vutils';
 import { Env } from './tools/env';
-import type { ExportTreeNode } from './layout/pivot-layout-helper';
+import type { LayouTreeNode } from './layout/pivot-layout-helper';
 
 export class PivotTable extends BaseTable implements PivotTableAPI {
   declare internalProps: PivotTableProtected;
@@ -123,9 +123,10 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
       this.updatePivotSortState(options.pivotSortState);
     }
 
-    if (options.dataSource) {
-      _setDataSource(this, options.dataSource);
-    } else if (options.records) {
+    // if (options.dataSource) {
+    //   _setDataSource(this, options.dataSource);
+    // } else
+    if (options.records) {
       this.setRecords(options.records as any, this.internalProps.sortState);
     } else {
       this.setRecords([]);
@@ -249,9 +250,10 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
     // internalProps.selection.range = range;
     // this._updateSize();
     // 传入新数据
-    if (options.dataSource) {
-      _setDataSource(this, options.dataSource);
-    } else if (options.records) {
+    // if (options.dataSource) {
+    //   _setDataSource(this, options.dataSource);
+    // } else
+    if (options.records) {
       this.setRecords(options.records as any, undefined);
     } else {
       this._resetFrozenColCount();
@@ -771,11 +773,11 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
     return this._getHeaderLayoutMap(col, row)?.hierarchyState;
   }
   /** 获取行头树结构 */
-  getLayoutRowTree(): ExportTreeNode[] {
+  getLayoutRowTree(): LayouTreeNode[] {
     const layoutMap = this.internalProps.layoutMap;
     return layoutMap.getLayoutRowTree();
   }
-  /** 获取行头树结构的总节点数 */
+  /** 获取表格行头树形结构的占位的总节点数 */
   getLayoutRowTreeCount(): number {
     const layoutMap = this.internalProps.layoutMap;
     return layoutMap.getLayoutRowTreeCount();
