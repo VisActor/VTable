@@ -564,6 +564,7 @@ export function bindTableGroupListener(eventManeger: EventManeger) {
         const cellsEvent: MousePointerMultiCellEvent = {
           ...cellInfo,
           event: e.nativeEvent,
+          federatedEvent: e,
           cells: [],
           targetIcon: icon
             ? {

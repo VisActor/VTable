@@ -258,8 +258,8 @@ export function createTable() {
     {
       field: 'employedSince',
       title: 'employedSince',
-      width: 120
-      // editor: 'custom-date'
+      width: 120,
+      editor: 'custom-date'
     },
     {
       field: 'sex',
