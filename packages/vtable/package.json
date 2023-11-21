@@ -49,8 +49,8 @@
     "test-nodejs": "ts-node --transpileOnly --skipProject ./nodejs/index.ts"
   },
   "dependencies": {
-    "@visactor/vrender": "0.16.14",
-    "@visactor/vrender-components": "0.16.14",
+    "@visactor/vrender": "0.16.16",
+    "@visactor/vrender-components": "0.16.16",
     "@visactor/vutils-extension": "1.5.1-alpha.0",
     "@visactor/vutils": "~0.16.8",
     "@visactor/vscale": "0.16.0",
