@@ -33,13 +33,7 @@ import type { ILinkDimension } from '../ts-types/pivot-table/dimension/link-dime
 import type { IImageDimension } from '../ts-types/pivot-table/dimension/image-dimension';
 import { getChartAxes, getChartDataId, getChartSpec, getRawChartSpec } from './chart-helper/get-chart-spec';
 import type { ExportTreeNode, IPivotLayoutHeadNode } from './pivot-layout-helper';
-import {
-  DimensionTree,
-  countLayoutTree,
-  foreachLayoutTree,
-  generateExportTree,
-  generateLayoutTree
-} from './pivot-layout-helper';
+import { DimensionTree, countLayoutTree, generateLayoutTree } from './pivot-layout-helper';
 import type { Dataset } from '../dataset/dataset';
 import { cloneDeep, isArray, isValid } from '@visactor/vutils';
 import type { TextStyle } from '../body-helper/style';
