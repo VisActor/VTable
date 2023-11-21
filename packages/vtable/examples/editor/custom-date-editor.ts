@@ -1,6 +1,6 @@
 import * as VTable from '../../src';
 import type { IEditor, RectProps, Placement } from '@visactor/vtable-editors';
-import { DateInputEditor, InputEditor } from '@visactor/vtable-editors';
+import { DateInputEditor, InputEditor, ListEditor } from '@visactor/vtable-editors';
 import * as luxon from 'luxon';
 import * as Pikaday from 'pikaday';
 import '../../node_modules/pikaday/css/pikaday.css';
@@ -9,6 +9,8 @@ const date_editor = new DateInputEditor({});
 VTable.register.editor('date', date_editor);
 const input_editor = new InputEditor({});
 VTable.register.editor('input', input_editor);
+const list_editor = new ListEditor({ values: ['girl', 'boy'] });
+VTable.register.editor('list', list_editor);
 
 class DateEditor implements IEditor {
   editorConfig: any;
@@ -262,7 +264,9 @@ export function createTable() {
     {
       field: 'sex',
       title: 'sex',
-      width: 100
+      width: 100,
+      editor: 'list',
+      values: ['girl', 'body']
     },
     {
       field: 'tel',
