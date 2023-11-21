@@ -9,7 +9,7 @@ const date_editor = new DateInputEditor({});
 VTable.register.editor('date', date_editor);
 const input_editor = new InputEditor({});
 VTable.register.editor('input', input_editor);
-const list_editor = new ListEditor({ values: ['girl', 'body'] });
+const list_editor = new ListEditor({ values: ['girl', 'boy'] });
 VTable.register.editor('list', list_editor);
 
 class DateEditor implements IEditor {

@@ -10,17 +10,23 @@ export class ListEditor implements IEditor {
   container: HTMLElement;
   element: HTMLSelectElement;
   successCallback: Function;
+
   constructor(editorConfig: ListEditorConfig) {
-    console.log('listEditor constructor');
     this.editorConfig = editorConfig;
   }
+
   createElement(value: string) {
+    // create select tag
     const select = document.createElement('select');
     select.setAttribute('type', 'text');
     select.style.position = 'absolute';
     select.style.padding = '4px';
     select.style.width = '100%';
     select.style.boxSizing = 'border-box';
+
+    this.element = select;
+
+    // create option tags
     const { values } = this.editorConfig;
     let opsStr = '';
     values.forEach(item => {
@@ -29,19 +35,25 @@ export class ListEditor implements IEditor {
     });
     select.innerHTML = opsStr;
 
-    this.element = select;
-
     this.container.appendChild(select);
+    // this._bindSelectChangeEvent();
   }
+
+  _bindSelectChangeEvent() {
+    this.element.addEventListener('change', () => {
+      // this.successCallback();
+    });
+  }
+
   setValue(value: string) {
     // do nothing
   }
+
   getValue() {
     return this.element.value;
   }
+
   beginEditing(container: HTMLElement, referencePosition: { rect: RectProps; placement?: Placement }, value?: string) {
-    console.log('input', 'beginEditing');
-    console.log('value', value);
     this.container = container;
 
     this.createElement(value);
@@ -67,15 +79,16 @@ export class ListEditor implements IEditor {
   }
 
   exit() {
-    // do nothing
+    this.container.removeChild(this.element);
   }
+
   targetIsOnEditor(target: HTMLElement) {
-    console.log('target', target);
     if (target === this.element) {
       return true;
     }
     return false;
   }
+
   bindSuccessCallback(success: Function) {
     this.successCallback = success;
   }
