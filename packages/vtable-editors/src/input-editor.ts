@@ -44,7 +44,7 @@ export class InputEditor implements IEditor {
     // do nothing
   }
   adjustPosition(rect: RectProps) {
-    this.element.style.top = rect.top + 100 + 'px';
+    this.element.style.top = rect.top + 'px';
     this.element.style.left = rect.left + 'px';
     this.element.style.width = rect.width + 'px';
     this.element.style.height = rect.height + 'px';
