@@ -29,6 +29,7 @@ import type { PivotTableProtected } from './ts-types/base-table';
 import { Title } from './components/title/title';
 import { cloneDeep } from '@visactor/vutils';
 import { Env } from './tools/env';
+import type { ExportTreeNode } from './layout/pivot-layout-helper';
 
 export class PivotTable extends BaseTable implements PivotTableAPI {
   declare internalProps: PivotTableProtected;
@@ -769,7 +770,16 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
   getHierarchyState(col: number, row: number): HierarchyState {
     return this._getHeaderLayoutMap(col, row)?.hierarchyState;
   }
-
+  /** 获取行头树结构 */
+  getLayoutRowTree(): ExportTreeNode[] {
+    const layoutMap = this.internalProps.layoutMap;
+    return layoutMap.getLayoutRowTree();
+  }
+  /** 获取行头树结构的总节点数 */
+  getLayoutRowTreeCount(): number {
+    const layoutMap = this.internalProps.layoutMap;
+    return layoutMap.getLayoutRowTreeCount();
+  }
   hasHierarchyTreeHeader() {
     return (this.internalProps.layoutMap as PivotHeaderLayoutMap).rowHierarchyType === 'tree';
   }
