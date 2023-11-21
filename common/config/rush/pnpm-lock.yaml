@@ -146,6 +146,7 @@ importers:
       '@types/react': 18.2.38
       '@types/react-dom': 18.2.16
       '@visactor/vchart': 1.6.0
+      '@visactor/vtable-editors': link:../vtable-editors
       '@vitejs/plugin-react': 3.1.0_vite@3.2.6
       axios: 1.6.2
       chai: 4.3.4
@@ -211,7 +212,7 @@ importers:
       '@internal/ts-config': link:../../share/ts-config
       '@rushstack/eslint-patch': 1.1.4
       '@types/jest': 26.0.24
-      '@types/node': 20.9.2
+      '@types/node': 20.9.3
       '@types/offscreencanvas': 2019.6.4
       eslint: 8.18.0
       husky: 7.0.4
@@ -222,11 +223,11 @@ importers:
       react-device-detect: 2.2.3
       ts-jest: 26.5.6_xuote2qreek47x2di7kesslrai
       ts-loader: 9.2.6_typescript@4.9.5
-      ts-node: 10.9.0_2ze2y3ffmenkts42iia3vcbj7i
+      ts-node: 10.9.0_hbpquxe4re6yx36cbh4pm66zo4
       tslib: 2.3.1
       tslint: 5.12.1_typescript@4.9.5
       typescript: 4.9.5
-      vite: 3.2.6_@types+node@20.9.2
+      vite: 3.2.6_@types+node@20.9.3
 
   ../../share/eslint-config:
     specifiers:
@@ -12499,6 +12500,40 @@ packages:
       terser:
         optional: true
     dependencies:
+      esbuild: 0.15.18
+      postcss: 8.4.21
+      resolve: 1.22.8
+      rollup: 2.79.1
+    optionalDependencies:
+      fsevents: 2.3.3
+    dev: true
+
+  /vite/3.2.6_@types+node@20.9.3:
+    resolution: {integrity: sha512-nTXTxYVvaQNLoW5BQ8PNNQ3lPia57gzsQU/Khv+JvzKPku8kNZL6NMUR/qwXhMG6E+g1idqEPanomJ+VZgixEg==}
+    engines: {node: ^14.18.0 || >=16.0.0}
+    hasBin: true
+    peerDependencies:
+      '@types/node': '>= 14'
+      less: '*'
+      sass: '*'
+      stylus: '*'
+      sugarss: '*'
+      terser: ^5.4.0
+    peerDependenciesMeta:
+      '@types/node':
+        optional: true
+      less:
+        optional: true
+      sass:
+        optional: true
+      stylus:
+        optional: true
+      sugarss:
+        optional: true
+      terser:
+        optional: true
+    dependencies:
+      '@types/node': 20.9.3
       esbuild: 0.15.18
       postcss: 8.4.21
       resolve: 1.22.8
