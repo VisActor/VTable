@@ -12,6 +12,7 @@ export class ListEditor implements IEditor {
   successCallback: Function;
 
   constructor(editorConfig: ListEditorConfig) {
+    console.log('listEditor constructor');
     this.editorConfig = editorConfig;
   }
 
