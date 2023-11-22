@@ -279,7 +279,7 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
       }
     } else {
       console.warn('your option is invalid, please check it!');
-      return;
+      return this;
     }
 
     // 更新表头
