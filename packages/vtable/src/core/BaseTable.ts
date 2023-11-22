@@ -389,6 +389,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     if (this.internalProps.title) {
       this.internalProps.title.resize();
     }
+    // this.stateManeger.checkFrozen();
     this.scenegraph.resize();
   }
 
@@ -433,7 +434,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     // const oldFrozenColCount = this.internalProps.frozenColCount;
     this.internalProps.frozenColCount = frozenColCount;
     this.options.frozenColCount = frozenColCount;
-    //纠正frozenColCount的值
+    // 纠正frozenColCount的值;
     if (this.tableNoFrameWidth - this.getColsWidth(0, frozenColCount - 1) <= 120) {
       this.internalProps.frozenColCount = 0;
     }

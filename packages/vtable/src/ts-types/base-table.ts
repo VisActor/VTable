@@ -161,7 +161,7 @@ export interface IBaseTableProtected {
   };
 
   dataSourceEventIds?: EventListenerId[];
-  headerEvents?: EventListenerId[];
+  // headerEvents?: EventListenerId[];
   layoutMap: SimpleHeaderLayoutMap | PivotHeaderLayoutMap;
   headerValues?: HeaderValues;
   tooltipHandler: TooltipHandler;

@@ -274,11 +274,6 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
   refreshHeader(): void {
     const internalProps = this.internalProps;
 
-    //原表头绑定的事件 解除掉
-    if (internalProps.headerEvents) {
-      internalProps.headerEvents.forEach((id: number) => this.off(id));
-    }
-
     //设置列宽
     for (let col = 0; col < internalProps.layoutMap.columnWidths.length; col++) {
       const { width, minWidth, maxWidth } = internalProps.layoutMap.columnWidths?.[col] ?? {};
@@ -296,7 +291,6 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
     //刷新表头，原来这里是_refreshRowCount 后改名为_refreshRowColCount  因为表头定义会影响行数，而转置模式下会影响列数
     this.refreshRowColCount();
   }
-
   refreshRowColCount(): void {
     const table = this;
     const { layoutMap } = table.internalProps;
@@ -305,11 +299,13 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
     }
     table.colCount = layoutMap.colCount ?? 0;
     table.rowCount = layoutMap.rowCount ?? 0;
-    table.frozenColCount = layoutMap.rowHeaderLevelCount; //TODO
+    // table.frozenColCount = layoutMap.rowHeaderLevelCount; //这里不要这样写 这个setter会检查扁头宽度 可能将frozenColCount置为0
+    table.internalProps.frozenColCount = layoutMap.rowHeaderLevelCount ?? 0;
     table.frozenRowCount = layoutMap.headerLevelCount;
 
     table.bottomFrozenRowCount = layoutMap?.bottomFrozenRowCount ?? 0;
     table.rightFrozenColCount = layoutMap?.rightFrozenColCount ?? 0;
+    this.stateManeger.setFrozenCol(this.internalProps.frozenColCount);
   }
   protected _getSortFuncFromHeaderOption(
     columns: undefined,

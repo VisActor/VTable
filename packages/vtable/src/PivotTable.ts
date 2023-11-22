@@ -360,12 +360,6 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
 
   refreshHeader(): void {
     const internalProps = this.internalProps;
-
-    //原表头绑定的事件 解除掉
-    if (internalProps.headerEvents) {
-      internalProps.headerEvents.forEach((id: number) => this.off(id));
-    }
-
     //设置列宽
     for (let col = 0; col < internalProps.layoutMap.columnWidths.length; col++) {
       const { width, minWidth, maxWidth } = internalProps.layoutMap.columnWidths?.[col] ?? {};
@@ -392,11 +386,13 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
     }
     table.colCount = layoutMap.colCount ?? 0;
     table.rowCount = layoutMap.rowCount ?? 0;
-    table.frozenColCount = layoutMap.rowHeaderLevelCount; //TODO
+    // table.frozenColCount = layoutMap.rowHeaderLevelCount; //这里不要这样写 这个setter会检查扁头宽度 可能将frozenColCount置为0
+    table.internalProps.frozenColCount = layoutMap.rowHeaderLevelCount ?? 0;
     table.frozenRowCount = layoutMap.headerLevelCount;
 
     table.bottomFrozenRowCount = this.options.bottomFrozenRowCount ?? 0;
     table.rightFrozenColCount = this.options.rightFrozenColCount ?? 0;
+    this.stateManeger.setFrozenCol(this.internalProps.frozenColCount);
   }
   protected _getSortFuncFromHeaderOption(
     columns: undefined,
@@ -865,5 +861,92 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
     // }
     // this.render();
     // console.log('setRecords cost time:', (typeof window !== 'undefined' ? window.performance.now() : 0) - time);
+    this.options.records = this.internalProps.records = records;
+    const options = this.options;
+    const internalProps = this.internalProps;
+    if (this.internalProps.enableDataAnalysis && (options.rows || options.columns)) {
+      const rowKeys = options.rows?.reduce((keys, rowObj) => {
+        if (typeof rowObj === 'string') {
+          keys.push(rowObj);
+        } else {
+          keys.push(rowObj.dimensionKey);
+        }
+        return keys;
+      }, []);
+      const columnKeys = options.columns?.reduce((keys, columnObj) => {
+        if (typeof columnObj === 'string') {
+          keys.push(columnObj);
+        } else {
+          keys.push(columnObj.dimensionKey);
+        }
+        return keys;
+      }, []);
+      const indicatorKeys = options.indicators?.reduce((keys, indicatorObj) => {
+        if (typeof indicatorObj === 'string') {
+          keys.push(indicatorObj);
+        } else {
+          keys.push(indicatorObj.indicatorKey);
+        }
+        return keys;
+      }, []);
+      this.dataset = new Dataset(
+        internalProps.dataConfig,
+        // this.pagination,
+        rowKeys,
+        columnKeys,
+        indicatorKeys,
+        this.internalProps.indicators,
+        options.indicatorsAsCol ?? true,
+        options.records,
+        options.rowHierarchyType,
+        this.internalProps.columnTree, //传递自定义树形结构会在dataset中补充指标节点children
+        this.internalProps.rowTree
+      );
+      internalProps.layoutMap = new PivotHeaderLayoutMap(this, this.dataset);
+    } else if (Array.isArray(this.internalProps.columnTree) || Array.isArray(this.internalProps.rowTree)) {
+      internalProps.layoutMap = new PivotHeaderLayoutMap(this, null);
+      //判断如果数据是二维数组 则标识已经分析过 直接从二维数组挨个读取渲染即可
+      //不是二维数组 对应是个object json对象 则表示flat数据，需要对应行列维度进行转成方便数据查询的行列树结构
+      if (records?.[0]?.constructor !== Array) {
+        this.flatDataToObjects = new FlatDataToObjects(
+          {
+            rows: internalProps.layoutMap.fullRowDimensionKeys,
+            columns: internalProps.layoutMap.colDimensionKeys,
+            indicators: internalProps.layoutMap.indicatorKeys,
+            indicatorsAsCol: internalProps.layoutMap.indicatorsAsCol,
+            indicatorDimensionKey: internalProps.layoutMap.indicatorDimensionKey
+          },
+          records
+        );
+      }
+    }
+    this.pivotSortState = [];
+    if (options.pivotSortState) {
+      this.updatePivotSortState(options.pivotSortState);
+    }
+    // 更新表头
+    this.refreshHeader();
+
+    // this.hasMedia = null; // 避免重复绑定
+    // 清空目前数据
+    if (internalProps.releaseList) {
+      internalProps.releaseList.forEach(releaseObj => releaseObj?.release?.());
+      internalProps.releaseList = null;
+    }
+    // // 恢复selection状态
+    // internalProps.selection.range = range;
+    // this._updateSize();
+
+    // 清空单元格内容
+    this.scenegraph.clearCells();
+    // this.internalProps.frozenColCount = this.options.frozenColCount || this.rowHeaderLevelCount;
+    // 生成单元格场景树
+    this.scenegraph.createSceneGraph();
+
+    if (this.internalProps.title && !this.internalProps.title.isReleased) {
+      this._updateSize();
+      this.internalProps.title.resize();
+      this.scenegraph.resize();
+    }
   }
 }

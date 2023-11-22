@@ -326,12 +326,6 @@ export class ListTable extends BaseTable implements ListTableAPI {
     const internalProps = table.internalProps;
     const transpose = table.transpose;
     const showHeader = table.showHeader;
-
-    //原表头绑定的事件 解除掉
-    if (internalProps.headerEvents) {
-      internalProps.headerEvents.forEach((id: number) => table.off(id));
-    }
-
     const layoutMap = (internalProps.layoutMap = new SimpleHeaderLayoutMap(
       this,
       internalProps.columns ?? [],
@@ -373,19 +367,21 @@ export class ListTable extends BaseTable implements ListTableAPI {
       table.colCount =
         (table.internalProps.dataSource?.length ?? 0) * layoutMap.bodyRowSpanCount + layoutMap.headerLevelCount;
       table.frozenRowCount = 0;
-      table.frozenColCount = layoutMap.headerLevelCount;
-
+      // table.frozenColCount = layoutMap.headerLevelCount; //这里不要这样写 这个setter会检查扁头宽度 可能将frozenColCount置为0
+      this.internalProps.frozenColCount = layoutMap.headerLevelCount ?? 0;
       table.rightFrozenColCount = this.options.rightFrozenColCount ?? 0;
     } else {
       table.colCount = layoutMap.colCount ?? 0;
       table.rowCount =
         (table.internalProps.dataSource?.length ?? 0) * layoutMap.bodyRowSpanCount + layoutMap.headerLevelCount;
-      table.frozenColCount = table.options.frozenColCount ?? 0; //TODO
+      // table.frozenColCount = table.options.frozenColCount ?? 0; //这里不要这样写 这个setter会检查扁头宽度 可能将frozenColCount置为0
+      this.internalProps.frozenColCount = this.options.frozenColCount ?? 0;
       table.frozenRowCount = layoutMap.headerLevelCount;
 
       table.bottomFrozenRowCount = this.options.bottomFrozenRowCount ?? 0;
       table.rightFrozenColCount = this.options.rightFrozenColCount ?? 0;
     }
+    this.stateManeger.setFrozenCol(this.internalProps.frozenColCount);
   }
 
   getFieldData(field: FieldDef | FieldFormat | undefined, col: number, row: number): FieldData {
@@ -724,7 +720,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
       _setRecords(this, records);
     }
     this.stateManeger.initCheckedState(records);
-    this.internalProps.frozenColCount = this.options.frozenColCount || this.rowHeaderLevelCount;
+    // this.internalProps.frozenColCount = this.options.frozenColCount || this.rowHeaderLevelCount;
     // 生成单元格场景树
     this.scenegraph.createSceneGraph();
 

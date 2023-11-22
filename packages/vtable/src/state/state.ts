@@ -514,14 +514,17 @@ export class StateManeger {
 
   checkFrozen(): boolean {
     // 判断固定列的总宽度 是否过大
-    if (this.table.options.frozenColCount) {
-      if (this.table.tableNoFrameWidth - this.table.getColsWidth(0, this.table.options.frozenColCount - 1) <= 120) {
+    const originalFrozenColCount = this.table.isListTable()
+      ? this.table.options.frozenColCount
+      : this.table.rowHeaderLevelCount;
+    if (originalFrozenColCount) {
+      if (this.table.tableNoFrameWidth - this.table.getColsWidth(0, originalFrozenColCount - 1) <= 120) {
         this.table._setFrozenColCount(0);
         this.setFrozenCol(-1);
         return false;
-      } else if (this.table.frozenColCount !== this.table.options.frozenColCount) {
-        this.table._setFrozenColCount(this.table.options.frozenColCount);
-        this.setFrozenCol(this.table.options.frozenColCount);
+      } else if (this.table.frozenColCount !== originalFrozenColCount) {
+        this.table._setFrozenColCount(originalFrozenColCount);
+        this.setFrozenCol(originalFrozenColCount);
         return false;
       }
     }
