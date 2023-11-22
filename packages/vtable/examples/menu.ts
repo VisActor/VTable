@@ -675,6 +675,10 @@ export const menus = [
       {
         path: 'unit-test-demo',
         name: 'pivotTable-color-legend'
+      },
+      {
+        path: 'unit-test-demo',
+        name: 'pivotTable-size-legend'
       }
     ]
   },
