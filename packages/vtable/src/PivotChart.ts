@@ -236,7 +236,7 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
       internalProps.layoutMap = new PivotHeaderLayoutMap(this, this.dataset);
     } else {
       console.warn('your option is invalid, please check it!');
-      return;
+      return this;
     }
 
     // 更新表头
