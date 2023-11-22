@@ -176,6 +176,12 @@ export function createCell(
         stroke: false
       });
       cellGroup.clear();
+    } else if (
+      table.isPivotChart() &&
+      (table.internalProps.layoutMap.isBottomFrozenRow(col, row) ||
+        table.internalProps.layoutMap.isRightFrozenColumn(col, row))
+    ) {
+      cellGroup.clear();
     }
 
     // if ((define as any)?.isAxis && cellLocation === 'columnHeader') {
