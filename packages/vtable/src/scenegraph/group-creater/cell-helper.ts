@@ -171,6 +171,10 @@ export function createCell(
       cellGroup.appendChild(axis.component);
       axis.overlap();
     } else if (table.internalProps.layoutMap.isEmpty(col, row)) {
+      cellGroup.setAttributes({
+        fill: false,
+        stroke: false
+      });
       cellGroup.clear();
     }
 

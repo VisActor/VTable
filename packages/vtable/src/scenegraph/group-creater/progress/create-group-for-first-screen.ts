@@ -102,20 +102,20 @@ export async function createGroupForFirstScreen(
   );
 
   if (table.bottomFrozenRowCount > 0) {
-    if (!table.isPivotChart()) {
-      // create left bottom frozen
-      createColGroup(
-        leftBottomCornerGroup,
-        xOrigin,
-        yOrigin,
-        0, // colStart
-        table.frozenColCount - 1, // colEnd
-        table.rowCount - 1 - table.bottomFrozenRowCount + 1, // rowStart
-        table.rowCount - 1, // rowEnd
-        table.isListTable() ? 'body' : 'rowHeader', // isHeader
-        table
-      );
-    }
+    // if (!table.isPivotChart()) {
+    // create left bottom frozen
+    createColGroup(
+      leftBottomCornerGroup,
+      xOrigin,
+      yOrigin,
+      0, // colStart
+      table.frozenColCount - 1, // colEnd
+      table.rowCount - 1 - table.bottomFrozenRowCount + 1, // rowStart
+      table.rowCount - 1, // rowEnd
+      table.isListTable() ? 'body' : 'rowHeader', // isHeader
+      table
+    );
+    // }
     // create bottomFrozenGroup
     createColGroup(
       bottomFrozenGroup,
@@ -132,20 +132,20 @@ export async function createGroupForFirstScreen(
   }
 
   if (table.rightFrozenColCount > 0) {
-    if (!table.isPivotChart()) {
-      // create right top frozen Group
-      createColGroup(
-        rightTopCornerGroup,
-        xOrigin,
-        yOrigin,
-        table.colCount - 1 - table.rightFrozenColCount + 1, // colStart
-        table.colCount - 1, // colEnd
-        0, // rowStart
-        table.columnHeaderLevelCount - 1, // rowEnd
-        'columnHeader', // isHeader
-        table
-      );
-    }
+    // if (!table.isPivotChart()) {
+    // create right top frozen Group
+    createColGroup(
+      rightTopCornerGroup,
+      xOrigin,
+      yOrigin,
+      table.colCount - 1 - table.rightFrozenColCount + 1, // colStart
+      table.colCount - 1, // colEnd
+      0, // rowStart
+      table.columnHeaderLevelCount - 1, // rowEnd
+      'columnHeader', // isHeader
+      table
+    );
+    // }
     // create rightFrozenGroup
     createColGroup(
       rightFrozenGroup,
@@ -161,7 +161,7 @@ export async function createGroupForFirstScreen(
     );
   }
 
-  if (table.bottomFrozenRowCount > 0 && table.rightFrozenColCount > 0 && !table.isPivotChart()) {
+  if (table.bottomFrozenRowCount > 0 && table.rightFrozenColCount > 0) {
     // create right bottom frozen Group
     createColGroup(
       rightBottomCornerGroup,

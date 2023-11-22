@@ -2346,9 +2346,18 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
     if (!this._table.isPivotChart()) {
       return false;
     }
-    if (col > this.colCount - this.rightFrozenColCount - 1 || row > this.rowCount - this.bottomFrozenRowCount - 1) {
+    if (this.isLeftBottomCorner(col, row)) {
       return true;
     }
+    if (this.isRightBottomCorner(col, row)) {
+      return true;
+    }
+    if (this.isRightTopCorner(col, row)) {
+      return true;
+    }
+    // if (col > this.colCount - this.rightFrozenColCount - 1 || row > this.rowCount - this.bottomFrozenRowCount - 1) {
+    //   return true;
+    // }
     // if (this.hasTwoIndicatorAxes && this.indicatorsAsCol && row === this.columnHeaderLevelCount - 1) {
     //   return true;
     // }
