@@ -1074,7 +1074,8 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
    */
   getColWidth(col: number): number {
     // const width = this.getColWidthDefine(col);
-    const width = this.colWidthsMap.get(col) ?? this.defaultColWidth;
+    const width =
+      this.colWidthsMap.get(col) ?? col < this.rowHeaderLevelCount ? this.defaultHeaderColWidth : this.defaultColWidth;
     if (
       (this.widthMode === 'adaptive' && typeof width === 'number') ||
       ((this as any).transpose && typeof width === 'number')

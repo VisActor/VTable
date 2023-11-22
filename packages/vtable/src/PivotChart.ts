@@ -129,7 +129,7 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
       this.internalProps.rowTree,
       true
     );
-
+    this.internalProps.layoutMap = new PivotHeaderLayoutMap(this, this.dataset);
     this.refreshHeader();
     // this.internalProps.frozenColCount = this.options.frozenColCount || this.rowHeaderLevelCount;
     // 生成单元格场景树
@@ -233,7 +233,12 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
         this.internalProps.rowTree,
         true
       );
+      internalProps.layoutMap = new PivotHeaderLayoutMap(this, this.dataset);
+    } else {
+      console.warn('your option is invalid, please check it!');
+      return;
     }
+
     // 更新表头
     this.refreshHeader();
 
@@ -273,7 +278,6 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
     if (internalProps.headerEvents) {
       internalProps.headerEvents.forEach((id: number) => this.off(id));
     }
-    internalProps.layoutMap = new PivotHeaderLayoutMap(this, this.dataset);
 
     //设置列宽
     for (let col = 0; col < internalProps.layoutMap.columnWidths.length; col++) {
