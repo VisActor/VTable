@@ -8,6 +8,8 @@ import pivotComponent from './pivot-table/pivot-comonent';
 import pivotChart from './pivot-chart/pivot-chart';
 import pivotChartComponent from './pivot-chart/pivot-chart-component';
 
+import listTableEvent from './event/list-table';
+
 // export default listTable;
 // export default listOptionRecord;
 // export default listComponent;
@@ -16,4 +18,6 @@ import pivotChartComponent from './pivot-chart/pivot-chart-component';
 // export default pivotComponent;
 
 // export default pivotChart;
-export default pivotChartComponent;
+// export default pivotChartComponent;
+
+export default listTableEvent;
