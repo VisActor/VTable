@@ -79,6 +79,8 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
       options.indicatorsAsCol && !options.columns?.length && !options.columnTree ? [] : cloneDeep(options.columnTree);
     this.internalProps.rowTree =
       !options.indicatorsAsCol && !options.rows?.length && !options.rowTree ? [] : cloneDeep(options.rowTree);
+    this.internalProps.records = options.records;
+
     this.setCustomStateNameToSpec();
     this.internalProps.columnResizeType = options.columnResizeType ?? 'column';
     this.internalProps.dataConfig = { isPivotChart: true };
@@ -129,14 +131,9 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
     );
 
     this.refreshHeader();
-    // if (options.dataSource) {
-    //   _setDataSource(this, options.dataSource);
-    // } else
-    if (options.records) {
-      this.setRecords(options.records as any, this.internalProps.sortState);
-    } else {
-      this.setRecords([]);
-    }
+    // this.internalProps.frozenColCount = this.options.frozenColCount || this.rowHeaderLevelCount;
+    // 生成单元格场景树
+    this.scenegraph.createSceneGraph();
     if (options.title) {
       this.internalProps.title = new Title(options.title, this);
       this.scenegraph.resize();
@@ -183,7 +180,7 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
       options.indicatorsAsCol && !options.columns?.length && !options.columnTree ? [] : cloneDeep(options.columnTree);
     this.internalProps.rowTree =
       !options.indicatorsAsCol && !options.rows?.length && !options.rowTree ? [] : cloneDeep(options.rowTree);
-
+    options.records && (this.internalProps.records = options.records);
     this.setCustomStateNameToSpec();
     this._selectedDataItemsInChart = [];
     // 更新protectedSpace
@@ -253,14 +250,11 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
     // if (options.dataSource) {
     //   _setDataSource(this, options.dataSource);
     // }else
-    if (options.records) {
-      this.setRecords(options.records as any, undefined);
-    } else {
-      this._resetFrozenColCount();
-      // 生成单元格场景树
-      this.scenegraph.createSceneGraph();
-      this.render();
-    }
+    // 清空单元格内容
+    this.scenegraph.clearCells();
+    // this.internalProps.frozenColCount = this.options.frozenColCount || this.rowHeaderLevelCount;
+    // 生成单元格场景树
+    this.scenegraph.createSceneGraph();
     if (options.title) {
       this.internalProps.title = new Title(options.title, this);
       this.scenegraph.resize();
@@ -519,7 +513,7 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
       if (moveContext.moveType === 'column') {
         // 是扁平数据结构 需要将二维数组this.records进行调整
         if (this.options.records?.[0]?.constructor === Array) {
-          for (let row = 0; row < this.internalProps.records.length; row++) {
+          for (let row = 0; row < (this.internalProps.records as Array<any>).length; row++) {
             const sourceColumns = (this.internalProps.records[row] as unknown as number[]).splice(
               moveContext.sourceIndex - this.rowHeaderLevelCount,
               moveContext.moveSize
@@ -1107,5 +1101,34 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
       }
     }
     return undefined;
+  }
+
+  /**
+   * 设置表格数据 及排序状态
+   * @param records
+   * @param sort
+   */
+  setRecords(records: Array<any>): void {
+    // const time = typeof window !== 'undefined' ? window.performance.now() : 0;
+    // // 清空单元格内容
+    // this.scenegraph.clearCells();
+    // this.internalProps.records = records;
+    // if (records) {
+    //   // _setRecords(this, records);
+    //   this.refreshRowColCount();
+    // } else {
+    //   // _setRecords(this, records);
+    // }
+    // this.stateManeger.initCheckedState(records);
+    // this.internalProps.frozenColCount = this.options.frozenColCount || this.rowHeaderLevelCount;
+    // // 生成单元格场景树
+    // this.scenegraph.createSceneGraph();
+    // if (this.internalProps.title && !this.internalProps.title.isReleased) {
+    //   this._updateSize();
+    //   this.internalProps.title.resize();
+    //   this.scenegraph.resize();
+    // }
+    // this.render();
+    // console.log('setRecords cost time:', (typeof window !== 'undefined' ? window.performance.now() : 0) - time);
   }
 }
