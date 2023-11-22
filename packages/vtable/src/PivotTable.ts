@@ -67,10 +67,7 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
     this.internalProps.rowTree =
       !options.indicatorsAsCol && !options.rows?.length && !options.rowTree ? [] : cloneDeep(options.rowTree);
     this.internalProps.records = options.records;
-    this.pivotSortState = [];
-    if (options.pivotSortState) {
-      this.updatePivotSortState(options.pivotSortState);
-    }
+
     //分页配置
     this.pagination = options.pagination;
     this.internalProps.columnResizeType = options.columnResizeType ?? 'column';
@@ -142,6 +139,10 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
       console.warn('your option is invalid, please check it!');
       return;
     }
+    this.pivotSortState = [];
+    if (options.pivotSortState) {
+      this.updatePivotSortState(options.pivotSortState);
+    }
     this.refreshHeader();
     this.stateManeger.initCheckedState(records);
     // this.internalProps.frozenColCount = this.options.frozenColCount || this.rowHeaderLevelCount;
@@ -193,10 +194,7 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
       !options.indicatorsAsCol && !options.rows?.length && !options.rowTree ? [] : cloneDeep(options.rowTree);
     options.records && (this.internalProps.records = options.records);
     this.stateManeger.initCheckedState(this.internalProps.records);
-    this.pivotSortState = [];
-    if (options.pivotSortState) {
-      this.updatePivotSortState(options.pivotSortState);
-    }
+
     //分页配置
     this.pagination = options.pagination;
     // 更新protectedSpace
@@ -281,7 +279,10 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
       console.warn('your option is invalid, please check it!');
       return this;
     }
-
+    this.pivotSortState = [];
+    if (options.pivotSortState) {
+      this.updatePivotSortState(options.pivotSortState);
+    }
     // 更新表头
     this.refreshHeader();
 
