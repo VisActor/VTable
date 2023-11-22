@@ -190,54 +190,58 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
     this._axes = isArray(options.axes) ? options.axes : [];
 
     //TODO 这里需要加上判断 dataConfig是否有配置变化
-    if (options.rows || options.columns) {
-      const rowKeys = options.rows.reduce((keys, rowObj) => {
+    // if (options.rows || options.columns) {
+    const rowKeys =
+      options.rows?.reduce((keys, rowObj) => {
         if (typeof rowObj === 'string') {
           keys.push(rowObj);
         } else {
           keys.push(rowObj.dimensionKey);
         }
         return keys;
-      }, []);
-      const columnKeys = options.columns.reduce((keys, columnObj) => {
+      }, []) ?? [];
+    const columnKeys =
+      options.columns?.reduce((keys, columnObj) => {
         if (typeof columnObj === 'string') {
           keys.push(columnObj);
         } else {
           keys.push(columnObj.dimensionKey);
         }
         return keys;
-      }, []);
-      const indicatorKeys = options.indicators?.reduce((keys, indicatorObj) => {
+      }, []) ?? [];
+    const indicatorKeys =
+      options.indicators?.reduce((keys, indicatorObj) => {
         if (typeof indicatorObj === 'string') {
           keys.push(indicatorObj);
         } else {
           keys.push(indicatorObj.indicatorKey);
         }
         return keys;
-      }, []);
+      }, []) ?? [];
 
-      this.internalProps.dataConfig.collectValuesBy = this._generateCollectValuesConfig(columnKeys, rowKeys);
-      this.internalProps.dataConfig.aggregationRules = this._generateAggregationRules();
-
-      this.dataset = new Dataset(
-        this.internalProps.dataConfig,
-        // null,
-        rowKeys,
-        columnKeys,
-        indicatorKeys,
-        this.internalProps.indicators,
-        options.indicatorsAsCol ?? true,
-        options.records ?? this.internalProps.records,
-        undefined,
-        this.internalProps.columnTree,
-        this.internalProps.rowTree,
-        true
-      );
-      internalProps.layoutMap = new PivotHeaderLayoutMap(this, this.dataset);
-    } else {
-      console.warn('your option is invalid, please check it!');
-      return this;
-    }
+    this.internalProps.dataConfig.collectValuesBy = this._generateCollectValuesConfig(columnKeys, rowKeys);
+    this.internalProps.dataConfig.aggregationRules = this._generateAggregationRules();
+    this.internalProps.dataConfig.dimensionSortArray = this._getDimensionSortArray();
+    this.dataset = new Dataset(
+      this.internalProps.dataConfig,
+      // null,
+      rowKeys,
+      columnKeys,
+      indicatorKeys,
+      this.internalProps.indicators,
+      options.indicatorsAsCol ?? true,
+      options.records ?? this.internalProps.records,
+      undefined,
+      this.internalProps.columnTree,
+      this.internalProps.rowTree,
+      true
+    );
+    // }
+    internalProps.layoutMap = new PivotHeaderLayoutMap(this, this.dataset);
+    // else {
+    //   console.warn('VTable Warn: your option is invalid, please check it!');
+    //   return this;
+    // }
 
     // 更新表头
     this.refreshHeader();

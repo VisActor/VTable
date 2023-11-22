@@ -136,7 +136,7 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
         );
       }
     } else {
-      console.warn('your option is invalid, please check it!');
+      console.warn('VTable Warn: your option is invalid, please check it!');
       return;
     }
     this.pivotSortState = [];
@@ -276,7 +276,7 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
         );
       }
     } else {
-      console.warn('your option is invalid, please check it!');
+      console.warn('VTable Warn: your option is invalid, please check it!');
       return this;
     }
     this.pivotSortState = [];

@@ -157,8 +157,8 @@ export class Dataset {
     this.rowSubTotalLabel = this.totals?.row?.subTotalLabel ?? '小计';
     this.collectValuesBy = this.dataConfig?.collectValuesBy;
     this.needSplitPositiveAndNegative = needSplitPositiveAndNegative ?? false;
-    this.rowsIsTotal = new Array(this.rows.length).fill(false);
-    this.colsIsTotal = new Array(this.columns.length).fill(false);
+    this.rowsIsTotal = new Array(this.rows?.length ?? 0).fill(false);
+    this.colsIsTotal = new Array(this.columns?.length ?? 0).fill(false);
     for (let i = 0, len = this.totals?.row?.subTotalsDimensions?.length; i < len; i++) {
       const dimension = this.totals.row.subTotalsDimensions[i];
       const dimensionIndex = this.rows.indexOf(dimension);
