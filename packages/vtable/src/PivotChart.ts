@@ -1113,26 +1113,26 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
    * @param sort
    */
   setRecords(records: Array<any>): void {
-    // const time = typeof window !== 'undefined' ? window.performance.now() : 0;
-    // // 清空单元格内容
-    // this.scenegraph.clearCells();
-    // this.internalProps.records = records;
-    // if (records) {
-    //   // _setRecords(this, records);
-    //   this.refreshRowColCount();
-    // } else {
-    //   // _setRecords(this, records);
-    // }
-    // this.stateManeger.initCheckedState(records);
+    this.options.records = this.internalProps.records = records;
+    const options = this.options;
+    const internalProps = this.internalProps;
+
+    this.dataset.setRecords(records);
+    internalProps.layoutMap = new PivotHeaderLayoutMap(this, this.dataset);
+
+    // 更新表头
+    this.refreshHeader();
+
+    // 清空单元格内容
+    this.scenegraph.clearCells();
     // this.internalProps.frozenColCount = this.options.frozenColCount || this.rowHeaderLevelCount;
-    // // 生成单元格场景树
-    // this.scenegraph.createSceneGraph();
-    // if (this.internalProps.title && !this.internalProps.title.isReleased) {
-    //   this._updateSize();
-    //   this.internalProps.title.resize();
-    //   this.scenegraph.resize();
-    // }
-    // this.render();
-    // console.log('setRecords cost time:', (typeof window !== 'undefined' ? window.performance.now() : 0) - time);
+    // 生成单元格场景树
+    this.scenegraph.createSceneGraph();
+
+    if (this.internalProps.title && !this.internalProps.title.isReleased) {
+      this._updateSize();
+      this.internalProps.title.resize();
+      this.scenegraph.resize();
+    }
   }
 }
