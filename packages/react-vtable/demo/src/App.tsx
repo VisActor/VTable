@@ -1,7 +1,19 @@
 import listTable from './list-table/list-table';
-import pivotTable from './list-table/pivot-table';
-import pivotChart from './list-table/pivot-chart';
+import listOptionRecord from './list-table/list-option-records';
+import listComponent from './list-table/list-component';
+
+import pivotTable from './pivot-table/pivot-table';
+import pivotComponent from './pivot-table/pivot-comonent';
+
+import pivotChart from './pivot-chart/pivot-chart';
+import pivotChartComponent from './pivot-chart/pivot-chart-component';
 
 // export default listTable;
+// export default listOptionRecord;
+// export default listComponent;
+
 // export default pivotTable;
-export default pivotChart;
+// export default pivotComponent;
+
+// export default pivotChart;
+export default pivotChartComponent;

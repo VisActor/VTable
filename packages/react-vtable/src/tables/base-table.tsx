@@ -55,6 +55,7 @@ const notOptionKeys = [
   'onError',
   'onReady',
   'option',
+  'records',
   'container'
 ];
 
@@ -65,23 +66,32 @@ const BaseTable: React.FC<Props> = React.forwardRef((props, ref) => {
   });
   useImperativeHandle(ref, () => tableContext.current.table);
   const hasOption = !!props.option;
+  const hasRecords = !!props.records;
   const isUnmount = useRef<boolean>(false);
   const prevOption = useRef(pickWithout(props, notOptionKeys));
+  const prevRecords = useRef(props.records);
   const eventsBinded = React.useRef<BaseTableProps>(null);
   const skipFunctionDiff = !!props.skipFunctionDiff;
 
   const parseOption = useCallback(
     (props: Props) => {
       if (hasOption && props.option) {
+        if (hasRecords && props.records) {
+          return {
+            ...props.option,
+            records: props.records
+          };
+        }
         return props.option;
       }
 
       return {
+        records: props.records,
         ...prevOption.current,
         ...tableContext.current.optionFromChildren
       };
     },
-    [hasOption]
+    [hasOption, hasRecords]
   );
 
   const createTable = useCallback(
@@ -104,6 +114,8 @@ const BaseTable: React.FC<Props> = React.forwardRef((props, ref) => {
     bindEventsToTable(tableContext.current.table, props, eventsBinded.current, TABLE_EVENTS);
 
     if (!isUnmount.current) {
+      // to be fixed
+      // will cause another useEffect
       setUpdateId(updateId + 1);
       if (props.onReady) {
         props.onReady(tableContext.current.table, updateId === 0);
@@ -145,6 +157,17 @@ const BaseTable: React.FC<Props> = React.forwardRef((props, ref) => {
         if (props.onError) {
           updatePromise.catch(props.onError);
         }
+      } else if (
+        hasRecords &&
+        !isEqual(eventsBinded.current.records, props.records, { skipFunction: skipFunctionDiff })
+      ) {
+        eventsBinded.current = props;
+        tableContext.current.table.setRecords(props.records);
+        const updatePromise = tableContext.current.table.renderAsync().then(handleTableRender);
+
+        if (props.onError) {
+          updatePromise.catch(props.onError);
+        }
       }
       return;
     }
@@ -163,12 +186,20 @@ const BaseTable: React.FC<Props> = React.forwardRef((props, ref) => {
       if (props.onError) {
         updatePromise.catch(props.onError);
       }
+    } else if (hasRecords && !isEqual(props.records, prevRecords.current, { skipFunction: skipFunctionDiff })) {
+      prevRecords.current = props.records;
+      tableContext.current.table.setRecords(props.records);
+      const updatePromise = tableContext.current.table.renderAsync().then(handleTableRender);
+
+      if (props.onError) {
+        updatePromise.catch(props.onError);
+      }
     }
     tableContext.current = {
       ...tableContext.current,
       isChildrenUpdated: false
     };
-  }, [createTable, hasOption, parseOption, handleTableRender, renderTable, skipFunctionDiff, props]);
+  }, [createTable, hasOption, hasRecords, parseOption, handleTableRender, renderTable, skipFunctionDiff, props]);
 
   useEffect(() => {
     return () => {
