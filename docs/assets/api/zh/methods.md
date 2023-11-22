@@ -114,6 +114,11 @@ tableInstance.renderWithRecreateCells();
 ## offVChartEvent(Function)
 
 解除监听 VChart 图表事件
+
+## setRecords(Function)
+
+设置表格数据接口，可作为更新接口调用。
+
 ## selectCell(Function)
 
 选中某个单元格

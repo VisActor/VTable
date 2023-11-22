@@ -116,6 +116,10 @@ Listen to VChart chart events
 
 Unlisten to VChart chart events
 
+## setRecords(Function)
+
+Set the table data interface, which can be called as an update interface.
+
 ## selectCell(Function)
 
 Select a cell
