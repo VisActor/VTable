@@ -2355,12 +2355,21 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
     if (this.isRightTopCorner(col, row)) {
       return true;
     }
-    // if (col > this.colCount - this.rightFrozenColCount - 1 || row > this.rowCount - this.bottomFrozenRowCount - 1) {
-    //   return true;
-    // }
-    // if (this.hasTwoIndicatorAxes && this.indicatorsAsCol && row === this.columnHeaderLevelCount - 1) {
-    //   return true;
-    // }
+    return false;
+  }
+  isAxisCell(col: number, row: number) {
+    if (!this._table.isPivotChart()) {
+      return false;
+    }
+    if (this.isBottomFrozenRow(col, row) || this.isRightFrozenColumn(col, row)) {
+      return true;
+    }
+    if (this.isRowHeader(col, row) && col === this.rowHeaderLevelCount - 1) {
+      return true;
+    }
+    if (this.hasTwoIndicatorAxes && this.indicatorsAsCol && row === this.columnHeaderLevelCount - 1) {
+      return true;
+    }
     return false;
   }
   getChartAxes(col: number, row: number): any[] {

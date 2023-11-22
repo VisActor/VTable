@@ -176,11 +176,7 @@ export function createCell(
         stroke: false
       });
       cellGroup.clear();
-    } else if (
-      table.isPivotChart() &&
-      (table.internalProps.layoutMap.isBottomFrozenRow(col, row) ||
-        table.internalProps.layoutMap.isRightFrozenColumn(col, row))
-    ) {
+    } else if (table.internalProps.layoutMap.isAxisCell(col, row)) {
       cellGroup.clear();
     }
 
