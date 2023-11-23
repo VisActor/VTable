@@ -768,10 +768,11 @@ export class ListTable extends BaseTable implements ListTableAPI {
         this.scenegraph.updateColWidth(col, newWidth - oldWidth);
       }
     }
-    const oldHeight = this.getRowHeight(row);
-    const newHeight = computeRowHeight(row, 0, this.colCount - 1, this);
-    this.scenegraph.updateRowHeight(row, newHeight - oldHeight);
-
+    if (this.heightMode === 'autoHeight') {
+      const oldHeight = this.getRowHeight(row);
+      const newHeight = computeRowHeight(row, 0, this.colCount - 1, this);
+      this.scenegraph.updateRowHeight(row, newHeight - oldHeight);
+    }
     this.fireListeners(TABLE_EVENT_TYPE.CHANGE_CELL_VALUE, {
       col,
       row,
