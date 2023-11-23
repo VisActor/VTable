@@ -171,6 +171,12 @@ export function createCell(
       cellGroup.appendChild(axis.component);
       axis.overlap();
     } else if (table.internalProps.layoutMap.isEmpty(col, row)) {
+      cellGroup.setAttributes({
+        fill: false,
+        stroke: false
+      });
+      cellGroup.clear();
+    } else if (table.internalProps.layoutMap.isAxisCell(col, row)) {
       cellGroup.clear();
     }
 
@@ -407,6 +413,16 @@ export function updateCell(col: number, row: number, table: BaseTableAPI, addNew
       const lineClamp = cellStyle.lineClamp;
       const padding = getQuadProps(getProp('padding', cellStyle, col, row, table)) ?? [0, 0, 0, 0];
 
+      const textAlign = cellTheme.text.textAlign;
+      let x = 0;
+      if (textAlign === 'center') {
+        x = padding[3] + (cellWidth - (padding[1] + padding[3])) / 2;
+      } else if (textAlign === 'right') {
+        x = padding[3] + cellWidth - (padding[1] + padding[3]);
+      } else {
+        x = padding[3];
+      }
+
       const attribute = {
         text: textArr.length === 1 && !autoWrapText ? textArr[0] : textArr, // 单行(no-autoWrapText)为字符串，多行(autoWrapText)为字符串数组
         maxLineWidth: cellWidth - (padding[1] + padding[3] + hierarchyOffset),
@@ -419,7 +435,8 @@ export function updateCell(col: number, row: number, table: BaseTableAPI, addNew
         // widthLimit: autoColWidth ? -1 : colWidth - (padding[1] + padding[3]),
         heightLimit: cellHeight - (padding[0] + padding[2]),
         pickable: false,
-        dx: hierarchyOffset
+        dx: hierarchyOffset,
+        x
       };
       textMark.setAttributes(cellTheme.text ? (Object.assign({}, cellTheme.text, attribute) as any) : attribute);
     }

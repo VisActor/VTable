@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vtable",
+      "comment": "fix: fix text mark x in updateCell()",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@visactor/vtable"
+}

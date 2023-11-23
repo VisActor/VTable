@@ -867,6 +867,9 @@ export class SimpleHeaderLayoutMap implements LayoutMapAPI {
   isEmpty(col: number, row: number) {
     return false;
   }
+  isAxisCell(col: number, row: number) {
+    return false;
+  }
   getChartAxes(col: number, row: number): any[] {
     return [];
   }

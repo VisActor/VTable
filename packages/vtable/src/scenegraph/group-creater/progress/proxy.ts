@@ -540,7 +540,7 @@ export class SceneProxy {
   }
 
   updateCellGroupContent(cellGroup: Group) {
-    if (!cellGroup.needUpdate) {
+    if (!cellGroup.needUpdate || cellGroup.role !== 'cell') {
       return cellGroup;
     }
 
