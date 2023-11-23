@@ -1239,25 +1239,28 @@ export class Scenegraph {
     // 更新各列x&col
     const cornerX = updateContainerChildrenX(this.cornerHeaderGroup, 0);
     const rowHeaderX = updateContainerChildrenX(this.rowHeaderGroup, 0);
-    const colHeaderX = this.colHeaderGroup.hasChildNodes()
-      ? updateContainerChildrenX(
-          this.colHeaderGroup,
-          (this.colHeaderGroup.firstChild as any).col > 0
-            ? this.table.getColsWidth(this.table.frozenColCount ?? 0, (this.colHeaderGroup.firstChild as any).col - 1)
-            : 0
-        )
-      : 0;
-    const bodyX = this.bodyGroup.hasChildNodes()
-      ? updateContainerChildrenX(
-          this.bodyGroup,
-          (this.bodyGroup.firstChild as any).col > 0
-            ? this.table.getColsWidth(this.table.frozenColCount ?? 0, (this.bodyGroup.firstChild as any).col - 1)
-            : 0
-        )
-      : 0;
+    const colHeaderX =
+      this.colHeaderGroup.hasChildNodes() && this.colHeaderGroup.firstChild
+        ? updateContainerChildrenX(
+            this.colHeaderGroup,
+            (this.colHeaderGroup.firstChild as any).col > 0
+              ? this.table.getColsWidth(this.table.frozenColCount ?? 0, (this.colHeaderGroup.firstChild as any).col - 1)
+              : 0
+          )
+        : 0;
+    const bodyX =
+      this.bodyGroup.hasChildNodes() && this.bodyGroup.firstChild
+        ? updateContainerChildrenX(
+            this.bodyGroup,
+            (this.bodyGroup.firstChild as any).col > 0
+              ? this.table.getColsWidth(this.table.frozenColCount ?? 0, (this.bodyGroup.firstChild as any).col - 1)
+              : 0
+          )
+        : 0;
     const rightX = updateContainerChildrenX(this.rightFrozenGroup, 0);
 
     this.bottomFrozenGroup.hasChildNodes() &&
+      this.bottomFrozenGroup.firstChild &&
       updateContainerChildrenX(
         this.bottomFrozenGroup,
         (this.bottomFrozenGroup.firstChild as any).col > 0
