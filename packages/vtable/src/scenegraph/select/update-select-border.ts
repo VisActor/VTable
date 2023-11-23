@@ -91,18 +91,14 @@ function updateComponent(selectComp: { rect: IRect; role: CellSubLocation }, key
   });
 
   //#region 判断是不是按着表头部分的选中框 因为绘制层级的原因 线宽会被遮住一半，因此需要动态调整层级
-  const isNearRowHeader =
-    // scene.table.scrollLeft === 0 &&
-    startCol === scene.table.frozenColCount;
-  const isNearRightRowHeader =
-    // scene.table.scrollLeft === 0 &&
-    scene.table.rightFrozenColCount > 0 && endCol === scene.table.colCount - scene.table.rightFrozenColCount - 1;
-  const isNearColHeader =
-    // scene.table.scrollTop === 0 &&
-    startRow === scene.table.frozenRowCount;
-  const isNearBottomColHeader =
-    // scene.table.scrollTop === 0 &&
-    endRow === scene.table.rowCount - scene.table.bottomFrozenRowCount - 1;
+  const isNearRowHeader = scene.table.frozenColCount ? startCol === scene.table.frozenColCount : false;
+  const isNearRightRowHeader = scene.table.rightFrozenColCount
+    ? scene.table.rightFrozenColCount > 0 && endCol === scene.table.colCount - scene.table.rightFrozenColCount - 1
+    : false;
+  const isNearColHeader = scene.table.frozenRowCount ? startRow === scene.table.frozenRowCount : true;
+  const isNearBottomColHeader = scene.table.bottomFrozenRowCount
+    ? endRow === scene.table.rowCount - scene.table.bottomFrozenRowCount - 1
+    : false;
   if (
     (isNearRowHeader && selectComp.rect.attribute.stroke[3]) ||
     (isNearRightRowHeader && selectComp.rect.attribute.stroke[1]) ||
@@ -154,19 +150,19 @@ function updateComponent(selectComp: { rect: IRect; role: CellSubLocation }, key
 
     //#region 调整层级后 滚动情况下会出现绘制范围出界 如body的选中框 渲染在了rowheader上面，所有需要调整选中框rect的 边界
     if (
-      selectComp.rect.attribute.x < scene.rowHeaderGroup.attribute.width &&
+      selectComp.rect.attribute.x < scene.table.getFrozenColsWidth() &&
       // selectComp.rect.attribute.x + selectComp.rect.attribute.width > scene.rowHeaderGroup.attribute.width &&
       scene.table.scrollLeft > 0 &&
       (selectComp.role === 'body' || selectComp.role === 'columnHeader' || selectComp.role === 'bottomFrozen')
     ) {
       selectComp.rect.setAttributes({
-        x: selectComp.rect.attribute.x + (scene.rowHeaderGroup.attribute.width - selectComp.rect.attribute.x),
-        width: selectComp.rect.attribute.width - (scene.rowHeaderGroup.attribute.width - selectComp.rect.attribute.x)
+        x: selectComp.rect.attribute.x + (scene.table.getFrozenColsWidth() - selectComp.rect.attribute.x),
+        width: selectComp.rect.attribute.width - (scene.table.getFrozenColsWidth() - selectComp.rect.attribute.x)
       });
     }
     if (
       // selectComp.rect.attribute.x < scene.rightFrozenGroup.attribute.x &&
-      scene.rightFrozenGroup.attribute.width > 0 && // right冻结列存在的情况下
+      scene.table.getRightFrozenColsWidth() > 0 && // right冻结列存在的情况下
       scene.rightFrozenGroup.attribute.height > 0 &&
       selectComp.rect.attribute.x + selectComp.rect.attribute.width > scene.rightFrozenGroup.attribute.x &&
       (selectComp.role === 'body' || selectComp.role === 'columnHeader' || selectComp.role === 'bottomFrozen')

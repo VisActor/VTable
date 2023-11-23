@@ -71,6 +71,18 @@ When using "Auto Width Mode", it may be necessary to limit the calculated maximu
   limitMaxAutoWidth: 500,
 });
 ```
+## Column width limit configuration: limitMinWidth
+
+When dragging the column width, it is easy to drag the width to 0. This may cause certain interaction problems when dragging it back again, or the functional restrictions should not drag it into a hidden column. In this case, you can configure `limitMinWidth` Limit the minimum column width, for example, limit the minimum draggable width to 20.
+
+Note: If set to true, the column width will be limited to a minimum of 10px when dragging to change the column width. If set to false, there will be no limit. Or set it directly to some numeric value. Default is 10px.
+
+```javascript
+ table = new VTable.ListTable({
+  // ...Other configuration items
+  limitMinWidth: 20,
+});
+```
 
 # Influence of line wrapping on line height
 

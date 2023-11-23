@@ -225,7 +225,7 @@ describe('listTable-1W init test', () => {
     // 使用setTimeout延迟执行验证语句
     // setTimeout(() => {
     // await new Promise(resolve => setTimeout(resolve, 1000));
-    expect(listTable.getAllColsWidth()).toBe(1355);
+    expect(listTable.getAllColsWidth()).toBe(1457);
     // }, 1000); // 延迟1秒
   });
 

@@ -79,6 +79,8 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
       options.indicatorsAsCol && !options.columns?.length && !options.columnTree ? [] : cloneDeep(options.columnTree);
     this.internalProps.rowTree =
       !options.indicatorsAsCol && !options.rows?.length && !options.rowTree ? [] : cloneDeep(options.rowTree);
+    this.internalProps.records = options.records;
+
     this.setCustomStateNameToSpec();
     this.internalProps.columnResizeType = options.columnResizeType ?? 'column';
     this.internalProps.dataConfig = { isPivotChart: true };
@@ -127,15 +129,11 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
       this.internalProps.rowTree,
       true
     );
-
+    this.internalProps.layoutMap = new PivotHeaderLayoutMap(this, this.dataset);
     this.refreshHeader();
-    if (options.dataSource) {
-      _setDataSource(this, options.dataSource);
-    } else if (options.records) {
-      this.setRecords(options.records as any, this.internalProps.sortState);
-    } else {
-      this.setRecords([]);
-    }
+    // this.internalProps.frozenColCount = this.options.frozenColCount || this.rowHeaderLevelCount;
+    // 生成单元格场景树
+    this.scenegraph.createSceneGraph();
     if (options.title) {
       this.internalProps.title = new Title(options.title, this);
       this.scenegraph.resize();
@@ -182,7 +180,7 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
       options.indicatorsAsCol && !options.columns?.length && !options.columnTree ? [] : cloneDeep(options.columnTree);
     this.internalProps.rowTree =
       !options.indicatorsAsCol && !options.rows?.length && !options.rowTree ? [] : cloneDeep(options.rowTree);
-
+    options.records && (this.internalProps.records = options.records);
     this.setCustomStateNameToSpec();
     this._selectedDataItemsInChart = [];
     // 更新protectedSpace
@@ -192,50 +190,59 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
     this._axes = isArray(options.axes) ? options.axes : [];
 
     //TODO 这里需要加上判断 dataConfig是否有配置变化
-    if (options.rows || options.columns) {
-      const rowKeys = options.rows.reduce((keys, rowObj) => {
+    // if (options.rows || options.columns) {
+    const rowKeys =
+      options.rows?.reduce((keys, rowObj) => {
         if (typeof rowObj === 'string') {
           keys.push(rowObj);
         } else {
           keys.push(rowObj.dimensionKey);
         }
         return keys;
-      }, []);
-      const columnKeys = options.columns.reduce((keys, columnObj) => {
+      }, []) ?? [];
+    const columnKeys =
+      options.columns?.reduce((keys, columnObj) => {
         if (typeof columnObj === 'string') {
           keys.push(columnObj);
         } else {
           keys.push(columnObj.dimensionKey);
         }
         return keys;
-      }, []);
-      const indicatorKeys = options.indicators?.reduce((keys, indicatorObj) => {
+      }, []) ?? [];
+    const indicatorKeys =
+      options.indicators?.reduce((keys, indicatorObj) => {
         if (typeof indicatorObj === 'string') {
           keys.push(indicatorObj);
         } else {
           keys.push(indicatorObj.indicatorKey);
         }
         return keys;
-      }, []);
+      }, []) ?? [];
 
-      this.internalProps.dataConfig.collectValuesBy = this._generateCollectValuesConfig(columnKeys, rowKeys);
-      this.internalProps.dataConfig.aggregationRules = this._generateAggregationRules();
+    this.internalProps.dataConfig.collectValuesBy = this._generateCollectValuesConfig(columnKeys, rowKeys);
+    this.internalProps.dataConfig.aggregationRules = this._generateAggregationRules();
+    this.internalProps.dataConfig.dimensionSortArray = this._getDimensionSortArray();
+    this.dataset = new Dataset(
+      this.internalProps.dataConfig,
+      // null,
+      rowKeys,
+      columnKeys,
+      indicatorKeys,
+      this.internalProps.indicators,
+      options.indicatorsAsCol ?? true,
+      options.records ?? this.internalProps.records,
+      undefined,
+      this.internalProps.columnTree,
+      this.internalProps.rowTree,
+      true
+    );
+    // }
+    internalProps.layoutMap = new PivotHeaderLayoutMap(this, this.dataset);
+    // else {
+    //   console.warn('VTable Warn: your option is invalid, please check it!');
+    //   return this;
+    // }
 
-      this.dataset = new Dataset(
-        this.internalProps.dataConfig,
-        // null,
-        rowKeys,
-        columnKeys,
-        indicatorKeys,
-        this.internalProps.indicators,
-        options.indicatorsAsCol ?? true,
-        options.records ?? this.internalProps.records,
-        undefined,
-        this.internalProps.columnTree,
-        this.internalProps.rowTree,
-        true
-      );
-    }
     // 更新表头
     this.refreshHeader();
 
@@ -249,16 +256,14 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
     // internalProps.selection.range = range;
     // this._updateSize();
     // 传入新数据
-    if (options.dataSource) {
-      _setDataSource(this, options.dataSource);
-    } else if (options.records) {
-      this.setRecords(options.records as any, undefined);
-    } else {
-      this._resetFrozenColCount();
-      // 生成单元格场景树
-      this.scenegraph.createSceneGraph();
-      this.render();
-    }
+    // if (options.dataSource) {
+    //   _setDataSource(this, options.dataSource);
+    // }else
+    // 清空单元格内容
+    this.scenegraph.clearCells();
+    // this.internalProps.frozenColCount = this.options.frozenColCount || this.rowHeaderLevelCount;
+    // 生成单元格场景树
+    this.scenegraph.createSceneGraph();
     if (options.title) {
       this.internalProps.title = new Title(options.title, this);
       this.scenegraph.resize();
@@ -272,12 +277,6 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
   }
   refreshHeader(): void {
     const internalProps = this.internalProps;
-
-    //原表头绑定的事件 解除掉
-    if (internalProps.headerEvents) {
-      internalProps.headerEvents.forEach((id: number) => this.off(id));
-    }
-    internalProps.layoutMap = new PivotHeaderLayoutMap(this, this.dataset);
 
     //设置列宽
     for (let col = 0; col < internalProps.layoutMap.columnWidths.length; col++) {
@@ -296,7 +295,6 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
     //刷新表头，原来这里是_refreshRowCount 后改名为_refreshRowColCount  因为表头定义会影响行数，而转置模式下会影响列数
     this.refreshRowColCount();
   }
-
   refreshRowColCount(): void {
     const table = this;
     const { layoutMap } = table.internalProps;
@@ -305,11 +303,13 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
     }
     table.colCount = layoutMap.colCount ?? 0;
     table.rowCount = layoutMap.rowCount ?? 0;
-    table.frozenColCount = layoutMap.rowHeaderLevelCount; //TODO
+    // table.frozenColCount = layoutMap.rowHeaderLevelCount; //这里不要这样写 这个setter会检查扁头宽度 可能将frozenColCount置为0
+    table.internalProps.frozenColCount = layoutMap.rowHeaderLevelCount ?? 0;
     table.frozenRowCount = layoutMap.headerLevelCount;
 
     table.bottomFrozenRowCount = layoutMap?.bottomFrozenRowCount ?? 0;
     table.rightFrozenColCount = layoutMap?.rightFrozenColCount ?? 0;
+    this.stateManeger.setFrozenCol(this.internalProps.frozenColCount);
   }
   protected _getSortFuncFromHeaderOption(
     columns: undefined,
@@ -517,7 +517,7 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
       if (moveContext.moveType === 'column') {
         // 是扁平数据结构 需要将二维数组this.records进行调整
         if (this.options.records?.[0]?.constructor === Array) {
-          for (let row = 0; row < this.internalProps.records.length; row++) {
+          for (let row = 0; row < (this.internalProps.records as Array<any>).length; row++) {
             const sourceColumns = (this.internalProps.records[row] as unknown as number[]).splice(
               moveContext.sourceIndex - this.rowHeaderLevelCount,
               moveContext.moveSize
@@ -1105,5 +1105,34 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
       }
     }
     return undefined;
+  }
+
+  /**
+   * 设置表格数据 及排序状态
+   * @param records
+   * @param sort
+   */
+  setRecords(records: Array<any>): void {
+    this.options.records = this.internalProps.records = records;
+    const options = this.options;
+    const internalProps = this.internalProps;
+
+    this.dataset.setRecords(records);
+    internalProps.layoutMap = new PivotHeaderLayoutMap(this, this.dataset);
+
+    // 更新表头
+    this.refreshHeader();
+
+    // 清空单元格内容
+    this.scenegraph.clearCells();
+    // this.internalProps.frozenColCount = this.options.frozenColCount || this.rowHeaderLevelCount;
+    // 生成单元格场景树
+    this.scenegraph.createSceneGraph();
+
+    if (this.internalProps.title && !this.internalProps.title.isReleased) {
+      this._updateSize();
+      this.internalProps.title.resize();
+      this.scenegraph.resize();
+    }
   }
 }
