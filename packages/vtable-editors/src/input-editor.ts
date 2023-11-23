@@ -9,7 +9,7 @@ export class InputEditor implements IEditor {
   editorConfig: InputEditorConfig;
   container: HTMLElement;
   declare element: HTMLInputElement;
-  constructor(editorConfig: InputEditorConfig) {
+  constructor(editorConfig?: InputEditorConfig) {
     this.editorConfig = editorConfig;
   }
   createElement() {

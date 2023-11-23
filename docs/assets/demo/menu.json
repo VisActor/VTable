@@ -544,6 +544,13 @@
             "zh": "滚动",
             "en": "scroll"
           }
+        },
+        {
+          "path": "edit",
+          "title": {
+            "zh": "编辑单元格",
+            "en": "editCell"
+          }
         }
       ]
     },

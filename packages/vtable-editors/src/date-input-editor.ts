@@ -9,7 +9,7 @@ export class DateInputEditor extends InputEditor implements IEditor {
   editorType: string = 'DateInput';
   declare element: HTMLInputElement;
   successCallback: Function;
-  constructor(editorConfig: DateInputEditorConfig) {
+  constructor(editorConfig?: DateInputEditorConfig) {
     super(editorConfig);
     this.editorConfig = editorConfig;
   }
