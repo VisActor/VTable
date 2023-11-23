@@ -676,7 +676,8 @@ export class SimpleHeaderLayoutMap implements LayoutMapAPI {
     }
     return {
       colHeaderPaths: colPath,
-      rowHeaderPaths: rowPath
+      rowHeaderPaths: rowPath,
+      cellLocation: this.getCellLocation(col, row)
     };
   }
   private getParentCellId(col: number, row: number) {
@@ -829,6 +830,9 @@ export class SimpleHeaderLayoutMap implements LayoutMapAPI {
     return undefined;
   }
   isEmpty(col: number, row: number) {
+    return false;
+  }
+  isAxisCell(col: number, row: number) {
     return false;
   }
   getChartAxes(col: number, row: number): any[] {

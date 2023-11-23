@@ -319,10 +319,10 @@ export class SceneProxy {
     const endCol = Math.min(this.totalCol, this.currentCol + onceCount);
     computeColsWidth(this.table, this.currentCol + 1, endCol);
 
-    // update last merge cell
+    // update last merge cell size
     for (let row = 0; row < this.table.rowCount; row++) {
       const cellGroup = this.highPerformanceGetCell(this.currentCol, row);
-      if (isNumber(cellGroup.mergeCol) && cellGroup.mergeCol > this.currentCol) {
+      if (isNumber(cellGroup.mergeStartCol) && cellGroup.mergeStartCol > this.currentCol) {
         this.table.scenegraph.updateCellContent(cellGroup.col, cellGroup.row);
       }
     }
@@ -467,9 +467,28 @@ export class SceneProxy {
     updateRowContent(this.rowUpdatePos, distRow, this);
 
     if (this.table.heightMode === 'autoHeight') {
+      // body group
       updateAutoRow(
         this.bodyLeftCol, // colStart
         this.bodyRightCol, // colEnd
+        this.rowUpdatePos, // rowStart
+        distRow, // rowEnd
+        this.table,
+        this.rowUpdateDirection
+      );
+      // row header group
+      updateAutoRow(
+        0, // colStart
+        this.table.frozenColCount - 1, // colEnd
+        this.rowUpdatePos, // rowStart
+        distRow, // rowEnd
+        this.table,
+        this.rowUpdateDirection
+      );
+      // right frozen group
+      updateAutoRow(
+        this.table.colCount - this.table.rightFrozenColCount, // colStart
+        this.table.colCount - 1, // colEnd
         this.rowUpdatePos, // rowStart
         distRow, // rowEnd
         this.table,
@@ -521,7 +540,7 @@ export class SceneProxy {
   }
 
   updateCellGroupContent(cellGroup: Group) {
-    if (!cellGroup.needUpdate) {
+    if (!cellGroup.needUpdate || cellGroup.role !== 'cell') {
       return cellGroup;
     }
 

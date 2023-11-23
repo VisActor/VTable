@@ -12,7 +12,7 @@ option: ListTable-columns-text#mergeCell
 
 ## 关键配置
 
- - `merge`  同一列中内容相同的相邻单元格进行合并
+ - `mergeCell`  同一列中内容相同的相邻单元格进行合并
 ## 代码演示
 
 ```javascript livedemo template=vtable

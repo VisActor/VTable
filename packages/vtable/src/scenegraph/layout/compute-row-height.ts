@@ -1,7 +1,7 @@
 import { RichText, Group as VGroup } from '@visactor/vrender';
 import type { PivotHeaderLayoutMap } from '../../layout/pivot-header-layout';
 import { validToString } from '../../tools/util';
-import type { ColumnIconOption } from '../../ts-types';
+import type { ColumnIconOption, ColumnTypeOption } from '../../ts-types';
 import { IconPosition } from '../../ts-types';
 import type { BaseTableAPI, HeaderData } from '../../ts-types/base-table';
 import type { ColumnData, TextColumnDefine } from '../../ts-types/list-table/layout-map/api';
@@ -11,8 +11,9 @@ import { getQuadProps } from '../utils/padding';
 import { dealWithRichTextIcon } from '../utils/text-icon-layout';
 import { getAxisConfigInPivotChart } from '../../layout/chart-helper/get-axis-config';
 import { computeAxisComponentHeight } from '../../components/axis/get-axis-component-size';
-import { isArray, isNumber } from '@visactor/vutils';
-import { decodeReactDom } from '../component/custom';
+import { isArray, isNumber, isObject } from '@visactor/vutils';
+import { CheckBox } from '@visactor/vrender-components';
+import { decodeReactDom, dealPercentCalc } from '../component/custom';
 
 const utilTextMark = new WrapText({
   ignoreBuf: true
@@ -23,6 +24,7 @@ const utilRichTextMark = new RichText({
   height: 0,
   textConfig: []
 });
+const utilCheckBoxMark = new CheckBox({});
 
 export function computeRowsHeight(
   table: BaseTableAPI,
@@ -157,6 +159,10 @@ export function computeRowsHeight(
     }
   }
 
+  if ((rowStart === 0 && rowEnd === table.rowCount - 1) || isClearRowRangeHeightsMap) {
+    table._clearRowRangeHeightsMap();
+  }
+
   // 处理adaptive高度
   if (table.heightMode === 'adaptive') {
     table._clearRowRangeHeightsMap();
@@ -275,8 +281,19 @@ export function computeRowHeight(row: number, startCol: number, endCol: number, 
       }
     }
 
+    const cellType = table.isHeader(col, row)
+      ? table._getHeaderLayoutMap(col, row)?.headerType
+      : table.getBodyColumnType(col, row);
+    if (cellType !== 'text' && cellType !== 'link' && cellType !== 'progressbar' && cellType !== 'checkbox') {
+      // text&link&progressbar测量文字宽度
+      // image&video&sparkline使用默认宽度
+      const defaultHeight = table.getDefaultRowHeight(row);
+      maxHeight = Math.max(maxHeight, isNumber(defaultHeight) ? defaultHeight : table.defaultRowHeight);
+      continue;
+    }
+
     // text height calculation
-    const textHeight = computeTextHeight(col, row, table);
+    const textHeight = computeTextHeight(col, row, cellType, table);
     maxHeight = Math.max(textHeight, maxHeight);
   }
   return maxHeight;
@@ -392,16 +409,17 @@ function computeCustomRenderHeight(col: number, row: number, table: BaseTableAPI
     if (customLayout) {
       // 处理customLayout
       const customLayoutObj = customLayout(arg);
-      if (customLayoutObj.rootContainer) {
-        customLayoutObj.rootContainer = decodeReactDom(customLayoutObj.rootContainer);
-      }
       if (customLayoutObj.rootContainer instanceof VGroup) {
+        customLayoutObj.rootContainer = decodeReactDom(customLayoutObj.rootContainer);
+        dealPercentCalc(customLayoutObj.rootContainer, table.getColWidth(col), 0);
+        customLayoutObj.rootContainer.setStage(table.scenegraph.stage);
+        // debugger
         height = (customLayoutObj.rootContainer as VGroup).AABBBounds.height() ?? 0;
         // height = (customLayoutObj.rootContainer as VGroup).attribute.height ?? 0;
-      } else if (customLayoutObj.rootContainer) {
-        customLayoutObj.rootContainer.isRoot = true;
-        const size = customLayoutObj.rootContainer.getContentSize();
-        height = size.height ?? 0;
+        // } else if (customLayoutObj.rootContainer) {
+        //   customLayoutObj.rootContainer.isRoot = true;
+        //   const size = customLayoutObj.rootContainer.getContentSize();
+        //   height = size.height ?? 0;
       } else {
         height = 0;
       }
@@ -424,7 +442,7 @@ function computeCustomRenderHeight(col: number, row: number, table: BaseTableAPI
  * @param {BaseTableAPI} table
  * @return {*}
  */
-function computeTextHeight(col: number, row: number, table: BaseTableAPI): number {
+function computeTextHeight(col: number, row: number, cellType: ColumnTypeOption, table: BaseTableAPI): number {
   let maxHeight = 0;
   const cellValue = table.getCellValue(col, row);
   // const dataValue = table.getCellOriginValue(col, row);
@@ -478,11 +496,48 @@ function computeTextHeight(col: number, row: number, table: BaseTableAPI): numbe
   const lineHeight = getProp('lineHeight', actStyle, col, row, table) ?? fontSize;
   const fontFamily = getProp('fontFamily', actStyle, col, row, table);
   const autoWrapText = getProp('autoWrapText', actStyle, col, row, table);
-  const lines = validToString(cellValue).split('\n') || [];
+  let text;
+  if (cellType === 'checkbox') {
+    text = isObject(cellValue) ? (cellValue as any).text : cellValue;
+  } else {
+    text = cellValue;
+  }
+  const lines = validToString(text).split('\n') || [];
 
   const cellWidth = table.getColsWidth(col, endCol);
 
-  if (iconInlineFront.length || iconInlineEnd.length) {
+  if (cellType === 'checkbox') {
+    const size = getProp('size', actStyle, col, row, table);
+    if (autoWrapText) {
+      const spaceBetweenTextAndIcon = getProp('spaceBetweenTextAndIcon', actStyle, col, row, table);
+      const maxLineWidth = cellWidth - (padding[1] + padding[3]) - iconWidth - size - spaceBetweenTextAndIcon;
+      utilCheckBoxMark.setAttributes({
+        text: {
+          maxLineWidth,
+          text: lines,
+          fontSize,
+          fontStyle,
+          fontWeight,
+          fontFamily,
+          lineHeight,
+          wordBreak: 'break-word'
+        },
+        icon: {
+          width: Math.floor(size / 1.4), // icon : box => 10 : 14
+          height: Math.floor(size / 1.4)
+        },
+        box: {
+          width: size,
+          height: size
+        },
+        spaceBetweenTextAndIcon
+      });
+      utilCheckBoxMark.render();
+      maxHeight = utilTextMark.AABBBounds.height();
+    } else {
+      maxHeight = Math.max(size, lines.length * lineHeight);
+    }
+  } else if (iconInlineFront.length || iconInlineEnd.length) {
     // if (autoWrapText) {
     const textOption = Object.assign({
       text: cellValue?.toString(),

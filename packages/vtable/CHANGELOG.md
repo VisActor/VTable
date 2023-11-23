@@ -1,6 +1,52 @@
 # Change Log - @visactor/vtable
 
-This log was last generated on Tue, 07 Nov 2023 12:09:57 GMT and should not be manually modified.
+This log was last generated on Fri, 17 Nov 2023 08:33:08 GMT and should not be manually modified.
+
+## 0.14.3
+Fri, 17 Nov 2023 08:33:08 GMT
+
+### Patches
+
+- refactor: add dpr argument when init vchart #570
+
+
+- fix: select_border_clip
+
+
+
+## 0.14.2
+Thu, 16 Nov 2023 04:36:53 GMT
+
+### Patches
+
+- fix: row header select bound wrong #572
+
+
+- fix: selectHeader copy data
+
+
+
+## 0.14.1
+Mon, 13 Nov 2023 12:07:03 GMT
+
+### Patches
+
+- refactor: when drag to canvas blank area to end select #556
+
+
+
+## 0.14.0
+Fri, 10 Nov 2023 11:31:45 GMT
+
+### Minor changes
+
+- feat: add jsx support in custom layout
+
+### Patches
+
+- feat: refactor merge cell strategy
+- feat: add functionial tickCount config in axis 
+- feat: update customLayout api
 
 ## 0.13.4
 Tue, 07 Nov 2023 12:09:57 GMT

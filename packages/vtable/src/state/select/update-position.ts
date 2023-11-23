@@ -123,14 +123,16 @@ export function updateSelectPosition(
         scenegraph.deleteAllSelectBorder();
       }
       if (state.select.headerSelectMode !== 'cell' && table.isColumnHeader(col, row)) {
+        const cellRange = table.getCellRange(col, row);
         state.select.ranges.push({
-          start: { col, row },
-          end: { col, row: table.rowCount - 1 }
+          start: { col: cellRange.start.col, row },
+          end: { col: cellRange.end.col, row: table.rowCount - 1 }
         });
       } else if (state.select.headerSelectMode !== 'cell' && table.isRowHeader(col, row)) {
+        const cellRange = table.getCellRange(col, row);
         state.select.ranges.push({
-          start: { col, row },
-          end: { col: table.colCount - 1, row }
+          start: { col, row: cellRange.start.row },
+          end: { col: table.colCount - 1, row: cellRange.end.row }
         });
       } else {
         state.select.ranges.push({

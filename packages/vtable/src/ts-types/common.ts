@@ -61,6 +61,7 @@ export type IListTableCellHeaderPaths = {
     field: FieldDef;
     // title: string | (() => string) | undefined;
   }[];
+  cellLocation: CellLocation;
 };
 export type IPivotTableCellHeaderPaths = {
   /** 列表头各级path表头信息 */
@@ -75,6 +76,7 @@ export type IPivotTableCellHeaderPaths = {
     indicatorKey?: string;
     value?: string;
   }[];
+  cellLocation: CellLocation;
 };
 
 export interface IDimensionInfo {

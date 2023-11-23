@@ -2723,7 +2723,8 @@ describe('pivot-header-layout test', () => {
           indicatorKey: '10002',
           value: ''
         }
-      ]
+      ],
+      cellLocation: 'rowHeader'
     });
     expect(layout.getCellHeaderPaths(2, 2)).toEqual({
       colHeaderPaths: [
@@ -2741,7 +2742,8 @@ describe('pivot-header-layout test', () => {
           indicatorKey: '10002',
           value: ''
         }
-      ]
+      ],
+      cellLocation: 'body'
     });
     expect(layout.getCellHeaderPaths(2, 4)).toEqual({
       colHeaderPaths: [
@@ -2750,7 +2752,8 @@ describe('pivot-header-layout test', () => {
           value: '地区-dongbei'
         }
       ],
-      rowHeaderPaths: []
+      rowHeaderPaths: [],
+      cellLocation: 'body'
     });
   });
 
@@ -2917,6 +2920,14 @@ describe('pivot-header-layout test', () => {
     expect(layout.getRowKeysPath(2, 1)).toBe('公司');
     expect(layout.getRowKeysPath(3, 2)).toBe('小型企业');
     expect(layout.getRowKeysPath(4, 3)).toBe('消费者');
+  });
+
+  test('pivot-header-layout isEmpty', () => {
+    expect(layout.isEmpty(0, 0)).toBe(false);
+    expect(layout.isEmpty(1, 0)).toBe(false);
+    expect(layout.isEmpty(0, 4)).toBe(true);
+    expect(layout.isEmpty(2, 4)).toBe(false);
+    expect(layout.isEmpty(2, 1)).toBe(false);
   });
 
   tableInstance.release();

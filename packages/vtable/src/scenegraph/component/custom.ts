@@ -1,12 +1,18 @@
 import type { Cursor } from '@visactor/vrender';
 import { createArc, createCircle, createLine, createRect, Group as VGroup } from '@visactor/vrender';
-import { isFunction, isString, isValid } from '@visactor/vutils';
-import type { ICustomLayout, ICustomRender, ICustomRenderElement, ICustomRenderElements } from '../../ts-types';
+import { isFunction, isObject, isString, isValid } from '@visactor/vutils';
+import type {
+  ICustomLayout,
+  ICustomRender,
+  ICustomRenderElement,
+  ICustomRenderElements,
+  RectElement
+} from '../../ts-types';
 import { Group } from '../graphic/group';
 import { Icon } from '../graphic/icon';
 import { WrapText } from '../graphic/text';
 import type { BaseTableAPI } from '../../ts-types/base-table';
-import type { Rect } from '../../render/layout';
+import type { percentCalcObj, Rect } from '../../render/layout';
 
 export function dealWithCustom(
   customLayout: ICustomLayout,
@@ -23,7 +29,7 @@ export function dealWithCustom(
   let expectedWidth: number;
   let expectedHeight: number;
   let customElements;
-  let elementsGroup: Group;
+  let elementsGroup: VGroup;
 
   if (typeof customLayout === 'function') {
     const arg = {
@@ -50,8 +56,8 @@ export function dealWithCustom(
     if (customRenderObj.rootContainer instanceof VGroup) {
       elementsGroup = customRenderObj.rootContainer;
       elementsGroup.name = 'custom-container';
-    } else if (customRenderObj.rootContainer) {
-      customElements = customRenderObj.rootContainer.getElements(undefined, false, false);
+      // } else if (customRenderObj.rootContainer) {
+      //   customElements = customRenderObj.rootContainer.getElements(undefined, false, false);
     }
     renderDefault = customRenderObj.renderDefault;
   } else if (typeof customRender === 'function') {
@@ -94,6 +100,9 @@ export function dealWithCustom(
     );
   }
 
+  // for percent calc
+  dealPercentCalc(elementsGroup, width, height);
+
   return {
     elementsGroup,
     renderDefault
@@ -105,8 +114,8 @@ function adjustElementToGroup(
   width: number,
   height: number,
   value: any
-): Group | undefined {
-  const customGroup = new Group({
+): VGroup | undefined {
+  const customGroup = new VGroup({
     x: 0,
     y: 0,
     width,
@@ -272,11 +281,13 @@ function adjustElementsPos(
     }
 
     // 转换字符串值（百分比、px）
-    const rect = element as Rect;
+    const rect = element as RectElement;
     if (isValid(rect.x)) {
       rect.x = isString(rect.x)
         ? transformString((rect as any).x as string, width - borderLineWidths[1])
         : Number(rect.x);
+    }
+    if (isValid(rect.y)) {
       rect.y = isString(rect.y)
         ? transformString((rect as any).y as string, height - borderLineWidths[2])
         : Number(rect.y);
@@ -331,6 +342,33 @@ function transformString(str: string, size?: number): number {
     return (parseInt(str, 10) / 100) * size;
   }
   return parseInt(str, 10);
+}
+
+export function dealPercentCalc(group: VGroup, parentWidth: number, parentHeight: number) {
+  if (!group) {
+    return;
+  }
+  group.forEachChildren((child: VGroup) => {
+    if (isObject(child.attribute.width) && (child.attribute.width as percentCalcObj).percent) {
+      child.setAttribute(
+        'width',
+        ((child.attribute.width as percentCalcObj).percent / 100) * parentWidth +
+          ((child.attribute.width as percentCalcObj).delta ?? 0)
+      );
+    }
+
+    if (isObject(child.attribute.height) && (child.attribute.height as percentCalcObj).percent) {
+      child.setAttribute(
+        'height',
+        ((child.attribute.height as percentCalcObj).percent / 100) * parentHeight +
+          ((child.attribute.height as percentCalcObj).delta ?? 0)
+      );
+    }
+
+    if (child.type === 'group') {
+      dealPercentCalc(child, child.attribute.width, child.attribute.height);
+    }
+  });
 }
 
 // temp devode for react jsx customLayout

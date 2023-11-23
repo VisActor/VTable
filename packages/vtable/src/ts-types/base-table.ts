@@ -40,7 +40,10 @@ import type {
   WidthModeDef,
   IHeaderTreeDefine,
   IDimension,
-  IIndicator
+  IIndicator,
+  StickCell,
+  CustomMergeCell,
+  CustomMerge
 } from '.';
 import type { TooltipOptions } from './tooltip';
 import type { IWrapTextGraphicAttribute } from '../scenegraph/graphic/text';
@@ -188,6 +191,9 @@ export interface IBaseTableProtected {
   // // 开启图表异步渲染 每批次渐进渲染图表个数
   // renderChartAsyncBatchCount?: number;
 
+  stick: { changedCells: StickCell[] };
+
+  customMergeCell?: CustomMergeCell;
   /**
    * 'auto':和浏览器滚动行为一致 表格滚动到顶部/底部时 触发浏览器默认行为;
    *  设置为 'none' 时, 表格滚动到顶部/底部时, 不再触发父容器滚动
@@ -334,6 +340,8 @@ export interface BaseTableConstructorOptions {
   /** 开启图表异步渲染 每批次渐进渲染图表个数  默认是5个 */
   renderChartAsyncBatchCount?: number;
 
+  customMergeCell?: CustomMergeCell;
+
   // for nodejs
   mode?: 'node' | 'broswer';
   modeParams?: any;
@@ -417,6 +425,9 @@ export interface BaseTableAPI {
   autoFillHeight?: boolean;
 
   isReleased: boolean;
+
+  rowHeightsMap: NumberMap<number>;
+  colWidthsMap: NumberMap<string | number>;
 
   on: <TYPE extends keyof TableEventHandlersEventArgumentMap>(
     type: TYPE,
@@ -633,6 +644,8 @@ export interface BaseTableAPI {
   isFrozenRow: (col: number, row?: number) => boolean;
   isTopFrozenRow: (col: number, row?: number) => boolean;
   isBottomFrozenRow: (col: number, row?: number) => boolean;
+
+  getCustomMerge: (col: number, row: number) => undefined | (Omit<CustomMerge, 'style'> & { style?: FullExtendStyle });
   /** 获取表格body部分的显示单元格范围 */
   getBodyVisibleCellRange: () => { rowStart: number; colStart: number; rowEnd: number; colEnd: number };
   /** 获取表格body部分的显示列号范围 */

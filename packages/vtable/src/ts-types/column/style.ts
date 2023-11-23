@@ -178,4 +178,7 @@ export interface ProgressBarStyleOption extends IStyleOption {
   barMarkPosition?: 'right' | 'bottom';
 }
 
-export type CheckboxStyleOption = ITextStyleOption;
+export type CheckboxStyleOption = {
+  size?: number;
+  spaceBetweenTextAndIcon?: number;
+} & ITextStyleOption;

@@ -467,7 +467,8 @@ describe('pivotTableTree init test', () => {
           dimensionKey: 'State',
           value: 'District of Columbia'
         }
-      ]
+      ],
+      cellLocation: 'body'
     });
   });
 

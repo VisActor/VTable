@@ -62,7 +62,8 @@ export function createChartCellGroup(
     stroke: false,
     x: padding[3],
     y: padding[0],
-    canvas: table.canvas,
+    // canvas: table.canvas,
+    canvas: table.canvas ?? (table.scenegraph.stage.window.getContext().canvas as unknown as HTMLCanvasElement),
     mode: table.options.mode,
     modeParams: table.options.modeParams,
     spec: chartSpec,
@@ -73,6 +74,7 @@ export function createChartCellGroup(
     dataId,
     data: table.getCellValue(col, row),
     cellPadding: padding,
+    dpr: table.internalProps.pixelRatio,
     // viewBox: {
     //   x1: Math.ceil(cellGroup.globalAABBBounds.x1 + padding[3] + table.scrollLeft),
     //   x2: Math.ceil(cellGroup.globalAABBBounds.x1 + width - padding[1] + table.scrollLeft),
