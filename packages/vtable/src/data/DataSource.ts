@@ -72,7 +72,7 @@ export function getField(
   table: BaseTableAPI,
   promiseCallBack: PromiseBack
 ): FieldData {
-  if (record === null) {
+  if (record === null || record === undefined) {
     return undefined;
   }
   if (isPromise(record)) {
