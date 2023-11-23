@@ -80,8 +80,8 @@ importers:
       '@types/react-dom': ^18.0.0
       '@visactor/vchart': 1.6.0
       '@visactor/vdataset': ~0.15.7
-      '@visactor/vrender': 0.16.16
-      '@visactor/vrender-components': 0.16.16
+      '@visactor/vrender': 0.16.17-alpha.4
+      '@visactor/vrender-components': 0.16.17-alpha.4
       '@visactor/vscale': 0.16.0
       '@visactor/vtable-editors': workspace:*
       '@visactor/vutils': ~0.16.8
@@ -124,8 +124,8 @@ importers:
       vite-plugin-markdown: ^2.1.0
     dependencies:
       '@visactor/vdataset': 0.15.14
-      '@visactor/vrender': 0.16.16
-      '@visactor/vrender-components': 0.16.16
+      '@visactor/vrender': 0.16.17-alpha.4
+      '@visactor/vrender-components': 0.16.17-alpha.4
       '@visactor/vscale': 0.16.0
       '@visactor/vutils': 0.16.13
       '@visactor/vutils-extension': 1.5.1-alpha.0
@@ -3113,7 +3113,7 @@ packages:
       '@visactor/vgrammar-util': 0.8.6
       '@visactor/vgrammar-wordcloud': 0.8.6
       '@visactor/vgrammar-wordcloud-shape': 0.8.6
-      '@visactor/vrender-components': 0.16.16
+      '@visactor/vrender-components': 0.16.17-alpha.4
       '@visactor/vrender-core': 0.16.16
       '@visactor/vrender-kits': 0.16.16
       '@visactor/vscale': 0.16.13
@@ -3175,7 +3175,7 @@ packages:
       '@visactor/vdataset': 0.16.13
       '@visactor/vgrammar-coordinate': 0.8.6
       '@visactor/vgrammar-util': 0.8.6
-      '@visactor/vrender-components': 0.16.16
+      '@visactor/vrender-components': 0.16.17-alpha.4
       '@visactor/vrender-core': 0.16.16
       '@visactor/vrender-kits': 0.16.16
       '@visactor/vscale': 0.16.13
@@ -3231,16 +3231,22 @@ packages:
       '@visactor/vrender-kits': 0.16.16
       '@visactor/vutils': 0.16.13
 
-  /@visactor/vrender-components/0.16.16:
-    resolution: {integrity: sha512-8t6eiFZeSd1OzrjMu9GFZho0LHAGXlSJua4sh7XWolRHohHEsIYAN+wkWBbQZ1IoL8ol01o3WxZq45Rm/sgHlA==}
+  /@visactor/vrender-components/0.16.17-alpha.4:
+    resolution: {integrity: sha512-/HDxuAMAszHAljrCSN24U05STRlvXcqUmIj9iTNJ20kE5vXLuYDwz4oNwo9eWZT/a0M6rfJY/cpp9j9yXEFZ0A==}
     dependencies:
-      '@visactor/vrender-core': 0.16.16
-      '@visactor/vrender-kits': 0.16.16
+      '@visactor/vrender-core': 0.16.17-alpha.4
+      '@visactor/vrender-kits': 0.16.17-alpha.4
       '@visactor/vscale': 0.16.13
       '@visactor/vutils': 0.16.13
 
   /@visactor/vrender-core/0.16.16:
     resolution: {integrity: sha512-29mJzajsajOxUz1LOOLXwiB+oSbT/cH/+TKcoIptQ93rztWDuR883i8hvg3NcL/bFNjPz1/l8LGkDYvMZpdSPA==}
+    dependencies:
+      '@visactor/vutils': 0.16.13
+      color-convert: 2.0.1
+
+  /@visactor/vrender-core/0.16.17-alpha.4:
+    resolution: {integrity: sha512-lKxLZmhju9t5ZNIjztgY7RZwV9L9v9NADVBogFPNACEDeb816h2htzFOwTawrWDlp+QVihmkZl17oBlkU95DVg==}
     dependencies:
       '@visactor/vutils': 0.16.13
       color-convert: 2.0.1
@@ -3253,11 +3259,19 @@ packages:
       '@visactor/vutils': 0.16.13
       roughjs: 4.5.2
 
-  /@visactor/vrender/0.16.16:
-    resolution: {integrity: sha512-x9x+qv7FJhDR4At12J6meyi25U6WYX9rccRAEVm5/RlqwWB8uMh0fD/Ok8BxXtTCEM/0ly5vh4UBWhG7d+gB5Q==}
+  /@visactor/vrender-kits/0.16.17-alpha.4:
+    resolution: {integrity: sha512-HDbjxycK768Je0a2gNX+a7O2W+xNJGwrbHYJMLCaCGI9wneB7KIeQL9SRlDHuk/fU+jg957y+Ao52UvD42aO1Q==}
     dependencies:
-      '@visactor/vrender-core': 0.16.16
-      '@visactor/vrender-kits': 0.16.16
+      '@resvg/resvg-js': 2.4.1
+      '@visactor/vrender-core': 0.16.17-alpha.4
+      '@visactor/vutils': 0.16.13
+      roughjs: 4.5.2
+
+  /@visactor/vrender/0.16.17-alpha.4:
+    resolution: {integrity: sha512-A0KJtwDHpb6IQWlheKDchzZ2XAIUI1BQJu1GwIyt0wUysTqdJ41xtivSbnlRYIe5AhrmgbBzzznTnn4IoeOi4A==}
+    dependencies:
+      '@visactor/vrender-core': 0.16.17-alpha.4
+      '@visactor/vrender-kits': 0.16.17-alpha.4
     dev: false
 
   /@visactor/vscale/0.16.0:
@@ -3322,7 +3336,7 @@ packages:
       '@babel/plugin-transform-react-jsx-source': 7.23.3_@babel+core@7.20.12
       magic-string: 0.27.0
       react-refresh: 0.14.0
-      vite: 3.2.6
+      vite: 3.2.6_gjd77ulsk5hapmpy7bqve755zm
     transitivePeerDependencies:
       - supports-color
     dev: true

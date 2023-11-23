@@ -1,4 +1,5 @@
-import type { FederatedPointerEvent } from '@visactor/vrender';
+import type { IEventTarget } from '@visactor/vrender';
+import { Gesture, type FederatedPointerEvent } from '@visactor/vrender';
 import type { MousePointerCellEvent, MousePointerMultiCellEvent, MousePointerSparklineEvent } from '../../ts-types';
 import { InteractionState } from '../../ts-types';
 import type { SceneEvent } from '../util';
@@ -20,6 +21,7 @@ let isDraging = false;
 export function bindTableGroupListener(eventManeger: EventManeger) {
   const table = eventManeger.table;
   const stateManeger = table.stateManeger;
+
   document.body.addEventListener('pointerdown', e => {
     LastBodyPointerXY = { x: e.x, y: e.y };
     isDown = true;
@@ -604,51 +606,14 @@ export function bindTableGroupListener(eventManeger: EventManeger) {
     }
   });
 
-  function dblclickHandler(e: FederatedPointerEvent) {
-    const eventArgsSet: SceneEvent = getCellEventArgsSet(e);
-    const bounds = eventArgsSet.eventArgs.targetCell.globalAABBBounds;
-    const { col, row } = eventArgsSet.eventArgs;
-    const value = table.getCellValue(col, row);
-    table.internalProps.focusControl.setFocusRect(
-      new Rect(bounds.x1 + table.scrollLeft, bounds.y1 + table.scrollTop, bounds.x2 - bounds.x1, bounds.y2 - bounds.y1),
-      value
-    );
-    if ((table as any).hasListeners(TABLE_EVENT_TYPE.DBLCLICK_CELL)) {
-      const cellInfo = table.getCellInfo(col, row);
-      let icon;
-      let position;
-      if (eventArgsSet.eventArgs?.target) {
-        const iconInfo = getIconAndPositionFromTarget(eventArgsSet.eventArgs?.target);
-        if (iconInfo) {
-          icon = iconInfo.icon;
-          position = iconInfo.position;
-        }
-      }
-      const cellsEvent: MousePointerMultiCellEvent = {
-        ...cellInfo,
-        event: e.nativeEvent,
-        federatedEvent: e,
-        cells: [],
-        targetIcon: icon
-          ? {
-              name: icon.name,
-              position: position,
-              funcType: (icon as any).attribute.funcType
-            }
-          : undefined,
-        target: eventArgsSet?.eventArgs?.target
-      };
-      table.fireListeners(TABLE_EVENT_TYPE.DBLCLICK_CELL, cellsEvent);
-    }
-  }
-  table.scenegraph.tableGroup.addEventListener('dbltap', (e: FederatedPointerEvent) => {
-    console.log('tableGroup', 'dbltap');
-    dblclickHandler(e);
-  });
-  table.scenegraph.tableGroup.addEventListener('dblclick', (e: FederatedPointerEvent) => {
-    console.log('tableGroup', 'dblclick');
-    dblclickHandler(e);
-  });
+  // table.scenegraph.tableGroup.addEventListener('dbltap', (e: FederatedPointerEvent) => {
+  //   console.log('tableGroup', 'dbltap');
+  //   dblclickHandler(e);
+  // });
+  // table.scenegraph.tableGroup.addEventListener('dblclick', (e: FederatedPointerEvent) => {
+  //   console.log('tableGroup', 'dblclick');
+  //   dblclickHandler(e);
+  // });
 
   table.scenegraph.tableGroup.addEventListener('checkbox_state_change', (e: FederatedPointerEvent) => {
     const eventArgsSet: SceneEvent = getCellEventArgsSet(e);
@@ -692,7 +657,19 @@ export function bindTableGroupListener(eventManeger: EventManeger) {
     table.fireListeners(TABLE_EVENT_TYPE.CHECKBOX_STATE_CHANGE, cellsEvent);
   });
 }
-
+export function bindGesture(eventManeger: EventManeger) {
+  const table = eventManeger.table;
+  eventManeger.gesture = new Gesture(table.scenegraph.stage as unknown as IEventTarget, {
+    tap: {
+      interval: 400
+    }
+  });
+  eventManeger.gesture.on('doubletap', e => {
+    console.log('doubletap', e);
+    // e.preventDefault();
+    dblclickHandler(e, table);
+  });
+}
 function endResizeCol(table: BaseTableAPI) {
   table.stateManeger.endResizeCol();
   if ((table as any).hasListeners(TABLE_EVENT_TYPE.RESIZE_COLUMN_END)) {
@@ -706,5 +683,43 @@ function endResizeCol(table: BaseTableAPI) {
       col: table.stateManeger.columnResize.col,
       columns
     });
+  }
+}
+
+function dblclickHandler(e: FederatedPointerEvent, table: BaseTableAPI) {
+  const eventArgsSet: SceneEvent = getCellEventArgsSet(e);
+  const bounds = eventArgsSet.eventArgs.targetCell.globalAABBBounds;
+  const { col, row } = eventArgsSet.eventArgs;
+  const value = table.getCellValue(col, row);
+  table.internalProps.focusControl.setFocusRect(
+    new Rect(bounds.x1 + table.scrollLeft, bounds.y1 + table.scrollTop, bounds.x2 - bounds.x1, bounds.y2 - bounds.y1),
+    value
+  );
+  if ((table as any).hasListeners(TABLE_EVENT_TYPE.DBLCLICK_CELL)) {
+    const cellInfo = table.getCellInfo(col, row);
+    let icon;
+    let position;
+    if (eventArgsSet.eventArgs?.target) {
+      const iconInfo = getIconAndPositionFromTarget(eventArgsSet.eventArgs?.target);
+      if (iconInfo) {
+        icon = iconInfo.icon;
+        position = iconInfo.position;
+      }
+    }
+    const cellsEvent: MousePointerMultiCellEvent = {
+      ...cellInfo,
+      event: e.nativeEvent,
+      federatedEvent: e,
+      cells: [],
+      targetIcon: icon
+        ? {
+            name: icon.name,
+            position: position,
+            funcType: (icon as any).attribute.funcType
+          }
+        : undefined,
+      target: eventArgsSet?.eventArgs?.target
+    };
+    table.fireListeners(TABLE_EVENT_TYPE.DBLCLICK_CELL, cellsEvent);
   }
 }

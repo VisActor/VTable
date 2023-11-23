@@ -169,6 +169,7 @@ export class Scenegraph {
         this.table.fireListeners('after_render', null);
         // console.trace('after_render');
       }
+      // event: { clickInterval: 400 }
       // autoRender: true
     });
 
