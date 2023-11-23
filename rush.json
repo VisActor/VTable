@@ -30,7 +30,8 @@
       "tags": [
         "package"
       ],
-      "shouldPublish": true
+      "shouldPublish": true,
+      "versionPolicyName": "vtableMain"
     },
     {
       "packageName": "@internal/docs",
@@ -70,7 +71,8 @@
       "tags": [
         "package"
       ],
-      "shouldPublish": false
+      "shouldPublish": true,
+      "versionPolicyName": "vtableMain"
     }
   ]
 }

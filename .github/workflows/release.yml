@@ -34,6 +34,20 @@ jobs:
       - name: Install rush
         run: node common/scripts/install-run-rush.js install --bypass-policy
 
+      - name: Parse semver version from branch name
+        id: semver_parser
+        uses: xile611/read-package-version-action@main
+        with:
+          path: packages/vtable
+          semver_string: ${{ github.ref_name }}
+          semver_pattern: '^release/(.*)$' # ^v?(.*)$ by default
+
+      - name: update nextBump of version policies
+        uses: xile611/set-next-bump-of-rush@main
+        with:
+          release_version: ${{ steps.semver_parser.outputs.full }}
+          write_next_bump: true
+
       - name: Update version
         run: node common/scripts/install-run-rush.js version --bump
 

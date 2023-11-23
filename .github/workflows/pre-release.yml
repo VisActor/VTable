@@ -41,8 +41,8 @@ jobs:
           semver_pattern: '^pre-release/(.*)$' # ^v?(.*)$ by default
 
       - name: Apply prereleaseName
-        run: node common/scripts/install-run-rush.js publish --apply --prerelease-name ${{ steps.semver_parser.outputs.pre_release_name }} --partial-prerelease
-
+        run: node common/scripts/apply-prerelease-version.js ${{ steps.semver_parser.outputs.pre_release_name }} ${{ steps.semver_parser.outputs.main }}
+  
       - name: Build packages
         env:
           NODE_OPTIONS: "--max_old_space_size=4096"
@@ -59,7 +59,7 @@ jobs:
 
       - name: Get npm version
         id: package-version
-        uses: xile611/read-package-version-action@v2.1
+        uses: xile611/read-package-version-action@main
         with:
           path: packages/vtable
 
