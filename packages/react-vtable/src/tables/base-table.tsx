@@ -1,6 +1,4 @@
 /* eslint-disable react/display-name */
-// import type { IData, IInitOption, ISpec } from '@visactor/vchart';
-// import VChart from '@visactor/vchart';
 import * as VTable from '@visactor/vtable';
 import React, { useState, useEffect, useRef, useImperativeHandle, useCallback } from 'react';
 import type { ContainerProps } from '../containers/withContainer';

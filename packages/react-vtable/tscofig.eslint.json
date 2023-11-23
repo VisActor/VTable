@@ -11,12 +11,7 @@
       "ESNext"
     ],
     "baseUrl": "./",
-    "rootDir": "./",
-    "paths": {
-      "@visactor/vtable": [
-        "../vtable/src"
-      ]
-    }
+    "rootDir": "./"
   },
   "include": [
     "src",

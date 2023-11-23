@@ -7,7 +7,6 @@
     "baseUrl": "./",
     "rootDir": "./src",
     "paths": {
-      "@visactor/vtable": ["../vtable/src/index.ts"]
     }
   },
   "ts-node": {
