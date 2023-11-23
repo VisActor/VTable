@@ -114,6 +114,11 @@ tableInstance.renderWithRecreateCells();
 ## offVChartEvent(Function)
 
 解除监听 VChart 图表事件
+
+## setRecords(Function)
+
+设置表格数据接口，可作为更新接口调用。
+
 ## selectCell(Function)
 
 选中某个单元格
@@ -376,6 +381,33 @@ enum HierarchyState {
   none = 'none'
 }
 ```
+
+## getLayouRowTree(Function)
+** PivotTable 专有 ** 
+
+获取表格行头树形结构
+```
+  /**
+   * 获取表格行树状结构
+   * @returns
+   */
+  getLayouRowTree() : LayouTreeNode[]
+```
+
+## getLayouRowTreeCount(Function)
+** PivotTable 专有 ** 
+
+获取表格行头树形结构的占位的总节点数。
+
+注意：逻辑中区分了平铺和树形层级结构
+```
+  /**
+   * 获取表格行头树形结构的占位的总节点数。
+   * @returns
+   */
+  getLayouRowTreeCount() : number
+```
+
 ## updateSortState(Function)
 
 更新排序状态，ListTable 专有

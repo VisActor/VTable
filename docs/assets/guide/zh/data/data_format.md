@@ -13,6 +13,8 @@
 ]
 ```
 
+同时：二维数组的数据结构也是可以支持设置的。
+
 接下来我们将分别介绍如何将这种数据应用到基本表格和透视表中。
 
 ## 基本表格数据
@@ -60,6 +62,41 @@ const tableInstance = new VTable.ListTable(document.getElementById(CONTAINER_ID)
 
 ```
 
+如果使用二维数组作为数据源，可以按如下配置来运行：
+```javascript livedemo  template=vtable
+    const option = {
+      columns : [
+        {
+            "field": "0",
+            "title": "name",
+            "sort": true,
+            "width":'auto',
+        },
+        {
+            "field": "1",
+            "title": "age"
+        },
+        {
+            "field": "2",
+            "title": "sex"
+        },
+        {
+            "field": "3",
+            "title": "phone"
+        },
+        {
+            "field": "4",
+            "title": "address"
+        },
+    ],
+    "records":[
+     [ "zhang_san", 20,"female", "123456789", "beijing haidian"],
+     ["li_si", 30,"female", "23456789", "beijing chaoyang"],
+     [ "wang_wu", 40, "male", "3456789", "beijing fengtai"]
+    ]
+}
+const tableInstance = new VTable.ListTable(document.getElementById(CONTAINER_ID), option);
+```
 ## 透视表数据
 
 透视表格的主要目的是对数据进行多维度的展示和分析，在配置透视表格时，我们需要指定分组（行和列）维度以及指标维度。例如，我们可以将数据按照性别分组，并计算每个的人数和平均年龄。
@@ -242,6 +279,10 @@ const option = {
 const tableInstance = new VTable.PivotTable(document.getElementById(CONTAINER_ID), option);
 
 ```
+
+## 重置数据接口
+可以使用setRecords 来改变表格数据。具体可查看api文档。
+
 ## 总结
 
 在本教程中，我们学习了如何在 VTable使用表格数据。我们首先了解了数据在表格中的意义，以及 VTable 中两种表格（基本表格和透视表格）的数据格式形式。为了帮助家更好地理解数据格式与表格的对应关系，我们分别讨论了基本表格和透视表格的对应关系。

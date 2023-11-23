@@ -46,7 +46,7 @@ import { EventTarget } from '../event/EventTarget';
 import { NumberMap } from '../tools/NumberMap';
 import { Rect } from '../tools/Rect';
 import type { TableTheme } from '../themes/theme';
-import { defaultOrderFn, throttle2 } from '../tools/util';
+import { throttle2 } from '../tools/util';
 import themes from '../themes';
 import { Env } from '../tools/env';
 import { Scenegraph } from '../scenegraph/scenegraph';
@@ -389,6 +389,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     if (this.internalProps.title) {
       this.internalProps.title.resize();
     }
+    // this.stateManeger.checkFrozen();
     this.scenegraph.resize();
   }
 
@@ -433,7 +434,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     // const oldFrozenColCount = this.internalProps.frozenColCount;
     this.internalProps.frozenColCount = frozenColCount;
     this.options.frozenColCount = frozenColCount;
-    //纠正frozenColCount的值
+    // 纠正frozenColCount的值;
     if (this.tableNoFrameWidth - this.getColsWidth(0, frozenColCount - 1) <= 120) {
       this.internalProps.frozenColCount = 0;
     }
@@ -1074,7 +1075,13 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
    */
   getColWidth(col: number): number {
     // const width = this.getColWidthDefine(col);
-    const width = this.colWidthsMap.get(col) ?? this.defaultColWidth;
+    const width =
+      this.colWidthsMap.get(col) ??
+      (col < this.rowHeaderLevelCount
+        ? Array.isArray(this.defaultHeaderColWidth)
+          ? this.defaultHeaderColWidth[col] ?? this.defaultColWidth
+          : this.defaultHeaderColWidth
+        : this.defaultColWidth);
     if (
       (this.widthMode === 'adaptive' && typeof width === 'number') ||
       ((this as any).transpose && typeof width === 'number')
@@ -1770,6 +1777,9 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     internalProps.handler?.release?.();
     // internalProps.scrollable?.release?.();
     internalProps.focusControl?.release?.();
+    internalProps.legends?.release();
+    internalProps.title?.release();
+    internalProps.layoutMap.release();
     if (internalProps.releaseList) {
       internalProps.releaseList.forEach(releaseObj => releaseObj?.release?.());
       internalProps.releaseList = null;
@@ -2320,6 +2330,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     field: FieldDef,
     fieldKey?: FieldKeyDef
   ): ((v1: any, v2: any, order: string) => 0 | 1 | -1) | undefined;
+  abstract setRecords(records: Array<any>, sort?: SortState | SortState[]): void;
   abstract refreshHeader(): void;
   abstract refreshRowColCount(): void;
   abstract getHierarchyState(col: number, row: number): HierarchyState | null;
@@ -2651,74 +2662,6 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
       return description(arg);
     }
     return description;
-  }
-  /**
-   * 设置表格数据 及排序状态
-   * @param records
-   * @param sort
-   */
-  setRecords(records: Array<any>, sort?: SortState | SortState[]): void {
-    const time = typeof window !== 'undefined' ? window.performance.now() : 0;
-    // 清空单元格内容
-    this.scenegraph.clearCells();
-
-    //重复逻辑抽取updateWidthHeight
-    if (sort !== undefined) {
-      this.internalProps.sortState = sort;
-      this.stateManeger.setSortState((this as any).sortState as SortState);
-    }
-    if (records) {
-      _setRecords(this, records);
-      if ((this as any).sortState) {
-        let order: any;
-        let field: any;
-        let fieldKey: any;
-        if (Array.isArray((this as any).sortState)) {
-          if ((this as any).sortState.length !== 0) {
-            ({ order, field, fieldKey } = (this as any).sortState?.[0]);
-          }
-        } else {
-          ({ order, field, fieldKey } = (this as any).sortState as SortState);
-        }
-        // 根据sort规则进行排序
-        if (order && field && order !== 'normal') {
-          const sortFunc = this._getSortFuncFromHeaderOption(undefined, field, fieldKey);
-          // 如果sort传入的信息不能生成正确的sortFunc，直接更新表格，避免首次加载无法正常显示内容
-          let hd;
-          if (fieldKey) {
-            hd = this.internalProps.layoutMap.headerObjects.find((col: any) => col && col.fieldKey === fieldKey);
-          } else {
-            hd = this.internalProps.layoutMap.headerObjects.find((col: any) => col && col.field === field);
-          }
-          hd?.define?.sort && this.dataSource.sort(hd.field, order, sortFunc ?? defaultOrderFn);
-        }
-      }
-      this.refreshRowColCount();
-    } else {
-      _setRecords(this, records);
-    }
-    this.stateManeger.initCheckedState(records);
-    this.internalProps.frozenColCount = this.options.frozenColCount || this.rowHeaderLevelCount;
-    // 生成单元格场景树
-    this.scenegraph.createSceneGraph();
-
-    if (this.internalProps.title && !this.internalProps.title.isReleased) {
-      this._updateSize();
-      this.internalProps.title.resize();
-      this.scenegraph.resize();
-    }
-
-    this.render();
-    console.log('setRecords cost time:', (typeof window !== 'undefined' ? window.performance.now() : 0) - time);
-  }
-  /**
-   * add or update a single record, col and row is optional, but all missing will be invalid
-   * @param col col position of the record, it is optional
-   * @param row row position of the record, it is optional
-   */
-  setRecord(record: any, col?: number, row?: number) {
-    const index = this.getRecordIndexByCell(col, row);
-    this.dataSource.setRecord(record, index);
   }
 
   setDropDownMenuHighlight(cells: DropDownMenuHighlightInfo[]): void {

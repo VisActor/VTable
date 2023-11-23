@@ -13,6 +13,7 @@ In VTable, the main data format we need to deal with is a JSON array. For exampl
   {"name": "wang_wu","age": 40,"sex": "male","phone": "3456789","address": "beijing fengtai"}
 ]
 ```
+At the same time: the data structure of two-dimensional array can also support setting.
 
 Next we will describe how to apply this data to basic tables and pivot tables, respectively.
 
@@ -27,7 +28,6 @@ Example:
 ```javascript livedemo  template=vtable
 
  const option = {
-    container: document.getElementById(CONTAINER_ID),
     columns : [
         {
             "field": "name",
@@ -58,8 +58,45 @@ Example:
      {"name": "wang_wu","age": 40,"sex": "male","phone": "3456789","address": "beijing fengtai"}
     ]
 }
-const tableInstance = new ListTable(option);
+const tableInstance = new VTable.ListTable(document.getElementById(CONTAINER_ID), option);
 
+```
+
+If you use a two-dimensional array as the data source, you can run it as follows:
+
+```javascript livedemo  template=vtable
+    const option = {
+      columns : [
+        {
+            "field": "0",
+            "title": "name",
+            "sort": true,
+            "width":'auto',
+        },
+        {
+            "field": "1",
+            "title": "age"
+        },
+        {
+            "field": "2",
+            "title": "sex"
+        },
+        {
+            "field": "3",
+            "title": "phone"
+        },
+        {
+            "field": "4",
+            "title": "address"
+        },
+    ],
+    "records":[
+     [ "zhang_san", 20,"female", "123456789", "beijing haidian"],
+     ["li_si", 30,"female", "23456789", "beijing chaoyang"],
+     [ "wang_wu", 40, "male", "3456789", "beijing fengtai"]
+    ]
+}
+const tableInstance = new VTable.ListTable(document.getElementById(CONTAINER_ID), option);
 ```
 
 ## Pivot Table Data
@@ -252,6 +289,8 @@ const option = {
 const tableInstance = new VTable.PivotTable(option);
 
 ```
+## Reset records interface
+You can use setRecords to change table data. Please check the api documentation for details.
 
 ## summarize
 

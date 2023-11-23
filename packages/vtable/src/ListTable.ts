@@ -17,13 +17,14 @@ import type {
 import { HierarchyState } from './ts-types';
 import { SimpleHeaderLayoutMap } from './layout';
 import { isValid } from '@visactor/vutils';
-import { _setDataSource } from './core/tableHelper';
+import { _setDataSource, _setRecords } from './core/tableHelper';
 import { BaseTable } from './core';
 import type { ListTableProtected } from './ts-types/base-table';
 import { TABLE_EVENT_TYPE } from './core/TABLE_EVENT_TYPE';
 import { Title } from './components/title/title';
 import { cloneDeep } from '@visactor/vutils';
 import { Env } from './tools/env';
+import { defaultOrderFn } from './tools/util';
 
 export class ListTable extends BaseTable implements ListTableAPI {
   declare internalProps: ListTableProtected;
@@ -325,12 +326,6 @@ export class ListTable extends BaseTable implements ListTableAPI {
     const internalProps = table.internalProps;
     const transpose = table.transpose;
     const showHeader = table.showHeader;
-
-    //原表头绑定的事件 解除掉
-    if (internalProps.headerEvents) {
-      internalProps.headerEvents.forEach((id: number) => table.off(id));
-    }
-
     const layoutMap = (internalProps.layoutMap = new SimpleHeaderLayoutMap(
       this,
       internalProps.columns ?? [],
@@ -372,19 +367,21 @@ export class ListTable extends BaseTable implements ListTableAPI {
       table.colCount =
         (table.internalProps.dataSource?.length ?? 0) * layoutMap.bodyRowSpanCount + layoutMap.headerLevelCount;
       table.frozenRowCount = 0;
-      table.frozenColCount = layoutMap.headerLevelCount;
-
+      // table.frozenColCount = layoutMap.headerLevelCount; //这里不要这样写 这个setter会检查扁头宽度 可能将frozenColCount置为0
+      this.internalProps.frozenColCount = layoutMap.headerLevelCount ?? 0;
       table.rightFrozenColCount = this.options.rightFrozenColCount ?? 0;
     } else {
       table.colCount = layoutMap.colCount ?? 0;
       table.rowCount =
         (table.internalProps.dataSource?.length ?? 0) * layoutMap.bodyRowSpanCount + layoutMap.headerLevelCount;
-      table.frozenColCount = table.options.frozenColCount ?? 0; //TODO
+      // table.frozenColCount = table.options.frozenColCount ?? 0; //这里不要这样写 这个setter会检查扁头宽度 可能将frozenColCount置为0
+      this.internalProps.frozenColCount = this.options.frozenColCount ?? 0;
       table.frozenRowCount = layoutMap.headerLevelCount;
 
       table.bottomFrozenRowCount = this.options.bottomFrozenRowCount ?? 0;
       table.rightFrozenColCount = this.options.rightFrozenColCount ?? 0;
     }
+    this.stateManeger.setFrozenCol(this.internalProps.frozenColCount);
   }
 
   getFieldData(field: FieldDef | FieldFormat | undefined, col: number, row: number): FieldData {
@@ -676,5 +673,73 @@ export class ListTable extends BaseTable implements ListTableAPI {
       });
     }
     return this.stateManeger.checkedState;
+  }
+  /**
+   * 设置表格数据 及排序状态
+   * @param records
+   * @param sort
+   */
+  setRecords(records: Array<any>, sort?: SortState | SortState[]): void {
+    const time = typeof window !== 'undefined' ? window.performance.now() : 0;
+    // 清空单元格内容
+    this.scenegraph.clearCells();
+
+    //重复逻辑抽取updateWidthHeight
+    if (sort !== undefined) {
+      this.internalProps.sortState = sort;
+      this.stateManeger.setSortState((this as any).sortState as SortState);
+    }
+    if (records) {
+      _setRecords(this, records);
+      if ((this as any).sortState) {
+        let order: any;
+        let field: any;
+        let fieldKey: any;
+        if (Array.isArray((this as any).sortState)) {
+          if ((this as any).sortState.length !== 0) {
+            ({ order, field, fieldKey } = (this as any).sortState?.[0]);
+          }
+        } else {
+          ({ order, field, fieldKey } = (this as any).sortState as SortState);
+        }
+        // 根据sort规则进行排序
+        if (order && field && order !== 'normal') {
+          const sortFunc = this._getSortFuncFromHeaderOption(undefined, field, fieldKey);
+          // 如果sort传入的信息不能生成正确的sortFunc，直接更新表格，避免首次加载无法正常显示内容
+          let hd;
+          if (fieldKey) {
+            hd = this.internalProps.layoutMap.headerObjects.find((col: any) => col && col.fieldKey === fieldKey);
+          } else {
+            hd = this.internalProps.layoutMap.headerObjects.find((col: any) => col && col.field === field);
+          }
+          hd?.define?.sort && this.dataSource.sort(hd.field, order, sortFunc ?? defaultOrderFn);
+        }
+      }
+      this.refreshRowColCount();
+    } else {
+      _setRecords(this, records);
+    }
+    this.stateManeger.initCheckedState(records);
+    // this.internalProps.frozenColCount = this.options.frozenColCount || this.rowHeaderLevelCount;
+    // 生成单元格场景树
+    this.scenegraph.createSceneGraph();
+
+    if (this.internalProps.title && !this.internalProps.title.isReleased) {
+      this._updateSize();
+      this.internalProps.title.resize();
+      this.scenegraph.resize();
+    }
+
+    this.render();
+    console.log('setRecords cost time:', (typeof window !== 'undefined' ? window.performance.now() : 0) - time);
+  }
+  /**
+   * 基本表格树形展示场景下，如果需要动态插入子节点的数据可以配合使用该接口，其他情况不适用
+   * @param col col position of the record, it is optional
+   * @param row row position of the record, it is optional
+   */
+  setRecord(record: any, col?: number, row?: number) {
+    const index = this.getRecordIndexByCell(col, row);
+    this.dataSource.setRecord(record, index);
   }
 }

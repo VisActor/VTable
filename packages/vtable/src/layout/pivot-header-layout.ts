@@ -32,8 +32,8 @@ import { diffCellAddress } from '../tools/diff-cell';
 import type { ILinkDimension } from '../ts-types/pivot-table/dimension/link-dimension';
 import type { IImageDimension } from '../ts-types/pivot-table/dimension/image-dimension';
 import { getChartAxes, getChartDataId, getChartSpec, getRawChartSpec } from './chart-helper/get-chart-spec';
-import type { IPivotLayoutHeadNode } from './pivot-layout-helper';
-import { DimensionTree } from './pivot-layout-helper';
+import type { LayouTreeNode, IPivotLayoutHeadNode } from './pivot-layout-helper';
+import { DimensionTree, countLayoutTree, generateLayoutTree } from './pivot-layout-helper';
 import type { Dataset } from '../dataset/dataset';
 import { cloneDeep, isArray, isValid } from '@visactor/vutils';
 import type { TextStyle } from '../body-helper/style';
@@ -2805,7 +2805,28 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
     }) as IIndicator;
     return indicatorInfo;
   }
+  /** 获取行头树结构 */
+  getLayoutRowTree() {
+    const tree: LayouTreeNode[] = [];
+    const children = this.rowDimensionTree.tree.children;
+    generateLayoutTree(tree, children);
+    return tree;
+  }
 
+  /** 获取行头总共的行数（全部展开情况下） */
+  getLayoutRowTreeCount() {
+    const children = this.rowDimensionTree.tree.children;
+    const mainTreeCount = countLayoutTree(children, this.rowHierarchyType === 'tree');
+    let totalCount = mainTreeCount;
+    this.extensionRows?.forEach(extensionRow => {
+      if (typeof extensionRow.rowTree !== 'function') {
+        //如果是自定义函数的扩展树结构 忽略这个计算 因为太复杂 需要将每个函数需要的参数都构造好才行
+        const thisTreeCount = countLayoutTree(extensionRow.rowTree as { children: any }[], true);
+        totalCount *= thisTreeCount;
+      }
+    });
+    return totalCount;
+  }
   updateDataset(dataset: Dataset) {
     // this.dataset = dataset;
     // if (dataset) {
