@@ -2629,7 +2629,7 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
     for (const key in this.dataset.collectValuesBy) {
       if (this.dataset.collectValuesBy[key].type === 'yField' && !this.dataset.collectValuesBy[key].range) {
         collectedValues =
-          this.dataset.collectedValues[key][
+          this.dataset.collectedValues[key]?.[
             path
               .map(pathObj => {
                 return pathObj.value;
@@ -2662,7 +2662,7 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
     for (const key in this.dataset.collectValuesBy) {
       if (this.dataset.collectValuesBy[key].type === 'xField' && !this.dataset.collectValuesBy[key].range) {
         collectedValues =
-          this.dataset.collectedValues[key][
+          this.dataset.collectedValues[key]?.[
             path
               .map(pathObj => {
                 return pathObj.value;

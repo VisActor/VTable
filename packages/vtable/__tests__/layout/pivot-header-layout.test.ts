@@ -1,7 +1,9 @@
 // @ts-nocheck
 // 有问题可对照demo unitTestListTable
-import { PivotChart } from '../../src';
+import * as VTable from '../../src';
 import { createDiv, removeDom } from '../dom';
+import VChart from '@visactor/vchart';
+VTable.register.chartModule('vchart', VChart);
 global.__VERSION__ = 'none';
 
 const option = {
@@ -2572,7 +2574,7 @@ describe('pivot-header-layout test', () => {
   containerDom.style.width = '500px';
   containerDom.style.height = '500px';
   option.container = containerDom;
-  const tableInstance = new PivotChart(option);
+  const tableInstance = new VTable.PivotChart(option);
   const layout = tableInstance.internalProps.layoutMap;
 
   test('pivot-header-layout column&row tree', () => {
