@@ -7,7 +7,7 @@ export function createTable() {
     .then(data => {
       const option: VTable.PivotTableConstructorOptions = {
         container: document.getElementById(CONTAINER_ID),
-        records: data,
+        // records: data,
         menu: {
           contextMenuItems: ['复制单元格内容', '查询详情']
         },
@@ -353,7 +353,7 @@ export function createTable() {
             showSort: false,
             format: rec => {
               if (rec) {
-                return Number(rec.Sales).toFixed(2);
+                return Number(rec?.Sales).toFixed(2);
               }
               return '--';
             },
@@ -392,7 +392,7 @@ export function createTable() {
             width: 'auto',
             showSort: false,
             format: rec => {
-              return Number(rec.Profit).toFixed(2);
+              return Number(rec?.Profit).toFixed(2);
             },
             style: {
               color: 'white',
@@ -435,7 +435,7 @@ export function createTable() {
       const tableInstance = new VTable.PivotTable(option);
       // 只为了方便控制太调试用，不要拷贝
       window.tableInstance = tableInstance;
-
+      tableInstance.setRecord(data);
       tableInstance.on('mouseenter_cell', args => {
         const { col, row } = args;
         const rect = tableInstance.getVisibleCellRangeRelativeRect({ col, row });

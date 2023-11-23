@@ -161,7 +161,7 @@ export interface IBaseTableProtected {
   };
 
   dataSourceEventIds?: EventListenerId[];
-  headerEvents?: EventListenerId[];
+  // headerEvents?: EventListenerId[];
   layoutMap: SimpleHeaderLayoutMap | PivotHeaderLayoutMap;
   headerValues?: HeaderValues;
   tooltipHandler: TooltipHandler;
@@ -316,11 +316,6 @@ export interface BaseTableConstructorOptions {
   pixelRatio?: number;
   /** 自定义渲染 函数形式*/
   customRender?: ICustomRender;
-  /**
-   * 传入用户实例化的数据对象 目前不完善
-   */
-  dataSource?: DataSource;
-
   /** 开启自动换行 默认false */
   autoWrapText?: boolean;
   /** 单元格中可显示最大字符数 默认200 */

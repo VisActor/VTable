@@ -251,3 +251,55 @@ export class DimensionTree {
     Array.prototype.splice.apply(parNode.children, sourceColumns);
   }
 }
+
+//#region 为方法getLayoutRowTree提供的类型和工具方法
+export type LayouTreeNode = {
+  dimensionKey?: string;
+  indicatorKey?: string;
+  value: string;
+  hierarchyState: HierarchyState;
+  children?: LayouTreeNode[];
+};
+
+export function generateLayoutTree(tree: LayouTreeNode[], children: IPivotLayoutHeadNode[]) {
+  children?.forEach((node: IPivotLayoutHeadNode) => {
+    const diemnsonNode: {
+      dimensionKey?: string;
+      indicatorKey?: string;
+      value: string;
+      hierarchyState: HierarchyState;
+      children: any;
+    } = {
+      dimensionKey: node.dimensionKey,
+      indicatorKey: node.indicatorKey,
+      value: node.value,
+      hierarchyState: node.hierarchyState,
+      children: undefined
+    };
+    tree.push(diemnsonNode);
+    if (node.children) {
+      diemnsonNode.children = [];
+      generateLayoutTree(diemnsonNode.children, node.children);
+    }
+  });
+}
+//#endregion
+
+//#region   为方法getLayoutRowTreeCount提的工具方法
+export function countLayoutTree(children: { children?: any }[], countParentNode: boolean) {
+  let count = 0;
+  children?.forEach((node: IPivotLayoutHeadNode) => {
+    if (countParentNode) {
+      count++;
+    } else {
+      if (!node.children || node.children.length === 0) {
+        count++;
+      }
+    }
+    if (node.children) {
+      count += countLayoutTree(node.children, countParentNode);
+    }
+  });
+  return count;
+}
+//#endregion

@@ -21,7 +21,7 @@ export class SimpleHeaderLayoutMap implements LayoutMapAPI {
   // private _headerObjectFieldKey: { [key in string]: HeaderData };
   private _headerCellIds: number[][];
   private _columns: ColumnData[];
-  readonly bodyRowCount: number = 1;
+  readonly bodyRowSpanCount: number = 1;
   //透视表中树形结构使用 这里为了table逻辑不报错
   // rowHierarchyIndent?: number = 0;
   hierarchyIndent?: number; // 树形展示缩进值
@@ -264,16 +264,41 @@ export class SimpleHeaderLayoutMap implements LayoutMapAPI {
     return this.transpose ? this.headerLevelCount : 0;
   }
   get frozenColCount(): number {
-    return this._table.internalProps.frozenColCount ?? 0;
+    if (this._table.internalProps.frozenColCount) {
+      if (this.colCount > this._table.internalProps.frozenColCount) {
+        return this._table.internalProps.frozenColCount;
+      }
+      return this.colCount;
+    }
+    return 0;
   }
   get frozenRowCount(): number {
-    return this._table.internalProps.frozenRowCount ?? 0;
+    // return this._table.internalProps.frozenRowCount ?? 0;
+    if (this._table.internalProps.frozenRowCount) {
+      if (this.rowCount >= this._table.internalProps.frozenRowCount) {
+        return this._table.internalProps.frozenRowCount;
+      }
+      return this.rowCount;
+    }
+    return 0;
   }
   get bottomFrozenRowCount(): number {
-    return this._table.internalProps.bottomFrozenRowCount ?? 0;
+    if (this._table.internalProps.bottomFrozenRowCount) {
+      if (this.rowCount - this.headerLevelCount >= this._table.internalProps.bottomFrozenRowCount) {
+        return this._table.internalProps.bottomFrozenRowCount;
+      }
+      return this.rowCount - this.headerLevelCount;
+    }
+    return 0;
   }
   get rightFrozenColCount(): number {
-    return this._table.internalProps.rightFrozenColCount ?? 0;
+    if (this._table.internalProps.rightFrozenColCount) {
+      if (this.colCount - this.rowHeaderLevelCount >= this._table.internalProps.rightFrozenColCount) {
+        return this._table.internalProps.rightFrozenColCount;
+      }
+      return this.colCount - this.rowHeaderLevelCount;
+    }
+    return 0;
   }
   get colCount(): number | undefined {
     //标准表格 列数是由表头定义的field决定的；如果是转置表格，这个值么有地方用到，而且是由数据量决定的，在listTable中有定义这个值
@@ -282,6 +307,16 @@ export class SimpleHeaderLayoutMap implements LayoutMapAPI {
   get rowCount(): number | undefined {
     //转置表格 行数是由表头定义的field决定的；如果是标准表格，这个值么有地方用到，而且是由数据量决定的，在listTable中有定义这个值
     return this.transpose ? this._columns.length : this.headerLevelCount + this.recordsCount;
+  }
+  /** 不包括冻结的行 */
+  get bodyRowCount(): number | undefined {
+    //转置表格 行数是由表头定义的field决定的；如果是标准表格，这个值么有地方用到，而且是由数据量决定的，在listTable中有定义这个值
+    return this.transpose ? this._columns.length : this.rowCount - this.bottomFrozenRowCount - this.headerLevelCount;
+  }
+  /** 不包括冻结的列 */
+  get bodyColCount(): number | undefined {
+    //转置表格 行数是由表头定义的field决定的；如果是标准表格，这个值么有地方用到，而且是由数据量决定的，在listTable中有定义这个值
+    return this.transpose ? this.colCount - this.rightFrozenColCount - this.rowHeaderLevelCount : this._columns.length;
   }
   get recordsCount() {
     //标准表格 列数是由表头定义的field决定的；如果是转置表格，这个值么有地方用到，而且是由数据量决定的，在listTable中有定义这个值

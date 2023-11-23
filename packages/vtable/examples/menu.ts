@@ -98,6 +98,10 @@ export const menus = [
       },
       {
         path: 'pivot-chart',
+        name: 'pivotChart-setRecords'
+      },
+      {
+        path: 'pivot-chart',
         name: 'pivotChart-horizontal'
       },
       {
@@ -220,11 +224,19 @@ export const menus = [
       },
       {
         path: 'pivot',
+        name: 'pivot-different-dimension-setRecords'
+      },
+      {
+        path: 'pivot',
         name: 'pivot-size-legend'
       },
       {
         path: 'pivot',
         name: 'pivot-basic'
+      },
+      {
+        path: 'pivot',
+        name: 'pivot-basic-setRecords'
       },
       {
         path: 'pivot',
@@ -298,6 +310,10 @@ export const menus = [
       {
         path: 'pivot-analysis',
         name: 'pivot-analysis'
+      },
+      {
+        path: 'pivot-analysis',
+        name: 'pivot-analysis-setRecords'
       },
       {
         path: 'pivot-analysis',
@@ -692,6 +708,10 @@ export const menus = [
       {
         path: 'unit-test-demo',
         name: 'pivotTable-color-legend'
+      },
+      {
+        path: 'unit-test-demo',
+        name: 'pivotTable-size-legend'
       }
     ]
   },
