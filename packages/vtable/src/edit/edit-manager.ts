@@ -29,6 +29,9 @@ export class EditManeger {
         // 如果是双击自动列宽 则编辑不开启
         return;
       }
+      if (this.table.isHeader(col, row)) {
+        return;
+      }
       console.log('editor-manager', 'DBLCLICK_CELL');
       const range = this.table.getCellRange(col, row);
       const isMerge = range.start.col !== range.end.col || range.start.row !== range.end.row;

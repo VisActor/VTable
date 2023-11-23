@@ -144,7 +144,7 @@ export function createTable() {
         editor: 'input',
         title: 'progress',
         description: '这是一个标题的详细描述',
-        width: 150,
+        width: 'auto',
         showSort: true //显示VTable内置排序图标
       },
       {
@@ -156,37 +156,12 @@ export function createTable() {
           }
           return v1 === v2 ? 0 : v1 > v2 ? 1 : -1;
         },
-        width: 100
-      },
-      {
-        field: 'id',
-        fieldFormat(rec) {
-          return `这是第${rec.id}号`;
-        },
-        title: 'ID说明',
-        description: '这是一个ID详细描述',
-        sort: (v1, v2, order) => {
-          if (order === 'desc') {
-            return v1 === v2 ? 0 : v1 > v2 ? -1 : 1;
-          }
-          return v1 === v2 ? 0 : v1 > v2 ? 1 : -1;
-        },
-        width: 150
-      },
-      {
-        title: 'Name',
-        headerStyle: {
-          textAlign: 'center',
-          fontWeight: 'bold',
-          fontSize: 13,
-          fontFamily: 'sans-serif'
-        },
-        field: 'name',
-        width: 150
+        width: 'auto'
       }
     ],
     showFrozenIcon: true, //显示VTable内置冻结列图标
     widthMode: 'standard',
+    autoFillWidth: true,
     allowFrozenColCount: 2
   };
 

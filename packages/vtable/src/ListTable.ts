@@ -824,15 +824,21 @@ export class ListTable extends BaseTable implements ListTableAPI {
     this.dataSource.changeFieldValue(value, recordIndex, field, col, row, this);
     const cell_value = this.getFieldData(fieldFormat || field, col, row);
     this.scenegraph.updateCellValue(col, row, cell_value);
-
-    if (!this.internalProps._widthResizedColMap.has(col)) {
+    if (this.widthMode === 'adaptive' || (this.autoFillWidth && this.getAllColsWidth() <= this.tableNoFrameWidth)) {
+      if (this.internalProps._widthResizedColMap.size === 0) {
+        //如果没有手动调整过行高列宽 则重新计算一遍并重新分配
+        this.scenegraph.recalculateColWidths();
+      }
+    } else if (!this.internalProps._widthResizedColMap.has(col)) {
       const oldWidth = this.getColWidth(col);
       const newWidth = computeColWidth(col, 0, this.rowCount - 1, this, false);
       if (newWidth !== oldWidth) {
         this.scenegraph.updateColWidth(col, newWidth - oldWidth);
       }
     }
-    if (this.heightMode === 'autoHeight') {
+    if (this.heightMode === 'adaptive' || (this.autoFillHeight && this.getAllRowsHeight() <= this.tableNoFrameHeight)) {
+      this.scenegraph.recalculateRowHeights();
+    } else if (this.heightMode === 'autoHeight') {
       const oldHeight = this.getRowHeight(row);
       const newHeight = computeRowHeight(row, 0, this.colCount - 1, this);
       this.scenegraph.updateRowHeight(row, newHeight - oldHeight);
