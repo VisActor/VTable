@@ -5,6 +5,7 @@ import type { FieldDef, FieldFormat, FieldKeyDef } from '../../table-engine';
 import type { ColumnIconOption } from '../../icon';
 import type { MenuListItem } from '../../menu';
 import type { BaseTableAPI } from '../../base-table';
+import type { IEditor } from '@visactor/vtable-editors';
 
 // eslint-disable-next-line no-unused-vars
 export interface IBasicHeaderDefine {
@@ -82,5 +83,5 @@ export interface IBasicColumnBodyDefine {
 
   customRender?: ICustomRender;
   customLayout?: ICustomLayout;
-  editor?: string | ((args: BaseCellInfo & { table: BaseTableAPI }) => string);
+  editor?: string | IEditor | ((args: BaseCellInfo & { table: BaseTableAPI }) => string | IEditor);
 }

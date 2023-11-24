@@ -30,6 +30,7 @@ import { EditManeger } from './edit/edit-manager';
 import { computeColWidth } from './scenegraph/layout/compute-col-width';
 import { computeRowHeight } from './scenegraph/layout/compute-row-height';
 import { defaultOrderFn } from './tools/util';
+import type { IEditor } from '@visactor/vtable-editors';
 
 export class ListTable extends BaseTable implements ListTableAPI {
   declare internalProps: ListTableProtected;
@@ -800,8 +801,15 @@ export class ListTable extends BaseTable implements ListTableAPI {
     this.dataSource.setRecord(record, index);
   }
   /** 开启单元格编辑 */
-  startEditCell(col: number, row: number) {
-    this.editorManager.startEditCell(col, row);
+  startEditCell(col?: number, row?: number) {
+    if (isValid(col) && isValid(row)) {
+      this.editorManager.startEditCell(col, row);
+    } else if (this.stateManeger.select?.cellPos) {
+      const { col, row } = this.stateManeger.select.cellPos;
+      if (isValid(col) && isValid(row)) {
+        this.editorManager.startEditCell(col, row);
+      }
+    }
   }
   /** 结束编辑 */
   completeEditCell() {
@@ -810,7 +818,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
   /** 获取单元格对应的编辑器 */
   getEditor(col: number, row: number) {
     const define = this.getBodyColumnDefine(col, row);
-    const editorDefine = define?.editor ?? this.options.editor;
+    let editorDefine = define?.editor ?? this.options.editor;
 
     if (typeof editorDefine === 'function') {
       const arg = {
@@ -820,11 +828,12 @@ export class ListTable extends BaseTable implements ListTableAPI {
         value: this.getCellValue(col, row) || '',
         table: this
       };
-      return (editorDefine as Function)(arg);
-    } else if (typeof editorDefine === 'string') {
+      editorDefine = (editorDefine as Function)(arg);
+    }
+    if (typeof editorDefine === 'string') {
       return editors.get(editorDefine);
     }
-    return editorDefine;
+    return editorDefine as IEditor;
   }
   /** 更改单元格数据 会触发change_cell_value事件*/
   changeCellValue(col: number, row: number, value: string | number | null) {

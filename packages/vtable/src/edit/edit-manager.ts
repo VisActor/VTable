@@ -1,7 +1,7 @@
 import type { IEditor } from '@visactor/vtable-editors';
 import { TABLE_EVENT_TYPE } from '../core/TABLE_EVENT_TYPE';
 import type { BaseTableAPI } from '../ts-types/base-table';
-import type { ListTableAPI } from '../ts-types';
+import type { ListTableAPI, ListTableConstructorOptions } from '../ts-types';
 import { getCellEventArgsSet } from '../event/util';
 
 export class EditManeger {
@@ -15,21 +15,33 @@ export class EditManeger {
   bindEvent() {
     const handler = this.table.internalProps.handler;
     this.table.on(TABLE_EVENT_TYPE.DBLCLICK_CELL, e => {
-      const { col, row } = e;
+      if (
+        !(this.table.options as ListTableConstructorOptions).editCellTrigger || //默认为双击
+        (this.table.options as ListTableConstructorOptions).editCellTrigger === 'doubleclick'
+      ) {
+        const { col, row } = e;
 
-      //取双击自动列宽逻辑
-      const eventArgsSet = getCellEventArgsSet(e.federatedEvent);
-      const resizeCol = this.table.scenegraph.getResizeColAt(
-        eventArgsSet.abstractPos.x,
-        eventArgsSet.abstractPos.y,
-        eventArgsSet.eventArgs?.targetCell
-      );
-      if (this.table._canResizeColumn(resizeCol.col, resizeCol.row) && resizeCol.col >= 0) {
-        // 判断同双击自动列宽的时间监听的DBLCLICK_CELL
-        // 如果是双击自动列宽 则编辑不开启
-        return;
+        //取双击自动列宽逻辑
+        const eventArgsSet = getCellEventArgsSet(e.federatedEvent);
+        const resizeCol = this.table.scenegraph.getResizeColAt(
+          eventArgsSet.abstractPos.x,
+          eventArgsSet.abstractPos.y,
+          eventArgsSet.eventArgs?.targetCell
+        );
+        if (this.table._canResizeColumn(resizeCol.col, resizeCol.row) && resizeCol.col >= 0) {
+          // 判断同双击自动列宽的时间监听的DBLCLICK_CELL
+          // 如果是双击自动列宽 则编辑不开启
+          return;
+        }
+        this.startEditCell(col, row);
       }
-      this.startEditCell(col, row);
+    });
+
+    this.table.on(TABLE_EVENT_TYPE.CLICK_CELL, e => {
+      if ((this.table.options as ListTableConstructorOptions).editCellTrigger === 'click') {
+        const { col, row } = e;
+        this.startEditCell(col, row);
+      }
     });
     document.body.addEventListener('pointerdown', (e: PointerEvent) => {
       const target = e.target;

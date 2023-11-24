@@ -141,7 +141,10 @@ export interface ListTableConstructorOptions extends BaseTableConstructorOptions
    * 排序状态
    */
   sortState?: SortState | SortState[];
-  editor?: string | ((args: BaseCellInfo & { table: BaseTableAPI }) => string);
+  /** 全局设置编辑器 */
+  editor?: string | IEditor | ((args: BaseCellInfo & { table: BaseTableAPI }) => string | IEditor);
+  /** 编辑触发时机 双击事件  单击事件 api手动开启编辑。默认为双击'doubleclick' */
+  editCellTrigger?: 'doubleclick' | 'click' | 'api';
 }
 
 export interface ListTableAPI extends BaseTableAPI {
@@ -155,6 +158,10 @@ export interface ListTableAPI extends BaseTableAPI {
   //#region 编辑器相关demo
   /** 获取单元格配置的编辑器 */
   getEditor: (col: number, row: number) => IEditor;
+  /** 开启单元格编辑 */
+  startEditCell: (col?: number, row?: number) => void;
+  /** 结束编辑 */
+  completeEditCell: () => void;
   /** 获取单元格展示数据源最原始值 */
   getCellRawValue: (col: number, row: number) => FieldData;
   //#endregion
