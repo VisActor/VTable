@@ -1,10 +1,11 @@
-import type { CellInfo, SortOption } from '../../common';
-import type { ICustomRender, ICustomRenderFuc, ICustomRenderObj } from '../../customElement';
+import type { BaseCellInfo, CellInfo, SortOption } from '../../common';
+import type { ICustomRender } from '../../customElement';
 import type { ICustomLayout } from '../../customLayout';
 import type { FieldDef, FieldFormat, FieldKeyDef } from '../../table-engine';
 import type { ColumnIconOption } from '../../icon';
 import type { MenuListItem } from '../../menu';
 import type { BaseTableAPI } from '../../base-table';
+import type { IEditor } from '@visactor/vtable-editors';
 
 // eslint-disable-next-line no-unused-vars
 export interface IBasicHeaderDefine {
@@ -82,4 +83,5 @@ export interface IBasicColumnBodyDefine {
 
   customRender?: ICustomRender;
   customLayout?: ICustomLayout;
+  editor?: string | IEditor | ((args: BaseCellInfo & { table: BaseTableAPI }) => string | IEditor);
 }

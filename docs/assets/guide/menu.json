@@ -351,6 +351,22 @@
       ]
     },
     {
+      "path": "edit",
+      "title": {
+        "zh": "编辑",
+        "en": "edit"
+      },
+      "children": [
+        {
+          "path": "edit_cell",
+          "title": {
+            "zh": "编辑表格数据",
+            "en": "edit cell"
+          }
+        }
+      ]
+    },
+    {
       "path": "data",
       "title": {
         "zh": "数据",
@@ -360,8 +376,8 @@
         {
           "path": "data_format",
           "title": {
-            "zh": "数据格式",
-            "en": "data_format"
+            "zh": "数据源",
+            "en": "records"
           }
         },
         {
@@ -424,6 +440,13 @@
         "en": "Developer Ecology"
       },
       "children": [
+        {
+          "path": "react",
+          "title": {
+            "zh": "React-VTable",
+            "en": "React-VTable"
+          }
+        },
         {
           "path": "vue",
           "title": {

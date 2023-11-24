@@ -1,6 +1,6 @@
 {
   "name": "@visactor/vtable",
-  "version": "0.14.3",
+  "version": "0.15.0",
   "description": "canvas table width high performance",
   "keywords": [
     "grid",
@@ -49,15 +49,17 @@
     "test-nodejs": "ts-node --transpileOnly --skipProject ./nodejs/index.ts"
   },
   "dependencies": {
-    "@visactor/vrender": "0.16.14",
-    "@visactor/vrender-components": "0.16.14",
+    "@visactor/vtable-editors": "workspace:*",
+    "@visactor/vrender": "0.16.17",
+    "@visactor/vrender-components": "0.16.17",
     "@visactor/vutils-extension": "1.5.1-alpha.0",
-    "@visactor/vutils": "~0.16.8",
+    "@visactor/vutils": "~0.16.10",
     "@visactor/vscale": "0.16.0",
     "@visactor/vdataset": "~0.15.7",
     "cssfontparser": "^1.2.1"
   },
   "devDependencies": {
+    "luxon": "*",
     "@visactor/vchart": "1.6.0",
     "@internal/bundler": "workspace:*",
     "@internal/eslint-config": "workspace:*",
@@ -105,7 +107,8 @@
     "d3-geo": "^3.0.1",
     "d3-hexbin": "^0.2.2",
     "d3-hierarchy": "^3.1.1",
-    "@resvg/resvg-js": "^2.5.0"
+    "@resvg/resvg-js": "^2.5.0",
+    "pikaday": "1.8.2"
   },
   "unpkg": "latest",
   "unpkgFiles": [
@@ -117,6 +120,7 @@
   "homepage": "https://visactor.io/vtable",
   "repository": {
     "type": "git",
-    "url": "https://github.com/VisActor/VTable.git"
+    "url": "https://github.com/VisActor/VTable.git",
+    "directory": "packages/vtable"
   }
 }

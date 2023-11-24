@@ -2,6 +2,8 @@ import { icons as iconPlugins } from './plugins/icons';
 import { themes as themePlugins } from './plugins/themes';
 import { chartTypes as chartTypePlugins } from './plugins/chartModules';
 import type { ColumnIconOption, ITableThemeDefine } from './ts-types';
+import type { IEditor } from '@visactor/vtable-editors';
+import { editors } from './edit/editors';
 
 function register(obj: { [key: string]: any }, name: string, value: any): any {
   const old = obj[name];
@@ -26,6 +28,12 @@ export function chartModule(name: string, chartModule?: any): any {
     return register(chartTypePlugins, name, chartModule);
   }
   return chartTypePlugins[name];
+}
+export function editor(name: string, editor?: IEditor): IEditor {
+  if (editor !== null && editor !== undefined) {
+    return register(editors, name, editor);
+  }
+  return editors[name];
 }
 // 清理注册的全局theme icon chartModule
 function clear(obj: any) {

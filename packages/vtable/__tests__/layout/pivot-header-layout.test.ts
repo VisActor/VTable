@@ -1,7 +1,9 @@
 // @ts-nocheck
 // 有问题可对照demo unitTestListTable
-import { PivotChart } from '../../src';
+import * as VTable from '../../src';
 import { createDiv, removeDom } from '../dom';
+import VChart from '@visactor/vchart';
+VTable.register.chartModule('vchart', VChart);
 global.__VERSION__ = 'none';
 
 const option = {
@@ -2572,7 +2574,7 @@ describe('pivot-header-layout test', () => {
   containerDom.style.width = '500px';
   containerDom.style.height = '500px';
   option.container = containerDom;
-  const tableInstance = new PivotChart(option);
+  const tableInstance = new VTable.PivotChart(option);
   const layout = tableInstance.internalProps.layoutMap;
 
   test('pivot-header-layout column&row tree', () => {
@@ -2920,6 +2922,14 @@ describe('pivot-header-layout test', () => {
     expect(layout.getRowKeysPath(2, 1)).toBe('公司');
     expect(layout.getRowKeysPath(3, 2)).toBe('小型企业');
     expect(layout.getRowKeysPath(4, 3)).toBe('消费者');
+  });
+
+  test('pivot-header-layout isEmpty', () => {
+    expect(layout.isEmpty(0, 0)).toBe(false);
+    expect(layout.isEmpty(1, 0)).toBe(false);
+    expect(layout.isEmpty(0, 4)).toBe(true);
+    expect(layout.isEmpty(2, 4)).toBe(false);
+    expect(layout.isEmpty(2, 1)).toBe(false);
   });
 
   tableInstance.release();

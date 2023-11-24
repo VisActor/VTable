@@ -92,12 +92,11 @@ export interface TableEventHandlersEventArgumentMap {
   };
   freeze_click: { col: number; row: number; fields: FieldDef[]; colCount: number };
   dropdown_menu_click: DropDownMenuEventArgs;
-  copydata: CellRange[];
 
   mouseover_chart_symbol: MousePointerSparklineEvent;
 
   drag_select_end: MousePointerMultiCellEvent;
-
+  copy_data: { cellRange: CellRange[]; copyData: string };
   drillmenu_click: DrillMenuEventInfo;
 
   dropdown_icon_click: CellAddress;
@@ -157,6 +156,8 @@ export interface TableEventHandlersEventArgumentMap {
   checkbox_state_change: MousePointerCellEvent & { checked: boolean };
   after_render: null;
   initialized: null;
+
+  change_cell_value: { col: number; row: number; rawValue: string | number; changedValue: string | number };
 }
 export interface DrillMenuEventInfo {
   dimensionKey: string | number;
@@ -190,9 +191,10 @@ export interface TableEventHandlersReturnMap {
   sort_click: boolean;
   freeze_click: void;
   dropdown_menu_click: void;
-  copydata: string;
+
   mouseover_chart_symbol: void;
   drag_select_end: void;
+  copy_data: void;
   drillmenu_click: void;
 
   dropdown_icon_click: void;
@@ -221,4 +223,6 @@ export interface TableEventHandlersReturnMap {
   checkbox_state_change: void;
   after_render: void;
   initialized: void;
+
+  change_cell_value: void;
 }

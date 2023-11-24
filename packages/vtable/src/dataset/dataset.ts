@@ -114,6 +114,8 @@ export class Dataset {
   rows: string[];
   columns: string[];
   indicatorKeys: string[];
+  customRowTree: IHeaderTreeDefine[];
+  customColTree: IHeaderTreeDefine[];
   // // 存储行表头path 这个是全量的 对比于分页截取的rowKeysPath；
   // private rowKeysPath_FULL: string[][];
   colHeaderTree: any[];
@@ -151,14 +153,16 @@ export class Dataset {
     this.indicatorKeys = indicatorKeys;
     this.indicatorsAsCol = indicatorsAsCol;
     this.indicators = indicators;
+    this.customColTree = customColTree;
+    this.customRowTree = customRowTree;
     this.colGrandTotalLabel = this.totals?.column?.grandTotalLabel ?? '总计';
     this.colSubTotalLabel = this.totals?.column?.subTotalLabel ?? '小计';
     this.rowGrandTotalLabel = this.totals?.row?.grandTotalLabel ?? '总计';
     this.rowSubTotalLabel = this.totals?.row?.subTotalLabel ?? '小计';
     this.collectValuesBy = this.dataConfig?.collectValuesBy;
     this.needSplitPositiveAndNegative = needSplitPositiveAndNegative ?? false;
-    this.rowsIsTotal = new Array(this.rows.length).fill(false);
-    this.colsIsTotal = new Array(this.columns.length).fill(false);
+    this.rowsIsTotal = new Array(this.rows?.length ?? 0).fill(false);
+    this.colsIsTotal = new Array(this.columns?.length ?? 0).fill(false);
     for (let i = 0, len = this.totals?.row?.subTotalsDimensions?.length; i < len; i++) {
       const dimension = this.totals.row.subTotalsDimensions[i];
       const dimensionIndex = this.rows.indexOf(dimension);
@@ -172,11 +176,25 @@ export class Dataset {
     // this.rowKeysPath = [];
     // this.rowKeysPath_FULL = [];
     // this.colKeysPath = [];
+    this.setRecords(records);
+    // this.updatePagination(pagination);
+  }
+
+  setRecords(records: any[] | Record<string, any[]>) {
+    this.records = records;
+    this.collectedValues = {};
+    this.cacheCollectedValues = {};
+    this.totalRecordsTree = {};
+    this.tree = {};
+    this.colFlatKeys = {};
+    this.rowFlatKeys = {};
+    this.colKeys = [];
+    this.rowKeys = [];
     if (records) {
       //处理数据
       this.records = records;
       const t0 = typeof window !== 'undefined' ? window.performance.now() : 0;
-      this.setRecords();
+      this.processRecords();
 
       //processRecord中按照collectValuesBy 收集了维度值。现在需要对有聚合需求的sumby 处理收集维度值范围
       this.processCollectedValuesWithSumBy();
@@ -204,47 +222,47 @@ export class Dataset {
       // console.log('madeTree:', t41 - t4);
 
       const t7 = typeof window !== 'undefined' ? window.performance.now() : 0;
-      if (customRowTree) {
-        if (!indicatorsAsCol) {
-          customRowTree = this._adjustCustomTree(customRowTree);
+      if (this.customRowTree) {
+        if (!this.indicatorsAsCol) {
+          this.customRowTree = this._adjustCustomTree(this.customRowTree);
         }
 
-        this.rowHeaderTree = customRowTree;
+        this.rowHeaderTree = this.customRowTree;
       } else {
         if (this.rowHierarchyType === 'tree') {
           this.rowHeaderTree = this.ArrToTree1(
             this.rowKeys,
             this.rows,
-            indicatorsAsCol ? undefined : indicators,
+            this.indicatorsAsCol ? undefined : this.indicators,
             this?.totals?.row?.showGrandTotals ||
-              (!indicatorsAsCol && this.columns.length === 0) ||
-              (indicatorsAsCol && this.rows.length === 0),
+              (!this.indicatorsAsCol && this.columns.length === 0) ||
+              (this.indicatorsAsCol && this.rows.length === 0),
             this.rowGrandTotalLabel
           );
         } else {
           this.rowHeaderTree = this.ArrToTree(
             this.rowKeys,
             this.rows,
-            indicatorsAsCol ? undefined : indicators,
+            this.indicatorsAsCol ? undefined : this.indicators,
             this.rowsIsTotal,
-            this?.totals?.row?.showGrandTotals || (indicatorsAsCol && this.rows.length === 0),
+            this?.totals?.row?.showGrandTotals || (this.indicatorsAsCol && this.rows.length === 0),
             this.rowGrandTotalLabel,
             this.rowSubTotalLabel
           );
         }
       }
-      if (customColTree) {
-        if (indicatorsAsCol) {
-          customColTree = this._adjustCustomTree(customColTree);
+      if (this.customColTree) {
+        if (this.indicatorsAsCol) {
+          this.customColTree = this._adjustCustomTree(this.customColTree);
         }
-        this.colHeaderTree = customColTree;
+        this.colHeaderTree = this.customColTree;
       } else {
         this.colHeaderTree = this.ArrToTree(
           this.colKeys,
           this.columns,
-          indicatorsAsCol ? indicators : undefined,
+          this.indicatorsAsCol ? this.indicators : undefined,
           this.colsIsTotal,
-          this.totals?.column?.showGrandTotals || (!indicatorsAsCol && this.columns.length === 0), // || this.rows.length === 0,//todo  这里原有逻辑暂时注释掉
+          this.totals?.column?.showGrandTotals || (!this.indicatorsAsCol && this.columns.length === 0), // || this.rows.length === 0,//todo  这里原有逻辑暂时注释掉
           this.colGrandTotalLabel,
           this.colSubTotalLabel
         );
@@ -260,7 +278,6 @@ export class Dataset {
         this.cacheDeminsionCollectedValues();
       }
     }
-    // this.updatePagination(pagination);
   }
   //将聚合类型注册 收集到aggregators
   registerAggregator(type: string, aggregator: any) {
@@ -274,9 +291,6 @@ export class Dataset {
     this.registerAggregator(AggregationType.MAX, MaxAggregator);
     this.registerAggregator(AggregationType.MIN, MinAggregator);
     this.registerAggregator(AggregationType.AVG, AvgAggregator);
-  }
-  private setRecords() {
-    this.processRecords();
   }
   /**processRecord中按照collectValuesBy 收集了维度值。现在需要对有聚合需求的 处理收集维度值范围 */
   private processCollectedValuesWithSumBy() {

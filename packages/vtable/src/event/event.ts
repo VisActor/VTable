@@ -1,5 +1,5 @@
 // import { FederatedPointerEvent } from '@visactor/vrender';
-import type { FederatedPointerEvent, IEventTarget } from '@visactor/vrender';
+import type { FederatedPointerEvent, Gesture } from '@visactor/vrender';
 import { RichText } from '@visactor/vrender';
 import type { MousePointerCellEvent } from '../ts-types';
 import { IconFuncTypeEnum } from '../ts-types';
@@ -13,7 +13,7 @@ import { bindDrillEvent, checkHaveDrill, drillClick } from './drill';
 import { bindSparklineHoverEvent } from './sparkline-event';
 import type { BaseTableAPI } from '../ts-types/base-table';
 import { checkHaveTextStick, handleTextStick } from '../scenegraph/stick-text';
-import { bindTableGroupListener } from './listener/table-group';
+import { bindGesture, bindTableGroupListener } from './listener/table-group';
 import { bindScrollBarListener } from './listener/scroll-bar';
 import { bindContainerDomListener } from './listener/container-dom';
 import { bindTouchListener } from './listener/touch';
@@ -37,6 +37,7 @@ export class EventManeger {
   touchSetTimeout: any; // touch start timeout, use to distinguish touch scrolling mode and default touch event
   touchEnd: boolean; // is touch event end when default touch event listener response
   touchMove: boolean; // is touch listener working, use to disable document touch scrolling function
+  gesture: Gesture;
   constructor(table: BaseTableAPI) {
     this.table = table;
     if (Env.mode === 'node') {
@@ -54,8 +55,8 @@ export class EventManeger {
     bindContainerDomListener(this);
     bindScrollBarListener(this);
     bindTouchListener(this);
+    bindGesture(this);
   }
-
   bindSelfEvent() {
     if (this.table.isReleased) {
       return;
@@ -340,5 +341,9 @@ export class EventManeger {
     }
 
     return false;
+  }
+  /** TODO 其他的事件并么有做remove */
+  release() {
+    this.gesture.release();
   }
 }

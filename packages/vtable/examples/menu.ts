@@ -57,6 +57,10 @@ export const menus = [
       {
         path: 'list',
         name: 'list-no-columns'
+      },
+      {
+        path: 'list',
+        name: 'list-large-columns'
       }
     ]
   },
@@ -95,6 +99,10 @@ export const menus = [
       {
         path: 'pivot-chart',
         name: 'pivotChart'
+      },
+      {
+        path: 'pivot-chart',
+        name: 'pivotChart-setRecords'
       },
       {
         path: 'pivot-chart',
@@ -220,11 +228,19 @@ export const menus = [
       },
       {
         path: 'pivot',
+        name: 'pivot-different-dimension-setRecords'
+      },
+      {
+        path: 'pivot',
         name: 'pivot-size-legend'
       },
       {
         path: 'pivot',
         name: 'pivot-basic'
+      },
+      {
+        path: 'pivot',
+        name: 'pivot-basic-setRecords'
       },
       {
         path: 'pivot',
@@ -298,6 +314,10 @@ export const menus = [
       {
         path: 'pivot-analysis',
         name: 'pivot-analysis'
+      },
+      {
+        path: 'pivot-analysis',
+        name: 'pivot-analysis-setRecords'
       },
       {
         path: 'pivot-analysis',
@@ -583,6 +603,23 @@ export const menus = [
     ]
   },
   {
+    menu: '编辑单元格',
+    children: [
+      {
+        path: 'editor',
+        name: 'input-editor'
+      },
+      {
+        path: 'editor',
+        name: 'date-editor'
+      },
+      {
+        path: 'editor',
+        name: 'custom-date-editor'
+      }
+    ]
+  },
+  {
     menu: '调试使用',
     children: [
       {
@@ -675,6 +712,10 @@ export const menus = [
       {
         path: 'unit-test-demo',
         name: 'pivotTable-color-legend'
+      },
+      {
+        path: 'unit-test-demo',
+        name: 'pivotTable-size-legend'
       }
     ]
   },

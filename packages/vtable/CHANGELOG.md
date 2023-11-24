@@ -1,6 +1,34 @@
 # Change Log - @visactor/vtable
 
-This log was last generated on Fri, 17 Nov 2023 08:33:08 GMT and should not be manually modified.
+This log was last generated on Fri, 24 Nov 2023 12:06:58 GMT and should not be manually modified.
+
+## 0.15.0
+Fri, 24 Nov 2023 12:06:58 GMT
+
+### Minor changes
+
+- feat: add event copy_data #551
+
+
+- feat: add column with min limit #590
+Open
+
+
+- feat: edit text value with inputEditor
+
+
+- feat: add react-vtable
+
+### Patches
+
+- fix: compute col width when large count col with sampling the frozen bottom rows is not computed
+
+
+- fix: fix cell position mismatch problems when bodyRowCount is 0 #596
+
+
+- fix/fix cell role judgement in updateCellGroupContent()
+- fix: fix text mark x in updateCell()
 
 ## 0.14.3
 Fri, 17 Nov 2023 08:33:08 GMT
@@ -335,4 +363,9 @@ Wed, 05 Jul 2023 06:55:19 GMT
 - feat: support event in mobile device
 - feat: add resize event response
 - alpha
+
+### Updates
+
+- none
+- update vrender version
 

@@ -31,6 +31,14 @@ export type LineDashsDef = number[] | (number[] | null)[];
 export type shadowColorsDef = { from: string; to: string } | ({ from: string; to: string } | null)[];
 export type PaddingsDef = number | (number | null)[];
 export type SortOption = boolean | ((v1: any, v2: any, order: SortOrder) => -1 | 0 | 1);
+export type BaseCellInfo = {
+  row: number;
+  col: number;
+  /**format之后的值 */
+  value: FieldData;
+  /**原始值 */
+  dataValue: FieldData;
+};
 export type CellInfo = {
   col: number;
   row: number;
