@@ -1,4 +1,9 @@
-import type { ITextGraphicAttribute, IRichTextCharacter, RichTextWordBreak } from '@visactor/vrender';
+import type {
+  ITextGraphicAttribute,
+  IRichTextCharacter,
+  RichTextWordBreak,
+  IRichTextGraphicAttribute
+} from '@visactor/vrender';
 export type ITitle = {
   /**
    * 是否显示标题
@@ -101,7 +106,8 @@ export type ITitle = {
      * 富文本配置
      */
     character?: IRichTextCharacter[];
-  } & Partial<ITextGraphicAttribute>;
+  } & Partial<ITextGraphicAttribute> &
+    Partial<IRichTextGraphicAttribute>;
   /**
    * 副标题样式
    */
@@ -142,7 +148,8 @@ export type ITitle = {
      * 富文本配置
      */
     character?: IRichTextCharacter[];
-  } & Partial<ITextGraphicAttribute>;
+  } & Partial<ITextGraphicAttribute> &
+    Partial<IRichTextGraphicAttribute>;
 };
 export interface IPadding {
   top?: number;
