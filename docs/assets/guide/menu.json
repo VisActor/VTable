@@ -360,8 +360,8 @@
         {
           "path": "data_format",
           "title": {
-            "zh": "数据格式",
-            "en": "data_format"
+            "zh": "数据源",
+            "en": "records"
           }
         },
         {

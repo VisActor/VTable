@@ -86,7 +86,8 @@ export interface TableEvents {
    * 拖拽框选单元格鼠标松开事件
    */
   DRAG_SELECT_END: 'drag_select_end';
-
+  /** 复制完成 */
+  COPY_DATA: 'copy_data';
   /**
    * 点击下拉菜单按钮
    */
@@ -150,7 +151,7 @@ export const TABLE_EVENT_TYPE: TableEvents = {
   DROPDOWN_MENU_CLICK: 'dropdown_menu_click',
   MOUSEOVER_CHART_SYMBOL: 'mouseover_chart_symbol',
   DRAG_SELECT_END: 'drag_select_end',
-
+  COPY_DATA: 'copy_data',
   DROPDOWN_ICON_CLICK: 'dropdown_icon_click', // 点击下拉菜单按钮
   DROPDOWN_MENU_CLEAR: 'dropdown_menu_clear', // 清空下拉菜单事件（菜单显示时点击其他区域）
 

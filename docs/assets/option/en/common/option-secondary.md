@@ -50,6 +50,10 @@ Maximum number of operable records, such as the maximum number of data entries t
 
 Specify the maximum column width when calculating column width, which can be boolean or a specific value. Default is 450.
 
+#${prefix} limitMinWidth(boolean|number) = 10
+
+Minimum column width limit. If set to true, the column width will be limited to a minimum of 10px when dragging to change the column width. If set to false, there will be no limit. Or set it directly to some numeric value. Default is 10px.
+
 #${prefix} frozenColCount(number) = 0
 
 The number of frozen columns

@@ -92,12 +92,11 @@ export interface TableEventHandlersEventArgumentMap {
   };
   freeze_click: { col: number; row: number; fields: FieldDef[]; colCount: number };
   dropdown_menu_click: DropDownMenuEventArgs;
-  copydata: CellRange[];
 
   mouseover_chart_symbol: MousePointerSparklineEvent;
 
   drag_select_end: MousePointerMultiCellEvent;
-
+  copy_data: { cellRange: CellRange[]; copyData: string };
   drillmenu_click: DrillMenuEventInfo;
 
   dropdown_icon_click: CellAddress;
@@ -190,9 +189,10 @@ export interface TableEventHandlersReturnMap {
   sort_click: boolean;
   freeze_click: void;
   dropdown_menu_click: void;
-  copydata: string;
+
   mouseover_chart_symbol: void;
   drag_select_end: void;
+  copy_data: void;
   drillmenu_click: void;
 
   dropdown_icon_click: void;

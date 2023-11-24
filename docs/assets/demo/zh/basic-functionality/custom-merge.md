@@ -95,22 +95,24 @@ const option = {
   records,
   columns,
   widthMode:'standard',
+  bottomFrozenRowCount:1,
   customMergeCell: (col, row, table) => {
-    if (col > 0 && col < 8 && row > 7 && row < 11) {
+    if (col >=0 && col < table.colCount && row === table.rowCount-1) {
       return {
-        text: 'long long long long long long long long long long long long long long long long long long text!',
+        text: '总结栏：此数据为一份人员基本信息',
         range: {
           start: {
-            col: 1,
-            row: 8
+            col: 0,
+            row: table.rowCount-1
           },
           end: {
-            col: 7,
-            row: 10
+            col: table.colCount-1,
+            row: table.rowCount-1
           }
         },
-        style: {
-          bgColor: '#ccc'
+        style:{
+          borderLineWidth:[6,1,1,1],
+          borderColor:['gray']
         }
       };
     }

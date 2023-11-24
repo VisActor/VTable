@@ -8,6 +8,9 @@
 
 |名称|事件名|描述|
 |:----|:----|:----|
+|生命周期事件：完成初始化|INITIALIZED|生命周期事件：成功初始化完成后触发|
+|渲染完成|AFTER\_RENDER|每次渲染完成触发|
+|监听图表事件|同vchart教程中规定的事件|表格中嵌入图表，需要监听图表事件的情况使用。使用方法`onVChartEvent`非`on`|
 |点击|CLICK\_CELL|单元格点击事件|
 |双击|DBLCLICK\_CELL|单元格双击事件|
 |右键|CONTEXTMENU\_CELL|单元格右键事件|
@@ -36,8 +39,8 @@
 |图例项unhover|LEGEND\_ITEM\_UNHOVER|鼠标离开hover的图例项|
 |鼠标进入坐标轴|MOUSEENTER\_AXIS|鼠标进入坐标轴组件|
 |鼠标离开坐标轴|MOUSELEAVE\_AXIS|鼠标离开坐标轴组件|
-|生命周期事件：完成初始化|INITIALIZED|生命周期事件：成功初始化完成后触发|
-|渲染完成|AFTER\_RENDER|每次渲染完成触发|
+|监听复制|COPY\_DATA|当使用快捷键复制单元格后触发该事件|
+
 
 ## 事件监听方式
 

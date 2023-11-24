@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "comment": "fix: compute col width when large count col with sampling the frozen bottom rows is not computed\n\n",
+      "type": "patch",
+      "packageName": "@visactor/vtable"
+    }
+  ],
+  "packageName": "@visactor/vtable",
+  "email": "892739385@qq.com"
+}
