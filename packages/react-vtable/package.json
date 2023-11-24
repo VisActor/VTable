@@ -1,8 +1,9 @@
 {
-  "name": "@visactor/vtable",
-  "version": "0.14.3",
-  "description": "canvas table width high performance",
+  "name": "@visactor/react-vtable",
+  "version": "0.13.4",
+  "description": "The react version of VTable",
   "keywords": [
+    "react",
     "grid",
     "table",
     "pivottable",
@@ -35,31 +36,22 @@
     }
   },
   "scripts": {
-    "demo": "vite serve examples",
-    "site-demo": "vite serve site-demo",
-    "compile": "tsc --noEmit",
-    "eslint": "eslint --debug --fix src/",
-    "build": "bundle --clean",
-    "dev": "bundle --clean -f es -w",
-    "start": "vite ./vite",
-    "test": "jest --silent",
-    "test-cov": "jest --coverage",
-    "ci": "ts-node --transpileOnly --skipProject ./scripts/trigger-test.ts",
-    "build:es": "bundle --clean -f es --ignorePostTasks",
-    "test-nodejs": "ts-node --transpileOnly --skipProject ./nodejs/index.ts"
+    "start": "vite ./demo",
+    "build": "bundle --clean"
+  },
+  "unpkg": "latest",
+  "unpkgFiles": [
+    "dist/react-vtable.js"
+  ],
+  "publishConfig": {
+    "access": "public"
   },
   "dependencies": {
-    "@visactor/vtable-editors": "workspace:*",
-    "@visactor/vrender": "0.16.17",
-    "@visactor/vrender-components": "0.16.17",
-    "@visactor/vutils-extension": "1.5.1-alpha.0",
+    "@visactor/vtable": "workspace:*",
     "@visactor/vutils": "~0.16.10",
-    "@visactor/vscale": "0.16.0",
-    "@visactor/vdataset": "~0.15.7",
-    "cssfontparser": "^1.2.1"
+    "react-is": "^18.2.0"
   },
   "devDependencies": {
-    "luxon": "*",
     "@visactor/vchart": "1.6.0",
     "@internal/bundler": "workspace:*",
     "@internal/eslint-config": "workspace:*",
@@ -102,25 +94,6 @@
     "node-fetch": "2.6.7",
     "form-data": "~4.0.0",
     "axios": "^1.4.0",
-    "d3-dsv": "^3.0.1",
-    "d3-array": "3.2.3",
-    "d3-geo": "^3.0.1",
-    "d3-hexbin": "^0.2.2",
-    "d3-hierarchy": "^3.1.1",
-    "@resvg/resvg-js": "^2.5.0",
-    "pikaday": "1.8.2"
-  },
-  "unpkg": "latest",
-  "unpkgFiles": [
-    "build/es5/index.js"
-  ],
-  "publishConfig": {
-    "access": "public"
-  },
-  "homepage": "https://visactor.io/vtable",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/VisActor/VTable.git",
-    "directory": "packages/vtable"
+    "@types/react-is": "^17.0.3"
   }
 }

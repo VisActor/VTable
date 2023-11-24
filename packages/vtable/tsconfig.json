@@ -6,6 +6,8 @@
     "lib": ["DOM", "ESNext"],
     "baseUrl": "./",
     "rootDir": "./src",
+    "outDir": "./es",
+    "composite": true,
     "plugins": [
       { "transform": "typescript-transform-paths" },
       {
