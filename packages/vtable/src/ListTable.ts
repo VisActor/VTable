@@ -799,6 +799,14 @@ export class ListTable extends BaseTable implements ListTableAPI {
     const index = this.getRecordIndexByCell(col, row);
     this.dataSource.setRecord(record, index);
   }
+  /** 开启单元格编辑 */
+  startEditCell(col: number, row: number) {
+    this.editorManager.startEditCell(col, row);
+  }
+  /** 结束编辑 */
+  completeEditCell() {
+    this.editorManager.completeEdit();
+  }
   /** 获取单元格对应的编辑器 */
   getEditor(col: number, row: number) {
     const define = this.getBodyColumnDefine(col, row);
@@ -818,6 +826,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
     }
     return editorDefine;
   }
+  /** 更改单元格数据 会触发change_cell_value事件*/
   changeCellValue(col: number, row: number, value: string | number | null) {
     const recordIndex = this.getRecordIndexByCell(col, row);
     const { field, fieldFormat } = this.internalProps.layoutMap.getBody(col, row);

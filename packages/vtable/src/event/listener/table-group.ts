@@ -661,7 +661,7 @@ export function bindGesture(eventManeger: EventManeger) {
   const table = eventManeger.table;
   eventManeger.gesture = new Gesture(table.scenegraph.stage as unknown as IEventTarget, {
     tap: {
-      interval: 400
+      interval: 300
     }
   });
   eventManeger.gesture.on('doubletap', e => {
