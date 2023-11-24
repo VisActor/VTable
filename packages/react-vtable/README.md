@@ -10,118 +10,60 @@
 
 <div align="center">
 
-VTable is not just a high-performance multidimensional data analysis table, but also a grid artist that creates art between rows and columns.
+VTable is not just a high-performance multidimensional data analysis table, but also a grid artist that creates art between rows and columns.React-VTable is a React wrapper of VTable.
 
-<p align="center">
-  <a href="">Introduction</a> •
-  <a href="">demo</a> •
-  <a href="">Tutorial</a> •
-  <a href="">API</a>•
-</p>
-
-[![npm Version](https://img.shields.io/npm/v/@visactor/vtable.svg)](https://www.npmjs.com/package/@visactor/vtable)
-[![npm Download](https://img.shields.io/npm/dm/@visactor/vtable.svg)](https://www.npmjs.com/package/@visactor/vtable)
+[![npm Version](https://img.shields.io/npm/v/@visactor/vtable.svg)](https://www.npmjs.com/package/@visactor/react-vtable)
+[![npm Download](https://img.shields.io/npm/dm/@visactor/vtable.svg)](https://www.npmjs.com/package/@visactor/react-vvtable)
 [![license](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/visactor/vtable/blob/main/LICENSE)
 
 </div>
-
-<div align="center">
-
-English| [简体中文](./README.zh-CN.md)
-
-</div>
-
-<div align="center">
-
-（video）
-
-</div>
-
-# Introduction
-
-VTable is a canvas table library based on visual rendering engine [VRender](https://github.com/VisActor/VRender). 
-
-The core capabilities are as follows:
-
-1. Extreme performance: Supports fast computation and rendering of millions of data points.
-2. Multidimensional analysis: Automatically analyzes and presents multidimensional data.
-3. Strong expressiveness: Provides flexible and powerful graphic capabilities, seamlessly integrating with charts of [VChart](https://github.com/VisActor/VChart).
-
-# Repo Intro
-
-This repository includes the following packages:
-
-1. vtable: VTable components
-2. vtable-docs: VTable documentation
 
 # Usage
 
 ## Installation
 
-[npm package](https://www.npmjs.com/package/@visactor/vtable)
+[npm package](https://www.npmjs.com/package/@visactor/react-vtable)
 
 ```bash
 // npm
-npm install @visactor/vtable
+npm install @visactor/react-vtable
 
 // yarn
-yarn add @visactor/vtable
+yarn add @visactor/react-vtable
 ```
 
 ## Quick Start
 
-```javascript
-import * as VTable from '@visactor/vtable';
-
-const columns =[
-    {
-        "field": "Order ID",
-        "caption": "Order ID",
-    },
-    {
-        "field": "Customer ID",
-        "caption": "Customer ID",
-    },
-    {
-        "field": "Product Name",
-        "caption": "Product Name",
-    },
-    {
-        "field": "Sales",
-        "caption": "Sales",
-    },
-    {
-        "field": "Profit",
-        "caption": "Profit",
-    }
-];
+```jsx
+import React from 'react';
+import ReactDOM from 'react-dom/client';
+import { ListTable } from "@visactor/react-vtable";
 
 const option = {
-  records:[
-      {
-      "Order ID": "CA-2018-156720",
-      "Customer ID": "JM-15580",
-      "Product Name": "Bagged Rubber Bands",
-      "Sales": "3.024",
-      "Profit": "-0.605"
-  },
-  {
-      "Order ID": "CA-2018-115427",
-      "Customer ID": "EB-13975",
-      "Product Name": "GBC Binding covers",
-      "Sales": "20.72",
-      "Profit": "6.475"
-  },
-  ...
+  header: [
+    {
+      field: "0",
+      caption: "name",
+    },
+    {
+      field: "1",
+      caption: "age",
+    },
+    {
+      field: "2",
+      caption: "gender",
+    },
+    {
+      field: "3",
+      caption: "hobby",
+    },
   ],
-  columns,
-  widthMode:'standard'
+  records: new Array(1000).fill(["John", 18, "male", "🏀"]),
 };
-const tableInstance = new VTable.ListTable(document.getElementById(CONTAINER_ID), option);
 
-
-
-
+ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
+  <ListTable option={option} height={'500px'}/>
+);
 ```
 
 ##
