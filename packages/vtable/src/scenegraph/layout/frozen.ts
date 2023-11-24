@@ -1,6 +1,8 @@
+import { getStyleTheme } from '../../core/tableHelper';
 import { Group } from '../graphic/group';
 import { createColGroup } from '../group-creater/column';
 import type { Scenegraph } from '../scenegraph';
+import { getProp } from '../utils/get-prop';
 
 export function dealFrozen(scene: Scenegraph) {
   if (scene.table.frozenColCount > scene.table.rowHeaderLevelCount) {
@@ -138,6 +140,13 @@ function moveColumnFromBottomToLeftBottomCorner(scene: Scenegraph) {
       scene.leftBottomCornerGroup.attribute.width + column.attribute.width
     );
     scene.bottomFrozenGroup.setAttribute('width', scene.bottomFrozenGroup.attribute.width - column.attribute.width);
+
+    column.forEachChildren((child: Group) => {
+      child.setAttributes({
+        stroke: false,
+        fill: false
+      });
+    });
   }
 }
 
@@ -154,6 +163,23 @@ function moveColumnFromLeftBottomCornerToBottom(scene: Scenegraph) {
       'width',
       scene.leftBottomCornerGroup.attribute.width - column.attribute.width
     );
+
+    column.forEachChildren((child: Group) => {
+      const cellStyle = scene.table._getCellStyle(child.col, child.row);
+      const range = scene.table.getCellRange(child.col, child.row);
+      const cellTheme = getStyleTheme(
+        cellStyle,
+        scene.table,
+        range ? range.start.col : child.col,
+        range ? range.start.row : child.row,
+        getProp
+      ).theme;
+
+      child.setAttributes({
+        fill: cellTheme?.group?.fill ?? undefined,
+        stroke: cellTheme?.group?.stroke ?? undefined
+      });
+    });
   }
 }
 

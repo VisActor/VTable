@@ -46,7 +46,8 @@ export function updateRow(
   });
 
   // reset attribute y and row number in CellGroup
-  const newTotalHeight = resetRowNumberAndY(scene);
+  // const newTotalHeight = resetRowNumberAndY(scene);
+  resetRowNumberAndY(scene);
 
   // add cells
   updateCells.forEach(cell => {
@@ -90,6 +91,7 @@ export function updateRow(
   }
 
   // update table size
+  const newTotalHeight = table.getRowsHeight(table.frozenRowCount, table.rowCount - 1);
   scene.updateContainerHeight(scene.table.frozenRowCount, newTotalHeight - scene.bodyGroup.attribute.height);
 }
 

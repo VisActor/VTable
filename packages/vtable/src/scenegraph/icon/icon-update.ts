@@ -23,7 +23,7 @@ export function hideHoverIcon(col: number, row: number, scene: Scenegraph) {
     row,
     (icon: Icon) => icon.attribute.visibleTime === 'mouseenter_cell',
     (icon: Icon) => {
-      icon.setAttribute('visible', false);
+      icon.setAttribute('opacity', 0);
     },
     scene
   );
@@ -43,7 +43,7 @@ export function showHoverIcon(col: number, row: number, scene: Scenegraph) {
     row,
     (icon: Icon) => icon.attribute.visibleTime === 'mouseenter_cell',
     (icon: Icon) => {
-      icon.setAttribute('visible', true);
+      icon.setAttribute('opacity', 1);
     },
     scene
   );
@@ -63,7 +63,7 @@ export function hideClickIcon(col: number, row: number, scene: Scenegraph) {
     row,
     (icon: Icon) => icon.attribute.visibleTime === 'click_cell',
     (icon: Icon) => {
-      icon.setAttribute('visible', false);
+      icon.setAttribute('opacity', 0);
     },
     scene
   );
@@ -83,7 +83,7 @@ export function showClickIcon(col: number, row: number, scene: Scenegraph) {
     row,
     (icon: Icon) => icon.attribute.visibleTime === 'click_cell',
     (icon: Icon) => {
-      icon.setAttribute('visible', true);
+      icon.setAttribute('opacity', 1);
     },
     scene
   );
