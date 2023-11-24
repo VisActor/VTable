@@ -13,10 +13,7 @@
         "afterDeclarations": true
       }
     ],
-    "strict": false,
-    "paths": {
-      "@visactor/vtable-editors": ["../vtable-editors/src/index.ts"]
-    }
+    "strict": false
   },
   "references": [
     {

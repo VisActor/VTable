@@ -18,6 +18,7 @@ export function createTable() {
         field: 'bloggerName',
         caption: '主播昵称',
         width: '260',
+        editor: '',
         customLayout: args => {
           const { table, row, col, rect } = args;
           const { height, width } = rect ?? table.getCellRect(col, row);

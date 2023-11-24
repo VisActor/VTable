@@ -3150,109 +3150,109 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
 
   /**获取选中区域的内容 作为复制内容 */
   getCopyValue(): string | null {
-    if (!this.stateManeger.select?.ranges) {
-      return null;
-    }
-    const ranges = this.stateManeger.select.ranges;
-    let minCol = Math.min(ranges[0].start.col, ranges[0].end.col);
-    let maxCol = Math.max(ranges[0].start.col, ranges[0].end.col);
-    let minRow = Math.min(ranges[0].start.row, ranges[0].end.row);
-    let maxRow = Math.max(ranges[0].start.row, ranges[0].end.row);
-    ranges.forEach((a: CellRange) => {
-      minCol = Math.min(minCol, a.start.col, a.end.col);
-      maxCol = Math.max(maxCol, a.start.col, a.end.col);
-      minRow = Math.min(minRow, a.start.row, a.end.row);
-      maxRow = Math.max(maxRow, a.start.row, a.end.row);
-      // return a.start.row - b.start.row || a.start.col - b.start.col
-    });
-    const isExistDataInRow = (r: number) => {
-      let isExist = false;
-      ranges.forEach((range: CellRange) => {
-        const minRow = Math.min(range.start.row, range.end.row);
-        const maxRow = Math.max(range.start.row, range.end.row);
-        if (minRow <= r && maxRow >= r) {
-          isExist = true;
-        }
+    if (this.stateManeger.select?.ranges?.length > 0) {
+      const ranges = this.stateManeger.select.ranges;
+      let minCol = Math.min(ranges[0].start.col, ranges[0].end.col);
+      let maxCol = Math.max(ranges[0].start.col, ranges[0].end.col);
+      let minRow = Math.min(ranges[0].start.row, ranges[0].end.row);
+      let maxRow = Math.max(ranges[0].start.row, ranges[0].end.row);
+      ranges.forEach((a: CellRange) => {
+        minCol = Math.min(minCol, a.start.col, a.end.col);
+        maxCol = Math.max(maxCol, a.start.col, a.end.col);
+        minRow = Math.min(minRow, a.start.row, a.end.row);
+        maxRow = Math.max(maxRow, a.start.row, a.end.row);
+        // return a.start.row - b.start.row || a.start.col - b.start.col
       });
-      return isExist;
-    };
-    const isExistDataInCol = (c: number) => {
-      let isExist = false;
-      ranges.forEach((range: CellRange) => {
-        const minCol = Math.min(range.start.col, range.end.col);
-        const maxCol = Math.max(range.start.col, range.end.col);
-        if (minCol <= c && maxCol >= c) {
-          isExist = true;
+      const isExistDataInRow = (r: number) => {
+        let isExist = false;
+        ranges.forEach((range: CellRange) => {
+          const minRow = Math.min(range.start.row, range.end.row);
+          const maxRow = Math.max(range.start.row, range.end.row);
+          if (minRow <= r && maxRow >= r) {
+            isExist = true;
+          }
+        });
+        return isExist;
+      };
+      const isExistDataInCol = (c: number) => {
+        let isExist = false;
+        ranges.forEach((range: CellRange) => {
+          const minCol = Math.min(range.start.col, range.end.col);
+          const maxCol = Math.max(range.start.col, range.end.col);
+          if (minCol <= c && maxCol >= c) {
+            isExist = true;
+          }
+        });
+        return isExist;
+      };
+
+      const getRangeExistDataInCell = (c: number, r: number) => {
+        let isExistRange;
+        ranges.forEach((range: CellRange) => {
+          const minRow = Math.min(range.start.row, range.end.row);
+          const maxRow = Math.max(range.start.row, range.end.row);
+          const minCol = Math.min(range.start.col, range.end.col);
+          const maxCol = Math.max(range.start.col, range.end.col);
+          if (minCol <= c && maxCol >= c && minRow <= r && maxRow >= r) {
+            isExistRange = range;
+          }
+        });
+        return isExistRange;
+      };
+      const getCopyCellValue = (col: number, row: number, range?: CellRange): string | Promise<string> | void => {
+        const cellRange = this.getCellRange(col, row);
+        let copyStartCol = cellRange.start.col;
+        let copyStartRow = cellRange.start.row;
+        if (range) {
+          const rangeMinCol = Math.min(range.start.col, range.end.col);
+          const rangeMinRow = Math.min(range.start.row, range.end.row);
+          copyStartCol = Math.max(rangeMinCol, cellRange.start.col);
+          copyStartRow = Math.max(rangeMinRow, cellRange.start.row);
         }
-      });
-      return isExist;
-    };
 
-    const getRangeExistDataInCell = (c: number, r: number) => {
-      let isExistRange;
-      ranges.forEach((range: CellRange) => {
-        const minRow = Math.min(range.start.row, range.end.row);
-        const maxRow = Math.max(range.start.row, range.end.row);
-        const minCol = Math.min(range.start.col, range.end.col);
-        const maxCol = Math.max(range.start.col, range.end.col);
-        if (minCol <= c && maxCol >= c && minRow <= r && maxRow >= r) {
-          isExistRange = range;
+        if (copyStartCol !== col || copyStartRow !== row) {
+          return '';
         }
-      });
-      return isExistRange;
-    };
-    const getCopyCellValue = (col: number, row: number, range?: CellRange): string | Promise<string> | void => {
-      const cellRange = this.getCellRange(col, row);
-      let copyStartCol = cellRange.start.col;
-      let copyStartRow = cellRange.start.row;
-      if (range) {
-        const rangeMinCol = Math.min(range.start.col, range.end.col);
-        const rangeMinRow = Math.min(range.start.row, range.end.row);
-        copyStartCol = Math.max(rangeMinCol, cellRange.start.col);
-        copyStartRow = Math.max(rangeMinRow, cellRange.start.row);
-      }
 
-      if (copyStartCol !== col || copyStartRow !== row) {
-        return '';
-      }
+        const value = this.getCellValue(col, row);
+        return value;
+      };
+      let copyValue = '';
 
-      const value = this.getCellValue(col, row);
-      return value;
-    };
-    let copyValue = '';
-
-    for (let r = minRow; r <= maxRow; r++) {
-      const isExistData = isExistDataInRow(r);
-      if (isExistData) {
-        for (let c = minCol; c <= maxCol; c++) {
-          const isExistDataCol = isExistDataInCol(c);
-          if (isExistDataCol) {
-            const range: CellRange | undefined = getRangeExistDataInCell(c, r);
-            if (range) {
-              const copyCellValue = getCopyCellValue(c, r, range);
-              if (typeof Promise !== 'undefined' && copyCellValue instanceof Promise) {
-                //无法获取异步数据
-              } else {
-                // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-                const strCellValue = `${copyCellValue}`;
-                if (/^\[object .*\]$/.exec(strCellValue)) {
-                  //object 对象忽略掉
+      for (let r = minRow; r <= maxRow; r++) {
+        const isExistData = isExistDataInRow(r);
+        if (isExistData) {
+          for (let c = minCol; c <= maxCol; c++) {
+            const isExistDataCol = isExistDataInCol(c);
+            if (isExistDataCol) {
+              const range: CellRange | undefined = getRangeExistDataInCell(c, r);
+              if (range) {
+                const copyCellValue = getCopyCellValue(c, r, range);
+                if (typeof Promise !== 'undefined' && copyCellValue instanceof Promise) {
+                  //无法获取异步数据
                 } else {
-                  copyValue += strCellValue;
+                  // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+                  const strCellValue = `${copyCellValue}`;
+                  if (/^\[object .*\]$/.exec(strCellValue)) {
+                    //object 对象忽略掉
+                  } else {
+                    copyValue += strCellValue;
+                  }
                 }
-              }
-              if (c < range.end.col || c < maxCol) {
+                if (c < range.end.col || c < maxCol) {
+                  copyValue += '\t';
+                }
+              } else {
                 copyValue += '\t';
               }
-            } else {
-              copyValue += '\t';
             }
           }
+          copyValue += '\n';
         }
-        copyValue += '\n';
       }
+      return copyValue;
     }
-    return copyValue;
+    return '';
   }
 
   /**获取选中区域的每个单元格详情 */

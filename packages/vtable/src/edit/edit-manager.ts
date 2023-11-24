@@ -29,26 +29,30 @@ export class EditManeger {
         // 如果是双击自动列宽 则编辑不开启
         return;
       }
+      //表头不允许编辑
       if (this.table.isHeader(col, row)) {
         return;
       }
-      console.log('editor-manager', 'DBLCLICK_CELL');
-      const range = this.table.getCellRange(col, row);
-      const isMerge = range.start.col !== range.end.col || range.start.row !== range.end.row;
-      if (isMerge) {
-        console.warn("this is merge cell, can't be edited");
-        return;
-      }
-      const rect = this.table.getCellRelativeRect(col, row);
       const editor = (this.table as ListTableAPI).getEditor(col, row);
       if (editor) {
+        //自定义内容单元格不允许编辑
+        if (this.table.getCustomRender(col, row) || this.table.getCustomLayout(col, row)) {
+          console.warn("VTable Warn: cell has config custom render or layout, can't be edited");
+          return;
+        }
+        const range = this.table.getCellRange(col, row);
+        const isMerge = range.start.col !== range.end.col || range.start.row !== range.end.row;
+        if (isMerge) {
+          console.warn("VTable Warn: this is merge cell, can't be edited");
+          return;
+        }
         editor.bindSuccessCallback?.(() => {
           this.completeEdit();
         });
         this.editingEditor = editor;
         this.editCell = { col, row };
         const dataValue = this.table.getCellOriginValue(col, row);
-
+        const rect = this.table.getCellRelativeRect(col, row);
         editor.beginEditing(
           this.table.getElement(),
           { rect: { left: rect.left, top: rect.top, width: rect.width, height: rect.height } },
