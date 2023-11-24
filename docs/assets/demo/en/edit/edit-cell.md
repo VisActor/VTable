@@ -1,26 +1,26 @@
 ---
 category: examples
 group: edit
-title: 编辑单元格内容
+title: edit cell
 cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/input-editor.gif
 link: '../guide/edit/edit_cell'
 option: ListTable-columns-text#editor
 ---
 
-# 编辑单元格
+# edit cell
 
-该示例展示了表格的可编辑能力
+This example demonstrates the editability of the table
 
-## 关键配置
+## Key Configurations
 
-- `VTable.register.editor` 注册编辑器
-- `editor` 设置了编辑器注册名称
+- `VTable.register.editor` register editor
+- `column.editor` editor config
 
-## 代码演示
+## Code demo
 
 ```javascript livedemo template=vtable
 let  tableInstance;
-// 使用时需要引入插件包@visactor/vtable-editors
+// You need to introduce the plug-in package when using it @visactor/vtable-editors
 // import * as VTable_editors from '@visactor/vtable-editors';
 const input_editor = new VTable_editors.InputEditor();
 const date_input_editor = new VTable_editors.DateInputEditor();

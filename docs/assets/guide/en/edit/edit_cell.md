@@ -1,45 +1,44 @@
-# 编辑单元格
-当涉及到编辑表格的业务场景时，VTable库提供了相应的编辑器，使你可以轻松地实现各种编辑需求。
+# Edit cell
+When it comes to business scenarios of editing tables, the VTable library provides corresponding editors so that you can easily implement various editing needs.
 
+# Steps for usage
 
-# 使用步骤
-
-## 1. 引用VTable的编辑器包：
-首先，确保已经正确安装了VTable库和相关的编辑器包。你可以使用以下命令来安装它们：
+## 1. Reference the editor package of VTable:
+First, make sure you have installed the VTable library and related editor packages correctly. You can install them using the following command:
 
 ```shell
 npm install @visactor/vtable-editors
 ```
 
-在代码中引入所需类型的编辑器模块：
+Introduce the required type of editor module into your code:
 
 ```javascript
 import { DateInputEditor, InputEditor, ListEditor } from '@visactor/vtable-editors';
 ```
 
-## 2. 创建编辑器：
-VTable-ediotrs库中目前提供了三种编辑器类型，包括文本输入框、日期选择器、下拉列表等。你可以根据需要选择合适的编辑器。(下拉列表编辑器效果还在优化中，目前比较丑哈)
+## 2. Create editor:
+The VTable-ediotrs library currently provides three editor types, including text input boxes, date pickers, drop-down lists, etc. You can choose the appropriate editor according to your needs.
 
-以下是创建编辑器的示例代码：
+Here is sample code to create an editor:
 
 ```javascript
 const inputEditor = new InputEditor();
 const dateInputEditor = new DateInputEditor();
-const listEditor = new ListEditor({ values: ['女', '男'] });
+const listEditor = new ListEditor({ values: ['Female', 'Male'] });
 ```
 
-在上面的示例中，我们创建了一个文本输入框编辑器(`InputEditor`)、一个日期选择器编辑器(`DateInputEditor`)和一个下拉列表编辑器(`ListEditor`)。你可以根据实际需求选择适合的编辑器类型。
-## 3. 注册并使用编辑器：
-在使用编辑器前，需要将编辑器实例注册到VTable中：
+In the above example, we created a text input box editor (`InputEditor`), a date picker editor (`DateInputEditor`) and a drop-down list editor (`ListEditor`). You can choose the appropriate editor type according to your actual needs.
+## 3. Register and use the editor:
+Before using the editor, you need to register the editor instance into VTable:
 ```javascript
-// 注册编辑器到VTable
+//Register editor to VTable
 VTable.register.editor('name-editor', inputEditor);
 VTable.register.editor('name-editor2', inputEditor2);
 VTable.register.editor('number-editor', numberEditor);
 VTable.register.editor('date-editor', dateInputEditor);
 VTable.register.editor('list-editor', listEditor);
 ```
-接下来需要再columns配置中指定使用的编辑器：
+Next, you need to specify the editor to use in the columns configuration:
 
 ```javascript
 columns: [
@@ -54,23 +53,23 @@ columns: [
   { title: 'birthday', field: 'birthDate', editor: 'date-editor' },
 ]
 ```
-在表格中，用户可以通过`双击`单元格来开始编辑，然后选择使用的编辑器进行输入。
+In a table, users can start editing by `double-clicking` a cell and then selecting the editor to use for input.
 
-注意：VTable库中的编辑器都是基于浏览器的原生输入框实现的，因此在某些特殊情况下可能会出现问题，如输入法输入、输入法弹窗等。你可以根据实际需求进行调整和优化。
+Note: The editors in the VTable library are all implemented based on the browser's native input box, so problems may occur in some special cases, such as input method input, input method pop-up windows, etc. You can adjust and optimize according to actual needs.
 
-editor配置可以在columns中，也可以在全局options中定义，同时可以支持自定义函数写法：
+Editor configuration can be defined in columns or global options. It also supports custom function writing:
 
 ```
 editor?: string | IEditor | ((args: BaseCellInfo & { table: BaseTableAPI }) => string | IEditor);
 ```
-## 4. 自定义实现一个编辑器：
-如果VTable-ediotrs库提供的几种编辑器无法满足你的需求，你可以自定义实现一个编辑器。为此，你需要创建一个类，实现编辑器接口(`IEditor`)的要求，并提供必要的方法和逻辑。
+## 4. Customize an editor:
+If the several editors provided by the VTable-ediotrs library cannot meet your needs, you can implement a custom editor. To do this, you need to create a class that implements the requirements of the editor interface (`IEditor`) and provides the necessary methods and logic.
 
-可以结合下面这个流程图来理解编辑器和VTable之间的关系：
+You can use the following flow chart to understand the relationship between the editor and VTable:
 
 ![image](https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/guide/editCellProcess.png)
 
-以下是一个自定义编辑器的示例代码：
+The following is sample code for a custom editor:
 
 ```javascript
 class DateEditor implements IEditor {
@@ -156,10 +155,9 @@ const custom_date_editor = new DateEditor({});
 VTable.register.editor('custom-date', custom_date_editor);
 
 ```
+In the above example, we created a custom editor named `DateEditor` and implemented the methods required by the `IEditor` interface. Then, we register the custom editor into the VTable through the `VTable.register.editor` method for use in the table.
 
-在上面的示例中，我们创建了一个名为`DateEditor`的自定义编辑器，并实现了`IEditor`接口所要求的方法。然后，我们通过`VTable.register.editor`方法将自定义编辑器注册到VTable中，以便在表格中使用。
-
-`IEditor`接口具体定义的源码(github：https://github.com/VisActor/VTable/blob/feat/editCell/packages/vtable-editors/src/types.ts)：
+`IEditor` interface's definition(github：https://github.com/VisActor/VTable/blob/feat/editCell/packages/vtable-editors/src/types.ts)：
 ```
 export interface IEditor {
   /** 编辑器类型 */
@@ -187,47 +185,47 @@ export interface IEditor {
 }
 ```
 
-## 5. 编辑事件监听：
-VTable提供了编辑事件监听的功能，你可以监听编辑数据事件，并在事件回调中执行相应的逻辑。
+## 5. Edit event listening:
+VTable provides the function of editing event listening. You can listen to the editing data event and execute the corresponding logic in the event callback.
 
-以下是一个编辑事件监听的示例代码：
+The following is a sample code for editing event listening:
 
 ```javascript
 const tableInstance = new VTable.ListTable(option);
 tableInstance.on('change_cell_value', () => {
-  // 编辑单元格数据
+  //Edit cell data
 });
 ```
 
-## 6. 编辑后数据获取：
-当用户完成编辑并提交数据后，你可以获取编辑后的数据以进行后续处理。可以直接取records值
+## 6. Obtain data after editing:
+When the user completes editing and submits the data, you can obtain the edited data for subsequent processing. You can directly get the records value
 
 ```javascript
-// 获取当前表格的全量数据
+// Get the full data of the current table
 tableInstance.records;
 ```
 
-## 7. 编辑触发时机
-编辑触发时机支持：双击单元格进入编辑，单击单元格进入编辑，调用api手动开启编辑.
+## 7. Edit trigger timing
+Editing trigger timing support: double-click a cell to enter editing, click a cell to enter editing, and call the API to manually start editing.
 ```
-  /** 编辑触发时机 双击事件  单击事件 api手动开启编辑。默认为双击'doubleclick' */
+  /** Editing trigger timing Double-click event Click event API manually starts editing. The default is double-click 'doubleclick' */
   editCellTrigger?: 'doubleclick' | 'click' | 'api';
 ```
 
-## 8. 相关api
+## 8. Related APIs
 
 ```
-  /** 设置单元格的value值，注意对应的是源数据的原始值，vtable实例records会做对应修改 */
+  /** Set the value of the cell. Note that it corresponds to the original value of the source data, and the vtable instance records will be modified accordingly */
   changeCellValue: (col: number, row: number, value: string | number | null) => void;
 
-  /** 获取单元格配置的编辑器 */
+  /** Get the editor of cell configuration */
   getEditor: (col: number, row: number) => IEditor;
 
-  /** 开启单元格编辑 */
+  /** Enable cell editing */
   startEditCell: (col?: number, row?: number) => void;
 
-  /** 结束编辑 */
+  /** End editing */
   completeEditCell: () => void;
 ```
 
-通过以上步骤，你可以创建一个具有编辑功能的表格，并根据业务需求选择合适的编辑器类型、自定义编辑器、监听编辑事件以及获取编辑后的数据。这样，用户就可以方便地编辑表格中的数据，并且你可以对编辑后的数据进行相应的处理。
+Through the above steps, you can create a table with editing functions, select the appropriate editor type according to business needs, customize the editor, listen to editing events, and obtain edited data. In this way, users can easily edit the data in the table, and you can process the edited data accordingly.

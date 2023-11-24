@@ -559,5 +559,45 @@ Export a picture of a certain cell range
    */
   exportCellRangeImg(cellRange: CellRange): string
 ```
+
+## changeCellValue(Function)
+Change the value of a cell:
+
+```
+  /** Set the value of the cell. Note that it corresponds to the original value of the source data, and the vtable instance records will be modified accordingly */
+  changeCellValue: (col: number, row: number, value: string | number | null) => void;
+```
+
+## getEditor(Function)
+
+Get the editor for the cell configuration
+
+```
+  /** Get the editor of cell configuration */
+  getEditor: (col: number, row: number) => IEditor;
+```
+
+## startEditCell(Function)
+
+Enable cell editing
+
+```
+  /** Enable cell editing */
+  startEditCell: (col?: number, row?: number) => void;
+```
+
+## completeEditCell(Function)
+
+End editing
+
+```
+  /** End editing */
+  completeEditCell: () => void;
+```
+
+## records
+
+Get all data of the current table
+
 ## dataSouce(CachedDataSource)
 Set the data source for the VTable table component instance. For specific usage, please refer to [Asynchronous data loading demo](../demo/performance/async-data) and [Tutorial](../guide/data/async_data)

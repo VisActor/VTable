@@ -1,33 +1,133 @@
 ---
 category: examples
 group: edit
-title: 编辑单元格内容
-cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/input-editor.gif
+title: custom date editor
+cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/custom-date-editor.png
 link: '../guide/edit/edit_cell'
 option: ListTable-columns-text#editor
 ---
 
-# 编辑单元格
+# custom date editor
 
-该示例展示了表格的可编辑能力
+This example shows how to customize a date editor.
 
-## 关键配置
+## Key Configurations
 
-- `VTable.register.editor` 注册编辑器
-- `editor` 设置了编辑器注册名称
+- `VTable.register.editor` register editor
+- `column.editor` editor config
 
-## 代码演示
+## Code demo
 
 ```javascript livedemo template=vtable
 let  tableInstance;
-// 使用时需要引入插件包@visactor/vtable-editors
+// You need to introduce the plug-in package when using it @visactor/vtable-editors
 // import * as VTable_editors from '@visactor/vtable-editors';
 const input_editor = new VTable_editors.InputEditor();
-const date_input_editor = new VTable_editors.DateInputEditor();
-const list_editor = new VTable_editors.ListEditor({values: ['girl', 'boy']});
 VTable.register.editor('input-editor', input_editor);
-VTable.register.editor('date-input-editor', date_input_editor);
-VTable.register.editor('list-editor', list_editor);
+const timestamp = new Date().getTime();
+const cssUrl = `https://pikaday.com/css/pikaday.css?t=${timestamp}`;
+const jsUrl = `https://pikaday.com/pikaday.js?t=${timestamp}`;
+
+function loadCSS(url){
+  return new Promise((resolve, reject) => {
+    const link = document.createElement('link');
+    link.rel = 'stylesheet';
+    link.href = url;
+    link.onload = resolve;
+    link.onerror = reject;
+    document.head.appendChild(link);
+  });
+}
+
+function loadJS(url) {
+  return new Promise((resolve, reject) => {
+    const script = document.createElement('script');
+    script.src = url;
+    script.onload = resolve;
+    script.onerror = reject;
+    document.head.appendChild(script);
+  });
+}
+
+Promise.all([loadCSS(cssUrl), loadJS(jsUrl)])
+  .then(() => {
+    // 自定义日期编辑组件  请按照编辑器插件@visactor/vtable-editors中定义的IEditor接口来实现
+  class DateEditor {
+    constructor(editorConfig) {
+      this.editorConfig = editorConfig;
+    }
+
+    beginEditing(container, referencePosition, value) {
+      const that = this;
+      this.container = container;
+      const input = document.createElement('input');
+
+      input.setAttribute('type', 'text');
+      input.style.padding = '4px';
+      input.style.width = '100%';
+      input.style.boxSizing = 'border-box';
+      input.style.position = 'absolute';
+      input.value = value;
+      this.element = input;
+      container.appendChild(input);
+
+      const picker = new Pikaday({
+        field: input,
+        format: 'D/M/YYYY',
+        toString(date, format) {
+          const day = date.getDate();
+          const month = date.getMonth() + 1;
+          const year = date.getFullYear();
+          return `${year}-${month}-${day}`;
+        },
+        parse(dateString, format) {
+          const parts = dateString.split('/');
+          const day = parseInt(parts[0], 10);
+          const month = parseInt(parts[1], 10) - 1;
+          const year = parseInt(parts[2], 10);
+          return new Date(year, month, day);
+        },
+        onSelect() {
+          const date = this.getDate();
+          that.successCallback();
+        }
+      });
+      this.picker = picker;
+      if (referencePosition?.rect) {
+        this.adjustPosition(referencePosition.rect);
+      }
+      this.picker.show();
+    }
+
+    adjustPosition(rect) {
+      this.element.style.top = rect.top + 'px';
+      this.element.style.left = rect.left + 'px';
+      this.element.style.width = rect.width + 'px';
+      this.element.style.height = rect.height + 'px';
+    }
+
+    getValue() {
+      return this.element.value;
+    }
+
+    exit() {
+      this.picker.destroy();
+      this.container.removeChild(this.element);
+    }
+
+    targetIsOnEditor(target) {
+      if (target === this.element || this.picker.el.contains(target)) {
+        return true;
+      }
+      return false;
+    }
+
+    bindSuccessCallback(successCallback) {
+      this.successCallback = successCallback;
+    }
+  }
+  const custom_date_editor = new DateEditor();
+  VTable.register.editor('custom-date', custom_date_editor);
 
   function generateRandomString(length) {
     let result = '';
@@ -173,15 +273,9 @@ VTable.register.editor('list-editor', list_editor);
     // },
     {
       field: 'birthday',
-      title: 'birthday\n(date editor)',
+      title: 'birthday\n(custom date editor)',
       width: 120,
-      editor: 'date-input-editor'
-    },
-    {
-      field: 'sex',
-      title: 'sex\n(list editor)',
-      width: 100,
-      editor: 'list-editor'
+      editor: 'custom-date'
     },
     {
       field: 'tel',
@@ -209,5 +303,8 @@ VTable.register.editor('list-editor', list_editor);
   };
   tableInstance = new VTable.ListTable(option);
   window['tableInstance'] = tableInstance;
-
+})
+.catch((error) => {
+    // 处理加载错误
+});  
 ```

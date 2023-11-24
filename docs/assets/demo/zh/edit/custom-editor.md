@@ -3,7 +3,7 @@ category: examples
 group: edit
 title: 自定义日期编辑器
 cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/custom-date-editor.png
-link: '../guide/interaction/edit'
+link: '../guide/edit/edit_cell'
 option: ListTable-columns-text#editor
 ---
 

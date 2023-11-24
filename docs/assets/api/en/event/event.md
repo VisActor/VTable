@@ -365,10 +365,19 @@ The parameter type of the event callback function:
 Same as **MOUSEENTER_AXIS**
 
 ## COPY_DATA
-Cell content copy event. **Form-specific events**
+Cell content copy event.
 
 Parameter types of event callback function:
 
 ```
  { cellRange: CellRange[]; copyData: string };
+```
+
+## CHANGE_CELL_VALUE
+Event that changes the cell value. **ListTable table exclusive event**
+
+Parameter types of event callback function:
+
+```
+{ col: number; row: number; rawValue: string | number; changedValue: string | number };
 ```

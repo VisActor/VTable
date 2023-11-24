@@ -200,5 +200,14 @@ Whether to display this column as a tree structure, which needs to be combined w
     ]
 }
 ```
+
+${prefix} editor (string|Object|Function)
+
+Configure the column cell editor
+```
+editor?: string | IEditor | ((args: BaseCellInfo & { table: BaseTableAPI }) => string | IEditor);
+```
+Among them, IEditor is the editor interface defined in @visactor/vtable-editors. For details, please refer to the source code: https://github.com/VisActor/VTable/blob/feat/editCell/packages/vtable-editors/src/types.ts .
+
 ${prefix} columns (Array)
 Configure arrays with upper columns, nesting structures to describe column grouping relationships.
