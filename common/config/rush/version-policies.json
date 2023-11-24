@@ -2,7 +2,7 @@
   {
     "definitionName": "lockStepVersion",
     "policyName": "vtableMain",
-    "version": "0.14.3",
+    "version": "0.15.0",
     "mainProject": "@visactor/vtable",
     "nextBump": "minor"
   }
