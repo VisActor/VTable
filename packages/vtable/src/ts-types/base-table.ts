@@ -569,8 +569,9 @@ export interface BaseTableAPI {
   //hover
 
   getHeaderDescription: (col: number, row: number) => string | undefined;
-
+  /** 获取单元格展示值 */
   getCellValue: (col: number, row: number) => string | null;
+  /** 获取单元格展示数据的format前的值 */
   getCellOriginValue: (col: number, row: number) => any;
   getCellOriginRecord: (col: number, row: number) => MaybePromiseOrUndefined;
   _dropDownMenuIsHighlight: (col: number, row: number, index: number) => boolean;

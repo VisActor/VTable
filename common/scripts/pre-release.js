@@ -1,35 +1,31 @@
 /**
- * prelease 
+ * prelease
  */
 
 const { spawnSync } = require('child_process')
 const fs = require('fs')
 const path = require('path')
+const checkAndUpdateNextBump = require('./version-policies');
+const getPackageJson = require('./get-package-json');
+const writePrereleaseVersion = require('./set-prerelease-version');
 
-function getPackageJson(pkgJsonPath) {
-  const pkgJson = fs.readFileSync(pkgJsonPath, { encoding: 'utf-8' })
-  return JSON.parse(pkgJson);
-}
+const semverRegex = /^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(?:-(alpha|beta|rc|hotfix)(?:\.(?:(0|[1-9])))*)$/;
 
-const semverRegex = /^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(?:-(alpha|beta|rc)(?:\.(?:(0|[1-9])))*)$/;
-
-const preReleaseNameReg = /^((alpha|beta|rc)(?:\.(?:0|[1-9]))*)$/;
-
+const preReleaseNameReg = /^((alpha|beta|rc|hotfix)(?:\.(?:0|[1-9]))*)$/;
 
 function run() {
   let preReleaseName = process.argv.slice(2)[0];
   let preReleaseType = '';
   const cwd = process.cwd();
-  const rushJson = getPackageJson(`${cwd}/rush.json`)
+  const rushJson = getPackageJson(path.join(__dirname, '../../rush.json'));
   const package = rushJson.projects.find((project) => project.packageName === '@visactor/vtable');
   let regRes = null;
 
-
   if (typeof preReleaseName === 'string' && preReleaseName && (regRes = preReleaseNameReg.exec(preReleaseName))) {
-    preReleaseType = regRes[2]; 
+    preReleaseType = regRes[2];
   } else if (!preReleaseName) {
     if (package) {
-      const pkgJsonPath = path.resolve(package.projectFolder, 'package.json')
+      const pkgJsonPath = path.join( __dirname, '../../', package.projectFolder, 'package.json')
       const pkgJson = getPackageJson(pkgJsonPath)
       const currentVersion = pkgJson.version;
 
@@ -45,22 +41,22 @@ function run() {
         console.log(`\x1b[31m[warning]\x1b[0m no prerelease-name supply, auto calculate prerelease-name \x1b[31m${preReleaseName}\x1b[0m`);
       } else {
         preReleaseName = `alpha.0`;
-        preReleaseType = 'alpha'; 
+        preReleaseType = 'alpha';
 
         console.log('\x1b[31m[warning]\x1b[0m no prerelease-name supply, default to \x1b[31m alpha.0\x1b[0m')
       }
     }
+  } else {
+    console.log(`\x1b[31m[error]\x1b[0m preReleaseName: \x1b[31m ${preReleaseName} \x1b[0m 不符合规范，只允许 alpha.0 , beta.1, rc.3, hotfix.0 类似的格式 `)
   }
 
   if (preReleaseName && preReleaseType) {
-    // 1. build all the packages
-    spawnSync('sh', ['-c', `rush build --only tag:package`], {
-      stdio: 'inherit',
-      shell: false,
-    });
 
-    // 2. apply version and update version of package.json
-    spawnSync('sh', ['-c', `rush publish --apply --prerelease-name ${preReleaseName} --partial-prerelease`], {
+    // 1. apply version and update version of package.json
+    writePrereleaseVersion(checkAndUpdateNextBump(process.argv.slice(2)[1]), preReleaseName)
+
+    // 2. build all the packages
+    spawnSync('sh', ['-c', `rush build --only tag:package`], {
       stdio: 'inherit',
       shell: false,
     });
@@ -76,9 +72,9 @@ function run() {
       stdio: 'inherit',
       shell: false,
     });
-    
+
     if (package) {
-      const pkgJsonPath = path.resolve(package.projectFolder, 'package.json')
+      const pkgJsonPath = path.join( __dirname, '../../', package.projectFolder, 'package.json')
       const pkgJson = getPackageJson(pkgJsonPath)
 
       // 5. add the the changes
@@ -97,4 +93,3 @@ function run() {
 }
 
 run()
-

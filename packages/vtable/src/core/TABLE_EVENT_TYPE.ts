@@ -125,6 +125,8 @@ export interface TableEvents {
   /** 表格实例初始化完成 */
   INITIALIZED: 'initialized';
   //#endregion
+
+  CHANGE_CELL_VALUE: 'change_cell_value';
 }
 /**
  * Table event types
@@ -172,5 +174,6 @@ export const TABLE_EVENT_TYPE: TableEvents = {
 
   CHECKBOX_STATE_CHANGE: 'checkbox_state_change',
   AFTER_RENDER: 'after_render',
-  INITIALIZED: 'initialized'
+  INITIALIZED: 'initialized',
+  CHANGE_CELL_VALUE: 'change_cell_value'
 } as TableEvents;

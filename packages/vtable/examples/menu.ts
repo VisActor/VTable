@@ -603,6 +603,23 @@ export const menus = [
     ]
   },
   {
+    menu: '编辑单元格',
+    children: [
+      {
+        path: 'editor',
+        name: 'input-editor'
+      },
+      {
+        path: 'editor',
+        name: 'date-editor'
+      },
+      {
+        path: 'editor',
+        name: 'custom-date-editor'
+      }
+    ]
+  },
+  {
     menu: '调试使用',
     children: [
       {

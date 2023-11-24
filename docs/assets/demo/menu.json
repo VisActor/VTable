@@ -799,6 +799,29 @@
       ]
     },
     {
+      "path": "edit",
+      "title": {
+        "zh": "编辑",
+        "en": "edit"
+      },
+      "children": [
+        {
+          "path": "edit-cell",
+          "title": {
+            "zh": "编辑单元格",
+            "en": "editCell"
+          }
+        },
+        {
+          "path": "custom-editor",
+          "title": {
+            "zh": "自定义编辑器",
+            "en": "custom date editor"
+          }
+        }
+      ]
+    },
+    {
       "path": "data-analysis",
       "title": {
         "zh": "数据分析",

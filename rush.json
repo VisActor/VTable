@@ -30,7 +30,17 @@
       "tags": [
         "package"
       ],
-      "shouldPublish": true
+      "shouldPublish": true,
+      "versionPolicyName": "vtableMain"
+    },
+    {
+      "packageName": "@visactor/vtable-editors",
+      "projectFolder": "packages/vtable-editors",
+      "tags": [
+        "package"
+      ],
+      "shouldPublish": true,
+      "versionPolicyName": "vtableMain"
     },
     {
       "packageName": "@internal/docs",
@@ -63,6 +73,15 @@
         "share"
       ],
       "shouldPublish": false
+    },
+    {
+      "packageName": "@visactor/react-vtable",
+      "projectFolder": "packages/react-vtable",
+      "tags": [
+        "package"
+      ],
+      "shouldPublish": true,
+      "versionPolicyName": "vtableMain"
     }
   ]
 }

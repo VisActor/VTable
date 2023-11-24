@@ -388,10 +388,19 @@ icon 图标点击事件。
 同**MOUSEENTER_AXIS**
 
 ## COPY_DATA
-单元格内容复制事件。**表格专有事件**
+单元格内容复制事件。
 
 事件回调函数的参数类型:
 
 ```
  { cellRange: CellRange[]; copyData: string };
+```
+
+## CHANGE_CELL_VALUE
+更改单元格值的事件。**ListTable表格专有事件**
+
+事件回调函数的参数类型:
+
+```
+{ col: number; row: number; rawValue: string | number; changedValue: string | number };
 ```

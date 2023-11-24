@@ -1,4 +1,4 @@
-import type { RectProps, MaybePromiseOrUndefined, IDimensionInfo, SortOrder } from './common';
+import type { RectProps, MaybePromiseOrUndefined, IDimensionInfo, SortOrder, BaseCellInfo } from './common';
 import type { SvgIcon } from './icon';
 export type { HeaderData } from './list-table/layout-map/api';
 export type LayoutObjectId = number | string;
@@ -9,6 +9,7 @@ import type { Either } from '../tools/helper';
 import type { IChartIndicator, ICornerDefine, IDimension, IIndicator, ITitleDefine } from './pivot-table';
 import type { ColumnsDefine } from './list-table';
 import type { ICellAxisOption, ITableAxisOption } from './component/axis';
+import type { IEditor } from '@visactor/vtable-editors';
 import type { ITextStyleOption } from '../body-helper/style';
 import type { DataSource } from '../data';
 
@@ -140,6 +141,10 @@ export interface ListTableConstructorOptions extends BaseTableConstructorOptions
    * 排序状态
    */
   sortState?: SortState | SortState[];
+  /** 全局设置编辑器 */
+  editor?: string | IEditor | ((args: BaseCellInfo & { table: BaseTableAPI }) => string | IEditor);
+  /** 编辑触发时机 双击事件  单击事件 api手动开启编辑。默认为双击'doubleclick' */
+  editCellTrigger?: 'doubleclick' | 'click' | 'api';
 }
 
 export interface ListTableAPI extends BaseTableAPI {
@@ -148,6 +153,18 @@ export interface ListTableAPI extends BaseTableAPI {
   // internalProps: ListTableProtected;
   isListTable: () => true;
   isPivotTable: () => false;
+  /** 设置单元格的value值，注意对应的是源数据的原始值，vtable实例records会做对应修改 */
+  changeCellValue: (col: number, row: number, value: string | number | null) => void;
+  //#region 编辑器相关demo
+  /** 获取单元格配置的编辑器 */
+  getEditor: (col: number, row: number) => IEditor;
+  /** 开启单元格编辑 */
+  startEditCell: (col?: number, row?: number) => void;
+  /** 结束编辑 */
+  completeEditCell: () => void;
+  /** 获取单元格展示数据源最原始值 */
+  getCellRawValue: (col: number, row: number) => FieldData;
+  //#endregion
 }
 export interface PivotTableConstructorOptions extends BaseTableConstructorOptions {
   /**

@@ -11,9 +11,9 @@ module.exports = {
     treeshake: true
   },
   globals: {
-    // '@visactor/vrender': 'VRender'
+    // '@visactor/vtable-editors': 'VTable.editors'
   },
   external: [
-    // '@visactor/vrender'
+    // '@visactor/vtable-editors'
   ]
 };

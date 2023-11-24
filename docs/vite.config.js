@@ -16,7 +16,8 @@ export default {
   },
   resolve: {
     alias: {
-      '@visactor/vtable': path.resolve('../packages/vtable/src/index.ts')
+      '@visactor/vtable': path.resolve('../packages/vtable/src/index.ts'),
+      '@visactor/vtable-editors': path.resolve('../packages/vtable-editors/src/index.ts')
     }
   },
   plugins: [react()]

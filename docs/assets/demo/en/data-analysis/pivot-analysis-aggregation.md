@@ -19,7 +19,7 @@ To pivot analysis table data data filtering rules, configure aggregationRules in
 - `indicators`
 - `enableDataAnalysis` turns on pivot data analysis
 - `dataConfig` configures data rules，set aggregationRules
-## 代码演示
+## Code demo
 
 ```javascript livedemo template=vtable
 const sumNumberFormat = VTable.DataStatistics.numberFormat({
