@@ -49,6 +49,7 @@
     "test-nodejs": "ts-node --transpileOnly --skipProject ./nodejs/index.ts"
   },
   "dependencies": {
+    "@visactor/vtable-editors": "workspace:*",
     "@visactor/vrender": "0.16.17",
     "@visactor/vrender-components": "0.16.17",
     "@visactor/vutils-extension": "1.5.1-alpha.0",
@@ -59,7 +60,6 @@
   },
   "devDependencies": {
     "luxon": "*",
-    "@visactor/vtable-editors": "workspace:*",
     "@visactor/vchart": "1.6.0",
     "@internal/bundler": "workspace:*",
     "@internal/eslint-config": "workspace:*",
