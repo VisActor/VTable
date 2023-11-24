@@ -544,13 +544,6 @@
             "zh": "滚动",
             "en": "scroll"
           }
-        },
-        {
-          "path": "edit",
-          "title": {
-            "zh": "编辑单元格",
-            "en": "editCell"
-          }
         }
       ]
     },
@@ -801,6 +794,29 @@
             "cover": "https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/custom-render.png",
             "link": "'../../guide/custom_define/custom_render'",
             "option": ""
+          }
+        }
+      ]
+    },
+    {
+      "path": "edit",
+      "title": {
+        "zh": "编辑",
+        "en": "edit"
+      },
+      "children": [
+        {
+          "path": "edit-cell",
+          "title": {
+            "zh": "编辑单元格",
+            "en": "editCell"
+          }
+        },
+        {
+          "path": "custom-editor",
+          "title": {
+            "zh": "自定义编辑器",
+            "en": "custom date editor"
           }
         }
       ]

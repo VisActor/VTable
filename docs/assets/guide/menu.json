@@ -351,6 +351,22 @@
       ]
     },
     {
+      "path": "edit",
+      "title": {
+        "zh": "编辑",
+        "en": "edit"
+      },
+      "children": [
+        {
+          "path": "edit_cell",
+          "title": {
+            "zh": "编辑表格数据",
+            "en": "edit cell"
+          }
+        }
+      ]
+    },
+    {
       "path": "data",
       "title": {
         "zh": "数据",

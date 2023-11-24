@@ -1,8 +1,8 @@
 ---
 category: examples
-group: Interaction
+group: edit
 title: 编辑单元格内容
-cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/edit.gif
+cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/input-editor.gif
 link: '../guide/interaction/edit'
 option: ListTable-columns-text#editor
 ---
@@ -28,110 +28,6 @@ const list_editor = new VTable_editors.ListEditor({values: ['girl', 'boy']});
 VTable.register.editor('input-editor', input_editor);
 VTable.register.editor('date-input-editor', date_input_editor);
 VTable.register.editor('list-editor', list_editor);
-const timestamp = new Date().getTime();
-const cssUrl = `https://pikaday.com/css/pikaday.css?t=${timestamp}`;
-const jsUrl = `https://pikaday.com/pikaday.js?t=${timestamp}`;
-
-function loadCSS(url){
-  return new Promise((resolve, reject) => {
-    const link = document.createElement('link');
-    link.rel = 'stylesheet';
-    link.href = url;
-    link.onload = resolve;
-    link.onerror = reject;
-    document.head.appendChild(link);
-  });
-}
-
-function loadJS(url) {
-  return new Promise((resolve, reject) => {
-    const script = document.createElement('script');
-    script.src = url;
-    script.onload = resolve;
-    script.onerror = reject;
-    document.head.appendChild(script);
-  });
-}
-
-Promise.all([loadCSS(cssUrl), loadJS(jsUrl)])
-  .then(() => {
-    // 自定义日期编辑组件  请按照编辑器插件@visactor/vtable-editors中定义的IEditor来实现
-  class DateEditor {
-    constructor(editorConfig) {
-      this.editorConfig = editorConfig;
-    }
-
-    beginEditing(container, referencePosition, value) {
-      const that = this;
-      this.container = container;
-      const input = document.createElement('input');
-
-      input.setAttribute('type', 'text');
-      input.style.padding = '4px';
-      input.style.width = '100%';
-      input.style.boxSizing = 'border-box';
-      input.style.position = 'absolute';
-      input.value = value;
-      this.element = input;
-      container.appendChild(input);
-
-      const picker = new Pikaday({
-        field: input,
-        format: 'D/M/YYYY',
-        toString(date, format) {
-          const day = date.getDate();
-          const month = date.getMonth() + 1;
-          const year = date.getFullYear();
-          return `${year}年${month}月${day}日`;
-        },
-        parse(dateString, format) {
-          const parts = dateString.split('/');
-          const day = parseInt(parts[0], 10);
-          const month = parseInt(parts[1], 10) - 1;
-          const year = parseInt(parts[2], 10);
-          return new Date(year, month, day);
-        },
-        onSelect() {
-          const date = this.getDate();
-          that.successCallback();
-        }
-      });
-      this.picker = picker;
-      if (referencePosition?.rect) {
-        this.adjustPosition(referencePosition.rect);
-      }
-      this.picker.show();
-    }
-
-    adjustPosition(rect) {
-      this.element.style.top = rect.top + 'px';
-      this.element.style.left = rect.left + 'px';
-      this.element.style.width = rect.width + 'px';
-      this.element.style.height = rect.height + 'px';
-    }
-
-    getValue() {
-      return this.element.value;
-    }
-
-    exit() {
-      this.picker.destroy();
-      this.container.removeChild(this.element);
-    }
-
-    targetIsOnEditor(target) {
-      if (target === this.element || this.picker.el.contains(target)) {
-        return true;
-      }
-      return false;
-    }
-
-    bindSuccessCallback(successCallback) {
-      this.successCallback = successCallback;
-    }
-  }
-  const custom_date_editor = new DateEditor();
-  VTable.register.editor('custom-date', custom_date_editor);
 
   function generateRandomString(length) {
     let result = '';
@@ -177,15 +73,6 @@ Promise.all([loadCSS(cssUrl), loadJS(jsUrl)])
     const month = randomDate.getMonth() + 1;
     const day = randomDate.getDate();
     return `${year}-${month < 10 ? '0' + month : month}-${day < 10 ? '0' + day : day}`;
-  }
-  function generateEmployedSince() {
-    const start = new Date('1970-01-01');
-    const end = new Date('2000-12-31');
-    const randomDate = new Date(start.getTime() + Math.random() * (end.getTime() - start.getTime()));
-    const year = randomDate.getFullYear();
-    const month = randomDate.getMonth() + 1;
-    const day = randomDate.getDate();
-    return `${year}年${month < 10 ? '0' + month : month}月${day < 10 ? '0' + day : day}日`;
   }
   function generateRandomPhoneNumber() {
     const areaCode = [
@@ -238,7 +125,6 @@ Promise.all([loadCSS(cssUrl), loadJS(jsUrl)])
         lastName: last,
         hobbies: generateRandomHobbies(),
         birthday: generateRandomBirthday(),
-        employedSince: generateEmployedSince(),
         tel: generateRandomPhoneNumber(),
         sex: i % 2 === 0 ? 'boy' : 'girl',
         work: i % 2 === 0 ? 'back-end engineer' : 'front-end engineer',
@@ -292,12 +178,6 @@ Promise.all([loadCSS(cssUrl), loadJS(jsUrl)])
       editor: 'date-input-editor'
     },
     {
-      field: 'employedSince',
-      title: 'employed since\n(custom date editor)',
-      width: 120,
-      editor: 'custom-date'
-    },
-    {
       field: 'sex',
       title: 'sex\n(list editor)',
       width: 100,
@@ -329,8 +209,5 @@ Promise.all([loadCSS(cssUrl), loadJS(jsUrl)])
   };
   tableInstance = new VTable.ListTable(option);
   window['tableInstance'] = tableInstance;
-})
-.catch((error) => {
-    // 处理加载错误
-});  
+
 ```
