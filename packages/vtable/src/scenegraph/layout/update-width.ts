@@ -175,6 +175,9 @@ function updateColunmWidth(
         colGroup = scene.getColGroupInRightBottomCorner(col);
         oldContainerHeight = scene.rightBottomCornerGroup.attribute.height ?? 0;
       }
+      if (!colGroup) {
+        continue;
+      }
       let y = 0;
       colGroup.forEachChildren((cellGroup: Group) => {
         // if (cellGroup.role !== 'cell') {
