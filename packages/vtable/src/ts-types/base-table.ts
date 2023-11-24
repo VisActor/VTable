@@ -161,7 +161,7 @@ export interface IBaseTableProtected {
   };
 
   dataSourceEventIds?: EventListenerId[];
-  headerEvents?: EventListenerId[];
+  // headerEvents?: EventListenerId[];
   layoutMap: SimpleHeaderLayoutMap | PivotHeaderLayoutMap;
   headerValues?: HeaderValues;
   tooltipHandler: TooltipHandler;
@@ -182,6 +182,11 @@ export interface IBaseTableProtected {
    * 计算列宽时 指定最大列宽 可设置boolean或者具体的值 默认为450
    */
   limitMaxAutoWidth?: boolean | number;
+
+  /**
+   * 限制列宽最小值。
+   */
+  limitMinWidth?: number;
 
   title?: Title;
   legends?: DiscreteTableLegend | ContinueTableLegend;
@@ -311,11 +316,6 @@ export interface BaseTableConstructorOptions {
   pixelRatio?: number;
   /** 自定义渲染 函数形式*/
   customRender?: ICustomRender;
-  /**
-   * 传入用户实例化的数据对象 目前不完善
-   */
-  dataSource?: DataSource;
-
   /** 开启自动换行 默认false */
   autoWrapText?: boolean;
   /** 单元格中可显示最大字符数 默认200 */
@@ -325,9 +325,13 @@ export interface BaseTableConstructorOptions {
   /** 最大可操作条目数 如copy操作可复制出最大数据条目数 */
   maxOperatableRecordCount?: number;
   /**
-   * 计算列宽时 指定最大列宽 可设置boolean或者具体的值 默认为450
+   * 计算列宽时 指定最大列宽 可设置boolean或者具体的值 默认为450。手动拖拽列宽的话不收这个限制
    */
   limitMaxAutoWidth?: boolean | number;
+  /**
+   * 限制列宽最小值。如设置为true 则拖拽改变列宽时限制列宽最小为10px，设置为false则不进行限制。默认为10px
+   */
+  limitMinWidth?: boolean | number;
 
   // maximum number of data items maintained in table instance
   maintainedDataCount?: number;
@@ -565,8 +569,9 @@ export interface BaseTableAPI {
   //hover
 
   getHeaderDescription: (col: number, row: number) => string | undefined;
-
+  /** 获取单元格展示值 */
   getCellValue: (col: number, row: number) => string | null;
+  /** 获取单元格展示数据的format前的值 */
   getCellOriginValue: (col: number, row: number) => any;
   getCellOriginRecord: (col: number, row: number) => MaybePromiseOrUndefined;
   _dropDownMenuIsHighlight: (col: number, row: number, index: number) => boolean;

@@ -114,6 +114,11 @@ tableInstance.renderWithRecreateCells();
 ## offVChartEvent(Function)
 
 解除监听 VChart 图表事件
+
+## setRecords(Function)
+
+设置表格数据接口，可作为更新接口调用。
+
 ## selectCell(Function)
 
 选中某个单元格
@@ -376,6 +381,33 @@ enum HierarchyState {
   none = 'none'
 }
 ```
+
+## getLayouRowTree(Function)
+** PivotTable 专有 ** 
+
+获取表格行头树形结构
+```
+  /**
+   * 获取表格行树状结构
+   * @returns
+   */
+  getLayouRowTree() : LayouTreeNode[]
+```
+
+## getLayouRowTreeCount(Function)
+** PivotTable 专有 ** 
+
+获取表格行头树形结构的占位的总节点数。
+
+注意：逻辑中区分了平铺和树形层级结构
+```
+  /**
+   * 获取表格行头树形结构的占位的总节点数。
+   * @returns
+   */
+  getLayouRowTreeCount() : number
+```
+
 ## updateSortState(Function)
 
 更新排序状态，ListTable 专有
@@ -529,6 +561,45 @@ use case: 点击图例项后 更新过滤规则 来更新图表
    */
   exportCellRangeImg(cellRange: CellRange): string
 ```
+
+## changeCellValue(Function)
+更改单元格的value值：
+
+```
+  /** 设置单元格的value值，注意对应的是源数据的原始值，vtable实例records会做对应修改 */
+  changeCellValue: (col: number, row: number, value: string | number | null) => void;
+```
+
+## getEditor(Function)
+
+获取单元格配置的编辑器
+
+```
+  /** 获取单元格配置的编辑器 */
+  getEditor: (col: number, row: number) => IEditor;
+```
+
+## startEditCell(Function)
+
+开启单元格编辑
+
+```
+  /** 开启单元格编辑 */
+  startEditCell: (col?: number, row?: number) => void;
+```
+
+## completeEditCell(Function)
+
+结束编辑
+
+```
+  /** 结束编辑 */
+  completeEditCell: () => void;
+```
+
+## records
+
+获取当前表格的全部数据
 
 ## dataSouce(CachedDataSource)
 给VTable表格组件实例设置数据源，具体使用可以参考[异步加载数据demo](../demo/performance/async-data)及[教程](../guide/data/async_data)

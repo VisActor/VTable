@@ -1,28 +1,32 @@
 /**
- * prelease 
+ * release
  */
 
-const { spawnSync } = require('child_process')
-const fs = require('fs')
-const path = require('path')
+const { spawnSync } = require('child_process');
+const fs = require('fs');
+const path = require('path');
+const checkAndUpdateNextBump = require('./version-policies');
 
 function getPackageJson(pkgJsonPath) {
   const pkgJson = fs.readFileSync(pkgJsonPath, { encoding: 'utf-8' })
   return JSON.parse(pkgJson)
 }
 
-
 function run() {
+  let releaseVersion = process.argv.slice(2)[0];
   const cwd = process.cwd();
 
-  // 1. build all the packages
-  spawnSync('sh', ['-c', `rush build --only tag:package`], {
+  // 0. update `nextBump`
+  checkAndUpdateNextBump(releaseVersion);
+
+  // 1. update version of package.json, this operation will remove the common/changes
+  spawnSync('sh', ['-c', `rush version --bump`], {
     stdio: 'inherit',
     shell: false,
   });
 
-  // 2. update version of package.json, this operation will remove the common/changes
-  spawnSync('sh', ['-c', `rush version --bump`], {
+  // 2. build all the packages
+  spawnSync('sh', ['-c', `rush build --only tag:package`], {
     stdio: 'inherit',
     shell: false,
   });
@@ -39,11 +43,11 @@ function run() {
     shell: false,
   });
 
-  const rushJson = getPackageJson(`${cwd}/rush.json`);
+  const rushJson = getPackageJson(path.join(__dirname, '../../rush.json'));
   const package = rushJson.projects.find((project) => project.name === '@visactor/vtable');
 
   if (package) {
-    const pkgJsonPath = path.resolve(project.projectFolder, 'package.json')
+    const pkgJsonPath = path.join( __dirname, '../../', project.projectFolder, 'package.json')
     const pkgJson = getPackageJson(pkgJsonPath)
 
     // 5. add tag
@@ -73,4 +77,3 @@ function run() {
 }
 
 run()
-

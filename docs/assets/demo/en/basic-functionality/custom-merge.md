@@ -96,21 +96,22 @@ const option = {
   columns,
   widthMode:'standard',
   customMergeCell: (col, row, table) => {
-    if (col > 0 && col < 8 && row > 7 && row < 11) {
+    if (col >=0 && col < table.colCount && row === table.rowCount-1) {
       return {
-        text: 'long long long long long long long long long long long long long long long long long long text!',
+        text: 'Summary column: This data is a basic information of personnel',
         range: {
           start: {
-            col: 1,
-            row: 8
+            col: 0,
+            row: table.rowCount-1
           },
           end: {
-            col: 7,
-            row: 10
+            col: table.colCount-1,
+            row: table.rowCount-1
           }
         },
-        style: {
-          bgColor: '#ccc'
+        style:{
+          borderLineWidth:[6,1,1,1],
+          borderColor:['gray']
         }
       };
     }

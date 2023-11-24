@@ -27,7 +27,7 @@ export class Icon extends Image {
     super(params);
 
     if (this.attribute.visibleTime === 'mouseenter_cell' || this.attribute.visibleTime === 'click_cell') {
-      this.attribute.visible = false;
+      this.attribute.opacity = 0;
     }
 
     if (this.attribute.hoverImage) {
@@ -41,11 +41,11 @@ export class Icon extends Image {
   }
 
   get backgroundWidth(): number {
-    return this.attribute.backgroundWidth ?? this.attribute.width;
+    return this.attribute.backgroundWidth ?? this.attribute.width ?? 0;
   }
 
   get backgroundHeight(): number {
-    return this.attribute.backgroundHeight ?? this.attribute.height;
+    return this.attribute.backgroundHeight ?? this.attribute.height ?? 0;
   }
 
   // protected tryUpdateAABBBounds() {

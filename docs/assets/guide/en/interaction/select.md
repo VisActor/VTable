@@ -69,6 +69,8 @@ const table = new VTable.ListTable({
 
 After turning on the shortcut, the user can use the copy shortcut that comes with the browser (such as: Ctrl + C, Cmd + C) to copy the contents of the selected cell.
 
+There is an event called `copy_data` in conjunction with copying content. This event will be triggered during copying and return the content copied to the clipboard.
+
 ## Open Select All
 
 When operating on table data, the user may want to shortcut all the contents of the table. The Open Select All function allows the user to select all the contents of the table at once by holding down the Ctrl key and pressing the A key. It should be noted that this function is turned off by default, and the Select All function is turned on with the following configuration:

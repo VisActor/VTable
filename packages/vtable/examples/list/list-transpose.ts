@@ -69,7 +69,8 @@ export function createTable() {
     columns,
     widthMode: 'standard',
     transpose: true,
-    dragHeaderMode: 'all'
+    dragHeaderMode: 'all',
+    limitMinWidth: 20
   };
   const tableInstance = new VTable.ListTable(option);
   window.tableInstance = tableInstance;

@@ -21,6 +21,9 @@ import type {
   PivotChartConstructorOptions,
   IHeaderTreeDefine,
   IDimension,
+  IIndicator,
+  ITitleDefine,
+  ICornerDefine,
   TextAlignType,
   TextBaselineType
 } from './ts-types';
@@ -55,6 +58,9 @@ export {
   PivotChart,
   IHeaderTreeDefine,
   IDimension,
+  IIndicator,
+  ITitleDefine,
+  ICornerDefine,
   ColumnsDefine,
   ColumnDefine,
   LinkColumnDefine,

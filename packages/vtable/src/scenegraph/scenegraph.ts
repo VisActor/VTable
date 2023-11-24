@@ -1,4 +1,4 @@
-import type { IStage, IRect, ITextCache, INode } from '@visactor/vrender';
+import type { IStage, IRect, ITextCache, INode, Text } from '@visactor/vrender';
 import { createStage, createRect, IContainPointMode, container, vglobal } from '@visactor/vrender';
 import type { CellSubLocation } from '../ts-types';
 import {
@@ -169,6 +169,7 @@ export class Scenegraph {
         this.table.fireListeners('after_render', null);
         // console.trace('after_render');
       }
+      // event: { clickInterval: 400 }
       // autoRender: true
     });
 
@@ -834,17 +835,17 @@ export class Scenegraph {
     }
 
     if (this.table.rightFrozenColCount > 0) {
-      this.rightFrozenGroup.setAttribute('x', this.tableGroup.attribute.width - this.rightFrozenGroup.attribute.width);
+      this.rightFrozenGroup.setAttribute('x', this.tableGroup.attribute.width - this.table.getRightFrozenColsWidth());
       this.rightTopCornerGroup.setAttributes({
         visible: true,
-        x: this.tableGroup.attribute.width - this.rightFrozenGroup.attribute.width,
-        width: this.rightFrozenGroup.attribute.width,
+        x: this.tableGroup.attribute.width - this.table.getRightFrozenColsWidth(),
+        width: this.table.getRightFrozenColsWidth(),
         height: this.table.getFrozenRowsHeight()
       });
       this.rightBottomCornerGroup.setAttributes({
         visible: true,
-        x: this.tableGroup.attribute.width - this.rightFrozenGroup.attribute.width,
-        width: this.rightFrozenGroup.attribute.width
+        x: this.tableGroup.attribute.width - this.table.getRightFrozenColsWidth(),
+        width: this.table.getRightFrozenColsWidth()
       });
     }
   }
@@ -984,13 +985,13 @@ export class Scenegraph {
    * @return {*}
    */
   setBodyAndColHeaderX(x: number) {
-    if (this.rowHeaderGroup.attribute.width + x === this.bodyGroup.attribute.x) {
+    if (this.table.getFrozenColsWidth() + x === this.bodyGroup.attribute.x) {
       return;
     }
-    this.bodyGroup.setAttribute('x', this.rowHeaderGroup.attribute.width + x);
-    this.colHeaderGroup.setAttribute('x', this.rowHeaderGroup.attribute.width + x);
+    this.bodyGroup.setAttribute('x', this.table.getFrozenColsWidth() + x);
+    this.colHeaderGroup.setAttribute('x', this.table.getFrozenColsWidth() + x);
     if (this.table.bottomFrozenRowCount > 0) {
-      this.bottomFrozenGroup.setAttribute('x', this.rowHeaderGroup.attribute.width + x);
+      this.bottomFrozenGroup.setAttribute('x', this.table.getFrozenColsWidth() + x);
     }
     this.updateNextFrame();
   }
@@ -1276,16 +1277,16 @@ export class Scenegraph {
     this.leftBottomCornerGroup.setDeltaWidth(cornerX - this.leftBottomCornerGroup.attribute.width);
     //TODO 可能有影响
     this.colHeaderGroup.setDeltaWidth(colHeaderX - this.colHeaderGroup.attribute.width);
-    this.rightFrozenGroup.setDeltaWidth(colHeaderX - this.rightFrozenGroup.attribute.width);
+    this.rightFrozenGroup.setDeltaWidth(colHeaderX - this.table.getRightFrozenColsWidth());
     this.rowHeaderGroup.setDeltaWidth(rowHeaderX - this.rowHeaderGroup.attribute.width);
     this.bottomFrozenGroup.setDeltaWidth(rowHeaderX - this.bottomFrozenGroup.attribute.width);
-    this.rightFrozenGroup.setDeltaWidth(rightX - this.rightFrozenGroup.attribute.width);
+    this.rightFrozenGroup.setDeltaWidth(rightX - this.table.getRightFrozenColsWidth());
     this.rightTopCornerGroup.setDeltaWidth(rightX - this.rightTopCornerGroup.attribute.width);
     this.rightBottomCornerGroup.setDeltaWidth(rightX - this.rightBottomCornerGroup.attribute.width);
     this.bodyGroup.setDeltaWidth(bodyX - this.bodyGroup.attribute.width);
 
     this.colHeaderGroup.setAttribute('x', this.cornerHeaderGroup.attribute.width);
-    this.bottomFrozenGroup.setAttribute('x', this.rowHeaderGroup.attribute.width);
+    this.bottomFrozenGroup.setAttribute('x', this.table.getFrozenColsWidth());
     this.bodyGroup.setAttribute('x', this.rowHeaderGroup.attribute.width);
   }
 
@@ -1482,7 +1483,7 @@ export class Scenegraph {
       if (isString(text.cache.clipedText)) {
         cacheStr = text.cache.clipedText;
       } else {
-        (text.cache as ITextCache).layoutData.lines.forEach((line: any) => {
+        (text.cache as ITextCache).layoutData?.lines?.forEach((line: any) => {
           cacheStr += line.str;
         });
       }
@@ -1563,5 +1564,14 @@ export class Scenegraph {
       return this.table.getRowsHeight(this.table.rowCount - this.table.bottomFrozenRowCount, row - 1);
     }
     return 0;
+  }
+  /** 更新场景树某个单元格的值 */
+  updateCellValue(col: number, row: number, value: string | number) {
+    const cellGroup = this.getCell(col, row);
+    const text = cellGroup.getChildByName('text', true) as unknown as WrapText;
+    if (text) {
+      const textAttributeStr = isArray(text.attribute.text) ? [value] : (value as string);
+      text.setAttribute('text', textAttributeStr);
+    }
   }
 }

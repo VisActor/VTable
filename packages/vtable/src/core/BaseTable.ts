@@ -46,7 +46,7 @@ import { EventTarget } from '../event/EventTarget';
 import { NumberMap } from '../tools/NumberMap';
 import { Rect } from '../tools/Rect';
 import type { TableTheme } from '../themes/theme';
-import { defaultOrderFn, throttle2 } from '../tools/util';
+import { throttle2 } from '../tools/util';
 import themes from '../themes';
 import { Env } from '../tools/env';
 import { Scenegraph } from '../scenegraph/scenegraph';
@@ -190,7 +190,8 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
       modeParams,
       canvasWidth,
       canvasHeight,
-      overscrollBehavior
+      overscrollBehavior,
+      limitMinWidth
     } = options;
     this.container = container;
     this.options = options;
@@ -300,7 +301,14 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
 
     internalProps.allowFrozenColCount = options.allowFrozenColCount ?? internalProps.colCount;
     internalProps.limitMaxAutoWidth = options.limitMaxAutoWidth ?? 450;
-
+    internalProps.limitMinWidth =
+      limitMinWidth !== null && limitMinWidth !== undefined
+        ? typeof limitMinWidth === 'number'
+          ? limitMinWidth
+          : limitMinWidth
+          ? 10
+          : 0
+        : 10;
     // 生成scenegraph
     this._vDataSet = new DataSet();
     this.scenegraph = new Scenegraph(this);
@@ -381,6 +389,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     if (this.internalProps.title) {
       this.internalProps.title.resize();
     }
+    // this.stateManeger.checkFrozen();
     this.scenegraph.resize();
   }
 
@@ -412,7 +421,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
    * 注意 这个值和options.frozenColCount 不一样！options.frozenColCount是用户实际设置的; 这里获取的值是调整过:frozen的列过宽时 frozeCount为0
    */
   get frozenColCount(): number {
-    return this.internalProps.frozenColCount ?? 0;
+    return this.internalProps.layoutMap?.frozenColCount ?? this.internalProps.frozenColCount ?? 0;
   }
   /**
    * Set the number of frozen columns.
@@ -425,7 +434,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     // const oldFrozenColCount = this.internalProps.frozenColCount;
     this.internalProps.frozenColCount = frozenColCount;
     this.options.frozenColCount = frozenColCount;
-    //纠正frozenColCount的值
+    // 纠正frozenColCount的值;
     if (this.tableNoFrameWidth - this.getColsWidth(0, frozenColCount - 1) <= 120) {
       this.internalProps.frozenColCount = 0;
     }
@@ -472,7 +481,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
    * Get the number of frozen rows.
    */
   get frozenRowCount(): number {
-    return this.internalProps.frozenRowCount ?? 0;
+    return this.internalProps.layoutMap?.frozenRowCount ?? this.internalProps.frozenRowCount ?? 0;
   }
   /**
    * Set the number of frozen rows.
@@ -483,7 +492,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
   }
 
   get rightFrozenColCount(): number {
-    return this.internalProps.rightFrozenColCount ?? 0;
+    return this.internalProps.layoutMap?.rightFrozenColCount ?? this.internalProps.rightFrozenColCount ?? 0;
   }
 
   set rightFrozenColCount(rightFrozenColCount: number) {
@@ -491,7 +500,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
   }
 
   get bottomFrozenRowCount(): number {
-    return this.internalProps.bottomFrozenRowCount ?? 0;
+    return this.internalProps.layoutMap?.bottomFrozenRowCount ?? this.internalProps.bottomFrozenRowCount ?? 0;
   }
 
   set bottomFrozenRowCount(bottomFrozenRowCount: number) {
@@ -1066,7 +1075,13 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
    */
   getColWidth(col: number): number {
     // const width = this.getColWidthDefine(col);
-    const width = this.colWidthsMap.get(col) ?? this.defaultColWidth;
+    const width =
+      this.colWidthsMap.get(col) ??
+      (col < this.rowHeaderLevelCount
+        ? Array.isArray(this.defaultHeaderColWidth)
+          ? this.defaultHeaderColWidth[col] ?? this.defaultColWidth
+          : this.defaultHeaderColWidth
+        : this.defaultColWidth);
     if (
       (this.widthMode === 'adaptive' && typeof width === 'number') ||
       ((this as any).transpose && typeof width === 'number')
@@ -1555,8 +1570,13 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
   /**
    * 异步重绘表格
    */
-  renderAsync(): void {
+  renderAsync(): Promise<void> {
     this.scenegraph.updateNextFrame();
+    return new Promise((resolve, reject) => {
+      setTimeout(() => {
+        resolve();
+      }, 0);
+    });
   }
   /**
    * 转换成视觉相对table左上角的坐标 如滚动超出表格上方 y将为负值
@@ -1762,6 +1782,9 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     internalProps.handler?.release?.();
     // internalProps.scrollable?.release?.();
     internalProps.focusControl?.release?.();
+    internalProps.legends?.release();
+    internalProps.title?.release();
+    internalProps.layoutMap.release();
     if (internalProps.releaseList) {
       internalProps.releaseList.forEach(releaseObj => releaseObj?.release?.());
       internalProps.releaseList = null;
@@ -1818,7 +1841,8 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
       customRender,
       renderChartAsync,
       renderChartAsyncBatchCount,
-      overscrollBehavior
+      overscrollBehavior,
+      limitMinWidth
     } = options;
     if (pixelRatio && pixelRatio !== this.internalProps.pixelRatio) {
       this.internalProps.pixelRatio = pixelRatio;
@@ -1896,6 +1920,14 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     internalProps.autoWrapText = options.autoWrapText;
     internalProps.allowFrozenColCount = options.allowFrozenColCount ?? internalProps.colCount;
     internalProps.limitMaxAutoWidth = options.limitMaxAutoWidth ?? 450;
+    internalProps.limitMinWidth =
+      limitMinWidth !== null && limitMinWidth !== undefined
+        ? typeof limitMinWidth === 'number'
+          ? limitMinWidth
+          : limitMinWidth
+          ? 10
+          : 0
+        : 10;
     // 生成scenegraph
     this._vDataSet = new DataSet();
     internalProps.legends?.release();
@@ -2303,6 +2335,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     field: FieldDef,
     fieldKey?: FieldKeyDef
   ): ((v1: any, v2: any, order: string) => 0 | 1 | -1) | undefined;
+  abstract setRecords(records: Array<any>, sort?: SortState | SortState[]): void;
   abstract refreshHeader(): void;
   abstract refreshRowColCount(): void;
   abstract getHierarchyState(col: number, row: number): HierarchyState | null;
@@ -2634,74 +2667,6 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
       return description(arg);
     }
     return description;
-  }
-  /**
-   * 设置表格数据 及排序状态
-   * @param records
-   * @param sort
-   */
-  setRecords(records: Array<any>, sort?: SortState | SortState[]): void {
-    const time = typeof window !== 'undefined' ? window.performance.now() : 0;
-    // 清空单元格内容
-    this.scenegraph.clearCells();
-
-    //重复逻辑抽取updateWidthHeight
-    if (sort !== undefined) {
-      this.internalProps.sortState = sort;
-      this.stateManeger.setSortState((this as any).sortState as SortState);
-    }
-    if (records) {
-      _setRecords(this, records);
-      if ((this as any).sortState) {
-        let order: any;
-        let field: any;
-        let fieldKey: any;
-        if (Array.isArray((this as any).sortState)) {
-          if ((this as any).sortState.length !== 0) {
-            ({ order, field, fieldKey } = (this as any).sortState?.[0]);
-          }
-        } else {
-          ({ order, field, fieldKey } = (this as any).sortState as SortState);
-        }
-        // 根据sort规则进行排序
-        if (order && field && order !== 'normal') {
-          const sortFunc = this._getSortFuncFromHeaderOption(undefined, field, fieldKey);
-          // 如果sort传入的信息不能生成正确的sortFunc，直接更新表格，避免首次加载无法正常显示内容
-          let hd;
-          if (fieldKey) {
-            hd = this.internalProps.layoutMap.headerObjects.find((col: any) => col && col.fieldKey === fieldKey);
-          } else {
-            hd = this.internalProps.layoutMap.headerObjects.find((col: any) => col && col.field === field);
-          }
-          hd?.define?.sort && this.dataSource.sort(hd.field, order, sortFunc ?? defaultOrderFn);
-        }
-      }
-      this.refreshRowColCount();
-    } else {
-      _setRecords(this, records);
-    }
-    this.stateManeger.initCheckedState(records);
-    this.internalProps.frozenColCount = this.options.frozenColCount || this.rowHeaderLevelCount;
-    // 生成单元格场景树
-    this.scenegraph.createSceneGraph();
-
-    if (this.internalProps.title && !this.internalProps.title.isReleased) {
-      this._updateSize();
-      this.internalProps.title.resize();
-      this.scenegraph.resize();
-    }
-
-    this.render();
-    console.log('setRecords cost time:', (typeof window !== 'undefined' ? window.performance.now() : 0) - time);
-  }
-  /**
-   * add or update a single record, col and row is optional, but all missing will be invalid
-   * @param col col position of the record, it is optional
-   * @param row row position of the record, it is optional
-   */
-  setRecord(record: any, col?: number, row?: number) {
-    const index = this.getRecordIndexByCell(col, row);
-    this.dataSource.setRecord(record, index);
   }
 
   setDropDownMenuHighlight(cells: DropDownMenuHighlightInfo[]): void {
@@ -3190,109 +3155,109 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
 
   /**获取选中区域的内容 作为复制内容 */
   getCopyValue(): string | null {
-    if (!this.stateManeger.select?.ranges) {
-      return null;
-    }
-    const ranges = this.stateManeger.select.ranges;
-    let minCol = Math.min(ranges[0].start.col, ranges[0].end.col);
-    let maxCol = Math.max(ranges[0].start.col, ranges[0].end.col);
-    let minRow = Math.min(ranges[0].start.row, ranges[0].end.row);
-    let maxRow = Math.max(ranges[0].start.row, ranges[0].end.row);
-    ranges.forEach((a: CellRange) => {
-      minCol = Math.min(minCol, a.start.col, a.end.col);
-      maxCol = Math.max(maxCol, a.start.col, a.end.col);
-      minRow = Math.min(minRow, a.start.row, a.end.row);
-      maxRow = Math.max(maxRow, a.start.row, a.end.row);
-      // return a.start.row - b.start.row || a.start.col - b.start.col
-    });
-    const isExistDataInRow = (r: number) => {
-      let isExist = false;
-      ranges.forEach((range: CellRange) => {
-        const minRow = Math.min(range.start.row, range.end.row);
-        const maxRow = Math.max(range.start.row, range.end.row);
-        if (minRow <= r && maxRow >= r) {
-          isExist = true;
-        }
+    if (this.stateManeger.select?.ranges?.length > 0) {
+      const ranges = this.stateManeger.select.ranges;
+      let minCol = Math.min(ranges[0].start.col, ranges[0].end.col);
+      let maxCol = Math.max(ranges[0].start.col, ranges[0].end.col);
+      let minRow = Math.min(ranges[0].start.row, ranges[0].end.row);
+      let maxRow = Math.max(ranges[0].start.row, ranges[0].end.row);
+      ranges.forEach((a: CellRange) => {
+        minCol = Math.min(minCol, a.start.col, a.end.col);
+        maxCol = Math.max(maxCol, a.start.col, a.end.col);
+        minRow = Math.min(minRow, a.start.row, a.end.row);
+        maxRow = Math.max(maxRow, a.start.row, a.end.row);
+        // return a.start.row - b.start.row || a.start.col - b.start.col
       });
-      return isExist;
-    };
-    const isExistDataInCol = (c: number) => {
-      let isExist = false;
-      ranges.forEach((range: CellRange) => {
-        const minCol = Math.min(range.start.col, range.end.col);
-        const maxCol = Math.max(range.start.col, range.end.col);
-        if (minCol <= c && maxCol >= c) {
-          isExist = true;
+      const isExistDataInRow = (r: number) => {
+        let isExist = false;
+        ranges.forEach((range: CellRange) => {
+          const minRow = Math.min(range.start.row, range.end.row);
+          const maxRow = Math.max(range.start.row, range.end.row);
+          if (minRow <= r && maxRow >= r) {
+            isExist = true;
+          }
+        });
+        return isExist;
+      };
+      const isExistDataInCol = (c: number) => {
+        let isExist = false;
+        ranges.forEach((range: CellRange) => {
+          const minCol = Math.min(range.start.col, range.end.col);
+          const maxCol = Math.max(range.start.col, range.end.col);
+          if (minCol <= c && maxCol >= c) {
+            isExist = true;
+          }
+        });
+        return isExist;
+      };
+
+      const getRangeExistDataInCell = (c: number, r: number) => {
+        let isExistRange;
+        ranges.forEach((range: CellRange) => {
+          const minRow = Math.min(range.start.row, range.end.row);
+          const maxRow = Math.max(range.start.row, range.end.row);
+          const minCol = Math.min(range.start.col, range.end.col);
+          const maxCol = Math.max(range.start.col, range.end.col);
+          if (minCol <= c && maxCol >= c && minRow <= r && maxRow >= r) {
+            isExistRange = range;
+          }
+        });
+        return isExistRange;
+      };
+      const getCopyCellValue = (col: number, row: number, range?: CellRange): string | Promise<string> | void => {
+        const cellRange = this.getCellRange(col, row);
+        let copyStartCol = cellRange.start.col;
+        let copyStartRow = cellRange.start.row;
+        if (range) {
+          const rangeMinCol = Math.min(range.start.col, range.end.col);
+          const rangeMinRow = Math.min(range.start.row, range.end.row);
+          copyStartCol = Math.max(rangeMinCol, cellRange.start.col);
+          copyStartRow = Math.max(rangeMinRow, cellRange.start.row);
         }
-      });
-      return isExist;
-    };
 
-    const getRangeExistDataInCell = (c: number, r: number) => {
-      let isExistRange;
-      ranges.forEach((range: CellRange) => {
-        const minRow = Math.min(range.start.row, range.end.row);
-        const maxRow = Math.max(range.start.row, range.end.row);
-        const minCol = Math.min(range.start.col, range.end.col);
-        const maxCol = Math.max(range.start.col, range.end.col);
-        if (minCol <= c && maxCol >= c && minRow <= r && maxRow >= r) {
-          isExistRange = range;
+        if (copyStartCol !== col || copyStartRow !== row) {
+          return '';
         }
-      });
-      return isExistRange;
-    };
-    const getCopyCellValue = (col: number, row: number, range?: CellRange): string | Promise<string> | void => {
-      const cellRange = this.getCellRange(col, row);
-      let copyStartCol = cellRange.start.col;
-      let copyStartRow = cellRange.start.row;
-      if (range) {
-        const rangeMinCol = Math.min(range.start.col, range.end.col);
-        const rangeMinRow = Math.min(range.start.row, range.end.row);
-        copyStartCol = Math.max(rangeMinCol, cellRange.start.col);
-        copyStartRow = Math.max(rangeMinRow, cellRange.start.row);
-      }
 
-      if (copyStartCol !== col || copyStartRow !== row) {
-        return '';
-      }
+        const value = this.getCellValue(col, row);
+        return value;
+      };
+      let copyValue = '';
 
-      const value = this.getCellValue(col, row);
-      return value;
-    };
-    let copyValue = '';
-
-    for (let r = minRow; r <= maxRow; r++) {
-      const isExistData = isExistDataInRow(r);
-      if (isExistData) {
-        for (let c = minCol; c <= maxCol; c++) {
-          const isExistDataCol = isExistDataInCol(c);
-          if (isExistDataCol) {
-            const range: CellRange | undefined = getRangeExistDataInCell(c, r);
-            if (range) {
-              const copyCellValue = getCopyCellValue(c, r, range);
-              if (typeof Promise !== 'undefined' && copyCellValue instanceof Promise) {
-                //无法获取异步数据
-              } else {
-                // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-                const strCellValue = `${copyCellValue}`;
-                if (/^\[object .*\]$/.exec(strCellValue)) {
-                  //object 对象忽略掉
+      for (let r = minRow; r <= maxRow; r++) {
+        const isExistData = isExistDataInRow(r);
+        if (isExistData) {
+          for (let c = minCol; c <= maxCol; c++) {
+            const isExistDataCol = isExistDataInCol(c);
+            if (isExistDataCol) {
+              const range: CellRange | undefined = getRangeExistDataInCell(c, r);
+              if (range) {
+                const copyCellValue = getCopyCellValue(c, r, range);
+                if (typeof Promise !== 'undefined' && copyCellValue instanceof Promise) {
+                  //无法获取异步数据
                 } else {
-                  copyValue += strCellValue;
+                  // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+                  const strCellValue = `${copyCellValue}`;
+                  if (/^\[object .*\]$/.exec(strCellValue)) {
+                    //object 对象忽略掉
+                  } else {
+                    copyValue += strCellValue;
+                  }
                 }
-              }
-              if (c < range.end.col || c < maxCol) {
+                if (c < range.end.col || c < maxCol) {
+                  copyValue += '\t';
+                }
+              } else {
                 copyValue += '\t';
               }
-            } else {
-              copyValue += '\t';
             }
           }
+          copyValue += '\n';
         }
-        copyValue += '\n';
       }
+      return copyValue;
     }
-    return copyValue;
+    return '';
   }
 
   /**获取选中区域的每个单元格详情 */
