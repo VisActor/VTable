@@ -425,6 +425,13 @@
       },
       "children": [
         {
+          "path": "react",
+          "title": {
+            "zh": "React-VTable",
+            "en": "React-VTable"
+          }
+        },
+        {
           "path": "vue",
           "title": {
             "zh": "Vue VTable",

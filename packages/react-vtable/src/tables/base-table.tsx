@@ -133,7 +133,7 @@ const BaseTable: React.FC<Props> = React.forwardRef((props, ref) => {
   }, [handleTableRender, props]);
 
   useEffect(() => {
-    if (!tableContext.current.table) {
+    if (!tableContext.current?.table) {
       createTable(props);
       renderTable();
       bindEventsToTable(tableContext.current.table, props, null, TABLE_EVENTS);
