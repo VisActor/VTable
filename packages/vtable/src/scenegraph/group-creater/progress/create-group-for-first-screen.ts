@@ -4,7 +4,7 @@ import { computeRowsHeight } from '../../layout/compute-row-height';
 import { createColGroup } from '../column';
 import type { SceneProxy } from './proxy';
 
-export async function createGroupForFirstScreen(
+export function createGroupForFirstScreen(
   cornerHeaderGroup: Group,
   colHeaderGroup: Group,
   rowHeaderGroup: Group,
@@ -216,6 +216,6 @@ export async function createGroupForFirstScreen(
     proxy.referenceCol = proxy.colStart + Math.floor((proxy.colEnd - proxy.colStart) / 2);
 
     // 开始异步任务
-    await proxy.progress();
+    proxy.progress();
   }
 }

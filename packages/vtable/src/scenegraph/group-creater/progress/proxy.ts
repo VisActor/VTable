@@ -142,7 +142,7 @@ export class SceneProxy {
     this.rowUpdatePos = this.bodyBottomRow;
   }
 
-  async createGroupForFirstScreen(
+  createGroupForFirstScreen(
     cornerHeaderGroup: Group,
     colHeaderGroup: Group,
     rowHeaderGroup: Group,
@@ -152,7 +152,7 @@ export class SceneProxy {
     xOrigin: number,
     yOrigin: number
   ) {
-    await createGroupForFirstScreen(
+    createGroupForFirstScreen(
       cornerHeaderGroup,
       colHeaderGroup,
       rowHeaderGroup,
