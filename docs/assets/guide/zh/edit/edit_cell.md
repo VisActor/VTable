@@ -5,10 +5,15 @@
 # 使用步骤
 
 ## 1. 引用VTable的编辑器包：
-首先，确保已经正确安装了VTable库和相关的编辑器包。你可以使用以下命令来安装它们：
+首先，确保已经正确安装了VTable库@visactor/vtable和相关的编辑器包@visactor/vtable-editors。你可以使用以下命令来安装它们：
 
 ```shell
+
+# 使用 npm 安装
 npm install @visactor/vtable-editors
+
+# 使用 yarn 安装
+yarn add @visactor/vtable-editors
 ```
 
 在代码中引入所需类型的编辑器模块：
