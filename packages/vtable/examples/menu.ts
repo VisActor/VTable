@@ -679,6 +679,10 @@ export const menus = [
       {
         path: 'business',
         name: 'testPerformanceMoreColumn'
+      },
+      {
+        path: 'business',
+        name: 'population-struct'
       }
     ]
   },
