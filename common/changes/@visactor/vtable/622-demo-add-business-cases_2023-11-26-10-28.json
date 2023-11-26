@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "comment": "refactor: sortState can not work when column has no sort setting #622\n\n",
+      "type": "none",
+      "packageName": "@visactor/vtable"
+    }
+  ],
+  "packageName": "@visactor/vtable",
+  "email": "892739385@qq.com"
+}
