@@ -70,7 +70,9 @@ export class ListTable extends BaseTable implements ListTableAPI {
     this.showHeader = options.showHeader ?? true;
 
     this.transpose = options.transpose ?? false;
-    this.editorManager = new EditManeger(this);
+    if (Env.mode !== 'node') {
+      this.editorManager = new EditManeger(this);
+    }
     this.refreshHeader();
 
     if (options.dataSource) {
