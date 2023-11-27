@@ -1,22 +1,22 @@
 ---
 category: examples
 group: business
-title: Sales bubble chart
+title: 销售情况气泡图
 cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/sales-bubble.png
 link: '../guide/custom_define/custom_render'
 option: PivotTable#customRender.elements
 ---
 
-# Sales bubble chart
+# 销售情况气泡图
 
-Map sales to circle size and color to help you gain more visual insights into your data.
+将销售额映射为圆形的大小和颜色深浅，来用更为视觉化的效果帮助洞察数据。
 
-## Key Configurations
+## 关键配置
 
 - `PivotTable`
 - `customRender` 
 
-##  Code demo
+##  示例代码
 
 ```javascript livedemo template=vtable
 

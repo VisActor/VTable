@@ -1,27 +1,6 @@
----
-category: examples
-group: business
-title: Sales bubble chart
-cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/sales-bubble.png
-link: '../guide/custom_define/custom_render'
-option: PivotTable#customRender.elements
----
-
-# Sales bubble chart
-
-Map sales to circle size and color to help you gain more visual insights into your data.
-
-## Key Configurations
-
-- `PivotTable`
-- `customRender` 
-
-##  Code demo
-
-```javascript livedemo template=vtable
-
- let  tableInstance;
- function getColor(min, max, value, opacity) {
+import * as VTable from '../../src';
+const CONTAINER_ID = 'vTable';
+function getColor(min, max, value, opacity) {
   if (max === min) {
     if (value > 0) {
       return `rgba(255,0,0,${opacity})`;
@@ -150,8 +129,7 @@ fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American
         }
       }
     };
-    tableInstance = new VTable.PivotTable(document.getElementById(CONTAINER_ID), option);
+    const tableInstance = new VTable.PivotTable(document.getElementById(CONTAINER_ID), option);
     window.tableInstance = tableInstance;
   })
   .catch(err => console.error(err));
-```

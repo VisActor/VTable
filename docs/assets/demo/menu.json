@@ -1139,6 +1139,13 @@
             "zh": "2023中国人口金字塔",
             "en": "2023 China Population Pyramid"
           }
+        },
+        {
+          "path": "sales-bubble",
+          "title": {
+            "zh": "销售数据气泡图",
+            "en": "Sales Bubble"
+          }
         }
       ]
     }
