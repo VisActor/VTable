@@ -806,8 +806,8 @@ export class Scenegraph {
       ),
       height: Math.min(
         this.table.tableNoFrameHeight,
-        (this.colHeaderGroup.attribute.height ?? 0) +
-          (this.bodyGroup.attribute.height ?? 0) +
+        Math.max(this.colHeaderGroup.attribute.height, this.cornerHeaderGroup.attribute.height, 0) +
+          Math.max(this.rowHeaderGroup.attribute.height, this.bodyGroup.attribute.height, 0) +
           this.bottomFrozenGroup.attribute.height
       )
     } as any);
