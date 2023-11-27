@@ -82,13 +82,27 @@ export function moveHeaderPosition(
 
   // 更新columnGroup列宽
   for (let col = updateColStart; col <= updateColEnd; col++) {
+    const columnWidth = table.getColWidth(col);
     const columnHeaderGroup = table.scenegraph.getColGroup(col, true);
     const columnGroup = table.scenegraph.getColGroup(col);
+    const columnBottomGroup = table.scenegraph.getColGroupInBottom(col);
     if (columnHeaderGroup) {
-      columnHeaderGroup.setAttribute('width', table.getColWidth(col));
+      columnHeaderGroup.setAttribute('width', columnWidth);
+      columnHeaderGroup.forEachChildren((child: Group) => {
+        child.setAttribute('width', columnWidth);
+      });
     }
     if (columnGroup) {
-      columnGroup.setAttribute('width', table.getColWidth(col));
+      columnGroup.setAttribute('width', columnWidth);
+      columnGroup.forEachChildren((child: Group) => {
+        child.setAttribute('width', columnWidth);
+      });
+    }
+    if (columnBottomGroup) {
+      columnBottomGroup.setAttribute('width', columnWidth);
+      columnBottomGroup.forEachChildren((child: Group) => {
+        child.setAttribute('width', columnWidth);
+      });
     }
   }
 

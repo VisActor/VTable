@@ -55,9 +55,14 @@ export function updateColWidth(scene: Scenegraph, col: number, detaX: number) {
     updateColunmWidth(bottomColumn, detaX, autoRowHeight, 'bottom', scene);
   }
   // deal with right bottom frozen cells
+  const rightTopColumn = scene.getColGroupInRightTopCorner(col);
+  if (rightTopColumn) {
+    updateColunmWidth(rightTopColumn, detaX, autoRowHeight, 'right-top', scene);
+  }
+  // deal with right bottom frozen cells
   const rightBottomColumn = scene.getColGroupInRightBottomCorner(col);
   if (rightBottomColumn) {
-    updateColunmWidth(bottomColumn, detaX, autoRowHeight, 'right-bottom', scene);
+    updateColunmWidth(rightBottomColumn, detaX, autoRowHeight, 'right-bottom', scene);
   }
 
   // 更新剩余列位置
@@ -114,7 +119,7 @@ function updateColunmWidth(
   columnGroup: Group,
   detaX: number,
   autoRowHeight: boolean,
-  mode: 'col-corner' | 'row-body' | 'bottom' | 'left-bottom' | 'right-bottom',
+  mode: 'col-corner' | 'row-body' | 'bottom' | 'left-bottom' | 'right-top' | 'right-bottom',
   scene: Scenegraph
 ) {
   let needRerangeRow = false;
@@ -170,6 +175,10 @@ function updateColunmWidth(
         row = scene.table.rowCount - scene.table.bottomFrozenRowCount;
         colGroup = scene.getColGroupInLeftBottomCorner(col);
         oldContainerHeight = scene.leftBottomCornerGroup.attribute.height ?? 0;
+      } else if (mode === 'right-top') {
+        row = 0;
+        colGroup = scene.getColGroupInRightTopCorner(col);
+        oldContainerHeight = scene.rightTopCornerGroup.attribute.height ?? 0;
       } else if (mode === 'right-bottom') {
         row = scene.table.rowCount - scene.table.bottomFrozenRowCount;
         colGroup = scene.getColGroupInRightBottomCorner(col);
