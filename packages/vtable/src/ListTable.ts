@@ -176,6 +176,10 @@ export class ListTable extends BaseTable implements ListTableAPI {
     if (col === -1 || row === -1) {
       return null;
     }
+    const customMergeText = this.getCustomMergeValue(col, row);
+    if (customMergeText) {
+      return customMergeText;
+    }
     const table = this;
     if (table.internalProps.layoutMap.isHeader(col, row)) {
       const { title } = table.internalProps.layoutMap.getHeader(col, row);

@@ -3414,6 +3414,18 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     }
     return false;
   }
+
+  getCustomMergeValue(col: number, row: number): string | undefined {
+    if (this.internalProps.customMergeCell) {
+      const customMerge = this.getCustomMerge(col, row);
+      if (customMerge) {
+        const { text } = customMerge;
+        return text;
+      }
+    }
+    return undefined;
+  }
+
   /**
    * 导出表格中当前可视区域的图片
    * @returns base64图片
