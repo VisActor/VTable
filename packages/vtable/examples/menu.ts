@@ -682,7 +682,7 @@ export const menus = [
       },
       {
         path: 'business',
-        name: 'population-struct'
+        name: 'population-pyramid'
       }
     ]
   },

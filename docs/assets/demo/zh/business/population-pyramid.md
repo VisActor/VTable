@@ -1,6 +1,26 @@
-import * as VTable from '../../src';
-const CONTAINER_ID = 'vTable';
-const records = [
+---
+category: examples
+group: Business
+title: 2023年中国人口金字塔
+cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/population-pyramid.png
+---
+
+# 2023年中国人口金字塔
+
+中国的人口分布图。
+
+数据来源：https://population-pyramid.net/zh-cn
+
+## 关键配置
+
+- `title` 定义标题
+- `theme` 定义表格样式
+- `cellType: 'progressbar'` 指定进度图
+
+## 代码演示
+
+```javascript livedemo template=vtable
+ const records = [
   [0, 5634674, 5063545],
   [1, 5705095, 5104886],
   [2, 6428332, 5727205],
@@ -104,9 +124,9 @@ const records = [
   [100, 3722, 45558],
   [101, 0, 0],
   [102, 0, 0]
-  // ['', 727445708, 698403578]
+  // ['', 727445708, 698403578]//人口总数
 ];
-const columns: VTable.ColumnsDefine = [
+const columns = [
   {
     field: '0',
     title: 'Age',
@@ -174,7 +194,7 @@ const columns: VTable.ColumnsDefine = [
   }
 ];
 
-const option: VTable.ListTableConstructorOptions = {
+const option = {
   records,
   columns,
   widthMode: 'standard',
@@ -195,14 +215,6 @@ const option: VTable.ListTableConstructorOptions = {
     orient: 'top',
     textStyle: { fill: '#16cdcd' }
   },
-  // {
-  //   text: 'dsagf',
-  //   align: 'right',
-  //   subtext:
-  //     '这是一个子标题\ndsag反馈第三个国际服大教室这是一个子标题\ndsag反馈第三个国际服大教室这是一个子标题\ndsag反馈第三个国际服大教室这是一个子标题\ndsag反馈第三个国际服大教室',
-  //   orient: 'top',
-  //   padding: 40
-  // }
   theme: VTable.themes.DEFAULT.extends({
     headerStyle: {
       color: '#dfeef7',
@@ -224,5 +236,6 @@ const option: VTable.ListTableConstructorOptions = {
     }
   })
 };
-const tableInstance = new VTable.ListTable(document.getElementById(CONTAINER_ID), option);
-window.tableInstance = tableInstance;
+  const tableInstance =  new VTable.ListTable(document.getElementById(CONTAINER_ID),option);
+  window.tableInstance = tableInstance;
+```
