@@ -472,13 +472,13 @@ export interface BaseTableAPI {
   throttleInvalidate: () => void;
   getRowHeight: (row: number) => number;
   getDefaultRowHeight: (row: number) => number | 'auto';
-  setRowHeight: (row: number, height: number, clearCache?: boolean) => void;
+  _setRowHeight: (row: number, height: number, clearCache?: boolean) => void;
   getColWidth: (col: number) => number;
   getColWidthDefined: (col: number) => string | number;
   // setColWidthDefined: (col: number, width: number) => void;
   getColWidthDefinedNumber: (col: number) => number;
   // getColWidthDefine: (col: number) => string | number;
-  setColWidth: (col: number, width: number | string, clearCache?: boolean, skipCheckFrozen?: boolean) => void;
+  _setColWidth: (col: number, width: number | string, clearCache?: boolean, skipCheckFrozen?: boolean) => void;
   _getColContentWidth: (col: number) => number;
   _setColContentWidth: (col: number, width: number | string, clearCache?: boolean) => void;
   getMaxColWidth: (col: number) => number;

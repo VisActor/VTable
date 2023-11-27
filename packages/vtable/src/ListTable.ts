@@ -375,7 +375,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
         const { width, minWidth, maxWidth } = layoutMap.columnWidths?.[col] ?? {};
         // width 为 "auto" 时先不存储ColWidth
         if (width && ((typeof width === 'string' && width !== 'auto') || (typeof width === 'number' && width > 0))) {
-          table.setColWidth(col, width);
+          table._setColWidth(col, width);
         }
         if (minWidth && ((typeof minWidth === 'number' && minWidth > 0) || typeof minWidth === 'string')) {
           table.setMinColWidth(col, minWidth);

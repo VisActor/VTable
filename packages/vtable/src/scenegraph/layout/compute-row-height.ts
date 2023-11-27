@@ -72,7 +72,7 @@ export function computeRowsHeight(
         if (update) {
           newHeights[row] = height;
         } else {
-          table.setRowHeight(row, height);
+          table._setRowHeight(row, height);
         }
       }
     }
@@ -84,7 +84,7 @@ export function computeRowsHeight(
         if (update) {
           newHeights[row] = height;
         } else {
-          table.setRowHeight(row, height);
+          table._setRowHeight(row, height);
         }
       }
     }
@@ -117,7 +117,7 @@ export function computeRowsHeight(
           if (update) {
             newHeights[row] = height;
           } else {
-            table.setRowHeight(row, height);
+            table._setRowHeight(row, height);
           }
         }
       } else if (
@@ -140,7 +140,7 @@ export function computeRowsHeight(
           if (update) {
             newHeights[row] = height;
           } else {
-            table.setRowHeight(row, height);
+            table._setRowHeight(row, height);
           }
         }
       } else {
@@ -152,7 +152,7 @@ export function computeRowsHeight(
           if (update) {
             newHeights[row] = height;
           } else {
-            table.setRowHeight(row, height);
+            table._setRowHeight(row, height);
           }
         }
       }
@@ -196,7 +196,7 @@ export function computeRowsHeight(
       if (update) {
         newHeights[row] = rowHeight;
       } else {
-        table.setRowHeight(row, rowHeight, false);
+        table._setRowHeight(row, rowHeight, false);
       }
     }
   } else if (table.autoFillHeight) {
@@ -220,7 +220,7 @@ export function computeRowsHeight(
         if (update) {
           newHeights[row] = newHeights[row] * factor;
         } else {
-          table.setRowHeight(row, table.getRowHeight(row) * factor);
+          table._setRowHeight(row, table.getRowHeight(row) * factor);
         }
       }
     }
@@ -376,7 +376,7 @@ function fillRowsHeight(
     if (newHeights) {
       newHeights[row] = height;
     } else {
-      table.setRowHeight(row, height);
+      table._setRowHeight(row, height);
     }
   }
 }

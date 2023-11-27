@@ -68,7 +68,7 @@ export function computeColsWidth(table: BaseTableAPI, colStart?: number, colEnd?
     if (update) {
       newWidths[col] = maxWidth;
     } else {
-      table.setColWidth(col, maxWidth, false, true);
+      table._setColWidth(col, maxWidth, false, true);
     }
   }
 
@@ -105,7 +105,7 @@ export function computeColsWidth(table: BaseTableAPI, colStart?: number, colEnd?
       if (update) {
         newWidths[col] = colWidth;
       } else {
-        table.setColWidth(col, colWidth, false, true);
+        table._setColWidth(col, colWidth, false, true);
       }
     }
   } else if (table.autoFillWidth) {
@@ -130,7 +130,7 @@ export function computeColsWidth(table: BaseTableAPI, colStart?: number, colEnd?
         if (update) {
           newWidths[col] = newWidths[col] * factor;
         } else {
-          table.setColWidth(col, table.getColWidth(col) * factor, false, true);
+          table._setColWidth(col, table.getColWidth(col) * factor, false, true);
         }
       }
     }

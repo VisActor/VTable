@@ -370,7 +370,7 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
       const { width, minWidth, maxWidth } = internalProps.layoutMap.columnWidths?.[col] ?? {};
       // width 为 "auto" 时先不存储ColWidth
       if (width && ((typeof width === 'string' && width !== 'auto') || (typeof width === 'number' && width > 0))) {
-        this.setColWidth(col, width);
+        this._setColWidth(col, width);
       }
       if (minWidth && ((typeof minWidth === 'number' && minWidth > 0) || typeof minWidth === 'string')) {
         this.setMinColWidth(col, minWidth);

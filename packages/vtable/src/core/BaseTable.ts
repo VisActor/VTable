@@ -808,14 +808,14 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     return 'grid';
   }
 
-  /**
-   * Set all column width.
-   * @param  {number[]} widths The column widths
-   * @return {void}
-   */
-  setColWidths(widths: number[]): void {
-    widths.forEach((value, index) => this.setColWidth(index, value));
-  }
+  // /**
+  //  * Set all column width.
+  //  * @param  {number[]} widths The column widths
+  //  * @return {void}
+  //  */
+  // setColWidths(widths: number[]): void {
+  //   widths.forEach((value, index) => this.setColWidth(index, value));
+  // }
   /**
    * 获取指定列范围的总宽度
    * @param startCol
@@ -924,7 +924,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
    * @param row
    * @returns
    */
-  setRowHeight(row: number, height: number, clearCache?: boolean): void {
+  _setRowHeight(row: number, height: number, clearCache?: boolean): void {
     this.rowHeightsMap.put(row, Math.round(height));
     // 清楚影响缓存
     if (clearCache) {
@@ -1097,7 +1097,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
    * @param row
    * @returns
    */
-  setColWidth(col: number, width: string | number, clearCache?: boolean, skipCheckFrozen?: boolean): void {
+  _setColWidth(col: number, width: string | number, clearCache?: boolean, skipCheckFrozen?: boolean): void {
     this.colWidthsMap.put(col, typeof width === 'number' ? Math.round(width) : width);
     // 清楚影响缓存
     if (clearCache) {
