@@ -1913,6 +1913,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     this.colWidthsLimit = {};
 
     internalProps.theme = themes.of(options.theme ?? themes.DEFAULT);
+    this.scenegraph.updateStageBackground();
     // this._updateSize();
     //设置是否自动撑开的配置
     // internalProps.autoRowHeight = options.autoRowHeight ?? false;
@@ -2442,6 +2443,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
   updateTheme(theme: ITableThemeDefine) {
     this.internalProps.theme = themes.of(theme ?? themes.DEFAULT);
     this.options.theme = theme;
+    this.scenegraph.updateStageBackground();
     this.scenegraph.clearCells();
     this.headerStyleCache = new Map();
     this.bodyStyleCache = new Map();

@@ -324,6 +324,11 @@ export class Scenegraph {
     this.proxy?.release();
   }
 
+  updateStageBackground() {
+    this.stage.background = this.table.theme.underlayBackgroundColor;
+    this.stage.renderNextFrame();
+  }
+
   /**
    * @description: 初始化表格外组件
    * @return {*}
