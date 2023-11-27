@@ -31,7 +31,7 @@ const records = [
 
 const columns = [
   {
-    field: '',
+    field: 'isCheck',
     title: '',
     width: 60,
     headerType: 'checkbox',

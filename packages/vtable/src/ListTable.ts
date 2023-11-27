@@ -732,6 +732,17 @@ export class ListTable extends BaseTable implements ListTableAPI {
     }
     return this.stateManeger.checkedState;
   }
+  /** 获取某个单元格checkbox的状态 */
+  getCellCheckboxState(col: number, row: number) {
+    const define = this.getBodyColumnDefine(col, row);
+    const field = define?.field;
+    const cellType = define?.cellType;
+    if (isValid(field) && cellType === 'checkbox') {
+      const dataIndex = this.dataSource.getIndexKey(this.getRecordIndexByCell(col, row));
+      return this.stateManeger.checkedState[dataIndex as number][field as string | number];
+    }
+    return undefined;
+  }
   /**
    * 设置表格数据 及排序状态
    * @param records

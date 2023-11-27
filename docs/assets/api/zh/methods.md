@@ -342,6 +342,12 @@ tableInstance.renderWithRecreateCells();
 getCheckboxState(field?: string | number): Array
 ```
 
+## getCellCheckboxState(Function)
+获取某个单元格checkbox的状态
+```
+getCellCheckboxState(col: number, row: number): Array
+```
+
 ## scrollToCell(Function)
 
 滚动到具体某个单元格位置。

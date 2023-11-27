@@ -40,6 +40,7 @@ import { cloneDeep, isArray } from '@visactor/vutils';
 import type { DiscreteLegend } from '@visactor/vrender-components';
 import { Title } from './components/title/title';
 import { Env } from './tools/env';
+import { TABLE_EVENT_TYPE } from './core/TABLE_EVENT_TYPE';
 
 export class PivotChart extends BaseTable implements PivotChartAPI {
   declare internalProps: PivotChartProtected;
@@ -138,6 +139,10 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
       this.internalProps.title = new Title(options.title, this);
       this.scenegraph.resize();
     }
+    //为了确保用户监听得到这个事件 这里做了异步 确保vtable实例已经初始化完成
+    setTimeout(() => {
+      this.fireListeners(TABLE_EVENT_TYPE.INITIALIZED, null);
+    }, 0);
   }
   static get EVENT_TYPE(): typeof PIVOT_CHART_EVENT_TYPE {
     return PIVOT_CHART_EVENT_TYPE;

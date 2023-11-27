@@ -30,6 +30,7 @@ import { Title } from './components/title/title';
 import { cloneDeep } from '@visactor/vutils';
 import { Env } from './tools/env';
 import type { LayouTreeNode } from './layout/pivot-layout-helper';
+import { TABLE_EVENT_TYPE } from './core/TABLE_EVENT_TYPE';
 
 export class PivotTable extends BaseTable implements PivotTableAPI {
   declare internalProps: PivotTableProtected;
@@ -154,6 +155,10 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
       this.internalProps.title = new Title(options.title, this);
       this.scenegraph.resize();
     }
+    //为了确保用户监听得到这个事件 这里做了异步 确保vtable实例已经初始化完成
+    setTimeout(() => {
+      this.fireListeners(TABLE_EVENT_TYPE.INITIALIZED, null);
+    }, 0);
   }
   static get EVENT_TYPE(): typeof PIVOT_TABLE_EVENT_TYPE {
     return PIVOT_TABLE_EVENT_TYPE;

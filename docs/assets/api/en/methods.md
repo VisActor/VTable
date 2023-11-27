@@ -342,6 +342,12 @@ Get the selected status of all data in the checkbox under a certain field. The o
 getCheckboxState(field?: string | number): Array
 ```
 
+## getCellCheckboxState(Function)
+Get the status of a cell checkbox
+```
+getCellCheckboxState(col: number, row: number): Array
+```
+
 ## scrollToCell(Function)
 
 Scroll to a specific cell location
