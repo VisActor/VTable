@@ -23,10 +23,10 @@ export function updateSelectPosition(
     col = -1;
     row = -1;
   }
-
-  if (cellPos.col === col && cellPos.row === row) {
-    return;
-  }
+  // 如果这里不继续进行 会造成问题drag select first cell seleted repeatly https://github.com/VisActor/VTable/issues/611
+  // if (cellPos.col === col && cellPos.row === row) {
+  //   return;
+  // }
   /** 完整显示选中单元格 自动滚动效果*/
   if (col !== -1 && row !== -1 && state.select.ranges.length > 0) {
     if (interactionState === InteractionState.grabing) {
