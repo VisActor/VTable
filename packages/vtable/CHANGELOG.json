@@ -2,6 +2,36 @@
   "name": "@visactor/vtable",
   "entries": [
     {
+      "version": "0.15.1",
+      "tag": "@visactor/vtable_v0.15.1",
+      "date": "Tue, 28 Nov 2023 12:32:45 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "refactor: sortState can not work when column has no sort setting #622\n\n"
+          },
+          {
+            "comment": "docs: add api getCellCheckboxState\n\n"
+          },
+          {
+            "comment": "fix: drag select first cell seleted repeatly #611\n\n"
+          },
+          {
+            "comment": "refactor: remove keydown event arguments cells\n\n"
+          },
+          {
+            "comment": "refactor: rename maneger to manager\n\n"
+          },
+          {
+            "comment": "fix: no indicators pivotchart render\n\n"
+          },
+          {
+            "comment": "fix: compute chart column width use Math.ceil bandSpace\n\n"
+          }
+        ]
+      }
+    },
+    {
       "version": "0.15.0",
       "tag": "@visactor/vtable_v0.15.0",
       "date": "Fri, 24 Nov 2023 12:06:58 GMT",
