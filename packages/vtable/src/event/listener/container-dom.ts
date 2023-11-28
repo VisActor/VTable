@@ -35,7 +35,7 @@ export function bindContainerDomListener(eventManeger: EventManeger) {
         keyCode: e.keyCode ?? e.which,
         code: e.code,
         event: e,
-        cells: table.getSelectedCellInfos(),
+        // cells: table.getSelectedCellInfos(),
         scaleRatio: table.canvas.getBoundingClientRect().width / table.canvas.offsetWidth
       };
       table.fireListeners(TABLE_EVENT_TYPE.KEYDOWN, cellsEvent);

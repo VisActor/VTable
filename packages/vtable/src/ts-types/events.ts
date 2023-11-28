@@ -33,7 +33,6 @@ export type KeydownEvent = {
   keyCode: number;
   code: string;
   event: KeyboardEvent;
-  cells?: CellInfo[][];
   stopCellMoving?: () => void;
   scaleRatio?: number;
 };
