@@ -217,10 +217,31 @@ export function computeRowsHeight(
     if (actualHeight < canvasHeight && actualHeight - actualHeaderHeight > 0) {
       const factor = (canvasHeight - actualHeaderHeight) / (actualHeight - actualHeaderHeight);
       for (let row = table.frozenRowCount; row < table.rowCount - table.bottomFrozenRowCount; row++) {
-        if (update) {
-          newHeights[row] = newHeights[row] * factor;
+        // if (update) {
+        //   newHeights[row] = newHeights[row] * factor;
+        // } else {
+        //   table.setRowHeight(row, table.getRowHeight(row) * factor);
+        // }
+        let rowHeight;
+        if (row === table.rowCount - table.bottomFrozenRowCount - 1) {
+          rowHeight =
+            canvasHeight -
+            actualHeaderHeight -
+            (update
+              ? newHeights.reduce((acr, cur, index) => {
+                  if (index >= table.frozenRowCount && index <= table.rowCount - table.bottomFrozenRowCount - 2) {
+                    return acr + cur;
+                  }
+                  return acr;
+                }, 0)
+              : table.getRowsHeight(table.frozenRowCount, table.rowCount - table.bottomFrozenRowCount - 2));
         } else {
-          table.setRowHeight(row, table.getRowHeight(row) * factor);
+          rowHeight = Math.round((update ? newHeights[row] : table.getRowHeight(row)) * factor);
+        }
+        if (update) {
+          newHeights[row] = rowHeight;
+        } else {
+          table.setRowHeight(row, rowHeight, false);
         }
       }
     }
