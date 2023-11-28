@@ -1984,11 +1984,13 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
    * 重新创建场景树并重新渲染
    */
   renderWithRecreateCells() {
+    const oldHoverState = { col: this.stateManeger.hover.cellPos.col, row: this.stateManeger.hover.cellPos.row };
     this.refreshHeader();
     this.scenegraph.clearCells();
     this.headerStyleCache = new Map();
     this.bodyStyleCache = new Map();
     this.scenegraph.createSceneGraph();
+    this.stateManeger.updateHoverPos(oldHoverState.col, oldHoverState.row);
     this.render();
   }
   /**
@@ -2440,12 +2442,14 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
    * 设置主题
    */
   updateTheme(theme: ITableThemeDefine) {
+    const oldHoverState = { col: this.stateManeger.hover.cellPos.col, row: this.stateManeger.hover.cellPos.row };
     this.internalProps.theme = themes.of(theme ?? themes.DEFAULT);
     this.options.theme = theme;
     this.scenegraph.clearCells();
     this.headerStyleCache = new Map();
     this.bodyStyleCache = new Map();
     this.scenegraph.createSceneGraph();
+    this.stateManeger.updateHoverPos(oldHoverState.col, oldHoverState.row);
     this.render();
   }
 

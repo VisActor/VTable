@@ -121,6 +121,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
    * Sets the define of the column.
    */
   updateColumns(columns: ColumnsDefine) {
+    const oldHoverState = { col: this.stateManeger.hover.cellPos.col, row: this.stateManeger.hover.cellPos.row };
     this.internalProps.columns = cloneDeep(columns);
     this.options.columns = columns;
     this.refreshHeader();
@@ -128,6 +129,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
     this.headerStyleCache = new Map();
     this.bodyStyleCache = new Map();
     this.scenegraph.createSceneGraph();
+    this.stateManeger.updateHoverPos(oldHoverState.col, oldHoverState.row);
     this.renderAsync();
   }
   /**
