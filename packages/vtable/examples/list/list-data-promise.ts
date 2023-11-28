@@ -1,4 +1,6 @@
 import * as VTable from '../../src';
+import { bindDebugTool } from '../../src/scenegraph/debug-tool';
+
 const CONTAINER_ID = 'vTable';
 const generatePersons = i => {
   return {
@@ -115,4 +117,6 @@ export function createTable() {
   const tableInstance = new VTable.ListTable(option);
   tableInstance.dataSource = dataSource;
   window.tableInstance = tableInstance;
+
+  bindDebugTool(tableInstance.scenegraph.stage, { customGrapicKeys: ['col', 'row'] });
 }

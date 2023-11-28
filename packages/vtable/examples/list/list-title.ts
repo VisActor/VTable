@@ -139,14 +139,17 @@ export function createTable() {
 
   setTimeout(() => {
     delete option.legends;
-    (option.title = {
+    option.title = {
       text: 'dsagf',
       align: 'right',
       subtext:
         '这是一个子标题\ndsag反馈第三个国际服大教室这是一个子标题\ndsag反馈第三个国际服大教室这是一个子标题\ndsag反馈第三个国际服大教室这是一个子标题\ndsag反馈第三个国际服大教室',
       orient: 'top',
       padding: 40
-    }),
-      tableInstance.updateOption(option);
+    };
+    option.theme = VTable.themes.DEFAULT.extends({
+      underlayBackgroundColor: 'red'
+    });
+    tableInstance.updateOption(option);
   }, 6000);
 }

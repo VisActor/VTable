@@ -1913,6 +1913,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     this.colWidthsLimit = {};
 
     internalProps.theme = themes.of(options.theme ?? themes.DEFAULT);
+    this.scenegraph.updateStageBackground();
     // this._updateSize();
     //设置是否自动撑开的配置
     // internalProps.autoRowHeight = options.autoRowHeight ?? false;
@@ -2449,6 +2450,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     const oldHoverState = { col: this.stateManager.hover.cellPos.col, row: this.stateManager.hover.cellPos.row };
     this.internalProps.theme = themes.of(theme ?? themes.DEFAULT);
     this.options.theme = theme;
+    this.scenegraph.updateStageBackground();
     this.scenegraph.clearCells();
     this.headerStyleCache = new Map();
     this.bodyStyleCache = new Map();
@@ -3422,6 +3424,18 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     }
     return false;
   }
+
+  getCustomMergeValue(col: number, row: number): string | undefined {
+    if (this.internalProps.customMergeCell) {
+      const customMerge = this.getCustomMerge(col, row);
+      if (customMerge) {
+        const { text } = customMerge;
+        return text;
+      }
+    }
+    return undefined;
+  }
+
   /**
    * 导出表格中当前可视区域的图片
    * @returns base64图片

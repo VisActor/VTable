@@ -70,7 +70,9 @@ export class ListTable extends BaseTable implements ListTableAPI {
     this.showHeader = options.showHeader ?? true;
 
     this.transpose = options.transpose ?? false;
-    this.editorManager = new EditManeger(this);
+    if (Env.mode !== 'node') {
+      this.editorManager = new EditManeger(this);
+    }
     this.refreshHeader();
 
     if (options.dataSource) {
@@ -177,6 +179,10 @@ export class ListTable extends BaseTable implements ListTableAPI {
   getCellValue(col: number, row: number): FieldData {
     if (col === -1 || row === -1) {
       return null;
+    }
+    const customMergeText = this.getCustomMergeValue(col, row);
+    if (customMergeText) {
+      return customMergeText;
     }
     const table = this;
     if (table.internalProps.layoutMap.isHeader(col, row)) {

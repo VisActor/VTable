@@ -226,7 +226,7 @@ export function throttle(func: Function, delay: number) {
         timer = null;
       }, delay);
     }
-    console.log('throttle');
+    // console.log('throttle');
     // 当我们第一次触发事件，定时器不存在时就执行函数，当我们再次点击时，因为定时器存在，
     // 所以无法再进入函数调用(无论事件如何执行),那么只能等定时器事件结束，
     // 我们让timer=null，回到第一次的状态,就又重新开始新的一轮
