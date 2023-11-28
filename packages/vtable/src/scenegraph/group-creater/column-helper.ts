@@ -50,8 +50,8 @@ export function createComplexColumn(
   // }
   if (columnGroup.lastChild) {
     y = (columnGroup.lastChild as Group).attribute.y + (columnGroup.lastChild as Group).attribute.height;
-  } else {
-    y = table.getRowsHeight(table.frozenRowCount, rowStart - 1);
+  } else if (columnGroup.colHeight) {
+    y = columnGroup.colHeight;
   }
 
   for (let j = rowStart; j <= rowEnd; j++) {
