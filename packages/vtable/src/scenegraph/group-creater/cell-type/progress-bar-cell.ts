@@ -80,11 +80,6 @@ export function createProgressBarCell(
     return Number(v);
   });
 
-  const top = 0;
-  const left = 0;
-  const right = contentWidth;
-  const bottom = contentHeight;
-
   const borderWidth = getQuadProps(getProp('borderLineWidth', style, col, row, table));
   let barPaddingTop = Math.max((barPadding as number[])[0], borderWidth[0]);
   const barPaddingRight = Math.max((barPadding as number[])[1], borderWidth[1]);
@@ -100,6 +95,11 @@ export function createProgressBarCell(
   if (barPaddingLeft & 1) {
     barPaddingLeft += 0.5;
   }
+
+  const top = barPaddingTop;
+  const left = barPaddingLeft;
+  const right = contentWidth;
+  const bottom = contentHeight;
 
   if (typeof barHeight === 'string' && str.endsWith(barHeight, '%')) {
     barHeight = Number(barHeight.substr(0, barHeight.length - 1));
@@ -142,8 +142,10 @@ export function createProgressBarCell(
           : (num - progressBarDefine.min) / (progressBarDefine.max - progressBarDefine.min);
 
       const barMaxWidth = contentWidth;
-      const barTop = barPaddingTop + contentHeight - (barHeight as number) - (barBottom as number);
-      const barLeft = 0 + barPaddingLeft;
+      const barTop = top + contentHeight - (barHeight as number) - (barBottom as number);
+      // const barLeft = 0 + barPaddingLeft;
+      const barSize = Math.min(barMaxWidth * percentile, barMaxWidth);
+      const barLeft = barRightToLeft ? left + right - barSize : left;
 
       const bgFillColor = getOrApply(barBgColor as any, {
         col,
@@ -166,7 +168,6 @@ export function createProgressBarCell(
         percentCompleteBarGroup.addChild(barBack);
       }
 
-      const barSize = Math.min(barMaxWidth * percentile, barMaxWidth);
       const fillColor =
         getOrApply(barColor as any, {
           col,
@@ -201,8 +202,8 @@ export function createProgressBarCell(
       // 绘制
       // 绘制背景
       const barMaxWidth = contentWidth;
-      const barTop = barPaddingTop + contentHeight - (barHeight as number) - (barBottom as number);
-      const barLeft = left + barPaddingLeft;
+      const barTop = top + contentHeight - (barHeight as number) - (barBottom as number);
+      const barLeft = left;
       const bgFillColor = getOrApply(barBgColor as any, {
         col,
         row,
@@ -391,10 +392,13 @@ export function createProgressBarCell(
 
       // 绘制
       // 绘制背景
-      const barMaxWidth = width - barPaddingLeft - barPaddingRight - 1; /*罫線*/
+      // const barMaxWidth = width - barPaddingLeft - barPaddingRight - 1; /*罫線*/
+      const barMaxWidth = contentWidth;
       const barSize = Math.min(barMaxWidth * percentile, barMaxWidth);
-      const barTop = bottom - barPaddingBottom - (barHeight as number) - (barBottom as number) - 1; /*罫線*/
-      const barLeft = barRightToLeft ? right - barPaddingRight - barSize : left + barPaddingLeft;
+      // const barTop = bottom - barPaddingBottom - (barHeight as number) - (barBottom as number) - 1; /*罫線*/
+      const barTop = top + contentHeight - (barHeight as number) - (barBottom as number);
+      // const barLeft = barRightToLeft ? right - barPaddingRight - barSize : left + barPaddingLeft;
+      const barLeft = barRightToLeft ? left + right - barSize : left;
 
       const bgFillColor = getOrApply(barBgColor as any, {
         col,

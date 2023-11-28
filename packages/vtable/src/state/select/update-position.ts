@@ -1,15 +1,15 @@
 import type { Scenegraph } from '../../scenegraph/scenegraph';
 import { InteractionState } from '../../ts-types';
-import type { StateManeger } from '../state';
+import type { StateManager } from '../state';
 /**
  * @description: 更新select位置
- * @param {StateManeger} state
+ * @param {StateManager} state
  * @param {number} col
  * @param {number} row
  * @return {*}
  */
 export function updateSelectPosition(
-  state: StateManeger,
+  state: StateManager,
   col: number,
   row: number,
   isShift: boolean,
@@ -23,10 +23,10 @@ export function updateSelectPosition(
     col = -1;
     row = -1;
   }
-
-  if (cellPos.col === col && cellPos.row === row) {
-    return;
-  }
+  // 如果这里不继续进行 会造成问题drag select first cell seleted repeatly https://github.com/VisActor/VTable/issues/611
+  // if (cellPos.col === col && cellPos.row === row) {
+  //   return;
+  // }
   /** 完整显示选中单元格 自动滚动效果*/
   if (col !== -1 && row !== -1 && state.select.ranges.length > 0) {
     if (interactionState === InteractionState.grabing) {

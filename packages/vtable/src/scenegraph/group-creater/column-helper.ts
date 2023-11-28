@@ -50,6 +50,8 @@ export function createComplexColumn(
   // }
   if (columnGroup.lastChild) {
     y = (columnGroup.lastChild as Group).attribute.y + (columnGroup.lastChild as Group).attribute.height;
+  } else if (columnGroup.colHeight) {
+    y = columnGroup.colHeight;
   }
 
   for (let j = rowStart; j <= rowEnd; j++) {
@@ -144,8 +146,6 @@ export function createComplexColumn(
           textAlign,
           textBaseline,
           mayHaveIcon,
-          isMerge,
-          range,
           cellTheme
         )
       );

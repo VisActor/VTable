@@ -68,7 +68,7 @@ export function computeColsWidth(table: BaseTableAPI, colStart?: number, colEnd?
     if (update) {
       newWidths[col] = maxWidth;
     } else {
-      table.setColWidth(col, maxWidth, false, true);
+      table._setColWidth(col, maxWidth, false, true);
     }
   }
 
@@ -105,7 +105,7 @@ export function computeColsWidth(table: BaseTableAPI, colStart?: number, colEnd?
       if (update) {
         newWidths[col] = colWidth;
       } else {
-        table.setColWidth(col, colWidth, false, true);
+        table._setColWidth(col, colWidth, false, true);
       }
     }
   } else if (table.autoFillWidth) {
@@ -127,10 +127,28 @@ export function computeColsWidth(table: BaseTableAPI, colStart?: number, colEnd?
     if (actualWidth < canvasWidth && actualWidth - actualHeaderWidth > 0) {
       const factor = (canvasWidth - actualHeaderWidth) / (actualWidth - actualHeaderWidth);
       for (let col = table.frozenColCount; col < table.colCount - table.rightFrozenColCount; col++) {
-        if (update) {
-          newWidths[col] = newWidths[col] * factor;
+        let colWidth;
+        if (col === table.colCount - table.rightFrozenColCount - 1) {
+          colWidth =
+            canvasWidth -
+            actualHeaderWidth -
+            (update
+              ? newWidths.reduce((acr, cur, index) => {
+                  if (index >= table.frozenColCount && index <= table.colCount - table.rightFrozenColCount - 2) {
+                    return acr + cur;
+                  }
+                  return acr;
+                }, 0)
+              : table.getColsWidth(table.frozenColCount, table.colCount - table.rightFrozenColCount - 2));
         } else {
-          table.setColWidth(col, table.getColWidth(col) * factor, false, true);
+          colWidth = Math.round((update ? newWidths[col] : table.getColWidth(col)) * factor);
+        }
+        if (update) {
+          // newWidths[col] = newWidths[col] * factor;
+          newWidths[col] = colWidth;
+        } else {
+          // table.setColWidth(col, table.getColWidth(col) * factor, false, true);
+          table._setColWidth(col, colWidth, false, true);
         }
       }
     }

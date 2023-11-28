@@ -1,9 +1,9 @@
 import type { ListTable } from '../../ListTable';
 import type { PivotHeaderLayoutMap } from '../../layout/pivot-header-layout';
-import type { StateManeger } from '../state';
+import type { StateManager } from '../state';
 
 // columnResizeType?: 'column' | 'indicator' | 'all' | 'indicatorGroup';
-export function updateResizeColumn(xInTable: number, yInTable: number, state: StateManeger) {
+export function updateResizeColumn(xInTable: number, yInTable: number, state: StateManager) {
   xInTable = Math.ceil(xInTable);
   yInTable = Math.ceil(yInTable);
   let detaX = state.columnResize.isRightFrozen ? state.columnResize.x - xInTable : xInTable - state.columnResize.x;
@@ -108,7 +108,7 @@ export function updateResizeColumn(xInTable: number, yInTable: number, state: St
   state.table.scenegraph.updateNextFrame();
 }
 
-function updateResizeColForColumn(detaX: number, state: StateManeger) {
+function updateResizeColForColumn(detaX: number, state: StateManager) {
   if (state.table.widthMode === 'adaptive' && state.columnResize.col < state.table.colCount - 1) {
     // in adaptive mode, the right column width can not be negative
     // const rightColWidth = state.table.getColWidth(state.columnResize.col + 1);
@@ -126,7 +126,7 @@ function updateResizeColForColumn(detaX: number, state: StateManeger) {
   }
 }
 
-function updateResizeColForAll(detaX: number, state: StateManeger) {
+function updateResizeColForAll(detaX: number, state: StateManager) {
   // 全列调整
   const layout = state.table.internalProps.layoutMap as PivotHeaderLayoutMap;
   for (
@@ -147,7 +147,7 @@ function updateResizeColForAll(detaX: number, state: StateManeger) {
   }
 }
 
-function updateResizeColForIndicator(detaX: number, state: StateManeger) {
+function updateResizeColForIndicator(detaX: number, state: StateManager) {
   const layout = state.table.internalProps.layoutMap as PivotHeaderLayoutMap;
   let resizeIndicatorKey;
   let resizeDimensionKey;
@@ -176,7 +176,7 @@ function updateResizeColForIndicator(detaX: number, state: StateManeger) {
   }
 }
 
-function updateResizeColForIndicatorGroup(detaX: number, state: StateManeger) {
+function updateResizeColForIndicatorGroup(detaX: number, state: StateManager) {
   // not support for PivotChart temply
   const layout = state.table.internalProps.layoutMap as PivotHeaderLayoutMap;
   //通过getCellHeaderPaths接口获取列表头最后一层指标维度的path

@@ -30,6 +30,7 @@ import { Title } from './components/title/title';
 import { cloneDeep } from '@visactor/vutils';
 import { Env } from './tools/env';
 import type { LayouTreeNode } from './layout/pivot-layout-helper';
+import { TABLE_EVENT_TYPE } from './core/TABLE_EVENT_TYPE';
 
 export class PivotTable extends BaseTable implements PivotTableAPI {
   declare internalProps: PivotTableProtected;
@@ -144,7 +145,7 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
       this.updatePivotSortState(options.pivotSortState);
     }
     this.refreshHeader();
-    this.stateManeger.initCheckedState(records);
+    this.stateManager.initCheckedState(records);
     // this.internalProps.frozenColCount = this.options.frozenColCount || this.rowHeaderLevelCount;
     // 生成单元格场景树
     this.scenegraph.createSceneGraph();
@@ -154,6 +155,10 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
       this.internalProps.title = new Title(options.title, this);
       this.scenegraph.resize();
     }
+    //为了确保用户监听得到这个事件 这里做了异步 确保vtable实例已经初始化完成
+    setTimeout(() => {
+      this.fireListeners(TABLE_EVENT_TYPE.INITIALIZED, null);
+    }, 0);
   }
   static get EVENT_TYPE(): typeof PIVOT_TABLE_EVENT_TYPE {
     return PIVOT_TABLE_EVENT_TYPE;
@@ -193,7 +198,7 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
     this.internalProps.rowTree =
       !options.indicatorsAsCol && !options.rows?.length && !options.rowTree ? [] : cloneDeep(options.rowTree);
     options.records && (this.internalProps.records = options.records);
-    this.stateManeger.initCheckedState(this.internalProps.records);
+    this.stateManager.initCheckedState(this.internalProps.records);
 
     //分页配置
     this.pagination = options.pagination;
@@ -365,7 +370,7 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
       const { width, minWidth, maxWidth } = internalProps.layoutMap.columnWidths?.[col] ?? {};
       // width 为 "auto" 时先不存储ColWidth
       if (width && ((typeof width === 'string' && width !== 'auto') || (typeof width === 'number' && width > 0))) {
-        this.setColWidth(col, width);
+        this._setColWidth(col, width);
       }
       if (minWidth && ((typeof minWidth === 'number' && minWidth > 0) || typeof minWidth === 'string')) {
         this.setMinColWidth(col, minWidth);
@@ -392,7 +397,7 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
 
     table.bottomFrozenRowCount = this.options.bottomFrozenRowCount ?? 0;
     table.rightFrozenColCount = this.options.rightFrozenColCount ?? 0;
-    this.stateManeger.setFrozenCol(this.internalProps.frozenColCount);
+    this.stateManager.setFrozenCol(this.internalProps.frozenColCount);
   }
   protected _getSortFuncFromHeaderOption(
     columns: undefined,
@@ -468,6 +473,10 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
   }
 
   getCellValue(col: number, row: number): FieldData {
+    const customMergeText = this.getCustomMergeValue(col, row);
+    if (customMergeText) {
+      return customMergeText;
+    }
     if (this.internalProps.layoutMap.isHeader(col, row)) {
       const { title, fieldFormat } = this.internalProps.layoutMap.getHeader(col, row);
       return typeof fieldFormat === 'function' ? fieldFormat(title) : title;
@@ -840,6 +849,7 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
    * @param sort
    */
   setRecords(records: Array<any>): void {
+    const oldHoverState = { col: this.stateManager.hover.cellPos.col, row: this.stateManager.hover.cellPos.row };
     this.options.records = this.internalProps.records = records;
     const options = this.options;
     const internalProps = this.internalProps;
@@ -875,7 +885,7 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
     // this.internalProps.frozenColCount = this.options.frozenColCount || this.rowHeaderLevelCount;
     // 生成单元格场景树
     this.scenegraph.createSceneGraph();
-
+    this.stateManager.updateHoverPos(oldHoverState.col, oldHoverState.row);
     if (this.internalProps.title && !this.internalProps.title.isReleased) {
       this._updateSize();
       this.internalProps.title.resize();

@@ -70,7 +70,9 @@ export class ListTable extends BaseTable implements ListTableAPI {
     this.showHeader = options.showHeader ?? true;
 
     this.transpose = options.transpose ?? false;
-    this.editorManager = new EditManeger(this);
+    if (Env.mode !== 'node') {
+      this.editorManager = new EditManeger(this);
+    }
     this.refreshHeader();
 
     if (options.dataSource) {
@@ -121,6 +123,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
    * Sets the define of the column.
    */
   updateColumns(columns: ColumnsDefine) {
+    const oldHoverState = { col: this.stateManager.hover.cellPos.col, row: this.stateManager.hover.cellPos.row };
     this.internalProps.columns = cloneDeep(columns);
     this.options.columns = columns;
     this.refreshHeader();
@@ -128,6 +131,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
     this.headerStyleCache = new Map();
     this.bodyStyleCache = new Map();
     this.scenegraph.createSceneGraph();
+    this.stateManager.updateHoverPos(oldHoverState.col, oldHoverState.row);
     this.renderAsync();
   }
   /**
@@ -175,6 +179,10 @@ export class ListTable extends BaseTable implements ListTableAPI {
   getCellValue(col: number, row: number): FieldData {
     if (col === -1 || row === -1) {
       return null;
+    }
+    const customMergeText = this.getCustomMergeValue(col, row);
+    if (customMergeText) {
+      return customMergeText;
     }
     const table = this;
     if (table.internalProps.layoutMap.isHeader(col, row)) {
@@ -375,7 +383,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
         const { width, minWidth, maxWidth } = layoutMap.columnWidths?.[col] ?? {};
         // width 为 "auto" 时先不存储ColWidth
         if (width && ((typeof width === 'string' && width !== 'auto') || (typeof width === 'number' && width > 0))) {
-          table.setColWidth(col, width);
+          table._setColWidth(col, width);
         }
         if (minWidth && ((typeof minWidth === 'number' && minWidth > 0) || typeof minWidth === 'string')) {
           table.setMinColWidth(col, minWidth);
@@ -415,7 +423,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
       table.bottomFrozenRowCount = this.options.bottomFrozenRowCount ?? 0;
       table.rightFrozenColCount = this.options.rightFrozenColCount ?? 0;
     }
-    this.stateManeger.setFrozenCol(this.internalProps.frozenColCount);
+    this.stateManager.setFrozenCol(this.internalProps.frozenColCount);
   }
   /**
    * 获取records数据源中 字段对应的value 值是format之后的
@@ -692,7 +700,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
     } else {
       this.internalProps.sortState = sortState;
       // 这里的sortState需要有field属性
-      // this.stateManeger.setSortState(sortState as SortState);
+      // this.stateManager.setSortState(sortState as SortState);
     }
     let order: any;
     let field: any;
@@ -718,19 +726,30 @@ export class ListTable extends BaseTable implements ListTableAPI {
         this.scenegraph.sortCell();
       }
     }
-    this.stateManeger.updateSortState(sortState as SortState);
+    this.stateManager.updateSortState(sortState as SortState);
   }
   /** 获取某个字段下checkbox 全部数据的选中状态 顺序对应原始传入数据records 不是对应表格展示row的状态值 */
   getCheckboxState(field?: string | number) {
-    if (this.stateManeger.checkedState.length < this.rowCount - this.columnHeaderLevelCount) {
-      this.stateManeger.initLeftRecordsCheckState(this.records);
+    if (this.stateManager.checkedState.length < this.rowCount - this.columnHeaderLevelCount) {
+      this.stateManager.initLeftRecordsCheckState(this.records);
     }
     if (isValid(field)) {
-      return this.stateManeger.checkedState.map(state => {
+      return this.stateManager.checkedState.map(state => {
         return state[field];
       });
     }
-    return this.stateManeger.checkedState;
+    return this.stateManager.checkedState;
+  }
+  /** 获取某个单元格checkbox的状态 */
+  getCellCheckboxState(col: number, row: number) {
+    const define = this.getBodyColumnDefine(col, row);
+    const field = define?.field;
+    const cellType = define?.cellType;
+    if (isValid(field) && cellType === 'checkbox') {
+      const dataIndex = this.dataSource.getIndexKey(this.getRecordIndexByCell(col, row));
+      return this.stateManager.checkedState[dataIndex as number][field as string | number];
+    }
+    return undefined;
   }
   /**
    * 设置表格数据 及排序状态
@@ -739,13 +758,14 @@ export class ListTable extends BaseTable implements ListTableAPI {
    */
   setRecords(records: Array<any>, sort?: SortState | SortState[]): void {
     const time = typeof window !== 'undefined' ? window.performance.now() : 0;
+    const oldHoverState = { col: this.stateManager.hover.cellPos.col, row: this.stateManager.hover.cellPos.row };
     // 清空单元格内容
     this.scenegraph.clearCells();
 
     //重复逻辑抽取updateWidthHeight
     if (sort !== undefined) {
       this.internalProps.sortState = sort;
-      this.stateManeger.setSortState((this as any).sortState as SortState);
+      this.stateManager.setSortState((this as any).sortState as SortState);
     }
     if (records) {
       _setRecords(this, records);
@@ -770,18 +790,19 @@ export class ListTable extends BaseTable implements ListTableAPI {
           } else {
             hd = this.internalProps.layoutMap.headerObjects.find((col: any) => col && col.field === field);
           }
-          hd?.define?.sort && this.dataSource.sort(hd.field, order, sortFunc ?? defaultOrderFn);
+          // hd?.define?.sort && //如果这里也判断 那想要利用sortState来排序 但不显示排序图标就实现不了
+          this.dataSource.sort(hd.field, order, sortFunc ?? defaultOrderFn);
         }
       }
       this.refreshRowColCount();
     } else {
       _setRecords(this, records);
     }
-    this.stateManeger.initCheckedState(records);
+    this.stateManager.initCheckedState(records);
     // this.internalProps.frozenColCount = this.options.frozenColCount || this.rowHeaderLevelCount;
     // 生成单元格场景树
     this.scenegraph.createSceneGraph();
-
+    this.stateManager.updateHoverPos(oldHoverState.col, oldHoverState.row);
     if (this.internalProps.title && !this.internalProps.title.isReleased) {
       this._updateSize();
       this.internalProps.title.resize();
@@ -804,8 +825,8 @@ export class ListTable extends BaseTable implements ListTableAPI {
   startEditCell(col?: number, row?: number) {
     if (isValid(col) && isValid(row)) {
       this.editorManager.startEditCell(col, row);
-    } else if (this.stateManeger.select?.cellPos) {
-      const { col, row } = this.stateManeger.select.cellPos;
+    } else if (this.stateManager.select?.cellPos) {
+      const { col, row } = this.stateManager.select.cellPos;
       if (isValid(col) && isValid(row)) {
         this.editorManager.startEditCell(col, row);
       }

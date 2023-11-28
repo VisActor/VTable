@@ -1,8 +1,8 @@
 import type { BaseTableAPI } from '../../ts-types/base-table';
-import type { StateManeger } from '../state';
+import type { StateManager } from '../state';
 import { adjustMoveHeaderTarget } from './adjust-header';
 
-export function startMoveCol(col: number, row: number, x: number, y: number, state: StateManeger) {
+export function startMoveCol(col: number, row: number, x: number, y: number, state: StateManager) {
   if (!('canMoveHeaderPosition' in state.table.internalProps.layoutMap)) {
     return;
   }
@@ -19,12 +19,12 @@ export function startMoveCol(col: number, row: number, x: number, y: number, sta
   state.table.scenegraph.component.showMoveCol(col, row, delta);
 
   // 调整列顺序期间清空选中清空
-  state.table.stateManeger.updateSelectPos(-1, -1);
+  state.table.stateManager.updateSelectPos(-1, -1);
 
   state.table.scenegraph.updateNextFrame();
 }
 
-export function updateMoveCol(col: number, row: number, x: number, y: number, state: StateManeger) {
+export function updateMoveCol(col: number, row: number, x: number, y: number, state: StateManager) {
   if (!('canMoveHeaderPosition' in state.table.internalProps.layoutMap)) {
     return;
   }
@@ -74,7 +74,7 @@ export function updateMoveCol(col: number, row: number, x: number, y: number, st
   state.table.scenegraph.updateNextFrame();
 }
 
-export function endMoveCol(state: StateManeger) {
+export function endMoveCol(state: StateManager) {
   if (
     'canMoveHeaderPosition' in state.table.internalProps.layoutMap &&
     state.columnMove.moving &&

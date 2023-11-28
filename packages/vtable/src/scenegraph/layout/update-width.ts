@@ -30,7 +30,7 @@ import { getHierarchyOffset } from '../utils/get-hierarchy-offset';
  * @return {*}
  */
 export function updateColWidth(scene: Scenegraph, col: number, detaX: number) {
-  scene.table.setColWidth(col, scene.table.getColWidth(col) + detaX, true);
+  scene.table._setColWidth(col, scene.table.getColWidth(col) + detaX, true);
 
   const autoRowHeight = scene.table.heightMode === 'autoHeight';
   // deal with corner header or column header
@@ -55,9 +55,14 @@ export function updateColWidth(scene: Scenegraph, col: number, detaX: number) {
     updateColunmWidth(bottomColumn, detaX, autoRowHeight, 'bottom', scene);
   }
   // deal with right bottom frozen cells
+  const rightTopColumn = scene.getColGroupInRightTopCorner(col);
+  if (rightTopColumn) {
+    updateColunmWidth(rightTopColumn, detaX, autoRowHeight, 'right-top', scene);
+  }
+  // deal with right bottom frozen cells
   const rightBottomColumn = scene.getColGroupInRightBottomCorner(col);
   if (rightBottomColumn) {
-    updateColunmWidth(bottomColumn, detaX, autoRowHeight, 'right-bottom', scene);
+    updateColunmWidth(rightBottomColumn, detaX, autoRowHeight, 'right-bottom', scene);
   }
 
   // 更新剩余列位置
@@ -114,7 +119,7 @@ function updateColunmWidth(
   columnGroup: Group,
   detaX: number,
   autoRowHeight: boolean,
-  mode: 'col-corner' | 'row-body' | 'bottom' | 'left-bottom' | 'right-bottom',
+  mode: 'col-corner' | 'row-body' | 'bottom' | 'left-bottom' | 'right-top' | 'right-bottom',
   scene: Scenegraph
 ) {
   let needRerangeRow = false;
@@ -170,10 +175,17 @@ function updateColunmWidth(
         row = scene.table.rowCount - scene.table.bottomFrozenRowCount;
         colGroup = scene.getColGroupInLeftBottomCorner(col);
         oldContainerHeight = scene.leftBottomCornerGroup.attribute.height ?? 0;
+      } else if (mode === 'right-top') {
+        row = 0;
+        colGroup = scene.getColGroupInRightTopCorner(col);
+        oldContainerHeight = scene.rightTopCornerGroup.attribute.height ?? 0;
       } else if (mode === 'right-bottom') {
         row = scene.table.rowCount - scene.table.bottomFrozenRowCount;
         colGroup = scene.getColGroupInRightBottomCorner(col);
         oldContainerHeight = scene.rightBottomCornerGroup.attribute.height ?? 0;
+      }
+      if (!colGroup) {
+        continue;
       }
       let y = 0;
       colGroup.forEachChildren((cellGroup: Group) => {
@@ -459,7 +471,7 @@ function resetRowHeight(scene: Scenegraph, row: number) {
   // 获取高度
   const maxHeight = computeRowHeight(row, 0, scene.table.colCount - 1, scene.table);
   // 更新table行高存储
-  scene.table.setRowHeight(row, maxHeight, true);
+  scene.table._setRowHeight(row, maxHeight, true);
 
   // 更新高度
   for (let col = 0; col < scene.table.colCount; col++) {

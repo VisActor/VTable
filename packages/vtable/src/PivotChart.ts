@@ -40,6 +40,7 @@ import { cloneDeep, isArray } from '@visactor/vutils';
 import type { DiscreteLegend } from '@visactor/vrender-components';
 import { Title } from './components/title/title';
 import { Env } from './tools/env';
+import { TABLE_EVENT_TYPE } from './core/TABLE_EVENT_TYPE';
 
 export class PivotChart extends BaseTable implements PivotChartAPI {
   declare internalProps: PivotChartProtected;
@@ -138,6 +139,10 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
       this.internalProps.title = new Title(options.title, this);
       this.scenegraph.resize();
     }
+    //为了确保用户监听得到这个事件 这里做了异步 确保vtable实例已经初始化完成
+    setTimeout(() => {
+      this.fireListeners(TABLE_EVENT_TYPE.INITIALIZED, null);
+    }, 0);
   }
   static get EVENT_TYPE(): typeof PIVOT_CHART_EVENT_TYPE {
     return PIVOT_CHART_EVENT_TYPE;
@@ -283,7 +288,7 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
       const { width, minWidth, maxWidth } = internalProps.layoutMap.columnWidths?.[col] ?? {};
       // width 为 "auto" 时先不存储ColWidth
       if (width && ((typeof width === 'string' && width !== 'auto') || (typeof width === 'number' && width > 0))) {
-        this.setColWidth(col, width);
+        this._setColWidth(col, width);
       }
       if (minWidth && ((typeof minWidth === 'number' && minWidth > 0) || typeof minWidth === 'string')) {
         this.setMinColWidth(col, minWidth);
@@ -309,7 +314,7 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
 
     table.bottomFrozenRowCount = layoutMap?.bottomFrozenRowCount ?? 0;
     table.rightFrozenColCount = layoutMap?.rightFrozenColCount ?? 0;
-    this.stateManeger.setFrozenCol(this.internalProps.frozenColCount);
+    this.stateManager.setFrozenCol(this.internalProps.frozenColCount);
   }
   protected _getSortFuncFromHeaderOption(
     columns: undefined,
@@ -375,6 +380,10 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
   }
 
   getCellValue(col: number, row: number): FieldData {
+    const customMergeText = this.getCustomMergeValue(col, row);
+    if (customMergeText) {
+      return customMergeText;
+    }
     if (this.internalProps.layoutMap.isHeader(col, row)) {
       const { title, fieldFormat } = this.internalProps.layoutMap.getHeader(col, row);
       return typeof fieldFormat === 'function' ? fieldFormat(title) : title;
@@ -1022,15 +1031,21 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
         const viewBox = chartNode.getViewBox();
         axes.forEach((axis: any, index: number) => {
           if (axis.type === 'linear') {
-            const chartAxis = chartInstance._chart._components[index];
-            chartAxis._domain = {
-              min: axis.range?.min ?? 0,
-              max: axis.range?.max ?? 0
-            };
+            // const chartAxis = chartInstance._chart._components[index];
+            // chartAxis._domain = {
+            //   min: axis.range?.min ?? 0,
+            //   max: axis.range?.max ?? 0
+            // };
+            chartInstance.updateModelSpecSync(
+              { type: 'axes', index },
+              { min: axis.range?.min ?? 0, max: axis.range?.max ?? 0 },
+              true
+            );
           } else if (axis.type === 'band') {
-            const chartAxis = chartInstance._chart._components[index];
-            chartAxis._spec.domain = axis.domain.slice(0);
-            chartAxis.updateScaleDomain();
+            // const chartAxis = chartInstance._chart._components[index];
+            // chartAxis._spec.domain = axis.domain.slice(0);
+            // chartAxis.updateScaleDomain();
+            chartInstance.updateModelSpec({ type: 'axes', index }, { domain: axis.domain.slice(0) }, true);
           }
         });
 
@@ -1113,6 +1128,7 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
    * @param sort
    */
   setRecords(records: Array<any>): void {
+    const oldHoverState = { col: this.stateManager.hover.cellPos.col, row: this.stateManager.hover.cellPos.row };
     this.options.records = this.internalProps.records = records;
     const options = this.options;
     const internalProps = this.internalProps;
@@ -1128,7 +1144,7 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
     // this.internalProps.frozenColCount = this.options.frozenColCount || this.rowHeaderLevelCount;
     // 生成单元格场景树
     this.scenegraph.createSceneGraph();
-
+    this.stateManager.updateHoverPos(oldHoverState.col, oldHoverState.row);
     if (this.internalProps.title && !this.internalProps.title.isReleased) {
       this._updateSize();
       this.internalProps.title.resize();

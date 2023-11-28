@@ -62,7 +62,7 @@ export function dealSort(col: number, row: number, table: ListTableAPI) {
   }
 
   table.internalProps.sortState = tableState; // 目前不支持多级排序 所以这里 直接赋值为单个sortState TODO优化（如果支持多级排序的话）
-  table.stateManeger.setSortState(tableState);
+  table.stateManager.setSortState(tableState);
   if (headerC?.sort) {
     executeSort(tableState, table, headerC);
   }
@@ -72,7 +72,7 @@ export function dealSort(col: number, row: number, table: ListTableAPI) {
 
   table.scenegraph.sortCell();
   // 排序后，清除选中效果
-  table.stateManeger.updateSelectPos(-1, -1);
+  table.stateManager.updateSelectPos(-1, -1);
 }
 
 function executeSort(newState: SortState, table: BaseTableAPI, headerDefine: HeaderDefine): void {

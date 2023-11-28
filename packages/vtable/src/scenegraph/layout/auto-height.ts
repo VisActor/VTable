@@ -33,7 +33,7 @@ export function updateAutoRowHeight(scene: Scenegraph, clearCellSize?: boolean) 
         maxRowHeight = Math.max(maxRowHeight, cellGroup.attribute.height);
       }
     }
-    scene.table.setRowHeight(row, maxRowHeight, true);
+    scene.table._setRowHeight(row, maxRowHeight, true);
   }
 
   // 设置行高

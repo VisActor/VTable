@@ -57,7 +57,7 @@ tableInstance.columns = newColumns;
 ```
 ## updatePagination(Function)
 
-更新页码配置信息
+更新页码配置信息 调用后会自动重绘。
 
 ```ts
   /**
@@ -83,8 +83,9 @@ export interface IPagination {
 基本表格和VTable数据分析透视表(enableDataAnalysis=true)支持分页，透视组合图不支持分页。
 
 注意! 透视表中perPageCount会自动修正为指标数量的整数倍。
+
 ## renderWithRecreateCells(Function)
-重新单元格对象集合并重新渲染表格，使用场景如：
+重新组织单元格对象树并重新渲染表格，使用场景如：
 
 批量更新多个配置项后的刷新：
 ```
@@ -142,6 +143,48 @@ tableInstance.renderWithRecreateCells();
    * @param cellRanges: CellRange[]
    */
   selectCells(cellRanges: CellRange[]): void
+```
+
+## getSelectedCellInfos(Function)
+
+获取已选中的单元格信息，返回结果是二维数组，第一层数组项代表一行，第二层数组每一项即代表该行的一个单元格信息。
+
+```
+  /**获取选中区域的每个单元格详情 */
+  getSelectedCellInfos(): CellInfo[][] | null;
+```
+
+## getCellValue(Function)
+
+获取单元格展示值
+
+```
+  /**
+   * 获取单元格展示值
+   */
+  getCellValue(col: number, row: number): FieldData;
+```
+
+## getCellOriginValue(Function)
+
+获取单元格展示数据的format前的值
+
+```
+  /**
+   * 获取单元格展示数据的format前的值
+   */
+  getCellOriginValue(col: number, row: number): FieldData;
+```
+
+## getCellRawValue(Function)
+
+获取单元格展示数据源最原始值
+
+```
+  /**
+   * 获取单元格展示数据源最原始值
+   */
+  getCellRawValue(col: number, row: number): FieldData;
 ```
 
 ## getCellStyle(Function)
@@ -340,6 +383,12 @@ tableInstance.renderWithRecreateCells();
 获取某个字段下checkbox 全部数据的选中状态 顺序对应原始传入数据records 不是对应表格展示row的状态值
 ```
 getCheckboxState(field?: string | number): Array
+```
+
+## getCellCheckboxState(Function)
+获取某个单元格checkbox的状态
+```
+getCellCheckboxState(col: number, row: number): Array
 ```
 
 ## scrollToCell(Function)
