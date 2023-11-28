@@ -752,6 +752,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
    */
   setRecords(records: Array<any>, sort?: SortState | SortState[]): void {
     const time = typeof window !== 'undefined' ? window.performance.now() : 0;
+    const oldHoverState = { col: this.stateManager.hover.cellPos.col, row: this.stateManager.hover.cellPos.row };
     // 清空单元格内容
     this.scenegraph.clearCells();
 
@@ -795,7 +796,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
     // this.internalProps.frozenColCount = this.options.frozenColCount || this.rowHeaderLevelCount;
     // 生成单元格场景树
     this.scenegraph.createSceneGraph();
-
+    this.stateManager.updateHoverPos(oldHoverState.col, oldHoverState.row);
     if (this.internalProps.title && !this.internalProps.title.isReleased) {
       this._updateSize();
       this.internalProps.title.resize();

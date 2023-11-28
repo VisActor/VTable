@@ -845,6 +845,7 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
    * @param sort
    */
   setRecords(records: Array<any>): void {
+    const oldHoverState = { col: this.stateManager.hover.cellPos.col, row: this.stateManager.hover.cellPos.row };
     this.options.records = this.internalProps.records = records;
     const options = this.options;
     const internalProps = this.internalProps;
@@ -880,7 +881,7 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
     // this.internalProps.frozenColCount = this.options.frozenColCount || this.rowHeaderLevelCount;
     // 生成单元格场景树
     this.scenegraph.createSceneGraph();
-
+    this.stateManager.updateHoverPos(oldHoverState.col, oldHoverState.row);
     if (this.internalProps.title && !this.internalProps.title.isReleased) {
       this._updateSize();
       this.internalProps.title.resize();
