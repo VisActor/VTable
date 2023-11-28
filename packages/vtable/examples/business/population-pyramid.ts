@@ -133,10 +133,10 @@ const columns: VTable.ColumnsDefine = [
     cellType: 'progressbar',
     min: 0,
     max: 13601860 + 1000000,
-    barType: 'negative_no_axis',
     style: {
       color: 'red',
       barHeight: 6,
+      barColor: '#4cba72',
       barRightToLeft: true
     }
   },
