@@ -164,7 +164,7 @@ describe('listTable init test', () => {
   });
   test('listTable selectCell', () => {
     listTable.selectCell(4, 5);
-    expect(listTable.stateManeger?.select.ranges).toEqual([
+    expect(listTable.stateManager?.select.ranges).toEqual([
       {
         start: {
           col: 4,
@@ -183,7 +183,7 @@ describe('listTable init test', () => {
       { start: { col: 4, row: 36 }, end: { col: 7, row: 36 } }
     ]);
 
-    expect(listTable.stateManeger?.select.ranges).toEqual([
+    expect(listTable.stateManager?.select.ranges).toEqual([
       { start: { col: 1, row: 3 }, end: { col: 4, row: 6 } },
       { start: { col: 0, row: 4 }, end: { col: 7, row: 4 } },
       { start: { col: 4, row: 36 }, end: { col: 7, row: 36 } }

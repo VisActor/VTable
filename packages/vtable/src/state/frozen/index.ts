@@ -12,10 +12,10 @@ export function dealFreeze(col: number, row: number, table: BaseTableAPI) {
     table.setFrozenColCount(col + 1);
   }
 
-  // table.stateManeger.frozen.col = table.frozenColCount - 1;
-  // table.stateManeger.frozen.row = row;
-  // if (table.stateManeger.checkFrozen()) {
-  //   table.stateManeger.setFrozenCol(table.frozenColCount - 1);
+  // table.stateManager.frozen.col = table.frozenColCount - 1;
+  // table.stateManager.frozen.row = row;
+  // if (table.stateManager.checkFrozen()) {
+  //   table.stateManager.setFrozenCol(table.frozenColCount - 1);
   // } else {
   //   table.scenegraph.updateFrozenIcon(0, table.colCount - 1);
   // }

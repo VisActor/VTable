@@ -222,8 +222,8 @@ export class TableComponent {
    * @return {*}
    */
   updateScrollBar() {
-    const oldHorizontalBarPos = this.table.stateManeger.scroll.horizontalBarPos;
-    const oldVerticalBarPos = this.table.stateManeger.scroll.verticalBarPos;
+    const oldHorizontalBarPos = this.table.stateManager.scroll.horizontalBarPos;
+    const oldVerticalBarPos = this.table.stateManager.scroll.verticalBarPos;
 
     const theme = this.table.theme;
     const width = theme.scrollStyle?.width as number;
@@ -294,8 +294,8 @@ export class TableComponent {
       });
     }
 
-    this.table.stateManeger.setScrollLeft(oldHorizontalBarPos);
-    this.table.stateManeger.setScrollTop(oldVerticalBarPos);
+    this.table.stateManager.setScrollLeft(oldHorizontalBarPos);
+    this.table.stateManager.setScrollTop(oldVerticalBarPos);
   }
 
   /**

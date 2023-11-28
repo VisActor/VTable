@@ -98,7 +98,7 @@ export function getChartAxes(col: number, row: number, layout: PivotHeaderLayout
             title: { visible: false },
             domainLine: { visible: false },
             seriesIndex: index,
-            height: -1,
+            // height: -1,
 
             sync: { axisId: NO_AXISID_FRO_VTABLE } // hack for fs
           }
@@ -132,9 +132,9 @@ export function getChartAxes(col: number, row: number, layout: PivotHeaderLayout
           domainLine: { visible: false },
           tick: { visible: false },
           subTick: { visible: false },
-          title: { visible: false },
+          title: { visible: false }
           // height: -1,
-          width: -1
+          // width: -1
           // autoIndent: false,
         }
       )
@@ -195,7 +195,7 @@ export function getChartAxes(col: number, row: number, layout: PivotHeaderLayout
             title: { visible: false },
             domainLine: { visible: false },
             seriesIndex: index,
-            width: -1,
+            // width: -1,
             // grid: index === 0 ? undefined : { visible: false }
 
             sync: { axisId: NO_AXISID_FRO_VTABLE } // hack for fs
@@ -230,8 +230,8 @@ export function getChartAxes(col: number, row: number, layout: PivotHeaderLayout
           domainLine: { visible: false },
           tick: { visible: false },
           subTick: { visible: false },
-          title: { visible: false },
-          height: -1
+          title: { visible: false }
+          // height: -1
           // autoIndent: false,
         }
       )

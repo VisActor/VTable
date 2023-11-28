@@ -381,3 +381,18 @@ Parameter types of event callback function:
 ```
 { col: number; row: number; rawValue: string | number; changedValue: string | number };
 ```
+
+## CHECKBOX_STATE_CHANGE
+Change the checkbox checkbox state. **ListTable table exclusive event**
+
+Parameter types of event callback function:
+
+```
+{ 
+  col: number; 
+  row: number; 
+  alue: string | number;
+  dataValue: string | number;
+  checked: boolean;
+};
+```

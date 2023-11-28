@@ -54,6 +54,9 @@ export function createCell(
   mayHaveIcon: boolean,
   cellTheme: IThemeSpec
 ): Group {
+  if (isPromise(value)) {
+    value = table.getCellValue(col, row);
+  }
   let bgColorFunc: Function;
   // 判断是否有mapping  遍历dataset中mappingRules
   if ((table.internalProps as PivotTableProtected)?.dataConfig?.mappingRules && !table.isHeader(col, row)) {
@@ -519,6 +522,7 @@ export function updateCell(col: number, row: number, table: BaseTableAPI, addNew
       updateCellContent.bind(
         null,
         type,
+        value,
         define,
         table,
         col,
@@ -531,8 +535,6 @@ export function updateCell(col: number, row: number, table: BaseTableAPI, addNew
         textAlign,
         textBaseline,
         mayHaveIcon,
-        isMerge,
-        range,
         addNew,
         cellTheme
       )
@@ -553,8 +555,6 @@ export function updateCell(col: number, row: number, table: BaseTableAPI, addNew
       textAlign,
       textBaseline,
       mayHaveIcon,
-      isMerge,
-      range,
       addNew,
       cellTheme
     );
@@ -590,11 +590,12 @@ function updateCellContent(
   textAlign: CanvasTextAlign,
   textBaseline: CanvasTextBaseline,
   mayHaveIcon: boolean,
-  isMerge: boolean,
-  range: CellRange,
   addNew: boolean,
   cellTheme?: IThemeSpec
 ) {
+  if (isPromise(value)) {
+    value = table.getCellValue(col, row);
+  }
   //解决报错 getCellByCache递归调用 死循环问题
   if (oldCellGroup.row !== row || oldCellGroup.col !== col) {
     return null;
@@ -636,6 +637,7 @@ function canUseFastUpdate(col: number, row: number, oldCellGroup: Group, autoWra
   const mayHaveIcon = !!define?.icon || !!define?.tree;
   const cellType = table.getBodyColumnType(col, row);
   const autoRowHeight = table.heightMode === 'autoHeight';
+  const value = table.getCellValue(col, row);
 
   if (
     !table.isHeader(col, row) &&
@@ -644,7 +646,8 @@ function canUseFastUpdate(col: number, row: number, oldCellGroup: Group, autoWra
     !autoWrapText &&
     !autoRowHeight &&
     !mayHaveIcon &&
-    oldCellGroup.firstChild?.type === 'text'
+    oldCellGroup.firstChild?.type === 'text' &&
+    !isPromise(value)
   ) {
     return true;
   }

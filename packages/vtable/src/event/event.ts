@@ -3,7 +3,7 @@ import type { FederatedPointerEvent, Gesture } from '@visactor/vrender';
 import { RichText } from '@visactor/vrender';
 import type { MousePointerCellEvent } from '../ts-types';
 import { IconFuncTypeEnum } from '../ts-types';
-import type { StateManeger } from '../state/state';
+import type { StateManager } from '../state/state';
 import type { Group } from '../scenegraph/graphic/group';
 import { TABLE_EVENT_TYPE } from '../core/TABLE_EVENT_TYPE';
 import type { Icon } from '../scenegraph/graphic/icon';
@@ -23,7 +23,7 @@ import { bindAxisHoverEvent } from './pivot-chart/axis-hover';
 import type { PivotTable } from '../PivotTable';
 import { Env } from '../tools/env';
 
-export class EventManeger {
+export class EventManager {
   table: BaseTableAPI;
   // _col: number;
   // _resizing: boolean = false;
@@ -62,29 +62,29 @@ export class EventManeger {
       return;
     }
 
-    const stateManeger: StateManeger = this.table.stateManeger;
+    const stateManager: StateManager = this.table.stateManager;
 
     // 图标点击
     this.table.on(TABLE_EVENT_TYPE.ICON_CLICK, iconInfo => {
       const { col, row, x, y, funcType, icon } = iconInfo;
       // 下拉菜单按钮点击
       if (funcType === IconFuncTypeEnum.dropDown) {
-        stateManeger.triggerDropDownMenu(col, row, x, y);
+        stateManager.triggerDropDownMenu(col, row, x, y);
       } else if (funcType === IconFuncTypeEnum.sort) {
-        stateManeger.triggerSort(col, row, icon);
+        stateManager.triggerSort(col, row, icon);
       } else if (funcType === IconFuncTypeEnum.frozen) {
-        stateManeger.triggerFreeze(col, row, icon);
+        stateManager.triggerFreeze(col, row, icon);
       } else if (funcType === IconFuncTypeEnum.drillDown) {
         drillClick(this.table);
       } else if (funcType === IconFuncTypeEnum.collapse || funcType === IconFuncTypeEnum.expand) {
-        this.table.stateManeger.updateSelectPos(-1, -1);
+        this.table.stateManager.updateSelectPos(-1, -1);
         this.table.toggleHierarchyState(col, row);
       }
     });
 
     // 下拉菜单内容点击
     this.table.on(TABLE_EVENT_TYPE.DROPDOWN_MENU_CLICK, () => {
-      stateManeger.hideMenu();
+      stateManager.hideMenu();
     });
 
     // 处理textStick
@@ -129,15 +129,15 @@ export class EventManeger {
 
   dealTableHover(eventArgsSet?: SceneEvent) {
     if (!eventArgsSet) {
-      this.table.stateManeger.updateHoverPos(-1, -1);
+      this.table.stateManager.updateHoverPos(-1, -1);
       return;
     }
     const { eventArgs } = eventArgsSet;
 
     if (eventArgs) {
-      this.table.stateManeger.updateHoverPos(eventArgs.col, eventArgs.row);
+      this.table.stateManager.updateHoverPos(eventArgs.col, eventArgs.row);
     } else {
-      this.table.stateManeger.updateHoverPos(-1, -1);
+      this.table.stateManager.updateHoverPos(-1, -1);
     }
   }
 
@@ -145,7 +145,7 @@ export class EventManeger {
     const { eventArgs } = eventArgsSet;
 
     if (eventArgs) {
-      this.table.stateManeger.updateHoverIcon(
+      this.table.stateManager.updateHoverIcon(
         eventArgs.col,
         eventArgs.row,
         eventArgs.target,
@@ -153,7 +153,7 @@ export class EventManeger {
         eventArgs.event
       );
     } else {
-      this.table.stateManeger.updateHoverIcon(-1, -1, undefined, undefined);
+      this.table.stateManager.updateHoverIcon(-1, -1, undefined, undefined);
     }
   }
 
@@ -163,7 +163,7 @@ export class EventManeger {
 
   dealTableSelect(eventArgsSet?: SceneEvent, isSelectMoving?: boolean): boolean {
     if (!eventArgsSet) {
-      this.table.stateManeger.updateSelectPos(-1, -1);
+      this.table.stateManager.updateSelectPos(-1, -1);
       return false;
     }
     const { eventArgs } = eventArgsSet;
@@ -179,21 +179,21 @@ export class EventManeger {
       //   eventArgsSet?.eventArgs?.target.type !== 'chart' &&
       //   eventArgs.event.pointerType !== 'touch'
       // ) {
-      //   this.table.stateManeger.updateHoverPos(-1, -1);
+      //   this.table.stateManager.updateHoverPos(-1, -1);
       // }
       const define = this.table.getBodyColumnDefine(eventArgs.col, eventArgs.row);
       if (
         this.table.isHeader(eventArgs.col, eventArgs.row) &&
-        (define?.disableHeaderSelect || this.table.stateManeger.select?.disableHeader)
+        (define?.disableHeaderSelect || this.table.stateManager.select?.disableHeader)
       ) {
         if (!isSelectMoving) {
           // 如果是点击点表头 取消单元格选中状态
-          this.table.stateManeger.updateSelectPos(-1, -1);
+          this.table.stateManager.updateSelectPos(-1, -1);
         }
         return false;
       } else if (!this.table.isHeader(eventArgs.col, eventArgs.row) && define?.disableSelect) {
         if (!isSelectMoving) {
-          this.table.stateManeger.updateSelectPos(-1, -1);
+          this.table.stateManager.updateSelectPos(-1, -1);
         }
         return false;
       }
@@ -203,10 +203,10 @@ export class EventManeger {
         (eventArgsSet?.eventArgs?.target.name === 'axis-label' || eventArgsSet?.eventArgs?.target.type === 'chart')
       ) {
         // 点击透视图坐标轴标签或图标内容，执行图表状态更新，不触发Select
-        this.table.stateManeger.updateSelectPos(-1, -1);
+        this.table.stateManager.updateSelectPos(-1, -1);
         return false;
       }
-      this.table.stateManeger.updateSelectPos(
+      this.table.stateManager.updateSelectPos(
         eventArgs.col,
         eventArgs.row,
         eventArgs.event.shiftKey,
@@ -214,12 +214,12 @@ export class EventManeger {
       );
       return true;
     }
-    // this.table.stateManeger.updateSelectPos(-1, -1); 这句有问题 如drag框选鼠标超出表格范围 这里就直接情况是不对的
+    // this.table.stateManager.updateSelectPos(-1, -1); 这句有问题 如drag框选鼠标超出表格范围 这里就直接情况是不对的
     return false;
   }
 
   deelTableSelectAll() {
-    this.table.stateManeger.updateSelectPos(-1, -1, false, false, true);
+    this.table.stateManager.updateSelectPos(-1, -1, false, false, true);
   }
 
   dealMenuSelect(eventArgsSet: SceneEvent) {
@@ -237,10 +237,10 @@ export class EventManeger {
         eventArgs.targetCell
       );
       if (this.table._canResizeColumn(resizeCol.col, resizeCol.row) && resizeCol.col >= 0) {
-        // this.table.stateManeger.updateResizeCol(resizeCol.col, eventArgsSet.abstractPos.x, first);
+        // this.table.stateManager.updateResizeCol(resizeCol.col, eventArgsSet.abstractPos.x, first);
         // this._col = resizeCol.col;
         if (update) {
-          this.table.stateManeger.startResizeCol(
+          this.table.stateManager.startResizeCol(
             resizeCol.col,
             eventArgsSet.abstractPos.x,
             eventArgsSet.abstractPos.y,
@@ -255,7 +255,7 @@ export class EventManeger {
   }
 
   dealColumnResize(xInTable: number, yInTable: number) {
-    this.table.stateManeger.updateResizeCol(xInTable, yInTable);
+    this.table.stateManager.updateResizeCol(xInTable, yInTable);
   }
 
   chechColumnMover(eventArgsSet: SceneEvent): boolean {
@@ -265,12 +265,12 @@ export class EventManeger {
     if (
       eventArgs &&
       this.table.isHeader(eventArgs.col, eventArgs.row) &&
-      checkCellInSelect(eventArgs.col, eventArgs.row, this.table.stateManeger.select.ranges) &&
-      // this.table.stateManeger.select.cellPosStart.col === eventArgs.col &&
-      // this.table.stateManeger.select.cellPosStart.row === eventArgs.row &&
+      checkCellInSelect(eventArgs.col, eventArgs.row, this.table.stateManager.select.ranges) &&
+      // this.table.stateManager.select.cellPosStart.col === eventArgs.col &&
+      // this.table.stateManager.select.cellPosStart.row === eventArgs.row &&
       this.table._canDragHeaderPosition(eventArgs.col, eventArgs.row)
     ) {
-      this.table.stateManeger.startMoveCol(
+      this.table.stateManager.startMoveCol(
         eventArgs.col,
         eventArgs.row,
         eventArgsSet.abstractPos.x,
@@ -284,7 +284,7 @@ export class EventManeger {
 
   dealColumnMover(eventArgsSet: SceneEvent) {
     const { eventArgs } = eventArgsSet;
-    this.table.stateManeger.updateMoveCol(
+    this.table.stateManager.updateMoveCol(
       eventArgs.col,
       eventArgs.row,
       eventArgsSet.abstractPos.x,

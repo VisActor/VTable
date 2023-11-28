@@ -660,9 +660,9 @@ describe('pivotTable init test', () => {
   });
   test('pivotTable dragHeader interaction', () => {
     pivotTable.selectCell(2, 1);
-    pivotTable.stateManeger.startMoveCol(2, 1, 230, 60);
-    pivotTable.stateManeger.updateMoveCol(3, 1, 320, 60);
-    pivotTable.stateManeger.endMoveCol();
+    pivotTable.stateManager.startMoveCol(2, 1, 230, 60);
+    pivotTable.stateManager.updateMoveCol(3, 1, 320, 60);
+    pivotTable.stateManager.endMoveCol();
     expect(pivotTable.getCellValue(3, 1)).toEqual('利润');
   });
   test('pivotTable updateOption hideIndicatorName&format', () => {

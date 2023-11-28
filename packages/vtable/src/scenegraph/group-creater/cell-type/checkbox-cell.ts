@@ -113,7 +113,7 @@ function createCheckbox(
     isChecked = value;
     text = '';
   }
-  isChecked = table.stateManeger.syncCheckedState(col, row, define.field as string | number, isChecked);
+  isChecked = table.stateManager.syncCheckedState(col, row, define.field as string | number, isChecked);
   const hierarchyOffset = getHierarchyOffset(col, row, table);
   const cellStyle = table._getCellStyle(col, row) as CheckboxStyleOption; // to be fixed
   const autoWrapText = cellStyle.autoWrapText ?? table.internalProps.autoWrapText;
@@ -129,7 +129,7 @@ function createCheckbox(
       value,
       dataValue
     });
-    isChecked = table.stateManeger.syncCheckedState(col, row, define.field as string | number, globalChecked);
+    isChecked = table.stateManager.syncCheckedState(col, row, define.field as string | number, globalChecked);
   }
   const globalDisable = getOrApply(disable as any, {
     col,

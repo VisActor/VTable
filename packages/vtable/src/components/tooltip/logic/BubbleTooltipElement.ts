@@ -203,13 +203,13 @@ export class BubbleTooltipElement {
       }
 
       // 判断当前tooltip范围是否与tooltip重合
-      const { x1: menuLeft, x2: menuRight, y1: menuTop, y2: menuBottom } = table.stateManeger.menu.bounds;
+      const { x1: menuLeft, x2: menuRight, y1: menuTop, y2: menuBottom } = table.stateManager.menu.bounds;
       const tooltipLeft = tooltipX;
       const tooltipRight = tooltipLeft + rootElementWidth;
       const tooltipTop = tooltipY;
       const tooltipBottom = tooltipLeft + rootElementHeight;
       if (
-        table.stateManeger.menu.isShow &&
+        table.stateManager.menu.isShow &&
         menuLeft < tooltipRight &&
         menuRight > tooltipLeft &&
         menuBottom > tooltipTop &&

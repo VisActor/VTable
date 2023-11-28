@@ -676,7 +676,7 @@ export class AdjustColorGroupBeforeRenderContribution implements IGroupRenderCon
     // 处理hover颜色
     if ((group as Group).role === 'cell') {
       const table = (group.stage as any).table as BaseTableAPI;
-      if (table.stateManeger.interactionState !== InteractionState.scrolling) {
+      if (table.stateManager.interactionState !== InteractionState.scrolling) {
         const hoverColor = getCellHoverColor(group as Group, table);
         if (hoverColor) {
           (group as any).oldColor = group.attribute.fill;
