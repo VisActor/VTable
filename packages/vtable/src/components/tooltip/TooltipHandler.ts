@@ -108,9 +108,9 @@ export class TooltipHandler {
         return;
       }
       // dropDownMenu区域不响应
-      const { x1: left, x2: right, y1: top, y2: bottom } = table.stateManeger.menu.bounds;
+      const { x1: left, x2: right, y1: top, y2: bottom } = table.stateManager.menu.bounds;
       if (
-        table.stateManeger.menu.isShow &&
+        table.stateManager.menu.isShow &&
         typeof e.x === 'number' &&
         typeof e.y === 'number' &&
         e.x > left &&
@@ -183,7 +183,7 @@ export class TooltipHandler {
         }
       }
       // dropDownMenu区域不响应
-      if (this._attachInfo && table.stateManeger.menu.isShow) {
+      if (this._attachInfo && table.stateManager.menu.isShow) {
         this._bindToCell(e.col, e.row);
       }
     });

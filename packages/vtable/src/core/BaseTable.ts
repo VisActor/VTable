@@ -50,8 +50,8 @@ import { throttle2 } from '../tools/util';
 import themes from '../themes';
 import { Env } from '../tools/env';
 import { Scenegraph } from '../scenegraph/scenegraph';
-import { StateManeger } from '../state/state';
-import { EventManeger } from '../event/event';
+import { StateManager } from '../state/state';
+import { EventManager } from '../event/event';
 import { BodyHelper } from '../body-helper/body-helper';
 import { HeaderHelper } from '../header-helper/header-helper';
 import type { PivotHeaderLayoutMap } from '../layout/pivot-header-layout';
@@ -118,8 +118,8 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
 
   _vDataSet: DataSet;
   scenegraph: Scenegraph;
-  stateManeger?: StateManeger;
-  eventManeger?: EventManeger;
+  stateManager?: StateManager;
+  eventManager?: EventManager;
   _pixelRatio: number;
 
   // bottomFrozenRowCount: number = 0;
@@ -312,8 +312,8 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     // 生成scenegraph
     this._vDataSet = new DataSet();
     this.scenegraph = new Scenegraph(this);
-    this.stateManeger = new StateManeger(this);
-    this.eventManeger = new EventManeger(this);
+    this.stateManager = new StateManager(this);
+    this.eventManager = new EventManager(this);
 
     if (options.legends) {
       internalProps.legends = createLegend(options.legends, this);
@@ -389,7 +389,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     if (this.internalProps.title) {
       this.internalProps.title.resize();
     }
-    // this.stateManeger.checkFrozen();
+    // this.stateManager.checkFrozen();
     this.scenegraph.resize();
   }
 
@@ -438,7 +438,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     if (this.tableNoFrameWidth - this.getColsWidth(0, frozenColCount - 1) <= 120) {
       this.internalProps.frozenColCount = 0;
     }
-    this.stateManeger.setFrozenCol(this.internalProps.frozenColCount);
+    this.stateManager.setFrozenCol(this.internalProps.frozenColCount);
   }
   /** 设置冻结的行数 */
   setFrozenColCount(frozenColCount: number) {
@@ -452,7 +452,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     if (this.tableNoFrameWidth - this.getColsWidth(0, frozenColCount - 1) <= 120) {
       this.internalProps.frozenColCount = 0;
     }
-    this.stateManeger.setFrozenCol(this.internalProps.frozenColCount);
+    this.stateManager.setFrozenCol(this.internalProps.frozenColCount);
   }
   /**
    * 和setFrozenColCount一样的逻辑 但保留options.frozenColCount不赋新值
@@ -1106,7 +1106,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
 
     // 检查冻结情况
     if (!skipCheckFrozen) {
-      this.stateManeger.checkFrozen();
+      this.stateManager.checkFrozen();
     }
   }
 
@@ -1719,17 +1719,17 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
   }
 
   get scrollTop(): number {
-    return this.stateManeger.scroll.verticalBarPos;
+    return this.stateManager.scroll.verticalBarPos;
   }
   set scrollTop(scrollTop: number) {
-    this.stateManeger.setScrollTop(scrollTop);
+    this.stateManager.setScrollTop(scrollTop);
   }
 
   get scrollLeft(): number {
-    return this.stateManeger.scroll.horizontalBarPos;
+    return this.stateManager.scroll.horizontalBarPos;
   }
   set scrollLeft(scrollLeft: number) {
-    this.stateManeger.setScrollLeft(scrollLeft);
+    this.stateManager.setScrollLeft(scrollLeft);
   }
 
   getScrollLeft() {
@@ -1934,11 +1934,11 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     internalProps.title?.release();
     internalProps.layoutMap.release();
     this.scenegraph.clearCells();
-    this.stateManeger.initState();
+    this.stateManager.initState();
 
     this._updateSize();
-    // this.stateManeger = new StateManeger(this);
-    // this.eventManeger = new EventManeger(this);
+    // this.stateManager = new StateManager(this);
+    // this.eventManager = new EventManager(this);
 
     if (options.legends) {
       internalProps.legends = createLegend(options.legends, this);
@@ -1984,13 +1984,13 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
    * 重新创建场景树并重新渲染
    */
   renderWithRecreateCells() {
-    const oldHoverState = { col: this.stateManeger.hover.cellPos.col, row: this.stateManeger.hover.cellPos.row };
+    const oldHoverState = { col: this.stateManager.hover.cellPos.col, row: this.stateManager.hover.cellPos.row };
     this.refreshHeader();
     this.scenegraph.clearCells();
     this.headerStyleCache = new Map();
     this.bodyStyleCache = new Map();
     this.scenegraph.createSceneGraph();
-    this.stateManeger.updateHoverPos(oldHoverState.col, oldHoverState.row);
+    this.stateManager.updateHoverPos(oldHoverState.col, oldHoverState.row);
     this.render();
   }
   /**
@@ -2300,7 +2300,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
    * 清除选中单元格
    */
   clearSelected() {
-    this.stateManeger.updateSelectPos(-1, -1);
+    this.stateManager.updateSelectPos(-1, -1);
   }
   /**
    * 选中单元格  和鼠标选中单元格效果一致
@@ -2308,8 +2308,8 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
    * @param row
    */
   selectCell(col: number, row: number) {
-    this.stateManeger.updateSelectPos(col, row);
-    this.stateManeger.endSelectCells();
+    this.stateManager.updateSelectPos(col, row);
+    this.stateManager.endSelectCells();
   }
   /**
    * 选中单元格区域，可设置多个区域同时选中
@@ -2318,11 +2318,11 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
   selectCells(cellRanges: CellRange[]) {
     const { scrollLeft, scrollTop } = this;
     cellRanges.forEach((cellRange: CellRange, index: number) => {
-      this.stateManeger.updateSelectPos(cellRange.start.col, cellRange.start.row, false, index >= 1);
-      this.stateManeger.updateInteractionState(InteractionState.grabing);
-      this.stateManeger.updateSelectPos(cellRange.end.col, cellRange.end.row, false, index >= 1);
-      this.stateManeger.endSelectCells(false);
-      this.stateManeger.updateInteractionState(InteractionState.default);
+      this.stateManager.updateSelectPos(cellRange.start.col, cellRange.start.row, false, index >= 1);
+      this.stateManager.updateInteractionState(InteractionState.grabing);
+      this.stateManager.updateSelectPos(cellRange.end.col, cellRange.end.row, false, index >= 1);
+      this.stateManager.endSelectCells(false);
+      this.stateManager.updateInteractionState(InteractionState.default);
     });
     // 选择后 会自动滚动到所选区域最后一行一列的位置 这里再设置回滚动前位置
     this.setScrollTop(scrollTop);
@@ -2442,14 +2442,14 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
    * 设置主题
    */
   updateTheme(theme: ITableThemeDefine) {
-    const oldHoverState = { col: this.stateManeger.hover.cellPos.col, row: this.stateManeger.hover.cellPos.row };
+    const oldHoverState = { col: this.stateManager.hover.cellPos.col, row: this.stateManager.hover.cellPos.row };
     this.internalProps.theme = themes.of(theme ?? themes.DEFAULT);
     this.options.theme = theme;
     this.scenegraph.clearCells();
     this.headerStyleCache = new Map();
     this.bodyStyleCache = new Map();
     this.scenegraph.createSceneGraph();
-    this.stateManeger.updateHoverPos(oldHoverState.col, oldHoverState.row);
+    this.stateManager.updateHoverPos(oldHoverState.col, oldHoverState.row);
     this.render();
   }
 
@@ -2674,10 +2674,10 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
   }
 
   setDropDownMenuHighlight(cells: DropDownMenuHighlightInfo[]): void {
-    this.stateManeger.setDropDownMenuHighlight(cells);
+    this.stateManager.setDropDownMenuHighlight(cells);
   }
   _dropDownMenuIsHighlight(colNow: number, rowNow: number, index: number): boolean {
-    return this.stateManeger.dropDownMenuIsHighlight(colNow, rowNow, index);
+    return this.stateManager.dropDownMenuIsHighlight(colNow, rowNow, index);
   }
 
   /** 判断单元格是否属于表头部分 */
@@ -2961,8 +2961,8 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
    * @returns
    */
   _canDragHeaderPosition(col: number, row: number): boolean {
-    if (this.isHeader(col, row) && this.stateManeger.isSelected(col, row)) {
-      const selectRange = this.stateManeger.select.ranges[0];
+    if (this.isHeader(col, row) && this.stateManager.isSelected(col, row)) {
+      const selectRange = this.stateManager.select.ranges[0];
       //判断是否整行或者整列选中
       if (this.isColumnHeader(col, row)) {
         if (selectRange.end.row !== this.rowCount - 1) {
@@ -3018,10 +3018,10 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
       menuType = Array.isArray(dropDownMenuOptions.content) ? 'dropdown-menu' : 'container';
     }
     if (this.internalProps.menu.renderMode === 'html') {
-      this.stateManeger.menu.isShow = true;
+      this.stateManager.menu.isShow = true;
       this.internalProps.menuHandler._bindToCell(col, row, menuType, dropDownMenuOptions);
     }
-    // this.stateManeger.showDropDownMenu(col,row,) //最好和这个保持一致
+    // this.stateManager.showDropDownMenu(col,row,) //最好和这个保持一致
   }
   /** 暂时只支持全局设置了tooltip.renderMode='html'，调用该接口才有效 */
   showTooltip(col: number, row: number, tooltipOptions?: TooltipOptions) {
@@ -3159,8 +3159,8 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
 
   /**获取选中区域的内容 作为复制内容 */
   getCopyValue(): string | null {
-    if (this.stateManeger.select?.ranges?.length > 0) {
-      const ranges = this.stateManeger.select.ranges;
+    if (this.stateManager.select?.ranges?.length > 0) {
+      const ranges = this.stateManager.select.ranges;
       let minCol = Math.min(ranges[0].start.col, ranges[0].end.col);
       let maxCol = Math.max(ranges[0].start.col, ranges[0].end.col);
       let minRow = Math.min(ranges[0].start.row, ranges[0].end.row);
@@ -3266,11 +3266,11 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
 
   /**获取选中区域的每个单元格详情 */
   getSelectedCellInfos(): CellInfo[][] | null {
-    if (!this.stateManeger.select?.ranges) {
+    if (!this.stateManager.select?.ranges) {
       return null;
     }
 
-    const ranges = this.stateManeger.select.ranges;
+    const ranges = this.stateManager.select.ranges;
     if (!ranges.length) {
       return [];
     }
@@ -3384,12 +3384,12 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
       return false;
     });
   }
-  /** 获取当前hover单元格的图表实例。这个方法hover实时获取有点缺陷：鼠标hover到单元格上触发了 chart.ts中的activate方法 但此时this.stateManeger.hover?.cellPos?.col还是-1 */
+  /** 获取当前hover单元格的图表实例。这个方法hover实时获取有点缺陷：鼠标hover到单元格上触发了 chart.ts中的activate方法 但此时this.stateManager.hover?.cellPos?.col还是-1 */
   _getActiveChartInstance() {
     // 根据hover的单元格位置 获取单元格实例 拿到chart图元
     const cellGroup = this.scenegraph.getCell(
-      this.stateManeger.hover?.cellPos?.col,
-      this.stateManeger.hover?.cellPos?.row
+      this.stateManager.hover?.cellPos?.col,
+      this.stateManager.hover?.cellPos?.row
     );
     return cellGroup?.getChildren()?.[0]?.type === 'chart'
       ? (cellGroup.getChildren()[0] as Chart).activeChartInstance

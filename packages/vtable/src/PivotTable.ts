@@ -145,7 +145,7 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
       this.updatePivotSortState(options.pivotSortState);
     }
     this.refreshHeader();
-    this.stateManeger.initCheckedState(records);
+    this.stateManager.initCheckedState(records);
     // this.internalProps.frozenColCount = this.options.frozenColCount || this.rowHeaderLevelCount;
     // 生成单元格场景树
     this.scenegraph.createSceneGraph();
@@ -198,7 +198,7 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
     this.internalProps.rowTree =
       !options.indicatorsAsCol && !options.rows?.length && !options.rowTree ? [] : cloneDeep(options.rowTree);
     options.records && (this.internalProps.records = options.records);
-    this.stateManeger.initCheckedState(this.internalProps.records);
+    this.stateManager.initCheckedState(this.internalProps.records);
 
     //分页配置
     this.pagination = options.pagination;
@@ -397,7 +397,7 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
 
     table.bottomFrozenRowCount = this.options.bottomFrozenRowCount ?? 0;
     table.rightFrozenColCount = this.options.rightFrozenColCount ?? 0;
-    this.stateManeger.setFrozenCol(this.internalProps.frozenColCount);
+    this.stateManager.setFrozenCol(this.internalProps.frozenColCount);
   }
   protected _getSortFuncFromHeaderOption(
     columns: undefined,

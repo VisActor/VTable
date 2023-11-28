@@ -27,12 +27,12 @@ export function bindSparklineHoverEvent(table: BaseTableAPI) {
     const { col, row, x, y } = e;
     const type = table.getBodyColumnType(col, row);
     if (type !== 'sparkline') {
-      table.stateManeger.updateSparklineHoverPose(-1, -1, 0, 0);
+      table.stateManager.updateSparklineHoverPose(-1, -1, 0, 0);
     }
-    table.stateManeger.updateSparklineHoverPose(col, row, x, y);
+    table.stateManager.updateSparklineHoverPose(col, row, x, y);
   });
 
   table.on(TABLE_EVENT_TYPE.MOUSELEAVE_TABLE, (e: MousePointerCellEvent) => {
-    table.stateManeger.updateSparklineHoverPose(-1, -1, 0, 0);
+    table.stateManager.updateSparklineHoverPose(-1, -1, 0, 0);
   });
 }

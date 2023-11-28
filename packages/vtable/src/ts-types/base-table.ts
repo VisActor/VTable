@@ -17,8 +17,8 @@ import type { ICustomRender } from './customElement';
 export type LayoutObjectId = number | string;
 import type { Rect } from '../tools/Rect';
 import type { Scenegraph } from '../scenegraph/scenegraph';
-import type { StateManeger } from '../state/state';
-import type { EventManeger } from '../event/event';
+import type { StateManager } from '../state/state';
+import type { EventManager } from '../event/event';
 import type {
   CellAddress,
   CellRange,
@@ -443,9 +443,9 @@ export interface BaseTableAPI {
   /** 场景树对象 */
   scenegraph: Scenegraph;
   /** 状态管理模块 */
-  stateManeger?: StateManeger;
+  stateManager?: StateManager;
   /** 事件管理模块 */
-  eventManeger?: EventManeger;
+  eventManager?: EventManager;
   /** 行表头的层数 */
   rowHeaderLevelCount: number;
   /** 列表头的层数 */

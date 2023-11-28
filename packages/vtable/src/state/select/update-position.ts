@@ -1,15 +1,15 @@
 import type { Scenegraph } from '../../scenegraph/scenegraph';
 import { InteractionState } from '../../ts-types';
-import type { StateManeger } from '../state';
+import type { StateManager } from '../state';
 /**
  * @description: 更新select位置
- * @param {StateManeger} state
+ * @param {StateManager} state
  * @param {number} col
  * @param {number} row
  * @return {*}
  */
 export function updateSelectPosition(
-  state: StateManeger,
+  state: StateManager,
   col: number,
   row: number,
   isShift: boolean,

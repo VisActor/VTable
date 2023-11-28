@@ -4,20 +4,20 @@ import type { KeydownEvent } from '../../ts-types';
 import { TABLE_EVENT_TYPE } from '../../core/TABLE_EVENT_TYPE';
 import { handleWhell } from '../scroll';
 import { browser } from '../../tools/helper';
-import type { EventManeger } from '../event';
+import type { EventManager } from '../event';
 
-export function bindContainerDomListener(eventManeger: EventManeger) {
-  const table = eventManeger.table;
-  const stateManeger = table.stateManeger;
+export function bindContainerDomListener(eventManager: EventManager) {
+  const table = eventManager.table;
+  const stateManager = table.stateManager;
   const handler: EventHandler = table.internalProps.handler;
 
   handler.on(table.getElement(), 'blur', (e: MouseEvent) => {
-    eventManeger.dealTableHover();
-    // eventManeger.dealTableSelect();
+    eventManager.dealTableHover();
+    // eventManager.dealTableSelect();
   });
 
   handler.on(table.getElement(), 'wheel', (e: WheelEvent) => {
-    handleWhell(e, stateManeger);
+    handleWhell(e, stateManager);
   });
 
   // 监听键盘事件
@@ -27,7 +27,7 @@ export function bindContainerDomListener(eventManeger: EventManeger) {
       if (e.key === 'a' && (e.ctrlKey || e.metaKey)) {
         e.preventDefault();
         //全选
-        eventManeger.deelTableSelectAll();
+        eventManager.deelTableSelectAll();
       }
     }
     if ((table as any).hasListeners(TABLE_EVENT_TYPE.KEYDOWN)) {
@@ -53,7 +53,7 @@ export function bindContainerDomListener(eventManeger: EventManeger) {
           (e as any).clipboardData.setData('text/plain', data); // Chrome, Firefox
         }
         table.fireListeners(TABLE_EVENT_TYPE.COPY_DATA, {
-          cellRange: table.stateManeger.select.ranges,
+          cellRange: table.stateManager.select.ranges,
           copyData: data
         });
       }

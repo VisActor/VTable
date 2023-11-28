@@ -121,7 +121,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
    * Sets the define of the column.
    */
   updateColumns(columns: ColumnsDefine) {
-    const oldHoverState = { col: this.stateManeger.hover.cellPos.col, row: this.stateManeger.hover.cellPos.row };
+    const oldHoverState = { col: this.stateManager.hover.cellPos.col, row: this.stateManager.hover.cellPos.row };
     this.internalProps.columns = cloneDeep(columns);
     this.options.columns = columns;
     this.refreshHeader();
@@ -129,7 +129,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
     this.headerStyleCache = new Map();
     this.bodyStyleCache = new Map();
     this.scenegraph.createSceneGraph();
-    this.stateManeger.updateHoverPos(oldHoverState.col, oldHoverState.row);
+    this.stateManager.updateHoverPos(oldHoverState.col, oldHoverState.row);
     this.renderAsync();
   }
   /**
@@ -417,7 +417,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
       table.bottomFrozenRowCount = this.options.bottomFrozenRowCount ?? 0;
       table.rightFrozenColCount = this.options.rightFrozenColCount ?? 0;
     }
-    this.stateManeger.setFrozenCol(this.internalProps.frozenColCount);
+    this.stateManager.setFrozenCol(this.internalProps.frozenColCount);
   }
   /**
    * 获取records数据源中 字段对应的value 值是format之后的
@@ -694,7 +694,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
     } else {
       this.internalProps.sortState = sortState;
       // 这里的sortState需要有field属性
-      // this.stateManeger.setSortState(sortState as SortState);
+      // this.stateManager.setSortState(sortState as SortState);
     }
     let order: any;
     let field: any;
@@ -720,19 +720,19 @@ export class ListTable extends BaseTable implements ListTableAPI {
         this.scenegraph.sortCell();
       }
     }
-    this.stateManeger.updateSortState(sortState as SortState);
+    this.stateManager.updateSortState(sortState as SortState);
   }
   /** 获取某个字段下checkbox 全部数据的选中状态 顺序对应原始传入数据records 不是对应表格展示row的状态值 */
   getCheckboxState(field?: string | number) {
-    if (this.stateManeger.checkedState.length < this.rowCount - this.columnHeaderLevelCount) {
-      this.stateManeger.initLeftRecordsCheckState(this.records);
+    if (this.stateManager.checkedState.length < this.rowCount - this.columnHeaderLevelCount) {
+      this.stateManager.initLeftRecordsCheckState(this.records);
     }
     if (isValid(field)) {
-      return this.stateManeger.checkedState.map(state => {
+      return this.stateManager.checkedState.map(state => {
         return state[field];
       });
     }
-    return this.stateManeger.checkedState;
+    return this.stateManager.checkedState;
   }
   /** 获取某个单元格checkbox的状态 */
   getCellCheckboxState(col: number, row: number) {
@@ -741,7 +741,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
     const cellType = define?.cellType;
     if (isValid(field) && cellType === 'checkbox') {
       const dataIndex = this.dataSource.getIndexKey(this.getRecordIndexByCell(col, row));
-      return this.stateManeger.checkedState[dataIndex as number][field as string | number];
+      return this.stateManager.checkedState[dataIndex as number][field as string | number];
     }
     return undefined;
   }
@@ -758,7 +758,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
     //重复逻辑抽取updateWidthHeight
     if (sort !== undefined) {
       this.internalProps.sortState = sort;
-      this.stateManeger.setSortState((this as any).sortState as SortState);
+      this.stateManager.setSortState((this as any).sortState as SortState);
     }
     if (records) {
       _setRecords(this, records);
@@ -791,7 +791,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
     } else {
       _setRecords(this, records);
     }
-    this.stateManeger.initCheckedState(records);
+    this.stateManager.initCheckedState(records);
     // this.internalProps.frozenColCount = this.options.frozenColCount || this.rowHeaderLevelCount;
     // 生成单元格场景树
     this.scenegraph.createSceneGraph();
@@ -818,8 +818,8 @@ export class ListTable extends BaseTable implements ListTableAPI {
   startEditCell(col?: number, row?: number) {
     if (isValid(col) && isValid(row)) {
       this.editorManager.startEditCell(col, row);
-    } else if (this.stateManeger.select?.cellPos) {
-      const { col, row } = this.stateManeger.select.cellPos;
+    } else if (this.stateManager.select?.cellPos) {
+      const { col, row } = this.stateManager.select.cellPos;
       if (isValid(col) && isValid(row)) {
         this.editorManager.startEditCell(col, row);
       }

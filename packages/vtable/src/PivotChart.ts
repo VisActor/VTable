@@ -314,7 +314,7 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
 
     table.bottomFrozenRowCount = layoutMap?.bottomFrozenRowCount ?? 0;
     table.rightFrozenColCount = layoutMap?.rightFrozenColCount ?? 0;
-    this.stateManeger.setFrozenCol(this.internalProps.frozenColCount);
+    this.stateManager.setFrozenCol(this.internalProps.frozenColCount);
   }
   protected _getSortFuncFromHeaderOption(
     columns: undefined,

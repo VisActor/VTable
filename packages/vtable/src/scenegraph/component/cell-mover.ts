@@ -76,7 +76,7 @@ export class CellMover {
     let symbolRotate = Math.PI;
     const linePoints: { x: number; y: number }[] = [];
     if (cellLocation === 'columnHeader') {
-      rectX = this.table.getColsWidth(0, col - 1) - this.table.stateManeger.scroll.horizontalBarPos;
+      rectX = this.table.getColsWidth(0, col - 1) - this.table.stateManager.scroll.horizontalBarPos;
       rectY = this.table.getRowsHeight(0, this.table.frozenRowCount - 1);
       rectHeight = this.table.tableNoFrameHeight;
       if (mergeInfo) {
@@ -92,7 +92,7 @@ export class CellMover {
       linePoints.push({ x: 0, y: 0 });
       linePoints.push({ x: 0, y: this.table.tableNoFrameHeight });
     } else if (cellLocation === 'rowHeader') {
-      rectY = this.table.getRowsHeight(0, row - 1) - this.table.stateManeger.scroll.verticalBarPos;
+      rectY = this.table.getRowsHeight(0, row - 1) - this.table.stateManager.scroll.verticalBarPos;
       rectX = this.table.getColsWidth(0, this.table.frozenColCount - 1);
       rectWidth = this.table.tableNoFrameWidth;
       if (mergeInfo) {
@@ -141,12 +141,12 @@ export class CellMover {
 
   update(backX: number | undefined, lineX: number | undefined, backY: number | undefined, lineY: number | undefined) {
     if (typeof backX === 'number' && typeof lineX === 'number') {
-      this.columnMoverLabel.setAttribute('x', lineX - this.table.stateManeger.scroll.horizontalBarPos);
-      this.columnMoverLine.setAttribute('x', lineX - this.table.stateManeger.scroll.horizontalBarPos);
+      this.columnMoverLabel.setAttribute('x', lineX - this.table.stateManager.scroll.horizontalBarPos);
+      this.columnMoverLine.setAttribute('x', lineX - this.table.stateManager.scroll.horizontalBarPos);
       this.columnMoverBack.setAttribute('x', backX);
     } else if (typeof backY === 'number' && typeof lineY === 'number') {
-      this.columnMoverLabel.setAttribute('y', lineY - this.table.stateManeger.scroll.verticalBarPos);
-      this.columnMoverLine.setAttribute('y', lineY - this.table.stateManeger.scroll.verticalBarPos);
+      this.columnMoverLabel.setAttribute('y', lineY - this.table.stateManager.scroll.verticalBarPos);
+      this.columnMoverLine.setAttribute('y', lineY - this.table.stateManager.scroll.verticalBarPos);
       this.columnMoverBack.setAttribute('y', backY);
     }
   }

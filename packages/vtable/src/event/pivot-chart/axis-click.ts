@@ -12,7 +12,7 @@ export function bindAxisClickEvent(table: BaseTableAPI) {
   }
 
   table.scenegraph.tableGroup.addEventListener('click', (e: FederatedPointerEvent) => {
-    if (table.stateManeger.columnMove.moving || table.stateManeger.columnResize.resizing) {
+    if (table.stateManager.columnMove.moving || table.stateManager.columnResize.resizing) {
       return;
     }
     if (e.target.name === 'axis-label') {

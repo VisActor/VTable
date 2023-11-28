@@ -207,10 +207,10 @@ export class HeaderHelper {
           for (let j = 0; j < menu.children.length; j++) {
             const childItem = menu.children[j];
             if (
-              _table.stateManeger.menu?.dropDownMenuHighlight &&
+              _table.stateManager.menu?.dropDownMenuHighlight &&
               isMenuHighlight(
                 _table,
-                _table.stateManeger.menu?.dropDownMenuHighlight,
+                _table.stateManager.menu?.dropDownMenuHighlight,
                 typeof childItem === 'object' ? childItem?.menuKey : childItem,
                 col,
                 row,

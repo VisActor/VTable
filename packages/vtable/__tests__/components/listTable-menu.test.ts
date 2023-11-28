@@ -83,7 +83,7 @@ describe('listTable-menu init test', () => {
   option.records = records;
   const listTable = new ListTable(option);
   test('listTable-menu getCell', () => {
-    expect(listTable.stateManeger.menu.isShow).toBe(false);
+    expect(listTable.stateManager.menu.isShow).toBe(false);
     const col = 0;
     const row = 2;
     listTable.showDropDownMenu(col, row, {
@@ -145,7 +145,7 @@ describe('listTable-menu init test', () => {
       }
     });
 
-    expect(listTable.stateManeger.menu.isShow).toBe(true);
+    expect(listTable.stateManager.menu.isShow).toBe(true);
   });
   listTable.release();
 });
