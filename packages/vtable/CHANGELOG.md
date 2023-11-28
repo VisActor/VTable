@@ -1,6 +1,33 @@
 # Change Log - @visactor/vtable
 
-This log was last generated on Fri, 24 Nov 2023 12:06:58 GMT and should not be manually modified.
+This log was last generated on Tue, 28 Nov 2023 12:32:45 GMT and should not be manually modified.
+
+## 0.15.1
+Tue, 28 Nov 2023 12:32:45 GMT
+
+### Updates
+
+- refactor: sortState can not work when column has no sort setting #622
+
+
+- docs: add api getCellCheckboxState
+
+
+- fix: drag select first cell seleted repeatly #611
+
+
+- refactor: remove keydown event arguments cells
+
+
+- refactor: rename maneger to manager
+
+
+- fix: no indicators pivotchart render
+
+
+- fix: compute chart column width use Math.ceil bandSpace
+
+
 
 ## 0.15.0
 Fri, 24 Nov 2023 12:06:58 GMT
