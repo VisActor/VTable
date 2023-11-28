@@ -324,6 +324,11 @@ export class Scenegraph {
     this.proxy?.release();
   }
 
+  updateStageBackground() {
+    this.stage.background = this.table.theme.underlayBackgroundColor;
+    this.stage.renderNextFrame();
+  }
+
   /**
    * @description: 初始化表格外组件
    * @return {*}
@@ -801,8 +806,8 @@ export class Scenegraph {
       ),
       height: Math.min(
         this.table.tableNoFrameHeight,
-        (this.colHeaderGroup.attribute.height ?? 0) +
-          (this.bodyGroup.attribute.height ?? 0) +
+        Math.max(this.colHeaderGroup.attribute.height, this.cornerHeaderGroup.attribute.height, 0) +
+          Math.max(this.rowHeaderGroup.attribute.height, this.bodyGroup.attribute.height, 0) +
           this.bottomFrozenGroup.attribute.height
       )
     } as any);
@@ -1071,7 +1076,17 @@ export class Scenegraph {
       if (actualWidth < canvasWidth && actualWidth - actualHeaderWidth > 0) {
         const factor = (canvasWidth - actualHeaderWidth) / (actualWidth - actualHeaderWidth);
         for (let col = table.frozenColCount; col < table.colCount - table.rightFrozenColCount; col++) {
-          this.setColWidth(col, table.getColWidth(col) * factor);
+          // this.setColWidth(col, table.getColWidth(col) * factor);
+          let colWidth;
+          if (col === table.colCount - table.rightFrozenColCount - 1) {
+            colWidth =
+              canvasWidth -
+              actualHeaderWidth -
+              table.getColsWidth(table.frozenColCount, table.colCount - table.rightFrozenColCount - 2);
+          } else {
+            colWidth = Math.round(table.getColWidth(col) * factor);
+          }
+          this.setColWidth(col, colWidth);
         }
       }
     }
@@ -1151,7 +1166,17 @@ export class Scenegraph {
       if (actualHeight < canvasHeight && actualHeight - actualHeaderHeight > 0) {
         const factor = (canvasHeight - actualHeaderHeight) / (actualHeight - actualHeaderHeight);
         for (let row = table.frozenRowCount; row < table.rowCount - table.bottomFrozenRowCount; row++) {
-          this.setRowHeight(row, table.getRowHeight(row) * factor);
+          // this.setRowHeight(row, table.getRowHeight(row) * factor);
+          let rowHeight;
+          if (row === table.rowCount - table.bottomFrozenRowCount - 1) {
+            rowHeight =
+              canvasHeight -
+              actualHeaderHeight -
+              table.getRowsHeight(table.frozenRowCount, table.rowCount - table.bottomFrozenRowCount - 2);
+          } else {
+            rowHeight = Math.round(table.getRowHeight(row) * factor);
+          }
+          this.setRowHeight(row, rowHeight);
         }
       }
     }

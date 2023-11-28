@@ -1,5 +1,22 @@
 export const menus = [
   {
+    menu: 'Debug',
+    children: [
+      {
+        path: 'debug',
+        name: 'aeolus'
+      },
+      {
+        path: 'debug',
+        name: 'bugserver'
+      },
+      {
+        path: 'debug',
+        name: 'site'
+      }
+    ]
+  },
+  {
     menu: '基本表格',
     children: [
       {
@@ -80,14 +97,6 @@ export const menus = [
   {
     menu: '透视图',
     children: [
-      {
-        path: 'pivot-chart',
-        name: 'aeolus'
-      },
-      {
-        path: 'pivot-chart',
-        name: 'bugserver'
-      },
       {
         path: 'pivot-chart',
         name: 'noDimension-updateOption'

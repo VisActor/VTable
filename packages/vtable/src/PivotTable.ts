@@ -468,6 +468,10 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
   }
 
   getCellValue(col: number, row: number): FieldData {
+    const customMergeText = this.getCustomMergeValue(col, row);
+    if (customMergeText) {
+      return customMergeText;
+    }
     if (this.internalProps.layoutMap.isHeader(col, row)) {
       const { title, fieldFormat } = this.internalProps.layoutMap.getHeader(col, row);
       return typeof fieldFormat === 'function' ? fieldFormat(title) : title;
