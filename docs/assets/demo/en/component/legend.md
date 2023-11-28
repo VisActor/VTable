@@ -163,7 +163,7 @@ In this example, the background color of the cell is mapped by the category Dime
             }
           })
         );
-        console.log(tableInstance.stateManeger?.select);
+        console.log(tableInstance.stateManager?.select);
       });
     });
 ```

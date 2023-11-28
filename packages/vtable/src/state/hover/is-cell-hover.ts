@@ -1,4 +1,4 @@
-import type { StateManeger } from '../state';
+import type { StateManager } from '../state';
 import type { Group } from '../../scenegraph/graphic/group';
 import { getProp } from '../../scenegraph/utils/get-prop';
 import type { BaseTableAPI } from '../../ts-types/base-table';
@@ -16,14 +16,14 @@ export function getCellHoverColor(cellGroup: Group, table: BaseTableAPI): string
   ) {
     for (let col = cellGroup.mergeStartCol; col <= cellGroup.mergeEndCol; col++) {
       for (let row = cellGroup.mergeStartRow; row <= cellGroup.mergeEndRow; row++) {
-        const key = isCellHover(table.stateManeger, col, row);
+        const key = isCellHover(table.stateManager, col, row);
         if (key && (!colorKey || key === 'cellBgColor')) {
           colorKey = key;
         }
       }
     }
   } else if (cellGroup.role === 'cell') {
-    colorKey = isCellHover(table.stateManeger, cellGroup.col, cellGroup.row);
+    colorKey = isCellHover(table.stateManager, cellGroup.col, cellGroup.row);
   }
 
   if (!colorKey) {
@@ -49,7 +49,7 @@ export function getCellHoverColor(cellGroup: Group, table: BaseTableAPI): string
   return fillColor;
 }
 
-export function isCellHover(state: StateManeger, col: number, row: number): string | undefined {
+export function isCellHover(state: StateManager, col: number, row: number): string | undefined {
   const { highlightScope, disableHeader, cellPos } = state.hover;
   const table = state.table;
 

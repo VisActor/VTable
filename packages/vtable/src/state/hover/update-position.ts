@@ -2,20 +2,20 @@ import type { Scenegraph } from '../../scenegraph/scenegraph';
 import type { CellRange } from '../../ts-types';
 import { HighlightScope } from '../../ts-types';
 import { CellPosition } from '../../ts-types';
-// import { HoverMode, SelectMode, StateManeger } from '../state';
-import type { StateManeger } from '../state';
+// import { HoverMode, SelectMode, StateManager } from '../state';
+import type { StateManager } from '../state';
 import { clearColHover, updateColHover } from './col';
 import { clearRowHover, updateRowHover } from './row';
 import { clearSingleHover, updateSingleHover } from './single';
 
 /**
  * @description: 更新hover位置
- * @param {StateManeger} state
+ * @param {StateManager} state
  * @param {number} col
  * @param {number} row
  * @return {*}
  */
-export function updateHoverPosition(state: StateManeger, col: number, row: number) {
+export function updateHoverPosition(state: StateManager, col: number, row: number) {
   const { table } = state;
   const { scenegraph } = table;
   const { highlightScope, singleStyle, disableHeader, cellPos, cellPosContainHeader } = state.hover;
@@ -132,7 +132,7 @@ export function updateHoverPosition(state: StateManeger, col: number, row: numbe
 
 /**
  * @description: 清空hover状态
- * @param {StateManeger} state
+ * @param {StateManager} state
  * @return {*}
  */
 function clearHover(

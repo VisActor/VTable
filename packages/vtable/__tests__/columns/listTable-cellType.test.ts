@@ -262,14 +262,14 @@ fruit and seeds. They are also highly intelligent and social, and are considered
     expect(listTable.scenegraph.getCell(6, 2).children[0].name).toBe('sparkline');
   });
   test('listTable-cellType sparkLine hover', () => {
-    listTable.stateManeger.updateSparklineHoverPose(6, 2, 1088, 210);
+    listTable.stateManager.updateSparklineHoverPose(6, 2, 1088, 210);
 
-    expect(listTable.stateManeger.sparkLine).toEqual({
+    expect(listTable.stateManager.sparkLine).toEqual({
       col: 6,
       row: 2
     });
-    listTable.stateManeger.updateSparklineHoverPose(5, 2, 850, 210);
-    expect(listTable.stateManeger.sparkLine).toEqual({
+    listTable.stateManager.updateSparklineHoverPose(5, 2, 850, 210);
+    expect(listTable.stateManager.sparkLine).toEqual({
       col: -1,
       row: -1
     });

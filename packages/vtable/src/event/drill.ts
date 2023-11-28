@@ -16,7 +16,7 @@ export function bindDrillEvent(table: BaseTableAPI) {
     }
     const dimension = (table.internalProps.layoutMap as PivotHeaderLayoutMap).getHeaderDimension(col, row);
     if (dimension?.drillDown || dimension?.drillUp) {
-      table.stateManeger.updateDrillState(
+      table.stateManager.updateDrillState(
         dimension.dimensionKey,
         dimension.title,
         dimension.drillDown,
@@ -25,16 +25,16 @@ export function bindDrillEvent(table: BaseTableAPI) {
         row
       );
     } else {
-      table.stateManeger.updateDrillState(undefined, undefined, false, false, -1, -1);
+      table.stateManager.updateDrillState(undefined, undefined, false, false, -1, -1);
     }
   });
   table.on(TABLE_EVENT_TYPE.MOUSELEAVE_TABLE, (e: MousePointerCellEvent) => {
-    table.stateManeger.updateDrillState(undefined, undefined, false, false, -1, -1);
+    table.stateManager.updateDrillState(undefined, undefined, false, false, -1, -1);
   });
 }
 
 export function drillClick(table: BaseTableAPI) {
-  table.fireListeners(PIVOT_TABLE_EVENT_TYPE.DRILLMENU_CLICK, table.stateManeger.drill as DrillMenuEventInfo);
+  table.fireListeners(PIVOT_TABLE_EVENT_TYPE.DRILLMENU_CLICK, table.stateManager.drill as DrillMenuEventInfo);
 }
 
 export function checkHaveDrill(table: PivotTableAPI) {

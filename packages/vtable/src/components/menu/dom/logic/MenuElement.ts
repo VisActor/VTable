@@ -203,10 +203,10 @@ export class MenuElement {
         const children = (this._menuInstanceInfo.content[dropDownIndex] as any)?.children;
         for (let i = 0; i < children.length; i++) {
           const menuItem = children[i];
-          const isHighlight = table.stateManeger.menu.dropDownMenuHighlight
+          const isHighlight = table.stateManager.menu.dropDownMenuHighlight
             ? isMenuHighlight(
                 table,
-                table.stateManeger.menu.dropDownMenuHighlight,
+                table.stateManager.menu.dropDownMenuHighlight,
                 typeof menuItem === 'object' ? menuItem?.menuKey || menuItem?.text : menuItem,
                 col,
                 row,
@@ -298,7 +298,7 @@ export class MenuElement {
             if (
               isMenuHighlight(
                 table,
-                table.stateManeger.menu.dropDownMenuHighlight,
+                table.stateManager.menu.dropDownMenuHighlight,
                 typeof childItem === 'object' ? childItem?.menuKey : childItem,
                 col,
                 row,
@@ -362,10 +362,10 @@ export class MenuElement {
         const menuListItem = menuInstanceInfo.content;
         for (let i = 0; i < menuListItem?.length ?? 0; i++) {
           const menuItem = menuListItem[i];
-          let isHighlight = table.stateManeger.menu.dropDownMenuHighlight
+          let isHighlight = table.stateManager.menu.dropDownMenuHighlight
             ? isMenuHighlight(
                 table,
-                table.stateManeger.menu.dropDownMenuHighlight,
+                table.stateManager.menu.dropDownMenuHighlight,
                 typeof menuItem === 'object' ? menuItem?.menuKey || menuItem?.text : menuItem,
                 col,
                 row,
@@ -374,7 +374,7 @@ export class MenuElement {
             : false;
 
           if (
-            table.stateManeger.menu.dropDownMenuHighlight &&
+            table.stateManager.menu.dropDownMenuHighlight &&
             typeof menuItem === 'object' &&
             Array.isArray(menuItem.children) &&
             menuItem.children.length
@@ -386,7 +386,7 @@ export class MenuElement {
               if (
                 isMenuHighlight(
                   table,
-                  table.stateManeger.menu.dropDownMenuHighlight,
+                  table.stateManager.menu.dropDownMenuHighlight,
                   typeof childItem === 'object' ? childItem?.menuKey || childItem?.text : childItem,
                   col,
                   row,

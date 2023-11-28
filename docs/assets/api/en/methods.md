@@ -57,7 +57,7 @@ tableInstance.columns = newColumns;
 ```
 ## updatePagination(Function)
 
-Update page number configuration information
+Update page number configuration information, and it will be automatically redrawn after calling
 
 ```ts
   /**
@@ -143,6 +143,47 @@ Select one or more cell ranges
    * @param cellRanges: CellRange[]
    */
   selectCells(cellRanges: CellRange[]): void
+```
+
+## getSelectedCellInfos(Function)
+Get the selected cell information, and the returned result is a two-dimensional array. The first-level array item represents a row, and each item of the second-level array represents a cell information of the row.
+
+```
+  /**Get details of each cell in the selected area */
+  getSelectedCellInfos(): CellInfo[][] | null;
+```
+
+## getCellValue(Function)
+
+Get cell display value
+
+```
+  /**
+   * Get the cell display value
+   */
+  getCellValue(col: number, row: number): FieldData;
+```
+
+## getCellOriginValue(Function)
+
+Get the value before the format of the cell display data
+
+```
+  /**
+   * Get the value before the format of the cell display data
+   */
+  getCellOriginValue(col: number, row: number): FieldData;
+```
+
+## getCellRawValue(Function)
+
+Get the original value of the cell display data source
+
+```
+  /**
+   * Get the original value of the cell display data source
+   */
+  getCellRawValue(col: number, row: number): FieldData;
 ```
 
 ## getCellStyle(Function)
@@ -340,6 +381,12 @@ For pivot table interfaces, get specific cell addresses based on the header dime
 Get the selected status of all data in the checkbox under a certain field. The order corresponds to the original incoming data records. It does not correspond to the status value of the row displayed in the table.
 ```
 getCheckboxState(field?: string | number): Array
+```
+
+## getCellCheckboxState(Function)
+Get the status of a cell checkbox
+```
+getCellCheckboxState(col: number, row: number): Array
 ```
 
 ## scrollToCell(Function)

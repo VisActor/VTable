@@ -38,7 +38,7 @@ import type { BaseTableAPI } from '../ts-types/base-table';
 import { debounce } from '../tools/debounce';
 import { updateResizeColumn } from './resize/update-resize-column';
 
-export class StateManeger {
+export class StateManager {
   table: BaseTableAPI;
   /**
    * Default 默认展示
@@ -492,7 +492,7 @@ export class StateManeger {
     this.table.scenegraph.component.showResizeCol(col, y, isRightFrozen);
 
     // 调整列宽期间清空选中清空
-    this.table.stateManeger.updateSelectPos(-1, -1);
+    this.table.stateManager.updateSelectPos(-1, -1);
 
     this.table.scenegraph.updateNextFrame();
   }
@@ -553,8 +553,8 @@ export class StateManeger {
     this.table.scenegraph.setY(-this.scroll.verticalBarPos);
 
     // 滚动期间清空选中清空
-    this.table.stateManeger.updateHoverPos(-1, -1);
-    // this.table.stateManeger.updateSelectPos(-1, -1);
+    this.table.stateManager.updateHoverPos(-1, -1);
+    // this.table.stateManager.updateSelectPos(-1, -1);
 
     this.table.fireListeners(TABLE_EVENT_TYPE.SCROLL, {
       scrollTop: this.scroll.verticalBarPos,
@@ -578,8 +578,8 @@ export class StateManeger {
     //   }
     // };
     // 滚动期间清空选中清空
-    this.table.stateManeger.updateHoverPos(-1, -1);
-    // this.table.stateManeger.updateSelectPos(-1, -1);
+    this.table.stateManager.updateHoverPos(-1, -1);
+    // this.table.stateManager.updateSelectPos(-1, -1);
     this.table.fireListeners(TABLE_EVENT_TYPE.SCROLL, {
       scrollTop: this.scroll.verticalBarPos,
       scrollLeft: this.scroll.horizontalBarPos,
@@ -605,8 +605,8 @@ export class StateManeger {
     const yRatio = top / (totalHeight - this.table.scenegraph.height);
     this.table.scenegraph.component.updateVerticalScrollBarPos(yRatio);
     // 滚动期间清空选中清空
-    this.table.stateManeger.updateHoverPos(-1, -1);
-    // this.table.stateManeger.updateSelectPos(-1, -1);
+    this.table.stateManager.updateHoverPos(-1, -1);
+    // this.table.stateManager.updateSelectPos(-1, -1);
     this.table.fireListeners(TABLE_EVENT_TYPE.SCROLL, {
       scrollTop: this.scroll.verticalBarPos,
       scrollLeft: this.scroll.horizontalBarPos,
@@ -635,8 +635,8 @@ export class StateManeger {
     this.table.scenegraph.component.updateHorizontalScrollBarPos(xRatio);
 
     // 滚动期间清空选中清空
-    this.table.stateManeger.updateHoverPos(-1, -1);
-    // this.table.stateManeger.updateSelectPos(-1, -1);
+    this.table.stateManager.updateHoverPos(-1, -1);
+    // this.table.stateManager.updateSelectPos(-1, -1);
     this.table.fireListeners(TABLE_EVENT_TYPE.SCROLL, {
       scrollTop: this.scroll.verticalBarPos,
       scrollLeft: this.scroll.horizontalBarPos,

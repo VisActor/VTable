@@ -24,7 +24,7 @@ export interface IBasicHeaderDefine {
   // headerType?: HeaderTypeOption | headerType.BaseHeader | null;
   /** sort排序规则 */
   sort?: SortOption;
-  /** 是否显示sort 排序icon。如果设置了sort字段 则可以省略这个 */
+  /** 显示sort排序icon。为了仅仅显示图标，无排序逻辑。如果设置了sort字段 肯定会显示图标，会省略这个配置 */
   showSort?: boolean;
   /** 该列不支持hover交互行为 */
   disableHover?: boolean;

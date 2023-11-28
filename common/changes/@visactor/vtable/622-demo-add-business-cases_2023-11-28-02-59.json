@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "comment": "refactor: remove keydown event arguments cells\n\n",
+      "type": "none",
+      "packageName": "@visactor/vtable"
+    }
+  ],
+  "packageName": "@visactor/vtable",
+  "email": "892739385@qq.com"
+}

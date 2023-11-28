@@ -14,7 +14,7 @@ export class RenderServiceForVTable extends DefaultRenderService {
   prepare(updateBounds: boolean): void {
     this.renderTreeRoots.forEach(g => {
       const table = (g.stage as any).table as BaseTableAPI;
-      if (table && table.stateManeger.fastScrolling) {
+      if (table && table.stateManager.fastScrolling) {
         // const now = Date.now();
         // if (now - this.lastPrepareTime > 50) {
         //   this.lastPrepareTime = now;

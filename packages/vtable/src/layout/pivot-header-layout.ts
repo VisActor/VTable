@@ -1247,18 +1247,20 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
       }
       return 0;
     }
-
-    const axisOption = ((this._table as PivotChart).pivotChartAxes as ITableAxisOption[]).find(axisOption => {
-      return axisOption.orient === 'bottom';
-    });
-    if (axisOption?.visible === false) {
-      return 0;
+    if (this.indicatorKeys.length >= 1) {
+      const axisOption = ((this._table as PivotChart).pivotChartAxes as ITableAxisOption[]).find(axisOption => {
+        return axisOption.orient === 'bottom';
+      });
+      if (axisOption?.visible === false) {
+        return 0;
+      }
+      if (this.indicatorsAsCol) {
+        // 指标在列上，指标及其对应坐标轴显示在底部，下侧冻结行数为1
+        return 1;
+      }
+      return 1; // 指标在行上，维度对应坐标轴显示在底部，下侧冻结行数为1
     }
-    if (this.indicatorsAsCol) {
-      // 指标在列上，指标及其对应坐标轴显示在底部，下侧冻结行数为1
-      return 1;
-    }
-    return 1; // 指标在行上，维度对应坐标轴显示在底部，下侧冻结行数为1
+    return 0;
   }
   get rightFrozenColCount(): number {
     // // return 0;
@@ -1400,7 +1402,7 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
           id: '',
           field: undefined,
           indicatorKey: undefined,
-          cellType: undefined,
+          cellType: 'text',
           define: undefined
         }
       );
@@ -1412,7 +1414,7 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
         id: '',
         field: undefined,
         indicatorKey: undefined,
-        cellType: undefined,
+        cellType: 'text',
         define: undefined
       }
     );
@@ -2410,14 +2412,16 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
     if (!this._table.isPivotChart()) {
       return false;
     }
-    if (this.isBottomFrozenRow(col, row) || this.isRightFrozenColumn(col, row)) {
-      return true;
-    }
-    if (this.isRowHeader(col, row) && col === this.rowHeaderLevelCount - 1) {
-      return true;
-    }
-    if (this.hasTwoIndicatorAxes && this.indicatorsAsCol && row === this.columnHeaderLevelCount - 1) {
-      return true;
+    if (this.indicatorKeys.length >= 1) {
+      if (this.isBottomFrozenRow(col, row) || this.isRightFrozenColumn(col, row)) {
+        return true;
+      }
+      if (this.isRowHeader(col, row) && col === this.rowHeaderLevelCount - 1) {
+        return true;
+      }
+      if (this.hasTwoIndicatorAxes && this.indicatorsAsCol && row === this.columnHeaderLevelCount - 1) {
+        return true;
+      }
     }
     return false;
   }
@@ -2893,7 +2897,7 @@ function scaleWholeRangeSize(count: number, bandwidth: number, paddingInner: num
   }
   const space = bandSpace(count, paddingInner, paddingOuter);
   const step = bandwidth / (1 - paddingInner);
-  const wholeSize = space * step;
+  const wholeSize = Math.ceil(space * step);
   return wholeSize;
 }
 

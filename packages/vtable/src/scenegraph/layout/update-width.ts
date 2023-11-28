@@ -30,7 +30,7 @@ import { getHierarchyOffset } from '../utils/get-hierarchy-offset';
  * @return {*}
  */
 export function updateColWidth(scene: Scenegraph, col: number, detaX: number) {
-  scene.table.setColWidth(col, scene.table.getColWidth(col) + detaX, true);
+  scene.table._setColWidth(col, scene.table.getColWidth(col) + detaX, true);
 
   const autoRowHeight = scene.table.heightMode === 'autoHeight';
   // deal with corner header or column header
@@ -471,7 +471,7 @@ function resetRowHeight(scene: Scenegraph, row: number) {
   // 获取高度
   const maxHeight = computeRowHeight(row, 0, scene.table.colCount - 1, scene.table);
   // 更新table行高存储
-  scene.table.setRowHeight(row, maxHeight, true);
+  scene.table._setRowHeight(row, maxHeight, true);
 
   // 更新高度
   for (let col = 0; col < scene.table.colCount; col++) {

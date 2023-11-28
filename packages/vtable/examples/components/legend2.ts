@@ -147,7 +147,7 @@ export function createTable() {
             }
           })
         );
-        console.log(tableInstance.stateManeger?.select);
+        console.log(tableInstance.stateManager?.select);
       });
     });
 }

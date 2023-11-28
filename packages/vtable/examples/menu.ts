@@ -688,6 +688,14 @@ export const menus = [
       {
         path: 'business',
         name: 'testPerformanceMoreColumn'
+      },
+      {
+        path: 'business',
+        name: 'population-pyramid'
+      },
+      {
+        path: 'business',
+        name: 'sales-bubble'
       }
     ]
   },
