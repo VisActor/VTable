@@ -2897,7 +2897,7 @@ function scaleWholeRangeSize(count: number, bandwidth: number, paddingInner: num
   }
   const space = bandSpace(count, paddingInner, paddingOuter);
   const step = bandwidth / (1 - paddingInner);
-  const wholeSize = space * step;
+  const wholeSize = Math.ceil(space * step);
   return wholeSize;
 }
 
