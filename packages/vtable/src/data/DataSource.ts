@@ -340,7 +340,6 @@ export class DataSource extends EventTarget implements DataSourceAPI {
     const oldIndexedData = this.currentIndexedData.slice(0);
     const indexed = this.getIndexKey(index);
     const state = this.getHierarchyState(index);
-
     const data = this.getOriginalRecord(indexed);
 
     this.clearSortedIndexMap();

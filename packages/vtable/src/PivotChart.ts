@@ -650,7 +650,7 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
     return this._getHeaderLayoutMap(col, row)?.hierarchyState;
   }
 
-  hasHierarchyTreeHeader() {
+  _hasHierarchyTreeHeader() {
     return (this.internalProps.layoutMap as PivotHeaderLayoutMap).rowHierarchyType === 'tree';
   }
 

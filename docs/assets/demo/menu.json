@@ -73,6 +73,13 @@
           }
         },
         {
+          "path": "list-table-tree-lazy-load",
+          "title": {
+            "zh": "基本表格树形展示(懒加载)",
+            "en": "List Table Tree(lazy load)"
+          }
+        },
+        {
           "path": "transpose-table",
           "title": {
             "zh": "转置表格",

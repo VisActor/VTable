@@ -133,7 +133,7 @@ export function createTable() {
       ]
     },
     {
-      类别: '生活家电（懒加载）',
+      类别: '生活家电',
       销售额: '229.696',
       数量: '20',
       利润: '90.704',
@@ -143,6 +143,14 @@ export function createTable() {
   const option: VTable.ListTableConstructorOptions = {
     container: document.getElementById(CONTAINER_ID),
     columns: [
+      {
+        field: '',
+        // tree: true,
+        title: '',
+        width: '50',
+        headerType: 'checkbox',
+        cellType: 'checkbox'
+      },
       {
         field: '类别',
         tree: true,
@@ -184,41 +192,44 @@ export function createTable() {
 
   const { TREE_HIERARCHY_STATE_CHANGE } = VTable.ListTable.EVENT_TYPE;
   instance.on(TREE_HIERARCHY_STATE_CHANGE, args => {
+    console.log(TREE_HIERARCHY_STATE_CHANGE, args);
     // TODO 调用接口插入设置子节点的数据
     if (args.hierarchyState === VTable.TYPES.HierarchyState.expand && !Array.isArray(args.originData.children)) {
-      const record = args.originData;
-      setTimeout(() => {
-        const children = [
-          {
-            类别: record['类别'] + ' - 分类1', // 对应原子类别
-            销售额: 2,
-            数量: 5,
-            利润: 4
-          },
-          {
-            类别: record['类别'] + ' - 分类2', // 对应原子类别
-            销售额: 3,
-            数量: 8,
-            利润: 5
-          },
-          {
-            类别: record['类别'] + ' - 分类3（懒加载）',
-            销售额: 4,
-            数量: 20,
-            利润: 90.704,
-            children: true
-          },
-          {
-            类别: record['类别'] + ' - 分类4', // 对应原子类别
-            销售额: 5,
-            数量: 6,
-            利润: 7
-          }
-        ];
-        instance.setRecordChildren(children, args.col, args.row);
-      }, 200);
+      args.originData.children = [
+        {
+          类别: args.originData['类别'] + ' - 分类1', // 对应原子类别
+          销售额: 2,
+          数量: 5,
+          利润: 4
+        },
+        {
+          类别: args.originData['类别'] + ' - 分类2', // 对应原子类别
+          销售额: 3,
+          数量: 8,
+          利润: 5
+        },
+        {
+          类别: args.originData['类别'] + ' - 分类3',
+          销售额: 4,
+          数量: 20,
+          利润: 90.704,
+          children: true
+        },
+        {
+          类别: args.originData['类别'] + ' - 分类4', // 对应原子类别
+          销售额: 5,
+          数量: 6,
+          利润: 7
+        }
+      ];
+      instance.setRecordChildren(args.originData, args.col, args.row);
     }
   });
 
+  // VTable.bindDebugTool(instance.scenegraph.stage as any, {
+  //   customGrapicKeys: ['role', '_updateTag'],
+  // });
+
+  // 只为了方便控制太调试用，不要拷贝
   window.tableInstance = instance;
 }

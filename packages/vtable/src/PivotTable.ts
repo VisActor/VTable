@@ -828,7 +828,7 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
     const layoutMap = this.internalProps.layoutMap;
     return layoutMap.getLayoutRowTreeCount();
   }
-  hasHierarchyTreeHeader() {
+  _hasHierarchyTreeHeader() {
     return (this.internalProps.layoutMap as PivotHeaderLayoutMap).rowHierarchyType === 'tree';
   }
 

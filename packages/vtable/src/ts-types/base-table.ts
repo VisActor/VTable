@@ -594,7 +594,7 @@ export interface BaseTableAPI {
 
   getHierarchyState: (col: number, row: number) => HierarchyState | null;
 
-  hasHierarchyTreeHeader: () => boolean;
+  _hasHierarchyTreeHeader: () => boolean;
 
   _canDragHeaderPosition: (col: number, row: number) => boolean;
 
