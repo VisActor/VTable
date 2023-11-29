@@ -22,11 +22,11 @@ export async function dynamicSetY(y: number, proxy: SceneProxy) {
 function move(deltaRow: number, screenTopRow: number, screenTopY: number, y: number, proxy: SceneProxy) {
   if (deltaRow > 0) {
     // 向下滚动，顶部cell group移到底部
-    moveCell(deltaRow, 'up', screenTopRow, screenTopY, proxy);
+    moveCell(deltaRow, 'up', screenTopRow, screenTopY, y, proxy);
     proxy.updateBody(y - proxy.deltaY);
   } else if (deltaRow < 0) {
     // 向上滚动，底部cell group移到顶部
-    moveCell(-deltaRow, 'down', screenTopRow, screenTopY, proxy);
+    moveCell(-deltaRow, 'down', screenTopRow, screenTopY, y, proxy);
     proxy.updateBody(y - proxy.deltaY);
   } else {
     // 不改变row，更新body group范围
@@ -39,6 +39,7 @@ async function moveCell(
   direction: 'up' | 'down',
   screenTopRow: number,
   screenTopY: number,
+  y: number,
   proxy: SceneProxy
 ) {
   // 限制count范围
@@ -197,7 +198,23 @@ async function moveCell(
         distEndRow > proxy.bodyBottomRow - (proxy.rowEnd - proxy.rowStart + 1) ? 'down' : 'up' // 跳转到底部时，从下向上对齐
       );
     }
-    proxy.table.scenegraph.proxy.deltaY = 0;
+
+    // update body position when click scroll bar
+    if (syncTopRow === proxy.bodyTopRow) {
+      const cellGroup = proxy.table.scenegraph.highPerformanceGetCell(proxy.bodyLeftCol, syncTopRow, true);
+      const delaY = cellGroup.attribute.y - y;
+      proxy.table.scenegraph.proxy.deltaY = delaY;
+    } else if (syncBottomRow === proxy.bodyBottomRow) {
+      const cellGroup = proxy.table.scenegraph.highPerformanceGetCell(proxy.bodyLeftCol, syncBottomRow, true);
+      const delaY =
+        cellGroup.attribute.y +
+        cellGroup.attribute.height -
+        (proxy.table.tableNoFrameHeight - proxy.table.getFrozenRowsHeight()) -
+        y;
+      proxy.table.scenegraph.proxy.deltaY = -delaY;
+    } else {
+      proxy.table.scenegraph.proxy.deltaY = 0;
+    }
 
     proxy.currentRow = direction === 'up' ? proxy.currentRow + count : proxy.currentRow - count;
     proxy.totalRow = Math.max(
