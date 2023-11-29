@@ -605,23 +605,23 @@ export class ListTable extends BaseTable implements ListTableAPI {
   toggleHierarchyState(col: number, row: number) {
     const hierarchyState = this.getHierarchyState(col, row);
     if (hierarchyState === HierarchyState.expand) {
+      this._refreshHierarchyState(col, row);
       this.fireListeners(TABLE_EVENT_TYPE.TREE_HIERARCHY_STATE_CHANGE, {
         col: col,
         row: row,
         hierarchyState: HierarchyState.collapse
       });
-      this._refreshHierarchyState(col, row);
     } else if (hierarchyState === HierarchyState.collapse) {
       const record = this.getCellOriginRecord(col, row);
+      if (Array.isArray(record.children)) {
+        this._refreshHierarchyState(col, row);
+      }
       this.fireListeners(TABLE_EVENT_TYPE.TREE_HIERARCHY_STATE_CHANGE, {
         col: col,
         row: row,
         hierarchyState: HierarchyState.expand,
         originData: record
       });
-      if (Array.isArray(record.children)) {
-        this._refreshHierarchyState(col, row);
-      }
     }
   }
   /** 刷新当前节点收起展开状态，如手动更改过 */
@@ -859,9 +859,10 @@ export class ListTable extends BaseTable implements ListTableAPI {
   /** 更改单元格数据 会触发change_cell_value事件*/
   changeCellValue(col: number, row: number, value: string | number | null) {
     const recordIndex = this.getRecordIndexByCell(col, row);
-    const { field, fieldFormat } = this.internalProps.layoutMap.getBody(col, row);
+    const { field } = this.internalProps.layoutMap.getBody(col, row);
     this.dataSource.changeFieldValue(value, recordIndex, field, col, row, this);
-    const cell_value = this.getFieldData(fieldFormat || field, col, row);
+    // const cell_value = this.getFieldData(fieldFormat || field, col, row);
+    const cell_value = this.getCellValue(col, row);
     this.scenegraph.updateCellValue(col, row, cell_value);
     if (this.widthMode === 'adaptive' || (this.autoFillWidth && this.getAllColsWidth() <= this.tableNoFrameWidth)) {
       if (this.internalProps._widthResizedColMap.size === 0) {
