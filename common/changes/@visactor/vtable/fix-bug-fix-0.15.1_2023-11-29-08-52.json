@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vtable",
+      "comment": "fix: fix merge cell checkbox update",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@visactor/vtable"
+}
