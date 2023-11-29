@@ -383,8 +383,8 @@
         {
           "path": "async_data",
           "title": {
-            "zh": "异步加载数据",
-            "en": "async load data"
+            "zh": "异步懒加载数据",
+            "en": "async lazy load data"
           }
         }
       ]

@@ -1,5 +1,5 @@
-# Load data asynchronously
-In order to reduce the pressure on the backend to request data, it is recommended to use asynchronous loading of data.
+# Lazy load data asynchronously
+In order to reduce the pressure on the backend to request data, it is recommended to use asynchronous lazy loading of data.
 
 ## Basic usage
 You need to customize a VTable.data.CachedDataSource data source instance. Set the get method in the instance parameters. This method accepts an index parameter, returns a Promise, and returns data when resolving.

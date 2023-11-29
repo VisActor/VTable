@@ -1,14 +1,14 @@
 ---
 category: examples
 group: performace
-title: Async Load Data
+title: Async Lazy Load Data
 cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/asyncData.gif
 link: '../guide/data/async_data'
 ---
 
-# Async Load Data
+# Async Lazy Load Data
 
-In order to reduce the pressure on the backend to request data, you can use this method to load data asynchronously.
+In order to reduce the pressure on the backend to request data, you can use this method to lazy load data asynchronously.
 
 Note: If you use VTable internal sorting, you need to obtain all the data before sorting, so this asynchronous is equivalent to invalidation. It is recommended that the backend implement sorting logic and the frontend only displays the sorting icon.
 
