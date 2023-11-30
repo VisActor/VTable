@@ -57,6 +57,7 @@ import {
   updateSortIcon
 } from './icon/icon-update';
 import { Env } from '../tools/env';
+import { createCornerCell } from './style/corner-cell';
 // import { contextModule } from './context/module';
 
 // VChart poptip theme
@@ -354,6 +355,21 @@ export class Scenegraph {
 
     // update table group position for cell group global position, not create border yet.
     createFrameBorder(this.tableGroup, this.table.theme.frameStyle, this.tableGroup.role, undefined, true);
+
+    if (this.table.isPivotChart()) {
+      createCornerCell(
+        this.rightTopCornerGroup,
+        this.table.theme.cornerRightTopCellStyle || this.table.theme.cornerHeaderStyle || {}
+      );
+      createCornerCell(
+        this.leftBottomCornerGroup,
+        this.table.theme.cornerLeftBottomCellStyle || this.table.theme.cornerHeaderStyle || {}
+      );
+      createCornerCell(
+        this.rightBottomCornerGroup,
+        this.table.theme.cornerRightBottomCellStyle || this.table.theme.cornerHeaderStyle || {}
+      );
+    }
 
     this.proxy.createGroupForFirstScreen(
       this.cornerHeaderGroup,
