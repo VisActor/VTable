@@ -1,6 +1,7 @@
 import type { IStage } from '@visactor/vrender';
 import type { Chart } from '../chart';
 import { Bounds, isValid } from '@visactor/vutils';
+import type { BaseTableAPI } from '../../../ts-types/base-table';
 export const cancelRenderChartQueue = false;
 export const chartRenderKeys: string[] = [];
 export const chartRenderQueueList: Chart[] = [];
@@ -61,6 +62,11 @@ export function renderChart(chart: Chart) {
     false,
     false
   );
+
+  // to be fixed: update state everytimes render, need be fix by vchart
+  const table = (chart.getRootNode() as any).table as BaseTableAPI;
+  (table.internalProps.layoutMap as any)?.updateDataStateToActiveChartInstance?.(chartInstance);
+
   if (typeof dataId === 'string') {
     chartInstance.updateDataSync(dataId, data ?? []);
   } else {

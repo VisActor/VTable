@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vtable",
+      "comment": "fix: fix chart item select problem",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vtable"
+}
