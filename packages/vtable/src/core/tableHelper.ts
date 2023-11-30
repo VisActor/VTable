@@ -56,7 +56,7 @@ export function _setRecords(table: BaseTableAPI, records: any[] = []): void {
     const newDataSource = (table.internalProps.dataSource = CachedDataSource.ofArray(
       data,
       table.pagination,
-      (table.options as any).hierarchyExpandLevel ?? (table.hasHierarchyTreeHeader?.() ? 1 : undefined)
+      (table.options as any).hierarchyExpandLevel ?? (table._hasHierarchyTreeHeader?.() ? 1 : undefined)
     ));
     table.addReleaseObj(newDataSource);
   });

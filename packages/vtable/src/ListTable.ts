@@ -605,42 +605,39 @@ export class ListTable extends BaseTable implements ListTableAPI {
   toggleHierarchyState(col: number, row: number) {
     const hierarchyState = this.getHierarchyState(col, row);
     if (hierarchyState === HierarchyState.expand) {
+      this._refreshHierarchyState(col, row);
       this.fireListeners(TABLE_EVENT_TYPE.TREE_HIERARCHY_STATE_CHANGE, {
         col: col,
         row: row,
         hierarchyState: HierarchyState.collapse
       });
     } else if (hierarchyState === HierarchyState.collapse) {
+      const record = this.getCellOriginRecord(col, row);
+      if (Array.isArray(record.children)) {
+        this._refreshHierarchyState(col, row);
+      }
       this.fireListeners(TABLE_EVENT_TYPE.TREE_HIERARCHY_STATE_CHANGE, {
         col: col,
         row: row,
         hierarchyState: HierarchyState.expand,
-        originData: this.getCellOriginRecord(col, row)
+        originData: record
       });
     }
-
+  }
+  /** 刷新当前节点收起展开状态，如手动更改过 */
+  _refreshHierarchyState(col: number, row: number) {
     const index = this.getRecordIndexByCell(col, row);
     const diffDataIndices = this.dataSource.toggleHierarchyState(index);
     const diffPositions = this.internalProps.layoutMap.toggleHierarchyState(diffDataIndices);
     //影响行数
     this.refreshRowColCount();
-    // //TODO 这里可以优化计算性能 针对变化的行高列宽进行计算
-    // //更新列宽
-    // this.computeColsWidth();
-    // //更新行高
-    // this.computeRowsHeight();
-    // 重新判断下行表头宽度是否过宽
-    // this._resetFrozenColCount();
-    //更改滚动条size
-    //重绘
-    // this.invalidate();
 
     this.clearCellStyleCache();
     this.scenegraph.updateHierarchyIcon(col, row);
     this.scenegraph.updateRow(diffPositions.removeCellPositions, diffPositions.addCellPositions);
   }
 
-  hasHierarchyTreeHeader() {
+  _hasHierarchyTreeHeader() {
     return (this.options.columns ?? this.options.header)?.some((column, i) => column.tree);
   }
 
@@ -817,9 +814,12 @@ export class ListTable extends BaseTable implements ListTableAPI {
    * @param col col position of the record, it is optional
    * @param row row position of the record, it is optional
    */
-  setRecord(record: any, col?: number, row?: number) {
+  setRecordChildren(records: any[], col: number, row: number) {
+    const record = this.getCellOriginRecord(col, row);
+    record.children = records;
     const index = this.getRecordIndexByCell(col, row);
     this.dataSource.setRecord(record, index);
+    this._refreshHierarchyState(col, row);
   }
   /** 开启单元格编辑 */
   startEditCell(col?: number, row?: number) {
@@ -859,10 +859,10 @@ export class ListTable extends BaseTable implements ListTableAPI {
   /** 更改单元格数据 会触发change_cell_value事件*/
   changeCellValue(col: number, row: number, value: string | number | null) {
     const recordIndex = this.getRecordIndexByCell(col, row);
-    const { field, fieldFormat } = this.internalProps.layoutMap.getBody(col, row);
+    const { field } = this.internalProps.layoutMap.getBody(col, row);
     this.dataSource.changeFieldValue(value, recordIndex, field, col, row, this);
-    const cell_value = this.getFieldData(fieldFormat || field, col, row);
-    this.scenegraph.updateCellValue(col, row, cell_value);
+    // const cell_value = this.getCellValue(col, row);
+    this.scenegraph.updateCellContent(col, row);
     if (this.widthMode === 'adaptive' || (this.autoFillWidth && this.getAllColsWidth() <= this.tableNoFrameWidth)) {
       if (this.internalProps._widthResizedColMap.size === 0) {
         //如果没有手动调整过行高列宽 则重新计算一遍并重新分配

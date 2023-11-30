@@ -153,3 +153,11 @@ Whether to display the sorting icon, no data sorting logic
 
 ${prefix} disableColumnResize(boolean)
 Whether to disable column width adjustment. If it is a transposed table or the indicator is specified in the row direction of the pivot table, this configuration does not take effect.
+
+${prefix} editor (string|Object|Function)
+
+Configure the indicator cell editor
+```
+editor?: string | IEditor | ((args: BaseCellInfo & { table: BaseTableAPI }) => string | IEditor);
+```
+Among them, IEditor is the editor interface defined in @visactor/vtable-editors. For details, please refer to the source code: https://github.com/VisActor/VTable/blob/feat/editCell/packages/vtable-editors/src/types.ts .

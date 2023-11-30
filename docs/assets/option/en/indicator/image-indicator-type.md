@@ -6,7 +6,7 @@ Specifies the column type as `'image'`, cellType can be omitted and defaults to 
 
 ##${prefix} cellType(string) = 'image'
 
-Specifies the column type as `'image'`, cellType can be omitted and defaults to `'text'`. Other configuration items are as follows (also applicable to 'vidio' type):
+Specifies the column type as `'image'`, cellType can be omitted and defaults to `'text'`. Other configuration items are as follows (also applicable to 'video' type):
 
 {{ use: base-indicator-type(
     prefix = '##'+${prefix},

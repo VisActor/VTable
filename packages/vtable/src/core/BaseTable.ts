@@ -2347,15 +2347,17 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
   abstract refreshRowColCount(): void;
   abstract getHierarchyState(col: number, row: number): HierarchyState | null;
   abstract toggleHierarchyState(col: number, row: number): void;
-  abstract hasHierarchyTreeHeader(): boolean;
+  abstract _hasHierarchyTreeHeader(): boolean;
   abstract getMenuInfo(col: number, row: number, type: string): DropDownMenuEventInfo;
   abstract moveHeaderPosition(source: CellAddress, target: CellAddress): boolean;
   /** @private */
-  abstract getFieldData(field: FieldDef | FieldFormat | undefined, col: number, row: number): FieldData;
+  // abstract getFieldData(field: FieldDef | FieldFormat | undefined, col: number, row: number): FieldData;
   abstract getRecordIndexByCell(col: number, row: number): number;
   abstract getCellOriginRecord(col: number, row: number): MaybePromiseOrUndefined;
+  abstract getCellRawRecord(col: number, row: number): MaybePromiseOrUndefined;
   abstract getCellValue(col: number, row: number): FieldData;
   abstract getCellOriginValue(col: number, row: number): FieldData;
+  abstract getCellRawValue(col: number, row: number): FieldData;
 
   abstract getTableIndexByRecordIndex(recordIndex: number): number;
   abstract getTableIndexByField(field: FieldDef): number;
