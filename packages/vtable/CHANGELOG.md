@@ -1,6 +1,13 @@
 # Change Log - @visactor/vtable
 
-This log was last generated on Tue, 28 Nov 2023 12:32:45 GMT and should not be manually modified.
+This log was last generated on Thu, 30 Nov 2023 02:57:38 GMT and should not be manually modified.
+
+## 0.15.2
+Thu, 30 Nov 2023 02:57:38 GMT
+
+### Patches
+
+- fix: fix merge cell checkbox update
 
 ## 0.15.1
 Tue, 28 Nov 2023 12:32:45 GMT
