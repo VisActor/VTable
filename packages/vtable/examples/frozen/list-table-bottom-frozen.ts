@@ -76,7 +76,7 @@ export function createTable() {
     records,
     columns,
     bottomFrozenRowCount: 2,
-    frozenColCount: 2
+    allowFrozenColCount: 2
   };
   const tableInstance = new VTable.ListTable(option);
   window.tableInstance = tableInstance;

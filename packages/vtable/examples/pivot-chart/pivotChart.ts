@@ -9253,6 +9253,75 @@ export function createTable() {
       '230713150305018': '利润'
     }
   ];
+  const theme = {
+    bodyStyle: {
+      borderColor: 'gray',
+      borderLineWidth: [1, 0, 0, 1]
+    },
+    headerStyle: {
+      borderColor: 'gray',
+      borderLineWidth: [0, 0, 0, 1],
+      hover: {
+        cellBgColor: '#CCE0FF'
+      }
+    },
+    rowHeaderStyle: {
+      borderColor: 'gray',
+      borderLineWidth: [1, 0, 1, 0],
+      hover: {
+        cellBgColor: ''
+      }
+    },
+    cornerHeaderStyle: {
+      borderColor: 'gray',
+      borderLineWidth: [0, 0, 1, 0],
+      hover: {
+        cellBgColor: ''
+      }
+    },
+    cornerRightTopCellStyle: {
+      borderColor: 'gray',
+      borderLineWidth: [0, 0, 1, 1],
+      hover: {
+        cellBgColor: ''
+      }
+    },
+    cornerLeftBottomCellStyle: {
+      borderColor: 'gray',
+      borderLineWidth: [1, 1, 0, 0],
+      hover: {
+        cellBgColor: ''
+      }
+    },
+    cornerRightBottomCellStyle: {
+      borderColor: 'gray',
+      borderLineWidth: [1, 0, 0, 1],
+      hover: {
+        cellBgColor: ''
+      }
+    },
+    rightFrozenStyle: {
+      borderColor: 'gray',
+      borderLineWidth: [1, 0, 1, 1],
+      hover: {
+        cellBgColor: ''
+      }
+    },
+    bottomFrozenStyle: {
+      borderColor: 'gray',
+      borderLineWidth: [1, 1, 0, 1],
+      hover: {
+        cellBgColor: ''
+      }
+    },
+    selectionStyle: {
+      cellBgColor: '',
+      cellBorderColor: ''
+    },
+    frameStyle: {
+      borderLineWidth: 0
+    }
+  };
   const option: VTable.PivotChartConstructorOptions = {
     columnTree,
     rowTree,
@@ -9274,75 +9343,7 @@ export function createTable() {
         padding: 0
       }
     },
-    theme: {
-      bodyStyle: {
-        borderColor: 'gray',
-        borderLineWidth: [1, 0, 0, 1]
-      },
-      headerStyle: {
-        borderColor: 'gray',
-        borderLineWidth: [0, 0, 0, 1],
-        hover: {
-          cellBgColor: '#CCE0FF'
-        }
-      },
-      rowHeaderStyle: {
-        borderColor: 'gray',
-        borderLineWidth: [1, 0, 1, 0],
-        hover: {
-          cellBgColor: ''
-        }
-      },
-      cornerHeaderStyle: {
-        borderColor: 'gray',
-        borderLineWidth: [0, 0, 1, 0],
-        hover: {
-          cellBgColor: ''
-        }
-      },
-      cornerRightTopCellStyle: {
-        borderColor: 'gray',
-        borderLineWidth: [0, 0, 1, 1],
-        hover: {
-          cellBgColor: ''
-        }
-      },
-      cornerLeftBottomCellStyle: {
-        borderColor: 'gray',
-        borderLineWidth: [1, 1, 0, 0],
-        hover: {
-          cellBgColor: ''
-        }
-      },
-      cornerRightBottomCellStyle: {
-        borderColor: 'gray',
-        borderLineWidth: [1, 0, 0, 1],
-        hover: {
-          cellBgColor: ''
-        }
-      },
-      rightFrozenStyle: {
-        borderColor: 'gray',
-        borderLineWidth: [1, 0, 1, 1],
-        hover: {
-          cellBgColor: ''
-        }
-      },
-      bottomFrozenStyle: {
-        borderColor: 'gray',
-        borderLineWidth: [1, 1, 0, 1],
-        hover: {
-          cellBgColor: ''
-        }
-      },
-      selectionStyle: {
-        cellBgColor: '',
-        cellBorderColor: ''
-      },
-      frameStyle: {
-        borderLineWidth: 0
-      }
-    }
+    theme
 
     // select: {
     //   disableSelect: true
@@ -9359,4 +9360,9 @@ export function createTable() {
   window.tableInstance = tableInstance;
 
   bindDebugTool(tableInstance.scenegraph.stage, { customGrapicKeys: ['col', 'row'] });
+
+  window.update = () => {
+    theme.cornerLeftBottomCellStyle.borderColor = 'red';
+    tableInstance.updateTheme(theme);
+  };
 }

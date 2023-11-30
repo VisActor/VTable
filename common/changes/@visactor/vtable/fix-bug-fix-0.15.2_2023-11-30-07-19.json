@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vtable",
+      "comment": "fix: fix bottom left frozen cell style",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@visactor/vtable"
+}
