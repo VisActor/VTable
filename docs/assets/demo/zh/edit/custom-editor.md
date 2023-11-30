@@ -302,6 +302,9 @@ Promise.all([loadCSS(cssUrl), loadJS(jsUrl)])
     heightMode: 'autoHeight'
   };
   tableInstance = new VTable.ListTable(option);
+  tableInstance.on('change_cell_value', arg => {
+    console.log(arg);
+  });
   window['tableInstance'] = tableInstance;
 })
 .catch((error) => {

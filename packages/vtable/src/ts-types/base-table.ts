@@ -573,7 +573,13 @@ export interface BaseTableAPI {
   getCellValue: (col: number, row: number) => string | null;
   /** 获取单元格展示数据的format前的值 */
   getCellOriginValue: (col: number, row: number) => any;
+  /** 获取单元格展示数据源最原始值 */
+  getCellRawValue: (col: number, row: number) => FieldData;
+  /** 获取单元格展示数据的format前的record源数据 */
   getCellOriginRecord: (col: number, row: number) => MaybePromiseOrUndefined;
+  /** 获取单元格展示源数据 */
+  getCellRawRecord: (col: number, row: number) => MaybePromiseOrUndefined;
+
   _dropDownMenuIsHighlight: (col: number, row: number, index: number) => boolean;
   // bindEvents(): void;
   refreshRowColCount: () => void;

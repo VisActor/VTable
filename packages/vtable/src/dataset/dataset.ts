@@ -1,4 +1,4 @@
-import { isArray } from '@visactor/vutils';
+import { isArray, isValid } from '@visactor/vutils';
 import type {
   FilterRules,
   IDataConfig,
@@ -33,7 +33,6 @@ import {
   sortBy,
   typeSort
 } from './statistics-helper';
-import { getNewRangeToAlign } from '../layout/chart-helper/zero-align';
 /**
  * 数据处理模块
  */
@@ -791,7 +790,7 @@ export class Dataset {
     //   agg = this.rowTotals[flatRowKey]?.[sortByIndicatorIndex];
     // } else {
     const agg = this.tree[flatRowKey]?.[flatColKey]?.[indicatorIndex];
-    if (considerChangedValue && this.changedTree[flatRowKey]?.[flatColKey]?.[indicatorIndex]) {
+    if (considerChangedValue && isValid(this.changedTree[flatRowKey]?.[flatColKey]?.[indicatorIndex])) {
       const changeValue = this.changedTree[flatRowKey][flatColKey][indicatorIndex];
       if (agg) {
         return {
@@ -799,6 +798,8 @@ export class Dataset {
             return changeValue;
           },
           formatValue: agg.formatValue,
+          formatFun: agg.formatFun,
+          records: agg.records,
           className: '',
           push() {
             // do nothing
@@ -811,7 +812,7 @@ export class Dataset {
           }
         };
         // agg.clearCacheValue();
-        // agg.value = () => {
+        // agg.value = () => { // 你们直接在原来的agg上赋值 会影响获取原始值的获取
         //   return changeValue;
         // };
       }

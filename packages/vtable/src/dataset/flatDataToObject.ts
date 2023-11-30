@@ -1,3 +1,4 @@
+import { isValid } from '@visactor/vutils';
 import { Env } from '../tools/env';
 
 // if (Env.mode === 'node') {
@@ -206,7 +207,7 @@ export class FlatDataToObjects {
       isHasIndicator && colKey.push(indicator);
       flatColKey = colKey.join(this.stringJoinChar);
     }
-    if (considerChangedValue && this.changedTree[flatRowKey]?.[flatColKey]) {
+    if (considerChangedValue && isValid(this.changedTree[flatRowKey]?.[flatColKey])) {
       return { value: this.changedTree[flatRowKey][flatColKey], record: this.tree?.[flatRowKey]?.[flatColKey]?.record };
     }
     return this.tree?.[flatRowKey]?.[flatColKey] ?? undefined;

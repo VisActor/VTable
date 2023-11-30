@@ -650,6 +650,10 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
     const dataValue = this.records[rowIndex]?.[colIndex];
     return dataValue;
   }
+
+  getCellRawRecord(col: number, row: number) {
+    return this.getCellOriginRecord(col, row);
+  }
   /**
    * 全量更新排序规则 TODO  待完善
    * @param sortRules
@@ -990,8 +994,8 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
       this.records[rowIndex][colIndex] = newValue;
     }
 
-    const cell_value = this.getCellValue(col, row);
-    this.scenegraph.updateCellValue(col, row, cell_value);
+    // const cell_value = this.getCellValue(col, row);
+    this.scenegraph.updateCellValue(col, row);
     if (this.widthMode === 'adaptive' || (this.autoFillWidth && this.getAllColsWidth() <= this.tableNoFrameWidth)) {
       if (this.internalProps._widthResizedColMap.size === 0) {
         //如果没有手动调整过行高列宽 则重新计算一遍并重新分配

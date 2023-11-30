@@ -2,7 +2,7 @@
 category: examples
 group: table-type
 title: Basic table tree display (lazy loading of child node data)
-cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/list-tree.png
+cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/list-tree-lazy-load-en.gif
 link: '../guide/table_type/List_table/tree_list'
 option: ListTable-columns-text#tree
 ---

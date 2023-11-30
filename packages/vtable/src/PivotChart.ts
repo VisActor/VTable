@@ -448,6 +448,10 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
     // return table.getFieldData(field, col, row);
   }
 
+  getCellRawValue(col: number, row: number) {
+    return this.getCellOriginValue(col, row);
+  }
+
   // 获取原始数据
   getCellOriginRecord(col: number, row: number) {
     const table = this;
@@ -471,6 +475,10 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
       // return ''
     }
     return undefined;
+  }
+
+  getCellRawRecord(col: number, row: number) {
+    return this.getCellOriginRecord(col, row);
   }
   /**
    * 全量更新排序规则 TODO  待完善

@@ -164,8 +164,6 @@ export interface ListTableAPI extends BaseTableAPI {
   startEditCell: (col?: number, row?: number) => void;
   /** 结束编辑 */
   completeEditCell: () => void;
-  /** 获取单元格展示数据源最原始值 */
-  getCellRawValue: (col: number, row: number) => FieldData;
   //#endregion
 }
 export interface PivotTableConstructorOptions extends BaseTableConstructorOptions {

@@ -637,6 +637,10 @@ export const menus = [
       {
         path: 'editor',
         name: 'pivot-editor'
+      },
+      {
+        path: 'editor',
+        name: 'video-editor'
       }
     ]
   },

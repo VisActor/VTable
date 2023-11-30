@@ -825,6 +825,13 @@
             "zh": "自定义编辑器",
             "en": "custom date editor"
           }
+        },
+        {
+          "path": "pivot-table-editor",
+          "title": {
+            "zh": "透视表编辑数据",
+            "en": "PivotTable edit data"
+          }
         }
       ]
     },

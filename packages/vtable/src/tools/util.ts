@@ -1,3 +1,4 @@
+import { isValid } from '@visactor/vutils';
 import type { SortOrder } from '../ts-types';
 
 export const judgeType = (value: any) => {
@@ -326,12 +327,6 @@ export function toFixed(n: number, fixed = 0) {
   return parseFloat(n.toFixed(fixed));
 }
 
-export function isValid(v: any): boolean {
-  if (isUndefined(v) || isNull(v)) {
-    return false;
-  }
-  return true;
-}
 export function validToString(v: any) {
   if (isString(v) || isNumber(v) || isBoolean(v)) {
     return v.toString();

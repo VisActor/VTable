@@ -861,9 +861,8 @@ export class ListTable extends BaseTable implements ListTableAPI {
     const recordIndex = this.getRecordIndexByCell(col, row);
     const { field } = this.internalProps.layoutMap.getBody(col, row);
     this.dataSource.changeFieldValue(value, recordIndex, field, col, row, this);
-    // const cell_value = this.getFieldData(fieldFormat || field, col, row);
-    const cell_value = this.getCellValue(col, row);
-    this.scenegraph.updateCellValue(col, row, cell_value);
+    // const cell_value = this.getCellValue(col, row);
+    this.scenegraph.updateCellValue(col, row);
     if (this.widthMode === 'adaptive' || (this.autoFillWidth && this.getAllColsWidth() <= this.tableNoFrameWidth)) {
       if (this.internalProps._widthResizedColMap.size === 0) {
         //如果没有手动调整过行高列宽 则重新计算一遍并重新分配
