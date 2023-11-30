@@ -38,7 +38,7 @@ VTable.register.editor('number-editor', numberEditor);
 VTable.register.editor('date-editor', dateInputEditor);
 VTable.register.editor('list-editor', listEditor);
 ```
-Next, you need to specify the editor to use in the columns configuration:
+Next, you need to specify the editor to use in the columns configuration(If it is a pivot table, configure the editor in indicators):
 
 ```javascript
 columns: [
