@@ -2,6 +2,32 @@
   "name": "@visactor/vtable",
   "entries": [
     {
+      "version": "0.15.3",
+      "tag": "@visactor/vtable_v0.15.3",
+      "date": "Thu, 30 Nov 2023 10:46:46 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "feat: add setRecordChildren to lazy load tree node\n\n"
+          },
+          {
+            "comment": "feat: pivot table support editable\n\n"
+          },
+          {
+            "comment": "fix: fix cornerCellStyle update"
+          },
+          {
+            "comment": "fix: fix chart item select problem"
+          }
+        ],
+        "patch": [
+          {
+            "comment": "fix: fix bottom left frozen cell style"
+          }
+        ]
+      }
+    },
+    {
       "version": "0.15.2",
       "tag": "@visactor/vtable_v0.15.2",
       "date": "Thu, 30 Nov 2023 02:57:38 GMT",

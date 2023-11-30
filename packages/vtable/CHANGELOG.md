@@ -1,6 +1,24 @@
 # Change Log - @visactor/vtable
 
-This log was last generated on Thu, 30 Nov 2023 02:57:38 GMT and should not be manually modified.
+This log was last generated on Thu, 30 Nov 2023 10:46:46 GMT and should not be manually modified.
+
+## 0.15.3
+Thu, 30 Nov 2023 10:46:46 GMT
+
+### Patches
+
+- fix: fix bottom left frozen cell style
+
+### Updates
+
+- feat: add setRecordChildren to lazy load tree node
+
+
+- feat: pivot table support editable
+
+
+- fix: fix cornerCellStyle update
+- fix: fix chart item select problem
 
 ## 0.15.2
 Thu, 30 Nov 2023 02:57:38 GMT
