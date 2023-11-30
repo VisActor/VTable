@@ -2624,7 +2624,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
               col,
               row,
               table: this,
-              value: this.getCellValue(col, row),
+              value: customMerge.text,
               dataValue: this.getCellOriginValue(col, row),
               cellHeaderPaths: this.getCellHeaderPaths(col, row)
             },
