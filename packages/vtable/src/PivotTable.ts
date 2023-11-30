@@ -995,7 +995,7 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
     }
 
     // const cell_value = this.getCellValue(col, row);
-    this.scenegraph.updateCellValue(col, row);
+    this.scenegraph.updateCellContent(col, row);
     if (this.widthMode === 'adaptive' || (this.autoFillWidth && this.getAllColsWidth() <= this.tableNoFrameWidth)) {
       if (this.internalProps._widthResizedColMap.size === 0) {
         //如果没有手动调整过行高列宽 则重新计算一遍并重新分配

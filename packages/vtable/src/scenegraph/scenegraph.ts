@@ -1593,8 +1593,8 @@ export class Scenegraph {
     }
     return 0;
   }
-  /** 更新场景树某个单元格的值 */
-  updateCellValue(col: number, row: number) {
-    updateCell(col, row, this.table);
-  }
+  // /** 更新场景树某个单元格的值 */
+  // updateCellValue(col: number, row: number) {
+  //   updateCell(col, row, this.table);
+  // }
 }
