@@ -208,6 +208,9 @@ VTable.register.editor('list-editor', list_editor);
     heightMode: 'autoHeight'
   };
   tableInstance = new VTable.ListTable(option);
+  tableInstance.on('change_cell_value', arg => {
+    console.log(arg);
+  });
   window['tableInstance'] = tableInstance;
 
 ```

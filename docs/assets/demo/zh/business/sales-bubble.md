@@ -1,6 +1,6 @@
 ---
 category: examples
-group: business
+group: Business
 title: 销售情况气泡图
 cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/sales-bubble.png
 link: '../guide/custom_define/custom_render'

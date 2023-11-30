@@ -423,6 +423,9 @@ export class DatasetForPivotTable {
           },
           reset() {
             // do nothing
+          },
+          clearCacheValue() {
+            // do nothing
           }
         };
   }

@@ -13,7 +13,7 @@ import type {
 import { HierarchyState } from '../ts-types';
 import { applyChainSafe, getOrApply, obj, isPromise, emptyFn } from '../tools/helper';
 import { EventTarget } from '../event/EventTarget';
-import { getValueByPath } from '../tools/util';
+import { getValueByPath, isAllDigits } from '../tools/util';
 import { diffCellIndices } from '../tools/diff-cell';
 import { cloneDeep, isValid } from '@visactor/vutils';
 import type { BaseTableAPI } from '../ts-types/base-table';
@@ -150,7 +150,7 @@ export class DataSource extends EventTarget implements DataSourceAPI {
     return EVENT_TYPE;
   }
   protected treeDataHierarchyState: Map<number | string, HierarchyState> = new Map();
-  changeValuesMap: Record<number, boolean>[] = [];
+  beforeChangedRecordsMap: Record<number, any>[] = [];
   constructor(obj?: DataSourceParam | DataSource, pagination?: IPagination, hierarchyExpandLevel?: number) {
     super();
 
@@ -340,7 +340,6 @@ export class DataSource extends EventTarget implements DataSourceAPI {
     const oldIndexedData = this.currentIndexedData.slice(0);
     const indexed = this.getIndexKey(index);
     const state = this.getHierarchyState(index);
-
     const data = this.getOriginalRecord(indexed);
 
     this.clearSortedIndexMap();
@@ -465,12 +464,12 @@ export class DataSource extends EventTarget implements DataSourceAPI {
     if (index >= 0) {
       const dataIndex = this.getIndexKey(index) as number;
 
-      if (!this.changeValuesMap[dataIndex]) {
+      if (!this.beforeChangedRecordsMap[dataIndex]) {
         const originRecord = this.getOriginalRecord(dataIndex);
-        this.changeValuesMap[dataIndex] = cloneDeep(originRecord);
+        this.beforeChangedRecordsMap[dataIndex] = cloneDeep(originRecord);
       }
       if (typeof field === 'string' || typeof field === 'number') {
-        const beforeChangedValue = this.changeValuesMap[dataIndex][field]; // this.getOriginalField(index, field, col, row, table);
+        const beforeChangedValue = this.beforeChangedRecordsMap[dataIndex][field]; // this.getOriginalField(index, field, col, row, table);
         const record = this.getOriginalRecord(dataIndex);
         if (typeof beforeChangedValue === 'number' && isAllDigits(value)) {
           record[field] = parseFloat(value);
@@ -622,8 +621,8 @@ export class DataSource extends EventTarget implements DataSourceAPI {
     });
   }
   protected getRawRecord(dataIndex: number): MaybePromiseOrUndefined {
-    if (this.changeValuesMap?.[dataIndex as number]) {
-      return this.changeValuesMap[dataIndex as number];
+    if (this.beforeChangedRecordsMap?.[dataIndex as number]) {
+      return this.beforeChangedRecordsMap[dataIndex as number];
     }
     return getValue(this._get(dataIndex), (val: MaybePromiseOrUndefined) => {
       this.recordPromiseCallBack(dataIndex, val);
@@ -689,9 +688,4 @@ export class DataSource extends EventTarget implements DataSourceAPI {
     },
     length: 0
   });
-}
-
-function isAllDigits(str: string) {
-  const pattern = /^-?\d+(\.\d+)?$/;
-  return pattern.test(str);
 }
