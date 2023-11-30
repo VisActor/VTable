@@ -13,6 +13,9 @@ import { Rect } from '../../tools/Rect';
 import type { EventManager } from '../event';
 import type { BaseTableAPI } from '../../ts-types/base-table';
 import type { IIconGraphicAttribute } from '../../scenegraph/graphic/icon';
+import { getCellMergeInfo } from '../../scenegraph/utils/get-cell-merge';
+import type { CheckBox, CheckboxAttributes } from '@visactor/vrender-components';
+
 // PointerMove敏感度太高了 记录下上一个鼠标位置 在接收到PointerMove事件时做判断 是否到到触发框选或者移动表头操作的标准，防止误触
 let LastPointerXY: { x: number; y: number };
 let LastBodyPointerXY: { x: number; y: number };
@@ -619,6 +622,23 @@ export function bindTableGroupListener(eventManager: EventManager) {
     const eventArgsSet: SceneEvent = getCellEventArgsSet(e);
     const { col, row } = eventArgsSet.eventArgs;
     const cellInfo = table.getCellInfo(col, row);
+
+    const mergeRange = getCellMergeInfo(table, col, row);
+    if (mergeRange) {
+      for (let col = mergeRange.start.col; col <= mergeRange.end.col; col++) {
+        for (let row = mergeRange.start.row; row <= mergeRange.end.row; row++) {
+          const cellGroup = table.scenegraph.getCell(col, row);
+          cellGroup.forEachChildren((checkbox: CheckBox) => {
+            if (checkbox.name === 'checkbox') {
+              checkbox.setAttributes({
+                checked: (e.target.attribute as CheckboxAttributes).checked,
+                indeterminate: (e.target.attribute as CheckboxAttributes).indeterminate
+              });
+            }
+          });
+        }
+      }
+    }
 
     const cellsEvent: MousePointerCellEvent & { checked: boolean } = {
       ...cellInfo,

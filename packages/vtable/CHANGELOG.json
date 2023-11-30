@@ -2,6 +2,18 @@
   "name": "@visactor/vtable",
   "entries": [
     {
+      "version": "0.15.2",
+      "tag": "@visactor/vtable_v0.15.2",
+      "date": "Thu, 30 Nov 2023 02:57:38 GMT",
+      "comments": {
+        "patch": [
+          {
+            "comment": "fix: fix merge cell checkbox update"
+          }
+        ]
+      }
+    },
+    {
       "version": "0.15.1",
       "tag": "@visactor/vtable_v0.15.1",
       "date": "Tue, 28 Nov 2023 12:32:45 GMT",

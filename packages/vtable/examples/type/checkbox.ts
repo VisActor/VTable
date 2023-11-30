@@ -21,6 +21,23 @@ export function createTable() {
         // checked: false
       },
       {
+        title: 'parent',
+        columns: [
+          {
+            field: 'percent',
+            title: 'percent',
+            width: 120,
+            sort: true
+          },
+          {
+            field: 'percent',
+            title: 'percent',
+            width: 120,
+            sort: true
+          }
+        ]
+      },
+      {
         field: 'percent',
         title: 'percent',
         width: 120,

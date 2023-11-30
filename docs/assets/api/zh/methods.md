@@ -651,4 +651,4 @@ use case: 点击图例项后 更新过滤规则 来更新图表
 获取当前表格的全部数据
 
 ## dataSouce(CachedDataSource)
-给VTable表格组件实例设置数据源，具体使用可以参考[异步加载数据demo](../demo/performance/async-data)及[教程](../guide/data/async_data)
+给VTable表格组件实例设置数据源，具体使用可以参考[异步懒加载数据demo](../demo/performance/async-data)及[教程](../guide/data/async_data)
