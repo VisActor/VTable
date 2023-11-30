@@ -629,6 +629,14 @@ export const menus = [
       {
         path: 'editor',
         name: 'custom-date-editor'
+      },
+      {
+        path: 'editor',
+        name: 'pivot-analysis-editor'
+      },
+      {
+        path: 'editor',
+        name: 'pivot-editor'
       }
     ]
   },

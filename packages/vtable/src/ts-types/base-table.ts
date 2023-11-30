@@ -577,7 +577,7 @@ export interface BaseTableAPI {
   _dropDownMenuIsHighlight: (col: number, row: number, index: number) => boolean;
   // bindEvents(): void;
   refreshRowColCount: () => void;
-  getFieldData: (field: FieldDef | FieldFormat | undefined, col: number, row: number) => FieldData;
+  // getFieldData: (field: FieldDef | FieldFormat | undefined, col: number, row: number) => FieldData;
   _hasField: (field: FieldDef, col: number, row: number) => boolean;
   getCellHeaderPaths: (col: number, row: number) => ICellHeaderPaths;
   getCellLocation: (col: number, row: number) => CellLocation;

@@ -18,12 +18,10 @@ import type {
 } from './ts-types';
 import { HierarchyState } from './ts-types';
 import { PivotHeaderLayoutMap } from './layout/pivot-header-layout';
-import { getField } from './data/DataSource';
 import { FlatDataToObjects } from './dataset/flatDataToObject';
 import { PIVOT_TABLE_EVENT_TYPE } from './ts-types/pivot-table/PIVOT_TABLE_EVENT_TYPE';
 import { cellInRange, emptyFn } from './tools/helper';
 import { Dataset } from './dataset/dataset';
-import { _setDataSource } from './core/tableHelper';
 import { BaseTable } from './core/BaseTable';
 import type { PivotTableProtected } from './ts-types/base-table';
 import { Title } from './components/title/title';
@@ -31,12 +29,17 @@ import { cloneDeep } from '@visactor/vutils';
 import { Env } from './tools/env';
 import type { LayouTreeNode } from './layout/pivot-layout-helper';
 import { TABLE_EVENT_TYPE } from './core/TABLE_EVENT_TYPE';
-
+import { EditManeger } from './edit/edit-manager';
+import * as editors from './edit/editors';
+import type { IEditor } from '@visactor/vtable-editors';
+import { computeColWidth } from './scenegraph/layout/compute-col-width';
+import { computeRowHeight } from './scenegraph/layout/compute-row-height';
+import { isAllDigits } from './tools/util';
 export class PivotTable extends BaseTable implements PivotTableAPI {
   declare internalProps: PivotTableProtected;
   declare options: PivotTableConstructorOptions;
   pivotSortState: PivotSortState[];
-
+  editorManager: EditManeger;
   dataset?: Dataset; //数据处理对象  开启数据透视分析的表
   flatDataToObjects?: FlatDataToObjects; //数据处理对象 聚合后的flat数据 转成便于查询的行列二维数组
   // drillMenu: Menu; //上卷下钻的按钮
@@ -143,6 +146,9 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
     this.pivotSortState = [];
     if (options.pivotSortState) {
       this.updatePivotSortState(options.pivotSortState);
+    }
+    if (Env.mode !== 'node') {
+      this.editorManager = new EditManeger(this);
     }
     this.refreshHeader();
     this.stateManager.initCheckedState(records);
@@ -453,24 +459,6 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
     const { layoutMap } = this.internalProps;
     return layoutMap.getBodyIndexByCol(col);
   }
-  getFieldData(field: FieldDef | FieldFormat | undefined, col: number, row: number): FieldData {
-    if (field === null || field === undefined) {
-      return null;
-    }
-    const table = this;
-    if (table.internalProps.layoutMap.isHeader(col, row)) {
-      return null;
-    }
-    const rowIndex = this.getBodyIndexByRow(row);
-    const colIndex = this.getBodyIndexByCol(col);
-    const dataValue = table.dataSource?.getField(rowIndex, colIndex, col, row, this);
-    if (typeof field !== 'string') {
-      //field为函数format
-      const cellHeaderPaths = table.internalProps.layoutMap.getCellHeaderPaths(col, row);
-      return getField({ dataValue, ...cellHeaderPaths }, field, col, row, this, emptyFn as any);
-    }
-    return dataValue;
-  }
 
   getCellValue(col: number, row: number): FieldData {
     const customMergeText = this.getCustomMergeValue(col, row);
@@ -573,6 +561,52 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
     // return table.getFieldData(field, col, row);
   }
 
+  /** 获取单元格展示数据源最原始值 */
+  getCellRawValue(col: number, row: number): FieldData {
+    const table = this;
+    if (table.internalProps.layoutMap.isHeader(col, row)) {
+      const { title } = table.internalProps.layoutMap.getHeader(col, row);
+      return typeof title === 'function' ? title() : title;
+    }
+    if (this.dataset) {
+      const cellDimensionPath = this.internalProps.layoutMap.getCellHeaderPaths(col, row);
+      const colKeys = cellDimensionPath.colHeaderPaths.map((colPath: any) => {
+        return colPath.indicatorKey ?? colPath.value;
+      });
+      const rowKeys = cellDimensionPath.rowHeaderPaths.map((rowPath: any) => {
+        return rowPath.indicatorKey ?? rowPath.value;
+      });
+      const aggregator = this.dataset.getAggregator(
+        !this.internalProps.layoutMap.indicatorsAsCol ? rowKeys.slice(0, -1) : rowKeys,
+        this.internalProps.layoutMap.indicatorsAsCol ? colKeys.slice(0, -1) : colKeys,
+        (this.internalProps.layoutMap as PivotHeaderLayoutMap).getIndicatorKey(col, row),
+        false
+      );
+      return aggregator.value ? aggregator.value() : undefined;
+    } else if (this.flatDataToObjects) {
+      //数据为行列树结构 根据row col获取对应的维度名称 查找到对应值
+      const cellDimensionPath = this.internalProps.layoutMap.getCellHeaderPaths(col, row);
+      const colKeys = cellDimensionPath.colHeaderPaths.map((colPath: any) => {
+        return colPath.indicatorKey ?? colPath.value;
+      });
+      const rowKeys = cellDimensionPath.rowHeaderPaths.map((rowPath: any) => {
+        return rowPath.indicatorKey ?? rowPath.value;
+      });
+      const treeNode = this.flatDataToObjects.getTreeNode(
+        rowKeys,
+        colKeys,
+        this.internalProps.layoutMap.getBody(col, row).indicatorKey,
+        false
+      );
+      return treeNode?.value;
+    }
+    const rowIndex = this.getBodyIndexByRow(row);
+    const colIndex = this.getBodyIndexByCol(col);
+    const dataValue = this.records[rowIndex]?.[colIndex];
+    console.warn('VTable warning: this raw value may be changed in editable mode');
+    return dataValue;
+  }
+
   // 获取原始数据
   getCellOriginRecord(col: number, row: number) {
     const table = this;
@@ -606,7 +640,8 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
       const treeNode = this.flatDataToObjects.getTreeNode(
         rowKeys,
         colKeys,
-        this.internalProps.layoutMap.getBody(col, row).indicatorKey
+        this.internalProps.layoutMap.getBody(col, row).indicatorKey,
+        false
       );
       return treeNode?.record;
     }
@@ -891,5 +926,97 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
       this.internalProps.title.resize();
       this.scenegraph.resize();
     }
+  }
+  /** 获取单元格对应的编辑器 */
+  getEditor(col: number, row: number) {
+    const define = this.getBodyColumnDefine(col, row);
+    let editorDefine = define?.editor ?? this.options.editor;
+
+    if (typeof editorDefine === 'function') {
+      const arg = {
+        col,
+        row,
+        dataValue: this.getCellOriginValue(col, row),
+        value: this.getCellValue(col, row) || '',
+        table: this
+      };
+      editorDefine = (editorDefine as Function)(arg);
+    }
+    if (typeof editorDefine === 'string') {
+      return editors.get(editorDefine);
+    }
+    return editorDefine as IEditor;
+  }
+
+  /** 更改单元格数据 会触发change_cell_value事件*/
+  changeCellValue(col: number, row: number, value: string | undefined) {
+    let newValue: any = value;
+    const rawValue = this.getCellRawValue(col, row);
+    if (typeof rawValue === 'number' && isAllDigits(value)) {
+      newValue = parseFloat(value);
+    }
+    if (this.dataset) {
+      const cellDimensionPath = this.internalProps.layoutMap.getCellHeaderPaths(col, row);
+      const colKeys = cellDimensionPath.colHeaderPaths.map((colPath: any) => {
+        return colPath.indicatorKey ?? colPath.value;
+      });
+      const rowKeys = cellDimensionPath.rowHeaderPaths.map((rowPath: any) => {
+        return rowPath.indicatorKey ?? rowPath.value;
+      });
+      this.dataset.changeTreeNodeValue(
+        !this.internalProps.layoutMap.indicatorsAsCol ? rowKeys.slice(0, -1) : rowKeys,
+        this.internalProps.layoutMap.indicatorsAsCol ? colKeys.slice(0, -1) : colKeys,
+        (this.internalProps.layoutMap as PivotHeaderLayoutMap).getIndicatorKey(col, row),
+        newValue
+      );
+    } else if (this.flatDataToObjects) {
+      const cellDimensionPath = this.internalProps.layoutMap.getCellHeaderPaths(col, row);
+      const colKeys = cellDimensionPath.colHeaderPaths.map((colPath: any) => {
+        return colPath.indicatorKey ?? colPath.value;
+      });
+      const rowKeys = cellDimensionPath.rowHeaderPaths.map((rowPath: any) => {
+        return rowPath.indicatorKey ?? rowPath.value;
+      });
+
+      this.flatDataToObjects.changeTreeNodeValue(
+        rowKeys,
+        colKeys,
+        this.internalProps.layoutMap.getBody(col, row).indicatorKey,
+        newValue
+      );
+    } else {
+      const rowIndex = this.getBodyIndexByRow(row);
+      const colIndex = this.getBodyIndexByCol(col);
+      this.records[rowIndex][colIndex] = newValue;
+    }
+
+    const cell_value = this.getCellValue(col, row);
+    this.scenegraph.updateCellValue(col, row, cell_value);
+    if (this.widthMode === 'adaptive' || (this.autoFillWidth && this.getAllColsWidth() <= this.tableNoFrameWidth)) {
+      if (this.internalProps._widthResizedColMap.size === 0) {
+        //如果没有手动调整过行高列宽 则重新计算一遍并重新分配
+        this.scenegraph.recalculateColWidths();
+      }
+    } else if (!this.internalProps._widthResizedColMap.has(col)) {
+      const oldWidth = this.getColWidth(col);
+      const newWidth = computeColWidth(col, 0, this.rowCount - 1, this, false);
+      if (newWidth !== oldWidth) {
+        this.scenegraph.updateColWidth(col, newWidth - oldWidth);
+      }
+    }
+    if (this.heightMode === 'adaptive' || (this.autoFillHeight && this.getAllRowsHeight() <= this.tableNoFrameHeight)) {
+      this.scenegraph.recalculateRowHeights();
+    } else if (this.heightMode === 'autoHeight') {
+      const oldHeight = this.getRowHeight(row);
+      const newHeight = computeRowHeight(row, 0, this.colCount - 1, this);
+      this.scenegraph.updateRowHeight(row, newHeight - oldHeight);
+    }
+    this.fireListeners(TABLE_EVENT_TYPE.CHANGE_CELL_VALUE, {
+      col,
+      row,
+      rawValue: this.getCellRawValue(col, row),
+      changedValue: newValue
+    });
+    this.scenegraph.updateNextFrame();
   }
 }

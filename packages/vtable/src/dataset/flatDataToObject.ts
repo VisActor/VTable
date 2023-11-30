@@ -30,6 +30,7 @@ export class FlatDataToObjects {
    * 树形节点，最后的子节点对应到body部分的每个单元格 树结构： 行-列-单元格
    */
   tree: Record<string, Record<string, Record<string, any>>> = {};
+  changedTree: Record<string, Record<string, Record<string, any>>> = {};
   private colFlatKeys = {};
   private rowFlatKeys = {};
 
@@ -168,7 +169,55 @@ export class FlatDataToObjects {
     });
   }
 
-  getTreeNode(rowKey: string[] | string = [], colKey: string[] | string = [], indicator: string): Record<string, any> {
+  getTreeNode(
+    rowKey: string[] | string = [],
+    colKey: string[] | string = [],
+    indicator: string,
+    considerChangedValue: boolean = true
+  ): Record<string, any> {
+    let flatRowKey;
+    let flatColKey;
+    if (typeof rowKey === 'string') {
+      flatRowKey = rowKey;
+    } else {
+      //考虑 指标key有可能在数组中间位置或者前面的可能 将其删除再添加到尾部
+      let isHasIndicator = false;
+      rowKey.map((key, i) => {
+        if (key === indicator) {
+          rowKey.splice(i, 1);
+          isHasIndicator = true;
+        }
+      });
+      isHasIndicator && rowKey.push(indicator);
+      flatRowKey = rowKey.join(this.stringJoinChar);
+    }
+
+    if (typeof colKey === 'string') {
+      flatColKey = colKey;
+    } else {
+      //考虑 指标key有可能在数组中间位置或者前面的可能 将其删除再添加到尾部
+      let isHasIndicator = false;
+      colKey.map((key, i) => {
+        if (key === indicator) {
+          colKey.splice(i, 1);
+          isHasIndicator = true;
+        }
+      });
+      isHasIndicator && colKey.push(indicator);
+      flatColKey = colKey.join(this.stringJoinChar);
+    }
+    if (considerChangedValue && this.changedTree[flatRowKey]?.[flatColKey]) {
+      return { value: this.changedTree[flatRowKey][flatColKey], record: this.tree?.[flatRowKey]?.[flatColKey]?.record };
+    }
+    return this.tree?.[flatRowKey]?.[flatColKey] ?? undefined;
+  }
+
+  changeTreeNodeValue(
+    rowKey: string[] | string = [],
+    colKey: string[] | string = [],
+    indicator: string,
+    newValue: any
+  ) {
     let flatRowKey;
     let flatColKey;
     if (typeof rowKey === 'string') {
@@ -201,6 +250,11 @@ export class FlatDataToObjects {
       flatColKey = colKey.join(this.stringJoinChar);
     }
 
-    return this.tree?.[flatRowKey]?.[flatColKey] ?? undefined;
+    if (this.changedTree[flatRowKey]) {
+      this.changedTree[flatRowKey][flatColKey] = newValue;
+    } else {
+      this.changedTree[flatRowKey] = {};
+      this.changedTree[flatRowKey][flatColKey] = newValue;
+    }
   }
 }

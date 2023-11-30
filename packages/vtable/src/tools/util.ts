@@ -435,3 +435,8 @@ export function toBoolean(val: unknown): boolean {
   }
   return Boolean(val);
 }
+
+export function isAllDigits(str: string) {
+  const pattern = /^-?\d+(\.\d+)?$/;
+  return pattern.test(str);
+}

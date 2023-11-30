@@ -155,6 +155,8 @@ export interface ListTableAPI extends BaseTableAPI {
   isPivotTable: () => false;
   /** 设置单元格的value值，注意对应的是源数据的原始值，vtable实例records会做对应修改 */
   changeCellValue: (col: number, row: number, value: string | number | null) => void;
+
+  getFieldData: (field: FieldDef | FieldFormat | undefined, col: number, row: number) => FieldData;
   //#region 编辑器相关demo
   /** 获取单元格配置的编辑器 */
   getEditor: (col: number, row: number) => IEditor;
@@ -243,6 +245,7 @@ export interface PivotTableConstructorOptions extends BaseTableConstructorOption
   pagination?: IPagination;
 
   extensionRows?: IExtensionRowDefine[];
+  editor?: string | IEditor | ((args: BaseCellInfo & { table: BaseTableAPI }) => string | IEditor);
 }
 export interface PivotChartConstructorOptions extends BaseTableConstructorOptions {
   /**

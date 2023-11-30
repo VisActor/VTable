@@ -54,6 +54,7 @@ export class Dataset {
    * 树形节点，最后的子节点对应到body部分的每个单元格 树结构： 行-列-单元格
    */
   tree: Record<string, Record<string, Aggregator[]>> = {};
+  changedTree: Record<string, Record<string, any[]>> = {};
   private colFlatKeys = {};
   private rowFlatKeys = {};
 
@@ -758,9 +759,14 @@ export class Dataset {
    * @param indicator
    * @returns
    */
-  getAggregator(rowKey: string[] | string = [], colKey: string[] | string = [], indicator: string): Aggregator {
+  getAggregator(
+    rowKey: string[] | string = [],
+    colKey: string[] | string = [],
+    indicator: string,
+    considerChangedValue: boolean = true
+  ): Aggregator {
     const indicatorIndex = this.indicatorKeys.indexOf(indicator);
-    let agg;
+    // let agg;
     let flatRowKey;
     let flatColKey;
     if (typeof rowKey === 'string') {
@@ -775,17 +781,43 @@ export class Dataset {
       flatColKey = colKey.join(this.stringJoinChar);
     }
     //TODO 原有逻辑 但这里先强制跳过
-    if (false && rowKey.length === 0 && colKey.length === 0) {
-      // agg = this.allTotal;
-      // } else if (rowKey.length === 0) {
-      //   // agg = this.tree.total[flatColKey]?.[sortByIndicatorIndex];
-      //   agg = this.colTotals[flatColKey]?.[sortByIndicatorIndex];
-      // } else if (colKey.length === 0) {
-      //   // agg = this.tree[flatRowKey].total?.[sortByIndicatorIndex];
-      //   agg = this.rowTotals[flatRowKey]?.[sortByIndicatorIndex];
-    } else {
-      agg = this.tree[flatRowKey]?.[flatColKey]?.[indicatorIndex];
+    // if ( rowKey.length === 0 && colKey.length === 0) {
+    // agg = this.allTotal;
+    // } else if (rowKey.length === 0) {
+    //   // agg = this.tree.total[flatColKey]?.[sortByIndicatorIndex];
+    //   agg = this.colTotals[flatColKey]?.[sortByIndicatorIndex];
+    // } else if (colKey.length === 0) {
+    //   // agg = this.tree[flatRowKey].total?.[sortByIndicatorIndex];
+    //   agg = this.rowTotals[flatRowKey]?.[sortByIndicatorIndex];
+    // } else {
+    const agg = this.tree[flatRowKey]?.[flatColKey]?.[indicatorIndex];
+    if (considerChangedValue && this.changedTree[flatRowKey]?.[flatColKey]?.[indicatorIndex]) {
+      const changeValue = this.changedTree[flatRowKey][flatColKey][indicatorIndex];
+      if (agg) {
+        return {
+          value: () => {
+            return changeValue;
+          },
+          formatValue: agg.formatValue,
+          className: '',
+          push() {
+            // do nothing
+          },
+          clearCacheValue() {
+            // do nothing
+          },
+          reset() {
+            // do nothing
+          }
+        };
+        // agg.clearCacheValue();
+        // agg.value = () => {
+        //   return changeValue;
+        // };
+      }
     }
+
+    // }
     return agg
       ? agg
       : {
@@ -798,6 +830,9 @@ export class Dataset {
           },
           formatValue() {
             return '';
+          },
+          clearCacheValue() {
+            // do nothing
           },
           reset() {
             // do nothing
@@ -1401,6 +1436,40 @@ export class Dataset {
       });
     }
     return customTree;
+  }
+
+  changeTreeNodeValue(
+    rowKey: string[] | string = [],
+    colKey: string[] | string = [],
+    indicator: string,
+    newValue: string | number
+  ) {
+    const indicatorIndex = this.indicatorKeys.indexOf(indicator);
+
+    let flatRowKey;
+    let flatColKey;
+    if (typeof rowKey === 'string') {
+      flatRowKey = rowKey;
+    } else {
+      flatRowKey = rowKey.join(this.stringJoinChar);
+    }
+
+    if (typeof colKey === 'string') {
+      flatColKey = colKey;
+    } else {
+      flatColKey = colKey.join(this.stringJoinChar);
+    }
+
+    if (this.changedTree[flatRowKey]?.[flatColKey]) {
+      this.changedTree[flatRowKey][flatColKey][indicatorIndex] = newValue;
+    } else if (this.changedTree[flatRowKey]) {
+      this.changedTree[flatRowKey][flatColKey] = [];
+      this.changedTree[flatRowKey][flatColKey][indicatorIndex] = newValue;
+    } else {
+      this.changedTree[flatRowKey] = {};
+      this.changedTree[flatRowKey][flatColKey] = [];
+      this.changedTree[flatRowKey][flatColKey][indicatorIndex] = newValue;
+    }
   }
 }
 
