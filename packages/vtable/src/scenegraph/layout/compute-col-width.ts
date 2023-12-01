@@ -66,7 +66,7 @@ export function computeColsWidth(table: BaseTableAPI, colStart?: number, colEnd?
       table._clearColRangeWidthsMap(col);
     }
     if (update) {
-      newWidths[col] = maxWidth;
+      newWidths[col] = table._adjustColWidth(col, maxWidth);
     } else {
       table._setColWidth(col, maxWidth, false, true);
     }
@@ -103,7 +103,7 @@ export function computeColsWidth(table: BaseTableAPI, colStart?: number, colEnd?
         colWidth = Math.round((update ? newWidths[col] : table.getColWidth(col)) * factor);
       }
       if (update) {
-        newWidths[col] = colWidth;
+        newWidths[col] = table._adjustColWidth(col, colWidth);
       } else {
         table._setColWidth(col, colWidth, false, true);
       }
@@ -145,7 +145,7 @@ export function computeColsWidth(table: BaseTableAPI, colStart?: number, colEnd?
         }
         if (update) {
           // newWidths[col] = newWidths[col] * factor;
-          newWidths[col] = colWidth;
+          newWidths[col] = table._adjustColWidth(col, colWidth);
         } else {
           // table.setColWidth(col, table.getColWidth(col) * factor, false, true);
           table._setColWidth(col, colWidth, false, true);
