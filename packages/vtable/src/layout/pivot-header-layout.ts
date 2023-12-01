@@ -14,7 +14,10 @@ import type {
   ICornerDefine,
   IDimensionInfo,
   IExtensionRowDefine,
-  IPagination
+  IPagination,
+  IColumnDimension,
+  IRowDimension,
+  FieldData
 } from '../ts-types';
 import { HierarchyState } from '../ts-types';
 import type {
@@ -59,8 +62,8 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
   private _rowHeaderCellIds: number[][] = [];
   private _rowHeaderCellIds_FULL: number[][] = [];
   private _columnWidths: WidthData[] = [];
-  rowsDefine: (IDimension | string)[];
-  columnsDefine: (IDimension | string)[];
+  rowsDefine: (IRowDimension | string)[];
+  columnsDefine: (IColumnDimension | string)[];
   indicatorsDefine: (IIndicator | string)[];
   columnPaths: number[][] = [];
   private _headerObjects: HeaderData[] = [];
@@ -490,9 +493,9 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
           isPivotCorner: false
           // customInfo: dimensionInfo?.customInfo
         },
-        width: dimensionInfo?.width,
-        minWidth: dimensionInfo?.minWidth,
-        maxWidth: dimensionInfo?.maxWidth,
+        width: (dimensionInfo as IRowDimension)?.width,
+        minWidth: (dimensionInfo as IRowDimension)?.minWidth,
+        maxWidth: (dimensionInfo as IRowDimension)?.maxWidth,
         showSort: indicatorInfo?.showSort ?? dimensionInfo?.showSort,
         description: dimensionInfo?.description
       };
@@ -600,7 +603,7 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
       const cell: HeaderData = {
         id,
         title: hd.value,
-        field: hd.dimensionKey,
+        field: hd.dimensionKey as FieldData,
         //如果不是整棵树的叶子节点，都靠左显示
         style:
           hd.level + 1 === totalLevel || typeof dimensionInfo?.headerStyle === 'function'
@@ -626,16 +629,16 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
         dropDownMenu: dimensionInfo?.dropDownMenu,
         pivotInfo: {
           value: hd.value,
-          dimensionKey: hd.dimensionKey,
+          dimensionKey: hd.dimensionKey as string,
           isPivotCorner: false
           // customInfo: dimensionInfo?.customInfo
         },
         hierarchyLevel: hd.level,
         dimensionTotalLevel: totalLevel,
         hierarchyState: hd.level + 1 === totalLevel ? undefined : hd.hierarchyState,
-        width: dimensionInfo?.width,
-        minWidth: dimensionInfo?.minWidth,
-        maxWidth: dimensionInfo?.maxWidth,
+        width: (dimensionInfo as IRowDimension)?.width,
+        minWidth: (dimensionInfo as IRowDimension)?.minWidth,
+        maxWidth: (dimensionInfo as IRowDimension)?.maxWidth,
         parentCellId: roots[roots.length - 1]
       };
 
@@ -674,7 +677,7 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
   private _addCornerHeaders(dimensionKeys: (string | number)[] | null, dimensions: (string | IDimension)[]) {
     const results: HeaderData[] = [];
     if (dimensionKeys) {
-      dimensionKeys.forEach((dimensionKey: string, key: number) => {
+      dimensionKeys.forEach((dimensionKey: string | number, key: number) => {
         const id = ++sharedVar.seqId;
         // const dimensionInfo: IDimension =
         //   (this.rowsDefine?.find(dimension =>
@@ -695,7 +698,7 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
               ? dimensionInfo.title
               : dimensionKey === 'axis'
               ? ''
-              : dimensionKey,
+              : (dimensionKey as string),
           field: '维度名称',
           style: this.cornerSetting.headerStyle,
           headerType: this.cornerSetting.headerType ?? 'text',
@@ -813,7 +816,7 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
         if (mainDimensionFirstRowKey) {
           const dimension = this.rowsDefine?.find(dimension =>
             typeof dimension === 'string' ? false : dimension.dimensionKey === mainDimensionFirstRowKey
-          ) as IDimension;
+          ) as IRowDimension;
           dimension &&
             (returnWidths[0 + (this.rowHeaderTitle ? 1 : 0)] = {
               width: dimension.width,
@@ -824,9 +827,9 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
         this._extensionRowDimensionKeys?.forEach((extensionRowDimensionKeys, index) => {
           const curDimensionFirstRowKey = extensionRowDimensionKeys[0];
           if (curDimensionFirstRowKey) {
-            const dimension = this.extensionRows[index].rows?.find((dimension: string | IDimension) =>
+            const dimension = this.extensionRows[index].rows?.find((dimension: string | IRowDimension) =>
               typeof dimension === 'string' ? false : dimension.dimensionKey === curDimensionFirstRowKey
-            ) as IDimension;
+            ) as IRowDimension;
             dimension &&
               (returnWidths[index + 1 + (this.rowHeaderTitle ? 1 : 0)] = {
                 width: dimension.width,
@@ -849,7 +852,7 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
         this.rowDimensionKeys.forEach((objKey, index) => {
           const dimension = this.rowsDefine?.find(dimension =>
             typeof dimension === 'string' ? false : dimension.dimensionKey === objKey
-          ) as IDimension;
+          ) as IRowDimension;
           dimension &&
             (returnWidths[index + (this.rowHeaderTitle ? 1 : 0)] = {
               width: dimension.width,
@@ -869,9 +872,9 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
         };
       }
     } else {
-      let width: string | number = 0;
-      let maxWidth: string | number;
-      let minWidth: string | number;
+      let width: string | number | undefined = 0;
+      let maxWidth: string | number | undefined;
+      let minWidth: string | number | undefined;
       let isAuto;
       this._indicators?.forEach((obj, index) => {
         if (typeof obj.width === 'number') {
@@ -1395,7 +1398,7 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
     // if (indicatorData) return indicatorData;
     const paths = this.getCellHeaderPaths(_col, _row);
     if (this.indicatorsAsCol) {
-      const indicatorKey = paths.colHeaderPaths.find(colPath => colPath.indicatorKey)?.indicatorKey;
+      const indicatorKey = paths.colHeaderPaths?.find(colPath => colPath.indicatorKey)?.indicatorKey;
       return (
         this._indicators?.find(indicator => indicator.indicatorKey === indicatorKey) ??
         this._indicators[0] ?? {
@@ -1407,7 +1410,7 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
         }
       );
     }
-    const indicatorKey = paths.rowHeaderPaths.find(rowPath => rowPath.indicatorKey)?.indicatorKey;
+    const indicatorKey = paths.rowHeaderPaths?.find(rowPath => rowPath.indicatorKey)?.indicatorKey;
     return (
       this._indicators?.find(indicator => indicator.indicatorKey === indicatorKey) ??
       this._indicators[0] ?? {
@@ -1552,8 +1555,8 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
     }
     const recordCol = this.getBodyIndexByCol(col);
     const recordRow = this.getBodyIndexByRow(row) + this.currentPageStartIndex;
-    let colPath;
-    let rowPath: IPivotLayoutHeadNode[];
+    let colPath: IPivotLayoutHeadNode[] = [];
+    let rowPath: IPivotLayoutHeadNode[] = [];
     if (row >= 0 && recordCol >= 0) {
       colPath = this.columnDimensionTree.getTreePath(
         recordCol,
@@ -1574,12 +1577,11 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
         //   rowPath = this.rowDimensionTree.getTreePath(recordRow, col + hd.hierarchyLevel);
         // }
         // 考虑多层级的ExtensionRowTree
-        rowPath = [];
         const row_pathIds = this._rowHeaderCellIds[recordRow]; //获取当前行的cellId 但这个cellId不是各级维度都有的  下面逻辑就是找全路径然后再去各个树找path的过程
         let findTree = this.rowDimensionTree; //第一棵寻找的树是第一列的维度树 主树
         let level = 0; //level和col对应，代表一层层树找的过程
         while (findTree) {
-          const pathIds = []; // pathIds记录寻找当前树需要匹配的cellId
+          const pathIds: (number | string)[] = []; // pathIds记录寻找当前树需要匹配的cellId
           let cellId: LayoutObjectId = row_pathIds[level]; //row_pathIds中每个值对应了pathIds的一个节点cellId
           pathIds.push(cellId);
           while (true) {

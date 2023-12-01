@@ -2,7 +2,23 @@
 
 在数据分析领域，表格是一种常见的数据展示方式。正确设置表格的行高列宽对于提高数据可读性和美观性具有重要意义。本教程将围绕 VTable 中的表格行高列宽计算功能，带了解如何正确配置行高和列宽以满足实际需求。
 
-# 行高配置
+# 列宽计算模式
+
+在 VTable 中，表格列宽度的计算模式`widthMode`可以配置为 `standard`（标准模式）、`adaptive`（自适应容器宽度模式）或 `autoWidth`（自动列宽模式）。[demo示例](https://visactor.io/vtable/demo/basic-functionality/width-mode-autoWidth)。（如果设置了`widthMode: 'autoWidth'`, 那么每一个单元格都会参与计算宽度，可想而知这个计算过程是需要耗费性能的。）
+
+- 标准模式（standard）：表格使用`width` 属性指定的宽度作为列宽度，如未指定，则采用 `defaultColWidth`或`defaultHeaderColWidth ` 设定的默认列宽。
+- 自适应容器宽度模式（adaptive）：在自适应容器宽度模式下表格使用容器的宽度分配列宽度(每列宽度的比例基于standard模式中的宽度值)。[demo示例](https://visactor.io/vtable/demo/basic-functionality/width-mode-adaptive)
+- 自动列宽模式（autoWidth）：在自动宽度模式下，根据列头和 body 单元格中的内容自动计算列宽度，忽略设置的 `width` 属性和 `defaultColWidth`。
+
+# 行高计算模式
+
+表格行高度的计算模式`heightMode`也可以配置为 `standard`（标准模式）、`adaptive`（自适应容器宽度模式）或 `autoHeight`（自动行高模式）。
+
+- 标准模式（standard）：采用 `defaultRowHeight` 及 `defaultHeaderRowHeight` 作为行高。
+- 自适应容器高度模式（adaptive）：使用容器的高度分配每行高度。
+- 自动行高模式（autoHeight）：根据内容自动计算行高，计算依据fontSize和lineHeight。相关搭配设置项`autoWrapText`自动换行，可以根据换行后的多行文本内容来计算行高。
+
+# 行高相关配置
 
 ## 默认行高
 
@@ -24,7 +40,45 @@ const table = new VTable.ListTable({
 });
 ```
 
-# 列宽配置
+## 行高撑满容器：autoFillHeight
+配置项 autoFillHeight，用于控制是否自动撑满容器高度。区别于高度模式`heightMode`的`adaptive`的自适应容器的效果，autoFillHeight 控制的是只有当行数较少的时候，表格可以自动撑满容器高度，但是当行数超过容器的时候根据真实情况来定行高可出现滚动条。
+```javascript
+const table = new VTable.ListTable({
+  autoFillHeight: true
+});
+```
+
+# 列宽相关配置
+
+## 列宽width
+可以在列属性中配置具体的宽度值，或者百分比或者'auto'自动计算列宽。
+```
+width?: number | string;
+```
+基本表格配置列宽：
+
+```javascript
+const table = new VTable.ListTable({
+  columns: [
+    {
+      // ...其他配置项
+      width: 200,
+    },
+  ],
+});
+```
+
+透视表列宽配置：
+```javascript
+const table = new VTable.PivotTable({
+  indicators: [
+    {
+      // ...其他配置项
+      width: 200,
+    },
+  ],
+});
+```
 
 ## 默认列宽
 
@@ -38,13 +92,19 @@ const table = new VTable.ListTable({
 
 ## 行表头默认列宽
 
-除了默认列宽的设置，VTable还支持针对行表头的列宽进行设置。通过`defaultHeaderColWidth`配置项进行设置，该配置项可以设定为一个，分别对应各级行表头列的宽度。以下代码示例展示了如何设置一级行表头列宽为 50，二级行表头列宽为 60：
+除了默认列宽的设置，VTable还支持针对行表头的列宽进行设置。通过`defaultHeaderColWidth`配置项进行设置，该配置项可以设定为一个，分别对应各级`行表头`列的宽度。以下代码示例展示了如何设置一级行表头列宽为 50，二级行表头列宽为 60：
 
 ```javascript
 const table = new VTable.ListTable({
   defaultHeaderColWidth: [50, 60],
 });
 ```
+
+需要注意的是：这个配置仅针对行表头起作用，如果是列表头的话是不考虑这个配置项的（会按body部分定义的宽度设置来执行逻辑）。
+
+具体的如：
+- 转置基本表格，如配置 defaultHeaderColWidth: [50, 'auto'], 表示转置表格的表头第一列宽度50，第二列按单元格内容适应宽度
+- 透视表，如配置 defaultHeaderColWidth: [50, 'auto'], 表示透视表的行表头第一列宽度50（也即第一级维度），第二列（第二级维度）按单元格内容适应宽度。
 
 ## 列宽限制配置：maxWidth+minWidth
 
@@ -93,29 +153,30 @@ const table = new VTable.ListTable({
   autoFillWidth: true
 });
 ```
+## 按内容计算列宽只计算表头或者body部分：columnWidthComputeMode
+计算内容宽度时限定只计算表头内容，或者body单元格内容，或者全部都适应计算。
 
-## 行高撑满容器：autoFillHeight
-配置项 autoFillHeight，用于控制是否自动撑满容器高度。区别于高度模式`heightMode`的`adaptive`的自适应容器的效果，autoFillHeight 控制的是只有当行数较少的时候，表格可以自动撑满容器高度，但是当行数超过容器的时候根据真实情况来定行高可出现滚动条。
+配置项定义：
+```
+  columnWidthComputeMode?: 'normal' | 'only-header' | 'only-body';
+```
+用法
 ```javascript
 const table = new VTable.ListTable({
-  autoFillHeight: true
+  columns: [
+    {
+      // ...其他配置项
+      columnWidthComputeMode： 'only-header'
+    },
+  ],
 });
 ```
 
-# 列宽计算模式
+# FAQ
+## 特定列设置自适应内容来计算列宽
+如果并不是想每一列都需要计算列宽，可以使用columns中的width来定义，而不用设置`widthMode: 'autoWidth'`。
+## 列宽根据表头内容自适应
+如果只需要计算表头内容宽度的话，可以用`columnWidthComputeMode: 'only-header'`来实现。不过需配合设置`widthMode:'autoWidth'`使用。
 
-在 VTable 中，表格列宽度的计算模式`widthMode`可以配置为 `standard`（标准模式）、`adaptive`（自适应容器宽度模式）或 `autoWidth`（自动列宽模式）。[demo示例](https://visactor.io/vtable/demo/basic-functionality/width-mode-autoWidth)
-
-- 标准模式（standard）：表格使用`width` 属性指定的宽度作为列宽度，如未指定，则采用 `defaultColWidth`或`defaultHeaderColWidth ` 设定的默认列宽。
-- 自适应容器宽度模式（adaptive）：在自适应容器宽度模式下表格使用容器的宽度分配列宽度(每列宽度的比例基于standard模式中的宽度值)。[demo示例](https://visactor.io/vtable/demo/basic-functionality/width-mode-adaptive)
-- 自动列宽模式（autoWidth）：在自动宽度模式下，根据列头和 body 单元格中的内容自动计算列宽度，忽略设置的 `width` 属性和 `defaultColWidth`。
-
-# 行高计算模式
-
-表格行高度的计算模式`heightMode`也可以配置为 `standard`（标准模式）、`adaptive`（自适应容器宽度模式）或 `autoHeight`（自动行高模式）。
-
-- 标准模式（standard）：采用 `defaultRowHeight` 及 `defaultHeaderRowHeight` 作为行高。
-- 自适应容器高度模式（adaptive）：使用容器的高度分配每行高度。
-- 自动行高模式（autoHeight）：根据内容自动计算行高，计算依据fontSize和lineHeight。相关搭配设置项`autoWrapText`自动换行，可以根据换行后的多行文本内容来计算行高。
 
 至此，我们已经介绍了 VTable 中的表格行高列宽计算功能，包括行高、列宽配置，以及表格宽度模式。通过掌握这些功能，您可以更便捷地 VTable 中进行数据展示与分析，现各种实际需求。

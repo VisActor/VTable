@@ -1,8 +1,9 @@
 import type { BaseComponentProps } from '../base-component';
 import { createComponent } from '../base-component';
-import type { IDimension } from '@visactor/vtable';
+import type { IRowDimension, IColumnDimension } from '@visactor/vtable';
 
-export type PivotDimensionProps = IDimension & BaseComponentProps;
+export type RowPivotDimensionProps = IRowDimension & BaseComponentProps;
+export type ColumnPivotDimensionProps = IColumnDimension & BaseComponentProps;
 
-export const PivotColumnDimension = createComponent<PivotDimensionProps>('PivotColumnDimension', 'columns');
-export const PivotRowDimension = createComponent<PivotDimensionProps>('PivotRowDimension', 'rows');
+export const PivotColumnDimension = createComponent<ColumnPivotDimensionProps>('PivotColumnDimension', 'columns');
+export const PivotRowDimension = createComponent<RowPivotDimensionProps>('PivotRowDimension', 'rows');
