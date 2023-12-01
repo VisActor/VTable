@@ -360,24 +360,24 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
     const { layoutMap } = this.internalProps;
     return layoutMap.getBodyIndexByCol(col);
   }
-  getFieldData(field: FieldDef | FieldFormat | undefined, col: number, row: number): FieldData {
-    if (field === null || field === undefined) {
-      return null;
-    }
-    const table = this;
-    if (table.internalProps.layoutMap.isHeader(col, row)) {
-      return null;
-    }
-    const rowIndex = this.getBodyIndexByRow(row);
-    const colIndex = this.getBodyIndexByCol(col);
-    const dataValue = table.dataSource?.getField(rowIndex, colIndex, col, row, this);
-    if (typeof field !== 'string') {
-      //field为函数format
-      const cellHeaderPaths = table.internalProps.layoutMap.getCellHeaderPaths(col, row);
-      return getField({ dataValue, ...cellHeaderPaths }, field, col, row, this, emptyFn as any);
-    }
-    return dataValue;
-  }
+  // getFieldData(field: FieldDef | FieldFormat | undefined, col: number, row: number): FieldData {
+  //   if (field === null || field === undefined) {
+  //     return null;
+  //   }
+  //   const table = this;
+  //   if (table.internalProps.layoutMap.isHeader(col, row)) {
+  //     return null;
+  //   }
+  //   const rowIndex = this.getBodyIndexByRow(row);
+  //   const colIndex = this.getBodyIndexByCol(col);
+  //   const dataValue = table.dataSource?.getField(rowIndex, colIndex, col, row, this);
+  //   if (typeof field !== 'string') {
+  //     //field为函数format
+  //     const cellHeaderPaths = table.internalProps.layoutMap.getCellHeaderPaths(col, row);
+  //     return getField({ dataValue, ...cellHeaderPaths }, field, col, row, this, emptyFn as any);
+  //   }
+  //   return dataValue;
+  // }
 
   getCellValue(col: number, row: number): FieldData {
     const customMergeText = this.getCustomMergeValue(col, row);
@@ -403,8 +403,19 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
       );
       return aggregator.value ? aggregator.value() : undefined;
     }
-    const { field, fieldFormat } = this.internalProps.layoutMap.getBody(col, row);
-    return this.getFieldData(fieldFormat || field, col, row);
+    const { fieldFormat } = this.internalProps.layoutMap.getBody(col, row);
+    const rowIndex = this.getBodyIndexByRow(row);
+    const colIndex = this.getBodyIndexByCol(col);
+    const dataValue = this.records[rowIndex]?.[colIndex];
+    const cellHeaderPaths = this.internalProps.layoutMap.getCellHeaderPaths(col, row);
+
+    if (typeof fieldFormat === 'function') {
+      const fieldResult = fieldFormat({ dataValue, ...cellHeaderPaths }, col, row, this);
+      return fieldResult;
+    }
+    return dataValue;
+    // const { field, fieldFormat } = this.internalProps.layoutMap.getBody(col, row);
+    // return this.getFieldData(fieldFormat || field, col, row);
   }
 
   getCellOriginValue(col: number, row: number): FieldData {
@@ -429,8 +440,16 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
       return aggregator.value ? aggregator.value() : undefined;
       // return ''
     }
-    const { field } = table.internalProps.layoutMap.getBody(col, row);
-    return table.getFieldData(field, col, row);
+    const rowIndex = this.getBodyIndexByRow(row);
+    const colIndex = this.getBodyIndexByCol(col);
+    const dataValue = this.records[rowIndex]?.[colIndex];
+    return dataValue;
+    // const { field } = table.internalProps.layoutMap.getBody(col, row);
+    // return table.getFieldData(field, col, row);
+  }
+
+  getCellRawValue(col: number, row: number) {
+    return this.getCellOriginValue(col, row);
   }
 
   // 获取原始数据
@@ -456,6 +475,10 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
       // return ''
     }
     return undefined;
+  }
+
+  getCellRawRecord(col: number, row: number) {
+    return this.getCellOriginRecord(col, row);
   }
   /**
    * 全量更新排序规则 TODO  待完善
@@ -650,7 +673,7 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
     return this._getHeaderLayoutMap(col, row)?.hierarchyState;
   }
 
-  hasHierarchyTreeHeader() {
+  _hasHierarchyTreeHeader() {
     return (this.internalProps.layoutMap as PivotHeaderLayoutMap).rowHierarchyType === 'tree';
   }
 

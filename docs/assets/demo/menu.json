@@ -27,8 +27,8 @@
         {
           "path": "async-data",
           "title": {
-            "zh": "异步加载数据源",
-            "en": "async load data"
+            "zh": "异步懒加载数据源",
+            "en": "async lazy load data"
           }
         }
       ]
@@ -70,6 +70,13 @@
             "cover": "https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/list-tree.png",
             "link": "'../../guide/table_type/List_table/tree_list'",
             "option": ""
+          }
+        },
+        {
+          "path": "list-table-tree-lazy-load",
+          "title": {
+            "zh": "基本表格树形展示(懒加载)",
+            "en": "List Table Tree(lazy load)"
           }
         },
         {
@@ -817,6 +824,13 @@
           "title": {
             "zh": "自定义编辑器",
             "en": "custom date editor"
+          }
+        },
+        {
+          "path": "pivot-table-editor",
+          "title": {
+            "zh": "透视表编辑数据",
+            "en": "PivotTable edit data"
           }
         }
       ]

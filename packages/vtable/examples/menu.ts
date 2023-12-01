@@ -41,6 +41,10 @@ export const menus = [
       },
       {
         path: 'list',
+        name: 'TODO-list-tree-checkbox'
+      },
+      {
+        path: 'list',
         name: 'list-data-promise'
       },
       {
@@ -625,6 +629,18 @@ export const menus = [
       {
         path: 'editor',
         name: 'custom-date-editor'
+      },
+      {
+        path: 'editor',
+        name: 'pivot-analysis-editor'
+      },
+      {
+        path: 'editor',
+        name: 'pivot-editor'
+      },
+      {
+        path: 'editor',
+        name: 'video-editor'
       }
     ]
   },

@@ -154,4 +154,10 @@ ${prefix} showSort(boolean)
 ${prefix} disableColumnResize(boolean)
 是否禁用调整列宽,如果是转置表格或者是透视表的指标是行方向指定 那该配置不生效
 
+${prefix} editor (string|Object|Function)
 
+配置该指标单元格编辑器
+```
+editor?: string | IEditor | ((args: BaseCellInfo & { table: BaseTableAPI }) => string | IEditor);
+```
+其中IEditor是@visactor/vtable-editors中定义的编辑器接口，具体可以参看源码：https://github.com/VisActor/VTable/blob/feat/editCell/packages/vtable-editors/src/types.ts。

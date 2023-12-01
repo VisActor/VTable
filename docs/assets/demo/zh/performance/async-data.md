@@ -1,14 +1,14 @@
 ---
 category: examples
 group: performace
-title: 异步加载数据源
+title: 异步懒加载数据源
 cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/asyncData.gif
 link: '../guide/data/async_data'
 ---
 
-# 异步加载数据
+# 异步懒加载数据
 
-为了减轻后端请求数据的压力，可以使用该方式来异步加载数据。
+为了减轻后端请求数据的压力，可以使用该方式来异步懒加载数据。
 
 注意：如果使用VTable内部排序的话，需要获取到全部数据才能排序，所以这个异步相当于失效，建议后端实现排序逻辑，前端仅展示排序图标。
 

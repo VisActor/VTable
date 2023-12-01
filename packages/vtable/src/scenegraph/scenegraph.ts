@@ -21,7 +21,7 @@ import { getQuadProps } from './utils/padding';
 import { createFrameBorder, updateFrameBorder, updateFrameBorderSize } from './style/frame-border';
 import { ResizeColumnHotSpotSize } from '../tools/global';
 import splitModule from './graphic/contributions';
-import { getProp } from './utils/get-prop';
+import { getFunctionalProp, getProp } from './utils/get-prop';
 import { dealWithIcon } from './utils/text-icon-layout';
 import { SceneProxy } from './group-creater/progress/proxy';
 import type { TooltipOptions } from '../ts-types/tooltip';
@@ -57,6 +57,7 @@ import {
   updateSortIcon
 } from './icon/icon-update';
 import { Env } from '../tools/env';
+import { createCornerCell } from './style/corner-cell';
 // import { contextModule } from './context/module';
 
 // VChart poptip theme
@@ -354,6 +355,21 @@ export class Scenegraph {
 
     // update table group position for cell group global position, not create border yet.
     createFrameBorder(this.tableGroup, this.table.theme.frameStyle, this.tableGroup.role, undefined, true);
+
+    if (this.table.isPivotChart()) {
+      createCornerCell(
+        this.rightTopCornerGroup,
+        this.table.theme.cornerRightTopCellStyle || this.table.theme.cornerHeaderStyle || {}
+      );
+      createCornerCell(
+        this.leftBottomCornerGroup,
+        this.table.theme.cornerLeftBottomCellStyle || this.table.theme.cornerHeaderStyle || {}
+      );
+      createCornerCell(
+        this.rightBottomCornerGroup,
+        this.table.theme.cornerRightBottomCellStyle || this.table.theme.cornerHeaderStyle || {}
+      );
+    }
 
     this.proxy.createGroupForFirstScreen(
       this.cornerHeaderGroup,
@@ -1590,13 +1606,8 @@ export class Scenegraph {
     }
     return 0;
   }
-  /** 更新场景树某个单元格的值 */
-  updateCellValue(col: number, row: number, value: string | number) {
-    const cellGroup = this.getCell(col, row);
-    const text = cellGroup.getChildByName('text', true) as unknown as WrapText;
-    if (text) {
-      const textAttributeStr = isArray(text.attribute.text) ? [value] : (value as string);
-      text.setAttribute('text', textAttributeStr);
-    }
-  }
+  // /** 更新场景树某个单元格的值 */
+  // updateCellValue(col: number, row: number) {
+  //   updateCell(col, row, this.table);
+  // }
 }

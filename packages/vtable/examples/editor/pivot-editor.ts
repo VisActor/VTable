@@ -1,6 +1,8 @@
 import * as VTable from '../../src';
+import { InputEditor } from '@visactor/vtable-editors';
 const CONTAINER_ID = 'vTable';
-
+const input_editor = new InputEditor({});
+VTable.register.editor('input', input_editor);
 export function createTable() {
   fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American_Superstore_Pivot_data.json')
     .then(res => res.json())
@@ -316,6 +318,7 @@ export function createTable() {
             title: 'Quantity',
             width: 'auto',
             showSort: false,
+            editor: 'input',
             style: {
               color: 'black',
               fontWeight: 'bold',
@@ -436,6 +439,9 @@ export function createTable() {
       // 只为了方便控制太调试用，不要拷贝
       window.tableInstance = tableInstance;
       tableInstance.setRecords(data);
+      tableInstance.on('change_cell_value', arg => {
+        console.log(arg);
+      });
       tableInstance.on('mouseenter_cell', args => {
         const { col, row } = args;
         const rect = tableInstance.getVisibleCellRangeRelativeRect({ col, row });

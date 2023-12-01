@@ -3,7 +3,9 @@ import type { ICustomLayout } from '../../customLayout';
 import type { FieldFormat } from '../../table-engine';
 import type { ColumnIconOption } from '../../icon';
 import type { MenuListItem } from '../../menu';
-import type { CellInfo } from '../../common';
+import type { BaseCellInfo, CellInfo } from '../../common';
+import type { IEditor } from '@visactor/vtable-editors';
+import type { BaseTableAPI } from '../../base-table';
 
 export interface IBasicHeaderIndicator {
   // 单种指标属性配置
@@ -29,6 +31,7 @@ export interface IBasicHeaderIndicator {
   headerCustomRender?: ICustomRender; // header单元格的自定义内容
   /** 指标名称表头自定义布局元素 */
   headerCustomLayout?: ICustomLayout;
+  editor?: string | IEditor | ((args: BaseCellInfo & { table: BaseTableAPI }) => string | IEditor);
 }
 
 export interface IBasicColumnIndicator {

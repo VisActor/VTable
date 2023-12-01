@@ -48,7 +48,7 @@ export function createComplexColumn(
   //   // insert cell into column group bottom
   //   y = columnGroup.colHeight;
   // }
-  if (columnGroup.lastChild) {
+  if (columnGroup.lastChild && (columnGroup.lastChild as Group).row === rowStart - 1) {
     y = (columnGroup.lastChild as Group).attribute.y + (columnGroup.lastChild as Group).attribute.height;
   } else if (columnGroup.colHeight) {
     y = columnGroup.colHeight;
@@ -150,10 +150,7 @@ export function createComplexColumn(
         )
       );
       columnGroup.updateColumnRowNumber(row);
-      // const height = table.getRowHeight(row);
-      const height = isMerge
-        ? table.getRowHeight(row) / (range.end.row - range.start.row + 1)
-        : table.getRowHeight(row);
+      const height = table.getRowHeight(row);
       columnGroup.updateColumnHeight(height);
       y += height;
     } else {
@@ -176,12 +173,6 @@ export function createComplexColumn(
         cellTheme
       );
       columnGroup.updateColumnRowNumber(row);
-      // // const height = cellGroup.attribute.height;
-      // const height = isMerge
-      //   ? cellGroup.attribute.height / (range.end.row - range.start.row + 1)
-      //   : cellGroup.attribute.height;
-      // columnGroup.updateColumnHeight(height);
-      // y += height;
       if (isMerge) {
         const rangeHeight = table.getRowHeight(row);
         const rangeWidth = table.getColWidth(col);

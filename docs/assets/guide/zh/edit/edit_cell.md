@@ -44,7 +44,7 @@ VTable.register.editor('number-editor', numberEditor);
 VTable.register.editor('date-editor', dateInputEditor);
 VTable.register.editor('list-editor', listEditor);
 ```
-接下来需要再columns配置中指定使用的编辑器：
+接下来需要再columns配置中指定使用的编辑器（如果是透视表则在indicators配置editor）：
 
 ```javascript
 columns: [

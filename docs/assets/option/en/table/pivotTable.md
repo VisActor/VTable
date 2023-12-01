@@ -325,3 +325,17 @@ Set the sorting state, only corresponding to the display effect of the button wi
     prefix = '#',
     tableType = 'pivotTable'
 ) }}
+
+## editor (string|Object|Function)
+
+Global configuration cell editor
+```
+editor?: string | IEditor | ((args: BaseCellInfo & { table: BaseTableAPI }) => string | IEditor);
+```
+Among them, IEditor is the editor interface defined in @visactor/vtable-editors. For details, please refer to the source code: https://github.com/VisActor/VTable/blob/feat/editCell/packages/vtable-editors/src/types.ts .
+
+{{ use: common-option-secondary(
+    prefix = '#',
+    tableType = 'listTable'
+) }}
+```

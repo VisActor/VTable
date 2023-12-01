@@ -104,7 +104,7 @@ Such as extending for DEFAULT
 
 ```
 
-option.theme = vTable.themes.DEFAULT.extends({ headerStyle:{ color: 'red')})
+option.theme = vTable.themes.DEFAULT.extends({ headerStyle:{ color: 'red'}})
 
 const tableInstance = new vTable.ListTable(option);
 ```

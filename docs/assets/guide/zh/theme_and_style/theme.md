@@ -104,7 +104,7 @@ VTable 中内置一套默认主题/DEFAULT，一套ARCO风格，一套暗黑主�
 
 ```
 
-option.theme = vTable.themes.DEFAULT.extends({ headerStyle:{ color: 'red')})
+option.theme = vTable.themes.DEFAULT.extends({ headerStyle:{ color: 'red'}})
 
 const tableInstance = new vTable.ListTable(option);
 ```

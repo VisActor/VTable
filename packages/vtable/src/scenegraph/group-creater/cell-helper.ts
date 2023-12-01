@@ -376,7 +376,7 @@ export function updateCell(col: number, row: number, table: BaseTableAPI, addNew
 
   let isMerge;
   let range;
-  if (cellLocation !== 'body' || (define as TextColumnDefine)?.mergeCell) {
+  if (cellLocation !== 'body' || (define as TextColumnDefine)?.mergeCell || table.internalProps.customMergeCell) {
     // 只有表头或者column配置合并单元格后再进行信息获取
     range = table.getCellRange(col, row);
     isMerge = range.start.col !== range.end.col || range.start.row !== range.end.row;

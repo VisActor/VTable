@@ -49,21 +49,6 @@ export function initSceneGraph(scene: Scenegraph) {
   leftBottomCornerGroup.role = 'corner-left-bottom-header';
   scene.leftBottomCornerGroup = leftBottomCornerGroup;
 
-  if (scene.table.isPivotChart()) {
-    createCornerCell(
-      rightTopCornerGroup,
-      scene.table.theme.cornerRightTopCellStyle || scene.table.theme.cornerHeaderStyle
-    );
-    createCornerCell(
-      leftBottomCornerGroup,
-      scene.table.theme.cornerLeftBottomCellStyle || scene.table.theme.cornerHeaderStyle
-    );
-    createCornerCell(
-      rightBottomCornerGroup,
-      scene.table.theme.cornerRightBottomCellStyle || scene.table.theme.cornerHeaderStyle
-    );
-  }
-
   scene.tableGroup.addChild(bodyGroup);
   //注意这块添加的顺序 会影响select框选效果 有可能引起框选框覆盖其他部分group的问题  具体问题出在update-select-border文件中的updateComponent方法
   scene.tableGroup.addChild(rowHeaderGroup);

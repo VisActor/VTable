@@ -1,8 +1,8 @@
 import * as VTable from '../../src';
 import { bindDebugTool } from '../../src/scenegraph/debug-tool';
 const CONTAINER_ID = 'vTable';
-const generatePersons = count => {
-  return Array.from(new Array(count)).map((_, i) => ({
+const generatePersons = i => {
+  return {
     id: i + 1,
     email1: `${i + 1}@xxx.com`,
     name: `小明${i + 1}`,
@@ -12,11 +12,41 @@ const generatePersons = count => {
     sex: i % 2 === 0 ? 'boy' : 'girl',
     work: i % 2 === 0 ? 'back-end engineer' : 'front-end engineer',
     city: 'beijing'
-  }));
+  };
 };
 
+const getRecordsWithAjax = (startIndex, num) => {
+  return new Promise(resolve => {
+    setTimeout(() => {
+      const records = [];
+      for (let i = 0; i < num; i++) {
+        records.push(generatePersons(startIndex + i));
+      }
+      resolve(records);
+    }, 500);
+  });
+};
+
+// create DataSource
+const loadedData = {};
+const dataSource = new VTable.data.CachedDataSource({
+  get(index) {
+    // 每一批次请求100条数据 0-99 100-199 200-299
+    const loadStartIndex = Math.floor(index / 100) * 100;
+    // 判断是否已请求过？
+    if (!loadedData[loadStartIndex]) {
+      const promiseObject = getRecordsWithAjax(loadStartIndex, 100); // return Promise Object
+      loadedData[loadStartIndex] = promiseObject;
+    }
+    return loadedData[loadStartIndex].then(data => {
+      return data[index - loadStartIndex]; //获取批次数据列表中的index对应数据
+    });
+  },
+  length: 10000 //all records count
+});
+
 export function createTable() {
-  const records = generatePersons(10);
+  // const records = generatePersons(1000);
   const columns: VTable.ColumnsDefine = [
     {
       field: 'id',
@@ -74,7 +104,7 @@ export function createTable() {
   ];
   const option = {
     container: document.getElementById(CONTAINER_ID),
-    records,
+    // records,
     columns,
     tooltip: {
       isShowOverflowTextTooltip: true
@@ -107,6 +137,8 @@ export function createTable() {
   };
   const tableInstance = new VTable.ListTable(option);
   window.tableInstance = tableInstance;
+
+  tableInstance.dataSource = dataSource;
 
   bindDebugTool(tableInstance.scenegraph.stage, { customGrapicKeys: ['col', 'row'] });
   // tableInstance.on('sort_click', args => {
