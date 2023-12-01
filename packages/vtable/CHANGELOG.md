@@ -1,6 +1,30 @@
 # Change Log - @visactor/vtable
 
-This log was last generated on Thu, 30 Nov 2023 10:46:46 GMT and should not be manually modified.
+This log was last generated on Fri, 01 Dec 2023 10:28:56 GMT and should not be manually modified.
+
+## 0.15.4
+Fri, 01 Dec 2023 10:28:56 GMT
+
+### Updates
+
+- fix: editor object set in column be cloned
+
+
+- fix: fix theme style get problem
+- fix: fix list table frozen hover color
+- fix: fix right bottom frozen cell in getCellRect()
+- fix: fix table resize problem when column width limit
+- fix: fix custom render renderDefault auto size problem
+- fix: fix columnWidthComputeMode config problem
+- fix: release tableInstance after resize event trigger
+
+
+- refactor: ts define optimize
+
+
+- fix: columnWidthComputeMode only-header
+
+
 
 ## 0.15.3
 Thu, 30 Nov 2023 10:46:46 GMT

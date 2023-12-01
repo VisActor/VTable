@@ -210,6 +210,11 @@ export class EventHandler {
       }
     }
 
+    for (const key in this.reseizeListeners) {
+      const resizeObserver: ResizeObserver = this.reseizeListeners[key];
+      resizeObserver?.disConnect();
+    }
+
     this.listeners = {};
   }
   release(): void {

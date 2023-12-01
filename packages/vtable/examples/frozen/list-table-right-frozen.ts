@@ -76,7 +76,11 @@ export function createTable() {
     records,
     columns,
     rightFrozenColCount: 2,
-    allowFrozenColCount: 10
+    allowFrozenColCount: 10,
+    hover: {
+      highlightMode: 'row'
+    },
+    theme: VTable.themes.ARCO
   };
   const tableInstance = new VTable.ListTable(option);
   window.tableInstance = tableInstance;

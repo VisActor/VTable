@@ -279,7 +279,7 @@ export class TableTheme implements ITableThemeDefine {
   get cornerRightTopCellStyle(): ITableThemeDefine['cornerRightTopCellStyle'] {
     if (!this._cornerRightTopCell) {
       const { obj, superTheme } = this.internalTheme;
-      if (!superTheme.cornerRightTopCellStyle || !obj.cornerRightTopCellStyle) {
+      if (!superTheme.cornerRightTopCellStyle && !obj.cornerRightTopCellStyle) {
         return this._cornerRightTopCell;
       }
       // const header = getProp(obj, superTheme, ["header"]);
@@ -296,7 +296,7 @@ export class TableTheme implements ITableThemeDefine {
   get cornerLeftBottomCellStyle(): ITableThemeDefine['cornerLeftBottomCellStyle'] {
     if (!this._cornerLeftBottomCell) {
       const { obj, superTheme } = this.internalTheme;
-      if (!superTheme.cornerLeftBottomCellStyle || !obj.cornerLeftBottomCellStyle) {
+      if (!superTheme.cornerLeftBottomCellStyle && !obj.cornerLeftBottomCellStyle) {
         return this._cornerLeftBottomCell;
       }
       // const header = getProp(obj, superTheme, ["header"]);
@@ -313,7 +313,7 @@ export class TableTheme implements ITableThemeDefine {
   get cornerRightBottomCellStyle(): ITableThemeDefine['cornerRightBottomCellStyle'] {
     if (!this._cornerRightBottomCell) {
       const { obj, superTheme } = this.internalTheme;
-      if (!superTheme.cornerRightBottomCellStyle || !obj.cornerRightBottomCellStyle) {
+      if (!superTheme.cornerRightBottomCellStyle && !obj.cornerRightBottomCellStyle) {
         return this._cornerRightBottomCell;
       }
       // const header = getProp(obj, superTheme, ["header"]);
@@ -330,7 +330,7 @@ export class TableTheme implements ITableThemeDefine {
   get rightFrozenStyle(): ITableThemeDefine['rightFrozenStyle'] {
     if (!this._rightFrozen) {
       const { obj, superTheme } = this.internalTheme;
-      if (!superTheme.rightFrozenStyle || !obj.rightFrozenStyle) {
+      if (!superTheme.rightFrozenStyle && !obj.rightFrozenStyle) {
         return this._rightFrozen;
       }
       // const header = getProp(obj, superTheme, ["header"]);
@@ -348,7 +348,7 @@ export class TableTheme implements ITableThemeDefine {
   get bottomFrozenStyle(): ITableThemeDefine['bottomFrozenStyle'] {
     if (!this._bottomFrozen) {
       const { obj, superTheme } = this.internalTheme;
-      if (!superTheme.bottomFrozenStyle || !obj.bottomFrozenStyle) {
+      if (!superTheme.bottomFrozenStyle && !obj.bottomFrozenStyle) {
         return this._bottomFrozen;
       }
       // const header = getProp(obj, superTheme, ["header"]);
