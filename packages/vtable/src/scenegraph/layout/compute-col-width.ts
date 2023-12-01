@@ -66,7 +66,7 @@ export function computeColsWidth(table: BaseTableAPI, colStart?: number, colEnd?
       table._clearColRangeWidthsMap(col);
     }
     if (update) {
-      newWidths[col] = maxWidth;
+      newWidths[col] = table._adjustColWidth(col, maxWidth);
     } else {
       table._setColWidth(col, maxWidth, false, true);
     }
@@ -103,7 +103,7 @@ export function computeColsWidth(table: BaseTableAPI, colStart?: number, colEnd?
         colWidth = Math.round((update ? newWidths[col] : table.getColWidth(col)) * factor);
       }
       if (update) {
-        newWidths[col] = colWidth;
+        newWidths[col] = table._adjustColWidth(col, colWidth);
       } else {
         table._setColWidth(col, colWidth, false, true);
       }
@@ -145,7 +145,7 @@ export function computeColsWidth(table: BaseTableAPI, colStart?: number, colEnd?
         }
         if (update) {
           // newWidths[col] = newWidths[col] * factor;
-          newWidths[col] = colWidth;
+          newWidths[col] = table._adjustColWidth(col, colWidth);
         } else {
           // table.setColWidth(col, table.getColWidth(col) * factor, false, true);
           table._setColWidth(col, colWidth, false, true);
@@ -316,9 +316,11 @@ function computeAutoColWidth(
 
     // 判断CustomRender
     const customWidth = computeCustomRenderWidth(col, row, table);
-    if (typeof customWidth === 'number') {
-      maxWidth = Math.max(customWidth, maxWidth);
-      continue;
+    if (customWidth) {
+      maxWidth = Math.max(customWidth.width, maxWidth);
+      if (!customWidth.renderDefault) {
+        continue;
+      }
     }
 
     // 判断透视表如果在指标
@@ -402,12 +404,13 @@ function computeAutoColWidth(
  * @param {BaseTableAPI} table
  * @return {*}
  */
-function computeCustomRenderWidth(col: number, row: number, table: BaseTableAPI): number | undefined {
+function computeCustomRenderWidth(col: number, row: number, table: BaseTableAPI) {
   const customRender = table.getCustomRender(col, row);
   const customLayout = table.getCustomLayout(col, row);
   if (customRender || customLayout) {
     let spanCol = 1;
     let width = 0;
+    let renderDefault = false;
     if (table.isHeader(col, row) || (table.getBodyColumnDefine(col, row) as TextColumnDefine)?.mergeCell) {
       const cellRange = table.getCellRange(col, row);
       spanCol = cellRange.end.col - cellRange.start.col + 1;
@@ -428,11 +431,7 @@ function computeCustomRenderWidth(col: number, row: number, table: BaseTableAPI)
         dealPercentCalc(customLayoutObj.rootContainer, 0, table.getRowHeight(row));
         customLayoutObj.rootContainer.setStage(table.scenegraph.stage);
         width = (customLayoutObj.rootContainer as VGroup).AABBBounds.width() ?? 0;
-        // width = (customLayoutObj.rootContainer as VGroup).attribute.width ?? 0;
-        // } else if (customLayoutObj.rootContainer) {
-        //   customLayoutObj.rootContainer.isRoot = true;
-        //   const size = customLayoutObj.rootContainer.getContentSize();
-        //   width = size.width ?? 0;
+        renderDefault = customLayoutObj.renderDefault;
       } else {
         width = 0;
       }
@@ -440,10 +439,15 @@ function computeCustomRenderWidth(col: number, row: number, table: BaseTableAPI)
       // 处理customRender
       const customRenderObj = customRender(arg);
       width = customRenderObj?.expectedWidth ?? 0;
+      renderDefault = customRenderObj?.renderDefault;
     } else {
       width = customRender?.expectedWidth ?? 0;
+      renderDefault = customRender?.renderDefault;
     }
-    return width / spanCol;
+    return {
+      width: width / spanCol,
+      renderDefault
+    };
   }
   return undefined;
 }

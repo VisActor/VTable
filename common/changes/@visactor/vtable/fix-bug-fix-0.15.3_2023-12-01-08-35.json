@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vtable",
+      "comment": "fix: fix table resize problem when column width limit",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vtable"
+}

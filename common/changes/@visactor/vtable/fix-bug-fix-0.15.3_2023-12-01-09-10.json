@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vtable",
+      "comment": "fix: fix columnWidthComputeMode config problem",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vtable"
+}
