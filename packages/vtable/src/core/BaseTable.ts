@@ -1241,16 +1241,30 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
   getCellRect(col: number, row: number): Rect {
     const isFrozenCell = this.isFrozenCell(col, row);
 
-    let absoluteLeft = this.getColsWidth(0, col - 1) || 0;
+    let absoluteLeft;
     const width = this.getColWidth(col);
     if (isFrozenCell && isFrozenCell.col) {
-      absoluteLeft += this.scrollLeft;
+      if (this.isRightFrozenColumn(col, row)) {
+        absoluteLeft = this.tableNoFrameWidth - (this.getColsWidth(col, this.colCount - 1) ?? 0);
+      } else {
+        absoluteLeft = this.getColsWidth(0, col - 1) || 0;
+        absoluteLeft += this.scrollLeft;
+      }
+    } else {
+      absoluteLeft = this.getColsWidth(0, col - 1) || 0;
     }
 
-    let absoluteTop = this.getRowsHeight(0, row - 1);
+    let absoluteTop;
     const height = this.getRowHeight(row);
     if (isFrozenCell && isFrozenCell.row) {
-      absoluteTop += this.scrollTop;
+      if (this.isBottomFrozenRow(col, row)) {
+        absoluteLeft = this.tableNoFrameHeight - (this.getRowsHeight(row, this.rowCount - 1) ?? 0);
+      } else {
+        absoluteTop = this.getRowsHeight(0, row - 1);
+        absoluteTop += this.scrollTop;
+      }
+    } else {
+      absoluteTop = this.getRowsHeight(0, row - 1);
     }
     return new Rect(Math.round(absoluteLeft), Math.round(absoluteTop), Math.round(width), Math.round(height));
   }

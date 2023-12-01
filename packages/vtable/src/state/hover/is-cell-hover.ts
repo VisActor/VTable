@@ -33,15 +33,19 @@ export function getCellHoverColor(cellGroup: Group, table: BaseTableAPI): string
   let hoverStyle;
   const layout = table.internalProps.layoutMap;
   if (layout.isCornerHeader(cellGroup.col, cellGroup.row)) {
-    hoverStyle = table.theme.cornerHeaderStyle?.hover;
+    hoverStyle = table.theme.cornerHeaderStyle?.hover || table.theme.headerStyle?.hover;
   } else if (layout.isColumnHeader(cellGroup.col, cellGroup.row)) {
     hoverStyle = table.theme.headerStyle?.hover;
   } else if (layout.isRowHeader(cellGroup.col, cellGroup.row)) {
     hoverStyle = table.theme.rowHeaderStyle?.hover;
   } else if (layout.isBottomFrozenRow(cellGroup.col, cellGroup.row)) {
-    hoverStyle = table.theme.bottomFrozenStyle?.hover || table.theme.headerStyle?.hover;
+    hoverStyle =
+      table.theme.bottomFrozenStyle?.hover ||
+      (table.isListTable() ? table.theme.bodyStyle?.hover : table.theme.headerStyle?.hover);
   } else if (layout.isRightFrozenColumn(cellGroup.col, cellGroup.row)) {
-    hoverStyle = table.theme.rightFrozenStyle?.hover || table.theme.rowHeaderStyle?.hover;
+    hoverStyle =
+      table.theme.rightFrozenStyle?.hover ||
+      (table.isListTable() ? table.theme.bodyStyle?.hover : table.theme.rowHeaderStyle?.hover);
   } else if (!table.isHeader(cellGroup.col, cellGroup.row)) {
     hoverStyle = table.theme.bodyStyle?.hover;
   }

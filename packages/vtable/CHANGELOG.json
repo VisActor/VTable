@@ -2,6 +2,45 @@
   "name": "@visactor/vtable",
   "entries": [
     {
+      "version": "0.15.4",
+      "tag": "@visactor/vtable_v0.15.4",
+      "date": "Fri, 01 Dec 2023 10:28:56 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "fix: editor object set in column be cloned\n\n"
+          },
+          {
+            "comment": "fix: fix theme style get problem"
+          },
+          {
+            "comment": "fix: fix list table frozen hover color"
+          },
+          {
+            "comment": "fix: fix right bottom frozen cell in getCellRect()"
+          },
+          {
+            "comment": "fix: fix table resize problem when column width limit"
+          },
+          {
+            "comment": "fix: fix custom render renderDefault auto size problem"
+          },
+          {
+            "comment": "fix: fix columnWidthComputeMode config problem"
+          },
+          {
+            "comment": "fix: release tableInstance after resize event trigger\n\n"
+          },
+          {
+            "comment": "refactor: ts define optimize\n\n"
+          },
+          {
+            "comment": "fix: columnWidthComputeMode only-header\n\n"
+          }
+        ]
+      }
+    },
+    {
       "version": "0.15.3",
       "tag": "@visactor/vtable_v0.15.3",
       "date": "Thu, 30 Nov 2023 10:46:46 GMT",

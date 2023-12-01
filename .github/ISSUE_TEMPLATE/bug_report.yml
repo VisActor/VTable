@@ -41,7 +41,7 @@ body:
     attributes:
       label: Link to Minimal Reproduction
       description: |
-        If the reproduction does not need a build setup, please provide a link to [Official Editor](TODO), [JSFiddle](TODO), [JSBin](https://jsbin.com/) or [CodePen](TODO). If it requires a build setup, you can use [CodeSandbox](TODO) or provide a GitHub repo.
+        If the reproduction does not need a build setup, please provide a link to [Official Editor](TODO), [JSFiddle](TODO), [JSBin](https://jsbin.com/) or [CodePen](TODO). If it requires a build setup, you can use [CodeSandbox](https://codesandbox.io/p/sandbox/vtable-bug-report-dd9pfl?file=%2Fsrc%2Findex.ts%3A57%2C11) or provide a GitHub repo.
         The reproduction should be **minimal** - i.e. it should contain only the bare minimum amount of code needed to show the bug.
         Please do not just fill in a random link. The issue will be closed if no valid reproduction is provided. [Why?](https://antfu.me/posts/why-reproductions-are-required)
 
