@@ -1,4 +1,4 @@
-import type { ColumnIconOption, FontIcon, ImageIcon, SvgIcon } from '../ts-types';
+import type { ColumnIconOption, ImageIcon, ListTableAPI, SvgIcon } from '../ts-types';
 import { HierarchyState, InternalIconName } from '../ts-types';
 import * as registerIcons from '../icons';
 import { Style } from './style/Style';
@@ -120,14 +120,14 @@ export class BodyHelper {
     }
     // icon.positionType = IconPosition.inlineFront;
     if (!obj.isObject(icon) || typeof icon === 'function') {
-      return this._table.getFieldData(icon, col, row);
+      return (this._table as ListTableAPI).getFieldData(icon, col, row);
     }
     // 新建对象 挨个属性赋值
     const retIcon: any = {};
     const iconOpt: any = icon;
     icons.iconPropKeys.forEach(k => {
       if (typeof iconOpt[k] !== 'undefined') {
-        const f = this._table.getFieldData(iconOpt[k], col, row);
+        const f = (this._table as ListTableAPI).getFieldData(iconOpt[k], col, row);
         if (f != null) {
           retIcon[k] = f;
         } else if (!this._table._hasField(iconOpt[k], col, row)) {

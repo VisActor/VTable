@@ -1,8 +1,26 @@
-import * as VTable from '../../src';
-const ListTable = VTable.ListTable;
-const CONTAINER_ID = 'vTable';
+---
+category: examples
+group: table-type
+title: 基本表格树形展示(懒加载子节点数据)
+cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/list-tree-lazy-load.gif
+link: '../guide/table_type/List_table/tree_list'
+option: ListTable-columns-text#tree
+---
 
-export function createTable() {
+# 基本表格树形展示(懒加载子节点数据)
+
+基本表格树形展示，开启某一列的tree模式，如果将对应数据的children设置为true而非具体的数据集合，那么点击时可以监听`TREE_HIERARCHY_STATE_CHANGE`事件来请求children数据并回传到表格组件中。
+
+## 关键配置
+
+- tree:true 在某一列上设置开启树形展示
+- children: true 在某一行数据上设置开启树形展示 并懒加载子节点数据
+- setRecordChildren(children: any[], col: number, row: number) 在某一行数据懒加载子节点数据后调用此方法回传到表格组件中
+- TREE_HIERARCHY_STATE_CHANGE 树形展示状态改变事件
+## 代码演示
+
+```javascript livedemo template=vtable
+  let  tableInstance;
   const data = [
     {
       类别: '办公用品',
@@ -140,7 +158,7 @@ export function createTable() {
       children: true
     }
   ];
-  const option: VTable.ListTableConstructorOptions = {
+  const option = {
     container: document.getElementById(CONTAINER_ID),
     columns: [
       {
@@ -180,7 +198,7 @@ export function createTable() {
     defaultRowHeight: 32
   };
 
-  const instance = new ListTable(option);
+  const instance = new VTable.ListTable(option);
 
   const { TREE_HIERARCHY_STATE_CHANGE } = VTable.ListTable.EVENT_TYPE;
   instance.on(TREE_HIERARCHY_STATE_CHANGE, args => {
@@ -219,6 +237,5 @@ export function createTable() {
       }, 200);
     }
   });
-
-  window.tableInstance = instance;
-}
+window['tableInstance'] = tableInstance;
+```

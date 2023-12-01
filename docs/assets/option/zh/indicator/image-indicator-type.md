@@ -6,7 +6,7 @@
 
 ##${prefix} cellType(string) = 'image'
 
-指定列类型为`'image'`，cellType可缺省默认为`'text'`。其他配置项如下（同样适用于类型为'vidio'）：
+指定列类型为`'image'`，cellType可缺省默认为`'text'`。其他配置项如下（同样适用于类型为'video'）：
 
 {{ use: base-indicator-type(
     prefix = '##'+${prefix},

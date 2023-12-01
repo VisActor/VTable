@@ -573,11 +573,17 @@ export interface BaseTableAPI {
   getCellValue: (col: number, row: number) => string | null;
   /** 获取单元格展示数据的format前的值 */
   getCellOriginValue: (col: number, row: number) => any;
+  /** 获取单元格展示数据源最原始值 */
+  getCellRawValue: (col: number, row: number) => FieldData;
+  /** 获取单元格展示数据的format前的record源数据 */
   getCellOriginRecord: (col: number, row: number) => MaybePromiseOrUndefined;
+  /** 获取单元格展示源数据 */
+  getCellRawRecord: (col: number, row: number) => MaybePromiseOrUndefined;
+
   _dropDownMenuIsHighlight: (col: number, row: number, index: number) => boolean;
   // bindEvents(): void;
   refreshRowColCount: () => void;
-  getFieldData: (field: FieldDef | FieldFormat | undefined, col: number, row: number) => FieldData;
+  // getFieldData: (field: FieldDef | FieldFormat | undefined, col: number, row: number) => FieldData;
   _hasField: (field: FieldDef, col: number, row: number) => boolean;
   getCellHeaderPaths: (col: number, row: number) => ICellHeaderPaths;
   getCellLocation: (col: number, row: number) => CellLocation;
@@ -594,7 +600,7 @@ export interface BaseTableAPI {
 
   getHierarchyState: (col: number, row: number) => HierarchyState | null;
 
-  hasHierarchyTreeHeader: () => boolean;
+  _hasHierarchyTreeHeader: () => boolean;
 
   _canDragHeaderPosition: (col: number, row: number) => boolean;
 

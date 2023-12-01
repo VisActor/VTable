@@ -30,6 +30,9 @@ export abstract class Aggregator {
   // }
   abstract push(record: any): void;
   abstract value(): any;
+  clearCacheValue() {
+    this._formatedValue = undefined;
+  }
   formatValue(col?: number, row?: number, table?: BaseTableAPI) {
     if (!this._formatedValue) {
       if (this.formatFun) {
