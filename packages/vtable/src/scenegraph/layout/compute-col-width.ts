@@ -43,7 +43,7 @@ export function computeColsWidth(table: BaseTableAPI, colStart?: number, colEnd?
     ) {
       const temp = table.internalProps.layoutMap.showHeader;
       table.internalProps.layoutMap.showHeader = true;
-      maxWidth = computeColWidth(col, 0, table.internalProps.layoutMap.headerLevelCount, table);
+      maxWidth = computeColWidth(col, 0, table.internalProps.layoutMap.headerLevelCount - 1, table);
       table.internalProps.layoutMap.showHeader = temp;
     } else if (
       !table.internalProps.transpose &&
