@@ -19,7 +19,7 @@ export function updateRow(
   // deduplication
   const removeRows = deduplication(removeCells.map(cell => cell.row)).sort((a, b) => b - a);
   const addRows = deduplication(addCells.map(cell => cell.row)).sort((a, b) => a - b);
-  // const updateRows = deduplication(updateCells.map(cell => cell.row)).sort((a, b) => a - b);
+  const updateRows = deduplication(updateCells.map(cell => cell.row)).sort((a, b) => a - b);
 
   // remove cells
   removeRows.forEach(row => {
@@ -49,24 +49,22 @@ export function updateRow(
   // const newTotalHeight = resetRowNumberAndY(scene);
   resetRowNumberAndY(scene);
 
-  // add cells
-  updateCells.forEach(cell => {
-    // updateRowAttr(row, scene);
-    if (!cell) {
-      return;
-    }
-    const mergeInfo = getCellMergeInfo(scene.table, cell.col, cell.row);
-    if (mergeInfo) {
-      for (let col = mergeInfo.start.col; col <= mergeInfo.end.col; col++) {
-        for (let row = mergeInfo.start.row; row <= mergeInfo.end.row; row++) {
-          updateCell(col, row, scene.table, false);
+  for (let col = 0; col < table.colCount; col++) {
+    // add cells
+    updateRows.forEach(r => {
+      // updateRowAttr(row, scene);
+      const mergeInfo = getCellMergeInfo(scene.table, col, r);
+      if (mergeInfo) {
+        for (let col = mergeInfo.start.col; col <= mergeInfo.end.col; col++) {
+          for (let row = mergeInfo.start.row; row <= mergeInfo.end.row; row++) {
+            updateCell(col, row, scene.table, false);
+          }
         }
+      } else {
+        updateCell(col, r, scene.table, false);
       }
-    } else {
-      updateCell(cell.col, cell.row, scene.table, false);
-    }
-  });
-
+    });
+  }
   if (isNumber(updateAfter)) {
     for (let col = 0; col < table.colCount; col++) {
       for (let row = updateAfter; row < table.rowCount; row++) {

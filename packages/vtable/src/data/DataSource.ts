@@ -141,8 +141,11 @@ export class DataSource extends EventTarget implements DataSourceAPI {
   private lastOrder: SortOrder;
   private lastOrderFn: (a: any, b: any, order: string) => number;
   private lastOrderField: FieldDef;
+  /** 每一行对应源数据的索引 */
   protected currentIndexedData: (number | number[])[] | null = [];
+  protected userPagination: IPagination;
   protected pagination: IPagination;
+  /** 当前页每一行对应源数据的索引 */
   protected _currentPagerIndexedData: (number | number[])[];
   // 当前是否为层级的树形结构 排序时判断该值确实是否继续进行子节点排序
   enableHierarchyState = false;
@@ -160,6 +163,7 @@ export class DataSource extends EventTarget implements DataSourceAPI {
     this.sortedIndexMap = new Map<string, ISortedMapItem>();
 
     this._currentPagerIndexedData = [];
+    this.userPagination = pagination;
     this.pagination = pagination || {
       totalCount: this._sourceLength,
       perPageCount: this._sourceLength,
@@ -493,6 +497,36 @@ export class DataSource extends EventTarget implements DataSourceAPI {
       const c_node_index = (indexed as Array<any>)[indexed.length - 1];
       const p_node = this.getOriginalRecord(indexed.slice(0, indexed.length - 1));
       (p_node as any).children.splice(c_node_index, 1, record);
+    }
+  }
+  /**
+   * 将数据record 添加到index位置处
+   * @param record
+   * @param index 代表的数据源中的index
+   */
+  addRecord(record: any, index: number) {
+    if (Array.isArray(record)) {
+      this.source.splice(index, 0, ...record);
+      for (let i = 0; i < record.length; i++) {
+        this.currentIndexedData.push(this.currentIndexedData.length);
+      }
+    } else {
+      this.source.splice(index, 0, record);
+      this.currentIndexedData.push(this.currentIndexedData.length);
+    }
+    this._sourceLength += record.length;
+    if (this.userPagination) {
+      this.pagination.totalCount = this._sourceLength;
+      const { perPageCount, currentPage } = this.pagination;
+      const startIndex = perPageCount * (currentPage || 0);
+      const endIndex = startIndex + perPageCount;
+      if (index <= endIndex) {
+        this.updatePagerData();
+      }
+    } else {
+      this.pagination.perPageCount = this._sourceLength;
+      this.pagination.totalCount = this._sourceLength;
+      this.updatePagerData();
     }
   }
   sort(

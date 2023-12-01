@@ -614,6 +614,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
     } else if (hierarchyState === HierarchyState.collapse) {
       const record = this.getCellOriginRecord(col, row);
       if (Array.isArray(record.children)) {
+        //children 是数组 表示已经有子树节点信息
         this._refreshHierarchyState(col, row);
       }
       this.fireListeners(TABLE_EVENT_TYPE.TREE_HIERARCHY_STATE_CHANGE, {
@@ -889,5 +890,50 @@ export class ListTable extends BaseTable implements ListTableAPI {
       changedValue: this.getCellOriginValue(col, row)
     });
     this.scenegraph.updateNextFrame();
+  }
+
+  addRecord(record: any | any[], recordIndex?: number) {
+    if (this.sortState) {
+    } else {
+      this.dataSource.addRecord(record, recordIndex);
+      this.refreshRowColCount();
+      if (this.pagination) {
+        const { perPageCount, currentPage } = this.pagination;
+        const startIndex = perPageCount * (currentPage || 0);
+        const endIndex = startIndex + perPageCount;
+        if (recordIndex <= endIndex) {
+          //如果是插入的是当前页后面的数据不需要更新场景树
+          if (recordIndex <= endIndex - perPageCount) {
+            // 如果是当页之前的数据 则整个场景树都更新
+            this.scenegraph.clearCells();
+            this.scenegraph.createSceneGraph();
+          } else {
+            //如果是插入当前页数据
+            if (this.rowCount - this.columnHeaderLevelCount === this.pagination.perPageCount) {
+              //如果当页数据是满的 则更新插入的部分行
+              const updateRows = [];
+              for (let row = recordIndex + this.columnHeaderLevelCount; row < this.rowCount; row++) {
+                updateRows.push({ col: 0, row });
+              }
+              this.scenegraph.updateRow([], [], updateRows);
+            } else {
+              //如果当页数据不是满的 则有部分插入 有部分更新
+              //TODO
+            }
+          }
+        }
+      } else {
+        const addRows = [];
+        for (
+          let row = recordIndex + this.columnHeaderLevelCount;
+          row < recordIndex + this.columnHeaderLevelCount + (Array.isArray(record) ? record.length : 1);
+          row++
+        ) {
+          addRows.push({ col: 0, row });
+        }
+        this.scenegraph.updateRow([], addRows, []);
+      }
+    }
+    // this.fireListeners(TABLE_EVENT_TYPE.ADD_RECORD, { row });
   }
 }
