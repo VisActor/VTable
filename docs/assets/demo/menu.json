@@ -73,6 +73,13 @@
           }
         },
         {
+          "path": "list-table-tree-lazy-load",
+          "title": {
+            "zh": "基本表格树形展示(懒加载)",
+            "en": "List Table Tree(lazy load)"
+          }
+        },
+        {
           "path": "transpose-table",
           "title": {
             "zh": "转置表格",
@@ -817,6 +824,13 @@
           "title": {
             "zh": "自定义编辑器",
             "en": "custom date editor"
+          }
+        },
+        {
+          "path": "pivot-table-editor",
+          "title": {
+            "zh": "透视表编辑数据",
+            "en": "PivotTable edit data"
           }
         }
       ]

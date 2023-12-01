@@ -63,8 +63,8 @@ export function createTable() {
       name: 'a'
     },
     {
-      progress: 80.4,
-      id: 2,
+      // progress: '',
+      // id: 2,
       name: 'b'
     },
     {
@@ -141,7 +141,7 @@ export function createTable() {
         fieldFormat(rec) {
           return `已完成${rec.progress}%`;
         },
-        editor: 'input',
+
         title: 'progress',
         description: '这是一个标题的详细描述',
         width: 'auto',
@@ -162,7 +162,8 @@ export function createTable() {
     showFrozenIcon: true, //显示VTable内置冻结列图标
     widthMode: 'standard',
     autoFillWidth: true,
-    allowFrozenColCount: 2
+    allowFrozenColCount: 2,
+    editor: 'input'
   };
 
   const instance = new ListTable(option);
