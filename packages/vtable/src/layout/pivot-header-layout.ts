@@ -60,7 +60,7 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
   private _rowHeaderCellIds_FULL: number[][] = [];
   private _columnWidths: WidthData[] = [];
   rowsDefine: (IDimension | string)[];
-  columnsDefine: (IDimension | string)[];
+  columnsDefine: (Omit<IDimension, 'width' | 'minWidth' | 'maxWidth'> | string)[];
   indicatorsDefine: (IIndicator | string)[];
   columnPaths: number[][] = [];
   private _headerObjects: HeaderData[] = [];
@@ -671,7 +671,10 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
     });
     return results;
   }
-  private _addCornerHeaders(dimensionKeys: (string | number)[] | null, dimensions: (string | IDimension)[]) {
+  private _addCornerHeaders(
+    dimensionKeys: (string | number)[] | null,
+    dimensions: (string | IDimension | Omit<IDimension, 'width' | 'minWidth' | 'maxWidth'>)[]
+  ) {
     const results: HeaderData[] = [];
     if (dimensionKeys) {
       dimensionKeys.forEach((dimensionKey: string, key: number) => {

@@ -198,7 +198,7 @@ export interface PivotTableConstructorOptions extends BaseTableConstructorOption
   /** 定义行上各个维度具体配置项和样式定义 */
   rows?: (IDimension | string)[]; // (string | IDimension)[]; 后续支持数据分析的透视表 支持string配置
   /** 定义列上各个维度具体配置项和样式定义 */
-  columns?: (IDimension | string)[]; // (string | IDimension)[];
+  columns?: (Omit<IDimension, 'width' | 'minWidth' | 'maxWidth'> | string)[]; // (string | IDimension)[];
   /** 定义指标具体配置项和样式定义 包含表头和body的定义*/
   indicators?: (IIndicator | string)[]; // (string | IIndicator)[];
 
@@ -264,7 +264,7 @@ export interface PivotChartConstructorOptions extends BaseTableConstructorOption
   /** 定义行上各个维度具体配置项和样式定义 */
   rows?: (IDimension | string)[]; // (string | IDimension)[]; 后续支持数据分析的透视表 支持string配置
   /** 定义列上各个维度具体配置项和样式定义 */
-  columns?: (IDimension | string)[]; // (string | IDimension)[];
+  columns?: (Omit<IDimension, 'width' | 'minWidth' | 'maxWidth'> | string)[]; // (string | IDimension)[];
   /** 定义指标具体配置项和样式定义 包含表头和body的定义*/
   indicators?: (IChartIndicator | string)[]; // (string | IIndicator)[];
 
