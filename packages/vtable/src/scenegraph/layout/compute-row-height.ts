@@ -284,9 +284,11 @@ export function computeRowHeight(row: number, startCol: number, endCol: number, 
   for (let col = startCol; col <= endCol; col++) {
     // CustomRender height calculation
     const customHeight = computeCustomRenderHeight(col, row, table);
-    if (typeof customHeight === 'number') {
-      maxHeight = Math.max(customHeight, maxHeight);
-      continue;
+    if (customHeight) {
+      maxHeight = Math.max(customHeight.height, maxHeight);
+      if (!customHeight.renderDefault) {
+        continue;
+      }
     }
 
     // Axis component height calculation
@@ -409,12 +411,13 @@ function fillRowsHeight(
  * @param {BaseTableAPI} table
  * @return {*}
  */
-function computeCustomRenderHeight(col: number, row: number, table: BaseTableAPI): number | undefined {
+function computeCustomRenderHeight(col: number, row: number, table: BaseTableAPI) {
   const customRender = table.getCustomRender(col, row);
   const customLayout = table.getCustomLayout(col, row);
   if (customRender || customLayout) {
     let spanRow = 1;
     let height = 0;
+    let renderDefault = false;
     if (table.isHeader(col, row) || (table.getBodyColumnDefine(col, row) as TextColumnDefine)?.mergeCell) {
       const cellRange = table.getCellRange(col, row);
       spanRow = cellRange.end.row - cellRange.start.row + 1;
@@ -434,13 +437,8 @@ function computeCustomRenderHeight(col: number, row: number, table: BaseTableAPI
         customLayoutObj.rootContainer = decodeReactDom(customLayoutObj.rootContainer);
         dealPercentCalc(customLayoutObj.rootContainer, table.getColWidth(col), 0);
         customLayoutObj.rootContainer.setStage(table.scenegraph.stage);
-        // debugger
         height = (customLayoutObj.rootContainer as VGroup).AABBBounds.height() ?? 0;
-        // height = (customLayoutObj.rootContainer as VGroup).attribute.height ?? 0;
-        // } else if (customLayoutObj.rootContainer) {
-        //   customLayoutObj.rootContainer.isRoot = true;
-        //   const size = customLayoutObj.rootContainer.getContentSize();
-        //   height = size.height ?? 0;
+        renderDefault = customLayoutObj.renderDefault;
       } else {
         height = 0;
       }
@@ -448,10 +446,15 @@ function computeCustomRenderHeight(col: number, row: number, table: BaseTableAPI
       // 处理customRender
       const customRenderObj = customRender(arg);
       height = customRenderObj?.expectedHeight ?? 0;
+      renderDefault = customRenderObj?.renderDefault;
     } else {
       height = customRender?.expectedHeight ?? 0;
+      renderDefault = customRender?.renderDefault;
     }
-    return height / spanRow;
+    return {
+      height: height / spanRow,
+      renderDefault
+    };
   }
   return undefined;
 }

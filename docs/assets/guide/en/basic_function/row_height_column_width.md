@@ -34,16 +34,21 @@ const table = new VTable.ListTable({
   defaultColWidth: 100,
 });
 ```
+## Default Column Width for Row Header
 
-## Row header default column width
-
-In addition to the default column width setting, VTable also supports setting the column width for row headers. Pass`defaultHeaderColWidth`The configuration item can be set. The configuration item can be set to one, which corresponds to the width of each row header column. The following code example shows how to set the width of the first row header column to 50 and the width of the second row header column to 60:
+In addition to setting the default column width, VTable also supports setting the column width specifically for the row header. This can be achieved using the `defaultHeaderColWidth` configuration option, which can be an array representing the widths of each level of row header columns. The following code example demonstrates how to set the column width to 50 for the first-level row header column and 60 for the second-level row header column:
 
 ```javascript
 const table = new VTable.ListTable({
   defaultHeaderColWidth: [50, 60],
 });
 ```
+
+Please note that this configuration only applies to row headers. If you have column headers, this configuration option will not be considered (the logic will be based on the widths defined in the body section).
+
+Specifically:
+- For transposed basic tables, if you configure `defaultHeaderColWidth: [50, 'auto']`, it means that the first column of the transposed table header has a width of 50, and the second column adjusts its width based on the content of the cells.
+- For pivot tables, if you configure `defaultHeaderColWidth: [50, 'auto']`, it means that the first column of the row header (first-level dimension) has a width of 50, and the second column (second-level dimension) adjusts its width based on the content of the cells.
 
 ## Column width limit: maxWidth + minWidth
 
@@ -150,5 +155,12 @@ The calculation mode of table row height `heightMode` can also be configured as 
 - Standard mode (standard): Use `defaultRowHeight` and `defaultHeaderRowHeight` as the row height.
 - Adaptive container height mode (adaptive): Use the height of the container to allocate the height of each row.
 - Automatic line height mode (autoHeight): Automatically calculate line height based on content, based on fontSize and lineHeight. The related configuration item `autoWrapText` automatically wraps lines, and can calculate the line height based on the multi-line text content after line wrapping.
+
+# FAQ
+## Setting Adaptive Content for Specific Columns to Calculate Column Width
+If you don't want to calculate the column width for every column, you can use the `width` property in the `columns` configuration instead of setting `widthMode: 'autoWidth'`.
+
+## Adapting Column Width Based on Header Content
+If you only need to calculate the width based on the header content, you can use `columnWidthComputeMode: 'only-header'`. However, you need to use it in conjunction with `widthMode: 'autoWidth'`.
 
 So far, we have introduced the table row height and column width calculation function in VTable, including row height, column width configuration, and table width mode. By mastering these functions, you can display and analyze data in VTable more conveniently to meet various practical needs.
