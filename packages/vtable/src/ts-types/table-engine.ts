@@ -6,7 +6,15 @@ import type { Rect } from '../tools/Rect';
 import type { BaseTableAPI, BaseTableConstructorOptions } from './base-table';
 import type { IDataConfig } from './new-data-set';
 import type { Either } from '../tools/helper';
-import type { IChartIndicator, ICornerDefine, IDimension, IIndicator, ITitleDefine } from './pivot-table';
+import type {
+  IChartIndicator,
+  IColumnDimension,
+  ICornerDefine,
+  IDimension,
+  IIndicator,
+  IRowDimension,
+  ITitleDefine
+} from './pivot-table';
 import type { ColumnsDefine } from './list-table';
 import type { ICellAxisOption, ITableAxisOption } from './component/axis';
 import type { IEditor } from '@visactor/vtable-editors';
@@ -196,9 +204,9 @@ export interface PivotTableConstructorOptions extends BaseTableConstructorOption
   // dimensions?: IDimension[];
 
   /** 定义行上各个维度具体配置项和样式定义 */
-  rows?: (IDimension | string)[]; // (string | IDimension)[]; 后续支持数据分析的透视表 支持string配置
+  rows?: (IRowDimension | string)[]; // (string | IDimension)[]; 后续支持数据分析的透视表 支持string配置
   /** 定义列上各个维度具体配置项和样式定义 */
-  columns?: (IDimension | string)[]; // (string | IDimension)[];
+  columns?: (IColumnDimension | string)[]; // (string | IDimension)[];
   /** 定义指标具体配置项和样式定义 包含表头和body的定义*/
   indicators?: (IIndicator | string)[]; // (string | IIndicator)[];
 
@@ -262,9 +270,9 @@ export interface PivotChartConstructorOptions extends BaseTableConstructorOption
   // dimensions?: IDimension[];
 
   /** 定义行上各个维度具体配置项和样式定义 */
-  rows?: (IDimension | string)[]; // (string | IDimension)[]; 后续支持数据分析的透视表 支持string配置
+  rows?: (IRowDimension | string)[]; // (string | IDimension)[]; 后续支持数据分析的透视表 支持string配置
   /** 定义列上各个维度具体配置项和样式定义 */
-  columns?: (IDimension | string)[]; // (string | IDimension)[];
+  columns?: (IColumnDimension | string)[]; // (string | IDimension)[];
   /** 定义指标具体配置项和样式定义 包含表头和body的定义*/
   indicators?: (IChartIndicator | string)[]; // (string | IIndicator)[];
 
@@ -387,7 +395,7 @@ export interface IDimensionHeaderNode {
 }
 
 export interface IExtensionRowDefine {
-  rows: (IDimension | string)[];
+  rows: (IRowDimension | string)[];
   rowTree: IHeaderTreeDefine[] | ((args: { dimensionKey: string | number; value: string }[]) => IHeaderTreeDefine[]);
 }
 
