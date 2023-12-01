@@ -144,7 +144,14 @@ export function createTable() {
       field: 'hobbies',
       title: 'hobbies',
       width: 200,
-      editor: new InputEditor({})
+      editor(args) {
+        if (args.row % 3 === 0) {
+          return new InputEditor({});
+        } else if (args.row % 3 === 1) {
+          return new DateInputEditor({});
+        }
+        return null;
+      }
     },
     {
       field: 'birthday',
