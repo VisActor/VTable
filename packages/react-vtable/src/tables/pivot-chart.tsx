@@ -5,7 +5,7 @@ import type { BaseTableProps } from './base-table';
 import { createTable } from './base-table';
 
 export interface PivotChartProps
-  extends Omit<BaseTableProps, 'option' | 'records' | 'type'>,
+  extends Omit<BaseTableProps, 'records' | 'type'>,
     Omit<PivotChartConstructorOptions, 'container'> {}
 
 export const PivotChart = createTable<React.PropsWithChildren<PivotChartProps>>('PivotChart', 'pivot-chart');
