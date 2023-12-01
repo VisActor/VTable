@@ -66,6 +66,12 @@ export class ListTable extends BaseTable implements ListTableAPI {
       : options.header
       ? cloneDeep(options.header)
       : [];
+    options.columns.forEach((colDefine, index) => {
+      //如果editor 是一个IEditor的实例  需要这样重新赋值 否则clone后变质了
+      if (colDefine.editor) {
+        internalProps.columns[index].editor = colDefine.editor;
+      }
+    });
 
     this.showHeader = options.showHeader ?? true;
 
@@ -125,6 +131,11 @@ export class ListTable extends BaseTable implements ListTableAPI {
   updateColumns(columns: ColumnsDefine) {
     const oldHoverState = { col: this.stateManager.hover.cellPos.col, row: this.stateManager.hover.cellPos.row };
     this.internalProps.columns = cloneDeep(columns);
+    columns.forEach((colDefine, index) => {
+      if (colDefine.editor) {
+        this.internalProps.columns[index].editor = colDefine.editor;
+      }
+    });
     this.options.columns = columns;
     this.refreshHeader();
     this.scenegraph.clearCells();
@@ -308,6 +319,11 @@ export class ListTable extends BaseTable implements ListTableAPI {
       : options.header
       ? cloneDeep(options.header)
       : [];
+    options.columns.forEach((colDefine, index) => {
+      if (colDefine.editor) {
+        internalProps.columns[index].editor = colDefine.editor;
+      }
+    });
     // 处理转置
     this.transpose = options.transpose ?? false;
     // 更新表头

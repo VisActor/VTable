@@ -14,7 +14,8 @@ import type {
   IDimensionInfo,
   SortOrder,
   IPagination,
-  CellLocation
+  CellLocation,
+  IIndicator
 } from './ts-types';
 import { HierarchyState } from './ts-types';
 import { PivotHeaderLayoutMap } from './layout/pivot-header-layout';
@@ -66,6 +67,12 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
     this.internalProps.columns = cloneDeep(options.columns);
     this.internalProps.rows = cloneDeep(options.rows);
     this.internalProps.indicators = cloneDeep(options.indicators);
+    options.indicators?.forEach((indicatorDefine, index) => {
+      //如果editor 是一个IEditor的实例  需要这样重新赋值 否则clone后变质了
+      if (typeof indicatorDefine === 'object' && indicatorDefine?.editor) {
+        (this.internalProps.indicators[index] as IIndicator).editor = indicatorDefine.editor;
+      }
+    });
     this.internalProps.columnTree =
       options.indicatorsAsCol && !options.columns?.length && !options.columnTree ? [] : cloneDeep(options.columnTree);
     this.internalProps.rowTree =
@@ -199,6 +206,11 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
     this.internalProps.columns = cloneDeep(options.columns);
     this.internalProps.rows = cloneDeep(options.rows);
     this.internalProps.indicators = !options.indicators?.length ? [] : cloneDeep(options.indicators);
+    options.indicators?.forEach((indicatorDefine, index) => {
+      if (typeof indicatorDefine === 'object' && indicatorDefine?.editor) {
+        (this.internalProps.indicators[index] as IIndicator).editor = indicatorDefine.editor;
+      }
+    });
     this.internalProps.columnTree =
       options.indicatorsAsCol && !options.columns?.length && !options.columnTree ? [] : cloneDeep(options.columnTree);
     this.internalProps.rowTree =

@@ -1,5 +1,5 @@
 import * as VTable from '../../src';
-import { DateInputEditor } from '@visactor/vtable-editors';
+import { DateInputEditor, InputEditor } from '@visactor/vtable-editors';
 const CONTAINER_ID = 'vTable';
 
 const date_editor = new DateInputEditor({});
@@ -143,7 +143,8 @@ export function createTable() {
     {
       field: 'hobbies',
       title: 'hobbies',
-      width: 200
+      width: 200,
+      editor: new InputEditor({})
     },
     {
       field: 'birthday',
