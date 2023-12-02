@@ -510,17 +510,19 @@ export class DataSource extends EventTarget implements DataSourceAPI {
       for (let i = 0; i < record.length; i++) {
         this.currentIndexedData.push(this.currentIndexedData.length);
       }
+      this._sourceLength += record.length;
     } else {
       this.source.splice(index, 0, record);
       this.currentIndexedData.push(this.currentIndexedData.length);
+      this._sourceLength += 1;
     }
-    this._sourceLength += record.length;
+
     if (this.userPagination) {
       this.pagination.totalCount = this._sourceLength;
       const { perPageCount, currentPage } = this.pagination;
       const startIndex = perPageCount * (currentPage || 0);
       const endIndex = startIndex + perPageCount;
-      if (index <= endIndex) {
+      if (index < endIndex) {
         this.updatePagerData();
       }
     } else {
@@ -611,7 +613,7 @@ export class DataSource extends EventTarget implements DataSourceAPI {
       });
     }
   }
-  get sourceLenght(): number {
+  get sourceLength(): number {
     return this._sourceLength;
   }
   set sourceLength(sourceLen: number) {

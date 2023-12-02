@@ -909,32 +909,45 @@ export class ListTable extends BaseTable implements ListTableAPI {
   }
 
   addRecord(record: any | any[], recordIndex?: number) {
+    if (recordIndex === undefined) {
+      recordIndex = this.dataSource.sourceLength;
+    }
     if (this.sortState) {
     } else {
       this.dataSource.addRecord(record, recordIndex);
+      const oldRowCount = this.rowCount;
       this.refreshRowColCount();
       if (this.pagination) {
         const { perPageCount, currentPage } = this.pagination;
         const startIndex = perPageCount * (currentPage || 0);
         const endIndex = startIndex + perPageCount;
-        if (recordIndex <= endIndex) {
-          //如果是插入的是当前页后面的数据不需要更新场景树
-          if (recordIndex <= endIndex - perPageCount) {
+        if (recordIndex < endIndex) {
+          //插入当前页或者前面的数据才需要更新 如果是插入的是当前页后面的数据不需要更新场景树
+          if (recordIndex < endIndex - perPageCount) {
             // 如果是当页之前的数据 则整个场景树都更新
             this.scenegraph.clearCells();
             this.scenegraph.createSceneGraph();
           } else {
             //如果是插入当前页数据
-            if (this.rowCount - this.columnHeaderLevelCount === this.pagination.perPageCount) {
+            const rowNum = recordIndex - (endIndex - perPageCount) + this.columnHeaderLevelCount;
+            if (oldRowCount - this.columnHeaderLevelCount === this.pagination.perPageCount) {
               //如果当页数据是满的 则更新插入的部分行
               const updateRows = [];
-              for (let row = recordIndex + this.columnHeaderLevelCount; row < this.rowCount; row++) {
+              for (let row = rowNum; row < this.rowCount; row++) {
                 updateRows.push({ col: 0, row });
               }
               this.scenegraph.updateRow([], [], updateRows);
             } else {
-              //如果当页数据不是满的 则有部分插入 有部分更新
-              //TODO
+              //如果当页数据不是满的 则插入新数据
+              const addRows = [];
+              for (
+                let row = rowNum;
+                row < Math.min(this.rowCount, rowNum + (Array.isArray(record) ? record.length : 1));
+                row++
+              ) {
+                addRows.push({ col: 0, row });
+              }
+              this.scenegraph.updateRow([], addRows, []);
             }
           }
         }
