@@ -17,7 +17,7 @@ import type {
 import { HierarchyState } from './ts-types';
 import { SimpleHeaderLayoutMap } from './layout';
 import { isValid } from '@visactor/vutils';
-import { _setDataSource, _setRecords } from './core/tableHelper';
+import { _setDataSource, _setRecords, sortRecords } from './core/tableHelper';
 import { BaseTable } from './core';
 import type { ListTableProtected } from './ts-types/base-table';
 import { TABLE_EVENT_TYPE } from './core/TABLE_EVENT_TYPE';
@@ -666,7 +666,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
     };
     return result;
   }
-  protected _getSortFuncFromHeaderOption(
+  _getSortFuncFromHeaderOption(
     columns: ColumnsDefine | undefined,
     field: FieldDef,
     fieldKey?: FieldKeyDef
@@ -907,14 +907,87 @@ export class ListTable extends BaseTable implements ListTableAPI {
     });
     this.scenegraph.updateNextFrame();
   }
-
-  addRecord(record: any | any[], recordIndex?: number) {
-    if (recordIndex === undefined) {
-      recordIndex = this.dataSource.sourceLength;
-    }
+  /**
+   * 添加数据 支持单条数据
+   * @param record 单条数据
+   * @param recordIndex 插入位置
+   */
+  addRecord(record: any, recordIndex?: number) {
     if (this.sortState) {
+      this.dataSource.addRecordForSorted(record);
+      sortRecords(this);
+      // 更新整个场景树
+      this.scenegraph.clearCells();
+      this.scenegraph.createSceneGraph();
     } else {
+      if (recordIndex === undefined || recordIndex > this.dataSource.sourceLength) {
+        recordIndex = this.dataSource.sourceLength;
+      }
       this.dataSource.addRecord(record, recordIndex);
+      const oldRowCount = this.rowCount;
+      this.refreshRowColCount();
+      if (this.pagination) {
+        const { perPageCount, currentPage } = this.pagination;
+        const startIndex = perPageCount * (currentPage || 0);
+        const endIndex = startIndex + perPageCount;
+        if (recordIndex < endIndex) {
+          //插入当前页或者前面的数据才需要更新 如果是插入的是当前页后面的数据不需要更新场景树
+          if (recordIndex < endIndex - perPageCount) {
+            // 如果是当页之前的数据 则整个场景树都更新
+            this.scenegraph.clearCells();
+            this.scenegraph.createSceneGraph();
+          } else {
+            //如果是插入当前页数据
+            const rowNum = recordIndex - (endIndex - perPageCount) + this.columnHeaderLevelCount;
+            if (oldRowCount - this.columnHeaderLevelCount === this.pagination.perPageCount) {
+              //如果当页数据是满的 则更新插入的部分行
+              const updateRows = [];
+              for (let row = rowNum; row < this.rowCount; row++) {
+                updateRows.push({ col: 0, row });
+              }
+              this.scenegraph.updateRow([], [], updateRows);
+            } else {
+              //如果当页数据不是满的 则插入新数据
+              const addRows = [];
+              for (let row = rowNum; row < Math.min(this.rowCount, rowNum + 1); row++) {
+                addRows.push({ col: 0, row });
+              }
+              this.scenegraph.updateRow([], addRows, []);
+            }
+          }
+        }
+      } else {
+        const addRows = [];
+        for (
+          let row = recordIndex + this.columnHeaderLevelCount;
+          row < recordIndex + this.columnHeaderLevelCount + 1;
+          row++
+        ) {
+          addRows.push({ col: 0, row });
+        }
+        this.scenegraph.updateRow([], addRows, []);
+      }
+    }
+    // this.fireListeners(TABLE_EVENT_TYPE.ADD_RECORD, { row });
+  }
+
+  /**
+   * 添加数据 支持多条数据
+   * @param records 多条数据
+   * @param recordIndex 插入位置
+   */
+  addRecords(records: any[], recordIndex?: number) {
+    if (this.sortState) {
+      this.dataSource.addRecordsForSorted(records);
+      sortRecords(this);
+      // 更新整个场景树
+      this.scenegraph.clearCells();
+      this.scenegraph.createSceneGraph();
+    } else {
+      if (recordIndex === undefined || recordIndex > this.dataSource.sourceLength) {
+        recordIndex = this.dataSource.sourceLength;
+      }
+      this.dataSource.addRecords(records, recordIndex);
       const oldRowCount = this.rowCount;
       this.refreshRowColCount();
       if (this.pagination) {
@@ -942,7 +1015,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
               const addRows = [];
               for (
                 let row = rowNum;
-                row < Math.min(this.rowCount, rowNum + (Array.isArray(record) ? record.length : 1));
+                row < Math.min(this.rowCount, rowNum + (Array.isArray(records) ? records.length : 1));
                 row++
               ) {
                 addRows.push({ col: 0, row });
@@ -955,7 +1028,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
         const addRows = [];
         for (
           let row = recordIndex + this.columnHeaderLevelCount;
-          row < recordIndex + this.columnHeaderLevelCount + (Array.isArray(record) ? record.length : 1);
+          row < recordIndex + this.columnHeaderLevelCount + (Array.isArray(records) ? records.length : 1);
           row++
         ) {
           addRows.push({ col: 0, row });

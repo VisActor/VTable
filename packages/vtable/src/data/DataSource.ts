@@ -500,21 +500,41 @@ export class DataSource extends EventTarget implements DataSourceAPI {
     }
   }
   /**
-   * 将数据record 添加到index位置处
-   * @param record
+   * 将单条数据record 添加到index位置处
+   * @param record 被添加的单条数据
    * @param index 代表的数据源中的index
    */
   addRecord(record: any, index: number) {
-    if (Array.isArray(record)) {
-      this.source.splice(index, 0, ...record);
-      for (let i = 0; i < record.length; i++) {
+    this.source.splice(index, 0, record);
+    this.currentIndexedData.push(this.currentIndexedData.length);
+    this._sourceLength += 1;
+
+    if (this.userPagination) {
+      this.pagination.totalCount = this._sourceLength;
+      const { perPageCount, currentPage } = this.pagination;
+      const startIndex = perPageCount * (currentPage || 0);
+      const endIndex = startIndex + perPageCount;
+      if (index < endIndex) {
+        this.updatePagerData();
+      }
+    } else {
+      this.pagination.perPageCount = this._sourceLength;
+      this.pagination.totalCount = this._sourceLength;
+      this.updatePagerData();
+    }
+  }
+  /**
+   * 将多条数据recordArr 依次添加到index位置处
+   * @param recordArr
+   * @param index 代表的数据源中的index
+   */
+  addRecords(recordArr: any, index: number) {
+    if (Array.isArray(recordArr)) {
+      this.source.splice(index, 0, ...recordArr);
+      for (let i = 0; i < recordArr.length; i++) {
         this.currentIndexedData.push(this.currentIndexedData.length);
       }
-      this._sourceLength += record.length;
-    } else {
-      this.source.splice(index, 0, record);
-      this.currentIndexedData.push(this.currentIndexedData.length);
-      this._sourceLength += 1;
+      this._sourceLength += recordArr.length;
     }
 
     if (this.userPagination) {
@@ -531,6 +551,34 @@ export class DataSource extends EventTarget implements DataSourceAPI {
       this.updatePagerData();
     }
   }
+
+  /**
+   * 将单条数据record 添加到index位置处
+   * @param record 被添加的单条数据
+   * @param index 代表的数据源中的index
+   */
+  addRecordForSorted(record: any) {
+    this.source.push(record);
+    this.currentIndexedData.push(this.currentIndexedData.length);
+    this._sourceLength += 1;
+    this.sortedIndexMap.clear();
+  }
+  /**
+   * 将多条数据recordArr 依次添加到index位置处
+   * @param recordArr
+   * @param index 代表的数据源中的index
+   */
+  addRecordsForSorted(recordArr: any) {
+    if (Array.isArray(recordArr)) {
+      this.source.push(...recordArr);
+      for (let i = 0; i < recordArr.length; i++) {
+        this.currentIndexedData.push(this.currentIndexedData.length);
+      }
+      this._sourceLength += recordArr.length;
+      this.sortedIndexMap.clear();
+    }
+  }
+
   sort(
     field: FieldDef,
     order: SortOrder,
