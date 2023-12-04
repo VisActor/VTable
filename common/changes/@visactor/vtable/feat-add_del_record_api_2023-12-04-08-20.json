@@ -1,7 +1,7 @@
 {
   "changes": [
     {
-      "comment": "feat: add api delRecords\n\n",
+      "comment": "feat: add api addRecords\n\n",
       "type": "minor",
       "packageName": "@visactor/vtable"
     }
