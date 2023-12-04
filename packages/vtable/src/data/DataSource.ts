@@ -564,6 +564,10 @@ export class DataSource extends EventTarget implements DataSourceAPI {
     this.currentIndexedData.push(this.currentIndexedData.length);
     this._sourceLength += 1;
     this.sortedIndexMap.clear();
+    if (!this.userPagination) {
+      this.pagination.perPageCount = this._sourceLength;
+      this.pagination.totalCount = this._sourceLength;
+    }
   }
   /**
    * 将多条数据recordArr 依次添加到index位置处
@@ -579,6 +583,10 @@ export class DataSource extends EventTarget implements DataSourceAPI {
       this._sourceLength += recordArr.length;
       this.sortedIndexMap.clear();
     }
+    if (!this.userPagination) {
+      this.pagination.perPageCount = this._sourceLength;
+      this.pagination.totalCount = this._sourceLength;
+    }
   }
   /**
    * 删除多条数据recordIndexs
@@ -592,6 +600,10 @@ export class DataSource extends EventTarget implements DataSourceAPI {
       this._sourceLength -= 1;
     }
     this.sortedIndexMap.clear();
+    if (!this.userPagination) {
+      this.pagination.perPageCount = this._sourceLength;
+      this.pagination.totalCount = this._sourceLength;
+    }
   }
 
   /**

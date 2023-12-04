@@ -1046,11 +1046,8 @@ export class ListTable extends BaseTable implements ListTableAPI {
   }
 
   /**
-   * 添加数据 支持多条数据
-   * @param records 多条数据
-   * @param recordIndex 向数据源中要插入的位置，从0开始。不设置recordIndex的话 默认追加到最后。
-   * 如果设置了排序规则recordIndex无效，会自动适应排序逻辑确定插入顺序。
-   * recordIndex 可以通过接口getRecordShowIndexByCell获取
+   * 删除数据 支持多条数据
+   * @param recordIndexs 要删除数据的索引（显示到body中的条目索引）
    */
   deleteRecords(recordIndexs: number[]) {
     if (this.sortState) {
