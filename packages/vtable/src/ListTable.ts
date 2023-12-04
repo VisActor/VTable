@@ -918,6 +918,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
     if (this.sortState) {
       this.dataSource.addRecordForSorted(record);
       sortRecords(this);
+      this.refreshRowColCount();
       // 更新整个场景树
       this.scenegraph.clearCells();
       this.scenegraph.createSceneGraph();
@@ -984,6 +985,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
     if (this.sortState) {
       this.dataSource.addRecordsForSorted(records);
       sortRecords(this);
+      this.refreshRowColCount();
       // 更新整个场景树
       this.scenegraph.clearCells();
       this.scenegraph.createSceneGraph();
@@ -1054,6 +1056,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
     if (this.sortState) {
       this.dataSource.deleteRecordsForSorted(recordIndexs);
       sortRecords(this);
+      this.refreshRowColCount();
       // 更新整个场景树
       this.scenegraph.clearCells();
       this.scenegraph.createSceneGraph();
