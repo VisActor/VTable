@@ -1071,9 +1071,9 @@ export class ListTable extends BaseTable implements ListTableAPI {
         const { perPageCount, currentPage } = this.pagination;
         const startIndex = perPageCount * (currentPage || 0);
         const endIndex = startIndex + perPageCount;
-        if (maxRecordIndex < endIndex) {
+        if (minRecordIndex < endIndex) {
           //删除当前页或者前面的数据才需要更新 如果是删除的是当前页后面的数据不需要更新场景树
-          if (maxRecordIndex < endIndex - perPageCount || minRecordIndex < endIndex - perPageCount) {
+          if (minRecordIndex < endIndex - perPageCount) {
             // 如果删除包含当页之前的数据 则整个场景树都更新
             this.scenegraph.clearCells();
             this.scenegraph.createSceneGraph();
