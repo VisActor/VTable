@@ -24,6 +24,8 @@ const scaleParser: Parser = (scale: IBaseScale) => {
 export class CartesianAxis {
   width: number;
   height: number;
+  x: number = 0;
+  y: number = 0;
   table: BaseTableAPI;
   option: ICellAxisOption;
   orient: IOrientType;
@@ -35,14 +37,27 @@ export class CartesianAxis {
   scale: BandAxisScale | LinearAxisScale;
   component: LineAxis;
 
-  constructor(option: ICellAxisOption, width: number, height: number, table: BaseTableAPI) {
+  constructor(
+    option: ICellAxisOption,
+    width: number,
+    height: number,
+    padding: [number, number, number, number],
+    table: BaseTableAPI
+  ) {
     this.table = table;
-    this.width = width;
-    this.height = height;
-    // this.option = cloneDeep(option);
     this.option = merge({}, commonAxis, option);
-
     this.orient = option.orient ?? 'left';
+
+    if (this.orient === 'left' || this.orient === 'right') {
+      this.width = width;
+      this.height = height - padding[2];
+      this.y = padding[0];
+    } else if (this.orient === 'top' || this.orient === 'bottom') {
+      this.width = width - padding[1];
+      this.height = height;
+      this.x = padding[3];
+    }
+
     this.visible = option.visible ?? true;
     this.type = option.type ?? 'band';
     this.inverse = 'inverse' in option ? !!option.inverse : false;
@@ -186,7 +201,7 @@ export class CartesianAxis {
       axisLength = height;
     }
     const attrs: LineAxisAttributes = {
-      start: { x: 0, y: 0 },
+      start: { x: this.x, y: this.y },
       end,
       // grid: {
       //   type: 'line',

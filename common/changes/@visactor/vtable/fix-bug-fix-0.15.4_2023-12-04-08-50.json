@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vtable",
+      "comment": "feat: axis support chart padding config",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vtable"
+}
