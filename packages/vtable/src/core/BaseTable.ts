@@ -2824,12 +2824,12 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
       if (this.isPivotChart() && isTopOrBottomAxis(col, row, layoutMap as PivotHeaderLayoutMap)) {
         // get chart padding for axis cell
         const chartColumn = layoutMap.getBody(col, this.rowHeaderLevelCount);
-        const padding = (chartColumn.style as any).padding ?? this.theme.bodyStyle.padding;
+        const padding = (chartColumn.style as any)?.padding ?? this.theme.bodyStyle.padding;
         paddingForAxis = padding;
       } else if (this.isPivotChart() && isLeftOrRightAxis(col, row, layoutMap as PivotHeaderLayoutMap)) {
         // get chart padding for axis cell
         const chartColumn = layoutMap.getBody(this.columnHeaderLevelCount, row);
-        const padding = (chartColumn.style as any).padding ?? this.theme.bodyStyle.padding;
+        const padding = (chartColumn.style as any)?.padding ?? this.theme.bodyStyle.padding;
         paddingForAxis = padding;
       }
 
