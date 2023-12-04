@@ -173,6 +173,9 @@ export interface ListTableAPI extends BaseTableAPI {
   /** 结束编辑 */
   completeEditCell: () => void;
   //#endregion
+  addRecord: (record: any, recordIndex?: number) => void;
+  addRecords: (records: any[], recordIndex?: number) => void;
+  deletesRecord: (recordIndexs: number[]) => void;
 }
 export interface PivotTableConstructorOptions extends BaseTableConstructorOptions {
   /**

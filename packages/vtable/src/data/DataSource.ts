@@ -510,6 +510,7 @@ export class DataSource extends EventTarget implements DataSourceAPI {
     this._sourceLength += 1;
 
     if (this.userPagination) {
+      //如果用户配置了分页
       this.pagination.totalCount = this._sourceLength;
       const { perPageCount, currentPage } = this.pagination;
       const startIndex = perPageCount * (currentPage || 0);
@@ -538,6 +539,7 @@ export class DataSource extends EventTarget implements DataSourceAPI {
     }
 
     if (this.userPagination) {
+      //如果用户配置了分页
       this.pagination.totalCount = this._sourceLength;
       const { perPageCount, currentPage } = this.pagination;
       const startIndex = perPageCount * (currentPage || 0);
@@ -576,6 +578,40 @@ export class DataSource extends EventTarget implements DataSourceAPI {
       }
       this._sourceLength += recordArr.length;
       this.sortedIndexMap.clear();
+    }
+  }
+  /**
+   * 删除多条数据recordIndexs
+   */
+  deleteRecordsForSorted(recordIndexs: number[]) {
+    const recordIndexsMaxToMin = recordIndexs.sort((a, b) => b - a);
+    for (let index = 0; index < recordIndexsMaxToMin.length; index++) {
+      const recordIndex = recordIndexsMaxToMin[index];
+      const rawIndex = this.currentIndexedData[recordIndex];
+      this.source.splice(rawIndex, 1);
+      this._sourceLength -= 1;
+    }
+    this.sortedIndexMap.clear();
+  }
+
+  /**
+   * 删除多条数据recordIndexs
+   */
+  deleteRecords(recordIndexs: number[]) {
+    const recordIndexsMaxToMin = recordIndexs.sort((a, b) => b - a);
+    for (let index = 0; index < recordIndexsMaxToMin.length; index++) {
+      const recordIndex = recordIndexsMaxToMin[index];
+      this.source.splice(recordIndex, 1);
+      this.currentIndexedData.pop();
+      this._sourceLength -= 1;
+    }
+    if (this.userPagination) {
+      // 如果用户配置了分页
+      this.updatePagerData();
+    } else {
+      this.pagination.perPageCount = this._sourceLength;
+      this.pagination.totalCount = this._sourceLength;
+      this.updatePagerData();
     }
   }
 

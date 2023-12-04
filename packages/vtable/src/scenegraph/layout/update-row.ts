@@ -188,7 +188,8 @@ function resetRowNumber(scene: Scenegraph) {
       }
       rowIndex++;
     });
-    rowIndex = (colGroup.firstChild as Group)?.row;
+    // rowIndex = (colGroup.firstChild as Group)?.row;
+    rowIndex = scene.table.columnHeaderLevelCount;
     colGroup.forEachChildren((cellGroup: Group) => {
       // const oldRow = cellGroup.row;
       // if (isNumber(cellGroup.mergeStartRow)) {
@@ -219,9 +220,9 @@ function resetRowNumberAndY(scene: Scenegraph) {
     if (!headerColGroup || !colGroup) {
       continue;
     }
-    // reset row number
-    let rowIndex = (headerColGroup.firstChild as Group)?.row;
     let y = 0;
+    // reset row number
+    // let rowIndex = (headerColGroup.firstChild as Group)?.row;
     // headerColGroup.forEachChildren((cellGroup: Group) => {
     //   cellGroup.row = rowIndex;
     //   rowIndex++;
@@ -231,8 +232,8 @@ function resetRowNumberAndY(scene: Scenegraph) {
     //   cellGroup.setAttribute('y', y);
     //   y+= cellGroup.attribute.height;
     // });
-    rowIndex = (colGroup.firstChild as Group)?.row;
-    const rowStart = rowIndex;
+    // let rowIndex = (colGroup.firstChild as Group)?.row;
+    let rowIndex = scene.table.columnHeaderLevelCount;
     y = scene.getCellGroupY(rowIndex);
     colGroup.forEachChildren((cellGroup: Group) => {
       // const oldRow = cellGroup.row;

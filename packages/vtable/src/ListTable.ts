@@ -1042,4 +1042,69 @@ export class ListTable extends BaseTable implements ListTableAPI {
     }
     // this.fireListeners(TABLE_EVENT_TYPE.ADD_RECORD, { row });
   }
+
+  /**
+   * 添加数据 支持多条数据
+   * @param records 多条数据
+   * @param recordIndex 向数据源中要插入的位置，从0开始。不设置recordIndex的话 默认追加到最后。
+   * 如果设置了排序规则recordIndex无效，会自动适应排序逻辑确定插入顺序。
+   * recordIndex 可以通过接口getRecordShowIndexByCell获取
+   */
+  deleteRecords(recordIndexs: number[]) {
+    if (this.sortState) {
+      this.dataSource.deleteRecordsForSorted(recordIndexs);
+      sortRecords(this);
+      // 更新整个场景树
+      this.scenegraph.clearCells();
+      this.scenegraph.createSceneGraph();
+    } else {
+      this.dataSource.deleteRecords(recordIndexs);
+      const oldRowCount = this.rowCount;
+      this.refreshRowColCount();
+      const recordIndexsMinToMax = recordIndexs.sort((a, b) => a - b);
+      const minRecordIndex = recordIndexsMinToMax[0];
+      const maxRecordIndex = recordIndexsMinToMax[recordIndexsMinToMax.length - 1];
+      if (this.pagination) {
+        const { perPageCount, currentPage } = this.pagination;
+        const startIndex = perPageCount * (currentPage || 0);
+        const endIndex = startIndex + perPageCount;
+        if (maxRecordIndex < endIndex) {
+          //删除当前页或者前面的数据才需要更新 如果是删除的是当前页后面的数据不需要更新场景树
+          if (maxRecordIndex < endIndex - perPageCount || minRecordIndex < endIndex - perPageCount) {
+            // 如果删除包含当页之前的数据 则整个场景树都更新
+            this.scenegraph.clearCells();
+            this.scenegraph.createSceneGraph();
+          } else {
+            //如果是仅删除当前页数据
+            const minRowNum = minRecordIndex - (endIndex - perPageCount) + this.columnHeaderLevelCount;
+            //如果当页数据是满的 则更新影响的部分行
+            const updateRows = [];
+            const delRows = [];
+            for (let row = minRowNum; row < this.rowCount; row++) {
+              updateRows.push({ col: 0, row });
+            }
+
+            if (this.rowCount < oldRowCount) {
+              //如果如果删除后不满 需要有删除数据
+              for (let row = this.rowCount; row < oldRowCount; row++) {
+                delRows.push({ col: 0, row });
+              }
+            }
+            this.scenegraph.updateRow(delRows, [], updateRows);
+          }
+        }
+      } else {
+        const delRows = [];
+
+        for (let index = 0; index < recordIndexsMinToMax.length; index++) {
+          const recordIndex = recordIndexsMinToMax[index];
+          const rowNum = recordIndex + this.columnHeaderLevelCount;
+
+          delRows.push({ col: 0, row: rowNum });
+        }
+        this.scenegraph.updateRow(delRows, [], []);
+      }
+    }
+    // this.fireListeners(TABLE_EVENT_TYPE.ADD_RECORD, { row });
+  }
 }

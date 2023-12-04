@@ -16,7 +16,7 @@ const generatePersons = count => {
 };
 
 export function createTable() {
-  const records = generatePersons(10);
+  const records = generatePersons(20);
   const columns: VTable.ColumnsDefine = [
     {
       field: '',
@@ -54,241 +54,7 @@ export function createTable() {
         }
       ]
     },
-    {
-      field: 'date1',
-      title: 'birthday',
-      width: 200
-    },
-    {
-      field: 'sex',
-      title: 'sex',
-      width: 100
-    },
-    {
-      field: 'tel',
-      title: 'telephone',
-      width: 150
-    },
-    {
-      field: 'work',
-      title: 'job',
-      width: 200
-    },
-    {
-      field: 'city',
-      title: 'city',
-      width: 150
-    },
-    {
-      field: 'date1',
-      title: 'birthday',
-      width: 200
-    },
-    {
-      field: 'sex',
-      title: 'sex',
-      width: 100
-    },
-    {
-      field: 'tel',
-      title: 'telephone',
-      width: 150
-    },
-    {
-      field: 'work',
-      title: 'job',
-      width: 200
-    },
-    {
-      field: 'city',
-      title: 'city',
-      width: 150
-    },
-    {
-      field: 'date1',
-      title: 'birthday',
-      width: 200
-    },
-    {
-      field: 'sex',
-      title: 'sex',
-      width: 100
-    },
-    {
-      field: 'tel',
-      title: 'telephone',
-      width: 150
-    },
-    {
-      field: 'work',
-      title: 'job',
-      width: 200
-    },
-    {
-      field: 'city',
-      title: 'city',
-      width: 150
-    },
-    {
-      field: 'date1',
-      title: 'birthday',
-      width: 200
-    },
-    {
-      field: 'sex',
-      title: 'sex',
-      width: 100
-    },
-    {
-      field: 'tel',
-      title: 'telephone',
-      width: 150
-    },
-    {
-      field: 'work',
-      title: 'job',
-      width: 200
-    },
-    {
-      field: 'city',
-      title: 'city',
-      width: 150
-    },
-    {
-      field: 'date1',
-      title: 'birthday',
-      width: 200
-    },
-    {
-      field: 'sex',
-      title: 'sex',
-      width: 100
-    },
-    {
-      field: 'tel',
-      title: 'telephone',
-      width: 150
-    },
-    {
-      field: 'work',
-      title: 'job',
-      width: 200
-    },
-    {
-      field: 'city',
-      title: 'city',
-      width: 150
-    },
-    {
-      field: 'date1',
-      title: 'birthday',
-      width: 200
-    },
-    {
-      field: 'sex',
-      title: 'sex',
-      width: 100
-    },
-    {
-      field: 'tel',
-      title: 'telephone',
-      width: 150
-    },
-    {
-      field: 'work',
-      title: 'job',
-      width: 200
-    },
-    {
-      field: 'city',
-      title: 'city',
-      width: 150
-    },
-    {
-      field: 'date1',
-      title: 'birthday',
-      width: 200
-    },
-    {
-      field: 'sex',
-      title: 'sex',
-      width: 100
-    },
-    {
-      field: 'tel',
-      title: 'telephone',
-      width: 150
-    },
-    {
-      field: 'work',
-      title: 'job',
-      width: 200
-    },
-    {
-      field: 'city',
-      title: 'city',
-      width: 150
-    },
-    {
-      field: 'date1',
-      title: 'birthday',
-      width: 200
-    },
-    {
-      field: 'sex',
-      title: 'sex',
-      width: 100
-    },
-    {
-      field: 'tel',
-      title: 'telephone',
-      width: 150
-    },
-    {
-      field: 'work',
-      title: 'job',
-      width: 200
-    },
-    {
-      field: 'city',
-      title: 'city',
-      width: 150
-    },
-    {
-      field: 'date1',
-      title: 'birthday',
-      width: 200
-    },
-    {
-      field: 'sex',
-      title: 'sex',
-      width: 100
-    },
-    {
-      field: 'tel',
-      title: 'telephone',
-      width: 150
-    },
-    {
-      field: 'work',
-      title: 'job',
-      width: 200
-    },
-    {
-      field: 'city',
-      title: 'city',
-      width: 150
-    },
-    {
-      field: 'date1',
-      title: 'birthday',
-      width: 200
-    },
-    {
-      field: 'sex',
-      title: 'sex',
-      width: 100
-    },
+
     {
       field: 'tel',
       title: 'telephone',
@@ -311,8 +77,12 @@ export function createTable() {
     columns,
     tooltip: {
       isShowOverflowTextTooltip: true
+    },
+    pagination: {
+      perPageCount: 10,
+      currentPage: 0
     }
-
+    // bottomFrozenRowCount: 1
     // autoWrapText: true,
     // heightMode: 'autoHeight',
     // widthMode: 'adaptive'
