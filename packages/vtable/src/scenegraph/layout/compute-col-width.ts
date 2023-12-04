@@ -68,90 +68,100 @@ export function computeColsWidth(table: BaseTableAPI, colStart?: number, colEnd?
     if (update) {
       newWidths[col] = table._adjustColWidth(col, maxWidth);
     } else {
-      table._setColWidth(col, maxWidth, false, true);
+      table._setColWidth(col, table._adjustColWidth(col, maxWidth), false, true);
     }
   }
 
   // 处理adaptive宽度
   if (table.widthMode === 'adaptive') {
     table._clearColRangeWidthsMap();
-    // const canvasWidth = table.internalProps.canvas.width;
-    const rowHeaderWidth = table.getColsWidth(0, table.rowHeaderLevelCount - 1);
-    const rightHeaderWidth = table.isPivotChart() ? table.getRightFrozenColsWidth() : 0;
-    const totalDrawWidth = table.tableNoFrameWidth - rowHeaderWidth - rightHeaderWidth;
-    const startCol = table.rowHeaderLevelCount;
-    const endCol = table.isPivotChart() ? table.colCount - table.rightFrozenColCount : table.colCount;
-    let actualWidth = 0;
-    for (let col = startCol; col < endCol; col++) {
-      actualWidth += update ? newWidths[col] : table.getColWidth(col);
-    }
-    const factor = totalDrawWidth / actualWidth;
-    for (let col = startCol; col < endCol; col++) {
-      let colWidth;
-      if (col === endCol - 1) {
-        colWidth =
-          totalDrawWidth -
-          (update
-            ? newWidths.reduce((acr, cur, index) => {
-                if (index >= startCol && index <= endCol - 2) {
-                  return acr + cur;
-                }
-                return acr;
-              }, 0)
-            : table.getColsWidth(startCol, endCol - 2));
-      } else {
-        colWidth = Math.round((update ? newWidths[col] : table.getColWidth(col)) * factor);
-      }
-      if (update) {
-        newWidths[col] = table._adjustColWidth(col, colWidth);
-      } else {
-        table._setColWidth(col, colWidth, false, true);
-      }
-    }
-  } else if (table.autoFillWidth) {
-    // 处理风神列宽特殊逻辑
-    table._clearColRangeWidthsMap();
     const canvasWidth = table.tableNoFrameWidth;
-    let actualWidth = 0;
     let actualHeaderWidth = 0;
     for (let col = 0; col < table.colCount; col++) {
       const colWidth = update ? newWidths[col] : table.getColWidth(col);
       if (col < table.frozenColCount || col >= table.colCount - table.rightFrozenColCount) {
         actualHeaderWidth += colWidth;
       }
-
-      actualWidth += colWidth;
     }
-
-    // 如果内容宽度小于canvas宽度，执行adaptive放大
-    if (actualWidth < canvasWidth && actualWidth - actualHeaderWidth > 0) {
-      const factor = (canvasWidth - actualHeaderWidth) / (actualWidth - actualHeaderWidth);
-      for (let col = table.frozenColCount; col < table.colCount - table.rightFrozenColCount; col++) {
-        let colWidth;
-        if (col === table.colCount - table.rightFrozenColCount - 1) {
-          colWidth =
-            canvasWidth -
-            actualHeaderWidth -
-            (update
-              ? newWidths.reduce((acr, cur, index) => {
-                  if (index >= table.frozenColCount && index <= table.colCount - table.rightFrozenColCount - 2) {
-                    return acr + cur;
-                  }
-                  return acr;
-                }, 0)
-              : table.getColsWidth(table.frozenColCount, table.colCount - table.rightFrozenColCount - 2));
-        } else {
-          colWidth = Math.round((update ? newWidths[col] : table.getColWidth(col)) * factor);
-        }
-        if (update) {
-          // newWidths[col] = newWidths[col] * factor;
-          newWidths[col] = table._adjustColWidth(col, colWidth);
-        } else {
-          // table.setColWidth(col, table.getColWidth(col) * factor, false, true);
-          table._setColWidth(col, colWidth, false, true);
-        }
+    const startCol = table.frozenColCount;
+    const endCol = table.isPivotChart() ? table.colCount - table.rightFrozenColCount : table.colCount;
+    getAdaptiveWidth(canvasWidth - actualHeaderWidth, startCol, endCol, update, newWidths, table);
+    // const canvasWidth = table.internalProps.canvas.width;
+    // const rowHeaderWidth = table.getColsWidth(0, table.rowHeaderLevelCount - 1);
+    // const rightHeaderWidth = table.isPivotChart() ? table.getRightFrozenColsWidth() : 0;
+    // const totalDrawWidth = table.tableNoFrameWidth - rowHeaderWidth - rightHeaderWidth;
+    // const startCol = table.rowHeaderLevelCount;
+    // const endCol = table.isPivotChart() ? table.colCount - table.rightFrozenColCount : table.colCount;
+    // let actualWidth = 0;
+    // for (let col = startCol; col < endCol; col++) {
+    //   actualWidth += update ? newWidths[col] : table.getColWidth(col);
+    // }
+    // const factor = totalDrawWidth / actualWidth;
+    // for (let col = startCol; col < endCol; col++) {
+    //   let colWidth;
+    //   if (col === endCol - 1) {
+    //     colWidth =
+    //       totalDrawWidth -
+    //       (update
+    //         ? newWidths.reduce((acr, cur, index) => {
+    //             if (index >= startCol && index <= endCol - 2) {
+    //               return acr + cur;
+    //             }
+    //             return acr;
+    //           }, 0)
+    //         : table.getColsWidth(startCol, endCol - 2));
+    //   } else {
+    //     colWidth = Math.round((update ? newWidths[col] : table.getColWidth(col)) * factor);
+    //   }
+    //   if (update) {
+    //     newWidths[col] = table._adjustColWidth(col, colWidth);
+    //   } else {
+    //     table._setColWidth(col, table._adjustColWidth(col, colWidth), false, true);
+    //   }
+    // }
+  } else if (table.autoFillWidth) {
+    // 处理风神列宽特殊逻辑
+    table._clearColRangeWidthsMap();
+    const canvasWidth = table.tableNoFrameWidth;
+    let actualHeaderWidth = 0;
+    for (let col = 0; col < table.colCount; col++) {
+      const colWidth = update ? newWidths[col] : table.getColWidth(col);
+      if (col < table.frozenColCount || col >= table.colCount - table.rightFrozenColCount) {
+        actualHeaderWidth += colWidth;
       }
     }
+    const startCol = table.frozenColCount;
+    const endCol = table.isPivotChart() ? table.colCount - table.rightFrozenColCount : table.colCount;
+    getAdaptiveWidth(canvasWidth - actualHeaderWidth, startCol, endCol, update, newWidths, table);
+    // // 如果内容宽度小于canvas宽度，执行adaptive放大
+    // if (actualWidth < canvasWidth && actualWidth - actualHeaderWidth > 0) {
+    //   const factor = (canvasWidth - actualHeaderWidth) / (actualWidth - actualHeaderWidth);
+    //   for (let col = table.frozenColCount; col < table.colCount - table.rightFrozenColCount; col++) {
+    //     let colWidth;
+    //     if (col === table.colCount - table.rightFrozenColCount - 1) {
+    //       colWidth =
+    //         canvasWidth -
+    //         actualHeaderWidth -
+    //         (update
+    //           ? newWidths.reduce((acr, cur, index) => {
+    //               if (index >= table.frozenColCount && index <= table.colCount - table.rightFrozenColCount - 2) {
+    //                 return acr + cur;
+    //               }
+    //               return acr;
+    //             }, 0)
+    //           : table.getColsWidth(table.frozenColCount, table.colCount - table.rightFrozenColCount - 2));
+    //     } else {
+    //       colWidth = Math.round((update ? newWidths[col] : table.getColWidth(col)) * factor);
+    //     }
+    //     if (update) {
+    //       // newWidths[col] = newWidths[col] * factor;
+    //       newWidths[col] = table._adjustColWidth(col, colWidth);
+    //     } else {
+    //       // table.setColWidth(col, table.getColWidth(col) * factor, false, true);
+    //       table._setColWidth(col, table._adjustColWidth(col, colWidth), false, true);
+    //     }
+    //   }
+    // }
   }
   // console.log('computeColsWidth  time:', (typeof window !== 'undefined' ? window.performance.now() : 0) - time);
 
@@ -579,4 +589,52 @@ function getColWidthDefinedWidthResizedWidth(col: number, table: BaseTableAPI) {
     return table.getColWidth(col);
   }
   return widthDefined;
+}
+
+function getAdaptiveWidth(
+  totalDrawWidth: number,
+  startCol: number,
+  endColPlus1: number,
+  update: boolean,
+  newWidths: number[],
+  table: BaseTableAPI
+) {
+  let actualWidth = 0;
+  const adaptiveColumns: number[] = [];
+  for (let col = startCol; col < endColPlus1; col++) {
+    const width = update ? newWidths[col] : table.getColWidth(col);
+    const maxWidth = table.getMaxColWidth(col);
+    const minWidth = table.getMinColWidth(col);
+    if (width !== maxWidth && width !== minWidth) {
+      actualWidth += width;
+      adaptiveColumns.push(col);
+    } else {
+      // fixed width, do not adaptive
+      totalDrawWidth -= width;
+    }
+  }
+
+  const factor = totalDrawWidth / actualWidth;
+
+  for (let i = 0; i < adaptiveColumns.length; i++) {
+    const col = adaptiveColumns[i];
+    let colWidth;
+    if (i === adaptiveColumns.length - 1) {
+      colWidth =
+        totalDrawWidth -
+        adaptiveColumns.reduce((acr, cur, index) => {
+          if (index !== col) {
+            return acr + (update ? newWidths[cur] : table.getColWidth(cur));
+          }
+          return acr;
+        }, 0);
+    } else {
+      colWidth = Math.round((update ? newWidths[col] : table.getColWidth(col)) * factor);
+    }
+    if (update) {
+      newWidths[col] = table._adjustColWidth(col, colWidth);
+    } else {
+      table._setColWidth(col, table._adjustColWidth(col, colWidth), false, true);
+    }
+  }
 }
