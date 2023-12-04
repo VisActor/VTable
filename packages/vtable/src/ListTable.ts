@@ -229,8 +229,8 @@ export class ListTable extends BaseTable implements ListTableAPI {
     const { field } = table.internalProps.layoutMap.getBody(col, row);
     return table.getRawFieldData(field, col, row);
   }
-  /** @private */
-  getRecordIndexByCell(col: number, row: number): number {
+  /** 获取当前单元格在body部分的展示索引（row / col-headerLevelCount）。注：ListTable特有接口 */
+  getRecordShowIndexByCell(col: number, row: number): number {
     const { layoutMap } = this.internalProps;
     return layoutMap.getRecordIndexByCell(col, row);
   }
@@ -269,7 +269,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
    */
   getCellOriginRecord(col: number, row: number): MaybePromiseOrUndefined {
     const table = this;
-    const index = table.getRecordIndexByCell(col, row);
+    const index = table.getRecordShowIndexByCell(col, row);
     if (index > -1) {
       return table.dataSource.get(index);
     }
@@ -283,7 +283,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
    */
   getCellRawRecord(col: number, row: number): MaybePromiseOrUndefined {
     const table = this;
-    const index = table.getRecordIndexByCell(col, row);
+    const index = table.getRecordShowIndexByCell(col, row);
     if (index > -1) {
       return table.dataSource.getRaw(index);
     }
@@ -456,7 +456,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
     if (table.internalProps.layoutMap.isHeader(col, row)) {
       return null;
     }
-    const index = table.getRecordIndexByCell(col, row);
+    const index = table.getRecordShowIndexByCell(col, row);
     return table.internalProps.dataSource.getField(index, field, col, row, this);
   }
   /**
@@ -474,7 +474,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
     if (table.internalProps.layoutMap.isHeader(col, row)) {
       return null;
     }
-    const index = table.getRecordIndexByCell(col, row);
+    const index = table.getRecordShowIndexByCell(col, row);
     return table.internalProps.dataSource.getRawField(index, field, col, row, this);
   }
   /**
@@ -610,7 +610,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
     if (!define.tree) {
       return HierarchyState.none;
     }
-    const index = this.getRecordIndexByCell(col, row);
+    const index = this.getRecordShowIndexByCell(col, row);
     return this.dataSource.getHierarchyState(index);
   }
   /**
@@ -643,7 +643,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
   }
   /** 刷新当前节点收起展开状态，如手动更改过 */
   _refreshHierarchyState(col: number, row: number) {
-    const index = this.getRecordIndexByCell(col, row);
+    const index = this.getRecordShowIndexByCell(col, row);
     const diffDataIndices = this.dataSource.toggleHierarchyState(index);
     const diffPositions = this.internalProps.layoutMap.toggleHierarchyState(diffDataIndices);
     //影响行数
@@ -760,7 +760,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
     const field = define?.field;
     const cellType = define?.cellType;
     if (isValid(field) && cellType === 'checkbox') {
-      const dataIndex = this.dataSource.getIndexKey(this.getRecordIndexByCell(col, row));
+      const dataIndex = this.dataSource.getIndexKey(this.getRecordShowIndexByCell(col, row));
       return this.stateManager.checkedState[dataIndex as number][field as string | number];
     }
     return undefined;
@@ -834,7 +834,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
   setRecordChildren(records: any[], col: number, row: number) {
     const record = this.getCellOriginRecord(col, row);
     record.children = records;
-    const index = this.getRecordIndexByCell(col, row);
+    const index = this.getRecordShowIndexByCell(col, row);
     this.dataSource.setRecord(record, index);
     this._refreshHierarchyState(col, row);
   }
@@ -875,7 +875,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
   }
   /** 更改单元格数据 会触发change_cell_value事件*/
   changeCellValue(col: number, row: number, value: string | number | null) {
-    const recordIndex = this.getRecordIndexByCell(col, row);
+    const recordIndex = this.getRecordShowIndexByCell(col, row);
     const { field } = this.internalProps.layoutMap.getBody(col, row);
     this.dataSource.changeFieldValue(value, recordIndex, field, col, row, this);
     // const cell_value = this.getCellValue(col, row);
@@ -908,9 +908,11 @@ export class ListTable extends BaseTable implements ListTableAPI {
     this.scenegraph.updateNextFrame();
   }
   /**
-   * 添加数据 支持单条数据
-   * @param record 单条数据
-   * @param recordIndex 插入位置
+   * 添加数据 支持多条数据
+   * @param records 多条数据
+   * @param recordIndex 向数据源中要插入的位置，从0开始。不设置recordIndex的话 默认追加到最后。
+   * 如果设置了排序规则recordIndex无效，会自动适应排序逻辑确定插入顺序。
+   * recordIndex 可以通过接口getRecordShowIndexByCell获取
    */
   addRecord(record: any, recordIndex?: number) {
     if (this.sortState) {
@@ -974,7 +976,9 @@ export class ListTable extends BaseTable implements ListTableAPI {
   /**
    * 添加数据 支持多条数据
    * @param records 多条数据
-   * @param recordIndex 插入位置
+   * @param recordIndex 向数据源中要插入的位置，从0开始。不设置recordIndex的话 默认追加到最后。
+   * 如果设置了排序规则recordIndex无效，会自动适应排序逻辑确定插入顺序。
+   * recordIndex 可以通过接口getRecordShowIndexByCell获取
    */
   addRecords(records: any[], recordIndex?: number) {
     if (this.sortState) {

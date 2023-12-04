@@ -544,7 +544,7 @@ export interface BaseTableAPI {
    * @returns
    */
   getCellAddrByFieldRecord: (field: FieldDef, recordIndex: number) => CellAddress;
-  getRecordIndexByCell: (col: number, row: number) => number;
+  getRecordShowIndexByCell: (col: number, row: number) => number;
   getRecordStartRowByRecordIndex: (index: number) => number;
 
   getHeaderField: (col: number, row: number) => any | undefined;

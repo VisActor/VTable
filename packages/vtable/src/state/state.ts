@@ -954,7 +954,7 @@ export class StateManager {
     }
   }
   setCheckedState(col: number, row: number, field: string | number, checked: boolean) {
-    const recordIndex = this.table.getRecordIndexByCell(col, row);
+    const recordIndex = this.table.getRecordShowIndexByCell(col, row);
     if (recordIndex >= 0) {
       const dataIndex = this.table.dataSource.getIndexKey(recordIndex) as number;
       if (this.checkedState[dataIndex]) {
@@ -996,7 +996,7 @@ export class StateManager {
       }
       return this.headerCheckedState[field];
     }
-    const recordIndex = this.table.getRecordIndexByCell(col, row);
+    const recordIndex = this.table.getRecordShowIndexByCell(col, row);
     if (recordIndex >= 0) {
       const dataIndex = this.table.dataSource.getIndexKey(recordIndex) as number;
       if (isValid(this.checkedState[dataIndex]?.[field])) {

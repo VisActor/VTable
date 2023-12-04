@@ -2366,7 +2366,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
   abstract moveHeaderPosition(source: CellAddress, target: CellAddress): boolean;
   /** @private */
   // abstract getFieldData(field: FieldDef | FieldFormat | undefined, col: number, row: number): FieldData;
-  abstract getRecordIndexByCell(col: number, row: number): number;
+  abstract getRecordShowIndexByCell(col: number, row: number): number;
   abstract getCellOriginRecord(col: number, row: number): MaybePromiseOrUndefined;
   abstract getCellRawRecord(col: number, row: number): MaybePromiseOrUndefined;
   abstract getCellValue(col: number, row: number): FieldData;
@@ -2577,7 +2577,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     if (this.internalProps.layoutMap.isHeader(col, row)) {
       return undefined;
     }
-    return this.internalProps.dataSource?.get(this.getRecordIndexByCell(col, row));
+    return this.internalProps.dataSource?.get(this.getRecordShowIndexByCell(col, row));
   }
   /** @deprecated 请使用getRecordByCell */
   getRecordByRowCol(col: number, row: number) {
@@ -2800,7 +2800,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     if (table.internalProps.layoutMap.isHeader(col, row)) {
       return false;
     }
-    const index = table.getRecordIndexByCell(col, row);
+    const index = table.getRecordShowIndexByCell(col, row);
     return table.internalProps.dataSource.hasField(index, field);
   }
   /**
