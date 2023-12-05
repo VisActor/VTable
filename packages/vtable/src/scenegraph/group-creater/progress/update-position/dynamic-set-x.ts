@@ -171,13 +171,22 @@ function updateColGroupContent(colGroup: Group, proxy: SceneProxy) {
 
 function updatePartColPosition(startCol: number, endCol: number, direction: 'left' | 'right', proxy: SceneProxy) {
   for (let col = startCol; col <= endCol; col++) {
-    if (proxy.table.scenegraph.bodyGroup.childrenCount > 0) {
+    if (
+      proxy.table.scenegraph.bodyGroup.childrenCount > 0 &&
+      proxy.table.scenegraph.bodyGroup.firstChild.type === 'group'
+    ) {
       updateColPosition(proxy.table.scenegraph.bodyGroup, direction, proxy);
     }
-    if (proxy.table.scenegraph.colHeaderGroup.childrenCount > 0) {
+    if (
+      proxy.table.scenegraph.colHeaderGroup.childrenCount > 0 &&
+      proxy.table.scenegraph.colHeaderGroup.firstChild.type === 'group'
+    ) {
       updateColPosition(proxy.table.scenegraph.colHeaderGroup, direction, proxy);
     }
-    if (proxy.table.scenegraph.bottomFrozenGroup.childrenCount > 0) {
+    if (
+      proxy.table.scenegraph.bottomFrozenGroup.childrenCount > 0 &&
+      proxy.table.scenegraph.bottomFrozenGroup.firstChild.type === 'group'
+    ) {
       updateColPosition(proxy.table.scenegraph.bottomFrozenGroup, direction, proxy);
     }
   }
