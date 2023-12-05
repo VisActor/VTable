@@ -202,19 +202,6 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
     this.rowDimensionKeys = this.rowDimensionTree.dimensionKeys.valueArr();
     this.fullRowDimensionKeys = this.fullRowDimensionKeys.concat(this.rowDimensionKeys);
 
-    if (this._table.isPivotChart()) {
-      this.hasTwoIndicatorAxes = this._indicators.some(indicatorObject => {
-        if (
-          indicatorObject.chartSpec &&
-          indicatorObject.chartSpec.series &&
-          indicatorObject.chartSpec.series.length > 1
-        ) {
-          return true;
-        }
-        return false;
-      });
-    }
-    this.resetColumnHeaderLevelCount();
     this.resetRowHeaderLevelCount();
 
     //生成列表头单元格
@@ -297,6 +284,20 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
       this._headerObjects[id] = cell;
     }
     // }
+
+    if (this._table.isPivotChart()) {
+      this.hasTwoIndicatorAxes = this._indicators.some(indicatorObject => {
+        if (
+          indicatorObject.chartSpec &&
+          indicatorObject.chartSpec.series &&
+          indicatorObject.chartSpec.series.length > 1
+        ) {
+          return true;
+        }
+        return false;
+      });
+    }
+    this.resetColumnHeaderLevelCount();
 
     // this.indicatorsAsCol = !isValid(this.rowDimensionKeys.find(key => key === this.indicatorDimensionKey));
     //  this.colAttrs[this.colAttrs.length-1]===this.indicatorDimensionKey&&this.colAttrs.pop();
