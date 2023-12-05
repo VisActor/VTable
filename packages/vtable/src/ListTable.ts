@@ -935,9 +935,11 @@ export class ListTable extends BaseTable implements ListTableAPI {
       if (recordIndex === undefined || recordIndex > this.dataSource.sourceLength) {
         recordIndex = this.dataSource.sourceLength;
       }
+      const headerCount = this.transpose ? this.rowHeaderLevelCount : this.columnHeaderLevelCount;
       this.dataSource.addRecord(record, recordIndex);
       const oldRowCount = this.rowCount;
       this.refreshRowColCount();
+      const newRowCount = this.transpose ? this.colCount : this.rowCount;
       if (this.pagination) {
         const { perPageCount, currentPage } = this.pagination;
         const startIndex = perPageCount * (currentPage || 0);
@@ -950,34 +952,44 @@ export class ListTable extends BaseTable implements ListTableAPI {
             this.scenegraph.createSceneGraph();
           } else {
             //如果是插入当前页数据
-            const rowNum = recordIndex - (endIndex - perPageCount) + this.columnHeaderLevelCount;
-            if (oldRowCount - this.columnHeaderLevelCount === this.pagination.perPageCount) {
+            const rowNum = recordIndex - (endIndex - perPageCount) + headerCount;
+            if (oldRowCount - headerCount === this.pagination.perPageCount) {
               //如果当页数据是满的 则更新插入的部分行
               const updateRows = [];
-              for (let row = rowNum; row < this.rowCount; row++) {
-                updateRows.push({ col: 0, row });
+              for (let row = rowNum; row < newRowCount; row++) {
+                if (this.transpose) {
+                  updateRows.push({ col: row, row: 0 });
+                } else {
+                  updateRows.push({ col: 0, row });
+                }
               }
-              this.scenegraph.updateRow([], [], updateRows);
+              this.transpose
+                ? this.scenegraph.updateCol([], [], updateRows)
+                : this.scenegraph.updateRow([], [], updateRows);
             } else {
               //如果当页数据不是满的 则插入新数据
               const addRows = [];
-              for (let row = rowNum; row < Math.min(this.rowCount, rowNum + 1); row++) {
-                addRows.push({ col: 0, row });
+              for (let row = rowNum; row < Math.min(newRowCount, rowNum + 1); row++) {
+                if (this.transpose) {
+                  addRows.push({ col: row, row: 0 });
+                } else {
+                  addRows.push({ col: 0, row });
+                }
               }
-              this.scenegraph.updateRow([], addRows, []);
+              this.transpose ? this.scenegraph.updateCol([], addRows, []) : this.scenegraph.updateRow([], addRows, []);
             }
           }
         }
       } else {
         const addRows = [];
-        for (
-          let row = recordIndex + this.columnHeaderLevelCount;
-          row < recordIndex + this.columnHeaderLevelCount + 1;
-          row++
-        ) {
-          addRows.push({ col: 0, row });
+        for (let row = recordIndex + headerCount; row < recordIndex + headerCount + 1; row++) {
+          if (this.transpose) {
+            addRows.push({ col: row, row: 0 });
+          } else {
+            addRows.push({ col: 0, row });
+          }
         }
-        this.scenegraph.updateRow([], addRows, []);
+        this.transpose ? this.scenegraph.updateCol([], addRows, []) : this.scenegraph.updateRow([], addRows, []);
       }
     }
     // this.fireListeners(TABLE_EVENT_TYPE.ADD_RECORD, { row });
@@ -1002,9 +1014,11 @@ export class ListTable extends BaseTable implements ListTableAPI {
       if (recordIndex === undefined || recordIndex > this.dataSource.sourceLength) {
         recordIndex = this.dataSource.sourceLength;
       }
+      const headerCount = this.transpose ? this.rowHeaderLevelCount : this.columnHeaderLevelCount;
       this.dataSource.addRecords(records, recordIndex);
-      const oldRowCount = this.rowCount;
+      const oldRowCount = this.transpose ? this.colCount : this.rowCount;
       this.refreshRowColCount();
+      const newRowCount = this.transpose ? this.colCount : this.rowCount;
       if (this.pagination) {
         const { perPageCount, currentPage } = this.pagination;
         const startIndex = perPageCount * (currentPage || 0);
@@ -1017,38 +1031,53 @@ export class ListTable extends BaseTable implements ListTableAPI {
             this.scenegraph.createSceneGraph();
           } else {
             //如果是插入当前页数据
-            const rowNum = recordIndex - (endIndex - perPageCount) + this.columnHeaderLevelCount;
-            if (oldRowCount - this.columnHeaderLevelCount === this.pagination.perPageCount) {
+
+            const rowNum = recordIndex - (endIndex - perPageCount) + headerCount;
+            if (oldRowCount - headerCount === this.pagination.perPageCount) {
               //如果当页数据是满的 则更新插入的部分行
               const updateRows = [];
-              for (let row = rowNum; row < this.rowCount; row++) {
-                updateRows.push({ col: 0, row });
+              for (let row = rowNum; row < newRowCount; row++) {
+                if (this.transpose) {
+                  updateRows.push({ col: row, row: 0 });
+                } else {
+                  updateRows.push({ col: 0, row });
+                }
               }
-              this.scenegraph.updateRow([], [], updateRows);
+              this.transpose
+                ? this.scenegraph.updateCol([], [], updateRows)
+                : this.scenegraph.updateRow([], [], updateRows);
             } else {
               //如果当页数据不是满的 则插入新数据
               const addRows = [];
               for (
                 let row = rowNum;
-                row < Math.min(this.rowCount, rowNum + (Array.isArray(records) ? records.length : 1));
+                row < Math.min(newRowCount, rowNum + (Array.isArray(records) ? records.length : 1));
                 row++
               ) {
-                addRows.push({ col: 0, row });
+                if (this.transpose) {
+                  addRows.push({ col: row, row: 0 });
+                } else {
+                  addRows.push({ col: 0, row });
+                }
               }
-              this.scenegraph.updateRow([], addRows, []);
+              this.transpose ? this.scenegraph.updateCol([], addRows, []) : this.scenegraph.updateRow([], addRows, []);
             }
           }
         }
       } else {
         const addRows = [];
         for (
-          let row = recordIndex + this.columnHeaderLevelCount;
-          row < recordIndex + this.columnHeaderLevelCount + (Array.isArray(records) ? records.length : 1);
+          let row = recordIndex + headerCount;
+          row < recordIndex + headerCount + (Array.isArray(records) ? records.length : 1);
           row++
         ) {
-          addRows.push({ col: 0, row });
+          if (this.transpose) {
+            addRows.push({ col: row, row: 0 });
+          } else {
+            addRows.push({ col: 0, row });
+          }
         }
-        this.scenegraph.updateRow([], addRows, []);
+        this.transpose ? this.scenegraph.updateCol([], addRows, []) : this.scenegraph.updateRow([], addRows, []);
       }
     }
     // this.fireListeners(TABLE_EVENT_TYPE.ADD_RECORD, { row });
@@ -1068,11 +1097,11 @@ export class ListTable extends BaseTable implements ListTableAPI {
       this.scenegraph.createSceneGraph();
     } else {
       this.dataSource.deleteRecords(recordIndexs);
-      const oldRowCount = this.rowCount;
+      const oldRowCount = this.transpose ? this.colCount : this.rowCount;
       this.refreshRowColCount();
+      const newRowCount = this.transpose ? this.colCount : this.rowCount;
       const recordIndexsMinToMax = recordIndexs.sort((a, b) => a - b);
       const minRecordIndex = recordIndexsMinToMax[0];
-      const maxRecordIndex = recordIndexsMinToMax[recordIndexsMinToMax.length - 1];
       if (this.pagination) {
         const { perPageCount, currentPage } = this.pagination;
         const startIndex = perPageCount * (currentPage || 0);
@@ -1085,21 +1114,34 @@ export class ListTable extends BaseTable implements ListTableAPI {
             this.scenegraph.createSceneGraph();
           } else {
             //如果是仅删除当前页数据
-            const minRowNum = minRecordIndex - (endIndex - perPageCount) + this.columnHeaderLevelCount;
+            const minRowNum =
+              minRecordIndex -
+              (endIndex - perPageCount) +
+              (this.transpose ? this.rowHeaderLevelCount : this.columnHeaderLevelCount);
             //如果当页数据是满的 则更新影响的部分行
             const updateRows = [];
             const delRows = [];
-            for (let row = minRowNum; row < this.rowCount; row++) {
-              updateRows.push({ col: 0, row });
-            }
 
-            if (this.rowCount < oldRowCount) {
-              //如果如果删除后不满 需要有删除数据
-              for (let row = this.rowCount; row < oldRowCount; row++) {
-                delRows.push({ col: 0, row });
+            for (let row = minRowNum; row < newRowCount; row++) {
+              if (this.transpose) {
+                updateRows.push({ col: row, row: 0 });
+              } else {
+                updateRows.push({ col: 0, row });
               }
             }
-            this.scenegraph.updateRow(delRows, [], updateRows);
+            if (newRowCount < oldRowCount) {
+              //如果如果删除后不满 需要有删除数据
+              for (let row = newRowCount; row < oldRowCount; row++) {
+                if (this.transpose) {
+                  delRows.push({ col: row, row: 0 });
+                } else {
+                  delRows.push({ col: 0, row });
+                }
+              }
+            }
+            this.transpose
+              ? this.scenegraph.updateCol(delRows, [], updateRows)
+              : this.scenegraph.updateRow(delRows, [], updateRows);
           }
         }
       } else {
@@ -1107,11 +1149,14 @@ export class ListTable extends BaseTable implements ListTableAPI {
 
         for (let index = 0; index < recordIndexsMinToMax.length; index++) {
           const recordIndex = recordIndexsMinToMax[index];
-          const rowNum = recordIndex + this.columnHeaderLevelCount;
-
-          delRows.push({ col: 0, row: rowNum });
+          const rowNum = recordIndex + (this.transpose ? this.rowHeaderLevelCount : this.columnHeaderLevelCount);
+          if (this.transpose) {
+            delRows.push({ col: rowNum, row: 0 });
+          } else {
+            delRows.push({ col: 0, row: rowNum });
+          }
         }
-        this.scenegraph.updateRow(delRows, [], []);
+        this.transpose ? this.scenegraph.updateCol(delRows, [], []) : this.scenegraph.updateRow(delRows, [], []);
       }
     }
     // this.fireListeners(TABLE_EVENT_TYPE.ADD_RECORD, { row });

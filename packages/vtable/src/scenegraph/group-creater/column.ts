@@ -4,98 +4,98 @@ import type { BaseTableAPI } from '../../ts-types/base-table';
 import { Group } from '../graphic/group';
 import { createComplexColumn } from './column-helper';
 
-/**
- * @description: 处理全部角表头
- * @param {Group} colHeaderGroup 列表头容器Group
- * @param {number} xOrigin x起始坐标
- * @param {number} yOrigin y起始坐标
- * @param {BaseTableAPI} table
- * @return {*}
- */
-export function createCornerHeaderColGroup(
-  cornerHeaderGroup: Group,
-  xOrigin: number,
-  yOrigin: number,
-  table: BaseTableAPI
-) {
-  createColGroup(
-    cornerHeaderGroup,
-    xOrigin,
-    yOrigin,
-    0, // colStart
-    table.rowHeaderLevelCount - 1, // colEnd
-    0, // rowStart
-    table.columnHeaderLevelCount - 1, // rowEnd
-    'cornerHeader', // CellType
-    table
-  );
-}
+// /**
+//  * @description: 处理全部角表头
+//  * @param {Group} colHeaderGroup 列表头容器Group
+//  * @param {number} xOrigin x起始坐标
+//  * @param {number} yOrigin y起始坐标
+//  * @param {BaseTableAPI} table
+//  * @return {*}
+//  */
+// export function createCornerHeaderColGroup(
+//   cornerHeaderGroup: Group,
+//   xOrigin: number,
+//   yOrigin: number,
+//   table: BaseTableAPI
+// ) {
+//   createColGroup(
+//     cornerHeaderGroup,
+//     xOrigin,
+//     yOrigin,
+//     0, // colStart
+//     table.rowHeaderLevelCount - 1, // colEnd
+//     0, // rowStart
+//     table.columnHeaderLevelCount - 1, // rowEnd
+//     'cornerHeader', // CellType
+//     table
+//   );
+// }
 
-/**
- * @description: 处理全部列表头
- * @param {Group} colHeaderGroup 列表头容器Group
- * @param {number} xOrigin x起始坐标
- * @param {number} yOrigin y起始坐标
- * @param {BaseTableAPI} table
- * @return {*}
- */
-export function createColHeaderColGroup(colHeaderGroup: Group, xOrigin: number, yOrigin: number, table: BaseTableAPI) {
-  createColGroup(
-    colHeaderGroup,
-    xOrigin,
-    yOrigin,
-    table.rowHeaderLevelCount, // colStart
-    table.colCount - 1, // colEnd
-    0, // rowStart
-    table.columnHeaderLevelCount - 1, // rowEnd
-    'columnHeader', // isHeader
-    table
-  );
-}
+// /**
+//  * @description: 处理全部列表头
+//  * @param {Group} colHeaderGroup 列表头容器Group
+//  * @param {number} xOrigin x起始坐标
+//  * @param {number} yOrigin y起始坐标
+//  * @param {BaseTableAPI} table
+//  * @return {*}
+//  */
+// export function createColHeaderColGroup(colHeaderGroup: Group, xOrigin: number, yOrigin: number, table: BaseTableAPI) {
+//   createColGroup(
+//     colHeaderGroup,
+//     xOrigin,
+//     yOrigin,
+//     table.rowHeaderLevelCount, // colStart
+//     table.colCount - 1, // colEnd
+//     0, // rowStart
+//     table.columnHeaderLevelCount - 1, // rowEnd
+//     'columnHeader', // isHeader
+//     table
+//   );
+// }
 
-/**
- * @description: 处理全部行表头
- * @param {Group} rowHeaderGroup 行表头容器Group
- * @param {number} xOrigin x起始坐标
- * @param {number} yOrigin y起始坐标
- * @param {BaseTableAPI} table
- * @return {*}
- */
-export function createRowHeaderColGroup(rowHeaderGroup: Group, xOrigin: number, yOrigin: number, table: BaseTableAPI) {
-  createColGroup(
-    rowHeaderGroup,
-    xOrigin,
-    yOrigin,
-    0, // colStart
-    table.rowHeaderLevelCount - 1, // colEnd
-    table.columnHeaderLevelCount, // rowStart
-    table.rowCount - 1, // rowEnd
-    'rowHeader', // isHeader
-    table
-  );
-}
+// /**
+//  * @description: 处理全部行表头
+//  * @param {Group} rowHeaderGroup 行表头容器Group
+//  * @param {number} xOrigin x起始坐标
+//  * @param {number} yOrigin y起始坐标
+//  * @param {BaseTableAPI} table
+//  * @return {*}
+//  */
+// export function createRowHeaderColGroup(rowHeaderGroup: Group, xOrigin: number, yOrigin: number, table: BaseTableAPI) {
+//   createColGroup(
+//     rowHeaderGroup,
+//     xOrigin,
+//     yOrigin,
+//     0, // colStart
+//     table.rowHeaderLevelCount - 1, // colEnd
+//     table.columnHeaderLevelCount, // rowStart
+//     table.rowCount - 1, // rowEnd
+//     'rowHeader', // isHeader
+//     table
+//   );
+// }
 
-/**
- * @description: 处理内容单元格
- * @param {Group} bodyGroup 内容容器Group
- * @param {number} xOrigin x起始坐标
- * @param {number} yOrigin y起始坐标
- * @param {BaseTableAPI} table
- * @return {*}
- */
-export function createBodyColGroup(bodyGroup: Group, xOrigin: number, yOrigin: number, table: BaseTableAPI) {
-  createColGroup(
-    bodyGroup,
-    xOrigin,
-    yOrigin,
-    table.rowHeaderLevelCount, // colStart
-    table.colCount - 1, // colEnd
-    table.columnHeaderLevelCount, // rowStart
-    table.rowCount - 1, // rowEnd
-    'body', // isHeader
-    table
-  );
-}
+// /**
+//  * @description: 处理内容单元格
+//  * @param {Group} bodyGroup 内容容器Group
+//  * @param {number} xOrigin x起始坐标
+//  * @param {number} yOrigin y起始坐标
+//  * @param {BaseTableAPI} table
+//  * @return {*}
+//  */
+// export function createBodyColGroup(bodyGroup: Group, xOrigin: number, yOrigin: number, table: BaseTableAPI) {
+//   createColGroup(
+//     bodyGroup,
+//     xOrigin,
+//     yOrigin,
+//     table.rowHeaderLevelCount, // colStart
+//     table.colCount - 1, // colEnd
+//     table.columnHeaderLevelCount, // rowStart
+//     table.rowCount - 1, // rowEnd
+//     'body', // isHeader
+//     table
+//   );
+// }
 
 /**
  * @description: 生成一个列的场景节点
