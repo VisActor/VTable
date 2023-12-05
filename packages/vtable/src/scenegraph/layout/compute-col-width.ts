@@ -74,6 +74,10 @@ export function computeColsWidth(table: BaseTableAPI, colStart?: number, colEnd?
 
   // 处理adaptive宽度
   if (table.widthMode === 'adaptive') {
+    const rowHeaderWidth = table.getColsWidth(0, table.rowHeaderLevelCount - 1);
+    const rightHeaderWidth = table.isPivotChart() ? table.getRightFrozenColsWidth() : 0;
+    const totalDrawWidth = table.tableNoFrameWidth - rowHeaderWidth - rightHeaderWidth;
+
     table._clearColRangeWidthsMap();
     const canvasWidth = table.tableNoFrameWidth;
     let actualHeaderWidth = 0;
@@ -623,7 +627,7 @@ function getAdaptiveWidth(
       colWidth =
         totalDrawWidth -
         adaptiveColumns.reduce((acr, cur, index) => {
-          if (index !== col) {
+          if (cur !== col) {
             return acr + (update ? newWidths[cur] : table.getColWidth(cur));
           }
           return acr;
