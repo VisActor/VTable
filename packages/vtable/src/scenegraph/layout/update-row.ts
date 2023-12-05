@@ -340,21 +340,21 @@ function addRowCellGroup(row: number, scene: Scenegraph) {
       const cellBefore = scene.highPerformanceGetCell(col, row, true);
       if (cellBefore !== cellGroup) {
         colGroup.insertBefore(cellGroup, cellBefore);
-        // cellBefore && (cellBefore.row = cellBefore.row + 1);
-        // // if (isNumber(cellBefore.mergeStartRow) && isNumber(cellBefore.mergeEndRow)) {
-        // //   cellBefore.mergeStartRow = cellBefore.mergeStartRow + 1;
-        // //   cellBefore.mergeEndRow = cellBefore.mergeEndRow + 1;
-        // // }
-        // if (cellBefore !== colGroup.lastChild) {
-        //   colGroup.lastChild && ((colGroup.lastChild as Group).row = (colGroup.lastChild as Group).row + 1);
-        //   // if (
-        //   //   isNumber((colGroup.lastChild as Group).mergeStartRow) &&
-        //   //   isNumber((colGroup.lastChild as Group).mergeEndRow)
-        //   // ) {
-        //   //   (colGroup.lastChild as Group).mergeStartRow = (colGroup.lastChild as Group).mergeStartRow + 1;
-        //   //   (colGroup.lastChild as Group).mergeEndRow = (colGroup.lastChild as Group).mergeEndRow + 1;
-        //   // }
+        cellBefore && (cellBefore.row = cellBefore.row + 1);
+        // if (isNumber(cellBefore.mergeStartRow) && isNumber(cellBefore.mergeEndRow)) {
+        //   cellBefore.mergeStartRow = cellBefore.mergeStartRow + 1;
+        //   cellBefore.mergeEndRow = cellBefore.mergeEndRow + 1;
         // }
+        if (cellBefore !== colGroup.lastChild) {
+          colGroup.lastChild && ((colGroup.lastChild as Group).row = (colGroup.lastChild as Group).row + 1);
+          // if (
+          //   isNumber((colGroup.lastChild as Group).mergeStartRow) &&
+          //   isNumber((colGroup.lastChild as Group).mergeEndRow)
+          // ) {
+          //   (colGroup.lastChild as Group).mergeStartRow = (colGroup.lastChild as Group).mergeStartRow + 1;
+          //   (colGroup.lastChild as Group).mergeEndRow = (colGroup.lastChild as Group).mergeEndRow + 1;
+          // }
+        }
       }
     }
 
