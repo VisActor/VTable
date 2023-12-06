@@ -123,7 +123,7 @@ export function createFrameBorder(
 
       let shadowRect;
       if (hasShadow) {
-        rectAttributes.fill = 'black';
+        rectAttributes.fill = 'white';
         (rectAttributes as any).notAdjustPos = true;
         shadowRect = createRect({
           x: borderLeft / 2,
@@ -131,6 +131,7 @@ export function createFrameBorder(
           width: group.attribute.width,
           height: group.attribute.height,
           fill: 'red',
+          cornerRadius: group.attribute.cornerRadius,
           globalCompositeOperation: 'destination-out'
         });
       }
