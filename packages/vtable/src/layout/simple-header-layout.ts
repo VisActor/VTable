@@ -14,8 +14,9 @@ import type {
 import { getChartDataId } from './chart-helper/get-chart-spec';
 // import { EmptyDataCache } from './utils';
 
-let seqId = 0;
+// let seqId = 0;
 export class SimpleHeaderLayoutMap implements LayoutMapAPI {
+  private seqId: number = 0;
   private _headerObjects: HeaderData[];
   private _headerObjectMap: { [key in LayoutObjectId]: HeaderData };
   // private _headerObjectFieldKey: { [key in string]: HeaderData };
@@ -612,7 +613,7 @@ export class SimpleHeaderLayoutMap implements LayoutMapAPI {
     const rowCells = this._newRow(row, hideColumnsSubHeader); // !hideColumnsSubHeader ? this._headerCellIds[row] || this._newRow(row) : [];
     column.forEach((hd: ColumnDefine) => {
       const col = this._columns.length;
-      const id = seqId++;
+      const id = this.seqId++;
       const cell: HeaderData = {
         id,
         title: hd.title ?? (hd as any).caption,
@@ -643,7 +644,7 @@ export class SimpleHeaderLayoutMap implements LayoutMapAPI {
       } else {
         const colDef = hd;
         this._columns.push({
-          id: seqId++,
+          id: this.seqId++,
           field: colDef.field,
           fieldKey: colDef.fieldKey,
           fieldFormat: colDef.fieldFormat,

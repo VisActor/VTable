@@ -44,11 +44,12 @@ import type { ITableAxisOption } from '../ts-types/component/axis';
 import { getQuadProps } from '../scenegraph/utils/padding';
 import { getAxisConfigInPivotChart } from './chart-helper/get-axis-config';
 
-export const sharedVar = { seqId: 0 };
+// export const sharedVar = { seqId: 0 };
 let colIndex = 0;
 
 const defaultDimension = { startInTotal: 0, level: 0 };
 export class PivotHeaderLayoutMap implements LayoutMapAPI {
+  sharedVar: { seqId: number };
   _showHeader = true;
   rowDimensionTree: DimensionTree;
   columnDimensionTree: DimensionTree;
@@ -127,6 +128,7 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
   _chartPadding?: number | number[];
   //#endregion
   constructor(table: PivotTable | PivotChart, dataset: Dataset) {
+    this.sharedVar = { seqId: 0 };
     this._table = table;
     if ((table as PivotTable).options.rowHierarchyType === 'tree') {
       this.extensionRows = (table as PivotTable).options.extensionRows;
@@ -192,9 +194,10 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
         this.indicatorKeys.push(indicator.indicatorKey);
       }
     });
-    this.columnDimensionTree = new DimensionTree((this.columnTree as IPivotLayoutHeadNode[]) ?? []);
+    this.columnDimensionTree = new DimensionTree((this.columnTree as IPivotLayoutHeadNode[]) ?? [], this.sharedVar);
     this.rowDimensionTree = new DimensionTree(
       (this.rowTree as IPivotLayoutHeadNode[]) ?? [],
+      this.sharedVar,
       this.rowHierarchyType,
       this.rowHierarchyType === 'tree' ? this.rowExpandLevel : undefined
     );
@@ -215,7 +218,7 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
     }
     // if (typeof this.showColumnHeader !== 'boolean') {
     if (this.columnHeaderTitle) {
-      const id = ++sharedVar.seqId;
+      const id = ++this.sharedVar.seqId;
       const firstRowIds = Array(this.colCount - this.rowHeaderLevelCount).fill(id);
       this._columnHeaderCellIds.unshift(firstRowIds);
       const cell: HeaderData = {
@@ -259,7 +262,7 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
     }
     // if (typeof this.showRowHeader !== 'boolean') {
     if (this.rowHeaderTitle) {
-      const id = ++sharedVar.seqId;
+      const id = ++this.sharedVar.seqId;
       const firstColIds = Array(this._rowHeaderCellIds_FULL[0]?.length ?? this.rowDimensionTree.tree.size).fill(id);
       this._rowHeaderCellIds_FULL.unshift(firstColIds);
       const cell: HeaderData = {
@@ -514,7 +517,7 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
         }
         if (!isValid(this._indicators?.find(indicator => indicator.indicatorKey === indicatorInfo.indicatorKey))) {
           this._indicators?.push({
-            id: ++sharedVar.seqId,
+            id: ++this.sharedVar.seqId,
             indicatorKey: indicatorInfo.indicatorKey,
             field: indicatorInfo.indicatorKey,
             fieldFormat: indicatorInfo?.format,
@@ -537,7 +540,7 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
         //兼容当某个指标没有设置在dimension.indicators中
         if (!isValid(this._indicators?.find(indicator => indicator.indicatorKey === hd.indicatorKey))) {
           this._indicators?.push({
-            id: ++sharedVar.seqId,
+            id: ++this.sharedVar.seqId,
             indicatorKey: hd.indicatorKey,
             field: hd.indicatorKey,
             cellType: 'text',
@@ -684,7 +687,7 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
     const results: HeaderData[] = [];
     if (dimensionKeys) {
       dimensionKeys.forEach((dimensionKey: string | number, key: number) => {
-        const id = ++sharedVar.seqId;
+        const id = ++this.sharedVar.seqId;
         // const dimensionInfo: IDimension =
         //   (this.rowsDefine?.find(dimension =>
         //     typeof dimension === 'string' ? false : dimension.dimensionKey === dimensionKey
@@ -741,7 +744,7 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
         }
       });
     } else {
-      const id = ++sharedVar.seqId;
+      const id = ++this.sharedVar.seqId;
       const cell: HeaderData = {
         id,
         title: '',
@@ -791,7 +794,7 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
           this._rowHeaderExtensionTree[key].reset(this._rowHeaderExtensionTree[key].tree.children, true);
           rowExtensionDimensionTree = this._rowHeaderExtensionTree[key];
         } else {
-          rowExtensionDimensionTree = new DimensionTree(tree ?? [], this.rowHierarchyType, undefined);
+          rowExtensionDimensionTree = new DimensionTree(tree ?? [], this.sharedVar, this.rowHierarchyType, undefined);
           this._rowHeaderExtensionTree[key] = rowExtensionDimensionTree;
         }
 
@@ -1792,7 +1795,7 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
     );
 
     if (this.rowHeaderTitle) {
-      const id = ++sharedVar.seqId;
+      const id = ++this.sharedVar.seqId;
       const firstColIds = Array(this.rowCount - this.columnHeaderLevelCount).fill(id);
       this._rowHeaderCellIds_FULL.unshift(firstColIds);
       const cell: HeaderData = {

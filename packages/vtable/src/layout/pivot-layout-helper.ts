@@ -3,7 +3,7 @@ import { IndicatorDimensionKeyPlaceholder } from '../tools/global';
 import type { Either } from '../tools/helper';
 import type { CellInfo, ColumnIconOption, ICustomRender, LayoutObjectId } from '../ts-types';
 import { HierarchyState } from '../ts-types';
-import { sharedVar } from './pivot-header-layout';
+// import { sharedVar } from './pivot-header-layout';
 
 interface IPivotLayoutBaseHeadNode {
   id: number;
@@ -32,6 +32,7 @@ interface IPivotLayoutIndicatorHeadNode extends IPivotLayoutBaseHeadNode {
 }
 export type IPivotLayoutHeadNode = Either<IPivotLayoutDimensionHeadNode, IPivotLayoutIndicatorHeadNode>;
 export class DimensionTree {
+  sharedVar: { seqId: number };
   // 每一个值对应的序号 结果缓存
   // cache: {
   //   [propName: string]: any;
@@ -63,12 +64,14 @@ export class DimensionTree {
   // dimensions: IDimension[] | undefined;//目前用不到这个
   constructor(
     tree: IPivotLayoutHeadNode[],
+    sharedVar: { seqId: number },
     hierarchyType: 'grid' | 'tree' = 'grid',
     rowExpandLevel: number = undefined
   ) {
     this.sizeIncludeParent = rowExpandLevel !== null && rowExpandLevel !== undefined;
     this.rowExpandLevel = rowExpandLevel;
     this.hierarchyType = hierarchyType;
+    this.sharedVar = sharedVar;
     this.reset(tree);
   }
 
@@ -96,7 +99,7 @@ export class DimensionTree {
       !this.dimensionKeys.contain(node.indicatorKey ? IndicatorDimensionKeyPlaceholder : node.dimensionKey) &&
         this.dimensionKeys.put(node.level, node.indicatorKey ? IndicatorDimensionKeyPlaceholder : node.dimensionKey);
       if (!node.id) {
-        node.id = ++sharedVar.seqId;
+        node.id = ++this.sharedVar.seqId;
       }
     }
     let size = node.dimensionKey ? (this.sizeIncludeParent ? 1 : 0) : 0;
