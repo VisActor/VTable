@@ -413,8 +413,12 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
     table.internalProps.frozenColCount = layoutMap.rowHeaderLevelCount ?? 0;
     table.frozenRowCount = layoutMap.headerLevelCount;
 
-    table.bottomFrozenRowCount = this.options.bottomFrozenRowCount ?? 0;
-    table.rightFrozenColCount = this.options.rightFrozenColCount ?? 0;
+    if (table.bottomFrozenRowCount !== (this.options.bottomFrozenRowCount ?? 0)) {
+      table.bottomFrozenRowCount = this.options.bottomFrozenRowCount ?? 0;
+    }
+    if (table.rightFrozenColCount !== (this.options.rightFrozenColCount ?? 0)) {
+      table.rightFrozenColCount = this.options.rightFrozenColCount ?? 0;
+    }
     this.stateManager.setFrozenCol(this.internalProps.frozenColCount);
   }
   protected _getSortFuncFromHeaderOption(
