@@ -144,6 +144,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
     this.scenegraph.createSceneGraph();
     this.stateManager.updateHoverPos(oldHoverState.col, oldHoverState.row);
     this.renderAsync();
+    this.eventManager.updateEventBinder();
   }
   /**
    *@deprecated 请使用columns

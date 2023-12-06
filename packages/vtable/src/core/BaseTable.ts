@@ -1954,7 +1954,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     this._updateSize();
     // this.stateManager = new StateManager(this);
     // this.eventManager = new EventManager(this);
-
+    this.eventManager.updateEventBinder();
     if (options.legends) {
       internalProps.legends = createLegend(options.legends, this);
       this.scenegraph.tableGroup.setAttributes({
