@@ -1176,5 +1176,6 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
       this.internalProps.title.resize();
       this.scenegraph.resize();
     }
+    this.eventManager.updateEventBinder();
   }
 }

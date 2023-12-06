@@ -946,6 +946,7 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
       this.internalProps.title.resize();
       this.scenegraph.resize();
     }
+    this.eventManager.updateEventBinder();
   }
   /** 获取单元格对应的编辑器 */
   getEditor(col: number, row: number) {
