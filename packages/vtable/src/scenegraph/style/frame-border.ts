@@ -37,7 +37,7 @@ export function createFrameBorder(
     borderLineDash
   } = frameTheme;
 
-  let hasShadow = false;
+  const hasShadow = false;
   const groupAttributes: IGroupGraphicAttribute = {};
   const rectAttributes: IRectGraphicAttribute = {
     pickable: false
@@ -52,10 +52,10 @@ export function createFrameBorder(
     rectAttributes.stroke = true;
     rectAttributes.stroke = shadowColor;
     rectAttributes.lineWidth = 1;
-    hasShadow = true;
+    // hasShadow = true;
 
-    // rectAttributes.fill = true;
-    // rectAttributes.fillOpacity = 0.01;
+    rectAttributes.fill = true;
+    rectAttributes.fillOpacity = 0.01;
   }
 
   // 处理边框
