@@ -122,10 +122,14 @@ export function createFrameBorder(
       rectAttributes.height = group.attribute.height + borderTop / 2 + borderBottom / 2;
 
       let shadowRect;
+      let borderRect;
       if (hasShadow) {
         rectAttributes.fill = 'white';
         (rectAttributes as any).notAdjustPos = true;
-        shadowRect = createRect({
+        // first draw
+        shadowRect = createRect(rectAttributes);
+        // second draw
+        borderRect = createGroup({
           x: borderLeft / 2,
           y: borderTop / 2,
           width: group.attribute.width,
@@ -134,13 +138,13 @@ export function createFrameBorder(
           cornerRadius: group.attribute.cornerRadius,
           globalCompositeOperation: 'destination-out'
         });
+        borderRect.name = 'table-border-rect';
+        borderRect.addChild(shadowRect);
+      } else {
+        borderRect = createRect(rectAttributes);
+        borderRect.name = 'table-border-rect';
       }
 
-      const borderRect = hasShadow ? createGroup(rectAttributes) : createRect(rectAttributes);
-      borderRect.name = 'table-border-rect';
-      if (shadowRect) {
-        borderRect.addChild(shadowRect);
-      }
       group.parent.insertBefore(borderRect, group);
       (group as any).border = borderRect;
     } else {
