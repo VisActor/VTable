@@ -69,12 +69,13 @@ export function updateCol(
 
   if (isNumber(updateAfter)) {
     for (let col = updateAfter; col < table.colCount; col++) {
-      const colGroup = scene.getColGroup(col);
-      colGroup.needUpdate = true;
+      for (let row = 0; row < table.rowCount; row++) {
+        const cellGroup = scene.highPerformanceGetCell(col, row, true);
+        cellGroup && (cellGroup.needUpdate = true);
+      }
     }
     scene.proxy.colUpdatePos = updateAfter;
   }
-
   if (addCols.length) {
     if (!isNumber(updateAfter)) {
       const minCol = Math.min(...addCols);
@@ -109,18 +110,18 @@ function removeCol(col: number, scene: Scenegraph) {
   }
   proxy.bodyRightCol--;
   // proxy.totalCol--;
-  const totalActualBodyColCount = Math.min(proxy.rowLimit, proxy.bodyRightCol - proxy.bodyLeftCol + 1); // 渐进加载总row数量
+  const totalActualBodyColCount = Math.min(proxy.colLimit, proxy.bodyRightCol - proxy.bodyLeftCol + 1); // 渐进加载总col数量
   proxy.totalActualBodyColCount = totalActualBodyColCount;
-  proxy.totalCol = proxy.colStart + totalActualBodyColCount - 1; // 目标渐进完成的row
+  proxy.totalCol = proxy.colStart + totalActualBodyColCount - 1; // 目标渐进完成的col
 }
 
 function addCol(col: number, scene: Scenegraph) {
   const proxy = scene.proxy;
   proxy.bodyRightCol++;
   // proxy.totalCol++;
-  const totalActualBodyColCount = Math.min(proxy.rowLimit, proxy.bodyRightCol - proxy.bodyLeftCol + 1); // 渐进加载总col数量
+  const totalActualBodyColCount = Math.min(proxy.colLimit, proxy.bodyRightCol - proxy.bodyLeftCol + 1); // 渐进加载总col数量
   proxy.totalActualBodyColCount = totalActualBodyColCount;
-  proxy.totalCol = proxy.colStart + totalActualBodyColCount - 1; // 目标渐进完成的row
+  proxy.totalCol = proxy.colStart + totalActualBodyColCount - 1; // 目标渐进完成的col
 
   if (col < proxy.colStart) {
     return undefined;
@@ -292,12 +293,7 @@ function addColGroup(col: number, scene: Scenegraph) {
     } else {
       scene.bodyGroup.appendChild(columnGroup);
     }
-    generateCellGroup(
-      columnGroup,
-      col,
-      scene.table.columnHeaderLevelCount,
-      scene.table.rowCount - scene.table.bottomFrozenRowCount - 1
-    );
+    generateCellGroup(columnGroup, col, scene.bodyRowStart, scene.bodyRowEnd);
   }
   if (scene.bottomFrozenGroup && scene.table.bottomFrozenRowCount > 0) {
     const columnGroup = new Group({

@@ -69,7 +69,7 @@ export function updateRow(
     for (let col = 0; col < table.colCount; col++) {
       for (let row = updateAfter; row < table.rowCount; row++) {
         const cellGroup = scene.highPerformanceGetCell(col, row, true);
-        cellGroup.needUpdate = true;
+        cellGroup && (cellGroup.needUpdate = true);
       }
     }
     scene.proxy.rowUpdatePos = updateAfter;
