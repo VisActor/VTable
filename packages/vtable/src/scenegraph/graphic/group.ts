@@ -292,6 +292,9 @@ export class Group extends VRenderGroup {
 }
 
 function after(group: Group, selfChange: boolean) {
+  if (!group.stage.dirtyBounds) {
+    return;
+  }
   if (!(group.stage && group.stage.renderCount)) {
     return;
   }
