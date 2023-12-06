@@ -116,8 +116,8 @@ export function createFrameBorder(
     rectAttributes.y = borderTop / 2;
     rectAttributes.pickable = false;
     if (isTableGroup) {
-      rectAttributes.x = group.attribute.x - borderLeft / 2;
-      rectAttributes.y = group.attribute.y - borderTop / 2;
+      rectAttributes.x = -borderLeft / 2;
+      rectAttributes.y = -borderTop / 2;
       rectAttributes.width = group.attribute.width + borderLeft / 2 + borderRight / 2;
       rectAttributes.height = group.attribute.height + borderTop / 2 + borderBottom / 2;
 
@@ -130,8 +130,8 @@ export function createFrameBorder(
         shadowRect = createRect(rectAttributes);
         // second draw
         borderRect = createGroup({
-          x: borderLeft / 2,
-          y: borderTop / 2,
+          x: group.attribute.x,
+          y: group.attribute.y,
           width: group.attribute.width,
           height: group.attribute.height,
           fill: 'red',
