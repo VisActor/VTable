@@ -775,6 +775,9 @@ export class Scenegraph {
   }
 
   resize() {
+    // reset proxy config
+    this.proxy.resize();
+
     if (this.table.widthMode === 'adaptive' || this.table.autoFillWidth) {
       if (this.table.internalProps._widthResizedColMap.size === 0) {
         //如果没有手动调整过行高列宽 则重新计算一遍并重新分配
@@ -809,6 +812,8 @@ export class Scenegraph {
     ) {
       this.updateChartSize(this.table.rowHeaderLevelCount);
     }
+
+    this.proxy.progress();
     // this.stage.window.resize(width, height);
     this.updateNextFrame();
   }

@@ -67,8 +67,15 @@ export function computeRowsHeight(
 
     // compute header row in column header row
     for (let row = rowStart; row < table.columnHeaderLevelCount; row++) {
+      let startCol = 0;
+      let endCol = table.colCount - 1;
+      if ((table.isPivotTable() || table.isPivotChart()) && checkPivotFixedStyleAndNoWrap(table, row)) {
+        // 列表头样式一致，只计算第一列行高，作为整行行高
+        startCol = 0;
+        endCol = table.rowHeaderLevelCount;
+      }
       if (isAllRowsAuto || table.getDefaultRowHeight(row) === 'auto') {
-        const height = computeRowHeight(row, 0, table.colCount - 1, table);
+        const height = computeRowHeight(row, startCol, endCol, table);
         if (update) {
           newHeights[row] = height;
         } else {
@@ -338,6 +345,7 @@ function checkFixedStyleAndNoWrap(table: BaseTableAPI): boolean {
       typeof cellDefine.style === 'function' ||
       typeof (cellDefine as ColumnData).icon === 'function' ||
       cellDefine.define?.customRender ||
+      cellDefine.define?.customLayout ||
       typeof cellDefine.define?.icon === 'function'
     ) {
       return false;
@@ -371,6 +379,7 @@ function checkFixedStyleAndNoWrapForTranspose(table: BaseTableAPI, row: number):
     typeof cellDefine.style === 'function' ||
     typeof (cellDefine as ColumnData).icon === 'function' ||
     cellDefine.define?.customRender ||
+    cellDefine.define?.customLayout ||
     typeof cellDefine.define?.icon === 'function'
   ) {
     return false;
@@ -381,6 +390,39 @@ function checkFixedStyleAndNoWrapForTranspose(table: BaseTableAPI, row: number):
     typeof cellStyle.fontSize === 'function' ||
     typeof cellStyle.lineHeight === 'function' ||
     cellStyle.autoWrapText === true
+  ) {
+    return false;
+  }
+
+  return true;
+}
+
+function checkPivotFixedStyleAndNoWrap(table: BaseTableAPI, row: number) {
+  const { layoutMap } = table.internalProps;
+  //设置了全局自动换行的话 不能复用高度计算
+  if (
+    table.internalProps.autoWrapText &&
+    (table.options.heightMode === 'autoHeight' || table.options.heightMode === 'adaptive')
+  ) {
+    return false;
+  }
+
+  const headerDefine = layoutMap.getHeader(table.rowHeaderLevelCount, row);
+  if (
+    typeof headerDefine.style === 'function' ||
+    typeof (headerDefine as HeaderData).icons === 'function' ||
+    headerDefine.define?.headerCustomRender ||
+    headerDefine.define?.headerCustomLayout ||
+    typeof headerDefine.define?.icon === 'function'
+  ) {
+    return false;
+  }
+  const headerStyle = table._getCellStyle(table.rowHeaderLevelCount, row);
+  if (
+    typeof headerStyle.padding === 'function' ||
+    typeof headerStyle.fontSize === 'function' ||
+    typeof headerStyle.lineHeight === 'function' ||
+    headerStyle.autoWrapText === true
   ) {
     return false;
   }
