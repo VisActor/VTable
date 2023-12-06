@@ -1,8 +1,22 @@
+import { isValid } from '@visactor/vutils';
 import { NumberMap } from '../tools/NumberMap';
 import { IndicatorDimensionKeyPlaceholder } from '../tools/global';
 import type { Either } from '../tools/helper';
-import type { CellInfo, ColumnIconOption, ICustomRender, LayoutObjectId } from '../ts-types';
+import type {
+  CellInfo,
+  ColumnIconOption,
+  FieldData,
+  HeaderData,
+  ICustomRender,
+  IDimension,
+  IIndicator,
+  IRowDimension,
+  LayoutObjectId
+} from '../ts-types';
 import { HierarchyState } from '../ts-types';
+import type { PivotHeaderLayoutMap } from './pivot-header-layout';
+import type { ILinkDimension } from '../ts-types/pivot-table/dimension/link-dimension';
+import type { IImageDimension } from '../ts-types/pivot-table/dimension/image-dimension';
 // import { sharedVar } from './pivot-header-layout';
 
 interface IPivotLayoutBaseHeadNode {
@@ -306,3 +320,217 @@ export function countLayoutTree(children: { children?: any }[], countParentNode:
   return count;
 }
 //#endregion
+
+export function dealHeader(
+  hd: IPivotLayoutHeadNode,
+  _headerCellIds: number[][],
+  results: HeaderData[],
+  roots: number[],
+  row: number,
+  layoutMap: PivotHeaderLayoutMap
+) {
+  // const col = this._columns.length;
+  const id = hd.id;
+  const dimensionInfo: IDimension =
+    (layoutMap.rowsDefine?.find(dimension =>
+      typeof dimension === 'string' ? false : dimension.dimensionKey === hd.dimensionKey
+    ) as IDimension) ??
+    (layoutMap.columnsDefine?.find(dimension =>
+      typeof dimension === 'string' ? false : dimension.dimensionKey === hd.dimensionKey
+    ) as IDimension);
+  const indicatorInfo = layoutMap.indicatorsDefine?.find(indicator => {
+    if (typeof indicator === 'string') {
+      return false;
+    }
+    if (hd.indicatorKey) {
+      return indicator.indicatorKey === hd.indicatorKey;
+    }
+    return indicator.title === hd.value;
+  }) as IIndicator;
+  const cell: HeaderData = {
+    id,
+    title: hd.value ?? indicatorInfo?.title,
+    field: hd.dimensionKey,
+    style:
+      typeof (indicatorInfo ?? dimensionInfo)?.headerStyle === 'function'
+        ? (indicatorInfo ?? dimensionInfo)?.headerStyle
+        : Object.assign({}, (indicatorInfo ?? dimensionInfo)?.headerStyle),
+    headerType: indicatorInfo?.headerType ?? dimensionInfo?.headerType ?? 'text',
+    headerIcon: indicatorInfo?.headerIcon ?? dimensionInfo?.headerIcon,
+    // define: <any>hd,
+    define: Object.assign({}, <any>hd, indicatorInfo ?? dimensionInfo),
+    fieldFormat: indicatorInfo?.headerFormat ?? dimensionInfo?.headerFormat,
+    // iconPositionList:[]
+    dropDownMenu: indicatorInfo?.dropDownMenu ?? dimensionInfo?.dropDownMenu,
+    pivotInfo: {
+      value: hd.value,
+      dimensionKey: hd.dimensionKey,
+      isPivotCorner: false
+      // customInfo: dimensionInfo?.customInfo
+    },
+    width: (dimensionInfo as IRowDimension)?.width,
+    minWidth: (dimensionInfo as IRowDimension)?.minWidth,
+    maxWidth: (dimensionInfo as IRowDimension)?.maxWidth,
+    showSort: indicatorInfo?.showSort ?? dimensionInfo?.showSort,
+    description: dimensionInfo?.description
+  };
+
+  if (indicatorInfo) {
+    //收集indicatorDimensionKey  提到了构造函数中
+    // this.indicatorDimensionKey = dimensionInfo.dimensionKey;
+    if (indicatorInfo.customRender) {
+      hd.customRender = indicatorInfo.customRender;
+    }
+    if (!isValid(layoutMap._indicators?.find(indicator => indicator.indicatorKey === indicatorInfo.indicatorKey))) {
+      layoutMap._indicators?.push({
+        id: ++layoutMap.sharedVar.seqId,
+        indicatorKey: indicatorInfo.indicatorKey,
+        field: indicatorInfo.indicatorKey,
+        fieldFormat: indicatorInfo?.format,
+        cellType: indicatorInfo?.cellType ?? (indicatorInfo as any)?.columnType ?? 'text',
+        chartModule: 'chartModule' in indicatorInfo ? indicatorInfo.chartModule : null,
+        chartSpec: 'chartSpec' in indicatorInfo ? indicatorInfo.chartSpec : null,
+        sparklineSpec: 'sparklineSpec' in indicatorInfo ? indicatorInfo.sparklineSpec : null,
+        style: indicatorInfo?.style,
+        icon: indicatorInfo?.icon,
+        define: Object.assign({}, <any>hd, indicatorInfo, {
+          dragHeader: dimensionInfo?.dragHeader
+        }),
+        width: indicatorInfo?.width,
+        minWidth: indicatorInfo?.minWidth,
+        maxWidth: indicatorInfo?.maxWidth,
+        disableColumnResize: indicatorInfo?.disableColumnResize
+      });
+    }
+  } else if (hd.indicatorKey) {
+    //兼容当某个指标没有设置在dimension.indicators中
+    if (!isValid(layoutMap._indicators?.find(indicator => indicator.indicatorKey === hd.indicatorKey))) {
+      layoutMap._indicators?.push({
+        id: ++layoutMap.sharedVar.seqId,
+        indicatorKey: hd.indicatorKey,
+        field: hd.indicatorKey,
+        cellType: 'text',
+        define: Object.assign({}, <any>hd)
+      });
+    }
+  }
+  // if (dimensionInfo.indicators) {
+  //   layoutMap.hideIndicatorName = dimensionInfo.hideIndicatorName ?? false;
+  //   layoutMap.indicatorsAsCol = dimensionInfo.indicatorsAsCol ?? true;
+  // }
+  results[id] = cell;
+  layoutMap._headerObjects[id] = cell;
+  _headerCellIds[row][layoutMap.colIndex] = id;
+  for (let r = row - 1; r >= 0; r--) {
+    _headerCellIds[r][layoutMap.colIndex] = roots[r];
+  }
+  if ((hd as IPivotLayoutHeadNode).children?.length >= 1) {
+    layoutMap
+      ._addHeaders(_headerCellIds, row + 1, (hd as IPivotLayoutHeadNode).children ?? [], [...roots, id])
+      .forEach(c => results.push(c));
+  } else {
+    // columns.push([""])//代码一个路径
+    for (let r = row + 1; r < _headerCellIds.length; r++) {
+      _headerCellIds[r][layoutMap.colIndex] = id;
+    }
+    layoutMap.colIndex++;
+  }
+}
+
+export function dealHeaderForTreeMode(
+  hd: IPivotLayoutHeadNode,
+  _headerCellIds: number[][],
+  results: HeaderData[],
+  roots: number[],
+  row: number,
+  totalLevel: number,
+  show: boolean,
+  dimensions: (IDimension | string)[],
+  layoutMap: PivotHeaderLayoutMap
+) {
+  const id = hd.id;
+  // const dimensionInfo: IDimension =
+  //   (this.rowsDefine?.find(dimension =>
+  //     typeof dimension === 'string' ? false : dimension.dimensionKey === hd.dimensionKey
+  //   ) as IDimension) ??
+  //   (this.columnsDefine?.find(dimension =>
+  //     typeof dimension === 'string' ? false : dimension.dimensionKey === hd.dimensionKey
+  //   ) as IDimension);
+  const dimensionInfo: IDimension = dimensions.find(dimension =>
+    typeof dimension === 'string' ? false : dimension.dimensionKey === hd.dimensionKey
+  ) as IDimension;
+
+  const cell: HeaderData = {
+    id,
+    title: hd.value,
+    field: hd.dimensionKey as FieldData,
+    //如果不是整棵树的叶子节点，都靠左显示
+    style:
+      hd.level + 1 === totalLevel || typeof dimensionInfo?.headerStyle === 'function'
+        ? dimensionInfo?.headerStyle
+        : Object.assign({}, dimensionInfo?.headerStyle, { textAlign: 'left' }),
+    headerType: dimensionInfo?.headerType ?? 'text',
+    headerIcon: dimensionInfo?.headerIcon,
+    define: Object.assign(<any>hd, {
+      linkJump: (dimensionInfo as ILinkDimension)?.linkJump,
+      linkDetect: (dimensionInfo as ILinkDimension)?.linkDetect,
+      templateLink: (dimensionInfo as ILinkDimension)?.templateLink,
+
+      // image相关 to be fixed
+      keepAspectRatio: (dimensionInfo as IImageDimension)?.keepAspectRatio ?? false,
+      imageAutoSizing: (dimensionInfo as IImageDimension)?.imageAutoSizing,
+
+      headerCustomRender: dimensionInfo?.headerCustomRender,
+      headerCustomLayout: dimensionInfo?.headerCustomLayout,
+      dragHeader: dimensionInfo?.dragHeader
+    }), //这里不能新建对象，要用hd保持引用关系
+    fieldFormat: dimensionInfo?.headerFormat,
+    // iconPositionList:[]
+    dropDownMenu: dimensionInfo?.dropDownMenu,
+    pivotInfo: {
+      value: hd.value,
+      dimensionKey: hd.dimensionKey as string,
+      isPivotCorner: false
+      // customInfo: dimensionInfo?.customInfo
+    },
+    hierarchyLevel: hd.level,
+    dimensionTotalLevel: totalLevel,
+    hierarchyState: hd.level + 1 === totalLevel ? undefined : hd.hierarchyState,
+    width: (dimensionInfo as IRowDimension)?.width,
+    minWidth: (dimensionInfo as IRowDimension)?.minWidth,
+    maxWidth: (dimensionInfo as IRowDimension)?.maxWidth,
+    parentCellId: roots[roots.length - 1]
+  };
+
+  results[id] = cell;
+  // this._cellIdDiemnsionMap.set(id, {
+  //   dimensionKey: hd.dimensionKey,
+  //   value: hd.value
+  // });
+  layoutMap._headerObjects[id] = cell;
+  _headerCellIds[row][layoutMap.colIndex] = id;
+  for (let r = row - 1; r >= 0; r--) {
+    _headerCellIds[r][layoutMap.colIndex] = roots[r];
+  }
+  if (hd.hierarchyState === HierarchyState.expand && (hd as IPivotLayoutHeadNode).children?.length >= 1) {
+    //row传值 colIndex++和_addHeaders有区别
+    show && layoutMap.colIndex++;
+    layoutMap
+      ._addHeadersForTreeMode(
+        _headerCellIds,
+        row,
+        (hd as IPivotLayoutHeadNode).children ?? [],
+        [...roots, id],
+        totalLevel,
+        show && hd.hierarchyState === HierarchyState.expand, //当前节点show 且当前节点状态为展开 则传给子节点为show：true
+        dimensions
+      )
+      .forEach(c => results.push(c));
+  } else {
+    // columns.push([""])//代码一个路径
+    show && layoutMap.colIndex++;
+    for (let r = row + 1; r < _headerCellIds.length; r++) {
+      _headerCellIds[r][layoutMap.colIndex] = id;
+    }
+  }
+}
