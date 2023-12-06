@@ -5,9 +5,7 @@ import { Group } from '../graphic/group';
 import { updateCell } from '../group-creater/cell-helper';
 import type { Scenegraph } from '../scenegraph';
 import { getCellMergeInfo } from '../utils/get-cell-merge';
-import { createColGroup } from '../group-creater/column';
 import type { IGroup } from '@visactor/vrender';
-import { table } from 'console';
 
 /**
  * add and remove rows in scenegraph
@@ -35,7 +33,7 @@ export function updateCol(
   });
 
   if (removeCols.length) {
-    resetColNumber(scene, removeCols[removeCols.length - 1]);
+    resetColNumber(scene);
   }
 
   scene.table._clearColRangeWidthsMap();
@@ -44,13 +42,14 @@ export function updateCol(
   let updateAfter: number;
   addCols.forEach(col => {
     const needUpdateAfter = addCol(col, scene);
+    resetColNumber(scene);
     updateAfter = updateAfter ?? needUpdateAfter;
     scene.table.colWidthsMap.adjustOrder(col, col + 1, scene.table.colWidthsMap.count() - col);
   });
 
   // reset attribute y and col number in CellGroup
   // const newTotalHeight = resetColNumberAndY(scene);
-  resetColNumberAndX(scene, addCols[addCols.length - 1]);
+  resetColNumberAndX(scene);
   // add cells
   updateCols.forEach(col => {
     for (let row = 0; row < table.rowCount; row++) {
@@ -158,47 +157,50 @@ function deduplication(array: number[]) {
   return result;
 }
 
-function resetColNumber(scene: Scenegraph, startCol: number) {
-  let colStartIndex = Math.min(scene.bodyColStart, startCol);
-  const colEndIndex =
-    (scene.bodyGroup?.lastChild as any)?.col ??
-    (scene.colHeaderGroup?.lastChild as any)?.col ??
-    (scene.bottomFrozenGroup?.lastChild as any)?.col;
-  for (let col = colStartIndex; col <= colEndIndex; col++) {
-    const headerColGroup = scene.getColGroup(col, true);
-    const colGroup = scene.getColGroup(col, false);
-    if (!headerColGroup && !colGroup) {
-      continue;
-    }
-    if (headerColGroup) {
-      headerColGroup.col = colStartIndex;
-      // reset col number
-      headerColGroup.forEachChildren((cellGroup: Group) => {
-        changeCellGroupCol(cellGroup);
-      });
-    }
-    if (colGroup) {
-      colGroup.col = colStartIndex;
-      colGroup.forEachChildren((cellGroup: Group) => {
-        changeCellGroupCol(cellGroup);
-      });
-    }
-    colStartIndex++;
-  }
+function resetColNumber(scene: Scenegraph) {
+  let colIndex = scene.bodyColStart;
+  scene.bodyGroup.forEachChildren((colGroup: Group) => {
+    colGroup.col = colIndex;
+    colGroup?.forEachChildren((cellGroup: Group) => {
+      processCell(cellGroup);
+    });
+    colIndex++;
+  });
 
-  function changeCellGroupCol(cellGroup: Group) {
-    cellGroup.col = colStartIndex;
+  colIndex = scene.bodyColStart;
+  scene.colHeaderGroup.forEachChildren((colGroup: Group) => {
+    colGroup.col = colIndex;
+    colGroup?.forEachChildren((cellGroup: Group) => {
+      processCell(cellGroup);
+    });
+    colIndex++;
+  });
+
+  colIndex = scene.bodyColStart;
+  scene.bottomFrozenGroup.forEachChildren((colGroup: Group) => {
+    colGroup.col = colIndex;
+    colGroup?.forEachChildren((cellGroup: Group) => {
+      processCell(cellGroup);
+    });
+    colIndex++;
+  });
+  function processCell(cellGroup: Group) {
+    cellGroup.col = colIndex;
     const merge = getCellMergeInfo(scene.table, cellGroup.col, cellGroup.row);
     if (merge) {
       cellGroup.mergeStartCol = merge.start.col;
-      cellGroup.mergeStartRow = merge.start.row;
+      cellGroup.mergeStartCol = merge.start.col;
       cellGroup.mergeEndCol = merge.end.col;
-      cellGroup.mergeEndRow = merge.end.row;
+      cellGroup.mergeEndCol = merge.end.col;
+    }
+
+    if (cellGroup.role !== 'cell') {
+      return;
     }
   }
 }
 
-function resetColNumberAndX(scene: Scenegraph, startCol: number) {
+function resetColNumberAndX(scene: Scenegraph) {
   let colIndex = scene.bodyColStart;
   let x = 0;
   scene.bodyGroup.forEachChildren((colGroup: Group) => {
@@ -339,33 +341,6 @@ function addColGroup(col: number, scene: Scenegraph) {
       cellGroup.row = row;
       cellGroup.needUpdate = true;
       group.appendChild(cellGroup);
-    }
-  }
-}
-
-function removeCellGroup(col: number, scene: Scenegraph) {
-  if (col >= scene.table.rowHeaderLevelCount) {
-    const colGroup = scene.getColGroup(col, false);
-    scene.bodyGroup.removeChild(colGroup);
-  }
-  for (let col = 0; col < scene.table.colCount; col++) {
-    // const headerColGroup = scene.getColGroup(col, true);
-    const colGroup = scene.getColGroup(col, false);
-    if (!colGroup) {
-      continue;
-    }
-    // remove cellGroup in colGroup
-    let cellGroup;
-    colGroup.forEachChildren((cell: Group) => {
-      if (cell.col === col) {
-        cellGroup = cell;
-        return true;
-      }
-      return false;
-    });
-    if (cellGroup) {
-      colGroup.updateColumnHeight(-(cellGroup as Group).attribute.height);
-      colGroup.removeChild(cellGroup);
     }
   }
 }
