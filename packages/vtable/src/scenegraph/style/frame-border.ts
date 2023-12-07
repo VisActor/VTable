@@ -124,24 +124,34 @@ export function createFrameBorder(
       let shadowRect;
       let borderRect;
       if (hasShadow) {
-        rectAttributes.x = -borderLeft / 2;
-        rectAttributes.y = -borderTop / 2;
         rectAttributes.fill = 'white';
-        // first draw
-        shadowRect = createRect(rectAttributes);
-        // second draw
-        borderRect = createGroup({
-          x: group.attribute.x,
-          y: group.attribute.y,
+        (rectAttributes as any).notAdjustPos = true;
+        // rectAttributes.globalCompositeOperation = 'source-over';
+
+        // first draw group
+        borderRect = createGroup(rectAttributes);
+        borderRect.name = 'table-border-rect';
+
+        // second draw rect
+        shadowRect = createRect({
+          x: borderLeft / 2,
+          y: borderTop / 2,
           width: group.attribute.width,
           height: group.attribute.height,
           fill: 'red',
           cornerRadius: group.attribute.cornerRadius,
-          globalCompositeOperation: 'destination-out',
-          notAdjustPos: true
-        } as any);
-        borderRect.name = 'table-border-rect';
+          globalCompositeOperation: 'destination-out'
+        });
         borderRect.addChild(shadowRect);
+
+        // hack for vrender globalCompositeOperation&clip render problem
+        const hackRect = createRect({
+          width: 1,
+          height: 1,
+          fill: 'transparent',
+          pickable: false
+        });
+        borderRect.addChild(hackRect);
       } else {
         borderRect = createRect(rectAttributes);
         borderRect.name = 'table-border-rect';
