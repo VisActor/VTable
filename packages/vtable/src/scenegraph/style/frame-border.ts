@@ -117,7 +117,7 @@ export function createFrameBorder(
     rectAttributes.pickable = false;
     if (isTableGroup) {
       rectAttributes.x = group.attribute.x - borderLeft / 2;
-      rectAttributes.y = group.attribute.x - borderTop / 2;
+      rectAttributes.y = group.attribute.y - borderTop / 2;
       rectAttributes.width = group.attribute.width + borderLeft / 2 + borderRight / 2;
       rectAttributes.height = group.attribute.height + borderTop / 2 + borderBottom / 2;
 
