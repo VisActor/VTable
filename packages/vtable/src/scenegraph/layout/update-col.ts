@@ -83,15 +83,33 @@ export function updateCol(
     }
     scene.proxy.colUpdateDirection = 'left';
     scene.proxy.updateColGroups(scene.proxy.screenColCount * 2);
+    updateRightFrozeCellGroups();
     scene.proxy.progress();
   } else if (removeCols.length) {
     scene.proxy.updateColGroups(scene.proxy.screenColCount * 2);
+    updateRightFrozeCellGroups();
     scene.proxy.progress();
   }
 
   // update table size
   const newTotalWidth = table.getColsWidth(table.frozenColCount, table.colCount - 1);
   scene.updateContainerWidth(scene.table.frozenColCount, newTotalWidth - scene.bodyGroup.attribute.width);
+
+  function updateRightFrozeCellGroups() {
+    if (
+      addCols?.[addCols?.length - 1] >= table.colCount - table.rightFrozenColCount ||
+      updateCols?.[updateCols?.length - 1] >= table.colCount - table.rightFrozenColCount ||
+      removeCols?.[0] >= table.colCount - table.rightFrozenColCount
+    ) {
+      for (let col = table.colCount - table.rightFrozenColCount; col < table.colCount; col++) {
+        for (let row = 0; row < table.rowCount; row++) {
+          const cellGroup = scene.highPerformanceGetCell(col, row, true);
+          cellGroup && (cellGroup.needUpdate = true);
+        }
+      }
+      scene.proxy.updateRightFrozenCellGroups();
+    }
+  }
 }
 
 function removeCol(col: number, scene: Scenegraph) {
@@ -203,7 +221,7 @@ function resetColNumber(scene: Scenegraph) {
 
 function resetColNumberAndX(scene: Scenegraph) {
   let colIndex = scene.bodyColStart;
-  let x = 0;
+  let x = scene.getCellGroupX(colIndex);
   scene.bodyGroup.forEachChildren((colGroup: Group) => {
     colGroup.col = colIndex;
     colGroup?.forEachChildren((cellGroup: Group) => {
@@ -215,7 +233,7 @@ function resetColNumberAndX(scene: Scenegraph) {
   });
 
   colIndex = scene.bodyColStart;
-  x = 0;
+  x = scene.getCellGroupX(colIndex);
   scene.colHeaderGroup.forEachChildren((colGroup: Group) => {
     colGroup.col = colIndex;
     colGroup?.forEachChildren((cellGroup: Group) => {
@@ -227,8 +245,43 @@ function resetColNumberAndX(scene: Scenegraph) {
   });
 
   colIndex = scene.bodyColStart;
-  x = 0;
+  x = scene.getCellGroupX(colIndex);
   scene.bottomFrozenGroup.forEachChildren((colGroup: Group) => {
+    colGroup.col = colIndex;
+    colGroup?.forEachChildren((cellGroup: Group) => {
+      processCell(cellGroup);
+    });
+    colGroup.setAttribute('x', x);
+    x += colGroup.attribute.width;
+    colIndex++;
+  });
+  colIndex = scene.table.colCount - scene.table.rightFrozenColCount;
+  x = 0;
+  scene.rightFrozenGroup.forEachChildren((colGroup: Group) => {
+    colGroup.col = colIndex;
+    colGroup?.forEachChildren((cellGroup: Group) => {
+      processCell(cellGroup);
+    });
+    colGroup.setAttribute('x', x);
+    x += colGroup.attribute.width;
+    colIndex++;
+  });
+
+  colIndex = scene.table.colCount - scene.table.rightFrozenColCount;
+  x = 0;
+  scene.rightTopCornerGroup.forEachChildren((colGroup: Group) => {
+    colGroup.col = colIndex;
+    colGroup?.forEachChildren((cellGroup: Group) => {
+      processCell(cellGroup);
+    });
+    colGroup.setAttribute('x', x);
+    x += colGroup.attribute.width;
+    colIndex++;
+  });
+
+  colIndex = scene.table.colCount - scene.table.rightFrozenColCount;
+  x = 0;
+  scene.rightBottomCornerGroup.forEachChildren((colGroup: Group) => {
     colGroup.col = colIndex;
     colGroup?.forEachChildren((cellGroup: Group) => {
       processCell(cellGroup);

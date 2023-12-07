@@ -595,6 +595,9 @@ export class DataSource extends EventTarget implements DataSourceAPI {
     const recordIndexsMaxToMin = recordIndexs.sort((a, b) => b - a);
     for (let index = 0; index < recordIndexsMaxToMin.length; index++) {
       const recordIndex = recordIndexsMaxToMin[index];
+      if (recordIndex >= this._sourceLength || recordIndex < 0) {
+        continue;
+      }
       const rawIndex = this.currentIndexedData[recordIndex];
       this.source.splice(rawIndex, 1);
       this._sourceLength -= 1;
@@ -610,9 +613,14 @@ export class DataSource extends EventTarget implements DataSourceAPI {
    * 删除多条数据recordIndexs
    */
   deleteRecords(recordIndexs: number[]) {
+    const realDeletedRecordIndexs = [];
     const recordIndexsMaxToMin = recordIndexs.sort((a, b) => b - a);
     for (let index = 0; index < recordIndexsMaxToMin.length; index++) {
       const recordIndex = recordIndexsMaxToMin[index];
+      if (recordIndex >= this._sourceLength || recordIndex < 0) {
+        continue;
+      }
+      realDeletedRecordIndexs.push(recordIndex);
       this.source.splice(recordIndex, 1);
       this.currentIndexedData.pop();
       this._sourceLength -= 1;
@@ -625,6 +633,7 @@ export class DataSource extends EventTarget implements DataSourceAPI {
       this.pagination.totalCount = this._sourceLength;
       this.updatePagerData();
     }
+    return realDeletedRecordIndexs;
   }
 
   sort(

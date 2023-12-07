@@ -1014,6 +1014,8 @@ export class ListTable extends BaseTable implements ListTableAPI {
     } else {
       if (recordIndex === undefined || recordIndex > this.dataSource.sourceLength) {
         recordIndex = this.dataSource.sourceLength;
+      } else if (recordIndex < 0) {
+        recordIndex = 0;
       }
       const headerCount = this.transpose ? this.rowHeaderLevelCount : this.columnHeaderLevelCount;
       this.dataSource.addRecords(records, recordIndex);
@@ -1089,77 +1091,82 @@ export class ListTable extends BaseTable implements ListTableAPI {
    * @param recordIndexs 要删除数据的索引（显示到body中的条目索引）
    */
   deleteRecords(recordIndexs: number[]) {
-    if (this.sortState) {
-      this.dataSource.deleteRecordsForSorted(recordIndexs);
-      sortRecords(this);
-      this.refreshRowColCount();
-      // 更新整个场景树
-      this.scenegraph.clearCells();
-      this.scenegraph.createSceneGraph();
-    } else {
-      this.dataSource.deleteRecords(recordIndexs);
-      const oldRowCount = this.transpose ? this.colCount : this.rowCount;
-      this.refreshRowColCount();
-      const newRowCount = this.transpose ? this.colCount : this.rowCount;
-      const recordIndexsMinToMax = recordIndexs.sort((a, b) => a - b);
-      const minRecordIndex = recordIndexsMinToMax[0];
-      if (this.pagination) {
-        const { perPageCount, currentPage } = this.pagination;
-        const startIndex = perPageCount * (currentPage || 0);
-        const endIndex = startIndex + perPageCount;
-        if (minRecordIndex < endIndex) {
-          //删除当前页或者前面的数据才需要更新 如果是删除的是当前页后面的数据不需要更新场景树
-          if (minRecordIndex < endIndex - perPageCount) {
-            // 如果删除包含当页之前的数据 则整个场景树都更新
-            this.scenegraph.clearCells();
-            this.scenegraph.createSceneGraph();
-          } else {
-            //如果是仅删除当前页数据
-            const minRowNum =
-              minRecordIndex -
-              (endIndex - perPageCount) +
-              (this.transpose ? this.rowHeaderLevelCount : this.columnHeaderLevelCount);
-            //如果当页数据是满的 则更新影响的部分行
-            const updateRows = [];
-            const delRows = [];
+    if (recordIndexs?.length > 0) {
+      if (this.sortState) {
+        this.dataSource.deleteRecordsForSorted(recordIndexs);
+        sortRecords(this);
+        this.refreshRowColCount();
+        // 更新整个场景树
+        this.scenegraph.clearCells();
+        this.scenegraph.createSceneGraph();
+      } else {
+        const deletedRecordIndexs = this.dataSource.deleteRecords(recordIndexs);
+        if (deletedRecordIndexs.length === 0) {
+          return;
+        }
+        const oldRowCount = this.transpose ? this.colCount : this.rowCount;
+        this.refreshRowColCount();
+        const newRowCount = this.transpose ? this.colCount : this.rowCount;
+        const recordIndexsMinToMax = deletedRecordIndexs.sort((a, b) => a - b);
+        const minRecordIndex = recordIndexsMinToMax[0];
+        if (this.pagination) {
+          const { perPageCount, currentPage } = this.pagination;
+          const startIndex = perPageCount * (currentPage || 0);
+          const endIndex = startIndex + perPageCount;
+          if (minRecordIndex < endIndex) {
+            //删除当前页或者前面的数据才需要更新 如果是删除的是当前页后面的数据不需要更新场景树
+            if (minRecordIndex < endIndex - perPageCount) {
+              // 如果删除包含当页之前的数据 则整个场景树都更新
+              this.scenegraph.clearCells();
+              this.scenegraph.createSceneGraph();
+            } else {
+              //如果是仅删除当前页数据
+              const minRowNum =
+                minRecordIndex -
+                (endIndex - perPageCount) +
+                (this.transpose ? this.rowHeaderLevelCount : this.columnHeaderLevelCount);
+              //如果当页数据是满的 则更新影响的部分行
+              const updateRows = [];
+              const delRows = [];
 
-            for (let row = minRowNum; row < newRowCount; row++) {
-              if (this.transpose) {
-                updateRows.push({ col: row, row: 0 });
-              } else {
-                updateRows.push({ col: 0, row });
-              }
-            }
-            if (newRowCount < oldRowCount) {
-              //如果如果删除后不满 需要有删除数据
-              for (let row = newRowCount; row < oldRowCount; row++) {
+              for (let row = minRowNum; row < newRowCount; row++) {
                 if (this.transpose) {
-                  delRows.push({ col: row, row: 0 });
+                  updateRows.push({ col: row, row: 0 });
                 } else {
-                  delRows.push({ col: 0, row });
+                  updateRows.push({ col: 0, row });
                 }
               }
+              if (newRowCount < oldRowCount) {
+                //如果如果删除后不满 需要有删除数据
+                for (let row = newRowCount; row < oldRowCount; row++) {
+                  if (this.transpose) {
+                    delRows.push({ col: row, row: 0 });
+                  } else {
+                    delRows.push({ col: 0, row });
+                  }
+                }
+              }
+              this.transpose
+                ? this.scenegraph.updateCol(delRows, [], updateRows)
+                : this.scenegraph.updateRow(delRows, [], updateRows);
             }
-            this.transpose
-              ? this.scenegraph.updateCol(delRows, [], updateRows)
-              : this.scenegraph.updateRow(delRows, [], updateRows);
           }
-        }
-      } else {
-        const delRows = [];
+        } else {
+          const delRows = [];
 
-        for (let index = 0; index < recordIndexsMinToMax.length; index++) {
-          const recordIndex = recordIndexsMinToMax[index];
-          const rowNum = recordIndex + (this.transpose ? this.rowHeaderLevelCount : this.columnHeaderLevelCount);
-          if (this.transpose) {
-            delRows.push({ col: rowNum, row: 0 });
-          } else {
-            delRows.push({ col: 0, row: rowNum });
+          for (let index = 0; index < recordIndexsMinToMax.length; index++) {
+            const recordIndex = recordIndexsMinToMax[index];
+            const rowNum = recordIndex + (this.transpose ? this.rowHeaderLevelCount : this.columnHeaderLevelCount);
+            if (this.transpose) {
+              delRows.push({ col: rowNum, row: 0 });
+            } else {
+              delRows.push({ col: 0, row: rowNum });
+            }
           }
+          this.transpose ? this.scenegraph.updateCol(delRows, [], []) : this.scenegraph.updateRow(delRows, [], []);
         }
-        this.transpose ? this.scenegraph.updateCol(delRows, [], []) : this.scenegraph.updateRow(delRows, [], []);
       }
+      // this.fireListeners(TABLE_EVENT_TYPE.ADD_RECORD, { row });
     }
-    // this.fireListeners(TABLE_EVENT_TYPE.ADD_RECORD, { row });
   }
 }
