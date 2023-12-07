@@ -9320,6 +9320,22 @@ export function createTable() {
     },
     frameStyle: {
       borderLineWidth: 0
+    },
+    axisStyle: {
+      defaultAxisStyle: {
+        title: {
+          style: {
+            fill: 'red'
+          }
+        }
+      },
+      leftAxisStyle: {
+        label: {
+          style: {
+            fill: 'yellow'
+          }
+        }
+      }
     }
   };
   const option: VTable.PivotChartConstructorOptions = {

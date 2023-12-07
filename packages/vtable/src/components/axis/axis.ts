@@ -13,7 +13,7 @@ import type { IBaseScale } from '@visactor/vscale';
 import { ticks } from '@visactor/vutils-extension';
 import { LinearAxisScale } from './linear-scale';
 import { doOverlap } from './label-overlap';
-import { getQuadProps } from '../../scenegraph/utils/padding';
+import type { TableTheme } from '../../themes/theme';
 
 const DEFAULT_BAND_INNER_PADDING = 0.1;
 const DEFAULT_BAND_OUTER_PADDING = 0.3;
@@ -45,8 +45,8 @@ export class CartesianAxis {
     table: BaseTableAPI
   ) {
     this.table = table;
-    this.option = merge({}, commonAxis, option);
     this.orient = option.orient ?? 'left';
+    this.option = merge({}, commonAxis, getAxisTheme(this.orient, table.theme), option);
 
     if (this.orient === 'left' || this.orient === 'right') {
       this.width = width;
@@ -293,4 +293,18 @@ export class CartesianAxis {
   getDomainSpec() {
     return (this.scale as LinearAxisScale).domain;
   }
+}
+
+function getAxisTheme(orient: IOrientType, theme: TableTheme) {
+  let directionStyle;
+  if (orient === 'left') {
+    directionStyle = theme.axisStyle.leftAxisStyle;
+  } else if (orient === 'right') {
+    directionStyle = theme.axisStyle.rightAxisStyle;
+  } else if (orient === 'top') {
+    directionStyle = theme.axisStyle.topAxisStyle;
+  } else if (orient === 'bottom') {
+    directionStyle = theme.axisStyle.bottomAxisStyle;
+  }
+  return merge({}, theme.axisStyle.defaultAxisStyle, directionStyle);
 }
