@@ -37,7 +37,7 @@ export function createFrameBorder(
     borderLineDash
   } = frameTheme;
 
-  const hasShadow = false;
+  let hasShadow = false;
   const groupAttributes: IGroupGraphicAttribute = {};
   const rectAttributes: IRectGraphicAttribute = {
     pickable: false
@@ -52,10 +52,10 @@ export function createFrameBorder(
     rectAttributes.stroke = true;
     rectAttributes.stroke = shadowColor;
     rectAttributes.lineWidth = 1;
-    // hasShadow = true;
+    hasShadow = true;
 
-    rectAttributes.fill = true;
-    rectAttributes.fillOpacity = 0.01;
+    // rectAttributes.fill = true;
+    // rectAttributes.fillOpacity = 0.01;
   }
 
   // 处理边框
@@ -116,16 +116,17 @@ export function createFrameBorder(
     rectAttributes.y = borderTop / 2;
     rectAttributes.pickable = false;
     if (isTableGroup) {
-      rectAttributes.x = -borderLeft / 2;
-      rectAttributes.y = -borderTop / 2;
+      rectAttributes.x = group.attribute.x - borderLeft / 2;
+      rectAttributes.y = group.attribute.x - borderTop / 2;
       rectAttributes.width = group.attribute.width + borderLeft / 2 + borderRight / 2;
       rectAttributes.height = group.attribute.height + borderTop / 2 + borderBottom / 2;
 
       let shadowRect;
       let borderRect;
       if (hasShadow) {
+        rectAttributes.x = -borderLeft / 2;
+        rectAttributes.y = -borderTop / 2;
         rectAttributes.fill = 'white';
-        (rectAttributes as any).notAdjustPos = true;
         // first draw
         shadowRect = createRect(rectAttributes);
         // second draw
@@ -136,8 +137,9 @@ export function createFrameBorder(
           height: group.attribute.height,
           fill: 'red',
           cornerRadius: group.attribute.cornerRadius,
-          globalCompositeOperation: 'destination-out'
-        });
+          globalCompositeOperation: 'destination-out',
+          notAdjustPos: true
+        } as any);
         borderRect.name = 'table-border-rect';
         borderRect.addChild(shadowRect);
       } else {
