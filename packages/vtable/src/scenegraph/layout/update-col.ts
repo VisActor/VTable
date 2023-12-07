@@ -123,12 +123,12 @@ function removeCol(col: number, scene: Scenegraph) {
       // scene.bottomFrozenGroup.removeChild(scene.bottomFrozenGroup.lastChild as any);
     } else {
       const colGroup = scene.getColGroup(col, false);
-      if (colGroup.parent === scene.bodyGroup) {
-        colGroup && scene.bodyGroup.removeChild(colGroup);
+      if (colGroup && colGroup.parent === scene.bodyGroup) {
+        scene.bodyGroup.removeChild(colGroup);
       }
       const bottomColGroup = scene.getColGroupInBottom(col);
-      if (bottomColGroup.parent === scene.bottomFrozenGroup) {
-        bottomColGroup && scene.bottomFrozenGroup.removeChild(bottomColGroup);
+      if (bottomColGroup && bottomColGroup.parent === scene.bottomFrozenGroup) {
+        scene.bottomFrozenGroup.removeChild(bottomColGroup);
       }
     }
   }
