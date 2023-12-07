@@ -117,8 +117,20 @@ function removeCol(col: number, scene: Scenegraph) {
   // removeCellGroup(col, scene);
   //先考虑非表头部分删除情况
   if (col >= scene.table.rowHeaderLevelCount) {
-    const colGroup = scene.getColGroup(col, false);
-    colGroup && scene.bodyGroup.removeChild(colGroup);
+    if (col >= scene.table.colCount - scene.table.rightFrozenColCount) {
+      // 如果是删除的右侧固定列 这里不做真正的删除，只需要后面将相应列做更新
+      // scene.bodyGroup.removeChild(scene.bodyGroup.lastChild as any);
+      // scene.bottomFrozenGroup.removeChild(scene.bottomFrozenGroup.lastChild as any);
+    } else {
+      const colGroup = scene.getColGroup(col, false);
+      if (colGroup.parent === scene.bodyGroup) {
+        colGroup && scene.bodyGroup.removeChild(colGroup);
+      }
+      const bottomColGroup = scene.getColGroupInBottom(col);
+      if (bottomColGroup.parent === scene.bottomFrozenGroup) {
+        bottomColGroup && scene.bottomFrozenGroup.removeChild(bottomColGroup);
+      }
+    }
   }
 
   // TODO 需要整体更新proxy的状态
