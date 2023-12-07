@@ -501,7 +501,6 @@ export class MenuElement {
       // 检测下方能否容纳，不能容纳向上偏移
       if (rootElementTop + rootElementHeight > containerHeight) {
         rootElementTop = containerHeight - rootElementHeight;
-        rootElementLeft += rootElementWidth - 2;
       }
       // 偏移后上方超出canvas范围，居中显示
       if (rootElementTop < 0) {

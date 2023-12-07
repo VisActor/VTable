@@ -808,8 +808,8 @@
     {
       "path": "edit",
       "title": {
-        "zh": "编辑",
-        "en": "edit"
+        "zh": "编辑数据",
+        "en": "edit data"
       },
       "children": [
         {
@@ -831,6 +831,13 @@
           "title": {
             "zh": "透视表编辑数据",
             "en": "PivotTable edit data"
+          }
+        },
+        {
+          "path": "add-delete-records",
+          "title": {
+            "zh": "动态新增删除数据",
+            "en": "Dynamically adjust data"
           }
         }
       ]
