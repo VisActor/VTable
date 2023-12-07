@@ -15,7 +15,7 @@ const generatePersons = count => {
 };
 
 export function createTable() {
-  const records = generatePersons(100);
+  const records = generatePersons(1000);
   const columns: VTable.ColumnsDefine = [
     {
       field: 'id',

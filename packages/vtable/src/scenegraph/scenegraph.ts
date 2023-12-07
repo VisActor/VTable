@@ -836,12 +836,25 @@ export class Scenegraph {
       )
     } as any);
 
-    if (this.tableGroup.border) {
+    if (this.tableGroup.border && this.tableGroup.border.type === 'rect') {
       this.tableGroup.border.setAttributes({
         x: this.table.tableX - this.tableGroup.border.attribute.lineWidth / 2,
         y: this.table.tableY - this.tableGroup.border.attribute.lineWidth / 2,
         width: this.tableGroup.attribute.width + this.tableGroup.border.attribute.lineWidth,
         height: this.tableGroup.attribute.height + this.tableGroup.border.attribute.lineWidth
+      });
+    } else if (this.tableGroup.border && this.tableGroup.border.type === 'group') {
+      this.tableGroup.border.setAttributes({
+        x: this.table.tableX - this.tableGroup.border.attribute.lineWidth / 2,
+        y: this.table.tableY - this.tableGroup.border.attribute.lineWidth / 2,
+        width: this.tableGroup.attribute.width + this.tableGroup.border.attribute.lineWidth,
+        height: this.tableGroup.attribute.height + this.tableGroup.border.attribute.lineWidth
+      });
+      (this.tableGroup.border.firstChild as IRect)?.setAttributes({
+        x: this.tableGroup.border.attribute.lineWidth / 2,
+        y: this.tableGroup.border.attribute.lineWidth / 2,
+        width: this.tableGroup.attribute.width,
+        height: this.tableGroup.attribute.height
       });
     }
 
