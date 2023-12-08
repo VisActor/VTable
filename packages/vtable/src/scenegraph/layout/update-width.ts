@@ -295,8 +295,18 @@ function updateCellWidth(
   } else if (cellGroup.firstChild?.name === 'axis') {
     // recreate axis component
     const axisConfig = scene.table.internalProps.layoutMap.getAxisConfigInPivotChart(col, row);
+    const cellStyle = scene.table._getCellStyle(col, row);
+    const padding = getQuadProps(getProp('padding', cellStyle, col, row, scene.table));
     if (axisConfig) {
-      const axis = new CartesianAxis(axisConfig, cellGroup.attribute.width, cellGroup.attribute.height, scene.table);
+      const spec = scene.table.internalProps.layoutMap.getRawChartSpec(col, row);
+      const axis = new CartesianAxis(
+        axisConfig,
+        cellGroup.attribute.width,
+        cellGroup.attribute.height,
+        padding,
+        spec?.theme,
+        scene.table
+      );
       cellGroup.clear();
       cellGroup.appendChild(axis.component);
       axis.overlap();

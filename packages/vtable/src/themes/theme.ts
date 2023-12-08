@@ -46,6 +46,7 @@ import {
   DEFAULTFONTFAMILY,
   DEFAULTFONTSIZE
 } from '../tools/global';
+import { getAxisStyle } from './component';
 //private symbol
 // const _ = getSymbol();
 
@@ -80,6 +81,8 @@ export class TableTheme implements ITableThemeDefine {
   private _dragHeaderSplitLine: RequiredTableThemeDefine['dragHeaderSplitLine'] | null = null;
   private _frozenColumnLine: RequiredTableThemeDefine['frozenColumnLine'] | null = null;
   private _selectionStyle: RequiredTableThemeDefine['selectionStyle'] | null = null;
+
+  private _axisStyle: RequiredTableThemeDefine['axisStyle'] | null = null;
   constructor(obj: PartialTableThemeDefine | ITableThemeDefine, superTheme: ITableThemeDefine) {
     this.internalTheme = {
       obj,
@@ -615,6 +618,20 @@ export class TableTheme implements ITableThemeDefine {
     }
     return this._selectionStyle;
   }
+
+  get axisStyle(): RequiredTableThemeDefine['axisStyle'] {
+    if (!this._axisStyle) {
+      const { obj, superTheme } = this.internalTheme;
+      const axisStyle: RequiredTableThemeDefine['axisStyle'] = ingoreNoneValueMerge(
+        {},
+        superTheme.axisStyle,
+        obj.axisStyle
+      );
+      this._axisStyle = getAxisStyle(axisStyle);
+    }
+    return this._axisStyle;
+  }
+
   hasProperty(names: string[]): boolean {
     const { obj, superTheme } = this.internalTheme;
     return hasThemeProperty(obj, names) || hasThemeProperty(superTheme, names);

@@ -90,6 +90,7 @@ import { DataSet } from '@visactor/vdataset';
 import { Title } from '../components/title/title';
 import type { Chart } from '../scenegraph/graphic/chart';
 import { setBatchRenderChartCount } from '../scenegraph/graphic/contributions/chart-render-helper';
+import { isLeftOrRightAxis, isTopOrBottomAxis } from '../layout/chart-helper/get-axis-config';
 const { toBoxArray } = utilStyle;
 const { isTouchEvent } = event;
 const rangeReg = /^\$(\d+)\$(\d+)$/;
@@ -1805,6 +1806,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     }
 
     this.scenegraph.stage.release();
+    this.scenegraph.proxy.release();
 
     const { parentElement } = internalProps.element;
     if (parentElement) {
@@ -2818,6 +2820,20 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
         return cacheStyle;
       }
       const hd = layoutMap.getHeader(col, row);
+
+      let paddingForAxis;
+      if (this.isPivotChart() && isTopOrBottomAxis(col, row, layoutMap as PivotHeaderLayoutMap)) {
+        // get chart padding for axis cell
+        const chartColumn = layoutMap.getBody(col, this.rowHeaderLevelCount);
+        const padding = (chartColumn.style as any)?.padding ?? this.theme.bodyStyle.padding;
+        paddingForAxis = padding;
+      } else if (this.isPivotChart() && isLeftOrRightAxis(col, row, layoutMap as PivotHeaderLayoutMap)) {
+        // get chart padding for axis cell
+        const chartColumn = layoutMap.getBody(this.columnHeaderLevelCount, row);
+        const padding = (chartColumn.style as any)?.padding ?? this.theme.bodyStyle.padding;
+        paddingForAxis = padding;
+      }
+
       if (
         (!hd || hd.isEmpty) &&
         (layoutMap.isLeftBottomCorner(col, row) ||
@@ -2831,7 +2847,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
       const styleClass = this.internalProps.headerHelper.getStyleClass(hd?.headerType || 'text');
       if (layoutMap.isBottomFrozenRow(col, row) && this.theme.bottomFrozenStyle) {
         cacheStyle = <FullExtendStyle>headerStyleContents.of(
-          {},
+          paddingForAxis ? { padding: paddingForAxis } : {},
           this.theme.bottomFrozenStyle,
           {
             col,
@@ -2846,7 +2862,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
         );
       } else if (layoutMap.isRightFrozenColumn(col, row) && this.theme.rightFrozenStyle) {
         cacheStyle = <FullExtendStyle>headerStyleContents.of(
-          {},
+          paddingForAxis ? { padding: paddingForAxis } : {},
           this.theme.rightFrozenStyle,
           {
             col,
@@ -2863,6 +2879,9 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
         // const styleClass = hd.headerType.StyleClass; //BaseHeader文件
         // const { style } = hd;
         const style = hd?.style || {};
+        if (paddingForAxis) {
+          (style as any).padding = paddingForAxis;
+        }
         cacheStyle = <FullExtendStyle>headerStyleContents.of(
           style,
           layoutMap.isColumnHeader(col, row) || layoutMap.isBottomFrozenRow(col, row)
