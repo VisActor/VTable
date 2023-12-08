@@ -107,7 +107,10 @@ export class SceneProxy {
     // 确定首屏高度范围
     const widthLimit = this.table.tableNoFrameWidth * 5;
     this.screenColCount = Math.ceil(this.table.tableNoFrameWidth / defaultColWidth);
-    this.firstScreenColLimit = this.bodyLeftCol + Math.min(this.colLimit, Math.ceil(widthLimit / defaultColWidth));
+    this.firstScreenColLimit = Math.max(
+      15, // min firstScreenColLimit
+      this.bodyLeftCol + Math.min(this.colLimit, Math.ceil(widthLimit / defaultColWidth))
+    );
     // this.firstScreenRowLimit = this.bodyBottomRow;
 
     this.colUpdatePos = this.bodyRightCol;
@@ -137,7 +140,10 @@ export class SceneProxy {
     // 确定首屏高度范围
     const heightLimit = this.table.tableNoFrameHeight * 5;
     this.screenRowCount = Math.ceil(this.table.tableNoFrameHeight / defaultRowHeight);
-    this.firstScreenRowLimit = this.bodyTopRow + Math.min(this.rowLimit, Math.ceil(heightLimit / defaultRowHeight));
+    this.firstScreenRowLimit = Math.max(
+      30, // min firstScreenRowLimit
+      this.bodyTopRow + Math.min(this.rowLimit, Math.ceil(heightLimit / defaultRowHeight))
+    );
     // this.firstScreenRowLimit = this.bodyBottomRow;
 
     this.rowUpdatePos = this.bodyBottomRow;
