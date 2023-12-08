@@ -280,8 +280,21 @@ const tableInstance = new VTable.PivotTable(document.getElementById(CONTAINER_ID
 
 ```
 
-## 重置数据接口
+## 数据接口
+
+### 重置数据
 可以使用setRecords 来改变表格数据。具体可查看api文档。
+
+### 添加数据
+可以使用`addRecords` 或者 `addRecord` 来新增表格数据。具体可查看api文档。
+
+### 删除数据
+可以使用`deleteRecords` 来删除表格数据。具体可查看api文档。
+
+### 修改数据
+目前还没有专门的修改数据的接口 不过可以结合删除和添加数据的接口来实现，先调用`deleteRecords`再调用`addRecords`。
+
+或者可以修改某一个数据字段利用`changeCellValue`接口来实现。
 
 ## 总结
 

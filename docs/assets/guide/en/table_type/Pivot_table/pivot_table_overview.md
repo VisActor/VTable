@@ -100,48 +100,6 @@ We will take the configuration of the pivot table in the following figure as an 
             },
           }
         ],
-        rowTree: [
-          {
-            dimensionKey: '类别',
-            value: '办公用品',
-            children: [
-              { dimensionKey: '子类别', value: '电脑' },
-              ...
-            ]
-          },
-          {
-            dimensionKey: '类别',
-            value: '家具',
-            children: [
-              { dimensionKey: '子类别', value: '衣柜' },
-              ...
-            ]
-          },
-        ],
-        columnTree: [
-          {
-            dimensionKey: '地区',
-            value: '东北',
-            children: [
-              {
-                dimensionKey: '邮寄方式',
-                value: '一级',
-                children: [
-                  {
-                    indicatorKey: '1',
-                    value: '销售额' // 可不填
-                  },
-                  {
-                    indicatorKey: '2',
-                    value: '利润'
-                  }
-                ]
-              },
-              ...
-            ]
-         },
-         ...
-      ],
       indicators: [
           {
             indicatorKey: '1',
@@ -154,8 +112,7 @@ We will take the configuration of the pivot table in the following figure as an 
         ],
     }
 
-In the above configuration, rowTree and columnTree are one tree respectively**Dimension tree**, the node of the tree defines the key and value, and the value is**Dimension value**Will be displayed in the header cell. The leaf node of the tree may be the name of Metirc. In the current example, Metirc is displayed as a column, which is configured in the leaf node of columnTree. The value of the Metirc node may not be configured to be displayed in the header cell using the title defined in indicators.
 
-Rows and columns define the corresponding**Dimensions**Basic information, including title, headerStyle, format, etc.
+In the above configuration, rows and columns define the **dimension** basic information corresponding to the row header and column header, including title, headerStyle, format, etc.
 
-Indicators define**Metirc**Basic information, including title, style, format, etc.
+indicators define the basic information of indicators, including title, style, format, etc.

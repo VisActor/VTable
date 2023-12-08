@@ -1,6 +1,6 @@
 import type { IStage, IRect, ITextCache, INode, Text } from '@visactor/vrender';
 import { createStage, createRect, IContainPointMode, container, vglobal } from '@visactor/vrender';
-import type { CellSubLocation } from '../ts-types';
+import type { CellRange, CellSubLocation } from '../ts-types';
 import {
   type CellAddress,
   type CellLocation,
@@ -58,6 +58,7 @@ import {
 } from './icon/icon-update';
 import { Env } from '../tools/env';
 import { createCornerCell } from './style/corner-cell';
+import { updateCol } from './layout/update-col';
 // import { contextModule } from './context/module';
 
 // VChart poptip theme
@@ -209,17 +210,19 @@ export class Scenegraph {
   }
 
   get bodyRowStart(): number {
-    if (this.transpose || this.isPivot) {
-      return this.table.columnHeaderLevelCount;
-    }
     return this.proxy.rowStart ?? 0;
   }
 
   get bodyRowEnd(): number {
-    if (this.transpose || this.isPivot) {
-      return this.table.rowCount - 1;
-    }
-    return this.proxy.rowEnd ?? 0;
+    return this.proxy.rowEnd ?? this.table.rowCount - 1;
+  }
+
+  get bodyColStart(): number {
+    return this.proxy.colStart ?? 0;
+  }
+
+  get bodyColEnd(): number {
+    return this.proxy.colEnd ?? this.table.colCount - 1;
   }
 
   /**
@@ -664,7 +667,14 @@ export class Scenegraph {
   updateCellSelectBorder(newStartCol: number, newStartRow: number, newEndCol: number, newEndRow: number) {
     updateCellSelectBorder(this, newStartCol, newStartRow, newEndCol, newEndRow);
   }
-
+  /** 根据select状态重新创建选中range节点  目前无调用者 */
+  recreateAllSelectRangeComponents() {
+    deleteAllSelectBorder(this);
+    this.table.stateManager.select.ranges.forEach((cellRange: CellRange) => {
+      updateCellSelectBorder(this, cellRange.start.col, cellRange.start.row, cellRange.end.col, cellRange.end.row);
+    });
+    moveSelectingRangeComponentsToSelectedRangeComponents(this);
+  }
   /**
    * @description: 列宽调整结果更新列宽
    * @param {number} col
@@ -1596,7 +1606,28 @@ export class Scenegraph {
     // rerender
     this.updateNextFrame();
   }
+  updateCol(removeCells: CellAddress[], addCells: CellAddress[], updateCells: CellAddress[] = []) {
+    // add or move rows
+    updateCol(removeCells, addCells, updateCells, this.table);
 
+    // update column width and row height
+    this.recalculateColWidths();
+
+    this.recalculateRowHeights();
+
+    // check frozen status
+    this.table.stateManager.checkFrozen();
+
+    // update frozen shadow
+    if (!this.isPivot && !this.transpose) {
+      this.component.setFrozenColumnShadow(this.table.frozenColCount - 1);
+    }
+
+    this.component.updateScrollBar();
+
+    // rerender
+    this.updateNextFrame();
+  }
   getColumnGroupX(col: number) {
     if (col < this.table.rowHeaderLevelCount) {
       // row header
@@ -1621,6 +1652,19 @@ export class Scenegraph {
     } else if (row < this.table.rowCount) {
       // bottom frozen
       return this.table.getRowsHeight(this.table.rowCount - this.table.bottomFrozenRowCount, row - 1);
+    }
+    return 0;
+  }
+  getCellGroupX(col: number) {
+    if (col < this.table.rowHeaderLevelCount) {
+      // column header
+      return this.table.getColsWidth(0, col - 1);
+    } else if (col < this.table.colCount - this.table.rightFrozenColCount) {
+      // body
+      return this.table.getColsWidth(this.table.rowHeaderLevelCount, col - 1);
+    } else if (col < this.table.colCount) {
+      // bottom frozen
+      return this.table.getColsWidth(this.table.colCount - this.table.rightFrozenColCount, col - 1);
     }
     return 0;
   }

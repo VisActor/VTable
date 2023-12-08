@@ -70,7 +70,7 @@ type TextBaselineType = 'top' | 'middle' | 'bottom' | 'alphabetic';
 
 ${prefix} lineHeight (number)
 
-文本行高。
+文字行高。
 
 ${prefix} underline (number)
 

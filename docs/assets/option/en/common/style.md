@@ -77,7 +77,7 @@ Set the border dashed style of the cell
   ) }}
 
 #${prefix} lineHeight(number)
-Set the line height of the text content in the cell
+Set the text font line height of the text content in the cell
 
 #${prefix} underline(UnderlinePropertyDefine)
 Set the underline for the text content of the cell

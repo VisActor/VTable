@@ -455,7 +455,7 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
       });
     }
   }
-  getRecordIndexByCell(col: number, row: number): number {
+  getRecordShowIndexByCell(col: number, row: number): number {
     return undefined;
   }
   getTableIndexByRecordIndex(recordIndex: number): number {

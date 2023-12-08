@@ -174,6 +174,85 @@ export class StateManager {
     this.setSelectState();
     this.setFrozenState();
   }
+  /** updateOption更新配置的情况下 调用接口*/
+  updateOptionSetState() {
+    this._updateOptionSetState();
+    this.setHoverState();
+    this.setSelectState();
+    this.setFrozenState();
+  }
+  _updateOptionSetState() {
+    this.interactionState = InteractionState.default;
+    // this.select = {
+    //   highlightScope: HighlightScope.single,
+    //   ranges: [],
+    //   cellPos: {
+    //     col: -1,
+    //     row: -1
+    //   },
+    //   selecting: false
+    // };
+    // this.hover = {
+    //   highlightScope: HighlightScope.single,
+    //   cellPos: {
+    //     col: -1,
+    //     row: -1
+    //   }
+    // };
+    this.hoverIcon = {
+      col: -1,
+      row: -1,
+      icon: null
+    };
+    this.columnResize = {
+      col: -1,
+      x: 0,
+      resizing: false
+    };
+    this.columnMove = {
+      colSource: -1,
+      colTarget: -1,
+      rowSource: -1,
+      rowTarget: -1,
+      x: 0,
+      y: 0,
+      moving: false
+    };
+    this.menu = {
+      x: -1,
+      y: -1,
+      isShow: false,
+      itemList: [],
+      bounds: new Bounds(),
+      highlightIndex: -1,
+      dropDownMenuHighlight: []
+    };
+    this.sort = {
+      col: -1,
+      row: -1,
+      order: 'normal'
+    };
+    this.frozen = {
+      col: -1
+      // row: -1,
+    };
+    // this.scroll = {
+    //   horizontalBarPos: 0,
+    //   verticalBarPos: 0
+    // };
+    this.tablePosition = {
+      absoluteX: 0,
+      absoluteY: 0
+    };
+    this.drill = {
+      col: -1,
+      row: -1
+    };
+    this.sparkLine = {
+      col: -1,
+      row: -1
+    };
+  }
   _initState() {
     this.interactionState = InteractionState.default;
     this.select = {
@@ -963,7 +1042,7 @@ export class StateManager {
     }
   }
   setCheckedState(col: number, row: number, field: string | number, checked: boolean) {
-    const recordIndex = this.table.getRecordIndexByCell(col, row);
+    const recordIndex = this.table.getRecordShowIndexByCell(col, row);
     if (recordIndex >= 0) {
       const dataIndex = this.table.dataSource.getIndexKey(recordIndex) as number;
       if (this.checkedState[dataIndex]) {
@@ -1005,7 +1084,7 @@ export class StateManager {
       }
       return this.headerCheckedState[field];
     }
-    const recordIndex = this.table.getRecordIndexByCell(col, row);
+    const recordIndex = this.table.getRecordShowIndexByCell(col, row);
     if (recordIndex >= 0) {
       const dataIndex = this.table.dataSource.getIndexKey(recordIndex) as number;
       if (isValid(this.checkedState[dataIndex]?.[field])) {

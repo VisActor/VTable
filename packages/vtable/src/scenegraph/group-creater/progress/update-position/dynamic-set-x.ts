@@ -245,6 +245,12 @@ export function updateColContent(syncLeftCol: number, syncRightCol: number, prox
 
     const bottomColGroup = proxy.table.scenegraph.getColGroupInBottom(col);
     bottomColGroup && updateColGroupContent(bottomColGroup, proxy);
+
+    const rightTopColGroup = proxy.table.scenegraph.getColGroupInRightTopCorner(col);
+    rightTopColGroup && updateColGroupContent(rightTopColGroup, proxy);
+
+    const rightBottomColGroup = proxy.table.scenegraph.getColGroupInRightBottomCorner(col);
+    rightBottomColGroup && updateColGroupContent(rightBottomColGroup, proxy);
   }
 }
 
