@@ -2,7 +2,7 @@ import { degreeToRadian, isNil, isValidNumber, merge } from '@visactor/vutils';
 import type { BaseTableAPI } from '../../ts-types/base-table';
 import type { ICellAxisOption } from '../../ts-types/component/axis';
 import { LineAxis, type LineAxisAttributes } from '@visactor/vrender-components';
-import { commonAxis, getAxisAttributes } from './get-axis-attributes';
+import { commonAxis, getAxisAttributes, getCommonAxis } from './get-axis-attributes';
 import { isXAxis, isYAxis } from '../util/orient';
 import type { IOrientType } from '../../ts-types/component/util';
 import { BandAxisScale } from './band-scale';
@@ -42,11 +42,20 @@ export class CartesianAxis {
     width: number,
     height: number,
     padding: [number, number, number, number],
+    chartSpecTheme: any,
     table: BaseTableAPI
   ) {
     this.table = table;
     this.orient = option.orient ?? 'left';
-    this.option = merge({}, commonAxis, getAxisTheme(this.orient, table.theme), option);
+    this.type = option.type ?? 'band';
+    this.option = merge(
+      {},
+      // commonAxis,
+      getCommonAxis(chartSpecTheme),
+      getTableAxisTheme(this.orient, table.theme),
+      getChartSpecAxisTheme(this.orient, this.type, chartSpecTheme),
+      option
+    );
 
     if (this.orient === 'left' || this.orient === 'right') {
       this.width = width;
@@ -59,7 +68,6 @@ export class CartesianAxis {
     }
 
     this.visible = option.visible ?? true;
-    this.type = option.type ?? 'band';
     this.inverse = 'inverse' in option ? !!option.inverse : false;
     if (option.type === 'band') {
       this.data = option.domain;
@@ -295,7 +303,7 @@ export class CartesianAxis {
   }
 }
 
-function getAxisTheme(orient: IOrientType, theme: TableTheme) {
+function getTableAxisTheme(orient: IOrientType, theme: TableTheme) {
   let directionStyle;
   if (orient === 'left') {
     directionStyle = theme.axisStyle.leftAxisStyle;
@@ -307,4 +315,29 @@ function getAxisTheme(orient: IOrientType, theme: TableTheme) {
     directionStyle = theme.axisStyle.bottomAxisStyle;
   }
   return merge({}, theme.axisStyle.defaultAxisStyle, directionStyle);
+}
+
+function getChartSpecAxisTheme(
+  orient: IOrientType,
+  type: 'linear' | 'band' | 'point' | 'time' | 'log' | 'symlog',
+  chartSpecTheme?: any
+) {
+  if (!chartSpecTheme) {
+    return {};
+  }
+  const axisTheme = chartSpecTheme.axis;
+  let axisTypeTheme;
+  if (type === 'linear' || type === 'log' || type === 'symlog') {
+    axisTypeTheme = chartSpecTheme.axisLinear;
+  } else if (type === 'band') {
+    axisTypeTheme = chartSpecTheme.axisBand;
+  }
+
+  let axisOrientTheme;
+  if (orient === 'top' || orient === 'bottom') {
+    axisOrientTheme = chartSpecTheme.axisX;
+  } else if (orient === 'left' || orient === 'right') {
+    axisOrientTheme = chartSpecTheme.axisY;
+  }
+  return merge({}, axisTheme, axisTypeTheme, axisOrientTheme);
 }

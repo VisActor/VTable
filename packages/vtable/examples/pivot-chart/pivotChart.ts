@@ -211,7 +211,23 @@ export function createTable() {
         axes: [
           { orient: 'left', visible: true, label: { visible: true } },
           { orient: 'bottom', visible: true }
-        ]
+        ],
+        theme: {
+          // axis: {
+          //   label: {
+          //     style: {
+          //       fill: 'green'
+          //     }
+          //   }
+          // }
+          colorScheme: {
+            default: {
+              palette: {
+                axisLabelFontColor: 'red'
+              }
+            }
+          }
+        }
       }
     },
     {
@@ -9320,23 +9336,23 @@ export function createTable() {
     },
     frameStyle: {
       borderLineWidth: 0
-    },
-    axisStyle: {
-      defaultAxisStyle: {
-        title: {
-          style: {
-            fill: 'red'
-          }
-        }
-      },
-      leftAxisStyle: {
-        label: {
-          style: {
-            fill: 'yellow'
-          }
-        }
-      }
     }
+    // axisStyle: {
+    //   defaultAxisStyle: {
+    //     title: {
+    //       style: {
+    //         fill: 'red'
+    //       }
+    //     }
+    //   },
+    //   leftAxisStyle: {
+    //     label: {
+    //       style: {
+    //         fill: 'yellow'
+    //       }
+    //     }
+    //   }
+    // }
   };
   const option: VTable.PivotChartConstructorOptions = {
     columnTree,
