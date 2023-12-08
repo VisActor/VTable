@@ -342,7 +342,7 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
       });
     }
   }
-  getRecordIndexByCell(col: number, row: number): number {
+  getRecordShowIndexByCell(col: number, row: number): number {
     return undefined;
   }
 

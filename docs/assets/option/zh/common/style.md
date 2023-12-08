@@ -78,7 +78,7 @@
   ) }}
 
 #${prefix} lineHeight(number)
-为单元格文本内容设置行高
+为单元格文本内容设置文字行高
 
 #${prefix} underline(UnderlinePropertyDefine)
 为单元格文本内容设置下划线

@@ -29,6 +29,10 @@ export const menus = [
       },
       {
         path: 'list',
+        name: 'list-add-records'
+      },
+      {
+        path: 'list',
         name: 'list-transpose-autoFillWidth'
       },
       {

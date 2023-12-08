@@ -382,7 +382,7 @@ function computeAutoColWidth(
       // if (cellHierarchyState === HierarchyState.expand || cellHierarchyState === HierarchyState.collapse) {
       const define = table.getBodyColumnDefine(col, row);
       if (define?.tree) {
-        const indexArr = table.dataSource.getIndexKey(table.getRecordIndexByCell(col, row));
+        const indexArr = table.dataSource.getIndexKey(table.getRecordShowIndexByCell(col, row));
         cellHierarchyIndent =
           Array.isArray(indexArr) && table.getHierarchyState(col, row) !== HierarchyState.none
             ? (indexArr.length - 1) * ((layoutMap as SimpleHeaderLayoutMap).hierarchyIndent ?? 0)

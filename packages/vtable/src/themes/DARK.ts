@@ -2,9 +2,6 @@ import type { ITableThemeDefine, StylePropertyFunctionArg } from '../ts-types';
 
 function getBackgroundColor(args: StylePropertyFunctionArg): string {
   const { row, table } = args;
-  // if (row < table.frozenRowCount) {
-  //   return "#FFF";
-  // }
   const index = row - table.frozenRowCount;
   if (!(index & 1)) {
     return '#2d3137';

@@ -121,7 +121,7 @@ const tableInstance = new vTable.ListTable(option);
         color: '#1B1F23',
         bgColor: '#EEF1F5',
         font: '500 12px PingFang SC',
-        lineHeight: '16px',
+        lineHeight: 16,
         borderColor: '#e1e4e8',
         padding: [8, 12, 8, 12],
       },
@@ -129,7 +129,7 @@ const tableInstance = new vTable.ListTable(option);
         color: '#1B1F23',
         bgColor: '#EEF1F5',
         font: '500 12px PingFang SC',
-        lineHeight: '16px',
+        lineHeight: 16,
         borderColor: '#e1e4e8',
         padding: [8, 12, 8, 12],
         hover: {//hover状态单元格样式
@@ -157,7 +157,7 @@ const tableInstance = new vTable.ListTable(option);
           }
         },
         borderColor: '#e1e4e8',
-        lineHeight: '18px',
+        lineHeight: 18,
         hover: {
           cellBgColor: '#d6e6fe',
           inlineRowBgColor: '#F3F8FF',

@@ -33,7 +33,7 @@ export function diffCellAddress(
   let parentId = layout.getParentCellId(col, row);
   let parentCellAddress = layout.getRowHeaderCellAddressByCellId(parentId);
   const updateCellPositions = [];
-  updateCellPositions.push(parentCellAddress);
+  parentCellAddress && updateCellPositions.push(parentCellAddress);
   while (parentId) {
     parentId = layout.getParentCellId(parentCellAddress.col, parentCellAddress.row);
     if (parentId) {

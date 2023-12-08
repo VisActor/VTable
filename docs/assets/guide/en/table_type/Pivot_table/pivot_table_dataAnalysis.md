@@ -15,6 +15,7 @@ const option={
   rows:['region','province'], //row dimensions
   columns:['year','quarter'], //column dimensions
   indicators:['sales','profit'], //Indicators
+  enableDataAnalysis: true, //Whether to enable data analysis function
   records:[ //Data source。 If summary data is passed in, use user incoming data
     {
       region:'东北',
@@ -172,14 +173,16 @@ According to the above traversed structure, a dimension tree will be generated, 
     <p>Correspondence between data source entries and cells</p>
   </div>
 
-### 自定义维度树
-虽然具有分析能力的多维表格可以自动分析各个维度的维度值组成行列表头的树形结构，并且可以根据`dataConfig.sortRules`进行排序，但具有复杂业务逻辑的场景还是期望可以能够**自定义行列表头维度值**及顺序。那么可以通过rowTree和columnTree来实现这些业务需求场景。
+### Custom dimension tree
+Although multi-dimensional tables with analytical capabilities can automatically analyze the dimension values of each dimension to form a tree structure of row and column headers, and can be sorted according to `dataConfig.sortRules`, scenarios with complex business logic still expect to be able to **customize Row column header dimension value ** and order. Then these business requirement scenarios can be realized through rowTree and columnTree.
+- enableDataAnalysis needs to be set to false to turn off the analysis of aggregated data within VTable.
+
    <div style="width: 80%; text-align: center;">
      <img src="https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/guide/custom-tree.png" />
     <p>custom rowTree columnTree</p>
   </div>
 
-自定义树的配置：
+Custom tree configuration:
 ```
 const option = {
     rowTree: [{
@@ -319,4 +322,4 @@ VTable official website example: https://visactor.io/vtable/demo/table-type/pivo
 
 The complexity of the custom tree lies in the formation of the row, column and dimension trees. You can choose to use it according to the business scenario. If you have complex sorting, aggregation or paging rules, you can choose to use a custom method.
 
-**Note: If you choose the custom tree configuration method, there will be no data aggregation capability, that is, one of the matched data entries will be used as the cell indicator value. **
+**Note: If you choose the custom tree configuration method, the data aggregation capability inside the VTable will not be enabled, that is, one of the matched data entries will be used as the cell indicator value. **

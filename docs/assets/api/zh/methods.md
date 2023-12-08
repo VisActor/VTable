@@ -652,3 +652,58 @@ use case: 点击图例项后 更新过滤规则 来更新图表
 
 ## dataSouce(CachedDataSource)
 给VTable表格组件实例设置数据源，具体使用可以参考[异步懒加载数据demo](../demo/performance/async-data)及[教程](../guide/data/async_data)
+
+## addRecords(Function)
+
+ 添加数据，支持多条数据
+ 
+** ListTable 专有 ** 
+```
+  /**
+   * 添加数据 支持多条数据
+   * @param records 多条数据
+   * @param recordIndex 向数据源中要插入的位置，从0开始。不设置recordIndex的话 默认追加到最后。
+   * 如果设置了排序规则recordIndex无效，会自动适应排序逻辑确定插入顺序。
+   * recordIndex 可以通过接口getRecordShowIndexByCell获取
+   */
+  addRecords(records: any[], recordIndex?: number) 
+```
+
+## addRecord(Function)
+
+ 添加数据，单条数据
+
+** ListTable 专有 ** 
+```
+  /**
+   * 添加数据 单条数据
+   * @param record 数据
+   * @param recordIndex 向数据源中要插入的位置，从0开始。不设置recordIndex的话 默认追加到最后。
+   * 如果设置了排序规则recordIndex无效，会自动适应排序逻辑确定插入顺序。
+   * recordIndex 可以通过接口getRecordShowIndexByCell获取
+   */
+  addRecord(record: any, recordIndex?: number)
+```
+
+## deleteRecords(Function)
+
+删除数据 支持多条数据
+
+** ListTable 专有 ** 
+```
+  /**
+   * 删除数据 支持多条数据
+   * @param recordIndexs 要删除数据的索引（显示到body中的条目索引）
+   */
+  deleteRecords(recordIndexs: number[]) 
+```
+
+## getRecordShowIndexByCell(Function)
+
+获取当前单元格数据在body部分的索引，即通过行列号去除表头层级数的索引
+
+** ListTable 专有 ** 
+```
+  /** 获取当前单元格在body部分的展示索引（row / col-headerLevelCount）。注：ListTable特有接口 */
+  getRecordShowIndexByCell(col: number, row: number): number
+```
