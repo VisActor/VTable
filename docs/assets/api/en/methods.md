@@ -648,3 +648,61 @@ Get all data of the current table
 
 ## dataSouce(CachedDataSource)
 Set the data source for the VTable table component instance. For specific usage, please refer to [Asynchronous data lazy loading demo](../demo/performance/async-data) and [Tutorial](../guide/data/async_data)
+
+## addRecords(Function)
+
+ Add data, support multiple pieces of data
+
+**  Note: ListTable specific interface ** 
+
+```
+  /**
+   * Add data to support multiple pieces of data
+   * @param records multiple data
+   * @param recordIndex The position to be inserted into the data source, starting from 0. If recordIndex is not set, it will be appended to the end by default.
+   * If the sorting rule recordIndex is set to be invalid, the sorting logic will be automatically adapted to determine the insertion order.
+   * recordIndex can be obtained through the interface getRecordShowIndexByCell
+   */
+  addRecords(records: any[], recordIndex?: number)
+```
+
+## addRecord(Function)
+
+ Add data, single piece of data
+
+**  Note: ListTable specific interface ** 
+
+```
+  /**
+   * Add data single data
+   * @param record data
+   * @param recordIndex The position to be inserted into the data source, starting from 0. If recordIndex is not set, it will be appended to the end by default.
+   * If the sorting rule recordIndex is set to be invalid, the sorting logic will be automatically adapted to determine the insertion order.
+   * recordIndex can be obtained through the interface getRecordShowIndexByCell
+   */
+  addRecord(record: any, recordIndex?: number)
+```
+
+## deleteRecords(Function)
+
+Delete data supports multiple pieces of data
+
+**  Note: ListTable specific interface ** 
+
+```
+  /**
+   * Delete data supports multiple pieces of data
+   * @param recordIndexs The index of the data to be deleted (the entry index displayed in the body)
+   */
+  deleteRecords(recordIndexs: number[])
+```
+
+## getRecordShowIndexByCell(Function)
+
+Get the index of the current cell data in the body part, that is, remove the index of the header level number by the row and column number.
+
+** ListTable proprietary **
+```
+  /** Get the display index of the current cell in the body part (row/col-headerLevelCount). Note: ListTable specific interface */
+  getRecordShowIndexByCell(col: number, row: number): number
+```

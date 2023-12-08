@@ -141,8 +141,11 @@ export class DataSource extends EventTarget implements DataSourceAPI {
   private lastOrder: SortOrder;
   private lastOrderFn: (a: any, b: any, order: string) => number;
   private lastOrderField: FieldDef;
+  /** 每一行对应源数据的索引 */
   protected currentIndexedData: (number | number[])[] | null = [];
+  protected userPagination: IPagination;
   protected pagination: IPagination;
+  /** 当前页每一行对应源数据的索引 */
   protected _currentPagerIndexedData: (number | number[])[];
   // 当前是否为层级的树形结构 排序时判断该值确实是否继续进行子节点排序
   enableHierarchyState = false;
@@ -160,6 +163,7 @@ export class DataSource extends EventTarget implements DataSourceAPI {
     this.sortedIndexMap = new Map<string, ISortedMapItem>();
 
     this._currentPagerIndexedData = [];
+    this.userPagination = pagination;
     this.pagination = pagination || {
       totalCount: this._sourceLength,
       perPageCount: this._sourceLength,
@@ -495,6 +499,143 @@ export class DataSource extends EventTarget implements DataSourceAPI {
       (p_node as any).children.splice(c_node_index, 1, record);
     }
   }
+  /**
+   * 将单条数据record 添加到index位置处
+   * @param record 被添加的单条数据
+   * @param index 代表的数据源中的index
+   */
+  addRecord(record: any, index: number) {
+    this.source.splice(index, 0, record);
+    this.currentIndexedData.push(this.currentIndexedData.length);
+    this._sourceLength += 1;
+
+    if (this.userPagination) {
+      //如果用户配置了分页
+      this.pagination.totalCount = this._sourceLength;
+      const { perPageCount, currentPage } = this.pagination;
+      const startIndex = perPageCount * (currentPage || 0);
+      const endIndex = startIndex + perPageCount;
+      if (index < endIndex) {
+        this.updatePagerData();
+      }
+    } else {
+      this.pagination.perPageCount = this._sourceLength;
+      this.pagination.totalCount = this._sourceLength;
+      this.updatePagerData();
+    }
+  }
+  /**
+   * 将多条数据recordArr 依次添加到index位置处
+   * @param recordArr
+   * @param index 代表的数据源中的index
+   */
+  addRecords(recordArr: any, index: number) {
+    if (Array.isArray(recordArr)) {
+      this.source.splice(index, 0, ...recordArr);
+      for (let i = 0; i < recordArr.length; i++) {
+        this.currentIndexedData.push(this.currentIndexedData.length);
+      }
+      this._sourceLength += recordArr.length;
+    }
+
+    if (this.userPagination) {
+      //如果用户配置了分页
+      this.pagination.totalCount = this._sourceLength;
+      const { perPageCount, currentPage } = this.pagination;
+      const startIndex = perPageCount * (currentPage || 0);
+      const endIndex = startIndex + perPageCount;
+      if (index < endIndex) {
+        this.updatePagerData();
+      }
+    } else {
+      this.pagination.perPageCount = this._sourceLength;
+      this.pagination.totalCount = this._sourceLength;
+      this.updatePagerData();
+    }
+  }
+
+  /**
+   * 将单条数据record 添加到index位置处
+   * @param record 被添加的单条数据
+   * @param index 代表的数据源中的index
+   */
+  addRecordForSorted(record: any) {
+    this.source.push(record);
+    this.currentIndexedData.push(this.currentIndexedData.length);
+    this._sourceLength += 1;
+    this.sortedIndexMap.clear();
+    if (!this.userPagination) {
+      this.pagination.perPageCount = this._sourceLength;
+      this.pagination.totalCount = this._sourceLength;
+    }
+  }
+  /**
+   * 将多条数据recordArr 依次添加到index位置处
+   * @param recordArr
+   * @param index 代表的数据源中的index
+   */
+  addRecordsForSorted(recordArr: any) {
+    if (Array.isArray(recordArr)) {
+      this.source.push(...recordArr);
+      for (let i = 0; i < recordArr.length; i++) {
+        this.currentIndexedData.push(this.currentIndexedData.length);
+      }
+      this._sourceLength += recordArr.length;
+      this.sortedIndexMap.clear();
+    }
+    if (!this.userPagination) {
+      this.pagination.perPageCount = this._sourceLength;
+      this.pagination.totalCount = this._sourceLength;
+    }
+  }
+  /**
+   * 删除多条数据recordIndexs
+   */
+  deleteRecordsForSorted(recordIndexs: number[]) {
+    const recordIndexsMaxToMin = recordIndexs.sort((a, b) => b - a);
+    for (let index = 0; index < recordIndexsMaxToMin.length; index++) {
+      const recordIndex = recordIndexsMaxToMin[index];
+      if (recordIndex >= this._sourceLength || recordIndex < 0) {
+        continue;
+      }
+      const rawIndex = this.currentIndexedData[recordIndex];
+      this.source.splice(rawIndex, 1);
+      this._sourceLength -= 1;
+    }
+    this.sortedIndexMap.clear();
+    if (!this.userPagination) {
+      this.pagination.perPageCount = this._sourceLength;
+      this.pagination.totalCount = this._sourceLength;
+    }
+  }
+
+  /**
+   * 删除多条数据recordIndexs
+   */
+  deleteRecords(recordIndexs: number[]) {
+    const realDeletedRecordIndexs = [];
+    const recordIndexsMaxToMin = recordIndexs.sort((a, b) => b - a);
+    for (let index = 0; index < recordIndexsMaxToMin.length; index++) {
+      const recordIndex = recordIndexsMaxToMin[index];
+      if (recordIndex >= this._sourceLength || recordIndex < 0) {
+        continue;
+      }
+      realDeletedRecordIndexs.push(recordIndex);
+      this.source.splice(recordIndex, 1);
+      this.currentIndexedData.pop();
+      this._sourceLength -= 1;
+    }
+    if (this.userPagination) {
+      // 如果用户配置了分页
+      this.updatePagerData();
+    } else {
+      this.pagination.perPageCount = this._sourceLength;
+      this.pagination.totalCount = this._sourceLength;
+      this.updatePagerData();
+    }
+    return realDeletedRecordIndexs;
+  }
+
   sort(
     field: FieldDef,
     order: SortOrder,
@@ -577,7 +718,7 @@ export class DataSource extends EventTarget implements DataSourceAPI {
       });
     }
   }
-  get sourceLenght(): number {
+  get sourceLength(): number {
     return this._sourceLength;
   }
   set sourceLength(sourceLen: number) {

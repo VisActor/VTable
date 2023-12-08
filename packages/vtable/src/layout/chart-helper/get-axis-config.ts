@@ -546,3 +546,72 @@ function getRange(
     ticks
   };
 }
+
+export function isTopOrBottomAxis(col: number, row: number, layout: PivotHeaderLayoutMap): boolean {
+  if (!layout._table.isPivotChart()) {
+    return false;
+  }
+
+  if (layout.indicatorsAsCol) {
+    if (
+      layout.hasTwoIndicatorAxes &&
+      row === layout.columnHeaderLevelCount - 1 &&
+      col >= layout.rowHeaderLevelCount &&
+      col < layout.colCount - layout.rightFrozenColCount
+    ) {
+      // 顶部副指标轴
+      return true;
+    } else if (
+      row === layout.rowCount - layout.bottomFrozenRowCount &&
+      col >= layout.rowHeaderLevelCount &&
+      col < layout.colCount - layout.rightFrozenColCount
+    ) {
+      // 底侧指标轴
+      return true;
+    }
+  } else {
+    if (
+      row === layout.rowCount - layout.bottomFrozenRowCount &&
+      col >= layout.rowHeaderLevelCount &&
+      col < layout.colCount - layout.rightFrozenColCount
+    ) {
+      // 底部维度轴
+      return true;
+    }
+  }
+  return false;
+}
+
+export function isLeftOrRightAxis(col: number, row: number, layout: PivotHeaderLayoutMap): boolean {
+  if (!layout._table.isPivotChart()) {
+    return false;
+  }
+
+  if (layout.indicatorsAsCol) {
+    if (
+      col === layout.rowHeaderLevelCount - 1 &&
+      row >= layout.columnHeaderLevelCount &&
+      row < layout.rowCount - layout.bottomFrozenRowCount
+    ) {
+      // 左侧维度轴
+      return true;
+    }
+  } else {
+    if (
+      col === layout.rowHeaderLevelCount - 1 &&
+      row >= layout.columnHeaderLevelCount &&
+      row < layout.rowCount - layout.bottomFrozenRowCount
+    ) {
+      // 左侧指标轴
+      return true;
+    } else if (
+      col === layout.colCount - layout.rightFrozenColCount &&
+      row >= layout.columnHeaderLevelCount &&
+      row < layout.rowCount - layout.bottomFrozenRowCount
+    ) {
+      // 右侧副指标轴
+      return true;
+    }
+  }
+  return false;
+}

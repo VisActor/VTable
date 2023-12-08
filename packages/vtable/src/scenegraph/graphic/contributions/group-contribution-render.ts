@@ -546,10 +546,12 @@ export class AdjustPosGroupBeforeRenderContribution implements IGroupRenderContr
       // width = groupAttribute.width,
       // height = groupAttribute.height,
       strokeArrayWidth = (groupAttribute as any).strokeArrayWidth,
-      strokeArrayColor = (groupAttribute as any).strokeArrayColor
+      strokeArrayColor = (groupAttribute as any).strokeArrayColor,
+      notAdjustPos
     } = group.attribute as any;
 
     if (
+      notAdjustPos !== true && // 不需要调整位置
       stroke &&
       Array.isArray(lineDash) &&
       !lineDash.length && // 非虚线
@@ -594,7 +596,8 @@ export class AdjustPosGroupAfterRenderContribution implements IGroupRenderContri
       stroke = groupAttribute.stroke,
       lineDash = groupAttribute.lineDash,
       strokeArrayWidth = (groupAttribute as any).strokeArrayWidth,
-      strokeArrayColor = (groupAttribute as any).strokeArrayColor
+      strokeArrayColor = (groupAttribute as any).strokeArrayColor,
+      notAdjustPos
     } = group.attribute as any;
 
     const { width = groupAttribute.width, height = groupAttribute.height } = group.attribute;
@@ -602,6 +605,7 @@ export class AdjustPosGroupAfterRenderContribution implements IGroupRenderContri
     // height = Math.ceil(height);
 
     if (
+      notAdjustPos !== true && // 不需要调整位置
       stroke &&
       Array.isArray(lineDash) &&
       !lineDash.length && // 非虚线

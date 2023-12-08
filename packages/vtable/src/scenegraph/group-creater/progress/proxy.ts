@@ -12,6 +12,7 @@ import { dynamicSetY, updateRowContent } from './update-position/dynamic-set-y';
 import { updateAutoRow } from './update-position/update-auto-row';
 import { sortVertical } from './update-position/sort-vertical';
 import { sortHorizontal } from './update-position/sort-horizontal';
+import { updateAutoColumn } from './update-position/update-auto-column';
 
 export class SceneProxy {
   table: BaseTableAPI;
@@ -140,6 +141,20 @@ export class SceneProxy {
     // this.firstScreenRowLimit = this.bodyBottomRow;
 
     this.rowUpdatePos = this.bodyBottomRow;
+  }
+
+  resize() {
+    const defaultColWidth = this.table.defaultColWidth;
+    this.taskColCount = Math.ceil(this.table.tableNoFrameWidth / defaultColWidth) * 1;
+    const widthLimit = this.table.tableNoFrameWidth * 5;
+    this.screenColCount = Math.ceil(this.table.tableNoFrameWidth / defaultColWidth);
+    this.firstScreenColLimit = this.bodyLeftCol + Math.min(this.colLimit, Math.ceil(widthLimit / defaultColWidth));
+
+    const defaultRowHeight = this.table.defaultRowHeight;
+    this.taskRowCount = Math.ceil(this.table.tableNoFrameHeight / defaultRowHeight) * 1;
+    const heightLimit = this.table.tableNoFrameHeight * 5;
+    this.screenRowCount = Math.ceil(this.table.tableNoFrameHeight / defaultRowHeight);
+    this.firstScreenRowLimit = this.bodyTopRow + Math.min(this.rowLimit, Math.ceil(heightLimit / defaultRowHeight));
   }
 
   createGroupForFirstScreen(
@@ -498,7 +513,61 @@ export class SceneProxy {
 
     this.rowUpdatePos = distRow + 1;
   }
+  /** 更新底部冻结行的单元格内容 包括两边的角头 */
+  updateBottomFrozenCellGroups() {
+    const startRow = this.table.rowCount - this.table.bottomFrozenRowCount;
+    const endRow = this.table.rowCount - 1;
+    if (this.table.heightMode === 'autoHeight') {
+      computeRowsHeight(this.table, startRow, endRow, false);
+    }
+    console.log('updateBottomFrozenCellGroups', startRow, endRow);
+    updateRowContent(startRow, endRow, this);
 
+    if (this.table.heightMode === 'autoHeight') {
+      // body group
+      updateAutoRow(
+        this.bodyLeftCol, // colStart
+        this.bodyRightCol, // colEnd
+        startRow, // rowStart
+        endRow, // rowEnd
+        this.table,
+        this.rowUpdateDirection
+      );
+      // row header group
+      updateAutoRow(
+        0, // colStart
+        this.table.frozenColCount - 1, // colEnd
+        startRow, // rowStart
+        endRow, // rowEnd
+        this.table,
+        this.rowUpdateDirection
+      );
+      // right frozen group
+      updateAutoRow(
+        this.table.colCount - this.table.rightFrozenColCount, // colStart
+        this.table.colCount - 1, // colEnd
+        startRow, // rowStart
+        endRow, // rowEnd
+        this.table,
+        this.rowUpdateDirection
+      );
+    }
+  }
+  /** 更新底部冻结行的单元格内容 包括两边的角头 */
+  updateRightFrozenCellGroups() {
+    const startCol = this.table.colCount - this.table.rightFrozenColCount;
+    const endCol = this.table.colCount - 1;
+    if (this.table.widthMode === 'autoWidth') {
+      computeColsWidth(this.table, startCol, endCol, false);
+    }
+    console.log('updateRightFrozenCellGroups', startCol, endCol);
+    updateColContent(startCol, endCol, this);
+
+    if (this.table.heightMode === 'autoHeight') {
+      // body group
+      updateAutoColumn(startCol, endCol, this.table, this.colUpdateDirection);
+    }
+  }
   async updateColCellGroupsAsync() {
     this.updateColGroups(this.taskRowCount);
   }

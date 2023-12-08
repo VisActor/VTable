@@ -1,5 +1,5 @@
-import type { IGroupGraphicAttribute, IRectGraphicAttribute } from '@visactor/vrender';
-import { createRect } from '@visactor/vrender';
+import type { IGroupGraphicAttribute, IRect, IRectGraphicAttribute } from '@visactor/vrender';
+import { createGroup, createRect } from '@visactor/vrender';
 import type { TableFrameStyle } from '../../ts-types';
 import type { Group } from '../graphic/group';
 import { isArray } from '@visactor/vutils';
@@ -37,6 +37,7 @@ export function createFrameBorder(
     borderLineDash
   } = frameTheme;
 
+  let hasShadow = false;
   const groupAttributes: IGroupGraphicAttribute = {};
   const rectAttributes: IRectGraphicAttribute = {
     pickable: false
@@ -51,9 +52,10 @@ export function createFrameBorder(
     rectAttributes.stroke = true;
     rectAttributes.stroke = shadowColor;
     rectAttributes.lineWidth = 1;
+    hasShadow = true;
 
-    rectAttributes.fill = true;
-    rectAttributes.fillOpacity = 0.01;
+    // rectAttributes.fill = true;
+    // rectAttributes.fillOpacity = 0.01;
   }
 
   // 处理边框
@@ -118,8 +120,43 @@ export function createFrameBorder(
       rectAttributes.y = group.attribute.y - borderTop / 2;
       rectAttributes.width = group.attribute.width + borderLeft / 2 + borderRight / 2;
       rectAttributes.height = group.attribute.height + borderTop / 2 + borderBottom / 2;
-      const borderRect = createRect(rectAttributes);
-      borderRect.name = 'table-border-rect';
+
+      let shadowRect;
+      let borderRect;
+      if (hasShadow) {
+        rectAttributes.fill = 'white';
+        (rectAttributes as any).notAdjustPos = true;
+        // rectAttributes.globalCompositeOperation = 'source-over';
+
+        // first draw group
+        borderRect = createGroup(rectAttributes);
+        borderRect.name = 'table-border-rect';
+
+        // second draw rect
+        shadowRect = createRect({
+          x: borderLeft / 2,
+          y: borderTop / 2,
+          width: group.attribute.width,
+          height: group.attribute.height,
+          fill: 'red',
+          cornerRadius: group.attribute.cornerRadius,
+          globalCompositeOperation: 'destination-out'
+        });
+        borderRect.addChild(shadowRect);
+
+        // hack for vrender globalCompositeOperation&clip render problem
+        const hackRect = createRect({
+          width: 1,
+          height: 1,
+          fill: 'transparent',
+          pickable: false
+        });
+        borderRect.addChild(hackRect);
+      } else {
+        borderRect = createRect(rectAttributes);
+        borderRect.name = 'table-border-rect';
+      }
+
       group.parent.insertBefore(borderRect, group);
       (group as any).border = borderRect;
     } else {
@@ -196,4 +233,11 @@ export function updateFrameBorderSize(group: Group) {
     width: group.attribute.width - borderLeft / 2 - borderRight / 2,
     height: group.attribute.height - borderTop / 2 - borderBottom / 2
   });
+
+  if (group.border.type === 'group') {
+    (group.border.firstChild as IRect).setAttributes({
+      width: group.attribute.width,
+      height: group.attribute.height
+    });
+  }
 }

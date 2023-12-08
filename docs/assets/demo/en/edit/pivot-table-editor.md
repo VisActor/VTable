@@ -1,6 +1,6 @@
 ---
 category: examples
-group: table-type
+group: edit
 title: pivot table edit data
 cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/pivot-table-editor.gif
 link: '../guide/edit/edit_cell'

@@ -551,6 +551,8 @@ export class StateManager {
     const totalHeight = this.table.getAllRowsHeight();
     this.scroll.verticalBarPos = Math.ceil(yRatio * (totalHeight - this.table.scenegraph.height));
     this.table.scenegraph.setY(-this.scroll.verticalBarPos);
+    this.scroll.verticalBarPos -= this.table.scenegraph.proxy.deltaY;
+    this.table.scenegraph.proxy.deltaY = 0;
 
     // 滚动期间清空选中清空
     this.table.stateManager.updateHoverPos(-1, -1);
@@ -571,6 +573,8 @@ export class StateManager {
     const totalWidth = this.table.getAllColsWidth();
     this.scroll.horizontalBarPos = Math.ceil(xRatio * (totalWidth - this.table.scenegraph.width));
     this.table.scenegraph.setX(-this.scroll.horizontalBarPos);
+    this.scroll.horizontalBarPos -= this.table.scenegraph.proxy.deltaX;
+    this.table.scenegraph.proxy.deltaX = 0;
     // console.log(this.table.scenegraph.bodyGroup.lastChild.attribute);
     // this.table.scenegraph.bodyGroup.lastChild.onBeforeAttributeUpdate = attr => {
     //   if (attr.x) {
@@ -954,7 +958,7 @@ export class StateManager {
     }
   }
   setCheckedState(col: number, row: number, field: string | number, checked: boolean) {
-    const recordIndex = this.table.getRecordIndexByCell(col, row);
+    const recordIndex = this.table.getRecordShowIndexByCell(col, row);
     if (recordIndex >= 0) {
       const dataIndex = this.table.dataSource.getIndexKey(recordIndex) as number;
       if (this.checkedState[dataIndex]) {
@@ -996,7 +1000,7 @@ export class StateManager {
       }
       return this.headerCheckedState[field];
     }
-    const recordIndex = this.table.getRecordIndexByCell(col, row);
+    const recordIndex = this.table.getRecordShowIndexByCell(col, row);
     if (recordIndex >= 0) {
       const dataIndex = this.table.dataSource.getIndexKey(recordIndex) as number;
       if (isValid(this.checkedState[dataIndex]?.[field])) {

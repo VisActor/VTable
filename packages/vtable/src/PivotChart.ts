@@ -311,9 +311,12 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
     // table.frozenColCount = layoutMap.rowHeaderLevelCount; //这里不要这样写 这个setter会检查扁头宽度 可能将frozenColCount置为0
     table.internalProps.frozenColCount = layoutMap.rowHeaderLevelCount ?? 0;
     table.frozenRowCount = layoutMap.headerLevelCount;
-
-    table.bottomFrozenRowCount = layoutMap?.bottomFrozenRowCount ?? 0;
-    table.rightFrozenColCount = layoutMap?.rightFrozenColCount ?? 0;
+    if (table.bottomFrozenRowCount !== (layoutMap?.bottomFrozenRowCount ?? 0)) {
+      table.bottomFrozenRowCount = layoutMap?.bottomFrozenRowCount ?? 0;
+    }
+    if (table.rightFrozenColCount !== (layoutMap?.rightFrozenColCount ?? 0)) {
+      table.rightFrozenColCount = layoutMap?.rightFrozenColCount ?? 0;
+    }
     this.stateManager.setFrozenCol(this.internalProps.frozenColCount);
   }
   protected _getSortFuncFromHeaderOption(
@@ -339,7 +342,7 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
       });
     }
   }
-  getRecordIndexByCell(col: number, row: number): number {
+  getRecordShowIndexByCell(col: number, row: number): number {
     return undefined;
   }
 
@@ -1173,5 +1176,6 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
       this.internalProps.title.resize();
       this.scenegraph.resize();
     }
+    this.eventManager.updateEventBinder();
   }
 }

@@ -58,6 +58,7 @@ import {
 } from './icon/icon-update';
 import { Env } from '../tools/env';
 import { createCornerCell } from './style/corner-cell';
+import { updateCol } from './layout/update-col';
 // import { contextModule } from './context/module';
 
 // VChart poptip theme
@@ -209,17 +210,19 @@ export class Scenegraph {
   }
 
   get bodyRowStart(): number {
-    if (this.transpose || this.isPivot) {
-      return this.table.columnHeaderLevelCount;
-    }
     return this.proxy.rowStart ?? 0;
   }
 
   get bodyRowEnd(): number {
-    if (this.transpose || this.isPivot) {
-      return this.table.rowCount - 1;
-    }
-    return this.proxy.rowEnd ?? 0;
+    return this.proxy.rowEnd ?? this.table.rowCount - 1;
+  }
+
+  get bodyColStart(): number {
+    return this.proxy.colStart ?? 0;
+  }
+
+  get bodyColEnd(): number {
+    return this.proxy.colEnd ?? this.table.colCount - 1;
   }
 
   /**
@@ -772,6 +775,9 @@ export class Scenegraph {
   }
 
   resize() {
+    // reset proxy config
+    this.proxy.resize();
+
     if (this.table.widthMode === 'adaptive' || this.table.autoFillWidth) {
       if (this.table.internalProps._widthResizedColMap.size === 0) {
         //如果没有手动调整过行高列宽 则重新计算一遍并重新分配
@@ -806,6 +812,8 @@ export class Scenegraph {
     ) {
       this.updateChartSize(this.table.rowHeaderLevelCount);
     }
+
+    this.proxy.progress();
     // this.stage.window.resize(width, height);
     this.updateNextFrame();
   }
@@ -828,12 +836,25 @@ export class Scenegraph {
       )
     } as any);
 
-    if (this.tableGroup.border) {
+    if (this.tableGroup.border && this.tableGroup.border.type === 'rect') {
       this.tableGroup.border.setAttributes({
         x: this.table.tableX - this.tableGroup.border.attribute.lineWidth / 2,
         y: this.table.tableY - this.tableGroup.border.attribute.lineWidth / 2,
         width: this.tableGroup.attribute.width + this.tableGroup.border.attribute.lineWidth,
         height: this.tableGroup.attribute.height + this.tableGroup.border.attribute.lineWidth
+      });
+    } else if (this.tableGroup.border && this.tableGroup.border.type === 'group') {
+      this.tableGroup.border.setAttributes({
+        x: this.table.tableX - this.tableGroup.border.attribute.lineWidth / 2,
+        y: this.table.tableY - this.tableGroup.border.attribute.lineWidth / 2,
+        width: this.tableGroup.attribute.width + this.tableGroup.border.attribute.lineWidth,
+        height: this.tableGroup.attribute.height + this.tableGroup.border.attribute.lineWidth
+      });
+      (this.tableGroup.border.firstChild as IRect)?.setAttributes({
+        x: this.tableGroup.border.attribute.lineWidth / 2,
+        y: this.tableGroup.border.attribute.lineWidth / 2,
+        width: this.tableGroup.attribute.width,
+        height: this.tableGroup.attribute.height
       });
     }
 
@@ -1578,7 +1599,28 @@ export class Scenegraph {
     // rerender
     this.updateNextFrame();
   }
+  updateCol(removeCells: CellAddress[], addCells: CellAddress[], updateCells: CellAddress[] = []) {
+    // add or move rows
+    updateCol(removeCells, addCells, updateCells, this.table);
 
+    // update column width and row height
+    this.recalculateColWidths();
+
+    this.recalculateRowHeights();
+
+    // check frozen status
+    this.table.stateManager.checkFrozen();
+
+    // update frozen shadow
+    if (!this.isPivot && !this.transpose) {
+      this.component.setFrozenColumnShadow(this.table.frozenColCount - 1);
+    }
+
+    this.component.updateScrollBar();
+
+    // rerender
+    this.updateNextFrame();
+  }
   getColumnGroupX(col: number) {
     if (col < this.table.rowHeaderLevelCount) {
       // row header
@@ -1603,6 +1645,19 @@ export class Scenegraph {
     } else if (row < this.table.rowCount) {
       // bottom frozen
       return this.table.getRowsHeight(this.table.rowCount - this.table.bottomFrozenRowCount, row - 1);
+    }
+    return 0;
+  }
+  getCellGroupX(col: number) {
+    if (col < this.table.rowHeaderLevelCount) {
+      // column header
+      return this.table.getColsWidth(0, col - 1);
+    } else if (col < this.table.colCount - this.table.rightFrozenColCount) {
+      // body
+      return this.table.getColsWidth(this.table.rowHeaderLevelCount, col - 1);
+    } else if (col < this.table.colCount) {
+      // bottom frozen
+      return this.table.getColsWidth(this.table.colCount - this.table.rightFrozenColCount, col - 1);
     }
     return 0;
   }

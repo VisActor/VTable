@@ -38,6 +38,7 @@ export class EventManager {
   touchEnd: boolean; // is touch event end when default touch event listener response
   touchMove: boolean; // is touch listener working, use to disable document touch scrolling function
   gesture: Gesture;
+  handleTextStickBindId: number;
   constructor(table: BaseTableAPI) {
     this.table = table;
     if (Env.mode === 'node') {
@@ -56,6 +57,19 @@ export class EventManager {
     bindScrollBarListener(this);
     bindTouchListener(this);
     bindGesture(this);
+  }
+  updateEventBinder() {
+    setTimeout(() => {
+      // 处理textStick 是否绑定SCROLL的判断
+      if (checkHaveTextStick(this.table) && !this.handleTextStickBindId) {
+        this.handleTextStickBindId = this.table.on(TABLE_EVENT_TYPE.SCROLL, e => {
+          handleTextStick(this.table);
+        });
+      } else if (!checkHaveTextStick(this.table) && this.handleTextStickBindId) {
+        this.table.off(this.handleTextStickBindId);
+        this.handleTextStickBindId = undefined;
+      }
+    }, 0);
   }
   bindSelfEvent() {
     if (this.table.isReleased) {
@@ -89,7 +103,7 @@ export class EventManager {
 
     // 处理textStick
     if (checkHaveTextStick(this.table)) {
-      this.table.on(TABLE_EVENT_TYPE.SCROLL, e => {
+      this.handleTextStickBindId = this.table.on(TABLE_EVENT_TYPE.SCROLL, e => {
         handleTextStick(this.table);
       });
     }

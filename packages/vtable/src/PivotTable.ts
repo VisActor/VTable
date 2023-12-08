@@ -413,8 +413,12 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
     table.internalProps.frozenColCount = layoutMap.rowHeaderLevelCount ?? 0;
     table.frozenRowCount = layoutMap.headerLevelCount;
 
-    table.bottomFrozenRowCount = this.options.bottomFrozenRowCount ?? 0;
-    table.rightFrozenColCount = this.options.rightFrozenColCount ?? 0;
+    if (table.bottomFrozenRowCount !== (this.options.bottomFrozenRowCount ?? 0)) {
+      table.bottomFrozenRowCount = this.options.bottomFrozenRowCount ?? 0;
+    }
+    if (table.rightFrozenColCount !== (this.options.rightFrozenColCount ?? 0)) {
+      table.rightFrozenColCount = this.options.rightFrozenColCount ?? 0;
+    }
     this.stateManager.setFrozenCol(this.internalProps.frozenColCount);
   }
   protected _getSortFuncFromHeaderOption(
@@ -451,7 +455,7 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
       });
     }
   }
-  getRecordIndexByCell(col: number, row: number): number {
+  getRecordShowIndexByCell(col: number, row: number): number {
     return undefined;
   }
   getTableIndexByRecordIndex(recordIndex: number): number {
@@ -942,6 +946,7 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
       this.internalProps.title.resize();
       this.scenegraph.resize();
     }
+    this.eventManager.updateEventBinder();
   }
   /** 获取单元格对应的编辑器 */
   getEditor(col: number, row: number) {

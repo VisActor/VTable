@@ -6,7 +6,6 @@ import { updateAutoRow } from './update-auto-row';
 export async function dynamicSetY(y: number, proxy: SceneProxy) {
   // 计算变动row range
   // const screenTopRow = proxy.table.getRowAt(y).row;
-  // proxy.deltaY = 0;
   const screenTop = (proxy.table as any).getTargetRowAt(y + proxy.table.scenegraph.colHeaderGroup.attribute.height);
   if (!screenTop) {
     return;
@@ -123,9 +122,9 @@ async function moveCell(
       );
 
       const cellGroup = proxy.table.scenegraph.highPerformanceGetCell(proxy.bodyLeftCol, screenTopRow, true);
-      const delaY =
+      const deltaY =
         screenTopY - (cellGroup.attribute.y + proxy.table.getFrozenRowsHeight() + proxy.table.scenegraph.proxy.deltaY);
-      proxy.table.scenegraph.proxy.deltaY += delaY;
+      proxy.table.scenegraph.proxy.deltaY += deltaY;
     }
 
     proxy.currentRow = direction === 'up' ? proxy.currentRow + count : proxy.currentRow - count;
@@ -202,18 +201,21 @@ async function moveCell(
     // update body position when click scroll bar
     if (syncTopRow === proxy.bodyTopRow) {
       const cellGroup = proxy.table.scenegraph.highPerformanceGetCell(proxy.bodyLeftCol, syncTopRow, true);
-      const delaY = cellGroup.attribute.y - y;
-      proxy.table.scenegraph.proxy.deltaY = delaY;
+      const deltaY = cellGroup.attribute.y - y;
+      proxy.table.scenegraph.proxy.deltaY = deltaY;
     } else if (syncBottomRow === proxy.bodyBottomRow) {
       const cellGroup = proxy.table.scenegraph.highPerformanceGetCell(proxy.bodyLeftCol, syncBottomRow, true);
-      const delaY =
+      const deltaY =
         cellGroup.attribute.y +
         cellGroup.attribute.height -
         (proxy.table.tableNoFrameHeight - proxy.table.getFrozenRowsHeight()) -
         y;
-      proxy.table.scenegraph.proxy.deltaY = -delaY;
+      proxy.table.scenegraph.proxy.deltaY = -deltaY;
     } else {
-      proxy.table.scenegraph.proxy.deltaY = 0;
+      const cellGroup = proxy.table.scenegraph.highPerformanceGetCell(proxy.bodyLeftCol, screenTopRow, true);
+      const deltaY =
+        screenTopY - (cellGroup.attribute.y + proxy.table.getFrozenRowsHeight() + proxy.table.scenegraph.proxy.deltaY);
+      proxy.table.scenegraph.proxy.deltaY = deltaY;
     }
 
     proxy.currentRow = direction === 'up' ? proxy.currentRow + count : proxy.currentRow - count;
