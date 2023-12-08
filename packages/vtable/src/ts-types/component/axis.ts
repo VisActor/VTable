@@ -5,6 +5,7 @@ export type ICellAxisOption = Omit<ICartesianAxisSpec, 'type'> &
     | {
         type: 'band';
         domain: (number | string)[];
+        __vtableChartTheme?: any;
       }
     | {
         type: 'linear' | 'time';
@@ -13,6 +14,7 @@ export type ICellAxisOption = Omit<ICartesianAxisSpec, 'type'> &
           max: number;
         };
         __ticksForVTable?: number[];
+        __vtableChartTheme?: any;
       }
   );
 

@@ -298,13 +298,11 @@ function updateCellWidth(
     const cellStyle = scene.table._getCellStyle(col, row);
     const padding = getQuadProps(getProp('padding', cellStyle, col, row, scene.table));
     if (axisConfig) {
-      const spec = scene.table.internalProps.layoutMap.getRawChartSpec(col, row);
       const axis = new CartesianAxis(
         axisConfig,
         cellGroup.attribute.width,
         cellGroup.attribute.height,
         padding,
-        spec?.theme,
         scene.table
       );
       cellGroup.clear();
