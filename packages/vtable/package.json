@@ -60,7 +60,7 @@
   },
   "devDependencies": {
     "luxon": "*",
-    "@visactor/vchart": "1.7.1",
+    "@visactor/vchart": "1.7.3",
     "@internal/bundler": "workspace:*",
     "@internal/eslint-config": "workspace:*",
     "@internal/ts-config": "workspace:*",
