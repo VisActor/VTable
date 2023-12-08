@@ -115,7 +115,9 @@ style 提供了一系列的单元格配置式，简要介绍如下。
 
 ### 单元格标记
 
-`mark`：设置单元格是否有记样式
+`marked`：设置单元格是否有记样式
+
+![image](https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/guide/cell-marked.jpeg)
 
 ### 自动换行
 

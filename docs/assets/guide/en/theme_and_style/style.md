@@ -115,7 +115,9 @@ Contains the following configuration items:
 
 ### Cell Tag
 
-`mark`: Set whether the cell has a record style
+`marked`: Set whether the cell has a record style
+
+![image](https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/guide/cell-marked.jpeg)
 
 ### line wrapping
 
