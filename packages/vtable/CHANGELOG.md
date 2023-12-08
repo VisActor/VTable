@@ -13,18 +13,16 @@ Fri, 08 Dec 2023 09:27:10 GMT
 - feat: add api delRecords
 
 
+This log was last generated on Fri, 08 Dec 2023 09:17:16 GMT and should not be manually modified.
+
+## 0.15.5
+Fri, 08 Dec 2023 09:17:16 GMT
 
 ### Updates
 
 - fix: updateOption to update updateEventBinder
-
-
 - fix: columnResizeType: all invalid
-
-
 - docs: refix lineheight description
-
-
 - fix: fix tree structure bottom frozen update
 - feat: axis support chart padding config
 - fix: fix limit column width adaptive update
