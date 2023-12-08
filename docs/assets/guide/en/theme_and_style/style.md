@@ -93,7 +93,7 @@ Contains the following configuration items:
 
 ### Line height, line feed settings
 
-*   `lineHeight`: set row height for cell
+*   `lineHeight`: set text height for cell content
 *   `textOverflow`: Sets the ellipsed form of the text. This configuration has no effect if autoWrapText sets line wrapping
 
 ### Underscore, underline settings

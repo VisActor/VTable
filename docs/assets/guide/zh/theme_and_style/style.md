@@ -93,7 +93,7 @@ style 提供了一系列的单元格配置式，简要介绍如下。
 
 ### 行高、换行设置
 
-*   `lineHeight`：为单格设置行高
+*   `lineHeight`：为单格内容设置文字行高
 *   `textOverflow`：设置文本的省略形式。如果 autoWrapText 设置自动换行，该配置无效
 
 ### 下划线、划线设置

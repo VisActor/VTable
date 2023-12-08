@@ -18,7 +18,7 @@ VTable supports setting various styles for text type data. The following are the
 *   `fontVariant`: Defines the font weight of the text.
 *   `fontStyle`: Defines the font style of the text.
 *   `textOverflow`: Set the omitted form of the text, it should be noted that if autoWrapText is set with line wrapping, the configuration is invalid.
-*   `lineHeight`: Set the font height for the cell text content.
+*   `lineHeight`: Set the text font height for the cell text content.
 *   `underline`: Set the underscore for the text content of the cell.
 *   `lineThrough`: Set the dash for the cell text content.
 *   `textStick`: Set whether the text of the cell has an adsorption effect \[The text can dynamically adjust the position when scrolling]
