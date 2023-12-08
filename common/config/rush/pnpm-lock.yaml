@@ -179,8 +179,8 @@ importers:
       '@types/react-dom': ^18.0.0
       '@visactor/vchart': 1.7.3
       '@visactor/vdataset': ~0.15.7
-      '@visactor/vrender': 0.16.17
-      '@visactor/vrender-components': 0.16.17
+      '@visactor/vrender': 0.16.20
+      '@visactor/vrender-components': 0.16.20
       '@visactor/vscale': 0.16.0
       '@visactor/vtable-editors': workspace:*
       '@visactor/vutils': ~0.16.10
@@ -223,8 +223,8 @@ importers:
       vite-plugin-markdown: ^2.1.0
     dependencies:
       '@visactor/vdataset': 0.15.14
-      '@visactor/vrender': 0.16.17
-      '@visactor/vrender-components': 0.16.17
+      '@visactor/vrender': 0.16.20
+      '@visactor/vrender-components': 0.16.20
       '@visactor/vscale': 0.16.0
       '@visactor/vtable-editors': link:../vtable-editors
       '@visactor/vutils': 0.16.18
@@ -3409,11 +3409,11 @@ packages:
       '@visactor/vutils': 0.16.18
       roughjs: 4.5.2
 
-  /@visactor/vrender/0.16.17:
-    resolution: {integrity: sha512-72woS3CQ7h3HHrPRneASgF17SLBifFTYY19BiCFxTiQZIfQJRm3aRems7Pbci8mTBDTwUDlWyAmF9jE2sit2mQ==}
+  /@visactor/vrender/0.16.20:
+    resolution: {integrity: sha512-2iJidENrlbQVyByaB8vajD4zDZ3K92+FdM1nhrLAbL8Nm09nohwuwjJ9ItsEq2VfemGT0XMSgBwsAH8VG6c/mQ==}
     dependencies:
-      '@visactor/vrender-core': 0.16.17
-      '@visactor/vrender-kits': 0.16.17
+      '@visactor/vrender-core': 0.16.20
+      '@visactor/vrender-kits': 0.16.20
     dev: false
 
   /@visactor/vscale/0.16.0:
