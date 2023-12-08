@@ -2,6 +2,59 @@
   "name": "@visactor/vtable",
   "entries": [
     {
+      "version": "0.16.0",
+      "tag": "@visactor/vtable_v0.16.0",
+      "date": "Fri, 08 Dec 2023 09:27:10 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "fix: updateOption to update updateEventBinder\n\n"
+          },
+          {
+            "comment": "fix: columnResizeType: all invalid\n\n"
+          },
+          {
+            "comment": "docs: refix lineheight description\n\n"
+          },
+          {
+            "comment": "fix: fix tree structure bottom frozen update"
+          },
+          {
+            "comment": "feat: axis support chart padding config"
+          },
+          {
+            "comment": "fix: fix limit column width adaptive update"
+          },
+          {
+            "comment": "fix: fix table range when container resize"
+          },
+          {
+            "comment": "feat: optimize pivot header performance"
+          },
+          {
+            "comment": "fix: fix table frame shadow color"
+          },
+          {
+            "comment": "fix: fix scroll position update problem"
+          },
+          {
+            "comment": "feat: add axis theme"
+          },
+          {
+            "comment": "feat: overlay default and hover colors"
+          }
+        ],
+        "minor": [
+          {
+            "comment": "feat: add api addRecords\n\n"
+          },
+          {
+            "comment": "feat: add api delRecords\n\n"
+          }
+        ]
+      }
+    },
+    {
       "version": "0.15.4",
       "tag": "@visactor/vtable_v0.15.4",
       "date": "Fri, 01 Dec 2023 10:28:56 GMT",
