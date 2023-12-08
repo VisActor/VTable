@@ -39,12 +39,6 @@ export default new ContainerModule((bind, unbind, isBound, rebind) => {
     bind(RectRenderContribution).toService(VTableSplitRectAfterRenderContribution);
   }
 
-  // group 渲染器注入contributions
-  bind(SplitGroupAfterRenderContribution).toSelf().inSingletonScope();
-  bind(GroupRenderContribution).toService(SplitGroupAfterRenderContribution);
-  bind(SplitGroupBeforeRenderContribution).toSelf().inSingletonScope();
-  bind(GroupRenderContribution).toService(SplitGroupBeforeRenderContribution);
-
   // chart渲染器注入
   bind(DefaultCanvasChartRender).toSelf().inSingletonScope();
   bind(ChartRender).to(DefaultCanvasChartRender);
@@ -57,6 +51,16 @@ export default new ContainerModule((bind, unbind, isBound, rebind) => {
   bind(ImageRenderContribution).toService(AfterImageRenderContribution);
 
   // group 渲染器注入contributions
+  bind(AdjustColorGroupBeforeRenderContribution).toSelf().inSingletonScope();
+  bind(GroupRenderContribution).toService(AdjustColorGroupBeforeRenderContribution);
+  bind(AdjustColorGroupAfterRenderContribution).toSelf().inSingletonScope();
+  bind(GroupRenderContribution).toService(AdjustColorGroupAfterRenderContribution);
+
+  bind(SplitGroupAfterRenderContribution).toSelf().inSingletonScope();
+  bind(GroupRenderContribution).toService(SplitGroupAfterRenderContribution);
+  bind(SplitGroupBeforeRenderContribution).toSelf().inSingletonScope();
+  bind(GroupRenderContribution).toService(SplitGroupBeforeRenderContribution);
+
   bind(DashGroupBeforeRenderContribution).toSelf().inSingletonScope();
   bind(GroupRenderContribution).toService(DashGroupBeforeRenderContribution);
   bind(DashGroupAfterRenderContribution).toSelf().inSingletonScope();
@@ -66,9 +70,4 @@ export default new ContainerModule((bind, unbind, isBound, rebind) => {
   bind(GroupRenderContribution).toService(AdjustPosGroupBeforeRenderContribution);
   bind(AdjustPosGroupAfterRenderContribution).toSelf().inSingletonScope();
   bind(GroupRenderContribution).toService(AdjustPosGroupAfterRenderContribution);
-
-  bind(AdjustColorGroupBeforeRenderContribution).toSelf().inSingletonScope();
-  bind(GroupRenderContribution).toService(AdjustColorGroupBeforeRenderContribution);
-  bind(AdjustColorGroupAfterRenderContribution).toSelf().inSingletonScope();
-  bind(GroupRenderContribution).toService(AdjustColorGroupAfterRenderContribution);
 });

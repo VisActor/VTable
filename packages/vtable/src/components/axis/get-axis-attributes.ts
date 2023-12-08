@@ -95,6 +95,34 @@ export const commonAxis = {
   }
 };
 
+export function getCommonAxis(theme: any) {
+  if (!theme?.colorScheme?.default?.palette) {
+    return commonAxis;
+  }
+  return merge({}, commonAxis, {
+    tick: {
+      style: {
+        stroke: theme.colorScheme.default.palette.axisDomainColor || '#D9DDE4'
+      }
+    },
+    subTick: {
+      style: {
+        stroke: theme.colorScheme.default.palette.axisDomainColor || '#D9DDE4'
+      }
+    },
+    label: {
+      style: {
+        fill: theme.colorScheme.default.palette.axisLabelFontColor || '#89909D'
+      }
+    },
+    title: {
+      style: {
+        fill: theme.colorScheme.default.palette.secondaryFontColor || '#333333'
+      }
+    }
+  });
+}
+
 export function getAxisAttributes(option: ICellAxisOption) {
   const spec = merge({}, option);
   // const spec = option;

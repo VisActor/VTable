@@ -835,7 +835,8 @@ export class StateManager {
       );
       (icon as any).oldVisibleTime = icon.attribute.visibleTime;
       icon.setAttribute('visibleTime', 'always');
-      icon.setAttribute('visible', true);
+      // icon.setAttribute('visible', true);
+      icon.setAttribute('opacity', 1);
     }
   }
 
@@ -851,9 +852,13 @@ export class StateManager {
         this.residentHoverIcon.row
       );
       this.residentHoverIcon.icon.setAttribute('visibleTime', (this.residentHoverIcon.icon as any).oldVisibleTime);
+      // this.residentHoverIcon.icon.setAttribute(
+      //   'visible',
+      //   this.residentHoverIcon.icon.attribute.visibleTime === 'always'
+      // );
       this.residentHoverIcon.icon.setAttribute(
-        'visible',
-        this.residentHoverIcon.icon.attribute.visibleTime === 'always'
+        'opacity',
+        this.residentHoverIcon.icon.attribute.visibleTime === 'always' ? 1 : 0
       );
       this.residentHoverIcon = null;
     }

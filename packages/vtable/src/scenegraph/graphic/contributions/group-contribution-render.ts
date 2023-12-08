@@ -683,8 +683,7 @@ export class AdjustColorGroupBeforeRenderContribution implements IGroupRenderCon
       if (table.stateManager.interactionState !== InteractionState.scrolling) {
         const hoverColor = getCellHoverColor(group as Group, table);
         if (hoverColor) {
-          (group as any).oldColor = group.attribute.fill;
-          group.attribute.fill = hoverColor;
+          (group.attribute as any)._vtableHoverFill = hoverColor;
         }
       }
     }
@@ -719,9 +718,19 @@ export class AdjustColorGroupAfterRenderContribution implements IGroupRenderCont
     ) => boolean
   ) {
     // 处理hover颜色
-    if ('oldColor' in group) {
-      group.attribute.fill = group.oldColor as any;
-      delete group.oldColor;
+    if ((group.attribute as any)._vtableHoverFill) {
+      if (fillCb) {
+        // do nothing
+        // fillCb(context, group.attribute, groupAttribute);
+      } else if (fVisible) {
+        const oldColor = group.attribute.fill;
+        // draw hover fill
+        group.attribute.fill = (group.attribute as any)._vtableHoverFill as any;
+        context.setCommonStyle(group, group.attribute, x, y, groupAttribute);
+        context.fill();
+        group.attribute.fill = oldColor;
+        (group.attribute as any)._vtableHoverFill = undefined;
+      }
     }
   }
 }

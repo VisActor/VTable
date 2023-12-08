@@ -1024,7 +1024,10 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
       let count = rowLevelCount;
       if (this.indicatorsAsCol) {
         // count = rowLevelCount;
-      } else if (this.hideIndicatorName && this.rowDimensionKeys[0] === this.indicatorDimensionKey) {
+      } else if (
+        this.hideIndicatorName &&
+        this.rowDimensionKeys[this.rowDimensionKeys.length - 1] === this.indicatorDimensionKey
+      ) {
         count = rowLevelCount - 1;
       }
 
