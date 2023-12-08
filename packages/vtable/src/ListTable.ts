@@ -144,6 +144,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
     this.scenegraph.createSceneGraph();
     this.stateManager.updateHoverPos(oldHoverState.col, oldHoverState.row);
     this.renderAsync();
+    this.eventManager.updateEventBinder();
   }
   /**
    *@deprecated 请使用columns
@@ -427,7 +428,9 @@ export class ListTable extends BaseTable implements ListTableAPI {
       table.frozenRowCount = 0;
       // table.frozenColCount = layoutMap.headerLevelCount; //这里不要这样写 这个setter会检查扁头宽度 可能将frozenColCount置为0
       this.internalProps.frozenColCount = layoutMap.headerLevelCount ?? 0;
-      table.rightFrozenColCount = this.options.rightFrozenColCount ?? 0;
+      if (table.rightFrozenColCount !== (this.options.rightFrozenColCount ?? 0)) {
+        table.rightFrozenColCount = this.options.rightFrozenColCount ?? 0;
+      }
     } else {
       table.colCount = layoutMap.colCount ?? 0;
       table.rowCount =
@@ -436,8 +439,12 @@ export class ListTable extends BaseTable implements ListTableAPI {
       this.internalProps.frozenColCount = this.options.frozenColCount ?? 0;
       table.frozenRowCount = layoutMap.headerLevelCount;
 
-      table.bottomFrozenRowCount = this.options.bottomFrozenRowCount ?? 0;
-      table.rightFrozenColCount = this.options.rightFrozenColCount ?? 0;
+      if (table.bottomFrozenRowCount !== (this.options.bottomFrozenRowCount ?? 0)) {
+        table.bottomFrozenRowCount = this.options.bottomFrozenRowCount ?? 0;
+      }
+      if (table.rightFrozenColCount !== (this.options.rightFrozenColCount ?? 0)) {
+        table.rightFrozenColCount = this.options.rightFrozenColCount ?? 0;
+      }
     }
     this.stateManager.setFrozenCol(this.internalProps.frozenColCount);
   }

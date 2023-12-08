@@ -94,6 +94,13 @@ export class Group extends VRenderGroup {
     this.setAttribute('width', (this.attribute.width ?? 0) + deltaX);
     if (this.border) {
       this.border.setAttribute('width', this.border.attribute.width + deltaX);
+
+      if (this.border.type === 'group') {
+        (this.border.firstChild as IRect).setAttribute(
+          'width',
+          (this.border.firstChild as IRect).attribute.width + deltaX
+        );
+      }
     }
   }
 
@@ -104,6 +111,12 @@ export class Group extends VRenderGroup {
     this.setAttribute('height', (this.attribute.height ?? 0) + deltaY);
     if (this.border) {
       this.border.setAttribute('height', this.border.attribute.height + deltaY);
+      if (this.border.type === 'group') {
+        (this.border.firstChild as IRect).setAttribute(
+          'width',
+          (this.border.firstChild as IRect).attribute.height + deltaY
+        );
+      }
     }
   }
 
@@ -292,6 +305,9 @@ export class Group extends VRenderGroup {
 }
 
 function after(group: Group, selfChange: boolean) {
+  if (!group.stage.dirtyBounds) {
+    return;
+  }
   if (!(group.stage && group.stage.renderCount)) {
     return;
   }

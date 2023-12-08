@@ -551,6 +551,8 @@ export class StateManager {
     const totalHeight = this.table.getAllRowsHeight();
     this.scroll.verticalBarPos = Math.ceil(yRatio * (totalHeight - this.table.scenegraph.height));
     this.table.scenegraph.setY(-this.scroll.verticalBarPos);
+    this.scroll.verticalBarPos -= this.table.scenegraph.proxy.deltaY;
+    this.table.scenegraph.proxy.deltaY = 0;
 
     // 滚动期间清空选中清空
     this.table.stateManager.updateHoverPos(-1, -1);
@@ -571,6 +573,8 @@ export class StateManager {
     const totalWidth = this.table.getAllColsWidth();
     this.scroll.horizontalBarPos = Math.ceil(xRatio * (totalWidth - this.table.scenegraph.width));
     this.table.scenegraph.setX(-this.scroll.horizontalBarPos);
+    this.scroll.horizontalBarPos -= this.table.scenegraph.proxy.deltaX;
+    this.table.scenegraph.proxy.deltaX = 0;
     // console.log(this.table.scenegraph.bodyGroup.lastChild.attribute);
     // this.table.scenegraph.bodyGroup.lastChild.onBeforeAttributeUpdate = attr => {
     //   if (attr.x) {
@@ -752,7 +756,8 @@ export class StateManager {
       );
       (icon as any).oldVisibleTime = icon.attribute.visibleTime;
       icon.setAttribute('visibleTime', 'always');
-      icon.setAttribute('visible', true);
+      // icon.setAttribute('visible', true);
+      icon.setAttribute('opacity', 1);
     }
   }
 
@@ -768,9 +773,13 @@ export class StateManager {
         this.residentHoverIcon.row
       );
       this.residentHoverIcon.icon.setAttribute('visibleTime', (this.residentHoverIcon.icon as any).oldVisibleTime);
+      // this.residentHoverIcon.icon.setAttribute(
+      //   'visible',
+      //   this.residentHoverIcon.icon.attribute.visibleTime === 'always'
+      // );
       this.residentHoverIcon.icon.setAttribute(
-        'visible',
-        this.residentHoverIcon.icon.attribute.visibleTime === 'always'
+        'opacity',
+        this.residentHoverIcon.icon.attribute.visibleTime === 'always' ? 1 : 0
       );
       this.residentHoverIcon = null;
     }

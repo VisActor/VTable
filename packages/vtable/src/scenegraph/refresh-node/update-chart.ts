@@ -6,6 +6,8 @@ import type { Chart } from '../graphic/chart';
 import type { Group } from '../graphic/group';
 import type { Scenegraph } from '../scenegraph';
 import type { PivotHeaderLayoutMap } from '../../layout/pivot-header-layout';
+import { getQuadProps } from '../utils/padding';
+import { getProp } from '../utils/get-prop';
 
 /** 供调整列宽后更新chart使用 */
 export function updateChartSize(scenegraph: Scenegraph, col: number) {
@@ -177,7 +179,17 @@ function updateTableAxes(containerGroup: Group, table: BaseTableAPI) {
           });
           if (isAxisComponent) {
             const axisConfig = table.internalProps.layoutMap.getAxisConfigInPivotChart(cell.col, cell.row);
-            const axis = new CartesianAxis(axisConfig, cell.attribute.width, cell.attribute.height, table);
+            const cellStyle = table._getCellStyle(cell.col, cell.row);
+            const padding = getQuadProps(getProp('padding', cellStyle, cell.col, cell.row, table));
+            const spec = table.internalProps.layoutMap.getRawChartSpec(cell.col, cell.row);
+            const axis = new CartesianAxis(
+              axisConfig,
+              cell.attribute.width,
+              cell.attribute.height,
+              padding,
+              spec?.theme,
+              table
+            );
             cell.clear();
             cell.appendChild(axis.component);
             axis.overlap();

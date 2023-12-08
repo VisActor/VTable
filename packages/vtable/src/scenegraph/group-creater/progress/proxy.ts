@@ -142,6 +142,20 @@ export class SceneProxy {
     this.rowUpdatePos = this.bodyBottomRow;
   }
 
+  resize() {
+    const defaultColWidth = this.table.defaultColWidth;
+    this.taskColCount = Math.ceil(this.table.tableNoFrameWidth / defaultColWidth) * 1;
+    const widthLimit = this.table.tableNoFrameWidth * 5;
+    this.screenColCount = Math.ceil(this.table.tableNoFrameWidth / defaultColWidth);
+    this.firstScreenColLimit = this.bodyLeftCol + Math.min(this.colLimit, Math.ceil(widthLimit / defaultColWidth));
+
+    const defaultRowHeight = this.table.defaultRowHeight;
+    this.taskRowCount = Math.ceil(this.table.tableNoFrameHeight / defaultRowHeight) * 1;
+    const heightLimit = this.table.tableNoFrameHeight * 5;
+    this.screenRowCount = Math.ceil(this.table.tableNoFrameHeight / defaultRowHeight);
+    this.firstScreenRowLimit = this.bodyTopRow + Math.min(this.rowLimit, Math.ceil(heightLimit / defaultRowHeight));
+  }
+
   createGroupForFirstScreen(
     cornerHeaderGroup: Group,
     colHeaderGroup: Group,

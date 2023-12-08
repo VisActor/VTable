@@ -3,6 +3,7 @@ import type { ColorsDef, LineDashsDef, LineWidthsDef, LineWidthsPropertyDefine }
 import type { ITextStyleOption } from './column/style';
 import type { ColorPropertyDefine, ColorsPropertyDefine } from './style-define';
 import type { ColumnIconOption } from './icon';
+import type { ICellAxisOption } from './component/axis';
 // ****** Custom Theme *******
 export type PartialTableThemeDefine = Partial<ITableThemeDefine>;
 export type ThemeStyle = ITextStyleOption & {
@@ -124,6 +125,15 @@ export interface ITableThemeDefine {
     cellBorderColor?: string; //边框颜色
     cellBorderLineWidth?: number; //边框线宽度
     cellBgColor?: string; //选择框背景颜色
+  };
+
+  // style for axis
+  axisStyle?: {
+    defaultAxisStyle?: Omit<ICellAxisOption, 'type' | 'domain' | 'range' | 'orient' | '__ticksForVTable'>;
+    leftAxisStyle?: Omit<ICellAxisOption, 'type' | 'domain' | 'range' | 'orient' | '__ticksForVTable'>;
+    rightAxisStyle?: Omit<ICellAxisOption, 'type' | 'domain' | 'range' | 'orient' | '__ticksForVTable'>;
+    topAxisStyle?: Omit<ICellAxisOption, 'type' | 'domain' | 'range' | 'orient' | '__ticksForVTable'>;
+    bottomAxisStyle?: Omit<ICellAxisOption, 'type' | 'domain' | 'range' | 'orient' | '__ticksForVTable'>;
   };
 }
 

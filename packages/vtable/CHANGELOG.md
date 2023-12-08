@@ -1,6 +1,24 @@
 # Change Log - @visactor/vtable
 
-This log was last generated on Fri, 01 Dec 2023 10:28:56 GMT and should not be manually modified.
+This log was last generated on Fri, 08 Dec 2023 09:17:16 GMT and should not be manually modified.
+
+## 0.15.5
+Fri, 08 Dec 2023 09:17:16 GMT
+
+### Updates
+
+- fix: updateOption to update updateEventBinder
+
+
+- fix: fix tree structure bottom frozen update
+- feat: axis support chart padding config
+- fix: fix limit column width adaptive update
+- fix: fix table range when container resize
+- feat: optimize pivot header performance
+- fix: fix table frame shadow color
+- fix: fix scroll position update problem
+- feat: add axis theme
+- feat: overlay default and hover colors
 
 ## 0.15.4
 Fri, 01 Dec 2023 10:28:56 GMT
