@@ -26,7 +26,7 @@ The calculation mode of table row height, which can be 'standard' (standard mode
 
 - 'standard': use `defaultRowHeight` and `defaultHeaderRowHeight` as row height.
 - 'adaptive': Use the height of the container to assign the height of each row.
-- 'autoHeight': Automatically calculate line height based on content, based on fontSize and lineHeight. The related collocation setting item `autoWrapText` automatically wraps the line, and the line height can be calculated according to the content of the multi-line text after the line wrap.
+- 'autoHeight': Automatically calculate line height based on content, based on fontSize and lineHeight(font height)，include padding. The related collocation setting item `autoWrapText` automatically wraps the line, and the line height can be calculated according to the content of the multi-line text after the line wrap.
 
 #${prefix} autoWrapText(boolean) = false
 

@@ -16,7 +16,7 @@
 
 - 标准模式（standard）：采用 `defaultRowHeight` 及 `defaultHeaderRowHeight` 作为行高。
 - 自适应容器高度模式（adaptive）：使用容器的高度分配每行高度。
-- 自动行高模式（autoHeight）：根据内容自动计算行高，计算依据fontSize和lineHeight。相关搭配设置项`autoWrapText`自动换行，可以根据换行后的多行文本内容来计算行高。
+- 自动行高模式（autoHeight）：根据内容自动计算行高，计算依据fontSize和lineHeight(文字行高)，以及padding。相关搭配设置项`autoWrapText`自动换行，可以根据换行后的多行文本内容来计算行高。
 
 # 行高相关配置
 

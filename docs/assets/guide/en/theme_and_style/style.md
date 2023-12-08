@@ -22,7 +22,7 @@ Configure headerStyle in each item of columns. If it is in the pivot table, it c
         headerStyle: {
           bgColor: 'red',
           autoWrapText: true,
-          lineHeight: '2em',
+          lineHeight: 20,
           lineClamp: 'auto',
           textBaseline: "top",
           color:"yellow"
@@ -49,7 +49,7 @@ Configure style in each item of columns. If it is in the pivot table, it corresp
         style: {
           bgColor: 'green',
           autoWrapText: true,
-          lineHeight: '1em',
+          lineHeight: 20,
           lineClamp: 'auto',
           textBaseline: "top",
           color:"yellow"

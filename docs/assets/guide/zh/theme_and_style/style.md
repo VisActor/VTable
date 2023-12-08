@@ -22,7 +22,7 @@ VTable 中单元格的style细化配置，包括单元格样式、表头单元�
         headerStyle: {
           bgColor: 'red',
           autoWrapText: true,
-          lineHeight: '2em',
+          lineHeight: 20,
           lineClamp: 'auto',
           textBaseline: "top",
           color:"yellow"
@@ -49,7 +49,7 @@ VTable 中单元格的style细化配置，包括单元格样式、表头单元�
         style: {
           bgColor: 'green',
           autoWrapText: true,
-          lineHeight: '1em',
+          lineHeight: 20,
           lineClamp: 'auto',
           textBaseline: "top",
           color:"yellow"
