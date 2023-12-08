@@ -12,32 +12,7 @@
 *   'header': 只能在表头处单元调整列宽
 *   'body': 只能在body单元格调整列宽
 
-## 调整列宽交互效果配置
 
-在进行列宽调整时，我们可以自定义调整列宽标记线的样式。在 `theme.columnResize` 对象中，我们可以设置以下配置项：
-
-*   lineColor: 直线的颜色
-*   bgColor: 背景线的颜色
-*   lineWidth: 直线的线宽
-*   width: 背景线的宽度
-
-```javascript
-{
-    theme:
-    {
-        columnResize : {
-            lineColor: 'blue',
-            bgColor: 'red',
-            lineWidth: 1,
-            width: 5
-        }
-    }
-}
-```
-
-这样我们就可以看到类似如下的交互效果：
-
-![image](https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/0a2e223bdcd7410c08f6a6a0d.png)
 
 ## 调整列宽限制
 
@@ -57,63 +32,7 @@
 
 设置后，列宽在拖拽调整时将不超过设定范围。
 
-## 样式示例
 
-根据上述配置，我们可以实现一个简单的 VTable 示例，展示如何调整列宽：
-
-```javascript livedemo  template=vtable
-const myVTable = new VTable.ListTable(document.getElementById(CONTAINER_ID), {
-  columnResizeMode: 'header',
-  columns : [
-        {
-            "field": "订单 ID",
-            "title": "订单 ID",
-            "sort": true,
-            "width":'auto',
-        },
-        {
-            "field": "邮寄方式",
-            "title": "邮寄方式"
-        },
-        {
-            "field": "类别",
-            "title": "类别"
-        },
-        {
-            "field": "子类别",
-            "title": "子类别"
-        },
-        {
-            "field": "销售额",
-            "title": "销售额"
-        },
-    ],
-    "records": [
-        {
-            "订单 ID": "CN-2019-1973789",
-            "邮寄方式": "标准级",
-            "类别": "办公用品",
-            "子类别": "信封",
-            "销售额": "125.44"
-        },
-        {
-            "订单 ID": "CN-2019-1973789",
-            "邮寄方式": "标准级",
-            "类别": "办公用品",
-            "子类别": "装订机",
-            "销售额": "31.92",
-        },
-    ],
-  theme: VTable.themes.BRIGHT.extends({
-    columnResize: {
-      lineColor: 'blue',
-      bgColor: 'lightgray',
-      lineWidth: 2,
-      width: 10
-    }
-  })
-});
-```
 
 ## 列宽调整作用范围
 配置项(透视表及透视图支持)：
@@ -127,6 +46,7 @@ const myVTable = new VTable.ListTable(document.getElementById(CONTAINER_ID), {
 - `indicator`：相同指标列的列宽一并调整；
 - `all`：所有列的列宽一并调整；
 - `indicatorGroup`：同一组的指标列一并调整，如东北维度值下有两个指标为：销售额和利润，当调整销售额的列宽时，利润列也会进行调整；
+
 ## 列宽调整作用范围配置示例
 在下面的示例中将columnResizeType设置为all。
 ```javascript livedemo  template=vtable
@@ -1107,4 +1027,98 @@ columnResizeType: 'all'
 };
 const tableInstance = new VTable.PivotTable(document.getElementById(CONTAINER_ID), option);
 
+```
+
+## 双击自动列宽
+当用户在浏览数据时，发现数据被折叠想要查看完整数据，可以通过双击交互来按内容展开列宽。
+
+但是内容如果过长，你会发现内容还是被缺省了，这个是因为我们内部有个最大列宽的默认配置`limitMaxAutoWidth: 450`限制计算出的最大列宽为450，这个时候你可以调整这个值来满足需求。或者可以配置自动行高来折行展示（非必要不要开启，有一定性能开销）：
+```
+  heightMode:'autoHeight',
+  autoWrapText:true,
+```
+
+## 调整列宽交互效果配置
+
+在进行列宽调整时，我们可以自定义调整列宽标记线的样式。在 `theme.columnResize` 对象中，我们可以设置以下配置项：
+
+*   lineColor: 直线的颜色
+*   bgColor: 背景线的颜色
+*   lineWidth: 直线的线宽
+*   width: 背景线的宽度
+
+```javascript
+{
+    theme:
+    {
+        columnResize : {
+            lineColor: 'blue',
+            bgColor: 'red',
+            lineWidth: 1,
+            width: 5
+        }
+    }
+}
+```
+
+这样我们就可以看到类似如下的交互效果：
+
+![image](https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/0a2e223bdcd7410c08f6a6a0d.png)
+
+### 样式示例
+
+根据上述配置，我们可以实现一个简单的 VTable 示例，展示如何调整列宽：
+
+```javascript livedemo  template=vtable
+const myVTable = new VTable.ListTable(document.getElementById(CONTAINER_ID), {
+  columnResizeMode: 'header',
+  columns : [
+        {
+            "field": "订单 ID",
+            "title": "订单 ID",
+            "sort": true,
+            "width":'auto',
+        },
+        {
+            "field": "邮寄方式",
+            "title": "邮寄方式"
+        },
+        {
+            "field": "类别",
+            "title": "类别"
+        },
+        {
+            "field": "子类别",
+            "title": "子类别"
+        },
+        {
+            "field": "销售额",
+            "title": "销售额"
+        },
+    ],
+    "records": [
+        {
+            "订单 ID": "CN-2019-1973789",
+            "邮寄方式": "标准级",
+            "类别": "办公用品",
+            "子类别": "信封",
+            "销售额": "125.44"
+        },
+        {
+            "订单 ID": "CN-2019-1973789",
+            "邮寄方式": "标准级",
+            "类别": "办公用品",
+            "子类别": "装订机",
+            "销售额": "31.92",
+        },
+    ],
+  theme: VTable.themes.BRIGHT.extends({
+    columnResize: {
+      lineColor: 'blue',
+      bgColor: 'lightgray',
+      lineWidth: 2,
+      width: 10
+    }
+  })
+});
 ```
