@@ -121,7 +121,7 @@ const table = new VTable.ListTable({
 
 ## Automatically calculate row height based on content (autoRowHeight)
 
-When the contents of some column cells are longer and wrap, the cells may need a larger row height to display the content. by setting `autoRowHeight` for `true`, VTable can automatically calculate row heights based on content, based on fontSize and lineHeight. The following code example shows how to configure the entire table to automatically calculate row heights based on content:
+When the contents of some column cells are longer and wrap, the cells may need a larger row height to display the content. by setting `autoRowHeight` for `true`, VTable can automatically calculate row heights based on content, based on fontSize and lineHeight(font height)，include padding. The following code example shows how to configure the entire table to automatically calculate row heights based on content:
 
 ```javascript
 const table = new VTable.ListTable({
@@ -154,7 +154,7 @@ The calculation mode of table row height `heightMode` can also be configured as 
 
 - Standard mode (standard): Use `defaultRowHeight` and `defaultHeaderRowHeight` as the row height.
 - Adaptive container height mode (adaptive): Use the height of the container to allocate the height of each row.
-- Automatic line height mode (autoHeight): Automatically calculate line height based on content, based on fontSize and lineHeight. The related configuration item `autoWrapText` automatically wraps lines, and can calculate the line height based on the multi-line text content after line wrapping.
+- Automatic line height mode (autoHeight): Automatically calculate line height based on content, based on fontSize and lineHeight(font height)，include padding. The related configuration item `autoWrapText` automatically wraps lines, and can calculate the line height based on the multi-line text content after line wrapping.
 
 # FAQ
 ## Setting Adaptive Content for Specific Columns to Calculate Column Width

@@ -1951,7 +1951,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     internalProps.title?.release();
     internalProps.layoutMap.release();
     this.scenegraph.clearCells();
-    this.stateManager.initState();
+    this.stateManager.updateOptionSetState();
 
     this._updateSize();
     // this.stateManager = new StateManager(this);

@@ -22,7 +22,7 @@ Configure headerStyle in each item of columns. If it is in the pivot table, it c
         headerStyle: {
           bgColor: 'red',
           autoWrapText: true,
-          lineHeight: '2em',
+          lineHeight: 20,
           lineClamp: 'auto',
           textBaseline: "top",
           color:"yellow"
@@ -49,7 +49,7 @@ Configure style in each item of columns. If it is in the pivot table, it corresp
         style: {
           bgColor: 'green',
           autoWrapText: true,
-          lineHeight: '1em',
+          lineHeight: 20,
           lineClamp: 'auto',
           textBaseline: "top",
           color:"yellow"
@@ -93,7 +93,7 @@ Contains the following configuration items:
 
 ### Line height, line feed settings
 
-*   `lineHeight`: set row height for cell
+*   `lineHeight`: set text height for cell content
 *   `textOverflow`: Sets the ellipsed form of the text. This configuration has no effect if autoWrapText sets line wrapping
 
 ### Underscore, underline settings
@@ -115,7 +115,9 @@ Contains the following configuration items:
 
 ### Cell Tag
 
-`mark`: Set whether the cell has a record style
+`marked`: Set whether the cell has a record style
+
+![image](https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/guide/cell-marked.jpeg)
 
 ### line wrapping
 

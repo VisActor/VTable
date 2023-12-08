@@ -18,9 +18,8 @@ VTable 支持为文本类型数据设置多样化的样式，以下为文本类�
 - `fontVariant`：定义文本的字体粗细。
 - `fontStyle`：定义文本的字体样式。
 - `textOverflow`：设置文本的省略形式，需要注意的是：如果autoWrapText设置了自动换行，该配置无效。
-- `lineHeight`：为单元格文本内容设置行高。
-- `underline`：为单元格文本内容设置行高。
-- `lineHeight`：为单元格文本内容设置下划线。
+- `lineHeight`：为单元格文本内容设置文字行高。
+- `underline`：为单元格文本内容设置下划线。
 - `lineThrough`：为单元格文本内容设置中划线。
 - `textStick`：设置单元格的文本是否带有吸附效果【当滚动时文本可动态调整位置】
 - `autoWrapText`：设置单元格是否自动换行。

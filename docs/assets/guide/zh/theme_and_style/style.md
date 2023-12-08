@@ -22,7 +22,7 @@ VTable 中单元格的style细化配置，包括单元格样式、表头单元�
         headerStyle: {
           bgColor: 'red',
           autoWrapText: true,
-          lineHeight: '2em',
+          lineHeight: 20,
           lineClamp: 'auto',
           textBaseline: "top",
           color:"yellow"
@@ -49,7 +49,7 @@ VTable 中单元格的style细化配置，包括单元格样式、表头单元�
         style: {
           bgColor: 'green',
           autoWrapText: true,
-          lineHeight: '1em',
+          lineHeight: 20,
           lineClamp: 'auto',
           textBaseline: "top",
           color:"yellow"
@@ -93,7 +93,7 @@ style 提供了一系列的单元格配置式，简要介绍如下。
 
 ### 行高、换行设置
 
-*   `lineHeight`：为单格设置行高
+*   `lineHeight`：为单格内容设置文字行高
 *   `textOverflow`：设置文本的省略形式。如果 autoWrapText 设置自动换行，该配置无效
 
 ### 下划线、划线设置
@@ -115,7 +115,9 @@ style 提供了一系列的单元格配置式，简要介绍如下。
 
 ### 单元格标记
 
-`mark`：设置单元格是否有记样式
+`marked`：设置单元格是否有记样式
+
+![image](https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/guide/cell-marked.jpeg)
 
 ### 自动换行
 

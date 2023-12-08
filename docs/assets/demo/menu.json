@@ -518,15 +518,13 @@
           "title": {
             "zh": "调整列宽",
             "en": "Adjust column width"
-          },
-          "meta": {
-            "title": "Adjust column width",
-            "keywords": "",
-            "category": "demo",
-            "group": "Interaction",
-            "cover": "https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/resize-col-width.gif",
-            "link": "'../../guide/interaction_and_event/resize_column_width'",
-            "option": ""
+          }
+        },
+        {
+          "path": "dblclick-resize-col-width",
+          "title": {
+            "zh": "双击列宽自动适应内容",
+            "en": "dblclick resize column width"
           }
         },
         {

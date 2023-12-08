@@ -1,6 +1,6 @@
 import type { IStage, IRect, ITextCache, INode, Text } from '@visactor/vrender';
 import { createStage, createRect, IContainPointMode, container, vglobal } from '@visactor/vrender';
-import type { CellSubLocation } from '../ts-types';
+import type { CellRange, CellSubLocation } from '../ts-types';
 import {
   type CellAddress,
   type CellLocation,
@@ -667,7 +667,14 @@ export class Scenegraph {
   updateCellSelectBorder(newStartCol: number, newStartRow: number, newEndCol: number, newEndRow: number) {
     updateCellSelectBorder(this, newStartCol, newStartRow, newEndCol, newEndRow);
   }
-
+  /** 根据select状态重新创建选中range节点  目前无调用者 */
+  recreateAllSelectRangeComponents() {
+    deleteAllSelectBorder(this);
+    this.table.stateManager.select.ranges.forEach((cellRange: CellRange) => {
+      updateCellSelectBorder(this, cellRange.start.col, cellRange.start.row, cellRange.end.col, cellRange.end.row);
+    });
+    moveSelectingRangeComponentsToSelectedRangeComponents(this);
+  }
   /**
    * @description: 列宽调整结果更新列宽
    * @param {number} col

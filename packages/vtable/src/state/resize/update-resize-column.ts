@@ -129,11 +129,7 @@ function updateResizeColForColumn(detaX: number, state: StateManager) {
 function updateResizeColForAll(detaX: number, state: StateManager) {
   // 全列调整
   const layout = state.table.internalProps.layoutMap as PivotHeaderLayoutMap;
-  for (
-    let col = state.table.options.frozenColCount;
-    col < state.table.colCount - state.table.rightFrozenColCount;
-    col++
-  ) {
+  for (let col = state.table.frozenColCount; col < state.table.colCount - state.table.rightFrozenColCount; col++) {
     // 是否禁止调整列宽disableColumnResize 对应canResizeColumn的逻辑判断
     if (!(state.table.internalProps.transpose || (state.table.isPivotTable() && !layout.indicatorsAsCol))) {
       const cellDefine = layout.getBody(col, state.table.columnHeaderLevelCount);
