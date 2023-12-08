@@ -2,6 +2,18 @@
   "name": "@visactor/vtable",
   "entries": [
     {
+      "version": "0.16.1",
+      "tag": "@visactor/vtable_v0.16.1",
+      "date": "Fri, 08 Dec 2023 10:37:39 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "fix: add min first screen limit"
+          }
+        ]
+      }
+    },
+    {
       "version": "0.16.0",
       "tag": "@visactor/vtable_v0.16.0",
       "date": "Fri, 08 Dec 2023 09:27:10 GMT",
