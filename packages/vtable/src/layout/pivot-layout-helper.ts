@@ -64,6 +64,7 @@ export class DimensionTree {
     value: '',
     children: [],
     level: -1,
+    levelSpan: 1,
     startIndex: 0,
     size: 0,
     startInTotal: 0,
