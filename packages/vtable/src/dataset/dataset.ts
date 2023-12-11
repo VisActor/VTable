@@ -234,7 +234,7 @@ export class Dataset {
             this.rowKeys,
             this.rows,
             this.indicatorsAsCol ? undefined : this.indicators,
-            this?.totals?.row?.showGrandTotals ||
+            this.totals?.row?.showGrandTotals ||
               (!this.indicatorsAsCol && this.columns.length === 0) ||
               (this.indicatorsAsCol && this.rows.length === 0),
             this.rowGrandTotalLabel
@@ -245,9 +245,11 @@ export class Dataset {
             this.rows,
             this.indicatorsAsCol ? undefined : this.indicators,
             this.rowsIsTotal,
-            this?.totals?.row?.showGrandTotals || (this.indicatorsAsCol && this.rows.length === 0),
+            this.totals?.row?.showGrandTotals || (this.indicatorsAsCol && this.rows.length === 0),
             this.rowGrandTotalLabel,
-            this.rowSubTotalLabel
+            this.rowSubTotalLabel,
+            this.totals?.row?.showGrandTotalsOnTop ?? false,
+            this.totals?.row?.showSubTotalsOnTop ?? false
           );
         }
       }
@@ -264,7 +266,9 @@ export class Dataset {
           this.colsIsTotal,
           this.totals?.column?.showGrandTotals || (!this.indicatorsAsCol && this.columns.length === 0), // || this.rows.length === 0,//todo  这里原有逻辑暂时注释掉
           this.colGrandTotalLabel,
-          this.colSubTotalLabel
+          this.colSubTotalLabel,
+          this.totals?.column?.showGrandTotalsOnLeft ?? false,
+          this.totals?.column?.showSubTotalsOnLeft ?? false
         );
       }
       const t8 = typeof window !== 'undefined' ? window.performance.now() : 0;
@@ -1270,7 +1274,9 @@ export class Dataset {
     subTotalFlags: boolean[],
     isGrandTotal: boolean,
     grandTotalLabel: string,
-    subTotalLabel: string
+    subTotalLabel: string,
+    showGrandTotalsOnTop: boolean,
+    showSubTotalsOnTop: boolean
   ) {
     /**
      *
@@ -1335,14 +1341,16 @@ export class Dataset {
                       })
                     : []
               };
+
               curChild.push(totalChild);
+
               curChild = totalChild.children;
             }
           }
           map.set(flatKey, item); // 存储路径对应的节点
           if (node) {
             //为了确保汇总小计放到最后 使用splice插入到倒数第二个位置。如果小计放前面 直接push就行
-            if (subTotalFlags[index - 1]) {
+            if (subTotalFlags[index - 1] && !showSubTotalsOnTop) {
               node.children.splice(node.children.length - 1, 0, item);
             } else {
               node.children.push(item);
@@ -1381,8 +1389,11 @@ export class Dataset {
             };
           }) ?? []
       };
-
-      result.push(node);
+      if (showGrandTotalsOnTop) {
+        result.unshift(node);
+      } else {
+        result.push(node);
+      }
     }
     return result;
   }
