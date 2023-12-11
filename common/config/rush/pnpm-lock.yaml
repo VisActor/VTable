@@ -328,6 +328,103 @@ importers:
       typescript: 4.9.5
       vite: 3.2.6_@types+node@20.10.0
 
+  ../../packages/vtable-export:
+    specifiers:
+      '@babel/core': 7.20.12
+      '@babel/preset-env': 7.20.2
+      '@internal/bundler': workspace:*
+      '@internal/eslint-config': workspace:*
+      '@internal/ts-config': workspace:*
+      '@rushstack/eslint-patch': ~1.1.4
+      '@types/chai': 4.2.22
+      '@types/jest': ^26.0.0
+      '@types/mocha': 9.0.0
+      '@types/node': '*'
+      '@types/offscreencanvas': 2019.6.4
+      '@types/react': ^18.0.0
+      '@types/react-dom': ^18.0.0
+      '@types/react-is': ^17.0.3
+      '@visactor/vchart': 1.7.3
+      '@visactor/vtable': workspace:*
+      '@visactor/vutils': ~0.16.10
+      '@vitejs/plugin-react': 3.1.0
+      axios: ^1.4.0
+      chai: 4.3.4
+      eslint: ~8.18.0
+      file-saver: 2.0.5
+      form-data: ~4.0.0
+      inversify: 6.0.1
+      jest: ^26.0.0
+      jest-electron: ^0.1.12
+      jest-transform-stub: ^2.0.0
+      json-formatter-js: ^2.3.4
+      magic-string: ^0.25.7
+      markdown-it: ^13.0.0
+      mocha: 9.1.3
+      node-fetch: 2.6.7
+      postcss: 8.4.21
+      react: ^18.0.0
+      react-dom: ^18.0.0
+      rimraf: 3.0.2
+      sass: 1.43.5
+      ts-jest: ^26.0.0
+      ts-loader: 9.2.6
+      ts-node: 10.9.0
+      tslib: 2.3.1
+      ttypescript: 1.5.13
+      typescript: 4.9.5
+      typescript-transform-paths: 3.3.1
+      vite: 3.2.6
+      vite-plugin-markdown: ^2.1.0
+    dependencies:
+      '@visactor/vtable': link:../vtable
+      '@visactor/vutils': 0.16.18
+      file-saver: 2.0.5
+    devDependencies:
+      '@babel/core': 7.20.12
+      '@babel/preset-env': 7.20.2_@babel+core@7.20.12
+      '@internal/bundler': link:../../tools/bundler
+      '@internal/eslint-config': link:../../share/eslint-config
+      '@internal/ts-config': link:../../share/ts-config
+      '@rushstack/eslint-patch': 1.1.4
+      '@types/chai': 4.2.22
+      '@types/jest': 26.0.24
+      '@types/mocha': 9.0.0
+      '@types/node': 20.10.0
+      '@types/offscreencanvas': 2019.6.4
+      '@types/react': 18.2.38
+      '@types/react-dom': 18.2.17
+      '@types/react-is': 17.0.7
+      '@visactor/vchart': 1.7.3
+      '@vitejs/plugin-react': 3.1.0_vite@3.2.6
+      axios: 1.6.2
+      chai: 4.3.4
+      eslint: 8.18.0
+      form-data: 4.0.0
+      inversify: 6.0.1
+      jest: 26.6.3_ts-node@10.9.0
+      jest-electron: 0.1.12_jest@26.6.3
+      jest-transform-stub: 2.0.0
+      json-formatter-js: 2.3.4
+      magic-string: 0.25.9
+      markdown-it: 13.0.2
+      mocha: 9.1.3
+      node-fetch: 2.6.7
+      postcss: 8.4.21
+      react: 18.2.0
+      react-dom: 18.2.0_react@18.2.0
+      rimraf: 3.0.2
+      sass: 1.43.5
+      ts-jest: 26.5.6_xuote2qreek47x2di7kesslrai
+      ts-loader: 9.2.6_typescript@4.9.5
+      ts-node: 10.9.0_4trkn2ujmhr5pmot7ghg7dhyji
+      tslib: 2.3.1
+      ttypescript: 1.5.13_fxi2xlggroal5l3a4znftvxz2m
+      typescript: 4.9.5
+      typescript-transform-paths: 3.3.1_typescript@4.9.5
+      vite: 3.2.6_okf62dhpj5izt2am6hjhv3ud7u
+      vite-plugin-markdown: 2.1.0_vite@3.2.6
+
   ../../share/eslint-config:
     specifiers:
       '@typescript-eslint/eslint-plugin': 5.30.0
@@ -3309,7 +3406,7 @@ packages:
       '@visactor/vdataset': 0.16.18
       '@visactor/vgrammar-coordinate': 0.9.4
       '@visactor/vgrammar-util': 0.9.4
-      '@visactor/vrender-components': 0.16.17
+      '@visactor/vrender-components': 0.16.20
       '@visactor/vrender-core': 0.16.20
       '@visactor/vrender-kits': 0.16.20
       '@visactor/vscale': 0.16.18
@@ -3365,14 +3462,6 @@ packages:
       '@visactor/vrender-kits': 0.16.20
       '@visactor/vutils': 0.16.18
 
-  /@visactor/vrender-components/0.16.17:
-    resolution: {integrity: sha512-D7brCgTblbY87kf8DK5OpQADkD51Ez7by7OxH6fMi5+b4NxBYzOCSeEKkKpiF/mWGUWHWSIHO6y38Hn5As5JZA==}
-    dependencies:
-      '@visactor/vrender-core': 0.16.17
-      '@visactor/vrender-kits': 0.16.17
-      '@visactor/vscale': 0.16.18
-      '@visactor/vutils': 0.16.18
-
   /@visactor/vrender-components/0.16.20:
     resolution: {integrity: sha512-kAiYwoyzahhO32OlkI1J1lGRaJX4sOkaob6H2+sUKO+7Qpj+76iegekrYcVGkR4AjUScLWg/Lv6PxWFSbbjz7Q==}
     dependencies:
@@ -3386,6 +3475,7 @@ packages:
     dependencies:
       '@visactor/vutils': 0.16.18
       color-convert: 2.0.1
+    dev: false
 
   /@visactor/vrender-core/0.16.20:
     resolution: {integrity: sha512-eRNz4l8BniXg0MvnwFOLc+lnYWC+8h6GDZgjIDw7K7QR8hIm2uY/PHBAzM/Yk5jHv3aGQ0RC3v33NlFaaAS+wg==}
@@ -3400,6 +3490,7 @@ packages:
       '@visactor/vrender-core': 0.16.17
       '@visactor/vutils': 0.16.18
       roughjs: 4.5.2
+    dev: false
 
   /@visactor/vrender-kits/0.16.20:
     resolution: {integrity: sha512-XqB7RsrqUxWg9SuyzKWoDRrQZRWVeUPm0Id/w6MsICZqRnZHllVPNezE71FT7trrQ8edpY8nWr5CJaSWyw1ylA==}
@@ -3536,6 +3627,7 @@ packages:
 
   /abab/2.0.6:
     resolution: {integrity: sha512-j2afSsaIENvHZN2B8GOpF566vZ5WVk5opAiMTvWgaQT8DkbOqsTfvNAvHoRGU2zzP8cPoqys+xHTRDWW8L+/BA==}
+    deprecated: Use your platform's native atob() and btoa() methods instead
     dev: true
 
   /abs-svg-path/0.1.1:
@@ -5351,6 +5443,7 @@ packages:
   /domexception/2.0.1:
     resolution: {integrity: sha512-yxJ2mFy/sibVQlu5qHjOkf9J3K6zgmCxgJ94u2EdvDOV09H+32LtRswEcUsmUWN72pVLOEnTSRaIVVzVQgS0dg==}
     engines: {node: '>=8'}
+    deprecated: Use your platform's native DOMException instead
     dependencies:
       webidl-conversions: 5.0.0
     dev: true
@@ -6270,6 +6363,10 @@ packages:
     dependencies:
       flat-cache: 3.2.0
 
+  /file-saver/2.0.5:
+    resolution: {integrity: sha512-P9bmyZ3h/PRG+Nzga+rbdI4OEpNDzAVyy74uVO9ATgzLK6VtAsYybF/+TOCvrc0MO793d6+42lLyZTw7/ArVzA==}
+    dev: false
+
   /file-source/0.6.1:
     resolution: {integrity: sha512-1R1KneL7eTXmXfKxC10V/9NeGOdbsAXJ+lQ//fvvcHUgtaZcZDWNJNblxAoVOyV1cj45pOtUrR3vZTBwqcW8XA==}
     dependencies:
@@ -6687,7 +6784,7 @@ packages:
       fs.realpath: 1.0.0
       inflight: 1.0.6
       inherits: 2.0.4
-      minimatch: 3.0.4
+      minimatch: 3.1.2
       once: 1.4.0
       path-is-absolute: 1.0.1
     dev: true
