@@ -36,7 +36,9 @@
   "dependencies": {
     "@visactor/vtable": "workspace:*",
     "@visactor/vutils": "~0.16.10",
-    "file-saver": "2.0.5"
+    "file-saver": "2.0.5",
+    "xlsx": "0.18.5",
+    "xlsx-js-style": "1.2.0"
   },
   "devDependencies": {
     "@visactor/vchart": "1.7.3",

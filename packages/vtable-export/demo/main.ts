@@ -1,7 +1,7 @@
 import { menus } from './menu';
 // import * as VTable from '../src';
 import { default as MarkdownIt } from 'markdown-it';
-import { downloadCsv, exportVTableToCsv } from '../src';
+import { downloadCsv, exportVTableToCsv, downloadExcel, exportVTableToExcel } from '../src';
 // window.VTable = VTable;
 // window.PivotTable = PivotTable;
 // window.PivotTable = PivotTable;
@@ -149,6 +149,7 @@ function bindExport() {
 
   exportExcelButton.addEventListener('click', () => {
     if (window.tableInstance) {
+      downloadExcel(exportVTableToExcel(window.tableInstance), 'export');
     }
   });
 }
