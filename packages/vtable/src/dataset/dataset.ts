@@ -1319,33 +1319,36 @@ export class Dataset {
           };
           if (subTotalFlags[index]) {
             let curChild = item.children;
-            for (let i = index; i < list.length - 1; i++) {
-              const totalChild: { value: string; dimensionKey: string; children: any[] } = {
-                value: subTotalLabel,
-                dimensionKey: rows[index + 1],
-                // id: `${flatKey}${concatStr}${subTotalLabel}`, // getId(item?.id, 1),
-                //树的叶子节点补充指标
-                children:
-                  index + 1 === list.length - 1 && indicators?.length >= 1
-                    ? indicators?.map(indicator => {
-                        if (typeof indicator === 'string') {
-                          return {
-                            indicatorKey: indicator,
-                            value: indicator
-                          };
-                        }
+            // for (let i = index; i < list.length - 1; i++) {
+            const totalChild: { value: string; dimensionKey: string; children: any[]; levelSpan: number } = {
+              value: subTotalLabel,
+              dimensionKey: rows[index + 1],
+              levelSpan: subTotalFlags.length - index - 1,
+              // id: `${flatKey}${concatStr}${subTotalLabel}`, // getId(item?.id, 1),
+              //树的叶子节点补充指标
+              children:
+                // i + 1 === list.length - 1 &&
+                indicators?.length >= 1
+                  ? indicators?.map(indicator => {
+                      if (typeof indicator === 'string') {
                         return {
-                          indicatorKey: indicator.indicatorKey,
-                          value: indicator.title
+                          indicatorKey: indicator,
+                          value: indicator
                         };
-                      })
-                    : []
-              };
+                      }
+                      return {
+                        indicatorKey: indicator.indicatorKey,
+                        value: indicator.title
+                      };
+                    })
+                  : []
+            };
 
-              curChild.push(totalChild);
+            curChild.push(totalChild);
 
-              curChild = totalChild.children;
-            }
+            curChild = totalChild.children;
+
+            // }
           }
           map.set(flatKey, item); // 存储路径对应的节点
           if (node) {
@@ -1371,10 +1374,10 @@ export class Dataset {
     }
     //最后将总计的节点加上
     if (isGrandTotal && arr?.length) {
-      const node: { value: string; dimensionKey: string; children: any[]; rowSpan: number } = {
+      const node: { value: string; dimensionKey: string; children: any[]; levelSpan: number } = {
         value: grandTotalLabel, // getId(item?.id, 1),
         dimensionKey: rows[0],
-        rowSpan: subTotalFlags.length,
+        levelSpan: subTotalFlags.length,
         children:
           indicators?.map(indicator => {
             if (typeof indicator === 'string') {
