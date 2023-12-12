@@ -816,6 +816,24 @@ export class Dataset {
         //   return changeValue;
         // };
       }
+      return {
+        value() {
+          return changeValue;
+        },
+        className: '',
+        push() {
+          // do nothing
+        },
+        formatValue() {
+          return changeValue;
+        },
+        clearCacheValue() {
+          // do nothing
+        },
+        reset() {
+          // do nothing
+        }
+      };
     }
 
     // }
