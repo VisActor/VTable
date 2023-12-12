@@ -36,7 +36,7 @@ Whether to display the table header.
 
 Pagination configuration.
 
-The basic table and VTable data analysis pivot table (enableDataAnalysis=true) support paging, but the pivot combination chart does not support paging.
+The basic table and VTable data analysis pivot table support paging, but the pivot combination chart does not support paging.
 
 The specific types of IPagination are as follows:
 

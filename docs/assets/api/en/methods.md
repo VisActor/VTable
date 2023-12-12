@@ -80,7 +80,7 @@ export interface IPagination {
   currentPage?: number;
 }
 ```
-The basic table and VTable data analysis pivot table (enableDataAnalysis=true) support paging, but the pivot combination chart does not support paging.
+The basic table and VTable data analysis pivot table support paging, but the pivot combination chart does not support paging.
 
 Note! The perPageCount in the pivot table will be automatically corrected to an integer multiple of the number of indicators.
 
