@@ -8,9 +8,8 @@ export function downloadCsv(str: string, name: string) {
   saveAs(blob, `${name}.csv`);
 }
 
-export function downloadExcel(workSheetStr: string, name: string) {
-  // debugger;
-  const arrayBuffer = workSheetStr2ArrayBuffer(workSheetStr);
+export function downloadExcel(arrayBuffer: ArrayBuffer, name: string) {
+  // const arrayBuffer = workSheetStr2ArrayBuffer(workSheetStr);
   const blob = new Blob([arrayBuffer], {
     type: 'application/octet-stream'
   });

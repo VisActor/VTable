@@ -147,9 +147,9 @@ function bindExport() {
     }
   });
 
-  exportExcelButton.addEventListener('click', () => {
+  exportExcelButton.addEventListener('click', async () => {
     if (window.tableInstance) {
-      downloadExcel(exportVTableToExcel(window.tableInstance), 'export');
+      downloadExcel(await exportVTableToExcel(window.tableInstance), 'export');
     }
   });
 }

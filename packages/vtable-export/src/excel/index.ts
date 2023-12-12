@@ -1,114 +1,115 @@
-import XLSX from 'xlsx-js-style';
-import { getCellStyle } from './style';
-import type { CellRange, IVTable } from '../util/type';
+import ExcelJS from 'exceljs';
+import { encodeCellAddress } from '../util/encode';
+import type { CellStyle, IVTable } from '../util/type';
 
-export function exportVTableToExcel(tableInstance: IVTable) {
-  const workSheet = exportVTableToWorkSheet(tableInstance);
-  const workBook = createWorkBook(workSheet);
+export async function exportVTableToExcel(tableInstance: IVTable) {
+  const workbook = new ExcelJS.Workbook();
+  const worksheet = workbook.addWorksheet('sheet1');
+  const columns = [];
 
-  const workBookExport = XLSX.write(workBook, {
-    bookType: 'xlsx',
-    bookSST: false,
-    type: 'binary'
-  });
-
-  return workBookExport;
-}
-
-function createWorkBook(workSheet: any, name: string = 'sheet') {
-  const workBook = { SheetNames: [] as any, Sheets: {} };
-
-  workBook.SheetNames.push(name);
-  workBook.Sheets[name] = workSheet;
-
-  return workBook;
-}
-
-function exportVTableToWorkSheet(tableInstance: IVTable) {
   const minRow = 0;
   const maxRow = tableInstance.rowCount - 1;
   const minCol = 0;
   const maxCol = tableInstance.colCount - 1;
 
-  const workSheet = {};
   const mergeCells = [];
   const mergeCellSet = new Set();
-  const columnsWidth = [];
-  const rowsWidth = [];
 
   for (let col = minCol; col <= maxCol; col++) {
     const colWith = tableInstance.getColWidth(col);
-    columnsWidth[col] = { wpx: colWith };
+    columns[col] = { width: colWith / 7 };
     for (let row = minRow; row <= maxRow; row++) {
-      if (!rowsWidth[row]) {
+      if (col === minCol) {
         const rowHeight = tableInstance.getRowHeight(row);
-        rowsWidth[row] = { hpx: rowHeight };
+        const worksheetRow = worksheet.getRow(row + 1);
+        worksheetRow.height = rowHeight * 0.75;
       }
 
       const cellValue = tableInstance.getCellValue(col, row);
-      const cell: XLSX.CellObject = {
-        v: cellValue,
-        t: typeof cellValue === 'number' ? 'n' : 's'
-      };
-      if (cellValue) {
-        cell.s = getCellStyle(col, row, tableInstance);
-      }
-      workSheet[encodeCellAddress(col, row)] = cell;
+      const cellStyle = tableInstance.getCellStyle(col, row);
+
+      const cell = worksheet.getCell(encodeCellAddress(col, row));
+      cell.value = cellValue;
+      cell.font = getCellFont(cellStyle);
+      cell.fill = getCellFill(cellStyle);
+      cell.border = getCellBorder(cellStyle);
+      cell.alignment = getCellAlignment(cellStyle);
 
       const cellRange = tableInstance.getCellRange(col, row);
       if (cellRange.start.col !== cellRange.end.col || cellRange.start.row !== cellRange.end.row) {
         const key = `${cellRange.start.col},${cellRange.start.row}:${cellRange.end.col},${cellRange.end.row}}`;
         if (!mergeCellSet.has(key)) {
           mergeCellSet.add(key);
-          mergeCells.push({
-            s: { c: cellRange.start.col, r: cellRange.start.row },
-            e: { c: cellRange.end.col, r: cellRange.end.row }
-          });
+          mergeCells.push(cellRange);
         }
       }
     }
   }
 
-  const tableRange = encodeCellRange({
-    start: {
-      col: 0,
-      row: 0
-    },
-    end: {
-      col: tableInstance.colCount - 1,
-      row: tableInstance.rowCount - 1
-    }
+  worksheet.columns = columns;
+  mergeCells.forEach(mergeCell => {
+    worksheet.mergeCells(
+      mergeCell.start.row + 1,
+      mergeCell.start.col + 1,
+      mergeCell.end.row + 1,
+      mergeCell.end.col + 1
+    );
   });
-
-  workSheet['!ref'] = tableRange;
-  workSheet['!merges'] = mergeCells;
-  workSheet['!cols'] = columnsWidth;
-  workSheet['!rows'] = rowsWidth;
-
-  return workSheet;
+  const buffer = await workbook.xlsx.writeBuffer();
+  return buffer;
 }
 
-/**
- * @description: comvert cell range to code
- * @param {CellRange} cellRange
- * @return {*}
- */
-function encodeCellRange(cellRange: CellRange) {
-  const start = encodeCellAddress(cellRange.start.col, cellRange.start.row);
-  const end = encodeCellAddress(cellRange.end.col, cellRange.end.row);
-  return `${start}:${end}`;
+function getCellFont(cellStyle: CellStyle): Partial<ExcelJS.Font> {
+  return {
+    // name: cellStyle.fontFamily || 'Arial', // only one font familt name
+    name: 'Arial',
+    size: cellStyle.fontSize || 10,
+    bold: cellStyle.fontWeight === 'bold', // only bold or not
+    italic: cellStyle.fontStyle === 'italic', // only italic or not
+    color: getColor('#000000'),
+    underline: cellStyle.underline
+  };
 }
 
-/**
- * @description: convert cell address to code
- * @param {number} col
- * @param {number} row
- * @return {*}
- */
-function encodeCellAddress(col: number, row: number) {
-  let s = '';
-  for (let column = col + 1; column > 0; column = Math.floor((column - 1) / 26)) {
-    s = String.fromCharCode(((column - 1) % 26) + 65) + s;
-  }
-  return s + (row + 1);
+function getCellFill(cellStyle: CellStyle): ExcelJS.Fill {
+  return {
+    type: 'pattern',
+    pattern: 'solid',
+    fgColor: getColor(cellStyle.bgColor)
+  };
+}
+
+function getCellBorder(cellStyle: CellStyle): Partial<ExcelJS.Borders> {
+  return {
+    top: {
+      style: 'medium',
+      color: getColor(cellStyle.borderColor)
+    },
+    left: {
+      style: 'medium',
+      color: getColor(cellStyle.borderColor)
+    },
+    bottom: {
+      style: 'medium',
+      color: getColor(cellStyle.borderColor)
+    },
+    right: {
+      style: 'medium',
+      color: getColor(cellStyle.borderColor)
+    }
+  };
+}
+
+function getCellAlignment(cellStyle: CellStyle): Partial<ExcelJS.Alignment> {
+  return {
+    horizontal: cellStyle.textAlign || 'left',
+    vertical: cellStyle.textBaseline,
+    wrapText: cellStyle.autoWrapText || false
+  };
+}
+
+function getColor(color: string) {
+  return {
+    argb: 'FF' + color.substring(1).toUpperCase()
+  };
 }
