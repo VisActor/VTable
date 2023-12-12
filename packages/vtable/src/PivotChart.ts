@@ -31,7 +31,7 @@ import { cellInRange, emptyFn } from './tools/helper';
 import { Dataset } from './dataset/dataset';
 import { _setDataSource } from './core/tableHelper';
 import { BaseTable } from './core/BaseTable';
-import type { PivotChartProtected } from './ts-types/base-table';
+import type { BaseTableAPI, PivotChartProtected } from './ts-types/base-table';
 import type { IChartColumnIndicator } from './ts-types/pivot-table/indicator/chart-indicator';
 import type { Chart } from './scenegraph/graphic/chart';
 import { clearChartCacheImage, updateChartData } from './scenegraph/refresh-node/update-chart';
@@ -389,7 +389,7 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
     }
     if (this.internalProps.layoutMap.isHeader(col, row)) {
       const { title, fieldFormat } = this.internalProps.layoutMap.getHeader(col, row);
-      return typeof fieldFormat === 'function' ? fieldFormat(title) : title;
+      return typeof fieldFormat === 'function' ? fieldFormat(title, col, row, this as BaseTableAPI) : title;
     }
     if (this.dataset) {
       const cellDimensionPath = this.internalProps.layoutMap.getCellHeaderPaths(col, row);
@@ -410,10 +410,8 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
     const rowIndex = this.getBodyIndexByRow(row);
     const colIndex = this.getBodyIndexByCol(col);
     const dataValue = this.records[rowIndex]?.[colIndex];
-    const cellHeaderPaths = this.internalProps.layoutMap.getCellHeaderPaths(col, row);
-
     if (typeof fieldFormat === 'function') {
-      const fieldResult = fieldFormat({ dataValue, ...cellHeaderPaths }, col, row, this);
+      const fieldResult = fieldFormat(dataValue, col, row, this as BaseTableAPI);
       return fieldResult;
     }
     return dataValue;
