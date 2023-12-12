@@ -80,7 +80,7 @@ export interface IPagination {
   currentPage?: number;
 }
 ```
-基本表格和VTable数据分析透视表(enableDataAnalysis=true)支持分页，透视组合图不支持分页。
+基本表格和VTable数据分析透视表支持分页，透视组合图不支持分页。
 
 注意! 透视表中perPageCount会自动修正为指标数量的整数倍。
 

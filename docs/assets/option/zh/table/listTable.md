@@ -36,7 +36,7 @@
 
 分页配置。
 
-基本表格和VTable数据分析透视表(enableDataAnalysis=true)支持分页，透视组合图不支持分页。
+基本表格和VTable数据分析透视表支持分页，透视组合图不支持分页。
 
 IPagination 的具体类型如下：
 

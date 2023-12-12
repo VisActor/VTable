@@ -214,9 +214,9 @@ const option = {
                     "headerStyle":{
                       fontWeight: "normal",
                     },
-                    "format":(rec)=>{
-                      if(rec)
-                      return '$'+Number(rec['Sales']).toFixed(2);
+                    "format":(value)=>{
+                      if(value)
+                      return '$'+Number(value).toFixed(2);
                       return '';
                     },
                     style:{
@@ -236,8 +236,9 @@ const option = {
                     "headerStyle":{
                       fontWeight: "normal",
                     },
-                    "format":(rec)=>{if(rec)
-                      return '$'+Number(rec['Profit']).toFixed(2);
+                    "format":(value)=>{
+                      if(value)
+                      return '$'+Number(value).toFixed(2);
                       return '';},
                     style:{
                       padding:[16,28,16,28],
