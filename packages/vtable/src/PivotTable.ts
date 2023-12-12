@@ -85,6 +85,9 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
     this.internalProps.dataConfig = cloneDeep(options.dataConfig);
 
     this.internalProps.enableDataAnalysis = options.enableDataAnalysis;
+    if (!options.rowTree && !options.columnTree) {
+      this.internalProps.enableDataAnalysis = true;
+    }
     const records = this.internalProps.records;
     if (this.internalProps.enableDataAnalysis && (options.rows || options.columns)) {
       const rowKeys =
@@ -224,7 +227,9 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
     internalProps.columnResizeType = options.columnResizeType ?? 'column';
     internalProps.dataConfig = cloneDeep(options.dataConfig);
     internalProps.enableDataAnalysis = options.enableDataAnalysis;
-
+    if (!options.rowTree && !options.columnTree) {
+      internalProps.enableDataAnalysis = true;
+    }
     //维护tree树形结构的展开状态
     if (
       options?.rowHierarchyType === 'tree' &&
