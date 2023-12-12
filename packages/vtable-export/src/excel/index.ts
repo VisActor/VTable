@@ -1,8 +1,6 @@
-import type * as VTable from '@visactor/vtable';
 import XLSX from 'xlsx-js-style';
-
-type IVTable = VTable.ListTable | VTable.PivotTable | VTable.PivotChart;
-type CellRange = VTable.TYPES.CellRange;
+import { getCellStyle } from './style';
+import type { CellRange, IVTable } from '../util/type';
 
 export function exportVTableToExcel(tableInstance: IVTable) {
   const workSheet = exportVTableToWorkSheet(tableInstance);
@@ -48,11 +46,14 @@ function exportVTableToWorkSheet(tableInstance: IVTable) {
       }
 
       const cellValue = tableInstance.getCellValue(col, row);
-      workSheet[encodeCellAddress(col, row)] = {
+      const cell: XLSX.CellObject = {
         v: cellValue,
-        t: typeof cellValue === 'number' ? 'n' : 's',
-        s: {}
+        t: typeof cellValue === 'number' ? 'n' : 's'
       };
+      if (cellValue) {
+        cell.s = getCellStyle(col, row, tableInstance);
+      }
+      workSheet[encodeCellAddress(col, row)] = cell;
 
       const cellRange = tableInstance.getCellRange(col, row);
       if (cellRange.start.col !== cellRange.end.col || cellRange.start.row !== cellRange.end.row) {
@@ -87,12 +88,23 @@ function exportVTableToWorkSheet(tableInstance: IVTable) {
   return workSheet;
 }
 
+/**
+ * @description: comvert cell range to code
+ * @param {CellRange} cellRange
+ * @return {*}
+ */
 function encodeCellRange(cellRange: CellRange) {
   const start = encodeCellAddress(cellRange.start.col, cellRange.start.row);
   const end = encodeCellAddress(cellRange.end.col, cellRange.end.row);
   return `${start}:${end}`;
 }
 
+/**
+ * @description: convert cell address to code
+ * @param {number} col
+ * @param {number} row
+ * @return {*}
+ */
 function encodeCellAddress(col: number, row: number) {
   let s = '';
   for (let column = col + 1; column > 0; column = Math.floor((column - 1) / 26)) {
