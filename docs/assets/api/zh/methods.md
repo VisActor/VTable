@@ -214,28 +214,48 @@ tableInstance.renderWithRecreateCells();
 ```
 
 ## getTableIndexByRecordIndex(Function)
-根据数据源的index 获取显示到表格中的index 行号或者列号（与转置相关）。注：ListTable特有接口
+根据数据源的index 获取显示到表格中的index 行号或者列号（与转置相关，非转置获取的是行号，转置表获取的是列号）。
+
+** ListTable 专有 ** 
 
 ```
   /**
-   * 根据数据源的index 获取显示到表格中的index 行号或者列号（与转置相关）。注：ListTable特有接口
+   * 根据数据源的index 获取显示到表格中的index 行号或者列号（与转置相关，非转置获取的是行号，转置表获取的是列号）。
+   
+   注：ListTable特有接口
    * @param recordIndex
    */
   getTableIndexByRecordIndex: (recordIndex: number) => number;
 ```
 
 ## getTableIndexByField(Function)
-根据数据源的field 获取显示到表格中的index 行号或者列号（与转置相关）。注：ListTable特有接口
+根据数据源的field 获取显示到表格中的index 行号或者列号（与转置相关，非转置获取的是行号，转置表获取的是列号）。
+
+** ListTable 专有 ** 
 ```
   /**
-   * 根据数据源的field 获取显示到表格中的index 行号或者列号（与转置相关）。注：ListTable特有接口
+   * 根据数据源的field 获取显示到表格中的index 行号或者列号（与转置相关，非转置获取的是行号，转置表获取的是列号）。注：ListTable特有接口
    * @param recordIndex
    */
   getTableIndexByField: (field: FieldDef) => number;
 ```
+
+
+## getRecordShowIndexByCell(Function)
+
+获取当前单元格数据在body部分的索引，即通过行列号去除表头层级数的索引
+
+** ListTable 专有 ** 
+```
+  /** 获取当前单元格在body部分的展示索引，即（ row / col ）- headerLevelCount。注：ListTable特有接口 */
+  getRecordShowIndexByCell(col: number, row: number): number
+```
+
 ## getCellAddrByFieldRecord(Function)
 
-根据数据源中的index和field获取单元格行列号。注：ListTable特有接口
+根据数据源中的index和field获取单元格行列号。
+
+注：ListTable特有接口
 ```
   /**
    * 根据数据源中的index和field获取单元格行列号。注：ListTable特有接口
@@ -696,14 +716,4 @@ use case: 点击图例项后 更新过滤规则 来更新图表
    * @param recordIndexs 要删除数据的索引（显示到body中的条目索引）
    */
   deleteRecords(recordIndexs: number[]) 
-```
-
-## getRecordShowIndexByCell(Function)
-
-获取当前单元格数据在body部分的索引，即通过行列号去除表头层级数的索引
-
-** ListTable 专有 ** 
-```
-  /** 获取当前单元格在body部分的展示索引（row / col-headerLevelCount）。注：ListTable特有接口 */
-  getRecordShowIndexByCell(col: number, row: number): number
 ```
