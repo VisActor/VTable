@@ -3,14 +3,13 @@ category: examples
 group: table-type
 title: Pivot Table
 cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/pivot-table.png
-order: 1-4
 link: '../guide/table_type/Pivot_table/pivot_table_useage'
 option: PivotTable#columnTree
 ---
 
-# Pivot Table
+# Pivot Table(custom header tree)
 
-Pivot Table
+Pivot Table, this example passes in the custom header tree structure rowTree and columnTree.
 
 ## Key Configurations
 
