@@ -794,7 +794,7 @@ export class Scenegraph {
       }
     }
 
-    if (this.table.heightMode === 'adaptive' || this.table.autoFillHeight) {
+    if (this.table.heightMode === 'adaptive') {
       // perf to be optimized:
       // reason to use recalculateRowHeights();
       // 1. error amplification（误差放大） in dealHeightMode when multiple resize
@@ -802,6 +802,9 @@ export class Scenegraph {
       // will cause scale error in dealHeightMode()
       this.recalculateRowHeights();
       // this.dealHeightMode();
+    } else if (this.table.autoFillHeight && this.table.tableNoFrameHeight >= this.table.getAllRowsHeight()) {
+      //行数超多时性能问题 所以这个地方单独做判断处理
+      this.dealHeightMode();
     }
 
     // this.dealWidthMode();
