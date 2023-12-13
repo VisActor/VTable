@@ -12,9 +12,6 @@ export function bindContainerDomListener(eventManager: EventManager) {
   const handler: EventHandler = table.internalProps.handler;
 
   handler.on(table.getElement(), 'blur', (e: MouseEvent) => {
-    if ((table as ListTableAPI).editorManager) {
-      (table as ListTableAPI).editorManager.completeEdit();
-    }
     eventManager.dealTableHover();
     // eventManager.dealTableSelect();
   });
