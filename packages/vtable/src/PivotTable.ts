@@ -952,6 +952,10 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
     }
     this.eventManager.updateEventBinder();
   }
+  /** 结束编辑 */
+  completeEditCell() {
+    this.editorManager.completeEdit();
+  }
   /** 获取单元格对应的编辑器 */
   getEditor(col: number, row: number) {
     const define = this.getBodyColumnDefine(col, row);
