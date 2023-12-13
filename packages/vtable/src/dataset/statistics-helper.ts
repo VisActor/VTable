@@ -4,7 +4,7 @@ import type { BaseTableAPI } from '../ts-types/base-table';
 
 export abstract class Aggregator {
   className = 'Aggregator';
-  isRecord?: boolean = true;
+  isRecord?: boolean = true; //是否需要维护records 将数据源都记录下来
   records?: any[] = [];
   type?: string;
   field?: string | string[];
@@ -64,6 +64,26 @@ export class RecordAggregator extends Aggregator {
   }
   reset() {
     this.records = [];
+  }
+}
+
+export class NoneAggregator extends Aggregator {
+  type: string = AggregationType.NONE; //仅获取其中一条数据 不做聚合 其fieldValue可以是number或者string类型
+  isRecord?: boolean = true;
+  declare field?: string;
+  fieldValue?: any;
+  push(record: any): void {
+    if (this.isRecord) {
+      this.records = [record];
+    }
+    this.fieldValue = record[this.field];
+  }
+  value() {
+    return this.fieldValue;
+  }
+  reset() {
+    this.records = [];
+    this.fieldValue = undefined;
   }
 }
 export class SumAggregator extends Aggregator {

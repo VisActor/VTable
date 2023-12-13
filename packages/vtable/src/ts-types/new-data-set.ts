@@ -10,6 +10,7 @@ export interface TotalsStatus {
 
 export enum AggregationType {
   RECORD = 'RECORD',
+  NONE = 'NONE',
   SUM = 'SUM',
   MIN = 'MIN',
   MAX = 'MAX',
