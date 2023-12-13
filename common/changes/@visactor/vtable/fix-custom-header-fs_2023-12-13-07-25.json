@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vtable",
+      "comment": "feat: add enableCellPadding config in custom layout",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vtable"
+}

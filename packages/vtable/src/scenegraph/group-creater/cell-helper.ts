@@ -142,6 +142,7 @@ export function createCell(
         cellHeight,
         false,
         table.heightMode === 'autoHeight',
+        padding,
         table
       );
       customElementsGroup = customResult.elementsGroup;
