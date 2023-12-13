@@ -5,6 +5,19 @@ export const menus = [
       {
         path: 'list',
         name: 'list'
+      },
+      {
+        path: 'list',
+        name: 'link'
+      }
+    ]
+  },
+  {
+    menu: 'pivotTable',
+    children: [
+      {
+        path: 'pivot',
+        name: 'pivot-basic'
       }
     ]
   }

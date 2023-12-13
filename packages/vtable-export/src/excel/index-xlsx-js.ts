@@ -1,5 +1,5 @@
 import XLSX from 'xlsx-js-style';
-import { getCellStyle } from './style';
+import { getCellStyle } from './style-xlsx-js';
 import type { CellRange, IVTable } from '../util/type';
 
 export function exportVTableToExcel(tableInstance: IVTable) {

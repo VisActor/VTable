@@ -1,17 +1,17 @@
 import ExcelJS from 'exceljs';
 import { encodeCellAddress } from '../util/encode';
-import type { CellStyle, IVTable } from '../util/type';
+import type { CellType, IVTable } from '../util/type';
+import { getCellAlignment, getCellBorder, getCellFill, getCellFont } from './style';
 
 export async function exportVTableToExcel(tableInstance: IVTable) {
   const workbook = new ExcelJS.Workbook();
   const worksheet = workbook.addWorksheet('sheet1');
-  const columns = [];
 
+  const columns = [];
   const minRow = 0;
   const maxRow = tableInstance.rowCount - 1;
   const minCol = 0;
   const maxCol = tableInstance.colCount - 1;
-
   const mergeCells = [];
   const mergeCellSet = new Set();
 
@@ -27,10 +27,11 @@ export async function exportVTableToExcel(tableInstance: IVTable) {
 
       const cellValue = tableInstance.getCellValue(col, row);
       const cellStyle = tableInstance.getCellStyle(col, row);
+      const cellType = tableInstance.getCellType(col, row);
 
       const cell = worksheet.getCell(encodeCellAddress(col, row));
-      cell.value = cellValue;
-      cell.font = getCellFont(cellStyle);
+      cell.value = getCellValue(cellValue, cellType);
+      cell.font = getCellFont(cellStyle, cellType);
       cell.fill = getCellFill(cellStyle);
       cell.border = getCellBorder(cellStyle);
       cell.alignment = getCellAlignment(cellStyle);
@@ -59,57 +60,13 @@ export async function exportVTableToExcel(tableInstance: IVTable) {
   return buffer;
 }
 
-function getCellFont(cellStyle: CellStyle): Partial<ExcelJS.Font> {
-  return {
-    // name: cellStyle.fontFamily || 'Arial', // only one font familt name
-    name: 'Arial',
-    size: cellStyle.fontSize || 10,
-    bold: cellStyle.fontWeight === 'bold', // only bold or not
-    italic: cellStyle.fontStyle === 'italic', // only italic or not
-    color: getColor('#000000'),
-    underline: cellStyle.underline
-  };
-}
-
-function getCellFill(cellStyle: CellStyle): ExcelJS.Fill {
-  return {
-    type: 'pattern',
-    pattern: 'solid',
-    fgColor: getColor(cellStyle.bgColor)
-  };
-}
-
-function getCellBorder(cellStyle: CellStyle): Partial<ExcelJS.Borders> {
-  return {
-    top: {
-      style: 'medium',
-      color: getColor(cellStyle.borderColor)
-    },
-    left: {
-      style: 'medium',
-      color: getColor(cellStyle.borderColor)
-    },
-    bottom: {
-      style: 'medium',
-      color: getColor(cellStyle.borderColor)
-    },
-    right: {
-      style: 'medium',
-      color: getColor(cellStyle.borderColor)
-    }
-  };
-}
-
-function getCellAlignment(cellStyle: CellStyle): Partial<ExcelJS.Alignment> {
-  return {
-    horizontal: cellStyle.textAlign || 'left',
-    vertical: cellStyle.textBaseline,
-    wrapText: cellStyle.autoWrapText || false
-  };
-}
-
-function getColor(color: string) {
-  return {
-    argb: 'FF' + color.substring(1).toUpperCase()
-  };
+function getCellValue(cellValue: string, cellType: CellType) {
+  if (cellType === 'link') {
+    return {
+      text: cellValue,
+      hyperlink: cellValue,
+      tooltip: cellValue
+    };
+  }
+  return cellValue;
 }
