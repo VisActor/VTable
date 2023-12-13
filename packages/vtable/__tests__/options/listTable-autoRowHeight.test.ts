@@ -119,7 +119,10 @@ describe('listTable-autoRowHeight init test', () => {
       // lineThroughDash: undefined,
       underline: false,
       // underlineDash: undefined
-      padding: [10, 0, 10, 60]
+      padding: [10, 0, 10, 60],
+      _linkColor: '#3772ff',
+      _strokeArrayColor: undefined,
+      _strokeArrayWidth: undefined
     });
   });
 

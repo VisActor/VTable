@@ -203,7 +203,10 @@ describe('listTable-1W init test', () => {
       textBaseline: 'middle',
       textOverflow: 'ellipsis',
       underline: false,
-      underlineWidth: undefined
+      underlineWidth: undefined,
+      _linkColor: '#3772ff',
+      _strokeArrayColor: undefined,
+      _strokeArrayWidth: undefined
     });
   });
   test('listTable-1W getRowHeight colWidth', () => {

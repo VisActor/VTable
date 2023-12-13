@@ -6,6 +6,7 @@ import { getCellAlignment, getCellBorder, getCellFill, getCellFont } from './sty
 export async function exportVTableToExcel(tableInstance: IVTable) {
   const workbook = new ExcelJS.Workbook();
   const worksheet = workbook.addWorksheet('sheet1');
+  worksheet.properties.defaultRowHeight = 40;
 
   const columns = [];
   const minRow = 0;
@@ -17,12 +18,13 @@ export async function exportVTableToExcel(tableInstance: IVTable) {
 
   for (let col = minCol; col <= maxCol; col++) {
     const colWith = tableInstance.getColWidth(col);
-    columns[col] = { width: colWith / 7 };
+    columns[col] = { width: colWith / 6 };
     for (let row = minRow; row <= maxRow; row++) {
       if (col === minCol) {
         const rowHeight = tableInstance.getRowHeight(row);
         const worksheetRow = worksheet.getRow(row + 1);
-        worksheetRow.height = rowHeight * 0.75;
+        // worksheetRow.height = rowHeight * 0.75;
+        worksheetRow.height = rowHeight;
       }
 
       const cellValue = tableInstance.getCellValue(col, row);
@@ -56,6 +58,30 @@ export async function exportVTableToExcel(tableInstance: IVTable) {
       mergeCell.end.col + 1
     );
   });
+
+  // frozen
+  const frozenView: ExcelJS.WorksheetViewFrozen[] = [];
+  // top frozen
+  if (tableInstance.frozenRowCount > 0) {
+    frozenView.push({
+      state: 'frozen',
+      ySplit: tableInstance.frozenRowCount,
+      // activeCell: 'A1',
+      topLeftCell: encodeCellAddress(0, tableInstance.frozenRowCount)
+    });
+  }
+  // left frozen
+  if (tableInstance.frozenColCount > 0) {
+    frozenView.push({
+      state: 'frozen',
+      xSplit: tableInstance.frozenColCount,
+      // activeCell: 'A1',
+      topLeftCell: encodeCellAddress(tableInstance.frozenColCount, 0)
+    });
+  }
+  // not support bottom&right frozen
+  worksheet.views = frozenView;
+
   const buffer = await workbook.xlsx.writeBuffer();
   return buffer;
 }

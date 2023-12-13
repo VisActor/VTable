@@ -138,7 +138,10 @@ describe('listTable init test', () => {
       underlineWidth: undefined,
       lineThrough: false,
       lineThroughLineWidth: undefined,
-      padding: [10, 16, 10, 16]
+      padding: [10, 16, 10, 16],
+      _linkColor: '#3772ff',
+      _strokeArrayColor: undefined,
+      _strokeArrayWidth: undefined
     });
   });
   test('listTable updateOption records&autoWidth&widthMode', () => {
