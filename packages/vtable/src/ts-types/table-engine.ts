@@ -20,6 +20,7 @@ import type { ICellAxisOption, ITableAxisOption } from './component/axis';
 import type { IEditor } from '@visactor/vtable-editors';
 import type { ITextStyleOption } from '../body-helper/style';
 import type { DataSource } from '../data';
+import type { EditManeger } from '../edit/edit-manager';
 
 export interface CellAddress {
   col: number;
@@ -157,6 +158,7 @@ export interface ListTableConstructorOptions extends BaseTableConstructorOptions
 
 export interface ListTableAPI extends BaseTableAPI {
   options: ListTableConstructorOptions;
+  editorManager: EditManeger;
   sortState: SortState[] | SortState | null;
   // internalProps: ListTableProtected;
   isListTable: () => true;
@@ -243,9 +245,9 @@ export interface PivotTableConstructorOptions extends BaseTableConstructorOption
   /** 数据分析相关配置 enableDataAnalysis开启后该配置才会有效 */
   dataConfig?: IDataConfig;
   /**
-   * 透视表是否开启数据分析
-   * 如果传入数据是明细数据需要聚合分析则开启
-   * 如传入数据是经过聚合好的为了提升性能这里设置为false，同时需要传入columnTree和rowTree
+   * 透视表是否开启数据分析 默认false
+   * 如果传入数据是明细数据需要聚合分析则开启 赋值为true
+   * 如传入数据是经过聚合好的为了提升性能这里设为false即可，同时呢需要传入自己组织好的行头树结构columnTree和rowTree
    */
   enableDataAnalysis?: boolean;
   /** 指标标题 用于显示到角头的值*/
@@ -309,6 +311,7 @@ export interface PivotChartConstructorOptions extends BaseTableConstructorOption
 export interface PivotTableAPI extends BaseTableAPI {
   records?: any;
   options: PivotTableConstructorOptions;
+  editorManager: EditManeger;
   // internalProps: PivotTableProtected;
   pivotSortState: PivotSortState[];
   isListTable: () => false;

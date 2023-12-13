@@ -667,12 +667,12 @@ export function createTable() {
         indicatorKey: '220524114340013',
         title: '销售额',
         width: 'auto',
-        format(record) {
+        format(value) {
           // if (rec.rowDimensions[0].value === '东北') return `${rec.dataValue}%`;
-          if (!record?.['220524114340013']) {
+          if (!value) {
             return '--';
           }
-          return Math.floor(parseFloat(record?.['220524114340013']));
+          return Math.floor(parseFloat(value));
         },
         headerStyle: {
           color: 'red',
@@ -699,12 +699,12 @@ export function createTable() {
       {
         indicatorKey: '220524114340014',
         title: '利润',
-        format(record) {
+        format(value) {
           // if (rec.rowDimensions[0].value === '东北') return `${rec.dataValue}%`;
-          if (!record?.['220524114340014']) {
+          if (!value) {
             return '--';
           }
-          return Math.floor(parseFloat(record?.['220524114340014']));
+          return Math.floor(parseFloat(value));
         },
         width: 'auto',
         headerStyle: {

@@ -230,7 +230,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
     const { field } = table.internalProps.layoutMap.getBody(col, row);
     return table.getRawFieldData(field, col, row);
   }
-  /** 获取当前单元格在body部分的展示索引（row / col-headerLevelCount）。注：ListTable特有接口 */
+  /** 获取当前单元格在body部分的展示索引 即(row / col)-headerLevelCount。注：ListTable特有接口 */
   getRecordShowIndexByCell(col: number, row: number): number {
     const { layoutMap } = this.internalProps;
     return layoutMap.getRecordIndexByCell(col, row);

@@ -449,7 +449,23 @@ export function updateCell(col: number, row: number, table: BaseTableAPI, addNew
         dx: hierarchyOffset,
         x
       };
+      const oldText = textMark.attribute.text;
       textMark.setAttributes(cellTheme.text ? (Object.assign({}, cellTheme.text, attribute) as any) : attribute);
+      if (!oldText && textMark.attribute.text) {
+        const textBaseline = cellTheme.text.textBaseline;
+        const height = cellHeight - (padding[0] + padding[2]);
+        let y = 0;
+        if (textBaseline === 'middle') {
+          y = padding[0] + (height - textMark.AABBBounds.height()) / 2;
+        } else if (textBaseline === 'bottom') {
+          y = padding[0] + height - textMark.AABBBounds.height();
+        } else {
+          y = padding[0];
+        }
+        textMark.setAttributes({
+          y
+        });
+      }
     }
     return oldCellGroup;
   }

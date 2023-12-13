@@ -80,7 +80,7 @@ export interface IPagination {
   currentPage?: number;
 }
 ```
-The basic table and VTable data analysis pivot table (enableDataAnalysis=true) support paging, but the pivot combination chart does not support paging.
+The basic table and VTable data analysis pivot table support paging, but the pivot combination chart does not support paging.
 
 Note! The perPageCount in the pivot table will be automatically corrected to an integer multiple of the number of indicators.
 
@@ -212,28 +212,50 @@ Get the data item of this cell
   getRecordByCell(col: number, row: number)
 ```
 ## getTableIndexByRecordIndex(Function)
-Get the index row number or column number displayed in the table based on the index of the data source (related to transposition). Note: ListTable specific interface
+Get the index row number or column number displayed in the table based on the index of the data source (Related to transposition, the non-transposition obtains the row number, and the transposed table obtains the column number). 
+
+Note: ListTable specific interface
 
 ```
   /**
-   * Get the index row number or column number displayed in the table based on the index of the data source (related to transposition). Note: ListTable specific interface
+   * Get the index row number or column number displayed in the table based on the index of the data source (Related to transposition, the non-transposition obtains the row number, and the transposed table obtains the column number). 
+   
+   Note: ListTable specific interface
    * @param recordIndex
    */
   getTableIndexByRecordIndex: (recordIndex: number) => number;
 ```
 
 ## getTableIndexByField(Function)
-Get the index row number or column number displayed in the table according to the field of the data source (related to transposition). Note: ListTable specific interface
+Get the index row number or column number displayed in the table according to the field of the data source (Related to transposition, the non-transposition obtains the row number, and the transposed table obtains the column number).
+
+ Note: ListTable specific interface
 ```
   /**
-   * Get the index row number or column number displayed in the table according to the field of the data source (related to transposition). Note: ListTable specific interface
+   * Get the index row number or column number displayed in the table according to the field of the data source (Related to transposition, the non-transposition obtains the row number, and the transposed table obtains the column number). 
+   
+   Note: ListTable specific interface
    * @param recordIndex
    */
   getTableIndexByField: (field: FieldDef) => number;
 ```
+
+
+## getRecordShowIndexByCell(Function)
+
+Get the index of the current cell data in the body part, that is, remove the index of the header level number by the row and column number.
+
+** ListTable proprietary **
+```
+  /** Get the display index of the current cell in the body part,it is ( row / col )- headerLevelCount. Note: ListTable specific interface */
+  getRecordShowIndexByCell(col: number, row: number): number
+```
+
 ## getCellAddrByFieldRecord(Function)
 
-Get the cell row and column number based on the index and field in the data source. Note: ListTable specific interface
+Get the cell row and column number based on the index and field in the data source. 
+
+Note: ListTable specific interface
 ```
   /**
    * Get the cell row and column number based on the index and field in the data source. Note: ListTable specific interface
@@ -695,14 +717,4 @@ Delete data supports multiple pieces of data
    * @param recordIndexs The index of the data to be deleted (the entry index displayed in the body)
    */
   deleteRecords(recordIndexs: number[])
-```
-
-## getRecordShowIndexByCell(Function)
-
-Get the index of the current cell data in the body part, that is, remove the index of the header level number by the row and column number.
-
-** ListTable proprietary **
-```
-  /** Get the display index of the current cell in the body part (row/col-headerLevelCount). Note: ListTable specific interface */
-  getRecordShowIndexByCell(col: number, row: number): number
 ```
