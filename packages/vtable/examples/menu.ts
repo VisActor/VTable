@@ -549,6 +549,10 @@ export const menus = [
       {
         path: 'custom',
         name: 'custom-layout'
+      },
+      {
+        path: 'custom',
+        name: 'custom-header'
       }
     ]
   },
