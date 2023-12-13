@@ -1,6 +1,21 @@
 # Change Log - @visactor/vtable
 
-This log was last generated on Wed, 13 Dec 2023 03:30:39 GMT and should not be manually modified.
+This log was last generated on Wed, 13 Dec 2023 11:43:30 GMT and should not be manually modified.
+
+## 0.16.3
+Wed, 13 Dec 2023 11:43:30 GMT
+
+### Updates
+
+- fix: fix axis theme get function
+- feat: add enableCellPadding config in custom layout
+- feat: add column disableHover&disableSelect config
+- fix: pivot table support not number type #718
+
+
+- fix: edge cell selection border clip #716
+
+
 
 ## 0.16.2
 Wed, 13 Dec 2023 03:30:39 GMT
