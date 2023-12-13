@@ -219,7 +219,7 @@ export function computeRowsHeight(
 
       actualHeight += rowHeight;
     }
-
+    table.scenegraph._dealAutoFillHeightOriginRowsHeight = actualHeight;
     // 如果内容高度小于canvas高度，执行adaptive放大
     if (actualHeight < canvasHeight && actualHeight - actualHeaderHeight > 0) {
       const factor = (canvasHeight - actualHeaderHeight) / (actualHeight - actualHeaderHeight);
