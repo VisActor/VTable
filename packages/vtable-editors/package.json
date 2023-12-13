@@ -1,6 +1,6 @@
 {
   "name": "@visactor/vtable-editors",
-  "version": "0.16.1",
+  "version": "0.16.2",
   "description": "",
   "sideEffects": false,
   "main": "cjs/index.js",
