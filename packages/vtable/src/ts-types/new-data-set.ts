@@ -10,7 +10,7 @@ export interface TotalsStatus {
 
 export enum AggregationType {
   RECORD = 'RECORD',
-  NONE = 'NONE',
+  NONE = 'NONE', //不做聚合 只获取其中一条数据作为节点的record 取其field
   SUM = 'SUM',
   MIN = 'MIN',
   MAX = 'MAX',
