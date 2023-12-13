@@ -1,6 +1,24 @@
 # Change Log - @visactor/vtable
 
-This log was last generated on Fri, 08 Dec 2023 10:37:39 GMT and should not be manually modified.
+This log was last generated on Wed, 13 Dec 2023 03:30:39 GMT and should not be manually modified.
+
+## 0.16.2
+Wed, 13 Dec 2023 03:30:39 GMT
+
+### Updates
+
+- fix: blank cell edit invalid on pivottbale #712
+
+
+- fix: data lazy load when drag header position #705
+
+
+- refactor: pivot table format arguments
+
+
+- docs: pivot table format usage update
+
+
 
 ## 0.16.1
 Fri, 08 Dec 2023 10:37:39 GMT

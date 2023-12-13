@@ -2,6 +2,27 @@
   "name": "@visactor/vtable",
   "entries": [
     {
+      "version": "0.16.2",
+      "tag": "@visactor/vtable_v0.16.2",
+      "date": "Wed, 13 Dec 2023 03:30:39 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "fix: blank cell edit invalid on pivottbale #712\n\n"
+          },
+          {
+            "comment": "fix: data lazy load when drag header position #705\n\n"
+          },
+          {
+            "comment": "refactor: pivot table format arguments\n\n"
+          },
+          {
+            "comment": "docs: pivot table format usage update\n\n"
+          }
+        ]
+      }
+    },
+    {
       "version": "0.16.1",
       "tag": "@visactor/vtable_v0.16.1",
       "date": "Fri, 08 Dec 2023 10:37:39 GMT",
