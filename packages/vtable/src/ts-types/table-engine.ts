@@ -20,6 +20,7 @@ import type { ICellAxisOption, ITableAxisOption } from './component/axis';
 import type { IEditor } from '@visactor/vtable-editors';
 import type { ITextStyleOption } from '../body-helper/style';
 import type { DataSource } from '../data';
+import type { EditManeger } from '../edit/edit-manager';
 
 export interface CellAddress {
   col: number;
@@ -157,6 +158,7 @@ export interface ListTableConstructorOptions extends BaseTableConstructorOptions
 
 export interface ListTableAPI extends BaseTableAPI {
   options: ListTableConstructorOptions;
+  editorManager: EditManeger;
   sortState: SortState[] | SortState | null;
   // internalProps: ListTableProtected;
   isListTable: () => true;
@@ -309,6 +311,7 @@ export interface PivotChartConstructorOptions extends BaseTableConstructorOption
 export interface PivotTableAPI extends BaseTableAPI {
   records?: any;
   options: PivotTableConstructorOptions;
+  editorManager: EditManeger;
   // internalProps: PivotTableProtected;
   pivotSortState: PivotSortState[];
   isListTable: () => false;

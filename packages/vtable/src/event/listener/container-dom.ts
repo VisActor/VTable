@@ -1,6 +1,6 @@
 import { isValid } from '@visactor/vutils';
 import type { EventHandler } from '../EventHandler';
-import type { KeydownEvent } from '../../ts-types';
+import type { KeydownEvent, ListTableAPI } from '../../ts-types';
 import { TABLE_EVENT_TYPE } from '../../core/TABLE_EVENT_TYPE';
 import { handleWhell } from '../scroll';
 import { browser } from '../../tools/helper';
@@ -12,6 +12,9 @@ export function bindContainerDomListener(eventManager: EventManager) {
   const handler: EventHandler = table.internalProps.handler;
 
   handler.on(table.getElement(), 'blur', (e: MouseEvent) => {
+    if ((table as ListTableAPI).editorManager) {
+      (table as ListTableAPI).editorManager.completeEdit();
+    }
     eventManager.dealTableHover();
     // eventManager.dealTableSelect();
   });
