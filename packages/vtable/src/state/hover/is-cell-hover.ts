@@ -83,10 +83,10 @@ export function isCellHover(state: StateManager, col: number, row: number): stri
     let cellDisable;
     if (isHeader) {
       const define = table.getHeaderDefine(col, row);
-      cellDisable = define.disableHeaderHover;
+      cellDisable = define?.disableHeaderHover;
     } else {
       const define = table.getBodyColumnDefine(col, row);
-      cellDisable = define.disableHover;
+      cellDisable = define?.disableHover;
     }
 
     if (cellDisable) {
