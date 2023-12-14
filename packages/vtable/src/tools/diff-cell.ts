@@ -49,7 +49,7 @@ export function diffCellAddress(
 }
 
 // find diff between two arrays
-export function diffCellIndices(oldIndexedData: (number | number[])[], currentIndexedData: (number | number[])[]) {
+function diffCellIndices(oldIndexedData: (number | number[])[], currentIndexedData: (number | number[])[]) {
   const add = [];
   const remove = [];
   // find removed indices
@@ -97,5 +97,62 @@ function checkIndex(oldIndex: number | number[], newIndex: number | number[]): b
       return false;
     }
   }
+  return true;
+}
+
+export function calculateArrayDiff(originalArray: (number | number[])[], targetArray: (number | number[])[]) {
+  const add = [];
+  const remove = [];
+
+  const originalMap = new Map();
+  for (let i = 0; i < originalArray.length; i++) {
+    const element = originalArray[i];
+    const key = JSON.stringify(element);
+    if (originalMap.has(key)) {
+      originalMap.get(key).push(i);
+    } else {
+      originalMap.set(key, [i]);
+    }
+  }
+
+  for (let i = 0; i < targetArray.length; i++) {
+    const element = targetArray[i];
+    const key = JSON.stringify(element);
+    if (!originalMap.has(key)) {
+      add.push(i);
+    } else {
+      const indices = originalMap.get(key);
+      indices.shift(); // Remove the first index
+      if (indices.length === 0) {
+        originalMap.delete(key);
+      }
+    }
+  }
+
+  for (let i = 0; i < originalArray.length; i++) {
+    const element = originalArray[i];
+    if (!targetArray.some(item => isEqual(item, element))) {
+      remove.push(i);
+    }
+  }
+
+  return { add, remove };
+}
+
+function isEqual(arr1: any, arr2: any) {
+  if (arr1 === arr2) {
+    return true;
+  }
+
+  if (arr1.length !== arr2.length) {
+    return false;
+  }
+
+  for (let i = 0; i < arr1.length; i++) {
+    if (arr1[i] !== arr2[i]) {
+      return false;
+    }
+  }
+
   return true;
 }
