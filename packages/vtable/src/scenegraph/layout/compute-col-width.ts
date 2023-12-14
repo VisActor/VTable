@@ -131,7 +131,7 @@ export function computeColsWidth(table: BaseTableAPI, colStart?: number, colEnd?
     let actualWidth = 0;
     for (let col = 0; col < table.colCount; col++) {
       const colWidth = update ? newWidths[col] : table.getColWidth(col);
-      if (col < table.frozenColCount || col >= table.colCount - table.rightFrozenColCount) {
+      if (col < table.frozenColCount || (table.isPivotChart() && col >= table.colCount - table.rightFrozenColCount)) {
         actualHeaderWidth += colWidth;
       }
       actualWidth += colWidth;
@@ -608,7 +608,7 @@ function getColWidthDefinedWidthResizedWidth(col: number, table: BaseTableAPI) {
   return widthDefined;
 }
 
-function getAdaptiveWidth(
+export function getAdaptiveWidth(
   totalDrawWidth: number,
   startCol: number,
   endColPlus1: number,
