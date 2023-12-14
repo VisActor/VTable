@@ -181,15 +181,7 @@ function updateTableAxes(containerGroup: Group, table: BaseTableAPI) {
             const axisConfig = table.internalProps.layoutMap.getAxisConfigInPivotChart(cell.col, cell.row);
             const cellStyle = table._getCellStyle(cell.col, cell.row);
             const padding = getQuadProps(getProp('padding', cellStyle, cell.col, cell.row, table));
-            const spec = table.internalProps.layoutMap.getRawChartSpec(cell.col, cell.row);
-            const axis = new CartesianAxis(
-              axisConfig,
-              cell.attribute.width,
-              cell.attribute.height,
-              padding,
-              spec?.theme,
-              table
-            );
+            const axis = new CartesianAxis(axisConfig, cell.attribute.width, cell.attribute.height, padding, table);
             cell.clear();
             cell.appendChild(axis.component);
             axis.overlap();

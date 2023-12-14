@@ -379,6 +379,10 @@ export const menus = [
       {
         path: 'pivot-analysis',
         name: 'pivot-analysis-field'
+      },
+      {
+        path: 'pivot-analysis',
+        name: 'pivot-analysis-str'
       }
     ]
   },
@@ -545,6 +549,10 @@ export const menus = [
       {
         path: 'custom',
         name: 'custom-layout'
+      },
+      {
+        path: 'custom',
+        name: 'custom-header'
       }
     ]
   },

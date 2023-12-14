@@ -186,6 +186,8 @@ export function updateCellHeight(
 
       if (customLayout || customRender) {
         // const { autoRowHeight } = table.internalProps;
+        const style = scene.table._getCellStyle(col, row) as ProgressBarStyle;
+        const padding = getQuadProps(getProp('padding', style, col, row, scene.table));
         const customResult = dealWithCustom(
           customLayout,
           customRender,
@@ -195,6 +197,7 @@ export function updateCellHeight(
           cell.attribute.height,
           false,
           scene.table.heightMode === 'autoHeight',
+          padding,
           scene.table
         );
         customElementsGroup = customResult.elementsGroup;

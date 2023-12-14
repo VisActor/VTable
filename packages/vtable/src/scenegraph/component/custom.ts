@@ -23,9 +23,11 @@ export function dealWithCustom(
   height: number,
   autoWidth: boolean,
   autoHeight: boolean,
+  padding: [number, number, number, number],
   table: BaseTableAPI
 ) {
   let renderDefault = true;
+  let enableCellPadding = false;
   let expectedWidth: number;
   let expectedHeight: number;
   let customElements;
@@ -60,6 +62,7 @@ export function dealWithCustom(
       //   customElements = customRenderObj.rootContainer.getElements(undefined, false, false);
     }
     renderDefault = customRenderObj.renderDefault;
+    enableCellPadding = customRenderObj.enableCellPadding;
   } else if (typeof customRender === 'function') {
     const arg = {
       col,
@@ -98,6 +101,15 @@ export function dealWithCustom(
       autoHeight ? expectedHeight : height,
       value
     );
+  }
+
+  if (enableCellPadding) {
+    elementsGroup.setAttributes({
+      x: padding[3],
+      y: padding[0],
+      width: width - padding[1] - padding[3],
+      height: height - padding[0] - padding[2]
+    });
   }
 
   // for percent calc

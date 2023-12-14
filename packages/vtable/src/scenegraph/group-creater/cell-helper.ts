@@ -142,6 +142,7 @@ export function createCell(
         cellHeight,
         false,
         table.heightMode === 'autoHeight',
+        padding,
         table
       );
       customElementsGroup = customResult.elementsGroup;
@@ -169,15 +170,7 @@ export function createCell(
 
     const axisConfig = table.internalProps.layoutMap.getAxisConfigInPivotChart(col, row);
     if (axisConfig) {
-      const spec = table.internalProps.layoutMap.getRawChartSpec(col, row);
-      const axis = new CartesianAxis(
-        axisConfig,
-        cellGroup.attribute.width,
-        cellGroup.attribute.height,
-        padding,
-        spec?.theme,
-        table
-      );
+      const axis = new CartesianAxis(axisConfig, cellGroup.attribute.width, cellGroup.attribute.height, padding, table);
       cellGroup.clear();
       cellGroup.appendChild(axis.component);
       axis.overlap();

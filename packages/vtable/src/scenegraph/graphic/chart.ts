@@ -154,7 +154,7 @@ export class Chart extends Group {
     this.active = false;
     // move active chart view box out of broswer view
     // to avoid async render when chart is releasd
-    this.activeChartInstance.updateViewBox(
+    this.activeChartInstance?.updateViewBox(
       {
         x1: -1000,
         x2: -800,
@@ -164,7 +164,7 @@ export class Chart extends Group {
       false,
       false
     );
-    this.activeChartInstance.release();
+    this.activeChartInstance?.release();
     this.activeChartInstance = null;
   }
   /** 更新图表对应数据 */

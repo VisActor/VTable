@@ -32,6 +32,13 @@ export interface IBasicHeaderIndicator {
   /** 指标名称表头自定义布局元素 */
   headerCustomLayout?: ICustomLayout;
   editor?: string | IEditor | ((args: BaseCellInfo & { table: BaseTableAPI }) => string | IEditor);
+
+  // /** 点击表头单元格时连带body整行或整列选中 或仅选中当前单元格，默认或整行或整列选中*/
+  // headerSelectMode?: 'inline' | 'cell';
+  /** 该指标表头单元格不支持hover交互行为 */
+  disableHeaderHover?: boolean;
+  /** 该指标表头单元格不支持选中 */
+  disableHeaderSelect?: boolean;
 }
 
 export interface IBasicColumnIndicator {
@@ -52,4 +59,9 @@ export interface IBasicColumnIndicator {
   customRender?: ICustomRender; // body单元格的自定义内容
   /** 指标值body单元格自定义布局元素 */
   customLayout?: ICustomLayout;
+
+  /** 该指标内容不支持hover交互行为 */
+  disableHover?: boolean;
+  /** 该指标内容不支持选中 */
+  disableSelect?: boolean;
 }
