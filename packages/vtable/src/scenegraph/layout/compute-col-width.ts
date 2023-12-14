@@ -614,7 +614,8 @@ export function getAdaptiveWidth(
   endColPlus1: number,
   update: boolean,
   newWidths: number[],
-  table: BaseTableAPI
+  table: BaseTableAPI,
+  fromScenegraph?: boolean
 ) {
   let actualWidth = 0;
   const adaptiveColumns: number[] = [];
@@ -650,6 +651,8 @@ export function getAdaptiveWidth(
     }
     if (update) {
       newWidths[col] = table._adjustColWidth(col, colWidth);
+    } else if (fromScenegraph) {
+      table.scenegraph.setColWidth(col, table._adjustColWidth(col, colWidth));
     } else {
       table._setColWidth(col, table._adjustColWidth(col, colWidth), false, true);
     }

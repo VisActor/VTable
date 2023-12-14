@@ -1095,7 +1095,7 @@ export class Scenegraph {
       }
       const startCol = table.frozenColCount;
       const endCol = table.isPivotChart() ? table.colCount - table.rightFrozenColCount : table.colCount;
-      getAdaptiveWidth(canvasWidth - actualHeaderWidth, startCol, endCol, false, [], table);
+      getAdaptiveWidth(canvasWidth - actualHeaderWidth, startCol, endCol, false, [], table, true);
     } else if (table.autoFillWidth) {
       // 处理风神列宽特殊逻辑
       table._clearColRangeWidthsMap();
@@ -1113,7 +1113,7 @@ export class Scenegraph {
       if (actualWidth < canvasWidth && actualWidth > actualHeaderWidth) {
         const startCol = table.frozenColCount;
         const endCol = table.isPivotChart() ? table.colCount - table.rightFrozenColCount : table.colCount;
-        getAdaptiveWidth(canvasWidth - actualHeaderWidth, startCol, endCol, false, [], table);
+        getAdaptiveWidth(canvasWidth - actualHeaderWidth, startCol, endCol, false, [], table, true);
       }
     }
 
@@ -1175,7 +1175,7 @@ export class Scenegraph {
           rowHeight = Math.round(table.getRowHeight(row) * factor);
         }
 
-        table._setRowHeight(row, rowHeight, false);
+        this.setRowHeight(row, rowHeight);
       }
     } else if (table.autoFillHeight) {
       table._clearRowRangeHeightsMap();
@@ -1193,9 +1193,12 @@ export class Scenegraph {
 
         actualHeight += rowHeight;
       }
-      table.scenegraph._dealAutoFillHeightOriginRowsHeight = actualHeight;
+      // table.scenegraph._dealAutoFillHeightOriginRowsHeight = actualHeight;
       // 如果内容高度小于canvas高度，执行adaptive放大
-      if (actualHeight < canvasHeight && actualHeight - actualHeaderHeight > 0) {
+      if (
+        (this._dealAutoFillHeightOriginRowsHeight ?? actualHeight) < canvasHeight &&
+        actualHeight - actualHeaderHeight > 0
+      ) {
         const factor = (canvasHeight - actualHeaderHeight) / (actualHeight - actualHeaderHeight);
         for (let row = table.frozenRowCount; row < table.rowCount - table.bottomFrozenRowCount; row++) {
           let rowHeight;
@@ -1207,7 +1210,7 @@ export class Scenegraph {
           } else {
             rowHeight = Math.round(table.getRowHeight(row) * factor);
           }
-          table._setRowHeight(row, rowHeight, false);
+          this.setRowHeight(row, rowHeight);
         }
       }
     }
