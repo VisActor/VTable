@@ -2,6 +2,30 @@
   "name": "@visactor/vtable",
   "entries": [
     {
+      "version": "0.16.3",
+      "tag": "@visactor/vtable_v0.16.3",
+      "date": "Wed, 13 Dec 2023 11:43:30 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "fix: fix axis theme get function"
+          },
+          {
+            "comment": "feat: add enableCellPadding config in custom layout"
+          },
+          {
+            "comment": "feat: add column disableHover&disableSelect config"
+          },
+          {
+            "comment": "fix: pivot table support not number type #718\n\n"
+          },
+          {
+            "comment": "fix: edge cell selection border clip #716\n\n"
+          }
+        ]
+      }
+    },
+    {
       "version": "0.16.2",
       "tag": "@visactor/vtable_v0.16.2",
       "date": "Wed, 13 Dec 2023 03:30:39 GMT",
