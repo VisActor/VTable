@@ -9,7 +9,7 @@ option: PivotTable#dataConfig.totals
 
 # 透视分析——小计总计
 
-透视分析表格数据汇总，dataConfig中配置totals来设置行列维度的小计总计。
+透视分析表格数据汇总，dataConfig中配置totals来设置行列维度的小计总计。该示例汇总总显示到底部，也可以通过total.showGrandTotalsOnTop来显示到顶部。[配置参考](../../option/PivotTable#dataConfig.totals)
 
 ## 关键配置
 
