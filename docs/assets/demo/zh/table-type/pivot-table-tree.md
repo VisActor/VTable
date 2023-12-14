@@ -3,12 +3,11 @@ category: examples
 group: table-type
 title: 透视表格树形展示
 cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/pivot-tree.png
-order: 1-6
 link: '../guide/table_type/Pivot_table/pivot_table_tree'
 option: PivotTable#rowHierarchyType('grid'%20%7C%20'tree')
 ---
 
-# 透视表格树形展示
+# 透视表格树形展示（自定义表头结构）
 
 透视表格树形展示，该示例传入了自定义表头树结构rowTree和columnTree，设置rowHierarchyType为tree。
 
@@ -16,13 +15,14 @@ option: PivotTable#rowHierarchyType('grid'%20%7C%20'tree')
 
 ## 关键配置
 
-- `PivotTable`
+- `PivotTable` 表格类型
 - `rowHierarchyType` 将层级展示设置为`tree`，默认为平铺模式`grid`。
-- `columnTree`
-- `rowTree`
+- `columnTree` 自定义表头树结构
+- `rowTree` 自定义表头树结构
 - `columns` 可选 配置维度的样式等
 - `rows`可选 配置维度的样式等
-- `indicators`
+- `indicators` 指标配置
+
 ## 代码演示
 
 ```javascript livedemo template=vtable
@@ -214,9 +214,9 @@ const option = {
                     "headerStyle":{
                       fontWeight: "normal",
                     },
-                    "format":(rec)=>{
-                      if(rec)
-                      return '$'+Number(rec['Sales']).toFixed(2);
+                    "format":(value)=>{
+                      if(value)
+                      return '$'+Number(value).toFixed(2);
                       return '';
                     },
                     style:{
@@ -236,8 +236,8 @@ const option = {
                     "headerStyle":{
                       fontWeight: "normal",
                     },
-                    "format":(rec)=>{if(rec)
-                      return '$'+Number(rec['Profit']).toFixed(2);
+                    "format":(value)=>{if(value)
+                      return '$'+Number(value).toFixed(2);
                       return '';},
                     style:{
                       padding:[16,28,16,28],

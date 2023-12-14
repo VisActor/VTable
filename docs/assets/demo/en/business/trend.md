@@ -240,8 +240,8 @@ const option = {
         indicatorKey: 'ratio',
         title: '环比',
         width: 'auto',
-        format: (rec) => {
-          if (rec?.ratio) return rec?.ratio * 100 + '%';
+        format: (value) => {
+          if (value) return value * 100 + '%';
           return '-';
         },
         icon: (args) => {

@@ -22,6 +22,8 @@ option: ListTable-columns-text#editor
 let  tableInstance;
 // 使用时需要引入插件包@visactor/vtable-editors
 // import * as VTable_editors from '@visactor/vtable-editors';
+// 正常使用方式 const input_editor = new VTable.editors.InputEditor();
+// 官网编辑器中将 VTable.editors重命名成了VTable_editors 
 const input_editor = new VTable_editors.InputEditor();
 const date_input_editor = new VTable_editors.DateInputEditor();
 const list_editor = new VTable_editors.ListEditor({values: ['girl', 'boy']});

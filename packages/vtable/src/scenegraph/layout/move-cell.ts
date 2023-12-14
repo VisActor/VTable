@@ -1,9 +1,6 @@
-import { Group } from '@visactor/vrender';
+import type { Group } from '@visactor/vrender';
 import { getCellMergeInfo } from '../utils/get-cell-merge';
 import type { BaseTableAPI } from '../../ts-types/base-table';
-
-const groupForPosition = new Group({});
-
 export function moveHeaderPosition(
   colSource: number,
   rowSource: number,
@@ -110,13 +107,50 @@ export function moveHeaderPosition(
   // scene.updateContainerAttrWidthAndX();
   scene.updateContainer();
 
-  for (let col = updateColStart; col <= updateColEnd; col++) {
-    // 将该列的chartInstance清除掉
-    const columnGroup = table.scenegraph.getColGroup(col);
-    columnGroup?.setAttribute('chartInstance', undefined);
-    // 更新单元格记录全量属性，不更新column theme
-    for (let row = updateRowStart; row <= updateRowEnd; row++) {
-      scene.updateCellContent(col, row);
+  if (direction === 'column') {
+    for (let col = updateColStart; col <= updateColEnd; col++) {
+      // 将该列的chartInstance清除掉
+      const columnGroup = table.scenegraph.getColGroup(col);
+      columnGroup?.setAttribute('chartInstance', undefined);
+
+      // 将上下表头 和中间body部分分别更新
+      for (let row = 0; row <= table.frozenRowCount - 1; row++) {
+        scene.updateCellContent(col, row);
+      }
+      for (let row = scene.bodyRowStart; row <= scene.bodyRowEnd; row++) {
+        scene.updateCellContent(col, row);
+      }
+      for (let row = table.rowCount - table.bottomFrozenRowCount; row <= table.rowCount - 1; row++) {
+        scene.updateCellContent(col, row);
+      }
+    }
+  } else {
+    // 将左侧冻结列or行表头的单元格更新
+    for (let col = 0; col <= table.frozenColCount - 1; col++) {
+      // 将该列的chartInstance清除掉
+      const columnGroup = table.scenegraph.getColGroup(col);
+      columnGroup?.setAttribute('chartInstance', undefined);
+      for (let row = updateRowStart; row <= updateRowEnd; row++) {
+        scene.updateCellContent(col, row);
+      }
+    }
+    // 将中间body的单元格更新
+    for (let col = scene.bodyColStart; col <= scene.bodyColEnd; col++) {
+      // 将该列的chartInstance清除掉
+      const columnGroup = table.scenegraph.getColGroup(col);
+      columnGroup?.setAttribute('chartInstance', undefined);
+      for (let row = updateRowStart; row <= updateRowEnd; row++) {
+        scene.updateCellContent(col, row);
+      }
+    }
+    // 将右侧冻结列的单元格更新
+    for (let col = table.colCount - table.rightFrozenColCount; col <= table.colCount - 1; col++) {
+      // 将该列的chartInstance清除掉
+      const columnGroup = table.scenegraph.getColGroup(col);
+      columnGroup?.setAttribute('chartInstance', undefined);
+      for (let row = updateRowStart; row <= updateRowEnd; row++) {
+        scene.updateCellContent(col, row);
+      }
     }
   }
 }

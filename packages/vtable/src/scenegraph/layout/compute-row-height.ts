@@ -219,7 +219,7 @@ export function computeRowsHeight(
 
       actualHeight += rowHeight;
     }
-
+    table.scenegraph._dealAutoFillHeightOriginRowsHeight = actualHeight;
     // 如果内容高度小于canvas高度，执行adaptive放大
     if (actualHeight < canvasHeight && actualHeight - actualHeaderHeight > 0) {
       const factor = (canvasHeight - actualHeaderHeight) / (actualHeight - actualHeaderHeight);
@@ -460,6 +460,7 @@ function computeCustomRenderHeight(col: number, row: number, table: BaseTableAPI
     let spanRow = 1;
     let height = 0;
     let renderDefault = false;
+    let enableCellPadding = false;
     if (table.isHeader(col, row) || (table.getBodyColumnDefine(col, row) as TextColumnDefine)?.mergeCell) {
       const cellRange = table.getCellRange(col, row);
       spanRow = cellRange.end.row - cellRange.start.row + 1;
@@ -481,6 +482,7 @@ function computeCustomRenderHeight(col: number, row: number, table: BaseTableAPI
         customLayoutObj.rootContainer.setStage(table.scenegraph.stage);
         height = (customLayoutObj.rootContainer as VGroup).AABBBounds.height() ?? 0;
         renderDefault = customLayoutObj.renderDefault;
+        enableCellPadding = customLayoutObj.enableCellPadding;
       } else {
         height = 0;
       }
@@ -492,6 +494,11 @@ function computeCustomRenderHeight(col: number, row: number, table: BaseTableAPI
     } else {
       height = customRender?.expectedHeight ?? 0;
       renderDefault = customRender?.renderDefault;
+    }
+    if (enableCellPadding) {
+      const actStyle = table._getCellStyle(col, row);
+      const padding = getQuadProps(getProp('padding', actStyle, col, row, table));
+      height += padding[0] + padding[2];
     }
     return {
       height: height / spanRow,

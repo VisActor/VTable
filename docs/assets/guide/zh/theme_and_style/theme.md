@@ -1136,9 +1136,9 @@ const option = {
                     "headerStyle":{
                       fontWeight: "normal",
                     },
-                    "format":(rec)=>{
-                      if(rec)
-                      return '$'+Number(rec['230627170530019']).toFixed(2);
+                    "format":(value)=>{
+                      if(value)
+                      return '$'+Number(value).toFixed(2);
                       return '';
                     },
                     style:{
@@ -1158,8 +1158,9 @@ const option = {
                     "headerStyle":{
                       fontWeight: "normal",
                     },
-                    "format":(rec)=>{if(rec)
-                      return '$'+Number(rec['230627170530022']).toFixed(2);
+                    "format":(value)=>{
+                      if(value)
+                      return '$'+Number(value).toFixed(2);
                       return '';},
                     style:{
                       padding:[16,28,16,28],

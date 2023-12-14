@@ -42,7 +42,6 @@ export class CartesianAxis {
     width: number,
     height: number,
     padding: [number, number, number, number],
-    chartSpecTheme: any,
     table: BaseTableAPI
   ) {
     this.table = table;
@@ -51,9 +50,9 @@ export class CartesianAxis {
     this.option = merge(
       {},
       // commonAxis,
-      getCommonAxis(chartSpecTheme),
+      getCommonAxis(option.__vtableChartTheme),
       getTableAxisTheme(this.orient, table.theme),
-      getChartSpecAxisTheme(this.orient, this.type, chartSpecTheme),
+      getChartSpecAxisTheme(this.orient, this.type, option.__vtableChartTheme),
       option
     );
 

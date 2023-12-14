@@ -314,8 +314,8 @@ export function createTable() {
             title: 'Sales',
             width: 'auto',
             showSort: false,
-            format: rec => {
-              return Number(rec['230517143221040']).toFixed(2);
+            format: value => {
+              return Number(value).toFixed(2);
             },
             style: {
               color: 'blue',
@@ -331,8 +331,8 @@ export function createTable() {
             title: 'Profit',
             width: 'auto',
             showSort: false,
-            format: rec => {
-              return Number(rec['230517143221041']).toFixed(2);
+            format: value => {
+              return Number(value).toFixed(2);
             },
             style: {
               color: 'pink'
