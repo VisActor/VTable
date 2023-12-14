@@ -131,7 +131,16 @@ Configuration example:
           indicatorKey: 'AverageOrderSales', //Indicator name
           field: 'Sales', //Indicator based on field
           aggregationType: VTable.TYPES.AggregationType.AVG, //Computation type
-          formatFun: sumNumberFormat
+        },
+        {
+          indicatorKey: 'MaxOrderSales', //Indicator name
+          field: 'Sales', //Indicator based on field
+          aggregationType: VTable.TYPES.AggregationType.MAX, //Computation type , caculate max value
+        },
+        {
+          indicatorKey: 'OrderSalesValue', //Indicator name
+          field: 'Sales', //Indicator based on field
+          aggregationType: VTable.TYPES.AggregationType.NONE, //don't aggregate
         }
       ]
 ```

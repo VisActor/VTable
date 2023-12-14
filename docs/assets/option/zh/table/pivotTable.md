@@ -97,7 +97,8 @@ export enum AggregationType {
   MIN = 'MIN',
   MAX = 'MAX',
   AVG = 'AVG',
-  COUNT = 'COUNT'
+  COUNT = 'COUNT',
+  NONE = 'NONE'
 }
 ```
 ### sortRules(SortRules)

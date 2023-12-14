@@ -125,14 +125,23 @@ filterRules: [
         {
           indicatorKey: 'OrderCount', //指标名称
           field: 'Sales', //指标依据字段
-          aggregationType: VTable.TYPES.AggregationType.COUNT, //计算类型
+          aggregationType: VTable.TYPES.AggregationType.COUNT, //计算类型 求数量
           formatFun: countNumberFormat
         },
         {
           indicatorKey: 'AverageOrderSales', //指标名称
           field: 'Sales', //指标依据字段
-          aggregationType: VTable.TYPES.AggregationType.AVG, //计算类型
-          formatFun: sumNumberFormat
+          aggregationType: VTable.TYPES.AggregationType.AVG, //计算类型  求平均
+        },
+        {
+          indicatorKey: 'MaxOrderSales', //指标名称
+          field: 'Sales', //指标依据字段
+          aggregationType: VTable.TYPES.AggregationType.MAX, //计算类型 求最大
+        },
+        {
+          indicatorKey: 'OrderSalesValue', //指标名称
+          field: 'Sales', //指标依据字段
+          aggregationType: VTable.TYPES.AggregationType.NONE, //不做聚合 匹配到其中对应数据获取其对应field的值
         }
       ]
 ```
