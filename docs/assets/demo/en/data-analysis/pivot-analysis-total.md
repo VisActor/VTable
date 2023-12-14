@@ -9,7 +9,7 @@ option: PivotTable#dataConfig.totals
 
 # Pivot Analysis - Subtotal Total
 
-To summarize table data in pivot analysis, configure totals in dataConfig to set the total subtotal of the row and column dimensions.
+To summarize table data in pivot analysis, configure totals in dataConfig to set the total subtotal of the row and column dimensions.This example summary is always displayed to the bottom, and can also be displayed to the top through total.showGrandTotalsOnTop. [Configuration reference](../../option/PivotTable#dataConfig.totals)
 
 ## Key Configurations
 
