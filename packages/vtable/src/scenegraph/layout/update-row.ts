@@ -79,7 +79,7 @@ export function updateRow(
   if (addRows.length) {
     if (!isNumber(updateAfter)) {
       const minRow = Math.min(...addRows);
-      scene.proxy.rowUpdatePos = minRow;
+      scene.proxy.rowUpdatePos = Math.min(minRow, scene.proxy.rowUpdatePos);
     }
     scene.proxy.rowUpdateDirection = 'up';
     scene.proxy.updateCellGroups(scene.proxy.screenRowCount * 2);

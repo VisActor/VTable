@@ -81,3 +81,11 @@ editor?: string | IEditor | ((args: BaseCellInfo & { table: BaseTableAPI }) => s
     prefix = '#',
     tableType = 'listTable'
 ) }}
+
+## hierarchyIndent(number)
+
+展示为树形结构时，每层内容缩进值。
+
+## hierarchyExpandLevel(number)
+
+展示为树形结构时，默认展开层数。默认为1只显示根节点，配置为`Infinity`则全部展开。

@@ -83,3 +83,11 @@ Among them, IEditor is the editor interface defined in @visactor/vtable-editors.
     tableType = 'listTable'
 ) }}
 ```
+
+## hierarchyIndent(number)
+
+When displayed as a tree structure, the indentation value of each layer of content.
+
+## hierarchyExpandLevel(number)
+
+When displayed as a tree structure, the number of levels is expanded by default. The default value is 1, which only displays the root node. If configured to `Infinity`, all nodes will be expanded.
