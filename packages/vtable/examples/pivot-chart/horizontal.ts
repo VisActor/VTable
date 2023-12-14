@@ -9245,11 +9245,11 @@ export function createTable() {
       }
     }),
     widthMode: 'adaptive',
-    heightMode: 'adaptive'
-    // hover: {
-    //   disableHeaderHover:false,
-    //   disableHover: true
-    // },
+    heightMode: 'adaptive',
+    hover: {
+      highlightMode: 'cell',
+      disableAxisHover: true
+    }
     // select: {
     //   disableSelect: true
     // }

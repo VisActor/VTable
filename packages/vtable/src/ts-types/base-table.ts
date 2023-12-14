@@ -270,6 +270,8 @@ export interface BaseTableConstructorOptions {
     disableHover?: boolean;
     /** 单独设置表头不响应鼠标hover交互 */
     disableHeaderHover?: boolean;
+    /** 单独设置坐标轴不响应鼠标hover交互 */
+    disableAxisHover?: boolean;
   };
   /** 选择单元格交互配置 */
   select?: {
