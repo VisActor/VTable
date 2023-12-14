@@ -170,8 +170,18 @@ export interface FilterRule {
 设置汇总，小计总计。
 ```
 export interface Totals {
-  row?: Total;
-  column?: Total;
+  row?: Total & {
+    /** 总计显示在上 默认false */
+    showGrandTotalsOnTop?: boolean;
+    /** 小计显示在上 默认false */
+    showSubTotalsOnTop?: boolean;
+  };
+  column?: Total & {
+    /** 总计显示在左 默认false */
+    showGrandTotalsOnLeft?: boolean;
+    /** 小计显示在左 默认false */
+    showSubTotalsOnLeft?: boolean;
+  };
 }
 ```
 

@@ -69,7 +69,8 @@ dataConfig: {
           showSubTotals: true,
           subTotalsDimensions: ['province'],
           grandTotalLabel: '行总计',
-          subTotalLabel: '小计'
+          subTotalLabel: '小计',
+          showGrandTotalsOnTop: true //汇总值显示在上
         },
         column: {
           showGrandTotals: true,

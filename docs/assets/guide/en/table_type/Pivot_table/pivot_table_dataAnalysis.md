@@ -68,7 +68,8 @@ dataConfig: {
           showSubTotals: true,
           subTotalsDimensions: ['province'],
           grandTotalLabel: 'row total',
-          subTotalLabel: 'Subtotal'
+          subTotalLabel: 'Subtotal',
+          showGrandTotalsOnTop: true //totals show on top
         },
         column: {
           showGrandTotals: true,
