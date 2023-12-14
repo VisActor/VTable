@@ -27,25 +27,36 @@ export interface CalcTotals {
 }
 
 export interface Total {
-  // 是否显示总计
+  /** 是否显示总计; */
   showGrandTotals: boolean;
-  // 是否显示小计
+  /** 是否显示小计; */
   showSubTotals: boolean;
+
   // // 计算总计方法
   // calcGrandTotals?: CalcTotals;
   // // 计算小计方法
   // calcSubTotals?: CalcTotals;
-  // 小计汇总维度定义
+  /** 小计汇总维度定义 */
   subTotalsDimensions?: string[];
-  // 默认'总计'
+  /** 汇总节点显示名称  默认'总计' */
   grandTotalLabel?: string;
-  // 默认'小计'
+  /** 汇总节点显示名称  默认'小计' */
   subTotalLabel?: string;
 }
 
 export interface Totals {
-  row?: Total;
-  column?: Total;
+  row?: Total & {
+    /** 总计显示在上 默认false */
+    showGrandTotalsOnTop?: boolean;
+    /** 小计显示在上 默认false */
+    showSubTotalsOnTop?: boolean;
+  };
+  column?: Total & {
+    /** 总计显示在左 默认false */
+    showGrandTotalsOnLeft?: boolean;
+    /** 小计显示在左 默认false */
+    showSubTotalsOnLeft?: boolean;
+  };
 }
 
 //#endregion 总计小计
