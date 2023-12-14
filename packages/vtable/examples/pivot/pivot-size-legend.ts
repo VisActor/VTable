@@ -269,8 +269,8 @@ export function createTable() {
             headerStyle: {
               fontWeight: 'normal'
             },
-            format: rec => {
-              return '$' + Number(rec?.Sales).toFixed(2);
+            format: value => {
+              return '$' + Number(value).toFixed(2);
             },
             style: {
               padding: [16, 28, 16, 28]

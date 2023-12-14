@@ -19,6 +19,10 @@ cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/perfor
 ## 代码演示
 
 ```javascript livedemo template=vtable
+// 使用时需要引入插件包@visactor/vtable-editors
+// import * as VTable_editors from '@visactor/vtable-editors';
+// 正常使用方式 const input_editor = new VTable.editors.InputEditor();
+// 官网编辑器中将 VTable.editors重命名成了VTable_editors 
 const input_editor = new VTable_editors.InputEditor();
 VTable.register.editor('input-editor', input_editor);
 function generateRandomString(length) {

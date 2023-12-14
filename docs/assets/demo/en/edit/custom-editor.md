@@ -20,8 +20,10 @@ This example shows how to customize a date editor.
 
 ```javascript livedemo template=vtable
 let  tableInstance;
-// You need to introduce the plug-in package when using it @visactor/vtable-editors
+// Need to introduce the plug-in package @visactor/vtable-editors when using it
 // import * as VTable_editors from '@visactor/vtable-editors';
+//Normal usage const input_editor = new VTable.editors.InputEditor();
+//VTable.editors is renamed to VTable_editors in the official website editor
 const input_editor = new VTable_editors.InputEditor();
 VTable.register.editor('input-editor', input_editor);
 const timestamp = new Date().getTime();

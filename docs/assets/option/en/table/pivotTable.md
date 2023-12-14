@@ -49,7 +49,7 @@ Currently, it supports incoming flattened data formats, taking the sales of larg
 ]
 ```
 ## enableDataAnalysis(boolean)
-Whether the pivot table enables data analysis.
+Whether the pivot table enables data analysis. Default false.
 
 If the incoming data records are detailed data and VTable is required for aggregate analysis, enable this configuration.
 

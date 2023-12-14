@@ -208,8 +208,8 @@ const option = {
             indicatorKey: '220922103859011',
             width: 200,
             showSort: false,
-            format(rec){
-              return Math.round(rec['220922103859011']);
+            format(value){
+              return Math.round(value);
             },
             style: {
               bgColor: (args) => {

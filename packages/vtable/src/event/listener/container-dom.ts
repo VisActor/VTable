@@ -1,6 +1,6 @@
 import { isValid } from '@visactor/vutils';
 import type { EventHandler } from '../EventHandler';
-import type { KeydownEvent } from '../../ts-types';
+import type { KeydownEvent, ListTableAPI } from '../../ts-types';
 import { TABLE_EVENT_TYPE } from '../../core/TABLE_EVENT_TYPE';
 import { handleWhell } from '../scroll';
 import { browser } from '../../tools/helper';

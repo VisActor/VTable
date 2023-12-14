@@ -9,15 +9,15 @@ option: PivotTable#enableDataAnalysis
 
 # 透视分析表格
 
-透视分析表格
+透视分析表格。
 
 ## 关键配置
 
-- `PivotTable`
-- `columns` 
-- `rows`
-- `indicators`
-- `enableDataAnalysis` 开启透视数据分析
+- `PivotTable` 表格类型
+- `columns` 列维度配置
+- `rows` 行维度配置
+- `indicators` 指标配置
+- `enableDataAnalysis` 设置为true， 开启透视数据分析
 - `dataConfig` 配置数据规则，可选配置项
 ## 代码演示
 

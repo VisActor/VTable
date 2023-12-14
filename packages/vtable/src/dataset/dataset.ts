@@ -27,6 +27,7 @@ import {
   CountAggregator,
   MaxAggregator,
   MinAggregator,
+  NoneAggregator,
   RecordAggregator,
   SumAggregator,
   naturalSort,
@@ -295,6 +296,7 @@ export class Dataset {
     this.registerAggregator(AggregationType.MAX, MaxAggregator);
     this.registerAggregator(AggregationType.MIN, MinAggregator);
     this.registerAggregator(AggregationType.AVG, AvgAggregator);
+    this.registerAggregator(AggregationType.NONE, NoneAggregator);
   }
   /**processRecord中按照collectValuesBy 收集了维度值。现在需要对有聚合需求的 处理收集维度值范围 */
   private processCollectedValuesWithSumBy() {
@@ -820,6 +822,24 @@ export class Dataset {
         //   return changeValue;
         // };
       }
+      return {
+        value() {
+          return changeValue;
+        },
+        className: '',
+        push() {
+          // do nothing
+        },
+        formatValue() {
+          return changeValue;
+        },
+        clearCacheValue() {
+          // do nothing
+        },
+        reset() {
+          // do nothing
+        }
+      };
     }
 
     // }

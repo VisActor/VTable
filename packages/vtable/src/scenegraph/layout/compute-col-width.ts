@@ -431,6 +431,7 @@ function computeCustomRenderWidth(col: number, row: number, table: BaseTableAPI)
     let spanCol = 1;
     let width = 0;
     let renderDefault = false;
+    let enableCellPadding = false;
     if (table.isHeader(col, row) || (table.getBodyColumnDefine(col, row) as TextColumnDefine)?.mergeCell) {
       const cellRange = table.getCellRange(col, row);
       spanCol = cellRange.end.col - cellRange.start.col + 1;
@@ -452,6 +453,7 @@ function computeCustomRenderWidth(col: number, row: number, table: BaseTableAPI)
         customLayoutObj.rootContainer.setStage(table.scenegraph.stage);
         width = (customLayoutObj.rootContainer as VGroup).AABBBounds.width() ?? 0;
         renderDefault = customLayoutObj.renderDefault;
+        enableCellPadding = customLayoutObj.enableCellPadding;
       } else {
         width = 0;
       }
@@ -463,6 +465,11 @@ function computeCustomRenderWidth(col: number, row: number, table: BaseTableAPI)
     } else {
       width = customRender?.expectedWidth ?? 0;
       renderDefault = customRender?.renderDefault;
+    }
+    if (enableCellPadding) {
+      const actStyle = table._getCellStyle(col, row);
+      const padding = getQuadProps(getProp('padding', actStyle, col, row, table));
+      width += padding[1] + padding[3];
     }
     return {
       width: width / spanCol,

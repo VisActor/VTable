@@ -50,11 +50,11 @@
 ```
 
 ## enableDataAnalysis(boolean)
-透视表是否开启数据分析。
+透视表是否开启数据分析。 默认false
 
-如果传入的数据records是明细数据，需要VTable做聚合分析则开启该配置。
+如果传入的数据records是明细数据，需要VTable做聚合分析则开启该配置将其设置为true。
 
-如传入数据是经过聚合好的，为了提升性能这里设置为false，同时要求传入columnTree和rowTree。
+如传入数据是经过聚合好的，为了提升性能这里设置为false，同时呢要求传入自己组织好的行头树结构columnTree和rowTree。
 ## dataConfig(IDataConfig)
 数据分析相关配置 enableDataAnalysis开启后该配置才会有效。
 ```
