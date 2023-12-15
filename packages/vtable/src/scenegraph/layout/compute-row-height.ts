@@ -213,7 +213,7 @@ export function computeRowsHeight(
     let actualHeaderHeight = 0;
     for (let row = 0; row < table.rowCount; row++) {
       const rowHeight = update ? newHeights[row] : table.getRowHeight(row);
-      if (row < table.frozenRowCount || row >= table.rowCount - table.bottomFrozenRowCount) {
+      if (row < table.frozenRowCount || (table.isPivotChart() && row >= table.rowCount - table.bottomFrozenRowCount)) {
         actualHeaderHeight += rowHeight;
       }
 
