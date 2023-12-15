@@ -2,6 +2,39 @@
   "name": "@visactor/vtable",
   "entries": [
     {
+      "version": "0.17.0",
+      "tag": "@visactor/vtable_v0.17.0",
+      "date": "Fri, 15 Dec 2023 11:23:08 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "feat: add option showGrandTotalsOnTop  #650\n\n"
+          },
+          {
+            "comment": "feat: optimize diffCellIndices in toggleHierarchyState()"
+          },
+          {
+            "comment": "fix: fix right frozen adaptive problem"
+          },
+          {
+            "comment": "feat: add disableAxisHover config"
+          },
+          {
+            "comment": "feat: optimize computeTextWidth() in pivot table"
+          },
+          {
+            "comment": "fix: fix disableHover bottom frozen hover error"
+          },
+          {
+            "comment": "fix: fix rowUpdatePos update in updateRow()"
+          },
+          {
+            "comment": "refactor: dropdownMenu hide #727\n\n"
+          }
+        ]
+      }
+    },
+    {
       "version": "0.16.3",
       "tag": "@visactor/vtable_v0.16.3",
       "date": "Wed, 13 Dec 2023 11:43:30 GMT",
