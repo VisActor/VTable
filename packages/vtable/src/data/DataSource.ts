@@ -14,7 +14,7 @@ import { HierarchyState } from '../ts-types';
 import { applyChainSafe, getOrApply, obj, isPromise, emptyFn } from '../tools/helper';
 import { EventTarget } from '../event/EventTarget';
 import { getValueByPath, isAllDigits } from '../tools/util';
-import { diffCellIndices } from '../tools/diff-cell';
+import { calculateArrayDiff } from '../tools/diff-cell';
 import { cloneDeep, isValid } from '@visactor/vutils';
 import type { BaseTableAPI } from '../ts-types/base-table';
 import { TABLE_EVENT_TYPE } from '../core/TABLE_EVENT_TYPE';
@@ -390,7 +390,11 @@ export class DataSource extends EventTarget implements DataSourceAPI {
     // 变更了pagerConfig所以需要更新分页数据  TODO待定 因为只关注根节点的数量的话 可能不会影响到
     this.updatePagerData();
 
-    return diffCellIndices(oldIndexedData, this.currentIndexedData);
+    const newDiff = calculateArrayDiff(oldIndexedData, this.currentIndexedData);
+    // const oldDiff = diffCellIndices(oldIndexedData, this.currentIndexedData);
+
+    // return oldDiff;
+    return newDiff;
   }
   /**
    * 某个节点状态由折叠变为展开，往this.currentIndexedData中插入展开后的新增节点，注意需要递归，因为展开节点下面的子节点也能是展开状态

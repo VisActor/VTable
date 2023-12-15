@@ -219,24 +219,39 @@ function updateComponent(selectComp: { rect: IRect; role: CellSubLocation }, key
   //#endregion
 
   //#region 处理边缘被截问题
-  const diffSize = Math.ceil(selectComp.rect.attribute.lineWidth / 2);
+  let diffSize = 0;
+  if (typeof selectComp.rect.attribute.lineWidth === 'number') {
+    diffSize = Math.ceil(selectComp.rect.attribute.lineWidth / 2);
+  }
   if (endCol === scene.table.colCount - 1) {
+    if (Array.isArray(selectComp.rect.attribute.lineWidth)) {
+      diffSize = Math.ceil((selectComp.rect.attribute.lineWidth[1] ?? 0) / 2);
+    }
     selectComp.rect.setAttributes({
       width: selectComp.rect.attribute.width - diffSize
     });
   }
   if (startCol === 0) {
+    if (Array.isArray(selectComp.rect.attribute.lineWidth)) {
+      diffSize = Math.ceil((selectComp.rect.attribute.lineWidth[3] ?? 0) / 2);
+    }
     selectComp.rect.setAttributes({
       x: selectComp.rect.attribute.x + diffSize,
       width: selectComp.rect.attribute.width - diffSize
     });
   }
   if (endRow === scene.table.rowCount - 1) {
+    if (Array.isArray(selectComp.rect.attribute.lineWidth)) {
+      diffSize = Math.ceil((selectComp.rect.attribute.lineWidth[2] ?? 0) / 2);
+    }
     selectComp.rect.setAttributes({
       height: selectComp.rect.attribute.height - diffSize
     });
   }
   if (startRow === 0) {
+    if (Array.isArray(selectComp.rect.attribute.lineWidth)) {
+      diffSize = Math.ceil((selectComp.rect.attribute.lineWidth[0] ?? 0) / 2);
+    }
     selectComp.rect.setAttributes({
       y: selectComp.rect.attribute.y + diffSize,
       height: selectComp.rect.attribute.height - diffSize

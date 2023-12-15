@@ -282,8 +282,11 @@ export function bindTableGroupListener(eventManager: EventManager) {
       });
     }
   });
-
   table.scenegraph.tableGroup.addEventListener('pointerupoutside', (e: FederatedPointerEvent) => {
+    const eventArgsSet: SceneEvent = getCellEventArgsSet(e);
+    if (stateManager.menu.isShow && (eventArgsSet.eventArgs?.target as any) !== stateManager.residentHoverIcon?.icon) {
+      stateManager.hideMenu();
+    }
     // 同pointerup中的逻辑
     if (stateManager.isResizeCol()) {
       endResizeCol(table);
@@ -350,11 +353,7 @@ export function bindTableGroupListener(eventManager: EventManager) {
       table.scenegraph.updateChartState(null);
     }
     // 处理menu
-    if (
-      stateManager.menu.isShow &&
-      eventArgsSet.eventArgs &&
-      (eventArgsSet.eventArgs.target as any) !== stateManager.residentHoverIcon?.icon
-    ) {
+    if (stateManager.menu.isShow && (eventArgsSet.eventArgs?.target as any) !== stateManager.residentHoverIcon?.icon) {
       // 点击在menu外，且不是下拉菜单的icon，移除menu
       stateManager.hideMenu();
     }
@@ -593,7 +592,13 @@ export function bindTableGroupListener(eventManager: EventManager) {
       }
     }
   });
-
+  // click outside
+  table.scenegraph.stage.addEventListener('pointerdown', (e: FederatedPointerEvent) => {
+    const eventArgsSet: SceneEvent = getCellEventArgsSet(e);
+    if (stateManager.menu.isShow && (eventArgsSet.eventArgs?.target as any) !== stateManager.residentHoverIcon?.icon) {
+      stateManager.hideMenu();
+    }
+  });
   // click outside
   table.scenegraph.stage.addEventListener('pointertap', (e: FederatedPointerEvent) => {
     const target = e.target;

@@ -270,6 +270,8 @@ export interface BaseTableConstructorOptions {
     disableHover?: boolean;
     /** 单独设置表头不响应鼠标hover交互 */
     disableHeaderHover?: boolean;
+    /** 单独设置坐标轴不响应鼠标hover交互 */
+    disableAxisHover?: boolean;
   };
   /** 选择单元格交互配置 */
   select?: {
@@ -561,6 +563,7 @@ export interface BaseTableAPI {
   _getBodyLayoutMap: (col: number, row: number) => ColumnData | IndicatorData;
   getBodyColumnDefine: (col: number, row: number) => ColumnDefine;
   getBodyColumnType: (col: number, row: number) => ColumnTypeOption;
+  getCellType: (col: number, row: number) => ColumnTypeOption;
   fireListeners: <TYPE extends keyof TableEventHandlersEventArgumentMap>(
     type: TYPE,
     event: TableEventHandlersEventArgumentMap[TYPE]

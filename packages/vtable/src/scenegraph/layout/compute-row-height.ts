@@ -69,7 +69,11 @@ export function computeRowsHeight(
     for (let row = rowStart; row < table.columnHeaderLevelCount; row++) {
       let startCol = 0;
       let endCol = table.colCount - 1;
-      if ((table.isPivotTable() || table.isPivotChart()) && checkPivotFixedStyleAndNoWrap(table, row)) {
+      if (
+        ((table.isPivotTable() && !table.isPivotChart()) ||
+          (table.isPivotChart() && !(table.internalProps.layoutMap as PivotHeaderLayoutMap).indicatorsAsCol)) && // no top axis
+        checkPivotFixedStyleAndNoWrap(table, row)
+      ) {
         // 列表头样式一致，只计算第一列行高，作为整行行高
         startCol = 0;
         endCol = table.rowHeaderLevelCount;
@@ -213,7 +217,7 @@ export function computeRowsHeight(
     let actualHeaderHeight = 0;
     for (let row = 0; row < table.rowCount; row++) {
       const rowHeight = update ? newHeights[row] : table.getRowHeight(row);
-      if (row < table.frozenRowCount || row >= table.rowCount - table.bottomFrozenRowCount) {
+      if (row < table.frozenRowCount || (table.isPivotChart() && row >= table.rowCount - table.bottomFrozenRowCount)) {
         actualHeaderHeight += rowHeight;
       }
 
@@ -526,8 +530,17 @@ function computeTextHeight(col: number, row: number, cellType: ColumnTypeOption,
   let iconInlineFrontHeight = 0;
   const iconInlineEnd: ColumnIconOption[] = [];
   let iconInlineEndHeight = 0;
-  const define = table.getBodyColumnDefine(col, row);
-  const mayHaveIcon = table.getCellLocation(col, row) !== 'body' ? true : !!define?.icon || !!define?.tree;
+  // const define = table.getBodyColumnDefine(col, row);
+  // const mayHaveIcon = table.getCellLocation(col, row) !== 'body' ? true : !!define?.icon || !!define?.tree;
+
+  let mayHaveIcon = false;
+  if (table.getCellLocation(col, row) !== 'body') {
+    mayHaveIcon = true;
+  } else {
+    const define = table.getBodyColumnDefine(col, row);
+    mayHaveIcon = !!define?.icon || !!define?.tree;
+  }
+
   if (mayHaveIcon) {
     const icons = table.getCellIcons(col, row);
     icons?.forEach(icon => {

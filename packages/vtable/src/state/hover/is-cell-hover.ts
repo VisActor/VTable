@@ -16,14 +16,14 @@ export function getCellHoverColor(cellGroup: Group, table: BaseTableAPI): string
   ) {
     for (let col = cellGroup.mergeStartCol; col <= cellGroup.mergeEndCol; col++) {
       for (let row = cellGroup.mergeStartRow; row <= cellGroup.mergeEndRow; row++) {
-        const key = isCellHover(table.stateManager, col, row);
+        const key = isCellHover(table.stateManager, col, row, cellGroup);
         if (key && (!colorKey || key === 'cellBgColor')) {
           colorKey = key;
         }
       }
     }
   } else if (cellGroup.role === 'cell') {
-    colorKey = isCellHover(table.stateManager, cellGroup.col, cellGroup.row);
+    colorKey = isCellHover(table.stateManager, cellGroup.col, cellGroup.row, cellGroup);
   }
 
   if (!colorKey) {
@@ -53,7 +53,7 @@ export function getCellHoverColor(cellGroup: Group, table: BaseTableAPI): string
   return fillColor;
 }
 
-export function isCellHover(state: StateManager, col: number, row: number): string | undefined {
+export function isCellHover(state: StateManager, col: number, row: number, cellGroup: Group): string | undefined {
   const { highlightScope, disableHeader, cellPos } = state.hover;
   const table = state.table;
 
@@ -83,10 +83,14 @@ export function isCellHover(state: StateManager, col: number, row: number): stri
     let cellDisable;
     if (isHeader) {
       const define = table.getHeaderDefine(col, row);
-      cellDisable = define.disableHeaderHover;
+      cellDisable = define?.disableHeaderHover;
+
+      if (cellGroup.firstChild && cellGroup.firstChild.name === 'axis' && table.options.hover?.disableAxisHover) {
+        cellDisable = true;
+      }
     } else {
       const define = table.getBodyColumnDefine(col, row);
-      cellDisable = define.disableHover;
+      cellDisable = define?.disableHover;
     }
 
     if (cellDisable) {

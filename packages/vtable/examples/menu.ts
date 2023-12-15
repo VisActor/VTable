@@ -45,6 +45,10 @@ export const menus = [
       },
       {
         path: 'list',
+        name: 'list-tree-20000'
+      },
+      {
+        path: 'list',
         name: 'TODO-list-tree-checkbox'
       },
       {

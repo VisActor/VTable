@@ -27,6 +27,8 @@ interface IPivotLayoutBaseHeadNode {
   value: string;
   children: IPivotLayoutHeadNode[] | undefined;
   level: number;
+  /** 节点跨占层数 如汇总节点跨几层维度 */
+  levelSpan: number;
   startIndex: number;
   size: number; //对应到colSpan或者rowSpan
   // parsing?:  'img' | 'link' | 'video' | 'templateLink';
@@ -62,6 +64,7 @@ export class DimensionTree {
     value: '',
     children: [],
     level: -1,
+    levelSpan: 1,
     startIndex: 0,
     size: 0,
     startInTotal: 0,
@@ -195,22 +198,44 @@ export class DimensionTree {
   }
   searchPath(index: number, node: IPivotLayoutHeadNode, path: Array<IPivotLayoutHeadNode>, maxDeep: number) {
     if (!node) {
-      return false;
+      return;
     }
     if (index < node.startIndex || index >= node.startIndex + node.size) {
-      return false;
+      return;
     }
     path.push(node);
-    if (!node.children || node.children.length === 0) {
-      return true;
+    if (!node.children || node.children.length === 0 || node.level >= maxDeep) {
+      return;
     }
-    if (node.level >= maxDeep) {
-      return true;
-    }
-    // 这里按照 数据填充时，序号时同级序号 还是全局序号
+
+    // const cIndex = index - node.startIndex;
+    // for (let i = 0; i < node.children.length; i++) {
+    //   const element = node.children[i];
+    //   if (cIndex >= element.startIndex && cIndex < element.startIndex + element.size) {
+    //     this.searchPath(cIndex, element, path, maxDeep);
+    //     break;
+    //   }
+    // }
+
+    // use dichotomy to optimize search performance
     const cIndex = index - node.startIndex;
-    node.children.some(n => this.searchPath(cIndex, n, path, maxDeep));
-    return true;
+    let left = 0;
+    let right = node.children.length - 1;
+
+    while (left <= right) {
+      const middle = Math.floor((left + right) / 2);
+      const element = node.children[middle];
+
+      if (cIndex >= element.startIndex && cIndex < element.startIndex + element.size) {
+        this.searchPath(cIndex, element, path, maxDeep);
+        break;
+      } else if (cIndex < element.startIndex) {
+        right = middle - 1;
+      } else {
+        left = middle + 1;
+      }
+    }
+    return;
   }
   /**
    * 将该树中 层级为level 的sourceIndex处的节点移动到targetIndex位置
@@ -424,14 +449,34 @@ export function dealHeader(
   for (let r = row - 1; r >= 0; r--) {
     _headerCellIds[r][layoutMap.colIndex] = roots[r];
   }
+
+  // 处理汇总小计跨维度层级的情况
+  if ((hd as any).levelSpan > 1) {
+    for (let i = 1; i < (hd as any).levelSpan; i++) {
+      if (!_headerCellIds[row + i]) {
+        _headerCellIds[row + i] = [];
+      }
+      _headerCellIds[row + i][layoutMap.colIndex] = id;
+    }
+  }
+
   if ((hd as IPivotLayoutHeadNode).children?.length >= 1) {
     layoutMap
-      ._addHeaders(_headerCellIds, row + 1, (hd as IPivotLayoutHeadNode).children ?? [], [...roots, id])
+      ._addHeaders(_headerCellIds, row + ((hd as any).levelSpan ?? 1), (hd as IPivotLayoutHeadNode).children ?? [], [
+        ...roots,
+        ...Array((hd as any).levelSpan ?? 1).fill(id)
+      ])
       .forEach(c => results.push(c));
   } else {
     // columns.push([""])//代码一个路径
     for (let r = row + 1; r < _headerCellIds.length; r++) {
       _headerCellIds[r][layoutMap.colIndex] = id;
+
+      // if ((hd as any).levelSpan > 1) {
+      //   for (let i = 1; i < (hd as any).levelSpan; i++) {
+      //     _headerCellIds[r + i][layoutMap.colIndex] = id;
+      //   }
+      // }
     }
     layoutMap.colIndex++;
   }

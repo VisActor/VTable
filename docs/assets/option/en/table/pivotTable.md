@@ -96,7 +96,8 @@ export enum AggregationType {
   MIN = 'MIN',
   MAX = 'MAX',
   AVG = 'AVG',
-  COUNT = 'COUNT'
+  COUNT = 'COUNT',
+  NONE = 'NONE'
 }
 ```
 ### sortRules(SortRules)
@@ -168,8 +169,14 @@ export interface FilterRule {
 Set up totals, subtotals, and grand totals.
 ```
 export interface Totals {
-  row?: Total;
-  column?: Total;
+  row?: Total & {
+    showGrandTotalsOnTop?: boolean;
+    showSubTotalsOnTop?: boolean;
+  };
+  column?: Total & {
+    showGrandTotalsOnLeft?: boolean;
+    showSubTotalsOnLeft?: boolean;
+  };
 }
 ```
 
