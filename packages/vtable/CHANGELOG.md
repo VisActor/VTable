@@ -1,6 +1,24 @@
 # Change Log - @visactor/vtable
 
-This log was last generated on Wed, 13 Dec 2023 11:43:30 GMT and should not be manually modified.
+This log was last generated on Fri, 15 Dec 2023 11:23:08 GMT and should not be manually modified.
+
+## 0.17.0
+Fri, 15 Dec 2023 11:23:08 GMT
+
+### Updates
+
+- feat: add option showGrandTotalsOnTop  #650
+
+
+- feat: optimize diffCellIndices in toggleHierarchyState()
+- fix: fix right frozen adaptive problem
+- feat: add disableAxisHover config
+- feat: optimize computeTextWidth() in pivot table
+- fix: fix disableHover bottom frozen hover error
+- fix: fix rowUpdatePos update in updateRow()
+- refactor: dropdownMenu hide #727
+
+
 
 ## 0.16.3
 Wed, 13 Dec 2023 11:43:30 GMT

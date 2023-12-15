@@ -104,4 +104,8 @@ export type CellStyle = {
   // lineThroughColor: CanvasRenderingContext2D['strokeStyle'];
   // lineThroughDash: number[];
   lineThroughLineWidth: number;
+
+  _strokeArrayWidth: number[];
+  _strokeArrayColor: string[];
+  _linkColor: CanvasRenderingContext2D['fillStyle'];
 };

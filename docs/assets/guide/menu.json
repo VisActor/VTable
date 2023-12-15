@@ -434,6 +434,29 @@
       ]
     },
     {
+      "path": "export",
+      "title": {
+        "zh": "表格导出",
+        "en": "table export"
+      },
+      "children": [
+        {
+          "path": "csv",
+          "title": {
+            "zh": "csv",
+            "en": "csv"
+          }
+        },
+        {
+          "path": "excel",
+          "title": {
+            "zh": "excel",
+            "en": "excel"
+          }
+        }
+      ]
+    },
+    {
       "path": "Developer_Ecology",
       "title": {
         "zh": "开发者生态",

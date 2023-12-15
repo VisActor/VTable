@@ -27,6 +27,8 @@ interface IPivotLayoutBaseHeadNode {
   value: string;
   children: IPivotLayoutHeadNode[] | undefined;
   level: number;
+  /** 节点跨占层数 如汇总节点跨几层维度 */
+  levelSpan: number;
   startIndex: number;
   size: number; //对应到colSpan或者rowSpan
   // parsing?:  'img' | 'link' | 'video' | 'templateLink';
@@ -62,6 +64,7 @@ export class DimensionTree {
     value: '',
     children: [],
     level: -1,
+    levelSpan: 1,
     startIndex: 0,
     size: 0,
     startInTotal: 0,
@@ -446,14 +449,34 @@ export function dealHeader(
   for (let r = row - 1; r >= 0; r--) {
     _headerCellIds[r][layoutMap.colIndex] = roots[r];
   }
+
+  // 处理汇总小计跨维度层级的情况
+  if ((hd as any).levelSpan > 1) {
+    for (let i = 1; i < (hd as any).levelSpan; i++) {
+      if (!_headerCellIds[row + i]) {
+        _headerCellIds[row + i] = [];
+      }
+      _headerCellIds[row + i][layoutMap.colIndex] = id;
+    }
+  }
+
   if ((hd as IPivotLayoutHeadNode).children?.length >= 1) {
     layoutMap
-      ._addHeaders(_headerCellIds, row + 1, (hd as IPivotLayoutHeadNode).children ?? [], [...roots, id])
+      ._addHeaders(_headerCellIds, row + ((hd as any).levelSpan ?? 1), (hd as IPivotLayoutHeadNode).children ?? [], [
+        ...roots,
+        ...Array((hd as any).levelSpan ?? 1).fill(id)
+      ])
       .forEach(c => results.push(c));
   } else {
     // columns.push([""])//代码一个路径
     for (let r = row + 1; r < _headerCellIds.length; r++) {
       _headerCellIds[r][layoutMap.colIndex] = id;
+
+      // if ((hd as any).levelSpan > 1) {
+      //   for (let i = 1; i < (hd as any).levelSpan; i++) {
+      //     _headerCellIds[r + i][layoutMap.colIndex] = id;
+      //   }
+      // }
     }
     layoutMap.colIndex++;
   }
