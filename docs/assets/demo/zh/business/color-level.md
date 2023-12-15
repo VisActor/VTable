@@ -125,61 +125,6 @@ const option = {
       220922103859015: "Furniture",
     },
   ],
-  rowTree: [
-      {
-        dimensionKey: '220922103859014',
-        value: "North East",
-      },
-      {
-        dimensionKey: '220922103859014',
-        value: "Central South",
-      },
-      {
-        dimensionKey: '220922103859014',
-        value: "East China",
-      },
-      {
-        dimensionKey: '220922103859014',
-        value: "North China",
-      },
-      {
-        dimensionKey: '220922103859014',
-        value: "North West",
-      },
-      {
-        dimensionKey: '220922103859014',
-        value: "South West",
-      },
-    ],
-    columnTree: [
-      {
-        dimensionKey: '220922103859015',
-        value: 'Technology',
-        children: [
-          {
-            indicatorKey: "220922103859011",
-          },
-        ],
-      },
-      {
-        dimensionKey: '220922103859015',
-        value: 'Office Supplies',
-        children: [
-          {
-            indicatorKey: "220922103859011",
-          },
-        ],
-      },
-      {
-        dimensionKey: '220922103859015',
-        value: 'Furniture',
-        children: [
-          {
-            indicatorKey: "220922103859011",
-          },
-        ],
-      },
-    ],
   rows:[
     {
         dimensionKey: '220922103859014',
