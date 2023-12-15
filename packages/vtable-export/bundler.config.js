@@ -5,8 +5,8 @@ module.exports = {
   formats: ['cjs', 'es', 'umd'],
   noEmitOnError: false,
   copy: ['css'],
-  name: 'ReactVTable',
-  umdOutputFilename: 'react-vtable',
+  name: 'VTable.export',
+  umdOutputFilename: 'vtable-export',
   rollupOptions: {
     treeshake: true
   },

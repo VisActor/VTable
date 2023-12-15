@@ -561,6 +561,7 @@ export interface BaseTableAPI {
   _getBodyLayoutMap: (col: number, row: number) => ColumnData | IndicatorData;
   getBodyColumnDefine: (col: number, row: number) => ColumnDefine;
   getBodyColumnType: (col: number, row: number) => ColumnTypeOption;
+  getCellType: (col: number, row: number) => ColumnTypeOption;
   fireListeners: <TYPE extends keyof TableEventHandlersEventArgumentMap>(
     type: TYPE,
     event: TableEventHandlersEventArgumentMap[TYPE]

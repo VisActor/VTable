@@ -1043,6 +1043,31 @@
       ]
     },
     {
+      "path": "export",
+      "title": {
+        "zh": "表格导出",
+        "en": "table export"
+      },
+      "children": [
+        {
+          "path": "table-export",
+          "title": {
+            "zh": "表格导出",
+            "en": "table export"
+          },
+          "meta": {
+            "title": "table export",
+            "keywords": "",
+            "category": "demo",
+            "group": "Export",
+            "cover": "https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/pivot-table.png",
+            "link": "'../../guide/export/excel'",
+            "option": ""
+          }
+        }
+      ]
+    },
+    {
       "path": "business",
       "title": {
         "zh": "业务场景",

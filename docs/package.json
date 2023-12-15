@@ -12,6 +12,7 @@
     "@arco-design/web-react": "2.46.1",
     "@visactor/vtable": "workspace:*",
     "@visactor/vtable-editors": "workspace:*",
+    "@visactor/vtable-export": "workspace:*",
     "@visactor/vchart": "1.7.3",
     "markdown-it": "^13.0.0",
     "highlight.js": "^11.8.0",

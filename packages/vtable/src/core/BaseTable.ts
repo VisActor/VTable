@@ -2501,6 +2501,17 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     const cellType = this.internalProps.layoutMap.getBody(col, row).cellType;
     return getProp('cellType', { cellType }, col, row, this);
   }
+
+  getCellType(col: number, row: number): ColumnTypeOption {
+    let cellType;
+    if (this.isHeader(col, row)) {
+      cellType = this.internalProps.layoutMap.getHeader(col, row).headerType;
+    } else {
+      cellType = this.internalProps.layoutMap.getBody(col, row).cellType;
+    }
+    return getProp('cellType', { cellType }, col, row, this);
+  }
+
   /**
    * 根据行列号获取对应的字段名
    * @param  {number} col column index.
@@ -3115,7 +3126,10 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
       // lineThroughDash: (theme.text as any).lineThroughDash
       padding: theme._vtable.padding,
       underlineWidth: theme.text.underline,
-      lineThroughLineWidth: theme.text.lineThrough
+      lineThroughLineWidth: theme.text.lineThrough,
+      _strokeArrayWidth: (theme.group as any).strokeArrayWidth,
+      _strokeArrayColor: (theme.group as any).strokeArrayColor,
+      _linkColor: getProp('linkColor', actStyle, col, row, this)
     };
   }
   /**

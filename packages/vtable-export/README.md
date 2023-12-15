@@ -5,7 +5,7 @@
 </div>
 
 <div align="center">
-  <h1>React-VTable</h1>
+  <h1>VTable-Export</h1>
 </div>
 
 <div align="center">
@@ -22,22 +22,21 @@ VTable is not just a high-performance multidimensional data analysis table, but 
 
 ## Installation
 
-[npm package](https://www.npmjs.com/package/@visactor/react-vtable)
+[npm package](https://www.npmjs.com/package/@visactor/vtable-export)
 
 ```bash
 // npm
-npm install @visactor/react-vtable
+npm install @visactor/vtable-export
 
 // yarn
-yarn add @visactor/react-vtable
+yarn add @visactor/vtable-export
 ```
 
 ## Quick Start
 
 ```jsx
-import React from 'react';
-import ReactDOM from 'react-dom/client';
-import { ListTable } from "@visactor/react-vtable";
+import * as VTable from '@visactor/vtable';
+import { downloadCsv, exportVTableToCsv, downloadExcel, exportVTableToExcel } from '@visactor/vtable-export';
 
 const option = {
   header: [
@@ -61,9 +60,14 @@ const option = {
   records: new Array(1000).fill(["John", 18, "male", "🏀"]),
 };
 
-ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
-  <ListTable option={option} height={'500px'}/>
-);
+const tableInstance = new VTable.ListTable(option);
+
+// donload csv file
+downloadCsv(exportVTableToCsv(tableInstance), 'export-csv');
+
+// donload excel file
+downloadExcel(await exportVTableToExcel(tableInstance), 'export-excel');
+
 ```
 
 ##
