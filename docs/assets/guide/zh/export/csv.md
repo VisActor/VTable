@@ -21,4 +21,4 @@ downloadCsv(exportVTableToCsv(tableInstance), 'export-csv');
 * `downloadCsv`：下载工具，在浏览器环境中将CSV格式的字符串下载为文件
 * 如果是服务端环境，可以自行处理`exportVTableToCsv`转换出的CSV格式的字符串
 
-参考[demo](https://codesandbox.io/p/sandbox/react-vtable-wjrvpq)
+参考[demo](../../demo/export/table-export)

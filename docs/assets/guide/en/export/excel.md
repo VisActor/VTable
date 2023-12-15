@@ -22,4 +22,4 @@ downloadExcel(exportVTableToExcel(tableInstance), 'export-csv');
 * If it is a server environment, you can process the Excel format ArrayBuffer converted by `exportVTableToExcel` yourself.
 * The excel export function is currently being improved. Currently, it only supports the export of text-type cells, and will support more types such as sparkline in the future.
 
-Reference[demo](https://codesandbox.io/p/sandbox/react-vtable-wjrvpq)
+Reference[demo](../../demo/export/table-export)
