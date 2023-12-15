@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vtable",
+      "comment": "fix: fix disableHover bottom frozen hover error",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vtable"
+}

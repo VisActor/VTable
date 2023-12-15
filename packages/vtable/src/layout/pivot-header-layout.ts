@@ -243,7 +243,9 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
         headerType: this.columnHeaderTitle.headerType ?? 'text',
         style: this.columnHeaderTitle.headerStyle,
         define: <any>{
-          id
+          id,
+          disableHeaderHover: !!this.columnHeaderTitle.disableHeaderHover,
+          disableHeaderSelect: !!this.columnHeaderTitle.disableHeaderSelect
         }
       };
       this.columnHeaderObjs.push(cell);
@@ -287,7 +289,9 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
         headerType: this.rowHeaderTitle.headerType ?? 'text',
         style: this.rowHeaderTitle.headerStyle,
         define: <any>{
-          id
+          id,
+          disableHeaderHover: !!this.columnHeaderTitle.disableHeaderHover,
+          disableHeaderSelect: !!this.columnHeaderTitle.disableHeaderSelect
         }
       };
       this.rowHeaderObjs.push(cell);
@@ -535,7 +539,9 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
           define: <any>{
             dimensionKey: '维度名称',
             id,
-            value: dimensionKey
+            value: dimensionKey,
+            disableHeaderHover: !!this.cornerSetting.disableHeaderHover,
+            disableHeaderSelect: !!this.cornerSetting.disableHeaderSelect
           },
           dropDownMenu: dimensionInfo?.cornerDropDownMenu,
           pivotInfo: {
@@ -575,7 +581,9 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
         define: <any>{
           dimensionKey: '维度名称',
           id,
-          value: ''
+          value: '',
+          disableHeaderHover: !!this.cornerSetting.disableHeaderHover,
+          disableHeaderSelect: !!this.cornerSetting.disableHeaderSelect
         }
       };
       results[id] = cell;
@@ -1639,7 +1647,9 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
         define: {
           field: '',
           headerType: 'text',
-          cellType: 'text'
+          cellType: 'text',
+          disableHeaderHover: !!this.columnHeaderTitle.disableHeaderHover,
+          disableHeaderSelect: !!this.columnHeaderTitle.disableHeaderSelect
         }
       };
       this.rowHeaderObjs.push(cell);

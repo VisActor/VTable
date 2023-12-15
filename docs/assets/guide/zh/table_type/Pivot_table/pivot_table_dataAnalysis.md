@@ -69,7 +69,8 @@ dataConfig: {
           showSubTotals: true,
           subTotalsDimensions: ['province'],
           grandTotalLabel: '行总计',
-          subTotalLabel: '小计'
+          subTotalLabel: '小计',
+          showGrandTotalsOnTop: true //汇总值显示在上
         },
         column: {
           showGrandTotals: true,
@@ -125,14 +126,23 @@ filterRules: [
         {
           indicatorKey: 'OrderCount', //指标名称
           field: 'Sales', //指标依据字段
-          aggregationType: VTable.TYPES.AggregationType.COUNT, //计算类型
+          aggregationType: VTable.TYPES.AggregationType.COUNT, //计算类型 求数量
           formatFun: countNumberFormat
         },
         {
           indicatorKey: 'AverageOrderSales', //指标名称
           field: 'Sales', //指标依据字段
-          aggregationType: VTable.TYPES.AggregationType.AVG, //计算类型
-          formatFun: sumNumberFormat
+          aggregationType: VTable.TYPES.AggregationType.AVG, //计算类型  求平均
+        },
+        {
+          indicatorKey: 'MaxOrderSales', //指标名称
+          field: 'Sales', //指标依据字段
+          aggregationType: VTable.TYPES.AggregationType.MAX, //计算类型 求最大
+        },
+        {
+          indicatorKey: 'OrderSalesValue', //指标名称
+          field: 'Sales', //指标依据字段
+          aggregationType: VTable.TYPES.AggregationType.NONE, //不做聚合 匹配到其中对应数据获取其对应field的值
         }
       ]
 ```
@@ -176,7 +186,7 @@ filterRules: [
 
 ### 自定义维度树
 虽然具有分析能力的多维表格可以自动分析各个维度的维度值组成行列表头的树形结构，并且可以根据`dataConfig.sortRules`进行排序，但具有复杂业务逻辑的场景还是期望可以能够**自定义行列表头维度值**及顺序。那么可以通过rowTree和columnTree来实现这些业务需求场景。
-- enableDataAnalysis需设置为false来关闭VTable内部聚合数据的分析。
+- enableDataAnalysis需设置为false来关闭VTable内部聚合数据的分析，提升一定的性能。
 
    <div style="width: 80%; text-align: center;">
      <img src="https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/guide/custom-tree.png" />

@@ -62,21 +62,37 @@ export function isCellHover(state: StateManager, col: number, row: number): stri
     return undefined;
   }
 
+  let hoverMode;
   if (highlightScope === HighlightScope.single && cellPos.col === col && cellPos.row === row) {
-    return 'cellBgColor';
+    hoverMode = 'cellBgColor';
   } else if (highlightScope === HighlightScope.column && cellPos.col === col) {
-    return 'inlineColumnBgColor';
+    hoverMode = 'inlineColumnBgColor';
   } else if (highlightScope === HighlightScope.row && cellPos.row === row) {
-    return 'inlineRowBgColor';
+    hoverMode = 'inlineRowBgColor';
   } else if (highlightScope === HighlightScope.cross) {
     if (cellPos.col === col && cellPos.row === row) {
-      return 'cellBgColor';
+      hoverMode = 'cellBgColor';
     } else if (cellPos.col === col) {
-      return 'inlineColumnBgColor';
+      hoverMode = 'inlineColumnBgColor';
     } else if (cellPos.row === row) {
-      return 'inlineRowBgColor';
+      hoverMode = 'inlineRowBgColor';
     }
   }
 
-  return undefined;
+  if (hoverMode) {
+    let cellDisable;
+    if (isHeader) {
+      const define = table.getHeaderDefine(col, row);
+      cellDisable = define?.disableHeaderHover;
+    } else {
+      const define = table.getBodyColumnDefine(col, row);
+      cellDisable = define?.disableHover;
+    }
+
+    if (cellDisable) {
+      hoverMode = undefined;
+    }
+  }
+
+  return hoverMode;
 }
