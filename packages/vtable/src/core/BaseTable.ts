@@ -2815,7 +2815,20 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     const { layoutMap } = this.internalProps;
     const isHeader = layoutMap.isHeader(col, row);
     if (isHeader) {
-      let cacheStyle = this.headerStyleCache.get(`${col}-${row}`);
+      // const cacheKey = `${col}-${row}`;
+      let cacheKey;
+      if (this.isPivotTable()) {
+        // use dimensionKey&indicatorKey to cache style object in pivot table
+        const define = this.getHeaderDefine(col, row) as any;
+        cacheKey = define?.dimensionKey
+          ? `dim-${define.dimensionKey}`
+          : define?.indicatorKey
+          ? `ind-${define.indicatorKey}`
+          : `${col}-${row}`;
+      } else {
+        cacheKey = `${col}-${row}`;
+      }
+      let cacheStyle = this.headerStyleCache.get(cacheKey);
       if (cacheStyle) {
         return cacheStyle;
       }
@@ -2901,7 +2914,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
           this.options.autoWrapText
         );
       }
-      this.headerStyleCache.set(`${col}-${row}`, cacheStyle);
+      this.headerStyleCache.set(cacheKey, cacheStyle);
       return cacheStyle;
     }
     let cacheKey;

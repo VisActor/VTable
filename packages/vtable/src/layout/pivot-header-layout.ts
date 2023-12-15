@@ -105,6 +105,7 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
   indicatorDimensionKey: string = IndicatorDimensionKeyPlaceholder;
   // 缓存行号列号对应的cellRange 需要注意当表头位置拖拽后 这个缓存的行列号已不准确 进行重置
   // private _cellRangeMap: Map<string, CellRange>; //存储单元格的行列号范围 针对解决是否为合并单元格情况
+  private _largeCellRangeCache: CellRange[];
   // 缓存行号列号对应的headerPath,注意树形结构展开需要清除！ 需要注意当表头位置拖拽后 这个缓存的行列号已不准确 进行重置
   private _CellHeaderPathMap: Map<string, IPivotTableCellHeaderPaths>;
   _table: PivotTable | PivotChart;
@@ -142,6 +143,7 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
     }
     this.dataset = dataset;
     // this._cellRangeMap = new Map();
+    this._largeCellRangeCache = [];
     this._CellHeaderPathMap = new Map();
     // this.showHeader = showHeader;
     // this.pivotLayout = pivotLayoutObj;
@@ -1302,10 +1304,15 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
     if (this.isRightFrozenColumn(col, row) || this.isBottomFrozenRow(col, row)) {
       return result;
     }
-    // if (this._cellRangeMap.has(`$${col}$${row}`)) return this._cellRangeMap.get(`$${col}$${row}`);
-    // if (this._cellRangeMap.has(`${col}-${row}`)) {
-    //   return this._cellRangeMap.get(`${col}-${row}`);
+    // if (this._cellRangeMap.has(`$${col}$${row}`)) {
+    //   return this._cellRangeMap.get(`$${col}$${row}`);
     // }
+    for (let i = 0; i < this._largeCellRangeCache.length; i++) {
+      const range = this._largeCellRangeCache[i];
+      if (col >= range.start.col && col <= range.end.col && row >= range.start.row && row <= range.end.row) {
+        return range;
+      }
+    }
     if (this.isHeader(col, row) && col !== -1 && row !== -1) {
       //in header
       const id = this.getCellId(col, row);
@@ -1343,6 +1350,10 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
       }
     }
     // this._cellRangeMap.set(`${col}-${row}`, result);
+    if (result.end.col - result.start.col > 100 || result.end.row - result.start.row > 100) {
+      // only cache large range to avoid long col&row search
+      this._largeCellRangeCache.push(result);
+    }
     return result;
   }
   isCellRangeEqual(col: number, row: number, targetCol: number, targetRow: number): boolean {
@@ -1411,6 +1422,21 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
     if (this._CellHeaderPathMap.has(`${col}-${row}`)) {
       return this._CellHeaderPathMap.get(`${col}-${row}`);
     }
+    let _largeCellRangeCacheIndex = -1;
+    for (let i = 0; i < this._largeCellRangeCache.length; i++) {
+      const range = this._largeCellRangeCache[i];
+      if (col >= range.start.col && col <= range.end.col && row >= range.start.row && row <= range.end.row) {
+        _largeCellRangeCacheIndex = i;
+        break;
+      }
+    }
+    // if (_largeCellRangeCacheIndex !== -1) {
+    //   const range = this._largeCellRangeCache[_largeCellRangeCacheIndex];
+    //   if (this._CellHeaderPathMap.has(`${range.start.col}-${range.start.row}`)) {
+    //     return this._CellHeaderPathMap.get(`${range.start.col}-${range.start.row}`);
+    //   }
+    // }
+    // console.log(`${col}-${row}`);
     const recordCol = this.getBodyIndexByCol(col);
     const recordRow = this.getBodyIndexByRow(row) + this.currentPageStartIndex;
     let colPath: IPivotLayoutHeadNode[] = [];
@@ -1666,6 +1692,7 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
     }, {} as { [key: LayoutObjectId]: HeaderData });
     this._CellHeaderPathMap = new Map();
     // this._cellRangeMap = new Map();
+    this._largeCellRangeCache.length = 0;
     const diffCell: {
       addCellPositions: CellAddress[];
       removeCellPositions: CellAddress[];
@@ -1970,6 +1997,7 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
         this.columnDimensionTree.reset(this.columnDimensionTree.tree.children, true);
         this._CellHeaderPathMap = new Map();
         // this._cellRangeMap = new Map();
+        this._largeCellRangeCache.length = 0;
         return {
           sourceIndex: sourceCellRange.start.col,
           targetIndex,
@@ -2024,6 +2052,7 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
         this.rowDimensionTree.reset(this.rowDimensionTree.tree.children, true);
         this._CellHeaderPathMap = new Map();
         // this._cellRangeMap = new Map();
+        this._largeCellRangeCache.length = 0;
         return {
           sourceIndex: sourceCellRange.start.row,
           targetIndex: targetIndex + this.columnHeaderLevelCount,
@@ -2390,6 +2419,7 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
 
   clearCellRangeMap() {
     // this._cellRangeMap.clear();
+    this._largeCellRangeCache.length = 0;
     this._CellHeaderPathMap = new Map();
   }
 

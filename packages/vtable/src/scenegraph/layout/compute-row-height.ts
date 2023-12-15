@@ -530,8 +530,17 @@ function computeTextHeight(col: number, row: number, cellType: ColumnTypeOption,
   let iconInlineFrontHeight = 0;
   const iconInlineEnd: ColumnIconOption[] = [];
   let iconInlineEndHeight = 0;
-  const define = table.getBodyColumnDefine(col, row);
-  const mayHaveIcon = table.getCellLocation(col, row) !== 'body' ? true : !!define?.icon || !!define?.tree;
+  // const define = table.getBodyColumnDefine(col, row);
+  // const mayHaveIcon = table.getCellLocation(col, row) !== 'body' ? true : !!define?.icon || !!define?.tree;
+
+  let mayHaveIcon = false;
+  if (table.getCellLocation(col, row) !== 'body') {
+    mayHaveIcon = true;
+  } else {
+    const define = table.getBodyColumnDefine(col, row);
+    mayHaveIcon = !!define?.icon || !!define?.tree;
+  }
+
   if (mayHaveIcon) {
     const icons = table.getCellIcons(col, row);
     icons?.forEach(icon => {

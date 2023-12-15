@@ -195,22 +195,44 @@ export class DimensionTree {
   }
   searchPath(index: number, node: IPivotLayoutHeadNode, path: Array<IPivotLayoutHeadNode>, maxDeep: number) {
     if (!node) {
-      return false;
+      return;
     }
     if (index < node.startIndex || index >= node.startIndex + node.size) {
-      return false;
+      return;
     }
     path.push(node);
-    if (!node.children || node.children.length === 0) {
-      return true;
+    if (!node.children || node.children.length === 0 || node.level >= maxDeep) {
+      return;
     }
-    if (node.level >= maxDeep) {
-      return true;
-    }
-    // 这里按照 数据填充时，序号时同级序号 还是全局序号
+
+    // const cIndex = index - node.startIndex;
+    // for (let i = 0; i < node.children.length; i++) {
+    //   const element = node.children[i];
+    //   if (cIndex >= element.startIndex && cIndex < element.startIndex + element.size) {
+    //     this.searchPath(cIndex, element, path, maxDeep);
+    //     break;
+    //   }
+    // }
+
+    // use dichotomy to optimize search performance
     const cIndex = index - node.startIndex;
-    node.children.some(n => this.searchPath(cIndex, n, path, maxDeep));
-    return true;
+    let left = 0;
+    let right = node.children.length - 1;
+
+    while (left <= right) {
+      const middle = Math.floor((left + right) / 2);
+      const element = node.children[middle];
+
+      if (cIndex >= element.startIndex && cIndex < element.startIndex + element.size) {
+        this.searchPath(cIndex, element, path, maxDeep);
+        break;
+      } else if (cIndex < element.startIndex) {
+        right = middle - 1;
+      } else {
+        left = middle + 1;
+      }
+    }
+    return;
   }
   /**
    * 将该树中 层级为level 的sourceIndex处的节点移动到targetIndex位置
