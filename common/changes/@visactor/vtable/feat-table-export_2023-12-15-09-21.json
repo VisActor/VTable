@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vtable-export",
+      "comment": "feat: add table-export tools",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vtable"
+}
