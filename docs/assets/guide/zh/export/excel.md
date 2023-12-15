@@ -22,4 +22,4 @@ downloadExcel(exportVTableToExcel(tableInstance), 'export-csv');
 * 如果是服务端环境，可以自行处理`exportVTableToExcel`转换出的Excel格式的ArrayBuffer
 * 目前excel导出功能正在完善中，目前只支持文字类型的单元格导出，后续会支持迷你图等更多类型。
 
-参考[demo](https://codesandbox.io/p/sandbox/react-vtable-wjrvpq)
+参考[demo](https://codesandbox.io/p/sandbox/vtable-export-j7k9j4)

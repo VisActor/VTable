@@ -1,3 +1,5 @@
+import { isNumber } from '@visactor/vutils';
+
 export function colorStringToRGB(colorString: string) {
   if (colorString.startsWith('#')) {
     // 处理十六进制颜色值（例如：#RRGGBB 或 #RGB）
@@ -26,9 +28,9 @@ export function colorStringToRGB(colorString: string) {
       .split(',')
       .map(Number);
     return values;
-  } else if (DEFAULT_COLORS[colorString]) {
+  } else if (isNumber(DEFAULT_COLORS[colorString])) {
     return rgb(DEFAULT_COLORS[colorString]);
-  } else if (DEFAULT_COLORS_OPACITY[colorString]) {
+  } else if (isNumber(DEFAULT_COLORS_OPACITY[colorString])) {
     return rgba(DEFAULT_COLORS_OPACITY[colorString]);
   }
 
