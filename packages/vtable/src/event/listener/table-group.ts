@@ -282,12 +282,6 @@ export function bindTableGroupListener(eventManager: EventManager) {
       });
     }
   });
-  // table.scenegraph.tableGroup.addEventListener('pointerdownoutside', (e: FederatedPointerEvent) => {
-  //   const eventArgsSet: SceneEvent = getCellEventArgsSet(e);
-  //   if (stateManager.menu.isShow && (eventArgsSet.eventArgs?.target as any) !== stateManager.residentHoverIcon?.icon) {
-  //     stateManager.hideMenu();
-  //   }
-  // });
   table.scenegraph.tableGroup.addEventListener('pointerupoutside', (e: FederatedPointerEvent) => {
     const eventArgsSet: SceneEvent = getCellEventArgsSet(e);
     if (stateManager.menu.isShow && (eventArgsSet.eventArgs?.target as any) !== stateManager.residentHoverIcon?.icon) {
