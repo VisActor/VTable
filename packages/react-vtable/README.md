@@ -5,7 +5,7 @@
 </div>
 
 <div align="center">
-  <h1>VTable</h1>
+  <h1>React-VTable</h1>
 </div>
 
 <div align="center">

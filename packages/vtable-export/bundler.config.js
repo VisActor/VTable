@@ -5,7 +5,7 @@ module.exports = {
   formats: ['cjs', 'es', 'umd'],
   noEmitOnError: false,
   copy: ['css'],
-  name: 'VTable',
+  name: 'VTable.export',
   umdOutputFilename: 'vtable-export',
   rollupOptions: {
     treeshake: true

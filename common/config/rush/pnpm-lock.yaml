@@ -17,6 +17,7 @@ importers:
       '@visactor/vchart': 1.7.3
       '@visactor/vtable': workspace:*
       '@visactor/vtable-editors': workspace:*
+      '@visactor/vtable-export': workspace:*
       '@vitejs/plugin-react': 3.1.0
       axios: ^1.4.0
       chalk: ^3.0.0
@@ -39,6 +40,7 @@ importers:
       '@visactor/vchart': 1.7.3
       '@visactor/vtable': link:../packages/vtable
       '@visactor/vtable-editors': link:../packages/vtable-editors
+      '@visactor/vtable-export': link:../packages/vtable-export
       axios: 1.6.2
       highlight.js: 11.9.0
       lodash: 4.17.21
