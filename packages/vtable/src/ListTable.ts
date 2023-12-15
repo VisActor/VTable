@@ -825,6 +825,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
     this.stateManager.initCheckedState(records);
     // this.internalProps.frozenColCount = this.options.frozenColCount || this.rowHeaderLevelCount;
     // 生成单元格场景树
+    this.clearCellStyleCache();
     this.scenegraph.createSceneGraph();
     this.stateManager.updateHoverPos(oldHoverState.col, oldHoverState.row);
     if (this.internalProps.title && !this.internalProps.title.isReleased) {

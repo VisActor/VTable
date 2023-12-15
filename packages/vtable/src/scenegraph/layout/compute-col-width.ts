@@ -131,7 +131,7 @@ export function computeColsWidth(table: BaseTableAPI, colStart?: number, colEnd?
     let actualWidth = 0;
     for (let col = 0; col < table.colCount; col++) {
       const colWidth = update ? newWidths[col] : table.getColWidth(col);
-      if (col < table.frozenColCount || col >= table.colCount - table.rightFrozenColCount) {
+      if (col < table.frozenColCount || (table.isPivotChart() && col >= table.colCount - table.rightFrozenColCount)) {
         actualHeaderWidth += colWidth;
       }
       actualWidth += colWidth;
@@ -518,8 +518,17 @@ function computeTextWidth(col: number, row: number, cellType: ColumnTypeOption, 
   // const dataValue = table.getCellOriginValue(col, row);
   const actStyle = table._getCellStyle(col, row);
   let iconWidth = 0;
-  const define = table.getBodyColumnDefine(col, row);
-  const mayHaveIcon = table.getCellLocation(col, row) !== 'body' ? true : !!define?.icon || !!define?.tree;
+
+  // const define = table.getBodyColumnDefine(col, row);
+  // const mayHaveIcon = table.getCellLocation(col, row) !== 'body' ? true : !!define?.icon || !!define?.tree;
+
+  let mayHaveIcon = false;
+  if (table.getCellLocation(col, row) !== 'body') {
+    mayHaveIcon = true;
+  } else {
+    const define = table.getBodyColumnDefine(col, row);
+    mayHaveIcon = !!define?.icon || !!define?.tree;
+  }
   if (mayHaveIcon) {
     const icons = table.getCellIcons(col, row);
     icons?.forEach(icon => {
@@ -528,6 +537,7 @@ function computeTextWidth(col: number, row: number, cellType: ColumnTypeOption, 
       }
     });
   }
+
   let spanCol = 1;
   if (table.isHeader(col, row) || (table.getBodyColumnDefine(col, row) as TextColumnDefine)?.mergeCell) {
     const cellRange = table.getCellRange(col, row);
@@ -608,13 +618,14 @@ function getColWidthDefinedWidthResizedWidth(col: number, table: BaseTableAPI) {
   return widthDefined;
 }
 
-function getAdaptiveWidth(
+export function getAdaptiveWidth(
   totalDrawWidth: number,
   startCol: number,
   endColPlus1: number,
   update: boolean,
   newWidths: number[],
-  table: BaseTableAPI
+  table: BaseTableAPI,
+  fromScenegraph?: boolean
 ) {
   let actualWidth = 0;
   const adaptiveColumns: number[] = [];
@@ -650,6 +661,8 @@ function getAdaptiveWidth(
     }
     if (update) {
       newWidths[col] = table._adjustColWidth(col, colWidth);
+    } else if (fromScenegraph) {
+      table.scenegraph.setColWidth(col, table._adjustColWidth(col, colWidth));
     } else {
       table._setColWidth(col, table._adjustColWidth(col, colWidth), false, true);
     }
