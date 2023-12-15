@@ -69,7 +69,11 @@ export function computeRowsHeight(
     for (let row = rowStart; row < table.columnHeaderLevelCount; row++) {
       let startCol = 0;
       let endCol = table.colCount - 1;
-      if ((table.isPivotTable() || table.isPivotChart()) && checkPivotFixedStyleAndNoWrap(table, row)) {
+      if (
+        ((table.isPivotTable() && !table.isPivotChart()) ||
+          (table.isPivotChart() && !(table.internalProps.layoutMap as PivotHeaderLayoutMap).indicatorsAsCol)) && // no top axis
+        checkPivotFixedStyleAndNoWrap(table, row)
+      ) {
         // 列表头样式一致，只计算第一列行高，作为整行行高
         startCol = 0;
         endCol = table.rowHeaderLevelCount;
