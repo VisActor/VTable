@@ -3,7 +3,7 @@
     {
       "packageName": "@visactor/vtable-export",
       "comment": "feat: add table-export tools",
-      "type": "none"
+      "type": "minor"
     }
   ],
   "packageName": "@visactor/vtable"
