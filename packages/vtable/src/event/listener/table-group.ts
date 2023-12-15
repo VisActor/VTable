@@ -285,6 +285,10 @@ export function bindTableGroupListener(eventManager: EventManager) {
 
   table.scenegraph.tableGroup.addEventListener('pointerupoutside', (e: FederatedPointerEvent) => {
     // 同pointerup中的逻辑
+    const eventArgsSet: SceneEvent = getCellEventArgsSet(e);
+    if (stateManager.menu.isShow && (eventArgsSet.eventArgs?.target as any) !== stateManager.residentHoverIcon?.icon) {
+      stateManager.hideMenu();
+    }
     if (stateManager.isResizeCol()) {
       endResizeCol(table);
     } else if (stateManager.isMoveCol()) {
@@ -350,11 +354,7 @@ export function bindTableGroupListener(eventManager: EventManager) {
       table.scenegraph.updateChartState(null);
     }
     // 处理menu
-    if (
-      stateManager.menu.isShow &&
-      eventArgsSet.eventArgs &&
-      (eventArgsSet.eventArgs.target as any) !== stateManager.residentHoverIcon?.icon
-    ) {
+    if (stateManager.menu.isShow && (eventArgsSet.eventArgs?.target as any) !== stateManager.residentHoverIcon?.icon) {
       // 点击在menu外，且不是下拉菜单的icon，移除menu
       stateManager.hideMenu();
     }
@@ -596,6 +596,10 @@ export function bindTableGroupListener(eventManager: EventManager) {
 
   // click outside
   table.scenegraph.stage.addEventListener('pointertap', (e: FederatedPointerEvent) => {
+    const eventArgsSet: SceneEvent = getCellEventArgsSet(e);
+    if (stateManager.menu.isShow && (eventArgsSet.eventArgs?.target as any) !== stateManager.residentHoverIcon?.icon) {
+      stateManager.hideMenu();
+    }
     const target = e.target;
     if (
       // 如果是鼠标点击到canvas空白区域 则取消选中状态
