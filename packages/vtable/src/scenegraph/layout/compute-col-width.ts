@@ -518,8 +518,17 @@ function computeTextWidth(col: number, row: number, cellType: ColumnTypeOption, 
   // const dataValue = table.getCellOriginValue(col, row);
   const actStyle = table._getCellStyle(col, row);
   let iconWidth = 0;
-  const define = table.getBodyColumnDefine(col, row);
-  const mayHaveIcon = table.getCellLocation(col, row) !== 'body' ? true : !!define?.icon || !!define?.tree;
+
+  // const define = table.getBodyColumnDefine(col, row);
+  // const mayHaveIcon = table.getCellLocation(col, row) !== 'body' ? true : !!define?.icon || !!define?.tree;
+
+  let mayHaveIcon = false;
+  if (table.getCellLocation(col, row) !== 'body') {
+    mayHaveIcon = true;
+  } else {
+    const define = table.getBodyColumnDefine(col, row);
+    mayHaveIcon = !!define?.icon || !!define?.tree;
+  }
   if (mayHaveIcon) {
     const icons = table.getCellIcons(col, row);
     icons?.forEach(icon => {
@@ -528,6 +537,7 @@ function computeTextWidth(col: number, row: number, cellType: ColumnTypeOption, 
       }
     });
   }
+
   let spanCol = 1;
   if (table.isHeader(col, row) || (table.getBodyColumnDefine(col, row) as TextColumnDefine)?.mergeCell) {
     const cellRange = table.getCellRange(col, row);

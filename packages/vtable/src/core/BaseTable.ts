@@ -1992,8 +1992,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     if (internalProps.menu.renderMode === 'html' && !internalProps.menuHandler) {
       internalProps.menuHandler = new MenuHandler(this);
     }
-    this.headerStyleCache = new Map();
-    this.bodyStyleCache = new Map();
+    this.clearCellStyleCache();
     this.clearColWidthCache();
     this.clearRowHeightCache();
   }
@@ -2004,8 +2003,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     const oldHoverState = { col: this.stateManager.hover.cellPos.col, row: this.stateManager.hover.cellPos.row };
     this.refreshHeader();
     this.scenegraph.clearCells();
-    this.headerStyleCache = new Map();
-    this.bodyStyleCache = new Map();
+    this.clearCellStyleCache();
     this.scenegraph.createSceneGraph();
     this.stateManager.updateHoverPos(oldHoverState.col, oldHoverState.row);
     this.render();
@@ -2444,8 +2442,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     this.options.autoWrapText = autoWrapText;
     // if (this.heightMode === 'autoHeight' || this.heightMode === 'adaptive') {
     this.scenegraph.clearCells();
-    this.headerStyleCache = new Map();
-    this.bodyStyleCache = new Map();
+    this.clearCellStyleCache();
     this.scenegraph.createSceneGraph();
     this.render();
     // }
@@ -2470,8 +2467,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     this.options.theme = theme;
     this.scenegraph.updateStageBackground();
     this.scenegraph.clearCells();
-    this.headerStyleCache = new Map();
-    this.bodyStyleCache = new Map();
+    this.clearCellStyleCache();
     this.scenegraph.createSceneGraph();
     this.stateManager.updateHoverPos(oldHoverState.col, oldHoverState.row);
     this.render();
@@ -2815,7 +2811,20 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     const { layoutMap } = this.internalProps;
     const isHeader = layoutMap.isHeader(col, row);
     if (isHeader) {
-      let cacheStyle = this.headerStyleCache.get(`${col}-${row}`);
+      // const cacheKey = `${col}-${row}`;
+      let cacheKey;
+      if (this.isPivotTable() && !this.isBottomFrozenRow(row) && !this.isRightFrozenColumn(col)) {
+        // use dimensionKey&indicatorKey to cache style object in pivot table
+        const define = this.getHeaderDefine(col, row) as any;
+        cacheKey = define?.dimensionKey
+          ? `dim-${define.dimensionKey}`
+          : define?.indicatorKey
+          ? `ind-${define.indicatorKey}`
+          : `${col}-${row}`;
+      } else {
+        cacheKey = `${col}-${row}`;
+      }
+      let cacheStyle = this.headerStyleCache.get(cacheKey);
       if (cacheStyle) {
         return cacheStyle;
       }
@@ -2901,7 +2910,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
           this.options.autoWrapText
         );
       }
-      this.headerStyleCache.set(`${col}-${row}`, cacheStyle);
+      this.headerStyleCache.set(cacheKey, cacheStyle);
       return cacheStyle;
     }
     let cacheKey;
@@ -2943,6 +2952,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
   }
   clearCellStyleCache() {
     this.headerStyleCache.clear();
+    this.bodyStyleCache.clear();
   }
   /**
    * 清除行高度缓存对象
