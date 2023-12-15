@@ -22,12 +22,44 @@ export function bindContainerDomListener(eventManager: EventManager) {
 
   // 监听键盘事件
   handler.on(table.getElement(), 'keydown', (e: KeyboardEvent) => {
-    if (table.keyboardOptions?.selectAllOnCtrlA) {
-      // 处理全选
-      if (e.key === 'a' && (e.ctrlKey || e.metaKey)) {
+    if (e.key === 'a' && (e.ctrlKey || e.metaKey)) {
+      if (table.keyboardOptions?.selectAllOnCtrlA) {
+        // 处理全选
         e.preventDefault();
         //全选
         eventManager.deelTableSelectAll();
+      }
+    } else if (e.key === 'ArrowUp') {
+      e.preventDefault();
+      // 处理向上箭头键
+      if (stateManager.select.cellPos.col >= 0 && stateManager.select.cellPos.row >= 0) {
+        const targetCol = stateManager.select.cellPos.col;
+        const targetRow = Math.min(table.rowCount - 1, Math.max(0, stateManager.select.cellPos.row - 1));
+        table.selectCell(targetCol, targetRow);
+      }
+    } else if (e.key === 'ArrowDown') {
+      e.preventDefault();
+      // 处理向下箭头键
+      if (stateManager.select.cellPos.col >= 0 && stateManager.select.cellPos.row >= 0) {
+        const targetCol = stateManager.select.cellPos.col;
+        const targetRow = Math.min(table.rowCount - 1, Math.max(0, stateManager.select.cellPos.row + 1));
+        table.selectCell(targetCol, targetRow);
+      }
+    } else if (e.key === 'ArrowLeft') {
+      e.preventDefault();
+      // 处理向左箭头键
+      if (stateManager.select.cellPos.col >= 0 && stateManager.select.cellPos.row >= 0) {
+        const targetRow = stateManager.select.cellPos.row;
+        const targetCol = Math.min(table.colCount - 1, Math.max(0, stateManager.select.cellPos.col - 1));
+        table.selectCell(targetCol, targetRow);
+      }
+    } else if (e.key === 'ArrowRight') {
+      e.preventDefault();
+      // 处理向右箭头键
+      if (stateManager.select.cellPos.col >= 0 && stateManager.select.cellPos.row >= 0) {
+        const targetRow = stateManager.select.cellPos.row;
+        const targetCol = Math.min(table.colCount - 1, Math.max(0, stateManager.select.cellPos.col + 1));
+        table.selectCell(targetCol, targetRow);
       }
     }
     if ((table as any).hasListeners(TABLE_EVENT_TYPE.KEYDOWN)) {
