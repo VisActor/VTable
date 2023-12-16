@@ -35,6 +35,9 @@ export function bindContainerDomListener(eventManager: EventManager) {
       (e.key === 'ArrowUp' || e.key === 'ArrowDown' || e.key === 'ArrowLeft' || e.key === 'ArrowRight')
     ) {
       e.preventDefault();
+      // 如果不加这句话 外部监听了键盘事件 会影响表格本身的移动格子功能，例如自定义日历编辑器的日期选择pickday.js
+      //可能会引起其他问题  例如自定义实现了日历编辑器 里面切换日期左右键可能失效，这个时候建议监听VTable实例的事件keydown
+      e.stopPropagation();
       let targetCol;
       let targetRow;
 
@@ -58,10 +61,9 @@ export function bindContainerDomListener(eventManager: EventManager) {
       table.selectCell(targetCol, targetRow);
       if ((table as ListTableAPI).editorManager.editingEditor) {
         (table as ListTableAPI).editorManager.completeEdit();
+        table.getElement().focus();
         if ((table as ListTableAPI).getEditor(targetCol, targetRow)) {
           (table as ListTableAPI).editorManager.startEditCell(targetCol, targetRow);
-        } else {
-          table.getElement().focus();
         }
       }
     } else if (e.key === 'Escape') {
@@ -85,6 +87,30 @@ export function bindContainerDomListener(eventManager: EventManager) {
               (table as ListTableAPI).editorManager.startEditCell(startCol, startRow);
             }
           }
+        }
+      }
+    } else if (e.key === 'Tab') {
+      e.preventDefault();
+      if (stateManager.select.cellPos.col >= 0 && stateManager.select.cellPos.row >= 0) {
+        let targetCol;
+        let targetRow;
+        if (stateManager.select.cellPos.col === table.colCount - 1) {
+          targetRow = Math.min(table.rowCount - 1, stateManager.select.cellPos.row + 1);
+          targetCol = table.rowHeaderLevelCount;
+        } else if (stateManager.select.cellPos.row === table.rowCount - 1) {
+          targetRow = table.rowCount - 1;
+          targetCol = table.rowHeaderLevelCount;
+        } else {
+          targetRow = stateManager.select.cellPos.row;
+          targetCol = stateManager.select.cellPos.col + 1;
+        }
+        table.selectCell(targetCol, targetRow);
+        if ((table as ListTableAPI).editorManager.editingEditor) {
+          (table as ListTableAPI).editorManager.completeEdit();
+          table.getElement().focus();
+        }
+        if ((table as ListTableAPI).getEditor(targetCol, targetRow)) {
+          (table as ListTableAPI).editorManager.startEditCell(targetCol, targetRow);
         }
       }
     }
