@@ -69,35 +69,6 @@ container.load(textMeasureModule);
 // container.load(contextModule);
 // console.log(container);
 
-const poptipStyle = {
-  visible: true,
-  position: 'auto',
-  padding: 8,
-  titleStyle: {
-    fontSize: 12,
-    fontWeight: 'bold',
-    fill: '#4E5969'
-  },
-  contentStyle: {
-    fontSize: 12,
-    fill: '#4E5969'
-  },
-  panel: {
-    visible: true,
-    fill: '#fff',
-    stroke: '#ffffff',
-    lineWidth: 0,
-    cornerRadius: 3,
-    shadowBlur: 12,
-    shadowOffsetX: 0,
-    shadowOffsetY: 4,
-    shadowColor: 'rgba(0, 0, 0, 0.1)',
-    size: 0,
-    space: 12
-  }
-  // maxWidthPercent: 0.8
-};
-
 export type MergeMap = Map<
   string,
   {
@@ -146,7 +117,7 @@ export class Scenegraph {
     this.clear = true;
     this.mergeMap = new Map();
 
-    setPoptipTheme(poptipStyle as any);
+    setPoptipTheme(this.table.theme.textPopTipStyle);
     let width;
     let height;
     if (Env.mode === 'node') {
@@ -166,7 +137,7 @@ export class Scenegraph {
       background: table.theme.underlayBackgroundColor,
       dpr: table.internalProps.pixelRatio,
       enableLayout: true,
-      pluginList: table.isPivotChart() ? ['poptipForText'] : undefined,
+      // pluginList: table.isPivotChart() ? ['poptipForText'] : undefined,
       afterRender: () => {
         this.table.fireListeners('after_render', null);
         // console.trace('after_render');
@@ -241,6 +212,14 @@ export class Scenegraph {
    * @return {*}
    */
   clearCells() {
+    // unbind AutoPoptip
+    if (this.table.isPivotChart() || this.table.hasCustomRenderOrLayout()) {
+      // bind for axis label in pivotChart
+      this.stage.pluginService.findPluginsByName('poptipForText').forEach(plugin => {
+        plugin.deactivate(this.stage.pluginService);
+      });
+    }
+
     this.clear = true;
     this.hasFrozen = false;
     this.mergeMap.clear();
@@ -349,6 +328,16 @@ export class Scenegraph {
    * @return {*}
    */
   createSceneGraph() {
+    // bind AutoPoptip
+    if (this.table.isPivotChart() || this.table.hasCustomRenderOrLayout()) {
+      // bind for axis label in pivotChart
+      (this.stage.pluginService as any).autoEnablePlugins.getContributions().forEach((p: any) => {
+        if (p.name === 'poptipForText') {
+          this.stage.pluginService.register(p);
+        }
+      });
+    }
+
     this.clear = false;
     // this.frozenColCount = this.table.rowHeaderLevelCount;
     this.frozenColCount = this.table.frozenColCount;

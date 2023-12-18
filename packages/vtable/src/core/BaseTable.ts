@@ -2381,6 +2381,9 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
    * @param pagination 要修改页码的信息
    */
   abstract updatePagination(pagination: IPagination): void;
+
+  abstract hasCustomRenderOrLayout(): boolean;
+
   get allowFrozenColCount(): number {
     return this.internalProps.allowFrozenColCount;
   }

@@ -668,6 +668,8 @@ export interface BaseTableAPI {
   getBodyVisibleColRange: () => { colStart: number; colEnd: number };
   /** 获取表格body部分的显示行号范围 */
   getBodyVisibleRowRange: () => { rowStart: number; rowEnd: number };
+
+  hasCustomRenderOrLayout: () => boolean;
 }
 export interface ListTableProtected extends IBaseTableProtected {
   /** 表格数据 */

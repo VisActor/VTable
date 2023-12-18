@@ -46,7 +46,7 @@ import {
   DEFAULTFONTFAMILY,
   DEFAULTFONTSIZE
 } from '../tools/global';
-import { getAxisStyle } from './component';
+import { defalutPoptipStyle, getAxisStyle } from './component';
 //private symbol
 // const _ = getSymbol();
 
@@ -83,6 +83,8 @@ export class TableTheme implements ITableThemeDefine {
   private _selectionStyle: RequiredTableThemeDefine['selectionStyle'] | null = null;
 
   private _axisStyle: RequiredTableThemeDefine['axisStyle'] | null = null;
+  private _textPopTipStyle: RequiredTableThemeDefine['textPopTipStyle'] | null = null;
+
   constructor(obj: PartialTableThemeDefine | ITableThemeDefine, superTheme: ITableThemeDefine) {
     this.internalTheme = {
       obj,
@@ -630,6 +632,20 @@ export class TableTheme implements ITableThemeDefine {
       this._axisStyle = getAxisStyle(axisStyle);
     }
     return this._axisStyle;
+  }
+
+  get textPopTipStyle(): RequiredTableThemeDefine['textPopTipStyle'] {
+    if (!this._textPopTipStyle) {
+      const { obj, superTheme } = this.internalTheme;
+      const textPopTipStyle: RequiredTableThemeDefine['textPopTipStyle'] = ingoreNoneValueMerge(
+        {},
+        defalutPoptipStyle,
+        superTheme.textPopTipStyle,
+        obj.textPopTipStyle
+      );
+      this._textPopTipStyle = textPopTipStyle;
+    }
+    return this._textPopTipStyle;
   }
 
   hasProperty(names: string[]): boolean {

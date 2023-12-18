@@ -140,6 +140,9 @@ function adjustElementToGroup(
 
   const elementsAdjusted = adjustElementsPos(elements, width, height, value);
   elementsAdjusted.forEach(element => {
+    if ((element as any).clickable) {
+      element.pickable = (element as any).clickable;
+    }
     switch (element.type) {
       case 'arc':
         const arc = createArc({
@@ -152,7 +155,7 @@ function adjustElementToGroup(
           outerRadius: element.radius as number,
           startAngle: element.startAngle as number,
           endAngle: element.endAngle as number,
-          pickable: !!element.clickable,
+          pickable: !!element.pickable,
           cursor: element.cursor as Cursor
         });
         customGroup.appendChild(arc);
@@ -177,7 +180,7 @@ function adjustElementToGroup(
         const text = new WrapText(
           Object.assign(
             {
-              pickable: !!element.clickable,
+              pickable: !!element.pickable,
               fill: element.color ?? element.fill
             },
             element as any
@@ -196,7 +199,7 @@ function adjustElementToGroup(
           cornerRadius: element.radius as number,
           fill: element.fill as string,
           stroke: element.stroke as string,
-          pickable: !!element.clickable,
+          pickable: !!element.pickable,
           cursor: element.cursor as Cursor
         });
         customGroup.appendChild(rect);
@@ -210,7 +213,7 @@ function adjustElementToGroup(
           radius: element.radius as number,
           fill: element.fill as string,
           stroke: element.stroke as string,
-          pickable: !!element.clickable,
+          pickable: !!element.pickable,
           cursor: element.cursor as Cursor
         });
         customGroup.appendChild(circle);
@@ -227,7 +230,7 @@ function adjustElementToGroup(
           backgroundWidth: element.hover ? ((element.hover.width ?? element.width) as number) : undefined,
           backgroundHeight: element.hover ? ((element.hover.width ?? element.width) as number) : undefined,
           backgroundColor: element.hover ? element.hover.bgColor ?? 'rgba(22,44,66,0.2)' : undefined,
-          pickable: !!element.clickable,
+          pickable: !!element.pickable,
           cursor: element.cursor as Cursor
         });
         icon.role = 'icon-custom';
@@ -245,7 +248,7 @@ function adjustElementToGroup(
           backgroundWidth: element.hover ? ((element.hover.width ?? element.width) as number) : undefined,
           backgroundHeight: element.hover ? ((element.hover.width ?? element.width) as number) : undefined,
           backgroundColor: element.hover ? element.hover.bgColor ?? 'rgba(22,44,66,0.2)' : undefined,
-          pickable: !!element.clickable,
+          pickable: !!element.pickable,
           cursor: element.cursor as Cursor,
           shape: element.shape
         });
@@ -257,7 +260,7 @@ function adjustElementToGroup(
         const line = createLine({
           points: element.points,
           stroke: element.stroke as string,
-          pickable: !!element.clickable,
+          pickable: !!element.pickable,
           cursor: element.cursor as Cursor
         });
         customGroup.appendChild(line);

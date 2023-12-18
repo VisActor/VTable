@@ -24,9 +24,9 @@ ${prefix} dy (number)
 
 The y-offset of the element.
 
-${prefix} clickable (boolean)
+${prefix} pickable (boolean)
 
-Whether the element is clickable.
+Whether the element is interactive, the interactive element will be displayed in the `target` of the interaction event callback parameter when it is interacted.
 
 ${prefix} cursor (string)
 

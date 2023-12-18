@@ -24,9 +24,9 @@ ${prefix} dy (number)
 
 元素的 y 偏移量。
 
-${prefix} clickable (boolean)
+${prefix} pickable (boolean)
 
-元素是否可点击。
+元素是否可交互，可交互的图元会在被交互时会显示在交互事件回调参数的`target`中。
 
 ${prefix} cursor (string)
 
