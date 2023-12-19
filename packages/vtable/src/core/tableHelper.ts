@@ -169,22 +169,32 @@ export function isAutoDefine(width: string | number): width is 'auto' {
   return Boolean(width && typeof width === 'string' && width.toLowerCase() === 'auto');
 }
 
-export function _getScrollableVisibleRect(table: BaseTable): Rect {
+export function _getScrollableVisibleRect(table: BaseTableAPI): Rect {
   let frozenColsWidth = 0;
-  if (table.internalProps.frozenColCount > 0) {
+  let rightFrozenColsWidth = 0;
+  if (table.frozenColCount > 0) {
     //有固定列时绘制固定列
     frozenColsWidth = table.getFrozenColsWidth();
   }
+  if (table.rightFrozenColCount > 0) {
+    //有固定列时绘制固定列
+    rightFrozenColsWidth = table.getRightFrozenColsWidth();
+  }
   let frozenRowsHeight = 0;
-  if (table.internalProps.frozenRowCount > 0) {
+  let bottomFrozenRowsHeight = 0;
+  if (table.frozenRowCount > 0) {
     //有固定列时绘制固定列
     frozenRowsHeight = table.getFrozenRowsHeight();
+  }
+  if (table.bottomFrozenRowCount > 0) {
+    //有固定列时绘制固定列
+    bottomFrozenRowsHeight = table.getBottomFrozenRowsHeight();
   }
   return new Rect(
     table.scrollLeft + frozenColsWidth,
     table.scrollTop + frozenRowsHeight,
-    table.tableNoFrameWidth - frozenColsWidth,
-    table.tableNoFrameHeight - frozenRowsHeight
+    table.tableNoFrameWidth - frozenColsWidth - rightFrozenColsWidth,
+    table.tableNoFrameHeight - frozenRowsHeight - bottomFrozenRowsHeight
   );
 }
 /**

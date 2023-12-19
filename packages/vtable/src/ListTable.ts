@@ -852,6 +852,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
   /** 开启单元格编辑 */
   startEditCell(col?: number, row?: number) {
     if (isValid(col) && isValid(row)) {
+      this.selectCell(col, row);
       this.editorManager.startEditCell(col, row);
     } else if (this.stateManager.select?.cellPos) {
       const { col, row } = this.stateManager.select.cellPos;

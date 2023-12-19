@@ -288,11 +288,17 @@ export function createTable() {
     container: document.getElementById(CONTAINER_ID),
     records,
     columns,
+    keyboardOptions: {
+      moveFocusCellOnTab: false,
+      // editCellOnEnter: false,
+      moveEditCellOnArrowKeys: true
+    },
+
     // heightMode: 'autoHeight',
     customMergeCell: (col, row, table) => {
       if (col >= 0 && col <= 5 && row === 2) {
         return {
-          text: table.getCellValue(0, 2),
+          text: table.getCellOriginValue(0, 2),
           range: {
             start: {
               col: 0,
