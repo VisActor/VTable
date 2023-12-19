@@ -942,9 +942,10 @@ export class Dataset {
             }
           }
         }
-        if (!isHasSortRule) {
-          results.push({ field, fieldIndex: l, func: naturalSort });
-        }
+        // 去掉内部默认排序
+        // if (!isHasSortRule) {
+        //   results.push({ field, fieldIndex: l, func: naturalSort });
+        // }
       }
       return results;
     }.call(this);
@@ -964,7 +965,7 @@ export class Dataset {
           }
           comparison = sorter.func(aChanged, bChanged);
         } else {
-          comparison = sorter.func(a[sorter.fieldIndex], b[sorter.fieldIndex]);
+          comparison = sorter.func?.(a[sorter.fieldIndex], b[sorter.fieldIndex]);
         }
         if (comparison !== 0) {
           return comparison * (sorter.sortRule?.sortType === SortType.DESC ? -1 : 1);
