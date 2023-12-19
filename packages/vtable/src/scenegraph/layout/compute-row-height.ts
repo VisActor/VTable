@@ -168,6 +168,11 @@ export function computeRowsHeight(
         }
       }
     }
+  } else {
+    table.rowHeightsMap.clear();
+    for (let row = 0; row < table.rowCount; row++) {
+      newHeights[row] = table.getRowHeight(row);
+    }
   }
 
   if ((rowStart === 0 && rowEnd === table.rowCount - 1) || isClearRowRangeHeightsMap) {
@@ -264,6 +269,7 @@ export function computeRowsHeight(
       if (newRowHeight !== oldRowHeights[row]) {
         // update the row height in scenegraph
         table.scenegraph.updateRowHeight(row, newRowHeight - oldRowHeights[row]);
+        table._setRowHeight(row, newRowHeight);
       }
     }
   }

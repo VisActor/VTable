@@ -27,9 +27,9 @@ export function updateCol(
     removeCol(col, scene);
   });
 
+  const colWidthsMap = table.colWidthsMap;
   removeCols.forEach(col => {
-    scene.table.colWidthsMap.adjustOrder(col + 1, col, scene.table.colWidthsMap.count() - col - 1);
-    scene.table.colWidthsMap.del(scene.table.colWidthsMap.count() - 1);
+    colWidthsMap.delAndReorder(col);
   });
 
   if (removeCols.length) {
@@ -44,7 +44,7 @@ export function updateCol(
     const needUpdateAfter = addCol(col, scene);
     resetColNumber(scene);
     updateAfter = updateAfter ?? needUpdateAfter;
-    scene.table.colWidthsMap.adjustOrder(col, col + 1, scene.table.colWidthsMap.count() - col);
+    colWidthsMap.addAndReorder(col);
   });
 
   // reset attribute y and col number in CellGroup

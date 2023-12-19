@@ -1,4 +1,5 @@
 import * as VTable from '../../src';
+import { bindDebugTool } from '../../src/scenegraph/debug-tool';
 const ListTable = VTable.ListTable;
 const CONTAINER_ID = 'vTable';
 
@@ -166,6 +167,8 @@ export function createTable() {
     ],
     showPin: true, //显示VTable内置冻结列图标
     widthMode: 'standard',
+    autoFillHeight: true,
+    // heightMode: 'adaptive',
     allowFrozenColCount: 2,
     records: data,
 
@@ -181,6 +184,8 @@ export function createTable() {
   };
 
   const instance = new ListTable(option);
+  window.tableInstance = instance;
+  bindDebugTool(instance.scenegraph.stage, { customGrapicKeys: ['col', 'row'] });
 
   const { TREE_HIERARCHY_STATE_CHANGE } = VTable.ListTable.EVENT_TYPE;
   instance.on(TREE_HIERARCHY_STATE_CHANGE, args => {
