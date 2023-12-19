@@ -78,7 +78,7 @@ export function createCellContent(
       const hierarchyOffset = getHierarchyOffset(cellGroup.col, cellGroup.row, table);
 
       const attribute = {
-        text: text,
+        text: text.length === 1 ? text[0] : text,
         maxLineWidth: autoColWidth ? Infinity : cellWidth - (padding[1] + padding[3] + hierarchyOffset),
         // fill: true,
         // textAlign: 'left',
@@ -180,7 +180,7 @@ export function createCellContent(
     if (inlineFrontIcons.length === 0 && inlineEndIcons.length === 0) {
       const text = convertInternal(textStr).replace(/\r?\n/g, '\n').replace(/\r/g, '\n').split('\n');
       const attribute = {
-        text: text,
+        text: text.length === 1 ? text[0] : text,
         maxLineWidth: autoColWidth ? Infinity : cellWidth - (padding[1] + padding[3]) - leftIconWidth - rightIconWidth,
         // fill: true,
         // textAlign: 'left',
