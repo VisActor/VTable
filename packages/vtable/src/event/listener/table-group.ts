@@ -285,7 +285,9 @@ export function bindTableGroupListener(eventManager: EventManager) {
   table.scenegraph.tableGroup.addEventListener('pointerupoutside', (e: FederatedPointerEvent) => {
     const eventArgsSet: SceneEvent = getCellEventArgsSet(e);
     if (stateManager.menu.isShow && (eventArgsSet.eventArgs?.target as any) !== stateManager.residentHoverIcon?.icon) {
-      stateManager.hideMenu();
+      setTimeout(() => {
+        stateManager.menu.isShow && stateManager.hideMenu();
+      }, 0);
     }
     // 同pointerup中的逻辑
     if (stateManager.isResizeCol()) {
