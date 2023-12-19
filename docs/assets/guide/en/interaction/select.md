@@ -33,6 +33,10 @@ Call the interface selectCells, the usage is as follows:
 // Two ranges in the table: from column 1, row 2 to column 4, row 2 and from column 3, row 5 to column 7, row 8
 tableInstance.selectCells([{start:{col:1,row:2},end:{col:4,row:2}},{start:{col:3,row:5},end:{col:7 ,row:8}}]);
 ```
+
+### Clear current selection
+When the selectCell interface is called, it can be cleared by passing null, and a special interface clearSelectedCell will be added later.
+
 ## Select style
 
 When one or more cells are selected, VTable applies specific styles to enable the user to identify the selected cells. can be passed `theme.selectionStyle` Configure the selected style.
