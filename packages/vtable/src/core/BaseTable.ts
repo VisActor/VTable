@@ -2784,21 +2784,23 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
   }
   /** 获取单元格的基本信息 目前主要组织单元格信息给事件传递给用户的参数使用 */
   getCellInfo(col: number, row: number): Omit<MousePointerCellEvent, 'target'> {
-    const colDef = this.isHeader(col, row) ? this.getHeaderDefine(col, row) : this.getBodyColumnDefine(col, row);
-    return {
-      col,
-      row,
-      field: this.getHeaderField(col, row),
-      cellHeaderPaths: this.internalProps.layoutMap.getCellHeaderPaths(col, row),
-      title: colDef?.title,
-      cellType: colDef?.cellType ? (typeof colDef.cellType === 'string' ? colDef.cellType : 'progressbar') : 'text',
-      originData: this.getCellOriginRecord(col, row),
-      cellRange: this.getCellRangeRelativeRect({ col, row }),
-      value: this.getCellValue(col, row),
-      dataValue: this.getCellOriginValue(col, row),
-      cellLocation: this.getCellLocation(col, row),
-      scaleRatio: this.canvas.getBoundingClientRect().width / this.canvas.offsetWidth
-    };
+    if (col >= 0 && row >= 0) {
+      const colDef = this.isHeader(col, row) ? this.getHeaderDefine(col, row) : this.getBodyColumnDefine(col, row);
+      return {
+        col,
+        row,
+        field: this.getHeaderField(col, row),
+        cellHeaderPaths: this.internalProps.layoutMap.getCellHeaderPaths(col, row),
+        title: colDef?.title,
+        cellType: colDef?.cellType ? (typeof colDef.cellType === 'string' ? colDef.cellType : 'progressbar') : 'text',
+        originData: this.getCellOriginRecord(col, row),
+        cellRange: this.getCellRangeRelativeRect({ col, row }),
+        value: this.getCellValue(col, row),
+        dataValue: this.getCellOriginValue(col, row),
+        cellLocation: this.getCellLocation(col, row),
+        scaleRatio: this.canvas.getBoundingClientRect().width / this.canvas.offsetWidth
+      };
+    }
   }
   /** @private */
   _hasField(field: FieldDef, col: number, row: number): boolean {
