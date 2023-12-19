@@ -1,5 +1,5 @@
 import type { Cursor } from '@visactor/vrender';
-import { createArc, createCircle, createLine, createRect, Group as VGroup } from '@visactor/vrender';
+import { createArc, createCircle, createLine, createRect, Text, Group as VGroup } from '@visactor/vrender';
 import { isFunction, isObject, isString, isValid } from '@visactor/vutils';
 import type {
   ICustomLayout,
