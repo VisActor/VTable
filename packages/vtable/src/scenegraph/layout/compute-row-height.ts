@@ -1,11 +1,10 @@
-import { RichText, Group as VGroup } from '@visactor/vrender';
+import { RichText, Text, Group as VGroup } from '@visactor/vrender';
 import type { PivotHeaderLayoutMap } from '../../layout/pivot-header-layout';
 import { validToString } from '../../tools/util';
 import type { ColumnIconOption, ColumnTypeOption } from '../../ts-types';
 import { IconPosition } from '../../ts-types';
 import type { BaseTableAPI, HeaderData } from '../../ts-types/base-table';
 import type { ColumnData, TextColumnDefine } from '../../ts-types/list-table/layout-map/api';
-import { WrapText } from '../graphic/text';
 import { getProp } from '../utils/get-prop';
 import { getQuadProps } from '../utils/padding';
 import { dealWithRichTextIcon } from '../utils/text-icon-layout';
@@ -15,7 +14,7 @@ import { isArray, isNumber, isObject } from '@visactor/vutils';
 import { CheckBox } from '@visactor/vrender-components';
 import { decodeReactDom, dealPercentCalc } from '../component/custom';
 
-const utilTextMark = new WrapText({
+const utilTextMark = new Text({
   ignoreBuf: true
   // autoWrapText: true
 });

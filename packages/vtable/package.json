@@ -50,11 +50,11 @@
   },
   "dependencies": {
     "@visactor/vtable-editors": "workspace:*",
-    "@visactor/vrender": "0.16.20",
-    "@visactor/vrender-components": "0.16.20",
-    "@visactor/vutils-extension": "1.5.1-alpha.0",
+    "@visactor/vrender": "0.17.5",
+    "@visactor/vrender-components": "0.17.5",
+    "@visactor/vutils-extension": "~1.7.5",
     "@visactor/vutils": "~0.16.10",
-    "@visactor/vscale": "0.16.0",
+    "@visactor/vscale": "~0.17.1",
     "@visactor/vdataset": "~0.15.7",
     "cssfontparser": "^1.2.1"
   },
