@@ -2801,6 +2801,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
         scaleRatio: this.canvas.getBoundingClientRect().width / this.canvas.offsetWidth
       };
     }
+    return undefined;
   }
   /** @private */
   _hasField(field: FieldDef, col: number, row: number): boolean {
