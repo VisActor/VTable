@@ -672,7 +672,8 @@ function computeTextHeight(col: number, row: number, cellType: ColumnTypeOption,
       fontWeight,
       fontFamily,
       lineHeight,
-      wordBreak: 'break-word'
+      wordBreak: 'break-word',
+      whiteSpace: lines.length === 1 && !autoWrapText ? 'no-wrap' : 'normal'
     });
     maxHeight = utilTextMark.AABBBounds.height();
   } else {
