@@ -107,7 +107,7 @@ VTable.register.icon('frozen',{
       tooltip: {
         style: { 
           bgColor:'gray',
-          fontSize:6
+          fontSize: 16
         },
         // 气泡框，按钮的的解释信息
         title: '点击可复制',

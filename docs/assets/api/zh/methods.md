@@ -120,9 +120,28 @@ tableInstance.renderWithRecreateCells();
 
 设置表格数据接口，可作为更新接口调用。
 
+## getDrawRange(Function)
+获取表格实际绘制内容区域的boundRect的值
+如
+```
+{
+    "bounds": {
+        "x1": 1,
+        "y1": 1,
+        "x2": 1581,
+        "y2": 361
+    },
+    bottom: 361,
+    height: 360,
+    left: 1，
+    right: 1581，
+    top: 1,
+    width: 1580
+}
+```
 ## selectCell(Function)
 
-选中某个单元格
+选中某个单元格。如果传空，则清除当前选中高亮状态。
 
 ```
   /**

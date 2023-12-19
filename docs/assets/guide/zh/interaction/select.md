@@ -33,6 +33,10 @@ tableInstance.selectCell(4,5);
 // 表格中的两个范围：从列1行2到列4行2  从列3行5到列7行8
 tableInstance.selectCells([{start:{col:1,row:2},end:{col:4,row:2}},{start:{col:3,row:5},end:{col:7,row:8}}]);
 ```
+
+### 清除当前选中
+selectCell接口调用时传空可以清除，后面增加专门的接口clearSelectedCell。
+
 ## 选中样式
 
 当选中一个或多个单元格时，VTable 会应用特定的样式，使用户能够识别出选中的单元格。可以通过 `theme.selectionStyle` 配置选中样式。
