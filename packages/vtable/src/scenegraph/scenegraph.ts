@@ -462,14 +462,20 @@ export class Scenegraph {
       element = this.cornerHeaderGroup.getColGroup(col) as Group;
     } else if (col < this.frozenColCount) {
       element = this.rowHeaderGroup.getColGroup(col) as Group;
-    } else if (isCornerOrColHeader) {
-      element = this.colHeaderGroup.getColGroup(col) as Group;
+    } else if (
+      isCornerOrColHeader &&
+      this.table.rightFrozenColCount > 0 &&
+      col > this.table.colCount - 1 - this.table.rightFrozenColCount
+    ) {
+      element = this.rightTopCornerGroup.getColGroup(col) as Group;
     } else if (
       !isCornerOrColHeader &&
       this.table.rightFrozenColCount > 0 &&
       col > this.table.colCount - 1 - this.table.rightFrozenColCount
     ) {
       element = this.rightFrozenGroup.getColGroup(col) as Group;
+    } else if (isCornerOrColHeader) {
+      element = this.colHeaderGroup.getColGroup(col) as Group;
     } else {
       element = this.bodyGroup.getColGroup(col) as Group;
     }
@@ -940,6 +946,7 @@ export class Scenegraph {
       this.cornerHeaderGroup.setDeltaHeight(detaY);
       this.rowHeaderGroup.setDeltaY(detaY);
       this.bodyGroup.setDeltaY(detaY);
+      this.rightFrozenGroup.setDeltaY(detaY);
     } else if (row >= this.table.rowCount - this.table.bottomFrozenRowCount) {
       this.leftBottomCornerGroup.setDeltaHeight(detaY);
       this.bottomFrozenGroup.setDeltaHeight(detaY);
@@ -947,6 +954,7 @@ export class Scenegraph {
     } else {
       this.rowHeaderGroup.setDeltaHeight(detaY);
       this.bodyGroup.setDeltaHeight(detaY);
+      this.rightFrozenGroup.setDeltaHeight(detaY);
     }
 
     this.updateTableSize();
