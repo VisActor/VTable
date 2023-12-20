@@ -48,6 +48,8 @@ import {
   getIconByXY,
   hideClickIcon,
   hideHoverIcon,
+  resetResidentHoverIcon,
+  residentHoverIcon,
   setIconHoverStyle,
   setIconNormalStyle,
   showClickIcon,
@@ -606,6 +608,13 @@ export class Scenegraph {
    */
   setIconNormalStyle(icon: Icon, col: number, row: number) {
     setIconNormalStyle(icon, col, row, this);
+  }
+
+  residentHoverIcon(col: number, row: number) {
+    residentHoverIcon(col, row, this);
+  }
+  resetResidentHoverIcon(col: number, row: number) {
+    resetResidentHoverIcon(col, row, this);
   }
 
   /**

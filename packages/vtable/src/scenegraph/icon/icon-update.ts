@@ -407,3 +407,34 @@ export function updateCellRangeIcon(
     updateCellGroupIcon(cellGroup, filter, dealer);
   }
 }
+
+export function residentHoverIcon(col: number, row: number, scene: Scenegraph) {
+  updateCellRangeIcon(
+    col,
+    row,
+    // filter
+    (icon: Icon) => icon.attribute.funcType === IconFuncTypeEnum.dropDown,
+    // dealer
+    (icon: Icon) => {
+      (icon as any).oldVisibleTime = icon.attribute.visibleTime;
+      icon.setAttribute('visibleTime', 'always');
+      icon.setAttribute('opacity', 1);
+    },
+    scene
+  );
+}
+
+export function resetResidentHoverIcon(col: number, row: number, scene: Scenegraph) {
+  updateCellRangeIcon(
+    col,
+    row,
+    // filter
+    (icon: Icon) => icon.attribute.funcType === IconFuncTypeEnum.dropDown,
+    // dealer
+    (icon: Icon) => {
+      icon.setAttribute('visibleTime', (icon as any).oldVisibleTime);
+      icon.setAttribute('opacity', icon.attribute.visibleTime === 'always' ? 1 : 0);
+    },
+    scene
+  );
+}
