@@ -1,4 +1,4 @@
-import type { ILine, IRect, IGroup, FederatedPointerEvent } from '@visactor/vrender';
+import type { ILine, IRect, IGroup, FederatedPointerEvent, Text } from '@visactor/vrender';
 import { createRect, createLine, createText, createGroup, createSymbol } from '@visactor/vrender';
 import { ScrollBar } from '@visactor/vrender-components';
 import type { Group } from '../graphic/group';
