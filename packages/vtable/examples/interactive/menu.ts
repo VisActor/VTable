@@ -181,7 +181,10 @@ export function createTable() {
   // instance.showDropDownMenu(col, row, {
   //   content: ['a', 'b']
   // });
-
+  instance.on('dropdown_menu_click', args => {
+    console.log('dropdown_menu_click', args);
+    instance.setDropDownMenuHighlight([args]);
+  });
   // 只为了方便控制太调试用，不要拷贝
   window.tableInstance = instance;
 }

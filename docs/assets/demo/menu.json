@@ -549,6 +549,13 @@
             "zh": "滚动",
             "en": "scroll"
           }
+        },
+        {
+          "path": "arrowkeys-move-select",
+          "title": {
+            "zh": "方向键切换选中单元格",
+            "en": "arrowkeys move select"
+          }
         }
       ]
     },

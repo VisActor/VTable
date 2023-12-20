@@ -1,4 +1,4 @@
-import type { ILine, IRect, IGroup } from '@visactor/vrender';
+import type { ILine, IRect, IGroup, FederatedPointerEvent } from '@visactor/vrender';
 import { createRect, createLine, createText, createGroup, createSymbol } from '@visactor/vrender';
 import { ScrollBar } from '@visactor/vrender-components';
 import type { Group } from '../graphic/group';
@@ -8,6 +8,9 @@ import { DrillIcon } from './drill-icon';
 import { CellMover } from './cell-mover';
 import { getColX } from './util';
 import type { BaseTableAPI } from '../../ts-types/base-table';
+import type { SceneEvent } from '../../event/util';
+import { getCellEventArgsSet } from '../../event/util';
+import type { ListTableAPI } from '../../ts-types';
 
 /**
  * @description: 表格内容外组件
@@ -215,6 +218,29 @@ export class TableComponent {
     });
     (this.vScrollBar as any).render();
     this.vScrollBar.hideAll();
+    this.hScrollBar.addEventListener('scrollDown', (e: FederatedPointerEvent) => {
+      const eventArgsSet: SceneEvent = getCellEventArgsSet(e);
+      if (
+        this.table.stateManager.menu.isShow &&
+        (eventArgsSet.eventArgs?.target as any) !== this.table.stateManager.residentHoverIcon?.icon
+      ) {
+        this.table.stateManager.hideMenu();
+      }
+
+      (this.table as ListTableAPI).editorManager?.completeEdit();
+    });
+
+    this.vScrollBar.addEventListener('scrollDown', (e: FederatedPointerEvent) => {
+      const eventArgsSet: SceneEvent = getCellEventArgsSet(e);
+      if (
+        this.table.stateManager.menu.isShow &&
+        (eventArgsSet.eventArgs?.target as any) !== this.table.stateManager.residentHoverIcon?.icon
+      ) {
+        this.table.stateManager.hideMenu();
+      }
+
+      (this.table as ListTableAPI).editorManager?.completeEdit();
+    });
   }
 
   /**

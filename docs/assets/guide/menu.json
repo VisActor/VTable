@@ -301,6 +301,13 @@
             "zh": "滚动",
             "en": "scroll"
           }
+        },
+        {
+          "path": "keyboard",
+          "title": {
+            "zh": "快捷键",
+            "en": "keyboard"
+          }
         }
       ]
     },

@@ -102,6 +102,20 @@ Enable shortcut key to select all.
 
 Enable shortcut key to copy, consistent with the browser's shortcut key.
 
+##${prefix} moveFocusCellOnTab(boolean) = true
+ Enable tab key interaction. The default is true. Turn on the tab key to move the selected cell. If you are currently editing a cell, moving to the next cell is also in the editing state.
+
+##${prefix} editCellOnEnter(boolean) = true
+Enable enter key interaction. Default is true. If the selected cell is editable, enter cell editing.
+
+##${prefix} moveEditCellOnArrowKeys(boolean) = false
+
+The default is not enabled, which is false.
+
+If this configuration is turned on, if you are currently editing a cell, the arrow keys can move to the next cell and enter the editing state, instead of moving the cursor to edit the string within the text.
+
+Switching the selected cells with the up, down, left and right arrow keys is not affected by this configuration.
+
 #${prefix} columnResizeMode(string) = 'all'
 
 Mouse hover over the cell right border can drag and adjust column width. This operation can trigger the following range:
