@@ -701,7 +701,7 @@ export function bindTableGroupListener(eventManager: EventManager) {
 }
 export function bindGesture(eventManager: EventManager) {
   const table = eventManager.table;
-  eventManager.gesture = new Gesture(table.scenegraph.stage as unknown as IEventTarget, {
+  eventManager.gesture = new Gesture(table.scenegraph.tableGroup as unknown as IEventTarget, {
     tap: {
       interval: 300
     }
