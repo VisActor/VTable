@@ -55,17 +55,21 @@ export function updateChartHover(col: number, row: number, x: number, y: number,
         const highlightLine = sparkline.getChildByName('highlight-line');
         if (highlightLine) {
           highlightLine.setAttributes({
-            x: pointX,
+            // x: pointX,
+            points: [
+              { x: pointX, y: max },
+              { x: pointX, y: min }
+            ],
             visible: true,
             pickable: true
           });
         } else {
           const highlightLine = createLine({
-            x: pointX,
-            y: 0,
+            // x: 0,
+            // y: 0,
             points: [
-              { x: 0, y: max },
-              { x: 0, y: min }
+              { x: pointX, y: max },
+              { x: pointX, y: min }
             ],
             lineWidth: line.hover?.strokeWidth,
             stroke: line.hover?.stroke
