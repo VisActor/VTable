@@ -242,6 +242,10 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     }
 
     internalProps.handler = new EventHandler();
+    if (isNumber(this.options.resizeTime)) {
+      internalProps.handler.resizeTime = this.options.resizeTime;
+    }
+
     internalProps.pixelRatio = pixelRatio;
     internalProps.frozenColCount = frozenColCount;
 
@@ -2381,6 +2385,9 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
    * @param pagination 要修改页码的信息
    */
   abstract updatePagination(pagination: IPagination): void;
+
+  abstract hasCustomRenderOrLayout(): boolean;
+
   get allowFrozenColCount(): number {
     return this.internalProps.allowFrozenColCount;
   }

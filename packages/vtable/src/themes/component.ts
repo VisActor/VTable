@@ -19,3 +19,32 @@ function getSingleAxisStyle(axisStyle?: RequiredTableThemeDefine['axisStyle']['d
 
   return axisStyle; // to do: turn into get mode
 }
+
+export const defalutPoptipStyle = {
+  visible: true,
+  position: 'auto',
+  padding: 8,
+  titleStyle: {
+    fontSize: 12,
+    fontWeight: 'bold',
+    fill: '#4E5969'
+  },
+  contentStyle: {
+    fontSize: 12,
+    fill: '#4E5969'
+  },
+  panel: {
+    visible: true,
+    fill: '#fff',
+    stroke: '#ffffff',
+    lineWidth: 0,
+    cornerRadius: 3,
+    shadowBlur: 12,
+    shadowOffsetX: 0,
+    shadowOffsetY: 4,
+    shadowColor: 'rgba(0, 0, 0, 0.1)',
+    size: 0,
+    space: 12
+  }
+  // maxWidthPercent: 0.8
+};

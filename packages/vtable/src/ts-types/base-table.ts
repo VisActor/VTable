@@ -360,6 +360,9 @@ export interface BaseTableConstructorOptions {
    *  设置为 'none' 时, 表格滚动到顶部/底部时, 不再触发父容器滚动
    * */
   overscrollBehavior?: 'auto' | 'none';
+
+  // resize response time
+  resizeTime?: number;
 }
 export interface BaseTableAPI {
   /** 表格的行数 */
@@ -668,6 +671,8 @@ export interface BaseTableAPI {
   getBodyVisibleColRange: () => { colStart: number; colEnd: number };
   /** 获取表格body部分的显示行号范围 */
   getBodyVisibleRowRange: () => { rowStart: number; rowEnd: number };
+
+  hasCustomRenderOrLayout: () => boolean;
 }
 export interface ListTableProtected extends IBaseTableProtected {
   /** 表格数据 */

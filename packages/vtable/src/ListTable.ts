@@ -1171,4 +1171,24 @@ export class ListTable extends BaseTable implements ListTableAPI {
       // this.fireListeners(TABLE_EVENT_TYPE.ADD_RECORD, { row });
     }
   }
+
+  hasCustomRenderOrLayout() {
+    const { headerObjects } = this.internalProps.layoutMap;
+    if (this.options.customRender) {
+      return true;
+    }
+
+    for (let i = 0; i < headerObjects.length; i++) {
+      const headerObject = headerObjects[i];
+      if (
+        headerObject?.define?.customLayout ||
+        headerObject?.define?.headerCustomLayout ||
+        headerObject?.define?.customRender ||
+        headerObject?.define?.headerCustomRender
+      ) {
+        return true;
+      }
+    }
+    return false;
+  }
 }

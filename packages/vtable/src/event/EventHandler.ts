@@ -108,6 +108,8 @@ export class ResizeObserver {
 }
 
 export class EventHandler {
+  resizeTime?: number;
+
   private listeners: {
     [key: string]: EventListenerObject;
   } = {};
@@ -130,7 +132,7 @@ export class EventHandler {
       if (type !== 'resize' || (target as Window) === window) {
         (target as EventTarget)?.addEventListener(type, listener, ...(options as []));
       } else {
-        const resizeObserver = new ResizeObserver(target as HTMLElement, listener);
+        const resizeObserver = new ResizeObserver(target as HTMLElement, listener, this.resizeTime);
         this.reseizeListeners[id] = resizeObserver;
       }
     }
