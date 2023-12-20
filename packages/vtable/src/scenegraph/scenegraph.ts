@@ -1,4 +1,4 @@
-import type { IStage, IRect, ITextCache, INode, Text } from '@visactor/vrender';
+import type { IStage, IRect, ITextCache, INode, Text, RichText } from '@visactor/vrender';
 import { createStage, createRect, IContainPointMode, container, vglobal } from '@visactor/vrender';
 import type { CellRange, CellSubLocation } from '../ts-types';
 import {
@@ -1519,11 +1519,9 @@ export class Scenegraph {
 
   getCellOverflowText(col: number, row: number): string | null {
     const cellGroup = this.getCell(col, row);
-    const text = cellGroup.getChildByName('text', true) as unknown as WrapText;
-    // if (text && text.cache?.clipedText !== text.attribute.text) {
-    //   return text.attribute.text as string;
-    // }
-    if (text) {
+    const text = cellGroup.getChildByName('text', true) as unknown as WrapText | RichText;
+
+    if (text && text.type === 'text') {
       const textAttributeStr = isArray(text.attribute.text)
         ? text.attribute.text.join('')
         : (text.attribute.text as string);
@@ -1537,6 +1535,16 @@ export class Scenegraph {
       }
       if (cacheStr !== textAttributeStr) {
         return textAttributeStr;
+      }
+    } else if (text && text.type === 'richtext') {
+      const richtext = text;
+      if (
+        richtext.attribute.ellipsis &&
+        richtext._frameCache &&
+        richtext.attribute.height < richtext._frameCache.actualHeight
+      ) {
+        const textConfig = richtext.attribute.textConfig.find((item: any) => item.text);
+        return (textConfig as any).text as string;
       }
     }
     return null;
