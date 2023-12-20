@@ -1,7 +1,6 @@
 /* eslint-disable no-undef */
-import type { IFullThemeSpec } from '@visactor/vrender';
+import type { IFullThemeSpec, Text } from '@visactor/vrender';
 import type { Group } from '../graphic/group';
-import type { WrapText } from '../graphic/text';
 import { getProp } from './get-prop';
 import { getQuadProps } from './padding';
 import type { BaseTableAPI } from '../../ts-types/base-table';
@@ -43,8 +42,7 @@ export function getTextPos(
 export function updateTextPose(table: BaseTableAPI, cell: Group, col: number, row: number, theme: IFullThemeSpec) {
   const headerStyle = table._getCellStyle(col, row);
   const padding = getQuadProps(getProp('padding', headerStyle, col, row, table));
-  // const text = cell.getChildAt(1) as WrapText;
-  const text = cell.getChildByName('text') as WrapText;
+  const text = cell.getChildByName('text') as Text;
   text.setAttributes(
     getTextPos(padding, theme.text.textAlign, theme.text.textBaseline, cell.attribute.width, cell.attribute.height)
   );

@@ -143,7 +143,7 @@ function createCheckbox(
   const autoRowHeight = table.heightMode === 'autoHeight';
 
   const attribute = {
-    text: text.length === 1 && !autoWrapText ? text[0] : text, // 单行(no-autoWrapText)为字符串，多行(autoWrapText)为字符串数组
+    text: text.length === 1 ? text[0] : text,
     maxLineWidth: autoColWidth
       ? Infinity
       : cellWidth - (padding[1] + padding[3] + hierarchyOffset) - size - spaceBetweenTextAndIcon,
@@ -156,7 +156,8 @@ function createCheckbox(
     // widthLimit: autoColWidth ? -1 : colWidth - (padding[1] + padding[3]),
     heightLimit: autoRowHeight ? -1 : cellHeight - (padding[0] + padding[2]),
     pickable: false,
-    dx: hierarchyOffset
+    dx: hierarchyOffset,
+    whiteSpace: text.length === 1 && !autoWrapText ? 'no-wrap' : 'normal'
   };
   const testAttribute = cellTheme.text ? (Object.assign({}, cellTheme.text, attribute) as any) : attribute;
   let checkbox;

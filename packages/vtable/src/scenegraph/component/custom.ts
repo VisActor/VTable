@@ -1,5 +1,5 @@
 import type { Cursor } from '@visactor/vrender';
-import { createArc, createCircle, createLine, createRect, Group as VGroup } from '@visactor/vrender';
+import { createArc, createCircle, createLine, createRect, Text, Group as VGroup } from '@visactor/vrender';
 import { isFunction, isObject, isString, isValid } from '@visactor/vutils';
 import type {
   ICustomLayout,
@@ -8,11 +8,9 @@ import type {
   ICustomRenderElements,
   RectElement
 } from '../../ts-types';
-import { Group } from '../graphic/group';
 import { Icon } from '../graphic/icon';
-import { WrapText } from '../graphic/text';
 import type { BaseTableAPI } from '../../ts-types/base-table';
-import type { percentCalcObj, Rect } from '../../render/layout';
+import type { percentCalcObj } from '../../render/layout';
 
 export function dealWithCustom(
   customLayout: ICustomLayout,
@@ -177,7 +175,7 @@ function adjustElementToGroup(
           });
           customGroup.appendChild(textBackRect);
         }
-        const text = new WrapText(
+        const text = new Text(
           Object.assign(
             {
               pickable: !!element.pickable,

@@ -139,4 +139,31 @@ export class NumberMap<T> {
     this._vals = {};
     this._sorted = false;
   }
+
+  getLastIndex() {
+    return this._keys[this._keys.length - 1];
+  }
+
+  delLast() {
+    const lastIndex = this.getLastIndex();
+    this.del(lastIndex);
+  }
+
+  delAndReorder(index: number) {
+    if (!this.has(index)) {
+      return;
+    }
+    const lastIndex = this.getLastIndex();
+
+    this.adjustOrder(index + 1, index, lastIndex - index);
+    this.delLast();
+  }
+
+  addAndReorder(index: number, newValue?: T) {
+    const lastIndex = this.getLastIndex();
+    this.adjustOrder(index, index + 1, lastIndex - index);
+    if (isValid(newValue)) {
+      this.put(index, newValue);
+    }
+  }
 }

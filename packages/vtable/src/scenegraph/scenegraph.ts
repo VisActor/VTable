@@ -11,7 +11,6 @@ import {
 import { isArray, isString, isValid } from '@visactor/vutils';
 import type { Group } from './graphic/group';
 import type { Icon } from './graphic/icon';
-import type { WrapText } from './graphic/text';
 import { getCellMergeInfo } from './utils/get-cell-merge';
 import { updateColWidth } from './layout/update-width';
 import { TableComponent } from './component/table-component';
@@ -1252,8 +1251,8 @@ export class Scenegraph {
       const headerStyle = this.table._getCellStyle(col, row);
       const padding = getQuadProps(getProp('padding', headerStyle, col, row, this.table));
 
-      // const text = cellGroup.getChildAt(1) as WrapText;
-      const text = cellGroup.getChildByName('text') as WrapText;
+      // const text = cellGroup.getChildAt(1) as Text;
+      const text = cellGroup.getChildByName('text') as Text;
       let oldCellHeight = 0;
       let newCellHeight = 0;
       if (text) {
@@ -1528,7 +1527,7 @@ export class Scenegraph {
 
   getCellOverflowText(col: number, row: number): string | null {
     const cellGroup = this.getCell(col, row);
-    const text = cellGroup.getChildByName('text', true) as unknown as WrapText | RichText;
+    const text = cellGroup.getChildByName('text', true) as unknown as Text | RichText;
 
     if (text && text.type === 'text') {
       const textAttributeStr = isArray(text.attribute.text)

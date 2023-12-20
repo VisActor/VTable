@@ -1,7 +1,6 @@
-import type { IGraphic } from '@visactor/vrender';
+import type { IGraphic, Text } from '@visactor/vrender';
 import type { BaseTableAPI } from '../../ts-types/base-table';
 import type { Group } from '../graphic/group';
-import type { WrapText } from '../graphic/text';
 import type { PivotHeaderLayoutMap } from '../../layout/pivot-header-layout';
 import type { ITextStyleOption, StickCell } from '../../ts-types';
 import { isNumber } from '@visactor/vutils';
@@ -153,7 +152,7 @@ function adjustCellContentVerticalLayout(
 
 function dealVertical(cellGroup: Group, minTop: number, maxTop: number, changedCells: StickCell[]) {
   // get text element
-  const text = cellGroup.getChildByName('text', true) as WrapText;
+  const text = cellGroup.getChildByName('text', true) as Text;
   if (!text) {
     return;
   }
@@ -219,7 +218,7 @@ function adjustCellContentHorizontalLayout(
 
 function dealHorizontal(cellGroup: Group, minLeft: number, maxLeft: number, changedCells: StickCell[]) {
   // get text element
-  const text = cellGroup.getChildByName('text', true) as WrapText;
+  const text = cellGroup.getChildByName('text', true) as Text;
   if (!text) {
     return;
   }

@@ -1,13 +1,12 @@
 /* eslint-disable no-undef */
 import type { IThemeSpec } from '@visactor/vrender';
-import { RichText } from '@visactor/vrender';
+import { RichText, Text } from '@visactor/vrender';
 import { convertInternal } from '../../tools/util';
 import type { ColumnIconOption } from '../../ts-types';
 import { IconFuncTypeEnum, IconPosition } from '../../ts-types';
 import { CellContent } from '../component/cell-content';
 import type { Group } from '../graphic/group';
 import { Icon } from '../graphic/icon';
-import { WrapText } from '../graphic/text';
 import type { Scenegraph } from '../scenegraph';
 import { getCellMergeInfo } from './get-cell-merge';
 import { getHierarchyOffset } from './get-hierarchy-offset';
@@ -79,7 +78,7 @@ export function createCellContent(
       const hierarchyOffset = getHierarchyOffset(cellGroup.col, cellGroup.row, table);
 
       const attribute = {
-        text: text.length === 1 && !autoWrapText ? text[0] : text, // 单行(no-autoWrapText)为字符串，多行(autoWrapText)为字符串数组
+        text: text.length === 1 ? text[0] : text,
         maxLineWidth: autoColWidth ? Infinity : cellWidth - (padding[1] + padding[3] + hierarchyOffset),
         // fill: true,
         // textAlign: 'left',
@@ -90,9 +89,10 @@ export function createCellContent(
         // widthLimit: autoColWidth ? -1 : colWidth - (padding[1] + padding[3]),
         heightLimit: autoRowHeight ? -1 : cellHeight - (padding[0] + padding[2]),
         pickable: false,
-        dx: hierarchyOffset
+        dx: hierarchyOffset,
+        whiteSpace: text.length === 1 && !autoWrapText ? 'no-wrap' : 'normal'
       };
-      const wrapText = new WrapText(cellTheme.text ? (Object.assign({}, cellTheme.text, attribute) as any) : attribute);
+      const wrapText = new Text(cellTheme.text ? (Object.assign({}, cellTheme.text, attribute) as any) : attribute);
       wrapText.name = 'text';
 
       cellGroup.appendChild(wrapText);
@@ -180,7 +180,7 @@ export function createCellContent(
     if (inlineFrontIcons.length === 0 && inlineEndIcons.length === 0) {
       const text = convertInternal(textStr).replace(/\r?\n/g, '\n').replace(/\r/g, '\n').split('\n');
       const attribute = {
-        text: text.length === 1 && !autoWrapText ? text[0] : text, // 单行(no-autoWrapText)为字符串，多行(autoWrapText)为字符串数组
+        text: text.length === 1 ? text[0] : text,
         maxLineWidth: autoColWidth ? Infinity : cellWidth - (padding[1] + padding[3]) - leftIconWidth - rightIconWidth,
         // fill: true,
         // textAlign: 'left',
@@ -190,9 +190,10 @@ export function createCellContent(
         pickable: false,
         autoWrapText,
         lineClamp,
-        wordBreak: 'break-word'
+        wordBreak: 'break-word',
+        whiteSpace: text.length === 1 && !autoWrapText ? 'no-wrap' : 'normal'
       };
-      const wrapText = new WrapText(cellTheme.text ? (Object.assign({}, cellTheme.text, attribute) as any) : attribute);
+      const wrapText = new Text(cellTheme.text ? (Object.assign({}, cellTheme.text, attribute) as any) : attribute);
       wrapText.name = 'text';
       textMark = wrapText;
     } else {
@@ -496,7 +497,7 @@ export function updateCellContentWidth(
   const textMark = cellGroup.getChildByName('text');
   const cellContent = cellGroup.getChildByName('content') as CellContent;
   let contentHeight: number;
-  if (textMark instanceof WrapText) {
+  if (textMark instanceof Text) {
     oldTextHeight = textMark.AABBBounds.height();
     textMark.setAttribute('maxLineWidth', distWidth - leftIconWidth - rightIconHeight - (padding[1] + padding[3]));
     // contentWidth = textMark.AABBBounds.width();
@@ -600,7 +601,7 @@ export function updateCellContentHeight(
 
   const textMark = cellGroup.getChildByName('text');
 
-  if (textMark instanceof WrapText && !autoRowHeight) {
+  if (textMark instanceof Text && !autoRowHeight) {
     textMark.setAttributes({
       heightLimit: newHeight
     } as any);

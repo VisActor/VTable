@@ -405,7 +405,9 @@ export function updateCell(col: number, row: number, table: BaseTableAPI, addNew
       stroke: cellTheme?.group?.stroke ?? undefined,
       strokeArrayWidth: (cellTheme?.group as any)?.strokeArrayWidth ?? undefined,
       strokeArrayColor: (cellTheme?.group as any)?.strokeArrayColor ?? undefined,
-      cursor: (cellTheme?.group as any)?.cursor ?? undefined
+      cursor: (cellTheme?.group as any)?.cursor ?? undefined,
+
+      y: table.scenegraph.getCellGroupY(row)
     } as any);
 
     // update text

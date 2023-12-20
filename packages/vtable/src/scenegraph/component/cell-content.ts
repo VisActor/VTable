@@ -1,9 +1,8 @@
 /* eslint-disable no-undef */
 import type { IGroupGraphicAttribute } from '@visactor/vrender';
-import { RichText } from '@visactor/vrender';
+import { RichText, Text } from '@visactor/vrender';
 import { Group } from '../graphic/group';
 import { Icon } from '../graphic/icon';
-import { WrapText } from '../graphic/text';
 
 /*
  * cell区域规划
@@ -99,8 +98,8 @@ export class CellContent extends Group {
     );
   }
 
-  addContent(content: Icon | WrapText | RichText) {
-    const lastChild = this._centerGroup.lastChild as Icon | WrapText | RichText;
+  addContent(content: Icon | Text | RichText) {
+    const lastChild = this._centerGroup.lastChild as Icon | Text | RichText;
     if (lastChild) {
       // 横排content，新加入content更新x坐标
       content.setAttributes({
@@ -108,7 +107,7 @@ export class CellContent extends Group {
       });
     }
     this._centerGroup.appendChild(content);
-    if (content instanceof WrapText) {
+    if (content instanceof Text) {
       this._centerGroup.setAttribute('pickable', false);
       content.setAttribute('textAlign', 'left');
     }
@@ -174,13 +173,13 @@ export class CellContent extends Group {
     const text = this._centerGroup.getChildByName('text');
     if (text instanceof RichText) {
       text.setAttribute('width', textWidth);
-    } else if (text instanceof WrapText) {
+    } else if (text instanceof Text) {
       text.setAttribute('maxLineWidth', textWidth);
     }
 
     // 按顺序更新x
     let x = 0;
-    this._centerGroup.forEachChildren((child: Icon | WrapText | RichText) => {
+    this._centerGroup.forEachChildren((child: Icon | Text | RichText) => {
       child.setAttribute('x', x);
       x += child.AABBBounds.width();
     });
