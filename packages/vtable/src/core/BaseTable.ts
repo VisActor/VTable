@@ -242,6 +242,10 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     }
 
     internalProps.handler = new EventHandler();
+    if (isNumber(this.options.resizeTime)) {
+      internalProps.handler.resizeTime = this.options.resizeTime;
+    }
+
     internalProps.pixelRatio = pixelRatio;
     internalProps.frozenColCount = frozenColCount;
 
