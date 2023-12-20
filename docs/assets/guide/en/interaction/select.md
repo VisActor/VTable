@@ -35,7 +35,7 @@ tableInstance.selectCells([{start:{col:1,row:2},end:{col:4,row:2}},{start:{col:3
 ```
 
 ### Clear current selection
-When the selectCell interface is called, it can be cleared by passing null, and a special interface clearSelectedCell will be added later.
+call api `clearSelected`.
 
 ## Select style
 

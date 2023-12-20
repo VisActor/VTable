@@ -35,7 +35,7 @@ tableInstance.selectCells([{start:{col:1,row:2},end:{col:4,row:2}},{start:{col:3
 ```
 
 ### 清除当前选中
-selectCell接口调用时传空可以清除，后面增加专门的接口clearSelectedCell。
+调用接口`clearSelected`
 
 ## 选中样式
 

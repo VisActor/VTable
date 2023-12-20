@@ -39,6 +39,13 @@ export class EventManager {
   touchMove: boolean; // is touch listener working, use to disable document touch scrolling function
   gesture: Gesture;
   handleTextStickBindId: number;
+
+  //鼠标事件记录
+  LastPointerXY: { x: number; y: number };
+  LastBodyPointerXY: { x: number; y: number };
+  isDown = false;
+  isDraging = false;
+
   constructor(table: BaseTableAPI) {
     this.table = table;
     if (Env.mode === 'node') {

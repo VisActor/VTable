@@ -172,6 +172,9 @@ tableInstance.renderWithRecreateCells();
   /**获取选中区域的每个单元格详情 */
   getSelectedCellInfos(): CellInfo[][] | null;
 ```
+## clearSelected(Function)
+
+清除所有单元格的选中状态。
 
 ## getCellValue(Function)
 

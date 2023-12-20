@@ -2260,34 +2260,27 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
    * @returns
    */
   private computeTargetRowByY(absoluteY: number): number {
-    //此方式效率太低，借助缓存，或者大约计算出一个值
-    // this.rowHeightsMap.each(0, this.rowCount - 1, (height: number, row: number): boolean | void => {
-    //   h += height || this.internalProps.defaultRowHeight;
-    //   if (h > absoluteY) {
-    //     targetRow = row;
-    //     return false;
-    //   }
-    // });
+    let defaultRowHeight = this.internalProps.defaultRowHeight;
+
     //使用二分法计算出row
     if (this._rowRangeHeightsMap.get(`$0$${this.rowCount - 1}`)) {
-      let startRow = 0;
-      let endRow = this.rowCount - 1;
-      while (endRow - startRow > 1) {
-        const midRow = Math.floor((startRow + endRow) / 2);
-        if (absoluteY < this._rowRangeHeightsMap.get(`$0$${midRow}`)) {
-          endRow = midRow;
-        } else if (absoluteY > this._rowRangeHeightsMap.get(`$0$${midRow}`)) {
-          startRow = midRow;
-        } else {
-          return midRow;
-        }
-      }
-      return endRow;
-      // if (this._rowRangeHeightsMap.get[`$0$${endRow}`] === absoluteY) return endRow;
-      // if (this._rowRangeHeightsMap.get[`$0$${startRow}`] === absoluteY) return startRow;
+      defaultRowHeight = this._rowRangeHeightsMap.get(`$0$${this.rowCount - 1}`) / this.rowCount;
+      // let startRow = 0;
+      // let endRow = this.rowCount - 1;
+      // while (endRow - startRow > 1) {
+      //   const midRow = Math.floor((startRow + endRow) / 2);
+      //   if (absoluteY < this._rowRangeHeightsMap.get(`$0$${midRow}`)) {
+      //     endRow = midRow;
+      //   } else if (absoluteY > this._rowRangeHeightsMap.get(`$0$${midRow}`)) {
+      //     startRow = midRow;
+      //   } else {
+      //     return midRow;
+      //   }
+      // }
+      // return endRow;
     }
     //否则使用defaultRowHeight大约计算一个row
-    return Math.min(Math.ceil(absoluteY / this.internalProps.defaultRowHeight), this.rowCount - 1);
+    return Math.min(Math.ceil(absoluteY / defaultRowHeight), this.rowCount - 1);
   }
   /**
    * 根据x值（包括了scroll的）计算所在列 主要借助colRangeWidthsMap缓存来提高计算效率

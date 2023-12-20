@@ -73,7 +73,7 @@ export function updateSelectPosition(
     state.select.ranges = [];
     // 隐藏select border
     scenegraph.deleteAllSelectBorder();
-  } else if (interactionState === InteractionState.default) {
+  } else if (interactionState === InteractionState.default && !table.stateManager.isResizeCol()) {
     const currentRange = state.select.ranges[state.select.ranges.length - 1];
     if (isShift && currentRange) {
       if (state.select.headerSelectMode !== 'cell' && table.isColumnHeader(col, row)) {
@@ -151,7 +151,7 @@ export function updateSelectPosition(
         currentRange.end.row
       );
     }
-  } else if (interactionState === InteractionState.grabing) {
+  } else if (interactionState === InteractionState.grabing && !table.stateManager.isResizeCol()) {
     // 可能有cellPosStart从-1开始grabing的情况
     if (cellPos.col === -1) {
       cellPos.col = col;
