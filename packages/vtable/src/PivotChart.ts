@@ -1179,6 +1179,9 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
   }
 
   hasCustomRenderOrLayout() {
+    if (this.options.customRender) {
+      return true;
+    }
     const { columnsDefine, rowsDefine, indicatorsDefine } = this.internalProps.layoutMap;
     for (let i = 0; i < columnsDefine.length; i++) {
       const columnDefine = columnsDefine[i];

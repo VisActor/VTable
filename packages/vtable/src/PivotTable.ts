@@ -1051,6 +1051,9 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
   }
 
   hasCustomRenderOrLayout() {
+    if (this.options.customRender) {
+      return true;
+    }
     const { columnsDefine, rowsDefine, indicatorsDefine } = this.internalProps.layoutMap;
     for (let i = 0; i < columnsDefine.length; i++) {
       const columnDefine = columnsDefine[i];

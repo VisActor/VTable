@@ -1174,6 +1174,10 @@ export class ListTable extends BaseTable implements ListTableAPI {
 
   hasCustomRenderOrLayout() {
     const { headerObjects } = this.internalProps.layoutMap;
+    if (this.options.customRender) {
+      return true;
+    }
+
     for (let i = 0; i < headerObjects.length; i++) {
       const headerObject = headerObjects[i];
       if (

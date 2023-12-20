@@ -354,6 +354,13 @@
             "zh": "单元格自定义渲染",
             "en": "custom_render"
           }
+        },
+        {
+          "path": "custom_component",
+          "title": {
+            "zh": "自定义交互组件",
+            "en": "custom_interactive_component"
+          }
         }
       ]
     },
