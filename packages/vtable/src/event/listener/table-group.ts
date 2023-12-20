@@ -285,7 +285,9 @@ export function bindTableGroupListener(eventManager: EventManager) {
   table.scenegraph.tableGroup.addEventListener('pointerupoutside', (e: FederatedPointerEvent) => {
     const eventArgsSet: SceneEvent = getCellEventArgsSet(e);
     if (stateManager.menu.isShow && (eventArgsSet.eventArgs?.target as any) !== stateManager.residentHoverIcon?.icon) {
-      stateManager.hideMenu();
+      setTimeout(() => {
+        stateManager.menu.isShow && stateManager.hideMenu();
+      }, 0);
     }
     // 同pointerup中的逻辑
     if (stateManager.isResizeCol()) {
@@ -721,13 +723,20 @@ function endResizeCol(table: BaseTableAPI) {
 
 function dblclickHandler(e: FederatedPointerEvent, table: BaseTableAPI) {
   const eventArgsSet: SceneEvent = getCellEventArgsSet(e);
-  const bounds = eventArgsSet.eventArgs.targetCell.globalAABBBounds;
-  const { col, row } = eventArgsSet.eventArgs;
+  let col = -1;
+  let row = -1;
+  if (eventArgsSet.eventArgs) {
+    col = eventArgsSet.eventArgs.col;
+    row = eventArgsSet.eventArgs.row;
+  }
   const value = table.getCellValue(col, row);
-  table.internalProps.focusControl.setFocusRect(
-    new Rect(bounds.x1 + table.scrollLeft, bounds.y1 + table.scrollTop, bounds.x2 - bounds.x1, bounds.y2 - bounds.y1),
-    value
-  );
+
+  const bounds = eventArgsSet.eventArgs?.targetCell?.globalAABBBounds;
+  bounds &&
+    table.internalProps.focusControl.setFocusRect(
+      new Rect(bounds.x1 + table.scrollLeft, bounds.y1 + table.scrollTop, bounds.x2 - bounds.x1, bounds.y2 - bounds.y1),
+      value
+    );
   if ((table as any).hasListeners(TABLE_EVENT_TYPE.DBLCLICK_CELL)) {
     const cellInfo = table.getCellInfo(col, row);
     let icon;

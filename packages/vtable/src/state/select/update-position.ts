@@ -28,8 +28,8 @@ export function updateSelectPosition(
   //   return;
   // }
   /** 完整显示选中单元格 自动滚动效果*/
-  if (col !== -1 && row !== -1 && state.select.ranges.length > 0) {
-    if (interactionState === InteractionState.grabing) {
+  if (col !== -1 && row !== -1) {
+    if (interactionState === InteractionState.grabing && state.select.ranges.length > 0) {
       const currentRange = state.select.ranges[state.select.ranges.length - 1];
       if (col > currentRange.start.col && col > currentRange.end.col) {
         //向右扩展

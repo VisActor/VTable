@@ -22,14 +22,116 @@ export function bindContainerDomListener(eventManager: EventManager) {
 
   // 监听键盘事件
   handler.on(table.getElement(), 'keydown', (e: KeyboardEvent) => {
-    if (table.keyboardOptions?.selectAllOnCtrlA) {
-      // 处理全选
-      if (e.key === 'a' && (e.ctrlKey || e.metaKey)) {
+    if (e.key === 'a' && (e.ctrlKey || e.metaKey)) {
+      if (table.keyboardOptions?.selectAllOnCtrlA) {
+        // 处理全选
         e.preventDefault();
         //全选
         eventManager.deelTableSelectAll();
       }
+    } else if (
+      stateManager.select.cellPos.col >= 0 &&
+      stateManager.select.cellPos.row >= 0 &&
+      (e.key === 'ArrowUp' || e.key === 'ArrowDown' || e.key === 'ArrowLeft' || e.key === 'ArrowRight')
+    ) {
+      if (
+        !(table.options.keyboardOptions?.moveEditCellOnArrowKeys ?? false) &&
+        (table as ListTableAPI).editorManager.editingEditor
+      ) {
+        // 编辑单元格状态下 如果没有开启方向键切换cell 则退出 。方向键可以在编辑input内移动光标
+        return;
+      }
+      e.preventDefault();
+      // 如果不加这句话 外部监听了键盘事件 会影响表格本身的移动格子功能，例如自定义日历编辑器的日期选择pickday.js
+      //可能会引起其他问题  例如自定义实现了日历编辑器 里面切换日期左右键可能失效，这个时候建议监听VTable实例的事件keydown
+      e.stopPropagation();
+      let targetCol;
+      let targetRow;
+
+      // 处理向上箭头键
+      if (e.key === 'ArrowUp') {
+        targetCol = stateManager.select.cellPos.col;
+        targetRow = Math.min(table.rowCount - 1, Math.max(0, stateManager.select.cellPos.row - 1));
+      } else if (e.key === 'ArrowDown') {
+        // 处理向下箭头键
+        targetCol = stateManager.select.cellPos.col;
+        targetRow = Math.min(table.rowCount - 1, Math.max(0, stateManager.select.cellPos.row + 1));
+      } else if (e.key === 'ArrowLeft') {
+        // 处理向左箭头键
+        targetRow = stateManager.select.cellPos.row;
+        targetCol = Math.min(table.colCount - 1, Math.max(0, stateManager.select.cellPos.col - 1));
+      } else if (e.key === 'ArrowRight') {
+        // 处理向右箭头键
+        targetRow = stateManager.select.cellPos.row;
+        targetCol = Math.min(table.colCount - 1, Math.max(0, stateManager.select.cellPos.col + 1));
+      }
+      table.selectCell(targetCol, targetRow);
+      if (
+        (table.options.keyboardOptions?.moveEditCellOnArrowKeys ?? false) &&
+        (table as ListTableAPI).editorManager.editingEditor
+      ) {
+        // 开启了方向键切换编辑单元格  并且当前已经在编辑状态下 切换到下一个需先退出再进入下个单元格的编辑
+        (table as ListTableAPI).editorManager.completeEdit();
+        table.getElement().focus();
+        if ((table as ListTableAPI).getEditor(targetCol, targetRow)) {
+          (table as ListTableAPI).editorManager.startEditCell(targetCol, targetRow);
+        }
+      }
+    } else if (e.key === 'Escape') {
+      if ((table as ListTableAPI).editorManager.editingEditor) {
+        (table as ListTableAPI).editorManager.editingEditor.exit();
+        (table as ListTableAPI).editorManager.editingEditor = null;
+      }
+    } else if (e.key === 'Enter') {
+      // 如果按enter键 可以结束当前的编辑 或开启编辑选中的单元格（仅限单选）
+      if ((table as ListTableAPI).editorManager.editingEditor) {
+        (table as ListTableAPI).editorManager.completeEdit();
+        table.getElement().focus();
+      } else {
+        if (
+          (table.options.keyboardOptions?.editCellOnEnter ?? true) &&
+          (table.stateManager.select.ranges?.length ?? 0) === 1
+        ) {
+          // 如果开启按enter键进入编辑的配置 且当前有选中的单元格 则进入编辑
+          const startCol = table.stateManager.select.ranges[0].start.col;
+          const startRow = table.stateManager.select.ranges[0].start.row;
+          const endCol = table.stateManager.select.ranges[0].end.col;
+          const endRow = table.stateManager.select.ranges[0].end.row;
+          if (startCol === endCol && startRow === endRow) {
+            if ((table as ListTableAPI).getEditor(startCol, startRow)) {
+              (table as ListTableAPI).editorManager.startEditCell(startCol, startRow);
+            }
+          }
+        }
+      }
+    } else if (e.key === 'Tab') {
+      if (table.options.keyboardOptions?.moveFocusCellOnTab ?? true) {
+        e.preventDefault();
+        if (stateManager.select.cellPos.col >= 0 && stateManager.select.cellPos.row >= 0) {
+          let targetCol;
+          let targetRow;
+          if (stateManager.select.cellPos.col === table.colCount - 1) {
+            targetRow = Math.min(table.rowCount - 1, stateManager.select.cellPos.row + 1);
+            targetCol = table.rowHeaderLevelCount;
+          } else if (stateManager.select.cellPos.row === table.rowCount - 1) {
+            targetRow = table.rowCount - 1;
+            targetCol = table.rowHeaderLevelCount;
+          } else {
+            targetRow = stateManager.select.cellPos.row;
+            targetCol = stateManager.select.cellPos.col + 1;
+          }
+          table.selectCell(targetCol, targetRow);
+          if ((table as ListTableAPI).editorManager.editingEditor) {
+            (table as ListTableAPI).editorManager.completeEdit();
+            table.getElement().focus();
+          }
+          if ((table as ListTableAPI).getEditor(targetCol, targetRow)) {
+            (table as ListTableAPI).editorManager.startEditCell(targetCol, targetRow);
+          }
+        }
+      }
     }
+
     if ((table as any).hasListeners(TABLE_EVENT_TYPE.KEYDOWN)) {
       const cellsEvent: KeydownEvent = {
         keyCode: e.keyCode ?? e.which,

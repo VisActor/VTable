@@ -47,6 +47,8 @@ import {
   getIconByXY,
   hideClickIcon,
   hideHoverIcon,
+  resetResidentHoverIcon,
+  residentHoverIcon,
   setIconHoverStyle,
   setIconNormalStyle,
   showClickIcon,
@@ -605,6 +607,13 @@ export class Scenegraph {
    */
   setIconNormalStyle(icon: Icon, col: number, row: number) {
     setIconNormalStyle(icon, col, row, this);
+  }
+
+  residentHoverIcon(col: number, row: number) {
+    residentHoverIcon(col, row, this);
+  }
+  resetResidentHoverIcon(col: number, row: number) {
+    resetResidentHoverIcon(col, row, this);
   }
 
   /**
@@ -1533,7 +1542,7 @@ export class Scenegraph {
     // if (text && text.cache?.clipedText !== text.attribute.text) {
     //   return text.attribute.text as string;
     // }
-    if (text) {
+    if (text && text.type === 'text') {
       const textAttributeStr = isArray(text.attribute.text)
         ? text.attribute.text.join('')
         : (text.attribute.text as string);
