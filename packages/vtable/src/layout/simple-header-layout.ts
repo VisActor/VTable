@@ -66,10 +66,10 @@ export class SimpleHeaderLayoutMap implements LayoutMapAPI {
     this._showHeader = _showHeader;
   }
   isHeader(col: number, row: number): boolean {
-    if (this.transpose && col < this.headerLevelCount) {
+    if (this.transpose && col >= 0 && col < this.headerLevelCount) {
       return true;
     }
-    if (!this.transpose && row < this.headerLevelCount) {
+    if (!this.transpose && row >= 0 && row < this.headerLevelCount) {
       return true;
     }
     return false;
@@ -84,13 +84,13 @@ export class SimpleHeaderLayoutMap implements LayoutMapAPI {
     return 'body';
   }
   isRowHeader(col: number, row: number): boolean {
-    if (this.transpose && col < this.headerLevelCount) {
+    if (this.transpose && col >= 0 && col <= this.headerLevelCount - 1) {
       return true;
     }
     return false;
   }
   isColumnHeader(col: number, row: number): boolean {
-    if (!this.transpose && row < this.headerLevelCount) {
+    if (!this.transpose && row >= 0 && row <= this.headerLevelCount - 1) {
       return true;
     }
     return false;
@@ -103,11 +103,16 @@ export class SimpleHeaderLayoutMap implements LayoutMapAPI {
    */
   isFrozenColumn(col: number, row?: number): boolean {
     if (isValid(row)) {
-      if (col < this.frozenColCount && row >= this.frozenRowCount && row < this.rowCount - this.bottomFrozenRowCount) {
+      if (
+        col >= 0 &&
+        col < this.frozenColCount &&
+        row >= this.frozenRowCount &&
+        row < this.rowCount - this.bottomFrozenRowCount
+      ) {
         return true;
       }
     } else {
-      if (this.frozenColCount > 0 && col < this.frozenColCount) {
+      if (this.frozenColCount > 0 && col >= 0 && col < this.frozenColCount) {
         return true;
       }
     }
@@ -143,12 +148,17 @@ export class SimpleHeaderLayoutMap implements LayoutMapAPI {
    */
   isFrozenRow(col: number, row?: number): boolean {
     if (isValid(row)) {
-      if (row < this.frozenRowCount && col >= this.frozenColCount && col < this.colCount - this.rightFrozenColCount) {
+      if (
+        row >= 0 &&
+        row < this.frozenRowCount &&
+        col >= this.frozenColCount &&
+        col < this.colCount - this.rightFrozenColCount
+      ) {
         return true;
       }
     } else {
       row = col;
-      if (this.frozenRowCount > 0 && row < this.frozenRowCount) {
+      if (this.frozenRowCount > 0 && row >= 0 && row < this.frozenRowCount) {
         return true;
       }
     }
@@ -178,13 +188,13 @@ export class SimpleHeaderLayoutMap implements LayoutMapAPI {
     return false;
   }
   isLeftBottomCorner(col: number, row: number): boolean {
-    if (col < this.rowHeaderLevelCount && row >= this.rowCount - this.bottomFrozenRowCount) {
+    if (col >= 0 && col < this.rowHeaderLevelCount && row >= this.rowCount - this.bottomFrozenRowCount) {
       return true;
     }
     return false;
   }
   isRightTopCorner(col: number, row: number): boolean {
-    if (col >= this.colCount - this.rightFrozenColCount && row < this.columnHeaderLevelCount) {
+    if (col >= this.colCount - this.rightFrozenColCount && row >= 0 && row < this.columnHeaderLevelCount) {
       return true;
     }
     return false;

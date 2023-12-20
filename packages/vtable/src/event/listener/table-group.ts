@@ -22,30 +22,28 @@ import { getCellMergeInfo } from '../../scenegraph/utils/get-cell-merge';
 import type { CheckBox, CheckboxAttributes } from '@visactor/vrender-components';
 
 // PointerMove敏感度太高了 记录下上一个鼠标位置 在接收到PointerMove事件时做判断 是否到到触发框选或者移动表头操作的标准，防止误触
-let LastPointerXY: { x: number; y: number };
-let LastBodyPointerXY: { x: number; y: number };
-let isDown = false;
-let isDraging = false;
+
 export function bindTableGroupListener(eventManager: EventManager) {
   const table = eventManager.table;
   const stateManager = table.stateManager;
 
   document.body.addEventListener('pointerdown', e => {
-    LastBodyPointerXY = { x: e.x, y: e.y };
-    isDown = true;
+    console.log('body pointerdown');
+    table.eventManager.LastBodyPointerXY = { x: e.x, y: e.y };
+    table.eventManager.isDown = true;
   });
   document.addEventListener('pointerup', e => {
-    LastBodyPointerXY = null;
-    // console.log('body pointerup', isDown, isDraging);
-    isDown = false;
-    isDraging = false;
+    table.eventManager.LastBodyPointerXY = null;
+    console.log('body pointerup', table.eventManager.isDown, table.eventManager.isDraging);
+    table.eventManager.isDown = false;
+    table.eventManager.isDraging = false;
   });
   document.body.addEventListener('pointermove', (e: FederatedPointerEvent) => {
-    if (isDown && LastBodyPointerXY) {
-      const lastX = LastBodyPointerXY?.x ?? e.x;
-      const lastY = LastBodyPointerXY?.y ?? e.y;
+    if (table.eventManager.isDown && table.eventManager.LastBodyPointerXY) {
+      const lastX = table.eventManager.LastBodyPointerXY?.x ?? e.x;
+      const lastY = table.eventManager.LastBodyPointerXY?.y ?? e.y;
       if (Math.abs(lastX - e.x) > 1 || Math.abs(lastY - e.y) > 1) {
-        isDraging = true;
+        table.eventManager.isDraging = true;
       }
     }
     // 注释掉。因为： 这里pointermove太敏感了 点击快的时候 可能动了1px这里也会执行到 就影响到下面选中不触发的问题。下面pointermove就有这段逻辑，这里先去掉
@@ -72,9 +70,9 @@ export function bindTableGroupListener(eventManager: EventManager) {
     }
   });
   table.scenegraph.tableGroup.addEventListener('pointermove', (e: FederatedPointerEvent) => {
-    const lastX = LastPointerXY?.x ?? e.x;
-    const lastY = LastPointerXY?.y ?? e.y;
-    LastPointerXY = { x: e.x, y: e.y };
+    const lastX = table.eventManager.LastPointerXY?.x ?? e.x;
+    const lastY = table.eventManager.LastPointerXY?.y ?? e.y;
+    table.eventManager.LastPointerXY = { x: e.x, y: e.y };
     // const eventArgsSet: SceneEvent = (table as any).getCellEventArgsSet(e);
     if (eventManager.touchSetTimeout) {
       // 移动端事件特殊处理
@@ -286,7 +284,9 @@ export function bindTableGroupListener(eventManager: EventManager) {
     const eventArgsSet: SceneEvent = getCellEventArgsSet(e);
     if (stateManager.menu.isShow && (eventArgsSet.eventArgs?.target as any) !== stateManager.residentHoverIcon?.icon) {
       setTimeout(() => {
-        stateManager.menu.isShow && stateManager.hideMenu();
+        if (!table.internalProps.menuHandler.pointInMenuElement(e.page.x, e.page.y)) {
+          stateManager.menu.isShow && stateManager.hideMenu();
+        }
       }, 0);
     }
     // 同pointerup中的逻辑
@@ -340,7 +340,14 @@ export function bindTableGroupListener(eventManager: EventManager) {
   });
 
   table.scenegraph.tableGroup.addEventListener('pointerdown', (e: FederatedPointerEvent) => {
-    LastPointerXY = { x: e.x, y: e.y };
+    console.log('tableGroup pointerdown');
+    table.eventManager.isDown = true;
+    table.eventManager.LastBodyPointerXY = { x: e.x, y: e.y };
+    // 避免在调整列宽等拖拽操作触发外层组件的拖拽逻辑
+    // 如果鼠标位置在表格内（加调整列宽的热区），将mousedown事件阻止冒泡
+    e.stopPropagation();
+
+    table.eventManager.LastPointerXY = { x: e.x, y: e.y };
     if (e.button !== 0) {
       // 只处理左键
       return;
@@ -606,7 +613,7 @@ export function bindTableGroupListener(eventManager: EventManager) {
     const target = e.target;
     if (
       // 如果是鼠标点击到canvas空白区域 则取消选中状态
-      !isDraging &&
+      !table.eventManager.isDraging &&
       target &&
       !target.isDescendantsOf(table.scenegraph.tableGroup)
       // &&
@@ -618,7 +625,7 @@ export function bindTableGroupListener(eventManager: EventManager) {
       eventManager.dealTableSelect();
       stateManager.updateCursor();
       table.scenegraph.updateChartState(null);
-    } else if (isDraging) {
+    } else if (table.eventManager.isDraging) {
       // 如果鼠标拖拽后是否 则结束选中
       stateManager.endSelectCells();
     }

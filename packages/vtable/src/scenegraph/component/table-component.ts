@@ -218,29 +218,6 @@ export class TableComponent {
     });
     (this.vScrollBar as any).render();
     this.vScrollBar.hideAll();
-    this.hScrollBar.addEventListener('scrollDown', (e: FederatedPointerEvent) => {
-      const eventArgsSet: SceneEvent = getCellEventArgsSet(e);
-      if (
-        this.table.stateManager.menu.isShow &&
-        (eventArgsSet.eventArgs?.target as any) !== this.table.stateManager.residentHoverIcon?.icon
-      ) {
-        this.table.stateManager.hideMenu();
-      }
-
-      (this.table as ListTableAPI).editorManager?.completeEdit();
-    });
-
-    this.vScrollBar.addEventListener('scrollDown', (e: FederatedPointerEvent) => {
-      const eventArgsSet: SceneEvent = getCellEventArgsSet(e);
-      if (
-        this.table.stateManager.menu.isShow &&
-        (eventArgsSet.eventArgs?.target as any) !== this.table.stateManager.residentHoverIcon?.icon
-      ) {
-        this.table.stateManager.hideMenu();
-      }
-
-      (this.table as ListTableAPI).editorManager?.completeEdit();
-    });
   }
 
   /**
