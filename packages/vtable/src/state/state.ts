@@ -833,10 +833,10 @@ export class StateManager {
         this.residentHoverIcon.row,
         cellGroup
       );
-      (icon as any).oldVisibleTime = icon.attribute.visibleTime;
-      icon.setAttribute('visibleTime', 'always');
-      // icon.setAttribute('visible', true);
-      icon.setAttribute('opacity', 1);
+      // (icon as any).oldVisibleTime = icon.attribute.visibleTime;
+      // icon.setAttribute('visibleTime', 'always');
+      // icon.setAttribute('opacity', 1);
+      this.table.scenegraph.residentHoverIcon(col, row);
     }
   }
 
@@ -851,15 +851,12 @@ export class StateManager {
         this.residentHoverIcon.col,
         this.residentHoverIcon.row
       );
-      this.residentHoverIcon.icon.setAttribute('visibleTime', (this.residentHoverIcon.icon as any).oldVisibleTime);
+      // this.residentHoverIcon.icon.setAttribute('visibleTime', (this.residentHoverIcon.icon as any).oldVisibleTime);
       // this.residentHoverIcon.icon.setAttribute(
-      //   'visible',
-      //   this.residentHoverIcon.icon.attribute.visibleTime === 'always'
+      //   'opacity',
+      //   this.residentHoverIcon.icon.attribute.visibleTime === 'always' ? 1 : 0
       // );
-      this.residentHoverIcon.icon.setAttribute(
-        'opacity',
-        this.residentHoverIcon.icon.attribute.visibleTime === 'always' ? 1 : 0
-      );
+      this.table.scenegraph.resetResidentHoverIcon(this.residentHoverIcon.col, this.residentHoverIcon.row);
       this.residentHoverIcon = null;
     }
   }
