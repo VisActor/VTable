@@ -6,12 +6,40 @@ import { bindDebugTool } from '../../src/scenegraph/debug-tool';
 const CONTAINER_ID = 'vTable';
 VTable.register.chartModule('vchart', VChart);
 export function createTable() {
-  const option = {
+  const option: VTable.TYPES.PivotChartConstructorOptions = {
     widthMode: 'adaptive',
     heightMode: 'adaptive',
-    rowTree: [],
+    rowTree: [
+      {
+        dimensionKey: '20001',
+        value: '销售额',
+        children: [
+          {
+            dimensionKey: '10001',
+            value: '销售额'
+          }
+        ]
+      }
+    ],
     columnTree: [],
-    rows: [],
+    rows: [
+      {
+        dimensionKey: '20001',
+        title: '销售额',
+        headerStyle: {
+          color: 'red',
+          cursor: 'pointer'
+        }
+      },
+      {
+        dimensionKey: '10001',
+        title: '销售额',
+        headerStyle: {
+          color: 'green',
+          cursor: 'pointer'
+        }
+      }
+    ],
     columns: [],
     defaultHeaderRowHeight: 'auto',
     indicatorTitle: ' ',
@@ -2151,342 +2179,342 @@ export function createTable() {
             smartInvert: false
           }
         }
-      },
-      {
-        indicatorKey: '1',
-        width: 'auto',
-        title: '',
-        cellType: 'chart',
-        chartModule: 'vchart',
-        chartSpec: {
-          type: 'line',
-          xField: ['231108105932024'],
-          yField: ['110002'],
-          direction: 'vertical',
-          seriesField: '20001',
-          axes: [
-            {
-              id: '1',
-              type: 'linear',
-              tick: {
-                visible: false,
-                tickMode: 'd3',
-                style: {
-                  stroke: 'rgba(255, 255, 255, 0)'
-                }
-              },
-              niceType: 'accurateFirst',
-              zIndex: 200,
-              grid: {
-                visible: true,
-                style: {
-                  zIndex: 150,
-                  stroke: '#DADCDD',
-                  lineWidth: 1,
-                  lineDash: [4, 2]
-                }
-              },
-              orient: 'left',
-              visible: true,
-              domainLine: {
-                visible: true,
-                style: {
-                  lineWidth: 1,
-                  stroke: 'rgba(255, 255, 255, 0)'
-                }
-              },
-              title: {
-                visible: false,
-                text: '利润',
-                space: 8,
-                style: {
-                  fontSize: 12,
-                  fill: '#363839',
-                  fontWeight: 'normal'
-                }
-              },
-              sampling: false,
-              label: {
-                visible: true,
-                space: 6,
-                flush: true,
-                padding: 0,
-                style: {
-                  fontSize: 12,
-                  maxLineWidth: 174,
-                  fill: '#6F6F6F',
-                  angle: 0,
-                  fontWeight: 'normal',
-                  dy: -1,
-                  direction: 'horizontal'
-                },
-                autoHide: true,
-                autoHideMethod: 'greedy'
-              },
-              hover: false,
-              background: {
-                visible: true,
-                state: {
-                  hover: {
-                    fillOpacity: 0.08,
-                    fill: '#141414'
-                  },
-                  hover_reverse: {
-                    fillOpacity: 0.08,
-                    fill: '#141414'
-                  }
-                }
-              },
-              zero: true,
-              nice: true
-            }
-          ],
-          data: {
-            id: 'data',
-            fields: {
-              '10001': {
-                alias: '指标名称 '
-              },
-              '20001': {
-                alias: '图例项 ',
-                domain: ['销售额', '利润'],
-                sortIndex: 0,
-                lockStatisticsByDomain: true
-              },
-              '110002': {
-                alias: '指标值 '
-              },
-              '010002': {
-                alias: '指标值 '
-              },
-              '231108105932017': {
-                alias: '销售额'
-              },
-              '231108105932024': {
-                alias: '订单日期',
-                domain: [
-                  '2016-01',
-                  '2016-02',
-                  '2016-03',
-                  '2016-04',
-                  '2016-05',
-                  '2016-06',
-                  '2016-07',
-                  '2016-08',
-                  '2016-09',
-                  '2016-10',
-                  '2016-11',
-                  '2016-12',
-                  '2017-01',
-                  '2017-02',
-                  '2017-03',
-                  '2017-04',
-                  '2017-05',
-                  '2017-06',
-                  '2017-07',
-                  '2017-08',
-                  '2017-09',
-                  '2017-10',
-                  '2017-11',
-                  '2017-12',
-                  '2018-01',
-                  '2018-02',
-                  '2018-03',
-                  '2018-04',
-                  '2018-05',
-                  '2018-06',
-                  '2018-07',
-                  '2018-08',
-                  '2018-09',
-                  '2018-10',
-                  '2018-11',
-                  '2018-12',
-                  '2019-01',
-                  '2019-02',
-                  '2019-03',
-                  '2019-04',
-                  '2019-05',
-                  '2019-06',
-                  '2019-07',
-                  '2019-08',
-                  '2019-09',
-                  '2019-10',
-                  '2019-11',
-                  '2019-12'
-                ],
-                sortIndex: 0,
-                lockStatisticsByDomain: true
-              },
-              '231108112716011': {
-                alias: '利润'
-              }
-            }
-          },
-          stackInverse: true,
-          background: 'rgba(255, 255, 255, 0)',
-          region: [
-            {
-              clip: true
-            }
-          ],
-          color: {
-            field: '20001',
-            type: 'ordinal',
-            range: ['#2E62F1', '#4DC36A'],
-            specified: {},
-            domain: ['销售额', '利润']
-          },
-          tooltip: {
-            handler: {}
-          },
-          line: {
-            style: {
-              curveType: {
-                type: 'ordinal',
-                field: '20001',
-                range: ['linear'],
-                domain: ['销售额', '利润']
-              },
-              lineWidth: {
-                type: 'ordinal',
-                field: '20001',
-                range: [3],
-                domain: ['销售额', '利润']
-              },
-              lineDash: {
-                type: 'ordinal',
-                field: '20001',
-                range: [[0, 0]],
-                domain: ['销售额', '利润']
-              }
-            }
-          },
-          area: {
-            style: {
-              curveType: {
-                type: 'ordinal',
-                field: '20001',
-                range: ['linear'],
-                domain: ['销售额', '利润']
-              }
-            }
-          },
-          point: {
-            style: {
-              shape: {
-                type: 'ordinal',
-                field: '20001',
-                range: ['circle'],
-                domain: ['销售额', '利润']
-              },
-              size: {
-                type: 'ordinal',
-                field: '20001',
-                range: [7.0898154036220635],
-                domain: ['销售额', '利润']
-              },
-              fill: {
-                field: '20001',
-                type: 'ordinal',
-                range: ['#2E62F1', '#4DC36A'],
-                specified: {},
-                domain: ['销售额', '利润']
-              },
-              stroke: {
-                field: '20001',
-                type: 'ordinal',
-                range: ['#2E62F1', '#4DC36A'],
-                specified: {},
-                domain: ['销售额', '利润']
-              },
-              strokeOpacity: {
-                type: 'ordinal',
-                field: '20001',
-                range: [1],
-                domain: ['销售额', '利润']
-              },
-              fillOpacity: {
-                type: 'ordinal',
-                field: '20001',
-                range: [1],
-                domain: ['销售额', '利润']
-              }
-            },
-            state: {
-              hover: {
-                lineWidth: 2,
-                fillOpacity: 1,
-                strokeOpacity: 1,
-                scaleX: 1.5,
-                scaleY: 1.5
-              }
-            }
-          },
-          invalidType: 'break',
-          hover: {
-            enable: true
-          },
-          select: {
-            enable: true
-          },
-          bar: {
-            state: {
-              hover: {
-                cursor: 'pointer',
-                fillOpacity: 0.8,
-                stroke: '#58595B',
-                lineWidth: 1,
-                zIndex: 500
-              },
-              selected: {
-                cursor: 'pointer',
-                fillOpacity: 1,
-                stroke: '#58595B',
-                lineWidth: 1
-              },
-              selected_reverse: {
-                fillOpacity: 0.3,
-                strokeWidth: 0.3
-              }
-            }
-          },
-          animation: false,
-          label: {
-            visible: false,
-            offset: 0,
-            overlap: {
-              hideOnHit: true,
-              avoidBaseMark: false,
-              strategy: [
-                {
-                  type: 'position',
-                  position: []
-                },
-                {
-                  type: 'moveY',
-                  offset: [-5, -4, -3, -2, -1, 0, 1, 2, 3, 4, 5]
-                },
-                {
-                  type: 'moveX',
-                  offset: [-5, -4, -3, -2, -1, 0, 1, 2, 3, 4, 5]
-                }
-              ],
-              clampForce: true
-            },
-            style: {
-              fontSize: 12,
-              fontWeight: 'normal',
-              zIndex: 400,
-              fill: '#363839',
-              stroke: 'rgba(255, 255, 255, 0.8)',
-              lineWidth: 1,
-              strokeOpacity: 1
-            },
-            position: 'top',
-            smartInvert: false
-          }
-        }
       }
+      // {
+      //   indicatorKey: '1',
+      //   width: 'auto',
+      //   title: '',
+      //   cellType: 'chart',
+      //   chartModule: 'vchart',
+      //   chartSpec: {
+      //     type: 'line',
+      //     xField: ['231108105932024'],
+      //     yField: ['110002'],
+      //     direction: 'vertical',
+      //     seriesField: '20001',
+      //     axes: [
+      //       {
+      //         id: '1',
+      //         type: 'linear',
+      //         tick: {
+      //           visible: false,
+      //           tickMode: 'd3',
+      //           style: {
+      //             stroke: 'rgba(255, 255, 255, 0)'
+      //           }
+      //         },
+      //         niceType: 'accurateFirst',
+      //         zIndex: 200,
+      //         grid: {
+      //           visible: true,
+      //           style: {
+      //             zIndex: 150,
+      //             stroke: '#DADCDD',
+      //             lineWidth: 1,
+      //             lineDash: [4, 2]
+      //           }
+      //         },
+      //         orient: 'left',
+      //         visible: true,
+      //         domainLine: {
+      //           visible: true,
+      //           style: {
+      //             lineWidth: 1,
+      //             stroke: 'rgba(255, 255, 255, 0)'
+      //           }
+      //         },
+      //         title: {
+      //           visible: false,
+      //           text: '利润',
+      //           space: 8,
+      //           style: {
+      //             fontSize: 12,
+      //             fill: '#363839',
+      //             fontWeight: 'normal'
+      //           }
+      //         },
+      //         sampling: false,
+      //         label: {
+      //           visible: true,
+      //           space: 6,
+      //           flush: true,
+      //           padding: 0,
+      //           style: {
+      //             fontSize: 12,
+      //             maxLineWidth: 174,
+      //             fill: '#6F6F6F',
+      //             angle: 0,
+      //             fontWeight: 'normal',
+      //             dy: -1,
+      //             direction: 'horizontal'
+      //           },
+      //           autoHide: true,
+      //           autoHideMethod: 'greedy'
+      //         },
+      //         hover: false,
+      //         background: {
+      //           visible: true,
+      //           state: {
+      //             hover: {
+      //               fillOpacity: 0.08,
+      //               fill: '#141414'
+      //             },
+      //             hover_reverse: {
+      //               fillOpacity: 0.08,
+      //               fill: '#141414'
+      //             }
+      //           }
+      //         },
+      //         zero: true,
+      //         nice: true
+      //       }
+      //     ],
+      //     data: {
+      //       id: 'data',
+      //       fields: {
+      //         '10001': {
+      //           alias: '指标名称 '
+      //         },
+      //         '20001': {
+      //           alias: '图例项 ',
+      //           domain: ['销售额', '利润'],
+      //           sortIndex: 0,
+      //           lockStatisticsByDomain: true
+      //         },
+      //         '110002': {
+      //           alias: '指标值 '
+      //         },
+      //         '010002': {
+      //           alias: '指标值 '
+      //         },
+      //         '231108105932017': {
+      //           alias: '销售额'
+      //         },
+      //         '231108105932024': {
+      //           alias: '订单日期',
+      //           domain: [
+      //             '2016-01',
+      //             '2016-02',
+      //             '2016-03',
+      //             '2016-04',
+      //             '2016-05',
+      //             '2016-06',
+      //             '2016-07',
+      //             '2016-08',
+      //             '2016-09',
+      //             '2016-10',
+      //             '2016-11',
+      //             '2016-12',
+      //             '2017-01',
+      //             '2017-02',
+      //             '2017-03',
+      //             '2017-04',
+      //             '2017-05',
+      //             '2017-06',
+      //             '2017-07',
+      //             '2017-08',
+      //             '2017-09',
+      //             '2017-10',
+      //             '2017-11',
+      //             '2017-12',
+      //             '2018-01',
+      //             '2018-02',
+      //             '2018-03',
+      //             '2018-04',
+      //             '2018-05',
+      //             '2018-06',
+      //             '2018-07',
+      //             '2018-08',
+      //             '2018-09',
+      //             '2018-10',
+      //             '2018-11',
+      //             '2018-12',
+      //             '2019-01',
+      //             '2019-02',
+      //             '2019-03',
+      //             '2019-04',
+      //             '2019-05',
+      //             '2019-06',
+      //             '2019-07',
+      //             '2019-08',
+      //             '2019-09',
+      //             '2019-10',
+      //             '2019-11',
+      //             '2019-12'
+      //           ],
+      //           sortIndex: 0,
+      //           lockStatisticsByDomain: true
+      //         },
+      //         '231108112716011': {
+      //           alias: '利润'
+      //         }
+      //       }
+      //     },
+      //     stackInverse: true,
+      //     background: 'rgba(255, 255, 255, 0)',
+      //     region: [
+      //       {
+      //         clip: true
+      //       }
+      //     ],
+      //     color: {
+      //       field: '20001',
+      //       type: 'ordinal',
+      //       range: ['#2E62F1', '#4DC36A'],
+      //       specified: {},
+      //       domain: ['销售额', '利润']
+      //     },
+      //     tooltip: {
+      //       handler: {}
+      //     },
+      //     line: {
+      //       style: {
+      //         curveType: {
+      //           type: 'ordinal',
+      //           field: '20001',
+      //           range: ['linear'],
+      //           domain: ['销售额', '利润']
+      //         },
+      //         lineWidth: {
+      //           type: 'ordinal',
+      //           field: '20001',
+      //           range: [3],
+      //           domain: ['销售额', '利润']
+      //         },
+      //         lineDash: {
+      //           type: 'ordinal',
+      //           field: '20001',
+      //           range: [[0, 0]],
+      //           domain: ['销售额', '利润']
+      //         }
+      //       }
+      //     },
+      //     area: {
+      //       style: {
+      //         curveType: {
+      //           type: 'ordinal',
+      //           field: '20001',
+      //           range: ['linear'],
+      //           domain: ['销售额', '利润']
+      //         }
+      //       }
+      //     },
+      //     point: {
+      //       style: {
+      //         shape: {
+      //           type: 'ordinal',
+      //           field: '20001',
+      //           range: ['circle'],
+      //           domain: ['销售额', '利润']
+      //         },
+      //         size: {
+      //           type: 'ordinal',
+      //           field: '20001',
+      //           range: [7.0898154036220635],
+      //           domain: ['销售额', '利润']
+      //         },
+      //         fill: {
+      //           field: '20001',
+      //           type: 'ordinal',
+      //           range: ['#2E62F1', '#4DC36A'],
+      //           specified: {},
+      //           domain: ['销售额', '利润']
+      //         },
+      //         stroke: {
+      //           field: '20001',
+      //           type: 'ordinal',
+      //           range: ['#2E62F1', '#4DC36A'],
+      //           specified: {},
+      //           domain: ['销售额', '利润']
+      //         },
+      //         strokeOpacity: {
+      //           type: 'ordinal',
+      //           field: '20001',
+      //           range: [1],
+      //           domain: ['销售额', '利润']
+      //         },
+      //         fillOpacity: {
+      //           type: 'ordinal',
+      //           field: '20001',
+      //           range: [1],
+      //           domain: ['销售额', '利润']
+      //         }
+      //       },
+      //       state: {
+      //         hover: {
+      //           lineWidth: 2,
+      //           fillOpacity: 1,
+      //           strokeOpacity: 1,
+      //           scaleX: 1.5,
+      //           scaleY: 1.5
+      //         }
+      //       }
+      //     },
+      //     invalidType: 'break',
+      //     hover: {
+      //       enable: true
+      //     },
+      //     select: {
+      //       enable: true
+      //     },
+      //     bar: {
+      //       state: {
+      //         hover: {
+      //           cursor: 'pointer',
+      //           fillOpacity: 0.8,
+      //           stroke: '#58595B',
+      //           lineWidth: 1,
+      //           zIndex: 500
+      //         },
+      //         selected: {
+      //           cursor: 'pointer',
+      //           fillOpacity: 1,
+      //           stroke: '#58595B',
+      //           lineWidth: 1
+      //         },
+      //         selected_reverse: {
+      //           fillOpacity: 0.3,
+      //           strokeWidth: 0.3
+      //         }
+      //       }
+      //     },
+      //     animation: false,
+      //     label: {
+      //       visible: false,
+      //       offset: 0,
+      //       overlap: {
+      //         hideOnHit: true,
+      //         avoidBaseMark: false,
+      //         strategy: [
+      //           {
+      //             type: 'position',
+      //             position: []
+      //           },
+      //           {
+      //             type: 'moveY',
+      //             offset: [-5, -4, -3, -2, -1, 0, 1, 2, 3, 4, 5]
+      //           },
+      //           {
+      //             type: 'moveX',
+      //             offset: [-5, -4, -3, -2, -1, 0, 1, 2, 3, 4, 5]
+      //           }
+      //         ],
+      //         clampForce: true
+      //       },
+      //       style: {
+      //         fontSize: 12,
+      //         fontWeight: 'normal',
+      //         zIndex: 400,
+      //         fill: '#363839',
+      //         stroke: 'rgba(255, 255, 255, 0.8)',
+      //         lineWidth: 1,
+      //         strokeOpacity: 1
+      //       },
+      //       position: 'top',
+      //       smartInvert: false
+      //     }
+      //   }
+      // }
     ],
     animation: false,
     theme: {
@@ -2571,32 +2599,38 @@ export function createTable() {
     hash: 'a065c49f9bac69d2a13bf27249f0e932'
   };
   const tableInstance = new VTable.PivotChart(document.getElementById(CONTAINER_ID), option);
-  // tableInstance.onVChartEvent('click', args => {
-  //   console.log('listenChart click', args);
-  // });
+  tableInstance.addEventListener('click_cell', args => {
+    console.log('listenChart click', args);
+    if (args.col === 0 && args.row === 0) {
+      update();
+    }
+  });
   // tableInstance.onVChartEvent('mouseover', args => {
   //   console.log('listenChart mouseover', args);
   // });
   window.tableInstance = tableInstance;
 
-  bindDebugTool(tableInstance.scenegraph.stage, {
-    customGrapicKeys: ['col', 'row']
-  });
+  // bindDebugTool(tableInstance.scenegraph.stage, {
+  //   customGrapicKeys: ['col', 'row']
+  // });
 
   window.update = () => {
-    const datum = {
-      '10001': '销售额',
-      '10003': '231108105932017',
-      '20001': '销售额',
-      '010002': '577798.3224487305',
-      '231108105932017': '577798.3224487305',
-      '231108105932024': '2019-10'
-    };
-    const path = VTable.getDataCellPath(option, datum);
-    console.log('path', path);
-    // const addr = tableInstance.internalProps.layoutMap.getCellAdressByHeaderPath(path)
-    // console.log(addr)
-    const { chartInstance, bounds } = tableInstance.getChartInstance(path);
-    console.log(chartInstance);
+    (option.rowTree = [
+      {
+        dimensionKey: '20001',
+        value: '销售额'
+      }
+    ]),
+      (option.rows = [
+        {
+          dimensionKey: '20001',
+          title: '销售额',
+          headerStyle: {
+            color: 'red',
+            cursor: 'pointer'
+          }
+        }
+      ]),
+      tableInstance.updateOption(option);
   };
 }
