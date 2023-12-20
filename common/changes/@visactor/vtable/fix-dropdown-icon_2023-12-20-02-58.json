@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vtable",
+      "comment": "fix: fix dropdown icon display error",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vtable"
+}
