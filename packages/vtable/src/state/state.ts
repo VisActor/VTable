@@ -841,23 +841,25 @@ export class StateManager {
   }
 
   hideMenu() {
-    this.table.fireListeners(TABLE_EVENT_TYPE.DROPDOWN_MENU_CLEAR, null);
-    this.table.fireListeners(TABLE_EVENT_TYPE.HIDE_MENU, null);
-    this.menu.isShow = false;
-    this.table.scenegraph.component.menu.detach();
-    if (this.residentHoverIcon) {
-      this.table.scenegraph.setIconNormalStyle(
-        this.residentHoverIcon.icon,
-        this.residentHoverIcon.col,
-        this.residentHoverIcon.row
-      );
-      // this.residentHoverIcon.icon.setAttribute('visibleTime', (this.residentHoverIcon.icon as any).oldVisibleTime);
-      // this.residentHoverIcon.icon.setAttribute(
-      //   'opacity',
-      //   this.residentHoverIcon.icon.attribute.visibleTime === 'always' ? 1 : 0
-      // );
-      this.table.scenegraph.resetResidentHoverIcon(this.residentHoverIcon.col, this.residentHoverIcon.row);
-      this.residentHoverIcon = null;
+    if (this.menu.isShow) {
+      this.table.fireListeners(TABLE_EVENT_TYPE.DROPDOWN_MENU_CLEAR, null);
+      this.table.fireListeners(TABLE_EVENT_TYPE.HIDE_MENU, null);
+      this.menu.isShow = false;
+      this.table.scenegraph.component.menu.detach();
+      if (this.residentHoverIcon) {
+        this.table.scenegraph.setIconNormalStyle(
+          this.residentHoverIcon.icon,
+          this.residentHoverIcon.col,
+          this.residentHoverIcon.row
+        );
+        // this.residentHoverIcon.icon.setAttribute('visibleTime', (this.residentHoverIcon.icon as any).oldVisibleTime);
+        // this.residentHoverIcon.icon.setAttribute(
+        //   'opacity',
+        //   this.residentHoverIcon.icon.attribute.visibleTime === 'always' ? 1 : 0
+        // );
+        this.table.scenegraph.resetResidentHoverIcon(this.residentHoverIcon.col, this.residentHoverIcon.row);
+        this.residentHoverIcon = null;
+      }
     }
   }
 
