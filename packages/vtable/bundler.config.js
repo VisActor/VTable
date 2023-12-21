@@ -11,9 +11,15 @@ module.exports = {
     treeshake: true
   },
   globals: {
-    // '@visactor/vtable-editors': 'VTable.editors'
+    '@visactor/vrender': 'VRender',
+    '@visactor/vrender-core': 'VRenderCore',
+    '@visactor/vrender-kits': 'VRenderKits',
+    '@visactor/vrender-components': 'VRenderComponents',
   },
   external: [
-    // '@visactor/vtable-editors'
-  ]
+    '@visactor/vrender',
+    '@visactor/vrender-core',
+    '@visactor/vrender-kits',
+    '@visactor/vrender-components',
+  ],
 };
