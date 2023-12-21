@@ -480,7 +480,7 @@ function updateMergeCellContentWidth(
  */
 function resetRowHeight(scene: Scenegraph, row: number) {
   // 获取高度
-  const maxHeight = computeRowHeight(row, 0, scene.table.colCount - 1, scene.table);
+  const maxHeight = Math.round(computeRowHeight(row, 0, scene.table.colCount - 1, scene.table));
   // 更新table行高存储
   scene.table._setRowHeight(row, maxHeight, true);
 
