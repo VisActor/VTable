@@ -36,14 +36,7 @@ export function bindScrollBarListener(eventManager: EventManager) {
     if (stateManager.interactionState !== InteractionState.scrolling) {
       stateManager.updateInteractionState(InteractionState.scrolling);
     }
-    const eventArgsSet: SceneEvent = getCellEventArgsSet(e);
-    if (
-      scenegraph.table.stateManager.menu.isShow &&
-      (eventArgsSet.eventArgs?.target as any) !== scenegraph.table.stateManager.residentHoverIcon?.icon
-    ) {
-      scenegraph.table.stateManager.hideMenu();
-    }
-
+    scenegraph.table.stateManager.hideMenu();
     (scenegraph.table as ListTableAPI).editorManager?.completeEdit();
   });
   scenegraph.component.vScrollBar.addEventListener('pointerup', () => {
@@ -64,15 +57,7 @@ export function bindScrollBarListener(eventManager: EventManager) {
     if (stateManager.interactionState !== InteractionState.scrolling) {
       stateManager.updateInteractionState(InteractionState.scrolling);
     }
-
-    const eventArgsSet: SceneEvent = getCellEventArgsSet(e);
-    if (
-      scenegraph.table.stateManager.menu.isShow &&
-      (eventArgsSet.eventArgs?.target as any) !== scenegraph.table.stateManager.residentHoverIcon?.icon
-    ) {
-      scenegraph.table.stateManager.hideMenu();
-    }
-
+    scenegraph.table.stateManager.hideMenu();
     (scenegraph.table as ListTableAPI).editorManager?.completeEdit();
   });
   scenegraph.component.hScrollBar.addEventListener('pointerup', () => {

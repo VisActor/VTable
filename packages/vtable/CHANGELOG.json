@@ -2,6 +2,21 @@
   "name": "@visactor/vtable",
   "entries": [
     {
+      "version": "0.17.2",
+      "tag": "@visactor/vtable_v0.17.2",
+      "date": "Thu, 21 Dec 2023 11:54:58 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "fix: edit bug #771\n\n"
+          },
+          {
+            "comment": "fix: add row height round in resetRowHeight"
+          }
+        ]
+      }
+    },
+    {
       "version": "0.17.1",
       "tag": "@visactor/vtable_v0.17.1",
       "date": "Thu, 21 Dec 2023 04:01:16 GMT",

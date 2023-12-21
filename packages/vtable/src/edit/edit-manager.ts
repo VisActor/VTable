@@ -43,12 +43,6 @@ export class EditManeger {
         this.startEditCell(col, row);
       }
     });
-    document.body.addEventListener('pointerdown', (e: PointerEvent) => {
-      const target = e.target;
-      if (this.editingEditor && !this.editingEditor.targetIsOnEditor(target as HTMLElement)) {
-        this.completeEdit();
-      }
-    });
 
     handler.on(this.table.getElement(), 'wheel', (e: WheelEvent) => {
       this.completeEdit();
@@ -86,8 +80,10 @@ export class EditManeger {
       );
     }
   }
-  completeEdit() {
-    if (this.editingEditor) {
+  /** 如果是事件触发调用该接口 请传入原始事件对象 将判断事件对象是否在编辑器本身上面  来处理是否结束编辑 */
+  completeEdit(e?: any) {
+    const target = e?.target;
+    if (this.editingEditor && (!target || (target && !this.editingEditor.targetIsOnEditor(target as HTMLElement)))) {
       const changedValue = this.editingEditor.getValue();
       (this.table as ListTableAPI).changeCellValue(this.editCell.col, this.editCell.row, changedValue);
       this.editingEditor.exit();
