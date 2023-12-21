@@ -2,6 +2,51 @@
   "name": "@visactor/vtable",
   "entries": [
     {
+      "version": "0.17.1",
+      "tag": "@visactor/vtable_v0.17.1",
+      "date": "Thu, 21 Dec 2023 04:01:16 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "refactor: 100W records scroll performance optimize when has select Cell #681\n\n"
+          },
+          {
+            "comment": "fix: stopPropagation effect doubletap\n\n"
+          },
+          {
+            "comment": "refactor: remove default sort rule for pivot table #759\n\n"
+          },
+          {
+            "comment": "fix: dropdown_menu_click trigger #760\n\n"
+          },
+          {
+            "comment": "fix: dblclick occur error #758\n\n"
+          },
+          {
+            "comment": "fix: fix richtext error in getCellOverflowText()"
+          },
+          {
+            "comment": "feat: add arrowkeys interaction #646\n\n"
+          },
+          {
+            "comment": "fix: add scrollBar event to call completeEdit #710\n\n"
+          },
+          {
+            "comment": "docs: update changlog of rush\n\n"
+          },
+          {
+            "comment": "fix: support tree mode adaptive"
+          },
+          {
+            "comment": "fix: fix dropdown icon display error"
+          },
+          {
+            "comment": "fix: fix right frozen columns width update problem"
+          }
+        ]
+      }
+    },
+    {
       "version": "0.17.0",
       "tag": "@visactor/vtable_v0.17.0",
       "date": "Fri, 15 Dec 2023 11:23:08 GMT",

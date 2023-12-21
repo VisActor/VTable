@@ -1,6 +1,40 @@
 # Change Log - @visactor/vtable
 
-This log was last generated on Fri, 15 Dec 2023 11:23:08 GMT and should not be manually modified.
+This log was last generated on Thu, 21 Dec 2023 04:01:16 GMT and should not be manually modified.
+
+## 0.17.1
+Thu, 21 Dec 2023 04:01:16 GMT
+
+### Updates
+
+- refactor: 100W records scroll performance optimize when has select Cell #681
+
+
+- fix: stopPropagation effect doubletap
+
+
+- refactor: remove default sort rule for pivot table #759
+
+
+- fix: dropdown_menu_click trigger #760
+
+
+- fix: dblclick occur error #758
+
+
+- fix: fix richtext error in getCellOverflowText()
+- feat: add arrowkeys interaction #646
+
+
+- fix: add scrollBar event to call completeEdit #710
+
+
+- docs: update changlog of rush
+
+
+- fix: support tree mode adaptive
+- fix: fix dropdown icon display error
+- fix: fix right frozen columns width update problem
 
 ## 0.17.0
 Fri, 15 Dec 2023 11:23:08 GMT
