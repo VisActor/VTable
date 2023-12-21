@@ -242,6 +242,10 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     }
 
     internalProps.handler = new EventHandler();
+    if (isNumber(this.options.resizeTime)) {
+      internalProps.handler.resizeTime = this.options.resizeTime;
+    }
+
     internalProps.pixelRatio = pixelRatio;
     internalProps.frozenColCount = frozenColCount;
 
@@ -2256,34 +2260,27 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
    * @returns
    */
   private computeTargetRowByY(absoluteY: number): number {
-    //此方式效率太低，借助缓存，或者大约计算出一个值
-    // this.rowHeightsMap.each(0, this.rowCount - 1, (height: number, row: number): boolean | void => {
-    //   h += height || this.internalProps.defaultRowHeight;
-    //   if (h > absoluteY) {
-    //     targetRow = row;
-    //     return false;
-    //   }
-    // });
+    let defaultRowHeight = this.internalProps.defaultRowHeight;
+
     //使用二分法计算出row
     if (this._rowRangeHeightsMap.get(`$0$${this.rowCount - 1}`)) {
-      let startRow = 0;
-      let endRow = this.rowCount - 1;
-      while (endRow - startRow > 1) {
-        const midRow = Math.floor((startRow + endRow) / 2);
-        if (absoluteY < this._rowRangeHeightsMap.get(`$0$${midRow}`)) {
-          endRow = midRow;
-        } else if (absoluteY > this._rowRangeHeightsMap.get(`$0$${midRow}`)) {
-          startRow = midRow;
-        } else {
-          return midRow;
-        }
-      }
-      return endRow;
-      // if (this._rowRangeHeightsMap.get[`$0$${endRow}`] === absoluteY) return endRow;
-      // if (this._rowRangeHeightsMap.get[`$0$${startRow}`] === absoluteY) return startRow;
+      defaultRowHeight = this._rowRangeHeightsMap.get(`$0$${this.rowCount - 1}`) / this.rowCount;
+      // let startRow = 0;
+      // let endRow = this.rowCount - 1;
+      // while (endRow - startRow > 1) {
+      //   const midRow = Math.floor((startRow + endRow) / 2);
+      //   if (absoluteY < this._rowRangeHeightsMap.get(`$0$${midRow}`)) {
+      //     endRow = midRow;
+      //   } else if (absoluteY > this._rowRangeHeightsMap.get(`$0$${midRow}`)) {
+      //     startRow = midRow;
+      //   } else {
+      //     return midRow;
+      //   }
+      // }
+      // return endRow;
     }
     //否则使用defaultRowHeight大约计算一个row
-    return Math.min(Math.ceil(absoluteY / this.internalProps.defaultRowHeight), this.rowCount - 1);
+    return Math.min(Math.ceil(absoluteY / defaultRowHeight), this.rowCount - 1);
   }
   /**
    * 根据x值（包括了scroll的）计算所在列 主要借助colRangeWidthsMap缓存来提高计算效率
@@ -2381,6 +2378,9 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
    * @param pagination 要修改页码的信息
    */
   abstract updatePagination(pagination: IPagination): void;
+
+  abstract hasCustomRenderOrLayout(): boolean;
+
   get allowFrozenColCount(): number {
     return this.internalProps.allowFrozenColCount;
   }
@@ -2784,21 +2784,24 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
   }
   /** 获取单元格的基本信息 目前主要组织单元格信息给事件传递给用户的参数使用 */
   getCellInfo(col: number, row: number): Omit<MousePointerCellEvent, 'target'> {
-    const colDef = this.isHeader(col, row) ? this.getHeaderDefine(col, row) : this.getBodyColumnDefine(col, row);
-    return {
-      col,
-      row,
-      field: this.getHeaderField(col, row),
-      cellHeaderPaths: this.internalProps.layoutMap.getCellHeaderPaths(col, row),
-      title: colDef?.title,
-      cellType: colDef?.cellType ? (typeof colDef.cellType === 'string' ? colDef.cellType : 'progressbar') : 'text',
-      originData: this.getCellOriginRecord(col, row),
-      cellRange: this.getCellRangeRelativeRect({ col, row }),
-      value: this.getCellValue(col, row),
-      dataValue: this.getCellOriginValue(col, row),
-      cellLocation: this.getCellLocation(col, row),
-      scaleRatio: this.canvas.getBoundingClientRect().width / this.canvas.offsetWidth
-    };
+    if (col >= 0 && row >= 0) {
+      const colDef = this.isHeader(col, row) ? this.getHeaderDefine(col, row) : this.getBodyColumnDefine(col, row);
+      return {
+        col,
+        row,
+        field: this.getHeaderField(col, row),
+        cellHeaderPaths: this.internalProps.layoutMap.getCellHeaderPaths(col, row),
+        title: colDef?.title,
+        cellType: colDef?.cellType ? (typeof colDef.cellType === 'string' ? colDef.cellType : 'progressbar') : 'text',
+        originData: this.getCellOriginRecord(col, row),
+        cellRange: this.getCellRangeRelativeRect({ col, row }),
+        value: this.getCellValue(col, row),
+        dataValue: this.getCellOriginValue(col, row),
+        cellLocation: this.getCellLocation(col, row),
+        scaleRatio: this.canvas.getBoundingClientRect().width / this.canvas.offsetWidth
+      };
+    }
+    return undefined;
   }
   /** @private */
   _hasField(field: FieldDef, col: number, row: number): boolean {

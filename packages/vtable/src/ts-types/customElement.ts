@@ -18,7 +18,8 @@ interface baseElement {
   y: number | string | ((value: string) => number | string);
   dx?: number;
   dy?: number;
-  clickable?: boolean;
+  // clickable?: boolean; // @dispose
+  pickable?: boolean;
   cursor?: string;
 }
 export interface TextElement extends baseElement {

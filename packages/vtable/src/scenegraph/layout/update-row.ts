@@ -5,7 +5,6 @@ import { Group } from '../graphic/group';
 import { updateCell } from '../group-creater/cell-helper';
 import type { Scenegraph } from '../scenegraph';
 import { getCellMergeInfo } from '../utils/get-cell-merge';
-import type { IGraphic } from '@visactor/vrender';
 
 /**
  * add and remove rows in scenegraph
@@ -27,9 +26,9 @@ export function updateRow(
     removeRow(row, scene);
   });
 
+  const rowHeightsMap = table.rowHeightsMap;
   removeRows.forEach(row => {
-    scene.table.rowHeightsMap.adjustOrder(row + 1, row, scene.table.rowHeightsMap.count() - row - 1);
-    scene.table.rowHeightsMap.del(scene.table.rowHeightsMap.count() - 1);
+    rowHeightsMap.delAndReorder(row);
   });
 
   if (removeRows.length) {
@@ -43,7 +42,7 @@ export function updateRow(
   addRows.forEach(row => {
     const needUpdateAfter = addRow(row, scene);
     updateAfter = updateAfter ?? needUpdateAfter;
-    scene.table.rowHeightsMap.adjustOrder(row, row + 1, scene.table.rowHeightsMap.count() - row);
+    rowHeightsMap.addAndReorder(row);
   });
 
   // reset attribute y and row number in CellGroup

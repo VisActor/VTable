@@ -80,7 +80,7 @@ async function moveCell(
 
     // const syncTopRow = Math.max(proxy.bodyTopRow, screenTopRow - proxy.screenRowCount * 1);
     // const syncBottomRow = Math.min(proxy.bodyBottomRow, screenTopRow + proxy.screenRowCount * 2);
-    computeRowsHeight(proxy.table, syncTopRow, syncBottomRow);
+    computeRowsHeight(proxy.table, syncTopRow, syncBottomRow, proxy.table.heightMode === 'autoHeight');
 
     // console.log('move', startRow, endRow, direction);
     updatePartRowPosition(startRow, endRow, direction, proxy);

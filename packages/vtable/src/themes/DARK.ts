@@ -15,7 +15,7 @@ function getBackgroundColor(args: StylePropertyFunctionArg): string {
  * @memberof VTable.themes.DARK
  */
 export default {
-  underlayBackgroundColor: '#FFF',
+  underlayBackgroundColor: 'transparent',
   // selectionBgColor: '#CCE0FF',
   defaultStyle: {
     color: '#D3D5DA',

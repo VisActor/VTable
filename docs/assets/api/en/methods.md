@@ -120,9 +120,32 @@ Unlisten to VChart chart events
 
 Set the table data interface, which can be called as an update interface.
 
+## getDrawRange(Function)
+Get the boundRect value of the actual drawn content area of the table
+like
+```
+{
+    "bounds": {
+        "x1": 1,
+        "y1": 1,
+        "x2": 1581,
+        "y2": 361
+    },
+    bottom: 361,
+    height: 360,
+    left: 1，
+    right: 1581，
+    top: 1,
+    width: 1580
+}
+```
 ## selectCell(Function)
 
-Select a cell
+Select a cell. If empty is passed, the currently selected highlight state will be cleared.
+
+## selectCell(Function)
+
+Select a cell。If empty is passed, the currently selected highlight state will be cleared.
 
 ```
   /**
@@ -152,6 +175,10 @@ Get the selected cell information, and the returned result is a two-dimensional 
   /**Get details of each cell in the selected area */
   getSelectedCellInfos(): CellInfo[][] | null;
 ```
+
+## clearSelected(Function)
+
+Clear the selection of all cells.
 
 ## getCellValue(Function)
 

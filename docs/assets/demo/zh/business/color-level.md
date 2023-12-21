@@ -35,154 +35,99 @@ const option = {
   columnResizeType: 'all',
   records: [
     {
-      220922103859011: '936196.0161590576',
-      220922103859014: 'North East',
-      220922103859015: "Technology",
+      sales: '936196.0161590576',
+      region: 'North East',
+      category: "Technology",
     },
     {
-      220922103859011: '824673.0542612076',
-      220922103859014: 'North East',
-      220922103859015: "Office Supplies",
+      sales: '824673.0542612076',
+      region: 'North East',
+      category: "Office Supplies",
     },
     {
-      220922103859011: '920698.4041175842',
-      220922103859014: 'North East',
-      220922103859015: "Furniture",
+      sales: '920698.4041175842',
+      region: 'North East',
+      category: "Furniture",
     },
     {
-      220922103859011: '1466575.628829956',
-      220922103859014: 'Central South',
-      220922103859015: "Technology",
+      sales: '1466575.628829956',
+      region: 'Central South',
+      category: "Technology",
     },
     {
-      220922103859011: '1270911.2654294968',
-      220922103859014: 'Central South',
-      220922103859015: "Office Supplies",
+      sales: '1270911.2654294968',
+      region: 'Central South',
+      category: "Office Supplies",
     },
     {
-      220922103859011: '1399928.2008514404',
-      220922103859014: 'Central South',
-      220922103859015: "Furniture",
+      sales: '1399928.2008514404',
+      region: 'Central South',
+      category: "Furniture",
     },
     {
-      220922103859011: '1599653.7198867798',
-      220922103859014: 'East China',
-      220922103859015: "Technology",
+      sales: '1599653.7198867798',
+      region: 'East China',
+      category: "Technology",
     },
     {
-      220922103859011: '1408628.5947360992',
-      220922103859014: 'East China',
-      220922103859015: "Office Supplies",
+      sales: '1408628.5947360992',
+      region: 'East China',
+      category: "Office Supplies",
     },
     {
-      220922103859011: '1676224.1276245117',
-      220922103859014: 'East China',
-      220922103859015: "Furniture",
+      sales: '1676224.1276245117',
+      region: 'East China',
+      category: "Furniture",
     },
     {
-      220922103859011: '781743.5634155273',
-      220922103859014: 'North China',
-      220922103859015: "Technology",
+      sales: '781743.5634155273',
+      region: 'North China',
+      category: "Technology",
     },
     {
-      220922103859011: '745813.5155878067',
-      220922103859014: 'North China',
-      220922103859015: "Office Supplies",
+      sales: '745813.5155878067',
+      region: 'North China',
+      category: "Office Supplies",
     },
     {
-      220922103859011: '919743.9351348877',
-      220922103859014: 'North China',
-      220922103859015: "Furniture",
+      sales: '919743.9351348877',
+      region: 'North China',
+      category: "Furniture",
     },
     {
-      220922103859011: '230956.3768310547',
-      220922103859014: 'North West',
-      220922103859015: "Technology",
+      sales: '230956.3768310547',
+      region: 'North West',
+      category: "Technology",
     },
     {
-      220922103859011: '267870.7928543091',
-      220922103859014: 'North West',
-      220922103859015: "Office Supplies",
+      sales: '267870.7928543091',
+      region: 'North West',
+      category: "Office Supplies",
     },
     {
-      220922103859011: '316212.42824935913',
-      220922103859014: 'North West',
-      220922103859015: "Furniture",
+      sales: '316212.42824935913',
+      region: 'North West',
+      category: "Furniture",
     },
     {
-      220922103859011: '453898.2000274658',
-      220922103859014: 'South West',
-      220922103859015: "Technology",
+      sales: '453898.2000274658',
+      region: 'South West',
+      category: "Technology",
     },
     {
-      220922103859011: '347692.57691955566',
-      220922103859014: 'South West',
-      220922103859015: "Office Supplies",
+      sales: '347692.57691955566',
+      region: 'South West',
+      category: "Office Supplies",
     },
     {
-      220922103859011: '501533.7320175171',
-      220922103859014: 'South West',
-      220922103859015: "Furniture",
+      sales: '501533.7320175171',
+      region: 'South West',
+      category: "Furniture",
     },
   ],
-  rowTree: [
-      {
-        dimensionKey: '220922103859014',
-        value: "North East",
-      },
-      {
-        dimensionKey: '220922103859014',
-        value: "Central South",
-      },
-      {
-        dimensionKey: '220922103859014',
-        value: "East China",
-      },
-      {
-        dimensionKey: '220922103859014',
-        value: "North China",
-      },
-      {
-        dimensionKey: '220922103859014',
-        value: "North West",
-      },
-      {
-        dimensionKey: '220922103859014',
-        value: "South West",
-      },
-    ],
-    columnTree: [
-      {
-        dimensionKey: '220922103859015',
-        value: 'Technology',
-        children: [
-          {
-            indicatorKey: "220922103859011",
-          },
-        ],
-      },
-      {
-        dimensionKey: '220922103859015',
-        value: 'Office Supplies',
-        children: [
-          {
-            indicatorKey: "220922103859011",
-          },
-        ],
-      },
-      {
-        dimensionKey: '220922103859015',
-        value: 'Furniture',
-        children: [
-          {
-            indicatorKey: "220922103859011",
-          },
-        ],
-      },
-    ],
   rows:[
     {
-        dimensionKey: '220922103859014',
+        dimensionKey: 'region',
         title: 'Area',
         width: 'auto',
         showSort: false,
@@ -193,7 +138,7 @@ const option = {
   ],
   columns:[
     {
-        dimensionKey: '220922103859015',
+        dimensionKey: 'category',
         title: 'Category',
         headerStyle: {
           textAlign: "right",
@@ -206,7 +151,7 @@ const option = {
   ],
   indicators: [
           {
-            indicatorKey: '220922103859011',
+            indicatorKey: 'sales',
             width: 200,
             showSort: false,
             format(value){
@@ -237,7 +182,3 @@ const option = {
 const tableInstance = new VTable.PivotTable(document.getElementById(CONTAINER_ID),option);
 window['tableInstance'] = tableInstance;
 ```
-
-## 相关教程
-
-[性能优化](link)

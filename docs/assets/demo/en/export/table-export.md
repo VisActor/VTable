@@ -4,8 +4,8 @@ group: export
 title: table export
 cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/pivot-table.png
 order: 4-6
-link: '../guide/components/dropdown'
-option: ListTable#menu.contextMenuItems
+link: '../../guide/export/excel'
+# option: ListTable
 ---
 
 # table export

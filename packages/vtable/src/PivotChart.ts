@@ -1177,4 +1177,36 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
     }
     this.eventManager.updateEventBinder();
   }
+
+  hasCustomRenderOrLayout() {
+    if (this.options.customRender) {
+      return true;
+    }
+    const { columnsDefine, rowsDefine, indicatorsDefine } = this.internalProps.layoutMap;
+    for (let i = 0; i < columnsDefine.length; i++) {
+      const columnDefine = columnsDefine[i];
+      if (typeof columnDefine !== 'string' && (columnDefine.headerCustomLayout || columnDefine.headerCustomRender)) {
+        return true;
+      }
+    }
+    for (let i = 0; i < rowsDefine.length; i++) {
+      const rowDefine = rowsDefine[i];
+      if (typeof rowDefine !== 'string' && (rowDefine.headerCustomLayout || rowDefine.headerCustomRender)) {
+        return true;
+      }
+    }
+    for (let i = 0; i < indicatorsDefine.length; i++) {
+      const indicatorDefine = indicatorsDefine[i];
+      if (
+        typeof indicatorDefine !== 'string' &&
+        (indicatorDefine.customLayout ||
+          indicatorDefine.headerCustomLayout ||
+          indicatorDefine.customRender ||
+          indicatorDefine.headerCustomRender)
+      ) {
+        return true;
+      }
+    }
+    return false;
+  }
 }

@@ -1,4 +1,4 @@
-import type { IStage, IRect, ITextCache, INode, Text } from '@visactor/vrender';
+import type { IStage, IRect, ITextCache, INode, Text, RichText } from '@visactor/vrender';
 import { createStage, createRect, IContainPointMode, container, vglobal } from '@visactor/vrender';
 import type { CellRange, CellSubLocation } from '../ts-types';
 import {
@@ -11,7 +11,6 @@ import {
 import { isArray, isString, isValid } from '@visactor/vutils';
 import type { Group } from './graphic/group';
 import type { Icon } from './graphic/icon';
-import type { WrapText } from './graphic/text';
 import { getCellMergeInfo } from './utils/get-cell-merge';
 import { updateColWidth } from './layout/update-width';
 import { TableComponent } from './component/table-component';
@@ -48,6 +47,8 @@ import {
   getIconByXY,
   hideClickIcon,
   hideHoverIcon,
+  resetResidentHoverIcon,
+  residentHoverIcon,
   setIconHoverStyle,
   setIconNormalStyle,
   showClickIcon,
@@ -68,35 +69,6 @@ container.load(textMeasureModule);
 // container.load(renderServiceModule);
 // container.load(contextModule);
 // console.log(container);
-
-const poptipStyle = {
-  visible: true,
-  position: 'auto',
-  padding: 8,
-  titleStyle: {
-    fontSize: 12,
-    fontWeight: 'bold',
-    fill: '#4E5969'
-  },
-  contentStyle: {
-    fontSize: 12,
-    fill: '#4E5969'
-  },
-  panel: {
-    visible: true,
-    fill: '#fff',
-    stroke: '#ffffff',
-    lineWidth: 0,
-    cornerRadius: 3,
-    shadowBlur: 12,
-    shadowOffsetX: 0,
-    shadowOffsetY: 4,
-    shadowColor: 'rgba(0, 0, 0, 0.1)',
-    size: 0,
-    space: 12
-  }
-  // maxWidthPercent: 0.8
-};
 
 export type MergeMap = Map<
   string,
@@ -146,7 +118,7 @@ export class Scenegraph {
     this.clear = true;
     this.mergeMap = new Map();
 
-    setPoptipTheme(poptipStyle as any);
+    setPoptipTheme(this.table.theme.textPopTipStyle);
     let width;
     let height;
     if (Env.mode === 'node') {
@@ -166,7 +138,7 @@ export class Scenegraph {
       background: table.theme.underlayBackgroundColor,
       dpr: table.internalProps.pixelRatio,
       enableLayout: true,
-      pluginList: table.isPivotChart() ? ['poptipForText'] : undefined,
+      // pluginList: table.isPivotChart() ? ['poptipForText'] : undefined,
       afterRender: () => {
         this.table.fireListeners('after_render', null);
         // console.trace('after_render');
@@ -241,6 +213,14 @@ export class Scenegraph {
    * @return {*}
    */
   clearCells() {
+    // unbind AutoPoptip
+    if (this.table.isPivotChart() || this.table.hasCustomRenderOrLayout()) {
+      // bind for axis label in pivotChart
+      this.stage.pluginService.findPluginsByName('poptipForText').forEach(plugin => {
+        plugin.deactivate(this.stage.pluginService);
+      });
+    }
+
     this.clear = true;
     this.hasFrozen = false;
     this.mergeMap.clear();
@@ -349,6 +329,16 @@ export class Scenegraph {
    * @return {*}
    */
   createSceneGraph() {
+    // bind AutoPoptip
+    if (this.table.isPivotChart() || this.table.hasCustomRenderOrLayout()) {
+      // bind for axis label in pivotChart
+      (this.stage.pluginService as any).autoEnablePlugins.getContributions().forEach((p: any) => {
+        if (p.name === 'poptipForText') {
+          this.stage.pluginService.register(p);
+        }
+      });
+    }
+
     this.clear = false;
     // this.frozenColCount = this.table.rowHeaderLevelCount;
     this.frozenColCount = this.table.frozenColCount;
@@ -462,14 +452,20 @@ export class Scenegraph {
       element = this.cornerHeaderGroup.getColGroup(col) as Group;
     } else if (col < this.frozenColCount) {
       element = this.rowHeaderGroup.getColGroup(col) as Group;
-    } else if (isCornerOrColHeader) {
-      element = this.colHeaderGroup.getColGroup(col) as Group;
+    } else if (
+      isCornerOrColHeader &&
+      this.table.rightFrozenColCount > 0 &&
+      col > this.table.colCount - 1 - this.table.rightFrozenColCount
+    ) {
+      element = this.rightTopCornerGroup.getColGroup(col) as Group;
     } else if (
       !isCornerOrColHeader &&
       this.table.rightFrozenColCount > 0 &&
       col > this.table.colCount - 1 - this.table.rightFrozenColCount
     ) {
       element = this.rightFrozenGroup.getColGroup(col) as Group;
+    } else if (isCornerOrColHeader) {
+      element = this.colHeaderGroup.getColGroup(col) as Group;
     } else {
       element = this.bodyGroup.getColGroup(col) as Group;
     }
@@ -606,6 +602,13 @@ export class Scenegraph {
    */
   setIconNormalStyle(icon: Icon, col: number, row: number) {
     setIconNormalStyle(icon, col, row, this);
+  }
+
+  residentHoverIcon(col: number, row: number) {
+    residentHoverIcon(col, row, this);
+  }
+  resetResidentHoverIcon(col: number, row: number) {
+    resetResidentHoverIcon(col, row, this);
   }
 
   /**
@@ -940,6 +943,7 @@ export class Scenegraph {
       this.cornerHeaderGroup.setDeltaHeight(detaY);
       this.rowHeaderGroup.setDeltaY(detaY);
       this.bodyGroup.setDeltaY(detaY);
+      this.rightFrozenGroup.setDeltaY(detaY);
     } else if (row >= this.table.rowCount - this.table.bottomFrozenRowCount) {
       this.leftBottomCornerGroup.setDeltaHeight(detaY);
       this.bottomFrozenGroup.setDeltaHeight(detaY);
@@ -947,6 +951,7 @@ export class Scenegraph {
     } else {
       this.rowHeaderGroup.setDeltaHeight(detaY);
       this.bodyGroup.setDeltaHeight(detaY);
+      this.rightFrozenGroup.setDeltaHeight(detaY);
     }
 
     this.updateTableSize();
@@ -1254,8 +1259,8 @@ export class Scenegraph {
       const headerStyle = this.table._getCellStyle(col, row);
       const padding = getQuadProps(getProp('padding', headerStyle, col, row, this.table));
 
-      // const text = cellGroup.getChildAt(1) as WrapText;
-      const text = cellGroup.getChildByName('text') as WrapText;
+      // const text = cellGroup.getChildAt(1) as Text;
+      const text = cellGroup.getChildByName('text') as Text;
       let oldCellHeight = 0;
       let newCellHeight = 0;
       if (text) {
@@ -1530,11 +1535,9 @@ export class Scenegraph {
 
   getCellOverflowText(col: number, row: number): string | null {
     const cellGroup = this.getCell(col, row);
-    const text = cellGroup.getChildByName('text', true) as unknown as WrapText;
-    // if (text && text.cache?.clipedText !== text.attribute.text) {
-    //   return text.attribute.text as string;
-    // }
-    if (text) {
+    const text = cellGroup.getChildByName('text', true) as unknown as Text | RichText;
+
+    if (text && text.type === 'text') {
       const textAttributeStr = isArray(text.attribute.text)
         ? text.attribute.text.join('')
         : (text.attribute.text as string);
@@ -1548,6 +1551,16 @@ export class Scenegraph {
       }
       if (cacheStr !== textAttributeStr) {
         return textAttributeStr;
+      }
+    } else if (text && text.type === 'richtext') {
+      const richtext = text;
+      if (
+        richtext.attribute.ellipsis &&
+        richtext._frameCache &&
+        richtext.attribute.height < richtext._frameCache.actualHeight
+      ) {
+        const textConfig = richtext.attribute.textConfig.find((item: any) => item.text);
+        return (textConfig as any).text as string;
       }
     }
     return null;

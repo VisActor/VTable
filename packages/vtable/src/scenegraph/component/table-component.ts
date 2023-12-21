@@ -1,13 +1,15 @@
-import type { ILine, IRect, IGroup } from '@visactor/vrender';
+import type { ILine, IRect, IGroup, FederatedPointerEvent, Text } from '@visactor/vrender';
 import { createRect, createLine, createText, createGroup, createSymbol } from '@visactor/vrender';
 import { ScrollBar } from '@visactor/vrender-components';
 import type { Group } from '../graphic/group';
-import type { WrapText } from '../graphic/text';
 import { MenuHandler } from './menu';
 import { DrillIcon } from './drill-icon';
 import { CellMover } from './cell-mover';
 import { getColX } from './util';
 import type { BaseTableAPI } from '../../ts-types/base-table';
+import type { SceneEvent } from '../../event/util';
+import { getCellEventArgsSet } from '../../event/util';
+import type { ListTableAPI } from '../../ts-types';
 
 /**
  * @description: 表格内容外组件
@@ -345,7 +347,7 @@ export class TableComponent {
       x: colX,
       y
     });
-    (this.columnResizeLabel.lastChild as WrapText).setAttribute('text', `${this.table.getColWidth(col)}px`);
+    (this.columnResizeLabel.lastChild as Text).setAttribute('text', `${this.table.getColWidth(col)}px`);
   }
 
   /**
@@ -378,7 +380,7 @@ export class TableComponent {
       x: colX,
       y
     });
-    (this.columnResizeLabel.lastChild as WrapText).setAttribute('text', `${Math.floor(this.table.getColWidth(col))}px`);
+    (this.columnResizeLabel.lastChild as Text).setAttribute('text', `${Math.floor(this.table.getColWidth(col))}px`);
   }
 
   /**

@@ -16,7 +16,7 @@ const generatePersons = count => {
 };
 
 export function createTable() {
-  const records = generatePersons(1000000);
+  const records = generatePersons(1000);
   const columns: VTable.ColumnsDefine = [
     {
       field: '',
@@ -315,9 +315,9 @@ export function createTable() {
     frozenColCount: 1,
     bottomFrozenRowCount: 2,
     rightFrozenColCount: 2,
-    overscrollBehavior: 'none'
+    overscrollBehavior: 'none',
     // autoWrapText: true,
-    // heightMode: 'autoHeight',
+    heightMode: 'autoHeight'
     // widthMode: 'adaptive'
   };
   const tableInstance = new VTable.ListTable(option);

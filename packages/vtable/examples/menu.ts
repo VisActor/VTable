@@ -557,6 +557,10 @@ export const menus = [
       {
         path: 'custom',
         name: 'custom-header'
+      },
+      {
+        path: 'custom',
+        name: 'custom-render'
       }
     ]
   },

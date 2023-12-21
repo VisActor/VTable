@@ -6,7 +6,8 @@ import type {
   IGraphicAttribute,
   IThemeAttribute,
   IGroupRenderContribution,
-  IDrawContext
+  IDrawContext,
+  IRectGraphicAttribute
 } from '@visactor/vrender';
 import { BaseRenderContributionTime, injectable } from '@visactor/vrender';
 import type { Group } from '../group';
@@ -218,7 +219,7 @@ export function renderStroke(
   context: IContext2d,
   x: number,
   y: number,
-  groupAttribute: Required<IGroupGraphicAttribute>,
+  groupAttribute: Required<IGroupGraphicAttribute> | Required<IRectGraphicAttribute>,
   stroke: boolean | [boolean, boolean, boolean, boolean],
   strokeArrayWidth: [number, number, number, number] | undefined,
   strokeArrayColor: [string, string, string, string] | undefined,

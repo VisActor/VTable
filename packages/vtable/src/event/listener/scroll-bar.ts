@@ -1,6 +1,10 @@
+import type { FederatedPointerEvent } from '@visactor/vrender';
 import { throttle } from '../../tools/util';
+import type { ListTableAPI } from '../../ts-types';
 import { InteractionState } from '../../ts-types';
 import type { EventManager } from '../event';
+import type { SceneEvent } from '../util';
+import { getCellEventArgsSet } from '../util';
 
 export function bindScrollBarListener(eventManager: EventManager) {
   const table = eventManager.table;
@@ -26,11 +30,21 @@ export function bindScrollBarListener(eventManager: EventManager) {
     }
     stateManager.hideHorizontalScrollBar();
   });
-  // 目前ScrollBar的pointerdown事件回调内有e.stopPropagation，因此无法通过vScrollBar监听，先使用_slider监听
-  (scenegraph.component.vScrollBar as any)._slider.addEventListener('pointerdown', () => {
+  scenegraph.component.vScrollBar.addEventListener('scrollDown', (e: FederatedPointerEvent) => {
+    scenegraph.table.eventManager.LastBodyPointerXY = { x: e.x, y: e.y };
+    scenegraph.table.eventManager.isDown = true;
     if (stateManager.interactionState !== InteractionState.scrolling) {
       stateManager.updateInteractionState(InteractionState.scrolling);
     }
+    const eventArgsSet: SceneEvent = getCellEventArgsSet(e);
+    if (
+      scenegraph.table.stateManager.menu.isShow &&
+      (eventArgsSet.eventArgs?.target as any) !== scenegraph.table.stateManager.residentHoverIcon?.icon
+    ) {
+      scenegraph.table.stateManager.hideMenu();
+    }
+
+    (scenegraph.table as ListTableAPI).editorManager?.completeEdit();
   });
   scenegraph.component.vScrollBar.addEventListener('pointerup', () => {
     stateManager.fastScrolling = false;
@@ -44,11 +58,22 @@ export function bindScrollBarListener(eventManager: EventManager) {
       stateManager.updateInteractionState(InteractionState.default);
     }
   });
-  // 目前ScrollBar的pointerdown事件回调内有e.stopPropagation，因此无法通过hScrollBar监听，先使用_slider监听
-  (scenegraph.component.hScrollBar as any)._slider.addEventListener('pointerdown', () => {
+  scenegraph.component.hScrollBar.addEventListener('scrollDown', (e: FederatedPointerEvent) => {
+    scenegraph.table.eventManager.LastBodyPointerXY = { x: e.x, y: e.y };
+    scenegraph.table.eventManager.isDown = true;
     if (stateManager.interactionState !== InteractionState.scrolling) {
       stateManager.updateInteractionState(InteractionState.scrolling);
     }
+
+    const eventArgsSet: SceneEvent = getCellEventArgsSet(e);
+    if (
+      scenegraph.table.stateManager.menu.isShow &&
+      (eventArgsSet.eventArgs?.target as any) !== scenegraph.table.stateManager.residentHoverIcon?.icon
+    ) {
+      scenegraph.table.stateManager.hideMenu();
+    }
+
+    (scenegraph.table as ListTableAPI).editorManager?.completeEdit();
   });
   scenegraph.component.hScrollBar.addEventListener('pointerup', () => {
     stateManager.fastScrolling = false;

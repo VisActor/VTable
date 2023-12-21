@@ -4,6 +4,7 @@ import type { ITextStyleOption } from './column/style';
 import type { ColorPropertyDefine, ColorsPropertyDefine } from './style-define';
 import type { ColumnIconOption } from './icon';
 import type { ICellAxisOption } from './component/axis';
+import type { PopTipAttributes } from '@visactor/vrender-components';
 // ****** Custom Theme *******
 export type PartialTableThemeDefine = Partial<ITableThemeDefine>;
 export type ThemeStyle = ITextStyleOption & {
@@ -135,6 +136,9 @@ export interface ITableThemeDefine {
     topAxisStyle?: Omit<ICellAxisOption, 'type' | 'domain' | 'range' | 'orient' | '__ticksForVTable'>;
     bottomAxisStyle?: Omit<ICellAxisOption, 'type' | 'domain' | 'range' | 'orient' | '__ticksForVTable'>;
   };
+
+  // style for text pop tip
+  textPopTipStyle?: PopTipAttributes;
 }
 
 export type RequiredTableThemeDefine = Required<ITableThemeDefine>;

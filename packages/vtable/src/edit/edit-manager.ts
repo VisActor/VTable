@@ -53,17 +53,6 @@ export class EditManeger {
     handler.on(this.table.getElement(), 'wheel', (e: WheelEvent) => {
       this.completeEdit();
     });
-    this.table.on(TABLE_EVENT_TYPE.KEYDOWN, e => {
-      const { code } = e;
-      if (this.editingEditor) {
-        if (code === 'Escape') {
-          this.editingEditor.exit();
-          this.editingEditor = null;
-        } else if (code === 'Enter') {
-          this.completeEdit();
-        }
-      }
-    });
   }
   startEditCell(col: number, row: number) {
     //表头不允许编辑

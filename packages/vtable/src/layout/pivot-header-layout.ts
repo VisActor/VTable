@@ -803,10 +803,10 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
   // }
 
   isHeader(col: number, row: number): boolean {
-    if (col < this.rowHeaderLevelCount) {
+    if (col >= 0 && col < this.rowHeaderLevelCount) {
       return true;
     }
-    if (row < this.columnHeaderLevelCount) {
+    if (row >= 0 && row < this.columnHeaderLevelCount) {
       return true;
     }
     if (col >= this.colCount - this.rightHeaderColCount) {
@@ -818,19 +818,19 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
     return false;
   }
   isCornerHeader(col: number, row: number): boolean {
-    if (col < this.rowHeaderLevelCount && row < this.columnHeaderLevelCount) {
+    if (col >= 0 && col < this.rowHeaderLevelCount && row >= 0 && row < this.columnHeaderLevelCount) {
       return true;
     }
     return false;
   }
   isColumnHeader(col: number, row: number): boolean {
-    if (col >= this.rowHeaderLevelCount && row < this.columnHeaderLevelCount) {
+    if (col >= this.rowHeaderLevelCount && row >= 0 && row < this.columnHeaderLevelCount) {
       return true;
     }
     return false;
   }
   isRowHeader(col: number, row: number): boolean {
-    if (col < this.rowHeaderLevelCount && row >= this.columnHeaderLevelCount) {
+    if (col >= 0 && col < this.rowHeaderLevelCount && row >= this.columnHeaderLevelCount) {
       return true;
     }
     return false;
@@ -843,11 +843,16 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
    */
   isFrozenColumn(col: number, row?: number): boolean {
     if (isValid(row)) {
-      if (col < this.frozenColCount && row >= this.frozenRowCount && row < this.rowCount - this.bottomFrozenRowCount) {
+      if (
+        col >= 0 &&
+        col < this.frozenColCount &&
+        row >= this.frozenRowCount &&
+        row < this.rowCount - this.bottomFrozenRowCount
+      ) {
         return true;
       }
     } else {
-      if (this.frozenColCount > 0 && col < this.frozenColCount) {
+      if (this.frozenColCount > 0 && col >= 0 && col < this.frozenColCount) {
         return true;
       }
     }
@@ -883,12 +888,17 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
    */
   isFrozenRow(col: number, row?: number): boolean {
     if (isValid(row)) {
-      if (row < this.frozenRowCount && col >= this.frozenColCount && col < this.colCount - this.rightFrozenColCount) {
+      if (
+        row >= 0 &&
+        row < this.frozenRowCount &&
+        col >= this.frozenColCount &&
+        col < this.colCount - this.rightFrozenColCount
+      ) {
         return true;
       }
     } else {
       row = col;
-      if (this.frozenRowCount > 0 && row < this.frozenRowCount) {
+      if (this.frozenRowCount > 0 && row >= 0 && row < this.frozenRowCount) {
         return true;
       }
     }
@@ -918,13 +928,13 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
     return false;
   }
   isLeftBottomCorner(col: number, row: number): boolean {
-    if (col < this.rowHeaderLevelCount && row >= this.rowCount - this.bottomFrozenRowCount) {
+    if (col >= 0 && col < this.rowHeaderLevelCount && row >= this.rowCount - this.bottomFrozenRowCount) {
       return true;
     }
     return false;
   }
   isRightTopCorner(col: number, row: number): boolean {
-    if (col >= this.colCount - this.rightFrozenColCount && row < this.columnHeaderLevelCount) {
+    if (col >= this.colCount - this.rightFrozenColCount && row >= 0 && row < this.columnHeaderLevelCount) {
       return true;
     }
     return false;
