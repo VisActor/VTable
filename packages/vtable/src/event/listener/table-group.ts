@@ -27,6 +27,7 @@ export function bindTableGroupListener(eventManager: EventManager) {
   const table = eventManager.table;
   const stateManager = table.stateManager;
 
+  // 有被阻止冒泡的场景 就触发不到这里的事件了
   document.body.addEventListener('pointerdown', e => {
     console.log('body pointerdown');
     table.eventManager.LastBodyPointerXY = { x: e.x, y: e.y };
@@ -280,7 +281,13 @@ export function bindTableGroupListener(eventManager: EventManager) {
       });
     }
   });
+  /**
+   * 两种场景会触发这里的pointerupoutside
+   * 1. 鼠标down和up的场景树节点不一样
+   * 2. 点击到非stage的（非canvas）  其他dom节点
+   */
   table.scenegraph.tableGroup.addEventListener('pointerupoutside', (e: FederatedPointerEvent) => {
+    console.log('pointerupoutside');
     const eventArgsSet: SceneEvent = getCellEventArgsSet(e);
     if (stateManager.menu.isShow && (eventArgsSet.eventArgs?.target as any) !== stateManager.residentHoverIcon?.icon) {
       setTimeout(() => {
@@ -330,9 +337,7 @@ export function bindTableGroupListener(eventManager: EventManager) {
         }
       }
     }
-    if ((table as ListTableAPI).editorManager) {
-      (table as ListTableAPI).editorManager.completeEdit();
-    }
+    (table as ListTableAPI).editorManager?.completeEdit(e.nativeEvent);
     stateManager.updateInteractionState(InteractionState.default);
     eventManager.dealTableHover();
     //点击到表格外部不需要取消选中状态
@@ -362,10 +367,12 @@ export function bindTableGroupListener(eventManager: EventManager) {
       table.scenegraph.updateChartState(null);
     }
     // 处理menu
-    if (stateManager.menu.isShow && (eventArgsSet.eventArgs?.target as any) !== stateManager.residentHoverIcon?.icon) {
+    if ((eventArgsSet.eventArgs?.target as any) !== stateManager.residentHoverIcon?.icon) {
       // 点击在menu外，且不是下拉菜单的icon，移除menu
       stateManager.hideMenu();
     }
+    (table as ListTableAPI).editorManager?.completeEdit(e.nativeEvent);
+
     const hitIcon = (eventArgsSet?.eventArgs?.target as any)?.role?.startsWith('icon')
       ? eventArgsSet.eventArgs.target
       : undefined;
@@ -601,12 +608,13 @@ export function bindTableGroupListener(eventManager: EventManager) {
       }
     }
   });
-  // click outside
+  // stage 的pointerdown监听 如果点击在表格内部 是会被阻止点的tableGroup的pointerdown 监听有stopPropagation
   table.scenegraph.stage.addEventListener('pointerdown', (e: FederatedPointerEvent) => {
     const eventArgsSet: SceneEvent = getCellEventArgsSet(e);
-    if (stateManager.menu.isShow && (eventArgsSet.eventArgs?.target as any) !== stateManager.residentHoverIcon?.icon) {
+    if ((eventArgsSet.eventArgs?.target as any) !== stateManager.residentHoverIcon?.icon) {
       stateManager.hideMenu();
     }
+    (table as ListTableAPI).editorManager?.completeEdit(e.nativeEvent);
   });
   // click outside
   table.scenegraph.stage.addEventListener('pointertap', (e: FederatedPointerEvent) => {

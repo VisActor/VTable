@@ -432,7 +432,7 @@ export function resetResidentHoverIcon(col: number, row: number, scene: Scenegra
     (icon: Icon) => icon.attribute.funcType === IconFuncTypeEnum.dropDown,
     // dealer
     (icon: Icon) => {
-      icon.setAttribute('visibleTime', (icon as any).oldVisibleTime);
+      (icon as any).oldVisibleTime && icon.setAttribute('visibleTime', (icon as any).oldVisibleTime);
       icon.setAttribute('opacity', icon.attribute.visibleTime === 'always' ? 1 : 0);
     },
     scene
