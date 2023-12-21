@@ -1,6 +1,16 @@
 # Change Log - @visactor/vtable
 
-This log was last generated on Thu, 21 Dec 2023 04:01:16 GMT and should not be manually modified.
+This log was last generated on Thu, 21 Dec 2023 11:54:58 GMT and should not be manually modified.
+
+## 0.17.2
+Thu, 21 Dec 2023 11:54:58 GMT
+
+### Updates
+
+- fix: edit bug #771
+
+
+- fix: add row height round in resetRowHeight
 
 ## 0.17.1
 Thu, 21 Dec 2023 04:01:16 GMT
