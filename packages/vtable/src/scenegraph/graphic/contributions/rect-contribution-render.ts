@@ -165,7 +165,7 @@ export class SplitRectAfterRenderContribution implements IRectRenderContribution
         context,
         x,
         y,
-        rectAttribute as Required<IGroupGraphicAttribute>,
+        rectAttribute,
         stroke,
         strokeArrayWidth || lineWidth,
         strokeArrayColor || strokeColor,
