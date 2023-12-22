@@ -54,7 +54,9 @@ async function moveColumn(
     direction = direction === 'left' ? 'right' : 'left';
     count = -count;
   }
-
+  if (count === 0) {
+    return;
+  }
   if (count <= 0) {
     return;
   }
