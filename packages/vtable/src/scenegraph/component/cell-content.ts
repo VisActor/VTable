@@ -235,6 +235,7 @@ export class CellContent extends Group {
 
   updateWidth(width: number) {
     this._cellWidth = width;
+    this._originCellWidth = width;
     this.layout();
   }
 
