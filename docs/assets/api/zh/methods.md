@@ -235,6 +235,23 @@ tableInstance.renderWithRecreateCells();
   getRecordByCell(col: number, row: number)
 ```
 
+## getBodyIndexByTableIndex(Function)
+
+根据表格单元格的行列号 获取在body部分的列索引及行索引
+
+```
+  /** 根据表格单元格的行列号 获取在body部分的列索引及行索引 */
+  getBodyIndexByTableIndex: (col: number, row: number) => CellAddress;
+```
+## getTableIndexByBodyIndex(Function)
+
+根据body部分的列索引及行索引，获取单元格的行列号
+
+```
+  /** 根据body部分的列索引及行索引，获取单元格的行列号 */
+  getTableIndexByBodyIndex: (col: number, row: number) => CellAddress;
+```
+
 ## getTableIndexByRecordIndex(Function)
 根据数据源的index 获取显示到表格中的index 行号或者列号（与转置相关，非转置获取的是行号，转置表获取的是列号）。
 
@@ -265,7 +282,7 @@ tableInstance.renderWithRecreateCells();
 
 ## getRecordShowIndexByCell(Function)
 
-获取当前单元格数据在body部分的索引，即通过行列号去除表头层级数的索引
+获取当前单元格数据在body部分的索引，即通过行列号去除表头层级数的索引（与转置相关，非转置获取的是body行号，转置表获取的是body列号）。
 
 ** ListTable 专有 ** 
 ```
@@ -738,4 +755,28 @@ use case: 点击图例项后 更新过滤规则 来更新图表
    * @param recordIndexs 要删除数据的索引（显示到body中的条目索引）
    */
   deleteRecords(recordIndexs: number[]) 
+```
+## getBodyVisibleCellRange(Function)
+
+获取表格body部分的显示单元格范围
+
+```
+  /** 获取表格body部分的显示单元格范围 */
+  getBodyVisibleCellRange: () => { rowStart: number; colStart: number; rowEnd: number; colEnd: number };
+```
+
+## getBodyVisibleColRange(Function)
+
+获取表格body部分的显示列号范围
+```
+  /** 获取表格body部分的显示列号范围 */
+  getBodyVisibleColRange: () => { colStart: number; colEnd: number };
+```
+## getBodyVisibleRowRange(Function)
+
+获取表格body部分的显示行号范围
+
+```
+  /** 获取表格body部分的显示行号范围 */
+  getBodyVisibleRowRange: () => { rowStart: number; rowEnd: number };
 ```

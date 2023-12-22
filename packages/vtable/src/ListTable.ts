@@ -146,6 +146,9 @@ export class ListTable extends BaseTable implements ListTableAPI {
     this.renderAsync();
     this.eventManager.updateEventBinder();
   }
+  get columns(): ColumnsDefine {
+    return this.internalProps.columns;
+  }
   /**
    *@deprecated 请使用columns
    */
