@@ -50,17 +50,13 @@ async function moveColumn(
   } else if (direction === 'right' && proxy.colStart - count < proxy.bodyLeftCol) {
     count = proxy.colStart - proxy.bodyLeftCol;
   }
+  if (count === 0) {
+    return;
+  }
   if (count < 0) {
     direction = direction === 'left' ? 'right' : 'left';
     count = -count;
   }
-  if (count === 0) {
-    return;
-  }
-  if (count <= 0) {
-    return;
-  }
-
   // 两种更新模式
   // 1. count < colEnd - colStart：从顶/底部移动count数量的单元格到底/顶部
   // 2. count >= colEnd - colStart：整体移动到目标位置
