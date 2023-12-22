@@ -238,6 +238,24 @@ Get the data item of this cell
    */
   getRecordByCell(col: number, row: number)
 ```
+
+## getBodyIndexByTableIndex(Function)
+
+Get the column index and row index in the body part according to the row and column numbers of the table cells
+
+```
+  /** Get the column index and row index in the body part based on the row and column numbers of the table cells */
+  getBodyIndexByTableIndex: (col: number, row: number) => CellAddress;
+```
+## getTableIndexByBodyIndex(Function)
+
+Get the row and column number of the cell based on the column index and row index of the body part
+
+```
+  /** Get the row and column number of the cell based on the column index and row index of the body part */
+  getTableIndexByBodyIndex: (col: number, row: number) => CellAddress;
+```
+
 ## getTableIndexByRecordIndex(Function)
 Get the index row number or column number displayed in the table based on the index of the data source (Related to transposition, the non-transposition obtains the row number, and the transposed table obtains the column number). 
 
@@ -270,7 +288,7 @@ Get the index row number or column number displayed in the table according to th
 
 ## getRecordShowIndexByCell(Function)
 
-Get the index of the current cell data in the body part, that is, remove the index of the header level number by the row and column number.
+Get the index of the current cell data in the body part, that is, remove the index of the header level number by the row and column number.(Related to transpose, the non-transpose gets the body row number, and the transpose table gets the body column number)
 
 ** ListTable proprietary **
 ```
@@ -744,4 +762,29 @@ Delete data supports multiple pieces of data
    * @param recordIndexs The index of the data to be deleted (the entry index displayed in the body)
    */
   deleteRecords(recordIndexs: number[])
+```
+
+## getBodyVisibleCellRange(Function)
+
+Get the display cell range of the table body part
+
+```
+  /** Get the display cell range of the table body */
+  getBodyVisibleCellRange: () => { rowStart: number; colStart: number; rowEnd: number; colEnd: number };
+```
+
+## getBodyVisibleColRange(Function)
+
+Get the displayed column number range in the body part of the table
+```
+  /** Get the displayed column number range in the body part of the table */
+  getBodyVisibleColRange: () => { colStart: number; colEnd: number };
+```
+## getBodyVisibleRowRange(Function)
+
+Get the displayed row number range of the table body part
+
+```
+  /** Get the displayed row number range of the table body */
+  getBodyVisibleRowRange: () => { rowStart: number; rowEnd: number };
 ```
