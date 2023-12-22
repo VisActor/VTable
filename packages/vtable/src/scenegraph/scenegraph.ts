@@ -904,9 +904,9 @@ export class Scenegraph {
     }
   }
 
-  updateRowHeight(row: number, detaY: number) {
+  updateRowHeight(row: number, detaY: number, skipTableHeightMap?: boolean) {
     detaY = Math.round(detaY);
-    updateRowHeight(this, row, detaY);
+    updateRowHeight(this, row, detaY, skipTableHeightMap);
     this.updateContainerHeight(row, detaY);
   }
 

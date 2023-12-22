@@ -267,8 +267,8 @@ export function computeRowsHeight(
       const newRowHeight = newHeights[row] ?? table.getRowHeight(row);
       if (newRowHeight !== oldRowHeights[row]) {
         // update the row height in scenegraph
-        table.scenegraph.updateRowHeight(row, newRowHeight - oldRowHeights[row]);
         table._setRowHeight(row, newRowHeight);
+        table.scenegraph.updateRowHeight(row, newRowHeight - oldRowHeights[row], true);
       }
     }
   }

@@ -42,6 +42,7 @@ export class CellContent extends Group {
   _autoWidth = false;
   _autoHeight = false;
   _cellWidth: number;
+  _originCellWidth: number;
   _cellHeight: number;
   _align: CanvasTextAlign;
   _baseline: CanvasTextBaseline;
@@ -77,6 +78,7 @@ export class CellContent extends Group {
     this._autoWidth = option.autoWidth;
     this._autoHeight = option.autoHeight;
     this._cellWidth = option.cellWidth;
+    this._originCellWidth = option.cellWidth;
     this._cellHeight = option.cellHeight;
     this._align = option.align;
     this._baseline = option.baseline;
@@ -238,6 +240,7 @@ export class CellContent extends Group {
 
   updateHeight(height: number) {
     this._cellHeight = height;
+    this._cellWidth = this._originCellWidth;
     this.layout();
   }
 }

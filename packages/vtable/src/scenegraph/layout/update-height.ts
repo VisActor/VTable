@@ -16,9 +16,11 @@ import type { BaseTableAPI } from '../../ts-types/base-table';
 import { resizeCellGroup } from '../group-creater/column-helper';
 import type { IGraphic } from '@visactor/vrender';
 
-export function updateRowHeight(scene: Scenegraph, row: number, detaY: number) {
+export function updateRowHeight(scene: Scenegraph, row: number, detaY: number, skipTableHeightMap?: boolean) {
   // 更新table行高存储
-  scene.table._setRowHeight(row, scene.table.getRowHeight(row) + detaY, true);
+  if (!skipTableHeightMap) {
+    scene.table._setRowHeight(row, scene.table.getRowHeight(row) + detaY, true);
+  }
 
   for (let col = 0; col < scene.table.colCount; col++) {
     const cell = scene.getCell(col, row);
