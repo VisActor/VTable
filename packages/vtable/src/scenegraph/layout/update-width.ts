@@ -222,9 +222,10 @@ function updateCellWidth(
   // autoColWidth: boolean,
   autoRowHeight: boolean
 ): boolean {
-  if (cell.attribute.width === distWidth) {
+  if (cell.attribute.width === distWidth && !cell.needUpdateWidth) {
     return false;
   }
+  cell.needUpdateWidth = false;
 
   cell.setAttribute('width', distWidth);
   // const mergeInfo = getCellMergeInfo(scene.table, col, row);
@@ -440,7 +441,7 @@ function updateMergeCellContentWidth(
         // const { width: contentWidth } = cellGroup.attribute;
         singleCellGroup.contentWidth = distWidth;
 
-        resizeCellGroup(
+        const { heightChange } = resizeCellGroup(
           singleCellGroup,
           rangeWidth,
           rangeHeight,
@@ -456,6 +457,11 @@ function updateMergeCellContentWidth(
           },
           table
         );
+
+        if (heightChange) {
+          singleCellGroup.needUpdateHeight = true;
+        }
+
         isHeightChange = isHeightChange || changed;
       }
     }

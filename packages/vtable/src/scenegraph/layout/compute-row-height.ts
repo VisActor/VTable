@@ -272,7 +272,7 @@ export function computeRowsHeight(
       }
     }
     for (let row = 0; row < table.rowCount; row++) {
-      const newRowHeight = newHeights[row] ?? table.getRowHeight(row);
+      const newRowHeight = table.getRowHeight(row);
       if (newRowHeight !== oldRowHeights[row]) {
         // update the row height in scenegraph
         // table._setRowHeight(row, newRowHeight);
