@@ -47,6 +47,9 @@ async function moveCell(
   } else if (direction === 'down' && proxy.rowStart - count < proxy.bodyTopRow) {
     count = proxy.rowStart - proxy.bodyTopRow;
   }
+  if (count === 0) {
+    return;
+  }
   if (count < 0) {
     direction = direction === 'up' ? 'down' : 'up';
     count = -count;
