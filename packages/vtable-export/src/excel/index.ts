@@ -27,16 +27,7 @@ export async function exportVTableToExcel(tableInstance: IVTable) {
         worksheetRow.height = rowHeight;
       }
 
-      const cellValue = tableInstance.getCellValue(col, row);
-      const cellStyle = tableInstance.getCellStyle(col, row);
-      const cellType = tableInstance.getCellType(col, row);
-
-      const cell = worksheet.getCell(encodeCellAddress(col, row));
-      cell.value = getCellValue(cellValue, cellType);
-      cell.font = getCellFont(cellStyle, cellType);
-      cell.fill = getCellFill(cellStyle);
-      cell.border = getCellBorder(cellStyle);
-      cell.alignment = getCellAlignment(cellStyle);
+      addCell(col, row, tableInstance, worksheet, workbook);
 
       const cellRange = tableInstance.getCellRange(col, row);
       if (cellRange.start.col !== cellRange.end.col || cellRange.start.row !== cellRange.end.row) {
@@ -84,6 +75,40 @@ export async function exportVTableToExcel(tableInstance: IVTable) {
 
   const buffer = await workbook.xlsx.writeBuffer();
   return buffer;
+}
+
+function addCell(
+  col: number,
+  row: number,
+  tableInstance: IVTable,
+  worksheet: ExcelJS.Worksheet,
+  workbook: ExcelJS.Workbook
+) {
+  const cellType = tableInstance.getCellType(col, row);
+  const cellValue = tableInstance.getCellValue(col, row);
+  const cellStyle = tableInstance.getCellStyle(col, row);
+
+  if (cellType === 'text' || cellType === 'link') {
+    const cell = worksheet.getCell(encodeCellAddress(col, row));
+    cell.value = getCellValue(cellValue, cellType);
+    cell.font = getCellFont(cellStyle, cellType);
+    cell.fill = getCellFill(cellStyle);
+    cell.border = getCellBorder(cellStyle);
+    cell.alignment = getCellAlignment(cellStyle);
+  } else if (cellType === 'image') {
+    const cellImageBase64 = tableInstance.exportCellImg(col, row);
+    const imageId = workbook.addImage({
+      base64: cellImageBase64,
+      extension: 'png'
+    });
+    worksheet.addImage(imageId, {
+      tl: { col: col + 0.5, row: row + 0.5 },
+      br: { col: col + 1, row: row + 1 },
+      editAs: 'oneCell'
+      // ext: { width: tableInstance.getColWidth(col), height: tableInstance.getRowHeight(row) }
+    });
+    console.log(col, row, col + 1 / tableInstance.getColWidth(col), row + 1 / tableInstance.getRowHeight(row));
+  }
 }
 
 function getCellValue(cellValue: string, cellType: CellType) {

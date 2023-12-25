@@ -9,6 +9,10 @@ export const menus = [
       {
         path: 'list',
         name: 'link'
+      },
+      {
+        path: 'list',
+        name: 'image'
       }
     ]
   },
