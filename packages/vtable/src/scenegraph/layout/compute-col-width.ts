@@ -66,7 +66,7 @@ export function computeColsWidth(table: BaseTableAPI, colStart?: number, colEnd?
       table._clearColRangeWidthsMap(col);
     }
     if (update) {
-      newWidths[col] = table._adjustColWidth(col, maxWidth);
+      newWidths[col] = Math.round(table._adjustColWidth(col, maxWidth));
     } else {
       table._setColWidth(col, table._adjustColWidth(col, maxWidth), false, true);
     }
@@ -182,7 +182,18 @@ export function computeColsWidth(table: BaseTableAPI, colStart?: number, colEnd?
       const newColWidth = newWidths[col] ?? table.getColWidth(col);
       if (newColWidth !== oldColWidths[col]) {
         // update the column width in scenegraph
-        table.scenegraph.updateColWidth(col, newColWidth - oldColWidths[col], true);
+        table._setColWidth(col, newColWidth);
+        // table.scenegraph.updateColWidth(col, newColWidth - oldColWidths[col], true, true);
+      }
+    }
+    for (let col = 0; col < table.colCount; col++) {
+      // newColWidth could not be in column min max range possibly
+      // const newColWidth = table._adjustColWidth(col, newWidths[col]) ?? table.getColWidth(col);
+      const newColWidth = table.getColWidth(col);
+      if (newColWidth !== oldColWidths[col]) {
+        // update the column width in scenegraph
+        // table._setColWidth(col, newColWidth);
+        table.scenegraph.updateColWidth(col, newColWidth - oldColWidths[col], true, true);
       }
     }
     table.scenegraph.updateContainer();

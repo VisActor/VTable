@@ -16,9 +16,11 @@ import type { BaseTableAPI } from '../../ts-types/base-table';
 import { resizeCellGroup } from '../group-creater/column-helper';
 import type { IGraphic } from '@visactor/vrender';
 
-export function updateRowHeight(scene: Scenegraph, row: number, detaY: number) {
+export function updateRowHeight(scene: Scenegraph, row: number, detaY: number, skipTableHeightMap?: boolean) {
   // 更新table行高存储
-  scene.table._setRowHeight(row, scene.table.getRowHeight(row) + detaY, true);
+  if (!skipTableHeightMap) {
+    scene.table._setRowHeight(row, scene.table.getRowHeight(row) + detaY, true);
+  }
 
   for (let col = 0; col < scene.table.colCount; col++) {
     const cell = scene.getCell(col, row);
@@ -75,7 +77,7 @@ export function updateCellHeightForRow(
   isHeader: boolean
   // autoRowHeight: boolean
 ) {
-  cell.setAttribute('height', height);
+  // cell.setAttribute('height', height);
   const cellGroup = cell;
   const distHeight = height;
 
@@ -96,7 +98,7 @@ export function updateCellHeightForColumn(
   detaY: number,
   isHeader: boolean
 ) {
-  cell.setAttribute('height', height);
+  // cell.setAttribute('height', height);
   const cellGroup = cell;
   updateCellHeight(scene, cellGroup, col, row, height, 0, isHeader);
 }
@@ -110,6 +112,13 @@ export function updateCellHeight(
   detaY: number,
   isHeader: boolean
 ) {
+  if (cell.attribute.height === distHeight && !cell.needUpdateHeight) {
+    return;
+  }
+  cell.needUpdateHeight = false;
+
+  cell.setAttribute('height', distHeight);
+
   // 更新单元格布局
   const type = scene.table.isHeader(col, row)
     ? scene.table._getHeaderLayoutMap(col, row).headerType
@@ -260,7 +269,7 @@ function updateMergeCellContentHeight(
         // const { height: contentHeight } = cellGroup.attribute;
         singleCellGroup.contentHeight = distHeight;
 
-        resizeCellGroup(
+        const { widthChange } = resizeCellGroup(
           singleCellGroup,
           rangeWidth,
           rangeHeight,
@@ -276,6 +285,10 @@ function updateMergeCellContentHeight(
           },
           table
         );
+
+        if (widthChange) {
+          singleCellGroup.needUpdateWidth = true;
+        }
       }
     }
   } else {
