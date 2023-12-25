@@ -80,7 +80,7 @@ export function computeRowsHeight(
       if (isAllRowsAuto || table.getDefaultRowHeight(row) === 'auto') {
         const height = computeRowHeight(row, startCol, endCol, table);
         if (update) {
-          newHeights[row] = height;
+          newHeights[row] = Math.round(height);
         } else {
           table._setRowHeight(row, height);
         }
@@ -92,7 +92,7 @@ export function computeRowsHeight(
       if (isAllRowsAuto || table.getDefaultRowHeight(row) === 'auto') {
         const height = computeRowHeight(row, 0, table.colCount - 1, table);
         if (update) {
-          newHeights[row] = height;
+          newHeights[row] = Math.round(height);
         } else {
           table._setRowHeight(row, height);
         }
@@ -125,7 +125,7 @@ export function computeRowsHeight(
         for (let row = table.rowCount - table.bottomFrozenRowCount; row <= rowEnd; row++) {
           const height = computeRowHeight(row, 0, table.colCount - 1, table);
           if (update) {
-            newHeights[row] = height;
+            newHeights[row] = Math.round(height);
           } else {
             table._setRowHeight(row, height);
           }
@@ -148,7 +148,7 @@ export function computeRowsHeight(
           }
           // table.setRowHeight(row, height);
           if (update) {
-            newHeights[row] = height;
+            newHeights[row] = Math.round(height);
           } else {
             table._setRowHeight(row, height);
           }
@@ -160,7 +160,7 @@ export function computeRowsHeight(
           const height = computeRowHeight(row, 0, table.colCount - 1, table);
           // table.setRowHeight(row, height);
           if (update) {
-            newHeights[row] = height;
+            newHeights[row] = Math.round(height);
           } else {
             table._setRowHeight(row, height);
           }
@@ -268,6 +268,14 @@ export function computeRowsHeight(
       if (newRowHeight !== oldRowHeights[row]) {
         // update the row height in scenegraph
         table._setRowHeight(row, newRowHeight);
+        // table.scenegraph.updateRowHeight(row, newRowHeight - oldRowHeights[row], true);
+      }
+    }
+    for (let row = 0; row < table.rowCount; row++) {
+      const newRowHeight = newHeights[row] ?? table.getRowHeight(row);
+      if (newRowHeight !== oldRowHeights[row]) {
+        // update the row height in scenegraph
+        // table._setRowHeight(row, newRowHeight);
         table.scenegraph.updateRowHeight(row, newRowHeight - oldRowHeights[row], true);
       }
     }
