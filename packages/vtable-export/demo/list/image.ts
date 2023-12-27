@@ -89,12 +89,21 @@ export function createTable() {
           }
           return 'link';
         },
-        width: 400,
+        width: 200,
         style: {
           padding: 1
         },
         keepAspectRatio: true,
         imageAutoSizing: true
+      },
+      {
+        field: 'progress',
+        fieldFormat(rec) {
+          return `已完成${rec.progress}%`;
+        },
+        title: 'progress',
+        description: '这是一个标题的详细描述',
+        width: 150
       }
     ],
     showFrozenIcon: true, //显示VTable内置冻结列图标

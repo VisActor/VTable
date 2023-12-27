@@ -1,3 +1,4 @@
+import { graphicUtil } from '@visactor/vrender';
 import ExcelJS from 'exceljs';
 import { encodeCellAddress } from '../util/encode';
 import type { CellType, IVTable } from '../util/type';
@@ -96,13 +97,13 @@ function addCell(
     cell.border = getCellBorder(cellStyle);
     cell.alignment = getCellAlignment(cellStyle);
   } else if (cellType === 'image') {
-    const cellImageBase64 = tableInstance.exportCellImg(col, row);
+    const cellImageBase64 = exportCellImg(col, row, tableInstance);
     const imageId = workbook.addImage({
       base64: cellImageBase64,
       extension: 'png'
     });
     worksheet.addImage(imageId, {
-      tl: { col: col + 0.5, row: row + 0.5 },
+      tl: { col: col + 1 / 80, row: row + 1 / 120 }, // ~1px
       br: { col: col + 1, row: row + 1 },
       editAs: 'oneCell'
       // ext: { width: tableInstance.getColWidth(col), height: tableInstance.getRowHeight(row) }
@@ -120,4 +121,13 @@ function getCellValue(cellValue: string, cellType: CellType) {
     };
   }
   return cellValue;
+}
+
+function exportCellImg(col: number, row: number, tableInstance: IVTable) {
+  const cellGroup = tableInstance.scenegraph.getCell(col, row);
+  const oldStroke = cellGroup.attribute.stroke;
+  cellGroup.attribute.stroke = false;
+  const canvas = graphicUtil.drawGraphicToCanvas(cellGroup as any, tableInstance.scenegraph.stage) as HTMLCanvasElement;
+  cellGroup.setAttribute('stroke', oldStroke);
+  return canvas.toDataURL();
 }
