@@ -456,6 +456,18 @@ Get the status of a cell checkbox
 getCellCheckboxState(col: number, row: number): Array
 ```
 
+## getScrollTop(Function)
+Get the current vertical scroll position
+
+## getScrollLeft(Function)
+Get the current horizontal scroll position
+
+## setScrollTop(Function)
+Set the vertical scroll position (the rendering interface will be updated)
+
+## setScrollLeft(Function)
+Set the horizontal scroll position (the rendering interface will be updated)
+
 ## scrollToCell(Function)
 
 Scroll to a specific cell location
