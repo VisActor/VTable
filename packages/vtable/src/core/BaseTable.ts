@@ -2813,7 +2813,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
       return false;
     }
     const index = table.getRecordShowIndexByCell(col, row);
-    return table.internalProps.dataSource.hasField(index, field);
+    return table.internalProps.dataSource?.hasField(index, field);
   }
   /**
    * 获取单元格的样式 内部逻辑使用 获取到的样式并不是计算后的
