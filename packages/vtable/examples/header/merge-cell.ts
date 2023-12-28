@@ -108,7 +108,10 @@ export function createTable() {
         },
         field: 'name',
         width: 150,
-        mergeCell: true
+        mergeCell(v, v2) {
+          console.log(v, v2);
+          return v === v2;
+        }
       }
     ],
     showFrozenIcon: true, //显示VTable内置冻结列图标
