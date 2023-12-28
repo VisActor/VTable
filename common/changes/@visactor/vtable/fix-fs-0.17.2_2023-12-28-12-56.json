@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vtable",
+      "comment": "fix: fix select update when change frozen",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vtable"
+}
