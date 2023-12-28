@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vtable-export",
+      "comment": "feat: add cell image table export",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vtable-export"
+}

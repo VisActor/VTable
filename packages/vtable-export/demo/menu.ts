@@ -13,6 +13,18 @@ export const menus = [
       {
         path: 'list',
         name: 'image'
+      },
+      {
+        path: 'list',
+        name: 'video'
+      },
+      {
+        path: 'list',
+        name: 'progress-bar'
+      },
+      {
+        path: 'list',
+        name: 'spark-line'
       }
     ]
   },

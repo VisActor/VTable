@@ -96,7 +96,7 @@ function addCell(
     cell.fill = getCellFill(cellStyle);
     cell.border = getCellBorder(cellStyle);
     cell.alignment = getCellAlignment(cellStyle);
-  } else if (cellType === 'image') {
+  } else if (cellType === 'image' || cellType === 'video' || cellType === 'progressbar' || cellType === 'sparkline') {
     const cellImageBase64 = exportCellImg(col, row, tableInstance);
     const imageId = workbook.addImage({
       base64: cellImageBase64,
