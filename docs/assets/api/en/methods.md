@@ -120,6 +120,13 @@ Unlisten to VChart chart events
 
 Set the table data interface, which can be called as an update interface.
 
+** The basic table can set the sorting state at the same time to sort the table data. Set sort to empty to clear the sorting state. If not set, the incoming data will be sorted according to the current sorting state **
+
+```
+setRecords(records: Array<any>) //Pivot table
+setRecords(records: Array<any>, sort?: SortState | SortState[]) //** The basic table can set the sorting state at the same time to sort the table data. Set sort to empty to clear the sorting state. If not set, the current sorting state will be used. Sort incoming data**
+```
+
 ## getDrawRange(Function)
 Get the boundRect value of the actual drawn content area of the table
 like
@@ -554,7 +561,7 @@ Update sort status, PivotTable exclusive
    * Update sort status
    * @param pivotSortStateConfig.dimensions sorting state dimension correspondence; pivotSortStateConfig.order sorting state
    */
-  updateSortState(pivotSortStateConfig: {
+  updatePivotSortState(pivotSortStateConfig: {
       dimensions: IDimensionInfo[];
       order: SortOrder;
     }[])

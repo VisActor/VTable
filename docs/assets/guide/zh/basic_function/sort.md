@@ -137,6 +137,9 @@ tableInstance.on('sort_click', args => {
 ```
 排序完成后需要setRecords将数据更新到表格，如果需要排序图标的切换则需要配合接口`updateSortState`，利用接口的第二个参数设置为false，只切换排序图标.
 
+注意：
+- setRecords 调用时需先清除内部排序状态（否则setRecords调用时会按上个排序状态对数据进行排序），即将第二个参数设置为null 
+
 示例：
 ```javascript livedemo template=vtable
 const records = [
@@ -379,12 +382,13 @@ const option = {
 
 // 创建 VTable 实例
 const tableInstance = new VTable.ListTable(document.getElementById(CONTAINER_ID), option);
-
+window.tableInstance=tableInstance;
 tableInstance.on('sort_click', args => {
     const sortState = Date.now() % 3 === 0 ? 'desc' : Date.now() % 3 === 1 ? 'asc' : 'normal';
     sortRecords(args.field, sortState)
       .then(records => {
-        tableInstance.setRecords(records);
+        debugger;
+        tableInstance.setRecords(records, null);
         tableInstance.updateSortState(
           {
             field: args.field,
@@ -401,7 +405,7 @@ tableInstance.on('sort_click', args => {
   function sortRecords(field, sort) {
     const promise = new Promise((resolve, reject) => {
       records.sort((a, b) => {
-        return sort === 'asc' ? a[field] - b[field] : b[field] - a[field];
+        return sort === 'asc' ?  b[field].localeCompare( a[field]): a[field].localeCompare( b[field]);
       });
       resolve(records);
     });
