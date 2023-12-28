@@ -17,7 +17,7 @@
     prefix = ${prefix}
 ) }}
 
-{{ use: vedio-cell-type(
+{{ use: video-cell-type(
     prefix = ${prefix}
 ) }}
 
