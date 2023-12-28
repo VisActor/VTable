@@ -449,6 +449,17 @@ getCheckboxState(field?: string | number): Array
 ```
 getCellCheckboxState(col: number, row: number): Array
 ```
+## getScrollTop(Function)
+获取当前竖向滚动位置
+
+## getScrollLeft(Function)
+获取当前横向滚动位置
+
+## setScrollTop(Function)
+设置竖向滚动位置 （会更新渲染界面）
+
+## setScrollLeft(Function)
+设置横向滚动位置（会更新渲染界面）
 
 ## scrollToCell(Function)
 
