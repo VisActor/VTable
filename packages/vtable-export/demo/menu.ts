@@ -25,6 +25,10 @@ export const menus = [
       {
         path: 'list',
         name: 'spark-line'
+      },
+      {
+        path: 'list',
+        name: 'list-large'
       }
     ]
   },
@@ -34,6 +38,10 @@ export const menus = [
       {
         path: 'pivot',
         name: 'pivot-basic'
+      },
+      {
+        path: 'pivot',
+        name: 'pivot-chart'
       }
     ]
   }

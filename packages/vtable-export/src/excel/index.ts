@@ -3,6 +3,8 @@ import ExcelJS from 'exceljs';
 import { encodeCellAddress } from '../util/encode';
 import type { CellType, IVTable } from '../util/type';
 import { getCellAlignment, getCellBorder, getCellFill, getCellFont } from './style';
+import { updateCell, renderChart } from '@visactor/vtable';
+import { isArray } from '@visactor/vutils';
 
 export async function exportVTableToExcel(tableInstance: IVTable) {
   const workbook = new ExcelJS.Workbook();
@@ -85,30 +87,72 @@ function addCell(
   worksheet: ExcelJS.Worksheet,
   workbook: ExcelJS.Workbook
 ) {
+  const { layoutMap } = tableInstance.internalProps;
   const cellType = tableInstance.getCellType(col, row);
   const cellValue = tableInstance.getCellValue(col, row);
   const cellStyle = tableInstance.getCellStyle(col, row);
 
-  if (cellType === 'text' || cellType === 'link') {
-    const cell = worksheet.getCell(encodeCellAddress(col, row));
-    cell.value = getCellValue(cellValue, cellType);
-    cell.font = getCellFont(cellStyle, cellType);
-    cell.fill = getCellFill(cellStyle);
-    cell.border = getCellBorder(cellStyle);
-    cell.alignment = getCellAlignment(cellStyle);
-  } else if (cellType === 'image' || cellType === 'video' || cellType === 'progressbar' || cellType === 'sparkline') {
+  const cellLocation = tableInstance.getCellLocation(col, row);
+  const define =
+    cellLocation !== 'body' ? tableInstance.getHeaderDefine(col, row) : tableInstance.getBodyColumnDefine(col, row);
+  const mayHaveIcon = cellLocation !== 'body' ? true : !!define?.icon || !!define?.tree;
+  let icons;
+  if (mayHaveIcon) {
+    icons = tableInstance.getCellIcons(col, row);
+  }
+  let customRender;
+  let customLayout;
+  if (cellLocation !== 'body') {
+    customRender = define?.headerCustomRender;
+    customLayout = define?.headerCustomLayout;
+  } else {
+    customRender = define?.customRender || tableInstance.customRender;
+    customLayout = define?.customLayout;
+  }
+
+  if (
+    cellType === 'image' ||
+    cellType === 'video' ||
+    cellType === 'progressbar' ||
+    cellType === 'sparkline' ||
+    layoutMap.isAxisCell(col, row) ||
+    (isArray(icons) && icons.length) ||
+    customRender ||
+    customLayout
+  ) {
     const cellImageBase64 = exportCellImg(col, row, tableInstance);
     const imageId = workbook.addImage({
       base64: cellImageBase64,
       extension: 'png'
     });
     worksheet.addImage(imageId, {
-      tl: { col: col + 1 / 80, row: row + 1 / 120 }, // ~1px
-      br: { col: col + 1, row: row + 1 },
+      tl: { col: col + 1 / 80, row: row + 1 / 120 } as any, // ~1px
+      br: { col: col + 1, row: row + 1 } as any,
       editAs: 'oneCell'
       // ext: { width: tableInstance.getColWidth(col), height: tableInstance.getRowHeight(row) }
     });
-    console.log(col, row, col + 1 / tableInstance.getColWidth(col), row + 1 / tableInstance.getRowHeight(row));
+  } else if (cellType === 'text' || cellType === 'link') {
+    const cell = worksheet.getCell(encodeCellAddress(col, row));
+    cell.value = getCellValue(cellValue, cellType);
+    cell.font = getCellFont(cellStyle, cellType);
+    cell.fill = getCellFill(cellStyle);
+    cell.border = getCellBorder(cellStyle);
+    cell.alignment = getCellAlignment(cellStyle);
+  } else if (cellType === 'chart') {
+    const cellGroup = tableInstance.scenegraph.getCell(col, row);
+    renderChart(cellGroup.firstChild as any); // render chart first
+    const cellImageBase64 = exportCellImg(col, row, tableInstance);
+    const imageId = workbook.addImage({
+      base64: cellImageBase64,
+      extension: 'png'
+    });
+    worksheet.addImage(imageId, {
+      tl: { col: col + 1 / 80, row: row + 1 / 120 } as any, // ~1px
+      br: { col: col + 1, row: row + 1 } as any,
+      editAs: 'oneCell'
+      // ext: { width: tableInstance.getColWidth(col), height: tableInstance.getRowHeight(row) }
+    });
+    tableInstance.scenegraph.updateNextFrame(); // rerender chart to avoid display error
   }
 }
 
@@ -124,10 +168,18 @@ function getCellValue(cellValue: string, cellType: CellType) {
 }
 
 function exportCellImg(col: number, row: number, tableInstance: IVTable) {
-  const cellGroup = tableInstance.scenegraph.getCell(col, row);
+  let cellGroup = tableInstance.scenegraph.getCell(col, row);
+  let needRemove = false;
+  if (cellGroup.role === 'empty') {
+    cellGroup = updateCell(col, row, tableInstance as any, true);
+    needRemove = true;
+  }
   const oldStroke = cellGroup.attribute.stroke;
   cellGroup.attribute.stroke = false;
   const canvas = graphicUtil.drawGraphicToCanvas(cellGroup as any, tableInstance.scenegraph.stage) as HTMLCanvasElement;
-  cellGroup.setAttribute('stroke', oldStroke);
+  cellGroup.attribute.stroke = oldStroke;
+  if (needRemove) {
+    cellGroup.parent.removeChild(cellGroup);
+  }
   return canvas.toDataURL();
 }
