@@ -1,4 +1,4 @@
-import { WrapText, type IWrapTextGraphicAttribute } from '@visactor/vrender';
+import { Text as VText, type ITextGraphicAttribute } from '@visactor/vrender';
 import type { BaseTableAPI } from '../../ts-types/base-table';
 import type { TagAttributes } from '@visactor/vrender-components';
 import { isArray } from '@visactor/vutils';
@@ -8,9 +8,9 @@ type ITextOption = {
   marginRight?: number;
   marginBottom?: number;
   marginLeft?: number;
-} & IWrapTextGraphicAttribute;
+} & ITextGraphicAttribute;
 
-export class Text extends WrapText {
+export class Text extends VText {
   constructor(options: ITextOption) {
     if (!options.textBaseline) {
       options.textBaseline = 'top';
