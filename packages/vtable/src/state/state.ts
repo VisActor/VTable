@@ -679,6 +679,11 @@ export class StateManager {
     const totalHeight = this.table.getAllRowsHeight();
     top = Math.max(0, Math.min(top, totalHeight - this.table.scenegraph.height));
     top = Math.ceil(top);
+    // 滚动期间清空选中清空
+    if (top !== this.scroll.verticalBarPos) {
+      this.table.stateManager.updateHoverPos(-1, -1);
+    }
+    // this.table.stateManager.updateSelectPos(-1, -1);
     this.scroll.verticalBarPos = top;
 
     // 设置scenegraph坐标
@@ -687,9 +692,6 @@ export class StateManager {
     // 更新scrollbar位置
     const yRatio = top / (totalHeight - this.table.scenegraph.height);
     this.table.scenegraph.component.updateVerticalScrollBarPos(yRatio);
-    // 滚动期间清空选中清空
-    this.table.stateManager.updateHoverPos(-1, -1);
-    // this.table.stateManager.updateSelectPos(-1, -1);
     this.table.fireListeners(TABLE_EVENT_TYPE.SCROLL, {
       scrollTop: this.scroll.verticalBarPos,
       scrollLeft: this.scroll.horizontalBarPos,
@@ -708,6 +710,11 @@ export class StateManager {
 
     left = Math.max(0, Math.min(left, totalWidth - this.table.scenegraph.width));
     left = Math.ceil(left);
+    // 滚动期间清空选中清空
+    if (left !== this.scroll.horizontalBarPos) {
+      this.table.stateManager.updateHoverPos(-1, -1);
+    }
+    // this.table.stateManager.updateSelectPos(-1, -1);
     this.scroll.horizontalBarPos = left;
 
     // 设置scenegraph坐标
@@ -717,9 +724,6 @@ export class StateManager {
     const xRatio = left / (totalWidth - this.table.scenegraph.width);
     this.table.scenegraph.component.updateHorizontalScrollBarPos(xRatio);
 
-    // 滚动期间清空选中清空
-    this.table.stateManager.updateHoverPos(-1, -1);
-    // this.table.stateManager.updateSelectPos(-1, -1);
     this.table.fireListeners(TABLE_EVENT_TYPE.SCROLL, {
       scrollTop: this.scroll.verticalBarPos,
       scrollLeft: this.scroll.horizontalBarPos,
