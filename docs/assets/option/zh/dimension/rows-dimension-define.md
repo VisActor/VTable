@@ -22,7 +22,7 @@
     dimensionHeaderType = 'rows'
 ) }}
 
-{{ use: vedio-dimension-type(
+{{ use: video-dimension-type(
     prefix = ${prefix},
     dimensionHeaderType = 'rows'
 ) }}

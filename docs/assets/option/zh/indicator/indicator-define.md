@@ -13,7 +13,7 @@
 {{ use: image-indicator-type(
     prefix = ${prefix}) }}
 
-{{ use: vedio-indicator-type(
+{{ use: video-indicator-type(
     prefix = ${prefix}) }}
 
 {{ use: progressbar-indicator-type(
