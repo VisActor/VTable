@@ -119,6 +119,12 @@ tableInstance.renderWithRecreateCells();
 ## setRecords(Function)
 
 设置表格数据接口，可作为更新接口调用。
+** 基本表格可同时设置排序状态对表格数据排序，sort设置为空清空排序状态，如果不设置则按当前排序状态对传入数据排序 **
+
+```
+setRecords(records: Array<any>) //透视表
+setRecords(records: Array<any>, sort?: SortState | SortState[]) //** 基本表格可同时设置排序状态对表格数据排序，sort设置为空清空排序状态，如果不设置则按当前排序状态对传入数据排序 **
+```
 
 ## getDrawRange(Function)
 获取表格实际绘制内容区域的boundRect的值
@@ -549,7 +555,7 @@ enum HierarchyState {
    * 更新排序状态
    * @param pivotSortStateConfig.dimensions 排序状态维度对应关系；pivotSortStateConfig.order 排序状态
    */
-  updateSortState(pivotSortStateConfig: {
+  updatePivotSortState(pivotSortStateConfig: {
       dimensions: IDimensionInfo[];
       order: SortOrder;
     }[])

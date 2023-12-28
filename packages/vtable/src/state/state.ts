@@ -362,12 +362,16 @@ export class StateManager {
       headerSelectMode,
       disableSelect,
       disableHeaderSelect
-    } = this.table.options?.select ?? {
-      /** 点击表头单元格时连带body整行或整列选中 或仅选中当前单元格，默认或整行或整列选中*/
-      headerSelectMode: 'inline',
-      disableSelect: false,
-      disableHeaderSelect: false
-    };
+    } = Object.assign(
+      {},
+      {
+        /** 点击表头单元格时连带body整行或整列选中 或仅选中当前单元格，默认或整行或整列选中*/
+        headerSelectMode: 'inline',
+        disableSelect: false,
+        disableHeaderSelect: false
+      },
+      this.table.options.select
+    );
 
     // if (enableRowHighlight && enableColumnHighlight) {
     //   this.select.highlightScope = HighlightScope.cross;
@@ -401,10 +405,9 @@ export class StateManager {
   }
 
   setSortState(sortState: SortState) {
-    this.sort.field = sortState.field as string;
-    this.sort.fieldKey = sortState.fieldKey as string;
-    this.sort.order = sortState.order;
-
+    this.sort.field = sortState?.field as string;
+    this.sort.fieldKey = sortState?.fieldKey as string;
+    this.sort.order = sortState?.order;
     // // 这里有一个问题，目前sortState中一般只传入了fieldKey，但是getCellRangeByField需要field
     // const range = this.table.getCellRangeByField(this.sort.field, 0);
     // if (range) {
