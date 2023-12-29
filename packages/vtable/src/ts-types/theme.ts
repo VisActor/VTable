@@ -91,6 +91,11 @@ export interface ITableThemeDefine {
     bgColor?: ColorPropertyDefine; //背景线的颜色
     lineWidth: number; //上面线的宽度
     width?: number; //背景线的宽度
+    labelColor?: string; //label的颜色
+    labelFontSize?: number; //label的字体大小
+    labelFontFamily?: string; //label的字体
+    labelBackgroundFill?: string; //label的背景填充
+    labelBackgroundCornerRadius?: number; //label的背景圆角
   };
   //拖拽表格换位分割线的样式
   dragHeaderSplitLine?: {

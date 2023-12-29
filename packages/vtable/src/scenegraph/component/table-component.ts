@@ -42,6 +42,12 @@ export class TableComponent {
     const columnResizeWidth = theme.columnResize?.lineWidth;
     const columnResizeBgColor = theme.columnResize?.bgColor;
     const columnResizeBgWidth = theme.columnResize?.width;
+    const labelColor = theme.columnResize?.labelColor;
+    const labelFontSize = theme.columnResize?.labelFontSize;
+    const labelFontFamily = theme.columnResize?.labelFontFamily;
+    const labelBackgroundFill = theme.columnResize?.labelBackgroundFill;
+    const labelBackgroundCornerRadius = theme.columnResize?.labelBackgroundCornerRadius;
+
     this.columnResizeLine = createLine({
       visible: false,
       pickable: false,
@@ -74,24 +80,25 @@ export class TableComponent {
       pickable: false,
       x: 0,
       y: 0,
-      fontSize: 10,
-      fill: '#FFF',
+      fontSize: labelFontSize, // 10
+      fill: labelColor,
+      fontFamily: labelFontFamily,
       text: '',
       textBaseline: 'top',
       dx: 12 + 4,
-      dy: -8 + 2
+      dy: -labelFontSize / 2
     });
     const columnResizeLabelBack = createRect({
       visible: false,
       pickable: false,
-      fill: '#3073F2',
+      fill: labelBackgroundFill,
       x: 0,
       y: 0,
-      width: 38,
-      height: 16,
-      cornerRadius: 5,
+      width: 5 * labelFontSize * 0.8,
+      height: labelFontSize + 8,
+      cornerRadius: labelBackgroundCornerRadius,
       dx: 12,
-      dy: -8
+      dy: -labelFontSize / 2 - 4
     });
     this.columnResizeLabel = createGroup({
       visible: false,
