@@ -34,9 +34,10 @@ export function createGroupForFirstScreen(
   } else {
     distRow = Math.min(proxy.firstScreenRowLimit, table.rowCount - 1);
   }
-
-  // compute colums width in first screen
-  computeColsWidth(table, 0, distCol);
+  if (table.internalProps._widthResizedColMap.size === 0) {
+    // compute colums width in first screen
+    computeColsWidth(table, 0, distCol);
+  }
 
   // compute rows height in first screen
   computeRowsHeight(table, 0, distRow);
