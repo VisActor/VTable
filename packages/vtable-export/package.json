@@ -38,7 +38,7 @@
     "@visactor/vutils": "~0.17.1",
     "file-saver": "2.0.5",
     "exceljs": "4.4.0",
-    "@visactor/vrender": "0.17.7-alpha.2"
+    "@visactor/vrender": "0.17.8"
   },
   "devDependencies": {
     "@visactor/vchart": "1.7.3",
