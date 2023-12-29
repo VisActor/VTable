@@ -221,7 +221,10 @@ export function computeRowsHeight(
     let actualHeaderHeight = 0;
     for (let row = 0; row < table.rowCount; row++) {
       const rowHeight = update ? newHeights[row] : table.getRowHeight(row);
-      if (row < table.frozenRowCount || (table.isPivotChart() && row >= table.rowCount - table.bottomFrozenRowCount)) {
+      if (
+        row < table.columnHeaderLevelCount ||
+        (table.isPivotChart() && row >= table.rowCount - table.bottomFrozenRowCount)
+      ) {
         actualHeaderHeight += rowHeight;
       }
 
@@ -230,26 +233,28 @@ export function computeRowsHeight(
     table.scenegraph._dealAutoFillHeightOriginRowsHeight = actualHeight;
     // 如果内容高度小于canvas高度，执行adaptive放大
     if (actualHeight < canvasHeight && actualHeight - actualHeaderHeight > 0) {
+      const startRow = table.columnHeaderLevelCount;
+      const endRow = table.isPivotChart() ? table.rowCount - table.bottomFrozenRowCount : table.rowCount;
       const factor = (canvasHeight - actualHeaderHeight) / (actualHeight - actualHeaderHeight);
-      for (let row = table.frozenRowCount; row < table.rowCount - table.bottomFrozenRowCount; row++) {
+      for (let row = startRow; row < endRow; row++) {
         // if (update) {
         //   newHeights[row] = newHeights[row] * factor;
         // } else {
         //   table.setRowHeight(row, table.getRowHeight(row) * factor);
         // }
         let rowHeight;
-        if (row === table.rowCount - table.bottomFrozenRowCount - 1) {
+        if (row === endRow - 1) {
           rowHeight =
             canvasHeight -
             actualHeaderHeight -
             (update
               ? newHeights.reduce((acr, cur, index) => {
-                  if (index >= table.frozenRowCount && index <= table.rowCount - table.bottomFrozenRowCount - 2) {
+                  if (index >= startRow && index <= endRow - 2) {
                     return acr + cur;
                   }
                   return acr;
                 }, 0)
-              : table.getRowsHeight(table.frozenRowCount, table.rowCount - table.bottomFrozenRowCount - 2));
+              : table.getRowsHeight(startRow, endRow - 2));
         } else {
           rowHeight = Math.round((update ? newHeights[row] : table.getRowHeight(row)) * factor);
         }

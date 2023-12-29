@@ -74,20 +74,23 @@ export function computeColsWidth(table: BaseTableAPI, colStart?: number, colEnd?
 
   // 处理adaptive宽度
   if (table.widthMode === 'adaptive') {
-    const rowHeaderWidth = table.getColsWidth(0, table.rowHeaderLevelCount - 1);
-    const rightHeaderWidth = table.isPivotChart() ? table.getRightFrozenColsWidth() : 0;
-    const totalDrawWidth = table.tableNoFrameWidth - rowHeaderWidth - rightHeaderWidth;
+    // const rowHeaderWidth = table.getColsWidth(0, table.rowHeaderLevelCount - 1);
+    // const rightHeaderWidth = table.isPivotChart() ? table.getRightFrozenColsWidth() : 0;
+    // const totalDrawWidth = table.tableNoFrameWidth - rowHeaderWidth - rightHeaderWidth;
 
     table._clearColRangeWidthsMap();
     const canvasWidth = table.tableNoFrameWidth;
     let actualHeaderWidth = 0;
     for (let col = 0; col < table.colCount; col++) {
       const colWidth = update ? newWidths[col] : table.getColWidth(col);
-      if (col < table.frozenColCount || col >= table.colCount - table.rightFrozenColCount) {
+      if (
+        col < table.rowHeaderLevelCount ||
+        (table.isPivotChart() && col >= table.colCount - table.rightFrozenColCount)
+      ) {
         actualHeaderWidth += colWidth;
       }
     }
-    const startCol = table.frozenColCount;
+    const startCol = table.rowHeaderLevelCount;
     const endCol = table.isPivotChart() ? table.colCount - table.rightFrozenColCount : table.colCount;
     getAdaptiveWidth(canvasWidth - actualHeaderWidth, startCol, endCol, update, newWidths, table);
     // const canvasWidth = table.internalProps.canvas.width;
@@ -131,14 +134,17 @@ export function computeColsWidth(table: BaseTableAPI, colStart?: number, colEnd?
     let actualWidth = 0;
     for (let col = 0; col < table.colCount; col++) {
       const colWidth = update ? newWidths[col] : table.getColWidth(col);
-      if (col < table.frozenColCount || (table.isPivotChart() && col >= table.colCount - table.rightFrozenColCount)) {
+      if (
+        col < table.rowHeaderLevelCount ||
+        (table.isPivotChart() && col >= table.colCount - table.rightFrozenColCount)
+      ) {
         actualHeaderWidth += colWidth;
       }
       actualWidth += colWidth;
     }
     // 如果内容宽度小于canvas宽度，执行adaptive放大
     if (actualWidth < canvasWidth && actualWidth > actualHeaderWidth) {
-      const startCol = table.frozenColCount;
+      const startCol = table.rowHeaderLevelCount;
       const endCol = table.isPivotChart() ? table.colCount - table.rightFrozenColCount : table.colCount;
       getAdaptiveWidth(canvasWidth - actualHeaderWidth, startCol, endCol, update, newWidths, table);
     }

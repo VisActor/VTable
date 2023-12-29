@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "comment": "fix: [Bug] adaptive mode compute problem when has frozencol and rightFrozenCol #820\n\n",
+      "type": "none",
+      "packageName": "@visactor/vtable"
+    }
+  ],
+  "packageName": "@visactor/vtable",
+  "email": "892739385@qq.com"
+}
