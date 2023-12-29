@@ -66,7 +66,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
       : options.header
       ? cloneDeep(options.header)
       : [];
-    internalProps.columns.forEach((colDefine, index) => {
+    options.columns?.forEach((colDefine, index) => {
       //如果editor 是一个IEditor的实例  需要这样重新赋值 否则clone后变质了
       if (colDefine.editor) {
         internalProps.columns[index].editor = colDefine.editor;
