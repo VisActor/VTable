@@ -9,6 +9,26 @@ export const menus = [
       {
         path: 'list',
         name: 'link'
+      },
+      {
+        path: 'list',
+        name: 'image'
+      },
+      {
+        path: 'list',
+        name: 'video'
+      },
+      {
+        path: 'list',
+        name: 'progress-bar'
+      },
+      {
+        path: 'list',
+        name: 'spark-line'
+      },
+      {
+        path: 'list',
+        name: 'list-large'
       }
     ]
   },
@@ -18,6 +38,10 @@ export const menus = [
       {
         path: 'pivot',
         name: 'pivot-basic'
+      },
+      {
+        path: 'pivot',
+        name: 'pivot-chart'
       }
     ]
   }

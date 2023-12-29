@@ -29,8 +29,10 @@ import { getHierarchyOffset } from '../utils/get-hierarchy-offset';
  * @param {number} detaX
  * @return {*}
  */
-export function updateColWidth(scene: Scenegraph, col: number, detaX: number) {
-  scene.table._setColWidth(col, scene.table.getColWidth(col) + detaX, true);
+export function updateColWidth(scene: Scenegraph, col: number, detaX: number, skipTableWidthMap?: boolean) {
+  if (!skipTableWidthMap) {
+    scene.table._setColWidth(col, scene.table.getColWidth(col) + detaX, true);
+  }
 
   const autoRowHeight = scene.table.heightMode === 'autoHeight';
   // deal with corner header or column header
@@ -220,9 +222,10 @@ function updateCellWidth(
   // autoColWidth: boolean,
   autoRowHeight: boolean
 ): boolean {
-  if (cell.attribute.width === distWidth) {
+  if (cell.attribute.width === distWidth && !cell.needUpdateWidth) {
     return false;
   }
+  cell.needUpdateWidth = false;
 
   cell.setAttribute('width', distWidth);
   // const mergeInfo = getCellMergeInfo(scene.table, col, row);
@@ -438,7 +441,7 @@ function updateMergeCellContentWidth(
         // const { width: contentWidth } = cellGroup.attribute;
         singleCellGroup.contentWidth = distWidth;
 
-        resizeCellGroup(
+        const { heightChange } = resizeCellGroup(
           singleCellGroup,
           rangeWidth,
           rangeHeight,
@@ -454,6 +457,11 @@ function updateMergeCellContentWidth(
           },
           table
         );
+
+        if (heightChange) {
+          singleCellGroup.needUpdateHeight = true;
+        }
+
         isHeightChange = isHeightChange || changed;
       }
     }

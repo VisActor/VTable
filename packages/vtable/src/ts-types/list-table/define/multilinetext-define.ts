@@ -12,8 +12,6 @@ export interface ITextHeaderDefine extends IBasicHeaderDefine {
 }
 
 export interface ITextColumnBodyDefine extends IBasicColumnBodyDefine {
-  /** 是否对相同内容合并单元格 **/
-  mergeCell?: boolean;
   style?: ITextStyleOption | ((styleArg: StylePropertyFunctionArg) => ITextStyleOption);
   cellType?: 'text';
 

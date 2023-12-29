@@ -121,5 +121,11 @@ export default {
     inlineColumnBgColor: '#CCE0FF',
     inlineRowBgColor: '#CCE0FF',
     cellBorderColor: '#0000ff'
+  },
+  tooltipStyle: {
+    bgColor: '#FFF',
+    color: '#000',
+    fontSize: 12,
+    fontFamily: 'Arial,sans-serif'
   }
 } as ITableThemeDefine;

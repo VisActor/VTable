@@ -151,7 +151,7 @@ export class TooltipHandler {
               placement: Placement.bottom,
               rect
             },
-            style: { arrowMark: false }
+            style: table.theme.tooltipStyle
           };
         }
       }

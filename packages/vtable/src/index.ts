@@ -33,6 +33,9 @@ import { PivotChart } from './PivotChart';
 import type { MousePointerCellEvent } from './ts-types/events';
 import * as CustomLayout from './render/layout';
 
+import { updateCell } from './scenegraph/group-creater/cell-helper';
+import { renderChart } from './scenegraph/graphic/contributions/chart-render-helper';
+
 // import { container, loadCanvasPicker } from '@visactor/vrender';
 // loadCanvasPicker(container);
 
@@ -83,7 +86,9 @@ export {
    * 暂不推荐使用
    */
   DataStatistics,
-  CustomLayout
+  CustomLayout,
+  updateCell,
+  renderChart
 };
 
 /** @private */

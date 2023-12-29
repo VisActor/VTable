@@ -264,6 +264,9 @@ export function resizeCellGroup(
     newLineWidth[2] = isLineWidthArray ? lineWidth[2] : lineWidth;
   }
 
+  const widthChange = rangeWidth !== cellGroup.attribute.width;
+  const heightChange = rangeHeight !== cellGroup.attribute.height;
+
   cellGroup.setAttributes({
     width: rangeWidth,
     height: rangeHeight,
@@ -274,6 +277,11 @@ export function resizeCellGroup(
   cellGroup.mergeStartRow = range.start.row;
   cellGroup.mergeEndCol = range.end.col;
   cellGroup.mergeEndRow = range.end.row;
+
+  return {
+    widthChange,
+    heightChange
+  };
 }
 
 function dealMerge(range: CellRange, mergeMap: MergeMap, table: BaseTableAPI) {

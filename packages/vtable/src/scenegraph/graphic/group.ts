@@ -19,6 +19,9 @@ export class Group extends VRenderGroup {
   border?: IRect; // table/header/body的border mark，挂载在这里方便更新
   needUpdate?: boolean;
 
+  needUpdateWidth?: boolean;
+  needUpdateHeight?: boolean;
+
   /**
    * @description: 清空Group下全部子元素
    * @return {*}

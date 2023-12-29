@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "comment": "fix:  transpose list demo when records has 10000 performance problem #790\n\n",
+      "type": "none",
+      "packageName": "@visactor/vtable"
+    }
+  ],
+  "packageName": "@visactor/vtable",
+  "email": "892739385@qq.com"
+}

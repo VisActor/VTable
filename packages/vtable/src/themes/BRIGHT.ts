@@ -89,5 +89,11 @@ export default {
   // },
   selectionStyle: {
     cellBgColor: 'rgba(0, 0, 255,0.1)'
+  },
+  tooltipStyle: {
+    bgColor: '#FFF',
+    color: '#000',
+    fontSize: 12,
+    fontFamily: 'Arial,sans-serif'
   }
 } as ITableThemeDefine;
