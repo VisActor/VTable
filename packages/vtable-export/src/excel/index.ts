@@ -1,9 +1,8 @@
-import { graphicUtil } from '@visactor/vrender';
 import ExcelJS from 'exceljs';
 import { encodeCellAddress } from '../util/encode';
 import type { CellType, IVTable } from '../util/type';
 import { getCellAlignment, getCellBorder, getCellFill, getCellFont } from './style';
-import { updateCell, renderChart } from '@visactor/vtable';
+import { updateCell, renderChart, graphicUtil } from '@visactor/vtable';
 import { isArray } from '@visactor/vutils';
 
 export async function exportVTableToExcel(tableInstance: IVTable) {
