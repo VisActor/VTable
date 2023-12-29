@@ -1,4 +1,6 @@
 /* eslint-disable sort-imports */
+import { graphicUtil } from '@visactor/vrender';
+
 import * as TYPES from './ts-types';
 import * as core from './core';
 import * as data from './data';
@@ -88,7 +90,8 @@ export {
   DataStatistics,
   CustomLayout,
   updateCell,
-  renderChart
+  renderChart,
+  graphicUtil
 };
 
 /** @private */
