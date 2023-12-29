@@ -37,9 +37,15 @@ export function updateColWidth(scene: Scenegraph, col: number, detaX: number, sk
   const autoRowHeight = scene.table.heightMode === 'autoHeight';
   // deal with corner header or column header
   const colOrCornerHeaderColumn = scene.getColGroup(col, true) as Group;
-  if (colOrCornerHeaderColumn) {
+  const rightTopColumn = scene.getColGroupInRightTopCorner(col);
+  if (colOrCornerHeaderColumn && !rightTopColumn) {
     updateColunmWidth(colOrCornerHeaderColumn, detaX, autoRowHeight, 'col-corner', scene);
   }
+  // deal with right bottom frozen cells
+  if (rightTopColumn) {
+    updateColunmWidth(rightTopColumn, detaX, autoRowHeight, 'right-top', scene);
+  }
+
   // deal with row header or body or right frozen cells
   const rowHeaderOrBodyColumn = scene.getColGroup(col) as Group;
   if (rowHeaderOrBodyColumn) {
@@ -55,11 +61,6 @@ export function updateColWidth(scene: Scenegraph, col: number, detaX: number, sk
   const bottomColumn = scene.getColGroupInBottom(col);
   if (bottomColumn) {
     updateColunmWidth(bottomColumn, detaX, autoRowHeight, 'bottom', scene);
-  }
-  // deal with right bottom frozen cells
-  const rightTopColumn = scene.getColGroupInRightTopCorner(col);
-  if (rightTopColumn) {
-    updateColunmWidth(rightTopColumn, detaX, autoRowHeight, 'right-top', scene);
   }
   // deal with right bottom frozen cells
   const rightBottomColumn = scene.getColGroupInRightBottomCorner(col);
