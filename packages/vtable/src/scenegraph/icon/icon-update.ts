@@ -236,7 +236,7 @@ export function updateIcon(baseIcon: Icon, iconConfig: ColumnIconOption, col: nu
     col,
     row,
     // filter
-    (icon: Icon) => icon.name === baseIcon.name,
+    (icon: Icon) => icon.attribute.funcType === 'sort',
     // dealer
     (icon: Icon) => {
       dealWithIcon(iconConfig, icon);
