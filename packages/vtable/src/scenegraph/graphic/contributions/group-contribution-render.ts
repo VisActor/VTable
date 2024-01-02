@@ -736,6 +736,106 @@ export class AdjustColorGroupAfterRenderContribution implements IGroupRenderCont
   }
 }
 
+@injectable()
+export class ClipBodyGroupBeforeRenderContribution implements IGroupRenderContribution {
+  time: BaseRenderContributionTime = BaseRenderContributionTime.beforeFillStroke;
+  useStyle = true;
+  order = 0;
+  drawShape(
+    group: IGroup,
+    context: IContext2d,
+    x: number,
+    y: number,
+    doFill: boolean,
+    doStroke: boolean,
+    fVisible: boolean,
+    sVisible: boolean,
+    groupAttribute: Required<IGroupGraphicAttribute>,
+    drawContext: IDrawContext,
+    fillCb?: (
+      ctx: IContext2d,
+      markAttribute: Partial<IMarkAttribute & IGraphicAttribute>,
+      themeAttribute: IThemeAttribute
+    ) => boolean,
+    strokeCb?: (
+      ctx: IContext2d,
+      markAttribute: Partial<IMarkAttribute & IGraphicAttribute>,
+      themeAttribute: IThemeAttribute
+    ) => boolean,
+    doFillOrStroke?: { doFill: boolean; doStroke: boolean }
+  ) {
+    const table = (group.stage as any).table as BaseTableAPI;
+    if ((group as Group).role === 'body') {
+      const x = -(group.attribute.x ?? 0) + table.getFrozenColsWidth();
+      const y = -(group.attribute.y ?? 0) + table.getFrozenRowsHeight();
+      const width = group.parent.attribute.width - table.getFrozenColsWidth() - table.getRightFrozenColsWidth();
+      const height = group.parent.attribute.height - table.getFrozenRowsHeight() - table.getBottomFrozenRowsHeight();
+      context.beginPath();
+      context.rect(x, y, width, height);
+    } else if ((group as Group).role === 'row-header') {
+      const x = 0;
+      const y = -(group.attribute.y ?? 0) + table.getFrozenRowsHeight();
+      const width = table.getFrozenColsWidth();
+      const height = group.parent.attribute.height - table.getFrozenRowsHeight() - table.getBottomFrozenRowsHeight();
+      context.beginPath();
+      context.rect(x, y, width, height);
+    } else if ((group as Group).role === 'col-header') {
+      const x = -(group.attribute.x ?? 0) + table.getFrozenColsWidth();
+      const y = 0;
+      const width = group.parent.attribute.width - table.getFrozenColsWidth() - table.getRightFrozenColsWidth();
+      const height = table.getFrozenRowsHeight();
+      context.beginPath();
+      context.rect(x, y, width, height);
+    } else if ((group as Group).role === 'right-frozen') {
+      const x = 0;
+      const y = -(group.attribute.y ?? 0) + table.getFrozenRowsHeight();
+      const width = table.getRightFrozenColsWidth();
+      const height = group.parent.attribute.height - table.getFrozenRowsHeight() - table.getBottomFrozenRowsHeight();
+      context.beginPath();
+      context.rect(x, y, width, height);
+    } else if ((group as Group).role === 'bottom-frozen') {
+      const x = -(group.attribute.x ?? 0) + table.getFrozenColsWidth();
+      const y = 0;
+      const width = group.parent.attribute.width - table.getFrozenColsWidth() - table.getRightFrozenColsWidth();
+      const height = table.getBottomFrozenRowsHeight();
+      context.beginPath();
+      context.rect(x, y, width, height);
+    }
+  }
+}
+@injectable()
+export class ClipBodyGroupAfterRenderContribution implements IGroupRenderContribution {
+  time: BaseRenderContributionTime = BaseRenderContributionTime.afterFillStroke;
+  useStyle = true;
+  order = 0;
+  drawShape(
+    group: IGroup,
+    context: IContext2d,
+    x: number,
+    y: number,
+    doFill: boolean,
+    doStroke: boolean,
+    fVisible: boolean,
+    sVisible: boolean,
+    groupAttribute: Required<IGroupGraphicAttribute>,
+    drawContext: IDrawContext,
+    fillCb?: (
+      ctx: IContext2d,
+      markAttribute: Partial<IMarkAttribute & IGraphicAttribute>,
+      themeAttribute: IThemeAttribute
+    ) => boolean,
+    strokeCb?: (
+      ctx: IContext2d,
+      markAttribute: Partial<IMarkAttribute & IGraphicAttribute>,
+      themeAttribute: IThemeAttribute
+    ) => boolean
+  ) {
+    // 处理hover颜色
+    if ((group as Group).role === 'body') {
+    }
+  }
+}
+
 function getCellSizeForDraw(group: any, width: number, height: number) {
   const table = group.stage.table as BaseTableAPI;
   if (group.role === 'cell') {

@@ -9,7 +9,7 @@ export function initSceneGraph(scene: Scenegraph) {
   scene.tableGroup = new Group({ x: 0, y: 0, width, height, clip: true, pickable: false });
   scene.tableGroup.role = 'table';
 
-  const colHeaderGroup = createContainerGroup(0, 0);
+  const colHeaderGroup = createContainerGroup(0, 0, true);
   colHeaderGroup.role = 'col-header';
   scene.colHeaderGroup = colHeaderGroup;
 
@@ -17,19 +17,19 @@ export function initSceneGraph(scene: Scenegraph) {
   cornerHeaderGroup.role = 'corner-header';
   scene.cornerHeaderGroup = cornerHeaderGroup;
 
-  const rowHeaderGroup = createContainerGroup(0, 0);
+  const rowHeaderGroup = createContainerGroup(0, 0, true);
   rowHeaderGroup.role = 'row-header';
   scene.rowHeaderGroup = rowHeaderGroup;
 
-  const bodyGroup = createContainerGroup(width, 0);
+  const bodyGroup = createContainerGroup(width, 0, true);
   bodyGroup.role = 'body';
   scene.bodyGroup = bodyGroup;
 
-  const rightFrozenGroup = createContainerGroup(0, 0);
+  const rightFrozenGroup = createContainerGroup(0, 0, true);
   rightFrozenGroup.role = 'right-frozen';
   scene.rightFrozenGroup = rightFrozenGroup;
 
-  const bottomFrozenGroup = createContainerGroup(0, 0);
+  const bottomFrozenGroup = createContainerGroup(0, 0, true);
   bottomFrozenGroup.role = 'bottom-frozen';
   scene.bottomFrozenGroup = bottomFrozenGroup;
 
@@ -64,13 +64,13 @@ export function initSceneGraph(scene: Scenegraph) {
   scene.tableGroup.addChild(componentGroup);
 }
 
-function createContainerGroup(width: number, height: number) {
+function createContainerGroup(width: number, height: number, clip?: boolean) {
   return new Group({
     x: 0,
     y: 0,
     width,
     height,
-    clip: false,
+    clip: clip ?? false,
     pickable: false
   });
 }
