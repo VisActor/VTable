@@ -141,6 +141,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
     this.scenegraph.clearCells();
     this.headerStyleCache = new Map();
     this.bodyStyleCache = new Map();
+    this.bodyBottomStyleCache = new Map();
     this.scenegraph.createSceneGraph();
     this.stateManager.updateHoverPos(oldHoverState.col, oldHoverState.row);
     this.renderAsync();
