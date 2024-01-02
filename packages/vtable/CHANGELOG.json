@@ -2,6 +2,63 @@
   "name": "@visactor/vtable",
   "entries": [
     {
+      "version": "0.17.3",
+      "tag": "@visactor/vtable_v0.17.3",
+      "date": "Fri, 29 Dec 2023 12:31:07 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "fix: setRecords lose hover state  #783\n\n"
+          },
+          {
+            "comment": "feat: add body index convert with table index #789\n\n"
+          },
+          {
+            "comment": "fix:  transpose list demo when records has 10000 performance problem #790\n\n"
+          },
+          {
+            "comment": "fix: setRecords recomputeColWidth problems #796\n\n"
+          },
+          {
+            "comment": "fix: set disableSelect drag interaction occor error #799\n\n"
+          },
+          {
+            "comment": "feat: mergeCell support custom compare function #804\n\n"
+          },
+          {
+            "comment": "fix: tooltip style not work #805\n\n"
+          },
+          {
+            "comment": "fix: pivot table pagination.perPageCount modify #807\n\n"
+          },
+          {
+            "comment": "fix: [Bug] adaptive mode compute problem when has frozencol and rightFrozenCol #820\n\n"
+          },
+          {
+            "comment": "fix: fix axis render update problem"
+          },
+          {
+            "comment": "feat: add column resize label theme"
+          },
+          {
+            "comment": "fix: fix select update when change frozen"
+          },
+          {
+            "comment": "fix: pivot table use icon bug\n\n"
+          },
+          {
+            "comment": "fix: fix sort icon update"
+          },
+          {
+            "comment": "refactor: update vrender event verison use scrollDrag\n\n"
+          },
+          {
+            "comment": "chore: update vrender version #785\n\n"
+          }
+        ]
+      }
+    },
+    {
       "version": "0.17.2",
       "tag": "@visactor/vtable_v0.17.2",
       "date": "Thu, 21 Dec 2023 11:54:58 GMT",
