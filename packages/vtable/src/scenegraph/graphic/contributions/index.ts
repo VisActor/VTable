@@ -21,7 +21,9 @@ import {
   AdjustPosGroupBeforeRenderContribution,
   AdjustPosGroupAfterRenderContribution,
   AdjustColorGroupBeforeRenderContribution,
-  AdjustColorGroupAfterRenderContribution
+  AdjustColorGroupAfterRenderContribution,
+  ClipBodyGroupBeforeRenderContribution,
+  ClipBodyGroupAfterRenderContribution
 } from './group-contribution-render';
 
 export default new ContainerModule((bind, unbind, isBound, rebind) => {
@@ -70,4 +72,9 @@ export default new ContainerModule((bind, unbind, isBound, rebind) => {
   bind(GroupRenderContribution).toService(AdjustPosGroupBeforeRenderContribution);
   bind(AdjustPosGroupAfterRenderContribution).toSelf().inSingletonScope();
   bind(GroupRenderContribution).toService(AdjustPosGroupAfterRenderContribution);
+
+  bind(ClipBodyGroupBeforeRenderContribution).toSelf().inSingletonScope();
+  bind(GroupRenderContribution).toService(ClipBodyGroupBeforeRenderContribution);
+  bind(ClipBodyGroupAfterRenderContribution).toSelf().inSingletonScope();
+  bind(GroupRenderContribution).toService(ClipBodyGroupAfterRenderContribution);
 });
