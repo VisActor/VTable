@@ -500,6 +500,21 @@ export class TableTheme implements ITableThemeDefine {
         },
         get width(): number {
           return columnResize.width ?? columnResize.lineWidth + 2;
+        },
+        get labelColor(): string {
+          return columnResize.labelColor ?? '#FFF';
+        },
+        get labelFontSize(): number {
+          return columnResize.labelFontSize ?? 10;
+        },
+        get labelFontFamily(): string {
+          return columnResize.labelFontFamily ?? 'sans-serif';
+        },
+        get labelBackgroundFill(): string {
+          return columnResize.labelBackgroundFill ?? '#3073F2';
+        },
+        get labelBackgroundCornerRadius(): number {
+          return columnResize.labelBackgroundCornerRadius ?? 5;
         }
       };
     }

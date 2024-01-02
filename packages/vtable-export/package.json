@@ -1,6 +1,6 @@
 {
   "name": "@visactor/vtable-export",
-  "version": "0.17.2",
+  "version": "0.17.3",
   "description": "The export util of VTable",
   "author": {
     "name": "VisActor",
@@ -82,6 +82,7 @@
     "node-fetch": "2.6.7",
     "form-data": "~4.0.0",
     "axios": "^1.4.0",
-    "@types/react-is": "^17.0.3"
+    "@types/react-is": "^17.0.3",
+    "rollup-plugin-node-resolve": "5.2.0"
   }
 }

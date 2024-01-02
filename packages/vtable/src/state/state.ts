@@ -362,12 +362,16 @@ export class StateManager {
       headerSelectMode,
       disableSelect,
       disableHeaderSelect
-    } = this.table.options?.select ?? {
-      /** 点击表头单元格时连带body整行或整列选中 或仅选中当前单元格，默认或整行或整列选中*/
-      headerSelectMode: 'inline',
-      disableSelect: false,
-      disableHeaderSelect: false
-    };
+    } = Object.assign(
+      {},
+      {
+        /** 点击表头单元格时连带body整行或整列选中 或仅选中当前单元格，默认或整行或整列选中*/
+        headerSelectMode: 'inline',
+        disableSelect: false,
+        disableHeaderSelect: false
+      },
+      this.table.options.select
+    );
 
     // if (enableRowHighlight && enableColumnHighlight) {
     //   this.select.highlightScope = HighlightScope.cross;
@@ -401,10 +405,9 @@ export class StateManager {
   }
 
   setSortState(sortState: SortState) {
-    this.sort.field = sortState.field as string;
-    this.sort.fieldKey = sortState.fieldKey as string;
-    this.sort.order = sortState.order;
-
+    this.sort.field = sortState?.field as string;
+    this.sort.fieldKey = sortState?.fieldKey as string;
+    this.sort.order = sortState?.order;
     // // 这里有一个问题，目前sortState中一般只传入了fieldKey，但是getCellRangeByField需要field
     // const range = this.table.getCellRangeByField(this.sort.field, 0);
     // if (range) {
@@ -679,6 +682,11 @@ export class StateManager {
     const totalHeight = this.table.getAllRowsHeight();
     top = Math.max(0, Math.min(top, totalHeight - this.table.scenegraph.height));
     top = Math.ceil(top);
+    // 滚动期间清空选中清空
+    if (top !== this.scroll.verticalBarPos) {
+      this.table.stateManager.updateHoverPos(-1, -1);
+    }
+    // this.table.stateManager.updateSelectPos(-1, -1);
     this.scroll.verticalBarPos = top;
 
     // 设置scenegraph坐标
@@ -687,9 +695,6 @@ export class StateManager {
     // 更新scrollbar位置
     const yRatio = top / (totalHeight - this.table.scenegraph.height);
     this.table.scenegraph.component.updateVerticalScrollBarPos(yRatio);
-    // 滚动期间清空选中清空
-    this.table.stateManager.updateHoverPos(-1, -1);
-    // this.table.stateManager.updateSelectPos(-1, -1);
     this.table.fireListeners(TABLE_EVENT_TYPE.SCROLL, {
       scrollTop: this.scroll.verticalBarPos,
       scrollLeft: this.scroll.horizontalBarPos,
@@ -708,6 +713,11 @@ export class StateManager {
 
     left = Math.max(0, Math.min(left, totalWidth - this.table.scenegraph.width));
     left = Math.ceil(left);
+    // 滚动期间清空选中清空
+    if (left !== this.scroll.horizontalBarPos) {
+      this.table.stateManager.updateHoverPos(-1, -1);
+    }
+    // this.table.stateManager.updateSelectPos(-1, -1);
     this.scroll.horizontalBarPos = left;
 
     // 设置scenegraph坐标
@@ -717,9 +727,6 @@ export class StateManager {
     const xRatio = left / (totalWidth - this.table.scenegraph.width);
     this.table.scenegraph.component.updateHorizontalScrollBarPos(xRatio);
 
-    // 滚动期间清空选中清空
-    this.table.stateManager.updateHoverPos(-1, -1);
-    // this.table.stateManager.updateSelectPos(-1, -1);
     this.table.fireListeners(TABLE_EVENT_TYPE.SCROLL, {
       scrollTop: this.scroll.verticalBarPos,
       scrollLeft: this.scroll.horizontalBarPos,

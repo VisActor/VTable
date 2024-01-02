@@ -684,8 +684,8 @@ export class Scenegraph {
    * @param {number} detaX 改变的宽度值
    * @return {*}
    */
-  updateColWidth(col: number, detaX: number, skipUpdateContainer?: boolean) {
-    updateColWidth(this, col, Math.round(detaX));
+  updateColWidth(col: number, detaX: number, skipUpdateContainer?: boolean, skipTableWidthMap?: boolean) {
+    updateColWidth(this, col, Math.round(detaX), skipTableWidthMap);
     // this.updateContainerWidth(col, detaX);
     if (!skipUpdateContainer) {
       // this.updateContainerAttrWidthAndX();
@@ -904,9 +904,9 @@ export class Scenegraph {
     }
   }
 
-  updateRowHeight(row: number, detaY: number) {
+  updateRowHeight(row: number, detaY: number, skipTableHeightMap?: boolean) {
     detaY = Math.round(detaY);
-    updateRowHeight(this, row, detaY);
+    updateRowHeight(this, row, detaY, skipTableHeightMap);
     this.updateContainerHeight(row, detaY);
   }
 
@@ -1093,12 +1093,15 @@ export class Scenegraph {
       const canvasWidth = table.tableNoFrameWidth;
       let actualHeaderWidth = 0;
       for (let col = 0; col < table.colCount; col++) {
-        const colWidth = table.getColWidth(col);
-        if (col < table.frozenColCount || col >= table.colCount - table.rightFrozenColCount) {
+        if (
+          col < table.rowHeaderLevelCount ||
+          (table.isPivotChart() && col >= table.colCount - table.rightFrozenColCount)
+        ) {
+          const colWidth = table.getColWidth(col);
           actualHeaderWidth += colWidth;
         }
       }
-      const startCol = table.frozenColCount;
+      const startCol = table.rowHeaderLevelCount;
       const endCol = table.isPivotChart() ? table.colCount - table.rightFrozenColCount : table.colCount;
       getAdaptiveWidth(canvasWidth - actualHeaderWidth, startCol, endCol, false, [], table, true);
     } else if (table.autoFillWidth) {
@@ -1109,14 +1112,17 @@ export class Scenegraph {
       let actualWidth = 0;
       for (let col = 0; col < table.colCount; col++) {
         const colWidth = table.getColWidth(col);
-        if (col < table.frozenColCount || (table.isPivotChart() && col >= table.colCount - table.rightFrozenColCount)) {
+        if (
+          col < table.rowHeaderLevelCount ||
+          (table.isPivotChart() && col >= table.colCount - table.rightFrozenColCount)
+        ) {
           actualHeaderWidth += colWidth;
         }
         actualWidth += colWidth;
       }
       // 如果内容宽度小于canvas宽度，执行adaptive放大
       if (actualWidth < canvasWidth && actualWidth > actualHeaderWidth) {
-        const startCol = table.frozenColCount;
+        const startCol = table.rowHeaderLevelCount;
         const endCol = table.isPivotChart() ? table.colCount - table.rightFrozenColCount : table.colCount;
         getAdaptiveWidth(canvasWidth - actualHeaderWidth, startCol, endCol, false, [], table, true);
       }
@@ -1190,7 +1196,7 @@ export class Scenegraph {
       for (let row = 0; row < table.rowCount; row++) {
         const rowHeight = table.getRowHeight(row);
         if (
-          row < table.frozenRowCount ||
+          row < table.columnHeaderLevelCount ||
           (table.isPivotChart() && row >= table.rowCount - table.bottomFrozenRowCount)
         ) {
           actualHeaderHeight += rowHeight;
@@ -1204,14 +1210,13 @@ export class Scenegraph {
         (this._dealAutoFillHeightOriginRowsHeight ?? actualHeight) < canvasHeight &&
         actualHeight - actualHeaderHeight > 0
       ) {
+        const startRow = table.columnHeaderLevelCount;
+        const endRow = table.isPivotChart() ? table.rowCount - table.bottomFrozenRowCount : table.rowCount;
         const factor = (canvasHeight - actualHeaderHeight) / (actualHeight - actualHeaderHeight);
-        for (let row = table.frozenRowCount; row < table.rowCount - table.bottomFrozenRowCount; row++) {
+        for (let row = startRow; row < endRow; row++) {
           let rowHeight;
-          if (row === table.rowCount - table.bottomFrozenRowCount - 1) {
-            rowHeight =
-              canvasHeight -
-              actualHeaderHeight -
-              table.getRowsHeight(table.frozenRowCount, table.rowCount - table.bottomFrozenRowCount - 2);
+          if (row === endRow - 1) {
+            rowHeight = canvasHeight - actualHeaderHeight - table.getRowsHeight(startRow, endRow - 2);
           } else {
             rowHeight = Math.round(table.getRowHeight(row) * factor);
           }
@@ -1341,7 +1346,7 @@ export class Scenegraph {
     this.leftBottomCornerGroup.setDeltaWidth(cornerX - this.leftBottomCornerGroup.attribute.width);
     //TODO 可能有影响
     this.colHeaderGroup.setDeltaWidth(colHeaderX - this.colHeaderGroup.attribute.width);
-    this.rightFrozenGroup.setDeltaWidth(colHeaderX - this.table.getRightFrozenColsWidth());
+    // this.rightFrozenGroup.setDeltaWidth(colHeaderX - this.table.getRightFrozenColsWidth());
     this.rowHeaderGroup.setDeltaWidth(rowHeaderX - this.rowHeaderGroup.attribute.width);
     this.bottomFrozenGroup.setDeltaWidth(rowHeaderX - this.bottomFrozenGroup.attribute.width);
     this.rightFrozenGroup.setDeltaWidth(rightX - this.table.getRightFrozenColsWidth());

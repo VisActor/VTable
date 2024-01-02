@@ -39,19 +39,19 @@ export function getCellBorder(cellStyle: CellStyle): Partial<ExcelJS.Borders> {
     if (!((_strokeArrayColor && !_strokeArrayColor[1]) || (_strokeArrayWidth && !_strokeArrayWidth[1]))) {
       border.right = {
         style: getBorderStyle((_strokeArrayWidth?.[1] as number) ?? (borderLineWidth as number), borderLineDash),
-        color: getColor(_strokeArrayColor?.[1] as string)
+        color: getColor((_strokeArrayColor?.[1] as string) ?? (borderColor as string))
       };
     }
     if (!((_strokeArrayColor && !_strokeArrayColor[2]) || (_strokeArrayWidth && !_strokeArrayWidth[2]))) {
       border.bottom = {
         style: getBorderStyle((_strokeArrayWidth?.[2] as number) ?? (borderLineWidth as number), borderLineDash),
-        color: getColor(_strokeArrayColor?.[2] as string)
+        color: getColor((_strokeArrayColor?.[2] as string) ?? (borderColor as string))
       };
     }
     if (!((_strokeArrayColor && !_strokeArrayColor[3]) || (_strokeArrayWidth && !_strokeArrayWidth[3]))) {
       border.left = {
         style: getBorderStyle((_strokeArrayWidth?.[3] as number) ?? (borderLineWidth as number), borderLineDash),
-        color: getColor(_strokeArrayColor?.[3] as string)
+        color: getColor((_strokeArrayColor?.[3] as string) ?? (borderColor as string))
       };
     }
     return border;

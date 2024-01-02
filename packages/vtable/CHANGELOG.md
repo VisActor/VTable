@@ -1,6 +1,52 @@
 # Change Log - @visactor/vtable
 
-This log was last generated on Thu, 21 Dec 2023 11:54:58 GMT and should not be manually modified.
+This log was last generated on Fri, 29 Dec 2023 12:31:07 GMT and should not be manually modified.
+
+## 0.17.3
+Fri, 29 Dec 2023 12:31:07 GMT
+
+### Updates
+
+- fix: setRecords lose hover state  #783
+
+
+- feat: add body index convert with table index #789
+
+
+- fix:  transpose list demo when records has 10000 performance problem #790
+
+
+- fix: setRecords recomputeColWidth problems #796
+
+
+- fix: set disableSelect drag interaction occor error #799
+
+
+- feat: mergeCell support custom compare function #804
+
+
+- fix: tooltip style not work #805
+
+
+- fix: pivot table pagination.perPageCount modify #807
+
+
+- fix: [Bug] adaptive mode compute problem when has frozencol and rightFrozenCol #820
+
+
+- fix: fix axis render update problem
+- feat: add column resize label theme
+- fix: fix select update when change frozen
+- fix: pivot table use icon bug
+
+
+- fix: fix sort icon update
+- refactor: update vrender event verison use scrollDrag
+
+
+- chore: update vrender version #785
+
+
 
 ## 0.17.2
 Thu, 21 Dec 2023 11:54:58 GMT

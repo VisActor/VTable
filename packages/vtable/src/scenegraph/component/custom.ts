@@ -395,11 +395,13 @@ export function decodeReactDom(dom: any) {
   const g = type({ attribute });
   g.id = attribute.id;
   g.name = attribute.name;
-  children &&
-    children.length &&
+  if (children && children.length) {
     children.forEach((item: any) => {
       const c = decodeReactDom(item);
       g.add(c);
     });
+  } else if (children) {
+    g.add(decodeReactDom(children));
+  }
   return g;
 }

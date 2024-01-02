@@ -2349,8 +2349,10 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
       isValid(this.pagination?.currentPage)
     ) {
       //调整perPageCount的数量 需要是indicatorKeys.length的整数倍
-      this.pagination.perPageCount =
-        Math.ceil(this.pagination.perPageCount / this.indicatorKeys.length) * this.indicatorKeys.length;
+      if (this.indicatorsAsCol === false) {
+        this.pagination.perPageCount =
+          Math.ceil(this.pagination.perPageCount / this.indicatorKeys.length) * this.indicatorKeys.length;
+      }
       const { perPageCount, currentPage } = this.pagination;
       // const startIndex = Math.ceil((perPageCount * (currentPage || 0)) / this.indicatorKeys.length);
       // const endIndex = startIndex + Math.ceil(perPageCount / this.indicatorKeys.length);

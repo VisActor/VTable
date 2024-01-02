@@ -673,6 +673,10 @@ export interface BaseTableAPI {
   getBodyVisibleRowRange: () => { rowStart: number; rowEnd: number };
 
   hasCustomRenderOrLayout: () => boolean;
+  /** 根据表格单元格的行列号 获取在body部分的列索引及行索引 */
+  getBodyIndexByTableIndex: (col: number, row: number) => CellAddress;
+  /** 根据body部分的列索引及行索引，获取单元格的行列号 */
+  getTableIndexByBodyIndex: (col: number, row: number) => CellAddress;
 }
 export interface ListTableProtected extends IBaseTableProtected {
   /** 表格数据 */
