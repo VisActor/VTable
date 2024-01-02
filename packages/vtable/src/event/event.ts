@@ -41,7 +41,7 @@ export class EventManager {
   gesture: Gesture;
   handleTextStickBindId: number;
 
-  //鼠标事件记录
+  //鼠标事件记录。 PointerMove敏感度太高了 记录下上一个鼠标位置 在接收到PointerMove事件时做判断 是否到到触发框选或者移动表头操作的标准，防止误触
   LastPointerXY: { x: number; y: number };
   LastBodyPointerXY: { x: number; y: number };
   isDown = false;
