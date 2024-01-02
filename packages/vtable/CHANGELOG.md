@@ -1,6 +1,13 @@
 # Change Log - @visactor/vtable
 
-This log was last generated on Fri, 29 Dec 2023 12:31:07 GMT and should not be manually modified.
+This log was last generated on Tue, 02 Jan 2024 09:23:54 GMT and should not be manually modified.
+
+## 0.17.4
+Tue, 02 Jan 2024 09:23:54 GMT
+
+### Updates
+
+- fix: fix frozen chart cell active problem 
 
 ## 0.17.3
 Fri, 29 Dec 2023 12:31:07 GMT
