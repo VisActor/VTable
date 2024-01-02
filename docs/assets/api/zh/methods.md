@@ -410,6 +410,20 @@ setRecords(records: Array<any>, sort?: SortState | SortState[]) //** 基本表�
 
 {{ use: ICellHeaderPaths() }}
 
+## getCellHeaderTreeNodes(Function)
+
+根据行列号获取表头tree节点，包含了用户在自定义树rowTree及columnTree树上的自定义属性（也是内部布局树的节点，获取后请不要随意修改）
+
+```
+  /**
+   * 根据行列号获取表头tree节点，包含了用户在自定义树rowTree及columnTree树上的自定义属性（也是内部布局树的节点，获取后请不要随意修改）
+   * @param col
+   * @param row
+   * @returns ICellHeaderPaths
+   */
+  getCellHeaderTreeNodes(col: number, row: number)=> ICellHeaderPaths
+```
+
 ## getCellAddress(Function)
 
 根据数据和 field 属性字段名称获取 body 中某条数据的行列号。目前仅支持基本表格ListTable
@@ -507,7 +521,7 @@ enum HierarchyState {
 }
 ```
 
-## getLayouRowTree(Function)
+## getLayoutRowTree(Function)
 ** PivotTable 专有 ** 
 
 获取表格行头树形结构
@@ -516,10 +530,10 @@ enum HierarchyState {
    * 获取表格行树状结构
    * @returns
    */
-  getLayouRowTree() : LayouTreeNode[]
+  getLayoutRowTree() : LayouTreeNode[]
 ```
 
-## getLayouRowTreeCount(Function)
+## getLayoutRowTreeCount(Function)
 ** PivotTable 专有 ** 
 
 获取表格行头树形结构的占位的总节点数。
@@ -530,7 +544,7 @@ enum HierarchyState {
    * 获取表格行头树形结构的占位的总节点数。
    * @returns
    */
-  getLayouRowTreeCount() : number
+  getLayoutRowTreeCount() : number
 ```
 
 ## updateSortState(Function)

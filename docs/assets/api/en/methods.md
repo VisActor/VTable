@@ -418,6 +418,21 @@ Get the path to the row list header
 
 {{ use: ICellHeaderPaths() }}
 
+
+## getCellHeaderTreeNodes(Function)
+
+Obtain the header tree node based on the row and column number, which includes the user's custom attributes on the custom tree rowTree and columnTree trees (it is also the node of the internal layout tree, please do not modify it at will after obtaining it)
+
+```
+  /**
+   * Obtain the header tree node based on the row and column number, which includes the user's custom attributes on the custom tree rowTree and columnTree trees (it is also the node of the internal layout tree, please do not modify it at will after obtaining it)
+   * @param col
+   * @param row
+   * @returns ICellHeaderPaths
+   */
+  getCellHeaderTreeNodes(col: number, row: number)=> ICellHeaderPaths
+```
+
 ## getCellAddress(Function)
 
 Get the row and column number of a piece of data in the body based on the data and field attribute field names. Currently only the basic table ListTable is supported.
@@ -513,7 +528,7 @@ enum HierarchyState {
   none = 'none'
 }
 ```
-## getLayouRowTree(Function)
+## getLayoutRowTree(Function)
 ** PivotTable Proprietary **
 
 Get the table row header tree structure
@@ -522,10 +537,10 @@ Get the table row header tree structure
    * Get the table row tree structure
    * @returns
    */
-  getLayouRowTree() : LayoutTreeNode[]
+  getLayoutRowTree() : LayoutTreeNode[]
 ```
 
-## getLayouRowTreeCount(Function)
+## getLayoutRowTreeCount(Function)
 ** PivotTable Proprietary **
 
 Get the total number of nodes occupying the table row header tree structure.
@@ -536,7 +551,7 @@ Note: The logic distinguishes between flat and tree hierarchies.
    * Get the total number of nodes occupying the table row header tree structure.
    * @returns
    */
-  getLayouRowTreeCount() : number
+  getLayoutRowTreeCount() : number
 ```
 
 ## updateSortState(Function)
