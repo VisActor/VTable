@@ -412,7 +412,7 @@ setRecords(records: Array<any>, sort?: SortState | SortState[]) //** 基本表�
 
 ## getCellHeaderTreeNodes(Function)
 
-根据行列号获取表头tree节点，包含了用户在自定义树rowTree及columnTree树上的自定义属性（也是内部布局树的节点，获取后请不要随意修改）
+根据行列号获取表头tree节点，包含了用户在自定义树rowTree及columnTree树上的自定义属性（也是内部布局树的节点，获取后请不要随意修改）。一般情况下用getCellHeaderPaths即可。
 
 ```
   /**

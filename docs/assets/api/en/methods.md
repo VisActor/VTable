@@ -421,7 +421,7 @@ Get the path to the row list header
 
 ## getCellHeaderTreeNodes(Function)
 
-Obtain the header tree node based on the row and column number, which includes the user's custom attributes on the custom tree rowTree and columnTree trees (it is also the node of the internal layout tree, please do not modify it at will after obtaining it)
+Obtain the header tree node based on the row and column number, which includes the user's custom attributes on the custom tree rowTree and columnTree trees (it is also the node of the internal layout tree, please do not modify it at will after obtaining it).Under normal circumstances, just use getCellHeaderPaths.
 
 ```
   /**
