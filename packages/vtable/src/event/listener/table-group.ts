@@ -26,10 +26,8 @@ import type { CheckBox, CheckboxAttributes } from '@visactor/vrender-components'
 export function bindTableGroupListener(eventManager: EventManager) {
   const table = eventManager.table;
   const stateManager = table.stateManager;
-  document.body.addEventListener('mousedown', e => {
-    console.log('body mousedown');
-  });
-  // 有被阻止冒泡的场景 就触发不到这里的事件了
+
+  // 有被阻止冒泡的场景 就触发不到这里的事件了 所以这个LastBodyPointerXY变量的赋值在scrollbar的down事件也进行了处理
   document.body.addEventListener('pointerdown', e => {
     console.log('body pointerdown');
     table.eventManager.LastBodyPointerXY = { x: e.x, y: e.y };
