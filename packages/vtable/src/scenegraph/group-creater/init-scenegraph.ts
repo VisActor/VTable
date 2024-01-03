@@ -13,7 +13,7 @@ export function initSceneGraph(scene: Scenegraph) {
   colHeaderGroup.role = 'col-header';
   scene.colHeaderGroup = colHeaderGroup;
 
-  const cornerHeaderGroup = createContainerGroup(0, 0);
+  const cornerHeaderGroup = createContainerGroup(0, 0, true);
   cornerHeaderGroup.role = 'corner-header';
   scene.cornerHeaderGroup = cornerHeaderGroup;
 
@@ -37,15 +37,15 @@ export function initSceneGraph(scene: Scenegraph) {
   componentGroup.role = 'component';
   scene.componentGroup = componentGroup;
 
-  const rightTopCornerGroup = createContainerGroup(0, 0);
+  const rightTopCornerGroup = createContainerGroup(0, 0, true);
   rightTopCornerGroup.role = 'corner-right-top-header';
   scene.rightTopCornerGroup = rightTopCornerGroup;
 
-  const rightBottomCornerGroup = createContainerGroup(0, 0);
+  const rightBottomCornerGroup = createContainerGroup(0, 0, true);
   rightBottomCornerGroup.role = 'corner-right-bottom-header';
   scene.rightBottomCornerGroup = rightBottomCornerGroup;
 
-  const leftBottomCornerGroup = createContainerGroup(0, 0);
+  const leftBottomCornerGroup = createContainerGroup(0, 0, true);
   leftBottomCornerGroup.role = 'corner-left-bottom-header';
   scene.leftBottomCornerGroup = leftBottomCornerGroup;
 
