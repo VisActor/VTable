@@ -228,4 +228,8 @@ Editing trigger timing support: double-click a cell to enter editing, click a ce
   completeEditCell: () => void;
 ```
 
+## Header Editing
+
+The basic table supports editing the display title in the header. You can enable this by configuring `headerEditor` globally or within a column. The usage is the same as `editor`.
+
 Through the above steps, you can create a table with editing functions, select the appropriate editor type according to business needs, customize the editor, listen to editing events, and obtain edited data. In this way, users can easily edit the data in the table, and you can process the edited data accordingly.

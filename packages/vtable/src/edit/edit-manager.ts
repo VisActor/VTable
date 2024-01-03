@@ -49,8 +49,8 @@ export class EditManeger {
     });
   }
   startEditCell(col: number, row: number) {
-    //表头不允许编辑
-    if (this.table.isHeader(col, row)) {
+    //透视表的表头不允许编辑
+    if (this.table.isPivotTable() && this.table.isHeader(col, row)) {
       return;
     }
     const editor = (this.table as ListTableAPI).getEditor(col, row);
@@ -60,11 +60,13 @@ export class EditManeger {
         console.warn("VTable Warn: cell has config custom render or layout, can't be edited");
         return;
       }
-      const range = this.table.getCellRange(col, row);
-      const isMerge = range.start.col !== range.end.col || range.start.row !== range.end.row;
-      if (isMerge) {
-        console.warn("VTable Warn: this is merge cell, can't be edited");
-        return;
+      if (!this.table.isHeader(col, row)) {
+        const range = this.table.getCellRange(col, row);
+        const isMerge = range.start.col !== range.end.col || range.start.row !== range.end.row;
+        if (isMerge) {
+          console.warn("VTable Warn: this is merge cell, can't be edited");
+          return;
+        }
       }
       editor.bindSuccessCallback?.(() => {
         this.completeEdit();
@@ -72,7 +74,7 @@ export class EditManeger {
       this.editingEditor = editor;
       this.editCell = { col, row };
       const dataValue = this.table.getCellOriginValue(col, row);
-      const rect = this.table.getCellRelativeRect(col, row);
+      const rect = this.table.getCellRangeRelativeRect(this.table.getCellRange(col, row));
       editor.beginEditing(
         this.table.getElement(),
         { rect: { left: rect.left, top: rect.top, width: rect.width, height: rect.height } },

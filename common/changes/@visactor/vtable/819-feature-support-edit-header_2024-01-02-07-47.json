@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "comment": "feat: support edit header title #819\n\n",
+      "type": "none",
+      "packageName": "@visactor/vtable"
+    }
+  ],
+  "packageName": "@visactor/vtable",
+  "email": "892739385@qq.com"
+}

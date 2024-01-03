@@ -219,5 +219,12 @@ editor?: string | IEditor | ((args: BaseCellInfo & { table: BaseTableAPI }) => s
 ```
 其中IEditor是@visactor/vtable-editors中定义的编辑器接口，具体可以参看源码：https://github.com/VisActor/VTable/blob/feat/editCell/packages/vtable-editors/src/types.ts。
 
+${prefix} headerEditor (string|Object|Function)
+
+配置该列表头显示标题title
+```
+headerEditor?: string | IEditor | ((args: BaseCellInfo & { table: BaseTableAPI }) => string | IEditor);
+```
+
 ${prefix} columns (Array)
 同上层的列配置数组，嵌套结构来描述列分组关系。

@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vtable",
+      "comment": "fix: add group clip in body",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vtable"
+}
