@@ -26,8 +26,10 @@ export function adjustMoveHeaderTarget(source: CellAddress, target: CellAddress,
     // tree模式[透视表行表头]
     const layoutMap = table.internalProps.layoutMap as PivotHeaderLayoutMap;
     if (layoutMap.rowHierarchyType === 'tree') {
-      const sourceRowHeaderPaths = layoutMap.getCellHeaderPathsWidthTreeNode(source.col, source.row).rowHeaderPaths;
-      const targetRowHeaderPaths = layoutMap.getCellHeaderPathsWidthTreeNode(target.col, target.row).rowHeaderPaths;
+      const sourceRowHeaderPaths = layoutMap.getCellHeaderPathsWidthTreeNode(source.col, source.row)
+        .rowHeaderPaths as any;
+      const targetRowHeaderPaths = layoutMap.getCellHeaderPathsWidthTreeNode(target.col, target.row)
+        .rowHeaderPaths as any;
       if (sourceRowHeaderPaths.length <= targetRowHeaderPaths.length) {
         const targetPathNode = targetRowHeaderPaths[sourceRowHeaderPaths.length - 1]; //找到共同层级节点
         // 根据这个目标节点找到结束的row index

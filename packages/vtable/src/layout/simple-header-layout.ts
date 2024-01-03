@@ -930,4 +930,10 @@ export class SimpleHeaderLayoutMap implements LayoutMapAPI {
   clearCellRangeMap() {
     this._cellRangeMap.clear();
   }
+
+  updateColumnTitle(col: number, row: number, title: string) {
+    const define = this._table.internalProps.layoutMap.getHeader(col, row);
+    define.title = title;
+    define.define.title = title;
+  }
 }

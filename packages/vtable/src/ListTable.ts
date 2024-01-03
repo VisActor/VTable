@@ -141,6 +141,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
     this.scenegraph.clearCells();
     this.headerStyleCache = new Map();
     this.bodyStyleCache = new Map();
+    this.bodyBottomStyleCache = new Map();
     this.scenegraph.createSceneGraph();
     this.stateManager.updateHoverPos(oldHoverState.col, oldHoverState.row);
     this.renderAsync();
@@ -871,7 +872,9 @@ export class ListTable extends BaseTable implements ListTableAPI {
   /** 获取单元格对应的编辑器 */
   getEditor(col: number, row: number) {
     const define = this.getBodyColumnDefine(col, row);
-    let editorDefine = define?.editor ?? this.options.editor;
+    let editorDefine = this.isHeader(col, row)
+      ? define?.headerEditor ?? this.options.headerEditor
+      : define?.editor ?? this.options.editor;
 
     if (typeof editorDefine === 'function') {
       const arg = {
@@ -892,9 +895,19 @@ export class ListTable extends BaseTable implements ListTableAPI {
   changeCellValue(col: number, row: number, value: string | number | null) {
     const recordIndex = this.getRecordShowIndexByCell(col, row);
     const { field } = this.internalProps.layoutMap.getBody(col, row);
-    this.dataSource.changeFieldValue(value, recordIndex, field, col, row, this);
+    const beforeChangeValue = this.getCellRawValue(col, row);
+    if (this.isHeader(col, row)) {
+      this.internalProps.layoutMap.updateColumnTitle(col, row, value as string);
+    } else {
+      this.dataSource.changeFieldValue(value, recordIndex, field, col, row, this);
+    }
     // const cell_value = this.getCellValue(col, row);
-    this.scenegraph.updateCellContent(col, row);
+    const range = this.getCellRange(col, row);
+    for (let sCol = range.start.col; sCol <= range.end.col; sCol++) {
+      for (let sRow = range.start.row; sRow <= range.end.row; sRow++) {
+        this.scenegraph.updateCellContent(sCol, sRow);
+      }
+    }
     if (this.widthMode === 'adaptive' || (this.autoFillWidth && this.getAllColsWidth() <= this.tableNoFrameWidth)) {
       if (this.internalProps._widthResizedColMap.size === 0) {
         //如果没有手动调整过行高列宽 则重新计算一遍并重新分配
@@ -917,7 +930,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
     this.fireListeners(TABLE_EVENT_TYPE.CHANGE_CELL_VALUE, {
       col,
       row,
-      rawValue: this.getCellRawValue(col, row),
+      rawValue: beforeChangeValue,
       changedValue: this.getCellOriginValue(col, row)
     });
     this.scenegraph.updateNextFrame();

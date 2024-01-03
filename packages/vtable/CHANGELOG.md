@@ -1,6 +1,28 @@
 # Change Log - @visactor/vtable
 
-This log was last generated on Tue, 02 Jan 2024 09:23:54 GMT and should not be manually modified.
+This log was last generated on Wed, 03 Jan 2024 12:50:32 GMT and should not be manually modified.
+
+## 0.17.5
+Wed, 03 Jan 2024 12:50:32 GMT
+
+### Updates
+
+- feat: support edit header title #819
+
+
+- fix: setRecords process scrollTop update scenegraph #831
+
+
+- refactor: list table bottom row can not use bottomFrozenStyle #836
+
+
+- feat: add api getCellHeaderTreeNodes for pivotTable #839
+
+
+- refactor: add onVChartEvent for BaseTable #843
+
+
+- fix: add group clip in body
 
 ## 0.17.4
 Tue, 02 Jan 2024 09:23:54 GMT

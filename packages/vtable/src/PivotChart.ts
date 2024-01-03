@@ -965,50 +965,6 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
     });
   }
 
-  /**
-   * 监听vchart事件
-   * @param type vchart事件类型
-   * @param listener vchart事件监听器
-   * @returns 事件监听器id
-   */
-  onVChartEvent(type: string, callback: AnyFunction): void;
-  onVChartEvent(type: string, query: any, callback: AnyFunction): void;
-  onVChartEvent(type: string, query?: any, callback?: AnyFunction): void {
-    if (!this._chartEventMap[type]) {
-      this._chartEventMap[type] = [];
-    }
-    if (typeof query === 'function') {
-      this._chartEventMap[type].push({ callback: query });
-    } else {
-      this._chartEventMap[type].push({ callback, query });
-    }
-  }
-
-  offVChartEvent(type: string, callback?: AnyFunction): void {
-    // delete this._chartEventMap[type];
-    if (!this._chartEventMap[type]) {
-      return;
-    }
-    if (callback) {
-      this._chartEventMap[type] = this._chartEventMap[type].filter(e => e.callback !== callback);
-    } else {
-      this._chartEventMap[type] = [];
-    }
-  }
-  /** 给activeChartInstance逐个绑定chart用户监听事件 */
-  _bindChartEvent(activeChartInstance: any) {
-    if (activeChartInstance) {
-      for (const key in this._chartEventMap) {
-        (this._chartEventMap[key] || []).forEach(e => {
-          if (e.query) {
-            activeChartInstance.on(key, e.query, e.callback);
-          } else {
-            activeChartInstance.on(key, e.callback);
-          }
-        });
-      }
-    }
-  }
   /** 更新数据过滤规则，适用场景：点击图例项后 更新过滤规则 来更新图表 */
   updateFilterRules(filterRules: FilterRules) {
     this.internalProps.dataConfig.filterRules = filterRules;
