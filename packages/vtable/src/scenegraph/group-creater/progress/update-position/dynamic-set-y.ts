@@ -270,22 +270,24 @@ function updatePartRowPosition(startRow: number, endRow: number, direction: 'up'
 }
 
 function updateCellGroupPosition(colGroup: Group, direction: 'up' | 'down', proxy: SceneProxy) {
-  if (direction === 'up') {
-    const cellGroup = colGroup.firstChild as Group;
-    proxy.updateCellGroupPosition(
-      cellGroup,
-      (colGroup.lastChild as Group).row + 1,
-      (colGroup.lastChild as Group).attribute.y + proxy.table.getRowHeight((colGroup.lastChild as Group).row) // (colGroup.lastChild as Group).attribute.height
-    );
-    colGroup.appendChild(cellGroup);
-  } else {
-    const cellGroup = colGroup.lastChild as Group;
-    proxy.updateCellGroupPosition(
-      cellGroup,
-      (colGroup.firstChild as Group).row - 1,
-      (colGroup.firstChild as Group).attribute.y - proxy.table.getRowHeight((cellGroup as Group).row) // cellGroup.attribute.height
-    );
-    colGroup.insertBefore(cellGroup, colGroup.firstChild);
+  if (colGroup.childrenCount >= 1) {
+    if (direction === 'up') {
+      const cellGroup = colGroup.firstChild as Group;
+      proxy.updateCellGroupPosition(
+        cellGroup,
+        (colGroup.lastChild as Group).row + 1,
+        (colGroup.lastChild as Group).attribute.y + proxy.table.getRowHeight((colGroup.lastChild as Group).row) // (colGroup.lastChild as Group).attribute.height
+      );
+      colGroup.appendChild(cellGroup);
+    } else {
+      const cellGroup = colGroup.lastChild as Group;
+      proxy.updateCellGroupPosition(
+        cellGroup,
+        (colGroup.firstChild as Group).row - 1,
+        (colGroup.firstChild as Group).attribute.y - proxy.table.getRowHeight((cellGroup as Group).row) // cellGroup.attribute.height
+      );
+      colGroup.insertBefore(cellGroup, colGroup.firstChild);
+    }
   }
 }
 
