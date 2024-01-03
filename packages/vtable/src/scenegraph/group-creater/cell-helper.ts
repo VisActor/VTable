@@ -406,6 +406,7 @@ export function updateCell(col: number, row: number, table: BaseTableAPI, addNew
       strokeArrayWidth: (cellTheme?.group as any)?.strokeArrayWidth ?? undefined,
       strokeArrayColor: (cellTheme?.group as any)?.strokeArrayColor ?? undefined,
       cursor: (cellTheme?.group as any)?.cursor ?? undefined,
+      cornerRadius: cellTheme?.group?.cornerRadius ?? 0,
 
       y: table.scenegraph.getCellGroupY(row)
     } as any);

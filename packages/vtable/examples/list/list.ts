@@ -315,10 +315,9 @@ export function createTable() {
     frozenColCount: 1,
     bottomFrozenRowCount: 2,
     rightFrozenColCount: 2,
-    overscrollBehavior: 'none',
-    autoWrapText: true,
-    heightMode: 'autoHeight',
-    dragHeaderMode: 'all'
+    overscrollBehavior: 'none'
+    // autoWrapText: true
+    // heightMode: 'autoHeight'
     // widthMode: 'adaptive'
   };
   const tableInstance = new VTable.ListTable(option);

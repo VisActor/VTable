@@ -9,7 +9,7 @@ import type {
   IDrawContext,
   IRectGraphicAttribute
 } from '@visactor/vrender';
-import { BaseRenderContributionTime, injectable } from '@visactor/vrender';
+import { BaseRenderContributionTime, createRectPath, injectable } from '@visactor/vrender';
 import type { Group } from '../group';
 import { getCellHoverColor } from '../../../state/hover/is-cell-hover';
 import type { BaseTableAPI } from '../../../ts-types/base-table';
@@ -598,7 +598,8 @@ export class AdjustPosGroupAfterRenderContribution implements IGroupRenderContri
       lineDash = groupAttribute.lineDash,
       strokeArrayWidth = (groupAttribute as any).strokeArrayWidth,
       strokeArrayColor = (groupAttribute as any).strokeArrayColor,
-      notAdjustPos
+      notAdjustPos,
+      cornerRadius = groupAttribute.cornerRadius
     } = group.attribute as any;
 
     const { width = groupAttribute.width, height = groupAttribute.height } = group.attribute;
@@ -643,7 +644,12 @@ export class AdjustPosGroupAfterRenderContribution implements IGroupRenderContri
       context.beginPath();
       x = Math.floor(x) + 0.5;
       y = Math.floor(y) + 0.5;
-      context.rect(x, y, widthFroDraw, heightFroDraw);
+      if (cornerRadius) {
+        // 测试后，cache对于重绘性能提升不大，但是在首屏有一定性能损耗，因此rect不再使用cache
+        createRectPath(context, x, y, widthFroDraw, heightFroDraw, cornerRadius);
+      } else {
+        context.rect(x, y, widthFroDraw, heightFroDraw);
+      }
       context.setStrokeStyle(group, group.attribute, x, y, groupAttribute);
       context.stroke();
     }
