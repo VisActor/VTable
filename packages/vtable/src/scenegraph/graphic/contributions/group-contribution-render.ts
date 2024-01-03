@@ -800,6 +800,34 @@ export class ClipBodyGroupBeforeRenderContribution implements IGroupRenderContri
       const height = table.getBottomFrozenRowsHeight();
       context.beginPath();
       context.rect(x, y, width, height);
+    } else if ((group as Group).role === 'corner-header') {
+      const x = 0;
+      const y = 0;
+      const width = table.getFrozenColsWidth();
+      const height = table.getFrozenRowsHeight();
+      context.beginPath();
+      context.rect(x, y, width, height);
+    } else if ((group as Group).role === 'corner-right-top-header') {
+      const x = 0;
+      const y = 0;
+      const width = table.getRightFrozenColsWidth();
+      const height = table.getFrozenRowsHeight();
+      context.beginPath();
+      context.rect(x, y, width, height);
+    } else if ((group as Group).role === 'corner-right-bottom-header') {
+      const x = 0;
+      const y = 0;
+      const width = table.getRightFrozenColsWidth();
+      const height = table.getBottomFrozenRowsHeight();
+      context.beginPath();
+      context.rect(x, y, width, height);
+    } else if ((group as Group).role === 'corner-left-bottom-header') {
+      const x = 0;
+      const y = 0;
+      const width = table.getFrozenColsWidth();
+      const height = table.getBottomFrozenRowsHeight();
+      context.beginPath();
+      context.rect(x, y, width, height);
     }
   }
 }
