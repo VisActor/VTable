@@ -271,8 +271,13 @@ export class Group extends VRenderGroup {
       this.role === 'row-header' ||
       this.role === 'col-header' ||
       this.role === 'right-frozen' ||
-      this.role === 'bottom-frozen'
+      this.role === 'bottom-frozen' ||
+      this.role === 'corner-header' ||
+      this.role === 'corner-right-top-header' ||
+      this.role === 'corner-right-bottom-header' ||
+      this.role === 'corner-left-bottom-header'
     ) {
+      // Infinity bounds for manual clip group
       this._AABBBounds.setValue(-Infinity, -Infinity, Infinity, Infinity);
       // 更新bounds之后需要设置父节点，否则tag丢失
       this.parent && this.parent.addChildUpdateBoundTag();
