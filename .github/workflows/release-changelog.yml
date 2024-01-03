@@ -1,0 +1,67 @@
+name: Release changelog
+
+on:
+  release:
+    types: [published]
+
+jobs:
+  update-changelog-after-publish-a-release:
+    name: GitHub Actions Test
+    runs-on: macOS-latest
+
+    strategy:
+      matrix:
+        node-version: [18.x]
+
+    steps:
+      - name: Checkout
+        id: checkout
+        uses: actions/checkout@v3
+      - run: |
+          git config user.name ${{ github.actor }}
+          git config user.email ${{ github.actor }}@users.noreply.github.com
+
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'npm'
+          cache-dependency-path: './common/config/rush/pnpm-lock.yaml'
+
+          # Install rush
+      - name: Install rush
+        run: node common/scripts/install-run-rush.js install --bypass-policy
+
+      - name: Create branch
+        run: |
+          git status
+          git fetch origin develop:develop
+          git checkout develop
+          git status
+          git checkout -b docs/generate-changelog-${{  github.event.release.tag_name }}
+
+      - name: generate changelog
+        id: generate-changelog
+        uses: xile611/collect-release-changelog@main
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          folder: ./docs/assets/changelog
+          langs: 'en,zh'
+          tag_name: ${{github.event.release.tag_name}}
+          file_name: changelog.md
+
+      - name: Push branch
+        run: |
+          git add .
+          git commit -m "docs: generate changelog of release ${{  github.event.release.tag_name }}" -n
+          git push origin docs/generate-changelog-${{  github.event.release.tag_name }}
+
+      - name: Create Pull Request
+        uses: dustinirving/create-pr@v1.0.2
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          title: '[Auto changelog] changlog of ${{  github.event.release.tag_name }}'
+          base: develop
+          head: 'docs/generate-changelog-${{  github.event.release.tag_name }}'
+          labels: changelog
+          body: 'update changelog of ${{  github.event.release.tag_name }}'
