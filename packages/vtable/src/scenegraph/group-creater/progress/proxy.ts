@@ -443,7 +443,10 @@ export class SceneProxy {
     } else if (y > yLimitBottom && this.rowEnd === this.bodyBottomRow) {
       // 执行真实body group坐标修改
       this.table.scenegraph.setBodyAndRowHeaderY(-y);
-    } else if (this.table.scenegraph.bodyGroup.firstChild.childrenCount === 0) {
+    } else if (
+      !this.table.scenegraph.bodyGroup.firstChild ||
+      this.table.scenegraph.bodyGroup.firstChild.childrenCount === 0
+    ) {
       // 兼容异步加载数据promise的情况 childrenCount=0 如果用户立即调用setScrollTop执行dynamicSetY会出错
       this.table.scenegraph.setBodyAndRowHeaderY(-y);
     } else {
@@ -462,7 +465,10 @@ export class SceneProxy {
     } else if (x > xLimitRight && this.colEnd === this.bodyRightCol) {
       // 执行真实body group坐标修改
       this.table.scenegraph.setBodyAndColHeaderX(-x);
-    } else if (this.table.scenegraph.bodyGroup.firstChild.childrenCount === 0) {
+    } else if (
+      !this.table.scenegraph.bodyGroup.firstChild ||
+      this.table.scenegraph.bodyGroup.firstChild.childrenCount === 0
+    ) {
       // 兼容异步加载数据promise的情况 childrenCount=0 如果用户立即调用setScrollLeft执行dynamicSetX会出错
       this.table.scenegraph.setBodyAndColHeaderX(-x);
     } else {
