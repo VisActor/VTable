@@ -933,6 +933,17 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
     const layoutMap = this.internalProps.layoutMap;
     return layoutMap.getLayoutRowTreeCount();
   }
+  /**
+   * 根据行列号获取表头tree节点，包含了用户在自定义树rowTree及columnTree树上的自定义属性（也是内部布局树的节点，获取后请不要随意修改）
+   * @param col
+   * @param row
+   * @returns
+   */
+  getCellHeaderTreeNodes(col: number, row: number): ICellHeaderPaths {
+    const layoutMap = this.internalProps.layoutMap;
+    const headerNodes = layoutMap.getCellHeaderPathsWidthTreeNode(col, row);
+    return headerNodes;
+  }
   _hasHierarchyTreeHeader() {
     return (this.internalProps.layoutMap as PivotHeaderLayoutMap).rowHierarchyType === 'tree';
   }

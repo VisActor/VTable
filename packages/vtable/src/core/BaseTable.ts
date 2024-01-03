@@ -149,6 +149,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
 
   headerStyleCache: any;
   bodyStyleCache: any;
+  bodyBottomStyleCache: any;
   container: HTMLElement;
   isReleased: boolean = false;
 
@@ -359,6 +360,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
 
     this.headerStyleCache = new Map();
     this.bodyStyleCache = new Map();
+    this.bodyBottomStyleCache = new Map();
 
     internalProps.stick = { changedCells: [] };
 
@@ -2937,7 +2939,12 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     } else {
       cacheKey = row;
     }
-    let cacheStyle = this.bodyStyleCache.get(cacheKey);
+    let cacheStyle;
+    if (layoutMap.isBottomFrozenRow(row)) {
+      cacheStyle = this.bodyBottomStyleCache.get(cacheKey);
+    } else {
+      cacheStyle = this.bodyStyleCache.get(cacheKey);
+    }
     if (cacheStyle) {
       return cacheStyle;
     }
@@ -2947,7 +2954,11 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     const style = column?.style;
     cacheStyle = <FullExtendStyle>columnStyleContents.of(
       style,
-      this.theme.bodyStyle,
+      layoutMap.isBottomFrozenRow(row) && this.theme.bottomFrozenStyle
+        ? this.theme.bottomFrozenStyle
+        : layoutMap.isRightFrozenColumn(col) && this.theme.rightFrozenStyle
+        ? this.theme.rightFrozenStyle
+        : this.theme.bodyStyle,
       {
         col,
         row,
@@ -2960,13 +2971,18 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
       this.options.autoWrapText
     );
     if (!isFunction(style)) {
-      this.bodyStyleCache.set(cacheKey, cacheStyle);
+      if (layoutMap.isBottomFrozenRow(row)) {
+        this.bodyBottomStyleCache.set(cacheKey, cacheStyle);
+      } else {
+        this.bodyStyleCache.set(cacheKey, cacheStyle);
+      }
     }
     return cacheStyle;
   }
   clearCellStyleCache() {
     this.headerStyleCache.clear();
     this.bodyStyleCache.clear();
+    this.bodyBottomStyleCache.clear();
   }
   /**
    * 清除行高度缓存对象
