@@ -354,9 +354,9 @@ function getCellCornerRadius(col: number, row: number, table: BaseTableAPI) {
     } else if (col === table.colCount - 1 && row === 0) {
       return [0, tableCornerRadius, 0, 0];
     } else if (col === 0 && row === table.rowCount - 1) {
-      return [0, 0, tableCornerRadius, 0];
-    } else if (col === table.colCount - 1 && row === table.rowCount - 1) {
       return [0, 0, 0, tableCornerRadius];
+    } else if (col === table.colCount - 1 && row === table.rowCount - 1) {
+      return [0, 0, tableCornerRadius, 0];
     }
   }
   return 0;
