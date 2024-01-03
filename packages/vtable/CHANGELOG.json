@@ -2,6 +2,33 @@
   "name": "@visactor/vtable",
   "entries": [
     {
+      "version": "0.17.5",
+      "tag": "@visactor/vtable_v0.17.5",
+      "date": "Wed, 03 Jan 2024 12:50:32 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "feat: support edit header title #819\n\n"
+          },
+          {
+            "comment": "fix: setRecords process scrollTop update scenegraph #831\n\n"
+          },
+          {
+            "comment": "refactor: list table bottom row can not use bottomFrozenStyle #836\n\n"
+          },
+          {
+            "comment": "feat: add api getCellHeaderTreeNodes for pivotTable #839\n\n"
+          },
+          {
+            "comment": "refactor: add onVChartEvent for BaseTable #843\n\n"
+          },
+          {
+            "comment": "fix: add group clip in body"
+          }
+        ]
+      }
+    },
+    {
       "version": "0.17.4",
       "tag": "@visactor/vtable_v0.17.4",
       "date": "Tue, 02 Jan 2024 09:23:54 GMT",
