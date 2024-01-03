@@ -266,6 +266,18 @@ export class Group extends VRenderGroup {
       this.parent && this.parent.addChildUpdateBoundTag();
       this.clearUpdateBoundTag();
       return this._AABBBounds;
+    } else if (
+      this.role === 'body' ||
+      this.role === 'row-header' ||
+      this.role === 'col-header' ||
+      this.role === 'right-frozen' ||
+      this.role === 'bottom-frozen'
+    ) {
+      this._AABBBounds.setValue(-Infinity, -Infinity, Infinity, Infinity);
+      // 更新bounds之后需要设置父节点，否则tag丢失
+      this.parent && this.parent.addChildUpdateBoundTag();
+      this.clearUpdateBoundTag();
+      return this._AABBBounds;
     }
     return super.doUpdateAABBBounds();
     // _AABBBounds
