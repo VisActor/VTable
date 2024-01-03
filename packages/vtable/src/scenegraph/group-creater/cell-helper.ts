@@ -483,7 +483,9 @@ export function updateCell(col: number, row: number, table: BaseTableAPI, addNew
       isMerge = range.start.col !== range.end.col || range.start.row !== range.end.row;
       value = customMergeText;
       customStyle = customMergeStyle;
-      cellTheme = getStyleTheme(customStyle, table, range.start.col, range.start.row, getProp).theme;
+      if (customStyle) {
+        cellTheme = getStyleTheme(customStyle, table, range.start.col, range.start.row, getProp).theme;
+      }
     }
   }
 
