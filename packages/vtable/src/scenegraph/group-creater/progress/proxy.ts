@@ -434,7 +434,8 @@ export class SceneProxy {
   }
 
   async setY(y: number) {
-    const yLimitTop = this.table.getRowsHeight(this.bodyTopRow, this.bodyTopRow + this.totalActualBodyRowCount) / 2;
+    const yLimitTop =
+      this.table.getRowsHeight(this.bodyTopRow, this.bodyTopRow + (this.rowEnd - this.rowStart + 1)) / 2;
     const yLimitBottom = this.table.getAllRowsHeight() - yLimitTop;
     if (y < yLimitTop && this.rowStart === this.bodyTopRow) {
       // 执行真实body group坐标修改
@@ -449,7 +450,8 @@ export class SceneProxy {
   }
 
   async setX(x: number) {
-    const xLimitLeft = this.table.getColsWidth(this.bodyLeftCol, this.bodyLeftCol + this.totalActualBodyColCount) / 2;
+    const xLimitLeft =
+      this.table.getColsWidth(this.bodyLeftCol, this.bodyLeftCol + (this.colEnd - this.colStart + 1)) / 2;
     const xLimitRight = this.table.getAllColsWidth() - xLimitLeft;
     if (x < xLimitLeft && this.colStart === this.bodyLeftCol) {
       // 执行真实body group坐标修改
