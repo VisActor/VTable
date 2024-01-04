@@ -1,6 +1,7 @@
 import listTable from './list-table/list-table';
 import listOptionRecord from './list-table/list-option-records';
 import listComponent from './list-table/list-component';
+import listCustomLayout from './list-table/list-custom-layout';
 
 import pivotTable from './pivot-table/pivot-table';
 import pivotComponent from './pivot-table/pivot-comonent';
@@ -13,6 +14,7 @@ import listTableEvent from './event/list-table';
 // export default listTable;
 // export default listOptionRecord;
 // export default listComponent;
+export default listCustomLayout;
 
 // export default pivotTable;
 // export default pivotComponent;
@@ -20,4 +22,4 @@ import listTableEvent from './event/list-table';
 // export default pivotChart;
 // export default pivotChartComponent;
 
-export default listTableEvent;
+// export default listTableEvent;
