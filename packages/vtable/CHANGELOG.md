@@ -1,6 +1,13 @@
 # Change Log - @visactor/vtable
 
-This log was last generated on Wed, 03 Jan 2024 12:50:32 GMT and should not be manually modified.
+This log was last generated on Wed, 03 Jan 2024 13:58:45 GMT and should not be manually modified.
+
+## 0.17.6
+Wed, 03 Jan 2024 13:58:45 GMT
+
+### Updates
+
+- fix: fix resize line position
 
 ## 0.17.5
 Wed, 03 Jan 2024 12:50:32 GMT

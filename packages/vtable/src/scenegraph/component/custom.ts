@@ -362,6 +362,9 @@ export function dealPercentCalc(group: VGroup, parentWidth: number, parentHeight
     return;
   }
   group.forEachChildren((child: VGroup) => {
+    if (!child) {
+      return;
+    }
     if (isObject(child.attribute.width) && (child.attribute.width as percentCalcObj).percent) {
       child.setAttribute(
         'width',
@@ -386,7 +389,7 @@ export function dealPercentCalc(group: VGroup, parentWidth: number, parentHeight
 
 // temp devode for react jsx customLayout
 export function decodeReactDom(dom: any) {
-  if (!dom.$$typeof) {
+  if (!dom || !dom.$$typeof) {
     // not react
     return dom;
   }
