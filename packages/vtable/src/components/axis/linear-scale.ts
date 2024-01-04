@@ -137,8 +137,13 @@ export class LinearAxisScale {
   }
 
   protected niceDomain(domain: number[]) {
+    if (isValid(domain[0]) || isValid(domain[1]) || this.type !== 'linear') {
+      // 如果用户设置了 min 或者 max 则按照用户设置的为准
+      // 如果是非 linear 类型也不处理
+      return domain;
+    }
     if (Math.abs(minInArray(domain) - maxInArray(domain)) <= 1e-12) {
-      let num = domain[0];
+      let num: number = domain[0];
       const flag = num >= 0 ? 1 : -1;
       num = Math.abs(num);
       if (num < 1) {

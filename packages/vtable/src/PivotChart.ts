@@ -1071,7 +1071,8 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
           chartInstance.updateFullDataSync?.(dataBatch);
         }
         // position = chartInstance.convertDatumToPosition(datum);
-        this.render();
+        // this.render();
+        this.renderAsync();
       }
       // cellPosition.offsetLeft(this.tableX);
       // cellPosition.offsetTop(this.tableY);
