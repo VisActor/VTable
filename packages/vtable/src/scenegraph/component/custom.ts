@@ -1,6 +1,6 @@
 import type { Cursor } from '@visactor/vrender';
 import { createArc, createCircle, createLine, createRect, Text, Group as VGroup } from '@visactor/vrender';
-import { isFunction, isObject, isString, isValid } from '@visactor/vutils';
+import { isArray, isFunction, isObject, isString, isValid } from '@visactor/vutils';
 import type {
   ICustomLayout,
   ICustomRender,
@@ -398,7 +398,7 @@ export function decodeReactDom(dom: any) {
   const g = type({ attribute });
   g.id = attribute.id;
   g.name = attribute.name;
-  if (children && children.length) {
+  if (isArray(children)) {
     children.forEach((item: any) => {
       const c = decodeReactDom(item);
       g.add(c);
