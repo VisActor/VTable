@@ -130,6 +130,10 @@ export class EventManager {
         );
         if (this.table._canResizeColumn(resizeCol.col, resizeCol.row) && resizeCol.col >= 0) {
           this.table.scenegraph.updateAutoColWidth(resizeCol.col);
+
+          if (this.table.isPivotChart()) {
+            this.table.scenegraph.updateChartSize(resizeCol.col);
+          }
         }
       }
     });
