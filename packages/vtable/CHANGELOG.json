@@ -2,6 +2,21 @@
   "name": "@visactor/vtable",
   "entries": [
     {
+      "version": "0.17.7",
+      "tag": "@visactor/vtable_v0.17.7",
+      "date": "Thu, 04 Jan 2024 10:03:11 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "feat: add cell image table export"
+          },
+          {
+            "comment": "fix: fix jsx parse error in react-vtable"
+          }
+        ]
+      }
+    },
+    {
       "version": "0.17.6",
       "tag": "@visactor/vtable_v0.17.6",
       "date": "Wed, 03 Jan 2024 13:58:45 GMT",
