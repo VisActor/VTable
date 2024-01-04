@@ -294,8 +294,8 @@ export function getStyleTheme(
       lineDash: borderLineDash,
       lineWidth: borderLineWidth,
       stroke: borderColor,
-      cursor: cursor === 'auto' || cursor === 'default' ? undefined : cursor,
-      cornerRadius: getCellCornerRadius(col, row, table)
+      cursor: cursor === 'auto' || cursor === 'default' ? undefined : cursor
+      // cornerRadius: getCellCornerRadius(col, row, table)
     },
     _vtable: {
       padding,
@@ -346,7 +346,7 @@ export function sortRecords(table: ListTable) {
   }
 }
 
-function getCellCornerRadius(col: number, row: number, table: BaseTableAPI) {
+export function getCellCornerRadius(col: number, row: number, table: BaseTableAPI) {
   const tableCornerRadius = table.theme.frameStyle.cornerRadius;
   if (tableCornerRadius) {
     if (col === 0 && row === 0) {
