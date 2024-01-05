@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vtable",
+      "comment": "fix: fix chart cell dblclick size update",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vtable"
+}
