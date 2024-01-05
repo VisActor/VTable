@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vtable",
+      "comment": "fix: fix react custom jsx parse",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vtable"
+}
