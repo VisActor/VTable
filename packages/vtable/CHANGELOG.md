@@ -1,6 +1,14 @@
 # Change Log - @visactor/vtable
 
-This log was last generated on Wed, 03 Jan 2024 13:58:45 GMT and should not be manually modified.
+This log was last generated on Thu, 04 Jan 2024 10:03:11 GMT and should not be manually modified.
+
+## 0.17.7
+Thu, 04 Jan 2024 10:03:11 GMT
+
+### Updates
+
+- feat: add cell image table export
+- fix: fix jsx parse error in react-vtable
 
 ## 0.17.6
 Wed, 03 Jan 2024 13:58:45 GMT

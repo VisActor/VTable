@@ -22,6 +22,7 @@ import { bindAxisClickEvent } from './pivot-chart/axis-click';
 import { bindAxisHoverEvent } from './pivot-chart/axis-hover';
 import type { PivotTable } from '../PivotTable';
 import { Env } from '../tools/env';
+import type { ListTable } from '../ListTable';
 
 export class EventManager {
   table: BaseTableAPI;
@@ -133,6 +134,18 @@ export class EventManager {
 
           if (this.table.isPivotChart()) {
             this.table.scenegraph.updateChartSize(resizeCol.col);
+          }
+          const state = this.table.stateManager;
+          // update frozen shadowline component
+          if (
+            state.columnResize.col < state.table.frozenColCount &&
+            !state.table.isPivotTable() &&
+            !(state.table as ListTable).transpose
+          ) {
+            state.table.scenegraph.component.setFrozenColumnShadow(
+              state.table.frozenColCount - 1,
+              state.columnResize.isRightFrozen
+            );
           }
         }
       }
