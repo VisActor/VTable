@@ -168,7 +168,7 @@ export function bindContainerDomListener(eventManager: EventManager) {
     }
   });
   handler.on(table.getElement(), 'paste', (e: any) => {
-    if (table.keyboardOptions?.pasteValueToCell) {
+    if (table.keyboardOptions?.pasteValueToCell && (table as ListTableAPI).changeCellValues) {
       if ((table as ListTableAPI).editorManager?.editingEditor) {
         return;
       }
