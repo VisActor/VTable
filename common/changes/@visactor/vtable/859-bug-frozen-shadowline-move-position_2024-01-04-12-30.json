@@ -1,7 +1,7 @@
 {
   "changes": [
     {
-      "comment": "feat: support edit header title #819\n\n",
+      "comment": "fix:  frozen shadowline should move position #859\n\n",
       "type": "none",
       "packageName": "@visactor/vtable"
     }

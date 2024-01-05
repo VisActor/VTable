@@ -155,9 +155,10 @@ function updateComponent(selectComp: { rect: IRect; role: CellSubLocation }, key
       scene.table.scrollLeft > 0 &&
       (selectComp.role === 'body' || selectComp.role === 'columnHeader' || selectComp.role === 'bottomFrozen')
     ) {
+      const width = selectComp.rect.attribute.width - (scene.table.getFrozenColsWidth() - selectComp.rect.attribute.x);
       selectComp.rect.setAttributes({
         x: selectComp.rect.attribute.x + (scene.table.getFrozenColsWidth() - selectComp.rect.attribute.x),
-        width: selectComp.rect.attribute.width - (scene.table.getFrozenColsWidth() - selectComp.rect.attribute.x)
+        width: width > 0 ? width : 0
       });
     }
     if (
@@ -167,9 +168,10 @@ function updateComponent(selectComp: { rect: IRect; role: CellSubLocation }, key
       selectComp.rect.attribute.x + selectComp.rect.attribute.width > scene.rightFrozenGroup.attribute.x &&
       (selectComp.role === 'body' || selectComp.role === 'columnHeader' || selectComp.role === 'bottomFrozen')
     ) {
+      const width = scene.rightFrozenGroup.attribute.x - selectComp.rect.attribute.x;
       selectComp.rect.setAttributes({
         x: selectComp.rect.attribute.x,
-        width: scene.rightFrozenGroup.attribute.x - selectComp.rect.attribute.x
+        width: width > 0 ? width : 0
       });
     }
     if (
@@ -177,9 +179,11 @@ function updateComponent(selectComp: { rect: IRect; role: CellSubLocation }, key
       scene.table.scrollTop > 0 &&
       (selectComp.role === 'body' || selectComp.role === 'rowHeader' || selectComp.role === 'rightFrozen')
     ) {
+      const height =
+        selectComp.rect.attribute.height - (scene.colHeaderGroup.attribute.height - selectComp.rect.attribute.y);
       selectComp.rect.setAttributes({
         y: selectComp.rect.attribute.y + (scene.colHeaderGroup.attribute.height - selectComp.rect.attribute.y),
-        height: selectComp.rect.attribute.height - (scene.colHeaderGroup.attribute.height - selectComp.rect.attribute.y)
+        height: height > 0 ? height : 0
       });
     }
     if (
@@ -188,9 +192,10 @@ function updateComponent(selectComp: { rect: IRect; role: CellSubLocation }, key
       selectComp.rect.attribute.y + selectComp.rect.attribute.height > scene.bottomFrozenGroup.attribute.y &&
       (selectComp.role === 'body' || selectComp.role === 'rowHeader' || selectComp.role === 'rightFrozen')
     ) {
+      const height = scene.bottomFrozenGroup.attribute.y - selectComp.rect.attribute.y;
       selectComp.rect.setAttributes({
         y: selectComp.rect.attribute.y,
-        height: scene.bottomFrozenGroup.attribute.y - selectComp.rect.attribute.y
+        height: height > 0 ? height : 0
       });
     }
     //#endregion

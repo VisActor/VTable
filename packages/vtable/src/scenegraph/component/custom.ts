@@ -1,6 +1,6 @@
 import type { Cursor } from '@visactor/vrender';
 import { createArc, createCircle, createLine, createRect, Text, Group as VGroup } from '@visactor/vrender';
-import { isFunction, isObject, isString, isValid } from '@visactor/vutils';
+import { isArray, isFunction, isObject, isString, isValid } from '@visactor/vutils';
 import type {
   ICustomLayout,
   ICustomRender,
@@ -362,6 +362,9 @@ export function dealPercentCalc(group: VGroup, parentWidth: number, parentHeight
     return;
   }
   group.forEachChildren((child: VGroup) => {
+    if (!child) {
+      return;
+    }
     if (isObject(child.attribute.width) && (child.attribute.width as percentCalcObj).percent) {
       child.setAttribute(
         'width',
@@ -386,7 +389,7 @@ export function dealPercentCalc(group: VGroup, parentWidth: number, parentHeight
 
 // temp devode for react jsx customLayout
 export function decodeReactDom(dom: any) {
-  if (!dom.$$typeof) {
+  if (!dom || !dom.$$typeof) {
     // not react
     return dom;
   }
@@ -395,7 +398,7 @@ export function decodeReactDom(dom: any) {
   const g = type({ attribute });
   g.id = attribute.id;
   g.name = attribute.name;
-  if (children && children.length) {
+  if (isArray(children)) {
     children.forEach((item: any) => {
       const c = decodeReactDom(item);
       g.add(c);
