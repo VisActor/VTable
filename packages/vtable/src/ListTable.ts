@@ -936,6 +936,85 @@ export class ListTable extends BaseTable implements ListTableAPI {
     this.scenegraph.updateNextFrame();
   }
   /**
+   * 批量更新多个单元格的数据
+   * @param col 粘贴数据的起始列号
+   * @param row 粘贴数据的起始行号
+   * @param values 多个单元格的数据数组
+   */
+  changeCellValues(startCol: number, startRow: number, values: (string | number)[][]) {
+    let pasteColEnd = startCol;
+    let pasteRowEnd = startRow;
+    // const rowCount = values.length;
+    for (let i = 0; i < values.length; i++) {
+      if (pasteRowEnd >= this.rowCount - 1) {
+        break;
+      }
+      pasteRowEnd = startRow + i;
+      const rowValues = values[i];
+      let thisRowPasteColEnd = startCol;
+      for (let j = 0; j < rowValues.length; j++) {
+        if (thisRowPasteColEnd >= this.colCount - 1) {
+          break;
+        }
+        thisRowPasteColEnd = startCol + j;
+        const value = rowValues[j];
+        const recordIndex = this.getRecordShowIndexByCell(startCol + j, startRow + i);
+        const { field } = this.internalProps.layoutMap.getBody(startCol + j, startRow + i);
+        const beforeChangeValue = this.getCellRawValue(startCol + j, startRow + i);
+        if (this.isHeader(startCol + j, startRow + i)) {
+          this.internalProps.layoutMap.updateColumnTitle(startCol + j, startRow + i, value as string);
+        } else {
+          this.dataSource.changeFieldValue(value, recordIndex, field, startCol + j, startRow + i, this);
+        }
+        this.fireListeners(TABLE_EVENT_TYPE.CHANGE_CELL_VALUE, {
+          col: startCol,
+          row: startRow,
+          rawValue: beforeChangeValue,
+          changedValue: this.getCellOriginValue(startCol + j, startRow + i)
+        });
+      }
+      pasteColEnd = Math.max(pasteColEnd, thisRowPasteColEnd);
+    }
+    // const cell_value = this.getCellValue(col, row);
+    const startRange = this.getCellRange(startCol, startRow);
+    const range = this.getCellRange(pasteColEnd, pasteRowEnd);
+    for (let sCol = startRange.start.col; sCol <= range.end.col; sCol++) {
+      for (let sRow = startRange.start.row; sRow <= range.end.row; sRow++) {
+        this.scenegraph.updateCellContent(sCol, sRow);
+      }
+    }
+    if (this.widthMode === 'adaptive' || (this.autoFillWidth && this.getAllColsWidth() <= this.tableNoFrameWidth)) {
+      if (this.internalProps._widthResizedColMap.size === 0) {
+        //如果没有手动调整过行高列宽 则重新计算一遍并重新分配
+        this.scenegraph.recalculateColWidths();
+      }
+    } else {
+      for (let sCol = startCol; sCol <= range.end.col; sCol++) {
+        if (!this.internalProps._widthResizedColMap.has(sCol)) {
+          const oldWidth = this.getColWidth(sCol);
+          const newWidth = computeColWidth(sCol, 0, this.rowCount - 1, this, false);
+          if (newWidth !== oldWidth) {
+            this.scenegraph.updateColWidth(sCol, newWidth - oldWidth);
+          }
+        }
+      }
+    }
+    if (this.heightMode === 'adaptive' || (this.autoFillHeight && this.getAllRowsHeight() <= this.tableNoFrameHeight)) {
+      this.scenegraph.recalculateRowHeights();
+    } else if (this.heightMode === 'autoHeight') {
+      for (let sRow = startRow; sRow <= range.end.row; sRow++) {
+        if (this.rowHeightsMap.get(sRow)) {
+          // 已经计算过行高的才走更新逻辑
+          const oldHeight = this.getRowHeight(sRow);
+          const newHeight = computeRowHeight(sRow, 0, this.colCount - 1, this);
+          this.scenegraph.updateRowHeight(sRow, newHeight - oldHeight);
+        }
+      }
+    }
+
+    this.scenegraph.updateNextFrame();
+  }
+  /**
    * 添加数据 单条数据
    * @param record 数据
    * @param recordIndex 向数据源中要插入的位置，从0开始。不设置recordIndex的话 默认追加到最后。

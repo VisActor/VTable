@@ -74,6 +74,8 @@ export interface TableKeyboardOptions {
   selectAllOnCtrlA?: boolean;
   /** 快捷键复制  默认：false*/
   copySelected?: boolean; //这个copy是和浏览器的快捷键一致的
+  /** 快捷键粘贴。粘贴内容到指定位置（即需要有选中状态），支持批量粘贴。 默认：false */
+  pasteValueToCell?: boolean; //paste是和浏览器的快捷键一致的
 }
 export interface DataSourceAPI {
   clearCurrentIndexedData: () => void;
@@ -169,7 +171,13 @@ export interface ListTableAPI extends BaseTableAPI {
   isPivotTable: () => false;
   /** 设置单元格的value值，注意对应的是源数据的原始值，vtable实例records会做对应修改 */
   changeCellValue: (col: number, row: number, value: string | number | null) => void;
-
+  /**
+   * 批量更新多个单元格的数据
+   * @param col 粘贴数据的起始列号
+   * @param row 粘贴数据的起始行号
+   * @param values 多个单元格的数据数组
+   */
+  changeCellValues: (col: number, row: number, values: (string | number)[][]) => void;
   getFieldData: (field: FieldDef | FieldFormat | undefined, col: number, row: number) => FieldData;
   //#region 编辑器相关demo
   /** 获取单元格配置的编辑器 */
@@ -322,6 +330,15 @@ export interface PivotTableAPI extends BaseTableAPI {
   isPivotTable: () => true;
   getPivotSortState: (col: number, row: number) => SortOrder;
   toggleHierarchyState: (col: number, row: number) => void;
+  /** 设置单元格的value值，注意对应的是源数据的原始值，vtable实例records会做对应修改 */
+  changeCellValue: (col: number, row: number, value: string | number | null) => void;
+  /**
+   * 批量更新多个单元格的数据
+   * @param col 粘贴数据的起始列号
+   * @param row 粘贴数据的起始行号
+   * @param values 多个单元格的数据数组
+   */
+  changeCellValues: (col: number, row: number, values: (string | number)[][]) => void;
 }
 export interface PivotChartAPI extends BaseTableAPI {
   records?: any | Record<string, any[]>;
