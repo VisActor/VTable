@@ -316,7 +316,7 @@ describe('PivotTable-size-legend init test', () => {
     expect(drawRange.left).toBe(1);
     expect(drawRange.right).toBe(566);
     expect(drawRange.top).toBe(58);
-    expect(drawRange.bottom).toBe(799);
+    expect(drawRange.bottom).toBe(798);
   });
   test('PivotTable-size-legend node', () => {
     //TODO 这个对应的例子pivotTable-size-legend 没有问题

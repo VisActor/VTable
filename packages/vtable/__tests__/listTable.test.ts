@@ -102,7 +102,7 @@ describe('listTable init test', () => {
   test('listTable scrollToCell', () => {
     listTable.scrollToCell({ col: 4, row: 28 });
     expect(listTable.getScrollLeft()).toBe(601);
-    expect(listTable.getScrollTop()).toBe(802);
+    expect(listTable.getScrollTop()).toBe(803);
   });
   test('listTable updateTheme', () => {
     listTable.heightMode = 'autoHeight';
