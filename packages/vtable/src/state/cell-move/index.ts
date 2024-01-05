@@ -1,3 +1,4 @@
+import type { ListTable } from '../../ListTable';
 import type { BaseTableAPI } from '../../ts-types/base-table';
 import type { StateManager } from '../state';
 import { adjustMoveHeaderTarget } from './adjust-header';
@@ -114,6 +115,7 @@ export function endMoveCol(state: StateManager) {
     state.updateCursor();
   }
   setTimeout(() => {
+    //触发事件 CHANGE_HEADER_POSITION 还需要用到这些值 所以延迟清理
     state.columnMove.moving = false;
     delete state.columnMove.colSource;
     delete state.columnMove.rowSource;
@@ -121,6 +123,17 @@ export function endMoveCol(state: StateManager) {
     delete state.columnMove.rowTarget;
   }, 0);
   state.table.scenegraph.component.hideMoveCol();
+  // update frozen shadowline component
+  if (
+    state.columnResize.col < state.table.frozenColCount &&
+    !state.table.isPivotTable() &&
+    !(state.table as ListTable).transpose
+  ) {
+    state.table.scenegraph.component.setFrozenColumnShadow(
+      state.table.frozenColCount - 1,
+      state.columnResize.isRightFrozen
+    );
+  }
   state.table.scenegraph.updateNextFrame();
 }
 
