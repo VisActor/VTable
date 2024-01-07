@@ -1002,14 +1002,18 @@ export class ListTable extends BaseTable implements ListTableAPI {
     if (this.heightMode === 'adaptive' || (this.autoFillHeight && this.getAllRowsHeight() <= this.tableNoFrameHeight)) {
       this.scenegraph.recalculateRowHeights();
     } else if (this.heightMode === 'autoHeight') {
+      const rows: number[] = [];
+      const deltaYs: number[] = [];
       for (let sRow = startRow; sRow <= range.end.row; sRow++) {
         if (this.rowHeightsMap.get(sRow)) {
           // 已经计算过行高的才走更新逻辑
           const oldHeight = this.getRowHeight(sRow);
           const newHeight = computeRowHeight(sRow, 0, this.colCount - 1, this);
-          this.scenegraph.updateRowHeight(sRow, newHeight - oldHeight);
+          rows.push(sRow);
+          deltaYs.push(newHeight - oldHeight);
         }
       }
+      this.scenegraph.updateRowsHeight(rows, deltaYs);
     }
 
     this.scenegraph.updateNextFrame();
