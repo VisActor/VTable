@@ -231,12 +231,12 @@ export function updateIcon(baseIcon: Icon, iconConfig: ColumnIconOption, col: nu
   // dealWithIcon(iconConfig, icon);
   // icon.name = iconConfig.name;
   // scene.updateNextFrame();
-
+  const iconName = baseIcon.name;
   updateCellRangeIcon(
     col,
     row,
     // filter
-    (icon: Icon) => icon.name === baseIcon.name,
+    (icon: Icon) => icon.name === iconName,
     // dealer
     (icon: Icon) => {
       dealWithIcon(iconConfig, icon);

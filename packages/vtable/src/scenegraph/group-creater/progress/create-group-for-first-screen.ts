@@ -34,20 +34,21 @@ export function createGroupForFirstScreen(
   } else {
     distRow = Math.min(proxy.firstScreenRowLimit, table.rowCount - 1);
   }
-
-  // compute colums width in first screen
-  computeColsWidth(table, 0, distCol);
+  if (table.internalProps._widthResizedColMap.size === 0) {
+    // compute colums width in first screen
+    computeColsWidth(table, 0, distCol);
+  }
 
   // compute rows height in first screen
   computeRowsHeight(table, 0, distRow);
 
-  if (distCol < table.colCount - 1 - table.rightFrozenColCount) {
+  if (distCol < table.colCount - table.rightFrozenColCount) {
     // compute right frozen row height
-    computeColsWidth(table, table.colCount - 1 - table.rightFrozenColCount + 1, table.colCount - 1);
+    computeColsWidth(table, table.colCount - table.rightFrozenColCount, table.colCount - 1);
   }
-  if (distRow < table.rowCount - 1 - table.bottomFrozenRowCount) {
+  if (distRow < table.rowCount - table.bottomFrozenRowCount) {
     // compute bottom frozen row height
-    computeRowsHeight(table, table.rowCount - 1 - table.bottomFrozenRowCount + 1, table.rowCount - 1);
+    computeRowsHeight(table, table.rowCount - table.bottomFrozenRowCount, table.rowCount - 1);
   }
 
   // update colHeaderGroup rowHeaderGroup bodyGroup position

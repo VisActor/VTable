@@ -434,13 +434,20 @@ export class SceneProxy {
   }
 
   async setY(y: number) {
-    const yLimitTop = this.table.getRowsHeight(this.bodyTopRow, this.bodyTopRow + this.totalActualBodyRowCount) / 2;
+    const yLimitTop =
+      this.table.getRowsHeight(this.bodyTopRow, this.bodyTopRow + (this.rowEnd - this.rowStart + 1)) / 2;
     const yLimitBottom = this.table.getAllRowsHeight() - yLimitTop;
     if (y < yLimitTop && this.rowStart === this.bodyTopRow) {
       // 执行真实body group坐标修改
       this.table.scenegraph.setBodyAndRowHeaderY(-y);
     } else if (y > yLimitBottom && this.rowEnd === this.bodyBottomRow) {
       // 执行真实body group坐标修改
+      this.table.scenegraph.setBodyAndRowHeaderY(-y);
+    } else if (
+      !this.table.scenegraph.bodyGroup.firstChild ||
+      this.table.scenegraph.bodyGroup.firstChild.childrenCount === 0
+    ) {
+      // 兼容异步加载数据promise的情况 childrenCount=0 如果用户立即调用setScrollTop执行dynamicSetY会出错
       this.table.scenegraph.setBodyAndRowHeaderY(-y);
     } else {
       // 执行动态更新节点
@@ -449,13 +456,20 @@ export class SceneProxy {
   }
 
   async setX(x: number) {
-    const xLimitLeft = this.table.getColsWidth(this.bodyLeftCol, this.bodyLeftCol + this.totalActualBodyColCount) / 2;
+    const xLimitLeft =
+      this.table.getColsWidth(this.bodyLeftCol, this.bodyLeftCol + (this.colEnd - this.colStart + 1)) / 2;
     const xLimitRight = this.table.getAllColsWidth() - xLimitLeft;
     if (x < xLimitLeft && this.colStart === this.bodyLeftCol) {
       // 执行真实body group坐标修改
       this.table.scenegraph.setBodyAndColHeaderX(-x);
     } else if (x > xLimitRight && this.colEnd === this.bodyRightCol) {
       // 执行真实body group坐标修改
+      this.table.scenegraph.setBodyAndColHeaderX(-x);
+    } else if (
+      this.table.scenegraph.bodyGroup.firstChild && //注意判断关系 这里不是 || 而是 &&
+      this.table.scenegraph.bodyGroup.firstChild.childrenCount === 0
+    ) {
+      // 兼容异步加载数据promise的情况 childrenCount=0 如果用户立即调用setScrollLeft执行dynamicSetX会出错
       this.table.scenegraph.setBodyAndColHeaderX(-x);
     } else {
       // 执行动态更新节点

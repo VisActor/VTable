@@ -68,5 +68,11 @@ export default {
     lineColor: '#416EFF',
     bgColor: '#D9E2FF'
   },
-  selectionStyle: { cellBorderColor: '#FD5', cellBgColor: 'rgba(111, 168, 220, 0.1)' }
+  selectionStyle: { cellBorderColor: '#FD5', cellBgColor: 'rgba(111, 168, 220, 0.1)' },
+  tooltipStyle: {
+    bgColor: '#FFF',
+    color: '#000',
+    fontSize: 12,
+    fontFamily: 'Arial,sans-serif'
+  }
 } as ITableThemeDefine;

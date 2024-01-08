@@ -1422,15 +1422,7 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
   //   return { start: { col: 0, row: 0 }, end: { col: 0, row: 0 } };
   // }
 
-  getCellHeaderPathsWidthTreeNode(
-    col: number,
-    row: number
-  ): {
-    /** 列表头各级path表头信息 */
-    readonly colHeaderPaths?: any[];
-    /** 行表头各级path表头信息 */
-    readonly rowHeaderPaths?: any[];
-  } {
+  getCellHeaderPathsWidthTreeNode(col: number, row: number): IPivotTableCellHeaderPaths {
     // if (this._CellHeaderPathMap.has(`$${col}$${row}`))
     if (this._CellHeaderPathMap.has(`${col}-${row}`)) {
       return this._CellHeaderPathMap.get(`${col}-${row}`);
@@ -1513,7 +1505,7 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
     const headerPaths: IPivotTableCellHeaderPaths = {
       colHeaderPaths: [],
       rowHeaderPaths: [],
-      cellLocation: this.getCellLocation(col, row)
+      cellLocation: headerPathsWidthNode.cellLocation
     };
     headerPathsWidthNode.colHeaderPaths?.forEach((colHeader: any) => {
       const colHeaderPath: {
@@ -2020,8 +2012,8 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
       } else if (this.isRowHeader(source.col, source.row)) {
         // 插入目标地址的列index
         let targetIndex;
-        const sourceRowHeaderPaths = this.getCellHeaderPathsWidthTreeNode(source.col, source.row).rowHeaderPaths;
-        const targetRowHeaderPaths = this.getCellHeaderPathsWidthTreeNode(target.col, target.row).rowHeaderPaths;
+        const sourceRowHeaderPaths = this.getCellHeaderPathsWidthTreeNode(source.col, source.row).rowHeaderPaths as any;
+        const targetRowHeaderPaths = this.getCellHeaderPathsWidthTreeNode(target.col, target.row).rowHeaderPaths as any;
         const sourceRowHeaderNode = sourceRowHeaderPaths[sourceRowHeaderPaths.length - 1];
         const targetRowHeaderNode = targetRowHeaderPaths[sourceRowHeaderPaths.length - 1];
         //整体移动的列数
@@ -2349,8 +2341,10 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
       isValid(this.pagination?.currentPage)
     ) {
       //调整perPageCount的数量 需要是indicatorKeys.length的整数倍
-      this.pagination.perPageCount =
-        Math.ceil(this.pagination.perPageCount / this.indicatorKeys.length) * this.indicatorKeys.length;
+      if (this.indicatorsAsCol === false) {
+        this.pagination.perPageCount =
+          Math.ceil(this.pagination.perPageCount / this.indicatorKeys.length) * this.indicatorKeys.length;
+      }
       const { perPageCount, currentPage } = this.pagination;
       // const startIndex = Math.ceil((perPageCount * (currentPage || 0)) / this.indicatorKeys.length);
       // const endIndex = startIndex + Math.ceil(perPageCount / this.indicatorKeys.length);

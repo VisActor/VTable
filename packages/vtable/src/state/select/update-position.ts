@@ -161,13 +161,14 @@ export function updateSelectPosition(
       cellPos.row = row;
     }
     const currentRange = state.select.ranges[state.select.ranges.length - 1];
-    currentRange.end = {
-      col,
-      row
-    };
+    currentRange &&
+      (currentRange.end = {
+        col,
+        row
+      });
     cellPos.col = col;
     cellPos.row = row;
-    scenegraph.updateCellSelectBorder(currentRange.start.col, currentRange.start.row, col, row);
+    currentRange && scenegraph.updateCellSelectBorder(currentRange.start.col, currentRange.start.row, col, row);
   }
   scenegraph.updateNextFrame();
 }

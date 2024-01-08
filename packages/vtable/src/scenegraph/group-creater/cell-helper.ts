@@ -483,7 +483,9 @@ export function updateCell(col: number, row: number, table: BaseTableAPI, addNew
       isMerge = range.start.col !== range.end.col || range.start.row !== range.end.row;
       value = customMergeText;
       customStyle = customMergeStyle;
-      cellTheme = getStyleTheme(customStyle, table, range.start.col, range.start.row, getProp).theme;
+      if (customStyle) {
+        cellTheme = getStyleTheme(customStyle, table, range.start.col, range.start.row, getProp).theme;
+      }
     }
   }
 
@@ -616,7 +618,7 @@ function updateCellContent(
     value = table.getCellValue(col, row);
   }
   //解决报错 getCellByCache递归调用 死循环问题
-  if (oldCellGroup.row !== row || oldCellGroup.col !== col) {
+  if (!addNew && (oldCellGroup.row !== row || oldCellGroup.col !== col)) {
     return null;
   }
   const newCellGroup = createCell(

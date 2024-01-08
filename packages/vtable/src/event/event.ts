@@ -22,12 +22,14 @@ import { bindAxisClickEvent } from './pivot-chart/axis-click';
 import { bindAxisHoverEvent } from './pivot-chart/axis-hover';
 import type { PivotTable } from '../PivotTable';
 import { Env } from '../tools/env';
+import type { ListTable } from '../ListTable';
 
 export class EventManager {
   table: BaseTableAPI;
   // _col: number;
   // _resizing: boolean = false;
-
+  /** 为了能够判断canvas mousedown 事件 以阻止事件冒泡 */
+  isPointerDownOnTable: boolean = false;
   isTouchdown: boolean; // touch scrolling mode on
   touchMovePoints: {
     x: number;
@@ -40,7 +42,7 @@ export class EventManager {
   gesture: Gesture;
   handleTextStickBindId: number;
 
-  //鼠标事件记录
+  //鼠标事件记录。 PointerMove敏感度太高了 记录下上一个鼠标位置 在接收到PointerMove事件时做判断 是否到到触发框选或者移动表头操作的标准，防止误触
   LastPointerXY: { x: number; y: number };
   LastBodyPointerXY: { x: number; y: number };
   isDown = false;
@@ -129,6 +131,22 @@ export class EventManager {
         );
         if (this.table._canResizeColumn(resizeCol.col, resizeCol.row) && resizeCol.col >= 0) {
           this.table.scenegraph.updateAutoColWidth(resizeCol.col);
+
+          if (this.table.isPivotChart()) {
+            this.table.scenegraph.updateChartSize(resizeCol.col);
+          }
+          const state = this.table.stateManager;
+          // update frozen shadowline component
+          if (
+            state.columnResize.col < state.table.frozenColCount &&
+            !state.table.isPivotTable() &&
+            !(state.table as ListTable).transpose
+          ) {
+            state.table.scenegraph.component.setFrozenColumnShadow(
+              state.table.frozenColCount - 1,
+              state.columnResize.isRightFrozen
+            );
+          }
         }
       }
     });

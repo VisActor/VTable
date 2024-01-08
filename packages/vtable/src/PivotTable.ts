@@ -480,7 +480,53 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
     const { layoutMap } = this.internalProps;
     return layoutMap.getBodyIndexByCol(col);
   }
-
+  getFieldData(field: string, col: number, row: number): FieldData {
+    const table = this;
+    if (table.internalProps.layoutMap.isHeader(col, row)) {
+      return undefined;
+    }
+    if (this.dataset) {
+      const cellDimensionPath = this.internalProps.layoutMap.getCellHeaderPaths(col, row);
+      if (cellDimensionPath) {
+        const colKeys = cellDimensionPath.colHeaderPaths.map((colPath: any) => {
+          return colPath.indicatorKey ?? colPath.value;
+        });
+        const rowKeys = cellDimensionPath.rowHeaderPaths.map((rowPath: any) => {
+          return rowPath.indicatorKey ?? rowPath.value;
+        });
+        const aggregator = this.dataset.getAggregator(
+          !this.internalProps.layoutMap.indicatorsAsCol ? rowKeys.slice(0, -1) : rowKeys,
+          this.internalProps.layoutMap.indicatorsAsCol ? colKeys.slice(0, -1) : colKeys,
+          (this.internalProps.layoutMap as PivotHeaderLayoutMap).getIndicatorKey(col, row)
+        );
+        if (aggregator.records && aggregator.records.length >= 1) {
+          return aggregator.records[0][field];
+        }
+        // return ''
+      }
+    } else if (this.flatDataToObjects) {
+      //数据为行列树结构 根据row col获取对应的维度名称 查找到对应值
+      const cellDimensionPath = this.internalProps.layoutMap.getCellHeaderPaths(col, row);
+      const colKeys = cellDimensionPath.colHeaderPaths.map((colPath: any) => {
+        return colPath.indicatorKey ?? colPath.value;
+      });
+      const rowKeys = cellDimensionPath.rowHeaderPaths.map((rowPath: any) => {
+        return rowPath.indicatorKey ?? rowPath.value;
+      });
+      const treeNode = this.flatDataToObjects.getTreeNode(
+        rowKeys,
+        colKeys,
+        this.internalProps.layoutMap.getBody(col, row).indicatorKey,
+        false
+      );
+      if (treeNode?.record) {
+        return treeNode?.record[field];
+      }
+    }
+    const rowIndex = this.getBodyIndexByRow(row);
+    const colIndex = this.getBodyIndexByCol(col);
+    return this.records[rowIndex]?.[colIndex];
+  }
   getCellValue(col: number, row: number): FieldData {
     const customMergeText = this.getCustomMergeValue(col, row);
     if (customMergeText) {
@@ -886,6 +932,17 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
   getLayoutRowTreeCount(): number {
     const layoutMap = this.internalProps.layoutMap;
     return layoutMap.getLayoutRowTreeCount();
+  }
+  /**
+   * 根据行列号获取表头tree节点，包含了用户在自定义树rowTree及columnTree树上的自定义属性（也是内部布局树的节点，获取后请不要随意修改）
+   * @param col
+   * @param row
+   * @returns
+   */
+  getCellHeaderTreeNodes(col: number, row: number): ICellHeaderPaths {
+    const layoutMap = this.internalProps.layoutMap;
+    const headerNodes = layoutMap.getCellHeaderPathsWidthTreeNode(col, row);
+    return headerNodes;
   }
   _hasHierarchyTreeHeader() {
     return (this.internalProps.layoutMap as PivotHeaderLayoutMap).rowHierarchyType === 'tree';

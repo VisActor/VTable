@@ -223,6 +223,7 @@ export function createTable() {
       title: 'email',
       width: 'auto',
       sort: true,
+      headerEditor: 'input',
       editor: 'input'
     },
     {
@@ -341,11 +342,36 @@ export function createTable() {
     }),
     autoWrapText: true,
     limitMaxAutoWidth: 600,
+    menu: {
+      contextMenuItems: ['向下插入数据', '向下插入空行', '向右插入空列', '修改值', '删除该行']
+    },
+    dragHeaderMode: 'all',
     heightMode: 'autoHeight'
   };
   const tableInstance = new VTable.ListTable(option);
   tableInstance.on('initialized', args => {
     console.log('initialized');
   });
+  tableInstance.on('change_cell_value', arg => {
+    console.log(arg);
+  });
   window.tableInstance = tableInstance;
+  tableInstance.on('dropdown_menu_click', args => {
+    console.log('dropdown_menu_click', args);
+    if (args.menuKey === '向下插入数据') {
+      const recordIndex = tableInstance.getRecordShowIndexByCell(args.col, args.row);
+      tableInstance.addRecords(generatePersons(1), recordIndex + 1);
+    } else if (args.menuKey === '向下插入空行') {
+      const recordIndex = tableInstance.getRecordShowIndexByCell(args.col, args.row);
+      tableInstance.addRecord({}, recordIndex + 1);
+    } else if (args.menuKey === '向右插入空列') {
+      columns.splice(args.col + 1, 0, { field: Date.now().toString(), headerEditor: 'input', editor: 'input' });
+      tableInstance.updateColumns(columns);
+    } else if (args.menuKey === '删除该行') {
+      const recordIndex = tableInstance.getRecordShowIndexByCell(args.col, args.row);
+      tableInstance.deleteRecords([recordIndex]);
+    } else if (args.menuKey === '修改值') {
+      tableInstance.startEditCell(args.col, args.row);
+    }
+  });
 }

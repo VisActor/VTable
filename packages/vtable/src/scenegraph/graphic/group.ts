@@ -19,6 +19,9 @@ export class Group extends VRenderGroup {
   border?: IRect; // table/header/body的border mark，挂载在这里方便更新
   needUpdate?: boolean;
 
+  needUpdateWidth?: boolean;
+  needUpdateHeight?: boolean;
+
   /**
    * @description: 清空Group下全部子元素
    * @return {*}
@@ -259,6 +262,23 @@ export class Group extends VRenderGroup {
       const attribute = this.attribute;
       const { x, y, width, height } = attribute;
       this._AABBBounds.setValue(x, y, x + width, y + height);
+      // 更新bounds之后需要设置父节点，否则tag丢失
+      this.parent && this.parent.addChildUpdateBoundTag();
+      this.clearUpdateBoundTag();
+      return this._AABBBounds;
+    } else if (
+      this.role === 'body' ||
+      this.role === 'row-header' ||
+      this.role === 'col-header' ||
+      this.role === 'right-frozen' ||
+      this.role === 'bottom-frozen' ||
+      this.role === 'corner-header' ||
+      this.role === 'corner-right-top-header' ||
+      this.role === 'corner-right-bottom-header' ||
+      this.role === 'corner-left-bottom-header'
+    ) {
+      // Infinity bounds for manual clip group
+      this._AABBBounds.setValue(-Infinity, -Infinity, Infinity, Infinity);
       // 更新bounds之后需要设置父节点，否则tag丢失
       this.parent && this.parent.addChildUpdateBoundTag();
       this.clearUpdateBoundTag();

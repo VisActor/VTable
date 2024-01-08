@@ -349,9 +349,14 @@ function resetRowNumber(scene: Scenegraph) {
     const merge = getCellMergeInfo(scene.table, cellGroup.col, cellGroup.row);
     if (merge) {
       cellGroup.mergeStartCol = merge.start.col;
-      cellGroup.mergeStartCol = merge.start.col;
       cellGroup.mergeEndCol = merge.end.col;
-      cellGroup.mergeEndCol = merge.end.col;
+      cellGroup.mergeStartRow = merge.start.row;
+      cellGroup.mergeEndRow = merge.end.row;
+    } else {
+      cellGroup.mergeStartCol = undefined;
+      cellGroup.mergeEndCol = undefined;
+      cellGroup.mergeStartRow = undefined;
+      cellGroup.mergeEndRow = undefined;
     }
   }
 }
@@ -422,9 +427,14 @@ function resetRowNumberAndY(scene: Scenegraph) {
     const merge = getCellMergeInfo(scene.table, cellGroup.col, cellGroup.row);
     if (merge) {
       cellGroup.mergeStartCol = merge.start.col;
-      cellGroup.mergeStartCol = merge.start.col;
       cellGroup.mergeEndCol = merge.end.col;
-      cellGroup.mergeEndCol = merge.end.col;
+      cellGroup.mergeStartRow = merge.start.row;
+      cellGroup.mergeEndRow = merge.end.row;
+    } else {
+      cellGroup.mergeStartCol = undefined;
+      cellGroup.mergeEndCol = undefined;
+      cellGroup.mergeStartRow = undefined;
+      cellGroup.mergeEndRow = undefined;
     }
   }
 }

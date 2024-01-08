@@ -33,7 +33,12 @@ export function renderChart(chart: Chart) {
   }
 
   axes.forEach((axis: any, index: number) => {
-    if (axis.type === 'linear') {
+    if (axis.type === 'band') {
+      // const chartAxis = chartInstance._chart._components[index];
+      // chartAxis._spec.domain = axis.domain.slice(0);
+      // chartAxis.updateScaleDomain();
+      chartInstance.updateModelSpec({ type: 'axes', index }, { domain: axis.domain.slice(0) }, true);
+    } else {
       // const chartAxis = chartInstance._chart._components[index];
       // chartAxis._domain = {
       //   min: axis.range?.min ?? 0,
@@ -44,11 +49,6 @@ export function renderChart(chart: Chart) {
         { min: axis.range?.min ?? 0, max: axis.range?.max ?? 0 },
         true
       );
-    } else if (axis.type === 'band') {
-      // const chartAxis = chartInstance._chart._components[index];
-      // chartAxis._spec.domain = axis.domain.slice(0);
-      // chartAxis.updateScaleDomain();
-      chartInstance.updateModelSpec({ type: 'axes', index }, { domain: axis.domain.slice(0) }, true);
     }
   });
 

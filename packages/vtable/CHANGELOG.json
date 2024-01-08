@@ -2,6 +2,156 @@
   "name": "@visactor/vtable",
   "entries": [
     {
+      "version": "0.17.8",
+      "tag": "@visactor/vtable_v0.17.8",
+      "date": "Fri, 05 Jan 2024 10:34:08 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "fix: selectRange error when near frozencol or frozenrow #854\n\n"
+          },
+          {
+            "comment": "fix:  frozen shadowline should move position #859\n\n"
+          },
+          {
+            "comment": "fix: fix chart cell dblclick size update"
+          },
+          {
+            "comment": "fix: fix bottom frozen row height compute in createGroupForFirstScreen()"
+          },
+          {
+            "comment": "fix: fix cellGroup merge range"
+          },
+          {
+            "comment": "fix: fix react custom jsx parse"
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.17.7",
+      "tag": "@visactor/vtable_v0.17.7",
+      "date": "Thu, 04 Jan 2024 10:03:11 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "feat: add cell image table export"
+          },
+          {
+            "comment": "fix: fix jsx parse error in react-vtable"
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.17.6",
+      "tag": "@visactor/vtable_v0.17.6",
+      "date": "Wed, 03 Jan 2024 13:58:45 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "fix: fix resize line position"
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.17.5",
+      "tag": "@visactor/vtable_v0.17.5",
+      "date": "Wed, 03 Jan 2024 12:50:32 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "feat: support edit header title #819\n\n"
+          },
+          {
+            "comment": "fix: setRecords process scrollTop update scenegraph #831\n\n"
+          },
+          {
+            "comment": "refactor: list table bottom row can not use bottomFrozenStyle #836\n\n"
+          },
+          {
+            "comment": "feat: add api getCellHeaderTreeNodes for pivotTable #839\n\n"
+          },
+          {
+            "comment": "refactor: add onVChartEvent for BaseTable #843\n\n"
+          },
+          {
+            "comment": "fix: add group clip in body"
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.17.4",
+      "tag": "@visactor/vtable_v0.17.4",
+      "date": "Tue, 02 Jan 2024 09:23:54 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "fix: fix frozen chart cell active problem "
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.17.3",
+      "tag": "@visactor/vtable_v0.17.3",
+      "date": "Fri, 29 Dec 2023 12:31:07 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "fix: setRecords lose hover state  #783\n\n"
+          },
+          {
+            "comment": "feat: add body index convert with table index #789\n\n"
+          },
+          {
+            "comment": "fix:  transpose list demo when records has 10000 performance problem #790\n\n"
+          },
+          {
+            "comment": "fix: setRecords recomputeColWidth problems #796\n\n"
+          },
+          {
+            "comment": "fix: set disableSelect drag interaction occor error #799\n\n"
+          },
+          {
+            "comment": "feat: mergeCell support custom compare function #804\n\n"
+          },
+          {
+            "comment": "fix: tooltip style not work #805\n\n"
+          },
+          {
+            "comment": "fix: pivot table pagination.perPageCount modify #807\n\n"
+          },
+          {
+            "comment": "fix: [Bug] adaptive mode compute problem when has frozencol and rightFrozenCol #820\n\n"
+          },
+          {
+            "comment": "fix: fix axis render update problem"
+          },
+          {
+            "comment": "feat: add column resize label theme"
+          },
+          {
+            "comment": "fix: fix select update when change frozen"
+          },
+          {
+            "comment": "fix: pivot table use icon bug\n\n"
+          },
+          {
+            "comment": "fix: fix sort icon update"
+          },
+          {
+            "comment": "refactor: update vrender event verison use scrollDrag\n\n"
+          },
+          {
+            "comment": "chore: update vrender version #785\n\n"
+          }
+        ]
+      }
+    },
+    {
       "version": "0.17.2",
       "tag": "@visactor/vtable_v0.17.2",
       "date": "Thu, 21 Dec 2023 11:54:58 GMT",
