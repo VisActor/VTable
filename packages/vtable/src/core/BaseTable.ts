@@ -91,6 +91,7 @@ import { Title } from '../components/title/title';
 import type { Chart } from '../scenegraph/graphic/chart';
 import { setBatchRenderChartCount } from '../scenegraph/graphic/contributions/chart-render-helper';
 import { isLeftOrRightAxis, isTopOrBottomAxis } from '../layout/chart-helper/get-axis-config';
+import { NumberRangeMap } from '../layout/row-height-map';
 const { toBoxArray } = utilStyle;
 const { isTouchEvent } = event;
 const rangeReg = /^\$(\d+)\$(\d+)$/;
@@ -153,6 +154,8 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
   container: HTMLElement;
   isReleased: boolean = false;
   _chartEventMap: Record<string, { query?: any; callback: AnyFunction }[]> = {};
+
+  _newRowHeightsMap: NumberRangeMap;
   constructor(container: HTMLElement, options: BaseTableConstructorOptions = {}) {
     super();
     if (!container && options.mode !== 'node') {
@@ -264,6 +267,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     setBatchRenderChartCount(renderChartAsyncBatchCount);
     internalProps.overscrollBehavior = overscrollBehavior ?? 'auto';
     internalProps._rowHeightsMap = new NumberMap();
+    this._newRowHeightsMap = new NumberRangeMap(this);
     internalProps._rowRangeHeightsMap = new Map();
     internalProps._colRangeWidthsMap = new Map();
     internalProps._widthResizedColMap = new Set();
@@ -901,8 +905,8 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     //       : this.defaultHeaderRowHeight
     //     : this.internalProps.defaultRowHeight)
     //     );
-    if (this.rowHeightsMap.get(row)) {
-      return this.rowHeightsMap.get(row);
+    if (this._newRowHeightsMap.get(row)) {
+      return this._newRowHeightsMap.get(row);
     }
     const defaultHeight = this.getDefaultRowHeight(row);
     if (isNumber(defaultHeight)) {
@@ -932,7 +936,8 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
    * @returns
    */
   _setRowHeight(row: number, height: number, clearCache?: boolean): void {
-    this.rowHeightsMap.put(row, Math.round(height));
+    // this.rowHeightsMap.put(row, Math.round(height));
+    this._newRowHeightsMap.put(row, Math.round(height));
     // 清楚影响缓存
     if (clearCache) {
       this._clearRowRangeHeightsMap(row);
@@ -946,29 +951,29 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
    */
   getRowsHeight(startRow: number, endRow: number): number {
     //通过缓存获取指定范围行高
-    const cachedRowHeight = this._rowRangeHeightsMap.get(`$${startRow}$${endRow}`);
-    if (cachedRowHeight !== null && cachedRowHeight !== undefined) {
-      return cachedRowHeight;
-    }
-    //特殊处理 先尝试获取startRow->endRow-1的行高
-    const cachedLowerRowHeight = this._rowRangeHeightsMap.get(`$${startRow}$${endRow - 1}`);
-    if (cachedLowerRowHeight !== null && cachedLowerRowHeight !== undefined) {
-      const height = Math.round(
-        cachedLowerRowHeight +
-          (this.rowHeightsMap.get(endRow) ??
-            (this.isColumnHeader(0, endRow) || this.isCornerHeader(0, endRow)
-              ? Array.isArray(this.defaultHeaderRowHeight) && isNumber(this.defaultHeaderRowHeight[endRow])
-                ? (this.defaultHeaderRowHeight[endRow] as number)
-                : isNumber(this.defaultHeaderRowHeight)
-                ? (this.defaultHeaderRowHeight as number)
-                : this.internalProps.defaultRowHeight
-              : this.internalProps.defaultRowHeight))
-      );
-      if (startRow >= 0 && endRow >= 0) {
-        this._rowRangeHeightsMap.set(`$${startRow}$${endRow}`, Math.round(height));
-      }
-      return height;
-    }
+    // const cachedRowHeight = this._rowRangeHeightsMap.get(`$${startRow}$${endRow}`);
+    // if (cachedRowHeight !== null && cachedRowHeight !== undefined) {
+    //   return cachedRowHeight;
+    // }
+    // //特殊处理 先尝试获取startRow->endRow-1的行高
+    // const cachedLowerRowHeight = this._rowRangeHeightsMap.get(`$${startRow}$${endRow - 1}`);
+    // if (cachedLowerRowHeight !== null && cachedLowerRowHeight !== undefined) {
+    //   const height = Math.round(
+    //     cachedLowerRowHeight +
+    //       (this.rowHeightsMap.get(endRow) ??
+    //         (this.isColumnHeader(0, endRow) || this.isCornerHeader(0, endRow)
+    //           ? Array.isArray(this.defaultHeaderRowHeight) && isNumber(this.defaultHeaderRowHeight[endRow])
+    //             ? (this.defaultHeaderRowHeight[endRow] as number)
+    //             : isNumber(this.defaultHeaderRowHeight)
+    //             ? (this.defaultHeaderRowHeight as number)
+    //             : this.internalProps.defaultRowHeight
+    //           : this.internalProps.defaultRowHeight))
+    //   );
+    //   if (startRow >= 0 && endRow >= 0) {
+    //     this._rowRangeHeightsMap.set(`$${startRow}$${endRow}`, Math.round(height));
+    //   }
+    //   return height;
+    // }
 
     let h = 0;
     // for (let i = startRow; i <= endRow; i++) {
@@ -996,13 +1001,14 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
       // part in body
       h += this.defaultRowHeight * (endRow - Math.max(this.columnHeaderLevelCount, startRow) + 1);
     } else {
-      for (let i = startRow; i <= endRow; i++) {
-        h += this.getRowHeight(i);
-      }
+      // for (let i = startRow; i <= endRow; i++) {
+      //   h += this.getRowHeight(i);
+      // }
+      h = this._newRowHeightsMap.getSumInRange(startRow, endRow);
     }
-    if (startRow >= 0 && endRow >= 0 && h > 0) {
-      this._rowRangeHeightsMap.set(`$${startRow}$${endRow}`, Math.round(h));
-    }
+    // if (startRow >= 0 && endRow >= 0 && h > 0) {
+    //   this._rowRangeHeightsMap.set(`$${startRow}$${endRow}`, Math.round(h));
+    // }
     // }
     return Math.round(h);
   }
@@ -1925,6 +1931,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     internalProps.overscrollBehavior = overscrollBehavior ?? 'auto';
     internalProps.cellTextOverflows = {};
     internalProps._rowHeightsMap = new NumberMap();
+    this._newRowHeightsMap = new NumberRangeMap(this);
     internalProps._rowRangeHeightsMap = new Map();
     internalProps._colRangeWidthsMap = new Map();
 

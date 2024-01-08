@@ -101,7 +101,8 @@ async function moveCell(
         syncTopRow, // rowStart
         syncBottomRow, // rowEnd
         proxy.table,
-        distEndRow > proxy.bodyBottomRow - (proxy.rowEnd - proxy.rowStart + 1) ? 'down' : 'up' // 跳转到底部时，从下向上对齐
+        distEndRow > proxy.bodyBottomRow - (proxy.rowEnd - proxy.rowStart + 1) ? 'down' : 'up', // 跳转到底部时，从下向上对齐
+        true
       );
 
       // row header group
@@ -111,7 +112,8 @@ async function moveCell(
         syncTopRow, // rowStart
         syncBottomRow, // rowEnd
         proxy.table,
-        distEndRow > proxy.bodyBottomRow - (proxy.rowEnd - proxy.rowStart + 1) ? 'down' : 'up' // 跳转到底部时，从下向上对齐
+        distEndRow > proxy.bodyBottomRow - (proxy.rowEnd - proxy.rowStart + 1) ? 'down' : 'up', // 跳转到底部时，从下向上对齐
+        true
       );
 
       // right frozen group
@@ -121,7 +123,8 @@ async function moveCell(
         syncTopRow, // rowStart
         syncBottomRow, // rowEnd
         proxy.table,
-        distEndRow > proxy.bodyBottomRow - (proxy.rowEnd - proxy.rowStart + 1) ? 'down' : 'up' // 跳转到底部时，从下向上对齐
+        distEndRow > proxy.bodyBottomRow - (proxy.rowEnd - proxy.rowStart + 1) ? 'down' : 'up', // 跳转到底部时，从下向上对齐
+        true
       );
 
       const cellGroup = proxy.table.scenegraph.highPerformanceGetCell(proxy.bodyLeftCol, screenTopRow, true);

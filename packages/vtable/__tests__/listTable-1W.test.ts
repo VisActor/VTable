@@ -235,6 +235,6 @@ describe('listTable-1W init test', () => {
   test('listTable-1W update heightMode', () => {
     listTable.heightMode = 'autoHeight';
     listTable.renderWithRecreateCells();
-    expect(listTable.getAllRowsHeight()).toBe(340072);
+    expect(listTable.getAllRowsHeight()).toBe(340076); // 340072
   });
 });

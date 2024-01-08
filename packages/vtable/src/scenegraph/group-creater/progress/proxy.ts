@@ -509,7 +509,8 @@ export class SceneProxy {
         this.rowUpdatePos, // rowStart
         distRow, // rowEnd
         this.table,
-        this.rowUpdateDirection
+        this.rowUpdateDirection,
+        true
       );
       // row header group
       updateAutoRow(
@@ -518,7 +519,8 @@ export class SceneProxy {
         this.rowUpdatePos, // rowStart
         distRow, // rowEnd
         this.table,
-        this.rowUpdateDirection
+        this.rowUpdateDirection,
+        true
       );
       // right frozen group
       updateAutoRow(
@@ -527,7 +529,8 @@ export class SceneProxy {
         this.rowUpdatePos, // rowStart
         distRow, // rowEnd
         this.table,
-        this.rowUpdateDirection
+        this.rowUpdateDirection,
+        true
       );
     }
 
