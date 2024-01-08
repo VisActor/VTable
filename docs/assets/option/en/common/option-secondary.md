@@ -102,6 +102,10 @@ Enable shortcut key to select all.
 
 Enable shortcut key to copy, consistent with the browser's shortcut key.
 
+##${prefix} pasteValueToCell(boolean) = false
+
+Enable shortcut key to paste, consistent with the browser's shortcut key.
+
 ##${prefix} moveFocusCellOnTab(boolean) = true
  Enable tab key interaction. The default is true. Turn on the tab key to move the selected cell. If you are currently editing a cell, moving to the next cell is also in the editing state.
 
