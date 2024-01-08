@@ -996,6 +996,43 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
     }
     return null;
   }
+  /** 获取某条数据所在的行列位置 */
+  getCellAddressByRecord(record: any) {
+    const rowHeaderPaths: IDimensionInfo[] = [];
+    const colHeaderPaths: IDimensionInfo[] = [];
+    for (const key in record) {
+      if (this.dataset.rows.indexOf(key) >= 0) {
+        rowHeaderPaths.push({
+          dimensionKey: key,
+          value: record[key]
+        });
+      }
+      if (this.dataset.columns.indexOf(key) >= 0) {
+        colHeaderPaths.push({
+          dimensionKey: key,
+          value: record[key]
+        });
+      }
+
+      if (this.dataset.indicatorKeys.indexOf(key) >= 0) {
+        if (this.dataset.indicatorsAsCol) {
+          colHeaderPaths.push({
+            indicatorKey: key,
+            value: record[key]
+          });
+        } else {
+          rowHeaderPaths.push({
+            indicatorKey: key
+          });
+        }
+      }
+    }
+    return this.getCellAddressByHeaderPaths({
+      rowHeaderPaths,
+      colHeaderPaths,
+      cellLocation: 'body'
+    });
+  }
 
   getChartInstance(cellHeaderPaths: IPivotTableCellHeaderPaths) {
     const cellAddr = this.getCellAddressByHeaderPaths(cellHeaderPaths);
