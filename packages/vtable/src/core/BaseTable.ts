@@ -37,7 +37,7 @@ import {
   type ITableThemeDefine,
   InteractionState
 } from '../ts-types';
-import type { AnyFunction, ColumnIconOption } from '../ts-types';
+import type { AnyFunction, CellAddressWithBound, ColumnIconOption } from '../ts-types';
 import { event, style as utilStyle } from '../tools/helper';
 
 import { TABLE_EVENT_TYPE } from './TABLE_EVENT_TYPE';
@@ -1512,7 +1512,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
    * @param absoluteY
    * @returns
    */
-  getCellAt(absoluteX: number, absoluteY: number): CellAddress {
+  getCellAt(absoluteX: number, absoluteY: number): CellAddressWithBound {
     const rowInfo = this.getRowAt(absoluteY);
     const { row, top, bottom, height } = rowInfo;
     const colInfo = this.getColAt(absoluteX);

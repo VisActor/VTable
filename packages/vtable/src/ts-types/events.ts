@@ -1,7 +1,7 @@
-import type { CellAddress, CellRange, CellLocation, FieldDef } from './table-engine';
+import type { CellAddress, CellRange, CellLocation, FieldDef, CellAddressWithBound } from './table-engine';
 import type { DropDownMenuEventArgs, MenuListItem, PivotInfo } from './menu';
 
-import type { AnyFunction, IDimensionInfo, RectProps, SortOrder } from './common';
+import type { IDimensionInfo, RectProps, SortOrder } from './common';
 import type { IconFuncTypeEnum, CellInfo, HierarchyState } from '.';
 import type { Icon } from '../scenegraph/graphic/icon';
 import type { FederatedPointerEvent, IEventTarget } from '@visactor/vrender';
@@ -37,9 +37,8 @@ export type KeydownEvent = {
   scaleRatio?: number;
 };
 
-export type MousePointerCellEvent = CellAddress &
+export type MousePointerCellEvent = CellAddressWithBound &
   CellInfo & {
-    related?: CellAddress;
     scaleRatio?: number;
     targetIcon?: { name: string; position: RectProps; funcType: string };
     event?: MouseEvent | PointerEvent | TouchEvent;

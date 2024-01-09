@@ -169,6 +169,8 @@ setRecords(records: Array<any>, sort?: SortState | SortState[]) //** 基本表�
    */
   selectCells(cellRanges: CellRange[]): void
 ```
+其中：
+{{ use: CellRange() }}
 
 ## getSelectedCellInfos(Function)
 
@@ -178,6 +180,9 @@ setRecords(records: Array<any>, sort?: SortState | SortState[]) //** 基本表�
   /**获取选中区域的每个单元格详情 */
   getSelectedCellInfos(): CellInfo[][] | null;
 ```
+
+{{ use: CellInfo() }}
+
 ## clearSelected(Function)
 
 清除所有单元格的选中状态。

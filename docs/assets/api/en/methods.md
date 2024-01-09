@@ -183,6 +183,8 @@ Get the selected cell information, and the returned result is a two-dimensional 
   getSelectedCellInfos(): CellInfo[][] | null;
 ```
 
+{{ use: CellInfo() }}
+
 ## clearSelected(Function)
 
 Clear the selection of all cells.
