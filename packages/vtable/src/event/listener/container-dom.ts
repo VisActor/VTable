@@ -167,7 +167,36 @@ export function bindContainerDomListener(eventManager: EventManager) {
       }
     }
   });
+  handler.on(table.getElement(), 'paste', (e: any) => {
+    if (table.keyboardOptions?.pasteValueToCell && (table as ListTableAPI).changeCellValues) {
+      if ((table as ListTableAPI).editorManager?.editingEditor) {
+        return;
+      }
+      if (table.stateManager.select.ranges?.length > 0) {
+        const ranges = table.stateManager.select.ranges;
+        const col = Math.min(ranges[0].start.col, ranges[0].end.col);
+        const row = Math.min(ranges[0].start.row, ranges[0].end.row);
 
+        const clipboardData = e.clipboardData || window.Clipboard;
+        const pastedData = clipboardData.getData('text');
+        const rows = pastedData.split('\n'); // 将数据拆分为行
+        const values: (string | number)[][] = [];
+        rows.forEach(function (rowCells: any, rowIndex: number) {
+          const cells = rowCells.split('\t'); // 将行数据拆分为单元格
+          const rowValues: (string | number)[] = [];
+          values.push(rowValues);
+          cells.forEach(function (cell: string, cellIndex: number) {
+            // 去掉单元格数据末尾的 '\r'
+            if (cellIndex === cells.length - 1) {
+              cell = cell.trim();
+            }
+            rowValues.push(cell);
+          });
+        });
+        (table as ListTableAPI).changeCellValues(col, row, values);
+      }
+    }
+  });
   handler.on(table.getElement(), 'contextmenu', (e: any) => {
     e.preventDefault();
   });

@@ -909,7 +909,19 @@ export class Scenegraph {
     updateRowHeight(this, row, detaY, skipTableHeightMap);
     this.updateContainerHeight(row, detaY);
   }
+  updateRowsHeight(rows: number[], detaYs: number[], skipTableHeightMap?: boolean) {
+    for (let i = 0; i < rows.length; i++) {
+      const row = rows[i];
+      const detaY = detaYs[i];
+      updateRowHeight(this, row, Math.round(detaY), skipTableHeightMap);
+      this._updateContainerHeight(row, detaY);
+    }
+    // 更新table/header/border高度
+    this.updateTableSize();
+    this.component.updateScrollBar();
 
+    this.updateNextFrame();
+  }
   /**
    * @description: 更新table&header&body高度
    * @return {*}
@@ -931,13 +943,7 @@ export class Scenegraph {
 
     this.updateNextFrame();
   }
-
-  /**
-   * @description: 更新table&header&body高度
-   * @return {*}
-   */
-  updateContainerHeight(row: number, detaY: number) {
-    // 更新table/header/border高度
+  _updateContainerHeight(row: number, detaY: number) {
     if (row < this.table.frozenRowCount) {
       this.colHeaderGroup.setDeltaHeight(detaY);
       this.cornerHeaderGroup.setDeltaHeight(detaY);
@@ -953,7 +959,14 @@ export class Scenegraph {
       this.bodyGroup.setDeltaHeight(detaY);
       this.rightFrozenGroup.setDeltaHeight(detaY);
     }
-
+  }
+  /**
+   * @description: 更新table&header&body高度
+   * @return {*}
+   */
+  updateContainerHeight(row: number, detaY: number) {
+    this._updateContainerHeight(row, detaY);
+    // 更新table/header/border高度
     this.updateTableSize();
     this.component.updateScrollBar();
 
