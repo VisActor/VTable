@@ -285,7 +285,7 @@ export class SceneProxy {
       let maxHeight = 0;
       for (let col = this.table.colCount - this.table.rightFrozenColCount; col < this.table.colCount; col++) {
         const colGroup = this.table.scenegraph.getColGroup(col);
-        const cellLocation = this.table.isListTable() ? 'body' : 'rowHeader';
+        const cellLocation = this.table.isPivotChart() ? 'rowHeader' : 'body'; // isHeader
         const { height } = createComplexColumn(
           colGroup,
           col,
