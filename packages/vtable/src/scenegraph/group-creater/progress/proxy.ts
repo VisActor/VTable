@@ -309,7 +309,7 @@ export class SceneProxy {
       if (!colGroup) {
         continue;
       }
-      const cellLocation = 'body';
+      const cellLocation = col < this.table.rowHeaderLevelCount ? 'rowHeader' : 'body';
       const { height } = createComplexColumn(
         colGroup,
         col,

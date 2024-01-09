@@ -79,6 +79,8 @@ export class DimensionTree {
   // blockEndIndexMap: Map<number, boolean> = new Map();
   dimensionKeys: NumberMap<string> = new NumberMap<string>();
   // dimensions: IDimension[] | undefined;//目前用不到这个
+
+  cache: Map<number, any> = new Map();
   constructor(
     tree: IPivotLayoutHeadNode[],
     sharedVar: { seqId: number },
@@ -219,6 +221,15 @@ export class DimensionTree {
 
     // use dichotomy to optimize search performance
     const cIndex = index - node.startIndex;
+
+    if (this.cache.has(node.level + 1)) {
+      const cacheNode = this.cache.get(node.level + 1);
+      if (cIndex >= cacheNode.startIndex && cIndex < cacheNode.startIndex + cacheNode.size) {
+        this.searchPath(cIndex, cacheNode, path, maxDeep);
+        return;
+      }
+    }
+
     let left = 0;
     let right = node.children.length - 1;
 
@@ -227,6 +238,7 @@ export class DimensionTree {
       const element = node.children[middle];
 
       if (cIndex >= element.startIndex && cIndex < element.startIndex + element.size) {
+        this.cache.set(element.level, element);
         this.searchPath(cIndex, element, path, maxDeep);
         break;
       } else if (cIndex < element.startIndex) {
