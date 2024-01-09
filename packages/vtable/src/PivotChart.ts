@@ -1000,6 +1000,19 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
   getCellAddressByRecord(record: any) {
     const rowHeaderPaths: IDimensionInfo[] = [];
     const colHeaderPaths: IDimensionInfo[] = [];
+    const recordKeyMapToIndicatorKeys = {};
+    const indicatorRecordKeys = [];
+    this.dataset.dataConfig.aggregationRules.forEach(aggregationRule => {
+      if (typeof aggregationRule.field === 'string') {
+        recordKeyMapToIndicatorKeys[aggregationRule.field] = aggregationRule.indicatorKey;
+        indicatorRecordKeys.push(aggregationRule.field);
+      } else {
+        for (let i = 0; i < aggregationRule.field.length; i++) {
+          recordKeyMapToIndicatorKeys[aggregationRule.field[i]] = aggregationRule.indicatorKey;
+          indicatorRecordKeys.push(aggregationRule.field[i]);
+        }
+      }
+    });
     for (const key in record) {
       if (this.dataset.rows.indexOf(key) >= 0) {
         rowHeaderPaths.push({
@@ -1013,16 +1026,14 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
           value: record[key]
         });
       }
-
-      if (this.dataset.indicatorKeys.indexOf(key) >= 0) {
+      if (indicatorRecordKeys.indexOf(key) >= 0) {
         if (this.dataset.indicatorsAsCol) {
           colHeaderPaths.push({
-            indicatorKey: key,
-            value: record[key]
+            indicatorKey: recordKeyMapToIndicatorKeys[key]
           });
         } else {
           rowHeaderPaths.push({
-            indicatorKey: key
+            indicatorKey: recordKeyMapToIndicatorKeys[key]
           });
         }
       }
