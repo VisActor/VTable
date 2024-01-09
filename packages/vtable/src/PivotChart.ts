@@ -1001,7 +1001,7 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
     const rowHeaderPaths: IDimensionInfo[] = [];
     const colHeaderPaths: IDimensionInfo[] = [];
     const recordKeyMapToIndicatorKeys = {};
-    const indicatorRecordKeys = [];
+    const indicatorRecordKeys: (string | number)[] = [];
     this.dataset.dataConfig.aggregationRules.forEach(aggregationRule => {
       if (typeof aggregationRule.field === 'string') {
         recordKeyMapToIndicatorKeys[aggregationRule.field] = aggregationRule.indicatorKey;
