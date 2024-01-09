@@ -714,6 +714,19 @@ use case: 点击图例项后 更新过滤规则 来更新图表
   changeCellValue: (col: number, row: number, value: string | number | null) => void;
 ```
 
+## changeCellValues(Function)
+批量更改单元格的value：
+
+```
+  /**
+   * 批量更新多个单元格的数据
+   * @param col 粘贴数据的起始列号
+   * @param row 粘贴数据的起始行号
+   * @param values 多个单元格的数据数组
+   */
+  changeCellValues(startCol: number, startRow: number, values: string[][]) 
+```
+
 ## getEditor(Function)
 
 获取单元格配置的编辑器

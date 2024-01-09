@@ -718,6 +718,19 @@ Change the value of a cell:
   changeCellValue: (col: number, row: number, value: string | number | null) => void;
 ```
 
+## changeCellValues(Function)
+Change the value of cells in batches:
+
+```
+  /**
+   * Batch update data of multiple cells
+   * @param col The starting column number of pasted data
+   * @param row The starting row number of pasted data
+   * @param values Data array of multiple cells
+   */
+  changeCellValues(startCol: number, startRow: number, values: string[][])
+```
+
 ## getEditor(Function)
 
 Get the editor for the cell configuration
