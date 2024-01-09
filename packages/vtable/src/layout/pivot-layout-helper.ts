@@ -98,6 +98,7 @@ export class DimensionTree {
     // 清空缓存的计算
     // this.cache = {};
     // this.dimensions = dimensions;
+    this.cache.clear();
     this.dimensionKeys = new NumberMap<string>();
     this.tree.children = tree as IPivotLayoutHeadNode[];
     // const re = { totalLevel: 0 };
@@ -239,6 +240,15 @@ export class DimensionTree {
 
       if (cIndex >= element.startIndex && cIndex < element.startIndex + element.size) {
         this.cache.set(element.level, element);
+        const deleteLevels: number[] = [];
+        this.cache.forEach((node, key) => {
+          if (key > element.level) {
+            deleteLevels.push(key);
+          }
+        });
+        deleteLevels.forEach(key => {
+          this.cache.delete(key);
+        });
         this.searchPath(cIndex, element, path, maxDeep);
         break;
       } else if (cIndex < element.startIndex) {
