@@ -28,8 +28,8 @@ export class EventManager {
   table: BaseTableAPI;
   // _col: number;
   // _resizing: boolean = false;
-  /** 为了能够判断canvas mousedown 事件 以阻止事件冒泡 */
-  isPointerDownOnTable: boolean = false;
+  // /** 为了能够判断canvas mousedown 事件 以阻止事件冒泡 */
+  // isPointerDownOnTable: boolean = false;
   isTouchdown: boolean; // touch scrolling mode on
   touchMovePoints: {
     x: number;
