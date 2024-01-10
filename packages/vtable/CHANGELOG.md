@@ -1,6 +1,22 @@
 # Change Log - @visactor/vtable
 
-This log was last generated on Thu, 04 Jan 2024 10:03:11 GMT and should not be manually modified.
+This log was last generated on Fri, 05 Jan 2024 10:34:08 GMT and should not be manually modified.
+
+## 0.17.8
+Fri, 05 Jan 2024 10:34:08 GMT
+
+### Updates
+
+- fix: selectRange error when near frozencol or frozenrow #854
+
+
+- fix:  frozen shadowline should move position #859
+
+
+- fix: fix chart cell dblclick size update
+- fix: fix bottom frozen row height compute in createGroupForFirstScreen()
+- fix: fix cellGroup merge range
+- fix: fix react custom jsx parse
 
 ## 0.17.7
 Thu, 04 Jan 2024 10:03:11 GMT

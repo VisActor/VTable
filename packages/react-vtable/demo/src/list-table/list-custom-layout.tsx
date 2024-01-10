@@ -49,22 +49,44 @@ function App() {
               >
                 {fieldData.map(item => {
                   return (
-                    <VTag
+                    // <VTag
+                    //   key={item.value}
+                    //   attribute={{
+                    //     text: 'item.label',
+                    //     textStyle: {
+                    //       fontSize: 14,
+                    //       ellipsis: true
+                    //     },
+                    //     panel: {
+                    //       visible: true,
+                    //       cornerRadius: 4
+                    //     },
+                    //     // boundsPadding: [0,4,0, 4],
+                    //     boundsPadding: [0, 8, 8, 0]
+                    //   }}
+                    // ></VTag>
+                    <VText
                       key={item.value}
                       attribute={{
                         text: 'item.label',
-                        textStyle: {
-                          fontSize: 14,
-                          ellipsis: true
-                        },
-                        panel: {
-                          visible: true,
-                          cornerRadius: 4
-                        },
-                        // boundsPadding: [0,4,0, 4],
-                        boundsPadding: [0, 8, 8, 0]
+                        fill: '#000'
                       }}
-                    ></VTag>
+                      stateProxy={stateName => {
+                        if (stateName === 'hover') {
+                          return {
+                            fill: 'red'
+                          };
+                        }
+                      }}
+                      onMouseEnter={event => {
+                        event.currentTarget.addState('hover', true, false);
+                        event.currentTarget.stage.renderNextFrame();
+                      }}
+                      onMouseLeave={event => {
+                        event.currentTarget.removeState('hover', false);
+                        event.currentTarget.stage.renderNextFrame();
+                      }}
+                    ></VText>
                   );
                 })}
               </VGroup>

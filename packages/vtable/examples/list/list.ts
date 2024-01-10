@@ -305,7 +305,7 @@ export function createTable() {
       width: 150
     }
   ];
-  const option = {
+  const option: VTable.ListTableConstructorOptions = {
     container: document.getElementById(CONTAINER_ID),
     records,
     columns,
@@ -315,13 +315,20 @@ export function createTable() {
     frozenColCount: 1,
     bottomFrozenRowCount: 2,
     rightFrozenColCount: 2,
-    overscrollBehavior: 'none'
-    // autoWrapText: true
-    // heightMode: 'autoHeight'
+    overscrollBehavior: 'none',
+    autoWrapText: true,
+    heightMode: 'autoHeight',
+    dragHeaderMode: 'all',
+    keyboardOptions: {
+      pasteValueToCell: true
+    }
     // widthMode: 'adaptive'
   };
   const tableInstance = new VTable.ListTable(option);
   window.tableInstance = tableInstance;
+  tableInstance.on('change_cell_value', arg => {
+    console.log(arg);
+  });
   // tableInstance.on('sort_click', args => {
   //   tableInstance.updateSortState(
   //     {

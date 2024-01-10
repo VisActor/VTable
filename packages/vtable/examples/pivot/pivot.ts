@@ -430,7 +430,10 @@ export function createTable() {
             color: '#00ffff'
           }
         },
-        widthMode: 'adaptive'
+        widthMode: 'adaptive',
+        keyboardOptions: {
+          pasteValueToCell: true
+        }
       };
       const tableInstance = new VTable.PivotTable(option);
       // 只为了方便控制太调试用，不要拷贝
@@ -455,6 +458,9 @@ export function createTable() {
             arrowMark: true
           }
         });
+      });
+      tableInstance.on('change_cell_value', arg => {
+        console.log(arg);
       });
     })
     // eslint-disable-next-line no-console

@@ -1,5 +1,13 @@
 import type { Cursor } from '@visactor/vrender';
-import { createArc, createCircle, createLine, createRect, Text, Group as VGroup } from '@visactor/vrender';
+import {
+  createArc,
+  createCircle,
+  createLine,
+  createRect,
+  REACT_TO_CANOPUS_EVENTS,
+  Text,
+  Group as VGroup
+} from '@visactor/vrender';
 import { isArray, isFunction, isObject, isString, isValid } from '@visactor/vutils';
 import type {
   ICustomLayout,
@@ -394,8 +402,13 @@ export function decodeReactDom(dom: any) {
     return dom;
   }
   const type = dom.type;
-  const { attribute, children } = dom.props;
+  const { attribute, children, stateProxy } = dom.props;
   const g = type({ attribute });
+  parseToGraphic(g, dom.props);
+  if (stateProxy) {
+    g.stateProxy = stateProxy;
+  }
+
   g.id = attribute.id;
   g.name = attribute.name;
   if (isArray(children)) {
@@ -407,4 +420,38 @@ export function decodeReactDom(dom: any) {
     g.add(decodeReactDom(children));
   }
   return g;
+}
+
+function parseToGraphic(g: any, props: any) {
+  let isGraphic: boolean = false;
+  switch (g.type) {
+    case 'richtext':
+      break;
+    // case 'rich/text':
+    //   out = g.attribute || {};
+    //   childrenList[0] && (out.text = childrenList[0]);
+    //   break;
+    case 'rich/image':
+      break;
+    default:
+      isGraphic = true;
+  }
+
+  if (isGraphic) {
+    // childrenList.forEach((c: any) => {
+    //   c && g.add(c);
+    // });
+
+    Object.keys(props).forEach(k => {
+      const en = REACT_TO_CANOPUS_EVENTS[k];
+      if (en) {
+        g.on(en, props[k]);
+      }
+    });
+
+    // } else {
+    //   if (g.type === 'richtext') {
+    //     g.attribute.textConfig = childrenList.map(item => item.attribute).filter(item => item);
+    //   }
+  }
 }

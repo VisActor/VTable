@@ -12,6 +12,7 @@
 |top|同上|
 |bottom|同上|
 |ctrl+c|键位不准，这个copy是和浏览器的快捷键一致的。<br> 复制选中单元格内容，需要开启keyboardOptions.copySelected|
+|ctrl+v|键位不准，粘贴快捷键和浏览器的快捷键一致的。<br> 粘贴内容到单元格，需要开启keyboardOptions.pasteValueToCell|
 |ctrl+a|全选，需要开启keyboardOptions.selectAllOnCtrlA|
 |shift|按住shift和鼠标左键，连续区域选中单元格|
 |ctrl|按住ctrl和鼠标左键，选中多个区域|
@@ -32,5 +33,7 @@ keyboardOptions: {
   selectAllOnCtrlA?: boolean;
   /** 快捷键复制  默认false 不开启*/
   copySelected?: boolean; //这个copy是和浏览器的快捷键一致的
+  /** 快捷键粘贴。粘贴内容到指定位置（即需要有选中状态），支持批量粘贴。 默认：false */
+  pasteValueToCell?: boolean; 
 }
 ```
