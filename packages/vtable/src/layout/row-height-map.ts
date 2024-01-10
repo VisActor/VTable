@@ -60,7 +60,8 @@ export class NumberRangeMap {
   }
 
   updateDifference(position: number, difference: number) {
-    this.difference.set(position, difference);
+    const oldDifference = this.difference.get(position) ?? 0;
+    this.difference.set(position, oldDifference + difference);
     this.update();
   }
 
