@@ -134,6 +134,10 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
   _chartPaddingOuter: number;
   _chartItemBandSize: number;
   _chartPadding?: number | number[];
+
+  _lastCellCol: number;
+  _lastCellRow: number;
+  _lastCellHeaderPath: IPivotTableCellHeaderPaths;
   //#endregion
   constructor(table: PivotTable | PivotChart, dataset: Dataset) {
     this.sharedVar = { seqId: 0 };
@@ -1424,8 +1428,11 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
 
   getCellHeaderPathsWidthTreeNode(col: number, row: number): IPivotTableCellHeaderPaths {
     // if (this._CellHeaderPathMap.has(`$${col}$${row}`))
-    if (this._CellHeaderPathMap.has(`${col}-${row}`)) {
-      return this._CellHeaderPathMap.get(`${col}-${row}`);
+    // if (this._CellHeaderPathMap.has(`${col}-${row}`)) {
+    //   return this._CellHeaderPathMap.get(`${col}-${row}`);
+    // }
+    if (col === this._lastCellCol && row === this._lastCellRow) {
+      return this._lastCellHeaderPath;
     }
     let _largeCellRangeCacheIndex = -1;
     for (let i = 0; i < this._largeCellRangeCache.length; i++) {
@@ -1497,7 +1504,10 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
       }
     }
     const p = { colHeaderPaths: colPath, rowHeaderPaths: rowPath, cellLocation: this.getCellLocation(col, row) };
-    this._CellHeaderPathMap.set(`${col}-${row}`, p);
+    // this._CellHeaderPathMap.set(`${col}-${row}`, p);
+    this._lastCellHeaderPath = p;
+    this._lastCellCol = col;
+    this._lastCellRow = row;
     return p;
   }
   getCellHeaderPaths(col: number, row: number): IPivotTableCellHeaderPaths {

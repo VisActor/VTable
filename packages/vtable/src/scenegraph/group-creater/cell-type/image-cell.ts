@@ -61,7 +61,9 @@ export function createImageCellGroup(
 
     lineCap: 'square',
 
-    clip: true
+    clip: true,
+
+    cornerRadius: cellTheme.group.cornerRadius
   });
   cellGroup.role = 'cell';
   cellGroup.col = col;
