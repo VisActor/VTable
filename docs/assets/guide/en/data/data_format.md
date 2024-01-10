@@ -303,7 +303,7 @@ Table data can be deleted using `deleteRecords`. Please check the api documentat
 ### change the data
 There is currently no dedicated interface for modifying data, but it can be achieved by combining the interfaces for deleting and adding data. First call `deleteRecords` and then `addRecords`.
 
-Or you can modify a certain data field using the `changeCellValue` interface.
+Or you can modify a certain data field using the `changeCellValue` or `changeCellValues` interface.
 
 ## summarize
 

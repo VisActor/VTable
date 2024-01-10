@@ -25,6 +25,10 @@ import type { EditManeger } from '../edit/edit-manager';
 export interface CellAddress {
   col: number;
   row: number;
+}
+export interface CellAddressWithBound {
+  col: number;
+  row: number;
   rect?: RectProps;
   x?: number;
   y?: number;
