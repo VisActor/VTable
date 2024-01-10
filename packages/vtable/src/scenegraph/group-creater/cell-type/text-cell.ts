@@ -8,6 +8,7 @@ import { getFunctionalProp } from '../../utils/get-prop';
 import { createCellContent } from '../../utils/text-icon-layout';
 import type { BaseTableAPI } from '../../../ts-types/base-table';
 import { getStyleTheme } from '../../../core/tableHelper';
+import type { CellRange } from '../../../ts-types';
 
 /**
  * @description: 创建单元格场景节点
@@ -43,7 +44,8 @@ export function createCellGroup(
   mayHaveIcon: boolean,
   customElementsGroup: VGroup,
   renderDefault: boolean,
-  cellTheme: IThemeSpec
+  cellTheme: IThemeSpec,
+  range: CellRange | undefined
 ): Group {
   const headerStyle = table._getCellStyle(col, row); // to be fixed
   const functionalPadding = getFunctionalProp('padding', headerStyle, col, row, table);
@@ -92,7 +94,13 @@ export function createCellGroup(
     const textStr: string = value;
     let icons;
     if (mayHaveIcon) {
-      icons = table.getCellIcons(col, row);
+      let iconCol = col;
+      let iconRow = row;
+      if (range) {
+        iconCol = range.start.col;
+        iconRow = range.start.row;
+      }
+      icons = table.getCellIcons(iconCol, iconRow);
     }
 
     createCellContent(

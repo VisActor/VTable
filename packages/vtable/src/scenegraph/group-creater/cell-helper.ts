@@ -52,7 +52,8 @@ export function createCell(
   textAlign: CanvasTextAlign,
   textBaseline: CanvasTextBaseline,
   mayHaveIcon: boolean,
-  cellTheme: IThemeSpec
+  cellTheme: IThemeSpec,
+  range: CellRange | undefined
 ): Group {
   if (isPromise(value)) {
     value = table.getCellValue(col, row);
@@ -165,7 +166,8 @@ export function createCell(
       mayHaveIcon,
       customElementsGroup,
       renderDefault,
-      cellTheme
+      cellTheme,
+      range
     );
 
     const axisConfig = table.internalProps.layoutMap.getAxisConfigInPivotChart(col, row);
@@ -309,7 +311,8 @@ export function createCell(
       false,
       null,
       true,
-      cellTheme
+      cellTheme,
+      range
     );
 
     // 创建bar group
@@ -561,7 +564,8 @@ export function updateCell(col: number, row: number, table: BaseTableAPI, addNew
         textBaseline,
         mayHaveIcon,
         addNew,
-        cellTheme
+        cellTheme,
+        range
       )
     );
   } else {
@@ -581,7 +585,8 @@ export function updateCell(col: number, row: number, table: BaseTableAPI, addNew
       textBaseline,
       mayHaveIcon,
       addNew,
-      cellTheme
+      cellTheme,
+      range
     );
   }
 
@@ -616,7 +621,8 @@ function updateCellContent(
   textBaseline: CanvasTextBaseline,
   mayHaveIcon: boolean,
   addNew: boolean,
-  cellTheme?: IThemeSpec
+  cellTheme: IThemeSpec,
+  range: CellRange | undefined
 ) {
   if (isPromise(value)) {
     value = table.getCellValue(col, row);
@@ -643,7 +649,8 @@ function updateCellContent(
     textAlign,
     textBaseline,
     mayHaveIcon,
-    cellTheme
+    cellTheme,
+    range
   );
   if (!addNew && oldCellGroup.parent) {
     oldCellGroup.parent.insertAfter(newCellGroup, oldCellGroup);

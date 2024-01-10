@@ -2,7 +2,7 @@
 import type { IThemeSpec } from '@visactor/vrender';
 import { RichText, Text } from '@visactor/vrender';
 import { convertInternal } from '../../tools/util';
-import type { ColumnIconOption } from '../../ts-types';
+import type { CellRange, ColumnIconOption } from '../../ts-types';
 import { IconFuncTypeEnum, IconPosition } from '../../ts-types';
 import { CellContent } from '../component/cell-content';
 import type { Group } from '../graphic/group';

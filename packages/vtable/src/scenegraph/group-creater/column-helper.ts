@@ -56,8 +56,6 @@ export function createComplexColumn(
 
   for (let j = rowStart; j <= rowEnd; j++) {
     const row = j;
-    const define = cellLocation !== 'body' ? table.getHeaderDefine(col, row) : table.getBodyColumnDefine(col, row);
-    const mayHaveIcon = cellLocation !== 'body' ? true : !!define?.icon || !!define?.tree;
     let value = table.getCellValue(col, row);
 
     // 处理单元格合并
@@ -82,6 +80,19 @@ export function createComplexColumn(
         customStyle = customMergeStyle;
       }
     }
+
+    let colForDefine = col;
+    let rowForDefine = row;
+    if (range) {
+      colForDefine = range.start.col;
+      rowForDefine = range.start.row;
+    }
+    const define =
+      cellLocation !== 'body'
+        ? table.getHeaderDefine(colForDefine, rowForDefine)
+        : table.getBodyColumnDefine(colForDefine, rowForDefine);
+    const mayHaveIcon = cellLocation !== 'body' ? true : !!define?.icon || !!define?.tree;
+
     if (!range && (cellLocation !== 'body' || (define as TextColumnDefine)?.mergeCell)) {
       // 只有表头或者column配置合并单元格后再进行信息获取
       range = table.getCellRange(col, row);
@@ -171,7 +182,8 @@ export function createComplexColumn(
         textAlign,
         textBaseline,
         mayHaveIcon,
-        cellTheme
+        cellTheme,
+        range
       );
       columnGroup.updateColumnRowNumber(row);
       if (isMerge) {
