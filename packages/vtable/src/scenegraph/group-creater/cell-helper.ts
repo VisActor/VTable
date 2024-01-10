@@ -24,7 +24,7 @@ import { createCellGroup } from './cell-type/text-cell';
 import { createVideoCellGroup } from './cell-type/video-cell';
 import type { ICustomLayoutFuc } from '../../ts-types/customLayout';
 import type { BaseTableAPI, PivotTableProtected } from '../../ts-types/base-table';
-import { getStyleTheme } from '../../core/tableHelper';
+import { getCellCornerRadius, getStyleTheme } from '../../core/tableHelper';
 import { isPromise } from '../../tools/helper';
 import { dealPromiseData } from '../utils/deal-promise-data';
 import { CartesianAxis } from '../../components/axis/axis';
@@ -391,6 +391,8 @@ export function updateCell(col: number, row: number, table: BaseTableAPI, addNew
     getProp
   ).theme;
 
+  cellTheme.group.cornerRadius = getCellCornerRadius(col, row, table);
+
   // fast method for text
   if (!addNew && !isMerge && canUseFastUpdate(col, row, oldCellGroup, autoWrapText, table)) {
     // update group
@@ -406,6 +408,7 @@ export function updateCell(col: number, row: number, table: BaseTableAPI, addNew
       strokeArrayWidth: (cellTheme?.group as any)?.strokeArrayWidth ?? undefined,
       strokeArrayColor: (cellTheme?.group as any)?.strokeArrayColor ?? undefined,
       cursor: (cellTheme?.group as any)?.cursor ?? undefined,
+      cornerRadius: cellTheme?.group?.cornerRadius ?? 0,
 
       y: table.scenegraph.getCellGroupY(row)
     } as any);
@@ -485,6 +488,7 @@ export function updateCell(col: number, row: number, table: BaseTableAPI, addNew
       customStyle = customMergeStyle;
       if (customStyle) {
         cellTheme = getStyleTheme(customStyle, table, range.start.col, range.start.row, getProp).theme;
+        cellTheme.group.cornerRadius = getCellCornerRadius(col, row, table);
       }
     }
   }

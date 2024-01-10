@@ -6,7 +6,7 @@ import { getProp, getRawProp } from '../utils/get-prop';
 import type { MergeMap } from '../scenegraph';
 import { createCell } from './cell-helper';
 import type { BaseTableAPI } from '../../ts-types/base-table';
-import { getStyleTheme } from '../../core/tableHelper';
+import { getCellCornerRadius, getStyleTheme } from '../../core/tableHelper';
 import { isPromise } from '../../tools/helper';
 import { dealPromiseData } from '../utils/deal-promise-data';
 import { isArray } from '@visactor/vutils';
@@ -102,6 +102,7 @@ export function createComplexColumn(
       range ? range.start.row : row,
       getProp
     ).theme;
+    cellTheme.group.cornerRadius = getCellCornerRadius(col, row, table);
     cellTheme.group.width = colWidth;
     cellTheme.group.height = Array.isArray(defaultRowHeight) ? defaultRowHeight[row] : defaultRowHeight;
     if (cellTheme._vtable.padding) {
