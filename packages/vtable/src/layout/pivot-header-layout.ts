@@ -2201,11 +2201,12 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
           for (let j = 0; j < rowArr.length; j++) {
             const dimension = rowArr[j];
             if (
-              ((!isValid(rowDimension.indicatorKey) &&
+              (!isValid(rowDimension.indicatorKey) &&
                 dimension.dimensionKey === rowDimension.dimensionKey &&
                 dimension.value === rowDimension.value) ||
-                (isValid(rowDimension.indicatorKey) && dimension.indicatorKey === rowDimension.indicatorKey)) &&
-              dimension.value === rowDimension.value
+              (isValid(rowDimension.indicatorKey) &&
+                dimension.indicatorKey === rowDimension.indicatorKey &&
+                (!rowDimension.value || dimension.value === rowDimension.value))
             ) {
               rowArr = dimension.children;
               if (needLowestLevel && !rowArr) {

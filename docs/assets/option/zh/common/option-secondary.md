@@ -100,6 +100,9 @@
 ##${prefix} copySelected(boolean) = false
 开启快捷键复制，与浏览器的快捷键一致。
 
+##${prefix} pasteValueToCell(boolean) = false
+开启快捷键粘贴，与浏览器的快捷键一致。
+
 ##${prefix} moveFocusCellOnTab(boolean) = true
  开启tab键交互 默认为true。开启tab键移动选中单元格，如果当前是在编辑单元格 则移动到下一个单元格也是编辑状态
 
