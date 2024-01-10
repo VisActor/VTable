@@ -164,15 +164,20 @@ export class Dataset {
     this.needSplitPositiveAndNegative = needSplitPositiveAndNegative ?? false;
     this.rowsIsTotal = new Array(this.rows?.length ?? 0).fill(false);
     this.colsIsTotal = new Array(this.columns?.length ?? 0).fill(false);
-    for (let i = 0, len = this.totals?.row?.subTotalsDimensions?.length; i < len; i++) {
-      const dimension = this.totals.row.subTotalsDimensions[i];
-      const dimensionIndex = this.rows.indexOf(dimension);
-      this.rowsIsTotal[dimensionIndex] = true;
+
+    if (this.totals?.row?.showSubTotals) {
+      for (let i = 0, len = this.totals?.row?.subTotalsDimensions?.length; i < len; i++) {
+        const dimension = this.totals.row.subTotalsDimensions[i];
+        const dimensionIndex = this.rows.indexOf(dimension);
+        this.rowsIsTotal[dimensionIndex] = true;
+      }
     }
-    for (let i = 0, len = this.totals?.column?.subTotalsDimensions?.length; i < len; i++) {
-      const dimension = this.totals.column.subTotalsDimensions[i];
-      const dimensionIndex = this.columns.indexOf(dimension);
-      this.colsIsTotal[dimensionIndex] = true;
+    if (this.totals?.column?.showSubTotals) {
+      for (let i = 0, len = this.totals?.column?.subTotalsDimensions?.length; i < len; i++) {
+        const dimension = this.totals.column.subTotalsDimensions[i];
+        const dimensionIndex = this.columns.indexOf(dimension);
+        this.colsIsTotal[dimensionIndex] = true;
+      }
     }
     // this.rowKeysPath = [];
     // this.rowKeysPath_FULL = [];

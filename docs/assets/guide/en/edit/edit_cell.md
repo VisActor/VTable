@@ -218,6 +218,14 @@ Editing trigger timing support: double-click a cell to enter editing, click a ce
   /** Set the value of the cell. Note that it corresponds to the original value of the source data, and the vtable instance records will be modified accordingly */
   changeCellValue: (col: number, row: number, value: string | number | null) => void;
 
+  /**
+   * Batch update data of multiple cells
+   * @param col The starting column number of pasted data
+   * @param row The starting row number of pasted data
+   * @param values Data array of multiple cells
+   */
+  changeCellValues(startCol: number, startRow: number, values: string[][])
+
   /** Get the editor of cell configuration */
   getEditor: (col: number, row: number) => IEditor;
 

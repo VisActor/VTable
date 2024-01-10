@@ -21,7 +21,6 @@ function App() {
         field={'3'}
         title={'hobby'}
         customLayout={args => {
-          // const fieldData = [];
           const fieldData = [
             {
               value: 'a',

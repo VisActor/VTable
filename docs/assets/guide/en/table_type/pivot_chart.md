@@ -137,13 +137,26 @@ Corresponding to the schematic structure of the perspective combination diagram 
 
 *   Rows configures the Dimension'Order Year 'and'Ship Mode' corresponding to the row header;
 *   Columns configures the Dimension'Region 'and'Category' corresponding to the list header;
-*   Indicators configure the Metirc data'Quantity ',' Sales', 'Profit' to be analyzed; Quantity corresponds to Metirc 1 in the figure above, and a histogram is used to show the trend; Sales and Profit correspond to Metirc 2 and Metirc 3 in the figure above, using a combined biaxial graph to show the data of the two Metircs.
+*   Indicators configure the Metirc data'Quantity ',' Sales', 'Profit' to be analyzed; Quantity corresponds to Metirc 1 in the figure above, and a histogram is used to show the trend; Sales and Profit correspond to Metirc 2 and Metirc 3 in the figure above, using a combined biaxial graph to show the data of the two Metircs. You need to set `cellType:'chart', chartModule:'vchart'` in the specific configuration of the indicator to indicate the chart rendering type to be configured, and specify that the registered chart library name is `vchart`.
 *   IndicatorAsCol configures Metirc in the row header or column header, it should be noted that:
     *   If true, that is, Metirc is in the column header, the display direction of the corresponding chart is'horizontal 'horizontal display;
     *   If it is false, that is, Metirc is at the head of the row, then the display direction of the corresponding chart is'vertical '.
 *   Legends configuration legend style;
     ![image](https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/ffc3a9b5518762d274121ff07.png)
 *   Axes configures the global style of the axis. If axes have been configured in chartSpec in the Metirc configuration, the configuration in chartSpec will be used first.
+
+## changeCellValues(Function)
+Change the value of cells in batches:
+
+```
+  /**
+   * Batch update data of multiple cells
+   * @param col The starting column number of pasted data
+   * @param row The starting row number of pasted data
+   * @param values Data array of multiple cells
+   */
+  changeCellValues(startCol: number, startRow: number, values: string[][])
+```
 
 # Chart Events
 

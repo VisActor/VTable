@@ -21,5 +21,5 @@ type IDefaultGraphicParamsType<T> = {
 };
 
 export function VTag(params: IDefaultGraphicParamsType<TagAttributes>) {
-  return new Tag(params ? params.attribute : {});
+  return new Tag(params ? params.attribute : {}) as any;
 }
