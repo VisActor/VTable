@@ -2990,6 +2990,8 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     this.headerStyleCache.clear();
     this.bodyStyleCache.clear();
     this.bodyBottomStyleCache.clear();
+
+    this._newRowHeightsMap.clear();
   }
   /**
    * 清除行高度缓存对象
