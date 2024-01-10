@@ -207,6 +207,7 @@ export class CartesianAxis {
       gridLength = regionWidth;
       axisLength = height;
     }
+    const size = this.orient === 'top' || this.orient === 'bottom' ? height : width;
     const attrs: LineAxisAttributes = {
       start: { x: this.x, y: this.y },
       end,
@@ -219,7 +220,9 @@ export class CartesianAxis {
         text: this.option.title.text,
         maxWidth: this._getTitleLimit(isX)
       },
-      items: this.getLabelItems(axisLength)
+      items: this.getLabelItems(axisLength),
+      verticalLimitSize: size,
+      verticalMinSize: size
     };
     return attrs;
   }
