@@ -567,7 +567,7 @@ export function bindTableGroupListener(eventManager: EventManager) {
     if (!eventArgsSet?.eventArgs) {
       return;
     }
-    if (eventManager.touchSetTimeout || e.pointerType !== 'touch') {
+    if (eventManager.touchSetTimeout) {
       // 通过这个变量判断非drag鼠标拖拽状态，就不再增加其他变量isDrag了（touchSetTimeout如果拖拽过会变成undefined pointermove事件有置为undefined）
       if (e.pointerType === 'touch') {
         // 移动端事件特殊处理
@@ -579,35 +579,35 @@ export function bindTableGroupListener(eventManager: EventManager) {
           eventManager.touchSetTimeout = undefined;
         }
       }
-      if ((table as any).hasListeners(TABLE_EVENT_TYPE.CLICK_CELL)) {
-        const { col, row } = eventArgsSet.eventArgs;
-        const cellInfo = table.getCellInfo(col, row);
-        let icon;
-        let position;
-        if (eventArgsSet.eventArgs?.target) {
-          const iconInfo = getIconAndPositionFromTarget(eventArgsSet.eventArgs?.target);
-          if (iconInfo) {
-            icon = iconInfo.icon;
-            position = iconInfo.position;
-          }
+    }
+    if (!eventManager.touchMove && (table as any).hasListeners(TABLE_EVENT_TYPE.CLICK_CELL)) {
+      const { col, row } = eventArgsSet.eventArgs;
+      const cellInfo = table.getCellInfo(col, row);
+      let icon;
+      let position;
+      if (eventArgsSet.eventArgs?.target) {
+        const iconInfo = getIconAndPositionFromTarget(eventArgsSet.eventArgs?.target);
+        if (iconInfo) {
+          icon = iconInfo.icon;
+          position = iconInfo.position;
         }
-        const cellsEvent: MousePointerMultiCellEvent = {
-          ...cellInfo,
-          event: e.nativeEvent,
-          federatedEvent: e,
-          cells: [],
-          targetIcon: icon
-            ? {
-                name: icon.name,
-                position: position,
-                funcType: (icon as any).attribute.funcType
-              }
-            : undefined,
-          target: eventArgsSet?.eventArgs?.target
-        };
-
-        table.fireListeners(TABLE_EVENT_TYPE.CLICK_CELL, cellsEvent);
       }
+      const cellsEvent: MousePointerMultiCellEvent = {
+        ...cellInfo,
+        event: e.nativeEvent,
+        federatedEvent: e,
+        cells: [],
+        targetIcon: icon
+          ? {
+              name: icon.name,
+              position: position,
+              funcType: (icon as any).attribute.funcType
+            }
+          : undefined,
+        target: eventArgsSet?.eventArgs?.target
+      };
+
+      table.fireListeners(TABLE_EVENT_TYPE.CLICK_CELL, cellsEvent);
     }
   });
   // stage 的pointerdown监听 如果点击在表格内部 是会被阻止点的tableGroup的pointerdown 监听有stopPropagation

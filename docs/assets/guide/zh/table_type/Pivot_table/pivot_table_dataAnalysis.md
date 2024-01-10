@@ -34,9 +34,9 @@ const option={
 ## 数据分析相关配置：
 |配置项|类型|描述|
 |:----|:----|:----|
-|rows|string[] \| IDimension[]|行维度字段数组，用于解析出对应的维度成员|
-|columns|string[] \| IDimension[]|列维度字段数组，用于解析出对应的维度成员|
-|indicators|string[] \| IIndicator[]|具体展示指标|
+|rows|(IRowDimension \| string)[]|行维度字段数组，用于解析出对应的维度成员|
+|columns|(IColumnDimension \| string)[]|列维度字段数组，用于解析出对应的维度成员|
+|indicators|(IIndicator \| string)[]|具体展示指标|
 |dataConfig.aggregationRules|aggregationRule[]|按照行列维度聚合值计算规则|
 |dataConfig.derivedFieldRules|DerivedFieldRule[]|派生字段|
 |dataConfig.sortRules|sortRule[]|排序规则|

@@ -49,7 +49,9 @@ export function createChartCellGroup(
 
       lineCap: 'square',
 
-      clip: true
+      clip: true,
+
+      cornerRadius: cellTheme.group.cornerRadius
     } as any);
     cellGroup.role = 'cell';
     cellGroup.col = col;

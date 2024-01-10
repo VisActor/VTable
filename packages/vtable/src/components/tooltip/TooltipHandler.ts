@@ -121,11 +121,11 @@ export class TooltipHandler {
         return;
       }
       const { col, row } = e;
-      if (e.related) {
-        if (this._isBindCell(col, row)) {
-          return;
-        }
-      }
+      // if (e.related) {
+      //   if (this._isBindCell(col, row)) {
+      //     return;
+      //   }
+      // }
       let tooltipOption;
       const headerDescription = table.getHeaderDescription(col, row);
       if (headerDescription) {
@@ -188,11 +188,11 @@ export class TooltipHandler {
       }
     });
     table.on(TABLE_EVENT_TYPE.MOUSELEAVE_CELL, e => {
-      if (e.related) {
-        if (this._isBindCell(e.related.col, e.related.row)) {
-          return;
-        }
-      }
+      // if (e.related) {
+      //   if (this._isBindCell(e.related.col, e.related.row)) {
+      //     return;
+      //   }
+      // }
       this._unbindFromCell();
     });
     table.on(TABLE_EVENT_TYPE.SELECTED_CELL, e => {

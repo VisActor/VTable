@@ -169,6 +169,8 @@ setRecords(records: Array<any>, sort?: SortState | SortState[]) //** 基本表�
    */
   selectCells(cellRanges: CellRange[]): void
 ```
+其中：
+{{ use: CellRange() }}
 
 ## getSelectedCellInfos(Function)
 
@@ -178,6 +180,9 @@ setRecords(records: Array<any>, sort?: SortState | SortState[]) //** 基本表�
   /**获取选中区域的每个单元格详情 */
   getSelectedCellInfos(): CellInfo[][] | null;
 ```
+
+{{ use: CellInfo() }}
+
 ## clearSelected(Function)
 
 清除所有单元格的选中状态。
@@ -707,6 +712,19 @@ use case: 点击图例项后 更新过滤规则 来更新图表
 ```
   /** 设置单元格的value值，注意对应的是源数据的原始值，vtable实例records会做对应修改 */
   changeCellValue: (col: number, row: number, value: string | number | null) => void;
+```
+
+## changeCellValues(Function)
+批量更改单元格的value：
+
+```
+  /**
+   * 批量更新多个单元格的数据
+   * @param col 粘贴数据的起始列号
+   * @param row 粘贴数据的起始行号
+   * @param values 多个单元格的数据数组
+   */
+  changeCellValues(startCol: number, startRow: number, values: string[][]) 
 ```
 
 ## getEditor(Function)
