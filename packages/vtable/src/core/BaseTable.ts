@@ -2996,6 +2996,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
    */
   clearRowHeightCache() {
     this.internalProps._rowHeightsMap.clear();
+    this._newRowHeightsMap.clear();
     this._clearRowRangeHeightsMap();
   }
   /**

@@ -16,6 +16,13 @@ export class NumberRangeMap {
     this.table = table;
   }
 
+  clear() {
+    this.data.clear();
+    this.cumulativeSum.clear();
+    this.difference.clear();
+    this.totalSum = 0;
+  }
+
   add(position: number, value: number) {
     const defaultValue = this.table.getRowHeight(position);
     this.data.set(position, value);
