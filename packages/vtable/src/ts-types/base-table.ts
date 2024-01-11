@@ -66,6 +66,7 @@ import type { Title } from '../components/title/title';
 import type { ITitle } from './component/title';
 import type { DiscreteTableLegend } from '../components/legend/discrete-legend/discrete-legend';
 import type { ContinueTableLegend } from '../components/legend/continue-legend/continue-legend';
+import type { NumberRangeMap } from '../layout/row-height-map';
 
 export interface IBaseTableProtected {
   element: HTMLElement;
@@ -100,7 +101,7 @@ export interface IBaseTableProtected {
 
   cachedRecordsRowHeightMap: NumberMap<string | number>; //存储每一条记录对应行的行高，只有当设置为自动换行随内容撑开才会起作用
   // headerRowHeightsMap: NumberMap<number>; //目前是用来存储了表头各行的高度，从headerRowHeight计算而来，headerRowHeight可以设置为数组的形式
-  _rowHeightsMap: NumberMap<number>; //存储数据条目每行高度
+  _rowHeightsMap: NumberRangeMap; //存储数据条目每行高度
   _colWidthsMap: NumberMap<string | number>; //存储各列的宽度
   _colContentWidthsMap: NumberMap<string | number>; //存储各列的内容宽度
   _colWidthsLimit: {
@@ -437,7 +438,8 @@ export interface BaseTableAPI {
 
   isReleased: boolean;
 
-  rowHeightsMap: NumberMap<number>;
+  // rowHeightsMap: NumberMap<number>;
+  rowHeightsMap: NumberRangeMap;
   colWidthsMap: NumberMap<string | number>;
 
   on: <TYPE extends keyof TableEventHandlersEventArgumentMap>(

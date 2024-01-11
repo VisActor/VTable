@@ -1,3 +1,4 @@
+import { isValid } from '@visactor/vutils';
 import type { BaseTableAPI } from '../ts-types/base-table';
 
 export class NumberRangeMap {
@@ -7,9 +8,12 @@ export class NumberRangeMap {
   totalSum: number;
   table: BaseTableAPI;
   isUpdate = false;
+  private _keys: number[] = [];
+  private _sorted = false;
 
   constructor(table: BaseTableAPI) {
     this.data = new Map();
+    this._keys.length = 0;
     this.cumulativeSum = new Map();
     this.difference = new Map();
     this.totalSum = 0;
@@ -30,6 +34,10 @@ export class NumberRangeMap {
 
   add(position: number, value: number) {
     const defaultValue = this.table.getRowHeight(position);
+    if (!this.data.has(position)) {
+      this._keys.push(position);
+      this._sorted = false;
+    }
     this.data.set(position, value);
     this.totalSum += value;
     // this.updateCumulativeSum(position, value);
@@ -40,6 +48,10 @@ export class NumberRangeMap {
     if (this.data.has(position)) {
       const value = this.data.get(position);
       this.data.delete(position);
+      const index = this._keys.indexOf(position);
+      if (index !== -1) {
+        this._keys.splice(index, 1); // 使用 splice() 方法删除指定索引位置的元素
+      }
       this.totalSum -= value;
       const defaultValue = this.table.getRowHeight(position);
       // this.updateCumulativeSum(position, -value);
@@ -62,6 +74,26 @@ export class NumberRangeMap {
 
   get(position: number) {
     return this.data.get(position);
+  }
+
+  has(position: number) {
+    return this.data.has(position);
+  }
+
+  private _sort() {
+    const { _keys: keys } = this;
+    if (!this._sorted) {
+      keys.sort((a, b) => {
+        if (a < b) {
+          return -1;
+        }
+        if (a > b) {
+          return 1;
+        }
+        return 0;
+      });
+      this._sorted = true;
+    }
   }
 
   updateDifference(position: number, difference: number) {
@@ -135,51 +167,95 @@ export class NumberRangeMap {
     this.difference.clear();
   }
 
+  // add and reorder
   insert(position: number, value?: number) {
-    this.clearRange();
-
-    const indices = [];
-    const values = [];
-
-    for (const [pos, value] of this.data) {
-      if (pos >= position) {
-        indices.push(pos + 1);
-        values.push(value);
-      }
-    }
-
-    for (let i = 0; i < indices.length; i++) {
-      this.data.set(indices[i], values[i]);
-    }
-
-    if (value) {
+    const lastIndex = this.getLastIndex();
+    this.adjustOrder(position, position + 1, lastIndex - position);
+    if (isValid(value)) {
       this.put(position, value);
     }
   }
 
+  getLastIndex() {
+    this._sort();
+    return this._keys[this._keys.length - 1];
+  }
+
+  delLast() {
+    const lastIndex = this.getLastIndex();
+    this.remove(lastIndex);
+  }
+
+  // del and reorder
   delete(position: number) {
+    if (!this.has(position)) {
+      return;
+    }
+    const lastIndex = this.getLastIndex();
+
+    this.adjustOrder(position + 1, position, lastIndex - position);
+    this.delLast();
+  }
+
+  /**
+   * 将sourceIndex位置开始 往后moveCount个值 调整到targetIndex位置处
+   * @param sourceIndex
+   * @param targetIndex
+   * @param moveCount
+   */
+  adjustOrder(sourceIndex: number, targetIndex: number, moveCount: number) {
     this.clearRange();
+    this._sort();
+    const { _keys: keys } = this;
 
-    const indices = [];
-    const values = [];
-    let lastIndex = -Infinity;
-
-    for (const [pos, value] of this.data) {
-      if (pos > position) {
-        indices.push(pos - 1);
-        values.push(value);
-        if (pos > lastIndex) {
-          lastIndex = pos;
+    if (sourceIndex > targetIndex) {
+      const sourceVals = [];
+      for (let i = indexFirst(keys, sourceIndex + moveCount - 1); i >= 0; i--) {
+        const key = keys[i];
+        if (key >= sourceIndex) {
+          sourceVals.push(this.get(key));
+        } else if (targetIndex <= key && key < sourceIndex) {
+          this.put(key + moveCount, this.get(key));
+        } else if (key < targetIndex) {
+          break;
         }
       }
+      for (let i = 0; i < moveCount; i++) {
+        this.put(targetIndex + i, sourceVals[moveCount - 1 - i]);
+      }
     }
-
-    for (let i = 0; i < indices.length; i++) {
-      this.data.set(indices[i], values[i]);
-    }
-
-    if (lastIndex !== -Infinity) {
-      this.data.delete(lastIndex);
+    const { length } = keys;
+    if (sourceIndex < targetIndex) {
+      const sourceVals = [];
+      for (let i = indexFirst(keys, sourceIndex); i < length; i++) {
+        const key = keys[i];
+        if (key >= sourceIndex && key < sourceIndex + moveCount) {
+          sourceVals.push(this.get(key));
+        } else if (sourceIndex + moveCount <= key && key <= targetIndex) {
+          this.put(key - moveCount, this.get(key));
+        } else if (key > targetIndex) {
+          break;
+        }
+      }
+      for (let i = 0; i < moveCount; i++) {
+        this.put(targetIndex + i, sourceVals[i]);
+      }
     }
   }
+}
+
+function indexFirst(arr: number[], elm: number): number {
+  let low = 0;
+  let high = arr.length - 1;
+  while (low <= high) {
+    const i = Math.floor((low + high) / 2);
+    if (arr[i] === elm) {
+      return i;
+    } else if (arr[i] > elm) {
+      high = i - 1;
+    } else {
+      low = i + 1;
+    }
+  }
+  return high < 0 ? 0 : high;
 }

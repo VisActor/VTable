@@ -155,7 +155,6 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
   isReleased: boolean = false;
   _chartEventMap: Record<string, { query?: any; callback: AnyFunction }[]> = {};
 
-  _newRowHeightsMap: NumberRangeMap;
   constructor(container: HTMLElement, options: BaseTableConstructorOptions = {}) {
     super();
     if (!container && options.mode !== 'node') {
@@ -266,8 +265,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     internalProps.renderChartAsync = renderChartAsync;
     setBatchRenderChartCount(renderChartAsyncBatchCount);
     internalProps.overscrollBehavior = overscrollBehavior ?? 'auto';
-    internalProps._rowHeightsMap = new NumberMap();
-    this._newRowHeightsMap = new NumberRangeMap(this);
+    internalProps._rowHeightsMap = new NumberRangeMap(this);
     internalProps._rowRangeHeightsMap = new Map();
     internalProps._colRangeWidthsMap = new Map();
     internalProps._widthResizedColMap = new Set();
@@ -623,13 +621,13 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
   /**
    * Get the columns width.
    */
-  get rowHeightsMap(): NumberMap<number> {
+  get rowHeightsMap(): NumberRangeMap {
     return this.internalProps._rowHeightsMap;
   }
   /**
    * Set the columns width.
    */
-  set rowHeightsMap(rowHeightsMap: NumberMap<number>) {
+  set rowHeightsMap(rowHeightsMap: NumberRangeMap) {
     this.internalProps._rowHeightsMap = rowHeightsMap;
   }
   /**
@@ -905,8 +903,8 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     //       : this.defaultHeaderRowHeight
     //     : this.internalProps.defaultRowHeight)
     //     );
-    if (this._newRowHeightsMap.get(row)) {
-      return this._newRowHeightsMap.get(row);
+    if (this.rowHeightsMap.get(row)) {
+      return this.rowHeightsMap.get(row);
     }
     const defaultHeight = this.getDefaultRowHeight(row);
     if (isNumber(defaultHeight)) {
@@ -937,7 +935,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
    */
   _setRowHeight(row: number, height: number, clearCache?: boolean): void {
     // this.rowHeightsMap.put(row, Math.round(height));
-    this._newRowHeightsMap.put(row, Math.round(height));
+    this.rowHeightsMap.put(row, Math.round(height));
     // 清楚影响缓存
     if (clearCache) {
       this._clearRowRangeHeightsMap(row);
@@ -1004,7 +1002,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
       // for (let i = startRow; i <= endRow; i++) {
       //   h += this.getRowHeight(i);
       // }
-      h = this._newRowHeightsMap.getSumInRange(startRow, endRow);
+      h = this.rowHeightsMap.getSumInRange(startRow, endRow);
     }
     // if (startRow >= 0 && endRow >= 0 && h > 0) {
     //   this._rowRangeHeightsMap.set(`$${startRow}$${endRow}`, Math.round(h));
@@ -1149,7 +1147,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
    * @param row
    */
   _clearRowRangeHeightsMap(row?: number): void {
-    this._newRowHeightsMap.clearRange();
+    this.rowHeightsMap.clearRange();
     // if (typeof row !== 'number') {
     //   this._rowRangeHeightsMap.clear();
     // } else {
@@ -1931,8 +1929,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     setBatchRenderChartCount(renderChartAsyncBatchCount);
     internalProps.overscrollBehavior = overscrollBehavior ?? 'auto';
     internalProps.cellTextOverflows = {};
-    internalProps._rowHeightsMap = new NumberMap();
-    this._newRowHeightsMap = new NumberRangeMap(this);
+    internalProps._rowHeightsMap = new NumberRangeMap(this);
     internalProps._rowRangeHeightsMap = new Map();
     internalProps._colRangeWidthsMap = new Map();
 
@@ -2999,7 +2996,6 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
    */
   clearRowHeightCache() {
     this.internalProps._rowHeightsMap.clear();
-    this._newRowHeightsMap.clear();
     this._clearRowRangeHeightsMap();
   }
   /**
