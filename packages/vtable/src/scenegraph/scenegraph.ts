@@ -1,5 +1,5 @@
-import type { IStage, IRect, ITextCache, INode, Text, RichText } from '@visactor/vrender';
-import { createStage, createRect, IContainPointMode, container, vglobal } from '@visactor/vrender';
+import type { IStage, IRect, ITextCache, INode, Text, RichText } from '@src/vrender';
+import { createStage, createRect, IContainPointMode, container, vglobal } from '@src/vrender';
 import type { CellRange, CellSubLocation } from '../ts-types';
 import {
   type CellAddress,

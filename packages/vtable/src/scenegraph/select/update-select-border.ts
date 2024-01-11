@@ -1,4 +1,4 @@
-import type { IRect } from '@visactor/vrender';
+import type { IRect } from '@src/vrender';
 import type { Scenegraph } from '../scenegraph';
 import type { CellSubLocation } from '../../ts-types';
 import { getCellMergeInfo } from '../utils/get-cell-merge';

@@ -3,7 +3,7 @@ import type {
   IRichTextCharacter,
   RichTextWordBreak,
   IRichTextGraphicAttribute
-} from '@visactor/vrender';
+} from '@src/vrender';
 export type ITitle = {
   /**
    * 是否显示标题

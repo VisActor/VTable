@@ -12,7 +12,10 @@ module.exports = {
     __VERSION__: JSON.stringify(require('../package.json').version)
   },
   resolve: {
-    alias: { '@visactor/vtable-editors': path.resolve(__dirname, '../../vtable-editors/src/index.ts') }
+    alias: {
+      '@visactor/vtable-editors': path.resolve(__dirname, '../../vtable-editors/src/index.ts'),
+      '@src': path.resolve(__dirname, '../src/')
+    }
   },
   plugins: [
     mdPlugin({ mode: [Mode.HTML, Mode.MARKDOWN, Mode.TOC, Mode.REACT] }),

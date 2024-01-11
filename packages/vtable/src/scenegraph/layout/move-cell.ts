@@ -1,4 +1,4 @@
-import type { Group } from '@visactor/vrender';
+import type { Group } from '@src/vrender';
 import { getCellMergeInfo } from '../utils/get-cell-merge';
 import type { BaseTableAPI } from '../../ts-types/base-table';
 export function moveHeaderPosition(

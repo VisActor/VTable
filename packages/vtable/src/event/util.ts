@@ -1,4 +1,4 @@
-import type { FederatedPointerEvent, IEventTarget } from '@visactor/vrender';
+import type { FederatedPointerEvent, IEventTarget } from '@src/vrender';
 import type { Group } from '../scenegraph/graphic/group';
 
 export interface SceneEvent {

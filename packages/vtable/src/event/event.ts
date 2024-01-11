@@ -1,6 +1,6 @@
-// import { FederatedPointerEvent } from '@visactor/vrender';
-import type { FederatedPointerEvent, Gesture } from '@visactor/vrender';
-import { RichText } from '@visactor/vrender';
+// import { FederatedPointerEvent } from '@src/vrender';
+import type { FederatedPointerEvent, Gesture } from '@src/vrender';
+import { RichText } from '@src/vrender';
 import type { MousePointerCellEvent } from '../ts-types';
 import { IconFuncTypeEnum } from '../ts-types';
 import type { StateManager } from '../state/state';

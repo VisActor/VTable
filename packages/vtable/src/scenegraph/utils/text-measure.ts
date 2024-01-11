@@ -1,11 +1,11 @@
-import type { ITextGraphicAttribute, TextOptionsType } from '@visactor/vrender';
+import type { ITextGraphicAttribute, TextOptionsType } from '@src/vrender';
 import {
   DefaultTextStyle,
   getTextBounds,
   DefaultTextMeasureContribution,
   TextMeasureContribution,
   ContainerModule
-} from '@visactor/vrender';
+} from '@src/vrender';
 // eslint-disable-next-line max-len
 // import {
 //   DefaultTextMeasureContribution,

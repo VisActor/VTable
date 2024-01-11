@@ -9,7 +9,7 @@ import type { BaseTableAPI } from '../../ts-types/base-table';
 import type { PivotHeaderLayoutMap } from '../../layout/pivot-header-layout';
 import { getAxisConfigInPivotChart } from '../../layout/chart-helper/get-axis-config';
 import { computeAxisComponentWidth } from '../../components/axis/get-axis-component-size';
-import { Group as VGroup } from '@visactor/vrender';
+import { Group as VGroup } from '@src/vrender';
 import { isObject } from '@visactor/vutils';
 import { decodeReactDom, dealPercentCalc } from '../component/custom';
 

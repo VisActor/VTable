@@ -1,4 +1,4 @@
-import type { Cursor } from '@visactor/vrender';
+import type { Cursor } from '@src/vrender';
 import {
   createArc,
   createCircle,
@@ -7,7 +7,7 @@ import {
   REACT_TO_CANOPUS_EVENTS,
   Text,
   Group as VGroup
-} from '@visactor/vrender';
+} from '@src/vrender';
 import { isArray, isFunction, isObject, isString, isValid } from '@visactor/vutils';
 import type {
   ICustomLayout,

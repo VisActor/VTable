@@ -1,4 +1,4 @@
-import type { IStage } from '@visactor/vrender';
+import type { IStage } from '@src/vrender';
 import type { Chart } from '../chart';
 import { Bounds, isValid } from '@visactor/vutils';
 import type { BaseTableAPI } from '../../../ts-types/base-table';

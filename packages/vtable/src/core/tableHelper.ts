@@ -1,4 +1,4 @@
-import type { IThemeSpec } from '@visactor/vrender';
+import type { IThemeSpec } from '@src/vrender';
 import type { BaseTable } from '../core';
 import { CachedDataSource, DataSource } from '../data';
 import { parseFont } from '../scenegraph/utils/font';

@@ -1,4 +1,4 @@
-import type { IGraphic, Text } from '@visactor/vrender';
+import type { IGraphic, Text } from '@src/vrender';
 import type { BaseTableAPI } from '../../ts-types/base-table';
 import type { Group } from '../graphic/group';
 import type { PivotHeaderLayoutMap } from '../../layout/pivot-header-layout';

@@ -15,7 +15,10 @@
         "afterDeclarations": true
       }
     ],
-    "strict": false
+    "strict": false,
+    "paths": {
+      "@src/*": ["./src/*"]
+    }
   },
   "references": [
     {

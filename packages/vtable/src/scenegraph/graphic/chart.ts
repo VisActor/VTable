@@ -1,5 +1,5 @@
-import type { GraphicType, IGroupGraphicAttribute } from '@visactor/vrender';
-import { genNumberType, Group } from '@visactor/vrender';
+import type { GraphicType, IGroupGraphicAttribute } from '@src/vrender';
+import { genNumberType, Group } from '@src/vrender';
 import { Bounds } from '@visactor/vutils';
 import type { BaseTableAPI } from '../../ts-types/base-table';
 import type { PivotChart } from '../../PivotChart';

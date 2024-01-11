@@ -1,4 +1,4 @@
-import type { Cursor, IThemeSpec } from '@visactor/vrender';
+import type { Cursor, IThemeSpec } from '@src/vrender';
 import type { ProgressBarStyle } from '../../body-helper/style/ProgressBarStyle';
 import { regUrl } from '../../tools/global';
 import type {
