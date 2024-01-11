@@ -414,7 +414,7 @@ export function decodeReactDom(dom: any) {
   if (isArray(children)) {
     children.forEach((item: any) => {
       const c = decodeReactDom(item);
-      g.add(c);
+      c && c.type && g.add(c);
     });
   } else if (children) {
     g.add(decodeReactDom(children));
