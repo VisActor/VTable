@@ -2442,28 +2442,18 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
   }
 
   /**
-   *  获取图表对应的指标值
+   *  获取图表对应的维度key非指标
    * */
   getDimensionKeyInChartSpec(_col: number, _row: number) {
-    // const paths = this.getCellHeaderPaths(_col, _row);
-    // let indicatorObj;
-    // if (this.indicatorsAsCol) {
-    //   const indicatorKey = paths.colHeaderPaths.find(colPath => colPath.indicatorKey)?.indicatorKey;
-    //   indicatorObj = this._indicatorObjects.find(indicator => indicator.indicatorKey === indicatorKey);
-    // } else {
-    //   const indicatorKey = paths.rowHeaderPaths.find(rowPath => rowPath.indicatorKey)?.indicatorKey;
-    //   indicatorObj = this._indicatorObjects.find(indicator => indicator.indicatorKey === indicatorKey);
-    // }
-    // const chartSpec = indicatorObj?.chartSpec;
     const chartSpec = this.getRawChartSpec(_col, _row);
-    const dimensionKeys: string[] = [];
+    let dimensionKey: string;
     if (chartSpec) {
       if (this.indicatorsAsCol === false) {
-        dimensionKeys.push(chartSpec.xField ?? chartSpec?.series[0]?.xField);
+        dimensionKey = chartSpec.xField ?? chartSpec?.series[0]?.xField;
       } else {
-        dimensionKeys.push(chartSpec.yField ?? chartSpec?.series[0]?.yField);
+        dimensionKey = chartSpec.yField ?? chartSpec?.series[0]?.yField;
       }
-      return dimensionKeys;
+      return dimensionKey;
     }
     return null;
   }

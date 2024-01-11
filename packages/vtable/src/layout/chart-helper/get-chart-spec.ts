@@ -106,7 +106,7 @@ export function getChartAxes(col: number, row: number, layout: PivotHeaderLayout
       );
     });
 
-    let rowDimensionKey = layout.getDimensionKeyInChartSpec(layout.rowHeaderLevelCount, row)?.[0];
+    let rowDimensionKey = layout.getDimensionKeyInChartSpec(layout.rowHeaderLevelCount, row);
     if (isArray(rowDimensionKey)) {
       rowDimensionKey = rowDimensionKey[0];
     }
@@ -204,7 +204,7 @@ export function getChartAxes(col: number, row: number, layout: PivotHeaderLayout
       );
     });
 
-    let columnDimensionKey = layout.getDimensionKeyInChartSpec(col, layout.columnHeaderLevelCount)[0];
+    let columnDimensionKey = layout.getDimensionKeyInChartSpec(col, layout.columnHeaderLevelCount);
     if (isArray(columnDimensionKey)) {
       columnDimensionKey = columnDimensionKey[0];
     }

@@ -26,10 +26,10 @@ export function bindAxisClickEvent(table: BaseTableAPI) {
         value?: string;
       }[];
       if (layout.indicatorsAsCol) {
-        dimensionKey = layout.getDimensionKeyInChartSpec(layout.rowHeaderLevelCount, row)[0];
+        dimensionKey = layout.getDimensionKeyInChartSpec(layout.rowHeaderLevelCount, row);
         dimensions = layout.getCellHeaderPaths(layout.rowHeaderLevelCount - 2, row).rowHeaderPaths;
       } else {
-        dimensionKey = layout.getDimensionKeyInChartSpec(col, layout.columnHeaderLevelCount)[0];
+        dimensionKey = layout.getDimensionKeyInChartSpec(col, layout.columnHeaderLevelCount);
         dimensions = layout.getCellHeaderPaths(col, layout.columnHeaderLevelCount - 1).colHeaderPaths;
       }
       const filter = dimensions
