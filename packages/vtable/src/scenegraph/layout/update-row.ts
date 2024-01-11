@@ -28,7 +28,8 @@ export function updateRow(
 
   const rowHeightsMap = table.rowHeightsMap;
   removeRows.forEach(row => {
-    rowHeightsMap.delAndReorder(row);
+    // rowHeightsMap.delAndReorder(row);
+    (scene.table as any)._newRowHeightsMap.delete(row);
   });
 
   if (removeRows.length) {
@@ -42,7 +43,8 @@ export function updateRow(
   addRows.forEach(row => {
     const needUpdateAfter = addRow(row, scene);
     updateAfter = updateAfter ?? needUpdateAfter;
-    rowHeightsMap.addAndReorder(row);
+    // rowHeightsMap.addAndReorder(row);
+    (scene.table as any)._newRowHeightsMap.insert(row);
   });
 
   // reset attribute y and row number in CellGroup

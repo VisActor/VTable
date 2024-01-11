@@ -1149,21 +1149,22 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
    * @param row
    */
   _clearRowRangeHeightsMap(row?: number): void {
-    if (typeof row !== 'number') {
-      this._rowRangeHeightsMap.clear();
-    } else {
-      const keys = this._rowRangeHeightsMap.keys();
-      for (const key of keys) {
-        const reg = rangeReg.exec(key);
-        if (reg) {
-          const start = Number(reg[1]);
-          const end = Number(reg[2]);
-          if (row >= start && row <= end) {
-            this._rowRangeHeightsMap.delete(key);
-          }
-        }
-      }
-    }
+    this._newRowHeightsMap.clearRange();
+    // if (typeof row !== 'number') {
+    //   this._rowRangeHeightsMap.clear();
+    // } else {
+    //   const keys = this._rowRangeHeightsMap.keys();
+    //   for (const key of keys) {
+    //     const reg = rangeReg.exec(key);
+    //     if (reg) {
+    //       const start = Number(reg[1]);
+    //       const end = Number(reg[2]);
+    //       if (row >= start && row <= end) {
+    //         this._rowRangeHeightsMap.delete(key);
+    //       }
+    //     }
+    //   }
+    // }
   }
   /**
    * 获取某一列内容的宽度 不关乎该列列宽值有多少
@@ -2991,7 +2992,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     this.bodyStyleCache.clear();
     this.bodyBottomStyleCache.clear();
 
-    this._newRowHeightsMap.clear();
+    // this._newRowHeightsMap.clear();
   }
   /**
    * 清除行高度缓存对象

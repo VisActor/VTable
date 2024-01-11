@@ -23,6 +23,11 @@ export class NumberRangeMap {
     this.totalSum = 0;
   }
 
+  clearRange() {
+    this.cumulativeSum.clear();
+    this.difference.clear();
+  }
+
   add(position: number, value: number) {
     const defaultValue = this.table.getRowHeight(position);
     this.data.set(position, value);
@@ -128,5 +133,53 @@ export class NumberRangeMap {
     }
 
     this.difference.clear();
+  }
+
+  insert(position: number, value?: number) {
+    this.clearRange();
+
+    const indices = [];
+    const values = [];
+
+    for (const [pos, value] of this.data) {
+      if (pos >= position) {
+        indices.push(pos + 1);
+        values.push(value);
+      }
+    }
+
+    for (let i = 0; i < indices.length; i++) {
+      this.data.set(indices[i], values[i]);
+    }
+
+    if (value) {
+      this.put(position, value);
+    }
+  }
+
+  delete(position: number) {
+    this.clearRange();
+
+    const indices = [];
+    const values = [];
+    let lastIndex = -Infinity;
+
+    for (const [pos, value] of this.data) {
+      if (pos > position) {
+        indices.push(pos - 1);
+        values.push(value);
+        if (pos > lastIndex) {
+          lastIndex = pos;
+        }
+      }
+    }
+
+    for (let i = 0; i < indices.length; i++) {
+      this.data.set(indices[i], values[i]);
+    }
+
+    if (lastIndex !== -Infinity) {
+      this.data.delete(lastIndex);
+    }
   }
 }

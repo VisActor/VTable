@@ -168,7 +168,8 @@ export function computeRowsHeight(
       }
     }
   } else {
-    table.rowHeightsMap.clear();
+    // table.rowHeightsMap.clear();
+    table.clearRowHeightCache();
     for (let row = 0; row < table.rowCount; row++) {
       newHeights[row] = table.getRowHeight(row);
     }
