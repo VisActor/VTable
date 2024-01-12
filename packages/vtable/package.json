@@ -49,7 +49,7 @@
     "test-nodejs": "ts-node --transpileOnly --skipProject ./nodejs/index.ts"
   },
   "dependencies": {
-    "@visactor/vtable-editors": "workspace:*",
+    "@visactor/vtable-editors": "workspace:0.17.9-alpha.5",
     "@visactor/vrender": "0.17.12-alpha.1",
     "@visactor/vrender-components": "0.17.12-alpha.1",
     "@visactor/vutils-extension": "~1.8.5",
