@@ -845,11 +845,15 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
   toggleHierarchyState(col: number, row: number) {
     let notFillWidth = false;
     let notFillHeight = false;
-    if (this.autoFillWidth) {
-      notFillWidth = this.getAllColsWidth() <= this.tableNoFrameWidth;
-    }
-    if (this.autoFillHeight) {
-      notFillHeight = this.getAllRowsHeight() <= this.tableNoFrameHeight;
+    const checkHasChart = this.internalProps.layoutMap.checkHasChart();
+    // 检查当前状态总宽高未撑满autoFill是否在起作用
+    if (checkHasChart) {
+      if (this.autoFillWidth) {
+        notFillWidth = this.getAllColsWidth() <= this.tableNoFrameWidth;
+      }
+      if (this.autoFillHeight) {
+        notFillHeight = this.getAllRowsHeight() <= this.tableNoFrameHeight;
+      }
     }
     const hierarchyState = this.getHierarchyState(col, row);
     if (hierarchyState === HierarchyState.expand) {
@@ -876,14 +880,17 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
     this.clearCellStyleCache();
     this.scenegraph.updateHierarchyIcon(col, row);
     this.scenegraph.updateRow(result.removeCellPositions, result.addCellPositions, result.updateCellPositions);
-    if (this.autoFillWidth && !notFillWidth) {
-      notFillWidth = this.getAllColsWidth() <= this.tableNoFrameWidth;
-    }
-    if (this.autoFillHeight && !notFillHeight) {
-      notFillHeight = this.getAllRowsHeight() <= this.tableNoFrameHeight;
-    }
-    if (this.widthMode === 'adaptive' || notFillWidth || this.heightMode === 'adaptive' || notFillHeight) {
-      this.scenegraph.updateChartSize(0); // 如果收起展开有性能问题 可以排查下这个防范
+    if (checkHasChart) {
+      // 检查更新节点状态后总宽高未撑满autoFill是否在起作用
+      if (this.autoFillWidth && !notFillWidth) {
+        notFillWidth = this.getAllColsWidth() <= this.tableNoFrameWidth;
+      }
+      if (this.autoFillHeight && !notFillHeight) {
+        notFillHeight = this.getAllRowsHeight() <= this.tableNoFrameHeight;
+      }
+      if (this.widthMode === 'adaptive' || notFillWidth || this.heightMode === 'adaptive' || notFillHeight) {
+        this.scenegraph.updateChartSize(0); // 如果收起展开有性能问题 可以排查下这个防范
+      }
     }
   }
   /**

@@ -4,6 +4,7 @@ import type { SimpleHeaderLayoutMap } from '../simple-header-layout';
 import { checkZeroAlign, getAxisOption, getAxisRange } from './get-axis-config';
 import { getAxisDomainRangeAndLabels } from './get-axis-domain';
 import { getNewRangeToAlign } from './zero-align';
+import type { ColumnData, IndicatorData } from '../../ts-types/list-table/layout-map/api';
 
 const NO_AXISID_FRO_VTABLE = 'NO_AXISID_FRO_VTABLE';
 
@@ -320,4 +321,15 @@ function getRange(
     isZeroAlign,
     axisOption
   };
+}
+/** 检查是否有直角坐标系的图表 */
+export function checkHasChart(layout: PivotHeaderLayoutMap | SimpleHeaderLayoutMap) {
+  let isHasChart = false;
+  layout.columnObjects.forEach((indicator: IndicatorData | ColumnData) => {
+    if (indicator.chartSpec) {
+      isHasChart = true;
+      return isHasChart;
+    }
+  });
+  return isHasChart;
 }

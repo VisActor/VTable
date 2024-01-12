@@ -11,7 +11,7 @@ import type {
   LayoutMapAPI,
   WidthData
 } from '../ts-types/list-table/layout-map/api';
-import { getChartDataId } from './chart-helper/get-chart-spec';
+import { checkHasChart, getChartDataId } from './chart-helper/get-chart-spec';
 // import { EmptyDataCache } from './utils';
 
 // let seqId = 0;
@@ -900,6 +900,10 @@ export class SimpleHeaderLayoutMap implements LayoutMapAPI {
     const columnObj = this.transpose ? this._columns[_row] : this._columns[_col];
     return columnObj.chartInstance;
   }
+  checkHasChart() {
+    return checkHasChart(this);
+  }
+
   getAxisConfigInPivotChart(col: number, row: number): any {
     return undefined;
   }
