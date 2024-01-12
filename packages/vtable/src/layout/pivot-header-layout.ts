@@ -2295,6 +2295,7 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
     if (isCartesianChart(col, row, this)) {
       return getAxisConfigInPivotChart(col, row, this);
     }
+    return undefined;
   }
   isEmpty(col: number, row: number) {
     if (!this._table.isPivotChart()) {
@@ -2332,6 +2333,7 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
     if (isCartesianChart(col, row, this)) {
       return getChartAxes(col, row, this);
     }
+    return undefined;
   }
   getRawChartSpec(col: number, row: number): any {
     return getRawChartSpec(col, row, this);
