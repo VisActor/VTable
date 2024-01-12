@@ -43,11 +43,11 @@ export function checkHasCartesianChart(layout: PivotHeaderLayoutMap) {
 
 /** 检查是否有直角坐标系的图表 */
 export function isCartesianChart(col: number, row: number, layout: PivotHeaderLayoutMap) {
-  let isHasCartesianChart = false;
+  let isHasCartesianChart = true;
   const chartSpec = layout.getRawChartSpec(col, row);
   if (chartSpec) {
-    if (chartSpec.type !== 'pie' && chartSpec.type !== 'funnel' && chartSpec.type !== 'rose') {
-      isHasCartesianChart = true;
+    if (chartSpec.type === 'pie' || chartSpec.type === 'funnel' || chartSpec.type === 'rose') {
+      isHasCartesianChart = false;
     }
   }
   return isHasCartesianChart;
