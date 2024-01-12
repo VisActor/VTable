@@ -10,6 +10,7 @@ import { getCellCornerRadius, getStyleTheme } from '../../core/tableHelper';
 import { isPromise } from '../../tools/helper';
 import { dealPromiseData } from '../utils/deal-promise-data';
 import { isArray } from '@visactor/vutils';
+import { dealWithCustom } from '../component/custom';
 /**
  * 创建复合列 同一列支持创建不同类型单元格
  * @param columnGroup 列Group
@@ -65,10 +66,17 @@ export function createComplexColumn(
     let range;
     let isMerge;
     let customStyle;
+    let customResult;
     if (table.internalProps.customMergeCell) {
       const customMerge = table.getCustomMerge(col, row);
       if (customMerge) {
-        const { range: customMergeRange, text: customMergeText, style: customMergeStyle } = customMerge;
+        const {
+          range: customMergeRange,
+          text: customMergeText,
+          style: customMergeStyle,
+          customLayout,
+          customRender
+        } = customMerge;
         range = customMergeRange;
         isMerge = range.start.col !== range.end.col || range.start.row !== range.end.row;
         if (isMerge) {
@@ -78,6 +86,21 @@ export function createComplexColumn(
         }
         value = customMergeText;
         customStyle = customMergeStyle;
+
+        if (customLayout || customRender) {
+          customResult = dealWithCustom(
+            customLayout,
+            customRender,
+            customMergeRange.start.col,
+            customMergeRange.start.row,
+            table.getColsWidth(customMergeRange.start.col, customMergeRange.end.col),
+            table.getRowsHeight(customMergeRange.start.row, customMergeRange.end.row),
+            false,
+            table.heightMode === 'autoHeight',
+            padding,
+            table
+          );
+        }
       }
     }
 
@@ -158,7 +181,9 @@ export function createComplexColumn(
           textAlign,
           textBaseline,
           mayHaveIcon,
-          cellTheme
+          cellTheme,
+          range,
+          customResult
         )
       );
       columnGroup.updateColumnRowNumber(row);
@@ -183,7 +208,8 @@ export function createComplexColumn(
         textBaseline,
         mayHaveIcon,
         cellTheme,
-        range
+        range,
+        customResult
       );
       columnGroup.updateColumnRowNumber(row);
       if (isMerge) {

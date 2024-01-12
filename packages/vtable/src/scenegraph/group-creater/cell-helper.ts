@@ -1,4 +1,4 @@
-import type { Cursor, IThemeSpec } from '@visactor/vrender';
+import type { Cursor, IThemeSpec, Group as VGroup } from '@visactor/vrender';
 import type { ProgressBarStyle } from '../../body-helper/style/ProgressBarStyle';
 import { regUrl } from '../../tools/global';
 import type {
@@ -53,7 +53,11 @@ export function createCell(
   textBaseline: CanvasTextBaseline,
   mayHaveIcon: boolean,
   cellTheme: IThemeSpec,
-  range: CellRange | undefined
+  range: CellRange | undefined,
+  customResult?: {
+    elementsGroup: VGroup;
+    renderDefault: boolean;
+  }
 ): Group {
   if (isPromise(value)) {
     value = table.getCellValue(col, row);
@@ -121,34 +125,38 @@ export function createCell(
 
     let customElementsGroup;
     let renderDefault = true;
-    let customRender;
-    let customLayout;
-    const cellLocation = table.getCellLocation(col, row);
-    if (cellLocation !== 'body') {
-      customRender = define?.headerCustomRender;
-      customLayout = define?.headerCustomLayout;
-    } else {
-      customRender = define?.customRender || table.customRender;
-      customLayout = define?.customLayout;
-    }
-
-    if (customLayout || customRender) {
-      // const { autoRowHeight } = table.internalProps;
-      const customResult = dealWithCustom(
-        customLayout,
-        customRender,
-        col,
-        row,
-        cellWidth,
-        cellHeight,
-        false,
-        table.heightMode === 'autoHeight',
-        padding,
-        table
-      );
+    if (customResult) {
       customElementsGroup = customResult.elementsGroup;
       renderDefault = customResult.renderDefault;
+    } else {
+      let customRender;
+      let customLayout;
+      const cellLocation = table.getCellLocation(col, row);
+      if (cellLocation !== 'body') {
+        customRender = define?.headerCustomRender;
+        customLayout = define?.headerCustomLayout;
+      } else {
+        customRender = define?.customRender || table.customRender;
+        customLayout = define?.customLayout;
+      }
+      if (customLayout || customRender) {
+        const customResult = dealWithCustom(
+          customLayout,
+          customRender,
+          col,
+          row,
+          cellWidth,
+          cellHeight,
+          false,
+          table.heightMode === 'autoHeight',
+          padding,
+          table
+        );
+        customElementsGroup = customResult.elementsGroup;
+        renderDefault = customResult.renderDefault;
+      }
     }
+
     cellGroup = createCellGroup(
       table,
       value,
@@ -185,53 +193,6 @@ export function createCell(
     } else if (table.internalProps.layoutMap.isAxisCell(col, row)) {
       cellGroup.clear();
     }
-
-    // if ((define as any)?.isAxis && cellLocation === 'columnHeader') {
-    //   cellGroup.setAttribute('clip', false);
-    //   const axis = new CartesianAxis(
-    //     {
-    //       orient: 'top',
-    //       type: 'band',
-    //       data: ['A', 'B', 'C'],
-    //       title: {
-    //         visible: true,
-    //         text: 'X Axis'
-    //       }
-    //     },
-    //     cellGroup.attribute.width,
-    //     cellGroup.attribute.height,
-    //     table
-    //   );
-    //   cellGroup.clear();
-    //   // axis.component.setAttribute('y', 40);
-    //   cellGroup.appendChild(axis.component);
-    // } else if ((define as any)?.isAxis && cellLocation === 'rowHeader') {
-    //   cellGroup.setAttribute('clip', false);
-    //   const axis = new CartesianAxis(
-    //     {
-    //       orient: 'left',
-    //       type: 'linear',
-    //       range: { min: 0, max: 30 },
-    //       label: {
-    //         flush: true
-    //       },
-    //       grid: {
-    //         visible: true
-    //       },
-    //       title: {
-    //         visible: true,
-    //         text: 'Y Axis'
-    //       }
-    //     },
-    //     cellGroup.attribute.width,
-    //     cellGroup.attribute.height,
-    //     table
-    //   );
-    //   cellGroup.clear();
-    //   // axis.component.setAttribute('x', 80);
-    //   cellGroup.appendChild(axis.component);
-    //   axis.overlap();
-    // }
   } else if (type === 'image') {
     // 创建图片单元格
     cellGroup = createImageCellGroup(
@@ -480,11 +441,23 @@ export function updateCell(col: number, row: number, table: BaseTableAPI, addNew
     : table.getBodyColumnType(col, row);
   let value = table.getCellValue(col, row);
 
+  const mayHaveIcon = cellLocation !== 'body' ? true : !!define?.icon || !!define?.tree;
+  const padding = cellTheme._vtable.padding;
+  const textAlign = cellTheme._vtable.textAlign;
+  const textBaseline = cellTheme._vtable.textBaseline;
+
   let customStyle;
+  let customResult;
   if (table.internalProps.customMergeCell) {
     const customMerge = table.getCustomMerge(col, row);
     if (customMerge) {
-      const { range: customMergeRange, text: customMergeText, style: customMergeStyle } = customMerge;
+      const {
+        range: customMergeRange,
+        text: customMergeText,
+        style: customMergeStyle,
+        customLayout,
+        customRender
+      } = customMerge;
       range = customMergeRange;
       isMerge = range.start.col !== range.end.col || range.start.row !== range.end.row;
       value = customMergeText;
@@ -493,15 +466,25 @@ export function updateCell(col: number, row: number, table: BaseTableAPI, addNew
         cellTheme = getStyleTheme(customStyle, table, range.start.col, range.start.row, getProp).theme;
         cellTheme.group.cornerRadius = getCellCornerRadius(col, row, table);
       }
+
+      if (customLayout || customRender) {
+        customResult = dealWithCustom(
+          customLayout,
+          customRender,
+          customMergeRange.start.col,
+          customMergeRange.start.row,
+          table.getColsWidth(customMergeRange.start.col, customMergeRange.end.col),
+          table.getRowsHeight(customMergeRange.start.row, customMergeRange.end.row),
+          false,
+          table.heightMode === 'autoHeight',
+          padding,
+          table
+        );
+      }
     }
   }
 
   let newCellGroup;
-  const mayHaveIcon = cellLocation !== 'body' ? true : !!define?.icon || !!define?.tree;
-  const padding = cellTheme._vtable.padding;
-  const textAlign = cellTheme._vtable.textAlign;
-  const textBaseline = cellTheme._vtable.textBaseline;
-
   let bgColorFunc: Function;
   // 判断是否有mapping  遍历dataset中mappingRules
   if ((table.internalProps as PivotTableProtected)?.dataConfig?.mappingRules && !table.isHeader(col, row)) {
@@ -516,16 +499,6 @@ export function updateCell(col: number, row: number, table: BaseTableAPI, addNew
         }
       }
     );
-  }
-
-  let customRender;
-  let customLayout;
-  if (cellLocation !== 'body') {
-    customRender = define?.headerCustomRender;
-    customLayout = define?.headerCustomLayout;
-  } else {
-    customRender = define?.customRender || table.customRender;
-    customLayout = define?.customLayout;
   }
 
   let cellWidth;
@@ -565,7 +538,8 @@ export function updateCell(col: number, row: number, table: BaseTableAPI, addNew
         mayHaveIcon,
         addNew,
         cellTheme,
-        range
+        range,
+        customResult
       )
     );
   } else {
@@ -586,7 +560,8 @@ export function updateCell(col: number, row: number, table: BaseTableAPI, addNew
       mayHaveIcon,
       addNew,
       cellTheme,
-      range
+      range,
+      customResult
     );
   }
 
@@ -622,7 +597,11 @@ function updateCellContent(
   mayHaveIcon: boolean,
   addNew: boolean,
   cellTheme: IThemeSpec,
-  range: CellRange | undefined
+  range: CellRange | undefined,
+  customResult?: {
+    elementsGroup: VGroup;
+    renderDefault: boolean;
+  }
 ) {
   if (isPromise(value)) {
     value = table.getCellValue(col, row);
@@ -650,7 +629,8 @@ function updateCellContent(
     textBaseline,
     mayHaveIcon,
     cellTheme,
-    range
+    range,
+    customResult
   );
   if (!addNew && oldCellGroup.parent) {
     oldCellGroup.parent.insertAfter(newCellGroup, oldCellGroup);
