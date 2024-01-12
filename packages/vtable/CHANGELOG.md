@@ -1,6 +1,26 @@
 # Change Log - @visactor/vtable
 
-This log was last generated on Fri, 05 Jan 2024 10:34:08 GMT and should not be manually modified.
+This log was last generated on Wed, 10 Jan 2024 11:22:48 GMT and should not be manually modified.
+
+## 0.17.9
+Wed, 10 Jan 2024 11:22:48 GMT
+
+### Updates
+
+- feat: support excel data paste to cells #857
+
+
+- fix: showSubTotals can not work #893
+
+
+- feat: add api getCellAddressByRecord
+
+
+- feat: optimize getCellHeaderPath function
+- fix: set display:none trigger resize logic
+
+
+- fix: fix right frozen cell location
 
 ## 0.17.8
 Fri, 05 Jan 2024 10:34:08 GMT
