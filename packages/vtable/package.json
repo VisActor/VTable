@@ -19,7 +19,7 @@
     "url": "https://VisActor.io/"
   },
   "license": "MIT",
-  "sideEffects": false,
+  "sideEffects": true,
   "main": "cjs/index.js",
   "module": "es/index.js",
   "types": "es/index.d.ts",
