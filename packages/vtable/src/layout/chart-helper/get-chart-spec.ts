@@ -49,6 +49,8 @@ export function isCartesianChart(col: number, row: number, layout: PivotHeaderLa
     if (chartSpec.type === 'pie' || chartSpec.type === 'funnel' || chartSpec.type === 'rose') {
       isHasCartesianChart = false;
     }
+  } else {
+    isHasCartesianChart = false;
   }
   return isHasCartesianChart;
 }

@@ -2292,7 +2292,7 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
   }
 
   getAxisConfigInPivotChart(col: number, row: number): any {
-    if (isCartesianChart(col, row, this)) {
+    if (isCartesianChart(col, row, this) || this.isAxisCell(col, row)) {
       return getAxisConfigInPivotChart(col, row, this);
     }
     return undefined;
@@ -2330,7 +2330,7 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
     return false;
   }
   getChartAxes(col: number, row: number): any[] {
-    if (isCartesianChart(col, row, this)) {
+    if (isCartesianChart(col, row, this) || this.isAxisCell(col, row)) {
       return getChartAxes(col, row, this);
     }
     return undefined;
