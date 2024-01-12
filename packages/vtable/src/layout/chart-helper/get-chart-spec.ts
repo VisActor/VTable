@@ -325,11 +325,12 @@ function getRange(
 /** 检查是否有直角坐标系的图表 */
 export function checkHasChart(layout: PivotHeaderLayoutMap | SimpleHeaderLayoutMap) {
   let isHasChart = false;
-  layout.columnObjects.forEach((indicator: IndicatorData | ColumnData) => {
-    if (indicator.chartSpec) {
+  for (let i = 0; i < layout.columnObjects.length; i++) {
+    const columnObj = layout.columnObjects[i];
+    if (columnObj.chartSpec) {
       isHasChart = true;
-      return isHasChart;
+      break;
     }
-  });
+  }
   return isHasChart;
 }
