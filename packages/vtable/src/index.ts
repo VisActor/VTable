@@ -1,5 +1,6 @@
 /* eslint-disable sort-imports */
-import { graphicUtil } from '@src/vrender';
+import { graphicUtil, registerForVrender } from '@src/vrender';
+registerForVrender();
 
 import * as TYPES from './ts-types';
 import * as core from './core';

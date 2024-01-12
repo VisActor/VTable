@@ -1,5 +1,5 @@
 import type { IStage, IRect, ITextCache, INode, Text, RichText } from '@src/vrender';
-import { createStage, createRect, IContainPointMode, container, vglobal } from '@src/vrender';
+import { createStage, createRect, IContainPointMode, container, vglobal, registerForVrender } from '@src/vrender';
 import type { CellRange, CellSubLocation } from '../ts-types';
 import {
   type CellAddress,
@@ -61,6 +61,8 @@ import { Env } from '../tools/env';
 import { createCornerCell } from './style/corner-cell';
 import { updateCol } from './layout/update-col';
 // import { contextModule } from './context/module';
+
+registerForVrender();
 
 // VChart poptip theme
 loadPoptip();

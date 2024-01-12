@@ -24,30 +24,39 @@ import {
 // 导出版本号
 // export const version = __VERSION__;
 
-preLoadAllModule();
+let registed = false;
+export function registerForVrender() {
+  if (registed) {
+    return;
+  }
+  registed = true;
+  // 注册内置组件
+  preLoadAllModule();
 
-if (isBrowserEnv()) {
-  loadBrowserEnv(container);
-} else if (isNodeEnv()) {
-  loadNodeEnv(container);
+  if (isBrowserEnv()) {
+    loadBrowserEnv(container);
+  } else if (isNodeEnv()) {
+    loadNodeEnv(container);
+  }
+  registerArc();
+  registerArc3d();
+  registerArea();
+  registerCircle();
+  registerGlyph();
+  registerGroup();
+  registerImage();
+  registerLine();
+  registerPath();
+  registerPolygon();
+  registerPyramid3d();
+  registerRect();
+  registerRect3d();
+  registerRichtext();
+  registerShadowRoot();
+  registerSymbol();
+  registerText();
+  registerWrapText();
 }
-registerArc();
-registerArc3d();
-registerArea();
-registerCircle();
-registerGlyph();
-registerGroup();
-registerImage();
-registerLine();
-registerPath();
-registerPolygon();
-registerPyramid3d();
-registerRect();
-registerRect3d();
-registerRichtext();
-registerShadowRoot();
-registerSymbol();
-registerText();
-registerWrapText();
+
 export * from '@visactor/vrender-core';
 export * from '@visactor/vrender-kits';
