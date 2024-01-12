@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vtable",
+      "comment": "feat: add customLayout & customRander in customMergeCell",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vtable"
+}
