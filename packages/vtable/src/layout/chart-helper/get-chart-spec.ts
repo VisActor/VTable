@@ -1,7 +1,7 @@
 import { cloneDeep, isArray, isNumber, merge } from '@visactor/vutils';
 import type { PivotHeaderLayoutMap } from '../pivot-header-layout';
 import type { SimpleHeaderLayoutMap } from '../simple-header-layout';
-import { checkZeroAlign, getAxisOption, getAxisRange } from './get-axis-config';
+import { getAxisOption, getAxisRange } from './get-axis-config';
 import { getAxisDomainRangeAndLabels } from './get-axis-domain';
 import { getNewRangeToAlign } from './zero-align';
 
@@ -21,7 +21,37 @@ export function getRawChartSpec(col: number, row: number, layout: PivotHeaderLay
 
   return chartSpec;
 }
+/** 检查是否有直角坐标系的图表 */
+export function checkHasCartesianChart(layout: PivotHeaderLayoutMap) {
+  let isHasCartesianChart = false;
+  for (let i = 0; i < layout.columnObjects.length; i++) {
+    //columnObjects数量和指标数量一样 并不是每个列都有 所有会快一些
+    const columnObj = layout.columnObjects[i];
+    if (columnObj.chartSpec) {
+      if (
+        columnObj.chartSpec.type !== 'pie' &&
+        columnObj.chartSpec.type !== 'funnel' &&
+        columnObj.chartSpec.type !== 'rose'
+      ) {
+        isHasCartesianChart = true;
+        break;
+      }
+    }
+  }
+  return isHasCartesianChart;
+}
 
+/** 检查是否有直角坐标系的图表 */
+export function isCartesianChart(col: number, row: number, layout: PivotHeaderLayoutMap) {
+  let isHasCartesianChart = false;
+  const chartSpec = layout.getRawChartSpec(col, row);
+  if (chartSpec) {
+    if (chartSpec.type !== 'pie' && chartSpec.type !== 'funnel' && chartSpec.type !== 'rose') {
+      isHasCartesianChart = true;
+    }
+  }
+  return isHasCartesianChart;
+}
 export function getChartSpec(col: number, row: number, layout: PivotHeaderLayoutMap): any {
   let chartSpec = layout.getRawChartSpec(col, row);
   if (chartSpec) {

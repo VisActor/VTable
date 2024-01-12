@@ -34,7 +34,14 @@ import { IndicatorDimensionKeyPlaceholder } from '../tools/global';
 import { diffCellAddress } from '../tools/diff-cell';
 import type { ILinkDimension } from '../ts-types/pivot-table/dimension/link-dimension';
 import type { IImageDimension } from '../ts-types/pivot-table/dimension/image-dimension';
-import { getChartAxes, getChartDataId, getChartSpec, getRawChartSpec } from './chart-helper/get-chart-spec';
+import {
+  checkHasCartesianChart,
+  getChartAxes,
+  getChartDataId,
+  getChartSpec,
+  getRawChartSpec,
+  isCartesianChart
+} from './chart-helper/get-chart-spec';
 import type { LayouTreeNode, IPivotLayoutHeadNode } from './pivot-layout-helper';
 import {
   DimensionTree,
@@ -171,7 +178,7 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
     if (dataset) {
       this.rowTree = dataset.rowHeaderTree;
       this.columnTree = dataset.colHeaderTree;
-      if (this.indicatorsAsCol && this._table.isPivotChart()) {
+      if (this.indicatorsAsCol && this._table.isPivotChart() && checkHasCartesianChart(this)) {
         const supplyAxisNode = (nodes: IHeaderTreeDefine[]) => {
           nodes.forEach((node: IHeaderTreeDefine) => {
             if (node.children?.length) {
@@ -1104,19 +1111,6 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
     return this.rowDimensionTree.tree.size;
   }
   get bottomFrozenRowCount(): number {
-    // // return 0;
-    // if (this.showHeader && this.showColumnHeader) {
-    //   if (this.indicatorsAsCol && !this.hideIndicatorName) {
-    //     // 查询指标是否有multiIndicator
-    //     return this.indicatorsDefine.find(indicator => {
-    //       return (indicator as any)?.multiIndicator;
-    //     })
-    //       ? 1
-    //       : 0;
-    //   }
-    // }
-    // return 0;
-    //上面是原有逻辑
     //下面是pivot-layout中逻辑
     if (!this._table.isPivotChart()) {
       if (this._table.internalProps.bottomFrozenRowCount) {
@@ -1127,7 +1121,7 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
       }
       return 0;
     }
-    if (this.indicatorKeys.length >= 1) {
+    if (this.indicatorKeys.length >= 1 && checkHasCartesianChart(this)) {
       const axisOption = ((this._table as PivotChart).pivotChartAxes as ITableAxisOption[]).find(axisOption => {
         return axisOption.orient === 'bottom';
       });
@@ -2298,7 +2292,9 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
   }
 
   getAxisConfigInPivotChart(col: number, row: number): any {
-    return getAxisConfigInPivotChart(col, row, this);
+    if (isCartesianChart(col, row, this)) {
+      return getAxisConfigInPivotChart(col, row, this);
+    }
   }
   isEmpty(col: number, row: number) {
     if (!this._table.isPivotChart()) {
@@ -2319,7 +2315,7 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
     if (!this._table.isPivotChart()) {
       return false;
     }
-    if (this.indicatorKeys.length >= 1) {
+    if (this.indicatorKeys.length >= 1 && checkHasCartesianChart(this)) {
       if (this.isBottomFrozenRow(col, row) || this.isRightFrozenColumn(col, row)) {
         return true;
       }
@@ -2333,7 +2329,9 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
     return false;
   }
   getChartAxes(col: number, row: number): any[] {
-    return getChartAxes(col, row, this);
+    if (isCartesianChart(col, row, this)) {
+      return getChartAxes(col, row, this);
+    }
   }
   getRawChartSpec(col: number, row: number): any {
     return getRawChartSpec(col, row, this);

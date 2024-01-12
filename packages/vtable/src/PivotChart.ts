@@ -703,6 +703,9 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
 
     for (let i = 0, len = indicators?.length; i < len; i++) {
       if (typeof indicators[i] !== 'string' && (indicators[i] as IChartColumnIndicator).chartSpec) {
+        if ((indicators[i] as IChartColumnIndicator).chartSpec?.type === 'pie') {
+          continue;
+        }
         if (this.options.indicatorsAsCol === false) {
           const indicatorDefine = indicators[i] as IIndicator;
           //明确指定 chartSpec.stack为true
@@ -1057,7 +1060,7 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
         chartInstance = chartNode.attribute.chartInstance;
         const { dataId, data, axes, spec } = chartNode.attribute;
         const viewBox = chartNode.getViewBox();
-        axes.forEach((axis: any, index: number) => {
+        axes?.forEach((axis: any, index: number) => {
           if (axis.type === 'linear') {
             // const chartAxis = chartInstance._chart._components[index];
             // chartAxis._domain = {

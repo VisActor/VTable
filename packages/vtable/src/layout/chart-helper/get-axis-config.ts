@@ -5,6 +5,7 @@ import type { PivotChart } from '../../PivotChart';
 import { getAxisDomainRangeAndLabels } from './get-axis-domain';
 import type { CollectedValue } from '../../ts-types';
 import { getNewRangeToAlign } from './zero-align';
+import { isCartesianChart } from './get-chart-spec';
 
 export function getAxisConfigInPivotChart(col: number, row: number, layout: PivotHeaderLayoutMap): any {
   if (!layout._table.isPivotChart()) {
@@ -155,34 +156,36 @@ export function getAxisConfigInPivotChart(col: number, row: number, layout: Pivo
       row >= layout.columnHeaderLevelCount &&
       row < layout.rowCount - layout.bottomFrozenRowCount
     ) {
-      let rowDimensionKey = layout.getDimensionKeyInChartSpec(layout.rowHeaderLevelCount, row);
-      if (isArray(rowDimensionKey)) {
-        rowDimensionKey = rowDimensionKey[0];
-      }
-      const data = layout.dataset.collectedValues[rowDimensionKey] ?? ([] as string[]);
-
-      const rowPath = layout.getRowKeysPath(col, row);
-      const domain = (data[rowPath ?? ''] as Array<string>) ?? [];
-
-      const { axisOption, isPercent, theme } = getAxisOption(col + 1, row, 'left', layout);
-      if (axisOption?.visible === false) {
-        return;
-      }
-      // 左侧维度轴
-      return merge(
-        {
-          domain: Array.from(domain).reverse(),
-          title: {
-            autoRotate: true
-          }
-        },
-        axisOption,
-        {
-          orient: 'left',
-          type: 'band',
-          __vtableChartTheme: theme
+      if (isCartesianChart(col, row, layout)) {
+        let rowDimensionKey = layout.getDimensionKeyInChartSpec(layout.rowHeaderLevelCount, row);
+        if (isArray(rowDimensionKey)) {
+          rowDimensionKey = rowDimensionKey[0];
         }
-      );
+        const data = layout.dataset.collectedValues[rowDimensionKey] ?? ([] as string[]);
+
+        const rowPath = layout.getRowKeysPath(col, row);
+        const domain = (data[rowPath ?? ''] as Array<string>) ?? [];
+
+        const { axisOption, isPercent, theme } = getAxisOption(col + 1, row, 'left', layout);
+        if (axisOption?.visible === false) {
+          return;
+        }
+        // 左侧维度轴
+        return merge(
+          {
+            domain: Array.from(domain).reverse(),
+            title: {
+              autoRotate: true
+            }
+          },
+          axisOption,
+          {
+            orient: 'left',
+            type: 'band',
+            __vtableChartTheme: theme
+          }
+        );
+      }
     }
   } else {
     if (
