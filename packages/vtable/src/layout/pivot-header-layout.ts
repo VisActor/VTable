@@ -17,7 +17,8 @@ import type {
   IPagination,
   IColumnDimension,
   IRowDimension,
-  FieldData
+  FieldData,
+  IChartIndicator
 } from '../ts-types';
 import { HierarchyState } from '../ts-types';
 import type {
@@ -81,7 +82,7 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
   private _rowHeaderLevelCount: number;
   rowsDefine: (IRowDimension | string)[];
   columnsDefine: (IColumnDimension | string)[];
-  indicatorsDefine: (IIndicator | string)[];
+  indicatorsDefine: (IIndicator | IChartIndicator | string)[];
   columnPaths: number[][] = [];
   _headerObjects: HeaderData[] = [];
   private _headerObjectMap: { [key: LayoutObjectId]: HeaderData } = {};
