@@ -63,6 +63,34 @@ export function updateChartSize(scenegraph: Scenegraph, col: number) {
     });
     // }
   }
+  // 右侧冻结的单元格也需要调整
+  if (!scenegraph.table.isPivotChart() && scenegraph.table.rightFrozenColCount >= 1) {
+    for (
+      let c = scenegraph.table.colCount - scenegraph.table.rightFrozenColCount;
+      c <= scenegraph.table.colCount - 1;
+      c++
+    ) {
+      const columnGroup = scenegraph.getColGroup(c);
+      columnGroup?.getChildren()?.forEach((cellNode: Group) => {
+        const width = scenegraph.table.getColWidth(cellNode.col);
+        const height = scenegraph.table.getRowHeight(cellNode.row);
+
+        cellNode.children.forEach((node: Chart) => {
+          if ((node as any).type === 'chart') {
+            node.cacheCanvas = null;
+            node.setAttribute(
+              'width',
+              Math.ceil(width - node.attribute.cellPadding[3] - node.attribute.cellPadding[1])
+            );
+            node.setAttribute(
+              'height',
+              Math.ceil(height - node.attribute.cellPadding[0] - node.attribute.cellPadding[2])
+            );
+          }
+        });
+      });
+    }
+  }
 }
 
 /** 清理所有chart节点的 图表缓存图片 */
