@@ -2,7 +2,7 @@
   "changes": [
     {
       "comment": "feat: add eventOptions #914\n\n",
-      "type": "none",
+      "type": "minor",
       "packageName": "@visactor/vtable"
     }
   ],
