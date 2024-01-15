@@ -50,7 +50,8 @@ export function createCellContent(
   textAlign: CanvasTextAlign,
   textBaseline: CanvasTextBaseline,
   table: BaseTableAPI,
-  cellTheme: IThemeSpec
+  cellTheme: IThemeSpec,
+  range: CellRange | undefined
 ) {
   const leftIcons: ColumnIconOption[] = [];
   const rightIcons: ColumnIconOption[] = [];
@@ -75,7 +76,9 @@ export function createCellContent(
       // 没有icon，cellGroup只添加WrapText
       const text = convertInternal(textStr).replace(/\r?\n/g, '\n').replace(/\r/g, '\n').split('\n');
 
-      const hierarchyOffset = getHierarchyOffset(cellGroup.col, cellGroup.row, table);
+      const hierarchyOffset = range
+        ? getHierarchyOffset(range.start.col, range.start.row, table)
+        : getHierarchyOffset(cellGroup.col, cellGroup.row, table);
 
       const attribute = {
         text: text.length === 1 ? text[0] : text,
@@ -133,7 +136,7 @@ export function createCellContent(
 
     // 添加非cell icon & absolute icon
     leftIcons.forEach(icon => {
-      const iconMark = dealWithIcon(icon, undefined, cellGroup.col, cellGroup.row, table);
+      const iconMark = dealWithIcon(icon, undefined, cellGroup.col, cellGroup.row, range, table);
       iconMark.role = 'icon-left';
       iconMark.name = icon.name;
       iconMark.setAttribute('x', leftIconWidth + (iconMark.attribute.marginLeft ?? 0));
@@ -144,7 +147,7 @@ export function createCellContent(
     });
 
     rightIcons.forEach(icon => {
-      const iconMark = dealWithIcon(icon, undefined, cellGroup.col, cellGroup.row, table);
+      const iconMark = dealWithIcon(icon, undefined, cellGroup.col, cellGroup.row, range, table);
       iconMark.role = 'icon-right';
       iconMark.name = icon.name;
       iconMark.setAttribute('x', rightIconWidth + (iconMark.attribute.marginLeft ?? 0));
@@ -155,7 +158,7 @@ export function createCellContent(
     });
 
     absoluteLeftIcons.forEach(icon => {
-      const iconMark = dealWithIcon(icon, undefined, cellGroup.col, cellGroup.row, table);
+      const iconMark = dealWithIcon(icon, undefined, cellGroup.col, cellGroup.row, range, table);
       iconMark.role = 'icon-absolute-left';
       iconMark.name = icon.name;
       iconMark.setAttribute('x', absoluteLeftIconWidth + (iconMark.attribute.marginLeft ?? 0));
@@ -165,7 +168,7 @@ export function createCellContent(
     });
 
     absoluteRightIcons.forEach(icon => {
-      const iconMark = dealWithIcon(icon, undefined, cellGroup.col, cellGroup.row, table);
+      const iconMark = dealWithIcon(icon, undefined, cellGroup.col, cellGroup.row, range, table);
       iconMark.role = 'icon-absolute-right';
       iconMark.name = icon.name;
       iconMark.setAttribute('x', absoluteRightIconWidth + (iconMark.attribute.marginLeft ?? 0));
@@ -253,13 +256,13 @@ export function createCellContent(
       });
 
       contentLeftIcons.forEach(icon => {
-        const iconMark = dealWithIcon(icon, undefined, cellGroup.col, cellGroup.row, table);
+        const iconMark = dealWithIcon(icon, undefined, cellGroup.col, cellGroup.row, range, table);
         iconMark.role = 'icon-content-left';
         iconMark.name = icon.name;
         cellContent.addLeftOccupyingIcon(iconMark);
       });
       contentRightIcons.forEach(icon => {
-        const iconMark = dealWithIcon(icon, undefined, cellGroup.col, cellGroup.row, table);
+        const iconMark = dealWithIcon(icon, undefined, cellGroup.col, cellGroup.row, range, table);
         iconMark.role = 'icon-content-right';
         iconMark.name = icon.name;
         cellContent.addRightOccupyingIcon(iconMark);
@@ -340,6 +343,7 @@ export function dealWithIcon(
   mark?: Icon,
   col?: number,
   row?: number,
+  range?: CellRange,
   table?: BaseTableAPI
 ): Icon {
   // positionType在外部处理
@@ -372,7 +376,10 @@ export function dealWithIcon(
     (icon.funcType === IconFuncTypeEnum.collapse || icon.funcType === IconFuncTypeEnum.expand)
   ) {
     // compute hierarchy offset
-    hierarchyOffset = getHierarchyOffset(col, row, table);
+    // hierarchyOffset = getHierarchyOffset(col, row, table);
+    hierarchyOffset = range
+      ? getHierarchyOffset(range.start.col, range.start.row, table)
+      : getHierarchyOffset(col, row, table);
   }
 
   iconAttribute.marginLeft = (icon.marginLeft ?? 0) + hierarchyOffset;

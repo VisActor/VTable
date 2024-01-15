@@ -97,7 +97,7 @@ export function createComplexColumn(
             table.getRowsHeight(customMergeRange.start.row, customMergeRange.end.row),
             false,
             table.heightMode === 'autoHeight',
-            padding,
+            [0, 0, 0, 0],
             table
           );
         }

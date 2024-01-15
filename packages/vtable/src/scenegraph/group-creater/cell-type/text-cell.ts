@@ -119,7 +119,8 @@ export function createCellGroup(
       textAlign,
       textBaseline,
       table,
-      cellTheme
+      cellTheme,
+      range
     );
 
     if ((cellTheme as any)?._vtable?.marked) {
