@@ -2450,9 +2450,9 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
     let dimensionKey: string;
     if (chartSpec) {
       if (this.indicatorsAsCol === false) {
-        dimensionKey = chartSpec.xField ?? chartSpec?.series[0]?.xField;
+        dimensionKey = chartSpec.xField ?? chartSpec?.series?.[0]?.xField;
       } else {
-        dimensionKey = chartSpec.yField ?? chartSpec?.series[0]?.yField;
+        dimensionKey = chartSpec.yField ?? chartSpec?.series?.[0]?.yField;
       }
       return dimensionKey;
     }

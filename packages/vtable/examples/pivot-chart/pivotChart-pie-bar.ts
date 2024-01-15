@@ -28,7 +28,7 @@ export function createTable() {
       },
       {
         Category: 'Technology',
-        SubCategory: 'Technology1',
+        SubCategory: 'Technology2',
         Profit: '2094.46999931335449',
         City: 'Amarillo'
       },
@@ -58,29 +58,41 @@ export function createTable() {
       },
       {
         Category: 'Office Supplies',
-        Quantity: '60',
+        Profit: '600',
         SubCategory: 'Technology3',
+        City: 'Anaheim'
+      },
+      {
+        Category: 'Furniture',
+        Profit: '4507.70899391174316',
+        SubCategory: 'Technology2',
+        City: 'Anaheim'
+      },
+      {
+        Category: 'Office Supplies',
+        Profit: '4507.70899391174316',
+        SubCategory: 'Technology2',
         City: 'Anaheim'
       }
     ],
     columns: ['Category'],
     rows: ['City'],
     indicators: [
-      // {
-      //   indicatorKey: 'Sales',
-      //   title: 'Sales',
-      //   cellType: 'chart',
-      //   chartModule: 'vchart',
-      //   style: {
-      //     padding: 1
-      //   },
-      //   chartSpec: {
-      //     type: 'pie',
-      //     data: { id: 'data1' },
-      //     categoryField: 'SubCategory',
-      //     valueField: 'Sales'
-      //   }
-      // },
+      {
+        indicatorKey: 'Sales',
+        title: 'Sales',
+        cellType: 'chart',
+        chartModule: 'vchart',
+        style: {
+          padding: 1
+        },
+        chartSpec: {
+          type: 'pie',
+          data: { id: 'data1' },
+          categoryField: 'SubCategory',
+          valueField: 'Sales'
+        }
+      },
       {
         indicatorKey: 'Profit',
         title: 'profit',
@@ -95,7 +107,18 @@ export function createTable() {
             id: 'sales'
           },
           xField: ['SubCategory'],
-          yField: 'Profit'
+          yField: 'Profit',
+          axes: [
+            {
+              zero: true,
+              nice: true,
+              id: 'sub-0',
+              type: 'linear',
+
+              orient: 'left',
+              visible: true
+            }
+          ]
         }
       }
     ],
@@ -103,7 +126,7 @@ export function createTable() {
     defaultRowHeight: 200,
     defaultHeaderRowHeight: 30,
     defaultColWidth: 280,
-    defaultHeaderColWidth: [80, 50],
+    defaultHeaderColWidth: [80, 'auto'],
     theme: VTable.themes.ARCO,
     corner: {
       titleOnDimension: 'row',
