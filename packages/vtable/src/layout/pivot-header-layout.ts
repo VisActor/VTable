@@ -1027,7 +1027,12 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
       if (this.columnHeaderTitle) {
         count += 1;
       }
-      if (this._table.isPivotChart() && this.indicatorsAsCol && !this.hasTwoIndicatorAxes) {
+      if (
+        this._table.isPivotChart() &&
+        this.indicatorsAsCol &&
+        !this.hasTwoIndicatorAxes &&
+        checkHasCartesianChart(this)
+      ) {
         count -= 1;
       }
       this.columnHeaderLevelCount = count;
@@ -2321,10 +2326,15 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
       if (this.isBottomFrozenRow(col, row) || this.isRightFrozenColumn(col, row)) {
         return true;
       }
-      if (this.isRowHeader(col, row) && col === this.rowHeaderLevelCount - 1) {
+      if (this.isRowHeader(col, row) && col === this.rowHeaderLevelCount - 1 && isCartesianChart(col, row, this)) {
         return true;
       }
-      if (this.hasTwoIndicatorAxes && this.indicatorsAsCol && row === this.columnHeaderLevelCount - 1) {
+      if (
+        this.hasTwoIndicatorAxes &&
+        this.indicatorsAsCol &&
+        row === this.columnHeaderLevelCount - 1 &&
+        isCartesianChart(col, row, this)
+      ) {
         return true;
       }
     }
@@ -2446,15 +2456,25 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
    *  获取图表对应的维度key非指标
    * */
   getDimensionKeyInChartSpec(_col: number, _row: number) {
-    const chartSpec = this.getRawChartSpec(_col, _row);
     let dimensionKey: string;
-    if (chartSpec) {
-      if (this.indicatorsAsCol === false) {
-        dimensionKey = chartSpec.xField ?? chartSpec?.series?.[0]?.xField;
-      } else {
-        dimensionKey = chartSpec.yField ?? chartSpec?.series?.[0]?.yField;
+    if (this.indicatorsAsCol === false) {
+      //考虑pie和bar 同时配置的情况 series?.[0]?.xField;没有的情况
+      for (let i = 0; i < this.indicatorsDefine.length; i++) {
+        const chartSpec = (this.indicatorsDefine[i] as IChartIndicator).chartSpec;
+        if (chartSpec) {
+          dimensionKey = chartSpec.xField ?? chartSpec?.series?.[0]?.xField;
+          if (dimensionKey) {
+            return dimensionKey;
+          }
+        }
       }
-      return dimensionKey;
+    } else {
+      const chartSpec = this.getRawChartSpec(_col, _row);
+      let dimensionKey: string;
+      if (chartSpec) {
+        dimensionKey = chartSpec.yField ?? chartSpec?.series?.[0]?.yField;
+        return dimensionKey;
+      }
     }
     return null;
   }

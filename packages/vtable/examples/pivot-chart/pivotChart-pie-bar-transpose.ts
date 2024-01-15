@@ -6,8 +6,7 @@ const CONTAINER_ID = 'vTable';
 VTable.register.chartModule('vchart', VChart);
 export function createTable() {
   const option: VTable.PivotChartConstructorOptions = {
-    // indicatorsAsCol: false,
-    // hideIndicatorName:true,
+    indicatorsAsCol: true,
     records: [
       {
         Category: 'Technology',
@@ -87,12 +86,40 @@ export function createTable() {
         style: {
           padding: 1
         },
-        headerStyle: { padding: 20 },
         chartSpec: {
           type: 'pie',
           data: { id: 'data1' },
           categoryField: 'SubCategory',
           valueField: 'Sales'
+        }
+      },
+      {
+        indicatorKey: 'Profit',
+        title: 'profit',
+        cellType: 'chart',
+        chartModule: 'vchart',
+        style: {
+          padding: 1
+        },
+        chartSpec: {
+          type: 'bar',
+          direction: 'horizontal',
+          data: {
+            id: 'sales'
+          },
+          yField: 'SubCategory',
+          xField: 'Profit',
+          axes: [
+            {
+              zero: true,
+              nice: true,
+              id: 'sub-0',
+              type: 'linear',
+
+              orient: 'bottom',
+              visible: true
+            }
+          ]
         }
       }
     ],
@@ -100,7 +127,7 @@ export function createTable() {
     defaultRowHeight: 200,
     defaultHeaderRowHeight: 30,
     defaultColWidth: 280,
-    defaultHeaderColWidth: [80, 50],
+    defaultHeaderColWidth: [80, 'auto'],
     theme: VTable.themes.ARCO,
     corner: {
       titleOnDimension: 'row',
