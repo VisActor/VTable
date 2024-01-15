@@ -556,6 +556,13 @@
             "zh": "方向键切换选中单元格",
             "en": "arrowkeys move select"
           }
+        },
+        {
+          "path": "copy-paste-cell-value",
+          "title": {
+            "zh": "复制粘贴",
+            "en": "copy paste cell value"
+          }
         }
       ]
     },

@@ -225,6 +225,14 @@ tableInstance.records;
   /** 设置单元格的value值，注意对应的是源数据的原始值，vtable实例records会做对应修改 */
   changeCellValue: (col: number, row: number, value: string | number | null) => void;
 
+  /**
+   * 批量更新多个单元格的数据
+   * @param col 粘贴数据的起始列号
+   * @param row 粘贴数据的起始行号
+   * @param values 多个单元格的数据数组
+   */
+  changeCellValues(startCol: number, startRow: number, values: string[][]) 
+
   /** 获取单元格配置的编辑器 */
   getEditor: (col: number, row: number) => IEditor;
 

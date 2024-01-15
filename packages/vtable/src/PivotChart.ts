@@ -996,6 +996,54 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
     }
     return null;
   }
+  /** 获取某条数据所在的行列位置 */
+  getCellAddressByRecord(record: any) {
+    const rowHeaderPaths: IDimensionInfo[] = [];
+    const colHeaderPaths: IDimensionInfo[] = [];
+    const recordKeyMapToIndicatorKeys = {};
+    const indicatorRecordKeys: (string | number)[] = [];
+    this.dataset.dataConfig.aggregationRules.forEach(aggregationRule => {
+      if (typeof aggregationRule.field === 'string') {
+        recordKeyMapToIndicatorKeys[aggregationRule.field] = aggregationRule.indicatorKey;
+        indicatorRecordKeys.push(aggregationRule.field);
+      } else {
+        for (let i = 0; i < aggregationRule.field.length; i++) {
+          recordKeyMapToIndicatorKeys[aggregationRule.field[i]] = aggregationRule.indicatorKey;
+          indicatorRecordKeys.push(aggregationRule.field[i]);
+        }
+      }
+    });
+    for (const key in record) {
+      if (this.dataset.rows.indexOf(key) >= 0) {
+        rowHeaderPaths.push({
+          dimensionKey: key,
+          value: record[key]
+        });
+      }
+      if (this.dataset.columns.indexOf(key) >= 0) {
+        colHeaderPaths.push({
+          dimensionKey: key,
+          value: record[key]
+        });
+      }
+      if (indicatorRecordKeys.indexOf(key) >= 0) {
+        if (this.dataset.indicatorsAsCol) {
+          colHeaderPaths.push({
+            indicatorKey: recordKeyMapToIndicatorKeys[key]
+          });
+        } else {
+          rowHeaderPaths.push({
+            indicatorKey: recordKeyMapToIndicatorKeys[key]
+          });
+        }
+      }
+    }
+    return this.getCellAddressByHeaderPaths({
+      rowHeaderPaths,
+      colHeaderPaths,
+      cellLocation: 'body'
+    });
+  }
 
   getChartInstance(cellHeaderPaths: IPivotTableCellHeaderPaths) {
     const cellAddr = this.getCellAddressByHeaderPaths(cellHeaderPaths);

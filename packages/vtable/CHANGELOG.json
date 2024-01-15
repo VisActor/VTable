@@ -2,6 +2,33 @@
   "name": "@visactor/vtable",
   "entries": [
     {
+      "version": "0.17.9",
+      "tag": "@visactor/vtable_v0.17.9",
+      "date": "Wed, 10 Jan 2024 11:22:48 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "feat: support excel data paste to cells #857\n\n"
+          },
+          {
+            "comment": "fix: showSubTotals can not work #893\n\n"
+          },
+          {
+            "comment": "feat: add api getCellAddressByRecord\n\n"
+          },
+          {
+            "comment": "feat: optimize getCellHeaderPath function"
+          },
+          {
+            "comment": "fix: set display:none trigger resize logic\n\n"
+          },
+          {
+            "comment": "fix: fix right frozen cell location"
+          }
+        ]
+      }
+    },
+    {
       "version": "0.17.8",
       "tag": "@visactor/vtable_v0.17.8",
       "date": "Fri, 05 Jan 2024 10:34:08 GMT",

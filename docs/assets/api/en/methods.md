@@ -183,6 +183,8 @@ Get the selected cell information, and the returned result is a two-dimensional 
   getSelectedCellInfos(): CellInfo[][] | null;
 ```
 
+{{ use: CellInfo() }}
+
 ## clearSelected(Function)
 
 Clear the selection of all cells.
@@ -714,6 +716,19 @@ Change the value of a cell:
 ```
   /** Set the value of the cell. Note that it corresponds to the original value of the source data, and the vtable instance records will be modified accordingly */
   changeCellValue: (col: number, row: number, value: string | number | null) => void;
+```
+
+## changeCellValues(Function)
+Change the value of cells in batches:
+
+```
+  /**
+   * Batch update data of multiple cells
+   * @param col The starting column number of pasted data
+   * @param row The starting row number of pasted data
+   * @param values Data array of multiple cells
+   */
+  changeCellValues(startCol: number, startRow: number, values: string[][])
 ```
 
 ## getEditor(Function)

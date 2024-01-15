@@ -17,7 +17,7 @@ import { TableComponent } from './component/table-component';
 import { updateRowHeight } from './layout/update-height';
 import { updateImageCellContentWhileResize } from './group-creater/cell-type/image-cell';
 import { getQuadProps } from './utils/padding';
-import { createFrameBorder, updateFrameBorder, updateFrameBorderSize } from './style/frame-border';
+import { createFrameBorder, updateCornerRadius, updateFrameBorder, updateFrameBorderSize } from './style/frame-border';
 import { ResizeColumnHotSpotSize } from '../tools/global';
 import splitModule from './graphic/contributions';
 import { getFunctionalProp, getProp } from './utils/get-prop';
@@ -909,7 +909,19 @@ export class Scenegraph {
     updateRowHeight(this, row, detaY, skipTableHeightMap);
     this.updateContainerHeight(row, detaY);
   }
+  updateRowsHeight(rows: number[], detaYs: number[], skipTableHeightMap?: boolean) {
+    for (let i = 0; i < rows.length; i++) {
+      const row = rows[i];
+      const detaY = detaYs[i];
+      updateRowHeight(this, row, Math.round(detaY), skipTableHeightMap);
+      this._updateContainerHeight(row, detaY);
+    }
+    // 更新table/header/border高度
+    this.updateTableSize();
+    this.component.updateScrollBar();
 
+    this.updateNextFrame();
+  }
   /**
    * @description: 更新table&header&body高度
    * @return {*}
@@ -931,13 +943,7 @@ export class Scenegraph {
 
     this.updateNextFrame();
   }
-
-  /**
-   * @description: 更新table&header&body高度
-   * @return {*}
-   */
-  updateContainerHeight(row: number, detaY: number) {
-    // 更新table/header/border高度
+  _updateContainerHeight(row: number, detaY: number) {
     if (row < this.table.frozenRowCount) {
       this.colHeaderGroup.setDeltaHeight(detaY);
       this.cornerHeaderGroup.setDeltaHeight(detaY);
@@ -953,7 +959,14 @@ export class Scenegraph {
       this.bodyGroup.setDeltaHeight(detaY);
       this.rightFrozenGroup.setDeltaHeight(detaY);
     }
-
+  }
+  /**
+   * @description: 更新table&header&body高度
+   * @return {*}
+   */
+  updateContainerHeight(row: number, detaY: number) {
+    this._updateContainerHeight(row, detaY);
+    // 更新table/header/border高度
     this.updateTableSize();
     this.component.updateScrollBar();
 
@@ -1504,18 +1517,18 @@ export class Scenegraph {
       this.bodyGroup.appendChild(this.bodyGroup.border);
       updateFrameBorderSize(this.bodyGroup);
       if (this.rowHeaderGroup.attribute.width === 0) {
-        updateFrameBorder(this.bodyGroup, this.table.theme.bodyStyle.frameStyle, [true, true, true, true]);
+        updateFrameBorder(this.bodyGroup, this.table.theme.bodyStyle.frameStyle);
       } else {
-        updateFrameBorder(this.bodyGroup, this.table.theme.bodyStyle.frameStyle, [true, true, true, false]);
+        updateFrameBorder(this.bodyGroup, this.table.theme.bodyStyle.frameStyle);
       }
     }
     if (this.colHeaderGroup.border) {
       this.colHeaderGroup.appendChild(this.colHeaderGroup.border);
       updateFrameBorderSize(this.colHeaderGroup);
       if (this.cornerHeaderGroup.attribute.width === 0) {
-        updateFrameBorder(this.colHeaderGroup, this.table.theme.headerStyle.frameStyle, [true, true, true, true]);
+        updateFrameBorder(this.colHeaderGroup, this.table.theme.headerStyle.frameStyle);
       } else {
-        updateFrameBorder(this.colHeaderGroup, this.table.theme.headerStyle.frameStyle, [true, true, true, false]);
+        updateFrameBorder(this.colHeaderGroup, this.table.theme.headerStyle.frameStyle);
       }
     }
     if (this.rowHeaderGroup.border) {
@@ -1526,6 +1539,8 @@ export class Scenegraph {
       this.cornerHeaderGroup.appendChild(this.cornerHeaderGroup.border);
       updateFrameBorderSize(this.cornerHeaderGroup);
     }
+
+    updateCornerRadius(this.table);
   }
 
   sortCell() {
