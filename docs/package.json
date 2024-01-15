@@ -10,9 +10,9 @@
   },
   "dependencies": {
     "@arco-design/web-react": "2.46.1",
-    "@visactor/vtable": "workspace:0.17.9-alpha.5",
-    "@visactor/vtable-editors": "workspace:0.17.9-alpha.5",
-    "@visactor/vtable-export": "workspace:0.17.9-alpha.5",
+    "@visactor/vtable": "workspace:0.17.9",
+    "@visactor/vtable-editors": "workspace:0.17.9",
+    "@visactor/vtable-export": "workspace:0.17.9",
     "@visactor/vchart": "1.8.5",
     "markdown-it": "^13.0.0",
     "highlight.js": "^11.8.0",

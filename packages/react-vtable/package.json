@@ -47,7 +47,7 @@
     "access": "public"
   },
   "dependencies": {
-    "@visactor/vtable": "workspace:0.17.9-alpha.5",
+    "@visactor/vtable": "workspace:0.17.9",
     "@visactor/vutils": "~0.17.1",
     "react-is": "^18.2.0"
   },
