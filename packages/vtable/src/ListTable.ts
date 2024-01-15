@@ -991,8 +991,8 @@ export class ListTable extends BaseTable implements ListTableAPI {
           this.dataSource.changeFieldValue(value, recordIndex, field, startCol + j, startRow + i, this);
         }
         this.fireListeners(TABLE_EVENT_TYPE.CHANGE_CELL_VALUE, {
-          col: startCol,
-          row: startRow,
+          col: startCol + j,
+          row: startRow + i,
           rawValue: beforeChangeValue,
           changedValue: this.getCellOriginValue(startCol + j, startRow + i)
         });
