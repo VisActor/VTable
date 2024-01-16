@@ -657,6 +657,18 @@ export class ListTable extends BaseTable implements ListTableAPI {
   }
   /** 刷新当前节点收起展开状态，如手动更改过 */
   _refreshHierarchyState(col: number, row: number) {
+    let notFillWidth = false;
+    let notFillHeight = false;
+    const checkHasChart = this.internalProps.layoutMap.checkHasChart();
+    // 检查当前状态总宽高未撑满autoFill是否在起作用
+    if (checkHasChart) {
+      if (this.autoFillWidth) {
+        notFillWidth = this.getAllColsWidth() <= this.tableNoFrameWidth;
+      }
+      if (this.autoFillHeight) {
+        notFillHeight = this.getAllRowsHeight() <= this.tableNoFrameHeight;
+      }
+    }
     const index = this.getRecordShowIndexByCell(col, row);
     const diffDataIndices = this.dataSource.toggleHierarchyState(index);
     const diffPositions = this.internalProps.layoutMap.toggleHierarchyState(diffDataIndices);
@@ -666,6 +678,18 @@ export class ListTable extends BaseTable implements ListTableAPI {
     this.clearCellStyleCache();
     this.scenegraph.updateHierarchyIcon(col, row);
     this.scenegraph.updateRow(diffPositions.removeCellPositions, diffPositions.addCellPositions);
+    if (checkHasChart) {
+      // 检查更新节点状态后总宽高未撑满autoFill是否在起作用
+      if (this.autoFillWidth && !notFillWidth) {
+        notFillWidth = this.getAllColsWidth() <= this.tableNoFrameWidth;
+      }
+      if (this.autoFillHeight && !notFillHeight) {
+        notFillHeight = this.getAllRowsHeight() <= this.tableNoFrameHeight;
+      }
+      if (this.widthMode === 'adaptive' || notFillWidth || this.heightMode === 'adaptive' || notFillHeight) {
+        this.scenegraph.updateChartSize(0); // 如果收起展开有性能问题 可以排查下这个防范
+      }
+    }
   }
 
   _hasHierarchyTreeHeader() {

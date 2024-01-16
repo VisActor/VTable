@@ -37,6 +37,7 @@ import type { ILinkDimension } from '../ts-types/pivot-table/dimension/link-dime
 import type { IImageDimension } from '../ts-types/pivot-table/dimension/image-dimension';
 import {
   checkHasCartesianChart,
+  checkHasChart,
   getChartAxes,
   getChartDataId,
   getChartSpec,
@@ -2290,6 +2291,9 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
       indicatorObj = this._indicators?.find(indicator => indicator.indicatorKey === indicatorKey);
     }
     return indicatorObj?.chartInstance;
+  }
+  checkHasChart() {
+    return checkHasChart(this);
   }
 
   getDimension(dimensionKey: string, type: 'column' | 'row'): any {

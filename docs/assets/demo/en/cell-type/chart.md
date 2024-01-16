@@ -1,14 +1,13 @@
 ---
 category: examples
-group: Cell Type
-title: Chart Type
+group: Cell Type In PivotTable
+title: Chart Type Use in PivotTable
 cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/chart.png
-order: 2-3
 link: '../guide/cell_type/chart'
-option: ListTable-columns-chart#cellType
+option: PivotTable-indicators-chart#cellType
 ---
 
-# Chart Type
+# Chart Type Use in PivotTable
 
 Combine the vchart chart library with rendering into tables to enrich visual display forms and improve multi-chart rendering performance.
 

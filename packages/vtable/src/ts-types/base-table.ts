@@ -450,9 +450,9 @@ export interface BaseTableAPI {
   /** 场景树对象 */
   scenegraph: Scenegraph;
   /** 状态管理模块 */
-  stateManager?: StateManager;
+  stateManager: StateManager;
   /** 事件管理模块 */
-  eventManager?: EventManager;
+  eventManager: EventManager;
   /** 行表头的层数 */
   rowHeaderLevelCount: number;
   /** 列表头的层数 */

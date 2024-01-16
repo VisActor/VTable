@@ -391,3 +391,15 @@ function getRange(
     axisOption
   };
 }
+/** 检查是否有直角坐标系的图表 */
+export function checkHasChart(layout: PivotHeaderLayoutMap | SimpleHeaderLayoutMap) {
+  let isHasChart = false;
+  for (let i = 0; i < layout.columnObjects.length; i++) {
+    const columnObj = layout.columnObjects[i];
+    if (columnObj.chartSpec) {
+      isHasChart = true;
+      break;
+    }
+  }
+  return isHasChart;
+}

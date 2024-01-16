@@ -119,8 +119,8 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
 
   _vDataSet: DataSet;
   scenegraph: Scenegraph;
-  stateManager?: StateManager;
-  eventManager?: EventManager;
+  stateManager: StateManager;
+  eventManager: EventManager;
   _pixelRatio: number;
 
   // bottomFrozenRowCount: number = 0;
