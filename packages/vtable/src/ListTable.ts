@@ -676,6 +676,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
     this.refreshRowColCount();
 
     this.clearCellStyleCache();
+    this.internalProps.layoutMap.clearCellRangeMap();
     this.scenegraph.updateHierarchyIcon(col, row);
     this.scenegraph.updateRow(diffPositions.removeCellPositions, diffPositions.addCellPositions);
     if (checkHasChart) {

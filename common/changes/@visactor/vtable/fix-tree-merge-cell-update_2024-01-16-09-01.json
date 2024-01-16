@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vtable",
+      "comment": "fix: fix tree structure auto merge update problem",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vtable"
+}
