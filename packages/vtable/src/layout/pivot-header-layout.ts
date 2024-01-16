@@ -41,7 +41,8 @@ import {
   getChartDataId,
   getChartSpec,
   getRawChartSpec,
-  isCartesianChart
+  isCartesianChart,
+  isHasCartesianChartInline
 } from './chart-helper/get-chart-spec';
 import type { LayouTreeNode, IPivotLayoutHeadNode } from './pivot-layout-helper';
 import {
@@ -846,6 +847,12 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
       return true;
     }
     return false;
+  }
+
+  isFrozen(col: number, row: number): boolean {
+    return (
+      this.isFrozenColumn(col) || this.isRightFrozenColumn(col) || this.isBottomFrozenRow(row) || this.isFrozenRow(row)
+    );
   }
   /**
    * 是否属于冻结左侧列
@@ -2298,7 +2305,12 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
   }
 
   getAxisConfigInPivotChart(col: number, row: number): any {
-    if (isCartesianChart(col, row, this) || this.isAxisCell(col, row)) {
+    if (
+      ((this.isFrozenColumn(col, row) || this.isRightFrozenColumn(col, row)) &&
+        isHasCartesianChartInline(col, row, 'row', this)) ||
+      ((this.isFrozenRow(col, row) || this.isBottomFrozenRow(col, row)) &&
+        isHasCartesianChartInline(col, row, 'col', this))
+    ) {
       return getAxisConfigInPivotChart(col, row, this);
     }
     return undefined;
@@ -2323,22 +2335,32 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
       return false;
     }
     if (this.indicatorKeys.length >= 1 && checkHasCartesianChart(this)) {
-      if (this.isBottomFrozenRow(col, row) || this.isRightFrozenColumn(col, row)) {
+      if (
+        (this.isBottomFrozenRow(col, row) && isHasCartesianChartInline(col, row, 'col', this)) ||
+        (this.isRightFrozenColumn(col, row) && isHasCartesianChartInline(col, row, 'row', this))
+      ) {
         return true;
       }
-      if (this.isRowHeader(col, row) && col === this.rowHeaderLevelCount - 1 && isCartesianChart(col, row, this)) {
+      if (
+        this.isRowHeader(col, row) &&
+        col === this.rowHeaderLevelCount - 1 &&
+        isHasCartesianChartInline(col, row, 'row', this)
+      ) {
         return true;
       }
       if (
         this.hasTwoIndicatorAxes &&
         this.indicatorsAsCol &&
         row === this.columnHeaderLevelCount - 1 &&
-        isCartesianChart(col, row, this)
+        isHasCartesianChartInline(col, row, 'col', this)
       ) {
         return true;
       }
     }
     return false;
+  }
+  isHasCartesianChartInline(col: number, row: number) {
+    return isHasCartesianChartInline(col, row, this);
   }
   getChartAxes(col: number, row: number): any[] {
     if (isCartesianChart(col, row, this) || this.isAxisCell(col, row)) {
@@ -2469,11 +2491,15 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
         }
       }
     } else {
-      const chartSpec = this.getRawChartSpec(_col, _row);
-      let dimensionKey: string;
-      if (chartSpec) {
-        dimensionKey = chartSpec.yField ?? chartSpec?.series?.[0]?.yField;
-        return dimensionKey;
+      //考虑pie和bar 同时配置的情况 series?.[0]?.xField;没有的情况
+      for (let i = 0; i < this.indicatorsDefine.length; i++) {
+        const chartSpec = (this.indicatorsDefine[i] as IChartIndicator).chartSpec;
+        if (chartSpec) {
+          dimensionKey = chartSpec.yField ?? chartSpec?.series?.[0]?.yField;
+          if (dimensionKey) {
+            return dimensionKey;
+          }
+        }
       }
     }
     return null;
@@ -2573,26 +2599,33 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
     const chartSpec = this.getRawChartSpec(_col, _row);
     const indicatorKeys: string[] = [];
     if (chartSpec) {
-      if (this.indicatorsAsCol === false) {
-        if (chartSpec.series) {
-          chartSpec.series.forEach((chartSeries: any) => {
-            const yField = chartSeries.yField;
-            indicatorKeys.push(yField);
-          });
+      if (chartSpec.series || chartSpec.xField || chartSpec.yField) {
+        if (this.indicatorsAsCol === false) {
+          if (chartSpec.series) {
+            chartSpec.series.forEach((chartSeries: any) => {
+              const yField = chartSeries.yField;
+              indicatorKeys.push(yField);
+            });
+          } else {
+            indicatorKeys.push(chartSpec.yField);
+          }
         } else {
-          indicatorKeys.push(chartSpec.yField);
+          if (chartSpec.series) {
+            chartSpec.series.forEach((chartSeries: any) => {
+              const xField = chartSeries.xField;
+              indicatorKeys.push(xField);
+            });
+          } else {
+            indicatorKeys.push(chartSpec.xField);
+          }
         }
-      } else {
-        if (chartSpec.series) {
-          chartSpec.series.forEach((chartSeries: any) => {
-            const xField = chartSeries.xField;
-            indicatorKeys.push(xField);
-          });
-        } else {
-          indicatorKeys.push(chartSpec.xField);
-        }
+        return indicatorKeys;
+      } else if (chartSpec.valueField) {
+        indicatorKeys.push(chartSpec.valueField);
       }
-      return indicatorKeys;
+      if (indicatorKeys.length >= 1) {
+        return indicatorKeys;
+      }
     }
     return null;
   }

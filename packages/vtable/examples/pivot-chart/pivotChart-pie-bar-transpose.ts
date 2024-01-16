@@ -125,7 +125,7 @@ export function createTable() {
     ],
     container: document.getElementById(CONTAINER_ID),
     defaultRowHeight: 200,
-    defaultHeaderRowHeight: 30,
+    defaultHeaderRowHeight: 50,
     defaultColWidth: 280,
     defaultHeaderColWidth: [80, 'auto'],
     theme: VTable.themes.ARCO,

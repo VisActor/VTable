@@ -5,58 +5,6 @@ import { bindDebugTool } from '../../src/scenegraph/debug-tool';
 const CONTAINER_ID = 'vTable';
 VTable.register.chartModule('vchart', VChart);
 export function createTable() {
-  const rowTree = [
-    {
-      dimensionKey: '230417170554012',
-      value: '一级'
-      // children: [
-      //   {
-      //     value: '数量',
-      //     indicatorKey: '230417171050011'
-      //   },
-      //   {
-      //     value: '销售额',
-      //     indicatorKey: '230417171050025'
-      //   },
-      //   {
-      //     value: '折扣',
-      //     indicatorKey: '230707112948009'
-      //   }
-      // ]
-    },
-    {
-      dimensionKey: '230417170554012',
-      value: '二级'
-    },
-    {
-      dimensionKey: '230417170554012',
-      value: '当日'
-    },
-    {
-      dimensionKey: '230417170554012',
-      value: '标准级'
-    }
-  ];
-  const columnTree = [
-    {
-      dimensionKey: '230417171050031',
-      value: '中国',
-      children: [
-        {
-          dimensionKey: '230417171050028',
-          value: '办公用品'
-        },
-        {
-          dimensionKey: '230417171050028',
-          value: '家具'
-        },
-        {
-          dimensionKey: '230417171050028',
-          value: '技术'
-        }
-      ]
-    }
-  ];
   const columns: (VTable.IDimension | string)[] = [
     {
       dimensionKey: '230417171050031',
@@ -92,7 +40,6 @@ export function createTable() {
     {
       indicatorKey: '230417171050011',
       title: '数量',
-      width: 'auto',
       cellType: 'chart',
       chartModule: 'vchart',
       headerStyle: {
@@ -112,7 +59,7 @@ export function createTable() {
     },
     {
       indicatorKey: '230417171050025',
-      title: '销售额 & 利润',
+      title: '销售额',
       cellType: 'chart',
       chartModule: 'vchart',
       headerStyle: {
@@ -124,86 +71,15 @@ export function createTable() {
         padding: 1
       },
       chartSpec: {
-        type: 'common',
-        series: [
-          {
-            type: 'bar',
-            stack: true,
-            xField: ['230417170554008'],
-            yField: '230713150305011',
-            seriesField: '230417171050030',
-            bar: {
-              state: {
-                selected: {
-                  fill: 'yellow'
-                },
-                selected_reverse: {
-                  // fill: '#ddd'
-                  opacity: 0.2
-                }
-              }
-            },
-            data: {
-              id: 'data1'
-            }
-          },
-          {
-            type: 'line',
-            stack: false,
-            xField: ['230417170554008'],
-            yField: '230417171050025',
-            seriesField: '230417171050030',
-            line: {
-              state: {
-                selected: {
-                  lineWidth: 3
-                },
-                selected_reverse: {
-                  lineWidth: 1
-                }
-              }
-            },
-            point: {
-              state: {
-                selected: {
-                  fill: 'yellow'
-                },
-                selected_reverse: {
-                  fill: '#ddd'
-                }
-              }
-            },
-            data: {
-              id: 'data2'
-            }
-          }
-        ],
-        axes: [
-          { orient: 'left', visible: true, label: { visible: true } },
-          { orient: 'bottom', visible: true }
-        ],
-        theme: {
-          // axis: {
-          //   label: {
-          //     style: {
-          //       fill: 'green'
-          //     }
-          //   }
-          // }
-          colorScheme: {
-            default: {
-              palette: {
-                axisLabelFontColor: 'red'
-              }
-            }
-          }
-        }
+        type: 'pie',
+        data: { id: 'data2' },
+        categoryField: '230417170554008',
+        valueField: '230417171050025'
       }
     },
     {
       indicatorKey: '230707112948009',
       title: '折扣',
-      width: 'auto',
       cellType: 'chart',
       chartModule: 'vchart',
       headerStyle: {
@@ -215,65 +91,10 @@ export function createTable() {
         padding: 1
       },
       chartSpec: {
-        // type: 'common',
-        stack: false,
-        type: 'area',
-        data: {
-          id: 'data'
-        },
-        xField: ['230417170554008'],
-        yField: '230707112948009',
-        seriesField: '230417171050030',
-        axes: [
-          { orient: 'left', visible: true, label: { visible: true } },
-          { orient: 'bottom', visible: true }
-        ],
-        line: {
-          state: {
-            selected: {
-              lineWidth: 3
-            },
-            selected_reverse: {
-              lineWidth: 1
-            }
-          }
-        },
-        point: {
-          state: {
-            selected: {
-              fill: 'yellow'
-            },
-            selected_reverse: {
-              fill: '#ddd'
-            }
-          }
-        },
-        area: {
-          state: {
-            selected: {
-              opacity: 1
-            },
-            selected_reverse: {
-              opacity: 0.2
-            }
-          }
-        },
-        theme: {
-          // axis: {
-          //   label: {
-          //     style: {
-          //       fill: 'green'
-          //     }
-          //   }
-          // }
-          colorScheme: {
-            default: {
-              palette: {
-                axisLabelFontColor: 'red'
-              }
-            }
-          }
-        }
+        type: 'pie',
+        data: { id: 'data3' },
+        categoryField: '230417170554008',
+        valueField: '230707112948009'
       }
     }
   ];
@@ -9349,8 +9170,6 @@ export function createTable() {
     // }
   };
   const option: VTable.PivotChartConstructorOptions = {
-    columnTree,
-    rowTree,
     rows,
     columns,
     indicators,

@@ -388,6 +388,21 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
       return customMergeText;
     }
     if (this.internalProps.layoutMap.isHeader(col, row)) {
+      if (
+        this.internalProps.layoutMap.isBottomFrozenRow(col, row) ||
+        this.internalProps.layoutMap.isRightFrozenColumn(col, row)
+      ) {
+        //针对底部和右侧冻结的轴单元格的值做处理 如果有轴这里会显示轴  如果没有则显示这里获取到的值
+        const indicatorKeys = this.internalProps.layoutMap.getIndicatorKeyInChartSpec(col, row);
+        let indicatorInfo: IIndicator;
+        indicatorKeys?.forEach(key => {
+          const info = this.internalProps.layoutMap.getIndicatorInfo(key);
+          if (info) {
+            indicatorInfo = info;
+          }
+        });
+        return indicatorInfo?.title ?? indicatorInfo?.indicatorKey ?? '';
+      }
       const { title, fieldFormat } = this.internalProps.layoutMap.getHeader(col, row);
       return typeof fieldFormat === 'function' ? fieldFormat(title, col, row, this as BaseTableAPI) : title;
     }
@@ -422,6 +437,21 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
   getCellOriginValue(col: number, row: number): FieldData {
     const table = this;
     if (table.internalProps.layoutMap.isHeader(col, row)) {
+      if (
+        this.internalProps.layoutMap.isBottomFrozenRow(col, row) ||
+        this.internalProps.layoutMap.isRightFrozenColumn(col, row)
+      ) {
+        //针对底部和右侧冻结的轴单元格的值做处理 如果有轴这里会显示轴  如果没有则显示这里获取到的值
+        const indicatorKeys = this.internalProps.layoutMap.getIndicatorKeyInChartSpec(col, row);
+        let indicatorInfo: IIndicator;
+        indicatorKeys?.forEach(key => {
+          const info = this.internalProps.layoutMap.getIndicatorInfo(key);
+          if (info) {
+            indicatorInfo = info;
+          }
+        });
+        return indicatorInfo?.title ?? indicatorInfo?.indicatorKey ?? '';
+      }
       const { title } = table.internalProps.layoutMap.getHeader(col, row);
       return typeof title === 'function' ? title() : title;
     }

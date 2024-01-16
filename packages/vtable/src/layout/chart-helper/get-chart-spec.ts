@@ -55,6 +55,43 @@ export function isCartesianChart(col: number, row: number, layout: PivotHeaderLa
   }
   return isHasCartesianChart;
 }
+
+/** 检查是否有直角坐标系的图表 整行或者整列去检查 */
+export function isHasCartesianChartInline(
+  col: number,
+  row: number,
+  checkDirection: 'col' | 'row',
+  layout: PivotHeaderLayoutMap
+) {
+  let isHasCartesianChart = true;
+  if ((layout.indicatorsAsCol && checkDirection === 'row') || (!layout.indicatorsAsCol && checkDirection === 'col')) {
+    for (let i = 0; i < layout.indicatorsDefine.length; i++) {
+      //columnObjects数量和指标数量一样 并不是每个列都有 所有会快一些
+      const columnObj = layout.indicatorsDefine[i] as IChartIndicator;
+      if (columnObj.chartSpec) {
+        if (
+          columnObj.chartSpec.type !== 'pie' &&
+          columnObj.chartSpec.type !== 'funnel' &&
+          columnObj.chartSpec.type !== 'rose'
+        ) {
+          isHasCartesianChart = true;
+          break;
+        }
+      }
+    }
+  } else {
+    const chartSpec = layout.getRawChartSpec(col, row);
+    if (chartSpec) {
+      if (chartSpec.type === 'pie' || chartSpec.type === 'funnel' || chartSpec.type === 'rose') {
+        isHasCartesianChart = false;
+      }
+    } else {
+      isHasCartesianChart = false;
+    }
+  }
+  return isHasCartesianChart;
+}
+
 export function getChartSpec(col: number, row: number, layout: PivotHeaderLayoutMap): any {
   let chartSpec = layout.getRawChartSpec(col, row);
   if (chartSpec) {

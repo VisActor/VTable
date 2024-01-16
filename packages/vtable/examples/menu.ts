@@ -123,11 +123,7 @@ export const menus = [
       },
       {
         path: 'pivot-chart',
-        name: 'pivotChart-pie-bar'
-      },
-      {
-        path: 'pivot-chart',
-        name: 'pivotChart-pie-bar-transpose'
+        name: 'pivotChart-pie1'
       },
       {
         path: 'pivot-chart',
@@ -140,6 +136,10 @@ export const menus = [
       {
         path: 'pivot-chart',
         name: 'pivotChart-horizontal'
+      },
+      {
+        path: 'pivot-chart',
+        name: 'pivotChart-horizontal-pie'
       },
       {
         path: 'pivot-chart',
