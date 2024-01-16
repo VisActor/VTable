@@ -2359,9 +2359,6 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
     }
     return false;
   }
-  isHasCartesianChartInline(col: number, row: number) {
-    return isHasCartesianChartInline(col, row, this);
-  }
   getChartAxes(col: number, row: number): any[] {
     if (isCartesianChart(col, row, this) || this.isAxisCell(col, row)) {
       return getChartAxes(col, row, this);
