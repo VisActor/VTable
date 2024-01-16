@@ -16,4 +16,7 @@ export interface IImageDimension extends IBasicDimension {
   keepAspectRatio?: boolean;
   /** 是否按图片尺寸自动撑开单元格尺寸 默认false */
   imageAutoSizing?: boolean; // 是否自动撑开单元格尺寸
+
+  /** 点击开启预览 */
+  clickToPreview?: boolean;
 }

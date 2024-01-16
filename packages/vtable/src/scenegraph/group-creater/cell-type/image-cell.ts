@@ -98,11 +98,15 @@ export function createImageCellGroup(
       }
 
       if (keepAspectRatio) {
+        const { width: cellWidth, height: cellHeight, isMerge } = getCellRange(cellGroup, table);
+
         const { width: imageWidth, height: imageHeight } = calcKeepAspectRatioSize(
           originImage.width,
           originImage.height,
-          cellGroup.attribute.width - padding[1] - padding[3],
-          cellGroup.attribute.height - padding[0] - padding[2]
+          // cellGroup.attribute.width - padding[1] - padding[3],
+          // cellGroup.attribute.height - padding[0] - padding[2]
+          cellWidth - padding[1] - padding[3],
+          cellHeight - padding[0] - padding[2]
         );
 
         // const left = 0;
@@ -110,8 +114,10 @@ export function createImageCellGroup(
         const pos = calcStartPosition(
           0,
           0,
-          cellGroup.attribute.width,
-          cellGroup.attribute.height,
+          // cellGroup.attribute.width,
+          // cellGroup.attribute.height,
+          cellWidth,
+          cellHeight,
           imageWidth,
           imageHeight,
           textAlign,
@@ -123,7 +129,9 @@ export function createImageCellGroup(
           x: pos.x,
           y: pos.y,
           width: imageWidth,
-          height: imageHeight
+          height: imageHeight,
+          dx: isMerge ? -table.getColsWidth(cellGroup.mergeStartCol, col - 1) : 0,
+          dy: isMerge ? -table.getRowsHeight(cellGroup.mergeStartRow, row - 1) : 0
         });
       }
 
@@ -167,22 +175,37 @@ export function _adjustWidthHeight(
   let needInvalidate = false;
   let targetWidth: number = null;
   let targetHeight: number = null;
-  if (scene.table.getColWidth(col) < width + padding[1] + padding[3]) {
+  const cellGroup = scene.getCell(col, row, true);
+  const { width: cellWidth, height: cellHeight, isMerge } = getCellRange(cellGroup, scene.table);
+
+  if (cellWidth < width + padding[1] + padding[3]) {
     targetWidth = width + padding[1] + padding[3];
     needInvalidate = true;
   }
-  if (scene.table.getRowHeight(row) < height + padding[2] + padding[0]) {
+  if (cellHeight < height + padding[2] + padding[0]) {
     targetHeight = height + padding[2] + padding[0];
     needInvalidate = true;
   }
   if (needInvalidate) {
     if (typeof targetWidth === 'number') {
       // table.setColWidth(col, targetWidth, true);
-      scene.setColWidth(col, targetWidth);
+      if (isMerge) {
+        for (let col = cellGroup.mergeStartCol; col <= cellGroup.mergeEndCol; col++) {
+          scene.setColWidth(col, targetWidth / (cellGroup.mergeEndCol - cellGroup.mergeStartCol + 1));
+        }
+      } else {
+        scene.setColWidth(col, targetWidth);
+      }
     }
     if (typeof targetHeight === 'number') {
       // table.setRowHeight(row, targetHeight, true);
-      scene.setRowHeight(row, targetHeight);
+      if (isMerge) {
+        for (let row = cellGroup.mergeStartRow; row <= cellGroup.mergeEndRow; row++) {
+          scene.setRowHeight(row, targetHeight / (cellGroup.mergeEndRow - cellGroup.mergeStartRow + 1));
+        }
+      } else {
+        scene.setRowHeight(row, targetHeight);
+      }
     }
     // table.updateCanvasScroll();
     // // table.throttleInvalidate(); // 这里会造成每一张图加载后就重绘 造成多次绘制问题！节流绘制
@@ -211,18 +234,24 @@ export function updateImageCellContentWhileResize(cellGroup: Group, col: number,
   const padding = getQuadProps(getProp('padding', headerStyle, col, row, table)) ?? [0, 0, 0, 0];
 
   if (image.keepAspectRatio) {
+    const { width: cellWidth, height: cellHeight } = getCellRange(cellGroup, table);
+
     const { width: imageWidth, height: imageHeight } = calcKeepAspectRatioSize(
       originImage.width || originImage.videoWidth,
       originImage.height || originImage.videoHeight,
-      cellGroup.attribute.width - (padding[1] + padding[3]),
-      cellGroup.attribute.height - (padding[0] + padding[2])
+      // cellGroup.attribute.width - (padding[1] + padding[3]),
+      // cellGroup.attribute.height - (padding[0] + padding[2])
+      cellWidth - (padding[1] + padding[3]),
+      cellHeight - (padding[0] + padding[2])
     );
 
     const pos = calcStartPosition(
       0,
       0,
-      cellGroup.attribute.width,
-      cellGroup.attribute.height,
+      // cellGroup.attribute.width,
+      // cellGroup.attribute.height,
+      cellWidth,
+      cellHeight,
       imageWidth,
       imageHeight,
       textAlign,
@@ -237,11 +266,15 @@ export function updateImageCellContentWhileResize(cellGroup: Group, col: number,
       height: imageHeight
     });
   } else {
+    const { width: cellWidth, height: cellHeight } = getCellRange(cellGroup, table);
+
     image.setAttributes({
       x: padding[3],
       y: padding[0],
-      width: cellGroup.attribute.width - padding[1] - padding[3],
-      height: cellGroup.attribute.height - padding[0] - padding[2]
+      // width: cellGroup.attribute.width - padding[1] - padding[3],
+      // height: cellGroup.attribute.height - padding[0] - padding[2]
+      width: cellWidth - padding[1] - padding[3],
+      height: cellHeight - padding[0] - padding[2]
     });
   }
 
@@ -250,8 +283,9 @@ export function updateImageCellContentWhileResize(cellGroup: Group, col: number,
   if (playIcon) {
     const left = 0;
     const top = 0;
-    const width = cellGroup.attribute.width;
-    const height = cellGroup.attribute.height;
+    // const width = cellGroup.attribute.width;
+    // const height = cellGroup.attribute.height;
+    const { width, height } = getCellRange(cellGroup, table);
     const iconSize = Math.floor(Math.min(width - padding[1] - padding[3], height - padding[2] - padding[0]) / 2);
     const anchorX =
       left + (width > image.attribute.width ? image.attribute.x - left + image.attribute.width / 2 : width / 2);
@@ -265,4 +299,24 @@ export function updateImageCellContentWhileResize(cellGroup: Group, col: number,
       height: iconSize
     });
   }
+}
+
+function getCellRange(cellGroup: Group, table: BaseTableAPI) {
+  if (
+    isValid(cellGroup.mergeStartCol) &&
+    isValid(cellGroup.mergeEndCol) &&
+    isValid(cellGroup.mergeStartRow) &&
+    isValid(cellGroup.mergeEndRow)
+  ) {
+    return {
+      width: table.getColsWidth(cellGroup.mergeStartCol, cellGroup.mergeEndCol),
+      height: table.getRowsHeight(cellGroup.mergeStartRow, cellGroup.mergeEndRow),
+      isMerge: true
+    };
+  }
+  return {
+    width: cellGroup.attribute.width,
+    height: cellGroup.attribute.height,
+    isMerge: false
+  };
 }
