@@ -814,6 +814,22 @@
             "link": "'../../guide/custom_define/custom_render'",
             "option": ""
           }
+        },
+        {
+          "path": "custom-merge-layout",
+          "title": {
+            "zh": "单元格自定义合并",
+            "en": "Cell custom merge"
+          },
+          "meta": {
+            "title": "Cell custom merge",
+            "keywords": "",
+            "category": "demo",
+            "group": "Custom",
+            "cover": "https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/custom-cell-layout-jsx.png",
+            "link": "'../../guide/custom_define/custom_merge'",
+            "option": ""
+          }
         }
       ]
     },
