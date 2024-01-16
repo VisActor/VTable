@@ -2,7 +2,7 @@
 category: examples
 group: Custom
 title: Custom Merge
-cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/custom-cell-layout-jsx.png
+cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/custom-merge-custom.png
 link: '../guide/custom_define/custom_merge'
 option: ListTable-columns-text#customLayout
 ---
