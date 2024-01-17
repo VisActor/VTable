@@ -34,7 +34,7 @@ export function updateRow(
   if (removeRows.length) {
     resetRowNumber(scene);
     const beforeRow = removeRows[removeRows.length - 1] - 1;
-    const afterRow = removeRows[0] - removeRows.length;
+    const afterRow = removeRows[0] - removeRows.length + 1;
     const rowUpdatePos = updateMergeCellGroup(beforeRow, afterRow, scene);
     isNumber(rowUpdatePos) && (scene.proxy.rowUpdatePos = Math.min(scene.proxy.rowUpdatePos, rowUpdatePos));
   }
@@ -475,13 +475,13 @@ function updateMergeCellGroup(beforeRow: number, afterRow: number, scene: Sceneg
   let updateRow;
   for (let col = 0; col < scene.table.colCount; col++) {
     const rangeBefore = scene.table.getCellRange(col, beforeRow);
-    if (rangeBefore.start.row <= beforeRow - 1 && rangeBefore.end.row >= beforeRow - 1) {
+    if (rangeBefore.start.row <= beforeRow + 1 && rangeBefore.end.row >= beforeRow + 1) {
       updateCellGroup(rangeBefore, scene);
       updateRow = rangeBefore.start.row;
     }
 
     const rangeAfter = scene.table.getCellRange(col, afterRow);
-    if (rangeAfter.start.row <= afterRow + 1 && rangeAfter.end.row >= afterRow + 1) {
+    if (rangeAfter.start.row <= afterRow - 1 && rangeAfter.end.row >= afterRow - 1) {
       updateCellGroup(rangeAfter, scene);
       updateRow = rangeBefore.start.row;
     }
