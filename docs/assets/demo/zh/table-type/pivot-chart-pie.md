@@ -1,11 +1,29 @@
-/* eslint-disable */
-import * as VTable from '../../src';
-import VChart from '@visactor/vchart';
-import { bindDebugTool } from '../../src/scenegraph/debug-tool';
-const CONTAINER_ID = 'vTable';
-VTable.register.chartModule('vchart', VChart);
-export function createTable() {
-  fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American_Superstore_Pivot_Chart_data.json')
+---
+category: examples
+group: table-type
+title: 透视组合图
+cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/pivot-chart-pie.png
+link: '../guide/table_type/pivot_chart'
+option: PivotChart-indicators-chart#cellType
+---
+
+# 透视组合图
+
+透视组合图将vchart图表库结合渲染到表格中，丰富可视化展示形式，提升渲染性能。
+
+## 关键配置
+
+- `PivotChart` 初始化表格类型使用PivotChart。
+- `VTable.register.chartModule('vchart', VChart)` 注册绘制图表的图表库 目前支持VChart
+- `cellType: 'chart'` 指定类型chart
+- `chartModule: 'vchart'` 指定注册的图表库名称
+- `chartSpec: {}` 图表spec
+## 代码演示
+
+```javascript livedemo template=vtable
+  VTable.register.chartModule('vchart', VChart);
+  let tableInstance;
+ fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American_Superstore_Pivot_Chart_data.json')
     .then(res => res.json())
     .then(data => {
       const columns = [
@@ -116,8 +134,7 @@ export function createTable() {
         }
       };
 
-      const tableInstance = new VTable.PivotChart(document.getElementById(CONTAINER_ID), option);
-      window.tableInstance = tableInstance;
+      tableInstance = new VTable.PivotChart(document.getElementById(CONTAINER_ID), option);
       const { LEGEND_ITEM_CLICK } = VTable.ListTable.EVENT_TYPE;
       tableInstance.on(LEGEND_ITEM_CLICK, args => {
         console.log('LEGEND_ITEM_CLICK', args);
@@ -128,5 +145,7 @@ export function createTable() {
           }
         ]);
       });
+      window.tableInstance = tableInstance;
     });
-}
+    
+```

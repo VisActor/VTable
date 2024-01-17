@@ -1,11 +1,30 @@
-/* eslint-disable */
-import * as VTable from '../../src';
-import VChart from '@visactor/vchart';
-import { bindDebugTool } from '../../src/scenegraph/debug-tool';
-const CONTAINER_ID = 'vTable';
-VTable.register.chartModule('vchart', VChart);
-export function createTable() {
-  fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American_Superstore_Pivot_Chart_data.json')
+---
+category: examples
+group: table-type
+title: Pivot Chart
+cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/pivot-chart-pie.png
+link: '../guide/table_type/pivot_chart'
+option: PivotChart-indicators-chart#cellType
+---
+
+# Perspective combination diagram
+
+The perspective combination diagram combines the vchart chart library to render into the table, enriching the visual display form and improving the rendering performance.
+
+## Key Configurations
+
+*   `PivotChart` Initialize the table type using PivotChart.
+*   `VTable.register.chartModule('vchart', VChart)` Register a charting library for charting, currently supports VChart
+*   `cellType: 'chart'` Specify the type chart
+*   `chartModule: 'vchart'` Specify the registered chart library name
+*   `chartSpec: {}` Chart specs
+
+## Code demo
+
+```javascript livedemo template=vtable
+  VTable.register.chartModule('vchart', VChart);
+  let tableInstance;
+ fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American_Superstore_Pivot_Chart_data.json')
     .then(res => res.json())
     .then(data => {
       const columns = [
@@ -116,8 +135,7 @@ export function createTable() {
         }
       };
 
-      const tableInstance = new VTable.PivotChart(document.getElementById(CONTAINER_ID), option);
-      window.tableInstance = tableInstance;
+      tableInstance = new VTable.PivotChart(document.getElementById(CONTAINER_ID), option);
       const { LEGEND_ITEM_CLICK } = VTable.ListTable.EVENT_TYPE;
       tableInstance.on(LEGEND_ITEM_CLICK, args => {
         console.log('LEGEND_ITEM_CLICK', args);
@@ -128,5 +146,7 @@ export function createTable() {
           }
         ]);
       });
+      window.tableInstance = tableInstance;
     });
-}
+    
+```

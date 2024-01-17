@@ -2,7 +2,7 @@
 
 In Vue 3.x, using VTable
 
-Composition API， you can refer to[ the online demo ](https://codesandbox.io/p/sandbox/mystifying-hamilton-3wl76r?file=%2Fsrc%2Fcomponents%2FPivotChart.vue%3A9339%2C1)for details.
+Composition API， you can refer to[ the online demo ](https://codesandbox.io/p/devbox/vchart-demo-vue-73h8wl)for details.
 
 
 ## Code Example
@@ -137,8 +137,3 @@ onMounted(() => {
 </script>
 
 ```
-
-
-## Results
-
-- [Online demo](https://codesandbox.io/p/sandbox/wizardly-dream-ktf74n)
