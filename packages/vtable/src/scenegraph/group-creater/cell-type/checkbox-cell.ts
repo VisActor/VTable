@@ -1,5 +1,5 @@
-import type { ILine, ISymbol, IThemeSpec } from '@visactor/vrender';
-import { createLine, createSymbol } from '@visactor/vrender';
+import type { ILine, ISymbol, IThemeSpec } from '@src/vrender';
+import { createLine, createSymbol } from '@src/vrender';
 import { PointScale, LinearScale } from '@visactor/vscale';
 import { Group } from '../../graphic/group';
 import type { CellInfo, CheckboxColumnDefine, CheckboxStyleOption, SparklineSpec } from '../../../ts-types';

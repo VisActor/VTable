@@ -1,4 +1,4 @@
-import type { IGroup, INode, IText } from '@visactor/vrender';
+import type { IGroup, INode, IText } from '@src/vrender';
 import type { LineAxis } from '@visactor/vrender-components';
 import type { CartesianAxis } from './axis';
 import { isXAxis } from '../util/orient';

@@ -1,4 +1,4 @@
-import { RichText, Text, Group as VGroup } from '@visactor/vrender';
+import { RichText, Text, Group as VGroup } from '@src/vrender';
 import type { PivotHeaderLayoutMap } from '../../layout/pivot-header-layout';
 import { validToString } from '../../tools/util';
 import type { ColumnIconOption, ColumnTypeOption } from '../../ts-types';

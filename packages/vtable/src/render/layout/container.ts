@@ -1,6 +1,6 @@
 import { isArray } from '@visactor/vutils';
-import type { IGroupGraphicAttribute } from '@visactor/vrender';
-import { Group } from '@visactor/vrender';
+import type { IGroupGraphicAttribute } from '@src/vrender';
+import { Group } from '@src/vrender';
 import type { percentCalcObj } from './percent-calc';
 
 export type IContainerOptions = {

@@ -1,5 +1,5 @@
-import type { IGraphic } from '@visactor/vrender';
-import { ContainerModule, DefaultRenderService, RenderService } from '@visactor/vrender';
+import type { IGraphic } from '@src/vrender';
+import { ContainerModule, DefaultRenderService, RenderService } from '@src/vrender';
 import type { BaseTableAPI } from '../../ts-types/base-table';
 import { InteractionState } from '../../ts-types';
 

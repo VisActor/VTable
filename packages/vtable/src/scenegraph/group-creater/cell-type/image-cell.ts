@@ -1,7 +1,7 @@
 // @ts-nocheck
 /* eslint-disable no-undef */
-import type { IImage, Image, IThemeSpec } from '@visactor/vrender';
-import { createImage } from '@visactor/vrender';
+import type { IImage, Image, IThemeSpec } from '@src/vrender';
+import { createImage } from '@src/vrender';
 import type { BaseTableAPI } from '../../../ts-types';
 import * as icons from '../../../icons';
 import { Group } from '../../graphic/group';

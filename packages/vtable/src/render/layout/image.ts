@@ -1,5 +1,5 @@
-import type { IImageGraphicAttribute } from '@visactor/vrender';
-import { Image as VImage } from '@visactor/vrender';
+import type { IImageGraphicAttribute } from '@src/vrender';
+import { Image as VImage } from '@src/vrender';
 import { isArray } from '@visactor/vutils';
 
 type IImageOptions = {

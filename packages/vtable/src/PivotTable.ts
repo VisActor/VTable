@@ -1128,8 +1128,8 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
         this._changeCellValueToDataSet(startCol + j, startRow + i, newValue);
 
         this.fireListeners(TABLE_EVENT_TYPE.CHANGE_CELL_VALUE, {
-          col: startCol,
-          row: startRow,
+          col: startCol + j,
+          row: startRow + i,
           rawValue,
           changedValue: this.getCellOriginValue(startCol + j, startRow + i)
         });

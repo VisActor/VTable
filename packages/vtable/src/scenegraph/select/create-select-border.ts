@@ -1,4 +1,4 @@
-import { createRect } from '@visactor/vrender';
+import { createRect } from '@src/vrender';
 import type { CellSubLocation } from '../../ts-types';
 import type { Scenegraph } from '../scenegraph';
 

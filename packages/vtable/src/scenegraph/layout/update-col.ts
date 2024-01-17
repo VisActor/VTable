@@ -5,7 +5,7 @@ import { Group } from '../graphic/group';
 import { updateCell } from '../group-creater/cell-helper';
 import type { Scenegraph } from '../scenegraph';
 import { getCellMergeInfo } from '../utils/get-cell-merge';
-import type { IGroup } from '@visactor/vrender';
+import type { IGroup } from '@src/vrender';
 
 /**
  * add and remove rows in scenegraph

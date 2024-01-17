@@ -1,5 +1,5 @@
 /* eslint-disable no-undef */
-import type { IGraphic, IThemeSpec } from '@visactor/vrender';
+import type { IGraphic, IThemeSpec } from '@src/vrender';
 import type { CellLocation, CellRange, TextColumnDefine } from '../../ts-types';
 import type { Group } from '../graphic/group';
 import { getProp, getRawProp } from '../utils/get-prop';

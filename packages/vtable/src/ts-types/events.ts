@@ -4,7 +4,7 @@ import type { DropDownMenuEventArgs, MenuListItem, PivotInfo } from './menu';
 import type { IDimensionInfo, RectProps, SortOrder } from './common';
 import type { IconFuncTypeEnum, CellInfo, HierarchyState } from '.';
 import type { Icon } from '../scenegraph/graphic/icon';
-import type { FederatedPointerEvent, IEventTarget } from '@visactor/vrender';
+import type { FederatedPointerEvent, IEventTarget } from '@src/vrender';
 
 export type KeyboardEventListener = (e: KeyboardEvent) => void;
 export type TableEventListener<TYPE extends keyof TableEventHandlersEventArgumentMap> = (

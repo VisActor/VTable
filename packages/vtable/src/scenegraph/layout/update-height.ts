@@ -14,7 +14,7 @@ import { getStyleTheme } from '../../core/tableHelper';
 import { isMergeCellGroup } from '../utils/is-merge-cell-group';
 import type { BaseTableAPI } from '../../ts-types/base-table';
 import { resizeCellGroup } from '../group-creater/column-helper';
-import type { IGraphic } from '@visactor/vrender';
+import type { IGraphic } from '@src/vrender';
 
 export function updateRowHeight(scene: Scenegraph, row: number, detaY: number, skipTableHeightMap?: boolean) {
   // 更新table行高存储
