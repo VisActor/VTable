@@ -63,7 +63,7 @@ export function isHasCartesianChartInline(
   checkDirection: 'col' | 'row',
   layout: PivotHeaderLayoutMap
 ) {
-  let isHasCartesianChart = true;
+  let isHasCartesianChart = false;
   if ((layout.indicatorsAsCol && checkDirection === 'row') || (!layout.indicatorsAsCol && checkDirection === 'col')) {
     for (let i = 0; i < layout.indicatorsDefine.length; i++) {
       //columnObjects数量和指标数量一样 并不是每个列都有 所有会快一些
@@ -82,8 +82,8 @@ export function isHasCartesianChartInline(
   } else {
     const chartSpec = layout.getRawChartSpec(col, row);
     if (chartSpec) {
-      if (chartSpec.type === 'pie' || chartSpec.type === 'funnel' || chartSpec.type === 'rose') {
-        isHasCartesianChart = false;
+      if (chartSpec.type !== 'pie' && chartSpec.type !== 'funnel' && chartSpec.type !== 'rose') {
+        isHasCartesianChart = true;
       }
     } else {
       isHasCartesianChart = false;

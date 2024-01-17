@@ -131,6 +131,10 @@ export const menus = [
       },
       {
         path: 'pivot-chart',
+        name: 'pivotChart-pie-legend'
+      },
+      {
+        path: 'pivot-chart',
         name: 'pivotChart'
       },
       {

@@ -48,6 +48,9 @@ export function createTable() {
         categoryField: '230417170554008',
         valueField: '230417171050011'
       },
+      headerStyle: {
+        padding: 10
+      },
       style: {
         padding: 1
       }
