@@ -1,5 +1,5 @@
 import { isNumber, isValid } from '@visactor/vutils';
-import type { CellAddress } from '../../ts-types';
+import type { CellAddress, CellRange } from '../../ts-types';
 import type { BaseTableAPI } from '../../ts-types/base-table';
 import { Group } from '../graphic/group';
 import { updateCell } from '../group-creater/cell-helper';
@@ -33,9 +33,10 @@ export function updateRow(
 
   if (removeRows.length) {
     resetRowNumber(scene);
-    const endRow = removeCells[removeCells.length - 1].row - removeCells.length + 1;
-    const needUpdate = updateMergeCellGroup(endRow, endRow - 1, scene);
-    needUpdate && (scene.proxy.rowUpdatePos = endRow);
+    const beforeRow = removeRows[removeRows.length - 1] - 1;
+    const afterRow = removeRows[0] - removeRows.length;
+    const rowUpdatePos = updateMergeCellGroup(beforeRow, afterRow, scene);
+    isNumber(rowUpdatePos) && (scene.proxy.rowUpdatePos = Math.min(scene.proxy.rowUpdatePos, rowUpdatePos));
   }
 
   scene.table._clearRowRangeHeightsMap();
@@ -51,6 +52,13 @@ export function updateRow(
   // reset attribute y and row number in CellGroup
   // const newTotalHeight = resetRowNumberAndY(scene);
   resetRowNumberAndY(scene);
+
+  if (addRows.length) {
+    const beforeRow = addRows[0] - 1;
+    const afterRow = addRows[addRows.length - 1] + 1;
+    const rowUpdatePos = updateMergeCellGroup(beforeRow, afterRow, scene);
+    isNumber(rowUpdatePos) && (scene.proxy.rowUpdatePos = Math.min(scene.proxy.rowUpdatePos, rowUpdatePos));
+  }
 
   for (let col = 0; col < table.colCount; col++) {
     // add cells
@@ -68,6 +76,14 @@ export function updateRow(
       }
     });
   }
+
+  if (updateRows.length) {
+    const beforeRow = updateRows[0] - 1;
+    const afterRow = updateRows[updateRows.length - 1] + 1;
+    const rowUpdatePos = updateMergeCellGroup(beforeRow, afterRow, scene);
+    isNumber(rowUpdatePos) && (scene.proxy.rowUpdatePos = Math.min(scene.proxy.rowUpdatePos, rowUpdatePos));
+  }
+
   if (isNumber(updateAfter)) {
     for (let col = 0; col < table.colCount; col++) {
       for (let row = updateAfter; row < table.rowCount; row++) {
@@ -75,7 +91,7 @@ export function updateRow(
         cellGroup && (cellGroup.needUpdate = true);
       }
     }
-    scene.proxy.rowUpdatePos = updateAfter;
+    scene.proxy.rowUpdatePos = Math.min(scene.proxy.rowUpdatePos, updateAfter);
   }
 
   if (addRows.length) {
@@ -86,13 +102,14 @@ export function updateRow(
     scene.proxy.rowUpdateDirection = 'up';
     scene.proxy.updateCellGroups(scene.proxy.screenRowCount * 2);
     updateBottomFrozeCellGroups();
-    scene.proxy.progress();
+    // scene.proxy.progress();
   } else if (removeRows.length) {
     scene.proxy.updateCellGroups(scene.proxy.screenRowCount * 2);
 
     updateBottomFrozeCellGroups();
     scene.proxy.progress();
   }
+  scene.proxy.progress();
 
   // update table size
   const newTotalHeight = table.getRowsHeight(table.frozenRowCount, table.rowCount - 1 - table.bottomFrozenRowCount);
@@ -454,15 +471,33 @@ function removeCellGroup(row: number, scene: Scenegraph) {
   // return infectCellRange;
 }
 
-function updateMergeCellGroup(row: number, rowUpdate: number, scene: Scenegraph) {
-  let needUpdate = false;
+function updateMergeCellGroup(beforeRow: number, afterRow: number, scene: Scenegraph) {
+  let updateRow;
   for (let col = 0; col < scene.table.colCount; col++) {
-    const range = scene.table.getCellRange(col, row);
-    if (range.start.row <= rowUpdate && range.end.row >= rowUpdate) {
-      const cellGroup = scene.highPerformanceGetCell(col, row, true);
-      cellGroup.needUpdate = true;
-      needUpdate = true;
+    const rangeBefore = scene.table.getCellRange(col, beforeRow);
+    if (rangeBefore.start.row <= beforeRow - 1 && rangeBefore.end.row >= beforeRow - 1) {
+      updateCellGroup(rangeBefore, scene);
+      updateRow = rangeBefore.start.row;
+    }
+
+    const rangeAfter = scene.table.getCellRange(col, afterRow);
+    if (rangeAfter.start.row <= afterRow + 1 && rangeAfter.end.row >= afterRow + 1) {
+      updateCellGroup(rangeAfter, scene);
+      updateRow = rangeBefore.start.row;
     }
   }
-  return needUpdate;
+  return updateRow;
+}
+
+function updateCellGroup(range: CellRange, scene: Scenegraph) {
+  const { start, end } = range;
+  for (let col = start.col; col <= end.col; col++) {
+    for (let row = start.row; row <= end.row; row++) {
+      const cellGroup = scene.highPerformanceGetCell(col, row, true);
+      if (!cellGroup) {
+        continue;
+      }
+      cellGroup.needUpdate = true;
+    }
+  }
 }
