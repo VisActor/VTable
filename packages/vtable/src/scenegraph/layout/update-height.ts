@@ -24,6 +24,9 @@ export function updateRowHeight(scene: Scenegraph, row: number, detaY: number, s
 
   for (let col = 0; col < scene.table.colCount; col++) {
     const cell = scene.getCell(col, row);
+    if (cell.role === 'empty') {
+      continue;
+    }
     const mergeInfo = getCellMergeInfo(scene.table, col, row);
     if (mergeInfo && mergeInfo.start.col !== col) {
       continue;

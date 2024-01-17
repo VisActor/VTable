@@ -639,6 +639,25 @@ export class DataSource extends EventTarget implements DataSourceAPI {
     }
     return realDeletedRecordIndexs;
   }
+  /**
+   * 修改多条数据recordIndexs
+   */
+  updateRecords(records: any[], recordIndexs: number[]) {
+    const realDeletedRecordIndexs = [];
+    for (let index = 0; index < recordIndexs.length; index++) {
+      const recordIndex = recordIndexs[index];
+      if (recordIndex >= this._sourceLength || recordIndex < 0) {
+        continue;
+      }
+      realDeletedRecordIndexs.push(recordIndex);
+      this.source[recordIndex] = records[index];
+    }
+    if (this.userPagination) {
+      // 如果用户配置了分页
+      this.updatePagerData();
+    }
+    return realDeletedRecordIndexs;
+  }
 
   sort(
     field: FieldDef,
