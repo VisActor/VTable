@@ -1,4 +1,4 @@
-import type { FederatedPointerEvent } from '@visactor/vrender';
+import type { FederatedPointerEvent } from '@src/vrender';
 import type { BaseTableAPI } from '../../ts-types/base-table';
 import type { SceneEvent } from '../util';
 import { getCellEventArgsSet } from '../util';

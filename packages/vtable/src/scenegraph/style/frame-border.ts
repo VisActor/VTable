@@ -1,5 +1,5 @@
-import type { IGroupGraphicAttribute, IRect, IRectGraphicAttribute } from '@visactor/vrender';
-import { createGroup, createRect } from '@visactor/vrender';
+import type { IGroupGraphicAttribute, IRect, IRectGraphicAttribute } from '@src/vrender';
+import { createGroup, createRect } from '@src/vrender';
 import type { TableFrameStyle } from '../../ts-types';
 import type { Group } from '../graphic/group';
 import { isArray } from '@visactor/vutils';

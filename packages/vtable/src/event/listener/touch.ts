@@ -1,4 +1,4 @@
-import type { FederatedPointerEvent } from '@visactor/vrender';
+import type { FederatedPointerEvent } from '@src/vrender';
 import { handleWhell, isHorizontalScrollable, isVerticalScrollable } from '../scroll';
 import type { EventManager } from '../event';
 import type { StateManager } from '../../state/state';

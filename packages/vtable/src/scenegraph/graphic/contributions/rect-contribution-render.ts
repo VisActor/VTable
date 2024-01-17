@@ -9,8 +9,8 @@ import type {
   IGroup,
   IGroupGraphicAttribute,
   IDrawContext
-} from '@visactor/vrender';
-import { BaseRenderContributionTime, injectable } from '@visactor/vrender';
+} from '@src/vrender';
+import { BaseRenderContributionTime, injectable } from '@src/vrender';
 import { renderStroke } from './group-contribution-render';
 
 @injectable()
