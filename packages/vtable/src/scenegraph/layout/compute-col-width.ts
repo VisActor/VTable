@@ -127,7 +127,6 @@ export function computeColsWidth(table: BaseTableAPI, colStart?: number, colEnd?
     //   }
     // }
   } else if (table.autoFillWidth) {
-    // 处理风神列宽特殊逻辑
     table._clearColRangeWidthsMap();
     const canvasWidth = table.tableNoFrameWidth;
     let actualHeaderWidth = 0;
@@ -188,10 +187,11 @@ export function computeColsWidth(table: BaseTableAPI, colStart?: number, colEnd?
       const newColWidth = newWidths[col] ?? table.getColWidth(col);
       if (newColWidth !== oldColWidths[col]) {
         // update the column width in scenegraph
-        table._setColWidth(col, newColWidth);
+        table._setColWidth(col, newColWidth, false, true);
         // table.scenegraph.updateColWidth(col, newColWidth - oldColWidths[col], true, true);
       }
     }
+    table.stateManager.checkFrozen();
     for (let col = 0; col < table.colCount; col++) {
       // newColWidth could not be in column min max range possibly
       // const newColWidth = table._adjustColWidth(col, newWidths[col]) ?? table.getColWidth(col);

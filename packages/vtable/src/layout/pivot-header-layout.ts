@@ -34,7 +34,13 @@ import { IndicatorDimensionKeyPlaceholder } from '../tools/global';
 import { diffCellAddress } from '../tools/diff-cell';
 import type { ILinkDimension } from '../ts-types/pivot-table/dimension/link-dimension';
 import type { IImageDimension } from '../ts-types/pivot-table/dimension/image-dimension';
-import { getChartAxes, getChartDataId, getChartSpec, getRawChartSpec } from './chart-helper/get-chart-spec';
+import {
+  checkHasChart,
+  getChartAxes,
+  getChartDataId,
+  getChartSpec,
+  getRawChartSpec
+} from './chart-helper/get-chart-spec';
 import type { LayouTreeNode, IPivotLayoutHeadNode } from './pivot-layout-helper';
 import {
   DimensionTree,
@@ -2283,6 +2289,9 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
       indicatorObj = this._indicators?.find(indicator => indicator.indicatorKey === indicatorKey);
     }
     return indicatorObj?.chartInstance;
+  }
+  checkHasChart() {
+    return checkHasChart(this);
   }
 
   getDimension(dimensionKey: string, type: 'column' | 'row'): any {
