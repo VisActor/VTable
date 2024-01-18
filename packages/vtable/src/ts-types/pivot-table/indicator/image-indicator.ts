@@ -12,6 +12,9 @@ export interface IImageHeaderIndicator extends IBasicHeaderIndicator {
   keepAspectRatio?: boolean;
   /** 是否按图片尺寸自动撑开单元格尺寸 默认false */
   imageAutoSizing?: boolean;
+
+  /** 点击开启预览 */
+  clickToPreview?: boolean;
 }
 
 export interface IImageColumnIndicator extends IBasicColumnIndicator {
@@ -22,4 +25,7 @@ export interface IImageColumnIndicator extends IBasicColumnIndicator {
   keepAspectRatio?: boolean;
   /** 是否按图片尺寸自动撑开单元格尺寸 默认false */
   imageAutoSizing?: boolean;
+
+  /** 点击开启预览 */
+  clickToPreview?: boolean;
 }

@@ -1,6 +1,6 @@
-export type { ITextGraphicAttribute, IWrapTextGraphicAttribute } from '@visactor/vrender';
-export { Text as WrapText } from '@visactor/vrender';
-// import { getTheme, graphicUtil, Text, CanvasTextLayout, textDrawOffsetX, textLayoutOffsetY } from '@visactor/vrender';
+export type { ITextGraphicAttribute, IWrapTextGraphicAttribute } from '@src/vrender';
+export { Text as WrapText } from '@src/vrender';
+// import { getTheme, graphicUtil, Text, CanvasTextLayout, textDrawOffsetX, textLayoutOffsetY } from '@src/vrender';
 // import type { Bounds } from '@visactor/vutils';
 // import { textMeasure } from '../utils/measure-text';
 

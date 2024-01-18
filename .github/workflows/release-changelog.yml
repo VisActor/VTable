@@ -48,7 +48,7 @@ jobs:
           folder: ./docs/assets/changelog
           langs: 'en,zh'
           tag_name: ${{github.event.release.tag_name}}
-          file_name: changelog.md
+          file_name: release.md
           
       - name: Build packages
         env:

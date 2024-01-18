@@ -61,6 +61,10 @@ export const menus = [
       },
       {
         path: 'list',
+        name: 'list-chart-bar'
+      },
+      {
+        path: 'list',
         name: 'list-updateOption'
       },
       {

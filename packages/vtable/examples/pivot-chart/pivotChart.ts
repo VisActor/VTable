@@ -9406,7 +9406,7 @@ export function createTable() {
     defaultRowHeight: 200,
     defaultHeaderRowHeight: 30,
     defaultColWidth: 280,
-    defaultHeaderColWidth: [80, 50],
+    defaultHeaderColWidth: [80, 'auto'],
 
     corner: {
       titleOnDimension: 'row',

@@ -1,6 +1,6 @@
-// import { FederatedPointerEvent } from '@visactor/vrender';
-import type { FederatedPointerEvent, Gesture } from '@visactor/vrender';
-import { RichText } from '@visactor/vrender';
+// import { FederatedPointerEvent } from '@src/vrender';
+import type { FederatedPointerEvent, Gesture } from '@src/vrender';
+import { RichText } from '@src/vrender';
 import type { MousePointerCellEvent } from '../ts-types';
 import { IconFuncTypeEnum } from '../ts-types';
 import type { StateManager } from '../state/state';
@@ -132,9 +132,9 @@ export class EventManager {
         if (this.table._canResizeColumn(resizeCol.col, resizeCol.row) && resizeCol.col >= 0) {
           this.table.scenegraph.updateAutoColWidth(resizeCol.col);
 
-          if (this.table.isPivotChart()) {
-            this.table.scenegraph.updateChartSize(resizeCol.col);
-          }
+          // if (this.table.isPivotChart()) {
+          this.table.scenegraph.updateChartSize(resizeCol.col);
+          // }
           const state = this.table.stateManager;
           // update frozen shadowline component
           if (

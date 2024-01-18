@@ -10,6 +10,9 @@ export interface IImageHeaderDefine extends IBasicHeaderDefine {
   keepAspectRatio?: boolean;
   /** 是否按图片尺寸自动撑开单元格尺寸 默认false */
   imageAutoSizing?: boolean;
+
+  /** 点击开启预览 */
+  clickToPreview?: boolean;
 }
 
 export interface IImageColumnBodyDefine extends IBasicColumnBodyDefine {
@@ -20,4 +23,7 @@ export interface IImageColumnBodyDefine extends IBasicColumnBodyDefine {
   keepAspectRatio?: boolean;
   /** 是否按图片尺寸自动撑开单元格尺寸 默认false */
   imageAutoSizing?: boolean;
+
+  /** 点击开启预览 */
+  clickToPreview?: boolean;
 }
