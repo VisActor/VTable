@@ -7,7 +7,7 @@ import { isNumber } from '@visactor/vutils';
 
 export function handleTextStick(table: BaseTableAPI) {
   // reset
-  const { changedCells } = table.internalProps.stick;
+  const { changedCells } = table.internalProps.stick; // changedCells only cache one time
   changedCells.forEach((cellPos: StickCell) => {
     const cellGroup = table.scenegraph.getCell(cellPos.col, cellPos.row);
     cellGroup.forEachChildren((child: IGraphic) => {
@@ -17,7 +17,7 @@ export function handleTextStick(table: BaseTableAPI) {
       });
     });
   });
-  changedCells.length = 0;
+  changedCells.clear();
 
   const { scrollTop, scrollLeft, frozenRowCount, frozenColCount } = table;
   const frozenRowsHeight = table.getFrozenRowsHeight();
@@ -130,7 +130,7 @@ function adjustCellContentVerticalLayout(
   cellGroup: Group,
   minTop: number,
   maxTop: number,
-  changedCells: StickCell[],
+  changedCells: Map<string, StickCell>,
   table: BaseTableAPI
 ) {
   if (
@@ -150,7 +150,7 @@ function adjustCellContentVerticalLayout(
   }
 }
 
-function dealVertical(cellGroup: Group, minTop: number, maxTop: number, changedCells: StickCell[]) {
+function dealVertical(cellGroup: Group, minTop: number, maxTop: number, changedCells: Map<string, StickCell>) {
   // get text element
   const graphic =
     (cellGroup.getChildByName('text', true) as Text) || (cellGroup.getChildByName('image', true) as Image);
@@ -171,28 +171,35 @@ function dealVertical(cellGroup: Group, minTop: number, maxTop: number, changedC
   graphic.AABBBounds.width();
   const textTop = graphic.globalAABBBounds.y1;
   const textBottom = graphic.globalAABBBounds.y2;
+  // const textCellTop = graphic.AABBBounds.y1;
+  // const textCellBottom = graphic.AABBBounds.y2;
+  // if (textCellTop < cellGroup.attribute.height || textCellBottom < 0) {
+  //   return;
+  // }
 
   if (textTop < minTop) {
     const deltaHeight = textTop - minTop;
     // text is out of view, move all elements down
-    changedCells.push({
-      col: cellGroup.col,
-      row: cellGroup.row,
-      dx: (cellGroup.firstChild as IGraphic)?.attribute.dx ?? 0,
-      dy: (cellGroup.firstChild as IGraphic)?.attribute.dy ?? 0
-    });
+    !changedCells.has(`${cellGroup.col}-${cellGroup.row}`) &&
+      changedCells.set(`${cellGroup.col}-${cellGroup.row}`, {
+        col: cellGroup.col,
+        row: cellGroup.row,
+        dx: (cellGroup.firstChild as IGraphic)?.attribute.dx ?? 0,
+        dy: (cellGroup.firstChild as IGraphic)?.attribute.dy ?? 0
+      });
     cellGroup.forEachChildren((child: IGraphic) => {
       child.setAttribute('dy', (child.attribute.dy ?? 0) - deltaHeight + 2); // 2 is the buffer
     });
   } else if (textBottom > maxTop) {
     const deltaHeight = textBottom - maxTop;
     // text is out of view, move all elements down
-    changedCells.push({
-      col: cellGroup.col,
-      row: cellGroup.row,
-      dx: (cellGroup.firstChild as IGraphic)?.attribute.dx ?? 0,
-      dy: (cellGroup.firstChild as IGraphic)?.attribute.dy ?? 0
-    });
+    !changedCells.has(`${cellGroup.col}-${cellGroup.row}`) &&
+      changedCells.set(`${cellGroup.col}-${cellGroup.row}`, {
+        col: cellGroup.col,
+        row: cellGroup.row,
+        dx: (cellGroup.firstChild as IGraphic)?.attribute.dx ?? 0,
+        dy: (cellGroup.firstChild as IGraphic)?.attribute.dy ?? 0
+      });
     cellGroup.forEachChildren((child: IGraphic) => {
       child.setAttribute('dy', (child.attribute.dy ?? 0) - deltaHeight); // 2 is the buffer
     });
@@ -208,7 +215,7 @@ function adjustCellContentHorizontalLayout(
   cellGroup: Group,
   minLeft: number,
   maxLeft: number,
-  changedCells: StickCell[],
+  changedCells: Map<string, StickCell>,
   table: BaseTableAPI
 ) {
   if (
@@ -228,7 +235,7 @@ function adjustCellContentHorizontalLayout(
   }
 }
 
-function dealHorizontal(cellGroup: Group, minLeft: number, maxLeft: number, changedCells: StickCell[]) {
+function dealHorizontal(cellGroup: Group, minLeft: number, maxLeft: number, changedCells: Map<string, StickCell>) {
   // get text element
   const text = cellGroup.getChildByName('text', true) as Text;
   if (!text) {
@@ -240,24 +247,26 @@ function dealHorizontal(cellGroup: Group, minLeft: number, maxLeft: number, chan
   if (textLeft < minLeft) {
     const deltaWidth = textLeft - minLeft;
     // text is out of view, move all elements right
-    changedCells.push({
-      col: cellGroup.col,
-      row: cellGroup.row,
-      dx: (cellGroup.firstChild as IGraphic)?.attribute.dx ?? 0,
-      dy: (cellGroup.firstChild as IGraphic)?.attribute.dy ?? 0
-    });
+    !changedCells.has(`${cellGroup.col}-${cellGroup.row}`) &&
+      changedCells.set(`${cellGroup.col}-${cellGroup.row}`, {
+        col: cellGroup.col,
+        row: cellGroup.row,
+        dx: (cellGroup.firstChild as IGraphic)?.attribute.dx ?? 0,
+        dy: (cellGroup.firstChild as IGraphic)?.attribute.dy ?? 0
+      });
     cellGroup.forEachChildren((child: IGraphic) => {
       child.setAttribute('dx', (child.attribute.dx ?? 0) - deltaWidth + 2); // 2 is the buffer
     });
   } else if (textRight > maxLeft) {
     const deltaWidth = textRight - maxLeft;
     // text is out of view, move all elements down
-    changedCells.push({
-      col: cellGroup.col,
-      row: cellGroup.row,
-      dx: (cellGroup.firstChild as IGraphic)?.attribute.dx ?? 0,
-      dy: (cellGroup.firstChild as IGraphic)?.attribute.dy ?? 0
-    });
+    !changedCells.has(`${cellGroup.col}-${cellGroup.row}`) &&
+      changedCells.set(`${cellGroup.col}-${cellGroup.row}`, {
+        col: cellGroup.col,
+        row: cellGroup.row,
+        dx: (cellGroup.firstChild as IGraphic)?.attribute.dx ?? 0,
+        dy: (cellGroup.firstChild as IGraphic)?.attribute.dy ?? 0
+      });
     cellGroup.forEachChildren((child: IGraphic) => {
       child.setAttribute('dx', (child.attribute.dx ?? 0) - deltaWidth); // 2 is the buffer
     });

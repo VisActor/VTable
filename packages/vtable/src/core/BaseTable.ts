@@ -362,7 +362,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     this.bodyStyleCache = new Map();
     this.bodyBottomStyleCache = new Map();
 
-    internalProps.stick = { changedCells: [] };
+    internalProps.stick = { changedCells: new Map() };
 
     internalProps.customMergeCell = options.customMergeCell;
   }
@@ -1933,6 +1933,8 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     this.colWidthsMap = new NumberMap();
     this.colContentWidthsMap = new NumberMap();
     this.colWidthsLimit = {};
+
+    internalProps.stick.changedCells.clear();
 
     internalProps.theme = themes.of(options.theme ?? themes.DEFAULT);
     this.scenegraph.updateStageBackground();
