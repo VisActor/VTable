@@ -592,26 +592,6 @@ export class DataSource extends EventTarget implements DataSourceAPI {
       this.pagination.totalCount = this._sourceLength;
     }
   }
-  /**
-   * 删除多条数据recordIndexs
-   */
-  deleteRecordsForSorted(recordIndexs: number[]) {
-    const recordIndexsMaxToMin = recordIndexs.sort((a, b) => b - a);
-    for (let index = 0; index < recordIndexsMaxToMin.length; index++) {
-      const recordIndex = recordIndexsMaxToMin[index];
-      if (recordIndex >= this._sourceLength || recordIndex < 0) {
-        continue;
-      }
-      const rawIndex = this.currentIndexedData[recordIndex];
-      this.source.splice(rawIndex, 1);
-      this._sourceLength -= 1;
-    }
-    this.sortedIndexMap.clear();
-    if (!this.userPagination) {
-      this.pagination.perPageCount = this._sourceLength;
-      this.pagination.totalCount = this._sourceLength;
-    }
-  }
 
   /**
    * 删除多条数据recordIndexs
@@ -640,6 +620,27 @@ export class DataSource extends EventTarget implements DataSourceAPI {
     return realDeletedRecordIndexs;
   }
   /**
+   * 删除多条数据recordIndexs
+   */
+  deleteRecordsForSorted(recordIndexs: number[]) {
+    const recordIndexsMaxToMin = recordIndexs.sort((a, b) => b - a);
+    for (let index = 0; index < recordIndexsMaxToMin.length; index++) {
+      const recordIndex = recordIndexsMaxToMin[index];
+      if (recordIndex >= this._sourceLength || recordIndex < 0) {
+        continue;
+      }
+      const rawIndex = this.currentIndexedData[recordIndex];
+      this.source.splice(rawIndex, 1);
+      this._sourceLength -= 1;
+    }
+    this.sortedIndexMap.clear();
+    if (!this.userPagination) {
+      this.pagination.perPageCount = this._sourceLength;
+      this.pagination.totalCount = this._sourceLength;
+    }
+  }
+
+  /**
    * 修改多条数据recordIndexs
    */
   updateRecords(records: any[], recordIndexs: number[]) {
@@ -657,6 +658,26 @@ export class DataSource extends EventTarget implements DataSourceAPI {
       this.updatePagerData();
     }
     return realDeletedRecordIndexs;
+  }
+
+  /**
+   * 删除多条数据recordIndexs
+   */
+  updateRecordsForSorted(records: any[], recordIndexs: number[]) {
+    const realDeletedRecordIndexs: number[] = [];
+    for (let index = 0; index < recordIndexs.length; index++) {
+      const recordIndex = recordIndexs[index];
+      if (recordIndex >= this._sourceLength || recordIndex < 0) {
+        continue;
+      }
+      const rawIndex = this.currentIndexedData[recordIndex];
+      if (typeof rawIndex !== 'number') {
+        return;
+      }
+      realDeletedRecordIndexs.push(recordIndex);
+      this.source[rawIndex] = records[index];
+    }
+    this.sortedIndexMap.clear();
   }
 
   sort(

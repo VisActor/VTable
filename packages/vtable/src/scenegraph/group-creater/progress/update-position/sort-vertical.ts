@@ -5,34 +5,45 @@ import { updateRowContent } from './dynamic-set-y';
 import { updateAutoRow } from './update-auto-row';
 
 export async function sortVertical(proxy: SceneProxy) {
-  // for (let col = proxy.bodyLeftCol; col <= proxy.bodyRightCol; col++) {
-  //   for (let row = proxy.rowStart; row <= proxy.rowEnd; row++) {
-  //     // const cellGroup = proxy.table.scenegraph.getCell(col, row);
-  //     const cellGroup = proxy.highPerformanceGetCell(col, row);
-  //     cellGroup.needUpdate = true;
-  //   }
-  // }
+  // 更新左 中 右 左下 底部 右下 部分的单元格需更新标记
+  proxy.table.scenegraph.bodyGroup.forEachChildren((colGroup: Group, index: number) => {
+    if (colGroup.type === 'group') {
+      colGroup.needUpdate = true;
+      colGroup?.forEachChildren((cellGroup: Group) => {
+        (cellGroup as any).needUpdate = true;
+      });
+    }
+  });
 
-  // row header group
-  for (let col = 0; col < proxy.table.frozenColCount; col++) {
-    const colGroup = proxy.table.scenegraph.getColGroup(col);
-    colGroup?.forEachChildren((cellGroup: Group, index) => {
-      cellGroup.needUpdate = true;
-    });
+  for (let col = 0; col < proxy.table.frozenColCount ?? 0; col++) {
+    // 将该列的chartInstance清除掉
+    const columnGroup = proxy.table.scenegraph.getColGroup(col);
+    columnGroup?.setAttribute('chartInstance', undefined);
+    for (let row = proxy.rowStart; row <= proxy.rowEnd; row++) {
+      proxy.table.scenegraph.updateCellContent(col, row);
+    }
+    for (let row = proxy.table.rowCount - proxy.table.bottomFrozenRowCount; row < proxy.table.rowCount; row++) {
+      proxy.table.scenegraph.updateCellContent(col, row);
+    }
   }
-  // right frozen group
+  for (let col = proxy.colStart; col <= proxy.colEnd; col++) {
+    // 将该列的chartInstance清除掉
+    const columnGroup = proxy.table.scenegraph.getColGroup(col);
+    columnGroup?.setAttribute('chartInstance', undefined);
+    for (let row = proxy.table.rowCount - proxy.table.bottomFrozenRowCount; row < proxy.table.rowCount; row++) {
+      proxy.table.scenegraph.updateCellContent(col, row);
+    }
+  }
   for (let col = proxy.table.colCount - proxy.table.rightFrozenColCount; col < proxy.table.colCount; col++) {
-    const colGroup = proxy.table.scenegraph.getColGroup(col);
-    colGroup?.forEachChildren((cellGroup: Group, index) => {
-      cellGroup.needUpdate = true;
-    });
-  }
-  // body group
-  for (let col = proxy.bodyLeftCol; col <= proxy.bodyRightCol; col++) {
-    const colGroup = proxy.table.scenegraph.getColGroup(col);
-    colGroup?.forEachChildren((cellGroup: Group, index) => {
-      cellGroup.needUpdate = true;
-    });
+    // 将该列的chartInstance清除掉
+    const columnGroup = proxy.table.scenegraph.getColGroup(col);
+    columnGroup?.setAttribute('chartInstance', undefined);
+    for (let row = proxy.rowStart; row <= proxy.rowEnd; row++) {
+      proxy.table.scenegraph.updateCellContent(col, row);
+    }
+    for (let row = proxy.table.rowCount - proxy.table.bottomFrozenRowCount; row < proxy.table.rowCount; row++) {
+      proxy.table.scenegraph.updateCellContent(col, row);
+    }
   }
 
   // 更新同步范围

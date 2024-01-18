@@ -1304,7 +1304,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
   updateRecords(records: any[], recordIndexs: number[]) {
     if (recordIndexs?.length > 0) {
       if (this.sortState) {
-        this.dataSource.deleteRecordsForSorted(recordIndexs);
+        this.dataSource.updateRecordsForSorted(records, recordIndexs);
         sortRecords(this);
         this.refreshRowColCount();
         // 更新整个场景树

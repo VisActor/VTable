@@ -5,29 +5,7 @@ import { updateColContent } from './dynamic-set-x';
 import { updateAutoColumn } from './update-auto-column';
 
 export async function sortHorizontal(proxy: SceneProxy) {
-  // for (let col = proxy.colStart; col <= proxy.colEnd; col++) {
-  //   const colGroup = proxy.table.scenegraph.getColGroup(col);
-  //   colGroup.needUpdate = true;
-  //   colGroup?.forEachChildren((cellGroup: Group) => {
-  //     (cellGroup as any).needUpdate = true;
-  //   });
-  // }
-  // proxy.table.scenegraph.colHeaderGroup.forEachChildren((colGroup: Group, index: number) => {
-  //   if (colGroup.type === 'group') {
-  //     colGroup.needUpdate = true;
-  //     colGroup?.forEachChildren((cellGroup: Group) => {
-  //       (cellGroup as any).needUpdate = true;
-  //     });
-  //   }
-  // });
-  proxy.table.scenegraph.bottomFrozenGroup.forEachChildren((colGroup: Group, index: number) => {
-    if (colGroup.type === 'group') {
-      colGroup.needUpdate = true;
-      colGroup?.forEachChildren((cellGroup: Group) => {
-        (cellGroup as any).needUpdate = true;
-      });
-    }
-  });
+  // 更新左 中 右 左下 底部 右下 部分的单元格需更新标记
   proxy.table.scenegraph.bodyGroup.forEachChildren((colGroup: Group, index: number) => {
     if (colGroup.type === 'group') {
       colGroup.needUpdate = true;
@@ -36,7 +14,25 @@ export async function sortHorizontal(proxy: SceneProxy) {
       });
     }
   });
-
+  for (let col = proxy.colStart; col <= proxy.colEnd; col++) {
+    // 将该列的chartInstance清除掉
+    const columnGroup = proxy.table.scenegraph.getColGroup(col);
+    columnGroup?.setAttribute('chartInstance', undefined);
+    for (let row = proxy.table.rowCount - proxy.table.bottomFrozenRowCount; row < proxy.table.rowCount; row++) {
+      proxy.table.scenegraph.updateCellContent(col, row);
+    }
+  }
+  for (let col = proxy.table.colCount - proxy.table.rightFrozenColCount; col < proxy.table.colCount; col++) {
+    // 将该列的chartInstance清除掉
+    const columnGroup = proxy.table.scenegraph.getColGroup(col);
+    columnGroup?.setAttribute('chartInstance', undefined);
+    for (let row = proxy.rowStart; row <= proxy.rowEnd; row++) {
+      proxy.table.scenegraph.updateCellContent(col, row);
+    }
+    for (let row = proxy.table.rowCount - proxy.table.bottomFrozenRowCount; row < proxy.table.rowCount; row++) {
+      proxy.table.scenegraph.updateCellContent(col, row);
+    }
+  }
   // 更新同步范围
   const syncLeftCol = Math.max(proxy.bodyLeftCol, proxy.screenLeftCol - proxy.screenColCount * 1);
   const syncRightCol = Math.min(proxy.bodyRightCol, proxy.screenLeftCol + proxy.screenColCount * 2);
