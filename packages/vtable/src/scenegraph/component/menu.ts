@@ -1,5 +1,5 @@
-import type { FederatedEvent, IGroup } from '@visactor/vrender';
-import { createRect, Text } from '@visactor/vrender';
+import type { FederatedEvent, IGroup } from '@src/vrender';
+import { createRect, Text } from '@src/vrender';
 import { TABLE_EVENT_TYPE } from '../../core/TABLE_EVENT_TYPE';
 import type { MenuListItem } from '../../ts-types';
 import { Group } from '../graphic/group';

@@ -307,7 +307,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
 
     internalProps.autoWrapText = options.autoWrapText;
 
-    internalProps.allowFrozenColCount = options.allowFrozenColCount ?? internalProps.colCount;
+    internalProps.allowFrozenColCount = options.allowFrozenColCount ?? 0;
     internalProps.limitMaxAutoWidth = options.limitMaxAutoWidth ?? 450;
     internalProps.limitMinWidth =
       limitMinWidth !== null && limitMinWidth !== undefined
@@ -1951,7 +1951,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     // internalProps.autoRowHeight = options.autoRowHeight ?? false;
     //是否统一设置为多行文本
     internalProps.autoWrapText = options.autoWrapText;
-    internalProps.allowFrozenColCount = options.allowFrozenColCount ?? internalProps.colCount;
+    internalProps.allowFrozenColCount = options.allowFrozenColCount ?? 0;
     internalProps.limitMaxAutoWidth = options.limitMaxAutoWidth ?? 450;
     internalProps.limitMinWidth =
       limitMinWidth !== null && limitMinWidth !== undefined

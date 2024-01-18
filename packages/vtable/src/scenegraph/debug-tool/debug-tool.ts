@@ -1,5 +1,5 @@
-import type { FederatedPointerEvent, IStage, IRect, IGraphic } from '@visactor/vrender';
-import { createRect, getTheme } from '@visactor/vrender';
+import type { FederatedPointerEvent, IStage, IRect, IGraphic } from '@src/vrender';
+import { createRect, getTheme } from '@src/vrender';
 import JSONFormatter from 'json-formatter-js';
 
 export interface DebugToolOptions {

@@ -8,8 +8,8 @@ import type {
   IGroupRenderContribution,
   IDrawContext,
   IRectGraphicAttribute
-} from '@visactor/vrender';
-import { BaseRenderContributionTime, createRectPath, injectable } from '@visactor/vrender';
+} from '@src/vrender';
+import { BaseRenderContributionTime, createRectPath, injectable } from '@src/vrender';
 import type { Group } from '../group';
 import { getCellHoverColor } from '../../../state/hover/is-cell-hover';
 import type { BaseTableAPI } from '../../../ts-types/base-table';

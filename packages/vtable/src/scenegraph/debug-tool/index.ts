@@ -1,4 +1,4 @@
-import type { Stage } from '@visactor/vrender';
+import type { Stage } from '@src/vrender';
 import type { DebugToolOptions } from './debug-tool';
 import { DebugTool } from './debug-tool';
 

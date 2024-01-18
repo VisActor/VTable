@@ -1,5 +1,5 @@
 /* eslint-disable no-undef */
-import type { IFullThemeSpec, Text } from '@visactor/vrender';
+import type { IFullThemeSpec, Text } from '@src/vrender';
 import type { Group } from '../graphic/group';
 import { getProp } from './get-prop';
 import { getQuadProps } from './padding';
