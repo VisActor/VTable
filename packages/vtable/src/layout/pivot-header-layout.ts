@@ -403,7 +403,7 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
         if ((indicatorObject?.style as TextStyle)?.padding) {
           this._chartPadding = (indicatorObject.style as TextStyle).padding as number;
         }
-        if (indicatorObject.chartSpec?.barWidth) {
+        if (indicatorObject.chartSpec?.barWidth && typeof indicatorObject.chartSpec.barWidth === 'number') {
           this._chartItemSpanSize = indicatorObject.chartSpec?.barWidth;
         }
         const bandAxisConfig = indicatorObject.chartSpec?.axes?.find((axis: any) => {
@@ -420,7 +420,7 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
           return true;
         }
         indicatorObject.chartSpec.series?.find((seriesObject: any) => {
-          if (seriesObject.barWidth) {
+          if (seriesObject.barWidth && typeof seriesObject.barWidth === 'number') {
             this._chartItemSpanSize = seriesObject.barWidth;
           }
           if (this._chartItemSpanSize > 0) {
