@@ -2,6 +2,30 @@
   "name": "@visactor/vtable",
   "entries": [
     {
+      "version": "0.17.10",
+      "tag": "@visactor/vtable_v0.17.10",
+      "date": "Thu, 18 Jan 2024 03:43:34 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "fix: select border range error #911\n\n"
+          },
+          {
+            "comment": "fix: when enable pasteValueToCell and event change_cell_value arguments is error #919\n\n"
+          },
+          {
+            "comment": "feat: use vrender-core"
+          },
+          {
+            "comment": "fix: fix tree structure auto merge update problem"
+          },
+          {
+            "comment": "fix: toggele tree node updateChartSize\n\n"
+          }
+        ]
+      }
+    },
+    {
       "version": "0.17.9",
       "tag": "@visactor/vtable_v0.17.9",
       "date": "Wed, 10 Jan 2024 11:22:48 GMT",
