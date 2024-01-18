@@ -1,5 +1,5 @@
-import type { IStage, IRect, ITextCache, INode, Text, RichText } from '@visactor/vrender';
-import { createStage, createRect, IContainPointMode, container, vglobal } from '@visactor/vrender';
+import type { IStage, IRect, ITextCache, INode, Text, RichText } from '@src/vrender';
+import { createStage, createRect, IContainPointMode, container, vglobal, registerForVrender } from '@src/vrender';
 import type { CellRange, CellSubLocation } from '../ts-types';
 import {
   type CellAddress,
@@ -61,6 +61,8 @@ import { Env } from '../tools/env';
 import { createCornerCell } from './style/corner-cell';
 import { updateCol } from './layout/update-col';
 // import { contextModule } from './context/module';
+
+registerForVrender();
 
 // VChart poptip theme
 loadPoptip();
@@ -1122,7 +1124,6 @@ export class Scenegraph {
       const endCol = table.isPivotChart() ? table.colCount - table.rightFrozenColCount : table.colCount;
       getAdaptiveWidth(canvasWidth - actualHeaderWidth, startCol, endCol, false, [], table, true);
     } else if (table.autoFillWidth) {
-      // 处理风神列宽特殊逻辑
       table._clearColRangeWidthsMap();
       const canvasWidth = table.tableNoFrameWidth;
       let actualHeaderWidth = 0;
@@ -1166,7 +1167,6 @@ export class Scenegraph {
       cornerHeaderWidth += column.attribute.width;
     });
     this.cornerHeaderGroup.setAttribute('width', cornerHeaderWidth);
-
     this.colHeaderGroup.setAttribute('x', this.cornerHeaderGroup.attribute.width);
     this.rowHeaderGroup.setAttribute('y', this.colHeaderGroup.attribute.height);
     this.bodyGroup.setAttributes({
@@ -1370,7 +1370,6 @@ export class Scenegraph {
     this.rightTopCornerGroup.setDeltaWidth(rightX - this.rightTopCornerGroup.attribute.width);
     this.rightBottomCornerGroup.setDeltaWidth(rightX - this.rightBottomCornerGroup.attribute.width);
     this.bodyGroup.setDeltaWidth(bodyX - this.bodyGroup.attribute.width);
-
     this.colHeaderGroup.setAttribute('x', this.cornerHeaderGroup.attribute.width);
     this.bottomFrozenGroup.setAttribute('x', this.table.getFrozenColsWidth());
     this.bodyGroup.setAttribute('x', this.rowHeaderGroup.attribute.width);

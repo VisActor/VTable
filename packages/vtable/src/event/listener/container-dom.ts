@@ -198,7 +198,9 @@ export function bindContainerDomListener(eventManager: EventManager) {
     }
   });
   handler.on(table.getElement(), 'contextmenu', (e: any) => {
-    e.preventDefault();
+    if (table.eventOptions?.preventDefaultContextMenu !== false) {
+      e.preventDefault();
+    }
   });
 
   handler.on(table.getContainer(), 'resize', e => {

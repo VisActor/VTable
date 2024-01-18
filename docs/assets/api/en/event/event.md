@@ -374,7 +374,7 @@ Parameter types of event callback function:
 ```
 
 ## CHANGE_CELL_VALUE
-Event that changes the cell value. **ListTable table exclusive event**
+Event that changes the cell value.
 
 Parameter types of event callback function:
 

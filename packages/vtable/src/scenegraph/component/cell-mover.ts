@@ -1,5 +1,5 @@
-import type { ILine, IRect, ISymbol } from '@visactor/vrender';
-import { createLine, createRect, createSymbol } from '@visactor/vrender';
+import type { ILine, IRect, ISymbol } from '@src/vrender';
+import { createLine, createRect, createSymbol } from '@src/vrender';
 import { getCellMergeInfo } from '../utils/get-cell-merge';
 import type { Group } from '../graphic/group';
 import type { BaseTableAPI } from '../../ts-types/base-table';

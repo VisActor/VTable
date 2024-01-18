@@ -6,7 +6,7 @@ import {
   SplitRectBeforeRenderContribution,
   SplitRectAfterRenderContribution,
   ContainerModule
-} from '@visactor/vrender';
+} from '@src/vrender';
 import { ChartRender, DefaultCanvasChartRender } from './chart-render';
 import { AfterImageRenderContribution, BeforeImageRenderContribution } from './image-contribution-render';
 import {

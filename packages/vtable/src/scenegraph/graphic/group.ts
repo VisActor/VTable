@@ -1,5 +1,5 @@
-import type { IGraphic, IColor, IRect, INode } from '@visactor/vrender';
-import { Group as VRenderGroup } from '@visactor/vrender';
+import type { IGraphic, IColor, IRect, INode } from '@src/vrender';
+import { Group as VRenderGroup } from '@src/vrender';
 import type { BaseTableAPI } from '../../ts-types/base-table';
 import { InteractionState } from '../../ts-types';
 import type { AABBBounds } from '@visactor/vutils';

@@ -19,7 +19,7 @@
     "url": "https://VisActor.io/"
   },
   "license": "MIT",
-  "sideEffects": false,
+  "sideEffects": true,
   "main": "cjs/index.js",
   "module": "es/index.js",
   "types": "es/index.d.ts",
@@ -50,8 +50,9 @@
   },
   "dependencies": {
     "@visactor/vtable-editors": "workspace:*",
-    "@visactor/vrender": "0.17.12-alpha.1",
-    "@visactor/vrender-components": "0.17.12-alpha.1",
+    "@visactor/vrender-core": "0.17.17-alpha.1",
+    "@visactor/vrender-kits": "0.17.17-alpha.1",
+    "@visactor/vrender-components": "0.17.17-alpha.1",
     "@visactor/vutils-extension": "~1.8.5",
     "@visactor/vutils": "~0.17.1",
     "@visactor/vscale": "~0.17.1",
@@ -60,7 +61,7 @@
   },
   "devDependencies": {
     "luxon": "*",
-    "@visactor/vchart": "1.8.5",
+    "@visactor/vchart": "1.8.7",
     "@internal/bundler": "workspace:*",
     "@internal/eslint-config": "workspace:*",
     "@internal/ts-config": "workspace:*",

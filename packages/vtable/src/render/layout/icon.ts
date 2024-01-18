@@ -1,5 +1,5 @@
-import type { IImageGraphicAttribute } from '@visactor/vrender';
-import { Image } from '@visactor/vrender';
+import type { IImageGraphicAttribute } from '@src/vrender';
+import { Image } from '@src/vrender';
 import { isArray, isString } from '@visactor/vutils';
 import * as registerIcons from '../../icons';
 import type { ColumnIconOption } from '../../ts-types';

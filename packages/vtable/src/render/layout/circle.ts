@@ -1,5 +1,5 @@
-import type { ICircleGraphicAttribute } from '@visactor/vrender';
-import { Circle as VCircle } from '@visactor/vrender';
+import type { ICircleGraphicAttribute } from '@src/vrender';
+import { Circle as VCircle } from '@src/vrender';
 import { isArray } from '@visactor/vutils';
 
 type ICircleOption = {

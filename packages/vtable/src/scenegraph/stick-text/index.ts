@@ -1,4 +1,4 @@
-import type { IGraphic, Text } from '@visactor/vrender';
+import type { IGraphic, Image, Text } from '@visactor/vrender';
 import type { BaseTableAPI } from '../../ts-types/base-table';
 import type { Group } from '../graphic/group';
 import type { PivotHeaderLayoutMap } from '../../layout/pivot-header-layout';
@@ -152,13 +152,25 @@ function adjustCellContentVerticalLayout(
 
 function dealVertical(cellGroup: Group, minTop: number, maxTop: number, changedCells: StickCell[]) {
   // get text element
-  const text = cellGroup.getChildByName('text', true) as Text;
-  if (!text) {
+  const graphic =
+    (cellGroup.getChildByName('text', true) as Text) || (cellGroup.getChildByName('image', true) as Image);
+  if (!graphic) {
     return;
   }
-  text.AABBBounds.width();
-  const textTop = text.globalAABBBounds.y1;
-  const textBottom = text.globalAABBBounds.y2;
+  if (graphic.type === 'image') {
+    const { image: url } = graphic.attribute;
+    if (!url || !graphic.resources) {
+      return;
+    }
+    const res = graphic.resources.get(url as any);
+    if (res.state !== 'success') {
+      return;
+    }
+  }
+
+  graphic.AABBBounds.width();
+  const textTop = graphic.globalAABBBounds.y1;
+  const textBottom = graphic.globalAABBBounds.y2;
 
   if (textTop < minTop) {
     const deltaHeight = textTop - minTop;

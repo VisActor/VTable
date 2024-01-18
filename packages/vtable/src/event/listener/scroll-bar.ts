@@ -1,4 +1,4 @@
-import type { FederatedPointerEvent } from '@visactor/vrender';
+import type { FederatedPointerEvent } from '@src/vrender';
 import { throttle } from '../../tools/util';
 import type { ListTableAPI } from '../../ts-types';
 import { InteractionState } from '../../ts-types';

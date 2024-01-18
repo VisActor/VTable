@@ -1,5 +1,6 @@
 /* eslint-disable sort-imports */
-import { graphicUtil } from '@visactor/vrender';
+import { graphicUtil, registerForVrender } from '@src/vrender';
+registerForVrender();
 
 import * as TYPES from './ts-types';
 import * as core from './core';
@@ -38,7 +39,7 @@ import * as CustomLayout from './render/layout';
 import { updateCell } from './scenegraph/group-creater/cell-helper';
 import { renderChart } from './scenegraph/graphic/contributions/chart-render-helper';
 
-// import { container, loadCanvasPicker } from '@visactor/vrender';
+// import { container, loadCanvasPicker } from '@src/vrender';
 // loadCanvasPicker(container);
 
 export { getDataCellPath } from './tools/get-data-path';

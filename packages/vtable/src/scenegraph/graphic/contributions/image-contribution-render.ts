@@ -7,8 +7,8 @@ import type {
   IThemeAttribute,
   IImageRenderContribution,
   IDrawContext
-} from '@visactor/vrender';
-import { BaseRenderContributionTime, injectable } from '@visactor/vrender';
+} from '@src/vrender';
+import { BaseRenderContributionTime, injectable } from '@src/vrender';
 
 /**
  * @description: image支持绘制部分形状

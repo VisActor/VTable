@@ -1,5 +1,5 @@
-import type { IGroupGraphicAttribute } from '@visactor/vrender';
-import { Group as VGroup } from '@visactor/vrender';
+import type { IGroupGraphicAttribute } from '@src/vrender';
+import { Group as VGroup } from '@src/vrender';
 import { isArray } from '@visactor/vutils';
 
 type IGroupOption = {
