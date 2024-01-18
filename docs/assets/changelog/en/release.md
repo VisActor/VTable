@@ -1,3 +1,42 @@
+# v0.17.10
+
+2024-01-18
+
+
+**🆕 New feature**
+
+- **@visactor/vtable**: use vrender-core
+
+**🐛 Bug fix**
+
+- **@visactor/vtable**: select border range error [#911](https://github.com/VisActor/VTable/issues/911)
+- **@visactor/vtable**: when enable pasteValueToCell and event change_cell_value arguments is error [#919](https://github.com/VisActor/VTable/issues/919)
+- **@visactor/vtable**: fix tree structure auto merge update problem
+- **@visactor/vtable**: toggele tree node updateChartSize
+
+
+
+[more detail about v0.17.10](https://github.com/VisActor/VTable/releases/tag/v0.17.10)
+
+# v0.17.9
+
+2024-01-18
+
+
+**🆕 New feature**
+
+- **@visactor/vtable**: support excel data paste to cells [#857](https://github.com/VisActor/VTable/issues/857)
+- **@visactor/vtable**: add api getCellAddressByRecord
+- **@visactor/vtable**: optimize getCellHeaderPath function
+
+**🐛 Bug fix**
+
+- **@visactor/vtable**: showSubTotals can not work [#893](https://github.com/VisActor/VTable/issues/893)
+- **@visactor/vtable**: set display:none trigger resize logic
+- **@visactor/vtable**: fix right frozen cell location
+
+[more detail about v0.17.9](https://github.com/VisActor/VTable/releases/tag/v0.17.9)
+
 # v0.17.8
 
 2024-01-17
