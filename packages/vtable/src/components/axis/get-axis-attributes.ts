@@ -82,7 +82,8 @@ export const commonAxis = {
       fill: '#89909D',
       fontWeight: 'normal',
       fillOpacity: 1
-    }
+    },
+    autoLimit: true
   },
   title: {
     space: 10,
