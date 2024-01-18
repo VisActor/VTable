@@ -1,6 +1,23 @@
 # Change Log - @visactor/vtable
 
-This log was last generated on Wed, 10 Jan 2024 11:22:48 GMT and should not be manually modified.
+This log was last generated on Thu, 18 Jan 2024 03:43:34 GMT and should not be manually modified.
+
+## 0.17.10
+Thu, 18 Jan 2024 03:43:34 GMT
+
+### Updates
+
+- fix: select border range error #911
+
+
+- fix: when enable pasteValueToCell and event change_cell_value arguments is error #919
+
+
+- feat: use vrender-core
+- fix: fix tree structure auto merge update problem
+- fix: toggele tree node updateChartSize
+
+
 
 ## 0.17.9
 Wed, 10 Jan 2024 11:22:48 GMT
