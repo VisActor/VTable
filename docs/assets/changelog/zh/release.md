@@ -5,16 +5,16 @@
 
 **🆕 新增功能**
 
-- **@visactor/vtable**: pivotchart support pie
-- **@visactor/vtable**: add customLayout & customRander in customMergeCell
-- **@visactor/vtable**: add eventOptions [#914](https://github.com/VisActor/VTable/issues/914)
+- **@visactor/vtable**: 支持 pivotchart 中配置显示饼图
+- **@visactor/vtable**: 在 customMergeCell 中添加 customLayout & customRander
+- **@visactor/vtable**: 添加 eventOptions [#914](https://github.com/VisActor/VTable/issues/914)
 
 **🐛 功能修复**
 
-- **@visactor/vtable**: handle with chartSpec barWidth set string type
-- **@visactor/vtable**: addRecords api call when body no data [#953](https://github.com/VisActor/VTable/issues/953)
-- **@visactor/vtable**: mouse drag to move Header position has error when column has multi-levels [#957](https://github.com/VisActor/VTable/issues/957)
-- **@visactor/vtable**: when resize column width bottomFrozenRow height should update [#954](https://github.com/VisActor/VTable/issues/954)
+- **@visactor/vtable**: 处理 chartSpec barWidth 设置为字符串类型的情况
+- **@visactor/vtable**: 修复当 body 没有数据时调用 addRecords api报错问题 [#953](https://github.com/VisActor/VTable/issues/953)
+- **@visactor/vtable**: 修复当列有多级时，鼠标拖动移动 Header 位置有误 [#957](https://github.com/VisActor/VTable/issues/957)
+- **@visactor/vtable**: 修复当调整列宽时，应更新 bottomFrozenRow 的高度 [#954](https://github.com/VisActor/VTable/issues/954)
 
 
 
