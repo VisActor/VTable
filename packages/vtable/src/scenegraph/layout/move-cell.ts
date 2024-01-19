@@ -1,11 +1,13 @@
 import type { Group } from '@src/vrender';
-import { getCellMergeInfo } from '../utils/get-cell-merge';
 import type { BaseTableAPI } from '../../ts-types/base-table';
+import type { CellRange } from '../../ts-types';
 export function moveHeaderPosition(
   colSource: number,
   rowSource: number,
   colTarget: number,
   rowTarget: number,
+  sourceMergeInfo: false | CellRange,
+  targetMergeInfo: false | CellRange,
   table: BaseTableAPI
 ) {
   const scene = table.scenegraph;
@@ -23,8 +25,6 @@ export function moveHeaderPosition(
   let targetColEnd = 0;
   let targetRowEnd = 0;
   if (direction === 'column') {
-    const sourceMergeInfo = getCellMergeInfo(table, colSource, rowSource);
-    const targetMergeInfo = getCellMergeInfo(table, colTarget, rowTarget);
     if (sourceMergeInfo && targetMergeInfo) {
       sourceColStart = sourceMergeInfo.start.col;
       sourceColEnd = sourceMergeInfo.end.col;
@@ -47,8 +47,6 @@ export function moveHeaderPosition(
     // targetRowStart = rowTarget;
     targetRowEnd = table.rowCount - 1;
   } else if (direction === 'row') {
-    const sourceMergeInfo = getCellMergeInfo(table, colSource, rowSource);
-    const targetMergeInfo = getCellMergeInfo(table, colTarget, rowTarget);
     if (sourceMergeInfo && targetMergeInfo) {
       sourceRowStart = sourceMergeInfo.start.row;
       sourceRowEnd = sourceMergeInfo.end.row;

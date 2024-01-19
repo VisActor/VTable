@@ -1318,8 +1318,15 @@ export class Scenegraph {
    * @param {number} colTarget 目标列col
    * @return {*}
    */
-  updateHeaderPosition(colSource: number, rowSource: number, colTarget: number, rowTarget: number) {
-    moveHeaderPosition(colSource, rowSource, colTarget, rowTarget, this.table);
+  updateHeaderPosition(
+    colSource: number,
+    rowSource: number,
+    colTarget: number,
+    rowTarget: number,
+    sourceMergeInfo: false | CellRange,
+    targetMergeInfo: false | CellRange
+  ) {
+    moveHeaderPosition(colSource, rowSource, colTarget, rowTarget, sourceMergeInfo, targetMergeInfo, this.table);
   }
 
   updateContainerAttrWidthAndX() {
