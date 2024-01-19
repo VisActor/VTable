@@ -1,3 +1,25 @@
+# v0.18.0
+
+2024-01-19
+
+
+**🆕 新增功能**
+
+- **@visactor/vtable**: 支持 pivotchart 中配置显示饼图
+- **@visactor/vtable**: 在 customMergeCell 中添加 customLayout & customRander
+- **@visactor/vtable**: 添加 eventOptions [#914](https://github.com/VisActor/VTable/issues/914)
+
+**🐛 功能修复**
+
+- **@visactor/vtable**: 处理 chartSpec barWidth 设置为字符串类型的情况
+- **@visactor/vtable**: 修复当 body 没有数据时调用 addRecords api报错问题 [#953](https://github.com/VisActor/VTable/issues/953)
+- **@visactor/vtable**: 修复当列有多级时，鼠标拖动移动 Header 位置有误 [#957](https://github.com/VisActor/VTable/issues/957)
+- **@visactor/vtable**: 修复当调整列宽时，应更新 bottomFrozenRow 的高度 [#954](https://github.com/VisActor/VTable/issues/954)
+
+
+
+[更多详情请查看 v0.18.0](https://github.com/VisActor/VTable/releases/tag/v0.18.0)
+
 # v0.17.10
 
 2024-01-18

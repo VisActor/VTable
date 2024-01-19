@@ -2,6 +2,18 @@
   "name": "@visactor/vtable",
   "entries": [
     {
+      "version": "0.18.1",
+      "tag": "@visactor/vtable_v0.18.1",
+      "date": "Fri, 19 Jan 2024 11:43:14 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "fix: fix funciton updateColumnWidth occor error\n\n"
+          }
+        ]
+      }
+    },
+    {
       "version": "0.18.0",
       "tag": "@visactor/vtable_v0.18.0",
       "date": "Fri, 19 Jan 2024 10:43:47 GMT",
