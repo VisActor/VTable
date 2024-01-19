@@ -1,6 +1,6 @@
 {
   "name": "@visactor/react-vtable",
-  "version": "0.17.10",
+  "version": "0.18.0",
   "description": "The react version of VTable",
   "keywords": [
     "react",

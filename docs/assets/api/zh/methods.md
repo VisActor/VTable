@@ -805,6 +805,21 @@ use case: 点击图例项后 更新过滤规则 来更新图表
    */
   deleteRecords(recordIndexs: number[]) 
 ```
+
+## updateRecords(Function)
+
+修改数据 支持多条数据
+
+** ListTable 专有 ** 
+```
+  /**
+   * 修改数据 支持多条数据
+   * @param records 修改数据条目
+   * @param recordIndexs 对应修改数据的索引（显示在body中的索引，即要修改的是body部分的第几行数据）
+   */
+  updateRecords(records: any[], recordIndexs: number[])
+```
+
 ## getBodyVisibleCellRange(Function)
 
 获取表格body部分的显示单元格范围

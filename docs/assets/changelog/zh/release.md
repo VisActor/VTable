@@ -1,3 +1,42 @@
+# v0.17.10
+
+2024-01-18
+
+
+**🆕 新增功能**
+
+- **@visactor/vtable**: 使用vrender-core
+
+**🐛 功能修复**
+
+- **@visactor/vtable**: 修复选择边界范围错误 [#911](https://github.com/VisActor/VTable/issues/911)
+- **@visactor/vtable**: 修复当启用pasteValueToCell和事件change_cell_value参数错误问题 [#919](https://github.com/VisActor/VTable/issues/919)
+- **@visactor/vtable**: 修复树结构自动合并更新问题
+- **@visactor/vtable**: 切换树节点是需要updateChartSize
+
+
+
+[更多详情请查看 v0.17.10](https://github.com/VisActor/VTable/releases/tag/v0.17.10)
+
+# v0.17.9
+
+2024-01-18
+
+
+**🆕 新增功能**
+
+- **@visactor/vtable**: 支持Excel数据批量粘贴到单元格 [#857](https://github.com/VisActor/VTable/issues/857)
+- **@visactor/vtable**: 添加api getCellAddressByRecord
+- **@visactor/vtable**: 优化getCellHeaderPath函数
+
+**🐛 功能修复**
+
+- **@visactor/vtable**: 修复showSubTotals无法生效问题 [#893](https://github.com/VisActor/VTable/issues/893)
+- **@visactor/vtable**: 修复当设置容器display:none触发resize逻辑问题
+- **@visactor/vtable**: 修复右侧冻结单元格位置
+
+[更多详情请查看 v0.17.9](https://github.com/VisActor/VTable/releases/tag/v0.17.9)
+
 # v0.17.8
 
 2024-01-17
