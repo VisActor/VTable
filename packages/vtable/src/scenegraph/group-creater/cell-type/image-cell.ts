@@ -83,7 +83,11 @@ export function createImageCellGroup(
   image.name = 'image';
   image.keepAspectRatio = keepAspectRatio;
   if (keepAspectRatio || imageAutoSizing) {
-    if (image.resources.has(image.attribute.image) && image.resources.get(image.attribute.image).state === 'success') {
+    if (
+      image.resources &&
+      image.resources.has(image.attribute.image) &&
+      image.resources.get(image.attribute.image).state === 'success'
+    ) {
       updateAutoSizingAndKeepAspectRatio(
         imageAutoSizing,
         keepAspectRatio,
@@ -110,7 +114,11 @@ export function createImageCellGroup(
       };
     }
   } else {
-    if (image.resources.has(image.attribute.image) && image.resources.get(image.attribute.image).state === 'success') {
+    if (
+      image.resources &&
+      image.resources.has(image.attribute.image) &&
+      image.resources.get(image.attribute.image).state === 'success'
+    ) {
       updateImageCellContentWhileResize(cellGroup, col, row, table);
     } else {
       image.successCallback = () => {
