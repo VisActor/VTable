@@ -5,6 +5,7 @@ import type { PivotChart } from '../../PivotChart';
 import { getAxisDomainRangeAndLabels } from './get-axis-domain';
 import type { CollectedValue } from '../../ts-types';
 import { getNewRangeToAlign } from './zero-align';
+import { isCartesianChart } from './get-chart-spec';
 
 export function getAxisConfigInPivotChart(col: number, row: number, layout: PivotHeaderLayoutMap): any {
   if (!layout._table.isPivotChart()) {
@@ -155,7 +156,7 @@ export function getAxisConfigInPivotChart(col: number, row: number, layout: Pivo
       row >= layout.columnHeaderLevelCount &&
       row < layout.rowCount - layout.bottomFrozenRowCount
     ) {
-      let rowDimensionKey = layout.getDimensionKeyInChartSpec(layout.rowHeaderLevelCount, row)?.[0];
+      let rowDimensionKey = layout.getDimensionKeyInChartSpec(layout.rowHeaderLevelCount, row);
       if (isArray(rowDimensionKey)) {
         rowDimensionKey = rowDimensionKey[0];
       }
@@ -321,7 +322,7 @@ export function getAxisConfigInPivotChart(col: number, row: number, layout: Pivo
     ) {
       // const indicatorKeys = layout.getIndicatorKeyInChartSpec(col, row);
 
-      let columnDimensionKey = layout.getDimensionKeyInChartSpec(col, layout.columnHeaderLevelCount)?.[0];
+      let columnDimensionKey = layout.getDimensionKeyInChartSpec(col, layout.columnHeaderLevelCount);
       if (isArray(columnDimensionKey)) {
         columnDimensionKey = columnDimensionKey[0];
       }
