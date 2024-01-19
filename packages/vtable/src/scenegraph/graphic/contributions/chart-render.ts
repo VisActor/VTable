@@ -7,7 +7,7 @@ import type {
   IMarkAttribute,
   IRenderService,
   IThemeAttribute
-} from '@visactor/vrender';
+} from '@src/vrender';
 import {
   ContributionProvider,
   getTheme,
@@ -16,7 +16,7 @@ import {
   inject,
   injectable,
   named
-} from '@visactor/vrender';
+} from '@src/vrender';
 import type { Chart } from '../chart';
 import { CHART_NUMBER_TYPE } from '../chart';
 import {

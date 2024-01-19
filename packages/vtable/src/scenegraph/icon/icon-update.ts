@@ -5,8 +5,8 @@ import type { ColumnIconOption, SortOrder, SvgIcon } from '../../ts-types';
 import { IconFuncTypeEnum } from '../../ts-types';
 import type { Icon } from '../graphic/icon';
 import type { TooltipOptions } from '../../ts-types/tooltip';
-import type { IRect } from '@visactor/vrender';
-import { IContainPointMode, createRect } from '@visactor/vrender';
+import type { IRect } from '@src/vrender';
+import { IContainPointMode, createRect } from '@src/vrender';
 import { dealWithIcon } from '../utils/text-icon-layout';
 import type { BaseTableAPI } from '../../ts-types/base-table';
 

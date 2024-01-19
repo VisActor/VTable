@@ -1,4 +1,4 @@
-import type { IRectGraphicAttribute } from '@visactor/vrender';
+import type { IRectGraphicAttribute } from '@src/vrender';
 import type { ThemeStyle } from '../../ts-types';
 import type { Group } from '../graphic/group';
 import { getStroke } from './frame-border';

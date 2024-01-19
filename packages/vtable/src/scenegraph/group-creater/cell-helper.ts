@@ -1,4 +1,4 @@
-import type { Cursor, IThemeSpec, Group as VGroup } from '@visactor/vrender';
+import type { Cursor, IThemeSpec, Group as VGroup } from '@src/vrender';
 import type { ProgressBarStyle } from '../../body-helper/style/ProgressBarStyle';
 import { regUrl } from '../../tools/global';
 import type {
@@ -201,8 +201,8 @@ export function createCell(
       y,
       col,
       row,
-      table.getColWidth(col),
-      table.getRowHeight(row),
+      cellWidth,
+      cellHeight,
       (define as ImageColumnDefine).keepAspectRatio,
       (define as ImageColumnDefine).imageAutoSizing,
       padding,
@@ -219,8 +219,8 @@ export function createCell(
       y,
       col,
       row,
-      table.getColWidth(col),
-      table.getRowHeight(row),
+      cellWidth,
+      cellHeight,
       (define as ImageColumnDefine).keepAspectRatio,
       (define as ImageColumnDefine).imageAutoSizing,
       padding,
@@ -238,8 +238,8 @@ export function createCell(
       y,
       col,
       row,
-      table.getColWidth(col),
-      table.getRowHeight(row),
+      cellWidth,
+      cellHeight,
       padding,
       value,
       (define as ChartColumnDefine).chartModule,

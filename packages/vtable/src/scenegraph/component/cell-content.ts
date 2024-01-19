@@ -1,6 +1,6 @@
 /* eslint-disable no-undef */
-import type { IGroupGraphicAttribute } from '@visactor/vrender';
-import { RichText, Text } from '@visactor/vrender';
+import type { IGroupGraphicAttribute } from '@src/vrender';
+import { RichText, Text } from '@src/vrender';
 import { Group } from '../graphic/group';
 import { Icon } from '../graphic/icon';
 

@@ -843,6 +843,18 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
    * @param row
    */
   toggleHierarchyState(col: number, row: number) {
+    let notFillWidth = false;
+    let notFillHeight = false;
+    const checkHasChart = this.internalProps.layoutMap.checkHasChart();
+    // 检查当前状态总宽高未撑满autoFill是否在起作用
+    if (checkHasChart) {
+      if (this.autoFillWidth) {
+        notFillWidth = this.getAllColsWidth() <= this.tableNoFrameWidth;
+      }
+      if (this.autoFillHeight) {
+        notFillHeight = this.getAllRowsHeight() <= this.tableNoFrameHeight;
+      }
+    }
     const hierarchyState = this.getHierarchyState(col, row);
     if (hierarchyState === HierarchyState.expand) {
       this.fireListeners(PIVOT_TABLE_EVENT_TYPE.TREE_HIERARCHY_STATE_CHANGE, {
@@ -868,6 +880,18 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
     this.clearCellStyleCache();
     this.scenegraph.updateHierarchyIcon(col, row);
     this.scenegraph.updateRow(result.removeCellPositions, result.addCellPositions, result.updateCellPositions);
+    if (checkHasChart) {
+      // 检查更新节点状态后总宽高未撑满autoFill是否在起作用
+      if (this.autoFillWidth && !notFillWidth) {
+        notFillWidth = this.getAllColsWidth() <= this.tableNoFrameWidth;
+      }
+      if (this.autoFillHeight && !notFillHeight) {
+        notFillHeight = this.getAllRowsHeight() <= this.tableNoFrameHeight;
+      }
+      if (this.widthMode === 'adaptive' || notFillWidth || this.heightMode === 'adaptive' || notFillHeight) {
+        this.scenegraph.updateChartSize(0); // 如果收起展开有性能问题 可以排查下这个防范
+      }
+    }
   }
   /**
    * 通过表头的维度值路径来计算单元格位置  getCellAddressByHeaderPaths接口更强大一些 不限表头 不限参数格式
@@ -1104,8 +1128,8 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
         this._changeCellValueToDataSet(startCol + j, startRow + i, newValue);
 
         this.fireListeners(TABLE_EVENT_TYPE.CHANGE_CELL_VALUE, {
-          col: startCol,
-          row: startRow,
+          col: startCol + j,
+          row: startRow + i,
           rawValue,
           changedValue: this.getCellOriginValue(startCol + j, startRow + i)
         });

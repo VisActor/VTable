@@ -1,6 +1,6 @@
 /* eslint-disable no-undef */
-import type { IThemeSpec, Group as VGroup } from '@visactor/vrender';
-import { createArc } from '@visactor/vrender';
+import type { IThemeSpec, Group as VGroup } from '@src/vrender';
+import { createArc } from '@src/vrender';
 import { isValid } from '@visactor/vutils';
 import { Group } from '../../graphic/group';
 // import { parseFont } from '../../utils/font';

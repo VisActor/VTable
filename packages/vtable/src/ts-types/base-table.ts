@@ -45,7 +45,8 @@ import type {
   CustomMergeCell,
   CustomMerge,
   IColumnDimension,
-  IRowDimension
+  IRowDimension,
+  TableEventOptions
 } from '.';
 import type { TooltipOptions } from './tooltip';
 import type { IWrapTextGraphicAttribute } from '../scenegraph/graphic/text';
@@ -90,7 +91,7 @@ export interface IBaseTableProtected {
   // font?: string;
   // underlayBackgroundColor?: string;
   keyboardOptions?: TableKeyboardOptions;
-
+  eventOptions?: TableEventOptions;
   // disableRowHeaderColumnResize?: boolean;
   // 列宽调整模式（全列调整；全列不可调整；仅表头单元格可调整；仅内容单元格可调整）
   columnResizeMode?: 'all' | 'none' | 'header' | 'body';
@@ -238,6 +239,8 @@ export interface BaseTableConstructorOptions {
   defaultHeaderColWidth?: (number | 'auto') | (number | 'auto')[];
   /** 快捷键功能设置 */
   keyboardOptions?: TableKeyboardOptions;
+  /** 事件触发相关设置 */
+  eventOptions?: TableEventOptions;
   /**
    * Canvas container
    */
@@ -390,6 +393,8 @@ export interface BaseTableAPI {
   defaultHeaderColWidth: (number | 'auto') | (number | 'auto')[];
   /** 当前表格快捷键设置 */
   keyboardOptions: TableKeyboardOptions | null;
+  /** 当前表格事件相关设置 */
+  eventOptions: TableEventOptions | null;
   /**
    * 是否显示图钉
    */
@@ -450,9 +455,9 @@ export interface BaseTableAPI {
   /** 场景树对象 */
   scenegraph: Scenegraph;
   /** 状态管理模块 */
-  stateManager?: StateManager;
+  stateManager: StateManager;
   /** 事件管理模块 */
-  eventManager?: EventManager;
+  eventManager: EventManager;
   /** 行表头的层数 */
   rowHeaderLevelCount: number;
   /** 列表头的层数 */

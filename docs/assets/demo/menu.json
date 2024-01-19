@@ -180,15 +180,13 @@
           "title": {
             "zh": "透视组合图",
             "en": "Pivot Chart"
-          },
-          "meta": {
-            "title": "Pivot Chart",
-            "keywords": "",
-            "category": "demo",
-            "group": "table-type",
-            "cover": "https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/pivot-chart.png",
-            "link": "'../../guide/table_type/Pivot_Chart/pivot_chart_useage'",
-            "option": ""
+          }
+        },
+        {
+          "path": "pivot-chart-pie",
+          "title": {
+            "zh": "透视组合图（饼图）",
+            "en": "Pivot Chart Pie"
           }
         }
       ]
@@ -251,17 +249,15 @@
         {
           "path": "chart",
           "title": {
-            "zh": "图表类型",
-            "en": "Chart Type"
-          },
-          "meta": {
-            "title": "Chart Type",
-            "keywords": "",
-            "category": "demo",
-            "group": "Cell Type",
-            "cover": "https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/chart.png",
-            "link": "",
-            "option": ""
+            "zh": "透视表图表展示",
+            "en": "Chart Type In PivotTable"
+          }
+        },
+        {
+          "path": "list-table-chart",
+          "title": {
+            "zh": "基本表格图表展示",
+            "en": "Chart Type In ListTable"
           }
         },
         {

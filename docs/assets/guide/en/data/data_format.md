@@ -301,7 +301,7 @@ You can use `addRecords` or `addRecord` to add table data. Please check the api 
 Table data can be deleted using `deleteRecords`. Please check the api documentation for details.
 
 ### change the data
-There is currently no dedicated interface for modifying data, but it can be achieved by combining the interfaces for deleting and adding data. First call `deleteRecords` and then `addRecords`.
+Table data can be modified using `updateRecords`. Please check the api documentation for details.
 
 Or you can modify a certain data field using the `changeCellValue` or `changeCellValues` interface.
 

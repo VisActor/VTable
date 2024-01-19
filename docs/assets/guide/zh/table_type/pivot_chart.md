@@ -139,7 +139,7 @@
 ![image](https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/ffc3a9b5518762d274121ff07.png)
 - axes配置轴全局的样式，指标配置中chartSpec中如已配置axes则优先使用chartSpec中的配置。
 
-注意：
+# 图表库注册
 
 在使用之前需要先注入使用的图表库组件：
 ```

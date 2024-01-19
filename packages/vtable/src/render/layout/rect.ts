@@ -1,5 +1,5 @@
-import type { IRectGraphicAttribute } from '@visactor/vrender';
-import { Rect as VRect } from '@visactor/vrender';
+import type { IRectGraphicAttribute } from '@src/vrender';
+import { Rect as VRect } from '@src/vrender';
 import { isArray } from '@visactor/vutils';
 
 type IRectOption = {

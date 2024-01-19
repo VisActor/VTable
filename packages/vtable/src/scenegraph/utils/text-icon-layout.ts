@@ -1,6 +1,6 @@
 /* eslint-disable no-undef */
-import type { IThemeSpec } from '@visactor/vrender';
-import { RichText, Text } from '@visactor/vrender';
+import type { IThemeSpec } from '@src/vrender';
+import { RichText, Text } from '@src/vrender';
 import { convertInternal } from '../../tools/util';
 import type { CellRange, ColumnIconOption } from '../../ts-types';
 import { IconFuncTypeEnum, IconPosition } from '../../ts-types';

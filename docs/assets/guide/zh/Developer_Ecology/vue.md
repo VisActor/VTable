@@ -2,7 +2,7 @@
 
 在 Vue 3.x 中使用 Vtable
 
-组合式 API，具体可以[参考在线 demo](https://codesandbox.io/p/sandbox/mystifying-hamilton-3wl76r?file=%2Fsrc%2Fcomponents%2FPivotChart.vue%3A9339%2C1)
+组合式 API，具体可以[参考在线 demo](https://codesandbox.io/p/devbox/vchart-demo-vue-73h8wl)
 
 ## 代码示例
 
@@ -136,8 +136,3 @@ onMounted(() => {
 </script>
 
 ```
-
-
-## 结果展示
-
-- [在线效果参考](https://codesandbox.io/p/sandbox/wizardly-dream-ktf74n)
