@@ -361,6 +361,13 @@
             "zh": "自定义交互组件",
             "en": "custom_interactive_component"
           }
+        },
+        {
+          "path": "custom_merge",
+          "title": {
+            "zh": "自定义单元格合并",
+            "en": "custom_merge"
+          }
         }
       ]
     },

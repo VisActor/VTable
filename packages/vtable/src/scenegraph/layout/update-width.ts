@@ -4,7 +4,7 @@ import { CartesianAxis } from '../../components/axis/axis';
 import { getStyleTheme } from '../../core/tableHelper';
 import type { BaseTableAPI } from '../../ts-types/base-table';
 import type { IProgressbarColumnBodyDefine } from '../../ts-types/list-table/define/progressbar-define';
-import { dealWithCustom } from '../component/custom';
+import { dealWithCustom, getCustomCellMergeCustom } from '../component/custom';
 import type { Group } from '../graphic/group';
 import type { Icon } from '../graphic/icon';
 import { updateImageCellContentWhileResize } from '../group-creater/cell-type/image-cell';
@@ -347,44 +347,46 @@ function updateCellWidth(
       customContainer.removeAllChild();
       cell.removeChild(customContainer);
 
-      let customRender;
-      let customLayout;
-      const cellType = scene.table.getCellLocation(col, row);
-      if (cellType !== 'body') {
-        const define = scene.table.getHeaderDefine(col, row);
-        customRender = define?.headerCustomRender;
-        customLayout = define?.headerCustomLayout;
-      } else {
-        const define = scene.table.getBodyColumnDefine(col, row);
-        customRender = define?.customRender || scene.table.customRender;
-        customLayout = define?.customLayout;
-      }
+      if (!getCustomCellMergeCustom(col, row, cell, scene.table)) {
+        let customRender;
+        let customLayout;
+        const cellType = scene.table.getCellLocation(col, row);
+        if (cellType !== 'body') {
+          const define = scene.table.getHeaderDefine(col, row);
+          customRender = define?.headerCustomRender;
+          customLayout = define?.headerCustomLayout;
+        } else {
+          const define = scene.table.getBodyColumnDefine(col, row);
+          customRender = define?.customRender || scene.table.customRender;
+          customLayout = define?.customLayout;
+        }
 
-      if (customLayout || customRender) {
-        // const { autoRowHeight } = table.internalProps;
-        const style = scene.table._getCellStyle(col, row) as ProgressBarStyle;
-        const padding = getQuadProps(getProp('padding', style, col, row, scene.table));
-        const customResult = dealWithCustom(
-          customLayout,
-          customRender,
-          col,
-          row,
-          cellGroup.attribute.width,
-          cellGroup.attribute.height,
-          false,
-          scene.table.heightMode === 'autoHeight',
-          padding,
-          scene.table
-        );
-        customElementsGroup = customResult.elementsGroup;
-        renderDefault = customResult.renderDefault;
-        isHeightChange = true;
-      }
+        if (customLayout || customRender) {
+          // const { autoRowHeight } = table.internalProps;
+          const style = scene.table._getCellStyle(col, row) as ProgressBarStyle;
+          const padding = getQuadProps(getProp('padding', style, col, row, scene.table));
+          const customResult = dealWithCustom(
+            customLayout,
+            customRender,
+            col,
+            row,
+            cellGroup.attribute.width,
+            cellGroup.attribute.height,
+            false,
+            scene.table.heightMode === 'autoHeight',
+            padding,
+            scene.table
+          );
+          customElementsGroup = customResult.elementsGroup;
+          renderDefault = customResult.renderDefault;
+          isHeightChange = true;
+        }
 
-      if (cell.childrenCount > 0) {
-        cell.insertBefore(customElementsGroup, cell.firstChild);
-      } else {
-        cell.appendChild(customElementsGroup);
+        if (cell.childrenCount > 0 && customElementsGroup) {
+          cell.insertBefore(customElementsGroup, cell.firstChild);
+        } else if (customElementsGroup) {
+          cell.appendChild(customElementsGroup);
+        }
       }
     }
 

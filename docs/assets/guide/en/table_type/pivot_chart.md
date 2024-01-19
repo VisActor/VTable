@@ -145,17 +145,12 @@ Corresponding to the schematic structure of the perspective combination diagram 
     ![image](https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/ffc3a9b5518762d274121ff07.png)
 *   Axes configures the global style of the axis. If axes have been configured in chartSpec in the Metirc configuration, the configuration in chartSpec will be used first.
 
-## changeCellValues(Function)
-Change the value of cells in batches:
+# Chart Module Register
 
+The chart library component needs to be injected before use:
 ```
-  /**
-   * Batch update data of multiple cells
-   * @param col The starting column number of pasted data
-   * @param row The starting row number of pasted data
-   * @param values Data array of multiple cells
-   */
-  changeCellValues(startCol: number, startRow: number, values: string[][])
+import VChart from '@visactor/vchart';
+VTable.register.chartModule('vchart', VChart);
 ```
 
 # Chart Events
