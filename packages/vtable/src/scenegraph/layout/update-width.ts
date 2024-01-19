@@ -192,18 +192,42 @@ function updateColunmWidth(
       }
       let y = 0;
       colGroup.forEachChildren((cellGroup: Group) => {
-        // if (cellGroup.role !== 'cell') {
-        //   cellGroup.setAttribute('y', y);
-        //   y += scene.table.getRowHeight(cellGroup.row) ?? 0;
-        //   return;
-        // }
-        // y += cellGroup.attribute.height ?? 0;
         cellGroup.setAttribute('y', y);
         y += scene.table.getRowHeight(cellGroup.row) ?? 0;
       });
       newTotalHeight = y;
     }
     scene.updateContainerHeight(row, newTotalHeight - oldContainerHeight);
+    //#region 修改bug:https://github.com/VisActor/VTable/issues/954 添加底部冻结行的三块区域
+    for (let col = 0; col < scene.table.frozenColCount; col++) {
+      const leftBottomFrozenColumnGroup = scene.getColGroupInLeftBottomCorner(col);
+      // reset cell y
+      let y = 0;
+      leftBottomFrozenColumnGroup.forEachChildren((cellGroup: Group) => {
+        cellGroup.setAttribute('y', y);
+        y += scene.table.getRowHeight(cellGroup.row);
+      });
+    }
+    for (let col = scene.table.colCount - scene.table.rightFrozenColCount; col < scene.table.colCount; col++) {
+      const rightBottomFrozenColumnGroup = scene.getColGroupInRightBottomCorner(col);
+      // reset cell y
+      let y = 0;
+      rightBottomFrozenColumnGroup.forEachChildren((cellGroup: Group) => {
+        cellGroup.setAttribute('y', y);
+        y += scene.table.getRowHeight(cellGroup.row);
+      });
+    }
+
+    for (let col = scene.table.frozenColCount; col < scene.table.colCount - scene.table.rightFrozenColCount; col++) {
+      const rightBottomFrozenColumnGroup = scene.getColGroupInBottom(col);
+      // reset cell y
+      let y = 0;
+      rightBottomFrozenColumnGroup.forEachChildren((cellGroup: Group) => {
+        cellGroup.setAttribute('y', y);
+        y += scene.table.getRowHeight(cellGroup.row);
+      });
+    }
+    //#endregion
   }
 }
 
