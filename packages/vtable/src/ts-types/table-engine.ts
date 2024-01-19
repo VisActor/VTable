@@ -81,6 +81,10 @@ export interface TableKeyboardOptions {
   /** 快捷键粘贴。粘贴内容到指定位置（即需要有选中状态），支持批量粘贴。 默认：false */
   pasteValueToCell?: boolean; //paste是和浏览器的快捷键一致的
 }
+export interface TableEventOptions {
+  /** 是否阻止右键的默认行为， 默认为true。*/
+  preventDefaultContextMenu?: boolean;
+}
 export interface DataSourceAPI {
   clearCurrentIndexedData: () => void;
   length: number;

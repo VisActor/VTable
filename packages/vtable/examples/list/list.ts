@@ -321,6 +321,9 @@ export function createTable() {
     dragHeaderMode: 'all',
     keyboardOptions: {
       pasteValueToCell: true
+    },
+    eventOptions: {
+      preventDefaultContextMenu: false
     }
     // widthMode: 'adaptive'
   };
