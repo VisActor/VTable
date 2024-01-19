@@ -1066,6 +1066,11 @@ export class ListTable extends BaseTable implements ListTableAPI {
       this.dataSource.addRecord(record, recordIndex);
       const oldRowCount = this.rowCount;
       this.refreshRowColCount();
+      if (this.scenegraph.proxy.totalActualBodyRowCount === 0) {
+        this.scenegraph.clearCells();
+        this.scenegraph.createSceneGraph();
+        return;
+      }
       const newRowCount = this.transpose ? this.colCount : this.rowCount;
       if (this.pagination) {
         const { perPageCount, currentPage } = this.pagination;
