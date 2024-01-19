@@ -203,7 +203,7 @@ function updateColunmWidth(
       const leftBottomFrozenColumnGroup = scene.getColGroupInLeftBottomCorner(col);
       // reset cell y
       let y = 0;
-      leftBottomFrozenColumnGroup.forEachChildren((cellGroup: Group) => {
+      leftBottomFrozenColumnGroup?.forEachChildren((cellGroup: Group) => {
         cellGroup.setAttribute('y', y);
         y += scene.table.getRowHeight(cellGroup.row);
       });
@@ -212,7 +212,7 @@ function updateColunmWidth(
       const rightBottomFrozenColumnGroup = scene.getColGroupInRightBottomCorner(col);
       // reset cell y
       let y = 0;
-      rightBottomFrozenColumnGroup.forEachChildren((cellGroup: Group) => {
+      rightBottomFrozenColumnGroup?.forEachChildren((cellGroup: Group) => {
         cellGroup.setAttribute('y', y);
         y += scene.table.getRowHeight(cellGroup.row);
       });
@@ -222,7 +222,7 @@ function updateColunmWidth(
       const rightBottomFrozenColumnGroup = scene.getColGroupInBottom(col);
       // reset cell y
       let y = 0;
-      rightBottomFrozenColumnGroup.forEachChildren((cellGroup: Group) => {
+      rightBottomFrozenColumnGroup?.forEachChildren((cellGroup: Group) => {
         cellGroup.setAttribute('y', y);
         y += scene.table.getRowHeight(cellGroup.row);
       });
