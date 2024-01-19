@@ -21,6 +21,8 @@ import type { IEditor } from '@visactor/vtable-editors';
 import type { ITextStyleOption } from '../body-helper/style';
 import type { DataSource } from '../data';
 import type { EditManeger } from '../edit/edit-manager';
+import type { ICustomRender } from './customElement';
+import type { ICustomLayout } from './customLayout';
 
 export interface CellAddress {
   col: number;
@@ -439,6 +441,8 @@ export type StickCell = { col: number; row: number; dx: number; dy: number };
 export type CustomMergeCell = (col: number, row: number, table: BaseTableAPI) => undefined | CustomMerge;
 export type CustomMerge = {
   range: CellRange;
-  text: string;
+  text?: string;
   style?: ITextStyleOption;
+  customLayout?: ICustomLayout;
+  customRender?: ICustomRender;
 };

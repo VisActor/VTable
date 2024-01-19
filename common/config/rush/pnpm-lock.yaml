@@ -185,7 +185,7 @@ importers:
       '@visactor/vrender-core': 0.17.17-alpha.1
       '@visactor/vrender-kits': 0.17.17-alpha.1
       '@visactor/vscale': ~0.17.1
-      '@visactor/vtable-editors': workspace:*
+      '@visactor/vtable-editors': workspace:0.17.9
       '@visactor/vutils': ~0.17.1
       '@visactor/vutils-extension': ~1.8.5
       '@vitejs/plugin-react': 3.1.0

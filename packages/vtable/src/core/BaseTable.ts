@@ -2648,7 +2648,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
   getCustomMerge(col: number, row: number) {
     if (this.internalProps.customMergeCell) {
       const customMerge = this.internalProps.customMergeCell(col, row, this);
-      if (customMerge && customMerge.range && customMerge.text) {
+      if (customMerge && customMerge.range && (customMerge.text || customMerge.customLayout || this.customRender)) {
         if (customMerge.style) {
           const styleClass = this.internalProps.bodyHelper.getStyleClass('text');
           const style = customMerge.style;
