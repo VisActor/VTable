@@ -907,16 +907,20 @@ export class Scenegraph {
   }
 
   updateRowHeight(row: number, detaY: number, skipTableHeightMap?: boolean) {
-    detaY = Math.round(detaY);
-    updateRowHeight(this, row, detaY, skipTableHeightMap);
-    this.updateContainerHeight(row, detaY);
+    if (row >= this.proxy.rowStart && row <= this.proxy.rowEnd) {
+      detaY = Math.round(detaY);
+      updateRowHeight(this, row, detaY, skipTableHeightMap);
+      this.updateContainerHeight(row, detaY);
+    }
   }
   updateRowsHeight(rows: number[], detaYs: number[], skipTableHeightMap?: boolean) {
     for (let i = 0; i < rows.length; i++) {
       const row = rows[i];
-      const detaY = detaYs[i];
-      updateRowHeight(this, row, Math.round(detaY), skipTableHeightMap);
-      this._updateContainerHeight(row, detaY);
+      if (row >= this.proxy.rowStart && row <= this.proxy.rowEnd) {
+        const detaY = detaYs[i];
+        updateRowHeight(this, row, Math.round(detaY), skipTableHeightMap);
+        this._updateContainerHeight(row, detaY);
+      }
     }
     // 更新table/header/border高度
     this.updateTableSize();

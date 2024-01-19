@@ -812,6 +812,19 @@ Delete data supports multiple pieces of data
    */
   deleteRecords(recordIndexs: number[])
 ```
+## updateRecords(Function)
+
+Modify data to support multiple pieces of data
+
+** ListTable proprietary **
+```
+  /**
+   * Modify data to support multiple pieces of data
+   * @param records Modify data entries
+   * @param recordIndexs The index corresponding to the modified data (the index displayed in the body, that is, which row of data in the body part is to be modified)
+   */
+  updateRecords(records: any[], recordIndexs: number[])
+```
 
 ## getBodyVisibleCellRange(Function)
 
