@@ -1,6 +1,15 @@
 # Change Log - @visactor/vtable
 
-This log was last generated on Fri, 19 Jan 2024 10:43:47 GMT and should not be manually modified.
+This log was last generated on Fri, 19 Jan 2024 11:43:14 GMT and should not be manually modified.
+
+## 0.18.1
+Fri, 19 Jan 2024 11:43:14 GMT
+
+### Updates
+
+- fix: fix funciton updateColumnWidth occor error
+
+
 
 ## 0.18.0
 Fri, 19 Jan 2024 10:43:47 GMT
