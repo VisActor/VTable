@@ -83,16 +83,15 @@ export function bindTableGroupListener(eventManager: EventManager) {
     if (stateManager.interactionState === InteractionState.scrolling) {
       return;
     }
-    if (
-      stateManager.interactionState === InteractionState.grabing &&
-      Math.abs(lastX - e.x) + Math.abs(lastY - e.y) >= 1
-    ) {
-      if (stateManager.isResizeCol()) {
-        /* do nothing */
-      } else if (stateManager.isMoveCol()) {
-        eventManager.dealColumnMover(eventArgsSet);
-      } else {
-        eventManager.dealTableSelect(eventArgsSet, true);
+    if (stateManager.interactionState === InteractionState.grabing) {
+      if (Math.abs(lastX - e.x) + Math.abs(lastY - e.y) >= 1) {
+        if (stateManager.isResizeCol()) {
+          /* do nothing */
+        } else if (stateManager.isMoveCol()) {
+          eventManager.dealColumnMover(eventArgsSet);
+        } else {
+          eventManager.dealTableSelect(eventArgsSet, true);
+        }
       }
       return;
     }

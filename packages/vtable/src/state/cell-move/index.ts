@@ -1,5 +1,6 @@
 import type { ListTable } from '../../ListTable';
 import { getCellMergeInfo } from '../../scenegraph/utils/get-cell-merge';
+import type { CellRange } from '../../ts-types';
 import type { BaseTableAPI } from '../../ts-types/base-table';
 import type { StateManager } from '../state';
 import { adjustMoveHeaderTarget } from './adjust-header';
@@ -116,6 +117,35 @@ export function endMoveCol(state: StateManager) {
         sourceMergeInfo,
         targetMergeInfo
       );
+      //调整冻结列数量
+      if (state.table.internalProps.frozenColDragHeaderMode === 'adjustFrozenCount' && state.table.isListTable()) {
+        if (
+          state.table.isFrozenColumn(state.columnMove.colTarget) &&
+          !state.table.isFrozenColumn(state.columnMove.colSource)
+        ) {
+          state.table.frozenColCount +=
+            (sourceMergeInfo as CellRange).end.col - (sourceMergeInfo as CellRange).start.col + 1;
+        } else if (
+          state.table.isFrozenColumn(state.columnMove.colSource) &&
+          !state.table.isFrozenColumn(state.columnMove.colTarget)
+        ) {
+          state.table.frozenColCount -=
+            (sourceMergeInfo as CellRange).end.col - (sourceMergeInfo as CellRange).start.col + 1;
+        }
+        if (
+          state.table.isRightFrozenColumn(state.columnMove.colTarget) &&
+          !state.table.isRightFrozenColumn(state.columnMove.colSource)
+        ) {
+          state.table.rightFrozenColCount +=
+            (sourceMergeInfo as CellRange).end.col - (sourceMergeInfo as CellRange).start.col + 1;
+        } else if (
+          state.table.isRightFrozenColumn(state.columnMove.colSource) &&
+          !state.table.isRightFrozenColumn(state.columnMove.colTarget)
+        ) {
+          state.table.rightFrozenColCount -=
+            (sourceMergeInfo as CellRange).end.col - (sourceMergeInfo as CellRange).start.col + 1;
+        }
+      }
     }
 
     state.updateCursor();
