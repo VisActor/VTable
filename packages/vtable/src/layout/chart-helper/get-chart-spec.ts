@@ -1,10 +1,10 @@
 import { cloneDeep, isArray, isNumber, merge } from '@visactor/vutils';
 import type { PivotHeaderLayoutMap } from '../pivot-header-layout';
 import type { SimpleHeaderLayoutMap } from '../simple-header-layout';
-import { checkZeroAlign, getAxisOption, getAxisRange } from './get-axis-config';
+import { getAxisOption, getAxisRange } from './get-axis-config';
 import { getAxisDomainRangeAndLabels } from './get-axis-domain';
 import { getNewRangeToAlign } from './zero-align';
-import type { ColumnData, IndicatorData } from '../../ts-types/list-table/layout-map/api';
+import type { IChartIndicator } from '../../ts-types';
 
 const NO_AXISID_FRO_VTABLE = 'NO_AXISID_FRO_VTABLE';
 
@@ -21,6 +21,75 @@ export function getRawChartSpec(col: number, row: number, layout: PivotHeaderLay
   const chartSpec = indicatorObj?.chartSpec;
 
   return chartSpec;
+}
+/** 检查是否有直角坐标系的图表 */
+export function checkHasCartesianChart(layout: PivotHeaderLayoutMap) {
+  let isHasCartesianChart = false;
+  for (let i = 0; i < layout.indicatorsDefine.length; i++) {
+    //columnObjects数量和指标数量一样 并不是每个列都有 所有会快一些
+    const columnObj = layout.indicatorsDefine[i] as IChartIndicator;
+    if (columnObj.chartSpec) {
+      if (
+        columnObj.chartSpec.type !== 'pie' &&
+        columnObj.chartSpec.type !== 'funnel' &&
+        columnObj.chartSpec.type !== 'rose'
+      ) {
+        isHasCartesianChart = true;
+        break;
+      }
+    }
+  }
+  return isHasCartesianChart;
+}
+
+/** 检查是否有直角坐标系的图表 */
+export function isCartesianChart(col: number, row: number, layout: PivotHeaderLayoutMap) {
+  let isHasCartesianChart = true;
+  const chartSpec = layout.getRawChartSpec(col, row);
+  if (chartSpec) {
+    if (chartSpec.type === 'pie' || chartSpec.type === 'funnel' || chartSpec.type === 'rose') {
+      isHasCartesianChart = false;
+    }
+  } else {
+    isHasCartesianChart = false;
+  }
+  return isHasCartesianChart;
+}
+
+/** 检查是否有直角坐标系的图表 整行或者整列去检查 */
+export function isHasCartesianChartInline(
+  col: number,
+  row: number,
+  checkDirection: 'col' | 'row',
+  layout: PivotHeaderLayoutMap
+) {
+  let isHasCartesianChart = false;
+  if ((layout.indicatorsAsCol && checkDirection === 'row') || (!layout.indicatorsAsCol && checkDirection === 'col')) {
+    for (let i = 0; i < layout.indicatorsDefine.length; i++) {
+      //columnObjects数量和指标数量一样 并不是每个列都有 所有会快一些
+      const columnObj = layout.indicatorsDefine[i] as IChartIndicator;
+      if (columnObj.chartSpec) {
+        if (
+          columnObj.chartSpec.type !== 'pie' &&
+          columnObj.chartSpec.type !== 'funnel' &&
+          columnObj.chartSpec.type !== 'rose'
+        ) {
+          isHasCartesianChart = true;
+          break;
+        }
+      }
+    }
+  } else {
+    const chartSpec = layout.getRawChartSpec(col, row);
+    if (chartSpec) {
+      if (chartSpec.type !== 'pie' && chartSpec.type !== 'funnel' && chartSpec.type !== 'rose') {
+        isHasCartesianChart = true;
+      }
+    } else {
+      isHasCartesianChart = false;
+    }
+  }
+  return isHasCartesianChart;
 }
 
 export function getChartSpec(col: number, row: number, layout: PivotHeaderLayoutMap): any {
@@ -107,7 +176,7 @@ export function getChartAxes(col: number, row: number, layout: PivotHeaderLayout
       );
     });
 
-    let rowDimensionKey = layout.getDimensionKeyInChartSpec(layout.rowHeaderLevelCount, row)?.[0];
+    let rowDimensionKey = layout.getDimensionKeyInChartSpec(layout.rowHeaderLevelCount, row);
     if (isArray(rowDimensionKey)) {
       rowDimensionKey = rowDimensionKey[0];
     }
@@ -205,7 +274,7 @@ export function getChartAxes(col: number, row: number, layout: PivotHeaderLayout
       );
     });
 
-    let columnDimensionKey = layout.getDimensionKeyInChartSpec(col, layout.columnHeaderLevelCount)[0];
+    let columnDimensionKey = layout.getDimensionKeyInChartSpec(col, layout.columnHeaderLevelCount);
     if (isArray(columnDimensionKey)) {
       columnDimensionKey = columnDimensionKey[0];
     }

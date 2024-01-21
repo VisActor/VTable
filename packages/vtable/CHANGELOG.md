@@ -1,6 +1,43 @@
 # Change Log - @visactor/vtable
 
-This log was last generated on Thu, 18 Jan 2024 03:43:34 GMT and should not be manually modified.
+This log was last generated on Fri, 19 Jan 2024 11:43:14 GMT and should not be manually modified.
+
+## 0.18.1
+Fri, 19 Jan 2024 11:43:14 GMT
+
+### Updates
+
+- fix: fix funciton updateColumnWidth occor error
+
+
+
+## 0.18.0
+Fri, 19 Jan 2024 10:43:47 GMT
+
+### Minor changes
+
+- feat: add eventOptions #914
+
+
+
+### Updates
+
+- fix: handle with chartSpec barWidth set string type
+
+
+- fix: addRecords api call when body no data #953
+
+
+- fix: mouse drag to move Header position has error when column has multi-levels #957
+
+
+- fix: when resize column width bottomFrozenRow height should update #954
+
+
+- feat: pivotchart support pie
+
+
+- feat: add customLayout & customRander in customMergeCell
 
 ## 0.17.10
 Thu, 18 Jan 2024 03:43:34 GMT
