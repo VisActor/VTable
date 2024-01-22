@@ -60,4 +60,18 @@ Sometimes, we don't want certain columns to participate in drag-and-drop transpo
 
 As with the above code, the "Sales" column cannot be dragged and transposed.
 
+## Restrict dragging of frozen columns
+Drag and drop the table header to move the position. Select different effects according to the business scenario for the rules of the frozen part. For example, you can prohibit dragging of frozen columns, or adjust the number of frozen columns.
+
+Constraints can be made through the following configuration (only valid for ListTable):
+```
+Drag the table header to move the position. Rules for frozen parts. The default is fixedFrozenCount.
+frozenColDragHeaderMode?: 'disabled' | 'adjustFrozenCount' | 'fixedFrozenCount';
+```
+The different rules are described below:
+
+- "disabled" (disables adjusting the position of frozen columns): Do not allow other column header drag operations to involve frozen columns, and frozen columns remain unchanged.
+- "adjustFrozenCount" (adjust the number of frozen columns based on the interaction results): Allow the header drag operation of other columns to involve the frozen column part, and adjust the number of frozen columns based on the dragging action. When the headers of other columns are dragged into the frozen column position, the number of frozen columns increases; when the headers of other columns are dragged out of the frozen column position, the number of frozen columns decreases.
+- "fixedFrozenCount" (can adjust frozen columns and keep the number of frozen columns unchanged): Allows you to freely drag the headers of other columns into or out of the frozen column position while keeping the number of frozen columns unchanged.
+
 So far, we have introduced the drag-and-drop header transposition function of VTable, including the activation of the drag-and-drop header transposition function, the style configuration of the drag-and-drop header transposition mark line, and whether a certain column can be dragged. By mastering these functions, you can more easily perform data analytics and processing in VTable.
