@@ -1,4 +1,4 @@
-import type { Cursor, IThemeSpec } from '@src/vrender';
+import type { Cursor, IThemeSpec, Group as VGroup } from '@src/vrender';
 import type { ProgressBarStyle } from '../../body-helper/style/ProgressBarStyle';
 import { regUrl } from '../../tools/global';
 import type {
@@ -52,7 +52,12 @@ export function createCell(
   textAlign: CanvasTextAlign,
   textBaseline: CanvasTextBaseline,
   mayHaveIcon: boolean,
-  cellTheme: IThemeSpec
+  cellTheme: IThemeSpec,
+  range: CellRange | undefined,
+  customResult?: {
+    elementsGroup: VGroup;
+    renderDefault: boolean;
+  }
 ): Group {
   if (isPromise(value)) {
     value = table.getCellValue(col, row);
@@ -120,34 +125,38 @@ export function createCell(
 
     let customElementsGroup;
     let renderDefault = true;
-    let customRender;
-    let customLayout;
-    const cellLocation = table.getCellLocation(col, row);
-    if (cellLocation !== 'body') {
-      customRender = define?.headerCustomRender;
-      customLayout = define?.headerCustomLayout;
-    } else {
-      customRender = define?.customRender || table.customRender;
-      customLayout = define?.customLayout;
-    }
-
-    if (customLayout || customRender) {
-      // const { autoRowHeight } = table.internalProps;
-      const customResult = dealWithCustom(
-        customLayout,
-        customRender,
-        col,
-        row,
-        cellWidth,
-        cellHeight,
-        false,
-        table.heightMode === 'autoHeight',
-        padding,
-        table
-      );
+    if (customResult) {
       customElementsGroup = customResult.elementsGroup;
       renderDefault = customResult.renderDefault;
+    } else {
+      let customRender;
+      let customLayout;
+      const cellLocation = table.getCellLocation(col, row);
+      if (cellLocation !== 'body') {
+        customRender = define?.headerCustomRender;
+        customLayout = define?.headerCustomLayout;
+      } else {
+        customRender = define?.customRender || table.customRender;
+        customLayout = define?.customLayout;
+      }
+      if (customLayout || customRender) {
+        const customResult = dealWithCustom(
+          customLayout,
+          customRender,
+          col,
+          row,
+          cellWidth,
+          cellHeight,
+          false,
+          table.heightMode === 'autoHeight',
+          padding,
+          table
+        );
+        customElementsGroup = customResult.elementsGroup;
+        renderDefault = customResult.renderDefault;
+      }
     }
+
     cellGroup = createCellGroup(
       table,
       value,
@@ -165,7 +174,8 @@ export function createCell(
       mayHaveIcon,
       customElementsGroup,
       renderDefault,
-      cellTheme
+      cellTheme,
+      range
     );
 
     const axisConfig = table.internalProps.layoutMap.getAxisConfigInPivotChart(col, row);
@@ -183,53 +193,6 @@ export function createCell(
     } else if (table.internalProps.layoutMap.isAxisCell(col, row)) {
       cellGroup.clear();
     }
-
-    // if ((define as any)?.isAxis && cellLocation === 'columnHeader') {
-    //   cellGroup.setAttribute('clip', false);
-    //   const axis = new CartesianAxis(
-    //     {
-    //       orient: 'top',
-    //       type: 'band',
-    //       data: ['A', 'B', 'C'],
-    //       title: {
-    //         visible: true,
-    //         text: 'X Axis'
-    //       }
-    //     },
-    //     cellGroup.attribute.width,
-    //     cellGroup.attribute.height,
-    //     table
-    //   );
-    //   cellGroup.clear();
-    //   // axis.component.setAttribute('y', 40);
-    //   cellGroup.appendChild(axis.component);
-    // } else if ((define as any)?.isAxis && cellLocation === 'rowHeader') {
-    //   cellGroup.setAttribute('clip', false);
-    //   const axis = new CartesianAxis(
-    //     {
-    //       orient: 'left',
-    //       type: 'linear',
-    //       range: { min: 0, max: 30 },
-    //       label: {
-    //         flush: true
-    //       },
-    //       grid: {
-    //         visible: true
-    //       },
-    //       title: {
-    //         visible: true,
-    //         text: 'Y Axis'
-    //       }
-    //     },
-    //     cellGroup.attribute.width,
-    //     cellGroup.attribute.height,
-    //     table
-    //   );
-    //   cellGroup.clear();
-    //   // axis.component.setAttribute('x', 80);
-    //   cellGroup.appendChild(axis.component);
-    //   axis.overlap();
-    // }
   } else if (type === 'image') {
     // 创建图片单元格
     cellGroup = createImageCellGroup(
@@ -309,7 +272,8 @@ export function createCell(
       false,
       null,
       true,
-      cellTheme
+      cellTheme,
+      range
     );
 
     // 创建bar group
@@ -373,24 +337,76 @@ export function updateCell(col: number, row: number, table: BaseTableAPI, addNew
   const cellStyle = table._getCellStyle(col, row);
   const autoWrapText = cellStyle.autoWrapText ?? table.internalProps.autoWrapText;
   const cellLocation = table.getCellLocation(col, row);
-  const define = cellLocation !== 'body' ? table.getHeaderDefine(col, row) : table.getBodyColumnDefine(col, row);
+  let value = table.getCellValue(col, row);
 
   let isMerge;
   let range;
-  if (cellLocation !== 'body' || (define as TextColumnDefine)?.mergeCell || table.internalProps.customMergeCell) {
+  let cellTheme;
+  let customStyle;
+  let customResult;
+  if (table.internalProps.customMergeCell) {
+    const customMerge = table.getCustomMerge(col, row);
+    if (customMerge) {
+      const {
+        range: customMergeRange,
+        text: customMergeText,
+        style: customMergeStyle,
+        customLayout,
+        customRender
+      } = customMerge;
+      range = customMergeRange;
+      isMerge = range.start.col !== range.end.col || range.start.row !== range.end.row;
+      value = customMergeText;
+      customStyle = customMergeStyle;
+      if (customStyle) {
+        cellTheme = getStyleTheme(customStyle, table, range.start.col, range.start.row, getProp).theme;
+        cellTheme.group.cornerRadius = getCellCornerRadius(col, row, table);
+      }
+
+      if (customLayout || customRender) {
+        customResult = dealWithCustom(
+          customLayout,
+          customRender,
+          customMergeRange.start.col,
+          customMergeRange.start.row,
+          table.getColsWidth(customMergeRange.start.col, customMergeRange.end.col),
+          table.getRowsHeight(customMergeRange.start.row, customMergeRange.end.row),
+          false,
+          table.heightMode === 'autoHeight',
+          [0, 0, 0, 0],
+          table
+        );
+      }
+    }
+  }
+
+  // const define = cellLocation !== 'body' ? table.getHeaderDefine(col, row) : table.getBodyColumnDefine(col, row);
+  let colForDefine = col;
+  let rowForDefine = row;
+  if (range) {
+    colForDefine = range.start.col;
+    rowForDefine = range.start.row;
+  }
+  const define =
+    cellLocation !== 'body'
+      ? table.getHeaderDefine(colForDefine, rowForDefine)
+      : table.getBodyColumnDefine(colForDefine, rowForDefine);
+
+  if (!range && (cellLocation !== 'body' || (define as TextColumnDefine)?.mergeCell)) {
     // 只有表头或者column配置合并单元格后再进行信息获取
     range = table.getCellRange(col, row);
     isMerge = range.start.col !== range.end.col || range.start.row !== range.end.row;
   }
 
-  let cellTheme = getStyleTheme(
-    cellStyle,
-    table,
-    isMerge ? range.start.col : col,
-    isMerge ? range.start.row : row,
-    getProp
-  ).theme;
-
+  if (!cellTheme) {
+    cellTheme = getStyleTheme(
+      cellStyle,
+      table,
+      isMerge ? range.start.col : col,
+      isMerge ? range.start.row : row,
+      getProp
+    ).theme;
+  }
   cellTheme.group.cornerRadius = getCellCornerRadius(col, row, table);
 
   // fast method for text
@@ -475,30 +491,13 @@ export function updateCell(col: number, row: number, table: BaseTableAPI, addNew
   const type = table.isHeader(col, row)
     ? table._getHeaderLayoutMap(col, row).headerType
     : table.getBodyColumnType(col, row);
-  let value = table.getCellValue(col, row);
 
-  let customStyle;
-  if (table.internalProps.customMergeCell) {
-    const customMerge = table.getCustomMerge(col, row);
-    if (customMerge) {
-      const { range: customMergeRange, text: customMergeText, style: customMergeStyle } = customMerge;
-      range = customMergeRange;
-      isMerge = range.start.col !== range.end.col || range.start.row !== range.end.row;
-      value = customMergeText;
-      customStyle = customMergeStyle;
-      if (customStyle) {
-        cellTheme = getStyleTheme(customStyle, table, range.start.col, range.start.row, getProp).theme;
-        cellTheme.group.cornerRadius = getCellCornerRadius(col, row, table);
-      }
-    }
-  }
-
-  let newCellGroup;
   const mayHaveIcon = cellLocation !== 'body' ? true : !!define?.icon || !!define?.tree;
   const padding = cellTheme._vtable.padding;
   const textAlign = cellTheme._vtable.textAlign;
   const textBaseline = cellTheme._vtable.textBaseline;
 
+  let newCellGroup;
   let bgColorFunc: Function;
   // 判断是否有mapping  遍历dataset中mappingRules
   if ((table.internalProps as PivotTableProtected)?.dataConfig?.mappingRules && !table.isHeader(col, row)) {
@@ -513,16 +512,6 @@ export function updateCell(col: number, row: number, table: BaseTableAPI, addNew
         }
       }
     );
-  }
-
-  let customRender;
-  let customLayout;
-  if (cellLocation !== 'body') {
-    customRender = define?.headerCustomRender;
-    customLayout = define?.headerCustomLayout;
-  } else {
-    customRender = define?.customRender || table.customRender;
-    customLayout = define?.customLayout;
   }
 
   let cellWidth;
@@ -561,7 +550,9 @@ export function updateCell(col: number, row: number, table: BaseTableAPI, addNew
         textBaseline,
         mayHaveIcon,
         addNew,
-        cellTheme
+        cellTheme,
+        range,
+        customResult
       )
     );
   } else {
@@ -581,7 +572,9 @@ export function updateCell(col: number, row: number, table: BaseTableAPI, addNew
       textBaseline,
       mayHaveIcon,
       addNew,
-      cellTheme
+      cellTheme,
+      range,
+      customResult
     );
   }
 
@@ -616,7 +609,12 @@ function updateCellContent(
   textBaseline: CanvasTextBaseline,
   mayHaveIcon: boolean,
   addNew: boolean,
-  cellTheme?: IThemeSpec
+  cellTheme: IThemeSpec,
+  range: CellRange | undefined,
+  customResult?: {
+    elementsGroup: VGroup;
+    renderDefault: boolean;
+  }
 ) {
   if (isPromise(value)) {
     value = table.getCellValue(col, row);
@@ -643,7 +641,9 @@ function updateCellContent(
     textAlign,
     textBaseline,
     mayHaveIcon,
-    cellTheme
+    cellTheme,
+    range,
+    customResult
   );
   if (!addNew && oldCellGroup.parent) {
     oldCellGroup.parent.insertAfter(newCellGroup, oldCellGroup);

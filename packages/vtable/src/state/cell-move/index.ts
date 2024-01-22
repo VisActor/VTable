@@ -1,4 +1,5 @@
 import type { ListTable } from '../../ListTable';
+import { getCellMergeInfo } from '../../scenegraph/utils/get-cell-merge';
 import type { BaseTableAPI } from '../../ts-types/base-table';
 import type { StateManager } from '../state';
 import { adjustMoveHeaderTarget } from './adjust-header';
@@ -84,6 +85,9 @@ export function endMoveCol(state: StateManager) {
     state.columnMove.colTarget >= 0 &&
     state.columnMove.rowTarget >= 0
   ) {
+    //getCellMergeInfo 一定要在moveHeaderPosition之前调用  否则就不是修改前的range了
+    const sourceMergeInfo = getCellMergeInfo(state.table, state.columnMove.colSource, state.columnMove.rowSource);
+    const targetMergeInfo = getCellMergeInfo(state.table, state.columnMove.colTarget, state.columnMove.rowTarget);
     // 调整列顺序
     const moveSuccess = (state.table as any).moveHeaderPosition(
       { col: state.columnMove.colSource, row: state.columnMove.rowSource },
@@ -108,7 +112,9 @@ export function endMoveCol(state: StateManager) {
         state.columnMove.colSource,
         state.columnMove.rowSource,
         state.columnMove.colTarget,
-        state.columnMove.rowTarget
+        state.columnMove.rowTarget,
+        sourceMergeInfo,
+        targetMergeInfo
       );
     }
 

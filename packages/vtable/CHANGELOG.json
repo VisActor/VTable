@@ -2,6 +2,50 @@
   "name": "@visactor/vtable",
   "entries": [
     {
+      "version": "0.18.1",
+      "tag": "@visactor/vtable_v0.18.1",
+      "date": "Fri, 19 Jan 2024 11:43:14 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "fix: fix funciton updateColumnWidth occor error\n\n"
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.18.0",
+      "tag": "@visactor/vtable_v0.18.0",
+      "date": "Fri, 19 Jan 2024 10:43:47 GMT",
+      "comments": {
+        "minor": [
+          {
+            "comment": "feat: add eventOptions #914\n\n"
+          }
+        ],
+        "none": [
+          {
+            "comment": "fix: handle with chartSpec barWidth set string type\n\n"
+          },
+          {
+            "comment": "fix: addRecords api call when body no data #953\n\n"
+          },
+          {
+            "comment": "fix: mouse drag to move Header position has error when column has multi-levels #957\n\n"
+          },
+          {
+            "comment": "fix: when resize column width bottomFrozenRow height should update #954\n\n"
+          },
+          {
+            "comment": "feat: pivotchart support pie\n\n"
+          },
+          {
+            "comment": "feat: add customLayout & customRander in customMergeCell"
+          }
+        ]
+      }
+    },
+    {
       "version": "0.17.10",
       "tag": "@visactor/vtable_v0.17.10",
       "date": "Thu, 18 Jan 2024 03:43:34 GMT",

@@ -32,7 +32,7 @@ export function renderChart(chart: Chart) {
     viewBox.y2 = viewBox.y1 + 1;
   }
 
-  axes.forEach((axis: any, index: number) => {
+  axes?.forEach((axis: any, index: number) => {
     if (axis.type === 'band') {
       // const chartAxis = chartInstance._chart._components[index];
       // chartAxis._spec.domain = axis.domain.slice(0);

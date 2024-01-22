@@ -20,3 +20,7 @@
 ##${prefix} imageAutoSizing(boolean) = false
 
 **image 类型专属配置项** 是否按图片尺寸自动撑开单元格尺寸，默认 false
+
+##${prefix} clickToPreview(boolean) = true
+
+**image 类型专属配置项** 是否开启点击预览

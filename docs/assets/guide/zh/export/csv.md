@@ -3,6 +3,9 @@
 `@visactor/vtable-export`包是为了 VTable 表格导出所封装的工具，它支持CSV和Excel两种格式的导出。
 
 ## 使用方式
+
+### import
+
 首先，你需要在你的应用中安装`@visactor/vtable`和`@visactor/vtable-export`包，然后在你的代码中引入它们生成一个表格实例，并导出：
 
 ```js
@@ -22,3 +25,18 @@ downloadCsv(exportVTableToCsv(tableInstance), 'export-csv');
 * 如果是服务端环境，可以自行处理`exportVTableToCsv`转换出的CSV格式的字符串
 
 参考[demo](../../demo/export/table-export)
+
+### umd
+
+也可以在HTML中直接引入`@visactor/vtable-export`包的umd产物：
+
+```html
+<script src="https://unpkg.com/@visactor/vtable-export@latest/dist/vtable-export.js"></script>
+```
+
+在全局变量`VTable.export`中找到相应工具，使用方法同上：
+
+```js
+const { downloadCsv, exportVTableToCsv } = VTable.export;
+// ......
+```

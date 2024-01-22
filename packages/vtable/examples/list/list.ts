@@ -10,7 +10,7 @@ const generatePersons = count => {
     date1: '2022年9月1日',
     tel: '000-0000-0000',
     sex: i % 2 === 0 ? 'boy' : 'girl',
-    work: i % 2 === 0 ? 'back-end engineer' : 'front-end engineer',
+    work: i % 2 === 0 ? 'back-end engineer' + (i + 1) : 'front-end engineer' + (i + 1),
     city: 'beijing'
   }));
 };
@@ -321,6 +321,9 @@ export function createTable() {
     dragHeaderMode: 'all',
     keyboardOptions: {
       pasteValueToCell: true
+    },
+    eventOptions: {
+      preventDefaultContextMenu: false
     }
     // widthMode: 'adaptive'
   };

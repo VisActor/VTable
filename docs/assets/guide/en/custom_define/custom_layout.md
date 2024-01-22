@@ -1,4 +1,4 @@
-# Detailed table
+# Custom Layout
 
 ## Introduction
 
