@@ -58,19 +58,39 @@ export function updateMoveCol(col: number, row: number, x: number, y: number, st
   let backX;
   let lineY;
   let backY;
-  const cellLocation = state.table.getCellLocation(col, row);
+  const cellLocation = state.table.getCellLocation(state.columnMove.colSource, state.columnMove.rowSource);
   if (cellLocation === 'columnHeader') {
-    (backX = state.columnMove.x),
-      (lineX =
+    backX = state.columnMove.x;
+    if (state.table.isFrozenColumn(col)) {
+      lineX =
         state.columnMove.colTarget >= state.columnMove.colSource
           ? state.table.getColsWidth(0, state.columnMove.colTarget)
-          : state.table.getColsWidth(0, state.columnMove.colTarget - 1));
+          : state.table.getColsWidth(0, state.columnMove.colTarget - 1);
+    } else if (state.table.isRightFrozenColumn(col)) {
+      lineX = state.table.tableNoFrameWidth - state.table.getColsWidth(targetCell.col + 1, state.table.colCount - 1);
+    } else {
+      lineX =
+        (state.columnMove.colTarget >= state.columnMove.colSource
+          ? state.table.getColsWidth(0, state.columnMove.colTarget)
+          : state.table.getColsWidth(0, state.columnMove.colTarget - 1)) -
+        state.table.stateManager.scroll.horizontalBarPos;
+    }
   } else if (cellLocation === 'rowHeader') {
-    (backY = state.columnMove.y),
-      (lineY =
+    backY = state.columnMove.y;
+    if (state.table.isFrozenRow(row)) {
+      lineY =
         state.columnMove.rowTarget >= state.columnMove.rowSource
           ? state.table.getRowsHeight(0, state.columnMove.rowTarget)
-          : state.table.getRowsHeight(0, state.columnMove.rowTarget - 1));
+          : state.table.getRowsHeight(0, state.columnMove.rowTarget - 1);
+    } else if (state.table.isBottomFrozenRow(row)) {
+      lineY = state.table.tableNoFrameHeight - state.table.getRowsHeight(targetCell.row + 1, state.table.rowCount - 1);
+    } else {
+      lineY =
+        (state.columnMove.rowTarget >= state.columnMove.rowSource
+          ? state.table.getRowsHeight(0, state.columnMove.rowTarget)
+          : state.table.getRowsHeight(0, state.columnMove.rowTarget - 1)) -
+        state.table.stateManager.scroll.verticalBarPos;
+    }
   }
 
   state.table.scenegraph.component.updateMoveCol(backX, lineX, backY, lineY);

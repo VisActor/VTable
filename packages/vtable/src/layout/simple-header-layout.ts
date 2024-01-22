@@ -181,7 +181,7 @@ export class SimpleHeaderLayoutMap implements LayoutMapAPI {
       }
     } else {
       row = col;
-      if (this.frozenRowCount > 0 && row >= this.rowCount - this.bottomFrozenRowCount) {
+      if (this.bottomFrozenRowCount > 0 && row >= this.rowCount - this.bottomFrozenRowCount) {
         return true;
       }
     }
