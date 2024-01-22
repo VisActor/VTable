@@ -81,6 +81,7 @@ export function moveHeaderPosition(
     const columnHeaderGroup = table.scenegraph.getColGroup(col, true);
     const columnGroup = table.scenegraph.getColGroup(col);
     const columnBottomGroup = table.scenegraph.getColGroupInBottom(col);
+    const columnLeftBottomGroup = table.scenegraph.getColGroupInLeftBottomCorner(col);
     const columnRightBottomGroup = table.scenegraph.getColGroupInRightBottomCorner(col);
     if (columnHeaderGroup) {
       columnHeaderGroup.setAttribute('width', columnWidth);
@@ -103,6 +104,12 @@ export function moveHeaderPosition(
     if (columnRightBottomGroup) {
       columnRightBottomGroup.setAttribute('width', columnWidth);
       columnRightBottomGroup.forEachChildren((child: Group) => {
+        child.setAttribute('width', columnWidth);
+      });
+    }
+    if (columnLeftBottomGroup) {
+      columnLeftBottomGroup.setAttribute('width', columnWidth);
+      columnLeftBottomGroup.forEachChildren((child: Group) => {
         child.setAttribute('width', columnWidth);
       });
     }
