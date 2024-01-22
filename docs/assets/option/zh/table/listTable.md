@@ -96,3 +96,12 @@ headerEditor?: string | IEditor | ((args: BaseCellInfo & { table: BaseTableAPI }
 ## hierarchyExpandLevel(number)
 
 展示为树形结构时，默认展开层数。默认为1只显示根节点，配置为`Infinity`则全部展开。
+
+
+## frozenColDragHeaderMode(string) = 'fixedFrozenCount'
+
+拖拽表头移动位置 针对冻结部分的规则  默认为fixedFrozenCount
+
+- "disabled"（禁止调整冻结列位置）：不允许其他列的表头拖拽操作涉及到冻结列部分，冻结列保持不变。
+- "adjustFrozenCount"（根据交互结果调整冻结数量）：允许其他列的表头拖拽操作涉及到冻结列部分，并根据拖拽的动作调整冻结列的数量。当其他列的表头被拖拽进入冻结列位置时，冻结列数量增加；当其他列的表头被拖拽移出冻结列位置时，冻结列数量减少。
+- "fixedFrozenCount"（可调整冻结列，并维持冻结数量不变）：允许自由拖拽其他列的表头移入或移出冻结列位置，同时保持冻结列的数量不变。
