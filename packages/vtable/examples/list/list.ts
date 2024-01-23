@@ -332,6 +332,26 @@ export function createTable() {
   tableInstance.on('change_cell_value', arg => {
     console.log(arg);
   });
+  let targetRow = 10;
+  function loop() {
+    targetRow += 1;
+    tableInstance.updateTheme(
+      VTable.themes.ARCO.extends({
+        bodyStyle: {
+          bgColor(args) {
+            if (args.row <= targetRow) {
+              return 'rgb(55,66,77)';
+            }
+            return 'rgb(255,255,255)';
+          }
+        }
+      })
+    );
+    tableInstance.scrollTop += 30;
+    requestAnimationFrame(loop);
+  }
+  // 启动循环
+  requestAnimationFrame(loop);
   // tableInstance.on('sort_click', args => {
   //   tableInstance.updateSortState(
   //     {
