@@ -52,7 +52,7 @@
     "react-is": "^18.2.0"
   },
   "devDependencies": {
-    "@visactor/vchart": "1.8.7",
+    "@visactor/vchart": "1.9.0-alpha.1",
     "@internal/bundler": "workspace:*",
     "@internal/eslint-config": "workspace:*",
     "@internal/ts-config": "workspace:*",

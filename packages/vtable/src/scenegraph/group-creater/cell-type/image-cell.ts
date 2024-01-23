@@ -12,8 +12,6 @@ import { getProp, getFunctionalProp } from '../../utils/get-prop';
 import { isValid } from '@visactor/vutils';
 import { getQuadProps } from '../../utils/padding';
 
-const regedIcons = icons.get();
-
 export function createImageCellGroup(
   columnGroup: Group,
   xOrigin: number,
@@ -335,7 +333,7 @@ function updateAutoSizingAndKeepAspectRatio(
   const originImage = image.resources.get(image.attribute.image).data;
   const { col, row } = cellGroup;
 
-  if (imageAutoSizing) {
+  if (imageAutoSizing && !isDamagePic(image)) {
     _adjustWidthHeight(
       col,
       row,
@@ -345,8 +343,7 @@ function updateAutoSizingAndKeepAspectRatio(
       padding
     );
   }
-
-  if (keepAspectRatio) {
+  if (keepAspectRatio || isDamagePic(image)) {
     const { width: cellWidth, height: cellHeight, isMerge } = getCellRange(cellGroup, table);
 
     const { width: imageWidth, height: imageHeight } = calcKeepAspectRatioSize(
@@ -393,4 +390,9 @@ function updateAutoSizingAndKeepAspectRatio(
       );
     }
   }
+}
+
+function isDamagePic(image: IImage) {
+  const regedIcons = icons.get();
+  return image.attribute.image === (regedIcons.damage_pic as any).svg;
 }
