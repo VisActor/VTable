@@ -1,4 +1,4 @@
-import type { IStage } from '@visactor/vrender';
+import type { IStage } from '@src/vrender';
 import type { Chart } from '../chart';
 import { Bounds, isValid } from '@visactor/vutils';
 import type { BaseTableAPI } from '../../../ts-types/base-table';
@@ -32,7 +32,7 @@ export function renderChart(chart: Chart) {
     viewBox.y2 = viewBox.y1 + 1;
   }
 
-  axes.forEach((axis: any, index: number) => {
+  axes?.forEach((axis: any, index: number) => {
     if (axis.type === 'band') {
       // const chartAxis = chartInstance._chart._components[index];
       // chartAxis._spec.domain = axis.domain.slice(0);

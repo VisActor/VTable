@@ -183,6 +183,8 @@ Get the selected cell information, and the returned result is a two-dimensional 
   getSelectedCellInfos(): CellInfo[][] | null;
 ```
 
+{{ use: CellInfo() }}
+
 ## clearSelected(Function)
 
 Clear the selection of all cells.
@@ -716,6 +718,19 @@ Change the value of a cell:
   changeCellValue: (col: number, row: number, value: string | number | null) => void;
 ```
 
+## changeCellValues(Function)
+Change the value of cells in batches:
+
+```
+  /**
+   * Batch update data of multiple cells
+   * @param col The starting column number of pasted data
+   * @param row The starting row number of pasted data
+   * @param values Data array of multiple cells
+   */
+  changeCellValues(startCol: number, startRow: number, values: string[][])
+```
+
 ## getEditor(Function)
 
 Get the editor for the cell configuration
@@ -796,6 +811,19 @@ Delete data supports multiple pieces of data
    * @param recordIndexs The index of the data to be deleted (the entry index displayed in the body)
    */
   deleteRecords(recordIndexs: number[])
+```
+## updateRecords(Function)
+
+Modify data to support multiple pieces of data
+
+** ListTable proprietary **
+```
+  /**
+   * Modify data to support multiple pieces of data
+   * @param records Modify data entries
+   * @param recordIndexs The index corresponding to the modified data (the index displayed in the body, that is, which row of data in the body part is to be modified)
+   */
+  updateRecords(records: any[], recordIndexs: number[])
 ```
 
 ## getBodyVisibleCellRange(Function)

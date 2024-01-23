@@ -131,13 +131,22 @@
 对应上面透视组合图的示意图结构：
 - rows配置了行标头对应的维度'Order Year'和'Ship Mode'；
 - columns配置了列表头对应的维度'Region'和'Category'；
-- indicators配置了要分析的指标数据'Quantity', 'Sales', 'Profit'；Quantity对应上图中的指标1，用了柱状图表展示趋势；Sales和Profit对应上图中的指标2和指标3，用组合双轴图展示两个指标的数据情况。
+- indicators配置了要分析的指标数据'Quantity', 'Sales', 'Profit'；Quantity对应上图中的指标1，用了柱状图表展示趋势；Sales和Profit对应上图中的指标2和指标3，用组合双轴图展示两个指标的数据情况。需要在indicator的具体配置中设置`cellType:'chart', chartModule:'vchart'`，来指明要配置图表渲染类型，并指明注册的图表库名称为`vchart`。
 - indicatorAsCol配置指标在行头还是列头，需要注意的是：
   - 如果为true也就是指标在列头，则对应图表的展示方位direction为'horizontal'横向展示；
   - 如果为false也就是指标在行头，则对应图表的展示方位direction为'vertical'宗向展示；
 - legends配置图例样式；
 ![image](https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/ffc3a9b5518762d274121ff07.png)
 - axes配置轴全局的样式，指标配置中chartSpec中如已配置axes则优先使用chartSpec中的配置。
+
+# 图表库注册
+
+在使用之前需要先注入使用的图表库组件：
+```
+import VChart from '@visactor/vchart';
+VTable.register.chartModule('vchart', VChart);
+```
+
 # 图表事件
 想要监听chart图表的事件，可以使用onVChartEvent实现，vtable做了简单的事件代理，支持的事件类型及回调还是都统一和vchart一致，具体可参考[VChart事件](https://visactor.io/vchart/api/API/event)
 ```    

@@ -120,6 +120,13 @@ If this configuration is turned on, if you are currently editing a cell, the arr
 
 Switching the selected cells with the up, down, left and right arrow keys is not affected by this configuration.
 
+#${prefix} eventOptions(Object)
+
+Issue settings related to event triggering, specific configuration items:
+
+##${prefix} preventDefaultContextMenu(boolean) = true
+Organizing the default behavior of the right mouse button
+
 #${prefix} columnResizeMode(string) = 'all'
 
 Mouse hover over the cell right border can drag and adjust column width. This operation can trigger the following range:

@@ -21,8 +21,14 @@ import type { IEditor } from '@visactor/vtable-editors';
 import type { ITextStyleOption } from '../body-helper/style';
 import type { DataSource } from '../data';
 import type { EditManeger } from '../edit/edit-manager';
+import type { ICustomRender } from './customElement';
+import type { ICustomLayout } from './customLayout';
 
 export interface CellAddress {
+  col: number;
+  row: number;
+}
+export interface CellAddressWithBound {
   col: number;
   row: number;
   rect?: RectProps;
@@ -76,6 +82,10 @@ export interface TableKeyboardOptions {
   copySelected?: boolean; //这个copy是和浏览器的快捷键一致的
   /** 快捷键粘贴。粘贴内容到指定位置（即需要有选中状态），支持批量粘贴。 默认：false */
   pasteValueToCell?: boolean; //paste是和浏览器的快捷键一致的
+}
+export interface TableEventOptions {
+  /** 是否阻止右键的默认行为， 默认为true。*/
+  preventDefaultContextMenu?: boolean;
 }
 export interface DataSourceAPI {
   clearCurrentIndexedData: () => void;
@@ -431,6 +441,8 @@ export type StickCell = { col: number; row: number; dx: number; dy: number };
 export type CustomMergeCell = (col: number, row: number, table: BaseTableAPI) => undefined | CustomMerge;
 export type CustomMerge = {
   range: CellRange;
-  text: string;
+  text?: string;
   style?: ITextStyleOption;
+  customLayout?: ICustomLayout;
+  customRender?: ICustomRender;
 };

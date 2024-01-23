@@ -1,5 +1,5 @@
-import type { IImageGraphicAttribute } from '@visactor/vrender';
-import { Image } from '@visactor/vrender';
+import type { IImageGraphicAttribute } from '@src/vrender';
+import { Image } from '@src/vrender';
 import type { IIconBase } from '../../ts-types';
 
 export interface IIconGraphicAttribute extends IImageGraphicAttribute {

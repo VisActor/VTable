@@ -44,7 +44,7 @@ import ReactDOM from 'react-dom/client';
 import { ListTable } from "@visactor/react-vtable";
 
 const option = {
-  header: [
+  columns: [
     {
       field: "0",
       caption: "name",

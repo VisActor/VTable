@@ -169,6 +169,8 @@ setRecords(records: Array<any>, sort?: SortState | SortState[]) //** 基本表�
    */
   selectCells(cellRanges: CellRange[]): void
 ```
+其中：
+{{ use: CellRange() }}
 
 ## getSelectedCellInfos(Function)
 
@@ -178,6 +180,9 @@ setRecords(records: Array<any>, sort?: SortState | SortState[]) //** 基本表�
   /**获取选中区域的每个单元格详情 */
   getSelectedCellInfos(): CellInfo[][] | null;
 ```
+
+{{ use: CellInfo() }}
+
 ## clearSelected(Function)
 
 清除所有单元格的选中状态。
@@ -709,6 +714,19 @@ use case: 点击图例项后 更新过滤规则 来更新图表
   changeCellValue: (col: number, row: number, value: string | number | null) => void;
 ```
 
+## changeCellValues(Function)
+批量更改单元格的value：
+
+```
+  /**
+   * 批量更新多个单元格的数据
+   * @param col 粘贴数据的起始列号
+   * @param row 粘贴数据的起始行号
+   * @param values 多个单元格的数据数组
+   */
+  changeCellValues(startCol: number, startRow: number, values: string[][]) 
+```
+
 ## getEditor(Function)
 
 获取单元格配置的编辑器
@@ -787,6 +805,21 @@ use case: 点击图例项后 更新过滤规则 来更新图表
    */
   deleteRecords(recordIndexs: number[]) 
 ```
+
+## updateRecords(Function)
+
+修改数据 支持多条数据
+
+** ListTable 专有 ** 
+```
+  /**
+   * 修改数据 支持多条数据
+   * @param records 修改数据条目
+   * @param recordIndexs 对应修改数据的索引（显示在body中的索引，即要修改的是body部分的第几行数据）
+   */
+  updateRecords(records: any[], recordIndexs: number[])
+```
+
 ## getBodyVisibleCellRange(Function)
 
 获取表格body部分的显示单元格范围

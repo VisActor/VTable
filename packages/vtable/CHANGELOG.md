@@ -1,6 +1,80 @@
 # Change Log - @visactor/vtable
 
-This log was last generated on Fri, 05 Jan 2024 10:34:08 GMT and should not be manually modified.
+This log was last generated on Fri, 19 Jan 2024 11:43:14 GMT and should not be manually modified.
+
+## 0.18.1
+Fri, 19 Jan 2024 11:43:14 GMT
+
+### Updates
+
+- fix: fix funciton updateColumnWidth occor error
+
+
+
+## 0.18.0
+Fri, 19 Jan 2024 10:43:47 GMT
+
+### Minor changes
+
+- feat: add eventOptions #914
+
+
+
+### Updates
+
+- fix: handle with chartSpec barWidth set string type
+
+
+- fix: addRecords api call when body no data #953
+
+
+- fix: mouse drag to move Header position has error when column has multi-levels #957
+
+
+- fix: when resize column width bottomFrozenRow height should update #954
+
+
+- feat: pivotchart support pie
+
+
+- feat: add customLayout & customRander in customMergeCell
+
+## 0.17.10
+Thu, 18 Jan 2024 03:43:34 GMT
+
+### Updates
+
+- fix: select border range error #911
+
+
+- fix: when enable pasteValueToCell and event change_cell_value arguments is error #919
+
+
+- feat: use vrender-core
+- fix: fix tree structure auto merge update problem
+- fix: toggele tree node updateChartSize
+
+
+
+## 0.17.9
+Wed, 10 Jan 2024 11:22:48 GMT
+
+### Updates
+
+- feat: support excel data paste to cells #857
+
+
+- fix: showSubTotals can not work #893
+
+
+- feat: add api getCellAddressByRecord
+
+
+- feat: optimize getCellHeaderPath function
+- fix: set display:none trigger resize logic
+
+
+- fix: fix right frozen cell location
 
 ## 0.17.8
 Fri, 05 Jan 2024 10:34:08 GMT

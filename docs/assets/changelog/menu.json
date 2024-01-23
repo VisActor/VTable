@@ -1,0 +1,12 @@
+{
+  "menu": "changelog",
+  "children": [
+    {
+      "path": "release",
+      "title": {
+        "zh": "发版记录",
+        "en": "release log"
+      }
+    }
+  ]
+}

@@ -1,4 +1,4 @@
-import { createRect, createLine } from '@visactor/vrender';
+import { createRect, createLine } from '@src/vrender';
 import type { ProgressBarStyle } from '../../../body-helper/style/ProgressBarStyle';
 import { str, getOrApply } from '../../../tools/helper';
 import { Group } from '../../graphic/group';

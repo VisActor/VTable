@@ -1,5 +1,5 @@
-import type { IEventTarget } from '@visactor/vrender';
-import { Gesture, type FederatedPointerEvent } from '@visactor/vrender';
+import type { IEventTarget } from '@src/vrender';
+import { Gesture, type FederatedPointerEvent } from '@src/vrender';
 import type {
   ListTableAPI,
   MousePointerCellEvent,

@@ -8,3 +8,7 @@ Specifies the column type as `'video'`, cellType can be omitted with default as 
 ##${prefix} cellType(string) = 'video'
 
 Specifies the column type as `'video'`, cellType can be omitted with default as `'text'`. All configuration options are the same as the image type, refer to the image type configuration options for details.
+
+##${prefix} clickToPreview(boolean) = true
+
+Whether to enable click preview.

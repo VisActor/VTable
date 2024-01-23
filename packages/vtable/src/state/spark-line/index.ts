@@ -1,4 +1,4 @@
-import { createLine, createSymbol } from '@visactor/vrender';
+import { createLine, createSymbol } from '@src/vrender';
 import { TABLE_EVENT_TYPE } from '../../core/TABLE_EVENT_TYPE';
 import type { MousePointerSparklineEvent } from '../../ts-types';
 import type { BaseTableAPI } from '../../ts-types/base-table';

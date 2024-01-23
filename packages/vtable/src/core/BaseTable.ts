@@ -37,7 +37,7 @@ import {
   type ITableThemeDefine,
   InteractionState
 } from '../ts-types';
-import type { AnyFunction, ColumnIconOption } from '../ts-types';
+import type { AnyFunction, CellAddressWithBound, ColumnIconOption, TableEventOptions } from '../ts-types';
 import { event, style as utilStyle } from '../tools/helper';
 
 import { TABLE_EVENT_TYPE } from './TABLE_EVENT_TYPE';
@@ -120,8 +120,8 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
 
   _vDataSet: DataSet;
   scenegraph: Scenegraph;
-  stateManager?: StateManager;
-  eventManager?: EventManager;
+  stateManager: StateManager;
+  eventManager: EventManager;
   _pixelRatio: number;
 
   // bottomFrozenRowCount: number = 0;
@@ -174,6 +174,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
       autoFillWidth = false,
       autoFillHeight = false,
       keyboardOptions,
+      eventOptions,
       // disableRowHeaderColumnResize,
       columnResizeMode,
       dragHeaderMode,
@@ -259,6 +260,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     internalProps.defaultHeaderColWidth = defaultHeaderColWidth ?? defaultColWidth;
 
     internalProps.keyboardOptions = keyboardOptions;
+    internalProps.eventOptions = eventOptions;
 
     internalProps.columnResizeMode = columnResizeMode;
     internalProps.dragHeaderMode = dragHeaderMode;
@@ -307,7 +309,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
 
     internalProps.autoWrapText = options.autoWrapText;
 
-    internalProps.allowFrozenColCount = options.allowFrozenColCount ?? internalProps.colCount;
+    internalProps.allowFrozenColCount = options.allowFrozenColCount ?? 0;
     internalProps.limitMaxAutoWidth = options.limitMaxAutoWidth ?? 450;
     internalProps.limitMinWidth =
       limitMinWidth !== null && limitMinWidth !== undefined
@@ -659,6 +661,12 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
   }
   set keyboardOptions(keyboardOptions: TableKeyboardOptions | null) {
     this.internalProps.keyboardOptions = keyboardOptions ?? undefined;
+  }
+  get eventOptions(): TableEventOptions | null {
+    return this.internalProps.eventOptions ?? null;
+  }
+  set eventOptions(eventOptions: TableEventOptions | null) {
+    this.internalProps.eventOptions = eventOptions ?? undefined;
   }
 
   get widthMode(): WidthModeDef {
@@ -1517,7 +1525,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
    * @param absoluteY
    * @returns
    */
-  getCellAt(absoluteX: number, absoluteY: number): CellAddress {
+  getCellAt(absoluteX: number, absoluteY: number): CellAddressWithBound {
     const rowInfo = this.getRowAt(absoluteY);
     const { row, top, bottom, height } = rowInfo;
     const colInfo = this.getColAt(absoluteX);
@@ -1850,6 +1858,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
       defaultColWidth = 80,
       defaultHeaderColWidth = 80,
       keyboardOptions,
+      eventOptions,
       // disableRowHeaderColumnResize,
       columnResizeMode,
       dragHeaderMode,
@@ -1922,6 +1931,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     internalProps.defaultColWidth = defaultColWidth;
     internalProps.defaultHeaderColWidth = defaultHeaderColWidth ?? defaultColWidth;
     internalProps.keyboardOptions = keyboardOptions;
+    internalProps.eventOptions = eventOptions;
 
     internalProps.columnResizeMode = columnResizeMode;
     internalProps.dragHeaderMode = dragHeaderMode;
@@ -1946,7 +1956,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     // internalProps.autoRowHeight = options.autoRowHeight ?? false;
     //是否统一设置为多行文本
     internalProps.autoWrapText = options.autoWrapText;
-    internalProps.allowFrozenColCount = options.allowFrozenColCount ?? internalProps.colCount;
+    internalProps.allowFrozenColCount = options.allowFrozenColCount ?? 0;
     internalProps.limitMaxAutoWidth = options.limitMaxAutoWidth ?? 450;
     internalProps.limitMinWidth =
       limitMinWidth !== null && limitMinWidth !== undefined
@@ -2643,7 +2653,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
   getCustomMerge(col: number, row: number) {
     if (this.internalProps.customMergeCell) {
       const customMerge = this.internalProps.customMergeCell(col, row, this);
-      if (customMerge && customMerge.range && customMerge.text) {
+      if (customMerge && customMerge.range && (customMerge.text || customMerge.customLayout || this.customRender)) {
         if (customMerge.style) {
           const styleClass = this.internalProps.bodyHelper.getStyleClass('text');
           const style = customMerge.style;
@@ -2852,12 +2862,20 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
       const hd = layoutMap.getHeader(col, row);
 
       let paddingForAxis;
-      if (this.isPivotChart() && isTopOrBottomAxis(col, row, layoutMap as PivotHeaderLayoutMap)) {
+      if (
+        this.isPivotChart() &&
+        isTopOrBottomAxis(col, row, layoutMap as PivotHeaderLayoutMap) &&
+        layoutMap.isAxisCell(col, row)
+      ) {
         // get chart padding for axis cell
         const chartColumn = layoutMap.getBody(col, this.rowHeaderLevelCount);
         const padding = (chartColumn.style as any)?.padding ?? this.theme.bodyStyle.padding;
         paddingForAxis = padding;
-      } else if (this.isPivotChart() && isLeftOrRightAxis(col, row, layoutMap as PivotHeaderLayoutMap)) {
+      } else if (
+        this.isPivotChart() &&
+        isLeftOrRightAxis(col, row, layoutMap as PivotHeaderLayoutMap) &&
+        layoutMap.isAxisCell(col, row)
+      ) {
         // get chart padding for axis cell
         const chartColumn = layoutMap.getBody(this.columnHeaderLevelCount, row);
         const padding = (chartColumn.style as any)?.padding ?? this.theme.bodyStyle.padding;

@@ -31,7 +31,7 @@ import { Bounds, isObject, isString, isValid } from '@visactor/vutils';
 import { updateDrill } from './drill';
 import { clearChartHover, updateChartHover } from './spark-line';
 import { endMoveCol, startMoveCol, updateMoveCol } from './cell-move';
-import type { FederatedEvent } from '@visactor/vrender';
+import type { FederatedEvent } from '@src/vrender';
 import type { TooltipOptions } from '../ts-types/tooltip';
 import { getIconAndPositionFromTarget } from '../scenegraph/utils/icon';
 import type { BaseTableAPI } from '../ts-types/base-table';
@@ -682,8 +682,8 @@ export class StateManager {
     const totalHeight = this.table.getAllRowsHeight();
     top = Math.max(0, Math.min(top, totalHeight - this.table.scenegraph.height));
     top = Math.ceil(top);
-    // 滚动期间清空选中清空
-    if (top !== this.scroll.verticalBarPos) {
+    // 滚动期间清空选中清空 如果调用接口hover状态需要保留，但是如果不调用updateHoverPos透视图处于hover状态的图就不能及时更新 所以这里单独判断了isPivotChart
+    if (top !== this.scroll.verticalBarPos || this.table.isPivotChart()) {
       this.table.stateManager.updateHoverPos(-1, -1);
     }
     // this.table.stateManager.updateSelectPos(-1, -1);

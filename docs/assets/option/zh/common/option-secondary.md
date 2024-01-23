@@ -117,6 +117,13 @@
 
 上下左右方向键切换选中单元格不受该配置影响，
 
+#${prefix} eventOptions(Object)
+
+事件触发相关问题设置，具体配置项：
+
+##${prefix} preventDefaultContextMenu(boolean) = true
+组织鼠标右键的默认行为
+
 #${prefix} columnResizeMode(string) = 'all'
 
 鼠标 hover 到单元格右边界可拖拽调整列宽。该操作可触发的范围：

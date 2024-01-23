@@ -1,5 +1,5 @@
 /* eslint-disable no-undef */
-import type { IGraphic, IThemeSpec } from '@visactor/vrender';
+import type { IGraphic, IThemeSpec } from '@src/vrender';
 import type { CellLocation, CellRange, TextColumnDefine } from '../../ts-types';
 import type { Group } from '../graphic/group';
 import { getProp, getRawProp } from '../utils/get-prop';
@@ -10,6 +10,7 @@ import { getCellCornerRadius, getStyleTheme } from '../../core/tableHelper';
 import { isPromise } from '../../tools/helper';
 import { dealPromiseData } from '../utils/deal-promise-data';
 import { isArray } from '@visactor/vutils';
+import { dealWithCustom } from '../component/custom';
 /**
  * 创建复合列 同一列支持创建不同类型单元格
  * @param columnGroup 列Group
@@ -56,8 +57,6 @@ export function createComplexColumn(
 
   for (let j = rowStart; j <= rowEnd; j++) {
     const row = j;
-    const define = cellLocation !== 'body' ? table.getHeaderDefine(col, row) : table.getBodyColumnDefine(col, row);
-    const mayHaveIcon = cellLocation !== 'body' ? true : !!define?.icon || !!define?.tree;
     let value = table.getCellValue(col, row);
 
     // 处理单元格合并
@@ -67,10 +66,17 @@ export function createComplexColumn(
     let range;
     let isMerge;
     let customStyle;
+    let customResult;
     if (table.internalProps.customMergeCell) {
       const customMerge = table.getCustomMerge(col, row);
       if (customMerge) {
-        const { range: customMergeRange, text: customMergeText, style: customMergeStyle } = customMerge;
+        const {
+          range: customMergeRange,
+          text: customMergeText,
+          style: customMergeStyle,
+          customLayout,
+          customRender
+        } = customMerge;
         range = customMergeRange;
         isMerge = range.start.col !== range.end.col || range.start.row !== range.end.row;
         if (isMerge) {
@@ -80,8 +86,36 @@ export function createComplexColumn(
         }
         value = customMergeText;
         customStyle = customMergeStyle;
+
+        if (customLayout || customRender) {
+          customResult = dealWithCustom(
+            customLayout,
+            customRender,
+            customMergeRange.start.col,
+            customMergeRange.start.row,
+            table.getColsWidth(customMergeRange.start.col, customMergeRange.end.col),
+            table.getRowsHeight(customMergeRange.start.row, customMergeRange.end.row),
+            false,
+            table.heightMode === 'autoHeight',
+            [0, 0, 0, 0],
+            table
+          );
+        }
       }
     }
+
+    let colForDefine = col;
+    let rowForDefine = row;
+    if (range) {
+      colForDefine = range.start.col;
+      rowForDefine = range.start.row;
+    }
+    const define =
+      cellLocation !== 'body'
+        ? table.getHeaderDefine(colForDefine, rowForDefine)
+        : table.getBodyColumnDefine(colForDefine, rowForDefine);
+    const mayHaveIcon = cellLocation !== 'body' ? true : !!define?.icon || !!define?.tree;
+
     if (!range && (cellLocation !== 'body' || (define as TextColumnDefine)?.mergeCell)) {
       // 只有表头或者column配置合并单元格后再进行信息获取
       range = table.getCellRange(col, row);
@@ -147,7 +181,9 @@ export function createComplexColumn(
           textAlign,
           textBaseline,
           mayHaveIcon,
-          cellTheme
+          cellTheme,
+          range,
+          customResult
         )
       );
       columnGroup.updateColumnRowNumber(row);
@@ -171,7 +207,9 @@ export function createComplexColumn(
         textAlign,
         textBaseline,
         mayHaveIcon,
-        cellTheme
+        cellTheme,
+        range,
+        customResult
       );
       columnGroup.updateColumnRowNumber(row);
       if (isMerge) {

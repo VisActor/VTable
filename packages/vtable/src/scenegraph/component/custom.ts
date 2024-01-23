@@ -1,4 +1,4 @@
-import type { Cursor } from '@visactor/vrender';
+import type { Cursor } from '@src/vrender';
 import {
   createArc,
   createCircle,
@@ -7,7 +7,7 @@ import {
   REACT_TO_CANOPUS_EVENTS,
   Text,
   Group as VGroup
-} from '@visactor/vrender';
+} from '@src/vrender';
 import { isArray, isFunction, isObject, isString, isValid } from '@visactor/vutils';
 import type {
   ICustomLayout,
@@ -19,6 +19,11 @@ import type {
 import { Icon } from '../graphic/icon';
 import type { BaseTableAPI } from '../../ts-types/base-table';
 import type { percentCalcObj } from '../../render/layout';
+import { ProgressBarStyle } from '../../body-helper/style/ProgressBarStyle';
+import { getQuadProps } from '../utils/padding';
+import { getProp } from '../utils/get-prop';
+import type { Group } from '../graphic/group';
+import { resizeCellGroup } from '../group-creater/column-helper';
 
 export function dealWithCustom(
   customLayout: ICustomLayout,
@@ -414,7 +419,7 @@ export function decodeReactDom(dom: any) {
   if (isArray(children)) {
     children.forEach((item: any) => {
       const c = decodeReactDom(item);
-      g.add(c);
+      c && c.type && g.add(c);
     });
   } else if (children) {
     g.add(decodeReactDom(children));
@@ -454,4 +459,56 @@ function parseToGraphic(g: any, props: any) {
     //     g.attribute.textConfig = childrenList.map(item => item.attribute).filter(item => item);
     //   }
   }
+}
+
+export function getCustomCellMergeCustom(col: number, row: number, cellGroup: Group, table: BaseTableAPI) {
+  if (table.internalProps.customMergeCell) {
+    const customMerge = table.getCustomMerge(col, row);
+    if (customMerge) {
+      const {
+        range: customMergeRange,
+        text: customMergeText,
+        style: customMergeStyle,
+        customLayout: customMergeLayout,
+        customRender: customMergeRender
+      } = customMerge;
+
+      if (customMergeLayout || customMergeRender) {
+        const customResult = dealWithCustom(
+          customMergeLayout,
+          customMergeRender,
+          customMergeRange.start.col,
+          customMergeRange.start.row,
+          table.getColsWidth(customMergeRange.start.col, customMergeRange.end.col),
+          table.getRowsHeight(customMergeRange.start.row, customMergeRange.end.row),
+          false,
+          table.heightMode === 'autoHeight',
+          [0, 0, 0, 0],
+          table
+        );
+
+        const customElementsGroup = customResult.elementsGroup;
+
+        if (cellGroup.childrenCount > 0 && customElementsGroup) {
+          cellGroup.insertBefore(customElementsGroup, cellGroup.firstChild);
+        } else if (customElementsGroup) {
+          cellGroup.appendChild(customElementsGroup);
+        }
+
+        const rangeHeight = table.getRowHeight(row);
+        const rangeWidth = table.getColWidth(col);
+
+        const { width: contentWidth } = cellGroup.attribute;
+        const { height: contentHeight } = cellGroup.attribute;
+        cellGroup.contentWidth = contentWidth;
+        cellGroup.contentHeight = contentHeight;
+
+        resizeCellGroup(cellGroup, rangeWidth, rangeHeight, customMergeRange, table);
+
+        return customResult;
+      }
+    }
+  }
+
+  return undefined;
 }
