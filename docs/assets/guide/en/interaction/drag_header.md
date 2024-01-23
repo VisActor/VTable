@@ -70,8 +70,8 @@ frozenColDragHeaderMode?: 'disabled' | 'adjustFrozenCount' | 'fixedFrozenCount';
 ```
 The different rules are described below:
 
-- "disabled" (disables adjusting the position of frozen columns): Do not allow other column header drag operations to involve frozen columns, and frozen columns remain unchanged.
-- "adjustFrozenCount" (adjust the number of frozen columns based on the interaction results): Allow the header drag operation of other columns to involve the frozen column part, and adjust the number of frozen columns based on the dragging action. When the headers of other columns are dragged into the frozen column position, the number of frozen columns increases; when the headers of other columns are dragged out of the frozen column position, the number of frozen columns decreases.
+- "disabled" (disables adjusting the position of frozen columns): The headers of other columns are not allowed to be moved into the frozen column, nor are the frozen columns allowed to be moved out. The frozen column remains unchanged.
+- "adjustFrozenCount" (adjust the number of frozen columns based on the interaction results): allows the headers of other columns to move into the frozen column, and the frozen column to move out, and adjusts the number of frozen columns based on the dragging action. When the headers of other columns are dragged into the frozen column position, the number of frozen columns increases; when the headers of other columns are dragged out of the frozen column position, the number of frozen columns decreases.
 - "fixedFrozenCount" (can adjust frozen columns and keep the number of frozen columns unchanged): Allows you to freely drag the headers of other columns into or out of the frozen column position while keeping the number of frozen columns unchanged.
 
 So far, we have introduced the drag-and-drop header transposition function of VTable, including the activation of the drag-and-drop header transposition function, the style configuration of the drag-and-drop header transposition mark line, and whether a certain column can be dragged. By mastering these functions, you can more easily perform data analytics and processing in VTable.
