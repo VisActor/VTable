@@ -326,6 +326,10 @@ export class Scenegraph {
     this.selectingRangeComponents = new Map();
   }
 
+  updateComponent() {
+    this.component.updateStyle();
+  }
+
   /**
    * @description: 依据数据创建表格场景树
    * @return {*}
