@@ -272,10 +272,10 @@ export function updateCellSelectBorder(
   newEndCol: number,
   newEndRow: number
 ) {
-  let startCol = Math.min(newEndCol, newStartCol);
-  let startRow = Math.min(newEndRow, newStartRow);
-  let endCol = Math.max(newEndCol, newStartCol);
-  let endRow = Math.max(newEndRow, newStartRow);
+  let startCol = Math.max(Math.min(newEndCol, newStartCol), 0);
+  let startRow = Math.max(Math.min(newEndRow, newStartRow), 0);
+  let endCol = Math.min(Math.max(newEndCol, newStartCol), scene.table.colCount - 1);
+  let endRow = Math.min(Math.max(newEndRow, newStartRow), scene.table.rowCount - 1);
   //#region region 校验四周的单元格有没有合并的情况，如有则扩大范围
   const extendSelectRange = () => {
     let isExtend = false;
@@ -293,7 +293,7 @@ export function updateCellSelectBorder(
       if (!isExtend && col === endCol) {
         for (let row = startRow; row <= endRow; row++) {
           const mergeInfo = getCellMergeInfo(scene.table, col, row);
-          if (mergeInfo && mergeInfo.end.col > endCol) {
+          if (mergeInfo && Math.min(mergeInfo.end.col, scene.table.colCount - 1) > endCol) {
             endCol = mergeInfo.end.col;
             isExtend = true;
             break;
@@ -320,7 +320,7 @@ export function updateCellSelectBorder(
         if (!isExtend && row === endRow) {
           for (let col = startCol; col <= endCol; col++) {
             const mergeInfo = getCellMergeInfo(scene.table, col, row);
-            if (mergeInfo && mergeInfo.end.row > endRow) {
+            if (mergeInfo && Math.min(mergeInfo.end.row, scene.table.rowCount - 1) > endRow) {
               endRow = mergeInfo.end.row;
               isExtend = true;
               break;

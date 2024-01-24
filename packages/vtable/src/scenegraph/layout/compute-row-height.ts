@@ -333,6 +333,13 @@ export function computeRowHeight(row: number, startCol: number, endCol: number, 
       }
     }
 
+    if (
+      table.isPivotChart() &&
+      ((table.isLeftFrozenColumn(col) && table.isBottomFrozenRow(row)) ||
+        (table.isRightFrozenColumn(col) && table.isBottomFrozenRow(row)))
+    ) {
+      continue;
+    }
     const cellType = table.isHeader(col, row)
       ? table._getHeaderLayoutMap(col, row)?.headerType
       : table.getBodyColumnType(col, row);
