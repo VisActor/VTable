@@ -971,14 +971,14 @@ export class ListTable extends BaseTable implements ListTableAPI {
     let pasteRowEnd = startRow;
     // const rowCount = values.length;
     for (let i = 0; i < values.length; i++) {
-      if (pasteRowEnd >= this.rowCount - 1) {
+      if (startRow + i > this.rowCount - 1) {
         break;
       }
       pasteRowEnd = startRow + i;
       const rowValues = values[i];
       let thisRowPasteColEnd = startCol;
       for (let j = 0; j < rowValues.length; j++) {
-        if (thisRowPasteColEnd >= this.colCount - 1) {
+        if (startCol + j > this.colCount - 1) {
           break;
         }
         thisRowPasteColEnd = startCol + j;

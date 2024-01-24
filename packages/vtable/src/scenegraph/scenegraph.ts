@@ -838,15 +838,45 @@ export class Scenegraph {
       y: this.table.tableY,
       width: Math.min(
         this.table.tableNoFrameWidth,
-        Math.max(this.colHeaderGroup.attribute.width, this.bodyGroup.attribute.width, 0) +
-          Math.max(this.cornerHeaderGroup.attribute.width, this.rowHeaderGroup.attribute.width, 0) +
-          this.rightBottomCornerGroup.attribute.width
+        Math.max(
+          this.colHeaderGroup.attribute.width,
+          this.bodyGroup.attribute.width,
+          this.bottomFrozenGroup.attribute.width,
+          0
+        ) +
+          Math.max(
+            this.cornerHeaderGroup.attribute.width,
+            this.rowHeaderGroup.attribute.width,
+            this.leftBottomCornerGroup.attribute.width,
+            0
+          ) +
+          Math.max(
+            this.rightTopCornerGroup.attribute.width,
+            this.rightFrozenGroup.attribute.width,
+            this.rightBottomCornerGroup.attribute.width,
+            0
+          )
       ),
       height: Math.min(
         this.table.tableNoFrameHeight,
-        Math.max(this.colHeaderGroup.attribute.height, this.cornerHeaderGroup.attribute.height, 0) +
-          Math.max(this.rowHeaderGroup.attribute.height, this.bodyGroup.attribute.height, 0) +
-          this.bottomFrozenGroup.attribute.height
+        Math.max(
+          this.colHeaderGroup.attribute.height,
+          this.cornerHeaderGroup.attribute.height,
+          this.rightTopCornerGroup.attribute.height,
+          0
+        ) +
+          Math.max(
+            this.rowHeaderGroup.attribute.height,
+            this.bodyGroup.attribute.height,
+            this.rightFrozenGroup.attribute.height,
+            0
+          ) +
+          Math.max(
+            this.leftBottomCornerGroup.attribute.height,
+            this.bottomFrozenGroup.attribute.height,
+            this.rightBottomCornerGroup.attribute.height,
+            0
+          )
       )
     } as any);
 
@@ -1045,9 +1075,9 @@ export class Scenegraph {
       return;
     }
     this.bodyGroup.setAttribute('y', this.colHeaderGroup.attribute.height + y);
-    this.rowHeaderGroup.setAttribute('y', this.colHeaderGroup.attribute.height + y);
+    this.rowHeaderGroup.setAttribute('y', this.cornerHeaderGroup.attribute.height + y);
     if (this.table.rightFrozenColCount > 0) {
-      this.rightFrozenGroup.setAttribute('y', this.colHeaderGroup.attribute.height + y);
+      this.rightFrozenGroup.setAttribute('y', this.rightTopCornerGroup.attribute.height + y);
     }
     // this.tableGroup.setAttribute('height', this.table.tableNoFrameHeight - y);
     // (this.tableGroup.lastChild as any).setAttribute('width', this.table.tableNoFrameWidth - x);
@@ -1168,7 +1198,7 @@ export class Scenegraph {
     });
     this.cornerHeaderGroup.setAttribute('width', cornerHeaderWidth);
     this.colHeaderGroup.setAttribute('x', this.cornerHeaderGroup.attribute.width);
-    this.rowHeaderGroup.setAttribute('y', this.colHeaderGroup.attribute.height);
+    this.rowHeaderGroup.setAttribute('y', this.cornerHeaderGroup.attribute.height);
     this.bodyGroup.setAttributes({
       x: this.rowHeaderGroup.attribute.width,
       y: this.colHeaderGroup.attribute.height
@@ -1372,7 +1402,7 @@ export class Scenegraph {
     this.colHeaderGroup.setDeltaWidth(colHeaderX - this.colHeaderGroup.attribute.width);
     // this.rightFrozenGroup.setDeltaWidth(colHeaderX - this.table.getRightFrozenColsWidth());
     this.rowHeaderGroup.setDeltaWidth(rowHeaderX - this.rowHeaderGroup.attribute.width);
-    this.bottomFrozenGroup.setDeltaWidth(rowHeaderX - this.bottomFrozenGroup.attribute.width);
+    this.bottomFrozenGroup.setDeltaWidth(colHeaderX - this.bottomFrozenGroup.attribute.width);
     this.rightFrozenGroup.setDeltaWidth(rightX - this.table.getRightFrozenColsWidth());
     this.rightTopCornerGroup.setDeltaWidth(rightX - this.rightTopCornerGroup.attribute.width);
     this.rightBottomCornerGroup.setDeltaWidth(rightX - this.rightBottomCornerGroup.attribute.width);
