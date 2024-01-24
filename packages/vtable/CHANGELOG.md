@@ -1,6 +1,32 @@
 # Change Log - @visactor/vtable
 
-This log was last generated on Fri, 19 Jan 2024 11:43:14 GMT and should not be manually modified.
+This log was last generated on Wed, 24 Jan 2024 12:12:36 GMT and should not be manually modified.
+
+## 0.18.2
+Wed, 24 Jan 2024 12:12:36 GMT
+
+### Updates
+
+- fix: fix rowHeaderGroup attribute y when has no colHeaderGroup #971
+
+
+- fix:  transpose bottomFrozenRow cell layout error #978
+
+
+- fix: passte value to last row occur error #979
+
+
+- fix: use updateColumns api click state not right #975
+
+
+- fix: record has nan string value pivotchart cell value parse handle this case #993
+
+
+- fix: row Height compute for axis
+
+
+- fix: fix deltaY col number in moveCell()
+- feat: add component update
 
 ## 0.18.1
 Fri, 19 Jan 2024 11:43:14 GMT

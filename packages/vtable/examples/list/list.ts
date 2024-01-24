@@ -332,6 +332,9 @@ export function createTable() {
   tableInstance.on('change_cell_value', arg => {
     console.log(arg);
   });
+  setTimeout(() => {
+    tableInstance.addRecord({ id: 333 }, 6);
+  }, 3000);
   // tableInstance.on('sort_click', args => {
   //   tableInstance.updateSortState(
   //     {

@@ -1,4 +1,4 @@
-import type { IEventTarget } from '@src/vrender';
+import type { IEventTarget, INode } from '@src/vrender';
 import { Gesture, type FederatedPointerEvent } from '@src/vrender';
 import type {
   ListTableAPI,
@@ -625,6 +625,7 @@ export function bindTableGroupListener(eventManager: EventManager) {
       // 如果是鼠标点击到canvas空白区域 则取消选中状态
       !table.eventManager.isDraging &&
       target &&
+      target.isDescendantsOf(table.scenegraph.stage) && //防止已经被删除掉了
       !target.isDescendantsOf(table.scenegraph.tableGroup)
       // &&
       // (target as any) !== table.scenegraph.tableGroup &&

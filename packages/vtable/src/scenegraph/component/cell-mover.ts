@@ -150,4 +150,23 @@ export class CellMover {
       this.columnMoverBack.setAttribute('y', backY);
     }
   }
+
+  updateStyle() {
+    const columnMoverLineWidth = this.table.theme.dragHeaderSplitLine.lineWidth;
+    const columnMoverLineColor = this.table.theme.dragHeaderSplitLine.lineColor;
+    const columnMoverShadowBlockColor = this.table.theme.dragHeaderSplitLine.shadowBlockColor;
+
+    this.columnMoverLabel.setAttributes({
+      fill: columnMoverLineColor as string
+    });
+    this.columnMoverLine.setAttributes({
+      stroke: columnMoverLineColor as string,
+      lineWidth: columnMoverLineWidth as number
+    });
+
+    // 列顺序调整阴影块
+    this.columnMoverBack.setAttributes({
+      fill: columnMoverShadowBlockColor
+    });
+  }
 }

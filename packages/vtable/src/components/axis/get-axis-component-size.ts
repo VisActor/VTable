@@ -85,7 +85,7 @@ export function computeAxisComponentWidth(config: ICellAxisOption, table: BaseTa
     titleWidth += attribute.title.space ?? 4;
   }
 
-  return tickWidth + labelWidth + titleWidth + 2; // 2 is buffer
+  return tickWidth + labelWidth + titleWidth + 1; // 2 is buffer
 }
 
 /**
@@ -170,7 +170,7 @@ export function computeAxisComponentHeight(config: ICellAxisOption, table: BaseT
     titleHeight += attribute.title.space ?? 4;
   }
 
-  return tickHeight + labelHeight + titleHeight + 2; // 2 is buffer
+  return tickHeight + labelHeight + titleHeight + 1; // 2 is buffer
 }
 
 // 保留一位有效数字
