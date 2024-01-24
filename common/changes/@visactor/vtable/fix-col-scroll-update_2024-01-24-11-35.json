@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vtable",
+      "comment": "fix: fix deltaY col number in moveCell()",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vtable"
+}
