@@ -1857,6 +1857,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
       // disableRowHeaderColumnResize,
       columnResizeMode,
       dragHeaderMode,
+
       // scrollBar,
       showFrozenIcon,
       allowFrozenColCount,
@@ -3061,6 +3062,12 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
    */
   _canDragHeaderPosition(col: number, row: number): boolean {
     if (this.isHeader(col, row) && this.stateManager.isSelected(col, row)) {
+      if (
+        this.internalProps.frozenColDragHeaderMode === 'disabled' &&
+        (this.isFrozenColumn(col) || this.isRightFrozenColumn(col))
+      ) {
+        return false;
+      }
       const selectRange = this.stateManager.select.ranges[0];
       //判断是否整行或者整列选中
       if (this.isColumnHeader(col, row)) {
