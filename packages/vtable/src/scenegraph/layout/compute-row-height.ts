@@ -277,7 +277,16 @@ export function computeRowsHeight(
         // table.scenegraph.updateRowHeight(row, newRowHeight - oldRowHeights[row], true);
       }
     }
-    for (let row = 0; row < table.rowCount; row++) {
+
+    const updateRowStart = table.scenegraph.proxy.rowStart;
+    let updateRowEnd = table.scenegraph.proxy.rowEnd;
+    if (
+      table.heightMode === 'adaptive' ||
+      (table.autoFillHeight && table.getAllRowsHeight() <= table.tableNoFrameHeight)
+    ) {
+      updateRowEnd = table.rowCount - 1;
+    }
+    for (let row = updateRowStart; row <= updateRowEnd; row++) {
       const newRowHeight = table.getRowHeight(row);
       if (newRowHeight !== oldRowHeights[row]) {
         // update the row height in scenegraph

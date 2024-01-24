@@ -34,7 +34,7 @@ import { moveSelectingRangeComponentsToSelectedRangeComponents } from './select/
 import { deleteAllSelectBorder, deleteLastSelectedRangeComponents } from './select/delete-select-border';
 import { updateRow } from './layout/update-row';
 import { handleTextStick } from './stick-text';
-import { computeRowsHeight } from './layout/compute-row-height';
+import { computeRowHeight, computeRowsHeight } from './layout/compute-row-height';
 import { emptyGroup } from './utils/empty-group';
 import { dealBottomFrozen, dealFrozen, dealRightFrozen, resetFrozen } from './layout/frozen';
 import { updateChartSize, updateChartState } from './refresh-node/update-chart';
@@ -60,6 +60,7 @@ import {
 import { Env } from '../tools/env';
 import { createCornerCell } from './style/corner-cell';
 import { updateCol } from './layout/update-col';
+import { deduplication } from '../tools/util';
 // import { contextModule } from './context/module';
 
 registerForVrender();
@@ -937,11 +938,9 @@ export class Scenegraph {
   }
 
   updateRowHeight(row: number, detaY: number, skipTableHeightMap?: boolean) {
-    if (row >= this.proxy.rowStart && row <= this.proxy.rowEnd) {
-      detaY = Math.round(detaY);
-      updateRowHeight(this, row, detaY, skipTableHeightMap);
-      this.updateContainerHeight(row, detaY);
-    }
+    detaY = Math.round(detaY);
+    updateRowHeight(this, row, detaY, skipTableHeightMap);
+    this.updateContainerHeight(row, detaY);
   }
   updateRowsHeight(rows: number[], detaYs: number[], skipTableHeightMap?: boolean) {
     for (let i = 0; i < rows.length; i++) {
@@ -1022,7 +1021,12 @@ export class Scenegraph {
     if (oldHeight === height) {
       return;
     }
-    this.updateRowHeight(row, height - oldHeight);
+    if (
+      (row >= this.proxy.rowStart && row <= this.proxy.rowEnd) ||
+      (row >= this.table.rowCount - this.table.bottomFrozenRowCount && row <= this.table.rowCount - 1)
+    ) {
+      this.updateRowHeight(row, height - oldHeight);
+    }
     this.table._clearRowRangeHeightsMap(row);
   }
 
@@ -1648,14 +1652,35 @@ export class Scenegraph {
   }
 
   updateRow(removeCells: CellAddress[], addCells: CellAddress[], updateCells: CellAddress[] = []) {
+    const addRows = deduplication(addCells.map(cell => cell.row)).sort((a, b) => a - b);
+    const updateRows = deduplication(updateCells.map(cell => cell.row)).sort((a, b) => a - b);
+    console.log('updateRow', addRows, updateRows);
     // add or move rows
     updateRow(removeCells, addCells, updateCells, this.table);
 
     // update column width and row height
     this.recalculateColWidths();
 
-    this.recalculateRowHeights();
+    // this.recalculateRowHeights();
 
+    if (
+      this.table.heightMode === 'adaptive' ||
+      (this.table.autoFillHeight && this.table.getAllRowsHeight() <= this.table.tableNoFrameHeight)
+    ) {
+      this.table.scenegraph.recalculateRowHeights();
+    } else if (this.table.heightMode === 'autoHeight') {
+      for (let i = 0; i < updateRows.length; i++) {
+        const row = updateRows[i];
+        const oldHeight = this.table.getRowHeight(row);
+        const newHeight = computeRowHeight(row, 0, this.table.colCount - 1, this.table);
+        if (
+          (row >= this.proxy.rowStart && row <= this.proxy.rowEnd) ||
+          (row >= this.table.rowCount - this.table.bottomFrozenRowCount && row <= this.table.rowCount - 1)
+        ) {
+          this.table.scenegraph.updateRowHeight(row, newHeight - oldHeight);
+        }
+      }
+    }
     // check frozen status
     this.table.stateManager.checkFrozen();
 

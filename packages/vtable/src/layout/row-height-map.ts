@@ -169,7 +169,7 @@ export class NumberRangeMap {
 
   // add and reorder
   insert(position: number, value?: number) {
-    const lastIndex = this.getLastIndex();
+    const lastIndex = this.getLastIndex() + 1;
     this.adjustOrder(position, position + 1, lastIndex - position);
     if (isValid(value)) {
       this.put(position, value);
