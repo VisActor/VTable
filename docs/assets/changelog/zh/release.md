@@ -1,3 +1,26 @@
+# v0.18.2
+
+2024-01-25
+
+
+**🆕 新增功能**
+
+- **@visactor/vtable**: add component update
+
+**🐛 功能修复**
+
+- **@visactor/vtable**: fix rowHeaderGroup attribute y when has no colHeaderGroup [#971](https://github.com/VisActor/VTable/issues/971)
+- **@visactor/vtable**:  transpose bottomFrozenRow cell layout error [#978](https://github.com/VisActor/VTable/issues/978)
+- **@visactor/vtable**: passte value to last row occur error [#979](https://github.com/VisActor/VTable/issues/979)
+- **@visactor/vtable**: use updateColumns api click state not right [#975](https://github.com/VisActor/VTable/issues/975)
+- **@visactor/vtable**: record has nan string value pivotchart cell value parse handle this case [#993](https://github.com/VisActor/VTable/issues/993)
+- **@visactor/vtable**: row Height compute for axis
+- **@visactor/vtable**: fix deltaY col number in moveCell()
+
+
+
+[更多详情请查看 v0.18.2](https://github.com/VisActor/VTable/releases/tag/v0.18.2)
+
 # v0.18.0
 
 2024-01-19
