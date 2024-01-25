@@ -92,4 +92,11 @@ export class EditManeger {
       this.editingEditor = null;
     }
   }
+
+  cancelEdit() {
+    if (this.editingEditor) {
+      this.editingEditor.exit();
+      this.editingEditor = null;
+    }
+  }
 }
