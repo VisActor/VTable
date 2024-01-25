@@ -1,23 +1,30 @@
-# v0.18.2
+# v0.18.3
 
 2024-01-25
 
+**🐛 功能修复**
+
+- **@visactor/vtable**: 点击单元格外部取消选择状态
+
+[更多详情请查看 v0.18.3](https://github.com/VisActor/VTable/releases/tag/v0.18.3)
+
+# v0.18.2
+
+2024-01-24
 
 **🆕 新增功能**
 
-- **@visactor/vtable**: add component update
+- **@visactor/vtable**: 当调用updateTheme时 组件更新逻辑
 
 **🐛 功能修复**
 
-- **@visactor/vtable**: fix rowHeaderGroup attribute y when has no colHeaderGroup [#971](https://github.com/VisActor/VTable/issues/971)
-- **@visactor/vtable**:  transpose bottomFrozenRow cell layout error [#978](https://github.com/VisActor/VTable/issues/978)
-- **@visactor/vtable**: passte value to last row occur error [#979](https://github.com/VisActor/VTable/issues/979)
-- **@visactor/vtable**: use updateColumns api click state not right [#975](https://github.com/VisActor/VTable/issues/975)
-- **@visactor/vtable**: record has nan string value pivotchart cell value parse handle this case [#993](https://github.com/VisActor/VTable/issues/993)
-- **@visactor/vtable**: row Height compute for axis
-- **@visactor/vtable**: fix deltaY col number in moveCell()
-
-
+- **@visactor/vtable**: 修复 rowHeaderGroup 属性 y 在没有 colHeaderGroup 时的问题 [#971](https://github.com/VisActor/VTable/issues/971)
+- **@visactor/vtable**: 修复 transpose时，bottomFrozenRow 单元格布局错误 [#978](https://github.com/VisActor/VTable/issues/978)
+- **@visactor/vtable**: 修复值粘贴到最后一行时出现的错误 [#979](https://github.com/VisActor/VTable/issues/979)
+- **@visactor/vtable**: 修复使用 updateColumns api 点击选择状态不正确的问题 [#975](https://github.com/VisActor/VTable/issues/975)
+- **@visactor/vtable**: 修复records中有'NaN'字符串值 pivotchart 单元格值解析处理问题 [#993](https://github.com/VisActor/VTable/issues/993)
+- **@visactor/vtable**: 坐标轴单元格行高度计算逻辑的优化
+- **@visactor/vtable**: 修复在 moveCell() 中 deltaY的问题
 
 [更多详情请查看 v0.18.2](https://github.com/VisActor/VTable/releases/tag/v0.18.2)
 
