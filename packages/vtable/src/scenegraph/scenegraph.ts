@@ -1658,7 +1658,14 @@ export class Scenegraph {
   updateRow(removeCells: CellAddress[], addCells: CellAddress[], updateCells: CellAddress[] = []) {
     const addRows = deduplication(addCells.map(cell => cell.row)).sort((a, b) => a - b);
     const updateRows = deduplication(updateCells.map(cell => cell.row)).sort((a, b) => a - b);
-    console.log('updateRow', addRows, updateRows);
+    //这个值是后续为了autoFillHeight判断逻辑中用到的 判断是否更新前是未填满的情况
+    const isNotFillHeight =
+      this.table.getAllRowsHeight() -
+        [...addRows, ...updateRows].reduce((tolHeight, rowNumber) => {
+          return tolHeight + this.table.getRowHeight(rowNumber);
+        }, 0) <=
+      this.table.tableNoFrameHeight;
+
     // add or move rows
     updateRow(removeCells, addCells, updateCells, this.table);
 
@@ -1669,7 +1676,7 @@ export class Scenegraph {
 
     if (
       this.table.heightMode === 'adaptive' ||
-      (this.table.autoFillHeight && this.table.getAllRowsHeight() <= this.table.tableNoFrameHeight)
+      (this.table.autoFillHeight && (this.table.getAllRowsHeight() <= this.table.tableNoFrameHeight || isNotFillHeight))
     ) {
       this.table.scenegraph.recalculateRowHeights();
     } else if (this.table.heightMode === 'autoHeight') {
