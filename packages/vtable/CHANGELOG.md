@@ -1,6 +1,15 @@
 # Change Log - @visactor/vtable
 
-This log was last generated on Wed, 24 Jan 2024 12:12:36 GMT and should not be manually modified.
+This log was last generated on Thu, 25 Jan 2024 10:27:02 GMT and should not be manually modified.
+
+## 0.18.3
+Thu, 25 Jan 2024 10:27:02 GMT
+
+### Updates
+
+- fix: click outside of cells click cancel select state
+
+
 
 ## 0.18.2
 Wed, 24 Jan 2024 12:12:36 GMT

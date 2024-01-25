@@ -2,6 +2,18 @@
   "name": "@visactor/vtable",
   "entries": [
     {
+      "version": "0.18.3",
+      "tag": "@visactor/vtable_v0.18.3",
+      "date": "Thu, 25 Jan 2024 10:27:02 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "fix: click outside of cells click cancel select state\n\n"
+          }
+        ]
+      }
+    },
+    {
       "version": "0.18.2",
       "tag": "@visactor/vtable_v0.18.2",
       "date": "Wed, 24 Jan 2024 12:12:36 GMT",
