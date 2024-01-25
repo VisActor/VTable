@@ -1997,6 +1997,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     internalProps.title?.release();
     internalProps.layoutMap.release();
     this.scenegraph.clearCells();
+    this.scenegraph.updateComponent();
     this.stateManager.updateOptionSetState();
 
     this._updateSize();
@@ -2507,6 +2508,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     const oldHoverState = { col: this.stateManager.hover.cellPos.col, row: this.stateManager.hover.cellPos.row };
     this.internalProps.theme = themes.of(theme ?? themes.DEFAULT);
     this.options.theme = theme;
+    this.scenegraph.updateComponent();
     this.scenegraph.updateStageBackground();
     this.scenegraph.clearCells();
     this.clearCellStyleCache();
