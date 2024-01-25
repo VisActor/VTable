@@ -2,14 +2,31 @@
 
 2024-01-25
 
-
 **🐛 Bug fix**
 
 - **@visactor/vtable**: click outside of cells click cancel select state
 
-
-
 [more detail about v0.18.3](https://github.com/VisActor/VTable/releases/tag/v0.18.3)
+
+# v0.18.2
+
+2024-01-24
+
+**🆕 New feature**
+
+- **@visactor/vtable**: add component update
+
+**🐛 Bug fix**
+
+- **@visactor/vtable**: fix rowHeaderGroup attribute y when has no colHeaderGroup [#971](https://github.com/VisActor/VTable/issues/971)
+- **@visactor/vtable**:  transpose bottomFrozenRow cell layout error [#978](https://github.com/VisActor/VTable/issues/978)
+- **@visactor/vtable**: passte value to last row occur error [#979](https://github.com/VisActor/VTable/issues/979)
+- **@visactor/vtable**: use updateColumns api click state not right [#975](https://github.com/VisActor/VTable/issues/975)
+- **@visactor/vtable**: record has nan string value pivotchart cell value parse handle this case [#993](https://github.com/VisActor/VTable/issues/993)
+- **@visactor/vtable**: row Height compute for axis
+- **@visactor/vtable**: fix deltaY col number in moveCell()
+
+[more detail about v0.18.2](https://github.com/VisActor/VTable/releases/tag/v0.18.2)
 
 # v0.18.0
 
