@@ -1,3 +1,16 @@
+# v0.18.3
+
+2024-01-25
+
+
+**🐛 Bug fix**
+
+- **@visactor/vtable**: click outside of cells click cancel select state
+
+
+
+[more detail about v0.18.3](https://github.com/VisActor/VTable/releases/tag/v0.18.3)
+
 # v0.18.0
 
 2024-01-19

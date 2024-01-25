@@ -1,3 +1,16 @@
+# v0.18.3
+
+2024-01-25
+
+
+**🐛 功能修复**
+
+- **@visactor/vtable**: click outside of cells click cancel select state
+
+
+
+[更多详情请查看 v0.18.3](https://github.com/VisActor/VTable/releases/tag/v0.18.3)
+
 # v0.18.0
 
 2024-01-19
