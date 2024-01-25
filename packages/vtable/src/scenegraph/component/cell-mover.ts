@@ -141,12 +141,12 @@ export class CellMover {
 
   update(backX: number | undefined, lineX: number | undefined, backY: number | undefined, lineY: number | undefined) {
     if (typeof backX === 'number' && typeof lineX === 'number') {
-      this.columnMoverLabel.setAttribute('x', lineX - this.table.stateManager.scroll.horizontalBarPos);
-      this.columnMoverLine.setAttribute('x', lineX - this.table.stateManager.scroll.horizontalBarPos);
+      this.columnMoverLabel.setAttribute('x', lineX);
+      this.columnMoverLine.setAttribute('x', lineX);
       this.columnMoverBack.setAttribute('x', backX);
     } else if (typeof backY === 'number' && typeof lineY === 'number') {
-      this.columnMoverLabel.setAttribute('y', lineY - this.table.stateManager.scroll.verticalBarPos);
-      this.columnMoverLine.setAttribute('y', lineY - this.table.stateManager.scroll.verticalBarPos);
+      this.columnMoverLabel.setAttribute('y', lineY);
+      this.columnMoverLine.setAttribute('y', lineY);
       this.columnMoverBack.setAttribute('y', backY);
     }
   }
