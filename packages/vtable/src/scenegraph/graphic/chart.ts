@@ -177,11 +177,14 @@ export class Chart extends Group {
     const cellGroup = this.parent as Group;
     const padding = this.attribute.cellPadding;
     const table = (this.stage as any).table as BaseTableAPI;
+
+    const { x1, y1, x2, y2 } = cellGroup.globalAABBBounds;
+
     return {
-      x1: Math.ceil(cellGroup.globalAABBBounds.x1 + padding[3] + table.scrollLeft),
-      x2: Math.ceil(cellGroup.globalAABBBounds.x1 + cellGroup.attribute.width - padding[1] + table.scrollLeft),
-      y1: Math.ceil(cellGroup.globalAABBBounds.y1 + padding[0] + table.scrollTop),
-      y2: Math.ceil(cellGroup.globalAABBBounds.y1 + cellGroup.attribute.height - padding[2] + table.scrollTop)
+      x1: Math.ceil(x1 + padding[3] + table.scrollLeft + (table.options.viewBox?.x1 ?? 0)),
+      x2: Math.ceil(x1 + cellGroup.attribute.width - padding[1] + table.scrollLeft + (table.options.viewBox?.x1 ?? 0)),
+      y1: Math.ceil(y1 + padding[0] + table.scrollTop + (table.options.viewBox?.y1 ?? 0)),
+      y2: Math.ceil(y1 + cellGroup.attribute.height - padding[2] + table.scrollTop + (table.options.viewBox?.y1 ?? 0))
     };
   }
 }
@@ -216,6 +219,11 @@ function getTableBounds(col: number, row: number, table: BaseTableAPI) {
     bodyBound.x1 = tableBound.x1 + table.getFrozenColsWidth();
     bodyBound.x2 = tableBound.x2 - table.getRightFrozenColsWidth();
   }
+
+  bodyBound.x1 = bodyBound.x1 + (table.options.viewBox?.x1 ?? 0);
+  bodyBound.x2 = bodyBound.x2 + (table.options.viewBox?.x1 ?? 0);
+  bodyBound.y1 = bodyBound.y1 + (table.options.viewBox?.y1 ?? 0);
+  bodyBound.y2 = bodyBound.y2 + (table.options.viewBox?.y1 ?? 0);
 
   return bodyBound;
 }

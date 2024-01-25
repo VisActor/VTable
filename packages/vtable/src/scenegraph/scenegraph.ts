@@ -123,7 +123,11 @@ export class Scenegraph {
     setPoptipTheme(this.table.theme.textPopTipStyle);
     let width;
     let height;
-    if (Env.mode === 'node') {
+    if (table.options.canvas && table.options.viewBox) {
+      vglobal.setEnv('browser');
+      width = table.options.viewBox.x2 - table.options.viewBox.x1;
+      height = table.options.viewBox.y2 - table.options.viewBox.y1;
+    } else if (Env.mode === 'node') {
       vglobal.setEnv('node', table.options.modeParams);
       width = table.canvasWidth;
       height = table.canvasHeight;
@@ -144,9 +148,12 @@ export class Scenegraph {
       afterRender: () => {
         this.table.fireListeners('after_render', null);
         // console.trace('after_render');
-      }
+      },
       // event: { clickInterval: 400 }
       // autoRender: true
+
+      canvasControled: !table.options.canvas,
+      viewBox: table.options.viewBox
     });
 
     this.stage.defaultLayer.setTheme({

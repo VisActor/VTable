@@ -13,6 +13,10 @@ export const menus = [
       {
         path: 'debug',
         name: 'site'
+      },
+      {
+        path: 'debug',
+        name: 'viewbox'
       }
     ]
   },

@@ -57,6 +57,7 @@ import { HeaderHelper } from '../header-helper/header-helper';
 import type { PivotHeaderLayoutMap } from '../layout/pivot-header-layout';
 import { TooltipHandler } from '../components/tooltip/TooltipHandler';
 import type { CachedDataSource, DataSource } from '../data';
+import type { IBoundsLike } from '@visactor/vutils';
 import { AABBBounds, isNumber, isBoolean, isFunction, type ITextSize, isValid } from '@visactor/vutils';
 import { textMeasure } from '../scenegraph/utils/text-measure';
 import { getProp } from '../scenegraph/utils/get-prop';
@@ -155,7 +156,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
   _chartEventMap: Record<string, { query?: any; callback: AnyFunction }[]> = {};
   constructor(container: HTMLElement, options: BaseTableConstructorOptions = {}) {
     super();
-    if (!container && options.mode !== 'node') {
+    if (!container && options.mode !== 'node' && !options.canvas) {
       throw new Error("vtable's container is undefined");
     }
     const {
@@ -235,7 +236,12 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     //设置是否自动撑开的配置
     // internalProps.autoRowHeight = options.autoRowHeight ?? false;
 
-    if (Env.mode !== 'node') {
+    if (this.options.canvas) {
+      internalProps.element = this.options.canvas.parentElement;
+      internalProps.focusControl = new FocusInput(this, internalProps.element);
+      internalProps.canvas = this.options.canvas;
+      internalProps.context = internalProps.canvas.getContext('2d')!;
+    } else if (Env.mode !== 'node') {
       internalProps.element = createRootElement(this.padding);
       internalProps.focusControl = new FocusInput(this, internalProps.element);
       internalProps.canvas = document.createElement('canvas');
@@ -772,8 +778,22 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
 
     let widthP = 0;
     let heightP = 0;
+    this.tableX = 0;
+    this.tableY = 0;
 
-    if (Env.mode === 'browser') {
+    if (this.options.canvas && this.options.viewBox) {
+      widthP = this.options.viewBox.x2 - this.options.viewBox.x1;
+      heightP = this.options.viewBox.y2 - this.options.viewBox.y1;
+      // this.tableX = this.options.viewBox.x1;
+      // this.tableY = this.options.viewBox.y1;
+      if (this?.scenegraph?.stage) {
+        if (this.options.viewBox) {
+          (this.scenegraph.stage as any).setViewBox(this.options.viewBox, false);
+        } else {
+          this.scenegraph.stage.resize(widthP, heightP);
+        }
+      }
+    } else if (Env.mode === 'browser') {
       const element = this.getElement();
 
       const width1 = element.parentElement?.offsetWidth ?? 1 - 1;
@@ -810,13 +830,23 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
       //考虑表格整体边框的问题
       const lineWidths = toBoxArray(this.internalProps.theme.frameStyle?.borderLineWidth ?? [null]);
       const shadowWidths = toBoxArray(this.internalProps.theme.frameStyle?.shadowBlur ?? [0]);
-      this.tableX = (lineWidths[3] ?? 0) + (shadowWidths[3] ?? 0);
-      this.tableY = (lineWidths[0] ?? 0) + (shadowWidths[0] ?? 0);
+      this.tableX += (lineWidths[3] ?? 0) + (shadowWidths[3] ?? 0);
+      this.tableY += (lineWidths[0] ?? 0) + (shadowWidths[0] ?? 0);
       this.tableNoFrameWidth =
         width - ((lineWidths[1] ?? 0) + (shadowWidths[1] ?? 0)) - ((lineWidths[3] ?? 0) + (shadowWidths[3] ?? 0));
       this.tableNoFrameHeight =
         height - ((lineWidths[0] ?? 0) + (shadowWidths[0] ?? 0)) - ((lineWidths[2] ?? 0) + (shadowWidths[2] ?? 0));
+    } else {
+      this.tableX += 0;
+      this.tableY += 0;
+      this.tableNoFrameWidth = width;
+      this.tableNoFrameHeight = height;
     }
+  }
+
+  updateViewBox(newViewBox: IBoundsLike) {
+    this.options.viewBox = newViewBox;
+    this.resize();
   }
 
   get rowHierarchyType(): 'grid' | 'tree' {
