@@ -1,6 +1,6 @@
 ---
 category: examples
-group: Cell Type In PivotTable
+group: Cell Type
 title: 透视表集成图表
 cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/chart.png
 link: '../guide/cell_type/chart'

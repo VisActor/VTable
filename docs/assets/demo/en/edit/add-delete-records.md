@@ -2,7 +2,7 @@
 category: examples
 group: edit
 title: add or delete records
-cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/performance.gif
+cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/add-delete-records.png
 ---
 
 # Add and delete data dynamically
