@@ -1,4 +1,4 @@
-import { isValid } from '@visactor/vutils';
+import { cloneDeep, isValid } from '@visactor/vutils';
 import { NumberMap } from '../tools/NumberMap';
 import { IndicatorDimensionKeyPlaceholder } from '../tools/global';
 import type { Either } from '../tools/helper';
@@ -26,6 +26,7 @@ interface IPivotLayoutBaseHeadNode {
   // indicatorKey?: string;
   value: string;
   children: IPivotLayoutHeadNode[] | undefined;
+  columns?: any; //兼容ListTable情况 simple-header-layout中增加了columnTree
   level: number;
   /** 节点跨占层数 如汇总节点跨几层维度 */
   levelSpan: number;
@@ -123,10 +124,11 @@ export class DimensionTree {
       }
     }
     let size = node.dimensionKey ? (this.sizeIncludeParent ? 1 : 0) : 0;
+    const children = node.children || node.columns;
     //平铺展示 分析所有层级
     if (this.hierarchyType === 'grid') {
-      if (node.children?.length >= 1) {
-        node.children.forEach(n => {
+      if (children?.length >= 1) {
+        children.forEach((n: any) => {
           n.level = (node.level ?? 0) + 1;
           size += this.setTreeNode(n, size, node);
         });
@@ -134,29 +136,29 @@ export class DimensionTree {
         size = 1;
         // re.totalLevel = Math.max(re.totalLevel, (node.level ?? -1) + 1);
       }
-    } else if (node.hierarchyState === HierarchyState.expand && node.children?.length >= 1) {
+    } else if (node.hierarchyState === HierarchyState.expand && children?.length >= 1) {
       //树形展示 有子节点 且下一层需要展开
-      node.children.forEach(n => {
+      children.forEach((n: any) => {
         n.level = (node.level ?? 0) + 1;
         size += this.setTreeNode(n, size, node);
       });
-    } else if (node.hierarchyState === HierarchyState.collapse && node.children?.length >= 1) {
+    } else if (node.hierarchyState === HierarchyState.collapse && children?.length >= 1) {
       //树形展示 有子节点 且下一层不需要展开
-      node.children.forEach(n => {
+      children.forEach((n: any) => {
         n.level = (node.level ?? 0) + 1;
         this.setTreeNode(n, size, node);
       });
-    } else if (!node.hierarchyState && node.level + 1 < this.rowExpandLevel && node.children?.length >= 1) {
+    } else if (!node.hierarchyState && node.level + 1 < this.rowExpandLevel && children?.length >= 1) {
       //树形展示 有子节点 且下一层需要展开
       node.hierarchyState = HierarchyState.expand;
-      node.children.forEach(n => {
+      children.forEach((n: any) => {
         n.level = (node.level ?? 0) + 1;
         size += this.setTreeNode(n, size, node);
       });
-    } else if (node.children?.length >= 1) {
+    } else if (children?.length >= 1) {
       //树形展示 有子节点 且下一层不需要展开
       node.hierarchyState = HierarchyState.collapse;
-      node.children.forEach(n => {
+      children.forEach((n: any) => {
         n.level = (node.level ?? 0) + 1;
         this.setTreeNode(n, size, node);
       });
@@ -292,17 +294,15 @@ export class DimensionTree {
           targetSubIndex = subIndex;
         }
       }
-
-      if (node.children && node.level < level) {
+      const children = node.children || node.columns;
+      if (children && node.level < level) {
         parNode = node;
-        for (let i = 0; i < node.children.length; i++) {
+        for (let i = 0; i < children.length; i++) {
           if (
-            (sourceIndex >= node.children[i].startInTotal &&
-              sourceIndex <= node.children[i].startInTotal + node.children[i].size) ||
-            (targetIndex >= node.children[i].startInTotal &&
-              targetIndex <= node.children[i].startInTotal + node.children[i].size)
+            (sourceIndex >= children[i].startInTotal && sourceIndex <= children[i].startInTotal + children[i].size) ||
+            (targetIndex >= children[i].startInTotal && targetIndex <= children[i].startInTotal + children[i].size)
           ) {
-            findTargetNode(node.children[i], i);
+            findTargetNode(children[i], i);
           }
         }
       }
@@ -310,9 +310,31 @@ export class DimensionTree {
     findTargetNode(this.tree, 0);
 
     //对parNode子节点位置进行移位【根据sourceSubIndex和targetSubIndex】
-    const sourceColumns = parNode.children.splice(sourceSubIndex, 1);
+    const children = parNode.children || parNode.columns;
+    const sourceColumns = children.splice(sourceSubIndex, 1);
     sourceColumns.unshift(targetSubIndex as any, 0 as any);
-    Array.prototype.splice.apply(parNode.children, sourceColumns);
+    Array.prototype.splice.apply(children, sourceColumns);
+  }
+  /** 获取纯净树结构 没有level size index这些属性 */
+  getCopiedTree() {
+    const children = cloneDeep(this.tree.children);
+    clearNode(children);
+    function clearNode(children: any) {
+      for (let i = 0; i < children.length; i++) {
+        const node = children[i];
+        delete node.level;
+        delete node.startIndex;
+        delete node.id;
+        delete node.levelSpan;
+        delete node.size;
+        delete node.startInTotal;
+        const childrenNew = node.children || node.columns;
+        if (childrenNew) {
+          clearNode(childrenNew);
+        }
+      }
+    }
+    return children;
   }
 }
 

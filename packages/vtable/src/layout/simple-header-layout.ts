@@ -12,6 +12,7 @@ import type {
   WidthData
 } from '../ts-types/list-table/layout-map/api';
 import { checkHasChart, getChartDataId } from './chart-helper/get-chart-spec';
+import { DimensionTree } from './pivot-layout-helper';
 // import { EmptyDataCache } from './utils';
 
 // let seqId = 0;
@@ -22,6 +23,8 @@ export class SimpleHeaderLayoutMap implements LayoutMapAPI {
   // private _headerObjectFieldKey: { [key in string]: HeaderData };
   private _headerCellIds: number[][];
   private _columns: ColumnData[];
+  /** 后期加的 对应pivot-header-layout 中的columnDimensionTree 为了排序后获取到排序后的columns */
+  columnTree: DimensionTree;
   readonly bodyRowSpanCount: number = 1;
   //透视表中树形结构使用 这里为了table逻辑不报错
   // rowHierarchyIndent?: number = 0;
@@ -40,6 +43,7 @@ export class SimpleHeaderLayoutMap implements LayoutMapAPI {
     this._columns = [];
     this._headerCellIds = [];
     this.hierarchyIndent = hierarchyIndent ?? 20;
+    this.columnTree = new DimensionTree(columns as any, { seqId: 0 }); //seqId这里没有利用上 所有顺便传了0
     this._headerObjects = this._addHeaders(0, columns, []);
     this._headerObjectMap = this._headerObjects.reduce((o, e) => {
       o[e.id as number] = e;
@@ -833,7 +837,9 @@ export class SimpleHeaderLayoutMap implements LayoutMapAPI {
         //将_columns的列定义调整位置 同调整_headerCellIds逻辑
         const sourceColumns = this._columns.splice(sourceCellRange.start.col, moveSize);
         sourceColumns.unshift(targetIndex as any, 0 as any);
-        Array.prototype.splice.apply(this._columns, sourceColumns);
+
+        // 对表头columnTree调整节点位置
+        this.columnTree.movePosition(source.row, sourceCellRange.start.col, targetIndex);
 
         this._cellRangeMap = new Map();
         return {
@@ -870,6 +876,9 @@ export class SimpleHeaderLayoutMap implements LayoutMapAPI {
         const sourceColumns = this._columns.splice(sourceCellRange.start.row, moveSize);
         sourceColumns.unshift(targetIndex as any, 0 as any);
         Array.prototype.splice.apply(this._columns, sourceColumns);
+
+        // 对表头columnTree调整节点位置
+        this.columnTree.movePosition(source.col, sourceCellRange.start.row, targetIndex);
 
         this._cellRangeMap = new Map();
         return {
