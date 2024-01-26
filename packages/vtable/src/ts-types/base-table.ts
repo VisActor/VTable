@@ -688,6 +688,11 @@ export interface BaseTableAPI {
   getBodyIndexByTableIndex: (col: number, row: number) => CellAddress;
   /** 根据body部分的列索引及行索引，获取单元格的行列号 */
   getTableIndexByBodyIndex: (col: number, row: number) => CellAddress;
+  /**
+   * 滚动到具体某个单元格位置
+   * @param cellAddr 要滚动到的单元格位置
+   */
+  scrollToCell: (cellAddr: { col?: number; row?: number }) => void;
 }
 export interface ListTableProtected extends IBaseTableProtected {
   /** 表格数据 */

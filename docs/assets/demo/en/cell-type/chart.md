@@ -1,6 +1,6 @@
 ---
 category: examples
-group: Cell Type In PivotTable
+group: Cell Type
 title: Chart Type Use in PivotTable
 cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/chart.png
 link: '../guide/cell_type/chart'
