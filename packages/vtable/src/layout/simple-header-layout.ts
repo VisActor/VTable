@@ -837,6 +837,7 @@ export class SimpleHeaderLayoutMap implements LayoutMapAPI {
         //将_columns的列定义调整位置 同调整_headerCellIds逻辑
         const sourceColumns = this._columns.splice(sourceCellRange.start.col, moveSize);
         sourceColumns.unshift(targetIndex as any, 0 as any);
+        Array.prototype.splice.apply(this._columns, sourceColumns);
 
         // 对表头columnTree调整节点位置
         this.columnTree.movePosition(source.row, sourceCellRange.start.col, targetIndex);
