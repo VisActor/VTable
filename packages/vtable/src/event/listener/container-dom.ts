@@ -16,12 +16,10 @@ export function bindContainerDomListener(eventManager: EventManager) {
       e.stopPropagation();
     }
   });
-
   handler.on(table.getElement(), 'blur', (e: MouseEvent) => {
     eventManager.dealTableHover();
     // eventManager.dealTableSelect();
   });
-
   handler.on(table.getElement(), 'wheel', (e: WheelEvent) => {
     handleWhell(e, stateManager);
   });
@@ -149,7 +147,6 @@ export function bindContainerDomListener(eventManager: EventManager) {
       table.fireListeners(TABLE_EVENT_TYPE.KEYDOWN, cellsEvent);
     }
   });
-
   handler.on(table.getElement(), 'copy', (e: KeyboardEvent) => {
     if (table.keyboardOptions?.copySelected) {
       const data = table.getCopyValue();
@@ -203,11 +200,13 @@ export function bindContainerDomListener(eventManager: EventManager) {
     }
   });
 
-  handler.on(table.getContainer(), 'resize', e => {
-    if (e.width === 0 && e.height === 0) {
-      // 临时绕行解决因为display设置为none产生的问题
-      return;
-    }
-    table.resize();
-  });
+  if (!table.options.canvas) {
+    handler.on(table.getContainer(), 'resize', e => {
+      if (e.width === 0 && e.height === 0) {
+        // 临时绕行解决因为display设置为none产生的问题
+        return;
+      }
+      table.resize();
+    });
+  }
 }

@@ -369,6 +369,8 @@ export interface BaseTableConstructorOptions {
 
   canvas?: HTMLCanvasElement;
   viewBox?: IBoundsLike;
+  chartOption?: any;
+  disableInteraction?: boolean;
 }
 export interface BaseTableAPI {
   /** 表格的行数 */

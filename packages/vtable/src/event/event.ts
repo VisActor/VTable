@@ -50,7 +50,7 @@ export class EventManager {
 
   constructor(table: BaseTableAPI) {
     this.table = table;
-    if (Env.mode === 'node') {
+    if (Env.mode === 'node' || table.options.disableInteraction) {
       return;
     }
     this.bindOuterEvent();

@@ -1,6 +1,6 @@
 import type { GraphicType, IGroupGraphicAttribute } from '@src/vrender';
 import { genNumberType, Group } from '@src/vrender';
-import { Bounds } from '@visactor/vutils';
+import { Bounds, merge } from '@visactor/vutils';
 import type { BaseTableAPI } from '../../ts-types/base-table';
 import type { PivotChart } from '../../PivotChart';
 
@@ -22,6 +22,7 @@ interface IChartGraphicAttribute extends IGroupGraphicAttribute {
   //   x2: number;
   //   y2: number;
   // };
+  tableChartOption: any;
 }
 
 export const CHART_NUMBER_TYPE = genNumberType();
@@ -40,25 +41,28 @@ export class Chart extends Group {
 
     // 创建chart
     if (!params.chartInstance) {
-      params.chartInstance = this.chartInstance = new params.ClassType(params.spec, {
-        renderCanvas: params.canvas,
-        mode: this.attribute.mode === 'node' ? 'node' : 'desktop-browser',
-        modeParams: this.attribute.modeParams,
-        canvasControled: false,
-        viewBox: { x1: 0, x2: 0, y1: 0, y2: 0 },
-        dpr: params.dpr,
-        // viewBox: params.viewBox,
-        // viewBox: this.getViewBox(),
-        // viewBox: {
-        //   x1: params.cellPadding[3],
-        //   x2: params.width - params.cellPadding[1],
-        //   y1: params.cellPadding[0],
-        //   y2: params.height - params.cellPadding[2]
-        // },
-        interactive: false,
-        animation: false,
-        autoFit: false
-      });
+      params.chartInstance = this.chartInstance = new params.ClassType(
+        params.spec,
+        merge({}, this.attribute.tableChartOption, {
+          renderCanvas: params.canvas,
+          mode: this.attribute.mode === 'node' ? 'node' : 'desktop-browser',
+          modeParams: this.attribute.modeParams,
+          canvasControled: false,
+          viewBox: { x1: 0, x2: 0, y1: 0, y2: 0 },
+          dpr: params.dpr,
+          // viewBox: params.viewBox,
+          // viewBox: this.getViewBox(),
+          // viewBox: {
+          //   x1: params.cellPadding[3],
+          //   x2: params.width - params.cellPadding[1],
+          //   y1: params.cellPadding[0],
+          //   y2: params.height - params.cellPadding[2]
+          // },
+          interactive: false,
+          animation: false,
+          autoFit: false
+        })
+      );
       this.chartInstance.renderSync();
     } else {
       this.chartInstance = params.chartInstance;
@@ -94,35 +98,38 @@ export class Chart extends Group {
       y1: y1 - table.scrollTop,
       y2: y2 - table.scrollTop
     });
-    this.activeChartInstance = new this.attribute.ClassType(this.attribute.spec, {
-      // disableDirtyBounds: true,
-      renderCanvas: this.attribute.canvas,
-      mode: 'desktop-browser',
-      canvasControled: false,
-      viewBox: {
-        x1: x1 - table.scrollLeft,
-        x2: x2 - table.scrollLeft,
-        y1: y1 - table.scrollTop,
-        y2: y2 - table.scrollTop
-      },
-      dpr: table.internalProps.pixelRatio,
-      animation: false,
-      interactive: true,
-      autoFit: false, //控制当容器变化大小时vchart实例不应响应事件进行内部处理
-      beforeRender: (stage: any) => {
-        const ctx = stage.window.getContext();
-        ctx.inuse = true;
-        ctx.clearMatrix();
-        ctx.setTransformForCurrent(true);
-        ctx.beginPath();
-        ctx.rect(clipBound.x1, clipBound.y1, clipBound.x2 - clipBound.x1, clipBound.y2 - clipBound.y1);
-        ctx.clip();
-      },
-      afterRender(stage: any) {
-        const ctx = stage.window.getContext();
-        ctx.inuse = false;
-      }
-    });
+    this.activeChartInstance = new this.attribute.ClassType(
+      this.attribute.spec,
+      merge({}, this.attribute.tableChartOption, {
+        // disableDirtyBounds: true,
+        renderCanvas: this.attribute.canvas,
+        mode: 'desktop-browser',
+        canvasControled: false,
+        viewBox: {
+          x1: x1 - table.scrollLeft,
+          x2: x2 - table.scrollLeft,
+          y1: y1 - table.scrollTop,
+          y2: y2 - table.scrollTop
+        },
+        dpr: table.internalProps.pixelRatio,
+        animation: false,
+        interactive: true,
+        autoFit: false, //控制当容器变化大小时vchart实例不应响应事件进行内部处理
+        beforeRender: (stage: any) => {
+          const ctx = stage.window.getContext();
+          ctx.inuse = true;
+          ctx.clearMatrix();
+          ctx.setTransformForCurrent(true);
+          ctx.beginPath();
+          ctx.rect(clipBound.x1, clipBound.y1, clipBound.x2 - clipBound.x1, clipBound.y2 - clipBound.y1);
+          ctx.clip();
+        },
+        afterRender(stage: any) {
+          const ctx = stage.window.getContext();
+          ctx.inuse = false;
+        }
+      })
+    );
     // this.activeChartInstance.updateData('data', this.attribute.data);
     this.activeChartInstance.renderSync();
 

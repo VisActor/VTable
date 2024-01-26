@@ -238,6 +238,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
 
     if (this.options.canvas) {
       internalProps.element = this.options.canvas.parentElement;
+      internalProps.element.style.position = 'relative';
       internalProps.focusControl = new FocusInput(this, internalProps.element);
       internalProps.canvas = this.options.canvas;
       internalProps.context = internalProps.canvas.getContext('2d')!;
@@ -1647,6 +1648,8 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     const visibleRect = this.getVisibleRect();
     rect.offsetLeft(this.tableX - visibleRect.left);
     rect.offsetTop(this.tableY - visibleRect.top);
+    rect.offsetLeft(this.options.viewBox?.x1 ?? 0);
+    rect.offsetTop(this.options.viewBox?.y1 ?? 0);
     return rect;
   }
 
@@ -1853,7 +1856,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     this.scenegraph.proxy.release();
 
     const { parentElement } = internalProps.element;
-    if (parentElement) {
+    if (parentElement && !this.options.canvas) {
       parentElement.removeChild(internalProps.element);
     }
 
@@ -2145,8 +2148,10 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     const originHeight = this.canvas.offsetHeight || currentHeight;
     const heightRatio = currentHeight / originHeight;
 
-    const x = (clientX - rect.left) / widthRatio + (isAddScroll ? table.scrollLeft : 0);
-    const y = (clientY - rect.top) / heightRatio + (isAddScroll ? table.scrollTop : 0);
+    const x =
+      (clientX - rect.left) / widthRatio + (isAddScroll ? table.scrollLeft : 0) - (this.options.viewBox?.x1 ?? 0);
+    const y =
+      (clientY - rect.top) / heightRatio + (isAddScroll ? table.scrollTop : 0) - (this.options.viewBox?.y1 ?? 0);
     return { x, y, inTable };
   }
   getTheme() {
