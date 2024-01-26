@@ -399,6 +399,30 @@ setRecords(records: Array<any>, sort?: SortState | SortState[]) //** 基本表�
   getCellOverflowText(col: number, row: number) => string | null
 ```
 
+## getCellRect(Function)
+获取单元格在整张表格中的具体位置。
+```
+ /**
+   * 获取单元格的范围 返回值为Rect类型。不考虑是否为合并单元格的情况，坐标从0开始
+   * @param {number} col column index
+   * @param {number} row row index
+   * @returns {Rect}
+   */
+  getCellRect(col: number, row: number): Rect
+```
+
+## getCellRelativeRect(Function)
+获取单元格在整张表格中的具体位置。相对位置是基于表格左上角（滚动情况减去滚动值）
+```
+  /**
+   * 获取的位置是相对表格显示界面的左上角 情况滚动情况 如单元格已经滚出表格上方 则这个单元格的y将为负值
+   * @param {number} col index of column, of the cell
+   * @param {number} row index of row, of the cell
+   * @returns {Rect} the rect of the cell.
+   */
+  getCellRelativeRect(col: number, row: number): Rect
+```
+
 ## getCellHeaderPaths(Function)
 
 获取行列表头的路径
