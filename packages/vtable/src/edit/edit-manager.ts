@@ -8,10 +8,12 @@ export class EditManeger {
   table: BaseTableAPI;
   editingEditor: IEditor;
   editCell: { col: number; row: number };
+
   constructor(table: BaseTableAPI) {
     this.table = table;
     this.bindEvent();
   }
+
   bindEvent() {
     const handler = this.table.internalProps.handler;
     this.table.on(TABLE_EVENT_TYPE.DBLCLICK_CELL, e => {
@@ -48,6 +50,7 @@ export class EditManeger {
       this.completeEdit();
     });
   }
+
   startEditCell(col: number, row: number) {
     //透视表的表头不允许编辑
     if (this.table.isPivotTable() && this.table.isHeader(col, row)) {
@@ -68,34 +71,62 @@ export class EditManeger {
           return;
         }
       }
-      editor.bindSuccessCallback?.(() => {
-        this.completeEdit();
-      });
       this.editingEditor = editor;
       this.editCell = { col, row };
       const dataValue = this.table.getCellOriginValue(col, row);
       const rect = this.table.getCellRangeRelativeRect(this.table.getCellRange(col, row));
-      editor.beginEditing(
-        this.table.getElement(),
-        { rect: { left: rect.left, top: rect.top, width: rect.width, height: rect.height } },
-        dataValue
-      );
+      const referencePosition = { rect: { left: rect.left, top: rect.top, width: rect.width, height: rect.height } };
+
+      // TODO: 添加开发时弃用警告
+      editor.beginEditing?.(this.table.getElement(), referencePosition, dataValue);
+
+      // TODO: 添加开发时弃用警告
+      editor.bindSuccessCallback?.(() => {
+        this.completeEdit();
+      });
+      editor.onStart?.({
+        value: dataValue,
+        endEdit: () => {
+          this.completeEdit();
+        },
+        referencePosition,
+        container: this.table.getElement()
+      });
     }
   }
+
   /** 如果是事件触发调用该接口 请传入原始事件对象 将判断事件对象是否在编辑器本身上面  来处理是否结束编辑 */
-  completeEdit(e?: any) {
-    const target = e?.target;
-    if (this.editingEditor && (!target || (target && !this.editingEditor.targetIsOnEditor(target as HTMLElement)))) {
-      const changedValue = this.editingEditor.getValue();
-      (this.table as ListTableAPI).changeCellValue(this.editCell.col, this.editCell.row, changedValue);
-      this.editingEditor.exit();
-      this.editingEditor = null;
+  completeEdit(e?: Event) {
+    if (!this.editingEditor) {
+      return;
     }
+
+    const target = e?.target as HTMLElement | undefined;
+
+    if (target && this.editingEditor.targetIsOnEditor?.(target)) {
+      // TODO: 添加开发时弃用警告
+      return;
+    }
+
+    if (target && this.editingEditor.onClickElsewhere?.(target)) {
+      return;
+    }
+
+    // TODO: 开发时检查 getValue 是否为方法，如不是则提供警告
+    const changedValue = this.editingEditor.getValue?.();
+    (this.table as ListTableAPI).changeCellValue(this.editCell.col, this.editCell.row, changedValue);
+
+    // TODO: 添加开发时弃用警告
+    this.editingEditor.exit?.();
+    this.editingEditor.onEnd?.();
+    this.editingEditor = null;
   }
 
   cancelEdit() {
     if (this.editingEditor) {
-      this.editingEditor.exit();
+      // TODO: 添加开发时弃用警告
+      this.editingEditor.exit?.();
+      this.editingEditor.onEnd?.();
       this.editingEditor = null;
     }
   }
