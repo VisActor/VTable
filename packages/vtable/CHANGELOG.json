@@ -2,6 +2,18 @@
   "name": "@visactor/vtable",
   "entries": [
     {
+      "version": "0.18.4",
+      "tag": "@visactor/vtable_v0.18.4",
+      "date": "Fri, 26 Jan 2024 09:15:07 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "fix: when click bottomFrozenRow table scroll sometimes #1011\n\n"
+          }
+        ]
+      }
+    },
+    {
       "version": "0.18.3",
       "tag": "@visactor/vtable_v0.18.3",
       "date": "Thu, 25 Jan 2024 10:27:02 GMT",
