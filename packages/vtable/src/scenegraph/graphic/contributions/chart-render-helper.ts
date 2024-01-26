@@ -32,26 +32,6 @@ export function renderChart(chart: Chart) {
     viewBox.y2 = viewBox.y1 + 1;
   }
 
-  axes?.forEach((axis: any, index: number) => {
-    if (axis.type === 'band') {
-      // const chartAxis = chartInstance._chart._components[index];
-      // chartAxis._spec.domain = axis.domain.slice(0);
-      // chartAxis.updateScaleDomain();
-      chartInstance.updateModelSpec({ type: 'axes', index }, { domain: axis.domain.slice(0) }, true);
-    } else {
-      // const chartAxis = chartInstance._chart._components[index];
-      // chartAxis._domain = {
-      //   min: axis.range?.min ?? 0,
-      //   max: axis.range?.max ?? 0
-      // };
-      chartInstance.updateModelSpecSync(
-        { type: 'axes', index },
-        { min: axis.range?.min ?? 0, max: axis.range?.max ?? 0 },
-        true
-      );
-    }
-  });
-
   chartInstance.updateViewBox(
     {
       x1: viewBox.x1 - (chart.getRootNode() as any).table.scrollLeft,
@@ -63,40 +43,74 @@ export function renderChart(chart: Chart) {
     false
   );
 
-  // to be fixed: update state everytimes render, need be fix by vchart
-  const table = (chart.getRootNode() as any).table as BaseTableAPI;
-  (table.internalProps.layoutMap as any)?.updateDataStateToActiveChartInstance?.(chartInstance);
+  const { table } = chart.getRootNode() as any;
 
-  if (typeof dataId === 'string') {
-    chartInstance.updateDataSync(dataId, data ?? []);
-  } else {
-    const dataBatch = [];
-    for (const dataIdStr in dataId) {
-      const dataIdAndField = dataId[dataIdStr];
-      const series = spec.series.find((item: any) => item?.data?.id === dataIdStr);
-      dataBatch.push({
-        id: dataIdStr,
-        values: dataIdAndField
-          ? data?.filter((item: any) => {
-              return item.hasOwnProperty(dataIdAndField);
-            }) ?? []
-          : data ?? [],
-        fields: series?.data?.fields
-      });
-      // 判断是否有updateFullDataSync 木有的话 还是循环调用updateDataSync
-      if (!chartInstance.updateFullDataSync) {
-        chartInstance.updateDataSync(
-          dataIdStr,
-          dataIdAndField
+  let updateSpec = false;
+  if (table.options.specFormat) {
+    const formatResult = table.options.specFormat(chart.attribute.spec);
+    if (formatResult.needFormatSpec && formatResult.spec) {
+      const spec = formatResult.spec;
+      chartInstance.updateSpecSync(spec);
+      updateSpec = true;
+    }
+  }
+
+  if (!updateSpec) {
+    axes?.forEach((axis: any, index: number) => {
+      if (axis.type === 'band') {
+        // const chartAxis = chartInstance._chart._components[index];
+        // chartAxis._spec.domain = axis.domain.slice(0);
+        // chartAxis.updateScaleDomain();
+        chartInstance.updateModelSpec({ type: 'axes', index }, { domain: axis.domain.slice(0) }, true);
+      } else {
+        // const chartAxis = chartInstance._chart._components[index];
+        // chartAxis._domain = {
+        //   min: axis.range?.min ?? 0,
+        //   max: axis.range?.max ?? 0
+        // };
+        chartInstance.updateModelSpecSync(
+          { type: 'axes', index },
+          { min: axis.range?.min ?? 0, max: axis.range?.max ?? 0 },
+          true
+        );
+      }
+    });
+
+    // to be fixed: update state everytimes render, need be fix by vchart
+    (table.internalProps.layoutMap as any)?.updateDataStateToActiveChartInstance?.(chartInstance);
+
+    if (typeof dataId === 'string') {
+      chartInstance.updateDataSync(dataId, data ?? []);
+    } else {
+      const dataBatch = [];
+      for (const dataIdStr in dataId) {
+        const dataIdAndField = dataId[dataIdStr];
+        const series = spec.series.find((item: any) => item?.data?.id === dataIdStr);
+        dataBatch.push({
+          id: dataIdStr,
+          values: dataIdAndField
             ? data?.filter((item: any) => {
                 return item.hasOwnProperty(dataIdAndField);
               }) ?? []
-            : data ?? []
-        );
+            : data ?? [],
+          fields: series?.data?.fields
+        });
+        // 判断是否有updateFullDataSync 木有的话 还是循环调用updateDataSync
+        if (!chartInstance.updateFullDataSync) {
+          chartInstance.updateDataSync(
+            dataIdStr,
+            dataIdAndField
+              ? data?.filter((item: any) => {
+                  return item.hasOwnProperty(dataIdAndField);
+                }) ?? []
+              : data ?? []
+          );
+        }
       }
+      chartInstance.updateFullDataSync?.(dataBatch);
     }
-    chartInstance.updateFullDataSync?.(dataBatch);
   }
+
   const sg = chartInstance.getStage();
   cacheStageCanvas(sg, chart);
   // chart.cacheCanvas = sg.toCanvas();

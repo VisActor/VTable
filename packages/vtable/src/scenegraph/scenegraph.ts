@@ -156,6 +156,8 @@ export class Scenegraph {
       viewBox: table.options.viewBox
     });
 
+    this.stage.defaultLayer.scale(0.5, 0.5);
+
     this.stage.defaultLayer.setTheme({
       group: {
         boundsPadding: 0,

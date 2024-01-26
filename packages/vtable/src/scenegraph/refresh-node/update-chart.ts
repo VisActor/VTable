@@ -109,6 +109,17 @@ export function clearChartCacheImage(scenegraph: Scenegraph) {
   }
 }
 
+export function clearCellChartCacheImage(col: number, row: number, scenegraph: Scenegraph) {
+  // 将调整列宽的后面的面也都一起需要调整viewbox。  TODO：columnResizeType支持后需要根据变化的列去调整，范围可能变多或者变少
+  const cellGroup = scenegraph.getCell(col, row);
+  cellGroup.children.forEach((node: Chart) => {
+    if ((node as any).type === 'chart') {
+      node.cacheCanvas = null;
+      node.addUpdateBoundTag();
+    }
+  });
+}
+
 /** 更新所有的图表chart节点上缓存attribute中的data数据 */
 export function updateChartData(scenegraph: Scenegraph) {
   const table = scenegraph.table;

@@ -59,6 +59,7 @@ export class DefaultCanvasChartRender implements IGraphicRender {
     const { dataId, data, spec } = chart.attribute;
     const viewBox = chart.getViewBox();
     const { width = groupAttribute.width, height = groupAttribute.height } = chart.attribute;
+    const { table } = chart.getRootNode() as any;
 
     const { chartInstance, active, cacheCanvas, activeChartInstance } = chart;
     // console.log('render chart', chart.parent.col, chart.parent.row, viewBox, cacheCanvas);
@@ -72,6 +73,14 @@ export class DefaultCanvasChartRender implements IGraphicRender {
         context.drawImage(cacheCanvas, x, y, width, height);
       }
     } else if (activeChartInstance) {
+      if (table.options.specFormat) {
+        const formatResult = table.options.specFormat(chart.attribute.spec);
+        if (formatResult.needFormatSpec && formatResult.spec) {
+          const spec = formatResult.spec;
+          activeChartInstance.updateSpecSync(spec);
+          return;
+        }
+      }
       if (typeof dataId === 'string') {
         activeChartInstance.updateDataSync(dataId, data ?? []);
       } else {
@@ -103,14 +112,14 @@ export class DefaultCanvasChartRender implements IGraphicRender {
         activeChartInstance.updateFullDataSync?.(dataBatch);
       }
     } else {
-      if ((chart.getRootNode() as any).table.internalProps.renderChartAsync) {
+      if (table.internalProps.renderChartAsync) {
         if (chartRenderKeys.indexOf(`${chart.parent.col}+${chart.parent.row}`) === -1) {
           chartRenderKeys.push(`${chart.parent.col}+${chart.parent.row}`);
           chartRenderQueueList.push(chart);
         }
         //判断是否已经开启渲染队列
         if (!IsHandlingChartQueue()) {
-          startRenderChartQueue((chart.getRootNode() as any).table);
+          startRenderChartQueue(table);
         }
       } else {
         renderChart(chart);

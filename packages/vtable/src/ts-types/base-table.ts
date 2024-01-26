@@ -371,6 +371,8 @@ export interface BaseTableConstructorOptions {
   viewBox?: IBoundsLike;
   chartOption?: any;
   disableInteraction?: boolean;
+
+  specFormat?: (spec: any) => { needFormatSpec: boolean; spec?: any };
 }
 export interface BaseTableAPI {
   /** 表格的行数 */
