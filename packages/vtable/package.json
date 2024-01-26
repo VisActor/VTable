@@ -1,6 +1,6 @@
 {
   "name": "@visactor/vtable",
-  "version": "0.18.2",
+  "version": "0.18.4",
   "description": "canvas table width high performance",
   "keywords": [
     "grid",
@@ -61,7 +61,7 @@
   },
   "devDependencies": {
     "luxon": "*",
-    "@visactor/vchart": "1.8.7",
+    "@visactor/vchart": "1.9.0",
     "@internal/bundler": "workspace:*",
     "@internal/eslint-config": "workspace:*",
     "@internal/ts-config": "workspace:*",
