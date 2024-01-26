@@ -77,7 +77,7 @@ editor?: string | IEditor | ((args: BaseCellInfo & { table: BaseTableAPI }) => s
 
 以下是一个自定义编辑器的示例代码：
 
-```javascript
+```ts
 class DateEditor implements IEditor {
   editorConfig: any;
   element: HTMLInputElement;
@@ -87,9 +87,10 @@ class DateEditor implements IEditor {
   constructor(editorConfig: any) {
     this.editorConfig = editorConfig;
   }
-  beginEditing(container: HTMLElement, referencePosition: { rect: RectProps; placement?: Placement }, value?: string) {
+  onStart({ container, value, referencePosition, endEdit }: EditContext) {
     const that = this;
     this.container = container;
+    this.successCallback = endEdit
     // const cellValue = luxon.DateTime.fromFormat(value, 'yyyy年MM月dd日').toFormat('yyyy-MM-dd');
     const input = document.createElement('input');
 
@@ -143,18 +144,15 @@ class DateEditor implements IEditor {
   getValue() {
     return this.element.value;
   }
-  exit() {
+  onEnd() {
     this.picker.destroy();
     this.container.removeChild(this.element);
   }
-  targetIsOnEditor(target: HTMLElement) {
+  onClickElsewhere(target: HTMLElement) {
     if (target === this.element || this.picker.el.contains(target)) {
       return true;
     }
     return false;
-  }
-  bindSuccessCallback(successCallback: Function) {
-    this.successCallback = successCallback;
   }
 }
 const custom_date_editor = new DateEditor({});
@@ -231,7 +229,7 @@ tableInstance.records;
    * @param row 粘贴数据的起始行号
    * @param values 多个单元格的数据数组
    */
-  changeCellValues(startCol: number, startRow: number, values: string[][]) 
+  changeCellValues(startCol: number, startRow: number, values: string[][])
 
   /** 获取单元格配置的编辑器 */
   getEditor: (col: number, row: number) => IEditor;
