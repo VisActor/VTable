@@ -103,12 +103,14 @@ export class EditManeger {
 
     const target = e?.target as HTMLElement | undefined;
 
-    if (target && this.editingEditor.targetIsOnEditor?.(target)) {
-      // TODO: 添加开发时弃用警告
-      return;
+    if (this.editingEditor.targetIsOnEditor) {
+      if (target && this.editingEditor.targetIsOnEditor(target)) {
+        // TODO: 添加开发时弃用警告
+        return;
+      }
     }
 
-    if (target && this.editingEditor.onClickElsewhere?.(target)) {
+    if (!this.editingEditor.onClickElsewhere || (target && this.editingEditor.onClickElsewhere?.(target))) {
       return;
     }
 
