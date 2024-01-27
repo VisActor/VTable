@@ -77,10 +77,12 @@ export class EditManeger {
       const rect = this.table.getCellRangeRelativeRect(this.table.getCellRange(col, row));
       const referencePosition = { rect: { left: rect.left, top: rect.top, width: rect.width, height: rect.height } };
 
-      // TODO: 添加开发时弃用警告
+      editor.beginEditing && console.warn('VTable Warn: `beginEditing` is deprecated, please use `onStart` instead.');
       editor.beginEditing?.(this.table.getElement(), referencePosition, dataValue);
 
-      // TODO: 添加开发时弃用警告
+      if (editor.bindSuccessCallback) {
+        console.warn('VTable Warn: `bindSuccessCallback` is deprecated, please use `onStart` instead.');
+      }
       editor.bindSuccessCallback?.(() => {
         this.completeEdit();
       });
@@ -104,8 +106,8 @@ export class EditManeger {
     const target = e?.target as HTMLElement | undefined;
 
     if (this.editingEditor.targetIsOnEditor) {
+      console.warn('VTable Warn: `targetIsOnEditor` is deprecated, please use `onClickElsewhere` instead.');
       if (target && this.editingEditor.targetIsOnEditor(target)) {
-        // TODO: 添加开发时弃用警告
         return;
       }
     }
@@ -114,11 +116,13 @@ export class EditManeger {
       return;
     }
 
-    // TODO: 开发时检查 getValue 是否为方法，如不是则提供警告
+    if (!this.editingEditor.getValue) {
+      console.warn('VTable Warn: `getValue` is not provided, did you forget to implement it?');
+    }
     const changedValue = this.editingEditor.getValue?.();
     (this.table as ListTableAPI).changeCellValue(this.editCell.col, this.editCell.row, changedValue);
 
-    // TODO: 添加开发时弃用警告
+    this.editingEditor.exit && console.warn('VTable Warn: `exit` is deprecated, please use `onEnd` instead.');
     this.editingEditor.exit?.();
     this.editingEditor.onEnd?.();
     this.editingEditor = null;
