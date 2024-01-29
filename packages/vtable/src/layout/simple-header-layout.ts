@@ -840,7 +840,7 @@ export class SimpleHeaderLayoutMap implements LayoutMapAPI {
         Array.prototype.splice.apply(this._columns, sourceColumns);
 
         // 对表头columnTree调整节点位置
-        this.columnTree.movePosition(source.row, sourceCellRange.start.col, targetIndex);
+        this.columnTree.movePosition(sourceCellRange.start.row, sourceCellRange.start.col, targetIndex);
 
         this._cellRangeMap = new Map();
         return {
@@ -879,7 +879,7 @@ export class SimpleHeaderLayoutMap implements LayoutMapAPI {
         Array.prototype.splice.apply(this._columns, sourceColumns);
 
         // 对表头columnTree调整节点位置
-        this.columnTree.movePosition(source.col, sourceCellRange.start.row, targetIndex);
+        this.columnTree.movePosition(sourceCellRange.start.col, sourceCellRange.start.row, targetIndex);
 
         this._cellRangeMap = new Map();
         return {
