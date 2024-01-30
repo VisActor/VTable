@@ -32,12 +32,19 @@ export function renderChart(chart: Chart) {
     viewBox.y2 = viewBox.y1 + 1;
   }
 
+  // use vrender trasnform, viewbox starts from 0,0
   chartInstance.updateViewBox(
+    // {
+    //   x1: viewBox.x1 - (chart.getRootNode() as any).table.scrollLeft,
+    //   x2: viewBox.x2 - (chart.getRootNode() as any).table.scrollLeft,
+    //   y1: viewBox.y1 - (chart.getRootNode() as any).table.scrollTop,
+    //   y2: viewBox.y2 - (chart.getRootNode() as any).table.scrollTop
+    // },
     {
-      x1: viewBox.x1 - (chart.getRootNode() as any).table.scrollLeft,
-      x2: viewBox.x2 - (chart.getRootNode() as any).table.scrollLeft,
-      y1: viewBox.y1 - (chart.getRootNode() as any).table.scrollTop,
-      y2: viewBox.y2 - (chart.getRootNode() as any).table.scrollTop
+      x1: 0,
+      x2: viewBox.x2 - viewBox.x1,
+      y1: 0,
+      y2: viewBox.y2 - viewBox.y1
     },
     false,
     false

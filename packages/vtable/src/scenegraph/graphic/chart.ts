@@ -64,6 +64,8 @@ export class Chart extends Group {
         })
       );
       this.chartInstance.renderSync();
+
+      this.chartInstance.getStage().params.renderKeepMatrix = true;
     } else {
       this.chartInstance = params.chartInstance;
     }

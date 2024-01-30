@@ -15,7 +15,8 @@ import {
   createImage,
   inject,
   injectable,
-  named
+  named,
+  BaseRender
 } from '@src/vrender';
 import type { Chart } from '../chart';
 import { CHART_NUMBER_TYPE } from '../chart';
@@ -32,7 +33,7 @@ export const ChartRender = Symbol.for('ChartRender');
 export const ChartRenderContribution = Symbol.for('ChartRenderContribution');
 
 @injectable()
-export class DefaultCanvasChartRender implements IGraphicRender {
+export class DefaultCanvasChartRender extends BaseRender<Chart> implements IGraphicRender {
   type: 'chart';
   numberType: number = CHART_NUMBER_TYPE;
 
@@ -127,42 +128,46 @@ export class DefaultCanvasChartRender implements IGraphicRender {
     }
   }
 
+  // draw(chart: Chart, renderService: IRenderService, drawContext: IDrawContext, params?: IGraphicRenderDrawParams) {
+  //   const { context } = drawContext;
+  //   if (!context) {
+  //     return;
+  //   }
+  //   // debugger;
+  //   const { clip } = chart.attribute;
+  //   if (clip) {
+  //     context.save();
+  //   } else {
+  //     context.highPerformanceSave();
+  //   }
+  //   // group直接transform
+  //   context.transformFromMatrix(chart.transMatrix, true);
+
+  //   context.beginPath();
+  //   // 如果跳过绘制，那就不绘制
+  //   if (params.skipDraw) {
+  //     this.drawShape(
+  //       chart,
+  //       context,
+  //       0,
+  //       0,
+  //       drawContext,
+  //       params,
+  //       () => false,
+  //       () => false
+  //     );
+  //   } else {
+  //     this.drawShape(chart, context, 0, 0, drawContext);
+  //   }
+
+  //   if (clip) {
+  //     context.restore();
+  //   } else {
+  //     context.highPerformanceRestore();
+  //   }
+  // }
   draw(chart: Chart, renderService: IRenderService, drawContext: IDrawContext, params?: IGraphicRenderDrawParams) {
-    const { context } = drawContext;
-    if (!context) {
-      return;
-    }
-    // debugger;
-    const { clip } = chart.attribute;
-    if (clip) {
-      context.save();
-    } else {
-      context.highPerformanceSave();
-    }
-    // group直接transform
-    context.transformFromMatrix(chart.transMatrix, true);
-
-    context.beginPath();
-    // 如果跳过绘制，那就不绘制
-    if (params.skipDraw) {
-      this.drawShape(
-        chart,
-        context,
-        0,
-        0,
-        drawContext,
-        params,
-        () => false,
-        () => false
-      );
-    } else {
-      this.drawShape(chart, context, 0, 0, drawContext);
-    }
-
-    if (clip) {
-      context.restore();
-    } else {
-      context.highPerformanceRestore();
-    }
+    // const circleAttribute = getTheme(circle, params?.theme).circle;
+    this._draw(chart, {} as any, false, drawContext, params);
   }
 }
