@@ -22,10 +22,10 @@ VTable没有封装Vue组件，那么如何在 Vue 中VTable呢？
 </template>
 
 <script setup>
-import { onMounted, ref } from "vue";
+import { onMounted, shallowRef } from "vue";
 import { ListTable } from "@visactor/vtable";
 
-const listTableRef = ref();
+const listTableRef = shallowRef();
 
 const records = [
   {
