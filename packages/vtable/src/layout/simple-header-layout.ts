@@ -12,7 +12,7 @@ import type {
   WidthData
 } from '../ts-types/list-table/layout-map/api';
 import { checkHasChart, getChartDataId } from './chart-helper/get-chart-spec';
-import { DimensionTree } from './pivot-layout-helper';
+import { DimensionTree } from './layout-helper';
 // import { EmptyDataCache } from './utils';
 
 // let seqId = 0;

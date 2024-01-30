@@ -19,13 +19,13 @@ import type { ILinkDimension } from '../ts-types/pivot-table/dimension/link-dime
 import type { IImageDimension } from '../ts-types/pivot-table/dimension/image-dimension';
 // import { sharedVar } from './pivot-header-layout';
 
-interface IPivotLayoutBaseHeadNode {
+interface ITreeLayoutBaseHeadNode {
   id: number;
   // dimensionKey: string;
   // // title: string;
   // indicatorKey?: string;
   value: string;
-  children: IPivotLayoutHeadNode[] | undefined;
+  children: ITreeLayoutHeadNode[] | undefined;
   columns?: any; //兼容ListTable情况 simple-header-layout中增加了columnTree
   level: number;
   /** 节点跨占层数 如汇总节点跨几层维度 */
@@ -41,13 +41,13 @@ interface IPivotLayoutBaseHeadNode {
   headerIcon?: (string | ColumnIconOption)[] | ((args: CellInfo) => (string | ColumnIconOption)[]);
 }
 
-interface IPivotLayoutDimensionHeadNode extends IPivotLayoutBaseHeadNode {
+interface ITreeLayoutDimensionHeadNode extends ITreeLayoutBaseHeadNode {
   dimensionKey: string;
 }
-interface IPivotLayoutIndicatorHeadNode extends IPivotLayoutBaseHeadNode {
+interface ITreeLayoutIndicatorHeadNode extends ITreeLayoutBaseHeadNode {
   indicatorKey: string;
 }
-export type IPivotLayoutHeadNode = Either<IPivotLayoutDimensionHeadNode, IPivotLayoutIndicatorHeadNode>;
+export type ITreeLayoutHeadNode = Either<ITreeLayoutDimensionHeadNode, ITreeLayoutIndicatorHeadNode>;
 export class DimensionTree {
   sharedVar: { seqId: number };
   // 每一个值对应的序号 结果缓存
@@ -58,7 +58,7 @@ export class DimensionTree {
   sizeIncludeParent = false;
   rowExpandLevel: number;
   hierarchyType: 'grid' | 'tree';
-  tree: IPivotLayoutHeadNode = {
+  tree: ITreeLayoutHeadNode = {
     id: 0,
     dimensionKey: '',
     // title: '',
@@ -83,7 +83,7 @@ export class DimensionTree {
 
   cache: Map<number, any> = new Map();
   constructor(
-    tree: IPivotLayoutHeadNode[],
+    tree: ITreeLayoutHeadNode[],
     sharedVar: { seqId: number },
     hierarchyType: 'grid' | 'tree' = 'grid',
     rowExpandLevel: number = undefined
@@ -95,20 +95,20 @@ export class DimensionTree {
     this.reset(tree);
   }
 
-  reset(tree: IPivotLayoutHeadNode[], updateTreeNode = false) {
+  reset(tree: ITreeLayoutHeadNode[], updateTreeNode = false) {
     // 清空缓存的计算
     // this.cache = {};
     // this.dimensions = dimensions;
     this.cache.clear();
     this.dimensionKeys = new NumberMap<string>();
-    this.tree.children = tree as IPivotLayoutHeadNode[];
+    this.tree.children = tree as ITreeLayoutHeadNode[];
     // const re = { totalLevel: 0 };
     // if (updateTreeNode) this.updateTreeNode(this.tree, 0, re, this.tree);
     // else
     this.setTreeNode(this.tree, 0, this.tree);
     this.totalLevel = this.dimensionKeys.count();
   }
-  setTreeNode(node: IPivotLayoutHeadNode, startIndex: number, parent: IPivotLayoutHeadNode): number {
+  setTreeNode(node: ITreeLayoutHeadNode, startIndex: number, parent: ITreeLayoutHeadNode): number {
     node.startIndex = startIndex;
     node.startInTotal = (parent.startInTotal ?? 0) + node.startIndex;
     // if (node.dimensionKey) {
@@ -173,14 +173,14 @@ export class DimensionTree {
     // startInTotal = parent.startIndex + prevStartIndex
     return size;
   }
-  getTreePath(index: number, maxDeep = 30): Array<IPivotLayoutHeadNode> {
+  getTreePath(index: number, maxDeep = 30): Array<ITreeLayoutHeadNode> {
     const path: any[] = [];
     this.searchPath(index, this.tree, path, maxDeep);
     path.shift();
     return path;
   }
 
-  getTreePathByCellIds(ids: LayoutObjectId[]): Array<IPivotLayoutHeadNode> {
+  getTreePathByCellIds(ids: LayoutObjectId[]): Array<ITreeLayoutHeadNode> {
     const path: any[] = [];
     let nodes = this.tree.children;
     for (let i = 0; i < ids.length; i++) {
@@ -196,12 +196,12 @@ export class DimensionTree {
     // path.shift();
     return path;
   }
-  findNodeById(nodes: IPivotLayoutHeadNode[], id: LayoutObjectId) {
+  findNodeById(nodes: ITreeLayoutHeadNode[], id: LayoutObjectId) {
     return nodes.find(node => {
       return node.id === id;
     });
   }
-  searchPath(index: number, node: IPivotLayoutHeadNode, path: Array<IPivotLayoutHeadNode>, maxDeep: number) {
+  searchPath(index: number, node: ITreeLayoutHeadNode, path: Array<ITreeLayoutHeadNode>, maxDeep: number) {
     if (!node) {
       return;
     }
@@ -269,7 +269,7 @@ export class DimensionTree {
    */
   movePosition(level: number, sourceIndex: number, targetIndex: number) {
     // let sourceNode: IPivotLayoutHeadNode;
-    let parNode: IPivotLayoutHeadNode;
+    let parNode: ITreeLayoutHeadNode;
     let sourceSubIndex: number;
     let targetSubIndex: number;
     /**
@@ -279,7 +279,7 @@ export class DimensionTree {
      * @param subIndex
      * @returns
      */
-    const findTargetNode = (node: IPivotLayoutHeadNode, subIndex: number) => {
+    const findTargetNode = (node: ITreeLayoutHeadNode, subIndex: number) => {
       if (sourceSubIndex !== undefined && targetSubIndex !== undefined) {
         return;
       }
@@ -332,8 +332,8 @@ export type LayouTreeNode = {
   children?: LayouTreeNode[];
 };
 
-export function generateLayoutTree(tree: LayouTreeNode[], children: IPivotLayoutHeadNode[]) {
-  children?.forEach((node: IPivotLayoutHeadNode) => {
+export function generateLayoutTree(tree: LayouTreeNode[], children: ITreeLayoutHeadNode[]) {
+  children?.forEach((node: ITreeLayoutHeadNode) => {
     const diemnsonNode: {
       dimensionKey?: string;
       indicatorKey?: string;
@@ -359,7 +359,7 @@ export function generateLayoutTree(tree: LayouTreeNode[], children: IPivotLayout
 //#region   为方法getLayoutRowTreeCount提的工具方法
 export function countLayoutTree(children: { children?: any }[], countParentNode: boolean) {
   let count = 0;
-  children?.forEach((node: IPivotLayoutHeadNode) => {
+  children?.forEach((node: ITreeLayoutHeadNode) => {
     if (countParentNode) {
       count++;
     } else {
@@ -376,7 +376,7 @@ export function countLayoutTree(children: { children?: any }[], countParentNode:
 //#endregion
 
 export function dealHeader(
-  hd: IPivotLayoutHeadNode,
+  hd: ITreeLayoutHeadNode,
   _headerCellIds: number[][],
   results: HeaderData[],
   roots: number[],
@@ -489,9 +489,9 @@ export function dealHeader(
     }
   }
 
-  if ((hd as IPivotLayoutHeadNode).children?.length >= 1) {
+  if ((hd as ITreeLayoutHeadNode).children?.length >= 1) {
     layoutMap
-      ._addHeaders(_headerCellIds, row + ((hd as any).levelSpan ?? 1), (hd as IPivotLayoutHeadNode).children ?? [], [
+      ._addHeaders(_headerCellIds, row + ((hd as any).levelSpan ?? 1), (hd as ITreeLayoutHeadNode).children ?? [], [
         ...roots,
         ...Array((hd as any).levelSpan ?? 1).fill(id)
       ])
@@ -512,7 +512,7 @@ export function dealHeader(
 }
 
 export function dealHeaderForTreeMode(
-  hd: IPivotLayoutHeadNode,
+  hd: ITreeLayoutHeadNode,
   _headerCellIds: number[][],
   results: HeaderData[],
   roots: number[],
@@ -588,14 +588,14 @@ export function dealHeaderForTreeMode(
   for (let r = row - 1; r >= 0; r--) {
     _headerCellIds[r][layoutMap.colIndex] = roots[r];
   }
-  if (hd.hierarchyState === HierarchyState.expand && (hd as IPivotLayoutHeadNode).children?.length >= 1) {
+  if (hd.hierarchyState === HierarchyState.expand && (hd as ITreeLayoutHeadNode).children?.length >= 1) {
     //row传值 colIndex++和_addHeaders有区别
     show && layoutMap.colIndex++;
     layoutMap
       ._addHeadersForTreeMode(
         _headerCellIds,
         row,
-        (hd as IPivotLayoutHeadNode).children ?? [],
+        (hd as ITreeLayoutHeadNode).children ?? [],
         [...roots, id],
         totalLevel,
         show && hd.hierarchyState === HierarchyState.expand, //当前节点show 且当前节点状态为展开 则传给子节点为show：true
