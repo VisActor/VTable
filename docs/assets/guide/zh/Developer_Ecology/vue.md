@@ -2,7 +2,7 @@
 
 在 Vue 3.x 中使用 Vtable
 
-组合式 API，具体可以[参考在线 demo](https://codesandbox.io/p/devbox/vchart-demo-vue-73h8wl)
+组合式 API，具体可以[参考在线 demo](https://codesandbox.io/p/devbox/magical-nash-t6t33f)
 
 ## 代码示例
 
@@ -135,4 +135,14 @@ onMounted(() => {
 });
 </script>
 
+```
+
+## 注意
+
+如果需要使用ref保存table实例，请使用`shallowRef`，使用`ref`会影响内部属性更新，导致渲染异常。
+
+
+```
+const tableInstance = shallowRef();
+tableInstance.value = new ListTable(listTableRef.value, option);
 ```
