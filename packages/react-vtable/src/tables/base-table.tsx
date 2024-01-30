@@ -62,7 +62,7 @@ const BaseTable: React.FC<Props> = React.forwardRef((props, ref) => {
   const tableContext = useRef<TableContextType>({
     optionFromChildren: {}
   });
-  useImperativeHandle(ref, () => tableContext.current.table);
+  useImperativeHandle(ref, () => tableContext.current?.table);
   const hasOption = !!props.option;
   const hasRecords = !!props.records;
   const isUnmount = useRef<boolean>(false);
@@ -82,11 +82,10 @@ const BaseTable: React.FC<Props> = React.forwardRef((props, ref) => {
         }
         return props.option;
       }
-
       return {
         records: props.records,
         ...prevOption.current,
-        ...tableContext.current.optionFromChildren
+        ...tableContext.current?.optionFromChildren
       };
     },
     [hasOption, hasRecords]
@@ -108,10 +107,13 @@ const BaseTable: React.FC<Props> = React.forwardRef((props, ref) => {
   );
 
   const handleTableRender = useCallback(() => {
-    // rebind events after render
-    bindEventsToTable(tableContext.current.table, props, eventsBinded.current, TABLE_EVENTS);
-
     if (!isUnmount.current) {
+      if (!tableContext.current || !tableContext.current.table) {
+        return;
+      }
+      // rebind events after render
+      bindEventsToTable(tableContext.current.table, props, eventsBinded.current, TABLE_EVENTS);
+
       // to be fixed
       // will cause another useEffect
       setUpdateId(updateId + 1);
@@ -124,13 +126,10 @@ const BaseTable: React.FC<Props> = React.forwardRef((props, ref) => {
   const renderTable = useCallback(() => {
     if (tableContext.current.table) {
       // eslint-disable-next-line promise/catch-or-return
-      const renderPromise = tableContext.current.table.renderAsync().then(handleTableRender);
-
-      if (props.onError) {
-        renderPromise.catch(props.onError);
-      }
+      tableContext.current.table.render();
+      handleTableRender();
     }
-  }, [handleTableRender, props]);
+  }, [handleTableRender]);
 
   useEffect(() => {
     if (!tableContext.current?.table) {
@@ -150,22 +149,14 @@ const BaseTable: React.FC<Props> = React.forwardRef((props, ref) => {
         eventsBinded.current = props;
         // eslint-disable-next-line promise/catch-or-return
         tableContext.current.table.updateOption(parseOption(props));
-        const updatePromise = tableContext.current.table.renderAsync().then(handleTableRender);
-
-        if (props.onError) {
-          updatePromise.catch(props.onError);
-        }
+        handleTableRender();
       } else if (
         hasRecords &&
         !isEqual(eventsBinded.current.records, props.records, { skipFunction: skipFunctionDiff })
       ) {
         eventsBinded.current = props;
         tableContext.current.table.setRecords(props.records);
-        const updatePromise = tableContext.current.table.renderAsync().then(handleTableRender);
-
-        if (props.onError) {
-          updatePromise.catch(props.onError);
-        }
+        handleTableRender();
       }
       return;
     }
@@ -179,19 +170,11 @@ const BaseTable: React.FC<Props> = React.forwardRef((props, ref) => {
       prevOption.current = newOption;
       // eslint-disable-next-line promise/catch-or-return
       tableContext.current.table.updateOption(parseOption(props));
-      const updatePromise = tableContext.current.table.renderAsync().then(handleTableRender);
-
-      if (props.onError) {
-        updatePromise.catch(props.onError);
-      }
+      handleTableRender();
     } else if (hasRecords && !isEqual(props.records, prevRecords.current, { skipFunction: skipFunctionDiff })) {
       prevRecords.current = props.records;
       tableContext.current.table.setRecords(props.records);
-      const updatePromise = tableContext.current.table.renderAsync().then(handleTableRender);
-
-      if (props.onError) {
-        updatePromise.catch(props.onError);
-      }
+      handleTableRender();
     }
     tableContext.current = {
       ...tableContext.current,
