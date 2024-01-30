@@ -319,21 +319,6 @@ export class DimensionTree {
   getCopiedTree() {
     const children = cloneDeep(this.tree.children);
     clearNode(children);
-    function clearNode(children: any) {
-      for (let i = 0; i < children.length; i++) {
-        const node = children[i];
-        delete node.level;
-        delete node.startIndex;
-        delete node.id;
-        delete node.levelSpan;
-        delete node.size;
-        delete node.startInTotal;
-        const childrenNew = node.children || node.columns;
-        if (childrenNew) {
-          clearNode(childrenNew);
-        }
-      }
-    }
     return children;
   }
 }
@@ -622,6 +607,22 @@ export function dealHeaderForTreeMode(
     show && layoutMap.colIndex++;
     for (let r = row + 1; r < _headerCellIds.length; r++) {
       _headerCellIds[r][layoutMap.colIndex] = id;
+    }
+  }
+}
+
+function clearNode(children: any) {
+  for (let i = 0; i < children.length; i++) {
+    const node = children[i];
+    delete node.level;
+    delete node.startIndex;
+    delete node.id;
+    delete node.levelSpan;
+    delete node.size;
+    delete node.startInTotal;
+    const childrenNew = node.children || node.columns;
+    if (childrenNew) {
+      clearNode(childrenNew);
     }
   }
 }
