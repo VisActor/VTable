@@ -846,8 +846,16 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
   }
 
   updateViewBox(newViewBox: IBoundsLike) {
+    const oldWidth = this.options?.viewBox.x2 ?? 0 - this.options?.viewBox.x1 ?? 0;
+    const oldHeight = this.options?.viewBox.y2 ?? 0 - this.options?.viewBox.y1 ?? 0;
+    const newWidth = newViewBox.x2 - newViewBox.x1;
+    const newHeight = newViewBox.y2 - newViewBox.y1;
     this.options.viewBox = newViewBox;
-    this.resize();
+    if (oldWidth !== newWidth || oldHeight !== newHeight) {
+      this.resize();
+    } else {
+      (this.scenegraph.stage as any).setViewBox(this.options.viewBox, true);
+    }
   }
 
   get rowHierarchyType(): 'grid' | 'tree' {
