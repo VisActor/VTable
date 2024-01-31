@@ -401,13 +401,6 @@ export class SimpleHeaderLayoutMap implements LayoutMapAPI {
     const id = this.getCellId(col, row);
     return this._headerObjectMap[id as number]!;
   }
-  getHeaderFieldKey(col: number, row: number) {
-    const id = this.getCellId(col, row);
-    return (
-      this._headerObjectMap[id as number]?.fieldKey ||
-      (this.transpose ? this._columns[row]?.fieldKey : this._columns[col]?.fieldKey)
-    );
-  }
   getHeaderField(col: number, row: number) {
     const id = this.getCellId(col, row);
     return (
@@ -658,7 +651,6 @@ export class SimpleHeaderLayoutMap implements LayoutMapAPI {
         // captionIcon,
         headerIcon: hd.headerIcon,
         field: (hd as ColumnDefine).field,
-        fieldKey: (hd as ColumnDefine)?.fieldKey,
         fieldFormat: (hd as ColumnDefine).fieldFormat,
         style: hd.headerStyle,
         headerType: hd.headerType ?? 'text',

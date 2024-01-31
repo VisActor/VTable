@@ -5,6 +5,8 @@ import type {
   FieldData,
   FieldDef,
   FieldFormat,
+  FilterRules,
+  IListTableDataConfig,
   IPagination,
   MaybePromiseOrCallOrUndefined,
   MaybePromiseOrUndefined,
@@ -126,11 +128,13 @@ export interface ISortedMapItem {
 }
 
 export class DataSource extends EventTarget implements DataSourceAPI {
+  dataConfig: IListTableDataConfig;
+  dataSourceObj: DataSourceParam | DataSource;
   private _get: (index: number | number[]) => any;
   /** 数据条目数 如果是树形结构的数据 则是第一层父节点的数量 */
   private _sourceLength: number;
 
-  private readonly _source: any;
+  private _source: any;
   /**
    * 缓存按字段进行排序的结果
    */
@@ -154,12 +158,18 @@ export class DataSource extends EventTarget implements DataSourceAPI {
   }
   protected treeDataHierarchyState: Map<number | string, HierarchyState> = new Map();
   beforeChangedRecordsMap: Record<number, any>[] = [];
-  constructor(obj?: DataSourceParam | DataSource, pagination?: IPagination, hierarchyExpandLevel?: number) {
+  constructor(
+    dataSourceObj?: DataSourceParam | DataSource,
+    dataConfig?: IListTableDataConfig,
+    pagination?: IPagination,
+    hierarchyExpandLevel?: number
+  ) {
     super();
-
-    this._get = obj?.get.bind(obj) || (undefined as any);
-    this._sourceLength = obj?.length || 0;
-    this._source = obj?.source ?? obj;
+    this.dataSourceObj = dataSourceObj;
+    this.dataConfig = dataConfig;
+    this._get = dataSourceObj?.get.bind(dataSourceObj) || (undefined as any);
+    this._source = this.filterRecords(dataSourceObj?.source ?? dataSourceObj);
+    this._sourceLength = this._source?.length || 0;
     this.sortedIndexMap = new Map<string, ISortedMapItem>();
 
     this._currentPagerIndexedData = [];
@@ -198,6 +208,20 @@ export class DataSource extends EventTarget implements DataSourceAPI {
       }
     }
     this.updatePagerData();
+  }
+
+  filterRecords(records: any[]) {
+    const filteredRecords = [];
+    if (this.dataConfig?.filterRules?.length >= 1) {
+      for (let i = 0, len = records.length; i < len; i++) {
+        const record = records[i];
+        if (this.filterRecord(record)) {
+          filteredRecords.push(record);
+        }
+      }
+      return filteredRecords;
+    }
+    return records;
   }
   /**
    * 初始化子节点的层次信息
@@ -741,6 +765,40 @@ export class DataSource extends EventTarget implements DataSourceAPI {
     this.updatePagerData();
     this.fireListeners(EVENT_TYPE.CHANGE_ORDER, null);
   }
+
+  private filterRecord(record: any) {
+    let isReserved = true;
+    for (let i = 0; i < this.dataConfig.filterRules.length; i++) {
+      const filterRule = this.dataConfig?.filterRules[i];
+      if (filterRule.filterKey) {
+        const filterValue = record[filterRule.filterKey];
+        if (filterRule.filteredValues.indexOf(filterValue) === -1) {
+          isReserved = false;
+          break;
+        }
+      } else if (!filterRule.filterFunc?.(record)) {
+        isReserved = false;
+        break;
+      }
+    }
+    return isReserved;
+  }
+
+  updateFilterRules(filterRules?: FilterRules): void {
+    this.dataConfig.filterRules = filterRules;
+    this._source = this.filterRecords(this.dataSourceObj?.source ?? this.dataSourceObj);
+    this._sourceLength = this._source?.length || 0;
+    // 初始化currentIndexedData 正常未排序。设置其状态
+    this.currentIndexedData = Array.from({ length: this._sourceLength }, (_, i) => i);
+    if (this.userPagination) {
+      // 如果用户配置了分页
+      this.updatePagerData();
+    } else {
+      this.pagination.perPageCount = this._sourceLength;
+      this.pagination.totalCount = this._sourceLength;
+      this.updatePagerData();
+    }
+  }
   /**
    * 当节点折叠或者展开时 将排序缓存清空（非当前排序规则的缓存）
    */
@@ -801,6 +859,9 @@ export class DataSource extends EventTarget implements DataSourceAPI {
     this.currentPagerIndexedData.length = 0;
   }
   protected getOriginalRecord(dataIndex: number | number[]): MaybePromiseOrUndefined {
+    if (this.dataConfig?.filterRules) {
+      return (this.source as Array<any>)[dataIndex as number];
+    }
     return getValue(this._get(dataIndex), (val: MaybePromiseOrUndefined) => {
       this.recordPromiseCallBack(dataIndex, val);
     });

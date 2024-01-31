@@ -3,15 +3,15 @@ import type {
   AggregationRule,
   AggregationRules,
   CollectValueBy,
-  IDataConfig,
   IIndicator,
-  PivotChartConstructorOptions
+  PivotChartConstructorOptions,
+  IPivotChartDataConfig
 } from '../../ts-types';
 import { AggregationType } from '../../ts-types';
 import type { IChartColumnIndicator } from '../../ts-types/pivot-table/indicator/chart-indicator';
 
 export function createDataset(options: PivotChartConstructorOptions) {
-  const dataConfig: IDataConfig = { isPivotChart: true };
+  const dataConfig: IPivotChartDataConfig = { isPivotChart: true };
 
   const rowKeys =
     options.rows?.reduce((keys, rowObj) => {

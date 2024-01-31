@@ -1,7 +1,7 @@
 import { isArray, isValid } from '@visactor/vutils';
 import type {
   FilterRules,
-  IDataConfig,
+  IPivotTableDataConfig,
   SortRule,
   AggregationRules,
   AggregationRule,
@@ -18,7 +18,8 @@ import type {
   IHeaderTreeDefine,
   CollectValueBy,
   CollectedValue,
-  IIndicator
+  IIndicator,
+  IPivotChartDataConfig
 } from '../ts-types';
 import { AggregationType, SortType } from '../ts-types';
 import type { Aggregator } from './statistics-helper';
@@ -41,7 +42,7 @@ export class Dataset {
   /**
    * 用户配置
    */
-  dataConfig: IDataConfig;
+  dataConfig: IPivotTableDataConfig | IPivotChartDataConfig;
   // /**
   //  * 分页配置
   //  */
@@ -127,7 +128,7 @@ export class Dataset {
   // 记录用户传入的汇总数据
   totalRecordsTree: Record<string, Record<string, Aggregator[]>> = {};
   constructor(
-    dataConfig: IDataConfig,
+    dataConfig: IPivotTableDataConfig | IPivotChartDataConfig,
     // pagination: IPagination,
     rows: string[],
     columns: string[],
@@ -160,7 +161,7 @@ export class Dataset {
     this.colSubTotalLabel = this.totals?.column?.subTotalLabel ?? '小计';
     this.rowGrandTotalLabel = this.totals?.row?.grandTotalLabel ?? '总计';
     this.rowSubTotalLabel = this.totals?.row?.subTotalLabel ?? '小计';
-    this.collectValuesBy = this.dataConfig?.collectValuesBy;
+    this.collectValuesBy = (this.dataConfig as IPivotChartDataConfig)?.collectValuesBy;
     this.needSplitPositiveAndNegative = needSplitPositiveAndNegative ?? false;
     this.rowsIsTotal = new Array(this.rows?.length ?? 0).fill(false);
     this.colsIsTotal = new Array(this.columns?.length ?? 0).fill(false);
@@ -280,7 +281,7 @@ export class Dataset {
       const t8 = typeof window !== 'undefined' ? window.performance.now() : 0;
       console.log('TreeToArr:', t8 - t7);
 
-      if (this.dataConfig?.isPivotChart) {
+      if ((this.dataConfig as IPivotChartDataConfig)?.isPivotChart) {
         // 处理PivotChart双轴图0值对齐
         // this.dealWithZeroAlign();
 
@@ -754,7 +755,7 @@ export class Dataset {
     this.processCollectedValuesWithSumBy();
     this.processCollectedValuesWithSortBy();
 
-    if (this.dataConfig?.isPivotChart) {
+    if ((this.dataConfig as IPivotChartDataConfig)?.isPivotChart) {
       // 处理PivotChart双轴图0值对齐
       // this.dealWithZeroAlign();
       // 记录PivotChart维度对应的数据
@@ -1449,10 +1450,10 @@ export class Dataset {
   private cacheDeminsionCollectedValues() {
     for (const key in this.collectValuesBy) {
       if (this.collectValuesBy[key].type === 'xField' || this.collectValuesBy[key].type === 'yField') {
-        if (this.dataConfig.dimensionSortArray) {
+        if ((this.dataConfig as IPivotChartDataConfig).dimensionSortArray) {
           this.cacheCollectedValues[key] = arraySortByAnotherArray(
             this.collectedValues[key] as unknown as string[],
-            this.dataConfig.dimensionSortArray
+            (this.dataConfig as IPivotChartDataConfig).dimensionSortArray
           ) as unknown as Record<string, CollectedValue>;
         } else {
           this.cacheCollectedValues[key] = this.collectedValues[key];

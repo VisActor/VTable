@@ -1,3 +1,4 @@
+import type { Either } from '../tools/helper';
 import type { SortOrder } from './common';
 
 //#region 总计小计
@@ -119,12 +120,14 @@ export type SortRules = SortRule[];
 //#endregion 排序规则
 
 //#region 过滤规则
-export interface FilterRule {
-  filterKey?: string;
-  filteredValues?: unknown[];
+export interface FilterFuncRule {
   filterFunc?: (row: Record<string, any>) => boolean;
 }
-export type FilterRules = FilterRule[];
+export interface FilterValueRule {
+  filterKey?: string;
+  filteredValues?: unknown[];
+}
+export type FilterRules = Either<FilterFuncRule, FilterValueRule>[];
 //#endregion 过滤规则
 
 //#region 聚合规则
@@ -169,9 +172,19 @@ export interface DerivedFieldRule {
 }
 export type DerivedFieldRules = DerivedFieldRule[];
 /**
- * 数据处理配置
+ * 基本表数据处理配置
  */
-export interface IDataConfig {
+export interface IListTableDataConfig {
+  // aggregationRules?: AggregationRules; //按照行列维度聚合值计算规则；
+  // sortRules?: SortRules; //排序规则；
+  filterRules?: FilterRules; //过滤规则；
+  // totals?: Totals; //小计或总计；
+  // derivedFieldRules?: DerivedFieldRules;
+}
+/**
+ * 透视表数据处理配置
+ */
+export interface IPivotTableDataConfig {
   aggregationRules?: AggregationRules; //按照行列维度聚合值计算规则；
   sortRules?: SortRules; //排序规则；
   filterRules?: FilterRules; //过滤规则；
@@ -181,17 +194,22 @@ export interface IDataConfig {
    */
   mappingRules?: MappingRules;
   derivedFieldRules?: DerivedFieldRules;
+}
 
+/**
+ * 透视图数据处理配置
+ */
+export interface IPivotChartDataConfig extends IPivotTableDataConfig {
   /**
-   * PivotChart专有  请忽略
+   * PivotChart专有
    */
   collectValuesBy?: Record<string, CollectValueBy>;
   /**
-   * PivotChart专有  请忽略
+   * PivotChart专有
    */
   isPivotChart?: boolean;
   /**
-   * PivotChart专有  请忽略
+   * PivotChart专有
    */
   dimensionSortArray?: string[];
 }

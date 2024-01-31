@@ -7,6 +7,7 @@ import type {
   FieldDef,
   FieldFormat,
   FieldKeyDef,
+  FilterRules,
   IPagination,
   ListTableAPI,
   ListTableConstructorOptions,
@@ -61,6 +62,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
     //分页配置
     this.pagination = options.pagination;
     internalProps.sortState = options.sortState;
+    internalProps.dataConfig = cloneDeep(options.dataConfig ?? {});
     internalProps.columns = options.columns
       ? cloneDeep(options.columns)
       : options.header
@@ -317,6 +319,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
     super.updateOption(options);
     //分页配置
     this.pagination = options.pagination;
+    internalProps.dataConfig = cloneDeep(options.dataConfig ?? {});
     //更新protectedSpace
     this.showHeader = options.showHeader ?? true;
     internalProps.columns = options.columns
@@ -757,20 +760,14 @@ export class ListTable extends BaseTable implements ListTableAPI {
     }
     let order: any;
     let field: any;
-    let fieldKey: any;
     if (Array.isArray(this.internalProps.sortState)) {
-      ({ order, field, fieldKey } = this.internalProps.sortState?.[0]);
+      ({ order, field } = this.internalProps.sortState?.[0]);
     } else {
-      ({ order, field, fieldKey } = this.internalProps.sortState as SortState);
+      ({ order, field } = this.internalProps.sortState as SortState);
     }
     if (field && executeSort) {
-      const sortFunc = this._getSortFuncFromHeaderOption(this.internalProps.columns, field, fieldKey);
-      let hd;
-      if (fieldKey) {
-        hd = this.internalProps.layoutMap.headerObjects.find((col: any) => col && col.fieldKey === fieldKey);
-      } else {
-        hd = this.internalProps.layoutMap.headerObjects.find((col: any) => col && col.field === field);
-      }
+      const sortFunc = this._getSortFuncFromHeaderOption(this.internalProps.columns, field);
+      const hd = this.internalProps.layoutMap.headerObjects.find((col: any) => col && col.field === field);
       if (hd?.define?.sort) {
         this.dataSource.sort(hd.field, order, sortFunc);
 
@@ -780,6 +777,17 @@ export class ListTable extends BaseTable implements ListTableAPI {
       }
     }
     this.stateManager.updateSortState(sortState as SortState);
+  }
+  updateFilterRules(filterRules: FilterRules) {
+    this.scenegraph.clearCells();
+    this.internalProps.dataConfig.filterRules = filterRules;
+    this.dataSource.updateFilterRules(filterRules);
+    this.refreshRowColCount();
+    this.headerStyleCache = new Map();
+    this.bodyStyleCache = new Map();
+    this.bodyBottomStyleCache = new Map();
+    this.scenegraph.createSceneGraph();
+    this.renderAsync();
   }
   /** 获取某个字段下checkbox 全部数据的选中状态 顺序对应原始传入数据records 不是对应表格展示row的状态值 */
   getCheckboxState(field?: string | number) {
@@ -825,24 +833,18 @@ export class ListTable extends BaseTable implements ListTableAPI {
       if ((this as any).sortState) {
         let order: any;
         let field: any;
-        let fieldKey: any;
         if (Array.isArray((this as any).sortState)) {
           if ((this as any).sortState.length !== 0) {
-            ({ order, field, fieldKey } = (this as any).sortState?.[0]);
+            ({ order, field } = (this as any).sortState?.[0]);
           }
         } else {
-          ({ order, field, fieldKey } = (this as any).sortState as SortState);
+          ({ order, field } = (this as any).sortState as SortState);
         }
         // 根据sort规则进行排序
         if (order && field && order !== 'normal') {
-          const sortFunc = this._getSortFuncFromHeaderOption(undefined, field, fieldKey);
+          const sortFunc = this._getSortFuncFromHeaderOption(undefined, field);
           // 如果sort传入的信息不能生成正确的sortFunc，直接更新表格，避免首次加载无法正常显示内容
-          let hd;
-          if (fieldKey) {
-            hd = this.internalProps.layoutMap.headerObjects.find((col: any) => col && col.fieldKey === fieldKey);
-          } else {
-            hd = this.internalProps.layoutMap.headerObjects.find((col: any) => col && col.field === field);
-          }
+          const hd = this.internalProps.layoutMap.headerObjects.find((col: any) => col && col.field === field);
           // hd?.define?.sort && //如果这里也判断 那想要利用sortState来排序 但不显示排序图标就实现不了
           this.dataSource.sort(hd.field, order, sortFunc ?? defaultOrderFn);
         }
