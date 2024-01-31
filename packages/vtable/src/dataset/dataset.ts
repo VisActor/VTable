@@ -491,8 +491,12 @@ export class Dataset {
             max: number;
             min: number;
           };
-          fieldRange.max = Math.max(record[field], fieldRange.max);
-          fieldRange.min = Math.min(record[field], fieldRange.min);
+          const max = Math.max(record[field], fieldRange.max);
+          const min = Math.min(record[field], fieldRange.min);
+          if (!isNaN(max)) {
+            fieldRange.max = max;
+            fieldRange.min = min;
+          }
         } else {
           const fieldRange = this.collectedValues[field][collectKeys] as Array<string>;
           if (fieldRange.indexOf(record[field]) === -1) {

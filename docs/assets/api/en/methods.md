@@ -404,6 +404,30 @@ Get the text of the cell with omitted text.
   getCellOverflowText(col: number, row: number) => string | null
 ```
 
+## getCellRect(Function)
+Get the specific position of the cell in the entire table.
+```
+ /**
+   * Get the range of cells. The return value is Rect type. Regardless of whether it is a merged cell, the coordinates start from 0
+   * @param {number} col column index
+   * @param {number} row row index
+   * @returns {Rect}
+   */
+  getCellRect(col: number, row: number): Rect
+```
+
+## getCellRelativeRect(Function)
+Get the specific position of the cell in the entire table. Relative position is based on the upper left corner of the table (scroll condition minus scroll value)
+```
+  /**
+   * The obtained position is relative to the upper left corner of the table display interface. In case of scrolling, if the cell has rolled out of the top of the table, the y of this cell will be a negative value.
+   * @param {number} col index of column, of the cell
+   * @param {number} row index of row, of the cell
+   * @returns {Rect} the rect of the cell.
+   */
+  getCellRelativeRect(col: number, row: number): Rect
+```
+
 ## getCellHeaderPaths(Function)
 
 Get the path to the row list header

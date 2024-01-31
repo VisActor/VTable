@@ -1,3 +1,5 @@
+import type { ListTable } from '../../../ListTable';
+import { ListTableAPI } from '../../../ts-types';
 import type { Group } from '../../graphic/group';
 import { computeColsWidth } from '../../layout/compute-col-width';
 import { computeRowsHeight } from '../../layout/compute-row-height';
@@ -114,7 +116,7 @@ export function createGroupForFirstScreen(
       table.frozenColCount - 1, // colEnd
       table.rowCount - 1 - table.bottomFrozenRowCount + 1, // rowStart
       table.rowCount - 1, // rowEnd
-      table.isListTable() ? 'body' : 'rowHeader', // isHeader
+      table.isListTable() ? ((table as ListTable).transpose ? 'rowHeader' : 'body') : 'rowHeader', // isHeader
       table
     );
     // }

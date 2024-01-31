@@ -2,6 +2,63 @@
   "name": "@visactor/vtable",
   "entries": [
     {
+      "version": "0.18.4",
+      "tag": "@visactor/vtable_v0.18.4",
+      "date": "Fri, 26 Jan 2024 09:15:07 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "fix: when click bottomFrozenRow table scroll sometimes #1011\n\n"
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.18.3",
+      "tag": "@visactor/vtable_v0.18.3",
+      "date": "Thu, 25 Jan 2024 10:27:02 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "fix: click outside of cells click cancel select state\n\n"
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.18.2",
+      "tag": "@visactor/vtable_v0.18.2",
+      "date": "Wed, 24 Jan 2024 12:12:36 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "fix: fix rowHeaderGroup attribute y when has no colHeaderGroup #971\n\n"
+          },
+          {
+            "comment": "fix:  transpose bottomFrozenRow cell layout error #978\n\n"
+          },
+          {
+            "comment": "fix: passte value to last row occur error #979\n\n"
+          },
+          {
+            "comment": "fix: use updateColumns api click state not right #975\n\n"
+          },
+          {
+            "comment": "fix: record has nan string value pivotchart cell value parse handle this case #993\n\n"
+          },
+          {
+            "comment": "fix: row Height compute for axis\n\n"
+          },
+          {
+            "comment": "fix: fix deltaY col number in moveCell()"
+          },
+          {
+            "comment": "feat: add component update"
+          }
+        ]
+      }
+    },
+    {
       "version": "0.18.1",
       "tag": "@visactor/vtable_v0.18.1",
       "date": "Fri, 19 Jan 2024 11:43:14 GMT",

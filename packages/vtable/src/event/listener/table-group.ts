@@ -625,6 +625,7 @@ export function bindTableGroupListener(eventManager: EventManager) {
       // 如果是鼠标点击到canvas空白区域 则取消选中状态
       !table.eventManager.isDraging &&
       target &&
+      (target.isDescendantsOf(table.scenegraph.stage) || (target as any).stage === target) && //判断节点未被删除 后面这个是为了判断是stage本身
       !target.isDescendantsOf(table.scenegraph.tableGroup)
       // &&
       // (target as any) !== table.scenegraph.tableGroup &&
