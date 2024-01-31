@@ -67,7 +67,7 @@ If the several editors provided by the VTable-ediotrs library cannot meet your n
 
 You can use the following flow chart to understand the relationship between the editor and VTable:
 
-![image](https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/guide/editCellProcess.png)
+![image](https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/guide/editCellProcess1.png)
 
 The following is sample code for a custom editor:
 

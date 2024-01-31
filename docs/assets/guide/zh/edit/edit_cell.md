@@ -76,7 +76,7 @@ interface ColumnDefine {
 
 可以结合下面这个流程图来理解编辑器和VTable之间的关系：
 
-![image](https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/guide/editCellProcess.png)
+![image](https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/guide/editCellProcess1.png)
 
 以下是一个自定义编辑器的示例代码：
 
