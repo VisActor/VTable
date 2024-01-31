@@ -8,7 +8,7 @@ VTable没有封装Vue组件，那么如何在 Vue 中VTable呢？
 
 在 Vue 3.x 中使用 Vtable
 
-组合式 API，具体可以[参考在线 demo](https://codesandbox.io/p/sandbox/mystifying-hamilton-3wl76r?file=%2Fsrc%2Fcomponents%2FPivotChart.vue%3A9339%2C1)
+组合式 API，具体可以[参考在线 demo](https://codesandbox.io/p/devbox/magical-nash-t6t33f)
 
 不同的表格，封装方式都是类似的
 

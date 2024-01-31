@@ -2,7 +2,7 @@
 
 In Vue 3.x, using VTable
 
-Composition API， you can refer to[ the online demo ](https://codesandbox.io/p/devbox/vchart-demo-vue-73h8wl)for details.
+Composition API， you can refer to[ the online demo ](https://codesandbox.io/p/devbox/magical-nash-t6t33f)for details.
 
 
 ## Code Example
@@ -136,4 +136,14 @@ onMounted(() => {
 });
 </script>
 
+```
+
+## Notice
+
+If you need to use ref to save table instances, please use `shallowRef`. Using `ref` will affect internal attribute updates and cause rendering exceptions.
+
+
+```
+const tableInstance = shallowRef();
+tableInstance.value = new ListTable(listTableRef.value, option);
 ```

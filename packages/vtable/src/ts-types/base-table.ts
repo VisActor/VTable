@@ -205,7 +205,7 @@ export interface IBaseTableProtected {
   // // 开启图表异步渲染 每批次渐进渲染图表个数
   // renderChartAsyncBatchCount?: number;
 
-  stick: { changedCells: StickCell[] };
+  stick: { changedCells: Map<string, StickCell> };
 
   customMergeCell?: CustomMergeCell;
   /**

@@ -136,7 +136,10 @@ export function updateSelectPosition(
         });
       } else if (col >= 0 && row >= 0) {
         const cellRange = table.getCellRange(col, row);
-        state.select.ranges.push(cellRange);
+        state.select.ranges.push({
+          start: { col: cellRange.start.col, row: cellRange.start.row },
+          end: { col: cellRange.end.col, row: cellRange.end.row }
+        });
       }
       cellPos.col = col;
       cellPos.row = row;
