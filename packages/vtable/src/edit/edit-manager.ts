@@ -110,9 +110,7 @@ export class EditManeger {
       if (target && this.editingEditor.targetIsOnEditor(target)) {
         return;
       }
-    }
-
-    if (!this.editingEditor.onClickElsewhere || (target && this.editingEditor.onClickElsewhere?.(target))) {
+    } else if (!this.editingEditor.onClickElsewhere || (target && this.editingEditor.onClickElsewhere?.(target))) {
       return;
     }
 
