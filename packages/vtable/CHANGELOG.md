@@ -1,6 +1,24 @@
 # Change Log - @visactor/vtable
 
-This log was last generated on Wed, 24 Jan 2024 12:12:36 GMT and should not be manually modified.
+This log was last generated on Fri, 26 Jan 2024 09:15:07 GMT and should not be manually modified.
+
+## 0.18.4
+Fri, 26 Jan 2024 09:15:07 GMT
+
+### Updates
+
+- fix: when click bottomFrozenRow table scroll sometimes #1011
+
+
+
+## 0.18.3
+Thu, 25 Jan 2024 10:27:02 GMT
+
+### Updates
+
+- fix: click outside of cells click cancel select state
+
+
 
 ## 0.18.2
 Wed, 24 Jan 2024 12:12:36 GMT

@@ -1281,7 +1281,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     const height = this.getRowHeight(row);
     if (isFrozenCell && isFrozenCell.row) {
       if (this.isBottomFrozenRow(col, row)) {
-        absoluteLeft = this.tableNoFrameHeight - (this.getRowsHeight(row, this.rowCount - 1) ?? 0);
+        absoluteTop = this.tableNoFrameHeight - (this.getRowsHeight(row, this.rowCount - 1) ?? 0);
       } else {
         absoluteTop = this.getRowsHeight(0, row - 1);
         absoluteTop += this.scrollTop;
@@ -1312,7 +1312,19 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
    * @returns {Rect} the rect of the cell.
    */
   getCellRelativeRect(col: number, row: number): Rect {
-    return this._toRelativeRect(this.getCellRect(col, row));
+    const isFrozenCell = this.isFrozenCell(col, row);
+    let relativeX = true;
+    let relativeY = true;
+    if (isFrozenCell?.col && isFrozenCell?.row) {
+      relativeX = false;
+      relativeY = false;
+    } else if (isFrozenCell?.col) {
+      relativeX = false;
+    } else if (isFrozenCell?.row) {
+      relativeY = false;
+    }
+    const cellRect = this.getCellRect(col, row);
+    return this._toRelativeRect(cellRect, relativeX, relativeY);
   }
   /**
    * 获取的位置是相对表格显示界面的左上角
@@ -1321,18 +1333,44 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
    */
   getCellRangeRelativeRect(range: CellRange | CellAddress): Rect {
     if ((<CellRange>range).start) {
+      const isFrozenCell = this.isFrozenCell((<CellRange>range).start.col, (<CellRange>range).start.row);
+      let relativeX = true;
+      let relativeY = true;
+      if (isFrozenCell?.col && isFrozenCell?.row) {
+        relativeX = false;
+        relativeY = false;
+      } else if (isFrozenCell?.col) {
+        relativeX = false;
+      } else if (isFrozenCell?.row) {
+        relativeY = false;
+      }
       return this._toRelativeRect(
         this.getCellsRect(
           (<CellRange>range).start.col,
           (<CellRange>range).start.row,
           (<CellRange>range).end.col,
           (<CellRange>range).end.row
-        )
+        ),
+        relativeX,
+        relativeY
       );
     }
     const cellRange = this.getCellRange((<CellAddress>range).col, (<CellAddress>range).row);
+    const isFrozenCell = this.isFrozenCell((<CellAddress>range).col, (<CellAddress>range).row);
+    let relativeX = true;
+    let relativeY = true;
+    if (isFrozenCell?.col && isFrozenCell?.row) {
+      relativeX = false;
+      relativeY = false;
+    } else if (isFrozenCell?.col) {
+      relativeX = false;
+    } else if (isFrozenCell?.row) {
+      relativeY = false;
+    }
     return this._toRelativeRect(
-      this.getCellsRect(cellRange.start.col, cellRange.start.row, cellRange.end.col, cellRange.end.row)
+      this.getCellsRect(cellRange.start.col, cellRange.start.row, cellRange.end.col, cellRange.end.row),
+      relativeX,
+      relativeY
     );
   }
   /**
@@ -1620,11 +1658,11 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
    * @param absoluteRect
    * @returns
    */
-  _toRelativeRect(absoluteRect: Rect): Rect {
+  _toRelativeRect(absoluteRect: Rect, relativeX: boolean = true, relativeY: boolean = true): Rect {
     const rect = absoluteRect.copy();
     const visibleRect = this.getVisibleRect();
-    rect.offsetLeft(this.tableX - visibleRect.left);
-    rect.offsetTop(this.tableY - visibleRect.top);
+    rect.offsetLeft(this.tableX - (relativeX ? visibleRect.left : 0));
+    rect.offsetTop(this.tableY - (relativeY ? visibleRect.top : 0));
     return rect;
   }
 

@@ -149,7 +149,8 @@ export class ListTable extends BaseTable implements ListTableAPI {
     this.eventManager.updateEventBinder();
   }
   get columns(): ColumnsDefine {
-    return this.internalProps.columns;
+    // return this.internalProps.columns;
+    return this.internalProps.layoutMap.columnTree.getCopiedTree(); //调整顺序后的columns
   }
   /**
    *@deprecated 请使用columns

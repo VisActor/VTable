@@ -45,14 +45,8 @@ import {
   isCartesianChart,
   isHasCartesianChartInline
 } from './chart-helper/get-chart-spec';
-import type { LayouTreeNode, IPivotLayoutHeadNode } from './pivot-layout-helper';
-import {
-  DimensionTree,
-  countLayoutTree,
-  dealHeader,
-  dealHeaderForTreeMode,
-  generateLayoutTree
-} from './pivot-layout-helper';
+import type { LayouTreeNode, ITreeLayoutHeadNode } from './layout-helper';
+import { DimensionTree, countLayoutTree, dealHeader, dealHeaderForTreeMode, generateLayoutTree } from './layout-helper';
 import type { Dataset } from '../dataset/dataset';
 import { cloneDeep, isArray, isValid } from '@visactor/vutils';
 import type { TextStyle } from '../body-helper/style';
@@ -217,9 +211,9 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
         this.indicatorKeys.push(indicator.indicatorKey);
       }
     });
-    this.columnDimensionTree = new DimensionTree((this.columnTree as IPivotLayoutHeadNode[]) ?? [], this.sharedVar);
+    this.columnDimensionTree = new DimensionTree((this.columnTree as ITreeLayoutHeadNode[]) ?? [], this.sharedVar);
     this.rowDimensionTree = new DimensionTree(
-      (this.rowTree as IPivotLayoutHeadNode[]) ?? [],
+      (this.rowTree as ITreeLayoutHeadNode[]) ?? [],
       this.sharedVar,
       this.rowHierarchyType,
       this.rowHierarchyType === 'tree' ? this.rowExpandLevel : undefined
@@ -471,7 +465,7 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
     this.setColumnWidths();
   }
 
-  _addHeaders(_headerCellIds: number[][], row: number, header: IPivotLayoutHeadNode[], roots: number[]): HeaderData[] {
+  _addHeaders(_headerCellIds: number[][], row: number, header: ITreeLayoutHeadNode[], roots: number[]): HeaderData[] {
     const _this = this;
     function _newRow(row: number): number[] {
       const newRow: number[] = (_headerCellIds[row] = []);
@@ -498,7 +492,7 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
   _addHeadersForTreeMode(
     _headerCellIds: number[][],
     row: number,
-    header: IPivotLayoutHeadNode[],
+    header: ITreeLayoutHeadNode[],
     roots: number[],
     totalLevel: number,
     show: boolean,
@@ -1459,8 +1453,8 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
     // console.log(`${col}-${row}`);
     const recordCol = this.getBodyIndexByCol(col);
     const recordRow = this.getBodyIndexByRow(row) + this.currentPageStartIndex;
-    let colPath: IPivotLayoutHeadNode[] = [];
-    let rowPath: IPivotLayoutHeadNode[] = [];
+    let colPath: ITreeLayoutHeadNode[] = [];
+    let rowPath: ITreeLayoutHeadNode[] = [];
     if (row >= 0 && recordCol >= 0) {
       colPath = this.columnDimensionTree.getTreePath(
         recordCol,
@@ -1808,7 +1802,7 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
     let row = 0;
     if (rowDimension) {
       row = this.columnHeaderLevelCount;
-      const { startInTotal, level } = rowDimension as IPivotLayoutHeadNode;
+      const { startInTotal, level } = rowDimension as ITreeLayoutHeadNode;
       row += startInTotal;
       if (this.rowHierarchyType === 'grid') {
         col = this.rowHeaderTitle ? level + 1 : level;
@@ -1818,7 +1812,7 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
       return { col, row };
     } else if (colDimension) {
       col = this.rowHeaderLevelCount;
-      const { startInTotal, level } = colDimension as IPivotLayoutHeadNode;
+      const { startInTotal, level } = colDimension as ITreeLayoutHeadNode;
       col += startInTotal;
       row = this.columnHeaderTitle ? level + 1 : level;
       return { col, row };
@@ -2013,7 +2007,7 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
 
         // 对维度树结构调整节点位置
         this.columnDimensionTree.movePosition(
-          source.row,
+          this.getCellHeaderPathsWidthTreeNode(source.col, source.row).colHeaderPaths.length - 1,
           sourceCellRange.start.col - this.rowHeaderLevelCount,
           targetIndex - this.rowHeaderLevelCount
         );
@@ -2247,7 +2241,7 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
     // 通过dimension获取col和row
     if (rowDimensionFinded || forceBody) {
       row = this.columnHeaderLevelCount;
-      const { startInTotal, level } = (rowDimensionFinded as IPivotLayoutHeadNode) ?? defaultDimension;
+      const { startInTotal, level } = (rowDimensionFinded as ITreeLayoutHeadNode) ?? defaultDimension;
       row += startInTotal ?? 0;
       if (this.rowHierarchyType === 'grid') {
         defaultCol = this.rowHeaderTitle ? level + 1 : level;
@@ -2257,7 +2251,7 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
     }
     if (colDimensionFinded || forceBody) {
       col = this.rowHeaderLevelCount;
-      const { startInTotal, level } = (colDimensionFinded as IPivotLayoutHeadNode) ?? defaultDimension;
+      const { startInTotal, level } = (colDimensionFinded as ITreeLayoutHeadNode) ?? defaultDimension;
       col += startInTotal ?? 0;
       defaultRow = this.columnHeaderTitle ? level + 1 : level;
     }
