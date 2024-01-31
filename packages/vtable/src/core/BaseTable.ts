@@ -840,7 +840,8 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
    * @returns
    */
   getColsWidth(startCol: number, endCol: number): number {
-    endCol = Math.min(endCol, this.colCount - 1); // endCol最大为this.colCount - 1，超过会导致width计算为NaN
+    startCol = Math.max(startCol, 0);
+    endCol = Math.min(endCol, (this.colCount ?? Infinity) - 1); // endCol最大为this.colCount - 1，超过会导致width计算为NaN
     //通过缓存获取指定范围列宽
     const cachedColWidth = this._colRangeWidthsMap.get(`$${startCol}$${endCol}`);
     if (cachedColWidth !== null && cachedColWidth !== undefined) {
@@ -956,6 +957,8 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
    * @returns
    */
   getRowsHeight(startRow: number, endRow: number): number {
+    startRow = Math.max(startRow, 0);
+    endRow = Math.min(endRow, (this.rowCount ?? Infinity) - 1);
     //通过缓存获取指定范围行高
     // const cachedRowHeight = this._rowRangeHeightsMap.get(`$${startRow}$${endRow}`);
     // if (cachedRowHeight !== null && cachedRowHeight !== undefined) {

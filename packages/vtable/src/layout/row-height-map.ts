@@ -116,6 +116,9 @@ export class NumberRangeMap {
   }
 
   calculatePrefixSum(position: number) {
+    if (position < 0) {
+      return 0;
+    }
     if (this.cumulativeSum.has(position)) {
       let cache = this.cumulativeSum.get(position);
       for (const [pos, difference] of this.difference) {
