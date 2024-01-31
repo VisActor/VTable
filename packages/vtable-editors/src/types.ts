@@ -1,36 +1,96 @@
-export interface IEditor {
-  /** 编辑器类型 */
-  editorType?: string;
-  /** 编辑配置 */
-  editorConfig: any;
-  /* 编辑器挂载的容器 由vtable传入 */
-  container: HTMLElement;
-  /** 编辑完成后调用。注意如果是（enter键，鼠标点击其他位置）这类编辑完成已有VTable实现，编辑器内部有完成按钮等类似的完成操作需要调用这个方法 */
-  successCallback?: Function;
-  /** 获取编辑器当前值 */
-  getValue: () => string | number | null;
-  /** 编辑器进入编辑状态 */
-  beginEditing: (
-    container: HTMLElement,
-    referencePosition: { rect: RectProps; placement?: Placement },
-    value?: string
-  ) => void;
-  /** 编辑器退出编辑状态 */
-  exit: () => void;
-  /** 判断鼠标点击的target是否属于编辑器内部元素 */
-  targetIsOnEditor: (target: HTMLElement) => boolean;
-  /** 由VTable调用来传入编辑成功的回调  请将callback赋值到successCallback */
-  bindSuccessCallback?: (callback: Function) => void;
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export interface IEditor<V = any> {
+  /**
+   * Called when cell enters edit mode.
+   *
+   * Warning will be thrown if you don't provide this function
+   * after removal of `beginEditing`.
+   */
+  onStart?: (context: EditContext<V>) => void;
+  /**
+   * called when cell exits edit mode.
+   *
+   * Warning will be thrown if you don't provide this function
+   * after removal of `exit`.
+   */
+  onEnd?: () => void;
+  /**
+   * Called when user click somewhere while editor is in edit mode.
+   *
+   * If returns falsy, VTable will exit edit mode.
+   *
+   * If returns truthy or not defined, nothing will happen.
+   * Which means, in this scenario, you need to call `endEdit` manually
+   * to end edit mode.
+   */
+  onClickElsewhere?: (target: HTMLElement) => boolean;
+  /**
+   * Called when editor mode is exited by any means.
+   * Expected to return the current value of the cell.
+   */
+  getValue: () => V;
+  /**
+   * Called when cell enter edit mode.
+   * @deprecated use `onStart` instead.
+   */
+  beginEditing?: (container: HTMLElement, referencePosition: ReferencePosition, value: V) => void;
+  /**
+   * @see onEnd
+   * @deprecated use `onEnd` instead.
+   */
+  exit?: () => void;
+  /**
+   * @see onClickElsewhere
+   * @deprecated use `onClickElsewhere` instead.
+   */
+  targetIsOnEditor?: (target: HTMLElement) => boolean;
+  /**
+   * Called when cell enters edit mode with a callback function
+   * that can be used to end edit mode.
+   * @see EditContext#endEdit
+   * @deprecated callback is provided as `endEdit` in `EditContext`, use `onStart` instead.
+   */
+  bindSuccessCallback?: (callback: () => void) => void;
 }
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export interface EditContext<V = any> {
+  /** Container element of the VTable instance. */
+  container: HTMLElement;
+  /** Position info of the cell that is being edited. */
+  referencePosition: ReferencePosition;
+  /** Cell value before editing. */
+  value: V;
+  /**
+   * Callback function that can be used to end edit mode.
+   *
+   * In most cases you don't need to call this function,
+   * since Enter key click is handled by VTable automatically,
+   * and mouse click can be handled by `onClickElsewhere`.
+   *
+   * However, if your editor has its own complete button,
+   * or you have external elements like Tooltip,
+   * you may want to use this callback to help you
+   * end edit mode.
+   */
+  endEdit: () => void;
+}
+
 export interface RectProps {
   left: number;
   top: number;
   width: number;
   height: number;
 }
+
 export enum Placement {
   top = 'top',
   bottom = 'bottom',
   left = 'left',
   right = 'right'
+}
+
+export interface ReferencePosition {
+  rect: RectProps;
+  placement?: Placement;
 }
