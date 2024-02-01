@@ -784,6 +784,18 @@ export class DataSource extends EventTarget implements DataSourceAPI {
     return isReserved;
   }
 
+  updateFilterRulesForSorted(filterRules?: FilterRules): void {
+    this.dataConfig.filterRules = filterRules;
+    this._source = this.filterRecords(this.dataSourceObj?.source ?? this.dataSourceObj);
+    this._sourceLength = this._source?.length || 0;
+    this.sortedIndexMap.clear();
+    this.currentIndexedData = Array.from({ length: this._sourceLength }, (_, i) => i);
+    if (!this.userPagination) {
+      this.pagination.perPageCount = this._sourceLength;
+      this.pagination.totalCount = this._sourceLength;
+    }
+  }
+
   updateFilterRules(filterRules?: FilterRules): void {
     this.dataConfig.filterRules = filterRules;
     this._source = this.filterRecords(this.dataSourceObj?.source ?? this.dataSourceObj);

@@ -781,13 +781,14 @@ export class ListTable extends BaseTable implements ListTableAPI {
   updateFilterRules(filterRules: FilterRules) {
     this.scenegraph.clearCells();
     this.internalProps.dataConfig.filterRules = filterRules;
-    this.dataSource.updateFilterRules(filterRules);
+    if (this.sortState) {
+      this.dataSource.updateFilterRulesForSorted(filterRules);
+      sortRecords(this);
+    } else {
+      this.dataSource.updateFilterRules(filterRules);
+    }
     this.refreshRowColCount();
-    this.headerStyleCache = new Map();
-    this.bodyStyleCache = new Map();
-    this.bodyBottomStyleCache = new Map();
     this.scenegraph.createSceneGraph();
-    this.renderAsync();
   }
   /** 获取某个字段下checkbox 全部数据的选中状态 顺序对应原始传入数据records 不是对应表格展示row的状态值 */
   getCheckboxState(field?: string | number) {

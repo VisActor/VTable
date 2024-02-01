@@ -176,7 +176,7 @@ export type DerivedFieldRules = DerivedFieldRule[];
  */
 export interface IListTableDataConfig {
   // aggregationRules?: AggregationRules; //按照行列维度聚合值计算规则；
-  // sortRules?: SortRules; //排序规则；
+  // sortRules?: SortTypeRule | SortByRule | SortFuncRule; //排序规则 不能简单的将sortState挪到这里 sort的规则在column中配置的；
   filterRules?: FilterRules; //过滤规则；
   // totals?: Totals; //小计或总计；
   // derivedFieldRules?: DerivedFieldRules;

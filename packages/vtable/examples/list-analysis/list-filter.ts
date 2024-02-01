@@ -307,6 +307,10 @@ export function createTable() {
   const option: VTable.ListTableConstructorOptions = {
     container: document.getElementById(CONTAINER_ID),
     records,
+    sortState: {
+      field: 'id',
+      order: 'desc'
+    },
     dataConfig: {
       filterRules: [
         {
@@ -335,7 +339,7 @@ export function createTable() {
     },
     pagination: {
       perPageCount: 100,
-      currentPage: 4555
+      currentPage: 0
     }
     // widthMode: 'adaptive'
   };
