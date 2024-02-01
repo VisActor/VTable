@@ -92,7 +92,11 @@ async function moveColumn(
     proxy.table.scenegraph.proxy.deltaX += deltaX;
 
     proxy.currentCol = direction === 'left' ? proxy.currentCol + count : proxy.currentCol - count;
-    proxy.totalCol = direction === 'left' ? proxy.totalCol + count : proxy.totalCol - count;
+    proxy.totalCol = Math.max(
+      0,
+      Math.min(proxy.table.colCount - 1, direction === 'left' ? proxy.totalCol + count : proxy.totalCol - count)
+    );
+
     proxy.referenceCol = proxy.colStart + Math.floor((proxy.colEnd - proxy.colStart) / 2);
     proxy.colUpdatePos = distStartCol;
     proxy.colUpdateDirection = direction;
@@ -147,7 +151,10 @@ async function moveColumn(
     }
 
     proxy.currentCol = direction === 'left' ? proxy.currentCol + count : proxy.currentCol - count;
-    proxy.totalCol = direction === 'left' ? proxy.totalCol + count : proxy.totalCol - count;
+    proxy.totalCol = Math.max(
+      0,
+      Math.min(proxy.table.colCount - 1, direction === 'left' ? proxy.totalCol + count : proxy.totalCol - count)
+    );
     proxy.referenceCol = proxy.colStart + Math.floor((proxy.colEnd - proxy.colStart) / 2);
     proxy.colUpdatePos = proxy.colStart;
     proxy.colUpdateDirection = distEndCol > proxy.bodyRightCol - (proxy.colEnd - proxy.colStart + 1) ? 'right' : 'left';
