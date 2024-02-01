@@ -435,3 +435,13 @@ export function isAllDigits(str: string) {
   const pattern = /^-?\d+(\.\d+)?$/;
   return pattern.test(str);
 }
+// array deduplication
+export function deduplication(array: number[]) {
+  const result = [];
+  for (let i = 0; i < array.length; i++) {
+    if (result.indexOf(array[i]) === -1) {
+      result.push(array[i]);
+    }
+  }
+  return result;
+}
