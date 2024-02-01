@@ -165,7 +165,7 @@ VTable.register.editor('custom-date', custom_date_editor);
 
 在上面的示例中，我们创建了一个名为`DateEditor`的自定义编辑器，并实现了`IEditor`接口所要求的方法。然后，我们通过`VTable.register.editor`方法将自定义编辑器注册到VTable中，以便在表格中使用。
 
-`IEditor` 接口[定义](https://github.com/VisActor/VTable/blob/develop/packages/vtable-editors/src/types.ts)：
+`IEditor` 接口[定义](https://github.com/VisActor/VTable/blob/main/packages/vtable-editors/src/types.ts)：
 ```ts
 export interface IEditor<V = any> {
   /** * 单元格进入编辑状态时调用 */

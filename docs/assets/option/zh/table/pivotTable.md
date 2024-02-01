@@ -343,7 +343,7 @@ export interface IIndicatorHeaderNode {
 ```
 editor?: string | IEditor | ((args: BaseCellInfo & { table: BaseTableAPI }) => string | IEditor);
 ```
-其中IEditor是@visactor/vtable-editors中定义的编辑器接口，具体可以参看源码：https://github.com/VisActor/VTable/blob/feat/editCell/packages/vtable-editors/src/types.ts。
+其中IEditor是@visactor/vtable-editors中定义的编辑器接口，具体可以参看源码：https://github.com/VisActor/VTable/blob/main/editCell/packages/vtable-editors/src/types.ts。
 
 {{ use: common-option-secondary(
     prefix = '#',

@@ -76,7 +76,7 @@ Global configuration cell editor
 ```
 editor?: string | IEditor | ((args: BaseCellInfo & { table: BaseTableAPI }) => string | IEditor);
 ```
-Among them, IEditor is the editor interface defined in @visactor/vtable-editors. For details, please refer to the source code: https://github.com/VisActor/VTable/blob/feat/editCell/packages/vtable-editors/src/types.ts .
+Among them, IEditor is the editor interface defined in @visactor/vtable-editors. For details, please refer to the source code: https://github.com/VisActor/VTable/blob/main/editCell/packages/vtable-editors/src/types.ts .
 
 ${prefix} headerEditor (string|Object|Function)
 

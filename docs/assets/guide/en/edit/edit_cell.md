@@ -157,7 +157,7 @@ VTable.register.editor('custom-date', custom_date_editor);
 ```
 In the above example, we created a custom editor named `DateEditor` and implemented the methods required by the `IEditor` interface. Then, we register the custom editor into the VTable through the `VTable.register.editor` method for use in the table.
 
-`IEditor` [definition](https://github.com/VisActor/VTable/blob/develop/packages/vtable-editors/src/types.ts)：
+`IEditor` [definition](https://github.com/VisActor/VTable/blob/main/packages/vtable-editors/src/types.ts)：
 ```ts
 export interface IEditor<V = any> {
   /** Called when cell enters edit mode. */
