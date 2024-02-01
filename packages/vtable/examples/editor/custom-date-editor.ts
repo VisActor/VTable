@@ -84,7 +84,7 @@ class DateEditor implements IEditor {
     this.picker.destroy();
     this.container.removeChild(this.element);
   }
-  onClickElsewhere(target: HTMLElement) {
+  isEditorElement(target: HTMLElement) {
     if (target === this.element || this.picker.el.contains(target)) {
       return true;
     }

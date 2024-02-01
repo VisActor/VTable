@@ -157,7 +157,7 @@ VTable.register.editor('custom-date', custom_date_editor);
 ```
 In the above example, we created a custom editor named `DateEditor` and implemented the methods required by the `IEditor` interface. Then, we register the custom editor into the VTable through the `VTable.register.editor` method for use in the table.
 
-`IEditor` [definition](https://github.com/VisActor/VTable/blob/develop/packages/vtable-editors/src/types.ts)：
+`IEditor` [definition](https://github.com/VisActor/VTable/blob/main/packages/vtable-editors/src/types.ts)：
 ```ts
 export interface IEditor<V = any> {
   /** Called when cell enters edit mode. */
@@ -173,7 +173,7 @@ export interface IEditor<V = any> {
    * Which means, in this scenario, you need to call `endEdit` manually
    * to end edit mode.
    */
-  onClickElsewhere?: (target: HTMLElement) => boolean;
+  isEditorElement?: (target: HTMLElement) => boolean;
   /**
    * Called when editor mode is exited by any means.
    * Expected to return the current value of the cell.
@@ -194,7 +194,7 @@ export interface EditContext<V = any> {
    *
    * In most cases you don't need to call this function,
    * since Enter key click is handled by VTable automatically,
-   * and mouse click can be handled by `onClickElsewhere`.
+   * and mouse click can be handled by `isEditorElement`.
    *
    * However, if your editor has its own complete button,
    * or you have external elements like Tooltip,

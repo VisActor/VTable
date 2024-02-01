@@ -106,11 +106,11 @@ export class EditManeger {
     const target = e?.target as HTMLElement | undefined;
 
     if (this.editingEditor.targetIsOnEditor) {
-      console.warn('VTable Warn: `targetIsOnEditor` is deprecated, please use `onClickElsewhere` instead.');
+      console.warn('VTable Warn: `targetIsOnEditor` is deprecated, please use `isEditorElement` instead.');
       if (target && this.editingEditor.targetIsOnEditor(target)) {
         return;
       }
-    } else if (!this.editingEditor.onClickElsewhere || (target && this.editingEditor.onClickElsewhere?.(target))) {
+    } else if (!this.editingEditor.isEditorElement || (target && this.editingEditor.isEditorElement?.(target))) {
       return;
     }
 
