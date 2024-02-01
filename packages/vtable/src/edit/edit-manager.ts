@@ -8,10 +8,12 @@ export class EditManeger {
   table: BaseTableAPI;
   editingEditor: IEditor;
   editCell: { col: number; row: number };
+
   constructor(table: BaseTableAPI) {
     this.table = table;
     this.bindEvent();
   }
+
   bindEvent() {
     const handler = this.table.internalProps.handler;
     this.table.on(TABLE_EVENT_TYPE.DBLCLICK_CELL, e => {
@@ -48,6 +50,7 @@ export class EditManeger {
       this.completeEdit();
     });
   }
+
   startEditCell(col: number, row: number) {
     //透视表的表头不允许编辑
     if (this.table.isPivotTable() && this.table.isHeader(col, row)) {
@@ -68,34 +71,66 @@ export class EditManeger {
           return;
         }
       }
-      editor.bindSuccessCallback?.(() => {
-        this.completeEdit();
-      });
       this.editingEditor = editor;
       this.editCell = { col, row };
       const dataValue = this.table.getCellOriginValue(col, row);
       const rect = this.table.getCellRangeRelativeRect(this.table.getCellRange(col, row));
-      editor.beginEditing(
-        this.table.getElement(),
-        { rect: { left: rect.left, top: rect.top, width: rect.width, height: rect.height } },
-        dataValue
-      );
+      const referencePosition = { rect: { left: rect.left, top: rect.top, width: rect.width, height: rect.height } };
+
+      editor.beginEditing && console.warn('VTable Warn: `beginEditing` is deprecated, please use `onStart` instead.');
+      editor.beginEditing?.(this.table.getElement(), referencePosition, dataValue);
+
+      if (editor.bindSuccessCallback) {
+        console.warn('VTable Warn: `bindSuccessCallback` is deprecated, please use `onStart` instead.');
+      }
+      editor.bindSuccessCallback?.(() => {
+        this.completeEdit();
+      });
+      editor.onStart?.({
+        value: dataValue,
+        endEdit: () => {
+          this.completeEdit();
+        },
+        referencePosition,
+        container: this.table.getElement()
+      });
     }
   }
+
   /** 如果是事件触发调用该接口 请传入原始事件对象 将判断事件对象是否在编辑器本身上面  来处理是否结束编辑 */
-  completeEdit(e?: any) {
-    const target = e?.target;
-    if (this.editingEditor && (!target || (target && !this.editingEditor.targetIsOnEditor(target as HTMLElement)))) {
-      const changedValue = this.editingEditor.getValue();
-      (this.table as ListTableAPI).changeCellValue(this.editCell.col, this.editCell.row, changedValue);
-      this.editingEditor.exit();
-      this.editingEditor = null;
+  completeEdit(e?: Event) {
+    if (!this.editingEditor) {
+      return;
     }
+
+    const target = e?.target as HTMLElement | undefined;
+
+    if (this.editingEditor.targetIsOnEditor) {
+      console.warn('VTable Warn: `targetIsOnEditor` is deprecated, please use `isEditorElement` instead.');
+      if (target && this.editingEditor.targetIsOnEditor(target)) {
+        return;
+      }
+    } else if (!this.editingEditor.isEditorElement || (target && this.editingEditor.isEditorElement?.(target))) {
+      return;
+    }
+
+    if (!this.editingEditor.getValue) {
+      console.warn('VTable Warn: `getValue` is not provided, did you forget to implement it?');
+    }
+    const changedValue = this.editingEditor.getValue?.();
+    (this.table as ListTableAPI).changeCellValue(this.editCell.col, this.editCell.row, changedValue);
+
+    this.editingEditor.exit && console.warn('VTable Warn: `exit` is deprecated, please use `onEnd` instead.');
+    this.editingEditor.exit?.();
+    this.editingEditor.onEnd?.();
+    this.editingEditor = null;
   }
 
   cancelEdit() {
     if (this.editingEditor) {
-      this.editingEditor.exit();
+      // TODO: 添加开发时弃用警告
+      this.editingEditor.exit?.();
+      this.editingEditor.onEnd?.();
       this.editingEditor = null;
     }
   }
