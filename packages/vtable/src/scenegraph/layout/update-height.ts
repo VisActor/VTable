@@ -49,10 +49,13 @@ export function updateRowHeight(scene: Scenegraph, row: number, detaY: number, s
 
     rowStart = row + 1;
     rowEnd = scene.table.columnHeaderLevelCount - 1;
+  } else if (row >= scene.table.rowCount - scene.table.bottomFrozenRowCount) {
+    rowStart = row + 1;
+    rowEnd = scene.table.rowCount - 1;
   } else {
     rowStart = row + 1;
     // rowEnd = scene.table.rowCount - 1;
-    rowEnd = scene.bodyRowEnd; //- scene.table.bottomFrozenRowCount;
+    rowEnd = Math.min(scene.proxy.rowEnd, scene.table.rowCount - scene.table.bottomFrozenRowCount - 1); //- scene.table.bottomFrozenRowCount;
   }
 
   // 更新以下行位置

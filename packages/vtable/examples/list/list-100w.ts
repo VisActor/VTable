@@ -180,4 +180,5 @@ export function createTable() {
     console.log('initialized');
   });
   window.tableInstance = tableInstance;
+  bindDebugTool(tableInstance.scenegraph.stage, { customGrapicKeys: ['col', 'row'] });
 }
