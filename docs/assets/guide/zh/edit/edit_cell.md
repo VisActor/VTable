@@ -65,19 +65,22 @@ columns: [
 
 editor配置可以在columns中，也可以在全局options中定义，同时可以支持自定义函数写法：
 
-```
-editor?: string | IEditor | ((args: BaseCellInfo & { table: BaseTableAPI }) => string | IEditor);
+```ts
+interface ColumnDefine {
+  // ...
+  editor?: string | IEditor | ((args: BaseCellInfo & { table: BaseTableAPI }) => string | IEditor);
+}
 ```
 ## 4. 自定义实现一个编辑器：
 如果VTable-ediotrs库提供的几种编辑器无法满足你的需求，你可以自定义实现一个编辑器。为此，你需要创建一个类，实现编辑器接口(`IEditor`)的要求，并提供必要的方法和逻辑。
 
 可以结合下面这个流程图来理解编辑器和VTable之间的关系：
 
-![image](https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/guide/editCellProcess.png)
+![image](https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/guide/editCellProcess1.png)
 
 以下是一个自定义编辑器的示例代码：
 
-```javascript
+```ts
 class DateEditor implements IEditor {
   editorConfig: any;
   element: HTMLInputElement;
@@ -87,9 +90,10 @@ class DateEditor implements IEditor {
   constructor(editorConfig: any) {
     this.editorConfig = editorConfig;
   }
-  beginEditing(container: HTMLElement, referencePosition: { rect: RectProps; placement?: Placement }, value?: string) {
+  onStart({ container, value, referencePosition, endEdit }: EditContext) {
     const that = this;
     this.container = container;
+    this.successCallback = endEdit
     // const cellValue = luxon.DateTime.fromFormat(value, 'yyyy年MM月dd日').toFormat('yyyy-MM-dd');
     const input = document.createElement('input');
 
@@ -143,18 +147,15 @@ class DateEditor implements IEditor {
   getValue() {
     return this.element.value;
   }
-  exit() {
+  onEnd() {
     this.picker.destroy();
     this.container.removeChild(this.element);
   }
-  targetIsOnEditor(target: HTMLElement) {
+  onClickElsewhere(target: HTMLElement) {
     if (target === this.element || this.picker.el.contains(target)) {
       return true;
     }
     return false;
-  }
-  bindSuccessCallback(successCallback: Function) {
-    this.successCallback = successCallback;
   }
 }
 const custom_date_editor = new DateEditor({});
@@ -164,31 +165,42 @@ VTable.register.editor('custom-date', custom_date_editor);
 
 在上面的示例中，我们创建了一个名为`DateEditor`的自定义编辑器，并实现了`IEditor`接口所要求的方法。然后，我们通过`VTable.register.editor`方法将自定义编辑器注册到VTable中，以便在表格中使用。
 
-`IEditor`接口具体定义的源码(github：https://github.com/VisActor/VTable/blob/feat/editCell/packages/vtable-editors/src/types.ts)：
-```
-export interface IEditor {
-  /** 编辑器类型 */
-  editorType?: string;
-  /** 编辑配置 */
-  editorConfig: any;
-  /* 编辑器挂载的容器 由vtable传入 */
+`IEditor` 接口[定义](https://github.com/VisActor/VTable/blob/main/packages/vtable-editors/src/types.ts)：
+```ts
+export interface IEditor<V = any> {
+  /** * 单元格进入编辑状态时调用 */
+  onStart?: (context: EditContext<V>) => void;
+  /** * 单元格退出编辑状态时调用 */
+  onEnd?: () => void;
+  /**
+   * 如果提供了此函数，VTable 将会在用户点击其他地方时调用此函数。
+   * 如果此函数返回了一个假值，VTable 将会调用 `onEnd` 并退出编辑状态。
+   */
+  onClickElsewhere?: (target: HTMLElement) => boolean;
+  /** * 获取编辑器当前值。将在 `onEnd` 调用后调用。 */
+  getValue: () => V;
+  // ...
+}
+
+export interface EditContext<V = any> {
+  /** VTable 实例所处的容器元素 */
   container: HTMLElement;
-  /** 编辑完成后调用。注意如果是（enter键，鼠标点击其他位置）这类编辑完成已有VTable实现，编辑器内部有完成按钮等类似的完成操作需要调用这个方法 */
-  successCallback?: Function;
-  /** 获取编辑器当前值 */
-  getValue: () => string | number | null;
-  /** 编辑器进入编辑状态 */
-  beginEditing: (
-    container: HTMLElement,
-    referencePosition: { rect: RectProps; placement?: Placement },
-    value?: string
-  ) => void;
-  /** 编辑器退出编辑状态 */
-  exit: () => void;
-  /** 判断鼠标点击的target是否属于编辑器内部元素 */
-  targetIsOnEditor: (target: HTMLElement) => boolean;
-  /** 由VTable调用来传入编辑成功的回调  请将callback赋值到successCallback */
-  bindSuccessCallback?: (callback: Function) => void;
+  /** 正在编辑的单元格位置信息 */
+  referencePosition: ReferencePosition;
+  /** 正在进入编辑状态的单元格当前值 */
+  value: V;
+  /**
+   * 用于结束编辑状态的回调。
+   *
+   * 大多数情况下你不需要使用此回调，因为 VTable 已经自带了 Enter 键按下
+   * 来结束编辑状态的行为；而鼠标点击其他位置来结束编辑状态的行为你也
+   * 可以通过 `onClickElsewhere` 函数来获得。
+   *
+   * 然而，如果你有特殊的需求，比如你想在编辑器内部提供一个“完成”按钮，
+   * 或者你有像 Tooltip 这样无法获取到的外部元素，
+   * 这时你可以保存这个回调并在你需要的时候来手动结束编辑状态。
+   */
+  endEdit: () => void;
 }
 ```
 
@@ -214,33 +226,35 @@ tableInstance.records;
 
 ## 7. 编辑触发时机
 编辑触发时机支持：双击单元格进入编辑，单击单元格进入编辑，调用api手动开启编辑.
-```
+```ts
+interface ListTableConstructorOptions {
   /** 编辑触发时机 双击事件  单击事件 api手动开启编辑。默认为双击'doubleclick' */
   editCellTrigger?: 'doubleclick' | 'click' | 'api';
+  // ...
+}
 ```
 
 ## 8. 相关api
 
-```
+```ts
+interface ListTableAPI {
   /** 设置单元格的value值，注意对应的是源数据的原始值，vtable实例records会做对应修改 */
   changeCellValue: (col: number, row: number, value: string | number | null) => void;
-
   /**
    * 批量更新多个单元格的数据
    * @param col 粘贴数据的起始列号
    * @param row 粘贴数据的起始行号
    * @param values 多个单元格的数据数组
    */
-  changeCellValues(startCol: number, startRow: number, values: string[][]) 
-
+  changeCellValues(startCol: number, startRow: number, values: string[][])
   /** 获取单元格配置的编辑器 */
   getEditor: (col: number, row: number) => IEditor;
-
   /** 开启单元格编辑 */
   startEditCell: (col?: number, row?: number) => void;
-
   /** 结束编辑 */
   completeEditCell: () => void;
+  // ...
+}
 ```
 ## 表头编辑
 
