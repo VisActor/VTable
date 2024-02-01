@@ -173,7 +173,7 @@ export interface IEditor<V = any> {
    * Which means, in this scenario, you need to call `endEdit` manually
    * to end edit mode.
    */
-  onClickElsewhere?: (target: HTMLElement) => boolean;
+  isEditorElement?: (target: HTMLElement) => boolean;
   /**
    * Called when editor mode is exited by any means.
    * Expected to return the current value of the cell.
@@ -194,7 +194,7 @@ export interface EditContext<V = any> {
    *
    * In most cases you don't need to call this function,
    * since Enter key click is handled by VTable automatically,
-   * and mouse click can be handled by `onClickElsewhere`.
+   * and mouse click can be handled by `isEditorElement`.
    *
    * However, if your editor has its own complete button,
    * or you have external elements like Tooltip,

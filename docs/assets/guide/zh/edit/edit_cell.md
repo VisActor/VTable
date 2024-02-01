@@ -151,7 +151,7 @@ class DateEditor implements IEditor {
     this.picker.destroy();
     this.container.removeChild(this.element);
   }
-  onClickElsewhere(target: HTMLElement) {
+  isEditorElement(target: HTMLElement) {
     if (target === this.element || this.picker.el.contains(target)) {
       return true;
     }
@@ -176,7 +176,7 @@ export interface IEditor<V = any> {
    * 如果提供了此函数，VTable 将会在用户点击其他地方时调用此函数。
    * 如果此函数返回了一个假值，VTable 将会调用 `onEnd` 并退出编辑状态。
    */
-  onClickElsewhere?: (target: HTMLElement) => boolean;
+  isEditorElement?: (target: HTMLElement) => boolean;
   /** * 获取编辑器当前值。将在 `onEnd` 调用后调用。 */
   getValue: () => V;
   // ...
@@ -194,7 +194,7 @@ export interface EditContext<V = any> {
    *
    * 大多数情况下你不需要使用此回调，因为 VTable 已经自带了 Enter 键按下
    * 来结束编辑状态的行为；而鼠标点击其他位置来结束编辑状态的行为你也
-   * 可以通过 `onClickElsewhere` 函数来获得。
+   * 可以通过 `isEditorElement` 函数来获得。
    *
    * 然而，如果你有特殊的需求，比如你想在编辑器内部提供一个“完成”按钮，
    * 或者你有像 Tooltip 这样无法获取到的外部元素，
