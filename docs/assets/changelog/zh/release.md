@@ -5,23 +5,22 @@
 
 **🆕 新增功能**
 
-- **@visactor/vtable**: support get sorted columns [#986](https://github.com/VisActor/VTable/issues/986)
-- **@visactor/vtable**: add option frozenColDragHeaderMode
+- **@visactor/vtable**: 支持获取排序后的列 [#986](https://github.com/VisActor/VTable/issues/986)
+- **@visactor/vtable**: 添加配置项：frozenColDragHeaderMode，设置冻结列拖动表头的限制规则
 
 **🐛 功能修复**
 
-- **@visactor/vtable**: select region saved problem [#1018](https://github.com/VisActor/VTable/issues/1018)
-- **@visactor/vtable**: when call updateColumns and discount col occor error [#1015](https://github.com/VisActor/VTable/issues/1015)
-- **@visactor/vtable**: rightFrozenColCount drag header move more time the column width is error [#1019](https://github.com/VisActor/VTable/issues/1019)
-- **@visactor/vtable**: empty string compute row height error [#1031](https://github.com/VisActor/VTable/issues/1031)
-- **@visactor/vtable**: fix merge image cell update problem
+- **@visactor/vtable**: 修复选择区域错误问题 [#1018](https://github.com/VisActor/VTable/issues/1018)
+- **@visactor/vtable**: 修复调用updateColumns和折扣列发生错误 [#1015](https://github.com/VisActor/VTable/issues/1015)
+- **@visactor/vtable**: 修复右侧冻结列计数拖动表头多次后列宽错误 [#1019](https://github.com/VisActor/VTable/issues/1019)
+- **@visactor/vtable**: 修复空字符串计算行高错误 [#1031](https://github.com/VisActor/VTable/issues/1031)
+- **@visactor/vtable**: 修复合并图像单元格更新问题
+- **@visactor/vtable**: 修正底部冻结行大小不正确的问题
 
 **🔨 功能重构**
 
-- **@visactor/vtable**: when drag header move to frozen region then markLine show positon
-- **@visactor/vtable**: optimize updateRow api performance & resize bottom frozen row not right
-
-
+- **@visactor/vtable**: 当拖动表头移动到冻结区域时标记线显示位置
+- **@visactor/vtable**: 优化updateRow api性能
 
 [更多详情请查看 v0.19.0](https://github.com/VisActor/VTable/releases/tag/v0.19.0)
 
