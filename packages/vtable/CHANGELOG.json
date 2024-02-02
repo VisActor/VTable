@@ -2,6 +2,42 @@
   "name": "@visactor/vtable",
   "entries": [
     {
+      "version": "0.19.0",
+      "tag": "@visactor/vtable_v0.19.0",
+      "date": "Fri, 02 Feb 2024 04:13:16 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "fix: select region saved problem #1018\n\n"
+          },
+          {
+            "comment": "fix: when call updateColumns and discount col occor error #1015\n\n"
+          },
+          {
+            "comment": "fix: rightFrozenColCount drag header move more time the column width is error #1019\n\n"
+          },
+          {
+            "comment": "fix: empty string compute row height error #1031\n\n"
+          },
+          {
+            "comment": "feat: support get sorted columns #986\n\n"
+          },
+          {
+            "comment": "feat: add option frozenColDragHeaderMode\n\n"
+          },
+          {
+            "comment": "refactor: when drag header move to frozen region then markLine show positon\n\n"
+          },
+          {
+            "comment": "refactor: optimize updateRow api performance & resize bottom frozen row not right\n\n"
+          },
+          {
+            "comment": "fix: fix merge image cell update problem"
+          }
+        ]
+      }
+    },
+    {
       "version": "0.18.4",
       "tag": "@visactor/vtable_v0.18.4",
       "date": "Fri, 26 Jan 2024 09:15:07 GMT",
