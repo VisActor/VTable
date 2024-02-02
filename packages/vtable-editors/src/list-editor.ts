@@ -84,7 +84,7 @@ export class ListEditor implements IEditor {
     this.container.removeChild(this.element);
   }
 
-  onClickElsewhere(target: HTMLElement) {
+  isEditorElement(target: HTMLElement) {
     return target === this.element;
   }
 }

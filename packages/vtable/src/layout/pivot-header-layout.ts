@@ -1323,6 +1323,44 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
     if (this.isRightFrozenColumn(col, row) || this.isBottomFrozenRow(col, row)) {
       return result;
     }
+
+    if (this._table.isPivotChart()) {
+      if (this.isLeftBottomCorner(col, row)) {
+        return {
+          start: {
+            col: 0,
+            row: this.rowCount - this.bottomFrozenRowCount
+          },
+          end: {
+            col: this.frozenColCount - 1,
+            row: this.rowCount - 1
+          }
+        };
+      } else if (this.isRightTopCorner(col, row)) {
+        return {
+          start: {
+            col: this.colCount - this.rightFrozenColCount,
+            row: 0
+          },
+          end: {
+            col: this.colCount - 1,
+            row: this.frozenRowCount - 1
+          }
+        };
+      } else if (this.isRightBottomCorner(col, row)) {
+        return {
+          start: {
+            col: this.colCount - this.rightFrozenColCount,
+            row: this.rowCount - this.bottomFrozenRowCount
+          },
+          end: {
+            col: this.colCount - 1,
+            row: this.rowCount - 1
+          }
+        };
+      }
+    }
+
     // if (this._cellRangeMap.has(`$${col}$${row}`)) {
     //   return this._cellRangeMap.get(`$${col}$${row}`);
     // }

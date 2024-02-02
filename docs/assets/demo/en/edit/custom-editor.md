@@ -118,7 +118,7 @@ Promise.all([loadCSS(cssUrl), loadJS(jsUrl)])
       this.container.removeChild(this.element);
     }
 
-    onClickElsewhere(target) {
+    isEditorElement(target) {
       if (target === this.element || this.picker.el.contains(target)) {
         return true;
       }
