@@ -301,13 +301,6 @@
             "zh": "滚动",
             "en": "scroll"
           }
-        },
-        {
-          "path": "keyboard",
-          "title": {
-            "zh": "快捷键",
-            "en": "keyboard"
-          }
         }
       ]
     },
@@ -326,6 +319,13 @@
           }
         }
       ]
+    },
+    {
+      "path": "shortcut",
+      "title": {
+        "zh": "快捷键",
+        "en": "Shortcut"
+      }
     },
     {
       "path": "custom_define",
