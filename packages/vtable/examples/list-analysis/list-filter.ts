@@ -311,15 +311,15 @@ export function createTable() {
       field: 'id',
       order: 'desc'
     },
-    dataConfig: {
-      filterRules: [
-        {
-          filterFunc: (record: Record<string, any>) => {
-            return record.id % 2 === 0;
-          }
-        }
-      ]
-    },
+    // dataConfig: {
+    //   filterRules: [
+    //     {
+    //       filterFunc: (record: Record<string, any>) => {
+    //         return record.id % 2 === 0;
+    //       }
+    //     }
+    //   ]
+    // },
     columns,
     tooltip: {
       isShowOverflowTextTooltip: true

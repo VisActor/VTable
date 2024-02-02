@@ -62,7 +62,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
     //分页配置
     this.pagination = options.pagination;
     internalProps.sortState = options.sortState;
-    internalProps.dataConfig = cloneDeep(options.dataConfig ?? {});
+    internalProps.dataConfig = {}; //cloneDeep(options.dataConfig ?? {});
     internalProps.columns = options.columns
       ? cloneDeep(options.columns)
       : options.header
@@ -319,7 +319,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
     super.updateOption(options);
     //分页配置
     this.pagination = options.pagination;
-    internalProps.dataConfig = cloneDeep(options.dataConfig ?? {});
+    internalProps.dataConfig = {}; // cloneDeep(options.dataConfig ?? {});
     //更新protectedSpace
     this.showHeader = options.showHeader ?? true;
     internalProps.columns = options.columns

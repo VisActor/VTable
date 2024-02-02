@@ -163,7 +163,7 @@ export interface ListTableConstructorOptions extends BaseTableConstructorOptions
    */
   sortState?: SortState | SortState[];
   /** 数据分析相关配置 enableDataAnalysis开启后该配置才会有效 */
-  dataConfig?: IListTableDataConfig;
+  // dataConfig?: IListTableDataConfig;
   /** 全局设置表头编辑器 */
   headerEditor?: string | IEditor | ((args: BaseCellInfo & { table: BaseTableAPI }) => string | IEditor);
   /** 全局设置编辑器 */
