@@ -16,7 +16,7 @@ const generatePersons = count => {
 };
 
 export function createTable() {
-  const records = generatePersons(1000000);
+  const records = generatePersons(10);
   const columns: VTable.ColumnsDefine = [
     {
       field: '',
@@ -29,8 +29,8 @@ export function createTable() {
     {
       field: 'id',
       title: 'ID',
-      width: '1%',
-      minWidth: 200,
+      width: 'auto',
+      minWidth: 50,
       sort: true
     },
     {
@@ -153,156 +153,6 @@ export function createTable() {
       field: 'city',
       title: 'city',
       width: 150
-    },
-    {
-      field: 'date1',
-      title: 'birthday',
-      width: 200
-    },
-    {
-      field: 'sex',
-      title: 'sex',
-      width: 100
-    },
-    {
-      field: 'tel',
-      title: 'telephone',
-      width: 150
-    },
-    {
-      field: 'work',
-      title: 'job',
-      width: 200
-    },
-    {
-      field: 'city',
-      title: 'city',
-      width: 150
-    },
-    {
-      field: 'date1',
-      title: 'birthday',
-      width: 200
-    },
-    {
-      field: 'sex',
-      title: 'sex',
-      width: 100
-    },
-    {
-      field: 'tel',
-      title: 'telephone',
-      width: 150
-    },
-    {
-      field: 'work',
-      title: 'job',
-      width: 200
-    },
-    {
-      field: 'city',
-      title: 'city',
-      width: 150
-    },
-    {
-      field: 'date1',
-      title: 'birthday',
-      width: 200
-    },
-    {
-      field: 'sex',
-      title: 'sex',
-      width: 100
-    },
-    {
-      field: 'tel',
-      title: 'telephone',
-      width: 150
-    },
-    {
-      field: 'work',
-      title: 'job',
-      width: 200
-    },
-    {
-      field: 'city',
-      title: 'city',
-      width: 150
-    },
-    {
-      field: 'date1',
-      title: 'birthday',
-      width: 200
-    },
-    {
-      field: 'sex',
-      title: 'sex',
-      width: 100
-    },
-    {
-      field: 'tel',
-      title: 'telephone',
-      width: 150
-    },
-    {
-      field: 'work',
-      title: 'job',
-      width: 200
-    },
-    {
-      field: 'city',
-      title: 'city',
-      width: 150
-    },
-    {
-      field: 'date1',
-      title: 'birthday',
-      width: 200
-    },
-    {
-      field: 'sex',
-      title: 'sex',
-      width: 100
-    },
-    {
-      field: 'tel',
-      title: 'telephone',
-      width: 150
-    },
-    {
-      field: 'work',
-      title: 'job',
-      width: 200
-    },
-    {
-      field: 'city',
-      title: 'city',
-      width: 150
-    },
-    {
-      field: 'date1',
-      title: 'birthday',
-      width: 200
-    },
-    {
-      field: 'sex',
-      title: 'sex',
-      width: 100
-    },
-    {
-      field: 'tel',
-      title: 'telephone',
-      width: 150
-    },
-    {
-      field: 'work',
-      title: 'job',
-      width: 200
-    },
-    {
-      field: 'city',
-      title: 'city',
-      width: 150
     }
   ];
   const option: VTable.ListTableConstructorOptions = {
@@ -317,7 +167,8 @@ export function createTable() {
     rightFrozenColCount: 2,
     overscrollBehavior: 'none',
     autoWrapText: true,
-    heightMode: 'autoHeight',
+    heightMode: 'adaptive',
+    widthMode: 'adaptive',
     dragHeaderMode: 'all',
     keyboardOptions: {
       pasteValueToCell: true

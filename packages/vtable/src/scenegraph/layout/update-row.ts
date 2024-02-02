@@ -5,6 +5,7 @@ import { Group } from '../graphic/group';
 import { updateCell } from '../group-creater/cell-helper';
 import type { Scenegraph } from '../scenegraph';
 import { getCellMergeInfo } from '../utils/get-cell-merge';
+import { deduplication } from '../../tools/util';
 
 /**
  * add and remove rows in scenegraph
@@ -28,7 +29,7 @@ export function updateRow(
 
   const rowHeightsMap = table.rowHeightsMap;
   removeRows.forEach(row => {
-    rowHeightsMap.delAndReorder(row);
+    rowHeightsMap.delete(row);
   });
 
   if (removeRows.length) {
@@ -46,7 +47,7 @@ export function updateRow(
   addRows.forEach(row => {
     const needUpdateAfter = addRow(row, scene);
     updateAfter = updateAfter ?? needUpdateAfter;
-    rowHeightsMap.addAndReorder(row);
+    rowHeightsMap.insert(row);
   });
 
   // reset attribute y and row number in CellGroup
@@ -201,18 +202,6 @@ function addRow(row: number, scene: Scenegraph) {
   // scene.proxy.rowEnd++;
   // scene.proxy.currentRow++;
 }
-
-// array deduplication
-function deduplication(array: number[]) {
-  const result = [];
-  for (let i = 0; i < array.length; i++) {
-    if (result.indexOf(array[i]) === -1) {
-      result.push(array[i]);
-    }
-  }
-  return result;
-}
-
 function resetRowNumber(scene: Scenegraph) {
   scene.bodyGroup.forEachChildren((colGroup: Group) => {
     let rowIndex = scene.bodyRowStart;

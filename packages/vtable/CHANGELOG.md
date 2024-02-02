@@ -1,6 +1,37 @@
 # Change Log - @visactor/vtable
 
-This log was last generated on Fri, 26 Jan 2024 09:15:07 GMT and should not be manually modified.
+This log was last generated on Fri, 02 Feb 2024 04:13:16 GMT and should not be manually modified.
+
+## 0.19.0
+Fri, 02 Feb 2024 04:13:16 GMT
+
+### Updates
+
+- fix: select region saved problem #1018
+
+
+- fix: when call updateColumns and discount col occor error #1015
+
+
+- fix: rightFrozenColCount drag header move more time the column width is error #1019
+
+
+- fix: empty string compute row height error #1031
+
+
+- feat: support get sorted columns #986
+
+
+- feat: add option frozenColDragHeaderMode
+
+
+- refactor: when drag header move to frozen region then markLine show positon
+
+
+- refactor: optimize updateRow api performance & resize bottom frozen row not right
+
+
+- fix: fix merge image cell update problem
 
 ## 0.18.4
 Fri, 26 Jan 2024 09:15:07 GMT
