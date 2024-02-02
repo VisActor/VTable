@@ -8,8 +8,8 @@ import type {
   IGroupRenderContribution,
   IDrawContext,
   IRectGraphicAttribute
-} from '@visactor/vrender';
-import { BaseRenderContributionTime, injectable } from '@visactor/vrender';
+} from '@src/vrender';
+import { BaseRenderContributionTime, createRectPath, injectable } from '@src/vrender';
 import type { Group } from '../group';
 import { getCellHoverColor } from '../../../state/hover/is-cell-hover';
 import type { BaseTableAPI } from '../../../ts-types/base-table';
@@ -598,7 +598,8 @@ export class AdjustPosGroupAfterRenderContribution implements IGroupRenderContri
       lineDash = groupAttribute.lineDash,
       strokeArrayWidth = (groupAttribute as any).strokeArrayWidth,
       strokeArrayColor = (groupAttribute as any).strokeArrayColor,
-      notAdjustPos
+      notAdjustPos,
+      cornerRadius = groupAttribute.cornerRadius
     } = group.attribute as any;
 
     const { width = groupAttribute.width, height = groupAttribute.height } = group.attribute;
@@ -643,7 +644,12 @@ export class AdjustPosGroupAfterRenderContribution implements IGroupRenderContri
       context.beginPath();
       x = Math.floor(x) + 0.5;
       y = Math.floor(y) + 0.5;
-      context.rect(x, y, widthFroDraw, heightFroDraw);
+      if (cornerRadius) {
+        // 测试后，cache对于重绘性能提升不大，但是在首屏有一定性能损耗，因此rect不再使用cache
+        createRectPath(context, x, y, widthFroDraw, heightFroDraw, cornerRadius);
+      } else {
+        context.rect(x, y, widthFroDraw, heightFroDraw);
+      }
       context.setStrokeStyle(group, group.attribute, x, y, groupAttribute);
       context.stroke();
     }
@@ -732,6 +738,134 @@ export class AdjustColorGroupAfterRenderContribution implements IGroupRenderCont
         group.attribute.fill = oldColor;
         (group.attribute as any)._vtableHoverFill = undefined;
       }
+    }
+  }
+}
+
+@injectable()
+export class ClipBodyGroupBeforeRenderContribution implements IGroupRenderContribution {
+  time: BaseRenderContributionTime = BaseRenderContributionTime.beforeFillStroke;
+  useStyle = true;
+  order = 0;
+  drawShape(
+    group: IGroup,
+    context: IContext2d,
+    x: number,
+    y: number,
+    doFill: boolean,
+    doStroke: boolean,
+    fVisible: boolean,
+    sVisible: boolean,
+    groupAttribute: Required<IGroupGraphicAttribute>,
+    drawContext: IDrawContext,
+    fillCb?: (
+      ctx: IContext2d,
+      markAttribute: Partial<IMarkAttribute & IGraphicAttribute>,
+      themeAttribute: IThemeAttribute
+    ) => boolean,
+    strokeCb?: (
+      ctx: IContext2d,
+      markAttribute: Partial<IMarkAttribute & IGraphicAttribute>,
+      themeAttribute: IThemeAttribute
+    ) => boolean,
+    doFillOrStroke?: { doFill: boolean; doStroke: boolean }
+  ) {
+    const table = (group.stage as any).table as BaseTableAPI;
+    if ((group as Group).role === 'body') {
+      const x = -(group.attribute.x ?? 0) + table.getFrozenColsWidth();
+      const y = -(group.attribute.y ?? 0) + table.getFrozenRowsHeight();
+      const width = group.parent.attribute.width - table.getFrozenColsWidth() - table.getRightFrozenColsWidth();
+      const height = group.parent.attribute.height - table.getFrozenRowsHeight() - table.getBottomFrozenRowsHeight();
+      context.beginPath();
+      context.rect(x, y, width, height);
+    } else if ((group as Group).role === 'row-header') {
+      const x = 0;
+      const y = -(group.attribute.y ?? 0) + table.getFrozenRowsHeight();
+      const width = table.getFrozenColsWidth();
+      const height = group.parent.attribute.height - table.getFrozenRowsHeight() - table.getBottomFrozenRowsHeight();
+      context.beginPath();
+      context.rect(x, y, width, height);
+    } else if ((group as Group).role === 'col-header') {
+      const x = -(group.attribute.x ?? 0) + table.getFrozenColsWidth();
+      const y = 0;
+      const width = group.parent.attribute.width - table.getFrozenColsWidth() - table.getRightFrozenColsWidth();
+      const height = table.getFrozenRowsHeight();
+      context.beginPath();
+      context.rect(x, y, width, height);
+    } else if ((group as Group).role === 'right-frozen') {
+      const x = 0;
+      const y = -(group.attribute.y ?? 0) + table.getFrozenRowsHeight();
+      const width = table.getRightFrozenColsWidth();
+      const height = group.parent.attribute.height - table.getFrozenRowsHeight() - table.getBottomFrozenRowsHeight();
+      context.beginPath();
+      context.rect(x, y, width, height);
+    } else if ((group as Group).role === 'bottom-frozen') {
+      const x = -(group.attribute.x ?? 0) + table.getFrozenColsWidth();
+      const y = 0;
+      const width = group.parent.attribute.width - table.getFrozenColsWidth() - table.getRightFrozenColsWidth();
+      const height = table.getBottomFrozenRowsHeight();
+      context.beginPath();
+      context.rect(x, y, width, height);
+    } else if ((group as Group).role === 'corner-header') {
+      const x = 0;
+      const y = 0;
+      const width = table.getFrozenColsWidth();
+      const height = table.getFrozenRowsHeight();
+      context.beginPath();
+      context.rect(x, y, width, height);
+    } else if ((group as Group).role === 'corner-right-top-header') {
+      const x = 0;
+      const y = 0;
+      const width = table.getRightFrozenColsWidth();
+      const height = table.getFrozenRowsHeight();
+      context.beginPath();
+      context.rect(x, y, width, height);
+    } else if ((group as Group).role === 'corner-right-bottom-header') {
+      const x = 0;
+      const y = 0;
+      const width = table.getRightFrozenColsWidth();
+      const height = table.getBottomFrozenRowsHeight();
+      context.beginPath();
+      context.rect(x, y, width, height);
+    } else if ((group as Group).role === 'corner-left-bottom-header') {
+      const x = 0;
+      const y = 0;
+      const width = table.getFrozenColsWidth();
+      const height = table.getBottomFrozenRowsHeight();
+      context.beginPath();
+      context.rect(x, y, width, height);
+    }
+  }
+}
+@injectable()
+export class ClipBodyGroupAfterRenderContribution implements IGroupRenderContribution {
+  time: BaseRenderContributionTime = BaseRenderContributionTime.afterFillStroke;
+  useStyle = true;
+  order = 0;
+  drawShape(
+    group: IGroup,
+    context: IContext2d,
+    x: number,
+    y: number,
+    doFill: boolean,
+    doStroke: boolean,
+    fVisible: boolean,
+    sVisible: boolean,
+    groupAttribute: Required<IGroupGraphicAttribute>,
+    drawContext: IDrawContext,
+    fillCb?: (
+      ctx: IContext2d,
+      markAttribute: Partial<IMarkAttribute & IGraphicAttribute>,
+      themeAttribute: IThemeAttribute
+    ) => boolean,
+    strokeCb?: (
+      ctx: IContext2d,
+      markAttribute: Partial<IMarkAttribute & IGraphicAttribute>,
+      themeAttribute: IThemeAttribute
+    ) => boolean
+  ) {
+    // 处理hover颜色
+    if ((group as Group).role === 'body') {
     }
   }
 }

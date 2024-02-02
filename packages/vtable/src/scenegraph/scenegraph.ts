@@ -1,5 +1,5 @@
-import type { IStage, IRect, ITextCache, INode, Text, RichText } from '@visactor/vrender';
-import { createStage, createRect, IContainPointMode, container, vglobal } from '@visactor/vrender';
+import type { IStage, IRect, ITextCache, INode, Text, RichText } from '@src/vrender';
+import { createStage, createRect, IContainPointMode, container, vglobal, registerForVrender } from '@src/vrender';
 import type { CellRange, CellSubLocation } from '../ts-types';
 import {
   type CellAddress,
@@ -17,7 +17,7 @@ import { TableComponent } from './component/table-component';
 import { updateRowHeight } from './layout/update-height';
 import { updateImageCellContentWhileResize } from './group-creater/cell-type/image-cell';
 import { getQuadProps } from './utils/padding';
-import { createFrameBorder, updateFrameBorder, updateFrameBorderSize } from './style/frame-border';
+import { createFrameBorder, updateCornerRadius, updateFrameBorder, updateFrameBorderSize } from './style/frame-border';
 import { ResizeColumnHotSpotSize } from '../tools/global';
 import splitModule from './graphic/contributions';
 import { getFunctionalProp, getProp } from './utils/get-prop';
@@ -34,7 +34,7 @@ import { moveSelectingRangeComponentsToSelectedRangeComponents } from './select/
 import { deleteAllSelectBorder, deleteLastSelectedRangeComponents } from './select/delete-select-border';
 import { updateRow } from './layout/update-row';
 import { handleTextStick } from './stick-text';
-import { computeRowsHeight } from './layout/compute-row-height';
+import { computeRowHeight, computeRowsHeight } from './layout/compute-row-height';
 import { emptyGroup } from './utils/empty-group';
 import { dealBottomFrozen, dealFrozen, dealRightFrozen, resetFrozen } from './layout/frozen';
 import { updateChartSize, updateChartState } from './refresh-node/update-chart';
@@ -60,7 +60,10 @@ import {
 import { Env } from '../tools/env';
 import { createCornerCell } from './style/corner-cell';
 import { updateCol } from './layout/update-col';
+import { deduplication } from '../tools/util';
 // import { contextModule } from './context/module';
+
+registerForVrender();
 
 // VChart poptip theme
 loadPoptip();
@@ -322,6 +325,10 @@ export class Scenegraph {
     this.component.addToGroup(this.componentGroup);
     this.selectedRangeComponents = new Map();
     this.selectingRangeComponents = new Map();
+  }
+
+  updateComponent() {
+    this.component.updateStyle();
   }
 
   /**
@@ -684,8 +691,8 @@ export class Scenegraph {
    * @param {number} detaX 改变的宽度值
    * @return {*}
    */
-  updateColWidth(col: number, detaX: number, skipUpdateContainer?: boolean) {
-    updateColWidth(this, col, Math.round(detaX));
+  updateColWidth(col: number, detaX: number, skipUpdateContainer?: boolean, skipTableWidthMap?: boolean) {
+    updateColWidth(this, col, Math.round(detaX), skipTableWidthMap);
     // this.updateContainerWidth(col, detaX);
     if (!skipUpdateContainer) {
       // this.updateContainerAttrWidthAndX();
@@ -836,15 +843,45 @@ export class Scenegraph {
       y: this.table.tableY,
       width: Math.min(
         this.table.tableNoFrameWidth,
-        Math.max(this.colHeaderGroup.attribute.width, this.bodyGroup.attribute.width, 0) +
-          Math.max(this.cornerHeaderGroup.attribute.width, this.rowHeaderGroup.attribute.width, 0) +
-          this.rightBottomCornerGroup.attribute.width
+        Math.max(
+          this.colHeaderGroup.attribute.width,
+          this.bodyGroup.attribute.width,
+          this.bottomFrozenGroup.attribute.width,
+          0
+        ) +
+          Math.max(
+            this.cornerHeaderGroup.attribute.width,
+            this.rowHeaderGroup.attribute.width,
+            this.leftBottomCornerGroup.attribute.width,
+            0
+          ) +
+          Math.max(
+            this.rightTopCornerGroup.attribute.width,
+            this.rightFrozenGroup.attribute.width,
+            this.rightBottomCornerGroup.attribute.width,
+            0
+          )
       ),
       height: Math.min(
         this.table.tableNoFrameHeight,
-        Math.max(this.colHeaderGroup.attribute.height, this.cornerHeaderGroup.attribute.height, 0) +
-          Math.max(this.rowHeaderGroup.attribute.height, this.bodyGroup.attribute.height, 0) +
-          this.bottomFrozenGroup.attribute.height
+        Math.max(
+          this.colHeaderGroup.attribute.height,
+          this.cornerHeaderGroup.attribute.height,
+          this.rightTopCornerGroup.attribute.height,
+          0
+        ) +
+          Math.max(
+            this.rowHeaderGroup.attribute.height,
+            this.bodyGroup.attribute.height,
+            this.rightFrozenGroup.attribute.height,
+            0
+          ) +
+          Math.max(
+            this.leftBottomCornerGroup.attribute.height,
+            this.bottomFrozenGroup.attribute.height,
+            this.rightBottomCornerGroup.attribute.height,
+            0
+          )
       )
     } as any);
 
@@ -904,12 +941,26 @@ export class Scenegraph {
     }
   }
 
-  updateRowHeight(row: number, detaY: number) {
+  updateRowHeight(row: number, detaY: number, skipTableHeightMap?: boolean) {
     detaY = Math.round(detaY);
-    updateRowHeight(this, row, detaY);
+    updateRowHeight(this, row, detaY, skipTableHeightMap);
     this.updateContainerHeight(row, detaY);
   }
+  updateRowsHeight(rows: number[], detaYs: number[], skipTableHeightMap?: boolean) {
+    for (let i = 0; i < rows.length; i++) {
+      const row = rows[i];
+      if (row >= this.proxy.rowStart && row <= this.proxy.rowEnd) {
+        const detaY = detaYs[i];
+        updateRowHeight(this, row, Math.round(detaY), skipTableHeightMap);
+        this._updateContainerHeight(row, detaY);
+      }
+    }
+    // 更新table/header/border高度
+    this.updateTableSize();
+    this.component.updateScrollBar();
 
+    this.updateNextFrame();
+  }
   /**
    * @description: 更新table&header&body高度
    * @return {*}
@@ -931,13 +982,7 @@ export class Scenegraph {
 
     this.updateNextFrame();
   }
-
-  /**
-   * @description: 更新table&header&body高度
-   * @return {*}
-   */
-  updateContainerHeight(row: number, detaY: number) {
-    // 更新table/header/border高度
+  _updateContainerHeight(row: number, detaY: number) {
     if (row < this.table.frozenRowCount) {
       this.colHeaderGroup.setDeltaHeight(detaY);
       this.cornerHeaderGroup.setDeltaHeight(detaY);
@@ -953,7 +998,14 @@ export class Scenegraph {
       this.bodyGroup.setDeltaHeight(detaY);
       this.rightFrozenGroup.setDeltaHeight(detaY);
     }
-
+  }
+  /**
+   * @description: 更新table&header&body高度
+   * @return {*}
+   */
+  updateContainerHeight(row: number, detaY: number) {
+    this._updateContainerHeight(row, detaY);
+    // 更新table/header/border高度
     this.updateTableSize();
     this.component.updateScrollBar();
 
@@ -973,7 +1025,12 @@ export class Scenegraph {
     if (oldHeight === height) {
       return;
     }
-    this.updateRowHeight(row, height - oldHeight);
+    if (
+      (row >= this.proxy.rowStart && row <= this.proxy.rowEnd) ||
+      (row >= this.table.rowCount - this.table.bottomFrozenRowCount && row <= this.table.rowCount - 1)
+    ) {
+      this.updateRowHeight(row, height - oldHeight);
+    }
     this.table._clearRowRangeHeightsMap(row);
   }
 
@@ -1026,9 +1083,9 @@ export class Scenegraph {
       return;
     }
     this.bodyGroup.setAttribute('y', this.colHeaderGroup.attribute.height + y);
-    this.rowHeaderGroup.setAttribute('y', this.colHeaderGroup.attribute.height + y);
+    this.rowHeaderGroup.setAttribute('y', this.cornerHeaderGroup.attribute.height + y);
     if (this.table.rightFrozenColCount > 0) {
-      this.rightFrozenGroup.setAttribute('y', this.colHeaderGroup.attribute.height + y);
+      this.rightFrozenGroup.setAttribute('y', this.rightTopCornerGroup.attribute.height + y);
     }
     // this.tableGroup.setAttribute('height', this.table.tableNoFrameHeight - y);
     // (this.tableGroup.lastChild as any).setAttribute('width', this.table.tableNoFrameWidth - x);
@@ -1093,30 +1150,35 @@ export class Scenegraph {
       const canvasWidth = table.tableNoFrameWidth;
       let actualHeaderWidth = 0;
       for (let col = 0; col < table.colCount; col++) {
-        const colWidth = table.getColWidth(col);
-        if (col < table.frozenColCount || col >= table.colCount - table.rightFrozenColCount) {
+        if (
+          col < table.rowHeaderLevelCount ||
+          (table.isPivotChart() && col >= table.colCount - table.rightFrozenColCount)
+        ) {
+          const colWidth = table.getColWidth(col);
           actualHeaderWidth += colWidth;
         }
       }
-      const startCol = table.frozenColCount;
+      const startCol = table.rowHeaderLevelCount;
       const endCol = table.isPivotChart() ? table.colCount - table.rightFrozenColCount : table.colCount;
       getAdaptiveWidth(canvasWidth - actualHeaderWidth, startCol, endCol, false, [], table, true);
     } else if (table.autoFillWidth) {
-      // 处理风神列宽特殊逻辑
       table._clearColRangeWidthsMap();
       const canvasWidth = table.tableNoFrameWidth;
       let actualHeaderWidth = 0;
       let actualWidth = 0;
       for (let col = 0; col < table.colCount; col++) {
         const colWidth = table.getColWidth(col);
-        if (col < table.frozenColCount || (table.isPivotChart() && col >= table.colCount - table.rightFrozenColCount)) {
+        if (
+          col < table.rowHeaderLevelCount ||
+          (table.isPivotChart() && col >= table.colCount - table.rightFrozenColCount)
+        ) {
           actualHeaderWidth += colWidth;
         }
         actualWidth += colWidth;
       }
       // 如果内容宽度小于canvas宽度，执行adaptive放大
       if (actualWidth < canvasWidth && actualWidth > actualHeaderWidth) {
-        const startCol = table.frozenColCount;
+        const startCol = table.rowHeaderLevelCount;
         const endCol = table.isPivotChart() ? table.colCount - table.rightFrozenColCount : table.colCount;
         getAdaptiveWidth(canvasWidth - actualHeaderWidth, startCol, endCol, false, [], table, true);
       }
@@ -1143,9 +1205,8 @@ export class Scenegraph {
       cornerHeaderWidth += column.attribute.width;
     });
     this.cornerHeaderGroup.setAttribute('width', cornerHeaderWidth);
-
     this.colHeaderGroup.setAttribute('x', this.cornerHeaderGroup.attribute.width);
-    this.rowHeaderGroup.setAttribute('y', this.colHeaderGroup.attribute.height);
+    this.rowHeaderGroup.setAttribute('y', this.cornerHeaderGroup.attribute.height);
     this.bodyGroup.setAttributes({
       x: this.rowHeaderGroup.attribute.width,
       y: this.colHeaderGroup.attribute.height
@@ -1190,7 +1251,7 @@ export class Scenegraph {
       for (let row = 0; row < table.rowCount; row++) {
         const rowHeight = table.getRowHeight(row);
         if (
-          row < table.frozenRowCount ||
+          row < table.columnHeaderLevelCount ||
           (table.isPivotChart() && row >= table.rowCount - table.bottomFrozenRowCount)
         ) {
           actualHeaderHeight += rowHeight;
@@ -1204,14 +1265,13 @@ export class Scenegraph {
         (this._dealAutoFillHeightOriginRowsHeight ?? actualHeight) < canvasHeight &&
         actualHeight - actualHeaderHeight > 0
       ) {
+        const startRow = table.columnHeaderLevelCount;
+        const endRow = table.isPivotChart() ? table.rowCount - table.bottomFrozenRowCount : table.rowCount;
         const factor = (canvasHeight - actualHeaderHeight) / (actualHeight - actualHeaderHeight);
-        for (let row = table.frozenRowCount; row < table.rowCount - table.bottomFrozenRowCount; row++) {
+        for (let row = startRow; row < endRow; row++) {
           let rowHeight;
-          if (row === table.rowCount - table.bottomFrozenRowCount - 1) {
-            rowHeight =
-              canvasHeight -
-              actualHeaderHeight -
-              table.getRowsHeight(table.frozenRowCount, table.rowCount - table.bottomFrozenRowCount - 2);
+          if (row === endRow - 1) {
+            rowHeight = canvasHeight - actualHeaderHeight - table.getRowsHeight(startRow, endRow - 2);
           } else {
             rowHeight = Math.round(table.getRowHeight(row) * factor);
           }
@@ -1296,8 +1356,15 @@ export class Scenegraph {
    * @param {number} colTarget 目标列col
    * @return {*}
    */
-  updateHeaderPosition(colSource: number, rowSource: number, colTarget: number, rowTarget: number) {
-    moveHeaderPosition(colSource, rowSource, colTarget, rowTarget, this.table);
+  updateHeaderPosition(
+    colSource: number,
+    rowSource: number,
+    colTarget: number,
+    rowTarget: number,
+    sourceMergeInfo: false | CellRange,
+    targetMergeInfo: false | CellRange
+  ) {
+    moveHeaderPosition(colSource, rowSource, colTarget, rowTarget, sourceMergeInfo, targetMergeInfo, this.table);
   }
 
   updateContainerAttrWidthAndX() {
@@ -1341,14 +1408,13 @@ export class Scenegraph {
     this.leftBottomCornerGroup.setDeltaWidth(cornerX - this.leftBottomCornerGroup.attribute.width);
     //TODO 可能有影响
     this.colHeaderGroup.setDeltaWidth(colHeaderX - this.colHeaderGroup.attribute.width);
-    this.rightFrozenGroup.setDeltaWidth(colHeaderX - this.table.getRightFrozenColsWidth());
+    // this.rightFrozenGroup.setDeltaWidth(colHeaderX - this.table.getRightFrozenColsWidth());
     this.rowHeaderGroup.setDeltaWidth(rowHeaderX - this.rowHeaderGroup.attribute.width);
-    this.bottomFrozenGroup.setDeltaWidth(rowHeaderX - this.bottomFrozenGroup.attribute.width);
-    this.rightFrozenGroup.setDeltaWidth(rightX - this.table.getRightFrozenColsWidth());
+    this.bottomFrozenGroup.setDeltaWidth(colHeaderX - this.bottomFrozenGroup.attribute.width);
+    this.rightFrozenGroup.setDeltaWidth(rightX - this.rightFrozenGroup.attribute.width);
     this.rightTopCornerGroup.setDeltaWidth(rightX - this.rightTopCornerGroup.attribute.width);
     this.rightBottomCornerGroup.setDeltaWidth(rightX - this.rightBottomCornerGroup.attribute.width);
     this.bodyGroup.setDeltaWidth(bodyX - this.bodyGroup.attribute.width);
-
     this.colHeaderGroup.setAttribute('x', this.cornerHeaderGroup.attribute.width);
     this.bottomFrozenGroup.setAttribute('x', this.table.getFrozenColsWidth());
     this.bodyGroup.setAttribute('x', this.rowHeaderGroup.attribute.width);
@@ -1499,18 +1565,18 @@ export class Scenegraph {
       this.bodyGroup.appendChild(this.bodyGroup.border);
       updateFrameBorderSize(this.bodyGroup);
       if (this.rowHeaderGroup.attribute.width === 0) {
-        updateFrameBorder(this.bodyGroup, this.table.theme.bodyStyle.frameStyle, [true, true, true, true]);
+        updateFrameBorder(this.bodyGroup, this.table.theme.bodyStyle.frameStyle);
       } else {
-        updateFrameBorder(this.bodyGroup, this.table.theme.bodyStyle.frameStyle, [true, true, true, false]);
+        updateFrameBorder(this.bodyGroup, this.table.theme.bodyStyle.frameStyle);
       }
     }
     if (this.colHeaderGroup.border) {
       this.colHeaderGroup.appendChild(this.colHeaderGroup.border);
       updateFrameBorderSize(this.colHeaderGroup);
       if (this.cornerHeaderGroup.attribute.width === 0) {
-        updateFrameBorder(this.colHeaderGroup, this.table.theme.headerStyle.frameStyle, [true, true, true, true]);
+        updateFrameBorder(this.colHeaderGroup, this.table.theme.headerStyle.frameStyle);
       } else {
-        updateFrameBorder(this.colHeaderGroup, this.table.theme.headerStyle.frameStyle, [true, true, true, false]);
+        updateFrameBorder(this.colHeaderGroup, this.table.theme.headerStyle.frameStyle);
       }
     }
     if (this.rowHeaderGroup.border) {
@@ -1521,6 +1587,8 @@ export class Scenegraph {
       this.cornerHeaderGroup.appendChild(this.cornerHeaderGroup.border);
       updateFrameBorderSize(this.cornerHeaderGroup);
     }
+
+    updateCornerRadius(this.table);
   }
 
   sortCell() {
@@ -1588,14 +1656,42 @@ export class Scenegraph {
   }
 
   updateRow(removeCells: CellAddress[], addCells: CellAddress[], updateCells: CellAddress[] = []) {
+    const addRows = deduplication(addCells.map(cell => cell.row)).sort((a, b) => a - b);
+    const updateRows = deduplication(updateCells.map(cell => cell.row)).sort((a, b) => a - b);
+    //这个值是后续为了autoFillHeight判断逻辑中用到的 判断是否更新前是未填满的情况
+    const isNotFillHeight =
+      this.table.getAllRowsHeight() -
+        [...addRows, ...updateRows].reduce((tolHeight, rowNumber) => {
+          return tolHeight + this.table.getRowHeight(rowNumber);
+        }, 0) <=
+      this.table.tableNoFrameHeight;
+
     // add or move rows
     updateRow(removeCells, addCells, updateCells, this.table);
 
     // update column width and row height
     this.recalculateColWidths();
 
-    this.recalculateRowHeights();
+    // this.recalculateRowHeights();
 
+    if (
+      this.table.heightMode === 'adaptive' ||
+      (this.table.autoFillHeight && (this.table.getAllRowsHeight() <= this.table.tableNoFrameHeight || isNotFillHeight))
+    ) {
+      this.table.scenegraph.recalculateRowHeights();
+    } else if (this.table.heightMode === 'autoHeight') {
+      for (let i = 0; i < updateRows.length; i++) {
+        const row = updateRows[i];
+        const oldHeight = this.table.getRowHeight(row);
+        const newHeight = computeRowHeight(row, 0, this.table.colCount - 1, this.table);
+        if (
+          (row >= this.proxy.rowStart && row <= this.proxy.rowEnd) ||
+          (row >= this.table.rowCount - this.table.bottomFrozenRowCount && row <= this.table.rowCount - 1)
+        ) {
+          this.table.scenegraph.updateRowHeight(row, newHeight - oldHeight);
+        }
+      }
+    }
     // check frozen status
     this.table.stateManager.checkFrozen();
 

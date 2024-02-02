@@ -28,7 +28,7 @@ import type { BaseTableAPI, PivotTableProtected } from './ts-types/base-table';
 import { Title } from './components/title/title';
 import { cloneDeep } from '@visactor/vutils';
 import { Env } from './tools/env';
-import type { LayouTreeNode } from './layout/pivot-layout-helper';
+import type { LayouTreeNode } from './layout/layout-helper';
 import { TABLE_EVENT_TYPE } from './core/TABLE_EVENT_TYPE';
 import { EditManeger } from './edit/edit-manager';
 import * as editors from './edit/editors';
@@ -480,7 +480,53 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
     const { layoutMap } = this.internalProps;
     return layoutMap.getBodyIndexByCol(col);
   }
-
+  getFieldData(field: string, col: number, row: number): FieldData {
+    const table = this;
+    if (table.internalProps.layoutMap.isHeader(col, row)) {
+      return undefined;
+    }
+    if (this.dataset) {
+      const cellDimensionPath = this.internalProps.layoutMap.getCellHeaderPaths(col, row);
+      if (cellDimensionPath) {
+        const colKeys = cellDimensionPath.colHeaderPaths.map((colPath: any) => {
+          return colPath.indicatorKey ?? colPath.value;
+        });
+        const rowKeys = cellDimensionPath.rowHeaderPaths.map((rowPath: any) => {
+          return rowPath.indicatorKey ?? rowPath.value;
+        });
+        const aggregator = this.dataset.getAggregator(
+          !this.internalProps.layoutMap.indicatorsAsCol ? rowKeys.slice(0, -1) : rowKeys,
+          this.internalProps.layoutMap.indicatorsAsCol ? colKeys.slice(0, -1) : colKeys,
+          (this.internalProps.layoutMap as PivotHeaderLayoutMap).getIndicatorKey(col, row)
+        );
+        if (aggregator.records && aggregator.records.length >= 1) {
+          return aggregator.records[0][field];
+        }
+        // return ''
+      }
+    } else if (this.flatDataToObjects) {
+      //数据为行列树结构 根据row col获取对应的维度名称 查找到对应值
+      const cellDimensionPath = this.internalProps.layoutMap.getCellHeaderPaths(col, row);
+      const colKeys = cellDimensionPath.colHeaderPaths.map((colPath: any) => {
+        return colPath.indicatorKey ?? colPath.value;
+      });
+      const rowKeys = cellDimensionPath.rowHeaderPaths.map((rowPath: any) => {
+        return rowPath.indicatorKey ?? rowPath.value;
+      });
+      const treeNode = this.flatDataToObjects.getTreeNode(
+        rowKeys,
+        colKeys,
+        this.internalProps.layoutMap.getBody(col, row).indicatorKey,
+        false
+      );
+      if (treeNode?.record) {
+        return treeNode?.record[field];
+      }
+    }
+    const rowIndex = this.getBodyIndexByRow(row);
+    const colIndex = this.getBodyIndexByCol(col);
+    return this.records[rowIndex]?.[colIndex];
+  }
   getCellValue(col: number, row: number): FieldData {
     const customMergeText = this.getCustomMergeValue(col, row);
     if (customMergeText) {
@@ -797,6 +843,18 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
    * @param row
    */
   toggleHierarchyState(col: number, row: number) {
+    let notFillWidth = false;
+    let notFillHeight = false;
+    const checkHasChart = this.internalProps.layoutMap.checkHasChart();
+    // 检查当前状态总宽高未撑满autoFill是否在起作用
+    if (checkHasChart) {
+      if (this.autoFillWidth) {
+        notFillWidth = this.getAllColsWidth() <= this.tableNoFrameWidth;
+      }
+      if (this.autoFillHeight) {
+        notFillHeight = this.getAllRowsHeight() <= this.tableNoFrameHeight;
+      }
+    }
     const hierarchyState = this.getHierarchyState(col, row);
     if (hierarchyState === HierarchyState.expand) {
       this.fireListeners(PIVOT_TABLE_EVENT_TYPE.TREE_HIERARCHY_STATE_CHANGE, {
@@ -822,6 +880,18 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
     this.clearCellStyleCache();
     this.scenegraph.updateHierarchyIcon(col, row);
     this.scenegraph.updateRow(result.removeCellPositions, result.addCellPositions, result.updateCellPositions);
+    if (checkHasChart) {
+      // 检查更新节点状态后总宽高未撑满autoFill是否在起作用
+      if (this.autoFillWidth && !notFillWidth) {
+        notFillWidth = this.getAllColsWidth() <= this.tableNoFrameWidth;
+      }
+      if (this.autoFillHeight && !notFillHeight) {
+        notFillHeight = this.getAllRowsHeight() <= this.tableNoFrameHeight;
+      }
+      if (this.widthMode === 'adaptive' || notFillWidth || this.heightMode === 'adaptive' || notFillHeight) {
+        this.scenegraph.updateChartSize(0); // 如果收起展开有性能问题 可以排查下这个防范
+      }
+    }
   }
   /**
    * 通过表头的维度值路径来计算单元格位置  getCellAddressByHeaderPaths接口更强大一些 不限表头 不限参数格式
@@ -886,6 +956,17 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
   getLayoutRowTreeCount(): number {
     const layoutMap = this.internalProps.layoutMap;
     return layoutMap.getLayoutRowTreeCount();
+  }
+  /**
+   * 根据行列号获取表头tree节点，包含了用户在自定义树rowTree及columnTree树上的自定义属性（也是内部布局树的节点，获取后请不要随意修改）
+   * @param col
+   * @param row
+   * @returns
+   */
+  getCellHeaderTreeNodes(col: number, row: number): ICellHeaderPaths {
+    const layoutMap = this.internalProps.layoutMap;
+    const headerNodes = layoutMap.getCellHeaderPathsWidthTreeNode(col, row);
+    return headerNodes;
   }
   _hasHierarchyTreeHeader() {
     return (this.internalProps.layoutMap as PivotHeaderLayoutMap).rowHierarchyType === 'tree';
@@ -985,6 +1066,123 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
     if (typeof rawValue === 'number' && isAllDigits(value)) {
       newValue = parseFloat(value);
     }
+    this._changeCellValueToDataSet(col, row, newValue);
+    // const cell_value = this.getCellValue(col, row);
+    this.scenegraph.updateCellContent(col, row);
+    if (this.widthMode === 'adaptive' || (this.autoFillWidth && this.getAllColsWidth() <= this.tableNoFrameWidth)) {
+      if (this.internalProps._widthResizedColMap.size === 0) {
+        //如果没有手动调整过行高列宽 则重新计算一遍并重新分配
+        this.scenegraph.recalculateColWidths();
+      }
+    } else if (!this.internalProps._widthResizedColMap.has(col)) {
+      const oldWidth = this.getColWidth(col);
+      const newWidth = computeColWidth(col, 0, this.rowCount - 1, this, false);
+      if (newWidth !== oldWidth) {
+        this.scenegraph.updateColWidth(col, newWidth - oldWidth);
+      }
+    }
+    if (this.heightMode === 'adaptive' || (this.autoFillHeight && this.getAllRowsHeight() <= this.tableNoFrameHeight)) {
+      this.scenegraph.recalculateRowHeights();
+    } else if (this.heightMode === 'autoHeight') {
+      const oldHeight = this.getRowHeight(row);
+      const newHeight = computeRowHeight(row, 0, this.colCount - 1, this);
+      this.scenegraph.updateRowHeight(row, newHeight - oldHeight);
+    }
+    this.fireListeners(TABLE_EVENT_TYPE.CHANGE_CELL_VALUE, {
+      col,
+      row,
+      rawValue: this.getCellRawValue(col, row),
+      changedValue: newValue
+    });
+    this.scenegraph.updateNextFrame();
+  }
+  /**
+   * 批量更新多个单元格的数据
+   * @param col 粘贴数据的起始列号
+   * @param row 粘贴数据的起始行号
+   * @param values 多个单元格的数据数组
+   */
+  changeCellValues(startCol: number, startRow: number, values: string[][]) {
+    let pasteColEnd = startCol;
+    let pasteRowEnd = startRow;
+    // const rowCount = values.length;
+    for (let i = 0; i < values.length; i++) {
+      if (startRow + i > this.rowCount - 1) {
+        break;
+      }
+      pasteRowEnd = startRow + i;
+      const rowValues = values[i];
+      let thisRowPasteColEnd = startCol;
+      for (let j = 0; j < rowValues.length; j++) {
+        if (startCol + j > this.colCount - 1) {
+          break;
+        }
+
+        thisRowPasteColEnd = startCol + j;
+        const value = rowValues[j];
+        let newValue: string | number = value;
+        const rawValue = this.getCellRawValue(startCol + j, startRow + i);
+        if (typeof rawValue === 'number' && isAllDigits(value)) {
+          newValue = parseFloat(value);
+        }
+        this._changeCellValueToDataSet(startCol + j, startRow + i, newValue);
+
+        this.fireListeners(TABLE_EVENT_TYPE.CHANGE_CELL_VALUE, {
+          col: startCol + j,
+          row: startRow + i,
+          rawValue,
+          changedValue: this.getCellOriginValue(startCol + j, startRow + i)
+        });
+      }
+      pasteColEnd = Math.max(pasteColEnd, thisRowPasteColEnd);
+    }
+
+    // const cell_value = this.getCellValue(col, row);
+    const startRange = this.getCellRange(startCol, startRow);
+    const range = this.getCellRange(pasteColEnd, pasteRowEnd);
+    for (let sCol = startRange.start.col; sCol <= range.end.col; sCol++) {
+      for (let sRow = startRange.start.row; sRow <= range.end.row; sRow++) {
+        this.scenegraph.updateCellContent(sCol, sRow);
+      }
+    }
+    if (this.widthMode === 'adaptive' || (this.autoFillWidth && this.getAllColsWidth() <= this.tableNoFrameWidth)) {
+      if (this.internalProps._widthResizedColMap.size === 0) {
+        //如果没有手动调整过行高列宽 则重新计算一遍并重新分配
+        this.scenegraph.recalculateColWidths();
+      }
+    } else {
+      for (let sCol = startCol; sCol <= range.end.col; sCol++) {
+        if (!this.internalProps._widthResizedColMap.has(sCol)) {
+          const oldWidth = this.getColWidth(sCol);
+          const newWidth = computeColWidth(sCol, 0, this.rowCount - 1, this, false);
+          if (newWidth !== oldWidth) {
+            this.scenegraph.updateColWidth(sCol, newWidth - oldWidth);
+          }
+        }
+      }
+    }
+
+    if (this.heightMode === 'adaptive' || (this.autoFillHeight && this.getAllRowsHeight() <= this.tableNoFrameHeight)) {
+      this.scenegraph.recalculateRowHeights();
+    } else if (this.heightMode === 'autoHeight') {
+      const rows: number[] = [];
+      const deltaYs: number[] = [];
+      for (let sRow = startRow; sRow <= range.end.row; sRow++) {
+        if (this.rowHeightsMap.get(sRow)) {
+          // 已经计算过行高的才走更新逻辑
+          const oldHeight = this.getRowHeight(sRow);
+          const newHeight = computeRowHeight(sRow, 0, this.colCount - 1, this);
+          rows.push(sRow);
+          deltaYs.push(newHeight - oldHeight);
+        }
+      }
+      this.scenegraph.updateRowsHeight(rows, deltaYs);
+    }
+
+    this.scenegraph.updateNextFrame();
+  }
+
+  private _changeCellValueToDataSet(col: number, row: number, newValue: string | number) {
     if (this.dataset) {
       const cellDimensionPath = this.internalProps.layoutMap.getCellHeaderPaths(col, row);
       const colKeys = cellDimensionPath.colHeaderPaths.map((colPath: any) => {
@@ -1019,37 +1217,7 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
       const colIndex = this.getBodyIndexByCol(col);
       this.records[rowIndex][colIndex] = newValue;
     }
-
-    // const cell_value = this.getCellValue(col, row);
-    this.scenegraph.updateCellContent(col, row);
-    if (this.widthMode === 'adaptive' || (this.autoFillWidth && this.getAllColsWidth() <= this.tableNoFrameWidth)) {
-      if (this.internalProps._widthResizedColMap.size === 0) {
-        //如果没有手动调整过行高列宽 则重新计算一遍并重新分配
-        this.scenegraph.recalculateColWidths();
-      }
-    } else if (!this.internalProps._widthResizedColMap.has(col)) {
-      const oldWidth = this.getColWidth(col);
-      const newWidth = computeColWidth(col, 0, this.rowCount - 1, this, false);
-      if (newWidth !== oldWidth) {
-        this.scenegraph.updateColWidth(col, newWidth - oldWidth);
-      }
-    }
-    if (this.heightMode === 'adaptive' || (this.autoFillHeight && this.getAllRowsHeight() <= this.tableNoFrameHeight)) {
-      this.scenegraph.recalculateRowHeights();
-    } else if (this.heightMode === 'autoHeight') {
-      const oldHeight = this.getRowHeight(row);
-      const newHeight = computeRowHeight(row, 0, this.colCount - 1, this);
-      this.scenegraph.updateRowHeight(row, newHeight - oldHeight);
-    }
-    this.fireListeners(TABLE_EVENT_TYPE.CHANGE_CELL_VALUE, {
-      col,
-      row,
-      rawValue: this.getCellRawValue(col, row),
-      changedValue: newValue
-    });
-    this.scenegraph.updateNextFrame();
   }
-
   hasCustomRenderOrLayout() {
     if (this.options.customRender) {
       return true;

@@ -50,15 +50,13 @@ async function moveColumn(
   } else if (direction === 'right' && proxy.colStart - count < proxy.bodyLeftCol) {
     count = proxy.colStart - proxy.bodyLeftCol;
   }
+  if (count === 0) {
+    return;
+  }
   if (count < 0) {
     direction = direction === 'left' ? 'right' : 'left';
     count = -count;
   }
-
-  if (count <= 0) {
-    return;
-  }
-
   // 两种更新模式
   // 1. count < colEnd - colStart：从顶/底部移动count数量的单元格到底/顶部
   // 2. count >= colEnd - colStart：整体移动到目标位置
@@ -94,7 +92,11 @@ async function moveColumn(
     proxy.table.scenegraph.proxy.deltaX += deltaX;
 
     proxy.currentCol = direction === 'left' ? proxy.currentCol + count : proxy.currentCol - count;
-    proxy.totalCol = direction === 'left' ? proxy.totalCol + count : proxy.totalCol - count;
+    proxy.totalCol = Math.max(
+      0,
+      Math.min(proxy.table.colCount - 1, direction === 'left' ? proxy.totalCol + count : proxy.totalCol - count)
+    );
+
     proxy.referenceCol = proxy.colStart + Math.floor((proxy.colEnd - proxy.colStart) / 2);
     proxy.colUpdatePos = distStartCol;
     proxy.colUpdateDirection = direction;
@@ -149,7 +151,10 @@ async function moveColumn(
     }
 
     proxy.currentCol = direction === 'left' ? proxy.currentCol + count : proxy.currentCol - count;
-    proxy.totalCol = direction === 'left' ? proxy.totalCol + count : proxy.totalCol - count;
+    proxy.totalCol = Math.max(
+      0,
+      Math.min(proxy.table.colCount - 1, direction === 'left' ? proxy.totalCol + count : proxy.totalCol - count)
+    );
     proxy.referenceCol = proxy.colStart + Math.floor((proxy.colEnd - proxy.colStart) / 2);
     proxy.colUpdatePos = proxy.colStart;
     proxy.colUpdateDirection = distEndCol > proxy.bodyRightCol - (proxy.colEnd - proxy.colStart + 1) ? 'right' : 'left';

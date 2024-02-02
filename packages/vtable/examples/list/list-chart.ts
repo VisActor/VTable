@@ -606,4 +606,10 @@ export function createTable() {
 
   const tableInstance = new VTable.ListTable(option);
   window.tableInstance = tableInstance;
+  tableInstance.onVChartEvent('click', args => {
+    console.log('onVChartEvent click', args);
+  });
+  tableInstance.onVChartEvent('mouseover', args => {
+    console.log('onVChartEvent mouseover', args);
+  });
 }

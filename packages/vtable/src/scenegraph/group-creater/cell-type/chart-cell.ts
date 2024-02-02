@@ -4,7 +4,7 @@ import * as registerChartTypes from '../../../chartModule';
 import { getFunctionalProp } from '../../utils/get-prop';
 import { isValid } from '@visactor/vutils';
 import type { BaseTableAPI } from '../../../ts-types/base-table';
-import type { IThemeSpec } from '@visactor/vrender';
+import type { IThemeSpec } from '@src/vrender';
 export function createChartCellGroup(
   cellGroup: Group | null,
   columnGroup: Group,
@@ -49,7 +49,9 @@ export function createChartCellGroup(
 
       lineCap: 'square',
 
-      clip: true
+      clip: true,
+
+      cornerRadius: cellTheme.group.cornerRadius
     } as any);
     cellGroup.role = 'cell';
     cellGroup.col = col;

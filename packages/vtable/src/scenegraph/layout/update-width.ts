@@ -1,10 +1,10 @@
-import type { IGraphic } from '@visactor/vrender';
+import type { IGraphic } from '@src/vrender';
 import type { ProgressBarStyle } from '../../body-helper/style/ProgressBarStyle';
 import { CartesianAxis } from '../../components/axis/axis';
 import { getStyleTheme } from '../../core/tableHelper';
 import type { BaseTableAPI } from '../../ts-types/base-table';
 import type { IProgressbarColumnBodyDefine } from '../../ts-types/list-table/define/progressbar-define';
-import { dealWithCustom } from '../component/custom';
+import { dealWithCustom, getCustomCellMergeCustom } from '../component/custom';
 import type { Group } from '../graphic/group';
 import type { Icon } from '../graphic/icon';
 import { updateImageCellContentWhileResize } from '../group-creater/cell-type/image-cell';
@@ -29,15 +29,23 @@ import { getHierarchyOffset } from '../utils/get-hierarchy-offset';
  * @param {number} detaX
  * @return {*}
  */
-export function updateColWidth(scene: Scenegraph, col: number, detaX: number) {
-  scene.table._setColWidth(col, scene.table.getColWidth(col) + detaX, true);
+export function updateColWidth(scene: Scenegraph, col: number, detaX: number, skipTableWidthMap?: boolean) {
+  if (!skipTableWidthMap) {
+    scene.table._setColWidth(col, scene.table.getColWidth(col) + detaX, true);
+  }
 
   const autoRowHeight = scene.table.heightMode === 'autoHeight';
   // deal with corner header or column header
   const colOrCornerHeaderColumn = scene.getColGroup(col, true) as Group;
-  if (colOrCornerHeaderColumn) {
+  const rightTopColumn = scene.getColGroupInRightTopCorner(col);
+  if (colOrCornerHeaderColumn && !rightTopColumn) {
     updateColunmWidth(colOrCornerHeaderColumn, detaX, autoRowHeight, 'col-corner', scene);
   }
+  // deal with right bottom frozen cells
+  if (rightTopColumn) {
+    updateColunmWidth(rightTopColumn, detaX, autoRowHeight, 'right-top', scene);
+  }
+
   // deal with row header or body or right frozen cells
   const rowHeaderOrBodyColumn = scene.getColGroup(col) as Group;
   if (rowHeaderOrBodyColumn) {
@@ -53,11 +61,6 @@ export function updateColWidth(scene: Scenegraph, col: number, detaX: number) {
   const bottomColumn = scene.getColGroupInBottom(col);
   if (bottomColumn) {
     updateColunmWidth(bottomColumn, detaX, autoRowHeight, 'bottom', scene);
-  }
-  // deal with right bottom frozen cells
-  const rightTopColumn = scene.getColGroupInRightTopCorner(col);
-  if (rightTopColumn) {
-    updateColunmWidth(rightTopColumn, detaX, autoRowHeight, 'right-top', scene);
   }
   // deal with right bottom frozen cells
   const rightBottomColumn = scene.getColGroupInRightBottomCorner(col);
@@ -189,18 +192,42 @@ function updateColunmWidth(
       }
       let y = 0;
       colGroup.forEachChildren((cellGroup: Group) => {
-        // if (cellGroup.role !== 'cell') {
-        //   cellGroup.setAttribute('y', y);
-        //   y += scene.table.getRowHeight(cellGroup.row) ?? 0;
-        //   return;
-        // }
-        // y += cellGroup.attribute.height ?? 0;
         cellGroup.setAttribute('y', y);
         y += scene.table.getRowHeight(cellGroup.row) ?? 0;
       });
       newTotalHeight = y;
     }
     scene.updateContainerHeight(row, newTotalHeight - oldContainerHeight);
+    //#region 修改bug:https://github.com/VisActor/VTable/issues/954 添加底部冻结行的三块区域
+    for (let col = 0; col < scene.table.frozenColCount; col++) {
+      const leftBottomFrozenColumnGroup = scene.getColGroupInLeftBottomCorner(col);
+      // reset cell y
+      let y = 0;
+      leftBottomFrozenColumnGroup?.forEachChildren((cellGroup: Group) => {
+        cellGroup.setAttribute('y', y);
+        y += scene.table.getRowHeight(cellGroup.row);
+      });
+    }
+    for (let col = scene.table.colCount - scene.table.rightFrozenColCount; col < scene.table.colCount; col++) {
+      const rightBottomFrozenColumnGroup = scene.getColGroupInRightBottomCorner(col);
+      // reset cell y
+      let y = 0;
+      rightBottomFrozenColumnGroup?.forEachChildren((cellGroup: Group) => {
+        cellGroup.setAttribute('y', y);
+        y += scene.table.getRowHeight(cellGroup.row);
+      });
+    }
+
+    for (let col = scene.table.frozenColCount; col < scene.table.colCount - scene.table.rightFrozenColCount; col++) {
+      const rightBottomFrozenColumnGroup = scene.getColGroupInBottom(col);
+      // reset cell y
+      let y = 0;
+      rightBottomFrozenColumnGroup?.forEachChildren((cellGroup: Group) => {
+        cellGroup.setAttribute('y', y);
+        y += scene.table.getRowHeight(cellGroup.row);
+      });
+    }
+    //#endregion
   }
 }
 
@@ -220,9 +247,10 @@ function updateCellWidth(
   // autoColWidth: boolean,
   autoRowHeight: boolean
 ): boolean {
-  if (cell.attribute.width === distWidth) {
+  if (cell.attribute.width === distWidth && !cell.needUpdateWidth) {
     return false;
   }
+  cell.needUpdateWidth = false;
 
   cell.setAttribute('width', distWidth);
   // const mergeInfo = getCellMergeInfo(scene.table, col, row);
@@ -319,44 +347,46 @@ function updateCellWidth(
       customContainer.removeAllChild();
       cell.removeChild(customContainer);
 
-      let customRender;
-      let customLayout;
-      const cellType = scene.table.getCellLocation(col, row);
-      if (cellType !== 'body') {
-        const define = scene.table.getHeaderDefine(col, row);
-        customRender = define?.headerCustomRender;
-        customLayout = define?.headerCustomLayout;
-      } else {
-        const define = scene.table.getBodyColumnDefine(col, row);
-        customRender = define?.customRender || scene.table.customRender;
-        customLayout = define?.customLayout;
-      }
+      if (!getCustomCellMergeCustom(col, row, cell, scene.table)) {
+        let customRender;
+        let customLayout;
+        const cellType = scene.table.getCellLocation(col, row);
+        if (cellType !== 'body') {
+          const define = scene.table.getHeaderDefine(col, row);
+          customRender = define?.headerCustomRender;
+          customLayout = define?.headerCustomLayout;
+        } else {
+          const define = scene.table.getBodyColumnDefine(col, row);
+          customRender = define?.customRender || scene.table.customRender;
+          customLayout = define?.customLayout;
+        }
 
-      if (customLayout || customRender) {
-        // const { autoRowHeight } = table.internalProps;
-        const style = scene.table._getCellStyle(col, row) as ProgressBarStyle;
-        const padding = getQuadProps(getProp('padding', style, col, row, scene.table));
-        const customResult = dealWithCustom(
-          customLayout,
-          customRender,
-          col,
-          row,
-          cellGroup.attribute.width,
-          cellGroup.attribute.height,
-          false,
-          scene.table.heightMode === 'autoHeight',
-          padding,
-          scene.table
-        );
-        customElementsGroup = customResult.elementsGroup;
-        renderDefault = customResult.renderDefault;
-        isHeightChange = true;
-      }
+        if (customLayout || customRender) {
+          // const { autoRowHeight } = table.internalProps;
+          const style = scene.table._getCellStyle(col, row) as ProgressBarStyle;
+          const padding = getQuadProps(getProp('padding', style, col, row, scene.table));
+          const customResult = dealWithCustom(
+            customLayout,
+            customRender,
+            col,
+            row,
+            cellGroup.attribute.width,
+            cellGroup.attribute.height,
+            false,
+            scene.table.heightMode === 'autoHeight',
+            padding,
+            scene.table
+          );
+          customElementsGroup = customResult.elementsGroup;
+          renderDefault = customResult.renderDefault;
+          isHeightChange = true;
+        }
 
-      if (cell.childrenCount > 0) {
-        cell.insertBefore(customElementsGroup, cell.firstChild);
-      } else {
-        cell.appendChild(customElementsGroup);
+        if (cell.childrenCount > 0 && customElementsGroup) {
+          cell.insertBefore(customElementsGroup, cell.firstChild);
+        } else if (customElementsGroup) {
+          cell.appendChild(customElementsGroup);
+        }
       }
     }
 
@@ -438,7 +468,7 @@ function updateMergeCellContentWidth(
         // const { width: contentWidth } = cellGroup.attribute;
         singleCellGroup.contentWidth = distWidth;
 
-        resizeCellGroup(
+        const { heightChange } = resizeCellGroup(
           singleCellGroup,
           rangeWidth,
           rangeHeight,
@@ -454,6 +484,11 @@ function updateMergeCellContentWidth(
           },
           table
         );
+
+        if (heightChange) {
+          singleCellGroup.needUpdateHeight = true;
+        }
+
         isHeightChange = isHeightChange || changed;
       }
     }
@@ -480,7 +515,7 @@ function updateMergeCellContentWidth(
  */
 function resetRowHeight(scene: Scenegraph, row: number) {
   // 获取高度
-  const maxHeight = computeRowHeight(row, 0, scene.table.colCount - 1, scene.table);
+  const maxHeight = Math.round(computeRowHeight(row, 0, scene.table.colCount - 1, scene.table));
   // 更新table行高存储
   scene.table._setRowHeight(row, maxHeight, true);
 

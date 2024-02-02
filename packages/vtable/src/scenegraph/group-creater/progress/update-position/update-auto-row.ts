@@ -7,7 +7,8 @@ export function updateAutoRow(
   rowStart: number,
   rowEnd: number,
   table: BaseTableAPI,
-  direction: 'up' | 'down' = 'up'
+  direction: 'up' | 'down' = 'up',
+  part?: boolean
 ) {
   // 更新y位置
   if (direction === 'up') {
@@ -21,6 +22,12 @@ export function updateAutoRow(
         if (cellGroup._prev) {
           // y = ((cellGroup._prev as Group)?.attribute.y ?? 0) + ((cellGroup._prev as Group)?.attribute.height ?? 0);
           y = (cellGroup._prev as Group)?.attribute.y + table.getRowHeight((cellGroup._prev as Group).row);
+        } else if (part) {
+          const baseCellGroup = table.scenegraph.highPerformanceGetCell(col, rowEnd + 1, true);
+          y = baseCellGroup.attribute.y;
+          for (let r = rowStart; r <= rowEnd; r++) {
+            y -= table.getRowHeight(r);
+          }
         } else {
           // 估计位置
           y = table.getRowsHeight(table.columnHeaderLevelCount, cellGroup.row - 1);
@@ -39,6 +46,12 @@ export function updateAutoRow(
         if (cellGroup._next) {
           // y = ((cellGroup._next as Group)?.attribute.y ?? 0) - (cellGroup.attribute.height ?? 0);
           y = (cellGroup._next as Group)?.attribute.y - table.getRowHeight(cellGroup.row);
+        } else if (part) {
+          const baseCellGroup = table.scenegraph.highPerformanceGetCell(col, rowStart - 1, true);
+          y = baseCellGroup.attribute.y;
+          for (let r = rowStart; r <= rowEnd; r++) {
+            y += table.getRowHeight(r);
+          }
         } else {
           // 估计位置
           y = table.getRowsHeight(table.columnHeaderLevelCount, cellGroup.row - 1);

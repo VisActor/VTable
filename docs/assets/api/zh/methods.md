@@ -119,6 +119,12 @@ tableInstance.renderWithRecreateCells();
 ## setRecords(Function)
 
 设置表格数据接口，可作为更新接口调用。
+** 基本表格可同时设置排序状态对表格数据排序，sort设置为空清空排序状态，如果不设置则按当前排序状态对传入数据排序 **
+
+```
+setRecords(records: Array<any>) //透视表
+setRecords(records: Array<any>, sort?: SortState | SortState[]) //** 基本表格可同时设置排序状态对表格数据排序，sort设置为空清空排序状态，如果不设置则按当前排序状态对传入数据排序 **
+```
 
 ## getDrawRange(Function)
 获取表格实际绘制内容区域的boundRect的值
@@ -163,6 +169,8 @@ tableInstance.renderWithRecreateCells();
    */
   selectCells(cellRanges: CellRange[]): void
 ```
+其中：
+{{ use: CellRange() }}
 
 ## getSelectedCellInfos(Function)
 
@@ -172,6 +180,9 @@ tableInstance.renderWithRecreateCells();
   /**获取选中区域的每个单元格详情 */
   getSelectedCellInfos(): CellInfo[][] | null;
 ```
+
+{{ use: CellInfo() }}
+
 ## clearSelected(Function)
 
 清除所有单元格的选中状态。
@@ -235,6 +246,23 @@ tableInstance.renderWithRecreateCells();
   getRecordByCell(col: number, row: number)
 ```
 
+## getBodyIndexByTableIndex(Function)
+
+根据表格单元格的行列号 获取在body部分的列索引及行索引
+
+```
+  /** 根据表格单元格的行列号 获取在body部分的列索引及行索引 */
+  getBodyIndexByTableIndex: (col: number, row: number) => CellAddress;
+```
+## getTableIndexByBodyIndex(Function)
+
+根据body部分的列索引及行索引，获取单元格的行列号
+
+```
+  /** 根据body部分的列索引及行索引，获取单元格的行列号 */
+  getTableIndexByBodyIndex: (col: number, row: number) => CellAddress;
+```
+
 ## getTableIndexByRecordIndex(Function)
 根据数据源的index 获取显示到表格中的index 行号或者列号（与转置相关，非转置获取的是行号，转置表获取的是列号）。
 
@@ -265,7 +293,7 @@ tableInstance.renderWithRecreateCells();
 
 ## getRecordShowIndexByCell(Function)
 
-获取当前单元格数据在body部分的索引，即通过行列号去除表头层级数的索引
+获取当前单元格数据在body部分的索引，即通过行列号去除表头层级数的索引（与转置相关，非转置获取的是body行号，转置表获取的是body列号）。
 
 ** ListTable 专有 ** 
 ```
@@ -371,6 +399,30 @@ tableInstance.renderWithRecreateCells();
   getCellOverflowText(col: number, row: number) => string | null
 ```
 
+## getCellRect(Function)
+获取单元格在整张表格中的具体位置。
+```
+ /**
+   * 获取单元格的范围 返回值为Rect类型。不考虑是否为合并单元格的情况，坐标从0开始
+   * @param {number} col column index
+   * @param {number} row row index
+   * @returns {Rect}
+   */
+  getCellRect(col: number, row: number): Rect
+```
+
+## getCellRelativeRect(Function)
+获取单元格在整张表格中的具体位置。相对位置是基于表格左上角（滚动情况减去滚动值）
+```
+  /**
+   * 获取的位置是相对表格显示界面的左上角 情况滚动情况 如单元格已经滚出表格上方 则这个单元格的y将为负值
+   * @param {number} col index of column, of the cell
+   * @param {number} row index of row, of the cell
+   * @returns {Rect} the rect of the cell.
+   */
+  getCellRelativeRect(col: number, row: number): Rect
+```
+
 ## getCellHeaderPaths(Function)
 
 获取行列表头的路径
@@ -386,6 +438,20 @@ tableInstance.renderWithRecreateCells();
 ```
 
 {{ use: ICellHeaderPaths() }}
+
+## getCellHeaderTreeNodes(Function)
+
+根据行列号获取表头tree节点，包含了用户在自定义树rowTree及columnTree树上的自定义属性（也是内部布局树的节点，获取后请不要随意修改）。一般情况下用getCellHeaderPaths即可。
+
+```
+  /**
+   * 根据行列号获取表头tree节点，包含了用户在自定义树rowTree及columnTree树上的自定义属性（也是内部布局树的节点，获取后请不要随意修改）
+   * @param col
+   * @param row
+   * @returns ICellHeaderPaths
+   */
+  getCellHeaderTreeNodes(col: number, row: number)=> ICellHeaderPaths
+```
 
 ## getCellAddress(Function)
 
@@ -432,6 +498,17 @@ getCheckboxState(field?: string | number): Array
 ```
 getCellCheckboxState(col: number, row: number): Array
 ```
+## getScrollTop(Function)
+获取当前竖向滚动位置
+
+## getScrollLeft(Function)
+获取当前横向滚动位置
+
+## setScrollTop(Function)
+设置竖向滚动位置 （会更新渲染界面）
+
+## setScrollLeft(Function)
+设置横向滚动位置（会更新渲染界面）
 
 ## scrollToCell(Function)
 
@@ -473,7 +550,7 @@ enum HierarchyState {
 }
 ```
 
-## getLayouRowTree(Function)
+## getLayoutRowTree(Function)
 ** PivotTable 专有 ** 
 
 获取表格行头树形结构
@@ -482,10 +559,10 @@ enum HierarchyState {
    * 获取表格行树状结构
    * @returns
    */
-  getLayouRowTree() : LayouTreeNode[]
+  getLayoutRowTree() : LayouTreeNode[]
 ```
 
-## getLayouRowTreeCount(Function)
+## getLayoutRowTreeCount(Function)
 ** PivotTable 专有 ** 
 
 获取表格行头树形结构的占位的总节点数。
@@ -496,7 +573,7 @@ enum HierarchyState {
    * 获取表格行头树形结构的占位的总节点数。
    * @returns
    */
-  getLayouRowTreeCount() : number
+  getLayoutRowTreeCount() : number
 ```
 
 ## updateSortState(Function)
@@ -521,7 +598,7 @@ enum HierarchyState {
    * 更新排序状态
    * @param pivotSortStateConfig.dimensions 排序状态维度对应关系；pivotSortStateConfig.order 排序状态
    */
-  updateSortState(pivotSortStateConfig: {
+  updatePivotSortState(pivotSortStateConfig: {
       dimensions: IDimensionInfo[];
       order: SortOrder;
     }[])
@@ -661,6 +738,19 @@ use case: 点击图例项后 更新过滤规则 来更新图表
   changeCellValue: (col: number, row: number, value: string | number | null) => void;
 ```
 
+## changeCellValues(Function)
+批量更改单元格的value：
+
+```
+  /**
+   * 批量更新多个单元格的数据
+   * @param col 粘贴数据的起始列号
+   * @param row 粘贴数据的起始行号
+   * @param values 多个单元格的数据数组
+   */
+  changeCellValues(startCol: number, startRow: number, values: string[][]) 
+```
+
 ## getEditor(Function)
 
 获取单元格配置的编辑器
@@ -738,4 +828,43 @@ use case: 点击图例项后 更新过滤规则 来更新图表
    * @param recordIndexs 要删除数据的索引（显示到body中的条目索引）
    */
   deleteRecords(recordIndexs: number[]) 
+```
+
+## updateRecords(Function)
+
+修改数据 支持多条数据
+
+** ListTable 专有 ** 
+```
+  /**
+   * 修改数据 支持多条数据
+   * @param records 修改数据条目
+   * @param recordIndexs 对应修改数据的索引（显示在body中的索引，即要修改的是body部分的第几行数据）
+   */
+  updateRecords(records: any[], recordIndexs: number[])
+```
+
+## getBodyVisibleCellRange(Function)
+
+获取表格body部分的显示单元格范围
+
+```
+  /** 获取表格body部分的显示单元格范围 */
+  getBodyVisibleCellRange: () => { rowStart: number; colStart: number; rowEnd: number; colEnd: number };
+```
+
+## getBodyVisibleColRange(Function)
+
+获取表格body部分的显示列号范围
+```
+  /** 获取表格body部分的显示列号范围 */
+  getBodyVisibleColRange: () => { colStart: number; colEnd: number };
+```
+## getBodyVisibleRowRange(Function)
+
+获取表格body部分的显示行号范围
+
+```
+  /** 获取表格body部分的显示行号范围 */
+  getBodyVisibleRowRange: () => { rowStart: number; rowEnd: number };
 ```

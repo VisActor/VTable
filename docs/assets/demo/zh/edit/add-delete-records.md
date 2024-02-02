@@ -2,7 +2,7 @@
 category: examples
 group: edit
 title: 动态添加删除数据
-cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/performance.gif
+cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/add-delete-records.png
 ---
 
 # 动态添加删除数据
@@ -14,6 +14,7 @@ cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/perfor
 - addRecords 接口调用
 - addRecord 接口调用
 - deleteRecords 接口调用
+- updateRecords 接口调用
 - changeCellValue 接口调用
 
 ## 代码演示
@@ -162,7 +163,7 @@ const option = {
   records,
   columns,
   menu:{
-    contextMenuItems:["向下插入数据","向下插入空行",'修改值','删除该行']
+    contextMenuItems:["向下插入数据","向下插入空行",'修改掉整行值','修改值','删除该行']
   },
   editor: 'input-editor'
 };
@@ -180,6 +181,20 @@ tableInstance.on('dropdown_menu_click', (args) => {
   }else if(args.menuKey==="删除该行"){
     const recordIndex=tableInstance.getRecordShowIndexByCell(args.col,args.row);
     tableInstance.deleteRecords([recordIndex]);
+  }else if(args.menuKey==="修改掉整行值"){
+    const recordIndex=tableInstance.getRecordShowIndexByCell(args.col,args.row);
+    tableInstance.updateRecords([{
+      "id": 1111,
+      "email1": "changed Value",
+      "name": "changed Value",
+      "lastName": "changed Value",
+      "hobbies": "changed Value",
+      "birthday": "1974-09-25",
+      "tel": "13237599651",
+      "sex": "boy",
+      "work": "back-end engineer",
+      "city": "beijing"
+    }],[recordIndex]);
   }else if(args.menuKey==="修改值"){
     tableInstance.startEditCell(args.col,args.row);
   }

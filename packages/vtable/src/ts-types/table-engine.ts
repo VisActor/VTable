@@ -21,8 +21,14 @@ import type { IEditor } from '@visactor/vtable-editors';
 import type { ITextStyleOption } from '../body-helper/style';
 import type { DataSource } from '../data';
 import type { EditManeger } from '../edit/edit-manager';
+import type { ICustomRender } from './customElement';
+import type { ICustomLayout } from './customLayout';
 
 export interface CellAddress {
+  col: number;
+  row: number;
+}
+export interface CellAddressWithBound {
   col: number;
   row: number;
   rect?: RectProps;
@@ -74,6 +80,12 @@ export interface TableKeyboardOptions {
   selectAllOnCtrlA?: boolean;
   /** 快捷键复制  默认：false*/
   copySelected?: boolean; //这个copy是和浏览器的快捷键一致的
+  /** 快捷键粘贴。粘贴内容到指定位置（即需要有选中状态），支持批量粘贴。 默认：false */
+  pasteValueToCell?: boolean; //paste是和浏览器的快捷键一致的
+}
+export interface TableEventOptions {
+  /** 是否阻止右键的默认行为， 默认为true。*/
+  preventDefaultContextMenu?: boolean;
 }
 export interface DataSourceAPI {
   clearCurrentIndexedData: () => void;
@@ -152,10 +164,18 @@ export interface ListTableConstructorOptions extends BaseTableConstructorOptions
    * 排序状态
    */
   sortState?: SortState | SortState[];
+  /** 全局设置表头编辑器 */
+  headerEditor?: string | IEditor | ((args: BaseCellInfo & { table: BaseTableAPI }) => string | IEditor);
   /** 全局设置编辑器 */
   editor?: string | IEditor | ((args: BaseCellInfo & { table: BaseTableAPI }) => string | IEditor);
   /** 编辑触发时机 双击事件  单击事件 api手动开启编辑。默认为双击'doubleclick' */
   editCellTrigger?: 'doubleclick' | 'click' | 'api';
+  /** 拖拽表头移动位置 针对冻结部分的规则  默认为fixedFrozenCount
+   * "disabled"（禁止调整冻结列位置）：不允许其他列的表头移入冻结列，也不允许冻结列移出，冻结列保持不变。
+   * "adjustFrozenCount"（根据交互结果调整冻结数量）：允许其他列的表头移入冻结列，及冻结列移出，并根据拖拽的动作调整冻结列的数量。当其他列的表头被拖拽进入冻结列位置时，冻结列数量增加；当其他列的表头被拖拽移出冻结列位置时，冻结列数量减少。
+   * "fixedFrozenCount"（可调整冻结列，并维持冻结数量不变）：允许自由拖拽其他列的表头移入或移出冻结列位置，同时保持冻结列的数量不变。
+   */
+  frozenColDragHeaderMode?: 'disabled' | 'adjustFrozenCount' | 'fixedFrozenCount';
 }
 
 export interface ListTableAPI extends BaseTableAPI {
@@ -167,7 +187,13 @@ export interface ListTableAPI extends BaseTableAPI {
   isPivotTable: () => false;
   /** 设置单元格的value值，注意对应的是源数据的原始值，vtable实例records会做对应修改 */
   changeCellValue: (col: number, row: number, value: string | number | null) => void;
-
+  /**
+   * 批量更新多个单元格的数据
+   * @param col 粘贴数据的起始列号
+   * @param row 粘贴数据的起始行号
+   * @param values 多个单元格的数据数组
+   */
+  changeCellValues: (col: number, row: number, values: (string | number)[][]) => void;
   getFieldData: (field: FieldDef | FieldFormat | undefined, col: number, row: number) => FieldData;
   //#region 编辑器相关demo
   /** 获取单元格配置的编辑器 */
@@ -320,6 +346,15 @@ export interface PivotTableAPI extends BaseTableAPI {
   isPivotTable: () => true;
   getPivotSortState: (col: number, row: number) => SortOrder;
   toggleHierarchyState: (col: number, row: number) => void;
+  /** 设置单元格的value值，注意对应的是源数据的原始值，vtable实例records会做对应修改 */
+  changeCellValue: (col: number, row: number, value: string | number | null) => void;
+  /**
+   * 批量更新多个单元格的数据
+   * @param col 粘贴数据的起始列号
+   * @param row 粘贴数据的起始行号
+   * @param values 多个单元格的数据数组
+   */
+  changeCellValues: (col: number, row: number, values: (string | number)[][]) => void;
 }
 export interface PivotChartAPI extends BaseTableAPI {
   records?: any | Record<string, any[]>;
@@ -412,6 +447,8 @@ export type StickCell = { col: number; row: number; dx: number; dy: number };
 export type CustomMergeCell = (col: number, row: number, table: BaseTableAPI) => undefined | CustomMerge;
 export type CustomMerge = {
   range: CellRange;
-  text: string;
+  text?: string;
   style?: ITextStyleOption;
+  customLayout?: ICustomLayout;
+  customRender?: ICustomRender;
 };

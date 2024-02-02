@@ -31,7 +31,7 @@ import { Bounds, isObject, isString, isValid } from '@visactor/vutils';
 import { updateDrill } from './drill';
 import { clearChartHover, updateChartHover } from './spark-line';
 import { endMoveCol, startMoveCol, updateMoveCol } from './cell-move';
-import type { FederatedEvent } from '@visactor/vrender';
+import type { FederatedEvent } from '@src/vrender';
 import type { TooltipOptions } from '../ts-types/tooltip';
 import { getIconAndPositionFromTarget } from '../scenegraph/utils/icon';
 import type { BaseTableAPI } from '../ts-types/base-table';
@@ -362,12 +362,16 @@ export class StateManager {
       headerSelectMode,
       disableSelect,
       disableHeaderSelect
-    } = this.table.options?.select ?? {
-      /** 点击表头单元格时连带body整行或整列选中 或仅选中当前单元格，默认或整行或整列选中*/
-      headerSelectMode: 'inline',
-      disableSelect: false,
-      disableHeaderSelect: false
-    };
+    } = Object.assign(
+      {},
+      {
+        /** 点击表头单元格时连带body整行或整列选中 或仅选中当前单元格，默认或整行或整列选中*/
+        headerSelectMode: 'inline',
+        disableSelect: false,
+        disableHeaderSelect: false
+      },
+      this.table.options.select
+    );
 
     // if (enableRowHighlight && enableColumnHighlight) {
     //   this.select.highlightScope = HighlightScope.cross;
@@ -401,10 +405,9 @@ export class StateManager {
   }
 
   setSortState(sortState: SortState) {
-    this.sort.field = sortState.field as string;
-    this.sort.fieldKey = sortState.fieldKey as string;
-    this.sort.order = sortState.order;
-
+    this.sort.field = sortState?.field as string;
+    this.sort.fieldKey = sortState?.fieldKey as string;
+    this.sort.order = sortState?.order;
     // // 这里有一个问题，目前sortState中一般只传入了fieldKey，但是getCellRangeByField需要field
     // const range = this.table.getCellRangeByField(this.sort.field, 0);
     // if (range) {
@@ -679,6 +682,11 @@ export class StateManager {
     const totalHeight = this.table.getAllRowsHeight();
     top = Math.max(0, Math.min(top, totalHeight - this.table.scenegraph.height));
     top = Math.ceil(top);
+    // 滚动期间清空选中清空 如果调用接口hover状态需要保留，但是如果不调用updateHoverPos透视图处于hover状态的图就不能及时更新 所以这里单独判断了isPivotChart
+    if (top !== this.scroll.verticalBarPos || this.table.isPivotChart()) {
+      this.table.stateManager.updateHoverPos(-1, -1);
+    }
+    // this.table.stateManager.updateSelectPos(-1, -1);
     this.scroll.verticalBarPos = top;
 
     // 设置scenegraph坐标
@@ -687,9 +695,6 @@ export class StateManager {
     // 更新scrollbar位置
     const yRatio = top / (totalHeight - this.table.scenegraph.height);
     this.table.scenegraph.component.updateVerticalScrollBarPos(yRatio);
-    // 滚动期间清空选中清空
-    this.table.stateManager.updateHoverPos(-1, -1);
-    // this.table.stateManager.updateSelectPos(-1, -1);
     this.table.fireListeners(TABLE_EVENT_TYPE.SCROLL, {
       scrollTop: this.scroll.verticalBarPos,
       scrollLeft: this.scroll.horizontalBarPos,
@@ -708,6 +713,11 @@ export class StateManager {
 
     left = Math.max(0, Math.min(left, totalWidth - this.table.scenegraph.width));
     left = Math.ceil(left);
+    // 滚动期间清空选中清空
+    if (left !== this.scroll.horizontalBarPos) {
+      this.table.stateManager.updateHoverPos(-1, -1);
+    }
+    // this.table.stateManager.updateSelectPos(-1, -1);
     this.scroll.horizontalBarPos = left;
 
     // 设置scenegraph坐标
@@ -717,9 +727,6 @@ export class StateManager {
     const xRatio = left / (totalWidth - this.table.scenegraph.width);
     this.table.scenegraph.component.updateHorizontalScrollBarPos(xRatio);
 
-    // 滚动期间清空选中清空
-    this.table.stateManager.updateHoverPos(-1, -1);
-    // this.table.stateManager.updateSelectPos(-1, -1);
     this.table.fireListeners(TABLE_EVENT_TYPE.SCROLL, {
       scrollTop: this.scroll.verticalBarPos,
       scrollLeft: this.scroll.horizontalBarPos,
@@ -841,23 +848,25 @@ export class StateManager {
   }
 
   hideMenu() {
-    this.table.fireListeners(TABLE_EVENT_TYPE.DROPDOWN_MENU_CLEAR, null);
-    this.table.fireListeners(TABLE_EVENT_TYPE.HIDE_MENU, null);
-    this.menu.isShow = false;
-    this.table.scenegraph.component.menu.detach();
-    if (this.residentHoverIcon) {
-      this.table.scenegraph.setIconNormalStyle(
-        this.residentHoverIcon.icon,
-        this.residentHoverIcon.col,
-        this.residentHoverIcon.row
-      );
-      // this.residentHoverIcon.icon.setAttribute('visibleTime', (this.residentHoverIcon.icon as any).oldVisibleTime);
-      // this.residentHoverIcon.icon.setAttribute(
-      //   'opacity',
-      //   this.residentHoverIcon.icon.attribute.visibleTime === 'always' ? 1 : 0
-      // );
-      this.table.scenegraph.resetResidentHoverIcon(this.residentHoverIcon.col, this.residentHoverIcon.row);
-      this.residentHoverIcon = null;
+    if (this.menu.isShow) {
+      this.table.fireListeners(TABLE_EVENT_TYPE.DROPDOWN_MENU_CLEAR, null);
+      this.table.fireListeners(TABLE_EVENT_TYPE.HIDE_MENU, null);
+      this.menu.isShow = false;
+      this.table.scenegraph.component.menu.detach();
+      if (this.residentHoverIcon) {
+        this.table.scenegraph.setIconNormalStyle(
+          this.residentHoverIcon.icon,
+          this.residentHoverIcon.col,
+          this.residentHoverIcon.row
+        );
+        // this.residentHoverIcon.icon.setAttribute('visibleTime', (this.residentHoverIcon.icon as any).oldVisibleTime);
+        // this.residentHoverIcon.icon.setAttribute(
+        //   'opacity',
+        //   this.residentHoverIcon.icon.attribute.visibleTime === 'always' ? 1 : 0
+        // );
+        this.table.scenegraph.resetResidentHoverIcon(this.residentHoverIcon.col, this.residentHoverIcon.row);
+        this.residentHoverIcon = null;
+      }
     }
   }
 

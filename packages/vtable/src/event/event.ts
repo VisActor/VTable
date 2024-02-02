@@ -1,6 +1,6 @@
-// import { FederatedPointerEvent } from '@visactor/vrender';
-import type { FederatedPointerEvent, Gesture } from '@visactor/vrender';
-import { RichText } from '@visactor/vrender';
+// import { FederatedPointerEvent } from '@src/vrender';
+import type { FederatedPointerEvent, Gesture } from '@src/vrender';
+import { RichText } from '@src/vrender';
 import type { MousePointerCellEvent } from '../ts-types';
 import { IconFuncTypeEnum } from '../ts-types';
 import type { StateManager } from '../state/state';
@@ -22,12 +22,15 @@ import { bindAxisClickEvent } from './pivot-chart/axis-click';
 import { bindAxisHoverEvent } from './pivot-chart/axis-hover';
 import type { PivotTable } from '../PivotTable';
 import { Env } from '../tools/env';
+import type { ListTable } from '../ListTable';
+import { isValid } from '@visactor/vutils';
 
 export class EventManager {
   table: BaseTableAPI;
   // _col: number;
   // _resizing: boolean = false;
-
+  /** 为了能够判断canvas mousedown 事件 以阻止事件冒泡 */
+  isPointerDownOnTable: boolean = false;
   isTouchdown: boolean; // touch scrolling mode on
   touchMovePoints: {
     x: number;
@@ -40,7 +43,7 @@ export class EventManager {
   gesture: Gesture;
   handleTextStickBindId: number;
 
-  //鼠标事件记录
+  //鼠标事件记录。 PointerMove敏感度太高了 记录下上一个鼠标位置 在接收到PointerMove事件时做判断 是否到到触发框选或者移动表头操作的标准，防止误触
   LastPointerXY: { x: number; y: number };
   LastBodyPointerXY: { x: number; y: number };
   isDown = false;
@@ -129,6 +132,22 @@ export class EventManager {
         );
         if (this.table._canResizeColumn(resizeCol.col, resizeCol.row) && resizeCol.col >= 0) {
           this.table.scenegraph.updateAutoColWidth(resizeCol.col);
+
+          // if (this.table.isPivotChart()) {
+          this.table.scenegraph.updateChartSize(resizeCol.col);
+          // }
+          const state = this.table.stateManager;
+          // update frozen shadowline component
+          if (
+            state.columnResize.col < state.table.frozenColCount &&
+            !state.table.isPivotTable() &&
+            !(state.table as ListTable).transpose
+          ) {
+            state.table.scenegraph.component.setFrozenColumnShadow(
+              state.table.frozenColCount - 1,
+              state.columnResize.isRightFrozen
+            );
+          }
         }
       }
     });
@@ -305,12 +324,14 @@ export class EventManager {
 
   dealColumnMover(eventArgsSet: SceneEvent) {
     const { eventArgs } = eventArgsSet;
-    this.table.stateManager.updateMoveCol(
-      eventArgs.col,
-      eventArgs.row,
-      eventArgsSet.abstractPos.x,
-      eventArgsSet.abstractPos.y
-    );
+    if (isValid(eventArgs.col) && isValid(eventArgs.row)) {
+      this.table.stateManager.updateMoveCol(
+        eventArgs.col,
+        eventArgs.row,
+        eventArgsSet.abstractPos.x,
+        eventArgsSet.abstractPos.y
+      );
+    }
   }
 
   startColumnResize(eventArgsSet: SceneEvent) {

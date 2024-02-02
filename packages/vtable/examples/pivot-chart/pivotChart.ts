@@ -9308,6 +9308,7 @@ export function createTable() {
     },
     headerStyle: {
       borderColor: 'gray',
+      bgColor: 'rgba(220, 210, 200, 0.2)',
       borderLineWidth: [0, 0, 0, 1],
       hover: {
         cellBgColor: '#CCE0FF'
@@ -9315,6 +9316,7 @@ export function createTable() {
     },
     rowHeaderStyle: {
       borderColor: 'gray',
+      bgColor: 'rgba(220, 210, 200, 0.2)',
       borderLineWidth: [1, 0, 1, 0],
       hover: {
         cellBgColor: ''
@@ -9322,6 +9324,7 @@ export function createTable() {
     },
     cornerHeaderStyle: {
       borderColor: 'gray',
+      bgColor: 'rgba(220, 210, 200, 0.2)',
       borderLineWidth: [0, 0, 1, 0],
       hover: {
         cellBgColor: ''
@@ -9329,6 +9332,7 @@ export function createTable() {
     },
     cornerRightTopCellStyle: {
       borderColor: 'gray',
+      bgColor: 'rgba(220, 210, 200, 0.2)',
       borderLineWidth: [0, 0, 1, 1],
       hover: {
         cellBgColor: ''
@@ -9336,6 +9340,7 @@ export function createTable() {
     },
     cornerLeftBottomCellStyle: {
       borderColor: 'gray',
+      bgColor: 'rgba(220, 210, 200, 0.2)',
       borderLineWidth: [1, 1, 0, 0],
       hover: {
         cellBgColor: ''
@@ -9343,6 +9348,7 @@ export function createTable() {
     },
     cornerRightBottomCellStyle: {
       borderColor: 'gray',
+      bgColor: 'rgba(220, 210, 200, 0.2)',
       borderLineWidth: [1, 0, 0, 1],
       hover: {
         cellBgColor: ''
@@ -9350,6 +9356,7 @@ export function createTable() {
     },
     rightFrozenStyle: {
       borderColor: 'gray',
+      bgColor: 'rgba(220, 210, 200, 0.2)',
       borderLineWidth: [1, 0, 1, 1],
       hover: {
         cellBgColor: ''
@@ -9368,7 +9375,8 @@ export function createTable() {
     },
     frameStyle: {
       borderLineWidth: 0
-    }
+    },
+    underlayBackgroundColor: '#ddd'
     // axisStyle: {
     //   defaultAxisStyle: {
     //     title: {
@@ -9398,7 +9406,7 @@ export function createTable() {
     defaultRowHeight: 200,
     defaultHeaderRowHeight: 30,
     defaultColWidth: 280,
-    defaultHeaderColWidth: [80, 50],
+    defaultHeaderColWidth: [80, 'auto'],
 
     corner: {
       titleOnDimension: 'row',

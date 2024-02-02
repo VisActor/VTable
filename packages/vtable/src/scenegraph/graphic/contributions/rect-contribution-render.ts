@@ -9,8 +9,8 @@ import type {
   IGroup,
   IGroupGraphicAttribute,
   IDrawContext
-} from '@visactor/vrender';
-import { BaseRenderContributionTime, injectable } from '@visactor/vrender';
+} from '@src/vrender';
+import { BaseRenderContributionTime, injectable } from '@src/vrender';
 import { renderStroke } from './group-contribution-render';
 
 @injectable()
@@ -154,8 +154,10 @@ export class SplitRectAfterRenderContribution implements IRectRenderContribution
       // let dx = 0;
       // let dy = 0;
       if (
-        (typeof lineWidth === 'number' && lineWidth & 1) ||
-        (Array.isArray(strokeArrayWidth) && strokeArrayWidth.some(width => width & 1))
+        rect.name !== 'border-rect' && // border-rect not need offset
+        rect.name !== 'table-border-rect' && // table-border-rect not need offset
+        ((typeof lineWidth === 'number' && lineWidth & 1) ||
+          (Array.isArray(strokeArrayWidth) && strokeArrayWidth.some(width => width & 1)))
       ) {
         x = Math.floor(x) + 0.5;
         y = Math.floor(y) + 0.5;

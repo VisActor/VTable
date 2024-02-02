@@ -1,9 +1,10 @@
-import type { IGroupGraphicAttribute, IRect, IRectGraphicAttribute } from '@visactor/vrender';
-import { createGroup, createRect } from '@visactor/vrender';
+import type { IGroupGraphicAttribute, IRect, IRectGraphicAttribute } from '@src/vrender';
+import { createGroup, createRect } from '@src/vrender';
 import type { TableFrameStyle } from '../../ts-types';
 import type { Group } from '../graphic/group';
 import { isArray } from '@visactor/vutils';
 import { getQuadProps } from '../utils/padding';
+import type { BaseTableAPI } from '../../ts-types/base-table';
 
 /**
  * @description: create frame border
@@ -182,7 +183,7 @@ export function createFrameBorder(
 export function updateFrameBorder(
   group: Group,
   frameTheme: TableFrameStyle | undefined,
-  strokeArray: [boolean, boolean, boolean, boolean] // to do 处理成0b001111形式
+  strokeArray?: [boolean, boolean, boolean, boolean] // to do 处理成0b001111形式
 ) {
   const { borderColor } = frameTheme;
   group.border?.setAttribute('stroke', getStroke(borderColor, strokeArray));
@@ -239,5 +240,85 @@ export function updateFrameBorderSize(group: Group) {
       width: group.attribute.width,
       height: group.attribute.height
     });
+  }
+}
+
+export function updateCornerRadius(table: BaseTableAPI) {
+  if (!table.theme.frameStyle.cornerRadius) {
+    return;
+  }
+  const cornerRadius = table.theme.frameStyle.cornerRadius;
+  const {
+    cornerHeaderGroup,
+    colHeaderGroup,
+    rowHeaderGroup,
+    bodyGroup,
+    rightTopCornerGroup,
+    leftBottomCornerGroup,
+    rightBottomCornerGroup,
+    rightFrozenGroup,
+    bottomFrozenGroup
+  } = table.scenegraph;
+
+  // reset corner radius
+  cornerHeaderGroup.setAttribute('cornerRadius', 0);
+  colHeaderGroup.setAttribute('cornerRadius', 0);
+  rowHeaderGroup.setAttribute('cornerRadius', 0);
+  bodyGroup.setAttribute('cornerRadius', 0);
+  rightTopCornerGroup.setAttribute('cornerRadius', 0);
+  leftBottomCornerGroup.setAttribute('cornerRadius', 0);
+  rightBottomCornerGroup.setAttribute('cornerRadius', 0);
+  rightFrozenGroup.setAttribute('cornerRadius', 0);
+  bottomFrozenGroup.setAttribute('cornerRadius', 0);
+
+  // left top
+  if (cornerHeaderGroup.attribute.width > 0 && cornerHeaderGroup.attribute.height > 0) {
+    setCornerRadius(cornerHeaderGroup, [cornerRadius, 0, 0, 0]);
+  } else if (colHeaderGroup.attribute.height > 0) {
+    setCornerRadius(colHeaderGroup, [cornerRadius, 0, 0, 0]);
+  } else if (rowHeaderGroup.attribute.width > 0) {
+    setCornerRadius(rowHeaderGroup, [cornerRadius, 0, 0, 0]);
+  } else {
+    setCornerRadius(bodyGroup, [cornerRadius, 0, 0, 0]);
+  }
+
+  // left bottom
+  if (leftBottomCornerGroup.attribute.width > 0 && leftBottomCornerGroup.attribute.height > 0) {
+    setCornerRadius(leftBottomCornerGroup, [0, 0, 0, cornerRadius]);
+  } else if (bottomFrozenGroup.attribute.height > 0) {
+    setCornerRadius(bottomFrozenGroup, [0, 0, 0, cornerRadius]);
+  } else if (rowHeaderGroup.attribute.width > 0) {
+    setCornerRadius(rowHeaderGroup, [0, 0, 0, cornerRadius]);
+  } else {
+    setCornerRadius(bodyGroup, [0, 0, 0, cornerRadius]);
+  }
+
+  // right top
+  if (rightTopCornerGroup.attribute.width > 0 && rightTopCornerGroup.attribute.height > 0) {
+    setCornerRadius(rightTopCornerGroup, [0, cornerRadius, 0, 0]);
+  } else if (colHeaderGroup.attribute.height > 0) {
+    setCornerRadius(colHeaderGroup, [0, cornerRadius, 0, 0]);
+  } else if (rightFrozenGroup.attribute.width > 0) {
+    setCornerRadius(rightFrozenGroup, [0, cornerRadius, 0, 0]);
+  } else {
+    setCornerRadius(bodyGroup, [0, cornerRadius, 0, 0]);
+  }
+
+  // right bottom
+  if (rightBottomCornerGroup.attribute.width > 0 && rightBottomCornerGroup.attribute.height > 0) {
+    setCornerRadius(rightBottomCornerGroup, [0, 0, cornerRadius, 0]);
+  } else if (rightFrozenGroup.attribute.width > 0) {
+    setCornerRadius(rightFrozenGroup, [0, 0, cornerRadius, 0]);
+  } else if (bottomFrozenGroup.attribute.height > 0) {
+    setCornerRadius(bottomFrozenGroup, [0, 0, cornerRadius, 0]);
+  } else {
+    setCornerRadius(bodyGroup, [0, 0, cornerRadius, 0]);
+  }
+}
+
+function setCornerRadius(group: Group, cornerRadius: number[]) {
+  group.setAttribute('cornerRadius', cornerRadius);
+  if (group.border) {
+    group.border.setAttribute('cornerRadius', cornerRadius);
   }
 }

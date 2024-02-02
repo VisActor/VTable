@@ -1,14 +1,13 @@
 ---
 category: examples
 group: Cell Type
-title: 图表类型
+title: 透视表集成图表
 cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/chart.png
-order: 2-3
 link: '../guide/cell_type/chart'
-option: ListTable-columns-chart#cellType
+option: PivotTable-indicators-chart#cellType
 ---
 
-# 图表类型
+# 图表类型集成到透视表
 
 将vchart图表库结合渲染到表格中，丰富可视化展示形式，提升多图表渲染性能。
 

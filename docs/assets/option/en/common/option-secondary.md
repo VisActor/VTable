@@ -102,6 +102,10 @@ Enable shortcut key to select all.
 
 Enable shortcut key to copy, consistent with the browser's shortcut key.
 
+##${prefix} pasteValueToCell(boolean) = false
+
+Enable shortcut key to paste, consistent with the browser's shortcut key.
+
 ##${prefix} moveFocusCellOnTab(boolean) = true
  Enable tab key interaction. The default is true. Turn on the tab key to move the selected cell. If you are currently editing a cell, moving to the next cell is also in the editing state.
 
@@ -115,6 +119,13 @@ The default is not enabled, which is false.
 If this configuration is turned on, if you are currently editing a cell, the arrow keys can move to the next cell and enter the editing state, instead of moving the cursor to edit the string within the text.
 
 Switching the selected cells with the up, down, left and right arrow keys is not affected by this configuration.
+
+#${prefix} eventOptions(Object)
+
+Issue settings related to event triggering, specific configuration items:
+
+##${prefix} preventDefaultContextMenu(boolean) = true
+Organizing the default behavior of the right mouse button
 
 #${prefix} columnResizeMode(string) = 'all'
 

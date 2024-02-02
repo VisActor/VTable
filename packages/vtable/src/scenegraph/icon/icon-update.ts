@@ -5,8 +5,8 @@ import type { ColumnIconOption, SortOrder, SvgIcon } from '../../ts-types';
 import { IconFuncTypeEnum } from '../../ts-types';
 import type { Icon } from '../graphic/icon';
 import type { TooltipOptions } from '../../ts-types/tooltip';
-import type { IRect } from '@visactor/vrender';
-import { IContainPointMode, createRect } from '@visactor/vrender';
+import type { IRect } from '@src/vrender';
+import { IContainPointMode, createRect } from '@src/vrender';
 import { dealWithIcon } from '../utils/text-icon-layout';
 import type { BaseTableAPI } from '../../ts-types/base-table';
 
@@ -231,12 +231,12 @@ export function updateIcon(baseIcon: Icon, iconConfig: ColumnIconOption, col: nu
   // dealWithIcon(iconConfig, icon);
   // icon.name = iconConfig.name;
   // scene.updateNextFrame();
-
+  const iconName = baseIcon.name;
   updateCellRangeIcon(
     col,
     row,
     // filter
-    (icon: Icon) => icon.name === baseIcon.name,
+    (icon: Icon) => icon.name === iconName,
     // dealer
     (icon: Icon) => {
       dealWithIcon(iconConfig, icon);
@@ -432,7 +432,7 @@ export function resetResidentHoverIcon(col: number, row: number, scene: Scenegra
     (icon: Icon) => icon.attribute.funcType === IconFuncTypeEnum.dropDown,
     // dealer
     (icon: Icon) => {
-      icon.setAttribute('visibleTime', (icon as any).oldVisibleTime);
+      (icon as any).oldVisibleTime && icon.setAttribute('visibleTime', (icon as any).oldVisibleTime);
       icon.setAttribute('opacity', icon.attribute.visibleTime === 'always' ? 1 : 0);
     },
     scene

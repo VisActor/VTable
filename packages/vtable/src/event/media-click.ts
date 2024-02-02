@@ -3,6 +3,7 @@ import { Env } from '../tools/env';
 import { regUrl } from '../tools/global';
 import type { LinkColumnDefine, MousePointerCellEvent } from '../ts-types';
 import type { BaseTableAPI } from '../ts-types/base-table';
+import type { IImageColumnBodyDefine } from '../ts-types/list-table/define/image-define';
 
 export function bindMediaClick(table: BaseTableAPI): void {
   if (Env.mode === 'browser') {
@@ -60,6 +61,10 @@ export function bindMediaClick(table: BaseTableAPI): void {
         window.open(url);
       } else if (cellType === 'image') {
         // 点击图片，打开放大图片
+        const { clickToPreview } = columnDefine as IImageColumnBodyDefine;
+        if (clickToPreview === false) {
+          return;
+        }
 
         // 开启蒙版
         const overlay = document.createElement('div');
@@ -98,6 +103,10 @@ export function bindMediaClick(table: BaseTableAPI): void {
         document.body.appendChild(overlay);
       } else if (cellType === 'video') {
         // 点击视频，弹出播放窗口
+        const { clickToPreview } = columnDefine as IImageColumnBodyDefine;
+        if (clickToPreview === false) {
+          return;
+        }
 
         // 开启蒙版
         const overlay = document.createElement('div');

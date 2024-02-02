@@ -2,7 +2,7 @@
 category: examples
 group: edit
 title: add or delete records
-cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/performance.gif
+cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/add-delete-records.png
 ---
 
 # Add and delete data dynamically
@@ -14,6 +14,7 @@ Add and delete data dynamically，Right-click and the Modify Data menu is displa
 - addRecords api
 - addRecord api
 - deleteRecords api
+- updateRecords api
 - changeCellValue api
 
 ## Code demo
@@ -162,7 +163,7 @@ const option = {
   records,
   columns,
   menu:{
-    contextMenuItems:["insert records bellow","insert blank row bellow",'modify cell value','delete records']
+    contextMenuItems:["insert records bellow","insert blank row bellow",'update row data','modify cell value','delete records']
   },
   editor: 'input-editor'
 };
@@ -180,6 +181,20 @@ tableInstance.on('dropdown_menu_click', (args) => {
   }else if(args.menuKey==="delete records"){
     const recordIndex=tableInstance.getRecordShowIndexByCell(args.col,args.row);
     tableInstance.deleteRecords([recordIndex]);
+  }else if(args.menuKey==="update row data"){
+    const recordIndex=tableInstance.getRecordShowIndexByCell(args.col,args.row);
+    tableInstance.updateRecords([{
+      "id": 1111,
+      "email1": "changed Value",
+      "name": "changed Value",
+      "lastName": "changed Value",
+      "hobbies": "changed Value",
+      "birthday": "1974-09-25",
+      "tel": "13237599651",
+      "sex": "boy",
+      "work": "back-end engineer",
+      "city": "beijing"
+    }],[recordIndex]);
   }else if(args.menuKey==="modify cell value"){
     tableInstance.startEditCell(args.col,args.row);
   }

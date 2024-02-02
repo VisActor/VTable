@@ -130,7 +130,7 @@ export class BodyHelper {
         const f = (this._table as ListTableAPI).getFieldData(iconOpt[k], col, row);
         if (f != null) {
           retIcon[k] = f;
-        } else if (!this._table._hasField(iconOpt[k], col, row)) {
+        } else if (!this._table._hasField?.(iconOpt[k], col, row)) {
           retIcon[k] = iconOpt[k];
         }
       }

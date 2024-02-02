@@ -23,7 +23,7 @@ let  tableInstance;
 // 使用时需要引入插件包@visactor/vtable-editors
 // import * as VTable_editors from '@visactor/vtable-editors';
 // 正常使用方式 const input_editor = new VTable.editors.InputEditor();
-// 官网编辑器中将 VTable.editors重命名成了VTable_editors 
+// 官网编辑器中将 VTable.editors重命名成了VTable_editors
 const input_editor = new VTable_editors.InputEditor();
 VTable.register.editor('input-editor', input_editor);
 const timestamp = new Date().getTime();
@@ -59,9 +59,10 @@ Promise.all([loadCSS(cssUrl), loadJS(jsUrl)])
       this.editorConfig = editorConfig;
     }
 
-    beginEditing(container, referencePosition, value) {
+    onStart({ container, referencePosition, value, endEdit }) {
       const that = this;
       this.container = container;
+      this.successCallback = endEdit;
       const input = document.createElement('input');
 
       input.setAttribute('type', 'text');
@@ -112,20 +113,16 @@ Promise.all([loadCSS(cssUrl), loadJS(jsUrl)])
       return this.element.value;
     }
 
-    exit() {
+    onEnd() {
       this.picker.destroy();
       this.container.removeChild(this.element);
     }
 
-    targetIsOnEditor(target) {
+    isEditorElement(target) {
       if (target === this.element || this.picker.el.contains(target)) {
         return true;
       }
       return false;
-    }
-
-    bindSuccessCallback(successCallback) {
-      this.successCallback = successCallback;
     }
   }
   const custom_date_editor = new DateEditor();
@@ -311,5 +308,5 @@ Promise.all([loadCSS(cssUrl), loadJS(jsUrl)])
 })
 .catch((error) => {
     // 处理加载错误
-});  
+});
 ```

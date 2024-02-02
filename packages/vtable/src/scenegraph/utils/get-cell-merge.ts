@@ -10,7 +10,13 @@ import type { BaseTableAPI } from '../../ts-types/base-table';
  */
 export function getCellMergeInfo(table: BaseTableAPI, col: number, row: number): false | CellRange {
   // 先判断非表头且非cellMerge配置，返回false
-  if (!table.isHeader(col, row) && (table.getBodyColumnDefine(col, row) as TextColumnDefine)?.mergeCell !== true) {
+  if (table.internalProps.customMergeCell) {
+    const customMerge = table.getCustomMerge(col, row);
+    if (customMerge) {
+      return customMerge.range;
+    }
+  }
+  if (!table.isHeader(col, row) && !table.getBodyColumnDefine(col, row)?.mergeCell) {
     return false;
   }
   const range = table.getCellRange(col, row);

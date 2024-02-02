@@ -1,5 +1,5 @@
-import type { IArcGraphicAttribute } from '@visactor/vrender';
-import { Arc as VArc } from '@visactor/vrender';
+import type { IArcGraphicAttribute } from '@src/vrender';
+import { Arc as VArc } from '@src/vrender';
 import { isArray } from '@visactor/vutils';
 
 type IArcOption = {

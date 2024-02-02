@@ -1,5 +1,5 @@
-import type { GraphicType, IGroupGraphicAttribute } from '@visactor/vrender';
-import { genNumberType, Group } from '@visactor/vrender';
+import type { GraphicType, IGroupGraphicAttribute } from '@src/vrender';
+import { genNumberType, Group } from '@src/vrender';
 import { Bounds } from '@visactor/vutils';
 import type { BaseTableAPI } from '../../ts-types/base-table';
 import type { PivotChart } from '../../PivotChart';
@@ -81,18 +81,14 @@ export class Chart extends Group {
    */
   activate(table: BaseTableAPI) {
     this.active = true;
+    const { col, row } = this.parent;
     // this.chart = new TestChart(this.attribute.spec);
     // const ctx = this.attribute.canvas.getContext('2d');
     // const { x1, y1, x2, y2 } = this.attribute.viewBox;
     const { x1, y1, x2, y2 } = this.getViewBox();
     //获取渲染区域的bound 考虑被表头遮住部分的情况
-    const tableBound = table.scenegraph.tableGroup.globalAABBBounds;
-    const bodyBound = new Bounds();
-    bodyBound.x1 = tableBound.x1 + table.getFrozenColsWidth();
-    bodyBound.x2 = tableBound.x2 - table.getRightFrozenColsWidth();
-    bodyBound.y1 = tableBound.y1 + table.getFrozenRowsHeight();
-    bodyBound.y2 = tableBound.y2 - table.getBottomFrozenRowsHeight();
-    const clipBound = bodyBound.intersect({
+    const tableBound = getTableBounds(col, row, table);
+    const clipBound = tableBound.intersect({
       x1: x1 - table.scrollLeft,
       x2: x2 - table.scrollLeft,
       y1: y1 - table.scrollTop,
@@ -188,4 +184,38 @@ export class Chart extends Group {
       y2: Math.ceil(cellGroup.globalAABBBounds.y1 + cellGroup.attribute.height - padding[2] + table.scrollTop)
     };
   }
+}
+
+function getTableBounds(col: number, row: number, table: BaseTableAPI) {
+  const { layoutMap } = table.internalProps;
+  const bodyBound = new Bounds();
+  const tableBound = table.scenegraph.tableGroup.globalAABBBounds;
+  bodyBound.x1 = tableBound.x1;
+  bodyBound.x2 = tableBound.x2;
+  bodyBound.y1 = tableBound.y1;
+  bodyBound.y2 = tableBound.y2;
+
+  if (!layoutMap.isFrozenColumn(col, row) && !layoutMap.isRightFrozenColumn(col, row)) {
+    // no frozen body
+    bodyBound.x1 = tableBound.x1 + table.getFrozenColsWidth();
+    bodyBound.x2 = tableBound.x2 - table.getRightFrozenColsWidth();
+    bodyBound.y1 = tableBound.y1 + table.getFrozenRowsHeight();
+    bodyBound.y2 = tableBound.y2 - table.getBottomFrozenRowsHeight();
+  } else if (layoutMap.isLeftBottomCorner(col, row) || layoutMap.isRightTopCorner(col, row)) {
+    // frozen cornor
+  } else if (layoutMap.isFrozenColumn(col, row)) {
+    // left frozen
+    bodyBound.y1 = tableBound.y1 + table.getFrozenRowsHeight();
+    bodyBound.y2 = tableBound.y2 - table.getBottomFrozenRowsHeight();
+  } else if (layoutMap.isRightFrozenColumn(col, row)) {
+    // right frozen
+    bodyBound.y1 = tableBound.y1 + table.getFrozenRowsHeight();
+    bodyBound.y2 = tableBound.y2 - table.getBottomFrozenRowsHeight();
+  } else if (layoutMap.isBottomFrozenRow(col, row)) {
+    // bottom frozen
+    bodyBound.x1 = tableBound.x1 + table.getFrozenColsWidth();
+    bodyBound.x2 = tableBound.x2 - table.getRightFrozenColsWidth();
+  }
+
+  return bodyBound;
 }

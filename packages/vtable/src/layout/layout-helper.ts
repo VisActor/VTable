@@ -1,4 +1,4 @@
-import { isValid } from '@visactor/vutils';
+import { cloneDeep, isValid } from '@visactor/vutils';
 import { NumberMap } from '../tools/NumberMap';
 import { IndicatorDimensionKeyPlaceholder } from '../tools/global';
 import type { Either } from '../tools/helper';
@@ -19,13 +19,14 @@ import type { ILinkDimension } from '../ts-types/pivot-table/dimension/link-dime
 import type { IImageDimension } from '../ts-types/pivot-table/dimension/image-dimension';
 // import { sharedVar } from './pivot-header-layout';
 
-interface IPivotLayoutBaseHeadNode {
+interface ITreeLayoutBaseHeadNode {
   id: number;
   // dimensionKey: string;
   // // title: string;
   // indicatorKey?: string;
   value: string;
-  children: IPivotLayoutHeadNode[] | undefined;
+  children: ITreeLayoutHeadNode[] | undefined;
+  columns?: any; //兼容ListTable情况 simple-header-layout中增加了columnTree
   level: number;
   /** 节点跨占层数 如汇总节点跨几层维度 */
   levelSpan: number;
@@ -40,13 +41,13 @@ interface IPivotLayoutBaseHeadNode {
   headerIcon?: (string | ColumnIconOption)[] | ((args: CellInfo) => (string | ColumnIconOption)[]);
 }
 
-interface IPivotLayoutDimensionHeadNode extends IPivotLayoutBaseHeadNode {
+interface ITreeLayoutDimensionHeadNode extends ITreeLayoutBaseHeadNode {
   dimensionKey: string;
 }
-interface IPivotLayoutIndicatorHeadNode extends IPivotLayoutBaseHeadNode {
+interface ITreeLayoutIndicatorHeadNode extends ITreeLayoutBaseHeadNode {
   indicatorKey: string;
 }
-export type IPivotLayoutHeadNode = Either<IPivotLayoutDimensionHeadNode, IPivotLayoutIndicatorHeadNode>;
+export type ITreeLayoutHeadNode = Either<ITreeLayoutDimensionHeadNode, ITreeLayoutIndicatorHeadNode>;
 export class DimensionTree {
   sharedVar: { seqId: number };
   // 每一个值对应的序号 结果缓存
@@ -57,7 +58,7 @@ export class DimensionTree {
   sizeIncludeParent = false;
   rowExpandLevel: number;
   hierarchyType: 'grid' | 'tree';
-  tree: IPivotLayoutHeadNode = {
+  tree: ITreeLayoutHeadNode = {
     id: 0,
     dimensionKey: '',
     // title: '',
@@ -79,8 +80,10 @@ export class DimensionTree {
   // blockEndIndexMap: Map<number, boolean> = new Map();
   dimensionKeys: NumberMap<string> = new NumberMap<string>();
   // dimensions: IDimension[] | undefined;//目前用不到这个
+
+  cache: Map<number, any> = new Map();
   constructor(
-    tree: IPivotLayoutHeadNode[],
+    tree: ITreeLayoutHeadNode[],
     sharedVar: { seqId: number },
     hierarchyType: 'grid' | 'tree' = 'grid',
     rowExpandLevel: number = undefined
@@ -92,19 +95,20 @@ export class DimensionTree {
     this.reset(tree);
   }
 
-  reset(tree: IPivotLayoutHeadNode[], updateTreeNode = false) {
+  reset(tree: ITreeLayoutHeadNode[], updateTreeNode = false) {
     // 清空缓存的计算
     // this.cache = {};
     // this.dimensions = dimensions;
+    this.cache.clear();
     this.dimensionKeys = new NumberMap<string>();
-    this.tree.children = tree as IPivotLayoutHeadNode[];
+    this.tree.children = tree as ITreeLayoutHeadNode[];
     // const re = { totalLevel: 0 };
     // if (updateTreeNode) this.updateTreeNode(this.tree, 0, re, this.tree);
     // else
     this.setTreeNode(this.tree, 0, this.tree);
     this.totalLevel = this.dimensionKeys.count();
   }
-  setTreeNode(node: IPivotLayoutHeadNode, startIndex: number, parent: IPivotLayoutHeadNode): number {
+  setTreeNode(node: ITreeLayoutHeadNode, startIndex: number, parent: ITreeLayoutHeadNode): number {
     node.startIndex = startIndex;
     node.startInTotal = (parent.startInTotal ?? 0) + node.startIndex;
     // if (node.dimensionKey) {
@@ -120,10 +124,11 @@ export class DimensionTree {
       }
     }
     let size = node.dimensionKey ? (this.sizeIncludeParent ? 1 : 0) : 0;
+    const children = node.children || node.columns;
     //平铺展示 分析所有层级
     if (this.hierarchyType === 'grid') {
-      if (node.children?.length >= 1) {
-        node.children.forEach(n => {
+      if (children?.length >= 1) {
+        children.forEach((n: any) => {
           n.level = (node.level ?? 0) + 1;
           size += this.setTreeNode(n, size, node);
         });
@@ -131,29 +136,29 @@ export class DimensionTree {
         size = 1;
         // re.totalLevel = Math.max(re.totalLevel, (node.level ?? -1) + 1);
       }
-    } else if (node.hierarchyState === HierarchyState.expand && node.children?.length >= 1) {
+    } else if (node.hierarchyState === HierarchyState.expand && children?.length >= 1) {
       //树形展示 有子节点 且下一层需要展开
-      node.children.forEach(n => {
+      children.forEach((n: any) => {
         n.level = (node.level ?? 0) + 1;
         size += this.setTreeNode(n, size, node);
       });
-    } else if (node.hierarchyState === HierarchyState.collapse && node.children?.length >= 1) {
+    } else if (node.hierarchyState === HierarchyState.collapse && children?.length >= 1) {
       //树形展示 有子节点 且下一层不需要展开
-      node.children.forEach(n => {
+      children.forEach((n: any) => {
         n.level = (node.level ?? 0) + 1;
         this.setTreeNode(n, size, node);
       });
-    } else if (!node.hierarchyState && node.level + 1 < this.rowExpandLevel && node.children?.length >= 1) {
+    } else if (!node.hierarchyState && node.level + 1 < this.rowExpandLevel && children?.length >= 1) {
       //树形展示 有子节点 且下一层需要展开
       node.hierarchyState = HierarchyState.expand;
-      node.children.forEach(n => {
+      children.forEach((n: any) => {
         n.level = (node.level ?? 0) + 1;
         size += this.setTreeNode(n, size, node);
       });
-    } else if (node.children?.length >= 1) {
+    } else if (children?.length >= 1) {
       //树形展示 有子节点 且下一层不需要展开
       node.hierarchyState = HierarchyState.collapse;
-      node.children.forEach(n => {
+      children.forEach((n: any) => {
         n.level = (node.level ?? 0) + 1;
         this.setTreeNode(n, size, node);
       });
@@ -168,14 +173,14 @@ export class DimensionTree {
     // startInTotal = parent.startIndex + prevStartIndex
     return size;
   }
-  getTreePath(index: number, maxDeep = 30): Array<IPivotLayoutHeadNode> {
+  getTreePath(index: number, maxDeep = 30): Array<ITreeLayoutHeadNode> {
     const path: any[] = [];
     this.searchPath(index, this.tree, path, maxDeep);
     path.shift();
     return path;
   }
 
-  getTreePathByCellIds(ids: LayoutObjectId[]): Array<IPivotLayoutHeadNode> {
+  getTreePathByCellIds(ids: LayoutObjectId[]): Array<ITreeLayoutHeadNode> {
     const path: any[] = [];
     let nodes = this.tree.children;
     for (let i = 0; i < ids.length; i++) {
@@ -191,12 +196,12 @@ export class DimensionTree {
     // path.shift();
     return path;
   }
-  findNodeById(nodes: IPivotLayoutHeadNode[], id: LayoutObjectId) {
+  findNodeById(nodes: ITreeLayoutHeadNode[], id: LayoutObjectId) {
     return nodes.find(node => {
       return node.id === id;
     });
   }
-  searchPath(index: number, node: IPivotLayoutHeadNode, path: Array<IPivotLayoutHeadNode>, maxDeep: number) {
+  searchPath(index: number, node: ITreeLayoutHeadNode, path: Array<ITreeLayoutHeadNode>, maxDeep: number) {
     if (!node) {
       return;
     }
@@ -219,6 +224,15 @@ export class DimensionTree {
 
     // use dichotomy to optimize search performance
     const cIndex = index - node.startIndex;
+
+    if (this.cache.has(node.level + 1)) {
+      const cacheNode = this.cache.get(node.level + 1);
+      if (cIndex >= cacheNode.startIndex && cIndex < cacheNode.startIndex + cacheNode.size) {
+        this.searchPath(cIndex, cacheNode, path, maxDeep);
+        return;
+      }
+    }
+
     let left = 0;
     let right = node.children.length - 1;
 
@@ -227,6 +241,16 @@ export class DimensionTree {
       const element = node.children[middle];
 
       if (cIndex >= element.startIndex && cIndex < element.startIndex + element.size) {
+        this.cache.set(element.level, element);
+        const deleteLevels: number[] = [];
+        this.cache.forEach((node, key) => {
+          if (key > element.level) {
+            deleteLevels.push(key);
+          }
+        });
+        deleteLevels.forEach(key => {
+          this.cache.delete(key);
+        });
         this.searchPath(cIndex, element, path, maxDeep);
         break;
       } else if (cIndex < element.startIndex) {
@@ -245,7 +269,7 @@ export class DimensionTree {
    */
   movePosition(level: number, sourceIndex: number, targetIndex: number) {
     // let sourceNode: IPivotLayoutHeadNode;
-    let parNode: IPivotLayoutHeadNode;
+    let parNode: ITreeLayoutHeadNode;
     let sourceSubIndex: number;
     let targetSubIndex: number;
     /**
@@ -255,7 +279,7 @@ export class DimensionTree {
      * @param subIndex
      * @returns
      */
-    const findTargetNode = (node: IPivotLayoutHeadNode, subIndex: number) => {
+    const findTargetNode = (node: ITreeLayoutHeadNode, subIndex: number) => {
       if (sourceSubIndex !== undefined && targetSubIndex !== undefined) {
         return;
       }
@@ -270,17 +294,15 @@ export class DimensionTree {
           targetSubIndex = subIndex;
         }
       }
-
-      if (node.children && node.level < level) {
+      const children = node.children || node.columns;
+      if (children && node.level < level) {
         parNode = node;
-        for (let i = 0; i < node.children.length; i++) {
+        for (let i = 0; i < children.length; i++) {
           if (
-            (sourceIndex >= node.children[i].startInTotal &&
-              sourceIndex <= node.children[i].startInTotal + node.children[i].size) ||
-            (targetIndex >= node.children[i].startInTotal &&
-              targetIndex <= node.children[i].startInTotal + node.children[i].size)
+            (sourceIndex >= children[i].startInTotal && sourceIndex <= children[i].startInTotal + children[i].size) ||
+            (targetIndex >= children[i].startInTotal && targetIndex <= children[i].startInTotal + children[i].size)
           ) {
-            findTargetNode(node.children[i], i);
+            findTargetNode(children[i], i);
           }
         }
       }
@@ -288,9 +310,16 @@ export class DimensionTree {
     findTargetNode(this.tree, 0);
 
     //对parNode子节点位置进行移位【根据sourceSubIndex和targetSubIndex】
-    const sourceColumns = parNode.children.splice(sourceSubIndex, 1);
+    const children = parNode.children || parNode.columns;
+    const sourceColumns = children.splice(sourceSubIndex, 1);
     sourceColumns.unshift(targetSubIndex as any, 0 as any);
-    Array.prototype.splice.apply(parNode.children, sourceColumns);
+    Array.prototype.splice.apply(children, sourceColumns);
+  }
+  /** 获取纯净树结构 没有level size index这些属性 */
+  getCopiedTree() {
+    const children = cloneDeep(this.tree.children);
+    clearNode(children);
+    return children;
   }
 }
 
@@ -303,8 +332,8 @@ export type LayouTreeNode = {
   children?: LayouTreeNode[];
 };
 
-export function generateLayoutTree(tree: LayouTreeNode[], children: IPivotLayoutHeadNode[]) {
-  children?.forEach((node: IPivotLayoutHeadNode) => {
+export function generateLayoutTree(tree: LayouTreeNode[], children: ITreeLayoutHeadNode[]) {
+  children?.forEach((node: ITreeLayoutHeadNode) => {
     const diemnsonNode: {
       dimensionKey?: string;
       indicatorKey?: string;
@@ -330,7 +359,7 @@ export function generateLayoutTree(tree: LayouTreeNode[], children: IPivotLayout
 //#region   为方法getLayoutRowTreeCount提的工具方法
 export function countLayoutTree(children: { children?: any }[], countParentNode: boolean) {
   let count = 0;
-  children?.forEach((node: IPivotLayoutHeadNode) => {
+  children?.forEach((node: ITreeLayoutHeadNode) => {
     if (countParentNode) {
       count++;
     } else {
@@ -347,7 +376,7 @@ export function countLayoutTree(children: { children?: any }[], countParentNode:
 //#endregion
 
 export function dealHeader(
-  hd: IPivotLayoutHeadNode,
+  hd: ITreeLayoutHeadNode,
   _headerCellIds: number[][],
   results: HeaderData[],
   roots: number[],
@@ -460,9 +489,9 @@ export function dealHeader(
     }
   }
 
-  if ((hd as IPivotLayoutHeadNode).children?.length >= 1) {
+  if ((hd as ITreeLayoutHeadNode).children?.length >= 1) {
     layoutMap
-      ._addHeaders(_headerCellIds, row + ((hd as any).levelSpan ?? 1), (hd as IPivotLayoutHeadNode).children ?? [], [
+      ._addHeaders(_headerCellIds, row + ((hd as any).levelSpan ?? 1), (hd as ITreeLayoutHeadNode).children ?? [], [
         ...roots,
         ...Array((hd as any).levelSpan ?? 1).fill(id)
       ])
@@ -483,7 +512,7 @@ export function dealHeader(
 }
 
 export function dealHeaderForTreeMode(
-  hd: IPivotLayoutHeadNode,
+  hd: ITreeLayoutHeadNode,
   _headerCellIds: number[][],
   results: HeaderData[],
   roots: number[],
@@ -559,14 +588,14 @@ export function dealHeaderForTreeMode(
   for (let r = row - 1; r >= 0; r--) {
     _headerCellIds[r][layoutMap.colIndex] = roots[r];
   }
-  if (hd.hierarchyState === HierarchyState.expand && (hd as IPivotLayoutHeadNode).children?.length >= 1) {
+  if (hd.hierarchyState === HierarchyState.expand && (hd as ITreeLayoutHeadNode).children?.length >= 1) {
     //row传值 colIndex++和_addHeaders有区别
     show && layoutMap.colIndex++;
     layoutMap
       ._addHeadersForTreeMode(
         _headerCellIds,
         row,
-        (hd as IPivotLayoutHeadNode).children ?? [],
+        (hd as ITreeLayoutHeadNode).children ?? [],
         [...roots, id],
         totalLevel,
         show && hd.hierarchyState === HierarchyState.expand, //当前节点show 且当前节点状态为展开 则传给子节点为show：true
@@ -578,6 +607,22 @@ export function dealHeaderForTreeMode(
     show && layoutMap.colIndex++;
     for (let r = row + 1; r < _headerCellIds.length; r++) {
       _headerCellIds[r][layoutMap.colIndex] = id;
+    }
+  }
+}
+
+function clearNode(children: any) {
+  for (let i = 0; i < children.length; i++) {
+    const node = children[i];
+    delete node.level;
+    delete node.startIndex;
+    delete node.id;
+    delete node.levelSpan;
+    delete node.size;
+    delete node.startInTotal;
+    const childrenNew = node.children || node.columns;
+    if (childrenNew) {
+      clearNode(childrenNew);
     }
   }
 }

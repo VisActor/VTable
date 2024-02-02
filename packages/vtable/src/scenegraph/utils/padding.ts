@@ -1,4 +1,4 @@
-import { parsePadding } from '@visactor/vrender';
+import { parsePadding } from '@src/vrender';
 import { isArray, isNumber, isString } from '@visactor/vutils';
 
 export function getQuadProps(

@@ -1,4 +1,4 @@
-import type { BaseCellInfo, CellInfo, SortOption } from '../../common';
+import type { BaseCellInfo, CellInfo, MergeCellOption, SortOption } from '../../common';
 import type { ICustomRender } from '../../customElement';
 import type { ICustomLayout } from '../../customLayout';
 import type { FieldDef, FieldFormat, FieldKeyDef } from '../../table-engine';
@@ -54,6 +54,7 @@ export interface IBasicHeaderDefine {
    *  是否禁用调整列宽,如果是转置表格或者是透视表的指标是行方向指定 那该配置不生效
    */
   disableColumnResize?: boolean;
+  headerEditor?: string | IEditor | ((args: BaseCellInfo & { table: BaseTableAPI }) => string | IEditor);
 }
 
 export interface IBasicColumnBodyDefine {
@@ -80,7 +81,8 @@ export interface IBasicColumnBodyDefine {
   // chartSpec?: any | ((arg0: CellInfo) => any);
   // sparklineSpec?: SparklineSpec | ((arg0: CellInfo) => SparklineSpec);
   // style?: ColumnStyleOption | null;
-
+  /** 是否对相同内容合并单元格 **/
+  mergeCell?: MergeCellOption;
   customRender?: ICustomRender;
   customLayout?: ICustomLayout;
   editor?: string | IEditor | ((args: BaseCellInfo & { table: BaseTableAPI }) => string | IEditor);

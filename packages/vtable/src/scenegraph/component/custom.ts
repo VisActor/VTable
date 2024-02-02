@@ -1,6 +1,14 @@
-import type { Cursor } from '@visactor/vrender';
-import { createArc, createCircle, createLine, createRect, Text, Group as VGroup } from '@visactor/vrender';
-import { isFunction, isObject, isString, isValid } from '@visactor/vutils';
+import type { Cursor } from '@src/vrender';
+import {
+  createArc,
+  createCircle,
+  createLine,
+  createRect,
+  REACT_TO_CANOPUS_EVENTS,
+  Text,
+  Group as VGroup
+} from '@src/vrender';
+import { isArray, isFunction, isObject, isString, isValid } from '@visactor/vutils';
 import type {
   ICustomLayout,
   ICustomRender,
@@ -11,6 +19,11 @@ import type {
 import { Icon } from '../graphic/icon';
 import type { BaseTableAPI } from '../../ts-types/base-table';
 import type { percentCalcObj } from '../../render/layout';
+import { ProgressBarStyle } from '../../body-helper/style/ProgressBarStyle';
+import { getQuadProps } from '../utils/padding';
+import { getProp } from '../utils/get-prop';
+import type { Group } from '../graphic/group';
+import { resizeCellGroup } from '../group-creater/column-helper';
 
 export function dealWithCustom(
   customLayout: ICustomLayout,
@@ -362,6 +375,9 @@ export function dealPercentCalc(group: VGroup, parentWidth: number, parentHeight
     return;
   }
   group.forEachChildren((child: VGroup) => {
+    if (!child) {
+      return;
+    }
     if (isObject(child.attribute.width) && (child.attribute.width as percentCalcObj).percent) {
       child.setAttribute(
         'width',
@@ -386,20 +402,113 @@ export function dealPercentCalc(group: VGroup, parentWidth: number, parentHeight
 
 // temp devode for react jsx customLayout
 export function decodeReactDom(dom: any) {
-  if (!dom.$$typeof) {
+  if (!dom || !dom.$$typeof) {
     // not react
     return dom;
   }
   const type = dom.type;
-  const { attribute, children } = dom.props;
+  const { attribute, children, stateProxy } = dom.props;
   const g = type({ attribute });
+  parseToGraphic(g, dom.props);
+  if (stateProxy) {
+    g.stateProxy = stateProxy;
+  }
+
   g.id = attribute.id;
   g.name = attribute.name;
-  children &&
-    children.length &&
+  if (isArray(children)) {
     children.forEach((item: any) => {
       const c = decodeReactDom(item);
-      g.add(c);
+      c && c.type && g.add(c);
     });
+  } else if (children) {
+    g.add(decodeReactDom(children));
+  }
   return g;
+}
+
+function parseToGraphic(g: any, props: any) {
+  let isGraphic: boolean = false;
+  switch (g.type) {
+    case 'richtext':
+      break;
+    // case 'rich/text':
+    //   out = g.attribute || {};
+    //   childrenList[0] && (out.text = childrenList[0]);
+    //   break;
+    case 'rich/image':
+      break;
+    default:
+      isGraphic = true;
+  }
+
+  if (isGraphic) {
+    // childrenList.forEach((c: any) => {
+    //   c && g.add(c);
+    // });
+
+    Object.keys(props).forEach(k => {
+      const en = REACT_TO_CANOPUS_EVENTS[k];
+      if (en) {
+        g.on(en, props[k]);
+      }
+    });
+
+    // } else {
+    //   if (g.type === 'richtext') {
+    //     g.attribute.textConfig = childrenList.map(item => item.attribute).filter(item => item);
+    //   }
+  }
+}
+
+export function getCustomCellMergeCustom(col: number, row: number, cellGroup: Group, table: BaseTableAPI) {
+  if (table.internalProps.customMergeCell) {
+    const customMerge = table.getCustomMerge(col, row);
+    if (customMerge) {
+      const {
+        range: customMergeRange,
+        text: customMergeText,
+        style: customMergeStyle,
+        customLayout: customMergeLayout,
+        customRender: customMergeRender
+      } = customMerge;
+
+      if (customMergeLayout || customMergeRender) {
+        const customResult = dealWithCustom(
+          customMergeLayout,
+          customMergeRender,
+          customMergeRange.start.col,
+          customMergeRange.start.row,
+          table.getColsWidth(customMergeRange.start.col, customMergeRange.end.col),
+          table.getRowsHeight(customMergeRange.start.row, customMergeRange.end.row),
+          false,
+          table.heightMode === 'autoHeight',
+          [0, 0, 0, 0],
+          table
+        );
+
+        const customElementsGroup = customResult.elementsGroup;
+
+        if (cellGroup.childrenCount > 0 && customElementsGroup) {
+          cellGroup.insertBefore(customElementsGroup, cellGroup.firstChild);
+        } else if (customElementsGroup) {
+          cellGroup.appendChild(customElementsGroup);
+        }
+
+        const rangeHeight = table.getRowHeight(row);
+        const rangeWidth = table.getColWidth(col);
+
+        const { width: contentWidth } = cellGroup.attribute;
+        const { height: contentHeight } = cellGroup.attribute;
+        cellGroup.contentWidth = contentWidth;
+        cellGroup.contentHeight = contentHeight;
+
+        resizeCellGroup(cellGroup, rangeWidth, rangeHeight, customMergeRange, table);
+
+        return customResult;
+      }
+    }
+  }
+
+  return undefined;
 }

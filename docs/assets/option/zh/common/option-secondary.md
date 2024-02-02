@@ -100,6 +100,9 @@
 ##${prefix} copySelected(boolean) = false
 开启快捷键复制，与浏览器的快捷键一致。
 
+##${prefix} pasteValueToCell(boolean) = false
+开启快捷键粘贴，与浏览器的快捷键一致。
+
 ##${prefix} moveFocusCellOnTab(boolean) = true
  开启tab键交互 默认为true。开启tab键移动选中单元格，如果当前是在编辑单元格 则移动到下一个单元格也是编辑状态
 
@@ -113,6 +116,13 @@
 开启这个配置的话，如果当前是在编辑单元格方向键可以移动到下个单元格并进入编辑状态，而不是编辑文本内字符串的光标移动 。
 
 上下左右方向键切换选中单元格不受该配置影响，
+
+#${prefix} eventOptions(Object)
+
+事件触发相关问题设置，具体配置项：
+
+##${prefix} preventDefaultContextMenu(boolean) = true
+组织鼠标右键的默认行为
 
 #${prefix} columnResizeMode(string) = 'all'
 

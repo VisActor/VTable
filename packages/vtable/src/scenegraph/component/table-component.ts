@@ -1,5 +1,5 @@
-import type { ILine, IRect, IGroup, FederatedPointerEvent, Text } from '@visactor/vrender';
-import { createRect, createLine, createText, createGroup, createSymbol } from '@visactor/vrender';
+import type { ILine, IRect, IGroup, FederatedPointerEvent, Text, IText } from '@src/vrender';
+import { createRect, createLine, createText, createGroup, createSymbol } from '@src/vrender';
 import { ScrollBar } from '@visactor/vrender-components';
 import type { Group } from '../graphic/group';
 import { MenuHandler } from './menu';
@@ -42,6 +42,12 @@ export class TableComponent {
     const columnResizeWidth = theme.columnResize?.lineWidth;
     const columnResizeBgColor = theme.columnResize?.bgColor;
     const columnResizeBgWidth = theme.columnResize?.width;
+    const labelColor = theme.columnResize?.labelColor;
+    const labelFontSize = theme.columnResize?.labelFontSize;
+    const labelFontFamily = theme.columnResize?.labelFontFamily;
+    const labelBackgroundFill = theme.columnResize?.labelBackgroundFill;
+    const labelBackgroundCornerRadius = theme.columnResize?.labelBackgroundCornerRadius;
+
     this.columnResizeLine = createLine({
       visible: false,
       pickable: false,
@@ -74,24 +80,25 @@ export class TableComponent {
       pickable: false,
       x: 0,
       y: 0,
-      fontSize: 10,
-      fill: '#FFF',
+      fontSize: labelFontSize, // 10
+      fill: labelColor,
+      fontFamily: labelFontFamily,
       text: '',
       textBaseline: 'top',
       dx: 12 + 4,
-      dy: -8 + 2
+      dy: -labelFontSize / 2
     });
     const columnResizeLabelBack = createRect({
       visible: false,
       pickable: false,
-      fill: '#3073F2',
+      fill: labelBackgroundFill,
       x: 0,
       y: 0,
-      width: 38,
-      height: 16,
-      cornerRadius: 5,
+      width: 5 * labelFontSize * 0.8,
+      height: labelFontSize + 8,
+      cornerRadius: labelBackgroundCornerRadius,
       dx: 12,
-      dy: -8
+      dy: -labelFontSize / 2 - 4
     });
     this.columnResizeLabel = createGroup({
       visible: false,
@@ -489,5 +496,93 @@ export class TableComponent {
       x: bounds.x1,
       y: bounds.y1
     };
+  }
+
+  updateStyle() {
+    const theme = this.table.theme;
+
+    // scrollbar
+    const scrollRailColor = theme.scrollStyle?.scrollRailColor as string;
+    const scrollSliderColor = theme.scrollStyle?.scrollSliderColor as string;
+    const width = theme.scrollStyle?.width as number;
+    this.hScrollBar.setAttributes({
+      height: width,
+      railStyle: {
+        fill: scrollRailColor
+      },
+      sliderStyle: {
+        fill: scrollSliderColor
+      }
+    });
+
+    this.vScrollBar.setAttributes({
+      width,
+      railStyle: {
+        fill: scrollRailColor
+      },
+      sliderStyle: {
+        fill: scrollSliderColor
+      }
+    });
+
+    // columnResizeLine & columnResizeBgLine
+    const columnResizeColor = theme.columnResize?.lineColor;
+    const columnResizeWidth = theme.columnResize?.lineWidth;
+    const columnResizeBgColor = theme.columnResize?.bgColor;
+    const columnResizeBgWidth = theme.columnResize?.width;
+
+    this.columnResizeLine.setAttributes({
+      stroke: columnResizeColor as string,
+      lineWidth: columnResizeWidth as number
+    });
+    this.columnResizeBgLine = createLine({
+      stroke: columnResizeBgColor as string,
+      lineWidth: columnResizeBgWidth as number
+    });
+
+    const labelColor = theme.columnResize?.labelColor;
+    const labelFontSize = theme.columnResize?.labelFontSize;
+    const labelFontFamily = theme.columnResize?.labelFontFamily;
+    const labelBackgroundFill = theme.columnResize?.labelBackgroundFill;
+    const labelBackgroundCornerRadius = theme.columnResize?.labelBackgroundCornerRadius;
+
+    // columnResizeLabelBack
+    (this.columnResizeLabel.lastChild as IText).setAttributes({
+      fontSize: labelFontSize, // 10
+      fill: labelColor,
+      fontFamily: labelFontFamily,
+      dy: -labelFontSize / 2
+    });
+    // columnResizeLabelText
+    (this.columnResizeLabel.firstChild as IRect).setAttributes({
+      fill: labelBackgroundFill,
+      width: 5 * labelFontSize * 0.8,
+      height: labelFontSize + 8,
+      cornerRadius: labelBackgroundCornerRadius,
+      dy: -labelFontSize / 2 - 4
+    });
+
+    // frozenShadowLine
+    const shadowWidth = theme.frozenColumnLine?.shadow?.width;
+    const shadowStartColor = theme.frozenColumnLine?.shadow?.startColor;
+    const shadowEndColor = theme.frozenColumnLine?.shadow?.endColor;
+    this.frozenShadowLine.setAttributes({
+      width: shadowWidth,
+      fill: {
+        gradient: 'linear',
+        x0: 0,
+        y0: 0,
+        x1: 1,
+        y1: 0,
+        stops: [
+          { color: shadowStartColor, offset: 0 },
+          { color: shadowEndColor, offset: 1 }
+        ]
+      }
+    });
+
+    this.cellMover.updateStyle();
+    // this.menu.updateStyle();
+    // this.drillIcon.updateStyle();
   }
 }

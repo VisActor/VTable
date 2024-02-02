@@ -134,22 +134,24 @@ export function updateSelectPosition(
           start: { col, row: cellRange.start.row },
           end: { col: table.colCount - 1, row: cellRange.end.row }
         });
-      } else {
+      } else if (col >= 0 && row >= 0) {
+        const cellRange = table.getCellRange(col, row);
         state.select.ranges.push({
-          start: { col, row },
-          end: { col, row }
+          start: { col: cellRange.start.col, row: cellRange.start.row },
+          end: { col: cellRange.end.col, row: cellRange.end.row }
         });
       }
       cellPos.col = col;
       cellPos.row = row;
       // scenegraph.setCellNormalStyle(col, row);
-      const currentRange = state.select.ranges[state.select.ranges.length - 1];
-      scenegraph.updateCellSelectBorder(
-        currentRange.start.col,
-        currentRange.start.row,
-        currentRange.end.col,
-        currentRange.end.row
-      );
+      const currentRange = state.select.ranges?.[state.select.ranges.length - 1];
+      currentRange &&
+        scenegraph.updateCellSelectBorder(
+          currentRange.start.col,
+          currentRange.start.row,
+          currentRange.end.col,
+          currentRange.end.row
+        );
     }
   } else if (interactionState === InteractionState.grabing && !table.stateManager.isResizeCol()) {
     // 可能有cellPosStart从-1开始grabing的情况
@@ -160,13 +162,14 @@ export function updateSelectPosition(
       cellPos.row = row;
     }
     const currentRange = state.select.ranges[state.select.ranges.length - 1];
-    currentRange.end = {
-      col,
-      row
-    };
+    currentRange &&
+      (currentRange.end = {
+        col,
+        row
+      });
     cellPos.col = col;
     cellPos.row = row;
-    scenegraph.updateCellSelectBorder(currentRange.start.col, currentRange.start.row, col, row);
+    currentRange && scenegraph.updateCellSelectBorder(currentRange.start.col, currentRange.start.row, col, row);
   }
   scenegraph.updateNextFrame();
 }

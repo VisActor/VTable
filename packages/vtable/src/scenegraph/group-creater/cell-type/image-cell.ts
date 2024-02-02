@@ -1,7 +1,7 @@
 // @ts-nocheck
 /* eslint-disable no-undef */
-import type { IImage, Image, IThemeSpec } from '@visactor/vrender';
-import { createImage } from '@visactor/vrender';
+import type { IImage, Image, IThemeSpec } from '@src/vrender';
+import { createImage } from '@src/vrender';
 import type { BaseTableAPI } from '../../../ts-types';
 import * as icons from '../../../icons';
 import { Group } from '../../graphic/group';
@@ -11,8 +11,6 @@ import type { Scenegraph } from '../../scenegraph';
 import { getProp, getFunctionalProp } from '../../utils/get-prop';
 import { isValid } from '@visactor/vutils';
 import { getQuadProps } from '../../utils/padding';
-
-const regedIcons = icons.get();
 
 export function createImageCellGroup(
   columnGroup: Group,
@@ -61,7 +59,9 @@ export function createImageCellGroup(
 
     lineCap: 'square',
 
-    clip: true
+    clip: true,
+
+    cornerRadius: cellTheme.group.cornerRadius
   });
   cellGroup.role = 'cell';
   cellGroup.col = col;
@@ -81,56 +81,48 @@ export function createImageCellGroup(
   image.name = 'image';
   image.keepAspectRatio = keepAspectRatio;
   if (keepAspectRatio || imageAutoSizing) {
-    image.successCallback = () => {
-      const originImage = image.resources.get(image.attribute.image).data;
-
-      if (imageAutoSizing) {
-        _adjustWidthHeight(
-          col,
-          row,
-          (originImage as HTMLImageElement).width,
-          (originImage as HTMLImageElement).height,
-          table.scenegraph,
-          padding
-        );
-      }
-
-      if (keepAspectRatio) {
-        const { width: imageWidth, height: imageHeight } = calcKeepAspectRatioSize(
-          originImage.width,
-          originImage.height,
-          cellGroup.attribute.width - padding[1] - padding[3],
-          cellGroup.attribute.height - padding[0] - padding[2]
-        );
-
-        // const left = 0;
-        // const top = 0;
-        const pos = calcStartPosition(
-          0,
-          0,
-          cellGroup.attribute.width,
-          cellGroup.attribute.height,
-          imageWidth,
-          imageHeight,
+    if (
+      image.resources &&
+      image.resources.has(image.attribute.image) &&
+      image.resources.get(image.attribute.image).state === 'success'
+    ) {
+      updateAutoSizingAndKeepAspectRatio(
+        imageAutoSizing,
+        keepAspectRatio,
+        padding,
+        textAlign,
+        textBaseline,
+        image,
+        cellGroup,
+        table
+      );
+    } else {
+      image.successCallback = () => {
+        updateAutoSizingAndKeepAspectRatio(
+          imageAutoSizing,
+          keepAspectRatio,
+          padding,
           textAlign,
           textBaseline,
-          padding
+          image,
+          cellGroup,
+          table
         );
-
-        image.setAttributes({
-          x: pos.x,
-          y: pos.y,
-          width: imageWidth,
-          height: imageHeight
-        });
-      }
-
-      table.scenegraph.updateNextFrame();
-    };
+        table.scenegraph.updateNextFrame();
+      };
+    }
   } else {
-    image.successCallback = () => {
+    if (
+      image.resources &&
+      image.resources.has(image.attribute.image) &&
+      image.resources.get(image.attribute.image).state === 'success'
+    ) {
       updateImageCellContentWhileResize(cellGroup, col, row, table);
-    };
+    } else {
+      image.successCallback = () => {
+        updateImageCellContentWhileResize(cellGroup, col, row, table);
+      };
+    }
   }
   (image as any).failCallback = () => {
     const regedIcons = icons.get();
@@ -165,22 +157,37 @@ export function _adjustWidthHeight(
   let needInvalidate = false;
   let targetWidth: number = null;
   let targetHeight: number = null;
-  if (scene.table.getColWidth(col) < width + padding[1] + padding[3]) {
+  const cellGroup = scene.getCell(col, row, true);
+  const { width: cellWidth, height: cellHeight, isMerge } = getCellRange(cellGroup, scene.table);
+
+  if (cellWidth < width + padding[1] + padding[3]) {
     targetWidth = width + padding[1] + padding[3];
     needInvalidate = true;
   }
-  if (scene.table.getRowHeight(row) < height + padding[2] + padding[0]) {
+  if (cellHeight < height + padding[2] + padding[0]) {
     targetHeight = height + padding[2] + padding[0];
     needInvalidate = true;
   }
   if (needInvalidate) {
     if (typeof targetWidth === 'number') {
       // table.setColWidth(col, targetWidth, true);
-      scene.setColWidth(col, targetWidth);
+      if (isMerge) {
+        for (let col = cellGroup.mergeStartCol; col <= cellGroup.mergeEndCol; col++) {
+          scene.setColWidth(col, targetWidth / (cellGroup.mergeEndCol - cellGroup.mergeStartCol + 1));
+        }
+      } else {
+        scene.setColWidth(col, targetWidth);
+      }
     }
     if (typeof targetHeight === 'number') {
       // table.setRowHeight(row, targetHeight, true);
-      scene.setRowHeight(row, targetHeight);
+      if (isMerge) {
+        for (let row = cellGroup.mergeStartRow; row <= cellGroup.mergeEndRow; row++) {
+          scene.setRowHeight(row, targetHeight / (cellGroup.mergeEndRow - cellGroup.mergeStartRow + 1));
+        }
+      } else {
+        scene.setRowHeight(row, targetHeight);
+      }
     }
     // table.updateCanvasScroll();
     // // table.throttleInvalidate(); // 这里会造成每一张图加载后就重绘 造成多次绘制问题！节流绘制
@@ -209,18 +216,24 @@ export function updateImageCellContentWhileResize(cellGroup: Group, col: number,
   const padding = getQuadProps(getProp('padding', headerStyle, col, row, table)) ?? [0, 0, 0, 0];
 
   if (image.keepAspectRatio) {
+    const { width: cellWidth, height: cellHeight } = getCellRange(cellGroup, table);
+
     const { width: imageWidth, height: imageHeight } = calcKeepAspectRatioSize(
       originImage.width || originImage.videoWidth,
       originImage.height || originImage.videoHeight,
-      cellGroup.attribute.width - (padding[1] + padding[3]),
-      cellGroup.attribute.height - (padding[0] + padding[2])
+      // cellGroup.attribute.width - (padding[1] + padding[3]),
+      // cellGroup.attribute.height - (padding[0] + padding[2])
+      cellWidth - (padding[1] + padding[3]),
+      cellHeight - (padding[0] + padding[2])
     );
 
     const pos = calcStartPosition(
       0,
       0,
-      cellGroup.attribute.width,
-      cellGroup.attribute.height,
+      // cellGroup.attribute.width,
+      // cellGroup.attribute.height,
+      cellWidth,
+      cellHeight,
       imageWidth,
       imageHeight,
       textAlign,
@@ -235,11 +248,15 @@ export function updateImageCellContentWhileResize(cellGroup: Group, col: number,
       height: imageHeight
     });
   } else {
+    const { width: cellWidth, height: cellHeight } = getCellRange(cellGroup, table);
+
     image.setAttributes({
       x: padding[3],
       y: padding[0],
-      width: cellGroup.attribute.width - padding[1] - padding[3],
-      height: cellGroup.attribute.height - padding[0] - padding[2]
+      // width: cellGroup.attribute.width - padding[1] - padding[3],
+      // height: cellGroup.attribute.height - padding[0] - padding[2]
+      width: cellWidth - padding[1] - padding[3],
+      height: cellHeight - padding[0] - padding[2]
     });
   }
 
@@ -248,8 +265,9 @@ export function updateImageCellContentWhileResize(cellGroup: Group, col: number,
   if (playIcon) {
     const left = 0;
     const top = 0;
-    const width = cellGroup.attribute.width;
-    const height = cellGroup.attribute.height;
+    // const width = cellGroup.attribute.width;
+    // const height = cellGroup.attribute.height;
+    const { width, height } = getCellRange(cellGroup, table);
     const iconSize = Math.floor(Math.min(width - padding[1] - padding[3], height - padding[2] - padding[0]) / 2);
     const anchorX =
       left + (width > image.attribute.width ? image.attribute.x - left + image.attribute.width / 2 : width / 2);
@@ -263,4 +281,118 @@ export function updateImageCellContentWhileResize(cellGroup: Group, col: number,
       height: iconSize
     });
   }
+}
+
+function getCellRange(cellGroup: Group, table: BaseTableAPI) {
+  if (
+    isValid(cellGroup.mergeStartCol) &&
+    isValid(cellGroup.mergeEndCol) &&
+    isValid(cellGroup.mergeStartRow) &&
+    isValid(cellGroup.mergeEndRow)
+  ) {
+    return {
+      width: table.getColsWidth(cellGroup.mergeStartCol, cellGroup.mergeEndCol),
+      height: table.getRowsHeight(cellGroup.mergeStartRow, cellGroup.mergeEndRow),
+      isMerge: true
+    };
+  }
+  return {
+    width: cellGroup.attribute.width,
+    height: cellGroup.attribute.height,
+    isMerge: false
+  };
+}
+
+function updateImageDxDy(startCol, endCol, startRow, endRow, table) {
+  for (let col = startCol; col <= endCol; col++) {
+    for (let row = startRow; row <= endRow; row++) {
+      const cellGroup = table.scenegraph.getCell(col, row);
+      if (cellGroup) {
+        const image = cellGroup.getChildByName('image');
+        if (image) {
+          image.setAttributes({
+            dx: -table.getColsWidth(cellGroup.mergeStartCol, col - 1),
+            dy: -table.getRowsHeight(cellGroup.mergeStartRow, row - 1)
+          });
+        }
+      }
+    }
+  }
+}
+
+function updateAutoSizingAndKeepAspectRatio(
+  imageAutoSizing: boolean,
+  keepAspectRatio: boolean,
+  padding: [number, number, number, number],
+  textAlign: CanvasTextAlign,
+  textBaseline: CanvasTextBaseline,
+  image: Image,
+  cellGroup: Group,
+  table: BaseTableAPI
+) {
+  const originImage = image.resources.get(image.attribute.image).data;
+  const { col, row } = cellGroup;
+
+  if (imageAutoSizing && !isDamagePic(image)) {
+    _adjustWidthHeight(
+      col,
+      row,
+      (originImage as HTMLImageElement).width,
+      (originImage as HTMLImageElement).height,
+      table.scenegraph,
+      padding
+    );
+  }
+  if (keepAspectRatio || isDamagePic(image)) {
+    const { width: cellWidth, height: cellHeight, isMerge } = getCellRange(cellGroup, table);
+
+    const { width: imageWidth, height: imageHeight } = calcKeepAspectRatioSize(
+      originImage.width,
+      originImage.height,
+      // cellGroup.attribute.width - padding[1] - padding[3],
+      // cellGroup.attribute.height - padding[0] - padding[2]
+      cellWidth - padding[1] - padding[3],
+      cellHeight - padding[0] - padding[2]
+    );
+
+    // const left = 0;
+    // const top = 0;
+    const pos = calcStartPosition(
+      0,
+      0,
+      // cellGroup.attribute.width,
+      // cellGroup.attribute.height,
+      cellWidth,
+      cellHeight,
+      imageWidth,
+      imageHeight,
+      textAlign,
+      textBaseline,
+      padding
+    );
+
+    image.setAttributes({
+      x: pos.x,
+      y: pos.y,
+      width: imageWidth,
+      height: imageHeight
+      // dx: isMerge ? -table.getColsWidth(cellGroup.mergeStartCol, col - 1) : 0,
+      // dy: isMerge ? -table.getRowsHeight(cellGroup.mergeStartRow, row - 1) : 0
+    });
+
+    if (isMerge) {
+      updateImageDxDy(
+        cellGroup.mergeStartCol,
+        cellGroup.mergeEndCol,
+        cellGroup.mergeStartRow,
+        cellGroup.mergeEndRow,
+        table
+      );
+    }
+  }
+}
+
+function isDamagePic(image: IImage) {
+  const regedIcons = icons.get();
+  return image.attribute.image === (regedIcons.damage_pic as any).svg;
 }

@@ -84,13 +84,19 @@ export function createTable() {
     showFrozenIcon: true, //显示VTable内置冻结列图标
     widthMode: 'standard',
     allowFrozenColCount: 2,
-    theme: VTable.themes.ARCO,
+    defaultRowHeight: 120,
+    theme: VTable.themes.ARCO.extends({
+      frameStyle: {
+        cornerRadius: 20,
+        borderLineWidth: 0
+      }
+    }),
     hover: {
       highlightMode: 'cross',
       disableHeaderHover: true
-    },
-    heightMode: 'autoHeight',
-    autoWrapText: true
+    }
+    // heightMode: 'autoHeight',
+    // autoWrapText: true
   };
 
   const instance = new ListTable(option);

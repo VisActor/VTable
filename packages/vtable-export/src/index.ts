@@ -1,5 +1,5 @@
-export { exportVTableToCsv } from './csv';
-export { downloadCsv } from './util/download';
+import { exportVTableToCsv } from './csv';
+import { downloadCsv, downloadExcel } from './util/download';
+import { exportVTableToExcel } from './excel';
 
-export { exportVTableToExcel } from './excel';
-export { downloadExcel } from './util/download';
+export { exportVTableToCsv, downloadCsv, exportVTableToExcel, downloadExcel };

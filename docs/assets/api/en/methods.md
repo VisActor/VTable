@@ -120,6 +120,13 @@ Unlisten to VChart chart events
 
 Set the table data interface, which can be called as an update interface.
 
+** The basic table can set the sorting state at the same time to sort the table data. Set sort to empty to clear the sorting state. If not set, the incoming data will be sorted according to the current sorting state **
+
+```
+setRecords(records: Array<any>) //Pivot table
+setRecords(records: Array<any>, sort?: SortState | SortState[]) //** The basic table can set the sorting state at the same time to sort the table data. Set sort to empty to clear the sorting state. If not set, the current sorting state will be used. Sort incoming data**
+```
+
 ## getDrawRange(Function)
 Get the boundRect value of the actual drawn content area of the table
 like
@@ -175,6 +182,8 @@ Get the selected cell information, and the returned result is a two-dimensional 
   /**Get details of each cell in the selected area */
   getSelectedCellInfos(): CellInfo[][] | null;
 ```
+
+{{ use: CellInfo() }}
 
 ## clearSelected(Function)
 
@@ -238,6 +247,24 @@ Get the data item of this cell
    */
   getRecordByCell(col: number, row: number)
 ```
+
+## getBodyIndexByTableIndex(Function)
+
+Get the column index and row index in the body part according to the row and column numbers of the table cells
+
+```
+  /** Get the column index and row index in the body part based on the row and column numbers of the table cells */
+  getBodyIndexByTableIndex: (col: number, row: number) => CellAddress;
+```
+## getTableIndexByBodyIndex(Function)
+
+Get the row and column number of the cell based on the column index and row index of the body part
+
+```
+  /** Get the row and column number of the cell based on the column index and row index of the body part */
+  getTableIndexByBodyIndex: (col: number, row: number) => CellAddress;
+```
+
 ## getTableIndexByRecordIndex(Function)
 Get the index row number or column number displayed in the table based on the index of the data source (Related to transposition, the non-transposition obtains the row number, and the transposed table obtains the column number). 
 
@@ -270,7 +297,7 @@ Get the index row number or column number displayed in the table according to th
 
 ## getRecordShowIndexByCell(Function)
 
-Get the index of the current cell data in the body part, that is, remove the index of the header level number by the row and column number.
+Get the index of the current cell data in the body part, that is, remove the index of the header level number by the row and column number.(Related to transpose, the non-transpose gets the body row number, and the transpose table gets the body column number)
 
 ** ListTable proprietary **
 ```
@@ -377,6 +404,30 @@ Get the text of the cell with omitted text.
   getCellOverflowText(col: number, row: number) => string | null
 ```
 
+## getCellRect(Function)
+Get the specific position of the cell in the entire table.
+```
+ /**
+   * Get the range of cells. The return value is Rect type. Regardless of whether it is a merged cell, the coordinates start from 0
+   * @param {number} col column index
+   * @param {number} row row index
+   * @returns {Rect}
+   */
+  getCellRect(col: number, row: number): Rect
+```
+
+## getCellRelativeRect(Function)
+Get the specific position of the cell in the entire table. Relative position is based on the upper left corner of the table (scroll condition minus scroll value)
+```
+  /**
+   * The obtained position is relative to the upper left corner of the table display interface. In case of scrolling, if the cell has rolled out of the top of the table, the y of this cell will be a negative value.
+   * @param {number} col index of column, of the cell
+   * @param {number} row index of row, of the cell
+   * @returns {Rect} the rect of the cell.
+   */
+  getCellRelativeRect(col: number, row: number): Rect
+```
+
 ## getCellHeaderPaths(Function)
 
 Get the path to the row list header
@@ -392,6 +443,21 @@ Get the path to the row list header
 ```
 
 {{ use: ICellHeaderPaths() }}
+
+
+## getCellHeaderTreeNodes(Function)
+
+Obtain the header tree node based on the row and column number, which includes the user's custom attributes on the custom tree rowTree and columnTree trees (it is also the node of the internal layout tree, please do not modify it at will after obtaining it).Under normal circumstances, just use getCellHeaderPaths.
+
+```
+  /**
+   * Obtain the header tree node based on the row and column number, which includes the user's custom attributes on the custom tree rowTree and columnTree trees (it is also the node of the internal layout tree, please do not modify it at will after obtaining it)
+   * @param col
+   * @param row
+   * @returns ICellHeaderPaths
+   */
+  getCellHeaderTreeNodes(col: number, row: number)=> ICellHeaderPaths
+```
 
 ## getCellAddress(Function)
 
@@ -438,6 +504,18 @@ Get the status of a cell checkbox
 getCellCheckboxState(col: number, row: number): Array
 ```
 
+## getScrollTop(Function)
+Get the current vertical scroll position
+
+## getScrollLeft(Function)
+Get the current horizontal scroll position
+
+## setScrollTop(Function)
+Set the vertical scroll position (the rendering interface will be updated)
+
+## setScrollLeft(Function)
+Set the horizontal scroll position (the rendering interface will be updated)
+
 ## scrollToCell(Function)
 
 Scroll to a specific cell location
@@ -476,7 +554,7 @@ enum HierarchyState {
   none = 'none'
 }
 ```
-## getLayouRowTree(Function)
+## getLayoutRowTree(Function)
 ** PivotTable Proprietary **
 
 Get the table row header tree structure
@@ -485,10 +563,10 @@ Get the table row header tree structure
    * Get the table row tree structure
    * @returns
    */
-  getLayouRowTree() : LayoutTreeNode[]
+  getLayoutRowTree() : LayoutTreeNode[]
 ```
 
-## getLayouRowTreeCount(Function)
+## getLayoutRowTreeCount(Function)
 ** PivotTable Proprietary **
 
 Get the total number of nodes occupying the table row header tree structure.
@@ -499,7 +577,7 @@ Note: The logic distinguishes between flat and tree hierarchies.
    * Get the total number of nodes occupying the table row header tree structure.
    * @returns
    */
-  getLayouRowTreeCount() : number
+  getLayoutRowTreeCount() : number
 ```
 
 ## updateSortState(Function)
@@ -524,7 +602,7 @@ Update sort status, PivotTable exclusive
    * Update sort status
    * @param pivotSortStateConfig.dimensions sorting state dimension correspondence; pivotSortStateConfig.order sorting state
    */
-  updateSortState(pivotSortStateConfig: {
+  updatePivotSortState(pivotSortStateConfig: {
       dimensions: IDimensionInfo[];
       order: SortOrder;
     }[])
@@ -664,6 +742,19 @@ Change the value of a cell:
   changeCellValue: (col: number, row: number, value: string | number | null) => void;
 ```
 
+## changeCellValues(Function)
+Change the value of cells in batches:
+
+```
+  /**
+   * Batch update data of multiple cells
+   * @param col The starting column number of pasted data
+   * @param row The starting row number of pasted data
+   * @param values Data array of multiple cells
+   */
+  changeCellValues(startCol: number, startRow: number, values: string[][])
+```
+
 ## getEditor(Function)
 
 Get the editor for the cell configuration
@@ -744,4 +835,42 @@ Delete data supports multiple pieces of data
    * @param recordIndexs The index of the data to be deleted (the entry index displayed in the body)
    */
   deleteRecords(recordIndexs: number[])
+```
+## updateRecords(Function)
+
+Modify data to support multiple pieces of data
+
+** ListTable proprietary **
+```
+  /**
+   * Modify data to support multiple pieces of data
+   * @param records Modify data entries
+   * @param recordIndexs The index corresponding to the modified data (the index displayed in the body, that is, which row of data in the body part is to be modified)
+   */
+  updateRecords(records: any[], recordIndexs: number[])
+```
+
+## getBodyVisibleCellRange(Function)
+
+Get the display cell range of the table body part
+
+```
+  /** Get the display cell range of the table body */
+  getBodyVisibleCellRange: () => { rowStart: number; colStart: number; rowEnd: number; colEnd: number };
+```
+
+## getBodyVisibleColRange(Function)
+
+Get the displayed column number range in the body part of the table
+```
+  /** Get the displayed column number range in the body part of the table */
+  getBodyVisibleColRange: () => { colStart: number; colEnd: number };
+```
+## getBodyVisibleRowRange(Function)
+
+Get the displayed row number range of the table body part
+
+```
+  /** Get the displayed row number range of the table body */
+  getBodyVisibleRowRange: () => { rowStart: number; rowEnd: number };
 ```

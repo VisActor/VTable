@@ -1,4 +1,4 @@
-import type { Cursor } from '@visactor/vrender';
+import type { Cursor } from '@src/vrender';
 import { Icon } from '../graphic/icon';
 import * as icons from '../../icons';
 import type { SvgIcon } from '../../ts-types';

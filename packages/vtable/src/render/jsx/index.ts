@@ -12,7 +12,7 @@ export {
   VPolygon,
   VText,
   jsx
-} from '@visactor/vrender';
+} from '@src/vrender';
 import type { TagAttributes } from '@visactor/vrender-components';
 import { Tag } from '@visactor/vrender-components';
 
@@ -21,5 +21,5 @@ type IDefaultGraphicParamsType<T> = {
 };
 
 export function VTag(params: IDefaultGraphicParamsType<TagAttributes>) {
-  return new Tag(params ? params.attribute : {});
+  return new Tag(params ? params.attribute : {}) as any;
 }

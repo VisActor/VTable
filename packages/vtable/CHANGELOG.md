@@ -1,6 +1,271 @@
 # Change Log - @visactor/vtable
 
-This log was last generated on Thu, 21 Dec 2023 04:01:16 GMT and should not be manually modified.
+This log was last generated on Fri, 02 Feb 2024 04:13:16 GMT and should not be manually modified.
+
+## 0.19.0
+Fri, 02 Feb 2024 04:13:16 GMT
+
+### Updates
+
+- fix: select region saved problem #1018
+
+
+- fix: when call updateColumns and discount col occor error #1015
+
+
+- fix: rightFrozenColCount drag header move more time the column width is error #1019
+
+
+- fix: empty string compute row height error #1031
+
+
+- feat: support get sorted columns #986
+
+
+- feat: add option frozenColDragHeaderMode
+
+
+- refactor: when drag header move to frozen region then markLine show positon
+
+
+- refactor: optimize updateRow api performance & resize bottom frozen row not right
+
+
+- fix: fix merge image cell update problem
+
+## 0.18.4
+Fri, 26 Jan 2024 09:15:07 GMT
+
+### Updates
+
+- fix: when click bottomFrozenRow table scroll sometimes #1011
+
+
+
+## 0.18.3
+Thu, 25 Jan 2024 10:27:02 GMT
+
+### Updates
+
+- fix: click outside of cells click cancel select state
+
+
+
+## 0.18.2
+Wed, 24 Jan 2024 12:12:36 GMT
+
+### Updates
+
+- fix: fix rowHeaderGroup attribute y when has no colHeaderGroup #971
+
+
+- fix:  transpose bottomFrozenRow cell layout error #978
+
+
+- fix: passte value to last row occur error #979
+
+
+- fix: use updateColumns api click state not right #975
+
+
+- fix: record has nan string value pivotchart cell value parse handle this case #993
+
+
+- fix: row Height compute for axis
+
+
+- fix: fix deltaY col number in moveCell()
+- feat: add component update
+
+## 0.18.1
+Fri, 19 Jan 2024 11:43:14 GMT
+
+### Updates
+
+- fix: fix funciton updateColumnWidth occor error
+
+
+
+## 0.18.0
+Fri, 19 Jan 2024 10:43:47 GMT
+
+### Minor changes
+
+- feat: add eventOptions #914
+
+
+
+### Updates
+
+- fix: handle with chartSpec barWidth set string type
+
+
+- fix: addRecords api call when body no data #953
+
+
+- fix: mouse drag to move Header position has error when column has multi-levels #957
+
+
+- fix: when resize column width bottomFrozenRow height should update #954
+
+
+- feat: pivotchart support pie
+
+
+- feat: add customLayout & customRander in customMergeCell
+
+## 0.17.10
+Thu, 18 Jan 2024 03:43:34 GMT
+
+### Updates
+
+- fix: select border range error #911
+
+
+- fix: when enable pasteValueToCell and event change_cell_value arguments is error #919
+
+
+- feat: use vrender-core
+- fix: fix tree structure auto merge update problem
+- fix: toggele tree node updateChartSize
+
+
+
+## 0.17.9
+Wed, 10 Jan 2024 11:22:48 GMT
+
+### Updates
+
+- feat: support excel data paste to cells #857
+
+
+- fix: showSubTotals can not work #893
+
+
+- feat: add api getCellAddressByRecord
+
+
+- feat: optimize getCellHeaderPath function
+- fix: set display:none trigger resize logic
+
+
+- fix: fix right frozen cell location
+
+## 0.17.8
+Fri, 05 Jan 2024 10:34:08 GMT
+
+### Updates
+
+- fix: selectRange error when near frozencol or frozenrow #854
+
+
+- fix:  frozen shadowline should move position #859
+
+
+- fix: fix chart cell dblclick size update
+- fix: fix bottom frozen row height compute in createGroupForFirstScreen()
+- fix: fix cellGroup merge range
+- fix: fix react custom jsx parse
+
+## 0.17.7
+Thu, 04 Jan 2024 10:03:11 GMT
+
+### Updates
+
+- feat: add cell image table export
+- fix: fix jsx parse error in react-vtable
+
+## 0.17.6
+Wed, 03 Jan 2024 13:58:45 GMT
+
+### Updates
+
+- fix: fix resize line position
+
+## 0.17.5
+Wed, 03 Jan 2024 12:50:32 GMT
+
+### Updates
+
+- feat: support edit header title #819
+
+
+- fix: setRecords process scrollTop update scenegraph #831
+
+
+- refactor: list table bottom row can not use bottomFrozenStyle #836
+
+
+- feat: add api getCellHeaderTreeNodes for pivotTable #839
+
+
+- refactor: add onVChartEvent for BaseTable #843
+
+
+- fix: add group clip in body
+
+## 0.17.4
+Tue, 02 Jan 2024 09:23:54 GMT
+
+### Updates
+
+- fix: fix frozen chart cell active problem 
+
+## 0.17.3
+Fri, 29 Dec 2023 12:31:07 GMT
+
+### Updates
+
+- fix: setRecords lose hover state  #783
+
+
+- feat: add body index convert with table index #789
+
+
+- fix:  transpose list demo when records has 10000 performance problem #790
+
+
+- fix: setRecords recomputeColWidth problems #796
+
+
+- fix: set disableSelect drag interaction occor error #799
+
+
+- feat: mergeCell support custom compare function #804
+
+
+- fix: tooltip style not work #805
+
+
+- fix: pivot table pagination.perPageCount modify #807
+
+
+- fix: [Bug] adaptive mode compute problem when has frozencol and rightFrozenCol #820
+
+
+- fix: fix axis render update problem
+- feat: add column resize label theme
+- fix: fix select update when change frozen
+- fix: pivot table use icon bug
+
+
+- fix: fix sort icon update
+- refactor: update vrender event verison use scrollDrag
+
+
+- chore: update vrender version #785
+
+
+
+## 0.17.2
+Thu, 21 Dec 2023 11:54:58 GMT
+
+### Updates
+
+- fix: edit bug #771
+
+
+- fix: add row height round in resetRowHeight
 
 ## 0.17.1
 Thu, 21 Dec 2023 04:01:16 GMT

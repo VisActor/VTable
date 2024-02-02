@@ -20,7 +20,7 @@
     dimensionHeaderType = 'columns'
 ) }}
 
-{{ use: vedio-dimension-type(
+{{ use: video-dimension-type(
     prefix = ${prefix},
     dimensionHeaderType = 'columns'
 ) }}

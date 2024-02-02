@@ -9,7 +9,7 @@ import type { BaseTableAPI } from '../../ts-types/base-table';
 import type { PivotHeaderLayoutMap } from '../../layout/pivot-header-layout';
 import { getAxisConfigInPivotChart } from '../../layout/chart-helper/get-axis-config';
 import { computeAxisComponentWidth } from '../../components/axis/get-axis-component-size';
-import { Group as VGroup } from '@visactor/vrender';
+import { Group as VGroup } from '@src/vrender';
 import { isObject } from '@visactor/vutils';
 import { decodeReactDom, dealPercentCalc } from '../component/custom';
 
@@ -66,7 +66,7 @@ export function computeColsWidth(table: BaseTableAPI, colStart?: number, colEnd?
       table._clearColRangeWidthsMap(col);
     }
     if (update) {
-      newWidths[col] = table._adjustColWidth(col, maxWidth);
+      newWidths[col] = Math.round(table._adjustColWidth(col, maxWidth));
     } else {
       table._setColWidth(col, table._adjustColWidth(col, maxWidth), false, true);
     }
@@ -74,20 +74,23 @@ export function computeColsWidth(table: BaseTableAPI, colStart?: number, colEnd?
 
   // 处理adaptive宽度
   if (table.widthMode === 'adaptive') {
-    const rowHeaderWidth = table.getColsWidth(0, table.rowHeaderLevelCount - 1);
-    const rightHeaderWidth = table.isPivotChart() ? table.getRightFrozenColsWidth() : 0;
-    const totalDrawWidth = table.tableNoFrameWidth - rowHeaderWidth - rightHeaderWidth;
+    // const rowHeaderWidth = table.getColsWidth(0, table.rowHeaderLevelCount - 1);
+    // const rightHeaderWidth = table.isPivotChart() ? table.getRightFrozenColsWidth() : 0;
+    // const totalDrawWidth = table.tableNoFrameWidth - rowHeaderWidth - rightHeaderWidth;
 
     table._clearColRangeWidthsMap();
     const canvasWidth = table.tableNoFrameWidth;
     let actualHeaderWidth = 0;
     for (let col = 0; col < table.colCount; col++) {
       const colWidth = update ? newWidths[col] : table.getColWidth(col);
-      if (col < table.frozenColCount || col >= table.colCount - table.rightFrozenColCount) {
+      if (
+        col < table.rowHeaderLevelCount ||
+        (table.isPivotChart() && col >= table.colCount - table.rightFrozenColCount)
+      ) {
         actualHeaderWidth += colWidth;
       }
     }
-    const startCol = table.frozenColCount;
+    const startCol = table.rowHeaderLevelCount;
     const endCol = table.isPivotChart() ? table.colCount - table.rightFrozenColCount : table.colCount;
     getAdaptiveWidth(canvasWidth - actualHeaderWidth, startCol, endCol, update, newWidths, table);
     // const canvasWidth = table.internalProps.canvas.width;
@@ -124,21 +127,23 @@ export function computeColsWidth(table: BaseTableAPI, colStart?: number, colEnd?
     //   }
     // }
   } else if (table.autoFillWidth) {
-    // 处理风神列宽特殊逻辑
     table._clearColRangeWidthsMap();
     const canvasWidth = table.tableNoFrameWidth;
     let actualHeaderWidth = 0;
     let actualWidth = 0;
     for (let col = 0; col < table.colCount; col++) {
       const colWidth = update ? newWidths[col] : table.getColWidth(col);
-      if (col < table.frozenColCount || (table.isPivotChart() && col >= table.colCount - table.rightFrozenColCount)) {
+      if (
+        col < table.rowHeaderLevelCount ||
+        (table.isPivotChart() && col >= table.colCount - table.rightFrozenColCount)
+      ) {
         actualHeaderWidth += colWidth;
       }
       actualWidth += colWidth;
     }
     // 如果内容宽度小于canvas宽度，执行adaptive放大
     if (actualWidth < canvasWidth && actualWidth > actualHeaderWidth) {
-      const startCol = table.frozenColCount;
+      const startCol = table.rowHeaderLevelCount;
       const endCol = table.isPivotChart() ? table.colCount - table.rightFrozenColCount : table.colCount;
       getAdaptiveWidth(canvasWidth - actualHeaderWidth, startCol, endCol, update, newWidths, table);
     }
@@ -182,7 +187,19 @@ export function computeColsWidth(table: BaseTableAPI, colStart?: number, colEnd?
       const newColWidth = newWidths[col] ?? table.getColWidth(col);
       if (newColWidth !== oldColWidths[col]) {
         // update the column width in scenegraph
-        table.scenegraph.updateColWidth(col, newColWidth - oldColWidths[col], true);
+        table._setColWidth(col, newColWidth, false, true);
+        // table.scenegraph.updateColWidth(col, newColWidth - oldColWidths[col], true, true);
+      }
+    }
+    table.stateManager.checkFrozen();
+    for (let col = 0; col < table.colCount; col++) {
+      // newColWidth could not be in column min max range possibly
+      // const newColWidth = table._adjustColWidth(col, newWidths[col]) ?? table.getColWidth(col);
+      const newColWidth = table.getColWidth(col);
+      if (newColWidth !== oldColWidths[col]) {
+        // update the column width in scenegraph
+        // table._setColWidth(col, newColWidth);
+        table.scenegraph.updateColWidth(col, newColWidth - oldColWidths[col], true, true);
       }
     }
     table.scenegraph.updateContainer();

@@ -1,4 +1,4 @@
-import type { FederatedPointerEvent } from '@visactor/vrender';
+import type { FederatedPointerEvent } from '@src/vrender';
 import { throttle } from '../../tools/util';
 import type { ListTableAPI } from '../../ts-types';
 import { InteractionState } from '../../ts-types';
@@ -36,18 +36,12 @@ export function bindScrollBarListener(eventManager: EventManager) {
     if (stateManager.interactionState !== InteractionState.scrolling) {
       stateManager.updateInteractionState(InteractionState.scrolling);
     }
-    const eventArgsSet: SceneEvent = getCellEventArgsSet(e);
-    if (
-      scenegraph.table.stateManager.menu.isShow &&
-      (eventArgsSet.eventArgs?.target as any) !== scenegraph.table.stateManager.residentHoverIcon?.icon
-    ) {
-      scenegraph.table.stateManager.hideMenu();
-    }
-
+    scenegraph.table.stateManager.hideMenu();
     (scenegraph.table as ListTableAPI).editorManager?.completeEdit();
   });
   scenegraph.component.vScrollBar.addEventListener('pointerup', () => {
     stateManager.fastScrolling = false;
+    scenegraph.table.eventManager.isDraging = false;
     if (stateManager.interactionState === InteractionState.scrolling) {
       stateManager.updateInteractionState(InteractionState.default);
     }
@@ -58,25 +52,21 @@ export function bindScrollBarListener(eventManager: EventManager) {
       stateManager.updateInteractionState(InteractionState.default);
     }
   });
+  scenegraph.component.vScrollBar.addEventListener('scrollUp', (e: FederatedPointerEvent) => {
+    scenegraph.table.eventManager.isDraging = false;
+  });
   scenegraph.component.hScrollBar.addEventListener('scrollDown', (e: FederatedPointerEvent) => {
     scenegraph.table.eventManager.LastBodyPointerXY = { x: e.x, y: e.y };
     scenegraph.table.eventManager.isDown = true;
     if (stateManager.interactionState !== InteractionState.scrolling) {
       stateManager.updateInteractionState(InteractionState.scrolling);
     }
-
-    const eventArgsSet: SceneEvent = getCellEventArgsSet(e);
-    if (
-      scenegraph.table.stateManager.menu.isShow &&
-      (eventArgsSet.eventArgs?.target as any) !== scenegraph.table.stateManager.residentHoverIcon?.icon
-    ) {
-      scenegraph.table.stateManager.hideMenu();
-    }
-
+    scenegraph.table.stateManager.hideMenu();
     (scenegraph.table as ListTableAPI).editorManager?.completeEdit();
   });
   scenegraph.component.hScrollBar.addEventListener('pointerup', () => {
     stateManager.fastScrolling = false;
+    scenegraph.table.eventManager.isDraging = false;
     if (stateManager.interactionState === InteractionState.scrolling) {
       stateManager.updateInteractionState(InteractionState.default);
     }
@@ -87,12 +77,17 @@ export function bindScrollBarListener(eventManager: EventManager) {
       stateManager.updateInteractionState(InteractionState.default);
     }
   });
-
+  scenegraph.component.hScrollBar.addEventListener('scrollUp', (e: FederatedPointerEvent) => {
+    scenegraph.table.eventManager.isDraging = false;
+  });
   const throttleVerticalWheel = throttle(stateManager.updateVerticalScrollBar, 20);
   const throttleHorizontalWheel = throttle(stateManager.updateHorizontalScrollBar, 20);
 
   // 监听滚动条组件scroll事件
-  scenegraph.component.vScrollBar.addEventListener('scroll', (e: any) => {
+  scenegraph.component.vScrollBar.addEventListener('scrollDrag', (e: any) => {
+    if (scenegraph.table.eventManager.isDown) {
+      scenegraph.table.eventManager.isDraging = true;
+    }
     stateManager.fastScrolling = true;
     if (stateManager.interactionState !== InteractionState.scrolling) {
       stateManager.updateInteractionState(InteractionState.scrolling);
@@ -101,7 +96,10 @@ export function bindScrollBarListener(eventManager: EventManager) {
     throttleVerticalWheel(ratio, e);
   });
 
-  scenegraph.component.hScrollBar.addEventListener('scroll', (e: any) => {
+  scenegraph.component.hScrollBar.addEventListener('scrollDrag', (e: any) => {
+    if (scenegraph.table.eventManager.isDown) {
+      scenegraph.table.eventManager.isDraging = true;
+    }
     stateManager.fastScrolling = true;
     if (stateManager.interactionState !== InteractionState.scrolling) {
       stateManager.updateInteractionState(InteractionState.scrolling);

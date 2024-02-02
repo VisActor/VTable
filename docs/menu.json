@@ -43,5 +43,9 @@
   {
     "menu": "faq",
     "type": "markdown"
+  },
+  {
+    "menu": "changelog",
+    "type": "markdown"
   }
 ]

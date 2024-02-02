@@ -11,6 +11,12 @@ export function bindContainerDomListener(eventManager: EventManager) {
   const stateManager = table.stateManager;
   const handler: EventHandler = table.internalProps.handler;
 
+  handler.on(table.getElement(), 'mousedown', (e: MouseEvent) => {
+    if (table.eventManager.isPointerDownOnTable) {
+      e.stopPropagation();
+    }
+  });
+
   handler.on(table.getElement(), 'blur', (e: MouseEvent) => {
     eventManager.dealTableHover();
     // eventManager.dealTableSelect();
@@ -78,10 +84,7 @@ export function bindContainerDomListener(eventManager: EventManager) {
         }
       }
     } else if (e.key === 'Escape') {
-      if ((table as ListTableAPI).editorManager.editingEditor) {
-        (table as ListTableAPI).editorManager.editingEditor.exit();
-        (table as ListTableAPI).editorManager.editingEditor = null;
-      }
+      (table as ListTableAPI).editorManager.cancelEdit();
     } else if (e.key === 'Enter') {
       // 如果按enter键 可以结束当前的编辑 或开启编辑选中的单元格（仅限单选）
       if ((table as ListTableAPI).editorManager.editingEditor) {
@@ -161,12 +164,47 @@ export function bindContainerDomListener(eventManager: EventManager) {
       }
     }
   });
+  handler.on(table.getElement(), 'paste', (e: any) => {
+    if (table.keyboardOptions?.pasteValueToCell && (table as ListTableAPI).changeCellValues) {
+      if ((table as ListTableAPI).editorManager?.editingEditor) {
+        return;
+      }
+      if (table.stateManager.select.ranges?.length > 0) {
+        const ranges = table.stateManager.select.ranges;
+        const col = Math.min(ranges[0].start.col, ranges[0].end.col);
+        const row = Math.min(ranges[0].start.row, ranges[0].end.row);
 
+        const clipboardData = e.clipboardData || window.Clipboard;
+        const pastedData = clipboardData.getData('text');
+        const rows = pastedData.split('\n'); // 将数据拆分为行
+        const values: (string | number)[][] = [];
+        rows.forEach(function (rowCells: any, rowIndex: number) {
+          const cells = rowCells.split('\t'); // 将行数据拆分为单元格
+          const rowValues: (string | number)[] = [];
+          values.push(rowValues);
+          cells.forEach(function (cell: string, cellIndex: number) {
+            // 去掉单元格数据末尾的 '\r'
+            if (cellIndex === cells.length - 1) {
+              cell = cell.trim();
+            }
+            rowValues.push(cell);
+          });
+        });
+        (table as ListTableAPI).changeCellValues(col, row, values);
+      }
+    }
+  });
   handler.on(table.getElement(), 'contextmenu', (e: any) => {
-    e.preventDefault();
+    if (table.eventOptions?.preventDefaultContextMenu !== false) {
+      e.preventDefault();
+    }
   });
 
-  handler.on(table.getContainer(), 'resize', () => {
+  handler.on(table.getContainer(), 'resize', e => {
+    if (e.width === 0 && e.height === 0) {
+      // 临时绕行解决因为display设置为none产生的问题
+      return;
+    }
     table.resize();
   });
 }

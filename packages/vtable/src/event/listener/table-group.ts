@@ -1,5 +1,5 @@
-import type { IEventTarget } from '@visactor/vrender';
-import { Gesture, type FederatedPointerEvent } from '@visactor/vrender';
+import type { IEventTarget } from '@src/vrender';
+import { Gesture, type FederatedPointerEvent } from '@src/vrender';
 import type {
   ListTableAPI,
   MousePointerCellEvent,
@@ -21,12 +21,11 @@ import type { IIconGraphicAttribute } from '../../scenegraph/graphic/icon';
 import { getCellMergeInfo } from '../../scenegraph/utils/get-cell-merge';
 import type { CheckBox, CheckboxAttributes } from '@visactor/vrender-components';
 
-// PointerMove敏感度太高了 记录下上一个鼠标位置 在接收到PointerMove事件时做判断 是否到到触发框选或者移动表头操作的标准，防止误触
-
 export function bindTableGroupListener(eventManager: EventManager) {
   const table = eventManager.table;
   const stateManager = table.stateManager;
 
+  // 有被阻止冒泡的场景 就触发不到这里的事件了 所以这个LastBodyPointerXY变量的赋值在scrollbar的down事件也进行了处理
   document.body.addEventListener('pointerdown', e => {
     console.log('body pointerdown');
     table.eventManager.LastBodyPointerXY = { x: e.x, y: e.y };
@@ -84,16 +83,15 @@ export function bindTableGroupListener(eventManager: EventManager) {
     if (stateManager.interactionState === InteractionState.scrolling) {
       return;
     }
-    if (
-      stateManager.interactionState === InteractionState.grabing &&
-      Math.abs(lastX - e.x) + Math.abs(lastY - e.y) >= 1
-    ) {
-      if (stateManager.isResizeCol()) {
-        /* do nothing */
-      } else if (stateManager.isMoveCol()) {
-        eventManager.dealColumnMover(eventArgsSet);
-      } else {
-        eventManager.dealTableSelect(eventArgsSet, true);
+    if (stateManager.interactionState === InteractionState.grabing) {
+      if (Math.abs(lastX - e.x) + Math.abs(lastY - e.y) >= 1) {
+        if (stateManager.isResizeCol()) {
+          /* do nothing */
+        } else if (stateManager.isMoveCol()) {
+          eventManager.dealColumnMover(eventArgsSet);
+        } else {
+          eventManager.dealTableSelect(eventArgsSet, true);
+        }
       }
       return;
     }
@@ -280,7 +278,13 @@ export function bindTableGroupListener(eventManager: EventManager) {
       });
     }
   });
+  /**
+   * 两种场景会触发这里的pointerupoutside
+   * 1. 鼠标down和up的场景树节点不一样
+   * 2. 点击到非stage的（非canvas）  其他dom节点
+   */
   table.scenegraph.tableGroup.addEventListener('pointerupoutside', (e: FederatedPointerEvent) => {
+    console.log('pointerupoutside');
     const eventArgsSet: SceneEvent = getCellEventArgsSet(e);
     if (stateManager.menu.isShow && (eventArgsSet.eventArgs?.target as any) !== stateManager.residentHoverIcon?.icon) {
       setTimeout(() => {
@@ -330,9 +334,7 @@ export function bindTableGroupListener(eventManager: EventManager) {
         }
       }
     }
-    if ((table as ListTableAPI).editorManager) {
-      (table as ListTableAPI).editorManager.completeEdit();
-    }
+    (table as ListTableAPI).editorManager?.completeEdit(e.nativeEvent);
     stateManager.updateInteractionState(InteractionState.default);
     eventManager.dealTableHover();
     //点击到表格外部不需要取消选中状态
@@ -341,12 +343,16 @@ export function bindTableGroupListener(eventManager: EventManager) {
 
   table.scenegraph.tableGroup.addEventListener('pointerdown', (e: FederatedPointerEvent) => {
     console.log('tableGroup pointerdown');
+    table.eventManager.isPointerDownOnTable = true;
+    setTimeout(() => {
+      table.eventManager.isPointerDownOnTable = false;
+    }, 0);
     table.eventManager.isDown = true;
     table.eventManager.LastBodyPointerXY = { x: e.x, y: e.y };
     // 避免在调整列宽等拖拽操作触发外层组件的拖拽逻辑
     // 如果鼠标位置在表格内（加调整列宽的热区），将mousedown事件阻止冒泡
     e.stopPropagation();
-
+    // e.preventDefault(); //为了阻止mousedown事件的触发，后续：不能这样写，会阻止table聚焦
     table.eventManager.LastPointerXY = { x: e.x, y: e.y };
     if (e.button !== 0) {
       // 只处理左键
@@ -362,10 +368,12 @@ export function bindTableGroupListener(eventManager: EventManager) {
       table.scenegraph.updateChartState(null);
     }
     // 处理menu
-    if (stateManager.menu.isShow && (eventArgsSet.eventArgs?.target as any) !== stateManager.residentHoverIcon?.icon) {
+    if ((eventArgsSet.eventArgs?.target as any) !== stateManager.residentHoverIcon?.icon) {
       // 点击在menu外，且不是下拉菜单的icon，移除menu
       stateManager.hideMenu();
     }
+    (table as ListTableAPI).editorManager?.completeEdit(e.nativeEvent);
+
     const hitIcon = (eventArgsSet?.eventArgs?.target as any)?.role?.startsWith('icon')
       ? eventArgsSet.eventArgs.target
       : undefined;
@@ -558,7 +566,7 @@ export function bindTableGroupListener(eventManager: EventManager) {
     if (!eventArgsSet?.eventArgs) {
       return;
     }
-    if (eventManager.touchSetTimeout || e.pointerType !== 'touch') {
+    if (eventManager.touchSetTimeout) {
       // 通过这个变量判断非drag鼠标拖拽状态，就不再增加其他变量isDrag了（touchSetTimeout如果拖拽过会变成undefined pointermove事件有置为undefined）
       if (e.pointerType === 'touch') {
         // 移动端事件特殊处理
@@ -570,43 +578,44 @@ export function bindTableGroupListener(eventManager: EventManager) {
           eventManager.touchSetTimeout = undefined;
         }
       }
-      if ((table as any).hasListeners(TABLE_EVENT_TYPE.CLICK_CELL)) {
-        const { col, row } = eventArgsSet.eventArgs;
-        const cellInfo = table.getCellInfo(col, row);
-        let icon;
-        let position;
-        if (eventArgsSet.eventArgs?.target) {
-          const iconInfo = getIconAndPositionFromTarget(eventArgsSet.eventArgs?.target);
-          if (iconInfo) {
-            icon = iconInfo.icon;
-            position = iconInfo.position;
-          }
+    }
+    if (!eventManager.touchMove && (table as any).hasListeners(TABLE_EVENT_TYPE.CLICK_CELL)) {
+      const { col, row } = eventArgsSet.eventArgs;
+      const cellInfo = table.getCellInfo(col, row);
+      let icon;
+      let position;
+      if (eventArgsSet.eventArgs?.target) {
+        const iconInfo = getIconAndPositionFromTarget(eventArgsSet.eventArgs?.target);
+        if (iconInfo) {
+          icon = iconInfo.icon;
+          position = iconInfo.position;
         }
-        const cellsEvent: MousePointerMultiCellEvent = {
-          ...cellInfo,
-          event: e.nativeEvent,
-          federatedEvent: e,
-          cells: [],
-          targetIcon: icon
-            ? {
-                name: icon.name,
-                position: position,
-                funcType: (icon as any).attribute.funcType
-              }
-            : undefined,
-          target: eventArgsSet?.eventArgs?.target
-        };
-
-        table.fireListeners(TABLE_EVENT_TYPE.CLICK_CELL, cellsEvent);
       }
+      const cellsEvent: MousePointerMultiCellEvent = {
+        ...cellInfo,
+        event: e.nativeEvent,
+        federatedEvent: e,
+        cells: [],
+        targetIcon: icon
+          ? {
+              name: icon.name,
+              position: position,
+              funcType: (icon as any).attribute.funcType
+            }
+          : undefined,
+        target: eventArgsSet?.eventArgs?.target
+      };
+
+      table.fireListeners(TABLE_EVENT_TYPE.CLICK_CELL, cellsEvent);
     }
   });
-  // click outside
+  // stage 的pointerdown监听 如果点击在表格内部 是会被阻止点的tableGroup的pointerdown 监听有stopPropagation
   table.scenegraph.stage.addEventListener('pointerdown', (e: FederatedPointerEvent) => {
     const eventArgsSet: SceneEvent = getCellEventArgsSet(e);
-    if (stateManager.menu.isShow && (eventArgsSet.eventArgs?.target as any) !== stateManager.residentHoverIcon?.icon) {
+    if ((eventArgsSet.eventArgs?.target as any) !== stateManager.residentHoverIcon?.icon) {
       stateManager.hideMenu();
     }
+    (table as ListTableAPI).editorManager?.completeEdit(e.nativeEvent);
   });
   // click outside
   table.scenegraph.stage.addEventListener('pointertap', (e: FederatedPointerEvent) => {
@@ -615,6 +624,7 @@ export function bindTableGroupListener(eventManager: EventManager) {
       // 如果是鼠标点击到canvas空白区域 则取消选中状态
       !table.eventManager.isDraging &&
       target &&
+      (target.isDescendantsOf(table.scenegraph.stage) || (target as any).stage === target) && //判断节点未被删除 后面这个是为了判断是stage本身
       !target.isDescendantsOf(table.scenegraph.tableGroup)
       // &&
       // (target as any) !== table.scenegraph.tableGroup &&

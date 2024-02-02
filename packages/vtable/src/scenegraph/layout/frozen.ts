@@ -59,6 +59,11 @@ export function resetFrozen(scene: Scenegraph) {
     }
   }
 
+  scene.deleteAllSelectBorder();
+  scene.table.stateManager.select.ranges.forEach(range => {
+    scene.updateCellSelectBorder(range.start.col, range.start.row, range.end.col, range.end.row);
+  });
+
   // scene.frozenColCount = scene.rowHeaderGroup.childrenCount;
   scene.frozenColCount = scene.table.frozenColCount;
   scene.frozenRowCount = scene.colHeaderGroup.firstChild?.childrenCount ?? 0;

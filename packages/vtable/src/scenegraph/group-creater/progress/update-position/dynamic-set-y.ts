@@ -47,6 +47,9 @@ async function moveCell(
   } else if (direction === 'down' && proxy.rowStart - count < proxy.bodyTopRow) {
     count = proxy.rowStart - proxy.bodyTopRow;
   }
+  if (count === 0) {
+    return;
+  }
   if (count < 0) {
     direction = direction === 'up' ? 'down' : 'up';
     count = -count;
@@ -98,7 +101,8 @@ async function moveCell(
         syncTopRow, // rowStart
         syncBottomRow, // rowEnd
         proxy.table,
-        distEndRow > proxy.bodyBottomRow - (proxy.rowEnd - proxy.rowStart + 1) ? 'down' : 'up' // 跳转到底部时，从下向上对齐
+        distEndRow > proxy.bodyBottomRow - (proxy.rowEnd - proxy.rowStart + 1) ? 'down' : 'up', // 跳转到底部时，从下向上对齐
+        true
       );
 
       // row header group
@@ -108,7 +112,8 @@ async function moveCell(
         syncTopRow, // rowStart
         syncBottomRow, // rowEnd
         proxy.table,
-        distEndRow > proxy.bodyBottomRow - (proxy.rowEnd - proxy.rowStart + 1) ? 'down' : 'up' // 跳转到底部时，从下向上对齐
+        distEndRow > proxy.bodyBottomRow - (proxy.rowEnd - proxy.rowStart + 1) ? 'down' : 'up', // 跳转到底部时，从下向上对齐
+        true
       );
 
       // right frozen group
@@ -118,10 +123,11 @@ async function moveCell(
         syncTopRow, // rowStart
         syncBottomRow, // rowEnd
         proxy.table,
-        distEndRow > proxy.bodyBottomRow - (proxy.rowEnd - proxy.rowStart + 1) ? 'down' : 'up' // 跳转到底部时，从下向上对齐
+        distEndRow > proxy.bodyBottomRow - (proxy.rowEnd - proxy.rowStart + 1) ? 'down' : 'up', // 跳转到底部时，从下向上对齐
+        true
       );
 
-      const cellGroup = proxy.table.scenegraph.highPerformanceGetCell(proxy.bodyLeftCol, screenTopRow, true);
+      const cellGroup = proxy.table.scenegraph.highPerformanceGetCell(proxy.colStart, screenTopRow, true);
       const deltaY =
         screenTopY - (cellGroup.attribute.y + proxy.table.getFrozenRowsHeight() + proxy.table.scenegraph.proxy.deltaY);
       proxy.table.scenegraph.proxy.deltaY += deltaY;
@@ -200,11 +206,11 @@ async function moveCell(
 
     // update body position when click scroll bar
     if (syncTopRow === proxy.bodyTopRow) {
-      const cellGroup = proxy.table.scenegraph.highPerformanceGetCell(proxy.bodyLeftCol, syncTopRow, true);
+      const cellGroup = proxy.table.scenegraph.highPerformanceGetCell(proxy.colStart, syncTopRow, true);
       const deltaY = cellGroup.attribute.y - y;
       proxy.table.scenegraph.proxy.deltaY = deltaY;
     } else if (syncBottomRow === proxy.bodyBottomRow) {
-      const cellGroup = proxy.table.scenegraph.highPerformanceGetCell(proxy.bodyLeftCol, syncBottomRow, true);
+      const cellGroup = proxy.table.scenegraph.highPerformanceGetCell(proxy.colStart, syncBottomRow, true);
       const deltaY =
         cellGroup.attribute.y +
         cellGroup.attribute.height -
@@ -212,7 +218,7 @@ async function moveCell(
         y;
       proxy.table.scenegraph.proxy.deltaY = -deltaY;
     } else {
-      const cellGroup = proxy.table.scenegraph.highPerformanceGetCell(proxy.bodyLeftCol, screenTopRow, true);
+      const cellGroup = proxy.table.scenegraph.highPerformanceGetCell(proxy.colStart, screenTopRow, true);
       const deltaY =
         screenTopY - (cellGroup.attribute.y + proxy.table.getFrozenRowsHeight() + proxy.table.scenegraph.proxy.deltaY);
       proxy.table.scenegraph.proxy.deltaY = deltaY;
@@ -267,22 +273,24 @@ function updatePartRowPosition(startRow: number, endRow: number, direction: 'up'
 }
 
 function updateCellGroupPosition(colGroup: Group, direction: 'up' | 'down', proxy: SceneProxy) {
-  if (direction === 'up') {
-    const cellGroup = colGroup.firstChild as Group;
-    proxy.updateCellGroupPosition(
-      cellGroup,
-      (colGroup.lastChild as Group).row + 1,
-      (colGroup.lastChild as Group).attribute.y + proxy.table.getRowHeight((colGroup.lastChild as Group).row) // (colGroup.lastChild as Group).attribute.height
-    );
-    colGroup.appendChild(cellGroup);
-  } else {
-    const cellGroup = colGroup.lastChild as Group;
-    proxy.updateCellGroupPosition(
-      cellGroup,
-      (colGroup.firstChild as Group).row - 1,
-      (colGroup.firstChild as Group).attribute.y - proxy.table.getRowHeight((cellGroup as Group).row) // cellGroup.attribute.height
-    );
-    colGroup.insertBefore(cellGroup, colGroup.firstChild);
+  if (colGroup.childrenCount >= 1) {
+    if (direction === 'up') {
+      const cellGroup = colGroup.firstChild as Group;
+      proxy.updateCellGroupPosition(
+        cellGroup,
+        (colGroup.lastChild as Group).row + 1,
+        (colGroup.lastChild as Group).attribute.y + proxy.table.getRowHeight((colGroup.lastChild as Group).row) // (colGroup.lastChild as Group).attribute.height
+      );
+      colGroup.appendChild(cellGroup);
+    } else {
+      const cellGroup = colGroup.lastChild as Group;
+      proxy.updateCellGroupPosition(
+        cellGroup,
+        (colGroup.firstChild as Group).row - 1,
+        (colGroup.firstChild as Group).attribute.y - proxy.table.getRowHeight((cellGroup as Group).row) // cellGroup.attribute.height
+      );
+      colGroup.insertBefore(cellGroup, colGroup.firstChild);
+    }
   }
 }
 

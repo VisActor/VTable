@@ -113,5 +113,11 @@ export default {
     // inlineColumnBgColor: "#82b2f5",
     cellBorderColor: '#4284FF',
     cellBorderLineWidth: 2
+  },
+  tooltipStyle: {
+    bgColor: '#FFF',
+    color: '#000',
+    fontSize: 12,
+    fontFamily: 'Arial,sans-serif'
   }
 } as ITableThemeDefine;

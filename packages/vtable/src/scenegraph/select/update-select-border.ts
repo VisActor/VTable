@@ -1,4 +1,4 @@
-import type { IRect } from '@visactor/vrender';
+import type { IRect } from '@src/vrender';
 import type { Scenegraph } from '../scenegraph';
 import type { CellSubLocation } from '../../ts-types';
 import { getCellMergeInfo } from '../utils/get-cell-merge';
@@ -155,9 +155,10 @@ function updateComponent(selectComp: { rect: IRect; role: CellSubLocation }, key
       scene.table.scrollLeft > 0 &&
       (selectComp.role === 'body' || selectComp.role === 'columnHeader' || selectComp.role === 'bottomFrozen')
     ) {
+      const width = selectComp.rect.attribute.width - (scene.table.getFrozenColsWidth() - selectComp.rect.attribute.x);
       selectComp.rect.setAttributes({
         x: selectComp.rect.attribute.x + (scene.table.getFrozenColsWidth() - selectComp.rect.attribute.x),
-        width: selectComp.rect.attribute.width - (scene.table.getFrozenColsWidth() - selectComp.rect.attribute.x)
+        width: width > 0 ? width : 0
       });
     }
     if (
@@ -167,9 +168,10 @@ function updateComponent(selectComp: { rect: IRect; role: CellSubLocation }, key
       selectComp.rect.attribute.x + selectComp.rect.attribute.width > scene.rightFrozenGroup.attribute.x &&
       (selectComp.role === 'body' || selectComp.role === 'columnHeader' || selectComp.role === 'bottomFrozen')
     ) {
+      const width = scene.rightFrozenGroup.attribute.x - selectComp.rect.attribute.x;
       selectComp.rect.setAttributes({
         x: selectComp.rect.attribute.x,
-        width: scene.rightFrozenGroup.attribute.x - selectComp.rect.attribute.x
+        width: width > 0 ? width : 0
       });
     }
     if (
@@ -177,9 +179,11 @@ function updateComponent(selectComp: { rect: IRect; role: CellSubLocation }, key
       scene.table.scrollTop > 0 &&
       (selectComp.role === 'body' || selectComp.role === 'rowHeader' || selectComp.role === 'rightFrozen')
     ) {
+      const height =
+        selectComp.rect.attribute.height - (scene.colHeaderGroup.attribute.height - selectComp.rect.attribute.y);
       selectComp.rect.setAttributes({
         y: selectComp.rect.attribute.y + (scene.colHeaderGroup.attribute.height - selectComp.rect.attribute.y),
-        height: selectComp.rect.attribute.height - (scene.colHeaderGroup.attribute.height - selectComp.rect.attribute.y)
+        height: height > 0 ? height : 0
       });
     }
     if (
@@ -188,9 +192,10 @@ function updateComponent(selectComp: { rect: IRect; role: CellSubLocation }, key
       selectComp.rect.attribute.y + selectComp.rect.attribute.height > scene.bottomFrozenGroup.attribute.y &&
       (selectComp.role === 'body' || selectComp.role === 'rowHeader' || selectComp.role === 'rightFrozen')
     ) {
+      const height = scene.bottomFrozenGroup.attribute.y - selectComp.rect.attribute.y;
       selectComp.rect.setAttributes({
         y: selectComp.rect.attribute.y,
-        height: scene.bottomFrozenGroup.attribute.y - selectComp.rect.attribute.y
+        height: height > 0 ? height : 0
       });
     }
     //#endregion
@@ -267,10 +272,10 @@ export function updateCellSelectBorder(
   newEndCol: number,
   newEndRow: number
 ) {
-  let startCol = Math.min(newEndCol, newStartCol);
-  let startRow = Math.min(newEndRow, newStartRow);
-  let endCol = Math.max(newEndCol, newStartCol);
-  let endRow = Math.max(newEndRow, newStartRow);
+  let startCol = Math.max(Math.min(newEndCol, newStartCol), 0);
+  let startRow = Math.max(Math.min(newEndRow, newStartRow), 0);
+  let endCol = Math.min(Math.max(newEndCol, newStartCol), scene.table.colCount - 1);
+  let endRow = Math.min(Math.max(newEndRow, newStartRow), scene.table.rowCount - 1);
   //#region region 校验四周的单元格有没有合并的情况，如有则扩大范围
   const extendSelectRange = () => {
     let isExtend = false;
@@ -288,7 +293,7 @@ export function updateCellSelectBorder(
       if (!isExtend && col === endCol) {
         for (let row = startRow; row <= endRow; row++) {
           const mergeInfo = getCellMergeInfo(scene.table, col, row);
-          if (mergeInfo && mergeInfo.end.col > endCol) {
+          if (mergeInfo && Math.min(mergeInfo.end.col, scene.table.colCount - 1) > endCol) {
             endCol = mergeInfo.end.col;
             isExtend = true;
             break;
@@ -315,7 +320,7 @@ export function updateCellSelectBorder(
         if (!isExtend && row === endRow) {
           for (let col = startCol; col <= endCol; col++) {
             const mergeInfo = getCellMergeInfo(scene.table, col, row);
-            if (mergeInfo && mergeInfo.end.row > endRow) {
+            if (mergeInfo && Math.min(mergeInfo.end.row, scene.table.rowCount - 1) > endRow) {
               endRow = mergeInfo.end.row;
               isExtend = true;
               break;

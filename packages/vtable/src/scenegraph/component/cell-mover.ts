@@ -1,5 +1,5 @@
-import type { ILine, IRect, ISymbol } from '@visactor/vrender';
-import { createLine, createRect, createSymbol } from '@visactor/vrender';
+import type { ILine, IRect, ISymbol } from '@src/vrender';
+import { createLine, createRect, createSymbol } from '@src/vrender';
 import { getCellMergeInfo } from '../utils/get-cell-merge';
 import type { Group } from '../graphic/group';
 import type { BaseTableAPI } from '../../ts-types/base-table';
@@ -141,13 +141,32 @@ export class CellMover {
 
   update(backX: number | undefined, lineX: number | undefined, backY: number | undefined, lineY: number | undefined) {
     if (typeof backX === 'number' && typeof lineX === 'number') {
-      this.columnMoverLabel.setAttribute('x', lineX - this.table.stateManager.scroll.horizontalBarPos);
-      this.columnMoverLine.setAttribute('x', lineX - this.table.stateManager.scroll.horizontalBarPos);
+      this.columnMoverLabel.setAttribute('x', lineX);
+      this.columnMoverLine.setAttribute('x', lineX);
       this.columnMoverBack.setAttribute('x', backX);
     } else if (typeof backY === 'number' && typeof lineY === 'number') {
-      this.columnMoverLabel.setAttribute('y', lineY - this.table.stateManager.scroll.verticalBarPos);
-      this.columnMoverLine.setAttribute('y', lineY - this.table.stateManager.scroll.verticalBarPos);
+      this.columnMoverLabel.setAttribute('y', lineY);
+      this.columnMoverLine.setAttribute('y', lineY);
       this.columnMoverBack.setAttribute('y', backY);
     }
+  }
+
+  updateStyle() {
+    const columnMoverLineWidth = this.table.theme.dragHeaderSplitLine.lineWidth;
+    const columnMoverLineColor = this.table.theme.dragHeaderSplitLine.lineColor;
+    const columnMoverShadowBlockColor = this.table.theme.dragHeaderSplitLine.shadowBlockColor;
+
+    this.columnMoverLabel.setAttributes({
+      fill: columnMoverLineColor as string
+    });
+    this.columnMoverLine.setAttributes({
+      stroke: columnMoverLineColor as string,
+      lineWidth: columnMoverLineWidth as number
+    });
+
+    // 列顺序调整阴影块
+    this.columnMoverBack.setAttributes({
+      fill: columnMoverShadowBlockColor
+    });
   }
 }

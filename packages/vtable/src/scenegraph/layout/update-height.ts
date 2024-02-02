@@ -8,20 +8,25 @@ import { getProp } from '../utils/get-prop';
 import { getQuadProps } from '../utils/padding';
 import { updateCellContentHeight } from '../utils/text-icon-layout';
 import type { IProgressbarColumnBodyDefine } from '../../ts-types/list-table/define/progressbar-define';
-import { dealWithCustom } from '../component/custom';
+import { dealWithCustom, getCustomCellMergeCustom } from '../component/custom';
 import { updateImageCellContentWhileResize } from '../group-creater/cell-type/image-cell';
 import { getStyleTheme } from '../../core/tableHelper';
 import { isMergeCellGroup } from '../utils/is-merge-cell-group';
 import type { BaseTableAPI } from '../../ts-types/base-table';
 import { resizeCellGroup } from '../group-creater/column-helper';
-import type { IGraphic } from '@visactor/vrender';
+import type { IGraphic } from '@src/vrender';
 
-export function updateRowHeight(scene: Scenegraph, row: number, detaY: number) {
+export function updateRowHeight(scene: Scenegraph, row: number, detaY: number, skipTableHeightMap?: boolean) {
   // 更新table行高存储
-  scene.table._setRowHeight(row, scene.table.getRowHeight(row) + detaY, true);
+  if (!skipTableHeightMap) {
+    scene.table._setRowHeight(row, scene.table.getRowHeight(row) + detaY, true);
+  }
 
   for (let col = 0; col < scene.table.colCount; col++) {
     const cell = scene.getCell(col, row);
+    if (cell.role === 'empty') {
+      continue;
+    }
     const mergeInfo = getCellMergeInfo(scene.table, col, row);
     if (mergeInfo && mergeInfo.start.col !== col) {
       continue;
@@ -44,10 +49,13 @@ export function updateRowHeight(scene: Scenegraph, row: number, detaY: number) {
 
     rowStart = row + 1;
     rowEnd = scene.table.columnHeaderLevelCount - 1;
+  } else if (row >= scene.table.rowCount - scene.table.bottomFrozenRowCount) {
+    rowStart = row + 1;
+    rowEnd = scene.table.rowCount - 1;
   } else {
     rowStart = row + 1;
     // rowEnd = scene.table.rowCount - 1;
-    rowEnd = scene.bodyRowEnd; //- scene.table.bottomFrozenRowCount;
+    rowEnd = Math.min(scene.proxy.rowEnd, scene.table.rowCount - scene.table.bottomFrozenRowCount - 1); //- scene.table.bottomFrozenRowCount;
   }
 
   // 更新以下行位置
@@ -75,7 +83,7 @@ export function updateCellHeightForRow(
   isHeader: boolean
   // autoRowHeight: boolean
 ) {
-  cell.setAttribute('height', height);
+  // cell.setAttribute('height', height);
   const cellGroup = cell;
   const distHeight = height;
 
@@ -96,7 +104,7 @@ export function updateCellHeightForColumn(
   detaY: number,
   isHeader: boolean
 ) {
-  cell.setAttribute('height', height);
+  // cell.setAttribute('height', height);
   const cellGroup = cell;
   updateCellHeight(scene, cellGroup, col, row, height, 0, isHeader);
 }
@@ -110,6 +118,13 @@ export function updateCellHeight(
   detaY: number,
   isHeader: boolean
 ) {
+  if (cell.attribute.height === distHeight && !cell.needUpdateHeight) {
+    return;
+  }
+  cell.needUpdateHeight = false;
+
+  cell.setAttribute('height', distHeight);
+
   // 更新单元格布局
   const type = scene.table.isHeader(col, row)
     ? scene.table._getHeaderLayoutMap(col, row).headerType
@@ -171,46 +186,47 @@ export function updateCellHeight(
       customContainer.removeAllChild();
       cell.removeChild(customContainer);
 
-      let customRender;
-      let customLayout;
-      const cellLocation = scene.table.getCellLocation(col, row);
-      if (cellLocation !== 'body') {
-        const define = scene.table.getHeaderDefine(col, row);
-        customRender = define?.headerCustomRender;
-        customLayout = define?.headerCustomLayout;
-      } else {
-        const define = scene.table.getBodyColumnDefine(col, row);
-        customRender = define?.customRender || scene.table.customRender;
-        customLayout = define?.customLayout;
-      }
+      if (!getCustomCellMergeCustom(col, row, cell, scene.table)) {
+        let customRender;
+        let customLayout;
+        const cellLocation = scene.table.getCellLocation(col, row);
+        if (cellLocation !== 'body') {
+          const define = scene.table.getHeaderDefine(col, row);
+          customRender = define?.headerCustomRender;
+          customLayout = define?.headerCustomLayout;
+        } else {
+          const define = scene.table.getBodyColumnDefine(col, row);
+          customRender = define?.customRender || scene.table.customRender;
+          customLayout = define?.customLayout;
+        }
 
-      if (customLayout || customRender) {
-        // const { autoRowHeight } = table.internalProps;
-        const style = scene.table._getCellStyle(col, row) as ProgressBarStyle;
-        const padding = getQuadProps(getProp('padding', style, col, row, scene.table));
-        const customResult = dealWithCustom(
-          customLayout,
-          customRender,
-          col,
-          row,
-          cell.attribute.width,
-          cell.attribute.height,
-          false,
-          scene.table.heightMode === 'autoHeight',
-          padding,
-          scene.table
-        );
-        customElementsGroup = customResult.elementsGroup;
-        renderDefault = customResult.renderDefault;
-      }
+        if (customLayout || customRender) {
+          // const { autoRowHeight } = table.internalProps;
+          const style = scene.table._getCellStyle(col, row) as ProgressBarStyle;
+          const padding = getQuadProps(getProp('padding', style, col, row, scene.table));
+          const customResult = dealWithCustom(
+            customLayout,
+            customRender,
+            col,
+            row,
+            cell.attribute.width,
+            cell.attribute.height,
+            false,
+            scene.table.heightMode === 'autoHeight',
+            padding,
+            scene.table
+          );
+          customElementsGroup = customResult.elementsGroup;
+          renderDefault = customResult.renderDefault;
+        }
 
-      if (cell.childrenCount > 0) {
-        cell.insertBefore(customElementsGroup, cell.firstChild);
-      } else {
-        cell.appendChild(customElementsGroup);
+        if (cell.childrenCount > 0 && customElementsGroup) {
+          cell.insertBefore(customElementsGroup, cell.firstChild);
+        } else if (customElementsGroup) {
+          cell.appendChild(customElementsGroup);
+        }
       }
     }
-
     if (renderDefault) {
       // 处理文字
       const style = scene.table._getCellStyle(col, row);
@@ -260,7 +276,7 @@ function updateMergeCellContentHeight(
         // const { height: contentHeight } = cellGroup.attribute;
         singleCellGroup.contentHeight = distHeight;
 
-        resizeCellGroup(
+        const { widthChange } = resizeCellGroup(
           singleCellGroup,
           rangeWidth,
           rangeHeight,
@@ -276,6 +292,10 @@ function updateMergeCellContentHeight(
           },
           table
         );
+
+        if (widthChange) {
+          singleCellGroup.needUpdateWidth = true;
+        }
       }
     }
   } else {

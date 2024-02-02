@@ -1,10 +1,11 @@
-import { isNumber } from '@visactor/vutils';
-import type { CellAddress } from '../../ts-types';
+import { isNumber, isValid } from '@visactor/vutils';
+import type { CellAddress, CellRange } from '../../ts-types';
 import type { BaseTableAPI } from '../../ts-types/base-table';
 import { Group } from '../graphic/group';
 import { updateCell } from '../group-creater/cell-helper';
 import type { Scenegraph } from '../scenegraph';
 import { getCellMergeInfo } from '../utils/get-cell-merge';
+import { deduplication } from '../../tools/util';
 
 /**
  * add and remove rows in scenegraph
@@ -28,11 +29,15 @@ export function updateRow(
 
   const rowHeightsMap = table.rowHeightsMap;
   removeRows.forEach(row => {
-    rowHeightsMap.delAndReorder(row);
+    rowHeightsMap.delete(row);
   });
 
   if (removeRows.length) {
     resetRowNumber(scene);
+    const beforeRow = removeRows[removeRows.length - 1] - 1;
+    const afterRow = removeRows[0] - removeRows.length + 1;
+    const rowUpdatePos = updateMergeCellGroup(beforeRow, afterRow, scene);
+    isNumber(rowUpdatePos) && (scene.proxy.rowUpdatePos = Math.min(scene.proxy.rowUpdatePos, rowUpdatePos));
   }
 
   scene.table._clearRowRangeHeightsMap();
@@ -42,12 +47,19 @@ export function updateRow(
   addRows.forEach(row => {
     const needUpdateAfter = addRow(row, scene);
     updateAfter = updateAfter ?? needUpdateAfter;
-    rowHeightsMap.addAndReorder(row);
+    rowHeightsMap.insert(row);
   });
 
   // reset attribute y and row number in CellGroup
   // const newTotalHeight = resetRowNumberAndY(scene);
   resetRowNumberAndY(scene);
+
+  if (addRows.length) {
+    const beforeRow = addRows[0] - 1;
+    const afterRow = addRows[addRows.length - 1] + 1;
+    const rowUpdatePos = updateMergeCellGroup(beforeRow, afterRow, scene);
+    isNumber(rowUpdatePos) && (scene.proxy.rowUpdatePos = Math.min(scene.proxy.rowUpdatePos, rowUpdatePos));
+  }
 
   for (let col = 0; col < table.colCount; col++) {
     // add cells
@@ -65,6 +77,14 @@ export function updateRow(
       }
     });
   }
+
+  if (updateRows.length) {
+    const beforeRow = updateRows[0] - 1;
+    const afterRow = updateRows[updateRows.length - 1] + 1;
+    const rowUpdatePos = updateMergeCellGroup(beforeRow, afterRow, scene);
+    isNumber(rowUpdatePos) && (scene.proxy.rowUpdatePos = Math.min(scene.proxy.rowUpdatePos, rowUpdatePos));
+  }
+
   if (isNumber(updateAfter)) {
     for (let col = 0; col < table.colCount; col++) {
       for (let row = updateAfter; row < table.rowCount; row++) {
@@ -72,7 +92,7 @@ export function updateRow(
         cellGroup && (cellGroup.needUpdate = true);
       }
     }
-    scene.proxy.rowUpdatePos = updateAfter;
+    scene.proxy.rowUpdatePos = Math.min(scene.proxy.rowUpdatePos, updateAfter);
   }
 
   if (addRows.length) {
@@ -83,13 +103,14 @@ export function updateRow(
     scene.proxy.rowUpdateDirection = 'up';
     scene.proxy.updateCellGroups(scene.proxy.screenRowCount * 2);
     updateBottomFrozeCellGroups();
-    scene.proxy.progress();
+    // scene.proxy.progress();
   } else if (removeRows.length) {
     scene.proxy.updateCellGroups(scene.proxy.screenRowCount * 2);
 
     updateBottomFrozeCellGroups();
     scene.proxy.progress();
   }
+  scene.proxy.progress();
 
   // update table size
   const newTotalHeight = table.getRowsHeight(table.frozenRowCount, table.rowCount - 1 - table.bottomFrozenRowCount);
@@ -112,7 +133,20 @@ export function updateRow(
   }
 }
 function removeRow(row: number, scene: Scenegraph) {
+  // const infectCellRange = removeCellGroup(row, scene);
+  // for (let i = 0; i < infectCellRange.length; i++) {
+  //   const { mergeStartCol, mergeEndCol, mergeStartRow, mergeEndRow } = infectCellRange[i];
+  //   for (let col = mergeStartCol; col <= mergeEndCol; col++) {
+  //     for (let row = mergeStartRow; row <= mergeEndRow; row++) {
+  //       const cellGroup = scene.getCell(col, row, true);
+  //       if (cellGroup) {
+  //         cellGroup.needUpdate = true;
+  //       }
+  //     }
+  //   }
+  // }
   removeCellGroup(row, scene);
+
   const proxy = scene.proxy;
 
   // TODO 需要整体更新proxy的状态
@@ -156,6 +190,7 @@ function addRow(row: number, scene: Scenegraph) {
     addRowCellGroup(row, scene);
     return row;
   }
+
   // update rows after
   return row;
 
@@ -167,138 +202,6 @@ function addRow(row: number, scene: Scenegraph) {
   // scene.proxy.rowEnd++;
   // scene.proxy.currentRow++;
 }
-
-// array deduplication
-function deduplication(array: number[]) {
-  const result = [];
-  for (let i = 0; i < array.length; i++) {
-    if (result.indexOf(array[i]) === -1) {
-      result.push(array[i]);
-    }
-  }
-  return result;
-}
-
-// function resetRowNumber(scene: Scenegraph) {
-//   for (let col = 0; col < scene.table.colCount; col++) {
-//     const headerColGroup = scene.getColGroup(col, true);
-//     const colGroup = scene.getColGroup(col, false);
-//     if (!headerColGroup && !colGroup) {
-//       continue;
-//     }
-//     // reset row number
-//     let rowIndex = 0; //(headerColGroup.firstChild as Group)?.row;
-//     headerColGroup?.forEachChildren((cellGroup: Group) => {
-//       // const oldRow = cellGroup.row;
-//       // if (isNumber(cellGroup.mergeStartRow)) {
-//       //   cellGroup.mergeStartRow = cellGroup.mergeStartRow - oldRow + rowIndex;
-//       // }
-//       // if (isNumber(cellGroup.mergeEndRow)) {
-//       //   cellGroup.mergeEndRow = cellGroup.mergeEndRow - oldRow + rowIndex;
-//       // }
-//       cellGroup.row = rowIndex;
-//       const merge = getCellMergeInfo(scene.table, cellGroup.col, cellGroup.row);
-//       if (merge) {
-//         cellGroup.mergeStartCol = merge.start.col;
-//         cellGroup.mergeStartRow = merge.start.row;
-//         cellGroup.mergeEndCol = merge.end.col;
-//         cellGroup.mergeEndRow = merge.end.row;
-//       }
-//       rowIndex++;
-//     });
-//     // rowIndex = (colGroup.firstChild as Group)?.row;
-//     // rowIndex = scene.table.columnHeaderLevelCount;
-//     rowIndex = scene.bodyRowStart;
-//     colGroup?.forEachChildren((cellGroup: Group) => {
-//       // const oldRow = cellGroup.row;
-//       // if (isNumber(cellGroup.mergeStartRow)) {
-//       //   cellGroup.mergeStartRow = cellGroup.mergeStartRow - oldRow + rowIndex;
-//       // }
-//       // if (isNumber(cellGroup.mergeEndRow)) {
-//       //   cellGroup.mergeEndRow = cellGroup.mergeEndRow - oldRow + rowIndex;
-//       // }
-//       cellGroup.row = rowIndex;
-//       const merge = getCellMergeInfo(scene.table, cellGroup.col, cellGroup.row);
-//       if (merge) {
-//         cellGroup.mergeStartCol = merge.start.col;
-//         cellGroup.mergeStartRow = merge.start.row;
-//         cellGroup.mergeEndCol = merge.end.col;
-//         cellGroup.mergeEndRow = merge.end.row;
-//       }
-//       rowIndex++;
-//     });
-//   }
-// }
-
-// function resetRowNumberAndY(scene: Scenegraph) {
-//   const table = scene.table;
-//   let newTotalHeight = 0;
-//   for (let col = 0; col < scene.table.colCount; col++) {
-//     const headerColGroup = scene.getColGroup(col, true);
-//     const colGroup = scene.getColGroup(col, false); // body, row header, right frozen
-//     const bottomGroup =
-//       scene.getColGroupInBottom(col) ||
-//       scene.getColGroupInLeftBottomCorner(col) ||
-//       scene.getColGroupInRightTopCorner(col);
-//     if (!headerColGroup && !colGroup && !bottomGroup) {
-//       continue;
-//     }
-//     let y = 0;
-//     // reset row number
-//     // let rowIndex = (headerColGroup.firstChild as Group)?.row;
-//     // headerColGroup.forEachChildren((cellGroup: Group) => {
-//     //   cellGroup.row = rowIndex;
-//     //   rowIndex++;
-//     //   if (cellGroup.role !== 'cell') {
-//     //     return;
-//     //   }
-//     //   cellGroup.setAttribute('y', y);
-//     //   y+= cellGroup.attribute.height;
-//     // });
-//     // let rowIndex = (colGroup.firstChild as Group)?.row;
-//     let rowIndex = scene.bodyRowStart;
-//     y = scene.getCellGroupY(rowIndex);
-//     colGroup?.forEachChildren((cellGroup: Group) => {
-//       // const oldRow = cellGroup.row;
-//       // if (isNumber(cellGroup.mergeStartRow)) {
-//       //   cellGroup.mergeStartRow = cellGroup.mergeStartRow - oldRow + rowIndex;
-//       // }
-//       // if (isNumber(cellGroup.mergeEndRow)) {
-//       //   cellGroup.mergeEndRow = cellGroup.mergeEndRow - oldRow + rowIndex;
-//       // }
-//       cellGroup.row = rowIndex;
-//       const merge = getCellMergeInfo(scene.table, cellGroup.col, cellGroup.row);
-//       if (merge) {
-//         cellGroup.mergeStartCol = merge.start.col;
-//         cellGroup.mergeStartRow = merge.start.row;
-//         cellGroup.mergeEndCol = merge.end.col;
-//         cellGroup.mergeEndRow = merge.end.row;
-//       }
-//       rowIndex++;
-//       if (cellGroup.role !== 'cell') {
-//         return;
-//       }
-//       cellGroup.setAttribute('y', y);
-//       y += cellGroup.attribute.height;
-//     });
-//     newTotalHeight = y;
-
-//     rowIndex = scene.table.rowCount - scene.table.bottomFrozenRowCount;
-//     // update bottom frozen cell row index
-//     bottomGroup?.forEachChildren((cellGroup: Group) => {
-//       cellGroup.row = rowIndex;
-//       const merge = getCellMergeInfo(scene.table, cellGroup.col, cellGroup.row);
-//       if (merge) {
-//         cellGroup.mergeStartCol = merge.start.col;
-//         cellGroup.mergeStartRow = merge.start.row;
-//         cellGroup.mergeEndCol = merge.end.col;
-//         cellGroup.mergeEndRow = merge.end.row;
-//       }
-//       rowIndex++;
-//     });
-//   }
-//   return newTotalHeight;
-// }
 function resetRowNumber(scene: Scenegraph) {
   scene.bodyGroup.forEachChildren((colGroup: Group) => {
     let rowIndex = scene.bodyRowStart;
@@ -349,9 +252,14 @@ function resetRowNumber(scene: Scenegraph) {
     const merge = getCellMergeInfo(scene.table, cellGroup.col, cellGroup.row);
     if (merge) {
       cellGroup.mergeStartCol = merge.start.col;
-      cellGroup.mergeStartCol = merge.start.col;
       cellGroup.mergeEndCol = merge.end.col;
-      cellGroup.mergeEndCol = merge.end.col;
+      cellGroup.mergeStartRow = merge.start.row;
+      cellGroup.mergeEndRow = merge.end.row;
+    } else {
+      cellGroup.mergeStartCol = undefined;
+      cellGroup.mergeEndCol = undefined;
+      cellGroup.mergeStartRow = undefined;
+      cellGroup.mergeEndRow = undefined;
     }
   }
 }
@@ -422,9 +330,14 @@ function resetRowNumberAndY(scene: Scenegraph) {
     const merge = getCellMergeInfo(scene.table, cellGroup.col, cellGroup.row);
     if (merge) {
       cellGroup.mergeStartCol = merge.start.col;
-      cellGroup.mergeStartCol = merge.start.col;
       cellGroup.mergeEndCol = merge.end.col;
-      cellGroup.mergeEndCol = merge.end.col;
+      cellGroup.mergeStartRow = merge.start.row;
+      cellGroup.mergeEndRow = merge.end.row;
+    } else {
+      cellGroup.mergeStartCol = undefined;
+      cellGroup.mergeEndCol = undefined;
+      cellGroup.mergeStartRow = undefined;
+      cellGroup.mergeEndRow = undefined;
     }
   }
 }
@@ -507,27 +420,16 @@ function addRowCellGroup(row: number, scene: Scenegraph) {
 }
 
 function removeCellGroup(row: number, scene: Scenegraph) {
+  // const infectCellRange = [];
   for (let col = 0; col < scene.table.colCount; col++) {
     // const headerColGroup = scene.getColGroup(col, true);
     const colGroup = scene.getColGroup(col, false);
     if (!colGroup) {
       continue;
     }
-    // // remove cellGroup in headerColGroup
-    // let headerCellGroup;
-    // headerColGroup.forEachChildren((cellGroup: Group) => {
-    //   if (cellGroup.row === row) {
-    //     headerCellGroup = cellGroup;
-    //     return true;
-    //   }
-    //   return false;
-    // });
-    // if (headerCellGroup) {
-    //   headerColGroup.removeChild(headerCellGroup);
-    // }
 
     // remove cellGroup in colGroup
-    let cellGroup;
+    let cellGroup: Group;
     colGroup.forEachChildren((cell: Group) => {
       if (cell.row === row) {
         cellGroup = cell;
@@ -538,6 +440,53 @@ function removeCellGroup(row: number, scene: Scenegraph) {
     if (cellGroup) {
       colGroup.updateColumnHeight(-(cellGroup as Group).attribute.height);
       colGroup.removeChild(cellGroup);
+      // if (
+      //   isValid(cellGroup.mergeStartCol) &&
+      //   isValid(cellGroup.mergeEndCol) &&
+      //   isValid(cellGroup.mergeStartRow) &&
+      //   isValid(cellGroup.mergeEndRow)
+      // ) {
+      //   infectCellRange.push({
+      //     col: cellGroup.col,
+      //     row: cellGroup.row,
+      //     mergeStartCol: cellGroup.mergeStartCol,
+      //     mergeEndCol: cellGroup.mergeEndCol,
+      //     mergeStartRow: cellGroup.mergeStartRow,
+      //     mergeEndRow: cellGroup.mergeEndRow
+      //   });
+      // }
+    }
+  }
+  // return infectCellRange;
+}
+
+function updateMergeCellGroup(beforeRow: number, afterRow: number, scene: Scenegraph) {
+  let updateRow;
+  for (let col = 0; col < scene.table.colCount; col++) {
+    const rangeBefore = scene.table.getCellRange(col, beforeRow);
+    if (rangeBefore.start.row <= beforeRow + 1 && rangeBefore.end.row >= beforeRow + 1) {
+      updateCellGroup(rangeBefore, scene);
+      updateRow = rangeBefore.start.row;
+    }
+
+    const rangeAfter = scene.table.getCellRange(col, afterRow);
+    if (rangeAfter.start.row <= afterRow - 1 && rangeAfter.end.row >= afterRow - 1) {
+      updateCellGroup(rangeAfter, scene);
+      updateRow = rangeBefore.start.row;
+    }
+  }
+  return updateRow;
+}
+
+function updateCellGroup(range: CellRange, scene: Scenegraph) {
+  const { start, end } = range;
+  for (let col = start.col; col <= end.col; col++) {
+    for (let row = start.row; row <= end.row; row++) {
+      const cellGroup = scene.highPerformanceGetCell(col, row, true);
+      if (!cellGroup) {
+        continue;
+      }
+      cellGroup.needUpdate = true;
     }
   }
 }

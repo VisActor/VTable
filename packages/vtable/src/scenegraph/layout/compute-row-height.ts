@@ -1,4 +1,4 @@
-import { RichText, Text, Group as VGroup } from '@visactor/vrender';
+import { RichText, Text, Group as VGroup } from '@src/vrender';
 import type { PivotHeaderLayoutMap } from '../../layout/pivot-header-layout';
 import { validToString } from '../../tools/util';
 import type { ColumnIconOption, ColumnTypeOption } from '../../ts-types';
@@ -79,11 +79,9 @@ export function computeRowsHeight(
       }
       if (isAllRowsAuto || table.getDefaultRowHeight(row) === 'auto') {
         const height = computeRowHeight(row, startCol, endCol, table);
-        if (update) {
-          newHeights[row] = height;
-        } else {
-          table._setRowHeight(row, height);
-        }
+        newHeights[row] = Math.round(height);
+        //表头部分需要马上设置到缓存中 因为adaptive不会调整表头的高度 另外后面adaptive处理过程中有取值 table.getRowsHeight(0, table.columnHeaderLevelCount - 1);
+        table._setRowHeight(row, height);
       }
     }
 
@@ -92,7 +90,7 @@ export function computeRowsHeight(
       if (isAllRowsAuto || table.getDefaultRowHeight(row) === 'auto') {
         const height = computeRowHeight(row, 0, table.colCount - 1, table);
         if (update) {
-          newHeights[row] = height;
+          newHeights[row] = Math.round(height);
         } else {
           table._setRowHeight(row, height);
         }
@@ -125,7 +123,7 @@ export function computeRowsHeight(
         for (let row = table.rowCount - table.bottomFrozenRowCount; row <= rowEnd; row++) {
           const height = computeRowHeight(row, 0, table.colCount - 1, table);
           if (update) {
-            newHeights[row] = height;
+            newHeights[row] = Math.round(height);
           } else {
             table._setRowHeight(row, height);
           }
@@ -148,7 +146,7 @@ export function computeRowsHeight(
           }
           // table.setRowHeight(row, height);
           if (update) {
-            newHeights[row] = height;
+            newHeights[row] = Math.round(height);
           } else {
             table._setRowHeight(row, height);
           }
@@ -160,7 +158,7 @@ export function computeRowsHeight(
           const height = computeRowHeight(row, 0, table.colCount - 1, table);
           // table.setRowHeight(row, height);
           if (update) {
-            newHeights[row] = height;
+            newHeights[row] = Math.round(height);
           } else {
             table._setRowHeight(row, height);
           }
@@ -168,7 +166,8 @@ export function computeRowsHeight(
       }
     }
   } else {
-    table.rowHeightsMap.clear();
+    // table.rowHeightsMap.clear();
+    table.clearRowHeightCache();
     for (let row = 0; row < table.rowCount; row++) {
       newHeights[row] = table.getRowHeight(row);
     }
@@ -221,7 +220,10 @@ export function computeRowsHeight(
     let actualHeaderHeight = 0;
     for (let row = 0; row < table.rowCount; row++) {
       const rowHeight = update ? newHeights[row] : table.getRowHeight(row);
-      if (row < table.frozenRowCount || (table.isPivotChart() && row >= table.rowCount - table.bottomFrozenRowCount)) {
+      if (
+        row < table.columnHeaderLevelCount ||
+        (table.isPivotChart() && row >= table.rowCount - table.bottomFrozenRowCount)
+      ) {
         actualHeaderHeight += rowHeight;
       }
 
@@ -230,26 +232,28 @@ export function computeRowsHeight(
     table.scenegraph._dealAutoFillHeightOriginRowsHeight = actualHeight;
     // 如果内容高度小于canvas高度，执行adaptive放大
     if (actualHeight < canvasHeight && actualHeight - actualHeaderHeight > 0) {
+      const startRow = table.columnHeaderLevelCount;
+      const endRow = table.isPivotChart() ? table.rowCount - table.bottomFrozenRowCount : table.rowCount;
       const factor = (canvasHeight - actualHeaderHeight) / (actualHeight - actualHeaderHeight);
-      for (let row = table.frozenRowCount; row < table.rowCount - table.bottomFrozenRowCount; row++) {
+      for (let row = startRow; row < endRow; row++) {
         // if (update) {
         //   newHeights[row] = newHeights[row] * factor;
         // } else {
         //   table.setRowHeight(row, table.getRowHeight(row) * factor);
         // }
         let rowHeight;
-        if (row === table.rowCount - table.bottomFrozenRowCount - 1) {
+        if (row === endRow - 1) {
           rowHeight =
             canvasHeight -
             actualHeaderHeight -
             (update
               ? newHeights.reduce((acr, cur, index) => {
-                  if (index >= table.frozenRowCount && index <= table.rowCount - table.bottomFrozenRowCount - 2) {
+                  if (index >= startRow && index <= endRow - 2) {
                     return acr + cur;
                   }
                   return acr;
                 }, 0)
-              : table.getRowsHeight(table.frozenRowCount, table.rowCount - table.bottomFrozenRowCount - 2));
+              : table.getRowsHeight(startRow, endRow - 2));
         } else {
           rowHeight = Math.round((update ? newHeights[row] : table.getRowHeight(row)) * factor);
         }
@@ -266,9 +270,34 @@ export function computeRowsHeight(
     for (let row = 0; row < table.rowCount; row++) {
       const newRowHeight = newHeights[row] ?? table.getRowHeight(row);
       if (newRowHeight !== oldRowHeights[row]) {
-        // update the row height in scenegraph
-        table.scenegraph.updateRowHeight(row, newRowHeight - oldRowHeights[row]);
         table._setRowHeight(row, newRowHeight);
+      }
+    }
+
+    if (
+      table.heightMode === 'adaptive' ||
+      (table.autoFillHeight && table.getAllRowsHeight() <= table.tableNoFrameHeight)
+    ) {
+      for (let row = 0; row <= table.columnHeaderLevelCount - 1; row++) {
+        const newRowHeight = table.getRowHeight(row);
+        if (newRowHeight !== oldRowHeights[row]) {
+          // update the row height in scenegraph
+          table.scenegraph.updateRowHeight(row, newRowHeight - oldRowHeights[row], true);
+        }
+      }
+      for (let row = table.rowCount - table.bottomFrozenRowCount; row <= table.rowCount - 1; row++) {
+        const newRowHeight = table.getRowHeight(row);
+        if (newRowHeight !== oldRowHeights[row]) {
+          // update the row height in scenegraph
+          table.scenegraph.updateRowHeight(row, newRowHeight - oldRowHeights[row], true);
+        }
+      }
+    }
+    for (let row = table.scenegraph.proxy.rowStart; row <= table.scenegraph.proxy.rowEnd; row++) {
+      const newRowHeight = table.getRowHeight(row);
+      if (newRowHeight !== oldRowHeights[row]) {
+        // update the row height in scenegraph
+        table.scenegraph.updateRowHeight(row, newRowHeight - oldRowHeights[row], true);
       }
     }
   }
@@ -320,6 +349,13 @@ export function computeRowHeight(row: number, startCol: number, endCol: number, 
       }
     }
 
+    if (
+      table.isPivotChart() &&
+      ((table.isLeftFrozenColumn(col) && table.isBottomFrozenRow(row)) ||
+        (table.isRightFrozenColumn(col) && table.isBottomFrozenRow(row)))
+    ) {
+      continue;
+    }
     const cellType = table.isHeader(col, row)
       ? table._getHeaderLayoutMap(col, row)?.headerType
       : table.getBodyColumnType(col, row);
@@ -675,7 +711,7 @@ function computeTextHeight(col: number, row: number, cellType: ColumnTypeOption,
       wordBreak: 'break-word',
       whiteSpace: lines.length === 1 && !autoWrapText ? 'no-wrap' : 'normal'
     });
-    maxHeight = utilTextMark.AABBBounds.height();
+    maxHeight = utilTextMark.AABBBounds.height() || (typeof lineHeight === 'number' ? lineHeight : fontSize);
   } else {
     // autoWrapText = false
     maxHeight = lines.length * lineHeight;

@@ -1,5 +1,5 @@
 import * as VTable from '../../src';
-import type { IEditor, RectProps, Placement } from '@visactor/vtable-editors';
+import type { IEditor, RectProps, Placement, EditContext } from '@visactor/vtable-editors';
 import { DateInputEditor, InputEditor, ListEditor } from '@visactor/vtable-editors';
 import * as luxon from 'luxon';
 import * as Pikaday from 'pikaday';
@@ -21,9 +21,10 @@ class DateEditor implements IEditor {
   constructor(editorConfig: any) {
     this.editorConfig = editorConfig;
   }
-  beginEditing(container: HTMLElement, referencePosition: { rect: RectProps; placement?: Placement }, value?: string) {
+  onStart({ container, value, referencePosition, endEdit }: EditContext) {
     const that = this;
     this.container = container;
+    this.successCallback = endEdit;
     // const cellValue = luxon.DateTime.fromFormat(value, 'yyyy年MM月dd日').toFormat('yyyy-MM-dd');
     const input = document.createElement('input');
 
@@ -79,18 +80,15 @@ class DateEditor implements IEditor {
     // const cellValue = luxon.DateTime.fromFormat(this.element.value, 'yyyy-MM-dd').toFormat('yyyy年MM月dd日');
     return this.element.value;
   }
-  exit() {
+  onEnd() {
     this.picker.destroy();
     this.container.removeChild(this.element);
   }
-  targetIsOnEditor(target: HTMLElement) {
+  isEditorElement(target: HTMLElement) {
     if (target === this.element || this.picker.el.contains(target)) {
       return true;
     }
     return false;
-  }
-  bindSuccessCallback(successCallback: Function) {
-    this.successCallback = successCallback;
   }
 }
 const custom_date_editor = new DateEditor({});
@@ -223,6 +221,7 @@ export function createTable() {
       title: 'email',
       width: 'auto',
       sort: true,
+      headerEditor: 'input',
       editor: 'input'
     },
     {
@@ -341,11 +340,36 @@ export function createTable() {
     }),
     autoWrapText: true,
     limitMaxAutoWidth: 600,
+    menu: {
+      contextMenuItems: ['向下插入数据', '向下插入空行', '向右插入空列', '修改值', '删除该行']
+    },
+    dragHeaderMode: 'all',
     heightMode: 'autoHeight'
   };
   const tableInstance = new VTable.ListTable(option);
   tableInstance.on('initialized', args => {
     console.log('initialized');
   });
+  tableInstance.on('change_cell_value', arg => {
+    console.log(arg);
+  });
   window.tableInstance = tableInstance;
+  tableInstance.on('dropdown_menu_click', args => {
+    console.log('dropdown_menu_click', args);
+    if (args.menuKey === '向下插入数据') {
+      const recordIndex = tableInstance.getRecordShowIndexByCell(args.col, args.row);
+      tableInstance.addRecords(generatePersons(1), recordIndex + 1);
+    } else if (args.menuKey === '向下插入空行') {
+      const recordIndex = tableInstance.getRecordShowIndexByCell(args.col, args.row);
+      tableInstance.addRecord({}, recordIndex + 1);
+    } else if (args.menuKey === '向右插入空列') {
+      columns.splice(args.col + 1, 0, { field: Date.now().toString(), headerEditor: 'input', editor: 'input' });
+      tableInstance.updateColumns(columns);
+    } else if (args.menuKey === '删除该行') {
+      const recordIndex = tableInstance.getRecordShowIndexByCell(args.col, args.row);
+      tableInstance.deleteRecords([recordIndex]);
+    } else if (args.menuKey === '修改值') {
+      tableInstance.startEditCell(args.col, args.row);
+    }
+  });
 }

@@ -20,3 +20,7 @@ Specify the column type as `'image'`, headerType can be omitted and defaults to 
 ##${prefix} imageAutoSizing(boolean) = false
 
 **Configuration item exclusive to image type** Whether to automatically expand the cell size according to the image size, default is false
+
+##${prefix} clickToPreview(boolean) = true
+
+**Configuration specific to image type** Whether to enable click preview.

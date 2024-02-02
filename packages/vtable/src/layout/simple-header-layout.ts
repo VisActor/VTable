@@ -11,7 +11,8 @@ import type {
   LayoutMapAPI,
   WidthData
 } from '../ts-types/list-table/layout-map/api';
-import { getChartDataId } from './chart-helper/get-chart-spec';
+import { checkHasChart, getChartDataId } from './chart-helper/get-chart-spec';
+import { DimensionTree } from './layout-helper';
 // import { EmptyDataCache } from './utils';
 
 // let seqId = 0;
@@ -22,6 +23,8 @@ export class SimpleHeaderLayoutMap implements LayoutMapAPI {
   // private _headerObjectFieldKey: { [key in string]: HeaderData };
   private _headerCellIds: number[][];
   private _columns: ColumnData[];
+  /** 后期加的 对应pivot-header-layout 中的columnDimensionTree 为了排序后获取到排序后的columns */
+  columnTree: DimensionTree;
   readonly bodyRowSpanCount: number = 1;
   //透视表中树形结构使用 这里为了table逻辑不报错
   // rowHierarchyIndent?: number = 0;
@@ -40,6 +43,7 @@ export class SimpleHeaderLayoutMap implements LayoutMapAPI {
     this._columns = [];
     this._headerCellIds = [];
     this.hierarchyIndent = hierarchyIndent ?? 20;
+    this.columnTree = new DimensionTree(columns as any, { seqId: 0 }); //seqId这里没有利用上 所有顺便传了0
     this._headerObjects = this._addHeaders(0, columns, []);
     this._headerObjectMap = this._headerObjects.reduce((o, e) => {
       o[e.id as number] = e;
@@ -181,7 +185,7 @@ export class SimpleHeaderLayoutMap implements LayoutMapAPI {
       }
     } else {
       row = col;
-      if (this.frozenRowCount > 0 && row >= this.rowCount - this.bottomFrozenRowCount) {
+      if (this.bottomFrozenRowCount > 0 && row >= this.rowCount - this.bottomFrozenRowCount) {
         return true;
       }
     }
@@ -311,21 +315,21 @@ export class SimpleHeaderLayoutMap implements LayoutMapAPI {
     }
     return 0;
   }
-  get colCount(): number | undefined {
+  get colCount(): number {
     //标准表格 列数是由表头定义的field决定的；如果是转置表格，这个值么有地方用到，而且是由数据量决定的，在listTable中有定义这个值
     return this.transpose ? this.headerLevelCount + this.recordsCount : this._columns.length;
   }
-  get rowCount(): number | undefined {
+  get rowCount(): number {
     //转置表格 行数是由表头定义的field决定的；如果是标准表格，这个值么有地方用到，而且是由数据量决定的，在listTable中有定义这个值
     return this.transpose ? this._columns.length : this.headerLevelCount + this.recordsCount;
   }
   /** 不包括冻结的行 */
-  get bodyRowCount(): number | undefined {
+  get bodyRowCount(): number {
     //转置表格 行数是由表头定义的field决定的；如果是标准表格，这个值么有地方用到，而且是由数据量决定的，在listTable中有定义这个值
     return this.transpose ? this._columns.length : this.rowCount - this.bottomFrozenRowCount - this.headerLevelCount;
   }
   /** 不包括冻结的列 */
-  get bodyColCount(): number | undefined {
+  get bodyColCount(): number {
     //转置表格 行数是由表头定义的field决定的；如果是标准表格，这个值么有地方用到，而且是由数据量决定的，在listTable中有定义这个值
     return this.transpose ? this.colCount - this.rightFrozenColCount - this.rowHeaderLevelCount : this._columns.length;
   }
@@ -492,14 +496,28 @@ export class SimpleHeaderLayoutMap implements LayoutMapAPI {
         if (this.headerLevelCount <= row && (this.columnObjects[col]?.define as TextColumnDefine)?.mergeCell) {
           const value = this.getBodyCellValue(col, row);
           for (let r = row - 1; r >= this.headerLevelCount; r--) {
-            if (value !== this.getBodyCellValue(col, r)) {
-              break;
+            const last_Value = this.getBodyCellValue(col, r);
+            if (typeof this.columnObjects[col].define.mergeCell === 'boolean') {
+              if (value !== last_Value) {
+                break;
+              }
+            } else {
+              if (!(this.columnObjects[col].define.mergeCell as Function)(value, last_Value)) {
+                break;
+              }
             }
             cellRange.start.row = r;
           }
           for (let r = row + 1; r < this.rowCount; r++) {
-            if (value !== this.getBodyCellValue(col, r)) {
-              break;
+            const next_Value = this.getBodyCellValue(col, r);
+            if (typeof this.columnObjects[col].define.mergeCell === 'boolean') {
+              if (value !== next_Value) {
+                break;
+              }
+            } else {
+              if (!(this.columnObjects[col].define.mergeCell as Function)(value, next_Value)) {
+                break;
+              }
             }
             cellRange.end.row = r;
           }
@@ -543,17 +561,31 @@ export class SimpleHeaderLayoutMap implements LayoutMapAPI {
     // hover相关的单元格位置是-1,-1，getCellRange计算有误，先进行判断
     if (this.headerLevelCount <= col || (col === -1 && row === -1)) {
       //如果是body部分 设置了需要合并单元格 这里判断左右是否内容相同 相同的话 将cellRange范围扩大
-      if (this.headerLevelCount <= col && (this.columnObjects[row]?.define as TextColumnDefine)?.mergeCell) {
+      if (this.headerLevelCount <= col && this.columnObjects[row]?.define?.mergeCell) {
         const value = this.getBodyCellValue(col, row);
         for (let c = col - 1; c >= this.headerLevelCount; c--) {
-          if (value !== this.getBodyCellValue(c, row)) {
-            break;
+          const last_Value = this.getBodyCellValue(c, row);
+          if (typeof this.columnObjects[row].define.mergeCell === 'boolean') {
+            if (value !== last_Value) {
+              break;
+            }
+          } else {
+            if (!(this.columnObjects[row].define.mergeCell as Function)(value, last_Value)) {
+              break;
+            }
           }
           result.start.col = c;
         }
         for (let c = col + 1; c < (this.colCount ?? 0); c++) {
-          if (value !== this.getBodyCellValue(c, row)) {
-            break;
+          const next_Value = this.getBodyCellValue(c, row);
+          if (typeof this.columnObjects[row].define.mergeCell === 'boolean') {
+            if (value !== next_Value) {
+              break;
+            }
+          } else {
+            if (!(this.columnObjects[row].define.mergeCell as Function)(value, next_Value)) {
+              break;
+            }
           }
           result.end.col = c;
         }
@@ -747,6 +779,12 @@ export class SimpleHeaderLayoutMap implements LayoutMapAPI {
     if (source.col < 0 || source.row < 0 || target.col < 0 || target.row < 0) {
       return false;
     }
+    if (this._table.internalProps.frozenColDragHeaderMode === 'disabled') {
+      if (this._table.isFrozenColumn(target.col) || this._table.isRightFrozenColumn(target.col)) {
+        return false;
+      }
+    }
+
     // 获取操作单元格的range范围
     const sourceCellRange = this.getCellRange(source.col, source.row);
     // 获取source和target对应sourceCellRange.start.row的headerId
@@ -801,6 +839,9 @@ export class SimpleHeaderLayoutMap implements LayoutMapAPI {
         sourceColumns.unshift(targetIndex as any, 0 as any);
         Array.prototype.splice.apply(this._columns, sourceColumns);
 
+        // 对表头columnTree调整节点位置
+        this.columnTree.movePosition(sourceCellRange.start.row, sourceCellRange.start.col, targetIndex);
+
         this._cellRangeMap = new Map();
         return {
           sourceIndex: sourceCellRange.start.col,
@@ -837,6 +878,9 @@ export class SimpleHeaderLayoutMap implements LayoutMapAPI {
         sourceColumns.unshift(targetIndex as any, 0 as any);
         Array.prototype.splice.apply(this._columns, sourceColumns);
 
+        // 对表头columnTree调整节点位置
+        this.columnTree.movePosition(sourceCellRange.start.col, sourceCellRange.start.row, targetIndex);
+
         this._cellRangeMap = new Map();
         return {
           sourceIndex: sourceCellRange.start.row,
@@ -872,6 +916,10 @@ export class SimpleHeaderLayoutMap implements LayoutMapAPI {
     const columnObj = this.transpose ? this._columns[_row] : this._columns[_col];
     return columnObj.chartInstance;
   }
+  checkHasChart() {
+    return checkHasChart(this);
+  }
+
   getAxisConfigInPivotChart(col: number, row: number): any {
     return undefined;
   }
@@ -901,5 +949,11 @@ export class SimpleHeaderLayoutMap implements LayoutMapAPI {
 
   clearCellRangeMap() {
     this._cellRangeMap.clear();
+  }
+
+  updateColumnTitle(col: number, row: number, title: string) {
+    const define = this._table.internalProps.layoutMap.getHeader(col, row);
+    define.title = title;
+    define.define.title = title;
   }
 }

@@ -1,6 +1,6 @@
 /* eslint-disable no-undef */
-import type { Cursor, IImage, IThemeSpec } from '@visactor/vrender';
-import { createRect, createImage } from '@visactor/vrender';
+import type { Cursor, IImage, IThemeSpec } from '@src/vrender';
+import { createRect, createImage } from '@src/vrender';
 import * as icons from '../../../icons';
 import { Group } from '../../graphic/group';
 import { calcKeepAspectRatioSize } from '../../utils/keep-aspect-ratio';
@@ -60,7 +60,9 @@ export function createVideoCellGroup(
 
     lineCap: 'square',
 
-    clip: true
+    clip: true,
+
+    cornerRadius: cellTheme.group.cornerRadius
   } as any);
   cellGroup.role = 'cell';
   cellGroup.col = col;
