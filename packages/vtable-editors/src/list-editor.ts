@@ -1,15 +1,15 @@
-import type { IEditor, Placement, RectProps } from './types';
+import type { EditContext, IEditor, Placement, RectProps } from './types';
 export interface ListEditorConfig {
   values: string[];
 }
 
 export class ListEditor implements IEditor {
   editorType: string = 'Input';
-  input: HTMLInputElement;
-  editorConfig: ListEditorConfig;
-  container: HTMLElement;
-  element: HTMLSelectElement;
-  successCallback: Function;
+  input?: HTMLInputElement;
+  editorConfig?: ListEditorConfig;
+  container?: HTMLElement;
+  element?: HTMLSelectElement;
+  successCallback?: () => void;
 
   constructor(editorConfig: ListEditorConfig) {
     console.log('listEditor constructor');
@@ -54,8 +54,9 @@ export class ListEditor implements IEditor {
     return this.element.value;
   }
 
-  beginEditing(container: HTMLElement, referencePosition: { rect: RectProps; placement?: Placement }, value?: string) {
+  onStart({ container, value, referencePosition, endEdit }: EditContext) {
     this.container = container;
+    this.successCallback = endEdit;
 
     this.createElement(value);
 
@@ -79,18 +80,11 @@ export class ListEditor implements IEditor {
     // do nothing
   }
 
-  exit() {
+  onEnd() {
     this.container.removeChild(this.element);
   }
 
-  targetIsOnEditor(target: HTMLElement) {
-    if (target === this.element) {
-      return true;
-    }
-    return false;
-  }
-
-  bindSuccessCallback(success: Function) {
-    this.successCallback = success;
+  isEditorElement(target: HTMLElement) {
+    return target === this.element;
   }
 }

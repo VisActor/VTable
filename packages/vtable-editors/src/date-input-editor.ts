@@ -7,8 +7,6 @@ export interface DateInputEditorConfig {
 
 export class DateInputEditor extends InputEditor implements IEditor {
   editorType: string = 'DateInput';
-  declare element: HTMLInputElement;
-  successCallback: Function;
   constructor(editorConfig?: DateInputEditorConfig) {
     super(editorConfig);
     this.editorConfig = editorConfig;
@@ -29,8 +27,5 @@ export class DateInputEditor extends InputEditor implements IEditor {
     //   debugger;
     //   this.successCallback();
     // };
-  }
-  bindSuccessCallback(success: Function) {
-    this.successCallback = success;
   }
 }

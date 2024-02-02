@@ -1,4 +1,5 @@
-import type { IEditor, Placement, RectProps } from './types';
+import type { EditContext, IEditor, Placement, RectProps } from './types';
+
 export interface InputEditorConfig {
   max?: number;
   min?: number;
@@ -8,10 +9,13 @@ export class InputEditor implements IEditor {
   editorType: string = 'Input';
   editorConfig: InputEditorConfig;
   container: HTMLElement;
-  declare element: HTMLInputElement;
+  successCallback?: () => void;
+  element?: HTMLInputElement;
+
   constructor(editorConfig?: InputEditorConfig) {
     this.editorConfig = editorConfig;
   }
+
   createElement() {
     const input = document.createElement('input');
     input.setAttribute('type', 'text');
@@ -23,15 +27,19 @@ export class InputEditor implements IEditor {
 
     this.container.appendChild(input);
   }
+
   setValue(value: string) {
     this.element.value = typeof value !== 'undefined' ? value : '';
   }
+
   getValue() {
     return this.element.value;
   }
-  beginEditing(container: HTMLElement, referencePosition: { rect: RectProps; placement?: Placement }, value?: string) {
+
+  onStart({ value, referencePosition, container, endEdit }: EditContext<string>) {
     console.log('input', 'beginEditing---- ');
     this.container = container;
+    this.successCallback = endEdit;
 
     this.createElement();
     if (value) {
@@ -43,24 +51,24 @@ export class InputEditor implements IEditor {
     this.element.focus();
     // do nothing
   }
+
   adjustPosition(rect: RectProps) {
     this.element.style.top = rect.top + 'px';
     this.element.style.left = rect.left + 'px';
     this.element.style.width = rect.width + 'px';
     this.element.style.height = rect.height + 'px';
   }
+
   endEditing() {
     // do nothing
   }
 
-  exit() {
+  onEnd() {
     // do nothing
     this.container.removeChild(this.element);
   }
-  targetIsOnEditor(target: HTMLElement) {
-    if (target === this.element) {
-      return true;
-    }
-    return false;
+
+  isEditorElement(target: HTMLElement) {
+    return target === this.element;
   }
 }
