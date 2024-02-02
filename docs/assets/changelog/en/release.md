@@ -1,3 +1,30 @@
+# v0.19.0
+
+2024-02-02
+
+
+**🆕 New feature**
+
+- **@visactor/vtable**: support get sorted columns [#986](https://github.com/VisActor/VTable/issues/986)
+- **@visactor/vtable**: add option frozenColDragHeaderMode
+
+**🐛 Bug fix**
+
+- **@visactor/vtable**: select region saved problem [#1018](https://github.com/VisActor/VTable/issues/1018)
+- **@visactor/vtable**: when call updateColumns and discount col occor error [#1015](https://github.com/VisActor/VTable/issues/1015)
+- **@visactor/vtable**: rightFrozenColCount drag header move more time the column width is error [#1019](https://github.com/VisActor/VTable/issues/1019)
+- **@visactor/vtable**: empty string compute row height error [#1031](https://github.com/VisActor/VTable/issues/1031)
+- **@visactor/vtable**: fix merge image cell update problem
+
+**🔨 Refactor**
+
+- **@visactor/vtable**: when drag header move to frozen region then markLine show positon
+- **@visactor/vtable**: optimize updateRow api performance & resize bottom frozen row not right
+
+
+
+[more detail about v0.19.0](https://github.com/VisActor/VTable/releases/tag/v0.19.0)
+
 # v0.18.3
 
 2024-01-25
