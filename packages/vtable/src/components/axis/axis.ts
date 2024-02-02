@@ -217,7 +217,7 @@ export class CartesianAxis {
       //   visible: this.option.grid.visible
       // },
       title: {
-        text: this.option.title.text,
+        text: this.option.title.text as string,
         maxWidth: this._getTitleLimit(isX)
       },
       items: this.getLabelItems(axisLength),
