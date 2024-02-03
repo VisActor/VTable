@@ -712,6 +712,46 @@ export class Dataset {
     this.sorted = false;
     this.sortRules = sortRules;
     this.sortKeys();
+    //和初始化代码逻辑一致 但未考虑透视图类型
+    if (!this.customRowTree) {
+      if (this.rowHierarchyType === 'tree') {
+        this.rowHeaderTree = this.ArrToTree1(
+          this.rowKeys,
+          this.rows,
+          this.indicatorsAsCol ? undefined : this.indicators,
+          this.totals?.row?.showGrandTotals ||
+            (!this.indicatorsAsCol && this.columns.length === 0) ||
+            (this.indicatorsAsCol && this.rows.length === 0),
+          this.rowGrandTotalLabel
+        );
+      } else {
+        this.rowHeaderTree = this.ArrToTree(
+          this.rowKeys,
+          this.rows,
+          this.indicatorsAsCol ? undefined : this.indicators,
+          this.rowsIsTotal,
+          this.totals?.row?.showGrandTotals || (this.indicatorsAsCol && this.rows.length === 0),
+          this.rowGrandTotalLabel,
+          this.rowSubTotalLabel,
+          this.totals?.row?.showGrandTotalsOnTop ?? false,
+          this.totals?.row?.showSubTotalsOnTop ?? false
+        );
+      }
+    }
+
+    if (!this.customColTree) {
+      this.colHeaderTree = this.ArrToTree(
+        this.colKeys,
+        this.columns,
+        this.indicatorsAsCol ? this.indicators : undefined,
+        this.colsIsTotal,
+        this.totals?.column?.showGrandTotals || (!this.indicatorsAsCol && this.columns.length === 0), // || this.rows.length === 0,//todo  这里原有逻辑暂时注释掉
+        this.colGrandTotalLabel,
+        this.colSubTotalLabel,
+        this.totals?.column?.showGrandTotalsOnLeft ?? false,
+        this.totals?.column?.showSubTotalsOnLeft ?? false
+      );
+    }
     // this.rowKeysPath_FULL = this.TreeToArr(
     //   this.ArrToTree(
     //     this.rowKeys,
