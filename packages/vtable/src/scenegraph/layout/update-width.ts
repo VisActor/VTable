@@ -20,6 +20,7 @@ import { updateCellContentWidth } from '../utils/text-icon-layout';
 import { computeRowHeight, computeRowsHeight } from './compute-row-height';
 import { updateCellHeightForRow } from './update-height';
 import { getHierarchyOffset } from '../utils/get-hierarchy-offset';
+import { getCellMergeRange } from '../../tools/merge-range';
 // import { updateAutoRowHeight } from './auto-height';
 
 /**
@@ -430,10 +431,7 @@ function updateMergeCellContentWidth(
       cellHeight += table.getRowHeight(row);
     }
 
-    const colStart = Math.max(cellGroup.mergeStartCol, table.scenegraph.proxy.colStart);
-    const colEnd = Math.min(cellGroup.mergeEndCol, table.scenegraph.proxy.colEnd);
-    const rowStart = Math.max(cellGroup.mergeStartRow, table.scenegraph.proxy.rowStart);
-    const rowEnd = Math.min(cellGroup.mergeEndRow, table.scenegraph.proxy.rowEnd);
+    const { colStart, colEnd, rowStart, rowEnd } = getCellMergeRange(cellGroup, table.scenegraph);
     for (let col = colStart; col <= colEnd; col++) {
       for (let row = rowStart; row <= rowEnd; row++) {
         const singleCellGroup = table.scenegraph.getCell(col, row);

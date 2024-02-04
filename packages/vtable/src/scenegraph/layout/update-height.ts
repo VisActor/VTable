@@ -15,6 +15,7 @@ import { isMergeCellGroup } from '../utils/is-merge-cell-group';
 import type { BaseTableAPI } from '../../ts-types/base-table';
 import { resizeCellGroup } from '../group-creater/column-helper';
 import type { IGraphic } from '@src/vrender';
+import { getCellMergeRange } from '../../tools/merge-range';
 
 export function updateRowHeight(scene: Scenegraph, row: number, detaY: number, skipTableHeightMap?: boolean) {
   // 更新table行高存储
@@ -260,10 +261,7 @@ function updateMergeCellContentHeight(
     for (let row = cellGroup.mergeStartRow; row <= cellGroup.mergeEndRow; row++) {
       distHeight += table.getRowHeight(row);
     }
-    const colStart = Math.max(cellGroup.mergeStartCol, table.scenegraph.proxy.colStart);
-    const colEnd = Math.min(cellGroup.mergeEndCol, table.scenegraph.proxy.colEnd);
-    const rowStart = Math.max(cellGroup.mergeStartRow, table.scenegraph.proxy.rowStart);
-    const rowEnd = Math.min(cellGroup.mergeEndRow, table.scenegraph.proxy.rowEnd);
+    const { colStart, colEnd, rowStart, rowEnd } = getCellMergeRange(cellGroup, table.scenegraph);
     for (let col = colStart; col <= colEnd; col++) {
       for (let row = rowStart; row <= rowEnd; row++) {
         const singleCellGroup = table.scenegraph.getCell(col, row);

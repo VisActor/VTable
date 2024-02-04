@@ -9,6 +9,7 @@ import type { IRect } from '@src/vrender';
 import { IContainPointMode, createRect } from '@src/vrender';
 import { dealWithIcon } from '../utils/text-icon-layout';
 import type { BaseTableAPI } from '../../ts-types/base-table';
+import { getCellMergeRange } from '../../tools/merge-range';
 
 export function hideHoverIcon(col: number, row: number, scene: Scenegraph) {
   if (col === -1 || row === -1) {
@@ -398,10 +399,7 @@ export function updateCellRangeIcon(
     isValid(cellGroup.mergeEndCol) &&
     isValid(cellGroup.mergeEndRow)
   ) {
-    const colStart = Math.max(cellGroup.mergeStartCol, scene.proxy.colStart);
-    const colEnd = Math.min(cellGroup.mergeEndCol, scene.proxy.colEnd);
-    const rowStart = Math.max(cellGroup.mergeStartRow, scene.proxy.rowStart);
-    const rowEnd = Math.min(cellGroup.mergeEndRow, scene.proxy.rowEnd);
+    const { colStart, colEnd, rowStart, rowEnd } = getCellMergeRange(cellGroup, scene);
     for (let col = colStart; col <= colEnd; col++) {
       for (let row = rowStart; row <= rowEnd; row++) {
         updateCellGroupIcon(scene.highPerformanceGetCell(col, row), filter, dealer);
