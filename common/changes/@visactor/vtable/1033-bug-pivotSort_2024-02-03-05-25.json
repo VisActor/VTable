@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "comment": "refactor: pivot table sort logic #1033\n\n",
+      "type": "none",
+      "packageName": "@visactor/vtable"
+    }
+  ],
+  "packageName": "@visactor/vtable",
+  "email": "892739385@qq.com"
+}
