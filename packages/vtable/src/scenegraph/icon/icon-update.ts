@@ -398,9 +398,13 @@ export function updateCellRangeIcon(
     isValid(cellGroup.mergeEndCol) &&
     isValid(cellGroup.mergeEndRow)
   ) {
-    for (let col = cellGroup.mergeStartCol; col <= cellGroup.mergeEndCol; col++) {
-      for (let row = cellGroup.mergeStartRow; row <= cellGroup.mergeEndRow; row++) {
-        updateCellGroupIcon(scene.getCell(col, row), filter, dealer);
+    const colStart = Math.max(cellGroup.mergeStartCol, scene.proxy.colStart);
+    const colEnd = Math.min(cellGroup.mergeEndCol, scene.proxy.colEnd);
+    const rowStart = Math.max(cellGroup.mergeStartRow, scene.proxy.rowStart);
+    const rowEnd = Math.min(cellGroup.mergeEndRow, scene.proxy.rowEnd);
+    for (let col = colStart; col <= colEnd; col++) {
+      for (let row = rowStart; row <= rowEnd; row++) {
+        updateCellGroupIcon(scene.highPerformanceGetCell(col, row), filter, dealer);
       }
     }
   } else {

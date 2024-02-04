@@ -260,8 +260,12 @@ function updateMergeCellContentHeight(
     for (let row = cellGroup.mergeStartRow; row <= cellGroup.mergeEndRow; row++) {
       distHeight += table.getRowHeight(row);
     }
-    for (let col = cellGroup.mergeStartCol; col <= cellGroup.mergeEndCol; col++) {
-      for (let row = cellGroup.mergeStartRow; row <= cellGroup.mergeEndRow; row++) {
+    const colStart = Math.max(cellGroup.mergeStartCol, table.scenegraph.proxy.colStart);
+    const colEnd = Math.min(cellGroup.mergeEndCol, table.scenegraph.proxy.colEnd);
+    const rowStart = Math.max(cellGroup.mergeStartRow, table.scenegraph.proxy.rowStart);
+    const rowEnd = Math.min(cellGroup.mergeEndRow, table.scenegraph.proxy.rowEnd);
+    for (let col = colStart; col <= colEnd; col++) {
+      for (let row = rowStart; row <= rowEnd; row++) {
         const singleCellGroup = table.scenegraph.getCell(col, row);
         singleCellGroup.forEachChildren((child: IGraphic) => {
           child.setAttributes({
