@@ -37,7 +37,7 @@ export function computeRowsHeight(
   const oldRowHeights: number[] = [];
   const newHeights: number[] = [];
   if (update) {
-    for (let row = 0; row < table.rowCount; row++) {
+    for (let row = rowStart; row <= rowEnd; row++) {
       // oldRowHeights.push(table.getRowHeight(row));
       oldRowHeights[row] = table.getRowHeight(row);
     }
@@ -166,10 +166,15 @@ export function computeRowsHeight(
       }
     }
   } else {
-    // table.rowHeightsMap.clear();
-    table.clearRowHeightCache();
-    for (let row = 0; row < table.rowCount; row++) {
-      newHeights[row] = table.getRowHeight(row);
+    if (table.rowCount !== table.rowHeightsMap.length) {
+      // for tree mode
+      // table.rowHeightsMap.clear();
+      table.clearRowHeightCache();
+    }
+    if (update) {
+      for (let row = rowStart; row <= rowEnd; row++) {
+        newHeights[row] = table.getRowHeight(row);
+      }
     }
   }
 
@@ -219,7 +224,7 @@ export function computeRowsHeight(
     let actualHeight = 0;
     let actualHeaderHeight = 0;
     for (let row = 0; row < table.rowCount; row++) {
-      const rowHeight = update ? newHeights[row] : table.getRowHeight(row);
+      const rowHeight = update ? newHeights[row] ?? table.getRowHeight(row) : table.getRowHeight(row);
       if (
         row < table.columnHeaderLevelCount ||
         (table.isPivotChart() && row >= table.rowCount - table.bottomFrozenRowCount)
@@ -267,7 +272,7 @@ export function computeRowsHeight(
   }
 
   if (update) {
-    for (let row = 0; row < table.rowCount; row++) {
+    for (let row = rowStart; row <= rowEnd; row++) {
       const newRowHeight = newHeights[row] ?? table.getRowHeight(row);
       if (newRowHeight !== oldRowHeights[row]) {
         table._setRowHeight(row, newRowHeight);
