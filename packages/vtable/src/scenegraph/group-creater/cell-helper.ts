@@ -1,4 +1,4 @@
-import type { Cursor, IThemeSpec, Group as VGroup } from '@src/vrender';
+import type { Cursor, IGraphic, IThemeSpec, Group as VGroup } from '@src/vrender';
 import type { ProgressBarStyle } from '../../body-helper/style/ProgressBarStyle';
 import { regUrl } from '../../tools/global';
 import type {
@@ -428,6 +428,13 @@ export function updateCell(col: number, row: number, table: BaseTableAPI, addNew
 
       y: table.scenegraph.getCellGroupY(row)
     } as any);
+
+    oldCellGroup.forEachChildren((child: IGraphic) => {
+      child.setAttributes({
+        dx: 0,
+        dy: 0
+      });
+    });
 
     // update text
     const textMark = oldCellGroup.getChildByName('text');

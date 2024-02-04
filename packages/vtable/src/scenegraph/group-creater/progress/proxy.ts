@@ -626,6 +626,10 @@ export class SceneProxy {
   updateCellGroupPosition(cellGroup: Group, newRow: number, y: number) {
     // 更新位置&row
     cellGroup.row = newRow;
+    cellGroup.mergeStartCol = undefined;
+    cellGroup.mergeStartRow = undefined;
+    cellGroup.mergeEndCol = undefined;
+    cellGroup.mergeEndRow = undefined;
     cellGroup.setAttribute('y', y);
     (cellGroup as any).needUpdate = true;
     (cellGroup as any).needUpdateForAutoRowHeight = true;
