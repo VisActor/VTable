@@ -206,6 +206,16 @@ export class ListTable extends BaseTable implements ListTableAPI {
     if (table.internalProps.layoutMap.isHeader(col, row)) {
       const { title } = table.internalProps.layoutMap.getHeader(col, row);
       return typeof title === 'function' ? title() : title;
+    } else if (table.internalProps.layoutMap.isAggregation(col, row)) {
+      const column = table.internalProps.layoutMap.getBody(col, row);
+      if (table.internalProps.layoutMap.isTopAggregation(col, row) && column.aggregation?.showOnTop) {
+        return column.aggregator?.value();
+      } else if (
+        table.internalProps.layoutMap.isBottomAggregation(col, row) &&
+        column.aggregation?.showOnTop === false
+      ) {
+        return column.aggregator?.value();
+      }
     }
     const { field, fieldFormat } = table.internalProps.layoutMap.getBody(col, row);
     return table.getFieldData(fieldFormat || field, col, row);
@@ -219,6 +229,9 @@ export class ListTable extends BaseTable implements ListTableAPI {
     if (table.internalProps.layoutMap.isHeader(col, row)) {
       const { title } = table.internalProps.layoutMap.getHeader(col, row);
       return typeof title === 'function' ? title() : title;
+    } else if (table.internalProps.layoutMap.isAggregation(col, row)) {
+      const column = table.internalProps.layoutMap.getBody(col, row);
+      return column.aggregator?.value();
     }
     const { field } = table.internalProps.layoutMap.getBody(col, row);
     return table.getFieldData(field, col, row);
@@ -427,11 +440,12 @@ export class ListTable extends BaseTable implements ListTableAPI {
     if (!layoutMap) {
       return;
     }
-    layoutMap.recordsCount = table.internalProps.dataSource?.length ?? 0;
+    layoutMap.recordsCount =
+      (table.internalProps.dataSource?.length ?? 0) +
+      (layoutMap.hasAggregation ? (layoutMap.hasAggregationOnTop && layoutMap.hasAggregationOnBottom ? 2 : 1) : 0);
     if (table.transpose) {
       table.rowCount = layoutMap.rowCount ?? 0;
-      table.colCount =
-        (table.internalProps.dataSource?.length ?? 0) * layoutMap.bodyRowSpanCount + layoutMap.headerLevelCount;
+      table.colCount = layoutMap.recordsCount * layoutMap.bodyRowSpanCount + layoutMap.headerLevelCount;
       table.frozenRowCount = 0;
       // table.frozenColCount = layoutMap.headerLevelCount; //这里不要这样写 这个setter会检查扁头宽度 可能将frozenColCount置为0
       this.internalProps.frozenColCount = layoutMap.headerLevelCount ?? 0;
@@ -443,8 +457,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
       }
     } else {
       table.colCount = layoutMap.colCount ?? 0;
-      table.rowCount =
-        (table.internalProps.dataSource?.length ?? 0) * layoutMap.bodyRowSpanCount + layoutMap.headerLevelCount;
+      table.rowCount = layoutMap.recordsCount * layoutMap.bodyRowSpanCount + layoutMap.headerLevelCount;
       // table.frozenColCount = table.options.frozenColCount ?? 0; //这里不要这样写 这个setter会检查扁头宽度 可能将frozenColCount置为0
       this.internalProps.frozenColCount = this.options.frozenColCount ?? 0;
       table.frozenRowCount = layoutMap.headerLevelCount;

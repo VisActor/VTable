@@ -1,5 +1,7 @@
 import * as sort from '../tools/sort';
 import type {
+  Aggregation,
+  AggregationRule,
   DataSourceAPI,
   FieldAssessor,
   FieldData,
@@ -12,7 +14,7 @@ import type {
   MaybePromiseOrUndefined,
   SortOrder
 } from '../ts-types';
-import { HierarchyState } from '../ts-types';
+import { AggregationType, HierarchyState } from '../ts-types';
 import { applyChainSafe, getOrApply, obj, isPromise, emptyFn } from '../tools/helper';
 import { EventTarget } from '../event/EventTarget';
 import { getValueByPath, isAllDigits } from '../tools/util';
@@ -20,6 +22,17 @@ import { calculateArrayDiff } from '../tools/diff-cell';
 import { cloneDeep, isValid } from '@visactor/vutils';
 import type { BaseTableAPI } from '../ts-types/base-table';
 import { TABLE_EVENT_TYPE } from '../core/TABLE_EVENT_TYPE';
+import {
+  RecordAggregator,
+  type Aggregator,
+  SumAggregator,
+  CountAggregator,
+  MaxAggregator,
+  MinAggregator,
+  AvgAggregator,
+  NoneAggregator
+} from '../dataset/statistics-helper';
+import type { ColumnData } from '../ts-types/list-table/layout-map/api';
 
 /**
  * 判断字段数据是否为访问器的格式
@@ -158,17 +171,29 @@ export class DataSource extends EventTarget implements DataSourceAPI {
   }
   protected treeDataHierarchyState: Map<number | string, HierarchyState> = new Map();
   beforeChangedRecordsMap: Record<number, any>[] = [];
+
+  // 注册聚合类型
+  registedAggregators: {
+    [key: string]: {
+      new (dimension: string | string[], formatFun?: any, isRecord?: boolean): Aggregator;
+    };
+  } = {};
+  // columns对应各个字段的聚合类对象
+  fieldAggregators: Aggregator[] = [];
   constructor(
     dataSourceObj?: DataSourceParam | DataSource,
     dataConfig?: IListTableDataConfig,
     pagination?: IPagination,
+    columnObjs?: ColumnData[],
     hierarchyExpandLevel?: number
   ) {
     super();
+    this.registerAggregators();
     this.dataSourceObj = dataSourceObj;
     this.dataConfig = dataConfig;
     this._get = dataSourceObj?.get.bind(dataSourceObj) || (undefined as any);
-    this._source = this.filterRecords(dataSourceObj?.source ?? dataSourceObj);
+    columnObjs && this._generateFieldAggragations(columnObjs);
+    this._source = this.processRecords(dataSourceObj?.source ?? dataSourceObj);
     this._sourceLength = this._source?.length || 0;
     this.sortedIndexMap = new Map<string, ISortedMapItem>();
 
@@ -209,19 +234,60 @@ export class DataSource extends EventTarget implements DataSourceAPI {
     }
     this.updatePagerData();
   }
-
-  filterRecords(records: any[]) {
+  //将聚合类型注册 收集到aggregators
+  registerAggregator(type: string, aggregator: any) {
+    this.registedAggregators[type] = aggregator;
+  }
+  //将聚合类型注册
+  registerAggregators() {
+    this.registerAggregator(AggregationType.RECORD, RecordAggregator);
+    this.registerAggregator(AggregationType.SUM, SumAggregator);
+    this.registerAggregator(AggregationType.COUNT, CountAggregator);
+    this.registerAggregator(AggregationType.MAX, MaxAggregator);
+    this.registerAggregator(AggregationType.MIN, MinAggregator);
+    this.registerAggregator(AggregationType.AVG, AvgAggregator);
+    this.registerAggregator(AggregationType.NONE, NoneAggregator);
+  }
+  _generateFieldAggragations(columnObjs: ColumnData[]) {
+    for (let i = 0; i < columnObjs.length; i++) {
+      const field = columnObjs[i].field;
+      const aggragation = columnObjs[i].aggregation;
+      if (!aggragation || aggragation.aggregationType === AggregationType.NONE) {
+        continue;
+      }
+      const aggregator = new this.registedAggregators[aggragation.aggregationType](field as string);
+      this.fieldAggregators.push(aggregator);
+      columnObjs[i].aggregator = aggregator;
+    }
+  }
+  processRecords(records: any[]) {
     const filteredRecords = [];
-    if (this.dataConfig?.filterRules?.length >= 1) {
+    const isHasAggregation = this.fieldAggregators.length >= 1;
+    const isHasFilterRule = this.dataConfig?.filterRules?.length >= 1;
+    if (isHasFilterRule || isHasAggregation) {
       for (let i = 0, len = records.length; i < len; i++) {
         const record = records[i];
-        if (this.filterRecord(record)) {
-          filteredRecords.push(record);
+        if (isHasFilterRule) {
+          if (this.filterRecord(record)) {
+            filteredRecords.push(record);
+            isHasAggregation && this.processRecord(record);
+          }
+        } else if (isHasAggregation) {
+          this.processRecord(record);
         }
       }
-      return filteredRecords;
+      if (isHasFilterRule) {
+        return filteredRecords;
+      }
     }
     return records;
+  }
+
+  processRecord(record: any) {
+    for (let i = 0; i < this.fieldAggregators.length; i++) {
+      const aggregator = this.fieldAggregators[i];
+      aggregator.push(record);
+    }
   }
   /**
    * 初始化子节点的层次信息
@@ -786,7 +852,7 @@ export class DataSource extends EventTarget implements DataSourceAPI {
 
   updateFilterRulesForSorted(filterRules?: FilterRules): void {
     this.dataConfig.filterRules = filterRules;
-    this._source = this.filterRecords(this.dataSourceObj?.source ?? this.dataSourceObj);
+    this._source = this.processRecords(this.dataSourceObj?.source ?? this.dataSourceObj);
     this._sourceLength = this._source?.length || 0;
     this.sortedIndexMap.clear();
     this.currentIndexedData = Array.from({ length: this._sourceLength }, (_, i) => i);
@@ -798,7 +864,7 @@ export class DataSource extends EventTarget implements DataSourceAPI {
 
   updateFilterRules(filterRules?: FilterRules): void {
     this.dataConfig.filterRules = filterRules;
-    this._source = this.filterRecords(this.dataSourceObj?.source ?? this.dataSourceObj);
+    this._source = this.processRecords(this.dataSourceObj?.source ?? this.dataSourceObj);
     this._sourceLength = this._source?.length || 0;
     // 初始化currentIndexedData 正常未排序。设置其状态
     this.currentIndexedData = Array.from({ length: this._sourceLength }, (_, i) => i);

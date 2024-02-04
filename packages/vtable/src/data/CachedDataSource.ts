@@ -8,6 +8,7 @@ import type {
   MaybePromiseOrUndefined
 } from '../ts-types';
 import type { BaseTableAPI } from '../ts-types/base-table';
+import type { ColumnData } from '../ts-types/list-table/layout-map/api';
 import type { DataSourceParam } from './DataSource';
 import { DataSource } from './DataSource';
 
@@ -44,6 +45,7 @@ export class CachedDataSource extends DataSource {
     array: any[],
     dataConfig?: IListTableDataConfig,
     pagination?: IPagination,
+    columnObjs?: ColumnData[],
     hierarchyExpandLevel?: number
   ): CachedDataSource {
     return new CachedDataSource(
@@ -59,6 +61,7 @@ export class CachedDataSource extends DataSource {
       },
       dataConfig,
       pagination,
+      columnObjs,
       hierarchyExpandLevel
     );
   }
@@ -66,9 +69,10 @@ export class CachedDataSource extends DataSource {
     opt?: DataSourceParam,
     dataConfig?: IListTableDataConfig,
     pagination?: IPagination,
+    columnObjs?: ColumnData[],
     hierarchyExpandLevel?: number
   ) {
-    super(opt, dataConfig, pagination, hierarchyExpandLevel);
+    super(opt, dataConfig, pagination, columnObjs, hierarchyExpandLevel);
     this._recordCache = {};
     this._fieldCache = {};
   }

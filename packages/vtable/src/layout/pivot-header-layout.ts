@@ -45,14 +45,8 @@ import {
   isCartesianChart,
   isHasCartesianChartInline
 } from './chart-helper/get-chart-spec';
-import type { LayouTreeNode, IPivotLayoutHeadNode } from './pivot-layout-helper';
-import {
-  DimensionTree,
-  countLayoutTree,
-  dealHeader,
-  dealHeaderForTreeMode,
-  generateLayoutTree
-} from './pivot-layout-helper';
+import type { LayouTreeNode, IPivotLayoutHeadNode } from './tree-helper';
+import { DimensionTree, countLayoutTree, dealHeader, dealHeaderForTreeMode, generateLayoutTree } from './tree-helper';
 import type { Dataset } from '../dataset/dataset';
 import { cloneDeep, isArray, isValid } from '@visactor/vutils';
 import type { TextStyle } from '../body-helper/style';

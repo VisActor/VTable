@@ -228,3 +228,10 @@ export type CollectValueBy = {
   sortBy?: string[];
 };
 export type CollectedValue = { max?: number; min?: number } | Array<string>;
+
+//#region 提供给基本表格的类型
+export type Aggregation = {
+  aggregationType: AggregationType;
+  showOnTop?: boolean;
+};
+//#endregion
