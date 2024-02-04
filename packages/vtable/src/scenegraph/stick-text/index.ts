@@ -4,6 +4,7 @@ import type { Group } from '../graphic/group';
 import type { PivotHeaderLayoutMap } from '../../layout/pivot-header-layout';
 import type { ITextStyleOption, StickCell } from '../../ts-types';
 import { isNumber } from '@visactor/vutils';
+import { getCellMergeRange } from '../../tools/merge-range';
 
 export function handleTextStick(table: BaseTableAPI) {
   // reset
@@ -139,10 +140,7 @@ function adjustCellContentVerticalLayout(
     isNumber(cellGroup.mergeEndCol) &&
     isNumber(cellGroup.mergeEndRow)
   ) {
-    const colStart = Math.max(cellGroup.mergeStartCol, table.scenegraph.proxy.colStart);
-    const colEnd = Math.min(cellGroup.mergeEndCol, table.scenegraph.proxy.colEnd);
-    const rowStart = Math.max(cellGroup.mergeStartRow, table.scenegraph.proxy.rowStart);
-    const rowEnd = Math.min(cellGroup.mergeEndRow, table.scenegraph.proxy.rowEnd);
+    const { colStart, colEnd, rowStart, rowEnd } = getCellMergeRange(cellGroup, table.scenegraph);
     for (let col = colStart; col <= colEnd; col++) {
       for (let row = rowStart; row <= rowEnd; row++) {
         const singleCellGroup = table.scenegraph.getCell(col, row);
@@ -228,10 +226,7 @@ function adjustCellContentHorizontalLayout(
     isNumber(cellGroup.mergeEndCol) &&
     isNumber(cellGroup.mergeEndRow)
   ) {
-    const colStart = Math.max(cellGroup.mergeStartCol, table.scenegraph.proxy.colStart);
-    const colEnd = Math.min(cellGroup.mergeEndCol, table.scenegraph.proxy.colEnd);
-    const rowStart = Math.max(cellGroup.mergeStartRow, table.scenegraph.proxy.rowStart);
-    const rowEnd = Math.min(cellGroup.mergeEndRow, table.scenegraph.proxy.rowEnd);
+    const { colStart, colEnd, rowStart, rowEnd } = getCellMergeRange(cellGroup, table.scenegraph);
     for (let col = colStart; col <= colEnd; col++) {
       for (let row = rowStart; row <= rowEnd; row++) {
         const singleCellGroup = table.scenegraph.getCell(col, row);

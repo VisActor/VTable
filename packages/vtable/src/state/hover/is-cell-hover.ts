@@ -4,6 +4,7 @@ import { getProp } from '../../scenegraph/utils/get-prop';
 import type { BaseTableAPI } from '../../ts-types/base-table';
 import { HighlightScope } from '../../ts-types';
 import { isValid } from '@visactor/vutils';
+import { getCellMergeRange } from '../../tools/merge-range';
 
 export function getCellHoverColor(cellGroup: Group, table: BaseTableAPI): string | undefined {
   let colorKey;
@@ -14,10 +15,7 @@ export function getCellHoverColor(cellGroup: Group, table: BaseTableAPI): string
     isValid(cellGroup.mergeEndCol) &&
     isValid(cellGroup.mergeEndRow)
   ) {
-    const colStart = Math.max(cellGroup.mergeStartCol, table.scenegraph.proxy.colStart);
-    const colEnd = Math.min(cellGroup.mergeEndCol, table.scenegraph.proxy.colEnd);
-    const rowStart = Math.max(cellGroup.mergeStartRow, table.scenegraph.proxy.rowStart);
-    const rowEnd = Math.min(cellGroup.mergeEndRow, table.scenegraph.proxy.rowEnd);
+    const { colStart, colEnd, rowStart, rowEnd } = getCellMergeRange(cellGroup, table.scenegraph);
     for (let col = colStart; col <= colEnd; col++) {
       for (let row = rowStart; row <= rowEnd; row++) {
         const key = isCellHover(table.stateManager, col, row, cellGroup);
