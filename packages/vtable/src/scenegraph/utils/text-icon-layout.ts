@@ -532,13 +532,13 @@ export function updateCellContentWidth(
     } else if (child.role === 'icon-absolute-right') {
       child.setAttribute('x', child.attribute.x + detaX);
     } else if (child.name === 'content' || child.name === 'text') {
-      const contentWidth = child.AABBBounds.width();
-      if (textAlign === 'center') {
+      const childTextAlign = child.attribute.textAlign ?? textAlign;
+      if (childTextAlign === 'center') {
         child.setAttribute(
           'x',
           padding[3] + leftIconWidth + (distWidth - (padding[1] + padding[3]) - leftIconWidth - rightIconWidth) / 2
         );
-      } else if (textAlign === 'right') {
+      } else if (childTextAlign === 'right') {
         child.setAttribute('x', padding[3] + distWidth - (padding[1] + padding[3]) - rightIconWidth);
       } else {
         // left: do nothing
