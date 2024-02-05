@@ -53,7 +53,6 @@ export interface HeaderData extends WidthData {
   icons?: (string | ColumnIconOption)[] | ((args: CellInfo) => (string | ColumnIconOption)[]);
 
   field: FieldDef;
-  fieldKey?: FieldKeyDef;
   fieldFormat?: FieldFormat;
   style?: HeaderStyleOption | ColumnStyle | null | undefined;
   headerType: 'text' | 'link' | 'image' | 'video' | 'checkbox'; // headerType.BaseHeader;

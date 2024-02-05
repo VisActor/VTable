@@ -2579,9 +2579,6 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
   getHeaderField(col: number, row: number): FieldDef {
     return this.internalProps.layoutMap.getHeaderField(col, row);
   }
-  getHeaderFieldKey(col: number, row: number): FieldDef {
-    return this.internalProps.layoutMap.getHeaderFieldKey(col, row);
-  }
   /**
    * 根据行列号获取配置
    * @param  {number} col column index.
@@ -2670,12 +2667,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
    */
   _getHeaderCellBySortState(sortState: SortState): CellAddress | undefined {
     const { layoutMap } = this.internalProps;
-    let hd;
-    if (sortState.fieldKey) {
-      hd = layoutMap.headerObjects.find((col: any) => col && col.fieldKey === sortState.fieldKey);
-    } else {
-      hd = layoutMap.headerObjects.find((col: any) => col && col.field === sortState.field);
-    }
+    const hd = layoutMap.headerObjects.find((col: any) => col && col.field === sortState.field);
     if (hd) {
       const headercell = layoutMap.getHeaderCellAdressById(hd.id as number);
       return headercell;

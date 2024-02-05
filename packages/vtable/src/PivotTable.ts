@@ -84,9 +84,11 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
     this.internalProps.columnResizeType = options.columnResizeType ?? 'column';
     this.internalProps.dataConfig = cloneDeep(options.dataConfig);
 
-    this.internalProps.enableDataAnalysis = options.enableDataAnalysis;
+    // this.internalProps.enableDataAnalysis = options.enableDataAnalysis;
     if (!options.rowTree && !options.columnTree) {
       this.internalProps.enableDataAnalysis = true;
+    } else {
+      this.internalProps.enableDataAnalysis = false;
     }
     const records = this.internalProps.records;
     if (this.internalProps.enableDataAnalysis && (options.rows || options.columns)) {
@@ -226,9 +228,11 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
     // 更新protectedSpace
     internalProps.columnResizeType = options.columnResizeType ?? 'column';
     internalProps.dataConfig = cloneDeep(options.dataConfig);
-    internalProps.enableDataAnalysis = options.enableDataAnalysis;
+    // internalProps.enableDataAnalysis = options.enableDataAnalysis;
     if (!options.rowTree && !options.columnTree) {
       internalProps.enableDataAnalysis = true;
+    } else {
+      internalProps.enableDataAnalysis = false;
     }
     //维护tree树形结构的展开状态
     if (

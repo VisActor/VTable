@@ -32,7 +32,7 @@ import type {
   HeaderValues,
   HeightModeDef,
   HierarchyState,
-  IDataConfig,
+  IPivotTableDataConfig,
   IPagination,
   ITableThemeDefine,
   SortState,
@@ -46,7 +46,9 @@ import type {
   CustomMerge,
   IColumnDimension,
   IRowDimension,
-  TableEventOptions
+  TableEventOptions,
+  IPivotChartDataConfig,
+  IListTableDataConfig
 } from '.';
 import type { TooltipOptions } from './tooltip';
 import type { IWrapTextGraphicAttribute } from '../scenegraph/graphic/text';
@@ -566,7 +568,6 @@ export interface BaseTableAPI {
   getRecordStartRowByRecordIndex: (index: number) => number;
 
   getHeaderField: (col: number, row: number) => any | undefined;
-  getHeaderFieldKey: (col: number, row: number) => any | undefined;
 
   _getHeaderCellBySortState: (sortState: SortState) => CellAddress | undefined;
   getHeaderDefine: (col: number, row: number) => ColumnDefine;
@@ -699,6 +700,7 @@ export interface BaseTableAPI {
 export interface ListTableProtected extends IBaseTableProtected {
   /** 表格数据 */
   records: any[] | null;
+  dataConfig?: IListTableDataConfig;
   columns: ColumnsDefine;
   layoutMap: SimpleHeaderLayoutMap;
 }
@@ -707,7 +709,7 @@ export interface PivotTableProtected extends IBaseTableProtected {
   /** 表格数据 */
   records: any[] | null;
   layoutMap: PivotHeaderLayoutMap;
-  dataConfig?: IDataConfig;
+  dataConfig?: IPivotTableDataConfig;
   /**
    * 透视表是否开启数据分析
    * 如果传入数据是明细数据需要聚合分析则开启
@@ -730,7 +732,7 @@ export interface PivotChartProtected extends IBaseTableProtected {
   /** 表格数据 */
   records: any[] | Record<string, any[]>;
   layoutMap: PivotHeaderLayoutMap;
-  dataConfig?: IDataConfig;
+  dataConfig?: IPivotChartDataConfig;
   columnTree?: IHeaderTreeDefine[];
   /** 行表头维度结构 */
   rowTree?: IHeaderTreeDefine[];

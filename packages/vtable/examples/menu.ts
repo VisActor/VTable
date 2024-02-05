@@ -98,6 +98,15 @@ export const menus = [
     ]
   },
   {
+    menu: '基本表格分析',
+    children: [
+      {
+        path: 'list-analysis',
+        name: 'list-filter'
+      }
+    ]
+  },
+  {
     menu: '透视表',
     children: [
       {
