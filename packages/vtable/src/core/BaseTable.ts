@@ -101,7 +101,6 @@ const EMPTY_STYLE = {};
 export abstract class BaseTable extends EventTarget implements BaseTableAPI {
   internalProps: IBaseTableProtected;
   showFrozenIcon = true;
-  showSort = true;
   padding: { top: number; left: number; right: number; bottom: number };
   globalDropDownMenu?: MenuListItem[];
   //画布绘制单元格的区域 不包括整体边框frame，所以比canvas的width和height要小一点（canvas的width包括了frame）
@@ -1939,16 +1938,6 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
         padding.right && (this.padding.right = padding.right);
       }
     }
-
-    // 更新hover/click状态
-
-    // 更新基础组件显示状态
-    // (showHeader!=undefined) &&(this.showHeader = showHeader);
-    // (showFrozenIcon!=undefined) &&(this.showFrozenIcon = showFrozenIcon);
-    // (showSort!=undefined) &&(this.showSort = showSort);
-    // style.initDocument(scrollBar);
-    // this.showHeader = typeof showHeader === 'boolean' ? showHeader : true;
-    // this.scrollBar = typeof scrollBar === 'boolean' ? scrollBar : true;
     this.showFrozenIcon = typeof showFrozenIcon === 'boolean' ? showFrozenIcon : true;
     if (typeof allowFrozenColCount === 'number' && allowFrozenColCount <= 0) {
       this.showFrozenIcon = false;

@@ -774,13 +774,13 @@ export class ListTable extends BaseTable implements ListTableAPI {
       } else {
         hd = this.internalProps.layoutMap.headerObjects.find((col: any) => col && col.field === field);
       }
-      if (hd?.define?.sort) {
-        this.dataSource.sort(hd.field, order, sortFunc);
+      // if (hd?.define?.sort) {
+      this.dataSource.sort(hd.field, order, sortFunc);
 
-        // clear cell range cache
-        this.internalProps.layoutMap.clearCellRangeMap();
-        this.scenegraph.sortCell();
-      }
+      // clear cell range cache
+      this.internalProps.layoutMap.clearCellRangeMap();
+      this.scenegraph.sortCell();
+      // }
     }
     this.stateManager.updateSortState(sortState as SortState);
   }

@@ -9,6 +9,7 @@ import { TextHeaderStyle } from './style';
 import type { ListTable } from '../ListTable';
 import type { BaseTableAPI } from '../ts-types/base-table';
 import { CheckboxStyle } from './style/CheckboxStyle';
+import { isValid } from '@visactor/vutils';
 export class HeaderHelper {
   normalIcon: SvgIcon;
   upIcon: SvgIcon;
@@ -182,7 +183,12 @@ export class HeaderHelper {
     const icon = order === 'asc' ? this.downIcon : order === 'desc' ? this.upIcon : this.normalIcon;
 
     const headerC = _table.getHeaderDefine(col, row) as any;
-    if (!headerC || !(headerC.showSort || headerC.sort) || (headerC.columns && headerC.columns.length > 0)) {
+    if (
+      !headerC ||
+      headerC.showSort === false ||
+      (!isValid(headerC.showSort) && !isValid(headerC.sort)) ||
+      (headerC.columns && headerC.columns.length > 0)
+    ) {
       return null;
     }
     return icon;
