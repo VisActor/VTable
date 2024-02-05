@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vtable",
+      "comment": "fix: fix textAlign value in width update#1065",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vtable"
+}
