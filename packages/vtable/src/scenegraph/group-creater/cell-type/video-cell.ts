@@ -57,6 +57,7 @@ export function createVideoCellGroup(
     strokeArrayWidth: (cellTheme?.group as any)?.strokeArrayWidth ?? undefined,
     strokeArrayColor: (cellTheme?.group as any)?.strokeArrayColor ?? undefined,
     cursor: (cellTheme?.group as any)?.cursor ?? undefined,
+    lineDash: cellTheme?.group?.lineDash ?? undefined,
 
     lineCap: 'square',
 
