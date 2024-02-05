@@ -186,7 +186,7 @@ export class HeaderHelper {
     if (
       !headerC ||
       headerC.showSort === false ||
-      (!isValid(headerC.showSort) && !isValid(headerC.sort)) ||
+      (!isValid(headerC.showSort) && !headerC.sort) ||
       (headerC.columns && headerC.columns.length > 0)
     ) {
       return null;

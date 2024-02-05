@@ -774,13 +774,13 @@ export class ListTable extends BaseTable implements ListTableAPI {
       } else {
         hd = this.internalProps.layoutMap.headerObjects.find((col: any) => col && col.field === field);
       }
-      // if (hd?.define?.sort) {
-      this.dataSource.sort(hd.field, order, sortFunc);
+      if (hd.define.sort !== false) {
+        this.dataSource.sort(hd.field, order, sortFunc);
 
-      // clear cell range cache
-      this.internalProps.layoutMap.clearCellRangeMap();
-      this.scenegraph.sortCell();
-      // }
+        // clear cell range cache
+        this.internalProps.layoutMap.clearCellRangeMap();
+        this.scenegraph.sortCell();
+      }
     }
     this.stateManager.updateSortState(sortState as SortState);
   }
@@ -847,7 +847,9 @@ export class ListTable extends BaseTable implements ListTableAPI {
             hd = this.internalProps.layoutMap.headerObjects.find((col: any) => col && col.field === field);
           }
           // hd?.define?.sort && //如果这里也判断 那想要利用sortState来排序 但不显示排序图标就实现不了
-          this.dataSource.sort(hd.field, order, sortFunc ?? defaultOrderFn);
+          if (hd.define.sort !== false) {
+            this.dataSource.sort(hd.field, order, sortFunc ?? defaultOrderFn);
+          }
         }
       }
       this.refreshRowColCount();
