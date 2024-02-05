@@ -97,10 +97,18 @@ export function createTable() {
       field: 'salary',
       title: 'salary',
       width: 100,
-      aggregation: {
-        aggregationType: AggregationType.MAX,
-        showOnTop: true
-      }
+      aggregation: [
+        {
+          aggregationType: AggregationType.MAX
+        },
+        {
+          aggregationType: AggregationType.MIN
+        },
+        {
+          aggregationType: AggregationType.AVG,
+          showOnTop: true
+        }
+      ]
     }
   ];
   const option: VTable.ListTableConstructorOptions = {
@@ -124,7 +132,7 @@ export function createTable() {
       isShowOverflowTextTooltip: true
     },
     frozenColCount: 1,
-    bottomFrozenRowCount: 1,
+    bottomFrozenRowCount: 2,
     rightFrozenColCount: 2,
     overscrollBehavior: 'none',
     autoWrapText: true,

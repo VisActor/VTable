@@ -83,5 +83,5 @@ export interface IBasicColumnBodyDefine {
   customRender?: ICustomRender;
   customLayout?: ICustomLayout;
   editor?: string | IEditor | ((args: BaseCellInfo & { table: BaseTableAPI }) => string | IEditor);
-  aggregation?: Aggregation;
+  aggregation?: Aggregation | Aggregation[];
 }

@@ -131,8 +131,8 @@ export interface ColumnData extends WidthData {
    * 是否禁用调整列宽,如果是转置表格或者是透视表的指标是行方向指定 那该配置不生效
    */
   disableColumnResize?: boolean;
-  aggregation?: Aggregation;
-  aggregator?: Aggregator;
+  aggregation?: Aggregation | Aggregation[];
+  aggregator?: Aggregator | Aggregator[];
 }
 
 export interface IndicatorData extends WidthData {

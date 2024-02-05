@@ -207,14 +207,12 @@ export class ListTable extends BaseTable implements ListTableAPI {
       const { title } = table.internalProps.layoutMap.getHeader(col, row);
       return typeof title === 'function' ? title() : title;
     } else if (table.internalProps.layoutMap.isAggregation(col, row)) {
-      const column = table.internalProps.layoutMap.getBody(col, row);
-      if (table.internalProps.layoutMap.isTopAggregation(col, row) && column.aggregation?.showOnTop) {
-        return column.aggregator?.value();
-      } else if (
-        table.internalProps.layoutMap.isBottomAggregation(col, row) &&
-        column.aggregation?.showOnTop === false
-      ) {
-        return column.aggregator?.value();
+      if (table.internalProps.layoutMap.isTopAggregation(col, row)) {
+        const aggregator = table.internalProps.layoutMap.getAggregatorOnTop(col, row);
+        return aggregator?.value();
+      } else if (table.internalProps.layoutMap.isBottomAggregation(col, row)) {
+        const aggregator = table.internalProps.layoutMap.getAggregatorOnBottom(col, row);
+        return aggregator?.value();
       }
     }
     const { field, fieldFormat } = table.internalProps.layoutMap.getBody(col, row);
@@ -230,8 +228,13 @@ export class ListTable extends BaseTable implements ListTableAPI {
       const { title } = table.internalProps.layoutMap.getHeader(col, row);
       return typeof title === 'function' ? title() : title;
     } else if (table.internalProps.layoutMap.isAggregation(col, row)) {
-      const column = table.internalProps.layoutMap.getBody(col, row);
-      return column.aggregator?.value();
+      if (table.internalProps.layoutMap.isTopAggregation(col, row)) {
+        const aggregator = table.internalProps.layoutMap.getAggregatorOnTop(col, row);
+        return aggregator?.value();
+      } else if (table.internalProps.layoutMap.isBottomAggregation(col, row)) {
+        const aggregator = table.internalProps.layoutMap.getAggregatorOnBottom(col, row);
+        return aggregator?.value();
+      }
     }
     const { field } = table.internalProps.layoutMap.getBody(col, row);
     return table.getFieldData(field, col, row);
@@ -442,7 +445,9 @@ export class ListTable extends BaseTable implements ListTableAPI {
     }
     layoutMap.recordsCount =
       (table.internalProps.dataSource?.length ?? 0) +
-      (layoutMap.hasAggregation ? (layoutMap.hasAggregationOnTop && layoutMap.hasAggregationOnBottom ? 2 : 1) : 0);
+      layoutMap.hasAggregationOnTopCount +
+      layoutMap.hasAggregationOnBottomCount;
+
     if (table.transpose) {
       table.rowCount = layoutMap.rowCount ?? 0;
       table.colCount = layoutMap.recordsCount * layoutMap.bodyRowSpanCount + layoutMap.headerLevelCount;

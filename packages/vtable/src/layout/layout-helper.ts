@@ -1,3 +1,4 @@
+import type { Aggregation } from '../ts-types';
 import type { ColumnData } from '../ts-types/list-table/layout-map/api';
 import type { SimpleHeaderLayoutMap } from './simple-header-layout';
 
@@ -14,22 +15,36 @@ export function checkHasAggregation(layoutMap: SimpleHeaderLayoutMap) {
 
 export function checkHasAggregationOnTop(layoutMap: SimpleHeaderLayoutMap) {
   const columnObjects = layoutMap.columnObjects;
+  let count = 0;
   for (let i = 0; i < columnObjects.length; i++) {
     const column = columnObjects[i];
-    if ((column as ColumnData)?.aggregation && (column as ColumnData)?.aggregation.showOnTop) {
-      return true;
+    if ((column as ColumnData)?.aggregation) {
+      if (Array.isArray((column as ColumnData)?.aggregation)) {
+        count = ((column as ColumnData).aggregation as Array<Aggregation>).filter(
+          item => item.showOnTop === true
+        ).length;
+      } else if (((column as ColumnData).aggregation as Aggregation).showOnTop === true) {
+        count = 1;
+      }
     }
   }
-  return false;
+  return count;
 }
 
 export function checkHasAggregationOnBottom(layoutMap: SimpleHeaderLayoutMap) {
   const columnObjects = layoutMap.columnObjects;
+  let count = 0;
   for (let i = 0; i < columnObjects.length; i++) {
     const column = columnObjects[i];
-    if ((column as ColumnData)?.aggregation && (column as ColumnData)?.aggregation.showOnTop === false) {
-      return true;
+    if ((column as ColumnData)?.aggregation) {
+      if (Array.isArray((column as ColumnData)?.aggregation)) {
+        count = ((column as ColumnData).aggregation as Array<Aggregation>).filter(
+          item => item.showOnTop === false
+        ).length;
+      } else if (((column as ColumnData).aggregation as Aggregation).showOnTop === false) {
+        count = 1;
+      }
     }
   }
-  return false;
+  return count;
 }

@@ -252,12 +252,24 @@ export class DataSource extends EventTarget implements DataSourceAPI {
     for (let i = 0; i < columnObjs.length; i++) {
       const field = columnObjs[i].field;
       const aggragation = columnObjs[i].aggregation;
-      if (!aggragation || aggragation.aggregationType === AggregationType.NONE) {
+      if (!aggragation) {
         continue;
       }
-      const aggregator = new this.registedAggregators[aggragation.aggregationType](field as string);
-      this.fieldAggregators.push(aggregator);
-      columnObjs[i].aggregator = aggregator;
+      if (Array.isArray(aggragation)) {
+        for (let j = 0; j < aggragation.length; j++) {
+          const item = aggragation[j];
+          const aggregator = new this.registedAggregators[item.aggregationType](field as string);
+          this.fieldAggregators.push(aggregator);
+          if (!columnObjs[i].aggregator) {
+            columnObjs[i].aggregator = [];
+          }
+          columnObjs[i].aggregator.push(aggregator);
+        }
+      } else {
+        const aggregator = new this.registedAggregators[aggragation.aggregationType](field as string);
+        this.fieldAggregators.push(aggregator);
+        columnObjs[i].aggregator = aggregator;
+      }
     }
   }
   processRecords(records: any[]) {
