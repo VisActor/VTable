@@ -104,14 +104,18 @@ export class EditManeger {
     }
 
     const target = e?.target as HTMLElement | undefined;
+    const { editingEditor: editor } = this;
 
-    if (this.editingEditor.targetIsOnEditor) {
-      console.warn('VTable Warn: `targetIsOnEditor` is deprecated, please use `isEditorElement` instead.');
-      if (target && this.editingEditor.targetIsOnEditor(target)) {
+    if (target) {
+      if (editor.targetIsOnEditor) {
+        console.warn('VTable Warn: `targetIsOnEditor` is deprecated, please use `isEditorElement` instead.');
+
+        if (editor.targetIsOnEditor(target)) {
+          return;
+        }
+      } else if (!editor.isEditorElement || editor.isEditorElement(target)) {
         return;
       }
-    } else if (!this.editingEditor.isEditorElement || (target && this.editingEditor.isEditorElement?.(target))) {
-      return;
     }
 
     if (!this.editingEditor.getValue) {
