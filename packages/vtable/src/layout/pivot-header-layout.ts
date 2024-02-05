@@ -2846,6 +2846,7 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
     const dataset = this.dataset;
     // if (dataset) {
     this.rowTree = dataset.rowHeaderTree;
+    this.columnTree = dataset.colHeaderTree;
 
     this.columnDimensionTree = new DimensionTree((this.columnTree as ITreeLayoutHeadNode[]) ?? [], this.sharedVar);
     this.rowDimensionTree = new DimensionTree(
