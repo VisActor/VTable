@@ -1271,7 +1271,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
         absoluteLeft = this.tableNoFrameWidth - (this.getColsWidth(col, this.colCount - 1) ?? 0);
       } else {
         absoluteLeft = this.getColsWidth(0, col - 1) || 0;
-        absoluteLeft += this.scrollLeft;
+        // absoluteLeft += this.scrollLeft;
       }
     } else {
       absoluteLeft = this.getColsWidth(0, col - 1) || 0;
@@ -1284,7 +1284,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
         absoluteTop = this.tableNoFrameHeight - (this.getRowsHeight(row, this.rowCount - 1) ?? 0);
       } else {
         absoluteTop = this.getRowsHeight(0, row - 1);
-        absoluteTop += this.scrollTop;
+        // absoluteTop += this.scrollTop;
       }
     } else {
       absoluteTop = this.getRowsHeight(0, row - 1);
@@ -1425,20 +1425,20 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
 
     let absoluteLeft = this.getColsWidth(0, startCol - 1) || 0; // startCol为0时，absoluteLeft计算为Nan
     let width = this.getColsWidth(startCol, endCol);
-    if (isFrozenStartCell && isFrozenStartCell.col) {
+    if (isFrozenStartCell?.col) {
       const scrollLeft = this.scrollLeft;
       absoluteLeft += scrollLeft;
-      if (!isFrozenEndCell || !isFrozenEndCell.col) {
+      if (!isFrozenEndCell?.col) {
         width -= scrollLeft;
         width = Math.max(width, this.getColsWidth(startCol, this.frozenColCount - 1));
       }
     }
-    let absoluteTop = this.getRowsHeight(0, startRow - 1);
+    const absoluteTop = this.getRowsHeight(0, startRow - 1);
     let height = this.getRowsHeight(startRow, endRow);
-    if (isFrozenStartCell && isFrozenStartCell.row) {
+    if (isFrozenStartCell?.row) {
       const scrollTop = this.scrollTop;
-      absoluteTop += scrollTop;
-      if (!isFrozenEndCell || !isFrozenEndCell.row) {
+      // absoluteTop += scrollTop;
+      if (!isFrozenEndCell?.row) {
         height -= scrollTop;
         height = Math.max(height, this.getRowsHeight(startRow, this.frozenRowCount - 1));
       }
