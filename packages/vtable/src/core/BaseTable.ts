@@ -858,6 +858,10 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     }
   }
 
+  setViewBoxTransform(a: number, b: number, c: number, d: number, e: number, f: number) {
+    this.scenegraph.stage.window.setViewBoxTransform(a, b, c, d, e, f);
+  }
+
   get rowHierarchyType(): 'grid' | 'tree' {
     return 'grid';
   }

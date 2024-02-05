@@ -3145,14 +3145,16 @@ export function createTable() {
   // };
   option.canvas = canvas;
   option.viewBox = {
-    x1: 200,
+    x1: 0,
     x2: 800,
-    y1: 200,
+    y1: 0,
     y2: 800
   };
   const instance = new VTable.PivotChart(option);
   // const instance = new VTable.ListTable(option);
   window.tableInstance = instance;
+
+  instance.setViewBoxTransform(1, 0, 0, 1, 100, 100);
 
   bindDebugTool(tableInstance.scenegraph.stage, {
     customGrapicKeys: ['col', 'row']

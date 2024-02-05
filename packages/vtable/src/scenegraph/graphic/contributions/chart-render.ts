@@ -55,6 +55,10 @@ export class DefaultCanvasChartRender extends BaseRender<Chart> implements IGrap
       themeAttribute: IThemeAttribute
     ) => boolean
   ) {
+    console.log(chart.parent.col, chart.parent.row);
+    // if (chart.parent.col !== 2 || chart.parent.row !== 2) {
+    //   return;
+    // }
     const groupAttribute = getTheme(chart, params?.theme).group;
 
     const { dataId, data, spec } = chart.attribute;
@@ -82,6 +86,34 @@ export class DefaultCanvasChartRender extends BaseRender<Chart> implements IGrap
           return;
         }
       }
+
+      const viewBox = chart.getViewBox();
+      activeChartInstance.updateViewBox(
+        // {
+        //   x1: viewBox.x1 - (chart.getRootNode() as any).table.scrollLeft,
+        //   x2: viewBox.x2 - (chart.getRootNode() as any).table.scrollLeft,
+        //   y1: viewBox.y1 - (chart.getRootNode() as any).table.scrollTop,
+        //   y2: viewBox.y2 - (chart.getRootNode() as any).table.scrollTop
+        // },
+        {
+          x1: 0,
+          x2: viewBox.x2 - viewBox.x1,
+          y1: 0,
+          y2: viewBox.y2 - viewBox.y1
+        },
+        false,
+        false
+      );
+      // console.log(viewBox);
+
+      const chartStage = activeChartInstance.getStage();
+      // chartStage.needRender = true;
+      // chartStage.background = 'red';
+      const matrix = chart.globalTransMatrix.clone();
+      const stageMatrix = chart.stage.window.getViewBoxTransform();
+      matrix.multiply(stageMatrix.a, stageMatrix.b, stageMatrix.c, stageMatrix.d, stageMatrix.e, stageMatrix.f);
+      chartStage.window.setViewBoxTransform(matrix.a, matrix.b, matrix.c, matrix.d, matrix.e, matrix.f);
+
       if (typeof dataId === 'string') {
         activeChartInstance.updateDataSync(dataId, data ?? []);
       } else {

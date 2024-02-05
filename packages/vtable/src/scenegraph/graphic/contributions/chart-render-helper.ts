@@ -50,6 +50,12 @@ export function renderChart(chart: Chart) {
     false
   );
 
+  const chartStage = chartInstance.getStage();
+  const matrix = chart.globalTransMatrix.clone();
+  const stageMatrix = chart.stage.window.getViewBoxTransform();
+  matrix.multiply(stageMatrix.a, stageMatrix.b, stageMatrix.c, stageMatrix.d, stageMatrix.e, stageMatrix.f);
+  chartStage.window.setViewBoxTransform(matrix.a, matrix.b, matrix.c, matrix.d, matrix.e, matrix.f);
+
   const { table } = chart.getRootNode() as any;
 
   let updateSpec = false;

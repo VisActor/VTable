@@ -65,7 +65,7 @@ export class Chart extends Group {
       );
       this.chartInstance.renderSync();
 
-      this.chartInstance.getStage().params.renderKeepMatrix = true;
+      this.chartInstance.getStage().enableDirtyBounds();
     } else {
       this.chartInstance = params.chartInstance;
     }
@@ -107,31 +107,52 @@ export class Chart extends Group {
         renderCanvas: this.attribute.canvas,
         mode: 'desktop-browser',
         canvasControled: false,
+        // viewBox: {
+        //   x1: x1 - table.scrollLeft,
+        //   x2: x2 - table.scrollLeft,
+        //   y1: y1 - table.scrollTop,
+        //   y2: y2 - table.scrollTop
+        // },
         viewBox: {
-          x1: x1 - table.scrollLeft,
-          x2: x2 - table.scrollLeft,
-          y1: y1 - table.scrollTop,
-          y2: y2 - table.scrollTop
+          x1: 0,
+          x2: x2 - x1,
+          y1: 0,
+          y2: y2 - y1
         },
         dpr: table.internalProps.pixelRatio,
         animation: false,
         interactive: true,
         autoFit: false, //控制当容器变化大小时vchart实例不应响应事件进行内部处理
         beforeRender: (stage: any) => {
-          const ctx = stage.window.getContext();
-          ctx.inuse = true;
-          ctx.clearMatrix();
-          ctx.setTransformForCurrent(true);
-          ctx.beginPath();
-          ctx.rect(clipBound.x1, clipBound.y1, clipBound.x2 - clipBound.x1, clipBound.y2 - clipBound.y1);
-          ctx.clip();
+          // const ctx = stage.window.getContext();
+          // ctx.inuse = true;
+          // ctx.clearMatrix();
+          // ctx.setTransformForCurrent(true);
+          // ctx.beginPath();
+          // ctx.rect(clipBound.x1, clipBound.y1, clipBound.x2 - clipBound.x1, clipBound.y2 - clipBound.y1);
+          // ctx.clip();
+          // if (!stage.needRender) {
+          //   stage.skipRender = true;
+          //   table.scenegraph.stage.dirtyBounds.union(this.AABBBounds);
+          //   table.scenegraph.updateNextFrame();
+          // }
         },
         afterRender(stage: any) {
-          const ctx = stage.window.getContext();
-          ctx.inuse = false;
+          // const ctx = stage.window.getContext();
+          // ctx.inuse = false;
+          // stage.needRender = false;
+          // stage.skipRender = false;
         }
       })
     );
+    const chartStage = this.activeChartInstance.getStage();
+    // chartStage.needRender = true;
+    // chartStage.background = 'red';
+    const matrix = this.globalTransMatrix.clone();
+    const stageMatrix = this.stage.window.getViewBoxTransform();
+    matrix.multiply(stageMatrix.a, stageMatrix.b, stageMatrix.c, stageMatrix.d, stageMatrix.e, stageMatrix.f);
+    chartStage.window.setViewBoxTransform(matrix.a, matrix.b, matrix.c, matrix.d, matrix.e, matrix.f);
+
     // this.activeChartInstance.updateData('data', this.attribute.data);
     this.activeChartInstance.renderSync();
 
