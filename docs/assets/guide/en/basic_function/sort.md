@@ -4,6 +4,8 @@ In the process of data analytics, the sorting (sorting) function is very importa
 
 VTable provides rich sorting functions, users can easily open on demand, customize sorting rules, set initial sorting status, etc.
 
+**Note**: This tutorial is only for the basic table ListTable. The pivot table sorting tutorial can be asynchronously accessed: https://visactor.io/vtable/guide/table_type/Pivot_table/pivot_table_dataAnalysis
+
 ## Enable sorting
 
 To use the sorting function of VTable, you need to configure the table columns first. exist `columns` The configuration items for each column need to be set according to cellType (column type). In this tutorial, we mainly focus on sorting-related configurations.
@@ -313,13 +315,13 @@ const columns =[
         "field": "230517143221027",
         "title": "Order ID",
         "width": "auto",
-        "sort":true
+        "showSort":true
     },
     {
         "field": "230517143221030",
         "title": "Customer ID",
         "width": "auto",
-        "sort":true
+        "showSort":true
     },
     {
         "field": "230517143221032",
@@ -377,8 +379,9 @@ const option = {
 // 创建 VTable 实例
 const tableInstance = new VTable.ListTable(document.getElementById(CONTAINER_ID), option);
 window.tableInstance=tableInstance;
+const clickCount=0;
 tableInstance.on('sort_click', args => {
-    const sortState = Date.now() % 3 === 0 ? 'desc' : Date.now() % 3 === 1 ? 'asc' : 'normal';
+    const sortState = clickCount % 3 === 0 ? 'desc' : clickCount % 3 === 1 ? 'asc' : 'normal';
     sortRecords(args.field, sortState)
       .then(records => {
         tableInstance.setRecords(records, null);

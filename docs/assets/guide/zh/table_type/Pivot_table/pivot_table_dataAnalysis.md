@@ -97,6 +97,9 @@ dataConfig: {
       ]
 
 ```
+
+如果需要修改排序规则 透视表可以使用接口 `updateSortRules`。
+
 具体示例：https://visactor.io/vtable/demo/data-analysis/pivot-analysis-sort-dimension
 ### 3. 过滤规则
 [option说明](../../../option/PivotTable#dataConfig.filterRules)
