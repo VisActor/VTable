@@ -1139,6 +1139,18 @@ export class Scenegraph {
     // 处理单元格内容需要textStick的情况
     handleTextStick(this.table);
 
+    // // temp add rect
+    // const rect = createRect({
+    //   x: 200,
+    //   y: 200,
+    //   width: 100,
+    //   height: 100,
+    //   fill: 'red',
+    //   stroke: 'blue',
+    //   lineWidth: 1
+    // });
+    // this.tableGroup.addChild(rect);
+
     this.updateNextFrame();
   }
 

@@ -1,4 +1,4 @@
-import type { GraphicType, IGroupGraphicAttribute } from '@src/vrender';
+import type { GraphicType, IGroupGraphicAttribute, Stage } from '@src/vrender';
 import { genNumberType, Group } from '@src/vrender';
 import { Bounds, merge } from '@visactor/vutils';
 import type { BaseTableAPI } from '../../ts-types/base-table';
@@ -123,25 +123,43 @@ export class Chart extends Group {
         animation: false,
         interactive: true,
         autoFit: false, //控制当容器变化大小时vchart实例不应响应事件进行内部处理
-        beforeRender: (stage: any) => {
-          // const ctx = stage.window.getContext();
-          // ctx.inuse = true;
-          // ctx.clearMatrix();
-          // ctx.setTransformForCurrent(true);
-          // ctx.beginPath();
-          // ctx.rect(clipBound.x1, clipBound.y1, clipBound.x2 - clipBound.x1, clipBound.y2 - clipBound.y1);
-          // ctx.clip();
-          // if (!stage.needRender) {
-          //   stage.skipRender = true;
-          //   table.scenegraph.stage.dirtyBounds.union(this.AABBBounds);
-          //   table.scenegraph.updateNextFrame();
-          // }
+        beforeRender: (chartStage: Stage) => {
+          const stage = this.stage;
+          const ctx = chartStage.window.getContext();
+          const stageMatrix = stage.window.getViewBoxTransform();
+          const viewBox = stage.window.getViewBox();
+          ctx.inuse = true;
+          // ctx.save();
+          // console.log(ctx.getImageData(0, 0, 100, 100));
+          ctx.clearMatrix();
+          ctx.setTransform(
+            stageMatrix.a,
+            stageMatrix.b,
+            stageMatrix.c,
+            stageMatrix.d,
+            stageMatrix.e,
+            stageMatrix.f,
+            true
+          );
+          ctx.translate(viewBox.x1, viewBox.y1);
+          ctx.setTransformForCurrent(true);
+          ctx.beginPath();
+          ctx.rect(clipBound.x1, clipBound.y1, clipBound.x2 - clipBound.x1, clipBound.y2 - clipBound.y1);
+          ctx.clip();
+          ctx.clearMatrix();
+
+          if (!chartStage.needRender) {
+            chartStage.pauseRender();
+            table.scenegraph.stage.dirtyBounds.union(this.globalAABBBounds);
+            table.scenegraph.updateNextFrame();
+          }
         },
         afterRender(stage: any) {
-          // const ctx = stage.window.getContext();
-          // ctx.inuse = false;
-          // stage.needRender = false;
-          // stage.skipRender = false;
+          const ctx = stage.window.getContext();
+          ctx.inuse = false;
+
+          stage.needRender = false;
+          chartStage.resumeRender();
         }
       })
     );

@@ -55,7 +55,7 @@ export class DefaultCanvasChartRender extends BaseRender<Chart> implements IGrap
       themeAttribute: IThemeAttribute
     ) => boolean
   ) {
-    console.log(chart.parent.col, chart.parent.row);
+    // console.log(chart.parent.col, chart.parent.row);
     // if (chart.parent.col !== 2 || chart.parent.row !== 2) {
     //   return;
     // }
@@ -107,7 +107,7 @@ export class DefaultCanvasChartRender extends BaseRender<Chart> implements IGrap
       // console.log(viewBox);
 
       const chartStage = activeChartInstance.getStage();
-      // chartStage.needRender = true;
+      chartStage.needRender = true;
       // chartStage.background = 'red';
       const matrix = chart.globalTransMatrix.clone();
       const stageMatrix = chart.stage.window.getViewBoxTransform();
@@ -144,6 +144,8 @@ export class DefaultCanvasChartRender extends BaseRender<Chart> implements IGrap
         }
         activeChartInstance.updateFullDataSync?.(dataBatch);
       }
+      // debugger;
+      // console.log(drawContext.context.canvas.toDataURL());
     } else {
       if (table.internalProps.renderChartAsync) {
         if (chartRenderKeys.indexOf(`${chart.parent.col}+${chart.parent.row}`) === -1) {
