@@ -99,26 +99,30 @@ const listTable = new ListTable({
 
 In the above code, the initial sorting state of the table is in descending order by age.
 
-## Sort state setting interface
+## Sort state setting interface(update sort rule)
 
-VTable provides `sortState` Properties are used to set the sorting state. This interface can be called directly when the sorting state needs to be modified. E.g:
+VTable provides the `updateSortState` property for setting the sorting state.
+Interface Description:
+```
+  /**
+   * Update sort status
+   * @param sortState The sorting state to be set
+   * @param executeSort Whether to execute internal sorting logic, setting false will only update the icon status and not perform data sorting
+   */
+  updateSortState(sortState: SortState[] | SortState | null, executeSort: boolean = true)
+```
+When you need to modify the sorting status, you can call this interface directly. For example:
 
 ```js
-listTable.sortState = [
+tableInstance.updateSortState(
   {
     field: 'name',
     order: 'asc',
   },
-];
+);
 ```
 
-If you need to reset the sorting state, you can `sortState` Set to `null`For example:
-
-```js
-listTable.sortState = null;
-```
-
-By using `sortState` Interface, users can dynamically adjust the sorting state of the table at any time to meet the needs of real-time analysis.
+By using the `updateSortState` interface, users can dynamically adjust the sorting state of the table at any time to meet real-time analysis needs.
 
 ## Disable internal sorting
 
@@ -133,8 +137,7 @@ tableInstance.on('sort_click', args => {
 ```
 After the sorting is completed, setRecords is required to update the data to the table. If you need to switch the sorting icon, you need to cooperate with the interface `updateSortState` and use the second parameter of the interface to be set to false to switch only the sorting icon.
 
-Notice:
-- When calling setRecords, you need to clear the internal sorting state first (otherwise, when calling setRecords, the data will be sorted according to the previous sorting state), that is, set the second parameter to null.
+- When calling the setRecords interface, you need to set the second parameter to null to clear the internal sorting state (otherwise, when setRecords is called, the data will be sorted according to the last set sorting state)
 
 Example:
 ```javascript livedemo template=vtable
@@ -409,4 +412,62 @@ tableInstance.on('sort_click', args => {
   }
 
 ```
+## Replace the default sort icon
+
 If you do not want to use the internal icon, you can use the icon customization function to replace it. Follow the reference tutorial: https://www.visactor.io/vtable/guide/custom_define/custom_icon
+
+Here is an example of replacing the sort icon:
+
+Note: Configuration of `name` and `funcType`
+
+```
+VTable.register.icon("frozenCurrent", {
+  type: "svg",
+  svg: "/sort.svg",
+  width: 22,
+  height: 22,
+  name: "sort_normal",
+  positionType: VTable.TYPES.IconPosition.left,
+  marginRight: 0,
+  funcType: VTable.TYPES.IconFuncTypeEnum.sort,
+  hover: {
+    width: 22,
+    height: 22,
+    bgColor: "rgba(101, 117, 168, 0.1)",
+  },
+  cursor: "pointer",
+});
+```
+
+## Hide sort icon
+
+We provide `showSort` configuration to hide the sorting icon, but the sorting logic can be executed normally
+
+Here is an example of hiding the sort icon:
+
+```js
+const listTable = new ListTable({
+  // ...Other configuration items
+  columns: [
+    {
+      title: 'name',
+      field: 'name',
+      cellType: 'text',
+      showSort: false,
+      sort: true, // Use built-in default sorting logic
+    },
+    {
+      title: 'Age',
+      field: 'age',
+      cellType: 'text',
+      showSort: false,
+      sort: (v1, v2, order) => { // Use custom sorting logic
+          if (order === 'desc') {
+            return v1 === v2 ? 0 : v1 > v2 ? -1 : 1;
+          }
+          return v1 === v2 ? 0 : v1 > v2 ? 1 : -1;
+        },
+    },
+  ],
+});
+```
