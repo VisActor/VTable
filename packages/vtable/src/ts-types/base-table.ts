@@ -373,6 +373,9 @@ export interface BaseTableConstructorOptions {
   disableInteraction?: boolean;
 
   specFormat?: (spec: any) => { needFormatSpec: boolean; spec?: any };
+
+  beforeRender?: (stage: any) => void;
+  afterRender?: (stage: any) => void;
 }
 export interface BaseTableAPI {
   /** 表格的行数 */

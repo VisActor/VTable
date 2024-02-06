@@ -1,4 +1,4 @@
-import type { IStage, IRect, ITextCache, INode, Text, RichText } from '@src/vrender';
+import type { IStage, IRect, ITextCache, INode, Text, RichText, Stage } from '@src/vrender';
 import { createStage, createRect, IContainPointMode, container, vglobal, registerForVrender } from '@src/vrender';
 import type { CellRange, CellSubLocation } from '../ts-types';
 import {
@@ -145,7 +145,11 @@ export class Scenegraph {
       dpr: table.internalProps.pixelRatio,
       enableLayout: true,
       // pluginList: table.isPivotChart() ? ['poptipForText'] : undefined,
-      afterRender: () => {
+      beforeRender: (stage: Stage) => {
+        this.table.options?.beforeRender(stage);
+      },
+      afterRender: (stage: Stage) => {
+        this.table.options?.afterRender(stage);
         this.table.fireListeners('after_render', null);
         // console.trace('after_render');
       },
