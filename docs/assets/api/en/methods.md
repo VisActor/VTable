@@ -592,6 +592,16 @@ Update the sort status, ListTable exclusive
    */
   updateSortState(sortState: SortState[] | SortState | null, executeSort: boolean = true)
 ```
+## updateSortRules(Function)
+
+Pivot table update sorting rules, exclusive to PivotTable
+```
+  /**
+   * Full update of sorting rules
+   * @param sortRules
+   */
+  updateSortRules(sortRules: SortRules)
+```
 
 ## updatePivotSortState(Function)
 

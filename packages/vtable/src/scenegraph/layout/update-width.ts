@@ -20,6 +20,7 @@ import { updateCellContentWidth } from '../utils/text-icon-layout';
 import { computeRowHeight, computeRowsHeight } from './compute-row-height';
 import { updateCellHeightForRow } from './update-height';
 import { getHierarchyOffset } from '../utils/get-hierarchy-offset';
+import { getCellMergeRange } from '../../tools/merge-range';
 // import { updateAutoRowHeight } from './auto-height';
 
 /**
@@ -430,8 +431,9 @@ function updateMergeCellContentWidth(
       cellHeight += table.getRowHeight(row);
     }
 
-    for (let col = cellGroup.mergeStartCol; col <= cellGroup.mergeEndCol; col++) {
-      for (let row = cellGroup.mergeStartRow; row <= cellGroup.mergeEndRow; row++) {
+    const { colStart, colEnd, rowStart, rowEnd } = getCellMergeRange(cellGroup, table.scenegraph);
+    for (let col = colStart; col <= colEnd; col++) {
+      for (let row = rowStart; row <= rowEnd; row++) {
         const singleCellGroup = table.scenegraph.getCell(col, row);
         singleCellGroup.forEachChildren((child: IGraphic) => {
           child.setAttributes({

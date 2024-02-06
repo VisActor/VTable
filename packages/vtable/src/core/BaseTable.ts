@@ -101,7 +101,6 @@ const EMPTY_STYLE = {};
 export abstract class BaseTable extends EventTarget implements BaseTableAPI {
   internalProps: IBaseTableProtected;
   showFrozenIcon = true;
-  showSort = true;
   padding: { top: number; left: number; right: number; bottom: number };
   globalDropDownMenu?: MenuListItem[];
   //画布绘制单元格的区域 不包括整体边框frame，所以比canvas的width和height要小一点（canvas的width包括了frame）
@@ -1271,7 +1270,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
         absoluteLeft = this.tableNoFrameWidth - (this.getColsWidth(col, this.colCount - 1) ?? 0);
       } else {
         absoluteLeft = this.getColsWidth(0, col - 1) || 0;
-        absoluteLeft += this.scrollLeft;
+        // absoluteLeft += this.scrollLeft;
       }
     } else {
       absoluteLeft = this.getColsWidth(0, col - 1) || 0;
@@ -1284,7 +1283,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
         absoluteTop = this.tableNoFrameHeight - (this.getRowsHeight(row, this.rowCount - 1) ?? 0);
       } else {
         absoluteTop = this.getRowsHeight(0, row - 1);
-        absoluteTop += this.scrollTop;
+        // absoluteTop += this.scrollTop;
       }
     } else {
       absoluteTop = this.getRowsHeight(0, row - 1);
@@ -1425,20 +1424,20 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
 
     let absoluteLeft = this.getColsWidth(0, startCol - 1) || 0; // startCol为0时，absoluteLeft计算为Nan
     let width = this.getColsWidth(startCol, endCol);
-    if (isFrozenStartCell && isFrozenStartCell.col) {
+    if (isFrozenStartCell?.col) {
       const scrollLeft = this.scrollLeft;
       absoluteLeft += scrollLeft;
-      if (!isFrozenEndCell || !isFrozenEndCell.col) {
+      if (!isFrozenEndCell?.col) {
         width -= scrollLeft;
         width = Math.max(width, this.getColsWidth(startCol, this.frozenColCount - 1));
       }
     }
-    let absoluteTop = this.getRowsHeight(0, startRow - 1);
+    const absoluteTop = this.getRowsHeight(0, startRow - 1);
     let height = this.getRowsHeight(startRow, endRow);
-    if (isFrozenStartCell && isFrozenStartCell.row) {
+    if (isFrozenStartCell?.row) {
       const scrollTop = this.scrollTop;
-      absoluteTop += scrollTop;
-      if (!isFrozenEndCell || !isFrozenEndCell.row) {
+      // absoluteTop += scrollTop;
+      if (!isFrozenEndCell?.row) {
         height -= scrollTop;
         height = Math.max(height, this.getRowsHeight(startRow, this.frozenRowCount - 1));
       }
@@ -1939,16 +1938,6 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
         padding.right && (this.padding.right = padding.right);
       }
     }
-
-    // 更新hover/click状态
-
-    // 更新基础组件显示状态
-    // (showHeader!=undefined) &&(this.showHeader = showHeader);
-    // (showFrozenIcon!=undefined) &&(this.showFrozenIcon = showFrozenIcon);
-    // (showSort!=undefined) &&(this.showSort = showSort);
-    // style.initDocument(scrollBar);
-    // this.showHeader = typeof showHeader === 'boolean' ? showHeader : true;
-    // this.scrollBar = typeof scrollBar === 'boolean' ? scrollBar : true;
     this.showFrozenIcon = typeof showFrozenIcon === 'boolean' ? showFrozenIcon : true;
     if (typeof allowFrozenColCount === 'number' && allowFrozenColCount <= 0) {
       this.showFrozenIcon = false;

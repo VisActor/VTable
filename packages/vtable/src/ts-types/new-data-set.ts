@@ -28,9 +28,9 @@ export interface CalcTotals {
 }
 
 export interface Total {
-  /** 是否显示总计; */
+  /** 是否显示总计; 如果配置了total对象，showGrandTotals默认false */
   showGrandTotals: boolean;
-  /** 是否显示小计; */
+  /** 是否显示小计;  如果配置了total对象，showSubTotals默认为true */
   showSubTotals: boolean;
 
   // // 计算总计方法

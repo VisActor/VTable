@@ -20,6 +20,10 @@ export class NumberRangeMap {
     this.table = table;
   }
 
+  get length() {
+    return this.data.size;
+  }
+
   clear() {
     this.data.clear();
     this.cumulativeSum.clear();

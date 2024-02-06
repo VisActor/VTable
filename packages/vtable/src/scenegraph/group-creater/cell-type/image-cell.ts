@@ -56,6 +56,7 @@ export function createImageCellGroup(
     strokeArrayWidth: (cellTheme?.group as any)?.strokeArrayWidth ?? undefined,
     strokeArrayColor: (cellTheme?.group as any)?.strokeArrayColor ?? undefined,
     cursor: (cellTheme?.group as any)?.cursor ?? undefined,
+    lineDash: cellTheme?.group?.lineDash ?? undefined,
 
     lineCap: 'square',
 
@@ -66,7 +67,8 @@ export function createImageCellGroup(
   cellGroup.role = 'cell';
   cellGroup.col = col;
   cellGroup.row = row;
-  columnGroup?.addChild(cellGroup);
+  // columnGroup?.addChild(cellGroup);
+  columnGroup?.addCellGroup(cellGroup);
 
   // image
   const value = table.getCellValue(col, row);

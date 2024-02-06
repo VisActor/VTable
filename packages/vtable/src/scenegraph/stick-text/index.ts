@@ -4,6 +4,7 @@ import type { Group } from '../graphic/group';
 import type { PivotHeaderLayoutMap } from '../../layout/pivot-header-layout';
 import type { ITextStyleOption, StickCell } from '../../ts-types';
 import { isNumber } from '@visactor/vutils';
+import { getCellMergeRange } from '../../tools/merge-range';
 
 export function handleTextStick(table: BaseTableAPI) {
   // reset
@@ -139,8 +140,9 @@ function adjustCellContentVerticalLayout(
     isNumber(cellGroup.mergeEndCol) &&
     isNumber(cellGroup.mergeEndRow)
   ) {
-    for (let col = cellGroup.mergeStartCol; col <= cellGroup.mergeEndCol; col++) {
-      for (let row = cellGroup.mergeStartRow; row <= cellGroup.mergeEndRow; row++) {
+    const { colStart, colEnd, rowStart, rowEnd } = getCellMergeRange(cellGroup, table.scenegraph);
+    for (let col = colStart; col <= colEnd; col++) {
+      for (let row = rowStart; row <= rowEnd; row++) {
         const singleCellGroup = table.scenegraph.getCell(col, row);
         dealVertical(singleCellGroup, minTop, maxTop, changedCells);
       }
@@ -224,8 +226,9 @@ function adjustCellContentHorizontalLayout(
     isNumber(cellGroup.mergeEndCol) &&
     isNumber(cellGroup.mergeEndRow)
   ) {
-    for (let col = cellGroup.mergeStartCol; col <= cellGroup.mergeEndCol; col++) {
-      for (let row = cellGroup.mergeStartRow; row <= cellGroup.mergeEndRow; row++) {
+    const { colStart, colEnd, rowStart, rowEnd } = getCellMergeRange(cellGroup, table.scenegraph);
+    for (let col = colStart; col <= colEnd; col++) {
+      for (let row = rowStart; row <= rowEnd; row++) {
         const singleCellGroup = table.scenegraph.getCell(col, row);
         dealHorizontal(singleCellGroup, minLeft, maxLeft, changedCells);
       }
