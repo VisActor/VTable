@@ -2,7 +2,7 @@
   "changes": [
     {
       "packageName": "@visactor/vtable",
-      "comment": "fix: fix custom merge cell computed height",
+      "comment": "fix: fix custom merge cell computed height&width",
       "type": "none"
     }
   ],
