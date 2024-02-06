@@ -107,6 +107,10 @@ export const menus = [
       {
         path: 'list-analysis',
         name: 'list-aggregation'
+      },
+      {
+        path: 'list-analysis',
+        name: 'list-aggregation-global'
       }
     ]
   },

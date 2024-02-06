@@ -88,16 +88,7 @@ export function createTable() {
     {
       field: 'salary',
       title: 'salary',
-      width: 100,
-      aggregation: [
-        {
-          aggregationType: AggregationType.AVG
-        },
-        {
-          aggregationType: AggregationType.SUM,
-          showOnTop: true
-        }
-      ]
+      width: 100
     },
     {
       field: 'salary',
@@ -170,48 +161,85 @@ export function createTable() {
         borderColor: 'red'
       }
     }),
-    customMergeCell: (col, row, table) => {
-      if (col >= 0 && col < table.colCount && row === table.rowCount - 1) {
-        return {
-          text: '统计数据中平均薪资：' + table.getCellOriginValue(table.colCount - 1, table.rowCount - 1),
-          range: {
-            start: {
-              col: 0,
-              row: table.rowCount - 1
-            },
-            end: {
-              col: table.colCount - 1,
-              row: table.rowCount - 1
+    // customMergeCell: (col, row, table) => {
+    //   if (col >= 0 && col < table.colCount && row === table.rowCount - 1) {
+    //     return {
+    //       text: '统计数据中平均薪资：' + table.getCellOriginValue(table.colCount - 1, table.rowCount - 1),
+    //       range: {
+    //         start: {
+    //           col: 0,
+    //           row: table.rowCount - 1
+    //         },
+    //         end: {
+    //           col: table.colCount - 1,
+    //           row: table.rowCount - 1
+    //         }
+    //       },
+    //       style: {
+    //         borderLineWidth: [6, 1, 1, 1],
+    //         borderColor: ['gray'],
+    //         textAlign: 'center'
+    //       }
+    //     };
+    //   }
+    //   if (col >= 0 && col < table.colCount && row === table.rowCount - 2) {
+    //     return {
+    //       text: '统计数据中最低薪资：' + table.getCellOriginValue(table.colCount - 1, table.rowCount - 2),
+    //       range: {
+    //         start: {
+    //           col: 0,
+    //           row: table.rowCount - 2
+    //         },
+    //         end: {
+    //           col: table.colCount - 1,
+    //           row: table.rowCount - 2
+    //         }
+    //       },
+    //       style: {
+    //         textStick: true,
+    //         borderLineWidth: [6, 1, 1, 1],
+    //         borderColor: ['gray'],
+    //         textAlign: 'center'
+    //       }
+    //     };
+    //   }
+    // },
+    aggregation(args) {
+      if (args.col === 1) {
+        return [
+          {
+            aggregationType: AggregationType.MAX,
+            formatFun(value) {
+              return '最大ID:' + Math.round(value) + '号';
             }
           },
-          style: {
-            borderLineWidth: [6, 1, 1, 1],
-            borderColor: ['gray'],
-            textAlign: 'center'
+          {
+            aggregationType: AggregationType.MIN,
+            showOnTop: false,
+            formatFun(value, col, row, table) {
+              return '最小ID:' + Math.round(value) + '号';
+            }
           }
-        };
+        ];
       }
-      if (col >= 0 && col < table.colCount && row === table.rowCount - 2) {
-        return {
-          text: '统计数据中最低薪资：' + table.getCellOriginValue(table.colCount - 1, table.rowCount - 2),
-          range: {
-            start: {
-              col: 0,
-              row: table.rowCount - 2
-            },
-            end: {
-              col: table.colCount - 1,
-              row: table.rowCount - 2
+      if (args.field === 'salary') {
+        return [
+          {
+            aggregationType: AggregationType.MIN,
+            formatFun(value) {
+              return '最低低低薪资:' + Math.round(value) + '元';
             }
           },
-          style: {
-            textStick: true,
-            borderLineWidth: [6, 1, 1, 1],
-            borderColor: ['gray'],
-            textAlign: 'center'
+          {
+            aggregationType: AggregationType.AVG,
+            showOnTop: false,
+            formatFun(value, col, row, table) {
+              return '平均平均平均:' + Math.round(value) + '元 (共计' + table.recordsCount + '条数据)';
+            }
           }
-        };
+        ];
       }
+      return null;
     }
     // transpose: true
     // widthMode: 'adaptive'

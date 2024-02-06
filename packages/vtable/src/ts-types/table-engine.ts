@@ -4,7 +4,7 @@ export type { HeaderData } from './list-table/layout-map/api';
 export type LayoutObjectId = number | string;
 import type { Rect } from '../tools/Rect';
 import type { BaseTableAPI, BaseTableConstructorOptions, ListTableProtected } from './base-table';
-import type { FilterRules, IListTableDataConfig, IPivotTableDataConfig } from './new-data-set';
+import type { Aggregation, FilterRules, IListTableDataConfig, IPivotTableDataConfig } from './new-data-set';
 import type { Either } from '../tools/helper';
 import type {
   IChartIndicator,
@@ -176,6 +176,10 @@ export interface ListTableConstructorOptions extends BaseTableConstructorOptions
    * "fixedFrozenCount"（可调整冻结列，并维持冻结数量不变）：允许自由拖拽其他列的表头移入或移出冻结列位置，同时保持冻结列的数量不变。
    */
   frozenColDragHeaderMode?: 'disabled' | 'adjustFrozenCount' | 'fixedFrozenCount';
+  aggregation?:
+    | Aggregation
+    | Aggregation[]
+    | ((args: { col: number; field: string }) => Aggregation | Aggregation[] | null);
 }
 
 export interface ListTableAPI extends BaseTableAPI {

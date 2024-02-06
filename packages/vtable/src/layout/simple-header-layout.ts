@@ -831,16 +831,7 @@ export class SimpleHeaderLayoutMap implements LayoutMapAPI {
           define: colDef,
           columnWidthComputeMode: colDef.columnWidthComputeMode,
           disableColumnResize: colDef?.disableColumnResize,
-          aggregation: colDef.aggregation
-            ? Array.isArray(colDef.aggregation)
-              ? colDef.aggregation.map(item => {
-                  if (!isValid(item.showOnTop)) {
-                    item.showOnTop = false;
-                  }
-                  return item;
-                })
-              : Object.assign({ showOnTop: false }, colDef.aggregation)
-            : undefined
+          aggregation: this._getAggregationForColumn(colDef, col)
         });
         for (let r = row + 1; r < this._headerCellIds.length; r++) {
           this._headerCellIds[r][col] = id;
@@ -848,6 +839,33 @@ export class SimpleHeaderLayoutMap implements LayoutMapAPI {
       }
     });
     return results;
+  }
+  private _getAggregationForColumn(colDef: ColumnDefine, col: number) {
+    let aggregation;
+    if (colDef.aggregation) {
+      aggregation = colDef.aggregation;
+    } else if (this._table.options.aggregation) {
+      if (typeof this._table.options.aggregation === 'function') {
+        aggregation = this._table.options.aggregation({
+          col: col,
+          field: colDef.field as string
+        });
+      } else {
+        aggregation = this._table.options.aggregation;
+      }
+    }
+    if (aggregation) {
+      if (Array.isArray(aggregation)) {
+        return aggregation.map(item => {
+          if (!isValid(item.showOnTop)) {
+            item.showOnTop = false;
+          }
+          return item;
+        });
+      }
+      return Object.assign({ showOnTop: false }, aggregation);
+    }
+    return null;
   }
   private _newRow(row: number, hideColumnsSubHeader = false): number[] {
     //如果当前行已经有数组对象 将上一行的id内容补全到当前行上
