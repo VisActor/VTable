@@ -1,3 +1,57 @@
+# v0.19.1
+
+2024-02-06
+
+
+**🆕 新增功能**
+- **@visactor/vtable**: 添加透视表更新排序规则的API updateSortRules
+- **@visactor/vtable**: 添加轴内偏移配置
+- **@visactor/vtable**: 在customRender中添加name配置
+
+**🐛 功能修复**
+
+- **@visactor/vtable**: 修复当表格有滚动时，点击表头编辑位置错误 [#1069](https://github.com/VisActor/VTable/issues/1069)
+- **@visactor/vtable**: 修复同步模式下列单元格顺序问题
+- **@visactor/vtable**: 修复单元格组中边框lineDash的问题 [#1051](https://github.com/VisActor/VTable/issues/1051)
+- **@visactor/vtable**: 修复宽度更新中textAlign值的问题[#1065](https://github.com/VisActor/VTable/issues/1065)
+- **@visactor/vtable**: 修复合并单元格内容位置
+- **@visactor/vtable**: 修复合并单元格更新问题
+
+**🔨 功能重构**
+
+- **@visactor/vtable**: 透视表排序逻辑 [#1033](https://github.com/VisActor/VTable/issues/1033)
+- **@visactor/vtable**: 显示排序选项工作正常 [#1077](https://github.com/VisActor/VTable/issues/1077)
+
+
+
+[更多详情请查看 v0.19.1](https://github.com/VisActor/VTable/releases/tag/v0.19.1)
+
+# v0.19.0
+
+2024-02-02
+
+
+**🆕 新增功能**
+
+- **@visactor/vtable**: 支持获取排序后的列 [#986](https://github.com/VisActor/VTable/issues/986)
+- **@visactor/vtable**: 添加配置项：frozenColDragHeaderMode，设置冻结列拖动表头的限制规则
+
+**🐛 功能修复**
+
+- **@visactor/vtable**: 修复选择区域错误问题 [#1018](https://github.com/VisActor/VTable/issues/1018)
+- **@visactor/vtable**: 修复调用updateColumns和折扣列发生错误 [#1015](https://github.com/VisActor/VTable/issues/1015)
+- **@visactor/vtable**: 修复右侧冻结列计数拖动表头多次后列宽错误 [#1019](https://github.com/VisActor/VTable/issues/1019)
+- **@visactor/vtable**: 修复空字符串计算行高错误 [#1031](https://github.com/VisActor/VTable/issues/1031)
+- **@visactor/vtable**: 修复合并图像单元格更新问题
+- **@visactor/vtable**: 修正底部冻结行大小不正确的问题
+
+**🔨 功能重构**
+
+- **@visactor/vtable**: 当拖动表头移动到冻结区域时标记线显示位置
+- **@visactor/vtable**: 优化updateRow api性能
+
+[更多详情请查看 v0.19.0](https://github.com/VisActor/VTable/releases/tag/v0.19.0)
+
 # v0.18.3
 
 2024-01-25

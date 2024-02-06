@@ -59,6 +59,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
     super(container as HTMLElement, options);
 
     const internalProps = this.internalProps;
+    internalProps.frozenColDragHeaderMode = options.frozenColDragHeaderMode;
     //分页配置
     this.pagination = options.pagination;
     internalProps.sortState = options.sortState;
@@ -158,7 +159,8 @@ export class ListTable extends BaseTable implements ListTableAPI {
     this.eventManager.updateEventBinder();
   }
   get columns(): ColumnsDefine {
-    return this.internalProps.columns;
+    // return this.internalProps.columns;
+    return this.internalProps.layoutMap.columnTree.getCopiedTree(); //调整顺序后的columns
   }
   /**
    *@deprecated 请使用columns
@@ -341,6 +343,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
   updateOption(options: ListTableConstructorOptions, accelerateFirstScreen = false) {
     const internalProps = this.internalProps;
     super.updateOption(options);
+    internalProps.frozenColDragHeaderMode = options.frozenColDragHeaderMode;
     //分页配置
     this.pagination = options.pagination;
     internalProps.dataConfig = {}; // cloneDeep(options.dataConfig ?? {});
@@ -794,7 +797,8 @@ export class ListTable extends BaseTable implements ListTableAPI {
     if (field && executeSort) {
       const sortFunc = this._getSortFuncFromHeaderOption(this.internalProps.columns, field);
       const hd = this.internalProps.layoutMap.headerObjects.find((col: any) => col && col.field === field);
-      if (hd?.define?.sort) {
+
+      if (hd.define.sort !== false) {
         this.dataSource.sort(hd.field, order, sortFunc);
 
         // clear cell range cache
@@ -873,7 +877,9 @@ export class ListTable extends BaseTable implements ListTableAPI {
           // 如果sort传入的信息不能生成正确的sortFunc，直接更新表格，避免首次加载无法正常显示内容
           const hd = this.internalProps.layoutMap.headerObjects.find((col: any) => col && col.field === field);
           // hd?.define?.sort && //如果这里也判断 那想要利用sortState来排序 但不显示排序图标就实现不了
-          this.dataSource.sort(hd.field, order, sortFunc ?? defaultOrderFn);
+          if (hd.define.sort !== false) {
+            this.dataSource.sort(hd.field, order, sortFunc ?? defaultOrderFn);
+          }
         }
       }
       this.refreshRowColCount();

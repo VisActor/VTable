@@ -124,8 +124,25 @@ export function createTable() {
         yField: '230417171050011',
         seriesField: '230417171050030',
         axes: [
-          { orient: 'left', visible: true, label: { visible: true } },
-          { orient: 'bottom', visible: true }
+          {
+            orient: 'left',
+            visible: true,
+            label: {
+              visible: true
+            },
+            innerOffset: {
+              top: 20,
+              bottom: 20
+            }
+          },
+          {
+            orient: 'bottom',
+            visible: true,
+            innerOffset: {
+              left: 20,
+              right: 20
+            }
+          }
         ],
         bar: {
           state: {
@@ -226,7 +243,15 @@ export function createTable() {
         ],
         axes: [
           { orient: 'left', visible: true, label: { visible: true } },
-          { orient: 'bottom', visible: true }
+
+          {
+            orient: 'bottom',
+            visible: true,
+            innerOffset: {
+              left: 20,
+              right: 20
+            }
+          }
         ],
         theme: {
           // axis: {
@@ -272,7 +297,14 @@ export function createTable() {
         seriesField: '230417171050030',
         axes: [
           { orient: 'left', visible: true, label: { visible: true } },
-          { orient: 'bottom', visible: true }
+          {
+            orient: 'bottom',
+            visible: true,
+            innerOffset: {
+              left: 20,
+              right: 20
+            }
+          }
         ],
         line: {
           state: {

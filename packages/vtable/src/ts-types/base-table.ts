@@ -69,6 +69,7 @@ import type { Title } from '../components/title/title';
 import type { ITitle } from './component/title';
 import type { DiscreteTableLegend } from '../components/legend/discrete-legend/discrete-legend';
 import type { ContinueTableLegend } from '../components/legend/continue-legend/continue-legend';
+import type { NumberRangeMap } from '../layout/row-height-map';
 
 export interface IBaseTableProtected {
   element: HTMLElement;
@@ -100,10 +101,15 @@ export interface IBaseTableProtected {
   columnResizeType?: 'column' | 'indicator' | 'all' | 'indicatorGroup';
   /** 控制拖拽表头移动位置顺序开关 */
   dragHeaderMode?: 'all' | 'none' | 'column' | 'row';
-
+  /** 拖拽表头移动位置 针对冻结部分的规则
+   * "disabled"（禁止调整冻结列位置）：不允许其他列的表头移入冻结列，也不允许冻结列移出，冻结列保持不变。
+   * "adjustFrozenCount"（根据交互结果调整冻结数量）：允许其他列的表头移入冻结列，及冻结列移出，并根据拖拽的动作调整冻结列的数量。当其他列的表头被拖拽进入冻结列位置时，冻结列数量增加；当其他列的表头被拖拽移出冻结列位置时，冻结列数量减少。
+   * "fixedFrozenCount"（可调整冻结列，并维持冻结数量不变）：允许自由拖拽其他列的表头移入或移出冻结列位置，同时保持冻结列的数量不变。
+   */
+  frozenColDragHeaderMode?: 'disabled' | 'adjustFrozenCount' | 'fixedFrozenCount';
   cachedRecordsRowHeightMap: NumberMap<string | number>; //存储每一条记录对应行的行高，只有当设置为自动换行随内容撑开才会起作用
   // headerRowHeightsMap: NumberMap<number>; //目前是用来存储了表头各行的高度，从headerRowHeight计算而来，headerRowHeight可以设置为数组的形式
-  _rowHeightsMap: NumberMap<number>; //存储数据条目每行高度
+  _rowHeightsMap: NumberRangeMap; //存储数据条目每行高度
   _colWidthsMap: NumberMap<string | number>; //存储各列的宽度
   _colContentWidthsMap: NumberMap<string | number>; //存储各列的内容宽度
   _colWidthsLimit: {
@@ -201,7 +207,7 @@ export interface IBaseTableProtected {
   // // 开启图表异步渲染 每批次渐进渲染图表个数
   // renderChartAsyncBatchCount?: number;
 
-  stick: { changedCells: StickCell[] };
+  stick: { changedCells: Map<string, StickCell> };
 
   customMergeCell?: CustomMergeCell;
   /**
@@ -254,6 +260,7 @@ export interface BaseTableConstructorOptions {
   columnResizeMode?: 'all' | 'none' | 'header' | 'body';
   /** 控制拖拽表头移动位置顺序开关 */
   dragHeaderMode?: 'all' | 'none' | 'column' | 'row';
+
   /**
    * 是否显示固定列图钉 基本表格生效
    */
@@ -446,7 +453,8 @@ export interface BaseTableAPI {
 
   isReleased: boolean;
 
-  rowHeightsMap: NumberMap<number>;
+  // rowHeightsMap: NumberMap<number>;
+  rowHeightsMap: NumberRangeMap;
   colWidthsMap: NumberMap<string | number>;
 
   on: <TYPE extends keyof TableEventHandlersEventArgumentMap>(

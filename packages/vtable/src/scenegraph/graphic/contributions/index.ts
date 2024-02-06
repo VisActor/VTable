@@ -5,7 +5,8 @@ import {
   RectRenderContribution,
   SplitRectBeforeRenderContribution,
   SplitRectAfterRenderContribution,
-  ContainerModule
+  ContainerModule,
+  DrawItemInterceptor
 } from '@src/vrender';
 import { ChartRender, DefaultCanvasChartRender } from './chart-render';
 import { AfterImageRenderContribution, BeforeImageRenderContribution } from './image-contribution-render';
@@ -25,6 +26,7 @@ import {
   ClipBodyGroupBeforeRenderContribution,
   ClipBodyGroupAfterRenderContribution
 } from './group-contribution-render';
+import { VTableDrawItemInterceptorContribution } from './draw-interceptor';
 
 export default new ContainerModule((bind, unbind, isBound, rebind) => {
   // rect 渲染器注入contributions
@@ -77,4 +79,8 @@ export default new ContainerModule((bind, unbind, isBound, rebind) => {
   bind(GroupRenderContribution).toService(ClipBodyGroupBeforeRenderContribution);
   bind(ClipBodyGroupAfterRenderContribution).toSelf().inSingletonScope();
   bind(GroupRenderContribution).toService(ClipBodyGroupAfterRenderContribution);
+
+  // interceptor
+  bind(VTableDrawItemInterceptorContribution).toSelf().inSingletonScope();
+  bind(DrawItemInterceptor).toService(VTableDrawItemInterceptorContribution);
 });

@@ -150,6 +150,9 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
   get pivotChartAxes() {
     return this._axes;
   }
+  get recordsCount() {
+    return this.records?.length;
+  }
 
   isListTable(): false {
     return false;
@@ -518,7 +521,12 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
   updateSortRules(sortRules: SortRules) {
     this.internalProps.dataConfig.sortRules = sortRules;
     this.dataset.updateSortRules(sortRules);
-    (this.internalProps.layoutMap as PivotHeaderLayoutMap).updateDataset(this.dataset);
+    this.internalProps.layoutMap.resetHeaderTree();
+    // 清空单元格内容
+    this.scenegraph.clearCells();
+    this.refreshHeader();
+    // 生成单元格场景树
+    this.scenegraph.createSceneGraph();
     this.render();
   }
   updatePivotSortState(

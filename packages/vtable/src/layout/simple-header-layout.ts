@@ -22,6 +22,7 @@ import type {
 import { checkHasChart, getChartDataId } from './chart-helper/get-chart-spec';
 import { checkHasAggregation, checkHasAggregationOnBottom, checkHasAggregationOnTop } from './layout-helper';
 import type { Aggregator } from '../dataset/statistics-helper';
+import { DimensionTree } from './tree-helper';
 // import { EmptyDataCache } from './utils';
 
 // let seqId = 0;
@@ -32,6 +33,8 @@ export class SimpleHeaderLayoutMap implements LayoutMapAPI {
   // private _headerObjectFieldKey: { [key in string]: HeaderData };
   private _headerCellIds: number[][];
   private _columns: ColumnData[];
+  /** 后期加的 对应pivot-header-layout 中的columnDimensionTree 为了排序后获取到排序后的columns */
+  columnTree: DimensionTree;
   readonly bodyRowSpanCount: number = 1;
   //透视表中树形结构使用 这里为了table逻辑不报错
   // rowHierarchyIndent?: number = 0;
@@ -53,6 +56,7 @@ export class SimpleHeaderLayoutMap implements LayoutMapAPI {
     this._columns = [];
     this._headerCellIds = [];
     this.hierarchyIndent = hierarchyIndent ?? 20;
+    this.columnTree = new DimensionTree(columns as any, { seqId: 0 }); //seqId这里没有利用上 所有顺便传了0
     this._headerObjects = this._addHeaders(0, columns, []);
     this._headerObjectMap = this._headerObjects.reduce((o, e) => {
       o[e.id as number] = e;
@@ -315,7 +319,7 @@ export class SimpleHeaderLayoutMap implements LayoutMapAPI {
       }
     } else {
       row = col;
-      if (this.frozenRowCount > 0 && row >= this.rowCount - this.bottomFrozenRowCount) {
+      if (this.bottomFrozenRowCount > 0 && row >= this.rowCount - this.bottomFrozenRowCount) {
         return true;
       }
     }
@@ -914,6 +918,12 @@ export class SimpleHeaderLayoutMap implements LayoutMapAPI {
     if (source.col < 0 || source.row < 0 || target.col < 0 || target.row < 0) {
       return false;
     }
+    if (this._table.internalProps.frozenColDragHeaderMode === 'disabled') {
+      if (this._table.isFrozenColumn(target.col) || this._table.isRightFrozenColumn(target.col)) {
+        return false;
+      }
+    }
+
     // 获取操作单元格的range范围
     const sourceCellRange = this.getCellRange(source.col, source.row);
     // 获取source和target对应sourceCellRange.start.row的headerId
@@ -968,6 +978,9 @@ export class SimpleHeaderLayoutMap implements LayoutMapAPI {
         sourceColumns.unshift(targetIndex as any, 0 as any);
         Array.prototype.splice.apply(this._columns, sourceColumns);
 
+        // 对表头columnTree调整节点位置
+        this.columnTree.movePosition(sourceCellRange.start.row, sourceCellRange.start.col, targetIndex);
+
         this._cellRangeMap = new Map();
         return {
           sourceIndex: sourceCellRange.start.col,
@@ -1003,6 +1016,9 @@ export class SimpleHeaderLayoutMap implements LayoutMapAPI {
         const sourceColumns = this._columns.splice(sourceCellRange.start.row, moveSize);
         sourceColumns.unshift(targetIndex as any, 0 as any);
         Array.prototype.splice.apply(this._columns, sourceColumns);
+
+        // 对表头columnTree调整节点位置
+        this.columnTree.movePosition(sourceCellRange.start.col, sourceCellRange.start.row, targetIndex);
 
         this._cellRangeMap = new Map();
         return {

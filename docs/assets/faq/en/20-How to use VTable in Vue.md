@@ -8,7 +8,7 @@ VTable does not encapsulate the Vue component, so how do you VTable in Vue?
 
 In Vue 3.x, using VTable
 
-Composition API， you can refer to[ the online demo ](https://codesandbox.io/p/sandbox/mystifying-hamilton-3wl76r?file=%2Fsrc%2Fcomponents%2FPivotChart.vue%3A9339%2C1)for details.
+Composition API， you can refer to[ the online demo ](https://codesandbox.io/p/devbox/magical-nash-t6t33f)for details.
 
 
 ## Code Example

@@ -4,7 +4,7 @@
 
 VTable 提供了丰富的排序功能，用户可以轻松地按需开启、自定义排序规则、设定初始排序状态等。
 
-**注**：该教程进针对基本表格ListTable，透视表的排序教程后续再补充！
+**注**：该教程进针对基本表格ListTable，透视表的排序教程可异步至：https://visactor.io/vtable/guide/table_type/Pivot_table/pivot_table_dataAnalysis
 
 ## 开启排序
 
@@ -99,7 +99,7 @@ const tableInstance = new ListTable({
 
 在上述代码中，表格的初始排序状态为按照年龄降序排列。
 
-## 排序状态设置接口
+## 排序状态设置接口(更改排序)
 
 VTable 提供 `updateSortState` 属性用于设置排序状态。
 接口说明：
@@ -107,7 +107,7 @@ VTable 提供 `updateSortState` 属性用于设置排序状态。
   /**
    * 更新排序状态
    * @param sortState 要设置的排序状态
-   * @param executeSort 是否执行内部排序逻辑，设置false将只更新图标状态
+   * @param executeSort 是否执行内部排序逻辑，设置false将只更新图标状态不执行数据排序
    */
   updateSortState(sortState: SortState[] | SortState | null, executeSort: boolean = true) 
 ```
@@ -138,7 +138,7 @@ tableInstance.on('sort_click', args => {
 排序完成后需要setRecords将数据更新到表格，如果需要排序图标的切换则需要配合接口`updateSortState`，利用接口的第二个参数设置为false，只切换排序图标.
 
 注意：
-- setRecords 调用时需先清除内部排序状态（否则setRecords调用时会按上个排序状态对数据进行排序），即将第二个参数设置为null 
+- setRecords 接口调用时需将第二个参数设置为null 这样就清除了内部排序状态（否则setRecords调用时会按上次设置过的排序状态对数据进行排序）
 
 示例：
 ```javascript livedemo template=vtable
@@ -319,13 +319,13 @@ const columns =[
         "field": "230517143221027",
         "title": "Order ID",
         "width": "auto",
-        "sort":true
+        "showSort":true
     },
     {
         "field": "230517143221030",
         "title": "Customer ID",
         "width": "auto",
-        "sort":true
+        "showSort":true
     },
     {
         "field": "230517143221032",
@@ -383,8 +383,9 @@ const option = {
 // 创建 VTable 实例
 const tableInstance = new VTable.ListTable(document.getElementById(CONTAINER_ID), option);
 window.tableInstance=tableInstance;
+const clickCount=0;
 tableInstance.on('sort_click', args => {
-    const sortState = Date.now() % 3 === 0 ? 'desc' : Date.now() % 3 === 1 ? 'asc' : 'normal';
+    const sortState = clickCount % 3 === 0 ? 'desc' : clickCount % 3 === 1 ? 'asc' : 'normal';
     sortRecords(args.field, sortState)
       .then(records => {
         debugger;
@@ -413,4 +414,63 @@ tableInstance.on('sort_click', args => {
   }
 
 ```
+
+## 替换默认的排序图标
+
 如果不希望使用内部的图标，可以使用图标自定义功能来替换，接参考教程：https://www.visactor.io/vtable/guide/custom_define/custom_icon
+
+以下是一个替换排序图标的例子：
+
+注意： `name`和`funcType`的配置
+
+```
+VTable.register.icon("frozenCurrent", {
+  type: "svg",
+  svg: "/sort.svg",
+  width: 22,
+  height: 22,
+  name: "sort_normal",
+  positionType: VTable.TYPES.IconPosition.left,
+  marginRight: 0,
+  funcType: VTable.TYPES.IconFuncTypeEnum.sort,
+  hover: {
+    width: 22,
+    height: 22,
+    bgColor: "rgba(101, 117, 168, 0.1)",
+  },
+  cursor: "pointer",
+});
+```
+
+## 隐藏排序图标
+
+我们提供了`showSort`配置来隐藏排序图标，但可以正常执行排序逻辑
+
+以下是一个隐藏排序图标的例子：
+
+```js
+const listTable = new ListTable({
+  // ...其它配置项
+  columns: [
+    {
+      title: '姓名',
+      field: 'name',
+      cellType: 'text',
+      showSort: false,
+      sort: true, // 使用内置默认排序逻辑
+    },
+    {
+      title: '年龄',
+      field: 'age',
+      cellType: 'text',
+      showSort: false,
+      sort: (v1, v2, order) => {   // 使用自定义排序逻辑
+          if (order === 'desc') {
+            return v1 === v2 ? 0 : v1 > v2 ? -1 : 1;
+          }
+          return v1 === v2 ? 0 : v1 > v2 ? 1 : -1;
+        },
+    },
+  ],
+});
+```

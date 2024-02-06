@@ -166,14 +166,14 @@ export class Dataset {
     this.rowsIsTotal = new Array(this.rows?.length ?? 0).fill(false);
     this.colsIsTotal = new Array(this.columns?.length ?? 0).fill(false);
 
-    if (this.totals?.row?.showSubTotals) {
+    if (this.totals?.row && this.totals.row.showSubTotals !== false) {
       for (let i = 0, len = this.totals?.row?.subTotalsDimensions?.length; i < len; i++) {
         const dimension = this.totals.row.subTotalsDimensions[i];
         const dimensionIndex = this.rows.indexOf(dimension);
         this.rowsIsTotal[dimensionIndex] = true;
       }
     }
-    if (this.totals?.column?.showSubTotals) {
+    if (this.totals?.column && this.totals.column.showSubTotals !== false) {
       for (let i = 0, len = this.totals?.column?.subTotalsDimensions?.length; i < len; i++) {
         const dimension = this.totals.column.subTotalsDimensions[i];
         const dimensionIndex = this.columns.indexOf(dimension);
@@ -531,7 +531,7 @@ export class Dataset {
           isToTalRecord = true;
           break;
         } else if (
-          this.dataConfig?.totals?.row?.showSubTotals &&
+          // this.dataConfig?.totals?.row?.showSubTotals &&
           this.dataConfig?.totals?.row?.subTotalsDimensions.indexOf(this.rows[l - 1]) >= 0
         ) {
           if (this.rowHierarchyType === 'grid') {
@@ -561,7 +561,7 @@ export class Dataset {
           isToTalRecord = true;
           break;
         } else if (
-          this.dataConfig?.totals?.column?.showSubTotals &&
+          // this.dataConfig?.totals?.column?.showSubTotals &&
           this.dataConfig?.totals?.column?.subTotalsDimensions.indexOf(this.columns[n - 1]) >= 0
         ) {
           colKey.push(this.colSubTotalLabel);
@@ -713,6 +713,46 @@ export class Dataset {
     this.sorted = false;
     this.sortRules = sortRules;
     this.sortKeys();
+    //和初始化代码逻辑一致 但未考虑透视图类型
+    if (!this.customRowTree) {
+      if (this.rowHierarchyType === 'tree') {
+        this.rowHeaderTree = this.ArrToTree1(
+          this.rowKeys,
+          this.rows,
+          this.indicatorsAsCol ? undefined : this.indicators,
+          this.totals?.row?.showGrandTotals ||
+            (!this.indicatorsAsCol && this.columns.length === 0) ||
+            (this.indicatorsAsCol && this.rows.length === 0),
+          this.rowGrandTotalLabel
+        );
+      } else {
+        this.rowHeaderTree = this.ArrToTree(
+          this.rowKeys,
+          this.rows,
+          this.indicatorsAsCol ? undefined : this.indicators,
+          this.rowsIsTotal,
+          this.totals?.row?.showGrandTotals || (this.indicatorsAsCol && this.rows.length === 0),
+          this.rowGrandTotalLabel,
+          this.rowSubTotalLabel,
+          this.totals?.row?.showGrandTotalsOnTop ?? false,
+          this.totals?.row?.showSubTotalsOnTop ?? false
+        );
+      }
+    }
+
+    if (!this.customColTree) {
+      this.colHeaderTree = this.ArrToTree(
+        this.colKeys,
+        this.columns,
+        this.indicatorsAsCol ? this.indicators : undefined,
+        this.colsIsTotal,
+        this.totals?.column?.showGrandTotals || (!this.indicatorsAsCol && this.columns.length === 0), // || this.rows.length === 0,//todo  这里原有逻辑暂时注释掉
+        this.colGrandTotalLabel,
+        this.colSubTotalLabel,
+        this.totals?.column?.showGrandTotalsOnLeft ?? false,
+        this.totals?.column?.showSubTotalsOnLeft ?? false
+      );
+    }
     // this.rowKeysPath_FULL = this.TreeToArr(
     //   this.ArrToTree(
     //     this.rowKeys,
@@ -969,9 +1009,9 @@ export class Dataset {
           let bChanged = b;
           if (sorter.fieldIndex < fieldArr.length - 1) {
             aChanged = a.slice(0, sorter.fieldIndex + 1);
-            aChanged.push(isRow ? that.totals?.row?.subTotalLabel : that.totals?.column?.subTotalLabel);
+            aChanged.push(isRow ? that.rowSubTotalLabel : that.colSubTotalLabel);
             bChanged = b.slice(0, sorter.fieldIndex + 1);
-            bChanged.push(isRow ? that.totals?.row?.subTotalLabel : that.totals?.column?.subTotalLabel);
+            bChanged.push(isRow ? that.rowSubTotalLabel : that.colSubTotalLabel);
           }
           comparison = sorter.func(aChanged, bChanged);
         } else {
@@ -1046,8 +1086,8 @@ export class Dataset {
   totalStatistics() {
     const that = this;
     if (
-      (that?.totals?.column?.showSubTotals && that?.totals?.column?.subTotalsDimensions?.length >= 1) ||
-      (that?.totals?.row?.showSubTotals && that?.totals?.row?.subTotalsDimensions?.length >= 1) ||
+      that?.totals?.column?.subTotalsDimensions?.length >= 1 ||
+      that?.totals?.row?.subTotalsDimensions?.length >= 1 ||
       that?.totals?.column?.showGrandTotals ||
       that?.totals?.row?.showGrandTotals
       // ||
@@ -1074,7 +1114,7 @@ export class Dataset {
           if (dimensionIndex >= 0) {
             const colTotalKey = colKey.slice(0, dimensionIndex + 1);
             // if (this.rowHierarchyType === 'grid') {
-            colTotalKey.push(that.totals?.column?.subTotalLabel ?? '小计');
+            colTotalKey.push(that.colSubTotalLabel);
             // }
             const flatColTotalKey = colTotalKey.join(this.stringJoinChar);
             if (this.totalRecordsTree?.[flatRowKey]?.[flatColTotalKey]) {
@@ -1149,7 +1189,7 @@ export class Dataset {
               const rowTotalKey = rowKey.slice(0, dimensionIndex + 1);
               if (this.rowHierarchyType === 'grid') {
                 // 如果是tree的情况则不追加小计单元格值
-                rowTotalKey.push(that.totals?.row?.subTotalLabel ?? '小计');
+                rowTotalKey.push(that.rowSubTotalLabel);
               }
               const flatRowTotalKey = rowTotalKey.join(this.stringJoinChar);
               if (!this.tree[flatRowTotalKey]) {

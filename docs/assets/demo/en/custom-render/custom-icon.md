@@ -8,7 +8,9 @@ link: '../guide/custom_define/custom_icon'
 
 # Custom Icon
 
-Display icon content in cells
+Display icon content in cells.
+
+Register the icon information globally through `VTable.register.icon`, and then directly configure the registration name in the icon or headerIcon in the column, or configure the complete icon information in the icon or headerIcon
 
 ## Key Configurations
 
@@ -190,7 +192,24 @@ const columns =[
     {
         "field": "Product Name",
         "title": "Product Name",
-        "width": "auto"
+        "width": "auto",
+        headerIcon: [
+          {
+            name: 'question',
+            type: 'svg',
+            marginLeft: 10,
+            positionType: VTable.TYPES.IconPosition.contentRight,
+            width:20,
+            height:20,
+            svg:`<svg t="1706853751091" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="4226" width="200" height="200"><path d="M533.333333 85.333333c-247.426667 0-448 200.573333-448 448s200.573333 448 448 448 448-200.573333 448-448-200.573333-448-448-448z m0 853.333334c-223.86 0-405.333333-181.473333-405.333333-405.333334s181.473333-405.333333 405.333333-405.333333 405.333333 181.473333 405.333334 405.333333-181.473333 405.333333-405.333334 405.333334z m21.333334-192a21.333333 21.333333 0 1 1-21.333334-21.333334 21.333333 21.333333 0 0 1 21.333334 21.333334z m-21.333334-85.333334a21.333333 21.333333 0 0 1-21.333333-21.333333v-42.666667a21.333333 21.333333 0 0 1 6.246667-15.086666c13.1-13.093333 28.9-24.886667 45.633333-37.333334C601.333333 516.966667 640 488.1 640 448c0-58.813333-47.853333-106.666667-106.666667-106.666667s-106.666667 47.853333-106.666666 106.666667a21.333333 21.333333 0 0 1-42.666667 0 149.333333 149.333333 0 0 1 298.666667 0c0 28.113333-10.6 53.873333-32.406667 78.74-17.593333 20.046667-39.593333 36.466667-60.873333 52.34-12.666667 9.453333-24.76 18.473333-34.72 27.433333V640a21.333333 21.333333 0 0 1-21.333334 21.333333z" fill="#5C5C66" p-id="4227"></path></svg>`,
+            tooltip: {
+              style: { arrowMark: true },
+              // 气泡框，按钮的的解释信息
+              title: 'this is product name',
+              placement: VTable.TYPES.Placement.right,
+            },
+          },
+        ]
     },
     {
         "field": "Category",
@@ -281,6 +300,9 @@ tableInstance.on('click_cell', args => {
       }else if(targetIcon.name === 'order'){
         const value=tableInstance.getCellValue(col,row);
         window?.alert?.('已复制订单号： '+value);
+      }else if(targetIcon.name === 'question'){
+        const value=tableInstance.getCellValue(col,row);
+        window?.alert?.('question: '+value);
       }
     }
 })
