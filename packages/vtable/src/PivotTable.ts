@@ -721,13 +721,13 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
     return this.getCellOriginRecord(col, row);
   }
   /**
-   * 全量更新排序规则 TODO  待完善
+   * 全量更新排序规则
    * @param sortRules
    */
   updateSortRules(sortRules: SortRules) {
     this.internalProps.dataConfig.sortRules = sortRules;
     this.dataset.updateSortRules(sortRules);
-    // (this.internalProps.layoutMap as PivotLayoutMap).updateDataset(this.dataset);
+    this.internalProps.layoutMap.resetHeaderTree();
     // 清空单元格内容
     this.scenegraph.clearCells();
     this.refreshHeader();

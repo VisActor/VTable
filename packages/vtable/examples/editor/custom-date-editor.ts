@@ -288,7 +288,7 @@ export function createTable() {
     records,
     columns,
     keyboardOptions: {
-      moveFocusCellOnTab: false,
+      moveFocusCellOnTab: true,
       // editCellOnEnter: false,
       moveEditCellOnArrowKeys: true
     },

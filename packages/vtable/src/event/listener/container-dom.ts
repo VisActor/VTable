@@ -127,9 +127,9 @@ export function bindContainerDomListener(eventManager: EventManager) {
           if ((table as ListTableAPI).editorManager.editingEditor) {
             (table as ListTableAPI).editorManager.completeEdit();
             table.getElement().focus();
-          }
-          if ((table as ListTableAPI).getEditor(targetCol, targetRow)) {
-            (table as ListTableAPI).editorManager.startEditCell(targetCol, targetRow);
+            if ((table as ListTableAPI).getEditor(targetCol, targetRow)) {
+              (table as ListTableAPI).editorManager.startEditCell(targetCol, targetRow);
+            }
           }
         }
       }

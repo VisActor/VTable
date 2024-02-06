@@ -175,6 +175,8 @@ export interface IEditor<V = any> {
   /**
    * 如果提供了此函数，VTable 将会在用户点击其他地方时调用此函数。
    * 如果此函数返回了一个假值，VTable 将会调用 `onEnd` 并退出编辑状态。
+   * 如果未定义此函数或此函数返回了一个真值， VTable 将不会做任何事。
+   * 这意味着，你需要手动调用 `onStart` 中提供的 `endEdit` 来结束编辑模式。
    */
   isEditorElement?: (target: HTMLElement) => boolean;
   /** * 获取编辑器当前值。将在 `onEnd` 调用后调用。 */

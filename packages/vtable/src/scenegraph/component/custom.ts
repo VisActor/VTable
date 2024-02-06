@@ -169,6 +169,7 @@ function adjustElementToGroup(
           pickable: !!element.pickable,
           cursor: element.cursor as Cursor
         });
+        arc.name = element.name;
         customGroup.appendChild(arc);
         break;
       case 'text':
@@ -197,6 +198,7 @@ function adjustElementToGroup(
             element as any
           )
         );
+        text.name = element.name;
         customGroup.appendChild(text);
         break;
       case 'rect':
@@ -213,6 +215,7 @@ function adjustElementToGroup(
           pickable: !!element.pickable,
           cursor: element.cursor as Cursor
         });
+        rect.name = element.name;
         customGroup.appendChild(rect);
         break;
       case 'circle':
@@ -227,6 +230,7 @@ function adjustElementToGroup(
           pickable: !!element.pickable,
           cursor: element.cursor as Cursor
         });
+        circle.name = element.name;
         customGroup.appendChild(circle);
         break;
       case 'icon':
@@ -244,6 +248,7 @@ function adjustElementToGroup(
           pickable: !!element.pickable,
           cursor: element.cursor as Cursor
         });
+        icon.name = element.name;
         icon.role = 'icon-custom';
         customGroup.appendChild(icon);
         break;
@@ -263,6 +268,7 @@ function adjustElementToGroup(
           cursor: element.cursor as Cursor,
           shape: element.shape
         });
+        image.name = element.name;
         image.role = 'image-custom';
         customGroup.appendChild(image);
         break;
@@ -274,6 +280,7 @@ function adjustElementToGroup(
           pickable: !!element.pickable,
           cursor: element.cursor as Cursor
         });
+        line.name = element.name;
         customGroup.appendChild(line);
         break;
     }

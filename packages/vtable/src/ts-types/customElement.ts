@@ -21,6 +21,7 @@ interface baseElement {
   // clickable?: boolean; // @dispose
   pickable?: boolean;
   cursor?: string;
+  name?: string;
 }
 export interface TextElement extends baseElement {
   type: 'text';
