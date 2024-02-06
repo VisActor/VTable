@@ -1,3 +1,32 @@
+# v0.19.1
+
+2024-02-06
+
+
+**🆕 新增功能**
+
+- **@visactor/vtable**: add update sort rule api
+- **@visactor/vtable**: add axis innerOffset config
+- **@visactor/vtable**: add name config in customRender
+
+**🐛 功能修复**
+
+- **@visactor/vtable**: when table has scroll then click header to edit position error [#1069](https://github.com/VisActor/VTable/issues/1069)
+- **@visactor/vtable**: fix column cell order problem in sync mode
+- **@visactor/vtable**: fix border lineDash in cell group [#1051](https://github.com/VisActor/VTable/issues/1051)
+- **@visactor/vtable**: fix textAlign value in width update[#1065](https://github.com/VisActor/VTable/issues/1065)
+- **@visactor/vtable**: fix merge cell content position
+- **@visactor/vtable**: fix merge cell update problem
+
+**🔨 功能重构**
+
+- **@visactor/vtable**: pivot table sort logic [#1033](https://github.com/VisActor/VTable/issues/1033)
+- **@visactor/vtable**: showsort option work well [#1077](https://github.com/VisActor/VTable/issues/1077)
+
+
+
+[更多详情请查看 v0.19.1](https://github.com/VisActor/VTable/releases/tag/v0.19.1)
+
 # v0.19.0
 
 2024-02-02
