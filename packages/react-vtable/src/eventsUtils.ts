@@ -1,6 +1,6 @@
 import { ListTable, PivotTable, PivotChart } from '@visactor/vtable';
 import type { IVTable } from './tables/base-table';
-import type { TableEventHandlersEventArgumentMap } from '@visactor/vtable/src/ts-types';
+import type { TYPES } from '@visactor/vtable';
 
 export type EventCallback<Params> = (params: Params) => void;
 
@@ -11,56 +11,56 @@ const EVENT_TYPE = {
 };
 
 export interface EventsProps {
-  onClickCell?: EventCallback<TableEventHandlersEventArgumentMap['click_cell']>;
-  onDblClickCell?: EventCallback<TableEventHandlersEventArgumentMap['dblclick_cell']>;
-  onMouseDownCell?: EventCallback<TableEventHandlersEventArgumentMap['mousedown_cell']>;
-  onMouseUpCell?: EventCallback<TableEventHandlersEventArgumentMap['mouseup_cell']>;
-  onSelectedCell?: EventCallback<TableEventHandlersEventArgumentMap['selected_cell']>;
-  onKeyDown?: EventCallback<TableEventHandlersEventArgumentMap['keydown']>;
-  onMouseEnterTable?: EventCallback<TableEventHandlersEventArgumentMap['mouseenter_table']>;
-  onMouseLeaveTable?: EventCallback<TableEventHandlersEventArgumentMap['mouseleave_table']>;
-  onMouseMoveCell?: EventCallback<TableEventHandlersEventArgumentMap['mousemove_cell']>;
-  onMouseEnterCell?: EventCallback<TableEventHandlersEventArgumentMap['mouseenter_cell']>;
-  onMouseLeaveCell?: EventCallback<TableEventHandlersEventArgumentMap['mouseleave_cell']>;
-  onContextMenuCell?: EventCallback<TableEventHandlersEventArgumentMap['contextmenu_cell']>;
-  onResizeColumn?: EventCallback<TableEventHandlersEventArgumentMap['resize_column']>;
-  onResizeColumnEnd?: EventCallback<TableEventHandlersEventArgumentMap['resize_column_end']>;
-  onChangeHeaderPosition?: EventCallback<TableEventHandlersEventArgumentMap['change_header_position']>;
-  onSortClick?: EventCallback<TableEventHandlersEventArgumentMap['sort_click']>;
-  onFreezeClick?: EventCallback<TableEventHandlersEventArgumentMap['freeze_click']>;
-  onScroll?: EventCallback<TableEventHandlersEventArgumentMap['scroll']>;
-  onDropdownMenuClick?: EventCallback<TableEventHandlersEventArgumentMap['dropdown_menu_click']>;
-  onMouseOverChartSymbol?: EventCallback<TableEventHandlersEventArgumentMap['mouseover_chart_symbol']>;
-  onDragSelectEnd?: EventCallback<TableEventHandlersEventArgumentMap['drag_select_end']>;
+  onClickCell?: EventCallback<TYPES.TableEventHandlersEventArgumentMap['click_cell']>;
+  onDblClickCell?: EventCallback<TYPES.TableEventHandlersEventArgumentMap['dblclick_cell']>;
+  onMouseDownCell?: EventCallback<TYPES.TableEventHandlersEventArgumentMap['mousedown_cell']>;
+  onMouseUpCell?: EventCallback<TYPES.TableEventHandlersEventArgumentMap['mouseup_cell']>;
+  onSelectedCell?: EventCallback<TYPES.TableEventHandlersEventArgumentMap['selected_cell']>;
+  onKeyDown?: EventCallback<TYPES.TableEventHandlersEventArgumentMap['keydown']>;
+  onMouseEnterTable?: EventCallback<TYPES.TableEventHandlersEventArgumentMap['mouseenter_table']>;
+  onMouseLeaveTable?: EventCallback<TYPES.TableEventHandlersEventArgumentMap['mouseleave_table']>;
+  onMouseMoveCell?: EventCallback<TYPES.TableEventHandlersEventArgumentMap['mousemove_cell']>;
+  onMouseEnterCell?: EventCallback<TYPES.TableEventHandlersEventArgumentMap['mouseenter_cell']>;
+  onMouseLeaveCell?: EventCallback<TYPES.TableEventHandlersEventArgumentMap['mouseleave_cell']>;
+  onContextMenuCell?: EventCallback<TYPES.TableEventHandlersEventArgumentMap['contextmenu_cell']>;
+  onResizeColumn?: EventCallback<TYPES.TableEventHandlersEventArgumentMap['resize_column']>;
+  onResizeColumnEnd?: EventCallback<TYPES.TableEventHandlersEventArgumentMap['resize_column_end']>;
+  onChangeHeaderPosition?: EventCallback<TYPES.TableEventHandlersEventArgumentMap['change_header_position']>;
+  onSortClick?: EventCallback<TYPES.TableEventHandlersEventArgumentMap['sort_click']>;
+  onFreezeClick?: EventCallback<TYPES.TableEventHandlersEventArgumentMap['freeze_click']>;
+  onScroll?: EventCallback<TYPES.TableEventHandlersEventArgumentMap['scroll']>;
+  onDropdownMenuClick?: EventCallback<TYPES.TableEventHandlersEventArgumentMap['dropdown_menu_click']>;
+  onMouseOverChartSymbol?: EventCallback<TYPES.TableEventHandlersEventArgumentMap['mouseover_chart_symbol']>;
+  onDragSelectEnd?: EventCallback<TYPES.TableEventHandlersEventArgumentMap['drag_select_end']>;
 
-  onDropdownIconClick?: EventCallback<TableEventHandlersEventArgumentMap['dropdown_icon_click']>;
-  onDropdownMenuClear?: EventCallback<TableEventHandlersEventArgumentMap['dropdown_menu_clear']>;
+  onDropdownIconClick?: EventCallback<TYPES.TableEventHandlersEventArgumentMap['dropdown_icon_click']>;
+  onDropdownMenuClear?: EventCallback<TYPES.TableEventHandlersEventArgumentMap['dropdown_menu_clear']>;
 
-  onTreeHierarchyStateChange?: EventCallback<TableEventHandlersEventArgumentMap['tree_hierarchy_state_change']>;
+  onTreeHierarchyStateChange?: EventCallback<TYPES.TableEventHandlersEventArgumentMap['tree_hierarchy_state_change']>;
 
-  onShowMenu?: EventCallback<TableEventHandlersEventArgumentMap['show_menu']>;
-  onHideMenu?: EventCallback<TableEventHandlersEventArgumentMap['hide_menu']>;
+  onShowMenu?: EventCallback<TYPES.TableEventHandlersEventArgumentMap['show_menu']>;
+  onHideMenu?: EventCallback<TYPES.TableEventHandlersEventArgumentMap['hide_menu']>;
 
-  onIconClick?: EventCallback<TableEventHandlersEventArgumentMap['icon_click']>;
+  onIconClick?: EventCallback<TYPES.TableEventHandlersEventArgumentMap['icon_click']>;
 
-  onLegendItemClick?: EventCallback<TableEventHandlersEventArgumentMap['legend_item_click']>;
-  onLegendItemHover?: EventCallback<TableEventHandlersEventArgumentMap['legend_item_hover']>;
-  onLegendItemUnHover?: EventCallback<TableEventHandlersEventArgumentMap['legend_item_unHover']>;
-  onLegendChange?: EventCallback<TableEventHandlersEventArgumentMap['legend_change']>;
+  onLegendItemClick?: EventCallback<TYPES.TableEventHandlersEventArgumentMap['legend_item_click']>;
+  onLegendItemHover?: EventCallback<TYPES.TableEventHandlersEventArgumentMap['legend_item_hover']>;
+  onLegendItemUnHover?: EventCallback<TYPES.TableEventHandlersEventArgumentMap['legend_item_unHover']>;
+  onLegendChange?: EventCallback<TYPES.TableEventHandlersEventArgumentMap['legend_change']>;
 
-  onMouseEnterAxis?: EventCallback<TableEventHandlersEventArgumentMap['mouseenter_axis']>;
-  onMouseLeaveAxis?: EventCallback<TableEventHandlersEventArgumentMap['mouseleave_axis']>;
+  onMouseEnterAxis?: EventCallback<TYPES.TableEventHandlersEventArgumentMap['mouseenter_axis']>;
+  onMouseLeaveAxis?: EventCallback<TYPES.TableEventHandlersEventArgumentMap['mouseleave_axis']>;
 
-  onCheckboxStateChange?: EventCallback<TableEventHandlersEventArgumentMap['checkbox_state_change']>;
-  onAfterRender?: EventCallback<TableEventHandlersEventArgumentMap['after_render']>;
-  onInitialized?: EventCallback<TableEventHandlersEventArgumentMap['initialized']>;
+  onCheckboxStateChange?: EventCallback<TYPES.TableEventHandlersEventArgumentMap['checkbox_state_change']>;
+  onAfterRender?: EventCallback<TYPES.TableEventHandlersEventArgumentMap['after_render']>;
+  onInitialized?: EventCallback<TYPES.TableEventHandlersEventArgumentMap['initialized']>;
 
   // pivot table only
-  onPivotSortClick?: EventCallback<TableEventHandlersEventArgumentMap['pivot_sort_click']>;
-  onDrillMenuClick?: EventCallback<TableEventHandlersEventArgumentMap['drillmenu_click']>;
+  onPivotSortClick?: EventCallback<TYPES.TableEventHandlersEventArgumentMap['pivot_sort_click']>;
+  onDrillMenuClick?: EventCallback<TYPES.TableEventHandlersEventArgumentMap['drillmenu_click']>;
 
   // pivot chart only
-  onVChartEventType?: EventCallback<TableEventHandlersEventArgumentMap['vchart_event_type']>;
+  onVChartEventType?: EventCallback<TYPES.TableEventHandlersEventArgumentMap['vchart_event_type']>;
 }
 
 export const TABLE_EVENTS = {
@@ -157,7 +157,7 @@ export const bindEventsToTable = <T>(
   if (newEventProps) {
     Object.keys(newEventProps).forEach(eventKey => {
       if (!prevEventProps || !prevEventProps[eventKey] || prevEventProps[eventKey] !== newEventProps[eventKey]) {
-        table.on(supportedEvents[eventKey] as keyof TableEventHandlersEventArgumentMap, newEventProps[eventKey]);
+        table.on(supportedEvents[eventKey] as keyof TYPES.TableEventHandlersEventArgumentMap, newEventProps[eventKey]);
       }
     });
   }

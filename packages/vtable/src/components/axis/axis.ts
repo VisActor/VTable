@@ -57,13 +57,17 @@ export class CartesianAxis {
     );
 
     if (this.orient === 'left' || this.orient === 'right') {
+      const innerOffsetTop = this.option.innerOffset?.top ?? 0;
+      const innerOffsetBottom = this.option.innerOffset?.bottom ?? 0;
       this.width = width;
-      this.height = height - padding[2];
-      this.y = padding[0];
+      this.height = height - padding[2] - innerOffsetBottom;
+      this.y = padding[0] + innerOffsetTop;
     } else if (this.orient === 'top' || this.orient === 'bottom') {
-      this.width = width - padding[1];
+      const innerOffsetLeft = this.option.innerOffset?.left ?? 0;
+      const innerOffsetRight = this.option.innerOffset?.right ?? 0;
+      this.width = width - padding[1] - innerOffsetRight;
       this.height = height;
-      this.x = padding[3];
+      this.x = padding[3] + innerOffsetLeft;
     }
 
     this.visible = option.visible ?? true;
@@ -217,7 +221,7 @@ export class CartesianAxis {
       //   visible: this.option.grid.visible
       // },
       title: {
-        text: this.option.title.text,
+        text: this.option.title.text as string,
         maxWidth: this._getTitleLimit(isX)
       },
       items: this.getLabelItems(axisLength),

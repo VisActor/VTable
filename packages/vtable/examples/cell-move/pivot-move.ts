@@ -11,6 +11,11 @@ export function createTable() {
       {
         dimensionKey: '地区',
         //title: '地区',
+        value: '东北22'
+      },
+      {
+        dimensionKey: '地区',
+        //title: '地区',
         value: '东北',
         children: [
           {
@@ -452,6 +457,8 @@ export function createTable() {
   };
   option.container = document.getElementById(CONTAINER_ID);
   const instance = new PivotTable(option);
+  // 只为了方便控制太调试用，不要拷贝
+  window.tableInstance = instance;
   instance.on('copy_data', e => {
     console.log('copy_data', e);
   });
@@ -459,7 +466,4 @@ export function createTable() {
   VTable.bindDebugTool(instance.scenegraph.stage as any, {
     customGrapicKeys: ['role', '_updateTag']
   });
-
-  // 只为了方便控制太调试用，不要拷贝
-  window.tableInstance = instance;
 }

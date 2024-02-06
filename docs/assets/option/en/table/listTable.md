@@ -76,7 +76,7 @@ Global configuration cell editor
 ```
 editor?: string | IEditor | ((args: BaseCellInfo & { table: BaseTableAPI }) => string | IEditor);
 ```
-Among them, IEditor is the editor interface defined in @visactor/vtable-editors. For details, please refer to the source code: https://github.com/VisActor/VTable/blob/feat/editCell/packages/vtable-editors/src/types.ts .
+Among them, IEditor is the editor interface defined in @visactor/vtable-editors. For details, please refer to the source code: https://github.com/VisActor/VTable/blob/main/packages/vtable-editors/src/types.ts .
 
 ${prefix} headerEditor (string|Object|Function)
 
@@ -98,3 +98,11 @@ When displayed as a tree structure, the indentation value of each layer of conte
 ## hierarchyExpandLevel(number)
 
 When displayed as a tree structure, the number of levels is expanded by default. The default value is 1, which only displays the root node. If configured to `Infinity`, all nodes will be expanded.
+
+## frozenColDragHeaderMode(string) = 'fixedFrozenCount'
+
+Drag the table header to move the position. Rules for frozen parts. The default is fixedFrozenCount.
+
+- "disabled" (disables adjusting the position of frozen columns): The headers of other columns are not allowed to be moved into the frozen column, nor are the frozen columns allowed to be moved out. The frozen column remains unchanged.
+- "adjustFrozenCount" (adjust the number of frozen columns based on the interaction results): allows the headers of other columns to move into the frozen column, and the frozen column to move out, and adjusts the number of frozen columns based on the dragging action. When the headers of other columns are dragged into the frozen column position, the number of frozen columns increases; when the headers of other columns are dragged out of the frozen column position, the number of frozen columns decreases.
+- "fixedFrozenCount" (can adjust frozen columns and keep the number of frozen columns unchanged): Allows you to freely drag the headers of other columns into or out of the frozen column position while keeping the number of frozen columns unchanged.

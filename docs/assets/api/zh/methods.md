@@ -588,6 +588,16 @@ enum HierarchyState {
    */
   updateSortState(sortState: SortState[] | SortState | null, executeSort: boolean = true)
 ```
+## updateSortRules(Function)
+
+透视表更新排序规则，PivotTable 专有
+```
+  /**
+   * 全量更新排序规则
+   * @param sortRules
+   */
+  updateSortRules(sortRules: SortRules)
+```
 
 ## updatePivotSortState(Function)
 
