@@ -96,12 +96,13 @@ export class SimpleHeaderLayoutMap implements LayoutMapAPI {
     if (this.hasAggregation) {
       if (this.hasAggregationOnBottomCount) {
         if (this.transpose) {
-          if (col === this.colCount - this.hasAggregationOnBottomCount) {
+          if (col >= this.colCount - this.hasAggregationOnBottomCount) {
             return true;
           }
-        }
-        if (row >= this.rowCount - this.hasAggregationOnBottomCount) {
-          return true;
+        } else {
+          if (row >= this.rowCount - this.hasAggregationOnBottomCount) {
+            return true;
+          }
         }
       }
       if (this.hasAggregationOnTopCount) {
@@ -109,9 +110,10 @@ export class SimpleHeaderLayoutMap implements LayoutMapAPI {
           if (col >= this.rowHeaderLevelCount && col < this.rowHeaderLevelCount + this.hasAggregationOnTopCount) {
             return true;
           }
-        }
-        if (row >= this.columnHeaderLevelCount && row < this.columnHeaderLevelCount + this.hasAggregationOnTopCount) {
-          return true;
+        } else {
+          if (row >= this.columnHeaderLevelCount && row < this.columnHeaderLevelCount + this.hasAggregationOnTopCount) {
+            return true;
+          }
         }
       }
     }
@@ -123,9 +125,10 @@ export class SimpleHeaderLayoutMap implements LayoutMapAPI {
         if (col >= this.rowHeaderLevelCount && col < this.rowHeaderLevelCount + this.hasAggregationOnTopCount) {
           return true;
         }
-      }
-      if (row >= this.columnHeaderLevelCount && row < this.columnHeaderLevelCount + this.hasAggregationOnTopCount) {
-        return true;
+      } else {
+        if (row >= this.columnHeaderLevelCount && row < this.columnHeaderLevelCount + this.hasAggregationOnTopCount) {
+          return true;
+        }
       }
     }
     return false;
@@ -133,12 +136,13 @@ export class SimpleHeaderLayoutMap implements LayoutMapAPI {
   isBottomAggregation(col: number, row: number): boolean {
     if (this.hasAggregationOnBottomCount) {
       if (this.transpose) {
-        if (col === this.colCount - this.hasAggregationOnBottomCount) {
+        if (col >= this.colCount - this.hasAggregationOnBottomCount) {
           return true;
         }
-      }
-      if (row >= this.rowCount - this.hasAggregationOnBottomCount) {
-        return true;
+      } else {
+        if (row >= this.rowCount - this.hasAggregationOnBottomCount) {
+          return true;
+        }
       }
     }
     return false;

@@ -370,6 +370,8 @@ export interface BaseTableConstructorOptions {
   resizeTime?: number;
 }
 export interface BaseTableAPI {
+  /** 数据总条目数 */
+  recordsCount: number;
   /** 表格的行数 */
   rowCount: number;
   /** 表格的列数 */

@@ -20,7 +20,7 @@ import { SimpleHeaderLayoutMap } from './layout';
 import { isValid } from '@visactor/vutils';
 import { _setDataSource, _setRecords, sortRecords } from './core/tableHelper';
 import { BaseTable } from './core';
-import type { ListTableProtected } from './ts-types/base-table';
+import type { BaseTableAPI, ListTableProtected } from './ts-types/base-table';
 import { TABLE_EVENT_TYPE } from './core/TABLE_EVENT_TYPE';
 import { Title } from './components/title/title';
 import { cloneDeep } from '@visactor/vutils';
@@ -113,6 +113,14 @@ export class ListTable extends BaseTable implements ListTableAPI {
    */
   get sortState(): SortState | SortState[] {
     return this.internalProps.sortState;
+  }
+
+  get records() {
+    return this.dataSource.source;
+  }
+
+  get recordsCount() {
+    return this.dataSource.source.length;
   }
   // /**
   //  * Gets the define of the header.
@@ -209,10 +217,10 @@ export class ListTable extends BaseTable implements ListTableAPI {
     } else if (table.internalProps.layoutMap.isAggregation(col, row)) {
       if (table.internalProps.layoutMap.isTopAggregation(col, row)) {
         const aggregator = table.internalProps.layoutMap.getAggregatorOnTop(col, row);
-        return aggregator?.value();
+        return aggregator?.formatValue ? aggregator.formatValue(col, row, this as BaseTableAPI) : '';
       } else if (table.internalProps.layoutMap.isBottomAggregation(col, row)) {
         const aggregator = table.internalProps.layoutMap.getAggregatorOnBottom(col, row);
-        return aggregator?.value();
+        return aggregator?.formatValue ? aggregator.formatValue(col, row, this as BaseTableAPI) : '';
       }
     }
     const { field, fieldFormat } = table.internalProps.layoutMap.getBody(col, row);

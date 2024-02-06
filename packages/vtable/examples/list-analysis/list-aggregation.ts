@@ -17,7 +17,7 @@ const generatePersons = count => {
 };
 
 export function createTable() {
-  const records = generatePersons(30);
+  const records = generatePersons(300);
   const columns: VTable.ColumnsDefine = [
     {
       field: '',
@@ -89,9 +89,15 @@ export function createTable() {
       field: 'salary',
       title: 'salary',
       width: 100,
-      aggregation: {
-        aggregationType: AggregationType.AVG
-      }
+      aggregation: [
+        {
+          aggregationType: AggregationType.AVG
+        },
+        {
+          aggregationType: AggregationType.SUM,
+          showOnTop: true
+        }
+      ]
     },
     {
       field: 'salary',
@@ -99,14 +105,23 @@ export function createTable() {
       width: 100,
       aggregation: [
         {
-          aggregationType: AggregationType.MAX
+          aggregationType: AggregationType.MAX,
+          formatFun(value) {
+            return '最高薪资:' + Math.round(value) + '元';
+          }
         },
         {
-          aggregationType: AggregationType.MIN
+          aggregationType: AggregationType.MIN,
+          formatFun(value) {
+            return '最低薪资:' + Math.round(value) + '元';
+          }
         },
         {
           aggregationType: AggregationType.AVG,
-          showOnTop: true
+          showOnTop: false,
+          formatFun(value, col, row, table) {
+            return '平均:' + Math.round(value) + '元 (共计' + table.recordsCount + '条数据)';
+          }
         }
       ]
     }
@@ -131,11 +146,12 @@ export function createTable() {
     tooltip: {
       isShowOverflowTextTooltip: true
     },
-    frozenColCount: 1,
-    bottomFrozenRowCount: 2,
-    rightFrozenColCount: 2,
+    // frozenColCount: 1,
+    bottomFrozenRowCount: 3,
+    rightFrozenColCount: 1,
     overscrollBehavior: 'none',
     autoWrapText: true,
+    // widthMode: 'autoWidth',
     heightMode: 'autoHeight',
     dragHeaderMode: 'all',
     keyboardOptions: {
@@ -147,10 +163,66 @@ export function createTable() {
     pagination: {
       perPageCount: 100,
       currentPage: 0
+    },
+    theme: VTable.themes.DEFAULT.extends({
+      cornerRightBottomCellStyle: {
+        bgColor: 'rgba(1,1,1,0.1)',
+        borderColor: 'red'
+      }
+    }),
+    customMergeCell: (col, row, table) => {
+      if (col >= 0 && col < table.colCount && row === table.rowCount - 1) {
+        return {
+          text: '统计数据中平均薪资：' + table.getCellOriginValue(table.colCount - 1, table.rowCount - 1),
+          range: {
+            start: {
+              col: 0,
+              row: table.rowCount - 1
+            },
+            end: {
+              col: table.colCount - 1,
+              row: table.rowCount - 1
+            }
+          },
+          style: {
+            borderLineWidth: [6, 1, 1, 1],
+            borderColor: ['gray'],
+            textAlign: 'center'
+          }
+        };
+      }
+      if (col >= 0 && col < table.colCount && row === table.rowCount - 2) {
+        return {
+          text: '统计数据中最低薪资：' + table.getCellOriginValue(table.colCount - 1, table.rowCount - 2),
+          range: {
+            start: {
+              col: 0,
+              row: table.rowCount - 2
+            },
+            end: {
+              col: table.colCount - 1,
+              row: table.rowCount - 2
+            }
+          },
+          style: {
+            textStick: true,
+            borderLineWidth: [6, 1, 1, 1],
+            borderColor: ['gray'],
+            textAlign: 'center'
+          }
+        };
+      }
     }
+    // transpose: true
     // widthMode: 'adaptive'
   };
   const tableInstance = new VTable.ListTable(option);
+  // tableInstance.updateFilterRules([
+  //   {
+  //     filterKey: 'sex',
+  //     filteredValues: ['boy']
+  //   }
+  // ]);
   window.tableInstance = tableInstance;
   tableInstance.on('change_cell_value', arg => {
     console.log(arg);

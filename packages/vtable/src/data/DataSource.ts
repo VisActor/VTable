@@ -180,6 +180,7 @@ export class DataSource extends EventTarget implements DataSourceAPI {
   } = {};
   // columns对应各个字段的聚合类对象
   fieldAggregators: Aggregator[] = [];
+  layoutColumnObjects: ColumnData[] = [];
   constructor(
     dataSourceObj?: DataSourceParam | DataSource,
     dataConfig?: IListTableDataConfig,
@@ -192,7 +193,7 @@ export class DataSource extends EventTarget implements DataSourceAPI {
     this.dataSourceObj = dataSourceObj;
     this.dataConfig = dataConfig;
     this._get = dataSourceObj?.get.bind(dataSourceObj) || (undefined as any);
-    columnObjs && this._generateFieldAggragations(columnObjs);
+    this.layoutColumnObjects = columnObjs;
     this._source = this.processRecords(dataSourceObj?.source ?? dataSourceObj);
     this._sourceLength = this._source?.length || 0;
     this.sortedIndexMap = new Map<string, ISortedMapItem>();
@@ -248,8 +249,10 @@ export class DataSource extends EventTarget implements DataSourceAPI {
     this.registerAggregator(AggregationType.AVG, AvgAggregator);
     this.registerAggregator(AggregationType.NONE, NoneAggregator);
   }
-  _generateFieldAggragations(columnObjs: ColumnData[]) {
-    for (let i = 0; i < columnObjs.length; i++) {
+  _generateFieldAggragations() {
+    const columnObjs = this.layoutColumnObjects;
+    for (let i = 0; i < columnObjs?.length; i++) {
+      columnObjs[i].aggregator = null; //重置聚合器 如更新了过滤条件都需要重新计算
       const field = columnObjs[i].field;
       const aggragation = columnObjs[i].aggregation;
       if (!aggragation) {
@@ -258,7 +261,7 @@ export class DataSource extends EventTarget implements DataSourceAPI {
       if (Array.isArray(aggragation)) {
         for (let j = 0; j < aggragation.length; j++) {
           const item = aggragation[j];
-          const aggregator = new this.registedAggregators[item.aggregationType](field as string);
+          const aggregator = new this.registedAggregators[item.aggregationType](field as string, item.formatFun);
           this.fieldAggregators.push(aggregator);
           if (!columnObjs[i].aggregator) {
             columnObjs[i].aggregator = [];
@@ -266,13 +269,17 @@ export class DataSource extends EventTarget implements DataSourceAPI {
           columnObjs[i].aggregator.push(aggregator);
         }
       } else {
-        const aggregator = new this.registedAggregators[aggragation.aggregationType](field as string);
+        const aggregator = new this.registedAggregators[aggragation.aggregationType](
+          field as string,
+          aggragation.formatFun
+        );
         this.fieldAggregators.push(aggregator);
         columnObjs[i].aggregator = aggregator;
       }
     }
   }
   processRecords(records: any[]) {
+    this._generateFieldAggragations();
     const filteredRecords = [];
     const isHasAggregation = this.fieldAggregators.length >= 1;
     const isHasFilterRule = this.dataConfig?.filterRules?.length >= 1;

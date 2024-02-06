@@ -20,11 +20,12 @@ export function checkHasAggregationOnTop(layoutMap: SimpleHeaderLayoutMap) {
     const column = columnObjects[i];
     if ((column as ColumnData)?.aggregation) {
       if (Array.isArray((column as ColumnData)?.aggregation)) {
-        count = ((column as ColumnData).aggregation as Array<Aggregation>).filter(
-          item => item.showOnTop === true
-        ).length;
+        count = Math.max(
+          count,
+          ((column as ColumnData).aggregation as Array<Aggregation>).filter(item => item.showOnTop === true).length
+        );
       } else if (((column as ColumnData).aggregation as Aggregation).showOnTop === true) {
-        count = 1;
+        count = Math.max(count, 1);
       }
     }
   }
@@ -38,11 +39,12 @@ export function checkHasAggregationOnBottom(layoutMap: SimpleHeaderLayoutMap) {
     const column = columnObjects[i];
     if ((column as ColumnData)?.aggregation) {
       if (Array.isArray((column as ColumnData)?.aggregation)) {
-        count = ((column as ColumnData).aggregation as Array<Aggregation>).filter(
-          item => item.showOnTop === false
-        ).length;
+        count = Math.max(
+          count,
+          ((column as ColumnData).aggregation as Array<Aggregation>).filter(item => item.showOnTop === false).length
+        );
       } else if (((column as ColumnData).aggregation as Aggregation).showOnTop === false) {
-        count = 1;
+        count = Math.max(count, 1);
       }
     }
   }
