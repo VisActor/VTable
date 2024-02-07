@@ -8,7 +8,8 @@ export function createTable() {
     {
       progress: 100,
       id: 1,
-      name: 'a'
+      name: 'a',
+      link: animal1ImageUrl
     },
     {
       progress: 80,
@@ -82,13 +83,13 @@ export function createTable() {
           fontFamily: 'sans-serif'
         },
         field: 'link',
-        // cellType: 'image',
-        cellType(args) {
-          if (args.row % 2 === 1) {
-            return 'image';
-          }
-          return 'link';
-        },
+        cellType: 'image',
+        // cellType(args) {
+        //   if (args.row % 2 === 1) {
+        //     return 'image';
+        //   }
+        //   return 'link';
+        // },
         width: 300,
         style: {
           padding: 1

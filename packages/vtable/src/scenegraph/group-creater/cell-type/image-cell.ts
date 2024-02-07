@@ -204,6 +204,9 @@ export function _adjustWidthHeight(
 
 export function updateImageCellContentWhileResize(cellGroup: Group, col: number, row: number, table: BaseTableAPI) {
   const image = cellGroup.getChildByName('image') as Image;
+  if (!image) {
+    return;
+  }
   const originImage =
     (typeof image.attribute.image !== 'string' && image.attribute.image) ||
     image.resources?.get(image.attribute.image).data;
