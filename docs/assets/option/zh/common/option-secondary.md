@@ -161,6 +161,12 @@ hover 交互响应模式：十字交叉、整列、整行或者单个单元格�
 
 单独设置表头不响应鼠标 select 交互。
 
+#${prefix} theme(Object)
+
+{{ use: common-theme(
+  prefix = '#' + ${prefix},
+) }}
+
 #${prefix} menu(Object)
 
 下拉菜单的相关配置。消失时机：显示后点击菜单区域外自动消失。具体配置项如下：
@@ -203,12 +209,6 @@ DropDownMenuHighlightInfo 的定义如下：
 ```
 
 {{ use: common-IDimensionInfo()}}
-
-#${prefix} theme(Object)
-
-{{ use: common-theme(
-  prefix = '#' + ${prefix},
-) }}
 
 #${prefix} title(Object)
 

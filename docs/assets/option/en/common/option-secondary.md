@@ -167,6 +167,12 @@ Do not respond to mouse select interaction.
 
 Separately set the header not to respond to mouse select interaction.
 
+#${prefix} theme(Object)
+
+{{ use: common-theme(
+  prefix = '#' + ${prefix},
+) }}
+
 #${prefix} menu(Object)
 
 Configuration related to the drop-down menu. Disappearance timing: automatically disappears after clicking the area outside the menu. Specific configuration items as follows:
@@ -210,12 +216,6 @@ Set the selected state of the menu. Declaration type is `DropDownMenuHighlightIn
 ```
 
 {{ use: common-IDimensionInfo()}}
-
-#${prefix} theme(Object)
-
-{{ use: common-theme(
-  prefix = '#' + ${prefix},
-) }}
 
 #${prefix} title(Object)
 
