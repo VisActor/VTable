@@ -1432,7 +1432,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
     }
   }
 
-  hasCustomRenderOrLayout() {
+  _hasCustomRenderOrLayout() {
     const { headerObjects } = this.internalProps.layoutMap;
     if (this.options.customRender) {
       return true;

@@ -2430,7 +2430,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
    */
   abstract updatePagination(pagination: IPagination): void;
 
-  abstract hasCustomRenderOrLayout(): boolean;
+  abstract _hasCustomRenderOrLayout(): boolean;
 
   get recordsCount() {
     return this.records?.length;

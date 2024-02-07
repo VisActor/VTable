@@ -1224,7 +1224,7 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
     this.eventManager.updateEventBinder();
   }
 
-  hasCustomRenderOrLayout() {
+  _hasCustomRenderOrLayout() {
     if (this.options.customRender) {
       return true;
     }

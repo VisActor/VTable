@@ -217,7 +217,7 @@ export class Scenegraph {
    */
   clearCells() {
     // unbind AutoPoptip
-    if (this.table.isPivotChart() || this.table.hasCustomRenderOrLayout()) {
+    if (this.table.isPivotChart() || this.table._hasCustomRenderOrLayout()) {
       // bind for axis label in pivotChart
       this.stage.pluginService.findPluginsByName('poptipForText').forEach(plugin => {
         plugin.deactivate(this.stage.pluginService);
@@ -337,7 +337,7 @@ export class Scenegraph {
    */
   createSceneGraph() {
     // bind AutoPoptip
-    if (this.table.isPivotChart() || this.table.hasCustomRenderOrLayout()) {
+    if (this.table.isPivotChart() || this.table._hasCustomRenderOrLayout()) {
       // bind for axis label in pivotChart
       (this.stage.pluginService as any).autoEnablePlugins.getContributions().forEach((p: any) => {
         if (p.name === 'poptipForText') {
