@@ -961,6 +961,27 @@ export class ListTable extends BaseTable implements ListTableAPI {
     } else {
       this.dataSource.changeFieldValue(value, recordIndex, field, col, row, this);
     }
+    //改变单元格的值后 聚合值做重新计算
+    const aggregators = this.internalProps.layoutMap.getAggregators(col, row);
+    if (aggregators) {
+      if (Array.isArray(aggregators)) {
+        for (let i = 0; i < aggregators?.length; i++) {
+          aggregators[i].recalculate();
+        }
+      } else {
+        aggregators.recalculate();
+      }
+      const aggregatorCells = this.internalProps.layoutMap.getCellAddressHasAggregator(col, row);
+      for (let i = 0; i < aggregatorCells.length; i++) {
+        const range = this.getCellRange(aggregatorCells[i].col, aggregatorCells[i].row);
+        for (let sCol = range.start.col; sCol <= range.end.col; sCol++) {
+          for (let sRow = range.start.row; sRow <= range.end.row; sRow++) {
+            this.scenegraph.updateCellContent(sCol, sRow);
+          }
+        }
+      }
+    }
+
     // const cell_value = this.getCellValue(col, row);
     const range = this.getCellRange(col, row);
     for (let sCol = range.start.col; sCol <= range.end.col; sCol++) {

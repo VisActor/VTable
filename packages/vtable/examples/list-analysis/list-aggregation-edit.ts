@@ -1,6 +1,9 @@
 import * as VTable from '../../src';
 import { AggregationType } from '../../src/ts-types';
+import { InputEditor } from '@visactor/vtable-editors';
 const CONTAINER_ID = 'vTable';
+const input_editor = new InputEditor({});
+VTable.register.editor('input', input_editor);
 const generatePersons = count => {
   return Array.from(new Array(count)).map((_, i) => ({
     id: i + 1,
@@ -103,6 +106,7 @@ export function createTable() {
       aggregation: [
         {
           aggregationType: AggregationType.MAX,
+          // showOnTop: true,
           formatFun(value) {
             return '最高薪资:' + Math.round(value) + '元';
           }
@@ -126,10 +130,6 @@ export function createTable() {
   const option: VTable.ListTableConstructorOptions = {
     container: document.getElementById(CONTAINER_ID),
     records,
-    sortState: {
-      field: 'id',
-      order: 'desc'
-    },
     // dataConfig: {
     //   filterRules: [
     //     {
@@ -143,7 +143,7 @@ export function createTable() {
     tooltip: {
       isShowOverflowTextTooltip: true
     },
-    // frozenColCount: 1,
+    frozenColCount: 1,
     bottomFrozenRowCount: 3,
     rightFrozenColCount: 1,
     overscrollBehavior: 'none',
@@ -168,49 +168,8 @@ export function createTable() {
         borderColor: ['gray']
       }
     }),
-    // customMergeCell: (col, row, table) => {
-    //   if (col >= 0 && col < table.colCount && row === table.rowCount - 1) {
-    //     return {
-    //       text: '统计数据中平均薪资：' + table.getCellOriginValue(table.colCount - 1, table.rowCount - 1),
-    //       range: {
-    //         start: {
-    //           col: 0,
-    //           row: table.rowCount - 1
-    //         },
-    //         end: {
-    //           col: table.colCount - 1,
-    //           row: table.rowCount - 1
-    //         }
-    //       },
-    //       style: {
-    //         borderLineWidth: [6, 1, 1, 1],
-    //         borderColor: ['gray'],
-    //         textAlign: 'center'
-    //       }
-    //     };
-    //   }
-    //   if (col >= 0 && col < table.colCount && row === table.rowCount - 2) {
-    //     return {
-    //       text: '统计数据中最低薪资：' + table.getCellOriginValue(table.colCount - 1, table.rowCount - 2),
-    //       range: {
-    //         start: {
-    //           col: 0,
-    //           row: table.rowCount - 2
-    //         },
-    //         end: {
-    //           col: table.colCount - 1,
-    //           row: table.rowCount - 2
-    //         }
-    //       },
-    //       style: {
-    //         textStick: true,
-    //         borderLineWidth: [6, 1, 1, 1],
-    //         borderColor: ['gray'],
-    //         textAlign: 'center'
-    //       }
-    //     };
-    //   }
-    // },
+    editor: 'input',
+    headerEditor: 'input',
     aggregation(args) {
       if (args.col === 1) {
         return [

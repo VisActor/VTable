@@ -163,6 +163,11 @@ export class SimpleHeaderLayoutMap implements LayoutMapAPI {
     return this._hasAggregationOnBottomCount;
   }
 
+  getAggregators(col: number, row: number) {
+    const column = this.getBody(col, row);
+    const aggregators = column.aggregator;
+    return aggregators;
+  }
   getAggregatorOnTop(col: number, row: number) {
     const column = this.getBody(col, row);
     const aggregators = column.aggregator;
@@ -211,6 +216,37 @@ export class SimpleHeaderLayoutMap implements LayoutMapAPI {
       return (aggregation as Aggregation)?.showOnTop === false ? (aggregators as Aggregator) : null;
     }
     return null;
+  }
+  /**
+   * 获取单元格所在行或者列中的聚合值的单元格地址
+   * @param col
+   * @param row
+   * @returns
+   */
+  getCellAddressHasAggregator(col: number, row: number) {
+    const cellAddrs = [];
+    if (this.transpose) {
+      const topCount = this.hasAggregationOnTopCount;
+      for (let i = 0; i < topCount; i++) {
+        cellAddrs.push({ col: this.headerLevelCount + i, row });
+      }
+
+      const bottomCount = this.hasAggregationOnBottomCount;
+      for (let i = 0; i < bottomCount; i++) {
+        cellAddrs.push({ col: this.rowCount - bottomCount + i, row });
+      }
+    } else {
+      const topCount = this.hasAggregationOnTopCount;
+      for (let i = 0; i < topCount; i++) {
+        cellAddrs.push({ col, row: this.headerLevelCount + i });
+      }
+
+      const bottomCount = this.hasAggregationOnBottomCount;
+      for (let i = 0; i < bottomCount; i++) {
+        cellAddrs.push({ col, row: this.rowCount - bottomCount + i });
+      }
+    }
+    return cellAddrs;
   }
   getCellLocation(col: number, row: number): CellLocation {
     if (this.isHeader(col, row)) {

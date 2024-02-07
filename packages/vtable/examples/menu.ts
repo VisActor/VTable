@@ -111,6 +111,10 @@ export const menus = [
       {
         path: 'list-analysis',
         name: 'list-aggregation-global'
+      },
+      {
+        path: 'list-analysis',
+        name: 'list-aggregation-edit'
       }
     ]
   },
