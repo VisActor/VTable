@@ -197,6 +197,18 @@ export class CountAggregator extends Aggregator {
     this.records = [];
     this.count = 0;
   }
+  recalculate() {
+    this.count = 0;
+    this._formatedValue = undefined;
+    for (let i = 0; i < this.records.length; i++) {
+      const record = this.records[i];
+      if (record.className === 'Aggregator') {
+        this.count += record.value();
+      } else {
+        this.count++;
+      }
+    }
+  }
 }
 export class AvgAggregator extends Aggregator {
   type: string = AggregationType.AVG;
