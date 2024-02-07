@@ -1,4 +1,5 @@
 import type {
+  AggregationType,
   CellAddress,
   CellRange,
   ColumnsDefine,
@@ -32,6 +33,7 @@ import { computeColWidth } from './scenegraph/layout/compute-col-width';
 import { computeRowHeight } from './scenegraph/layout/compute-row-height';
 import { defaultOrderFn } from './tools/util';
 import type { IEditor } from '@visactor/vtable-editors';
+import type { ColumnData } from './ts-types/list-table/layout-map/api';
 
 export class ListTable extends BaseTable implements ListTableAPI {
   declare internalProps: ListTableProtected;
@@ -1450,5 +1452,50 @@ export class ListTable extends BaseTable implements ListTableAPI {
       }
     }
     return false;
+  }
+  /**
+   * 根据字段获取聚合值
+   * @param field 字段名
+   * 返回数组，包括列号和每一列的聚合值数组
+   */
+  getAggregateValuesByField(field: string | number): {
+    col: number;
+    aggregateValue: { aggregationType: AggregationType; value: number | string }[];
+  }[] {
+    const columns = this.internalProps.layoutMap.getColumnByField(field);
+    const results: {
+      col: number;
+      aggregateValue: { aggregationType: AggregationType; value: number | string }[];
+    }[] = [];
+    for (let i = 0; i < columns.length; i++) {
+      const aggregator = columns[i].columnDefine.aggregator;
+      delete columns[i].columnDefine;
+      if (aggregator) {
+        const columnAggregateValue: {
+          col: number;
+          aggregateValue: { aggregationType: AggregationType; value: number | string }[];
+        } = {
+          col: columns[i].col,
+          aggregateValue: null
+        };
+        columnAggregateValue.aggregateValue = [];
+        if (Array.isArray(aggregator)) {
+          for (let j = 0; j < aggregator.length; j++) {
+            columnAggregateValue.aggregateValue.push({
+              aggregationType: aggregator[j].type as AggregationType,
+              value: aggregator[j].value()
+            });
+          }
+        } else {
+          columnAggregateValue.aggregateValue.push({
+            aggregationType: aggregator.type as AggregationType,
+            value: aggregator.value()
+          });
+        }
+
+        results.push(columnAggregateValue);
+      }
+    }
+    return results;
   }
 }

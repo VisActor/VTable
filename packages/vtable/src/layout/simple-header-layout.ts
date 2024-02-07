@@ -1149,4 +1149,17 @@ export class SimpleHeaderLayoutMap implements LayoutMapAPI {
     define.title = title;
     define.define.title = title;
   }
+
+  getColumnByField(field: string | number): {
+    col: number;
+    columnDefine: ColumnData;
+  }[] {
+    const result = this.columnObjects?.reduce((pre: { col: number; columnDefine: ColumnData }[], cur, index) => {
+      if (cur.field === field) {
+        pre.push({ col: index, columnDefine: cur });
+      }
+      return pre;
+    }, []);
+    return result;
+  }
 }
