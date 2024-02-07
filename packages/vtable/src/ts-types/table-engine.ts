@@ -4,7 +4,7 @@ export type { HeaderData } from './list-table/layout-map/api';
 export type LayoutObjectId = number | string;
 import type { Rect } from '../tools/Rect';
 import type { BaseTableAPI, BaseTableConstructorOptions, ListTableProtected } from './base-table';
-import type { Aggregation, FilterRules, IListTableDataConfig, IPivotTableDataConfig } from './new-data-set';
+import type { Aggregation, AggregationType, FilterRules, IPivotTableDataConfig } from './new-data-set';
 import type { Either } from '../tools/helper';
 import type {
   IChartIndicator,
@@ -214,6 +214,10 @@ export interface ListTableAPI extends BaseTableAPI {
   deleteRecords: (recordIndexs: number[]) => void;
   updateRecords: (records: any[], recordIndexs: number[]) => void;
   updateFilterRules: (filterRules: FilterRules) => void;
+  getAggregateValuesByField: (field: string | number) => {
+    col: number;
+    aggregateValue: { aggregationType: AggregationType; value: number | string }[];
+  }[];
 }
 export interface PivotTableConstructorOptions extends BaseTableConstructorOptions {
   /**
