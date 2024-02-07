@@ -1425,11 +1425,11 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     const isFrozenStartCell = this.isFrozenCell(startCol, startRow);
     const isFrozenEndCell = this.isFrozenCell(endCol, endRow);
 
-    let absoluteLeft = this.getColsWidth(0, startCol - 1) || 0; // startCol为0时，absoluteLeft计算为Nan
+    const absoluteLeft = this.getColsWidth(0, startCol - 1) || 0; // startCol为0时，absoluteLeft计算为Nan
     let width = this.getColsWidth(startCol, endCol);
     if (isFrozenStartCell?.col) {
       const scrollLeft = this.scrollLeft;
-      absoluteLeft += scrollLeft;
+      // absoluteLeft += scrollLeft;
       if (!isFrozenEndCell?.col) {
         width -= scrollLeft;
         width = Math.max(width, this.getColsWidth(startCol, this.frozenColCount - 1));
