@@ -1,17 +1,5 @@
 {{ target: common-option-secondary }}
 
-#${prefix} theme(Object)
-
-{{ use: common-theme(
-  prefix = '#' + ${prefix},
-) }}
-
-#${prefix} title(Object)
-
-{{ use: common-title(
-  prefix = '#' + ${prefix},
-) }}
-
 #${prefix} widthMode('standard' | 'adaptive' | 'autoWidth') = 'standard'
 
 Table column width calculation mode, can be 'standard' (standard mode), 'adaptive' (container width adaptive mode) or 'autoWidth' (automatic width mode), default is 'standard'.
@@ -107,7 +95,7 @@ Enable shortcut key to copy, consistent with the browser's shortcut key.
 Enable shortcut key to paste, consistent with the browser's shortcut key.
 
 ##${prefix} moveFocusCellOnTab(boolean) = true
- Enable tab key interaction. The default is true. Turn on the tab key to move the selected cell. If you are currently editing a cell, moving to the next cell is also in the editing state.
+Enable tab key interaction. The default is true. Turn on the tab key to move the selected cell. If you are currently editing a cell, moving to the next cell is also in the editing state.
 
 ##${prefix} editCellOnEnter(boolean) = true
 Enable enter key interaction. Default is true. If the selected cell is editable, enter cell editing.
@@ -223,6 +211,18 @@ Set the selected state of the menu. Declaration type is `DropDownMenuHighlightIn
 
 {{ use: common-IDimensionInfo()}}
 
+#${prefix} theme(Object)
+
+{{ use: common-theme(
+  prefix = '#' + ${prefix},
+) }}
+
+#${prefix} title(Object)
+
+{{ use: common-title(
+  prefix = '#' + ${prefix},
+) }}
+
 #${prefix} tooltip(Object)
 
 Tooltip related configuration. Specific configuration items are as follows:
@@ -302,7 +302,9 @@ Where ICustomRenderFuc is defined as:
 ) }}
 
 ## overscrollBehavior(string) = 'auto'
+
 Table scrolling behavior, can be set: 'auto'|'none', the default value is 'auto'.
+
 ```
 'auto': Trigger the browser's default behavior when the table scrolls to the top or bottom;
 'none': triggers the browser's default behavior when the table scrolls to the top or bottom;
@@ -310,10 +312,11 @@ Table scrolling behavior, can be set: 'auto'|'none', the default value is 'auto'
 
 #${prefix} customMergeCell(Function)
 Customize cell merging rules. When the incoming row and column numbers are within the target area, the merging rules are returned:
-* text: Merge text in cells
-* range: merged range
-* style: style of merged cells
-Example: 
+
+- text: Merge text in cells
+- range: merged range
+- style: style of merged cells
+  Example:
 
 ```
   customMergeCell: (col, row, table) => {
