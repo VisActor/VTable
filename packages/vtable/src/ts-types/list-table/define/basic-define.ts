@@ -6,7 +6,7 @@ import type { ColumnIconOption } from '../../icon';
 import type { MenuListItem } from '../../menu';
 import type { BaseTableAPI } from '../../base-table';
 import type { IEditor } from '@visactor/vtable-editors';
-import type { Aggregation, AggregationType } from '../../new-data-set';
+import type { Aggregation, CustomAggregation } from '../../new-data-set';
 
 // eslint-disable-next-line no-unused-vars
 export interface IBasicHeaderDefine {
@@ -83,5 +83,5 @@ export interface IBasicColumnBodyDefine {
   customRender?: ICustomRender;
   customLayout?: ICustomLayout;
   editor?: string | IEditor | ((args: BaseCellInfo & { table: BaseTableAPI }) => string | IEditor);
-  aggregation?: Aggregation | Aggregation[];
+  aggregation?: Aggregation | CustomAggregation | (Aggregation | CustomAggregation)[];
 }

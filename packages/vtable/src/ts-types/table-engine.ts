@@ -4,7 +4,13 @@ export type { HeaderData } from './list-table/layout-map/api';
 export type LayoutObjectId = number | string;
 import type { Rect } from '../tools/Rect';
 import type { BaseTableAPI, BaseTableConstructorOptions, ListTableProtected } from './base-table';
-import type { Aggregation, AggregationType, FilterRules, IPivotTableDataConfig } from './new-data-set';
+import type {
+  Aggregation,
+  AggregationType,
+  CustomAggregation,
+  FilterRules,
+  IPivotTableDataConfig
+} from './new-data-set';
 import type { Either } from '../tools/helper';
 import type {
   IChartIndicator,
@@ -178,8 +184,12 @@ export interface ListTableConstructorOptions extends BaseTableConstructorOptions
   frozenColDragHeaderMode?: 'disabled' | 'adjustFrozenCount' | 'fixedFrozenCount';
   aggregation?:
     | Aggregation
-    | Aggregation[]
-    | ((args: { col: number; field: string }) => Aggregation | Aggregation[] | null);
+    | CustomAggregation
+    | (Aggregation | CustomAggregation)[]
+    | ((args: {
+        col: number;
+        field: string;
+      }) => Aggregation | CustomAggregation | (Aggregation | CustomAggregation)[] | null);
 }
 
 export interface ListTableAPI extends BaseTableAPI {

@@ -16,7 +16,8 @@ export enum AggregationType {
   MIN = 'MIN',
   MAX = 'MAX',
   AVG = 'AVG',
-  COUNT = 'COUNT'
+  COUNT = 'COUNT',
+  CUSTOM = 'CUSTOM'
 }
 export enum SortType {
   ASC = 'ASC',
@@ -231,7 +232,14 @@ export type CollectedValue = { max?: number; min?: number } | Array<string>;
 
 //#region 提供给基本表格的类型
 export type Aggregation = {
-  aggregationType?: AggregationType;
+  aggregationType: AggregationType;
+  showOnTop?: boolean;
+  formatFun?: (value: number, col: number, row: number, table: BaseTableAPI) => string | number;
+};
+
+export type CustomAggregation = {
+  aggregationType: AggregationType.CUSTOM;
+  aggregationFun: (values: any[], records: any[]) => any;
   showOnTop?: boolean;
   formatFun?: (value: number, col: number, row: number, table: BaseTableAPI) => string | number;
 };

@@ -115,6 +115,10 @@ export const menus = [
       {
         path: 'list-analysis',
         name: 'list-aggregation-edit'
+      },
+      {
+        path: 'list-analysis',
+        name: 'olympic-winners'
       }
     ]
   },

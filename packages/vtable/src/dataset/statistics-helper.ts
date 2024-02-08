@@ -10,24 +10,12 @@ export abstract class Aggregator {
   field?: string | string[];
   formatFun?: any;
   _formatedValue?: any;
-  needSplitPositiveAndNegativeForSum?: boolean = false;
-  constructor(
-    dimension: string | string[],
-    formatFun?: any,
-    isRecord?: boolean,
-    needSplitPositiveAndNegative?: boolean
-  ) {
+
+  constructor(dimension: string, formatFun?: any, isRecord?: boolean) {
     this.field = dimension;
-    this.needSplitPositiveAndNegativeForSum = needSplitPositiveAndNegative ?? false;
     this.formatFun = formatFun;
     this.isRecord = isRecord ?? this.isRecord;
   }
-  // push(record: any) {
-  //   if (this.isRecord) {
-  //     if (record.className === 'Aggregator') this.records.push(...record.records);
-  //     else this.records.push(record);
-  //   }
-  // }
   abstract push(record: any): void;
   abstract value(): any;
   abstract recalculate(): any;
@@ -93,12 +81,52 @@ export class NoneAggregator extends Aggregator {
     // do nothing
   }
 }
+export class CustomAggregator extends Aggregator {
+  type: string = AggregationType.CUSTOM; //仅获取其中一条数据 不做聚合 其fieldValue可以是number或者string类型
+  isRecord?: boolean = true;
+  declare field?: string;
+  aggregationFun: Function;
+  values: (string | number)[] = [];
+  fieldValue?: any;
+  constructor(dimension: string, formatFun?: any, isRecord?: boolean, aggregationFun?: Function) {
+    super(dimension, formatFun, isRecord);
+    this.aggregationFun = aggregationFun;
+  }
+  push(record: any): void {
+    if (this.isRecord) {
+      if (record.className === 'Aggregator') {
+        this.records.push(...record.records);
+      } else {
+        this.records.push(record);
+      }
+    }
+    this.values.push(record[this.field]);
+  }
+  value() {
+    if (!this.fieldValue) {
+      this.fieldValue = this.aggregationFun?.(this.values, this.records, this.field);
+    }
+    return this.fieldValue;
+  }
+  reset() {
+    this.records = [];
+    this.fieldValue = undefined;
+  }
+  recalculate() {
+    // do nothing
+  }
+}
 export class SumAggregator extends Aggregator {
   type: string = AggregationType.SUM;
   sum = 0;
   positiveSum = 0;
   nagetiveSum = 0;
   declare field?: string;
+  needSplitPositiveAndNegativeForSum?: boolean = false;
+  constructor(dimension: string, formatFun?: any, isRecord?: boolean, needSplitPositiveAndNegative?: boolean) {
+    super(dimension, formatFun, isRecord);
+    this.needSplitPositiveAndNegativeForSum = needSplitPositiveAndNegative ?? false;
+  }
   push(record: any): void {
     if (this.isRecord) {
       if (record.className === 'Aggregator') {

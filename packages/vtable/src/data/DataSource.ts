@@ -2,6 +2,7 @@ import * as sort from '../tools/sort';
 import type {
   Aggregation,
   AggregationRule,
+  CustomAggregation,
   DataSourceAPI,
   FieldAssessor,
   FieldData,
@@ -30,7 +31,8 @@ import {
   MaxAggregator,
   MinAggregator,
   AvgAggregator,
-  NoneAggregator
+  NoneAggregator,
+  CustomAggregator
 } from '../dataset/statistics-helper';
 import type { ColumnData } from '../ts-types/list-table/layout-map/api';
 
@@ -175,7 +177,7 @@ export class DataSource extends EventTarget implements DataSourceAPI {
   // 注册聚合类型
   registedAggregators: {
     [key: string]: {
-      new (dimension: string | string[], formatFun?: any, isRecord?: boolean): Aggregator;
+      new (dimension: string | string[], formatFun?: any, isRecord?: boolean, aggregationFun?: Function): Aggregator;
     };
   } = {};
   // columns对应各个字段的聚合类对象
@@ -248,6 +250,7 @@ export class DataSource extends EventTarget implements DataSourceAPI {
     this.registerAggregator(AggregationType.MIN, MinAggregator);
     this.registerAggregator(AggregationType.AVG, AvgAggregator);
     this.registerAggregator(AggregationType.NONE, NoneAggregator);
+    this.registerAggregator(AggregationType.CUSTOM, CustomAggregator);
   }
   _generateFieldAggragations() {
     const columnObjs = this.layoutColumnObjects;
@@ -261,7 +264,12 @@ export class DataSource extends EventTarget implements DataSourceAPI {
       if (Array.isArray(aggragation)) {
         for (let j = 0; j < aggragation.length; j++) {
           const item = aggragation[j];
-          const aggregator = new this.registedAggregators[item.aggregationType](field as string, item.formatFun);
+          const aggregator = new this.registedAggregators[item.aggregationType](
+            field as string,
+            item.formatFun,
+            true,
+            (item as CustomAggregation).aggregationFun
+          );
           this.fieldAggregators.push(aggregator);
           if (!columnObjs[i].aggregator) {
             columnObjs[i].aggregator = [];
@@ -271,7 +279,9 @@ export class DataSource extends EventTarget implements DataSourceAPI {
       } else {
         const aggregator = new this.registedAggregators[aggragation.aggregationType](
           field as string,
-          aggragation.formatFun
+          aggragation.formatFun,
+          true,
+          (aggragation as CustomAggregation).aggregationFun
         );
         this.fieldAggregators.push(aggregator);
         columnObjs[i].aggregator = aggregator;
