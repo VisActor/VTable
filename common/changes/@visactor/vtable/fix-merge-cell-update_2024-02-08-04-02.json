@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vtable",
+      "comment": "fix: fix content position update problem",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vtable"
+}
