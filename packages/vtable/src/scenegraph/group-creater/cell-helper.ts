@@ -35,6 +35,7 @@ import { resizeCellGroup } from './column-helper';
 import { getHierarchyOffset } from '../utils/get-hierarchy-offset';
 import { getQuadProps } from '../utils/padding';
 import { convertInternal } from '../../tools/util';
+import { updateCellContentHeight, updateCellContentWidth } from '../utils/text-icon-layout';
 
 export function createCell(
   type: ColumnTypeOption,
@@ -586,15 +587,57 @@ export function updateCell(col: number, row: number, table: BaseTableAPI, addNew
   }
 
   if (isMerge) {
-    const rangeHeight = table.getRowHeight(row);
-    const rangeWidth = table.getColWidth(col);
+    // const rangeHeight = table.getRowHeight(row);
+    // const rangeWidth = table.getColWidth(col);
 
     const { width: contentWidth } = newCellGroup.attribute;
     const { height: contentHeight } = newCellGroup.attribute;
     newCellGroup.contentWidth = contentWidth;
     newCellGroup.contentHeight = contentHeight;
 
-    resizeCellGroup(newCellGroup, rangeWidth, rangeHeight, range, table);
+    // resizeCellGroup(newCellGroup, rangeWidth, rangeHeight, range, table);
+    for (let col = range.start.col; col <= range.end.col; col++) {
+      for (let row = range.start.row; row <= range.end.row; row++) {
+        const cellGroup = table.scenegraph.getCell(col, row, true);
+
+        if (range.start.row !== range.end.row) {
+          // const cellGroup = table.scenegraph.getCell(col, row, true);
+          updateCellContentHeight(
+            cellGroup,
+            cellHeight,
+            cellHeight,
+            table.heightMode === 'autoHeight',
+            padding,
+            textAlign,
+            textBaseline
+          );
+        }
+        if (range.start.col !== range.end.col) {
+          // const cellGroup = table.scenegraph.getCell(col, row, true);
+          updateCellContentWidth(
+            cellGroup,
+            cellWidth,
+            cellHeight,
+            0,
+            table.heightMode === 'autoHeight',
+            padding,
+            textAlign,
+            textBaseline,
+            table.scenegraph
+          );
+        }
+        // TODO: deal width custom merge
+        // ...
+
+        newCellGroup.contentWidth = cellWidth;
+        newCellGroup.contentHeight = cellHeight;
+
+        const rangeHeight = table.getRowHeight(row);
+        const rangeWidth = table.getColWidth(col);
+
+        resizeCellGroup(cellGroup, rangeWidth, rangeHeight, range, table);
+      }
+    }
   }
 
   return newCellGroup;
@@ -665,6 +708,7 @@ function updateCellContent(
 }
 
 function canUseFastUpdate(col: number, row: number, oldCellGroup: Group, autoWrapText: boolean, table: BaseTableAPI) {
+  // return false;
   const define = table.getBodyColumnDefine(col, row);
   const mayHaveIcon = !!define?.icon || !!define?.tree;
   const cellType = table.getBodyColumnType(col, row);
