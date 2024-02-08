@@ -470,9 +470,9 @@ export function updateCell(col: number, row: number, table: BaseTableAPI, addNew
         dx: hierarchyOffset,
         x
       };
-      const oldText = textMark.attribute.text;
+      // const oldText = textMark.attribute.text;
       textMark.setAttributes(cellTheme.text ? (Object.assign({}, cellTheme.text, attribute) as any) : attribute);
-      if (!oldText && textMark.attribute.text) {
+      if (textMark.attribute.text) {
         const textBaseline = cellTheme.text.textBaseline;
         const height = cellHeight - (padding[0] + padding[2]);
         let y = 0;
