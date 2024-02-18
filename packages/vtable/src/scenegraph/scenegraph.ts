@@ -146,10 +146,10 @@ export class Scenegraph {
       enableLayout: true,
       // pluginList: table.isPivotChart() ? ['poptipForText'] : undefined,
       beforeRender: (stage: Stage) => {
-        this.table.options?.beforeRender(stage);
+        this.table.options.beforeRender && this.table.options.beforeRender(stage);
       },
       afterRender: (stage: Stage) => {
-        this.table.options?.afterRender(stage);
+        this.table.options.afterRender && this.table.options.afterRender(stage);
         this.table.fireListeners('after_render', null);
         // console.trace('after_render');
       },
