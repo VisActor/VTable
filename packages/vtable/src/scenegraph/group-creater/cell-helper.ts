@@ -501,8 +501,8 @@ export function updateCell(col: number, row: number, table: BaseTableAPI, addNew
 
   const mayHaveIcon = cellLocation !== 'body' ? true : !!define?.icon || !!define?.tree;
   const padding = cellTheme._vtable.padding;
-  const textAlign = cellTheme._vtable.textAlign;
-  const textBaseline = cellTheme._vtable.textBaseline;
+  const textAlign = cellTheme.text.textAlign;
+  const textBaseline = cellTheme.text.textBaseline;
 
   let newCellGroup;
   let bgColorFunc: Function;
@@ -609,6 +609,7 @@ export function updateCell(col: number, row: number, table: BaseTableAPI, addNew
             padding,
             textAlign,
             textBaseline
+            // 'middle'
           );
         }
         if (range.start.col !== range.end.col) {
@@ -628,8 +629,8 @@ export function updateCell(col: number, row: number, table: BaseTableAPI, addNew
         // TODO: deal width custom merge
         // ...
 
-        newCellGroup.contentWidth = cellWidth;
-        newCellGroup.contentHeight = cellHeight;
+        cellGroup.contentWidth = cellWidth;
+        cellGroup.contentHeight = cellHeight;
 
         const rangeHeight = table.getRowHeight(row);
         const rangeWidth = table.getColWidth(col);
