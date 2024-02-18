@@ -1,10 +1,25 @@
-/* eslint-disable */
-import * as VTable from '../../src';
-const CONTAINER_ID = 'vTable';
+---
+category: examples
+group: list-table-data-analysis
+title: 基本表格数据过滤
+cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/pivot-analysis-aggregation.png
+link: '../guide/table_type/Pivot_table/pivot_table_dataAnalysis'
+option: PivotTable#dataConfig.aggregationRules
+---
 
-export function createTable() {
-  var tableInstance;
-  VTable.register.icon('filter', {
+# 基本表格数据过滤
+
+基本表格通过接口updateFilterRules来设置过滤，支持值过滤和函数过滤。
+
+## 关键配置
+
+- `ListTable`
+- `updateFilterRules` 设置或者更新过滤数据规则
+## 代码演示
+
+```javascript livedemo template=vtable
+var tableInstance;
+VTable.register.icon('filter', {
     name: 'filter',
     type: 'svg',
     width: 20,
@@ -139,10 +154,10 @@ export function createTable() {
         heightMode: 'autoHeight',
         widthMode: 'autoWidth',
         bottomFrozenRowCount: 1,
-        theme: VTable.themes.ARCO.extends({
-          bottomFrozenStyle: {
+        theme:VTable.themes.ARCO.extends({
+          bottomFrozenStyle:{
             fontFamily: 'PingFang SC',
-            fontWeight: 500
+            fontWeight: 500,
           }
         })
       };
@@ -217,4 +232,4 @@ export function createTable() {
         select = null;
       }
     });
-}
+```

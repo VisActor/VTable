@@ -1,8 +1,27 @@
-import * as VTable from '../../src';
-import { AggregationType } from '../../src/ts-types';
-import { InputEditor } from '@visactor/vtable-editors';
-const CONTAINER_ID = 'vTable';
-const input_editor = new InputEditor({});
+---
+category: examples
+group: list-table-data-analysis
+title: 同一列数据设置多种聚合汇总方式
+cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/pivot-analysis-aggregation.png
+link: '../guide/table_type/Pivot_table/pivot_table_dataAnalysis'
+option: PivotTable#dataConfig.aggregationRules
+---
+
+# 同一列数据设置多种聚合汇总方式
+
+基本表格聚合计算，每一列可以设置聚合方式，支持求和，平均，最大最小，自定义函数汇总逻辑。同一列和设置多种聚合方式，结果展示在多行。
+
+且该示例数据支持编辑，编辑后自动计算需要聚合的值。
+
+## 关键配置
+
+- `ListTable`
+- `columns.aggregation` 配置聚合计算
+## 代码演示
+
+```javascript livedemo template=vtable
+
+const input_editor = new VTable_editors.InputEditor({});
 VTable.register.editor('input', input_editor);
 const generatePersons = count => {
   return Array.from(new Array(count)).map((_, i) => ({
@@ -18,10 +37,10 @@ const generatePersons = count => {
     salary: Math.round(Math.random() * 10000)
   }));
 };
+var tableInstance;
 
-export function createTable() {
   const records = generatePersons(300);
-  const columns: VTable.ColumnsDefine = [
+  const columns = [
     {
       field: '',
       title: '行号',
@@ -30,7 +49,7 @@ export function createTable() {
         return row - 1;
       },
       aggregation: {
-        aggregationType: AggregationType.NONE,
+        aggregationType: VTable.TYPES.AggregationType.NONE,
         formatFun() {
           return '汇总：';
         }
@@ -105,21 +124,21 @@ export function createTable() {
       width: 100,
       aggregation: [
         {
-          aggregationType: AggregationType.MAX,
+          aggregationType: VTable.TYPES.AggregationType.MAX,
           // showOnTop: true,
           formatFun(value) {
             return '最高薪资:' + Math.round(value) + '元';
           }
         },
         {
-          aggregationType: AggregationType.MIN,
+          aggregationType: VTable.TYPES.AggregationType.MIN,
           showOnTop: true,
           formatFun(value) {
             return '最低薪资:' + Math.round(value) + '元';
           }
         },
         {
-          aggregationType: AggregationType.AVG,
+          aggregationType: VTable.TYPES.AggregationType.AVG,
           showOnTop: false,
           formatFun(value, col, row, table) {
             return '平均:' + Math.round(value) + '元 (共计' + table.recordsCount + '条数据)';
@@ -128,7 +147,7 @@ export function createTable() {
       ]
     }
   ];
-  const option: VTable.ListTableConstructorOptions = {
+  const option = {
     container: document.getElementById(CONTAINER_ID),
     records,
     // dataConfig: {
@@ -175,13 +194,13 @@ export function createTable() {
       if (args.col === 1) {
         return [
           {
-            aggregationType: AggregationType.MAX,
+            aggregationType: VTable.TYPES.AggregationType.MAX,
             formatFun(value) {
               return '最大ID:' + Math.round(value) + '号';
             }
           },
           {
-            aggregationType: AggregationType.MIN,
+            aggregationType: VTable.TYPES.AggregationType.MIN,
             showOnTop: false,
             formatFun(value, col, row, table) {
               return '最小ID:' + Math.round(value) + '号';
@@ -192,13 +211,13 @@ export function createTable() {
       if (args.field === 'salary') {
         return [
           {
-            aggregationType: AggregationType.MIN,
+            aggregationType: VTable.TYPES.AggregationType.MIN,
             formatFun(value) {
               return '最低低低薪资:' + Math.round(value) + '元';
             }
           },
           {
-            aggregationType: AggregationType.AVG,
+            aggregationType: VTable.TYPES.AggregationType.AVG,
             showOnTop: false,
             formatFun(value, col, row, table) {
               return '平均平均平均:' + Math.round(value) + '元 (共计' + table.recordsCount + '条数据)';
@@ -211,7 +230,7 @@ export function createTable() {
     // transpose: true
     // widthMode: 'adaptive'
   };
-  const tableInstance = new VTable.ListTable(option);
+  tableInstance = new VTable.ListTable(option);
   // tableInstance.updateFilterRules([
   //   {
   //     filterKey: 'sex',
@@ -222,4 +241,5 @@ export function createTable() {
   tableInstance.on('change_cell_value', arg => {
     console.log(arg);
   });
-}
+
+```

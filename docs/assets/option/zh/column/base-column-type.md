@@ -228,3 +228,6 @@ headerEditor?: string | IEditor | ((args: BaseCellInfo & { table: BaseTableAPI }
 
 ${prefix} columns (Array)
 同上层的列配置数组，嵌套结构来描述列分组关系。
+
+${prefix} hideColumnsSubHeader(boolean) = false
+是否隐藏子表头的header标题，默认不隐藏。

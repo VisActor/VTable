@@ -219,3 +219,6 @@ headerEditor?: string | IEditor | ((args: BaseCellInfo & { table: BaseTableAPI }
 
 ${prefix} columns (Array)
 Configure arrays with upper columns, nesting structures to describe column grouping relationships.
+
+${prefix} hideColumnsSubHeader(boolean) = false
+Whether to hide the header title of the subtable header. The default value is not hidden.
