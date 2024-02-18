@@ -82,10 +82,7 @@ export function bindContainerDomListener(eventManager: EventManager) {
         }
       }
     } else if (e.key === 'Escape') {
-      if ((table as ListTableAPI).editorManager.editingEditor) {
-        (table as ListTableAPI).editorManager.editingEditor.exit();
-        (table as ListTableAPI).editorManager.editingEditor = null;
-      }
+      (table as ListTableAPI).editorManager.cancelEdit();
     } else if (e.key === 'Enter') {
       // 如果按enter键 可以结束当前的编辑 或开启编辑选中的单元格（仅限单选）
       if ((table as ListTableAPI).editorManager.editingEditor) {
@@ -128,9 +125,9 @@ export function bindContainerDomListener(eventManager: EventManager) {
           if ((table as ListTableAPI).editorManager.editingEditor) {
             (table as ListTableAPI).editorManager.completeEdit();
             table.getElement().focus();
-          }
-          if ((table as ListTableAPI).getEditor(targetCol, targetRow)) {
-            (table as ListTableAPI).editorManager.startEditCell(targetCol, targetRow);
+            if ((table as ListTableAPI).getEditor(targetCol, targetRow)) {
+              (table as ListTableAPI).editorManager.startEditCell(targetCol, targetRow);
+            }
           }
         }
       }

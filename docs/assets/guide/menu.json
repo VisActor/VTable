@@ -301,13 +301,6 @@
             "zh": "滚动",
             "en": "scroll"
           }
-        },
-        {
-          "path": "keyboard",
-          "title": {
-            "zh": "快捷键",
-            "en": "keyboard"
-          }
         }
       ]
     },
@@ -328,6 +321,13 @@
       ]
     },
     {
+      "path": "shortcut",
+      "title": {
+        "zh": "快捷键",
+        "en": "Shortcut"
+      }
+    },
+    {
       "path": "custom_define",
       "title": {
         "zh": "自定义",
@@ -338,35 +338,35 @@
           "path": "custom_icon",
           "title": {
             "zh": "自定义icon",
-            "en": "custom_icon"
+            "en": "custom icon"
           }
         },
         {
           "path": "custom_layout",
           "title": {
-            "zh": "单元格自定义布局",
-            "en": "custom_layout"
+            "zh": "单元格自定义渲染（JSX）",
+            "en": "custom render(JSX)"
           }
         },
         {
           "path": "custom_render",
           "title": {
             "zh": "单元格自定义渲染",
-            "en": "custom_render"
+            "en": "custom render"
           }
         },
         {
           "path": "custom_component",
           "title": {
             "zh": "自定义交互组件",
-            "en": "custom_interactive_component"
+            "en": "custom interactive component"
           }
         },
         {
           "path": "custom_merge",
           "title": {
             "zh": "自定义单元格合并",
-            "en": "custom_merge"
+            "en": "custom merge"
           }
         }
       ]

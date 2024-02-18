@@ -28,7 +28,7 @@ import type { BaseTableAPI, PivotTableProtected } from './ts-types/base-table';
 import { Title } from './components/title/title';
 import { cloneDeep } from '@visactor/vutils';
 import { Env } from './tools/env';
-import type { LayouTreeNode } from './layout/pivot-layout-helper';
+import type { LayouTreeNode } from './layout/layout-helper';
 import { TABLE_EVENT_TYPE } from './core/TABLE_EVENT_TYPE';
 import { EditManeger } from './edit/edit-manager';
 import * as editors from './edit/editors';
@@ -721,13 +721,13 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
     return this.getCellOriginRecord(col, row);
   }
   /**
-   * 全量更新排序规则 TODO  待完善
+   * 全量更新排序规则
    * @param sortRules
    */
   updateSortRules(sortRules: SortRules) {
     this.internalProps.dataConfig.sortRules = sortRules;
     this.dataset.updateSortRules(sortRules);
-    // (this.internalProps.layoutMap as PivotLayoutMap).updateDataset(this.dataset);
+    this.internalProps.layoutMap.resetHeaderTree();
     // 清空单元格内容
     this.scenegraph.clearCells();
     this.refreshHeader();

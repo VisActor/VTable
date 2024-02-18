@@ -148,7 +148,7 @@ export class Chart extends Group {
           ctx.clip();
           ctx.clearMatrix();
 
-          if (!chartStage.needRender) {
+          if (!(chartStage as any).needRender) {
             chartStage.pauseRender();
             table.scenegraph.stage.dirtyBounds.union(this.globalAABBBounds);
             table.scenegraph.updateNextFrame();

@@ -37,7 +37,7 @@ export function computeRowsHeight(
   const oldRowHeights: number[] = [];
   const newHeights: number[] = [];
   if (update) {
-    for (let row = 0; row < table.rowCount; row++) {
+    for (let row = rowStart; row <= rowEnd; row++) {
       // oldRowHeights.push(table.getRowHeight(row));
       oldRowHeights[row] = table.getRowHeight(row);
     }
@@ -79,11 +79,9 @@ export function computeRowsHeight(
       }
       if (isAllRowsAuto || table.getDefaultRowHeight(row) === 'auto') {
         const height = computeRowHeight(row, startCol, endCol, table);
-        if (update) {
-          newHeights[row] = Math.round(height);
-        } else {
-          table._setRowHeight(row, height);
-        }
+        newHeights[row] = Math.round(height);
+        //表头部分需要马上设置到缓存中 因为adaptive不会调整表头的高度 另外后面adaptive处理过程中有取值 table.getRowsHeight(0, table.columnHeaderLevelCount - 1);
+        table._setRowHeight(row, height);
       }
     }
 
@@ -168,9 +166,15 @@ export function computeRowsHeight(
       }
     }
   } else {
-    table.rowHeightsMap.clear();
-    for (let row = 0; row < table.rowCount; row++) {
-      newHeights[row] = table.getRowHeight(row);
+    if (table.rowCount !== table.rowHeightsMap.length) {
+      // for tree mode
+      // table.rowHeightsMap.clear();
+      table.clearRowHeightCache();
+    }
+    if (update) {
+      for (let row = rowStart; row <= rowEnd; row++) {
+        newHeights[row] = table.getRowHeight(row);
+      }
     }
   }
 
@@ -220,7 +224,7 @@ export function computeRowsHeight(
     let actualHeight = 0;
     let actualHeaderHeight = 0;
     for (let row = 0; row < table.rowCount; row++) {
-      const rowHeight = update ? newHeights[row] : table.getRowHeight(row);
+      const rowHeight = update ? newHeights[row] ?? table.getRowHeight(row) : table.getRowHeight(row);
       if (
         row < table.columnHeaderLevelCount ||
         (table.isPivotChart() && row >= table.rowCount - table.bottomFrozenRowCount)
@@ -268,19 +272,36 @@ export function computeRowsHeight(
   }
 
   if (update) {
-    for (let row = 0; row < table.rowCount; row++) {
+    for (let row = rowStart; row <= rowEnd; row++) {
       const newRowHeight = newHeights[row] ?? table.getRowHeight(row);
       if (newRowHeight !== oldRowHeights[row]) {
-        // update the row height in scenegraph
         table._setRowHeight(row, newRowHeight);
-        // table.scenegraph.updateRowHeight(row, newRowHeight - oldRowHeights[row], true);
       }
     }
-    for (let row = 0; row < table.rowCount; row++) {
+
+    if (
+      table.heightMode === 'adaptive' ||
+      (table.autoFillHeight && table.getAllRowsHeight() <= table.tableNoFrameHeight)
+    ) {
+      for (let row = 0; row <= table.columnHeaderLevelCount - 1; row++) {
+        const newRowHeight = table.getRowHeight(row);
+        if (newRowHeight !== oldRowHeights[row]) {
+          // update the row height in scenegraph
+          table.scenegraph.updateRowHeight(row, newRowHeight - oldRowHeights[row], true);
+        }
+      }
+      for (let row = table.rowCount - table.bottomFrozenRowCount; row <= table.rowCount - 1; row++) {
+        const newRowHeight = table.getRowHeight(row);
+        if (newRowHeight !== oldRowHeights[row]) {
+          // update the row height in scenegraph
+          table.scenegraph.updateRowHeight(row, newRowHeight - oldRowHeights[row], true);
+        }
+      }
+    }
+    for (let row = table.scenegraph.proxy.rowStart; row <= table.scenegraph.proxy.rowEnd; row++) {
       const newRowHeight = table.getRowHeight(row);
       if (newRowHeight !== oldRowHeights[row]) {
         // update the row height in scenegraph
-        // table._setRowHeight(row, newRowHeight);
         table.scenegraph.updateRowHeight(row, newRowHeight - oldRowHeights[row], true);
       }
     }
@@ -490,7 +511,11 @@ function computeCustomRenderHeight(col: number, row: number, table: BaseTableAPI
     let height = 0;
     let renderDefault = false;
     let enableCellPadding = false;
-    if (table.isHeader(col, row) || (table.getBodyColumnDefine(col, row) as TextColumnDefine)?.mergeCell) {
+    if (
+      table.isHeader(col, row) ||
+      (table.getBodyColumnDefine(col, row) as TextColumnDefine)?.mergeCell ||
+      table.hasCustomMerge()
+    ) {
       const cellRange = table.getCellRange(col, row);
       spanRow = cellRange.end.row - cellRange.start.row + 1;
     }
@@ -593,7 +618,11 @@ function computeTextHeight(col: number, row: number, cellType: ColumnTypeOption,
   }
   let spanRow = 1;
   let endCol = col;
-  if (table.isHeader(col, row) || (table.getBodyColumnDefine(col, row) as TextColumnDefine)?.mergeCell) {
+  if (
+    table.isHeader(col, row) ||
+    (table.getBodyColumnDefine(col, row) as TextColumnDefine)?.mergeCell ||
+    table.hasCustomMerge()
+  ) {
     const cellRange = table.getCellRange(col, row);
     spanRow = cellRange.end.row - cellRange.start.row + 1;
     col = cellRange.start.col;
@@ -695,7 +724,7 @@ function computeTextHeight(col: number, row: number, cellType: ColumnTypeOption,
       wordBreak: 'break-word',
       whiteSpace: lines.length === 1 && !autoWrapText ? 'no-wrap' : 'normal'
     });
-    maxHeight = utilTextMark.AABBBounds.height();
+    maxHeight = utilTextMark.AABBBounds.height() || (typeof lineHeight === 'number' ? lineHeight : fontSize);
   } else {
     // autoWrapText = false
     maxHeight = lines.length * lineHeight;

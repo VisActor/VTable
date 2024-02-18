@@ -6,6 +6,8 @@ Table event list, you can listen to the required events according to actual need
 
 The specific return data of the event can be actually tested to observe whether it meets the business needs, or communicate with us.
 
+For a more comprehensive list of events, please refer to: https://visactor.io/vtable/api/events
+
 | Name | Event Name | Description |
 |:----|:----|:----|
 |Life cycle event: initialization completed|INITIALIZED|Life cycle event: triggered after successful initialization is completed|

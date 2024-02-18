@@ -1,6 +1,80 @@
 # Change Log - @visactor/vtable
 
-This log was last generated on Wed, 24 Jan 2024 12:12:36 GMT and should not be manually modified.
+This log was last generated on Mon, 05 Feb 2024 12:36:17 GMT and should not be manually modified.
+
+## 0.19.1
+Mon, 05 Feb 2024 12:36:17 GMT
+
+### Updates
+
+- refactor: pivot table sort logic #1033
+
+
+- feat: add update sort rule api
+
+
+- fix: when table has scroll then click header to edit position error #1069
+
+
+- refactor: showsort option work well #1077
+
+
+- feat: add axis innerOffset config
+- fix: fix column cell order problem in sync mode
+- fix: fix border lineDash in cell group #1051
+- fix: fix textAlign value in width update#1065
+- feat: add name config in customRender
+- fix: fix merge cell content position
+- fix: fix merge cell update problem
+
+## 0.19.0
+Fri, 02 Feb 2024 04:13:16 GMT
+
+### Updates
+
+- fix: select region saved problem #1018
+
+
+- fix: when call updateColumns and discount col occor error #1015
+
+
+- fix: rightFrozenColCount drag header move more time the column width is error #1019
+
+
+- fix: empty string compute row height error #1031
+
+
+- feat: support get sorted columns #986
+
+
+- feat: add option frozenColDragHeaderMode
+
+
+- refactor: when drag header move to frozen region then markLine show positon
+
+
+- refactor: optimize updateRow api performance & resize bottom frozen row not right
+
+
+- fix: fix merge image cell update problem
+
+## 0.18.4
+Fri, 26 Jan 2024 09:15:07 GMT
+
+### Updates
+
+- fix: when click bottomFrozenRow table scroll sometimes #1011
+
+
+
+## 0.18.3
+Thu, 25 Jan 2024 10:27:02 GMT
+
+### Updates
+
+- fix: click outside of cells click cancel select state
+
+
 
 ## 0.18.2
 Wed, 24 Jan 2024 12:12:36 GMT

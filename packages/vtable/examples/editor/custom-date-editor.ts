@@ -1,5 +1,5 @@
 import * as VTable from '../../src';
-import type { IEditor, RectProps, Placement } from '@visactor/vtable-editors';
+import type { IEditor, RectProps, Placement, EditContext } from '@visactor/vtable-editors';
 import { DateInputEditor, InputEditor, ListEditor } from '@visactor/vtable-editors';
 import * as luxon from 'luxon';
 import * as Pikaday from 'pikaday';
@@ -21,9 +21,10 @@ class DateEditor implements IEditor {
   constructor(editorConfig: any) {
     this.editorConfig = editorConfig;
   }
-  beginEditing(container: HTMLElement, referencePosition: { rect: RectProps; placement?: Placement }, value?: string) {
+  onStart({ container, value, referencePosition, endEdit }: EditContext) {
     const that = this;
     this.container = container;
+    this.successCallback = endEdit;
     // const cellValue = luxon.DateTime.fromFormat(value, 'yyyy年MM月dd日').toFormat('yyyy-MM-dd');
     const input = document.createElement('input');
 
@@ -79,18 +80,15 @@ class DateEditor implements IEditor {
     // const cellValue = luxon.DateTime.fromFormat(this.element.value, 'yyyy-MM-dd').toFormat('yyyy年MM月dd日');
     return this.element.value;
   }
-  exit() {
+  onEnd() {
     this.picker.destroy();
     this.container.removeChild(this.element);
   }
-  targetIsOnEditor(target: HTMLElement) {
+  isEditorElement(target: HTMLElement) {
     if (target === this.element || this.picker.el.contains(target)) {
       return true;
     }
     return false;
-  }
-  bindSuccessCallback(successCallback: Function) {
-    this.successCallback = successCallback;
   }
 }
 const custom_date_editor = new DateEditor({});
@@ -290,7 +288,7 @@ export function createTable() {
     records,
     columns,
     keyboardOptions: {
-      moveFocusCellOnTab: false,
+      moveFocusCellOnTab: true,
       // editCellOnEnter: false,
       moveEditCellOnArrowKeys: true
     },

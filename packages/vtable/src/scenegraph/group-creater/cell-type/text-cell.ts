@@ -76,6 +76,7 @@ export function createCellGroup(
     strokeArrayWidth: (cellTheme?.group as any)?.strokeArrayWidth ?? undefined,
     strokeArrayColor: (cellTheme?.group as any)?.strokeArrayColor ?? undefined,
     cursor: (cellTheme?.group as any)?.cursor ?? undefined,
+    lineDash: cellTheme?.group?.lineDash ?? undefined,
 
     lineCap: 'square',
 
@@ -86,7 +87,8 @@ export function createCellGroup(
   cellGroup.role = 'cell';
   cellGroup.col = col;
   cellGroup.row = row;
-  columnGroup?.addChild(cellGroup);
+  // columnGroup?.addChild(cellGroup); // fix promise cell row order in column
+  columnGroup?.addCellGroup(cellGroup);
   if (customElementsGroup) {
     cellGroup.appendChild(customElementsGroup);
   }

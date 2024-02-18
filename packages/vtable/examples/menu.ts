@@ -550,15 +550,15 @@ export const menus = [
     children: [
       {
         path: 'cell-move',
-        name: 'column'
+        name: 'column-move'
       },
       {
         path: 'cell-move',
-        name: 'row'
+        name: 'row-move'
       },
       {
         path: 'cell-move',
-        name: 'pivot'
+        name: 'pivot-move'
       }
     ]
   },

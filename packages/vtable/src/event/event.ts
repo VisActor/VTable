@@ -23,6 +23,7 @@ import { bindAxisHoverEvent } from './pivot-chart/axis-hover';
 import type { PivotTable } from '../PivotTable';
 import { Env } from '../tools/env';
 import type { ListTable } from '../ListTable';
+import { isValid } from '@visactor/vutils';
 
 export class EventManager {
   table: BaseTableAPI;
@@ -323,12 +324,14 @@ export class EventManager {
 
   dealColumnMover(eventArgsSet: SceneEvent) {
     const { eventArgs } = eventArgsSet;
-    this.table.stateManager.updateMoveCol(
-      eventArgs.col,
-      eventArgs.row,
-      eventArgsSet.abstractPos.x,
-      eventArgsSet.abstractPos.y
-    );
+    if (isValid(eventArgs.col) && isValid(eventArgs.row)) {
+      this.table.stateManager.updateMoveCol(
+        eventArgs.col,
+        eventArgs.row,
+        eventArgsSet.abstractPos.x,
+        eventArgsSet.abstractPos.y
+      );
+    }
   }
 
   startColumnResize(eventArgsSet: SceneEvent) {

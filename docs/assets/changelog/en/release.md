@@ -1,3 +1,89 @@
+# v0.19.1
+
+2024-02-06
+
+
+**🆕 New feature**
+
+- **@visactor/vtable**: add update sort rule api
+- **@visactor/vtable**: add axis innerOffset config
+- **@visactor/vtable**: add name config in customRender
+
+**🐛 Bug fix**
+
+- **@visactor/vtable**: when table has scroll then click header to edit position error [#1069](https://github.com/VisActor/VTable/issues/1069)
+- **@visactor/vtable**: fix column cell order problem in sync mode
+- **@visactor/vtable**: fix border lineDash in cell group [#1051](https://github.com/VisActor/VTable/issues/1051)
+- **@visactor/vtable**: fix textAlign value in width update[#1065](https://github.com/VisActor/VTable/issues/1065)
+- **@visactor/vtable**: fix merge cell content position
+- **@visactor/vtable**: fix merge cell update problem
+
+**🔨 Refactor**
+
+- **@visactor/vtable**: pivot table sort logic [#1033](https://github.com/VisActor/VTable/issues/1033)
+- **@visactor/vtable**: showsort option work well [#1077](https://github.com/VisActor/VTable/issues/1077)
+
+
+
+[more detail about v0.19.1](https://github.com/VisActor/VTable/releases/tag/v0.19.1)
+
+# v0.19.0
+
+2024-02-02
+
+
+**🆕 New feature**
+
+- **@visactor/vtable**: support get sorted columns [#986](https://github.com/VisActor/VTable/issues/986)
+- **@visactor/vtable**: add option frozenColDragHeaderMode
+
+**🐛 Bug fix**
+
+- **@visactor/vtable**: select region saved problem [#1018](https://github.com/VisActor/VTable/issues/1018)
+- **@visactor/vtable**: when call updateColumns and discount col occor error [#1015](https://github.com/VisActor/VTable/issues/1015)
+- **@visactor/vtable**: rightFrozenColCount drag header move more time the column width is error [#1019](https://github.com/VisActor/VTable/issues/1019)
+- **@visactor/vtable**: empty string compute row height error [#1031](https://github.com/VisActor/VTable/issues/1031)
+- **@visactor/vtable**: fix merge image cell update problem
+
+**🔨 Refactor**
+
+- **@visactor/vtable**: when drag header move to frozen region then markLine show positon
+- **@visactor/vtable**: optimize updateRow api performance & resize bottom frozen row not right
+
+
+
+[more detail about v0.19.0](https://github.com/VisActor/VTable/releases/tag/v0.19.0)
+
+# v0.18.3
+
+2024-01-25
+
+**🐛 Bug fix**
+
+- **@visactor/vtable**: click outside of cells click cancel select state
+
+[more detail about v0.18.3](https://github.com/VisActor/VTable/releases/tag/v0.18.3)
+
+# v0.18.2
+
+2024-01-24
+
+**🆕 New feature**
+
+- **@visactor/vtable**: add component update
+
+**🐛 Bug fix**
+
+- **@visactor/vtable**: fix rowHeaderGroup attribute y when has no colHeaderGroup [#971](https://github.com/VisActor/VTable/issues/971)
+- **@visactor/vtable**:  transpose bottomFrozenRow cell layout error [#978](https://github.com/VisActor/VTable/issues/978)
+- **@visactor/vtable**: passte value to last row occur error [#979](https://github.com/VisActor/VTable/issues/979)
+- **@visactor/vtable**: use updateColumns api click state not right [#975](https://github.com/VisActor/VTable/issues/975)
+- **@visactor/vtable**: record has nan string value pivotchart cell value parse handle this case [#993](https://github.com/VisActor/VTable/issues/993)
+- **@visactor/vtable**: row Height compute for axis
+- **@visactor/vtable**: fix deltaY col number in moveCell()
+
+[more detail about v0.18.2](https://github.com/VisActor/VTable/releases/tag/v0.18.2)
+
 # v0.18.0
 
 2024-01-19

@@ -509,7 +509,8 @@ export class SceneProxy {
         this.rowUpdatePos, // rowStart
         distRow, // rowEnd
         this.table,
-        this.rowUpdateDirection
+        this.rowUpdateDirection,
+        true
       );
       // row header group
       updateAutoRow(
@@ -518,7 +519,8 @@ export class SceneProxy {
         this.rowUpdatePos, // rowStart
         distRow, // rowEnd
         this.table,
-        this.rowUpdateDirection
+        this.rowUpdateDirection,
+        true
       );
       // right frozen group
       updateAutoRow(
@@ -527,7 +529,8 @@ export class SceneProxy {
         this.rowUpdatePos, // rowStart
         distRow, // rowEnd
         this.table,
-        this.rowUpdateDirection
+        this.rowUpdateDirection,
+        true
       );
     }
 
@@ -623,6 +626,10 @@ export class SceneProxy {
   updateCellGroupPosition(cellGroup: Group, newRow: number, y: number) {
     // 更新位置&row
     cellGroup.row = newRow;
+    cellGroup.mergeStartCol = undefined;
+    cellGroup.mergeStartRow = undefined;
+    cellGroup.mergeEndCol = undefined;
+    cellGroup.mergeEndRow = undefined;
     cellGroup.setAttribute('y', y);
     (cellGroup as any).needUpdate = true;
     (cellGroup as any).needUpdateForAutoRowHeight = true;
@@ -726,8 +733,15 @@ function getCellByCache(cacheCellGroup: Group, row: number): Group | null {
   }
   if (cacheCellGroup.row === row) {
     return cacheCellGroup;
-  } else if (cacheCellGroup.row > row) {
-    return getCellByCache(cacheCellGroup._prev as Group, row);
   }
-  return getCellByCache(cacheCellGroup._next as Group, row);
+  const prev = cacheCellGroup._prev as Group;
+  const next = cacheCellGroup._next as Group;
+  // cacheCellGroup may have wrong order
+  if (cacheCellGroup.row > row && prev && prev.row === row - 1) {
+    return getCellByCache(prev, row);
+  }
+  if (cacheCellGroup.row < row && next && next.row === row + 1) {
+    return getCellByCache(next, row);
+  }
+  return null;
 }
