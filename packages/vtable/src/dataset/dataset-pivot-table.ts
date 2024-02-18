@@ -415,6 +415,9 @@ export class DatasetForPivotTable {
           push() {
             // do nothing
           },
+          recalculate() {
+            // do nothing
+          },
           value(): any {
             return null;
           },
