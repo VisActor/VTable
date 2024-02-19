@@ -839,6 +839,9 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
    * @returns
    */
   getColsWidth(startCol: number, endCol: number): number {
+    if (startCol > endCol) {
+      return 0;
+    }
     startCol = Math.max(startCol, 0);
     endCol = Math.min(endCol, (this.colCount ?? Infinity) - 1); // endCol最大为this.colCount - 1，超过会导致width计算为NaN
     //通过缓存获取指定范围列宽
@@ -956,6 +959,9 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
    * @returns
    */
   getRowsHeight(startRow: number, endRow: number): number {
+    if (startRow > endRow) {
+      return 0;
+    }
     startRow = Math.max(startRow, 0);
     endRow = Math.min(endRow, (this.rowCount ?? Infinity) - 1);
     //通过缓存获取指定范围行高
@@ -1419,28 +1425,38 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
    * @returns {Rect}
    */
   getCellsRect(startCol: number, startRow: number, endCol: number, endRow: number): Rect {
-    const isFrozenStartCell = this.isFrozenCell(startCol, startRow);
-    const isFrozenEndCell = this.isFrozenCell(endCol, endRow);
-
     let absoluteLeft = this.getColsWidth(0, startCol - 1) || 0; // startCol为0时，absoluteLeft计算为Nan
     let width = this.getColsWidth(startCol, endCol);
-    if (isFrozenStartCell?.col) {
-      const scrollLeft = this.scrollLeft;
-      absoluteLeft += scrollLeft;
-      if (!isFrozenEndCell?.col) {
-        width -= scrollLeft;
-        width = Math.max(width, this.getColsWidth(startCol, this.frozenColCount - 1));
-      }
+    const scrollLeft = this.scrollLeft;
+    if (this.isLeftFrozenColumn(startCol) && this.isRightFrozenColumn(endCol)) {
+      width = this.tableNoFrameWidth - (this.getColsWidth(startCol + 1, this.colCount - 1) ?? 0) - absoluteLeft;
+    } else if (this.isLeftFrozenColumn(startCol) && !this.isLeftFrozenColumn(endCol)) {
+      width = Math.max(width - scrollLeft, this.getColsWidth(startCol, this.frozenColCount - 1));
+    } else if (!this.isRightFrozenColumn(startCol) && this.isRightFrozenColumn(endCol)) {
+      absoluteLeft = Math.min(absoluteLeft - scrollLeft, this.tableNoFrameWidth - this.getRightFrozenColsWidth());
+      width = this.tableNoFrameWidth - (this.getColsWidth(startCol + 1, this.colCount - 1) ?? 0) - absoluteLeft;
+    } else if (this.isRightFrozenColumn(startCol)) {
+      absoluteLeft = this.tableNoFrameWidth - (this.getColsWidth(startCol, this.colCount - 1) ?? 0);
+    } else {
+      // 范围全部在整体一块区域 如都在右侧冻结区域 都可以走这块逻辑
+      // do nothing
     }
-    const absoluteTop = this.getRowsHeight(0, startRow - 1);
+
+    let absoluteTop = this.getRowsHeight(0, startRow - 1);
     let height = this.getRowsHeight(startRow, endRow);
-    if (isFrozenStartCell?.row) {
-      const scrollTop = this.scrollTop;
-      // absoluteTop += scrollTop;
-      if (!isFrozenEndCell?.row) {
-        height -= scrollTop;
-        height = Math.max(height, this.getRowsHeight(startRow, this.frozenRowCount - 1));
-      }
+    const scrollTop = this.scrollTop;
+    if (this.isTopFrozenRow(startRow) && this.isBottomFrozenRow(endRow)) {
+      height = this.tableNoFrameHeight - (this.getRowsHeight(startRow + 1, this.rowCount - 1) ?? 0) - absoluteTop;
+    } else if (this.isTopFrozenRow(startRow) && !this.isTopFrozenRow(endRow)) {
+      height = Math.max(height - scrollTop, this.getRowsHeight(startRow, this.frozenRowCount - 1));
+    } else if (!this.isBottomFrozenRow(startRow) && this.isBottomFrozenRow(endRow)) {
+      absoluteTop = Math.min(absoluteTop - scrollTop, this.tableNoFrameHeight - this.getBottomFrozenRowsHeight());
+      height = this.tableNoFrameHeight - (this.getRowsHeight(startRow + 1, this.rowCount - 1) ?? 0) - absoluteTop;
+    } else if (this.isBottomFrozenRow(startRow)) {
+      absoluteTop = this.tableNoFrameHeight - (this.getRowsHeight(startRow, this.rowCount - 1) ?? 0);
+    } else {
+      // 范围全部在整体一块区域 如都在右侧冻结区域 都可以走这块逻辑
+      // do nothing
     }
     return new Rect(Math.round(absoluteLeft), Math.round(absoluteTop), Math.round(width), Math.round(height));
   }
@@ -2678,6 +2694,10 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
       }
     }
     return this.internalProps.layoutMap.getCellRange(col, row);
+  }
+
+  hasCustomMerge() {
+    return !!this.internalProps.customMergeCell;
   }
 
   getCustomMerge(col: number, row: number) {
