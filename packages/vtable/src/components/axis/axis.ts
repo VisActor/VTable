@@ -159,7 +159,15 @@ export class CartesianAxis {
     const axisStylrAttrs = getAxisAttributes(this.option);
     const attrs = this.getUpdateAttribute();
     attrs.verticalFactor = this.orient === 'top' || this.orient === 'right' ? -1 : 1;
-    this.component = new LineAxis(merge({}, axisStylrAttrs, attrs));
+    this.component = new LineAxis(
+      merge(
+        {
+          disableTriggerEvent: this.table.options.disableInteraction
+        },
+        axisStylrAttrs,
+        attrs
+      )
+    );
     this.component.setAttributes(this.setLayoutStartPosition({ x: 0, y: 0 }));
     (this.component as any).originAxis = this;
   }

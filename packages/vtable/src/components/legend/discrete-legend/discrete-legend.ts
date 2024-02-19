@@ -35,7 +35,8 @@ export class DiscreteTableLegend {
     });
     const legend = new DiscreteLegend(
       merge({}, attrs, {
-        defaultSelected: this.selectedData
+        defaultSelected: this.selectedData,
+        disableTriggerEvent: this.table.options.disableInteraction
       })
     );
     legend.name = 'legend';
