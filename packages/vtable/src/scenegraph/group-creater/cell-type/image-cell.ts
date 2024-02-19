@@ -88,16 +88,18 @@ export function createImageCellGroup(
       image.resources.has(image.attribute.image) &&
       image.resources.get(image.attribute.image).state === 'success'
     ) {
-      updateAutoSizingAndKeepAspectRatio(
-        imageAutoSizing,
-        keepAspectRatio,
-        padding,
-        textAlign,
-        textBaseline,
-        image,
-        cellGroup,
-        table
-      );
+      setTimeout(() => {
+        updateAutoSizingAndKeepAspectRatio(
+          imageAutoSizing,
+          keepAspectRatio,
+          padding,
+          textAlign,
+          textBaseline,
+          image,
+          cellGroup,
+          table
+        );
+      }, 0);
     } else {
       image.successCallback = () => {
         updateAutoSizingAndKeepAspectRatio(
@@ -151,7 +153,8 @@ export function _adjustWidthHeight(
   width: number,
   height: number,
   scene: Scenegraph,
-  padding: [number, number, number, number]
+  padding: [number, number, number, number],
+  cellGroup: Group
 ): boolean {
   // const { width, height } = img as any;
   // const currentContext = context.toCurrentContext();
@@ -159,7 +162,7 @@ export function _adjustWidthHeight(
   let needInvalidate = false;
   let targetWidth: number = null;
   let targetHeight: number = null;
-  const cellGroup = scene.getCell(col, row, true);
+  // const cellGroup = scene.getCell(col, row, true);
   const { width: cellWidth, height: cellHeight, isMerge } = getCellRange(cellGroup, scene.table);
 
   if (cellWidth < width + padding[1] + padding[3]) {
@@ -204,6 +207,9 @@ export function _adjustWidthHeight(
 
 export function updateImageCellContentWhileResize(cellGroup: Group, col: number, row: number, table: BaseTableAPI) {
   const image = cellGroup.getChildByName('image') as Image;
+  if (!image) {
+    return;
+  }
   const originImage =
     (typeof image.attribute.image !== 'string' && image.attribute.image) ||
     image.resources?.get(image.attribute.image).data;
@@ -342,7 +348,8 @@ function updateAutoSizingAndKeepAspectRatio(
       (originImage as HTMLImageElement).width,
       (originImage as HTMLImageElement).height,
       table.scenegraph,
-      padding
+      padding,
+      cellGroup
     );
   }
   if (keepAspectRatio || isDamagePic(image)) {
