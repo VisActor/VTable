@@ -110,7 +110,7 @@ headerEditor?: string | IEditor | ((args: BaseCellInfo & { table: BaseTableAPI }
 
 ## aggregation(Aggregation|CustomAggregation|Array|Function)
 
-数据聚合分析配置，全局配置每一列都将有聚合逻辑，也可以在列（columns）定义中配置，列中配置的优先级更高。
+数据聚合汇总分析配置，全局配置每一列都将有聚合逻辑，也可以在列（columns）定义中配置，列中配置的优先级更高。
 
 ```
 aggregation?:

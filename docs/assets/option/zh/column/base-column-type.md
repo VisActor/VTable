@@ -239,7 +239,7 @@ ${prefix} aggregation(Aggregation | CustomAggregation | Array)
 
 非必填。
 
-数据聚合配置，对该列数据进行分析。
+数据聚合配置，对该列数据进行汇总分析。
 
 全局 option 也可以配置，对每一列都配置聚合规则。
 

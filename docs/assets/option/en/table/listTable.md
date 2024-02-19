@@ -113,7 +113,7 @@ Drag the table header to move the position. Rules for frozen parts. The default 
 
 ## aggregation(Aggregation|CustomAggregation|Array|Function)
 
-Data aggregation analysis configuration, global configuration, each column will have aggregation logic, it can also be configured in the column (columns) definition, the configuration in the column has a higher priority.
+Data aggregation summary analysis configuration, global configuration, each column will have aggregation logic, it can also be configured in the column (columns) definition, the configuration in the column has a higher priority.
 
 ```
 aggregation?:

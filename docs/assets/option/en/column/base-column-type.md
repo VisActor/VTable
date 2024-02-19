@@ -239,7 +239,7 @@ ${prefix} aggregation(Aggregation | CustomAggregation | Array)
 
 Not required.
 
-Data aggregation configuration to analyze the column data.
+Data aggregation summary configuration to analyze the column data.
 
 Global options can also be configured to configure aggregation rules for each column.
 

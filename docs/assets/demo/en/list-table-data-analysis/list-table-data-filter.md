@@ -1,21 +1,21 @@
 ---
 category: examples
 group: list-table-data-analysis
-title: 基本表格数据过滤
+title: List table data filtering
 cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/list-table-filter.gif
 link: '../guide/table_type/Pivot_table/list_table_dataAnalysis'
 ---
 
-# 基本表格数据过滤
+# List table data filtering
 
-基本表格通过接口 updateFilterRules 来设置过滤，支持值过滤和函数过滤。
+The basic table sets filtering through the interface updateFilterRules, supporting value filtering and function filtering.
 
-## 关键配置
+## Key Configurations
 
 - `ListTable`
-- `updateFilterRules` 设置或者更新过滤数据规则
+- `updateFilterRules` sets or updates filtering data rules
 
-## 代码演示
+## Code demo
 
 ```javascript livedemo template=vtable
 var tableInstance;

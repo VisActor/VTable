@@ -946,4 +946,4 @@ Get the displayed row number range of the table body part
 
 ## getAggregateValuesByField(Function)
 
-Get aggregate value
+Get aggregation summary value

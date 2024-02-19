@@ -943,4 +943,4 @@ use case: 点击图例项后 更新过滤规则 来更新图表
 
 ## getAggregateValuesByField(Function)
 
-获取聚合值
+获取聚合汇总的值

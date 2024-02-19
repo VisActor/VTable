@@ -1,21 +1,22 @@
 ---
 category: examples
 group: list-table-data-analysis
-title: 基本表格数据过滤
-cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/list-table-filter.gif
+title: List Table data aggregation summary
+cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/list-table-aggregation.png
 link: '../guide/table_type/Pivot_table/list_table_dataAnalysis'
+option: ListTable-columns-text#aggregation(Aggregation%20%7C%20CustomAggregation%20%7C%20Array)
 ---
 
-# 基本表格数据过滤
+# List table aggregation summary
 
-基本表格通过接口 updateFilterRules 来设置过滤，支持值过滤和函数过滤。
+Basic table aggregation calculation, each column can set the aggregation method, and supports summation, average, maximum and minimum, and custom function summary logic.
 
-## 关键配置
+## Key Configurations
 
 - `ListTable`
-- `updateFilterRules` 设置或者更新过滤数据规则
+- `columns.aggregation` Configure aggregation calculations
 
-## 代码演示
+## Code demo
 
 ```javascript livedemo template=vtable
 var tableInstance;

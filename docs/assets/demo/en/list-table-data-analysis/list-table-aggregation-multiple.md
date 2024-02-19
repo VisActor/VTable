@@ -1,24 +1,24 @@
 ---
 category: examples
 group: list-table-data-analysis
-title: 同一列数据设置多种聚合汇总方式
+title: Set multiple aggregation and aggregation summary methods for the same column of data
 cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/list-table-multiple-aggregation.png
 link: '../guide/table_type/Pivot_table/list_table_dataAnalysis'
 option: ListTable-columns-text#aggregation(Aggregation%20%7C%20CustomAggregation%20%7C%20Array)
 ---
 
-# 同一列数据设置多种聚合汇总方式
+# Set multiple aggregation and aggregation summary methods for the same column of data
 
-基本表格聚合计算，每一列可以设置聚合方式，支持求和，平均，最大最小，自定义函数汇总逻辑。同一列和设置多种聚合方式，结果展示在多行。
+Basic table aggregation calculation, each column can set the aggregation method, and supports summation, average, maximum and minimum, and custom function summary logic. The same column and multiple aggregation methods are set, and the results are displayed in multiple rows.
 
-且该示例数据支持编辑，编辑后自动计算需要聚合的值。
+And this sample data supports editing, and the values that need to be aggregated are automatically calculated after editing.
 
-## 关键配置
+## Key Configurations
 
 - `ListTable`
-- `columns.aggregation` 配置聚合计算
+- `columns.aggregation` Configure aggregation calculations
 
-## 代码演示
+## Code demo
 
 ```javascript livedemo template=vtable
 const input_editor = new VTable_editors.InputEditor({});
