@@ -332,7 +332,6 @@ export class MaxAggregator extends Aggregator {
 export class MinAggregator extends Aggregator {
   type: string = AggregationType.MIN;
   min: number = Number.MAX_SAFE_INTEGER;
-  isRecord?: boolean = false;
   declare field?: string;
   push(record: any): void {
     if (this.isRecord) {

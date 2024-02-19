@@ -1427,12 +1427,7 @@ export class Scenegraph {
 
     this.updateTableSize();
 
-    // 记录滚动条原位置
-    const oldHorizontalBarPos = this.table.stateManager.scroll.horizontalBarPos;
-    const oldVerticalBarPos = this.table.stateManager.scroll.verticalBarPos;
     this.component.updateScrollBar();
-    this.table.stateManager.setScrollLeft(oldHorizontalBarPos);
-    this.table.stateManager.setScrollTop(oldVerticalBarPos);
     this.updateNextFrame();
   }
 

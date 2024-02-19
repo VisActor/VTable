@@ -27,7 +27,7 @@ export function createTable() {
       title: '行号',
       width: 80,
       fieldFormat(data, col, row, table) {
-        return row - 1;
+        return row - 2;
       },
       aggregation: {
         aggregationType: AggregationType.NONE,
