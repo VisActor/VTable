@@ -594,50 +594,7 @@ export function updateCell(col: number, row: number, table: BaseTableAPI, addNew
     newCellGroup.contentWidth = contentWidth;
     newCellGroup.contentHeight = contentHeight;
 
-    // resizeCellGroup(newCellGroup, rangeWidth, rangeHeight, range, table);
-    for (let col = range.start.col; col <= range.end.col; col++) {
-      for (let row = range.start.row; row <= range.end.row; row++) {
-        const cellGroup = table.scenegraph.getCell(col, row, true);
-
-        if (range.start.row !== range.end.row) {
-          // const cellGroup = table.scenegraph.getCell(col, row, true);
-          updateCellContentHeight(
-            cellGroup,
-            cellHeight,
-            cellHeight,
-            table.heightMode === 'autoHeight',
-            padding,
-            textAlign,
-            textBaseline
-            // 'middle'
-          );
-        }
-        if (range.start.col !== range.end.col) {
-          // const cellGroup = table.scenegraph.getCell(col, row, true);
-          updateCellContentWidth(
-            cellGroup,
-            cellWidth,
-            cellHeight,
-            0,
-            table.heightMode === 'autoHeight',
-            padding,
-            textAlign,
-            textBaseline,
-            table.scenegraph
-          );
-        }
-        // TODO: deal width custom merge
-        // ...
-
-        cellGroup.contentWidth = cellWidth;
-        cellGroup.contentHeight = cellHeight;
-
-        const rangeHeight = table.getRowHeight(row);
-        const rangeWidth = table.getColWidth(col);
-
-        resizeCellGroup(cellGroup, rangeWidth, rangeHeight, range, table);
-      }
-    }
+    dealWithMergeCellSize(range, cellWidth, cellHeight, padding, textAlign, textBaseline, table);
   }
 
   return newCellGroup;
@@ -728,4 +685,65 @@ function canUseFastUpdate(col: number, row: number, oldCellGroup: Group, autoWra
     return true;
   }
   return false;
+}
+
+function dealWithMergeCellSize(
+  range: CellRange,
+  cellWidth: number,
+  cellHeight: number,
+  padding: [number, number, number, number],
+  textAlign: CanvasTextAlign,
+  textBaseline: CanvasTextBaseline,
+  table: BaseTableAPI
+) {
+  // const rangeHeight = table.getRowHeight(row);
+  // const rangeWidth = table.getColWidth(col);
+
+  // const { width: contentWidth } = newCellGroup.attribute;
+  // const { height: contentHeight } = newCellGroup.attribute;
+  // newCellGroup.contentWidth = contentWidth;
+  // newCellGroup.contentHeight = contentHeight;
+
+  // resizeCellGroup(newCellGroup, rangeWidth, rangeHeight, range, table);
+  for (let col = range.start.col; col <= range.end.col; col++) {
+    for (let row = range.start.row; row <= range.end.row; row++) {
+      const cellGroup = table.scenegraph.getCell(col, row, true);
+
+      if (range.start.row !== range.end.row) {
+        // const cellGroup = table.scenegraph.getCell(col, row, true);
+        updateCellContentHeight(
+          cellGroup,
+          cellHeight,
+          cellHeight,
+          table.heightMode === 'autoHeight',
+          padding,
+          textAlign,
+          textBaseline
+          // 'middle'
+        );
+      }
+      if (range.start.col !== range.end.col) {
+        // const cellGroup = table.scenegraph.getCell(col, row, true);
+        updateCellContentWidth(
+          cellGroup,
+          cellWidth,
+          cellHeight,
+          0,
+          table.heightMode === 'autoHeight',
+          padding,
+          textAlign,
+          textBaseline,
+          table.scenegraph
+        );
+      }
+
+      cellGroup.contentWidth = cellWidth;
+      cellGroup.contentHeight = cellHeight;
+
+      const rangeHeight = table.getRowHeight(row);
+      const rangeWidth = table.getColWidth(col);
+
+      resizeCellGroup(cellGroup, rangeWidth, rangeHeight, range, table);
+    }
+  }
 }
