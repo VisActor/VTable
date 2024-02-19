@@ -1473,7 +1473,11 @@ export class Scenegraph {
     );
     createFrameBorder(
       this.rowHeaderGroup,
-      this.isPivot ? this.table.theme.rowHeaderStyle.frameStyle : this.table.theme.bodyStyle.frameStyle,
+      this.isPivot
+        ? this.table.theme.rowHeaderStyle.frameStyle
+        : this.table.internalProps.transpose
+        ? this.table.theme.headerStyle.frameStyle
+        : this.table.theme.bodyStyle.frameStyle,
       this.rowHeaderGroup.role,
       isListTableWithFrozen ? [true, false, true, true] : undefined
     );
