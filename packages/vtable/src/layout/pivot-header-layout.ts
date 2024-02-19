@@ -2818,13 +2818,25 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
     return indicatorInfo;
   }
   /** 获取行头树结构 */
+  getLayoutColumnTree() {
+    const tree: LayouTreeNode[] = [];
+    const children = this.columnDimensionTree.tree.children;
+    generateLayoutTree(tree, children);
+    return tree;
+  }
+  /** 获取行头树结构 */
   getLayoutRowTree() {
     const tree: LayouTreeNode[] = [];
     const children = this.rowDimensionTree.tree.children;
     generateLayoutTree(tree, children);
     return tree;
   }
-
+  /** 获取列头总共的行数（全部展开情况下） */
+  getLayoutColumnTreeCount() {
+    const children = this.columnDimensionTree.tree.children;
+    const mainTreeCount = countLayoutTree(children, this.rowHierarchyType === 'tree');
+    return mainTreeCount;
+  }
   /** 获取行头总共的行数（全部展开情况下） */
   getLayoutRowTreeCount() {
     const children = this.rowDimensionTree.tree.children;

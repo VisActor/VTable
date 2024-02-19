@@ -954,6 +954,16 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
   getHierarchyState(col: number, row: number): HierarchyState {
     return this._getHeaderLayoutMap(col, row)?.hierarchyState;
   }
+  /** 获取列头树结构 */
+  getLayoutColumnTree(): LayouTreeNode[] {
+    const layoutMap = this.internalProps.layoutMap;
+    return layoutMap.getLayoutColumnTree();
+  }
+  /** 获取表格列头树形结构的占位的总节点数 */
+  getLayoutColumnTreeCount(): number {
+    const layoutMap = this.internalProps.layoutMap;
+    return layoutMap.getLayoutColumnTreeCount();
+  }
   /** 获取行头树结构 */
   getLayoutRowTree(): LayouTreeNode[] {
     const layoutMap = this.internalProps.layoutMap;
