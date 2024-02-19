@@ -47,6 +47,6 @@ export class FocusInput extends EventTarget {
   }
   release(): void {
     // document.removeChild(this._input);
-    this._container.parentElement.removeChild(this._container);
+    this._container.parentElement?.removeChild(this._container);
   }
 }
