@@ -23,6 +23,10 @@ import type {
 import { bindEventsToTable, TABLE_EVENTS_KEYS, TABLE_EVENTS } from '../eventsUtils';
 
 export type IVTable = VTable.ListTable | VTable.PivotTable | VTable.PivotChart;
+export type IOption =
+  | VTable.ListTableConstructorOptions
+  | VTable.PivotTableConstructorOptions
+  | VTable.PivotChartConstructorOptions;
 
 export interface BaseTableProps extends EventsProps {
   type?: string;
@@ -57,16 +61,41 @@ const notOptionKeys = [
   'container'
 ];
 
+const parseOptionFromChildren = (props: Props) => {
+  const optionFromChildren: Omit<IOption, 'type' | 'data' | 'width' | 'height'> = {};
+
+  toArray(props.children).map(child => {
+    const parseOption = child && (child as any).type && (child as any).type.parseOption;
+
+    if (parseOption && (child as any).props) {
+      const optionResult = parseOption((child as any).props);
+
+      if (optionResult.isSingle) {
+        optionFromChildren[optionResult.optionName] = optionResult.option;
+      } else {
+        if (!optionFromChildren[optionResult.optionName]) {
+          optionFromChildren[optionResult.optionName] = [];
+        }
+
+        optionFromChildren[optionResult.optionName].push(optionResult.option);
+      }
+    }
+  });
+
+  return optionFromChildren;
+};
+
 const BaseTable: React.FC<Props> = React.forwardRef((props, ref) => {
   const [updateId, setUpdateId] = useState<number>(0);
   const tableContext = useRef<TableContextType>({
-    optionFromChildren: {}
+    // optionFromChildren: {}
   });
-  useImperativeHandle(ref, () => tableContext.current.table);
+  useImperativeHandle(ref, () => tableContext.current?.table);
   const hasOption = !!props.option;
   const hasRecords = !!props.records;
   const isUnmount = useRef<boolean>(false);
   const prevOption = useRef(pickWithout(props, notOptionKeys));
+  const optionFromChildren = useRef<Omit<IOption, 'records'>>(null);
   const prevRecords = useRef(props.records);
   const eventsBinded = React.useRef<BaseTableProps>(null);
   const skipFunctionDiff = !!props.skipFunctionDiff;
@@ -82,12 +111,12 @@ const BaseTable: React.FC<Props> = React.forwardRef((props, ref) => {
         }
         return props.option;
       }
-
       return {
         records: props.records,
         ...prevOption.current,
-        ...tableContext.current.optionFromChildren
-      };
+        ...optionFromChildren.current
+        // ...tableContext.current?.optionFromChildren
+      } as IOption;
     },
     [hasOption, hasRecords]
   );
@@ -108,10 +137,13 @@ const BaseTable: React.FC<Props> = React.forwardRef((props, ref) => {
   );
 
   const handleTableRender = useCallback(() => {
-    // rebind events after render
-    bindEventsToTable(tableContext.current.table, props, eventsBinded.current, TABLE_EVENTS);
-
     if (!isUnmount.current) {
+      if (!tableContext.current || !tableContext.current.table) {
+        return;
+      }
+      // rebind events after render
+      bindEventsToTable(tableContext.current.table, props, eventsBinded.current, TABLE_EVENTS);
+
       // to be fixed
       // will cause another useEffect
       setUpdateId(updateId + 1);
@@ -124,23 +156,26 @@ const BaseTable: React.FC<Props> = React.forwardRef((props, ref) => {
   const renderTable = useCallback(() => {
     if (tableContext.current.table) {
       // eslint-disable-next-line promise/catch-or-return
-      const renderPromise = tableContext.current.table.renderAsync().then(handleTableRender);
-
-      if (props.onError) {
-        renderPromise.catch(props.onError);
-      }
+      tableContext.current.table.render();
+      handleTableRender();
     }
-  }, [handleTableRender, props]);
+  }, [handleTableRender]);
 
   useEffect(() => {
+    const newOptionFromChildren = hasOption ? null : parseOptionFromChildren(props);
+
     if (!tableContext.current?.table) {
+      if (!hasOption) {
+        optionFromChildren.current = newOptionFromChildren;
+      }
+
       createTable(props);
       renderTable();
       bindEventsToTable(tableContext.current.table, props, null, TABLE_EVENTS);
-      tableContext.current = {
-        ...tableContext.current,
-        isChildrenUpdated: false
-      };
+      // tableContext.current = {
+      //   ...tableContext.current,
+      //   isChildrenUpdated: false
+      // };
       eventsBinded.current = props;
       return;
     }
@@ -150,22 +185,14 @@ const BaseTable: React.FC<Props> = React.forwardRef((props, ref) => {
         eventsBinded.current = props;
         // eslint-disable-next-line promise/catch-or-return
         tableContext.current.table.updateOption(parseOption(props));
-        const updatePromise = tableContext.current.table.renderAsync().then(handleTableRender);
-
-        if (props.onError) {
-          updatePromise.catch(props.onError);
-        }
+        handleTableRender();
       } else if (
         hasRecords &&
         !isEqual(eventsBinded.current.records, props.records, { skipFunction: skipFunctionDiff })
       ) {
         eventsBinded.current = props;
         tableContext.current.table.setRecords(props.records);
-        const updatePromise = tableContext.current.table.renderAsync().then(handleTableRender);
-
-        if (props.onError) {
-          updatePromise.catch(props.onError);
-        }
+        handleTableRender();
       }
       return;
     }
@@ -174,38 +201,33 @@ const BaseTable: React.FC<Props> = React.forwardRef((props, ref) => {
 
     if (
       !isEqual(newOption, prevOption.current, { skipFunction: skipFunctionDiff }) ||
-      tableContext.current.isChildrenUpdated
+      // tableContext.current.isChildrenUpdated
+      !isEqual(newOptionFromChildren, optionFromChildren.current)
     ) {
       prevOption.current = newOption;
+      optionFromChildren.current = newOptionFromChildren;
+
       // eslint-disable-next-line promise/catch-or-return
       tableContext.current.table.updateOption(parseOption(props));
-      const updatePromise = tableContext.current.table.renderAsync().then(handleTableRender);
-
-      if (props.onError) {
-        updatePromise.catch(props.onError);
-      }
+      handleTableRender();
     } else if (hasRecords && !isEqual(props.records, prevRecords.current, { skipFunction: skipFunctionDiff })) {
       prevRecords.current = props.records;
       tableContext.current.table.setRecords(props.records);
-      const updatePromise = tableContext.current.table.renderAsync().then(handleTableRender);
-
-      if (props.onError) {
-        updatePromise.catch(props.onError);
-      }
+      handleTableRender();
     }
-    tableContext.current = {
-      ...tableContext.current,
-      isChildrenUpdated: false
-    };
+    // tableContext.current = {
+    //   ...tableContext.current,
+    //   isChildrenUpdated: false
+    // };
   }, [createTable, hasOption, hasRecords, parseOption, handleTableRender, renderTable, skipFunctionDiff, props]);
 
   useEffect(() => {
     return () => {
       if (tableContext) {
-        if (tableContext.current.table) {
+        if (tableContext.current && tableContext.current.table) {
           tableContext.current.table.release();
+          tableContext.current = null;
         }
-        tableContext.current = null;
       }
       isUnmount.current = true;
     };
@@ -214,10 +236,24 @@ const BaseTable: React.FC<Props> = React.forwardRef((props, ref) => {
   return (
     <RootTableContext.Provider value={tableContext.current}>
       {toArray(props.children).map((child: React.ReactNode, index: number) => {
+        if (typeof child === 'string') {
+          return;
+        }
+
+        const componentName =
+          child && (child as any).type && ((child as any).type.displayName || (child as any).type.name);
+        const childId = `${componentName}-${index}`;
+
         return (
-          <React.Fragment key={(child as any)?.props?.id ?? (child as any)?.id ?? `child-${index}`}>
-            {React.cloneElement(child as IMarkElement, {
-              updateId: updateId
+          // <React.Fragment key={(child as any)?.props?.id ?? (child as any)?.id ?? `child-${index}`}>
+          //   {React.cloneElement(child as IMarkElement, {
+          //     updateId: updateId
+          //   })}
+          // </React.Fragment>
+          <React.Fragment key={childId}>
+            {React.cloneElement(child as React.ReactElement<any, React.JSXElementConstructor<any>>, {
+              updateId: updateId,
+              componentId: childId
             })}
           </React.Fragment>
         );

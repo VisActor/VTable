@@ -678,6 +678,7 @@ export interface BaseTableAPI {
   isTopFrozenRow: (col: number, row?: number) => boolean;
   isBottomFrozenRow: (col: number, row?: number) => boolean;
 
+  hasCustomMerge: () => boolean;
   getCustomMerge: (col: number, row: number) => undefined | (Omit<CustomMerge, 'style'> & { style?: FullExtendStyle });
   /** 获取表格body部分的显示单元格范围 */
   getBodyVisibleCellRange: () => { rowStart: number; colStart: number; rowEnd: number; colEnd: number };
