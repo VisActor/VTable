@@ -58,7 +58,15 @@ export async function sortVertical(proxy: SceneProxy) {
   }
   // console.log('sort更新同步范围', syncTopRow, syncBottomRow);
 
+  const oldBodyHeight = proxy.table.getAllRowsHeight();
+
   computeRowsHeight(proxy.table, syncTopRow, syncBottomRow);
+
+  const newBodyHeight = proxy.table.getAllRowsHeight();
+
+  if (oldBodyHeight !== newBodyHeight) {
+    proxy.table.scenegraph.updateContainerHeight(proxy.table.frozenRowCount, newBodyHeight - oldBodyHeight);
+  }
 
   updateRowContent(syncTopRow, syncBottomRow, proxy);
 
