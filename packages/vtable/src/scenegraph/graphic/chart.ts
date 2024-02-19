@@ -169,7 +169,8 @@ export class Chart extends Group {
     const matrix = this.globalTransMatrix.clone();
     const stageMatrix = this.stage.window.getViewBoxTransform();
     matrix.multiply(stageMatrix.a, stageMatrix.b, stageMatrix.c, stageMatrix.d, stageMatrix.e, stageMatrix.f);
-    chartStage.window.setViewBoxTransform(matrix.a, matrix.b, matrix.c, matrix.d, matrix.e, matrix.f);
+    chartStage.window.setViewBoxTransform &&
+      chartStage.window.setViewBoxTransform(matrix.a, matrix.b, matrix.c, matrix.d, matrix.e, matrix.f);
 
     // this.activeChartInstance.updateData('data', this.attribute.data);
     this.activeChartInstance.renderSync();
