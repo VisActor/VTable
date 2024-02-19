@@ -2986,6 +2986,16 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
           this.options.autoWrapText
         );
       } else {
+        let defaultStyle;
+        if (layoutMap.isColumnHeader(col, row) || layoutMap.isBottomFrozenRow(col, row)) {
+          defaultStyle = this.theme.headerStyle;
+        } else if (this.internalProps.transpose && layoutMap.isRowHeader(col, row)) {
+          defaultStyle = this.theme.headerStyle;
+        } else if (layoutMap.isRowHeader(col, row) || layoutMap.isRightFrozenColumn(col, row)) {
+          defaultStyle = this.theme.rowHeaderStyle;
+        } else {
+          defaultStyle = this.theme.cornerHeaderStyle;
+        }
         // const styleClass = hd.headerType.StyleClass; //BaseHeader文件
         // const { style } = hd;
         const style = hd?.style || {};
@@ -2994,11 +3004,12 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
         }
         cacheStyle = <FullExtendStyle>headerStyleContents.of(
           style,
-          layoutMap.isColumnHeader(col, row) || layoutMap.isBottomFrozenRow(col, row)
-            ? this.theme.headerStyle
-            : layoutMap.isRowHeader(col, row) || layoutMap.isRightFrozenColumn(col, row)
-            ? this.theme.rowHeaderStyle
-            : this.theme.cornerHeaderStyle,
+          defaultStyle,
+          // layoutMap.isColumnHeader(col, row) || layoutMap.isBottomFrozenRow(col, row)
+          //   ? this.theme.headerStyle
+          //   : layoutMap.isRowHeader(col, row) || layoutMap.isRightFrozenColumn(col, row)
+          //   ? this.theme.rowHeaderStyle
+          //   : this.theme.cornerHeaderStyle,
           {
             col,
             row,
