@@ -1,7 +1,5 @@
 import * as sort from '../tools/sort';
 import type {
-  Aggregation,
-  AggregationRule,
   CustomAggregation,
   DataSourceAPI,
   FieldAssessor,
@@ -22,7 +20,6 @@ import { getValueByPath, isAllDigits } from '../tools/util';
 import { calculateArrayDiff } from '../tools/diff-cell';
 import { cloneDeep, isValid } from '@visactor/vutils';
 import type { BaseTableAPI } from '../ts-types/base-table';
-import { TABLE_EVENT_TYPE } from '../core/TABLE_EVENT_TYPE';
 import {
   RecordAggregator,
   type Aggregator,
