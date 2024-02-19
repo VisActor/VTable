@@ -685,8 +685,8 @@ export function bindTableGroupListener(eventManager: EventManager) {
         cellInfo.field as string | number,
         (e.detail as unknown as { checked: boolean }).checked
       );
-      const define = table.getBodyColumnDefine(col, row);
-      if (define.cellType === 'checkbox') {
+      const cellType = table.getCellType(col, row);
+      if (cellType === 'checkbox') {
         table.scenegraph.updateCheckboxCellState(col, row, (e.detail as unknown as { checked: boolean }).checked);
       }
     } else {
@@ -697,8 +697,8 @@ export function bindTableGroupListener(eventManager: EventManager) {
         cellInfo.field as string | number,
         (e.detail as unknown as { checked: boolean }).checked
       );
-      const define = table.getBodyColumnDefine(col, row);
-      if (define.headerType === 'checkbox') {
+      const cellType = table.getCellType(col, row);
+      if (cellType === 'checkbox') {
         const oldHeaderCheckedState = table.stateManager.headerCheckedState[cellInfo.field as string | number];
         const newHeaderCheckedState = table.stateManager.updateHeaderCheckedState(cellInfo.field as string | number);
         if (oldHeaderCheckedState !== newHeaderCheckedState) {

@@ -2864,7 +2864,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
         field: this.getHeaderField(col, row),
         cellHeaderPaths: this.internalProps.layoutMap.getCellHeaderPaths(col, row),
         title: colDef?.title,
-        cellType: colDef?.cellType ? (typeof colDef.cellType === 'string' ? colDef.cellType : 'progressbar') : 'text',
+        cellType: this.getCellType(col, row),
         originData: this.getCellOriginRecord(col, row),
         cellRange: this.getCellRangeRelativeRect({ col, row }),
         value: this.getCellValue(col, row),
@@ -3008,14 +3008,15 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
       return cacheStyle;
     }
     let cacheKey;
+    const cellType = this.getCellType(col, row);
     //如果是主体部分，获取相应的style
     if (
       (this.isListTable() && !(this as any).transpose) ||
       (this.isPivotTable() && (this.internalProps.layoutMap as PivotHeaderLayoutMap).indicatorsAsCol)
     ) {
-      cacheKey = col;
+      cacheKey = col + cellType;
     } else {
-      cacheKey = row;
+      cacheKey = row + cellType;
     }
     let cacheStyle;
     if (layoutMap.isBottomFrozenRow(row)) {
@@ -3028,7 +3029,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     }
     const column = layoutMap.getBody(col, row);
     // const styleClass = column?.cellType?.StyleClass; //BaseColumn文件
-    const styleClass = this.internalProps.bodyHelper.getStyleClass(column.cellType);
+    const styleClass = this.internalProps.bodyHelper.getStyleClass(this.getCellType(col, row));
     const style = column?.style;
     cacheStyle = <FullExtendStyle>columnStyleContents.of(
       style,
