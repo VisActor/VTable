@@ -1102,6 +1102,9 @@ export class SimpleHeaderLayoutMap implements LayoutMapAPI {
   }
   setChartInstance(_col: number, _row: number, chartInstance: any) {
     const columnObj = this.transpose ? this._columns[_row] : this._columns[_col];
+    if (typeof columnObj.chartSpec === 'function') {
+      return;
+    }
     columnObj.chartInstance = chartInstance;
   }
 
@@ -1125,9 +1128,34 @@ export class SimpleHeaderLayoutMap implements LayoutMapAPI {
   getChartAxes(col: number, row: number): any[] {
     return [];
   }
+  /** 共享chartSpec 非函数 */
+  isShareChartSpec(col: number, row: number): boolean {
+    const body = this.getBody(col, row);
+    const chartSpec = body?.chartSpec;
+    if (typeof chartSpec === 'function') {
+      return false;
+    }
+    return true;
+  }
+  getChartSpec(col: number, row: number) {
+    return this.getRawChartSpec(col, row);
+  }
   getRawChartSpec(col: number, row: number): any {
     const body = this.getBody(col, row);
-    return body?.chartSpec;
+    const chartSpec = body?.chartSpec;
+    if (typeof chartSpec === 'function') {
+      // 动态组织spec
+      const arg = {
+        col,
+        row,
+        dataValue: this._table.getCellOriginValue(col, row) || '',
+        value: this._table.getCellValue(col, row) || '',
+        rect: this._table.getCellRangeRelativeRect(this._table.getCellRange(col, row)),
+        table: this._table
+      };
+      return chartSpec(arg);
+    }
+    return chartSpec;
   }
   getChartDataId(col: number, row: number): any {
     return getChartDataId(col, row, this);

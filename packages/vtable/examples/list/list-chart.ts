@@ -4,7 +4,7 @@ import VChart from '@visactor/vchart';
 VTable.register.chartModule('vchart', VChart);
 const CONTAINER_ID = 'vTable';
 export function createTable() {
-  const columns = [
+  const columns: VTable.ColumnsDefine = [
     {
       field: 'personid',
       title: 'personid',
@@ -22,79 +22,150 @@ export function createTable() {
       width: '320',
       cellType: 'chart',
       chartModule: 'vchart',
-      chartSpec: {
-        type: 'area',
-        data: {
-          id: 'data'
-        },
-        xField: 'x',
-        yField: 'y',
-        seriesField: 'type',
-        point: {
-          style: {
-            fillOpacity: 1,
-            stroke: '#000',
-            strokeWidth: 4
-          },
-          state: {
-            hover: {
-              fillOpacity: 0.5,
-              stroke: 'blue',
-              strokeWidth: 2
+      chartSpec(args) {
+        if (args.row % 2 == 1)
+          return {
+            type: 'area',
+            data: {
+              id: 'data'
             },
-            selected: {
-              fill: 'red'
-            }
-          }
-        },
-        area: {
-          style: {
-            fillOpacity: 0.3,
-            stroke: '#000',
-            strokeWidth: 4
-          },
-          state: {
-            hover: {
-              fillOpacity: 1
+            xField: 'x',
+            yField: 'y',
+            seriesField: 'type',
+            point: {
+              style: {
+                fillOpacity: 1,
+                stroke: '#000',
+                strokeWidth: 4
+              },
+              state: {
+                hover: {
+                  fillOpacity: 0.5,
+                  stroke: 'blue',
+                  strokeWidth: 2
+                },
+                selected: {
+                  fill: 'red'
+                }
+              }
             },
-            selected: {
-              fill: 'red',
-              fillOpacity: 1
-            }
-          }
-        },
-        line: {
-          state: {
-            hover: {
-              stroke: 'red'
+            area: {
+              style: {
+                fillOpacity: 0.3,
+                stroke: '#000',
+                strokeWidth: 4
+              },
+              state: {
+                hover: {
+                  fillOpacity: 1
+                },
+                selected: {
+                  fill: 'red',
+                  fillOpacity: 1
+                }
+              }
             },
-            selected: {
-              stroke: 'yellow'
-            }
-          }
-        },
+            line: {
+              state: {
+                hover: {
+                  stroke: 'red'
+                },
+                selected: {
+                  stroke: 'yellow'
+                }
+              }
+            },
 
-        axes: [
-          {
-            orient: 'left',
-            range: {
-              min: 0
-            }
-          },
-          {
-            orient: 'bottom',
-            label: {
-              visible: true
-            },
-            type: 'band'
-          }
-        ],
-        legends: [
-          {
-            visible: true,
-            orient: 'bottom'
-          }
-        ]
+            axes: [
+              {
+                orient: 'left',
+                range: {
+                  min: 0
+                }
+              },
+              {
+                orient: 'bottom',
+                label: {
+                  visible: true
+                },
+                type: 'band'
+              }
+            ],
+            legends: [
+              {
+                visible: true,
+                orient: 'bottom'
+              }
+            ]
+          };
+        else
+          return {
+            type: 'common',
+            series: [
+              {
+                type: 'line',
+                data: {
+                  id: 'data'
+                },
+                xField: 'x',
+                yField: 'y',
+                seriesField: 'type',
+                line: {
+                  state: {
+                    hover: {
+                      strokeWidth: 4
+                    },
+                    selected: {
+                      stroke: 'red'
+                    },
+                    hover_reverse: {
+                      stroke: '#ddd'
+                    }
+                  }
+                },
+                point: {
+                  state: {
+                    hover: {
+                      fill: 'red'
+                    },
+                    selected: {
+                      fill: 'yellow'
+                    },
+                    hover_reverse: {
+                      fill: '#ddd'
+                    }
+                  }
+                },
+                legends: [
+                  {
+                    visible: true,
+                    orient: 'bottom'
+                  }
+                ]
+              }
+            ],
+            axes: [
+              {
+                orient: 'left',
+                range: {
+                  min: 0
+                }
+              },
+              {
+                orient: 'bottom',
+                label: {
+                  visible: true
+                },
+                type: 'band'
+              }
+            ],
+            legends: [
+              {
+                visible: true,
+                orient: 'bottom'
+              }
+            ]
+          };
       }
     },
     {

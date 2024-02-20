@@ -21,7 +21,8 @@ export function createChartCellGroup(
   chartInstance: any,
   dataId: string | Record<string, string>,
   table: BaseTableAPI,
-  cellTheme: IThemeSpec
+  cellTheme: IThemeSpec,
+  isShareChartSpec: true
 ) {
   // 获取注册的chart图表类型
   const registerCharts = registerChartTypes.get();
@@ -62,7 +63,7 @@ export function createChartCellGroup(
   }
   cellGroup.AABBBounds.width(); // TODO 需要底层VRender修改
   // chart
-  const chartGroup = new Chart({
+  const chartGroup = new Chart(isShareChartSpec, {
     stroke: false,
     x: padding[3],
     y: padding[0],
