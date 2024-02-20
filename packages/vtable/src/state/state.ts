@@ -874,7 +874,12 @@ export class StateManager {
     this.menu.dropDownMenuHighlight = cells;
     for (let i = 0; i < cells.length; i++) {
       const { col, row } = cells[i];
-      this.table.scenegraph.updateCellContent(col, row);
+      const range = this.table.getCellRange(col, row);
+      for (let col = range.start.col; col <= range.end.col; col++) {
+        for (let row = range.start.row; row <= range.end.row; row++) {
+          this.table.scenegraph.updateCellContent(col, row);
+        }
+      }
     }
   }
   dropDownMenuIsHighlight(colNow: number, rowNow: number, index: number): boolean {
