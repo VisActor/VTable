@@ -28,7 +28,7 @@ import type { BaseTableAPI, PivotTableProtected } from './ts-types/base-table';
 import { Title } from './components/title/title';
 import { cloneDeep } from '@visactor/vutils';
 import { Env } from './tools/env';
-import type { LayouTreeNode } from './layout/layout-helper';
+import type { LayouTreeNode } from './layout/tree-helper';
 import { TABLE_EVENT_TYPE } from './core/TABLE_EVENT_TYPE';
 import { EditManeger } from './edit/edit-manager';
 import * as editors from './edit/editors';
@@ -189,6 +189,9 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
   }
   isPivotChart(): false {
     return false;
+  }
+  get recordsCount() {
+    return this.records?.length;
   }
   _canResizeColumn(col: number, row: number): boolean {
     const ifCan = super._canResizeColumn(col, row);
@@ -951,6 +954,16 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
   getHierarchyState(col: number, row: number): HierarchyState {
     return this._getHeaderLayoutMap(col, row)?.hierarchyState;
   }
+  /** 获取列头树结构 */
+  getLayoutColumnTree(): LayouTreeNode[] {
+    const layoutMap = this.internalProps.layoutMap;
+    return layoutMap.getLayoutColumnTree();
+  }
+  /** 获取表格列头树形结构的占位的总节点数 */
+  getLayoutColumnTreeCount(): number {
+    const layoutMap = this.internalProps.layoutMap;
+    return layoutMap.getLayoutColumnTreeCount();
+  }
   /** 获取行头树结构 */
   getLayoutRowTree(): LayouTreeNode[] {
     const layoutMap = this.internalProps.layoutMap;
@@ -1222,7 +1235,7 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
       this.records[rowIndex][colIndex] = newValue;
     }
   }
-  hasCustomRenderOrLayout() {
+  _hasCustomRenderOrLayout() {
     if (this.options.customRender) {
       return true;
     }

@@ -1,4 +1,5 @@
 import type {
+  AggregationType,
   CellAddress,
   CellRange,
   ColumnsDefine,
@@ -20,7 +21,7 @@ import { SimpleHeaderLayoutMap } from './layout';
 import { isValid } from '@visactor/vutils';
 import { _setDataSource, _setRecords, sortRecords } from './core/tableHelper';
 import { BaseTable } from './core';
-import type { ListTableProtected } from './ts-types/base-table';
+import type { BaseTableAPI, ListTableProtected } from './ts-types/base-table';
 import { TABLE_EVENT_TYPE } from './core/TABLE_EVENT_TYPE';
 import { Title } from './components/title/title';
 import { cloneDeep } from '@visactor/vutils';
@@ -32,6 +33,7 @@ import { computeColWidth } from './scenegraph/layout/compute-col-width';
 import { computeRowHeight } from './scenegraph/layout/compute-row-height';
 import { defaultOrderFn } from './tools/util';
 import type { IEditor } from '@visactor/vtable-editors';
+import type { ColumnData } from './ts-types/list-table/layout-map/api';
 
 export class ListTable extends BaseTable implements ListTableAPI {
   declare internalProps: ListTableProtected;
@@ -114,6 +116,14 @@ export class ListTable extends BaseTable implements ListTableAPI {
    */
   get sortState(): SortState | SortState[] {
     return this.internalProps.sortState;
+  }
+
+  get records() {
+    return this.dataSource.source;
+  }
+
+  get recordsCount() {
+    return this.dataSource.source.length;
   }
   // /**
   //  * Gets the define of the header.
@@ -208,6 +218,14 @@ export class ListTable extends BaseTable implements ListTableAPI {
     if (table.internalProps.layoutMap.isHeader(col, row)) {
       const { title } = table.internalProps.layoutMap.getHeader(col, row);
       return typeof title === 'function' ? title() : title;
+    } else if (table.internalProps.layoutMap.isAggregation(col, row)) {
+      if (table.internalProps.layoutMap.isTopAggregation(col, row)) {
+        const aggregator = table.internalProps.layoutMap.getAggregatorOnTop(col, row);
+        return aggregator?.formatValue ? aggregator.formatValue(col, row, this as BaseTableAPI) : '';
+      } else if (table.internalProps.layoutMap.isBottomAggregation(col, row)) {
+        const aggregator = table.internalProps.layoutMap.getAggregatorOnBottom(col, row);
+        return aggregator?.formatValue ? aggregator.formatValue(col, row, this as BaseTableAPI) : '';
+      }
     }
     const { field, fieldFormat } = table.internalProps.layoutMap.getBody(col, row);
     return table.getFieldData(fieldFormat || field, col, row);
@@ -221,6 +239,14 @@ export class ListTable extends BaseTable implements ListTableAPI {
     if (table.internalProps.layoutMap.isHeader(col, row)) {
       const { title } = table.internalProps.layoutMap.getHeader(col, row);
       return typeof title === 'function' ? title() : title;
+    } else if (table.internalProps.layoutMap.isAggregation(col, row)) {
+      if (table.internalProps.layoutMap.isTopAggregation(col, row)) {
+        const aggregator = table.internalProps.layoutMap.getAggregatorOnTop(col, row);
+        return aggregator?.value();
+      } else if (table.internalProps.layoutMap.isBottomAggregation(col, row)) {
+        const aggregator = table.internalProps.layoutMap.getAggregatorOnBottom(col, row);
+        return aggregator?.value();
+      }
     }
     const { field } = table.internalProps.layoutMap.getBody(col, row);
     return table.getFieldData(field, col, row);
@@ -430,11 +456,14 @@ export class ListTable extends BaseTable implements ListTableAPI {
     if (!layoutMap) {
       return;
     }
-    layoutMap.recordsCount = table.internalProps.dataSource?.length ?? 0;
+    layoutMap.recordsCount =
+      (table.internalProps.dataSource?.length ?? 0) +
+      layoutMap.hasAggregationOnTopCount +
+      layoutMap.hasAggregationOnBottomCount;
+
     if (table.transpose) {
       table.rowCount = layoutMap.rowCount ?? 0;
-      table.colCount =
-        (table.internalProps.dataSource?.length ?? 0) * layoutMap.bodyRowSpanCount + layoutMap.headerLevelCount;
+      table.colCount = layoutMap.recordsCount * layoutMap.bodyRowSpanCount + layoutMap.headerLevelCount;
       table.frozenRowCount = 0;
       // table.frozenColCount = layoutMap.headerLevelCount; //这里不要这样写 这个setter会检查扁头宽度 可能将frozenColCount置为0
       this.internalProps.frozenColCount = layoutMap.headerLevelCount ?? 0;
@@ -446,8 +475,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
       }
     } else {
       table.colCount = layoutMap.colCount ?? 0;
-      table.rowCount =
-        (table.internalProps.dataSource?.length ?? 0) * layoutMap.bodyRowSpanCount + layoutMap.headerLevelCount;
+      table.rowCount = layoutMap.recordsCount * layoutMap.bodyRowSpanCount + layoutMap.headerLevelCount;
       // table.frozenColCount = table.options.frozenColCount ?? 0; //这里不要这样写 这个setter会检查扁头宽度 可能将frozenColCount置为0
       this.internalProps.frozenColCount = this.options.frozenColCount ?? 0;
       table.frozenRowCount = layoutMap.headerLevelCount;
@@ -935,6 +963,27 @@ export class ListTable extends BaseTable implements ListTableAPI {
     } else {
       this.dataSource.changeFieldValue(value, recordIndex, field, col, row, this);
     }
+    //改变单元格的值后 聚合值做重新计算
+    const aggregators = this.internalProps.layoutMap.getAggregators(col, row);
+    if (aggregators) {
+      if (Array.isArray(aggregators)) {
+        for (let i = 0; i < aggregators?.length; i++) {
+          aggregators[i].recalculate();
+        }
+      } else {
+        aggregators.recalculate();
+      }
+      const aggregatorCells = this.internalProps.layoutMap.getCellAddressHasAggregator(col, row);
+      for (let i = 0; i < aggregatorCells.length; i++) {
+        const range = this.getCellRange(aggregatorCells[i].col, aggregatorCells[i].row);
+        for (let sCol = range.start.col; sCol <= range.end.col; sCol++) {
+          for (let sRow = range.start.row; sRow <= range.end.row; sRow++) {
+            this.scenegraph.updateCellContent(sCol, sRow);
+          }
+        }
+      }
+    }
+
     // const cell_value = this.getCellValue(col, row);
     const range = this.getCellRange(col, row);
     for (let sCol = range.start.col; sCol <= range.end.col; sCol++) {
@@ -1385,7 +1434,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
     }
   }
 
-  hasCustomRenderOrLayout() {
+  _hasCustomRenderOrLayout() {
     const { headerObjects } = this.internalProps.layoutMap;
     if (this.options.customRender) {
       return true;
@@ -1403,5 +1452,50 @@ export class ListTable extends BaseTable implements ListTableAPI {
       }
     }
     return false;
+  }
+  /**
+   * 根据字段获取聚合值
+   * @param field 字段名
+   * 返回数组，包括列号和每一列的聚合值数组
+   */
+  getAggregateValuesByField(field: string | number): {
+    col: number;
+    aggregateValue: { aggregationType: AggregationType; value: number | string }[];
+  }[] {
+    const columns = this.internalProps.layoutMap.getColumnByField(field);
+    const results: {
+      col: number;
+      aggregateValue: { aggregationType: AggregationType; value: number | string }[];
+    }[] = [];
+    for (let i = 0; i < columns.length; i++) {
+      const aggregator = columns[i].columnDefine.aggregator;
+      delete columns[i].columnDefine;
+      if (aggregator) {
+        const columnAggregateValue: {
+          col: number;
+          aggregateValue: { aggregationType: AggregationType; value: number | string }[];
+        } = {
+          col: columns[i].col,
+          aggregateValue: null
+        };
+        columnAggregateValue.aggregateValue = [];
+        if (Array.isArray(aggregator)) {
+          for (let j = 0; j < aggregator.length; j++) {
+            columnAggregateValue.aggregateValue.push({
+              aggregationType: aggregator[j].type as AggregationType,
+              value: aggregator[j].value()
+            });
+          }
+        } else {
+          columnAggregateValue.aggregateValue.push({
+            aggregationType: aggregator.type as AggregationType,
+            value: aggregator.value()
+          });
+        }
+
+        results.push(columnAggregateValue);
+      }
+    }
+    return results;
   }
 }

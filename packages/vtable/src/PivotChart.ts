@@ -150,6 +150,9 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
   get pivotChartAxes() {
     return this._axes;
   }
+  get recordsCount() {
+    return this.records?.length;
+  }
 
   isListTable(): false {
     return false;
@@ -1221,7 +1224,7 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
     this.eventManager.updateEventBinder();
   }
 
-  hasCustomRenderOrLayout() {
+  _hasCustomRenderOrLayout() {
     if (this.options.customRender) {
       return true;
     }

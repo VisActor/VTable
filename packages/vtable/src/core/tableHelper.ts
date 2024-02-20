@@ -59,6 +59,7 @@ export function _setRecords(table: ListTableAPI, records: any[] = []): void {
       data,
       table.internalProps.dataConfig,
       table.pagination,
+      table.internalProps.layoutMap.columnObjects,
       (table.options as any).hierarchyExpandLevel ?? (table._hasHierarchyTreeHeader?.() ? 1 : undefined)
     ));
     table.addReleaseObj(newDataSource);

@@ -1,5 +1,5 @@
 import type { Either } from '../tools/helper';
-import type { SortOrder } from './common';
+import type { BaseTableAPI } from './base-table';
 
 //#region 总计小计
 export interface TotalsStatus {
@@ -16,7 +16,8 @@ export enum AggregationType {
   MIN = 'MIN',
   MAX = 'MAX',
   AVG = 'AVG',
-  COUNT = 'COUNT'
+  COUNT = 'COUNT',
+  CUSTOM = 'CUSTOM'
 }
 export enum SortType {
   ASC = 'ASC',
@@ -138,7 +139,7 @@ export interface AggregationRule<T extends AggregationType> {
   field: T extends AggregationType.RECORD ? string[] | string : string;
   aggregationType: T;
   /**计算结果格式化 */
-  formatFun?: (num: number) => string;
+  formatFun?: (value: number, col: number, row: number, table: BaseTableAPI) => number | string;
 }
 export type AggregationRules = AggregationRule<AggregationType>[];
 //#endregion 聚合规则
@@ -228,3 +229,18 @@ export type CollectValueBy = {
   sortBy?: string[];
 };
 export type CollectedValue = { max?: number; min?: number } | Array<string>;
+
+//#region 提供给基本表格的类型
+export type Aggregation = {
+  aggregationType: AggregationType;
+  showOnTop?: boolean;
+  formatFun?: (value: number, col: number, row: number, table: BaseTableAPI) => string | number;
+};
+
+export type CustomAggregation = {
+  aggregationType: AggregationType.CUSTOM;
+  aggregationFun: (values: any[], records: any[]) => any;
+  showOnTop?: boolean;
+  formatFun?: (value: number, col: number, row: number, table: BaseTableAPI) => string | number;
+};
+//#endregion

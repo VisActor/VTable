@@ -869,8 +869,8 @@
     {
       "path": "data-analysis",
       "title": {
-        "zh": "数据分析",
-        "en": "Data Analysis"
+        "zh": "透视表数据分析",
+        "en": "Pivot Table Data Analysis"
       },
       "children": [
         {
@@ -927,6 +927,36 @@
           "title": {
             "zh": "指标聚合方式",
             "en": "Indicator Aggregation Type"
+          }
+        }
+      ]
+    },
+    {
+      "path": "list-table-data-analysis",
+      "title": {
+        "zh": "基本表数据分析",
+        "en": "List Table Data Analysis"
+      },
+      "children": [
+        {
+          "path": "list-table-data-filter",
+          "title": {
+            "zh": "数据过滤",
+            "en": "Data Filter"
+          }
+        },
+        {
+          "path": "list-table-aggregation",
+          "title": {
+            "zh": "数据聚合分析",
+            "en": "Data Aggregation"
+          }
+        },
+        {
+          "path": "list-table-aggregation-multiple",
+          "title": {
+            "zh": "多种数据聚合",
+            "en": "Multiple Data Aggregation"
           }
         }
       ]

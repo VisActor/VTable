@@ -857,6 +857,9 @@ export class Dataset {
           formatFun: agg.formatFun,
           records: agg.records,
           className: '',
+          recalculate() {
+            // do nothing
+          },
           push() {
             // do nothing
           },
@@ -880,6 +883,9 @@ export class Dataset {
         push() {
           // do nothing
         },
+        recalculate() {
+          // do nothing
+        },
         formatValue() {
           return changeValue;
         },
@@ -898,6 +904,9 @@ export class Dataset {
       : {
           className: '',
           push() {
+            // do nothing
+          },
+          recalculate() {
             // do nothing
           },
           value(): any {

@@ -377,6 +377,8 @@ export interface BaseTableConstructorOptions {
   resizeTime?: number;
 }
 export interface BaseTableAPI {
+  /** 数据总条目数 */
+  recordsCount: number;
   /** 表格的行数 */
   rowCount: number;
   /** 表格的列数 */
@@ -687,7 +689,7 @@ export interface BaseTableAPI {
   /** 获取表格body部分的显示行号范围 */
   getBodyVisibleRowRange: () => { rowStart: number; rowEnd: number };
 
-  hasCustomRenderOrLayout: () => boolean;
+  _hasCustomRenderOrLayout: () => boolean;
   /** 根据表格单元格的行列号 获取在body部分的列索引及行索引 */
   getBodyIndexByTableIndex: (col: number, row: number) => CellAddress;
   /** 根据body部分的列索引及行索引，获取单元格的行列号 */
