@@ -2698,7 +2698,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
         return customMerge.range;
       }
     }
-    return this.internalProps.layoutMap.getCellRange(col, row);
+    return this.internalProps.layoutMap?.getCellRange(col, row);
   }
 
   hasCustomMerge() {
