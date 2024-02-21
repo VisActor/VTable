@@ -18,7 +18,7 @@ Corresponding to the name of the injected chart library component, the injection
 
 **Exclusive configuration options for chart type**
 
-Corresponds to the chart library's spec, where value corresponds to the provided records
+Set the spec of the chart, or set it to a function that returns a different spec. The data displayed in the chart is provided by records.
 
 {{ use: base-indicator-type(
     prefix = '##'+${prefix}
