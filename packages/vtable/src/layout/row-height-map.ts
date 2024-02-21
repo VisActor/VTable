@@ -25,6 +25,7 @@ export class NumberRangeMap {
   }
 
   clear() {
+    this._keys = [];
     this.data.clear();
     this.cumulativeSum.clear();
     this.difference.clear();
