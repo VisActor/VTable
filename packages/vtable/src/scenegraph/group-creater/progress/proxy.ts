@@ -425,7 +425,7 @@ export class SceneProxy {
     this.colEnd = endCol;
     this.colUpdatePos = this.colEnd;
     this.referenceCol = this.colStart + Math.floor((endCol - this.colStart) / 2);
-    console.log('async', this.referenceCol, this.colStart, this.colEnd);
+    // console.log('async', this.referenceCol, this.colStart, this.colEnd);
 
     // update container group size and border
     // this.table.scenegraph.updateContainerAttrWidthAndX();
@@ -439,16 +439,16 @@ export class SceneProxy {
     const yLimitBottom = this.table.getAllRowsHeight() - yLimitTop;
     if (y < yLimitTop && this.rowStart === this.bodyTopRow) {
       // 执行真实body group坐标修改
-      this.table.scenegraph.setBodyAndRowHeaderY(-y);
+      this.table.scenegraph.setBodyAndRowHeaderY(-y + this.deltaY);
     } else if (y > yLimitBottom && this.rowEnd === this.bodyBottomRow) {
       // 执行真实body group坐标修改
-      this.table.scenegraph.setBodyAndRowHeaderY(-y);
+      this.table.scenegraph.setBodyAndRowHeaderY(-y + this.deltaY);
     } else if (
       !this.table.scenegraph.bodyGroup.firstChild ||
       this.table.scenegraph.bodyGroup.firstChild.childrenCount === 0
     ) {
       // 兼容异步加载数据promise的情况 childrenCount=0 如果用户立即调用setScrollTop执行dynamicSetY会出错
-      this.table.scenegraph.setBodyAndRowHeaderY(-y);
+      this.table.scenegraph.setBodyAndRowHeaderY(-y + this.deltaY);
     } else {
       // 执行动态更新节点
       this.dynamicSetY(y);
@@ -461,16 +461,16 @@ export class SceneProxy {
     const xLimitRight = this.table.getAllColsWidth() - xLimitLeft;
     if (x < xLimitLeft && this.colStart === this.bodyLeftCol) {
       // 执行真实body group坐标修改
-      this.table.scenegraph.setBodyAndColHeaderX(-x);
+      this.table.scenegraph.setBodyAndColHeaderX(-x + this.deltaX);
     } else if (x > xLimitRight && this.colEnd === this.bodyRightCol) {
       // 执行真实body group坐标修改
-      this.table.scenegraph.setBodyAndColHeaderX(-x);
+      this.table.scenegraph.setBodyAndColHeaderX(-x + this.deltaX);
     } else if (
       this.table.scenegraph.bodyGroup.firstChild && //注意判断关系 这里不是 || 而是 &&
       this.table.scenegraph.bodyGroup.firstChild.childrenCount === 0
     ) {
       // 兼容异步加载数据promise的情况 childrenCount=0 如果用户立即调用setScrollLeft执行dynamicSetX会出错
-      this.table.scenegraph.setBodyAndColHeaderX(-x);
+      this.table.scenegraph.setBodyAndColHeaderX(-x + this.deltaX);
     } else {
       // 执行动态更新节点
       this.dynamicSetX(x);
