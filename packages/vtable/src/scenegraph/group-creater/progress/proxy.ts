@@ -439,14 +439,17 @@ export class SceneProxy {
     const yLimitBottom = this.table.getAllRowsHeight() - yLimitTop;
     if (y < yLimitTop && this.rowStart === this.bodyTopRow) {
       // 执行真实body group坐标修改
+      this.updateDeltaY(y);
       this.table.scenegraph.setBodyAndRowHeaderY(-y + this.deltaY);
     } else if (y > yLimitBottom && this.rowEnd === this.bodyBottomRow) {
       // 执行真实body group坐标修改
+      this.updateDeltaY(y);
       this.table.scenegraph.setBodyAndRowHeaderY(-y + this.deltaY);
     } else if (
       !this.table.scenegraph.bodyGroup.firstChild ||
       this.table.scenegraph.bodyGroup.firstChild.childrenCount === 0
     ) {
+      this.updateDeltaY(y);
       // 兼容异步加载数据promise的情况 childrenCount=0 如果用户立即调用setScrollTop执行dynamicSetY会出错
       this.table.scenegraph.setBodyAndRowHeaderY(-y + this.deltaY);
     } else {
@@ -461,15 +464,18 @@ export class SceneProxy {
     const xLimitRight = this.table.getAllColsWidth() - xLimitLeft;
     if (x < xLimitLeft && this.colStart === this.bodyLeftCol) {
       // 执行真实body group坐标修改
+      this.updateDeltaX(x);
       this.table.scenegraph.setBodyAndColHeaderX(-x + this.deltaX);
     } else if (x > xLimitRight && this.colEnd === this.bodyRightCol) {
       // 执行真实body group坐标修改
+      this.updateDeltaX(x);
       this.table.scenegraph.setBodyAndColHeaderX(-x + this.deltaX);
     } else if (
       this.table.scenegraph.bodyGroup.firstChild && //注意判断关系 这里不是 || 而是 &&
       this.table.scenegraph.bodyGroup.firstChild.childrenCount === 0
     ) {
       // 兼容异步加载数据promise的情况 childrenCount=0 如果用户立即调用setScrollLeft执行dynamicSetX会出错
+      this.updateDeltaX(x);
       this.table.scenegraph.setBodyAndColHeaderX(-x + this.deltaX);
     } else {
       // 执行动态更新节点
@@ -720,6 +726,38 @@ export class SceneProxy {
       this.cellCache.set(col, cellGroup);
     }
     return cellGroup;
+  }
+
+  updateDeltaY(y: number) {
+    if (this.rowStart === this.bodyTopRow) {
+      const cellGroup = this.table.scenegraph.highPerformanceGetCell(this.colStart, this.rowStart, true);
+      const deltaY = cellGroup.attribute.y - y;
+      this.deltaY = deltaY;
+    } else if (this.rowEnd === this.bodyBottomRow) {
+      const cellGroup = this.table.scenegraph.highPerformanceGetCell(this.colStart, this.rowEnd, true);
+      const deltaY =
+        cellGroup.attribute.y +
+        cellGroup.attribute.height -
+        (this.table.tableNoFrameHeight - this.table.getFrozenRowsHeight() - this.table.getBottomFrozenRowsHeight()) -
+        y;
+      this.deltaY = deltaY;
+    }
+  }
+
+  updateDeltaX(x: number) {
+    if (this.colStart === this.bodyLeftCol) {
+      const colGroup = this.table.scenegraph.getColGroup(this.colStart);
+      const deltaX = colGroup.attribute.x - x;
+      this.deltaX = deltaX;
+    } else if (this.colEnd === this.bodyRightCol) {
+      const colGroup = this.table.scenegraph.getColGroup(this.colEnd);
+      const deltaX =
+        colGroup.attribute.x +
+        colGroup.attribute.width -
+        (this.table.tableNoFrameWidth - this.table.getFrozenColsWidth() - this.table.getRightFrozenColsWidth()) -
+        x;
+      this.deltaX = deltaX;
+    }
   }
 
   release() {

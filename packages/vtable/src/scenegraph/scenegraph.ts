@@ -336,6 +336,7 @@ export class Scenegraph {
    * @return {*}
    */
   createSceneGraph() {
+    this.table.rowHeightsMap.clear();
     // bind AutoPoptip
     if (this.table.isPivotChart() || this.table._hasCustomRenderOrLayout()) {
       // bind for axis label in pivotChart
