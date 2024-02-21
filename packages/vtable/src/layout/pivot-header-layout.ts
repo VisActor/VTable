@@ -1462,7 +1462,7 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
   getRecordStartRowByRecordIndex(index: number): number {
     return this.columnHeaderLevelCount + index;
   }
-  getRecordIndexByCell(col: number, row: number): number {
+  getRecordShowIndexByCell(col: number, row: number): number {
     return undefined;
   }
   // getCellRangeTranspose(): CellRange {

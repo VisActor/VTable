@@ -165,7 +165,7 @@ export function createTable() {
         sort: true
       }
     ],
-    showPin: true, //显示VTable内置冻结列图标
+    showFrozenIcon: true, //显示VTable内置冻结列图标
     widthMode: 'standard',
     autoFillHeight: true,
     // heightMode: 'adaptive',

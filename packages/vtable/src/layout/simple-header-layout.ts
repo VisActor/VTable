@@ -793,7 +793,7 @@ export class SimpleHeaderLayoutMap implements LayoutMapAPI {
       range1.end.row === range2.end.row
     );
   }
-  getRecordIndexByCell(col: number, row: number): number {
+  getRecordShowIndexByCell(col: number, row: number): number {
     const skipRowCount = this.hasAggregationOnTopCount ? this.headerLevelCount + 1 : this.headerLevelCount;
     if (this.transpose) {
       if (col < skipRowCount) {

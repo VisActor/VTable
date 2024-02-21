@@ -303,6 +303,22 @@ Note: ListTable specific interface
   getTableIndexByRecordIndex: (recordIndex: number) => number;
 ```
 
+## getRecordIndexByCell(Function)
+
+Get the number of data in the current cell in the data source.
+
+If it is a table in tree mode, an array will be returned, such as [1,2], the 3rd item in the children of the 2nd item in the data source.
+
+** ListTable proprietary **
+
+```
+  /** Get the number of the data in the current cell in the data source.
+   * If it is a table in tree mode, an array will be returned, such as [1,2], the 3rd item in the children of the 2nd item in the data source
+   * Note: ListTable specific interface */
+  getRecordIndexByCell(col: number, row: number): number | number[]
+** ListTable proprietary **
+```
+
 ## getTableIndexByField(Function)
 
 Get the index row number or column number displayed in the table according to the field of the data source (Related to transposition, the non-transposition obtains the row number, and the transposed table obtains the column number).
