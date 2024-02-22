@@ -108,7 +108,7 @@ export class StateManager {
     col: number;
     row: number;
     field?: string;
-    fieldKey?: string;
+    // fieldKey?: string;
     order: SortOrder;
     icon?: Icon;
   };
@@ -406,7 +406,7 @@ export class StateManager {
 
   setSortState(sortState: SortState) {
     this.sort.field = sortState?.field as string;
-    this.sort.fieldKey = sortState?.fieldKey as string;
+    // this.sort.fieldKey = sortState?.fieldKey as string;
     this.sort.order = sortState?.order;
     // // 这里有一个问题，目前sortState中一般只传入了fieldKey，但是getCellRangeByField需要field
     // const range = this.table.getCellRangeByField(this.sort.field, 0);

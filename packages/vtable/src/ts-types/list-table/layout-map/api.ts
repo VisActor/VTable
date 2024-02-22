@@ -18,8 +18,10 @@ import type {
   FieldKeyDef,
   CustomRenderFunctionArg,
   SparklineSpec,
-  HierarchyState
+  HierarchyState,
+  Aggregation
 } from '../../';
+import type { Aggregator } from '../../../dataset/statistics-helper';
 
 import type { HeaderDefine, ColumnDefine, ColumnBodyDefine } from '../define';
 
@@ -53,7 +55,6 @@ export interface HeaderData extends WidthData {
   icons?: (string | ColumnIconOption)[] | ((args: CellInfo) => (string | ColumnIconOption)[]);
 
   field: FieldDef;
-  fieldKey?: FieldKeyDef;
   fieldFormat?: FieldFormat;
   style?: HeaderStyleOption | ColumnStyle | null | undefined;
   headerType: 'text' | 'link' | 'image' | 'video' | 'checkbox'; // headerType.BaseHeader;
@@ -104,7 +105,7 @@ export interface WidthData {
 export interface ColumnData extends WidthData {
   id: LayoutObjectId;
   field: FieldDef;
-  fieldKey?: FieldKeyDef;
+  // fieldKey?: FieldKeyDef;
   fieldFormat?: FieldFormat;
   // icon?: ColumnIconOption | ColumnIconOption[];
   icon?:
@@ -130,6 +131,8 @@ export interface ColumnData extends WidthData {
    * 是否禁用调整列宽,如果是转置表格或者是透视表的指标是行方向指定 那该配置不生效
    */
   disableColumnResize?: boolean;
+  aggregation?: Aggregation | Aggregation[];
+  aggregator?: Aggregator | Aggregator[];
 }
 
 export interface IndicatorData extends WidthData {

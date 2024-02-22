@@ -42,7 +42,6 @@ export function dealSort(col: number, row: number, table: ListTableAPI) {
   } else if (headerC?.sort) {
     //如果当前表头设置了sort 则 转变sort的状态
     tableState = {
-      fieldKey: <string>table.getHeaderFieldKey(col, row),
       field: <string>table.getHeaderField(col, row),
       order: 'asc'
     };
@@ -50,7 +49,6 @@ export function dealSort(col: number, row: number, table: ListTableAPI) {
     //当前排序规则是该表头field 且仅为显示showSort无sort 什么也不做
   } else {
     tableState = {
-      fieldKey: <string>table.getHeaderFieldKey(col, row),
       field: <string>table.getHeaderField(col, row),
       order: 'normal'
     };
@@ -76,14 +74,8 @@ export function dealSort(col: number, row: number, table: ListTableAPI) {
 }
 
 function executeSort(newState: SortState, table: BaseTableAPI, headerDefine: HeaderDefine): void {
-  let hd;
-  if (newState.fieldKey) {
-    hd = table.internalProps.layoutMap.headerObjects.find(
-      (col: HeaderData) => col && col.fieldKey === newState.fieldKey
-    );
-  } else {
-    hd = table.internalProps.layoutMap.headerObjects.find((col: HeaderData) => col && col.field === newState.field);
-  }
+  const hd = table.internalProps.layoutMap.headerObjects.find((col: HeaderData) => col && col.field === newState.field);
+
   if (!hd) {
     return;
   }

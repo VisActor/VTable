@@ -16,7 +16,7 @@ const generatePersons = count => {
 };
 
 export function createTable() {
-  const records = generatePersons(10);
+  const records = generatePersons(10000);
   const columns: VTable.ColumnsDefine = [
     {
       field: '',
@@ -166,9 +166,6 @@ export function createTable() {
     bottomFrozenRowCount: 2,
     rightFrozenColCount: 2,
     overscrollBehavior: 'none',
-    autoWrapText: true,
-    heightMode: 'adaptive',
-    widthMode: 'adaptive',
     dragHeaderMode: 'all',
     keyboardOptions: {
       pasteValueToCell: true

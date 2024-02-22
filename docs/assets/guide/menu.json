@@ -411,6 +411,29 @@
       ]
     },
     {
+      "path": "data_analysis",
+      "title": {
+        "zh": "数据分析",
+        "en": "data analysis"
+      },
+      "children": [
+        {
+          "path": "pivot_table_dataAnalysis",
+          "title": {
+            "zh": "透视表数据分析",
+            "en": "pivot table data analysis"
+          }
+        },
+        {
+          "path": "list_table_dataAnalysis",
+          "title": {
+            "zh": "基本表数据分析",
+            "en": "list table data analysis"
+          }
+        }
+      ]
+    },
+    {
       "path": "components",
       "title": {
         "zh": "常用组件",
