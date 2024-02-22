@@ -68,9 +68,17 @@ export function isCellHover(state: StateManager, col: number, row: number, cellG
   if (highlightScope === HighlightScope.single && cellPos.col === col && cellPos.row === row) {
     hoverMode = 'cellBgColor';
   } else if (highlightScope === HighlightScope.column && cellPos.col === col) {
-    hoverMode = 'inlineColumnBgColor';
+    if (cellPos.col === col && cellPos.row === row) {
+      hoverMode = 'cellBgColor';
+    } else {
+      hoverMode = 'inlineColumnBgColor';
+    }
   } else if (highlightScope === HighlightScope.row && cellPos.row === row) {
-    hoverMode = 'inlineRowBgColor';
+    if (cellPos.col === col && cellPos.row === row) {
+      hoverMode = 'cellBgColor';
+    } else {
+      hoverMode = 'inlineRowBgColor';
+    }
   } else if (highlightScope === HighlightScope.cross) {
     if (cellPos.col === col && cellPos.row === row) {
       hoverMode = 'cellBgColor';
