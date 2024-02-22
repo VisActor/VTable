@@ -1,6 +1,7 @@
-import type { ColumnTypeOption } from './column';
+import type { Style } from '../body-helper/style';
+import type { ColumnStyleOption, ColumnTypeOption } from './column';
 import type { ColumnData } from './list-table/layout-map/api';
-import type { CellLocation, FieldData, FieldDef } from './table-engine';
+import type { CellLocation, CellRange, FieldData, FieldDef } from './table-engine';
 
 export type MaybePromise<T> = T | Promise<T>;
 
@@ -126,3 +127,15 @@ export enum HighlightScope {
 }
 
 export type SortOrder = 'asc' | 'desc' | 'normal';
+
+export type CustomCellStyle = {
+  id: string;
+  style: ColumnStyleOption;
+};
+
+export type CustomCellStyleArrangement = {
+  col?: number;
+  row?: number;
+  range?: CellRange;
+  customStyleId: string;
+};

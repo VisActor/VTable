@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vtable",
+      "comment": "feat: add custom cell style function",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vtable"
+}

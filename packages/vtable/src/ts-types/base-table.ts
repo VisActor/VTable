@@ -1,5 +1,12 @@
 import type { ITextSize } from '@visactor/vutils';
-import type { RectProps, MaybePromiseOrUndefined, ICellHeaderPaths, CellInfo } from './common';
+import type {
+  RectProps,
+  MaybePromiseOrUndefined,
+  ICellHeaderPaths,
+  CellInfo,
+  CustomCellStyle,
+  CustomCellStyleArrangement
+} from './common';
 import type {
   TableEventListener,
   TableEventHandlersEventArgumentMap,
@@ -373,6 +380,9 @@ export interface BaseTableConstructorOptions {
 
   // resize response time
   resizeTime?: number;
+
+  customCellStyle?: CustomCellStyle[];
+  customCellStyleArrangement?: CustomCellStyleArrangement[];
 }
 export interface BaseTableAPI {
   /** 表格的行数 */

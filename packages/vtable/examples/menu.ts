@@ -487,6 +487,10 @@ export const menus = [
       {
         path: 'style',
         name: 'border'
+      },
+      {
+        path: 'style',
+        name: 'custom-cell-style'
       }
     ]
   },
