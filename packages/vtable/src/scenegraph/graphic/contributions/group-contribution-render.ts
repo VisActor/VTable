@@ -261,9 +261,11 @@ export function renderStroke(
       context.moveTo(x, y);
       context.lineTo(x + width, y);
     }
-    if ((isSplitDraw || isDash) && (!strokeArrayColor || strokeArrayColor[0])) {
-      if (strokeArrayColor) {
+    if (isSplitDraw || isDash) {
+      if (strokeArrayColor && strokeArrayColor[0]) {
         context.strokeStyle = strokeArrayColor[0];
+      } else {
+        context.strokeStyle = 'transparent';
       }
       if (!isWidthNumber) {
         context.lineWidth = strokeArrayWidth[0];
@@ -287,9 +289,11 @@ export function renderStroke(
       context.moveTo(x + width, y);
       context.lineTo(x + width, y + height);
     }
-    if ((isSplitDraw || isDash) && (!strokeArrayColor || strokeArrayColor[1])) {
-      if (strokeArrayColor) {
+    if (isSplitDraw || isDash) {
+      if (strokeArrayColor && strokeArrayColor[1]) {
         context.strokeStyle = strokeArrayColor[1];
+      } else {
+        context.strokeStyle = 'transparent';
       }
       if (!isWidthNumber) {
         context.lineWidth = strokeArrayWidth[1];
@@ -313,9 +317,11 @@ export function renderStroke(
       context.moveTo(x, y + height);
       context.lineTo(x + width, y + height);
     }
-    if ((isSplitDraw || isDash) && (!strokeArrayColor || strokeArrayColor[2])) {
-      if (strokeArrayColor) {
+    if (isSplitDraw || isDash) {
+      if (strokeArrayColor && strokeArrayColor[2]) {
         context.strokeStyle = strokeArrayColor[2];
+      } else {
+        context.strokeStyle = 'transparent';
       }
       if (!isWidthNumber) {
         context.lineWidth = strokeArrayWidth[2];
@@ -339,9 +345,11 @@ export function renderStroke(
       context.moveTo(x, y);
       context.lineTo(x, y + height);
     }
-    if ((isSplitDraw || isDash) && (!strokeArrayColor || strokeArrayColor[3])) {
-      if (strokeArrayColor) {
+    if (isSplitDraw || isDash) {
+      if (strokeArrayColor && strokeArrayColor[3]) {
         context.strokeStyle = strokeArrayColor[3];
+      } else {
+        context.strokeStyle = 'transparent';
       }
       if (!isWidthNumber) {
         context.lineWidth = strokeArrayWidth[3];

@@ -407,6 +407,9 @@ export class TableTheme implements ITableThemeDefine {
         get borderLineDash(): LineDashsDef | undefined {
           return frameStyle.borderLineDash;
         },
+        get innerBorder(): boolean | undefined {
+          return frameStyle.innerBorder;
+        },
         get shadowBlur(): number {
           return frameStyle.shadowBlur;
         },

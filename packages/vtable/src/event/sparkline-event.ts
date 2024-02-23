@@ -15,7 +15,7 @@ export function bindSparklineHoverEvent(table: BaseTableAPI) {
   } else {
     const layoutMap = table.internalProps.layoutMap as SimpleHeaderLayoutMap;
     hasSparkLine = layoutMap.columnObjects.some(column => {
-      return column.cellType === 'sparkline';
+      return column.cellType === 'sparkline' || typeof column.cellType === 'function';
     });
   }
 

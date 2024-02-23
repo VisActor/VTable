@@ -76,7 +76,7 @@ export function createVideoCellGroup(
   const video = document.createElement('video');
   video.addEventListener('loadeddata', (): void => {
     if (imageAutoSizing) {
-      _adjustWidthHeight(col, row, video.videoWidth, video.videoHeight, table.scenegraph, padding);
+      _adjustWidthHeight(col, row, video.videoWidth, video.videoHeight, table.scenegraph, padding, cellGroup);
     }
     const width = cellGroup.attribute.width;
     const height = cellGroup.attribute.height;
