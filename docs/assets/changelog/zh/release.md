@@ -1,3 +1,31 @@
+# v0.19.1
+
+2024-02-06
+
+
+**🆕 新增功能**
+- **@visactor/vtable**: 添加透视表更新排序规则的API updateSortRules
+- **@visactor/vtable**: 添加轴内偏移配置
+- **@visactor/vtable**: 在customRender中添加name配置
+
+**🐛 功能修复**
+
+- **@visactor/vtable**: 修复当表格有滚动时，点击表头编辑位置错误 [#1069](https://github.com/VisActor/VTable/issues/1069)
+- **@visactor/vtable**: 修复同步模式下列单元格顺序问题
+- **@visactor/vtable**: 修复单元格组中边框lineDash的问题 [#1051](https://github.com/VisActor/VTable/issues/1051)
+- **@visactor/vtable**: 修复宽度更新中textAlign值的问题[#1065](https://github.com/VisActor/VTable/issues/1065)
+- **@visactor/vtable**: 修复合并单元格内容位置
+- **@visactor/vtable**: 修复合并单元格更新问题
+
+**🔨 功能重构**
+
+- **@visactor/vtable**: 透视表排序逻辑 [#1033](https://github.com/VisActor/VTable/issues/1033)
+- **@visactor/vtable**: 显示排序选项工作正常 [#1077](https://github.com/VisActor/VTable/issues/1077)
+
+
+
+[更多详情请查看 v0.19.1](https://github.com/VisActor/VTable/releases/tag/v0.19.1)
+
 # v0.19.0
 
 2024-02-02

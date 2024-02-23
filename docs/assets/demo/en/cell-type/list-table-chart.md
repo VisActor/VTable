@@ -7,7 +7,7 @@ link: '../guide/cell_type/chart'
 option: ListTable-columns-chart#cellType
 ---
 
-# Basic table integrated chart
+# List table integrated chart
 
 Combine vchart chart library and render it into tables to enrich visual display forms and improve multi-chart rendering performance. This example refers to vchart’s bar progress bar. For details, please refer to: https://visactor.io/vchart/demo/progress/linear-progress-with-target-value
 

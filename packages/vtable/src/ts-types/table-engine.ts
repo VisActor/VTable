@@ -3,8 +3,14 @@ import type { SvgIcon } from './icon';
 export type { HeaderData } from './list-table/layout-map/api';
 export type LayoutObjectId = number | string;
 import type { Rect } from '../tools/Rect';
-import type { BaseTableAPI, BaseTableConstructorOptions } from './base-table';
-import type { IDataConfig } from './new-data-set';
+import type { BaseTableAPI, BaseTableConstructorOptions, ListTableProtected } from './base-table';
+import type {
+  Aggregation,
+  AggregationType,
+  CustomAggregation,
+  FilterRules,
+  IPivotTableDataConfig
+} from './new-data-set';
 import type { Either } from '../tools/helper';
 import type {
   IChartIndicator,
@@ -104,8 +110,6 @@ export interface DataSourceAPI {
 export interface SortState {
   /** 排序依据字段 */
   field: FieldDef;
-
-  fieldKey?: FieldKeyDef;
   /** 排序规则 */
   order: SortOrder;
 }
@@ -164,6 +168,8 @@ export interface ListTableConstructorOptions extends BaseTableConstructorOptions
    * 排序状态
    */
   sortState?: SortState | SortState[];
+  /** 数据分析相关配置 enableDataAnalysis开启后该配置才会有效 */
+  // dataConfig?: IListTableDataConfig;
   /** 全局设置表头编辑器 */
   headerEditor?: string | IEditor | ((args: BaseCellInfo & { table: BaseTableAPI }) => string | IEditor);
   /** 全局设置编辑器 */
@@ -176,13 +182,23 @@ export interface ListTableConstructorOptions extends BaseTableConstructorOptions
    * "fixedFrozenCount"（可调整冻结列，并维持冻结数量不变）：允许自由拖拽其他列的表头移入或移出冻结列位置，同时保持冻结列的数量不变。
    */
   frozenColDragHeaderMode?: 'disabled' | 'adjustFrozenCount' | 'fixedFrozenCount';
+  aggregation?:
+    | Aggregation
+    | CustomAggregation
+    | (Aggregation | CustomAggregation)[]
+    | ((args: {
+        col: number;
+        field: string;
+      }) => Aggregation | CustomAggregation | (Aggregation | CustomAggregation)[] | null);
 }
 
 export interface ListTableAPI extends BaseTableAPI {
   options: ListTableConstructorOptions;
   editorManager: EditManeger;
   sortState: SortState[] | SortState | null;
-  // internalProps: ListTableProtected;
+  // /** 数据分析相关配置  */
+  // dataConfig?: IListTableDataConfig;
+  internalProps: ListTableProtected;
   isListTable: () => true;
   isPivotTable: () => false;
   /** 设置单元格的value值，注意对应的是源数据的原始值，vtable实例records会做对应修改 */
@@ -206,6 +222,12 @@ export interface ListTableAPI extends BaseTableAPI {
   addRecord: (record: any, recordIndex?: number) => void;
   addRecords: (records: any[], recordIndex?: number) => void;
   deleteRecords: (recordIndexs: number[]) => void;
+  updateRecords: (records: any[], recordIndexs: number[]) => void;
+  updateFilterRules: (filterRules: FilterRules) => void;
+  getAggregateValuesByField: (field: string | number) => {
+    col: number;
+    aggregateValue: { aggregationType: AggregationType; value: number | string }[];
+  }[];
 }
 export interface PivotTableConstructorOptions extends BaseTableConstructorOptions {
   /**
@@ -271,13 +293,8 @@ export interface PivotTableConstructorOptions extends BaseTableConstructorOption
   rowHeaderTitle?: ITitleDefine;
   //#endregion
   /** 数据分析相关配置 enableDataAnalysis开启后该配置才会有效 */
-  dataConfig?: IDataConfig;
-  /**
-   * 透视表是否开启数据分析 默认false
-   * 如果传入数据是明细数据需要聚合分析则开启 赋值为true
-   * 如传入数据是经过聚合好的为了提升性能这里设为false即可，同时呢需要传入自己组织好的行头树结构columnTree和rowTree
-   */
-  enableDataAnalysis?: boolean;
+  dataConfig?: IPivotTableDataConfig;
+
   /** 指标标题 用于显示到角头的值*/
   indicatorTitle?: string;
   /** 分页配置 */

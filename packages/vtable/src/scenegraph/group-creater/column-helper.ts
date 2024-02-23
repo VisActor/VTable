@@ -80,7 +80,8 @@ export function createComplexColumn(
         range = customMergeRange;
         isMerge = range.start.col !== range.end.col || range.start.row !== range.end.row;
         if (isMerge) {
-          const mergeSize = dealMerge(range, mergeMap, table);
+          const needUpdateRange = rowStart > range.start.row;
+          const mergeSize = dealMerge(range, mergeMap, table, needUpdateRange);
           cellWidth = mergeSize.cellWidth;
           cellHeight = mergeSize.cellHeight;
         }
@@ -122,7 +123,8 @@ export function createComplexColumn(
       isMerge = range.start.col !== range.end.col || range.start.row !== range.end.row;
       // 所有Merge单元格，只保留左上角一个真实的单元格，其他使用空Group占位
       if (isMerge) {
-        const mergeSize = dealMerge(range, mergeMap, table);
+        const needUpdateRange = rowStart > range.start.row;
+        const mergeSize = dealMerge(range, mergeMap, table, needUpdateRange);
         cellWidth = mergeSize.cellWidth;
         cellHeight = mergeSize.cellHeight;
       }
@@ -323,11 +325,11 @@ export function resizeCellGroup(
   };
 }
 
-function dealMerge(range: CellRange, mergeMap: MergeMap, table: BaseTableAPI) {
+function dealMerge(range: CellRange, mergeMap: MergeMap, table: BaseTableAPI, forceUpdate: boolean) {
   let cellWidth = 0;
   let cellHeight = 0;
   const mergeResult = mergeMap.get(`${range.start.col},${range.start.row};${range.end.col},${range.end.row}`);
-  if (!mergeResult) {
+  if (!mergeResult || forceUpdate) {
     for (let col = range.start.col; col <= range.end.col; col++) {
       cellWidth += table.getColWidth(col);
     }

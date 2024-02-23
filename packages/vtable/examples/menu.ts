@@ -98,6 +98,31 @@ export const menus = [
     ]
   },
   {
+    menu: '基本表格分析',
+    children: [
+      {
+        path: 'list-analysis',
+        name: 'list-filter'
+      },
+      {
+        path: 'list-analysis',
+        name: 'list-aggregation'
+      },
+      {
+        path: 'list-analysis',
+        name: 'list-aggregation-global'
+      },
+      {
+        path: 'list-analysis',
+        name: 'list-aggregation-edit'
+      },
+      {
+        path: 'list-analysis',
+        name: 'olympic-winners'
+      }
+    ]
+  },
+  {
     menu: '透视表',
     children: [
       {
@@ -221,6 +246,10 @@ export const menus = [
       {
         path: 'type',
         name: 'cellType-function'
+      },
+      {
+        path: 'type',
+        name: 'progress-sparkline-cellType'
       },
       {
         path: 'type',

@@ -6,15 +6,12 @@ import type { ColumnIconOption } from '../../icon';
 import type { MenuListItem } from '../../menu';
 import type { BaseTableAPI } from '../../base-table';
 import type { IEditor } from '@visactor/vtable-editors';
+import type { Aggregation, CustomAggregation } from '../../new-data-set';
 
 // eslint-disable-next-line no-unused-vars
 export interface IBasicHeaderDefine {
   // 表头的标题
   title?: string | (() => string); //支持图文混合
-  /** @deprecated
-   * 已废除该配置 标题中显示图标 现在请使用headerIcon进行配置
-   */
-  // captionIcon?: ColumnIconOption;
   /** 表头Icon配置 */
   headerIcon?: string | ColumnIconOption | (string | ColumnIconOption)[];
   // | ((args: CellInfo) => string | ColumnIconOption | (string | ColumnIconOption)[]);
@@ -24,7 +21,7 @@ export interface IBasicHeaderDefine {
   // headerType?: HeaderTypeOption | headerType.BaseHeader | null;
   /** sort排序规则 */
   sort?: SortOption;
-  /** 显示sort排序icon。为了仅仅显示图标，无排序逻辑。如果设置了sort字段 肯定会显示图标，会省略这个配置 */
+  /** 显示sort排序icon。为了仅仅显示图标，无排序逻辑 */
   showSort?: boolean;
   /** 该列不支持hover交互行为 */
   disableHover?: boolean;
@@ -86,4 +83,5 @@ export interface IBasicColumnBodyDefine {
   customRender?: ICustomRender;
   customLayout?: ICustomLayout;
   editor?: string | IEditor | ((args: BaseCellInfo & { table: BaseTableAPI }) => string | IEditor);
+  aggregation?: Aggregation | CustomAggregation | (Aggregation | CustomAggregation)[];
 }

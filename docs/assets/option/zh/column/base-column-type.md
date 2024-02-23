@@ -214,17 +214,33 @@ ${prefix} tree (boolean)
 ${prefix} editor (string|Object|Function)
 
 配置该列单元格编辑器
+
 ```
 editor?: string | IEditor | ((args: BaseCellInfo & { table: BaseTableAPI }) => string | IEditor);
 ```
-其中IEditor是@visactor/vtable-editors中定义的编辑器接口，具体可以参看源码：https://github.com/VisActor/VTable/blob/main/packages/vtable-editors/src/types.ts。
+
+其中 IEditor 是@visactor/vtable-editors 中定义的编辑器接口，具体可以参看源码：https://github.com/VisActor/VTable/blob/main/packages/vtable-editors/src/types.ts。
 
 ${prefix} headerEditor (string|Object|Function)
 
-配置该列表头显示标题title
+配置该列表头显示标题 title
+
 ```
 headerEditor?: string | IEditor | ((args: BaseCellInfo & { table: BaseTableAPI }) => string | IEditor);
 ```
 
 ${prefix} columns (Array)
 同上层的列配置数组，嵌套结构来描述列分组关系。
+
+${prefix} hideColumnsSubHeader(boolean) = false
+是否隐藏子表头的 header 标题，默认不隐藏。
+
+${prefix} aggregation(Aggregation | CustomAggregation | Array)
+
+非必填。
+
+数据聚合配置，对该列数据进行汇总分析。
+
+全局 option 也可以配置，对每一列都配置聚合规则。
+
+可参考教程文档

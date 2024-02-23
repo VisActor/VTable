@@ -449,7 +449,11 @@ function computeCustomRenderWidth(col: number, row: number, table: BaseTableAPI)
     let width = 0;
     let renderDefault = false;
     let enableCellPadding = false;
-    if (table.isHeader(col, row) || (table.getBodyColumnDefine(col, row) as TextColumnDefine)?.mergeCell) {
+    if (
+      table.isHeader(col, row) ||
+      (table.getBodyColumnDefine(col, row) as TextColumnDefine)?.mergeCell ||
+      table.hasCustomMerge()
+    ) {
       const cellRange = table.getCellRange(col, row);
       spanCol = cellRange.end.col - cellRange.start.col + 1;
     }
@@ -556,7 +560,11 @@ function computeTextWidth(col: number, row: number, cellType: ColumnTypeOption, 
   }
 
   let spanCol = 1;
-  if (table.isHeader(col, row) || (table.getBodyColumnDefine(col, row) as TextColumnDefine)?.mergeCell) {
+  if (
+    table.isHeader(col, row) ||
+    (table.getBodyColumnDefine(col, row) as TextColumnDefine)?.mergeCell ||
+    table.hasCustomMerge()
+  ) {
     const cellRange = table.getCellRange(col, row);
     spanCol = cellRange.end.col - cellRange.start.col + 1;
   }

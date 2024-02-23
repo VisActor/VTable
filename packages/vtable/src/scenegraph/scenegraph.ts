@@ -217,7 +217,7 @@ export class Scenegraph {
    */
   clearCells() {
     // unbind AutoPoptip
-    if (this.table.isPivotChart() || this.table.hasCustomRenderOrLayout()) {
+    if (this.table.isPivotChart() || this.table._hasCustomRenderOrLayout()) {
       // bind for axis label in pivotChart
       this.stage.pluginService.findPluginsByName('poptipForText').forEach(plugin => {
         plugin.deactivate(this.stage.pluginService);
@@ -337,7 +337,7 @@ export class Scenegraph {
    */
   createSceneGraph() {
     // bind AutoPoptip
-    if (this.table.isPivotChart() || this.table.hasCustomRenderOrLayout()) {
+    if (this.table.isPivotChart() || this.table._hasCustomRenderOrLayout()) {
       // bind for axis label in pivotChart
       (this.stage.pluginService as any).autoEnablePlugins.getContributions().forEach((p: any) => {
         if (p.name === 'poptipForText') {
@@ -886,25 +886,49 @@ export class Scenegraph {
     } as any);
 
     if (this.tableGroup.border && this.tableGroup.border.type === 'rect') {
-      this.tableGroup.border.setAttributes({
-        x: this.table.tableX - this.tableGroup.border.attribute.lineWidth / 2,
-        y: this.table.tableY - this.tableGroup.border.attribute.lineWidth / 2,
-        width: this.tableGroup.attribute.width + this.tableGroup.border.attribute.lineWidth,
-        height: this.tableGroup.attribute.height + this.tableGroup.border.attribute.lineWidth
-      });
+      if (this.table.theme.frameStyle?.innerBorder) {
+        this.tableGroup.border.setAttributes({
+          x: this.table.tableX + this.tableGroup.border.attribute.lineWidth / 2,
+          y: this.table.tableY + this.tableGroup.border.attribute.lineWidth / 2,
+          width: this.tableGroup.attribute.width - this.tableGroup.border.attribute.lineWidth,
+          height: this.tableGroup.attribute.height - this.tableGroup.border.attribute.lineWidth
+        });
+      } else {
+        this.tableGroup.border.setAttributes({
+          x: this.table.tableX - this.tableGroup.border.attribute.lineWidth / 2,
+          y: this.table.tableY - this.tableGroup.border.attribute.lineWidth / 2,
+          width: this.tableGroup.attribute.width + this.tableGroup.border.attribute.lineWidth,
+          height: this.tableGroup.attribute.height + this.tableGroup.border.attribute.lineWidth
+        });
+      }
     } else if (this.tableGroup.border && this.tableGroup.border.type === 'group') {
-      this.tableGroup.border.setAttributes({
-        x: this.table.tableX - this.tableGroup.border.attribute.lineWidth / 2,
-        y: this.table.tableY - this.tableGroup.border.attribute.lineWidth / 2,
-        width: this.tableGroup.attribute.width + this.tableGroup.border.attribute.lineWidth,
-        height: this.tableGroup.attribute.height + this.tableGroup.border.attribute.lineWidth
-      });
-      (this.tableGroup.border.firstChild as IRect)?.setAttributes({
-        x: this.tableGroup.border.attribute.lineWidth / 2,
-        y: this.tableGroup.border.attribute.lineWidth / 2,
-        width: this.tableGroup.attribute.width,
-        height: this.tableGroup.attribute.height
-      });
+      if (this.table.theme.frameStyle?.innerBorder) {
+        this.tableGroup.border.setAttributes({
+          x: this.table.tableX + this.tableGroup.border.attribute.lineWidth / 2,
+          y: this.table.tableY + this.tableGroup.border.attribute.lineWidth / 2,
+          width: this.tableGroup.attribute.width - this.tableGroup.border.attribute.lineWidth,
+          height: this.tableGroup.attribute.height - this.tableGroup.border.attribute.lineWidth
+        });
+        (this.tableGroup.border.firstChild as IRect)?.setAttributes({
+          x: 0,
+          y: 0,
+          width: this.tableGroup.attribute.width - this.tableGroup.border.attribute.lineWidth,
+          height: this.tableGroup.attribute.height - this.tableGroup.border.attribute.lineWidth
+        });
+      } else {
+        this.tableGroup.border.setAttributes({
+          x: this.table.tableX - this.tableGroup.border.attribute.lineWidth / 2,
+          y: this.table.tableY - this.tableGroup.border.attribute.lineWidth / 2,
+          width: this.tableGroup.attribute.width + this.tableGroup.border.attribute.lineWidth,
+          height: this.tableGroup.attribute.height + this.tableGroup.border.attribute.lineWidth
+        });
+        (this.tableGroup.border.firstChild as IRect)?.setAttributes({
+          x: this.tableGroup.border.attribute.lineWidth / 2,
+          y: this.tableGroup.border.attribute.lineWidth / 2,
+          width: this.tableGroup.attribute.width,
+          height: this.tableGroup.attribute.height
+        });
+      }
     }
 
     if (this.table.bottomFrozenRowCount > 0) {
@@ -1427,12 +1451,7 @@ export class Scenegraph {
 
     this.updateTableSize();
 
-    // 记录滚动条原位置
-    const oldHorizontalBarPos = this.table.stateManager.scroll.horizontalBarPos;
-    const oldVerticalBarPos = this.table.stateManager.scroll.verticalBarPos;
     this.component.updateScrollBar();
-    this.table.stateManager.setScrollLeft(oldHorizontalBarPos);
-    this.table.stateManager.setScrollTop(oldVerticalBarPos);
     this.updateNextFrame();
   }
 
@@ -1473,7 +1492,11 @@ export class Scenegraph {
     );
     createFrameBorder(
       this.rowHeaderGroup,
-      this.isPivot ? this.table.theme.rowHeaderStyle.frameStyle : this.table.theme.bodyStyle.frameStyle,
+      this.isPivot
+        ? this.table.theme.rowHeaderStyle.frameStyle
+        : this.table.internalProps.transpose
+        ? this.table.theme.headerStyle.frameStyle
+        : this.table.theme.bodyStyle.frameStyle,
       this.rowHeaderGroup.role,
       isListTableWithFrozen ? [true, false, true, true] : undefined
     );
