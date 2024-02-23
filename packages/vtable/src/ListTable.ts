@@ -800,7 +800,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
   getCellCheckboxState(col: number, row: number) {
     const define = this.getBodyColumnDefine(col, row);
     const field = define?.field;
-    const cellType = define?.cellType;
+    const cellType = this.getCellType(col, row);
     if (isValid(field) && cellType === 'checkbox') {
       const dataIndex = this.dataSource.getIndexKey(this.getRecordShowIndexByCell(col, row));
       return this.stateManager.checkedState[dataIndex as number][field as string | number];

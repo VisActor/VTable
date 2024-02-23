@@ -113,7 +113,7 @@ export interface ColumnData extends WidthData {
     | (string | ColumnIconOption)[]
     | ((args: CellInfo) => string | ColumnIconOption | (string | ColumnIconOption)[]);
 
-  cellType: 'text' | 'link' | 'image' | 'video' | 'sparkline' | 'progressbar' | 'chart'; //BaseColumn<T, any>;
+  cellType: 'text' | 'link' | 'image' | 'video' | 'sparkline' | 'progressbar' | 'chart' | 'checkbox'; //BaseColumn<T, any>;
   /** 如果是绘制图表库组件的图表类型 需要将注入的组件名称 写到chartType */
   chartModule?: string;
   /** 如果是绘制图表库组件的图表类型 统一图表配置chartSpec */

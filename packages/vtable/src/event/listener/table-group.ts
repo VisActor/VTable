@@ -109,10 +109,11 @@ export function bindTableGroupListener(eventManager: EventManager) {
     if ((table as any).hasListeners(TABLE_EVENT_TYPE.MOUSELEAVE_CELL)) {
       // const cellGoup = eventArgsSet?.eventArgs?.target as unknown as Group;
       if (
-        cellGoup?.role === 'cell' &&
+        // cellGoup?.role === 'cell' && // 这里去掉这个判断 处理当鼠标移动到滚动条上 也需要触发leave事件
         table.stateManager.hover.cellPos.col !== -1 &&
         table.stateManager.hover.cellPos.row !== -1 &&
-        (cellGoup.col !== table.stateManager.hover.cellPos.col || cellGoup.row !== table.stateManager.hover.cellPos.row)
+        (cellGoup?.col !== table.stateManager.hover.cellPos.col ||
+          cellGoup?.row !== table.stateManager.hover.cellPos.row)
       ) {
         table.fireListeners(TABLE_EVENT_TYPE.MOUSELEAVE_CELL, {
           col: table.stateManager.hover.cellPos.col,
@@ -265,6 +266,22 @@ export function bindTableGroupListener(eventManager: EventManager) {
     if (!stateManager.isResizeCol() && !stateManager.isMoveCol() && !stateManager.isSelecting()) {
       stateManager.updateInteractionState(InteractionState.default);
       stateManager.updateCursor();
+    }
+    // 移动到table外部 如移动到表格空白区域 移动到表格浏览器外部
+    if ((table as any).hasListeners(TABLE_EVENT_TYPE.MOUSELEAVE_CELL)) {
+      if (table.stateManager.hover.cellPos.col !== -1 && table.stateManager.hover.cellPos.row !== -1) {
+        table.fireListeners(TABLE_EVENT_TYPE.MOUSELEAVE_CELL, {
+          col: table.stateManager.hover.cellPos.col,
+          row: table.stateManager.hover.cellPos.row,
+          cellRange: table.getCellRangeRelativeRect({
+            col: table.stateManager.hover.cellPos.col,
+            row: table.stateManager.hover.cellPos.row
+          }),
+          scaleRatio: table.canvas.getBoundingClientRect().width / table.canvas.offsetWidth,
+          event: e.nativeEvent,
+          target: undefined
+        });
+      }
     }
     eventManager.dealTableHover();
 
@@ -685,8 +702,8 @@ export function bindTableGroupListener(eventManager: EventManager) {
         cellInfo.field as string | number,
         (e.detail as unknown as { checked: boolean }).checked
       );
-      const define = table.getBodyColumnDefine(col, row);
-      if (define.cellType === 'checkbox') {
+      const cellType = table.getCellType(col, row);
+      if (cellType === 'checkbox') {
         table.scenegraph.updateCheckboxCellState(col, row, (e.detail as unknown as { checked: boolean }).checked);
       }
     } else {
@@ -697,8 +714,8 @@ export function bindTableGroupListener(eventManager: EventManager) {
         cellInfo.field as string | number,
         (e.detail as unknown as { checked: boolean }).checked
       );
-      const define = table.getBodyColumnDefine(col, row);
-      if (define.headerType === 'checkbox') {
+      const cellType = table.getCellType(col, row);
+      if (cellType === 'checkbox') {
         const oldHeaderCheckedState = table.stateManager.headerCheckedState[cellInfo.field as string | number];
         const newHeaderCheckedState = table.stateManager.updateHeaderCheckedState(cellInfo.field as string | number);
         if (oldHeaderCheckedState !== newHeaderCheckedState) {
