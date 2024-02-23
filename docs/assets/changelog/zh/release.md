@@ -5,22 +5,21 @@
 
 **🆕 新增功能**
 
-- **@visactor/vtable**: add aggregation for list table column
-- **@visactor/vtable**: add api getAggregateValuesByField
-- **@visactor/vtable**: add custom aggregation
-- **@visactor/vtable**: chartSpec support function [#1115](https://github.com/VisActor/VTable/issues/1115)
-- **@visactor/vtable**: add filter data config [#607](https://github.com/VisActor/VTable/issues/607)
+- **@visactor/vtable**：添加列表列的聚合
+- **@visactor/vtable**：添加 api getAggregateValuesByField
+- **@visactor/vtable**：添加自定义聚合
+- **@visactor/vtable**：chartSpec 支持函数 [#1115](https://github.com/VisActor/VTable/issues/1115)
+- **@visactor/vtable**：添加基本表格的过滤能力 [#607](https://github.com/VisActor/VTable/issues/607)
 
 **🐛 功能修复**
 
-- **@visactor/vtable**: edit right frozen cell input position error
-- **@visactor/vtable**: mouseleave_cell event trigger [#1112](https://github.com/VisActor/VTable/issues/1112)
-- **@visactor/vtable**: fix cellBgColor judgement in isCellHover()
-- **@visactor/vtable**: fix custom merge cell computed height&width
-- **@visactor/vtable**: fix content position update problem
-- **@visactor/vtable**: merge cell update in setDropDownMenuHighlight()
-- **@visactor/vtable**: fix react-vtable display error in react strict mode [#990](https://github.com/VisActor/VTable/issues/990)
-
+- **@visactor/vtable**：编辑右冻结单元格输入位置错误
+- **@visactor/vtable**：mouseleave_cell 事件触发器 [#1112](https://github.com/VisActor/VTable/issues/1112)
+- **@visactor/vtable**：修复 isCellHover() 中的 cellBgColor 判断
+- **@visactor/vtable**：修复自定义合并单元计算的高度和宽度
+- **@visactor/vtable**：修复内容位置更新问题
+- **@visactor/vtable**：在 setDropDownMenuHighlight() 中合并单元格更新
+- **@visactor/vtable**：修复react严格模式下的react-vtable显示错误[#990](https://github.com/VisActor/VTable/issues/990)
 
 
 [更多详情请查看 v0.20.0](https://github.com/VisActor/VTable/releases/tag/v0.20.0)
