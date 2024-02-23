@@ -45,6 +45,8 @@ export function dealWithCustom(
   let elementsGroup: VGroup;
 
   if (typeof customLayout === 'function') {
+    const plugin = table.scenegraph.stage.getPluginsByName('FlexLayoutPlugin')[0];
+    (plugin as any).pauseLayout(true);
     const arg = {
       col,
       row,

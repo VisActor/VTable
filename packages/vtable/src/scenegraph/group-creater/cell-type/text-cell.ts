@@ -90,6 +90,8 @@ export function createCellGroup(
   // columnGroup?.addChild(cellGroup); // fix promise cell row order in column
   columnGroup?.addCellGroup(cellGroup);
   if (customElementsGroup) {
+    const plugin = table.scenegraph.stage.getPluginsByName('FlexLayoutPlugin')[0];
+    (plugin as any).pauseLayout(false);
     cellGroup.appendChild(customElementsGroup);
   }
   if (renderDefault) {
