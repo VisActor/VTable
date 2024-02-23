@@ -57,6 +57,7 @@ import { HeaderHelper } from '../header-helper/header-helper';
 import type { PivotHeaderLayoutMap } from '../layout/pivot-header-layout';
 import { TooltipHandler } from '../components/tooltip/TooltipHandler';
 import type { CachedDataSource, DataSource } from '../data';
+import type { IBoundsLike } from '@visactor/vutils';
 import { AABBBounds, isNumber, isBoolean, isFunction, type ITextSize, isValid } from '@visactor/vutils';
 import { textMeasure } from '../scenegraph/utils/text-measure';
 import { getProp } from '../scenegraph/utils/get-prop';
@@ -156,7 +157,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
 
   constructor(container: HTMLElement, options: BaseTableConstructorOptions = {}) {
     super();
-    if (!container && options.mode !== 'node') {
+    if (!container && options.mode !== 'node' && !options.canvas) {
       throw new Error("vtable's container is undefined");
     }
     const {
@@ -236,7 +237,13 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     //设置是否自动撑开的配置
     // internalProps.autoRowHeight = options.autoRowHeight ?? false;
 
-    if (Env.mode !== 'node') {
+    if (this.options.canvas) {
+      internalProps.element = this.options.canvas.parentElement;
+      internalProps.element.style.position = 'relative';
+      internalProps.focusControl = new FocusInput(this, internalProps.element);
+      internalProps.canvas = this.options.canvas;
+      internalProps.context = internalProps.canvas.getContext('2d')!;
+    } else if (Env.mode !== 'node') {
       internalProps.element = createRootElement(this.padding);
       internalProps.focusControl = new FocusInput(this, internalProps.element);
       internalProps.canvas = document.createElement('canvas');
@@ -773,8 +780,22 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
 
     let widthP = 0;
     let heightP = 0;
+    this.tableX = 0;
+    this.tableY = 0;
 
-    if (Env.mode === 'browser') {
+    if (this.options.canvas && this.options.viewBox) {
+      widthP = this.options.viewBox.x2 - this.options.viewBox.x1;
+      heightP = this.options.viewBox.y2 - this.options.viewBox.y1;
+      // this.tableX = this.options.viewBox.x1;
+      // this.tableY = this.options.viewBox.y1;
+      if (this?.scenegraph?.stage) {
+        if (this.options.viewBox) {
+          (this.scenegraph.stage as any).setViewBox(this.options.viewBox, false);
+        } else {
+          this.scenegraph.stage.resize(widthP, heightP);
+        }
+      }
+    } else if (Env.mode === 'browser') {
       const element = this.getElement();
 
       const width1 = element.parentElement?.offsetWidth ?? 1 - 1;
@@ -811,13 +832,35 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
       //考虑表格整体边框的问题
       const lineWidths = toBoxArray(this.internalProps.theme.frameStyle?.borderLineWidth ?? [null]);
       const shadowWidths = toBoxArray(this.internalProps.theme.frameStyle?.shadowBlur ?? [0]);
-      this.tableX = (lineWidths[3] ?? 0) + (shadowWidths[3] ?? 0);
-      this.tableY = (lineWidths[0] ?? 0) + (shadowWidths[0] ?? 0);
+      this.tableX += (lineWidths[3] ?? 0) + (shadowWidths[3] ?? 0);
+      this.tableY += (lineWidths[0] ?? 0) + (shadowWidths[0] ?? 0);
       this.tableNoFrameWidth =
         width - ((lineWidths[1] ?? 0) + (shadowWidths[1] ?? 0)) - ((lineWidths[3] ?? 0) + (shadowWidths[3] ?? 0));
       this.tableNoFrameHeight =
         height - ((lineWidths[0] ?? 0) + (shadowWidths[0] ?? 0)) - ((lineWidths[2] ?? 0) + (shadowWidths[2] ?? 0));
+    } else {
+      this.tableX += 0;
+      this.tableY += 0;
+      this.tableNoFrameWidth = width;
+      this.tableNoFrameHeight = height;
     }
+  }
+
+  updateViewBox(newViewBox: IBoundsLike) {
+    const oldWidth = this.options?.viewBox.x2 ?? 0 - this.options?.viewBox.x1 ?? 0;
+    const oldHeight = this.options?.viewBox.y2 ?? 0 - this.options?.viewBox.y1 ?? 0;
+    const newWidth = newViewBox.x2 - newViewBox.x1;
+    const newHeight = newViewBox.y2 - newViewBox.y1;
+    this.options.viewBox = newViewBox;
+    if (oldWidth !== newWidth || oldHeight !== newHeight) {
+      this.resize();
+    } else {
+      (this.scenegraph.stage as any).setViewBox(this.options.viewBox, true);
+    }
+  }
+
+  setViewBoxTransform(a: number, b: number, c: number, d: number, e: number, f: number) {
+    this.scenegraph.stage.window.setViewBoxTransform(a, b, c, d, e, f);
   }
 
   get rowHierarchyType(): 'grid' | 'tree' {
@@ -1678,6 +1721,8 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     const visibleRect = this.getVisibleRect();
     rect.offsetLeft(this.tableX - (relativeX ? visibleRect.left : 0));
     rect.offsetTop(this.tableY - (relativeY ? visibleRect.top : 0));
+    rect.offsetLeft(this.options.viewBox?.x1 ?? 0);
+    rect.offsetTop(this.options.viewBox?.y1 ?? 0);
     return rect;
   }
 
@@ -1883,8 +1928,9 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     this.scenegraph.stage.release();
     this.scenegraph.proxy.release();
 
+    internalProps.focusControl.release();
     const { parentElement } = internalProps.element;
-    if (parentElement) {
+    if (parentElement && !this.options.canvas) {
       parentElement.removeChild(internalProps.element);
     }
 
@@ -2169,8 +2215,10 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     const originHeight = this.canvas.offsetHeight || currentHeight;
     const heightRatio = currentHeight / originHeight;
 
-    const x = (clientX - rect.left) / widthRatio + (isAddScroll ? table.scrollLeft : 0);
-    const y = (clientY - rect.top) / heightRatio + (isAddScroll ? table.scrollTop : 0);
+    const x =
+      (clientX - rect.left) / widthRatio + (isAddScroll ? table.scrollLeft : 0) - (this.options.viewBox?.x1 ?? 0);
+    const y =
+      (clientY - rect.top) / heightRatio + (isAddScroll ? table.scrollTop : 0) - (this.options.viewBox?.y1 ?? 0);
     return { x, y, inTable };
   }
   getTheme() {

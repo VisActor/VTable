@@ -18,8 +18,10 @@ export interface SceneEvent {
 export function getCellEventArgsSet(e: FederatedPointerEvent): SceneEvent {
   const tableEvent: SceneEvent = {
     abstractPos: {
-      x: e.x,
-      y: e.y
+      // x: e.x,
+      // y: e.y,
+      x: e.viewport.x,
+      y: e.viewport.y
     }
     // eventArgs: {
     //   col: (e.target as any).col,

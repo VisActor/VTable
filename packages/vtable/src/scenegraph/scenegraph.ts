@@ -1,4 +1,4 @@
-import type { IStage, IRect, ITextCache, INode, Text, RichText } from '@src/vrender';
+import type { IStage, IRect, ITextCache, INode, Text, RichText, Stage } from '@src/vrender';
 import { createStage, createRect, IContainPointMode, container, vglobal, registerForVrender } from '@src/vrender';
 import type { CellRange, CellSubLocation } from '../ts-types';
 import {
@@ -124,7 +124,11 @@ export class Scenegraph {
     setPoptipTheme(this.table.theme.textPopTipStyle);
     let width;
     let height;
-    if (Env.mode === 'node') {
+    if (table.options.canvas && table.options.viewBox) {
+      vglobal.setEnv('browser');
+      width = table.options.viewBox.x2 - table.options.viewBox.x1;
+      height = table.options.viewBox.y2 - table.options.viewBox.y1;
+    } else if (Env.mode === 'node') {
       vglobal.setEnv('node', table.options.modeParams);
       width = table.canvasWidth;
       height = table.canvasHeight;
@@ -142,12 +146,19 @@ export class Scenegraph {
       dpr: table.internalProps.pixelRatio,
       enableLayout: true,
       // pluginList: table.isPivotChart() ? ['poptipForText'] : undefined,
-      afterRender: () => {
+      beforeRender: (stage: Stage) => {
+        this.table.options.beforeRender && this.table.options.beforeRender(stage);
+      },
+      afterRender: (stage: Stage) => {
+        this.table.options.afterRender && this.table.options.afterRender(stage);
         this.table.fireListeners('after_render', null);
         // console.trace('after_render');
-      }
+      },
       // event: { clickInterval: 400 }
       // autoRender: true
+
+      canvasControled: !table.options.canvas,
+      viewBox: table.options.viewBox
     });
 
     this.stage.defaultLayer.setTheme({
@@ -1135,6 +1146,18 @@ export class Scenegraph {
     this.component.updateScrollBar();
     // 处理单元格内容需要textStick的情况
     handleTextStick(this.table);
+
+    // // temp add rect
+    // const rect = createRect({
+    //   x: 200,
+    //   y: 200,
+    //   width: 100,
+    //   height: 100,
+    //   fill: 'red',
+    //   stroke: 'blue',
+    //   lineWidth: 1
+    // });
+    // this.tableGroup.addChild(rect);
 
     this.updateNextFrame();
   }

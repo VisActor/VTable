@@ -1,4 +1,4 @@
-import type { ITextSize } from '@visactor/vutils';
+import type { IBoundsLike, ITextSize } from '@visactor/vutils';
 import type { RectProps, MaybePromiseOrUndefined, ICellHeaderPaths, CellInfo } from './common';
 import type {
   TableEventListener,
@@ -373,6 +373,16 @@ export interface BaseTableConstructorOptions {
 
   // resize response time
   resizeTime?: number;
+
+  canvas?: HTMLCanvasElement;
+  viewBox?: IBoundsLike;
+  chartOption?: any;
+  disableInteraction?: boolean;
+
+  specFormat?: (spec: any) => { needFormatSpec: boolean; spec?: any };
+
+  beforeRender?: (stage: any) => void;
+  afterRender?: (stage: any) => void;
 }
 export interface BaseTableAPI {
   /** 表格的行数 */
