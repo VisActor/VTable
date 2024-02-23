@@ -1,6 +1,38 @@
 # Change Log - @visactor/vtable
 
-This log was last generated on Mon, 05 Feb 2024 12:36:17 GMT and should not be manually modified.
+This log was last generated on Fri, 23 Feb 2024 10:06:24 GMT and should not be manually modified.
+
+## 0.20.0
+Fri, 23 Feb 2024 10:06:24 GMT
+
+### Updates
+
+- feat: add aggregation for list table column
+
+
+- feat: add api getAggregateValuesByField
+
+
+- feat: add custom aggregation
+
+
+- fix: edit right frozen cell input position error
+
+
+- fix: mouseleave_cell event trigger #1112
+
+
+- feat: chartSpec support function #1115
+
+
+- feat: add filter data config #607
+
+
+- fix: fix cellBgColor judgement in isCellHover()
+- fix: fix custom merge cell computed height&width
+- fix: fix content position update problem
+- fix: merge cell update in setDropDownMenuHighlight()
+- fix: fix react-vtable display error in react strict mode #990
 
 ## 0.19.1
 Mon, 05 Feb 2024 12:36:17 GMT
