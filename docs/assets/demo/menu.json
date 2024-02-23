@@ -247,17 +247,24 @@
           }
         },
         {
-          "path": "chart",
+          "path": "list-chart",
           "title": {
-            "zh": "透视表图表展示",
-            "en": "Chart Type In PivotTable"
+            "zh": "基本表格集成图表",
+            "en": "Chart Type In ListTable"
           }
         },
         {
           "path": "list-table-chart",
           "title": {
-            "zh": "基本表格图表展示",
-            "en": "Chart Type In ListTable"
+            "zh": "基本表格集成图表 2",
+            "en": "Chart Type In ListTable 2"
+          }
+        },
+        {
+          "path": "chart",
+          "title": {
+            "zh": "透视表图表展示",
+            "en": "Chart Type In PivotTable"
           }
         },
         {
@@ -869,8 +876,8 @@
     {
       "path": "data-analysis",
       "title": {
-        "zh": "数据分析",
-        "en": "Data Analysis"
+        "zh": "透视表数据分析",
+        "en": "Pivot Table Data Analysis"
       },
       "children": [
         {
@@ -927,6 +934,36 @@
           "title": {
             "zh": "指标聚合方式",
             "en": "Indicator Aggregation Type"
+          }
+        }
+      ]
+    },
+    {
+      "path": "list-table-data-analysis",
+      "title": {
+        "zh": "基本表数据分析",
+        "en": "List Table Data Analysis"
+      },
+      "children": [
+        {
+          "path": "list-table-data-filter",
+          "title": {
+            "zh": "数据过滤",
+            "en": "Data Filter"
+          }
+        },
+        {
+          "path": "list-table-aggregation",
+          "title": {
+            "zh": "数据聚合分析",
+            "en": "Data Aggregation"
+          }
+        },
+        {
+          "path": "list-table-aggregation-multiple",
+          "title": {
+            "zh": "多种数据聚合",
+            "en": "Multiple Data Aggregation"
           }
         }
       ]

@@ -60,7 +60,7 @@ export class DefaultCanvasChartRender implements IGraphicRender {
     const viewBox = chart.getViewBox();
     const { width = groupAttribute.width, height = groupAttribute.height } = chart.attribute;
 
-    const { chartInstance, active, cacheCanvas, activeChartInstance } = chart;
+    const { active, cacheCanvas, activeChartInstance } = chart;
     // console.log('render chart', chart.parent.col, chart.parent.row, viewBox, cacheCanvas);
     if (!active && cacheCanvas) {
       if (isArray(cacheCanvas)) {
@@ -89,7 +89,7 @@ export class DefaultCanvasChartRender implements IGraphicRender {
               : data ?? [],
             fields: series?.data?.fields
           });
-          if (!chartInstance.updateFullDataSync) {
+          if (!activeChartInstance.updateFullDataSync) {
             activeChartInstance.updateDataSync(
               dataIdStr,
               dataIdAndField

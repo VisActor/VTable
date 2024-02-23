@@ -33,14 +33,14 @@ export class Chart extends Group {
   activeChartInstance: any;
   active: boolean;
   cacheCanvas: HTMLCanvasElement | { x: number; y: number; width: number; height: number; canvas: HTMLCanvasElement }[]; // HTMLCanvasElement
-
-  constructor(params: IChartGraphicAttribute) {
+  isShareChartSpec: boolean; //针对chartSpec用户配置成函数形式的话 就不需要存储chartInstance了 会太占内存，使用这个变量 当渲染出缓存图表会就删除chartInstance实例
+  constructor(isShareChartSpec: boolean, params: IChartGraphicAttribute) {
     super(params);
     this.numberType = CHART_NUMBER_TYPE;
-
+    this.isShareChartSpec = isShareChartSpec;
     // 创建chart
     if (!params.chartInstance) {
-      params.chartInstance = this.chartInstance = new params.ClassType(params.spec, {
+      const chartInstance = new params.ClassType(params.spec, {
         renderCanvas: params.canvas,
         mode: this.attribute.mode === 'node' ? 'node' : 'desktop-browser',
         modeParams: this.attribute.modeParams,
@@ -59,7 +59,8 @@ export class Chart extends Group {
         animation: false,
         autoFit: false
       });
-      this.chartInstance.renderSync();
+      chartInstance.renderSync();
+      params.chartInstance = this.chartInstance = chartInstance;
     } else {
       this.chartInstance = params.chartInstance;
     }
