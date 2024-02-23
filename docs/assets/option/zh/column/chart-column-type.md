@@ -22,4 +22,4 @@
 
 **chart 类型专属配置项**
 
-对应图表库的 spec 其中 value 对应在 records 中提供
+设置图表的 spec，或者设置成函数返回不同的spec。其中显示在图表的数据是对应在 records 中提供。

@@ -16,7 +16,7 @@ VTable.register.chartModule('vchart', VChart);
 表格展示类型`cellType`设置成`chart`用于生成图表。
 - cellType: 'chart' //chart图表类型
 - chartModule: 'vchart' // vchart是注册时配置的名称
-- chartSpec:{ }  //chart配置项
+- chartSpec:{ }  //chart配置项 支持函数形式返回spec
 
 其中chartSpec配置项对应[VChart配置](https://visactor.io/vchart/option)
 

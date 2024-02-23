@@ -22,4 +22,4 @@ Corresponding to the injected chart library component name
 
 **Chart type exclusive configuration options**
 
-Corresponding to the chart library's spec, the value is provided in the records
+Set the spec of the chart, or set it to a function that returns a different spec. The data displayed in the chart is provided by records.

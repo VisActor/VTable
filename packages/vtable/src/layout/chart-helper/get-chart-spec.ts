@@ -20,7 +20,36 @@ export function getRawChartSpec(col: number, row: number, layout: PivotHeaderLay
   }
   const chartSpec = indicatorObj?.chartSpec;
 
+  if (typeof chartSpec === 'function') {
+    // 动态组织spec
+    const arg = {
+      col,
+      row,
+      dataValue: layout._table.getCellOriginValue(col, row) || '',
+      value: layout._table.getCellValue(col, row) || '',
+      rect: layout._table.getCellRangeRelativeRect(layout._table.getCellRange(col, row)),
+      table: layout._table
+    };
+    return chartSpec(arg);
+  }
   return chartSpec;
+}
+export function isShareChartSpec(col: number, row: number, layout: PivotHeaderLayoutMap): any {
+  const paths = layout.getCellHeaderPaths(col, row);
+  let indicatorObj;
+  if (layout.indicatorsAsCol) {
+    const indicatorKey = paths.colHeaderPaths.find(colPath => colPath.indicatorKey)?.indicatorKey;
+    indicatorObj = layout.columnObjects.find(indicator => indicator.indicatorKey === indicatorKey);
+  } else {
+    const indicatorKey = paths.rowHeaderPaths.find(rowPath => rowPath.indicatorKey)?.indicatorKey;
+    indicatorObj = layout.columnObjects.find(indicator => indicator.indicatorKey === indicatorKey);
+  }
+  const chartSpec = indicatorObj?.chartSpec;
+
+  if (typeof chartSpec === 'function') {
+    return false;
+  }
+  return true;
 }
 /** 检查是否有直角坐标系的图表 */
 export function checkHasCartesianChart(layout: PivotHeaderLayoutMap) {
@@ -95,16 +124,19 @@ export function isHasCartesianChartInline(
 export function getChartSpec(col: number, row: number, layout: PivotHeaderLayoutMap): any {
   let chartSpec = layout.getRawChartSpec(col, row);
   if (chartSpec) {
-    chartSpec = cloneDeep(chartSpec);
-    chartSpec.sortDataByAxis = true;
-    if (isArray(chartSpec.series)) {
-      chartSpec.series.forEach((serie: any) => {
-        serie.sortDataByAxis = true;
-      });
+    if (layout._table.isPivotChart()) {
+      chartSpec = cloneDeep(chartSpec);
+      chartSpec.sortDataByAxis = true;
+      if (isArray(chartSpec.series)) {
+        chartSpec.series.forEach((serie: any) => {
+          serie.sortDataByAxis = true;
+        });
+      }
+      chartSpec.axes = layout.getChartAxes(col, row);
+      chartSpec.padding = 0;
+      chartSpec.dataZoom = []; // Do not support datazoom temply
+      return chartSpec;
     }
-    chartSpec.axes = layout.getChartAxes(col, row);
-    chartSpec.padding = 0;
-    chartSpec.dataZoom = []; // Do not support datazoom temply
     return chartSpec;
   }
   return null;
