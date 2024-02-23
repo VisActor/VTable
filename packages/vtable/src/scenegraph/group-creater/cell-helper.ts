@@ -243,13 +243,12 @@ export function createCell(
       padding,
       value,
       (define as ChartColumnDefine).chartModule,
-      table.isPivotChart()
-        ? (table.internalProps.layoutMap as PivotHeaderLayoutMap).getChartSpec(col, row)
-        : (define as ChartColumnDefine).chartSpec,
+      table.internalProps.layoutMap.getChartSpec(col, row),
       chartInstance,
-      (table.internalProps.layoutMap as PivotHeaderLayoutMap)?.getChartDataId(col, row) ?? 'data',
+      table.internalProps.layoutMap.getChartDataId(col, row) ?? 'data',
       table,
-      cellTheme
+      cellTheme,
+      table.internalProps.layoutMap.isShareChartSpec(col, row)
     );
   } else if (type === 'progressbar') {
     const style = table._getCellStyle(col, row) as ProgressBarStyle;

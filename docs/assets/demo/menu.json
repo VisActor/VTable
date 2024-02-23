@@ -247,17 +247,24 @@
           }
         },
         {
-          "path": "chart",
+          "path": "list-chart",
           "title": {
-            "zh": "透视表图表展示",
-            "en": "Chart Type In PivotTable"
+            "zh": "基本表格集成图表",
+            "en": "Chart Type In ListTable"
           }
         },
         {
           "path": "list-table-chart",
           "title": {
-            "zh": "基本表格图表展示",
-            "en": "Chart Type In ListTable"
+            "zh": "基本表格集成图表 2",
+            "en": "Chart Type In ListTable 2"
+          }
+        },
+        {
+          "path": "chart",
+          "title": {
+            "zh": "透视表图表展示",
+            "en": "Chart Type In PivotTable"
           }
         },
         {
