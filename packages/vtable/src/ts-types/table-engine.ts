@@ -104,7 +104,7 @@ export interface DataSourceAPI {
   updatePagination: (pagination: IPagination) => void;
   getIndexKey: (index: number) => number | number[];
   /** 数据是否为树形结构 且可以展开收起 */
-  enableHierarchyState: boolean;
+  hierarchyExpandLevel: number;
 }
 
 export interface SortState {

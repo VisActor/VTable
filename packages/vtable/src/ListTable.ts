@@ -267,10 +267,19 @@ export class ListTable extends BaseTable implements ListTableAPI {
   /** 获取当前单元格在body部分的展示索引 即(row / col)-headerLevelCount。注：ListTable特有接口 */
   getRecordShowIndexByCell(col: number, row: number): number {
     const { layoutMap } = this.internalProps;
-    return layoutMap.getRecordIndexByCell(col, row);
+    return layoutMap.getRecordShowIndexByCell(col, row);
   }
 
-  getTableIndexByRecordIndex(recordIndex: number) {
+  /** 获取当前单元格的数据是数据源中的第几条。
+   * 如果是树形模式的表格，将返回数组，如[1,2] 数据源中第2条数据中children中的第3条
+   * 注：ListTable特有接口 */
+  getRecordIndexByCell(col: number, row: number): number | number[] {
+    const { layoutMap } = this.internalProps;
+    const recordShowIndex = layoutMap.getRecordShowIndexByCell(col, row);
+    return this.dataSource.currentPagerIndexedData[recordShowIndex];
+  }
+
+  getTableIndexByRecordIndex(recordIndex: number | number[]) {
     if (this.transpose) {
       return this.dataSource.getTableIndex(recordIndex) + this.rowHeaderLevelCount;
     }
