@@ -10,7 +10,7 @@ import type { BaseTableAPI } from '../../ts-types/base-table';
  * @param {BaseTableAPI} table
  * @return {*}
  */
-export function dealSort(col: number, row: number, table: ListTableAPI) {
+export function dealSort(col: number, row: number, table: ListTableAPI, event: Event) {
   //是击中的sort按钮才进行排序
   let range1 = null;
   let tableState: SortState;
@@ -53,8 +53,9 @@ export function dealSort(col: number, row: number, table: ListTableAPI) {
       order: 'normal'
     };
   }
+  (tableState as SortState & { event: Event }).event = event;
   // 如果用户监听SORT_CLICK事件的回调函数返回false 则不执行内部排序逻辑
-  const sortEventReturns = table.fireListeners(TABLE_EVENT_TYPE.SORT_CLICK, tableState);
+  const sortEventReturns = table.fireListeners(TABLE_EVENT_TYPE.SORT_CLICK, tableState as SortState & { event: Event });
   if (sortEventReturns.includes(false)) {
     return;
   }
