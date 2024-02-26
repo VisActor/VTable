@@ -722,7 +722,8 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
       dimensionKey: dimensionInfos[dimensionInfos.length - 1].dimensionKey,
       value: this.getCellValue(col, row),
       cellLocation: this.getCellLocation(col, row),
-      isPivotCorner: this.isCornerHeader(col, row)
+      isPivotCorner: this.isCornerHeader(col, row),
+      event: undefined
     };
     return result;
   }
