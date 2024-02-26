@@ -222,18 +222,20 @@ export class DataSource extends EventTarget implements DataSourceAPI {
       }
 
       this.currentIndexedData = Array.from({ length: this._sourceLength }, (_, i) => i);
-      let nodeLength = this._sourceLength;
-      for (let i = 0; i < nodeLength; i++) {
-        const indexKey = this.currentIndexedData[i];
-        const nodeData = this.getOriginalRecord(indexKey);
-        if ((nodeData as any).children?.length > 0) {
-          this.treeDataHierarchyState.set(
-            Array.isArray(indexKey) ? indexKey.join(',') : indexKey,
-            HierarchyState.expand
-          );
-          const childrenLength = this.initChildrenNodeHierarchy(indexKey, this.hierarchyExpandLevel, 2, nodeData);
-          i += childrenLength;
-          nodeLength += childrenLength;
+      if (this.hierarchyExpandLevel > 1) {
+        let nodeLength = this._sourceLength;
+        for (let i = 0; i < nodeLength; i++) {
+          const indexKey = this.currentIndexedData[i];
+          const nodeData = this.getOriginalRecord(indexKey);
+          if ((nodeData as any).children?.length > 0) {
+            this.treeDataHierarchyState.set(
+              Array.isArray(indexKey) ? indexKey.join(',') : indexKey,
+              HierarchyState.expand
+            );
+            const childrenLength = this.initChildrenNodeHierarchy(indexKey, this.hierarchyExpandLevel, 2, nodeData);
+            i += childrenLength;
+            nodeLength += childrenLength;
+          }
         }
       }
     }
