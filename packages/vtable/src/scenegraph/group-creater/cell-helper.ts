@@ -7,7 +7,6 @@ import type {
   CheckboxColumnDefine,
   ColumnDefine,
   ColumnTypeOption,
-  ICustomRender,
   ImageColumnDefine,
   MappingRule,
   ProgressbarColumnDefine,
@@ -22,7 +21,6 @@ import { createProgressBarCell } from './cell-type/progress-bar-cell';
 import { createSparkLineCellGroup } from './cell-type/spark-line-cell';
 import { createCellGroup } from './cell-type/text-cell';
 import { createVideoCellGroup } from './cell-type/video-cell';
-import type { ICustomLayoutFuc } from '../../ts-types/customLayout';
 import type { BaseTableAPI, PivotTableProtected } from '../../ts-types/base-table';
 import { getCellCornerRadius, getStyleTheme } from '../../core/tableHelper';
 import { isPromise } from '../../tools/helper';
@@ -31,11 +29,11 @@ import { CartesianAxis } from '../../components/axis/axis';
 import { createCheckboxCellGroup } from './cell-type/checkbox-cell';
 // import type { PivotLayoutMap } from '../../layout/pivot-layout';
 import type { PivotHeaderLayoutMap } from '../../layout/pivot-header-layout';
-import { resizeCellGroup } from './column-helper';
 import { getHierarchyOffset } from '../utils/get-hierarchy-offset';
 import { getQuadProps } from '../utils/padding';
 import { convertInternal } from '../../tools/util';
 import { updateCellContentHeight, updateCellContentWidth } from '../utils/text-icon-layout';
+import { isArray } from '@visactor/vutils';
 
 export function createCell(
   type: ColumnTypeOption,
@@ -746,4 +744,111 @@ function dealWithMergeCellSize(
       resizeCellGroup(cellGroup, rangeWidth, rangeHeight, range, table);
     }
   }
+}
+
+export function resizeCellGroup(
+  cellGroup: Group,
+  rangeWidth: number,
+  rangeHeight: number,
+  range: CellRange,
+  table: BaseTableAPI
+) {
+  const { col, row } = cellGroup;
+  const dx = -table.getColsWidth(range.start.col, col - 1);
+  const dy = -table.getRowsHeight(range.start.row, row - 1);
+
+  cellGroup.forEachChildren((child: IGraphic) => {
+    child.setAttributes({
+      dx: (child.attribute.dx ?? 0) + dx,
+      dy: (child.attribute.dy ?? 0) + dy
+    });
+  });
+
+  const lineWidth = cellGroup.attribute.lineWidth;
+  const isLineWidthArray = isArray(lineWidth);
+  const newLineWidth = [0, 0, 0, 0];
+
+  if (col === range.start.col) {
+    newLineWidth[3] = isLineWidthArray ? lineWidth[3] : lineWidth;
+  }
+  if (row === range.start.row) {
+    newLineWidth[0] = isLineWidthArray ? lineWidth[0] : lineWidth;
+  }
+  if (col === range.end.col) {
+    newLineWidth[1] = isLineWidthArray ? lineWidth[1] : lineWidth;
+  }
+  if (row === range.end.row) {
+    newLineWidth[2] = isLineWidthArray ? lineWidth[2] : lineWidth;
+  }
+
+  const widthChange = rangeWidth !== cellGroup.attribute.width;
+  const heightChange = rangeHeight !== cellGroup.attribute.height;
+
+  cellGroup.setAttributes({
+    width: rangeWidth,
+    height: rangeHeight,
+    strokeArrayWidth: newLineWidth
+  } as any);
+
+  cellGroup.mergeStartCol = range.start.col;
+  cellGroup.mergeStartRow = range.start.row;
+  cellGroup.mergeEndCol = range.end.col;
+  cellGroup.mergeEndRow = range.end.row;
+
+  return {
+    widthChange,
+    heightChange
+  };
+}
+
+export function getCustomCellMergeCustom(col: number, row: number, cellGroup: Group, table: BaseTableAPI) {
+  if (table.internalProps.customMergeCell) {
+    const customMerge = table.getCustomMerge(col, row);
+    if (customMerge) {
+      const {
+        range: customMergeRange,
+        text: customMergeText,
+        style: customMergeStyle,
+        customLayout: customMergeLayout,
+        customRender: customMergeRender
+      } = customMerge;
+
+      if (customMergeLayout || customMergeRender) {
+        const customResult = dealWithCustom(
+          customMergeLayout,
+          customMergeRender,
+          customMergeRange.start.col,
+          customMergeRange.start.row,
+          table.getColsWidth(customMergeRange.start.col, customMergeRange.end.col),
+          table.getRowsHeight(customMergeRange.start.row, customMergeRange.end.row),
+          false,
+          table.heightMode === 'autoHeight',
+          [0, 0, 0, 0],
+          table
+        );
+
+        const customElementsGroup = customResult.elementsGroup;
+
+        if (cellGroup.childrenCount > 0 && customElementsGroup) {
+          cellGroup.insertBefore(customElementsGroup, cellGroup.firstChild);
+        } else if (customElementsGroup) {
+          cellGroup.appendChild(customElementsGroup);
+        }
+
+        const rangeHeight = table.getRowHeight(row);
+        const rangeWidth = table.getColWidth(col);
+
+        const { width: contentWidth } = cellGroup.attribute;
+        const { height: contentHeight } = cellGroup.attribute;
+        cellGroup.contentWidth = contentWidth;
+        cellGroup.contentHeight = contentHeight;
+
+        resizeCellGroup(cellGroup, rangeWidth, rangeHeight, customMergeRange, table);
+
+        return customResult;
+      }
+    }
+  }
+
+  return undefined;
 }
