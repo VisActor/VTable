@@ -82,7 +82,7 @@ export interface TableEventHandlersEventArgumentMap {
     scrollRatioY?: number;
   };
   resize_column: { col: number; colWidth: number };
-  resize_column_end: { col: number; columns: number[] };
+  resize_column_end: { col: number; colWidths: number[] };
   change_header_position: { source: CellAddress; target: CellAddress };
   sort_click: {
     field: FieldDef;
