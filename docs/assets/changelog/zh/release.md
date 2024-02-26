@@ -1,3 +1,29 @@
+# v0.20.0
+
+2024-02-23
+
+
+**🆕 新增功能**
+
+- **@visactor/vtable**：添加列表列的聚合
+- **@visactor/vtable**：添加 api getAggregateValuesByField
+- **@visactor/vtable**：添加自定义聚合
+- **@visactor/vtable**：chartSpec 支持函数 [#1115](https://github.com/VisActor/VTable/issues/1115)
+- **@visactor/vtable**：添加基本表格的过滤能力 [#607](https://github.com/VisActor/VTable/issues/607)
+
+**🐛 功能修复**
+
+- **@visactor/vtable**：编辑右冻结单元格输入位置错误
+- **@visactor/vtable**：mouseleave_cell 事件触发器 [#1112](https://github.com/VisActor/VTable/issues/1112)
+- **@visactor/vtable**：修复 isCellHover() 中的 cellBgColor 判断
+- **@visactor/vtable**：修复自定义合并单元计算的高度和宽度
+- **@visactor/vtable**：修复内容位置更新问题
+- **@visactor/vtable**：在 setDropDownMenuHighlight() 中合并单元格更新
+- **@visactor/vtable**：修复react严格模式下的react-vtable显示错误[#990](https://github.com/VisActor/VTable/issues/990)
+
+
+[更多详情请查看 v0.20.0](https://github.com/VisActor/VTable/releases/tag/v0.20.0)
+
 # v0.19.1
 
 2024-02-06
