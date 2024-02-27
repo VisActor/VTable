@@ -376,7 +376,7 @@ export class TableTheme implements ITableThemeDefine {
         {},
         this.defaultStyle,
         superTheme.rowHeaderStyle,
-        obj.rowHeaderStyle // ?? obj.headerStyle
+        obj.rowHeaderStyle ?? obj.headerStyle
       );
       this._rowHeader = this.getStyle(header);
     }
