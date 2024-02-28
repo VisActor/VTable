@@ -1105,9 +1105,14 @@ export class Scenegraph {
    */
   setBodyAndRowHeaderY(y: number) {
     // correct y, avoid scroll out of range
-    const firstBodyCell = this.bodyGroup.firstChild.firstChild as Group;
-    const lastBodyCell = this.bodyGroup.firstChild.lastChild as Group;
-    if (firstBodyCell && firstBodyCell.row === this.table.frozenRowCount && firstBodyCell.attribute.y + y < 0) {
+    const firstBodyCell = this.bodyGroup.firstChild?.firstChild as Group;
+    const lastBodyCell = this.bodyGroup.firstChild?.lastChild as Group;
+    if (
+      y === 0 &&
+      firstBodyCell &&
+      firstBodyCell.row === this.table.frozenRowCount &&
+      firstBodyCell.attribute.y + y < 0
+    ) {
       y = -firstBodyCell.attribute.y;
     } else if (
       lastBodyCell &&
@@ -1145,7 +1150,7 @@ export class Scenegraph {
     // correct x, avoid scroll out of range
     const firstBodyCol = this.bodyGroup.firstChild as Group;
     const lastBodyCol = this.bodyGroup.lastChild as Group;
-    if (firstBodyCol && firstBodyCol.col === this.table.frozenColCount && firstBodyCol.attribute.x + x < 0) {
+    if (x === 0 && firstBodyCol && firstBodyCol.col === this.table.frozenColCount && firstBodyCol.attribute.x + x < 0) {
       x = -firstBodyCol.attribute.x;
     } else if (
       lastBodyCol &&
