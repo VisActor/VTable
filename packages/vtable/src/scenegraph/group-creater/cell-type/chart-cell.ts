@@ -5,6 +5,7 @@ import { getFunctionalProp } from '../../utils/get-prop';
 import { isValid } from '@visactor/vutils';
 import type { BaseTableAPI } from '../../../ts-types/base-table';
 import type { IThemeSpec } from '@src/vrender';
+import { getCellBorderStrokeWidth } from '../../utils/cell-border-stroke-width';
 export function createChartCellGroup(
   cellGroup: Group | null,
   columnGroup: Group,
@@ -33,6 +34,7 @@ export function createChartCellGroup(
   }
   // cell
   if (!cellGroup) {
+    const strokeArrayWidth = getCellBorderStrokeWidth(col, row, cellTheme, table);
     cellGroup = new Group({
       x: xOrigin,
       y: yOrigin,
@@ -43,7 +45,7 @@ export function createChartCellGroup(
       lineWidth: cellTheme?.group?.lineWidth ?? undefined,
       fill: cellTheme?.group?.fill ?? undefined,
       stroke: cellTheme?.group?.stroke ?? undefined,
-      strokeArrayWidth: (cellTheme?.group as any)?.strokeArrayWidth ?? undefined,
+      strokeArrayWidth: strokeArrayWidth,
       strokeArrayColor: (cellTheme?.group as any)?.strokeArrayColor ?? undefined,
       cursor: (cellTheme?.group as any)?.cursor ?? undefined,
       lineDash: cellTheme?.group?.lineDash ?? undefined,

@@ -100,6 +100,11 @@ export class TableTheme implements ITableThemeDefine {
     return getProp(obj, superTheme, ['underlayBackgroundColor']);
   }
 
+  get cellInnerBorder(): boolean {
+    const { obj, superTheme } = this.internalTheme;
+    return !!getProp(obj, superTheme, ['cellInnerBorder']);
+  }
+
   get defaultStyle(): RequiredTableThemeDefine['defaultStyle'] {
     // const defaultStyle = getProp(obj, superTheme, ["defaultStyle"]);
     if (!this._defaultStyle) {
