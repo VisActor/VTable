@@ -28,7 +28,7 @@ import type { BaseTableAPI, PivotTableProtected } from './ts-types/base-table';
 import { Title } from './components/title/title';
 import { cloneDeep } from '@visactor/vutils';
 import { Env } from './tools/env';
-import type { LayouTreeNode } from './layout/layout-helper';
+import type { LayouTreeNode } from './layout/tree-helper';
 import { TABLE_EVENT_TYPE } from './core/TABLE_EVENT_TYPE';
 import { EditManeger } from './edit/edit-manager';
 import * as editors from './edit/editors';
@@ -84,9 +84,11 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
     this.internalProps.columnResizeType = options.columnResizeType ?? 'column';
     this.internalProps.dataConfig = cloneDeep(options.dataConfig);
 
-    this.internalProps.enableDataAnalysis = options.enableDataAnalysis;
+    // this.internalProps.enableDataAnalysis = options.enableDataAnalysis;
     if (!options.rowTree && !options.columnTree) {
       this.internalProps.enableDataAnalysis = true;
+    } else {
+      this.internalProps.enableDataAnalysis = false;
     }
     const records = this.internalProps.records;
     if (this.internalProps.enableDataAnalysis && (options.rows || options.columns)) {
@@ -188,6 +190,9 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
   isPivotChart(): false {
     return false;
   }
+  get recordsCount() {
+    return this.records?.length;
+  }
   _canResizeColumn(col: number, row: number): boolean {
     const ifCan = super._canResizeColumn(col, row);
     if (ifCan) {
@@ -226,9 +231,11 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
     // 更新protectedSpace
     internalProps.columnResizeType = options.columnResizeType ?? 'column';
     internalProps.dataConfig = cloneDeep(options.dataConfig);
-    internalProps.enableDataAnalysis = options.enableDataAnalysis;
+    // internalProps.enableDataAnalysis = options.enableDataAnalysis;
     if (!options.rowTree && !options.columnTree) {
       internalProps.enableDataAnalysis = true;
+    } else {
+      internalProps.enableDataAnalysis = false;
     }
     //维护tree树形结构的展开状态
     if (
@@ -947,6 +954,16 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
   getHierarchyState(col: number, row: number): HierarchyState {
     return this._getHeaderLayoutMap(col, row)?.hierarchyState;
   }
+  /** 获取列头树结构 */
+  getLayoutColumnTree(): LayouTreeNode[] {
+    const layoutMap = this.internalProps.layoutMap;
+    return layoutMap.getLayoutColumnTree();
+  }
+  /** 获取表格列头树形结构的占位的总节点数 */
+  getLayoutColumnTreeCount(): number {
+    const layoutMap = this.internalProps.layoutMap;
+    return layoutMap.getLayoutColumnTreeCount();
+  }
   /** 获取行头树结构 */
   getLayoutRowTree(): LayouTreeNode[] {
     const layoutMap = this.internalProps.layoutMap;
@@ -978,7 +995,8 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
       dimensionKey: dimensionInfos[dimensionInfos.length - 1].dimensionKey,
       value: this.getCellValue(col, row),
       cellLocation: this.getCellLocation(col, row),
-      isPivotCorner: this.isCornerHeader(col, row)
+      isPivotCorner: this.isCornerHeader(col, row),
+      event: undefined
     };
     return result;
   }
@@ -1218,7 +1236,7 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
       this.records[rowIndex][colIndex] = newValue;
     }
   }
-  hasCustomRenderOrLayout() {
+  _hasCustomRenderOrLayout() {
     if (this.options.customRender) {
       return true;
     }

@@ -7,7 +7,6 @@ import type {
   CheckboxColumnDefine,
   ColumnDefine,
   ColumnTypeOption,
-  ICustomRender,
   ImageColumnDefine,
   MappingRule,
   ProgressbarColumnDefine,
@@ -22,7 +21,6 @@ import { createProgressBarCell } from './cell-type/progress-bar-cell';
 import { createSparkLineCellGroup } from './cell-type/spark-line-cell';
 import { createCellGroup } from './cell-type/text-cell';
 import { createVideoCellGroup } from './cell-type/video-cell';
-import type { ICustomLayoutFuc } from '../../ts-types/customLayout';
 import type { BaseTableAPI, PivotTableProtected } from '../../ts-types/base-table';
 import { getCellCornerRadius, getStyleTheme } from '../../core/tableHelper';
 import { isPromise } from '../../tools/helper';
@@ -31,10 +29,11 @@ import { CartesianAxis } from '../../components/axis/axis';
 import { createCheckboxCellGroup } from './cell-type/checkbox-cell';
 // import type { PivotLayoutMap } from '../../layout/pivot-layout';
 import type { PivotHeaderLayoutMap } from '../../layout/pivot-header-layout';
-import { resizeCellGroup } from './column-helper';
 import { getHierarchyOffset } from '../utils/get-hierarchy-offset';
 import { getQuadProps } from '../utils/padding';
 import { convertInternal } from '../../tools/util';
+import { updateCellContentHeight, updateCellContentWidth } from '../utils/text-icon-layout';
+import { isArray } from '@visactor/vutils';
 
 export function createCell(
   type: ColumnTypeOption,
@@ -243,13 +242,12 @@ export function createCell(
       padding,
       value,
       (define as ChartColumnDefine).chartModule,
-      table.isPivotChart()
-        ? (table.internalProps.layoutMap as PivotHeaderLayoutMap).getChartSpec(col, row)
-        : (define as ChartColumnDefine).chartSpec,
+      table.internalProps.layoutMap.getChartSpec(col, row),
       chartInstance,
-      (table.internalProps.layoutMap as PivotHeaderLayoutMap)?.getChartDataId(col, row) ?? 'data',
+      table.internalProps.layoutMap.getChartDataId(col, row) ?? 'data',
       table,
-      cellTheme
+      cellTheme,
+      table.internalProps.layoutMap.isShareChartSpec(col, row)
     );
   } else if (type === 'progressbar') {
     const style = table._getCellStyle(col, row) as ProgressBarStyle;
@@ -470,9 +468,9 @@ export function updateCell(col: number, row: number, table: BaseTableAPI, addNew
         dx: hierarchyOffset,
         x
       };
-      const oldText = textMark.attribute.text;
+      // const oldText = textMark.attribute.text;
       textMark.setAttributes(cellTheme.text ? (Object.assign({}, cellTheme.text, attribute) as any) : attribute);
-      if (!oldText && textMark.attribute.text) {
+      if (textMark.attribute.text) {
         const textBaseline = cellTheme.text.textBaseline;
         const height = cellHeight - (padding[0] + padding[2]);
         let y = 0;
@@ -501,8 +499,8 @@ export function updateCell(col: number, row: number, table: BaseTableAPI, addNew
 
   const mayHaveIcon = cellLocation !== 'body' ? true : !!define?.icon || !!define?.tree;
   const padding = cellTheme._vtable.padding;
-  const textAlign = cellTheme._vtable.textAlign;
-  const textBaseline = cellTheme._vtable.textBaseline;
+  const textAlign = cellTheme.text.textAlign;
+  const textBaseline = cellTheme.text.textBaseline;
 
   let newCellGroup;
   let bgColorFunc: Function;
@@ -586,15 +584,15 @@ export function updateCell(col: number, row: number, table: BaseTableAPI, addNew
   }
 
   if (isMerge) {
-    const rangeHeight = table.getRowHeight(row);
-    const rangeWidth = table.getColWidth(col);
+    // const rangeHeight = table.getRowHeight(row);
+    // const rangeWidth = table.getColWidth(col);
 
     const { width: contentWidth } = newCellGroup.attribute;
     const { height: contentHeight } = newCellGroup.attribute;
     newCellGroup.contentWidth = contentWidth;
     newCellGroup.contentHeight = contentHeight;
 
-    resizeCellGroup(newCellGroup, rangeWidth, rangeHeight, range, table);
+    dealWithMergeCellSize(range, cellWidth, cellHeight, padding, textAlign, textBaseline, table);
   }
 
   return newCellGroup;
@@ -665,6 +663,7 @@ function updateCellContent(
 }
 
 function canUseFastUpdate(col: number, row: number, oldCellGroup: Group, autoWrapText: boolean, table: BaseTableAPI) {
+  // return false;
   const define = table.getBodyColumnDefine(col, row);
   const mayHaveIcon = !!define?.icon || !!define?.tree;
   const cellType = table.getBodyColumnType(col, row);
@@ -684,4 +683,172 @@ function canUseFastUpdate(col: number, row: number, oldCellGroup: Group, autoWra
     return true;
   }
   return false;
+}
+
+function dealWithMergeCellSize(
+  range: CellRange,
+  cellWidth: number,
+  cellHeight: number,
+  padding: [number, number, number, number],
+  textAlign: CanvasTextAlign,
+  textBaseline: CanvasTextBaseline,
+  table: BaseTableAPI
+) {
+  // const rangeHeight = table.getRowHeight(row);
+  // const rangeWidth = table.getColWidth(col);
+
+  // const { width: contentWidth } = newCellGroup.attribute;
+  // const { height: contentHeight } = newCellGroup.attribute;
+  // newCellGroup.contentWidth = contentWidth;
+  // newCellGroup.contentHeight = contentHeight;
+
+  // resizeCellGroup(newCellGroup, rangeWidth, rangeHeight, range, table);
+  for (let col = range.start.col; col <= range.end.col; col++) {
+    for (let row = range.start.row; row <= range.end.row; row++) {
+      const cellGroup = table.scenegraph.getCell(col, row, true);
+
+      if (range.start.row !== range.end.row) {
+        // const cellGroup = table.scenegraph.getCell(col, row, true);
+        updateCellContentHeight(
+          cellGroup,
+          cellHeight,
+          cellHeight,
+          table.heightMode === 'autoHeight',
+          padding,
+          textAlign,
+          textBaseline
+          // 'middle'
+        );
+      }
+      if (range.start.col !== range.end.col) {
+        // const cellGroup = table.scenegraph.getCell(col, row, true);
+        updateCellContentWidth(
+          cellGroup,
+          cellWidth,
+          cellHeight,
+          0,
+          table.heightMode === 'autoHeight',
+          padding,
+          textAlign,
+          textBaseline,
+          table.scenegraph
+        );
+      }
+
+      cellGroup.contentWidth = cellWidth;
+      cellGroup.contentHeight = cellHeight;
+
+      const rangeHeight = table.getRowHeight(row);
+      const rangeWidth = table.getColWidth(col);
+
+      resizeCellGroup(cellGroup, rangeWidth, rangeHeight, range, table);
+    }
+  }
+}
+
+export function resizeCellGroup(
+  cellGroup: Group,
+  rangeWidth: number,
+  rangeHeight: number,
+  range: CellRange,
+  table: BaseTableAPI
+) {
+  const { col, row } = cellGroup;
+  const dx = -table.getColsWidth(range.start.col, col - 1);
+  const dy = -table.getRowsHeight(range.start.row, row - 1);
+
+  cellGroup.forEachChildren((child: IGraphic) => {
+    child.setAttributes({
+      dx: (child.attribute.dx ?? 0) + dx,
+      dy: (child.attribute.dy ?? 0) + dy
+    });
+  });
+
+  const lineWidth = cellGroup.attribute.lineWidth;
+  const isLineWidthArray = isArray(lineWidth);
+  const newLineWidth = [0, 0, 0, 0];
+
+  if (col === range.start.col) {
+    newLineWidth[3] = isLineWidthArray ? lineWidth[3] : lineWidth;
+  }
+  if (row === range.start.row) {
+    newLineWidth[0] = isLineWidthArray ? lineWidth[0] : lineWidth;
+  }
+  if (col === range.end.col) {
+    newLineWidth[1] = isLineWidthArray ? lineWidth[1] : lineWidth;
+  }
+  if (row === range.end.row) {
+    newLineWidth[2] = isLineWidthArray ? lineWidth[2] : lineWidth;
+  }
+
+  const widthChange = rangeWidth !== cellGroup.attribute.width;
+  const heightChange = rangeHeight !== cellGroup.attribute.height;
+
+  cellGroup.setAttributes({
+    width: rangeWidth,
+    height: rangeHeight,
+    strokeArrayWidth: newLineWidth
+  } as any);
+
+  cellGroup.mergeStartCol = range.start.col;
+  cellGroup.mergeStartRow = range.start.row;
+  cellGroup.mergeEndCol = range.end.col;
+  cellGroup.mergeEndRow = range.end.row;
+
+  return {
+    widthChange,
+    heightChange
+  };
+}
+
+export function getCustomCellMergeCustom(col: number, row: number, cellGroup: Group, table: BaseTableAPI) {
+  if (table.internalProps.customMergeCell) {
+    const customMerge = table.getCustomMerge(col, row);
+    if (customMerge) {
+      const {
+        range: customMergeRange,
+        text: customMergeText,
+        style: customMergeStyle,
+        customLayout: customMergeLayout,
+        customRender: customMergeRender
+      } = customMerge;
+
+      if (customMergeLayout || customMergeRender) {
+        const customResult = dealWithCustom(
+          customMergeLayout,
+          customMergeRender,
+          customMergeRange.start.col,
+          customMergeRange.start.row,
+          table.getColsWidth(customMergeRange.start.col, customMergeRange.end.col),
+          table.getRowsHeight(customMergeRange.start.row, customMergeRange.end.row),
+          false,
+          table.heightMode === 'autoHeight',
+          [0, 0, 0, 0],
+          table
+        );
+
+        const customElementsGroup = customResult.elementsGroup;
+
+        if (cellGroup.childrenCount > 0 && customElementsGroup) {
+          cellGroup.insertBefore(customElementsGroup, cellGroup.firstChild);
+        } else if (customElementsGroup) {
+          cellGroup.appendChild(customElementsGroup);
+        }
+
+        const rangeHeight = table.getRowHeight(row);
+        const rangeWidth = table.getColWidth(col);
+
+        const { width: contentWidth } = cellGroup.attribute;
+        const { height: contentHeight } = cellGroup.attribute;
+        cellGroup.contentWidth = contentWidth;
+        cellGroup.contentHeight = contentHeight;
+
+        resizeCellGroup(cellGroup, rangeWidth, rangeHeight, customMergeRange, table);
+
+        return customResult;
+      }
+    }
+  }
+
+  return undefined;
 }
