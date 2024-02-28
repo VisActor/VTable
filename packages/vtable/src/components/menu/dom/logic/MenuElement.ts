@@ -139,7 +139,8 @@ export class MenuElement {
         // dropDownIndex,
         text,
         highlight,
-        cellLocation: table.getCellLocation(col, row)
+        cellLocation: table.getCellLocation(col, row),
+        event: e
       });
 
       table.fireListeners(TABLE_EVENT_TYPE.DROPDOWN_MENU_CLEAR, null); // 清除菜单
@@ -175,7 +176,8 @@ export class MenuElement {
         // dropDownIndex,
         text,
         highlight,
-        cellLocation: table.getCellLocation(col, row)
+        cellLocation: table.getCellLocation(col, row),
+        event: e
       });
 
       table.fireListeners(TABLE_EVENT_TYPE.DROPDOWN_MENU_CLEAR, null); // 清除菜单
@@ -321,7 +323,8 @@ export class MenuElement {
         menuKey,
         text,
         highlight,
-        cellLocation: table.getCellLocation(col, row)
+        cellLocation: table.getCellLocation(col, row),
+        event: e
       });
 
       table.fireListeners(TABLE_EVENT_TYPE.DROPDOWN_MENU_CLEAR, null); // 清除菜单

@@ -751,7 +751,7 @@ function endResizeCol(table: BaseTableAPI) {
     }
     table.fireListeners(TABLE_EVENT_TYPE.RESIZE_COLUMN_END, {
       col: table.stateManager.columnResize.col,
-      columns
+      colWidths: columns
     });
   }
 }
