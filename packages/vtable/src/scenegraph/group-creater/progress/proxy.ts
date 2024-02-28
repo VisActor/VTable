@@ -1,4 +1,4 @@
-import { isNumber } from '@visactor/vutils';
+import { isNumber, isValid } from '@visactor/vutils';
 import type { BaseTableAPI } from '../../../ts-types/base-table';
 import { Group } from '../../graphic/group';
 import { computeColsWidth } from '../../layout/compute-col-width';
@@ -440,18 +440,18 @@ export class SceneProxy {
     if (y < yLimitTop && this.rowStart === this.bodyTopRow) {
       // 执行真实body group坐标修改
       this.updateDeltaY(y);
-      this.table.scenegraph.setBodyAndRowHeaderY(-y + this.deltaY);
+      this.updateBody(y - this.deltaY);
     } else if (y > yLimitBottom && this.rowEnd === this.bodyBottomRow) {
       // 执行真实body group坐标修改
       this.updateDeltaY(y);
-      this.table.scenegraph.setBodyAndRowHeaderY(-y + this.deltaY);
+      this.updateBody(y - this.deltaY);
     } else if (
       !this.table.scenegraph.bodyGroup.firstChild ||
       this.table.scenegraph.bodyGroup.firstChild.childrenCount === 0
     ) {
       this.updateDeltaY(y);
       // 兼容异步加载数据promise的情况 childrenCount=0 如果用户立即调用setScrollTop执行dynamicSetY会出错
-      this.table.scenegraph.setBodyAndRowHeaderY(-y + this.deltaY);
+      this.updateBody(y - this.deltaY);
     } else {
       // 执行动态更新节点
       this.dynamicSetY(y);
@@ -728,34 +728,54 @@ export class SceneProxy {
     return cellGroup;
   }
 
-  updateDeltaY(y: number) {
+  updateDeltaY(y: number, screenTopY?: number, screenTopRow?: number) {
     if (this.rowStart === this.bodyTopRow) {
       const cellGroup = this.table.scenegraph.highPerformanceGetCell(this.colStart, this.rowStart, true);
-      const deltaY = cellGroup.attribute.y - y;
-      this.deltaY = deltaY;
+      if (cellGroup.role === 'cell') {
+        const deltaY = cellGroup.attribute.y;
+        this.deltaY = -deltaY;
+      }
     } else if (this.rowEnd === this.bodyBottomRow) {
       const cellGroup = this.table.scenegraph.highPerformanceGetCell(this.colStart, this.rowEnd, true);
-      const deltaY =
-        cellGroup.attribute.y +
-        cellGroup.attribute.height -
-        (this.table.tableNoFrameHeight - this.table.getFrozenRowsHeight() - this.table.getBottomFrozenRowsHeight()) -
-        y;
+      if (cellGroup.role === 'cell') {
+        // const deltaY =
+        //   cellGroup.attribute.y +
+        //   cellGroup.attribute.height -
+        //   (this.table.tableNoFrameHeight - this.table.getFrozenRowsHeight() - this.table.getBottomFrozenRowsHeight()) -
+        //   y;
+        const deltaY =
+          cellGroup.attribute.y +
+          cellGroup.attribute.height -
+          (this.table.getAllRowsHeight() - this.table.getFrozenRowsHeight() - this.table.getBottomFrozenRowsHeight());
+        this.deltaY = -deltaY;
+      }
+    } else if (isValid(screenTopY) && isValid(screenTopRow)) {
+      const cellGroup = this.table.scenegraph.highPerformanceGetCell(this.colStart, screenTopRow, true);
+      const deltaY = screenTopY - (cellGroup.attribute.y + this.table.getFrozenRowsHeight());
       this.deltaY = deltaY;
     }
   }
 
-  updateDeltaX(x: number) {
+  updateDeltaX(x: number, screenLeftX?: number, screenLeftCol?: number) {
     if (this.colStart === this.bodyLeftCol) {
       const colGroup = this.table.scenegraph.getColGroup(this.colStart);
-      const deltaX = colGroup.attribute.x - x;
-      this.deltaX = deltaX;
+      if (colGroup) {
+        const deltaX = colGroup.attribute.x;
+        this.deltaX = -deltaX;
+      }
     } else if (this.colEnd === this.bodyRightCol) {
       const colGroup = this.table.scenegraph.getColGroup(this.colEnd);
-      const deltaX =
-        colGroup.attribute.x +
-        colGroup.attribute.width -
-        (this.table.tableNoFrameWidth - this.table.getFrozenColsWidth() - this.table.getRightFrozenColsWidth()) -
-        x;
+      if (colGroup) {
+        const deltaX =
+          colGroup.attribute.x +
+          colGroup.attribute.width -
+          (this.table.getAllColsWidth() - this.table.getFrozenColsWidth() - this.table.getRightFrozenColsWidth());
+        this.deltaX = -deltaX;
+      }
+    } else if (isValid(screenLeftX) && isValid(screenLeftCol)) {
+      const colGroup =
+        this.table.scenegraph.getColGroup(screenLeftCol) || this.table.scenegraph.getColGroup(screenLeftCol, true);
+      const deltaX = screenLeftX - (colGroup.attribute.x + this.table.getFrozenColsWidth() + this.deltaX);
       this.deltaX = deltaX;
     }
   }
