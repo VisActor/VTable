@@ -1104,6 +1104,23 @@ export class Scenegraph {
    * @return {*}
    */
   setBodyAndRowHeaderY(y: number) {
+    // correct y, avoid scroll out of range
+    const firstBodyCell = this.bodyGroup.firstChild.firstChild as Group;
+    const lastBodyCell = this.bodyGroup.firstChild.lastChild as Group;
+    if (firstBodyCell.row === this.table.frozenRowCount && firstBodyCell.attribute.y + y < 0) {
+      y = -firstBodyCell.attribute.y;
+    } else if (
+      lastBodyCell.row === this.table.rowCount - this.table.bottomFrozenRowCount - 1 &&
+      lastBodyCell.attribute.y + lastBodyCell.attribute.height + y <
+        this.table.tableNoFrameHeight - this.table.getFrozenRowsHeight() - this.table.getBottomFrozenRowsHeight()
+    ) {
+      y =
+        this.table.tableNoFrameHeight -
+        this.table.getFrozenRowsHeight() -
+        this.table.getBottomFrozenRowsHeight() -
+        lastBodyCell.attribute.y -
+        lastBodyCell.attribute.height;
+    }
     if (this.colHeaderGroup.attribute.height + y === this.bodyGroup.attribute.y) {
       return;
     }
@@ -1123,6 +1140,23 @@ export class Scenegraph {
    * @return {*}
    */
   setBodyAndColHeaderX(x: number) {
+    // correct x, avoid scroll out of range
+    const firstBodyCol = this.bodyGroup.firstChild as Group;
+    const lastBodyCol = this.bodyGroup.lastChild as Group;
+    if (firstBodyCol.col === this.table.frozenColCount && firstBodyCol.attribute.x + x < 0) {
+      x = -firstBodyCol.attribute.x;
+    } else if (
+      lastBodyCol.col === this.table.colCount - this.table.rightFrozenColCount - 1 &&
+      lastBodyCol.attribute.x + lastBodyCol.attribute.width + x <
+        this.table.tableNoFrameWidth - this.table.getFrozenColsWidth() - this.table.getRightFrozenColsWidth()
+    ) {
+      x =
+        this.table.tableNoFrameWidth -
+        this.table.getFrozenColsWidth() -
+        this.table.getRightFrozenColsWidth() -
+        lastBodyCol.attribute.x -
+        lastBodyCol.attribute.width;
+    }
     if (this.table.getFrozenColsWidth() + x === this.bodyGroup.attribute.x) {
       return;
     }
