@@ -1111,6 +1111,7 @@ export class Scenegraph {
       y = -firstBodyCell.attribute.y;
     } else if (
       lastBodyCell &&
+      this.table.tableNoFrameHeight < this.table.getAllRowsHeight() &&
       lastBodyCell.row === this.table.rowCount - this.table.bottomFrozenRowCount - 1 &&
       lastBodyCell.attribute.y + lastBodyCell.attribute.height + y <
         this.table.tableNoFrameHeight - this.table.getFrozenRowsHeight() - this.table.getBottomFrozenRowsHeight()
@@ -1148,6 +1149,7 @@ export class Scenegraph {
       x = -firstBodyCol.attribute.x;
     } else if (
       lastBodyCol &&
+      this.table.tableNoFrameWidth < this.table.getAllColsWidth() &&
       lastBodyCol.col === this.table.colCount - this.table.rightFrozenColCount - 1 &&
       lastBodyCol.attribute.x + lastBodyCol.attribute.width + x <
         this.table.tableNoFrameWidth - this.table.getFrozenColsWidth() - this.table.getRightFrozenColsWidth()
