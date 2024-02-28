@@ -2,6 +2,51 @@
   "name": "@visactor/vtable",
   "entries": [
     {
+      "version": "0.20.0",
+      "tag": "@visactor/vtable_v0.20.0",
+      "date": "Fri, 23 Feb 2024 10:06:24 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "feat: add aggregation for list table column\n\n"
+          },
+          {
+            "comment": "feat: add api getAggregateValuesByField\n\n"
+          },
+          {
+            "comment": "feat: add custom aggregation\n\n"
+          },
+          {
+            "comment": "fix: edit right frozen cell input position error\n\n"
+          },
+          {
+            "comment": "fix: mouseleave_cell event trigger #1112\n\n"
+          },
+          {
+            "comment": "feat: chartSpec support function #1115\n\n"
+          },
+          {
+            "comment": "feat: add filter data config #607\n\n"
+          },
+          {
+            "comment": "fix: fix cellBgColor judgement in isCellHover()"
+          },
+          {
+            "comment": "fix: fix custom merge cell computed height&width"
+          },
+          {
+            "comment": "fix: fix content position update problem"
+          },
+          {
+            "comment": "fix: merge cell update in setDropDownMenuHighlight()"
+          },
+          {
+            "comment": "fix: fix react-vtable display error in react strict mode #990"
+          }
+        ]
+      }
+    },
+    {
       "version": "0.19.1",
       "tag": "@visactor/vtable_v0.19.1",
       "date": "Mon, 05 Feb 2024 12:36:17 GMT",

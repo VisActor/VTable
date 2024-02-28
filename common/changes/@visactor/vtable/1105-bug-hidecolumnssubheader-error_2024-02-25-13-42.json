@@ -1,7 +1,7 @@
 {
   "changes": [
     {
-      "comment": "feat: add aggregation for list table column\n\n",
+      "comment": "fix: hideColumnsSubheader with three levels show error #1105\n\n",
       "type": "none",
       "packageName": "@visactor/vtable"
     }

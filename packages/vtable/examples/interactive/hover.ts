@@ -87,14 +87,14 @@ export function createTable() {
     theme: {
       bodyStyle: {
         hover: {
-          cellBgColor: '#CCE0FF',
+          cellBgColor: 'red',
           inlineRowBgColor: '#F3F8FF',
           inlineColumnBgColor: '#F3F8FF'
         }
       }
     },
     hover: {
-      highlightMode: 'cross',
+      highlightMode: 'row',
       disableHover: false,
       disableHeaderHover: true
     }

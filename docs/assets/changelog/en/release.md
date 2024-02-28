@@ -1,3 +1,30 @@
+# v0.20.0
+
+2024-02-23
+
+
+**🆕 New feature**
+
+- **@visactor/vtable**: add aggregation for list table column
+- **@visactor/vtable**: add api getAggregateValuesByField
+- **@visactor/vtable**: add custom aggregation
+- **@visactor/vtable**: chartSpec support function [#1115](https://github.com/VisActor/VTable/issues/1115)
+- **@visactor/vtable**: add filter data config [#607](https://github.com/VisActor/VTable/issues/607)
+
+**🐛 Bug fix**
+
+- **@visactor/vtable**: edit right frozen cell input position error
+- **@visactor/vtable**: mouseleave_cell event trigger [#1112](https://github.com/VisActor/VTable/issues/1112)
+- **@visactor/vtable**: fix cellBgColor judgement in isCellHover()
+- **@visactor/vtable**: fix custom merge cell computed height&width
+- **@visactor/vtable**: fix content position update problem
+- **@visactor/vtable**: merge cell update in setDropDownMenuHighlight()
+- **@visactor/vtable**: fix react-vtable display error in react strict mode [#990](https://github.com/VisActor/VTable/issues/990)
+
+
+
+[more detail about v0.20.0](https://github.com/VisActor/VTable/releases/tag/v0.20.0)
+
 # v0.19.1
 
 2024-02-06

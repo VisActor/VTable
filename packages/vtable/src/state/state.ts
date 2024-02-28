@@ -788,10 +788,11 @@ export class StateManager {
     }
   }
 
-  triggerDropDownMenu(col: number, row: number, x: number, y: number) {
+  triggerDropDownMenu(col: number, row: number, x: number, y: number, event: Event) {
     this.table.fireListeners(TABLE_EVENT_TYPE.DROPDOWN_ICON_CLICK, {
       col,
-      row
+      row,
+      event
     });
     if (this.menu.isShow) {
       this.hideMenu();
@@ -874,7 +875,15 @@ export class StateManager {
     this.menu.dropDownMenuHighlight = cells;
     for (let i = 0; i < cells.length; i++) {
       const { col, row } = cells[i];
-      this.table.scenegraph.updateCellContent(col, row);
+      const range = this.table.getCellRange(col, row);
+      if (!range) {
+        continue;
+      }
+      for (let col = range.start.col; col <= range.end.col; col++) {
+        for (let row = range.start.row; row <= range.end.row; row++) {
+          this.table.scenegraph.updateCellContent(col, row);
+        }
+      }
     }
   }
   dropDownMenuIsHighlight(colNow: number, rowNow: number, index: number): boolean {
@@ -927,7 +936,7 @@ export class StateManager {
     }
     return false;
   }
-  triggerSort(col: number, row: number, iconMark: Icon) {
+  triggerSort(col: number, row: number, iconMark: Icon, event: Event) {
     if (this.table.isPivotTable()) {
       // 透视表不执行sort操作
       const order = (this.table as PivotTableAPI).getPivotSortState(col, row);
@@ -937,7 +946,8 @@ export class StateManager {
         row: row,
         order: order || 'normal',
         dimensionInfo: (this.table.internalProps.layoutMap as PivotHeaderLayoutMap).getPivotDimensionInfo(col, row),
-        cellLocation: this.table.getCellLocation(col, row)
+        cellLocation: this.table.getCellLocation(col, row),
+        event
       });
       return;
     }
@@ -945,7 +955,7 @@ export class StateManager {
     const oldSortCol = this.sort.col;
     const oldSortRow = this.sort.row;
     // 执行sort
-    dealSort(col, row, this.table as ListTableAPI);
+    dealSort(col, row, this.table as ListTableAPI, event);
     this.sort.col = col;
     this.sort.row = row;
 

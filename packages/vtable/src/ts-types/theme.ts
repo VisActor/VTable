@@ -27,6 +27,7 @@ export type FrameStyle = {
   borderColor?: ColorsDef;
   borderLineWidth?: LineWidthsDef;
   borderLineDash?: LineDashsDef;
+  innerBorder?: boolean;
 };
 export type TableFrameStyle = FrameStyle & {
   shadowBlur?: number; //阴影宽度

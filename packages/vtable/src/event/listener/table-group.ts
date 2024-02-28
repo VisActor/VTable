@@ -109,10 +109,11 @@ export function bindTableGroupListener(eventManager: EventManager) {
     if ((table as any).hasListeners(TABLE_EVENT_TYPE.MOUSELEAVE_CELL)) {
       // const cellGoup = eventArgsSet?.eventArgs?.target as unknown as Group;
       if (
-        cellGoup?.role === 'cell' &&
+        // cellGoup?.role === 'cell' && // 这里去掉这个判断 处理当鼠标移动到滚动条上 也需要触发leave事件
         table.stateManager.hover.cellPos.col !== -1 &&
         table.stateManager.hover.cellPos.row !== -1 &&
-        (cellGoup.col !== table.stateManager.hover.cellPos.col || cellGoup.row !== table.stateManager.hover.cellPos.row)
+        (cellGoup?.col !== table.stateManager.hover.cellPos.col ||
+          cellGoup?.row !== table.stateManager.hover.cellPos.row)
       ) {
         table.fireListeners(TABLE_EVENT_TYPE.MOUSELEAVE_CELL, {
           col: table.stateManager.hover.cellPos.col,
@@ -266,6 +267,22 @@ export function bindTableGroupListener(eventManager: EventManager) {
       stateManager.updateInteractionState(InteractionState.default);
       stateManager.updateCursor();
     }
+    // 移动到table外部 如移动到表格空白区域 移动到表格浏览器外部
+    if ((table as any).hasListeners(TABLE_EVENT_TYPE.MOUSELEAVE_CELL)) {
+      if (table.stateManager.hover.cellPos.col !== -1 && table.stateManager.hover.cellPos.row !== -1) {
+        table.fireListeners(TABLE_EVENT_TYPE.MOUSELEAVE_CELL, {
+          col: table.stateManager.hover.cellPos.col,
+          row: table.stateManager.hover.cellPos.row,
+          cellRange: table.getCellRangeRelativeRect({
+            col: table.stateManager.hover.cellPos.col,
+            row: table.stateManager.hover.cellPos.row
+          }),
+          scaleRatio: table.canvas.getBoundingClientRect().width / table.canvas.offsetWidth,
+          event: e.nativeEvent,
+          target: undefined
+        });
+      }
+    }
     eventManager.dealTableHover();
 
     const target = e.target;
@@ -343,15 +360,16 @@ export function bindTableGroupListener(eventManager: EventManager) {
 
   table.scenegraph.tableGroup.addEventListener('pointerdown', (e: FederatedPointerEvent) => {
     console.log('tableGroup pointerdown');
-    table.eventManager.isPointerDownOnTable = true;
-    setTimeout(() => {
-      table.eventManager.isPointerDownOnTable = false;
-    }, 0);
+    // table.eventManager.isPointerDownOnTable = true;
+    // setTimeout(() => {
+    //   table.eventManager.isPointerDownOnTable = false;
+    // }, 0);
     table.eventManager.isDown = true;
     table.eventManager.LastBodyPointerXY = { x: e.x, y: e.y };
-    // 避免在调整列宽等拖拽操作触发外层组件的拖拽逻辑
-    // 如果鼠标位置在表格内（加调整列宽的热区），将mousedown事件阻止冒泡
-    e.stopPropagation();
+    // // 避免在调整列宽等拖拽操作触发外层组件的拖拽逻辑;
+    // // 如果鼠标位置在表格内（加调整列宽的热区），将pointerdown事件阻止冒泡（如果阻止mousedown需要结合isPointerDownOnTable来判断）
+    // e.stopPropagation();
+
     // e.preventDefault(); //为了阻止mousedown事件的触发，后续：不能这样写，会阻止table聚焦
     table.eventManager.LastPointerXY = { x: e.x, y: e.y };
     if (e.button !== 0) {
@@ -733,7 +751,7 @@ function endResizeCol(table: BaseTableAPI) {
     }
     table.fireListeners(TABLE_EVENT_TYPE.RESIZE_COLUMN_END, {
       col: table.stateManager.columnResize.col,
-      columns
+      colWidths: columns
     });
   }
 }

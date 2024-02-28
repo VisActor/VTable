@@ -995,7 +995,8 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
       dimensionKey: dimensionInfos[dimensionInfos.length - 1].dimensionKey,
       value: this.getCellValue(col, row),
       cellLocation: this.getCellLocation(col, row),
-      isPivotCorner: this.isCornerHeader(col, row)
+      isPivotCorner: this.isCornerHeader(col, row),
+      event: undefined
     };
     return result;
   }

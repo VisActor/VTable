@@ -18,7 +18,7 @@ import { applyChainSafe, getOrApply, obj, isPromise, emptyFn } from '../tools/he
 import { EventTarget } from '../event/EventTarget';
 import { getValueByPath, isAllDigits } from '../tools/util';
 import { calculateArrayDiff } from '../tools/diff-cell';
-import { cloneDeep, isValid } from '@visactor/vutils';
+import { arrayEqual, cloneDeep, isValid } from '@visactor/vutils';
 import type { BaseTableAPI } from '../ts-types/base-table';
 import {
   RecordAggregator,
@@ -164,7 +164,7 @@ export class DataSource extends EventTarget implements DataSourceAPI {
   /** 当前页每一行对应源数据的索引 */
   protected _currentPagerIndexedData: (number | number[])[];
   // 当前是否为层级的树形结构 排序时判断该值确实是否继续进行子节点排序
-  enableHierarchyState = false;
+  hierarchyExpandLevel: number = 0;
   static get EVENT_TYPE(): typeof EVENT_TYPE {
     return EVENT_TYPE;
   }
@@ -205,34 +205,40 @@ export class DataSource extends EventTarget implements DataSourceAPI {
       currentPage: 0
     };
     if (hierarchyExpandLevel >= 1) {
-      this.enableHierarchyState = true;
+      this.hierarchyExpandLevel = hierarchyExpandLevel;
     }
-    // 初始化currentIndexedData 正常未排序。设置其状态
     this.currentIndexedData = Array.from({ length: this._sourceLength }, (_, i) => i);
-    if (this.enableHierarchyState) {
+    // 初始化currentIndexedData 正常未排序。设置其状态
+    this.initTreeHierarchyState();
+    this.updatePagerData();
+  }
+  initTreeHierarchyState() {
+    if (this.hierarchyExpandLevel) {
+      this.treeDataHierarchyState = new Map();
       for (let i = 0; i < this._sourceLength; i++) {
         //expandLevel为有效值即需要按tree分析展示数据
         const nodeData = this.getOriginalRecord(i);
         (nodeData as any).children && this.treeDataHierarchyState.set(i, HierarchyState.collapse);
       }
-    }
-    if (hierarchyExpandLevel > 1) {
-      let nodeLength = this._sourceLength;
-      for (let i = 0; i < nodeLength; i++) {
-        const indexKey = this.currentIndexedData[i];
-        const nodeData = this.getOriginalRecord(indexKey);
-        if ((nodeData as any).children?.length > 0) {
-          this.treeDataHierarchyState.set(
-            Array.isArray(indexKey) ? indexKey.join(',') : indexKey,
-            HierarchyState.expand
-          );
-          const childrenLength = this.initChildrenNodeHierarchy(indexKey, hierarchyExpandLevel, 2, nodeData);
-          i += childrenLength;
-          nodeLength += childrenLength;
+
+      this.currentIndexedData = Array.from({ length: this._sourceLength }, (_, i) => i);
+      if (this.hierarchyExpandLevel > 1) {
+        let nodeLength = this._sourceLength;
+        for (let i = 0; i < nodeLength; i++) {
+          const indexKey = this.currentIndexedData[i];
+          const nodeData = this.getOriginalRecord(indexKey);
+          if ((nodeData as any).children?.length > 0) {
+            this.treeDataHierarchyState.set(
+              Array.isArray(indexKey) ? indexKey.join(',') : indexKey,
+              HierarchyState.expand
+            );
+            const childrenLength = this.initChildrenNodeHierarchy(indexKey, this.hierarchyExpandLevel, 2, nodeData);
+            i += childrenLength;
+            nodeLength += childrenLength;
+          }
         }
       }
     }
-    this.updatePagerData();
   }
   //将聚合类型注册 收集到aggregators
   registerAggregator(type: string, aggregator: any) {
@@ -416,7 +422,10 @@ export class DataSource extends EventTarget implements DataSourceAPI {
   getIndexKey(index: number): number | number[] {
     return _getIndex(this.currentPagerIndexedData, index);
   }
-  getTableIndex(colOrRow: number): number {
+  getTableIndex(colOrRow: number | number[]): number {
+    if (Array.isArray(colOrRow)) {
+      return this.currentPagerIndexedData.findIndex(value => arrayEqual(value, colOrRow));
+    }
     return this.currentPagerIndexedData.findIndex(value => value === colOrRow);
   }
   /** 获取数据源中第index位置的field字段数据。传入col row是因为后面的format函数参数使用*/
@@ -628,7 +637,7 @@ export class DataSource extends EventTarget implements DataSourceAPI {
     this.source.splice(index, 0, record);
     this.currentIndexedData.push(this.currentIndexedData.length);
     this._sourceLength += 1;
-
+    this.initTreeHierarchyState();
     if (this.userPagination) {
       //如果用户配置了分页
       this.pagination.totalCount = this._sourceLength;
@@ -836,7 +845,7 @@ export class DataSource extends EventTarget implements DataSourceAPI {
       );
     }
     this.currentIndexedData = sortedIndexArray;
-    if (this.enableHierarchyState) {
+    if (this.hierarchyExpandLevel) {
       let nodeLength = sortedIndexArray.length;
       const t0 = window.performance.now();
       for (let i = 0; i < nodeLength; i++) {

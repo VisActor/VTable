@@ -301,6 +301,22 @@ setRecords(records: Array<any>, sort?: SortState | SortState[]) //** 基本表�
   getTableIndexByRecordIndex: (recordIndex: number) => number;
 ```
 
+## getRecordIndexByCell(Function)
+
+获取当前单元格的数据是数据源中的第几条。
+
+如果是树形模式的表格，将返回数组，如[1,2] 数据源中第2条数据中children中的第3条。
+
+** ListTable 专有 **
+
+```
+  /** 获取当前单元格的数据是数据源中的第几条。
+   * 如果是树形模式的表格，将返回数组，如[1,2] 数据源中第2条数据中children中的第3条
+   * 注：ListTable特有接口 */
+  getRecordIndexByCell(col: number, row: number): number | number[]
+** ListTable 专有 **
+```
+
 ## getTableIndexByField(Function)
 
 根据数据源的 field 获取显示到表格中的 index 行号或者列号（与转置相关，非转置获取的是行号，转置表获取的是列号）。

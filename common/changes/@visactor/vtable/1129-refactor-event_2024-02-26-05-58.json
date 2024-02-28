@@ -1,7 +1,7 @@
 {
   "changes": [
     {
-      "comment": "fix: edit right frozen cell input position error\n\n",
+      "comment": "refactor: rename resize_column_end event arguments #1129\n\n",
       "type": "none",
       "packageName": "@visactor/vtable"
     }

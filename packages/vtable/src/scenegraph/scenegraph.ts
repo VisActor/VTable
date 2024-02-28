@@ -887,25 +887,49 @@ export class Scenegraph {
     } as any);
 
     if (this.tableGroup.border && this.tableGroup.border.type === 'rect') {
-      this.tableGroup.border.setAttributes({
-        x: this.table.tableX - this.tableGroup.border.attribute.lineWidth / 2,
-        y: this.table.tableY - this.tableGroup.border.attribute.lineWidth / 2,
-        width: this.tableGroup.attribute.width + this.tableGroup.border.attribute.lineWidth,
-        height: this.tableGroup.attribute.height + this.tableGroup.border.attribute.lineWidth
-      });
+      if (this.table.theme.frameStyle?.innerBorder) {
+        this.tableGroup.border.setAttributes({
+          x: this.table.tableX + this.tableGroup.border.attribute.lineWidth / 2,
+          y: this.table.tableY + this.tableGroup.border.attribute.lineWidth / 2,
+          width: this.tableGroup.attribute.width - this.tableGroup.border.attribute.lineWidth,
+          height: this.tableGroup.attribute.height - this.tableGroup.border.attribute.lineWidth
+        });
+      } else {
+        this.tableGroup.border.setAttributes({
+          x: this.table.tableX - this.tableGroup.border.attribute.lineWidth / 2,
+          y: this.table.tableY - this.tableGroup.border.attribute.lineWidth / 2,
+          width: this.tableGroup.attribute.width + this.tableGroup.border.attribute.lineWidth,
+          height: this.tableGroup.attribute.height + this.tableGroup.border.attribute.lineWidth
+        });
+      }
     } else if (this.tableGroup.border && this.tableGroup.border.type === 'group') {
-      this.tableGroup.border.setAttributes({
-        x: this.table.tableX - this.tableGroup.border.attribute.lineWidth / 2,
-        y: this.table.tableY - this.tableGroup.border.attribute.lineWidth / 2,
-        width: this.tableGroup.attribute.width + this.tableGroup.border.attribute.lineWidth,
-        height: this.tableGroup.attribute.height + this.tableGroup.border.attribute.lineWidth
-      });
-      (this.tableGroup.border.firstChild as IRect)?.setAttributes({
-        x: this.tableGroup.border.attribute.lineWidth / 2,
-        y: this.tableGroup.border.attribute.lineWidth / 2,
-        width: this.tableGroup.attribute.width,
-        height: this.tableGroup.attribute.height
-      });
+      if (this.table.theme.frameStyle?.innerBorder) {
+        this.tableGroup.border.setAttributes({
+          x: this.table.tableX + this.tableGroup.border.attribute.lineWidth / 2,
+          y: this.table.tableY + this.tableGroup.border.attribute.lineWidth / 2,
+          width: this.tableGroup.attribute.width - this.tableGroup.border.attribute.lineWidth,
+          height: this.tableGroup.attribute.height - this.tableGroup.border.attribute.lineWidth
+        });
+        (this.tableGroup.border.firstChild as IRect)?.setAttributes({
+          x: 0,
+          y: 0,
+          width: this.tableGroup.attribute.width - this.tableGroup.border.attribute.lineWidth,
+          height: this.tableGroup.attribute.height - this.tableGroup.border.attribute.lineWidth
+        });
+      } else {
+        this.tableGroup.border.setAttributes({
+          x: this.table.tableX - this.tableGroup.border.attribute.lineWidth / 2,
+          y: this.table.tableY - this.tableGroup.border.attribute.lineWidth / 2,
+          width: this.tableGroup.attribute.width + this.tableGroup.border.attribute.lineWidth,
+          height: this.tableGroup.attribute.height + this.tableGroup.border.attribute.lineWidth
+        });
+        (this.tableGroup.border.firstChild as IRect)?.setAttributes({
+          x: this.tableGroup.border.attribute.lineWidth / 2,
+          y: this.tableGroup.border.attribute.lineWidth / 2,
+          width: this.tableGroup.attribute.width,
+          height: this.tableGroup.attribute.height
+        });
+      }
     }
 
     if (this.table.bottomFrozenRowCount > 0) {
@@ -1469,7 +1493,11 @@ export class Scenegraph {
     );
     createFrameBorder(
       this.rowHeaderGroup,
-      this.isPivot ? this.table.theme.rowHeaderStyle.frameStyle : this.table.theme.bodyStyle.frameStyle,
+      this.isPivot
+        ? this.table.theme.rowHeaderStyle.frameStyle
+        : // : this.table.internalProps.transpose
+          // ? this.table.theme.headerStyle.frameStyle
+          this.table.theme.bodyStyle.frameStyle,
       this.rowHeaderGroup.role,
       isListTableWithFrozen ? [true, false, true, true] : undefined
     );

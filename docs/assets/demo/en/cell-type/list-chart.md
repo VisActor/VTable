@@ -1,14 +1,31 @@
-/* eslint-disable */
-import * as VTable from '../../src';
-import VChart from '@visactor/vchart';
-VTable.register.chartModule('vchart', VChart);
-const CONTAINER_ID = 'vTable';
-export function createTable() {
-  const columns: VTable.ColumnsDefine = [
+---
+category: examples
+group: Cell Type
+title: List table integrated chart
+cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/list-chart-multiple.png
+link: '../guide/cell_type/chart'
+option: ListTable-columns-chart#cellType
+---
+
+# Basic table integrated chart
+
+Combine vchart chart library and render it into tables to enrich visual display forms and improve multi-chart rendering performance. This example refers to vchart’s bar line pie chart. For details, please refer to: https://visactor.io/vchart/demo/progress/linear-progress-with-target-value
+
+## Key Configurations
+
+- `VTable.register.chartModule('vchart', VChart)` registers the chart library for drawing charts. Currently supports VChart
+- `cellType: 'chart'` specifies the type chart
+- `chartModule: 'vchart'` specifies the registered chart library name
+- `chartSpec: {}` chart spec
+
+## Code Demo
+
+```javascript livedemo template=vtable
+  VTable.register.chartModule('vchart', VChart);
+  const columns = [
     {
       field: 'id',
       title: 'id',
-      description: '这是一个标题的详细描述',
       sort: true,
       width: 80,
       style: {
@@ -166,12 +183,12 @@ export function createTable() {
               }
             ]
           };
-        return {
-          type: 'pie',
-          data: { id: 'data1' },
-          categoryField: 'y',
-          valueField: 'x'
-        };
+          return {
+            type: 'pie',
+            data: { id: 'data1' },
+            categoryField: 'y',
+            valueField: 'x'
+          }
       }
     },
     {
@@ -417,9 +434,9 @@ export function createTable() {
           }
         ]
       }
-    }
+    },
   ];
-  const records: any[] = []; // = generatePersonsDataSource(10);
+  const records = []; 
   for (let i = 1; i <= 10; i++)
     records.push({
       id: i,
@@ -513,7 +530,6 @@ export function createTable() {
       ]
     });
   const option = {
-    container: document.getElementById(CONTAINER_ID),
     records,
     columns,
     transpose: false,
@@ -522,12 +538,6 @@ export function createTable() {
     defaultHeaderRowHeight: 50
   };
 
-  const tableInstance = new VTable.ListTable(option);
-  window.tableInstance = tableInstance;
-  tableInstance.onVChartEvent('click', args => {
-    console.log('onVChartEvent click', args);
-  });
-  tableInstance.onVChartEvent('mouseover', args => {
-    console.log('onVChartEvent mouseover', args);
-  });
-}
+const tableInstance = new VTable.ListTable(document.getElementById(CONTAINER_ID),option);
+window['tableInstance'] = tableInstance;
+```

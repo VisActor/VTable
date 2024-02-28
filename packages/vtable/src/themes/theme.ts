@@ -376,7 +376,7 @@ export class TableTheme implements ITableThemeDefine {
         {},
         this.defaultStyle,
         superTheme.rowHeaderStyle,
-        obj.rowHeaderStyle // ?? obj.headerStyle
+        obj.rowHeaderStyle ?? obj.headerStyle
       );
       this._rowHeader = this.getStyle(header);
     }
@@ -406,6 +406,9 @@ export class TableTheme implements ITableThemeDefine {
         },
         get borderLineDash(): LineDashsDef | undefined {
           return frameStyle.borderLineDash;
+        },
+        get innerBorder(): boolean | undefined {
+          return frameStyle.innerBorder;
         },
         get shadowBlur(): number {
           return frameStyle.shadowBlur;

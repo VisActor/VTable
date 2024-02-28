@@ -2,7 +2,7 @@
   "changes": [
     {
       "packageName": "@visactor/vtable",
-      "comment": "fix: fix react-vtable display error in react strict mode #990",
+      "comment": "fix: fix axis innerOffset",
       "type": "none"
     }
   ],

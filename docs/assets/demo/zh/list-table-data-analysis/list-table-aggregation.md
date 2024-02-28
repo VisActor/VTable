@@ -3,7 +3,7 @@ category: examples
 group: list-table-data-analysis
 title: 基本表格数据聚合分析
 cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/list-table-aggregation.png
-link: '../guide/table_type/Pivot_table/list_table_dataAnalysis'
+link: '../guide/data_analysis/list_table_dataAnalysis'
 option: ListTable-columns-text#aggregation(Aggregation%20%7C%20CustomAggregation%20%7C%20Array)
 ---
 
