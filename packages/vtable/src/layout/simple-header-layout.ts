@@ -839,15 +839,17 @@ export class SimpleHeaderLayoutMap implements LayoutMapAPI {
 
       results[id] = cell;
       for (let r = row - 1; r >= 0; r--) {
-        this._headerCellIds[r][col] = roots[r];
+        this._headerCellIds[r] && (this._headerCellIds[r][col] = roots[r]);
       }
       if (!hideColumnsSubHeader) {
         rowCells[col] = id;
-      } else {
+      } else if (this._headerCellIds[row - 1]) {
         rowCells[col] = this._headerCellIds[row - 1][col];
       }
       if (hd.columns) {
-        this._addHeaders(row + 1, hd.columns, [...roots, id], hd.hideColumnsSubHeader).forEach(c => results.push(c));
+        this._addHeaders(row + 1, hd.columns, [...roots, id], hd.hideColumnsSubHeader || hideColumnsSubHeader).forEach(
+          c => results.push(c)
+        );
       } else {
         const colDef = hd;
         this._columns.push({
