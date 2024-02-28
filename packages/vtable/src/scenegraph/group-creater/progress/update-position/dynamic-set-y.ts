@@ -22,13 +22,16 @@ function move(deltaRow: number, screenTopRow: number, screenTopY: number, y: num
   if (deltaRow > 0) {
     // 向下滚动，顶部cell group移到底部
     moveCell(deltaRow, 'up', screenTopRow, screenTopY, y, proxy);
+    proxy.updateDeltaY(y, screenTopY, screenTopRow);
     proxy.updateBody(y - proxy.deltaY);
   } else if (deltaRow < 0) {
     // 向上滚动，底部cell group移到顶部
     moveCell(-deltaRow, 'down', screenTopRow, screenTopY, y, proxy);
+    proxy.updateDeltaY(y, screenTopY, screenTopRow);
     proxy.updateBody(y - proxy.deltaY);
   } else {
     // 不改变row，更新body group范围
+    proxy.updateDeltaY(y, screenTopY, screenTopRow);
     proxy.updateBody(y - proxy.deltaY);
   }
 }
@@ -204,25 +207,25 @@ async function moveCell(
       );
     }
 
-    // update body position when click scroll bar
-    if (syncTopRow === proxy.bodyTopRow) {
-      const cellGroup = proxy.table.scenegraph.highPerformanceGetCell(proxy.colStart, syncTopRow, true);
-      const deltaY = cellGroup.attribute.y - y;
-      proxy.table.scenegraph.proxy.deltaY = deltaY;
-    } else if (syncBottomRow === proxy.bodyBottomRow) {
-      const cellGroup = proxy.table.scenegraph.highPerformanceGetCell(proxy.colStart, syncBottomRow, true);
-      const deltaY =
-        cellGroup.attribute.y +
-        cellGroup.attribute.height -
-        (proxy.table.tableNoFrameHeight - proxy.table.getFrozenRowsHeight()) -
-        y;
-      proxy.table.scenegraph.proxy.deltaY = -deltaY;
-    } else {
-      const cellGroup = proxy.table.scenegraph.highPerformanceGetCell(proxy.colStart, screenTopRow, true);
-      const deltaY =
-        screenTopY - (cellGroup.attribute.y + proxy.table.getFrozenRowsHeight() + proxy.table.scenegraph.proxy.deltaY);
-      proxy.table.scenegraph.proxy.deltaY = deltaY;
-    }
+    // // update body position when click scroll bar
+    // if (syncTopRow === proxy.bodyTopRow) {
+    //   const cellGroup = proxy.table.scenegraph.highPerformanceGetCell(proxy.colStart, syncTopRow, true);
+    //   const deltaY = cellGroup.attribute.y - y;
+    //   proxy.table.scenegraph.proxy.deltaY = deltaY;
+    // } else if (syncBottomRow === proxy.bodyBottomRow) {
+    //   const cellGroup = proxy.table.scenegraph.highPerformanceGetCell(proxy.colStart, syncBottomRow, true);
+    //   const deltaY =
+    //     cellGroup.attribute.y +
+    //     cellGroup.attribute.height -
+    //     (proxy.table.tableNoFrameHeight - proxy.table.getFrozenRowsHeight()) -
+    //     y;
+    //   proxy.table.scenegraph.proxy.deltaY = -deltaY;
+    // } else {
+    //   const cellGroup = proxy.table.scenegraph.highPerformanceGetCell(proxy.colStart, screenTopRow, true);
+    //   const deltaY =
+    //     screenTopY - (cellGroup.attribute.y + proxy.table.getFrozenRowsHeight() + proxy.table.scenegraph.proxy.deltaY);
+    //   proxy.table.scenegraph.proxy.deltaY = deltaY;
+    // }
 
     proxy.currentRow = direction === 'up' ? proxy.currentRow + count : proxy.currentRow - count;
     proxy.totalRow = Math.max(
