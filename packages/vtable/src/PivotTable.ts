@@ -206,7 +206,7 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
     }
     return ifCan;
   }
-  updateOption(options: PivotTableConstructorOptions, accelerateFirstScreen = false) {
+  updateOption(options: PivotTableConstructorOptions) {
     const internalProps = this.internalProps;
     //维护选中状态
     // const range = internalProps.selection.range; //保留原有单元格选中状态
