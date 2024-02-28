@@ -360,15 +360,16 @@ export function bindTableGroupListener(eventManager: EventManager) {
 
   table.scenegraph.tableGroup.addEventListener('pointerdown', (e: FederatedPointerEvent) => {
     console.log('tableGroup pointerdown');
-    table.eventManager.isPointerDownOnTable = true;
-    setTimeout(() => {
-      table.eventManager.isPointerDownOnTable = false;
-    }, 0);
+    // table.eventManager.isPointerDownOnTable = true;
+    // setTimeout(() => {
+    //   table.eventManager.isPointerDownOnTable = false;
+    // }, 0);
     table.eventManager.isDown = true;
     table.eventManager.LastBodyPointerXY = { x: e.x, y: e.y };
-    // 避免在调整列宽等拖拽操作触发外层组件的拖拽逻辑
-    // 如果鼠标位置在表格内（加调整列宽的热区），将mousedown事件阻止冒泡
-    e.stopPropagation();
+    // // 避免在调整列宽等拖拽操作触发外层组件的拖拽逻辑;
+    // // 如果鼠标位置在表格内（加调整列宽的热区），将pointerdown事件阻止冒泡（如果阻止mousedown需要结合isPointerDownOnTable来判断）
+    // e.stopPropagation();
+
     // e.preventDefault(); //为了阻止mousedown事件的触发，后续：不能这样写，会阻止table聚焦
     table.eventManager.LastPointerXY = { x: e.x, y: e.y };
     if (e.button !== 0) {
