@@ -1107,9 +1107,10 @@ export class Scenegraph {
     // correct y, avoid scroll out of range
     const firstBodyCell = this.bodyGroup.firstChild.firstChild as Group;
     const lastBodyCell = this.bodyGroup.firstChild.lastChild as Group;
-    if (firstBodyCell.row === this.table.frozenRowCount && firstBodyCell.attribute.y + y < 0) {
+    if (firstBodyCell && firstBodyCell.row === this.table.frozenRowCount && firstBodyCell.attribute.y + y < 0) {
       y = -firstBodyCell.attribute.y;
     } else if (
+      lastBodyCell &&
       lastBodyCell.row === this.table.rowCount - this.table.bottomFrozenRowCount - 1 &&
       lastBodyCell.attribute.y + lastBodyCell.attribute.height + y <
         this.table.tableNoFrameHeight - this.table.getFrozenRowsHeight() - this.table.getBottomFrozenRowsHeight()
@@ -1143,9 +1144,10 @@ export class Scenegraph {
     // correct x, avoid scroll out of range
     const firstBodyCol = this.bodyGroup.firstChild as Group;
     const lastBodyCol = this.bodyGroup.lastChild as Group;
-    if (firstBodyCol.col === this.table.frozenColCount && firstBodyCol.attribute.x + x < 0) {
+    if (firstBodyCol && firstBodyCol.col === this.table.frozenColCount && firstBodyCol.attribute.x + x < 0) {
       x = -firstBodyCol.attribute.x;
     } else if (
+      lastBodyCol &&
       lastBodyCol.col === this.table.colCount - this.table.rightFrozenColCount - 1 &&
       lastBodyCol.attribute.x + lastBodyCol.attribute.width + x <
         this.table.tableNoFrameWidth - this.table.getFrozenColsWidth() - this.table.getRightFrozenColsWidth()
