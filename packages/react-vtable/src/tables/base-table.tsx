@@ -202,7 +202,7 @@ const BaseTable: React.FC<Props> = React.forwardRef((props, ref) => {
     if (
       !isEqual(newOption, prevOption.current, { skipFunction: skipFunctionDiff }) ||
       // tableContext.current.isChildrenUpdated
-      !isEqual(newOptionFromChildren, optionFromChildren.current)
+      !isEqual(newOptionFromChildren, optionFromChildren.current, { skipFunction: skipFunctionDiff })
     ) {
       prevOption.current = newOption;
       optionFromChildren.current = newOptionFromChildren;

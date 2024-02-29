@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vtable",
+      "comment": "fix: add skipFunctionDiff in react-vtable",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vtable"
+}
