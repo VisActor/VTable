@@ -1,5 +1,5 @@
-import type { RectProps, MaybePromiseOrUndefined, IDimensionInfo, SortOrder, BaseCellInfo } from './common';
-import type { SvgIcon } from './icon';
+import type { RectProps, MaybePromiseOrUndefined, IDimensionInfo, SortOrder, BaseCellInfo, CellInfo } from './common';
+import type { ColumnIconOption, SvgIcon } from './icon';
 export type { HeaderData } from './list-table/layout-map/api';
 export type LayoutObjectId = number | string;
 import type { Rect } from '../tools/Rect';
@@ -29,6 +29,7 @@ import type { DataSource } from '../data';
 import type { EditManeger } from '../edit/edit-manager';
 import type { ICustomRender } from './customElement';
 import type { ICustomLayout } from './customLayout';
+import type { StylePropertyFunctionArg } from './style-define';
 
 export interface CellAddress {
   col: number;
@@ -92,6 +93,38 @@ export interface TableKeyboardOptions {
 export interface TableEventOptions {
   /** 是否阻止右键的默认行为， 默认为true。*/
   preventDefaultContextMenu?: boolean;
+}
+
+export interface RowSeriesNumber {
+  enable: boolean;
+  align?: 'left' | 'right';
+  span?: number | 'dependOnNear';
+  title?: string;
+  field?: FieldDef;
+  format?: (col?: number, row?: number, table?: BaseTableAPI) => any;
+  cellType?: 'text' | 'link' | 'image' | 'video' | 'checkbox';
+  style?: ITextStyleOption | ((styleArg: StylePropertyFunctionArg) => ITextStyleOption);
+  icon?:
+    | string
+    | ColumnIconOption
+    | (string | ColumnIconOption)[]
+    | ((args: CellInfo) => string | ColumnIconOption | (string | ColumnIconOption)[]);
+}
+
+export interface ColumnSeriesNumber {
+  enable: boolean;
+  align?: 'top' | 'bottom';
+  span?: number | 'dependOnNear';
+  title?: string;
+  field?: FieldDef;
+  format?: (col?: number, row?: number, table?: BaseTableAPI) => any;
+  cellType?: 'text' | 'link' | 'image' | 'video' | 'checkbox';
+  style?: ITextStyleOption | ((styleArg: StylePropertyFunctionArg) => ITextStyleOption);
+  icon?:
+    | string
+    | ColumnIconOption
+    | (string | ColumnIconOption)[]
+    | ((args: CellInfo) => string | ColumnIconOption | (string | ColumnIconOption)[]);
 }
 export interface DataSourceAPI {
   clearCurrentIndexedData: () => void;
