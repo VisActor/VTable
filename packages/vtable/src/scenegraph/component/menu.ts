@@ -298,7 +298,7 @@ export class MenuHandler {
         const { field } = this._table.isHeader(col, row)
           ? this._table.getHeaderDefine(col, row)
           : this._table.getBodyColumnDefine(col, row);
-        menuInfo = contextmenu(field, row);
+        menuInfo = contextmenu(field, row, col);
       }
       return {
         menuInfo,
