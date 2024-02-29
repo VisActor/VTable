@@ -22,12 +22,19 @@ function move(deltaRow: number, screenTopRow: number, screenTopY: number, y: num
   if (deltaRow > 0) {
     // 向下滚动，顶部cell group移到底部
     moveCell(deltaRow, 'up', screenTopRow, screenTopY, y, proxy);
+    const screenTop = (proxy.table as any).getTargetRowAt(
+      y + proxy.deltaHeight + proxy.table.scenegraph.colHeaderGroup.attribute.height
+    );
+    screenTopRow = screenTop.row;
+    screenTopY = screenTop.top;
     proxy.updateDeltaY(y, screenTopY, screenTopRow);
+    proxy.deltaY -= proxy.deltaHeight;
     proxy.updateBody(y - proxy.deltaY);
   } else if (deltaRow < 0) {
     // 向上滚动，底部cell group移到顶部
     moveCell(-deltaRow, 'down', screenTopRow, screenTopY, y, proxy);
-    proxy.updateDeltaY(y, screenTopY, screenTopRow);
+    proxy.updateDeltaY(y, screenTopY - proxy.deltaHeight, screenTopRow);
+    // proxy.deltaY += proxy.deltaHeight;
     proxy.updateBody(y - proxy.deltaY);
   } else {
     // 不改变row，更新body group范围
@@ -84,9 +91,10 @@ async function moveCell(
       syncBottomRow = bottomRow;
     }
 
-    // const syncTopRow = Math.max(proxy.bodyTopRow, screenTopRow - proxy.screenRowCount * 1);
-    // const syncBottomRow = Math.min(proxy.bodyBottomRow, screenTopRow + proxy.screenRowCount * 2);
+    // const oldRowsHeight = proxy.table.getRowsHeight(proxy.bodyTopRow, proxy.bodyBottomRow);
     computeRowsHeight(proxy.table, syncTopRow, syncBottomRow, proxy.table.heightMode === 'autoHeight');
+    // const rowsHeight = proxy.table.getRowsHeight(proxy.bodyTopRow, proxy.bodyBottomRow);
+    // proxy.deltaHeight = rowsHeight - oldRowsHeight;
 
     // console.log('move', startRow, endRow, direction);
     updatePartRowPosition(startRow, endRow, direction, proxy);
@@ -165,7 +173,10 @@ async function moveCell(
     }
     //console.log('更新同步范围', syncTopRow, syncBottomRow);
 
+    // const oldRowsHeight = proxy.table.getRowsHeight(proxy.bodyTopRow, proxy.bodyBottomRow);
     computeRowsHeight(proxy.table, syncTopRow, syncBottomRow);
+    // const rowsHeight = proxy.table.getRowsHeight(proxy.bodyTopRow, proxy.bodyBottomRow);
+    // proxy.deltaHeight = rowsHeight - oldRowsHeight;
 
     // 更新同步范围
     updateAllRowPosition(distStartRowY, count, direction, proxy);

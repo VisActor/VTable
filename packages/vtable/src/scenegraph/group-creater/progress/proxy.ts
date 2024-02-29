@@ -13,6 +13,7 @@ import { updateAutoRow } from './update-position/update-auto-row';
 import { sortVertical } from './update-position/sort-vertical';
 import { sortHorizontal } from './update-position/sort-horizontal';
 import { updateAutoColumn } from './update-position/update-auto-column';
+import { getDefaultHeight, getDefaultWidth } from './default-width-height';
 
 export class SceneProxy {
   table: BaseTableAPI;
@@ -38,6 +39,7 @@ export class SceneProxy {
   screenTopRow: number = 0; // 当前屏幕范围内显示的第一行的row number
   totalActualBodyRowCount: number; // 实际表格body部分的行数
   deltaY: number = 0;
+  deltaHeight: number = 0;
 
   colLimit = 100;
   // bodyLeftCol: number; // table body部分的第一列col number
@@ -57,6 +59,7 @@ export class SceneProxy {
   colUpdateDirection: 'left' | 'right'; // 当前列更新方向
   totalActualBodyColCount: number; // 实际表格body部分的列数
   deltaX: number = 0;
+  deltaWidth: number = 0;
 
   cellCache: Map<number, Group> = new Map(); // 单元格位置快速查找缓存
 
@@ -96,6 +99,7 @@ export class SceneProxy {
     this.totalCol = this.bodyLeftCol + totalActualBodyColCount - 1; // 目标渐进完成的col
     this.colStart = this.bodyLeftCol;
     const defaultColWidth = this.table.defaultColWidth;
+    // const defaultColWidth = getDefaultHeight(this.table);
     this.taskColCount = Math.ceil(this.table.tableNoFrameWidth / defaultColWidth) * 1;
 
     // 确定动态更新限制
@@ -128,6 +132,7 @@ export class SceneProxy {
     this.totalRow = this.bodyTopRow + totalActualBodyRowCount - 1; // 目标渐进完成的row
     this.rowStart = this.bodyTopRow;
     const defaultRowHeight = this.table.defaultRowHeight;
+    // const defaultRowHeight = getDefaultWidth(this.table);
     this.taskRowCount = Math.ceil(this.table.tableNoFrameHeight / defaultRowHeight) * 1;
 
     // 确定动态更新限制

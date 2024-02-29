@@ -61,6 +61,7 @@ import { Env } from '../tools/env';
 import { createCornerCell } from './style/corner-cell';
 import { updateCol } from './layout/update-col';
 import { deduplication } from '../tools/util';
+import { getDefaultHeight, getDefaultWidth } from './group-creater/progress/default-width-height';
 // import { contextModule } from './context/module';
 
 registerForVrender();
@@ -337,6 +338,14 @@ export class Scenegraph {
    */
   createSceneGraph() {
     this.table.rowHeightsMap.clear();
+
+    if (this.table.heightMode === 'autoHeight') {
+      this.table.defaultRowHeight = getDefaultHeight(this.table);
+    }
+    if (this.table.widthMode === 'autoWidth' || this.table.internalProps.transpose) {
+      this.table.defaultColWidth = getDefaultWidth(this.table);
+    }
+
     // bind AutoPoptip
     if (this.table.isPivotChart() || this.table._hasCustomRenderOrLayout()) {
       // bind for axis label in pivotChart

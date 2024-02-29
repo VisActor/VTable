@@ -167,7 +167,8 @@ export class NumberRangeMap {
     for (const [sumPos, sum] of this.cumulativeSum) {
       for (const [difPos, difference] of this.difference) {
         if (sumPos >= difPos) {
-          this.cumulativeSum.set(sumPos, sum + difference);
+          const oldSum = this.cumulativeSum.get(sumPos);
+          this.cumulativeSum.set(sumPos, oldSum + difference);
         }
       }
     }
