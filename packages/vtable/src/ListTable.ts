@@ -119,7 +119,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
   }
 
   get records() {
-    return this.dataSource.source;
+    return this.dataSource?.source;
   }
 
   get recordsCount() {
@@ -868,11 +868,11 @@ export class ListTable extends BaseTable implements ListTableAPI {
     option?: { restoreHierarchyState?: boolean; sortState?: SortState | SortState[] }
   ): void {
     let sort: SortState | SortState[];
-    if (Array.isArray(option) || (option as any).order) {
+    if (Array.isArray(option) || (option as any)?.order) {
       //兼容之前第二个参数为sort的情况
       sort = <any>option;
     } else {
-      sort = option.sortState;
+      sort = option?.sortState;
     }
     const time = typeof window !== 'undefined' ? window.performance.now() : 0;
     const oldHoverState = { col: this.stateManager.hover.cellPos.col, row: this.stateManager.hover.cellPos.row };
@@ -888,6 +888,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
     const currentPagerIndexedData = this.dataSource?._currentPagerIndexedData;
     const currentIndexedData = this.dataSource?.currentIndexedData;
     const treeDataHierarchyState = this.dataSource?.treeDataHierarchyState;
+    const oldRecordLength = this.records?.length ?? 0;
     if (records) {
       _setRecords(this, records);
       if ((this as any).sortState) {
@@ -911,7 +912,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
           }
         }
       }
-      if (option?.restoreHierarchyState) {
+      if (option?.restoreHierarchyState && oldRecordLength === this.records?.length) {
         // restoreHierarchyState逻辑，保留树形结构展开收起的状态
         this.dataSource._currentPagerIndexedData = currentPagerIndexedData;
         this.dataSource.currentIndexedData = currentIndexedData;
@@ -920,7 +921,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
       this.refreshRowColCount();
     } else {
       _setRecords(this, records);
-      if (option?.restoreHierarchyState) {
+      if (option?.restoreHierarchyState && oldRecordLength === this.records?.length) {
         // restoreHierarchyState逻辑，保留树形结构展开收起的状态
         this.dataSource._currentPagerIndexedData = currentPagerIndexedData;
         this.dataSource.currentIndexedData = currentIndexedData;
