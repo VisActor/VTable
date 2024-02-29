@@ -43,7 +43,7 @@ export function _dealWithUpdateDataSource(table: BaseTableAPI, fn: (table: BaseT
 
   table.internalProps.dataSourceEventIds = [
     table.internalProps.handler.on(table.internalProps.dataSource, DataSource.EVENT_TYPE.CHANGE_ORDER, () => {
-      if (table.dataSource.enableHierarchyState) {
+      if (table.dataSource.hierarchyExpandLevel) {
         table.refreshRowColCount();
       }
       table.render();

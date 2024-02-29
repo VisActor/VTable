@@ -2427,7 +2427,10 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     field: FieldDef,
     fieldKey?: FieldKeyDef
   ): ((v1: any, v2: any, order: string) => 0 | 1 | -1) | undefined;
-  abstract setRecords(records: Array<any>, sort?: SortState | SortState[]): void;
+  abstract setRecords(
+    records: Array<any>,
+    option?: { restoreHierarchyState: boolean; sort?: SortState | SortState[] }
+  ): void;
   abstract refreshHeader(): void;
   abstract refreshRowColCount(): void;
   abstract getHierarchyState(col: number, row: number): HierarchyState | null;
@@ -2981,16 +2984,16 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
           this.options.autoWrapText
         );
       } else {
-        let defaultStyle;
-        if (layoutMap.isColumnHeader(col, row) || layoutMap.isBottomFrozenRow(col, row)) {
-          defaultStyle = this.theme.headerStyle;
-        } else if (this.internalProps.transpose && layoutMap.isRowHeader(col, row)) {
-          defaultStyle = this.theme.headerStyle;
-        } else if (layoutMap.isRowHeader(col, row) || layoutMap.isRightFrozenColumn(col, row)) {
-          defaultStyle = this.theme.rowHeaderStyle;
-        } else {
-          defaultStyle = this.theme.cornerHeaderStyle;
-        }
+        // let defaultStyle;
+        // if (layoutMap.isColumnHeader(col, row) || layoutMap.isBottomFrozenRow(col, row)) {
+        //   defaultStyle = this.theme.headerStyle;
+        // } else if (this.internalProps.transpose && layoutMap.isRowHeader(col, row)) {
+        //   defaultStyle = this.theme.headerStyle;
+        // } else if (layoutMap.isRowHeader(col, row) || layoutMap.isRightFrozenColumn(col, row)) {
+        //   defaultStyle = this.theme.rowHeaderStyle;
+        // } else {
+        //   defaultStyle = this.theme.cornerHeaderStyle;
+        // }
         // const styleClass = hd.headerType.StyleClass; //BaseHeader文件
         // const { style } = hd;
         const style = hd?.style || {};
@@ -2999,12 +3002,12 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
         }
         cacheStyle = <FullExtendStyle>headerStyleContents.of(
           style,
-          defaultStyle,
-          // layoutMap.isColumnHeader(col, row) || layoutMap.isBottomFrozenRow(col, row)
-          //   ? this.theme.headerStyle
-          //   : layoutMap.isRowHeader(col, row) || layoutMap.isRightFrozenColumn(col, row)
-          //   ? this.theme.rowHeaderStyle
-          //   : this.theme.cornerHeaderStyle,
+          // defaultStyle,
+          layoutMap.isColumnHeader(col, row) || layoutMap.isBottomFrozenRow(col, row)
+            ? this.theme.headerStyle
+            : layoutMap.isRowHeader(col, row) || layoutMap.isRightFrozenColumn(col, row)
+            ? this.theme.rowHeaderStyle
+            : this.theme.cornerHeaderStyle,
           {
             col,
             row,

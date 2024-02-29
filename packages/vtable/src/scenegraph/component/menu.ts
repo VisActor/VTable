@@ -298,7 +298,7 @@ export class MenuHandler {
         const { field } = this._table.isHeader(col, row)
           ? this._table.getHeaderDefine(col, row)
           : this._table.getBodyColumnDefine(col, row);
-        menuInfo = contextmenu(field, row);
+        menuInfo = contextmenu(field, row, col);
       }
       return {
         menuInfo,
@@ -317,6 +317,7 @@ export class MenuHandler {
         const resultMenuInfo = this.getEventInfo(target as unknown as Group);
         const resultTableInfo = this._table.getMenuInfo(this._menuInfo.col, this._menuInfo.row, this._menuInfo.type);
         const result = Object.assign(resultMenuInfo, resultTableInfo);
+        result.event = e.nativeEvent;
         this._table.fireListeners(TABLE_EVENT_TYPE.DROPDOWN_MENU_CLICK, result);
 
         // 由DROPDOWNMENU_CLICK事件清空菜单
