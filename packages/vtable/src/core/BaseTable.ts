@@ -258,7 +258,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     internalProps.defaultHeaderColWidth = defaultHeaderColWidth ?? defaultColWidth;
 
     internalProps.keyboardOptions = keyboardOptions;
-    internalProps.eventOptions = eventOptions;
+    internalProps.eventOptions = eventOptions ?? {};
     if (!internalProps.eventOptions.overscrollBehavior) {
       internalProps.eventOptions.overscrollBehavior = 'auto';
     }
@@ -1985,7 +1985,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     internalProps.defaultColWidth = defaultColWidth;
     internalProps.defaultHeaderColWidth = defaultHeaderColWidth ?? defaultColWidth;
     internalProps.keyboardOptions = keyboardOptions;
-    internalProps.eventOptions = eventOptions;
+    internalProps.eventOptions = eventOptions ?? {};
     if (!internalProps.eventOptions.overscrollBehavior) {
       internalProps.eventOptions.overscrollBehavior = 'auto';
     }
