@@ -121,6 +121,12 @@
 'none': 表格滚动到顶部或者底部时, 触发浏览器默认行为;
 ```
 
+##${prefix} scrollResponseInTable(boolean) = false
+
+是否将滚动事件的响应限制在表格内部.
+
+默认 false，即处于 container 内都会响应滚动。
+
 #${prefix} columnResizeMode(string) = 'all'
 
 鼠标 hover 到单元格右边界可拖拽调整列宽。该操作可触发的范围：

@@ -149,3 +149,16 @@ eventOptions:{
 ```
 
 具体说明可参考：https://developer.mozilla.org/zh-CN/docs/Web/CSS/overscroll-behavior
+
+## 限定滚动响应在表格内
+
+在某些场景下，我们需要将滚动事件的响应限制在表格内部，而不是在整个页面中。这可以通过配置项 eventOptions.scrollResponseInTable 来实现。
+默认 false，即处于 container 内都会响应滚动。
+
+```javascript
+const option = {
+  eventOptions: {
+    scrollResponseInTable: true
+  }
+};
+```

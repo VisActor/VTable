@@ -124,6 +124,12 @@ Table scrolling behavior, can be set: 'auto'|'none', the default value is 'auto'
 'none': triggers the browser's default behavior when the table scrolls to the top or bottom;
 ```
 
+##${prefix} scrollResponseInTable(boolean) = false
+
+Whether to limit the response to scroll events to within the table.
+
+The default is false, that is, scrolling will be responded to within the container.
+
 #${prefix} columnResizeMode(string) = 'all'
 
 Mouse hover over the cell right border can drag and adjust column width. This operation can trigger the following range:

@@ -23,6 +23,19 @@ export function bindContainerDomListener(eventManager: EventManager) {
   });
 
   handler.on(table.getElement(), 'wheel', (e: WheelEvent) => {
+    if (table.internalProps.eventOptions.scrollResponseInTable) {
+      const drawRange = table.getDrawRange();
+      const tableBound = table.canvas.getBoundingClientRect();
+      if (
+        e.pageX >= drawRange.left + tableBound.left &&
+        e.pageX <= drawRange.right + tableBound.left &&
+        e.pageY >= drawRange.top + tableBound.top &&
+        e.pageY <= drawRange.bottom + tableBound.top
+      ) {
+        handleWhell(e, stateManager);
+      }
+      return;
+    }
     handleWhell(e, stateManager);
   });
 

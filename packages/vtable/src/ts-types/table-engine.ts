@@ -97,6 +97,8 @@ export interface TableEventOptions {
    *  设置为 'none' 时, 表格滚动到顶部/底部时, 不再触发父容器滚动
    * */
   overscrollBehavior?: 'auto' | 'none';
+  /** 是否限定鼠标滚动表格仅当鼠标处于表格内才响应。默认false，即处于container内但非表格内也会响应滚动 */
+  scrollResponseInTable?: boolean;
 }
 export interface DataSourceAPI {
   clearCurrentIndexedData: () => void;

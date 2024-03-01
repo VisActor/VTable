@@ -149,3 +149,16 @@ This problem may be because the browser's default behavior is triggered outside 
 ```
 
 For specific instructions, please refer to: https://developer.mozilla.org/zh-CN/docs/Web/CSS/overscroll-behavior
+
+## Limit scrolling response to within the table
+
+In some scenarios, we need to limit the response to scroll events to within the table instead of throughout the page. This can be achieved through the configuration item eventOptions.scrollResponseInTable.
+The default is false, that is, scrolling will be responded to within the container.
+
+```javascript
+const option = {
+  eventOptions: {
+    scrollResponseInTable: true
+  }
+};
+```
