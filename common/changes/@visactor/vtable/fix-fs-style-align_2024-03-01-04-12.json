@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vtable",
+      "comment": "feat: add cellInnerBorder&cellBorderClipDirection&_contentOffset in theme comfig",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vtable"
+}
