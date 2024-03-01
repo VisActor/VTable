@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vtable",
+      "comment": "fix: add fontStyle & fontVariant",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vtable"
+}
