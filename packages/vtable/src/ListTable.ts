@@ -871,8 +871,11 @@ export class ListTable extends BaseTable implements ListTableAPI {
     if (Array.isArray(option) || (option as any)?.order) {
       //兼容之前第二个参数为sort的情况
       sort = <any>option;
-    } else {
-      sort = option?.sortState;
+    } else if (option) {
+      sort = option.sortState;
+    } else if (option === null) {
+      //兼容之前第二个参数为null来清除sort排序状态的逻辑
+      sort = null;
     }
     const time = typeof window !== 'undefined' ? window.performance.now() : 0;
     const oldHoverState = { col: this.stateManager.hover.cellPos.col, row: this.stateManager.hover.cellPos.row };
