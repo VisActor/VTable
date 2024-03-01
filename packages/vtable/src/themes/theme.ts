@@ -83,6 +83,7 @@ export class TableTheme implements ITableThemeDefine {
   private _selectionStyle: RequiredTableThemeDefine['selectionStyle'] | null = null;
 
   private _axisStyle: RequiredTableThemeDefine['axisStyle'] | null = null;
+  private _checkboxStyle: RequiredTableThemeDefine['checkboxStyle'] | null = null;
   private _textPopTipStyle: RequiredTableThemeDefine['textPopTipStyle'] | null = null;
 
   constructor(obj: PartialTableThemeDefine | ITableThemeDefine, superTheme: ITableThemeDefine) {
@@ -650,6 +651,19 @@ export class TableTheme implements ITableThemeDefine {
       this._axisStyle = getAxisStyle(axisStyle);
     }
     return this._axisStyle;
+  }
+
+  get checkboxStyle(): RequiredTableThemeDefine['checkboxStyle'] {
+    if (!this._checkboxStyle) {
+      const { obj, superTheme } = this.internalTheme;
+      const checkboxStyle: RequiredTableThemeDefine['checkboxStyle'] = ingoreNoneValueMerge(
+        {},
+        superTheme.checkboxStyle,
+        obj.checkboxStyle
+      );
+      this._checkboxStyle = checkboxStyle;
+    }
+    return this._checkboxStyle;
   }
 
   get textPopTipStyle(): RequiredTableThemeDefine['textPopTipStyle'] {

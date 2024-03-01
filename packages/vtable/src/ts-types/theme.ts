@@ -1,6 +1,6 @@
 /* eslint-disable sort-imports */
 import type { ColorsDef, LineDashsDef, LineWidthsDef, LineWidthsPropertyDefine } from '.';
-import type { ITextStyleOption } from './column/style';
+import type { CheckboxStyle, ITextStyleOption } from './column/style';
 import type { ColorPropertyDefine, ColorsPropertyDefine } from './style-define';
 import type { ColumnIconOption } from './icon';
 import type { ICellAxisOption } from './component/axis';
@@ -142,6 +142,8 @@ export interface ITableThemeDefine {
     topAxisStyle?: Omit<ICellAxisOption, 'type' | 'domain' | 'range' | 'orient' | '__ticksForVTable'>;
     bottomAxisStyle?: Omit<ICellAxisOption, 'type' | 'domain' | 'range' | 'orient' | '__ticksForVTable'>;
   };
+
+  checkboxStyle?: CheckboxStyle;
 
   // style for text pop tip
   textPopTipStyle?: PopTipAttributes;

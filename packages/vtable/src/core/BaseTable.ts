@@ -2729,7 +2729,8 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
               cellHeaderPaths: this.getCellHeaderPaths(col, row)
             },
             styleClass,
-            this.options.autoWrapText
+            this.options.autoWrapText,
+            this.theme
           );
           customMerge.style = fullStyle;
         }
@@ -2966,7 +2967,8 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
             cellHeaderPaths: this.getCellHeaderPaths(col, row)
           },
           styleClass,
-          this.options.autoWrapText
+          this.options.autoWrapText,
+          this.theme
         );
       } else if (layoutMap.isRightFrozenColumn(col, row) && this.theme.rightFrozenStyle) {
         cacheStyle = <FullExtendStyle>headerStyleContents.of(
@@ -2981,7 +2983,8 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
             cellHeaderPaths: this.getCellHeaderPaths(col, row)
           },
           styleClass,
-          this.options.autoWrapText
+          this.options.autoWrapText,
+          this.theme
         );
       } else {
         // let defaultStyle;
@@ -3017,7 +3020,8 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
             cellHeaderPaths: this.getCellHeaderPaths(col, row)
           },
           styleClass,
-          this.options.autoWrapText
+          this.options.autoWrapText,
+          this.theme
         );
       }
       this.headerStyleCache.set(cacheKey, cacheStyle);
@@ -3063,7 +3067,8 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
         cellHeaderPaths: this.getCellHeaderPaths(col, row)
       },
       styleClass,
-      this.options.autoWrapText
+      this.options.autoWrapText,
+      this.theme
     );
     if (!isFunction(style)) {
       if (layoutMap.isBottomFrozenRow(row)) {
