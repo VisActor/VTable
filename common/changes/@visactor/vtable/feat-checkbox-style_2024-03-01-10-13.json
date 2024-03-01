@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vtable",
+      "comment": "feat: add checkbox style theme",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vtable"
+}
