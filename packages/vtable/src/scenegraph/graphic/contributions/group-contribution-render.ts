@@ -149,13 +149,32 @@ export class SplitGroupAfterRenderContribution implements IGroupRenderContributi
         (typeof lineWidth === 'number' && lineWidth & 1) ||
         (Array.isArray(strokeArrayWidth) && strokeArrayWidth.some(width => width & 1))
       ) {
-        x = Math.floor(x) + 0.5;
-        y = Math.floor(y) + 0.5;
+        const table = (group.stage as any).table as BaseTableAPI;
+        const bottomRight = table.theme.cellBorderClipDirection === 'bottom-right';
+        let deltaWidth = 0;
+        let deltaHeight = 0;
+        if (bottomRight) {
+          x = Math.floor(x) - 0.5;
+          y = Math.floor(y) - 0.5;
+          if (group.role === 'cell') {
+            const col = (group as any).col as number;
+            const row = (group as any).row as number;
+            if (table && col === table.colCount - 1) {
+              deltaWidth = 1;
+            }
+            if (table && row === table.rowCount - 1) {
+              deltaHeight = 1;
+            }
+          }
+        } else {
+          x = Math.floor(x) + 0.5;
+          y = Math.floor(y) + 0.5;
+        }
 
         const { width: widthFroDraw, height: heightFroDraw } = getCellSizeForDraw(
           group,
-          Math.ceil(width),
-          Math.ceil(height)
+          Math.ceil(width + deltaWidth),
+          Math.ceil(height + deltaHeight)
         );
         widthForStroke = widthFroDraw;
         heightForStroke = heightFroDraw;
@@ -472,13 +491,32 @@ export class DashGroupAfterRenderContribution implements IGroupRenderContributio
     let widthForStroke;
     let heightForStroke;
     if (lineWidth & 1) {
-      x = Math.floor(x) + 0.5;
-      y = Math.floor(y) + 0.5;
+      const table = (group.stage as any).table as BaseTableAPI;
+      const bottomRight = table.theme.cellBorderClipDirection === 'bottom-right';
+      let deltaWidth = 0;
+      let deltaHeight = 0;
+      if (bottomRight) {
+        x = Math.floor(x) - 0.5;
+        y = Math.floor(y) - 0.5;
+        if (group.role === 'cell') {
+          const col = (group as any).col as number;
+          const row = (group as any).row as number;
+          if (table && col === table.colCount - 1) {
+            deltaWidth = 1;
+          }
+          if (table && row === table.rowCount - 1) {
+            deltaHeight = 1;
+          }
+        }
+      } else {
+        x = Math.floor(x) + 0.5;
+        y = Math.floor(y) + 0.5;
+      }
 
       const { width: widthFroDraw, height: heightFroDraw } = getCellSizeForDraw(
         group,
-        Math.ceil(width),
-        Math.ceil(height)
+        Math.ceil(width + deltaWidth),
+        Math.ceil(height + deltaHeight)
       );
       widthForStroke = widthFroDraw;
       heightForStroke = heightFroDraw;
@@ -650,11 +688,31 @@ export class AdjustPosGroupAfterRenderContribution implements IGroupRenderContri
         Math.ceil(height)
       );
       context.beginPath();
-      x = Math.floor(x) + 0.5;
-      y = Math.floor(y) + 0.5;
+      const table = (group.stage as any).table as BaseTableAPI;
+      const bottomRight = table.theme.cellBorderClipDirection === 'bottom-right';
+      let deltaWidth = 0;
+      let deltaHeight = 0;
+      if (bottomRight) {
+        x = Math.floor(x) - 0.5;
+        y = Math.floor(y) - 0.5;
+        if (group.role === 'cell') {
+          const col = (group as any).col as number;
+          const row = (group as any).row as number;
+          if (table && col === table.colCount - 1) {
+            deltaWidth = 1;
+          }
+          if (table && row === table.rowCount - 1) {
+            deltaHeight = 1;
+          }
+        }
+      } else {
+        x = Math.floor(x) + 0.5;
+        y = Math.floor(y) + 0.5;
+      }
+
       if (cornerRadius) {
         // 测试后，cache对于重绘性能提升不大，但是在首屏有一定性能损耗，因此rect不再使用cache
-        createRectPath(context, x, y, widthFroDraw, heightFroDraw, cornerRadius);
+        createRectPath(context, x, y, widthFroDraw + deltaWidth, heightFroDraw + deltaHeight, cornerRadius);
       } else {
         context.rect(x, y, widthFroDraw, heightFroDraw);
       }

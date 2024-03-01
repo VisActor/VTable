@@ -146,8 +146,13 @@ export interface ITableThemeDefine {
   // style for text pop tip
   textPopTipStyle?: PopTipAttributes;
 
+  // senior config for fs
   // 四边单元格，靠近边框的border是否显示；配置false的话，左侧单元格不显示左边框，同理
   cellInnerBorder?: boolean;
+  // cell border clip direction
+  cellBorderClipDirection?: 'top-left' | 'bottom-right'; // default is 'top-left'
+  // text offset, hack for fs
+  _contentOffset?: number;
 }
 
 export type RequiredTableThemeDefine = Required<ITableThemeDefine>;
