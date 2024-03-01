@@ -439,30 +439,120 @@ export function createTable() {
         cellType: 'chart',
         chartModule: 'vchart',
         width: 500,
-        chartSpec: {
-          type: 'common',
-          series: [
-            {
-              type: 'line',
-              data: {
-                id: 'data',
-                transforms: [
-                  {
-                    type: 'fold',
-                    options: {
-                      key: 'x', // 转化后，原始数据的 key 放入这个配置对应的字段中作为值
-                      value: 'y', // 转化后，原始数据的 value 放入这个配置对应的字段中作为值
-                      fields: Object.keys(temperatureList[rowTree[0].value].day) // 需要转化的维度
+        chartSpec: args => {
+          if (args.row % 2 === 0) {
+            return {
+              type: 'common',
+              series: [
+                {
+                  type: 'area',
+                  data: {
+                    id: 'data',
+                    transforms: [
+                      {
+                        type: 'fold',
+                        options: {
+                          key: 'x', // 转化后，原始数据的 key 放入这个配置对应的字段中作为值
+                          value: 'y', // 转化后，原始数据的 value 放入这个配置对应的字段中作为值
+                          fields: Object.keys(temperatureList[rowTree[0].value].month) // 需要转化的维度
+                        }
+                      }
+                    ]
+                  },
+                  xField: 'x',
+                  yField: 'y',
+                  seriesField: 'type',
+                  point: {
+                    style: {
+                      fillOpacity: 1,
+                      strokeWidth: 0
+                    },
+                    state: {
+                      hover: {
+                        fillOpacity: 0.5,
+                        stroke: 'blue',
+                        strokeWidth: 2
+                      },
+                      selected: {
+                        fill: 'red'
+                      }
+                    }
+                  },
+                  area: {
+                    style: {
+                      fillOpacity: 0.3,
+                      stroke: '#000',
+                      strokeWidth: 4
+                    },
+                    state: {
+                      hover: {
+                        fillOpacity: 1
+                      },
+                      selected: {
+                        fill: 'red',
+                        fillOpacity: 1
+                      }
+                    }
+                  },
+                  line: {
+                    state: {
+                      hover: {
+                        stroke: 'red'
+                      },
+                      selected: {
+                        stroke: 'yellow'
+                      }
                     }
                   }
-                ]
-              },
-              xField: 'x',
-              yField: 'y',
-              seriesField: 'type'
-            }
-          ],
-          axes: [{ orient: 'left' }, { orient: 'bottom', label: { visible: true } }]
+                }
+              ],
+              axes: [{ orient: 'left' }, { orient: 'bottom', label: { visible: true } }],
+
+              markLine: [
+                {
+                  y: 0,
+                  line: {
+                    // 配置线样式
+                    style: {
+                      lineWidth: 1,
+                      stroke: 'black',
+                      lineDash: [5, 5]
+                    }
+                  },
+                  endSymbol: {
+                    style: {
+                      visible: false
+                    }
+                  }
+                }
+              ]
+            };
+          }
+          return {
+            type: 'common',
+            series: [
+              {
+                type: 'line',
+                data: {
+                  id: 'data',
+                  transforms: [
+                    {
+                      type: 'fold',
+                      options: {
+                        key: 'x', // 转化后，原始数据的 key 放入这个配置对应的字段中作为值
+                        value: 'y', // 转化后，原始数据的 value 放入这个配置对应的字段中作为值
+                        fields: Object.keys(temperatureList[rowTree[0].value].day) // 需要转化的维度
+                      }
+                    }
+                  ]
+                },
+                xField: 'x',
+                yField: 'y',
+                seriesField: 'type'
+              }
+            ],
+            axes: [{ orient: 'left' }, { orient: 'bottom', label: { visible: true } }]
+          };
         }
       },
       {

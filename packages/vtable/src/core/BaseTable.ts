@@ -2427,7 +2427,10 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     field: FieldDef,
     fieldKey?: FieldKeyDef
   ): ((v1: any, v2: any, order: string) => 0 | 1 | -1) | undefined;
-  abstract setRecords(records: Array<any>, sort?: SortState | SortState[]): void;
+  abstract setRecords(
+    records: Array<any>,
+    option?: { restoreHierarchyState: boolean; sort?: SortState | SortState[] }
+  ): void;
   abstract refreshHeader(): void;
   abstract refreshRowColCount(): void;
   abstract getHierarchyState(col: number, row: number): HierarchyState | null;
@@ -2453,8 +2456,11 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
    */
   abstract updatePagination(pagination: IPagination): void;
 
-  abstract hasCustomRenderOrLayout(): boolean;
+  abstract _hasCustomRenderOrLayout(): boolean;
 
+  get recordsCount() {
+    return this.records?.length;
+  }
   get allowFrozenColCount(): number {
     return this.internalProps.allowFrozenColCount;
   }
@@ -2591,9 +2597,6 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
   getHeaderField(col: number, row: number): FieldDef {
     return this.internalProps.layoutMap.getHeaderField(col, row);
   }
-  getHeaderFieldKey(col: number, row: number): FieldDef {
-    return this.internalProps.layoutMap.getHeaderFieldKey(col, row);
-  }
   /**
    * 根据行列号获取配置
    * @param  {number} col column index.
@@ -2682,12 +2685,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
    */
   _getHeaderCellBySortState(sortState: SortState): CellAddress | undefined {
     const { layoutMap } = this.internalProps;
-    let hd;
-    if (sortState.fieldKey) {
-      hd = layoutMap.headerObjects.find((col: any) => col && col.fieldKey === sortState.fieldKey);
-    } else {
-      hd = layoutMap.headerObjects.find((col: any) => col && col.field === sortState.field);
-    }
+    const hd = layoutMap.headerObjects.find((col: any) => col && col.field === sortState.field);
     if (hd) {
       const headercell = layoutMap.getHeaderCellAdressById(hd.id as number);
       return headercell;
@@ -2986,16 +2984,16 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
           this.options.autoWrapText
         );
       } else {
-        let defaultStyle;
-        if (layoutMap.isColumnHeader(col, row) || layoutMap.isBottomFrozenRow(col, row)) {
-          defaultStyle = this.theme.headerStyle;
-        } else if (this.internalProps.transpose && layoutMap.isRowHeader(col, row)) {
-          defaultStyle = this.theme.headerStyle;
-        } else if (layoutMap.isRowHeader(col, row) || layoutMap.isRightFrozenColumn(col, row)) {
-          defaultStyle = this.theme.rowHeaderStyle;
-        } else {
-          defaultStyle = this.theme.cornerHeaderStyle;
-        }
+        // let defaultStyle;
+        // if (layoutMap.isColumnHeader(col, row) || layoutMap.isBottomFrozenRow(col, row)) {
+        //   defaultStyle = this.theme.headerStyle;
+        // } else if (this.internalProps.transpose && layoutMap.isRowHeader(col, row)) {
+        //   defaultStyle = this.theme.headerStyle;
+        // } else if (layoutMap.isRowHeader(col, row) || layoutMap.isRightFrozenColumn(col, row)) {
+        //   defaultStyle = this.theme.rowHeaderStyle;
+        // } else {
+        //   defaultStyle = this.theme.cornerHeaderStyle;
+        // }
         // const styleClass = hd.headerType.StyleClass; //BaseHeader文件
         // const { style } = hd;
         const style = hd?.style || {};
@@ -3004,12 +3002,12 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
         }
         cacheStyle = <FullExtendStyle>headerStyleContents.of(
           style,
-          defaultStyle,
-          // layoutMap.isColumnHeader(col, row) || layoutMap.isBottomFrozenRow(col, row)
-          //   ? this.theme.headerStyle
-          //   : layoutMap.isRowHeader(col, row) || layoutMap.isRightFrozenColumn(col, row)
-          //   ? this.theme.rowHeaderStyle
-          //   : this.theme.cornerHeaderStyle,
+          // defaultStyle,
+          layoutMap.isColumnHeader(col, row) || layoutMap.isBottomFrozenRow(col, row)
+            ? this.theme.headerStyle
+            : layoutMap.isRowHeader(col, row) || layoutMap.isRightFrozenColumn(col, row)
+            ? this.theme.rowHeaderStyle
+            : this.theme.cornerHeaderStyle,
           {
             col,
             row,

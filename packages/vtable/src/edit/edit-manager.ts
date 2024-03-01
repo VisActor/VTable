@@ -3,6 +3,7 @@ import { TABLE_EVENT_TYPE } from '../core/TABLE_EVENT_TYPE';
 import type { BaseTableAPI } from '../ts-types/base-table';
 import type { ListTableAPI, ListTableConstructorOptions } from '../ts-types';
 import { getCellEventArgsSet } from '../event/util';
+import type { SimpleHeaderLayoutMap } from '../layout';
 
 export class EditManeger {
   table: BaseTableAPI;
@@ -70,6 +71,10 @@ export class EditManeger {
           console.warn("VTable Warn: this is merge cell, can't be edited");
           return;
         }
+      }
+      if ((this.table.internalProps.layoutMap as SimpleHeaderLayoutMap)?.isAggregation?.(col, row)) {
+        console.warn("VTable Warn: this is aggregation value, can't be edited");
+        return;
       }
       this.editingEditor = editor;
       this.editCell = { col, row };

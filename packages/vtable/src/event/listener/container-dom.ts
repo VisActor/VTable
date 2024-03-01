@@ -11,11 +11,11 @@ export function bindContainerDomListener(eventManager: EventManager) {
   const stateManager = table.stateManager;
   const handler: EventHandler = table.internalProps.handler;
 
-  handler.on(table.getElement(), 'mousedown', (e: MouseEvent) => {
-    if (table.eventManager.isPointerDownOnTable) {
-      e.stopPropagation();
-    }
-  });
+  // handler.on(table.getElement(), 'mousedown', (e: MouseEvent) => {
+  // if (table.eventManager.isPointerDownOnTable) {
+  //   e.stopPropagation();
+  // }
+  // });
 
   handler.on(table.getElement(), 'blur', (e: MouseEvent) => {
     eventManager.dealTableHover();

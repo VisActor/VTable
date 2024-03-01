@@ -8,12 +8,12 @@ import { getProp } from '../utils/get-prop';
 import { getQuadProps } from '../utils/padding';
 import { updateCellContentHeight } from '../utils/text-icon-layout';
 import type { IProgressbarColumnBodyDefine } from '../../ts-types/list-table/define/progressbar-define';
-import { dealWithCustom, getCustomCellMergeCustom } from '../component/custom';
+import { dealWithCustom } from '../component/custom';
 import { updateImageCellContentWhileResize } from '../group-creater/cell-type/image-cell';
 import { getStyleTheme } from '../../core/tableHelper';
 import { isMergeCellGroup } from '../utils/is-merge-cell-group';
 import type { BaseTableAPI } from '../../ts-types/base-table';
-import { resizeCellGroup } from '../group-creater/column-helper';
+import { resizeCellGroup, getCustomCellMergeCustom } from '../group-creater/cell-helper';
 import type { IGraphic } from '@src/vrender';
 import { getCellMergeRange } from '../../tools/merge-range';
 

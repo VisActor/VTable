@@ -217,7 +217,7 @@ export class Scenegraph {
    */
   clearCells() {
     // unbind AutoPoptip
-    if (this.table.isPivotChart() || this.table.hasCustomRenderOrLayout()) {
+    if (this.table.isPivotChart() || this.table._hasCustomRenderOrLayout()) {
       // bind for axis label in pivotChart
       this.stage.pluginService.findPluginsByName('poptipForText').forEach(plugin => {
         plugin.deactivate(this.stage.pluginService);
@@ -337,7 +337,7 @@ export class Scenegraph {
    */
   createSceneGraph() {
     // bind AutoPoptip
-    if (this.table.isPivotChart() || this.table.hasCustomRenderOrLayout()) {
+    if (this.table.isPivotChart() || this.table._hasCustomRenderOrLayout()) {
       // bind for axis label in pivotChart
       (this.stage.pluginService as any).autoEnablePlugins.getContributions().forEach((p: any) => {
         if (p.name === 'poptipForText') {
@@ -1451,12 +1451,7 @@ export class Scenegraph {
 
     this.updateTableSize();
 
-    // 记录滚动条原位置
-    const oldHorizontalBarPos = this.table.stateManager.scroll.horizontalBarPos;
-    const oldVerticalBarPos = this.table.stateManager.scroll.verticalBarPos;
     this.component.updateScrollBar();
-    this.table.stateManager.setScrollLeft(oldHorizontalBarPos);
-    this.table.stateManager.setScrollTop(oldVerticalBarPos);
     this.updateNextFrame();
   }
 
@@ -1499,9 +1494,9 @@ export class Scenegraph {
       this.rowHeaderGroup,
       this.isPivot
         ? this.table.theme.rowHeaderStyle.frameStyle
-        : this.table.internalProps.transpose
-        ? this.table.theme.headerStyle.frameStyle
-        : this.table.theme.bodyStyle.frameStyle,
+        : // : this.table.internalProps.transpose
+          // ? this.table.theme.headerStyle.frameStyle
+          this.table.theme.bodyStyle.frameStyle,
       this.rowHeaderGroup.role,
       isListTableWithFrozen ? [true, false, true, true] : undefined
     );

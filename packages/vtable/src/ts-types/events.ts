@@ -82,11 +82,12 @@ export interface TableEventHandlersEventArgumentMap {
     scrollRatioY?: number;
   };
   resize_column: { col: number; colWidth: number };
-  resize_column_end: { col: number; columns: number[] };
+  resize_column_end: { col: number; colWidths: number[] };
   change_header_position: { source: CellAddress; target: CellAddress };
   sort_click: {
     field: FieldDef;
     order: SortOrder;
+    event: Event;
   };
   freeze_click: { col: number; row: number; fields: FieldDef[]; colCount: number };
   dropdown_menu_click: DropDownMenuEventArgs;
@@ -97,7 +98,7 @@ export interface TableEventHandlersEventArgumentMap {
   copy_data: { cellRange: CellRange[]; copyData: string };
   drillmenu_click: DrillMenuEventInfo;
 
-  dropdown_icon_click: CellAddress;
+  dropdown_icon_click: CellAddress & { event: Event };
   dropdown_menu_clear: CellAddress;
 
   show_menu: {
@@ -116,6 +117,7 @@ export interface TableEventHandlersEventArgumentMap {
     y: number;
     funcType?: IconFuncTypeEnum | string;
     icon: Icon;
+    event: Event;
   };
 
   pivot_sort_click: {
@@ -124,6 +126,7 @@ export interface TableEventHandlersEventArgumentMap {
     order: SortOrder;
     dimensionInfo: IDimensionInfo[];
     cellLocation: CellLocation;
+    event: Event;
   };
   tree_hierarchy_state_change: {
     col: number;
@@ -164,6 +167,7 @@ export interface DrillMenuEventInfo {
   drillUp: boolean;
   col: number;
   row: number;
+  event: Event;
 }
 export interface TableEventHandlersReturnMap {
   selected_cell: void;

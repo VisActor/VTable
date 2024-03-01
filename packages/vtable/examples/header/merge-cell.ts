@@ -28,6 +28,121 @@ export function createTable() {
       progress: 28,
       id: 5,
       name: 'e'
+    },
+    {
+      progress: 100,
+      id: 1,
+      name: 'a'
+    },
+    {
+      progress: 80,
+      id: 2,
+      name: 'a'
+    },
+    {
+      progress: 1,
+      id: 3,
+      name: 'c'
+    },
+    {
+      progress: 55,
+      id: 4,
+      name: 'd'
+    },
+    {
+      progress: 28,
+      id: 5,
+      name: 'e'
+    },
+    {
+      progress: 100,
+      id: 1,
+      name: 'a'
+    },
+    {
+      progress: 80,
+      id: 2,
+      name: 'a'
+    },
+    {
+      progress: 1,
+      id: 3,
+      name: 'c'
+    },
+    {
+      progress: 55,
+      id: 4,
+      name: 'd'
+    },
+    {
+      progress: 28,
+      id: 5,
+      name: 'e'
+    },
+    {
+      progress: 100,
+      id: 1,
+      name: 'a'
+    },
+    {
+      progress: 80,
+      id: 2,
+      name: 'a'
+    },
+    {
+      progress: 1,
+      id: 3,
+      name: 'c'
+    },
+    {
+      progress: 55,
+      id: 4,
+      name: 'd'
+    },
+    {
+      progress: 28,
+      id: 5,
+      name: 'e'
+    },
+    {
+      progress: 100,
+      id: 1,
+      name: 'a'
+    },
+    {
+      progress: 80,
+      id: 2,
+      name: 'a'
+    },
+    {
+      progress: 1,
+      id: 3,
+      name: 'c'
+    },
+    {
+      progress: 55,
+      id: 4,
+      name: 'd'
+    },
+    {
+      progress: 28,
+      id: 5,
+      name: 'e'
+    },
+    {
+      progress: 1,
+      id: 3,
+      name: 'c'
+    },
+    {
+      progress: 55,
+      id: 4,
+      name: 'd'
+    },
+    {
+      progress: 28,
+      id: 5,
+      name: 'e'
     }
   ];
   const option: VTable.ListTableConstructorOptions = {
@@ -40,7 +155,10 @@ export function createTable() {
         },
         title: 'progress',
         description: '这是一个标题的详细描述',
-        width: 150
+        width: 150,
+        style: {
+          // textStick: true
+        }
       },
       {
         field: 'id',
@@ -56,6 +174,9 @@ export function createTable() {
             return v1 === v2 ? 0 : v1 > v2 ? -1 : 1;
           }
           return v1 === v2 ? 0 : v1 > v2 ? 1 : -1;
+        },
+        style: {
+          textStick: true
         },
         width: 100,
         mergeCell: true
@@ -112,31 +233,79 @@ export function createTable() {
           console.log(v, v2);
           return v === v2;
         }
+      },
+      {
+        field: 'id',
+        title: 'ID说明',
+        width: 150
+      },
+      {
+        field: 'id',
+        title: 'ID说明',
+        width: 150
+      },
+      {
+        field: 'id',
+        title: 'ID说明',
+        width: 150
+      },
+      {
+        field: 'id',
+        title: 'ID说明',
+        width: 150
+      },
+      {
+        field: 'id',
+        title: 'ID说明',
+        width: 150
+      },
+      {
+        field: 'id',
+        title: 'ID说明',
+        width: 150
+      },
+      {
+        field: 'id',
+        title: 'ID说明',
+        width: 150
+      },
+      {
+        field: 'id',
+        title: 'ID说明',
+        width: 150
       }
     ],
     showFrozenIcon: true, //显示VTable内置冻结列图标
     widthMode: 'standard',
-    allowFrozenColCount: 2
+    allowFrozenColCount: 2,
+    customMergeCell: (col, row, table) => {
+      if (col <= 1 && row > 0 && row < 11) {
+        return {
+          text: 'customMergeCell',
+          range: {
+            start: {
+              col: 0,
+              row: 1
+            },
+            end: {
+              col: 1,
+              row: 10
+            }
+          },
+          style: {
+            bgColor: 'red',
+            textStick: true
+          }
+        };
+      }
+    }
   };
 
   const instance = new ListTable(option);
-
+  window.tableInstance = instance;
   //设置表格数据
   instance.setRecords(personsDataSource, {
     field: 'id',
     order: 'desc'
   });
-  // instance.setRecords(personsDataSource);
-
-  VTable.bindDebugTool(instance.scenegraph.stage as any, {
-    customGrapicKeys: ['role', '_updateTag']
-  });
-
-  // instance.updateSortState({
-  //   field: 'id',
-  //   order: 'desc',
-  // });
-
-  // 只为了方便控制太调试用，不要拷贝
-  window.tableInstance = instance;
 }

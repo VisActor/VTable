@@ -1,6 +1,6 @@
 import type {
   FilterRules,
-  IDataConfig,
+  IPivotTableDataConfig,
   SortRule,
   AggregationRules,
   AggregationRule,
@@ -35,7 +35,7 @@ export class DatasetForPivotTable {
   /**
    * 用户配置
    */
-  dataConfig: IDataConfig;
+  dataConfig: IPivotTableDataConfig;
   /**
    * 明细数据
    */
@@ -94,7 +94,7 @@ export class DatasetForPivotTable {
   columns: string[];
   indicatorKeys: string[];
   constructor(
-    dataConfig: IDataConfig,
+    dataConfig: IPivotTableDataConfig,
     rows: string[],
     columns: string[],
     indicators: string[],
@@ -413,6 +413,9 @@ export class DatasetForPivotTable {
       : {
           className: '',
           push() {
+            // do nothing
+          },
+          recalculate() {
             // do nothing
           },
           value(): any {

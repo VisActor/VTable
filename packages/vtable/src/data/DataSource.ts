@@ -1,23 +1,37 @@
 import * as sort from '../tools/sort';
 import type {
+  CustomAggregation,
   DataSourceAPI,
   FieldAssessor,
   FieldData,
   FieldDef,
   FieldFormat,
+  FilterRules,
+  IListTableDataConfig,
   IPagination,
   MaybePromiseOrCallOrUndefined,
   MaybePromiseOrUndefined,
   SortOrder
 } from '../ts-types';
-import { HierarchyState } from '../ts-types';
+import { AggregationType, HierarchyState } from '../ts-types';
 import { applyChainSafe, getOrApply, obj, isPromise, emptyFn } from '../tools/helper';
 import { EventTarget } from '../event/EventTarget';
 import { getValueByPath, isAllDigits } from '../tools/util';
 import { calculateArrayDiff } from '../tools/diff-cell';
-import { cloneDeep, isValid } from '@visactor/vutils';
+import { arrayEqual, cloneDeep, isValid } from '@visactor/vutils';
 import type { BaseTableAPI } from '../ts-types/base-table';
-import { TABLE_EVENT_TYPE } from '../core/TABLE_EVENT_TYPE';
+import {
+  RecordAggregator,
+  type Aggregator,
+  SumAggregator,
+  CountAggregator,
+  MaxAggregator,
+  MinAggregator,
+  AvgAggregator,
+  NoneAggregator,
+  CustomAggregator
+} from '../dataset/statistics-helper';
+import type { ColumnData } from '../ts-types/list-table/layout-map/api';
 
 /**
  * 判断字段数据是否为访问器的格式
@@ -126,11 +140,13 @@ export interface ISortedMapItem {
 }
 
 export class DataSource extends EventTarget implements DataSourceAPI {
+  dataConfig: IListTableDataConfig;
+  dataSourceObj: DataSourceParam | DataSource;
   private _get: (index: number | number[]) => any;
   /** 数据条目数 如果是树形结构的数据 则是第一层父节点的数量 */
   private _sourceLength: number;
 
-  private readonly _source: any;
+  private _source: any;
   /**
    * 缓存按字段进行排序的结果
    */
@@ -142,24 +158,43 @@ export class DataSource extends EventTarget implements DataSourceAPI {
   private lastOrderFn: (a: any, b: any, order: string) => number;
   private lastOrderField: FieldDef;
   /** 每一行对应源数据的索引 */
-  protected currentIndexedData: (number | number[])[] | null = [];
+  currentIndexedData: (number | number[])[] | null = [];
   protected userPagination: IPagination;
   protected pagination: IPagination;
   /** 当前页每一行对应源数据的索引 */
-  protected _currentPagerIndexedData: (number | number[])[];
+  _currentPagerIndexedData: (number | number[])[];
   // 当前是否为层级的树形结构 排序时判断该值确实是否继续进行子节点排序
-  enableHierarchyState = false;
+  hierarchyExpandLevel: number = 0;
   static get EVENT_TYPE(): typeof EVENT_TYPE {
     return EVENT_TYPE;
   }
-  protected treeDataHierarchyState: Map<number | string, HierarchyState> = new Map();
+  treeDataHierarchyState: Map<number | string, HierarchyState> = new Map();
   beforeChangedRecordsMap: Record<number, any>[] = [];
-  constructor(obj?: DataSourceParam | DataSource, pagination?: IPagination, hierarchyExpandLevel?: number) {
-    super();
 
-    this._get = obj?.get.bind(obj) || (undefined as any);
-    this._sourceLength = obj?.length || 0;
-    this._source = obj?.source ?? obj;
+  // 注册聚合类型
+  registedAggregators: {
+    [key: string]: {
+      new (dimension: string | string[], formatFun?: any, isRecord?: boolean, aggregationFun?: Function): Aggregator;
+    };
+  } = {};
+  // columns对应各个字段的聚合类对象
+  fieldAggregators: Aggregator[] = [];
+  layoutColumnObjects: ColumnData[] = [];
+  constructor(
+    dataSourceObj?: DataSourceParam | DataSource,
+    dataConfig?: IListTableDataConfig,
+    pagination?: IPagination,
+    columnObjs?: ColumnData[],
+    hierarchyExpandLevel?: number
+  ) {
+    super();
+    this.registerAggregators();
+    this.dataSourceObj = dataSourceObj;
+    this.dataConfig = dataConfig;
+    this._get = dataSourceObj?.get.bind(dataSourceObj) || (undefined as any);
+    this.layoutColumnObjects = columnObjs;
+    this._source = this.processRecords(dataSourceObj?.source ?? dataSourceObj);
+    this._sourceLength = this._source?.length || 0;
     this.sortedIndexMap = new Map<string, ISortedMapItem>();
 
     this._currentPagerIndexedData = [];
@@ -170,34 +205,121 @@ export class DataSource extends EventTarget implements DataSourceAPI {
       currentPage: 0
     };
     if (hierarchyExpandLevel >= 1) {
-      this.enableHierarchyState = true;
+      this.hierarchyExpandLevel = hierarchyExpandLevel;
     }
-    // 初始化currentIndexedData 正常未排序。设置其状态
     this.currentIndexedData = Array.from({ length: this._sourceLength }, (_, i) => i);
-    if (this.enableHierarchyState) {
+    // 初始化currentIndexedData 正常未排序。设置其状态
+    this.initTreeHierarchyState();
+    this.updatePagerData();
+  }
+  initTreeHierarchyState() {
+    if (this.hierarchyExpandLevel) {
+      this.treeDataHierarchyState = new Map();
       for (let i = 0; i < this._sourceLength; i++) {
         //expandLevel为有效值即需要按tree分析展示数据
         const nodeData = this.getOriginalRecord(i);
         (nodeData as any).children && this.treeDataHierarchyState.set(i, HierarchyState.collapse);
       }
-    }
-    if (hierarchyExpandLevel > 1) {
-      let nodeLength = this._sourceLength;
-      for (let i = 0; i < nodeLength; i++) {
-        const indexKey = this.currentIndexedData[i];
-        const nodeData = this.getOriginalRecord(indexKey);
-        if ((nodeData as any).children?.length > 0) {
-          this.treeDataHierarchyState.set(
-            Array.isArray(indexKey) ? indexKey.join(',') : indexKey,
-            HierarchyState.expand
-          );
-          const childrenLength = this.initChildrenNodeHierarchy(indexKey, hierarchyExpandLevel, 2, nodeData);
-          i += childrenLength;
-          nodeLength += childrenLength;
+
+      this.currentIndexedData = Array.from({ length: this._sourceLength }, (_, i) => i);
+      if (this.hierarchyExpandLevel > 1) {
+        let nodeLength = this._sourceLength;
+        for (let i = 0; i < nodeLength; i++) {
+          const indexKey = this.currentIndexedData[i];
+          const nodeData = this.getOriginalRecord(indexKey);
+          if ((nodeData as any).children?.length > 0) {
+            this.treeDataHierarchyState.set(
+              Array.isArray(indexKey) ? indexKey.join(',') : indexKey,
+              HierarchyState.expand
+            );
+            const childrenLength = this.initChildrenNodeHierarchy(indexKey, this.hierarchyExpandLevel, 2, nodeData);
+            i += childrenLength;
+            nodeLength += childrenLength;
+          }
         }
       }
     }
-    this.updatePagerData();
+  }
+  //将聚合类型注册 收集到aggregators
+  registerAggregator(type: string, aggregator: any) {
+    this.registedAggregators[type] = aggregator;
+  }
+  //将聚合类型注册
+  registerAggregators() {
+    this.registerAggregator(AggregationType.RECORD, RecordAggregator);
+    this.registerAggregator(AggregationType.SUM, SumAggregator);
+    this.registerAggregator(AggregationType.COUNT, CountAggregator);
+    this.registerAggregator(AggregationType.MAX, MaxAggregator);
+    this.registerAggregator(AggregationType.MIN, MinAggregator);
+    this.registerAggregator(AggregationType.AVG, AvgAggregator);
+    this.registerAggregator(AggregationType.NONE, NoneAggregator);
+    this.registerAggregator(AggregationType.CUSTOM, CustomAggregator);
+  }
+  _generateFieldAggragations() {
+    const columnObjs = this.layoutColumnObjects;
+    for (let i = 0; i < columnObjs?.length; i++) {
+      columnObjs[i].aggregator = null; //重置聚合器 如更新了过滤条件都需要重新计算
+      const field = columnObjs[i].field;
+      const aggragation = columnObjs[i].aggregation;
+      if (!aggragation) {
+        continue;
+      }
+      if (Array.isArray(aggragation)) {
+        for (let j = 0; j < aggragation.length; j++) {
+          const item = aggragation[j];
+          const aggregator = new this.registedAggregators[item.aggregationType](
+            field as string,
+            item.formatFun,
+            true,
+            (item as CustomAggregation).aggregationFun
+          );
+          this.fieldAggregators.push(aggregator);
+          if (!columnObjs[i].aggregator) {
+            columnObjs[i].aggregator = [];
+          }
+          columnObjs[i].aggregator.push(aggregator);
+        }
+      } else {
+        const aggregator = new this.registedAggregators[aggragation.aggregationType](
+          field as string,
+          aggragation.formatFun,
+          true,
+          (aggragation as CustomAggregation).aggregationFun
+        );
+        this.fieldAggregators.push(aggregator);
+        columnObjs[i].aggregator = aggregator;
+      }
+    }
+  }
+  processRecords(records: any[]) {
+    this._generateFieldAggragations();
+    const filteredRecords = [];
+    const isHasAggregation = this.fieldAggregators.length >= 1;
+    const isHasFilterRule = this.dataConfig?.filterRules?.length >= 1;
+    if (isHasFilterRule || isHasAggregation) {
+      for (let i = 0, len = records.length; i < len; i++) {
+        const record = records[i];
+        if (isHasFilterRule) {
+          if (this.filterRecord(record)) {
+            filteredRecords.push(record);
+            isHasAggregation && this.processRecord(record);
+          }
+        } else if (isHasAggregation) {
+          this.processRecord(record);
+        }
+      }
+      if (isHasFilterRule) {
+        return filteredRecords;
+      }
+    }
+    return records;
+  }
+
+  processRecord(record: any) {
+    for (let i = 0; i < this.fieldAggregators.length; i++) {
+      const aggregator = this.fieldAggregators[i];
+      aggregator.push(record);
+    }
   }
   /**
    * 初始化子节点的层次信息
@@ -300,7 +422,10 @@ export class DataSource extends EventTarget implements DataSourceAPI {
   getIndexKey(index: number): number | number[] {
     return _getIndex(this.currentPagerIndexedData, index);
   }
-  getTableIndex(colOrRow: number): number {
+  getTableIndex(colOrRow: number | number[]): number {
+    if (Array.isArray(colOrRow)) {
+      return this.currentPagerIndexedData.findIndex(value => arrayEqual(value, colOrRow));
+    }
     return this.currentPagerIndexedData.findIndex(value => value === colOrRow);
   }
   /** 获取数据源中第index位置的field字段数据。传入col row是因为后面的format函数参数使用*/
@@ -512,7 +637,7 @@ export class DataSource extends EventTarget implements DataSourceAPI {
     this.source.splice(index, 0, record);
     this.currentIndexedData.push(this.currentIndexedData.length);
     this._sourceLength += 1;
-
+    this.initTreeHierarchyState();
     if (this.userPagination) {
       //如果用户配置了分页
       this.pagination.totalCount = this._sourceLength;
@@ -720,7 +845,7 @@ export class DataSource extends EventTarget implements DataSourceAPI {
       );
     }
     this.currentIndexedData = sortedIndexArray;
-    if (this.enableHierarchyState) {
+    if (this.hierarchyExpandLevel) {
       let nodeLength = sortedIndexArray.length;
       const t0 = window.performance.now();
       for (let i = 0; i < nodeLength; i++) {
@@ -740,6 +865,52 @@ export class DataSource extends EventTarget implements DataSourceAPI {
     filedMap[order] = sortedIndexArray;
     this.updatePagerData();
     this.fireListeners(EVENT_TYPE.CHANGE_ORDER, null);
+  }
+
+  private filterRecord(record: any) {
+    let isReserved = true;
+    for (let i = 0; i < this.dataConfig.filterRules.length; i++) {
+      const filterRule = this.dataConfig?.filterRules[i];
+      if (filterRule.filterKey) {
+        const filterValue = record[filterRule.filterKey];
+        if (filterRule.filteredValues.indexOf(filterValue) === -1) {
+          isReserved = false;
+          break;
+        }
+      } else if (!filterRule.filterFunc?.(record)) {
+        isReserved = false;
+        break;
+      }
+    }
+    return isReserved;
+  }
+
+  updateFilterRulesForSorted(filterRules?: FilterRules): void {
+    this.dataConfig.filterRules = filterRules;
+    this._source = this.processRecords(this.dataSourceObj?.source ?? this.dataSourceObj);
+    this._sourceLength = this._source?.length || 0;
+    this.sortedIndexMap.clear();
+    this.currentIndexedData = Array.from({ length: this._sourceLength }, (_, i) => i);
+    if (!this.userPagination) {
+      this.pagination.perPageCount = this._sourceLength;
+      this.pagination.totalCount = this._sourceLength;
+    }
+  }
+
+  updateFilterRules(filterRules?: FilterRules): void {
+    this.dataConfig.filterRules = filterRules;
+    this._source = this.processRecords(this.dataSourceObj?.source ?? this.dataSourceObj);
+    this._sourceLength = this._source?.length || 0;
+    // 初始化currentIndexedData 正常未排序。设置其状态
+    this.currentIndexedData = Array.from({ length: this._sourceLength }, (_, i) => i);
+    if (this.userPagination) {
+      // 如果用户配置了分页
+      this.updatePagerData();
+    } else {
+      this.pagination.perPageCount = this._sourceLength;
+      this.pagination.totalCount = this._sourceLength;
+      this.updatePagerData();
+    }
   }
   /**
    * 当节点折叠或者展开时 将排序缓存清空（非当前排序规则的缓存）
@@ -801,6 +972,9 @@ export class DataSource extends EventTarget implements DataSourceAPI {
     this.currentPagerIndexedData.length = 0;
   }
   protected getOriginalRecord(dataIndex: number | number[]): MaybePromiseOrUndefined {
+    if (this.dataConfig?.filterRules) {
+      return (this.source as Array<any>)[dataIndex as number];
+    }
     return getValue(this._get(dataIndex), (val: MaybePromiseOrUndefined) => {
       this.recordPromiseCallBack(dataIndex, val);
     });

@@ -311,8 +311,8 @@ export function createTable() {
     menu: {
       renderMode: 'html',
       defaultHeaderMenuItems: ['升序排序', '降序排序', '冻结列'],
-      contextMenuItems: (field: string, row: number) => {
-        console.log(field, row);
+      contextMenuItems: (field: string, row: number, col: number) => {
+        console.log(field, row, col);
         return [
           { text: '复制表头', menuKey: '复制表头$1' },
           { text: '复制单元格', menuKey: '复制单元格$1' }

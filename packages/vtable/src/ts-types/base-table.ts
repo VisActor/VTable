@@ -32,7 +32,7 @@ import type {
   HeaderValues,
   HeightModeDef,
   HierarchyState,
-  IDataConfig,
+  IPivotTableDataConfig,
   IPagination,
   ITableThemeDefine,
   SortState,
@@ -46,7 +46,9 @@ import type {
   CustomMerge,
   IColumnDimension,
   IRowDimension,
-  TableEventOptions
+  TableEventOptions,
+  IPivotChartDataConfig,
+  IListTableDataConfig
 } from '.';
 import type { TooltipOptions } from './tooltip';
 import type { IWrapTextGraphicAttribute } from '../scenegraph/graphic/text';
@@ -156,7 +158,7 @@ export interface IBaseTableProtected {
     /** 内置下拉菜单的全局设置项 目前只针对基本表格有效 会对每个表头单元格开启默认的下拉菜单功能。代替原来的option.dropDownMenu*/
     defaultHeaderMenuItems?: MenuListItem[];
     /** 右键菜单。代替原来的option.contextmenu */
-    contextMenuItems?: MenuListItem[] | ((field: FieldDef, row: number) => MenuListItem[]);
+    contextMenuItems?: MenuListItem[] | ((field: FieldDef, row: number, col: number) => MenuListItem[]);
     /** 设置选中状态的菜单。代替原来的option.dropDownMenuHighlight  */
     dropDownMenuHighlight?: DropDownMenuHighlightInfo[];
   };
@@ -299,7 +301,7 @@ export interface BaseTableConstructorOptions {
     /** 内置下拉菜单的全局设置项 目前只针对基本表格有效 会对每个表头单元格开启默认的下拉菜单功能。代替原来的option.dropDownMenu*/
     defaultHeaderMenuItems?: MenuListItem[];
     /** 右键菜单。代替原来的option.contextmenu */
-    contextMenuItems?: MenuListItem[] | ((field: string, row: number) => MenuListItem[]);
+    contextMenuItems?: MenuListItem[] | ((field: string, row: number, col: number) => MenuListItem[]);
     /** 设置选中状态的菜单。代替原来的option.dropDownMenuHighlight  */
     dropDownMenuHighlight?: DropDownMenuHighlightInfo[];
   };
@@ -375,6 +377,8 @@ export interface BaseTableConstructorOptions {
   resizeTime?: number;
 }
 export interface BaseTableAPI {
+  /** 数据总条目数 */
+  recordsCount: number;
   /** 表格的行数 */
   rowCount: number;
   /** 表格的列数 */
@@ -505,12 +509,12 @@ export interface BaseTableAPI {
   setMaxColWidth: (col: number, maxwidth: string | number) => void;
   getMinColWidth: (col: number) => number;
   setMinColWidth: (col: number, minwidth: string | number) => void;
-  getCellRect: (col: number, row: number) => RectProps;
-  getCellRelativeRect: (col: number, row: number) => RectProps;
-  getCellsRect: (startCol: number, startRow: number, endCol: number, endRow: number) => RectProps;
-  getCellRangeRect: (cellRange: CellRange | CellAddress) => RectProps;
-  getCellRangeRelativeRect: (cellRange: CellRange | CellAddress) => RectProps;
-  getVisibleCellRangeRelativeRect: (cellRange: CellRange | CellAddress) => RectProps;
+  getCellRect: (col: number, row: number) => Rect;
+  getCellRelativeRect: (col: number, row: number) => Rect;
+  getCellsRect: (startCol: number, startRow: number, endCol: number, endRow: number) => Rect;
+  getCellRangeRect: (cellRange: CellRange | CellAddress) => Rect;
+  getCellRangeRelativeRect: (cellRange: CellRange | CellAddress) => Rect;
+  getVisibleCellRangeRelativeRect: (cellRange: CellRange | CellAddress) => Rect;
   isFrozenCell: (col: number, row: number) => { row: boolean; col: boolean } | null;
   getRowAt: (absoluteY: number) => { top: number; row: number; bottom: number };
   getColAt: (absoluteX: number) => { left: number; col: number; right: number };
@@ -566,7 +570,6 @@ export interface BaseTableAPI {
   getRecordStartRowByRecordIndex: (index: number) => number;
 
   getHeaderField: (col: number, row: number) => any | undefined;
-  getHeaderFieldKey: (col: number, row: number) => any | undefined;
 
   _getHeaderCellBySortState: (sortState: SortState) => CellAddress | undefined;
   getHeaderDefine: (col: number, row: number) => ColumnDefine;
@@ -686,7 +689,7 @@ export interface BaseTableAPI {
   /** 获取表格body部分的显示行号范围 */
   getBodyVisibleRowRange: () => { rowStart: number; rowEnd: number };
 
-  hasCustomRenderOrLayout: () => boolean;
+  _hasCustomRenderOrLayout: () => boolean;
   /** 根据表格单元格的行列号 获取在body部分的列索引及行索引 */
   getBodyIndexByTableIndex: (col: number, row: number) => CellAddress;
   /** 根据body部分的列索引及行索引，获取单元格的行列号 */
@@ -700,6 +703,7 @@ export interface BaseTableAPI {
 export interface ListTableProtected extends IBaseTableProtected {
   /** 表格数据 */
   records: any[] | null;
+  dataConfig?: IListTableDataConfig;
   columns: ColumnsDefine;
   layoutMap: SimpleHeaderLayoutMap;
 }
@@ -708,7 +712,7 @@ export interface PivotTableProtected extends IBaseTableProtected {
   /** 表格数据 */
   records: any[] | null;
   layoutMap: PivotHeaderLayoutMap;
-  dataConfig?: IDataConfig;
+  dataConfig?: IPivotTableDataConfig;
   /**
    * 透视表是否开启数据分析
    * 如果传入数据是明细数据需要聚合分析则开启
@@ -731,7 +735,7 @@ export interface PivotChartProtected extends IBaseTableProtected {
   /** 表格数据 */
   records: any[] | Record<string, any[]>;
   layoutMap: PivotHeaderLayoutMap;
-  dataConfig?: IDataConfig;
+  dataConfig?: IPivotChartDataConfig;
   columnTree?: IHeaderTreeDefine[];
   /** 行表头维度结构 */
   rowTree?: IHeaderTreeDefine[];

@@ -204,13 +204,14 @@ export class TooltipHandler {
       this._unbindFromCell();
     });
     table.on(TABLE_EVENT_TYPE.SCROLL, e => {
-      const info = this._attachInfo;
-      if (info?.tooltipOptions && info?.range?.start) {
-        const { col, row } = info.range.start;
-        const rect = table.getCellRangeRelativeRect({ col, row });
-        info.tooltipOptions.referencePosition.rect = rect;
-        this._move(info.range.start.col, info.range.start.row, info.tooltipOptions);
-      }
+      this._unbindFromCell();
+      // const info = this._attachInfo;
+      // if (info?.tooltipOptions && info?.range?.start) {
+      //   const { col, row } = info.range.start;
+      //   const rect = table.getCellRangeRelativeRect({ col, row });
+      //   info.tooltipOptions.referencePosition.rect = rect;
+      //   this._move(info.range.start.col, info.range.start.row, info.tooltipOptions);
+      // }
     });
   }
   _getTooltipInstanceInfo(col: number, row: number): BaseTooltip | null {

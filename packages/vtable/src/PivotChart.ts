@@ -150,6 +150,9 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
   get pivotChartAxes() {
     return this._axes;
   }
+  get recordsCount() {
+    return this.records?.length;
+  }
 
   isListTable(): false {
     return false;
@@ -173,7 +176,7 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
     }
     return ifCan;
   }
-  updateOption(options: PivotChartConstructorOptions, accelerateFirstScreen = false) {
+  updateOption(options: PivotChartConstructorOptions) {
     const internalProps = this.internalProps;
     //维护选中状态
     // const range = internalProps.selection.range; //保留原有单元格选中状态
@@ -719,7 +722,8 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
       dimensionKey: dimensionInfos[dimensionInfos.length - 1].dimensionKey,
       value: this.getCellValue(col, row),
       cellLocation: this.getCellLocation(col, row),
-      isPivotCorner: this.isCornerHeader(col, row)
+      isPivotCorner: this.isCornerHeader(col, row),
+      event: undefined
     };
     return result;
   }
@@ -1221,7 +1225,7 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
     this.eventManager.updateEventBinder();
   }
 
-  hasCustomRenderOrLayout() {
+  _hasCustomRenderOrLayout() {
     if (this.options.customRender) {
       return true;
     }
