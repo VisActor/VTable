@@ -934,18 +934,18 @@ export class Scenegraph {
     if (this.table.bottomFrozenRowCount > 0) {
       this.bottomFrozenGroup.setAttribute(
         'y',
-        this.tableGroup.attribute.height - this.bottomFrozenGroup.attribute.height
+        this.tableGroup.attribute.height - this.table.getBottomFrozenRowsHeight()
       );
       this.leftBottomCornerGroup.setAttributes({
         visible: true,
-        y: this.tableGroup.attribute.height - this.bottomFrozenGroup.attribute.height,
-        height: this.bottomFrozenGroup.attribute.height,
+        y: this.tableGroup.attribute.height - this.table.getBottomFrozenRowsHeight(),
+        height: this.table.getBottomFrozenRowsHeight(),
         width: this.table.getFrozenColsWidth()
       });
       this.rightBottomCornerGroup.setAttributes({
         visible: true,
-        y: this.tableGroup.attribute.height - this.bottomFrozenGroup.attribute.height,
-        height: this.bottomFrozenGroup.attribute.height
+        y: this.tableGroup.attribute.height - this.table.getBottomFrozenRowsHeight(),
+        height: this.table.getBottomFrozenRowsHeight()
       });
     }
 

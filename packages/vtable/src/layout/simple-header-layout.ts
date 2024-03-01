@@ -478,10 +478,10 @@ export class SimpleHeaderLayoutMap implements LayoutMapAPI {
   }
   get rightFrozenColCount(): number {
     if (this._table.internalProps.rightFrozenColCount) {
-      if (this.colCount - this.rowHeaderLevelCount >= this._table.internalProps.rightFrozenColCount) {
+      if (this.colCount - this.frozenColCount >= this._table.internalProps.rightFrozenColCount) {
         return this._table.internalProps.rightFrozenColCount;
       }
-      return this.colCount - this.rowHeaderLevelCount;
+      return Math.max(0, this.colCount - this.frozenColCount);
     }
     return 0;
   }
