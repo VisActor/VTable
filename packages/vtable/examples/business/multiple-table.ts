@@ -107,7 +107,9 @@ export function createTable(container) {
     showFrozenIcon: true, //显示VTable内置冻结列图标
     widthMode: 'standard',
     allowFrozenColCount: 2,
-    overscrollBehavior: container === container1 ? 'none' : 'auto'
+    eventOptions: {
+      overscrollBehavior: container === container1 ? 'none' : 'auto'
+    }
   };
 
   const instance = new ListTable(option);

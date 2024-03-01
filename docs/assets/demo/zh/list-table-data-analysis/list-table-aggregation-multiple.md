@@ -166,7 +166,6 @@ const option = {
   frozenColCount: 1,
   bottomFrozenRowCount: 2,
   rightFrozenColCount: 1,
-  overscrollBehavior: 'none',
   autoWrapText: true,
   widthMode: 'autoWidth',
   heightMode: 'autoHeight',

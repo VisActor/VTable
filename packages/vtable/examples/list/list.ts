@@ -165,7 +165,6 @@ export function createTable() {
     frozenColCount: 1,
     bottomFrozenRowCount: 2,
     rightFrozenColCount: 2,
-    overscrollBehavior: 'none',
     dragHeaderMode: 'all',
     keyboardOptions: {
       pasteValueToCell: true

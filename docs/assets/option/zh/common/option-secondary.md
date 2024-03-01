@@ -112,6 +112,15 @@
 ##${prefix} preventDefaultContextMenu(boolean) = true
 组织鼠标右键的默认行为
 
+##${prefix} overscrollBehavior(string) = 'auto'
+
+表格滚动行为，可设置：'auto'|'none'，默认值为'auto'。
+
+```
+'auto': 表格滚动到顶部或者底部时，触发浏览器默认行为;
+'none': 表格滚动到顶部或者底部时, 触发浏览器默认行为;
+```
+
 #${prefix} columnResizeMode(string) = 'all'
 
 鼠标 hover 到单元格右边界可拖拽调整列宽。该操作可触发的范围：
@@ -293,15 +302,6 @@ html 目前实现较完整，先默认使用 html 渲染方式。目前暂不支
 {{ use: common-custom-render-object(
   prefix = '##' + ${prefix},
 ) }}
-
-## overscrollBehavior(string) = 'auto'
-
-表格滚动行为，可设置：'auto'|'none'，默认值为'auto'。
-
-```
-'auto': 表格滚动到顶部或者底部时，触发浏览器默认行为;
-'none': 表格滚动到顶部或者底部时, 触发浏览器默认行为;
-```
 
 #${prefix} customMergeCell(Function)
 自定义单元格合并规则，传入的行列号在目标区域内时，返回合并规则：
