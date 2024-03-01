@@ -92,6 +92,11 @@ export interface TableKeyboardOptions {
 export interface TableEventOptions {
   /** 是否阻止右键的默认行为， 默认为true。*/
   preventDefaultContextMenu?: boolean;
+  /**
+   * 'auto':和浏览器滚动行为一致 表格滚动到顶部/底部时 触发浏览器默认行为;
+   *  设置为 'none' 时, 表格滚动到顶部/底部时, 不再触发父容器滚动
+   * */
+  overscrollBehavior?: 'auto' | 'none';
 }
 export interface DataSourceAPI {
   clearCurrentIndexedData: () => void;

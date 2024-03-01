@@ -52,7 +52,7 @@ export function bindTouchListener(eventManager: EventManager) {
 
       if (
         e.cancelable &&
-        (table.internalProps.overscrollBehavior === 'none' ||
+        (table.internalProps.eventOptions.overscrollBehavior === 'none' ||
           (Math.abs(deltaY) >= Math.abs(deltaX) && deltaY !== 0 && isVerticalScrollable(deltaY, stateManager)) ||
           (Math.abs(deltaY) <= Math.abs(deltaX) && deltaX !== 0 && isHorizontalScrollable(deltaX, stateManager)))
       ) {

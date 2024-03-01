@@ -194,7 +194,6 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
       modeParams,
       canvasWidth,
       canvasHeight,
-      overscrollBehavior,
       limitMinWidth
     } = options;
     this.container = container;
@@ -260,12 +259,14 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
 
     internalProps.keyboardOptions = keyboardOptions;
     internalProps.eventOptions = eventOptions;
+    if (!internalProps.eventOptions.overscrollBehavior) {
+      internalProps.eventOptions.overscrollBehavior = 'auto';
+    }
 
     internalProps.columnResizeMode = columnResizeMode;
     internalProps.dragHeaderMode = dragHeaderMode;
     internalProps.renderChartAsync = renderChartAsync;
     setBatchRenderChartCount(renderChartAsyncBatchCount);
-    internalProps.overscrollBehavior = overscrollBehavior ?? 'auto';
     internalProps._rowHeightsMap = new NumberRangeMap(this);
     internalProps._rowRangeHeightsMap = new Map();
     internalProps._colRangeWidthsMap = new Map();
@@ -1941,7 +1942,6 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
       customRender,
       renderChartAsync,
       renderChartAsyncBatchCount,
-      overscrollBehavior,
       limitMinWidth
     } = options;
     if (pixelRatio && pixelRatio !== this.internalProps.pixelRatio) {
@@ -1986,12 +1986,14 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     internalProps.defaultHeaderColWidth = defaultHeaderColWidth ?? defaultColWidth;
     internalProps.keyboardOptions = keyboardOptions;
     internalProps.eventOptions = eventOptions;
+    if (!internalProps.eventOptions.overscrollBehavior) {
+      internalProps.eventOptions.overscrollBehavior = 'auto';
+    }
 
     internalProps.columnResizeMode = columnResizeMode;
     internalProps.dragHeaderMode = dragHeaderMode;
     internalProps.renderChartAsync = renderChartAsync;
     setBatchRenderChartCount(renderChartAsyncBatchCount);
-    internalProps.overscrollBehavior = overscrollBehavior ?? 'auto';
     internalProps.cellTextOverflows = {};
     internalProps._rowHeightsMap = new NumberRangeMap(this);
     internalProps._rowRangeHeightsMap = new Map();
