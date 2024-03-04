@@ -2,6 +2,27 @@
   "name": "@visactor/vtable",
   "entries": [
     {
+      "version": "0.20.2",
+      "tag": "@visactor/vtable_v0.20.2",
+      "date": "Fri, 01 Mar 2024 11:46:26 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "fix: rightFrozenCol is bigger then colCount #1162\n\n"
+          },
+          {
+            "comment": "fix: header description tooltip flicker #1173\n\n"
+          },
+          {
+            "comment": "feat: add checkbox style theme"
+          },
+          {
+            "comment": "fix: add fontStyle & fontVariant"
+          }
+        ]
+      }
+    },
+    {
       "version": "0.20.1",
       "tag": "@visactor/vtable_v0.20.1",
       "date": "Thu, 29 Feb 2024 11:57:42 GMT",
