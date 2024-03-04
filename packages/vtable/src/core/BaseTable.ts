@@ -291,6 +291,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     internalProps.cellTextOverflows = {};
     internalProps.focusedTable = false;
     internalProps.theme = themes.of(options.theme ?? themes.DEFAULT); //原来在listTable文件中
+    internalProps.theme.isPivot = this.isPivotTable();
 
     if (container) {
       //先清空
@@ -303,6 +304,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
 
     this.options = options;
     internalProps.theme = themes.of(options.theme ?? themes.DEFAULT);
+    internalProps.theme.isPivot = this.isPivotTable();
     internalProps.bodyHelper = new BodyHelper(this);
     internalProps.headerHelper = new HeaderHelper(this);
 
@@ -2006,6 +2008,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     internalProps.stick.changedCells.clear();
 
     internalProps.theme = themes.of(options.theme ?? themes.DEFAULT);
+    internalProps.theme.isPivot = this.isPivotTable();
     this.scenegraph.updateStageBackground();
     // this._updateSize();
     //设置是否自动撑开的配置
@@ -2536,6 +2539,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
   }
   set theme(theme: TableTheme) {
     this.internalProps.theme = themes.of(theme ?? themes.DEFAULT);
+    this.internalProps.theme.isPivot = this.isPivotTable();
     this.options.theme = theme;
   }
   /**
@@ -2544,6 +2548,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
   updateTheme(theme: ITableThemeDefine) {
     const oldHoverState = { col: this.stateManager.hover.cellPos.col, row: this.stateManager.hover.cellPos.row };
     this.internalProps.theme = themes.of(theme ?? themes.DEFAULT);
+    this.internalProps.theme.isPivot = this.isPivotTable();
     this.options.theme = theme;
     this.scenegraph.updateComponent();
     this.scenegraph.updateStageBackground();
