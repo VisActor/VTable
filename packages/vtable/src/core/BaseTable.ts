@@ -3457,7 +3457,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
             }
           }
           if (r < maxRow) {
-            copyValue += '\n';
+            copyValue += '\r\n';
           }
         }
       }
