@@ -152,11 +152,23 @@ export function bindContainerDomListener(eventManager: EventManager) {
       const data = table.getCopyValue();
       if (isValid(data)) {
         e.preventDefault();
-        if (browser.IE) {
-          (window as any).clipboardData.setData('Text', data); // IE
-        } else {
-          (e as any).clipboardData.setData('text/plain', data); // Chrome, Firefox
-        }
+        // if (browser.IE) {
+        //   (window as any).clipboardData.setData('Text', data); // IE
+        // } else {
+        //   (e as any).clipboardData.setData('text/plain', data); // Chrome, Firefox
+        // }
+        const parsedCellData = data.toString().replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+        .replace(/\r\n/g, '</td></tr><tr><td>').replace(/\t/g, '</td><td>').replace(/(<br(\s*|\/)>(\r\n|\n)?|\r\n|\n)/g, '<br>\r\n').replace(/\x20{2,}/gi, substring => {
+          // excel空格序列化
+          return `<span style="mso-spacerun: yes">${'&nbsp;'.repeat(substring.length - 1)} </span>`;
+        });
+        const result = `<table><tbody><tr><td>${parsedCellData}</td></tr></tbody></table>`;
+        navigator.clipboard.writeText(result);
+        navigator.clipboard.write([
+          new ClipboardItem({
+            'text/html': new Blob([result], { type: 'text/html' }),
+          })
+        ])
         table.fireListeners(TABLE_EVENT_TYPE.COPY_DATA, {
           cellRange: table.stateManager.select.ranges,
           copyData: data
@@ -174,23 +186,112 @@ export function bindContainerDomListener(eventManager: EventManager) {
         const col = Math.min(ranges[0].start.col, ranges[0].end.col);
         const row = Math.min(ranges[0].start.row, ranges[0].end.row);
 
-        const clipboardData = e.clipboardData || window.Clipboard;
-        const pastedData = clipboardData.getData('text');
-        const rows = pastedData.split('\n'); // 将数据拆分为行
-        const values: (string | number)[][] = [];
-        rows.forEach(function (rowCells: any, rowIndex: number) {
-          const cells = rowCells.split('\t'); // 将行数据拆分为单元格
-          const rowValues: (string | number)[] = [];
-          values.push(rowValues);
-          cells.forEach(function (cell: string, cellIndex: number) {
-            // 去掉单元格数据末尾的 '\r'
-            if (cellIndex === cells.length - 1) {
-              cell = cell.trim();
+        // const clipboardData = e.clipboardData || window.Clipboard;
+        // const pastedData = clipboardData.getData('text');
+        // const rows = pastedData.split('\n'); // 将数据拆分为行
+        // const values: (string | number)[][] = [];
+        // rows.forEach(function (rowCells: any, rowIndex: number) {
+        //   const cells = rowCells.split('\t'); // 将行数据拆分为单元格
+        //   const rowValues: (string | number)[] = [];
+        //   values.push(rowValues);
+        //   cells.forEach(function (cell: string, cellIndex: number) {
+        //     // 去掉单元格数据末尾的 '\r'
+        //     if (cellIndex === cells.length - 1) {
+        //       cell = cell.trim();
+        //     }
+        //     rowValues.push(cell);
+        //   });
+        // });
+        
+        navigator.clipboard.read().then(clipboardItems => {
+          for (const item of clipboardItems) {
+          
+            if (item.types.includes('text/html')) {
+              item.getType('text/html').then(blob => {
+              
+                blob.text().then(pastedData => {
+                  const values: (string | number)[][] = [];
+                  if (pastedData && /(<table)|(<TABLE)/g.test(pastedData)) {
+                    const regex = /<tr[^>]*>(.*?)<\/tr>/gs; // 匹配<tr>标签及其内容
+                    // const matches = pastedData.matchAll(regex);
+                    const matches = Array.from(pastedData.matchAll(regex)); 
+                    for (const match of matches) {
+                      const rowContent = match[1]; // 获取<tr>标签中的内容
+                      const cellRegex = /<td[^>]*>(.*?)<\/td>/gs; // 匹配<td>标签及其内容
+                      const cellMatches: RegExpMatchArray[] = Array.from(rowContent.matchAll(cellRegex));
+                      const rowValues = cellMatches.map(cellMatch => {
+                        return cellMatch[1]
+                        .replace(/(<(?!br)([^>]+)>)/gi, '')
+                        .replace(/<br(\s*|\/)>[\r\n]?/gim, '\n')
+                          // .replace(/<br>/g, '\n') // 替换<br>标签为换行符
+                          // .replace(/<(?:.|\n)*?>/gm, '') // 去除HTML标签
+                          .replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&#9;/gi, '\t').replace(/&nbsp;/g, ' ')
+                          // .trim(); // 去除首尾空格
+                      });
+                      values.push(rowValues);
+                    }
+                  } else {
+                      const rows = pastedData.split('\n'); // 将数据拆分为行
+                      rows.forEach(function (rowCells: any, rowIndex: number) {
+                        const cells = rowCells.split('\t'); // 将行数据拆分为单元格
+                        const rowValues: (string | number)[] = [];
+                        values.push(rowValues);
+                        cells.forEach(function (cell: string, cellIndex: number) {
+                          // 去掉单元格数据末尾的 '\r'
+                          if (cellIndex === cells.length - 1) {
+                            cell = cell.trim();
+                          }
+                          rowValues.push(cell);
+                        });
+                      });
+                  }
+                  (table as ListTableAPI).changeCellValues(col, row, values);
+
+                }).catch(error => {
+             
+                });
+              }).catch(error => {
+           
+              });
+            } else if (item.types.length === 1 && item.types[0] === 'text/plain') {
+                // 如果只有 'text/plain'
+                item.getType('text/plain').then(blob => {
+         
+                blob.text().then(pastedData => {
+                const rows = pastedData.replace(/\r(?!\n)/g, '\r\n').split('\r\n'); // 将数据拆分为行
+                if (rows.length > 1 && rows[rows.length - 1] === '') {
+                  rows.pop();
+                }
+                const values: (string | number)[][] = [];
+                rows.forEach(function (rowCells: any, rowIndex: number) {
+                  const cells = rowCells.split('\t'); // 将行数据拆分为单元格
+                  const rowValues: (string | number)[] = [];
+                  values.push(rowValues);
+                  cells.forEach(function (cell: string, cellIndex: number) {
+            
+                    if (cell.includes("\n")) {
+                      cell = cell.replace(/^"(.*)"$/, '$1')
+                      .replace(/["]*/g, match => (new Array(Math.floor(match.length / 2))).fill('"').join(''));
+                    }
+                    rowValues.push(cell);
+                  });
+                });
+
+                  (table as ListTableAPI).changeCellValues(col, row, values);
+                }).catch(error => {
+            
+                  });
+              }).catch(error => {
+      
+                });
+              } else {
+              // 其他情况
+           
             }
-            rowValues.push(cell);
-          });
+          }
+        }).catch(error => {
         });
-        (table as ListTableAPI).changeCellValues(col, row, values);
+
       }
     }
   });
