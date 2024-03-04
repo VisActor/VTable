@@ -2,6 +2,18 @@
   "name": "@visactor/vtable",
   "entries": [
     {
+      "version": "0.20.3",
+      "tag": "@visactor/vtable_v0.20.3",
+      "date": "Mon, 04 Mar 2024 04:30:08 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "fix: fix checkbox text space problem"
+          }
+        ]
+      }
+    },
+    {
       "version": "0.20.2",
       "tag": "@visactor/vtable_v0.20.2",
       "date": "Fri, 01 Mar 2024 11:46:26 GMT",
