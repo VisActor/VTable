@@ -1,6 +1,13 @@
 # Change Log - @visactor/vtable
 
-This log was last generated on Fri, 01 Mar 2024 11:46:26 GMT and should not be manually modified.
+This log was last generated on Mon, 04 Mar 2024 04:30:08 GMT and should not be manually modified.
+
+## 0.20.3
+Mon, 04 Mar 2024 04:30:08 GMT
+
+### Updates
+
+- fix: fix checkbox text space problem
 
 ## 0.20.2
 Fri, 01 Mar 2024 11:46:26 GMT
