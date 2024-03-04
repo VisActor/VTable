@@ -86,6 +86,8 @@ export class TableTheme implements ITableThemeDefine {
   private _checkboxStyle: RequiredTableThemeDefine['checkboxStyle'] | null = null;
   private _textPopTipStyle: RequiredTableThemeDefine['textPopTipStyle'] | null = null;
 
+  isPivot: boolean = false;
+
   constructor(obj: PartialTableThemeDefine | ITableThemeDefine, superTheme: ITableThemeDefine) {
     this.internalTheme = {
       obj,
@@ -377,7 +379,7 @@ export class TableTheme implements ITableThemeDefine {
         {},
         this.defaultStyle,
         superTheme.rowHeaderStyle,
-        obj.rowHeaderStyle ?? obj.headerStyle
+        obj.rowHeaderStyle ?? (this.isPivot ? null : obj.headerStyle) // not for pivot
       );
       this._rowHeader = this.getStyle(header);
     }
