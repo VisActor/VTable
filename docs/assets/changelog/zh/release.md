@@ -1,3 +1,22 @@
+# v0.20.2
+
+2024-03-04
+
+
+**🆕 新增功能**
+
+- **@visactor/vtable**: add checkbox style theme
+
+**🐛 功能修复**
+
+- **@visactor/vtable**: rightFrozenCol is bigger then colCount [#1162](https://github.com/VisActor/VTable/issues/1162)
+- **@visactor/vtable**: header description tooltip flicker [#1173](https://github.com/VisActor/VTable/issues/1173)
+- **@visactor/vtable**: add fontStyle & fontVariant
+
+
+
+[更多详情请查看 v0.20.2](https://github.com/VisActor/VTable/releases/tag/v0.20.2)
+
 # v0.20.1
 
 2024-02-29
