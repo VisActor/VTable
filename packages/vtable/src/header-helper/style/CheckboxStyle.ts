@@ -43,8 +43,7 @@ export class CheckboxStyle extends Style {
     this._disableCheckedFill = style?.checkboxStyle?.disableCheckedFill ?? checkboxThemeStyle?.disableCheckedFill;
     this._disableCheckedStroke = style?.checkboxStyle?.disableCheckedStroke ?? checkboxThemeStyle?.disableCheckedStroke;
 
-    this._spaceBetweenTextAndIcon =
-      style?.checkboxStyle?.spaceBetweenTextAndIcon ?? checkboxThemeStyle?.spaceBetweenTextAndIcon;
+    this._checkIconImage = style?.checkboxStyle?.checkIconImage ?? checkboxThemeStyle?.checkIconImage;
     this._indeterminateIconImage =
       style?.checkboxStyle?.indeterminateIconImage ?? checkboxThemeStyle?.indeterminateIconImage;
   }
