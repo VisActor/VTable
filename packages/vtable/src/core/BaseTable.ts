@@ -2111,7 +2111,11 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
    */
   getBottomFrozenRowsHeight(): number {
     if (this.bottomFrozenRowCount > 0) {
-      const height = this.getRowsHeight(this.rowCount - this.bottomFrozenRowCount, this.rowCount - 1);
+      // const height = this.getRowsHeight(this.rowCount - this.bottomFrozenRowCount, this.rowCount - 1);//替换成下面遍历获取高度，鉴于冻结数量有限。否则这里在初始化的时候ClipBodyGroupBeforeRenderContribution.drawShap就先走了这个计算，导致初始化时间加长，而后续计算行高列宽会清除这个计算结果，浪费了性能
+      let height = 0;
+      for (let row = this.rowCount - this.bottomFrozenRowCount; row <= this.rowCount - 1; row++) {
+        height += this.getRowHeight(row);
+      }
       return height;
     }
     return 0;
@@ -2122,7 +2126,11 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
    */
   getRightFrozenColsWidth(): number {
     if (this.rightFrozenColCount > 0) {
-      const width = this.getColsWidth(this.colCount - this.rightFrozenColCount, this.colCount - 1);
+      // const width = this.getColsWidth(this.colCount - this.rightFrozenColCount, this.colCount - 1); // 同getBottomFrozenRowsHeight的原因
+      let width = 0;
+      for (let col = this.colCount - this.rightFrozenColCount; col <= this.colCount - 1; col++) {
+        width += this.getColWidth(col);
+      }
       return width;
     }
     return 0;

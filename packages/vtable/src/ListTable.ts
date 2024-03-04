@@ -867,6 +867,10 @@ export class ListTable extends BaseTable implements ListTableAPI {
     records: Array<any>,
     option?: { restoreHierarchyState?: boolean; sortState?: SortState | SortState[] }
   ): void {
+    this.internalProps.dataSource?.release();
+    // 过滤掉dataSource的引用
+    this.internalProps.releaseList = this.internalProps.releaseList?.filter((item: any) => !item.dataSourceObj);
+    this.internalProps.dataSource = null;
     let sort: SortState | SortState[];
     if (Array.isArray(option) || (option as any)?.order) {
       //兼容之前第二个参数为sort的情况
