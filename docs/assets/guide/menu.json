@@ -478,6 +478,13 @@
       ]
     },
     {
+      "path": "search",
+      "title": {
+        "zh": "搜索",
+        "en": "search"
+      }
+    },
+    {
       "path": "export",
       "title": {
         "zh": "表格导出",

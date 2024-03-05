@@ -1131,6 +1131,31 @@
       ]
     },
     {
+      "path": "search",
+      "title": {
+        "zh": "搜索",
+        "en": "search"
+      },
+      "children": [
+        {
+          "path": "search-component",
+          "title": {
+            "zh": "搜索组件",
+            "en": "search-component"
+          },
+          "meta": {
+            "title": "search component",
+            "keywords": "",
+            "category": "demo",
+            "group": "Component",
+            "cover": "https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/list-table.png",
+            "link": "",
+            "option": ""
+          }
+        }
+      ]
+    },
+    {
       "path": "business",
       "title": {
         "zh": "业务场景",
