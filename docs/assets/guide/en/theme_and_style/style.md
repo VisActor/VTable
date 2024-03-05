@@ -72,14 +72,14 @@ Style provides a series of cell configurations, briefly described below.
 
 ### Text style
 
-*   `textAlign`: Defines the horizontal alignment of text in cells
-*   `textBaseline`: Defines the vertical alignment of text in cells
-*   `color`: Defines the text color of the cell
-*   `fontSize`: define cell text size
-*   `fontFamily`: Defines the text font of the cell
-*   `fontWeight`: Defines the text font weight of the unit
-*   `fontVariant`: Defines the text weight of the cell
-*   'FontStyle: Defines the text font style of the cell
+- `textAlign`: Defines the horizontal alignment of text in cells
+- `textBaseline`: Defines the vertical alignment of text in cells
+- `color`: Defines the text color of the cell
+- `fontSize`: define cell text size
+- `fontFamily`: Defines the text font of the cell
+- `fontWeight`: Defines the text font weight of the unit
+- `fontVariant`: Defines the text weight of the cell
+- 'FontStyle: Defines the text font style of the cell
 
 These settings make it easy to adjust the rendering of text in cells.
 
@@ -87,19 +87,21 @@ These settings make it easy to adjust the rendering of text in cells.
 
 Contains the following configuration items:
 
-*   `borderColor`Set the color of the border for the cell
-*   `borderLineWidth`: cell sets the width of the border
-*   `borderLineDash`: Set the line dashed style of the border for the cell
+- `borderColor`Set the color of the border for the cell
+- `borderLineWidth`: cell sets the width of the border
+- `borderLineDash`: Set the line dashed style of the border for the cell
 
 ### Line height, line feed settings
 
-*   `lineHeight`: set text height for cell content
-*   `textOverflow`: Sets the ellipsed form of the text. This configuration has no effect if autoWrapText sets line wrapping
+- `lineHeight`: set text height for cell content
+- `textOverflow`: Sets the ellipsed form of the text. This configuration has no effect if autoWrapText sets line wrapping
 
 ### Underscore, underline settings
 
-*   `underline`: set underscores for single cells
-*   `lineThrough`: underline cell text
+- `underline`: set underscores for single cells
+- `underlineDash`: Dashed style of underline.
+- `underlineOffset`: The distance between underline and text.
+- `lineThrough`: underline cell text
 
 ### Link text color
 
@@ -125,6 +127,6 @@ Contains the following configuration items:
 
 ### Maximum number of rows setting
 
-*   `lineamp`: Set the maximum number of rows of the unit, you can set number or'auto ', set it to'auto', it will be automatically calculated
+- `lineamp`: Set the maximum number of rows of the unit, you can set number or'auto ', set it to'auto', it will be automatically calculated
 
 Through the above introduction, you have mastered the use of style in VTable, and then you can create a table with a personalized style according to your needs.
