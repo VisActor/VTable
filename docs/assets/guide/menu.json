@@ -522,6 +522,13 @@
           }
         }
       ]
+    },
+    {
+      "path": "multi_language_support",
+      "title": {
+        "zh": "多语言支持",
+        "en": "multi-language support"
+      }
     }
   ]
 }
