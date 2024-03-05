@@ -135,11 +135,24 @@ tableInstance.renderWithRecreateCells();
 ## setRecords(Function)
 
 设置表格数据接口，可作为更新接口调用。
-** 基本表格可同时设置排序状态对表格数据排序，sort 设置为空清空排序状态，如果不设置则按当前排序状态对传入数据排序 **
+
+基本表格更新：
+
+基本表格可同时设置排序状态对表格数据排序，sort 设置为 null 清空排序状态，如果不设置则按当前排序状态对传入数据排序。
+
+restoreHierarchyState 可暂时忽略，用的场景比较特殊，可以咨询 VTable 的研发后再决定是否使用。
 
 ```
-setRecords(records: Array<any>) //透视表
-setRecords(records: Array<any>, sort?: SortState | SortState[]) //** 基本表格可同时设置排序状态对表格数据排序，sort设置为空清空排序状态，如果不设置则按当前排序状态对传入数据排序 **
+setRecords(
+    records: Array<any>,
+    option?: { sort?: SortState | SortState[], restoreHierarchyState: boolean;  }
+  ): void;
+```
+
+透视表更新：
+
+```
+setRecords(records: Array<any>)
 ```
 
 ## getDrawRange(Function)
@@ -299,6 +312,22 @@ setRecords(records: Array<any>, sort?: SortState | SortState[]) //** 基本表�
    * @param recordIndex
    */
   getTableIndexByRecordIndex: (recordIndex: number) => number;
+```
+
+## getRecordIndexByCell(Function)
+
+获取当前单元格的数据是数据源中的第几条。
+
+如果是树形模式的表格，将返回数组，如[1,2] 数据源中第 2 条数据中 children 中的第 3 条。
+
+** ListTable 专有 **
+
+```
+  /** 获取当前单元格的数据是数据源中的第几条。
+   * 如果是树形模式的表格，将返回数组，如[1,2] 数据源中第2条数据中children中的第3条
+   * 注：ListTable特有接口 */
+  getRecordIndexByCell(col: number, row: number): number | number[]
+** ListTable 专有 **
 ```
 
 ## getTableIndexByField(Function)

@@ -136,11 +136,23 @@ Unlisten to VChart chart events
 
 Set the table data interface, which can be called as an update interface.
 
-** The basic table can set the sorting state at the same time to sort the table data. Set sort to empty to clear the sorting state. If not set, the incoming data will be sorted according to the current sorting state **
+Basic table updates:
+
+The basic table can also set the sorting status to sort the table data. Set sort to null to clear the sorting status. If not set, the incoming data will be sorted according to the current sorting status.
+
+restoreHierarchyState can be ignored temporarily. The usage scenario is quite special. You can consult the R&D team of VTable before deciding whether to use it.
 
 ```
-setRecords(records: Array<any>) //Pivot table
-setRecords(records: Array<any>, sort?: SortState | SortState[]) //** The basic table can set the sorting state at the same time to sort the table data. Set sort to empty to clear the sorting state. If not set, the current sorting state will be used. Sort incoming data**
+setRecords(
+    records: Array<any>,
+    option?: { sort?: SortState | SortState[], restoreHierarchyState: boolean; }
+  ): void;
+```
+
+Pivot table update:
+
+```
+setRecords(records: Array<any>)
 ```
 
 ## getDrawRange(Function)
@@ -301,6 +313,22 @@ Note: ListTable specific interface
    * @param recordIndex
    */
   getTableIndexByRecordIndex: (recordIndex: number) => number;
+```
+
+## getRecordIndexByCell(Function)
+
+Get the number of data in the current cell in the data source.
+
+If it is a table in tree mode, an array will be returned, such as [1,2], the 3rd item in the children of the 2nd item in the data source.
+
+** ListTable proprietary **
+
+```
+  /** Get the number of the data in the current cell in the data source.
+   * If it is a table in tree mode, an array will be returned, such as [1,2], the 3rd item in the children of the 2nd item in the data source
+   * Note: ListTable specific interface */
+  getRecordIndexByCell(col: number, row: number): number | number[]
+** ListTable proprietary **
 ```
 
 ## getTableIndexByField(Function)

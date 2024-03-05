@@ -1,14 +1,30 @@
-/* eslint-disable */
-import * as VTable from '../../src';
-import VChart from '@visactor/vchart';
-VTable.register.chartModule('vchart', VChart);
-const CONTAINER_ID = 'vTable';
-export function createTable() {
-  const columns: VTable.ColumnsDefine = [
+---
+category: examples
+group: Cell Type
+title: 基本表格集成图表
+cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/list-chart-multiple.png
+link: '../guide/cell_type/chart'
+option: ListTable-columns-chart#cellType
+---
+
+# 图表类型集成到透视表
+
+将vchart图表库结合渲染到表格中，丰富可视化展示形式，提升多图表渲染性能。该示例引用了vchart的线柱饼面图，具体可参考：https://visactor.io/vchart/demo/progress/linear-progress-with-target-value
+
+## 关键配置
+
+- `VTable.register.chartModule('vchart', VChart)` 注册绘制图表的图表库 目前支持VChart
+- `cellType: 'chart'` 指定类型chart
+- `chartModule: 'vchart'` 指定注册的图表库名称
+- `chartSpec: {}|Function` 图表spec
+## 代码演示
+
+```javascript livedemo template=vtable
+  VTable.register.chartModule('vchart', VChart);
+  const columns = [
     {
       field: 'id',
       title: 'id',
-      description: '这是一个标题的详细描述',
       sort: true,
       width: 80,
       style: {
@@ -166,12 +182,12 @@ export function createTable() {
               }
             ]
           };
-        return {
-          type: 'pie',
-          data: { id: 'data1' },
-          categoryField: 'y',
-          valueField: 'x'
-        };
+          return {
+            type: 'pie',
+            data: { id: 'data1' },
+            categoryField: 'y',
+            valueField: 'x'
+          }
       }
     },
     {
@@ -417,9 +433,9 @@ export function createTable() {
           }
         ]
       }
-    }
+    },
   ];
-  const records: any[] = []; // = generatePersonsDataSource(10);
+  const records = []; 
   for (let i = 1; i <= 10; i++)
     records.push({
       id: i,
@@ -513,7 +529,6 @@ export function createTable() {
       ]
     });
   const option = {
-    container: document.getElementById(CONTAINER_ID),
     records,
     columns,
     transpose: false,
@@ -522,12 +537,6 @@ export function createTable() {
     defaultHeaderRowHeight: 50
   };
 
-  const tableInstance = new VTable.ListTable(option);
-  window.tableInstance = tableInstance;
-  tableInstance.onVChartEvent('click', args => {
-    console.log('onVChartEvent click', args);
-  });
-  tableInstance.onVChartEvent('mouseover', args => {
-    console.log('onVChartEvent mouseover', args);
-  });
-}
+const tableInstance = new VTable.ListTable(document.getElementById(CONTAINER_ID),option);
+window['tableInstance'] = tableInstance;
+```

@@ -1,3 +1,82 @@
+# v0.20.2
+
+2024-03-04
+
+
+**🆕 New feature**
+
+- **@visactor/vtable**: add checkbox style theme
+
+**🐛 Bug fix**
+
+- **@visactor/vtable**: rightFrozenCol is bigger then colCount [#1162](https://github.com/VisActor/VTable/issues/1162)
+- **@visactor/vtable**: header description tooltip flicker [#1173](https://github.com/VisActor/VTable/issues/1173)
+- **@visactor/vtable**: add fontStyle & fontVariant
+
+
+
+[more detail about v0.20.2](https://github.com/VisActor/VTable/releases/tag/v0.20.2)
+
+# v0.20.1
+
+2024-02-29
+
+
+**🆕 New feature**
+
+- **@visactor/vtable**: add api getRecordIndexByCell [#1121](https://github.com/VisActor/VTable/issues/1121)
+
+**🐛 Bug fix**
+
+- **@visactor/vtable**: hideColumnsSubheader with three levels show error [#1105](https://github.com/VisActor/VTable/issues/1105)
+- **@visactor/vtable**: customlayout flex render error [#1163](https://github.com/VisActor/VTable/issues/1163)
+- **@visactor/vtable**: when scroll tooltip hide [#905](https://github.com/VisActor/VTable/issues/905)
+- **@visactor/vtable**: fix axis innerOffset
+- **@visactor/vtable**: add skipFunctionDiff in react-vtable
+
+**🔨 Refactor**
+
+- **@visactor/vtable**: rename resize_column_end event arguments [#1129](https://github.com/VisActor/VTable/issues/1129)
+- **@visactor/vtable**: api return value type
+- **@visactor/vtable**: setRecords support restoreHierarchyState [#1148](https://github.com/VisActor/VTable/issues/1148)
+- **@visactor/vtable**: vtable not stop event bubble [#892](https://github.com/VisActor/VTable/issues/892)
+- **@visactor/vtable**: remove Circular dependency
+
+**🔖 other**
+
+- **@visactor/vtable**: fix-contextMenuItems-add-col-param
+
+
+
+[more detail about v0.20.1](https://github.com/VisActor/VTable/releases/tag/v0.20.1)
+
+# v0.20.0
+
+2024-02-23
+
+
+**🆕 New feature**
+
+- **@visactor/vtable**: add aggregation for list table column
+- **@visactor/vtable**: add api getAggregateValuesByField
+- **@visactor/vtable**: add custom aggregation
+- **@visactor/vtable**: chartSpec support function [#1115](https://github.com/VisActor/VTable/issues/1115)
+- **@visactor/vtable**: add filter data config [#607](https://github.com/VisActor/VTable/issues/607)
+
+**🐛 Bug fix**
+
+- **@visactor/vtable**: edit right frozen cell input position error
+- **@visactor/vtable**: mouseleave_cell event trigger [#1112](https://github.com/VisActor/VTable/issues/1112)
+- **@visactor/vtable**: fix cellBgColor judgement in isCellHover()
+- **@visactor/vtable**: fix custom merge cell computed height&width
+- **@visactor/vtable**: fix content position update problem
+- **@visactor/vtable**: merge cell update in setDropDownMenuHighlight()
+- **@visactor/vtable**: fix react-vtable display error in react strict mode [#990](https://github.com/VisActor/VTable/issues/990)
+
+
+
+[more detail about v0.20.0](https://github.com/VisActor/VTable/releases/tag/v0.20.0)
+
 # v0.19.1
 
 2024-02-06

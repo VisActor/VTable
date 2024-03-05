@@ -43,7 +43,8 @@ import {
   getChartSpec,
   getRawChartSpec,
   isCartesianChart,
-  isHasCartesianChartInline
+  isHasCartesianChartInline,
+  isShareChartSpec
 } from './chart-helper/get-chart-spec';
 import type { ITreeLayoutHeadNode, LayouTreeNode } from './tree-helper';
 import { DimensionTree, countLayoutTree, dealHeader, dealHeaderForTreeMode, generateLayoutTree } from './tree-helper';
@@ -1462,7 +1463,7 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
   getRecordStartRowByRecordIndex(index: number): number {
     return this.columnHeaderLevelCount + index;
   }
-  getRecordIndexByCell(col: number, row: number): number {
+  getRecordShowIndexByCell(col: number, row: number): number {
     return undefined;
   }
   // getCellRangeTranspose(): CellRange {
@@ -2312,6 +2313,9 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
       const indicatorKey = paths.rowHeaderPaths.find(rowPath => rowPath.indicatorKey)?.indicatorKey;
       indicatorObj = this._indicators?.find(indicator => indicator.indicatorKey === indicatorKey);
     }
+    if (typeof indicatorObj?.chartSpec === 'function') {
+      return;
+    }
     indicatorObj && (indicatorObj.chartInstance = chartInstance);
   }
 
@@ -2406,6 +2410,13 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
   }
   getRawChartSpec(col: number, row: number): any {
     return getRawChartSpec(col, row, this);
+  }
+
+  getChartSpec(col: number, row: number): any {
+    return getChartSpec(col, row, this);
+  }
+  isShareChartSpec(col: number, row: number): any {
+    return isShareChartSpec(col, row, this);
   }
   getChartDataId(col: number, row: number): any {
     return getChartDataId(col, row, this);
@@ -2540,9 +2551,7 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
     }
     return null;
   }
-  getChartSpec(col: number, row: number): any {
-    return getChartSpec(col, row, this);
-  }
+
   /** 将_selectedDataItemsInChart保存的数据状态同步到各个图表实例中 */
   _generateChartState() {
     const state = {

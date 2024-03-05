@@ -249,6 +249,10 @@ export const menus = [
       },
       {
         path: 'type',
+        name: 'progress-sparkline-cellType'
+      },
+      {
+        path: 'type',
         name: 'text'
       },
       {

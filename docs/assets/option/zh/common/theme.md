@@ -118,6 +118,10 @@ body单元格的样式配置
   prefix = ${prefix}
   ) }}
 
+{{ use: common-checkbox-style (
+  prefix = ${prefix}
+  ) }}
+
 #${prefix} selectionStyle(Object)
 
 选择框样式

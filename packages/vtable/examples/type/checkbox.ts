@@ -17,6 +17,11 @@ export function createTable() {
             return false;
           }
           return true;
+        },
+        style: {
+          checkboxStyle: {
+            checkedFill: '#333333'
+          }
         }
         // checked: false
       },
@@ -66,8 +71,13 @@ export function createTable() {
     ],
     showFrozenIcon: true, //显示VTable内置冻结列图标
     widthMode: 'standard',
-    heightMode: 'autoHeight'
+    heightMode: 'autoHeight',
     // transpose: true
+    theme: VTable.themes.DEFAULT.extends({
+      checkboxStyle: {
+        defaultFill: 'red'
+      }
+    })
   };
 
   const instance = new ListTable(option);

@@ -1,3 +1,81 @@
+# v0.20.2
+
+2024-03-04
+
+
+**🆕 新增功能**
+
+- **@visactor/vtable**: add checkbox style theme
+
+**🐛 功能修复**
+
+- **@visactor/vtable**: rightFrozenCol is bigger then colCount [#1162](https://github.com/VisActor/VTable/issues/1162)
+- **@visactor/vtable**: header description tooltip flicker [#1173](https://github.com/VisActor/VTable/issues/1173)
+- **@visactor/vtable**: add fontStyle & fontVariant
+
+
+
+[更多详情请查看 v0.20.2](https://github.com/VisActor/VTable/releases/tag/v0.20.2)
+
+# v0.20.1
+
+2024-02-29
+
+
+**🆕 新增功能**
+
+- **@visactor/vtable**: add api getRecordIndexByCell [#1121](https://github.com/VisActor/VTable/issues/1121)
+
+**🐛 功能修复**
+
+- **@visactor/vtable**: hideColumnsSubheader with three levels show error [#1105](https://github.com/VisActor/VTable/issues/1105)
+- **@visactor/vtable**: customlayout flex render error [#1163](https://github.com/VisActor/VTable/issues/1163)
+- **@visactor/vtable**: when scroll tooltip hide [#905](https://github.com/VisActor/VTable/issues/905)
+- **@visactor/vtable**: fix axis innerOffset
+- **@visactor/vtable**: add skipFunctionDiff in react-vtable
+
+**🔨 功能重构**
+
+- **@visactor/vtable**: rename resize_column_end event arguments [#1129](https://github.com/VisActor/VTable/issues/1129)
+- **@visactor/vtable**: api return value type
+- **@visactor/vtable**: setRecords support restoreHierarchyState [#1148](https://github.com/VisActor/VTable/issues/1148)
+- **@visactor/vtable**: vtable not stop event bubble [#892](https://github.com/VisActor/VTable/issues/892)
+- **@visactor/vtable**: remove Circular dependency
+
+**🔖 其他**
+
+- **@visactor/vtable**: fix-contextMenuItems-add-col-param
+
+
+
+[更多详情请查看 v0.20.1](https://github.com/VisActor/VTable/releases/tag/v0.20.1)
+
+# v0.20.0
+
+2024-02-23
+
+
+**🆕 新增功能**
+
+- **@visactor/vtable**：添加列表列的聚合
+- **@visactor/vtable**：添加 api getAggregateValuesByField
+- **@visactor/vtable**：添加自定义聚合
+- **@visactor/vtable**：chartSpec 支持函数 [#1115](https://github.com/VisActor/VTable/issues/1115)
+- **@visactor/vtable**：添加基本表格的过滤能力 [#607](https://github.com/VisActor/VTable/issues/607)
+
+**🐛 功能修复**
+
+- **@visactor/vtable**：编辑右冻结单元格输入位置错误
+- **@visactor/vtable**：mouseleave_cell 事件触发器 [#1112](https://github.com/VisActor/VTable/issues/1112)
+- **@visactor/vtable**：修复 isCellHover() 中的 cellBgColor 判断
+- **@visactor/vtable**：修复自定义合并单元计算的高度和宽度
+- **@visactor/vtable**：修复内容位置更新问题
+- **@visactor/vtable**：在 setDropDownMenuHighlight() 中合并单元格更新
+- **@visactor/vtable**：修复react严格模式下的react-vtable显示错误[#990](https://github.com/VisActor/VTable/issues/990)
+
+
+[更多详情请查看 v0.20.0](https://github.com/VisActor/VTable/releases/tag/v0.20.0)
+
 # v0.19.1
 
 2024-02-06

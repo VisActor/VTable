@@ -191,7 +191,9 @@ const BaseTable: React.FC<Props> = React.forwardRef((props, ref) => {
         !isEqual(eventsBinded.current.records, props.records, { skipFunction: skipFunctionDiff })
       ) {
         eventsBinded.current = props;
-        tableContext.current.table.setRecords(props.records);
+        tableContext.current.table.setRecords(props.records, {
+          restoreHierarchyState: props.option.restoreHierarchyState
+        });
         handleTableRender();
       }
       return;
@@ -202,7 +204,7 @@ const BaseTable: React.FC<Props> = React.forwardRef((props, ref) => {
     if (
       !isEqual(newOption, prevOption.current, { skipFunction: skipFunctionDiff }) ||
       // tableContext.current.isChildrenUpdated
-      !isEqual(newOptionFromChildren, optionFromChildren.current)
+      !isEqual(newOptionFromChildren, optionFromChildren.current, { skipFunction: skipFunctionDiff })
     ) {
       prevOption.current = newOption;
       optionFromChildren.current = newOptionFromChildren;
@@ -212,7 +214,9 @@ const BaseTable: React.FC<Props> = React.forwardRef((props, ref) => {
       handleTableRender();
     } else if (hasRecords && !isEqual(props.records, prevRecords.current, { skipFunction: skipFunctionDiff })) {
       prevRecords.current = props.records;
-      tableContext.current.table.setRecords(props.records);
+      tableContext.current.table.setRecords(props.records, {
+        restoreHierarchyState: props.option.restoreHierarchyState
+      });
       handleTableRender();
     }
     // tableContext.current = {
