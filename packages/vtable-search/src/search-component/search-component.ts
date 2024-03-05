@@ -2,7 +2,7 @@ import type * as VTable from '@visactor/vtable';
 
 type IVTable = VTable.ListTable | VTable.PivotTable | VTable.PivotChart;
 
-type QueryResult = {
+export type QueryResult = {
   queryStr: string;
   results: {
     col: number;
@@ -17,7 +17,7 @@ export type SearchComponentOption = {
   skipHeader?: boolean;
   highlightCellStyle?: VTable.TYPES.CellStyle;
   focuseHighlightCellStyle?: VTable.TYPES.CellStyle;
-  queryMethod?: (queryStr: string, value: string) => boolean;
+  queryMethod?: (queryStr: string, value: string, option: { col: number; row: number; table: IVTable }) => boolean;
   callback?: (queryResult: QueryResult, table: IVTable) => void;
 };
 
@@ -30,7 +30,7 @@ const defalutFocusHightlightCellStyle: Partial<VTable.TYPES.CellStyle> = {
 };
 
 function defalultQueryMethod(queryStr: string, value: string) {
-  return value.includes(queryStr);
+  return value.toString().includes(queryStr);
 }
 
 export class SearchComponent {
@@ -39,7 +39,7 @@ export class SearchComponent {
   autoJump: boolean;
   highlightCellStyle: Partial<VTable.TYPES.CellStyle>;
   focuseHighlightCellStyle: Partial<VTable.TYPES.CellStyle>;
-  queryMethod: (queryStr: string, value: string) => boolean;
+  queryMethod: (queryStr: string, value: string, option: { col: number; row: number; table: IVTable }) => boolean;
   callback?: (queryResult: QueryResult, table: IVTable) => void;
 
   queryStr: string;
@@ -58,19 +58,22 @@ export class SearchComponent {
     this.focuseHighlightCellStyle = option.focuseHighlightCellStyle || defalutFocusHightlightCellStyle;
     this.queryMethod = option.queryMethod || defalultQueryMethod;
     this.callback = option.callback;
+
+    this.table.registerCustomCellStyle('__search_component_highlight', this.highlightCellStyle as any);
+    this.table.registerCustomCellStyle('__search_component_focuse', this.focuseHighlightCellStyle as any);
   }
 
   search(str: string) {
     this.clear();
     this.queryStr = str;
 
-    for (let col = 0; col < this.table.colCount; col++) {
-      for (let row = 0; row < this.table.rowCount; row++) {
+    for (let row = 0; row < this.table.rowCount; row++) {
+      for (let col = 0; col < this.table.colCount; col++) {
         if (this.skipHeader && this.table.isHeader(col, row)) {
           continue;
         }
         const value = this.table.getCellValue(col, row);
-        if (this.queryMethod(this.queryStr, value)) {
+        if (this.queryMethod(this.queryStr, value, { col, row, table: this.table })) {
           this.queryResult.push({
             col,
             row,
@@ -97,10 +100,17 @@ export class SearchComponent {
     }
   }
 
-  updateCellStyle() {
+  updateCellStyle(highlight: boolean = true) {
+    if (!this.queryResult) {
+      return;
+    }
     for (let i = 0; i < this.queryResult.length; i++) {
       const { col, row } = this.queryResult[i];
-      this.table.customUpdateCellStyle(col, row, this.highlightCellStyle);
+      this.table.arrangeCustomCellStyle({
+        col,
+        row,
+        customStyleId: highlight ? '__search_component_highlight' : null
+      });
     }
   }
 
@@ -110,18 +120,20 @@ export class SearchComponent {
     }
     if (this.currentIndex !== -1) {
       // reset last focus
-      this.table.customUpdateCellStyle(
-        this.queryResult[this.currentIndex].col,
-        this.queryResult[this.currentIndex].row,
-        this.highlightCellStyle
-      );
+      this.table.arrangeCustomCellStyle({
+        col: this.queryResult[this.currentIndex].col,
+        row: this.queryResult[this.currentIndex].row,
+        customStyleId: '__search_component_highlight'
+      });
     }
     this.currentIndex++;
     if (this.currentIndex >= this.queryResult.length) {
       this.currentIndex = 0;
     }
     const { col, row } = this.queryResult[this.currentIndex];
-    this.table.customUpdateCellStyle(col, row, this.focuseHighlightCellStyle);
+    this.table.arrangeCustomCellStyle({ col, row, customStyleId: '__search_component_focuse' });
+
+    this.jumpToCell(col, row);
   }
 
   prev() {
@@ -130,21 +142,34 @@ export class SearchComponent {
     }
     if (this.currentIndex !== -1) {
       // reset last focus
-      this.table.customUpdateCellStyle(
-        this.queryResult[this.currentIndex].col,
-        this.queryResult[this.currentIndex].row,
-        this.highlightCellStyle
-      );
+      this.table.arrangeCustomCellStyle({
+        col: this.queryResult[this.currentIndex].col,
+        row: this.queryResult[this.currentIndex].row,
+        customStyleId: '__search_component_highlight'
+      });
     }
     this.currentIndex--;
     if (this.currentIndex < 0) {
       this.currentIndex = this.queryResult.length - 1;
     }
     const { col, row } = this.queryResult[this.currentIndex];
-    this.table.customUpdateCellStyle(col, row, this.focuseHighlightCellStyle);
+    this.table.arrangeCustomCellStyle({ col, row, customStyleId: '__search_component_focuse' });
+
+    this.jumpToCell(col, row);
+  }
+
+  jumpToCell(col: number, row: number) {
+    // if focus cell out of screen, jump to cell
+    const { rowStart, rowEnd } = this.table.getBodyVisibleRowRange();
+    const { colStart, colEnd } = this.table.getBodyVisibleColRange();
+    if (row <= rowStart || row >= rowEnd || col <= colStart || col >= colEnd) {
+      this.table.scrollToCell({ col, row });
+    }
   }
 
   clear() {
+    // reset highlight cell style
+    this.updateCellStyle(null);
     this.queryStr = '';
     this.queryResult = [];
     this.currentIndex = -1;
