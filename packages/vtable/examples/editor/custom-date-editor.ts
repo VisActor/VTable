@@ -346,7 +346,10 @@ export function createTable() {
       contextMenuItems: ['向下插入数据', '向下插入空行', '向右插入空列', '修改值', '删除该行']
     },
     dragHeaderMode: 'all',
-    heightMode: 'autoHeight'
+    heightMode: 'autoHeight',
+    editor: arg => {
+      return '';
+    }
   };
   const tableInstance = new VTable.ListTable(option);
   tableInstance.on('initialized', args => {

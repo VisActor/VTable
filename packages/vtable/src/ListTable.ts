@@ -997,6 +997,25 @@ export class ListTable extends BaseTable implements ListTableAPI {
     }
     return editorDefine as IEditor;
   }
+  /** 检查单元格是否定义过编辑器 不管编辑器是否有效 只要有定义就返回true */
+  isHasEditorDefine(col: number, row: number) {
+    const define = this.getBodyColumnDefine(col, row);
+    let editorDefine = this.isHeader(col, row)
+      ? define?.headerEditor ?? this.options.headerEditor
+      : define?.editor ?? this.options.editor;
+
+    if (typeof editorDefine === 'function') {
+      const arg = {
+        col,
+        row,
+        dataValue: this.getCellOriginValue(col, row),
+        value: this.getCellValue(col, row) || '',
+        table: this
+      };
+      editorDefine = (editorDefine as Function)(arg);
+    }
+    return isValid(editorDefine);
+  }
   /** 更改单元格数据 会触发change_cell_value事件*/
   changeCellValue(col: number, row: number, value: string | number | null) {
     const recordIndex = this.getRecordShowIndexByCell(col, row);
@@ -1084,7 +1103,10 @@ export class ListTable extends BaseTable implements ListTableAPI {
           break;
         }
         thisRowPasteColEnd = startCol + j;
-        if ((workOnEditableCell && this.getEditor(startCol + j, startRow + i)) || workOnEditableCell === false) {
+        if (
+          (workOnEditableCell && this.isHasEditorDefine(startCol + j, startRow + i)) ||
+          workOnEditableCell === false
+        ) {
           const value = rowValues[j];
           const recordIndex = this.getRecordShowIndexByCell(startCol + j, startRow + i);
           const { field } = this.internalProps.layoutMap.getBody(startCol + j, startRow + i);
