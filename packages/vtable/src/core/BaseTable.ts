@@ -3262,7 +3262,8 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
       borderLineDash: theme.group.lineDash,
       underline: !!theme.text.underline,
       // underlineColor: theme.text.underlineColor,
-      // underlineDash: theme.text.underlineDash,
+      underlineDash: theme.text.underlineDash,
+      underlineOffset: theme.text.underlineOffset,
       lineThrough: !!theme.text.lineThrough,
       // lineThroughColor: theme.text.lineThroughColor,
       // lineThroughDash: (theme.text as any).lineThroughDash
