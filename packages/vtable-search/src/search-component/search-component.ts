@@ -17,7 +17,7 @@ export type SearchComponentOption = {
   skipHeader?: boolean;
   highlightCellStyle?: VTable.TYPES.CellStyle;
   focuseHighlightCellStyle?: VTable.TYPES.CellStyle;
-  queryMethod?: (queryStr: string, value: string, option: { col: number; row: number; table: IVTable }) => boolean;
+  queryMethod?: (queryStr: string, value: string, option?: { col: number; row: number; table: IVTable }) => boolean;
   callback?: (queryResult: QueryResult, table: IVTable) => void;
 };
 
@@ -67,6 +67,13 @@ export class SearchComponent {
     this.clear();
     this.queryStr = str;
 
+    if (!str) {
+      return {
+        index: 0,
+        results: this.queryResult
+      };
+    }
+
     for (let row = 0; row < this.table.rowCount; row++) {
       for (let col = 0; col < this.table.colCount; col++) {
         if (this.skipHeader && this.table.isHeader(col, row)) {
@@ -85,10 +92,6 @@ export class SearchComponent {
 
     this.updateCellStyle();
 
-    if (this.autoJump) {
-      this.next();
-    }
-
     if (this.callback) {
       this.callback(
         {
@@ -98,6 +101,14 @@ export class SearchComponent {
         this.table
       );
     }
+
+    if (this.autoJump) {
+      return this.next();
+    }
+    return {
+      index: 0,
+      results: this.queryResult
+    };
   }
 
   updateCellStyle(highlight: boolean = true) {
@@ -118,7 +129,10 @@ export class SearchComponent {
 
   next() {
     if (!this.queryResult.length) {
-      return;
+      return {
+        index: 0,
+        results: this.queryResult
+      };
     }
     if (this.currentIndex !== -1) {
       // reset last focus
@@ -138,11 +152,19 @@ export class SearchComponent {
     this.table.arrangeCustomCellStyle({ col, row }, '__search_component_focuse');
 
     this.jumpToCell(col, row);
+
+    return {
+      index: this.currentIndex,
+      results: this.queryResult
+    };
   }
 
   prev() {
     if (!this.queryResult.length) {
-      return;
+      return {
+        index: 0,
+        results: this.queryResult
+      };
     }
     if (this.currentIndex !== -1) {
       // reset last focus
@@ -162,6 +184,11 @@ export class SearchComponent {
     this.table.arrangeCustomCellStyle({ col, row }, '__search_component_focuse');
 
     this.jumpToCell(col, row);
+
+    return {
+      index: this.currentIndex,
+      results: this.queryResult
+    };
   }
 
   jumpToCell(col: number, row: number) {

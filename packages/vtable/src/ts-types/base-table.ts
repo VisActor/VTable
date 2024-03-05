@@ -55,7 +55,8 @@ import type {
   IRowDimension,
   TableEventOptions,
   IPivotChartDataConfig,
-  IListTableDataConfig
+  IListTableDataConfig,
+  ColumnStyleOption
 } from '.';
 import type { TooltipOptions } from './tooltip';
 import type { IWrapTextGraphicAttribute } from '../scenegraph/graphic/text';
@@ -709,6 +710,9 @@ export interface BaseTableAPI {
    * @param cellAddr 要滚动到的单元格位置
    */
   scrollToCell: (cellAddr: { col?: number; row?: number }) => void;
+
+  registerCustomCellStyle: (customStyleId: string, customStyle: ColumnStyleOption | undefined | null) => void;
+  arrangeCustomCellStyle: (cellPos: { col?: number; row?: number; range?: CellRange }, customStyleId: string) => void;
 }
 export interface ListTableProtected extends IBaseTableProtected {
   /** 表格数据 */
