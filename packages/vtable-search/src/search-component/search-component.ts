@@ -106,11 +106,13 @@ export class SearchComponent {
     }
     for (let i = 0; i < this.queryResult.length; i++) {
       const { col, row } = this.queryResult[i];
-      this.table.arrangeCustomCellStyle({
-        col,
-        row,
-        customStyleId: highlight ? '__search_component_highlight' : null
-      });
+      this.table.arrangeCustomCellStyle(
+        {
+          col,
+          row
+        },
+        highlight ? '__search_component_highlight' : null
+      );
     }
   }
 
@@ -120,18 +122,20 @@ export class SearchComponent {
     }
     if (this.currentIndex !== -1) {
       // reset last focus
-      this.table.arrangeCustomCellStyle({
-        col: this.queryResult[this.currentIndex].col,
-        row: this.queryResult[this.currentIndex].row,
-        customStyleId: '__search_component_highlight'
-      });
+      this.table.arrangeCustomCellStyle(
+        {
+          col: this.queryResult[this.currentIndex].col,
+          row: this.queryResult[this.currentIndex].row
+        },
+        '__search_component_highlight'
+      );
     }
     this.currentIndex++;
     if (this.currentIndex >= this.queryResult.length) {
       this.currentIndex = 0;
     }
     const { col, row } = this.queryResult[this.currentIndex];
-    this.table.arrangeCustomCellStyle({ col, row, customStyleId: '__search_component_focuse' });
+    this.table.arrangeCustomCellStyle({ col, row }, '__search_component_focuse');
 
     this.jumpToCell(col, row);
   }
@@ -142,18 +146,20 @@ export class SearchComponent {
     }
     if (this.currentIndex !== -1) {
       // reset last focus
-      this.table.arrangeCustomCellStyle({
-        col: this.queryResult[this.currentIndex].col,
-        row: this.queryResult[this.currentIndex].row,
-        customStyleId: '__search_component_highlight'
-      });
+      this.table.arrangeCustomCellStyle(
+        {
+          col: this.queryResult[this.currentIndex].col,
+          row: this.queryResult[this.currentIndex].row
+        },
+        '__search_component_highlight'
+      );
     }
     this.currentIndex--;
     if (this.currentIndex < 0) {
       this.currentIndex = this.queryResult.length - 1;
     }
     const { col, row } = this.queryResult[this.currentIndex];
-    this.table.arrangeCustomCellStyle({ col, row, customStyleId: '__search_component_focuse' });
+    this.table.arrangeCustomCellStyle({ col, row }, '__search_component_focuse');
 
     this.jumpToCell(col, row);
   }

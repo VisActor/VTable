@@ -85,12 +85,14 @@ export class CustomCellStylePlugin {
     this.table.scenegraph.updateNextFrame();
   }
 
-  arrangeCustomCellStyle(cellPos: {
-    col?: number;
-    row?: number;
-    range?: CellRange;
-    customStyleId: string | undefined | null;
-  }) {
+  arrangeCustomCellStyle(
+    cellPos: {
+      col?: number;
+      row?: number;
+      range?: CellRange;
+    },
+    customStyleId: string | undefined | null
+  ) {
     const index = this.customCellStyleArrangement.findIndex(style => {
       if (style.range && cellPos.range) {
         return (
@@ -105,13 +107,13 @@ export class CustomCellStylePlugin {
 
     if (index === -1) {
       this.customCellStyleArrangement.push({
-        customStyleId: cellPos.customStyleId,
+        customStyleId: customStyleId,
         col: cellPos.col,
         row: cellPos.row,
         range: cellPos.range
       });
     } else {
-      this.customCellStyleArrangement[index].customStyleId = cellPos.customStyleId;
+      this.customCellStyleArrangement[index].customStyleId = customStyleId;
     }
 
     // update cell group

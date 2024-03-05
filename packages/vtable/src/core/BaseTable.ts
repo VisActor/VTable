@@ -3834,7 +3834,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     this.customCellStylePlugin.registerCustomCellStyle(customStyleId, customStyle);
   }
 
-  arrangeCustomCellStyle(cellPos: { col?: number; row?: number; range?: CellRange; customStyleId: string }) {
-    this.customCellStylePlugin.arrangeCustomCellStyle(cellPos);
+  arrangeCustomCellStyle(cellPos: { col?: number; row?: number; range?: CellRange }, customStyleId: string) {
+    this.customCellStylePlugin.arrangeCustomCellStyle(cellPos, customStyleId);
   }
 }
