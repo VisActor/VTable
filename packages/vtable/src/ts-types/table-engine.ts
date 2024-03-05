@@ -209,7 +209,7 @@ export interface ListTableAPI extends BaseTableAPI {
    * @param row 粘贴数据的起始行号
    * @param values 多个单元格的数据数组
    */
-  changeCellValues: (col: number, row: number, values: (string | number)[][]) => void;
+  changeCellValues: (col: number, row: number, values: (string | number)[][], workOnEditableCell: boolean) => void;
   getFieldData: (field: FieldDef | FieldFormat | undefined, col: number, row: number) => FieldData;
   //#region 编辑器相关demo
   /** 获取单元格配置的编辑器 */

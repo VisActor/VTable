@@ -275,7 +275,8 @@ export function createTable() {
     {
       field: 'work',
       title: 'job',
-      width: 200
+      width: 200,
+      editor: 'input'
     },
     {
       field: 'city',
@@ -288,6 +289,7 @@ export function createTable() {
     records,
     columns,
     keyboardOptions: {
+      pasteValueToCell: true,
       moveFocusCellOnTab: true,
       // editCellOnEnter: false,
       moveEditCellOnArrowKeys: true

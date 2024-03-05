@@ -1120,7 +1120,7 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
    * @param row 粘贴数据的起始行号
    * @param values 多个单元格的数据数组
    */
-  changeCellValues(startCol: number, startRow: number, values: string[][]) {
+  changeCellValues(startCol: number, startRow: number, values: string[][], workOnEditableCell = false) {
     let pasteColEnd = startCol;
     let pasteRowEnd = startRow;
     // const rowCount = values.length;
@@ -1137,20 +1137,22 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
         }
 
         thisRowPasteColEnd = startCol + j;
-        const value = rowValues[j];
-        let newValue: string | number = value;
-        const rawValue = this.getCellRawValue(startCol + j, startRow + i);
-        if (typeof rawValue === 'number' && isAllDigits(value)) {
-          newValue = parseFloat(value);
-        }
-        this._changeCellValueToDataSet(startCol + j, startRow + i, newValue);
+        if ((workOnEditableCell && this.getEditor(startCol + j, startRow + i)) || workOnEditableCell === false) {
+          const value = rowValues[j];
+          let newValue: string | number = value;
+          const rawValue = this.getCellRawValue(startCol + j, startRow + i);
+          if (typeof rawValue === 'number' && isAllDigits(value)) {
+            newValue = parseFloat(value);
+          }
+          this._changeCellValueToDataSet(startCol + j, startRow + i, newValue);
 
-        this.fireListeners(TABLE_EVENT_TYPE.CHANGE_CELL_VALUE, {
-          col: startCol + j,
-          row: startRow + i,
-          rawValue,
-          changedValue: this.getCellOriginValue(startCol + j, startRow + i)
-        });
+          this.fireListeners(TABLE_EVENT_TYPE.CHANGE_CELL_VALUE, {
+            col: startCol + j,
+            row: startRow + i,
+            rawValue,
+            changedValue: this.getCellOriginValue(startCol + j, startRow + i)
+          });
+        }
       }
       pasteColEnd = Math.max(pasteColEnd, thisRowPasteColEnd);
     }

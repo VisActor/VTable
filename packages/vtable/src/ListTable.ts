@@ -1068,7 +1068,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
    * @param row 粘贴数据的起始行号
    * @param values 多个单元格的数据数组
    */
-  changeCellValues(startCol: number, startRow: number, values: (string | number)[][]) {
+  changeCellValues(startCol: number, startRow: number, values: (string | number)[][], workOnEditableCell = false) {
     let pasteColEnd = startCol;
     let pasteRowEnd = startRow;
     // const rowCount = values.length;
@@ -1084,21 +1084,23 @@ export class ListTable extends BaseTable implements ListTableAPI {
           break;
         }
         thisRowPasteColEnd = startCol + j;
-        const value = rowValues[j];
-        const recordIndex = this.getRecordShowIndexByCell(startCol + j, startRow + i);
-        const { field } = this.internalProps.layoutMap.getBody(startCol + j, startRow + i);
-        const beforeChangeValue = this.getCellRawValue(startCol + j, startRow + i);
-        if (this.isHeader(startCol + j, startRow + i)) {
-          this.internalProps.layoutMap.updateColumnTitle(startCol + j, startRow + i, value as string);
-        } else {
-          this.dataSource.changeFieldValue(value, recordIndex, field, startCol + j, startRow + i, this);
+        if ((workOnEditableCell && this.getEditor(startCol + j, startRow + i)) || workOnEditableCell === false) {
+          const value = rowValues[j];
+          const recordIndex = this.getRecordShowIndexByCell(startCol + j, startRow + i);
+          const { field } = this.internalProps.layoutMap.getBody(startCol + j, startRow + i);
+          const beforeChangeValue = this.getCellRawValue(startCol + j, startRow + i);
+          if (this.isHeader(startCol + j, startRow + i)) {
+            this.internalProps.layoutMap.updateColumnTitle(startCol + j, startRow + i, value as string);
+          } else {
+            this.dataSource.changeFieldValue(value, recordIndex, field, startCol + j, startRow + i, this);
+          }
+          this.fireListeners(TABLE_EVENT_TYPE.CHANGE_CELL_VALUE, {
+            col: startCol + j,
+            row: startRow + i,
+            rawValue: beforeChangeValue,
+            changedValue: this.getCellOriginValue(startCol + j, startRow + i)
+          });
         }
-        this.fireListeners(TABLE_EVENT_TYPE.CHANGE_CELL_VALUE, {
-          col: startCol + j,
-          row: startRow + i,
-          rawValue: beforeChangeValue,
-          changedValue: this.getCellOriginValue(startCol + j, startRow + i)
-        });
       }
       pasteColEnd = Math.max(pasteColEnd, thisRowPasteColEnd);
     }
