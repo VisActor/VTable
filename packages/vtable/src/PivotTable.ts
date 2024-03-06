@@ -26,7 +26,7 @@ import { Dataset } from './dataset/dataset';
 import { BaseTable } from './core/BaseTable';
 import type { BaseTableAPI, PivotTableProtected } from './ts-types/base-table';
 import { Title } from './components/title/title';
-import { cloneDeep } from '@visactor/vutils';
+import { cloneDeep, isValid } from '@visactor/vutils';
 import { Env } from './tools/env';
 import type { LayouTreeNode } from './layout/tree-helper';
 import { TABLE_EVENT_TYPE } from './core/TABLE_EVENT_TYPE';
@@ -1076,7 +1076,23 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
     }
     return editorDefine as IEditor;
   }
+  /** 检查单元格是否定义过编辑器 不管编辑器是否有效 只要有定义就返回true */
+  isHasEditorDefine(col: number, row: number) {
+    const define = this.getBodyColumnDefine(col, row);
+    let editorDefine = define?.editor ?? this.options.editor;
 
+    if (typeof editorDefine === 'function') {
+      const arg = {
+        col,
+        row,
+        dataValue: this.getCellOriginValue(col, row),
+        value: this.getCellValue(col, row) || '',
+        table: this
+      };
+      editorDefine = (editorDefine as Function)(arg);
+    }
+    return isValid(editorDefine);
+  }
   /** 更改单元格数据 会触发change_cell_value事件*/
   changeCellValue(col: number, row: number, value: string | undefined) {
     let newValue: any = value;
@@ -1120,7 +1136,7 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
    * @param row 粘贴数据的起始行号
    * @param values 多个单元格的数据数组
    */
-  changeCellValues(startCol: number, startRow: number, values: string[][]) {
+  changeCellValues(startCol: number, startRow: number, values: string[][], workOnEditableCell = false) {
     let pasteColEnd = startCol;
     let pasteRowEnd = startRow;
     // const rowCount = values.length;
@@ -1137,20 +1153,25 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
         }
 
         thisRowPasteColEnd = startCol + j;
-        const value = rowValues[j];
-        let newValue: string | number = value;
-        const rawValue = this.getCellRawValue(startCol + j, startRow + i);
-        if (typeof rawValue === 'number' && isAllDigits(value)) {
-          newValue = parseFloat(value);
-        }
-        this._changeCellValueToDataSet(startCol + j, startRow + i, newValue);
+        if (
+          (workOnEditableCell && this.isHasEditorDefine(startCol + j, startRow + i)) ||
+          workOnEditableCell === false
+        ) {
+          const value = rowValues[j];
+          let newValue: string | number = value;
+          const rawValue = this.getCellRawValue(startCol + j, startRow + i);
+          if (typeof rawValue === 'number' && isAllDigits(value)) {
+            newValue = parseFloat(value);
+          }
+          this._changeCellValueToDataSet(startCol + j, startRow + i, newValue);
 
-        this.fireListeners(TABLE_EVENT_TYPE.CHANGE_CELL_VALUE, {
-          col: startCol + j,
-          row: startRow + i,
-          rawValue,
-          changedValue: this.getCellOriginValue(startCol + j, startRow + i)
-        });
+          this.fireListeners(TABLE_EVENT_TYPE.CHANGE_CELL_VALUE, {
+            col: startCol + j,
+            row: startRow + i,
+            rawValue,
+            changedValue: this.getCellOriginValue(startCol + j, startRow + i)
+          });
+        }
       }
       pasteColEnd = Math.max(pasteColEnd, thisRowPasteColEnd);
     }

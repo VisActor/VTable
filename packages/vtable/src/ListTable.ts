@@ -998,6 +998,25 @@ export class ListTable extends BaseTable implements ListTableAPI {
     }
     return editorDefine as IEditor;
   }
+  /** 检查单元格是否定义过编辑器 不管编辑器是否有效 只要有定义就返回true */
+  isHasEditorDefine(col: number, row: number) {
+    const define = this.getBodyColumnDefine(col, row);
+    let editorDefine = this.isHeader(col, row)
+      ? define?.headerEditor ?? this.options.headerEditor
+      : define?.editor ?? this.options.editor;
+
+    if (typeof editorDefine === 'function') {
+      const arg = {
+        col,
+        row,
+        dataValue: this.getCellOriginValue(col, row),
+        value: this.getCellValue(col, row) || '',
+        table: this
+      };
+      editorDefine = (editorDefine as Function)(arg);
+    }
+    return isValid(editorDefine);
+  }
   /** 更改单元格数据 会触发change_cell_value事件*/
   changeCellValue(col: number, row: number, value: string | number | null) {
     const recordIndex = this.getRecordShowIndexByCell(col, row);
@@ -1069,7 +1088,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
    * @param row 粘贴数据的起始行号
    * @param values 多个单元格的数据数组
    */
-  changeCellValues(startCol: number, startRow: number, values: (string | number)[][]) {
+  changeCellValues(startCol: number, startRow: number, values: (string | number)[][], workOnEditableCell = false) {
     let pasteColEnd = startCol;
     let pasteRowEnd = startRow;
     // const rowCount = values.length;
@@ -1085,21 +1104,26 @@ export class ListTable extends BaseTable implements ListTableAPI {
           break;
         }
         thisRowPasteColEnd = startCol + j;
-        const value = rowValues[j];
-        const recordIndex = this.getRecordShowIndexByCell(startCol + j, startRow + i);
-        const { field } = this.internalProps.layoutMap.getBody(startCol + j, startRow + i);
-        const beforeChangeValue = this.getCellRawValue(startCol + j, startRow + i);
-        if (this.isHeader(startCol + j, startRow + i)) {
-          this.internalProps.layoutMap.updateColumnTitle(startCol + j, startRow + i, value as string);
-        } else {
-          this.dataSource.changeFieldValue(value, recordIndex, field, startCol + j, startRow + i, this);
+        if (
+          (workOnEditableCell && this.isHasEditorDefine(startCol + j, startRow + i)) ||
+          workOnEditableCell === false
+        ) {
+          const value = rowValues[j];
+          const recordIndex = this.getRecordShowIndexByCell(startCol + j, startRow + i);
+          const { field } = this.internalProps.layoutMap.getBody(startCol + j, startRow + i);
+          const beforeChangeValue = this.getCellRawValue(startCol + j, startRow + i);
+          if (this.isHeader(startCol + j, startRow + i)) {
+            this.internalProps.layoutMap.updateColumnTitle(startCol + j, startRow + i, value as string);
+          } else {
+            this.dataSource.changeFieldValue(value, recordIndex, field, startCol + j, startRow + i, this);
+          }
+          this.fireListeners(TABLE_EVENT_TYPE.CHANGE_CELL_VALUE, {
+            col: startCol + j,
+            row: startRow + i,
+            rawValue: beforeChangeValue,
+            changedValue: this.getCellOriginValue(startCol + j, startRow + i)
+          });
         }
-        this.fireListeners(TABLE_EVENT_TYPE.CHANGE_CELL_VALUE, {
-          col: startCol + j,
-          row: startRow + i,
-          rawValue: beforeChangeValue,
-          changedValue: this.getCellOriginValue(startCol + j, startRow + i)
-        });
       }
       pasteColEnd = Math.max(pasteColEnd, thisRowPasteColEnd);
     }
