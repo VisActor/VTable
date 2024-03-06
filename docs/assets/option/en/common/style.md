@@ -219,3 +219,11 @@ Progress bar mark width
 Progress bar mark position, can be set to `'right' | 'bottom'`, default is `'right'`.
 
 {{ /if }}
+
+{{ if: ${isCheckbox} }}
+
+{{ use: common-checkbox-style (
+  prefix = ${prefix}
+  ) }}
+
+{{ /if }}

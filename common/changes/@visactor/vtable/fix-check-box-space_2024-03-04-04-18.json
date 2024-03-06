@@ -2,7 +2,7 @@
   "changes": [
     {
       "packageName": "@visactor/vtable",
-      "comment": "fix: fix axis innerOffset",
+      "comment": "fix: fix checkbox text space problem",
       "type": "none"
     }
   ],

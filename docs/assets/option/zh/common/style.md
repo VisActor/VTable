@@ -221,3 +221,11 @@
 进度条标记位置，可设置`'right' | 'bottom'`，默认`'right'`。
 
 {{ /if }}
+
+{{ if: ${isCheckbox} }}
+
+{{ use: common-checkbox-style (
+  prefix = ${prefix}
+  ) }}
+
+{{ /if }}

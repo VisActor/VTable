@@ -97,7 +97,9 @@ export class EditManeger {
           this.completeEdit();
         },
         referencePosition,
-        container: this.table.getElement()
+        container: this.table.getElement(),
+        col,
+        row
       });
     }
   }

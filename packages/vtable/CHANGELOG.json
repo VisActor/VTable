@@ -2,6 +2,84 @@
   "name": "@visactor/vtable",
   "entries": [
     {
+      "version": "0.20.3",
+      "tag": "@visactor/vtable_v0.20.3",
+      "date": "Mon, 04 Mar 2024 04:30:08 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "fix: fix checkbox text space problem"
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.20.2",
+      "tag": "@visactor/vtable_v0.20.2",
+      "date": "Fri, 01 Mar 2024 11:46:26 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "fix: rightFrozenCol is bigger then colCount #1162\n\n"
+          },
+          {
+            "comment": "fix: header description tooltip flicker #1173\n\n"
+          },
+          {
+            "comment": "feat: add checkbox style theme"
+          },
+          {
+            "comment": "fix: add fontStyle & fontVariant"
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.20.1",
+      "tag": "@visactor/vtable_v0.20.1",
+      "date": "Thu, 29 Feb 2024 11:57:42 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "fix: hideColumnsSubheader with three levels show error #1105\n\n"
+          },
+          {
+            "comment": "feat: add api getRecordIndexByCell #1121\n\n"
+          },
+          {
+            "comment": "refactor: rename resize_column_end event arguments #1129\n\n"
+          },
+          {
+            "comment": "refactor: api return value type\n\n"
+          },
+          {
+            "comment": "refactor: setRecords support restoreHierarchyState #1148\n\n"
+          },
+          {
+            "comment": "fix: customlayout flex render error #1163\n\n"
+          },
+          {
+            "comment": "refactor: vtable not stop event bubble #892"
+          },
+          {
+            "comment": "fix: when scroll tooltip hide #905\n\n"
+          },
+          {
+            "comment": "fix: fix axis innerOffset"
+          },
+          {
+            "comment": "fix-contextMenuItems-add-col-param"
+          },
+          {
+            "comment": "fix: add skipFunctionDiff in react-vtable"
+          },
+          {
+            "comment": "refactor: remove Circular dependency\n\n"
+          }
+        ]
+      }
+    },
+    {
       "version": "0.20.0",
       "tag": "@visactor/vtable_v0.20.0",
       "date": "Fri, 23 Feb 2024 10:06:24 GMT",

@@ -1,7 +1,7 @@
 {
   "changes": [
     {
-      "comment": "refactor: remove Circular dependency\n\n",
+      "comment": "fix: records change restoreHierarchyState occor error #1203\n\n",
       "type": "none",
       "packageName": "@visactor/vtable"
     }

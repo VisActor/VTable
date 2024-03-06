@@ -158,17 +158,17 @@ export class DataSource extends EventTarget implements DataSourceAPI {
   private lastOrderFn: (a: any, b: any, order: string) => number;
   private lastOrderField: FieldDef;
   /** 每一行对应源数据的索引 */
-  protected currentIndexedData: (number | number[])[] | null = [];
+  currentIndexedData: (number | number[])[] | null = [];
   protected userPagination: IPagination;
   protected pagination: IPagination;
   /** 当前页每一行对应源数据的索引 */
-  protected _currentPagerIndexedData: (number | number[])[];
+  _currentPagerIndexedData: (number | number[])[];
   // 当前是否为层级的树形结构 排序时判断该值确实是否继续进行子节点排序
   hierarchyExpandLevel: number = 0;
   static get EVENT_TYPE(): typeof EVENT_TYPE {
     return EVENT_TYPE;
   }
-  protected treeDataHierarchyState: Map<number | string, HierarchyState> = new Map();
+  treeDataHierarchyState: Map<number | string, HierarchyState> = new Map();
   beforeChangedRecordsMap: Record<number, any>[] = [];
 
   // 注册聚合类型

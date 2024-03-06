@@ -291,6 +291,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     internalProps.cellTextOverflows = {};
     internalProps.focusedTable = false;
     internalProps.theme = themes.of(options.theme ?? themes.DEFAULT); //原来在listTable文件中
+    internalProps.theme.isPivot = this.isPivotTable();
 
     if (container) {
       //先清空
@@ -303,6 +304,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
 
     this.options = options;
     internalProps.theme = themes.of(options.theme ?? themes.DEFAULT);
+    internalProps.theme.isPivot = this.isPivotTable();
     internalProps.bodyHelper = new BodyHelper(this);
     internalProps.headerHelper = new HeaderHelper(this);
 
@@ -2006,6 +2008,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     internalProps.stick.changedCells.clear();
 
     internalProps.theme = themes.of(options.theme ?? themes.DEFAULT);
+    internalProps.theme.isPivot = this.isPivotTable();
     this.scenegraph.updateStageBackground();
     // this._updateSize();
     //设置是否自动撑开的配置
@@ -2427,7 +2430,10 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     field: FieldDef,
     fieldKey?: FieldKeyDef
   ): ((v1: any, v2: any, order: string) => 0 | 1 | -1) | undefined;
-  abstract setRecords(records: Array<any>, sort?: SortState | SortState[]): void;
+  abstract setRecords(
+    records: Array<any>,
+    option?: { restoreHierarchyState: boolean; sort?: SortState | SortState[] }
+  ): void;
   abstract refreshHeader(): void;
   abstract refreshRowColCount(): void;
   abstract getHierarchyState(col: number, row: number): HierarchyState | null;
@@ -2533,6 +2539,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
   }
   set theme(theme: TableTheme) {
     this.internalProps.theme = themes.of(theme ?? themes.DEFAULT);
+    this.internalProps.theme.isPivot = this.isPivotTable();
     this.options.theme = theme;
   }
   /**
@@ -2541,6 +2548,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
   updateTheme(theme: ITableThemeDefine) {
     const oldHoverState = { col: this.stateManager.hover.cellPos.col, row: this.stateManager.hover.cellPos.row };
     this.internalProps.theme = themes.of(theme ?? themes.DEFAULT);
+    this.internalProps.theme.isPivot = this.isPivotTable();
     this.options.theme = theme;
     this.scenegraph.updateComponent();
     this.scenegraph.updateStageBackground();
@@ -2726,7 +2734,8 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
               cellHeaderPaths: this.getCellHeaderPaths(col, row)
             },
             styleClass,
-            this.options.autoWrapText
+            this.options.autoWrapText,
+            this.theme
           );
           customMerge.style = fullStyle;
         }
@@ -2963,7 +2972,8 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
             cellHeaderPaths: this.getCellHeaderPaths(col, row)
           },
           styleClass,
-          this.options.autoWrapText
+          this.options.autoWrapText,
+          this.theme
         );
       } else if (layoutMap.isRightFrozenColumn(col, row) && this.theme.rightFrozenStyle) {
         cacheStyle = <FullExtendStyle>headerStyleContents.of(
@@ -2978,7 +2988,8 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
             cellHeaderPaths: this.getCellHeaderPaths(col, row)
           },
           styleClass,
-          this.options.autoWrapText
+          this.options.autoWrapText,
+          this.theme
         );
       } else {
         // let defaultStyle;
@@ -3014,7 +3025,8 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
             cellHeaderPaths: this.getCellHeaderPaths(col, row)
           },
           styleClass,
-          this.options.autoWrapText
+          this.options.autoWrapText,
+          this.theme
         );
       }
       this.headerStyleCache.set(cacheKey, cacheStyle);
@@ -3060,7 +3072,8 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
         cellHeaderPaths: this.getCellHeaderPaths(col, row)
       },
       styleClass,
-      this.options.autoWrapText
+      this.options.autoWrapText,
+      this.theme
     );
     if (!isFunction(style)) {
       if (layoutMap.isBottomFrozenRow(row)) {

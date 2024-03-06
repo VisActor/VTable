@@ -89,7 +89,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
     if (options.dataSource) {
       _setDataSource(this, options.dataSource);
     } else if (options.records) {
-      this.setRecords(options.records as any, internalProps.sortState);
+      this.setRecords(options.records as any, { sortState: internalProps.sortState });
     } else {
       this.setRecords([]);
     }
@@ -119,7 +119,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
   }
 
   get records() {
-    return this.dataSource.source;
+    return this.dataSource?.source;
   }
 
   get recordsCount() {
@@ -351,7 +351,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
     }
     return ifCan;
   }
-  updateOption(options: ListTableConstructorOptions, accelerateFirstScreen = false) {
+  updateOption(options: ListTableConstructorOptions & { restoreHierarchyState?: boolean }) {
     const internalProps = this.internalProps;
     super.updateOption(options);
     internalProps.frozenColDragHeaderMode = options.frozenColDragHeaderMode;
@@ -388,7 +388,10 @@ export class ListTable extends BaseTable implements ListTableAPI {
     if (options.dataSource) {
       _setDataSource(this, options.dataSource);
     } else if (options.records) {
-      this.setRecords(options.records as any, options.sortState);
+      this.setRecords(options.records as any, {
+        restoreHierarchyState: options.restoreHierarchyState,
+        sortState: options.sortState
+      });
     } else {
       this._resetFrozenColCount();
       // 生成单元格场景树
@@ -414,6 +417,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
         (this.pagination.currentPage = pagination.currentPage);
       pagination.perPageCount &&
         (this.pagination.perPageCount = pagination.perPageCount || this.pagination.perPageCount);
+      this.internalProps.layoutMap.clearCellRangeMap();
       // 清空单元格内容
       this.scenegraph.clearCells();
       //数据源缓存数据更新
@@ -860,7 +864,20 @@ export class ListTable extends BaseTable implements ListTableAPI {
    * @param records
    * @param sort
    */
-  setRecords(records: Array<any>, sort?: SortState | SortState[]): void {
+  setRecords(
+    records: Array<any>,
+    option?: { restoreHierarchyState?: boolean; sortState?: SortState | SortState[] }
+  ): void {
+    let sort: SortState | SortState[];
+    if (Array.isArray(option) || (option as any)?.order) {
+      //兼容之前第二个参数为sort的情况
+      sort = <any>option;
+    } else if (option) {
+      sort = option.sortState;
+    } else if (option === null) {
+      //兼容之前第二个参数为null来清除sort排序状态的逻辑
+      sort = null;
+    }
     const time = typeof window !== 'undefined' ? window.performance.now() : 0;
     const oldHoverState = { col: this.stateManager.hover.cellPos.col, row: this.stateManager.hover.cellPos.row };
     // 清空单元格内容
@@ -871,6 +888,11 @@ export class ListTable extends BaseTable implements ListTableAPI {
       this.internalProps.sortState = sort;
       this.stateManager.setSortState((this as any).sortState as SortState);
     }
+    // restoreHierarchyState逻辑，保留树形结构展开收起的状态
+    const currentPagerIndexedData = this.dataSource?._currentPagerIndexedData;
+    const currentIndexedData = this.dataSource?.currentIndexedData;
+    const treeDataHierarchyState = this.dataSource?.treeDataHierarchyState;
+    const oldRecordLength = this.records?.length ?? 0;
     if (records) {
       _setRecords(this, records);
       if ((this as any).sortState) {
@@ -894,10 +916,23 @@ export class ListTable extends BaseTable implements ListTableAPI {
           }
         }
       }
+      if (option?.restoreHierarchyState && oldRecordLength === this.records?.length) {
+        // restoreHierarchyState逻辑，保留树形结构展开收起的状态
+        this.dataSource._currentPagerIndexedData = currentPagerIndexedData;
+        this.dataSource.currentIndexedData = currentIndexedData;
+        this.dataSource.treeDataHierarchyState = treeDataHierarchyState;
+      }
       this.refreshRowColCount();
     } else {
       _setRecords(this, records);
+      if (option?.restoreHierarchyState && oldRecordLength === this.records?.length) {
+        // restoreHierarchyState逻辑，保留树形结构展开收起的状态
+        this.dataSource._currentPagerIndexedData = currentPagerIndexedData;
+        this.dataSource.currentIndexedData = currentIndexedData;
+        this.dataSource.treeDataHierarchyState = treeDataHierarchyState;
+      }
     }
+
     this.stateManager.initCheckedState(records);
     // this.internalProps.frozenColCount = this.options.frozenColCount || this.rowHeaderLevelCount;
     // 生成单元格场景树

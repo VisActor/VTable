@@ -59,6 +59,7 @@ IStyleOption 类型结构如下：
   prefix = ${prefix},
   isImage = ${isImage},
   isProgressbar = ${isProgressbar},
+  isCheckbox = ${isCheckbox},
 ) }}
 
 ${prefix} headerIcon(string|Object|Array)

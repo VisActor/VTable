@@ -224,16 +224,22 @@ export function getStyleTheme(
   let fontFamily;
   let fontSize;
   let fontWeight;
+  let fontStyle;
+  let fontVariant;
   if (font) {
     // 后期会弃用直接设置font，而使用fontFamily fontSize fontWeight 等属性
-    const { family, size, weight } = parseFont(font);
+    const { family, size, weight, style, variant } = parseFont(font);
     fontFamily = family.join(' ');
     fontSize = size;
     fontWeight = weight;
+    fontStyle = style;
+    fontStyle = variant;
   } else {
     fontFamily = getProp('fontFamily', headerStyle, col, row, table);
     fontSize = getProp('fontSize', headerStyle, col, row, table);
     fontWeight = getProp('fontWeight', headerStyle, col, row, table);
+    fontStyle = getProp('fontStyle', headerStyle, col, row, table);
+    fontVariant = getProp('fontVariant', headerStyle, col, row, table);
   }
 
   // const fontSize = getFontSize(font);
@@ -282,6 +288,8 @@ export function getStyleTheme(
       fontFamily,
       fontSize,
       fontWeight,
+      fontStyle,
+      fontVariant,
       fill: color,
       textAlign,
       textBaseline,
