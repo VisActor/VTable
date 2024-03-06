@@ -417,6 +417,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
         (this.pagination.currentPage = pagination.currentPage);
       pagination.perPageCount &&
         (this.pagination.perPageCount = pagination.perPageCount || this.pagination.perPageCount);
+      this.internalProps.layoutMap.clearCellRangeMap();
       // 清空单元格内容
       this.scenegraph.clearCells();
       //数据源缓存数据更新
