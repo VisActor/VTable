@@ -190,7 +190,7 @@ export function bindContainerDomListener(eventManager: EventManager) {
             rowValues.push(cell);
           });
         });
-        (table as ListTableAPI).changeCellValues(col, row, values);
+        (table as ListTableAPI).changeCellValues(col, row, values, true);
       }
     }
   });
