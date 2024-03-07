@@ -798,7 +798,9 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
    * @param source 移动源位置
    * @param target 移动目标位置
    */
-  moveHeaderPosition(source: CellAddress, target: CellAddress) {
+  _moveHeaderPosition(source: CellAddress, target: CellAddress) {
+    const sourceCellRange = this.getCellRange(source.col, source.row);
+    const targetCellRange = this.getCellRange(target.col, target.row);
     // 调用布局类 布局数据结构调整为移动位置后的
     const moveContext = (this.internalProps.layoutMap as PivotHeaderLayoutMap).moveHeaderPosition(source, target);
     if (moveContext) {
@@ -808,14 +810,21 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
           for (let row = 0; row < this.internalProps.records.length; row++) {
             const sourceColumns = (this.internalProps.records[row] as unknown as number[]).splice(
               moveContext.sourceIndex - this.rowHeaderLevelCount,
-              moveContext.moveSize
+              moveContext.sourceSize
             );
             sourceColumns.unshift((moveContext.targetIndex as any) - this.rowHeaderLevelCount, 0 as any);
             Array.prototype.splice.apply(this.internalProps.records[row] as unknown as number[], sourceColumns);
           }
         }
         //colWidthsMap 中存储着每列的宽度 根据移动 sourceCol targetCol 调整其中的位置
-        this.colWidthsMap.adjustOrder(moveContext.sourceIndex, moveContext.targetIndex, moveContext.moveSize);
+        // this.colWidthsMap.adjustOrder(moveContext.sourceIndex, moveContext.targetIndex, moveContext.moveSize);
+        this.colWidthsMap.exchangeOrder(
+          sourceCellRange.start.col,
+          sourceCellRange.end.col - sourceCellRange.start.col + 1,
+          targetCellRange.start.col,
+          targetCellRange.end.col - targetCellRange.start.col + 1,
+          moveContext.targetIndex
+        );
         //下面代码取自refreshHeader列宽设置逻辑
         //设置列宽极限值 TODO 目前是有问题的 最大最小宽度限制 移动列位置后不正确
         for (let col = 0; col < this.internalProps.layoutMap.columnWidths.length; col++) {
@@ -832,17 +841,34 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
         if (this.options.records?.[0]?.constructor === Array) {
           const sourceRows = (this.internalProps.records as unknown as number[]).splice(
             moveContext.sourceIndex - this.columnHeaderLevelCount,
-            moveContext.moveSize
+            moveContext.sourceSize
           );
           sourceRows.unshift((moveContext.targetIndex as any) - this.columnHeaderLevelCount, 0 as any);
           Array.prototype.splice.apply(this.internalProps.records, sourceRows);
         }
         //colWidthsMap 中存储着每列的宽度 根据移动 sourceCol targetCol 调整其中的位置
-        this.rowHeightsMap.adjustOrder(moveContext.sourceIndex, moveContext.targetIndex, moveContext.moveSize);
+        // this.rowHeightsMap.adjustOrder(moveContext.sourceIndex, moveContext.targetIndex, moveContext.moveSize);
+        if (moveContext.targetIndex > moveContext.sourceIndex) {
+          this.rowHeightsMap.exchangeOrder(
+            moveContext.sourceIndex,
+            moveContext.sourceSize,
+            moveContext.targetIndex + moveContext.sourceSize - moveContext.targetSize,
+            moveContext.targetSize,
+            moveContext.targetIndex
+          );
+        } else {
+          this.rowHeightsMap.exchangeOrder(
+            moveContext.sourceIndex,
+            moveContext.sourceSize,
+            moveContext.targetIndex,
+            moveContext.targetSize,
+            moveContext.targetIndex
+          );
+        }
       }
-      return true;
+      return moveContext;
     }
-    return false;
+    return null;
   }
   /**
    * 表头切换层级状态

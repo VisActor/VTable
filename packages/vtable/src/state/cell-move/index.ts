@@ -110,33 +110,65 @@ export function endMoveCol(state: StateManager) {
     const sourceMergeInfo = getCellMergeInfo(state.table, state.columnMove.colSource, state.columnMove.rowSource);
     const targetMergeInfo = getCellMergeInfo(state.table, state.columnMove.colTarget, state.columnMove.rowTarget);
     // 调整列顺序
-    const moveSuccess = (state.table as any).moveHeaderPosition(
+    const moveContext = state.table._moveHeaderPosition(
       { col: state.columnMove.colSource, row: state.columnMove.rowSource },
       { col: state.columnMove.colTarget, row: state.columnMove.rowTarget }
     );
 
     // 更新状态
-    if (moveSuccess) {
+    if (moveContext) {
       // clear columns width and rows height cache
-      clearWidthsAndHeightsCache(
-        state.columnMove.colSource,
-        state.columnMove.rowSource,
-        state.columnMove.colTarget,
-        state.columnMove.rowTarget,
-        state.table
-      );
+      if (moveContext.moveType === 'column') {
+        clearWidthsAndHeightsCache(
+          Math.min(
+            (sourceMergeInfo as any)?.start?.col ?? state.columnMove.colSource,
+            (targetMergeInfo as any)?.start?.col ?? state.columnMove.colTarget
+          ),
+          Math.max(
+            (sourceMergeInfo as any)?.end?.col ?? state.columnMove.colSource,
+            (targetMergeInfo as any)?.end?.col ?? state.columnMove.colTarget
+          ),
+          0,
+          -1,
+          state.table
+        );
+      } else {
+        clearWidthsAndHeightsCache(
+          0,
+          -1,
+          Math.min(
+            (sourceMergeInfo as any)?.start?.row ?? state.columnMove.rowSource,
+            (targetMergeInfo as any)?.start?.row ?? state.columnMove.rowTarget
+          ),
+          Math.max(
+            (sourceMergeInfo as any)?.end?.row ?? state.columnMove.rowSource,
+            (targetMergeInfo as any)?.end?.row ?? state.columnMove.rowTarget
+          ),
+          state.table
+        );
+      }
 
       // clear cell style cache
       state.table.clearCellStyleCache();
-
-      state.table.scenegraph.updateHeaderPosition(
-        state.columnMove.colSource,
-        state.columnMove.rowSource,
-        state.columnMove.colTarget,
-        state.columnMove.rowTarget,
-        sourceMergeInfo,
-        targetMergeInfo
-      );
+      if (moveContext.moveType === 'column') {
+        state.table.scenegraph.updateHeaderPosition(
+          Math.min(moveContext.sourceIndex, moveContext.targetIndex),
+          Math.max(moveContext.sourceIndex + moveContext.sourceSize, moveContext.targetIndex + moveContext.targetSize),
+          0,
+          -1,
+          moveContext.moveType
+        );
+      } else {
+        state.table.scenegraph.updateHeaderPosition(
+          0,
+          -1,
+          Math.min(moveContext.sourceIndex, moveContext.targetIndex),
+          moveContext.targetIndex > moveContext.sourceIndex
+            ? moveContext.targetIndex + moveContext.sourceSize - 1
+            : moveContext.sourceIndex + moveContext.sourceSize - 1,
+          moveContext.moveType
+        );
+      }
       //调整冻结列数量
       if (state.table.internalProps.frozenColDragHeaderMode === 'adjustFrozenCount' && state.table.isListTable()) {
         if (
@@ -194,16 +226,12 @@ export function endMoveCol(state: StateManager) {
 }
 
 function clearWidthsAndHeightsCache(
-  colSource: number,
-  rowSource: number,
-  colTarget: number,
-  rowTarget: number,
+  colMin: number,
+  colMax: number,
+  rowMin: number,
+  rowMax: number,
   table: BaseTableAPI
 ) {
-  const colMin = Math.min(colSource, colTarget);
-  const colMax = Math.max(colSource, colTarget);
-  const rowMin = Math.min(rowSource, rowTarget);
-  const rowMax = Math.max(rowSource, rowTarget);
   for (let col = colMin; col <= colMax; col++) {
     table._clearColRangeWidthsMap(col);
   }
