@@ -5,7 +5,7 @@ import type { SceneProxy } from '../proxy';
 import { updateAutoColumn } from './update-auto-column';
 import { checkFirstColMerge, getFirstChild, getLastChild } from './util';
 
-export async function dynamicSetX(x: number, proxy: SceneProxy) {
+export async function dynamicSetX(x: number, isEnd: boolean, proxy: SceneProxy) {
   const screenLeft = (proxy.table as BaseTableAPI).getTargetColAt(
     x + proxy.table.scenegraph.rowHeaderGroup.attribute.width
   );
@@ -15,9 +15,29 @@ export async function dynamicSetX(x: number, proxy: SceneProxy) {
   const screenLeftCol = screenLeft.col;
   const screenLeftX = screenLeft.left;
   proxy.screenLeftCol = screenLeftCol;
-  const deltaCol = proxy.screenLeftCol - proxy.referenceCol;
 
+  let deltaCol;
+  if (isEnd) {
+    deltaCol = proxy.bodyRightCol - proxy.colEnd;
+  } else {
+    deltaCol = proxy.screenLeftCol - proxy.referenceCol;
+  }
+  // const deltaCol = proxy.screenLeftCol - proxy.referenceCol;
   move(deltaCol, screenLeftCol, screenLeftX, x, proxy);
+
+  if (isEnd) {
+    const colGroup = proxy.table.scenegraph.getColGroup(proxy.colEnd);
+    if (colGroup) {
+      const deltaX =
+        colGroup.attribute.x +
+        colGroup.attribute.width -
+        (proxy.table.tableNoFrameWidth - proxy.table.getFrozenColsWidth() - proxy.table.getRightFrozenColsWidth()) -
+        x;
+      proxy.deltaX = -deltaX;
+      proxy.table.scenegraph.setBodyAndColHeaderX(-x + proxy.deltaX);
+    }
+  }
+
   proxy.table.scenegraph.updateNextFrame();
 }
 

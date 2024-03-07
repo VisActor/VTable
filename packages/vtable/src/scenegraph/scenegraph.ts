@@ -339,12 +339,12 @@ export class Scenegraph {
   createSceneGraph() {
     this.table.rowHeightsMap.clear();
 
-    if (this.table.heightMode === 'autoHeight') {
-      this.table.defaultRowHeight = getDefaultHeight(this.table);
-    }
-    if (this.table.widthMode === 'autoWidth' || this.table.internalProps.transpose) {
-      this.table.defaultColWidth = getDefaultWidth(this.table);
-    }
+    // if (this.table.heightMode === 'autoHeight') {
+    //   this.table.defaultRowHeight = getDefaultHeight(this.table);
+    // }
+    // if (this.table.widthMode === 'autoWidth' || this.table.internalProps.transpose) {
+    //   this.table.defaultColWidth = getDefaultWidth(this.table);
+    // }
 
     // bind AutoPoptip
     if (this.table.isPivotChart() || this.table._hasCustomRenderOrLayout()) {
@@ -1073,18 +1073,8 @@ export class Scenegraph {
    * @param {number} x
    * @return {*}
    */
-  setX(x: number) {
-    // if (this.colHeaderGroup.attribute.width + x === this.bodyGroup.attribute.x) {
-    //   return;
-    // }
-    // // this.tableGroup.setAttribute('x', x);
-    // // this.tableGroup.setAttribute('width', this.table.tableNoFrameWidth - x);
-    // this.bodyGroup.setAttribute('x', this.rowHeaderGroup.attribute.width + x);
-    // this.colHeaderGroup.setAttribute('x', this.rowHeaderGroup.attribute.width + x);
-
-    // // (this.tableGroup.lastChild as any).setAttribute('width', this.table.tableNoFrameWidth - x);
-    // this.updateNextFrame();
-    this.table.scenegraph.proxy.setX(-x);
+  setX(x: number, isEnd = false) {
+    this.table.scenegraph.proxy.setX(-x, isEnd);
   }
 
   /**
@@ -1092,19 +1082,8 @@ export class Scenegraph {
    * @param {number} y
    * @return {*}
    */
-  setY(y: number) {
-    // if (this.transpose || this.isPivot) {
-    //   if (this.colHeaderGroup.attribute.height + y === this.bodyGroup.attribute.y) {
-    //     return;
-    //   }
-    //   this.bodyGroup.setAttribute('y', this.colHeaderGroup.attribute.height + y);
-    //   this.rowHeaderGroup.setAttribute('y', this.colHeaderGroup.attribute.height + y);
-    //   // this.tableGroup.setAttribute('height', this.table.tableNoFrameHeight - y);
-    //   // (this.tableGroup.lastChild as any).setAttribute('width', this.table.tableNoFrameWidth - x);
-    //   this.updateNextFrame();
-    // } else if (this.table.scenegraph.proxy) {
-    this.table.scenegraph.proxy.setY(-y);
-    // }
+  setY(y: number, isEnd = false) {
+    this.table.scenegraph.proxy.setY(-y, isEnd);
   }
 
   /**
