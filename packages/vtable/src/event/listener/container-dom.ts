@@ -187,35 +187,6 @@ export function bindContainerDomListener(eventManager: EventManager) {
         
                   rowValues.push(`<td>${parsedCellData}</td>`);
             });
-
-          // rows.forEach(function (rowCells: any, rowIndex: number) {
-          //   console.log(rows);
-          //   console.log(rowCells);
-          //   const cells = rowCells[0].data; 
-          //   const rowValues: (string | number)[] = [];
-          //   if (rowIndex === 0) {
-          //     result.push('<tbody>');
-          //   }
-          //   cells.forEach(function (cell: string, cellIndex: number) {
-             
-          //       const cellData = cell;
-          //       const parsedCellData = !cellData ?
-          //         '' :
-          //         cellData.toString()
-          //           .replace(/&/g, '&amp;')
-          //           .replace(/</g, '&lt;')
-          //           .replace(/>/g, '&gt;')
-          //           .replace(/(<br(\s*|\/)>(\r\n|\n)?|\r\n|\n)/g, '<br>\r\n')
-          //           .replace(/\x20{2,}/gi, (substring: string | any[]) => {
-          //             // The way how Excel serializes data with at least two spaces.
-          //             return `<span style="mso-spacerun: yes">${'&nbsp;'.repeat(substring.length - 1)} </span>`;
-          //           })
-          //           .replace(/\t/gi, '&#9;');
-          
-          //           rowValues.push(`<td>${parsedCellData}</td>`);
-          //         })
-          
-
               result.push('<tr>', ...rowValues, '</tr>');
           
               if (rowIndex === rowCells.length - 1) {
