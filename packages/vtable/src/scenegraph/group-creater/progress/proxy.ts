@@ -438,7 +438,7 @@ export class SceneProxy {
     this.table.scenegraph.updateBorderSizeAndPosition();
   }
 
-  async setY(y: number) {
+  async setY(y: number, isEnd = false) {
     const yLimitTop =
       this.table.getRowsHeight(this.bodyTopRow, this.bodyTopRow + (this.rowEnd - this.rowStart + 1)) / 2;
     const yLimitBottom = this.table.getAllRowsHeight() - yLimitTop;
@@ -459,11 +459,11 @@ export class SceneProxy {
       this.updateBody(y - this.deltaY);
     } else {
       // 执行动态更新节点
-      this.dynamicSetY(y);
+      this.dynamicSetY(y, isEnd);
     }
   }
 
-  async setX(x: number) {
+  async setX(x: number, isEnd = false) {
     const xLimitLeft =
       this.table.getColsWidth(this.bodyLeftCol, this.bodyLeftCol + (this.colEnd - this.colStart + 1)) / 2;
     const xLimitRight = this.table.getAllColsWidth() - xLimitLeft;
@@ -484,15 +484,15 @@ export class SceneProxy {
       this.table.scenegraph.setBodyAndColHeaderX(-x + this.deltaX);
     } else {
       // 执行动态更新节点
-      this.dynamicSetX(x);
+      this.dynamicSetX(x, isEnd);
     }
   }
 
-  async dynamicSetY(y: number) {
-    dynamicSetY(y, this);
+  async dynamicSetY(y: number, isEnd = false) {
+    dynamicSetY(y, isEnd, this);
   }
-  async dynamicSetX(x: number) {
-    dynamicSetX(x, this);
+  async dynamicSetX(x: number, isEnd = false) {
+    dynamicSetX(x, isEnd, this);
   }
 
   updateBody(y: number) {
@@ -756,8 +756,11 @@ export class SceneProxy {
       }
     } else if (isValid(screenTopY) && isValid(screenTopRow)) {
       const cellGroup = this.table.scenegraph.highPerformanceGetCell(this.colStart, screenTopRow, true);
-      const deltaY = screenTopY - (cellGroup.attribute.y + this.table.getFrozenRowsHeight());
-      this.deltaY = deltaY;
+      const bodyY = y - this.deltaY;
+      const distRowYOffset = screenTopY - bodyY; // dist cell 距离表格顶部的位置差
+      const currentRowYOffset = cellGroup.attribute.y - bodyY + this.table.getFrozenRowsHeight(); // current cell 距离表格顶部的位置差
+      // const deltaY = screenTopY - (cellGroup.attribute.y + );
+      this.deltaY = distRowYOffset - currentRowYOffset;
     }
   }
 
@@ -780,8 +783,12 @@ export class SceneProxy {
     } else if (isValid(screenLeftX) && isValid(screenLeftCol)) {
       const colGroup =
         this.table.scenegraph.getColGroup(screenLeftCol) || this.table.scenegraph.getColGroup(screenLeftCol, true);
-      const deltaX = screenLeftX - (colGroup.attribute.x + this.table.getFrozenColsWidth() + this.deltaX);
-      this.deltaX = deltaX;
+      // const deltaX = screenLeftX - (colGroup.attribute.x + this.table.getFrozenColsWidth() + this.deltaX);
+      // this.deltaX = deltaX + this.deltaX;
+      const bodyX = x - this.deltaX;
+      const distColXOffset = screenLeftX - bodyX; // dist col 距离表格左侧的位置差
+      const currentColXOffset = colGroup.attribute.x - bodyX + this.table.getFrozenColsWidth(); // current col 距离表格左侧的位置差
+      this.deltaX = distColXOffset - currentColXOffset;
     }
   }
 

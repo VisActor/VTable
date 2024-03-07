@@ -147,6 +147,10 @@ export class NumberRangeMap {
       } else {
         sum += this.data.get(i) ?? this.table.getRowHeight(i);
       }
+      // if (i === position && this.cumulativeSum.has(i + 1)) {
+      //   sum += this.cumulativeSum.get(i + 1) - (this.data.get(i + 1) ?? this.table.getRowHeight(i + 1));
+      //   break;
+      // }
     }
     this.cumulativeSum.set(position, sum);
     return sum;
