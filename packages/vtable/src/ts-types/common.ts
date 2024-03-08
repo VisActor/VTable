@@ -135,8 +135,10 @@ export type CustomCellStyle = {
 };
 
 export type CustomCellStyleArrangement = {
-  col?: number;
-  row?: number;
-  range?: CellRange;
+  cellPosition: {
+    col?: number;
+    row?: number;
+    range?: CellRange;
+  };
   customStyleId: string;
 };

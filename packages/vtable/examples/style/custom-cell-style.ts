@@ -480,8 +480,10 @@ export function createTable() {
     ],
     customCellStyleArrangement: [
       {
-        col: 3,
-        row: 4,
+        cellPosition: {
+          col: 3,
+          row: 4
+        },
         customStyleId: 'custom-1'
       }
     ]
@@ -494,6 +496,8 @@ export function createTable() {
     const order = e.order === 'asc' ? 'desc' : e.order === 'desc' ? 'normal' : 'asc';
     instance.updatePivotSortState([{ dimensions: e.dimensionInfo, order }]);
   });
+
+  // instance.registerCustomCellStyle(id, customCellStyle);
 
   bindDebugTool(instance.scenegraph.stage as any, {
     customGrapicKeys: ['role', '_updateTag']
