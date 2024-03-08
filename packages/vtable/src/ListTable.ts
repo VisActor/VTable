@@ -215,7 +215,14 @@ export class ListTable extends BaseTable implements ListTableAPI {
       return customMergeText;
     }
     const table = this;
-    if (table.internalProps.layoutMap.isHeader(col, row)) {
+    if (table.internalProps.layoutMap.isSeriesNumber(col, row)) {
+      if (table.internalProps.layoutMap.isSeriesNumberInHeader(col, row)) {
+        const { title } = table.internalProps.layoutMap.getSeriesNumberHeader(col, row);
+        return title;
+      }
+      const { format } = table.internalProps.layoutMap.getSeriesNumberBody(col, row);
+      return typeof format === 'function' ? format(col, row, this) : row - this.columnHeaderLevelCount + 1;
+    } else if (table.internalProps.layoutMap.isHeader(col, row)) {
       const { title } = table.internalProps.layoutMap.getHeader(col, row);
       return typeof title === 'function' ? title() : title;
     } else if (table.internalProps.layoutMap.isAggregation(col, row)) {
@@ -236,7 +243,14 @@ export class ListTable extends BaseTable implements ListTableAPI {
       return null;
     }
     const table = this;
-    if (table.internalProps.layoutMap.isHeader(col, row)) {
+    if (table.internalProps.layoutMap.isSeriesNumber(col, row)) {
+      if (table.internalProps.layoutMap.isSeriesNumberInHeader(col, row)) {
+        const { title } = table.internalProps.layoutMap.getSeriesNumberHeader(col, row);
+        return title;
+      }
+      const { format } = table.internalProps.layoutMap.getSeriesNumberBody(col, row);
+      return typeof format === 'function' ? format(col, row, this) : row - this.columnHeaderLevelCount;
+    } else if (table.internalProps.layoutMap.isHeader(col, row)) {
       const { title } = table.internalProps.layoutMap.getHeader(col, row);
       return typeof title === 'function' ? title() : title;
     } else if (table.internalProps.layoutMap.isAggregation(col, row)) {

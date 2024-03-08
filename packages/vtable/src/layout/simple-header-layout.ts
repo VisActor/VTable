@@ -9,7 +9,8 @@ import type {
   IListTableCellHeaderPaths,
   LayoutObjectId,
   AggregationType,
-  Aggregation
+  Aggregation,
+  RowSeriesNumber
 } from '../ts-types';
 import type { ColumnsDefine, TextColumnDefine } from '../ts-types/list-table/define';
 import type {
@@ -17,6 +18,7 @@ import type {
   ColumnDefine,
   HeaderData,
   LayoutMapAPI,
+  SeriesNumberColumnData,
   WidthData
 } from '../ts-types/list-table/layout-map/api';
 import { checkHasChart, getChartDataId } from './chart-helper/get-chart-spec';
@@ -33,6 +35,11 @@ export class SimpleHeaderLayoutMap implements LayoutMapAPI {
   // private _headerObjectFieldKey: { [key in string]: HeaderData };
   private _headerCellIds: number[][];
   private _columns: ColumnData[];
+  rowSeriesNumberColumn: SeriesNumberColumnData[];
+  leftRowSeriesNumberColumn: SeriesNumberColumnData[];
+  rightRowSeriesNumberColumn: SeriesNumberColumnData[];
+  leftRowSeriesNumberColumnCount: number = 0;
+  rightRowSeriesNumberColumnCount: number = 0;
   /** 后期加的 对应pivot-header-layout 中的columnDimensionTree 为了排序后获取到排序后的columns */
   columnTree: DimensionTree;
   readonly bodyRowSpanCount: number = 1;
@@ -69,6 +76,40 @@ export class SimpleHeaderLayoutMap implements LayoutMapAPI {
     //   o[e.fieldKey] = e;
     //   return o;
     // }, {} as { [key in string]: HeaderData });
+    this.handleRowSeriesNumber(table.internalProps.rowSeriesNumber);
+  }
+  handleRowSeriesNumber(rowSeriesNumber: RowSeriesNumber[]) {
+    if (rowSeriesNumber) {
+      if (Array.isArray(rowSeriesNumber)) {
+        this.rowSeriesNumberColumn = rowSeriesNumber.map(seriesNumber => {
+          return {
+            id: this.seqId++,
+            title: seriesNumber.title,
+            define: seriesNumber,
+            cellType: seriesNumber.cellType ?? 'text',
+            style: seriesNumber.style,
+            format: seriesNumber.format,
+            field: seriesNumber.field,
+            icon: seriesNumber.icon
+          };
+        });
+        this.leftRowSeriesNumberColumn = this.rowSeriesNumberColumn.filter(rowSeriesNumberItem => {
+          if (rowSeriesNumberItem.define.align === 'left' || !isValid(rowSeriesNumberItem.define.align)) {
+            return true;
+          }
+          return false;
+        });
+        this.rightRowSeriesNumberColumn = this.rowSeriesNumberColumn.filter(rowSeriesNumberItem => {
+          if (rowSeriesNumberItem.define.align === 'right') {
+            return true;
+          }
+          return false;
+        });
+        this.leftRowSeriesNumberColumnCount = this.leftRowSeriesNumberColumn.length;
+        this.rightRowSeriesNumberColumnCount = this.rightRowSeriesNumberColumn.length;
+      } else {
+      }
+    }
   }
   // get columnWidths(): ColumnData[] {
   //   return this._columns;
@@ -84,6 +125,49 @@ export class SimpleHeaderLayoutMap implements LayoutMapAPI {
   }
   set showHeader(_showHeader: boolean) {
     this._showHeader = _showHeader;
+  }
+  isSeriesNumberInHeader(col: number, row: number): boolean {
+    if (col < this.leftRowSeriesNumberColumnCount && row < this.headerLevelCount) {
+      return true;
+    }
+    if (col >= this.colCount - this.rightRowSeriesNumberColumnCount && row < this.headerLevelCount) {
+      return true;
+    }
+    return false;
+  }
+  isSeriesNumberInBody(col: number, row: number): boolean {
+    if (col < this.leftRowSeriesNumberColumnCount && row >= this.headerLevelCount) {
+      return true;
+    }
+    if (col >= this.colCount - this.rightRowSeriesNumberColumnCount && row >= this.headerLevelCount) {
+      return true;
+    }
+    return false;
+  }
+  isSeriesNumber(col: number, row: number): boolean {
+    if (col < this.leftRowSeriesNumberColumnCount) {
+      return true;
+    }
+    if (col >= this.colCount - this.rightRowSeriesNumberColumnCount) {
+      return true;
+    }
+    return false;
+  }
+  getSeriesNumberHeader(col: number, row: number) {
+    if (col < this.leftRowSeriesNumberColumnCount && row < this.headerLevelCount) {
+      return this.leftRowSeriesNumberColumn[col];
+    }
+    if (col >= this.colCount - this.rightRowSeriesNumberColumnCount && row < this.headerLevelCount) {
+      return this.rightRowSeriesNumberColumn[col - (this.colCount - this.rightRowSeriesNumberColumnCount)];
+    }
+  }
+  getSeriesNumberBody(col: number, row: number) {
+    if (col < this.leftRowSeriesNumberColumnCount) {
+      return this.leftRowSeriesNumberColumn[col];
+    }
+    if (col >= this.colCount - this.rightRowSeriesNumberColumnCount) {
+      return this.rightRowSeriesNumberColumn[col - (this.colCount - this.rightRowSeriesNumberColumnCount)];
+    }
   }
   isHeader(col: number, row: number): boolean {
     if (this.transpose && col >= 0 && col < this.headerLevelCount) {
@@ -264,7 +348,13 @@ export class SimpleHeaderLayoutMap implements LayoutMapAPI {
     return false;
   }
   isColumnHeader(col: number, row: number): boolean {
-    if (!this.transpose && row >= 0 && row <= this.headerLevelCount - 1) {
+    if (
+      !this.transpose &&
+      row >= 0 &&
+      row <= this.headerLevelCount - 1 &&
+      col >= this.leftRowSeriesNumberColumnCount &&
+      col < this.colCount - this.rightRowSeriesNumberColumnCount
+    ) {
       return true;
     }
     return false;
@@ -487,7 +577,9 @@ export class SimpleHeaderLayoutMap implements LayoutMapAPI {
   }
   get colCount(): number {
     //标准表格 列数是由表头定义的field决定的；如果是转置表格，这个值么有地方用到，而且是由数据量决定的，在listTable中有定义这个值
-    return this.transpose ? this.headerLevelCount + this.recordsCount : this._columns.length;
+    return this.transpose
+      ? this.headerLevelCount + this.recordsCount
+      : this._columns.length + this.leftRowSeriesNumberColumnCount + this.rightRowSeriesNumberColumnCount;
   }
   get rowCount(): number {
     //转置表格 行数是由表头定义的field决定的；如果是标准表格，这个值么有地方用到，而且是由数据量决定的，在listTable中有定义这个值
@@ -555,7 +647,7 @@ export class SimpleHeaderLayoutMap implements LayoutMapAPI {
         return { width: defaultWidth };
       }
     }
-    return this._columns[col];
+    return this._columns[col - this.leftRowSeriesNumberColumnCount];
   }
   getCellId(col: number, row: number): LayoutObjectId {
     if (this.transpose) {
@@ -565,13 +657,19 @@ export class SimpleHeaderLayoutMap implements LayoutMapAPI {
       //in header
       return this._headerCellIds[col]?.[row];
     }
+    if (this.isSeriesNumber(col, row)) {
+      return this.rowSeriesNumberColumn[col].id;
+    }
     if (this.headerLevelCount <= row) {
-      return this._columns[col]?.id;
+      return this._columns[col - this.leftRowSeriesNumberColumnCount]?.id;
     }
     //in header
-    return this._headerCellIds[row]?.[col];
+    return this._headerCellIds[row]?.[col - this.leftRowSeriesNumberColumnCount];
   }
-  getHeader(col: number, row: number): HeaderData {
+  getHeader(col: number, row: number): HeaderData | SeriesNumberColumnData {
+    if (this.isSeriesNumberInHeader(col, row)) {
+      return this.rowSeriesNumberColumn[col];
+    }
     const id = this.getCellId(col, row);
     return this._headerObjectMap[id as number]!;
   }
@@ -590,7 +688,7 @@ export class SimpleHeaderLayoutMap implements LayoutMapAPI {
           if (this.transpose) {
             return { col: i, row: j };
           }
-          return { col: j, row: i };
+          return { col: j + this.leftRowSeriesNumberColumnCount, row: i };
         }
       }
     }
@@ -601,8 +699,11 @@ export class SimpleHeaderLayoutMap implements LayoutMapAPI {
     const hd = this.headerObjects.find((col: any) => col && col.field === field);
     return this.getHeaderCellAdressById(hd.id as number);
   }
-  getBody(col: number, _row: number): ColumnData {
-    return this.transpose ? this._columns[_row] : this._columns[col];
+  getBody(col: number, _row: number): ColumnData | SeriesNumberColumnData {
+    if (this.isSeriesNumber(col, _row)) {
+      return this.getSeriesNumberBody(col, _row);
+    }
+    return this.transpose ? this._columns[_row] : this._columns[col - this.leftRowSeriesNumberColumnCount];
   }
   getBodyLayoutRangeById(id: LayoutObjectId): CellRange {
     if (this.transpose) {
@@ -656,16 +757,24 @@ export class SimpleHeaderLayoutMap implements LayoutMapAPI {
       // hover相关的单元格位置是-1,-1，getCellRange计算有误，先进行判断
       if (this.headerLevelCount <= row) {
         //如果是body部分 设置了需要合并单元格 这里判断上下是否内容相同 相同的话 将cellRange范围扩大
-        if (this.headerLevelCount <= row && (this.columnObjects[col]?.define as TextColumnDefine)?.mergeCell) {
+        if (
+          this.headerLevelCount <= row &&
+          (this.columnObjects[col - this.leftRowSeriesNumberColumnCount]?.define as TextColumnDefine)?.mergeCell
+        ) {
           const value = this.getBodyCellValue(col, row);
           for (let r = row - 1; r >= this.headerLevelCount; r--) {
             const last_Value = this.getBodyCellValue(col, r);
-            if (typeof this.columnObjects[col].define.mergeCell === 'boolean') {
+            if (typeof this.columnObjects[col - this.leftRowSeriesNumberColumnCount].define.mergeCell === 'boolean') {
               if (value !== last_Value) {
                 break;
               }
             } else {
-              if (!(this.columnObjects[col].define.mergeCell as Function)(value, last_Value)) {
+              if (
+                !(this.columnObjects[col - this.leftRowSeriesNumberColumnCount].define.mergeCell as Function)(
+                  value,
+                  last_Value
+                )
+              ) {
                 break;
               }
             }
@@ -673,12 +782,17 @@ export class SimpleHeaderLayoutMap implements LayoutMapAPI {
           }
           for (let r = row + 1; r < this.rowCount; r++) {
             const next_Value = this.getBodyCellValue(col, r);
-            if (typeof this.columnObjects[col].define.mergeCell === 'boolean') {
+            if (typeof this.columnObjects[col - this.leftRowSeriesNumberColumnCount].define.mergeCell === 'boolean') {
               if (value !== next_Value) {
                 break;
               }
             } else {
-              if (!(this.columnObjects[col].define.mergeCell as Function)(value, next_Value)) {
+              if (
+                !(this.columnObjects[col - this.leftRowSeriesNumberColumnCount].define.mergeCell as Function)(
+                  value,
+                  next_Value
+                )
+              ) {
                 break;
               }
             }
@@ -930,12 +1044,15 @@ export class SimpleHeaderLayoutMap implements LayoutMapAPI {
     return newRow;
   }
   getCellHeaderPaths(col: number, row: number): IListTableCellHeaderPaths {
+    if (this.isSeriesNumber(col, row)) {
+      return undefined;
+    }
     let colPath: IListTableCellHeaderPaths['colHeaderPaths'] = [];
     let rowPath: IListTableCellHeaderPaths['rowHeaderPaths'] = [];
     if (!this.transpose) {
       colPath = [
         {
-          field: this._columns[col].field
+          field: this._columns[col - this.leftRowSeriesNumberColumnCount].field
         }
       ];
     } else {
@@ -1101,7 +1218,7 @@ export class SimpleHeaderLayoutMap implements LayoutMapAPI {
     };
   }
   setChartInstance(_col: number, _row: number, chartInstance: any) {
-    const columnObj = this.transpose ? this._columns[_row] : this._columns[_col];
+    const columnObj = this.transpose ? this._columns[_row] : this._columns[_col - this.leftRowSeriesNumberColumnCount];
     if (typeof columnObj.chartSpec === 'function') {
       return;
     }
@@ -1109,7 +1226,7 @@ export class SimpleHeaderLayoutMap implements LayoutMapAPI {
   }
 
   getChartInstance(_col: number, _row: number) {
-    const columnObj = this.transpose ? this._columns[_row] : this._columns[_col];
+    const columnObj = this.transpose ? this._columns[_row] : this._columns[_col - this.leftRowSeriesNumberColumnCount];
     return columnObj.chartInstance;
   }
   checkHasChart() {
@@ -1131,7 +1248,7 @@ export class SimpleHeaderLayoutMap implements LayoutMapAPI {
   /** 共享chartSpec 非函数 */
   isShareChartSpec(col: number, row: number): boolean {
     const body = this.getBody(col, row);
-    const chartSpec = body?.chartSpec;
+    const chartSpec = (body as ColumnData)?.chartSpec;
     if (typeof chartSpec === 'function') {
       return false;
     }
@@ -1142,7 +1259,7 @@ export class SimpleHeaderLayoutMap implements LayoutMapAPI {
   }
   getRawChartSpec(col: number, row: number): any {
     const body = this.getBody(col, row);
-    const chartSpec = body?.chartSpec;
+    const chartSpec = (body as ColumnData)?.chartSpec;
     if (typeof chartSpec === 'function') {
       // 动态组织spec
       const arg = {

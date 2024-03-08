@@ -48,7 +48,9 @@ import type {
   IRowDimension,
   TableEventOptions,
   IPivotChartDataConfig,
-  IListTableDataConfig
+  IListTableDataConfig,
+  RowSeriesNumber,
+  ColumnSeriesNumber
 } from '.';
 import type { TooltipOptions } from './tooltip';
 import type { IWrapTextGraphicAttribute } from '../scenegraph/graphic/text';
@@ -95,6 +97,8 @@ export interface IBaseTableProtected {
   // underlayBackgroundColor?: string;
   keyboardOptions?: TableKeyboardOptions;
   eventOptions?: TableEventOptions;
+  rowSeriesNumber?: RowSeriesNumber[];
+  columnSeriesNumber?: ColumnSeriesNumber[];
   // disableRowHeaderColumnResize?: boolean;
   // 列宽调整模式（全列调整；全列不可调整；仅表头单元格可调整；仅内容单元格可调整）
   columnResizeMode?: 'all' | 'none' | 'header' | 'body';
@@ -362,11 +366,12 @@ export interface BaseTableConstructorOptions {
 
   customMergeCell?: CustomMergeCell;
 
-  // for nodejs
+  // #region for nodejs
   mode?: 'node' | 'broswer';
   modeParams?: any;
   canvasWidth?: number;
   canvasHeight?: number;
+  // #endregion
   /**
    * 'auto':和浏览器滚动行为一致 表格滚动到顶部/底部时 触发浏览器默认行为;
    *  设置为 'none' 时, 表格滚动到顶部/底部时, 不再触发父容器滚动
@@ -375,6 +380,9 @@ export interface BaseTableConstructorOptions {
 
   // resize response time
   resizeTime?: number;
+
+  rowSeriesNumber?: RowSeriesNumber[];
+  columnSeriesNumber?: ColumnSeriesNumber[];
 }
 export interface BaseTableAPI {
   /** 数据总条目数 */

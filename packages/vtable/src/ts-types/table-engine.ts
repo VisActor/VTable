@@ -74,7 +74,9 @@ export type CellSubLocation =
   | 'rightFrozen'
   | 'rightTopCorner'
   | 'leftBottomCorner'
-  | 'rightBottomCorner';
+  | 'rightBottomCorner'
+  | 'rowSeriesNumber'
+  | 'colSeriesNumber';
 
 export interface TableKeyboardOptions {
   /** tab键 默认为true。开启tab键移动选中单元格，如果当前是在编辑单元格 则移动到下一个单元格也是编辑状态 */
@@ -109,6 +111,12 @@ export interface RowSeriesNumber {
     | ColumnIconOption
     | (string | ColumnIconOption)[]
     | ((args: CellInfo) => string | ColumnIconOption | (string | ColumnIconOption)[]);
+  /** 选中整行或者全选时 是否包括序号部分 */
+  selectRangeInclude?: boolean;
+  /** 是否可拖拽顺序 */
+  dragOrder?: boolean;
+  /** 是否显示调换顺序的图标 */
+  showDragOrderIcon?: boolean;
 }
 
 export interface ColumnSeriesNumber {
@@ -125,6 +133,12 @@ export interface ColumnSeriesNumber {
     | ColumnIconOption
     | (string | ColumnIconOption)[]
     | ((args: CellInfo) => string | ColumnIconOption | (string | ColumnIconOption)[]);
+  /** 选中整行或者全选时 是否包括序号部分 */
+  selectRangeInclude?: boolean;
+  /** 是否可拖拽顺序 */
+  dragOrder?: boolean;
+  /** 是否显示调换顺序的图标 */
+  showDragOrderIcon?: boolean;
 }
 export interface DataSourceAPI {
   clearCurrentIndexedData: () => void;

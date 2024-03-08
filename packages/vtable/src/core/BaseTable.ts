@@ -174,6 +174,8 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
       autoFillHeight = false,
       keyboardOptions,
       eventOptions,
+      rowSeriesNumber,
+      columnSeriesNumber,
       // disableRowHeaderColumnResize,
       columnResizeMode,
       dragHeaderMode,
@@ -260,6 +262,8 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
 
     internalProps.keyboardOptions = keyboardOptions;
     internalProps.eventOptions = eventOptions;
+    internalProps.rowSeriesNumber = rowSeriesNumber;
+    internalProps.columnSeriesNumber = columnSeriesNumber;
 
     internalProps.columnResizeMode = columnResizeMode;
     internalProps.dragHeaderMode = dragHeaderMode;
@@ -1922,6 +1926,8 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
       defaultHeaderColWidth = 80,
       keyboardOptions,
       eventOptions,
+      rowSeriesNumber,
+      columnSeriesNumber,
       // disableRowHeaderColumnResize,
       columnResizeMode,
       dragHeaderMode,
@@ -1986,6 +1992,8 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     internalProps.defaultHeaderColWidth = defaultHeaderColWidth ?? defaultColWidth;
     internalProps.keyboardOptions = keyboardOptions;
     internalProps.eventOptions = eventOptions;
+    internalProps.rowSeriesNumber = rowSeriesNumber;
+    internalProps.columnSeriesNumber = columnSeriesNumber;
 
     internalProps.columnResizeMode = columnResizeMode;
     internalProps.dragHeaderMode = dragHeaderMode;
