@@ -34,7 +34,7 @@ import { endMoveCol, startMoveCol, updateMoveCol } from './cell-move';
 import type { FederatedEvent } from '@src/vrender';
 import type { TooltipOptions } from '../ts-types/tooltip';
 import { getIconAndPositionFromTarget } from '../scenegraph/utils/icon';
-import type { BaseTableAPI } from '../ts-types/base-table';
+import type { BaseTableAPI, HeaderData } from '../ts-types/base-table';
 import { debounce } from '../tools/debounce';
 import { updateResizeColumn } from './resize/update-resize-column';
 
@@ -918,7 +918,7 @@ export class StateManager {
           // 手动查询menuKey对应的dropDownIndex
           const headerC = this.table._getHeaderLayoutMap(col ?? colNow, row ?? rowNow);
 
-          const dropDownMenu = headerC.dropDownMenu || this.table.globalDropDownMenu;
+          const dropDownMenu = (headerC as HeaderData).dropDownMenu || this.table.globalDropDownMenu;
           if (dropDownMenu) {
             for (let i = 0; i < dropDownMenu.length; i++) {
               const item: any = dropDownMenu[i];

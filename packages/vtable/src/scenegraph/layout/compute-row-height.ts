@@ -4,7 +4,7 @@ import { validToString } from '../../tools/util';
 import type { ColumnIconOption, ColumnTypeOption } from '../../ts-types';
 import { IconPosition } from '../../ts-types';
 import type { BaseTableAPI, HeaderData } from '../../ts-types/base-table';
-import type { ColumnData, TextColumnDefine } from '../../ts-types/list-table/layout-map/api';
+import type { ColumnData, ColumnDefine, TextColumnDefine } from '../../ts-types/list-table/layout-map/api';
 import { getProp } from '../utils/get-prop';
 import { getQuadProps } from '../utils/padding';
 import { dealWithRichTextIcon } from '../utils/text-icon-layout';
@@ -362,7 +362,7 @@ export function computeRowHeight(row: number, startCol: number, endCol: number, 
       continue;
     }
     const cellType = table.isHeader(col, row)
-      ? table._getHeaderLayoutMap(col, row)?.headerType
+      ? (table._getHeaderLayoutMap(col, row) as HeaderData)?.headerType
       : table.getBodyColumnType(col, row);
     if (cellType !== 'text' && cellType !== 'link' && cellType !== 'progressbar' && cellType !== 'checkbox') {
       // text&link&progressbar测量文字宽度
@@ -394,8 +394,8 @@ function checkFixedStyleAndNoWrap(table: BaseTableAPI): boolean {
     if (
       typeof cellDefine.style === 'function' ||
       typeof (cellDefine as ColumnData).icon === 'function' ||
-      cellDefine.define?.customRender ||
-      cellDefine.define?.customLayout ||
+      (cellDefine.define as ColumnDefine)?.customRender ||
+      (cellDefine.define as ColumnDefine)?.customLayout ||
       typeof cellDefine.define?.icon === 'function'
     ) {
       return false;
@@ -428,8 +428,8 @@ function checkFixedStyleAndNoWrapForTranspose(table: BaseTableAPI, row: number):
   if (
     typeof cellDefine.style === 'function' ||
     typeof (cellDefine as ColumnData).icon === 'function' ||
-    cellDefine.define?.customRender ||
-    cellDefine.define?.customLayout ||
+    (cellDefine.define as ColumnDefine)?.customRender ||
+    (cellDefine.define as ColumnDefine)?.customLayout ||
     typeof cellDefine.define?.icon === 'function'
   ) {
     return false;
@@ -461,8 +461,8 @@ function checkPivotFixedStyleAndNoWrap(table: BaseTableAPI, row: number) {
   if (
     typeof headerDefine.style === 'function' ||
     typeof (headerDefine as HeaderData).icons === 'function' ||
-    headerDefine.define?.headerCustomRender ||
-    headerDefine.define?.headerCustomLayout ||
+    (headerDefine.define as ColumnDefine)?.headerCustomRender ||
+    (headerDefine.define as ColumnDefine)?.headerCustomLayout ||
     typeof headerDefine.define?.icon === 'function'
   ) {
     return false;
@@ -588,7 +588,7 @@ function computeTextHeight(col: number, row: number, cellType: ColumnTypeOption,
     mayHaveIcon = true;
   } else {
     const define = table.getBodyColumnDefine(col, row);
-    mayHaveIcon = !!define?.icon || !!define?.tree;
+    mayHaveIcon = !!define?.icon || !!(define as ColumnDefine)?.tree;
   }
 
   if (mayHaveIcon) {

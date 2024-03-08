@@ -31,7 +31,7 @@ import { cellInRange, emptyFn } from './tools/helper';
 import { Dataset } from './dataset/dataset';
 import { _setDataSource } from './core/tableHelper';
 import { BaseTable } from './core/BaseTable';
-import type { BaseTableAPI, PivotChartProtected } from './ts-types/base-table';
+import type { BaseTableAPI, HeaderData, PivotChartProtected } from './ts-types/base-table';
 import type { IChartColumnIndicator } from './ts-types/pivot-table/indicator/chart-indicator';
 import type { Chart } from './scenegraph/graphic/chart';
 import { clearChartCacheImage, updateChartData } from './scenegraph/refresh-node/update-chart';
@@ -709,7 +709,7 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
     return cellHeaderPaths;
   }
   getHierarchyState(col: number, row: number): HierarchyState {
-    return this._getHeaderLayoutMap(col, row)?.hierarchyState;
+    return (this._getHeaderLayoutMap(col, row) as HeaderData)?.hierarchyState;
   }
 
   _hasHierarchyTreeHeader() {

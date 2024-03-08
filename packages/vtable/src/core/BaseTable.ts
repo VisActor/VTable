@@ -37,7 +37,14 @@ import {
   type ITableThemeDefine,
   InteractionState
 } from '../ts-types';
-import type { AnyFunction, CellAddressWithBound, ColumnIconOption, TableEventOptions } from '../ts-types';
+import type {
+  AnyFunction,
+  CellAddressWithBound,
+  ColumnIconOption,
+  ColumnSeriesNumber,
+  RowSeriesNumber,
+  TableEventOptions
+} from '../ts-types';
 import { event, style as utilStyle } from '../tools/helper';
 
 import { TABLE_EVENT_TYPE } from './TABLE_EVENT_TYPE';
@@ -65,7 +72,8 @@ import type {
   ColumnDefine,
   ColumnsDefine,
   ImageColumnDefine,
-  IndicatorData
+  IndicatorData,
+  SeriesNumberColumnData
 } from '../ts-types/list-table/layout-map/api';
 import type { TooltipOptions } from '../ts-types/tooltip';
 import { IconCache } from '../plugins/icons';
@@ -2573,7 +2581,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
    * @param  {number} row row index.
    * @return {ColumnDefine} The column define object.
    */
-  getBodyColumnDefine(col: number, row: number): ColumnDefine {
+  getBodyColumnDefine(col: number, row: number): ColumnDefine | RowSeriesNumber | ColumnSeriesNumber {
     // TODO: 暂时修复透视表报错
     const body = this.internalProps.layoutMap.getBody(col, row);
     return body?.define;
@@ -2587,7 +2595,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
   getCellType(col: number, row: number): ColumnTypeOption {
     let cellType;
     if (this.isHeader(col, row)) {
-      cellType = this.internalProps.layoutMap.getHeader(col, row).headerType;
+      cellType = (this.internalProps.layoutMap.getHeader(col, row) as HeaderData).headerType;
     } else {
       cellType = this.internalProps.layoutMap.getBody(col, row).cellType;
     }
@@ -2608,7 +2616,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
    * @param  {number} row row index.
    * @return {ColumnDefine} The column define object.
    */
-  getHeaderDefine(col: number, row: number): ColumnDefine {
+  getHeaderDefine(col: number, row: number): ColumnDefine | RowSeriesNumber | ColumnSeriesNumber {
     const hd = this.internalProps.layoutMap.getHeader(col, row);
     return hd?.define;
   }
@@ -2634,11 +2642,11 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
    * @param  {number} col The column index.
    * @return {*} The array of header define object.
    */
-  getHeadersDefine(col: number, row: number): ColumnDefine[] {
+  getHeadersDefine(col: number, row: number): (ColumnDefine | RowSeriesNumber | ColumnSeriesNumber)[] {
     const headers = [];
     while (true) {
       const header = this.getHeaderDefine(col, row);
-      if (header && (header.field || header.columns)) {
+      if (header && (header.field || (header as ColumnDefine).columns)) {
         headers.push(header);
       } else {
         break;
@@ -2649,10 +2657,10 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
 
     return headers;
   }
-  _getHeaderLayoutMap(col: number, row: number): HeaderData {
+  _getHeaderLayoutMap(col: number, row: number): HeaderData | SeriesNumberColumnData {
     return this.internalProps.layoutMap.getHeader(col, row);
   }
-  _getBodyLayoutMap(col: number, row: number): ColumnData | IndicatorData {
+  _getBodyLayoutMap(col: number, row: number): ColumnData | IndicatorData | SeriesNumberColumnData {
     return this.internalProps.layoutMap.getBody(col, row);
   }
   /** 获取绘制画布的canvas上下文 */
@@ -2773,7 +2781,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
   getHeaderDescription(col: number, row: number): string | undefined {
     const field = this._getHeaderLayoutMap(col, row);
     const fieldDef = field?.define;
-    const description = fieldDef?.description ?? field?.description;
+    const description = (fieldDef as ColumnDefine)?.description ?? (field as HeaderData)?.description;
     if (typeof description === 'function') {
       const arg: CellInfo = {
         col,
@@ -2948,7 +2956,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
       }
 
       if (
-        (!hd || hd.isEmpty) &&
+        (!hd || (hd as HeaderData).isEmpty) &&
         (layoutMap.isLeftBottomCorner(col, row) ||
           layoutMap.isRightBottomCorner(col, row) ||
           layoutMap.isCornerHeader(col, row) ||
@@ -2957,7 +2965,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
         return EMPTY_STYLE;
       }
 
-      const styleClass = this.internalProps.headerHelper.getStyleClass(hd?.headerType || 'text');
+      const styleClass = this.internalProps.headerHelper.getStyleClass((hd as HeaderData)?.headerType || 'text');
       if (layoutMap.isBottomFrozenRow(col, row) && this.theme.bottomFrozenStyle) {
         cacheStyle = <FullExtendStyle>headerStyleContents.of(
           paddingForAxis ? { padding: paddingForAxis } : {},
@@ -3168,7 +3176,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
       if (!define) {
         return false;
       }
-      if (define.dragHeader === undefined) {
+      if ((define as ColumnDefine).dragHeader === undefined) {
         if (this.internalProps.dragHeaderMode === 'all') {
           return true;
         } else if (this.internalProps.dragHeaderMode === 'column') {
@@ -3182,7 +3190,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
         }
         return false;
       }
-      return define.dragHeader;
+      return (define as ColumnDefine).dragHeader;
     }
     return false;
   }
@@ -3550,10 +3558,10 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     let customRender;
     if (this.getCellLocation(col, row) !== 'body') {
       const define = this.getHeaderDefine(col, row);
-      customRender = define?.headerCustomRender;
+      customRender = (define as ColumnDefine)?.headerCustomRender;
     } else {
       const define = this.getBodyColumnDefine(col, row);
-      customRender = define?.customRender || this.customRender;
+      customRender = (define as ColumnDefine)?.customRender || this.customRender;
     }
     return customRender;
   }
@@ -3562,10 +3570,10 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     let customLayout;
     if (this.getCellLocation(col, row) !== 'body') {
       const define = this.getHeaderDefine(col, row);
-      customLayout = define?.headerCustomLayout;
+      customLayout = (define as ColumnDefine)?.headerCustomLayout;
     } else {
       const define = this.getBodyColumnDefine(col, row);
-      customLayout = define?.customLayout;
+      customLayout = (define as ColumnDefine)?.customLayout;
     }
     return customLayout;
   }

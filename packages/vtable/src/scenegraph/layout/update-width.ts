@@ -2,7 +2,7 @@ import type { IGraphic } from '@src/vrender';
 import type { ProgressBarStyle } from '../../body-helper/style/ProgressBarStyle';
 import { CartesianAxis } from '../../components/axis/axis';
 import { getStyleTheme } from '../../core/tableHelper';
-import type { BaseTableAPI } from '../../ts-types/base-table';
+import type { BaseTableAPI, HeaderData } from '../../ts-types/base-table';
 import type { IProgressbarColumnBodyDefine } from '../../ts-types/list-table/define/progressbar-define';
 import { dealWithCustom, getCustomCellMergeCustom } from '../component/custom';
 import type { Group } from '../graphic/group';
@@ -21,6 +21,7 @@ import { computeRowHeight, computeRowsHeight } from './compute-row-height';
 import { updateCellHeightForRow } from './update-height';
 import { getHierarchyOffset } from '../utils/get-hierarchy-offset';
 import { getCellMergeRange } from '../../tools/merge-range';
+import type { ColumnDefine } from '../../ts-types';
 // import { updateAutoRowHeight } from './auto-height';
 
 /**
@@ -268,7 +269,7 @@ function updateCellWidth(
 
   // 更新单元格布局
   const type = scene.table.isHeader(col, row)
-    ? scene.table._getHeaderLayoutMap(col, row).headerType
+    ? (scene.table._getHeaderLayoutMap(col, row) as HeaderData).headerType
     : scene.table.getBodyColumnType(col, row);
   let isHeightChange = false;
   if (type === 'progressbar') {
@@ -354,12 +355,12 @@ function updateCellWidth(
         const cellType = scene.table.getCellLocation(col, row);
         if (cellType !== 'body') {
           const define = scene.table.getHeaderDefine(col, row);
-          customRender = define?.headerCustomRender;
-          customLayout = define?.headerCustomLayout;
+          customRender = (define as ColumnDefine)?.headerCustomRender;
+          customLayout = (define as ColumnDefine)?.headerCustomLayout;
         } else {
           const define = scene.table.getBodyColumnDefine(col, row);
-          customRender = define?.customRender || scene.table.customRender;
-          customLayout = define?.customLayout;
+          customRender = (define as ColumnDefine)?.customRender || scene.table.customRender;
+          customLayout = (define as ColumnDefine)?.customLayout;
         }
 
         if (customLayout || customRender) {

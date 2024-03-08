@@ -1,11 +1,11 @@
 /* eslint-disable no-undef */
 import type { IGraphic, IThemeSpec } from '@src/vrender';
-import type { CellLocation, CellRange, TextColumnDefine } from '../../ts-types';
+import type { CellLocation, CellRange, ColumnDefine, TextColumnDefine } from '../../ts-types';
 import type { Group } from '../graphic/group';
 import { getProp, getRawProp } from '../utils/get-prop';
 import type { MergeMap } from '../scenegraph';
 import { createCell } from './cell-helper';
-import type { BaseTableAPI } from '../../ts-types/base-table';
+import type { BaseTableAPI, HeaderData } from '../../ts-types/base-table';
 import { getCellCornerRadius, getStyleTheme } from '../../core/tableHelper';
 import { isPromise } from '../../tools/helper';
 import { dealPromiseData } from '../utils/deal-promise-data';
@@ -115,7 +115,7 @@ export function createComplexColumn(
       cellLocation !== 'body'
         ? table.getHeaderDefine(colForDefine, rowForDefine)
         : table.getBodyColumnDefine(colForDefine, rowForDefine);
-    const mayHaveIcon = cellLocation !== 'body' ? true : !!define?.icon || !!define?.tree;
+    const mayHaveIcon = cellLocation !== 'body' ? true : !!define?.icon || !!(define as ColumnDefine)?.tree;
 
     if (!range && (cellLocation !== 'body' || (define as TextColumnDefine)?.mergeCell)) {
       // 只有表头或者column配置合并单元格后再进行信息获取
@@ -158,8 +158,9 @@ export function createComplexColumn(
     // margin = getProp('margin', headerStyle, col, 0, table)
 
     const type =
-      (table.isHeader(col, row) ? table._getHeaderLayoutMap(col, row).headerType : table.getBodyColumnType(col, row)) ||
-      'text';
+      (table.isHeader(col, row)
+        ? (table._getHeaderLayoutMap(col, row) as HeaderData).headerType
+        : table.getBodyColumnType(col, row)) || 'text';
 
     // deal with promise data
     if (isPromise(value)) {
@@ -196,7 +197,7 @@ export function createComplexColumn(
       const cellGroup = createCell(
         type,
         value,
-        define,
+        define as ColumnDefine,
         table,
         col,
         row,

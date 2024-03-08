@@ -33,7 +33,7 @@ import { computeColWidth } from './scenegraph/layout/compute-col-width';
 import { computeRowHeight } from './scenegraph/layout/compute-row-height';
 import { defaultOrderFn } from './tools/util';
 import type { IEditor } from '@visactor/vtable-editors';
-import type { ColumnData } from './ts-types/list-table/layout-map/api';
+import type { ColumnData, ColumnDefine } from './ts-types/list-table/layout-map/api';
 
 export class ListTable extends BaseTable implements ListTableAPI {
   declare internalProps: ListTableProtected;
@@ -234,7 +234,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
         return aggregator?.formatValue ? aggregator.formatValue(col, row, this as BaseTableAPI) : '';
       }
     }
-    const { field, fieldFormat } = table.internalProps.layoutMap.getBody(col, row);
+    const { field, fieldFormat } = table.internalProps.layoutMap.getBody(col, row) as ColumnData;
     return table.getFieldData(fieldFormat || field, col, row);
   }
   /** 获取单元格展示数据的format前的值 */
@@ -358,7 +358,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
       if (!this.transpose) {
         // 列上是否配置了禁止拖拽列宽的配置项disableColumnResize
         const cellDefine = this.internalProps.layoutMap.getBody(col, this.columnHeaderLevelCount);
-        if (cellDefine?.disableColumnResize) {
+        if ((cellDefine as ColumnData)?.disableColumnResize) {
           return false;
         }
       }
@@ -677,7 +677,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
    * @returns
    */
   getHierarchyState(col: number, row: number) {
-    const define = this.getBodyColumnDefine(col, row);
+    const define = this.getBodyColumnDefine(col, row) as ColumnDefine;
     if (!define.tree) {
       return HierarchyState.none;
     }
@@ -958,8 +958,8 @@ export class ListTable extends BaseTable implements ListTableAPI {
   getEditor(col: number, row: number) {
     const define = this.getBodyColumnDefine(col, row);
     let editorDefine = this.isHeader(col, row)
-      ? define?.headerEditor ?? this.options.headerEditor
-      : define?.editor ?? this.options.editor;
+      ? (define as ColumnDefine)?.headerEditor ?? this.options.headerEditor
+      : (define as ColumnDefine)?.editor ?? this.options.editor;
 
     if (typeof editorDefine === 'function') {
       const arg = {

@@ -10,7 +10,14 @@ import type {
 import type { MenuListItem, DropDownMenuEventInfo, DropDownMenuHighlightInfo } from './menu';
 import type { CellStyle } from './style-define';
 import type { ColumnIconOption } from './icon';
-import type { ColumnData, ColumnDefine, ColumnsDefine, HeaderData, IndicatorData } from './list-table/layout-map/api';
+import type {
+  ColumnData,
+  ColumnDefine,
+  ColumnsDefine,
+  HeaderData,
+  IndicatorData,
+  SeriesNumberColumnData
+} from './list-table/layout-map/api';
 export type { HeaderData } from './list-table/layout-map/api';
 import type { TableTheme } from '../themes/theme';
 import type { ICustomRender } from './customElement';
@@ -580,15 +587,15 @@ export interface BaseTableAPI {
   getHeaderField: (col: number, row: number) => any | undefined;
 
   _getHeaderCellBySortState: (sortState: SortState) => CellAddress | undefined;
-  getHeaderDefine: (col: number, row: number) => ColumnDefine;
-  _getHeaderLayoutMap: (col: number, row: number) => HeaderData;
+  getHeaderDefine: (col: number, row: number) => ColumnDefine | RowSeriesNumber | ColumnSeriesNumber;
+  _getHeaderLayoutMap: (col: number, row: number) => HeaderData | SeriesNumberColumnData;
   getContext: () => CanvasRenderingContext2D;
   getCellRange: (col: number, row: number) => CellRange;
   _resetFrozenColCount: () => void;
   isCellRangeEqual: (col: number, row: number, targetCol: number, targetRow: number) => boolean;
   _getLayoutCellId: (col: number, row: number) => LayoutObjectId;
-  _getBodyLayoutMap: (col: number, row: number) => ColumnData | IndicatorData;
-  getBodyColumnDefine: (col: number, row: number) => ColumnDefine;
+  _getBodyLayoutMap: (col: number, row: number) => ColumnData | IndicatorData | SeriesNumberColumnData;
+  getBodyColumnDefine: (col: number, row: number) => ColumnDefine | RowSeriesNumber | ColumnSeriesNumber;
   getBodyColumnType: (col: number, row: number) => ColumnTypeOption;
   getCellType: (col: number, row: number) => ColumnTypeOption;
   fireListeners: <TYPE extends keyof TableEventHandlersEventArgumentMap>(

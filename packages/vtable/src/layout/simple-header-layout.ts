@@ -160,6 +160,7 @@ export class SimpleHeaderLayoutMap implements LayoutMapAPI {
     if (col >= this.colCount - this.rightRowSeriesNumberColumnCount && row < this.headerLevelCount) {
       return this.rightRowSeriesNumberColumn[col - (this.colCount - this.rightRowSeriesNumberColumnCount)];
     }
+    return undefined;
   }
   getSeriesNumberBody(col: number, row: number) {
     if (col < this.leftRowSeriesNumberColumnCount) {
@@ -168,6 +169,7 @@ export class SimpleHeaderLayoutMap implements LayoutMapAPI {
     if (col >= this.colCount - this.rightRowSeriesNumberColumnCount) {
       return this.rightRowSeriesNumberColumn[col - (this.colCount - this.rightRowSeriesNumberColumnCount)];
     }
+    return undefined;
   }
   isHeader(col: number, row: number): boolean {
     if (this.transpose && col >= 0 && col < this.headerLevelCount) {
@@ -249,13 +251,13 @@ export class SimpleHeaderLayoutMap implements LayoutMapAPI {
 
   getAggregators(col: number, row: number) {
     const column = this.getBody(col, row);
-    const aggregators = column.aggregator;
+    const aggregators = (column as ColumnData).aggregator;
     return aggregators;
   }
   getAggregatorOnTop(col: number, row: number) {
     const column = this.getBody(col, row);
-    const aggregators = column.aggregator;
-    const aggregation = column.aggregation;
+    const aggregators = (column as ColumnData).aggregator;
+    const aggregation = (column as ColumnData).aggregation;
     if (Array.isArray(aggregation)) {
       const topAggregationIndexs = aggregation.reduce((indexs, agg, index) => {
         if (agg.showOnTop) {
@@ -279,8 +281,8 @@ export class SimpleHeaderLayoutMap implements LayoutMapAPI {
 
   getAggregatorOnBottom(col: number, row: number) {
     const column = this.getBody(col, row);
-    const aggregators = column.aggregator;
-    const aggregation = column.aggregation;
+    const aggregators = (column as ColumnData).aggregator;
+    const aggregation = (column as ColumnData).aggregation;
     if (Array.isArray(aggregation)) {
       const bottomAggregationIndexs = aggregation.reduce((indexs, agg, index) => {
         if (agg.showOnTop === false) {
@@ -737,7 +739,7 @@ export class SimpleHeaderLayoutMap implements LayoutMapAPI {
     if (this.isHeader(col, row)) {
       return null;
     }
-    const { field, fieldFormat } = this.getBody(col, row);
+    const { field, fieldFormat } = this.getBody(col, row) as ColumnData;
     return this._table.getFieldData(fieldFormat || field, col, row);
   }
   getCellRange(col: number, row: number): CellRange {

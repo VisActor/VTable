@@ -12,10 +12,11 @@ import { dealWithCustom, getCustomCellMergeCustom } from '../component/custom';
 import { updateImageCellContentWhileResize } from '../group-creater/cell-type/image-cell';
 import { getStyleTheme } from '../../core/tableHelper';
 import { isMergeCellGroup } from '../utils/is-merge-cell-group';
-import type { BaseTableAPI } from '../../ts-types/base-table';
+import type { BaseTableAPI, HeaderData } from '../../ts-types/base-table';
 import { resizeCellGroup } from '../group-creater/column-helper';
 import type { IGraphic } from '@src/vrender';
 import { getCellMergeRange } from '../../tools/merge-range';
+import type { ColumnDefine } from '../../ts-types';
 
 export function updateRowHeight(scene: Scenegraph, row: number, detaY: number, skipTableHeightMap?: boolean) {
   // 更新table行高存储
@@ -128,7 +129,7 @@ export function updateCellHeight(
 
   // 更新单元格布局
   const type = scene.table.isHeader(col, row)
-    ? scene.table._getHeaderLayoutMap(col, row).headerType
+    ? (scene.table._getHeaderLayoutMap(col, row) as HeaderData).headerType
     : scene.table.getBodyColumnType(col, row);
   if (type === 'progressbar') {
     // 目前先采用重新生成节点的方案
@@ -193,12 +194,12 @@ export function updateCellHeight(
         const cellLocation = scene.table.getCellLocation(col, row);
         if (cellLocation !== 'body') {
           const define = scene.table.getHeaderDefine(col, row);
-          customRender = define?.headerCustomRender;
-          customLayout = define?.headerCustomLayout;
+          customRender = (define as ColumnDefine)?.headerCustomRender;
+          customLayout = (define as ColumnDefine)?.headerCustomLayout;
         } else {
           const define = scene.table.getBodyColumnDefine(col, row);
-          customRender = define?.customRender || scene.table.customRender;
-          customLayout = define?.customLayout;
+          customRender = (define as ColumnDefine)?.customRender || scene.table.customRender;
+          customLayout = (define as ColumnDefine)?.customLayout;
         }
 
         if (customLayout || customRender) {

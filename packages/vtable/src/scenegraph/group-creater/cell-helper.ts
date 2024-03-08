@@ -23,7 +23,7 @@ import { createSparkLineCellGroup } from './cell-type/spark-line-cell';
 import { createCellGroup } from './cell-type/text-cell';
 import { createVideoCellGroup } from './cell-type/video-cell';
 import type { ICustomLayoutFuc } from '../../ts-types/customLayout';
-import type { BaseTableAPI, PivotTableProtected } from '../../ts-types/base-table';
+import type { BaseTableAPI, HeaderData, PivotTableProtected } from '../../ts-types/base-table';
 import { getCellCornerRadius, getStyleTheme } from '../../core/tableHelper';
 import { isPromise } from '../../tools/helper';
 import { dealPromiseData } from '../utils/deal-promise-data';
@@ -496,10 +496,10 @@ export function updateCell(col: number, row: number, table: BaseTableAPI, addNew
   }
 
   const type = table.isHeader(col, row)
-    ? table._getHeaderLayoutMap(col, row).headerType
+    ? (table._getHeaderLayoutMap(col, row) as HeaderData).headerType
     : table.getBodyColumnType(col, row);
 
-  const mayHaveIcon = cellLocation !== 'body' ? true : !!define?.icon || !!define?.tree;
+  const mayHaveIcon = cellLocation !== 'body' ? true : !!define?.icon || !!(define as ColumnDefine)?.tree;
   const padding = cellTheme._vtable.padding;
   const textAlign = cellTheme.text.textAlign;
   const textBaseline = cellTheme.text.textBaseline;
@@ -566,7 +566,7 @@ export function updateCell(col: number, row: number, table: BaseTableAPI, addNew
     newCellGroup = updateCellContent(
       type,
       value,
-      define,
+      define as ColumnDefine,
       table,
       col,
       row,
@@ -667,7 +667,7 @@ function updateCellContent(
 function canUseFastUpdate(col: number, row: number, oldCellGroup: Group, autoWrapText: boolean, table: BaseTableAPI) {
   // return false;
   const define = table.getBodyColumnDefine(col, row);
-  const mayHaveIcon = !!define?.icon || !!define?.tree;
+  const mayHaveIcon = !!define?.icon || !!(define as ColumnDefine)?.tree;
   const cellType = table.getBodyColumnType(col, row);
   const autoRowHeight = table.heightMode === 'autoHeight';
   const value = table.getCellValue(col, row);

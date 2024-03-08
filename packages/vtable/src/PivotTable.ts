@@ -15,7 +15,8 @@ import type {
   SortOrder,
   IPagination,
   CellLocation,
-  IIndicator
+  IIndicator,
+  ColumnDefine
 } from './ts-types';
 import { HierarchyState } from './ts-types';
 import { PivotHeaderLayoutMap } from './layout/pivot-header-layout';
@@ -24,7 +25,7 @@ import { PIVOT_TABLE_EVENT_TYPE } from './ts-types/pivot-table/PIVOT_TABLE_EVENT
 import { cellInRange, emptyFn } from './tools/helper';
 import { Dataset } from './dataset/dataset';
 import { BaseTable } from './core/BaseTable';
-import type { BaseTableAPI, PivotTableProtected } from './ts-types/base-table';
+import type { BaseTableAPI, HeaderData, PivotTableProtected } from './ts-types/base-table';
 import { Title } from './components/title/title';
 import { cloneDeep } from '@visactor/vutils';
 import { Env } from './tools/env';
@@ -952,7 +953,7 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
     return cellHeaderPaths;
   }
   getHierarchyState(col: number, row: number): HierarchyState {
-    return this._getHeaderLayoutMap(col, row)?.hierarchyState;
+    return (this._getHeaderLayoutMap(col, row) as HeaderData)?.hierarchyState;
   }
   /** 获取列头树结构 */
   getLayoutColumnTree(): LayouTreeNode[] {
@@ -1058,7 +1059,7 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
   /** 获取单元格对应的编辑器 */
   getEditor(col: number, row: number) {
     const define = this.getBodyColumnDefine(col, row);
-    let editorDefine = define?.editor ?? this.options.editor;
+    let editorDefine = (define as ColumnDefine)?.editor ?? this.options.editor;
 
     if (typeof editorDefine === 'function') {
       const arg = {
