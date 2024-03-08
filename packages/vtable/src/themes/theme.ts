@@ -103,6 +103,21 @@ export class TableTheme implements ITableThemeDefine {
     return getProp(obj, superTheme, ['underlayBackgroundColor']);
   }
 
+  get cellInnerBorder(): boolean {
+    const { obj, superTheme } = this.internalTheme;
+    return !!getProp(obj, superTheme, ['cellInnerBorder']);
+  }
+
+  get cellBorderClipDirection(): 'top-left' | 'bottom-right' {
+    const { obj, superTheme } = this.internalTheme;
+    return getProp(obj, superTheme, ['cellBorderClipDirection']) ?? 'top-left';
+  }
+
+  get _contentOffset(): number {
+    const { obj, superTheme } = this.internalTheme;
+    return getProp(obj, superTheme, ['_contentOffset']) ?? 0;
+  }
+
   get defaultStyle(): RequiredTableThemeDefine['defaultStyle'] {
     // const defaultStyle = getProp(obj, superTheme, ["defaultStyle"]);
     if (!this._defaultStyle) {

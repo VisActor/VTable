@@ -80,6 +80,15 @@ export function createCellContent(
         ? getHierarchyOffset(range.start.col, range.start.row, table)
         : getHierarchyOffset(cellGroup.col, cellGroup.row, table);
 
+      let _contentOffset = 0;
+      if (isNumber(table.theme._contentOffset)) {
+        if (textAlign === 'left') {
+          _contentOffset = table.theme._contentOffset;
+        } else if (textAlign === 'right') {
+          _contentOffset = -table.theme._contentOffset;
+        }
+      }
+
       const attribute = {
         text: text.length === 1 ? text[0] : text,
         maxLineWidth: autoColWidth ? Infinity : cellWidth - (padding[1] + padding[3] + hierarchyOffset),
@@ -92,7 +101,7 @@ export function createCellContent(
         // widthLimit: autoColWidth ? -1 : colWidth - (padding[1] + padding[3]),
         heightLimit: autoRowHeight ? -1 : cellHeight - (padding[0] + padding[2]),
         pickable: false,
-        dx: hierarchyOffset,
+        dx: hierarchyOffset + _contentOffset,
         whiteSpace: text.length === 1 && !autoWrapText ? 'no-wrap' : 'normal'
       };
       const wrapText = new Text(cellTheme.text ? (Object.assign({}, cellTheme.text, attribute) as any) : attribute);
@@ -181,6 +190,14 @@ export function createCellContent(
     let textMark;
     // 直接添加richtext / wrapText
     if (inlineFrontIcons.length === 0 && inlineEndIcons.length === 0) {
+      let _contentOffset = 0;
+      if (isNumber(table.theme._contentOffset)) {
+        if (textAlign === 'left') {
+          _contentOffset = table.theme._contentOffset;
+        } else if (textAlign === 'right') {
+          _contentOffset = -table.theme._contentOffset;
+        }
+      }
       const text = convertInternal(textStr).replace(/\r?\n/g, '\n').replace(/\r/g, '\n').split('\n');
       const attribute = {
         text: text.length === 1 ? text[0] : text,
@@ -194,7 +211,8 @@ export function createCellContent(
         autoWrapText,
         lineClamp,
         wordBreak: 'break-word',
-        whiteSpace: text.length === 1 && !autoWrapText ? 'no-wrap' : 'normal'
+        whiteSpace: text.length === 1 && !autoWrapText ? 'no-wrap' : 'normal',
+        dx: _contentOffset
       };
       const wrapText = new Text(cellTheme.text ? (Object.assign({}, cellTheme.text, attribute) as any) : attribute);
       wrapText.name = 'text';

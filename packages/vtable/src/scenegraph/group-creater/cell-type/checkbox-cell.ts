@@ -11,6 +11,7 @@ import { getHierarchyOffset } from '../../utils/get-hierarchy-offset';
 import { getOrApply } from '../../../tools/helper';
 import type { CheckboxStyle } from '../../../body-helper/style/CheckboxStyle';
 import { getProp } from '../../utils/get-prop';
+import { getCellBorderStrokeWidth } from '../../utils/cell-border-stroke-width';
 
 export function createCheckboxCellGroup(
   cellGroup: Group | null,
@@ -31,6 +32,7 @@ export function createCheckboxCellGroup(
 ) {
   // cell
   if (!cellGroup) {
+    const strokeArrayWidth = getCellBorderStrokeWidth(col, row, cellTheme, table);
     cellGroup = new Group({
       x: xOrigin,
       y: yOrigin,
@@ -42,7 +44,7 @@ export function createCheckboxCellGroup(
       fill: cellTheme?.group?.fill ?? undefined,
       stroke: cellTheme?.group?.stroke ?? undefined,
 
-      strokeArrayWidth: (cellTheme?.group as any)?.strokeArrayWidth ?? undefined,
+      strokeArrayWidth: strokeArrayWidth,
       strokeArrayColor: (cellTheme?.group as any)?.strokeArrayColor ?? undefined,
       cursor: (cellTheme?.group as any)?.cursor ?? undefined,
       lineDash: cellTheme?.group?.lineDash ?? undefined,
