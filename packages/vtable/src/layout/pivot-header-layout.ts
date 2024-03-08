@@ -2149,10 +2149,14 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
       }
       // 如果传入的是整体的path 按照行列维度区分开
       colHeaderPaths = dimensionPaths.filter(
-        (path: IDimensionInfo) => this.colDimensionKeys.indexOf(path.dimensionKey) >= 0
+        (path: IDimensionInfo) =>
+          this.colDimensionKeys.indexOf(path.dimensionKey) >= 0 ||
+          (this.colDimensionKeys.indexOf(this.indicatorDimensionKey) >= 0 && path.indicatorKey)
       );
       rowHeaderPaths = dimensionPaths.filter(
-        (path: IDimensionInfo) => this.rowDimensionKeys.indexOf(path.dimensionKey) >= 0
+        (path: IDimensionInfo) =>
+          this.rowDimensionKeys.indexOf(path.dimensionKey) >= 0 ||
+          (this.rowDimensionKeys.indexOf(this.indicatorDimensionKey) >= 0 && path.indicatorKey)
       );
     } else {
       colHeaderPaths = dimensionPaths.colHeaderPaths;
