@@ -543,13 +543,13 @@ export class ListTable extends BaseTable implements ListTableAPI {
    * @param source 移动源位置
    * @param target 移动目标位置
    */
-  moveHeaderPosition(source: CellAddress, target: CellAddress) {
+  _moveHeaderPosition(source: CellAddress, target: CellAddress) {
     // 调用布局类 布局数据结构调整为移动位置后的
     const moveContext = this.internalProps.layoutMap.moveHeaderPosition(source, target);
     if (moveContext) {
       if (moveContext.moveType === 'column') {
         //colWidthsMap 中存储着每列的宽度 根据移动 sourceCol targetCol 调整其中的位置
-        this.colWidthsMap.adjustOrder(moveContext.sourceIndex, moveContext.targetIndex, moveContext.moveSize);
+        this.colWidthsMap.adjustOrder(moveContext.sourceIndex, moveContext.targetIndex, moveContext.sourceSize);
         if (!this.transpose) {
           //下面代码取自refreshHeader列宽设置逻辑
           //设置列宽极限值 TODO 目前是有问题的 最大最小宽度限制 移动列位置后不正确
@@ -578,9 +578,9 @@ export class ListTable extends BaseTable implements ListTableAPI {
           this._clearRowRangeHeightsMap(row);
         }
       }
-      return true;
+      return moveContext;
     }
-    return false;
+    return null;
   }
 
   /**

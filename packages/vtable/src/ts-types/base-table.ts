@@ -699,6 +699,17 @@ export interface BaseTableAPI {
    * @param cellAddr 要滚动到的单元格位置
    */
   scrollToCell: (cellAddr: { col?: number; row?: number }) => void;
+
+  _moveHeaderPosition: (
+    source: CellAddress,
+    target: CellAddress
+  ) => {
+    sourceIndex: number;
+    targetIndex: any;
+    sourceSize: any;
+    targetSize: any;
+    moveType: 'column' | 'row';
+  };
 }
 export interface ListTableProtected extends IBaseTableProtected {
   /** 表格数据 */

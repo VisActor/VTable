@@ -255,6 +255,67 @@ export class NumberRangeMap {
       }
     }
   }
+
+  exchangeOrder(
+    sourceIndex: number,
+    sourceCount: number,
+    targetIndex: number,
+    targetCount: number,
+    insertIndex: number
+  ) {
+    const { _keys: keys } = this;
+    if (!this._sorted) {
+      keys.sort((a, b) => {
+        if (a < b) {
+          return -1;
+        }
+        if (a > b) {
+          return 1;
+        }
+        return 0;
+      });
+      this._sorted = true;
+    }
+    if (sourceIndex > targetIndex) {
+      //先将target部分的值存起来
+      const targetVals = [];
+      const sourceVals = [];
+      for (let i = indexFirst(keys, targetIndex); i < sourceIndex + sourceCount; i++) {
+        const key = keys[i];
+        if (key >= sourceIndex && key < sourceIndex + sourceCount) {
+          sourceVals.push(this.get(key));
+        } else {
+          targetVals.push(this.get(key));
+        }
+      }
+      for (let i = 0; i < sourceCount; i++) {
+        this.put(insertIndex + i, sourceVals[i]);
+      }
+
+      for (let i = 0; i < targetVals.length; i++) {
+        this.put(insertIndex + sourceCount + i, targetVals[i]);
+      }
+    } else {
+      //先将target部分的值存起来
+      const targetVals = [];
+      const sourceVals = [];
+      for (let i = indexFirst(keys, sourceIndex); i < targetIndex + targetCount; i++) {
+        const key = keys[i];
+        if (key >= sourceIndex && key < sourceIndex + sourceCount) {
+          sourceVals.push(this.get(key));
+        } else {
+          targetVals.push(this.get(key));
+        }
+      }
+      for (let i = 0; i < sourceCount; i++) {
+        this.put(insertIndex + i, sourceVals[i]);
+      }
+
+      for (let i = 0; i < targetVals.length; i++) {
+        this.put(sourceIndex + i, targetVals[i]);
+      }
+    }
+  }
 }
 
 function indexFirst(arr: number[], elm: number): number {
