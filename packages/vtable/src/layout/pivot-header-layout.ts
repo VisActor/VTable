@@ -1764,7 +1764,7 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
       oldRowHeaderCellPositons,
       this
     );
-    this._rowHeaderCellIds = this._rowHeaderCellIds_FULL;
+    this._rowHeaderCellIds = this._rowHeaderCellIds_FULL.slice();
 
     return diffCell;
   }
@@ -1982,6 +1982,7 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
         );
         sourceRowHeaderPaths.pop(); // 如果用了缓存_CellHeaderPathMap的话 这里pop会影响缓存的值 所以上面使用clone
         targetRowHeaderPaths.pop();
+
         if (sourceRowHeaderPaths.length <= targetRowHeaderPaths.length) {
           if (sourceRowHeaderPaths.length === targetRowHeaderPaths.length) {
             return !sourceRowHeaderPaths.find(
@@ -1989,6 +1990,15 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
                 item.dimensionKey !== targetRowHeaderPaths[i].dimensionKey ||
                 item.value !== targetRowHeaderPaths[i].value
             );
+          }
+
+          if (sourceRowHeaderPaths.length > 0) {
+            //处理如层级a.b节点移动到c.d.e节点的情况 这个时候要返回false
+            for (let i = 0; i < sourceRowHeaderPaths.length; i++) {
+              if (sourceRowHeaderPaths[i].startInTotal !== targetRowHeaderPaths[i].startInTotal) {
+                return false;
+              }
+            }
           }
           return true;
         }
@@ -2006,7 +2016,16 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
    * @param target
    * @returns
    */
-  moveHeaderPosition(source: CellAddress, target: CellAddress) {
+  moveHeaderPosition(
+    source: CellAddress,
+    target: CellAddress
+  ): {
+    sourceIndex: number;
+    targetIndex: any;
+    sourceSize: any;
+    targetSize: any;
+    moveType: 'column' | 'row';
+  } {
     // 判断从source地址是否可以移动到target地址
     if (
       this.canMoveHeaderPosition(source, target) &&
@@ -2016,17 +2035,17 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
       // 对移动列表头 行表头 分别处理
       if (this.isColumnHeader(source.col, source.row)) {
         // source单元格包含的列数
-        const moveSize = sourceCellRange.end.col - sourceCellRange.start.col + 1;
+        const sourceSize = sourceCellRange.end.col - sourceCellRange.start.col + 1;
         // 插入目标地址的列index
         let targetIndex;
         const targetCellRange = this.getCellRange(target.col, sourceCellRange.start.row);
         if (target.col >= source.col) {
-          targetIndex = targetCellRange.end.col - moveSize + 1;
+          targetIndex = targetCellRange.end.col - sourceSize + 1;
         } else {
           targetIndex = targetCellRange.start.col;
         }
         //如果操作列和目标地址col一样 则不执行其他逻辑
-        if (targetIndex === sourceCellRange.end.col - this.rowHeaderLevelCount) {
+        if (targetIndex === sourceCellRange.start.col) {
           return null;
         }
         // 逐行将每一行的source id 移动到目标地址targetCol处
@@ -2034,7 +2053,7 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
           // 从header id的二维数组中取出需要操作的source ids
           const sourceIds = this._columnHeaderCellIds[row].splice(
             sourceCellRange.start.col - this.rowHeaderLevelCount,
-            moveSize
+            sourceSize
           );
           // 将source ids插入到目标地址targetCol处
           // 把sourceIds变成一个适合splice的数组（包含splice前2个参数的数组） 以通过splice来插入sourceIds数组
@@ -2043,7 +2062,7 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
         }
 
         //将_columns的列定义调整位置 同调整_headerCellIds逻辑
-        const sourceColumns = this._columnWidths.splice(sourceCellRange.start.col, moveSize);
+        const sourceColumns = this._columnWidths.splice(sourceCellRange.start.col, sourceSize);
         sourceColumns.unshift(targetIndex as any, 0 as any);
         Array.prototype.splice.apply(this._columnWidths, sourceColumns);
 
@@ -2051,7 +2070,7 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
         this.columnDimensionTree.movePosition(
           this.getCellHeaderPathsWidthTreeNode(source.col, source.row).colHeaderPaths.length - 1,
           sourceCellRange.start.col - this.rowHeaderLevelCount,
-          targetIndex - this.rowHeaderLevelCount
+          targetCellRange.start.col - this.rowHeaderLevelCount
         );
         this.columnDimensionTree.reset(this.columnDimensionTree.tree.children, true);
         this._CellHeaderPathMap = new Map();
@@ -2060,7 +2079,8 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
         return {
           sourceIndex: sourceCellRange.start.col,
           targetIndex,
-          moveSize,
+          sourceSize,
+          targetSize: targetCellRange.end.col - targetCellRange.start.col + 1,
           moveType: 'column'
         };
       } else if (this.isRowHeader(source.col, source.row)) {
@@ -2071,17 +2091,20 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
         const sourceRowHeaderNode = sourceRowHeaderPaths[sourceRowHeaderPaths.length - 1];
         const targetRowHeaderNode = targetRowHeaderPaths[sourceRowHeaderPaths.length - 1];
         //整体移动的列数
-        const moveSize = sourceRowHeaderNode.size;
+        // const moveSize = sourceRowHeaderNode.size;
+        const sourceSize = sourceRowHeaderNode.size;
         if (target.row >= source.row) {
-          targetIndex = targetRowHeaderNode.startInTotal + targetRowHeaderNode.size - moveSize;
+          targetIndex = targetRowHeaderNode.startInTotal + targetRowHeaderNode.size - sourceSize;
         } else {
           targetIndex = targetRowHeaderNode.startInTotal;
         }
 
         //如果操作列和目标地址col一样 则不执行其他逻辑
         if (
-          targetIndex === source.row - this.columnHeaderLevelCount ||
-          targetIndex === sourceCellRange.end.row - this.columnHeaderLevelCount
+          // targetIndex === source.row - this.columnHeaderLevelCount ||
+          // targetIndex === sourceCellRange.end.row - this.columnHeaderLevelCount
+          targetIndex ===
+          sourceCellRange.start.row - this.columnHeaderLevelCount
         ) {
           return null;
         }
@@ -2090,22 +2113,23 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
         // 从header id的二维数组中取出需要操作的source ids
         const sourceIds = this._rowHeaderCellIds.splice(
           sourceCellRange.start.row - this.columnHeaderLevelCount,
-          moveSize
+          sourceSize
         );
         sourceIds.unshift((targetIndex - this.currentPageStartIndex) as any, 0 as any);
         Array.prototype.splice.apply(this._rowHeaderCellIds, sourceIds);
         // 表头id _rowHeaderCellIds_FULL进行调整
         // 从header id的二维数组中取出需要操作的source ids
         const sourceIds_FULL = this._rowHeaderCellIds_FULL.splice(
-          sourceCellRange.start.row + this.currentPageStartIndex,
-          moveSize
+          sourceCellRange.start.row - this.columnHeaderLevelCount + this.currentPageStartIndex,
+          sourceSize
         );
         sourceIds_FULL.unshift(targetIndex as any, 0 as any);
         Array.prototype.splice.apply(this._rowHeaderCellIds_FULL, sourceIds_FULL);
         // 对维度树结构调整节点位置
         this.rowDimensionTree.movePosition(
-          this.getCellHeaderPathsWidthTreeNode(source.col, source.row).rowHeaderPaths.length - 1,
+          sourceRowHeaderPaths.length - 1,
           sourceCellRange.start.row - this.columnHeaderLevelCount,
+          // targetCellRange.start.row - this.columnHeaderLevelCount
           targetIndex + (target.row > source.row ? sourceRowHeaderNode.size - 1 : 0)
         );
         this.rowDimensionTree.reset(this.rowDimensionTree.tree.children, true);
@@ -2115,7 +2139,8 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
         return {
           sourceIndex: sourceCellRange.start.row,
           targetIndex: targetIndex + this.columnHeaderLevelCount,
-          moveSize,
+          sourceSize,
+          targetSize: targetRowHeaderNode.size,
           moveType: 'row'
         };
       }

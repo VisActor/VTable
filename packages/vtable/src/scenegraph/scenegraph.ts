@@ -1413,14 +1413,15 @@ export class Scenegraph {
    * @return {*}
    */
   updateHeaderPosition(
-    colSource: number,
-    rowSource: number,
-    colTarget: number,
-    rowTarget: number,
-    sourceMergeInfo: false | CellRange,
-    targetMergeInfo: false | CellRange
+    updateColStart: number,
+    updateColEnd: number,
+    updateRowStart: number,
+    updateRowEnd: number,
+    moveType: 'column' | 'row'
+    // sourceMergeInfo: false | CellRange,
+    // targetMergeInfo: false | CellRange
   ) {
-    moveHeaderPosition(colSource, rowSource, colTarget, rowTarget, sourceMergeInfo, targetMergeInfo, this.table);
+    moveHeaderPosition(updateColStart, updateColEnd, updateRowStart, updateRowEnd, moveType, this.table);
   }
 
   updateContainerAttrWidthAndX() {

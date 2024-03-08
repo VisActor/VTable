@@ -578,6 +578,10 @@ export const menus = [
         name: 'column-move'
       },
       {
+        path: 'pivot',
+        name: 'pivot-drag-header'
+      },
+      {
         path: 'cell-move',
         name: 'row-move'
       },
