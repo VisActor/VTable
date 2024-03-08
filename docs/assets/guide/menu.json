@@ -368,6 +368,13 @@
             "zh": "自定义单元格合并",
             "en": "custom merge"
           }
+        },
+        {
+          "path": "custom_style",
+          "title": {
+            "zh": "自定义单元格样式",
+            "en": "custom style"
+          }
         }
       ]
     },
@@ -476,6 +483,13 @@
           }
         }
       ]
+    },
+    {
+      "path": "search",
+      "title": {
+        "zh": "搜索",
+        "en": "search"
+      }
     },
     {
       "path": "export",

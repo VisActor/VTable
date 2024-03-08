@@ -334,3 +334,29 @@ html 目前实现较完整，先默认使用 html 渲染方式。目前暂不支
   }
 
 ```
+
+#${prefix} customCellStyle(Array)
+
+```
+{
+  customCellStyle: {id: string;style: ColumnStyleOption}[]
+}
+```
+
+自定义单元格样式
+* id: 自定义样式的唯一id
+* style: 自定义单元格样式，与`column`中的`style`配置相同，最终呈现效果是单元格原有样式与自定义样式融合
+
+#${prefix} customCellStyleArrangement(Array)
+
+```
+{
+  customCellStyleArrangement: {cellPosition: {row?: number; col?: number; range?: {start: {row: number; col: number}; end: {row: number; col: number}}}; customStyleId: string}[]
+}
+```
+
+自定义单元格样式分配
+* cellPosition: 单元格位置信息，支持配置单个单元格与单元格区域
+  * 单个单元格：`{ row: number, column: number }`
+  * 单元格区域：`{ range: { start: { row: number, column: number }, end: { row: number, column: number} } }`
+* customStyleId: 自定义样式id，与注册自定义样式时定义的id相同

@@ -37,7 +37,13 @@ import {
   type ITableThemeDefine,
   InteractionState
 } from '../ts-types';
-import type { AnyFunction, CellAddressWithBound, ColumnIconOption, TableEventOptions } from '../ts-types';
+import type {
+  AnyFunction,
+  CellAddressWithBound,
+  ColumnIconOption,
+  ColumnStyleOption,
+  TableEventOptions
+} from '../ts-types';
 import { event, style as utilStyle } from '../tools/helper';
 
 import { TABLE_EVENT_TYPE } from './TABLE_EVENT_TYPE';
@@ -57,7 +63,7 @@ import { HeaderHelper } from '../header-helper/header-helper';
 import type { PivotHeaderLayoutMap } from '../layout/pivot-header-layout';
 import { TooltipHandler } from '../components/tooltip/TooltipHandler';
 import type { CachedDataSource, DataSource } from '../data';
-import { AABBBounds, isNumber, isBoolean, isFunction, type ITextSize, isValid } from '@visactor/vutils';
+import { AABBBounds, isNumber, isBoolean, isFunction, type ITextSize, isValid, merge } from '@visactor/vutils';
 import { textMeasure } from '../scenegraph/utils/text-measure';
 import { getProp } from '../scenegraph/utils/get-prop';
 import type {
@@ -92,6 +98,7 @@ import type { Chart } from '../scenegraph/graphic/chart';
 import { setBatchRenderChartCount } from '../scenegraph/graphic/contributions/chart-render-helper';
 import { isLeftOrRightAxis, isTopOrBottomAxis } from '../layout/chart-helper/get-axis-config';
 import { NumberRangeMap } from '../layout/row-height-map';
+import { CustomCellStylePlugin, mergeStyle } from '../plugins/custom-cell-style';
 const { toBoxArray } = utilStyle;
 const { isTouchEvent } = event;
 const rangeReg = /^\$(\d+)\$(\d+)$/;
@@ -153,6 +160,8 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
   container: HTMLElement;
   isReleased: boolean = false;
   _chartEventMap: Record<string, { query?: any; callback: AnyFunction }[]> = {};
+
+  customCellStylePlugin: CustomCellStylePlugin;
 
   constructor(container: HTMLElement, options: BaseTableConstructorOptions = {}) {
     super();
@@ -370,6 +379,12 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     internalProps.stick = { changedCells: new Map() };
 
     internalProps.customMergeCell = options.customMergeCell;
+
+    this.customCellStylePlugin = new CustomCellStylePlugin(
+      this,
+      options.customCellStyle ?? [],
+      options.customCellStyleArrangement ?? []
+    );
   }
   /** 节流绘制 */
   throttleInvalidate = throttle2(this.render.bind(this), 200);
@@ -2914,6 +2929,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
    * @returns
    */
   _getCellStyle(col: number, row: number): FullExtendStyle {
+    const customCellStyle = this.customCellStylePlugin.getCustomCellStyle(col, row);
     const { layoutMap } = this.internalProps;
     const isHeader = layoutMap.isHeader(col, row);
     if (isHeader) {
@@ -2932,6 +2948,9 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
       }
       let cacheStyle = this.headerStyleCache.get(cacheKey);
       if (cacheStyle) {
+        if (customCellStyle) {
+          return mergeStyle(cacheStyle, customCellStyle);
+        }
         return cacheStyle;
       }
       const hd = layoutMap.getHeader(col, row);
@@ -3039,6 +3058,9 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
         );
       }
       this.headerStyleCache.set(cacheKey, cacheStyle);
+      if (customCellStyle) {
+        return mergeStyle(cacheStyle, customCellStyle);
+      }
       return cacheStyle;
     }
     let cacheKey;
@@ -3059,6 +3081,9 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
       cacheStyle = this.bodyStyleCache.get(cacheKey);
     }
     if (cacheStyle) {
+      if (customCellStyle) {
+        return mergeStyle(cacheStyle, customCellStyle);
+      }
       return cacheStyle;
     }
     const column = layoutMap.getBody(col, row);
@@ -3090,6 +3115,9 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
       } else {
         this.bodyStyleCache.set(cacheKey, cacheStyle);
       }
+    }
+    if (customCellStyle) {
+      return mergeStyle(cacheStyle as any, customCellStyle);
     }
     return cacheStyle;
   }
@@ -3810,5 +3838,13 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
         });
       }
     }
+  }
+
+  registerCustomCellStyle(customStyleId: string, customStyle: ColumnStyleOption | undefined | null) {
+    this.customCellStylePlugin.registerCustomCellStyle(customStyleId, customStyle);
+  }
+
+  arrangeCustomCellStyle(cellPos: { col?: number; row?: number; range?: CellRange }, customStyleId: string) {
+    this.customCellStylePlugin.arrangeCustomCellStyle(cellPos, customStyleId);
   }
 }
