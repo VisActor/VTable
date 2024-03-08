@@ -341,3 +341,29 @@ Customize cell merging rules. When the incoming row and column numbers are withi
   }
 
 ```
+
+#${prefix} customCellStyle(Array)
+
+```
+{
+   customCellStyle: {id: string;style: ColumnStyleOption}[]
+}
+```
+
+Custom cell style
+* id: the unique id of the custom style
+* style: Custom cell style, which is the same as the `style` configuration in `column`. The final rendering effect is the fusion of the original style of the cell and the custom style.
+
+#${prefix} customCellStyleArrangement(Array)
+
+```
+{
+   customCellStyleArrangement: {cellPosition: {row?: number; col?: number; range?: {start: {row: number; col: number}; end: {row: number; col: number}}}; customStyleId: string} []
+}
+```
+
+Custom cell style assignment
+* cellPosition: cell position information, supports configuration of single cells and cell areas
+   * Single cell: `{ row: number, column: number }`
+   * Cell range: `{ range: { start: { row: number, column: number }, end: { row: number, column: number} } }`
+* customStyleId: Custom style id, the same as the id defined when registering the custom style
