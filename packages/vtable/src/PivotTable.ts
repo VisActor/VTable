@@ -1106,7 +1106,7 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
   /** 检查单元格是否定义过编辑器 不管编辑器是否有效 只要有定义就返回true */
   isHasEditorDefine(col: number, row: number) {
     const define = this.getBodyColumnDefine(col, row);
-    let editorDefine = define?.editor ?? this.options.editor;
+    let editorDefine = (define as ColumnDefine)?.editor ?? this.options.editor;
 
     if (typeof editorDefine === 'function') {
       const arg = {

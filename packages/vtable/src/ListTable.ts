@@ -1016,8 +1016,8 @@ export class ListTable extends BaseTable implements ListTableAPI {
   isHasEditorDefine(col: number, row: number) {
     const define = this.getBodyColumnDefine(col, row);
     let editorDefine = this.isHeader(col, row)
-      ? define?.headerEditor ?? this.options.headerEditor
-      : define?.editor ?? this.options.editor;
+      ? (define as ColumnDefine)?.headerEditor ?? this.options.headerEditor
+      : (define as ColumnDefine)?.editor ?? this.options.editor;
 
     if (typeof editorDefine === 'function') {
       const arg = {
