@@ -158,6 +158,7 @@ export function bindContainerDomListener(eventManager: EventManager) {
         // } else {
         //   (e as any).clipboardData.setData('text/plain', data); // Chrome, Firefox
         // }
+
         // 将复制的数据转为html格式
         const setDataToHTML = (data: string) => {
           const result = ['<table>'];
@@ -175,6 +176,7 @@ export function bindContainerDomListener(eventManager: EventManager) {
               result.push('<tbody>');
             }
             cells.forEach(function (cell: string, cellIndex: number) {
+
               // 单元格数据处理
               const parsedCellData = !cell ? '' :
                 cell.toString()
@@ -189,6 +191,7 @@ export function bindContainerDomListener(eventManager: EventManager) {
                     return `<span style="mso-spacerun: yes">${'&nbsp;'.repeat(substring.length - 1)} </span>`;
                   }) // replace 2 or more spaces with &nbsp; to prevent XSS attacks
                   .replace(/\t/gi, '&#9;'); //   replace \t with &#9; to prevent XSS attacks
+
         
                   rowValues.push(`<td>${parsedCellData}</td>`);
             });
@@ -202,11 +205,10 @@ export function bindContainerDomListener(eventManager: EventManager) {
           return [META_HEAD, result.join('')].join('');
         };
         const dataHTML = setDataToHTML(data);
-        // 复制到剪切板
         navigator.clipboard.write([
           new ClipboardItem({
-            'text/html': new Blob([dataHTML], { type: 'text/html' }),  // 复制html格式数据到剪切板
-            'text/plain': new Blob([data], { type: 'text/plain' }), //   复制纯文本数据到剪切板
+            'text/html': new Blob([dataHTML], { type: 'text/html' }),
+            'text/plain': new Blob([data], { type: 'text/plain' }),
           })
         ])
         table.fireListeners(TABLE_EVENT_TYPE.COPY_DATA, {
@@ -283,6 +285,7 @@ export function bindContainerDomListener(eventManager: EventManager) {
                 item.getType('text/plain').then(blob => {
          
                 blob.text().then(pastedData => {
+
                 const rows = pastedData.replace(/\r(?!\n)/g, '\r\n').split('\r\n'); // 文本中的换行符格式进行统一处理
                 const values: (string | number)[][] = [];
                  if (rows.length > 1 && rows[rows.length - 1] === '') {
