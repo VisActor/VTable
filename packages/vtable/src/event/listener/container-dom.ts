@@ -157,16 +157,50 @@ export function bindContainerDomListener(eventManager: EventManager) {
         // } else {
         //   (e as any).clipboardData.setData('text/plain', data); // Chrome, Firefox
         // }
-        const parsedCellData = data.toString().replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
-        .replace(/\r\n/g, '</td></tr><tr><td>').replace(/\t/g, '</td><td>').replace(/(<br(\s*|\/)>(\r\n|\n)?|\r\n|\n)/g, '<br>\r\n').replace(/\x20{2,}/gi, substring => {
-          // excel空格序列化
-          return `<span style="mso-spacerun: yes">${'&nbsp;'.repeat(substring.length - 1)} </span>`;
-        });
-        const result = `<table><tbody><tr><td>${parsedCellData}</td></tr></tbody></table>`;
-        navigator.clipboard.writeText(result);
+        const setDataToHTML = (data: string) => {
+          const result = ['<table>'];
+          const META_HEAD = [
+            '<meta name="author" content="Visactor"/>',
+            '<style type="text/css">td{white-space:normal}br{mso-data-placement:same-cell}</style>',
+          ].join('');
+          const rows = data.split('\r\n'); // 将数据拆分为行
+          const values: (string | number)[][] = [];
+          rows.forEach(function (rowCells: any, rowIndex: number) {
+            const cells = rowCells.split('\t'); // 将行数据拆分为单元格
+            const rowValues: (string | number)[] = [];
+            if (rowIndex === 0) {
+              result.push('<tbody>');
+            }
+            cells.forEach(function (cell: string, cellIndex: number) {
+           
+              const parsedCellData = !cell ? '' :
+                cell.toString()
+                  .replace(/&/g, '&amp;')
+                  .replace(/</g, '&lt;')
+                  .replace(/>/g, '&gt;')
+                  .replace(/(<br(\s*|\/)>(\r\n|\n)?|\r\n|\n)/g, '<br>\r\n')
+                  .replace(/\x20{2,}/gi, (substring: string | any[]) => {
+                    // The way how Excel serializes data with at least two spaces.
+                    return `<span style="mso-spacerun: yes">${'&nbsp;'.repeat(substring.length - 1)} </span>`;
+                  })
+                  .replace(/\t/gi, '&#9;');
+        
+                  rowValues.push(`<td>${parsedCellData}</td>`);
+            });
+              result.push('<tr>', ...rowValues, '</tr>');
+          
+              if (rowIndex === rowCells.length - 1) {
+                result.push('</tbody>');
+              }
+            });
+          result.push('</table>');
+          return [META_HEAD, result.join('')].join('');
+        };
+        const dataHTML = setDataToHTML(data);
         navigator.clipboard.write([
           new ClipboardItem({
-            'text/html': new Blob([result], { type: 'text/html' }),
+            'text/html': new Blob([dataHTML], { type: 'text/html' }),
+            'text/plain': new Blob([data], { type: 'text/plain' }),
           })
         ])
         table.fireListeners(TABLE_EVENT_TYPE.COPY_DATA, {
@@ -259,10 +293,10 @@ export function bindContainerDomListener(eventManager: EventManager) {
          
                 blob.text().then(pastedData => {
                 const rows = pastedData.replace(/\r(?!\n)/g, '\r\n').split('\r\n'); // 将数据拆分为行
-                if (rows.length > 1 && rows[rows.length - 1] === '') {
+                const values: (string | number)[][] = [];
+                 if (rows.length > 1 && rows[rows.length - 1] === '') {
                   rows.pop();
                 }
-                const values: (string | number)[][] = [];
                 rows.forEach(function (rowCells: any, rowIndex: number) {
                   const cells = rowCells.split('\t'); // 将行数据拆分为单元格
                   const rowValues: (string | number)[] = [];
