@@ -1045,7 +1045,7 @@ export class SimpleHeaderLayoutMap implements LayoutMapAPI {
 
         // 对表头columnTree调整节点位置
         this.columnTree.movePosition(sourceCellRange.start.row, sourceCellRange.start.col, targetIndex);
-
+        this.columnTree.reset(this.columnTree.tree.children, true);
         this._cellRangeMap = new Map();
         return {
           sourceIndex: sourceCellRange.start.col,
@@ -1085,7 +1085,7 @@ export class SimpleHeaderLayoutMap implements LayoutMapAPI {
 
         // 对表头columnTree调整节点位置
         this.columnTree.movePosition(sourceCellRange.start.col, sourceCellRange.start.row, targetIndex);
-
+        this.columnTree.reset(this.columnTree.tree.children, true);
         this._cellRangeMap = new Map();
         return {
           sourceIndex: sourceCellRange.start.row,
