@@ -368,6 +368,13 @@
             "zh": "自定义单元格合并",
             "en": "custom merge"
           }
+        },
+        {
+          "path": "custom_style",
+          "title": {
+            "zh": "自定义单元格样式",
+            "en": "custom style"
+          }
         }
       ]
     },
@@ -478,6 +485,13 @@
       ]
     },
     {
+      "path": "search",
+      "title": {
+        "zh": "搜索",
+        "en": "search"
+      }
+    },
+    {
       "path": "export",
       "title": {
         "zh": "表格导出",
@@ -522,6 +536,13 @@
           }
         }
       ]
+    },
+    {
+      "path": "multi_language_support",
+      "title": {
+        "zh": "多语言支持",
+        "en": "multi-language support"
+      }
     }
   ]
 }

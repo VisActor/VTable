@@ -1,3 +1,55 @@
+# v0.20.2
+
+2024-03-04
+
+
+**🆕 新增功能**
+
+- **@visactor/vtable**: add checkbox style theme
+
+**🐛 功能修复**
+
+- **@visactor/vtable**: rightFrozenCol is bigger then colCount [#1162](https://github.com/VisActor/VTable/issues/1162)
+- **@visactor/vtable**: header description tooltip flicker [#1173](https://github.com/VisActor/VTable/issues/1173)
+- **@visactor/vtable**: add fontStyle & fontVariant
+
+
+
+[更多详情请查看 v0.20.2](https://github.com/VisActor/VTable/releases/tag/v0.20.2)
+
+# v0.20.1
+
+2024-02-29
+
+
+**🆕 新增功能**
+
+- **@visactor/vtable**: add api getRecordIndexByCell [#1121](https://github.com/VisActor/VTable/issues/1121)
+
+**🐛 功能修复**
+
+- **@visactor/vtable**: hideColumnsSubheader with three levels show error [#1105](https://github.com/VisActor/VTable/issues/1105)
+- **@visactor/vtable**: customlayout flex render error [#1163](https://github.com/VisActor/VTable/issues/1163)
+- **@visactor/vtable**: when scroll tooltip hide [#905](https://github.com/VisActor/VTable/issues/905)
+- **@visactor/vtable**: fix axis innerOffset
+- **@visactor/vtable**: add skipFunctionDiff in react-vtable
+
+**🔨 功能重构**
+
+- **@visactor/vtable**: rename resize_column_end event arguments [#1129](https://github.com/VisActor/VTable/issues/1129)
+- **@visactor/vtable**: api return value type
+- **@visactor/vtable**: setRecords support restoreHierarchyState [#1148](https://github.com/VisActor/VTable/issues/1148)
+- **@visactor/vtable**: vtable not stop event bubble [#892](https://github.com/VisActor/VTable/issues/892)
+- **@visactor/vtable**: remove Circular dependency
+
+**🔖 其他**
+
+- **@visactor/vtable**: fix-contextMenuItems-add-col-param
+
+
+
+[更多详情请查看 v0.20.1](https://github.com/VisActor/VTable/releases/tag/v0.20.1)
+
 # v0.20.0
 
 2024-02-23

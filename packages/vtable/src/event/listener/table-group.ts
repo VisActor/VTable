@@ -134,7 +134,10 @@ export function bindTableGroupListener(eventManager: EventManager) {
         cellGoup?.role === 'cell' &&
         isValid(cellGoup.col) &&
         isValid(cellGoup.row) &&
-        (cellGoup.col !== table.stateManager.hover.cellPos.col || cellGoup.row !== table.stateManager.hover.cellPos.row)
+        (cellGoup.col !== table.stateManager.hover.cellPos.col ||
+          cellGoup.row !== table.stateManager.hover.cellPos.row) &&
+        (cellGoup.col !== table.stateManager.hover.cellPosContainHeader?.col ||
+          cellGoup.row !== table.stateManager.hover.cellPosContainHeader?.row)
       ) {
         table.fireListeners(TABLE_EVENT_TYPE.MOUSEENTER_CELL, {
           col: cellGoup.col,
@@ -725,6 +728,8 @@ export function bindTableGroupListener(eventManager: EventManager) {
       }
     }
     table.fireListeners(TABLE_EVENT_TYPE.CHECKBOX_STATE_CHANGE, cellsEvent);
+
+    table.scenegraph.updateNextFrame();
   });
 }
 export function bindGesture(eventManager: EventManager) {

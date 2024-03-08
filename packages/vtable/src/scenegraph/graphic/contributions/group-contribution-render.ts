@@ -389,6 +389,7 @@ export function renderStroke(
     }
     context.stroke();
   }
+  context.lineDashOffset = 0;
 }
 
 // DashGroupContribution处理虚线边框对齐

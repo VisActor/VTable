@@ -71,8 +71,8 @@ export interface IStyleOption {
   underline?: UnderlinePropertyDefine;
   /** TODO */
   underlineColor?: ColorPropertyDefine;
-  /** TODO */
   underlineDash?: LineDashPropertyDefine;
+  underlineOffset?: number;
   lineThrough?: LineThroughPropertyDefine;
   /** TODO */
   lineThroughColor?: ColorPropertyDefine;
@@ -181,4 +181,32 @@ export interface ProgressBarStyleOption extends IStyleOption {
 export type CheckboxStyleOption = {
   size?: number;
   spaceBetweenTextAndIcon?: number;
+  checkboxStyle?: CheckboxStyle;
 } & ITextStyleOption;
+
+export type CheckboxStyle = {
+  // 选择框尺寸
+  size?: number;
+  // 选择框与文字间距
+  spaceBetweenTextAndIcon?: number;
+
+  // 未选中状态填充颜色
+  defaultFill?: string;
+  // 未选中状态描边颜色
+  defaultStroke?: string;
+  // disable状态填充颜色
+  disableFill?: string;
+  // checked状态填充颜色
+  checkedFill?: string;
+  // checked状态描边颜色
+  checkedStroke?: string;
+  // checked状态填充颜色
+  disableCheckedFill?: string;
+  // checked状态描边颜色
+  disableCheckedStroke?: string;
+
+  // checked状态图标url
+  checkIconImage?: string;
+  // indeterminate状态图标url
+  indeterminateIconImage?: string;
+};

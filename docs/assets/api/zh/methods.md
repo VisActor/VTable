@@ -135,11 +135,24 @@ tableInstance.renderWithRecreateCells();
 ## setRecords(Function)
 
 设置表格数据接口，可作为更新接口调用。
-** 基本表格可同时设置排序状态对表格数据排序，sort 设置为空清空排序状态，如果不设置则按当前排序状态对传入数据排序 **
+
+基本表格更新：
+
+基本表格可同时设置排序状态对表格数据排序，sort 设置为 null 清空排序状态，如果不设置则按当前排序状态对传入数据排序。
+
+restoreHierarchyState 可暂时忽略，用的场景比较特殊，可以咨询 VTable 的研发后再决定是否使用。
 
 ```
-setRecords(records: Array<any>) //透视表
-setRecords(records: Array<any>, sort?: SortState | SortState[]) //** 基本表格可同时设置排序状态对表格数据排序，sort设置为空清空排序状态，如果不设置则按当前排序状态对传入数据排序 **
+setRecords(
+    records: Array<any>,
+    option?: { sort?: SortState | SortState[], restoreHierarchyState: boolean;  }
+  ): void;
+```
+
+透视表更新：
+
+```
+setRecords(records: Array<any>)
 ```
 
 ## getDrawRange(Function)
@@ -305,7 +318,7 @@ setRecords(records: Array<any>, sort?: SortState | SortState[]) //** 基本表�
 
 获取当前单元格的数据是数据源中的第几条。
 
-如果是树形模式的表格，将返回数组，如[1,2] 数据源中第2条数据中children中的第3条。
+如果是树形模式的表格，将返回数组，如[1,2] 数据源中第 2 条数据中 children 中的第 3 条。
 
 ** ListTable 专有 **
 
@@ -960,3 +973,22 @@ use case: 点击图例项后 更新过滤规则 来更新图表
 ## getAggregateValuesByField(Function)
 
 获取聚合汇总的值
+
+## registerCustomCellStyle(Function)
+注册自定义样式
+```
+registerCustomCellStyle: (customStyleId: string, customStyle: ColumnStyleOption | undefined | null) => void
+```
+自定义单元格样式
+* customStyleId: 自定义样式的唯一id
+* customStyle: 自定义单元格样式，与`column`中的`style`配置相同，最终呈现效果是单元格原有样式与自定义样式融合
+
+## registerCustomCellStyleArrangement(Function)
+分配自定义样式
+```
+registerCustomCellStyleArrangement: (cellPosition: { col?: number; row?: number; range?: CellRange }, customStyleId: string) => void
+```
+* cellPosition: 单元格位置信息，支持配置单个单元格与单元格区域
+  * 单个单元格：`{ row: number, column: number }`
+  * 单元格区域：`{ range: { start: { row: number, column: number }, end: { row: number, column: number} } }`
+* customStyleId: 自定义样式id，与注册自定义样式时定义的id相同
