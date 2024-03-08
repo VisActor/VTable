@@ -29,8 +29,8 @@ export class EventManager {
   table: BaseTableAPI;
   // _col: number;
   // _resizing: boolean = false;
-  /** 为了能够判断canvas mousedown 事件 以阻止事件冒泡 */
-  isPointerDownOnTable: boolean = false;
+  // /** 为了能够判断canvas mousedown 事件 以阻止事件冒泡 */
+  // isPointerDownOnTable: boolean = false;
   isTouchdown: boolean; // touch scrolling mode on
   touchMovePoints: {
     x: number;
@@ -90,12 +90,12 @@ export class EventManager {
 
     // 图标点击
     this.table.on(TABLE_EVENT_TYPE.ICON_CLICK, iconInfo => {
-      const { col, row, x, y, funcType, icon } = iconInfo;
+      const { col, row, x, y, funcType, icon, event } = iconInfo;
       // 下拉菜单按钮点击
       if (funcType === IconFuncTypeEnum.dropDown) {
-        stateManager.triggerDropDownMenu(col, row, x, y);
+        stateManager.triggerDropDownMenu(col, row, x, y, event);
       } else if (funcType === IconFuncTypeEnum.sort) {
-        stateManager.triggerSort(col, row, icon);
+        stateManager.triggerSort(col, row, icon, event);
       } else if (funcType === IconFuncTypeEnum.frozen) {
         stateManager.triggerFreeze(col, row, icon);
       } else if (funcType === IconFuncTypeEnum.drillDown) {
@@ -361,7 +361,8 @@ export class EventManager {
         col,
         row,
         funcType: icon.attribute.funcType,
-        icon
+        icon,
+        event
       });
 
       return true;
@@ -376,7 +377,8 @@ export class EventManager {
           col,
           row,
           funcType: (icon.attribute as any).funcType,
-          icon: icon as unknown as Icon
+          icon: icon as unknown as Icon,
+          event
         });
         return true;
       }

@@ -169,7 +169,7 @@ export interface IBaseTableProtected {
     /** 内置下拉菜单的全局设置项 目前只针对基本表格有效 会对每个表头单元格开启默认的下拉菜单功能。代替原来的option.dropDownMenu*/
     defaultHeaderMenuItems?: MenuListItem[];
     /** 右键菜单。代替原来的option.contextmenu */
-    contextMenuItems?: MenuListItem[] | ((field: FieldDef, row: number) => MenuListItem[]);
+    contextMenuItems?: MenuListItem[] | ((field: FieldDef, row: number, col: number) => MenuListItem[]);
     /** 设置选中状态的菜单。代替原来的option.dropDownMenuHighlight  */
     dropDownMenuHighlight?: DropDownMenuHighlightInfo[];
   };
@@ -312,7 +312,7 @@ export interface BaseTableConstructorOptions {
     /** 内置下拉菜单的全局设置项 目前只针对基本表格有效 会对每个表头单元格开启默认的下拉菜单功能。代替原来的option.dropDownMenu*/
     defaultHeaderMenuItems?: MenuListItem[];
     /** 右键菜单。代替原来的option.contextmenu */
-    contextMenuItems?: MenuListItem[] | ((field: string, row: number) => MenuListItem[]);
+    contextMenuItems?: MenuListItem[] | ((field: string, row: number, col: number) => MenuListItem[]);
     /** 设置选中状态的菜单。代替原来的option.dropDownMenuHighlight  */
     dropDownMenuHighlight?: DropDownMenuHighlightInfo[];
   };
@@ -524,12 +524,12 @@ export interface BaseTableAPI {
   setMaxColWidth: (col: number, maxwidth: string | number) => void;
   getMinColWidth: (col: number) => number;
   setMinColWidth: (col: number, minwidth: string | number) => void;
-  getCellRect: (col: number, row: number) => RectProps;
-  getCellRelativeRect: (col: number, row: number) => RectProps;
-  getCellsRect: (startCol: number, startRow: number, endCol: number, endRow: number) => RectProps;
-  getCellRangeRect: (cellRange: CellRange | CellAddress) => RectProps;
-  getCellRangeRelativeRect: (cellRange: CellRange | CellAddress) => RectProps;
-  getVisibleCellRangeRelativeRect: (cellRange: CellRange | CellAddress) => RectProps;
+  getCellRect: (col: number, row: number) => Rect;
+  getCellRelativeRect: (col: number, row: number) => Rect;
+  getCellsRect: (startCol: number, startRow: number, endCol: number, endRow: number) => Rect;
+  getCellRangeRect: (cellRange: CellRange | CellAddress) => Rect;
+  getCellRangeRelativeRect: (cellRange: CellRange | CellAddress) => Rect;
+  getVisibleCellRangeRelativeRect: (cellRange: CellRange | CellAddress) => Rect;
   isFrozenCell: (col: number, row: number) => { row: boolean; col: boolean } | null;
   getRowAt: (absoluteY: number) => { top: number; row: number; bottom: number };
   getColAt: (absoluteX: number) => { left: number; col: number; right: number };
@@ -714,6 +714,17 @@ export interface BaseTableAPI {
    * @param cellAddr 要滚动到的单元格位置
    */
   scrollToCell: (cellAddr: { col?: number; row?: number }) => void;
+
+  _moveHeaderPosition: (
+    source: CellAddress,
+    target: CellAddress
+  ) => {
+    sourceIndex: number;
+    targetIndex: any;
+    sourceSize: any;
+    targetSize: any;
+    moveType: 'column' | 'row';
+  };
 }
 export interface ListTableProtected extends IBaseTableProtected {
   /** 表格数据 */

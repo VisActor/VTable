@@ -61,6 +61,7 @@ import { Env } from '../tools/env';
 import { createCornerCell } from './style/corner-cell';
 import { updateCol } from './layout/update-col';
 import { deduplication } from '../tools/util';
+import { getDefaultHeight, getDefaultWidth } from './group-creater/progress/default-width-height';
 // import { contextModule } from './context/module';
 
 registerForVrender();
@@ -336,6 +337,15 @@ export class Scenegraph {
    * @return {*}
    */
   createSceneGraph() {
+    this.table.rowHeightsMap.clear();
+
+    // if (this.table.heightMode === 'autoHeight') {
+    //   this.table.defaultRowHeight = getDefaultHeight(this.table);
+    // }
+    // if (this.table.widthMode === 'autoWidth' || this.table.internalProps.transpose) {
+    //   this.table.defaultColWidth = getDefaultWidth(this.table);
+    // }
+
     // bind AutoPoptip
     if (this.table.isPivotChart() || this.table._hasCustomRenderOrLayout()) {
       // bind for axis label in pivotChart
@@ -940,18 +950,18 @@ export class Scenegraph {
     if (this.table.bottomFrozenRowCount > 0) {
       this.bottomFrozenGroup.setAttribute(
         'y',
-        this.tableGroup.attribute.height - this.bottomFrozenGroup.attribute.height
+        this.tableGroup.attribute.height - this.table.getBottomFrozenRowsHeight()
       );
       this.leftBottomCornerGroup.setAttributes({
         visible: true,
-        y: this.tableGroup.attribute.height - this.bottomFrozenGroup.attribute.height,
-        height: this.bottomFrozenGroup.attribute.height,
+        y: this.tableGroup.attribute.height - this.table.getBottomFrozenRowsHeight(),
+        height: this.table.getBottomFrozenRowsHeight(),
         width: this.table.getFrozenColsWidth()
       });
       this.rightBottomCornerGroup.setAttributes({
         visible: true,
-        y: this.tableGroup.attribute.height - this.bottomFrozenGroup.attribute.height,
-        height: this.bottomFrozenGroup.attribute.height
+        y: this.tableGroup.attribute.height - this.table.getBottomFrozenRowsHeight(),
+        height: this.table.getBottomFrozenRowsHeight()
       });
     }
 
@@ -1069,18 +1079,8 @@ export class Scenegraph {
    * @param {number} x
    * @return {*}
    */
-  setX(x: number) {
-    // if (this.colHeaderGroup.attribute.width + x === this.bodyGroup.attribute.x) {
-    //   return;
-    // }
-    // // this.tableGroup.setAttribute('x', x);
-    // // this.tableGroup.setAttribute('width', this.table.tableNoFrameWidth - x);
-    // this.bodyGroup.setAttribute('x', this.rowHeaderGroup.attribute.width + x);
-    // this.colHeaderGroup.setAttribute('x', this.rowHeaderGroup.attribute.width + x);
-
-    // // (this.tableGroup.lastChild as any).setAttribute('width', this.table.tableNoFrameWidth - x);
-    // this.updateNextFrame();
-    this.table.scenegraph.proxy.setX(-x);
+  setX(x: number, isEnd = false) {
+    this.table.scenegraph.proxy.setX(-x, isEnd);
   }
 
   /**
@@ -1088,19 +1088,8 @@ export class Scenegraph {
    * @param {number} y
    * @return {*}
    */
-  setY(y: number) {
-    // if (this.transpose || this.isPivot) {
-    //   if (this.colHeaderGroup.attribute.height + y === this.bodyGroup.attribute.y) {
-    //     return;
-    //   }
-    //   this.bodyGroup.setAttribute('y', this.colHeaderGroup.attribute.height + y);
-    //   this.rowHeaderGroup.setAttribute('y', this.colHeaderGroup.attribute.height + y);
-    //   // this.tableGroup.setAttribute('height', this.table.tableNoFrameHeight - y);
-    //   // (this.tableGroup.lastChild as any).setAttribute('width', this.table.tableNoFrameWidth - x);
-    //   this.updateNextFrame();
-    // } else if (this.table.scenegraph.proxy) {
-    this.table.scenegraph.proxy.setY(-y);
-    // }
+  setY(y: number, isEnd = false) {
+    this.table.scenegraph.proxy.setY(-y, isEnd);
   }
 
   /**
@@ -1109,6 +1098,30 @@ export class Scenegraph {
    * @return {*}
    */
   setBodyAndRowHeaderY(y: number) {
+    // correct y, avoid scroll out of range
+    const firstBodyCell = this.bodyGroup.firstChild?.firstChild as Group;
+    const lastBodyCell = this.bodyGroup.firstChild?.lastChild as Group;
+    if (
+      y === 0 &&
+      firstBodyCell &&
+      firstBodyCell.row === this.table.frozenRowCount &&
+      firstBodyCell.attribute.y + y < 0
+    ) {
+      y = -firstBodyCell.attribute.y;
+    } else if (
+      lastBodyCell &&
+      this.table.tableNoFrameHeight < this.table.getAllRowsHeight() &&
+      lastBodyCell.row === this.table.rowCount - this.table.bottomFrozenRowCount - 1 &&
+      lastBodyCell.attribute.y + lastBodyCell.attribute.height + y <
+        this.table.tableNoFrameHeight - this.table.getFrozenRowsHeight() - this.table.getBottomFrozenRowsHeight()
+    ) {
+      y =
+        this.table.tableNoFrameHeight -
+        this.table.getFrozenRowsHeight() -
+        this.table.getBottomFrozenRowsHeight() -
+        lastBodyCell.attribute.y -
+        lastBodyCell.attribute.height;
+    }
     if (this.colHeaderGroup.attribute.height + y === this.bodyGroup.attribute.y) {
       return;
     }
@@ -1128,6 +1141,25 @@ export class Scenegraph {
    * @return {*}
    */
   setBodyAndColHeaderX(x: number) {
+    // correct x, avoid scroll out of range
+    const firstBodyCol = this.bodyGroup.firstChild as Group;
+    const lastBodyCol = this.bodyGroup.lastChild as Group;
+    if (x === 0 && firstBodyCol && firstBodyCol.col === this.table.frozenColCount && firstBodyCol.attribute.x + x < 0) {
+      x = -firstBodyCol.attribute.x;
+    } else if (
+      lastBodyCol &&
+      this.table.tableNoFrameWidth < this.table.getAllColsWidth() &&
+      lastBodyCol.col === this.table.colCount - this.table.rightFrozenColCount - 1 &&
+      lastBodyCol.attribute.x + lastBodyCol.attribute.width + x <
+        this.table.tableNoFrameWidth - this.table.getFrozenColsWidth() - this.table.getRightFrozenColsWidth()
+    ) {
+      x =
+        this.table.tableNoFrameWidth -
+        this.table.getFrozenColsWidth() -
+        this.table.getRightFrozenColsWidth() -
+        lastBodyCol.attribute.x -
+        lastBodyCol.attribute.width;
+    }
     if (this.table.getFrozenColsWidth() + x === this.bodyGroup.attribute.x) {
       return;
     }
@@ -1387,14 +1419,15 @@ export class Scenegraph {
    * @return {*}
    */
   updateHeaderPosition(
-    colSource: number,
-    rowSource: number,
-    colTarget: number,
-    rowTarget: number,
-    sourceMergeInfo: false | CellRange,
-    targetMergeInfo: false | CellRange
+    updateColStart: number,
+    updateColEnd: number,
+    updateRowStart: number,
+    updateRowEnd: number,
+    moveType: 'column' | 'row'
+    // sourceMergeInfo: false | CellRange,
+    // targetMergeInfo: false | CellRange
   ) {
-    moveHeaderPosition(colSource, rowSource, colTarget, rowTarget, sourceMergeInfo, targetMergeInfo, this.table);
+    moveHeaderPosition(updateColStart, updateColEnd, updateRowStart, updateRowEnd, moveType, this.table);
   }
 
   updateContainerAttrWidthAndX() {
@@ -1500,9 +1533,9 @@ export class Scenegraph {
       this.rowHeaderGroup,
       this.isPivot
         ? this.table.theme.rowHeaderStyle.frameStyle
-        : this.table.internalProps.transpose
-        ? this.table.theme.headerStyle.frameStyle
-        : this.table.theme.bodyStyle.frameStyle,
+        : // : this.table.internalProps.transpose
+          // ? this.table.theme.headerStyle.frameStyle
+          this.table.theme.bodyStyle.frameStyle,
       this.rowHeaderGroup.role,
       isListTableWithFrozen ? [true, false, true, true] : undefined
     );

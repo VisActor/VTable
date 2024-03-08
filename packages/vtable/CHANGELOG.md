@@ -1,6 +1,61 @@
 # Change Log - @visactor/vtable
 
-This log was last generated on Fri, 23 Feb 2024 10:06:24 GMT and should not be manually modified.
+This log was last generated on Mon, 04 Mar 2024 04:30:08 GMT and should not be manually modified.
+
+## 0.20.3
+Mon, 04 Mar 2024 04:30:08 GMT
+
+### Updates
+
+- fix: fix checkbox text space problem
+
+## 0.20.2
+Fri, 01 Mar 2024 11:46:26 GMT
+
+### Updates
+
+- fix: rightFrozenCol is bigger then colCount #1162
+
+
+- fix: header description tooltip flicker #1173
+
+
+- feat: add checkbox style theme
+- fix: add fontStyle & fontVariant
+
+## 0.20.1
+Thu, 29 Feb 2024 11:57:42 GMT
+
+### Updates
+
+- fix: hideColumnsSubheader with three levels show error #1105
+
+
+- feat: add api getRecordIndexByCell #1121
+
+
+- refactor: rename resize_column_end event arguments #1129
+
+
+- refactor: api return value type
+
+
+- refactor: setRecords support restoreHierarchyState #1148
+
+
+- fix: customlayout flex render error #1163
+
+
+- refactor: vtable not stop event bubble #892
+- fix: when scroll tooltip hide #905
+
+
+- fix: fix axis innerOffset
+- fix-contextMenuItems-add-col-param
+- fix: add skipFunctionDiff in react-vtable
+- refactor: remove Circular dependency
+
+
 
 ## 0.20.0
 Fri, 23 Feb 2024 10:06:24 GMT

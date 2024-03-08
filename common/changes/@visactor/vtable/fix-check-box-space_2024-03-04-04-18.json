@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vtable",
+      "comment": "fix: fix checkbox text space problem",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vtable"
+}

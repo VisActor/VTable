@@ -89,7 +89,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
     if (options.dataSource) {
       _setDataSource(this, options.dataSource);
     } else if (options.records) {
-      this.setRecords(options.records as any, internalProps.sortState);
+      this.setRecords(options.records as any, { sortState: internalProps.sortState });
     } else {
       this.setRecords([]);
     }
@@ -119,7 +119,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
   }
 
   get records() {
-    return this.dataSource.source;
+    return this.dataSource?.source;
   }
 
   get recordsCount() {
@@ -365,7 +365,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
     }
     return ifCan;
   }
-  updateOption(options: ListTableConstructorOptions, accelerateFirstScreen = false) {
+  updateOption(options: ListTableConstructorOptions & { restoreHierarchyState?: boolean }) {
     const internalProps = this.internalProps;
     super.updateOption(options);
     internalProps.frozenColDragHeaderMode = options.frozenColDragHeaderMode;
@@ -402,7 +402,10 @@ export class ListTable extends BaseTable implements ListTableAPI {
     if (options.dataSource) {
       _setDataSource(this, options.dataSource);
     } else if (options.records) {
-      this.setRecords(options.records as any, options.sortState);
+      this.setRecords(options.records as any, {
+        restoreHierarchyState: options.restoreHierarchyState,
+        sortState: options.sortState
+      });
     } else {
       this._resetFrozenColCount();
       // 生成单元格场景树
@@ -428,6 +431,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
         (this.pagination.currentPage = pagination.currentPage);
       pagination.perPageCount &&
         (this.pagination.perPageCount = pagination.perPageCount || this.pagination.perPageCount);
+      this.internalProps.layoutMap.clearCellRangeMap();
       // 清空单元格内容
       this.scenegraph.clearCells();
       //数据源缓存数据更新
@@ -553,13 +557,13 @@ export class ListTable extends BaseTable implements ListTableAPI {
    * @param source 移动源位置
    * @param target 移动目标位置
    */
-  moveHeaderPosition(source: CellAddress, target: CellAddress) {
+  _moveHeaderPosition(source: CellAddress, target: CellAddress) {
     // 调用布局类 布局数据结构调整为移动位置后的
     const moveContext = this.internalProps.layoutMap.moveHeaderPosition(source, target);
     if (moveContext) {
       if (moveContext.moveType === 'column') {
         //colWidthsMap 中存储着每列的宽度 根据移动 sourceCol targetCol 调整其中的位置
-        this.colWidthsMap.adjustOrder(moveContext.sourceIndex, moveContext.targetIndex, moveContext.moveSize);
+        this.colWidthsMap.adjustOrder(moveContext.sourceIndex, moveContext.targetIndex, moveContext.sourceSize);
         if (!this.transpose) {
           //下面代码取自refreshHeader列宽设置逻辑
           //设置列宽极限值 TODO 目前是有问题的 最大最小宽度限制 移动列位置后不正确
@@ -588,9 +592,9 @@ export class ListTable extends BaseTable implements ListTableAPI {
           this._clearRowRangeHeightsMap(row);
         }
       }
-      return true;
+      return moveContext;
     }
-    return false;
+    return null;
   }
 
   /**
@@ -758,7 +762,8 @@ export class ListTable extends BaseTable implements ListTableAPI {
     const result: DropDownMenuEventInfo = {
       field: this.getHeaderField(col, row),
       value: this.getCellValue(col, row),
-      cellLocation: this.getCellLocation(col, row)
+      cellLocation: this.getCellLocation(col, row),
+      event: undefined
     };
     return result;
   }
@@ -873,7 +878,20 @@ export class ListTable extends BaseTable implements ListTableAPI {
    * @param records
    * @param sort
    */
-  setRecords(records: Array<any>, sort?: SortState | SortState[]): void {
+  setRecords(
+    records: Array<any>,
+    option?: { restoreHierarchyState?: boolean; sortState?: SortState | SortState[] }
+  ): void {
+    let sort: SortState | SortState[];
+    if (Array.isArray(option) || (option as any)?.order) {
+      //兼容之前第二个参数为sort的情况
+      sort = <any>option;
+    } else if (option) {
+      sort = option.sortState;
+    } else if (option === null) {
+      //兼容之前第二个参数为null来清除sort排序状态的逻辑
+      sort = null;
+    }
     const time = typeof window !== 'undefined' ? window.performance.now() : 0;
     const oldHoverState = { col: this.stateManager.hover.cellPos.col, row: this.stateManager.hover.cellPos.row };
     // 清空单元格内容
@@ -884,6 +902,11 @@ export class ListTable extends BaseTable implements ListTableAPI {
       this.internalProps.sortState = sort;
       this.stateManager.setSortState((this as any).sortState as SortState);
     }
+    // restoreHierarchyState逻辑，保留树形结构展开收起的状态
+    const currentPagerIndexedData = this.dataSource?._currentPagerIndexedData;
+    const currentIndexedData = this.dataSource?.currentIndexedData;
+    const treeDataHierarchyState = this.dataSource?.treeDataHierarchyState;
+    const oldRecordLength = this.records?.length ?? 0;
     if (records) {
       _setRecords(this, records);
       if ((this as any).sortState) {
@@ -907,10 +930,23 @@ export class ListTable extends BaseTable implements ListTableAPI {
           }
         }
       }
+      if (option?.restoreHierarchyState && oldRecordLength === this.records?.length) {
+        // restoreHierarchyState逻辑，保留树形结构展开收起的状态
+        this.dataSource._currentPagerIndexedData = currentPagerIndexedData;
+        this.dataSource.currentIndexedData = currentIndexedData;
+        this.dataSource.treeDataHierarchyState = treeDataHierarchyState;
+      }
       this.refreshRowColCount();
     } else {
       _setRecords(this, records);
+      if (option?.restoreHierarchyState && oldRecordLength === this.records?.length) {
+        // restoreHierarchyState逻辑，保留树形结构展开收起的状态
+        this.dataSource._currentPagerIndexedData = currentPagerIndexedData;
+        this.dataSource.currentIndexedData = currentIndexedData;
+        this.dataSource.treeDataHierarchyState = treeDataHierarchyState;
+      }
     }
+
     this.stateManager.initCheckedState(records);
     // this.internalProps.frozenColCount = this.options.frozenColCount || this.rowHeaderLevelCount;
     // 生成单元格场景树
@@ -975,6 +1011,25 @@ export class ListTable extends BaseTable implements ListTableAPI {
       return editors.get(editorDefine);
     }
     return editorDefine as IEditor;
+  }
+  /** 检查单元格是否定义过编辑器 不管编辑器是否有效 只要有定义就返回true */
+  isHasEditorDefine(col: number, row: number) {
+    const define = this.getBodyColumnDefine(col, row);
+    let editorDefine = this.isHeader(col, row)
+      ? define?.headerEditor ?? this.options.headerEditor
+      : define?.editor ?? this.options.editor;
+
+    if (typeof editorDefine === 'function') {
+      const arg = {
+        col,
+        row,
+        dataValue: this.getCellOriginValue(col, row),
+        value: this.getCellValue(col, row) || '',
+        table: this
+      };
+      editorDefine = (editorDefine as Function)(arg);
+    }
+    return isValid(editorDefine);
   }
   /** 更改单元格数据 会触发change_cell_value事件*/
   changeCellValue(col: number, row: number, value: string | number | null) {
@@ -1047,7 +1102,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
    * @param row 粘贴数据的起始行号
    * @param values 多个单元格的数据数组
    */
-  changeCellValues(startCol: number, startRow: number, values: (string | number)[][]) {
+  changeCellValues(startCol: number, startRow: number, values: (string | number)[][], workOnEditableCell = false) {
     let pasteColEnd = startCol;
     let pasteRowEnd = startRow;
     // const rowCount = values.length;
@@ -1063,21 +1118,26 @@ export class ListTable extends BaseTable implements ListTableAPI {
           break;
         }
         thisRowPasteColEnd = startCol + j;
-        const value = rowValues[j];
-        const recordIndex = this.getRecordShowIndexByCell(startCol + j, startRow + i);
-        const { field } = this.internalProps.layoutMap.getBody(startCol + j, startRow + i);
-        const beforeChangeValue = this.getCellRawValue(startCol + j, startRow + i);
-        if (this.isHeader(startCol + j, startRow + i)) {
-          this.internalProps.layoutMap.updateColumnTitle(startCol + j, startRow + i, value as string);
-        } else {
-          this.dataSource.changeFieldValue(value, recordIndex, field, startCol + j, startRow + i, this);
+        if (
+          (workOnEditableCell && this.isHasEditorDefine(startCol + j, startRow + i)) ||
+          workOnEditableCell === false
+        ) {
+          const value = rowValues[j];
+          const recordIndex = this.getRecordShowIndexByCell(startCol + j, startRow + i);
+          const { field } = this.internalProps.layoutMap.getBody(startCol + j, startRow + i);
+          const beforeChangeValue = this.getCellRawValue(startCol + j, startRow + i);
+          if (this.isHeader(startCol + j, startRow + i)) {
+            this.internalProps.layoutMap.updateColumnTitle(startCol + j, startRow + i, value as string);
+          } else {
+            this.dataSource.changeFieldValue(value, recordIndex, field, startCol + j, startRow + i, this);
+          }
+          this.fireListeners(TABLE_EVENT_TYPE.CHANGE_CELL_VALUE, {
+            col: startCol + j,
+            row: startRow + i,
+            rawValue: beforeChangeValue,
+            changedValue: this.getCellOriginValue(startCol + j, startRow + i)
+          });
         }
-        this.fireListeners(TABLE_EVENT_TYPE.CHANGE_CELL_VALUE, {
-          col: startCol + j,
-          row: startRow + i,
-          rawValue: beforeChangeValue,
-          changedValue: this.getCellOriginValue(startCol + j, startRow + i)
-        });
       }
       pasteColEnd = Math.max(pasteColEnd, thisRowPasteColEnd);
     }

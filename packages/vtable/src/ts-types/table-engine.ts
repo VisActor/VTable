@@ -89,7 +89,7 @@ export interface TableKeyboardOptions {
   selectAllOnCtrlA?: boolean;
   /** 快捷键复制  默认：false*/
   copySelected?: boolean; //这个copy是和浏览器的快捷键一致的
-  /** 快捷键粘贴。粘贴内容到指定位置（即需要有选中状态），支持批量粘贴。 默认：false */
+  /** 快捷键粘贴，默认：false 。粘贴内容到指定位置（即粘贴前要有选中的单元格）；支持批量粘贴；粘贴生效仅针对配置了编辑 editor 的单元格；*/
   pasteValueToCell?: boolean; //paste是和浏览器的快捷键一致的
 }
 export interface TableEventOptions {
@@ -256,7 +256,7 @@ export interface ListTableAPI extends BaseTableAPI {
    * @param row 粘贴数据的起始行号
    * @param values 多个单元格的数据数组
    */
-  changeCellValues: (col: number, row: number, values: (string | number)[][]) => void;
+  changeCellValues: (col: number, row: number, values: (string | number)[][], workOnEditableCell: boolean) => void;
   getFieldData: (field: FieldDef | FieldFormat | undefined, col: number, row: number) => FieldData;
   //#region 编辑器相关demo
   /** 获取单元格配置的编辑器 */

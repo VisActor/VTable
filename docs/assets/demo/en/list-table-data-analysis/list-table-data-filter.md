@@ -3,7 +3,7 @@ category: examples
 group: list-table-data-analysis
 title: List table data filtering
 cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/list-table-filter.gif
-link: '../guide/table_type/Pivot_table/list_table_dataAnalysis'
+link: '../guide/data_analysis/list_table_dataAnalysis'
 ---
 
 # List table data filtering

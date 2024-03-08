@@ -1,7 +1,7 @@
 {
   "changes": [
     {
-      "comment": "feat: add api getRecordIndexByCell #1121\n\n",
+      "comment": "fix: drag header position cell error #1220\n\n",
       "type": "none",
       "packageName": "@visactor/vtable"
     }

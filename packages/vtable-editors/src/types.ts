@@ -74,6 +74,8 @@ export interface EditContext<V = any> {
    * end edit mode.
    */
   endEdit: () => void;
+  col: number;
+  row: number;
 }
 
 export interface RectProps {

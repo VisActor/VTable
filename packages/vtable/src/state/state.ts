@@ -632,7 +632,7 @@ export class StateManager {
   updateVerticalScrollBar(yRatio: number) {
     const totalHeight = this.table.getAllRowsHeight();
     this.scroll.verticalBarPos = Math.ceil(yRatio * (totalHeight - this.table.scenegraph.height));
-    this.table.scenegraph.setY(-this.scroll.verticalBarPos);
+    this.table.scenegraph.setY(-this.scroll.verticalBarPos, yRatio === 1);
     this.scroll.verticalBarPos -= this.table.scenegraph.proxy.deltaY;
     this.table.scenegraph.proxy.deltaY = 0;
 
@@ -654,7 +654,7 @@ export class StateManager {
   updateHorizontalScrollBar(xRatio: number) {
     const totalWidth = this.table.getAllColsWidth();
     this.scroll.horizontalBarPos = Math.ceil(xRatio * (totalWidth - this.table.scenegraph.width));
-    this.table.scenegraph.setX(-this.scroll.horizontalBarPos);
+    this.table.scenegraph.setX(-this.scroll.horizontalBarPos, xRatio === 1);
     this.scroll.horizontalBarPos -= this.table.scenegraph.proxy.deltaX;
     this.table.scenegraph.proxy.deltaX = 0;
     // console.log(this.table.scenegraph.bodyGroup.lastChild.attribute);
@@ -788,10 +788,11 @@ export class StateManager {
     }
   }
 
-  triggerDropDownMenu(col: number, row: number, x: number, y: number) {
+  triggerDropDownMenu(col: number, row: number, x: number, y: number, event: Event) {
     this.table.fireListeners(TABLE_EVENT_TYPE.DROPDOWN_ICON_CLICK, {
       col,
-      row
+      row,
+      event
     });
     if (this.menu.isShow) {
       this.hideMenu();
@@ -935,7 +936,7 @@ export class StateManager {
     }
     return false;
   }
-  triggerSort(col: number, row: number, iconMark: Icon) {
+  triggerSort(col: number, row: number, iconMark: Icon, event: Event) {
     if (this.table.isPivotTable()) {
       // 透视表不执行sort操作
       const order = (this.table as PivotTableAPI).getPivotSortState(col, row);
@@ -945,7 +946,8 @@ export class StateManager {
         row: row,
         order: order || 'normal',
         dimensionInfo: (this.table.internalProps.layoutMap as PivotHeaderLayoutMap).getPivotDimensionInfo(col, row),
-        cellLocation: this.table.getCellLocation(col, row)
+        cellLocation: this.table.getCellLocation(col, row),
+        event
       });
       return;
     }
@@ -953,7 +955,7 @@ export class StateManager {
     const oldSortCol = this.sort.col;
     const oldSortRow = this.sort.row;
     // 执行sort
-    dealSort(col, row, this.table as ListTableAPI);
+    dealSort(col, row, this.table as ListTableAPI, event);
     this.sort.col = col;
     this.sort.row = row;
 

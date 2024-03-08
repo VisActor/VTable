@@ -41,6 +41,8 @@ export interface TextElement extends baseElement {
   textBaseline?: TextBaselineType;
   lineHeight?: number;
   underline?: number;
+  underlineDash?: number[];
+  underlineOffset?: number;
   lineThrough?: number;
   heightLimit?: number;
   lineClamp?: number;

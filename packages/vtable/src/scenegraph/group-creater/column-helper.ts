@@ -1,15 +1,14 @@
 /* eslint-disable no-undef */
-import type { IGraphic, IThemeSpec } from '@src/vrender';
+import type { IThemeSpec } from '@src/vrender';
 import type { CellLocation, CellRange, ColumnDefine, TextColumnDefine } from '../../ts-types';
 import type { Group } from '../graphic/group';
 import { getProp, getRawProp } from '../utils/get-prop';
 import type { MergeMap } from '../scenegraph';
-import { createCell } from './cell-helper';
+import { createCell, resizeCellGroup } from './cell-helper';
 import type { BaseTableAPI, HeaderData } from '../../ts-types/base-table';
 import { getCellCornerRadius, getStyleTheme } from '../../core/tableHelper';
 import { isPromise } from '../../tools/helper';
 import { dealPromiseData } from '../utils/deal-promise-data';
-import { isArray } from '@visactor/vutils';
 import { dealWithCustom } from '../component/custom';
 /**
  * 创建复合列 同一列支持创建不同类型单元格
@@ -269,61 +268,6 @@ export function getColumnGroupTheme(
   columnTheme.group.width = colWidth;
   columnTheme.group.height = 0;
   return { theme: columnTheme, hasFunctionPros };
-}
-
-export function resizeCellGroup(
-  cellGroup: Group,
-  rangeWidth: number,
-  rangeHeight: number,
-  range: CellRange,
-  table: BaseTableAPI
-) {
-  const { col, row } = cellGroup;
-  const dx = -table.getColsWidth(range.start.col, col - 1);
-  const dy = -table.getRowsHeight(range.start.row, row - 1);
-
-  cellGroup.forEachChildren((child: IGraphic) => {
-    child.setAttributes({
-      dx: (child.attribute.dx ?? 0) + dx,
-      dy: (child.attribute.dy ?? 0) + dy
-    });
-  });
-
-  const lineWidth = cellGroup.attribute.lineWidth;
-  const isLineWidthArray = isArray(lineWidth);
-  const newLineWidth = [0, 0, 0, 0];
-
-  if (col === range.start.col) {
-    newLineWidth[3] = isLineWidthArray ? lineWidth[3] : lineWidth;
-  }
-  if (row === range.start.row) {
-    newLineWidth[0] = isLineWidthArray ? lineWidth[0] : lineWidth;
-  }
-  if (col === range.end.col) {
-    newLineWidth[1] = isLineWidthArray ? lineWidth[1] : lineWidth;
-  }
-  if (row === range.end.row) {
-    newLineWidth[2] = isLineWidthArray ? lineWidth[2] : lineWidth;
-  }
-
-  const widthChange = rangeWidth !== cellGroup.attribute.width;
-  const heightChange = rangeHeight !== cellGroup.attribute.height;
-
-  cellGroup.setAttributes({
-    width: rangeWidth,
-    height: rangeHeight,
-    strokeArrayWidth: newLineWidth
-  } as any);
-
-  cellGroup.mergeStartCol = range.start.col;
-  cellGroup.mergeStartRow = range.start.row;
-  cellGroup.mergeEndCol = range.end.col;
-  cellGroup.mergeEndRow = range.end.row;
-
-  return {
-    widthChange,
-    heightChange
-  };
 }
 
 function dealMerge(range: CellRange, mergeMap: MergeMap, table: BaseTableAPI, forceUpdate: boolean) {

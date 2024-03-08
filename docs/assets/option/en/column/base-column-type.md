@@ -59,6 +59,7 @@ The type structure of IStyleOption is as follows:
   prefix = ${prefix},
   isImage = ${isImage},
   isProgressbar = ${isProgressbar},
+  isCheckbox = ${isCheckbox},
 ) }}
 
 ${prefix} headerIcon(string|Object|Array)

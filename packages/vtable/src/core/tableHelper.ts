@@ -224,16 +224,22 @@ export function getStyleTheme(
   let fontFamily;
   let fontSize;
   let fontWeight;
+  let fontStyle;
+  let fontVariant;
   if (font) {
     // 后期会弃用直接设置font，而使用fontFamily fontSize fontWeight 等属性
-    const { family, size, weight } = parseFont(font);
+    const { family, size, weight, style, variant } = parseFont(font);
     fontFamily = family.join(' ');
     fontSize = size;
     fontWeight = weight;
+    fontStyle = style;
+    fontStyle = variant;
   } else {
     fontFamily = getProp('fontFamily', headerStyle, col, row, table);
     fontSize = getProp('fontSize', headerStyle, col, row, table);
     fontWeight = getProp('fontWeight', headerStyle, col, row, table);
+    fontStyle = getProp('fontStyle', headerStyle, col, row, table);
+    fontVariant = getProp('fontVariant', headerStyle, col, row, table);
   }
 
   // const fontSize = getFontSize(font);
@@ -246,7 +252,8 @@ export function getStyleTheme(
   const lineHeight = getProp('lineHeight', headerStyle, col, row, table);
   const underline = getProp('underline', headerStyle, col, row, table); // boolean
   // const underlineColor = getProp('underlineColor', headerStyle, col, row, table);
-  // const underlineDash = getProp('underlineDash', headerStyle, col, row, table);
+  const underlineDash = getProp('underlineDash', headerStyle, col, row, table);
+  const underlineOffset = getProp('underlineOffset', headerStyle, col, row, table);
   const lineThrough = getProp('lineThrough', headerStyle, col, row, table); // boolean
   // const lineThroughColor = getProp('lineThroughColor', headerStyle, col, row, table);
   // const lineThroughDash = getProp('lineThroughDash', headerStyle, col, row, table);
@@ -282,11 +289,15 @@ export function getStyleTheme(
       fontFamily,
       fontSize,
       fontWeight,
+      fontStyle,
+      fontVariant,
       fill: color,
       textAlign,
       textBaseline,
       lineHeight: lineHeight ?? fontSize,
       underline: underline ? textDecorationWidth : undefined,
+      underlineDash,
+      underlineOffset,
       lineThrough: lineThrough ? textDecorationWidth : undefined,
       ellipsis:
         !textOverflow || textOverflow === 'clip' ? undefined : textOverflow === 'ellipsis' ? '...' : textOverflow

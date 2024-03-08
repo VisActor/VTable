@@ -83,7 +83,10 @@ export class TableTheme implements ITableThemeDefine {
   private _selectionStyle: RequiredTableThemeDefine['selectionStyle'] | null = null;
 
   private _axisStyle: RequiredTableThemeDefine['axisStyle'] | null = null;
+  private _checkboxStyle: RequiredTableThemeDefine['checkboxStyle'] | null = null;
   private _textPopTipStyle: RequiredTableThemeDefine['textPopTipStyle'] | null = null;
+
+  isPivot: boolean = false;
 
   constructor(obj: PartialTableThemeDefine | ITableThemeDefine, superTheme: ITableThemeDefine) {
     this.internalTheme = {
@@ -245,6 +248,9 @@ export class TableTheme implements ITableThemeDefine {
         get underlineDash(): LineDashPropertyDefine | undefined {
           return defaultStyle.underlineDash;
         },
+        get underlineOffset(): number | undefined {
+          return defaultStyle.underlineOffset;
+        },
         get lineThrough(): LineThroughPropertyDefine | undefined {
           return defaultStyle.lineThrough ?? false;
         },
@@ -376,7 +382,7 @@ export class TableTheme implements ITableThemeDefine {
         {},
         this.defaultStyle,
         superTheme.rowHeaderStyle,
-        obj.rowHeaderStyle // ?? obj.headerStyle
+        obj.rowHeaderStyle ?? (this.isPivot ? null : obj.headerStyle) // not for pivot
       );
       this._rowHeader = this.getStyle(header);
     }
@@ -652,6 +658,19 @@ export class TableTheme implements ITableThemeDefine {
     return this._axisStyle;
   }
 
+  get checkboxStyle(): RequiredTableThemeDefine['checkboxStyle'] {
+    if (!this._checkboxStyle) {
+      const { obj, superTheme } = this.internalTheme;
+      const checkboxStyle: RequiredTableThemeDefine['checkboxStyle'] = ingoreNoneValueMerge(
+        {},
+        superTheme.checkboxStyle,
+        obj.checkboxStyle
+      );
+      this._checkboxStyle = checkboxStyle;
+    }
+    return this._checkboxStyle;
+  }
+
   get textPopTipStyle(): RequiredTableThemeDefine['textPopTipStyle'] {
     if (!this._textPopTipStyle) {
       const { obj, superTheme } = this.internalTheme;
@@ -830,6 +849,9 @@ export class TableTheme implements ITableThemeDefine {
       },
       get underlineDash(): LineDashPropertyDefine | undefined {
         return style.underlineDash;
+      },
+      get underlineOffset(): number | undefined {
+        return style.underlineOffset;
       },
       get lineThrough(): LineThroughPropertyDefine | undefined {
         return style.lineThrough ?? false;

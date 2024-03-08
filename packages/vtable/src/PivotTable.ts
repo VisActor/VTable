@@ -27,7 +27,7 @@ import { Dataset } from './dataset/dataset';
 import { BaseTable } from './core/BaseTable';
 import type { BaseTableAPI, HeaderData, PivotTableProtected } from './ts-types/base-table';
 import { Title } from './components/title/title';
-import { cloneDeep } from '@visactor/vutils';
+import { cloneDeep, isValid } from '@visactor/vutils';
 import { Env } from './tools/env';
 import type { LayouTreeNode } from './layout/tree-helper';
 import { TABLE_EVENT_TYPE } from './core/TABLE_EVENT_TYPE';
@@ -207,7 +207,7 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
     }
     return ifCan;
   }
-  updateOption(options: PivotTableConstructorOptions, accelerateFirstScreen = false) {
+  updateOption(options: PivotTableConstructorOptions) {
     const internalProps = this.internalProps;
     //维护选中状态
     // const range = internalProps.selection.range; //保留原有单元格选中状态
@@ -799,7 +799,9 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
    * @param source 移动源位置
    * @param target 移动目标位置
    */
-  moveHeaderPosition(source: CellAddress, target: CellAddress) {
+  _moveHeaderPosition(source: CellAddress, target: CellAddress) {
+    const sourceCellRange = this.getCellRange(source.col, source.row);
+    const targetCellRange = this.getCellRange(target.col, target.row);
     // 调用布局类 布局数据结构调整为移动位置后的
     const moveContext = (this.internalProps.layoutMap as PivotHeaderLayoutMap).moveHeaderPosition(source, target);
     if (moveContext) {
@@ -809,14 +811,21 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
           for (let row = 0; row < this.internalProps.records.length; row++) {
             const sourceColumns = (this.internalProps.records[row] as unknown as number[]).splice(
               moveContext.sourceIndex - this.rowHeaderLevelCount,
-              moveContext.moveSize
+              moveContext.sourceSize
             );
             sourceColumns.unshift((moveContext.targetIndex as any) - this.rowHeaderLevelCount, 0 as any);
             Array.prototype.splice.apply(this.internalProps.records[row] as unknown as number[], sourceColumns);
           }
         }
         //colWidthsMap 中存储着每列的宽度 根据移动 sourceCol targetCol 调整其中的位置
-        this.colWidthsMap.adjustOrder(moveContext.sourceIndex, moveContext.targetIndex, moveContext.moveSize);
+        // this.colWidthsMap.adjustOrder(moveContext.sourceIndex, moveContext.targetIndex, moveContext.moveSize);
+        this.colWidthsMap.exchangeOrder(
+          sourceCellRange.start.col,
+          sourceCellRange.end.col - sourceCellRange.start.col + 1,
+          targetCellRange.start.col,
+          targetCellRange.end.col - targetCellRange.start.col + 1,
+          moveContext.targetIndex
+        );
         //下面代码取自refreshHeader列宽设置逻辑
         //设置列宽极限值 TODO 目前是有问题的 最大最小宽度限制 移动列位置后不正确
         for (let col = 0; col < this.internalProps.layoutMap.columnWidths.length; col++) {
@@ -833,17 +842,34 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
         if (this.options.records?.[0]?.constructor === Array) {
           const sourceRows = (this.internalProps.records as unknown as number[]).splice(
             moveContext.sourceIndex - this.columnHeaderLevelCount,
-            moveContext.moveSize
+            moveContext.sourceSize
           );
           sourceRows.unshift((moveContext.targetIndex as any) - this.columnHeaderLevelCount, 0 as any);
           Array.prototype.splice.apply(this.internalProps.records, sourceRows);
         }
         //colWidthsMap 中存储着每列的宽度 根据移动 sourceCol targetCol 调整其中的位置
-        this.rowHeightsMap.adjustOrder(moveContext.sourceIndex, moveContext.targetIndex, moveContext.moveSize);
+        // this.rowHeightsMap.adjustOrder(moveContext.sourceIndex, moveContext.targetIndex, moveContext.moveSize);
+        if (moveContext.targetIndex > moveContext.sourceIndex) {
+          this.rowHeightsMap.exchangeOrder(
+            moveContext.sourceIndex,
+            moveContext.sourceSize,
+            moveContext.targetIndex + moveContext.sourceSize - moveContext.targetSize,
+            moveContext.targetSize,
+            moveContext.targetIndex
+          );
+        } else {
+          this.rowHeightsMap.exchangeOrder(
+            moveContext.sourceIndex,
+            moveContext.sourceSize,
+            moveContext.targetIndex,
+            moveContext.targetSize,
+            moveContext.targetIndex
+          );
+        }
       }
-      return true;
+      return moveContext;
     }
-    return false;
+    return null;
   }
   /**
    * 表头切换层级状态
@@ -996,7 +1022,8 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
       dimensionKey: dimensionInfos[dimensionInfos.length - 1].dimensionKey,
       value: this.getCellValue(col, row),
       cellLocation: this.getCellLocation(col, row),
-      isPivotCorner: this.isCornerHeader(col, row)
+      isPivotCorner: this.isCornerHeader(col, row),
+      event: undefined
     };
     return result;
   }
@@ -1076,7 +1103,23 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
     }
     return editorDefine as IEditor;
   }
+  /** 检查单元格是否定义过编辑器 不管编辑器是否有效 只要有定义就返回true */
+  isHasEditorDefine(col: number, row: number) {
+    const define = this.getBodyColumnDefine(col, row);
+    let editorDefine = define?.editor ?? this.options.editor;
 
+    if (typeof editorDefine === 'function') {
+      const arg = {
+        col,
+        row,
+        dataValue: this.getCellOriginValue(col, row),
+        value: this.getCellValue(col, row) || '',
+        table: this
+      };
+      editorDefine = (editorDefine as Function)(arg);
+    }
+    return isValid(editorDefine);
+  }
   /** 更改单元格数据 会触发change_cell_value事件*/
   changeCellValue(col: number, row: number, value: string | undefined) {
     let newValue: any = value;
@@ -1120,7 +1163,7 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
    * @param row 粘贴数据的起始行号
    * @param values 多个单元格的数据数组
    */
-  changeCellValues(startCol: number, startRow: number, values: string[][]) {
+  changeCellValues(startCol: number, startRow: number, values: string[][], workOnEditableCell = false) {
     let pasteColEnd = startCol;
     let pasteRowEnd = startRow;
     // const rowCount = values.length;
@@ -1137,20 +1180,25 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
         }
 
         thisRowPasteColEnd = startCol + j;
-        const value = rowValues[j];
-        let newValue: string | number = value;
-        const rawValue = this.getCellRawValue(startCol + j, startRow + i);
-        if (typeof rawValue === 'number' && isAllDigits(value)) {
-          newValue = parseFloat(value);
-        }
-        this._changeCellValueToDataSet(startCol + j, startRow + i, newValue);
+        if (
+          (workOnEditableCell && this.isHasEditorDefine(startCol + j, startRow + i)) ||
+          workOnEditableCell === false
+        ) {
+          const value = rowValues[j];
+          let newValue: string | number = value;
+          const rawValue = this.getCellRawValue(startCol + j, startRow + i);
+          if (typeof rawValue === 'number' && isAllDigits(value)) {
+            newValue = parseFloat(value);
+          }
+          this._changeCellValueToDataSet(startCol + j, startRow + i, newValue);
 
-        this.fireListeners(TABLE_EVENT_TYPE.CHANGE_CELL_VALUE, {
-          col: startCol + j,
-          row: startRow + i,
-          rawValue,
-          changedValue: this.getCellOriginValue(startCol + j, startRow + i)
-        });
+          this.fireListeners(TABLE_EVENT_TYPE.CHANGE_CELL_VALUE, {
+            col: startCol + j,
+            row: startRow + i,
+            rawValue,
+            changedValue: this.getCellOriginValue(startCol + j, startRow + i)
+          });
+        }
       }
       pasteColEnd = Math.max(pasteColEnd, thisRowPasteColEnd);
     }

@@ -625,14 +625,14 @@ function computeTextWidth(col: number, row: number, cellType: ColumnTypeOption, 
   return maxWidth;
 }
 
-function getCellRect(col: number, row: number, table: BaseTableAPI) {
+function getCellRect(col: number, row: number, table: BaseTableAPI): any {
   return {
     left: 0,
     top: 0,
     right: table.getColWidth(col),
     bottom: table.getRowHeight(row),
-    width: 0,
-    height: 0
+    width: null, // vrender 逻辑中通过判断null对flex的元素来自动计算宽高
+    height: null
   };
 }
 
