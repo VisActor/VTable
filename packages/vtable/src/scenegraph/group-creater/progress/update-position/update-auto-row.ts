@@ -49,7 +49,7 @@ export function updateAutoRow(
         } else if (part) {
           const baseCellGroup = table.scenegraph.highPerformanceGetCell(col, rowStart - 1, true);
           y = baseCellGroup.attribute.y;
-          for (let r = rowStart; r <= rowEnd; r++) {
+          for (let r = rowStart - 1; r < rowEnd; r++) {
             y += table.getRowHeight(r);
           }
         } else {

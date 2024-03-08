@@ -71,8 +71,8 @@ export interface IStyleOption {
   underline?: UnderlinePropertyDefine;
   /** TODO */
   underlineColor?: ColorPropertyDefine;
-  /** TODO */
   underlineDash?: LineDashPropertyDefine;
+  underlineOffset?: number;
   lineThrough?: LineThroughPropertyDefine;
   /** TODO */
   lineThroughColor?: ColorPropertyDefine;

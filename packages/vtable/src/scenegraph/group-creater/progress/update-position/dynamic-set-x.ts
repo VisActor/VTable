@@ -5,7 +5,7 @@ import type { SceneProxy } from '../proxy';
 import { updateAutoColumn } from './update-auto-column';
 import { checkFirstColMerge, getFirstChild, getLastChild } from './util';
 
-export async function dynamicSetX(x: number, proxy: SceneProxy) {
+export async function dynamicSetX(x: number, isEnd: boolean, proxy: SceneProxy) {
   const screenLeft = (proxy.table as BaseTableAPI).getTargetColAt(
     x + proxy.table.scenegraph.rowHeaderGroup.attribute.width
   );
@@ -15,9 +15,29 @@ export async function dynamicSetX(x: number, proxy: SceneProxy) {
   const screenLeftCol = screenLeft.col;
   const screenLeftX = screenLeft.left;
   proxy.screenLeftCol = screenLeftCol;
-  const deltaCol = proxy.screenLeftCol - proxy.referenceCol;
 
+  let deltaCol;
+  if (isEnd) {
+    deltaCol = proxy.bodyRightCol - proxy.colEnd;
+  } else {
+    deltaCol = proxy.screenLeftCol - proxy.referenceCol;
+  }
+  // const deltaCol = proxy.screenLeftCol - proxy.referenceCol;
   move(deltaCol, screenLeftCol, screenLeftX, x, proxy);
+
+  if (isEnd) {
+    const colGroup = proxy.table.scenegraph.getColGroup(proxy.colEnd);
+    if (colGroup) {
+      const deltaX =
+        colGroup.attribute.x +
+        colGroup.attribute.width -
+        (proxy.table.tableNoFrameWidth - proxy.table.getFrozenColsWidth() - proxy.table.getRightFrozenColsWidth()) -
+        x;
+      proxy.deltaX = -deltaX;
+      proxy.table.scenegraph.setBodyAndColHeaderX(-x + proxy.deltaX);
+    }
+  }
+
   proxy.table.scenegraph.updateNextFrame();
 }
 
@@ -25,13 +45,16 @@ function move(deltaCol: number, screenLeftCol: number, screenLeftX: number, x: n
   if (deltaCol > 0) {
     // 向右滚动，左部column group移到右部
     moveColumn(deltaCol, 'left', proxy.screenLeftCol, screenLeftX, x, proxy);
+    proxy.updateDeltaX(x, screenLeftX, screenLeftCol);
     proxy.table.scenegraph.setBodyAndColHeaderX(-x + proxy.deltaX);
   } else if (deltaCol < 0) {
     // 向左滚动，右部cell group移到左部
     moveColumn(-deltaCol, 'right', proxy.screenLeftCol, screenLeftX, x, proxy);
+    proxy.updateDeltaX(x, screenLeftX, screenLeftCol);
     proxy.table.scenegraph.setBodyAndColHeaderX(-x + proxy.deltaX);
   } else {
     // 不改变row，更新body group范围
+    proxy.updateDeltaX(x, screenLeftX, screenLeftCol);
     proxy.table.scenegraph.setBodyAndColHeaderX(-x + proxy.deltaX);
   }
 }
@@ -128,27 +151,27 @@ async function moveColumn(
       proxy.table,
       distEndCol > proxy.bodyRightCol - (proxy.colEnd - proxy.colStart + 1) ? 'right' : 'left' // 跳转到右侧时，从右向左对齐
     );
-    // update body position when click scroll bar
-    if (syncLeftCol === proxy.bodyLeftCol) {
-      const colGroup = proxy.table.scenegraph.getColGroup(syncLeftCol);
-      const deltaX = colGroup.attribute.x - x;
-      proxy.table.scenegraph.proxy.deltaX = deltaX;
-    } else if (syncRightCol === proxy.bodyRightCol) {
-      const colGroup = proxy.table.scenegraph.getColGroup(syncRightCol);
-      const deltaX =
-        colGroup.attribute.x +
-        colGroup.attribute.width -
-        (proxy.table.tableNoFrameWidth - proxy.table.getFrozenColsWidth()) -
-        x;
-      proxy.table.scenegraph.proxy.deltaX = -deltaX;
-    } else {
-      // proxy.table.scenegraph.proxy.deltaX = 0;
-      const colGroup =
-        proxy.table.scenegraph.getColGroup(screenLeftCol) || proxy.table.scenegraph.getColGroup(screenLeftCol, true);
-      const deltaX =
-        screenLeftX - (colGroup.attribute.x + proxy.table.getFrozenColsWidth() + proxy.table.scenegraph.proxy.deltaX);
-      proxy.table.scenegraph.proxy.deltaX = deltaX;
-    }
+    // // update body position when click scroll bar
+    // if (syncLeftCol === proxy.bodyLeftCol) {
+    //   const colGroup = proxy.table.scenegraph.getColGroup(syncLeftCol);
+    //   const deltaX = colGroup.attribute.x - x;
+    //   proxy.table.scenegraph.proxy.deltaX = deltaX;
+    // } else if (syncRightCol === proxy.bodyRightCol) {
+    //   const colGroup = proxy.table.scenegraph.getColGroup(syncRightCol);
+    //   const deltaX =
+    //     colGroup.attribute.x +
+    //     colGroup.attribute.width -
+    //     (proxy.table.tableNoFrameWidth - proxy.table.getFrozenColsWidth()) -
+    //     x;
+    //   proxy.table.scenegraph.proxy.deltaX = -deltaX;
+    // } else {
+    //   // proxy.table.scenegraph.proxy.deltaX = 0;
+    //   const colGroup =
+    //     proxy.table.scenegraph.getColGroup(screenLeftCol) || proxy.table.scenegraph.getColGroup(screenLeftCol, true);
+    //   const deltaX =
+    //     screenLeftX - (colGroup.attribute.x + proxy.table.getFrozenColsWidth() + proxy.table.scenegraph.proxy.deltaX);
+    //   proxy.table.scenegraph.proxy.deltaX = deltaX;
+    // }
 
     proxy.currentCol = direction === 'left' ? proxy.currentCol + count : proxy.currentCol - count;
     proxy.totalCol = Math.max(

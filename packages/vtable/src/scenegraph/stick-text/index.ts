@@ -30,12 +30,12 @@ export function handleTextStick(table: BaseTableAPI) {
   const colStart = Math.max(colLeft, table.frozenColCount);
   const rowEnd =
     table.getAllRowsHeight() > table.tableNoFrameHeight
-      ? table.getRowAt(scrollTop + table.tableNoFrameHeight - 1).row
-      : table.rowCount - 1;
+      ? table.getRowAt(scrollTop + table.tableNoFrameHeight - table.getBottomFrozenRowsHeight() - 1).row
+      : table.rowCount - table.bottomFrozenRowCount - 1;
   const colEnd =
     table.getAllColsWidth() > table.tableNoFrameWidth
-      ? table.getColAt(scrollLeft + table.tableNoFrameWidth - 1).col
-      : table.colCount - 1;
+      ? table.getColAt(scrollLeft + table.tableNoFrameWidth - table.getRightFrozenColsWidth() - 1).col
+      : table.colCount - table.rightFrozenColCount - 1;
   if (colEnd < 0 || rowEnd < 0) {
     return;
   }

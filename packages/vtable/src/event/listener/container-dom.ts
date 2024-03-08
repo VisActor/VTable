@@ -326,6 +326,7 @@ export function bindContainerDomListener(eventManager: EventManager) {
         }).catch(error => {
         });
 
+        (table as ListTableAPI).changeCellValues(col, row, values, true);
       }
     }
   });

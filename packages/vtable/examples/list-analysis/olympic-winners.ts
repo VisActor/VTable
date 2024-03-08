@@ -1,5 +1,6 @@
 /* eslint-disable */
 import * as VTable from '../../src';
+import { bindDebugTool } from '../../src/scenegraph/debug-tool';
 const CONTAINER_ID = 'vTable';
 
 export function createTable() {
@@ -149,6 +150,7 @@ export function createTable() {
       const t0 = window.performance.now();
       tableInstance = new VTable.ListTable(document.getElementById(CONTAINER_ID), option);
       window.tableInstance = tableInstance;
+      bindDebugTool(tableInstance.scenegraph.stage, { customGrapicKeys: ['col', 'row'] });
       const filterListValues = {
         country: ['all', 'China', 'United States', 'Australia'],
         year: ['all', '2004', '2008', '2012', '2016', '2020'],

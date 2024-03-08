@@ -2440,7 +2440,16 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
   abstract toggleHierarchyState(col: number, row: number): void;
   abstract _hasHierarchyTreeHeader(): boolean;
   abstract getMenuInfo(col: number, row: number, type: string): DropDownMenuEventInfo;
-  abstract moveHeaderPosition(source: CellAddress, target: CellAddress): boolean;
+  abstract _moveHeaderPosition(
+    source: CellAddress,
+    target: CellAddress
+  ): {
+    sourceIndex: number;
+    targetIndex: any;
+    sourceSize: any;
+    targetSize: any;
+    moveType: 'column' | 'row';
+  };
   /** @private */
   // abstract getFieldData(field: FieldDef | FieldFormat | undefined, col: number, row: number): FieldData;
   abstract getRecordShowIndexByCell(col: number, row: number): number;
@@ -3262,7 +3271,8 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
       borderLineDash: theme.group.lineDash,
       underline: !!theme.text.underline,
       // underlineColor: theme.text.underlineColor,
-      // underlineDash: theme.text.underlineDash,
+      underlineDash: theme.text.underlineDash,
+      underlineOffset: theme.text.underlineOffset,
       lineThrough: !!theme.text.lineThrough,
       // lineThroughColor: theme.text.lineThroughColor,
       // lineThroughDash: (theme.text as any).lineThroughDash

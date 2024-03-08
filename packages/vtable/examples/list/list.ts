@@ -24,6 +24,11 @@ export function createTable() {
       width: 80,
       fieldFormat(data, col, row, table) {
         return row - 1;
+      },
+      style: {
+        underline: true,
+        underlineDash: [2, 0],
+        underlineOffset: 3
       }
     },
     {
@@ -37,7 +42,12 @@ export function createTable() {
       field: 'email1',
       title: 'email',
       width: 200,
-      sort: true
+      sort: true,
+      style: {
+        underline: true,
+        underlineDash: [2, 0],
+        underlineOffset: 3
+      }
     },
     {
       title: 'full name',
@@ -172,6 +182,15 @@ export function createTable() {
     },
     eventOptions: {
       preventDefaultContextMenu: false
+    },
+    autoWrapText: true,
+    theme: {
+      headerStyle: {
+        textAlign: 'left',
+        underline: true,
+
+        borderColor: ['#E1E4E8', '#E1E4E8', '#E1E4E8', '#E1E4E8']
+      }
     }
     // widthMode: 'adaptive'
   };

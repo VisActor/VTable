@@ -248,6 +248,9 @@ export class TableTheme implements ITableThemeDefine {
         get underlineDash(): LineDashPropertyDefine | undefined {
           return defaultStyle.underlineDash;
         },
+        get underlineOffset(): number | undefined {
+          return defaultStyle.underlineOffset;
+        },
         get lineThrough(): LineThroughPropertyDefine | undefined {
           return defaultStyle.lineThrough ?? false;
         },
@@ -846,6 +849,9 @@ export class TableTheme implements ITableThemeDefine {
       },
       get underlineDash(): LineDashPropertyDefine | undefined {
         return style.underlineDash;
+      },
+      get underlineOffset(): number | undefined {
+        return style.underlineOffset;
       },
       get lineThrough(): LineThroughPropertyDefine | undefined {
         return style.lineThrough ?? false;
