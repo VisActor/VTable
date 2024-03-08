@@ -154,10 +154,9 @@ export function endMoveCol(state: StateManager) {
         state.table.scenegraph.updateHeaderPosition(
           Math.min(moveContext.sourceIndex, moveContext.targetIndex),
           Math.min(
-            Math.max(
-              moveContext.sourceIndex + moveContext.sourceSize - 1,
-              moveContext.targetIndex + moveContext.targetSize - 1
-            ),
+            moveContext.targetIndex > moveContext.sourceIndex
+              ? moveContext.targetIndex + moveContext.sourceSize - 1
+              : moveContext.sourceIndex + moveContext.sourceSize - 1,
             state.table.colCount - 1
           ),
           0,
@@ -171,7 +170,7 @@ export function endMoveCol(state: StateManager) {
           Math.min(moveContext.sourceIndex, moveContext.targetIndex),
           Math.min(
             moveContext.targetIndex > moveContext.sourceIndex
-              ? moveContext.targetIndex + moveContext.targetSize - 1
+              ? moveContext.targetIndex + moveContext.sourceSize - 1
               : moveContext.sourceIndex + moveContext.sourceSize - 1,
             state.table.rowCount - 1
           ),
