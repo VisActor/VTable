@@ -711,8 +711,20 @@ export interface BaseTableAPI {
    */
   scrollToCell: (cellAddr: { col?: number; row?: number }) => void;
 
+
   registerCustomCellStyle: (customStyleId: string, customStyle: ColumnStyleOption | undefined | null) => void;
   arrangeCustomCellStyle: (cellPos: { col?: number; row?: number; range?: CellRange }, customStyleId: string) => void;
+
+  _moveHeaderPosition: (
+    source: CellAddress,
+    target: CellAddress
+  ) => {
+    sourceIndex: number;
+    targetIndex: any;
+    sourceSize: any;
+    targetSize: any;
+    moveType: 'column' | 'row';
+  };
 }
 export interface ListTableProtected extends IBaseTableProtected {
   /** 表格数据 */

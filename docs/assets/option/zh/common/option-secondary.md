@@ -89,7 +89,7 @@
 开启快捷键复制，与浏览器的快捷键一致。
 
 ##${prefix} pasteValueToCell(boolean) = false
-开启快捷键粘贴，与浏览器的快捷键一致。
+开启快捷键粘贴，与浏览器的快捷键一致。粘贴生效仅针对配置了编辑 editor 的单元格
 
 ##${prefix} moveFocusCellOnTab(boolean) = true
 开启 tab 键交互 默认为 true。开启 tab 键移动选中单元格，如果当前是在编辑单元格 则移动到下一个单元格也是编辑状态

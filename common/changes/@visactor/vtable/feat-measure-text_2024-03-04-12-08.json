@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vtable",
+      "comment": "feat: add text measure ment config",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vtable"
+}

@@ -728,6 +728,8 @@ export function bindTableGroupListener(eventManager: EventManager) {
       }
     }
     table.fireListeners(TABLE_EVENT_TYPE.CHECKBOX_STATE_CHANGE, cellsEvent);
+
+    table.scenegraph.updateNextFrame();
   });
 }
 export function bindGesture(eventManager: EventManager) {
