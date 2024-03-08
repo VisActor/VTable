@@ -772,7 +772,7 @@ export function resizeCellGroup(
 
     if (typeof child._dy === 'number') {
       child.setAttributes({
-        dy: (child._dx ?? 0) + dy
+        dy: (child._dy ?? 0) + dy
       });
     } else {
       child._dy = child.attribute.dy ?? 0;
