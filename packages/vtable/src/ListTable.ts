@@ -868,6 +868,16 @@ export class ListTable extends BaseTable implements ListTableAPI {
     records: Array<any>,
     option?: { restoreHierarchyState?: boolean; sortState?: SortState | SortState[] }
   ): void {
+    // restoreHierarchyState逻辑，保留树形结构展开收起的状态
+    const currentPagerIndexedData = this.dataSource?._currentPagerIndexedData;
+    const currentIndexedData = this.dataSource?.currentIndexedData;
+    const treeDataHierarchyState = this.dataSource?.treeDataHierarchyState;
+    const oldRecordLength = this.records?.length ?? 0;
+    // 释放事件 及 对象
+    this.internalProps.dataSource?.release();
+    // 过滤掉dataSource的引用
+    this.internalProps.releaseList = this.internalProps.releaseList?.filter((item: any) => !item.dataSourceObj);
+    this.internalProps.dataSource = null;
     let sort: SortState | SortState[];
     if (Array.isArray(option) || (option as any)?.order) {
       //兼容之前第二个参数为sort的情况
@@ -888,11 +898,6 @@ export class ListTable extends BaseTable implements ListTableAPI {
       this.internalProps.sortState = sort;
       this.stateManager.setSortState((this as any).sortState as SortState);
     }
-    // restoreHierarchyState逻辑，保留树形结构展开收起的状态
-    const currentPagerIndexedData = this.dataSource?._currentPagerIndexedData;
-    const currentIndexedData = this.dataSource?.currentIndexedData;
-    const treeDataHierarchyState = this.dataSource?.treeDataHierarchyState;
-    const oldRecordLength = this.records?.length ?? 0;
     if (records) {
       _setRecords(this, records);
       if ((this as any).sortState) {
