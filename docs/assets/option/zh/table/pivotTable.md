@@ -258,6 +258,10 @@ export interface IIndicatorHeaderNode {
 
 {{ use: indicators-define( prefix = '#',) }}
 
+## indicatorsAsCol(boolean) = true
+
+指标显示在列上，默认是true。如果配置为false，则显示在行，指标以行展示
+
 ## rowHierarchyType('grid' | 'tree')
 
 层级维度结构显示形式，平铺还是树形结构。

@@ -100,6 +100,10 @@ The specific configuration of each indicator in the perspective combination char
 {{ use: chart-indicator-type(
     prefix = '#') }}
 
+## indicatorsAsCol(boolean) = true
+
+The indicator is displayed on the column, default is true. If configured to false, it will be displayed in rows and the indicator will be displayed in rows.
+
 ## indicatorTitle(string)
 
 indicator header for displaying the value to the corner header

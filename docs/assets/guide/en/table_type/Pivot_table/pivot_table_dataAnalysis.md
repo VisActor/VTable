@@ -15,7 +15,6 @@ const option={
   rows:['region','province'], //row dimensions
   columns:['year','quarter'], //column dimensions
   indicators:['sales','profit'], //Indicators
-  enableDataAnalysis: true, //Whether to enable data analysis function
   records:[ //Data source。 If summary data is passed in, use user incoming data
     {
       region:'东北',
@@ -261,7 +260,6 @@ const option = {
         ]
     }],
     indicators: ['sales', 'profit'],
-    //enableDataAnalysis:true,
     corner: {
         titleOnDimension: 'none'
     },
