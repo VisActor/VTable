@@ -289,6 +289,7 @@ export function createTable() {
     records,
     columns,
     keyboardOptions: {
+      copySelected: true,
       pasteValueToCell: true,
       moveFocusCellOnTab: true,
       // editCellOnEnter: false,
