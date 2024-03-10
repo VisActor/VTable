@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "comment": "docs: indicatorsAsCol support indicators display in rows #1238\n\n",
+      "type": "none",
+      "packageName": "@visactor/vtable"
+    }
+  ],
+  "packageName": "@visactor/vtable",
+  "email": "892739385@qq.com"
+}
