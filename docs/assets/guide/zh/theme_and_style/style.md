@@ -1,16 +1,16 @@
-# 样式Style介绍
+# 样式 Style 介绍
 
 表格样式配置提供了灵活性和自定义性，使用户能够根据每一列的业务数据类型来设计和美化表格展现形式，如果需要从表格整体考虑样式可以使用[theme](../../guide/theme_and_style/theme)。
 
-本文档将介绍如何使用style、headerStyle来配置表格样式，以帮助用户更好地理解和使用这些功能。
+本文档将介绍如何使用 style、headerStyle 来配置表格样式，以帮助用户更好地理解和使用这些功能。
 
 ## 简单介绍
 
-VTable 中单元格的style细化配置，包括单元格样式、表头单元格样式等，样式的配置以列为一组分别配置（如果是转置表格的话，以行为一组配置style）。
+VTable 中单元格的 style 细化配置，包括单元格样式、表头单元格样式等，样式的配置以列为一组分别配置（如果是转置表格的话，以行为一组配置 style）。
 
 ## 表头单元格样式配置
 
-在columns的每一项中配置headerStyle，如果是在透视表则对应的是columns和rows。示例代码：
+在 columns 的每一项中配置 headerStyle，如果是在透视表则对应的是 columns 和 rows。示例代码：
 
      import * as vTable from '@visactor/vtable';
 
@@ -35,9 +35,9 @@ VTable 中单元格的style细化配置，包括单元格样式、表头单元�
 
 ![image](https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/0a2e223bdcd7410c08f6a6a0b.png)
 
-## body单元格样式配置
+## body 单元格样式配置
 
-在columns的每一项中配置style，如果是在透视表则对应的是columns和rows。示例代码：
+在 columns 的每一项中配置 style，如果是在透视表则对应的是 columns 和 rows。示例代码：
 
      import * as vTable from '@visactor/vtable';
 
@@ -72,14 +72,14 @@ style 提供了一系列的单元格配置式，简要介绍如下。
 
 ### 文字样式
 
-*   `textAlign`：定义单元格内文字的水平对齐方式
-*   `textBaseline`：定义单元格内文字的垂直对齐方式
-*   `color`：定义单元格的文字颜色
-*   `fontSize`：定义单元格文字大小
-*   `fontFamily`：定义单元格的文字字体
-*   `fontWeight`：定义单元的文字字体粗细
-*   `fontVariant`：定义单元格的文字字粗细
-*   `fontStyle`：定义单元格的文字字体样式
+- `textAlign`：定义单元格内文字的水平对齐方式
+- `textBaseline`：定义单元格内文字的垂直对齐方式
+- `color`：定义单元格的文字颜色
+- `fontSize`：定义单元格文字大小
+- `fontFamily`：定义单元格的文字字体
+- `fontWeight`：定义单元的文字字体粗细
+- `fontVariant`：定义单元格的文字字粗细
+- `fontStyle`：定义单元格的文字字体样式
 
 这些设置可以方便调整单元格中的文本呈现效果。
 
@@ -87,19 +87,21 @@ style 提供了一系列的单元格配置式，简要介绍如下。
 
 包含如下配置项：
 
-*   `borderColor`为单元格设置边框的颜色
-*   `borderLineWidth`：单元格设置边框的宽度
-*   `borderLineDash`：为单元设置边框的线条虚线样式
+- `borderColor`为单元格设置边框的颜色
+- `borderLineWidth`：单元格设置边框的宽度
+- `borderLineDash`：为单元设置边框的线条虚线样式
 
 ### 行高、换行设置
 
-*   `lineHeight`：为单格内容设置文字行高
-*   `textOverflow`：设置文本的省略形式。如果 autoWrapText 设置自动换行，该配置无效
+- `lineHeight`：为单格内容设置文字行高
+- `textOverflow`：设置文本的省略形式。如果 autoWrapText 设置自动换行，该配置无效
 
 ### 下划线、划线设置
 
-*   `underline`：为单格设置下划线
-*   `lineThrough`：为单元格文字中划线
+- `underline`：为单格设置下划线
+- `underlineDash`：下划线的虚线样式。
+- `underlineOffset`：下划线与文字的间隔距离。
+- `lineThrough`：为单元格文字中划线
 
 ### 链接文本颜色
 
@@ -125,6 +127,6 @@ style 提供了一系列的单元格配置式，简要介绍如下。
 
 ### 最大行数设置
 
-*   `lineamp`：设置单元的最大行数, 可设置 number 或者 'auto'，设置为 'auto'，则会自动计算
+- `lineamp`：设置单元的最大行数, 可设置 number 或者 'auto'，设置为 'auto'，则会自动计算
 
-通过以上介绍，您已经掌握了 VTable  中样式Style 的使用方法，接来就可以根据需求创建具有个性化风格的表格。
+通过以上介绍，您已经掌握了 VTable 中样式 Style 的使用方法，接来就可以根据需求创建具有个性化风格的表格。

@@ -76,6 +76,14 @@ ${prefix} underline (number)
 
 文本下划线的粗细。
 
+${prefix} underlineDash (number[])
+
+文本下划线的虚线样式。
+
+${prefix} underlineOffset (number)
+
+文本下划线距文字的距离。
+
 ${prefix} lineThrough (number)
 
 文本删除线的粗细。

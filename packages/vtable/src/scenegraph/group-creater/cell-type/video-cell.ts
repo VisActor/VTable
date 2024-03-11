@@ -10,6 +10,7 @@ import { _adjustWidthHeight } from './image-cell';
 import { getFunctionalProp, getProp } from '../../utils/get-prop';
 import { isValid } from '@visactor/vutils';
 import type { BaseTableAPI } from '../../../ts-types/base-table';
+import { getCellBorderStrokeWidth } from '../../utils/cell-border-stroke-width';
 
 const regedIcons = icons.get();
 
@@ -43,6 +44,7 @@ export function createVideoCellGroup(
   }
 
   // cell
+  const strokeArrayWidth = getCellBorderStrokeWidth(col, row, cellTheme, table);
   const cellGroup = new Group({
     x: xOrigin,
     y: yOrigin,
@@ -54,7 +56,7 @@ export function createVideoCellGroup(
     lineWidth: cellTheme?.group?.lineWidth ?? undefined,
     fill: cellTheme?.group?.fill ?? undefined,
     stroke: cellTheme?.group?.stroke ?? undefined,
-    strokeArrayWidth: (cellTheme?.group as any)?.strokeArrayWidth ?? undefined,
+    strokeArrayWidth: strokeArrayWidth,
     strokeArrayColor: (cellTheme?.group as any)?.strokeArrayColor ?? undefined,
     cursor: (cellTheme?.group as any)?.cursor ?? undefined,
     lineDash: cellTheme?.group?.lineDash ?? undefined,

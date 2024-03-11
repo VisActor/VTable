@@ -76,6 +76,14 @@ ${prefix} underline (number)
 
 Text underline thickness.
 
+${prefix} underlineDash (number[])
+
+Dashed style for text underlining.
+
+${prefix} underlineOffset (number)
+
+The distance between the text underline and the text.
+
 ${prefix} lineThrough (number)
 
 Text strikethrough thickness.

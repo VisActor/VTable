@@ -516,6 +516,10 @@ export const menus = [
       {
         path: 'style',
         name: 'border'
+      },
+      {
+        path: 'style',
+        name: 'custom-cell-style'
       }
     ]
   },
@@ -576,6 +580,10 @@ export const menus = [
       {
         path: 'cell-move',
         name: 'column-move'
+      },
+      {
+        path: 'pivot',
+        name: 'pivot-drag-header'
       },
       {
         path: 'cell-move',

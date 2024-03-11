@@ -252,7 +252,8 @@ export function getStyleTheme(
   const lineHeight = getProp('lineHeight', headerStyle, col, row, table);
   const underline = getProp('underline', headerStyle, col, row, table); // boolean
   // const underlineColor = getProp('underlineColor', headerStyle, col, row, table);
-  // const underlineDash = getProp('underlineDash', headerStyle, col, row, table);
+  const underlineDash = getProp('underlineDash', headerStyle, col, row, table);
+  const underlineOffset = getProp('underlineOffset', headerStyle, col, row, table);
   const lineThrough = getProp('lineThrough', headerStyle, col, row, table); // boolean
   // const lineThroughColor = getProp('lineThroughColor', headerStyle, col, row, table);
   // const lineThroughDash = getProp('lineThroughDash', headerStyle, col, row, table);
@@ -295,6 +296,8 @@ export function getStyleTheme(
       textBaseline,
       lineHeight: lineHeight ?? fontSize,
       underline: underline ? textDecorationWidth : undefined,
+      underlineDash,
+      underlineOffset,
       lineThrough: lineThrough ? textDecorationWidth : undefined,
       ellipsis:
         !textOverflow || textOverflow === 'clip' ? undefined : textOverflow === 'ellipsis' ? '...' : textOverflow

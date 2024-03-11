@@ -11,6 +11,7 @@ import type { Scenegraph } from '../../scenegraph';
 import { getProp, getFunctionalProp } from '../../utils/get-prop';
 import { isValid } from '@visactor/vutils';
 import { getQuadProps } from '../../utils/padding';
+import { getCellBorderStrokeWidth } from '../../utils/cell-border-stroke-width';
 
 export function createImageCellGroup(
   columnGroup: Group,
@@ -42,6 +43,7 @@ export function createImageCellGroup(
   }
 
   // cell
+  const strokeArrayWidth = getCellBorderStrokeWidth(col, row, cellTheme, table);
   const cellGroup = new Group({
     x: xOrigin,
     y: yOrigin,
@@ -53,7 +55,7 @@ export function createImageCellGroup(
     lineWidth: cellTheme?.group?.lineWidth ?? undefined,
     fill: cellTheme?.group?.fill ?? undefined,
     stroke: cellTheme?.group?.stroke ?? undefined,
-    strokeArrayWidth: (cellTheme?.group as any)?.strokeArrayWidth ?? undefined,
+    strokeArrayWidth: strokeArrayWidth ?? undefined,
     strokeArrayColor: (cellTheme?.group as any)?.strokeArrayColor ?? undefined,
     cursor: (cellTheme?.group as any)?.cursor ?? undefined,
     lineDash: cellTheme?.group?.lineDash ?? undefined,

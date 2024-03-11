@@ -1,7 +1,7 @@
 {{ target: common-style }}
 
 #${prefix} bgColor(ColorPropertyDefine)
-  
+
 Define the background color of the cell
 
 {{ use: common-color(
@@ -84,6 +84,14 @@ Set the underline for the text content of the cell
 {{ use: common-underline(
   prefix = ${prefix}
   ) }}
+#${prefix} underlineDash(LineDashPropertyDefine)
+Set the dashed underline style for cell text content
+{{ use: common-underlineDash(
+  prefix = ${prefix}
+  ) }}
+
+#${prefix} underlineOffset(number)
+Set the distance between underline and text for cell text content
 #${prefix} lineThrough(LineThroughPropertyDefine)
 Set the line-through for the text content of the cell
 {{ use: common-lineThrough(
@@ -132,7 +140,7 @@ Whether to display the progress bar
 
 ```
  showBar?:boolean | ((args: StylePropertyFunctionArg) => boolean)
- ```
+```
 
 #${prefix} barColor(ColorPropertyDefine)
 
@@ -217,5 +225,13 @@ Progress bar mark width
 #${prefix} barMarkPosition(string)
 
 Progress bar mark position, can be set to `'right' | 'bottom'`, default is `'right'`.
+
+{{ /if }}
+
+{{ if: ${isCheckbox} }}
+
+{{ use: common-checkbox-style (
+  prefix = ${prefix}
+  ) }}
 
 {{ /if }}

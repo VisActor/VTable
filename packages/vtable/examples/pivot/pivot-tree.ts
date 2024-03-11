@@ -26,11 +26,39 @@ export function createTable() {
                 children: [
                   {
                     dimensionKey: '220524114340023',
-                    value: '一级'
+                    value: '一级',
+                    children: [
+                      {
+                        dimensionKey: '2205241143400232',
+                        value: '一级'
+                      },
+                      {
+                        dimensionKey: '2205241143400232',
+                        value: '二级'
+                      },
+                      {
+                        dimensionKey: '2205241143400232',
+                        value: '三级'
+                      }
+                    ]
                   },
                   {
                     dimensionKey: '220524114340023',
-                    value: '二级'
+                    value: '二级',
+                    children: [
+                      {
+                        dimensionKey: '2205241143400232',
+                        value: '一级'
+                      },
+                      {
+                        dimensionKey: '2205241143400232',
+                        value: '二级'
+                      },
+                      {
+                        dimensionKey: '2205241143400232',
+                        value: '三级'
+                      }
+                    ]
                   },
                   {
                     dimensionKey: '220524114340023',
@@ -44,16 +72,16 @@ export function createTable() {
                 children: [
                   {
                     dimensionKey: '220524114340023',
-                    value: '一级'
+                    value: '一级1'
                     // hierarchyState: 'expand',
                   },
                   {
                     dimensionKey: '220524114340023',
-                    value: '二级'
+                    value: '二级1'
                   },
                   {
                     dimensionKey: '220524114340023',
-                    value: '三级'
+                    value: '三级1'
                   }
                 ]
               },
@@ -70,16 +98,16 @@ export function createTable() {
             children: [
               {
                 dimensionKey: '220524114340022',
-                value: '公司'
+                value: '公司1'
                 // hierarchyState: 'expand',
               },
               {
                 dimensionKey: '220524114340022',
-                value: '消费者'
+                value: '消费者1'
               },
               {
                 dimensionKey: '220524114340022',
-                value: '小型企业'
+                value: '小型企业1'
               }
             ]
           },
@@ -90,16 +118,16 @@ export function createTable() {
             children: [
               {
                 dimensionKey: '220524114340022',
-                value: '公司'
+                value: '公司2'
                 // hierarchyState: 'expand',
               },
               {
                 dimensionKey: '220524114340022',
-                value: '消费者'
+                value: '消费者2'
               },
               {
                 dimensionKey: '220524114340022',
-                value: '小型企业'
+                value: '小型企业2'
               }
             ]
           },
@@ -110,16 +138,16 @@ export function createTable() {
             children: [
               {
                 dimensionKey: '220524114340022',
-                value: '公司'
+                value: '公司3'
                 // hierarchyState: 'expand',
               },
               {
                 dimensionKey: '220524114340022',
-                value: '消费者'
+                value: '消费者3'
               },
               {
                 dimensionKey: '220524114340022',
-                value: '小型企业'
+                value: '小型企业3'
               }
             ]
           }
@@ -428,6 +456,8 @@ export function createTable() {
             fontFamily: 'sans-serif'
           }
         },
+        heightMode: 'autoHeight',
+        autoWrapText: true,
         widthMode: 'standard',
         rowHierarchyType: 'tree',
         rowExpandLevel: 2,

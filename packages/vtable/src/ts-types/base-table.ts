@@ -1,5 +1,12 @@
 import type { ITextSize } from '@visactor/vutils';
-import type { RectProps, MaybePromiseOrUndefined, ICellHeaderPaths, CellInfo } from './common';
+import type {
+  RectProps,
+  MaybePromiseOrUndefined,
+  ICellHeaderPaths,
+  CellInfo,
+  CustomCellStyle,
+  CustomCellStyleArrangement
+} from './common';
 import type {
   TableEventListener,
   TableEventHandlersEventArgumentMap,
@@ -48,7 +55,8 @@ import type {
   IRowDimension,
   TableEventOptions,
   IPivotChartDataConfig,
-  IListTableDataConfig
+  IListTableDataConfig,
+  ColumnStyleOption
 } from '.';
 import type { TooltipOptions } from './tooltip';
 import type { IWrapTextGraphicAttribute } from '../scenegraph/graphic/text';
@@ -375,6 +383,9 @@ export interface BaseTableConstructorOptions {
 
   // resize response time
   resizeTime?: number;
+
+  customCellStyle?: CustomCellStyle[];
+  customCellStyleArrangement?: CustomCellStyleArrangement[];
 }
 export interface BaseTableAPI {
   /** 数据总条目数 */
@@ -699,6 +710,21 @@ export interface BaseTableAPI {
    * @param cellAddr 要滚动到的单元格位置
    */
   scrollToCell: (cellAddr: { col?: number; row?: number }) => void;
+
+
+  registerCustomCellStyle: (customStyleId: string, customStyle: ColumnStyleOption | undefined | null) => void;
+  arrangeCustomCellStyle: (cellPos: { col?: number; row?: number; range?: CellRange }, customStyleId: string) => void;
+
+  _moveHeaderPosition: (
+    source: CellAddress,
+    target: CellAddress
+  ) => {
+    sourceIndex: number;
+    targetIndex: any;
+    sourceSize: any;
+    targetSize: any;
+    moveType: 'column' | 'row';
+  };
 }
 export interface ListTableProtected extends IBaseTableProtected {
   /** 表格数据 */

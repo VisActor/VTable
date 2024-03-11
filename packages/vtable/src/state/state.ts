@@ -632,7 +632,7 @@ export class StateManager {
   updateVerticalScrollBar(yRatio: number) {
     const totalHeight = this.table.getAllRowsHeight();
     this.scroll.verticalBarPos = Math.ceil(yRatio * (totalHeight - this.table.scenegraph.height));
-    this.table.scenegraph.setY(-this.scroll.verticalBarPos);
+    this.table.scenegraph.setY(-this.scroll.verticalBarPos, yRatio === 1);
     this.scroll.verticalBarPos -= this.table.scenegraph.proxy.deltaY;
     this.table.scenegraph.proxy.deltaY = 0;
 
@@ -654,7 +654,7 @@ export class StateManager {
   updateHorizontalScrollBar(xRatio: number) {
     const totalWidth = this.table.getAllColsWidth();
     this.scroll.horizontalBarPos = Math.ceil(xRatio * (totalWidth - this.table.scenegraph.width));
-    this.table.scenegraph.setX(-this.scroll.horizontalBarPos);
+    this.table.scenegraph.setX(-this.scroll.horizontalBarPos, xRatio === 1);
     this.scroll.horizontalBarPos -= this.table.scenegraph.proxy.deltaX;
     this.table.scenegraph.proxy.deltaX = 0;
     // console.log(this.table.scenegraph.bodyGroup.lastChild.attribute);

@@ -975,3 +975,22 @@ Get the displayed row number range of the table body part
 ## getAggregateValuesByField(Function)
 
 Get aggregation summary value
+
+## registerCustomCellStyle(Function)
+Register a custom style
+```
+registerCustomCellStyle: (customStyleId: string, customStyle: ColumnStyleOption | undefined | null) => void
+```
+Custom cell style
+* customStyleId: the unique id of the custom style
+* customStyle: Custom cell style, which is the same as the `style` configuration in `column`. The final rendering effect is the fusion of the original style of the cell and the custom style.
+
+## registerCustomCellStyleArrangement(Function)
+Assign custom styles
+```
+registerCustomCellStyleArrangement: (cellPosition: { col?: number; row?: number; range?: CellRange }, customStyleId: string) => void
+```
+* cellPosition: cell position information, supports configuration of single cells and cell areas
+   * Single cell: `{ row: number, column: number }`
+   * Cell range: `{ range: { start: { row: number, column: number }, end: { row: number, column: number} } }`
+* customStyleId: Custom style id, the same as the id defined when registering the custom style

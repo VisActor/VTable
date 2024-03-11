@@ -91,6 +91,15 @@
       ],
       "shouldPublish": true,
       "versionPolicyName": "vtableMain"
+    },
+    {
+      "packageName": "@visactor/vtable-search",
+      "projectFolder": "packages/vtable-search",
+      "tags": [
+        "package"
+      ],
+      "shouldPublish": true,
+      "versionPolicyName": "vtableMain"
     }
   ]
 }

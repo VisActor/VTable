@@ -4,7 +4,8 @@ import {
   getTextBounds,
   DefaultTextMeasureContribution,
   TextMeasureContribution,
-  ContainerModule
+  ContainerModule,
+  container
 } from '@src/vrender';
 // eslint-disable-next-line max-len
 // import {
@@ -14,14 +15,29 @@ import {
 import type { ITextMeasureOption, ITextSize } from '@visactor/vutils';
 import { TextMeasure } from '@visactor/vutils';
 
+let customAlphabetCharSet = '';
+
 type ITextGraphicAttributeFroMeasure = Omit<ITextGraphicAttribute, 'lineHeight'> & {
   lineHeight?: number;
 };
 
-export default new ContainerModule((bind, unbind, isBound, rebind) => {
-  bind(FastTextMeasureContribution).toSelf().inSingletonScope();
-  rebind(TextMeasureContribution).toService(FastTextMeasureContribution);
+const textMeasureModule = new ContainerModule((bind, unbind, isBound, rebind) => {
+  if (isBound(TextMeasureContribution)) {
+    rebind(TextMeasureContribution).to(FastTextMeasureContribution).inSingletonScope();
+  } else {
+    bind(TextMeasureContribution).to(FastTextMeasureContribution).inSingletonScope();
+  }
 });
+
+const restoreTextMeasureModule = new ContainerModule((bind, unbind, isBound, rebind) => {
+  if (isBound(TextMeasureContribution)) {
+    rebind(TextMeasureContribution).to(DefaultTextMeasureContribution).inSingletonScope();
+  } else {
+    bind(TextMeasureContribution).to(DefaultTextMeasureContribution).inSingletonScope();
+  }
+});
+
+export default textMeasureModule;
 
 export const initTextMeasure = (
   textSpec?: ITextGraphicAttributeFroMeasure,
@@ -35,9 +51,9 @@ export const initTextMeasure = (
         fontSize: DefaultTextStyle.fontSize
       },
       getTextBounds: useNaiveCanvas ? undefined : getTextBounds,
-      specialCharSet: `{}()//&-/: .,@%'"~…${
+      specialCharSet: `{}()//&-/: .,@%'"~…=${
         TextMeasure.ALPHABET_CHAR_SET
-      }${TextMeasure.ALPHABET_CHAR_SET.toUpperCase()}0123456789`,
+      }${TextMeasure.ALPHABET_CHAR_SET.toUpperCase()}0123456789${customAlphabetCharSet}`,
       ...(option ?? {})
     },
     textSpec
@@ -237,3 +253,15 @@ export class TextMeasureTool {
 }
 
 export const textMeasure = new TextMeasureTool();
+
+// add user custom alphabet char set into fast measurement
+export function setCustomAlphabetCharSet(str: string) {
+  customAlphabetCharSet = str;
+  fastTextMeasureCache.clear();
+  // container.load(textMeasureModule);
+}
+
+// change fast textMeasure into canvas textMeasure
+export function restoreMeasureText() {
+  container.load(restoreTextMeasureModule);
+}

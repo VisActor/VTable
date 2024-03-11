@@ -215,7 +215,7 @@ const BaseTable: React.FC<Props> = React.forwardRef((props, ref) => {
     } else if (hasRecords && !isEqual(props.records, prevRecords.current, { skipFunction: skipFunctionDiff })) {
       prevRecords.current = props.records;
       tableContext.current.table.setRecords(props.records, {
-        restoreHierarchyState: props.option.restoreHierarchyState
+        restoreHierarchyState: props.option?.restoreHierarchyState
       });
       handleTableRender();
     }

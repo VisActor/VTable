@@ -758,10 +758,28 @@ export function resizeCellGroup(
   const dy = -table.getRowsHeight(range.start.row, row - 1);
 
   cellGroup.forEachChildren((child: IGraphic) => {
-    child.setAttributes({
-      dx: (child.attribute.dx ?? 0) + dx,
-      dy: (child.attribute.dy ?? 0) + dy
-    });
+    // 利用_dx hack解决掉 合并单元格的范围内的格子依次执行该方法 如果挨个调用updateCell的话 执行多次后dx累计问题
+    if (typeof child._dx === 'number') {
+      child.setAttributes({
+        dx: (child._dx ?? 0) + dx
+      });
+    } else {
+      child._dx = child.attribute.dx ?? 0;
+      child.setAttributes({
+        dx: (child.attribute.dx ?? 0) + dx
+      });
+    }
+
+    if (typeof child._dy === 'number') {
+      child.setAttributes({
+        dy: (child._dy ?? 0) + dy
+      });
+    } else {
+      child._dy = child.attribute.dy ?? 0;
+      child.setAttributes({
+        dy: (child.attribute.dy ?? 0) + dy
+      });
+    }
   });
 
   const lineWidth = cellGroup.attribute.lineWidth;

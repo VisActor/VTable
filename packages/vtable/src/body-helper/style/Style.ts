@@ -46,6 +46,7 @@ export class Style extends EventTarget implements ColumnStyle {
   private _underline?: UnderlinePropertyDefine;
   private _underlineColor?: ColorPropertyDefine;
   private _underlineDash?: LineDashPropertyDefine;
+  private _underlineOffset?: number;
   private _lineThrough?: LineThroughPropertyDefine;
   private _lineThroughColor?: ColorPropertyDefine;
   private _lineThroughDash?: LineDashPropertyDefine;
@@ -81,6 +82,7 @@ export class Style extends EventTarget implements ColumnStyle {
     this._underline = style?.underline ?? bodyStyle?.underline;
     this._underlineColor = style?.underlineColor ?? bodyStyle?.underlineColor;
     this._underlineDash = style?.underlineDash ?? bodyStyle?.underlineDash;
+    this._underlineOffset = style?.underlineOffset ?? bodyStyle?.underlineOffset;
     this._lineThrough = style?.lineThrough ?? bodyStyle?.lineThrough;
     this._lineThroughColor = style?.lineThroughColor ?? bodyStyle?.lineThroughColor;
     this._lineThroughDash = style?.lineThroughDash ?? bodyStyle?.lineThroughDash;
@@ -208,6 +210,12 @@ export class Style extends EventTarget implements ColumnStyle {
   set underlineDash(underlineDash: LineDashPropertyDefine | undefined) {
     this._underlineDash = underlineDash;
     // this.doChangeStyle();
+  }
+  get underlineOffset(): number | undefined {
+    return this._underlineOffset;
+  }
+  set underlineOffset(underlineOffset: number | undefined) {
+    this._underlineOffset = underlineOffset;
   }
   get lineThrough(): LineThroughPropertyDefine | undefined {
     return this._lineThrough;
