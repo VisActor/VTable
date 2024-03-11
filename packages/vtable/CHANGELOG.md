@@ -1,6 +1,18 @@
 # Change Log - @visactor/vtable
 
-This log was last generated on Mon, 11 Mar 2024 06:03:40 GMT and should not be manually modified.
+This log was last generated on Mon, 11 Mar 2024 07:05:40 GMT and should not be manually modified.
+
+## 0.21.1
+Mon, 11 Mar 2024 07:05:40 GMT
+
+### Updates
+
+- fix: merge cell render error with summary and pagination #1223
+
+
+- docs: indicatorsAsCol support indicators display in rows #1238
+
+
 
 ## 0.21.0
 Mon, 11 Mar 2024 06:03:40 GMT
