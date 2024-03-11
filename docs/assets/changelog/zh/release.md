@@ -1,3 +1,20 @@
+# v0.21.1
+
+2024-03-11
+
+
+**🐛 功能修复**
+
+- **@visactor/vtable**: merge cell render error with summary and pagination [#1223](https://github.com/VisActor/VTable/issues/1223)
+
+**📖 文档更新**
+
+- **@visactor/vtable**: indicatorsAsCol support indicators display in rows [#1238](https://github.com/VisActor/VTable/issues/1238)
+
+
+
+[更多详情请查看 v0.21.1](https://github.com/VisActor/VTable/releases/tag/v0.21.1)
+
 # v0.21.0
 
 2024-03-11
