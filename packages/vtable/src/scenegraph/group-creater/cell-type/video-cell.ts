@@ -6,7 +6,7 @@ import { Group } from '../../graphic/group';
 import { calcKeepAspectRatioSize } from '../../utils/keep-aspect-ratio';
 import { Icon } from '../../graphic/icon';
 import { calcStartPosition } from '../../utils/cell-pos';
-import { _adjustWidthHeight } from './image-cell';
+import { _adjustWidthHeight, getCellRange, updateImageDxDy } from './image-cell';
 import { getFunctionalProp, getProp } from '../../utils/get-prop';
 import { isValid } from '@visactor/vutils';
 import type { BaseTableAPI } from '../../../ts-types/base-table';
@@ -80,36 +80,66 @@ export function createVideoCellGroup(
     if (imageAutoSizing) {
       _adjustWidthHeight(col, row, video.videoWidth, video.videoHeight, table.scenegraph, padding, cellGroup);
     }
-    const width = cellGroup.attribute.width;
-    const height = cellGroup.attribute.height;
+    // const width = cellGroup.attribute.width;
+    // const height = cellGroup.attribute.height;
     // 更新宽高
+    const { width: cellWidth, height: cellHeight, isMerge } = getCellRange(cellGroup, table);
     if (keepAspectRatio) {
       const { width: videoWidth, height: videoHeight } = calcKeepAspectRatioSize(
         video.videoWidth,
         video.videoHeight,
-        width - padding[1] - padding[3],
-        height - padding[0] - padding[2]
+        cellWidth - padding[1] - padding[3],
+        cellHeight - padding[0] - padding[2]
       );
-      const pos = calcStartPosition(0, 0, width, height, videoWidth, videoHeight, textAlign, textBaseline, padding);
+      const pos = calcStartPosition(
+        0,
+        0,
+        cellWidth,
+        cellHeight,
+        videoWidth,
+        videoHeight,
+        textAlign,
+        textBaseline,
+        padding
+      );
 
       image.setAttributes({
         width: videoWidth,
         height: videoHeight,
         x: pos.x,
-        y: pos.y
+        y: pos.y,
+        dx: 0
       });
     } else {
+      // const { width: cellWidth, height: cellHeight } = getCellRange(cellGroup, table);
       image.setAttributes({
         x: padding[3],
         y: padding[0],
-        width: width - padding[1] - padding[3],
-        height: height - padding[2] - padding[0]
+        width: cellWidth - padding[1] - padding[3],
+        height: cellHeight - padding[2] - padding[0],
+        dy: 0
       });
+    }
+
+    if (isMerge) {
+      updateImageDxDy(
+        cellGroup.mergeStartCol,
+        cellGroup.mergeEndCol,
+        cellGroup.mergeStartRow,
+        cellGroup.mergeEndRow,
+        table
+      );
     }
 
     const left = 0;
     const top = 0;
     // 播放按钮
+    // const iconSize = Math.floor(Math.min(width - padding[1] - padding[3], height - padding[2] - padding[0]) / 2);
+    // const anchorX =
+    //   left + (width > image.attribute.width ? image.attribute.x - left + image.attribute.width / 2 : width / 2);
+    // const anchorY =
+    //   top + (height > image.attribute.height ? image.attribute.y - top + image.attribute.height / 2 : height / 2);
+    const { width, height } = getCellRange(cellGroup, table);
     const iconSize = Math.floor(Math.min(width - padding[1] - padding[3], height - padding[2] - padding[0]) / 2);
     const anchorX =
       left + (width > image.attribute.width ? image.attribute.x - left + image.attribute.width / 2 : width / 2);
@@ -145,6 +175,7 @@ export function createVideoCellGroup(
     cursor: 'pointer' as Cursor
   });
   image.name = 'image';
+  image.keepAspectRatio = keepAspectRatio;
   cellGroup.appendChild(image);
 
   return cellGroup;
