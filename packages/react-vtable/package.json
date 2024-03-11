@@ -48,11 +48,11 @@
   },
   "dependencies": {
     "@visactor/vtable": "workspace:*",
-    "@visactor/vutils": "~0.17.1",
+    "@visactor/vutils": "~0.18.1",
     "react-is": "^18.2.0"
   },
   "devDependencies": {
-    "@visactor/vchart": "1.9.1",
+    "@visactor/vchart": "1.9.6",
     "@internal/bundler": "workspace:*",
     "@internal/eslint-config": "workspace:*",
     "@internal/ts-config": "workspace:*",
