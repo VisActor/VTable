@@ -253,6 +253,10 @@ Row header tree, with a structure similar to columnTree.
 
 {{ use: indicators-define( prefix = '#',) }}
 
+## indicatorsAsCol(boolean) = true
+
+The indicator is displayed on the column, default is true. If configured to false, it will be displayed in rows and the indicator will be displayed in rows.
+
 ## rowHierarchyType('grid' | 'tree')
 
 Hierarchy display style for dimensional structure, flat or tree.
