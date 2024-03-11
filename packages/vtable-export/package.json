@@ -35,7 +35,7 @@
   },
   "dependencies": {
     "@visactor/vtable": "workspace:*",
-    "@visactor/vutils": "~0.17.1",
+    "@visactor/vutils": "~0.18.1",
     "file-saver": "2.0.5",
     "exceljs": "4.4.0"
   },

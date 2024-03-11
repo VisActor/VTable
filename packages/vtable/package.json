@@ -54,9 +54,9 @@
     "@visactor/vrender-kits": "0.18.2-alpha.1",
     "@visactor/vrender-components": "0.18.2-alpha.1",
     "@visactor/vutils-extension": "~1.8.5",
-    "@visactor/vutils": "~0.17.1",
-    "@visactor/vscale": "~0.17.1",
-    "@visactor/vdataset": "~0.17.1",
+    "@visactor/vutils": "~0.18.1",
+    "@visactor/vscale": "~0.18.1",
+    "@visactor/vdataset": "~0.18.1",
     "cssfontparser": "^1.2.1"
   },
   "devDependencies": {
