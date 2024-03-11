@@ -596,7 +596,9 @@ export class ListTable extends BaseTable implements ListTableAPI {
     }
     return null;
   }
-
+  _moveRecordOrder(source: number, target: number) {
+    //
+  }
   /**
    * 方法适用于获取body中某条数据的行列号
    * @param findTargetRecord 通过数据对象或者指定函数来计算数据条目index

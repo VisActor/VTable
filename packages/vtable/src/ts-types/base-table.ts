@@ -79,6 +79,7 @@ import type { ITitle } from './component/title';
 import type { DiscreteTableLegend } from '../components/legend/discrete-legend/discrete-legend';
 import type { ContinueTableLegend } from '../components/legend/continue-legend/continue-legend';
 import type { NumberRangeMap } from '../layout/row-height-map';
+import type { RowSeriesNumberHelper } from '../core/row-series-number-helper';
 
 export interface IBaseTableProtected {
   element: HTMLElement;
@@ -143,6 +144,7 @@ export interface IBaseTableProtected {
 
   bodyHelper: BodyHelper;
   headerHelper: HeaderHelper;
+  rowSeriesNumberHelper: RowSeriesNumberHelper;
 
   cellTextOverflows: { [at: string]: string };
   // headerDescriptions: { [at: string]: string };
@@ -725,6 +727,7 @@ export interface BaseTableAPI {
     targetSize: any;
     moveType: 'column' | 'row';
   };
+  _moveRecordOrder: (source: number, target: number) => void;
 }
 export interface ListTableProtected extends IBaseTableProtected {
   /** 表格数据 */

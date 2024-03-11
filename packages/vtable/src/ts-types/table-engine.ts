@@ -116,7 +116,7 @@ export interface RowSeriesNumber {
   /** 是否可拖拽顺序 */
   dragOrder?: boolean;
   /** 是否显示调换顺序的图标 */
-  showDragOrderIcon?: boolean;
+  dragOrderIcon?: string | ColumnIconOption;
 }
 
 export interface ColumnSeriesNumber {

@@ -10,7 +10,7 @@ import type { PivotHeaderLayoutMap } from '../../layout/pivot-header-layout';
 import { getAxisConfigInPivotChart } from '../../layout/chart-helper/get-axis-config';
 import { computeAxisComponentWidth } from '../../components/axis/get-axis-component-size';
 import { Group as VGroup } from '@src/vrender';
-import { isObject } from '@visactor/vutils';
+import { isObject, isValid } from '@visactor/vutils';
 import { decodeReactDom, dealPercentCalc } from '../component/custom';
 
 export function computeColsWidth(table: BaseTableAPI, colStart?: number, colEnd?: number, update?: boolean): void {
@@ -372,7 +372,13 @@ function computeAutoColWidth(
     const cellType = table.isHeader(col, row)
       ? (table._getHeaderLayoutMap(col, row) as HeaderData)?.headerType
       : table.getBodyColumnType(col, row);
-    if (cellType !== 'text' && cellType !== 'link' && cellType !== 'progressbar' && cellType !== 'checkbox') {
+    if (
+      isValid(cellType) &&
+      cellType !== 'text' &&
+      cellType !== 'link' &&
+      cellType !== 'progressbar' &&
+      cellType !== 'checkbox'
+    ) {
       // text&link&progressbar测量文字宽度
       // image&video&sparkline使用默认宽度
       maxWidth = Math.max(maxWidth, table.getColWidthDefinedNumber(col) || 0);

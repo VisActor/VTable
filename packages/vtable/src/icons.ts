@@ -307,6 +307,20 @@ const builtins = {
       height: 13,
       cursor: 'pointer'
     };
+  },
+  get dragReorder(): SvgIcon {
+    return {
+      type: 'svg',
+      svg: '<svg t="1710129136961" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="5166" width="200" height="200"><path d="M362.666667 192m-64 0a64 64 0 1 0 128 0 64 64 0 1 0-128 0Z" fill="#666666" p-id="5167"></path><path d="M661.333333 192m-64 0a64 64 0 1 0 128 0 64 64 0 1 0-128 0Z" fill="#666666" p-id="5168"></path><path d="M362.666667 512m-64 0a64 64 0 1 0 128 0 64 64 0 1 0-128 0Z" fill="#666666" p-id="5169"></path><path d="M661.333333 512m-64 0a64 64 0 1 0 128 0 64 64 0 1 0-128 0Z" fill="#666666" p-id="5170"></path><path d="M362.666667 832m-64 0a64 64 0 1 0 128 0 64 64 0 1 0-128 0Z" fill="#666666" p-id="5171"></path><path d="M661.333333 832m-64 0a64 64 0 1 0 128 0 64 64 0 1 0-128 0Z" fill="#666666" p-id="5172"></path></svg>',
+      width: 20, //其实指定的是svg图片绘制多大，实际下面的阴影是box，margin也是相对阴影范围指定的
+      height: 20,
+      funcType: IconFuncTypeEnum.dragReorder,
+      positionType: IconPosition.left,
+      name: 'dragReorderIcon',
+      marginLeft: -10,
+      marginRight: 10,
+      cursor: 'grab'
+    };
   }
 };
 

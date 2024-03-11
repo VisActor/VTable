@@ -10,7 +10,7 @@ import { getQuadProps } from '../utils/padding';
 import { dealWithRichTextIcon } from '../utils/text-icon-layout';
 import { getAxisConfigInPivotChart } from '../../layout/chart-helper/get-axis-config';
 import { computeAxisComponentHeight } from '../../components/axis/get-axis-component-size';
-import { isArray, isNumber, isObject } from '@visactor/vutils';
+import { isArray, isNumber, isObject, isValid } from '@visactor/vutils';
 import { CheckBox } from '@visactor/vrender-components';
 import { decodeReactDom, dealPercentCalc } from '../component/custom';
 
@@ -364,7 +364,13 @@ export function computeRowHeight(row: number, startCol: number, endCol: number, 
     const cellType = table.isHeader(col, row)
       ? (table._getHeaderLayoutMap(col, row) as HeaderData)?.headerType
       : table.getBodyColumnType(col, row);
-    if (cellType !== 'text' && cellType !== 'link' && cellType !== 'progressbar' && cellType !== 'checkbox') {
+    if (
+      isValid(cellType) &&
+      cellType !== 'text' &&
+      cellType !== 'link' &&
+      cellType !== 'progressbar' &&
+      cellType !== 'checkbox'
+    ) {
       // text&link&progressbar测量文字宽度
       // image&video&sparkline使用默认宽度
       const defaultHeight = table.getDefaultRowHeight(row);

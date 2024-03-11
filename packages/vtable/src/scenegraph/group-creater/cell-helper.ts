@@ -10,6 +10,7 @@ import type {
   ImageColumnDefine,
   MappingRule,
   ProgressbarColumnDefine,
+  RowSeriesNumber,
   TextColumnDefine
 } from '../../ts-types';
 import { dealWithCustom } from '../component/custom';
@@ -497,7 +498,10 @@ export function updateCell(col: number, row: number, table: BaseTableAPI, addNew
     ? (table._getHeaderLayoutMap(col, row) as HeaderData).headerType
     : table.getBodyColumnType(col, row);
 
-  const mayHaveIcon = cellLocation !== 'body' ? true : !!define?.icon || !!(define as ColumnDefine)?.tree;
+  const mayHaveIcon =
+    cellLocation !== 'body'
+      ? true
+      : (define as RowSeriesNumber)?.dragOrder || !!define?.icon || !!(define as ColumnDefine)?.tree;
   const padding = cellTheme._vtable.padding;
   const textAlign = cellTheme.text.textAlign;
   const textBaseline = cellTheme.text.textBaseline;

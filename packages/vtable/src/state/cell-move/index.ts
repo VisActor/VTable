@@ -1,4 +1,5 @@
 import type { ListTable } from '../../ListTable';
+import type { SimpleHeaderLayoutMap } from '../../layout';
 import { getCellMergeInfo } from '../../scenegraph/utils/get-cell-merge';
 import type { CellRange } from '../../ts-types';
 import type { BaseTableAPI } from '../../ts-types/base-table';
@@ -17,7 +18,12 @@ export function startMoveCol(col: number, row: number, x: number, y: number, sta
 
   const cellLocation = state.table.getCellLocation(col, row);
   const delta =
-    cellLocation === 'columnHeader' ? state.columnMove.x : cellLocation === 'rowHeader' ? state.columnMove.y : 0;
+    cellLocation === 'columnHeader'
+      ? state.columnMove.x
+      : cellLocation === 'rowHeader' ||
+        (state.table.internalProps.layoutMap as SimpleHeaderLayoutMap).isSeriesNumberInBody(col, row)
+      ? state.columnMove.y
+      : 0;
 
   state.table.scenegraph.component.showMoveCol(col, row, delta);
 
@@ -40,6 +46,7 @@ export function updateMoveCol(col: number, row: number, x: number, y: number, st
 
   state.columnMove.x = x - state.table.tableX;
   state.columnMove.y = y - state.table.tableY;
+  console.log('columnMoveY', state.columnMove.y);
   state.columnMove.colTarget = targetCell.col;
   state.columnMove.rowTarget = targetCell.row;
 
@@ -75,7 +82,10 @@ export function updateMoveCol(col: number, row: number, x: number, y: number, st
           : state.table.getColsWidth(0, state.columnMove.colTarget - 1)) -
         state.table.stateManager.scroll.horizontalBarPos;
     }
-  } else if (cellLocation === 'rowHeader') {
+  } else if (
+    cellLocation === 'rowHeader' ||
+    (state.table.internalProps.layoutMap as SimpleHeaderLayoutMap).isSeriesNumberInBody(col, row)
+  ) {
     backY = state.columnMove.y;
     if (state.table.isFrozenRow(row)) {
       lineY =
@@ -117,6 +127,14 @@ export function endMoveCol(state: StateManager) {
 
     // 更新状态
     if (moveContext) {
+      if (
+        (state.table.internalProps.layoutMap as SimpleHeaderLayoutMap).isSeriesNumberInBody(
+          state.columnMove.colSource,
+          state.columnMove.rowSource
+        )
+      ) {
+        state.table._moveRecordOrder(moveContext.sourceIndex, moveContext.targetIndex);
+      }
       // clear columns width and rows height cache
       if (moveContext.moveType === 'column') {
         clearWidthsAndHeightsCache(

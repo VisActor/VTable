@@ -1315,4 +1315,8 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
     }
     return false;
   }
+
+  _moveRecordOrder(source: number, target: number) {
+    //
+  }
 }

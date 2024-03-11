@@ -112,8 +112,8 @@ export function createTable() {
     {
       field: 'sex',
       title: 'sex',
-      width: 100,
-      mergeCell: true
+      width: 100
+      // mergeCell: true
     },
     {
       field: 'email1',
@@ -179,6 +179,7 @@ export function createTable() {
         enable: true,
         title: '行号',
         field: 'name',
+        dragOrder: true,
         // format: (args: any) => {
         //   return args.value;
         // },

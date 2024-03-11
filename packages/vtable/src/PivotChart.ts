@@ -1256,4 +1256,7 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
     }
     return false;
   }
+  _moveRecordOrder(source: number, target: number) {
+    //
+  }
 }

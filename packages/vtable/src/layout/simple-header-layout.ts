@@ -127,16 +127,16 @@ export class SimpleHeaderLayoutMap implements LayoutMapAPI {
     this._showHeader = _showHeader;
   }
   isSeriesNumberInHeader(col: number, row: number): boolean {
-    if (col < this.leftRowSeriesNumberColumnCount && row < this.headerLevelCount) {
+    if (col >= 0 && row >= 0 && col < this.leftRowSeriesNumberColumnCount && row < this.headerLevelCount) {
       return true;
     }
-    if (col >= this.colCount - this.rightRowSeriesNumberColumnCount && row < this.headerLevelCount) {
+    if (row >= 0 && col >= this.colCount - this.rightRowSeriesNumberColumnCount && row < this.headerLevelCount) {
       return true;
     }
     return false;
   }
   isSeriesNumberInBody(col: number, row: number): boolean {
-    if (col < this.leftRowSeriesNumberColumnCount && row >= this.headerLevelCount) {
+    if (col >= 0 && col < this.leftRowSeriesNumberColumnCount && row >= this.headerLevelCount) {
       return true;
     }
     if (col >= this.colCount - this.rightRowSeriesNumberColumnCount && row >= this.headerLevelCount) {
@@ -1090,6 +1090,11 @@ export class SimpleHeaderLayoutMap implements LayoutMapAPI {
    * @returns boolean 是否可以移动
    */
   canMoveHeaderPosition(source: CellAddress, target: CellAddress): boolean {
+    if (this.isSeriesNumberInHeader(target.col, target.row) || this.isSeriesNumberInHeader(source.col, source.row)) {
+      return false;
+    } else if (this.isSeriesNumberInBody(target.col, target.row) && this.isSeriesNumberInBody(source.col, source.row)) {
+      return true;
+    }
     if (source.col < 0 || source.row < 0 || target.col < 0 || target.row < 0) {
       return false;
     }
@@ -1151,19 +1156,29 @@ export class SimpleHeaderLayoutMap implements LayoutMapAPI {
         // 逐行将每一行的source id 移动到目标地址targetCol处
         for (let row = 0; row < this._headerCellIds.length; row++) {
           // 从header id的二维数组中取出需要操作的source ids
-          const sourceIds = this._headerCellIds[row].splice(sourceCellRange.start.col, sourceSize);
+          const sourceIds = this._headerCellIds[row].splice(
+            sourceCellRange.start.col - this.leftRowSeriesNumberColumnCount,
+            sourceSize
+          );
           // 将source ids插入到目标地址targetCol处
           // 把sourceIds变成一个适合splice的数组（包含splice前2个参数的数组） 以通过splice来插入sourceIds数组
-          sourceIds.unshift(targetIndex, 0);
+          sourceIds.unshift(targetIndex - this.leftRowSeriesNumberColumnCount, 0);
           Array.prototype.splice.apply(this._headerCellIds[row], sourceIds);
         }
         //将_columns的列定义调整位置 同调整_headerCellIds逻辑
-        const sourceColumns = this._columns.splice(sourceCellRange.start.col, sourceSize);
-        sourceColumns.unshift(targetIndex as any, 0 as any);
+        const sourceColumns = this._columns.splice(
+          sourceCellRange.start.col - this.leftRowSeriesNumberColumnCount,
+          sourceSize
+        );
+        sourceColumns.unshift((targetIndex - this.leftRowSeriesNumberColumnCount) as any, 0 as any);
         Array.prototype.splice.apply(this._columns, sourceColumns);
 
         // 对表头columnTree调整节点位置
-        this.columnTree.movePosition(sourceCellRange.start.row, sourceCellRange.start.col, targetIndex);
+        this.columnTree.movePosition(
+          sourceCellRange.start.row,
+          sourceCellRange.start.col - this.leftRowSeriesNumberColumnCount,
+          targetIndex - this.leftRowSeriesNumberColumnCount
+        );
         this.columnTree.reset(this.columnTree.tree.children, true);
         this._cellRangeMap = new Map();
         return {
@@ -1211,6 +1226,14 @@ export class SimpleHeaderLayoutMap implements LayoutMapAPI {
           targetIndex,
           sourceSize,
           targetSize: targetCellRange.end.row - targetCellRange.start.row + 1,
+          moveType: 'row'
+        };
+      } else if (this.isSeriesNumberInBody(source.col, source.row)) {
+        return {
+          sourceIndex: source.row,
+          targetIndex: target.row,
+          sourceSize: 1,
+          targetSize: 1,
           moveType: 'row'
         };
       }

@@ -2921,6 +2921,10 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
     }, {} as { [key: LayoutObjectId]: HeaderData });
     this.setPagination(this.pagination);
   }
+
+  isSeriesNumberInHeader() {
+    return false;
+  }
 }
 /** 计算 scale 的实际 range 长度 */
 function scaleWholeRangeSize(count: number, bandwidth: number, paddingInner: number, paddingOuter: number) {

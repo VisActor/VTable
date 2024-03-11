@@ -100,6 +100,9 @@ import type { Chart } from '../scenegraph/graphic/chart';
 import { setBatchRenderChartCount } from '../scenegraph/graphic/contributions/chart-render-helper';
 import { isLeftOrRightAxis, isTopOrBottomAxis } from '../layout/chart-helper/get-axis-config';
 import { NumberRangeMap } from '../layout/row-height-map';
+import { ListTable } from '../ListTable';
+import type { SimpleHeaderLayoutMap } from '../layout';
+import { RowSeriesNumberHelper } from './row-series-number-helper';
 const { toBoxArray } = utilStyle;
 const { isTouchEvent } = event;
 const rangeReg = /^\$(\d+)\$(\d+)$/;
@@ -319,6 +322,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     internalProps.theme.isPivot = this.isPivotTable();
     internalProps.bodyHelper = new BodyHelper(this);
     internalProps.headerHelper = new HeaderHelper(this);
+    internalProps.rowSeriesNumberHelper = new RowSeriesNumberHelper(this);
 
     internalProps.autoWrapText = options.autoWrapText;
 
@@ -2611,7 +2615,9 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
 
   getCellType(col: number, row: number): ColumnTypeOption {
     let cellType;
-    if (this.isHeader(col, row)) {
+    if (this.isSeriesNumberInHeader(col, row)) {
+      return (this.internalProps.layoutMap as SimpleHeaderLayoutMap).getSeriesNumberHeader(col, row).cellType;
+    } else if (this.isHeader(col, row)) {
       cellType = (this.internalProps.layoutMap.getHeader(col, row) as HeaderData).headerType;
     } else {
       cellType = this.internalProps.layoutMap.getBody(col, row).cellType;
@@ -2818,7 +2824,13 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
   _dropDownMenuIsHighlight(colNow: number, rowNow: number, index: number): boolean {
     return this.stateManager.dropDownMenuIsHighlight(colNow, rowNow, index);
   }
-
+  /** 判断单元格是否属于表头部分 */
+  isSeriesNumberInHeader(col: number, row: number): boolean {
+    return (
+      this.internalProps.layoutMap &&
+      (this.internalProps.layoutMap as SimpleHeaderLayoutMap).isSeriesNumberInHeader(col, row)
+    );
+  }
   /** 判断单元格是否属于表头部分 */
   isHeader(col: number, row: number): boolean {
     return this.internalProps.layoutMap && this.internalProps.layoutMap.isHeader(col, row);
@@ -3224,6 +3236,8 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     let icons;
     if (this.isHeader(col, row)) {
       icons = this.internalProps.headerHelper.getIcons(col, row);
+    } else if ((this.internalProps.layoutMap as SimpleHeaderLayoutMap).isSeriesNumberInBody(col, row)) {
+      icons = this.internalProps.rowSeriesNumberHelper.getIcons(col, row);
     } else {
       const cellValue = this.getCellValue(col, row);
       const dataValue = this.getCellOriginValue(col, row);
@@ -3826,5 +3840,8 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
         });
       }
     }
+  }
+  _moveRecordOrder(source: number, target: number) {
+    //
   }
 }

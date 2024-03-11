@@ -3,6 +3,7 @@ import { createLine, createRect, createSymbol } from '@src/vrender';
 import { getCellMergeInfo } from '../utils/get-cell-merge';
 import type { Group } from '../graphic/group';
 import type { BaseTableAPI } from '../../ts-types/base-table';
+import type { SimpleHeaderLayoutMap } from '../../layout';
 
 export class CellMover {
   columnMoverLabel: ISymbol;
@@ -91,7 +92,10 @@ export class CellMover {
 
       linePoints.push({ x: 0, y: 0 });
       linePoints.push({ x: 0, y: this.table.tableNoFrameHeight });
-    } else if (cellLocation === 'rowHeader') {
+    } else if (
+      cellLocation === 'rowHeader' ||
+      (this.table.internalProps.layoutMap as SimpleHeaderLayoutMap).isSeriesNumberInBody(col, row)
+    ) {
       rectY = this.table.getRowsHeight(0, row - 1) - this.table.stateManager.scroll.verticalBarPos;
       rectX = this.table.getColsWidth(0, this.table.frozenColCount - 1);
       rectWidth = this.table.tableNoFrameWidth;
