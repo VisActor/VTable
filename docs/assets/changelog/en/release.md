@@ -1,3 +1,37 @@
+# v0.21.0
+
+2024-03-11
+
+
+**🆕 New feature**
+
+- **@visactor/vtable**: add text measure ment config
+- **@visactor/vtable**: add custom cell style function
+- **@visactor/vtable**: add cellInnerBorder&cellBorderClipDirection&_contentOffset in theme comfig
+- **@visactor/vtable**: add search component
+
+**🐛 Bug fix**
+
+- **@visactor/vtable**: records change restoreHierarchyState occor error [#1203](https://github.com/VisActor/VTable/issues/1203)
+- **@visactor/vtable**: call updatePagination mergeCell render error [#1207](https://github.com/VisActor/VTable/issues/1207)
+- **@visactor/vtable**: drag header position cell error [#1220](https://github.com/VisActor/VTable/issues/1220)
+- **@visactor/vtable**: fix checkbox text space problem
+- **@visactor/vtable**: fix scroll position delta
+
+**🔨 Refactor**
+
+- **@visactor/vtable**: pasteValueToCell can only work on editable cell [#1063](https://github.com/VisActor/VTable/issues/1063)
+- **@visactor/vtable**: support underlineDash and underlineOffset [#1132](https://github.com/VisActor/VTable/issues/1132) [#1135](https://github.com/VisActor/VTable/issues/1135)
+- **@visactor/vtable**: onStart funciton add col row arguments [#1214](https://github.com/VisActor/VTable/issues/1214)
+
+**✅  Test Case**
+
+- **@visactor/vtable**: add unit test getCellAddressByHeaderPaths
+
+
+
+[more detail about v0.21.0](https://github.com/VisActor/VTable/releases/tag/v0.21.0)
+
 # v0.20.2
 
 2024-03-04
