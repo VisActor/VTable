@@ -343,6 +343,7 @@ importers:
       '@internal/ts-config': workspace:*
       '@rushstack/eslint-patch': ~1.1.4
       '@types/chai': 4.2.22
+      '@types/file-saver': 2.0.7
       '@types/jest': ^26.0.0
       '@types/mocha': 9.0.0
       '@types/node': '*'
@@ -385,6 +386,7 @@ importers:
       vite: 3.2.6
       vite-plugin-markdown: ^2.1.0
     dependencies:
+      '@types/file-saver': 2.0.7
       '@visactor/vtable': link:../vtable
       '@visactor/vutils': 0.18.1
       exceljs: 4.4.0
@@ -3038,6 +3040,10 @@ packages:
 
   /@types/expect/1.20.4:
     resolution: {integrity: sha512-Q5Vn3yjTDyCMV50TB6VRIbQNxSE4OmZR86VSbGaNpfUolm0iePBB4KdEEHmxoY5sT2+2DIvXW0rvMDP2nHZ4Mg==}
+
+  /@types/file-saver/2.0.7:
+    resolution: {integrity: sha512-dNKVfHd/jk0SkR/exKGj2ggkB45MAkzvWCaqLUUgkyjITkGNzH8H+yUwr+BLJUBjZOe9w8X3wgmXhZDRg1ED6A==}
+    dev: false
 
   /@types/fs-extra/9.0.13:
     resolution: {integrity: sha512-nEnwB++1u5lVDM2UI4c1+5R+FYaKfaAzS4OococimjVm3nQw3TuzH5UNsocrcTBbhnerblyHj4A49qXbIiZdpA==}

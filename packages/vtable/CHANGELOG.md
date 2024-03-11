@@ -1,6 +1,42 @@
 # Change Log - @visactor/vtable
 
-This log was last generated on Mon, 04 Mar 2024 04:30:08 GMT and should not be manually modified.
+This log was last generated on Mon, 11 Mar 2024 06:03:40 GMT and should not be manually modified.
+
+## 0.21.0
+Mon, 11 Mar 2024 06:03:40 GMT
+
+### Minor changes
+
+- feat: add search component
+
+### Updates
+
+- refactor: pasteValueToCell can only work on editable cell #1063
+
+
+- refactor: support underlineDash and underlineOffset #1132 #1135
+
+
+- fix: records change restoreHierarchyState occor error #1203
+
+
+- fix: call updatePagination mergeCell render error #1207
+
+
+- refactor: onStart funciton add col row arguments #1214
+
+
+- fix: drag header position cell error #1220
+
+
+- test: add unit test getCellAddressByHeaderPaths
+
+
+- feat: add text measure ment config
+- feat: add custom cell style function
+- fix: fix checkbox text space problem
+- fix: fix scroll position delta 
+- feat: add cellInnerBorder&cellBorderClipDirection&_contentOffset in theme comfig
 
 ## 0.20.3
 Mon, 04 Mar 2024 04:30:08 GMT
