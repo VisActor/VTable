@@ -164,11 +164,15 @@ $ rush docs
 - [官网](https://visactor.io/vtable)
 - [使用趋势](https://npm-compare.com/@visactor/vtable)
 
-# 💫 生态
+# 💫 Ecosystem
 
-| 项目                                             | 介绍                                                                      |
-| ------------------------------------------------ | ------------------------------------------------------------------------- |
-| [智能生成组件](https://visactor.io/ai-vtable)    | 基于 AI 的智能表格生成组件                                                |                                                        |
+| Project                                                     | Description                                                                            |
+| ----------------------------------------------------------- | -------------------------------------------------------------------------------------- |
+| [React-VTable](https://www.visactor.io/vtable/guide/Developer_Ecology/react)    |  VTable React 组件                                                          |
+
+
+# ⭐️ Star History
+[![Star History Chart](https://api.star-history.com/svg?repos=visactor/vtable&type=Date)](https://star-history.com/#visactor/vtable&Date)
 
 # 🤝 参与贡献
 
