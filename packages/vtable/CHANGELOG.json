@@ -2,6 +2,21 @@
   "name": "@visactor/vtable",
   "entries": [
     {
+      "version": "0.21.1",
+      "tag": "@visactor/vtable_v0.21.1",
+      "date": "Mon, 11 Mar 2024 07:05:40 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "fix: merge cell render error with summary and pagination #1223\n\n"
+          },
+          {
+            "comment": "docs: indicatorsAsCol support indicators display in rows #1238\n\n"
+          }
+        ]
+      }
+    },
+    {
       "version": "0.21.0",
       "tag": "@visactor/vtable_v0.21.0",
       "date": "Mon, 11 Mar 2024 06:03:40 GMT",

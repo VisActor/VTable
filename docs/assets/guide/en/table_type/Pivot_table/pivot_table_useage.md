@@ -9,9 +9,10 @@ The following are the Key Configurations items and their descriptions for using 
 * `indicators`: The specific configuration of each indicator in the pivot table.
 * `columns`: The column header corresponds to the style and format configuration of various levels of dimensions.
 * `rows`: The row header corresponds to the style and format configuration of dimensions at all levels.
-* `enableDataAnalysis`: Enable VTable's ability to analyze perspective structures, the default is false. If you pass in custom columnTree and rowTree, please turn it off. If you do not pass in columnTree and rowTree, please turn it on.
 * `columnTree`: Customize the list header dimension tree (custom capability). Generally, this tree structure only needs to be configured when there are special sorting requirements for dimension values.
 * `rowTree`: Customize the row header dimension tree (customization capability). Generally, this tree structure needs to be configured when there are special sorting requirements for dimension values.
+* `indicatorsAsCol`: Whether indicators are displayed as column headers and indicator values are displayed in columns. The default is true.
+* `indicatorTitle`: indicator title, the title displayed at the corner position.
 * `rowHierarchyType`: tree hierarchical display or tile display.
 * `hideIndicatorName`: Whether it is necessary to hide the indicator name on the header. Default is false.
 * `showRowHeader`: Whether to display the row header, the default is true.

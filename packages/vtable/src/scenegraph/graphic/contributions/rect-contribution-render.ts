@@ -154,25 +154,25 @@ export class SplitRectAfterRenderContribution implements IRectRenderContribution
     if (Array.isArray(stroke) || Array.isArray(strokeArrayColor) || Array.isArray(strokeArrayWidth)) {
       // let dx = 0;
       // let dy = 0;
-      let deltaWidth = 0;
-      let deltaHeight = 0;
+      const deltaWidth = 0;
+      const deltaHeight = 0;
       if (
-        // rect.name !== 'border-rect' && // border-rect not need offset
-        // rect.name !== 'table-border-rect' && // table-border-rect not need offset
-        (typeof lineWidth === 'number' && lineWidth & 1) ||
-        (Array.isArray(strokeArrayWidth) && strokeArrayWidth.some(width => width & 1))
+        rect.name !== 'border-rect' && // border-rect not need offset
+        rect.name !== 'table-border-rect' && // table-border-rect not need offset
+        ((typeof lineWidth === 'number' && lineWidth & 1) ||
+          (Array.isArray(strokeArrayWidth) && strokeArrayWidth.some(width => width & 1)))
       ) {
-        const table = (rect.stage as any).table as BaseTableAPI;
-        const bottomRight = table.theme.cellBorderClipDirection === 'bottom-right';
-        if (bottomRight) {
-          x = Math.floor(x) - 0.5;
-          y = Math.floor(y) - 0.5;
-          deltaWidth = 0.5;
-          deltaHeight = 0.5;
-        } else {
-          x = Math.floor(x) + 0.5;
-          y = Math.floor(y) + 0.5;
-        }
+        // const table = (rect.stage as any).table as BaseTableAPI;
+        // const bottomRight = table.theme.cellBorderClipDirection === 'bottom-right';
+        // if (bottomRight) {
+        //   x = Math.floor(x) - 0.5;
+        //   y = Math.floor(y) - 0.5;
+        //   deltaWidth = 0.5;
+        //   deltaHeight = 0.5;
+        // } else {
+        x = Math.floor(x) + 0.5;
+        y = Math.floor(y) + 0.5;
+        // }
       }
       renderStroke(
         rect as IGroup,

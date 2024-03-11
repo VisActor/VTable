@@ -128,6 +128,13 @@
           }
         },
         {
+          "path": "pivot-analysis-table-indicator-row",
+          "title": {
+            "zh": "透视分析表格指标在行",
+            "en": "Pivot Analysis Table with indicator row"
+          }
+        },
+        {
           "path": "pivot-table",
           "title": {
             "zh": "透视表格（自定义表头结构）",

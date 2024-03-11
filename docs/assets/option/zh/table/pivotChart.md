@@ -100,6 +100,10 @@ export interface IIndicatorHeaderNode {
 {{ use: chart-indicator-type(
     prefix = '#') }}
 
+## indicatorsAsCol(boolean) = true
+
+指标显示在列上，默认是true。如果配置为false，则显示在行，指标以行展示
+
 ## indicatorTitle(string)
 
 指标标题 用于显示到角头的值

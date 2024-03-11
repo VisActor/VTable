@@ -15,7 +15,6 @@ const option={
   rows:['region','province'], //行维度
   columns:['year','quarter'], //列维度
   indicators:['sales','profit'], //指标
-  enableDataAnalysis: true, //是否开启数据分析功能
   records:[ //数据源 如果传入了汇总数据则使用用户传入数据
     {
       region:'东北',
@@ -262,7 +261,6 @@ const option = {
         ]
     }],
     indicators: ['sales', 'profit'],
-    //enableDataAnalysis:true,
     corner: {
         titleOnDimension: 'none'
     },
