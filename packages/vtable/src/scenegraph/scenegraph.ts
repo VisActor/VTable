@@ -108,7 +108,7 @@ export class Scenegraph {
   stage: IStage;
   table: BaseTableAPI;
   isPivot: boolean;
-  transpose: boolean;
+  // transpose: boolean;
   hasFrozen: boolean; // 是否已经处理冻结列，用在getCell判断是否从cornerHeaderGroup获取cellGroup
   frozenColCount: number; // 冻结列数
   frozenRowCount: number; // 冻结行数
@@ -207,7 +207,7 @@ export class Scenegraph {
    */
   initSceneGraph() {
     this.isPivot = this.table.isPivotTable();
-    this.transpose = (this.table.options as any).transpose; // 初始化时this.table.transpose还未赋值
+    // (this.table as any).transpose = (this.table.options as any).transpose; // 初始化时this.table.transpose还未赋值
 
     initSceneGraph(this);
   }
@@ -724,7 +724,7 @@ export class Scenegraph {
   }
 
   updateCheckboxCellState(col: number, row: number, checked: boolean) {
-    if (this.transpose) {
+    if ((this.table as any).transpose) {
       this.bodyGroup.children?.forEach((columnGroup: INode) => {
         columnGroup
           .getChildAt(row)
@@ -747,7 +747,7 @@ export class Scenegraph {
     }
   }
   updateHeaderCheckboxCellState(col: number, row: number, checked: boolean | 'indeterminate') {
-    if (this.transpose) {
+    if ((this.table as any).transpose) {
       this.rowHeaderGroup.children?.forEach((columnGroup: INode) => {
         columnGroup
           .getChildAt(row)
@@ -1176,7 +1176,7 @@ export class Scenegraph {
     // this.resetFrozen();
     // this.dealFrozen();
 
-    if (!this.isPivot && !this.transpose) {
+    if (!this.isPivot && !(this.table as any).transpose) {
       this.component.setFrozenColumnShadow(this.table.frozenColCount - 1);
     }
     this.table.stateManager.checkFrozen();
@@ -1650,7 +1650,7 @@ export class Scenegraph {
   sortCell() {
     if (this.isPivot) {
       // 透视表外部处理排序
-    } else if (this.transpose) {
+    } else if ((this.table as any).transpose) {
       this.proxy.sortCellHorizontal();
     } else {
       this.proxy.sortCellVertical();
@@ -1752,7 +1752,7 @@ export class Scenegraph {
     this.table.stateManager.checkFrozen();
 
     // update frozen shadow
-    if (!this.isPivot && !this.transpose) {
+    if (!this.isPivot && !(this.table as any).transpose) {
       this.component.setFrozenColumnShadow(this.table.frozenColCount - 1);
     }
 
@@ -1774,7 +1774,7 @@ export class Scenegraph {
     this.table.stateManager.checkFrozen();
 
     // update frozen shadow
-    if (!this.isPivot && !this.transpose) {
+    if (!this.isPivot && !(this.table as any).transpose) {
       this.component.setFrozenColumnShadow(this.table.frozenColCount - 1);
     }
 
