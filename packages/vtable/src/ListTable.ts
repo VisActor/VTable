@@ -558,12 +558,21 @@ export class ListTable extends BaseTable implements ListTableAPI {
    * @param target 移动目标位置
    */
   _moveHeaderPosition(source: CellAddress, target: CellAddress) {
+    const sourceCellRange = this.getCellRange(source.col, source.row);
+    const targetCellRange = this.getCellRange(target.col, target.row);
     // 调用布局类 布局数据结构调整为移动位置后的
     const moveContext = this.internalProps.layoutMap.moveHeaderPosition(source, target);
     if (moveContext) {
       if (moveContext.moveType === 'column') {
         //colWidthsMap 中存储着每列的宽度 根据移动 sourceCol targetCol 调整其中的位置
-        this.colWidthsMap.adjustOrder(moveContext.sourceIndex, moveContext.targetIndex, moveContext.sourceSize);
+        // this.colWidthsMap.adjustOrder(moveContext.sourceIndex, moveContext.targetIndex, moveContext.sourceSize);
+        this.colWidthsMap.exchangeOrder(
+          sourceCellRange.start.col,
+          sourceCellRange.end.col - sourceCellRange.start.col + 1,
+          targetCellRange.start.col,
+          targetCellRange.end.col - targetCellRange.start.col + 1,
+          moveContext.targetIndex
+        );
         if (!this.transpose) {
           //下面代码取自refreshHeader列宽设置逻辑
           //设置列宽极限值 TODO 目前是有问题的 最大最小宽度限制 移动列位置后不正确
@@ -578,26 +587,52 @@ export class ListTable extends BaseTable implements ListTableAPI {
             }
           }
         }
-        // 清空相关缓存
-        const colStart = Math.min(moveContext.sourceIndex, moveContext.targetIndex);
-        const colEnd = Math.max(moveContext.sourceIndex, moveContext.targetIndex);
-        for (let col = colStart; col <= colEnd; col++) {
-          this._clearColRangeWidthsMap(col);
-        }
+        // // 清空相关缓存
+        // const colStart = Math.min(moveContext.sourceIndex, moveContext.targetIndex);
+        // const colEnd = Math.max(moveContext.sourceIndex, moveContext.targetIndex);
+        // for (let col = colStart; col <= colEnd; col++) {
+        //   this._clearColRangeWidthsMap(col);
+        // }
       } else {
-        // 清空相关缓存
-        const rowStart = Math.min(moveContext.sourceIndex, moveContext.targetIndex);
-        const rowEnd = Math.max(moveContext.sourceIndex, moveContext.targetIndex);
-        for (let row = rowStart; row <= rowEnd; row++) {
-          this._clearRowRangeHeightsMap(row);
+        // // 清空相关缓存
+        // const rowStart = Math.min(moveContext.sourceIndex, moveContext.targetIndex);
+        // const rowEnd = Math.max(moveContext.sourceIndex, moveContext.targetIndex);
+        // for (let row = rowStart; row <= rowEnd; row++) {
+        //   this._clearRowRangeHeightsMap(row);
+        // }
+        //colWidthsMap 中存储着每列的宽度 根据移动 sourceCol targetCol 调整其中的位置
+        // this.rowHeightsMap.adjustOrder(moveContext.sourceIndex, moveContext.targetIndex, moveContext.moveSize);
+        if (moveContext.targetIndex > moveContext.sourceIndex) {
+          this.rowHeightsMap.exchangeOrder(
+            moveContext.sourceIndex,
+            moveContext.sourceSize,
+            moveContext.targetIndex + moveContext.sourceSize - moveContext.targetSize,
+            moveContext.targetSize,
+            moveContext.targetIndex
+          );
+        } else {
+          this.rowHeightsMap.exchangeOrder(
+            moveContext.sourceIndex,
+            moveContext.sourceSize,
+            moveContext.targetIndex,
+            moveContext.targetSize,
+            moveContext.targetIndex
+          );
         }
       }
       return moveContext;
     }
     return null;
   }
-  _moveRecordOrder(source: number, target: number) {
-    //
+  changeRecordOrder(sourceIndex: number, targetIndex: number) {
+    if (this.transpose) {
+      sourceIndex = this.getRecordShowIndexByCell(sourceIndex, 0);
+      targetIndex = this.getRecordShowIndexByCell(targetIndex, 0);
+    } else {
+      sourceIndex = this.getRecordShowIndexByCell(0, sourceIndex);
+      targetIndex = this.getRecordShowIndexByCell(0, targetIndex);
+    }
+    this.dataSource.reorderRecord(sourceIndex, targetIndex);
   }
   /**
    * 方法适用于获取body中某条数据的行列号

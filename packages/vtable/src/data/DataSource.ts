@@ -1047,4 +1047,19 @@ export class DataSource extends EventTarget implements DataSourceAPI {
     },
     length: 0
   });
+
+  reorderRecord(sourceIndex: number, targetIndex: number) {
+    if (this.lastOrder === 'asc' || this.lastOrder === 'desc') {
+      const sourceIds = this._currentPagerIndexedData.splice(sourceIndex, 1);
+      sourceIds.unshift(targetIndex, 0);
+      Array.prototype.splice.apply(this._currentPagerIndexedData, sourceIds);
+    } else {
+      // 从source的二维数组中取出需要操作的records
+      const records = this.source.splice(sourceIndex, 1);
+      // 将records插入到目标地址targetIndex处
+      // 把records变成一个适合splice的数组（包含splice前2个参数的数组） 以通过splice来插入到source数组
+      records.unshift(targetIndex, 0);
+      Array.prototype.splice.apply(this.source, records);
+    }
+  }
 }

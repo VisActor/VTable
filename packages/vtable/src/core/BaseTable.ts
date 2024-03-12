@@ -3841,7 +3841,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
       }
     }
   }
-  _moveRecordOrder(source: number, target: number) {
+  changeRecordOrder(source: number, target: number) {
     //
   }
 }

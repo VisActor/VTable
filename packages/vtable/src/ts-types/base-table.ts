@@ -727,7 +727,7 @@ export interface BaseTableAPI {
     targetSize: any;
     moveType: 'column' | 'row';
   };
-  _moveRecordOrder: (source: number, target: number) => void;
+  changeRecordOrder: (source: number, target: number) => void;
 }
 export interface ListTableProtected extends IBaseTableProtected {
   /** 表格数据 */

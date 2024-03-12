@@ -117,8 +117,9 @@ export function endMoveCol(state: StateManager) {
     state.columnMove.rowTarget >= 0
   ) {
     //getCellMergeInfo 一定要在moveHeaderPosition之前调用  否则就不是修改前的range了
-    const sourceMergeInfo = getCellMergeInfo(state.table, state.columnMove.colSource, state.columnMove.rowSource);
-    const targetMergeInfo = getCellMergeInfo(state.table, state.columnMove.colTarget, state.columnMove.rowTarget);
+    const oldSourceMergeInfo = state.table.getCellRange(state.columnMove.colSource, state.columnMove.rowSource);
+    const oldTargetMergeInfo = state.table.getCellRange(state.columnMove.colTarget, state.columnMove.rowTarget);
+
     // 调整列顺序
     const moveContext = state.table._moveHeaderPosition(
       { col: state.columnMove.colSource, row: state.columnMove.rowSource },
@@ -127,73 +128,67 @@ export function endMoveCol(state: StateManager) {
 
     // 更新状态
     if (moveContext) {
+      state.table.internalProps.layoutMap.clearCellRangeMap();
+      const sourceMergeInfo = state.table.getCellRange(state.columnMove.colSource, state.columnMove.rowSource);
+      const targetMergeInfo = state.table.getCellRange(state.columnMove.colTarget, state.columnMove.rowTarget);
+
+      const colMin = Math.min(
+        sourceMergeInfo.start.col,
+        targetMergeInfo.start.col,
+        oldSourceMergeInfo.start.col,
+        oldTargetMergeInfo.start.col
+      );
+      const colMax = Math.max(
+        sourceMergeInfo.end.col,
+        targetMergeInfo.end.col,
+        oldSourceMergeInfo.end.col,
+        oldTargetMergeInfo.end.col
+      );
+      const rowMin = Math.min(
+        sourceMergeInfo.start.row,
+        targetMergeInfo.start.row,
+        oldSourceMergeInfo.start.row,
+        oldTargetMergeInfo.start.row
+      );
+      const rowMax = Math.max(
+        sourceMergeInfo.end.row,
+        targetMergeInfo.end.row,
+        oldSourceMergeInfo.end.row,
+        oldTargetMergeInfo.end.row
+      );
+      // console.log(colMin, colMax, rowMin, rowMax);
       if (
         (state.table.internalProps.layoutMap as SimpleHeaderLayoutMap).isSeriesNumberInBody(
           state.columnMove.colSource,
           state.columnMove.rowSource
         )
       ) {
-        state.table._moveRecordOrder(moveContext.sourceIndex, moveContext.targetIndex);
+        state.table.changeRecordOrder(moveContext.sourceIndex, moveContext.targetIndex);
       }
       // clear columns width and rows height cache
       if (moveContext.moveType === 'column') {
-        clearWidthsAndHeightsCache(
-          Math.min(
-            (sourceMergeInfo as any)?.start?.col ?? state.columnMove.colSource,
-            (targetMergeInfo as any)?.start?.col ?? state.columnMove.colTarget
-          ),
-          Math.max(
-            (sourceMergeInfo as any)?.end?.col ?? state.columnMove.colSource,
-            (targetMergeInfo as any)?.end?.col ?? state.columnMove.colTarget
-          ),
-          0,
-          -1,
-          state.table
-        );
+        clearWidthsAndHeightsCache(colMin, colMax, 0, -1, state.table);
       } else {
-        clearWidthsAndHeightsCache(
-          0,
-          -1,
-          Math.min(
-            (sourceMergeInfo as any)?.start?.row ?? state.columnMove.rowSource,
-            (targetMergeInfo as any)?.start?.row ?? state.columnMove.rowTarget
-          ),
-          Math.max(
-            (sourceMergeInfo as any)?.end?.row ?? state.columnMove.rowSource,
-            (targetMergeInfo as any)?.end?.row ?? state.columnMove.rowTarget
-          ),
-          state.table
-        );
+        clearWidthsAndHeightsCache(0, -1, rowMin, rowMax, state.table);
       }
 
       // clear cell style cache
       state.table.clearCellStyleCache();
-      if (moveContext.moveType === 'column') {
+      if (
+        state.table.internalProps.layoutMap.isSeriesNumberInBody(state.columnMove.colSource, state.columnMove.rowSource)
+      ) {
+        // 如果是拖拽序号换位置 考虑到非拖拽单元格合并而是其他地方有合并被拆开或者独立单元格拖拽后变为合并的情况  这里直接刷新这个场景树的节点 才能覆盖所有情况
         state.table.scenegraph.updateHeaderPosition(
-          Math.min(moveContext.sourceIndex, moveContext.targetIndex),
-          Math.min(
-            moveContext.targetIndex > moveContext.sourceIndex
-              ? moveContext.targetIndex + moveContext.sourceSize - 1
-              : moveContext.sourceIndex + moveContext.sourceSize - 1,
-            state.table.colCount - 1
-          ),
-          0,
-          -1,
+          state.table.scenegraph.proxy.colStart,
+          state.table.scenegraph.proxy.colEnd,
+          state.table.scenegraph.proxy.rowStart,
+          state.table.scenegraph.proxy.rowEnd,
           moveContext.moveType
         );
+      } else if (moveContext.moveType === 'column') {
+        state.table.scenegraph.updateHeaderPosition(colMin, colMax, 0, -1, moveContext.moveType);
       } else {
-        state.table.scenegraph.updateHeaderPosition(
-          0,
-          -1,
-          Math.min(moveContext.sourceIndex, moveContext.targetIndex),
-          Math.min(
-            moveContext.targetIndex > moveContext.sourceIndex
-              ? moveContext.targetIndex + moveContext.sourceSize - 1
-              : moveContext.sourceIndex + moveContext.sourceSize - 1,
-            state.table.rowCount - 1
-          ),
-          moveContext.moveType
-        );
+        state.table.scenegraph.updateHeaderPosition(0, -1, rowMin, rowMax, moveContext.moveType);
       }
       //调整冻结列数量
       if (state.table.internalProps.frozenColDragHeaderMode === 'adjustFrozenCount' && state.table.isListTable()) {

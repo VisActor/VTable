@@ -316,7 +316,7 @@ const builtins = {
       height: 20,
       funcType: IconFuncTypeEnum.dragReorder,
       positionType: IconPosition.left,
-      name: 'dragReorderIcon',
+      name: 'dragReorder',
       marginLeft: -10,
       marginRight: 10,
       cursor: 'grab'
