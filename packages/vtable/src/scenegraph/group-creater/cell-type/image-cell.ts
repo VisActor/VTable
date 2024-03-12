@@ -84,6 +84,8 @@ export function createImageCellGroup(
   });
   image.name = 'image';
   image.keepAspectRatio = keepAspectRatio;
+  image.textAlign = textAlign;
+  image.textBaseline = textBaseline;
   if (keepAspectRatio || imageAutoSizing) {
     if (
       image.resources &&
