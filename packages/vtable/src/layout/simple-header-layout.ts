@@ -729,19 +729,6 @@ export class SimpleHeaderLayoutMap implements LayoutMapAPI {
     }
     throw new Error(`can not found body layout @id=${id as number}`);
   }
-  /**
-   * 获取body部分cell的内容
-   * @param col
-   * @param row
-   * @returns
-   */
-  getBodyCellValue(col: number, row: number) {
-    if (this.isHeader(col, row)) {
-      return null;
-    }
-    const { field, fieldFormat } = this.getBody(col, row) as ColumnData;
-    return this._table.getFieldData(fieldFormat || field, col, row);
-  }
   getCellRange(col: number, row: number): CellRange {
     if (col === -1 || row === -1) {
       return {
@@ -763,9 +750,9 @@ export class SimpleHeaderLayoutMap implements LayoutMapAPI {
           this.headerLevelCount <= row &&
           (this.columnObjects[col - this.leftRowSeriesNumberColumnCount]?.define as TextColumnDefine)?.mergeCell
         ) {
-          const value = this.getBodyCellValue(col, row);
+          const value = this._table.getCellValue(col, row);
           for (let r = row - 1; r >= this.headerLevelCount; r--) {
-            const last_Value = this.getBodyCellValue(col, r);
+            const last_Value = this._table.getCellValue(col, r);
             if (typeof this.columnObjects[col - this.leftRowSeriesNumberColumnCount].define.mergeCell === 'boolean') {
               if (value !== last_Value) {
                 break;
@@ -783,7 +770,7 @@ export class SimpleHeaderLayoutMap implements LayoutMapAPI {
             cellRange.start.row = r;
           }
           for (let r = row + 1; r < this.rowCount; r++) {
-            const next_Value = this.getBodyCellValue(col, r);
+            const next_Value = this._table.getCellValue(col, r);
             if (typeof this.columnObjects[col - this.leftRowSeriesNumberColumnCount].define.mergeCell === 'boolean') {
               if (value !== next_Value) {
                 break;
@@ -841,9 +828,9 @@ export class SimpleHeaderLayoutMap implements LayoutMapAPI {
     if (this.headerLevelCount <= col || (col === -1 && row === -1)) {
       //如果是body部分 设置了需要合并单元格 这里判断左右是否内容相同 相同的话 将cellRange范围扩大
       if (this.headerLevelCount <= col && this.columnObjects[row]?.define?.mergeCell) {
-        const value = this.getBodyCellValue(col, row);
+        const value = this._table.getCellValue(col, row);
         for (let c = col - 1; c >= this.headerLevelCount; c--) {
-          const last_Value = this.getBodyCellValue(c, row);
+          const last_Value = this._table.getCellValue(c, row);
           if (typeof this.columnObjects[row].define.mergeCell === 'boolean') {
             if (value !== last_Value) {
               break;
@@ -856,7 +843,7 @@ export class SimpleHeaderLayoutMap implements LayoutMapAPI {
           result.start.col = c;
         }
         for (let c = col + 1; c < (this.colCount ?? 0); c++) {
-          const next_Value = this.getBodyCellValue(c, row);
+          const next_Value = this._table.getCellValue(c, row);
           if (typeof this.columnObjects[row].define.mergeCell === 'boolean') {
             if (value !== next_Value) {
               break;

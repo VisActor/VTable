@@ -1,3 +1,54 @@
+# v0.21.1
+
+2024-03-11
+
+
+**🐛 功能修复**
+
+- **@visactor/vtable**: merge cell render error with summary and pagination [#1223](https://github.com/VisActor/VTable/issues/1223)
+
+**📖 文档更新**
+
+- **@visactor/vtable**: indicatorsAsCol support indicators display in rows [#1238](https://github.com/VisActor/VTable/issues/1238)
+
+
+
+[更多详情请查看 v0.21.1](https://github.com/VisActor/VTable/releases/tag/v0.21.1)
+
+# v0.21.0
+
+2024-03-11
+
+
+**🆕 新增功能**
+
+- **@visactor/vtable**: add text measure ment config
+- **@visactor/vtable**: add custom cell style function
+- **@visactor/vtable**: add cellInnerBorder&cellBorderClipDirection&_contentOffset in theme comfig
+- **@visactor/vtable**: add search component
+
+**🐛 功能修复**
+
+- **@visactor/vtable**: records change restoreHierarchyState occor error [#1203](https://github.com/VisActor/VTable/issues/1203)
+- **@visactor/vtable**: call updatePagination mergeCell render error [#1207](https://github.com/VisActor/VTable/issues/1207)
+- **@visactor/vtable**: drag header position cell error [#1220](https://github.com/VisActor/VTable/issues/1220)
+- **@visactor/vtable**: fix checkbox text space problem
+- **@visactor/vtable**: fix scroll position delta
+
+**🔨 功能重构**
+
+- **@visactor/vtable**: pasteValueToCell can only work on editable cell [#1063](https://github.com/VisActor/VTable/issues/1063)
+- **@visactor/vtable**: support underlineDash and underlineOffset [#1132](https://github.com/VisActor/VTable/issues/1132) [#1135](https://github.com/VisActor/VTable/issues/1135)
+- **@visactor/vtable**: onStart funciton add col row arguments [#1214](https://github.com/VisActor/VTable/issues/1214)
+
+**✅  单元测试**
+
+- **@visactor/vtable**: add unit test getCellAddressByHeaderPaths
+
+
+
+[更多详情请查看 v0.21.0](https://github.com/VisActor/VTable/releases/tag/v0.21.0)
+
 # v0.20.2
 
 2024-03-04

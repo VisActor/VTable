@@ -13,6 +13,8 @@ import { computeAxisComponentHeight } from '../../components/axis/get-axis-compo
 import { isArray, isNumber, isObject, isValid } from '@visactor/vutils';
 import { CheckBox } from '@visactor/vrender-components';
 import { decodeReactDom, dealPercentCalc } from '../component/custom';
+import { getCellMergeRange } from '../../tools/merge-range';
+import { getCellMergeInfo } from '../utils/get-cell-merge';
 
 const utilTextMark = new Text({
   ignoreBuf: true
@@ -71,7 +73,8 @@ export function computeRowsHeight(
       if (
         ((table.isPivotTable() && !table.isPivotChart()) ||
           (table.isPivotChart() && !(table.internalProps.layoutMap as PivotHeaderLayoutMap).indicatorsAsCol)) && // no top axis
-        checkPivotFixedStyleAndNoWrap(table, row)
+        checkPivotFixedStyleAndNoWrap(table, row) &&
+        !getCellMergeInfo(table, table.rowHeaderLevelCount, row)
       ) {
         // 列表头样式一致，只计算第一列行高，作为整行行高
         startCol = 0;

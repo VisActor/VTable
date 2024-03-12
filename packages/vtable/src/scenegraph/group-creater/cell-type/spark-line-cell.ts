@@ -6,6 +6,7 @@ import { Group } from '../../graphic/group';
 import type { CellInfo, SparklineSpec } from '../../../ts-types';
 import type { BaseTableAPI } from '../../../ts-types/base-table';
 import type { ColumnData } from '../../../ts-types/list-table/layout-map/api';
+import { getCellBorderStrokeWidth } from '../../utils/cell-border-stroke-width';
 
 const xScale: PointScale = new PointScale();
 const yScale: LinearScale = new LinearScale();
@@ -25,6 +26,7 @@ export function createSparkLineCellGroup(
 ) {
   // cell
   if (!cellGroup) {
+    const strokeArrayWidth = getCellBorderStrokeWidth(col, row, cellTheme, table);
     cellGroup = new Group({
       x: xOrigin,
       y: yOrigin,
@@ -36,7 +38,7 @@ export function createSparkLineCellGroup(
       fill: cellTheme?.group?.fill ?? undefined,
       stroke: cellTheme?.group?.stroke ?? undefined,
 
-      strokeArrayWidth: (cellTheme?.group as any)?.strokeArrayWidth ?? undefined,
+      strokeArrayWidth: strokeArrayWidth,
       strokeArrayColor: (cellTheme?.group as any)?.strokeArrayColor ?? undefined,
       cursor: (cellTheme?.group as any)?.cursor ?? undefined,
       lineDash: cellTheme?.group?.lineDash ?? undefined,
