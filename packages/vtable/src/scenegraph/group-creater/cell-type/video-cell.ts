@@ -176,6 +176,8 @@ export function createVideoCellGroup(
   });
   image.name = 'image';
   image.keepAspectRatio = keepAspectRatio;
+  image.textAlign = textAlign;
+  image.textBaseline = textBaseline;
   cellGroup.appendChild(image);
 
   return cellGroup;

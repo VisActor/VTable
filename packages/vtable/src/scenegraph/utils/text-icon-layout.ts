@@ -106,6 +106,7 @@ export function createCellContent(
       };
       const wrapText = new Text(cellTheme.text ? (Object.assign({}, cellTheme.text, attribute) as any) : attribute);
       wrapText.name = 'text';
+      (wrapText as any).textBaseline = textBaseline;
 
       cellGroup.appendChild(wrapText);
 
