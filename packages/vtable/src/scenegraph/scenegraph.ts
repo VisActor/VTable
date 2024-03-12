@@ -708,7 +708,7 @@ export class Scenegraph {
     // this.updateContainerWidth(col, detaX);
     if (!skipUpdateContainer) {
       // this.updateContainerAttrWidthAndX();
-      this.updateContainer();
+      this.updateContainer(true);
     }
   }
 
@@ -1479,21 +1479,31 @@ export class Scenegraph {
     this.bodyGroup.setAttribute('x', this.rowHeaderGroup.attribute.width);
   }
 
-  updateContainer() {
-    if (!this._needUpdateContainer) {
-      this._needUpdateContainer = true;
-      setTimeout(() => {
-        this.updateContainerAttrWidthAndX();
+  updateContainer(async: boolean = false) {
+    if (async) {
+      if (!this._needUpdateContainer) {
+        this._needUpdateContainer = true;
+        setTimeout(() => {
+          this.updateContainerAttrWidthAndX();
 
-        this.updateTableSize();
+          this.updateTableSize();
 
-        this.component.updateScrollBar();
-        this.updateNextFrame();
+          this.component.updateScrollBar();
+          this.updateNextFrame();
 
-        this._needUpdateContainer = false;
-      }, 0);
+          this._needUpdateContainer = false;
+        }, 0);
+      }
+    } else {
+      this.updateContainerAttrWidthAndX();
+
+      this.updateTableSize();
+
+      this.component.updateScrollBar();
+      this.updateNextFrame();
+
+      this._needUpdateContainer = false;
     }
-    // console.trace('updateContainer');
   }
 
   updateCellContentWhileResize(col: number, row: number) {
