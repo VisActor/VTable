@@ -231,7 +231,7 @@ export function updateImageCellContentWhileResize(cellGroup: Group, col: number,
   const colStart = cellGroup.mergeStartCol ?? cellGroup.col;
   const rowStart = cellGroup.mergeStartRow ?? cellGroup.row;
   const colEnd = cellGroup.mergeEndCol ?? cellGroup.col;
-  const rowEnd = cellGroup.mergeEndCol ?? cellGroup.col;
+  const rowEnd = cellGroup.mergeEndCol ?? cellGroup.row;
 
   if (image.keepAspectRatio) {
     const { width: imageWidth, height: imageHeight } = calcKeepAspectRatioSize(
