@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "comment": "fix: after change transpose resize line render error #1239\n\n",
+      "type": "none",
+      "packageName": "@visactor/vtable"
+    }
+  ],
+  "packageName": "@visactor/vtable",
+  "email": "892739385@qq.com"
+}
