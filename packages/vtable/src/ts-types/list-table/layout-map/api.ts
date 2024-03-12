@@ -135,6 +135,8 @@ export interface ColumnData extends WidthData {
   disableColumnResize?: boolean;
   aggregation?: Aggregation | Aggregation[];
   aggregator?: Aggregator | Aggregator[];
+  /** 是否为子节点 即上层还有父节点 */
+  isChildNode?: boolean;
 }
 
 export interface IndicatorData extends WidthData {
@@ -186,6 +188,7 @@ export interface SeriesNumberColumnData extends WidthData {
   cellType: 'text' | 'link' | 'image' | 'video' | 'checkbox';
   style: ColumnStyleOption | null | undefined;
   define: RowSeriesNumber;
+  isChildNode: false;
 }
 // Simple header
 

@@ -490,10 +490,10 @@ export class ListTable extends BaseTable implements ListTableAPI {
 
     if (table.transpose) {
       table.rowCount = layoutMap.rowCount ?? 0;
-      table.colCount = layoutMap.recordsCount * layoutMap.bodyRowSpanCount + layoutMap.headerLevelCount;
+      table.colCount = layoutMap.colCount ?? 0;
       table.frozenRowCount = 0;
       // table.frozenColCount = layoutMap.headerLevelCount; //这里不要这样写 这个setter会检查扁头宽度 可能将frozenColCount置为0
-      this.internalProps.frozenColCount = layoutMap.headerLevelCount ?? 0;
+      this.internalProps.frozenColCount = Math.max(layoutMap.headerLevelCount ?? 0, this.options.frozenColCount);
       if (table.bottomFrozenRowCount !== (this.options.bottomFrozenRowCount ?? 0)) {
         table.bottomFrozenRowCount = this.options.bottomFrozenRowCount ?? 0;
       }
@@ -531,7 +531,10 @@ export class ListTable extends BaseTable implements ListTableAPI {
     if (table.internalProps.layoutMap.isHeader(col, row)) {
       return null;
     }
-    const index = table.getRecordShowIndexByCell(col, row);
+    const index = table.getRecordShowIndexByCell(
+      table.transpose ? col - table.internalProps.layoutMap.leftRowSeriesNumberColumnCount : col,
+      row
+    );
     return table.internalProps.dataSource.getField(index, field, col, row, this);
   }
   /**

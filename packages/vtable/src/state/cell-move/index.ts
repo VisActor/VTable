@@ -158,6 +158,7 @@ export function endMoveCol(state: StateManager) {
       );
       // console.log(colMin, colMax, rowMin, rowMax);
       if (
+        !(state.table as ListTable).transpose &&
         (state.table.internalProps.layoutMap as SimpleHeaderLayoutMap).isSeriesNumberInBody(
           state.columnMove.colSource,
           state.columnMove.rowSource
