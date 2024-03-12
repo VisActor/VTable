@@ -116,6 +116,8 @@ export class Scenegraph {
 
   mergeMap: MergeMap;
   _dealAutoFillHeightOriginRowsHeight: number; // hack 缓存一个值 用于处理autoFillHeight的逻辑判断 在某些情况下是需要更新此值的 如增删数据 但目前没有做这个
+
+  _needUpdateContainer: boolean = false;
   constructor(table: BaseTableAPI) {
     this.table = table;
     this.hasFrozen = false;
@@ -1478,14 +1480,20 @@ export class Scenegraph {
   }
 
   updateContainer() {
+    if (!this._needUpdateContainer) {
+      this._needUpdateContainer = true;
+      setTimeout(() => {
+        this.updateContainerAttrWidthAndX();
+
+        this.updateTableSize();
+
+        this.component.updateScrollBar();
+        this.updateNextFrame();
+
+        this._needUpdateContainer = false;
+      }, 0);
+    }
     // console.trace('updateContainer');
-
-    this.updateContainerAttrWidthAndX();
-
-    this.updateTableSize();
-
-    this.component.updateScrollBar();
-    this.updateNextFrame();
   }
 
   updateCellContentWhileResize(col: number, row: number) {
