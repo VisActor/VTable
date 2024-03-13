@@ -18,6 +18,9 @@ module.exports = {
       }
     }
   ],
+  globals: {
+    __VERSION__: 'readonly'
+  },
   rules: {
     'prettier/prettier': ['warn'],
     // 强制使用 Unix 换行符： \n
