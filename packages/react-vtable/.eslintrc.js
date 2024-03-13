@@ -18,10 +18,12 @@ module.exports = {
       }
     }
   ],
+  globals: {
+    __VERSION__: 'readonly'
+  },
   rules: {
     'prettier/prettier': ['warn'],
-    // 强制使用 Unix 换行符： \n
-    'linebreak-style': ['error', 'unix'],
+    'linebreak-style': [0, 'error', 'windows'],
     // 强制换行时操作符在行首
     // 与prettier冲突
     // "operator-linebreak": ["error", "before", { "overrides": { "=": "after" } }],

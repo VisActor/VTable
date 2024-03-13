@@ -106,6 +106,7 @@ export function createCellContent(
       };
       const wrapText = new Text(cellTheme.text ? (Object.assign({}, cellTheme.text, attribute) as any) : attribute);
       wrapText.name = 'text';
+      (wrapText as any).textBaseline = textBaseline;
 
       cellGroup.appendChild(wrapText);
 
@@ -198,10 +199,15 @@ export function createCellContent(
           _contentOffset = -table.theme._contentOffset;
         }
       }
+      const hierarchyOffset = range
+        ? getHierarchyOffset(range.start.col, range.start.row, table)
+        : getHierarchyOffset(cellGroup.col, cellGroup.row, table);
       const text = convertInternal(textStr).replace(/\r?\n/g, '\n').replace(/\r/g, '\n').split('\n');
       const attribute = {
         text: text.length === 1 ? text[0] : text,
-        maxLineWidth: autoColWidth ? Infinity : cellWidth - (padding[1] + padding[3]) - leftIconWidth - rightIconWidth,
+        maxLineWidth: autoColWidth
+          ? Infinity
+          : cellWidth - (padding[1] + padding[3]) - leftIconWidth - rightIconWidth - hierarchyOffset,
         // fill: true,
         // textAlign: 'left',
         textBaseline: 'top',
@@ -212,7 +218,7 @@ export function createCellContent(
         lineClamp,
         wordBreak: 'break-word',
         whiteSpace: text.length === 1 && !autoWrapText ? 'no-wrap' : 'normal',
-        dx: _contentOffset
+        dx: _contentOffset + (!contentLeftIcons.length && !contentRightIcons.length ? hierarchyOffset : 0)
       };
       const wrapText = new Text(cellTheme.text ? (Object.assign({}, cellTheme.text, attribute) as any) : attribute);
       wrapText.name = 'text';

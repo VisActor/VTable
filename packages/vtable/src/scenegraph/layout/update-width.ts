@@ -141,7 +141,8 @@ function updateColunmWidth(
       oldColumnWidth + detaX,
       detaX,
       mode === 'row-body' ? cell.col < scene.table.rowHeaderLevelCount : true,
-      autoRowHeight
+      autoRowHeight,
+      scene.table.internalProps.autoWrapText
     );
     if (isHeightChange) {
       const mergeInfo = getCellMergeInfo(scene.table, cell.col, cell.row);
@@ -246,7 +247,8 @@ function updateCellWidth(
   detaX: number,
   isHeader: boolean,
   // autoColWidth: boolean,
-  autoRowHeight: boolean
+  autoRowHeight: boolean,
+  autoWrapText: boolean
 ): boolean {
   if (cell.attribute.width === distWidth && !cell.needUpdateWidth) {
     return false;
@@ -407,7 +409,7 @@ function updateCellWidth(
     }
   }
 
-  return autoRowHeight ? isHeightChange : false;
+  return autoRowHeight && autoWrapText ? isHeightChange : false;
 }
 
 function updateMergeCellContentWidth(

@@ -50,7 +50,7 @@ export class ProgressBarStyle extends Style {
     this._barHeight = style.barHeight ?? 3;
     this._barHeight = style.barHeight ?? 3;
     this._barBottom = style.barBottom ?? 0;
-    this._barPadding = style.barPadding ?? [1, 1, 1, 1];
+    this._barPadding = style.barPadding ?? [0, 0, 0, 0];
     this._showBarMark = style.showBarMark ?? false;
     this._barMarkPositiveColor = style.barMarkPositiveColor ?? '#4dbd74';
     this._barMarkNegativeColor = style.barMarkNegativeColor ?? '#f86c6b';
