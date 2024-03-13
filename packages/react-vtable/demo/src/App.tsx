@@ -10,11 +10,12 @@ import pivotChart from './pivot-chart/pivot-chart';
 import pivotChartComponent from './pivot-chart/pivot-chart-component';
 
 import listTableEvent from './event/list-table';
+import eventRebind from './event/event-rebind';
 
 // export default listTable;
 // export default listOptionRecord;
 // export default listComponent;
-export default listCustomLayout;
+// export default listCustomLayout;
 
 // export default pivotTable;
 // export default pivotComponent;
@@ -23,3 +24,4 @@ export default listCustomLayout;
 // export default pivotChartComponent;
 
 // export default listTableEvent;
+export default eventRebind;

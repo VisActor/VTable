@@ -84,6 +84,8 @@ export function createImageCellGroup(
   });
   image.name = 'image';
   image.keepAspectRatio = keepAspectRatio;
+  image.textAlign = textAlign;
+  image.textBaseline = textBaseline;
   if (keepAspectRatio || imageAutoSizing) {
     if (
       image.resources &&
@@ -225,9 +227,13 @@ export function updateImageCellContentWhileResize(cellGroup: Group, col: number,
   const textBaseline = getProp('textBaseline', headerStyle, col, row, table) ?? 'middle';
   const padding = getQuadProps(getProp('padding', headerStyle, col, row, table)) ?? [0, 0, 0, 0];
 
-  if (image.keepAspectRatio) {
-    const { width: cellWidth, height: cellHeight } = getCellRange(cellGroup, table);
+  const { width: cellWidth, height: cellHeight, isMerge } = getCellRange(cellGroup, table);
+  const colStart = cellGroup.mergeStartCol ?? cellGroup.col;
+  const rowStart = cellGroup.mergeStartRow ?? cellGroup.row;
+  const colEnd = cellGroup.mergeEndCol ?? cellGroup.col;
+  const rowEnd = cellGroup.mergeEndCol ?? cellGroup.row;
 
+  if (image.keepAspectRatio) {
     const { width: imageWidth, height: imageHeight } = calcKeepAspectRatioSize(
       originImage.width || originImage.videoWidth,
       originImage.height || originImage.videoHeight,
@@ -251,23 +257,33 @@ export function updateImageCellContentWhileResize(cellGroup: Group, col: number,
       padding
     );
 
-    image.setAttributes({
-      x: pos.x,
-      y: pos.y,
-      width: imageWidth,
-      height: imageHeight
-    });
+    for (let col = colStart; col <= colEnd; col++) {
+      for (let row = rowStart; row <= rowEnd; row++) {
+        const cellGroup = table.scenegraph.getCell(col, row);
+        const image = cellGroup.getChildByName('image') as Image;
+        image?.setAttributes({
+          x: pos.x,
+          y: pos.y,
+          width: imageWidth,
+          height: imageHeight
+        });
+      }
+    }
   } else {
-    const { width: cellWidth, height: cellHeight } = getCellRange(cellGroup, table);
-
-    image.setAttributes({
-      x: padding[3],
-      y: padding[0],
-      // width: cellGroup.attribute.width - padding[1] - padding[3],
-      // height: cellGroup.attribute.height - padding[0] - padding[2]
-      width: cellWidth - padding[1] - padding[3],
-      height: cellHeight - padding[0] - padding[2]
-    });
+    for (let col = colStart; col <= colEnd; col++) {
+      for (let row = rowStart; row <= rowEnd; row++) {
+        const cellGroup = table.scenegraph.getCell(col, row);
+        const image = cellGroup.getChildByName('image') as Image;
+        image?.setAttributes({
+          x: padding[3],
+          y: padding[0],
+          // width: cellGroup.attribute.width - padding[1] - padding[3],
+          // height: cellGroup.attribute.height - padding[0] - padding[2]
+          width: cellWidth - padding[1] - padding[3],
+          height: cellHeight - padding[0] - padding[2]
+        });
+      }
+    }
   }
 
   // update video play icon
@@ -284,16 +300,32 @@ export function updateImageCellContentWhileResize(cellGroup: Group, col: number,
     const anchorY =
       top + (height > image.attribute.height ? image.attribute.y - top + image.attribute.height / 2 : height / 2);
 
-    playIcon.setAttributes({
-      x: anchorX - iconSize / 2,
-      y: anchorY - iconSize / 2,
-      width: iconSize,
-      height: iconSize
-    });
+    for (let col = colStart; col <= colEnd; col++) {
+      for (let row = rowStart; row <= rowEnd; row++) {
+        const cellGroup = table.scenegraph.getCell(col, row);
+        const playIcon = cellGroup.getChildByName('play-icon') as Image;
+        playIcon.setAttributes({
+          x: anchorX - iconSize / 2,
+          y: anchorY - iconSize / 2,
+          width: iconSize,
+          height: iconSize
+        });
+      }
+    }
+  }
+
+  if (isMerge) {
+    updateImageDxDy(
+      cellGroup.mergeStartCol,
+      cellGroup.mergeEndCol,
+      cellGroup.mergeStartRow,
+      cellGroup.mergeEndRow,
+      table
+    );
   }
 }
 
-function getCellRange(cellGroup: Group, table: BaseTableAPI) {
+export function getCellRange(cellGroup: Group, table: BaseTableAPI) {
   if (
     isValid(cellGroup.mergeStartCol) &&
     isValid(cellGroup.mergeEndCol) &&
@@ -313,7 +345,7 @@ function getCellRange(cellGroup: Group, table: BaseTableAPI) {
   };
 }
 
-function updateImageDxDy(startCol, endCol, startRow, endRow, table) {
+export function updateImageDxDy(startCol, endCol, startRow, endRow, table) {
   for (let col = startCol; col <= endCol; col++) {
     for (let row = startRow; row <= endRow; row++) {
       const cellGroup = table.scenegraph.getCell(col, row);
@@ -321,6 +353,13 @@ function updateImageDxDy(startCol, endCol, startRow, endRow, table) {
         const image = cellGroup.getChildByName('image');
         if (image) {
           image.setAttributes({
+            dx: -table.getColsWidth(cellGroup.mergeStartCol, col - 1),
+            dy: -table.getRowsHeight(cellGroup.mergeStartRow, row - 1)
+          });
+        }
+        const playIcon = cellGroup.getChildByName('play-icon');
+        if (playIcon) {
+          playIcon.setAttributes({
             dx: -table.getColsWidth(cellGroup.mergeStartCol, col - 1),
             dy: -table.getRowsHeight(cellGroup.mergeStartRow, row - 1)
           });

@@ -81,20 +81,22 @@ export function createProgressBarCell(
   });
 
   const borderWidth = getQuadProps(getProp('borderLineWidth', style, col, row, table));
-  let barPaddingTop = Math.max((barPadding as number[])[0], borderWidth[0]);
-  const barPaddingRight = Math.max((barPadding as number[])[1], borderWidth[1]);
-  const barPaddingBottom = Math.max((barPadding as number[])[2], borderWidth[2]);
-  let barPaddingLeft = Math.max((barPadding as number[])[3], borderWidth[3]);
+  const barPaddingTop = Math.max((barPadding as number[])[0], Math.ceil(borderWidth[0] / 2));
+  const barPaddingRight = Math.max((barPadding as number[])[1], Math.floor(borderWidth[1] / 2));
+  const barPaddingBottom = Math.max((barPadding as number[])[2], Math.floor(borderWidth[2] / 2));
+  const barPaddingLeft = Math.max((barPadding as number[])[3], Math.ceil(borderWidth[3] / 2));
 
   contentWidth -= barPaddingRight + barPaddingLeft;
   contentHeight -= barPaddingBottom + barPaddingTop;
 
-  if (barPaddingTop & 1) {
-    barPaddingTop += 0.5;
-  }
-  if (barPaddingLeft & 1) {
-    barPaddingLeft += 0.5;
-  }
+  // if (barPaddingTop & 1) {
+  //   // barPaddingTop += 0.5;
+  //   contentWidth += borderWidth[0];
+  // }
+  // if (barPaddingLeft & 1) {
+  //   // barPaddingLeft += 0.5;
+  //   contentHeight += borderWidth[0];
+  // }
 
   const top = barPaddingTop;
   const left = barPaddingLeft;

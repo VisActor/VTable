@@ -125,7 +125,7 @@ export const findEventProps = <T extends EventsProps>(
   const result: EventsProps = {};
 
   Object.keys(props).forEach(key => {
-    if (supportedEvents[key]) {
+    if (supportedEvents[key] && props[key]) {
       result[key] = props[key];
     }
   });
