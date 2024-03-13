@@ -1,6 +1,6 @@
-import minimist, { ParsedArgs } from "minimist";
-import { spawnSync } from "child_process";
-import { RushConfiguration } from "@microsoft/rush-lib";
+import minimist, { ParsedArgs } from 'minimist';
+import { execSync, spawnSync } from 'child_process';
+import { RushConfiguration } from '@microsoft/rush-lib';
 
 interface PrettierScriptArgv extends ParsedArgs {
   dir?: string;
@@ -12,12 +12,12 @@ function run() {
   const rushConfiguration = RushConfiguration.loadFromDefaultLocation({ startingFolder: cwd });
 
   const argv: PrettierScriptArgv = minimist(process.argv.slice(2));
-  const configFilePath = rushConfiguration.rushJsonFolder + "/.prettierrc.js";
-  const ignoreFilePath = rushConfiguration.rushJsonFolder + "/.prettierignore";
+  const configFilePath = rushConfiguration.rushJsonFolder + '/.prettierrc.js';
+  const ignoreFilePath = rushConfiguration.rushJsonFolder + '/.prettierignore';
 
-  let ext = "{ts,tsx,less}";
+  let ext = '{ts,tsx,less}';
   if (argv.ext) {
-    const length = argv.ext.split(",").length;
+    const length = argv.ext.split(',').length;
     ext = length === 1 ? `${argv.ext}` : `{${argv.ext}}`;
   }
 
@@ -28,17 +28,10 @@ function run() {
 
   console.log(patterns);
 
-  spawnSync(
-    "sh",
-    [
-      "-c",
-      `prettier  --config ${configFilePath} --ignore-path ${ignoreFilePath} --write ${patterns}`,
-    ],
-    {
-      shell: false,
-      stdio: [0, 1, 2],
-    },
-  );
+  execSync(`prettier  --config ${configFilePath} --ignore-path ${ignoreFilePath} --write ${patterns}`, {
+    stdio: [0, 1, 2],
+    windowsHide: true
+  });
 }
 
 run();
