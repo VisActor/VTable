@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "comment": "fix: pivot tree mode when use headerIcon the indent value invalid #1269\n\n",
+      "type": "none",
+      "packageName": "@visactor/vtable"
+    }
+  ],
+  "packageName": "@visactor/vtable",
+  "email": "892739385@qq.com"
+}
