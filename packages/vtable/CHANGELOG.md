@@ -1,6 +1,20 @@
 # Change Log - @visactor/vtable
 
-This log was last generated on Mon, 11 Mar 2024 07:05:40 GMT and should not be manually modified.
+This log was last generated on Thu, 14 Mar 2024 02:24:21 GMT and should not be manually modified.
+
+## 0.21.2
+Thu, 14 Mar 2024 02:24:21 GMT
+
+### Updates
+
+- fix: after change transpose resize line render error #1239
+
+
+- fix: pivot tree mode when use headerIcon the indent value invalid #1269
+
+
+- feat: add textStickBaseOnAlign config
+- fix: fix progress bar rect height
 
 ## 0.21.1
 Mon, 11 Mar 2024 07:05:40 GMT
