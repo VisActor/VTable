@@ -163,7 +163,7 @@ export class TableComponent {
     componentGroup.addChild(this.columnResizeLabel);
 
     const hoverOn = this.table.theme.scrollStyle.hoverOn;
-    if (hoverOn) {
+    if (hoverOn && !this.table.options.scroll?.barToSide) {
       componentGroup.addChild(this.hScrollBar);
       componentGroup.addChild(this.vScrollBar);
     } else {
