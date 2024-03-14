@@ -11,5 +11,5 @@ module.exports = {
   "arrowParens": "avoid",
   "proseWrap": "preserve",
   "htmlWhitespaceSensitivity": "css",
-  "endOfLine": "lf"
+  "endOfLine": "auto"
 };

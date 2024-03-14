@@ -1,10 +1,11 @@
 import { isValid } from '@visactor/vutils';
 import type { EventHandler } from '../EventHandler';
-import type { KeydownEvent, ListTableAPI } from '../../ts-types';
+import { InteractionState, type KeydownEvent, type ListTableAPI } from '../../ts-types';
 import { TABLE_EVENT_TYPE } from '../../core/TABLE_EVENT_TYPE';
 import { handleWhell } from '../scroll';
 import { browser } from '../../tools/helper';
 import type { EventManager } from '../event';
+import { BaseTableAPI } from '../../ts-types/base-table';
 
 export function bindContainerDomListener(eventManager: EventManager) {
   const table = eventManager.table;
@@ -226,6 +227,8 @@ export function bindContainerDomListener(eventManager: EventManager) {
         const ranges = table.stateManager.select.ranges;
         const col = Math.min(ranges[0].start.col, ranges[0].end.col);
         const row = Math.min(ranges[0].start.row, ranges[0].end.row);
+        const values: (string | number)[][] = [];
+
         // 读取剪切板数据
         navigator.clipboard.read().then(clipboardItems => {
           for (const item of clipboardItems) {
@@ -233,7 +236,6 @@ export function bindContainerDomListener(eventManager: EventManager) {
             if (item.types.includes('text/html')) {
               item.getType('text/html').then(blob => {
                 blob.text().then(pastedData => {
-                  const values: (string | number)[][] = [];
                   // 解析html数据
                   if (pastedData && /(<table)|(<TABLE)/g.test(pastedData)) {
                     const regex = /<tr[^>]*>(.*?)<\/tr>/gs; // 匹配<tr>标签及其内容
@@ -261,22 +263,33 @@ export function bindContainerDomListener(eventManager: EventManager) {
                       });
                       values.push(rowValues);
                     }
+                    (table as ListTableAPI).changeCellValues(col, row, values, true);
                   } else {
-                    const rows = pastedData.split('\n'); // 将数据拆分为行
-                    rows.forEach(function (rowCells: any, rowIndex: number) {
-                      const cells = rowCells.split('\t'); // 将行数据拆分为单元格
-                      const rowValues: (string | number)[] = [];
-                      values.push(rowValues);
-                      cells.forEach(function (cell: string, cellIndex: number) {
-                        // 去掉单元格数据末尾的 '\r'
-                        if (cellIndex === cells.length - 1) {
-                          cell = cell.trim();
+                    navigator.clipboard.read().then(clipboardItems => {
+                      for (const item of clipboardItems) {
+                        if (item.types.includes('text/plain')) {
+                          item.getType('text/plain').then(blob => {
+                            blob.text().then(pastedData => {
+                              const rows = pastedData.split('\n'); // 将数据拆分为行
+                              rows.forEach(function (rowCells: any, rowIndex: number) {
+                                const cells = rowCells.split('\t'); // 将行数据拆分为单元格
+                                const rowValues: (string | number)[] = [];
+                                values.push(rowValues);
+                                cells.forEach(function (cell: string, cellIndex: number) {
+                                  // 去掉单元格数据末尾的 '\r'
+                                  if (cellIndex === cells.length - 1) {
+                                    cell = cell.trim();
+                                  }
+                                  rowValues.push(cell);
+                                });
+                              });
+                              (table as ListTableAPI).changeCellValues(col, row, values, true);
+                            });
+                          });
                         }
-                        rowValues.push(cell);
-                      });
+                      }
                     });
                   }
-                  (table as ListTableAPI).changeCellValues(col, row, values, true);
                 });
               });
             } else if (item.types.length === 1 && item.types[0] === 'text/plain') {
@@ -301,10 +314,9 @@ export function bindContainerDomListener(eventManager: EventManager) {
                       rowValues.push(cell);
                     });
                   });
-
-                  (table as ListTableAPI).changeCellValues(col, row, values, true);
                 });
               });
+              (table as ListTableAPI).changeCellValues(col, row, values, true);
             } else {
               // 其他情况
             }
@@ -313,6 +325,7 @@ export function bindContainerDomListener(eventManager: EventManager) {
       }
     }
   });
+
   handler.on(table.getElement(), 'contextmenu', (e: any) => {
     if (table.eventOptions?.preventDefaultContextMenu !== false) {
       e.preventDefault();
@@ -326,4 +339,68 @@ export function bindContainerDomListener(eventManager: EventManager) {
     }
     table.resize();
   });
+
+  // 有被阻止冒泡的场景 就触发不到这里的事件了 所以这个LastBodyPointerXY变量的赋值在scrollbar的down事件也进行了处理
+  const globalPointerdownCallback = (e: MouseEvent) => {
+    // console.log('body pointerdown');
+    table.eventManager.LastBodyPointerXY = { x: e.x, y: e.y };
+    table.eventManager.isDown = true;
+  };
+  eventManager.globalEventListeners.push({
+    name: 'pointerdown',
+    env: 'body',
+    callback: globalPointerdownCallback
+  });
+  document.body.addEventListener('pointerdown', globalPointerdownCallback);
+
+  const globalPointerupCallback = (e: MouseEvent) => {
+    table.eventManager.LastBodyPointerXY = null;
+    // console.log('body pointerup', table.eventManager.isDown, table.eventManager.isDraging);
+    table.eventManager.isDown = false;
+    table.eventManager.isDraging = false;
+  };
+  eventManager.globalEventListeners.push({
+    name: 'pointerup',
+    env: 'document',
+    callback: globalPointerupCallback
+  });
+  document.addEventListener('pointerup', globalPointerupCallback);
+
+  const globalPointermoveCallback = (e: MouseEvent) => {
+    if (table.eventManager.isDown && table.eventManager.LastBodyPointerXY) {
+      const lastX = table.eventManager.LastBodyPointerXY?.x ?? e.x;
+      const lastY = table.eventManager.LastBodyPointerXY?.y ?? e.y;
+      if (Math.abs(lastX - e.x) > 1 || Math.abs(lastY - e.y) > 1) {
+        table.eventManager.isDraging = true;
+      }
+    }
+    // 注释掉。因为： 这里pointermove太敏感了 点击快的时候 可能动了1px这里也会执行到 就影响到下面选中不触发的问题。下面pointermove就有这段逻辑，这里先去掉
+    // if (eventManager.touchSetTimeout) {
+    //   clearTimeout(eventManager.touchSetTimeout);
+    //   console.log('eventManager.touchSetTimeout', eventManager.touchSetTimeout);
+    //   eventManager.touchSetTimeout = undefined;
+    // }
+    // const eventArgsSet = getCellEventArgsSet(e);
+    const { x, y } = table._getMouseAbstractPoint(e, false);
+    if (stateManager.interactionState === InteractionState.scrolling) {
+      return;
+    }
+    if (stateManager.interactionState === InteractionState.grabing) {
+      if (stateManager.isResizeCol()) {
+        eventManager.dealColumnResize(x, y);
+        if ((table as any).hasListeners(TABLE_EVENT_TYPE.RESIZE_COLUMN)) {
+          table.fireListeners(TABLE_EVENT_TYPE.RESIZE_COLUMN, {
+            col: table.stateManager.columnResize.col,
+            colWidth: table.getColWidth(table.stateManager.columnResize.col)
+          });
+        }
+      }
+    }
+  };
+  eventManager.globalEventListeners.push({
+    name: 'pointermove',
+    env: 'body',
+    callback: globalPointermoveCallback
+  });
+  document.body.addEventListener('pointermove', globalPointermoveCallback);
 }

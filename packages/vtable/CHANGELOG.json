@@ -2,6 +2,27 @@
   "name": "@visactor/vtable",
   "entries": [
     {
+      "version": "0.21.2",
+      "tag": "@visactor/vtable_v0.21.2",
+      "date": "Thu, 14 Mar 2024 02:24:21 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "fix: after change transpose resize line render error #1239\n\n"
+          },
+          {
+            "comment": "fix: pivot tree mode when use headerIcon the indent value invalid #1269\n\n"
+          },
+          {
+            "comment": "feat: add textStickBaseOnAlign config"
+          },
+          {
+            "comment": "fix: fix progress bar rect height"
+          }
+        ]
+      }
+    },
+    {
       "version": "0.21.1",
       "tag": "@visactor/vtable_v0.21.1",
       "date": "Mon, 11 Mar 2024 07:05:40 GMT",

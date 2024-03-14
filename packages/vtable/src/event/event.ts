@@ -49,6 +49,8 @@ export class EventManager {
   isDown = false;
   isDraging = false;
 
+  globalEventListeners: { name: string; env: 'document' | 'body' | 'window'; callback: (e?: any) => void }[] = [];
+
   constructor(table: BaseTableAPI) {
     this.table = table;
     if (Env.mode === 'node') {
@@ -389,5 +391,17 @@ export class EventManager {
   /** TODO 其他的事件并么有做remove */
   release() {
     this.gesture.release();
+
+    // remove global event listerner
+    this.globalEventListeners.forEach(item => {
+      if (item.env === 'document') {
+        document.removeEventListener(item.name, item.callback);
+      } else if (item.env === 'body') {
+        document.body.removeEventListener(item.name, item.callback);
+      } else if (item.env === 'window') {
+        window.removeEventListener(item.name, item.callback);
+      }
+    });
+    this.globalEventListeners = [];
   }
 }
