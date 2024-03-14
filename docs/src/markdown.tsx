@@ -5,6 +5,7 @@ import { useContext, useEffect, useState } from 'react';
 import { LanguageContext, LanguageEnum } from './i18n';
 import MarkdownIt from 'markdown-it';
 import hljs from 'highlight.js';
+import { transform as bubleTransform } from 'buble';
 
 import 'highlight.js/styles/atom-one-light.css';
 
@@ -55,6 +56,19 @@ function htmlRestore(str: string) {
   result = result.replace(/&#39;/g, "'");
   result = result.replace(/&quot;/g, '"');
   return result;
+}
+
+function transformCode(str: string) {
+  let transformedCode = str;
+  try {
+    transformedCode =
+      bubleTransform(transformedCode, {
+        transforms: { templateString: false }
+      }).code ?? '';
+  } catch (e) {
+    transformedCode = str;
+  }
+  return transformedCode;
 }
 
 function generateMenuItem(node: IMenuItem, assetDirectory: string, language: LanguageEnum, navigate: any) {
@@ -112,12 +126,18 @@ function Content(props: IContentProps) {
     const pre = demo[0];
     const code = demo[1];
     const containerId = `markdown-demo-${globalContainerId++}`;
-    content = content.replace(pre, `<div id="${containerId}" class="markdown-demo"></div>`);
+    content = content.replace(
+      pre,
+      `<div style="position: relative">
+      <div id="${containerId}" class="markdown-demo"></div>
+      <div id="live-demo-additional-container" style="position: absolute; left: 0; top: 0"></div>
+    </div>`
+    );
     const evaluateCode = code
       .replaceAll('CONTAINER_ID', `"${containerId}"`)
       .concat(`window['${containerId}'] = tableInstance;`);
     return {
-      code: htmlRestore(evaluateCode),
+      code: transformCode(htmlRestore(evaluateCode)),
       id: containerId
     };
   });

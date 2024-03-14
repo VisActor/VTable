@@ -1,3 +1,4 @@
+import React from 'react';
 import ReactDOM from 'react-dom/client';
 import * as VTable from '@visactor/vtable';
 import * as VChart from '@visactor/vchart';
@@ -24,6 +25,8 @@ import '@arco-design/web-react/dist/css/arco.css';
 (window as any).SearchComponent = SearchComponent;
 
 (window as any).CONTAINER_ID = 'chart';
+(window as any).React = React;
+(window as any).ReactDom = ReactDOM;
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   // <React.StrictMode>
