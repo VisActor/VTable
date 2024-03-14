@@ -489,6 +489,10 @@ export const menus = [
       {
         path: 'interactive',
         name: 'resize-container'
+      },
+      {
+        path: 'interactive',
+        name: 'update-column'
       }
     ]
   },
