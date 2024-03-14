@@ -14,7 +14,7 @@
     "@visactor/vtable-editors": "workspace:*",
     "@visactor/vtable-export": "workspace:*",
     "@visactor/vtable-search": "workspace:*",
-    "@visactor/vchart": "1.9.6",
+    "@visactor/vchart": "1.10.0",
     "markdown-it": "^13.0.0",
     "highlight.js": "^11.8.0",
     "axios": "^1.4.0",
