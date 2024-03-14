@@ -662,7 +662,7 @@ export class StateManager {
   }
   updateVerticalScrollBar(yRatio: number) {
     const totalHeight = this.table.getAllRowsHeight();
-
+    const oldVerticalBarPos = this.scroll.verticalBarPos;
     this.scroll.verticalBarPos = Math.ceil(yRatio * (totalHeight - this.table.scenegraph.height));
     this.table.scenegraph.setY(-this.scroll.verticalBarPos, yRatio === 1);
     this.scroll.verticalBarPos -= this.table.scenegraph.proxy.deltaY;
@@ -682,10 +682,14 @@ export class StateManager {
       scrollDirection: 'vertical',
       scrollRatioY: yRatio
     });
-    this.checkVerticalScrollBarEnd();
+
+    if (oldVerticalBarPos !== this.scroll.verticalBarPos) {
+      this.checkVerticalScrollBarEnd();
+    }
   }
   updateHorizontalScrollBar(xRatio: number) {
     const totalWidth = this.table.getAllColsWidth();
+    const oldHorizontalBarPos = this.scroll.horizontalBarPos;
     this.scroll.horizontalBarPos = Math.ceil(xRatio * (totalWidth - this.table.scenegraph.width));
     this.table.scenegraph.setX(-this.scroll.horizontalBarPos, xRatio === 1);
     this.scroll.horizontalBarPos -= this.table.scenegraph.proxy.deltaX;
@@ -709,7 +713,10 @@ export class StateManager {
       scrollDirection: 'horizontal',
       scrollRatioX: xRatio
     });
-    this.checkHorizontalScrollBarEnd();
+
+    if (oldHorizontalBarPos !== this.scroll.horizontalBarPos) {
+      this.checkHorizontalScrollBarEnd();
+    }
   }
   setScrollTop(top: number) {
     // 矫正top值范围
@@ -720,6 +727,7 @@ export class StateManager {
     if (top !== this.scroll.verticalBarPos || this.table.isPivotChart()) {
       this.table.stateManager.updateHoverPos(-1, -1);
     }
+    const oldVerticalBarPos = this.scroll.verticalBarPos;
     // this.table.stateManager.updateSelectPos(-1, -1);
     this.scroll.verticalBarPos = top;
 
@@ -739,7 +747,10 @@ export class StateManager {
       scrollDirection: 'vertical',
       scrollRatioY: yRatio
     });
-    this.checkVerticalScrollBarEnd();
+
+    if (oldVerticalBarPos !== top) {
+      this.checkVerticalScrollBarEnd();
+    }
   }
   setScrollLeft(left: number) {
     // 矫正left值范围
@@ -753,6 +764,7 @@ export class StateManager {
       this.table.stateManager.updateHoverPos(-1, -1);
     }
     // this.table.stateManager.updateSelectPos(-1, -1);
+    const oldHorizontalBarPos = this.scroll.horizontalBarPos;
     this.scroll.horizontalBarPos = left;
 
     // 设置scenegraph坐标
@@ -772,7 +784,9 @@ export class StateManager {
       scrollDirection: 'horizontal',
       scrollRatioX: xRatio
     });
-    this.checkHorizontalScrollBarEnd();
+    if (oldHorizontalBarPos != left) {
+      this.checkHorizontalScrollBarEnd();
+    }
   }
   hideVerticalScrollBar() {
     this.table.scenegraph.component.hideVerticalScrollBar();
