@@ -669,7 +669,7 @@ function updateCellContent(
 function canUseFastUpdate(col: number, row: number, oldCellGroup: Group, autoWrapText: boolean, table: BaseTableAPI) {
   // return false;
   const define = table.getBodyColumnDefine(col, row);
-  const mayHaveIcon = !!define?.icon || !!(define as ColumnDefine)?.tree;
+  const mayHaveIcon = !!define?.icon || !!(define as ColumnDefine)?.tree || (define as RowSeriesNumber).dragOrder;
   const cellType = table.getBodyColumnType(col, row);
   const autoRowHeight = table.heightMode === 'autoHeight';
   const value = table.getCellValue(col, row);

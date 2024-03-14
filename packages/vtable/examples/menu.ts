@@ -89,6 +89,10 @@ export const menus = [
       },
       {
         path: 'list',
+        name: 'list-tree-rowSeriesNumber'
+      },
+      {
+        path: 'list',
         name: 'list-merge-cell'
       },
       {
