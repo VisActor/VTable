@@ -635,11 +635,11 @@ export class StateManager {
 
     if (scrollTop + viewHeight >= totalHeight) {
       this.table.fireListeners(TABLE_EVENT_TYPE.SCROLL_VERTICAL_END, {
-        scrollTop: this.scroll.verticalBarPos,
+        scrollTop,
         scrollLeft: this.scroll.horizontalBarPos,
         scrollHeight: this.table.theme.scrollStyle?.width,
         scrollWidth: this.table.theme.scrollStyle?.width,
-        viewHeight: this.table.tableNoFrameHeight,
+        viewHeight,
         viewWidth: this.table.tableNoFrameWidth
       });
     }
@@ -652,11 +652,11 @@ export class StateManager {
     if (scrollLeft + viewWidth >= totalWidth) {
       this.table.fireListeners(TABLE_EVENT_TYPE.SCROLL_HORIZONTAL_END, {
         scrollTop: this.scroll.verticalBarPos,
-        scrollLeft: this.scroll.horizontalBarPos,
+        scrollLeft,
         scrollHeight: this.table.theme.scrollStyle?.width,
         scrollWidth: this.table.theme.scrollStyle?.width,
         viewHeight: this.table.tableNoFrameHeight,
-        viewWidth: this.table.tableNoFrameWidth
+        viewWidth
       });
     }
   }
