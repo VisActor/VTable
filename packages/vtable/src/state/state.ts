@@ -628,9 +628,41 @@ export class StateManager {
       this.table.scenegraph.updateFrozenIcon(0, this.table.colCount - 1);
     }
   }
+  checkVerticalScrollBarEnd() {
+    const totalHeight = this.table.getAllRowsHeight();
+    const scrollTop = this.scroll.verticalBarPos;
+    const viewHeight = this.table.tableNoFrameHeight;
 
+    if (scrollTop + viewHeight >= totalHeight) {
+      this.table.fireListeners(TABLE_EVENT_TYPE.SCROLL_VERTICAL_END, {
+        scrollTop: this.scroll.verticalBarPos,
+        scrollLeft: this.scroll.horizontalBarPos,
+        scrollHeight: this.table.theme.scrollStyle?.width,
+        scrollWidth: this.table.theme.scrollStyle?.width,
+        viewHeight: this.table.tableNoFrameHeight,
+        viewWidth: this.table.tableNoFrameWidth
+      });
+    }
+  }
+  checkHorizontalScrollBarEnd() {
+    const totalWidth = this.table.getAllColsWidth();
+    const scrollLeft = this.scroll.horizontalBarPos;
+    const viewWidth = this.table.tableNoFrameWidth;
+
+    if (scrollLeft + viewWidth >= totalWidth) {
+      this.table.fireListeners(TABLE_EVENT_TYPE.SCROLL_HORIZONTAL_END, {
+        scrollTop: this.scroll.verticalBarPos,
+        scrollLeft: this.scroll.horizontalBarPos,
+        scrollHeight: this.table.theme.scrollStyle?.width,
+        scrollWidth: this.table.theme.scrollStyle?.width,
+        viewHeight: this.table.tableNoFrameHeight,
+        viewWidth: this.table.tableNoFrameWidth
+      });
+    }
+  }
   updateVerticalScrollBar(yRatio: number) {
     const totalHeight = this.table.getAllRowsHeight();
+
     this.scroll.verticalBarPos = Math.ceil(yRatio * (totalHeight - this.table.scenegraph.height));
     this.table.scenegraph.setY(-this.scroll.verticalBarPos, yRatio === 1);
     this.scroll.verticalBarPos -= this.table.scenegraph.proxy.deltaY;
@@ -650,6 +682,7 @@ export class StateManager {
       scrollDirection: 'vertical',
       scrollRatioY: yRatio
     });
+    this.checkVerticalScrollBarEnd();
   }
   updateHorizontalScrollBar(xRatio: number) {
     const totalWidth = this.table.getAllColsWidth();
@@ -676,6 +709,7 @@ export class StateManager {
       scrollDirection: 'horizontal',
       scrollRatioX: xRatio
     });
+    this.checkHorizontalScrollBarEnd();
   }
   setScrollTop(top: number) {
     // 矫正top值范围
@@ -705,6 +739,7 @@ export class StateManager {
       scrollDirection: 'vertical',
       scrollRatioY: yRatio
     });
+    this.checkVerticalScrollBarEnd();
   }
   setScrollLeft(left: number) {
     // 矫正left值范围
@@ -737,6 +772,7 @@ export class StateManager {
       scrollDirection: 'horizontal',
       scrollRatioX: xRatio
     });
+    this.checkHorizontalScrollBarEnd();
   }
   hideVerticalScrollBar() {
     this.table.scenegraph.component.hideVerticalScrollBar();

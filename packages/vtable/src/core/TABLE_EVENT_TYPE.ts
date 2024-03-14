@@ -72,7 +72,14 @@ export interface TableEvents {
    * 滚动表格事件
    */
   SCROLL: 'scroll';
-
+  /**
+   * 横向滚动条滚动到结束位
+   */
+  SCROLL_HORIZONTAL_END: 'scroll_horizontal_end';
+  /**
+   * 竖向滚动条滚动到结束位
+   */
+  SCROLL_VERTICAL_END: 'scroll_vertical_end';
   /**
    * 点击下拉菜单图标事件
    */
@@ -150,6 +157,8 @@ export const TABLE_EVENT_TYPE: TableEvents = {
   SORT_CLICK: 'sort_click',
   FREEZE_CLICK: 'freeze_click',
   SCROLL: 'scroll',
+  SCROLL_HORIZONTAL_END: 'scroll_horizontal_end',
+  SCROLL_VERTICAL_END: 'scroll_vertical_end',
   DROPDOWN_MENU_CLICK: 'dropdown_menu_click',
   MOUSEOVER_CHART_SYMBOL: 'mouseover_chart_symbol',
   DRAG_SELECT_END: 'drag_select_end',
