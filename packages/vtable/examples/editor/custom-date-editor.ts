@@ -217,6 +217,12 @@ export function createTable() {
       sort: true
     },
     {
+      field: '',
+      title: 'ID',
+      width: 80,
+      sort: true
+    },
+    {
       field: 'email1',
       title: 'email',
       width: 'auto',
