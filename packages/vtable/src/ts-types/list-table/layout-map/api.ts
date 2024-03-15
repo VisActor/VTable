@@ -184,7 +184,7 @@ export interface SeriesNumberColumnData extends WidthData {
     | ColumnIconOption
     | (string | ColumnIconOption)[]
     | ((args: CellInfo) => string | ColumnIconOption | (string | ColumnIconOption)[]);
-
+  headerIcon?: string | ColumnIconOption | (string | ColumnIconOption)[];
   cellType: 'text' | 'link' | 'image' | 'video' | 'checkbox';
   style: ColumnStyleOption | null | undefined;
   define: RowSeriesNumber;

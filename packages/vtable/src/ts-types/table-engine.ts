@@ -107,6 +107,9 @@ export interface RowSeriesNumber {
   format?: (col?: number, row?: number, table?: BaseTableAPI) => any;
   cellType?: 'text' | 'link' | 'image' | 'video' | 'checkbox';
   style?: ITextStyleOption | ((styleArg: StylePropertyFunctionArg) => ITextStyleOption);
+  headerStyle?: ITextStyleOption | ((styleArg: StylePropertyFunctionArg) => ITextStyleOption);
+  /** 表头Icon配置 */
+  headerIcon?: string | ColumnIconOption | (string | ColumnIconOption)[];
   icon?:
     | string
     | ColumnIconOption
@@ -127,6 +130,7 @@ export interface ColumnSeriesNumber {
   format?: (col?: number, row?: number, table?: BaseTableAPI) => any;
   cellType?: 'text' | 'link' | 'image' | 'video' | 'checkbox';
   style?: ITextStyleOption | ((styleArg: StylePropertyFunctionArg) => ITextStyleOption);
+  headerStyle?: ITextStyleOption | ((styleArg: StylePropertyFunctionArg) => ITextStyleOption);
   icon?:
     | string
     | ColumnIconOption

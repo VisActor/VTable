@@ -1314,7 +1314,10 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
   //   }
   //   return 0;
   // }
-  getHeader(col: number, row: number): HeaderData {
+  getHeader(col: number, row: number): HeaderData | SeriesNumberColumnData {
+    if (this.isSeriesNumberInHeader(col, row)) {
+      return this.getSeriesNumberHeader(col, row);
+    }
     const id = this.getCellId(col, row);
     return this._headerObjectMap[id as number] ?? { id: undefined, field: '', headerType: 'text', define: undefined };
   }
@@ -3072,7 +3075,10 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
   getSeriesNumberHeader(col: number, row: number) {
     if (col >= 0 && col < this.leftRowSeriesNumberColumnCount) {
       if (row < this.headerLevelCount) {
-        return this.leftRowSeriesNumberColumn[col];
+        // return this.leftRowSeriesNumberColumn[col];
+        return Object.assign({}, this.leftRowSeriesNumberColumn[col], {
+          style: this._table.internalProps.rowSeriesNumber.headerStyle
+        });
       }
     }
     if (col >= this.colCount - this.rightRowSeriesNumberColumnCount && row < this.headerLevelCount) {

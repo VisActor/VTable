@@ -3269,8 +3269,16 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     let icons;
     if (this.isHeader(col, row)) {
       icons = this.internalProps.headerHelper.getIcons(col, row);
-    } else if ((this.internalProps.layoutMap as SimpleHeaderLayoutMap).isSeriesNumberInBody(col, row)) {
-      icons = this.internalProps.rowSeriesNumberHelper.getIcons(col, row);
+    } else if ((this.internalProps.layoutMap as SimpleHeaderLayoutMap).isSeriesNumber(col, row)) {
+      const dragOrder = (this.internalProps.layoutMap as SimpleHeaderLayoutMap).getSeriesNumberBody(col, row)?.define
+        .dragOrder;
+      if (dragOrder) {
+        icons = this.internalProps.rowSeriesNumberHelper.getIcons(col, row);
+      }
+      const cellValue = this.getCellValue(col, row);
+      const dataValue = this.getCellOriginValue(col, row);
+      const ctx = this.internalProps.context;
+      icons = icons.concat(this.internalProps.bodyHelper.getIcons(col, row, cellValue, dataValue, ctx));
     } else {
       const cellValue = this.getCellValue(col, row);
       const dataValue = this.getCellOriginValue(col, row);

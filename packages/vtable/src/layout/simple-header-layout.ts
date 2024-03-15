@@ -92,6 +92,7 @@ export class SimpleHeaderLayoutMap implements LayoutMapAPI {
             format: seriesNumber.format,
             field: seriesNumber.field,
             icon: seriesNumber.icon,
+            headerIcon: seriesNumber.headerIcon,
             isChildNode: false
           };
         });
@@ -107,6 +108,7 @@ export class SimpleHeaderLayoutMap implements LayoutMapAPI {
             format: rowSeriesNumber.format,
             field: rowSeriesNumber.field,
             icon: rowSeriesNumber.icon,
+            headerIcon: rowSeriesNumber.headerIcon,
             isChildNode: false
           }
         ];
@@ -193,7 +195,9 @@ export class SimpleHeaderLayoutMap implements LayoutMapAPI {
         return undefined;
       }
       if (row < this.headerLevelCount) {
-        return this.leftRowSeriesNumberColumn[col];
+        return Object.assign({}, this.leftRowSeriesNumberColumn[col], {
+          style: this._table.internalProps.rowSeriesNumber.headerStyle
+        });
       }
     }
     if (col >= this.colCount - this.rightRowSeriesNumberColumnCount && row < this.headerLevelCount) {
@@ -745,7 +749,7 @@ export class SimpleHeaderLayoutMap implements LayoutMapAPI {
   }
   getHeader(col: number, row: number): HeaderData | SeriesNumberColumnData {
     if (this.isSeriesNumberInHeader(col, row)) {
-      return this.rowSeriesNumberColumn[col];
+      return this.getSeriesNumberHeader(col, row);
     }
     const id = this.getCellId(col, row);
     return this._headerObjectMap[id as number]!;
