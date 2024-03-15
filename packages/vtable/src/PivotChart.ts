@@ -407,7 +407,7 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
         });
         return indicatorInfo?.title ?? indicatorInfo?.indicatorKey ?? '';
       }
-      const { title, fieldFormat } = this.internalProps.layoutMap.getHeader(col, row);
+      const { title, fieldFormat } = this.internalProps.layoutMap.getHeader(col, row) as HeaderData;
       return typeof fieldFormat === 'function' ? fieldFormat(title, col, row, this as BaseTableAPI) : title;
     }
     if (this.dataset) {

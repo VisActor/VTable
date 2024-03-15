@@ -553,7 +553,7 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
       const { format } = this.internalProps.layoutMap.getSeriesNumberBody(col, row);
       return typeof format === 'function' ? format(col, row, this) : row - this.columnHeaderLevelCount + 1;
     } else if (this.internalProps.layoutMap.isHeader(col, row)) {
-      const { title, fieldFormat } = this.internalProps.layoutMap.getHeader(col, row);
+      const { title, fieldFormat } = this.internalProps.layoutMap.getHeader(col, row) as HeaderData;
       return typeof fieldFormat === 'function' ? fieldFormat(title, col, row, this as BaseTableAPI) : title;
     }
     if (this.dataset) {

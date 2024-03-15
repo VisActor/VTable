@@ -1863,7 +1863,7 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
   isHeaderForColWidth(col: number, row: number): boolean {
     return this.isHeader(col, row);
   }
-  getHeaderForColWidth(col: number, row: number): HeaderData {
+  getHeaderForColWidth(col: number, row: number): HeaderData | SeriesNumberColumnData {
     return this.getHeader(col, row);
   }
   /**
