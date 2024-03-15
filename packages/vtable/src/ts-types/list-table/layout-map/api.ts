@@ -188,7 +188,7 @@ export interface SeriesNumberColumnData extends WidthData {
   cellType: 'text' | 'link' | 'image' | 'video' | 'checkbox';
   style: ColumnStyleOption | null | undefined;
   define: RowSeriesNumber;
-  isChildNode: false;
+  isChildNode?: false;
 }
 // Simple header
 

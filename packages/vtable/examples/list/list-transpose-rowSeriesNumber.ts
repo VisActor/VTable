@@ -153,6 +153,21 @@ export function createTable() {
       ]
     },
     {
+      title: 'Full name 1',
+      columns: [
+        {
+          field: 'name',
+          title: 'First Name 1',
+          width: 120
+        },
+        {
+          field: 'lastName',
+          title: 'Last Name 1',
+          width: 100
+        }
+      ]
+    },
+    {
       field: 'hobbies',
       title: 'hobbies',
       width: 200
@@ -185,7 +200,7 @@ export function createTable() {
     columns,
     heightMode: 'autoHeight',
     autoWrapText: true,
-    frozenColCount: 4,
+    // frozenColCount: 4,
     keyboardOptions: {
       copySelected: true
     },

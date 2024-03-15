@@ -144,6 +144,18 @@ export const menus = [
       {
         path: 'pivot',
         name: 'pivot-tree'
+      },
+      {
+        path: 'pivot',
+        name: 'pivot-rowSeriesNumber'
+      },
+      {
+        path: 'pivot',
+        name: 'pivot-rowSeriesNumber-rowTitle'
+      },
+      {
+        path: 'pivot',
+        name: 'pivot-tree-rowSeriesNumber'
       }
     ]
   },

@@ -190,7 +190,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
       keyboardOptions,
       eventOptions,
       rowSeriesNumber,
-      columnSeriesNumber,
+      // columnSeriesNumber,
       // disableRowHeaderColumnResize,
       columnResizeMode,
       dragHeaderMode,
@@ -278,7 +278,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     internalProps.keyboardOptions = keyboardOptions;
     internalProps.eventOptions = eventOptions;
     internalProps.rowSeriesNumber = rowSeriesNumber;
-    internalProps.columnSeriesNumber = columnSeriesNumber;
+    // internalProps.columnSeriesNumber = columnSeriesNumber;
 
     internalProps.columnResizeMode = columnResizeMode;
     internalProps.dragHeaderMode = dragHeaderMode;
@@ -1951,7 +1951,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
       keyboardOptions,
       eventOptions,
       rowSeriesNumber,
-      columnSeriesNumber,
+      // columnSeriesNumber,
       // disableRowHeaderColumnResize,
       columnResizeMode,
       dragHeaderMode,
@@ -2017,7 +2017,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     internalProps.keyboardOptions = keyboardOptions;
     internalProps.eventOptions = eventOptions;
     internalProps.rowSeriesNumber = rowSeriesNumber;
-    internalProps.columnSeriesNumber = columnSeriesNumber;
+    // internalProps.columnSeriesNumber = columnSeriesNumber;
 
     internalProps.columnResizeMode = columnResizeMode;
     internalProps.dragHeaderMode = dragHeaderMode;
@@ -2834,7 +2834,14 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
   _dropDownMenuIsHighlight(colNow: number, rowNow: number, index: number): boolean {
     return this.stateManager.dropDownMenuIsHighlight(colNow, rowNow, index);
   }
-  /** 判断单元格是否属于表头部分 */
+  /** 判断单元格是否属于序号body部分 */
+  isSeriesNumberInBody(col: number, row: number): boolean {
+    return (
+      this.internalProps.layoutMap &&
+      (this.internalProps.layoutMap as SimpleHeaderLayoutMap).isSeriesNumberInBody(col, row)
+    );
+  }
+  /** 判断单元格是否属于序号表头部分 */
   isSeriesNumberInHeader(col: number, row: number): boolean {
     return (
       this.internalProps.layoutMap &&
@@ -3089,7 +3096,10 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     let cacheKey;
     const cellType = this.getCellType(col, row);
     //如果是主体部分，获取相应的style
-    if (
+    if (this.isSeriesNumberInBody(col, row)) {
+      // 如果是行序号
+      cacheKey = `${col}-series-` + cellType;
+    } else if (
       (this.isListTable() && !(this as any).transpose) ||
       (this.isPivotTable() && (this.internalProps.layoutMap as PivotHeaderLayoutMap).indicatorsAsCol)
     ) {

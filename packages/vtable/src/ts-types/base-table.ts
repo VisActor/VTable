@@ -399,7 +399,7 @@ export interface BaseTableConstructorOptions {
   resizeTime?: number;
 
   rowSeriesNumber?: RowSeriesNumber[];
-  columnSeriesNumber?: ColumnSeriesNumber[];
+  // columnSeriesNumber?: ColumnSeriesNumber[];
   customCellStyle?: CustomCellStyle[];
   customCellStyleArrangement?: CustomCellStyleArrangement[];
 }

@@ -599,7 +599,10 @@ export class StateManager {
     const originalFrozenColCount =
       this.table.isListTable() && !this.table.internalProps.transpose
         ? this.table.options.frozenColCount
-        : Math.max(this.table.rowHeaderLevelCount ?? 0, this.table.options.frozenColCount ?? 0);
+        : Math.max(
+            (this.table.rowHeaderLevelCount ?? 0) + this.table.internalProps.layoutMap.leftRowSeriesNumberColumnCount,
+            this.table.options.frozenColCount ?? 0
+          );
     if (originalFrozenColCount) {
       if (this.table.tableNoFrameWidth - this.table.getColsWidth(0, originalFrozenColCount - 1) <= 120) {
         this.table._setFrozenColCount(0);

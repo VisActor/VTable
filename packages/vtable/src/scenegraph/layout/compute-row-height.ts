@@ -1,7 +1,7 @@
 import { RichText, Text, Group as VGroup } from '@src/vrender';
 import type { PivotHeaderLayoutMap } from '../../layout/pivot-header-layout';
 import { validToString } from '../../tools/util';
-import type { ColumnIconOption, ColumnTypeOption } from '../../ts-types';
+import type { ColumnIconOption, ColumnTypeOption, RowSeriesNumber } from '../../ts-types';
 import { IconPosition } from '../../ts-types';
 import type { BaseTableAPI, HeaderData } from '../../ts-types/base-table';
 import type { ColumnData, ColumnDefine, TextColumnDefine } from '../../ts-types/list-table/layout-map/api';
@@ -597,7 +597,7 @@ function computeTextHeight(col: number, row: number, cellType: ColumnTypeOption,
     mayHaveIcon = true;
   } else {
     const define = table.getBodyColumnDefine(col, row);
-    mayHaveIcon = !!define?.icon || !!(define as ColumnDefine)?.tree;
+    mayHaveIcon = !!define?.icon || !!(define as ColumnDefine)?.tree || (define as RowSeriesNumber)?.dragOrder;
   }
 
   if (mayHaveIcon) {

@@ -99,6 +99,7 @@ export interface TableEventOptions {
 
 export interface RowSeriesNumber {
   enable: boolean;
+  width?: number | 'auto';
   align?: 'left' | 'right';
   span?: number | 'dependOnNear';
   title?: string;

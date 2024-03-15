@@ -24,12 +24,12 @@ export function adjustMoveHeaderTarget(source: CellAddress, target: CellAddress,
     // ||
     // ((table as ListTable).transpose && table.internalProps.layoutMap.isSeriesNumberInBody(source.col, source.row))
   ) {
+    const layoutMap = table.internalProps.layoutMap as PivotHeaderLayoutMap;
     const targetCellRange = table.getCellRange(sourceCellRange.start.col, target.row);
-    if (target.col >= table.rowHeaderLevelCount) {
-      target.col = table.rowHeaderLevelCount - 1;
+    if (target.col >= table.rowHeaderLevelCount + layoutMap.leftRowSeriesNumberColumnCount) {
+      target.col = table.rowHeaderLevelCount + layoutMap.leftRowSeriesNumberColumnCount - 1;
     }
     // tree模式[透视表行表头]
-    const layoutMap = table.internalProps.layoutMap as PivotHeaderLayoutMap;
     if (layoutMap.rowHierarchyType === 'tree') {
       const sourceRowHeaderPaths = layoutMap.getCellHeaderPathsWidthTreeNode(source.col, source.row)
         .rowHeaderPaths as any;

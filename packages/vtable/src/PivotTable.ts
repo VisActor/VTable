@@ -37,6 +37,7 @@ import type { IEditor } from '@visactor/vtable-editors';
 import { computeColWidth } from './scenegraph/layout/compute-col-width';
 import { computeRowHeight } from './scenegraph/layout/compute-row-height';
 import { isAllDigits } from './tools/util';
+import type { IndicatorData } from './ts-types/list-table/layout-map/api';
 export class PivotTable extends BaseTable implements PivotTableAPI {
   declare internalProps: PivotTableProtected;
   declare options: PivotTableConstructorOptions;
@@ -200,7 +201,7 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
       if (!this.internalProps.layoutMap.indicatorsAsCol) {
         // 列上是否配置了禁止拖拽列宽的配置项disableColumnResize
         const cellDefine = this.internalProps.layoutMap.getBody(col, this.columnHeaderLevelCount);
-        if (cellDefine?.disableColumnResize) {
+        if ((cellDefine as IndicatorData)?.disableColumnResize) {
           return false;
         }
       }
@@ -423,7 +424,11 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
     table.colCount = layoutMap.colCount ?? 0;
     table.rowCount = layoutMap.rowCount ?? 0;
     // table.frozenColCount = layoutMap.rowHeaderLevelCount; //这里不要这样写 这个setter会检查扁头宽度 可能将frozenColCount置为0
-    table.internalProps.frozenColCount = layoutMap.rowHeaderLevelCount ?? 0;
+    // table.internalProps.frozenColCount = layoutMap.rowHeaderLevelCount ?? 0;
+    this.internalProps.frozenColCount = Math.max(
+      (layoutMap.rowHeaderLevelCount ?? 0) + layoutMap.leftRowSeriesNumberColumnCount,
+      this.options.frozenColCount ?? 0
+    );
     table.frozenRowCount = layoutMap.headerLevelCount;
 
     if (table.bottomFrozenRowCount !== (this.options.bottomFrozenRowCount ?? 0)) {
@@ -524,7 +529,7 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
       const treeNode = this.flatDataToObjects.getTreeNode(
         rowKeys,
         colKeys,
-        this.internalProps.layoutMap.getBody(col, row).indicatorKey,
+        (this.internalProps.layoutMap.getBody(col, row) as IndicatorData).indicatorKey,
         false
       );
       if (treeNode?.record) {
@@ -540,7 +545,14 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
     if (customMergeText) {
       return customMergeText;
     }
-    if (this.internalProps.layoutMap.isHeader(col, row)) {
+    if (this.internalProps.layoutMap.isSeriesNumber(col, row)) {
+      if (this.internalProps.layoutMap.isSeriesNumberInHeader(col, row)) {
+        const { title } = this.internalProps.layoutMap.getSeriesNumberHeader(col, row);
+        return title;
+      }
+      const { format } = this.internalProps.layoutMap.getSeriesNumberBody(col, row);
+      return typeof format === 'function' ? format(col, row, this) : row - this.columnHeaderLevelCount + 1;
+    } else if (this.internalProps.layoutMap.isHeader(col, row)) {
       const { title, fieldFormat } = this.internalProps.layoutMap.getHeader(col, row);
       return typeof fieldFormat === 'function' ? fieldFormat(title, col, row, this as BaseTableAPI) : title;
     }
@@ -570,14 +582,14 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
       const valueNode = this.flatDataToObjects.getTreeNode(
         rowKeys,
         colKeys,
-        this.internalProps.layoutMap.getBody(col, row).indicatorKey
+        (this.internalProps.layoutMap.getBody(col, row) as IndicatorData).indicatorKey
       );
-      const { fieldFormat } = this.internalProps.layoutMap.getBody(col, row);
+      const { fieldFormat } = this.internalProps.layoutMap.getBody(col, row) as IndicatorData;
       return typeof fieldFormat === 'function'
         ? fieldFormat(valueNode?.value, col, row, this as BaseTableAPI)
         : valueNode?.value ?? '';
     }
-    const { fieldFormat } = this.internalProps.layoutMap.getBody(col, row);
+    const { fieldFormat } = this.internalProps.layoutMap.getBody(col, row) as IndicatorData;
     const rowIndex = this.getBodyIndexByRow(row);
     const colIndex = this.getBodyIndexByCol(col);
     const dataValue = this.records[rowIndex]?.[colIndex];
@@ -623,7 +635,7 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
       const treeNode = this.flatDataToObjects.getTreeNode(
         rowKeys,
         colKeys,
-        this.internalProps.layoutMap.getBody(col, row).indicatorKey
+        (this.internalProps.layoutMap.getBody(col, row) as IndicatorData).indicatorKey
       );
       return treeNode?.value;
     }
@@ -669,7 +681,7 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
       const treeNode = this.flatDataToObjects.getTreeNode(
         rowKeys,
         colKeys,
-        this.internalProps.layoutMap.getBody(col, row).indicatorKey,
+        (this.internalProps.layoutMap.getBody(col, row) as IndicatorData).indicatorKey,
         false
       );
       return treeNode?.value;
@@ -714,7 +726,7 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
       const treeNode = this.flatDataToObjects.getTreeNode(
         rowKeys,
         colKeys,
-        this.internalProps.layoutMap.getBody(col, row).indicatorKey,
+        (this.internalProps.layoutMap.getBody(col, row) as IndicatorData).indicatorKey,
         false
       );
       return treeNode?.record;
@@ -1275,7 +1287,7 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
       this.flatDataToObjects.changeTreeNodeValue(
         rowKeys,
         colKeys,
-        this.internalProps.layoutMap.getBody(col, row).indicatorKey,
+        (this.internalProps.layoutMap.getBody(col, row) as IndicatorData).indicatorKey,
         newValue
       );
     } else {

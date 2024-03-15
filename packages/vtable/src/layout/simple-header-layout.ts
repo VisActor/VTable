@@ -88,9 +88,11 @@ export class SimpleHeaderLayoutMap implements LayoutMapAPI {
             define: seriesNumber,
             cellType: seriesNumber.cellType ?? 'text',
             style: seriesNumber.style,
+            width: seriesNumber.width,
             format: seriesNumber.format,
             field: seriesNumber.field,
-            icon: seriesNumber.icon
+            icon: seriesNumber.icon,
+            isChildNode: false
           };
         });
         this.leftRowSeriesNumberColumn = this.rowSeriesNumberColumn.filter(rowSeriesNumberItem => {
@@ -1161,8 +1163,8 @@ export class SimpleHeaderLayoutMap implements LayoutMapAPI {
     ) {
       // 如果是子节点之间相互换位置  则匹配表头最后一级
       if (
-        this.getColumnDefine(source.col + this.leftRowSeriesNumberColumnCount, source.row).isChildNode &&
-        this.getColumnDefine(target.col + this.leftRowSeriesNumberColumnCount, target.row).isChildNode
+        this._getColumnDefine(source.col + this.leftRowSeriesNumberColumnCount, source.row).isChildNode &&
+        this._getColumnDefine(target.col + this.leftRowSeriesNumberColumnCount, target.row).isChildNode
       ) {
         source.col = source.col + this.leftRowSeriesNumberColumnCount + this.rowHeaderLevelCount - 1;
         target.col = target.col + this.leftRowSeriesNumberColumnCount + this.rowHeaderLevelCount - 1;
@@ -1270,7 +1272,7 @@ export class SimpleHeaderLayoutMap implements LayoutMapAPI {
         (this.isSeriesNumberInBody(source.col, source.row) && this.transpose)
       ) {
         if (this.isSeriesNumberInBody(source.col, source.row)) {
-          sourceCellRange = this.getCellRange(source.col + this.leftRowSeriesNumberColumnCount, source.row);
+          sourceCellRange = this.getCellRange(source.col + this.leftRowSeriesNumberColumnCount, source.row); // 把拖拽转移到拖拽表头节点
         }
         // source单元格包含的列数
         const sourceSize = sourceCellRange.end.row - sourceCellRange.start.row + 1;
@@ -1432,7 +1434,7 @@ export class SimpleHeaderLayoutMap implements LayoutMapAPI {
     }, []);
     return result;
   }
-  getColumnDefine(col: number, row: number) {
+  _getColumnDefine(col: number, row: number) {
     if (col >= 0) {
       if (col < this.leftRowSeriesNumberColumnCount) {
         return this.leftRowSeriesNumberColumn[col];
