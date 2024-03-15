@@ -11,6 +11,7 @@
   "dependencies": {
     "@arco-design/web-react": "2.46.1",
     "@visactor/vtable": "workspace:*",
+    "@visactor/react-vtable": "workspace:*",
     "@visactor/vtable-editors": "workspace:*",
     "@visactor/vtable-export": "workspace:*",
     "@visactor/vtable-search": "workspace:*",

@@ -20,6 +20,7 @@ export default {
       '@visactor/vtable-editors': path.resolve('../packages/vtable-editors/src/index.ts'),
       '@visactor/vtable-export': path.resolve('../packages/vtable-export/src/index.ts'),
       '@visactor/vtable-search': path.resolve('../packages/vtable-search/src/index.ts'),
+      '@visactor/react-vtable': path.resolve('../packages/react-vtable/src/index.ts'),
       '@src': path.resolve(__dirname, '../packages/vtable/src/')
     }
   },

@@ -15,6 +15,7 @@ importers:
       '@types/markdown-it': ^13.0.0
       '@types/react': ^18.0.0
       '@types/react-dom': ^18.0.0
+      '@visactor/react-vtable': workspace:*
       '@visactor/vchart': 1.9.6
       '@visactor/vtable': workspace:*
       '@visactor/vtable-editors': workspace:*
@@ -40,6 +41,7 @@ importers:
       yargs: ^17.1.1
     dependencies:
       '@arco-design/web-react': 2.46.1_astwcq3eovj2b3imvk5ncn4g7e
+      '@visactor/react-vtable': link:../packages/react-vtable
       '@visactor/vchart': 1.9.6
       '@visactor/vtable': link:../packages/vtable
       '@visactor/vtable-editors': link:../packages/vtable-editors

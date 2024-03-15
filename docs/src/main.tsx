@@ -10,6 +10,7 @@ import {
   exportVTableToExcel,
 } from "@visactor/vtable-export";
 import { SearchComponent } from '@visactor/vtable-search';
+import * as ReactVTable from '@visactor/react-vtable';
 import { App } from './app';
 
 import '@arco-design/web-react/dist/css/arco.css';
@@ -27,6 +28,7 @@ import '@arco-design/web-react/dist/css/arco.css';
 (window as any).CONTAINER_ID = 'chart';
 (window as any).React = React;
 (window as any).ReactDom = ReactDOM;
+(window as any).ReactVTable = ReactVTable;
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   // <React.StrictMode>
