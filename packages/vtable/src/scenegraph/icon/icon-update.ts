@@ -394,6 +394,7 @@ export function updateCellRangeIcon(
 ) {
   const cellGroup = scene.getCell(col, row);
   if (
+    cellGroup.role === 'cell' &&
     isValid(cellGroup.mergeStartCol) &&
     isValid(cellGroup.mergeStartRow) &&
     isValid(cellGroup.mergeEndCol) &&
