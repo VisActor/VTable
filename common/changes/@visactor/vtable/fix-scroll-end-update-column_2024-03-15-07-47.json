@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vtable",
+      "comment": "fix: fix typeError in getCellMergeRange()",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vtable"
+}
