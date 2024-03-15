@@ -78,7 +78,7 @@ export class SimpleHeaderLayoutMap implements LayoutMapAPI {
     // }, {} as { [key in string]: HeaderData });
     this.handleRowSeriesNumber(table.internalProps.rowSeriesNumber);
   }
-  handleRowSeriesNumber(rowSeriesNumber: RowSeriesNumber[]) {
+  handleRowSeriesNumber(rowSeriesNumber: RowSeriesNumber) {
     if (rowSeriesNumber) {
       if (Array.isArray(rowSeriesNumber)) {
         this.rowSeriesNumberColumn = rowSeriesNumber.map(seriesNumber => {
@@ -95,22 +95,36 @@ export class SimpleHeaderLayoutMap implements LayoutMapAPI {
             isChildNode: false
           };
         });
-        this.leftRowSeriesNumberColumn = this.rowSeriesNumberColumn.filter(rowSeriesNumberItem => {
-          if (rowSeriesNumberItem.define.align === 'left' || !isValid(rowSeriesNumberItem.define.align)) {
-            return true;
-          }
-          return false;
-        });
-        this.rightRowSeriesNumberColumn = this.rowSeriesNumberColumn.filter(rowSeriesNumberItem => {
-          if (rowSeriesNumberItem.define.align === 'right') {
-            return true;
-          }
-          return false;
-        });
-        this.leftRowSeriesNumberColumnCount = this.leftRowSeriesNumberColumn.length;
-        this.rightRowSeriesNumberColumnCount = this.rightRowSeriesNumberColumn.length;
       } else {
+        this.rowSeriesNumberColumn = [
+          {
+            id: this.seqId++,
+            title: rowSeriesNumber.title,
+            define: rowSeriesNumber,
+            cellType: rowSeriesNumber.cellType ?? 'text',
+            style: rowSeriesNumber.style,
+            width: rowSeriesNumber.width,
+            format: rowSeriesNumber.format,
+            field: rowSeriesNumber.field,
+            icon: rowSeriesNumber.icon,
+            isChildNode: false
+          }
+        ];
       }
+      this.leftRowSeriesNumberColumn = this.rowSeriesNumberColumn.filter(rowSeriesNumberItem => {
+        if (rowSeriesNumberItem.define.align === 'left' || !isValid(rowSeriesNumberItem.define.align)) {
+          return true;
+        }
+        return false;
+      });
+      this.rightRowSeriesNumberColumn = this.rowSeriesNumberColumn.filter(rowSeriesNumberItem => {
+        if (rowSeriesNumberItem.define.align === 'right') {
+          return true;
+        }
+        return false;
+      });
+      this.leftRowSeriesNumberColumnCount = this.leftRowSeriesNumberColumn.length;
+      this.rightRowSeriesNumberColumnCount = this.rightRowSeriesNumberColumn.length;
     }
   }
   // get columnWidths(): ColumnData[] {

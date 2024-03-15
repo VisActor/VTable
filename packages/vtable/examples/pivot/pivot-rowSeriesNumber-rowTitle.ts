@@ -442,20 +442,18 @@ export function createTable() {
         heightMode: 'autoHeight',
         autoWrapText: true,
         dragHeaderMode: 'all',
-        rowSeriesNumber: [
-          {
-            enable: true,
-            title: '行号',
-            field: 'name',
-            dragOrder: true,
-            // format: (args: any) => {
-            //   return args.value;
-            // },
-            style: {
-              color: 'red'
-            }
+        rowSeriesNumber: {
+          enable: true,
+          title: '行号',
+          field: 'name',
+          dragOrder: true,
+          // format: (args: any) => {
+          //   return args.value;
+          // },
+          style: {
+            color: 'red'
           }
-        ]
+        }
       };
       const tableInstance = new VTable.PivotTable(option);
       // 只为了方便控制太调试用，不要拷贝

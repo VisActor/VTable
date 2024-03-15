@@ -198,20 +198,18 @@ export function createTable() {
     //   perPageCount: 20,
     //   currentPage: 1
     // },
-    rowSeriesNumber: [
-      {
-        enable: true,
-        title: '行号',
-        field: 'name',
-        dragOrder: true,
-        // format: (args: any) => {
-        //   return args.value;
-        // },
-        style: {
-          color: 'red'
-        }
+    rowSeriesNumber: {
+      enable: true,
+      title: '行号',
+      field: 'name',
+      dragOrder: true,
+      // format: (args: any) => {
+      //   return args.value;
+      // },
+      style: {
+        color: 'red'
       }
-    ]
+    }
   };
   const tableInstance = new VTable.ListTable(option);
   tableInstance.on('initialized', args => {

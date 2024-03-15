@@ -197,20 +197,18 @@ export function createTable() {
     },
     theme: VTable.themes.BRIGHT,
     defaultRowHeight: 32,
-    rowSeriesNumber: [
-      {
-        enable: true,
-        title: '行号',
-        field: 'name',
-        dragOrder: true,
-        // format: (args: any) => {
-        //   return args.value;
-        // },
-        style: {
-          color: 'red'
-        }
+    rowSeriesNumber: {
+      enable: true,
+      title: '行号',
+      field: 'name',
+      dragOrder: true,
+      // format: (args: any) => {
+      //   return args.value;
+      // },
+      style: {
+        color: 'red'
       }
-    ]
+    }
   };
 
   const instance = new ListTable(option);

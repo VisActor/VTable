@@ -113,7 +113,7 @@ export interface IBaseTableProtected {
   // underlayBackgroundColor?: string;
   keyboardOptions?: TableKeyboardOptions;
   eventOptions?: TableEventOptions;
-  rowSeriesNumber?: RowSeriesNumber[];
+  rowSeriesNumber?: RowSeriesNumber;
   columnSeriesNumber?: ColumnSeriesNumber[];
   // disableRowHeaderColumnResize?: boolean;
   // 列宽调整模式（全列调整；全列不可调整；仅表头单元格可调整；仅内容单元格可调整）
@@ -398,7 +398,7 @@ export interface BaseTableConstructorOptions {
   // resize response time
   resizeTime?: number;
 
-  rowSeriesNumber?: RowSeriesNumber[];
+  rowSeriesNumber?: RowSeriesNumber;
   // columnSeriesNumber?: ColumnSeriesNumber[];
   customCellStyle?: CustomCellStyle[];
   customCellStyleArrangement?: CustomCellStyleArrangement[];
