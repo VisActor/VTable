@@ -741,6 +741,8 @@ export interface BaseTableAPI {
     moveType: 'column' | 'row';
   };
   changeRecordOrder: (source: number, target: number) => void;
+  isSeriesNumber: (col: number, row?: number) => boolean;
+  isHasSeriesNumber: () => boolean;
 }
 export interface ListTableProtected extends IBaseTableProtected {
   /** 表格数据 */

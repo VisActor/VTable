@@ -3892,4 +3892,10 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
   arrangeCustomCellStyle(cellPos: { col?: number; row?: number; range?: CellRange }, customStyleId: string) {
     this.customCellStylePlugin.arrangeCustomCellStyle(cellPos, customStyleId);
   }
+  isSeriesNumber(col: number, row: number): boolean {
+    return this.internalProps.layoutMap.isSeriesNumber(col, row);
+  }
+  isHasSeriesNumber(): boolean {
+    return this.internalProps.layoutMap?.leftRowSeriesNumberColumnCount > 0;
+  }
 }
