@@ -168,7 +168,8 @@ export class DataSource extends EventTarget implements DataSourceAPI {
   static get EVENT_TYPE(): typeof EVENT_TYPE {
     return EVENT_TYPE;
   }
-  treeDataHierarchyState: Map<number | string, HierarchyState> = new Map();
+  hasHierarchyStateExpand: boolean = false;
+  // treeDataHierarchyState: Map<number | string, HierarchyState> = new Map();
   beforeChangedRecordsMap: Record<number, any>[] = [];
 
   // 注册聚合类型
@@ -214,11 +215,14 @@ export class DataSource extends EventTarget implements DataSourceAPI {
   }
   initTreeHierarchyState() {
     if (this.hierarchyExpandLevel) {
-      this.treeDataHierarchyState = new Map();
-      for (let i = 0; i < this._sourceLength; i++) {
-        //expandLevel为有效值即需要按tree分析展示数据
-        const nodeData = this.getOriginalRecord(i);
-        (nodeData as any).children && this.treeDataHierarchyState.set(i, HierarchyState.collapse);
+      // this.treeDataHierarchyState = new Map();
+      if (this.hierarchyExpandLevel <= 1) {
+        for (let i = 0; i < this._sourceLength; i++) {
+          //expandLevel为有效值即需要按tree分析展示数据
+          const nodeData = this.getOriginalRecord(i);
+          (nodeData as any).children && !nodeData.hierarchyState && (nodeData.hierarchyState = HierarchyState.collapse);
+          // (nodeData as any).children && this.treeDataHierarchyState.set(i, HierarchyState.collapse);
+        }
       }
 
       this.currentIndexedData = Array.from({ length: this._sourceLength }, (_, i) => i);
@@ -228,18 +232,23 @@ export class DataSource extends EventTarget implements DataSourceAPI {
           const indexKey = this.currentIndexedData[i];
           const nodeData = this.getOriginalRecord(indexKey);
           if ((nodeData as any).children?.length > 0) {
-            this.treeDataHierarchyState.set(
-              Array.isArray(indexKey) ? indexKey.join(',') : indexKey,
-              HierarchyState.expand
-            );
+            // this.treeDataHierarchyState.set(
+            //   Array.isArray(indexKey) ? indexKey.join(',') : indexKey,
+            //   HierarchyState.expand
+            // );
+            !nodeData.hierarchyState && (nodeData.hierarchyState = HierarchyState.expand);
+            this.hasHierarchyStateExpand = true;
             const childrenLength = this.initChildrenNodeHierarchy(indexKey, this.hierarchyExpandLevel, 2, nodeData);
             i += childrenLength;
             nodeLength += childrenLength;
+          } else if ((nodeData as any).children === true) {
+            !nodeData.hierarchyState && (nodeData.hierarchyState = HierarchyState.collapse);
           }
         }
       }
     }
   }
+
   //将聚合类型注册 收集到aggregators
   registerAggregator(type: string, aggregator: any) {
     this.registedAggregators[type] = aggregator;
@@ -336,32 +345,39 @@ export class DataSource extends EventTarget implements DataSourceAPI {
     currentLevel: number,
     nodeData: any
   ): number {
-    if (currentLevel > hierarchyExpandLevel) {
-      return 0;
-    }
+    // if (currentLevel > hierarchyExpandLevel) {
+    //   return 0;
+    // }
     let childTotalLength = 0;
     const nodeLength = nodeData.children?.length ?? 0;
     for (let j = 0; j < nodeLength; j++) {
-      childTotalLength += 1;
+      if (currentLevel <= hierarchyExpandLevel || nodeData.hierarchyState === HierarchyState.expand) {
+        childTotalLength += 1;
+      }
       const childNodeData = nodeData.children[j];
       const childIndexKey = Array.isArray(indexKey) ? indexKey.concat(j) : [indexKey, j];
-      this.currentIndexedData.splice(
-        this.currentIndexedData.indexOf(indexKey) + childTotalLength,
-        // childTotalLength,
-        0,
-        childIndexKey
-      );
+      if (currentLevel <= hierarchyExpandLevel || nodeData.hierarchyState === HierarchyState.expand) {
+        this.currentIndexedData.splice(
+          this.currentIndexedData.indexOf(indexKey) + childTotalLength,
+          // childTotalLength,
+          0,
+          childIndexKey
+        );
+      }
       if (childNodeData.children?.length > 0) {
         if (currentLevel < hierarchyExpandLevel) {
-          this.treeDataHierarchyState.set(
-            Array.isArray(childIndexKey) ? childIndexKey.join(',') : childIndexKey,
-            HierarchyState.expand
-          );
+          // this.treeDataHierarchyState.set(
+          //   Array.isArray(childIndexKey) ? childIndexKey.join(',') : childIndexKey,
+          //   HierarchyState.expand
+          // );
+          !childNodeData.hierarchyState && (childNodeData.hierarchyState = HierarchyState.expand);
+          this.hasHierarchyStateExpand = true;
         } else {
-          this.treeDataHierarchyState.set(
-            Array.isArray(childIndexKey) ? childIndexKey.join(',') : childIndexKey,
-            HierarchyState.collapse
-          );
+          // this.treeDataHierarchyState.set(
+          //   Array.isArray(childIndexKey) ? childIndexKey.join(',') : childIndexKey,
+          //   HierarchyState.collapse
+          // );
+          !childNodeData.hierarchyState && (childNodeData.hierarchyState = HierarchyState.collapse);
         }
       }
 
@@ -458,8 +474,10 @@ export class DataSource extends EventTarget implements DataSourceAPI {
    * @returns
    */
   getHierarchyState(index: number): HierarchyState {
-    const indexed = this.getIndexKey(index);
-    return this.treeDataHierarchyState.get(Array.isArray(indexed) ? indexed.join(',') : indexed) ?? null;
+    // const indexed = this.getIndexKey(index);
+    const record = this.getOriginalRecord(this.currentIndexedData[index]);
+    return record?.hierarchyState ?? null;
+    // return this.treeDataHierarchyState.get(Array.isArray(indexed) ? indexed.join(',') : indexed) ?? null;
   }
   /**
    * 展开或者收起数据index
@@ -474,8 +492,10 @@ export class DataSource extends EventTarget implements DataSourceAPI {
     this.clearSortedIndexMap();
     if (state === HierarchyState.collapse) {
       // 将节点状态置为expand
-      this.treeDataHierarchyState.set(Array.isArray(indexed) ? indexed.join(',') : indexed, HierarchyState.expand);
+      // this.treeDataHierarchyState.set(Array.isArray(indexed) ? indexed.join(',') : indexed, HierarchyState.expand);
+      data.hierarchyState = HierarchyState.expand;
       this.pushChildrenNode(indexed, HierarchyState.expand, data);
+      this.hasHierarchyStateExpand = true;
     } else if (state === HierarchyState.expand) {
       // 记录状态变化影响的子节点行数
       let childrenLength = 0;
@@ -501,7 +521,8 @@ export class DataSource extends EventTarget implements DataSourceAPI {
 
             computeChildrenNodeLength(
               childIndex,
-              this.treeDataHierarchyState.get(childIndex.join(',')),
+              // this.treeDataHierarchyState.get(childIndex.join(',')),
+              nodeData.children[i].hierarchyState,
               nodeData.children[i]
             );
           }
@@ -510,7 +531,8 @@ export class DataSource extends EventTarget implements DataSourceAPI {
       computeChildrenNodeLength(indexed, state, data);
 
       this.currentIndexedData.splice(this.currentIndexedData.indexOf(indexed) + 1, childrenLength);
-      this.treeDataHierarchyState.set(Array.isArray(indexed) ? indexed.join(',') : indexed, HierarchyState.collapse);
+      // this.treeDataHierarchyState.set(Array.isArray(indexed) ? indexed.join(',') : indexed, HierarchyState.collapse);
+      data.hierarchyState = HierarchyState.collapse;
     }
     // 变更了pagerConfig所以需要更新分页数据  TODO待定 因为只关注根节点的数量的话 可能不会影响到
     this.updatePagerData();
@@ -569,14 +591,17 @@ export class DataSource extends EventTarget implements DataSourceAPI {
           0,
           childIndex
         );
-        const preChildState = this.treeDataHierarchyState.get(childIndex.join(','));
+
+        // const preChildState = this.treeDataHierarchyState.get(childIndex.join(','));
         const childData = this.getOriginalRecord(childIndex);
-        if (!preChildState && (childData as any).children) {
-          this.treeDataHierarchyState.set(childIndex.join(','), HierarchyState.collapse);
+        if (!nodeData.children[i].hierarchyState && (childData as any).children) {
+          // this.treeDataHierarchyState.set(childIndex.join(','), HierarchyState.collapse);
+          nodeData.children[i].hierarchyState = HierarchyState.collapse;
         }
         childrenLength += this.pushChildrenNode(
           childIndex,
-          this.treeDataHierarchyState.get(childIndex.join(',')),
+          // this.treeDataHierarchyState.get(childIndex.join(',')),
+          nodeData.children[i].hierarchyState,
           nodeData.children[subNodeSortedIndexArray[i]]
         );
       }
@@ -845,13 +870,16 @@ export class DataSource extends EventTarget implements DataSourceAPI {
       );
     }
     this.currentIndexedData = sortedIndexArray;
+
     if (this.hierarchyExpandLevel) {
       let nodeLength = sortedIndexArray.length;
       const t0 = window.performance.now();
       for (let i = 0; i < nodeLength; i++) {
+        const record = this.getOriginalRecord(sortedIndexArray[i]);
         const subNodeLength = this.pushChildrenNode(
           sortedIndexArray[i],
-          this.treeDataHierarchyState.get(sortedIndexArray[i]),
+          // this.treeDataHierarchyState.get(sortedIndexArray[i]),
+          record.hierarchyState,
           this.getOriginalRecord(sortedIndexArray[i]) // ？sortedIndexArray 在这个过程中不是变化了吗 通过i取id还是对的吗？ 对哦！因为i和nodeLength都+subNodeLength 来动态调整过了！
         );
         nodeLength += subNodeLength;
@@ -1047,19 +1075,178 @@ export class DataSource extends EventTarget implements DataSourceAPI {
     },
     length: 0
   });
+  isCanExchangeOrder(sourceIndex: number, targetIndex: number) {
+    // if (this.treeDataHierarchyState?.size > 0) {
+    if (this.hasHierarchyStateExpand) {
+      let sourceIndexs = this.currentPagerIndexedData[sourceIndex] as number[];
+      let targetIndexs = this.currentPagerIndexedData[targetIndex] as number[];
+      if (Array.isArray(sourceIndexs)) {
+        sourceIndexs = [...sourceIndexs];
+      } else {
+        sourceIndexs = [sourceIndexs];
+      }
 
+      if (Array.isArray(targetIndexs)) {
+        targetIndexs = [...targetIndexs];
+      } else {
+        targetIndexs = [targetIndexs];
+      }
+
+      if (targetIndex > sourceIndex) {
+        if (targetIndexs.length > sourceIndexs.length) {
+          let targetNextIndexs = this.currentPagerIndexedData[targetIndex + 1] as number[];
+          if (Array.isArray(targetNextIndexs)) {
+            targetNextIndexs = [...targetNextIndexs];
+          } else {
+            targetNextIndexs = [targetNextIndexs];
+          }
+
+          if (targetNextIndexs.length < targetIndexs.length) {
+            targetIndexs.splice(targetIndexs.length - 1, 1);
+          }
+        }
+      }
+      if (sourceIndexs.length === targetIndexs.length) {
+        for (let i = 0; i <= sourceIndexs.length - 2; i++) {
+          if (sourceIndexs[i] !== targetIndexs[i]) {
+            return false;
+          }
+        }
+        return true;
+      }
+
+      return false;
+    }
+    return true;
+  }
   reorderRecord(sourceIndex: number, targetIndex: number) {
     if (this.lastOrder === 'asc' || this.lastOrder === 'desc') {
-      const sourceIds = this._currentPagerIndexedData.splice(sourceIndex, 1);
-      sourceIds.unshift(targetIndex, 0);
-      Array.prototype.splice.apply(this._currentPagerIndexedData, sourceIds);
-    } else {
-      // 从source的二维数组中取出需要操作的records
-      const records = this.source.splice(sourceIndex, 1);
-      // 将records插入到目标地址targetIndex处
-      // 把records变成一个适合splice的数组（包含splice前2个参数的数组） 以通过splice来插入到source数组
-      records.unshift(targetIndex, 0);
-      Array.prototype.splice.apply(this.source, records);
+      // const sourceIds = this._currentPagerIndexedData.splice(sourceIndex, 1);
+      // sourceIds.unshift(targetIndex, 0);
+      // Array.prototype.splice.apply(this._currentPagerIndexedData, sourceIds);
+      return;
+    } else if (this.isCanExchangeOrder(sourceIndex, targetIndex)) {
+      // if (this.treeDataHierarchyState?.size > 0) {
+      if (this.hasHierarchyStateExpand) {
+        let sourceIndexs = this.currentPagerIndexedData[sourceIndex];
+        let targetIndexs = this.currentPagerIndexedData[targetIndex];
+        if (Array.isArray(sourceIndexs)) {
+          sourceIndexs = [...sourceIndexs];
+        } else {
+          sourceIndexs = [sourceIndexs];
+        }
+
+        if (Array.isArray(targetIndexs)) {
+          targetIndexs = [...targetIndexs];
+        } else {
+          targetIndexs = [targetIndexs];
+        }
+
+        let sourceI;
+        let targetI;
+        if (sourceIndexs.length > 1 || targetIndexs.length > 1) {
+          if (targetIndex > sourceIndex) {
+            if (targetIndexs.length > sourceIndexs.length) {
+              let targetNextIndexs = this.currentPagerIndexedData[targetIndex + 1] as number[];
+              if (Array.isArray(targetNextIndexs)) {
+                targetNextIndexs = [...targetNextIndexs];
+              } else {
+                targetNextIndexs = [targetNextIndexs];
+              }
+
+              if (targetNextIndexs.length < targetIndexs.length) {
+                targetIndexs.splice(targetIndexs.length - 1, 1);
+              }
+            }
+          }
+          sourceI = (<number[]>sourceIndexs).splice(sourceIndexs.length - 1, 1)[0];
+          targetI = (<number[]>targetIndexs).splice(targetIndexs.length - 1, 1)[0];
+          if (sourceIndexs.length >= 1) {
+            const parent = this.getOriginalRecord(sourceIndexs);
+            const sourceIds = parent.children.splice(sourceI, 1);
+            sourceIds.unshift(targetI, 0);
+            Array.prototype.splice.apply(parent.children, sourceIds);
+          } else {
+            const sourceIds = this.source.splice(sourceI, 1);
+            // 将records插入到目标地址targetIndex处
+            // 把records变成一个适合splice的数组（包含splice前2个参数的数组） 以通过splice来插入到source数组
+            sourceIds.unshift(targetI, 0);
+            Array.prototype.splice.apply(this.source, sourceIds);
+          }
+        } else {
+          sourceI = this.currentPagerIndexedData[sourceIndex];
+          targetI = this.currentPagerIndexedData[targetIndex];
+          // 从source的二维数组中取出需要操作的records
+          const records = this.source.splice(sourceI, 1);
+          // 将records插入到目标地址targetIndex处
+          // 把records变成一个适合splice的数组（包含splice前2个参数的数组） 以通过splice来插入到source数组
+          records.unshift(targetI, 0);
+          Array.prototype.splice.apply(this.source, records);
+        }
+        this.restoreTreeHierarchyState();
+        this.updatePagerData();
+      } else {
+        // 从source的二维数组中取出需要操作的records
+        const records = this.source.splice(sourceIndex, 1);
+        // 将records插入到目标地址targetIndex处
+        // 把records变成一个适合splice的数组（包含splice前2个参数的数组） 以通过splice来插入到source数组
+        records.unshift(targetIndex, 0);
+        Array.prototype.splice.apply(this.source, records);
+      }
     }
+  }
+
+  restoreTreeHierarchyState() {
+    if (this.hierarchyExpandLevel) {
+      for (let i = 0; i < this._sourceLength; i++) {
+        //expandLevel为有效值即需要按tree分析展示数据
+        const nodeData = this.getOriginalRecord(i);
+        (nodeData as any).children && !nodeData.hierarchyState && (nodeData.hierarchyState = HierarchyState.collapse);
+      }
+
+      this.currentIndexedData = Array.from({ length: this._sourceLength }, (_, i) => i);
+      let nodeLength = this._sourceLength;
+      for (let i = 0; i < nodeLength; i++) {
+        const indexKey = this.currentIndexedData[i];
+        const nodeData = this.getOriginalRecord(indexKey);
+        if ((nodeData as any).children?.length > 0 && nodeData.hierarchyState === HierarchyState.expand) {
+          this.hasHierarchyStateExpand = true;
+          const childrenLength = this.restoreChildrenNodeHierarchy(indexKey, nodeData);
+          i += childrenLength;
+          nodeLength += childrenLength;
+        } else if ((nodeData as any).children === true) {
+          !nodeData.hierarchyState && (nodeData.hierarchyState = HierarchyState.collapse);
+        }
+      }
+    }
+  }
+  restoreChildrenNodeHierarchy(
+    indexKey: number | number[],
+
+    nodeData: any
+  ): number {
+    let childTotalLength = 0;
+    const nodeLength = nodeData.children?.length ?? 0;
+    for (let j = 0; j < nodeLength; j++) {
+      if (nodeData.hierarchyState === HierarchyState.expand) {
+        childTotalLength += 1;
+      }
+      const childNodeData = nodeData.children[j];
+      const childIndexKey = Array.isArray(indexKey) ? indexKey.concat(j) : [indexKey, j];
+      if (nodeData.hierarchyState === HierarchyState.expand) {
+        this.currentIndexedData.splice(
+          this.currentIndexedData.indexOf(indexKey) + childTotalLength,
+          // childTotalLength,
+          0,
+          childIndexKey
+        );
+      }
+      childTotalLength += this.restoreChildrenNodeHierarchy(
+        childIndexKey,
+
+        childNodeData
+      );
+    }
+    return childTotalLength;
   }
 }

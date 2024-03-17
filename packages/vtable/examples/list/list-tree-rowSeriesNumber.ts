@@ -101,6 +101,13 @@ export function createTable() {
       ]
     },
     {
+      类别: '生活家电（懒加载）',
+      销售额: '229.696',
+      数量: '20',
+      利润: '90.704',
+      children: true
+    },
+    {
       类别: '家具',
       销售额: '129.696',
       数量: '2',
@@ -147,13 +154,6 @@ export function createTable() {
           ]
         }
       ]
-    },
-    {
-      类别: '生活家电（懒加载）',
-      销售额: '229.696',
-      数量: '20',
-      利润: '90.704',
-      children: true
     }
   ];
   const option: VTable.ListTableConstructorOptions = {
@@ -191,10 +191,10 @@ export function createTable() {
     hierarchyIndent: 20,
     hierarchyExpandLevel: 2,
 
-    sortState: {
-      field: '销售额',
-      order: 'asc'
-    },
+    // sortState: {
+    //   field: '销售额',
+    //   order: 'asc'
+    // },
     theme: VTable.themes.BRIGHT,
     defaultRowHeight: 32,
     rowSeriesNumber: {
