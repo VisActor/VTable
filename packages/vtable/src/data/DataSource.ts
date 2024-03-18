@@ -604,10 +604,20 @@ export class DataSource extends EventTarget implements DataSourceAPI {
       if (typeof field === 'string' || typeof field === 'number') {
         const beforeChangedValue = this.beforeChangedRecordsMap[dataIndex][field]; // this.getOriginalField(index, field, col, row, table);
         const record = this.getOriginalRecord(dataIndex);
+        let formatValue = value;
         if (typeof beforeChangedValue === 'number' && isAllDigits(value)) {
-          record[field] = parseFloat(value);
+          formatValue = parseFloat(value);
+        }
+        if (isPromise(record)) {
+          record
+            .then(record => {
+              record[field] = formatValue;
+            })
+            .catch((err: Error) => {
+              console.error(err);
+            });
         } else {
-          record[field] = value;
+          record[field] = formatValue;
         }
       }
     }
