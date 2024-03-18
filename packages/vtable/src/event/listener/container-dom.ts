@@ -227,6 +227,8 @@ export function bindContainerDomListener(eventManager: EventManager) {
         const ranges = table.stateManager.select.ranges;
         const col = Math.min(ranges[0].start.col, ranges[0].end.col);
         const row = Math.min(ranges[0].start.row, ranges[0].end.row);
+        const values: (string | number)[][] = [];
+
         // 读取剪切板数据
         navigator.clipboard.read().then(clipboardItems => {
           for (const item of clipboardItems) {
@@ -234,7 +236,6 @@ export function bindContainerDomListener(eventManager: EventManager) {
             if (item.types.includes('text/html')) {
               item.getType('text/html').then(blob => {
                 blob.text().then(pastedData => {
-                  const values: (string | number)[][] = [];
                   // 解析html数据
                   if (pastedData && /(<table)|(<TABLE)/g.test(pastedData)) {
                     const regex = /<tr[^>]*>(.*?)<\/tr>/gs; // 匹配<tr>标签及其内容
@@ -262,22 +263,33 @@ export function bindContainerDomListener(eventManager: EventManager) {
                       });
                       values.push(rowValues);
                     }
+                    (table as ListTableAPI).changeCellValues(col, row, values, true);
                   } else {
-                    const rows = pastedData.split('\n'); // 将数据拆分为行
-                    rows.forEach(function (rowCells: any, rowIndex: number) {
-                      const cells = rowCells.split('\t'); // 将行数据拆分为单元格
-                      const rowValues: (string | number)[] = [];
-                      values.push(rowValues);
-                      cells.forEach(function (cell: string, cellIndex: number) {
-                        // 去掉单元格数据末尾的 '\r'
-                        if (cellIndex === cells.length - 1) {
-                          cell = cell.trim();
+                    navigator.clipboard.read().then(clipboardItems => {
+                      for (const item of clipboardItems) {
+                        if (item.types.includes('text/plain')) {
+                          item.getType('text/plain').then(blob => {
+                            blob.text().then(pastedData => {
+                              const rows = pastedData.split('\n'); // 将数据拆分为行
+                              rows.forEach(function (rowCells: any, rowIndex: number) {
+                                const cells = rowCells.split('\t'); // 将行数据拆分为单元格
+                                const rowValues: (string | number)[] = [];
+                                values.push(rowValues);
+                                cells.forEach(function (cell: string, cellIndex: number) {
+                                  // 去掉单元格数据末尾的 '\r'
+                                  if (cellIndex === cells.length - 1) {
+                                    cell = cell.trim();
+                                  }
+                                  rowValues.push(cell);
+                                });
+                              });
+                              (table as ListTableAPI).changeCellValues(col, row, values, true);
+                            });
+                          });
                         }
-                        rowValues.push(cell);
-                      });
+                      }
                     });
                   }
-                  (table as ListTableAPI).changeCellValues(col, row, values, true);
                 });
               });
             } else if (item.types.length === 1 && item.types[0] === 'text/plain') {
@@ -302,10 +314,9 @@ export function bindContainerDomListener(eventManager: EventManager) {
                       rowValues.push(cell);
                     });
                   });
-
-                  (table as ListTableAPI).changeCellValues(col, row, values, true);
                 });
               });
+              (table as ListTableAPI).changeCellValues(col, row, values, true);
             } else {
               // 其他情况
             }
@@ -314,6 +325,7 @@ export function bindContainerDomListener(eventManager: EventManager) {
       }
     }
   });
+
   handler.on(table.getElement(), 'contextmenu', (e: any) => {
     if (table.eventOptions?.preventDefaultContextMenu !== false) {
       e.preventDefault();

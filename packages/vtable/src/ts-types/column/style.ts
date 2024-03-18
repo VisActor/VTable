@@ -93,6 +93,7 @@ export interface IStyleOption {
   cursor?: CursorPropertyDefine;
 
   textStick?: boolean;
+  textStickBaseOnAlign?: boolean;
 
   marked?: MarkedPropertyDefine;
 }
