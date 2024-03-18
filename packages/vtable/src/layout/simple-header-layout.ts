@@ -70,13 +70,14 @@ export class SimpleHeaderLayoutMap implements LayoutMapAPI {
     this._columns = [];
     this._headerCellIds = [];
     this.hierarchyIndent = hierarchyIndent ?? 20;
-    this.rowHierarchyType = checkHasTreeDefine(this) ? 'tree' : 'grid';
+
     this.columnTree = new DimensionTree(columns as any, { seqId: 0 }); //seqId这里没有利用上 所有顺便传了0
     this._headerObjects = this._addHeaders(0, columns, []);
     this._headerObjectMap = this._headerObjects.reduce((o, e) => {
       o[e.id as number] = e;
       return o;
     }, {} as { [key in LayoutObjectId]: HeaderData });
+    this.rowHierarchyType = checkHasTreeDefine(this) ? 'tree' : 'grid';
     this._hasAggregation = checkHasAggregation(this);
     this._hasAggregationOnBottomCount = checkHasAggregationOnBottom(this);
     this._hasAggregationOnTopCount = checkHasAggregationOnTop(this);
