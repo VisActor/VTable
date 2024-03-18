@@ -31,6 +31,7 @@ export function createTable() {
           销售额: '125.44',
           数量: '2',
           利润: '42.56',
+          hierarchyState: 'expand',
           children: [
             {
               类别: '黄色信封',
@@ -73,6 +74,7 @@ export function createTable() {
       销售额: '229.696',
       数量: '20',
       利润: '90.704',
+      hierarchyState: 'collapse',
       children: [
         {
           类别: '设备', // 对应原子类别

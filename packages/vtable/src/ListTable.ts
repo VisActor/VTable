@@ -365,7 +365,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
     }
     return ifCan;
   }
-  updateOption(options: ListTableConstructorOptions & { restoreHierarchyState?: boolean }) {
+  updateOption(options: ListTableConstructorOptions) {
     const internalProps = this.internalProps;
     super.updateOption(options);
     internalProps.frozenColDragHeaderMode = options.frozenColDragHeaderMode;
@@ -403,7 +403,6 @@ export class ListTable extends BaseTable implements ListTableAPI {
       _setDataSource(this, options.dataSource);
     } else if (options.records) {
       this.setRecords(options.records as any, {
-        restoreHierarchyState: options.restoreHierarchyState,
         sortState: options.sortState
       });
     } else {
@@ -921,10 +920,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
    * @param records
    * @param sort
    */
-  setRecords(
-    records: Array<any>,
-    option?: { restoreHierarchyState?: boolean; sortState?: SortState | SortState[] }
-  ): void {
+  setRecords(records: Array<any>, option?: { sortState?: SortState | SortState[] }): void {
     let sort: SortState | SortState[];
     if (Array.isArray(option) || (option as any)?.order) {
       //兼容之前第二个参数为sort的情况
@@ -945,11 +941,6 @@ export class ListTable extends BaseTable implements ListTableAPI {
       this.internalProps.sortState = sort;
       this.stateManager.setSortState((this as any).sortState as SortState);
     }
-    // restoreHierarchyState逻辑，保留树形结构展开收起的状态
-    const currentPagerIndexedData = this.dataSource?._currentPagerIndexedData;
-    const currentIndexedData = this.dataSource?.currentIndexedData;
-    const treeDataHierarchyState = this.dataSource?.treeDataHierarchyState;
-    const oldRecordLength = this.records?.length ?? 0;
     if (records) {
       _setRecords(this, records);
       if ((this as any).sortState) {
@@ -973,21 +964,9 @@ export class ListTable extends BaseTable implements ListTableAPI {
           }
         }
       }
-      if (option?.restoreHierarchyState && oldRecordLength === this.records?.length) {
-        // restoreHierarchyState逻辑，保留树形结构展开收起的状态
-        this.dataSource._currentPagerIndexedData = currentPagerIndexedData;
-        this.dataSource.currentIndexedData = currentIndexedData;
-        this.dataSource.treeDataHierarchyState = treeDataHierarchyState;
-      }
       this.refreshRowColCount();
     } else {
       _setRecords(this, records);
-      if (option?.restoreHierarchyState && oldRecordLength === this.records?.length) {
-        // restoreHierarchyState逻辑，保留树形结构展开收起的状态
-        this.dataSource._currentPagerIndexedData = currentPagerIndexedData;
-        this.dataSource.currentIndexedData = currentIndexedData;
-        this.dataSource.treeDataHierarchyState = treeDataHierarchyState;
-      }
     }
 
     this.stateManager.initCheckedState(records);

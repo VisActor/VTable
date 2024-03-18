@@ -2460,10 +2460,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     field: FieldDef,
     fieldKey?: FieldKeyDef
   ): ((v1: any, v2: any, order: string) => 0 | 1 | -1) | undefined;
-  abstract setRecords(
-    records: Array<any>,
-    option?: { restoreHierarchyState: boolean; sort?: SortState | SortState[] }
-  ): void;
+  abstract setRecords(records: Array<any>, option?: { sortState?: SortState | SortState[] }): void;
   abstract refreshHeader(): void;
   abstract refreshRowColCount(): void;
   abstract getHierarchyState(col: number, row: number): HierarchyState | null;

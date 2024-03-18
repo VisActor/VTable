@@ -215,37 +215,28 @@ export class DataSource extends EventTarget implements DataSourceAPI {
   }
   initTreeHierarchyState() {
     if (this.hierarchyExpandLevel) {
-      // this.treeDataHierarchyState = new Map();
-      if (this.hierarchyExpandLevel <= 1) {
-        for (let i = 0; i < this._sourceLength; i++) {
-          //expandLevel为有效值即需要按tree分析展示数据
-          const nodeData = this.getOriginalRecord(i);
-          (nodeData as any).children && !nodeData.hierarchyState && (nodeData.hierarchyState = HierarchyState.collapse);
-          // (nodeData as any).children && this.treeDataHierarchyState.set(i, HierarchyState.collapse);
-        }
-      }
-
       this.currentIndexedData = Array.from({ length: this._sourceLength }, (_, i) => i);
-      if (this.hierarchyExpandLevel > 1) {
-        let nodeLength = this._sourceLength;
-        for (let i = 0; i < nodeLength; i++) {
-          const indexKey = this.currentIndexedData[i];
-          const nodeData = this.getOriginalRecord(indexKey);
-          if ((nodeData as any).children?.length > 0) {
-            // this.treeDataHierarchyState.set(
-            //   Array.isArray(indexKey) ? indexKey.join(',') : indexKey,
-            //   HierarchyState.expand
-            // );
-            !nodeData.hierarchyState && (nodeData.hierarchyState = HierarchyState.expand);
-            this.hasHierarchyStateExpand = true;
-            const childrenLength = this.initChildrenNodeHierarchy(indexKey, this.hierarchyExpandLevel, 2, nodeData);
-            i += childrenLength;
-            nodeLength += childrenLength;
-          } else if ((nodeData as any).children === true) {
-            !nodeData.hierarchyState && (nodeData.hierarchyState = HierarchyState.collapse);
+      // if (this.hierarchyExpandLevel > 1) {
+      let nodeLength = this._sourceLength;
+      for (let i = 0; i < nodeLength; i++) {
+        const indexKey = this.currentIndexedData[i];
+        const nodeData = this.getOriginalRecord(indexKey);
+        if ((nodeData as any).children?.length > 0) {
+          this.hierarchyExpandLevel > 1 &&
+            !nodeData.hierarchyState &&
+            (nodeData.hierarchyState = HierarchyState.expand);
+          this.hasHierarchyStateExpand = true;
+          if (nodeData.hierarchyState === HierarchyState.collapse) {
+            continue;
           }
+          const childrenLength = this.initChildrenNodeHierarchy(indexKey, this.hierarchyExpandLevel, 2, nodeData);
+          i += childrenLength;
+          nodeLength += childrenLength;
+        } else if ((nodeData as any).children === true) {
+          !nodeData.hierarchyState && (nodeData.hierarchyState = HierarchyState.collapse);
         }
       }
+      // }
     }
   }
 
@@ -365,7 +356,7 @@ export class DataSource extends EventTarget implements DataSourceAPI {
         );
       }
       if (childNodeData.children?.length > 0) {
-        if (currentLevel < hierarchyExpandLevel) {
+        if (currentLevel < hierarchyExpandLevel || childNodeData.hierarchyState === HierarchyState.expand) {
           // this.treeDataHierarchyState.set(
           //   Array.isArray(childIndexKey) ? childIndexKey.join(',') : childIndexKey,
           //   HierarchyState.expand
@@ -380,13 +371,14 @@ export class DataSource extends EventTarget implements DataSourceAPI {
           !childNodeData.hierarchyState && (childNodeData.hierarchyState = HierarchyState.collapse);
         }
       }
-
-      childTotalLength += this.initChildrenNodeHierarchy(
-        childIndexKey,
-        hierarchyExpandLevel,
-        currentLevel + 1,
-        childNodeData
-      );
+      if (childNodeData.hierarchyState === HierarchyState.expand) {
+        childTotalLength += this.initChildrenNodeHierarchy(
+          childIndexKey,
+          hierarchyExpandLevel,
+          currentLevel + 1,
+          childNodeData
+        );
+      }
     }
     return childTotalLength;
   }
