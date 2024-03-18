@@ -10,7 +10,7 @@ import type {
   ImageColumnDefine,
   MappingRule,
   ProgressbarColumnDefine,
-  RowSeriesNumber,
+  IRowSeriesNumber,
   TextColumnDefine
 } from '../../ts-types';
 import { dealWithCustom } from '../component/custom';
@@ -501,7 +501,7 @@ export function updateCell(col: number, row: number, table: BaseTableAPI, addNew
   const mayHaveIcon =
     cellLocation !== 'body'
       ? true
-      : (define as RowSeriesNumber)?.dragOrder || !!define?.icon || !!(define as ColumnDefine)?.tree;
+      : (define as IRowSeriesNumber)?.dragOrder || !!define?.icon || !!(define as ColumnDefine)?.tree;
   const padding = cellTheme._vtable.padding;
   const textAlign = cellTheme.text.textAlign;
   const textBaseline = cellTheme.text.textBaseline;
@@ -669,7 +669,7 @@ function updateCellContent(
 function canUseFastUpdate(col: number, row: number, oldCellGroup: Group, autoWrapText: boolean, table: BaseTableAPI) {
   // return false;
   const define = table.getBodyColumnDefine(col, row);
-  const mayHaveIcon = !!define?.icon || !!(define as ColumnDefine)?.tree || (define as RowSeriesNumber).dragOrder;
+  const mayHaveIcon = !!define?.icon || !!(define as ColumnDefine)?.tree || (define as IRowSeriesNumber).dragOrder;
   const cellType = table.getBodyColumnType(col, row);
   const autoRowHeight = table.heightMode === 'autoHeight';
   const value = table.getCellValue(col, row);

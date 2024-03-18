@@ -4,7 +4,7 @@ import type { CellType, IVTable } from '../util/type';
 import { getCellAlignment, getCellBorder, getCellFill, getCellFont } from './style';
 import { updateCell, renderChart, graphicUtil } from '@visactor/vtable';
 import { isArray } from '@visactor/vutils';
-import type { RowSeriesNumber } from '@visactor/vtable/src/ts-types';
+import type { IRowSeriesNumber } from '@visactor/vtable/src/ts-types';
 
 export async function exportVTableToExcel(tableInstance: IVTable) {
   const workbook = new ExcelJS.Workbook();
@@ -96,7 +96,7 @@ function addCell(
   const define =
     cellLocation !== 'body' ? tableInstance.getHeaderDefine(col, row) : tableInstance.getBodyColumnDefine(col, row);
   const mayHaveIcon =
-    cellLocation !== 'body' ? true : (define as RowSeriesNumber)?.dragOrder || !!define?.icon || !!define?.tree;
+    cellLocation !== 'body' ? true : (define as IRowSeriesNumber)?.dragOrder || !!define?.icon || !!define?.tree;
   let icons;
   if (mayHaveIcon) {
     icons = tableInstance.getCellIcons(col, row);

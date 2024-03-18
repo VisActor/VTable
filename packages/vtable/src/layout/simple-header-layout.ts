@@ -10,7 +10,7 @@ import type {
   LayoutObjectId,
   AggregationType,
   Aggregation,
-  RowSeriesNumber
+  IRowSeriesNumber
 } from '../ts-types';
 import type { ColumnsDefine, TextColumnDefine } from '../ts-types/list-table/define';
 import type {
@@ -86,7 +86,7 @@ export class SimpleHeaderLayoutMap implements LayoutMapAPI {
     // }, {} as { [key in string]: HeaderData });
     this.handleRowSeriesNumber(table.internalProps.rowSeriesNumber);
   }
-  handleRowSeriesNumber(rowSeriesNumber: RowSeriesNumber) {
+  handleRowSeriesNumber(rowSeriesNumber: IRowSeriesNumber) {
     if (rowSeriesNumber) {
       if (Array.isArray(rowSeriesNumber)) {
         this.rowSeriesNumberColumn = rowSeriesNumber.map(seriesNumber => {

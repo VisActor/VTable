@@ -206,7 +206,7 @@ export function createTable() {
     // },
     rowSeriesNumber: {
       title: '',
-      field: 'name',
+      // field: 'sex',
       dragOrder: true,
       headerIcon: 'book',
       width: 'auto',

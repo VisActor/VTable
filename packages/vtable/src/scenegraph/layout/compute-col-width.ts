@@ -1,5 +1,5 @@
 import type { SimpleHeaderLayoutMap } from '../../layout';
-import type { ColumnDefine, ColumnTypeOption, RowSeriesNumber, TextColumnDefine } from '../../ts-types';
+import type { ColumnDefine, ColumnTypeOption, IRowSeriesNumber, TextColumnDefine } from '../../ts-types';
 import { HierarchyState, IconPosition } from '../../ts-types';
 import * as calc from '../../tools/calc';
 import { validToString } from '../../tools/util';
@@ -555,7 +555,7 @@ function computeTextWidth(col: number, row: number, cellType: ColumnTypeOption, 
     mayHaveIcon = true;
   } else {
     const define = table.getBodyColumnDefine(col, row);
-    mayHaveIcon = !!define?.icon || !!(define as ColumnDefine)?.tree || (define as RowSeriesNumber)?.dragOrder;
+    mayHaveIcon = !!define?.icon || !!(define as ColumnDefine)?.tree || (define as IRowSeriesNumber)?.dragOrder;
   }
   if (mayHaveIcon) {
     const icons = table.getCellIcons(col, row);

@@ -20,7 +20,7 @@ import type {
   SparklineSpec,
   HierarchyState,
   Aggregation,
-  RowSeriesNumber
+  IRowSeriesNumber
 } from '../../';
 import type { Aggregator } from '../../../dataset/statistics-helper';
 import type { BaseTableAPI } from '../../base-table';
@@ -187,7 +187,7 @@ export interface SeriesNumberColumnData extends WidthData {
   headerIcon?: string | ColumnIconOption | (string | ColumnIconOption)[];
   cellType: 'text' | 'link' | 'image' | 'video' | 'checkbox';
   style: ColumnStyleOption | null | undefined;
-  define: RowSeriesNumber;
+  define: IRowSeriesNumber;
   isChildNode?: false;
 }
 // Simple header

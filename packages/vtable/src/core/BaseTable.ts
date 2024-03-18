@@ -42,7 +42,7 @@ import type {
   CellAddressWithBound,
   ColumnIconOption,
   ColumnSeriesNumber,
-  RowSeriesNumber,
+  IRowSeriesNumber,
   ColumnStyleOption,
   TableEventOptions
 } from '../ts-types';
@@ -2609,7 +2609,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
    * @param  {number} row row index.
    * @return {ColumnDefine} The column define object.
    */
-  getBodyColumnDefine(col: number, row: number): ColumnDefine | RowSeriesNumber | ColumnSeriesNumber {
+  getBodyColumnDefine(col: number, row: number): ColumnDefine | IRowSeriesNumber | ColumnSeriesNumber {
     // TODO: 暂时修复透视表报错
     const body = this.internalProps.layoutMap.getBody(col, row);
     return body?.define;
@@ -2646,7 +2646,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
    * @param  {number} row row index.
    * @return {ColumnDefine} The column define object.
    */
-  getHeaderDefine(col: number, row: number): ColumnDefine | RowSeriesNumber | ColumnSeriesNumber {
+  getHeaderDefine(col: number, row: number): ColumnDefine | IRowSeriesNumber | ColumnSeriesNumber {
     const hd = this.internalProps.layoutMap.getHeader(col, row);
     return hd?.define;
   }
@@ -2672,7 +2672,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
    * @param  {number} col The column index.
    * @return {*} The array of header define object.
    */
-  getHeadersDefine(col: number, row: number): (ColumnDefine | RowSeriesNumber | ColumnSeriesNumber)[] {
+  getHeadersDefine(col: number, row: number): (ColumnDefine | IRowSeriesNumber | ColumnSeriesNumber)[] {
     const headers = [];
     while (true) {
       const header = this.getHeaderDefine(col, row);

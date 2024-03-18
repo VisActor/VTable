@@ -18,7 +18,7 @@ import type {
   IColumnDimension,
   IRowDimension,
   IChartIndicator,
-  RowSeriesNumber
+  IRowSeriesNumber
 } from '../ts-types';
 import { HierarchyState } from '../ts-types';
 import type {
@@ -392,7 +392,7 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
     this.handleRowSeriesNumber(table.internalProps.rowSeriesNumber);
     this.setColumnWidths();
   }
-  handleRowSeriesNumber(rowSeriesNumber: RowSeriesNumber) {
+  handleRowSeriesNumber(rowSeriesNumber: IRowSeriesNumber) {
     if (rowSeriesNumber) {
       if (Array.isArray(rowSeriesNumber)) {
         this.rowSeriesNumberColumn = rowSeriesNumber.map(seriesNumber => {

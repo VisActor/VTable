@@ -1,6 +1,6 @@
 /* eslint-disable no-undef */
 import type { IThemeSpec } from '@src/vrender';
-import type { CellLocation, CellRange, ColumnDefine, RowSeriesNumber, TextColumnDefine } from '../../ts-types';
+import type { CellLocation, CellRange, ColumnDefine, IRowSeriesNumber, TextColumnDefine } from '../../ts-types';
 import type { Group } from '../graphic/group';
 import { getProp, getRawProp } from '../utils/get-prop';
 import type { MergeMap } from '../scenegraph';
@@ -117,7 +117,7 @@ export function createComplexColumn(
     const mayHaveIcon =
       cellLocation !== 'body'
         ? true
-        : (define as RowSeriesNumber)?.dragOrder || !!define?.icon || !!(define as ColumnDefine)?.tree;
+        : (define as IRowSeriesNumber)?.dragOrder || !!define?.icon || !!(define as ColumnDefine)?.tree;
 
     if (!range && (cellLocation !== 'body' || (define as TextColumnDefine)?.mergeCell)) {
       // 只有表头或者column配置合并单元格后再进行信息获取

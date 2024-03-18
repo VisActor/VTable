@@ -63,7 +63,7 @@ import type {
   TableEventOptions,
   IPivotChartDataConfig,
   IListTableDataConfig,
-  RowSeriesNumber,
+  IRowSeriesNumber,
   ColumnSeriesNumber,
   ColumnStyleOption
 } from '.';
@@ -113,7 +113,7 @@ export interface IBaseTableProtected {
   // underlayBackgroundColor?: string;
   keyboardOptions?: TableKeyboardOptions;
   eventOptions?: TableEventOptions;
-  rowSeriesNumber?: RowSeriesNumber;
+  rowSeriesNumber?: IRowSeriesNumber;
   columnSeriesNumber?: ColumnSeriesNumber[];
   // disableRowHeaderColumnResize?: boolean;
   // 列宽调整模式（全列调整；全列不可调整；仅表头单元格可调整；仅内容单元格可调整）
@@ -398,7 +398,7 @@ export interface BaseTableConstructorOptions {
   // resize response time
   resizeTime?: number;
 
-  rowSeriesNumber?: RowSeriesNumber;
+  rowSeriesNumber?: IRowSeriesNumber;
   // columnSeriesNumber?: ColumnSeriesNumber[];
   customCellStyle?: CustomCellStyle[];
   customCellStyleArrangement?: CustomCellStyleArrangement[];
@@ -599,7 +599,7 @@ export interface BaseTableAPI {
   getHeaderField: (col: number, row: number) => any | undefined;
 
   _getHeaderCellBySortState: (sortState: SortState) => CellAddress | undefined;
-  getHeaderDefine: (col: number, row: number) => ColumnDefine | RowSeriesNumber | ColumnSeriesNumber;
+  getHeaderDefine: (col: number, row: number) => ColumnDefine | IRowSeriesNumber | ColumnSeriesNumber;
   _getHeaderLayoutMap: (col: number, row: number) => HeaderData | SeriesNumberColumnData;
   getContext: () => CanvasRenderingContext2D;
   getCellRange: (col: number, row: number) => CellRange;
@@ -607,7 +607,7 @@ export interface BaseTableAPI {
   isCellRangeEqual: (col: number, row: number, targetCol: number, targetRow: number) => boolean;
   _getLayoutCellId: (col: number, row: number) => LayoutObjectId;
   _getBodyLayoutMap: (col: number, row: number) => ColumnData | IndicatorData | SeriesNumberColumnData;
-  getBodyColumnDefine: (col: number, row: number) => ColumnDefine | RowSeriesNumber | ColumnSeriesNumber;
+  getBodyColumnDefine: (col: number, row: number) => ColumnDefine | IRowSeriesNumber | ColumnSeriesNumber;
   getBodyColumnType: (col: number, row: number) => ColumnTypeOption;
   getCellType: (col: number, row: number) => ColumnTypeOption;
   fireListeners: <TYPE extends keyof TableEventHandlersEventArgumentMap>(
