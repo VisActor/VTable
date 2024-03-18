@@ -98,25 +98,23 @@ export interface TableEventOptions {
 }
 
 export interface RowSeriesNumber {
-  enable: boolean;
   width?: number | 'auto';
-  align?: 'left' | 'right';
-  span?: number | 'dependOnNear';
+  // align?: 'left' | 'right';
+  // span?: number | 'dependOnNear';
   title?: string;
   field?: FieldDef;
   format?: (col?: number, row?: number, table?: BaseTableAPI) => any;
   cellType?: 'text' | 'link' | 'image' | 'video' | 'checkbox';
   style?: ITextStyleOption | ((styleArg: StylePropertyFunctionArg) => ITextStyleOption);
   headerStyle?: ITextStyleOption | ((styleArg: StylePropertyFunctionArg) => ITextStyleOption);
-  /** 表头Icon配置 */
   headerIcon?: string | ColumnIconOption | (string | ColumnIconOption)[];
   icon?:
     | string
     | ColumnIconOption
     | (string | ColumnIconOption)[]
     | ((args: CellInfo) => string | ColumnIconOption | (string | ColumnIconOption)[]);
-  /** 选中整行或者全选时 是否包括序号部分 */
-  selectRangeInclude?: boolean;
+  // /** 选中整行或者全选时 是否包括序号部分 */
+  // selectRangeInclude?: boolean;
   /** 是否可拖拽顺序 */
   dragOrder?: boolean;
 }

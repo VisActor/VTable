@@ -205,7 +205,6 @@ export function createTable() {
     //   currentPage: 1
     // },
     rowSeriesNumber: {
-      enable: true,
       title: '',
       field: 'name',
       dragOrder: true,

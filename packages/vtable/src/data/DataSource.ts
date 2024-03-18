@@ -214,30 +214,32 @@ export class DataSource extends EventTarget implements DataSourceAPI {
     this.updatePagerData();
   }
   initTreeHierarchyState() {
-    if (this.hierarchyExpandLevel) {
-      this.currentIndexedData = Array.from({ length: this._sourceLength }, (_, i) => i);
-      // if (this.hierarchyExpandLevel > 1) {
-      let nodeLength = this._sourceLength;
-      for (let i = 0; i < nodeLength; i++) {
-        const indexKey = this.currentIndexedData[i];
-        const nodeData = this.getOriginalRecord(indexKey);
-        if ((nodeData as any).children?.length > 0) {
-          this.hierarchyExpandLevel > 1 &&
-            !nodeData.hierarchyState &&
-            (nodeData.hierarchyState = HierarchyState.expand);
-          this.hasHierarchyStateExpand = true;
-          if (nodeData.hierarchyState === HierarchyState.collapse) {
-            continue;
-          }
-          const childrenLength = this.initChildrenNodeHierarchy(indexKey, this.hierarchyExpandLevel, 2, nodeData);
-          i += childrenLength;
-          nodeLength += childrenLength;
-        } else if ((nodeData as any).children === true) {
+    // if (this.hierarchyExpandLevel) {
+    this.currentIndexedData = Array.from({ length: this._sourceLength }, (_, i) => i);
+    // if (this.hierarchyExpandLevel > 1) {
+    let nodeLength = this._sourceLength;
+    for (let i = 0; i < nodeLength; i++) {
+      const indexKey = this.currentIndexedData[i];
+      const nodeData = this.getOriginalRecord(indexKey);
+      if ((nodeData as any).children?.length > 0) {
+        if (this.hierarchyExpandLevel > 1) {
+          !nodeData.hierarchyState && (nodeData.hierarchyState = HierarchyState.expand);
+        } else {
           !nodeData.hierarchyState && (nodeData.hierarchyState = HierarchyState.collapse);
         }
+        this.hasHierarchyStateExpand = true;
+        if (nodeData.hierarchyState === HierarchyState.collapse) {
+          continue;
+        }
+        const childrenLength = this.initChildrenNodeHierarchy(indexKey, this.hierarchyExpandLevel, 2, nodeData);
+        i += childrenLength;
+        nodeLength += childrenLength;
+      } else if ((nodeData as any).children === true) {
+        !nodeData.hierarchyState && (nodeData.hierarchyState = HierarchyState.collapse);
       }
-      // }
     }
+    // }
+    // }
   }
 
   //将聚合类型注册 收集到aggregators
