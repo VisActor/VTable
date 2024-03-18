@@ -614,7 +614,7 @@ export class DataSource extends EventTarget implements DataSourceAPI {
               record[field] = formatValue;
             })
             .catch((err: Error) => {
-              console.error(err);
+              console.error('VTable Error:', err);
             });
         } else {
           record[field] = formatValue;
