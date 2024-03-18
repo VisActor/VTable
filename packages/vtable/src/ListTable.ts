@@ -906,7 +906,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
   }
   /** 获取某个单元格checkbox的状态 */
   getCellCheckboxState(col: number, row: number) {
-    const define = this.getBodyColumnDefine(col, row);
+    const define = this.getBodyColumnDefine(col, row) as ColumnDefine;
     const field = define?.field;
     const cellType = this.getCellType(col, row);
     if (isValid(field) && cellType === 'checkbox') {

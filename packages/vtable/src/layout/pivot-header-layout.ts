@@ -418,7 +418,7 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
             style: rowSeriesNumber.style,
             width: rowSeriesNumber.width,
             format: rowSeriesNumber.format,
-            field: rowSeriesNumber.field,
+            field: '', // rowSeriesNumber.field,
             icon: rowSeriesNumber.icon,
             isChildNode: false
           }

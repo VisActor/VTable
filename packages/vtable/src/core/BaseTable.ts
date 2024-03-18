@@ -2675,7 +2675,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
   getHeadersDefine(col: number, row: number): (ColumnDefine | IRowSeriesNumber | ColumnSeriesNumber)[] {
     const headers = [];
     while (true) {
-      const header = this.getHeaderDefine(col, row);
+      const header = this.getHeaderDefine(col, row) as ColumnDefine;
       if (header && (header.field || (header as ColumnDefine).columns)) {
         headers.push(header);
       } else {
