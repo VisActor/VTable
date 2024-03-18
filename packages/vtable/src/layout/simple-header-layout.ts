@@ -145,14 +145,18 @@ export class SimpleHeaderLayoutMap implements LayoutMapAPI {
     this._showHeader = _showHeader;
   }
   isSeriesNumberInHeader(col: number, row: number): boolean {
-    if (col >= 0 && row >= 0 && col < this.leftRowSeriesNumberColumnCount) {
+    if (this.leftRowSeriesNumberColumnCount > 0 && col >= 0 && row >= 0 && col < this.leftRowSeriesNumberColumnCount) {
       if (this.transpose) {
         return false;
       } else if (row < this.headerLevelCount) {
         return true;
       }
     }
-    if (row >= 0 && col >= this.colCount - this.rightRowSeriesNumberColumnCount) {
+    if (
+      this.rightRowSeriesNumberColumnCount > 0 &&
+      row >= 0 &&
+      col >= this.colCount - this.rightRowSeriesNumberColumnCount
+    ) {
       if (this.transpose) {
         return false;
       } else if (row < this.headerLevelCount) {
@@ -162,7 +166,7 @@ export class SimpleHeaderLayoutMap implements LayoutMapAPI {
     return false;
   }
   isSeriesNumberInBody(col: number, row: number): boolean {
-    if (col >= 0 && col < this.leftRowSeriesNumberColumnCount) {
+    if (this.leftRowSeriesNumberColumnCount > 0 && col >= 0 && col < this.leftRowSeriesNumberColumnCount) {
       if (this.transpose) {
         return true;
       }
@@ -170,7 +174,7 @@ export class SimpleHeaderLayoutMap implements LayoutMapAPI {
         return true;
       }
     }
-    if (col >= this.colCount - this.rightRowSeriesNumberColumnCount) {
+    if (this.rightRowSeriesNumberColumnCount > 0 && col >= this.colCount - this.rightRowSeriesNumberColumnCount) {
       if (this.transpose) {
         return true;
       }
@@ -181,16 +185,20 @@ export class SimpleHeaderLayoutMap implements LayoutMapAPI {
     return false;
   }
   isSeriesNumber(col: number, row: number): boolean {
-    if (col >= 0 && row >= 0 && col < this.leftRowSeriesNumberColumnCount) {
+    if (this.leftRowSeriesNumberColumnCount > 0 && col >= 0 && row >= 0 && col < this.leftRowSeriesNumberColumnCount) {
       return true;
     }
-    if (row >= 0 && col >= this.colCount - this.rightRowSeriesNumberColumnCount) {
+    if (
+      this.rightRowSeriesNumberColumnCount > 0 &&
+      row >= 0 &&
+      col >= this.colCount - this.rightRowSeriesNumberColumnCount
+    ) {
       return true;
     }
     return false;
   }
   getSeriesNumberHeader(col: number, row: number) {
-    if (col >= 0 && col < this.leftRowSeriesNumberColumnCount) {
+    if (this.leftRowSeriesNumberColumnCount > 0 && col >= 0 && col < this.leftRowSeriesNumberColumnCount) {
       if (this.transpose) {
         return undefined;
       }
@@ -200,7 +208,11 @@ export class SimpleHeaderLayoutMap implements LayoutMapAPI {
         });
       }
     }
-    if (col >= this.colCount - this.rightRowSeriesNumberColumnCount && row < this.headerLevelCount) {
+    if (
+      this.rightRowSeriesNumberColumnCount > 0 &&
+      col >= this.colCount - this.rightRowSeriesNumberColumnCount &&
+      row < this.headerLevelCount
+    ) {
       if (this.transpose) {
         return undefined;
       }
@@ -211,7 +223,7 @@ export class SimpleHeaderLayoutMap implements LayoutMapAPI {
     return undefined;
   }
   getSeriesNumberBody(col: number, row: number) {
-    if (col >= 0 && col < this.leftRowSeriesNumberColumnCount) {
+    if (this.leftRowSeriesNumberColumnCount > 0 && col >= 0 && col < this.leftRowSeriesNumberColumnCount) {
       if (this.transpose) {
         return this.leftRowSeriesNumberColumn[col];
       }
@@ -219,7 +231,7 @@ export class SimpleHeaderLayoutMap implements LayoutMapAPI {
         return this.leftRowSeriesNumberColumn[col];
       }
     }
-    if (col >= this.colCount - this.rightRowSeriesNumberColumnCount) {
+    if (this.rightRowSeriesNumberColumnCount > 0 && col >= this.colCount - this.rightRowSeriesNumberColumnCount) {
       if (this.transpose) {
         return this.rightRowSeriesNumberColumn[col - (this.colCount - this.rightRowSeriesNumberColumnCount)];
       }

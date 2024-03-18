@@ -3038,12 +3038,16 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
     this.setPagination(this.pagination);
   }
   isSeriesNumberInHeader(col: number, row: number): boolean {
-    if (col >= 0 && row >= 0 && col < this.leftRowSeriesNumberColumnCount) {
+    if (this.leftRowSeriesNumberColumnCount > 0 && col >= 0 && row >= 0 && col < this.leftRowSeriesNumberColumnCount) {
       if (row < this.headerLevelCount) {
         return true;
       }
     }
-    if (row >= 0 && col >= this.colCount - this.rightRowSeriesNumberColumnCount) {
+    if (
+      this.rightRowSeriesNumberColumnCount > 0 &&
+      row >= 0 &&
+      col >= this.colCount - this.rightRowSeriesNumberColumnCount
+    ) {
       if (row < this.headerLevelCount) {
         return true;
       }
@@ -3051,12 +3055,12 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
     return false;
   }
   isSeriesNumberInBody(col: number, row: number): boolean {
-    if (col >= 0 && col < this.leftRowSeriesNumberColumnCount) {
+    if (this.leftRowSeriesNumberColumnCount > 0 && col >= 0 && col < this.leftRowSeriesNumberColumnCount) {
       if (row >= this.headerLevelCount) {
         return true;
       }
     }
-    if (col >= this.colCount - this.rightRowSeriesNumberColumnCount) {
+    if (this.rightRowSeriesNumberColumnCount > 0 && col >= this.colCount - this.rightRowSeriesNumberColumnCount) {
       if (row >= this.headerLevelCount) {
         return true;
       }
@@ -3064,16 +3068,20 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
     return false;
   }
   isSeriesNumber(col: number, row: number): boolean {
-    if (col >= 0 && row >= 0 && col < this.leftRowSeriesNumberColumnCount) {
+    if (this.leftRowSeriesNumberColumnCount > 0 && col >= 0 && row >= 0 && col < this.leftRowSeriesNumberColumnCount) {
       return true;
     }
-    if (row >= 0 && col >= this.colCount - this.rightRowSeriesNumberColumnCount) {
+    if (
+      this.rightRowSeriesNumberColumnCount > 0 &&
+      row >= 0 &&
+      col >= this.colCount - this.rightRowSeriesNumberColumnCount
+    ) {
       return true;
     }
     return false;
   }
   getSeriesNumberHeader(col: number, row: number) {
-    if (col >= 0 && col < this.leftRowSeriesNumberColumnCount) {
+    if (this.leftRowSeriesNumberColumnCount > 0 && col >= 0 && col < this.leftRowSeriesNumberColumnCount) {
       if (row < this.headerLevelCount) {
         // return this.leftRowSeriesNumberColumn[col];
         return Object.assign({}, this.leftRowSeriesNumberColumn[col], {
@@ -3081,7 +3089,11 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
         });
       }
     }
-    if (col >= this.colCount - this.rightRowSeriesNumberColumnCount && row < this.headerLevelCount) {
+    if (
+      this.rightRowSeriesNumberColumnCount > 0 &&
+      col >= this.colCount - this.rightRowSeriesNumberColumnCount &&
+      row < this.headerLevelCount
+    ) {
       if (row < this.headerLevelCount) {
         return this.rightRowSeriesNumberColumn[col - (this.colCount - this.rightRowSeriesNumberColumnCount)];
       }
@@ -3089,12 +3101,12 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
     return undefined;
   }
   getSeriesNumberBody(col: number, row: number) {
-    if (col >= 0 && col < this.leftRowSeriesNumberColumnCount) {
+    if (this.leftRowSeriesNumberColumnCount > 0 && col >= 0 && col < this.leftRowSeriesNumberColumnCount) {
       if (row >= this.headerLevelCount) {
         return this.leftRowSeriesNumberColumn[col];
       }
     }
-    if (col >= this.colCount - this.rightRowSeriesNumberColumnCount) {
+    if (this.rightRowSeriesNumberColumnCount > 0 && col >= this.colCount - this.rightRowSeriesNumberColumnCount) {
       if (row >= this.headerLevelCount) {
         return this.rightRowSeriesNumberColumn[col - (this.colCount - this.rightRowSeriesNumberColumnCount)];
       }

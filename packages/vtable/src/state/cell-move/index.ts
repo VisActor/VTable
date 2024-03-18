@@ -1,5 +1,6 @@
 import type { ListTable } from '../../ListTable';
 import type { SimpleHeaderLayoutMap } from '../../layout';
+import type { PivotHeaderLayoutMap } from '../../layout/pivot-header-layout';
 import { getCellMergeInfo } from '../../scenegraph/utils/get-cell-merge';
 import type { CellRange } from '../../ts-types';
 import type { BaseTableAPI } from '../../ts-types/base-table';
@@ -150,13 +151,22 @@ export function endMoveCol(state: StateManager) {
         oldSourceMergeInfo.start.row,
         oldTargetMergeInfo.start.row
       );
-      const rowMax = Math.max(
+      let rowMax = Math.max(
         sourceMergeInfo.end.row,
         targetMergeInfo.end.row,
         oldSourceMergeInfo.end.row,
         oldTargetMergeInfo.end.row
       );
-      // console.log(colMin, colMax, rowMin, rowMax);
+      if (
+        moveContext.moveType === 'row' &&
+        (state.table.internalProps.layoutMap as PivotHeaderLayoutMap).rowHierarchyType === 'tree'
+      ) {
+        if (moveContext.targetIndex > moveContext.sourceIndex) {
+          rowMax = rowMax + moveContext.targetSize - 1;
+        } else {
+          rowMax = rowMax + moveContext.sourceSize - 1;
+        }
+      }
       if (
         !(state.table as ListTable).transpose &&
         (state.table.internalProps.layoutMap as SimpleHeaderLayoutMap).isSeriesNumberInBody(
