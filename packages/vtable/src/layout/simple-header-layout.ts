@@ -22,7 +22,12 @@ import type {
   WidthData
 } from '../ts-types/list-table/layout-map/api';
 import { checkHasChart, getChartDataId } from './chart-helper/get-chart-spec';
-import { checkHasAggregation, checkHasAggregationOnBottom, checkHasAggregationOnTop } from './layout-helper';
+import {
+  checkHasAggregation,
+  checkHasAggregationOnBottom,
+  checkHasAggregationOnTop,
+  checkHasTreeDefine
+} from './layout-helper';
 import type { Aggregator } from '../dataset/statistics-helper';
 import { DimensionTree } from './tree-helper';
 // import { EmptyDataCache } from './utils';
@@ -54,6 +59,8 @@ export class SimpleHeaderLayoutMap implements LayoutMapAPI {
   _hasAggregation: boolean = false;
   _hasAggregationOnTopCount: number = 0;
   _hasAggregationOnBottomCount: number = 0;
+  /**层级维度结构显示形式 */
+  rowHierarchyType?: 'grid' | 'tree';
   // 缓存行号列号对应的cellRange 需要注意当表头位置拖拽后 这个缓存的行列号已不准确 进行重置
   private _cellRangeMap: Map<string, CellRange>; //存储单元格的行列号范围 针对解决是否为合并单元格情况
   constructor(table: ListTable, columns: ColumnsDefine, showHeader: boolean, hierarchyIndent: number) {
@@ -63,6 +70,7 @@ export class SimpleHeaderLayoutMap implements LayoutMapAPI {
     this._columns = [];
     this._headerCellIds = [];
     this.hierarchyIndent = hierarchyIndent ?? 20;
+    this.rowHierarchyType = checkHasTreeDefine(this) ? 'tree' : 'grid';
     this.columnTree = new DimensionTree(columns as any, { seqId: 0 }); //seqId这里没有利用上 所有顺便传了0
     this._headerObjects = this._addHeaders(0, columns, []);
     this._headerObjectMap = this._headerObjects.reduce((o, e) => {
@@ -114,15 +122,15 @@ export class SimpleHeaderLayoutMap implements LayoutMapAPI {
         ];
       }
       this.leftRowSeriesNumberColumn = this.rowSeriesNumberColumn.filter(rowSeriesNumberItem => {
-        if (rowSeriesNumberItem.define.align === 'left' || !isValid(rowSeriesNumberItem.define.align)) {
-          return true;
-        }
-        return false;
+        // if (rowSeriesNumberItem.define.align === 'left' || !isValid(rowSeriesNumberItem.define.align)) {
+        //   return true;
+        // }
+        return true;
       });
       this.rightRowSeriesNumberColumn = this.rowSeriesNumberColumn.filter(rowSeriesNumberItem => {
-        if (rowSeriesNumberItem.define.align === 'right') {
-          return true;
-        }
+        // if (rowSeriesNumberItem.define.align === 'right') {
+        //   return true;
+        // }
         return false;
       });
       this.leftRowSeriesNumberColumnCount = this.leftRowSeriesNumberColumn.length;

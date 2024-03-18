@@ -200,7 +200,6 @@ export function createTable() {
     theme: VTable.themes.BRIGHT,
     defaultRowHeight: 32,
     rowSeriesNumber: {
-      enable: true,
       title: '行号',
       field: 'name',
       dragOrder: true,

@@ -186,6 +186,7 @@ export class DataSource extends EventTarget implements DataSourceAPI {
     dataConfig?: IListTableDataConfig,
     pagination?: IPagination,
     columnObjs?: ColumnData[],
+    rowHierarchyType?: 'grid' | 'tree',
     hierarchyExpandLevel?: number
   ) {
     super();
@@ -210,7 +211,9 @@ export class DataSource extends EventTarget implements DataSourceAPI {
     }
     this.currentIndexedData = Array.from({ length: this._sourceLength }, (_, i) => i);
     // 初始化currentIndexedData 正常未排序。设置其状态
-    this.initTreeHierarchyState();
+    if (rowHierarchyType === 'tree') {
+      this.initTreeHierarchyState();
+    }
     this.updatePagerData();
   }
   initTreeHierarchyState() {

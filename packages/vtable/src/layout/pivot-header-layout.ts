@@ -425,15 +425,15 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
         ];
       }
       this.leftRowSeriesNumberColumn = this.rowSeriesNumberColumn.filter(rowSeriesNumberItem => {
-        if (rowSeriesNumberItem.define.align === 'left' || !isValid(rowSeriesNumberItem.define.align)) {
-          return true;
-        }
-        return false;
+        // if (rowSeriesNumberItem.define.align === 'left' || !isValid(rowSeriesNumberItem.define.align)) {
+        //   return true;
+        // }
+        return true;
       });
       this.rightRowSeriesNumberColumn = this.rowSeriesNumberColumn.filter(rowSeriesNumberItem => {
-        if (rowSeriesNumberItem.define.align === 'right') {
-          return true;
-        }
+        // if (rowSeriesNumberItem.define.align === 'right') {
+        //   return true;
+        // }
         return false;
       });
       this.leftRowSeriesNumberColumnCount = this.leftRowSeriesNumberColumn.length;
