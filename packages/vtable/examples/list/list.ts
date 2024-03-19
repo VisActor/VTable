@@ -190,6 +190,10 @@ export function createTable() {
         underline: true,
 
         borderColor: ['#E1E4E8', '#E1E4E8', '#E1E4E8', '#E1E4E8']
+      },
+      scrollStyle: {
+        width: 50,
+        hoverOn: false
       }
     }
     // widthMode: 'adaptive'

@@ -2,6 +2,14 @@ import type { Group } from '../scenegraph/graphic/group';
 import type { Scenegraph } from '../scenegraph/scenegraph';
 
 export function getCellMergeRange(cellGroup: Group, scene: Scenegraph) {
+  if (!scene || !scene.proxy) {
+    return {
+      colStart: 0,
+      colEnd: 0,
+      rowStart: 0,
+      rowEnd: 0
+    };
+  }
   const { mergeStartCol, mergeEndCol, mergeStartRow, mergeEndRow, col, row } = cellGroup;
   const { colStart, colEnd, rowStart, rowEnd, bodyLeftCol, bodyRightCol, bodyTopRow, bodyBottomRow } = scene.proxy;
 
