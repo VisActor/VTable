@@ -99,6 +99,7 @@ import { setBatchRenderChartCount } from '../scenegraph/graphic/contributions/ch
 import { isLeftOrRightAxis, isTopOrBottomAxis } from '../layout/chart-helper/get-axis-config';
 import { NumberRangeMap } from '../layout/row-height-map';
 import { CustomCellStylePlugin, mergeStyle } from '../plugins/custom-cell-style';
+import { hideCellSelectBorder, restoreCellSelectBorder } from '../scenegraph/select/update-select-border';
 const { toBoxArray } = utilStyle;
 const { isTouchEvent } = event;
 const rangeReg = /^\$(\d+)\$(\d+)$/;
@@ -3690,6 +3691,14 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
       this.scrollToCell({ col, row });
     }
     const cellRect = this.getCellRelativeRect(col, row);
+
+    // disable hover&select style
+    if (this.stateManager.select?.ranges?.length > 0) {
+      hideCellSelectBorder(this.scenegraph);
+    }
+    const { col: hoverCol, row: hoverRow } = this.stateManager.hover.cellPos;
+    this.stateManager.updateHoverPos(-1, -1);
+
     const c = this.scenegraph.stage.toCanvas(
       false,
       new AABBBounds().set(
@@ -3704,6 +3713,13 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
       this.setScrollLeft(scrollLeft);
     }
     // return c.toDataURL('image/jpeg', 0.5);
+
+    // restore hover&select style
+    if (this.stateManager.select?.ranges?.length > 0) {
+      restoreCellSelectBorder(this.scenegraph);
+    }
+    this.stateManager.updateHoverPos(hoverCol, hoverRow);
+
     return c.toDataURL();
   }
 
