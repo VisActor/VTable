@@ -685,7 +685,7 @@ function canUseFastUpdate(col: number, row: number, oldCellGroup: Group, autoWra
   return false;
 }
 
-function dealWithMergeCellSize(
+export function dealWithMergeCellSize(
   range: CellRange,
   cellWidth: number,
   cellHeight: number,
@@ -694,21 +694,11 @@ function dealWithMergeCellSize(
   textBaseline: CanvasTextBaseline,
   table: BaseTableAPI
 ) {
-  // const rangeHeight = table.getRowHeight(row);
-  // const rangeWidth = table.getColWidth(col);
-
-  // const { width: contentWidth } = newCellGroup.attribute;
-  // const { height: contentHeight } = newCellGroup.attribute;
-  // newCellGroup.contentWidth = contentWidth;
-  // newCellGroup.contentHeight = contentHeight;
-
-  // resizeCellGroup(newCellGroup, rangeWidth, rangeHeight, range, table);
   for (let col = range.start.col; col <= range.end.col; col++) {
     for (let row = range.start.row; row <= range.end.row; row++) {
       const cellGroup = table.scenegraph.getCell(col, row, true);
 
-      if (range.start.row !== range.end.row) {
-        // const cellGroup = table.scenegraph.getCell(col, row, true);
+      if (cellGroup.role === 'cell' && range.start.row !== range.end.row && cellGroup.contentWidth !== cellWidth) {
         updateCellContentHeight(
           cellGroup,
           cellHeight,
@@ -720,8 +710,7 @@ function dealWithMergeCellSize(
           // 'middle'
         );
       }
-      if (range.start.col !== range.end.col) {
-        // const cellGroup = table.scenegraph.getCell(col, row, true);
+      if (cellGroup.role === 'cell' && range.start.col !== range.end.col && cellGroup.contentWidth !== cellWidth) {
         updateCellContentWidth(
           cellGroup,
           cellWidth,
