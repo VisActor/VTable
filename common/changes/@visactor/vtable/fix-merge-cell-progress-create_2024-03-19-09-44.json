@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vtable",
+      "comment": "fix: fix cell progress create content size",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vtable"
+}
