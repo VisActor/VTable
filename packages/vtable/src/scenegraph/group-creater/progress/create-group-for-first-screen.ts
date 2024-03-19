@@ -92,63 +92,121 @@ export function createGroupForFirstScreen(
     );
 
   // create rowHeaderGroup
-  if (table.rowHeaderLevelCount > 0) {
-    createColGroup(
-      rowHeaderGroup,
-      xOrigin,
-      yOrigin,
-      0, // colStart
-      table.rowHeaderLevelCount - 1, // colEnd
-      table.columnHeaderLevelCount, // rowStart
-      // Math.min(proxy.firstScreenRowLimit, table.rowCount - 1 - table.bottomFrozenRowCount), // rowEnd
-      distRow - table.bottomFrozenRowCount,
-      'rowHeader', // isHeader
-      table
-    );
-  }
-  if (table.frozenColCount > table.rowHeaderLevelCount) {
-    createColGroup(
-      rowHeaderGroup,
-      xOrigin,
-      yOrigin,
-      table.rowHeaderLevelCount, // colStart
-      table.frozenColCount - 1, // colEnd
-      table.columnHeaderLevelCount, // rowStart
-      // Math.min(proxy.firstScreenRowLimit, table.rowCount - 1 - table.bottomFrozenRowCount), // rowEnd
-      distRow - table.bottomFrozenRowCount,
-      'body',
-      table
-    );
+  if (table.frozenColCount > 0) {
+    if (table.leftRowSeriesNumberCount > 0) {
+      createColGroup(
+        rowHeaderGroup,
+        xOrigin,
+        yOrigin,
+        0, // colStart
+        table.leftRowSeriesNumberCount - 1, // colEnd
+        table.columnHeaderLevelCount, // rowStart
+        // Math.min(proxy.firstScreenRowLimit, table.rowCount - 1 - table.bottomFrozenRowCount), // rowEnd
+        distRow - table.bottomFrozenRowCount,
+        'rowHeader', // isHeader
+        table
+      );
+    }
+    if (table.rowHeaderLevelCount > 0) {
+      createColGroup(
+        rowHeaderGroup,
+        xOrigin,
+        yOrigin,
+        table.leftRowSeriesNumberCount, // colStart
+        table.leftRowSeriesNumberCount + table.rowHeaderLevelCount - 1, // colEnd
+        table.columnHeaderLevelCount, // rowStart
+        // Math.min(proxy.firstScreenRowLimit, table.rowCount - 1 - table.bottomFrozenRowCount), // rowEnd
+        distRow - table.bottomFrozenRowCount,
+        'rowHeader', // isHeader
+        table
+      );
+    }
+    if (table.frozenColCount > table.rowHeaderLevelCount + table.leftRowSeriesNumberCount) {
+      createColGroup(
+        rowHeaderGroup,
+        xOrigin,
+        yOrigin,
+        table.rowHeaderLevelCount + table.leftRowSeriesNumberCount, // colStart
+        table.frozenColCount - 1, // colEnd
+        table.columnHeaderLevelCount, // rowStart
+        // Math.min(proxy.firstScreenRowLimit, table.rowCount - 1 - table.bottomFrozenRowCount), // rowEnd
+        distRow - table.bottomFrozenRowCount,
+        'body',
+        table
+      );
+    }
   }
 
   if (table.bottomFrozenRowCount > 0) {
     // if (!table.isPivotChart()) {
     // create left bottom frozen
-    if (table.rowHeaderLevelCount > 0) {
-      createColGroup(
-        leftBottomCornerGroup,
-        xOrigin,
-        yOrigin,
-        0, // colStart
-        table.rowHeaderLevelCount - 1, // colEnd
-        table.rowCount - 1 - table.bottomFrozenRowCount + 1, // rowStart
-        table.rowCount - 1, // rowEnd
-        'rowHeader', // isHeader
-        table
-      );
-    }
-    if (table.frozenColCount > table.rowHeaderLevelCount) {
-      createColGroup(
-        leftBottomCornerGroup,
-        xOrigin,
-        yOrigin,
-        table.rowHeaderLevelCount, // colStart
-        table.frozenColCount - 1, // colEnd
-        table.rowCount - 1 - table.bottomFrozenRowCount + 1, // rowStart
-        table.rowCount - 1, // rowEnd
-        'body',
-        table
-      );
+    // if (table.rowHeaderLevelCount > 0) {
+    //   createColGroup(
+    //     leftBottomCornerGroup,
+    //     xOrigin,
+    //     yOrigin,
+    //     0, // colStart
+    //     table.rowHeaderLevelCount - 1, // colEnd
+    //     table.rowCount - 1 - table.bottomFrozenRowCount + 1, // rowStart
+    //     table.rowCount - 1, // rowEnd
+    //     'rowHeader', // isHeader
+    //     table
+    //   );
+    // }
+    // if (table.frozenColCount > table.rowHeaderLevelCount) {
+    //   createColGroup(
+    //     leftBottomCornerGroup,
+    //     xOrigin,
+    //     yOrigin,
+    //     table.rowHeaderLevelCount, // colStart
+    //     table.frozenColCount - 1, // colEnd
+    //     table.rowCount - 1 - table.bottomFrozenRowCount + 1, // rowStart
+    //     table.rowCount - 1, // rowEnd
+    //     'body',
+    //     table
+    //   );
+    // }
+
+    if (table.frozenColCount > 0) {
+      if (table.leftRowSeriesNumberCount > 0) {
+        createColGroup(
+          leftBottomCornerGroup,
+          xOrigin,
+          yOrigin,
+          0, // colStart
+          table.leftRowSeriesNumberCount - 1, // colEnd
+          table.rowCount - 1 - table.bottomFrozenRowCount + 1, // rowStart
+          table.rowCount - 1, // rowEnd
+          'rowHeader', // isHeader
+          table
+        );
+      }
+      if (table.rowHeaderLevelCount > 0) {
+        createColGroup(
+          leftBottomCornerGroup,
+          xOrigin,
+          yOrigin,
+          table.leftRowSeriesNumberCount, // colStart
+          table.leftRowSeriesNumberCount + table.rowHeaderLevelCount - 1, // colEnd
+          table.rowCount - 1 - table.bottomFrozenRowCount + 1, // rowStart
+          table.rowCount - 1, // rowEnd
+          'rowHeader', // isHeader
+          table
+        );
+      }
+      if (table.frozenColCount > table.rowHeaderLevelCount + table.leftRowSeriesNumberCount) {
+        createColGroup(
+          leftBottomCornerGroup,
+          xOrigin,
+          yOrigin,
+          table.rowHeaderLevelCount + table.leftRowSeriesNumberCount, // colStart
+          table.frozenColCount - 1, // colEnd
+          table.rowCount - 1 - table.bottomFrozenRowCount + 1, // rowStart
+          table.rowCount - 1, // rowEnd
+          'body',
+          table
+        );
+      }
     }
     // }
     // create bottomFrozenGroup

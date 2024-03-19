@@ -3275,7 +3275,12 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
       const cellValue = this.getCellValue(col, row);
       const dataValue = this.getCellOriginValue(col, row);
       const ctx = this.internalProps.context;
-      icons = icons.concat(this.internalProps.bodyHelper.getIcons(col, row, cellValue, dataValue, ctx));
+      const cellIcon = this.internalProps.bodyHelper.getIcons(col, row, cellValue, dataValue, ctx);
+      if (icons?.length > 0) {
+        icons = icons.concat();
+      } else if (cellIcon?.length > 0) {
+        icons = cellIcon;
+      }
     } else {
       const cellValue = this.getCellValue(col, row);
       const dataValue = this.getCellOriginValue(col, row);
@@ -3894,5 +3899,8 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
   }
   isHasSeriesNumber(): boolean {
     return this.internalProps.layoutMap?.leftRowSeriesNumberColumnCount > 0;
+  }
+  get leftRowSeriesNumberCount(): number {
+    return this.internalProps.layoutMap?.leftRowSeriesNumberColumnCount ?? 0;
   }
 }

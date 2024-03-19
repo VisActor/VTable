@@ -743,6 +743,7 @@ export interface BaseTableAPI {
   changeRecordOrder: (source: number, target: number) => void;
   isSeriesNumber: (col: number, row?: number) => boolean;
   isHasSeriesNumber: () => boolean;
+  leftRowSeriesNumberCount: number;
 }
 export interface ListTableProtected extends IBaseTableProtected {
   /** 表格数据 */
