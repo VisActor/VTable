@@ -144,9 +144,8 @@ export function createGroupForFirstScreen(
         yOrigin,
         table.rowHeaderLevelCount, // colStart
         table.frozenColCount - 1, // colEnd
-        table.columnHeaderLevelCount, // rowStart
-        // Math.min(proxy.firstScreenRowLimit, table.rowCount - 1 - table.bottomFrozenRowCount), // rowEnd
-        distRow - table.bottomFrozenRowCount,
+        table.rowCount - 1 - table.bottomFrozenRowCount + 1, // rowStart
+        table.rowCount - 1, // rowEnd
         'body',
         table
       );
