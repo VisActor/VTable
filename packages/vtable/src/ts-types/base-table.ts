@@ -302,6 +302,10 @@ export interface BaseTableConstructorOptions {
     /** 单独设置表头不响应鼠标select交互 */
     disableHeaderSelect?: boolean;
   };
+  scroll?: {
+    /*** 滚动条是否置于边上 */
+    barToSide?: boolean;
+  };
   /** 下拉菜单的相关配置。消失时机：显示后点击菜单区域外自动消失*/
   menu?: {
     /** 代替原来的option.menuType  html目前实现较完整 先默认html渲染方式*/
