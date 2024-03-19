@@ -40,8 +40,10 @@ import {
 import type {
   AnyFunction,
   CellAddressWithBound,
+  ColorPropertyDefine,
   ColumnIconOption,
   ColumnStyleOption,
+  MappingRule,
   TableEventOptions
 } from '../ts-types';
 import { event, style as utilStyle } from '../tools/helper';
@@ -88,7 +90,12 @@ import {
   updateRootElementPadding
 } from './tableHelper';
 import { MenuHandler } from '../components/menu/dom/MenuHandler';
-import type { BaseTableAPI, BaseTableConstructorOptions, IBaseTableProtected } from '../ts-types/base-table';
+import type {
+  BaseTableAPI,
+  BaseTableConstructorOptions,
+  IBaseTableProtected,
+  PivotTableProtected
+} from '../ts-types/base-table';
 import { FocusInput } from './FouseInput';
 import { defaultPixelRatio } from '../tools/pixel-ratio';
 import { createLegend } from '../components/legend/create-legend';
@@ -3063,6 +3070,28 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
       }
       return cacheStyle;
     }
+
+    let bgColorFunc: ColorPropertyDefine;
+    // 判断是否有mapping  遍历dataset中mappingRules
+    if ((this.internalProps as PivotTableProtected)?.dataConfig?.mappingRules && !this.isHeader(col, row)) {
+      (this.internalProps as PivotTableProtected)?.dataConfig?.mappingRules?.forEach(
+        (mappingRule: MappingRule, i: number) => {
+          if (
+            mappingRule.bgColor &&
+            (this.internalProps.layoutMap as PivotHeaderLayoutMap).getIndicatorKey(col, row) ===
+              mappingRule.bgColor.indicatorKey
+          ) {
+            bgColorFunc = mappingRule.bgColor.mapping;
+          }
+        }
+      );
+      // // 判断是否有mapping  遍历dataset中mappingRules 但这里还需要根据fieldName来判断
+      // if (bgColorFunc && typeof bgColorFunc === 'function') {
+      //   const cellValue = this.getCellOriginValue(col, row);
+      //   bgColor = bgColorFunc(this, cellValue);
+      // }
+    }
+
     let cacheKey;
     const cellType = this.getCellType(col, row);
     //如果是主体部分，获取相应的style
@@ -3109,6 +3138,9 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
       this.options.autoWrapText,
       this.theme
     );
+    if (bgColorFunc) {
+      cacheStyle = mergeStyle(cacheStyle as any, { bgColor: bgColorFunc });
+    }
     if (!isFunction(style)) {
       if (layoutMap.isBottomFrozenRow(row)) {
         this.bodyBottomStyleCache.set(cacheKey, cacheStyle);
