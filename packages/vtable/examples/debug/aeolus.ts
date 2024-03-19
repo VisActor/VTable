@@ -2561,21 +2561,14 @@ export function createTable() {
   // document.getElementById(CONTAINER_ID).parentElement.style.display = 'none';
   const instance = new VTable.PivotChart(document.getElementById(CONTAINER_ID), option);
   window.tableInstance = instance;
-  setTimeout(() => {
-    document.getElementById(CONTAINER_ID).parentElement.style.display = 'none';
-  }, 1000);
-
-  setTimeout(() => {
-    document.getElementById(CONTAINER_ID).parentElement.style.display = 'block';
-  }, 3000);
 
   // tableInstance.onVChartEvent('mouseover', args => {
   //   console.log('listenChart mouseover', args);
   // });
 
-  // bindDebugTool(tableInstance.scenegraph.stage, {
-  //   customGrapicKeys: ['col', 'row']
-  // });
+  bindDebugTool(tableInstance.scenegraph.stage, {
+    customGrapicKeys: ['col', 'row']
+  });
 
   window.update = () => {
     (option.rowTree = [
