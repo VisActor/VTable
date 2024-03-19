@@ -710,7 +710,7 @@ export function dealWithMergeCellSize(
           // 'middle'
         );
       }
-      if (cellGroup.role === 'cell' && range.start.col !== range.end.col && cellGroup.contentWidth !== cellWidth) {
+      if (cellGroup.role === 'cell' && range.start.col !== range.end.col && cellGroup.contentHeight !== cellHeight) {
         updateCellContentWidth(
           cellGroup,
           cellWidth,
