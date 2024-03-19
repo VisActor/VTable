@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vtable",
+      "comment": "fix: use default style in exportCellImg()",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vtable"
+}
