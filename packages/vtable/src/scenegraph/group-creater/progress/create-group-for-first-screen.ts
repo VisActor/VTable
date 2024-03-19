@@ -92,33 +92,65 @@ export function createGroupForFirstScreen(
     );
 
   // create rowHeaderGroup
-  createColGroup(
-    rowHeaderGroup,
-    xOrigin,
-    yOrigin,
-    0, // colStart
-    table.frozenColCount - 1, // colEnd
-    table.columnHeaderLevelCount, // rowStart
-    // Math.min(proxy.firstScreenRowLimit, table.rowCount - 1 - table.bottomFrozenRowCount), // rowEnd
-    distRow - table.bottomFrozenRowCount,
-    table.isListTable() && !table.internalProps.transpose ? 'body' : 'rowHeader', // isHeader
-    table
-  );
+  if (table.rowHeaderLevelCount > 0) {
+    createColGroup(
+      rowHeaderGroup,
+      xOrigin,
+      yOrigin,
+      0, // colStart
+      table.rowHeaderLevelCount - 1, // colEnd
+      table.columnHeaderLevelCount, // rowStart
+      // Math.min(proxy.firstScreenRowLimit, table.rowCount - 1 - table.bottomFrozenRowCount), // rowEnd
+      distRow - table.bottomFrozenRowCount,
+      'rowHeader', // isHeader
+      table
+    );
+  }
+  if (table.frozenColCount > table.rowHeaderLevelCount) {
+    createColGroup(
+      rowHeaderGroup,
+      xOrigin,
+      yOrigin,
+      table.rowHeaderLevelCount, // colStart
+      table.frozenColCount - 1, // colEnd
+      table.columnHeaderLevelCount, // rowStart
+      // Math.min(proxy.firstScreenRowLimit, table.rowCount - 1 - table.bottomFrozenRowCount), // rowEnd
+      distRow - table.bottomFrozenRowCount,
+      'body',
+      table
+    );
+  }
 
   if (table.bottomFrozenRowCount > 0) {
     // if (!table.isPivotChart()) {
     // create left bottom frozen
-    createColGroup(
-      leftBottomCornerGroup,
-      xOrigin,
-      yOrigin,
-      0, // colStart
-      table.frozenColCount - 1, // colEnd
-      table.rowCount - 1 - table.bottomFrozenRowCount + 1, // rowStart
-      table.rowCount - 1, // rowEnd
-      table.isListTable() ? ((table as ListTable).transpose ? 'rowHeader' : 'body') : 'rowHeader', // isHeader
-      table
-    );
+    if (table.rowHeaderLevelCount > 0) {
+      createColGroup(
+        leftBottomCornerGroup,
+        xOrigin,
+        yOrigin,
+        0, // colStart
+        table.rowHeaderLevelCount - 1, // colEnd
+        table.rowCount - 1 - table.bottomFrozenRowCount + 1, // rowStart
+        table.rowCount - 1, // rowEnd
+        'rowHeader', // isHeader
+        table
+      );
+    }
+    if (table.frozenColCount > table.rowHeaderLevelCount) {
+      createColGroup(
+        leftBottomCornerGroup,
+        xOrigin,
+        yOrigin,
+        table.rowHeaderLevelCount, // colStart
+        table.frozenColCount - 1, // colEnd
+        table.columnHeaderLevelCount, // rowStart
+        // Math.min(proxy.firstScreenRowLimit, table.rowCount - 1 - table.bottomFrozenRowCount), // rowEnd
+        distRow - table.bottomFrozenRowCount,
+        'body',
+        table
+      );
+    }
     // }
     // create bottomFrozenGroup
     distCol - table.rightFrozenColCount >= table.frozenColCount &&

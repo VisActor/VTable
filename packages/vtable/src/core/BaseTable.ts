@@ -3268,7 +3268,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
       icons = this.internalProps.headerHelper.getIcons(col, row);
     } else if ((this.internalProps.layoutMap as SimpleHeaderLayoutMap).isSeriesNumber(col, row)) {
       const dragOrder = (this.internalProps.layoutMap as SimpleHeaderLayoutMap).getSeriesNumberBody(col, row)?.define
-        .dragOrder;
+        ?.dragOrder;
       if (dragOrder) {
         icons = this.internalProps.rowSeriesNumberHelper.getIcons(col, row);
       }
