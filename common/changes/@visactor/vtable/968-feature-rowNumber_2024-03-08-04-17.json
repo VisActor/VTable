@@ -2,7 +2,7 @@
   "changes": [
     {
       "comment": "feat: support rowSeriesNumber #968\n\n",
-      "type": "none",
+      "type": "minor",
       "packageName": "@visactor/vtable"
     }
   ],

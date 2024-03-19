@@ -2,7 +2,7 @@
   "changes": [
     {
       "comment": "feat: record data support set hierarchyState\n\n",
-      "type": "none",
+      "type": "minor",
       "packageName": "@visactor/vtable"
     }
   ],
