@@ -2,6 +2,23 @@
 
 The definition of ICustomRenderObj is as follows:
 
+```
+export type ICustomRenderObj = {
+  /** Configured type collection */
+  elements: ICustomRenderElements;
+  /** Desired cell height */
+  expectedHeight: number;
+  /** Expected cell width */
+  expectedWidth: number;
+  /**
+   * Do you still need to render content by default? Only if the configuration is true, it will be drawn. By default, it will not be drawn.
+   */
+  renderDefault?: boolean;
+};
+```
+
+Detailed configuration instructions are as follows:
+
 ${prefix} elements (Array)
 
 The configured type collection. The type is declared as: ICustomRenderElement[].
