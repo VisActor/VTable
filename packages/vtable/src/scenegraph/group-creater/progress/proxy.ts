@@ -333,7 +333,7 @@ export class SceneProxy {
     this.currentRow = endRow;
     this.rowEnd = endRow;
     this.rowUpdatePos = this.rowEnd;
-    this.referenceRow = this.rowStart + Math.floor((endRow - this.rowStart) / 2);
+    // this.referenceRow = this.rowStart + Math.floor((endRow - this.rowStart) / 2);
 
     // update container group size and border
     this.table.scenegraph.updateContainer();
@@ -429,7 +429,7 @@ export class SceneProxy {
     this.currentCol = endCol;
     this.colEnd = endCol;
     this.colUpdatePos = this.colEnd;
-    this.referenceCol = this.colStart + Math.floor((endCol - this.colStart) / 2);
+    // this.referenceCol = this.colStart + Math.floor((endCol - this.colStart) / 2);
     // console.log('async', this.referenceCol, this.colStart, this.colEnd);
 
     // update container group size and border

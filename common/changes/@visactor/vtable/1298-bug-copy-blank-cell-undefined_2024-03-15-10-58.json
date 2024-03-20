@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "comment": "fix: when copy blank cell and paste to cell change to undefined #1298\n\n",
+      "type": "none",
+      "packageName": "@visactor/vtable"
+    }
+  ],
+  "packageName": "@visactor/vtable",
+  "email": "892739385@qq.com"
+}
