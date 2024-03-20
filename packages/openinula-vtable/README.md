@@ -5,15 +5,15 @@
 </div>
 
 <div align="center">
-  <h1>React-VTable</h1>
+  <h1>Openinula-VTable</h1>
 </div>
 
 <div align="center">
 
-VTable is not just a high-performance multidimensional data analysis table, but also a grid artist that creates art between rows and columns.React-VTable is a React wrapper of VTable.
+VTable is not just a high-performance multidimensional data analysis table, but also a grid artist that creates art between rows and columns.Openinula-VTable is a openinula wrapper of VTable.
 
-[![npm Version](https://img.shields.io/npm/v/@visactor/vtable.svg)](https://www.npmjs.com/package/@visactor/react-vtable)
-[![npm Download](https://img.shields.io/npm/dm/@visactor/vtable.svg)](https://www.npmjs.com/package/@visactor/react-vvtable)
+[![npm Version](https://img.shields.io/npm/v/@visactor/vtable.svg)](https://www.npmjs.com/package/@visactor/openinula-vtable)
+[![npm Download](https://img.shields.io/npm/dm/@visactor/vtable.svg)](https://www.npmjs.com/package/@visactor/openinula-vtable)
 [![license](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/visactor/vtable/blob/main/LICENSE)
 
 </div>
@@ -22,22 +22,20 @@ VTable is not just a high-performance multidimensional data analysis table, but 
 
 ## Installation
 
-[npm package](https://www.npmjs.com/package/@visactor/react-vtable)
+[npm package](https://www.npmjs.com/package/@visactor/openinula-vtable)
 
 ```bash
 // npm
-npm install @visactor/react-vtable
+npm install @visactor/openinula-vtable
 
 // yarn
-yarn add @visactor/react-vtable
+yarn add @visactor/openinula-vtable
 ```
 
 ## Quick Start
 
 ```jsx
-import React from 'react';
-import ReactDOM from 'react-dom/client';
-import { ListTable } from "@visactor/react-vtable";
+import Inula from 'openinula';
 
 const option = {
   header: [
@@ -61,8 +59,9 @@ const option = {
   records: new Array(1000).fill(["John", 18, "male", "🏀"]),
 };
 
-ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
-  <ListTable option={option} height={'500px'}/>
+Inula.render(
+  <ListTable option={option} height={'500px'}/>,
+  (document.getElementById('root') as HTMLElement)
 );
 ```
 
