@@ -205,13 +205,19 @@ export function updateCellHeight(
           // const { autoRowHeight } = table.internalProps;
           const style = scene.table._getCellStyle(col, row) as ProgressBarStyle;
           const padding = getQuadProps(getProp('padding', style, col, row, scene.table));
+          let width = cell.attribute.width;
+          let height = cell.attribute.height;
+          if (isMergeCellGroup(cell)) {
+            width = scene.table.getColsWidth(cell.mergeStartCol, cell.mergeEndCol);
+            height = scene.table.getRowsHeight(cell.mergeStartRow, cell.mergeEndRow);
+          }
           const customResult = dealWithCustom(
             customLayout,
             customRender,
             col,
             row,
-            cell.attribute.width,
-            cell.attribute.height,
+            width,
+            height,
             false,
             scene.table.heightMode === 'autoHeight',
             padding,
@@ -228,21 +234,29 @@ export function updateCellHeight(
         }
       }
     }
-    if (renderDefault) {
-      // 处理文字
-      const style = scene.table._getCellStyle(col, row);
-      updateMergeCellContentHeight(
-        cell,
-        distHeight,
-        detaY,
-        // scene.table.internalProps.autoRowHeight,
-        scene.table.heightMode === 'autoHeight',
-        getQuadProps(style.padding as number),
-        style.textAlign,
-        style.textBaseline,
-        scene.table
-      );
-    }
+    // if (renderDefault) {
+    //   // 处理文字
+    //   const style = scene.table._getCellStyle(col, row);
+    //   updateMergeCellContentHeight(
+    //     cell,
+    //     distHeight,
+    //     detaY,
+    //     // scene.table.internalProps.autoRowHeight,
+    //     scene.table.heightMode === 'autoHeight',
+    //     getQuadProps(style.padding as number),
+    //     style.textAlign,
+    //     style.textBaseline,
+    //     scene.table
+    //   );
+    // }
+    updateMergeCellContentHeight(
+      cell,
+      distHeight,
+      detaY,
+      scene.table.heightMode === 'autoHeight',
+      renderDefault,
+      scene.table
+    );
   }
 }
 
@@ -251,9 +265,7 @@ function updateMergeCellContentHeight(
   distHeight: number,
   detaY: number,
   autoRowHeight: boolean,
-  padding: [number, number, number, number],
-  textAlign: CanvasTextAlign,
-  textBaseline: CanvasTextBaseline,
+  renderDefault: boolean,
   table: BaseTableAPI
 ) {
   if (isMergeCellGroup(cellGroup)) {
@@ -271,7 +283,20 @@ function updateMergeCellContentHeight(
             dy: 0
           });
         });
-        updateCellContentHeight(singleCellGroup, distHeight, detaY, autoRowHeight, padding, textAlign, textBaseline);
+
+        if (renderDefault) {
+          const style = table._getCellStyle(col, row);
+          updateCellContentHeight(
+            singleCellGroup,
+            distHeight,
+            detaY,
+            autoRowHeight,
+            getQuadProps(style.padding as number),
+            style.textAlign,
+            style.textBaseline
+          );
+        }
+
         const rangeHeight = table.getRowHeight(row);
         const rangeWidth = table.getColWidth(col);
 
@@ -301,6 +326,15 @@ function updateMergeCellContentHeight(
       }
     }
   } else {
-    updateCellContentHeight(cellGroup, distHeight, detaY, autoRowHeight, padding, textAlign, textBaseline);
+    const style = table._getCellStyle(cellGroup.col, cellGroup.row);
+    updateCellContentHeight(
+      cellGroup,
+      distHeight,
+      detaY,
+      autoRowHeight,
+      getQuadProps(style.padding as number),
+      style.textAlign,
+      style.textBaseline
+    );
   }
 }
