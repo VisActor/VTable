@@ -536,6 +536,9 @@ export class StateManager {
   isResizeCol(): boolean {
     return this.columnResize.resizing;
   }
+  isFillHandle(): boolean {
+    return this.columnResize.resizing;
+  }
   isSelecting(): boolean {
     return this.select.selecting;
   }
@@ -567,6 +570,19 @@ export class StateManager {
   }
   startResizeCol(col: number, x: number, y: number, isRightFrozen?: boolean) {
     this.columnResize.resizing = true;
+    this.columnResize.col = col;
+    this.columnResize.x = x;
+    this.columnResize.isRightFrozen = isRightFrozen;
+
+    this.table.scenegraph.component.showResizeCol(col, y, isRightFrozen);
+
+    // 调整列宽期间清空选中清空
+    this.table.stateManager.updateSelectPos(-1, -1);
+
+    this.table.scenegraph.updateNextFrame();
+  }
+  startFillSelect(col: number, x: number, y: number, isRightFrozen?: boolean) {
+    // this.columnResize.resizing = true;
     this.columnResize.col = col;
     this.columnResize.x = x;
     this.columnResize.isRightFrozen = isRightFrozen;

@@ -48,6 +48,7 @@ export class EventManager {
   LastBodyPointerXY: { x: number; y: number };
   isDown = false;
   isDraging = false;
+  isFilling = false;
 
   globalEventListeners: { name: string; env: 'document' | 'body' | 'window'; callback: (e?: any) => void }[] = [];
 
@@ -248,15 +249,385 @@ export class EventManager {
         this.table.stateManager.updateSelectPos(-1, -1);
         return false;
       }
+      // console.log(this.checkCellFillhandle(eventArgsSet));
+        console.log(isSelectMoving);
+        console.log(this.table.eventManager.isFilling);
+        // console.log(this.table.stateManager.select?.ranges?.length);
+        // console.log(this.checkCellFillhandle(eventArgsSet));
+       
+        if (this.table.stateManager.select?.ranges?.length && this.table.eventManager.isFilling) {
+        //  if (isSelectMoving !== true) {
+        //   const currentRange = this.table.stateManager.select.ranges[this.table.stateManager.select.ranges.length - 1];
+      
+        //   this.table.stateManager.updateSelectPos(
+       
+        //     currentRange.start.col,
+        //     currentRange.start.row,
+        //     true,
+        //     eventArgs.event.ctrlKey || eventArgs.event.metaKey
+        //   );
+        //   return false;
+        // }
+      let updateRow;
+      let updateCol;
+      const currentRange = this.table.stateManager.select.ranges[this.table.stateManager.select.ranges.length - 1];
+      console.log(currentRange);
+      console.log(eventArgs.col, eventArgs.row);
+
+      if (Math.abs(currentRange.start.row - eventArgs.row) >= Math.abs(currentRange.start.col - eventArgs.col)) {
+  
+           updateRow = eventArgs.row;
+        updateCol = currentRange.end.col;
+  
+        
+      } else {
+            updateRow = currentRange.end.row;
+        updateCol = eventArgs.col;
+      }
+
+      console.log(updateRow,updateCol);
+
+
       this.table.stateManager.updateSelectPos(
+       
+        updateCol,
+        updateRow,
+        true,
+        eventArgs.event.ctrlKey || eventArgs.event.metaKey
+      );
+         
+      } else {
+         this.table.stateManager.updateSelectPos(
         eventArgs.col,
         eventArgs.row,
         eventArgs.event.shiftKey,
         eventArgs.event.ctrlKey || eventArgs.event.metaKey
       );
+      }
+      
+      // this.table.stateManager.updateSelectPos(
+      //   eventArgs.col,
+      //   eventArgs.row,
+      //   eventArgs.event.shiftKey,
+      //   eventArgs.event.ctrlKey || eventArgs.event.metaKey
+      // );
+      return true;
+      
+      
+    }
+    // this.table.stateManager.updateSelectPos(-1, -1); 这句有问题 如drag框选鼠标超出表格范围 这里就直接情况是不对的
+    return false;
+  }
+  dealFillSelect(eventArgsSet?: SceneEvent, isSelectMoving?: boolean): boolean {
+    if (!eventArgsSet) {
+      this.table.stateManager.updateSelectPos(-1, -1);
+      return false;
+    }
+    const { eventArgs } = eventArgsSet;
+
+    if (eventArgs) {
+      if (eventArgs.target.name === 'checkbox') {
+        return false;
+      }
+
+      // // 注意：如果启用下面这句代码逻辑 则在点击选中单元格时失效hover效果。但是会导致chart实例的click事件失效，所以先特殊处理这个逻辑
+      // if (
+      //   !this.table.isPivotChart() &&
+      //   eventArgsSet?.eventArgs?.target.type !== 'chart' &&
+      //   eventArgs.event.pointerType !== 'touch'
+      // ) {
+      //   this.table.stateManager.updateHoverPos(-1, -1);
+      // }
+      const define = this.table.getBodyColumnDefine(eventArgs.col, eventArgs.row);
+      if (
+        this.table.isHeader(eventArgs.col, eventArgs.row) &&
+        (define?.disableHeaderSelect || this.table.stateManager.select?.disableHeader)
+      ) {
+        if (!isSelectMoving) {
+          // 如果是点击点表头 取消单元格选中状态
+          this.table.stateManager.updateSelectPos(-1, -1);
+        }
+        return false;
+      } else if (!this.table.isHeader(eventArgs.col, eventArgs.row) && define?.disableSelect) {
+        if (!isSelectMoving) {
+          this.table.stateManager.updateSelectPos(-1, -1);
+        }
+        return false;
+      }
+
+      if (
+        this.table.isPivotChart() &&
+        (eventArgsSet?.eventArgs?.target.name === 'axis-label' || eventArgsSet?.eventArgs?.target.type === 'chart')
+      ) {
+        // 点击透视图坐标轴标签或图标内容，执行图表状态更新，不触发Select
+        this.table.stateManager.updateSelectPos(-1, -1);
+        return false;
+      }
+      console.log(this.table.stateManager.select.ranges);
+      // let updateRow;
+      // let updateCol;
+      //    const selectRange = this.table.stateManager.select.ranges[0];
+      //    const startCol = Math.min(selectRange.start.col, selectRange.end.col);
+      //    const startRow = Math.min( selectRange.start.row,  selectRange.end.row);
+      // const endCol = Math.max( selectRange.start.col,  selectRange.end.col);
+      // const endRow = Math.max( selectRange.start.row,  selectRange.end.row);
+      // // const currentRange = this.table.stateManager.select.ranges[0];
+      // console.log(selectRange);
+      // console.log(eventArgs.col, eventArgs.row);
+      // console.log(startCol, startRow);
+      // console.log(endCol, endRow);
+
+      // if (Math.abs(startRow - eventArgs.row) > Math.abs(startCol - eventArgs.col)) {
+      //    updateRow = eventArgs.row;
+      //   updateCol = startCol;
+      // } else {
+      //       updateRow = startRow;
+      //   updateCol = eventArgs.col;
+      // }
+      // if (eventArgs.row === startRow && eventArgs.col < startCol) {
+      //   // directionOfDrag = 'left';
+      //   updateRow = endRow;
+      //   updateCol = eventArgs.col;
+    
+      // } else if (eventArgs.row === startRow && eventArgs.row === endRow &&
+      //   eventArgs.col > startCol) {
+      //   // directionOfDrag = 'right';
+      //   updateRow = endRow;
+      //   updateCol = eventArgs.col;
+    
+      // } else if (eventArgs.row < startRow && eventArgs.col === startCol) {
+      //   // directionOfDrag = 'up';
+      //   updateRow = eventArgs.row;
+      //   updateCol = endCol;
+    
+      // } else if (eventArgs.row > startRow &&
+      //   eventArgs.col === startCol) {
+      //   // directionOfDrag = 'down';
+      //   updateRow = eventArgs.row;
+      //   updateCol = endCol;
+      // }
+    
+      // console.log(updateRow,updateCol);
+
+  
+      this.table.stateManager.updateSelectPos(
+        // updateCol,
+        // updateRow,
+        eventArgs.col,
+        eventArgs.row,
+        eventArgs.event.shiftKey,
+        eventArgs.event.ctrlKey || eventArgs.event.metaKey
+      );
+  
+    
       return true;
     }
     // this.table.stateManager.updateSelectPos(-1, -1); 这句有问题 如drag框选鼠标超出表格范围 这里就直接情况是不对的
+    return false;
+  }
+  fillSelected(eventArgsSet?: SceneEvent, isSelectMoving?: boolean): boolean {
+    if (!eventArgsSet) {
+      this.table.stateManager.updateSelectPos(-1, -1);
+      return false;
+    }
+    const { eventArgs } = eventArgsSet;
+
+    if (eventArgs) {
+      if (eventArgs.target.name === 'checkbox') {
+        return false;
+      }
+
+      // // 注意：如果启用下面这句代码逻辑 则在点击选中单元格时失效hover效果。但是会导致chart实例的click事件失效，所以先特殊处理这个逻辑
+      // if (
+      //   !this.table.isPivotChart() &&
+      //   eventArgsSet?.eventArgs?.target.type !== 'chart' &&
+      //   eventArgs.event.pointerType !== 'touch'
+      // ) {
+      //   this.table.stateManager.updateHoverPos(-1, -1);
+      // }
+      const define = this.table.getBodyColumnDefine(eventArgs.col, eventArgs.row);
+      if (
+        this.table.isHeader(eventArgs.col, eventArgs.row) &&
+        (define?.disableHeaderSelect || this.table.stateManager.select?.disableHeader)
+      ) {
+        if (!isSelectMoving) {
+          // 如果是点击点表头 取消单元格选中状态
+          this.table.stateManager.updateSelectPos(-1, -1);
+        }
+        return false;
+      } else if (!this.table.isHeader(eventArgs.col, eventArgs.row) && define?.disableSelect) {
+        if (!isSelectMoving) {
+          this.table.stateManager.updateSelectPos(-1, -1);
+        }
+        return false;
+      }
+
+      if (
+        this.table.isPivotChart() &&
+        (eventArgsSet?.eventArgs?.target.name === 'axis-label' || eventArgsSet?.eventArgs?.target.type === 'chart')
+      ) {
+        // 点击透视图坐标轴标签或图标内容，执行图表状态更新，不触发Select
+        this.table.stateManager.updateSelectPos(-1, -1);
+        return false;
+      }
+      console.log(this.table.stateManager.select.ranges);
+      // let updateRow;
+      // let updateCol;
+      //    const selectRange = this.table.stateManager.select.ranges[0];
+      //    const startCol = Math.min(selectRange.start.col, selectRange.end.col);
+      //    const startRow = Math.min( selectRange.start.row,  selectRange.end.row);
+      // const endCol = Math.max( selectRange.start.col,  selectRange.end.col);
+      // const endRow = Math.max( selectRange.start.row,  selectRange.end.row);
+      // // const currentRange = this.table.stateManager.select.ranges[0];
+      // console.log(selectRange);
+      // console.log(eventArgs.col, eventArgs.row);
+      // console.log(startCol, startRow);
+      // console.log(endCol, endRow);
+
+      // if (Math.abs(startRow - eventArgs.row) > Math.abs(startCol - eventArgs.col)) {
+      //    updateRow = eventArgs.row;
+      //   updateCol = startCol;
+      // } else {
+      //       updateRow = startRow;
+      //   updateCol = eventArgs.col;
+      // }
+      // if (eventArgs.row === startRow && eventArgs.col < startCol) {
+      //   // directionOfDrag = 'left';
+      //   updateRow = endRow;
+      //   updateCol = eventArgs.col;
+    
+      // } else if (eventArgs.row === startRow && eventArgs.row === endRow &&
+      //   eventArgs.col > startCol) {
+      //   // directionOfDrag = 'right';
+      //   updateRow = endRow;
+      //   updateCol = eventArgs.col;
+    
+      // } else if (eventArgs.row < startRow && eventArgs.col === startCol) {
+      //   // directionOfDrag = 'up';
+      //   updateRow = eventArgs.row;
+      //   updateCol = endCol;
+    
+      // } else if (eventArgs.row > startRow &&
+      //   eventArgs.col === startCol) {
+      //   // directionOfDrag = 'down';
+      //   updateRow = eventArgs.row;
+      //   updateCol = endCol;
+      // }
+    
+      // console.log(updateRow,updateCol);
+
+  
+      this.table.stateManager.updateSelectPos(
+        // updateCol,
+        // updateRow,
+        eventArgs.col,
+        eventArgs.row,
+        eventArgs.event.shiftKey,
+        eventArgs.event.ctrlKey || eventArgs.event.metaKey
+      );
+  
+    
+      return true;
+    }
+ 
+
+    // Fill area may starts or ends with invisible cell. There won't be any information about it as highlighted
+    // selection store just renderable indexes (It's part of Walkontable). I extrapolate where the start or/and
+    // the end is.
+    const [fillStartRow, fillStartColumn, fillEndRow, fillEndColumn] =
+      this.hot.selection.highlight.getFill().getVisualCorners();
+    const selectionRangeLast = this.hot.getSelectedRangeLast();
+    const topStartCorner = selectionRangeLast.getTopStartCorner();
+    const bottomEndCorner = selectionRangeLast.getBottomEndCorner();
+
+    this.resetSelectionOfDraggedArea();
+
+    const cornersOfSelectedCells = [
+      topStartCorner.row,
+      topStartCorner.col,
+      bottomEndCorner.row,
+      bottomEndCorner.col,
+    ];
+
+    const cornersOfSelectionAndDragAreas = this.hot
+      .runHooks(
+        'modifyAutofillRange',
+        [
+          Math.min(topStartCorner.row, fillStartRow),
+          Math.min(topStartCorner.col, fillStartColumn),
+          Math.max(bottomEndCorner.row, fillEndRow),
+          Math.max(bottomEndCorner.col, fillEndColumn),
+        ],
+        cornersOfSelectedCells
+      );
+
+    const {
+      directionOfDrag,
+      startOfDragCoords,
+      endOfDragCoords
+    } = getDragDirectionAndRange(
+      cornersOfSelectedCells,
+      cornersOfSelectionAndDragAreas,
+      (row, column) => this.hot._createCellCoords(row, column),
+    );
+
+    if (startOfDragCoords && startOfDragCoords.row > -1 && startOfDragCoords.col > -1) {
+      const selectionData = this.getSelectionData();
+      const sourceRange = selectionRangeLast.clone();
+      const targetRange = this.hot._createCellRange(startOfDragCoords, startOfDragCoords, endOfDragCoords);
+
+      const beforeAutofillHookResult = this.hot.runHooks(
+        'beforeAutofill',
+        selectionData,
+        sourceRange,
+        targetRange,
+        directionOfDrag
+      );
+
+      if (beforeAutofillHookResult === false) {
+        this.hot.selection.highlight.getFill().clear();
+        this.hot.render();
+
+        return false;
+      }
+
+      let fillData = beforeAutofillHookResult;
+      const res = beforeAutofillHookResult;
+
+      if (
+        ['up', 'left'].indexOf(directionOfDrag) > -1 &&
+        !(res.length === 1 && res[0].length === 0)
+      ) {
+        fillData = [];
+
+        if (directionOfDrag === 'up') {
+          const dragLength = endOfDragCoords.row - startOfDragCoords.row + 1;
+          const fillOffset = dragLength % res.length;
+
+          for (let i = 0; i < dragLength; i++) {
+            fillData.push(res[(i + (res.length - fillOffset)) % res.length]);
+          }
+
+        } else {
+          const dragLength = endOfDragCoords.col - startOfDragCoords.col + 1;
+          const fillOffset = dragLength % res[0].length;
+
+          for (let i = 0; i < res.length; i++) {
+            fillData.push([]);
+
+            for (let j = 0; j < dragLength; j++) {
+              fillData[i]
+                .push(res[i][(j + (res[i].length - fillOffset)) % res[i].length]);
+            }
+          }
+        }
+      }
+
+     
+
+    } 
+
+    return true;
     return false;
   }
 
@@ -271,13 +642,13 @@ export class EventManager {
   checkColumnResize(eventArgsSet: SceneEvent, update?: boolean): boolean {
     // return false;
     const { eventArgs } = eventArgsSet;
-
     if (eventArgs) {
       const resizeCol = this.table.scenegraph.getResizeColAt(
         eventArgsSet.abstractPos.x,
         eventArgsSet.abstractPos.y,
         eventArgs.targetCell
       );
+  
       if (this.table._canResizeColumn(resizeCol.col, resizeCol.row) && resizeCol.col >= 0) {
         // this.table.stateManager.updateResizeCol(resizeCol.col, eventArgsSet.abstractPos.x, first);
         // this._col = resizeCol.col;
@@ -291,6 +662,50 @@ export class EventManager {
         }
         return true;
       }
+    }
+
+    return false;
+  }
+
+  checkCellFillhandle(eventArgsSet: SceneEvent, update?: boolean): boolean {
+    // return false;
+    const { eventArgs } = eventArgsSet;
+    if (eventArgs) {
+      if (this.table.stateManager.select?.ranges?.length) {
+        // if (update) {
+        //   return true;
+        // }
+        const lastCol = this.table.stateManager.select.ranges[this.table.stateManager.select.ranges.length - 1].end.col;
+        const lastRow = this.table.stateManager.select.ranges[this.table.stateManager.select.ranges.length - 1].end.row;
+
+      const lastCellBound = this.table.scenegraph.highPerformanceGetCell(lastCol, lastRow).globalAABBBounds;
+      // 计算鼠标与fillhandle矩形中心之间的距离
+      const distanceX = Math.abs(eventArgsSet.abstractPos.x - lastCellBound.x2);
+      const distanceY = Math.abs(eventArgsSet.abstractPos.y - lastCellBound.y2);
+      const squareSize = 6 * 3;
+      // 判断鼠标是否落在fillhandle矩形内
+      if (this.isFilling || (distanceX <= squareSize / 2 && distanceY <= squareSize / 2)) {
+        if (update) {
+          console.log("123");
+    
+          this.isFilling = true;
+            // const selectRange = this.table.stateManager.select.ranges[0];
+            //       const endCol = Math.max( selectRange.start.col,  selectRange.end.col);
+            //       const endRow = Math.max( selectRange.start.row,  selectRange.end.row);
+            // this.dealFillSelect(eventArgsSet);
+             
+          // this.table.stateManager.isResizeCol.mouseDownOnCellCorner = true;
+          // this.table.stateManager.startResizeCol(
+          //   resizeCol.col,
+          //   eventArgsSet.abstractPos.x,
+          //   eventArgsSet.abstractPos.y,
+          //   resizeCol.rightFrozen
+          // );
+        }
+        return true;
+      } 
+      }
+      
     }
 
     return false;
