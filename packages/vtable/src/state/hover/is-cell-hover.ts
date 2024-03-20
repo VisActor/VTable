@@ -2,6 +2,7 @@ import type { StateManager } from '../state';
 import type { Group } from '../../scenegraph/graphic/group';
 import { getProp } from '../../scenegraph/utils/get-prop';
 import type { BaseTableAPI } from '../../ts-types/base-table';
+import type { ColumnDefine } from '../../ts-types';
 import { HighlightScope } from '../../ts-types';
 import { isValid } from '@visactor/vutils';
 import { getCellMergeRange } from '../../tools/merge-range';
@@ -93,14 +94,14 @@ export function isCellHover(state: StateManager, col: number, row: number, cellG
     let cellDisable;
     if (isHeader) {
       const define = table.getHeaderDefine(col, row);
-      cellDisable = define?.disableHeaderHover;
+      cellDisable = (define as ColumnDefine)?.disableHeaderHover;
 
       if (cellGroup.firstChild && cellGroup.firstChild.name === 'axis' && table.options.hover?.disableAxisHover) {
         cellDisable = true;
       }
     } else {
       const define = table.getBodyColumnDefine(col, row);
-      cellDisable = define?.disableHover;
+      cellDisable = (define as ColumnDefine)?.disableHover;
     }
 
     if (cellDisable) {

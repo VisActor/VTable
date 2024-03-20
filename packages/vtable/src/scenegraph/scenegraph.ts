@@ -686,8 +686,14 @@ export class Scenegraph {
     deleteAllSelectBorder(this);
   }
 
-  updateCellSelectBorder(newStartCol: number, newStartRow: number, newEndCol: number, newEndRow: number) {
-    updateCellSelectBorder(this, newStartCol, newStartRow, newEndCol, newEndRow);
+  updateCellSelectBorder(
+    newStartCol: number,
+    newStartRow: number,
+    newEndCol: number,
+    newEndRow: number,
+    extendSelectRange: boolean = true
+  ) {
+    updateCellSelectBorder(this, newStartCol, newStartRow, newEndCol, newEndRow, extendSelectRange);
   }
   /** 根据select状态重新创建选中range节点  目前无调用者 */
   recreateAllSelectRangeComponents() {

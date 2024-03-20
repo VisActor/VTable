@@ -1,3 +1,4 @@
+import type { ListTable } from '../../ListTable';
 import type { PivotHeaderLayoutMap } from '../../layout/pivot-header-layout';
 import type { CellAddress } from '../../ts-types';
 import type { BaseTableAPI } from '../../ts-types/base-table';
@@ -18,13 +19,17 @@ export function adjustMoveHeaderTarget(source: CellAddress, target: CellAddress,
     } else {
       target.col = targetCellRange.start.col;
     } //左侧 位置是合并单元格的最左侧
-  } else if (table.isRowHeader(source.col, source.row)) {
+  } else if (
+    table.isRowHeader(source.col, source.row)
+    // ||
+    // ((table as ListTable).transpose && table.internalProps.layoutMap.isSeriesNumberInBody(source.col, source.row))
+  ) {
+    const layoutMap = table.internalProps.layoutMap as PivotHeaderLayoutMap;
     const targetCellRange = table.getCellRange(sourceCellRange.start.col, target.row);
-    if (target.col >= table.rowHeaderLevelCount) {
-      target.col = table.rowHeaderLevelCount - 1;
+    if (target.col >= table.rowHeaderLevelCount + layoutMap.leftRowSeriesNumberColumnCount) {
+      target.col = table.rowHeaderLevelCount + layoutMap.leftRowSeriesNumberColumnCount - 1;
     }
     // tree模式[透视表行表头]
-    const layoutMap = table.internalProps.layoutMap as PivotHeaderLayoutMap;
     if (layoutMap.rowHierarchyType === 'tree') {
       const sourceRowHeaderPaths = layoutMap.getCellHeaderPathsWidthTreeNode(source.col, source.row)
         .rowHeaderPaths as any;

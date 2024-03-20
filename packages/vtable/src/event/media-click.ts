@@ -2,7 +2,7 @@ import { TABLE_EVENT_TYPE } from '../core/TABLE_EVENT_TYPE';
 import { Env } from '../tools/env';
 import { regUrl } from '../tools/global';
 import type { LinkColumnDefine, MousePointerCellEvent } from '../ts-types';
-import type { BaseTableAPI } from '../ts-types/base-table';
+import type { BaseTableAPI, HeaderData } from '../ts-types/base-table';
 import type { IImageColumnBodyDefine } from '../ts-types/list-table/define/image-define';
 
 export function bindMediaClick(table: BaseTableAPI): void {
@@ -15,8 +15,8 @@ export function bindMediaClick(table: BaseTableAPI): void {
       let cellType;
       if (table.internalProps.layoutMap.isHeader(col, row)) {
         cellType = table.isPivotTable()
-          ? table._getHeaderLayoutMap(col, row).headerType
-          : table.getHeaderDefine(col, row).headerType;
+          ? (table._getHeaderLayoutMap(col, row) as HeaderData).headerType
+          : (table.getHeaderDefine(col, row) as HeaderData).headerType;
       } else {
         cellType = table.getBodyColumnType(col, row);
       }

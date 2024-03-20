@@ -33,7 +33,7 @@ import { computeColWidth } from './scenegraph/layout/compute-col-width';
 import { computeRowHeight } from './scenegraph/layout/compute-row-height';
 import { defaultOrderFn } from './tools/util';
 import type { IEditor } from '@visactor/vtable-editors';
-import type { ColumnData } from './ts-types/list-table/layout-map/api';
+import type { ColumnData, ColumnDefine } from './ts-types/list-table/layout-map/api';
 
 export class ListTable extends BaseTable implements ListTableAPI {
   declare internalProps: ListTableProtected;
@@ -215,7 +215,14 @@ export class ListTable extends BaseTable implements ListTableAPI {
       return customMergeText;
     }
     const table = this;
-    if (table.internalProps.layoutMap.isHeader(col, row)) {
+    if (table.internalProps.layoutMap.isSeriesNumber(col, row)) {
+      if (table.internalProps.layoutMap.isSeriesNumberInHeader(col, row)) {
+        const { title } = table.internalProps.layoutMap.getSeriesNumberHeader(col, row);
+        return title;
+      }
+      const { format } = table.internalProps.layoutMap.getSeriesNumberBody(col, row);
+      return typeof format === 'function' ? format(col, row, this) : row - this.columnHeaderLevelCount + 1;
+    } else if (table.internalProps.layoutMap.isHeader(col, row)) {
       const { title } = table.internalProps.layoutMap.getHeader(col, row);
       return typeof title === 'function' ? title() : title;
     } else if (table.internalProps.layoutMap.isAggregation(col, row)) {
@@ -227,7 +234,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
         return aggregator?.formatValue ? aggregator.formatValue(col, row, this as BaseTableAPI) : '';
       }
     }
-    const { field, fieldFormat } = table.internalProps.layoutMap.getBody(col, row);
+    const { field, fieldFormat } = table.internalProps.layoutMap.getBody(col, row) as ColumnData;
     return table.getFieldData(fieldFormat || field, col, row);
   }
   /** 获取单元格展示数据的format前的值 */
@@ -236,7 +243,14 @@ export class ListTable extends BaseTable implements ListTableAPI {
       return null;
     }
     const table = this;
-    if (table.internalProps.layoutMap.isHeader(col, row)) {
+    if (table.internalProps.layoutMap.isSeriesNumber(col, row)) {
+      if (table.internalProps.layoutMap.isSeriesNumberInHeader(col, row)) {
+        const { title } = table.internalProps.layoutMap.getSeriesNumberHeader(col, row);
+        return title;
+      }
+      const { format } = table.internalProps.layoutMap.getSeriesNumberBody(col, row);
+      return typeof format === 'function' ? format(col, row, this) : row - this.columnHeaderLevelCount;
+    } else if (table.internalProps.layoutMap.isHeader(col, row)) {
       const { title } = table.internalProps.layoutMap.getHeader(col, row);
       return typeof title === 'function' ? title() : title;
     } else if (table.internalProps.layoutMap.isAggregation(col, row)) {
@@ -344,14 +358,14 @@ export class ListTable extends BaseTable implements ListTableAPI {
       if (!this.transpose) {
         // 列上是否配置了禁止拖拽列宽的配置项disableColumnResize
         const cellDefine = this.internalProps.layoutMap.getBody(col, this.columnHeaderLevelCount);
-        if (cellDefine?.disableColumnResize) {
+        if ((cellDefine as ColumnData)?.disableColumnResize) {
           return false;
         }
       }
     }
     return ifCan;
   }
-  updateOption(options: ListTableConstructorOptions & { restoreHierarchyState?: boolean }) {
+  updateOption(options: ListTableConstructorOptions) {
     const internalProps = this.internalProps;
     super.updateOption(options);
     internalProps.frozenColDragHeaderMode = options.frozenColDragHeaderMode;
@@ -389,7 +403,6 @@ export class ListTable extends BaseTable implements ListTableAPI {
       _setDataSource(this, options.dataSource);
     } else if (options.records) {
       this.setRecords(options.records as any, {
-        restoreHierarchyState: options.restoreHierarchyState,
         sortState: options.sortState
       });
     } else {
@@ -476,10 +489,13 @@ export class ListTable extends BaseTable implements ListTableAPI {
 
     if (table.transpose) {
       table.rowCount = layoutMap.rowCount ?? 0;
-      table.colCount = layoutMap.recordsCount * layoutMap.bodyRowSpanCount + layoutMap.headerLevelCount;
+      table.colCount = layoutMap.colCount ?? 0;
       table.frozenRowCount = 0;
       // table.frozenColCount = layoutMap.headerLevelCount; //这里不要这样写 这个setter会检查扁头宽度 可能将frozenColCount置为0
-      this.internalProps.frozenColCount = layoutMap.headerLevelCount ?? 0;
+      this.internalProps.frozenColCount = Math.max(
+        (layoutMap.headerLevelCount ?? 0) + layoutMap.leftRowSeriesNumberColumnCount,
+        this.options.frozenColCount ?? 0
+      );
       if (table.bottomFrozenRowCount !== (this.options.bottomFrozenRowCount ?? 0)) {
         table.bottomFrozenRowCount = this.options.bottomFrozenRowCount ?? 0;
       }
@@ -517,7 +533,10 @@ export class ListTable extends BaseTable implements ListTableAPI {
     if (table.internalProps.layoutMap.isHeader(col, row)) {
       return null;
     }
-    const index = table.getRecordShowIndexByCell(col, row);
+    const index = table.getRecordShowIndexByCell(
+      table.transpose ? col - table.internalProps.layoutMap.leftRowSeriesNumberColumnCount : col,
+      row
+    );
     return table.internalProps.dataSource.getField(index, field, col, row, this);
   }
   /**
@@ -544,12 +563,21 @@ export class ListTable extends BaseTable implements ListTableAPI {
    * @param target 移动目标位置
    */
   _moveHeaderPosition(source: CellAddress, target: CellAddress) {
+    const sourceCellRange = this.getCellRange(source.col, source.row);
+    const targetCellRange = this.getCellRange(target.col, target.row);
     // 调用布局类 布局数据结构调整为移动位置后的
     const moveContext = this.internalProps.layoutMap.moveHeaderPosition(source, target);
     if (moveContext) {
       if (moveContext.moveType === 'column') {
         //colWidthsMap 中存储着每列的宽度 根据移动 sourceCol targetCol 调整其中的位置
-        this.colWidthsMap.adjustOrder(moveContext.sourceIndex, moveContext.targetIndex, moveContext.sourceSize);
+        // this.colWidthsMap.adjustOrder(moveContext.sourceIndex, moveContext.targetIndex, moveContext.sourceSize);
+        this.colWidthsMap.exchangeOrder(
+          sourceCellRange.start.col,
+          sourceCellRange.end.col - sourceCellRange.start.col + 1,
+          targetCellRange.start.col,
+          targetCellRange.end.col - targetCellRange.start.col + 1,
+          moveContext.targetIndex
+        );
         if (!this.transpose) {
           //下面代码取自refreshHeader列宽设置逻辑
           //设置列宽极限值 TODO 目前是有问题的 最大最小宽度限制 移动列位置后不正确
@@ -564,25 +592,53 @@ export class ListTable extends BaseTable implements ListTableAPI {
             }
           }
         }
-        // 清空相关缓存
-        const colStart = Math.min(moveContext.sourceIndex, moveContext.targetIndex);
-        const colEnd = Math.max(moveContext.sourceIndex, moveContext.targetIndex);
-        for (let col = colStart; col <= colEnd; col++) {
-          this._clearColRangeWidthsMap(col);
-        }
+        // // 清空相关缓存
+        // const colStart = Math.min(moveContext.sourceIndex, moveContext.targetIndex);
+        // const colEnd = Math.max(moveContext.sourceIndex, moveContext.targetIndex);
+        // for (let col = colStart; col <= colEnd; col++) {
+        //   this._clearColRangeWidthsMap(col);
+        // }
       } else {
-        // 清空相关缓存
-        const rowStart = Math.min(moveContext.sourceIndex, moveContext.targetIndex);
-        const rowEnd = Math.max(moveContext.sourceIndex, moveContext.targetIndex);
-        for (let row = rowStart; row <= rowEnd; row++) {
-          this._clearRowRangeHeightsMap(row);
+        // // 清空相关缓存
+        // const rowStart = Math.min(moveContext.sourceIndex, moveContext.targetIndex);
+        // const rowEnd = Math.max(moveContext.sourceIndex, moveContext.targetIndex);
+        // for (let row = rowStart; row <= rowEnd; row++) {
+        //   this._clearRowRangeHeightsMap(row);
+        // }
+        //colWidthsMap 中存储着每列的宽度 根据移动 sourceCol targetCol 调整其中的位置
+        // this.rowHeightsMap.adjustOrder(moveContext.sourceIndex, moveContext.targetIndex, moveContext.moveSize);
+        if (moveContext.targetIndex > moveContext.sourceIndex) {
+          this.rowHeightsMap.exchangeOrder(
+            moveContext.sourceIndex,
+            moveContext.sourceSize,
+            moveContext.targetIndex + moveContext.sourceSize - moveContext.targetSize,
+            moveContext.targetSize,
+            moveContext.targetIndex
+          );
+        } else {
+          this.rowHeightsMap.exchangeOrder(
+            moveContext.sourceIndex,
+            moveContext.sourceSize,
+            moveContext.targetIndex,
+            moveContext.targetSize,
+            moveContext.targetIndex
+          );
         }
       }
       return moveContext;
     }
     return null;
   }
-
+  changeRecordOrder(sourceIndex: number, targetIndex: number) {
+    if (this.transpose) {
+      sourceIndex = this.getRecordShowIndexByCell(sourceIndex, 0);
+      targetIndex = this.getRecordShowIndexByCell(targetIndex, 0);
+    } else {
+      sourceIndex = this.getRecordShowIndexByCell(0, sourceIndex);
+      targetIndex = this.getRecordShowIndexByCell(0, targetIndex);
+    }
+    this.dataSource.reorderRecord(sourceIndex, targetIndex);
+  }
   /**
    * 方法适用于获取body中某条数据的行列号
    * @param findTargetRecord 通过数据对象或者指定函数来计算数据条目index
@@ -667,7 +723,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
    * @returns
    */
   getHierarchyState(col: number, row: number) {
-    const define = this.getBodyColumnDefine(col, row);
+    const define = this.getBodyColumnDefine(col, row) as ColumnDefine;
     if (!define.tree) {
       return HierarchyState.none;
     }
@@ -850,7 +906,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
   }
   /** 获取某个单元格checkbox的状态 */
   getCellCheckboxState(col: number, row: number) {
-    const define = this.getBodyColumnDefine(col, row);
+    const define = this.getBodyColumnDefine(col, row) as ColumnDefine;
     const field = define?.field;
     const cellType = this.getCellType(col, row);
     if (isValid(field) && cellType === 'checkbox') {
@@ -864,10 +920,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
    * @param records
    * @param sort
    */
-  setRecords(
-    records: Array<any>,
-    option?: { restoreHierarchyState?: boolean; sortState?: SortState | SortState[] }
-  ): void {
+  setRecords(records: Array<any>, option?: { sortState?: SortState | SortState[] }): void {
     let sort: SortState | SortState[];
     if (Array.isArray(option) || (option as any)?.order) {
       //兼容之前第二个参数为sort的情况
@@ -888,11 +941,6 @@ export class ListTable extends BaseTable implements ListTableAPI {
       this.internalProps.sortState = sort;
       this.stateManager.setSortState((this as any).sortState as SortState);
     }
-    // restoreHierarchyState逻辑，保留树形结构展开收起的状态
-    const currentPagerIndexedData = this.dataSource?._currentPagerIndexedData;
-    const currentIndexedData = this.dataSource?.currentIndexedData;
-    const treeDataHierarchyState = this.dataSource?.treeDataHierarchyState;
-    const oldRecordLength = this.records?.length ?? 0;
     if (records) {
       _setRecords(this, records);
       if ((this as any).sortState) {
@@ -916,21 +964,9 @@ export class ListTable extends BaseTable implements ListTableAPI {
           }
         }
       }
-      if (option?.restoreHierarchyState && oldRecordLength === this.records?.length) {
-        // restoreHierarchyState逻辑，保留树形结构展开收起的状态
-        this.dataSource._currentPagerIndexedData = currentPagerIndexedData;
-        this.dataSource.currentIndexedData = currentIndexedData;
-        this.dataSource.treeDataHierarchyState = treeDataHierarchyState;
-      }
       this.refreshRowColCount();
     } else {
       _setRecords(this, records);
-      if (option?.restoreHierarchyState && oldRecordLength === this.records?.length) {
-        // restoreHierarchyState逻辑，保留树形结构展开收起的状态
-        this.dataSource._currentPagerIndexedData = currentPagerIndexedData;
-        this.dataSource.currentIndexedData = currentIndexedData;
-        this.dataSource.treeDataHierarchyState = treeDataHierarchyState;
-      }
     }
 
     this.stateManager.initCheckedState(records);
@@ -980,8 +1016,8 @@ export class ListTable extends BaseTable implements ListTableAPI {
   getEditor(col: number, row: number) {
     const define = this.getBodyColumnDefine(col, row);
     let editorDefine = this.isHeader(col, row)
-      ? define?.headerEditor ?? this.options.headerEditor
-      : define?.editor ?? this.options.editor;
+      ? (define as ColumnDefine)?.headerEditor ?? this.options.headerEditor
+      : (define as ColumnDefine)?.editor ?? this.options.editor;
 
     if (typeof editorDefine === 'function') {
       const arg = {
@@ -1002,8 +1038,8 @@ export class ListTable extends BaseTable implements ListTableAPI {
   isHasEditorDefine(col: number, row: number) {
     const define = this.getBodyColumnDefine(col, row);
     let editorDefine = this.isHeader(col, row)
-      ? define?.headerEditor ?? this.options.headerEditor
-      : define?.editor ?? this.options.editor;
+      ? (define as ColumnDefine)?.headerEditor ?? this.options.headerEditor
+      : (define as ColumnDefine)?.editor ?? this.options.editor;
 
     if (typeof editorDefine === 'function') {
       const arg = {

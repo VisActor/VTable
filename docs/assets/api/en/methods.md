@@ -138,14 +138,12 @@ Set the table data interface, which can be called as an update interface.
 
 Basic table updates:
 
-The basic table can also set the sorting status to sort the table data. Set sort to null to clear the sorting status. If not set, the incoming data will be sorted according to the current sorting status.
-
-restoreHierarchyState can be ignored temporarily. The usage scenario is quite special. You can consult the R&D team of VTable before deciding whether to use it.
+The basic table can also set the sorting status to sort the table data. Set sortState to null to clear the sorting status. If not set, the incoming data will be sorted according to the current sorting status.
 
 ```
 setRecords(
     records: Array<any>,
-    option?: { sort?: SortState | SortState[], restoreHierarchyState: boolean; }
+    option?: { sortState?: SortState | SortState[]}
   ): void;
 ```
 
@@ -977,20 +975,27 @@ Get the displayed row number range of the table body part
 Get aggregation summary value
 
 ## registerCustomCellStyle(Function)
+
 Register a custom style
+
 ```
 registerCustomCellStyle: (customStyleId: string, customStyle: ColumnStyleOption | undefined | null) => void
 ```
+
 Custom cell style
-* customStyleId: the unique id of the custom style
-* customStyle: Custom cell style, which is the same as the `style` configuration in `column`. The final rendering effect is the fusion of the original style of the cell and the custom style.
+
+- customStyleId: the unique id of the custom style
+- customStyle: Custom cell style, which is the same as the `style` configuration in `column`. The final rendering effect is the fusion of the original style of the cell and the custom style.
 
 ## registerCustomCellStyleArrangement(Function)
+
 Assign custom styles
+
 ```
 registerCustomCellStyleArrangement: (cellPosition: { col?: number; row?: number; range?: CellRange }, customStyleId: string) => void
 ```
-* cellPosition: cell position information, supports configuration of single cells and cell areas
-   * Single cell: `{ row: number, column: number }`
-   * Cell range: `{ range: { start: { row: number, column: number }, end: { row: number, column: number} } }`
-* customStyleId: Custom style id, the same as the id defined when registering the custom style
+
+- cellPosition: cell position information, supports configuration of single cells and cell areas
+  - Single cell: `{ row: number, column: number }`
+  - Cell range: `{ range: { start: { row: number, column: number }, end: { row: number, column: number} } }`
+- customStyleId: Custom style id, the same as the id defined when registering the custom style

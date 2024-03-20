@@ -147,7 +147,8 @@ export enum IconFuncTypeEnum {
   expand = 'expand',
   collapse = 'collapse',
   drillDown = 'drillDown',
-  drillUp = 'drillUp'
+  drillUp = 'drillUp',
+  dragReorder = 'dragReorder'
 }
 export enum InternalIconName {
   upwardIconName = 'sort_upward',
@@ -160,7 +161,8 @@ export enum InternalIconName {
   dropdownIconName = 'dropdownIcon',
   // dropdownHoverIconName = 'dropdownIcon_hover',
   expandIconName = 'expand',
-  collapseIconName = 'collapse'
+  collapseIconName = 'collapse',
+  dragReorderIconName = 'dragReorder'
 }
 // 目前暂不支持FontIcon&PathIcon
 export type ColumnIconOption = ImageIcon | SvgIcon;

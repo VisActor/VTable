@@ -105,6 +105,7 @@ export function updateRow(
     updateBottomFrozeCellGroups();
     // scene.proxy.progress();
   } else if (removeRows.length) {
+    setRowSeriesNumberCellNeedUpdate(removeRows[removeRows.length - 1], scene);
     scene.proxy.updateCellGroups(scene.proxy.screenRowCount * 2);
 
     updateBottomFrozeCellGroups();
@@ -487,6 +488,14 @@ function updateCellGroup(range: CellRange, scene: Scenegraph) {
         continue;
       }
       cellGroup.needUpdate = true;
+    }
+  }
+}
+
+function setRowSeriesNumberCellNeedUpdate(startUpdateRow: number, scene: Scenegraph) {
+  if (scene.table.isHasSeriesNumber()) {
+    for (let row = startUpdateRow; row <= scene.table.rowCount - 1; row++) {
+      updateCell(0, row, scene.table, false);
     }
   }
 }

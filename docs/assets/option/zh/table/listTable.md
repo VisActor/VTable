@@ -139,3 +139,10 @@ type CustomAggregation = {
   formatFun?: (value: number, col: number, row: number, table: BaseTableAPI) => string | number;
 };
 ```
+
+## rowSeriesNumber(IRowSeriesNumber)
+
+配置行序号。
+{{ use: row-series-number(
+    prefix = '###',
+) }}
