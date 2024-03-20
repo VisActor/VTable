@@ -471,8 +471,9 @@ function computeCustomRenderWidth(col: number, row: number, table: BaseTableAPI)
       if (customLayoutObj.rootContainer instanceof VGroup) {
         customLayoutObj.rootContainer = decodeReactDom(customLayoutObj.rootContainer);
         dealPercentCalc(customLayoutObj.rootContainer, 0, table.getRowHeight(row));
+        const setedWidth = (customLayoutObj.rootContainer as VGroup).attribute.width;
         customLayoutObj.rootContainer.setStage(table.scenegraph.stage);
-        width = (customLayoutObj.rootContainer as VGroup).AABBBounds.width() ?? 0;
+        width = setedWidth > 0 ? setedWidth : (customLayoutObj.rootContainer as VGroup).AABBBounds.width() ?? 0;
         renderDefault = customLayoutObj.renderDefault;
         enableCellPadding = customLayoutObj.enableCellPadding;
       } else {
