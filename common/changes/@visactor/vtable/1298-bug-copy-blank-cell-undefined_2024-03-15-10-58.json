@@ -1,7 +1,7 @@
 {
   "changes": [
     {
-      "comment": "fix: after change transpose resize line render error #1239\n\n",
+      "comment": "fix: when copy blank cell and paste to cell change to undefined #1298\n\n",
       "type": "none",
       "packageName": "@visactor/vtable"
     }

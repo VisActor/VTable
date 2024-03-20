@@ -25,49 +25,6 @@ export function bindTableGroupListener(eventManager: EventManager) {
   const table = eventManager.table;
   const stateManager = table.stateManager;
 
-  // 有被阻止冒泡的场景 就触发不到这里的事件了 所以这个LastBodyPointerXY变量的赋值在scrollbar的down事件也进行了处理
-  document.body.addEventListener('pointerdown', e => {
-    console.log('body pointerdown');
-    table.eventManager.LastBodyPointerXY = { x: e.x, y: e.y };
-    table.eventManager.isDown = true;
-  });
-  document.addEventListener('pointerup', e => {
-    table.eventManager.LastBodyPointerXY = null;
-    console.log('body pointerup', table.eventManager.isDown, table.eventManager.isDraging);
-    table.eventManager.isDown = false;
-    table.eventManager.isDraging = false;
-  });
-  document.body.addEventListener('pointermove', (e: FederatedPointerEvent) => {
-    if (table.eventManager.isDown && table.eventManager.LastBodyPointerXY) {
-      const lastX = table.eventManager.LastBodyPointerXY?.x ?? e.x;
-      const lastY = table.eventManager.LastBodyPointerXY?.y ?? e.y;
-      if (Math.abs(lastX - e.x) > 1 || Math.abs(lastY - e.y) > 1) {
-        table.eventManager.isDraging = true;
-      }
-    }
-    // 注释掉。因为： 这里pointermove太敏感了 点击快的时候 可能动了1px这里也会执行到 就影响到下面选中不触发的问题。下面pointermove就有这段逻辑，这里先去掉
-    // if (eventManager.touchSetTimeout) {
-    //   clearTimeout(eventManager.touchSetTimeout);
-    //   console.log('eventManager.touchSetTimeout', eventManager.touchSetTimeout);
-    //   eventManager.touchSetTimeout = undefined;
-    // }
-    // const eventArgsSet = getCellEventArgsSet(e);
-    const { x, y } = table._getMouseAbstractPoint(e, false);
-    if (stateManager.interactionState === InteractionState.scrolling) {
-      return;
-    }
-    if (stateManager.interactionState === InteractionState.grabing) {
-      if (stateManager.isResizeCol()) {
-        eventManager.dealColumnResize(x, y);
-        if ((table as any).hasListeners(TABLE_EVENT_TYPE.RESIZE_COLUMN)) {
-          table.fireListeners(TABLE_EVENT_TYPE.RESIZE_COLUMN, {
-            col: table.stateManager.columnResize.col,
-            colWidth: table.getColWidth(table.stateManager.columnResize.col)
-          });
-        }
-      }
-    }
-  });
   table.scenegraph.tableGroup.addEventListener('pointermove', (e: FederatedPointerEvent) => {
     const lastX = table.eventManager.LastPointerXY?.x ?? e.x;
     const lastY = table.eventManager.LastPointerXY?.y ?? e.y;

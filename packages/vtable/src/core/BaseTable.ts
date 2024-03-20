@@ -3479,7 +3479,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
                   //无法获取异步数据
                 } else {
                   // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-                  const strCellValue = `${copyCellValue}`;
+                  const strCellValue = isValid(copyCellValue) ? `${copyCellValue}` : '';
                   if (/^\[object .*\]$/.exec(strCellValue)) {
                     //object 对象忽略掉
                   } else {

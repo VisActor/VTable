@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "comment": "fix:  bug datasource lazy load edit cell value invalid #1302\n\n",
+      "type": "none",
+      "packageName": "@visactor/vtable"
+    }
+  ],
+  "packageName": "@visactor/vtable",
+  "email": "892739385@qq.com"
+}
