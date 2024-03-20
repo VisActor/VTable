@@ -1,23 +1,44 @@
-# 自定义布局
+# 自定义渲染自动布局
 
 ## 简介
 
-VTable CustomRender支持用户自定义单元格内需要渲染需要的元素，使用时通过回调函数返回元素数组，指定元素的类型、样式和坐标（VTable CustomRender 布局能力设计 ）
+本篇教程主要介绍如何使用 CustomLayout 实现自动布局。
 
-目前的使用方式比较底层，如果用户希望实现一个复杂的样式，需要手动计算各个元素的位置，手动处理对齐、换行等功能，上手比较困难，可维护性较低
+_- 注意 ：如果您想通过定义坐标来实现完全自定义可以参考教程： [CustomRender](../custom_define/custom_render)， CustomRender 写法支持用户自定义单元格内需要渲染需要的元素，使用时通过回调函数返回元素数组，指定元素的类型、样式和坐标（VTable CustomRender 布局能力设计 ）。不过该使用方式比较底层，如果用户希望实现一个复杂的样式，需要手动计算各个元素的位置，手动处理对齐、换行等功能，上手比较困难，可维护性较低。-_
 
-通过CustomLayout是在CustomRender API的基础上，提供一套简单盒模型布局能力，用户通过配置容器与元素，实现对齐、折行等基础布局能力，方便实现与维护较为复杂的单元格内容
-下面是一个相对复杂的文字图标混排布局，使用CustomLayout实现（红色为不同容器bounds）：
+通过 CustomLayout 是在 CustomRender API 的基础上，提供一套简单盒模型布局能力，用户通过配置容器与元素，实现对齐、折行等基础布局能力，方便实现与维护较为复杂的单元格内容。`VTable`使用[`VRender`](https://visactor.io/vrender/option/Group)提供的图元和布局能力实现`customLayout`功能，目前推荐使用 JSX 写法，层级结构更加清晰，[参考示例](../../demo/custom-render/custom-cell-layout-jsx)。
+
+下面是一个相对复杂的文字图标混排布局，使用 CustomLayout 实现（红色为不同容器 bounds）：
 
 <div style="display: flex; justify-content: center;">
   <img src="https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/350c0511133d336e622523221.png" style="flex: 0 0 50%; padding: 10px;">
   <img src="https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/350c0511133d336e622523222.png" style="flex: 0 0 50%; padding: 10px;">
 </div>
-CustomLayout示例代码如下：
+
+## CustomLayout 配置
+
+与 customRender 类似，customLayout 也分为`customLayout`和`headerCustomLayout`两个接口分别来配置表头和内容的自定义渲染，在 columns/rows 中配置
+
+```typescript
+const option = {
+  columns: [
+    {
+      // ......
+      customLayout: (args: VTable.TYPES.CustomRenderFunctionArg) => {
+        // ......
+      }
+    }
+  ]
+};
+```
+
+customLayout 函数返回一个对象，该对象需要有：`rootContainer`来指定自定义渲染内容的根节点，`renderDefault`指定是否需要绘制单元格原内容（与 customRender 一致）。
+
+举一个配置示例，如下示例中使用到了 VGroup，VImage，VText，最后将其返回：
 
 ```tsx
 {
-  customLayout: (args) => {
+  customLayout: args => {
     const { table, row, col, rect } = args;
     const { height, width } = rect ?? table.getCellRect(col, row);
     const record = table.getRecordByCell(col, row);
@@ -160,30 +181,9 @@ CustomLayout示例代码如下：
       rootContainer: container,
       renderDefault: false
     };
-  }
-
+  };
 }
 ```
-
-## 使用方法
-
-与customRender类似，customLayout也分为`customLayout`和`headerCustomLayout`两个接口分别配置表头和内容的自定义渲染，在columns/rows中配置
-
-```typescript
-const option = {
-    columns: [
-        {
-            // ......
-            customLayout: (args: VTable.TYPES.CustomRenderFunctionArg) => {
-                // ......
-            }
-        }
-    ]
-}
-```
-
-customLayout函数返回一个对象，其中`rootContainer`为自定义渲染内容的根节点，`renderDefault`为是否需要绘制单元格原内容的标记（与customRender一致）。
-`VTable`使用`VRender`提供的图元和布局能力实现`customLayout`功能，目前推荐使用JSX写法，层级结构更加清晰，[参考示例](../../demo/custom-render/custom-cell-layout-jsx)
 
 ## 布局能力
 
@@ -200,103 +200,98 @@ customLayout函数返回一个对象，其中`rootContainer`为自定义渲染�
 
 表头部分横向布局，分为三部分（A B CD）：
 
-*   左右两侧（A B），宽度像素指定（由icon size决定），高度为单元格高度
-*   中间部分（CD）高度单元格高度，指定宽度单元格宽度 - AB总宽度
+- 左右两侧（A B），宽度像素指定（由 icon size 决定），高度为单元格高度
+- 中间部分（CD）高度单元格高度，指定宽度单元格宽度 - AB 总宽度
 
 中间部分纵向布局，分为两部分（C D）：
 
-*   上部（C）指定高度（由“全部”文字样式确定），宽度为父级container宽度
-*   下部（D）不指定高度，宽度为父级container宽度，实际高度由布局结果确定，超过容器部分被截断
+- 上部（C）指定高度（由“全部”文字样式确定），宽度为父级 container 宽度
+- 下部（D）不指定高度，宽度为父级 container 宽度，实际高度由布局结果确定，超过容器部分被截断
 
-中间下部（D）横向布局，有三个element：分组文字、省份按钮、城市按钮
+中间下部（D）横向布局，有三个 element：分组文字、省份按钮、城市按钮
 
 <div style="width:500px; height:160px;">
   <img src="https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/45df54929d214e7453e228f2d.png" alt="image" style="width:100%; height:100%;">
 </div>
 
-其中省份按钮和城市按钮是多个element组合而成，整个容器的高度由布局折行结果决定，最小高度为不换行显示为一行；最大高度为三个element都折行显示，显示为三行
+其中省份按钮和城市按钮是多个 element 组合而成，整个容器的高度由布局折行结果决定，最小高度为不换行显示为一行；最大高度为三个 element 都折行显示，显示为三行
 
 ## 自动行高列宽计算
 
-使用percentCalc方法指定百分比宽高的container，在表格指定自适应宽高时，会依据内容的宽高自动计算出可以容纳所有内容的单元格宽高，作为本单元格实际内容宽高
+使用 percentCalc 方法指定百分比宽高的 container，在表格指定自适应宽高时，会依据内容的宽高自动计算出可以容纳所有内容的单元格宽高，作为本单元格实际内容宽高
 
-## JSX图元
+## JSX 图元
+
+详细说明请参考 VRender 提供的教程：[TODO]
+
+### 容器图元
+
+容器图元`VGroup`是盒模型布局容器，支持元素在其中自动布局；`VGroup`的子元素可以是`VGroup`，也可以是基础图元；布局支持配置以下属性
+
+- display: 布局模式（`flex`开启 flex 布局模式）
+- flexDirection: 主轴的方向
+- flexWrap: 单行显示还是多行显示
+- justifyContent: 行向轴分配内容元素之间和周围的空间规则
+- alignItems: 交叉轴上的对齐规则
+- alignContent: 主轴上的对齐规则
 
 ### 基础图元
 
-基础的自定义图元，目前支持`VRect` `VCircle` `VText` `VImage` 
+基础的自定义图元，目前支持`VRect` `VCircle` `VText` `VImage`
 
-|图元类型|基础属性|
-|:----|:----|
-|rect|width, height, stroke, fill, lineWidth, cornerRadius...|
-|circle|radius, startAngle, endAngle, stroke, fill, lineWidth...|
-|text|text, fontSize, fontFamily, fill...|
-|image|image, width, height |
+| 图元类型 | 基础属性                                                 |
+| :------- | :------------------------------------------------------- |
+| rect     | width, height, stroke, fill, lineWidth, cornerRadius...  |
+| circle   | radius, startAngle, endAngle, stroke, fill, lineWidth... |
+| text     | text, fontSize, fontFamily, fill...                      |
+| image    | image, width, height                                     |
 
 基础自定义组件，目前支持`VTag`
 |图元类型|基础属性|
 |:----|:----|
 |tag|text, textStyle, shape, padding...|
 
-背景样式
-*   Image支持配置`background`背景样式
-    *   stroke
-    *   fill
-    *   lineWidth
-    *   cornerRadius
-    *   expendX
-    *   expendY
-
-![image](https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/0a2e223bdcd7410c08f6a6a0e.jpg)
-
-图元可以配置`boundsPadding`属性，实现margin效果
+图元可以配置`boundsPadding`属性，实现 margin 效果
 `boundsPadding: [marginLeft, marginRight, marginTop, marginBottom]`
-图元的margin会计算在图元所占的空间
+图元的 margin 会计算在图元所占的空间
 
-在基础属性外，可以使用状态更新来实现hover等交互效果：
+### 图元状态更新及交互事件
+
+在基础属性外，可以使用状态更新来实现 hover 等交互效果：
+
 ```tsx
 <VImage
-    attribute={{
-      id: 'row-down',
-      image: collapseDown,
-      width: 20,
-      height: 20,
-      cursor: 'pointer'
-    }}
-    stateProxy={(stateName: string) => {
-      if (stateName === 'hover') {
-        return {
-          background: {
-            fill: '#ccc',
-            cornerRadius: 5,
-            expandX: 1,
-            expandY: 1
-          }
-        };
-      }
-    }}
-    onMouseEnter={event => {
-      event.currentTarget.addState('hover', true, false);
-      event.currentTarget.stage.renderNextFrame();
-    }}
-    onMouseLeave={event => {
-      event.currentTarget.removeState('hover', false);
-      event.currentTarget.stage.renderNextFrame();
-    }}
+  attribute={{
+    id: 'row-down',
+    image: collapseDown,
+    width: 20,
+    height: 20,
+    cursor: 'pointer'
+  }}
+  stateProxy={(stateName: string) => {
+    if (stateName === 'hover') {
+      return {
+        background: {
+          fill: '#ccc',
+          cornerRadius: 5,
+          expandX: 1,
+          expandY: 1
+        }
+      };
+    }
+  }}
+  onMouseEnter={event => {
+    event.currentTarget.addState('hover', true, false);
+    event.currentTarget.stage.renderNextFrame();
+  }}
+  onMouseLeave={event => {
+    event.currentTarget.removeState('hover', false);
+    event.currentTarget.stage.renderNextFrame();
+  }}
 ></VImage>
 ```
+
 通过绑定事件，更新图元状态，实现交互更新图元样式效果。
-
-### 容器图元
-
-容器图元`VGroup`是盒模型布局容器，支持元素在其中自动布局；`VGroup`的子元素可以是`VGroup`，也可以是基础图元；布局支持配置以下属性
-
-* display: 布局模式（`flex`开启flex布局模式）
-* flexDirection: 主轴的方向
-* flexWrap: 单行显示还是多行显示
-* justifyContent: 行向轴分配内容元素之间和周围的空间规则
-* alignItems: 交叉轴上的对齐规则
-* alignContent: 主轴上的对齐规则
 
 ## API
 
@@ -304,67 +299,72 @@ customLayout函数返回一个对象，其中`rootContainer`为自定义渲染�
 
 矩形图元
 
-|key|type|description|
-|:----|:----|:----|
-|width|number|矩形宽度|
-|height|number|矩形高度|
-|lineWidth|number|描边宽度|
-|cornerRadius|number|角弧度|
-|fill|string|填充颜色|
-|stroke|string|描边颜色|
+| key          | type   | description |
+| :----------- | :----- | :---------- |
+| width        | number | 矩形宽度    |
+| height       | number | 矩形高度    |
+| lineWidth    | number | 描边宽度    |
+| cornerRadius | number | 角弧度      |
+| fill         | string | 填充颜色    |
+| stroke       | string | 描边颜色    |
 
 ### VCircle
 
 圆形图元
 
-|key|type|description|
-|:----|:----|:----|
-|radius|number|半径|
-|startAngle|number|起始弧度|
-|endAngle|number|结束弧度|
-|lineWidth|number|描边宽度|
-|fill|string|填充颜色|
-|stroke|string|描边颜色|
+| key        | type   | description |
+| :--------- | :----- | :---------- |
+| radius     | number | 半径        |
+| startAngle | number | 起始弧度    |
+| endAngle   | number | 结束弧度    |
+| lineWidth  | number | 描边宽度    |
+| fill       | string | 填充颜色    |
+| stroke     | string | 描边颜色    |
 
 ### VText
 
 文字图元
 
-|key|type|description|
-|:----|:----|:----|
-|text|string|文字内容|
-|fontSize|string|字号|
-|fontFamily|string|字体|
-|fill|string|文字颜色|
+| key        | type   | description |
+| :--------- | :----- | :---------- |
+| text       | string | 文字内容    |
+| fontSize   | string | 字号        |
+| fontFamily | string | 字体        |
+| fill       | string | 文字颜色    |
 
 ### VImage
 
 图片图元
 
-|key|type|description|
-|:----|:----|:----|
-|width|number|图片宽度|
-|height|number|图片高度|
-|image|string | HTMLImageElement | HTMLCanvasElement|图片内容|
+| key    | type   | description                                       |
+| :----- | :----- | :------------------------------------------------ |
+| width  | number | 图片宽度                                          |
+| height | number | 图片高度                                          |
+| image  | string | HTMLImageElement \| HTMLCanvasElement \| 图片内容 |
 
 ### VGroup
 
 容器
 
-|key|type|description|
-|:----|:----|:----|
-|width|number | percentCalcObj|容器宽度|
-|height|number | percentCalcObj|容器高度|
-|display|'relative' \| 'flex'|布局模式（`flex`开启flex布局模式）|
-|flexDirection|'row' \| 'row-reverse' \| 'column' \| 'column-reverse'|主轴的方向|
-|flexWrap|'nowrap' \| 'wrap'|单行显示还是多行显示|
-|justifyContent|'flex-start' \| 'flex-end' \| 'center' \| 'space-between' \| 'space-around'|行向轴分配内容元素之间和周围的空间规则|
-|alignItems|'flex-start' \| 'flex-end' \| 'center'|交叉轴上的对齐规则|
-|alignContent|'flex-start' \| 'center' \| 'space-between' \| 'space-around'|主轴上的对齐规则|
+| key            | type                                                                        | description                            |
+| :------------- | :-------------------------------------------------------------------------- | :------------------------------------- |
+| width          | number                                                                      | percentCalcObj\|容器宽度               |
+| height         | number                                                                      | percentCalcObj\|容器高度               |
+| display        | 'relative' \| 'flex'                                                        | 布局模式（`flex`开启 flex 布局模式）   |
+| flexDirection  | 'row' \| 'row-reverse' \| 'column' \| 'column-reverse'                      | 主轴的方向                             |
+| flexWrap       | 'nowrap' \| 'wrap'                                                          | 单行显示还是多行显示                   |
+| justifyContent | 'flex-start' \| 'flex-end' \| 'center' \| 'space-between' \| 'space-around' | 行向轴分配内容元素之间和周围的空间规则 |
+| alignItems     | 'flex-start' \| 'flex-end' \| 'center'                                      | 交叉轴上的对齐规则                     |
+| alignContent   | 'flex-start' \| 'center' \| 'space-between' \| 'space-around'               | 主轴上的对齐规则                       |
 
+## CustomLayout 创建图元对象用法
 
-## CustomLayout图元
-旧版customLayout支持的图元，CustomLayout图元实现方式与jsx图元相同，写法有所区别，需要通过`new VTable.CustomLayout.XXX`创建图元，例如：
+_- customLayout 支持对象创建的写法_
+
+CustomLayout 创建图元对象的写法，需要通过`new VTable.CustomLayout.XXX`创建图元，具体创建时配置属性可以参考[`VRender图元配置`](https://visactor.io/vrender/option/Group)
+
+例如：
+
 ```ts
 const text1 = new VTable.CustomLayout.Text({
   text: 'text',
@@ -375,22 +375,22 @@ const text1 = new VTable.CustomLayout.Text({
 
 const container = new VTable.CustomLayout.Container({
   height,
-  width,
+  width
 });
 containerRight.add(text1);
 
 return {
   rootContainer: container,
-  renderDefault: false,
+  renderDefault: false
 };
 ```
 
-常用图元与jsx图元相同，命名对照如下：
-|JSX图元|CustomLayout图元|
-|:----|:----|
-|VRect|CustomLayout.Rect|
-|VCircle|CustomLayout.Circle|
-|VText|CustomLayout.Text|
-|VImage|CustomLayout.Image|
-|VGroup|CustomLayout.Group / CustomLayout.Container|
-|VGroup(flexWrap: 'no-wrap')|CustomLayout.GroupElement|
+CustomLayout 常用图元与 jsx 图元对应如下：
+
+| JSX 图元 | CustomLayout 图元   |
+| :------- | :------------------ |
+| VRect    | CustomLayout.Rect   |
+| VCircle  | CustomLayout.Circle |
+| VText    | CustomLayout.Text   |
+| VImage   | CustomLayout.Image  |
+| VGroup   | CustomLayout.Group  |

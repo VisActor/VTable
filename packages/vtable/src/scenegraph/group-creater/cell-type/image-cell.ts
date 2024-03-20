@@ -327,6 +327,7 @@ export function updateImageCellContentWhileResize(cellGroup: Group, col: number,
 
 export function getCellRange(cellGroup: Group, table: BaseTableAPI) {
   if (
+    cellGroup.role === 'cell' &&
     isValid(cellGroup.mergeStartCol) &&
     isValid(cellGroup.mergeEndCol) &&
     isValid(cellGroup.mergeStartRow) &&

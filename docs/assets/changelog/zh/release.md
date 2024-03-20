@@ -1,3 +1,22 @@
+# v0.21.2
+
+2024-03-14
+
+
+**🆕 新增功能**
+
+- **@visactor/vtable**: add textStickBaseOnAlign config
+
+**🐛 功能修复**
+
+- **@visactor/vtable**: after change transpose resize line render error [#1239](https://github.com/VisActor/VTable/issues/1239)
+- **@visactor/vtable**: pivot tree mode when use headerIcon the indent value invalid [#1269](https://github.com/VisActor/VTable/issues/1269)
+- **@visactor/vtable**: fix progress bar rect height
+
+
+
+[更多详情请查看 v0.21.2](https://github.com/VisActor/VTable/releases/tag/v0.21.2)
+
 # v0.21.1
 
 2024-03-11

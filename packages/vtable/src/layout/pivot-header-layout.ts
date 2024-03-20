@@ -182,6 +182,8 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
             if (node.children?.length) {
               supplyAxisNode(node.children);
             } else {
+              // 在指标在列上的透视图中，主指标轴（离散轴）显示在左侧，因此需要在原先行表头的布局中最右侧加入一列，用来显示坐标轴
+              // 加入的这一列dimensionKey配置为'axis'，在后续行列计算维度时需要注意，这一列是为了显示坐标轴加入的，不在行列维度信息内
               node.children = [
                 {
                   dimensionKey: 'axis',
@@ -2292,7 +2294,7 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
                 (!rowDimension.value || dimension.value === rowDimension.value))
             ) {
               rowArr = dimension.children;
-              if (needLowestLevel && !rowArr) {
+              if (needLowestLevel && (!rowArr || rowArr.some(row => row.dimensionKey === 'axis'))) {
                 rowDimensionFinded = dimension;
               } else if (!needLowestLevel) {
                 rowDimensionFinded = dimension;
