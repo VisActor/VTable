@@ -31,6 +31,6 @@ Inula.render(
 
 // release openinula instance, do not copy
 window.customRelease = () => {
-  root.unmount();
+  Inula.unmountComponentAtNode(root);
 };
 ```

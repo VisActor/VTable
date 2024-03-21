@@ -41,6 +41,6 @@ Inula.render(<InulaVTable.ListTable option={option} height={'500px'} />, root);
 
 // release openinula instance, do not copy
 window.customRelease = () => {
-  root.unmount();
+  Inula.unmountComponentAtNode(root);
 };
 ```
