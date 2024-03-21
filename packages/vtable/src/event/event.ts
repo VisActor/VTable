@@ -251,71 +251,36 @@ export class EventManager {
         this.table.stateManager.updateSelectPos(-1, -1);
         return false;
       }
-      // console.log(this.checkCellFillhandle(eventArgsSet));
-        console.log(isSelectMoving);
-        console.log(this.table.eventManager.isFilling);
-        // console.log(this.table.stateManager.select?.ranges?.length);
-        // console.log(this.checkCellFillhandle(eventArgsSet));
-       
-        if (this.table.stateManager.select?.ranges?.length && this.table.eventManager.isFilling) {
-        //  if (isSelectMoving !== true) {
-        //   const currentRange = this.table.stateManager.select.ranges[this.table.stateManager.select.ranges.length - 1];
-      
-        //   this.table.stateManager.updateSelectPos(
-       
-        //     currentRange.start.col,
-        //     currentRange.start.row,
-        //     true,
-        //     eventArgs.event.ctrlKey || eventArgs.event.metaKey
-        //   );
-        //   return false;
-        // }
-      let updateRow;
-      let updateCol;
-      const currentRange = this.table.stateManager.select.ranges[this.table.stateManager.select.ranges.length - 1];
-      console.log(currentRange);
-      console.log(eventArgs.col, eventArgs.row);
 
-      if (Math.abs(currentRange.start.row - eventArgs.row) >= Math.abs(currentRange.start.col - eventArgs.col)) {
-  
-           updateRow = eventArgs.row;
-        updateCol = currentRange.end.col;
-  
-        
+      if (this.table.stateManager.select?.ranges?.length && this.table.eventManager.isFilling) {
+        let updateRow;
+        let updateCol;
+        const currentRange = this.table.stateManager.select.ranges[this.table.stateManager.select.ranges.length - 1];
+
+        if (Math.abs(currentRange.start.row - eventArgs.row) >= Math.abs(currentRange.start.col - eventArgs.col)) {
+          updateRow = eventArgs.row;
+          updateCol = currentRange.end.col;
+        } else {
+          updateRow = currentRange.end.row;
+          updateCol = eventArgs.col;
+        }
+
+        this.table.stateManager.updateSelectPos(
+          updateCol,
+          updateRow,
+          true,
+          eventArgs.event.ctrlKey || eventArgs.event.metaKey
+        );
       } else {
-            updateRow = currentRange.end.row;
-        updateCol = eventArgs.col;
+        this.table.stateManager.updateSelectPos(
+          eventArgs.col,
+          eventArgs.row,
+          eventArgs.event.shiftKey,
+          eventArgs.event.ctrlKey || eventArgs.event.metaKey
+        );
       }
 
-      console.log(updateRow,updateCol);
-
-
-      this.table.stateManager.updateSelectPos(
-       
-        updateCol,
-        updateRow,
-        true,
-        eventArgs.event.ctrlKey || eventArgs.event.metaKey
-      );
-         
-      } else {
-         this.table.stateManager.updateSelectPos(
-        eventArgs.col,
-        eventArgs.row,
-        eventArgs.event.shiftKey,
-        eventArgs.event.ctrlKey || eventArgs.event.metaKey
-      );
-      }
-      
-      // this.table.stateManager.updateSelectPos(
-      //   eventArgs.col,
-      //   eventArgs.row,
-      //   eventArgs.event.shiftKey,
-      //   eventArgs.event.ctrlKey || eventArgs.event.metaKey
-      // );
       return true;
-      
-      
     }
     // this.table.stateManager.updateSelectPos(-1, -1); 这句有问题 如drag框选鼠标超出表格范围 这里就直接情况是不对的
     return false;
@@ -365,70 +330,20 @@ export class EventManager {
         this.table.stateManager.updateSelectPos(-1, -1);
         return false;
       }
-      console.log(this.table.stateManager.select.ranges);
-      // let updateRow;
-      // let updateCol;
-      //    const selectRange = this.table.stateManager.select.ranges[0];
-      //    const startCol = Math.min(selectRange.start.col, selectRange.end.col);
-      //    const startRow = Math.min( selectRange.start.row,  selectRange.end.row);
-      // const endCol = Math.max( selectRange.start.col,  selectRange.end.col);
-      // const endRow = Math.max( selectRange.start.row,  selectRange.end.row);
-      // // const currentRange = this.table.stateManager.select.ranges[0];
-      // console.log(selectRange);
-      // console.log(eventArgs.col, eventArgs.row);
-      // console.log(startCol, startRow);
-      // console.log(endCol, endRow);
-
-      // if (Math.abs(startRow - eventArgs.row) > Math.abs(startCol - eventArgs.col)) {
-      //    updateRow = eventArgs.row;
-      //   updateCol = startCol;
-      // } else {
-      //       updateRow = startRow;
-      //   updateCol = eventArgs.col;
-      // }
-      // if (eventArgs.row === startRow && eventArgs.col < startCol) {
-      //   // directionOfDrag = 'left';
-      //   updateRow = endRow;
-      //   updateCol = eventArgs.col;
-    
-      // } else if (eventArgs.row === startRow && eventArgs.row === endRow &&
-      //   eventArgs.col > startCol) {
-      //   // directionOfDrag = 'right';
-      //   updateRow = endRow;
-      //   updateCol = eventArgs.col;
-    
-      // } else if (eventArgs.row < startRow && eventArgs.col === startCol) {
-      //   // directionOfDrag = 'up';
-      //   updateRow = eventArgs.row;
-      //   updateCol = endCol;
-    
-      // } else if (eventArgs.row > startRow &&
-      //   eventArgs.col === startCol) {
-      //   // directionOfDrag = 'down';
-      //   updateRow = eventArgs.row;
-      //   updateCol = endCol;
-      // }
-    
-      // console.log(updateRow,updateCol);
-
-  
       this.table.stateManager.updateSelectPos(
-        // updateCol,
-        // updateRow,
         eventArgs.col,
         eventArgs.row,
         eventArgs.event.shiftKey,
         eventArgs.event.ctrlKey || eventArgs.event.metaKey
       );
-  
-    
+
       return true;
     }
     // this.table.stateManager.updateSelectPos(-1, -1); 这句有问题 如drag框选鼠标超出表格范围 这里就直接情况是不对的
     return false;
   }
-  fillSelected(eventArgsSet?: SceneEvent, SelectCellRange?: any, SelectData?:any): any {
-    console.log(SelectCellRange);
+
+  fillSelected(eventArgsSet?: SceneEvent, SelectCellRange?: any, SelectData?: any): any {
     if (!eventArgsSet) {
       this.table.stateManager.updateSelectPos(-1, -1);
       return;
@@ -440,43 +355,22 @@ export class EventManager {
         return;
       }
       let direction;
-      // let currentselectedrange = this.table.stateManager.select.ranges;
-      console.log(eventArgs);
-      console.log(Math.abs(SelectCellRange.start.row - eventArgs.row));
-      console.log(Math.abs(SelectCellRange.start.col - eventArgs.col));
-//  if ((SelectCellRange.end.row - eventArgs.row) >= (SelectCellRange.end.col - eventArgs.col)) {
-//       if (SelectCellRange.start.row >= eventArgs.row) {
-//       direction = 'up';
-//       } else {
-//         direction = 'down';
-//         };
-   
-//         console.log(direction);
-   
-//  } else {
-//   if (eventArgs.col > SelectCellRange.end.col ) {
-//     direction = 'left';
-//     } else {
-//       direction = 'right';
-//       };
-//  }
 
- if (eventArgs.row >= SelectCellRange.start.row && eventArgs.row <= SelectCellRange.end.row) {
-  if (eventArgs.col > SelectCellRange.end.col ) {
-    direction = 'right';
-    } else {
-      direction = 'left';
-      };
-  } else {
-    if (eventArgs.row > SelectCellRange.end.row) {
-      direction = 'down';
+      if (eventArgs.row >= SelectCellRange.start.row && eventArgs.row <= SelectCellRange.end.row) {
+        if (eventArgs.col > SelectCellRange.end.col) {
+          direction = 'right';
+        } else {
+          direction = 'left';
+        }
       } else {
-        direction = 'up';
-        };
-   }
- console.log(direction);
- let values: (string | number)[][] = [];
-      let fillData: any[][] = [];
+        if (eventArgs.row > SelectCellRange.end.row) {
+          direction = 'down';
+        } else {
+          direction = 'up';
+        }
+      }
+      const values: (string | number)[][] = [];
+      const fillData: any[][] = [];
       let updaterow;
       let updatecol;
       const rows = SelectData.split('\n'); // 将数据拆分为行
@@ -492,81 +386,64 @@ export class EventManager {
           rowValues.push(cell);
         });
       });
-   
+
       updaterow = SelectCellRange.start.row;
       updatecol = SelectCellRange.start.col;
       if (['up', 'left'].indexOf(direction) > -1) {
-       
         if (direction === 'up') {
           updaterow = eventArgs.row;
-     
+
           const fillLength = SelectCellRange.start.row - updaterow;
-        
-                  
+
           for (let i = 0; i < fillLength; i++) {
-            let rowIndex = values.length - 1 - i % values.length;
-            let newRow = values[rowIndex].slice(0); // 复制一行数据
+            const rowIndex = values.length - 1 - (i % values.length);
+            const newRow = values[rowIndex].slice(0); // 复制一行数据
 
             fillData.unshift(newRow); // 在填充数据的开头插入新行
           }
-
         } else {
           updatecol = eventArgs.col;
           const fillLength = SelectCellRange.start.col - updatecol;
-     
+
           for (let i = 0; i < values.length; i++) {
-            let newRow = values[i].slice(0); // 复制一行数据
+            const newRow = values[i].slice(0); // 复制一行数据
             while (newRow.length < fillLength) {
-                newRow.unshift(newRow[0]); // 在新行开头向左填充元素
+              newRow.unshift(newRow[0]); // 在新行开头向左填充元素
             }
             fillData.push(newRow);
+          }
         }
-          
-       
-      } 
-    
-    }else {
-        if (direction == "down") {
+      } else {
+        if (direction === 'down') {
           updaterow = SelectCellRange.end.row + 1;
           const fillLength = eventArgs.row - SelectCellRange.end.row;
-         
+
           // 将原始数据添加到新数组中
           for (let i = 0; i < fillLength; i++) {
-            let rowIndex = i % values.length;
-            let newRow = values[rowIndex]; // 复制一行数据
+            const rowIndex = i % values.length;
+            const newRow = values[rowIndex]; // 复制一行数据
             fillData.push(newRow);
-        }
+          }
         } else {
           const fillLength = eventArgs.col - SelectCellRange.end.col;
           updatecol = SelectCellRange.end.col + 1;
-       
-          values.forEach(function(rowCells: any[]) {
-            let newRow: any[] = [];
-          // 将原始数据按顺序填充到新行中
-          for (let i = 0; i < fillLength; i++) {
-              let dataIndex = i % rowCells.length;
+
+          values.forEach(function (rowCells: any[]) {
+            const newRow: any[] = [];
+            // 将原始数据按顺序填充到新行中
+            for (let i = 0; i < fillLength; i++) {
+              const dataIndex = i % rowCells.length;
               newRow.push(rowCells[dataIndex]);
-          }
+            }
 
-          // 将新行添加到填充数据中
-          fillData.push(newRow);
-                });
-              }
+            // 将新行添加到填充数据中
+            fillData.push(newRow);
+          });
+        }
       }
-   
-     
-      console.log(fillData);
-      console.log(updatecol,updaterow);
+
       (this.table as ListTableAPI).changeCellValues(updatecol, updaterow, fillData, false);
-
-
     }
-   
-
-
-
-
-   
   }
 
   deelTableSelectAll() {
@@ -586,7 +463,7 @@ export class EventManager {
         eventArgsSet.abstractPos.y,
         eventArgs.targetCell
       );
-  
+
       if (this.table._canResizeColumn(resizeCol.col, resizeCol.row) && resizeCol.col >= 0) {
         // this.table.stateManager.updateResizeCol(resizeCol.col, eventArgsSet.abstractPos.x, first);
         // this._col = resizeCol.col;
@@ -606,47 +483,26 @@ export class EventManager {
   }
 
   checkCellFillhandle(eventArgsSet: SceneEvent, update?: boolean): boolean {
-    // return false;
     const { eventArgs } = eventArgsSet;
     if (eventArgs) {
       if (this.table.stateManager.select?.ranges?.length) {
-        // if (update) {
-        //   return true;
-        // }
         const lastCol = this.table.stateManager.select.ranges[this.table.stateManager.select.ranges.length - 1].end.col;
         const lastRow = this.table.stateManager.select.ranges[this.table.stateManager.select.ranges.length - 1].end.row;
 
-      const lastCellBound = this.table.scenegraph.highPerformanceGetCell(lastCol, lastRow).globalAABBBounds;
-      // 计算鼠标与fillhandle矩形中心之间的距离
-      const distanceX = Math.abs(eventArgsSet.abstractPos.x - lastCellBound.x2);
-      const distanceY = Math.abs(eventArgsSet.abstractPos.y - lastCellBound.y2);
-      const squareSize = 6 * 3;
-      // 判断鼠标是否落在fillhandle矩形内
-      if (this.isFilling || (distanceX <= squareSize / 2 && distanceY <= squareSize / 2)) {
-        if (update) {
-          console.log("123");
-    
-          this.isFilling = true;
-       
-            // const selectRange = this.table.stateManager.select.ranges[0];
-            //       const endCol = Math.max( selectRange.start.col,  selectRange.end.col);
-            //       const endRow = Math.max( selectRange.start.row,  selectRange.end.row);
-            // this.dealFillSelect(eventArgsSet);
-             
-          // this.table.stateManager.isResizeCol.mouseDownOnCellCorner = true;
-          // this.table.stateManager.startResizeCol(
-          //   resizeCol.col,
-          //   eventArgsSet.abstractPos.x,
-          //   eventArgsSet.abstractPos.y,
-          //   resizeCol.rightFrozen
-          // );
+        const lastCellBound = this.table.scenegraph.highPerformanceGetCell(lastCol, lastRow).globalAABBBounds;
+        // 计算鼠标与fillhandle矩形中心之间的距离
+        const distanceX = Math.abs(eventArgsSet.abstractPos.x - lastCellBound.x2);
+        const distanceY = Math.abs(eventArgsSet.abstractPos.y - lastCellBound.y2);
+        const squareSize = 6 * 3;
+        // 判断鼠标是否落在fillhandle矩形内
+        if (this.isFilling || (distanceX <= squareSize / 2 && distanceY <= squareSize / 2)) {
+          if (update) {
+            this.isFilling = true;
+          }
+          return true;
         }
-        return true;
-      } 
       }
-      
     }
-
     return false;
   }
 

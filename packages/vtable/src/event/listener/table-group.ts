@@ -46,77 +46,28 @@ export function bindTableGroupListener(eventManager: EventManager) {
         } else if (stateManager.isMoveCol()) {
           eventManager.dealColumnMover(eventArgsSet);
         } else {
-          console.log(stateManager.isResizeCol(), stateManager.isMoveCol());
-          //   if (table.eventManager.isFilling && table.stateManager.select) {
-          // //     const selectRange = table.stateManager.select.ranges[0];
-          // //     const startCol = Math.min(selectRange.start.col, selectRange.end.col);
-          // //     const startRow = Math.min( selectRange.start.row,  selectRange.end.row);
-          // //  const endCol = Math.max( selectRange.start.col,  selectRange.end.col);
-          // //  const endRow = Math.max( selectRange.start.row,  selectRange.end.row);
-          // //  // const currentRange = this.table.stateManager.select.ranges[0];
-          // //  let updateRow;
-          // //  let updateCol;
-          // //  const { eventArgs } = eventArgsSet;
-          // //  if (Math.abs(startRow - eventArgs.row) > Math.abs(startCol - eventArgs.col)) {
-          // //     updateRow = eventArgs.row;
-          // //    updateCol = startCol;
-          // //  } else {
-          // //        updateRow = startRow;
-          // //    updateCol = eventArgs.col;
-          // //  }
-          // eventManager.dealFillSelect(eventArgsSet, true);
-       
-          // //  if (eventArgs.row === startRow && eventArgs.col < startCol) {
-          // //    // directionOfDrag = 'left';
-          // //    updateRow = endRow;
-          // //    updateCol = eventArgs.col;
-         
-          // //  } else if (eventArgs.row === startRow && eventArgs.row === endRow &&
-          // //    eventArgs.col > startCol) {
-          // //    // directionOfDrag = 'right';
-          // //    updateRow = endRow;
-          // //    updateCol = eventArgs.col;
-         
-          // //  } else if (eventArgs.row < startRow && eventArgs.col === startCol) {
-          // //    // directionOfDrag = 'up';
-          // //    updateRow = eventArgs.row;
-          // //    updateCol = endCol;
-         
-          // //  } else if (eventArgs.row > startRow &&
-          // //    eventArgs.col === startCol) {
-          // //    // directionOfDrag = 'down';
-          // //    updateRow = eventArgs.row;
-          // //    updateCol = endCol;
-          // //  }
-          //   } else {
-          //     eventManager.dealTableSelect(eventArgsSet, true);
-          //   }
-            eventManager.dealTableSelect(eventArgsSet, true);
+          eventManager.dealTableSelect(eventArgsSet, true);
         }
       }
       return;
     }
- 
+
     // if (stateManager.menu.isShow && stateManager.menu.bounds.inPoint(e.x, e.y)) {
     //   eventManager.dealMenuHover(eventArgsSet);
     //   return;
     // }
     // 更新列宽调整pointer
     if (stateManager.isResizeCol() || eventManager.checkColumnResize(eventArgsSet)) {
-      
-        // 更新填充柄pointer
-    if (table.stateManager.select && eventManager.checkCellFillhandle(eventArgsSet)) {
-      stateManager.updateCursor('crosshair');
-   
-    } else {
-      stateManager.updateCursor('col-resize');
-     
-    }
+      // 更新填充柄pointer
+      if (table.stateManager.select && eventManager.checkCellFillhandle(eventArgsSet)) {
+        stateManager.updateCursor('crosshair');
+      } else {
+        stateManager.updateCursor('col-resize');
+      }
     } else {
       stateManager.updateCursor();
-
     }
-     // 更新填充柄pointer
+    // 更新填充柄pointer
     // if (table.scenegraph.selectedRangeComponents && eventManager.checkCellFillhandle(eventArgsSet)) {
     //   stateManager.updateCursor('crosshair');
     // } else {
@@ -169,7 +120,7 @@ export function bindTableGroupListener(eventManager: EventManager) {
         });
       }
     }
-  
+
     eventManager.dealIconHover(eventArgsSet);
     eventManager.dealTableHover(eventArgsSet);
 
@@ -214,7 +165,7 @@ export function bindTableGroupListener(eventManager: EventManager) {
     const eventArgsSet = getCellEventArgsSet(e);
     const cellGoup = eventArgsSet?.eventArgs?.target as unknown as Group;
     // console.log('pointerover', cellGoup);
-    
+
     if (
       cellGoup &&
       (table as any).hasListeners(TABLE_EVENT_TYPE.MOUSEOVER_CHART_SYMBOL) &&
@@ -448,9 +399,6 @@ export function bindTableGroupListener(eventManager: EventManager) {
         // 这里处理成hover  这样移动端 当点击到带有下拉菜单dropdown的单元格时 那个icon才能绘制出来。可以测试example的menu示例
         eventManager.dealTableHover(eventArgsSet);
       } else {
-
-        console.log(table.eventManager.isFilling);
-        console.log(eventManager.checkCellFillhandle(eventArgsSet));
         // 处理列宽调整
         if (!eventManager.checkCellFillhandle(eventArgsSet) && eventManager.checkColumnResize(eventArgsSet, true)) {
           // eventManager.startColumnResize(e);
@@ -467,21 +415,18 @@ export function bindTableGroupListener(eventManager: EventManager) {
         }
 
         // 处理填充功能
-          if (eventManager.checkCellFillhandle(eventArgsSet, true)) {
-            if (table.eventManager.isFilling) {
-          
-                table.eventManager.LastRange = {
-                  start: table.stateManager.select.ranges[0].start, 
-                  end: {
-                    col: (getCellEventArgsSet(e).eventArgs.target as unknown as Group).col, 
-                    row: (getCellEventArgsSet(e).eventArgs.target as unknown as Group).row
-                  }
-                }
-                table.eventManager.SelectData = table.getCopyValue();
-                console.log(table.eventManager.LastRange);
-                console.log(table.eventManager.SelectData);
+        if (eventManager.checkCellFillhandle(eventArgsSet, true)) {
+          if (table.eventManager.isFilling) {
+            table.eventManager.LastRange = {
+              start: table.stateManager.select.ranges[0].start,
+              end: {
+                col: (getCellEventArgsSet(e).eventArgs.target as unknown as Group).col,
+                row: (getCellEventArgsSet(e).eventArgs.target as unknown as Group).row
+              }
+            };
+            table.eventManager.SelectData = table.getCopyValue();
           }
-          }
+        }
         // 处理单元格选择
         if (eventManager.dealTableSelect(eventArgsSet)) {
           // 先执行单选逻辑，再更新为grabing模式
@@ -528,9 +473,7 @@ export function bindTableGroupListener(eventManager: EventManager) {
             }
           });
         }
-      } 
-   
-      else if (stateManager.isSelecting()) {
+      } else if (stateManager.isSelecting()) {
         table.stateManager.endSelectCells();
         table.eventManager.isDraging = false;
         const eventArgsSet: SceneEvent = getCellEventArgsSet(e);
@@ -543,36 +486,23 @@ export function bindTableGroupListener(eventManager: EventManager) {
             scaleRatio: table.canvas.getBoundingClientRect().width / table.canvas.offsetWidth,
             target: eventArgsSet?.eventArgs?.target
           };
-      
+
           cellsEvent.cells = table.getSelectedCellInfos();
           table.fireListeners(TABLE_EVENT_TYPE.DRAG_SELECT_END, cellsEvent);
         }
-     
-      } 
-      console.log(table.eventManager.isFilling);
-      console.log(table.scenegraph.selectingRangeComponents.size);
-      if (table.eventManager.isFilling) { 
+      }
+
+      if (table.eventManager.isFilling) {
         const eventArgsSet: SceneEvent = getCellEventArgsSet(e);
         table.eventManager.isFilling = false;
-        console.log(table.eventManager.LastRange);
-        console.log(table.eventManager.SelectData);
-        eventManager.fillSelected(eventArgsSet, table.eventManager.LastRange, table.eventManager.SelectData)
+        eventManager.fillSelected(eventArgsSet, table.eventManager.LastRange, table.eventManager.SelectData);
         table.eventManager.SelectData = table.getCopyValue();
-        console.log(table.eventManager.SelectData);
-       
-      } 
-     
+      }
     } else if (stateManager.interactionState === InteractionState.scrolling) {
       stateManager.updateInteractionState(InteractionState.default);
       // scroll end
     }
-    console.log(table.eventManager.isFilling);
-    console.log(table.stateManager.select.ranges);
-   
-   
-   
-        
-   
+
     // console.log('DRAG_SELECT_END');
     if ((table as any).hasListeners(TABLE_EVENT_TYPE.MOUSEUP_CELL)) {
       const eventArgsSet: SceneEvent = getCellEventArgsSet(e);
@@ -645,12 +575,10 @@ export function bindTableGroupListener(eventManager: EventManager) {
     }
     if (table.eventManager.isFilling) {
       table.eventManager.isFilling = false;
-      console.log(table.stateManager.select.ranges);
       table.eventManager.LastRange = stateManager.select.ranges[0];
       table.eventManager.SelectData = table.getCopyValue();
       return;
-
-}
+    }
     const eventArgsSet: SceneEvent = getCellEventArgsSet(e);
     eventManager.dealIconClick(e, eventArgsSet);
     if (!eventArgsSet?.eventArgs) {
@@ -710,7 +638,6 @@ export function bindTableGroupListener(eventManager: EventManager) {
   // click outside
   table.scenegraph.stage.addEventListener('pointertap', (e: FederatedPointerEvent) => {
     const target = e.target;
-    console.log(table.eventManager.isDraging);
     if (
       // 如果是鼠标点击到canvas空白区域 则取消选中状态
       !table.eventManager.isDraging &&
