@@ -1,13 +1,13 @@
 /* eslint-disable react/display-name */
 import * as VTable from '@visactor/vtable';
-import React, { useState, useEffect, useRef, useImperativeHandle, useCallback } from 'openinula';
+import Inula, { useState, useEffect, useRef, useImperativeHandle, useCallback } from 'openinula';
 import type { ContainerProps } from '../containers/withContainer';
 import withContainer from '../containers/withContainer';
 import type { TableContextType } from '../context/table';
 import RootTableContext from '../context/table';
 import { isEqual, isNil, pickWithout } from '@visactor/vutils';
 import { toArray } from '../util';
-import { REACT_PRIVATE_PROPS } from '../constants';
+import { INULA_PRIVATE_PROPS } from '../constants';
 import type { IMarkElement } from '../components';
 import type {
   EventsProps
@@ -48,10 +48,10 @@ export interface BaseTableProps extends EventsProps {
   onError?: (err: Error) => void;
 }
 
-type Props = React.PropsWithChildren<BaseTableProps>;
+type Props = Inula.PropsWithChildren<BaseTableProps>;
 
 const notOptionKeys = [
-  ...REACT_PRIVATE_PROPS,
+  ...INULA_PRIVATE_PROPS,
   ...TABLE_EVENTS_KEYS,
   'skipFunctionDiff',
   'onError',
@@ -61,7 +61,7 @@ const notOptionKeys = [
   'container'
 ];
 
-const getComponentId = (child: React.ReactNode, index: number) => {
+const getComponentId = (child: Inula.InulaNode, index: number) => {
   const componentName = child && (child as any).type && ((child as any).type.displayName || (child as any).type.name);
   return `${componentName}-${index}`;
 };
@@ -97,7 +97,7 @@ const parseOptionFromChildren = (props: Props) => {
   return optionFromChildren;
 };
 
-const BaseTable: React.FC<Props> = React.forwardRef((props, ref) => {
+const BaseTable: Inula.FC<Props> = Inula.forwardRef((props, ref) => {
   const [updateId, setUpdateId] = useState<number>(0);
   const tableContext = useRef<TableContextType>({});
   useImperativeHandle(ref, () => tableContext.current?.table);
@@ -107,7 +107,7 @@ const BaseTable: React.FC<Props> = React.forwardRef((props, ref) => {
   const prevOption = useRef(pickWithout(props, notOptionKeys));
   const optionFromChildren = useRef<Omit<IOption, 'records'>>(null);
   const prevRecords = useRef(props.records);
-  const eventsBinded = React.useRef<BaseTableProps>(null);
+  const eventsBinded = Inula.useRef<BaseTableProps>(null);
   const skipFunctionDiff = !!props.skipFunctionDiff;
 
   const parseOption = useCallback(
@@ -251,7 +251,7 @@ const BaseTable: React.FC<Props> = React.forwardRef((props, ref) => {
 
   return (
     <RootTableContext.Provider value={tableContext.current}>
-      {toArray(props.children).map((child: React.ReactNode, index: number) => {
+      {toArray(props.children).map((child: Inula.InulaNode, index: number) => {
         if (typeof child === 'string') {
           return;
         }
@@ -263,17 +263,17 @@ const BaseTable: React.FC<Props> = React.forwardRef((props, ref) => {
         // const childId = `${componentName}-${index}`;
 
         return (
-          // <React.Fragment key={(child as any)?.props?.id ?? (child as any)?.id ?? `child-${index}`}>
-          //   {React.cloneElement(child as IMarkElement, {
+          // <Inula.Fragment key={(child as any)?.props?.id ?? (child as any)?.id ?? `child-${index}`}>
+          //   {Inula.cloneElement(child as IMarkElement, {
           //     updateId: updateId
           //   })}
-          // </React.Fragment>
-          <React.Fragment key={childId}>
-            {React.cloneElement(child as React.ReactElement<any, React.JSXElementConstructor<any>>, {
+          // </Inula.Fragment>
+          <Inula.Fragment key={childId}>
+            {Inula.cloneElement(child as Inula.InulaElement<any, Inula.JSXElementConstructor<any>>, {
               updateId: updateId,
               componentId: childId
             })}
-          </React.Fragment>
+          </Inula.Fragment>
         );
       })}
     </RootTableContext.Provider>

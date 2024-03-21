@@ -35,12 +35,12 @@ export const typeOfComponent = (component: any, customTypeKey = '__TYPE'): strin
     (typeof component?.type === 'string' && component.type) ||
     (component?.type &&
       typeof component.type === 'symbol' &&
-      component.type.toString() === 'Symbol(react.fragment)' &&
-      'react.fragment') ||
+      component.type.toString() === 'Symbol(inula.fragment)' &&
+      'inula.fragment') ||
     (typeof component?.type === 'function' && component.type) ||
     (typeof component?.type === 'object' &&
-      component.type.$$typeof.toString() === 'Symbol(react.forward_ref)' &&
-      'react.forward_ref') ||
+      component.type.$$typeof.toString() === 'Symbol(inula.forward_ref)' &&
+      'inula.forward_ref') ||
     (typeof component === 'string' && 'string') ||
     (typeof component === 'function' && 'function') ||
     undefined
@@ -66,7 +66,7 @@ export const toArray = <T = InulaNode, TC = InulaNode>(children: T): TC[] => {
 };
 
 /*
- * Find and return all matched children by type. `type` can be a React element class or
+ * Find and return all matched children by type. `type` can be a Inula element class or
  * string
  */
 export const findAllByType = <T extends InulaNode, TC = unknown>(children: InulaNode, type: TC | TC[]): T[] => {
@@ -91,7 +91,7 @@ export const findAllByType = <T extends InulaNode, TC = unknown>(children: Inula
 };
 /*
  * Return the first matched child by type, return null otherwise.
- * `type` can be a React element class or string.
+ * `type` can be a Inula element class or string.
  */
 export const findChildByType = <T extends InulaNode, TC = unknown>(children: InulaNode, type: TC): T => {
   const result = findAllByType<T, TC>(children, type);

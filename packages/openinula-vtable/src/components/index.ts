@@ -1,4 +1,4 @@
-import type React from 'openinula';
+import type Inula from 'openinula';
 export { ListColumn } from './list/list-column';
 export { PivotColumnDimension, PivotRowDimension } from './pivot/pivot-dimension';
 export { PivotIndicator } from './pivot/pivot-indicator';
@@ -9,6 +9,6 @@ export { Tooltip } from './component/tooltip';
 
 type Props = { updateId?: number };
 
-export interface IMarkElement extends React.ReactElement<Props, React.JSXElementConstructor<Props>> {
+export interface IMarkElement extends Inula.InulaElement<Props, Inula.JSXElementConstructor<Props>> {
   id: string | number;
 }

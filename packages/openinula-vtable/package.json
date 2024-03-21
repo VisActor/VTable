@@ -48,8 +48,7 @@
   },
   "dependencies": {
     "@visactor/vtable": "workspace:*",
-    "@visactor/vutils": "~0.18.1",
-    "openinula": "0.1.2-SNAPSHOT"
+    "@visactor/vutils": "~0.18.1"
   },
   "devDependencies": {
     "@visactor/vchart": "1.9.6",
@@ -88,6 +87,10 @@
     "markdown-it": "^13.0.0",
     "node-fetch": "2.6.7",
     "form-data": "~4.0.0",
-    "axios": "^1.4.0"
+    "axios": "^1.4.0",
+    "openinula": "~0.1.2-SNAPSHOT"
+  },
+  "peerDependencies": {
+    "openinula": "~0.1.2-SNAPSHOT"
   }
 }

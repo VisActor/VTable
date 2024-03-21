@@ -1,18 +1,18 @@
-import React, { useRef, useState, useLayoutEffect } from 'openinula';
+import Inula, { useRef, useState, useLayoutEffect } from 'openinula';
 
 export interface ContainerProps {
-  style?: React.CSSProperties;
+  style?: Inula.CSSProperties;
   className?: string;
   width?: number | string;
   height?: number | string;
 }
 
 export default function withContainer<Props extends ContainerProps, CompProps>(
-  Comp: typeof React.Component<any, CompProps>,
+  Comp: typeof Inula.Component<any, CompProps>,
   name = 'TableContainer',
   getProps?: (props: any) => CompProps
 ) {
-  const Cls = React.forwardRef<any, CompProps & Props>((props: CompProps & Props, ref) => {
+  const Cls = Inula.forwardRef<any, CompProps & Props>((props: CompProps & Props, ref) => {
     const container = useRef();
     const [inited, setInited] = useState(false);
     const { className, style, width, ...options } = props;

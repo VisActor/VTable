@@ -1,4 +1,4 @@
-import React from 'openinula';
+import Inula from 'openinula';
 import type { ListTable, PivotTable, PivotChart } from '@visactor/vtable';
 
 export interface TableContextType {
@@ -7,11 +7,11 @@ export interface TableContextType {
   isChildrenUpdated?: boolean;
 }
 
-const TableContext = React.createContext<TableContextType>(null);
+const TableContext = Inula.createContext<TableContextType>(null);
 TableContext.displayName = 'TableContext';
 
-export function withTableInstance<T>(Component: typeof React.Component) {
-  const Com = React.forwardRef<any, T>((props: T, ref) => {
+export function withTableInstance<T>(Component: typeof Inula.Component) {
+  const Com = Inula.forwardRef<any, T>((props: T, ref) => {
     return (
       <TableContext.Consumer>
         {(ctx: TableContextType) => <Component ref={ref} table={ctx.table} {...props} />}
