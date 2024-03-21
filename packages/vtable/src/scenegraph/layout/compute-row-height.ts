@@ -367,13 +367,13 @@ export function computeRowHeight(row: number, startCol: number, endCol: number, 
     const cellType = table.isHeader(col, row)
       ? table._getHeaderLayoutMap(col, row)?.headerType
       : table.getBodyColumnType(col, row);
-    if (cellType !== 'text' && cellType !== 'link' && cellType !== 'progressbar' && cellType !== 'checkbox') {
-      // // text&link&progressbar测量文字宽度
-      // // image&video&sparkline使用默认宽度
-      // const defaultHeight = table.getDefaultRowHeight(row);
-      // maxHeight = Math.max(maxHeight, isNumber(defaultHeight) ? defaultHeight : table.defaultRowHeight);
-      continue;
-    }
+    // if (cellType !== 'text' && cellType !== 'link' && cellType !== 'progressbar' && cellType !== 'checkbox') {
+    //   // text&link&progressbar测量文字宽度
+    //   // image&video&sparkline使用默认宽度
+    //   const defaultHeight = table.getDefaultRowHeight(row);
+    //   maxHeight = Math.max(maxHeight, isNumber(defaultHeight) ? defaultHeight : table.defaultRowHeight);
+    //   continue;
+    // }
 
     // text height calculation
     const textHeight = computeTextHeight(col, row, cellType, table);
@@ -645,99 +645,102 @@ function computeTextHeight(col: number, row: number, cellType: ColumnTypeOption,
   const fontFamily = getProp('fontFamily', actStyle, col, row, table);
   const autoWrapText = getProp('autoWrapText', actStyle, col, row, table);
   let text;
-  if (cellType === 'checkbox') {
-    text = isObject(cellValue) ? (cellValue as any).text : cellValue;
+  if (cellType !== 'text' && cellType !== 'link' && cellType !== 'progressbar' && cellType !== 'checkbox') {
+    maxHeight = lineHeight;
   } else {
-    text = cellValue;
-  }
-  const lines = validToString(text).split('\n') || [];
-
-  const cellWidth = table.getColsWidth(col, endCol);
-
-  if (cellType === 'checkbox') {
-    const size = getProp('size', actStyle, col, row, table);
-    if (autoWrapText) {
-      const spaceBetweenTextAndIcon = getProp('spaceBetweenTextAndIcon', actStyle, col, row, table);
-      const maxLineWidth = cellWidth - (padding[1] + padding[3]) - iconWidth - size - spaceBetweenTextAndIcon;
-      utilCheckBoxMark.setAttributes({
-        text: {
-          maxLineWidth,
-          text: lines,
-          fontSize,
-          fontStyle,
-          fontWeight,
-          fontFamily,
-          lineHeight,
-          wordBreak: 'break-word'
-        },
-        icon: {
-          width: Math.floor(size / 1.4), // icon : box => 10 : 14
-          height: Math.floor(size / 1.4)
-        },
-        box: {
-          width: size,
-          height: size
-        },
-        spaceBetweenTextAndIcon
-      });
-      utilCheckBoxMark.render();
-      maxHeight = utilTextMark.AABBBounds.height();
+    if (cellType === 'checkbox') {
+      text = isObject(cellValue) ? (cellValue as any).text : cellValue;
     } else {
-      maxHeight = Math.max(size, lines.length * lineHeight);
+      text = cellValue;
     }
-  } else if (iconInlineFront.length || iconInlineEnd.length) {
-    // if (autoWrapText) {
-    const textOption = Object.assign({
-      text: cellValue?.toString(),
-      fontFamily,
-      fontSize,
-      fontStyle,
-      fontWeight,
-      lineHeight
-    });
-    textOption.textBaseline = 'middle';
-    const textConfig = [
-      ...iconInlineFront.map(icon => dealWithRichTextIcon(icon)),
-      textOption,
-      ...iconInlineEnd.map(icon => dealWithRichTextIcon(icon))
-    ];
-    utilRichTextMark.setAttributes({
-      width: cellWidth - (padding[1] + padding[3]) - iconWidth,
-      height: 0,
-      textConfig
-    });
-    maxHeight = utilRichTextMark.AABBBounds.height();
-    // } else {
-    //   maxHeight = 0;
-    //   lines.forEach((line: string, index: number) => {
-    //     if (index === 0 && iconInlineFront.length) {
-    //       maxHeight += Math.max(lineHeight, iconInlineFrontHeight);
-    //     } else if (index === lines.length - 1 && iconInlineEnd.length) {
-    //       maxHeight += Math.max(lineHeight, iconInlineEndHeight);
-    //     } else {
-    //       maxHeight += lineHeight;
-    //     }
-    //   });
-    // }
-  } else if (autoWrapText) {
-    const maxLineWidth = cellWidth - (padding[1] + padding[3]) - iconWidth;
-    utilTextMark.setAttributes({
-      maxLineWidth,
-      text: lines,
-      fontSize,
-      fontStyle,
-      fontWeight,
-      fontFamily,
-      lineHeight,
-      wordBreak: 'break-word',
-      whiteSpace: lines.length === 1 && !autoWrapText ? 'no-wrap' : 'normal'
-    });
-    maxHeight = utilTextMark.AABBBounds.height() || (typeof lineHeight === 'number' ? lineHeight : fontSize);
-  } else {
-    // autoWrapText = false
-    maxHeight = lines.length * lineHeight;
-  }
+    const lines = validToString(text).split('\n') || [];
 
+    const cellWidth = table.getColsWidth(col, endCol);
+
+    if (cellType === 'checkbox') {
+      const size = getProp('size', actStyle, col, row, table);
+      if (autoWrapText) {
+        const spaceBetweenTextAndIcon = getProp('spaceBetweenTextAndIcon', actStyle, col, row, table);
+        const maxLineWidth = cellWidth - (padding[1] + padding[3]) - iconWidth - size - spaceBetweenTextAndIcon;
+        utilCheckBoxMark.setAttributes({
+          text: {
+            maxLineWidth,
+            text: lines,
+            fontSize,
+            fontStyle,
+            fontWeight,
+            fontFamily,
+            lineHeight,
+            wordBreak: 'break-word'
+          },
+          icon: {
+            width: Math.floor(size / 1.4), // icon : box => 10 : 14
+            height: Math.floor(size / 1.4)
+          },
+          box: {
+            width: size,
+            height: size
+          },
+          spaceBetweenTextAndIcon
+        });
+        utilCheckBoxMark.render();
+        maxHeight = utilTextMark.AABBBounds.height();
+      } else {
+        maxHeight = Math.max(size, lines.length * lineHeight);
+      }
+    } else if (iconInlineFront.length || iconInlineEnd.length) {
+      // if (autoWrapText) {
+      const textOption = Object.assign({
+        text: cellValue?.toString(),
+        fontFamily,
+        fontSize,
+        fontStyle,
+        fontWeight,
+        lineHeight
+      });
+      textOption.textBaseline = 'middle';
+      const textConfig = [
+        ...iconInlineFront.map(icon => dealWithRichTextIcon(icon)),
+        textOption,
+        ...iconInlineEnd.map(icon => dealWithRichTextIcon(icon))
+      ];
+      utilRichTextMark.setAttributes({
+        width: cellWidth - (padding[1] + padding[3]) - iconWidth,
+        height: 0,
+        textConfig
+      });
+      maxHeight = utilRichTextMark.AABBBounds.height();
+      // } else {
+      //   maxHeight = 0;
+      //   lines.forEach((line: string, index: number) => {
+      //     if (index === 0 && iconInlineFront.length) {
+      //       maxHeight += Math.max(lineHeight, iconInlineFrontHeight);
+      //     } else if (index === lines.length - 1 && iconInlineEnd.length) {
+      //       maxHeight += Math.max(lineHeight, iconInlineEndHeight);
+      //     } else {
+      //       maxHeight += lineHeight;
+      //     }
+      //   });
+      // }
+    } else if (autoWrapText) {
+      const maxLineWidth = cellWidth - (padding[1] + padding[3]) - iconWidth;
+      utilTextMark.setAttributes({
+        maxLineWidth,
+        text: lines,
+        fontSize,
+        fontStyle,
+        fontWeight,
+        fontFamily,
+        lineHeight,
+        wordBreak: 'break-word',
+        whiteSpace: lines.length === 1 && !autoWrapText ? 'no-wrap' : 'normal'
+      });
+      maxHeight = utilTextMark.AABBBounds.height() || (typeof lineHeight === 'number' ? lineHeight : fontSize);
+    } else {
+      // autoWrapText = false
+      maxHeight = lines.length * lineHeight;
+    }
+  }
   return (Math.max(maxHeight, iconHeight) + padding[0] + padding[2]) / spanRow;
 }
 
