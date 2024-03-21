@@ -12,6 +12,7 @@ export function createCellSelectBorder(
   selectId: string, //整体区域${endRow}-${startCol}${startRow}${endCol}${endRow}作为其编号
   strokes?: boolean[]
 ) {
+  console.log(strokes);
   const startCol = Math.min(start_Col, end_Col);
   const startRow = Math.min(start_Row, end_Row);
   const endCol = Math.max(start_Col, end_Col);
@@ -22,9 +23,12 @@ export function createCellSelectBorder(
   // 框选外边框
   const bodyClickBorderColor = theme.selectionStyle?.cellBorderColor;
   const bodyClickLineWidth = theme.selectionStyle?.cellBorderLineWidth;
+  console.log(bodyClickLineWidth);
   const rect = createRect({
+    // lineDash:[2,2,2,2],
     pickable: false,
     fill: (theme.selectionStyle?.cellBgColor as any) ?? 'rgba(0, 0, 255,0.1)',
+
     lineWidth: bodyClickLineWidth as number,
     // stroke: bodyClickBorderColor as string,
     stroke: strokes.map(stroke => {

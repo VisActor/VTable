@@ -354,6 +354,11 @@ export function bindContainerDomListener(eventManager: EventManager) {
   document.body.addEventListener('pointerdown', globalPointerdownCallback);
 
   const globalPointerupCallback = (e: MouseEvent) => {
+   
+  
+ 
+
+
     table.eventManager.LastBodyPointerXY = null;
     // console.log('body pointerup', table.eventManager.isDown, table.eventManager.isDraging);
     table.eventManager.isDown = false;

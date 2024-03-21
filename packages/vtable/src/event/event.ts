@@ -24,6 +24,7 @@ import type { PivotTable } from '../PivotTable';
 import { Env } from '../tools/env';
 import type { ListTable } from '../ListTable';
 import { isValid } from '@visactor/vutils';
+import { InteractionState, type KeydownEvent, type ListTableAPI } from '../ts-types';
 
 export class EventManager {
   table: BaseTableAPI;
@@ -49,7 +50,8 @@ export class EventManager {
   isDown = false;
   isDraging = false;
   isFilling = false;
-
+  LastRange: any = [];
+  SelectData: any;
   globalEventListeners: { name: string; env: 'document' | 'body' | 'window'; callback: (e?: any) => void }[] = [];
 
   constructor(table: BaseTableAPI) {
@@ -425,211 +427,223 @@ export class EventManager {
     // this.table.stateManager.updateSelectPos(-1, -1); 这句有问题 如drag框选鼠标超出表格范围 这里就直接情况是不对的
     return false;
   }
-  // fillSelected(eventArgsSet?: SceneEvent, isSelectMoving?: boolean): boolean {
-  //   if (!eventArgsSet) {
-  //     this.table.stateManager.updateSelectPos(-1, -1);
-  //     return false;
-  //   }
-  //   const { eventArgs } = eventArgsSet;
+  fillSelected(eventArgsSet?: SceneEvent, SelectCellRange?: any, SelectData?:any): any {
+    console.log(SelectCellRange);
+    if (!eventArgsSet) {
+      this.table.stateManager.updateSelectPos(-1, -1);
+      return;
+    }
+    const { eventArgs } = eventArgsSet;
 
-  //   if (eventArgs) {
-  //     if (eventArgs.target.name === 'checkbox') {
-  //       return false;
-  //     }
+    if (eventArgs) {
+      if (eventArgs.target.name === 'checkbox') {
+        return;
+      }
+      let direction;
+      // let currentselectedrange = this.table.stateManager.select.ranges;
+      console.log(eventArgs);
+      console.log(Math.abs(SelectCellRange.start.row - eventArgs.row));
+      console.log(Math.abs(SelectCellRange.start.col - eventArgs.col));
+ if (Math.abs(SelectCellRange.start.row - eventArgs.row) >= Math.abs(SelectCellRange.start.col - eventArgs.col)) {
+  console.log("??");
+      if (SelectCellRange.start.row >= eventArgs.row) {
+      direction = 'up';
+      } else {
+        direction = 'down';
+        };
+   
+        console.log(direction);
+   
+ } else {
+  if (SelectCellRange.start.col >= eventArgs.col) {
+    direction = 'left';
+    } else {
+      direction = 'right';
+      };
+ }
+ console.log(direction);
+ let values: (string | number)[][] = [];
+      let fillData: any[][] = [];
+      let updaterow;
+      let updatecol;
+      // const rawData = this.table.getCopyValue();
+      const rows = SelectData.split('\n'); // 将数据拆分为行
+      rows.forEach(function (rowCells: any, rowIndex: number) {
+        const cells = rowCells.split('\t'); // 将行数据拆分为单元格
+        const rowValues: (string | number)[] = [];
+        values.push(rowValues);
+        cells.forEach(function (cell: string, cellIndex: number) {
+          // 去掉单元格数据末尾的 '\r'
+          if (cellIndex === cells.length - 1) {
+            cell = cell.trim();
+          }
+          rowValues.push(cell);
+        });
+      });
+      
+      // if (
+      //   ['up', 'left'].indexOf(direction) > -1
+      // ) {
+      //   values = [];
 
-  //     // // 注意：如果启用下面这句代码逻辑 则在点击选中单元格时失效hover效果。但是会导致chart实例的click事件失效，所以先特殊处理这个逻辑
-  //     // if (
-  //     //   !this.table.isPivotChart() &&
-  //     //   eventArgsSet?.eventArgs?.target.type !== 'chart' &&
-  //     //   eventArgs.event.pointerType !== 'touch'
-  //     // ) {
-  //     //   this.table.stateManager.updateHoverPos(-1, -1);
-  //     // }
-  //     const define = this.table.getBodyColumnDefine(eventArgs.col, eventArgs.row);
-  //     if (
-  //       this.table.isHeader(eventArgs.col, eventArgs.row) &&
-  //       (define?.disableHeaderSelect || this.table.stateManager.select?.disableHeader)
-  //     ) {
-  //       if (!isSelectMoving) {
-  //         // 如果是点击点表头 取消单元格选中状态
-  //         this.table.stateManager.updateSelectPos(-1, -1);
-  //       }
-  //       return false;
-  //     } else if (!this.table.isHeader(eventArgs.col, eventArgs.row) && define?.disableSelect) {
-  //       if (!isSelectMoving) {
-  //         this.table.stateManager.updateSelectPos(-1, -1);
-  //       }
-  //       return false;
-  //     }
+      //   if (direction === 'up') {
+      //     const dragLength = eventArgs.row - startOfDragCoords.row + 1;
+      //     const fillOffset = dragLength % res.length;
 
-  //     if (
-  //       this.table.isPivotChart() &&
-  //       (eventArgsSet?.eventArgs?.target.name === 'axis-label' || eventArgsSet?.eventArgs?.target.type === 'chart')
-  //     ) {
-  //       // 点击透视图坐标轴标签或图标内容，执行图表状态更新，不触发Select
-  //       this.table.stateManager.updateSelectPos(-1, -1);
-  //       return false;
-  //     }
-  //     console.log(this.table.stateManager.select.ranges);
-  //     // let updateRow;
-  //     // let updateCol;
-  //     //    const selectRange = this.table.stateManager.select.ranges[0];
-  //     //    const startCol = Math.min(selectRange.start.col, selectRange.end.col);
-  //     //    const startRow = Math.min( selectRange.start.row,  selectRange.end.row);
-  //     // const endCol = Math.max( selectRange.start.col,  selectRange.end.col);
-  //     // const endRow = Math.max( selectRange.start.row,  selectRange.end.row);
-  //     // // const currentRange = this.table.stateManager.select.ranges[0];
-  //     // console.log(selectRange);
-  //     // console.log(eventArgs.col, eventArgs.row);
-  //     // console.log(startCol, startRow);
-  //     // console.log(endCol, endRow);
+      //     for (let i = 0; i < dragLength; i++) {
+      //       values.push(res[(i + (res.length - fillOffset)) % res.length]);
+      //     }
 
-  //     // if (Math.abs(startRow - eventArgs.row) > Math.abs(startCol - eventArgs.col)) {
-  //     //    updateRow = eventArgs.row;
-  //     //   updateCol = startCol;
-  //     // } else {
-  //     //       updateRow = startRow;
-  //     //   updateCol = eventArgs.col;
-  //     // }
-  //     // if (eventArgs.row === startRow && eventArgs.col < startCol) {
-  //     //   // directionOfDrag = 'left';
-  //     //   updateRow = endRow;
-  //     //   updateCol = eventArgs.col;
+      //   } else {
+      //     const dragLength = endOfDragCoords.col - startOfDragCoords.col + 1;
+      //     const fillOffset = dragLength % res[0].length;
+
+      //     for (let i = 0; i < res.length; i++) {
+      //       values.push([]);
+
+      //       for (let j = 0; j < dragLength; j++) {
+      //         values[i]
+      //           .push(res[i][(j + (res[i].length - fillOffset)) % res[i].length]);
+      //       }
+      //     }
+      //   }
+      // }
+      if (['up', 'left'].indexOf(direction) > -1) {
+        if (direction === 'up') {
+          const dragLength = SelectCellRange.start.row - eventArgs.row;
+      //     for (let i = dragLength - 1; i >= 0; i--) {
+      //       values.reverse().forEach(function (rowCells: any, rowIndex: number) {
+      //         fillData.push(rowCells);
+      //   });
+      // }
+      // 计算需要向上填充的行数
+let fillRowCount = Math.max(dragLength - values.length, 0);
+
+// 首先添加需要向上填充的空行
+for (let i = 0; i < fillRowCount; i++) {
+    let emptyRow: any[] = [];
+    for (let j = 0; j < values[0].length; j++) {
+        emptyRow.push(null); // 或者根据需求填充其他值
+    }
+    fillData.push(emptyRow);
+}
+
+// 将原始数据逆序添加到新数组中
+values.reverse().forEach(function(rowCells: any[]) {
+    let newRow: any[] = [];
     
-  //     // } else if (eventArgs.row === startRow && eventArgs.row === endRow &&
-  //     //   eventArgs.col > startCol) {
-  //     //   // directionOfDrag = 'right';
-  //     //   updateRow = endRow;
-  //     //   updateCol = eventArgs.col;
+    // 计算需要填充的空单元格数量
+    let fillCount = Math.max(values[0].length - rowCells.length, 0);
     
-  //     // } else if (eventArgs.row < startRow && eventArgs.col === startCol) {
-  //     //   // directionOfDrag = 'up';
-  //     //   updateRow = eventArgs.row;
-  //     //   updateCol = endCol;
+    // 在新行中先添加需要填充的空单元格
+    for (let i = 0; i < fillCount; i++) {
+        newRow.push(null); // 或者根据需求填充其他值
+    }
     
-  //     // } else if (eventArgs.row > startRow &&
-  //     //   eventArgs.col === startCol) {
-  //     //   // directionOfDrag = 'down';
-  //     //   updateRow = eventArgs.row;
-  //     //   updateCol = endCol;
-  //     // }
+    // 将原始数据逆序添加到新行中
+    rowCells.reverse().forEach(function(cellData: any) {
+        newRow.push(cellData);
+    });
     
-  //     // console.log(updateRow,updateCol);
+    fillData.push(newRow);
+});
+       
 
+        } else {
+          const dragLength = SelectCellRange.start.col - eventArgs.col;
+          values.forEach(function(rowCells: any[]) {
+            let newRow: any[] = [];
+            
+            // 计算需要填充的空单元格数量
+            let fillCount = Math.max(dragLength - rowCells.length, 0);
+            
+            // 在新行中先添加需要填充的空单元格
+            for (let i = 0; i < fillCount; i++) {
+                newRow.push(null); // 或者根据需求填充其他值
+            }
+            
+            // 将原始数据逆序添加到新行中
+            rowCells.reverse().forEach(function(cellData: any) {
+                newRow.push(cellData);
+            });
+            
+            fillData.push(newRow);
+        });
+          
+       
+      } 
+      updaterow = eventArgs.row;
+          updatecol = eventArgs.col;
+    }else {
+        if (direction == "down") {
+          const dragLength = eventArgs.row - SelectCellRange.end.row;
+          console.log(dragLength);
+          // 将原始数据添加到新数组中
+values.forEach(function(rowCells: any[]) {
+  let newRow: any[] = [];
   
-  //     this.table.stateManager.updateSelectPos(
-  //       // updateCol,
-  //       // updateRow,
-  //       eventArgs.col,
-  //       eventArgs.row,
-  //       eventArgs.event.shiftKey,
-  //       eventArgs.event.ctrlKey || eventArgs.event.metaKey
-  //     );
-  
-    
-  //     return true;
-  //   }
- 
+  // 将原始数据添加到新行中
+  rowCells.forEach(function(cellData: any) {
+      newRow.push(cellData);
+  });
 
-  //   // Fill area may starts or ends with invisible cell. There won't be any information about it as highlighted
-  //   // selection store just renderable indexes (It's part of Walkontable). I extrapolate where the start or/and
-  //   // the end is.
-  //   const [fillStartRow, fillStartColumn, fillEndRow, fillEndColumn] =
-  //     this.hot.selection.highlight.getFill().getVisualCorners();
-  //   const selectionRangeLast = this.hot.getSelectedRangeLast();
-  //   const topStartCorner = selectionRangeLast.getTopStartCorner();
-  //   const bottomEndCorner = selectionRangeLast.getBottomEndCorner();
+  fillData.push(newRow);
+});
 
-  //   this.resetSelectionOfDraggedArea();
+// 计算需要向下填充的行数
+let fillRowCount = Math.max(dragLength - values.length, 0);
 
-  //   const cornersOfSelectedCells = [
-  //     topStartCorner.row,
-  //     topStartCorner.col,
-  //     bottomEndCorner.row,
-  //     bottomEndCorner.col,
-  //   ];
+// 添加需要向下填充的空行
+for (let i = 0; i < fillRowCount; i++) {
+  let emptyRow: any[] = [];
+  for (let j = 0; j < values[0].length; j++) {
+      emptyRow.push(null); // 或者根据需求填充其他值
+  }
+  fillData.push(emptyRow);
+}
 
-  //   const cornersOfSelectionAndDragAreas = this.hot
-  //     .runHooks(
-  //       'modifyAutofillRange',
-  //       [
-  //         Math.min(topStartCorner.row, fillStartRow),
-  //         Math.min(topStartCorner.col, fillStartColumn),
-  //         Math.max(bottomEndCorner.row, fillEndRow),
-  //         Math.max(bottomEndCorner.col, fillEndColumn),
-  //       ],
-  //       cornersOfSelectedCells
-  //     );
+        } else {
+          const dragLength = eventArgs.col - SelectCellRange.end.col;
+          values.forEach(function(rowCells: any[]) {
+            let newRow: any[] = [];
+            
+            // 将原始数据添加到新行中
+            rowCells.forEach(function(cellData: any) {
+                newRow.push(cellData);
+            });
+        
+            // 计算需要填充的空单元格数量
+            let fillCount = Math.max(dragLength - rowCells.length, 0);
+        
+            // 在新行末尾添加需要填充的空单元格
+            for (let i = 0; i < fillCount; i++) {
+                newRow.push(null); // 或者根据需求填充其他值
+            }
+        
+            fillData.push(newRow);
+        });
+        }
 
-  //   const {
-  //     directionOfDrag,
-  //     startOfDragCoords,
-  //     endOfDragCoords
-  //   } = getDragDirectionAndRange(
-  //     cornersOfSelectedCells,
-  //     cornersOfSelectionAndDragAreas,
-  //     (row, column) => this.hot._createCellCoords(row, column),
-  //   );
-
-  //   if (startOfDragCoords && startOfDragCoords.row > -1 && startOfDragCoords.col > -1) {
-  //     const selectionData = this.getSelectionData();
-  //     const sourceRange = selectionRangeLast.clone();
-  //     const targetRange = this.hot._createCellRange(startOfDragCoords, startOfDragCoords, endOfDragCoords);
-
-  //     const beforeAutofillHookResult = this.hot.runHooks(
-  //       'beforeAutofill',
-  //       selectionData,
-  //       sourceRange,
-  //       targetRange,
-  //       directionOfDrag
-  //     );
-
-  //     if (beforeAutofillHookResult === false) {
-  //       this.hot.selection.highlight.getFill().clear();
-  //       this.hot.render();
-
-  //       return false;
-  //     }
-
-  //     let fillData = beforeAutofillHookResult;
-  //     const res = beforeAutofillHookResult;
-
-  //     if (
-  //       ['up', 'left'].indexOf(directionOfDrag) > -1 &&
-  //       !(res.length === 1 && res[0].length === 0)
-  //     ) {
-  //       fillData = [];
-
-  //       if (directionOfDrag === 'up') {
-  //         const dragLength = endOfDragCoords.row - startOfDragCoords.row + 1;
-  //         const fillOffset = dragLength % res.length;
-
-  //         for (let i = 0; i < dragLength; i++) {
-  //           fillData.push(res[(i + (res.length - fillOffset)) % res.length]);
-  //         }
-
-  //       } else {
-  //         const dragLength = endOfDragCoords.col - startOfDragCoords.col + 1;
-  //         const fillOffset = dragLength % res[0].length;
-
-  //         for (let i = 0; i < res.length; i++) {
-  //           fillData.push([]);
-
-  //           for (let j = 0; j < dragLength; j++) {
-  //             fillData[i]
-  //               .push(res[i][(j + (res[i].length - fillOffset)) % res[i].length]);
-  //           }
-  //         }
-  //       }
-  //     }
-
+         updaterow = SelectCellRange.start.row;
+          updatecol = SelectCellRange.start.col;
+      //      values.forEach(function (rowCells: any, rowIndex: number) {
+      //   fillData.push(rowCells);
+      // })
+      }
+   
      
+      console.log(fillData);
+      (this.table as ListTableAPI).changeCellValues(updatecol, updaterow, fillData, true);
 
-  //   } 
 
-  //   return true;
-  //   return false;
-  // }
+    }
+   
+
+
+
+
+   
+  }
 
   deelTableSelectAll() {
     this.table.stateManager.updateSelectPos(-1, -1, false, false, true);
@@ -689,6 +703,7 @@ export class EventManager {
           console.log("123");
     
           this.isFilling = true;
+       
             // const selectRange = this.table.stateManager.select.ranges[0];
             //       const endCol = Math.max( selectRange.start.col,  selectRange.end.col);
             //       const endRow = Math.max( selectRange.start.row,  selectRange.end.row);

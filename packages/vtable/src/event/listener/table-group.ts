@@ -483,6 +483,10 @@ export function bindTableGroupListener(eventManager: EventManager) {
     // // eventManager.dealFillSelect(eventArgsSet)
     // stateManager.updateInteractionState(InteractionState.grabing);
     // return;
+  
+  
+   
+  
   }
         // 处理单元格选择
         if (eventManager.dealTableSelect(eventArgsSet)) {
@@ -528,8 +532,17 @@ export function bindTableGroupListener(eventManager: EventManager) {
     console.log(table.stateManager.columnMove.colTarget);
     console.log((getCellEventArgsSet(e).eventArgs.target as unknown as Group).col);
     console.log((getCellEventArgsSet(e).eventArgs.target as unknown as Group).row);
+    //  let LastRange;
+    console.log(table.eventManager.isFilling);
+    console.log(table.scenegraph.selectingRangeComponents.size);
+    if (table.scenegraph.selectingRangeComponents.size && !table.eventManager.isFilling) {
+     
+      table.scenegraph.selectingRangeComponents.forEach((rangeComponent, key) => {
+        const [startColStr, startRowStr, endColStr, endRowStr] = key.split('-');
+        table.eventManager.LastRange = {start: {col: startColStr,row:startRowStr}, end: {col:endColStr,row:endRowStr}}
+      });
   
-    table.eventManager.isFilling = false;
+  }
     if (stateManager.interactionState === 'grabing') {
       // stateManager.interactionState = 'default';
       stateManager.updateInteractionState(InteractionState.default);
@@ -586,12 +599,43 @@ export function bindTableGroupListener(eventManager: EventManager) {
           cellsEvent.cells = table.getSelectedCellInfos();
           table.fireListeners(TABLE_EVENT_TYPE.DRAG_SELECT_END, cellsEvent);
         }
-      }
+      } 
+      console.log(table.eventManager.isFilling);
+      console.log(table.scenegraph.selectingRangeComponents.size);
+      if (table.eventManager.isFilling) { 
+        const eventArgsSet: SceneEvent = getCellEventArgsSet(e);
+        table.eventManager.isFilling = false;
+        // const LastRange = table.eventManager.LastRange;
+        // console.log(table.scenegraph.selectingRangeComponents);
+        // console.log(table.scenegraph.selectingRangeComponents.keys());
+        // const LastRange = table.scenegraph.selectingRangeComponents.keys()[0].split('-');
+        // table.scenegraph.selectingRangeComponents.forEach((rangeComponent, key) => {
+        //   const [startColStr, startRowStr, endColStr, endRowStr] = key.split('-');
+        //   const LastRange = {start: {col: startColStr,row:startRowStr}, end: {col:endColStr,row:endRowStr}}
+        //   console.log(LastRange);
+        //   console.log(table.stateManager.select.ranges);
+        //   eventManager.fillSelected(eventArgsSet, LastRange, table.eventManager.SelectData)
+        //   table.eventManager.SelectData = table.getCopyValue();
+        // });
+        // console.log(LastRange);
+        console.log(table.stateManager.select.ranges);
+        eventManager.fillSelected(eventArgsSet, table.eventManager.LastRange, table.eventManager.SelectData)
+        table.eventManager.SelectData = table.getCopyValue();
+        console.log(table.eventManager.SelectData);
+       
+      } 
      
     } else if (stateManager.interactionState === InteractionState.scrolling) {
       stateManager.updateInteractionState(InteractionState.default);
       // scroll end
     }
+    console.log(table.eventManager.isFilling);
+    console.log(table.stateManager.select.ranges);
+   
+   
+   
+        
+   
     // console.log('DRAG_SELECT_END');
     if ((table as any).hasListeners(TABLE_EVENT_TYPE.MOUSEUP_CELL)) {
       const eventArgsSet: SceneEvent = getCellEventArgsSet(e);
@@ -662,6 +706,14 @@ export function bindTableGroupListener(eventManager: EventManager) {
     if (table.stateManager.columnResize.resizing || table.stateManager.columnMove.moving) {
       return;
     }
+    if (table.eventManager.isFilling) {
+      table.eventManager.isFilling = false;
+      console.log(table.stateManager.select.ranges);
+      table.eventManager.LastRange = stateManager.select.ranges[0];
+      table.eventManager.SelectData = table.getCopyValue();
+      return;
+
+}
     const eventArgsSet: SceneEvent = getCellEventArgsSet(e);
     eventManager.dealIconClick(e, eventArgsSet);
     if (!eventArgsSet?.eventArgs) {
