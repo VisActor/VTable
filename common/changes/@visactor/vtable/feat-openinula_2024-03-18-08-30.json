@@ -2,7 +2,7 @@
   "changes": [
     {
       "packageName": "@visactor/vtable",
-      "comment": "fix: fix typeError in getCellMergeRange()",
+      "comment": "feat: add openinula-vtable",
       "type": "none"
     }
   ],

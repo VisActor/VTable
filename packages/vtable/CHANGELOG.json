@@ -2,6 +2,39 @@
   "name": "@visactor/vtable",
   "entries": [
     {
+      "version": "0.21.3",
+      "tag": "@visactor/vtable_v0.21.3",
+      "date": "Wed, 20 Mar 2024 10:48:31 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "fix: mapping colorMap not work #1295\n\n"
+          },
+          {
+            "comment": "fix: when copy blank cell and paste to cell change to undefined #1298\n\n"
+          },
+          {
+            "comment": "fix:  bug datasource lazy load edit cell value invalid #1302\n\n"
+          },
+          {
+            "comment": "docs: add list table tree mode guide\n\n"
+          },
+          {
+            "comment": "fix: fix cell progress create content size"
+          },
+          {
+            "comment": "fix: fix row level in getCellAdressByHeaderPath()"
+          },
+          {
+            "comment": "fix: use default style in exportCellImg()"
+          },
+          {
+            "comment": "fix: fix typeError in getCellMergeRange()"
+          }
+        ]
+      }
+    },
+    {
       "version": "0.21.2",
       "tag": "@visactor/vtable_v0.21.2",
       "date": "Thu, 14 Mar 2024 02:24:21 GMT",
