@@ -10,7 +10,7 @@ import { getQuadProps } from '../utils/padding';
 import { dealWithRichTextIcon } from '../utils/text-icon-layout';
 import { getAxisConfigInPivotChart } from '../../layout/chart-helper/get-axis-config';
 import { computeAxisComponentHeight } from '../../components/axis/get-axis-component-size';
-import { isArray, isNumber, isObject } from '@visactor/vutils';
+import { isArray, isNumber, isObject, isValid, max } from '@visactor/vutils';
 import { CheckBox } from '@visactor/vrender-components';
 import { decodeReactDom, dealPercentCalc } from '../component/custom';
 import { getCellMergeRange } from '../../tools/merge-range';
@@ -313,7 +313,7 @@ export function computeRowsHeight(
 }
 
 export function computeRowHeight(row: number, startCol: number, endCol: number, table: BaseTableAPI): number {
-  let maxHeight = 0;
+  let maxHeight;
   // 如果是透视图
   if (
     table.isPivotChart() &&
@@ -338,7 +338,7 @@ export function computeRowHeight(row: number, startCol: number, endCol: number, 
     // CustomRender height calculation
     const customHeight = computeCustomRenderHeight(col, row, table);
     if (customHeight) {
-      maxHeight = Math.max(customHeight.height, maxHeight);
+      maxHeight = isValid(maxHeight) ? Math.max(customHeight.height, maxHeight) : customHeight.height;
       if (!customHeight.renderDefault) {
         continue;
       }
@@ -351,7 +351,7 @@ export function computeRowHeight(row: number, startCol: number, endCol: number, 
       if (axisConfig) {
         const axisWidth = computeAxisComponentHeight(axisConfig, table);
         if (typeof axisWidth === 'number') {
-          maxHeight = Math.max(axisWidth, maxHeight);
+          maxHeight = isValid(maxHeight) ? Math.max(axisWidth, maxHeight) : axisWidth;
           continue;
         }
       }
@@ -368,18 +368,23 @@ export function computeRowHeight(row: number, startCol: number, endCol: number, 
       ? table._getHeaderLayoutMap(col, row)?.headerType
       : table.getBodyColumnType(col, row);
     if (cellType !== 'text' && cellType !== 'link' && cellType !== 'progressbar' && cellType !== 'checkbox') {
-      // text&link&progressbar测量文字宽度
-      // image&video&sparkline使用默认宽度
-      const defaultHeight = table.getDefaultRowHeight(row);
-      maxHeight = Math.max(maxHeight, isNumber(defaultHeight) ? defaultHeight : table.defaultRowHeight);
+      // // text&link&progressbar测量文字宽度
+      // // image&video&sparkline使用默认宽度
+      // const defaultHeight = table.getDefaultRowHeight(row);
+      // maxHeight = Math.max(maxHeight, isNumber(defaultHeight) ? defaultHeight : table.defaultRowHeight);
       continue;
     }
 
     // text height calculation
     const textHeight = computeTextHeight(col, row, cellType, table);
-    maxHeight = Math.max(textHeight, maxHeight);
+    maxHeight = isValid(maxHeight) ? Math.max(textHeight, maxHeight) : textHeight;
   }
-  return maxHeight;
+  if (isValid(maxHeight)) {
+    return maxHeight;
+  }
+
+  const defaultHeight = table.getDefaultRowHeight(row);
+  return isNumber(defaultHeight) ? defaultHeight : table.defaultRowHeight;
 }
 
 function checkFixedStyleAndNoWrap(table: BaseTableAPI): boolean {
