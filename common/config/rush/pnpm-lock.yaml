@@ -81,7 +81,7 @@ importers:
       '@types/mocha': 9.0.0
       '@types/node': '*'
       '@types/offscreencanvas': 2019.6.4
-      '@visactor/vchart': 1.9.6
+      '@visactor/vchart': 1.10.0
       '@visactor/vtable': workspace:*
       '@visactor/vutils': ~0.18.1
       axios: ^1.4.0
@@ -125,7 +125,7 @@ importers:
       '@types/mocha': 9.0.0
       '@types/node': 20.11.26
       '@types/offscreencanvas': 2019.6.4
-      '@visactor/vchart': 1.9.6
+      '@visactor/vchart': 1.10.0
       axios: 1.6.7
       chai: 4.3.4
       eslint: 8.18.0
