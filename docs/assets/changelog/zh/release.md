@@ -1,3 +1,26 @@
+# v0.21.3
+
+2024-03-20
+
+
+**🐛 功能修复**
+
+- **@visactor/vtable**: mapping colorMap not work [#1295](https://github.com/VisActor/VTable/issues/1295)
+- **@visactor/vtable**: when copy blank cell and paste to cell change to undefined [#1298](https://github.com/VisActor/VTable/issues/1298)
+- **@visactor/vtable**:  bug datasource lazy load edit cell value invalid [#1302](https://github.com/VisActor/VTable/issues/1302)
+- **@visactor/vtable**: fix cell progress create content size
+- **@visactor/vtable**: fix row level in getCellAdressByHeaderPath()
+- **@visactor/vtable**: use default style in exportCellImg()
+- **@visactor/vtable**: fix typeError in getCellMergeRange()
+
+**📖 文档更新**
+
+- **@visactor/vtable**: add list table tree mode guide
+
+
+
+[更多详情请查看 v0.21.3](https://github.com/VisActor/VTable/releases/tag/v0.21.3)
+
 # v0.21.2
 
 2024-03-14
