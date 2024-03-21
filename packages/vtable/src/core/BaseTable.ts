@@ -3647,15 +3647,27 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
   }
 
   hasAutoImageColumn() {
-    return (this.internalProps.layoutMap.columnObjects as ColumnData[]).find((column: ColumnData) => {
+    const bodyColumn = (this.internalProps.layoutMap.columnObjects as ColumnData[]).find((column: ColumnData) => {
       if (
-        (column.cellType === 'image' || typeof column.cellType === 'function') &&
+        (column.cellType === 'image' || column.cellType === 'video' || typeof column.cellType === 'function') &&
         (column.define as ImageColumnDefine).imageAutoSizing
       ) {
         return true;
       }
       return false;
     });
+    const headerObj = (this.internalProps.layoutMap.headerObjects as HeaderData[]).find((column: HeaderData) => {
+      if (column) {
+        if (
+          (column.headerType === 'image' || column.headerType === 'video' || typeof column.headerType === 'function') &&
+          (column.define as ImageColumnDefine).imageAutoSizing
+        ) {
+          return true;
+        }
+      }
+      return false;
+    });
+    return bodyColumn || headerObj;
   }
   /** 获取当前hover单元格的图表实例。这个方法hover实时获取有点缺陷：鼠标hover到单元格上触发了 chart.ts中的activate方法 但此时this.stateManager.hover?.cellPos?.col还是-1 */
   _getActiveChartInstance() {

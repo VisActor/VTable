@@ -330,6 +330,10 @@ export const menus = [
       },
       {
         path: 'pivot',
+        name: 'pivot-image-on-column'
+      },
+      {
+        path: 'pivot',
         name: 'pivot-image-tree'
       },
       {
