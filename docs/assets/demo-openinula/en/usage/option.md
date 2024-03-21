@@ -1,17 +1,17 @@
 ---
 category: examples
 group: usage
-title: 使用完整option
+title: full option
 cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/react-default.png
 order: 1-1
 link: '../guide/Developer_Ecology/openinula'
 ---
 
-# 使用完整option
+# full option
 
-可以直接使用可以直接使用VTable的完整option，将option作为一个prop传入表格组件。
+You can use the complete option of VTable directly and pass the option into the table component as a prop.
 
-## 代码演示
+## code demo
 ```javascript livedemo template=vtable-openinula
 // import * as InulaVTable from '@visactor/openinula-vtable';
 const option = {

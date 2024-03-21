@@ -63,7 +63,10 @@ function transformCode(str: string) {
   try {
     transformedCode =
       bubleTransform(transformedCode, {
-        transforms: { templateString: false }
+        transforms: { 
+          templateString: false 
+        },
+        // jsx: 'Inula.createElement'
       }).code ?? '';
   } catch (e) {
     transformedCode = str;
@@ -214,7 +217,7 @@ export function Markdown() {
         .then(text => {
           let processedText = text;
           // remove meta info for examples
-          if (assetDirectory === 'demo' || assetDirectory === 'demo-react' || assetDirectory === 'demo-react') {
+          if (assetDirectory === 'demo' || assetDirectory === 'demo-react' || assetDirectory === 'demo-openinula') {
             processedText = processedText.replace(/---(.|\n)*---/, '').trim();
           }
           // Hack: process all livedemo code to livedemo language and replace these after

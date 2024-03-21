@@ -12,6 +12,7 @@
     "@arco-design/web-react": "2.46.1",
     "@visactor/vtable": "workspace:*",
     "@visactor/react-vtable": "workspace:*",
+    "@visactor/openinula-vtable": "workspace:*",
     "@visactor/vtable-editors": "workspace:*",
     "@visactor/vtable-export": "workspace:*",
     "@visactor/vtable-search": "workspace:*",
@@ -24,7 +25,7 @@
     "react-dom": "^18.0.0",
     "react-router-dom": "6.9.0",
     "lodash": "4.17.21",
-    "openinula": "0.1.2-SNAPSHOT"
+    "openinula": "~0.1.2-SNAPSHOT"
   },
   "devDependencies": {
     "@internal/eslint-config": "workspace:*",

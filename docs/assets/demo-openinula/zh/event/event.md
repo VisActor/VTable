@@ -1,19 +1,21 @@
 ---
 category: examples
-group: usage
-title: 使用完整option
+group: event
+title: 事件监听
 cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/react-default.png
 order: 1-1
-link: '../guide/Developer_Ecology/openinula'
+link: '../guide/table_type/List_table/list_table_define_and_generate'
+option: ListTable-columns-text#cellType
 ---
 
-# 使用完整option
+# 事件监听
 
-可以直接使用可以直接使用VTable的完整option，将option作为一个prop传入表格组件。
+VTable支持的事件都可以通过openinula的props传入进行监听，具体可以参考[事件列表]([../api/event](https://www.visactor.io/vtable/guide/Developer_Ecology/openinula#%E4%BA%8B%E4%BB%B6%E7%BB%91%E5%AE%9A))。
 
 ## 代码演示
 ```javascript livedemo template=vtable-openinula
 // import * as InulaVTable from '@visactor/openinula-vtable';
+
 const option = {
   header: [
     {
@@ -37,7 +39,16 @@ const option = {
 };
 
 const root = document.getElementById(CONTAINER_ID);
-Inula.render(<InulaVTable.ListTable option={option} height={'500px'} />, root);
+Inula.render(
+  <InulaVTable.ListTable
+    option={option}
+    height={'500px'}
+    onMouseMoveCell={(args) => {
+      console.log('onMouseMoveCell', args)
+    }}
+  />,
+  root
+);
 
 // release openinula instance, do not copy
 window.customRelease = () => {

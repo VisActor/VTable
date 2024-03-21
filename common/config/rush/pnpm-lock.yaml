@@ -15,6 +15,7 @@ importers:
       '@types/markdown-it': ^13.0.0
       '@types/react': ^18.0.0
       '@types/react-dom': ^18.0.0
+      '@visactor/openinula-vtable': workspace:*
       '@visactor/react-vtable': workspace:*
       '@visactor/vchart': 1.10.0
       '@visactor/vtable': workspace:*
@@ -33,7 +34,7 @@ importers:
       lodash: 4.17.21
       markdown-it: ^13.0.0
       marked: ^0.3.19
-      openinula: 0.1.2-SNAPSHOT
+      openinula: ~0.1.2-SNAPSHOT
       react: ^18.0.0
       react-dom: ^18.0.0
       react-router-dom: 6.9.0
@@ -42,6 +43,7 @@ importers:
       yargs: ^17.1.1
     dependencies:
       '@arco-design/web-react': 2.46.1_astwcq3eovj2b3imvk5ncn4g7e
+      '@visactor/openinula-vtable': link:../packages/openinula-vtable
       '@visactor/react-vtable': link:../packages/react-vtable
       '@visactor/vchart': 1.10.0
       '@visactor/vtable': link:../packages/vtable
@@ -89,7 +91,7 @@ importers:
       '@types/mocha': 9.0.0
       '@types/node': '*'
       '@types/offscreencanvas': 2019.6.4
-      '@visactor/vchart': 1.9.6
+      '@visactor/vchart': 1.10.0
       '@visactor/vtable': workspace:*
       '@visactor/vutils': ~0.18.1
       axios: ^1.4.0
@@ -131,9 +133,9 @@ importers:
       '@types/chai': 4.2.22
       '@types/jest': 26.0.24
       '@types/mocha': 9.0.0
-      '@types/node': 20.11.26
+      '@types/node': 20.11.27
       '@types/offscreencanvas': 2019.6.4
-      '@visactor/vchart': 1.9.6
+      '@visactor/vchart': 1.10.0
       axios: 1.6.7
       chai: 4.3.4
       eslint: 8.18.0
@@ -153,12 +155,12 @@ importers:
       sass: 1.43.5
       ts-jest: 26.5.6_xuote2qreek47x2di7kesslrai
       ts-loader: 9.2.6_typescript@4.9.5
-      ts-node: 10.9.0_32vkw2bqjxvgm4nwc6bp5pki4y
+      ts-node: 10.9.0_q3ikajzckgo764r6r77gh73v5i
       tslib: 2.3.1
       ttypescript: 1.5.13_fxi2xlggroal5l3a4znftvxz2m
       typescript: 4.9.5
       typescript-transform-paths: 3.3.1_typescript@4.9.5
-      vite: 3.2.6_bhr6wtejq3b4sjxs7jnijxfqma
+      vite: 3.2.6_mkbi27cavp4dqy23t46acop4nm
       vite-plugin-markdown: 2.2.0_vite@3.2.6
 
   ../../packages/react-vtable:
@@ -10179,7 +10181,6 @@ packages:
   /openinula/0.1.2-SNAPSHOT:
     resolution: {integrity: sha512-dAw3TIvyPgAgYgYevKeYHo3EvONvSyhLY3xt5YUTUFIQ60aR4Sjgc0/pbIPn1k+4M3E9iQl+x2Fx1fAjUvh7Ug==}
     engines: {node: '>=0.10.0'}
-    dev: true
 
   /optionator/0.8.3:
     resolution: {integrity: sha512-+IW9pACdk3XWmmTXG8m3upGUJst5XRGzxMRjXzAuJ1XnIFNvfhjjIuYkDvysnPQ7qzqVzLt78BCruntqRhWQbA==}

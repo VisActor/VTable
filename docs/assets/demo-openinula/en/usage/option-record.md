@@ -1,17 +1,17 @@
 ---
 category: examples
 group: usage
-title: 使用完整option
+title: use option and record
 cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/react-default.png
 order: 1-1
 link: '../guide/Developer_Ecology/openinula'
 ---
 
-# 使用完整option
+# use option and record
 
-可以直接使用可以直接使用VTable的完整option，将option作为一个prop传入表格组件。
+Records can be separated from options and passed into the table component as a separate prop.
 
-## 代码演示
+## code demo
 ```javascript livedemo template=vtable-openinula
 // import * as InulaVTable from '@visactor/openinula-vtable';
 const option = {
@@ -33,11 +33,11 @@ const option = {
       caption: 'hobby',
     },
   ],
-  records: new Array(1000).fill(['John', 18, 'male', '🏀']),
 };
+const records = new Array(1000).fill(['John', 18, 'male', '🏀']);
 
 const root = document.getElementById(CONTAINER_ID);
-Inula.render(<InulaVTable.ListTable option={option} height={'500px'} />, root);
+Inula.render(<InulaVTable.ListTable option={option} records={records} height={'500px'} />, root);
 
 // release openinula instance, do not copy
 window.customRelease = () => {
