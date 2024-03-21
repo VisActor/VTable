@@ -529,6 +529,13 @@
           }
         },
         {
+          "path": "openinula",
+          "title": {
+            "zh": "Openinula-VTable",
+            "en": "Openinula-VTable"
+          }
+        },
+        {
           "path": "vue",
           "title": {
             "zh": "Vue VTable",
