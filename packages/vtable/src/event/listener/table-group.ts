@@ -381,6 +381,7 @@ export function bindTableGroupListener(eventManager: EventManager) {
 
   table.scenegraph.tableGroup.addEventListener('pointerdown', (e: FederatedPointerEvent) => {
     console.log('tableGroup pointerdown');
+    console.log(stateManager.interactionState);
     // table.eventManager.isPointerDownOnTable = true;
     // setTimeout(() => {
     //   table.eventManager.isPointerDownOnTable = false;
@@ -464,35 +465,27 @@ export function bindTableGroupListener(eventManager: EventManager) {
           stateManager.updateInteractionState(InteractionState.grabing);
           return;
         }
-   // 处理填充功能
-  //  if (eventManager.checkCellFillhandle(eventArgsSet, true)) {
-  //   // eventManager.startColumnResize(e);
-  //   // eventManager._resizing = true;
-  //   console.info(eventArgsSet.eventArgs.col,eventArgsSet.eventArgs.row)
-  //   // eventManager.dealTableSelect(eventArgsSet)
-  
-  //   // return;
-  // }
 
-  if (eventManager.checkCellFillhandle(eventArgsSet, true)) {
-    // table.eventManager.isDraging = false;
-    // stateManager.updateInteractionState(InteractionState.grabing);
-    // eventManager.startColumnResize(e);
-    // eventManager._resizing = true;
-    // console.info(eventArgsSet.eventArgs.col,eventArgsSet.eventArgs.row)
-    // // eventManager.dealFillSelect(eventArgsSet)
-    // stateManager.updateInteractionState(InteractionState.grabing);
-    // return;
-  
-  
-   
-  
-  }
+        // 处理填充功能
+          if (eventManager.checkCellFillhandle(eventArgsSet, true)) {
+            if (table.eventManager.isFilling) {
+          
+                table.eventManager.LastRange = {
+                  start: table.stateManager.select.ranges[0].start, 
+                  end: {
+                    col: (getCellEventArgsSet(e).eventArgs.target as unknown as Group).col, 
+                    row: (getCellEventArgsSet(e).eventArgs.target as unknown as Group).row
+                  }
+                }
+                table.eventManager.SelectData = table.getCopyValue();
+                console.log(table.eventManager.LastRange);
+                console.log(table.eventManager.SelectData);
+          }
+          }
         // 处理单元格选择
         if (eventManager.dealTableSelect(eventArgsSet)) {
           // 先执行单选逻辑，再更新为grabing模式
           // stateManager.interactionState = 'grabing';
-          // 处理填充功能
           stateManager.updateInteractionState(InteractionState.grabing);
           // console.log('DRAG_SELECT_START');
         }
@@ -517,32 +510,6 @@ export function bindTableGroupListener(eventManager: EventManager) {
       // 只处理左键
       return;
     }
-    console.log(stateManager.interactionState);
-    console.log(stateManager.isSelecting());
-    console.log(table.stateManager.select.ranges);
-    console.log(table.scenegraph.selectedRangeComponents);
-    console.log(table.scenegraph.selectingRangeComponents);
-    console.log(table.getDrawRange());
-    console.log(table.getSelectedCellInfos());
-    console.log(table.stateManager.hover.cellPos.col);
-    console.log(table.stateManager.hover.cellPos.row);
-    console.log(table.stateManager.columnMove.colSource);
-    console.log(table.stateManager.columnMove.rowSource);
-    console.log(table.stateManager.columnMove.colTarget);
-    console.log(table.stateManager.columnMove.colTarget);
-    console.log((getCellEventArgsSet(e).eventArgs.target as unknown as Group).col);
-    console.log((getCellEventArgsSet(e).eventArgs.target as unknown as Group).row);
-    //  let LastRange;
-    console.log(table.eventManager.isFilling);
-    console.log(table.scenegraph.selectingRangeComponents.size);
-    if (table.scenegraph.selectingRangeComponents.size && !table.eventManager.isFilling) {
-     
-      table.scenegraph.selectingRangeComponents.forEach((rangeComponent, key) => {
-        const [startColStr, startRowStr, endColStr, endRowStr] = key.split('-');
-        table.eventManager.LastRange = {start: {col: startColStr,row:startRowStr}, end: {col:endColStr,row:endRowStr}}
-      });
-  
-  }
     if (stateManager.interactionState === 'grabing') {
       // stateManager.interactionState = 'default';
       stateManager.updateInteractionState(InteractionState.default);
@@ -562,26 +529,7 @@ export function bindTableGroupListener(eventManager: EventManager) {
           });
         }
       } 
-      //  else if (eventManager.isFilling) {
-      //   table.eventManager.isFilling = false;
-      //   table.stateManager.endSelectCells();
-      //   table.eventManager.isDraging = false;
-      //   const eventArgsSet: SceneEvent = getCellEventArgsSet(e);
-      //   if (eventArgsSet.eventArgs && (table as any).hasListeners(TABLE_EVENT_TYPE.DRAG_SELECT_END)) {
-      //     const cellsEvent: MousePointerMultiCellEvent = {
-      //       event: e.nativeEvent,
-      //       cells: [],
-      //       col: (eventArgsSet.eventArgs.target as unknown as Group).col,
-      //       row: (eventArgsSet.eventArgs.target as unknown as Group).row,
-      //       scaleRatio: table.canvas.getBoundingClientRect().width / table.canvas.offsetWidth,
-      //       target: eventArgsSet?.eventArgs?.target
-      //     };
-
-      //     cellsEvent.cells = table.getSelectedCellInfos();
-      //     table.fireListeners(TABLE_EVENT_TYPE.DRAG_SELECT_END, cellsEvent);
-      //   }
-      // } 
-      
+   
       else if (stateManager.isSelecting()) {
         table.stateManager.endSelectCells();
         table.eventManager.isDraging = false;
@@ -595,30 +543,19 @@ export function bindTableGroupListener(eventManager: EventManager) {
             scaleRatio: table.canvas.getBoundingClientRect().width / table.canvas.offsetWidth,
             target: eventArgsSet?.eventArgs?.target
           };
-
+      
           cellsEvent.cells = table.getSelectedCellInfos();
           table.fireListeners(TABLE_EVENT_TYPE.DRAG_SELECT_END, cellsEvent);
         }
+     
       } 
       console.log(table.eventManager.isFilling);
       console.log(table.scenegraph.selectingRangeComponents.size);
       if (table.eventManager.isFilling) { 
         const eventArgsSet: SceneEvent = getCellEventArgsSet(e);
         table.eventManager.isFilling = false;
-        // const LastRange = table.eventManager.LastRange;
-        // console.log(table.scenegraph.selectingRangeComponents);
-        // console.log(table.scenegraph.selectingRangeComponents.keys());
-        // const LastRange = table.scenegraph.selectingRangeComponents.keys()[0].split('-');
-        // table.scenegraph.selectingRangeComponents.forEach((rangeComponent, key) => {
-        //   const [startColStr, startRowStr, endColStr, endRowStr] = key.split('-');
-        //   const LastRange = {start: {col: startColStr,row:startRowStr}, end: {col:endColStr,row:endRowStr}}
-        //   console.log(LastRange);
-        //   console.log(table.stateManager.select.ranges);
-        //   eventManager.fillSelected(eventArgsSet, LastRange, table.eventManager.SelectData)
-        //   table.eventManager.SelectData = table.getCopyValue();
-        // });
-        // console.log(LastRange);
-        console.log(table.stateManager.select.ranges);
+        console.log(table.eventManager.LastRange);
+        console.log(table.eventManager.SelectData);
         eventManager.fillSelected(eventArgsSet, table.eventManager.LastRange, table.eventManager.SelectData)
         table.eventManager.SelectData = table.getCopyValue();
         console.log(table.eventManager.SelectData);

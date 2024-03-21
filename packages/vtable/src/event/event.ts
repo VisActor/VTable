@@ -444,29 +444,41 @@ export class EventManager {
       console.log(eventArgs);
       console.log(Math.abs(SelectCellRange.start.row - eventArgs.row));
       console.log(Math.abs(SelectCellRange.start.col - eventArgs.col));
- if (Math.abs(SelectCellRange.start.row - eventArgs.row) >= Math.abs(SelectCellRange.start.col - eventArgs.col)) {
-  console.log("??");
-      if (SelectCellRange.start.row >= eventArgs.row) {
-      direction = 'up';
-      } else {
-        direction = 'down';
-        };
+//  if ((SelectCellRange.end.row - eventArgs.row) >= (SelectCellRange.end.col - eventArgs.col)) {
+//       if (SelectCellRange.start.row >= eventArgs.row) {
+//       direction = 'up';
+//       } else {
+//         direction = 'down';
+//         };
    
-        console.log(direction);
+//         console.log(direction);
    
- } else {
-  if (SelectCellRange.start.col >= eventArgs.col) {
-    direction = 'left';
+//  } else {
+//   if (eventArgs.col > SelectCellRange.end.col ) {
+//     direction = 'left';
+//     } else {
+//       direction = 'right';
+//       };
+//  }
+
+ if (eventArgs.row >= SelectCellRange.start.row && eventArgs.row <= SelectCellRange.end.row) {
+  if (eventArgs.col > SelectCellRange.end.col ) {
+    direction = 'right';
     } else {
-      direction = 'right';
+      direction = 'left';
       };
- }
+  } else {
+    if (eventArgs.row > SelectCellRange.end.row) {
+      direction = 'down';
+      } else {
+        direction = 'up';
+        };
+   }
  console.log(direction);
  let values: (string | number)[][] = [];
       let fillData: any[][] = [];
       let updaterow;
       let updatecol;
-      // const rawData = this.table.getCopyValue();
       const rows = SelectData.split('\n'); // 将数据拆分为行
       rows.forEach(function (rowCells: any, rowIndex: number) {
         const cells = rowCells.split('\t'); // 将行数据拆分为单元格
@@ -480,160 +492,72 @@ export class EventManager {
           rowValues.push(cell);
         });
       });
-      
-      // if (
-      //   ['up', 'left'].indexOf(direction) > -1
-      // ) {
-      //   values = [];
-
-      //   if (direction === 'up') {
-      //     const dragLength = eventArgs.row - startOfDragCoords.row + 1;
-      //     const fillOffset = dragLength % res.length;
-
-      //     for (let i = 0; i < dragLength; i++) {
-      //       values.push(res[(i + (res.length - fillOffset)) % res.length]);
-      //     }
-
-      //   } else {
-      //     const dragLength = endOfDragCoords.col - startOfDragCoords.col + 1;
-      //     const fillOffset = dragLength % res[0].length;
-
-      //     for (let i = 0; i < res.length; i++) {
-      //       values.push([]);
-
-      //       for (let j = 0; j < dragLength; j++) {
-      //         values[i]
-      //           .push(res[i][(j + (res[i].length - fillOffset)) % res[i].length]);
-      //       }
-      //     }
-      //   }
-      // }
+   
+      updaterow = SelectCellRange.start.row;
+      updatecol = SelectCellRange.start.col;
       if (['up', 'left'].indexOf(direction) > -1) {
-        if (direction === 'up') {
-          const dragLength = SelectCellRange.start.row - eventArgs.row;
-      //     for (let i = dragLength - 1; i >= 0; i--) {
-      //       values.reverse().forEach(function (rowCells: any, rowIndex: number) {
-      //         fillData.push(rowCells);
-      //   });
-      // }
-      // 计算需要向上填充的行数
-let fillRowCount = Math.max(dragLength - values.length, 0);
-
-// 首先添加需要向上填充的空行
-for (let i = 0; i < fillRowCount; i++) {
-    let emptyRow: any[] = [];
-    for (let j = 0; j < values[0].length; j++) {
-        emptyRow.push(null); // 或者根据需求填充其他值
-    }
-    fillData.push(emptyRow);
-}
-
-// 将原始数据逆序添加到新数组中
-values.reverse().forEach(function(rowCells: any[]) {
-    let newRow: any[] = [];
-    
-    // 计算需要填充的空单元格数量
-    let fillCount = Math.max(values[0].length - rowCells.length, 0);
-    
-    // 在新行中先添加需要填充的空单元格
-    for (let i = 0; i < fillCount; i++) {
-        newRow.push(null); // 或者根据需求填充其他值
-    }
-    
-    // 将原始数据逆序添加到新行中
-    rowCells.reverse().forEach(function(cellData: any) {
-        newRow.push(cellData);
-    });
-    
-    fillData.push(newRow);
-});
        
+        if (direction === 'up') {
+          updaterow = eventArgs.row;
+     
+          const fillLength = SelectCellRange.start.row - updaterow;
+        
+                  
+          for (let i = 0; i < fillLength; i++) {
+            let rowIndex = values.length - 1 - i % values.length;
+            let newRow = values[rowIndex].slice(0); // 复制一行数据
+
+            fillData.unshift(newRow); // 在填充数据的开头插入新行
+          }
 
         } else {
-          const dragLength = SelectCellRange.start.col - eventArgs.col;
-          values.forEach(function(rowCells: any[]) {
-            let newRow: any[] = [];
-            
-            // 计算需要填充的空单元格数量
-            let fillCount = Math.max(dragLength - rowCells.length, 0);
-            
-            // 在新行中先添加需要填充的空单元格
-            for (let i = 0; i < fillCount; i++) {
-                newRow.push(null); // 或者根据需求填充其他值
+          updatecol = eventArgs.col;
+          const fillLength = SelectCellRange.start.col - updatecol;
+     
+          for (let i = 0; i < values.length; i++) {
+            let newRow = values[i].slice(0); // 复制一行数据
+            while (newRow.length < fillLength) {
+                newRow.unshift(newRow[0]); // 在新行开头向左填充元素
             }
-            
-            // 将原始数据逆序添加到新行中
-            rowCells.reverse().forEach(function(cellData: any) {
-                newRow.push(cellData);
-            });
-            
             fillData.push(newRow);
-        });
+        }
           
        
       } 
-      updaterow = eventArgs.row;
-          updatecol = eventArgs.col;
+    
     }else {
         if (direction == "down") {
-          const dragLength = eventArgs.row - SelectCellRange.end.row;
-          console.log(dragLength);
+          updaterow = SelectCellRange.end.row + 1;
+          const fillLength = eventArgs.row - SelectCellRange.end.row;
+         
           // 将原始数据添加到新数组中
-values.forEach(function(rowCells: any[]) {
-  let newRow: any[] = [];
-  
-  // 将原始数据添加到新行中
-  rowCells.forEach(function(cellData: any) {
-      newRow.push(cellData);
-  });
-
-  fillData.push(newRow);
-});
-
-// 计算需要向下填充的行数
-let fillRowCount = Math.max(dragLength - values.length, 0);
-
-// 添加需要向下填充的空行
-for (let i = 0; i < fillRowCount; i++) {
-  let emptyRow: any[] = [];
-  for (let j = 0; j < values[0].length; j++) {
-      emptyRow.push(null); // 或者根据需求填充其他值
-  }
-  fillData.push(emptyRow);
-}
-
+          for (let i = 0; i < fillLength; i++) {
+            let rowIndex = i % values.length;
+            let newRow = values[rowIndex]; // 复制一行数据
+            fillData.push(newRow);
+        }
         } else {
-          const dragLength = eventArgs.col - SelectCellRange.end.col;
+          const fillLength = eventArgs.col - SelectCellRange.end.col;
+          updatecol = SelectCellRange.end.col + 1;
+       
           values.forEach(function(rowCells: any[]) {
             let newRow: any[] = [];
-            
-            // 将原始数据添加到新行中
-            rowCells.forEach(function(cellData: any) {
-                newRow.push(cellData);
-            });
-        
-            // 计算需要填充的空单元格数量
-            let fillCount = Math.max(dragLength - rowCells.length, 0);
-        
-            // 在新行末尾添加需要填充的空单元格
-            for (let i = 0; i < fillCount; i++) {
-                newRow.push(null); // 或者根据需求填充其他值
-            }
-        
-            fillData.push(newRow);
-        });
-        }
+          // 将原始数据按顺序填充到新行中
+          for (let i = 0; i < fillLength; i++) {
+              let dataIndex = i % rowCells.length;
+              newRow.push(rowCells[dataIndex]);
+          }
 
-         updaterow = SelectCellRange.start.row;
-          updatecol = SelectCellRange.start.col;
-      //      values.forEach(function (rowCells: any, rowIndex: number) {
-      //   fillData.push(rowCells);
-      // })
+          // 将新行添加到填充数据中
+          fillData.push(newRow);
+                });
+              }
       }
    
      
       console.log(fillData);
-      (this.table as ListTableAPI).changeCellValues(updatecol, updaterow, fillData, true);
+      console.log(updatecol,updaterow);
+      (this.table as ListTableAPI).changeCellValues(updatecol, updaterow, fillData, false);
 
 
     }
