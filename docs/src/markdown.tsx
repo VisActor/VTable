@@ -135,7 +135,7 @@ function Content(props: IContentProps) {
     );
     const evaluateCode = code
       .replaceAll('CONTAINER_ID', `"${containerId}"`)
-      .concat(`window['${containerId}'] = tableInstance;`);
+      .concat(`if(typeof tableInstance !== 'undefined'){window['${containerId}'] = tableInstance;}`);
     return {
       code: transformCode(htmlRestore(evaluateCode)),
       id: containerId
@@ -214,7 +214,7 @@ export function Markdown() {
         .then(text => {
           let processedText = text;
           // remove meta info for examples
-          if (assetDirectory === 'demo') {
+          if (assetDirectory === 'demo' || assetDirectory === 'demo-react' || assetDirectory === 'demo-react') {
             processedText = processedText.replace(/---(.|\n)*---/, '').trim();
           }
           // Hack: process all livedemo code to livedemo language and replace these after

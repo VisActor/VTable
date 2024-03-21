@@ -33,6 +33,7 @@ importers:
       lodash: 4.17.21
       markdown-it: ^13.0.0
       marked: ^0.3.19
+      openinula: 0.1.2-SNAPSHOT
       react: ^18.0.0
       react-dom: ^18.0.0
       react-router-dom: 6.9.0
@@ -52,6 +53,7 @@ importers:
       highlight.js: 11.9.0
       lodash: 4.17.21
       markdown-it: 13.0.2
+      openinula: 0.1.2-SNAPSHOT
       react: 18.2.0
       react-dom: 18.2.0_react@18.2.0
       react-router-dom: 6.9.0_biqbaboplfbrettd7655fr4n2y
@@ -10088,6 +10090,11 @@ packages:
     engines: {node: '>=6'}
     dependencies:
       mimic-fn: 2.1.0
+
+  /openinula/0.1.2-SNAPSHOT:
+    resolution: {integrity: sha512-dAw3TIvyPgAgYgYevKeYHo3EvONvSyhLY3xt5YUTUFIQ60aR4Sjgc0/pbIPn1k+4M3E9iQl+x2Fx1fAjUvh7Ug==}
+    engines: {node: '>=0.10.0'}
+    dev: false
 
   /optionator/0.8.3:
     resolution: {integrity: sha512-+IW9pACdk3XWmmTXG8m3upGUJst5XRGzxMRjXzAuJ1XnIFNvfhjjIuYkDvysnPQ7qzqVzLt78BCruntqRhWQbA==}

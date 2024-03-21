@@ -1,0 +1,58 @@
+{
+  "menu": "example",
+  "children": [
+    {
+      "path": "usage",
+      "title": {
+        "zh": "用法",
+        "en": "usage"
+      },
+      "children": [
+        {
+          "path": "option",
+          "title": {
+            "zh": "使用完整option",
+            "en": "usage-1"
+          }
+        },
+        {
+          "path": "option+record",
+          "title": {
+            "zh": "使用option&record",
+            "en": "usage-2"
+          }
+        },
+        {
+          "path": "component",
+          "title": {
+            "zh": "使用component",
+            "en": "usage-3"
+          }
+        }
+      ]
+    },
+    {
+      "path": "component",
+      "title": {
+        "zh": "组件",
+        "en": "component"
+      },
+      "children": [
+        {
+          "path": "pivot-table",
+          "title": {
+            "zh": "table",
+            "en": "table"
+          }
+        },
+        {
+          "path": "pivot-chart",
+          "title": {
+            "zh": "table",
+            "en": "table"
+          }
+        }
+      ]
+    }
+  ]
+}
