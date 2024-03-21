@@ -1,5 +1,5 @@
 import { RushConfiguration } from "@microsoft/rush-lib";
-import { spawn } from "child_process";
+import { spawn,exec } from "child_process";
 
 function run() {
   const projects = RushConfiguration.loadFromDefaultLocation({
@@ -10,16 +10,12 @@ function run() {
   const fe = projects.findProjectByShorthandName("@bit-cloud/fe");
 
   if (server && fe) {
-    spawn("sh", ["-c", "rushx dev"], {
+    exec("rushx dev",  {
       cwd: server.projectFolder,
-      shell: false,
-      stdio: [0, 1, 2],
-    });
+    },);
 
-    spawn("sh", ["-c", "rushx dev"], {
+    exec("rushx dev", {
       cwd: fe.projectFolder,
-      shell: false,
-      stdio: [0, 1, 2],
     });
   }
 }

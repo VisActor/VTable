@@ -1,23 +1,44 @@
-# Custom Layout
+# Custom Rendering Auto Layout
 
 ## Introduction
 
-VTable CustomRender supports user-defined cells that need to render the required elements. When used, return an array of elements through the callback function, and specify the type, style and coordinates of the elements (VTable CustomRender layout capability design)
+This tutorial mainly introduces how to use CustomLayout to achieve auto layout.
 
-The current use method is relatively low-level. If the user wants to implement a complex style, he needs to manually calculate the position of each element, and manually handle functions such as alignment and line wrapping. It is difficult to get started and has low maintainability
+_- Note: If you want to implement a fully customized layout by defining coordinates, you can refer to the tutorial: [CustomRender](../custom_define/custom_render). The CustomRender approach supports users in customizing the elements needed within a cell, using a callback function to return an array of elements, specifying the type, style, and coordinates of the elements (VTable CustomRender layout capability design). However, this method is more low-level, and if users want to implement a complex style, they need to manually calculate the positions of various elements, and manually handle alignment, line wrapping, and other functions, which is relatively difficult to get started with and has low maintainability. -_
 
-Through CustomLayout, a set of simple box model layout capabilities is provided on the basis of the CustomRender API. Users can configure containers and elements to achieve basic layout capabilities such as alignment and line wrapping, which is convenient for realizing and maintaining more complex cell content
-Here is a relatively complex mixed layout of text icons, implemented using CustomLayout (red for different container bounds):
+CustomLayout provides a simple box model layout capability on top of the CustomRender API. Users can achieve basic layout capabilities such as alignment and wrapping by configuring containers and elements, facilitating the implementation and maintenance of more complex cell content. `VTable` uses the graphical and layout capabilities provided by [`VRender`](https://visactor.io/vrender/option/Group) to implement the `customLayout` function. Currently, the use of JSX syntax is recommended for its clearer hierarchical structure, [see example](../../demo/custom-render/custom-cell-layout-jsx).
+
+Below is a relatively complex text and icon mixed layout implemented using CustomLayout (red indicates the bounds of different containers):
 
 <div style="display: flex; justify-content: center;">
   <img src="https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/350c0511133d336e622523221.png" style="flex: 0 0 50%; padding: 10px;">
   <img src="https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/350c0511133d336e622523222.png" style="flex: 0 0 50%; padding: 10px;">
 </div>
-CustomLayout implementation code is as follows:
+
+## CustomLayout Configuration
+
+Similar to customRender, customLayout is divided into two interfaces: `customLayout` and `headerCustomLayout`, to configure custom rendering for headers and content respectively, within columns/rows.
+
+```typescript
+const option = {
+  columns: [
+    {
+      // ......
+      customLayout: (args: VTable.TYPES.CustomRenderFunctionArg) => {
+        // ......
+      }
+    }
+  ]
+};
+```
+
+The `customLayout` function returns an object, which needs to include: `rootContainer` to specify the root node for the custom rendering content, and `renderDefault` to specify whether the original cell content needs to be rendered (consistent with `customRender`).
+
+Here is a configuration example, where VGroup, VImage, and VText are used, and finally returned:
 
 ```tsx
 {
-  customLayout: (args) => {
+  customLayout: args => {
     const { table, row, col, rect } = args;
     const { height, width } = rect ?? table.getCellRect(col, row);
     const record = table.getRecordByCell(col, row);
@@ -160,236 +181,187 @@ CustomLayout implementation code is as follows:
       rootContainer: container,
       renderDefault: false
     };
-  }
-
+  };
 }
 ```
 
-## How to use
+## Layout Capabilities
 
-Similar to customRender, customLayout is also divided into`customLayout`and`headerCustomLayout`Two interfaces configure custom rendering of table headers and content respectively, configured in columns/rows
-
-```typescript
-const option = {
-    columns: [
-        {
-            // ......
-            customLayout: (args: VTable.TYPES.CustomRenderFunctionArg) => {
-                // ......
-            }
-        }
-    ]
-}
-```
-
-The customLayout function returns an object, where `rootContainer` is the root node of the custom rendered content, and `renderDefault` is a flag indicating whether the original content of the cell needs to be drawn (consistent with customRender).
-`VTable` uses the primitives and layout capabilities provided by `VRender` to implement the `customLayout` function. Currently, it is recommended to use JSX writing method, which has a clearer hierarchical structure. [Reference example](../../demo/custom-render/custom-cell-layout-jsx)
-
-## Layout capability
-
-Take this header as an example
+Taking this header as an example
 
 <div style="width:500px; height:160px;">
   <img src="https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/350c0511133d336e622523225.png" alt="image" style="width:100%; height:100%;">
 </div>
-Divided into five containers A B CD C D
+It is divided into five containers: A, B, CD, C, and D
 
 <div style="width:500px; height:160px;">
   <img src="https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/45df54929d214e7453e228f2c.png" alt="image" style="width:100%; height:100%;">
 </div>
 
-The header part is laid out horizontally and is divided into three parts (A B CD):
+The header part is laid out horizontally, divided into three sections (A, B, CD):
 
-*   Left and right sides (A B), width pixel specified (determined by icon size), height is cell height
-*   Middle Part (CD) Height Cell Height, Specify Width Cell Width - AB Total Width
+- The left and right sides (A, B), with specified pixel width (determined by the icon size), and the height equal to the cell height
+- The middle part (CD) has the cell height, with the specified width being the cell width minus the total width of AB
 
-The middle part is arranged vertically and is divided into two parts (C D):
+The middle part is laid out vertically, divided into two sections (C, D):
 
-*   Top (C) Specifies the height (determined by the "All" text style) and the width is the width of the parent container
-*   The lower part (D) does not specify the height, the width is the width of the parent container, the actual height is determined by the layout result, and the part exceeding the container is truncated
+- The upper part (C) has a specified height (determined by the "all" text style), and the width is the width of the parent container
+- The lower part (D) does not have a specified height; its width is the width of the parent container, and the actual height is determined by the layout result, with parts exceeding the container being truncated
 
-Lower middle (D) horizontal layout, there are three elements: group text, province button, city button
+The lower middle part (D) is laid out horizontally, with three elements: group text, province button, and city button
 
 <div style="width:500px; height:160px;">
   <img src="https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/45df54929d214e7453e228f2d.png" alt="image" style="width:100%; height:100%;">
 </div>
 
-The province button and the city button are composed of multiple elements. The height of the entire container is determined by the layout wrapping result. The minimum height is displayed as one line without wrapping; the maximum height is displayed as three lines for all three elements
+The province and city buttons are composed of multiple elements, and the height of the entire container is determined by the layout wrap result. The minimum height is when it is displayed in one line without wrapping; the maximum height is when all three elements are wrapped and displayed in three lines.
 
-## Automatic row height and column width calculation
+## Automatic Row Height and Column Width Calculation
 
-Use the percentCalc method to specify the container with the percentage width and height. When the table specifies the adaptive width and height, the width and height of the cell that can hold all the content will be automatically calculated according to the width and height of the content. As the actual content width and height of this cell
+Using the percentCalc method to specify the width and height of a container in percentage, when specifying adaptive width and height in the table, it will automatically calculate the cell width and height that can accommodate all content based on the content's width and height, as the actual content width and height of this cell.
 
-## JSX Elements
+## JSX Primitives
 
-### Basic Elements
+For detailed instructions, please refer to the tutorial provided by VRender: [TODO]
 
-Basic custom primitive, currently supports `VRect` `VCircle` `VText` `VImage` 
+### Container Primitives
 
-| Primitive Types | Basic Properties |
-|:----|:----|
-|rect|width, height, stroke, fill, lineWidth, cornerRadius...|
-|circle|radius, startAngle, endAngle, stroke, fill, lineWidth...|
-|text|text, fontSize, fontFamily, fill...|
-|image|image, width, height |
+Container primitives `VGroup` are box model layout containers that support automatic layout of elements within them; `VGroup`'s child elements can be `VGroup` or basic primitives; layout supports configuring the following properties:
 
-Basic custom component, currently supports `VTag`
-| Primitive Types | Basic Properties |
+- display: Layout mode (`flex` activates flex layout mode)
+- flexDirection: The direction of the main axis
+- flexWrap: Whether to display in a single line or multiple lines
+- justifyContent: Rules for distributing space between and around content elements along the row axis
+- alignItems: Alignment rules on the cross axis
+- alignContent: Alignment rules on the main axis
+
+### Basic Primitives
+
+Basic custom primitives currently support `VRect`, `VCircle`, `VText`, `VImage`
+
+| Primitive Type | Basic Properties                                           |
+| :------------- | :--------------------------------------------------------- |
+| rect           | width, height, stroke, fill, lineWidth, cornerRadius...    |
+| circle         | radius, startAngle, endAngle, stroke, fill, lineWidth...   |
+| text           | text, fontSize, fontFamily, fill...                        |
+| image          | image, width, height                                       |
+
+Basic custom components currently support `VTag`
+|Primitive Type|Basic Properties|
 |:----|:----|
 |tag|text, textStyle, shape, padding...|
 
-Background Style
-*   Image support to configure background styles
-    *   stroke
-    *   fill
-    *   lineWidth
-    *   cornerRadius
-    *   expendX
-    *   expendY
-
-![image](https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/0a2e223bdcd7410c08f6a6a0e.jpg)
-
-Graph elements can be configured with the `boundsPadding` attribute to achieve margin effects.
+Primitives can be configured with the `boundsPadding` property to achieve a margin effect
 `boundsPadding: [marginLeft, marginRight, marginTop, marginBottom]`
-The margin of the primitive will be calculated in the space occupied by the primitive.
+The margin of a primitive is calculated in the space it occupies
 
-In addition to basic attributes, status updates can be used to achieve interactive effects such as hover:
+### Primitive State Updates and Interaction Events
+
+In addition to basic properties, state updates can be used to implement interaction effects such as hover:
+
 ```tsx
 <VImage
-    attribute={{
-      id: 'row-down',
-      image: collapseDown,
-      width: 20,
-      height: 20,
-      cursor: 'pointer'
-    }}
-    stateProxy={(stateName: string) => {
-      if (stateName === 'hover') {
-        return {
-          background: {
-            fill: '#ccc',
-            cornerRadius: 5,
-            expandX: 1,
-            expandY: 1
-          }
-        };
-      }
-    }}
-    onMouseEnter={event => {
-      event.currentTarget.addState('hover', true, false);
-      event.currentTarget.stage.renderNextFrame();
-    }}
-    onMouseLeave={event => {
-      event.currentTarget.removeState('hover', false);
-      event.currentTarget.stage.renderNextFrame();
-    }}
+  attribute={{
+    id: 'row-down',
+    image: collapseDown,
+    width: 20,
+    height: 20,
+    cursor: 'pointer'
+  }}
+  stateProxy={(stateName: string) => {
+    if (stateName === 'hover') {
+      return {
+        background: {
+          fill: '#ccc',
+          cornerRadius: 5,
+          expandX: 1,
+          expandY: 1
+        }
+      };
+    }
+  }}
+  onMouseEnter={event => {
+    event.currentTarget.addState('hover', true, false);
+    event.currentTarget.stage.renderNextFrame();
+  }}
+  onMouseLeave={event => {
+    event.currentTarget.removeState('hover', false);
+    event.currentTarget.stage.renderNextFrame();
+  }}
 ></VImage>
 ```
-By binding events, the status of the primitives is updated to achieve the effect of interactively updating the primitive styles
 
-### Container Elememt
-
-The container primitive `VGroup` is a box model layout container that supports automatic layout of elements in it; the child elements of `VGroup` can be `VGroup` or basic primitives; the layout supports the configuration of the following attributes
-
-* display: layout mode (`flex` turns on flex layout mode)
-* flexDirection: direction of the main axis
-* flexWrap: Single line display or multi-line display
-* justifyContent: Row-oriented axis allocates space rules between and around content elements
-* alignItems: alignment rules on the cross axis
-* alignContent: Alignment rules on the main axis
+By binding events, updating the state of primitives, and implementing interaction updates to the style of primitives.
 
 ## API
 
 ### VRect
 
-rect element
+Rectangle Primitive
 
-|key|type|description|
-|:----|:----|:----|
-|width|number|rect width|
-|height|number|rect height|
-|lineWidth|number|stroke width|
-|cornerRadius|number|corner radius|
-|fill|string|fill color|
-|stroke|string|stroke color|
+| key          | type   | description   |
+| :----------- | :----- | :------------ |
+| width        | number | Rectangle width |
+| height       | number | Rectangle height |
+| lineWidth    | number | Stroke width  |
+| cornerRadius | number | Corner radius |
+| fill         | string | Fill color    |
+| stroke       | string | Stroke color  |
 
 ### VCircle
 
-circle element
+Circle Primitive
 
-|key|type|description|
-|:----|:----|:----|
-|radius|number|circle radius|
-|startAngle|number|start radius|
-|endAngle|number|end radius|
-|lineWidth|number|stroke width|
-|fill|string|fill color|
-|stroke|string|stroke color|
+| key        | type   | description |
+| :--------- | :----- | :---------- |
+| radius     | number | Radius      |
+| startAngle | number | Start angle |
+| endAngle   | number | End angle   |
+| lineWidth  | number | Stroke width|
+| fill       | string | Fill color  |
+| stroke     | string | Stroke color|
 
 ### VText
 
-text element
+Text Primitive
 
-|key|type|description|
-|:----|:----|:----|
-|text|string|text content|
-|fontSize|string|font size|
-|fontFamily|string|font family|
-|fill|string|text color|
+| key        | type   | description |
+| :--------- | :----- | :---------- |
+| text       | string | Text content|
+| fontSize   | string | Font size   |
+| fontFamily | string | Font family |
+| fill       | string | Text color  |
 
 ### VImage
 
-image element
+Image Primitive
 
-|key|type|description|
-|:----|:----|:----|
-|width|number|image width|
-|height|number|image height|
-|image|string | HTMLImageElement | HTMLCanvasElement|image content|
+| key    | type   | description                                       |
+| :----- | :----- | :------------------------------------------------ |
+| width  | number | Image width                                       |
+| height | number | Image height                                      |
+| image  | string | HTMLImageElement \| HTMLCanvasElement \| Image content |
 
 ### VGroup
 
-container
+Container
 
-|key|type|description|
-|:----|:----|:----|
-|width|number | percentCalcObj|container width|
-|height|number | percentCalcObj|container height|
-|display|'relative' \| 'flex'|layout mode (`flex` turns on flex layout mode)|
-|flexDirection|'row' \| 'row-reverse' \| 'column' \| 'column-reverse'|direction of the main axis|
-|flexWrap|'nowrap' \| 'wrap'|Single line display or multi-line display|
-|justifyContent|'flex-start' \| 'flex-end' \| 'center' \| 'space-between' \| 'space-around'|Row-oriented axis allocates space rules between and around content elements|
-|alignItems|'flex-start' \| 'flex-end' \| 'center'|alignment rules on the cross axis|
-|alignContent|'flex-start' \| 'center' \| 'space-between' \| 'space-around'|Alignment rules on the main axis|
+| key            | type                                                                        | description                            |
+| :------------- | :-------------------------------------------------------------------------- | :------------------------------------- |
+| width          | number                                                                      | percentCalcObj\|Container width        |
+| height         | number                                                                      | percentCalcObj\|Container height       |
+| display        | 'relative' \| 'flex'                                                        | Layout mode (`flex` enables flex layout mode) |
+| flexDirection  | 'row' \| 'row-reverse' \| 'column' \| 'column-reverse'                      | Direction of the main axis             |
+| flexWrap       | 'nowrap' \| 'wrap'                                                          | Whether to display in a single line or multiple lines |
+| justifyContent | 'flex-start' \| 'flex-end' \| 'center' \| 'space-between' \| 'space-around' | Rule for distributing space between and around content elements along the row axis |
+| alignItems     | 'flex-start' \| 'flex-end' \| 'center'                                      | Alignment rule on the cross axis       |
+| alignContent   | 'flex-start' \| 'center' \| 'space-between' \| 'space-around'               | Alignment rule on the main axis        |
 
-## CustomLayout Element
-The primitives supported by the old version of customLayout are implemented in the same way as jsx primitives, but the writing method is different. You need to create the primitives through `new VTable.CustomLayout.XXX`, for example:
-```ts
-const text1 = new VTable.CustomLayout.Text({
-  text: 'text',
-  fontSize: 28,
-  fontFamily: 'sans-serif',
-  fill: 'black'
-});
+## CustomLayout Creating Primitive Objects Usage
 
-const container = new VTable.CustomLayout.Container({
-  height,
-  width,
-});
-containerRight.add(text1);
+_- customLayout supports object creation syntax_
 
-return {
-  rootContainer: container,
-  renderDefault: false,
-};
-```
+To create primitive objects using CustomLayout, you need to use `new VTable.CustomLayout.XXX` to create primitives. For specific configuration properties, refer to [`VRender Primitive Configuration`](https://visactor.io/vrender/option/Group)
 
-Commonly used primitives are the same as jsx primitives, and the naming comparison is as follows:
-|JSX Element|CustomLayout Element|
-|:----|:----|
-|VRect|CustomLayout.Rect|
-|VCircle|CustomLayout.Circle|
-|VText|CustomLayout.Text|
-|VImage|CustomLayout.Image|
-|VGroup|CustomLayout.Group / CustomLayout.Container|
-|VGroup(flexWrap: 'no-wrap')|CustomLayout.GroupElement|
+For example:
+

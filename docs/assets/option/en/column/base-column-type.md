@@ -126,6 +126,8 @@ ${prefix} headerCustomRender(Function|Object)
 
 Custom rendering of header cell, in function or object form. The type is: `ICustomRenderFuc | ICustomRenderObj`.
 
+[demo link](../demo/custom-render/custom-render) [tutorial link](../guide/custom_define/custom_render)
+
 The definition of ICustomRenderFuc is:
 
 ```
@@ -154,6 +156,8 @@ Custom layout element definition for header cell, suitable for complex layout ce
 
 ${prefix} customRender(Function|Object)
 Custom rendering for body cell header cell, in function or object form. The type is: `ICustomRenderFuc | ICustomRenderObj`.
+
+[demo link](../demo/custom-render/custom-render) [tutorial link](../guide/custom_define/custom_render)
 
 The definition of ICustomRenderFuc is:
 

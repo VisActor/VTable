@@ -1,3 +1,4 @@
+import type { ColorPropertyDefine } from '.';
 import type { Either } from '../tools/helper';
 import type { BaseTableAPI } from './base-table';
 
@@ -163,7 +164,7 @@ export interface SymbolMapping {
 
 export type MappingFuncRule = {
   indicatorKey: string;
-  mapping?: (table: any, value: number) => string;
+  mapping?: ColorPropertyDefine;
 };
 
 //#endregion 映射规则

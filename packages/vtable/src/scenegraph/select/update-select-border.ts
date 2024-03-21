@@ -644,3 +644,21 @@ export function updateCellSelectBorder(
     );
   }
 }
+
+export function hideCellSelectBorder(scene: Scenegraph) {
+  scene.selectingRangeComponents.forEach((selectComp: { rect: IRect; role: CellSubLocation }, key: string) => {
+    selectComp.rect.setAttribute('visible', false);
+  });
+  scene.selectedRangeComponents.forEach((selectComp: { rect: IRect; role: CellSubLocation }, key: string) => {
+    selectComp.rect.setAttribute('visible', false);
+  });
+}
+
+export function restoreCellSelectBorder(scene: Scenegraph) {
+  scene.selectingRangeComponents.forEach((selectComp: { rect: IRect; role: CellSubLocation }, key: string) => {
+    selectComp.rect.setAttribute('visible', false);
+  });
+  scene.selectedRangeComponents.forEach((selectComp: { rect: IRect; role: CellSubLocation }, key: string) => {
+    selectComp.rect.setAttribute('visible', false);
+  });
+}

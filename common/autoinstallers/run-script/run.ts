@@ -1,6 +1,7 @@
 import minimist, { ParsedArgs } from "minimist";
 import { RushConfiguration } from "@microsoft/rush-lib";
 import { spawnSync } from "child_process";
+import { execSync } from 'node:child_process'
 
 interface RunScriptArgv extends ParsedArgs {
   project?: string;
@@ -16,9 +17,9 @@ function run() {
   const targetProject = projects.findProjectByShorthandName(argv.project!);
 
   if (targetProject) {
-    spawnSync("sh", ["-c", `rushx ${argv.script}`], {
+    execSync(`rushx ${argv.script}`, {
       cwd: targetProject?.projectFolder,
-      shell: false,
+      windowsHide:true,
       stdio: [0, 1, 2],
     });
   }

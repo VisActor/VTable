@@ -40,8 +40,10 @@ import {
 import type {
   AnyFunction,
   CellAddressWithBound,
+  ColorPropertyDefine,
   ColumnIconOption,
   ColumnStyleOption,
+  MappingRule,
   TableEventOptions
 } from '../ts-types';
 import { event, style as utilStyle } from '../tools/helper';
@@ -88,7 +90,12 @@ import {
   updateRootElementPadding
 } from './tableHelper';
 import { MenuHandler } from '../components/menu/dom/MenuHandler';
-import type { BaseTableAPI, BaseTableConstructorOptions, IBaseTableProtected } from '../ts-types/base-table';
+import type {
+  BaseTableAPI,
+  BaseTableConstructorOptions,
+  IBaseTableProtected,
+  PivotTableProtected
+} from '../ts-types/base-table';
 import { FocusInput } from './FouseInput';
 import { defaultPixelRatio } from '../tools/pixel-ratio';
 import { createLegend } from '../components/legend/create-legend';
@@ -99,6 +106,7 @@ import { setBatchRenderChartCount } from '../scenegraph/graphic/contributions/ch
 import { isLeftOrRightAxis, isTopOrBottomAxis } from '../layout/chart-helper/get-axis-config';
 import { NumberRangeMap } from '../layout/row-height-map';
 import { CustomCellStylePlugin, mergeStyle } from '../plugins/custom-cell-style';
+import { hideCellSelectBorder, restoreCellSelectBorder } from '../scenegraph/select/update-select-border';
 const { toBoxArray } = utilStyle;
 const { isTouchEvent } = event;
 const rangeReg = /^\$(\d+)\$(\d+)$/;
@@ -3063,6 +3071,28 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
       }
       return cacheStyle;
     }
+
+    let bgColorFunc: ColorPropertyDefine;
+    // 判断是否有mapping  遍历dataset中mappingRules
+    if ((this.internalProps as PivotTableProtected)?.dataConfig?.mappingRules && !this.isHeader(col, row)) {
+      (this.internalProps as PivotTableProtected)?.dataConfig?.mappingRules?.forEach(
+        (mappingRule: MappingRule, i: number) => {
+          if (
+            mappingRule.bgColor &&
+            (this.internalProps.layoutMap as PivotHeaderLayoutMap).getIndicatorKey(col, row) ===
+              mappingRule.bgColor.indicatorKey
+          ) {
+            bgColorFunc = mappingRule.bgColor.mapping;
+          }
+        }
+      );
+      // // 判断是否有mapping  遍历dataset中mappingRules 但这里还需要根据fieldName来判断
+      // if (bgColorFunc && typeof bgColorFunc === 'function') {
+      //   const cellValue = this.getCellOriginValue(col, row);
+      //   bgColor = bgColorFunc(this, cellValue);
+      // }
+    }
+
     let cacheKey;
     const cellType = this.getCellType(col, row);
     //如果是主体部分，获取相应的style
@@ -3109,6 +3139,9 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
       this.options.autoWrapText,
       this.theme
     );
+    if (bgColorFunc) {
+      cacheStyle = mergeStyle(cacheStyle as any, { bgColor: bgColorFunc });
+    }
     if (!isFunction(style)) {
       if (layoutMap.isBottomFrozenRow(row)) {
         this.bodyBottomStyleCache.set(cacheKey, cacheStyle);
@@ -3479,7 +3512,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
                   //无法获取异步数据
                 } else {
                   // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-                  const strCellValue = `${copyCellValue}`;
+                  const strCellValue = isValid(copyCellValue) ? `${copyCellValue}` : '';
                   if (/^\[object .*\]$/.exec(strCellValue)) {
                     //object 对象忽略掉
                   } else {
@@ -3690,6 +3723,14 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
       this.scrollToCell({ col, row });
     }
     const cellRect = this.getCellRelativeRect(col, row);
+
+    // disable hover&select style
+    if (this.stateManager.select?.ranges?.length > 0) {
+      hideCellSelectBorder(this.scenegraph);
+    }
+    const { col: hoverCol, row: hoverRow } = this.stateManager.hover.cellPos;
+    this.stateManager.updateHoverPos(-1, -1);
+
     const c = this.scenegraph.stage.toCanvas(
       false,
       new AABBBounds().set(
@@ -3704,6 +3745,13 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
       this.setScrollLeft(scrollLeft);
     }
     // return c.toDataURL('image/jpeg', 0.5);
+
+    // restore hover&select style
+    if (this.stateManager.select?.ranges?.length > 0) {
+      restoreCellSelectBorder(this.scenegraph);
+    }
+    this.stateManager.updateHoverPos(hoverCol, hoverRow);
+
     return c.toDataURL();
   }
 

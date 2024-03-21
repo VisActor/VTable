@@ -155,6 +155,19 @@ Pivot table update:
 setRecords(records: Array<any>)
 ```
 
+## setRecordChildren(Function)
+
+In the basic table tree display scenario, if you need to dynamically insert data of sub-nodes, you can use this interface. It is not applicable in other situations.
+
+```
+  /**
+   * @param records The data set to the cell's child nodes
+   * @param col needs to set the cell address of the child node
+   * @param row needs to set the cell address of the child node
+   */
+  setRecordChildren(records: any[], col: number, row: number)
+```
+
 ## getDrawRange(Function)
 
 Get the boundRect value of the actual drawn content area of the table
@@ -977,20 +990,27 @@ Get the displayed row number range of the table body part
 Get aggregation summary value
 
 ## registerCustomCellStyle(Function)
+
 Register a custom style
+
 ```
 registerCustomCellStyle: (customStyleId: string, customStyle: ColumnStyleOption | undefined | null) => void
 ```
+
 Custom cell style
-* customStyleId: the unique id of the custom style
-* customStyle: Custom cell style, which is the same as the `style` configuration in `column`. The final rendering effect is the fusion of the original style of the cell and the custom style.
+
+- customStyleId: the unique id of the custom style
+- customStyle: Custom cell style, which is the same as the `style` configuration in `column`. The final rendering effect is the fusion of the original style of the cell and the custom style.
 
 ## registerCustomCellStyleArrangement(Function)
+
 Assign custom styles
+
 ```
 registerCustomCellStyleArrangement: (cellPosition: { col?: number; row?: number; range?: CellRange }, customStyleId: string) => void
 ```
-* cellPosition: cell position information, supports configuration of single cells and cell areas
-   * Single cell: `{ row: number, column: number }`
-   * Cell range: `{ range: { start: { row: number, column: number }, end: { row: number, column: number} } }`
-* customStyleId: Custom style id, the same as the id defined when registering the custom style
+
+- cellPosition: cell position information, supports configuration of single cells and cell areas
+  - Single cell: `{ row: number, column: number }`
+  - Cell range: `{ range: { start: { row: number, column: number }, end: { row: number, column: number} } }`
+- customStyleId: Custom style id, the same as the id defined when registering the custom style

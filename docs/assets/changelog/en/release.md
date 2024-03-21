@@ -1,3 +1,45 @@
+# v0.21.3
+
+2024-03-20
+
+
+**🐛 Bug fix**
+
+- **@visactor/vtable**: mapping colorMap not work [#1295](https://github.com/VisActor/VTable/issues/1295)
+- **@visactor/vtable**: when copy blank cell and paste to cell change to undefined [#1298](https://github.com/VisActor/VTable/issues/1298)
+- **@visactor/vtable**:  bug datasource lazy load edit cell value invalid [#1302](https://github.com/VisActor/VTable/issues/1302)
+- **@visactor/vtable**: fix cell progress create content size
+- **@visactor/vtable**: fix row level in getCellAdressByHeaderPath()
+- **@visactor/vtable**: use default style in exportCellImg()
+- **@visactor/vtable**: fix typeError in getCellMergeRange()
+
+**📖 Site / documentation update**
+
+- **@visactor/vtable**: add list table tree mode guide
+
+
+
+[more detail about v0.21.3](https://github.com/VisActor/VTable/releases/tag/v0.21.3)
+
+# v0.21.2
+
+2024-03-14
+
+
+**🆕 New feature**
+
+- **@visactor/vtable**: add textStickBaseOnAlign config
+
+**🐛 Bug fix**
+
+- **@visactor/vtable**: after change transpose resize line render error [#1239](https://github.com/VisActor/VTable/issues/1239)
+- **@visactor/vtable**: pivot tree mode when use headerIcon the indent value invalid [#1269](https://github.com/VisActor/VTable/issues/1269)
+- **@visactor/vtable**: fix progress bar rect height
+
+
+
+[more detail about v0.21.2](https://github.com/VisActor/VTable/releases/tag/v0.21.2)
+
 # v0.21.1
 
 2024-03-11

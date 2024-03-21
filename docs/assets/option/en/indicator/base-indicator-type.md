@@ -103,11 +103,11 @@ type ColumnIconOption = ImageIcon | SvgIcon;
 {{ use: svg-icon(  prefix = '##' + ${prefix}) }}
 
 ${prefix} headerCustomRender(Function|Object)
-Custom rendering content definition for the indicator name header
+Custom rendering content definition for the indicator name header. For details, please refer to [Basic table custom rendering configuration](../option/ListTable-columns-text#headerCustomRender)
 
 ${prefix} headerCustomLayout(Function)
 
-Custom layout elements for the indicator name header cell.
+Custom layout elements for the indicator name header cell. 
 
 ```
 (args: CustomRenderFunctionArg) => ICustomLayoutObj;
