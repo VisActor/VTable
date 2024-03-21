@@ -5,17 +5,17 @@
 
 **🐛 功能修复**
 
-- **@visactor/vtable**: mapping colorMap not work [#1295](https://github.com/VisActor/VTable/issues/1295)
-- **@visactor/vtable**: when copy blank cell and paste to cell change to undefined [#1298](https://github.com/VisActor/VTable/issues/1298)
-- **@visactor/vtable**:  bug datasource lazy load edit cell value invalid [#1302](https://github.com/VisActor/VTable/issues/1302)
-- **@visactor/vtable**: fix cell progress create content size
-- **@visactor/vtable**: fix row level in getCellAdressByHeaderPath()
-- **@visactor/vtable**: use default style in exportCellImg()
-- **@visactor/vtable**: fix typeError in getCellMergeRange()
+- **@visactor/vtable**: 透视分析表中使用映射 colorMap 不起作用 [#1295](https://github.com/VisActor/VTable/issues/1295)
+- **@visactor/vtable**: 当复制空白单元格并粘贴到单元格时变成undefined [#1298](https://github.com/VisActor/VTable/issues/1298)
+- **@visactor/vtable**: 修复数据源懒加载编辑单元格值无效的 bug [#1302](https://github.com/VisActor/VTable/issues/1302)
+- **@visactor/vtable**: 修复单元格进度的宽高值少一像素问题
+- **@visactor/vtable**: 修复 getCellAdressByHeaderPath接口问题
+- **@visactor/vtable**: 在 exportCellImg() 中使用默认样式
+- **@visactor/vtable**: 修复 getCellMergeRange() 中的 typeError
 
 **📖 文档更新**
 
-- **@visactor/vtable**: add list table tree mode guide
+- **@visactor/vtable**: 添加基本表格树形结构文档
 
 
 
@@ -28,13 +28,13 @@
 
 **🆕 新增功能**
 
-- **@visactor/vtable**: add textStickBaseOnAlign config
+- **@visactor/vtable**: 添加 textStickBaseOnAlign 配置
 
 **🐛 功能修复**
 
-- **@visactor/vtable**: after change transpose resize line render error [#1239](https://github.com/VisActor/VTable/issues/1239)
-- **@visactor/vtable**: pivot tree mode when use headerIcon the indent value invalid [#1269](https://github.com/VisActor/VTable/issues/1269)
-- **@visactor/vtable**: fix progress bar rect height
+- **@visactor/vtable**: 表格转置后，调整列宽后冻结线条渲染错误 [#1239](https://github.com/VisActor/VTable/issues/1239)
+- **@visactor/vtable**: 在使用 headerIcon 的透视树模式下，缩进值无效 [#1269](https://github.com/VisActor/VTable/issues/1269)
+- **@visactor/vtable**: 修复进度条矩形高度问题
 
 
 
@@ -44,14 +44,13 @@
 
 2024-03-11
 
-
 **🐛 功能修复**
 
-- **@visactor/vtable**: merge cell render error with summary and pagination [#1223](https://github.com/VisActor/VTable/issues/1223)
+- **@visactor/vtable**: 合并单元格渲染错误，当配置了聚合和分页时 [#1223](https://github.com/VisActor/VTable/issues/1223)
 
 **📖 文档更新**
 
-- **@visactor/vtable**: indicatorsAsCol support indicators display in rows [#1238](https://github.com/VisActor/VTable/issues/1238)
+- **@visactor/vtable**: indicatorsAsCol 支持指标在行中显示 [#1238](https://github.com/VisActor/VTable/issues/1238)
 
 
 
@@ -64,28 +63,27 @@
 
 **🆕 新增功能**
 
-- **@visactor/vtable**: add text measure ment config
-- **@visactor/vtable**: add custom cell style function
-- **@visactor/vtable**: add cellInnerBorder&cellBorderClipDirection&_contentOffset in theme comfig
-- **@visactor/vtable**: add search component
+- **@visactor/vtable**: 添加文本测量配置
+- **@visactor/vtable**: 添加自定义单元格样式功能
+- **@visactor/vtable**: 在主题配置中添加 cellInnerBorder、cellBorderClipDirection 和 _contentOffset
+- **@visactor/vtable**: 添加搜索组件
 
 **🐛 功能修复**
 
-- **@visactor/vtable**: records change restoreHierarchyState occor error [#1203](https://github.com/VisActor/VTable/issues/1203)
-- **@visactor/vtable**: call updatePagination mergeCell render error [#1207](https://github.com/VisActor/VTable/issues/1207)
-- **@visactor/vtable**: drag header position cell error [#1220](https://github.com/VisActor/VTable/issues/1220)
-- **@visactor/vtable**: fix checkbox text space problem
-- **@visactor/vtable**: fix scroll position delta
+- **@visactor/vtable**: 调用 updatePagination 合并单元格渲染错误 [#1207](https://github.com/VisActor/VTable/issues/1207)
+- **@visactor/vtable**: 拖动表头位置单元格错误 [#1220](https://github.com/VisActor/VTable/issues/1220)
+- **@visactor/vtable**: 修复复选框文本间距问题
+- **@visactor/vtable**: 修复滚动位置差异
 
 **🔨 功能重构**
 
-- **@visactor/vtable**: pasteValueToCell can only work on editable cell [#1063](https://github.com/VisActor/VTable/issues/1063)
-- **@visactor/vtable**: support underlineDash and underlineOffset [#1132](https://github.com/VisActor/VTable/issues/1132) [#1135](https://github.com/VisActor/VTable/issues/1135)
-- **@visactor/vtable**: onStart funciton add col row arguments [#1214](https://github.com/VisActor/VTable/issues/1214)
+- **@visactor/vtable**: 限制pasteValueToCell 只能在可编辑单元格上工作 [#1063](https://github.com/VisActor/VTable/issues/1063)
+- **@visactor/vtable**: 支持 underlineDash 和 underlineOffset [#1132](https://github.com/VisActor/VTable/issues/1132) [#1135](https://github.com/VisActor/VTable/issues/1135)
+- **@visactor/vtable**: onStart 函数添加 col row 参数 [#1214](https://github.com/VisActor/VTable/issues/1214)
 
 **✅  单元测试**
 
-- **@visactor/vtable**: add unit test getCellAddressByHeaderPaths
+- **@visactor/vtable**: 添加单元测试 getCellAddressByHeaderPaths
 
 
 
@@ -98,13 +96,13 @@
 
 **🆕 新增功能**
 
-- **@visactor/vtable**: add checkbox style theme
+- **@visactor/vtable**: 添加复选框样式主题
 
 **🐛 功能修复**
 
-- **@visactor/vtable**: rightFrozenCol is bigger then colCount [#1162](https://github.com/VisActor/VTable/issues/1162)
-- **@visactor/vtable**: header description tooltip flicker [#1173](https://github.com/VisActor/VTable/issues/1173)
-- **@visactor/vtable**: add fontStyle & fontVariant
+- **@visactor/vtable**: 修复右侧冻结列数大于列总数的情况下渲染问题 [#1162](https://github.com/VisActor/VTable/issues/1162)
+- **@visactor/vtable**: 表头上的Tooltip hover时移动闪烁问题 [#1173](https://github.com/VisActor/VTable/issues/1173)
+- **@visactor/vtable**: 添加字体样式和字体变体
 
 
 
@@ -117,27 +115,27 @@
 
 **🆕 新增功能**
 
-- **@visactor/vtable**: add api getRecordIndexByCell [#1121](https://github.com/VisActor/VTable/issues/1121)
+- **@visactor/vtable**: 添加getRecordIndexByCell API [#1121](https://github.com/VisActor/VTable/issues/1121)
 
 **🐛 功能修复**
 
-- **@visactor/vtable**: hideColumnsSubheader with three levels show error [#1105](https://github.com/VisActor/VTable/issues/1105)
-- **@visactor/vtable**: customlayout flex render error [#1163](https://github.com/VisActor/VTable/issues/1163)
-- **@visactor/vtable**: when scroll tooltip hide [#905](https://github.com/VisActor/VTable/issues/905)
-- **@visactor/vtable**: fix axis innerOffset
-- **@visactor/vtable**: add skipFunctionDiff in react-vtable
+- **@visactor/vtable**: 三级子标题设置隐藏列时显示错误 [#1105](https://github.com/VisActor/VTable/issues/1105)
+- **@visactor/vtable**: 自定义布局弹性渲染错误 [#1163](https://github.com/VisActor/VTable/issues/1163)
+- **@visactor/vtable**: 滚动时将tooltip隐藏 [#905](https://github.com/VisActor/VTable/issues/905)
+- **@visactor/vtable**: 修复轴内偏移
+- **@visactor/vtable**: 在 react-vtable 中添加skipFunctionDiff
 
 **🔨 功能重构**
 
-- **@visactor/vtable**: rename resize_column_end event arguments [#1129](https://github.com/VisActor/VTable/issues/1129)
-- **@visactor/vtable**: api return value type
-- **@visactor/vtable**: setRecords support restoreHierarchyState [#1148](https://github.com/VisActor/VTable/issues/1148)
-- **@visactor/vtable**: vtable not stop event bubble [#892](https://github.com/VisActor/VTable/issues/892)
-- **@visactor/vtable**: remove Circular dependency
+- **@visactor/vtable**: 重命名 resize_column_end 事件参数 [#1129](https://github.com/VisActor/VTable/issues/1129)
+- **@visactor/vtable**: API 返回value类型定义
+- **@visactor/vtable**: setRecords 支持恢复层次状态 [#1148](https://github.com/VisActor/VTable/issues/1148)
+- **@visactor/vtable**: vtable 不停止事件冒泡 [#892](https://github.com/VisActor/VTable/issues/892)
+- **@visactor/vtable**: 移除循环依赖
 
 **🔖 其他**
 
-- **@visactor/vtable**: fix-contextMenuItems-add-col-param
+- **@visactor/vtable**: 修复 contextMenuItems 事件添加col参数
 
 
 
