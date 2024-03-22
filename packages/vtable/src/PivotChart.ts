@@ -31,7 +31,7 @@ import { cellInRange, emptyFn } from './tools/helper';
 import { Dataset } from './dataset/dataset';
 import { _setDataSource } from './core/tableHelper';
 import { BaseTable } from './core/BaseTable';
-import type { BaseTableAPI, PivotChartProtected } from './ts-types/base-table';
+import type { BaseTableAPI, HeaderData, PivotChartProtected } from './ts-types/base-table';
 import type { IChartColumnIndicator } from './ts-types/pivot-table/indicator/chart-indicator';
 import type { Chart } from './scenegraph/graphic/chart';
 import { clearChartCacheImage, updateChartData } from './scenegraph/refresh-node/update-chart';
@@ -41,6 +41,7 @@ import type { DiscreteLegend } from '@visactor/vrender-components';
 import { Title } from './components/title/title';
 import { Env } from './tools/env';
 import { TABLE_EVENT_TYPE } from './core/TABLE_EVENT_TYPE';
+import type { IndicatorData } from './ts-types/list-table/layout-map/api';
 
 export class PivotChart extends BaseTable implements PivotChartAPI {
   declare internalProps: PivotChartProtected;
@@ -169,7 +170,7 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
       if (!this.internalProps.layoutMap.indicatorsAsCol) {
         // 列上是否配置了禁止拖拽列宽的配置项disableColumnResize
         const cellDefine = this.internalProps.layoutMap.getBody(col, this.columnHeaderLevelCount);
-        if (cellDefine?.disableColumnResize) {
+        if ((cellDefine as IndicatorData)?.disableColumnResize) {
           return false;
         }
       }
@@ -406,7 +407,7 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
         });
         return indicatorInfo?.title ?? indicatorInfo?.indicatorKey ?? '';
       }
-      const { title, fieldFormat } = this.internalProps.layoutMap.getHeader(col, row);
+      const { title, fieldFormat } = this.internalProps.layoutMap.getHeader(col, row) as HeaderData;
       return typeof fieldFormat === 'function' ? fieldFormat(title, col, row, this as BaseTableAPI) : title;
     }
     if (this.dataset) {
@@ -424,7 +425,7 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
       );
       return aggregator.value ? aggregator.value() : undefined;
     }
-    const { fieldFormat } = this.internalProps.layoutMap.getBody(col, row);
+    const { fieldFormat } = this.internalProps.layoutMap.getBody(col, row) as IndicatorData;
     const rowIndex = this.getBodyIndexByRow(row);
     const colIndex = this.getBodyIndexByCol(col);
     const dataValue = this.records[rowIndex]?.[colIndex];
@@ -709,7 +710,7 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
     return cellHeaderPaths;
   }
   getHierarchyState(col: number, row: number): HierarchyState {
-    return this._getHeaderLayoutMap(col, row)?.hierarchyState;
+    return (this._getHeaderLayoutMap(col, row) as HeaderData)?.hierarchyState;
   }
 
   _hasHierarchyTreeHeader() {
@@ -1255,5 +1256,8 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
       }
     }
     return false;
+  }
+  changeRecordOrder(source: number, target: number) {
+    //
   }
 }

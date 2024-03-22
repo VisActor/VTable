@@ -11,17 +11,17 @@ type IBasicTitleDefine = {
 
 type ITextTitleDefine = IBasicTitleDefine & {
   headerType?: 'text';
-  headerStyle: ITextStyleOption;
+  headerStyle?: ITextStyleOption;
 };
 
 type IImageTitleDefine = IBasicTitleDefine & {
-  headerType: 'image';
-  headerStyle: IImageStyleOption;
+  headerType?: 'image';
+  headerStyle?: IImageStyleOption;
 };
 
 type ILinkTitleDefine = IBasicTitleDefine & {
-  headerType: 'link';
-  headerStyle: ITextStyleOption;
+  headerType?: 'link';
+  headerStyle?: ITextStyleOption;
 };
 
 export type ITitleDefine = ITextTitleDefine | IImageTitleDefine | ILinkTitleDefine;
