@@ -153,6 +153,19 @@ Pivot table update:
 setRecords(records: Array<any>)
 ```
 
+## setRecordChildren(Function)
+
+In the basic table tree display scenario, if you need to dynamically insert data of sub-nodes, you can use this interface. It is not applicable in other situations.
+
+```
+  /**
+   * @param records The data set to the cell's child nodes
+   * @param col needs to set the cell address of the child node
+   * @param row needs to set the cell address of the child node
+   */
+  setRecordChildren(records: any[], col: number, row: number)
+```
+
 ## getDrawRange(Function)
 
 Get the boundRect value of the actual drawn content area of the table

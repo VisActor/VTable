@@ -73,7 +73,7 @@ ${prefix} cornerDescription(string)
 
 ${prefix} headerCustomRender(Function|Object)
 
-表头单元格自定义渲染函数，可以指定表头的渲染方式。
+表头单元格自定义渲染函数，可以指定表头的渲染方式。可具体参考[基本表格自定义渲染配置](../option/ListTable-columns-text#headerCustomRender)
 
 ${prefix} headerCustomLayout(Function)
 

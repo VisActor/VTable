@@ -62,21 +62,21 @@ export function createCell(
   if (isPromise(value)) {
     value = table.getCellValue(col, row);
   }
-  let bgColorFunc: Function;
-  // 判断是否有mapping  遍历dataset中mappingRules
-  if ((table.internalProps as PivotTableProtected)?.dataConfig?.mappingRules && !table.isHeader(col, row)) {
-    (table.internalProps as PivotTableProtected)?.dataConfig?.mappingRules?.forEach(
-      (mappingRule: MappingRule, i: number) => {
-        if (
-          mappingRule.bgColor &&
-          (table.internalProps.layoutMap as PivotHeaderLayoutMap).getIndicatorKey(col, row) ===
-            mappingRule.bgColor.indicatorKey
-        ) {
-          bgColorFunc = mappingRule.bgColor.mapping;
-        }
-      }
-    );
-  }
+  // let bgColorFunc: Function;
+  // // 判断是否有mapping  遍历dataset中mappingRules
+  // if ((table.internalProps as PivotTableProtected)?.dataConfig?.mappingRules && !table.isHeader(col, row)) {
+  //   (table.internalProps as PivotTableProtected)?.dataConfig?.mappingRules?.forEach(
+  //     (mappingRule: MappingRule, i: number) => {
+  //       if (
+  //         mappingRule.bgColor &&
+  //         (table.internalProps.layoutMap as PivotHeaderLayoutMap).getIndicatorKey(col, row) ===
+  //           mappingRule.bgColor.indicatorKey
+  //       ) {
+  //         bgColorFunc = mappingRule.bgColor.mapping;
+  //       }
+  //     }
+  //   );
+  // }
   let cellGroup: Group;
   if (type === 'text' || type === 'link') {
     if (type === 'link') {
@@ -107,21 +107,21 @@ export function createCell(
       }
     }
     // 判断是否有mapping  遍历dataset中mappingRules 但这里还需要根据fieldName来判断
-    if (bgColorFunc) {
-      const cellValue = table.getCellOriginValue(col, row);
-      const bgColor = bgColorFunc(table, cellValue);
-      if (bgColor) {
-        if (cellTheme) {
-          cellTheme.group.fill = bgColor;
-        } else {
-          cellTheme = {
-            group: {
-              fill: bgColor
-            }
-          };
-        }
-      }
-    }
+    // if (bgColorFunc) {
+    //   const cellValue = table.getCellOriginValue(col, row);
+    //   const bgColor = bgColorFunc(table, cellValue);
+    //   if (bgColor) {
+    //     if (cellTheme) {
+    //       cellTheme.group.fill = bgColor;
+    //     } else {
+    //       cellTheme = {
+    //         group: {
+    //           fill: bgColor
+    //         }
+    //       };
+    //     }
+    //   }
+    // }
 
     let customElementsGroup;
     let renderDefault = true;
@@ -507,21 +507,21 @@ export function updateCell(col: number, row: number, table: BaseTableAPI, addNew
   const textBaseline = cellTheme.text.textBaseline;
 
   let newCellGroup;
-  let bgColorFunc: Function;
+  // let bgColorFunc: Function;
   // 判断是否有mapping  遍历dataset中mappingRules
-  if ((table.internalProps as PivotTableProtected)?.dataConfig?.mappingRules && !table.isHeader(col, row)) {
-    (table.internalProps as PivotTableProtected)?.dataConfig?.mappingRules?.forEach(
-      (mappingRule: MappingRule, i: number) => {
-        if (
-          mappingRule.bgColor &&
-          (table.internalProps.layoutMap as PivotHeaderLayoutMap).getIndicatorKey(col, row) ===
-            mappingRule.bgColor.indicatorKey
-        ) {
-          bgColorFunc = mappingRule.bgColor.mapping;
-        }
-      }
-    );
-  }
+  // if ((table.internalProps as PivotTableProtected)?.dataConfig?.mappingRules && !table.isHeader(col, row)) {
+  //   (table.internalProps as PivotTableProtected)?.dataConfig?.mappingRules?.forEach(
+  //     (mappingRule: MappingRule, i: number) => {
+  //       if (
+  //         mappingRule.bgColor &&
+  //         (table.internalProps.layoutMap as PivotHeaderLayoutMap).getIndicatorKey(col, row) ===
+  //           mappingRule.bgColor.indicatorKey
+  //       ) {
+  //         bgColorFunc = mappingRule.bgColor.mapping;
+  //       }
+  //     }
+  //   );
+  // }
 
   let cellWidth;
   let cellHeight;
@@ -550,7 +550,7 @@ export function updateCell(col: number, row: number, table: BaseTableAPI, addNew
         table,
         col,
         row,
-        bgColorFunc,
+        // bgColorFunc,
         cellWidth,
         cellHeight,
         oldCellGroup,
@@ -572,7 +572,7 @@ export function updateCell(col: number, row: number, table: BaseTableAPI, addNew
       table,
       col,
       row,
-      bgColorFunc,
+      // bgColorFunc,
       cellWidth,
       cellHeight,
       oldCellGroup,
@@ -609,7 +609,7 @@ function updateCellContent(
   table: BaseTableAPI,
   col: number,
   row: number,
-  bgColorFunc: Function,
+  // bgColorFunc: Function,
   cellWidth: number,
   cellHeight: number,
   oldCellGroup: Group,
@@ -689,7 +689,7 @@ function canUseFastUpdate(col: number, row: number, oldCellGroup: Group, autoWra
   return false;
 }
 
-function dealWithMergeCellSize(
+export function dealWithMergeCellSize(
   range: CellRange,
   cellWidth: number,
   cellHeight: number,
@@ -698,21 +698,11 @@ function dealWithMergeCellSize(
   textBaseline: CanvasTextBaseline,
   table: BaseTableAPI
 ) {
-  // const rangeHeight = table.getRowHeight(row);
-  // const rangeWidth = table.getColWidth(col);
-
-  // const { width: contentWidth } = newCellGroup.attribute;
-  // const { height: contentHeight } = newCellGroup.attribute;
-  // newCellGroup.contentWidth = contentWidth;
-  // newCellGroup.contentHeight = contentHeight;
-
-  // resizeCellGroup(newCellGroup, rangeWidth, rangeHeight, range, table);
   for (let col = range.start.col; col <= range.end.col; col++) {
     for (let row = range.start.row; row <= range.end.row; row++) {
       const cellGroup = table.scenegraph.getCell(col, row, true);
 
-      if (range.start.row !== range.end.row) {
-        // const cellGroup = table.scenegraph.getCell(col, row, true);
+      if (cellGroup.role === 'cell' && range.start.row !== range.end.row && cellGroup.contentWidth !== cellWidth) {
         updateCellContentHeight(
           cellGroup,
           cellHeight,
@@ -724,8 +714,7 @@ function dealWithMergeCellSize(
           // 'middle'
         );
       }
-      if (range.start.col !== range.end.col) {
-        // const cellGroup = table.scenegraph.getCell(col, row, true);
+      if (cellGroup.role === 'cell' && range.start.col !== range.end.col && cellGroup.contentHeight !== cellHeight) {
         updateCellContentWidth(
           cellGroup,
           cellWidth,
