@@ -4,7 +4,7 @@ import type { CellLocation, CellRange, ColumnDefine, IRowSeriesNumber, TextColum
 import type { Group } from '../graphic/group';
 import { getProp, getRawProp } from '../utils/get-prop';
 import type { MergeMap } from '../scenegraph';
-import { createCell, resizeCellGroup } from './cell-helper';
+import { createCell, resizeCellGroup, dealWithMergeCellSize } from './cell-helper';
 import type { BaseTableAPI, HeaderData } from '../../ts-types/base-table';
 import { getCellCornerRadius, getStyleTheme } from '../../core/tableHelper';
 import { isPromise } from '../../tools/helper';
@@ -226,7 +226,8 @@ export function createComplexColumn(
         cellGroup.contentWidth = contentWidth;
         cellGroup.contentHeight = contentHeight;
 
-        resizeCellGroup(cellGroup, rangeWidth, rangeHeight, range, table);
+        // resizeCellGroup(cellGroup, rangeWidth, rangeHeight, range, table);
+        dealWithMergeCellSize(range, contentWidth, contentHeight, padding, textAlign, textBaseline, table);
         columnGroup.updateColumnHeight(rangeHeight);
         y += rangeHeight;
       } else {

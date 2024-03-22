@@ -72,7 +72,7 @@ Description information for hover, displayed as a tooltip
 
 ${prefix} headerCustomRender(Function|Object)
 
-Custom rendering function for header cells, you can specify the rendering method for headers.
+Custom rendering function for header cells, you can specify the rendering method for headers. For details, please refer to [Basic table custom rendering configuration](../option/ListTable-columns-text#headerCustomRender)
 
 ${prefix} headerCustomLayout(Function)
 

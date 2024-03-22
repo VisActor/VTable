@@ -986,8 +986,9 @@ export class ListTable extends BaseTable implements ListTableAPI {
   }
   /**
    * 基本表格树形展示场景下，如果需要动态插入子节点的数据可以配合使用该接口，其他情况不适用
-   * @param col col position of the record, it is optional
-   * @param row row position of the record, it is optional
+   * @param records 设置到单元格其子节点的数据
+   * @param col 需要设置子节点的单元格地址
+   * @param row  需要设置子节点的单元格地址
    */
   setRecordChildren(records: any[], col: number, row: number) {
     const record = this.getCellOriginRecord(col, row);
