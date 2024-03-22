@@ -130,3 +130,31 @@ Contains the following configuration items:
 - `lineamp`: Set the maximum number of rows of the unit, you can set number or'auto ', set it to'auto', it will be automatically calculated
 
 Through the above introduction, you have mastered the use of style in VTable, and then you can create a table with a personalized style according to your needs.
+
+## Custom style
+
+If you need different styles for different cells, you can use the style function:
+
+```
+style: (args)=>{
+  if(args.value>10)
+    return {color: 'red'};
+  return {colore: 'green'};
+}
+
+```
+
+Or set a style in style to a function
+
+```
+style: {
+  color(args){
+    if(args.value>10)
+      return 'red';
+    return 'green';
+  }
+}
+
+```
+
+Or use style registration to change the style through interface calls. For details, please refer to the tutorial: https://visactor.io/vtable/guide/custom_define/custom_style

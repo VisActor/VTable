@@ -130,3 +130,31 @@ style 提供了一系列的单元格配置式，简要介绍如下。
 - `lineamp`：设置单元的最大行数, 可设置 number 或者 'auto'，设置为 'auto'，则会自动计算
 
 通过以上介绍，您已经掌握了 VTable 中样式 Style 的使用方法，接来就可以根据需求创建具有个性化风格的表格。
+
+## 自定义样式
+
+如果有不同单元格不同样式的需求，可以使用 style 的函数写法：
+
+```
+style: (args)=>{
+  if(args.value>10)
+    return {color: 'red'};
+  return {colore: 'green'};
+}
+
+```
+
+或者 style 中某个样式设置成函数
+
+```
+style: {
+  color(args){
+    if(args.value>10)
+      return 'red';
+    return 'green';
+  }
+}
+
+```
+
+或者使用样式注册，通过接口调用来变更样式，具体可参考教程：https://visactor.io/vtable/guide/custom_define/custom_style
