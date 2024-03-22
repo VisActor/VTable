@@ -62,6 +62,12 @@ export class StateManager {
     headerSelectMode?: 'inline' | 'cell';
     selecting: boolean;
   };
+  fillHandle: {
+    direcitonRow?: boolean;
+    isFilling: boolean;
+    startX: number;
+    startY: number;
+  };
   hover: {
     highlightScope: HighlightScope; // hover模式
     singleStyle?: boolean; // hover当前单元格是否使用单独样式
@@ -263,6 +269,11 @@ export class StateManager {
         row: -1
       },
       selecting: false
+    };
+    this.fillHandle = {
+      isFilling: false,
+      startX: undefined,
+      startY: undefined
     };
     this.hover = {
       highlightScope: HighlightScope.single,
@@ -537,7 +548,7 @@ export class StateManager {
     return this.columnResize.resizing;
   }
   isFillHandle(): boolean {
-    return this.columnResize.resizing;
+    return this.fillHandle.isFilling;
   }
   isSelecting(): boolean {
     return this.select.selecting;
@@ -581,18 +592,19 @@ export class StateManager {
 
     this.table.scenegraph.updateNextFrame();
   }
-  startFillSelect(col: number, x: number, y: number, isRightFrozen?: boolean) {
-    // this.columnResize.resizing = true;
-    this.columnResize.col = col;
-    this.columnResize.x = x;
-    this.columnResize.isRightFrozen = isRightFrozen;
-
-    this.table.scenegraph.component.showResizeCol(col, y, isRightFrozen);
-
-    // 调整列宽期间清空选中清空
-    this.table.stateManager.updateSelectPos(-1, -1);
-
+  startFillSelect(x: number, y: number) {
+    this.fillHandle.isFilling = true;
+    this.fillHandle.startX = x;
+    this.fillHandle.startY = y;
     this.table.scenegraph.updateNextFrame();
+    this.table.fireListeners(TABLE_EVENT_TYPE.MOUSEDOWN_FILL_HANDLE, {});
+  }
+  endFillSelect() {
+    this.fillHandle.isFilling = false;
+    this.fillHandle.startX = undefined;
+    this.fillHandle.startY = undefined;
+    this.table.stateManager.fillHandle.direcitonRow = undefined;
+    this.table.eventManager.isDraging && this.table.fireListeners(TABLE_EVENT_TYPE.DRAG_FILL_HANDLE_END, {});
   }
   updateResizeCol(xInTable: number, yInTable: number) {
     updateResizeColumn(xInTable, yInTable, this);

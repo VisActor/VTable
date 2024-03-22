@@ -45,6 +45,8 @@ export function bindTableGroupListener(eventManager: EventManager) {
           /* do nothing */
         } else if (stateManager.isMoveCol()) {
           eventManager.dealColumnMover(eventArgsSet);
+        } else if (stateManager.isFillHandle()) {
+          eventManager.dealFillSelect(eventArgsSet, true);
         } else {
           eventManager.dealTableSelect(eventArgsSet, true);
         }
@@ -415,17 +417,17 @@ export function bindTableGroupListener(eventManager: EventManager) {
         }
 
         // 处理填充功能
-        if (eventManager.checkCellFillhandle(eventArgsSet, true)) {
-          if (table.eventManager.isFilling) {
-            table.eventManager.LastRange = {
-              start: table.stateManager.select.ranges[0].start,
-              end: {
-                col: (getCellEventArgsSet(e).eventArgs.target as unknown as Group).col,
-                row: (getCellEventArgsSet(e).eventArgs.target as unknown as Group).row
-              }
-            };
-            table.eventManager.SelectData = table.getCopyValue();
-          }
+        if (eventManager.checkCellFillhandle(eventArgsSet, true) && eventManager.dealFillSelect(eventArgsSet)) {
+          // table.eventManager.LastRange = {
+          //   start: table.stateManager.select.ranges[0].start,
+          //   end: {
+          //     col: (getCellEventArgsSet(e).eventArgs.target as unknown as Group).col,
+          //     row: (getCellEventArgsSet(e).eventArgs.target as unknown as Group).row
+          //   }
+          // };
+          // table.eventManager.SelectData = table.getCopyValue();
+          stateManager.updateInteractionState(InteractionState.grabing);
+          return;
         }
         // 处理单元格选择
         if (eventManager.dealTableSelect(eventArgsSet)) {
@@ -475,7 +477,9 @@ export function bindTableGroupListener(eventManager: EventManager) {
         }
       } else if (stateManager.isSelecting()) {
         table.stateManager.endSelectCells();
-        table.eventManager.isDraging = false;
+        if (table.stateManager.isFillHandle()) {
+          table.stateManager.endFillSelect();
+        }
         const eventArgsSet: SceneEvent = getCellEventArgsSet(e);
         if (eventArgsSet.eventArgs && (table as any).hasListeners(TABLE_EVENT_TYPE.DRAG_SELECT_END)) {
           const cellsEvent: MousePointerMultiCellEvent = {
@@ -490,13 +494,6 @@ export function bindTableGroupListener(eventManager: EventManager) {
           cellsEvent.cells = table.getSelectedCellInfos();
           table.fireListeners(TABLE_EVENT_TYPE.DRAG_SELECT_END, cellsEvent);
         }
-      }
-
-      if (table.eventManager.isFilling) {
-        const eventArgsSet: SceneEvent = getCellEventArgsSet(e);
-        table.eventManager.isFilling = false;
-        eventManager.fillSelected(eventArgsSet, table.eventManager.LastRange, table.eventManager.SelectData);
-        table.eventManager.SelectData = table.getCopyValue();
       }
     } else if (stateManager.interactionState === InteractionState.scrolling) {
       stateManager.updateInteractionState(InteractionState.default);
@@ -573,12 +570,10 @@ export function bindTableGroupListener(eventManager: EventManager) {
     if (table.stateManager.columnResize.resizing || table.stateManager.columnMove.moving) {
       return;
     }
-    if (table.eventManager.isFilling) {
-      table.eventManager.isFilling = false;
-      table.eventManager.LastRange = stateManager.select.ranges[0];
-      table.eventManager.SelectData = table.getCopyValue();
-      return;
-    }
+    // if (table.stateManager.fillHandle.isFilling) {
+    //   table.stateManager.endFillSelect();
+    //   return;
+    // }
     const eventArgsSet: SceneEvent = getCellEventArgsSet(e);
     eventManager.dealIconClick(e, eventArgsSet);
     if (!eventArgsSet?.eventArgs) {

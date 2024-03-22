@@ -49,9 +49,6 @@ export class EventManager {
   LastBodyPointerXY: { x: number; y: number };
   isDown = false;
   isDraging = false;
-  isFilling = false;
-  LastRange: any = [];
-  SelectData: any;
   globalEventListeners: { name: string; env: 'document' | 'body' | 'window'; callback: (e?: any) => void }[] = [];
 
   constructor(table: BaseTableAPI) {
@@ -135,7 +132,9 @@ export class EventManager {
           eventArgsSet.abstractPos.y,
           eventArgsSet.eventArgs?.targetCell
         );
-        if (this.table._canResizeColumn(resizeCol.col, resizeCol.row) && resizeCol.col >= 0) {
+        if (this.table.eventManager.checkCellFillhandle(eventArgsSet)) {
+          this.table.fireListeners(TABLE_EVENT_TYPE.DBLCLICK_FILL_HANDLE, {});
+        } else if (this.table._canResizeColumn(resizeCol.col, resizeCol.row) && resizeCol.col >= 0) {
           this.table.scenegraph.updateAutoColWidth(resizeCol.col);
 
           // if (this.table.isPivotChart()) {
@@ -252,84 +251,6 @@ export class EventManager {
         return false;
       }
 
-      if (this.table.stateManager.select?.ranges?.length && this.table.eventManager.isFilling) {
-        let updateRow;
-        let updateCol;
-        const currentRange = this.table.stateManager.select.ranges[this.table.stateManager.select.ranges.length - 1];
-
-        if (Math.abs(currentRange.start.row - eventArgs.row) >= Math.abs(currentRange.start.col - eventArgs.col)) {
-          updateRow = eventArgs.row;
-          updateCol = currentRange.end.col;
-        } else {
-          updateRow = currentRange.end.row;
-          updateCol = eventArgs.col;
-        }
-
-        this.table.stateManager.updateSelectPos(
-          updateCol,
-          updateRow,
-          true,
-          eventArgs.event.ctrlKey || eventArgs.event.metaKey
-        );
-      } else {
-        this.table.stateManager.updateSelectPos(
-          eventArgs.col,
-          eventArgs.row,
-          eventArgs.event.shiftKey,
-          eventArgs.event.ctrlKey || eventArgs.event.metaKey
-        );
-      }
-
-      return true;
-    }
-    // this.table.stateManager.updateSelectPos(-1, -1); 这句有问题 如drag框选鼠标超出表格范围 这里就直接情况是不对的
-    return false;
-  }
-  dealFillSelect(eventArgsSet?: SceneEvent, isSelectMoving?: boolean): boolean {
-    if (!eventArgsSet) {
-      this.table.stateManager.updateSelectPos(-1, -1);
-      return false;
-    }
-    const { eventArgs } = eventArgsSet;
-
-    if (eventArgs) {
-      if (eventArgs.target.name === 'checkbox') {
-        return false;
-      }
-
-      // // 注意：如果启用下面这句代码逻辑 则在点击选中单元格时失效hover效果。但是会导致chart实例的click事件失效，所以先特殊处理这个逻辑
-      // if (
-      //   !this.table.isPivotChart() &&
-      //   eventArgsSet?.eventArgs?.target.type !== 'chart' &&
-      //   eventArgs.event.pointerType !== 'touch'
-      // ) {
-      //   this.table.stateManager.updateHoverPos(-1, -1);
-      // }
-      const define = this.table.getBodyColumnDefine(eventArgs.col, eventArgs.row);
-      if (
-        this.table.isHeader(eventArgs.col, eventArgs.row) &&
-        (define?.disableHeaderSelect || this.table.stateManager.select?.disableHeader)
-      ) {
-        if (!isSelectMoving) {
-          // 如果是点击点表头 取消单元格选中状态
-          this.table.stateManager.updateSelectPos(-1, -1);
-        }
-        return false;
-      } else if (!this.table.isHeader(eventArgs.col, eventArgs.row) && define?.disableSelect) {
-        if (!isSelectMoving) {
-          this.table.stateManager.updateSelectPos(-1, -1);
-        }
-        return false;
-      }
-
-      if (
-        this.table.isPivotChart() &&
-        (eventArgsSet?.eventArgs?.target.name === 'axis-label' || eventArgsSet?.eventArgs?.target.type === 'chart')
-      ) {
-        // 点击透视图坐标轴标签或图标内容，执行图表状态更新，不触发Select
-        this.table.stateManager.updateSelectPos(-1, -1);
-        return false;
-      }
       this.table.stateManager.updateSelectPos(
         eventArgs.col,
         eventArgs.row,
@@ -342,109 +263,157 @@ export class EventManager {
     // this.table.stateManager.updateSelectPos(-1, -1); 这句有问题 如drag框选鼠标超出表格范围 这里就直接情况是不对的
     return false;
   }
-
-  fillSelected(eventArgsSet?: SceneEvent, SelectCellRange?: any, SelectData?: any): any {
-    if (!eventArgsSet) {
-      this.table.stateManager.updateSelectPos(-1, -1);
-      return;
-    }
+  dealFillSelect(eventArgsSet?: SceneEvent, isSelectMoving?: boolean): boolean {
     const { eventArgs } = eventArgsSet;
 
     if (eventArgs) {
-      if (eventArgs.target.name === 'checkbox') {
-        return;
-      }
-      let direction;
-
-      if (eventArgs.row >= SelectCellRange.start.row && eventArgs.row <= SelectCellRange.end.row) {
-        if (eventArgs.col > SelectCellRange.end.col) {
-          direction = 'right';
-        } else {
-          direction = 'left';
-        }
-      } else {
-        if (eventArgs.row > SelectCellRange.end.row) {
-          direction = 'down';
-        } else {
-          direction = 'up';
-        }
-      }
-      const values: (string | number)[][] = [];
-      const fillData: any[][] = [];
-      let updaterow;
-      let updatecol;
-      const rows = SelectData.split('\n'); // 将数据拆分为行
-      rows.forEach(function (rowCells: any, rowIndex: number) {
-        const cells = rowCells.split('\t'); // 将行数据拆分为单元格
-        const rowValues: (string | number)[] = [];
-        values.push(rowValues);
-        cells.forEach(function (cell: string, cellIndex: number) {
-          // 去掉单元格数据末尾的 '\r'
-          if (cellIndex === cells.length - 1) {
-            cell = cell.trim();
-          }
-          rowValues.push(cell);
-        });
-      });
-
-      updaterow = SelectCellRange.start.row;
-      updatecol = SelectCellRange.start.col;
-      if (['up', 'left'].indexOf(direction) > -1) {
-        if (direction === 'up') {
-          updaterow = eventArgs.row;
-
-          const fillLength = SelectCellRange.start.row - updaterow;
-
-          for (let i = 0; i < fillLength; i++) {
-            const rowIndex = values.length - 1 - (i % values.length);
-            const newRow = values[rowIndex].slice(0); // 复制一行数据
-
-            fillData.unshift(newRow); // 在填充数据的开头插入新行
-          }
-        } else {
-          updatecol = eventArgs.col;
-          const fillLength = SelectCellRange.start.col - updatecol;
-
-          for (let i = 0; i < values.length; i++) {
-            const newRow = values[i].slice(0); // 复制一行数据
-            while (newRow.length < fillLength) {
-              newRow.unshift(newRow[0]); // 在新行开头向左填充元素
+      if (this.table.stateManager.select?.ranges?.length && this.table.stateManager.isFillHandle()) {
+        let updateRow;
+        let updateCol;
+        const currentRange = this.table.stateManager.select.ranges[this.table.stateManager.select.ranges.length - 1];
+        if (isSelectMoving) {
+          if (!isValid(this.table.stateManager.fillHandle.direcitonRow)) {
+            if (
+              Math.abs(this.table.stateManager.fillHandle.startY - eventArgsSet.abstractPos.y) >=
+              Math.abs(this.table.stateManager.fillHandle.startX - eventArgsSet.abstractPos.x)
+            ) {
+              this.table.stateManager.fillHandle.direcitonRow = true;
+            } else {
+              this.table.stateManager.fillHandle.direcitonRow = false;
             }
-            fillData.push(newRow);
+          }
+          if (this.table.stateManager.fillHandle.direcitonRow) {
+            updateRow = eventArgs.row;
+            updateCol = currentRange.end.col;
+          } else {
+            updateRow = currentRange.end.row;
+            updateCol = eventArgs.col;
           }
         }
+
+        this.table.stateManager.updateSelectPos(
+          isSelectMoving ? updateCol : currentRange.end.col,
+          isSelectMoving ? updateRow : currentRange.end.row,
+          true,
+          eventArgs.event.ctrlKey || eventArgs.event.metaKey
+        );
       } else {
-        if (direction === 'down') {
-          updaterow = SelectCellRange.end.row + 1;
-          const fillLength = eventArgs.row - SelectCellRange.end.row;
-
-          // 将原始数据添加到新数组中
-          for (let i = 0; i < fillLength; i++) {
-            const rowIndex = i % values.length;
-            const newRow = values[rowIndex]; // 复制一行数据
-            fillData.push(newRow);
-          }
-        } else {
-          const fillLength = eventArgs.col - SelectCellRange.end.col;
-          updatecol = SelectCellRange.end.col + 1;
-
-          values.forEach(function (rowCells: any[]) {
-            const newRow: any[] = [];
-            // 将原始数据按顺序填充到新行中
-            for (let i = 0; i < fillLength; i++) {
-              const dataIndex = i % rowCells.length;
-              newRow.push(rowCells[dataIndex]);
-            }
-
-            // 将新行添加到填充数据中
-            fillData.push(newRow);
-          });
-        }
+        this.table.stateManager.updateSelectPos(
+          eventArgs.col,
+          eventArgs.row,
+          eventArgs.event.shiftKey,
+          eventArgs.event.ctrlKey || eventArgs.event.metaKey
+        );
       }
-
-      (this.table as ListTableAPI).changeCellValues(updatecol, updaterow, fillData, false);
+      return true;
     }
+    // this.table.stateManager.updateSelectPos(-1, -1); 这句有问题 如drag框选鼠标超出表格范围 这里就直接情况是不对的
+    return false;
   }
+
+  // fillSelected(eventArgsSet?: SceneEvent, SelectCellRange?: any, SelectData?: any): any {
+  //   return;
+  //   if (!eventArgsSet) {
+  //     this.table.stateManager.updateSelectPos(-1, -1);
+  //     return;
+  //   }
+  //   const { eventArgs } = eventArgsSet;
+
+  //   if (eventArgs) {
+  //     if (eventArgs.target.name === 'checkbox') {
+  //       return;
+  //     }
+  //     let direction;
+
+  //     if (eventArgs.row >= SelectCellRange.start.row && eventArgs.row <= SelectCellRange.end.row) {
+  //       if (eventArgs.col > SelectCellRange.end.col) {
+  //         direction = 'right';
+  //       } else {
+  //         direction = 'left';
+  //       }
+  //     } else {
+  //       if (eventArgs.row > SelectCellRange.end.row) {
+  //         direction = 'down';
+  //       } else {
+  //         direction = 'up';
+  //       }
+  //     }
+  //     const values: (string | number)[][] = [];
+  //     const fillData: any[][] = [];
+  //     let updaterow;
+  //     let updatecol;
+  //     const rows = SelectData.split('\n'); // 将数据拆分为行
+  //     rows.forEach(function (rowCells: any, rowIndex: number) {
+  //       const cells = rowCells.split('\t'); // 将行数据拆分为单元格
+  //       const rowValues: (string | number)[] = [];
+  //       values.push(rowValues);
+  //       cells.forEach(function (cell: string, cellIndex: number) {
+  //         // 去掉单元格数据末尾的 '\r'
+  //         if (cellIndex === cells.length - 1) {
+  //           cell = cell.trim();
+  //         }
+  //         rowValues.push(cell);
+  //       });
+  //     });
+
+  //     updaterow = SelectCellRange.start.row;
+  //     updatecol = SelectCellRange.start.col;
+  //     if (['up', 'left'].indexOf(direction) > -1) {
+  //       if (direction === 'up') {
+  //         updaterow = eventArgs.row;
+
+  //         const fillLength = SelectCellRange.start.row - updaterow;
+
+  //         for (let i = 0; i < fillLength; i++) {
+  //           const rowIndex = values.length - 1 - (i % values.length);
+  //           const newRow = values[rowIndex].slice(0); // 复制一行数据
+
+  //           fillData.unshift(newRow); // 在填充数据的开头插入新行
+  //         }
+  //       } else {
+  //         updatecol = eventArgs.col;
+  //         const fillLength = SelectCellRange.start.col - updatecol;
+
+  //         for (let i = 0; i < values.length; i++) {
+  //           const newRow = values[i].slice(0); // 复制一行数据
+  //           while (newRow.length < fillLength) {
+  //             newRow.unshift(newRow[0]); // 在新行开头向左填充元素
+  //           }
+  //           fillData.push(newRow);
+  //         }
+  //       }
+  //     } else {
+  //       if (direction === 'down') {
+  //         updaterow = SelectCellRange.end.row + 1;
+  //         const fillLength = eventArgs.row - SelectCellRange.end.row;
+
+  //         // 将原始数据添加到新数组中
+  //         for (let i = 0; i < fillLength; i++) {
+  //           const rowIndex = i % values.length;
+  //           const newRow = values[rowIndex]; // 复制一行数据
+  //           fillData.push(newRow);
+  //         }
+  //       } else {
+  //         const fillLength = eventArgs.col - SelectCellRange.end.col;
+  //         updatecol = SelectCellRange.end.col + 1;
+
+  //         values.forEach(function (rowCells: any[]) {
+  //           const newRow: any[] = [];
+  //           // 将原始数据按顺序填充到新行中
+  //           for (let i = 0; i < fillLength; i++) {
+  //             const dataIndex = i % rowCells.length;
+  //             newRow.push(rowCells[dataIndex]);
+  //           }
+
+  //           // 将新行添加到填充数据中
+  //           fillData.push(newRow);
+  //         });
+  //       }
+  //     }
+
+  //     (this.table as ListTableAPI).changeCellValues(updatecol, updaterow, fillData, false);
+  //   }
+  // }
 
   deelTableSelectAll() {
     this.table.stateManager.updateSelectPos(-1, -1, false, false, true);
@@ -483,23 +452,30 @@ export class EventManager {
   }
 
   checkCellFillhandle(eventArgsSet: SceneEvent, update?: boolean): boolean {
-    const { eventArgs } = eventArgsSet;
-    if (eventArgs) {
-      if (this.table.stateManager.select?.ranges?.length) {
-        const lastCol = this.table.stateManager.select.ranges[this.table.stateManager.select.ranges.length - 1].end.col;
-        const lastRow = this.table.stateManager.select.ranges[this.table.stateManager.select.ranges.length - 1].end.row;
+    if (this.table.options.excelOptions?.fillHandle) {
+      const { eventArgs } = eventArgsSet;
+      if (eventArgs) {
+        if (this.table.stateManager.select?.ranges?.length) {
+          const lastCol =
+            this.table.stateManager.select.ranges[this.table.stateManager.select.ranges.length - 1].end.col;
+          const lastRow =
+            this.table.stateManager.select.ranges[this.table.stateManager.select.ranges.length - 1].end.row;
 
-        const lastCellBound = this.table.scenegraph.highPerformanceGetCell(lastCol, lastRow).globalAABBBounds;
-        // 计算鼠标与fillhandle矩形中心之间的距离
-        const distanceX = Math.abs(eventArgsSet.abstractPos.x - lastCellBound.x2);
-        const distanceY = Math.abs(eventArgsSet.abstractPos.y - lastCellBound.y2);
-        const squareSize = 6 * 3;
-        // 判断鼠标是否落在fillhandle矩形内
-        if (this.isFilling || (distanceX <= squareSize / 2 && distanceY <= squareSize / 2)) {
-          if (update) {
-            this.isFilling = true;
+          const lastCellBound = this.table.scenegraph.highPerformanceGetCell(lastCol, lastRow).globalAABBBounds;
+          // 计算鼠标与fillhandle矩形中心之间的距离
+          const distanceX = Math.abs(eventArgsSet.abstractPos.x - lastCellBound.x2);
+          const distanceY = Math.abs(eventArgsSet.abstractPos.y - lastCellBound.y2);
+          const squareSize = 6 * 3;
+          // 判断鼠标是否落在fillhandle矩形内
+          if (
+            this.table.stateManager.fillHandle?.isFilling ||
+            (distanceX <= squareSize / 2 && distanceY <= squareSize / 2)
+          ) {
+            if (update) {
+              this.table.stateManager.startFillSelect(eventArgsSet.abstractPos.x, eventArgsSet.abstractPos.y);
+            }
+            return true;
           }
-          return true;
         }
       }
     }

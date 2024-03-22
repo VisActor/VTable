@@ -31,7 +31,11 @@ import type { BaseTableAPI } from '../ts-types/base-table';
 import { updateAllSelectComponent, updateCellSelectBorder } from './select/update-select-border';
 import { createCellSelectBorder } from './select/create-select-border';
 import { moveSelectingRangeComponentsToSelectedRangeComponents } from './select/move-select-border';
-import { deleteAllSelectBorder, deleteLastSelectedRangeComponents } from './select/delete-select-border';
+import {
+  deleteAllSelectBorder,
+  deleteLastSelectedRangeComponents,
+  removeFillHandleFromSelectComponents
+} from './select/delete-select-border';
 import { updateRow } from './layout/update-row';
 import { handleTextStick } from './stick-text';
 import { computeRowHeight, computeRowsHeight } from './layout/compute-row-height';
@@ -688,6 +692,10 @@ export class Scenegraph {
 
   updateCellSelectBorder(newStartCol: number, newStartRow: number, newEndCol: number, newEndRow: number) {
     updateCellSelectBorder(this, newStartCol, newStartRow, newEndCol, newEndRow);
+  }
+
+  removeFillHandleFromSelectComponents() {
+    removeFillHandleFromSelectComponents(this);
   }
   /** 根据select状态重新创建选中range节点  目前无调用者 */
   recreateAllSelectRangeComponents() {

@@ -393,7 +393,7 @@ export function updateCellSelectBorder(
   scene.selectingRangeComponents.forEach(
     (selectComp: { rect: IRect; fillhandle?: IRect; role: CellSubLocation }, key: string) => {
       selectComp.rect.delete();
-      selectComp.fillhandle.delete();
+      selectComp.fillhandle?.delete();
     }
   );
   scene.selectingRangeComponents = new Map();

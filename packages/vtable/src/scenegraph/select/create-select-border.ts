@@ -10,8 +10,17 @@ export function createCellSelectBorder(
   end_Row: number,
   selectRangeType: CellSubLocation,
   selectId: string, //整体区域${endRow}-${startCol}${startRow}${endCol}${endRow}作为其编号
-  strokes?: boolean[]
+  strokes: boolean[]
+  // isHasFillHandleRect: boolean
 ) {
+  let isHasFillHandleRect = !!scene.table.options.excelOptions?.fillHandle;
+  if (scene.table.stateManager.select.ranges?.length > 1) {
+    isHasFillHandleRect = false;
+    scene.removeFillHandleFromSelectComponents();
+  }
+  if (Array.isArray(strokes) && (strokes[1] === false || strokes[2] === false)) {
+    isHasFillHandleRect = false;
+  }
   const startCol = Math.min(start_Col, end_Col);
   const startRow = Math.min(start_Row, end_Row);
   const endCol = Math.max(start_Col, end_Col);
@@ -41,18 +50,21 @@ export function createCellSelectBorder(
     visible: true
   });
   // 创建右下角小方块
-  const fillhandle = createRect({
-    pickable: false,
-    fill: bodyClickBorderColor as string,
-    // lineWidth: bodyClickLineWidth as number,
-    stroke: bodyClickBorderColor as string, // 右下角小方块边框颜色
-    x: lastCellBound.x2 - 3, // 调整小方块位置
-    y: lastCellBound.y2 - 3, // 调整小方块位置
-    width: 6,
-    height: 6,
+  let fillhandle;
+  if (isHasFillHandleRect) {
+    fillhandle = createRect({
+      pickable: false,
+      fill: bodyClickBorderColor as string,
+      // lineWidth: bodyClickLineWidth as number,
+      stroke: bodyClickBorderColor as string, // 右下角小方块边框颜色
+      x: lastCellBound.x2 - 3, // 调整小方块位置
+      y: lastCellBound.y2 - 3, // 调整小方块位置
+      width: 6,
+      height: 6,
 
-    visible: true
-  });
+      visible: true
+    });
+  }
   scene.lastSelectId = selectId;
   scene.selectingRangeComponents.set(`${startCol}-${startRow}-${endCol}-${endRow}-${selectId}`, {
     rect,
@@ -79,24 +91,25 @@ export function createCellSelectBorder(
       ? scene.bottomFrozenGroup
       : scene.rightBottomCornerGroup
   );
-  scene.tableGroup.insertAfter(
-    fillhandle,
-    selectRangeType === 'body'
-      ? scene.bodyGroup
-      : selectRangeType === 'columnHeader'
-      ? scene.colHeaderGroup
-      : selectRangeType === 'rowHeader'
-      ? scene.rowHeaderGroup
-      : selectRangeType === 'cornerHeader'
-      ? scene.cornerHeaderGroup
-      : selectRangeType === 'rightTopCorner'
-      ? scene.rightTopCornerGroup
-      : selectRangeType === 'rightFrozen'
-      ? scene.rightFrozenGroup
-      : selectRangeType === 'leftBottomCorner'
-      ? scene.leftBottomCornerGroup
-      : selectRangeType === 'bottomFrozen'
-      ? scene.bottomFrozenGroup
-      : scene.rightBottomCornerGroup
-  );
+  isHasFillHandleRect &&
+    scene.tableGroup.insertAfter(
+      fillhandle,
+      selectRangeType === 'body'
+        ? scene.bodyGroup
+        : selectRangeType === 'columnHeader'
+        ? scene.colHeaderGroup
+        : selectRangeType === 'rowHeader'
+        ? scene.rowHeaderGroup
+        : selectRangeType === 'cornerHeader'
+        ? scene.cornerHeaderGroup
+        : selectRangeType === 'rightTopCorner'
+        ? scene.rightTopCornerGroup
+        : selectRangeType === 'rightFrozen'
+        ? scene.rightFrozenGroup
+        : selectRangeType === 'leftBottomCorner'
+        ? scene.leftBottomCornerGroup
+        : selectRangeType === 'bottomFrozen'
+        ? scene.bottomFrozenGroup
+        : scene.rightBottomCornerGroup
+    );
 }

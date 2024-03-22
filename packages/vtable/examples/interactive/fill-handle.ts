@@ -1,0 +1,231 @@
+import * as VTable from '../../src';
+import { bindDebugTool } from '../../src/scenegraph/debug-tool';
+const CONTAINER_ID = 'vTable';
+const generatePersons = count => {
+  return Array.from(new Array(count)).map((_, i) => ({
+    id: i + 1,
+    email1: `${i + 1}@xxx.com`,
+    name: `小明${i + 1}`,
+    lastName: '王',
+    date1: '2022年9月1日',
+    tel: '000-0000-0000',
+    sex: i % 2 === 0 ? 'boy' : 'girl',
+    work: i % 2 === 0 ? 'back-end engineer' + (i + 1) : 'front-end engineer' + (i + 1),
+    city: 'beijing'
+  }));
+};
+
+export function createTable() {
+  const records = generatePersons(100);
+  const columns: VTable.ColumnsDefine = [
+    {
+      field: '',
+      title: '行号',
+      width: 80,
+      fieldFormat(data, col, row, table) {
+        return row - 1;
+      },
+      style: {
+        underline: true,
+        underlineDash: [2, 0],
+        underlineOffset: 3
+      }
+    },
+    {
+      field: 'id',
+      title: 'ID',
+      width: 'auto',
+      minWidth: 50,
+      sort: true
+    },
+    {
+      field: 'email1',
+      title: 'email',
+      width: 200,
+      sort: true,
+      style: {
+        underline: true,
+        underlineDash: [2, 0],
+        underlineOffset: 3
+      }
+    },
+    {
+      title: 'full name',
+      columns: [
+        {
+          field: 'name',
+          title: 'First Name',
+          width: 200
+        },
+        {
+          field: 'name',
+          title: 'Last Name',
+          width: 200
+        }
+      ]
+    },
+    {
+      field: 'date1',
+      title: 'birthday',
+      width: 200
+    },
+    {
+      field: 'sex',
+      title: 'sex',
+      width: 100
+    },
+    {
+      field: 'tel',
+      title: 'telephone',
+      width: 150
+    },
+    {
+      field: 'work',
+      title: 'job',
+      width: 200
+    },
+    {
+      field: 'city',
+      title: 'city',
+      width: 150
+    },
+    {
+      field: 'date1',
+      title: 'birthday',
+      width: 200
+    },
+    {
+      field: 'sex',
+      title: 'sex',
+      width: 100
+    },
+    {
+      field: 'tel',
+      title: 'telephone',
+      width: 150
+    },
+    {
+      field: 'work',
+      title: 'job',
+      width: 200
+    },
+    {
+      field: 'city',
+      title: 'city',
+      width: 150
+    },
+    {
+      field: 'date1',
+      title: 'birthday',
+      width: 200
+    },
+    {
+      field: 'sex',
+      title: 'sex',
+      width: 100
+    },
+    {
+      field: 'tel',
+      title: 'telephone',
+      width: 150
+    },
+    {
+      field: 'work',
+      title: 'job',
+      width: 200
+    },
+    {
+      field: 'city',
+      title: 'city',
+      width: 150
+    },
+    {
+      field: 'date1',
+      title: 'birthday',
+      width: 200
+    },
+    {
+      field: 'sex',
+      title: 'sex',
+      width: 100
+    },
+    {
+      field: 'tel',
+      title: 'telephone',
+      width: 150
+    },
+    {
+      field: 'work',
+      title: 'job',
+      width: 200
+    },
+    {
+      field: 'city',
+      title: 'city',
+      width: 150
+    }
+  ];
+  const option: VTable.ListTableConstructorOptions = {
+    container: document.getElementById(CONTAINER_ID),
+    records,
+    columns,
+    tooltip: {
+      isShowOverflowTextTooltip: true
+    },
+    frozenColCount: 1,
+    bottomFrozenRowCount: 2,
+    rightFrozenColCount: 2,
+    overscrollBehavior: 'none',
+    dragHeaderMode: 'all',
+    keyboardOptions: {
+      pasteValueToCell: true
+    },
+    eventOptions: {
+      preventDefaultContextMenu: false
+    },
+    excelOptions: {
+      fillHandle: true
+    },
+    autoWrapText: true,
+    theme: {
+      headerStyle: {
+        textAlign: 'left',
+        underline: true,
+
+        borderColor: ['#E1E4E8', '#E1E4E8', '#E1E4E8', '#E1E4E8']
+      }
+    }
+    // widthMode: 'adaptive'
+  };
+  const tableInstance = new VTable.ListTable(option);
+  window.tableInstance = tableInstance;
+  tableInstance.on('mousedown_fill_handle', arg => {
+    console.log('mousedown_fill_handle');
+  });
+  tableInstance.on('drag_fill_handle_end', arg => {
+    console.log('drag_fill_handle_end');
+  });
+  tableInstance.on('dblclick_fill_handle', arg => {
+    console.log('dblclick_fill_handle');
+  });
+
+  tableInstance.on('click_cell', arg => {
+    console.log('click_cell');
+  });
+  tableInstance.on('dblclick_cell', arg => {
+    console.log('dblclick_cell');
+  });
+  // setTimeout(() => {
+  //   tableInstance.addRecord({ id: 333 }, 6);
+  // }, 3000);
+  // tableInstance.on('sort_click', args => {
+  //   tableInstance.updateSortState(
+  //     {
+  //       field: args.field,
+  //       order: Date.now() % 3 === 0 ? 'desc' : Date.now() % 3 === 1 ? 'asc' : 'normal'
+  //     },
+  //     false
+  //   );
+  //   return false; //return false代表不执行内部排序逻辑
+  // });
+}
