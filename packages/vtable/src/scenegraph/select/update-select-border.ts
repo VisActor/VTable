@@ -4,15 +4,23 @@ import type { CellSubLocation } from '../../ts-types';
 import { getCellMergeInfo } from '../utils/get-cell-merge';
 
 export function updateAllSelectComponent(scene: Scenegraph) {
-  scene.selectingRangeComponents.forEach((selectComp: { rect: IRect; role: CellSubLocation }, key: string) => {
-    updateComponent(selectComp, key, scene);
-  });
-  scene.selectedRangeComponents.forEach((selectComp: { rect: IRect; role: CellSubLocation }, key: string) => {
-    updateComponent(selectComp, key, scene);
-  });
+  scene.selectingRangeComponents.forEach(
+    (selectComp: { rect: IRect; fillhandle?: IRect; role: CellSubLocation }, key: string) => {
+      updateComponent(selectComp, key, scene);
+    }
+  );
+  scene.selectedRangeComponents.forEach(
+    (selectComp: { rect: IRect; fillhandle?: IRect; role: CellSubLocation }, key: string) => {
+      updateComponent(selectComp, key, scene);
+    }
+  );
 }
 
-function updateComponent(selectComp: { rect: IRect; role: CellSubLocation }, key: string, scene: Scenegraph) {
+function updateComponent(
+  selectComp: { rect: IRect; fillhandle?: IRect; role: CellSubLocation },
+  key: string,
+  scene: Scenegraph
+) {
   const [startColStr, startRowStr, endColStr, endRowStr] = key.split('-');
   const startCol = parseInt(startColStr, 10);
   const startRow = parseInt(startRowStr, 10);
@@ -81,6 +89,10 @@ function updateComponent(selectComp: { rect: IRect; role: CellSubLocation }, key
     computeRectCellRangeStartCol,
     computeRectCellRangeStartRow
   ).globalAABBBounds;
+  const lastCellBound = scene.highPerformanceGetCell(
+    computeRectCellRangeEndCol,
+    computeRectCellRangeEndRow
+  ).globalAABBBounds;
 
   selectComp.rect.setAttributes({
     x: firstCellBound.x1 - scene.tableGroup.attribute.x, //坐标xy在下面的逻辑中会做适当调整
@@ -89,6 +101,15 @@ function updateComponent(selectComp: { rect: IRect; role: CellSubLocation }, key
     height: rowsHeight,
     visible: true
   });
+  if (selectComp.fillhandle) {
+    selectComp.fillhandle.setAttributes({
+      x: lastCellBound.x2 - scene.tableGroup.attribute.x - 3, // 调整小方块位置
+      y: lastCellBound.y2 - scene.tableGroup.attribute.y - 3, // 调整小方块位置
+      width: 6,
+      height: 6,
+      visible: true
+    });
+  }
 
   //#region 判断是不是按着表头部分的选中框 因为绘制层级的原因 线宽会被遮住一半，因此需要动态调整层级
   const isNearRowHeader = scene.table.frozenColCount ? startCol === scene.table.frozenColCount : false;
@@ -160,6 +181,10 @@ function updateComponent(selectComp: { rect: IRect; role: CellSubLocation }, key
         x: selectComp.rect.attribute.x + (scene.table.getFrozenColsWidth() - selectComp.rect.attribute.x),
         width: width > 0 ? width : 0
       });
+      // selectComp.fillhandle.setAttributes({
+      //   x: selectComp.rect.attribute.x + (scene.table.getFrozenColsWidth() - selectComp.rect.attribute.x),
+      //   width: width > 0 ? width : 0
+      // });
     }
     if (
       // selectComp.rect.attribute.x < scene.rightFrozenGroup.attribute.x &&
@@ -173,6 +198,10 @@ function updateComponent(selectComp: { rect: IRect; role: CellSubLocation }, key
         x: selectComp.rect.attribute.x,
         width: width > 0 ? width : 0
       });
+      // selectComp.fillhandle.setAttributes({
+      //   x: selectComp.rect.attribute.x,
+      //   width: width > 0 ? width : 0
+      // });
     }
     if (
       selectComp.rect.attribute.y < scene.colHeaderGroup.attribute.height &&
@@ -185,6 +214,10 @@ function updateComponent(selectComp: { rect: IRect; role: CellSubLocation }, key
         y: selectComp.rect.attribute.y + (scene.colHeaderGroup.attribute.height - selectComp.rect.attribute.y),
         height: height > 0 ? height : 0
       });
+      // selectComp.fillhandle.setAttributes({
+      //   y: selectComp.rect.attribute.y + (scene.colHeaderGroup.attribute.height - selectComp.rect.attribute.y),
+      //   height: height > 0 ? height : 0
+      // });
     }
     if (
       scene.bottomFrozenGroup.attribute.width > 0 &&
@@ -197,6 +230,10 @@ function updateComponent(selectComp: { rect: IRect; role: CellSubLocation }, key
         y: selectComp.rect.attribute.y,
         height: height > 0 ? height : 0
       });
+      // selectComp.fillhandle.setAttributes({
+      //   y: selectComp.fillhandle.attribute.y,
+      //   height: height > 0 ? height : 0
+      // });
     }
     //#endregion
   } else {
@@ -235,6 +272,9 @@ function updateComponent(selectComp: { rect: IRect; role: CellSubLocation }, key
     selectComp.rect.setAttributes({
       width: selectComp.rect.attribute.width - diffSize
     });
+    // selectComp.fillhandle.setAttributes({
+    //   width: selectComp.rect.attribute.width - diffSize
+    // });
   }
   if (startCol === 0) {
     if (Array.isArray(selectComp.rect.attribute.lineWidth)) {
@@ -244,6 +284,10 @@ function updateComponent(selectComp: { rect: IRect; role: CellSubLocation }, key
       x: selectComp.rect.attribute.x + diffSize,
       width: selectComp.rect.attribute.width - diffSize
     });
+    // selectComp.fillhandle.setAttributes({
+    //   x: selectComp.rect.attribute.x + diffSize,
+    //   width: selectComp.rect.attribute.width - diffSize
+    // });
   }
   if (endRow === scene.table.rowCount - 1) {
     if (Array.isArray(selectComp.rect.attribute.lineWidth)) {
@@ -252,6 +296,9 @@ function updateComponent(selectComp: { rect: IRect; role: CellSubLocation }, key
     selectComp.rect.setAttributes({
       height: selectComp.rect.attribute.height - diffSize
     });
+    // selectComp.fillhandle.setAttributes({
+    //   height: selectComp.rect.attribute.height - diffSize
+    // });
   }
   if (startRow === 0) {
     if (Array.isArray(selectComp.rect.attribute.lineWidth)) {
@@ -261,6 +308,10 @@ function updateComponent(selectComp: { rect: IRect; role: CellSubLocation }, key
       y: selectComp.rect.attribute.y + diffSize,
       height: selectComp.rect.attribute.height - diffSize
     });
+    // selectComp.fillhandle.setAttributes({
+    //   y: selectComp.rect.attribute.y + diffSize,
+    //   height: selectComp.rect.attribute.height - diffSize
+    // });
   }
   //#endregion
 }
@@ -339,9 +390,12 @@ export function updateCellSelectBorder(
   };
   extendSelectRange();
   //#endregion
-  scene.selectingRangeComponents.forEach((selectComp: { rect: IRect; role: CellSubLocation }, key: string) => {
-    selectComp.rect.delete();
-  });
+  scene.selectingRangeComponents.forEach(
+    (selectComp: { rect: IRect; fillhandle?: IRect; role: CellSubLocation }, key: string) => {
+      selectComp.rect.delete();
+      selectComp.fillhandle.delete();
+    }
+  );
   scene.selectingRangeComponents = new Map();
 
   let needRowHeader = false;

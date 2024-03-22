@@ -17,7 +17,7 @@ export function createCellSelectBorder(
   const endCol = Math.max(start_Col, end_Col);
   const endRow = Math.max(start_Row, end_Row);
   const firstCellBound = scene.highPerformanceGetCell(startCol, startRow).globalAABBBounds;
-
+  const lastCellBound = scene.highPerformanceGetCell(endCol, endRow).globalAABBBounds;
   const theme = scene.table.theme;
   // 框选外边框
   const bodyClickBorderColor = theme.selectionStyle?.cellBorderColor;
@@ -25,6 +25,7 @@ export function createCellSelectBorder(
   const rect = createRect({
     pickable: false,
     fill: (theme.selectionStyle?.cellBgColor as any) ?? 'rgba(0, 0, 255,0.1)',
+
     lineWidth: bodyClickLineWidth as number,
     // stroke: bodyClickBorderColor as string,
     stroke: strokes.map(stroke => {
@@ -39,13 +40,47 @@ export function createCellSelectBorder(
     height: 0,
     visible: true
   });
+  // 创建右下角小方块
+  const fillhandle = createRect({
+    pickable: false,
+    fill: bodyClickBorderColor as string,
+    // lineWidth: bodyClickLineWidth as number,
+    stroke: bodyClickBorderColor as string, // 右下角小方块边框颜色
+    x: lastCellBound.x2 - 3, // 调整小方块位置
+    y: lastCellBound.y2 - 3, // 调整小方块位置
+    width: 6,
+    height: 6,
+
+    visible: true
+  });
   scene.lastSelectId = selectId;
   scene.selectingRangeComponents.set(`${startCol}-${startRow}-${endCol}-${endRow}-${selectId}`, {
     rect,
+    fillhandle,
     role: selectRangeType
   });
   scene.tableGroup.insertAfter(
     rect,
+    selectRangeType === 'body'
+      ? scene.bodyGroup
+      : selectRangeType === 'columnHeader'
+      ? scene.colHeaderGroup
+      : selectRangeType === 'rowHeader'
+      ? scene.rowHeaderGroup
+      : selectRangeType === 'cornerHeader'
+      ? scene.cornerHeaderGroup
+      : selectRangeType === 'rightTopCorner'
+      ? scene.rightTopCornerGroup
+      : selectRangeType === 'rightFrozen'
+      ? scene.rightFrozenGroup
+      : selectRangeType === 'leftBottomCorner'
+      ? scene.leftBottomCornerGroup
+      : selectRangeType === 'bottomFrozen'
+      ? scene.bottomFrozenGroup
+      : scene.rightBottomCornerGroup
+  );
+  scene.tableGroup.insertAfter(
+    fillhandle,
     selectRangeType === 'body'
       ? scene.bodyGroup
       : selectRangeType === 'columnHeader'
