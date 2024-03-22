@@ -1,10 +1,10 @@
 import type { FederatedEvent, IGroup } from '@src/vrender';
 import { createRect, Text } from '@src/vrender';
 import { TABLE_EVENT_TYPE } from '../../core/TABLE_EVENT_TYPE';
-import type { MenuListItem } from '../../ts-types';
+import type { ColumnDefine, MenuListItem } from '../../ts-types';
 import { Group } from '../graphic/group';
 import { Icon } from '../graphic/icon';
-import type { BaseTableAPI } from '../../ts-types/base-table';
+import type { BaseTableAPI, HeaderData } from '../../ts-types/base-table';
 
 /**
  * 菜单类型
@@ -275,7 +275,10 @@ export class MenuHandler {
    */
   getMenuInfo(col: number, row: number, type: MenuType) {
     if (type === MenuType.dropDown) {
-      const { dropDownMenu = this._table.globalDropDownMenu, pivotInfo } = this._table._getHeaderLayoutMap(col, row);
+      const { dropDownMenu = this._table.globalDropDownMenu, pivotInfo } = this._table._getHeaderLayoutMap(
+        col,
+        row
+      ) as HeaderData;
       let highlightIndex = -1;
       if (Array.isArray(dropDownMenu)) {
         for (let i = 0; i < dropDownMenu.length; i++) {
@@ -295,9 +298,11 @@ export class MenuHandler {
       if (Array.isArray(contextmenu)) {
         menuInfo = contextmenu;
       } else if (typeof contextmenu === 'function') {
-        const { field } = this._table.isHeader(col, row)
-          ? this._table.getHeaderDefine(col, row)
-          : this._table.getBodyColumnDefine(col, row);
+        const { field } = (
+          this._table.isHeader(col, row)
+            ? this._table.getHeaderDefine(col, row)
+            : this._table.getBodyColumnDefine(col, row)
+        ) as ColumnDefine;
         menuInfo = contextmenu(field, row, col);
       }
       return {

@@ -690,8 +690,14 @@ export class Scenegraph {
     deleteAllSelectBorder(this);
   }
 
-  updateCellSelectBorder(newStartCol: number, newStartRow: number, newEndCol: number, newEndRow: number) {
-    updateCellSelectBorder(this, newStartCol, newStartRow, newEndCol, newEndRow);
+  updateCellSelectBorder(
+    newStartCol: number,
+    newStartRow: number,
+    newEndCol: number,
+    newEndRow: number,
+    extendSelectRange: boolean = true
+  ) {
+    updateCellSelectBorder(this, newStartCol, newStartRow, newEndCol, newEndRow, extendSelectRange);
   }
 
   removeFillHandleFromSelectComponents() {

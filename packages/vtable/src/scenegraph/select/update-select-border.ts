@@ -321,7 +321,8 @@ export function updateCellSelectBorder(
   newStartCol: number,
   newStartRow: number,
   newEndCol: number,
-  newEndRow: number
+  newEndRow: number,
+  ifExtendSelectRange: boolean = true
 ) {
   let startCol = Math.max(Math.min(newEndCol, newStartCol), 0);
   let startRow = Math.max(Math.min(newEndRow, newStartRow), 0);
@@ -388,7 +389,7 @@ export function updateCellSelectBorder(
       extendSelectRange();
     }
   };
-  extendSelectRange();
+  ifExtendSelectRange && extendSelectRange();
   //#endregion
   scene.selectingRangeComponents.forEach(
     (selectComp: { rect: IRect; fillhandle?: IRect; role: CellSubLocation }, key: string) => {

@@ -95,6 +95,11 @@
   position: relative;
 }
 
+/* #live-demo-additional-container {
+  width: 100%;
+  height: 400px;
+} */
+
 .markdown-container table {
   border: solid 1px #dddddd;
   border-collapse: collapse;
