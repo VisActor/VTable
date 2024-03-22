@@ -2,6 +2,18 @@
   "name": "@visactor/vtable",
   "entries": [
     {
+      "version": "0.22.1",
+      "tag": "@visactor/vtable_v0.22.1",
+      "date": "Fri, 22 Mar 2024 11:26:30 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "feat: add openinula-vtable"
+          }
+        ]
+      }
+    },
+    {
       "version": "0.22.0",
       "tag": "@visactor/vtable_v0.22.0",
       "date": "Fri, 22 Mar 2024 10:54:02 GMT",
