@@ -2,7 +2,7 @@
 category: examples
 group: usage
 title: 使用完整option
-cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/react-default.png
+cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/react-default-new.png
 order: 1-1
 link: '../guide/Developer_Ecology/openinula'
 ---
