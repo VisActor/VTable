@@ -1,3 +1,4 @@
+import type { SimpleHeaderLayoutMap } from '../../layout';
 import type { Scenegraph } from '../../scenegraph/scenegraph';
 import { InteractionState } from '../../ts-types';
 import type { StateManager } from '../state';
@@ -63,7 +64,8 @@ export function updateSelectPosition(
       currentRange.start.col,
       currentRange.start.row,
       currentRange.end.col,
-      currentRange.end.row
+      currentRange.end.row,
+      false
     );
   } else if (cellPos.col !== -1 && cellPos.row !== -1 && (col === -1 || row === -1)) {
     // 输入-1清空选中状态
@@ -117,6 +119,7 @@ export function updateSelectPosition(
       //   // 更新select border
       //   scenegraph.updateCellSelectBorder(cellPos.col, cellPos.row, cellPos.col, cellPos.row);
     } else {
+      let extendSelectRange = true;
       // 单选或多选开始
       if (cellPos.col !== -1 && cellPos.row !== -1 && !isCtrl) {
         state.select.ranges = [];
@@ -134,6 +137,18 @@ export function updateSelectPosition(
           start: { col, row: cellRange.start.row },
           end: { col: table.colCount - 1, row: cellRange.end.row }
         });
+      } else if ((table.internalProps.layoutMap as SimpleHeaderLayoutMap).isSeriesNumberInHeader(col, row)) {
+        extendSelectRange = false;
+        state.select.ranges.push({
+          start: { col: 0, row: 0 },
+          end: { col: table.colCount - 1, row: table.rowCount - 1 }
+        });
+      } else if ((table.internalProps.layoutMap as SimpleHeaderLayoutMap).isSeriesNumberInBody(col, row)) {
+        extendSelectRange = false;
+        state.select.ranges.push({
+          start: { col, row: row },
+          end: { col: table.colCount - 1, row: row }
+        });
       } else if (col >= 0 && row >= 0) {
         const cellRange = table.getCellRange(col, row);
         state.select.ranges.push({
@@ -150,10 +165,12 @@ export function updateSelectPosition(
           currentRange.start.col,
           currentRange.start.row,
           currentRange.end.col,
-          currentRange.end.row
+          currentRange.end.row,
+          extendSelectRange
         );
     }
   } else if (interactionState === InteractionState.grabing && !table.stateManager.isResizeCol()) {
+    let extendSelectRange = true;
     // 可能有cellPosStart从-1开始grabing的情况
     if (cellPos.col === -1) {
       cellPos.col = col;
@@ -161,15 +178,36 @@ export function updateSelectPosition(
     if (cellPos.row === -1) {
       cellPos.row = row;
     }
-    const currentRange = state.select.ranges[state.select.ranges.length - 1];
-    currentRange &&
-      (currentRange.end = {
-        col,
-        row
-      });
     cellPos.col = col;
     cellPos.row = row;
-    currentRange && scenegraph.updateCellSelectBorder(currentRange.start.col, currentRange.start.row, col, row);
+    const currentRange = state.select.ranges[state.select.ranges.length - 1];
+    if (currentRange) {
+      if (
+        (table.internalProps.layoutMap as SimpleHeaderLayoutMap).isSeriesNumberInBody(
+          currentRange.start.col,
+          currentRange.start.row
+        )
+      ) {
+        // 如果选中起始位置是序号 那么选中范围都是整行整行的选中
+        extendSelectRange = false;
+        currentRange.end = {
+          col: table.colCount - 1,
+          row
+        };
+      } else {
+        currentRange.end = {
+          col,
+          row
+        };
+      }
+      scenegraph.updateCellSelectBorder(
+        currentRange.start.col,
+        currentRange.start.row,
+        currentRange.end.col,
+        currentRange.end.row,
+        extendSelectRange
+      );
+    }
   }
   scenegraph.updateNextFrame();
 }

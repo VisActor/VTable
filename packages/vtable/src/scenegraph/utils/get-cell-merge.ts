@@ -1,4 +1,4 @@
-import type { CellRange, TextColumnDefine } from '../../ts-types';
+import type { CellRange, ColumnDefine, TextColumnDefine } from '../../ts-types';
 import type { BaseTableAPI } from '../../ts-types/base-table';
 
 /**
@@ -16,7 +16,7 @@ export function getCellMergeInfo(table: BaseTableAPI, col: number, row: number):
       return customMerge.range;
     }
   }
-  if (!table.isHeader(col, row) && !table.getBodyColumnDefine(col, row)?.mergeCell) {
+  if (!table.isHeader(col, row) && !(table.getBodyColumnDefine(col, row) as ColumnDefine)?.mergeCell) {
     return false;
   }
   const range = table.getCellRange(col, row);

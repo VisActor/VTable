@@ -81,6 +81,18 @@ export const menus = [
       },
       {
         path: 'list',
+        name: 'list-rowSeriesNumber'
+      },
+      {
+        path: 'list',
+        name: 'list-transpose-rowSeriesNumber'
+      },
+      {
+        path: 'list',
+        name: 'list-tree-rowSeriesNumber'
+      },
+      {
+        path: 'list',
         name: 'list-merge-cell'
       },
       {
@@ -132,6 +144,18 @@ export const menus = [
       {
         path: 'pivot',
         name: 'pivot-tree'
+      },
+      {
+        path: 'pivot',
+        name: 'pivot-rowSeriesNumber'
+      },
+      {
+        path: 'pivot',
+        name: 'pivot-rowSeriesNumber-rowTitle'
+      },
+      {
+        path: 'pivot',
+        name: 'pivot-tree-rowSeriesNumber'
       }
     ]
   },

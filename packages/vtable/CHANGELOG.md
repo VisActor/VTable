@@ -1,27 +1,21 @@
 # Change Log - @visactor/vtable
 
-This log was last generated on Wed, 20 Mar 2024 10:48:31 GMT and should not be manually modified.
+This log was last generated on Fri, 22 Mar 2024 10:54:02 GMT and should not be manually modified.
 
-## 0.21.3
-Wed, 20 Mar 2024 10:48:31 GMT
+## 0.22.0
+Fri, 22 Mar 2024 10:54:02 GMT
+
+### Minor changes
+
+- feat: support rowSeriesNumber #968
+
+
+- feat: record data support set hierarchyState
+
+
 
 ### Updates
 
-- fix: mapping colorMap not work #1295
-
-
-- fix: when copy blank cell and paste to cell change to undefined #1298
-
-
-- fix:  bug datasource lazy load edit cell value invalid #1302
-
-
-- docs: add list table tree mode guide
-
-
-- fix: fix cell progress create content size
-- fix: fix row level in getCellAdressByHeaderPath()
-- fix: use default style in exportCellImg()
 - fix: fix typeError in getCellMergeRange()
 
 ## 0.21.2

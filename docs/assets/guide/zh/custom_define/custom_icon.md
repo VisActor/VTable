@@ -1,10 +1,10 @@
-# icon使用
+# icon 使用
 
 在 VTable 中，我们可以使用自定义图标功能来提高表格的可读性和视觉效果。本教程将主要介绍 icon 的使用方式、注册方法以及如何重置功能图标。
 
 ## 定义 icon
 
-我们可以通过 icon 和 headerIcon 来分别分别配置表头及body显示的单元格图标：
+我们可以通过 icon 和 headerIcon 来分别分别配置表头及 body 显示的单元格图标：
 
 - `headerIcon` 表头单元格图标配置，它可以帮助我们设置表头的图标样式。配置项根据 `ColumnIconOption` 的类型进行定义，具体可以参考给定的配置。
 
@@ -20,8 +20,8 @@
 const tableInstance = new VTable.ListTable({
   columns: [
     {
-      field: "orderID",
-      title: "订单编号",
+      field: 'orderID',
+      title: '订单编号',
       headerIcon: {
         type: 'svg', //指定svg格式图标，其他还支持path，image
         svg: `<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 12 12" fill="none">
@@ -36,17 +36,17 @@ const tableInstance = new VTable.ListTable({
           // 热区大小
           width: 26,
           height: 26,
-          bgColor: 'rgba(22,44,66,0.5)',
+          bgColor: 'rgba(22,44,66,0.5)'
         },
         tooltip: {
           style: { arrowMark: false },
           // 气泡框，按钮的的解释信息
           title: '过滤',
-          placement: VTable.TYPES.Placement.right,
-        },
+          placement: VTable.TYPES.Placement.right
+        }
       }
-    },
-  ],
+    }
+  ]
 });
 ```
 
@@ -62,8 +62,8 @@ const tableInstance = new VTable.ListTable({
 const tableInstance = new VTable.ListTable({
   columns: [
     {
-      field: "orderID",
-      title: "订单编号",
+      field: 'orderID',
+      title: '订单编号',
       icon: {
         type: 'image',
         src: 'avatar', // src从records中field位avator的字段中取值
@@ -75,18 +75,18 @@ const tableInstance = new VTable.ListTable({
         positionType: VTable.TYPES.IconPosition.contentLeft,
         marginRight: 20,
         marginLeft: 0,
-        cursor: 'pointer',
-      },
-    },
-  ],
+        cursor: 'pointer'
+      }
+    }
+  ]
 });
 ```
 
-这个示例中，我们为单元格配置了一个名为 `Avatar` 的图标。该图标的作用是用来显示头像图片，图片src的值是从records的avator的字段中获取到的。
+这个示例中，我们为单元格配置了一个名为 `Avatar` 的图标。该图标的作用是用来显示头像图片，图片 src 的值是从 records 的 avator 的字段中获取到的。
 
 效果图片：TODO
 
-## 如何注册icon及注册后的使用
+## 如何注册 icon 及注册后的使用
 
 在 VTable 中，通过 `register.icon` 方法，我们可以注册自定义图标，并在表格中使用。如果想替换内置的功能图标，也可以通过注册来实现。
 
@@ -95,20 +95,20 @@ const tableInstance = new VTable.ListTable({
 假设我们需要注册一个名为 `order` 的图标，代码如下：
 
 ```javascript
-VTable.register.icon("order", {
-  type: "svg",
-  svg: "http://" + window.location.host + "/mock-data/order.svg",
+VTable.register.icon('order', {
+  type: 'svg',
+  svg: 'http://' + window.location.host + '/mock-data/order.svg',
   width: 22,
   height: 22,
-  name: "order",
+  name: 'order',
   positionType: VTable.TYPES.IconPosition.left,
   marginRight: 0,
   hover: {
     width: 22,
     height: 22,
-    bgColor: "rgba(101, 117, 168, 0.1)",
+    bgColor: 'rgba(101, 117, 168, 0.1)'
   },
-  cursor: "pointer",
+  cursor: 'pointer'
 });
 ```
 
@@ -120,12 +120,12 @@ VTable.register.icon("order", {
 const tableInstance = new VTable.PivotTable({
   columns: [
     {
-      field: "orderID",
-      title: "订单编号",
-      headerIcon: "order",
-      icon: "order",
-    },
-  ],
+      field: 'orderID',
+      title: '订单编号',
+      headerIcon: 'order',
+      icon: 'order'
+    }
+  ]
 });
 ```
 
@@ -140,81 +140,83 @@ const tableInstance = new VTable.PivotTable({
 假设我们需要替换内置的 frozen 冻结功能的相关图标，代码如下：
 
 ```javascript
-VTable.register.icon("freeze", {
-  type: "svg",
-  svg: "http://" + window.location.host + "/mock-data/freeze.svg",
+VTable.register.icon('freeze', {
+  type: 'svg',
+  svg: 'http://' + window.location.host + '/mock-data/freeze.svg',
   width: 22,
   height: 22,
-  name: "freeze",
+  name: 'freeze',
   positionType: VTable.TYPES.IconPosition.left,
   marginRight: 0,
   funcType: VTable.TYPES.IconFuncTypeEnum.frozen,
   hover: {
     width: 22,
     height: 22,
-    bgColor: "rgba(101, 117, 168, 0.1)",
+    bgColor: 'rgba(101, 117, 168, 0.1)'
   },
-  cursor: "pointer",
+  cursor: 'pointer'
 });
 
-VTable.register.icon("frozen", {
-  type: "svg",
-  svg: "http://" + window.location.host + "/mock-data/frozen.svg",
+VTable.register.icon('frozen', {
+  type: 'svg',
+  svg: 'http://' + window.location.host + '/mock-data/frozen.svg',
   width: 22,
   height: 22,
-  name: "frozen",
+  name: 'frozen',
   positionType: VTable.TYPES.IconPosition.left,
   marginRight: 0,
   funcType: VTable.TYPES.IconFuncTypeEnum.frozen,
   hover: {
     width: 22,
     height: 22,
-    bgColor: "rgba(101, 117, 168, 0.1)",
+    bgColor: 'rgba(101, 117, 168, 0.1)'
   },
-  cursor: "pointer",
+  cursor: 'pointer'
 });
 
-VTable.register.icon("frozenCurrent", {
-  type: "svg",
-  svg: "http://" + window.location.host + "/mock-data/frozenCurrent.svg",
+VTable.register.icon('frozenCurrent', {
+  type: 'svg',
+  svg: 'http://' + window.location.host + '/mock-data/frozenCurrent.svg',
   width: 22,
   height: 22,
-  name: "frozenCurrent",
+  name: 'frozenCurrent',
   positionType: VTable.TYPES.IconPosition.left,
   marginRight: 0,
   funcType: VTable.TYPES.IconFuncTypeEnum.frozen,
   hover: {
     width: 22,
     height: 22,
-    bgColor: "rgba(101, 117, 168, 0.1)",
+    bgColor: 'rgba(101, 117, 168, 0.1)'
   },
-  cursor: "pointer",
+  cursor: 'pointer'
 });
 ```
 
 替换后的效果如：
 TODO
 
-同样的方法，我们可以替换其他功能性图标。在VTable中内置了几种关联内部功能的图标，如排序，固定列，下拉菜单图标，展开折叠图标等。
+同样的方法，我们可以替换其他功能性图标。在 VTable 中内置了几种关联内部功能的图标，如排序，固定列，下拉菜单图标，展开折叠图标等。
 
 可重置内部图标列表如下：
 
-|功能|配置funcType|配置name|图标描述|
-|:----|:----|:----|:----|
-|排序|VTable.TYPES.IconFuncTypeEnum.sort|"sort_normal"|排序功能图标 正常未排序状态|
-|排序|VTable.TYPES.IconFuncTypeEnum.sort|"sort_upward"|排序功能图标 升序状态|
-|排序|VTable.TYPES.IconFuncTypeEnum.sort|"sort_downward"|排序功能图标 降序状态|
-|固定列|VTable.TYPES.IconFuncTypeEnum.frozen|"freeze"|固定列功能图标 可固定状态|
-|固定列|VTable.TYPES.IconFuncTypeEnum.frozen|"frozen"|固定列功能图标 已固定状态|
-|固定列|VTable.TYPES.IconFuncTypeEnum.frozen|"frozenCurrent"|固定列功能图标 被冻结当列|
-|图片or视频地址失效|VTable.TYPES.IconFuncTypeEnum.damagePic|"damage_pic"|多媒体资源解析失败|
-|树形结构折叠|VTable.TYPES.IconFuncTypeEnum.collapse|"collapse"|树形结构折叠状态|
-|树形结构展开|VTable.TYPES.IconFuncTypeEnum.expand|"expand"|树形结构展开状态|
-|树形结构折叠|VTable.TYPES.IconFuncTypeEnum.collapse|"collapse"|树形结构折叠状态|
-|下拉菜单|VTable.TYPES.IconFuncTypeEnum.dropDown|"downward"|下拉图标正常状态|
-|下拉菜单|VTable.TYPES.IconFuncTypeEnum.dropDown|"downward_hover"|下拉图标hover状态|
+| 功能                 | 配置 funcType                             | 配置 name        | 图标描述                                  |
+| :------------------- | :---------------------------------------- | :--------------- | :---------------------------------------- |
+| 排序                 | VTable.TYPES.IconFuncTypeEnum.sort        | "sort_normal"    | 排序功能图标 正常未排序状态               |
+| 排序                 | VTable.TYPES.IconFuncTypeEnum.sort        | "sort_upward"    | 排序功能图标 升序状态                     |
+| 排序                 | VTable.TYPES.IconFuncTypeEnum.sort        | "sort_downward"  | 排序功能图标 降序状态                     |
+| 固定列               | VTable.TYPES.IconFuncTypeEnum.frozen      | "freeze"         | 固定列功能图标 可固定状态                 |
+| 固定列               | VTable.TYPES.IconFuncTypeEnum.frozen      | "frozen"         | 固定列功能图标 已固定状态                 |
+| 固定列               | VTable.TYPES.IconFuncTypeEnum.frozen      | "frozenCurrent"  | 固定列功能图标 被冻结当列                 |
+| 图片 or 视频地址失效 | VTable.TYPES.IconFuncTypeEnum.damagePic   | "damage_pic"     | 多媒体资源解析失败                        |
+| 树形结构折叠         | VTable.TYPES.IconFuncTypeEnum.collapse    | "collapse"       | 树形结构折叠状态                          |
+| 树形结构展开         | VTable.TYPES.IconFuncTypeEnum.expand      | "expand"         | 树形结构展开状态                          |
+| 树形结构折叠         | VTable.TYPES.IconFuncTypeEnum.collapse    | "collapse"       | 树形结构折叠状态                          |
+| 下拉菜单             | VTable.TYPES.IconFuncTypeEnum.dropDown    | "downward"       | 下拉图标正常状态                          |
+| 下拉菜单             | VTable.TYPES.IconFuncTypeEnum.dropDown    | "downward_hover" | 下拉图标 hover 状态                       |
+| 行拖拽               | VTable.TYPES.IconFuncTypeEnum.dragReorder | "dragReorder"    | 拖拽行顺序，配置了 rowSeriesNumber 时可见 |
 
-**需要注意的是**：列表中的内置图表都有其特殊的功能，可以重置，但不能自行使用到headerIcon或者icon的定义中！如下错误用法：
+**需要注意的是**：列表中的内置图表都有其特殊的功能，可以重置，但不能自行配置在 headerIcon 或者 icon 的定义中！如下错误用法：
+
 ```
   columns: [
     {
@@ -226,5 +228,7 @@ TODO
     },
   ]
 ```
+
+同时自己业务中注册的图标，不需要配置`funcType`。
 
 至此，关于 VTable 中 icon 的使用方法、注册和替换功能图标的教程就全部介绍完毕。希望本教程能帮助您更好地理解和使用 VTable，打造出更加优美、实用的数据可视化表格

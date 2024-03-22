@@ -46,6 +46,7 @@ export class CachedDataSource extends DataSource {
     dataConfig?: IListTableDataConfig,
     pagination?: IPagination,
     columnObjs?: ColumnData[],
+    rowHierarchyType?: 'grid' | 'tree',
     hierarchyExpandLevel?: number
   ): CachedDataSource {
     return new CachedDataSource(
@@ -62,6 +63,7 @@ export class CachedDataSource extends DataSource {
       dataConfig,
       pagination,
       columnObjs,
+      rowHierarchyType,
       hierarchyExpandLevel
     );
   }
@@ -70,9 +72,10 @@ export class CachedDataSource extends DataSource {
     dataConfig?: IListTableDataConfig,
     pagination?: IPagination,
     columnObjs?: ColumnData[],
+    rowHierarchyType?: 'grid' | 'tree',
     hierarchyExpandLevel?: number
   ) {
-    super(opt, dataConfig, pagination, columnObjs, hierarchyExpandLevel);
+    super(opt, dataConfig, pagination, columnObjs, rowHierarchyType, hierarchyExpandLevel);
     this._recordCache = {};
     this._fieldCache = {};
   }
