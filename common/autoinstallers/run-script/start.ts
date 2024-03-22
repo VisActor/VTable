@@ -10,13 +10,16 @@ function run() {
   const fe = projects.findProjectByShorthandName("@bit-cloud/fe");
 
   if (server && fe) {
-    spawn("sh", ["-c", "rushx dev"], {
+    const command = process.platform === "win32" ? "cmd" : "sh";
+    const args = process.platform === "win32" ? ["/c", "rushx dev"] : ["-c", "rushx dev"];
+
+    spawn(command, args, {
       cwd: server.projectFolder,
       shell: false,
       stdio: [0, 1, 2],
     });
 
-    spawn("sh", ["-c", "rushx dev"], {
+    spawn(command, args, {
       cwd: fe.projectFolder,
       shell: false,
       stdio: [0, 1, 2],

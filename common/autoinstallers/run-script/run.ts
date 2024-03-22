@@ -16,7 +16,10 @@ function run() {
   const targetProject = projects.findProjectByShorthandName(argv.project!);
 
   if (targetProject) {
-    spawnSync("sh", ["-c", `rushx ${argv.script}`], {
+    const command = process.platform === "win32" ? "cmd" : "sh";
+    const args = process.platform === "win32" ? ["/c", `rushx ${argv.script}`] : ["-c", `rushx ${argv.script}`];
+
+    spawnSync(command, args, {
       cwd: targetProject?.projectFolder,
       shell: false,
       stdio: [0, 1, 2],
