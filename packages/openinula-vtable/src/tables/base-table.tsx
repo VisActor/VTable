@@ -22,6 +22,8 @@ import type {
 } from '../eventsUtils';
 import { bindEventsToTable, TABLE_EVENTS_KEYS, TABLE_EVENTS } from '../eventsUtils';
 
+const React = Inula; // hack for createElement, wait for fixed in gulp config
+
 export type IVTable = VTable.ListTable | VTable.PivotTable | VTable.PivotChart;
 export type IOption =
   | VTable.ListTableConstructorOptions
