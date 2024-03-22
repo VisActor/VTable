@@ -2,6 +2,26 @@
   "name": "@visactor/vtable",
   "entries": [
     {
+      "version": "0.22.0",
+      "tag": "@visactor/vtable_v0.22.0",
+      "date": "Fri, 22 Mar 2024 10:54:02 GMT",
+      "comments": {
+        "minor": [
+          {
+            "comment": "feat: support rowSeriesNumber #968\n\n"
+          },
+          {
+            "comment": "feat: record data support set hierarchyState\n\n"
+          }
+        ],
+        "none": [
+          {
+            "comment": "fix: fix typeError in getCellMergeRange()"
+          }
+        ]
+      }
+    },
+    {
       "version": "0.21.2",
       "tag": "@visactor/vtable_v0.21.2",
       "date": "Thu, 14 Mar 2024 02:24:21 GMT",

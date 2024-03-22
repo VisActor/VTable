@@ -1,6 +1,22 @@
 # Change Log - @visactor/vtable
 
-This log was last generated on Thu, 14 Mar 2024 02:24:21 GMT and should not be manually modified.
+This log was last generated on Fri, 22 Mar 2024 10:54:02 GMT and should not be manually modified.
+
+## 0.22.0
+Fri, 22 Mar 2024 10:54:02 GMT
+
+### Minor changes
+
+- feat: support rowSeriesNumber #968
+
+
+- feat: record data support set hierarchyState
+
+
+
+### Updates
+
+- fix: fix typeError in getCellMergeRange()
 
 ## 0.21.2
 Thu, 14 Mar 2024 02:24:21 GMT
