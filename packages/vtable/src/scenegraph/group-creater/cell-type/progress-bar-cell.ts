@@ -5,6 +5,7 @@ import { Group } from '../../graphic/group';
 import { getProp } from '../../utils/get-prop';
 import { getQuadProps } from '../../utils/padding';
 import type { BaseTableAPI } from '../../../ts-types/base-table';
+import { isNumber } from '@visactor/vutils';
 
 export function createProgressBarCell(
   progressBarDefine: {
@@ -33,9 +34,13 @@ export function createProgressBarCell(
   const height = table.getRowHeight(row);
   let contentWidth = width;
   let contentHeight = height;
+  let _contentOffset = 0;
+  if (isNumber(table.theme._contentOffset)) {
+    _contentOffset = table.theme._contentOffset;
+  }
   const percentCompleteBarGroup = new Group({
-    x: 0,
-    y: 0,
+    x: -_contentOffset,
+    y: -_contentOffset,
     width: contentWidth,
     height: contentHeight
   });
