@@ -229,9 +229,9 @@ export function bindContainerDomListener(eventManager: EventManager) {
           for (const item of clipboardItems) {
             // 优先处理 html 格式数据
             if (item.types.includes('text/html')) {
-              copyHtmlToTable(item);
+              pasteHtmlToTable(item);
             } else if (item.types.length === 1 && item.types[0] === 'text/plain') {
-              copyTextToTable(item);
+              pasteTextToTable(item);
             } else {
               // 其他情况
             }
@@ -254,7 +254,7 @@ export function bindContainerDomListener(eventManager: EventManager) {
     }
     table.resize();
   });
-  function copyHtmlToTable(item: ClipboardItem) {
+  function pasteHtmlToTable(item: ClipboardItem) {
     const ranges = table.stateManager.select.ranges;
     const selectRangeLength = ranges.length;
     const col = Math.min(ranges[selectRangeLength - 1].start.col, ranges[selectRangeLength - 1].end.col);
@@ -307,32 +307,8 @@ export function bindContainerDomListener(eventManager: EventManager) {
           navigator.clipboard.read().then(clipboardItems => {
             for (const item of clipboardItems) {
               if (item.types.includes('text/plain')) {
-                item.getType('text/plain').then(blob => {
-                  blob.text().then(pastedData => {
-                    const rows = pastedData.split('\n'); // 将数据拆分为行
-                    rows.forEach(function (rowCells: any, rowIndex: number) {
-                      const cells = rowCells.split('\t'); // 将行数据拆分为单元格
-                      const rowValues: (string | number)[] = [];
-                      values.push(rowValues);
-                      cells.forEach(function (cell: string, cellIndex: number) {
-                        // 去掉单元格数据末尾的 '\r'
-                        if (cellIndex === cells.length - 1) {
-                          cell = cell.trim();
-                        }
-                        rowValues.push(cell);
-                      });
-                      pasteValuesColCount = Math.max(pasteValuesColCount, rowValues?.length ?? 0);
-                    });
-                    pasteValuesRowCount = values.length ?? 0;
-                    values = handlePasteValues(
-                      values,
-                      pasteValuesRowCount,
-                      pasteValuesColCount,
-                      maxRow - row + 1,
-                      maxCol - col + 1
-                    );
-                    (table as ListTableAPI).changeCellValues(col, row, values, true);
-                  });
+                item.getType('text/plain').then((blob: Blob) => {
+                  blob.text().then(_pasteValue);
                 });
               }
             }
@@ -341,8 +317,8 @@ export function bindContainerDomListener(eventManager: EventManager) {
       });
     });
   }
-  function copyTextToTable(item: ClipboardItem) {
-    // 如果只有 'text/plain'
+
+  function _pasteValue(pastedData: string) {
     const ranges = table.stateManager.select.ranges;
     const selectRangeLength = ranges.length;
     const col = Math.min(ranges[selectRangeLength - 1].start.col, ranges[selectRangeLength - 1].end.col);
@@ -352,10 +328,39 @@ export function bindContainerDomListener(eventManager: EventManager) {
     let pasteValuesColCount = 0;
     let pasteValuesRowCount = 0;
     let values: (string | number)[][] = [];
+    const rows = pastedData.split('\n'); // 将数据拆分为行
+    rows.forEach(function (rowCells: any, rowIndex: number) {
+      const cells = rowCells.split('\t'); // 将行数据拆分为单元格
+      const rowValues: (string | number)[] = [];
+      values.push(rowValues);
+      cells.forEach(function (cell: string, cellIndex: number) {
+        // 去掉单元格数据末尾的 '\r'
+        if (cellIndex === cells.length - 1) {
+          cell = cell.trim();
+        }
+        rowValues.push(cell);
+      });
+      pasteValuesColCount = Math.max(pasteValuesColCount, rowValues?.length ?? 0);
+    });
+    pasteValuesRowCount = values.length ?? 0;
+    values = handlePasteValues(values, pasteValuesRowCount, pasteValuesColCount, maxRow - row + 1, maxCol - col + 1);
+    (table as ListTableAPI).changeCellValues(col, row, values, true);
+  }
+  function pasteTextToTable(item: ClipboardItem) {
+    // 如果只有 'text/plain'
+    const ranges = table.stateManager.select.ranges;
+    const selectRangeLength = ranges.length;
+    const col = Math.min(ranges[selectRangeLength - 1].start.col, ranges[selectRangeLength - 1].end.col);
+    const row = Math.min(ranges[selectRangeLength - 1].start.row, ranges[selectRangeLength - 1].end.row);
+    const maxCol = Math.max(ranges[selectRangeLength - 1].start.col, ranges[selectRangeLength - 1].end.col);
+    const maxRow = Math.max(ranges[selectRangeLength - 1].start.row, ranges[selectRangeLength - 1].end.row);
+    let pasteValuesColCount = 0;
+    let pasteValuesRowCount = 0;
+    // const values: (string | number)[][] = [];
     item.getType('text/plain').then((blob: any) => {
       blob.text().then((pastedData: any) => {
         const rows = pastedData.replace(/\r(?!\n)/g, '\r\n').split('\r\n'); // 文本中的换行符格式进行统一处理
-        const values: (string | number)[][] = [];
+        let values: (string | number)[][] = [];
         if (rows.length > 1 && rows[rows.length - 1] === '') {
           rows.pop();
         }
@@ -370,14 +375,20 @@ export function bindContainerDomListener(eventManager: EventManager) {
                 .replace(/["]*/g, match => new Array(Math.floor(match.length / 2)).fill('"').join('')); // 连续出现的双引号替换为一半数量的双引号
             }
             rowValues.push(cell);
-            pasteValuesColCount = Math.max(pasteValuesColCount, rowValues?.length ?? 0);
           });
+          pasteValuesColCount = Math.max(pasteValuesColCount, rowValues?.length ?? 0);
         });
+        pasteValuesRowCount = values.length ?? 0;
+        values = handlePasteValues(
+          values,
+          pasteValuesRowCount,
+          pasteValuesColCount,
+          maxRow - row + 1,
+          maxCol - col + 1
+        );
+        (table as ListTableAPI).changeCellValues(col, row, values, true);
       });
     });
-    pasteValuesRowCount = values.length ?? 0;
-    values = handlePasteValues(values, pasteValuesRowCount, pasteValuesColCount, maxRow - row + 1, maxCol - col + 1);
-    (table as ListTableAPI).changeCellValues(col, row, values, true);
   }
   function handlePasteValues(
     values: (string | number)[][],
