@@ -38,7 +38,8 @@ export function computeColsWidth(table: BaseTableAPI, colStart?: number, colEnd?
     let maxWidth;
     if (
       !table.internalProps.transpose &&
-      table.internalProps.layoutMap.columnWidths?.[col]?.columnWidthComputeMode === 'only-header' &&
+      (table.internalProps.layoutMap.columnWidths?.[col]?.columnWidthComputeMode === 'only-header' ||
+        table.columnWidthComputeMode === 'only-header') &&
       'showHeader' in table.internalProps.layoutMap
     ) {
       const temp = table.internalProps.layoutMap.showHeader;
@@ -47,7 +48,8 @@ export function computeColsWidth(table: BaseTableAPI, colStart?: number, colEnd?
       table.internalProps.layoutMap.showHeader = temp;
     } else if (
       !table.internalProps.transpose &&
-      table.internalProps.layoutMap.columnWidths?.[col]?.columnWidthComputeMode === 'only-body'
+      (table.internalProps.layoutMap.columnWidths?.[col]?.columnWidthComputeMode === 'only-body' ||
+        table.columnWidthComputeMode === 'only-body')
     ) {
       maxWidth = computeColWidth(
         col,
@@ -223,63 +225,16 @@ export function computeColWidth(
   table: BaseTableAPI,
   forceCompute: boolean = false //forceCompute如果设置为true 即便不是自动列宽的列也会按内容计算列宽
 ): number {
-  // const { layoutMap, transpose } = table.internalProps;
-  // let { width } = layoutMap?.getColumnWidthDefined(col) ?? {};
+  let width = getColWidthDefinedWidthResizedWidth(col, table);
+  if (
+    table.internalProps.transpose &&
+    width === 'auto' &&
+    ((table.columnWidthComputeMode === 'only-header' && col >= table.rowHeaderLevelCount) ||
+      (table.columnWidthComputeMode === 'only-body' && col < table.rowHeaderLevelCount))
+  ) {
+    width = table.getDefaultColumnWidth(col);
+  }
 
-  // if (transpose) {
-  //   // 转置模式
-  //   if (table.widthMode === 'standard') {
-  //     // return table.getColWidth(col);
-  //     // standard模式使用默认值
-  //     if (table.isRowHeader(col, 0) || table.isCornerHeader(col, 0)) {
-  //       const defaultWidth = Array.isArray(table.defaultHeaderColWidth)
-  //         ? table.defaultHeaderColWidth[col] ?? table.defaultColWidth
-  //         : table.defaultHeaderColWidth;
-  //       if (defaultWidth === 'auto') {
-  //         widthfffff = 'auto';
-  //       } else {
-  //         return defaultWidth;
-  //       }
-  //     }
-
-  //     if (widthfffff !== 'auto') {
-  //       // if (width && (typeof width === 'string' || width > 0)) return width;
-  //       if (typeof widthfffff === 'string') {
-  //         return calc.toPx(widthfffff, table.internalProps.calcWidthContext);
-  //       } else if (widthfffff) {
-  //         return widthfffff;
-  //       }
-  //       return table.defaultColWidth;
-  //     }
-  //   } else if (
-  //     table.widthMode === 'adaptive' &&
-  //     col === 0 &&
-  //     widthfffff !== 'auto' &&
-  //     (layoutMap as SimpleHeaderLayoutMap)?.showHeader
-  //   ) {
-  //     // ToBeFixed hack逻辑，转置第一列列宽为header[0]
-  //     if (typeof widthfffff === 'string') {
-  //       return calc.toPx(widthfffff, table.internalProps.calcWidthContext);
-  //     } else if (widthfffff) {
-  //       return widthfffff;
-  //     }
-  //   }
-  //   // autoWidth adaptive 需要计算内容宽度
-  //   // do nothing
-  // } else if (widthfffff !== 'auto' && table.widthMode !== 'autoWidth' && !forceCompute) {
-  //   // if (width && (typeof width === 'string' || width > 0)) return width;
-  //   if (typeof widthfffff === 'string') {
-  //     return calc.toPx(widthfffff, table.internalProps.calcWidthContext);
-  //   } else if (widthfffff) {
-  //     return widthfffff;
-  //   }
-  //   //是透视表的行表头部分 则宽度按defaultHeaderColWidth设置
-  //   const defaultWidth = table.getColWidthDefine(col);
-  //   if (defaultWidth !== 'auto') {
-  //     return table.getColWidth(col);
-  //   }
-  // }
-  const width = getColWidthDefinedWidthResizedWidth(col, table);
   if (forceCompute && !table.internalProps.transpose) {
     return computeAutoColWidth(width, col, startRow, endRow, forceCompute, table);
   } else if (typeof width === 'number') {
