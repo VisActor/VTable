@@ -282,7 +282,7 @@ export function computeColWidth(
   const width = getColWidthDefinedWidthResizedWidth(col, table);
   if (forceCompute && !table.internalProps.transpose) {
     return computeAutoColWidth(width, col, startRow, endRow, forceCompute, table);
-  } else if (typeof width === 'number' && !table.internalProps.transpose) {
+  } else if (typeof width === 'number') {
     return width;
   } else if (width !== 'auto' && typeof width === 'string') {
     // return calc.toPx(width, table.internalProps.calcWidthContext);
@@ -364,12 +364,7 @@ function computeAutoColWidth(
     // const indicatorWidth = computeIndicatorWidth(col, row, forceCompute, table);
     // const indicatorWidth = table.internalProps.layoutMap.getColumnWidthDefined(col);
     const indicatorWidth = widthDeifne;
-    if (
-      typeof indicatorWidth === 'number' &&
-      table.widthMode === 'standard' &&
-      !forceCompute &&
-      !table.internalProps.transpose
-    ) {
+    if (typeof indicatorWidth === 'number' && table.widthMode === 'standard' && !forceCompute) {
       maxWidth = Math.max(indicatorWidth, maxWidth);
       continue;
     }
