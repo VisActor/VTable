@@ -12,7 +12,8 @@ export function createTable() {
   ];
   const option: VTable.PivotTableConstructorOptions = {
     container: document.getElementById(CONTAINER_ID),
-    columnTree: [
+    indicatorsAsCol: false,
+    rowTree: [
       {
         dimensionKey: '地区',
         value: '东北',
@@ -57,7 +58,7 @@ export function createTable() {
         ]
       }
     ],
-    rowTree: [
+    columnTree: [
       {
         dimensionKey: '类别',
         //title: '类别',
@@ -86,7 +87,7 @@ export function createTable() {
         ]
       }
     ],
-    columns: [
+    rows: [
       {
         dimensionKey: '地区',
         title: '地区',
@@ -104,7 +105,7 @@ export function createTable() {
         }
       }
     ],
-    rows: [
+    columns: [
       {
         dimensionKey: '类别',
         title: '类别',
