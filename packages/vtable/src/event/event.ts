@@ -272,17 +272,27 @@ export class EventManager {
         let updateCol;
         const currentRange = this.table.stateManager.select.ranges[this.table.stateManager.select.ranges.length - 1];
         if (isSelectMoving) {
-          if (!isValid(this.table.stateManager.fillHandle.direcitonRow)) {
+          if (!isValid(this.table.stateManager.fillHandle.directionRow)) {
             if (
               Math.abs(this.table.stateManager.fillHandle.startY - eventArgsSet.abstractPos.y) >=
               Math.abs(this.table.stateManager.fillHandle.startX - eventArgsSet.abstractPos.x)
             ) {
-              this.table.stateManager.fillHandle.direcitonRow = true;
+              this.table.stateManager.fillHandle.directionRow = true;
+              if (this.table.stateManager.fillHandle.startY - eventArgsSet.abstractPos.y > 0) {
+                this.table.stateManager.fillHandle.direction = 'top';
+              } else {
+                this.table.stateManager.fillHandle.direction = 'bottom';
+              }
             } else {
-              this.table.stateManager.fillHandle.direcitonRow = false;
+              this.table.stateManager.fillHandle.directionRow = false;
+              if (this.table.stateManager.fillHandle.startX - eventArgsSet.abstractPos.x > 0) {
+                this.table.stateManager.fillHandle.direction = 'left';
+              } else {
+                this.table.stateManager.fillHandle.direction = 'right';
+              }
             }
           }
-          if (this.table.stateManager.fillHandle.direcitonRow) {
+          if (this.table.stateManager.fillHandle.directionRow) {
             updateRow = eventArgs.row;
             updateCol = currentRange.end.col;
           } else {

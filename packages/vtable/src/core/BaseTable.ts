@@ -67,7 +67,16 @@ import { HeaderHelper } from '../header-helper/header-helper';
 import type { PivotHeaderLayoutMap } from '../layout/pivot-header-layout';
 import { TooltipHandler } from '../components/tooltip/TooltipHandler';
 import type { CachedDataSource, DataSource } from '../data';
-import { AABBBounds, isNumber, isBoolean, isFunction, type ITextSize, isValid, merge } from '@visactor/vutils';
+import {
+  AABBBounds,
+  isNumber,
+  isBoolean,
+  isFunction,
+  type ITextSize,
+  isValid,
+  merge,
+  cloneDeep
+} from '@visactor/vutils';
 import { textMeasure } from '../scenegraph/utils/text-measure';
 import { getProp } from '../scenegraph/utils/get-prop';
 import type {
@@ -3661,6 +3670,14 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     }
     return cellInfoArray;
   }
+  getSelectedCellRanges(): CellRange[] {
+    const ranges = this.stateManager.select.ranges;
+    if (!ranges.length) {
+      return [];
+    }
+    return cloneDeep(ranges);
+  }
+
   /** 计算字体的宽度接口 */
   measureText(text: string, font: { fontSize: number; fontWeight: string | number; fontFamily: string }): ITextSize {
     return textMeasure.measureText(text, font);

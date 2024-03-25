@@ -63,7 +63,8 @@ export class StateManager {
     selecting: boolean;
   };
   fillHandle: {
-    direcitonRow?: boolean;
+    direction?: 'top' | 'bottom' | 'left' | 'right';
+    directionRow?: boolean;
     isFilling: boolean;
     startX: number;
     startY: number;
@@ -603,8 +604,9 @@ export class StateManager {
     this.fillHandle.isFilling = false;
     this.fillHandle.startX = undefined;
     this.fillHandle.startY = undefined;
-    this.table.stateManager.fillHandle.direcitonRow = undefined;
-    this.table.eventManager.isDraging && this.table.fireListeners(TABLE_EVENT_TYPE.DRAG_FILL_HANDLE_END, {});
+    this.table.stateManager.fillHandle.directionRow = undefined;
+    this.table.eventManager.isDraging &&
+      this.table.fireListeners(TABLE_EVENT_TYPE.DRAG_FILL_HANDLE_END, { direction: this.fillHandle.direction });
   }
   updateResizeCol(xInTable: number, yInTable: number) {
     updateResizeColumn(xInTable, yInTable, this);

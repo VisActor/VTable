@@ -199,11 +199,15 @@ export function createTable() {
   };
   const tableInstance = new VTable.ListTable(option);
   window.tableInstance = tableInstance;
+  let startSelectCellRanges;
   tableInstance.on('mousedown_fill_handle', arg => {
     console.log('mousedown_fill_handle');
+    startSelectCellRanges = tableInstance.getSelectedCellRanges();
   });
   tableInstance.on('drag_fill_handle_end', arg => {
-    console.log('drag_fill_handle_end');
+    console.log('drag_fill_handle_end', arg);
+    const values = [[1], [2], [3]];
+    tableInstance.changeCellValues(startSelectCellRanges[0].end.col, startSelectCellRanges[0].end.row, values);
   });
   tableInstance.on('dblclick_fill_handle', arg => {
     console.log('dblclick_fill_handle');
