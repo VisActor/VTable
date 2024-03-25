@@ -342,12 +342,12 @@ export class SimpleHeaderLayoutMap implements LayoutMapAPI {
     let aggregators: Aggregator[] = [];
     if (this.transpose) {
       for (let i = startRow; i <= endRow; i++) {
-        const column = this.getBody(startCol, i);
+        const column = this.getBody(startCol, i) as ColumnData;
         aggregators = aggregators.concat(Array.isArray(column.aggregator) ? column.aggregator : [column.aggregator]);
       }
     } else {
       for (let i = startCol; i <= endCol; i++) {
-        const column = this.getBody(i, startRow);
+        const column = this.getBody(i, startRow) as ColumnData;
         aggregators = aggregators.concat(Array.isArray(column.aggregator) ? column.aggregator : [column.aggregator]);
       }
       return aggregators;
@@ -416,7 +416,7 @@ export class SimpleHeaderLayoutMap implements LayoutMapAPI {
     if (this.transpose) {
       for (let row = startRow; row <= endRow; row++) {
         const column = this.getBody(startCol, row);
-        if (column.aggregator) {
+        if ((column as ColumnData).aggregator) {
           for (let i = 0; i < topCount; i++) {
             cellAddrs.push({ col: this.headerLevelCount + i, row });
           }
@@ -428,7 +428,7 @@ export class SimpleHeaderLayoutMap implements LayoutMapAPI {
     } else {
       for (let col = startCol; col <= endCol; col++) {
         const column = this.getBody(col, startRow);
-        if (column.aggregator) {
+        if ((column as ColumnData).aggregator) {
           for (let i = 0; i < topCount; i++) {
             cellAddrs.push({ col, row: this.headerLevelCount + i });
           }
