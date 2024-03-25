@@ -1101,13 +1101,10 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
    * @private
    */
   getColWidthDefined(col: number): string | number {
-    const { layoutMap, transpose } = this.internalProps;
+    const { layoutMap } = this.internalProps;
     // const ctx = _getInitContext.call(table);
     if (this.widthMode === 'autoWidth') {
       return 'auto';
-    }
-    if (transpose) {
-      return this.getDefaultColumnWidth(col);
     }
     const { width } = layoutMap?.getColumnWidthDefined(col) ?? {};
     if (typeof width === 'number' && width <= 0) {
