@@ -36,6 +36,8 @@ Supported event types:
   SORT_CLICK: 'sort_click',
   FREEZE_CLICK: 'freeze_click',
   SCROLL: 'scroll',
+  SCROLL_HORIZONTAL_END: 'scroll_horizontal_end',
+  SCROLL_VERTICAL_END: 'scroll_vertical_end',
   DROPDOWN_MENU_CLICK: 'dropdown_menu_click',
   MOUSEOVER_CHART_SYMBOL: 'mouseover_chart_symbol',
   DRAG_SELECT_END: 'drag_select_end',
@@ -216,6 +218,34 @@ Event callback function parameter types.
       viewWidth: number;
       viewHeight: number;
     }`
+
+## SCROLL_HORIZONTAL_END
+
+Scroll horizontally to the right to end the event
+
+Event callback function parameter types.
+`    {
+    scrollLeft: number;
+    scrollTop: number;
+    scrollWidth: number;
+    scrollHeight: number;
+    viewWidth: number;
+    viewHeight: number;
+}`
+
+## SCROLL_VERTICAL_END
+
+Vertical scroll bar scrolls to the end position
+
+Event callback function parameter types.
+`    {
+    scrollLeft: number;
+    scrollTop: number;
+    scrollWidth: number;
+    scrollHeight: number;
+    viewWidth: number;
+    viewHeight: number;
+}`
 
 
 ## MOUSEOVER_CHART_SYMBOL
