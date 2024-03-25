@@ -6,7 +6,7 @@ import type {
   MousePointerMultiCellEvent,
   MousePointerSparklineEvent
 } from '../../ts-types';
-import { InteractionState } from '../../ts-types';
+import { IconFuncTypeEnum, InteractionState } from '../../ts-types';
 import type { SceneEvent } from '../util';
 import { getCellEventArgsSet } from '../util';
 import { TABLE_EVENT_TYPE } from '../../core/TABLE_EVENT_TYPE';
@@ -437,6 +437,14 @@ export function bindTableGroupListener(eventManager: EventManager) {
           // console.log('DRAG_SELECT_START');
         }
       }
+    } else if ((hitIcon.attribute as any).funcType === IconFuncTypeEnum.dragReorder) {
+      stateManager.startMoveCol(
+        eventArgsSet.eventArgs.col,
+        eventArgsSet.eventArgs.row,
+        eventArgsSet.abstractPos.x,
+        eventArgsSet.abstractPos.y
+      );
+      stateManager.updateInteractionState(InteractionState.grabing);
     }
     if ((table as any).hasListeners(TABLE_EVENT_TYPE.MOUSEDOWN_CELL)) {
       const eventArgsSet: SceneEvent = getCellEventArgsSet(e);

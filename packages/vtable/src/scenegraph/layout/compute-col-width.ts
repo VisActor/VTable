@@ -1,16 +1,16 @@
 import type { SimpleHeaderLayoutMap } from '../../layout';
-import type { ColumnTypeOption, TextColumnDefine } from '../../ts-types';
+import type { ColumnDefine, ColumnTypeOption, IRowSeriesNumber, TextColumnDefine } from '../../ts-types';
 import { HierarchyState, IconPosition } from '../../ts-types';
 import * as calc from '../../tools/calc';
 import { validToString } from '../../tools/util';
 import { getQuadProps } from '../utils/padding';
 import { getProp } from '../utils/get-prop';
-import type { BaseTableAPI } from '../../ts-types/base-table';
+import type { BaseTableAPI, HeaderData } from '../../ts-types/base-table';
 import type { PivotHeaderLayoutMap } from '../../layout/pivot-header-layout';
 import { getAxisConfigInPivotChart } from '../../layout/chart-helper/get-axis-config';
 import { computeAxisComponentWidth } from '../../components/axis/get-axis-component-size';
 import { Group as VGroup } from '@src/vrender';
-import { isObject } from '@visactor/vutils';
+import { isObject, isValid } from '@visactor/vutils';
 import { decodeReactDom, dealPercentCalc } from '../component/custom';
 
 export function computeColsWidth(table: BaseTableAPI, colStart?: number, colEnd?: number, update?: boolean): void {
@@ -370,9 +370,15 @@ function computeAutoColWidth(
     }
 
     const cellType = table.isHeader(col, row)
-      ? table._getHeaderLayoutMap(col, row)?.headerType
+      ? (table._getHeaderLayoutMap(col, row) as HeaderData)?.headerType
       : table.getBodyColumnType(col, row);
-    if (cellType !== 'text' && cellType !== 'link' && cellType !== 'progressbar' && cellType !== 'checkbox') {
+    if (
+      isValid(cellType) &&
+      cellType !== 'text' &&
+      cellType !== 'link' &&
+      cellType !== 'progressbar' &&
+      cellType !== 'checkbox'
+    ) {
       // text&link&progressbar测量文字宽度
       // image&video&sparkline使用默认宽度
       maxWidth = Math.max(maxWidth, table.getColWidthDefinedNumber(col) || 0);
@@ -386,11 +392,12 @@ function computeAutoColWidth(
     if (layoutMap.isHeader(col, row)) {
       const hd = layoutMap.getHeader(col, row);
       // 如果某级表头设置了only-body，在计算表头内容宽度时跳过改级表头
-      if (hd?.define?.columnWidthComputeMode === 'only-body') {
+      if ((hd as HeaderData)?.define?.columnWidthComputeMode === 'only-body') {
         continue;
       }
-      if (hd?.hierarchyLevel) {
-        cellHierarchyIndent = (hd.hierarchyLevel ?? 0) * ((layoutMap as PivotHeaderLayoutMap).rowHierarchyIndent ?? 0);
+      if ((hd as HeaderData)?.hierarchyLevel) {
+        cellHierarchyIndent =
+          ((hd as HeaderData).hierarchyLevel ?? 0) * ((layoutMap as PivotHeaderLayoutMap).rowHierarchyIndent ?? 0);
       }
     } else {
       deltaRow = prepareDeltaRow;
@@ -398,7 +405,7 @@ function computeAutoColWidth(
       // const cellHierarchyState = table.getHierarchyState(col, row);
       // if (cellHierarchyState === HierarchyState.expand || cellHierarchyState === HierarchyState.collapse) {
       const define = table.getBodyColumnDefine(col, row);
-      if (define?.tree) {
+      if ((define as ColumnDefine)?.tree) {
         const indexArr = table.dataSource.getIndexKey(table.getRecordShowIndexByCell(col, row));
         cellHierarchyIndent =
           Array.isArray(indexArr) && table.getHierarchyState(col, row) !== HierarchyState.none
@@ -548,7 +555,7 @@ function computeTextWidth(col: number, row: number, cellType: ColumnTypeOption, 
     mayHaveIcon = true;
   } else {
     const define = table.getBodyColumnDefine(col, row);
-    mayHaveIcon = !!define?.icon || !!define?.tree;
+    mayHaveIcon = !!define?.icon || !!(define as ColumnDefine)?.tree || (define as IRowSeriesNumber)?.dragOrder;
   }
   if (mayHaveIcon) {
     const icons = table.getCellIcons(col, row);

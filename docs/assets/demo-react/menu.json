@@ -1,0 +1,120 @@
+{
+  "menu": "example",
+  "children": [
+    {
+      "path": "usage",
+      "title": {
+        "zh": "用法",
+        "en": "usage"
+      },
+      "children": [
+        {
+          "path": "option",
+          "title": {
+            "zh": "使用完整option",
+            "en": "usage-1"
+          }
+        },
+        {
+          "path": "option-record",
+          "title": {
+            "zh": "使用option&record",
+            "en": "usage-2"
+          }
+        },
+        {
+          "path": "grammatical-tag",
+          "title": {
+            "zh": "使用语义化标签",
+            "en": "usage-3"
+          }
+        }
+      ]
+    },
+    {
+      "path": "grammatical-tag",
+      "title": {
+        "zh": "语义化标签",
+        "en": "grammatical tag"
+      },
+      "children": [
+        {
+          "path": "pivot-table",
+          "title": {
+            "zh": "透视表",
+            "en": "pivot table"
+          }
+        },
+        {
+          "path": "pivot-chart",
+          "title": {
+            "zh": "透视图",
+            "en": "pivot chart"
+          }
+        }
+      ]
+    },
+    {
+      "path": "component",
+      "title": {
+        "zh": "组件",
+        "en": "component"
+      },
+      "children": [
+        {
+          "path": "menu",
+          "title": {
+            "zh": "菜单",
+            "en": "menu"
+          }
+        },
+        {
+          "path": "tooltip",
+          "title": {
+            "zh": "提示信息",
+            "en": "tooltip"
+          }
+        }
+      ]
+    },
+    {
+      "path": "event",
+      "title": {
+        "zh": "事件监听",
+        "en": "event"
+      },
+      "children": [
+        {
+          "path": "ready",
+          "title": {
+            "zh": "onReady",
+            "en": "onReady"
+          }
+        },
+        {
+          "path": "event",
+          "title": {
+            "zh": "事件监听",
+            "en": "event listener"
+          }
+        }
+      ]
+    },
+    {
+      "path": "custom-layout",
+      "title": {
+        "zh": "自定义布局",
+        "en": "custom layout"
+      },
+      "children": [
+        {
+          "path": "custom-layout",
+          "title": {
+            "zh": "自定义布局",
+            "en": "custom layout"
+          }
+        }
+      ]
+    }
+  ]
+}

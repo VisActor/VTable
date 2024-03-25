@@ -161,7 +161,7 @@ export interface TableEventHandlersEventArgumentMap {
   change_cell_value: { col: number; row: number; rawValue: string | number; changedValue: string | number };
 
   mousedown_fill_handle: {};
-  drag_fill_handle_end: {};
+  drag_fill_handle_end: { direction?: 'top' | 'bottom' | 'left' | 'right' };
   dblclick_fill_handle: {};
 }
 export interface DrillMenuEventInfo {

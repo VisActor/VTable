@@ -138,14 +138,12 @@ tableInstance.renderWithRecreateCells();
 
 基本表格更新：
 
-基本表格可同时设置排序状态对表格数据排序，sort 设置为 null 清空排序状态，如果不设置则按当前排序状态对传入数据排序。
-
-restoreHierarchyState 可暂时忽略，用的场景比较特殊，可以咨询 VTable 的研发后再决定是否使用。
+基本表格可同时设置排序状态对表格数据排序，sortState 设置为 null 清空排序状态，如果不设置则按当前排序状态对传入数据排序。
 
 ```
 setRecords(
     records: Array<any>,
-    option?: { sort?: SortState | SortState[], restoreHierarchyState: boolean;  }
+    option?: { sortState?: SortState | SortState[] }
   ): void;
 ```
 

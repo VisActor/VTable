@@ -1,5 +1,6 @@
 import Inula, { useRef, useState, useLayoutEffect } from 'openinula';
 
+const React = Inula; // hack for createElement, wait for fixed in gulp config
 export interface ContainerProps {
   style?: Inula.CSSProperties;
   className?: string;

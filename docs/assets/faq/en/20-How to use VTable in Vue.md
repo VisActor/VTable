@@ -6,10 +6,13 @@ VTable does not encapsulate the Vue component, so how do you VTable in Vue?
 
 ## Solution
 
-In Vue 3.x, using VTable
+It is recommended to use Vtable in Vue 3.x. If you use vue2, it may cause performance problems. For example, binding the instance of table to the vue component `this.tableInstance = new VTable.ListTable(dom, option)` will cause vue's Responsiveness monitors all changes to the tableInstance attribute, causing table performance to look poor. (If you need to save the variable, you can place it on the window first).
 
-Composition API， you can refer to[ the online demo ](https://codesandbox.io/p/devbox/magical-nash-t6t33f)for details.
+The following code uses Vue3!
 
+Composite API usage:
+
+You can refer to[ the online demo ](https://codesandbox.io/p/devbox/magical-nash-t6t33f)for details.
 
 ## Code Example
 
@@ -353,11 +356,9 @@ onMounted(() => {
 
 ```
 
-
 ## Results
 
 - [Online demo](https://codesandbox.io/p/sandbox/wizardly-dream-ktf74n)
-
 
 ## Related Documentation
 

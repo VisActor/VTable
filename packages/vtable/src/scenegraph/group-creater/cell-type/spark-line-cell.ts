@@ -5,6 +5,7 @@ import { isValid } from '@visactor/vutils';
 import { Group } from '../../graphic/group';
 import type { CellInfo, SparklineSpec } from '../../../ts-types';
 import type { BaseTableAPI } from '../../../ts-types/base-table';
+import type { ColumnData } from '../../../ts-types/list-table/layout-map/api';
 import { getCellBorderStrokeWidth } from '../../utils/cell-border-stroke-width';
 
 const xScale: PointScale = new PointScale();
@@ -76,7 +77,7 @@ function createSparkLine(
   //待定 TODO group需要设置shape属性吗
   let sparklineSpec: SparklineSpec;
   let chartGroup: Group;
-  const chartSpecRaw = table.internalProps.layoutMap.getBody(col, row).sparklineSpec;
+  const chartSpecRaw = (table.internalProps.layoutMap.getBody(col, row) as ColumnData).sparklineSpec;
   const dataValue = table.getCellValue(col, row) as unknown as any[];
 
   if (!Array.isArray(dataValue)) {

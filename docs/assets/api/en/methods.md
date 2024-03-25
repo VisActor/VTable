@@ -138,14 +138,12 @@ Set the table data interface, which can be called as an update interface.
 
 Basic table updates:
 
-The basic table can also set the sorting status to sort the table data. Set sort to null to clear the sorting status. If not set, the incoming data will be sorted according to the current sorting status.
-
-restoreHierarchyState can be ignored temporarily. The usage scenario is quite special. You can consult the R&D team of VTable before deciding whether to use it.
+The basic table can also set the sorting status to sort the table data. Set sortState to null to clear the sorting status. If not set, the incoming data will be sorted according to the current sorting status.
 
 ```
 setRecords(
     records: Array<any>,
-    option?: { sort?: SortState | SortState[], restoreHierarchyState: boolean; }
+    option?: { sortState?: SortState | SortState[]}
   ): void;
 ```
 

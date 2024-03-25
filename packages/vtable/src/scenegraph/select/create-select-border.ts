@@ -1,6 +1,7 @@
 import { createRect } from '@src/vrender';
 import type { CellSubLocation } from '../../ts-types';
 import type { Scenegraph } from '../scenegraph';
+import { table } from 'console';
 
 export function createCellSelectBorder(
   scene: Scenegraph,
@@ -17,6 +18,18 @@ export function createCellSelectBorder(
   if (scene.table.stateManager.select.ranges?.length > 1) {
     isHasFillHandleRect = false;
     scene.removeFillHandleFromSelectComponents();
+  } else if (scene.table.stateManager.select.ranges?.length === 1) {
+    const maxRow = Math.max(
+      scene.table.stateManager.select.ranges[0].start.row,
+      scene.table.stateManager.select.ranges[0].end.row
+    );
+    const maxCol = Math.max(
+      scene.table.stateManager.select.ranges[0].start.col,
+      scene.table.stateManager.select.ranges[0].end.col
+    );
+    if (scene.table.isHeader(maxCol, maxRow)) {
+      isHasFillHandleRect = false;
+    }
   }
   if (Array.isArray(strokes) && (strokes[1] === false || strokes[2] === false)) {
     isHasFillHandleRect = false;

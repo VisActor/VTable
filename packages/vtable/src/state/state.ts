@@ -34,7 +34,7 @@ import { endMoveCol, startMoveCol, updateMoveCol } from './cell-move';
 import type { FederatedEvent } from '@src/vrender';
 import type { TooltipOptions } from '../ts-types/tooltip';
 import { getIconAndPositionFromTarget } from '../scenegraph/utils/icon';
-import type { BaseTableAPI } from '../ts-types/base-table';
+import type { BaseTableAPI, HeaderData } from '../ts-types/base-table';
 import { debounce } from '../tools/debounce';
 import { updateResizeColumn } from './resize/update-resize-column';
 
@@ -63,7 +63,8 @@ export class StateManager {
     selecting: boolean;
   };
   fillHandle: {
-    direcitonRow?: boolean;
+    direction?: 'top' | 'bottom' | 'left' | 'right';
+    directionRow?: boolean;
     isFilling: boolean;
     startX: number;
     startY: number;
@@ -603,8 +604,9 @@ export class StateManager {
     this.fillHandle.isFilling = false;
     this.fillHandle.startX = undefined;
     this.fillHandle.startY = undefined;
-    this.table.stateManager.fillHandle.direcitonRow = undefined;
-    this.table.eventManager.isDraging && this.table.fireListeners(TABLE_EVENT_TYPE.DRAG_FILL_HANDLE_END, {});
+    this.table.stateManager.fillHandle.directionRow = undefined;
+    this.table.eventManager.isDraging &&
+      this.table.fireListeners(TABLE_EVENT_TYPE.DRAG_FILL_HANDLE_END, { direction: this.fillHandle.direction });
   }
   updateResizeCol(xInTable: number, yInTable: number) {
     updateResizeColumn(xInTable, yInTable, this);
@@ -627,7 +629,12 @@ export class StateManager {
     const originalFrozenColCount =
       this.table.isListTable() && !this.table.internalProps.transpose
         ? this.table.options.frozenColCount
-        : this.table.rowHeaderLevelCount;
+        : this.table.isPivotChart()
+        ? this.table.rowHeaderLevelCount ?? 0
+        : Math.max(
+            (this.table.rowHeaderLevelCount ?? 0) + this.table.internalProps.layoutMap.leftRowSeriesNumberColumnCount,
+            this.table.options.frozenColCount ?? 0
+          );
     if (originalFrozenColCount) {
       if (this.table.tableNoFrameWidth - this.table.getColsWidth(0, originalFrozenColCount - 1) <= 120) {
         this.table._setFrozenColCount(0);
@@ -947,7 +954,7 @@ export class StateManager {
           // 手动查询menuKey对应的dropDownIndex
           const headerC = this.table._getHeaderLayoutMap(col ?? colNow, row ?? rowNow);
 
-          const dropDownMenu = headerC.dropDownMenu || this.table.globalDropDownMenu;
+          const dropDownMenu = (headerC as HeaderData).dropDownMenu || this.table.globalDropDownMenu;
           if (dropDownMenu) {
             for (let i = 0; i < dropDownMenu.length; i++) {
               const item: any = dropDownMenu[i];
