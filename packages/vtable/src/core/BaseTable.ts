@@ -42,6 +42,8 @@ import type {
   CellAddressWithBound,
   ColorPropertyDefine,
   ColumnIconOption,
+  ColumnSeriesNumber,
+  IRowSeriesNumber,
   ColumnStyleOption,
   MappingRule,
   TableEventOptions
@@ -73,7 +75,8 @@ import type {
   ColumnDefine,
   ColumnsDefine,
   ImageColumnDefine,
-  IndicatorData
+  IndicatorData,
+  SeriesNumberColumnData
 } from '../ts-types/list-table/layout-map/api';
 import type { TooltipOptions } from '../ts-types/tooltip';
 import { IconCache } from '../plugins/icons';
@@ -105,6 +108,9 @@ import type { Chart } from '../scenegraph/graphic/chart';
 import { setBatchRenderChartCount } from '../scenegraph/graphic/contributions/chart-render-helper';
 import { isLeftOrRightAxis, isTopOrBottomAxis } from '../layout/chart-helper/get-axis-config';
 import { NumberRangeMap } from '../layout/row-height-map';
+import { ListTable } from '../ListTable';
+import type { SimpleHeaderLayoutMap } from '../layout';
+import { RowSeriesNumberHelper } from './row-series-number-helper';
 import { CustomCellStylePlugin, mergeStyle } from '../plugins/custom-cell-style';
 import { hideCellSelectBorder, restoreCellSelectBorder } from '../scenegraph/select/update-select-border';
 const { toBoxArray } = utilStyle;
@@ -191,6 +197,8 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
       autoFillHeight = false,
       keyboardOptions,
       eventOptions,
+      rowSeriesNumber,
+      // columnSeriesNumber,
       // disableRowHeaderColumnResize,
       columnResizeMode,
       dragHeaderMode,
@@ -277,6 +285,8 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
 
     internalProps.keyboardOptions = keyboardOptions;
     internalProps.eventOptions = eventOptions;
+    internalProps.rowSeriesNumber = rowSeriesNumber;
+    // internalProps.columnSeriesNumber = columnSeriesNumber;
 
     internalProps.columnResizeMode = columnResizeMode;
     internalProps.dragHeaderMode = dragHeaderMode;
@@ -324,6 +334,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     internalProps.theme.isPivot = this.isPivotTable();
     internalProps.bodyHelper = new BodyHelper(this);
     internalProps.headerHelper = new HeaderHelper(this);
+    internalProps.rowSeriesNumberHelper = new RowSeriesNumberHelper(this);
 
     internalProps.autoWrapText = options.autoWrapText;
 
@@ -1947,6 +1958,8 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
       defaultHeaderColWidth = 80,
       keyboardOptions,
       eventOptions,
+      rowSeriesNumber,
+      // columnSeriesNumber,
       // disableRowHeaderColumnResize,
       columnResizeMode,
       dragHeaderMode,
@@ -2011,6 +2024,8 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     internalProps.defaultHeaderColWidth = defaultHeaderColWidth ?? defaultColWidth;
     internalProps.keyboardOptions = keyboardOptions;
     internalProps.eventOptions = eventOptions;
+    internalProps.rowSeriesNumber = rowSeriesNumber;
+    // internalProps.columnSeriesNumber = columnSeriesNumber;
 
     internalProps.columnResizeMode = columnResizeMode;
     internalProps.dragHeaderMode = dragHeaderMode;
@@ -2453,10 +2468,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     field: FieldDef,
     fieldKey?: FieldKeyDef
   ): ((v1: any, v2: any, order: string) => 0 | 1 | -1) | undefined;
-  abstract setRecords(
-    records: Array<any>,
-    option?: { restoreHierarchyState: boolean; sort?: SortState | SortState[] }
-  ): void;
+  abstract setRecords(records: Array<any>, option?: { sortState?: SortState | SortState[] }): void;
   abstract refreshHeader(): void;
   abstract refreshRowColCount(): void;
   abstract getHierarchyState(col: number, row: number): HierarchyState | null;
@@ -2605,7 +2617,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
    * @param  {number} row row index.
    * @return {ColumnDefine} The column define object.
    */
-  getBodyColumnDefine(col: number, row: number): ColumnDefine {
+  getBodyColumnDefine(col: number, row: number): ColumnDefine | IRowSeriesNumber | ColumnSeriesNumber {
     // TODO: 暂时修复透视表报错
     const body = this.internalProps.layoutMap.getBody(col, row);
     return body?.define;
@@ -2618,8 +2630,10 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
 
   getCellType(col: number, row: number): ColumnTypeOption {
     let cellType;
-    if (this.isHeader(col, row)) {
-      cellType = this.internalProps.layoutMap.getHeader(col, row).headerType;
+    if (this.isSeriesNumberInHeader(col, row)) {
+      return (this.internalProps.layoutMap as SimpleHeaderLayoutMap).getSeriesNumberHeader(col, row).cellType;
+    } else if (this.isHeader(col, row)) {
+      cellType = (this.internalProps.layoutMap.getHeader(col, row) as HeaderData).headerType;
     } else {
       cellType = this.internalProps.layoutMap.getBody(col, row).cellType;
     }
@@ -2640,7 +2654,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
    * @param  {number} row row index.
    * @return {ColumnDefine} The column define object.
    */
-  getHeaderDefine(col: number, row: number): ColumnDefine {
+  getHeaderDefine(col: number, row: number): ColumnDefine | IRowSeriesNumber | ColumnSeriesNumber {
     const hd = this.internalProps.layoutMap.getHeader(col, row);
     return hd?.define;
   }
@@ -2666,11 +2680,11 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
    * @param  {number} col The column index.
    * @return {*} The array of header define object.
    */
-  getHeadersDefine(col: number, row: number): ColumnDefine[] {
+  getHeadersDefine(col: number, row: number): (ColumnDefine | IRowSeriesNumber | ColumnSeriesNumber)[] {
     const headers = [];
     while (true) {
-      const header = this.getHeaderDefine(col, row);
-      if (header && (header.field || header.columns)) {
+      const header = this.getHeaderDefine(col, row) as ColumnDefine;
+      if (header && (header.field || (header as ColumnDefine).columns)) {
         headers.push(header);
       } else {
         break;
@@ -2681,10 +2695,10 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
 
     return headers;
   }
-  _getHeaderLayoutMap(col: number, row: number): HeaderData {
+  _getHeaderLayoutMap(col: number, row: number): HeaderData | SeriesNumberColumnData {
     return this.internalProps.layoutMap.getHeader(col, row);
   }
-  _getBodyLayoutMap(col: number, row: number): ColumnData | IndicatorData {
+  _getBodyLayoutMap(col: number, row: number): ColumnData | IndicatorData | SeriesNumberColumnData {
     return this.internalProps.layoutMap.getBody(col, row);
   }
   /** 获取绘制画布的canvas上下文 */
@@ -2806,7 +2820,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
   getHeaderDescription(col: number, row: number): string | undefined {
     const field = this._getHeaderLayoutMap(col, row);
     const fieldDef = field?.define;
-    const description = fieldDef?.description ?? field?.description;
+    const description = (fieldDef as ColumnDefine)?.description ?? (field as HeaderData)?.description;
     if (typeof description === 'function') {
       const arg: CellInfo = {
         col,
@@ -2825,7 +2839,20 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
   _dropDownMenuIsHighlight(colNow: number, rowNow: number, index: number): boolean {
     return this.stateManager.dropDownMenuIsHighlight(colNow, rowNow, index);
   }
-
+  /** 判断单元格是否属于序号body部分 */
+  isSeriesNumberInBody(col: number, row: number): boolean {
+    return (
+      this.internalProps.layoutMap &&
+      (this.internalProps.layoutMap as SimpleHeaderLayoutMap).isSeriesNumberInBody(col, row)
+    );
+  }
+  /** 判断单元格是否属于序号表头部分 */
+  isSeriesNumberInHeader(col: number, row: number): boolean {
+    return (
+      this.internalProps.layoutMap &&
+      (this.internalProps.layoutMap as SimpleHeaderLayoutMap).isSeriesNumberInHeader(col, row)
+    );
+  }
   /** 判断单元格是否属于表头部分 */
   isHeader(col: number, row: number): boolean {
     return this.internalProps.layoutMap && this.internalProps.layoutMap.isHeader(col, row);
@@ -2985,7 +3012,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
       }
 
       if (
-        (!hd || hd.isEmpty) &&
+        (!hd || (hd as HeaderData).isEmpty) &&
         (layoutMap.isLeftBottomCorner(col, row) ||
           layoutMap.isRightBottomCorner(col, row) ||
           layoutMap.isCornerHeader(col, row) ||
@@ -2994,7 +3021,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
         return EMPTY_STYLE;
       }
 
-      const styleClass = this.internalProps.headerHelper.getStyleClass(hd?.headerType || 'text');
+      const styleClass = this.internalProps.headerHelper.getStyleClass((hd as HeaderData)?.headerType || 'text');
       if (layoutMap.isBottomFrozenRow(col, row) && this.theme.bottomFrozenStyle) {
         cacheStyle = <FullExtendStyle>headerStyleContents.of(
           paddingForAxis ? { padding: paddingForAxis } : {},
@@ -3096,7 +3123,10 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     let cacheKey;
     const cellType = this.getCellType(col, row);
     //如果是主体部分，获取相应的style
-    if (
+    if (this.isSeriesNumberInBody(col, row)) {
+      // 如果是行序号
+      cacheKey = `${col}-series-` + cellType;
+    } else if (
       (this.isListTable() && !(this as any).transpose) ||
       (this.isPivotTable() && (this.internalProps.layoutMap as PivotHeaderLayoutMap).indicatorsAsCol)
     ) {
@@ -3243,7 +3273,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
       if (!define) {
         return false;
       }
-      if (define.dragHeader === undefined) {
+      if ((define as ColumnDefine).dragHeader === undefined) {
         if (this.internalProps.dragHeaderMode === 'all') {
           return true;
         } else if (this.internalProps.dragHeaderMode === 'column') {
@@ -3257,7 +3287,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
         }
         return false;
       }
-      return define.dragHeader;
+      return (define as ColumnDefine).dragHeader;
     }
     return false;
   }
@@ -3269,6 +3299,21 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     let icons;
     if (this.isHeader(col, row)) {
       icons = this.internalProps.headerHelper.getIcons(col, row);
+    } else if ((this.internalProps.layoutMap as SimpleHeaderLayoutMap).isSeriesNumber(col, row)) {
+      const dragOrder = (this.internalProps.layoutMap as SimpleHeaderLayoutMap).getSeriesNumberBody(col, row)?.define
+        ?.dragOrder;
+      if (dragOrder) {
+        icons = this.internalProps.rowSeriesNumberHelper.getIcons(col, row);
+      }
+      const cellValue = this.getCellValue(col, row);
+      const dataValue = this.getCellOriginValue(col, row);
+      const ctx = this.internalProps.context;
+      const cellIcon = this.internalProps.bodyHelper.getIcons(col, row, cellValue, dataValue, ctx);
+      if (icons?.length > 0) {
+        icons = icons.concat();
+      } else if (cellIcon?.length > 0) {
+        icons = cellIcon;
+      }
     } else {
       const cellValue = this.getCellValue(col, row);
       const dataValue = this.getCellOriginValue(col, row);
@@ -3626,10 +3671,10 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     let customRender;
     if (this.getCellLocation(col, row) !== 'body') {
       const define = this.getHeaderDefine(col, row);
-      customRender = define?.headerCustomRender;
+      customRender = (define as ColumnDefine)?.headerCustomRender;
     } else {
       const define = this.getBodyColumnDefine(col, row);
-      customRender = define?.customRender || this.customRender;
+      customRender = (define as ColumnDefine)?.customRender || this.customRender;
     }
     return customRender;
   }
@@ -3638,10 +3683,10 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     let customLayout;
     if (this.getCellLocation(col, row) !== 'body') {
       const define = this.getHeaderDefine(col, row);
-      customLayout = define?.headerCustomLayout;
+      customLayout = (define as ColumnDefine)?.headerCustomLayout;
     } else {
       const define = this.getBodyColumnDefine(col, row);
-      customLayout = define?.customLayout;
+      customLayout = (define as ColumnDefine)?.customLayout;
     }
     return customLayout;
   }
@@ -3887,12 +3932,23 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
       }
     }
   }
-
+  changeRecordOrder(source: number, target: number) {
+    //
+  }
   registerCustomCellStyle(customStyleId: string, customStyle: ColumnStyleOption | undefined | null) {
     this.customCellStylePlugin.registerCustomCellStyle(customStyleId, customStyle);
   }
 
   arrangeCustomCellStyle(cellPos: { col?: number; row?: number; range?: CellRange }, customStyleId: string) {
     this.customCellStylePlugin.arrangeCustomCellStyle(cellPos, customStyleId);
+  }
+  isSeriesNumber(col: number, row: number): boolean {
+    return this.internalProps.layoutMap.isSeriesNumber(col, row);
+  }
+  isHasSeriesNumber(): boolean {
+    return this.internalProps.layoutMap?.leftRowSeriesNumberColumnCount > 0;
+  }
+  get leftRowSeriesNumberCount(): number {
+    return this.internalProps.layoutMap?.leftRowSeriesNumberColumnCount ?? 0;
   }
 }

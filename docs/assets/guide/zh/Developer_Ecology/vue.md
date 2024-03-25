@@ -1,8 +1,12 @@
 ## 如何在 Vue 中使用 VTable？
 
-在 Vue 3.x 中使用 Vtable
+建议在 Vue 3.x 中使用 Vtable，如果使用 vue2 可能造成性能问题，如将 table 的实例绑定到 vue 组件上`this.tableInstance = new VTable.ListTable(dom, option)`，这样会导致 vue 的响应式去监听了 tableInstance 属性的所有变更，导致表格性能看上去不太好。（如果需要保存变量可以先放置到 window 上）
 
-组合式 API，具体可以[参考在线 demo](https://codesandbox.io/p/devbox/magical-nash-t6t33f)
+以下代码使用基于 Vue3 ！
+
+组合式 API 用法：
+
+具体可以[参考在线 demo](https://codesandbox.io/p/devbox/magical-nash-t6t33f)
 
 ## 代码示例
 
@@ -139,8 +143,7 @@ onMounted(() => {
 
 ## 注意
 
-如果需要使用ref保存table实例，请使用`shallowRef`，使用`ref`会影响内部属性更新，导致渲染异常。
-
+如果需要使用 ref 保存 table 实例，请使用`shallowRef`，使用`ref`会影响内部属性更新，导致渲染异常。
 
 ```
 const tableInstance = shallowRef();

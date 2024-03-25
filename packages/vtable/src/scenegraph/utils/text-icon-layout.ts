@@ -409,7 +409,7 @@ export function dealWithIcon(
   iconAttribute.marginLeft = (icon.marginLeft ?? 0) + hierarchyOffset;
   iconAttribute.marginRight = icon.marginRight ?? 0;
 
-  if (icon.interactive) {
+  if (icon.interactive === false) {
     iconAttribute.pickable = false;
   }
 

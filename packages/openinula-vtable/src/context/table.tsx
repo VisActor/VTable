@@ -1,6 +1,8 @@
 import Inula from 'openinula';
 import type { ListTable, PivotTable, PivotChart } from '@visactor/vtable';
 
+const React = Inula; // hack for createElement, wait for fixed in gulp config
+
 export interface TableContextType {
   table?: ListTable | PivotTable | PivotChart;
   // optionFromChildren: any;
