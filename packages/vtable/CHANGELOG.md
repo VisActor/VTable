@@ -1,6 +1,29 @@
 # Change Log - @visactor/vtable
 
-This log was last generated on Wed, 20 Mar 2024 10:48:31 GMT and should not be manually modified.
+This log was last generated on Fri, 22 Mar 2024 11:26:30 GMT and should not be manually modified.
+
+## 0.22.1
+Fri, 22 Mar 2024 11:26:30 GMT
+
+### Updates
+
+- feat: add openinula-vtable
+
+## 0.22.0
+Fri, 22 Mar 2024 10:54:02 GMT
+
+### Minor changes
+
+- feat: support rowSeriesNumber #968
+
+
+- feat: record data support set hierarchyState
+
+
+
+### Updates
+
+- fix: fix typeError in getCellMergeRange()
 
 ## 0.21.3
 Wed, 20 Mar 2024 10:48:31 GMT

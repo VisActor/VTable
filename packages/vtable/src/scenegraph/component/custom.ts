@@ -404,8 +404,12 @@ export function dealPercentCalc(group: VGroup, parentWidth: number, parentHeight
 
 // temp devode for react jsx customLayout
 export function decodeReactDom(dom: any) {
-  if (!dom || !dom.$$typeof) {
-    // not react
+  if (
+    !dom ||
+    (!isValid(dom.$$typeof) && // for react
+      !isValid(dom.vtype)) // for openinula
+  ) {
+    // not react or openinula
     return dom;
   }
   const type = dom.type;

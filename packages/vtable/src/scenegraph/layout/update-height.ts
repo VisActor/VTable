@@ -12,10 +12,11 @@ import { dealWithCustom } from '../component/custom';
 import { updateImageCellContentWhileResize } from '../group-creater/cell-type/image-cell';
 import { getStyleTheme } from '../../core/tableHelper';
 import { isMergeCellGroup } from '../utils/is-merge-cell-group';
-import type { BaseTableAPI } from '../../ts-types/base-table';
+import type { BaseTableAPI, HeaderData } from '../../ts-types/base-table';
 import { resizeCellGroup, getCustomCellMergeCustom } from '../group-creater/cell-helper';
 import type { IGraphic } from '@src/vrender';
 import { getCellMergeRange } from '../../tools/merge-range';
+import type { ColumnDefine } from '../../ts-types';
 
 export function updateRowHeight(scene: Scenegraph, row: number, detaY: number, skipTableHeightMap?: boolean) {
   // 更新table行高存储
@@ -128,7 +129,7 @@ export function updateCellHeight(
 
   // 更新单元格布局
   const type = scene.table.isHeader(col, row)
-    ? scene.table._getHeaderLayoutMap(col, row).headerType
+    ? (scene.table._getHeaderLayoutMap(col, row) as HeaderData).headerType
     : scene.table.getBodyColumnType(col, row);
   if (type === 'progressbar') {
     // 目前先采用重新生成节点的方案
@@ -193,25 +194,31 @@ export function updateCellHeight(
         const cellLocation = scene.table.getCellLocation(col, row);
         if (cellLocation !== 'body') {
           const define = scene.table.getHeaderDefine(col, row);
-          customRender = define?.headerCustomRender;
-          customLayout = define?.headerCustomLayout;
+          customRender = (define as ColumnDefine)?.headerCustomRender;
+          customLayout = (define as ColumnDefine)?.headerCustomLayout;
         } else {
           const define = scene.table.getBodyColumnDefine(col, row);
-          customRender = define?.customRender || scene.table.customRender;
-          customLayout = define?.customLayout;
+          customRender = (define as ColumnDefine)?.customRender || scene.table.customRender;
+          customLayout = (define as ColumnDefine)?.customLayout;
         }
 
         if (customLayout || customRender) {
           // const { autoRowHeight } = table.internalProps;
           const style = scene.table._getCellStyle(col, row) as ProgressBarStyle;
           const padding = getQuadProps(getProp('padding', style, col, row, scene.table));
+          let width = cell.attribute.width;
+          let height = cell.attribute.height;
+          if (isMergeCellGroup(cell)) {
+            width = scene.table.getColsWidth(cell.mergeStartCol, cell.mergeEndCol);
+            height = scene.table.getRowsHeight(cell.mergeStartRow, cell.mergeEndRow);
+          }
           const customResult = dealWithCustom(
             customLayout,
             customRender,
             col,
             row,
-            cell.attribute.width,
-            cell.attribute.height,
+            width,
+            height,
             false,
             scene.table.heightMode === 'autoHeight',
             padding,
@@ -228,21 +235,29 @@ export function updateCellHeight(
         }
       }
     }
-    if (renderDefault) {
-      // 处理文字
-      const style = scene.table._getCellStyle(col, row);
-      updateMergeCellContentHeight(
-        cell,
-        distHeight,
-        detaY,
-        // scene.table.internalProps.autoRowHeight,
-        scene.table.heightMode === 'autoHeight',
-        getQuadProps(style.padding as number),
-        style.textAlign,
-        style.textBaseline,
-        scene.table
-      );
-    }
+    // if (renderDefault) {
+    //   // 处理文字
+    //   const style = scene.table._getCellStyle(col, row);
+    //   updateMergeCellContentHeight(
+    //     cell,
+    //     distHeight,
+    //     detaY,
+    //     // scene.table.internalProps.autoRowHeight,
+    //     scene.table.heightMode === 'autoHeight',
+    //     getQuadProps(style.padding as number),
+    //     style.textAlign,
+    //     style.textBaseline,
+    //     scene.table
+    //   );
+    // }
+    updateMergeCellContentHeight(
+      cell,
+      distHeight,
+      detaY,
+      scene.table.heightMode === 'autoHeight',
+      renderDefault,
+      scene.table
+    );
   }
 }
 
@@ -251,9 +266,7 @@ function updateMergeCellContentHeight(
   distHeight: number,
   detaY: number,
   autoRowHeight: boolean,
-  padding: [number, number, number, number],
-  textAlign: CanvasTextAlign,
-  textBaseline: CanvasTextBaseline,
+  renderDefault: boolean,
   table: BaseTableAPI
 ) {
   if (isMergeCellGroup(cellGroup)) {
@@ -271,7 +284,20 @@ function updateMergeCellContentHeight(
             dy: 0
           });
         });
-        updateCellContentHeight(singleCellGroup, distHeight, detaY, autoRowHeight, padding, textAlign, textBaseline);
+
+        if (renderDefault) {
+          const style = table._getCellStyle(col, row);
+          updateCellContentHeight(
+            singleCellGroup,
+            distHeight,
+            detaY,
+            autoRowHeight,
+            getQuadProps(style.padding as number),
+            style.textAlign,
+            style.textBaseline
+          );
+        }
+
         const rangeHeight = table.getRowHeight(row);
         const rangeWidth = table.getColWidth(col);
 
@@ -301,6 +327,15 @@ function updateMergeCellContentHeight(
       }
     }
   } else {
-    updateCellContentHeight(cellGroup, distHeight, detaY, autoRowHeight, padding, textAlign, textBaseline);
+    const style = table._getCellStyle(cellGroup.col, cellGroup.row);
+    updateCellContentHeight(
+      cellGroup,
+      distHeight,
+      detaY,
+      autoRowHeight,
+      getQuadProps(style.padding as number),
+      style.textAlign,
+      style.textBaseline
+    );
   }
 }

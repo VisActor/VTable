@@ -449,6 +449,13 @@
             "link": "'../../guide/basic_function/row_height_column_width'",
             "option": ""
           }
+        },
+        {
+          "path": "row-series-number",
+          "title": {
+            "zh": "行序号",
+            "en": "row series number"
+          }
         }
       ]
     },
@@ -1300,6 +1307,29 @@
           "title": {
             "zh": "销售数据气泡图",
             "en": "Sales Bubble"
+          }
+        }
+      ]
+    },
+    {
+      "path": "react",
+      "title": {
+        "zh": "react",
+        "en": "react"
+      },
+      "children": [
+        {
+          "path": "table-option",
+          "title": {
+            "zh": "table-option",
+            "en": "table-option"
+          }
+        },
+        {
+          "path": "table-component",
+          "title": {
+            "zh": "table-component",
+            "en": "table-component"
           }
         }
       ]

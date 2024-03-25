@@ -16,6 +16,7 @@ import type { ITextMeasureOption, ITextSize } from '@visactor/vutils';
 import { TextMeasure } from '@visactor/vutils';
 
 let customAlphabetCharSet = '';
+let textMeasureMode: 'quick' | 'canvas' = 'quick';
 
 type ITextGraphicAttributeFroMeasure = Omit<ITextGraphicAttribute, 'lineHeight'> & {
   lineHeight?: number;
@@ -100,7 +101,7 @@ export class FastTextMeasureContribution extends DefaultTextMeasureContribution 
 
     const { fontSize, fontFamily = 'Arial,sans-serif', fontWeight = 'normal', fontStyle = 'normal' } = options;
     const fastTextMeasure = getFastTextMeasure(fontSize, fontWeight, fontFamily, fontStyle);
-    const textMeasure = fastTextMeasure.measure(text);
+    const textMeasure = fastTextMeasure.measure(text, textMeasureMode);
     return textMeasure.width;
   }
 
@@ -118,7 +119,7 @@ export class FastTextMeasureContribution extends DefaultTextMeasureContribution 
 
     const { fontSize, fontFamily = 'Arial,sans-serif', fontWeight = 'normal', fontStyle = 'normal' } = options;
     const fastTextMeasure = getFastTextMeasure(fontSize, fontWeight, fontFamily, fontStyle);
-    const textMeasure = fastTextMeasure.measure(text);
+    const textMeasure = fastTextMeasure.measure(text, textMeasureMode);
     return textMeasure;
   }
 }
@@ -132,7 +133,7 @@ export class TextMeasureTool {
   measureText(text: string, options: ITextGraphicAttribute): ITextSize {
     const { fontSize, fontFamily = 'Arial,sans-serif', fontWeight = 'normal', fontStyle = 'normal' } = options;
     const fastTextMeasure = getFastTextMeasure(fontSize, fontWeight, fontFamily, fontStyle);
-    const textMeasure = fastTextMeasure.measure(text);
+    const textMeasure = fastTextMeasure.measure(text, textMeasureMode);
     return textMeasure;
   }
 
@@ -144,7 +145,7 @@ export class TextMeasureTool {
   measureTextWidth(text: string, options: ITextGraphicAttribute): number {
     const { fontSize, fontFamily = 'Arial,sans-serif', fontWeight = 'normal', fontStyle = 'normal' } = options;
     const fastTextMeasure = getFastTextMeasure(fontSize, fontWeight, fontFamily, fontStyle);
-    const textMeasure = fastTextMeasure.measure(text);
+    const textMeasure = fastTextMeasure.measure(text, textMeasureMode);
     return textMeasure.width;
   }
 
@@ -263,5 +264,6 @@ export function setCustomAlphabetCharSet(str: string) {
 
 // change fast textMeasure into canvas textMeasure
 export function restoreMeasureText() {
+  textMeasureMode = 'canvas';
   container.load(restoreTextMeasureModule);
 }

@@ -50,3 +50,14 @@ export function checkHasAggregationOnBottom(layoutMap: SimpleHeaderLayoutMap) {
   }
   return count;
 }
+
+export function checkHasTreeDefine(layoutMap: SimpleHeaderLayoutMap) {
+  const columnObjects = layoutMap.columnObjects;
+  for (let i = 0; i < columnObjects.length; i++) {
+    const column = columnObjects[i];
+    if ((column as ColumnData)?.define?.tree) {
+      return true;
+    }
+  }
+  return false;
+}

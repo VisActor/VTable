@@ -234,6 +234,13 @@
             "zh": "单元格合并",
             "en": "cell merge"
           }
+        },
+        {
+          "path": "row_series_number",
+          "title": {
+            "zh": "行序号",
+            "en": "row series number"
+          }
         }
       ]
     },
@@ -526,6 +533,13 @@
           "title": {
             "zh": "React-VTable",
             "en": "React-VTable"
+          }
+        },
+        {
+          "path": "openinula",
+          "title": {
+            "zh": "Openinula-VTable",
+            "en": "Openinula-VTable"
           }
         },
         {
