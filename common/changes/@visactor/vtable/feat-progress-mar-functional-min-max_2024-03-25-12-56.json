@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vtable",
+      "comment": "feat: max/min in progress support funtion #1312",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vtable"
+}
