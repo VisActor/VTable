@@ -841,7 +841,7 @@ use case: 点击图例项后 更新过滤规则 来更新图表
 
 ```
   /** 设置单元格的value值，注意对应的是源数据的原始值，vtable实例records会做对应修改 */
-  changeCellValue: (col: number, row: number, value: string | number | null) => void;
+  changeCellValue: (col: number, row: number, value: string | number | null, workOnEditableCell = false) => void;
 ```
 
 ## changeCellValues(Function)
@@ -854,8 +854,9 @@ use case: 点击图例项后 更新过滤规则 来更新图表
    * @param col 粘贴数据的起始列号
    * @param row 粘贴数据的起始行号
    * @param values 多个单元格的数据数组
+   * @param workOnEditableCell 是否仅更改可编辑单元格
    */
-  changeCellValues(startCol: number, startRow: number, values: string[][])
+  changeCellValues(startCol: number, startRow: number, values: string[][], workOnEditableCell = false)
 ```
 
 ## getEditor(Function)
