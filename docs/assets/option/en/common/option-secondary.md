@@ -167,6 +167,14 @@ Do not respond to mouse select interaction.
 
 Separately set the header not to respond to mouse select interaction.
 
+#${prefix} scroll(Object)
+
+scroll configuration, specific configuration items as follows:
+
+##${prefix} barToSide(boolean) = false
+
+Place the scroll bar next to the canvas without following the content.
+
 #${prefix} theme(Object)
 
 {{ use: common-theme(
