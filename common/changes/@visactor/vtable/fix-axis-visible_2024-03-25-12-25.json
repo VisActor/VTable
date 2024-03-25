@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vtable",
+      "comment": "fix: fix axis column/row visible in pivotchart #1309",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vtable"
+}
