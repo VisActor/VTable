@@ -343,12 +343,16 @@ export class SimpleHeaderLayoutMap implements LayoutMapAPI {
     if (this.transpose) {
       for (let i = startRow; i <= endRow; i++) {
         const column = this.getBody(startCol, i) as ColumnData;
-        aggregators = aggregators.concat(Array.isArray(column.aggregator) ? column.aggregator : [column.aggregator]);
+        if (column.aggregator) {
+          aggregators = aggregators.concat(Array.isArray(column.aggregator) ? column.aggregator : [column.aggregator]);
+        }
       }
     } else {
       for (let i = startCol; i <= endCol; i++) {
         const column = this.getBody(i, startRow) as ColumnData;
-        aggregators = aggregators.concat(Array.isArray(column.aggregator) ? column.aggregator : [column.aggregator]);
+        if (column.aggregator) {
+          aggregators = aggregators.concat(Array.isArray(column.aggregator) ? column.aggregator : [column.aggregator]);
+        }
       }
       return aggregators;
     }
