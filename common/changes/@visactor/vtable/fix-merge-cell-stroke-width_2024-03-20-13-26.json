@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vtable",
+      "comment": "fix: fix stroke width update in merge cell #1324",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vtable"
+}

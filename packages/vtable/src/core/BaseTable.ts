@@ -186,6 +186,8 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
 
   customCellStylePlugin: CustomCellStylePlugin;
 
+  columnWidthComputeMode?: 'normal' | 'only-header' | 'only-body';
+
   constructor(container: HTMLElement, options: BaseTableConstructorOptions = {}) {
     super();
     if (!container && options.mode !== 'node') {
@@ -258,6 +260,8 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     this.tableNoFrameHeight = 0;
     this.canvasWidth = canvasWidth;
     this.canvasHeight = canvasHeight;
+
+    this.columnWidthComputeMode = options.columnWidthComputeMode ?? 'normal';
 
     const internalProps = (this.internalProps = {} as IBaseTableProtected);
     // style.initDocument(scrollBar);
@@ -976,6 +980,27 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     return this.defaultRowHeight;
   }
 
+  getDefaultColumnWidth(col: number) {
+    // return col < this.rowHeaderLevelCount
+    //   ? Array.isArray(this.defaultHeaderColWidth)
+    //     ? this.defaultHeaderColWidth[col] ?? this.defaultColWidth
+    //     : this.defaultHeaderColWidth
+    //   : this.defaultColWidth;
+    if (this.isRowHeader(col, 0) || this.isCornerHeader(col, 0)) {
+      return Array.isArray(this.defaultHeaderColWidth)
+        ? this.defaultHeaderColWidth[col] ?? this.defaultColWidth
+        : this.defaultHeaderColWidth;
+    } else if (this.isRightFrozenColumn(col, this.columnHeaderLevelCount)) {
+      if (this.isPivotTable()) {
+        return Array.isArray(this.defaultHeaderColWidth)
+          ? this.defaultHeaderColWidth[this.rowHeaderLevelCount - this.rightFrozenColCount] ?? this.defaultColWidth
+          : this.defaultHeaderColWidth;
+      }
+      return this.defaultColWidth;
+    }
+    return this.defaultColWidth;
+  }
+
   getDefaultRowHeight(row: number) {
     if (this.isColumnHeader(0, row) || this.isCornerHeader(0, row)) {
       return Array.isArray(this.defaultHeaderRowHeight)
@@ -1096,19 +1121,21 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
       return 0;
     } else if (width) {
       return width;
-    } else if (this.isRowHeader(col, 0) || this.isCornerHeader(col, 0)) {
-      return Array.isArray(this.defaultHeaderColWidth)
-        ? this.defaultHeaderColWidth[col] ?? this.defaultColWidth
-        : this.defaultHeaderColWidth;
-    } else if (this.isRightFrozenColumn(col, this.columnHeaderLevelCount)) {
-      if (this.isPivotTable()) {
-        return Array.isArray(this.defaultHeaderColWidth)
-          ? this.defaultHeaderColWidth[this.rowHeaderLevelCount - this.rightFrozenColCount] ?? this.defaultColWidth
-          : this.defaultHeaderColWidth;
-      }
-      return this.defaultColWidth;
     }
-    return this.defaultColWidth;
+    return this.getDefaultColumnWidth(col);
+    // } else if (this.isRowHeader(col, 0) || this.isCornerHeader(col, 0)) {
+    //   return Array.isArray(this.defaultHeaderColWidth)
+    //     ? this.defaultHeaderColWidth[col] ?? this.defaultColWidth
+    //     : this.defaultHeaderColWidth;
+    // } else if (this.isRightFrozenColumn(col, this.columnHeaderLevelCount)) {
+    //   if (this.isPivotTable()) {
+    //     return Array.isArray(this.defaultHeaderColWidth)
+    //       ? this.defaultHeaderColWidth[this.rowHeaderLevelCount - this.rightFrozenColCount] ?? this.defaultColWidth
+    //       : this.defaultHeaderColWidth;
+    //   }
+    //   return this.defaultColWidth;
+    // }
+    // return this.defaultColWidth;
   }
 
   // setColWidthDefined(col: number, width: number) {
@@ -1154,13 +1181,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
    */
   getColWidth(col: number): number {
     // const width = this.getColWidthDefine(col);
-    const width =
-      this.colWidthsMap.get(col) ??
-      (col < this.rowHeaderLevelCount
-        ? Array.isArray(this.defaultHeaderColWidth)
-          ? this.defaultHeaderColWidth[col] ?? this.defaultColWidth
-          : this.defaultHeaderColWidth
-        : this.defaultColWidth);
+    const width = this.colWidthsMap.get(col) ?? this.getDefaultColumnWidth(col);
     if (
       (this.widthMode === 'adaptive' && typeof width === 'number') ||
       ((this as any).transpose && typeof width === 'number')
@@ -3709,15 +3730,27 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
   }
 
   hasAutoImageColumn() {
-    return (this.internalProps.layoutMap.columnObjects as ColumnData[]).find((column: ColumnData) => {
+    const bodyColumn = (this.internalProps.layoutMap.columnObjects as ColumnData[]).find((column: ColumnData) => {
       if (
-        (column.cellType === 'image' || typeof column.cellType === 'function') &&
+        (column.cellType === 'image' || column.cellType === 'video' || typeof column.cellType === 'function') &&
         (column.define as ImageColumnDefine).imageAutoSizing
       ) {
         return true;
       }
       return false;
     });
+    const headerObj = (this.internalProps.layoutMap.headerObjects as HeaderData[]).find((column: HeaderData) => {
+      if (column) {
+        if (
+          (column.headerType === 'image' || column.headerType === 'video' || typeof column.headerType === 'function') &&
+          (column.define as ImageColumnDefine).imageAutoSizing
+        ) {
+          return true;
+        }
+      }
+      return false;
+    });
+    return bodyColumn || headerObj;
   }
   /** 获取当前hover单元格的图表实例。这个方法hover实时获取有点缺陷：鼠标hover到单元格上触发了 chart.ts中的activate方法 但此时this.stateManager.hover?.cellPos?.col还是-1 */
   _getActiveChartInstance() {
