@@ -689,39 +689,39 @@ function computeTextHeight(col: number, row: number, cellType: ColumnTypeOption,
         maxHeight = Math.max(size, lines.length * lineHeight);
       }
     } else if (iconInlineFront.length || iconInlineEnd.length) {
-      // if (autoWrapText) {
-      const textOption = Object.assign({
-        text: cellValue?.toString(),
-        fontFamily,
-        fontSize,
-        fontStyle,
-        fontWeight,
-        lineHeight
-      });
-      textOption.textBaseline = 'middle';
-      const textConfig = [
-        ...iconInlineFront.map(icon => dealWithRichTextIcon(icon)),
-        textOption,
-        ...iconInlineEnd.map(icon => dealWithRichTextIcon(icon))
-      ];
-      utilRichTextMark.setAttributes({
-        width: cellWidth - (padding[1] + padding[3]) - iconWidth,
-        height: 0,
-        textConfig
-      });
-      maxHeight = utilRichTextMark.AABBBounds.height();
-      // } else {
-      //   maxHeight = 0;
-      //   lines.forEach((line: string, index: number) => {
-      //     if (index === 0 && iconInlineFront.length) {
-      //       maxHeight += Math.max(lineHeight, iconInlineFrontHeight);
-      //     } else if (index === lines.length - 1 && iconInlineEnd.length) {
-      //       maxHeight += Math.max(lineHeight, iconInlineEndHeight);
-      //     } else {
-      //       maxHeight += lineHeight;
-      //     }
-      //   });
-      // }
+      if (autoWrapText) {
+        const textOption = Object.assign({
+          text: cellValue?.toString(),
+          fontFamily,
+          fontSize,
+          fontStyle,
+          fontWeight,
+          lineHeight
+        });
+        textOption.textBaseline = 'middle';
+        const textConfig = [
+          ...iconInlineFront.map(icon => dealWithRichTextIcon(icon)),
+          textOption,
+          ...iconInlineEnd.map(icon => dealWithRichTextIcon(icon))
+        ];
+        utilRichTextMark.setAttributes({
+          width: cellWidth - (padding[1] + padding[3]) - iconWidth,
+          height: 0,
+          textConfig
+        });
+        maxHeight = utilRichTextMark.AABBBounds.height();
+      } else {
+        maxHeight = 0;
+        lines.forEach((line: string, index: number) => {
+          if (index === 0 && iconInlineFront.length) {
+            maxHeight += Math.max(lineHeight, iconInlineFrontHeight);
+          } else if (index === lines.length - 1 && iconInlineEnd.length) {
+            maxHeight += Math.max(lineHeight, iconInlineEndHeight);
+          } else {
+            maxHeight += lineHeight;
+          }
+        });
+      }
     } else if (autoWrapText) {
       const maxLineWidth = cellWidth - (padding[1] + padding[3]) - iconWidth;
       utilTextMark.setAttributes({
