@@ -244,7 +244,7 @@ export function createCellContent(
         width: autoColWidth ? 0 : cellWidth - (padding[1] + padding[3]) - leftIconWidth - rightIconWidth,
         height: autoRowHeight && autoWrapText ? 0 : Math.ceil(cellHeight - (padding[0] + padding[2])),
         textConfig,
-        verticalDirection: autoRowHeight ? 'top' : (textBaseline as any),
+        verticalDirection: autoRowHeight && autoWrapText ? 'top' : (textBaseline as any),
 
         ellipsis: textOption.ellipsis
         // verticalDirection: textBaseline as any
