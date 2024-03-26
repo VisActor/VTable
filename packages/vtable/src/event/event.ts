@@ -278,18 +278,25 @@ export class EventManager {
               Math.abs(this.table.stateManager.fillHandle.startX - eventArgsSet.abstractPos.x)
             ) {
               this.table.stateManager.fillHandle.directionRow = true;
-              if (this.table.stateManager.fillHandle.startY - eventArgsSet.abstractPos.y > 0) {
-                this.table.stateManager.fillHandle.direction = 'top';
-              } else {
-                this.table.stateManager.fillHandle.direction = 'bottom';
-              }
             } else {
               this.table.stateManager.fillHandle.directionRow = false;
-              if (this.table.stateManager.fillHandle.startX - eventArgsSet.abstractPos.x > 0) {
-                this.table.stateManager.fillHandle.direction = 'left';
-              } else {
-                this.table.stateManager.fillHandle.direction = 'right';
-              }
+            }
+          }
+
+          if (
+            Math.abs(this.table.stateManager.fillHandle.startY - eventArgsSet.abstractPos.y) >=
+            Math.abs(this.table.stateManager.fillHandle.startX - eventArgsSet.abstractPos.x)
+          ) {
+            if (this.table.stateManager.fillHandle.startY - eventArgsSet.abstractPos.y > 0) {
+              this.table.stateManager.fillHandle.direction = 'top';
+            } else {
+              this.table.stateManager.fillHandle.direction = 'bottom';
+            }
+          } else {
+            if (this.table.stateManager.fillHandle.startX - eventArgsSet.abstractPos.x > 0) {
+              this.table.stateManager.fillHandle.direction = 'left';
+            } else {
+              this.table.stateManager.fillHandle.direction = 'right';
             }
           }
           if (this.table.stateManager.fillHandle.directionRow) {
@@ -466,10 +473,14 @@ export class EventManager {
       const { eventArgs } = eventArgsSet;
       if (eventArgs) {
         if (this.table.stateManager.select?.ranges?.length) {
-          const lastCol =
-            this.table.stateManager.select.ranges[this.table.stateManager.select.ranges.length - 1].end.col;
-          const lastRow =
-            this.table.stateManager.select.ranges[this.table.stateManager.select.ranges.length - 1].end.row;
+          const lastCol = Math.max(
+            this.table.stateManager.select.ranges[this.table.stateManager.select.ranges.length - 1].start.col,
+            this.table.stateManager.select.ranges[this.table.stateManager.select.ranges.length - 1].end.col
+          );
+          const lastRow = Math.max(
+            this.table.stateManager.select.ranges[this.table.stateManager.select.ranges.length - 1].start.row,
+            this.table.stateManager.select.ranges[this.table.stateManager.select.ranges.length - 1].end.row
+          );
 
           const lastCellBound = this.table.scenegraph.highPerformanceGetCell(lastCol, lastRow).globalAABBBounds;
           // 计算鼠标与fillhandle矩形中心之间的距离

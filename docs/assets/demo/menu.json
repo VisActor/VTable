@@ -900,6 +900,13 @@
             "zh": "动态新增删除数据",
             "en": "Dynamically adjust data"
           }
+        },
+        {
+          "path": "fill-handle",
+          "title": {
+            "zh": "填充柄效果",
+            "en": "fill handle effect"
+          }
         }
       ]
     },

@@ -260,8 +260,9 @@ interface ListTableAPI {
    * @param col 粘贴数据的起始列号
    * @param row 粘贴数据的起始行号
    * @param values 多个单元格的数据数组
+   * @param workOnEditableCell 是否仅允许更改可编辑单元格的值，默认为 false
    */
-  changeCellValues(startCol: number, startRow: number, values: string[][]);
+  changeCellValues(startCol: number, startRow: number, values: string[][], workOnEditableCell = false);
   /** 获取单元格配置的编辑器 */
   getEditor: (col: number, row: number) => IEditor;
   /** 开启单元格编辑 */

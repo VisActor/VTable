@@ -68,6 +68,10 @@ export class StateManager {
     isFilling: boolean;
     startX: number;
     startY: number;
+    beforeFillMinCol?: number;
+    beforeFillMinRow?: number;
+    beforeFillMaxCol?: number;
+    beforeFillMaxRow?: number;
   };
   hover: {
     highlightScope: HighlightScope; // hover模式
@@ -589,7 +593,7 @@ export class StateManager {
     this.table.scenegraph.component.showResizeCol(col, y, isRightFrozen);
 
     // 调整列宽期间清空选中清空
-    this.table.stateManager.updateSelectPos(-1, -1);
+    this.updateSelectPos(-1, -1);
 
     this.table.scenegraph.updateNextFrame();
   }
@@ -597,16 +601,37 @@ export class StateManager {
     this.fillHandle.isFilling = true;
     this.fillHandle.startX = x;
     this.fillHandle.startY = y;
-    this.table.scenegraph.updateNextFrame();
+    const currentRange = this.select.ranges[this.select.ranges.length - 1];
+    this.fillHandle.beforeFillMinCol = Math.min(currentRange.start.col, currentRange.end.col);
+    this.fillHandle.beforeFillMinRow = Math.min(currentRange.start.row, currentRange.end.row);
+    this.fillHandle.beforeFillMaxCol = Math.max(currentRange.start.col, currentRange.end.col);
+    this.fillHandle.beforeFillMaxRow = Math.max(currentRange.start.row, currentRange.end.row);
+    // this.table.scenegraph.updateNextFrame();
     this.table.fireListeners(TABLE_EVENT_TYPE.MOUSEDOWN_FILL_HANDLE, {});
   }
   endFillSelect() {
     this.fillHandle.isFilling = false;
     this.fillHandle.startX = undefined;
     this.fillHandle.startY = undefined;
-    this.table.stateManager.fillHandle.directionRow = undefined;
-    this.table.eventManager.isDraging &&
-      this.table.fireListeners(TABLE_EVENT_TYPE.DRAG_FILL_HANDLE_END, { direction: this.fillHandle.direction });
+    this.fillHandle.directionRow = undefined;
+    const currentMinCol = Math.min(this.select.ranges[0].start.col, this.select.ranges[0].end.col);
+    const currentMinRow = Math.min(this.select.ranges[0].start.row, this.select.ranges[0].end.row);
+    const currentMaxCol = Math.max(this.select.ranges[0].start.col, this.select.ranges[0].end.col);
+    const currentMaxRow = Math.max(this.select.ranges[0].start.row, this.select.ranges[0].end.row);
+    //如果选中区域没有发生变化 不触发事件
+    if (
+      this.fillHandle.beforeFillMinCol !== currentMinCol ||
+      this.fillHandle.beforeFillMinRow !== currentMinRow ||
+      this.fillHandle.beforeFillMaxCol !== currentMaxCol ||
+      this.fillHandle.beforeFillMaxRow !== currentMaxRow
+    ) {
+      this.table.eventManager.isDraging &&
+        this.table.fireListeners(TABLE_EVENT_TYPE.DRAG_FILL_HANDLE_END, { direction: this.fillHandle.direction });
+    }
+    this.fillHandle.beforeFillMaxCol = undefined;
+    this.fillHandle.beforeFillMaxRow = undefined;
+    this.fillHandle.beforeFillMinCol = undefined;
+    this.fillHandle.beforeFillMinRow = undefined;
   }
   updateResizeCol(xInTable: number, yInTable: number) {
     updateResizeColumn(xInTable, yInTable, this);
@@ -672,8 +697,8 @@ export class StateManager {
     this.table.scenegraph.proxy.deltaY = 0;
 
     // 滚动期间清空选中清空
-    this.table.stateManager.updateHoverPos(-1, -1);
-    // this.table.stateManager.updateSelectPos(-1, -1);
+    this.updateHoverPos(-1, -1);
+    // this.updateSelectPos(-1, -1);
 
     this.table.fireListeners(TABLE_EVENT_TYPE.SCROLL, {
       scrollTop: this.scroll.verticalBarPos,
@@ -699,8 +724,8 @@ export class StateManager {
     //   }
     // };
     // 滚动期间清空选中清空
-    this.table.stateManager.updateHoverPos(-1, -1);
-    // this.table.stateManager.updateSelectPos(-1, -1);
+    this.updateHoverPos(-1, -1);
+    // this.updateSelectPos(-1, -1);
     this.table.fireListeners(TABLE_EVENT_TYPE.SCROLL, {
       scrollTop: this.scroll.verticalBarPos,
       scrollLeft: this.scroll.horizontalBarPos,
@@ -719,9 +744,9 @@ export class StateManager {
     top = Math.ceil(top);
     // 滚动期间清空选中清空 如果调用接口hover状态需要保留，但是如果不调用updateHoverPos透视图处于hover状态的图就不能及时更新 所以这里单独判断了isPivotChart
     if (top !== this.scroll.verticalBarPos || this.table.isPivotChart()) {
-      this.table.stateManager.updateHoverPos(-1, -1);
+      this.updateHoverPos(-1, -1);
     }
-    // this.table.stateManager.updateSelectPos(-1, -1);
+    // this.updateSelectPos(-1, -1);
     this.scroll.verticalBarPos = top;
 
     // 设置scenegraph坐标
@@ -750,9 +775,9 @@ export class StateManager {
     left = Math.ceil(left);
     // 滚动期间清空选中清空
     if (left !== this.scroll.horizontalBarPos) {
-      this.table.stateManager.updateHoverPos(-1, -1);
+      this.updateHoverPos(-1, -1);
     }
-    // this.table.stateManager.updateSelectPos(-1, -1);
+    // this.updateSelectPos(-1, -1);
     this.scroll.horizontalBarPos = left;
 
     // 设置scenegraph坐标

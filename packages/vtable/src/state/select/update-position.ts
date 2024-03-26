@@ -195,10 +195,67 @@ export function updateSelectPosition(
           row
         };
       } else {
-        currentRange.end = {
-          col,
-          row
-        };
+        if (state.fillHandle.isFilling) {
+          // 修正拖拽填充柄选中范围 和 不拖填充柄是有区别的 解决选中区域缩小问题
+          if (state.fillHandle.direction === 'top') {
+            if (row === state.fillHandle.beforeFillMinRow && row === state.fillHandle.beforeFillMaxRow) {
+              currentRange.start.row = currentRange.end.row = row;
+            } else if (row <= state.fillHandle.beforeFillMinRow) {
+              if (currentRange.start.row < currentRange.end.row) {
+                const temp = currentRange.start.row;
+                currentRange.start.row = currentRange.end.row;
+                currentRange.end.row = temp;
+              }
+              currentRange.end.row = row;
+            } else if (row === state.fillHandle.beforeFillMaxRow) {
+              if (currentRange.start.row > currentRange.end.row) {
+                currentRange.start.row = row;
+              } else {
+                currentRange.end.row = row;
+              }
+            }
+          } else if (state.fillHandle.direction === 'bottom') {
+            if (row >= state.fillHandle.beforeFillMaxRow) {
+              if (currentRange.start.row > currentRange.end.row) {
+                const temp = currentRange.start.row;
+                currentRange.start.row = currentRange.end.row;
+                currentRange.end.row = temp;
+              }
+              currentRange.end.row = row;
+            }
+          } else if (state.fillHandle.direction === 'left') {
+            if (col === state.fillHandle.beforeFillMinCol && col === state.fillHandle.beforeFillMaxCol) {
+              currentRange.start.col = currentRange.end.col = col;
+            } else if (col <= state.fillHandle.beforeFillMinCol) {
+              if (currentRange.start.col < currentRange.end.col) {
+                const temp = currentRange.start.col;
+                currentRange.start.col = currentRange.end.col;
+                currentRange.end.col = temp;
+              }
+              currentRange.end.col = col;
+            } else if (col === state.fillHandle.beforeFillMaxCol) {
+              if (currentRange.start.col > currentRange.end.col) {
+                currentRange.start.col = col;
+              } else {
+                currentRange.end.col = col;
+              }
+            }
+          } else if (state.fillHandle.direction === 'right') {
+            if (col >= state.fillHandle.beforeFillMaxCol) {
+              if (currentRange.start.col > currentRange.end.col) {
+                const temp = currentRange.start.col;
+                currentRange.start.col = currentRange.end.col;
+                currentRange.end.col = temp;
+              }
+              currentRange.end.col = col;
+            }
+          }
+        } else {
+          currentRange.end = {
+            col,
+            row
+          };
+        }
       }
       scenegraph.updateCellSelectBorder(
         currentRange.start.col,

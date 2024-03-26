@@ -115,6 +115,14 @@ Issue settings related to event triggering, specific configuration items:
 ##${prefix} preventDefaultContextMenu(boolean) = true
 Organizing the default behavior of the right mouse button
 
+#${prefix} excelOptions(Object)
+
+Align excel advanced capabilities
+
+##${prefix} fillHandle(boolean) = false
+
+Fill handle, when set to true, when a cell is selected, the fill handle will be displayed on the lower right side of the cell. You can drag the fill handle to edit the value of the cell. Or double-click the fill handle to change the value of the cell you want to edit.
+
 #${prefix} columnResizeMode(string) = 'all'
 
 Mouse hover over the cell right border can drag and adjust column width. This operation can trigger the following range:
@@ -351,8 +359,9 @@ Customize cell merging rules. When the incoming row and column numbers are withi
 ```
 
 Custom cell style
-* id: the unique id of the custom style
-* style: Custom cell style, which is the same as the `style` configuration in `column`. The final rendering effect is the fusion of the original style of the cell and the custom style.
+
+- id: the unique id of the custom style
+- style: Custom cell style, which is the same as the `style` configuration in `column`. The final rendering effect is the fusion of the original style of the cell and the custom style.
 
 #${prefix} customCellStyleArrangement(Array)
 
@@ -363,7 +372,8 @@ Custom cell style
 ```
 
 Custom cell style assignment
-* cellPosition: cell position information, supports configuration of single cells and cell areas
-   * Single cell: `{ row: number, column: number }`
-   * Cell range: `{ range: { start: { row: number, column: number }, end: { row: number, column: number} } }`
-* customStyleId: Custom style id, the same as the id defined when registering the custom style
+
+- cellPosition: cell position information, supports configuration of single cells and cell areas
+  - Single cell: `{ row: number, column: number }`
+  - Cell range: `{ range: { start: { row: number, column: number }, end: { row: number, column: number} } }`
+- customStyleId: Custom style id, the same as the id defined when registering the custom style

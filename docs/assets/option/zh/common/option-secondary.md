@@ -112,6 +112,14 @@
 ##${prefix} preventDefaultContextMenu(boolean) = true
 组织鼠标右键的默认行为
 
+#${prefix} excelOptions(Object)
+
+对齐 excel 高级能力
+
+##${prefix} fillHandle(boolean) = false
+
+填充柄，设置为 true 后，当选中单元格后，填充柄会显示在单元格右下方，可以拖动填充柄来编辑单元格的值。或者双击填充柄来改变需要编辑单元格的值。
+
 #${prefix} columnResizeMode(string) = 'all'
 
 鼠标 hover 到单元格右边界可拖拽调整列宽。该操作可触发的范围：
