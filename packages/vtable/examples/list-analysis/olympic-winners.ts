@@ -12,7 +12,7 @@ export function createTable() {
     height: 20,
     marginRight: 6,
     positionType: VTable.TYPES.IconPosition.right,
-    // interactive: true,
+    interactive: true,
     svg: '<svg t="1707378931406" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="1587" width="200" height="200"><path d="M741.248 79.68l-234.112 350.08v551.488l55.296 24.704v-555.776l249.152-372.544c8.064-32.96-10.496-59.712-41.152-59.712h-709.248c-30.464 0-49.28 26.752-41.344 59.712l265.728 372.544v432.256l55.36 24.704v-478.592l-248.896-348.864h649.216z m-68.032 339.648c0-16.832 12.096-30.592 27.264-30.848h277.888c15.232 0 27.712 13.824 27.712 30.848s-12.416 30.848-27.712 30.848h-277.888c-15.168-0.32-27.264-14.016-27.264-30.848z m0 185.216c0-16.832 12.096-30.592 27.264-30.848h277.888c15.232 0 27.712 13.824 27.712 30.848s-12.416 30.848-27.712 30.848h-277.888c-15.168-0.256-27.264-14.016-27.264-30.848z m0 185.28c0-16.832 12.096-30.592 27.264-30.848h277.888c15.232 0 27.712 13.824 27.712 30.848s-12.416 30.848-27.712 30.848h-277.888c-15.168-0.32-27.264-13.952-27.264-30.848z" p-id="1588"></path></svg>'
   });
 
@@ -23,33 +23,12 @@ export function createTable() {
     height: 20,
     marginRight: 6,
     positionType: VTable.TYPES.IconPosition.right,
-    // interactive: true,
     svg: '<svg t="1707378931406" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="1587" width="200" height="200"><path d="M741.248 79.68l-234.112 350.08v551.488l55.296 24.704v-555.776l249.152-372.544c8.064-32.96-10.496-59.712-41.152-59.712h-709.248c-30.464 0-49.28 26.752-41.344 59.712l265.728 372.544v432.256l55.36 24.704v-478.592l-248.896-348.864h649.216z m-68.032 339.648c0-16.832 12.096-30.592 27.264-30.848h277.888c15.232 0 27.712 13.824 27.712 30.848s-12.416 30.848-27.712 30.848h-277.888c-15.168-0.32-27.264-14.016-27.264-30.848z m0 185.216c0-16.832 12.096-30.592 27.264-30.848h277.888c15.232 0 27.712 13.824 27.712 30.848s-12.416 30.848-27.712 30.848h-277.888c-15.168-0.256-27.264-14.016-27.264-30.848z m0 185.28c0-16.832 12.096-30.592 27.264-30.848h277.888c15.232 0 27.712 13.824 27.712 30.848s-12.416 30.848-27.712 30.848h-277.888c-15.168-0.32-27.264-13.952-27.264-30.848z" p-id="1588" fill="#1296db"></path></svg>'
   });
   fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/olympic-winners.json')
     .then(res => res.json())
     .then(data => {
       const columns = [
-        {
-          field: 'athlete',
-          title: 'athlete',
-          aggregation: {
-            aggregationType: VTable.TYPES.AggregationType.NONE,
-            formatFun(value) {
-              return 'Total:';
-            }
-          }
-        },
-        {
-          field: 'age',
-          title: 'age',
-          aggregation: {
-            aggregationType: VTable.TYPES.AggregationType.AVG,
-            formatFun(value) {
-              return Math.round(value) + '(Avg)';
-            }
-          }
-        },
         {
           field: 'country',
           title: 'country',

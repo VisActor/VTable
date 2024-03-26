@@ -332,10 +332,31 @@ export class SimpleHeaderLayoutMap implements LayoutMapAPI {
     return this._hasAggregationOnBottomCount;
   }
 
-  getAggregators(col: number, row: number) {
+  getAggregatorsByCell(col: number, row: number) {
     const column = this.getBody(col, row);
     const aggregators = (column as ColumnData).aggregator;
     return aggregators;
+  }
+
+  getAggregatorsByCellRange(startCol: number, startRow: number, endCol: number, endRow: number) {
+    let aggregators: Aggregator[] = [];
+    if (this.transpose) {
+      for (let i = startRow; i <= endRow; i++) {
+        const column = this.getBody(startCol, i) as ColumnData;
+        if (column.aggregator) {
+          aggregators = aggregators.concat(Array.isArray(column.aggregator) ? column.aggregator : [column.aggregator]);
+        }
+      }
+    } else {
+      for (let i = startCol; i <= endCol; i++) {
+        const column = this.getBody(i, startRow) as ColumnData;
+        if (column.aggregator) {
+          aggregators = aggregators.concat(Array.isArray(column.aggregator) ? column.aggregator : [column.aggregator]);
+        }
+      }
+      return aggregators;
+    }
+    return [];
   }
   getAggregatorOnTop(col: number, row: number) {
     const column = this.getBody(col, row);
@@ -392,27 +413,33 @@ export class SimpleHeaderLayoutMap implements LayoutMapAPI {
    * @param row
    * @returns
    */
-  getCellAddressHasAggregator(col: number, row: number) {
+  getAggregatorCellAddress(startCol: number, startRow: number, endCol: number, endRow: number) {
     const cellAddrs = [];
+    const topCount = this.hasAggregationOnTopCount;
+    const bottomCount = this.hasAggregationOnBottomCount;
     if (this.transpose) {
-      const topCount = this.hasAggregationOnTopCount;
-      for (let i = 0; i < topCount; i++) {
-        cellAddrs.push({ col: this.headerLevelCount + i, row });
-      }
-
-      const bottomCount = this.hasAggregationOnBottomCount;
-      for (let i = 0; i < bottomCount; i++) {
-        cellAddrs.push({ col: this.rowCount - bottomCount + i, row });
+      for (let row = startRow; row <= endRow; row++) {
+        const column = this.getBody(startCol, row);
+        if ((column as ColumnData).aggregator) {
+          for (let i = 0; i < topCount; i++) {
+            cellAddrs.push({ col: this.headerLevelCount + i, row });
+          }
+          for (let i = 0; i < bottomCount; i++) {
+            cellAddrs.push({ col: this.rowCount - bottomCount + i, row });
+          }
+        }
       }
     } else {
-      const topCount = this.hasAggregationOnTopCount;
-      for (let i = 0; i < topCount; i++) {
-        cellAddrs.push({ col, row: this.headerLevelCount + i });
-      }
-
-      const bottomCount = this.hasAggregationOnBottomCount;
-      for (let i = 0; i < bottomCount; i++) {
-        cellAddrs.push({ col, row: this.rowCount - bottomCount + i });
+      for (let col = startCol; col <= endCol; col++) {
+        const column = this.getBody(col, startRow);
+        if ((column as ColumnData).aggregator) {
+          for (let i = 0; i < topCount; i++) {
+            cellAddrs.push({ col, row: this.headerLevelCount + i });
+          }
+          for (let i = 0; i < bottomCount; i++) {
+            cellAddrs.push({ col, row: this.rowCount - bottomCount + i });
+          }
+        }
       }
     }
     return cellAddrs;

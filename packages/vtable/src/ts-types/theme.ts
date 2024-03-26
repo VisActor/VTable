@@ -1,5 +1,5 @@
 /* eslint-disable sort-imports */
-import type { ColorsDef, LineDashsDef, LineWidthsDef, LineWidthsPropertyDefine } from '.';
+import type { ColorsDef, LineDashsDef, LineWidthsDef, LineWidthsPropertyDefine, LineDashsPropertyDefine } from '.';
 import type { CheckboxStyle, ITextStyleOption } from './column/style';
 import type { ColorPropertyDefine, ColorsPropertyDefine } from './style-define';
 import type { ColumnIconOption } from './icon';

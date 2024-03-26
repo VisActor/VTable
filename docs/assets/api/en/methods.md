@@ -841,7 +841,7 @@ Change the value of a cell:
 
 ```
   /** Set the value of the cell. Note that it corresponds to the original value of the source data, and the vtable instance records will be modified accordingly */
-  changeCellValue: (col: number, row: number, value: string | number | null) => void;
+  changeCellValue: (col: number, row: number, value: string | number | null, workOnEditableCell = false) => void;
 ```
 
 ## changeCellValues(Function)

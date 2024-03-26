@@ -775,7 +775,7 @@ export function resizeCellGroup(
     }
   });
 
-  const lineWidth = cellGroup.attribute.lineWidth;
+  const lineWidth = (cellGroup.attribute as any).strokeArrayWidth ?? cellGroup.attribute.lineWidth;
   const isLineWidthArray = isArray(lineWidth);
   const newLineWidth = [0, 0, 0, 0];
 

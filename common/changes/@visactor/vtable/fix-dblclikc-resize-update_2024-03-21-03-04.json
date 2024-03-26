@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vtable",
+      "comment": "fix: fix _widthResizedColMap update in DBLCLICK_CELL #1297",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vtable"
+}

@@ -354,6 +354,10 @@ export const menus = [
       },
       {
         path: 'pivot',
+        name: 'pivot-image-on-column'
+      },
+      {
+        path: 'pivot',
         name: 'pivot-image-tree'
       },
       {
@@ -466,6 +470,10 @@ export const menus = [
   {
     menu: '交互',
     children: [
+      {
+        path: 'interactive',
+        name: 'fill-handle'
+      },
       {
         path: 'interactive',
         name: 'hover'

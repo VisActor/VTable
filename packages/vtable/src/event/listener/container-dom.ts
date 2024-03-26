@@ -224,99 +224,14 @@ export function bindContainerDomListener(eventManager: EventManager) {
         return;
       }
       if (table.stateManager.select.ranges?.length > 0) {
-        const ranges = table.stateManager.select.ranges;
-        const col = Math.min(ranges[0].start.col, ranges[0].end.col);
-        const row = Math.min(ranges[0].start.row, ranges[0].end.row);
-        const values: (string | number)[][] = [];
-
         // 读取剪切板数据
         navigator.clipboard.read().then(clipboardItems => {
           for (const item of clipboardItems) {
             // 优先处理 html 格式数据
             if (item.types.includes('text/html')) {
-              item.getType('text/html').then(blob => {
-                blob.text().then(pastedData => {
-                  // 解析html数据
-                  if (pastedData && /(<table)|(<TABLE)/g.test(pastedData)) {
-                    const regex = /<tr[^>]*>(.*?)<\/tr>/gs; // 匹配<tr>标签及其内容
-                    // const matches = pastedData.matchAll(regex);
-                    const matches = Array.from(pastedData.matchAll(regex));
-                    for (const match of matches) {
-                      const rowContent = match[1]; // 获取<tr>标签中的内容
-                      const cellRegex = /<td[^>]*>(.*?)<\/td>/gs; // 匹配<td>标签及其内容
-                      const cellMatches: RegExpMatchArray[] = Array.from(rowContent.matchAll(cellRegex)); // 获取<td>标签中的内容
-                      const rowValues = cellMatches.map(cellMatch => {
-                        return (
-                          cellMatch[1]
-                            .replace(/(<(?!br)([^>]+)>)/gi, '') // 除了 <br> 标签以外的所有 HTML 标签都替换为空字符串
-                            .replace(/<br(\s*|\/)>[\r\n]?/gim, '\n') // 将字符串中的 <br> 标签以及其后可能存在的空白字符和斜杠都替换为换行符 \n
-                            // .replace(/<br>/g, '\n') // 替换<br>标签为换行符
-                            // .replace(/<(?:.|\n)*?>/gm, '') // 去除HTML标签
-                            //将字符串中的 HTML 实体字符转换为原始的字符
-                            .replace(/&amp;/g, '&')
-                            .replace(/&lt;/g, '<')
-                            .replace(/&gt;/g, '>')
-                            .replace(/&#9;/gi, '\t')
-                            .replace(/&nbsp;/g, ' ')
-                        );
-                        // .trim(); // 去除首尾空格
-                      });
-                      values.push(rowValues);
-                    }
-                    (table as ListTableAPI).changeCellValues(col, row, values, true);
-                  } else {
-                    navigator.clipboard.read().then(clipboardItems => {
-                      for (const item of clipboardItems) {
-                        if (item.types.includes('text/plain')) {
-                          item.getType('text/plain').then(blob => {
-                            blob.text().then(pastedData => {
-                              const rows = pastedData.split('\n'); // 将数据拆分为行
-                              rows.forEach(function (rowCells: any, rowIndex: number) {
-                                const cells = rowCells.split('\t'); // 将行数据拆分为单元格
-                                const rowValues: (string | number)[] = [];
-                                values.push(rowValues);
-                                cells.forEach(function (cell: string, cellIndex: number) {
-                                  // 去掉单元格数据末尾的 '\r'
-                                  if (cellIndex === cells.length - 1) {
-                                    cell = cell.trim();
-                                  }
-                                  rowValues.push(cell);
-                                });
-                              });
-                              (table as ListTableAPI).changeCellValues(col, row, values, true);
-                            });
-                          });
-                        }
-                      }
-                    });
-                  }
-                });
-              });
+              pasteHtmlToTable(item);
             } else if (item.types.length === 1 && item.types[0] === 'text/plain') {
-              // 如果只有 'text/plain'
-              item.getType('text/plain').then(blob => {
-                blob.text().then(pastedData => {
-                  const rows = pastedData.replace(/\r(?!\n)/g, '\r\n').split('\r\n'); // 文本中的换行符格式进行统一处理
-                  const values: (string | number)[][] = [];
-                  if (rows.length > 1 && rows[rows.length - 1] === '') {
-                    rows.pop();
-                  }
-                  rows.forEach(function (rowCells: any, rowIndex: number) {
-                    const cells = rowCells.split('\t'); // 将行数据拆分为单元格
-                    const rowValues: (string | number)[] = [];
-                    values.push(rowValues);
-                    cells.forEach(function (cell: string, cellIndex: number) {
-                      if (cell.includes('\n')) {
-                        cell = cell
-                          .replace(/^"(.*)"$/, '$1') // 将字符串开头和结尾的双引号去除，并保留双引号内的内容
-                          .replace(/["]*/g, match => new Array(Math.floor(match.length / 2)).fill('"').join('')); // 连续出现的双引号替换为一半数量的双引号
-                      }
-                      rowValues.push(cell);
-                    });
-                  });
-                });
-              });
-              (table as ListTableAPI).changeCellValues(col, row, values, true);
+              pasteTextToTable(item);
             } else {
               // 其他情况
             }
@@ -339,7 +254,168 @@ export function bindContainerDomListener(eventManager: EventManager) {
     }
     table.resize();
   });
+  function pasteHtmlToTable(item: ClipboardItem) {
+    const ranges = table.stateManager.select.ranges;
+    const selectRangeLength = ranges.length;
+    const col = Math.min(ranges[selectRangeLength - 1].start.col, ranges[selectRangeLength - 1].end.col);
+    const row = Math.min(ranges[selectRangeLength - 1].start.row, ranges[selectRangeLength - 1].end.row);
+    const maxCol = Math.max(ranges[selectRangeLength - 1].start.col, ranges[selectRangeLength - 1].end.col);
+    const maxRow = Math.max(ranges[selectRangeLength - 1].start.row, ranges[selectRangeLength - 1].end.row);
+    let pasteValuesColCount = 0;
+    let pasteValuesRowCount = 0;
+    let values: (string | number)[][] = [];
+    item.getType('text/html').then((blob: any) => {
+      blob.text().then((pastedData: any) => {
+        // 解析html数据
+        if (pastedData && /(<table)|(<TABLE)/g.test(pastedData)) {
+          const regex = /<tr[^>]*>(.*?)<\/tr>/gs; // 匹配<tr>标签及其内容
+          // const matches = pastedData.matchAll(regex);
+          const matches = Array.from(pastedData.matchAll(regex));
+          for (const match of matches) {
+            const rowContent = match[1]; // 获取<tr>标签中的内容
+            const cellRegex = /<td[^>]*>(.*?)<\/td>/gs; // 匹配<td>标签及其内容
+            const cellMatches: RegExpMatchArray[] = Array.from(rowContent.matchAll(cellRegex)); // 获取<td>标签中的内容
+            const rowValues = cellMatches.map(cellMatch => {
+              return (
+                cellMatch[1]
+                  .replace(/(<(?!br)([^>]+)>)/gi, '') // 除了 <br> 标签以外的所有 HTML 标签都替换为空字符串
+                  .replace(/<br(\s*|\/)>[\r\n]?/gim, '\n') // 将字符串中的 <br> 标签以及其后可能存在的空白字符和斜杠都替换为换行符 \n
+                  // .replace(/<br>/g, '\n') // 替换<br>标签为换行符
+                  // .replace(/<(?:.|\n)*?>/gm, '') // 去除HTML标签
+                  //将字符串中的 HTML 实体字符转换为原始的字符
+                  .replace(/&amp;/g, '&')
+                  .replace(/&lt;/g, '<')
+                  .replace(/&gt;/g, '>')
+                  .replace(/&#9;/gi, '\t')
+                  .replace(/&nbsp;/g, ' ')
+              );
+              // .trim(); // 去除首尾空格
+            });
+            values.push(rowValues);
+            pasteValuesColCount = Math.max(pasteValuesColCount, rowValues?.length ?? 0);
+          }
+          pasteValuesRowCount = values.length ?? 0;
+          values = handlePasteValues(
+            values,
+            pasteValuesRowCount,
+            pasteValuesColCount,
+            maxRow - row + 1,
+            maxCol - col + 1
+          );
+          (table as ListTableAPI).changeCellValues(col, row, values, true);
+        } else {
+          navigator.clipboard.read().then(clipboardItems => {
+            for (const item of clipboardItems) {
+              if (item.types.includes('text/plain')) {
+                item.getType('text/plain').then((blob: Blob) => {
+                  blob.text().then(_pasteValue);
+                });
+              }
+            }
+          });
+        }
+      });
+    });
+  }
 
+  function _pasteValue(pastedData: string) {
+    const ranges = table.stateManager.select.ranges;
+    const selectRangeLength = ranges.length;
+    const col = Math.min(ranges[selectRangeLength - 1].start.col, ranges[selectRangeLength - 1].end.col);
+    const row = Math.min(ranges[selectRangeLength - 1].start.row, ranges[selectRangeLength - 1].end.row);
+    const maxCol = Math.max(ranges[selectRangeLength - 1].start.col, ranges[selectRangeLength - 1].end.col);
+    const maxRow = Math.max(ranges[selectRangeLength - 1].start.row, ranges[selectRangeLength - 1].end.row);
+    let pasteValuesColCount = 0;
+    let pasteValuesRowCount = 0;
+    let values: (string | number)[][] = [];
+    const rows = pastedData.split('\n'); // 将数据拆分为行
+    rows.forEach(function (rowCells: any, rowIndex: number) {
+      const cells = rowCells.split('\t'); // 将行数据拆分为单元格
+      const rowValues: (string | number)[] = [];
+      values.push(rowValues);
+      cells.forEach(function (cell: string, cellIndex: number) {
+        // 去掉单元格数据末尾的 '\r'
+        if (cellIndex === cells.length - 1) {
+          cell = cell.trim();
+        }
+        rowValues.push(cell);
+      });
+      pasteValuesColCount = Math.max(pasteValuesColCount, rowValues?.length ?? 0);
+    });
+    pasteValuesRowCount = values.length ?? 0;
+    values = handlePasteValues(values, pasteValuesRowCount, pasteValuesColCount, maxRow - row + 1, maxCol - col + 1);
+    (table as ListTableAPI).changeCellValues(col, row, values, true);
+  }
+  function pasteTextToTable(item: ClipboardItem) {
+    // 如果只有 'text/plain'
+    const ranges = table.stateManager.select.ranges;
+    const selectRangeLength = ranges.length;
+    const col = Math.min(ranges[selectRangeLength - 1].start.col, ranges[selectRangeLength - 1].end.col);
+    const row = Math.min(ranges[selectRangeLength - 1].start.row, ranges[selectRangeLength - 1].end.row);
+    const maxCol = Math.max(ranges[selectRangeLength - 1].start.col, ranges[selectRangeLength - 1].end.col);
+    const maxRow = Math.max(ranges[selectRangeLength - 1].start.row, ranges[selectRangeLength - 1].end.row);
+    let pasteValuesColCount = 0;
+    let pasteValuesRowCount = 0;
+    // const values: (string | number)[][] = [];
+    item.getType('text/plain').then((blob: any) => {
+      blob.text().then((pastedData: any) => {
+        const rows = pastedData.replace(/\r(?!\n)/g, '\r\n').split('\r\n'); // 文本中的换行符格式进行统一处理
+        let values: (string | number)[][] = [];
+        if (rows.length > 1 && rows[rows.length - 1] === '') {
+          rows.pop();
+        }
+        rows.forEach(function (rowCells: any, rowIndex: number) {
+          const cells = rowCells.split('\t'); // 将行数据拆分为单元格
+          const rowValues: (string | number)[] = [];
+          values.push(rowValues);
+          cells.forEach(function (cell: string, cellIndex: number) {
+            if (cell.includes('\n')) {
+              cell = cell
+                .replace(/^"(.*)"$/, '$1') // 将字符串开头和结尾的双引号去除，并保留双引号内的内容
+                .replace(/["]*/g, match => new Array(Math.floor(match.length / 2)).fill('"').join('')); // 连续出现的双引号替换为一半数量的双引号
+            }
+            rowValues.push(cell);
+          });
+          pasteValuesColCount = Math.max(pasteValuesColCount, rowValues?.length ?? 0);
+        });
+        pasteValuesRowCount = values.length ?? 0;
+        values = handlePasteValues(
+          values,
+          pasteValuesRowCount,
+          pasteValuesColCount,
+          maxRow - row + 1,
+          maxCol - col + 1
+        );
+        (table as ListTableAPI).changeCellValues(col, row, values, true);
+      });
+    });
+  }
+  function handlePasteValues(
+    values: (string | number)[][],
+    rowCount: number,
+    colCount: number,
+    selectedRowCount: number,
+    selectedColCount: number
+  ) {
+    if (selectedColCount > colCount || selectedRowCount > rowCount) {
+      if (selectedColCount % colCount === 0 && selectedRowCount % rowCount === 0) {
+        const toPasteValues: (string | number)[][] = [];
+        // 在目标区域中循环遍历，将复制的值逐个粘贴到每个单元格中
+        for (let i = 0; i < selectedRowCount; i++) {
+          const rowPasteValue: (string | number)[] = [];
+          toPasteValues.push(rowPasteValue);
+          for (let j = 0; j < selectedColCount; j++) {
+            const copiedRow = i % rowCount;
+            const copiedCol = j % colCount;
+            rowPasteValue.push(values[copiedRow][copiedCol]);
+          }
+        }
+        return toPasteValues;
+      }
+      return values;
+    }
+    return values;
+  }
   // 有被阻止冒泡的场景 就触发不到这里的事件了 所以这个LastBodyPointerXY变量的赋值在scrollbar的down事件也进行了处理
   const globalPointerdownCallback = (e: MouseEvent) => {
     // console.log('body pointerdown');

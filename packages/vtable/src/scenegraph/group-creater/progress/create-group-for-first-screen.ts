@@ -26,7 +26,10 @@ export function createGroupForFirstScreen(
 
   let distCol;
   let distRow;
-  if (table.widthMode === 'adaptive') {
+  if (
+    table.widthMode === 'adaptive' ||
+    (table.options.autoWrapText && (table.heightMode === 'adaptive' || table.heightMode === 'autoHeight'))
+  ) {
     distCol = table.colCount - 1;
   } else {
     distCol = Math.min(proxy.firstScreenColLimit, table.colCount - 1);

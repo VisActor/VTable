@@ -8,7 +8,7 @@ VTable provides the ability to row serial numbers. Users can easily enable, cust
 
 Currently the following configurations are supported:
 
-```
+```javascript
 export interface IRowSeriesNumber {
   width?: number | 'auto';
   // align?: 'left' | 'right';

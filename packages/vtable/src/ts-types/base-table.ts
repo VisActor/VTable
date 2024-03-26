@@ -268,6 +268,9 @@ export interface BaseTableConstructorOptions {
   defaultHeaderColWidth?: (number | 'auto') | (number | 'auto')[];
   /** 快捷键功能设置 */
   keyboardOptions?: TableKeyboardOptions;
+  excelOptions?: {
+    fillHandle?: boolean;
+  };
   /** 事件触发相关设置 */
   eventOptions?: TableEventOptions;
   /**
@@ -402,6 +405,8 @@ export interface BaseTableConstructorOptions {
   // columnSeriesNumber?: ColumnSeriesNumber[];
   customCellStyle?: CustomCellStyle[];
   customCellStyleArrangement?: CustomCellStyleArrangement[];
+
+  columnWidthComputeMode?: 'normal' | 'only-header' | 'only-body';
 }
 export interface BaseTableAPI {
   /** 数据总条目数 */
@@ -505,6 +510,8 @@ export interface BaseTableAPI {
   canvasWidth?: number;
   canvasHeight?: number;
 
+  columnWidthComputeMode?: 'normal' | 'only-header' | 'only-body';
+
   /** 获取表格绘制的范围 不包括frame的宽度 */
   getDrawRange: () => Rect;
   /** 将鼠标坐标值 转换成表格坐标系中的坐标位置 */
@@ -523,6 +530,7 @@ export interface BaseTableAPI {
   throttleInvalidate: () => void;
   getRowHeight: (row: number) => number;
   getDefaultRowHeight: (row: number) => number | 'auto';
+  getDefaultColumnWidth: (col: number) => number | 'auto';
   _setRowHeight: (row: number, height: number, clearCache?: boolean) => void;
   getColWidth: (col: number) => number;
   getColWidthDefined: (col: number) => string | number;
@@ -666,6 +674,7 @@ export interface BaseTableAPI {
   getCopyValue: () => string;
 
   getSelectedCellInfos: () => CellInfo[][];
+  getSelectedCellRanges: () => CellRange[];
   getCellInfo: (col: number, row: number) => Omit<MousePointerCellEvent, 'target'>;
 
   showTooltip: (col: number, row: number, tooltipOptions?: TooltipOptions) => void;
@@ -726,7 +735,6 @@ export interface BaseTableAPI {
    * @param cellAddr 要滚动到的单元格位置
    */
   scrollToCell: (cellAddr: { col?: number; row?: number }) => void;
-
   registerCustomCellStyle: (customStyleId: string, customStyle: ColumnStyleOption | undefined | null) => void;
   arrangeCustomCellStyle: (cellPos: { col?: number; row?: number; range?: CellRange }, customStyleId: string) => void;
 

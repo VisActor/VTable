@@ -31,7 +31,11 @@ import type { BaseTableAPI } from '../ts-types/base-table';
 import { updateAllSelectComponent, updateCellSelectBorder } from './select/update-select-border';
 import { createCellSelectBorder } from './select/create-select-border';
 import { moveSelectingRangeComponentsToSelectedRangeComponents } from './select/move-select-border';
-import { deleteAllSelectBorder, deleteLastSelectedRangeComponents } from './select/delete-select-border';
+import {
+  deleteAllSelectBorder,
+  deleteLastSelectedRangeComponents,
+  removeFillHandleFromSelectComponents
+} from './select/delete-select-border';
 import { updateRow } from './layout/update-row';
 import { handleTextStick } from './stick-text';
 import { computeRowHeight, computeRowsHeight } from './layout/compute-row-height';
@@ -100,9 +104,9 @@ export class Scenegraph {
   rightBottomCornerGroup: Group; // 右下角占位单元格Group,只在有右侧下侧都有冻结行时使用
   componentGroup: Group; // 表格外组件Group
   /** 所有选中区域对应的选框组件 */
-  selectedRangeComponents: Map<string, { rect: IRect; role: CellSubLocation }>;
+  selectedRangeComponents: Map<string, { rect: IRect; fillhandle?: IRect; role: CellSubLocation }>;
   /** 当前正在选择区域对应的选框组件 为什么是map 以为可能一个选中区域会被拆分为多个rect组件 三块表头和body都分别对应不同组件*/
-  selectingRangeComponents: Map<string, { rect: IRect; role: CellSubLocation }>;
+  selectingRangeComponents: Map<string, { rect: IRect; fillhandle?: IRect; role: CellSubLocation }>;
   lastSelectId: string;
   component: TableComponent;
   stage: IStage;
@@ -694,6 +698,10 @@ export class Scenegraph {
     extendSelectRange: boolean = true
   ) {
     updateCellSelectBorder(this, newStartCol, newStartRow, newEndCol, newEndRow, extendSelectRange);
+  }
+
+  removeFillHandleFromSelectComponents() {
+    removeFillHandleFromSelectComponents(this);
   }
   /** 根据select状态重新创建选中range节点  目前无调用者 */
   recreateAllSelectRangeComponents() {

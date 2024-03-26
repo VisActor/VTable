@@ -398,6 +398,13 @@
             "zh": "编辑表格数据",
             "en": "edit cell"
           }
+        },
+        {
+          "path": "fill_handle",
+          "title": {
+            "zh": "填充柄",
+            "en": "fill handle"
+          }
         }
       ]
     },

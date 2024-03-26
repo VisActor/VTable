@@ -8,7 +8,7 @@ VTable 提供了行序号的能力，用户可以轻松地按需开启、自定�
 
 目前支持如下各项配置：
 
-```
+```javascript
 export interface IRowSeriesNumber {
   width?: number | 'auto';
   // align?: 'left' | 'right';
