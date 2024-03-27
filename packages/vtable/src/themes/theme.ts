@@ -52,9 +52,9 @@ import { defalutPoptipStyle, getAxisStyle } from './component';
 
 function getProp(obj: PartialTableThemeDefine, superObj: ITableThemeDefine, names: string[], defNames?: string[]): any {
   return (
-    getChainSafe(obj, ...names) ||
-    getChainSafe(superObj, ...names) ||
-    (defNames && getChainSafe(obj, ...defNames)) ||
+    getChainSafe(obj, ...names) ??
+    getChainSafe(superObj, ...names) ??
+    (defNames && getChainSafe(obj, ...defNames)) ??
     (defNames && getChainSafe(superObj, ...defNames))
   );
 }
