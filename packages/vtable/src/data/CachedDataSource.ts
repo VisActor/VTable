@@ -118,7 +118,7 @@ export class CachedDataSource extends DataSource {
     this._recordCache[index] = record;
   }
   get records(): any[] {
-    return Array.isArray(this._recordCache) ? this._recordCache : super.records;
+    return Array.isArray(this._recordCache) && this._recordCache.length > 0 ? this._recordCache : super.records;
   }
 
   release(): void {
