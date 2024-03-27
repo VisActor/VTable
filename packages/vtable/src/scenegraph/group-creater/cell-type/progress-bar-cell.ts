@@ -29,8 +29,24 @@ export function createProgressBarCell(
   }
 
   progressBarDefine.barType = progressBarDefine.barType ?? 'default';
-  progressBarDefine.min = progressBarDefine.min ?? 0;
-  progressBarDefine.max = progressBarDefine.max ?? progressBarDefine.min + 100;
+  progressBarDefine.min =
+    getOrApply(progressBarDefine.min, {
+      col,
+      row,
+      table,
+      context: null,
+      value,
+      dataValue
+    }) ?? 0;
+  progressBarDefine.max =
+    getOrApply(progressBarDefine.max, {
+      col,
+      row,
+      table,
+      context: null,
+      value,
+      dataValue
+    }) ?? progressBarDefine.min + 100;
   const height = table.getRowHeight(row);
   let contentWidth = width;
   let contentHeight = height;
