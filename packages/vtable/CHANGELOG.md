@@ -1,6 +1,48 @@
 # Change Log - @visactor/vtable
 
-This log was last generated on Fri, 22 Mar 2024 11:26:30 GMT and should not be manually modified.
+This log was last generated on Wed, 27 Mar 2024 06:41:08 GMT and should not be manually modified.
+
+## 0.22.2
+Wed, 27 Mar 2024 06:41:08 GMT
+
+### Updates
+
+- fix: icon set interactive true logic error #1097
+
+
+- fix: customlayout container set width invalid #1263
+
+
+- fix: row height compute error when set autoHeight and has large count columns #1325
+
+
+- fix: compute row height handle with sparkline cellType #1331
+
+
+- fix: pivot-image demo can not scroll #1337
+
+
+- feat: add validateValue api for editor #1374
+
+
+- fix: change-header-position arguments row refix
+
+
+- fix: drawCellInnerBorder with no frameStyle #1381
+
+
+- feat: max/min in progress support funtion #1312
+- fix: fix axis column/row visible in pivotchart #1309
+- fix: fix _widthResizedColMap update in DBLCLICK_CELL #1297
+- fix: fix table text measurement in restore mode #1349
+- fix: fix merge cell custom layout update #1271
+- fix: fix stroke width update in merge cell #1324
+- fix: add _contentOffset in progressbar #1350
+- fix: fix richtext height measurement #1313
+- fix: fix textStickBaseOnAlign in style
+- refactor: setRecords clear reference object #1188
+
+
 
 ## 0.22.1
 Fri, 22 Mar 2024 11:26:30 GMT
