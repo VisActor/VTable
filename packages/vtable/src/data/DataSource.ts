@@ -808,6 +808,7 @@ export class DataSource extends EventTarget implements DataSourceAPI {
       }
       return realDeletedRecordIndexs;
     }
+    return [];
   }
   /**
    * 删除多条数据recordIndexs
