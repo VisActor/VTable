@@ -37,16 +37,17 @@ export class InputEditor implements IEditor {
   }
 
   onStart({ value, referencePosition, container, endEdit }: EditContext<string>) {
-    console.log('input', 'beginEditing---- ');
     this.container = container;
     this.successCallback = endEdit;
+    if (!this.element) {
+      this.createElement();
 
-    this.createElement();
-    if (value) {
-      this.setValue(value);
-    }
-    if (referencePosition?.rect) {
-      this.adjustPosition(referencePosition.rect);
+      if (value) {
+        this.setValue(value);
+      }
+      if (referencePosition?.rect) {
+        this.adjustPosition(referencePosition.rect);
+      }
     }
     this.element.focus();
     // do nothing
@@ -66,6 +67,7 @@ export class InputEditor implements IEditor {
   onEnd() {
     // do nothing
     this.container.removeChild(this.element);
+    this.element = undefined;
   }
 
   isEditorElement(target: HTMLElement) {
