@@ -105,7 +105,7 @@ export class TableTheme implements ITableThemeDefine {
 
   get cellInnerBorder(): boolean {
     const { obj, superTheme } = this.internalTheme;
-    return !!getProp(obj, superTheme, ['cellInnerBorder']) ?? true;
+    return getProp(obj, superTheme, ['cellInnerBorder']) ?? true;
   }
 
   get cellBorderClipDirection(): 'top-left' | 'bottom-right' {
