@@ -5,6 +5,7 @@ import { getFunctionalProp } from '../../utils/get-prop';
 import { isValid } from '@visactor/vutils';
 import type { BaseTableAPI } from '../../../ts-types/base-table';
 import type { IThemeSpec } from '@src/vrender';
+import { getCellBorderStrokeWidth } from '../../utils/cell-border-stroke-width';
 export function createChartCellGroup(
   cellGroup: Group | null,
   columnGroup: Group,
@@ -21,7 +22,8 @@ export function createChartCellGroup(
   chartInstance: any,
   dataId: string | Record<string, string>,
   table: BaseTableAPI,
-  cellTheme: IThemeSpec
+  cellTheme: IThemeSpec,
+  isShareChartSpec: true
 ) {
   // 获取注册的chart图表类型
   const registerCharts = registerChartTypes.get();
@@ -33,6 +35,7 @@ export function createChartCellGroup(
   }
   // cell
   if (!cellGroup) {
+    const strokeArrayWidth = getCellBorderStrokeWidth(col, row, cellTheme, table);
     cellGroup = new Group({
       x: xOrigin,
       y: yOrigin,
@@ -43,9 +46,10 @@ export function createChartCellGroup(
       lineWidth: cellTheme?.group?.lineWidth ?? undefined,
       fill: cellTheme?.group?.fill ?? undefined,
       stroke: cellTheme?.group?.stroke ?? undefined,
-      strokeArrayWidth: (cellTheme?.group as any)?.strokeArrayWidth ?? undefined,
+      strokeArrayWidth: strokeArrayWidth,
       strokeArrayColor: (cellTheme?.group as any)?.strokeArrayColor ?? undefined,
       cursor: (cellTheme?.group as any)?.cursor ?? undefined,
+      lineDash: cellTheme?.group?.lineDash ?? undefined,
 
       lineCap: 'square',
 
@@ -56,11 +60,12 @@ export function createChartCellGroup(
     cellGroup.role = 'cell';
     cellGroup.col = col;
     cellGroup.row = row;
-    columnGroup?.addChild(cellGroup);
+    // columnGroup?.addChild(cellGroup);
+    columnGroup?.addCellGroup(cellGroup);
   }
   cellGroup.AABBBounds.width(); // TODO 需要底层VRender修改
   // chart
-  const chartGroup = new Chart({
+  const chartGroup = new Chart(isShareChartSpec, {
     stroke: false,
     x: padding[3],
     y: padding[0],

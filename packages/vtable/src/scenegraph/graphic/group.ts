@@ -201,6 +201,23 @@ export class Group extends VRenderGroup {
     return null;
   }
 
+  addCellGroup(cellGroup: Group) {
+    if (this.childrenCount === 0 || (this.lastChild as Group).row === cellGroup.row - 1) {
+      this.addChild(cellGroup);
+    } else {
+      // for promise cell row order in column
+      let c = this._firstChild as Group;
+      for (let i = 0; i < this.childrenCount; i++) {
+        if (c.row === cellGroup.row - 1) {
+          this.insertAfter(cellGroup, c);
+          return;
+        }
+        c = c._next as Group;
+      }
+      this.addChild(cellGroup);
+    }
+  }
+
   getChildAt(index: number) {
     const child = super.getChildAt(index);
     if (child && child.name === 'border-rect') {

@@ -6,9 +6,9 @@ In VTable, we can use the custom icon function to improve the readability and vi
 
 We can configure the cell icons displayed in the header and body through icon and headerIcon respectively:
 
-*   `headerIcon` Header cell icon configuration, which can help us set the icon style of the header. Configuration items are based on `ColumnIconOption` The type is defined, and you can refer to the given configuration for details.
+- `headerIcon` Header cell icon configuration, which can help us set the icon style of the header. Configuration items are based on `ColumnIconOption` The type is defined, and you can refer to the given configuration for details.
 
-*   `icon` The icon used to configure the body cell.
+- `icon` The icon used to configure the body cell.
 
 The specific content of the configuration is[ColumnIconOption]() Type objects can also dynamically set the icon style of the cell by passing a custom function.
 
@@ -20,8 +20,8 @@ First, let's look at a use `headerIcon` Simple example of.
 const tableInstance = new VTable.ListTable({
   columns: [
     {
-      field: "orderID",
-      title: "订单编号",
+      field: 'orderID',
+      title: '订单编号',
       headerIcon: {
         type: 'svg', //指定svg格式图标，其他还支持path，image
         svg: `<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 12 12" fill="none">
@@ -36,17 +36,17 @@ const tableInstance = new VTable.ListTable({
           // 热区大小
           width: 26,
           height: 26,
-          bgColor: 'rgba(22,44,66,0.5)',
+          bgColor: 'rgba(22,44,66,0.5)'
         },
         tooltip: {
           style: { arrowMark: false },
           // 气泡框，按钮的的解释信息
           title: '过滤',
-          placement: VTable.TYPES.Placement.right,
-        },
+          placement: VTable.TYPES.Placement.right
+        }
       }
-    },
-  ],
+    }
+  ]
 });
 ```
 
@@ -62,8 +62,8 @@ Next, let's look at a use `icon` Simple example of.
 const tableInstance = new VTable.ListTable({
   columns: [
     {
-      field: "orderID",
-      title: "订单编号",
+      field: 'orderID',
+      title: '订单编号',
       icon: {
         type: 'image',
         src: 'avatar', // src从records中field位avator的字段中取值
@@ -75,10 +75,10 @@ const tableInstance = new VTable.ListTable({
         positionType: VTable.TYPES.IconPosition.contentLeft,
         marginRight: 20,
         marginLeft: 0,
-        cursor: 'pointer',
-      },
-    },
-  ],
+        cursor: 'pointer'
+      }
+    }
+  ]
 });
 ```
 
@@ -95,20 +95,20 @@ In VTable, through `register.icon` Method, we can register custom icons and use 
 Suppose we need to register a `order` Icon, the code is as follows:
 
 ```javascript
-VTable.register.icon("order", {
-  type: "svg",
-  svg: "http://" + window.location.host + "/mock-data/order.svg",
+VTable.register.icon('order', {
+  type: 'svg',
+  svg: 'http://' + window.location.host + '/mock-data/order.svg',
   width: 22,
   height: 22,
-  name: "order",
+  name: 'order',
   positionType: VTable.TYPES.IconPosition.left,
   marginRight: 0,
   hover: {
     width: 22,
     height: 22,
-    bgColor: "rgba(101, 117, 168, 0.1)",
+    bgColor: 'rgba(101, 117, 168, 0.1)'
   },
-  cursor: "pointer",
+  cursor: 'pointer'
 });
 ```
 
@@ -120,12 +120,12 @@ After registration is complete, we can, in the column definition of the table, p
 const tableInstance = new VTable.PivotTable({
   columns: [
     {
-      field: "orderID",
-      title: "订单编号",
-      headerIcon: "order",
-      icon: "order",
-    },
-  ],
+      field: 'orderID',
+      title: '订单编号',
+      headerIcon: 'order',
+      icon: 'order'
+    }
+  ]
 });
 ```
 
@@ -140,55 +140,55 @@ For built-in functional icons, such as pin, sort, etc., we can replace them by r
 Suppose we need to replace the relevant icon of the built-in frozen function, the code is as follows:
 
 ```javascript
-VTable.register.icon("freeze", {
-  type: "svg",
-  svg: "http://" + window.location.host + "/mock-data/freeze.svg",
+VTable.register.icon('freeze', {
+  type: 'svg',
+  svg: 'http://' + window.location.host + '/mock-data/freeze.svg',
   width: 22,
   height: 22,
-  name: "freeze",
+  name: 'freeze',
   positionType: VTable.TYPES.IconPosition.left,
   marginRight: 0,
   funcType: VTable.TYPES.IconFuncTypeEnum.frozen,
   hover: {
     width: 22,
     height: 22,
-    bgColor: "rgba(101, 117, 168, 0.1)",
+    bgColor: 'rgba(101, 117, 168, 0.1)'
   },
-  cursor: "pointer",
+  cursor: 'pointer'
 });
 
-VTable.register.icon("frozen", {
-  type: "svg",
-  svg: "http://" + window.location.host + "/mock-data/frozen.svg",
+VTable.register.icon('frozen', {
+  type: 'svg',
+  svg: 'http://' + window.location.host + '/mock-data/frozen.svg',
   width: 22,
   height: 22,
-  name: "frozen",
+  name: 'frozen',
   positionType: VTable.TYPES.IconPosition.left,
   marginRight: 0,
   funcType: VTable.TYPES.IconFuncTypeEnum.frozen,
   hover: {
     width: 22,
     height: 22,
-    bgColor: "rgba(101, 117, 168, 0.1)",
+    bgColor: 'rgba(101, 117, 168, 0.1)'
   },
-  cursor: "pointer",
+  cursor: 'pointer'
 });
 
-VTable.register.icon("frozenCurrent", {
-  type: "svg",
-  svg: "http://" + window.location.host + "/mock-data/frozenCurrent.svg",
+VTable.register.icon('frozenCurrent', {
+  type: 'svg',
+  svg: 'http://' + window.location.host + '/mock-data/frozenCurrent.svg',
   width: 22,
   height: 22,
-  name: "frozenCurrent",
+  name: 'frozenCurrent',
   positionType: VTable.TYPES.IconPosition.left,
   marginRight: 0,
   funcType: VTable.TYPES.IconFuncTypeEnum.frozen,
   hover: {
     width: 22,
     height: 22,
-    bgColor: "rgba(101, 117, 168, 0.1)",
+    bgColor: 'rgba(101, 117, 168, 0.1)'
   },
-  cursor: "pointer",
+  cursor: 'pointer'
 });
 ```
 
@@ -199,22 +199,24 @@ In the same way, we can replace other functional icons. Several icons related to
 
 The list of resettable internal icons is as follows:
 
-| Functions | Configure funcType | Configure name | Icon description |
-|:----|:----|:----|:----|
-| Sort | VTable. TYPES. IconFuncTypeEnum.sort | "sort\_normal" | Sort function icon, normal unsorted status |
-| Sort | VTable. TYPES. IconFuncTypeEnum.sort | "sort\_upward" | Sort function icons, ascending status |
-| Sort | VTable. TYPES. IconFuncTypeEnum.sort | "sort\_downward" | Sort function icons, descending status |
-| Fixed Column | VTable. TYPES. IconFuncTypeEnum.frozen | "freeze" | Fixed Column Function Icon, Fixed State |
-| Fixed Columns | VTable. TYPES. IconFuncTypeEnum.frozen | "frozen" | Fixed Columns Function Icon, Fixed Status |
-| Fixed Columns | VTable. TYPES. IconFuncTypeEnum.frozen | "frozenCurrent" | Fixed Columns Function Icon, Frozen When Columns |
-| Image or video address invalid | VTable. TYPES. IconFuncTypeEnum.damagePic | "damage\_pic" | Multimedia resource parsing failed |
-| Tree Structure Folding | VTable. TYPES. IconFuncTypeEnum.collapse | "collapse" | Tree Structure Folded State |
-| Tree Structure Expand | VTable. TYPES. IconFuncTypeEnum.expand | "expand" | Tree Structure Expand State |
-| Tree Structure Folding | VTable. TYPES. IconFuncTypeEnum.collapse | "collapse" | Tree Structure Folded State |
-| Drop-down menu | VTable. TYPES. IconFuncTypeEnum.dropDown | "downward" | Drop-down icon normal status |
-| dropdown menu | VTable. TYPES. IconFuncTypeEnum.dropDown | "downward\_hover" | dropdown icon hover status |
+| Functions                      | Configure funcType                        | Configure name   | Icon description                                                    |
+| :----------------------------- | :---------------------------------------- | :--------------- | :------------------------------------------------------------------ |
+| Sort                           | VTable. TYPES. IconFuncTypeEnum.sort      | "sort_normal"    | Sort function icon, normal unsorted status                          |
+| Sort                           | VTable. TYPES. IconFuncTypeEnum.sort      | "sort_upward"    | Sort function icons, ascending status                               |
+| Sort                           | VTable. TYPES. IconFuncTypeEnum.sort      | "sort_downward"  | Sort function icons, descending status                              |
+| Fixed Column                   | VTable. TYPES. IconFuncTypeEnum.frozen    | "freeze"         | Fixed Column Function Icon, Fixed State                             |
+| Fixed Columns                  | VTable. TYPES. IconFuncTypeEnum.frozen    | "frozen"         | Fixed Columns Function Icon, Fixed Status                           |
+| Fixed Columns                  | VTable. TYPES. IconFuncTypeEnum.frozen    | "frozenCurrent"  | Fixed Columns Function Icon, Frozen When Columns                    |
+| Image or video address invalid | VTable. TYPES. IconFuncTypeEnum.damagePic | "damage_pic"     | Multimedia resource parsing failed                                  |
+| Tree Structure Folding         | VTable. TYPES. IconFuncTypeEnum.collapse  | "collapse"       | Tree Structure Folded State                                         |
+| Tree Structure Expand          | VTable. TYPES. IconFuncTypeEnum.expand    | "expand"         | Tree Structure Expand State                                         |
+| Tree Structure Folding         | VTable. TYPES. IconFuncTypeEnum.collapse  | "collapse"       | Tree Structure Folded State                                         |
+| Drop-down menu                 | VTable. TYPES. IconFuncTypeEnum.dropDown  | "downward"       | Drop-down icon normal status                                        |
+| dropdown menu                  | VTable. TYPES. IconFuncTypeEnum.dropDown  | "downward_hover" | dropdown icon hover status                                          |
+| Row drag and drop              | VTable.TYPES.IconFuncTypeEnum.dragReorder | "dragReorder"    | Drag and drop row order, visible when rowSeriesNumber is configured |
 
-**It should be noted**: The built-in charts in the list have their own special functions and can be reset, but they cannot be used in the definition of headerIcon or icon! The following incorrect usage:
+**It should be noted**: The built-in charts in the list have their own special functions and can be reset, but they cannot be configured in the definition of headerIcon or icon! The following incorrect usage:
+
 ```
   columns: [
     {
@@ -226,4 +228,7 @@ The list of resettable internal icons is as follows:
     },
   ]
 ```
+
+At the same time, the icons registered in your own business do not need to configure `funcType`.
+
 At this point, the tutorial on how to use icons in VTable, register and replace function icons is all introduced. I hope this tutorial can help you better understand and use VTable, and create a more beautiful and practical data lake visualization table

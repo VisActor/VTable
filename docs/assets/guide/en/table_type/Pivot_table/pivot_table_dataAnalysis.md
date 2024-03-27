@@ -15,7 +15,6 @@ const option={
   rows:['region','province'], //row dimensions
   columns:['year','quarter'], //column dimensions
   indicators:['sales','profit'], //Indicators
-  enableDataAnalysis: true, //Whether to enable data analysis function
   records:[ //Data source。 If summary data is passed in, use user incoming data
     {
       region:'东北',
@@ -96,6 +95,9 @@ Configuration example:
       ]
 
 ```
+
+If you need to modify the sorting rules of the pivot table, you can use the interface `updateSortRules`.
+
 Online demo：https://visactor.io/vtable/demo/data-analysis/pivot-analysis-sort-dimension
 ### 3. Filter rules
 [option description](../../../option/PivotTable#dataConfig.filterRules)
@@ -258,7 +260,6 @@ const option = {
         ]
     }],
     indicators: ['sales', 'profit'],
-    //enableDataAnalysis:true,
     corner: {
         titleOnDimension: 'none'
     },

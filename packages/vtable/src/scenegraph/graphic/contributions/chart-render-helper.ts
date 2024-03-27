@@ -148,6 +148,12 @@ function cacheStageCanvas(stage: IStage, chart: Chart) {
   const { viewWidth, viewHeight } = stage;
   if (viewWidth < cacheCanvasSizeLimit && viewHeight < cacheCanvasSizeLimit) {
     chart.cacheCanvas = stage.toCanvas();
+    if (!chart.isShareChartSpec) {
+      // 不能整列共享chart的情况 生成完图片后即将chartInstance清除
+      chart.chartInstance?.release();
+      chart.chartInstance = null;
+      chart.setAttribute('chartInstance', null);
+    }
     return;
   }
 

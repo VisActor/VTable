@@ -59,6 +59,7 @@ IStyleOption 类型结构如下：
   prefix = ${prefix},
   isImage = ${isImage},
   isProgressbar = ${isProgressbar},
+  isCheckbox = ${isCheckbox},
 ) }}
 
 ${prefix} headerIcon(string|Object|Array)
@@ -126,6 +127,8 @@ ${prefix} headerCustomRender(Function|Object)
 
 表头单元格自定义渲染，函数形式或者对象形式。类型为：`ICustomRenderFuc | ICustomRenderObj`。
 
+[示例链接](../demo/custom-render/custom-render) [教程链接](../guide/custom_define/custom_render)
+
 其中 ICustomRenderFuc 定义为：
 
 ```
@@ -154,6 +157,8 @@ ${prefix} headerCustomLayout(Function)
 ${prefix} customRender(Function|Object)
 body 单元格表头单元格自定义渲染，函数形式或者对象形式。类型为：`ICustomRenderFuc | ICustomRenderObj`。
 
+[示例链接](../demo/custom-render/custom-render) [教程链接](../guide/custom_define/custom_render)
+
 其中 ICustomRenderFuc 定义为：
 
 ```
@@ -169,6 +174,8 @@ body 单元格表头单元格自定义渲染，函数形式或者对象形式。
 ${prefix} customLayout(Function)
 
 body 单元格自定义布局元素定义，该自定义形式适合内容复杂布局的单元格。
+
+定义为如下函数：
 
 ```
 (args: CustomRenderFunctionArg) => ICustomLayoutObj;
@@ -214,17 +221,33 @@ ${prefix} tree (boolean)
 ${prefix} editor (string|Object|Function)
 
 配置该列单元格编辑器
+
 ```
 editor?: string | IEditor | ((args: BaseCellInfo & { table: BaseTableAPI }) => string | IEditor);
 ```
-其中IEditor是@visactor/vtable-editors中定义的编辑器接口，具体可以参看源码：https://github.com/VisActor/VTable/blob/main/packages/vtable-editors/src/types.ts。
+
+其中 IEditor 是@visactor/vtable-editors 中定义的编辑器接口，具体可以参看源码：https://github.com/VisActor/VTable/blob/main/packages/vtable-editors/src/types.ts。
 
 ${prefix} headerEditor (string|Object|Function)
 
-配置该列表头显示标题title
+配置该列表头显示标题 title
+
 ```
 headerEditor?: string | IEditor | ((args: BaseCellInfo & { table: BaseTableAPI }) => string | IEditor);
 ```
 
 ${prefix} columns (Array)
 同上层的列配置数组，嵌套结构来描述列分组关系。
+
+${prefix} hideColumnsSubHeader(boolean) = false
+是否隐藏子表头的 header 标题，默认不隐藏。
+
+${prefix} aggregation(Aggregation | CustomAggregation | Array)
+
+非必填。
+
+数据聚合配置，对该列数据进行汇总分析。
+
+全局 option 也可以配置，对每一列都配置聚合规则。
+
+可参考教程文档

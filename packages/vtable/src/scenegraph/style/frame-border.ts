@@ -117,10 +117,17 @@ export function createFrameBorder(
     rectAttributes.y = borderTop / 2;
     rectAttributes.pickable = false;
     if (isTableGroup) {
-      rectAttributes.x = group.attribute.x - borderLeft / 2;
-      rectAttributes.y = group.attribute.y - borderTop / 2;
-      rectAttributes.width = group.attribute.width + borderLeft / 2 + borderRight / 2;
-      rectAttributes.height = group.attribute.height + borderTop / 2 + borderBottom / 2;
+      if (frameTheme.innerBorder) {
+        rectAttributes.x = group.attribute.x + borderLeft / 2;
+        rectAttributes.y = group.attribute.y + borderTop / 2;
+        rectAttributes.width = group.attribute.width - borderLeft / 2 - borderRight / 2;
+        rectAttributes.height = group.attribute.height - borderTop / 2 - borderBottom / 2;
+      } else {
+        rectAttributes.x = group.attribute.x - borderLeft / 2;
+        rectAttributes.y = group.attribute.y - borderTop / 2;
+        rectAttributes.width = group.attribute.width + borderLeft / 2 + borderRight / 2;
+        rectAttributes.height = group.attribute.height + borderTop / 2 + borderBottom / 2;
+      }
 
       let shadowRect;
       let borderRect;
@@ -158,7 +165,12 @@ export function createFrameBorder(
         borderRect.name = 'table-border-rect';
       }
 
-      group.parent.insertBefore(borderRect, group);
+      // to be fixed: border index in shadow mode
+      if (frameTheme.innerBorder && !hasShadow) {
+        group.parent.insertAfter(borderRect, group);
+      } else {
+        group.parent.insertBefore(borderRect, group);
+      }
       (group as any).border = borderRect;
     } else {
       // rectAttributes.x = rectAttributes.lineWidth / 2;

@@ -15,7 +15,6 @@ const option={
   rows:['region','province'], //行维度
   columns:['year','quarter'], //列维度
   indicators:['sales','profit'], //指标
-  enableDataAnalysis: true, //是否开启数据分析功能
   records:[ //数据源 如果传入了汇总数据则使用用户传入数据
     {
       region:'东北',
@@ -97,6 +96,9 @@ dataConfig: {
       ]
 
 ```
+
+如果需要修改排序规则 透视表可以使用接口 `updateSortRules`。
+
 具体示例：https://visactor.io/vtable/demo/data-analysis/pivot-analysis-sort-dimension
 ### 3. 过滤规则
 [option说明](../../../option/PivotTable#dataConfig.filterRules)
@@ -259,7 +261,6 @@ const option = {
         ]
     }],
     indicators: ['sales', 'profit'],
-    //enableDataAnalysis:true,
     corner: {
         titleOnDimension: 'none'
     },

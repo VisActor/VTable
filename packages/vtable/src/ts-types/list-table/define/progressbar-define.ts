@@ -9,8 +9,8 @@ export interface IProgressbarColumnBodyDefine extends IBasicColumnBodyDefine {
    * 如果barType为'negative'或'negative_no_axis'，负向进度条的总长度为长度为min到0，正向进度条的总长度为长度为0到max，
    * 例如：min为10，max为50，数据为30，进度条展示为单元格宽度的一半
    */
-  min?: number;
-  max?: number;
+  min?: number | ((args: StylePropertyFunctionArg) => number);
+  max?: number | ((args: StylePropertyFunctionArg) => number);
   /* 进度条类型 默认default
    * default：由min到max的进度条
    * negative：分别展示min到0，0到max的正负向两个进度条，中间展示0值坐标轴

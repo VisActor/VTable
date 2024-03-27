@@ -11,6 +11,7 @@ import type { Scenegraph } from '../../scenegraph';
 import { getProp, getFunctionalProp } from '../../utils/get-prop';
 import { isValid } from '@visactor/vutils';
 import { getQuadProps } from '../../utils/padding';
+import { getCellBorderStrokeWidth } from '../../utils/cell-border-stroke-width';
 
 export function createImageCellGroup(
   columnGroup: Group,
@@ -42,6 +43,7 @@ export function createImageCellGroup(
   }
 
   // cell
+  const strokeArrayWidth = getCellBorderStrokeWidth(col, row, cellTheme, table);
   const cellGroup = new Group({
     x: xOrigin,
     y: yOrigin,
@@ -53,9 +55,10 @@ export function createImageCellGroup(
     lineWidth: cellTheme?.group?.lineWidth ?? undefined,
     fill: cellTheme?.group?.fill ?? undefined,
     stroke: cellTheme?.group?.stroke ?? undefined,
-    strokeArrayWidth: (cellTheme?.group as any)?.strokeArrayWidth ?? undefined,
+    strokeArrayWidth: strokeArrayWidth ?? undefined,
     strokeArrayColor: (cellTheme?.group as any)?.strokeArrayColor ?? undefined,
     cursor: (cellTheme?.group as any)?.cursor ?? undefined,
+    lineDash: cellTheme?.group?.lineDash ?? undefined,
 
     lineCap: 'square',
 
@@ -66,7 +69,8 @@ export function createImageCellGroup(
   cellGroup.role = 'cell';
   cellGroup.col = col;
   cellGroup.row = row;
-  columnGroup?.addChild(cellGroup);
+  // columnGroup?.addChild(cellGroup);
+  columnGroup?.addCellGroup(cellGroup);
 
   // image
   const value = table.getCellValue(col, row);
@@ -80,22 +84,26 @@ export function createImageCellGroup(
   });
   image.name = 'image';
   image.keepAspectRatio = keepAspectRatio;
+  image.textAlign = textAlign;
+  image.textBaseline = textBaseline;
   if (keepAspectRatio || imageAutoSizing) {
     if (
       image.resources &&
       image.resources.has(image.attribute.image) &&
       image.resources.get(image.attribute.image).state === 'success'
     ) {
-      updateAutoSizingAndKeepAspectRatio(
-        imageAutoSizing,
-        keepAspectRatio,
-        padding,
-        textAlign,
-        textBaseline,
-        image,
-        cellGroup,
-        table
-      );
+      setTimeout(() => {
+        updateAutoSizingAndKeepAspectRatio(
+          imageAutoSizing,
+          keepAspectRatio,
+          padding,
+          textAlign,
+          textBaseline,
+          image,
+          cellGroup,
+          table
+        );
+      }, 0);
     } else {
       image.successCallback = () => {
         updateAutoSizingAndKeepAspectRatio(
@@ -149,7 +157,8 @@ export function _adjustWidthHeight(
   width: number,
   height: number,
   scene: Scenegraph,
-  padding: [number, number, number, number]
+  padding: [number, number, number, number],
+  cellGroup: Group
 ): boolean {
   // const { width, height } = img as any;
   // const currentContext = context.toCurrentContext();
@@ -157,7 +166,7 @@ export function _adjustWidthHeight(
   let needInvalidate = false;
   let targetWidth: number = null;
   let targetHeight: number = null;
-  const cellGroup = scene.getCell(col, row, true);
+  // const cellGroup = scene.getCell(col, row, true);
   const { width: cellWidth, height: cellHeight, isMerge } = getCellRange(cellGroup, scene.table);
 
   if (cellWidth < width + padding[1] + padding[3]) {
@@ -202,6 +211,9 @@ export function _adjustWidthHeight(
 
 export function updateImageCellContentWhileResize(cellGroup: Group, col: number, row: number, table: BaseTableAPI) {
   const image = cellGroup.getChildByName('image') as Image;
+  if (!image) {
+    return;
+  }
   const originImage =
     (typeof image.attribute.image !== 'string' && image.attribute.image) ||
     image.resources?.get(image.attribute.image).data;
@@ -215,9 +227,13 @@ export function updateImageCellContentWhileResize(cellGroup: Group, col: number,
   const textBaseline = getProp('textBaseline', headerStyle, col, row, table) ?? 'middle';
   const padding = getQuadProps(getProp('padding', headerStyle, col, row, table)) ?? [0, 0, 0, 0];
 
-  if (image.keepAspectRatio) {
-    const { width: cellWidth, height: cellHeight } = getCellRange(cellGroup, table);
+  const { width: cellWidth, height: cellHeight, isMerge } = getCellRange(cellGroup, table);
+  const colStart = cellGroup.mergeStartCol ?? cellGroup.col;
+  const rowStart = cellGroup.mergeStartRow ?? cellGroup.row;
+  const colEnd = cellGroup.mergeEndCol ?? cellGroup.col;
+  const rowEnd = cellGroup.mergeEndCol ?? cellGroup.row;
 
+  if (image.keepAspectRatio) {
     const { width: imageWidth, height: imageHeight } = calcKeepAspectRatioSize(
       originImage.width || originImage.videoWidth,
       originImage.height || originImage.videoHeight,
@@ -241,23 +257,33 @@ export function updateImageCellContentWhileResize(cellGroup: Group, col: number,
       padding
     );
 
-    image.setAttributes({
-      x: pos.x,
-      y: pos.y,
-      width: imageWidth,
-      height: imageHeight
-    });
+    for (let col = colStart; col <= colEnd; col++) {
+      for (let row = rowStart; row <= rowEnd; row++) {
+        const cellGroup = table.scenegraph.getCell(col, row);
+        const image = cellGroup.getChildByName('image') as Image;
+        image?.setAttributes({
+          x: pos.x,
+          y: pos.y,
+          width: imageWidth,
+          height: imageHeight
+        });
+      }
+    }
   } else {
-    const { width: cellWidth, height: cellHeight } = getCellRange(cellGroup, table);
-
-    image.setAttributes({
-      x: padding[3],
-      y: padding[0],
-      // width: cellGroup.attribute.width - padding[1] - padding[3],
-      // height: cellGroup.attribute.height - padding[0] - padding[2]
-      width: cellWidth - padding[1] - padding[3],
-      height: cellHeight - padding[0] - padding[2]
-    });
+    for (let col = colStart; col <= colEnd; col++) {
+      for (let row = rowStart; row <= rowEnd; row++) {
+        const cellGroup = table.scenegraph.getCell(col, row);
+        const image = cellGroup.getChildByName('image') as Image;
+        image?.setAttributes({
+          x: padding[3],
+          y: padding[0],
+          // width: cellGroup.attribute.width - padding[1] - padding[3],
+          // height: cellGroup.attribute.height - padding[0] - padding[2]
+          width: cellWidth - padding[1] - padding[3],
+          height: cellHeight - padding[0] - padding[2]
+        });
+      }
+    }
   }
 
   // update video play icon
@@ -274,17 +300,34 @@ export function updateImageCellContentWhileResize(cellGroup: Group, col: number,
     const anchorY =
       top + (height > image.attribute.height ? image.attribute.y - top + image.attribute.height / 2 : height / 2);
 
-    playIcon.setAttributes({
-      x: anchorX - iconSize / 2,
-      y: anchorY - iconSize / 2,
-      width: iconSize,
-      height: iconSize
-    });
+    for (let col = colStart; col <= colEnd; col++) {
+      for (let row = rowStart; row <= rowEnd; row++) {
+        const cellGroup = table.scenegraph.getCell(col, row);
+        const playIcon = cellGroup.getChildByName('play-icon') as Image;
+        playIcon.setAttributes({
+          x: anchorX - iconSize / 2,
+          y: anchorY - iconSize / 2,
+          width: iconSize,
+          height: iconSize
+        });
+      }
+    }
+  }
+
+  if (isMerge) {
+    updateImageDxDy(
+      cellGroup.mergeStartCol,
+      cellGroup.mergeEndCol,
+      cellGroup.mergeStartRow,
+      cellGroup.mergeEndRow,
+      table
+    );
   }
 }
 
-function getCellRange(cellGroup: Group, table: BaseTableAPI) {
+export function getCellRange(cellGroup: Group, table: BaseTableAPI) {
   if (
+    cellGroup.role === 'cell' &&
     isValid(cellGroup.mergeStartCol) &&
     isValid(cellGroup.mergeEndCol) &&
     isValid(cellGroup.mergeStartRow) &&
@@ -303,7 +346,7 @@ function getCellRange(cellGroup: Group, table: BaseTableAPI) {
   };
 }
 
-function updateImageDxDy(startCol, endCol, startRow, endRow, table) {
+export function updateImageDxDy(startCol, endCol, startRow, endRow, table) {
   for (let col = startCol; col <= endCol; col++) {
     for (let row = startRow; row <= endRow; row++) {
       const cellGroup = table.scenegraph.getCell(col, row);
@@ -311,6 +354,13 @@ function updateImageDxDy(startCol, endCol, startRow, endRow, table) {
         const image = cellGroup.getChildByName('image');
         if (image) {
           image.setAttributes({
+            dx: -table.getColsWidth(cellGroup.mergeStartCol, col - 1),
+            dy: -table.getRowsHeight(cellGroup.mergeStartRow, row - 1)
+          });
+        }
+        const playIcon = cellGroup.getChildByName('play-icon');
+        if (playIcon) {
+          playIcon.setAttributes({
             dx: -table.getColsWidth(cellGroup.mergeStartCol, col - 1),
             dy: -table.getRowsHeight(cellGroup.mergeStartRow, row - 1)
           });
@@ -340,7 +390,8 @@ function updateAutoSizingAndKeepAspectRatio(
       (originImage as HTMLImageElement).width,
       (originImage as HTMLImageElement).height,
       table.scenegraph,
-      padding
+      padding,
+      cellGroup
     );
   }
   if (keepAspectRatio || isDamagePic(image)) {

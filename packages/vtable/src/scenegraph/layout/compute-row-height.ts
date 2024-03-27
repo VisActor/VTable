@@ -1,18 +1,20 @@
 import { RichText, Text, Group as VGroup } from '@src/vrender';
 import type { PivotHeaderLayoutMap } from '../../layout/pivot-header-layout';
 import { validToString } from '../../tools/util';
-import type { ColumnIconOption, ColumnTypeOption } from '../../ts-types';
+import type { ColumnIconOption, ColumnTypeOption, IRowSeriesNumber } from '../../ts-types';
 import { IconPosition } from '../../ts-types';
 import type { BaseTableAPI, HeaderData } from '../../ts-types/base-table';
-import type { ColumnData, TextColumnDefine } from '../../ts-types/list-table/layout-map/api';
+import type { ColumnData, ColumnDefine, TextColumnDefine } from '../../ts-types/list-table/layout-map/api';
 import { getProp } from '../utils/get-prop';
 import { getQuadProps } from '../utils/padding';
 import { dealWithRichTextIcon } from '../utils/text-icon-layout';
 import { getAxisConfigInPivotChart } from '../../layout/chart-helper/get-axis-config';
 import { computeAxisComponentHeight } from '../../components/axis/get-axis-component-size';
-import { isArray, isNumber, isObject } from '@visactor/vutils';
+import { isArray, isNumber, isObject, isValid } from '@visactor/vutils';
 import { CheckBox } from '@visactor/vrender-components';
 import { decodeReactDom, dealPercentCalc } from '../component/custom';
+import { getCellMergeRange } from '../../tools/merge-range';
+import { getCellMergeInfo } from '../utils/get-cell-merge';
 
 const utilTextMark = new Text({
   ignoreBuf: true
@@ -37,7 +39,7 @@ export function computeRowsHeight(
   const oldRowHeights: number[] = [];
   const newHeights: number[] = [];
   if (update) {
-    for (let row = 0; row < table.rowCount; row++) {
+    for (let row = rowStart; row <= rowEnd; row++) {
       // oldRowHeights.push(table.getRowHeight(row));
       oldRowHeights[row] = table.getRowHeight(row);
     }
@@ -71,7 +73,8 @@ export function computeRowsHeight(
       if (
         ((table.isPivotTable() && !table.isPivotChart()) ||
           (table.isPivotChart() && !(table.internalProps.layoutMap as PivotHeaderLayoutMap).indicatorsAsCol)) && // no top axis
-        checkPivotFixedStyleAndNoWrap(table, row)
+        checkPivotFixedStyleAndNoWrap(table, row) &&
+        !getCellMergeInfo(table, table.rowHeaderLevelCount, row)
       ) {
         // 列表头样式一致，只计算第一列行高，作为整行行高
         startCol = 0;
@@ -166,10 +169,15 @@ export function computeRowsHeight(
       }
     }
   } else {
-    // table.rowHeightsMap.clear();
-    table.clearRowHeightCache();
-    for (let row = 0; row < table.rowCount; row++) {
-      newHeights[row] = table.getRowHeight(row);
+    if (table.rowCount !== table.rowHeightsMap.length) {
+      // for tree mode
+      // table.rowHeightsMap.clear();
+      table.clearRowHeightCache();
+    }
+    if (update) {
+      for (let row = rowStart; row <= rowEnd; row++) {
+        newHeights[row] = table.getRowHeight(row);
+      }
     }
   }
 
@@ -219,7 +227,7 @@ export function computeRowsHeight(
     let actualHeight = 0;
     let actualHeaderHeight = 0;
     for (let row = 0; row < table.rowCount; row++) {
-      const rowHeight = update ? newHeights[row] : table.getRowHeight(row);
+      const rowHeight = update ? newHeights[row] ?? table.getRowHeight(row) : table.getRowHeight(row);
       if (
         row < table.columnHeaderLevelCount ||
         (table.isPivotChart() && row >= table.rowCount - table.bottomFrozenRowCount)
@@ -267,7 +275,7 @@ export function computeRowsHeight(
   }
 
   if (update) {
-    for (let row = 0; row < table.rowCount; row++) {
+    for (let row = rowStart; row <= rowEnd; row++) {
       const newRowHeight = newHeights[row] ?? table.getRowHeight(row);
       if (newRowHeight !== oldRowHeights[row]) {
         table._setRowHeight(row, newRowHeight);
@@ -305,7 +313,7 @@ export function computeRowsHeight(
 }
 
 export function computeRowHeight(row: number, startCol: number, endCol: number, table: BaseTableAPI): number {
-  let maxHeight = 0;
+  let maxHeight;
   // 如果是透视图
   if (
     table.isPivotChart() &&
@@ -330,7 +338,7 @@ export function computeRowHeight(row: number, startCol: number, endCol: number, 
     // CustomRender height calculation
     const customHeight = computeCustomRenderHeight(col, row, table);
     if (customHeight) {
-      maxHeight = Math.max(customHeight.height, maxHeight);
+      maxHeight = isValid(maxHeight) ? Math.max(customHeight.height, maxHeight) : customHeight.height;
       if (!customHeight.renderDefault) {
         continue;
       }
@@ -343,7 +351,7 @@ export function computeRowHeight(row: number, startCol: number, endCol: number, 
       if (axisConfig) {
         const axisWidth = computeAxisComponentHeight(axisConfig, table);
         if (typeof axisWidth === 'number') {
-          maxHeight = Math.max(axisWidth, maxHeight);
+          maxHeight = isValid(maxHeight) ? Math.max(axisWidth, maxHeight) : axisWidth;
           continue;
         }
       }
@@ -357,21 +365,26 @@ export function computeRowHeight(row: number, startCol: number, endCol: number, 
       continue;
     }
     const cellType = table.isHeader(col, row)
-      ? table._getHeaderLayoutMap(col, row)?.headerType
+      ? (table._getHeaderLayoutMap(col, row) as HeaderData)?.headerType
       : table.getBodyColumnType(col, row);
-    if (cellType !== 'text' && cellType !== 'link' && cellType !== 'progressbar' && cellType !== 'checkbox') {
-      // text&link&progressbar测量文字宽度
-      // image&video&sparkline使用默认宽度
-      const defaultHeight = table.getDefaultRowHeight(row);
-      maxHeight = Math.max(maxHeight, isNumber(defaultHeight) ? defaultHeight : table.defaultRowHeight);
-      continue;
-    }
+    // if ( isValid(cellType) && cellType !== 'text' && cellType !== 'link' && cellType !== 'progressbar' && cellType !== 'checkbox') {
+    //   // text&link&progressbar测量文字宽度
+    //   // image&video&sparkline使用默认宽度
+    //   const defaultHeight = table.getDefaultRowHeight(row);
+    //   maxHeight = Math.max(maxHeight, isNumber(defaultHeight) ? defaultHeight : table.defaultRowHeight);
+    //   continue;
+    // }
 
     // text height calculation
     const textHeight = computeTextHeight(col, row, cellType, table);
-    maxHeight = Math.max(textHeight, maxHeight);
+    maxHeight = isValid(maxHeight) ? Math.max(textHeight, maxHeight) : textHeight;
   }
-  return maxHeight;
+  if (isValid(maxHeight)) {
+    return maxHeight;
+  }
+
+  const defaultHeight = table.getDefaultRowHeight(row);
+  return isNumber(defaultHeight) ? defaultHeight : table.defaultRowHeight;
 }
 
 function checkFixedStyleAndNoWrap(table: BaseTableAPI): boolean {
@@ -389,8 +402,8 @@ function checkFixedStyleAndNoWrap(table: BaseTableAPI): boolean {
     if (
       typeof cellDefine.style === 'function' ||
       typeof (cellDefine as ColumnData).icon === 'function' ||
-      cellDefine.define?.customRender ||
-      cellDefine.define?.customLayout ||
+      (cellDefine.define as ColumnDefine)?.customRender ||
+      (cellDefine.define as ColumnDefine)?.customLayout ||
       typeof cellDefine.define?.icon === 'function'
     ) {
       return false;
@@ -423,8 +436,8 @@ function checkFixedStyleAndNoWrapForTranspose(table: BaseTableAPI, row: number):
   if (
     typeof cellDefine.style === 'function' ||
     typeof (cellDefine as ColumnData).icon === 'function' ||
-    cellDefine.define?.customRender ||
-    cellDefine.define?.customLayout ||
+    (cellDefine.define as ColumnDefine)?.customRender ||
+    (cellDefine.define as ColumnDefine)?.customLayout ||
     typeof cellDefine.define?.icon === 'function'
   ) {
     return false;
@@ -456,8 +469,8 @@ function checkPivotFixedStyleAndNoWrap(table: BaseTableAPI, row: number) {
   if (
     typeof headerDefine.style === 'function' ||
     typeof (headerDefine as HeaderData).icons === 'function' ||
-    headerDefine.define?.headerCustomRender ||
-    headerDefine.define?.headerCustomLayout ||
+    (headerDefine.define as ColumnDefine)?.headerCustomRender ||
+    (headerDefine.define as ColumnDefine)?.headerCustomLayout ||
     typeof headerDefine.define?.icon === 'function'
   ) {
     return false;
@@ -506,7 +519,11 @@ function computeCustomRenderHeight(col: number, row: number, table: BaseTableAPI
     let height = 0;
     let renderDefault = false;
     let enableCellPadding = false;
-    if (table.isHeader(col, row) || (table.getBodyColumnDefine(col, row) as TextColumnDefine)?.mergeCell) {
+    if (
+      table.isHeader(col, row) ||
+      (table.getBodyColumnDefine(col, row) as TextColumnDefine)?.mergeCell ||
+      table.hasCustomMerge()
+    ) {
       const cellRange = table.getCellRange(col, row);
       spanRow = cellRange.end.row - cellRange.start.row + 1;
     }
@@ -579,7 +596,7 @@ function computeTextHeight(col: number, row: number, cellType: ColumnTypeOption,
     mayHaveIcon = true;
   } else {
     const define = table.getBodyColumnDefine(col, row);
-    mayHaveIcon = !!define?.icon || !!define?.tree;
+    mayHaveIcon = !!define?.icon || !!(define as ColumnDefine)?.tree || (define as IRowSeriesNumber)?.dragOrder;
   }
 
   if (mayHaveIcon) {
@@ -609,7 +626,11 @@ function computeTextHeight(col: number, row: number, cellType: ColumnTypeOption,
   }
   let spanRow = 1;
   let endCol = col;
-  if (table.isHeader(col, row) || (table.getBodyColumnDefine(col, row) as TextColumnDefine)?.mergeCell) {
+  if (
+    table.isHeader(col, row) ||
+    (table.getBodyColumnDefine(col, row) as TextColumnDefine)?.mergeCell ||
+    table.hasCustomMerge()
+  ) {
     const cellRange = table.getCellRange(col, row);
     spanRow = cellRange.end.row - cellRange.start.row + 1;
     col = cellRange.start.col;
@@ -624,99 +645,102 @@ function computeTextHeight(col: number, row: number, cellType: ColumnTypeOption,
   const fontFamily = getProp('fontFamily', actStyle, col, row, table);
   const autoWrapText = getProp('autoWrapText', actStyle, col, row, table);
   let text;
-  if (cellType === 'checkbox') {
-    text = isObject(cellValue) ? (cellValue as any).text : cellValue;
+  if (cellType !== 'text' && cellType !== 'link' && cellType !== 'progressbar' && cellType !== 'checkbox') {
+    maxHeight = lineHeight;
   } else {
-    text = cellValue;
-  }
-  const lines = validToString(text).split('\n') || [];
+    if (cellType === 'checkbox') {
+      text = isObject(cellValue) ? (cellValue as any).text : cellValue;
+    } else {
+      text = cellValue;
+    }
+    const lines = validToString(text).split('\n') || [];
 
-  const cellWidth = table.getColsWidth(col, endCol);
+    const cellWidth = table.getColsWidth(col, endCol);
 
-  if (cellType === 'checkbox') {
-    const size = getProp('size', actStyle, col, row, table);
-    if (autoWrapText) {
-      const spaceBetweenTextAndIcon = getProp('spaceBetweenTextAndIcon', actStyle, col, row, table);
-      const maxLineWidth = cellWidth - (padding[1] + padding[3]) - iconWidth - size - spaceBetweenTextAndIcon;
-      utilCheckBoxMark.setAttributes({
-        text: {
-          maxLineWidth,
-          text: lines,
+    if (cellType === 'checkbox') {
+      const size = getProp('size', actStyle, col, row, table);
+      if (autoWrapText) {
+        const spaceBetweenTextAndIcon = getProp('spaceBetweenTextAndIcon', actStyle, col, row, table);
+        const maxLineWidth = cellWidth - (padding[1] + padding[3]) - iconWidth - size - spaceBetweenTextAndIcon;
+        utilCheckBoxMark.setAttributes({
+          text: {
+            maxLineWidth,
+            text: lines,
+            fontSize,
+            fontStyle,
+            fontWeight,
+            fontFamily,
+            lineHeight,
+            wordBreak: 'break-word'
+          },
+          icon: {
+            width: Math.floor(size / 1.4), // icon : box => 10 : 14
+            height: Math.floor(size / 1.4)
+          },
+          box: {
+            width: size,
+            height: size
+          },
+          spaceBetweenTextAndIcon
+        });
+        utilCheckBoxMark.render();
+        maxHeight = utilTextMark.AABBBounds.height();
+      } else {
+        maxHeight = Math.max(size, lines.length * lineHeight);
+      }
+    } else if (iconInlineFront.length || iconInlineEnd.length) {
+      if (autoWrapText) {
+        const textOption = Object.assign({
+          text: cellValue?.toString(),
+          fontFamily,
           fontSize,
           fontStyle,
           fontWeight,
-          fontFamily,
-          lineHeight,
-          wordBreak: 'break-word'
-        },
-        icon: {
-          width: Math.floor(size / 1.4), // icon : box => 10 : 14
-          height: Math.floor(size / 1.4)
-        },
-        box: {
-          width: size,
-          height: size
-        },
-        spaceBetweenTextAndIcon
+          lineHeight
+        });
+        textOption.textBaseline = 'middle';
+        const textConfig = [
+          ...iconInlineFront.map(icon => dealWithRichTextIcon(icon)),
+          textOption,
+          ...iconInlineEnd.map(icon => dealWithRichTextIcon(icon))
+        ];
+        utilRichTextMark.setAttributes({
+          width: cellWidth - (padding[1] + padding[3]) - iconWidth,
+          height: 0,
+          textConfig
+        });
+        maxHeight = utilRichTextMark.AABBBounds.height();
+      } else {
+        maxHeight = 0;
+        lines.forEach((line: string, index: number) => {
+          if (index === 0 && iconInlineFront.length) {
+            maxHeight += Math.max(lineHeight, iconInlineFrontHeight);
+          } else if (index === lines.length - 1 && iconInlineEnd.length) {
+            maxHeight += Math.max(lineHeight, iconInlineEndHeight);
+          } else {
+            maxHeight += lineHeight;
+          }
+        });
+      }
+    } else if (autoWrapText) {
+      const maxLineWidth = cellWidth - (padding[1] + padding[3]) - iconWidth;
+      utilTextMark.setAttributes({
+        maxLineWidth,
+        text: lines,
+        fontSize,
+        fontStyle,
+        fontWeight,
+        fontFamily,
+        lineHeight,
+        wordBreak: 'break-word',
+        whiteSpace: lines.length === 1 && !autoWrapText ? 'no-wrap' : 'normal'
       });
-      utilCheckBoxMark.render();
-      maxHeight = utilTextMark.AABBBounds.height();
+      maxHeight = utilTextMark.AABBBounds.height() || (typeof lineHeight === 'number' ? lineHeight : fontSize);
     } else {
-      maxHeight = Math.max(size, lines.length * lineHeight);
+      // autoWrapText = false
+      maxHeight = lines.length * lineHeight;
     }
-  } else if (iconInlineFront.length || iconInlineEnd.length) {
-    // if (autoWrapText) {
-    const textOption = Object.assign({
-      text: cellValue?.toString(),
-      fontFamily,
-      fontSize,
-      fontStyle,
-      fontWeight,
-      lineHeight
-    });
-    textOption.textBaseline = 'middle';
-    const textConfig = [
-      ...iconInlineFront.map(icon => dealWithRichTextIcon(icon)),
-      textOption,
-      ...iconInlineEnd.map(icon => dealWithRichTextIcon(icon))
-    ];
-    utilRichTextMark.setAttributes({
-      width: cellWidth - (padding[1] + padding[3]) - iconWidth,
-      height: 0,
-      textConfig
-    });
-    maxHeight = utilRichTextMark.AABBBounds.height();
-    // } else {
-    //   maxHeight = 0;
-    //   lines.forEach((line: string, index: number) => {
-    //     if (index === 0 && iconInlineFront.length) {
-    //       maxHeight += Math.max(lineHeight, iconInlineFrontHeight);
-    //     } else if (index === lines.length - 1 && iconInlineEnd.length) {
-    //       maxHeight += Math.max(lineHeight, iconInlineEndHeight);
-    //     } else {
-    //       maxHeight += lineHeight;
-    //     }
-    //   });
-    // }
-  } else if (autoWrapText) {
-    const maxLineWidth = cellWidth - (padding[1] + padding[3]) - iconWidth;
-    utilTextMark.setAttributes({
-      maxLineWidth,
-      text: lines,
-      fontSize,
-      fontStyle,
-      fontWeight,
-      fontFamily,
-      lineHeight,
-      wordBreak: 'break-word',
-      whiteSpace: lines.length === 1 && !autoWrapText ? 'no-wrap' : 'normal'
-    });
-    maxHeight = utilTextMark.AABBBounds.height() || (typeof lineHeight === 'number' ? lineHeight : fontSize);
-  } else {
-    // autoWrapText = false
-    maxHeight = lines.length * lineHeight;
   }
-
   return (Math.max(maxHeight, iconHeight) + padding[0] + padding[2]) / spanRow;
 }
 

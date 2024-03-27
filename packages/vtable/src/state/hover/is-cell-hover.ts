@@ -2,8 +2,10 @@ import type { StateManager } from '../state';
 import type { Group } from '../../scenegraph/graphic/group';
 import { getProp } from '../../scenegraph/utils/get-prop';
 import type { BaseTableAPI } from '../../ts-types/base-table';
+import type { ColumnDefine } from '../../ts-types';
 import { HighlightScope } from '../../ts-types';
 import { isValid } from '@visactor/vutils';
+import { getCellMergeRange } from '../../tools/merge-range';
 
 export function getCellHoverColor(cellGroup: Group, table: BaseTableAPI): string | undefined {
   let colorKey;
@@ -14,8 +16,9 @@ export function getCellHoverColor(cellGroup: Group, table: BaseTableAPI): string
     isValid(cellGroup.mergeEndCol) &&
     isValid(cellGroup.mergeEndRow)
   ) {
-    for (let col = cellGroup.mergeStartCol; col <= cellGroup.mergeEndCol; col++) {
-      for (let row = cellGroup.mergeStartRow; row <= cellGroup.mergeEndRow; row++) {
+    const { colStart, colEnd, rowStart, rowEnd } = getCellMergeRange(cellGroup, table.scenegraph);
+    for (let col = colStart; col <= colEnd; col++) {
+      for (let row = rowStart; row <= rowEnd; row++) {
         const key = isCellHover(table.stateManager, col, row, cellGroup);
         if (key && (!colorKey || key === 'cellBgColor')) {
           colorKey = key;
@@ -66,9 +69,17 @@ export function isCellHover(state: StateManager, col: number, row: number, cellG
   if (highlightScope === HighlightScope.single && cellPos.col === col && cellPos.row === row) {
     hoverMode = 'cellBgColor';
   } else if (highlightScope === HighlightScope.column && cellPos.col === col) {
-    hoverMode = 'inlineColumnBgColor';
+    if (cellPos.col === col && cellPos.row === row) {
+      hoverMode = 'cellBgColor';
+    } else {
+      hoverMode = 'inlineColumnBgColor';
+    }
   } else if (highlightScope === HighlightScope.row && cellPos.row === row) {
-    hoverMode = 'inlineRowBgColor';
+    if (cellPos.col === col && cellPos.row === row) {
+      hoverMode = 'cellBgColor';
+    } else {
+      hoverMode = 'inlineRowBgColor';
+    }
   } else if (highlightScope === HighlightScope.cross) {
     if (cellPos.col === col && cellPos.row === row) {
       hoverMode = 'cellBgColor';
@@ -83,14 +94,14 @@ export function isCellHover(state: StateManager, col: number, row: number, cellG
     let cellDisable;
     if (isHeader) {
       const define = table.getHeaderDefine(col, row);
-      cellDisable = define?.disableHeaderHover;
+      cellDisable = (define as ColumnDefine)?.disableHeaderHover;
 
       if (cellGroup.firstChild && cellGroup.firstChild.name === 'axis' && table.options.hover?.disableAxisHover) {
         cellDisable = true;
       }
     } else {
       const define = table.getBodyColumnDefine(col, row);
-      cellDisable = define?.disableHover;
+      cellDisable = (define as ColumnDefine)?.disableHover;
     }
 
     if (cellDisable) {

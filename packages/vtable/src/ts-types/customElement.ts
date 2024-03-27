@@ -21,6 +21,7 @@ interface baseElement {
   // clickable?: boolean; // @dispose
   pickable?: boolean;
   cursor?: string;
+  name?: string;
 }
 export interface TextElement extends baseElement {
   type: 'text';
@@ -28,7 +29,7 @@ export interface TextElement extends baseElement {
   stroke?: string | ((value: string) => string);
   fill?: string | ((value: string) => string);
   color?: string | ((value: string) => string);
-  lineWidth: number;
+  lineWidth?: number;
   fontSize?: number | ((value: string) => number);
   fontFamily?: string | ((value: string) => string);
   fontWeight?: string | number | ((value: string) => string | number);
@@ -40,6 +41,8 @@ export interface TextElement extends baseElement {
   textBaseline?: TextBaselineType;
   lineHeight?: number;
   underline?: number;
+  underlineDash?: number[];
+  underlineOffset?: number;
   lineThrough?: number;
   heightLimit?: number;
   lineClamp?: number;

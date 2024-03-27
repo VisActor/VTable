@@ -1,15 +1,14 @@
 /* eslint-disable no-undef */
-import type { IGraphic, IThemeSpec } from '@src/vrender';
-import type { CellLocation, CellRange, TextColumnDefine } from '../../ts-types';
+import type { IThemeSpec } from '@src/vrender';
+import type { CellLocation, CellRange, ColumnDefine, IRowSeriesNumber, TextColumnDefine } from '../../ts-types';
 import type { Group } from '../graphic/group';
 import { getProp, getRawProp } from '../utils/get-prop';
 import type { MergeMap } from '../scenegraph';
-import { createCell } from './cell-helper';
-import type { BaseTableAPI } from '../../ts-types/base-table';
+import { createCell, dealWithMergeCellSize, resizeCellGroup } from './cell-helper';
+import type { BaseTableAPI, HeaderData } from '../../ts-types/base-table';
 import { getCellCornerRadius, getStyleTheme } from '../../core/tableHelper';
 import { isPromise } from '../../tools/helper';
 import { dealPromiseData } from '../utils/deal-promise-data';
-import { isArray } from '@visactor/vutils';
 import { dealWithCustom } from '../component/custom';
 /**
  * 创建复合列 同一列支持创建不同类型单元格
@@ -80,7 +79,8 @@ export function createComplexColumn(
         range = customMergeRange;
         isMerge = range.start.col !== range.end.col || range.start.row !== range.end.row;
         if (isMerge) {
-          const mergeSize = dealMerge(range, mergeMap, table);
+          const needUpdateRange = rowStart > range.start.row;
+          const mergeSize = dealMerge(range, mergeMap, table, needUpdateRange);
           cellWidth = mergeSize.cellWidth;
           cellHeight = mergeSize.cellHeight;
         }
@@ -114,7 +114,10 @@ export function createComplexColumn(
       cellLocation !== 'body'
         ? table.getHeaderDefine(colForDefine, rowForDefine)
         : table.getBodyColumnDefine(colForDefine, rowForDefine);
-    const mayHaveIcon = cellLocation !== 'body' ? true : !!define?.icon || !!define?.tree;
+    const mayHaveIcon =
+      cellLocation !== 'body'
+        ? true
+        : (define as IRowSeriesNumber)?.dragOrder || !!define?.icon || !!(define as ColumnDefine)?.tree;
 
     if (!range && (cellLocation !== 'body' || (define as TextColumnDefine)?.mergeCell)) {
       // 只有表头或者column配置合并单元格后再进行信息获取
@@ -122,7 +125,8 @@ export function createComplexColumn(
       isMerge = range.start.col !== range.end.col || range.start.row !== range.end.row;
       // 所有Merge单元格，只保留左上角一个真实的单元格，其他使用空Group占位
       if (isMerge) {
-        const mergeSize = dealMerge(range, mergeMap, table);
+        const needUpdateRange = rowStart > range.start.row;
+        const mergeSize = dealMerge(range, mergeMap, table, needUpdateRange);
         cellWidth = mergeSize.cellWidth;
         cellHeight = mergeSize.cellHeight;
       }
@@ -156,8 +160,9 @@ export function createComplexColumn(
     // margin = getProp('margin', headerStyle, col, 0, table)
 
     const type =
-      (table.isHeader(col, row) ? table._getHeaderLayoutMap(col, row).headerType : table.getBodyColumnType(col, row)) ||
-      'text';
+      (table.isHeader(col, row)
+        ? (table._getHeaderLayoutMap(col, row) as HeaderData).headerType
+        : table.getBodyColumnType(col, row)) || 'text';
 
     // deal with promise data
     if (isPromise(value)) {
@@ -194,7 +199,7 @@ export function createComplexColumn(
       const cellGroup = createCell(
         type,
         value,
-        define,
+        define as ColumnDefine,
         table,
         col,
         row,
@@ -221,7 +226,8 @@ export function createComplexColumn(
         cellGroup.contentWidth = contentWidth;
         cellGroup.contentHeight = contentHeight;
 
-        resizeCellGroup(cellGroup, rangeWidth, rangeHeight, range, table);
+        // resizeCellGroup(cellGroup, rangeWidth, rangeHeight, range, table);
+        dealWithMergeCellSize(range, contentWidth, contentHeight, padding, textAlign, textBaseline, table);
         columnGroup.updateColumnHeight(rangeHeight);
         y += rangeHeight;
       } else {
@@ -268,66 +274,11 @@ export function getColumnGroupTheme(
   return { theme: columnTheme, hasFunctionPros };
 }
 
-export function resizeCellGroup(
-  cellGroup: Group,
-  rangeWidth: number,
-  rangeHeight: number,
-  range: CellRange,
-  table: BaseTableAPI
-) {
-  const { col, row } = cellGroup;
-  const dx = -table.getColsWidth(range.start.col, col - 1);
-  const dy = -table.getRowsHeight(range.start.row, row - 1);
-
-  cellGroup.forEachChildren((child: IGraphic) => {
-    child.setAttributes({
-      dx: (child.attribute.dx ?? 0) + dx,
-      dy: (child.attribute.dy ?? 0) + dy
-    });
-  });
-
-  const lineWidth = cellGroup.attribute.lineWidth;
-  const isLineWidthArray = isArray(lineWidth);
-  const newLineWidth = [0, 0, 0, 0];
-
-  if (col === range.start.col) {
-    newLineWidth[3] = isLineWidthArray ? lineWidth[3] : lineWidth;
-  }
-  if (row === range.start.row) {
-    newLineWidth[0] = isLineWidthArray ? lineWidth[0] : lineWidth;
-  }
-  if (col === range.end.col) {
-    newLineWidth[1] = isLineWidthArray ? lineWidth[1] : lineWidth;
-  }
-  if (row === range.end.row) {
-    newLineWidth[2] = isLineWidthArray ? lineWidth[2] : lineWidth;
-  }
-
-  const widthChange = rangeWidth !== cellGroup.attribute.width;
-  const heightChange = rangeHeight !== cellGroup.attribute.height;
-
-  cellGroup.setAttributes({
-    width: rangeWidth,
-    height: rangeHeight,
-    strokeArrayWidth: newLineWidth
-  } as any);
-
-  cellGroup.mergeStartCol = range.start.col;
-  cellGroup.mergeStartRow = range.start.row;
-  cellGroup.mergeEndCol = range.end.col;
-  cellGroup.mergeEndRow = range.end.row;
-
-  return {
-    widthChange,
-    heightChange
-  };
-}
-
-function dealMerge(range: CellRange, mergeMap: MergeMap, table: BaseTableAPI) {
+function dealMerge(range: CellRange, mergeMap: MergeMap, table: BaseTableAPI, forceUpdate: boolean) {
   let cellWidth = 0;
   let cellHeight = 0;
   const mergeResult = mergeMap.get(`${range.start.col},${range.start.row};${range.end.col},${range.end.row}`);
-  if (!mergeResult) {
+  if (!mergeResult || forceUpdate) {
     for (let col = range.start.col; col <= range.end.col; col++) {
       cellWidth += table.getColWidth(col);
     }

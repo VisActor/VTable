@@ -3,7 +3,7 @@ import type { BaseMenu } from './BaseMenu';
 import { Container, Menu } from './Menu';
 import { cellInRange } from '../../../tools/helper';
 import { TABLE_EVENT_TYPE } from '../../../core/TABLE_EVENT_TYPE';
-import type { BaseTableAPI } from '../../../ts-types/base-table';
+import type { BaseTableAPI, HeaderData } from '../../../ts-types/base-table';
 // import { DEFAULTFONT } from '../../tools/global';
 // import { getFontSize } from '../../tools/canvases';
 
@@ -64,7 +64,7 @@ function getMenuInstanceInfo(
   } // 没有指定的下拉菜单 从headerLayout中获取下拉菜单内容
   else if (type === 'dropdown-menu') {
     // 获取下拉菜单信息及位置 注：这里逻辑特指内置的下拉菜单
-    const { dropDownMenu = table.globalDropDownMenu, pivotInfo } = table._getHeaderLayoutMap(col, row);
+    const { dropDownMenu = table.globalDropDownMenu, pivotInfo } = table._getHeaderLayoutMap(col, row) as HeaderData;
 
     // const x = (left + right) / 2;
     // const y = bottom;
@@ -203,7 +203,7 @@ export class MenuHandler {
         const abstractPos = table._getMouseAbstractPoint(e.event, false);
         let menu = null;
         if (abstractPos.inTable && typeof table.internalProps.menu?.contextMenuItems === 'function') {
-          menu = table.internalProps.menu.contextMenuItems(table.getHeaderField(e.col, e.row) as string, e.row);
+          menu = table.internalProps.menu.contextMenuItems(table.getHeaderField(e.col, e.row) as string, e.row, e.col);
         } else if (abstractPos.inTable && Array.isArray(table.internalProps.menu?.contextMenuItems)) {
           menu = table.internalProps.menu?.contextMenuItems;
         }

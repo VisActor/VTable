@@ -128,6 +128,13 @@
           }
         },
         {
+          "path": "pivot-analysis-table-indicator-row",
+          "title": {
+            "zh": "透视分析表格指标在行",
+            "en": "Pivot Analysis Table with indicator row"
+          }
+        },
+        {
           "path": "pivot-table",
           "title": {
             "zh": "透视表格（自定义表头结构）",
@@ -247,17 +254,24 @@
           }
         },
         {
-          "path": "chart",
+          "path": "list-chart",
           "title": {
-            "zh": "透视表图表展示",
-            "en": "Chart Type In PivotTable"
+            "zh": "基本表格集成图表",
+            "en": "Chart Type In ListTable"
           }
         },
         {
           "path": "list-table-chart",
           "title": {
-            "zh": "基本表格图表展示",
-            "en": "Chart Type In ListTable"
+            "zh": "基本表格集成图表 2",
+            "en": "Chart Type In ListTable 2"
+          }
+        },
+        {
+          "path": "chart",
+          "title": {
+            "zh": "透视表图表展示",
+            "en": "Chart Type In PivotTable"
           }
         },
         {
@@ -434,6 +448,13 @@
             "cover": "https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/width-mode-autoWidth.png",
             "link": "'../../guide/basic_function/row_height_column_width'",
             "option": ""
+          }
+        },
+        {
+          "path": "row-series-number",
+          "title": {
+            "zh": "行序号",
+            "en": "row series number"
           }
         }
       ]
@@ -826,6 +847,22 @@
             "link": "'../../guide/custom_define/custom_merge'",
             "option": ""
           }
+        },
+        {
+          "path": "custom-style",
+          "title": {
+            "zh": "单元格自定义样式",
+            "en": "Cell custom style"
+          },
+          "meta": {
+            "title": "Cell custom style",
+            "keywords": "",
+            "category": "demo",
+            "group": "Custom",
+            "cover": "https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/custom-style.png",
+            "link": "'../../guide/custom_define/custom_style'",
+            "option": ""
+          }
         }
       ]
     },
@@ -869,8 +906,8 @@
     {
       "path": "data-analysis",
       "title": {
-        "zh": "数据分析",
-        "en": "Data Analysis"
+        "zh": "透视表数据分析",
+        "en": "Pivot Table Data Analysis"
       },
       "children": [
         {
@@ -927,6 +964,36 @@
           "title": {
             "zh": "指标聚合方式",
             "en": "Indicator Aggregation Type"
+          }
+        }
+      ]
+    },
+    {
+      "path": "list-table-data-analysis",
+      "title": {
+        "zh": "基本表数据分析",
+        "en": "List Table Data Analysis"
+      },
+      "children": [
+        {
+          "path": "list-table-data-filter",
+          "title": {
+            "zh": "数据过滤",
+            "en": "Data Filter"
+          }
+        },
+        {
+          "path": "list-table-aggregation",
+          "title": {
+            "zh": "数据聚合分析",
+            "en": "Data Aggregation"
+          }
+        },
+        {
+          "path": "list-table-aggregation-multiple",
+          "title": {
+            "zh": "多种数据聚合",
+            "en": "Multiple Data Aggregation"
           }
         }
       ]
@@ -1094,6 +1161,31 @@
       ]
     },
     {
+      "path": "search",
+      "title": {
+        "zh": "搜索",
+        "en": "search"
+      },
+      "children": [
+        {
+          "path": "search-component",
+          "title": {
+            "zh": "搜索组件",
+            "en": "search-component"
+          },
+          "meta": {
+            "title": "search component",
+            "keywords": "",
+            "category": "demo",
+            "group": "Component",
+            "cover": "https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/list-table.png",
+            "link": "",
+            "option": ""
+          }
+        }
+      ]
+    },
+    {
       "path": "business",
       "title": {
         "zh": "业务场景",
@@ -1215,6 +1307,29 @@
           "title": {
             "zh": "销售数据气泡图",
             "en": "Sales Bubble"
+          }
+        }
+      ]
+    },
+    {
+      "path": "react",
+      "title": {
+        "zh": "react",
+        "en": "react"
+      },
+      "children": [
+        {
+          "path": "table-option",
+          "title": {
+            "zh": "table-option",
+            "en": "table-option"
+          }
+        },
+        {
+          "path": "table-component",
+          "title": {
+            "zh": "table-component",
+            "en": "table-component"
           }
         }
       ]

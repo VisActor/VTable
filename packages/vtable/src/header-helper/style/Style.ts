@@ -36,6 +36,7 @@ export class Style extends EventTarget implements ColumnStyle {
   private _padding: PaddingsPropertyDefine | undefined;
   private _defaultPadding: PaddingsPropertyDefine = [10, 16, 10, 16];
   private _textStick: boolean;
+  private _textStickBaseOnAlign: boolean;
   private _marked: MarkedPropertyDefine;
   // eslint-disable-next-line no-undef
   private _textAlign: TextAlignType;
@@ -47,6 +48,7 @@ export class Style extends EventTarget implements ColumnStyle {
   private _underline?: UnderlinePropertyDefine;
   private _underlineColor?: ColorPropertyDefine;
   private _underlineDash?: LineDashPropertyDefine;
+  private _underlineOffset?: number;
   private _lineThrough?: LineThroughPropertyDefine;
   private _lineThroughColor?: ColorPropertyDefine;
   private _lineThroughDash?: LineDashPropertyDefine;
@@ -79,6 +81,7 @@ export class Style extends EventTarget implements ColumnStyle {
     this._fontStyle = style.fontStyle ?? headerStyle?.fontStyle;
     this._textOverflow = (style.textOverflow ?? headerStyle?.textOverflow) || 'ellipsis';
     this._textStick = style.textStick ?? headerStyle?.textStick ?? false;
+    this._textStickBaseOnAlign = style.textStickBaseOnAlign ?? headerStyle?.textStickBaseOnAlign ?? false;
     this._marked = style.marked ?? headerStyle?.marked ?? false;
     this._textAlign = (style.textAlign ?? headerStyle?.textAlign) || 'left';
     this._textBaseline = (style.textBaseline ?? headerStyle?.textBaseline) || 'middle';
@@ -89,6 +92,7 @@ export class Style extends EventTarget implements ColumnStyle {
     this._underline = style.underline ?? headerStyle?.underline;
     this._underlineColor = style.underlineColor ?? headerStyle?.underlineColor;
     this._underlineDash = style.underlineDash ?? headerStyle?.underlineDash;
+    this._underlineOffset = style.underlineOffset ?? headerStyle?.underlineOffset;
     this._lineThrough = style.lineThrough ?? headerStyle?.lineThrough;
     this._lineThroughColor = style.lineThroughColor ?? headerStyle?.lineThroughColor;
     this._lineThroughDash = style.lineThroughDash ?? headerStyle?.lineThroughDash;
@@ -180,6 +184,13 @@ export class Style extends EventTarget implements ColumnStyle {
     this._textStick = textStick;
     //this.doChangeStyle();
   }
+  get textStickBaseOnAlign(): boolean {
+    return this._textStickBaseOnAlign;
+  }
+  set textStickBaseOnAlign(textStickBaseOnAlign: boolean) {
+    this._textStickBaseOnAlign = textStickBaseOnAlign;
+    // this.doChangeStyle();
+  }
   get marked(): MarkedPropertyDefine | undefined {
     return this._marked;
   }
@@ -233,6 +244,15 @@ export class Style extends EventTarget implements ColumnStyle {
     this._underlineDash = underlineDash;
     //this.doChangeStyle();
   }
+
+  get underlineOffset(): number | undefined {
+    return this._underlineOffset;
+  }
+  set underlineOffset(underlineOffset: number | undefined) {
+    this._underlineOffset = underlineOffset;
+    //this.doChangeStyle();
+  }
+
   get lineThrough(): LineThroughPropertyDefine | undefined {
     return this._lineThrough;
   }

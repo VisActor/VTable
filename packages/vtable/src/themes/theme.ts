@@ -52,9 +52,9 @@ import { defalutPoptipStyle, getAxisStyle } from './component';
 
 function getProp(obj: PartialTableThemeDefine, superObj: ITableThemeDefine, names: string[], defNames?: string[]): any {
   return (
-    getChainSafe(obj, ...names) ||
-    getChainSafe(superObj, ...names) ||
-    (defNames && getChainSafe(obj, ...defNames)) ||
+    getChainSafe(obj, ...names) ??
+    getChainSafe(superObj, ...names) ??
+    (defNames && getChainSafe(obj, ...defNames)) ??
     (defNames && getChainSafe(superObj, ...defNames))
   );
 }
@@ -83,7 +83,10 @@ export class TableTheme implements ITableThemeDefine {
   private _selectionStyle: RequiredTableThemeDefine['selectionStyle'] | null = null;
 
   private _axisStyle: RequiredTableThemeDefine['axisStyle'] | null = null;
+  private _checkboxStyle: RequiredTableThemeDefine['checkboxStyle'] | null = null;
   private _textPopTipStyle: RequiredTableThemeDefine['textPopTipStyle'] | null = null;
+
+  isPivot: boolean = false;
 
   constructor(obj: PartialTableThemeDefine | ITableThemeDefine, superTheme: ITableThemeDefine) {
     this.internalTheme = {
@@ -98,6 +101,21 @@ export class TableTheme implements ITableThemeDefine {
   get underlayBackgroundColor(): string {
     const { obj, superTheme } = this.internalTheme;
     return getProp(obj, superTheme, ['underlayBackgroundColor']);
+  }
+
+  get cellInnerBorder(): boolean {
+    const { obj, superTheme } = this.internalTheme;
+    return getProp(obj, superTheme, ['cellInnerBorder']) ?? true;
+  }
+
+  get cellBorderClipDirection(): 'top-left' | 'bottom-right' {
+    const { obj, superTheme } = this.internalTheme;
+    return getProp(obj, superTheme, ['cellBorderClipDirection']) ?? 'top-left';
+  }
+
+  get _contentOffset(): number {
+    const { obj, superTheme } = this.internalTheme;
+    return getProp(obj, superTheme, ['_contentOffset']) ?? 0;
   }
 
   get defaultStyle(): RequiredTableThemeDefine['defaultStyle'] {
@@ -245,6 +263,9 @@ export class TableTheme implements ITableThemeDefine {
         get underlineDash(): LineDashPropertyDefine | undefined {
           return defaultStyle.underlineDash;
         },
+        get underlineOffset(): number | undefined {
+          return defaultStyle.underlineOffset;
+        },
         get lineThrough(): LineThroughPropertyDefine | undefined {
           return defaultStyle.lineThrough ?? false;
         },
@@ -376,7 +397,7 @@ export class TableTheme implements ITableThemeDefine {
         {},
         this.defaultStyle,
         superTheme.rowHeaderStyle,
-        obj.rowHeaderStyle // ?? obj.headerStyle
+        obj.rowHeaderStyle ?? (this.isPivot ? null : obj.headerStyle) // not for pivot
       );
       this._rowHeader = this.getStyle(header);
     }
@@ -406,6 +427,9 @@ export class TableTheme implements ITableThemeDefine {
         },
         get borderLineDash(): LineDashsDef | undefined {
           return frameStyle.borderLineDash;
+        },
+        get innerBorder(): boolean | undefined {
+          return frameStyle.innerBorder;
         },
         get shadowBlur(): number {
           return frameStyle.shadowBlur;
@@ -649,6 +673,19 @@ export class TableTheme implements ITableThemeDefine {
     return this._axisStyle;
   }
 
+  get checkboxStyle(): RequiredTableThemeDefine['checkboxStyle'] {
+    if (!this._checkboxStyle) {
+      const { obj, superTheme } = this.internalTheme;
+      const checkboxStyle: RequiredTableThemeDefine['checkboxStyle'] = ingoreNoneValueMerge(
+        {},
+        superTheme.checkboxStyle,
+        obj.checkboxStyle
+      );
+      this._checkboxStyle = checkboxStyle;
+    }
+    return this._checkboxStyle;
+  }
+
   get textPopTipStyle(): RequiredTableThemeDefine['textPopTipStyle'] {
     if (!this._textPopTipStyle) {
       const { obj, superTheme } = this.internalTheme;
@@ -827,6 +864,9 @@ export class TableTheme implements ITableThemeDefine {
       },
       get underlineDash(): LineDashPropertyDefine | undefined {
         return style.underlineDash;
+      },
+      get underlineOffset(): number | undefined {
+        return style.underlineOffset;
       },
       get lineThrough(): LineThroughPropertyDefine | undefined {
         return style.lineThrough ?? false;

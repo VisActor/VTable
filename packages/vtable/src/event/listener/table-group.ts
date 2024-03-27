@@ -6,7 +6,7 @@ import type {
   MousePointerMultiCellEvent,
   MousePointerSparklineEvent
 } from '../../ts-types';
-import { InteractionState } from '../../ts-types';
+import { IconFuncTypeEnum, InteractionState } from '../../ts-types';
 import type { SceneEvent } from '../util';
 import { getCellEventArgsSet } from '../util';
 import { TABLE_EVENT_TYPE } from '../../core/TABLE_EVENT_TYPE';
@@ -25,49 +25,6 @@ export function bindTableGroupListener(eventManager: EventManager) {
   const table = eventManager.table;
   const stateManager = table.stateManager;
 
-  // 有被阻止冒泡的场景 就触发不到这里的事件了 所以这个LastBodyPointerXY变量的赋值在scrollbar的down事件也进行了处理
-  document.body.addEventListener('pointerdown', e => {
-    console.log('body pointerdown');
-    table.eventManager.LastBodyPointerXY = { x: e.x, y: e.y };
-    table.eventManager.isDown = true;
-  });
-  document.addEventListener('pointerup', e => {
-    table.eventManager.LastBodyPointerXY = null;
-    console.log('body pointerup', table.eventManager.isDown, table.eventManager.isDraging);
-    table.eventManager.isDown = false;
-    table.eventManager.isDraging = false;
-  });
-  document.body.addEventListener('pointermove', (e: FederatedPointerEvent) => {
-    if (table.eventManager.isDown && table.eventManager.LastBodyPointerXY) {
-      const lastX = table.eventManager.LastBodyPointerXY?.x ?? e.x;
-      const lastY = table.eventManager.LastBodyPointerXY?.y ?? e.y;
-      if (Math.abs(lastX - e.x) > 1 || Math.abs(lastY - e.y) > 1) {
-        table.eventManager.isDraging = true;
-      }
-    }
-    // 注释掉。因为： 这里pointermove太敏感了 点击快的时候 可能动了1px这里也会执行到 就影响到下面选中不触发的问题。下面pointermove就有这段逻辑，这里先去掉
-    // if (eventManager.touchSetTimeout) {
-    //   clearTimeout(eventManager.touchSetTimeout);
-    //   console.log('eventManager.touchSetTimeout', eventManager.touchSetTimeout);
-    //   eventManager.touchSetTimeout = undefined;
-    // }
-    // const eventArgsSet = getCellEventArgsSet(e);
-    const { x, y } = table._getMouseAbstractPoint(e, false);
-    if (stateManager.interactionState === InteractionState.scrolling) {
-      return;
-    }
-    if (stateManager.interactionState === InteractionState.grabing) {
-      if (stateManager.isResizeCol()) {
-        eventManager.dealColumnResize(x, y);
-        if ((table as any).hasListeners(TABLE_EVENT_TYPE.RESIZE_COLUMN)) {
-          table.fireListeners(TABLE_EVENT_TYPE.RESIZE_COLUMN, {
-            col: table.stateManager.columnResize.col,
-            colWidth: table.getColWidth(table.stateManager.columnResize.col)
-          });
-        }
-      }
-    }
-  });
   table.scenegraph.tableGroup.addEventListener('pointermove', (e: FederatedPointerEvent) => {
     const lastX = table.eventManager.LastPointerXY?.x ?? e.x;
     const lastY = table.eventManager.LastPointerXY?.y ?? e.y;
@@ -109,10 +66,11 @@ export function bindTableGroupListener(eventManager: EventManager) {
     if ((table as any).hasListeners(TABLE_EVENT_TYPE.MOUSELEAVE_CELL)) {
       // const cellGoup = eventArgsSet?.eventArgs?.target as unknown as Group;
       if (
-        cellGoup?.role === 'cell' &&
+        // cellGoup?.role === 'cell' && // 这里去掉这个判断 处理当鼠标移动到滚动条上 也需要触发leave事件
         table.stateManager.hover.cellPos.col !== -1 &&
         table.stateManager.hover.cellPos.row !== -1 &&
-        (cellGoup.col !== table.stateManager.hover.cellPos.col || cellGoup.row !== table.stateManager.hover.cellPos.row)
+        (cellGoup?.col !== table.stateManager.hover.cellPos.col ||
+          cellGoup?.row !== table.stateManager.hover.cellPos.row)
       ) {
         table.fireListeners(TABLE_EVENT_TYPE.MOUSELEAVE_CELL, {
           col: table.stateManager.hover.cellPos.col,
@@ -133,7 +91,10 @@ export function bindTableGroupListener(eventManager: EventManager) {
         cellGoup?.role === 'cell' &&
         isValid(cellGoup.col) &&
         isValid(cellGoup.row) &&
-        (cellGoup.col !== table.stateManager.hover.cellPos.col || cellGoup.row !== table.stateManager.hover.cellPos.row)
+        (cellGoup.col !== table.stateManager.hover.cellPos.col ||
+          cellGoup.row !== table.stateManager.hover.cellPos.row) &&
+        (cellGoup.col !== table.stateManager.hover.cellPosContainHeader?.col ||
+          cellGoup.row !== table.stateManager.hover.cellPosContainHeader?.row)
       ) {
         table.fireListeners(TABLE_EVENT_TYPE.MOUSEENTER_CELL, {
           col: cellGoup.col,
@@ -266,6 +227,22 @@ export function bindTableGroupListener(eventManager: EventManager) {
       stateManager.updateInteractionState(InteractionState.default);
       stateManager.updateCursor();
     }
+    // 移动到table外部 如移动到表格空白区域 移动到表格浏览器外部
+    if ((table as any).hasListeners(TABLE_EVENT_TYPE.MOUSELEAVE_CELL)) {
+      if (table.stateManager.hover.cellPos.col !== -1 && table.stateManager.hover.cellPos.row !== -1) {
+        table.fireListeners(TABLE_EVENT_TYPE.MOUSELEAVE_CELL, {
+          col: table.stateManager.hover.cellPos.col,
+          row: table.stateManager.hover.cellPos.row,
+          cellRange: table.getCellRangeRelativeRect({
+            col: table.stateManager.hover.cellPos.col,
+            row: table.stateManager.hover.cellPos.row
+          }),
+          scaleRatio: table.canvas.getBoundingClientRect().width / table.canvas.offsetWidth,
+          event: e.nativeEvent,
+          target: undefined
+        });
+      }
+    }
     eventManager.dealTableHover();
 
     const target = e.target;
@@ -310,7 +287,7 @@ export function bindTableGroupListener(eventManager: EventManager) {
             target: { col: table.stateManager.columnMove.colTarget, row: table.stateManager.columnMove.rowTarget },
             source: {
               col: table.stateManager.columnMove.colSource,
-              row: table.stateManager.columnMove.rowSource //TODO row
+              row: table.stateManager.columnMove.rowSource
             }
           });
         }
@@ -343,15 +320,16 @@ export function bindTableGroupListener(eventManager: EventManager) {
 
   table.scenegraph.tableGroup.addEventListener('pointerdown', (e: FederatedPointerEvent) => {
     console.log('tableGroup pointerdown');
-    table.eventManager.isPointerDownOnTable = true;
-    setTimeout(() => {
-      table.eventManager.isPointerDownOnTable = false;
-    }, 0);
+    // table.eventManager.isPointerDownOnTable = true;
+    // setTimeout(() => {
+    //   table.eventManager.isPointerDownOnTable = false;
+    // }, 0);
     table.eventManager.isDown = true;
     table.eventManager.LastBodyPointerXY = { x: e.x, y: e.y };
-    // 避免在调整列宽等拖拽操作触发外层组件的拖拽逻辑
-    // 如果鼠标位置在表格内（加调整列宽的热区），将mousedown事件阻止冒泡
-    e.stopPropagation();
+    // // 避免在调整列宽等拖拽操作触发外层组件的拖拽逻辑;
+    // // 如果鼠标位置在表格内（加调整列宽的热区），将pointerdown事件阻止冒泡（如果阻止mousedown需要结合isPointerDownOnTable来判断）
+    // e.stopPropagation();
+
     // e.preventDefault(); //为了阻止mousedown事件的触发，后续：不能这样写，会阻止table聚焦
     table.eventManager.LastPointerXY = { x: e.x, y: e.y };
     if (e.button !== 0) {
@@ -432,6 +410,14 @@ export function bindTableGroupListener(eventManager: EventManager) {
           // console.log('DRAG_SELECT_START');
         }
       }
+    } else if ((hitIcon.attribute as any).funcType === IconFuncTypeEnum.dragReorder) {
+      stateManager.startMoveCol(
+        eventArgsSet.eventArgs.col,
+        eventArgsSet.eventArgs.row,
+        eventArgsSet.abstractPos.x,
+        eventArgsSet.abstractPos.y
+      );
+      stateManager.updateInteractionState(InteractionState.grabing);
     }
     if ((table as any).hasListeners(TABLE_EVENT_TYPE.MOUSEDOWN_CELL)) {
       const eventArgsSet: SceneEvent = getCellEventArgsSet(e);
@@ -466,7 +452,7 @@ export function bindTableGroupListener(eventManager: EventManager) {
             target: { col: eventArgsSet.eventArgs.col, row: eventArgsSet.eventArgs.row },
             source: {
               col: table.stateManager.columnMove.colSource,
-              row: table.stateManager.columnMove.colSource //TODO row
+              row: table.stateManager.columnMove.rowSource
             }
           });
         }
@@ -685,8 +671,8 @@ export function bindTableGroupListener(eventManager: EventManager) {
         cellInfo.field as string | number,
         (e.detail as unknown as { checked: boolean }).checked
       );
-      const define = table.getBodyColumnDefine(col, row);
-      if (define.cellType === 'checkbox') {
+      const cellType = table.getCellType(col, row);
+      if (cellType === 'checkbox') {
         table.scenegraph.updateCheckboxCellState(col, row, (e.detail as unknown as { checked: boolean }).checked);
       }
     } else {
@@ -697,8 +683,8 @@ export function bindTableGroupListener(eventManager: EventManager) {
         cellInfo.field as string | number,
         (e.detail as unknown as { checked: boolean }).checked
       );
-      const define = table.getBodyColumnDefine(col, row);
-      if (define.headerType === 'checkbox') {
+      const cellType = table.getCellType(col, row);
+      if (cellType === 'checkbox') {
         const oldHeaderCheckedState = table.stateManager.headerCheckedState[cellInfo.field as string | number];
         const newHeaderCheckedState = table.stateManager.updateHeaderCheckedState(cellInfo.field as string | number);
         if (oldHeaderCheckedState !== newHeaderCheckedState) {
@@ -707,6 +693,8 @@ export function bindTableGroupListener(eventManager: EventManager) {
       }
     }
     table.fireListeners(TABLE_EVENT_TYPE.CHECKBOX_STATE_CHANGE, cellsEvent);
+
+    table.scenegraph.updateNextFrame();
   });
 }
 export function bindGesture(eventManager: EventManager) {
@@ -733,7 +721,7 @@ function endResizeCol(table: BaseTableAPI) {
     }
     table.fireListeners(TABLE_EVENT_TYPE.RESIZE_COLUMN_END, {
       col: table.stateManager.columnResize.col,
-      columns
+      colWidths: columns
     });
   }
 }

@@ -34,7 +34,7 @@ import { endMoveCol, startMoveCol, updateMoveCol } from './cell-move';
 import type { FederatedEvent } from '@src/vrender';
 import type { TooltipOptions } from '../ts-types/tooltip';
 import { getIconAndPositionFromTarget } from '../scenegraph/utils/icon';
-import type { BaseTableAPI } from '../ts-types/base-table';
+import type { BaseTableAPI, HeaderData } from '../ts-types/base-table';
 import { debounce } from '../tools/debounce';
 import { updateResizeColumn } from './resize/update-resize-column';
 
@@ -108,7 +108,7 @@ export class StateManager {
     col: number;
     row: number;
     field?: string;
-    fieldKey?: string;
+    // fieldKey?: string;
     order: SortOrder;
     icon?: Icon;
   };
@@ -406,7 +406,7 @@ export class StateManager {
 
   setSortState(sortState: SortState) {
     this.sort.field = sortState?.field as string;
-    this.sort.fieldKey = sortState?.fieldKey as string;
+    // this.sort.fieldKey = sortState?.fieldKey as string;
     this.sort.order = sortState?.order;
     // // 这里有一个问题，目前sortState中一般只传入了fieldKey，但是getCellRangeByField需要field
     // const range = this.table.getCellRangeByField(this.sort.field, 0);
@@ -599,7 +599,12 @@ export class StateManager {
     const originalFrozenColCount =
       this.table.isListTable() && !this.table.internalProps.transpose
         ? this.table.options.frozenColCount
-        : this.table.rowHeaderLevelCount;
+        : this.table.isPivotChart()
+        ? this.table.rowHeaderLevelCount ?? 0
+        : Math.max(
+            (this.table.rowHeaderLevelCount ?? 0) + this.table.internalProps.layoutMap.leftRowSeriesNumberColumnCount,
+            this.table.options.frozenColCount ?? 0
+          );
     if (originalFrozenColCount) {
       if (this.table.tableNoFrameWidth - this.table.getColsWidth(0, originalFrozenColCount - 1) <= 120) {
         this.table._setFrozenColCount(0);
@@ -632,7 +637,7 @@ export class StateManager {
   updateVerticalScrollBar(yRatio: number) {
     const totalHeight = this.table.getAllRowsHeight();
     this.scroll.verticalBarPos = Math.ceil(yRatio * (totalHeight - this.table.scenegraph.height));
-    this.table.scenegraph.setY(-this.scroll.verticalBarPos);
+    this.table.scenegraph.setY(-this.scroll.verticalBarPos, yRatio === 1);
     this.scroll.verticalBarPos -= this.table.scenegraph.proxy.deltaY;
     this.table.scenegraph.proxy.deltaY = 0;
 
@@ -654,7 +659,7 @@ export class StateManager {
   updateHorizontalScrollBar(xRatio: number) {
     const totalWidth = this.table.getAllColsWidth();
     this.scroll.horizontalBarPos = Math.ceil(xRatio * (totalWidth - this.table.scenegraph.width));
-    this.table.scenegraph.setX(-this.scroll.horizontalBarPos);
+    this.table.scenegraph.setX(-this.scroll.horizontalBarPos, xRatio === 1);
     this.scroll.horizontalBarPos -= this.table.scenegraph.proxy.deltaX;
     this.table.scenegraph.proxy.deltaX = 0;
     // console.log(this.table.scenegraph.bodyGroup.lastChild.attribute);
@@ -788,10 +793,11 @@ export class StateManager {
     }
   }
 
-  triggerDropDownMenu(col: number, row: number, x: number, y: number) {
+  triggerDropDownMenu(col: number, row: number, x: number, y: number, event: Event) {
     this.table.fireListeners(TABLE_EVENT_TYPE.DROPDOWN_ICON_CLICK, {
       col,
-      row
+      row,
+      event
     });
     if (this.menu.isShow) {
       this.hideMenu();
@@ -874,7 +880,15 @@ export class StateManager {
     this.menu.dropDownMenuHighlight = cells;
     for (let i = 0; i < cells.length; i++) {
       const { col, row } = cells[i];
-      this.table.scenegraph.updateCellContent(col, row);
+      const range = this.table.getCellRange(col, row);
+      if (!range) {
+        continue;
+      }
+      for (let col = range.start.col; col <= range.end.col; col++) {
+        for (let row = range.start.row; row <= range.end.row; row++) {
+          this.table.scenegraph.updateCellContent(col, row);
+        }
+      }
     }
   }
   dropDownMenuIsHighlight(colNow: number, rowNow: number, index: number): boolean {
@@ -910,7 +924,7 @@ export class StateManager {
           // 手动查询menuKey对应的dropDownIndex
           const headerC = this.table._getHeaderLayoutMap(col ?? colNow, row ?? rowNow);
 
-          const dropDownMenu = headerC.dropDownMenu || this.table.globalDropDownMenu;
+          const dropDownMenu = (headerC as HeaderData).dropDownMenu || this.table.globalDropDownMenu;
           if (dropDownMenu) {
             for (let i = 0; i < dropDownMenu.length; i++) {
               const item: any = dropDownMenu[i];
@@ -927,7 +941,7 @@ export class StateManager {
     }
     return false;
   }
-  triggerSort(col: number, row: number, iconMark: Icon) {
+  triggerSort(col: number, row: number, iconMark: Icon, event: Event) {
     if (this.table.isPivotTable()) {
       // 透视表不执行sort操作
       const order = (this.table as PivotTableAPI).getPivotSortState(col, row);
@@ -937,7 +951,8 @@ export class StateManager {
         row: row,
         order: order || 'normal',
         dimensionInfo: (this.table.internalProps.layoutMap as PivotHeaderLayoutMap).getPivotDimensionInfo(col, row),
-        cellLocation: this.table.getCellLocation(col, row)
+        cellLocation: this.table.getCellLocation(col, row),
+        event
       });
       return;
     }
@@ -945,7 +960,7 @@ export class StateManager {
     const oldSortCol = this.sort.col;
     const oldSortRow = this.sort.row;
     // 执行sort
-    dealSort(col, row, this.table as ListTableAPI);
+    dealSort(col, row, this.table as ListTableAPI, event);
     this.sort.col = col;
     this.sort.row = row;
 

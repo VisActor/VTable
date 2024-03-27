@@ -33,6 +33,6 @@ jobs:
       - name: Build
         env:
           NODE_OPTIONS: "--max_old_space_size=4096"
-        run: node common/scripts/install-run-rush.js build --only tag:package
+        run: node common/scripts/install-run-rush.js build -t @visactor/vtable
       - name: Test
-        run: node common/scripts/install-run-rush.js test --only tag:package
+        run: node common/scripts/install-run-rush.js test -t @visactor/vtable

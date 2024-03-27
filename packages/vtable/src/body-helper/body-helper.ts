@@ -102,6 +102,7 @@ export class BodyHelper {
       case 'checkbox':
         return CheckboxStyle;
     }
+    return TextStyle;
   }
   getCellIconFromRecordValue(icon: ColumnIconOption, col: number, row: number): ColumnIconOption;
   getCellIconFromRecordValue(icon: ColumnIconOption[], col: number, row: number): ColumnIconOption[];

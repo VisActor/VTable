@@ -1,6 +1,14 @@
 import { getValueFromDeepArray } from '../tools/util';
-import type { FieldData, FieldDef, IPagination, MaybePromise, MaybePromiseOrUndefined } from '../ts-types';
+import type {
+  FieldData,
+  FieldDef,
+  IListTableDataConfig,
+  IPagination,
+  MaybePromise,
+  MaybePromiseOrUndefined
+} from '../ts-types';
 import type { BaseTableAPI } from '../ts-types/base-table';
+import type { ColumnData } from '../ts-types/list-table/layout-map/api';
 import type { DataSourceParam } from './DataSource';
 import { DataSource } from './DataSource';
 
@@ -33,7 +41,14 @@ export class CachedDataSource extends DataSource {
   static get EVENT_TYPE(): typeof DataSource.EVENT_TYPE {
     return DataSource.EVENT_TYPE;
   }
-  static ofArray(array: any[], pagination?: IPagination, hierarchyExpandLevel?: number): CachedDataSource {
+  static ofArray(
+    array: any[],
+    dataConfig?: IListTableDataConfig,
+    pagination?: IPagination,
+    columnObjs?: ColumnData[],
+    rowHierarchyType?: 'grid' | 'tree',
+    hierarchyExpandLevel?: number
+  ): CachedDataSource {
     return new CachedDataSource(
       {
         get: (index: number): any => {
@@ -45,12 +60,22 @@ export class CachedDataSource extends DataSource {
         length: array.length,
         source: array
       },
+      dataConfig,
       pagination,
+      columnObjs,
+      rowHierarchyType,
       hierarchyExpandLevel
     );
   }
-  constructor(opt?: DataSourceParam, pagination?: IPagination, hierarchyExpandLevel?: number) {
-    super(opt, pagination, hierarchyExpandLevel);
+  constructor(
+    opt?: DataSourceParam,
+    dataConfig?: IListTableDataConfig,
+    pagination?: IPagination,
+    columnObjs?: ColumnData[],
+    rowHierarchyType?: 'grid' | 'tree',
+    hierarchyExpandLevel?: number
+  ) {
+    super(opt, dataConfig, pagination, columnObjs, rowHierarchyType, hierarchyExpandLevel);
     this._recordCache = {};
     this._fieldCache = {};
   }

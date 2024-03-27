@@ -24,7 +24,9 @@ export function createTable() {
           indicatorKey: '销售总额', //指标名称
           field: 'sales', //指标依据字段
           aggregationType: VTable.TYPES.AggregationType.SUM, //计算类型
-          formatFun: sumNumberFormat
+          formatFun(value, col, row, table) {
+            return value;
+          }
         },
         {
           indicatorKey: '订单数', //指标名称

@@ -19,11 +19,6 @@ import type {
 import { Icon } from '../graphic/icon';
 import type { BaseTableAPI } from '../../ts-types/base-table';
 import type { percentCalcObj } from '../../render/layout';
-import { ProgressBarStyle } from '../../body-helper/style/ProgressBarStyle';
-import { getQuadProps } from '../utils/padding';
-import { getProp } from '../utils/get-prop';
-import type { Group } from '../graphic/group';
-import { resizeCellGroup } from '../group-creater/column-helper';
 
 export function dealWithCustom(
   customLayout: ICustomLayout,
@@ -169,6 +164,7 @@ function adjustElementToGroup(
           pickable: !!element.pickable,
           cursor: element.cursor as Cursor
         });
+        arc.name = element.name;
         customGroup.appendChild(arc);
         break;
       case 'text':
@@ -197,6 +193,7 @@ function adjustElementToGroup(
             element as any
           )
         );
+        text.name = element.name;
         customGroup.appendChild(text);
         break;
       case 'rect':
@@ -213,6 +210,7 @@ function adjustElementToGroup(
           pickable: !!element.pickable,
           cursor: element.cursor as Cursor
         });
+        rect.name = element.name;
         customGroup.appendChild(rect);
         break;
       case 'circle':
@@ -227,6 +225,7 @@ function adjustElementToGroup(
           pickable: !!element.pickable,
           cursor: element.cursor as Cursor
         });
+        circle.name = element.name;
         customGroup.appendChild(circle);
         break;
       case 'icon':
@@ -244,6 +243,7 @@ function adjustElementToGroup(
           pickable: !!element.pickable,
           cursor: element.cursor as Cursor
         });
+        icon.name = element.name;
         icon.role = 'icon-custom';
         customGroup.appendChild(icon);
         break;
@@ -263,6 +263,7 @@ function adjustElementToGroup(
           cursor: element.cursor as Cursor,
           shape: element.shape
         });
+        image.name = element.name;
         image.role = 'image-custom';
         customGroup.appendChild(image);
         break;
@@ -274,6 +275,7 @@ function adjustElementToGroup(
           pickable: !!element.pickable,
           cursor: element.cursor as Cursor
         });
+        line.name = element.name;
         customGroup.appendChild(line);
         break;
     }
@@ -402,8 +404,12 @@ export function dealPercentCalc(group: VGroup, parentWidth: number, parentHeight
 
 // temp devode for react jsx customLayout
 export function decodeReactDom(dom: any) {
-  if (!dom || !dom.$$typeof) {
-    // not react
+  if (
+    !dom ||
+    (!isValid(dom.$$typeof) && // for react
+      !isValid(dom.vtype)) // for openinula
+  ) {
+    // not react or openinula
     return dom;
   }
   const type = dom.type;
@@ -459,56 +465,4 @@ function parseToGraphic(g: any, props: any) {
     //     g.attribute.textConfig = childrenList.map(item => item.attribute).filter(item => item);
     //   }
   }
-}
-
-export function getCustomCellMergeCustom(col: number, row: number, cellGroup: Group, table: BaseTableAPI) {
-  if (table.internalProps.customMergeCell) {
-    const customMerge = table.getCustomMerge(col, row);
-    if (customMerge) {
-      const {
-        range: customMergeRange,
-        text: customMergeText,
-        style: customMergeStyle,
-        customLayout: customMergeLayout,
-        customRender: customMergeRender
-      } = customMerge;
-
-      if (customMergeLayout || customMergeRender) {
-        const customResult = dealWithCustom(
-          customMergeLayout,
-          customMergeRender,
-          customMergeRange.start.col,
-          customMergeRange.start.row,
-          table.getColsWidth(customMergeRange.start.col, customMergeRange.end.col),
-          table.getRowsHeight(customMergeRange.start.row, customMergeRange.end.row),
-          false,
-          table.heightMode === 'autoHeight',
-          [0, 0, 0, 0],
-          table
-        );
-
-        const customElementsGroup = customResult.elementsGroup;
-
-        if (cellGroup.childrenCount > 0 && customElementsGroup) {
-          cellGroup.insertBefore(customElementsGroup, cellGroup.firstChild);
-        } else if (customElementsGroup) {
-          cellGroup.appendChild(customElementsGroup);
-        }
-
-        const rangeHeight = table.getRowHeight(row);
-        const rangeWidth = table.getColWidth(col);
-
-        const { width: contentWidth } = cellGroup.attribute;
-        const { height: contentHeight } = cellGroup.attribute;
-        cellGroup.contentWidth = contentWidth;
-        cellGroup.contentHeight = contentHeight;
-
-        resizeCellGroup(cellGroup, rangeWidth, rangeHeight, customMergeRange, table);
-
-        return customResult;
-      }
-    }
-  }
-
-  return undefined;
 }

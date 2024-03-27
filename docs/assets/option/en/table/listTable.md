@@ -74,7 +74,9 @@ order: 'desc' | 'asc' | 'normal';
 
 Global configuration cell editor
 ```
+
 editor?: string | IEditor | ((args: BaseCellInfo & { table: BaseTableAPI }) => string | IEditor);
+
 ```
 Among them, IEditor is the editor interface defined in @visactor/vtable-editors. For details, please refer to the source code: https://github.com/VisActor/VTable/blob/main/packages/vtable-editors/src/types.ts .
 
@@ -82,7 +84,9 @@ ${prefix} headerEditor (string|Object|Function)
 
 Global configuration for the editor of the display title in the table header
 ```
+
 headerEditor?: string | IEditor | ((args: BaseCellInfo & { table: BaseTableAPI }) => string | IEditor);
+
 ```
 
 {{ use: common-option-secondary(
@@ -106,3 +110,42 @@ Drag the table header to move the position. Rules for frozen parts. The default 
 - "disabled" (disables adjusting the position of frozen columns): The headers of other columns are not allowed to be moved into the frozen column, nor are the frozen columns allowed to be moved out. The frozen column remains unchanged.
 - "adjustFrozenCount" (adjust the number of frozen columns based on the interaction results): allows the headers of other columns to move into the frozen column, and the frozen column to move out, and adjusts the number of frozen columns based on the dragging action. When the headers of other columns are dragged into the frozen column position, the number of frozen columns increases; when the headers of other columns are dragged out of the frozen column position, the number of frozen columns decreases.
 - "fixedFrozenCount" (can adjust frozen columns and keep the number of frozen columns unchanged): Allows you to freely drag the headers of other columns into or out of the frozen column position while keeping the number of frozen columns unchanged.
+
+## aggregation(Aggregation|CustomAggregation|Array|Function)
+
+Data aggregation summary analysis configuration, global configuration, each column will have aggregation logic, it can also be configured in the column (columns) definition, the configuration in the column has a higher priority.
+
+```
+aggregation?:
+    | Aggregation
+    | CustomAggregation
+    | (Aggregation | CustomAggregation)[]
+    | ((args: {
+        col: number;
+        field: string;
+      }) => Aggregation | CustomAggregation | (Aggregation | CustomAggregation)[] | null);
+```
+
+Among them:
+
+```
+type Aggregation = {
+  aggregationType: AggregationType;
+  showOnTop?: boolean;
+  formatFun?: (value: number, col: number, row: number, table: BaseTableAPI) => string | number;
+};
+
+type CustomAggregation = {
+  aggregationType: AggregationType.CUSTOM;
+  aggregationFun: (values: any[], records: any[]) => any;
+  showOnTop?: boolean;
+  formatFun?: (value: number, col: number, row: number, table: BaseTableAPI) => string | number;
+};
+```
+
+## rowSeriesNumber(IRowSeriesNumber)
+
+set row serial number.
+{{ use: row-series-number(
+    prefix = '###',
+) }}

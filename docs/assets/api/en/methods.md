@@ -13,6 +13,7 @@ Update table configuration items, which will be automatically redrawn after bein
    */
   updateOption(options: BaseTableConstructorOptions) => void
 ```
+
 If you need to update a single configuration item, please refer to the other `update**` interfaces below
 
 ## updateTheme(Function)
@@ -26,15 +27,20 @@ Update the table theme and it will be automatically redrawn after calling it.
    */
   updateTheme(theme: ITableThemeDefine) => void
 ```
+
 use:
+
 ```
 tableInstance.updateTheme(newTheme)
 ```
+
 Corresponding attribute update interface（https://visactor.io/vtable/guide/basic_function/update_option）:
+
 ```
 // will not automatically redraw after calling
 tableInstance.theme = newTheme;
 ```
+
 ## updateColumns(Function)
 
 Update the configuration information of the columns field of the table, and it will be automatically redrawn after calling
@@ -46,15 +52,20 @@ Update the configuration information of the columns field of the table, and it w
    */
   updateColumns(columns: ColumnsDefine) => void
 ```
+
 use:
+
 ```
 tableInstance. updateColumns(newColumns)
 ```
+
 Corresponding attribute update interface（https://visactor.io/vtable/guide/basic_function/update_option）:
+
 ```
 // will not automatically redraw after calling
 tableInstance.columns = newColumns;
 ```
+
 ## updatePagination(Function)
 
 Update page number configuration information, and it will be automatically redrawn after calling
@@ -66,7 +77,9 @@ Update page number configuration information, and it will be automatically redra
    */
   updatePagination(pagination: IPagination): void;
 ```
+
 IPagination type define:
+
 ```
 /**
  *Paging configuration
@@ -80,14 +93,17 @@ export interface IPagination {
   currentPage?: number;
 }
 ```
+
 The basic table and VTable data analysis pivot table support paging, but the pivot combination chart does not support paging.
 
 Note! The perPageCount in the pivot table will be automatically corrected to an integer multiple of the number of indicators.
 
 ## renderWithRecreateCells(Function)
+
 Re-collect the cell objects and re-render the table. Use scenarios such as:
 
 Refresh after batch updating multiple configuration items:
+
 ```
 tableInstance.theme = newThemeObj;
 tableInstance.widthMode = 'autoWidth';
@@ -120,16 +136,41 @@ Unlisten to VChart chart events
 
 Set the table data interface, which can be called as an update interface.
 
-** The basic table can set the sorting state at the same time to sort the table data. Set sort to empty to clear the sorting state. If not set, the incoming data will be sorted according to the current sorting state **
+Basic table updates:
+
+The basic table can also set the sorting status to sort the table data. Set sortState to null to clear the sorting status. If not set, the incoming data will be sorted according to the current sorting status.
 
 ```
-setRecords(records: Array<any>) //Pivot table
-setRecords(records: Array<any>, sort?: SortState | SortState[]) //** The basic table can set the sorting state at the same time to sort the table data. Set sort to empty to clear the sorting state. If not set, the current sorting state will be used. Sort incoming data**
+setRecords(
+    records: Array<any>,
+    option?: { sortState?: SortState | SortState[]}
+  ): void;
+```
+
+Pivot table update:
+
+```
+setRecords(records: Array<any>)
+```
+
+## setRecordChildren(Function)
+
+In the basic table tree display scenario, if you need to dynamically insert data of sub-nodes, you can use this interface. It is not applicable in other situations.
+
+```
+  /**
+   * @param records The data set to the cell's child nodes
+   * @param col needs to set the cell address of the child node
+   * @param row needs to set the cell address of the child node
+   */
+  setRecordChildren(records: any[], col: number, row: number)
 ```
 
 ## getDrawRange(Function)
+
 Get the boundRect value of the actual drawn content area of the table
 like
+
 ```
 {
     "bounds": {
@@ -146,6 +187,7 @@ like
     width: 1580
 }
 ```
+
 ## selectCell(Function)
 
 Select a cell. If empty is passed, the currently selected highlight state will be cleared.
@@ -176,6 +218,7 @@ Select one or more cell ranges
 ```
 
 ## getSelectedCellInfos(Function)
+
 Get the selected cell information, and the returned result is a two-dimensional array. The first-level array item represents a row, and each item of the second-level array represents a cell information of the row.
 
 ```
@@ -234,6 +277,7 @@ Getting the style of a cell
    */
   getCellStyle(col: number, row: number) => CellStyle
 ```
+
 ## getRecordByCell(Function)
 
 Get the data item of this cell
@@ -256,6 +300,7 @@ Get the column index and row index in the body part according to the row and col
   /** Get the column index and row index in the body part based on the row and column numbers of the table cells */
   getBodyIndexByTableIndex: (col: number, row: number) => CellAddress;
 ```
+
 ## getTableIndexByBodyIndex(Function)
 
 Get the row and column number of the cell based on the column index and row index of the body part
@@ -266,40 +311,59 @@ Get the row and column number of the cell based on the column index and row inde
 ```
 
 ## getTableIndexByRecordIndex(Function)
-Get the index row number or column number displayed in the table based on the index of the data source (Related to transposition, the non-transposition obtains the row number, and the transposed table obtains the column number). 
+
+Get the index row number or column number displayed in the table based on the index of the data source (Related to transposition, the non-transposition obtains the row number, and the transposed table obtains the column number).
 
 Note: ListTable specific interface
 
 ```
   /**
-   * Get the index row number or column number displayed in the table based on the index of the data source (Related to transposition, the non-transposition obtains the row number, and the transposed table obtains the column number). 
-   
+   * Get the index row number or column number displayed in the table based on the index of the data source (Related to transposition, the non-transposition obtains the row number, and the transposed table obtains the column number).
+
    Note: ListTable specific interface
    * @param recordIndex
    */
   getTableIndexByRecordIndex: (recordIndex: number) => number;
 ```
 
+## getRecordIndexByCell(Function)
+
+Get the number of data in the current cell in the data source.
+
+If it is a table in tree mode, an array will be returned, such as [1,2], the 3rd item in the children of the 2nd item in the data source.
+
+** ListTable proprietary **
+
+```
+  /** Get the number of the data in the current cell in the data source.
+   * If it is a table in tree mode, an array will be returned, such as [1,2], the 3rd item in the children of the 2nd item in the data source
+   * Note: ListTable specific interface */
+  getRecordIndexByCell(col: number, row: number): number | number[]
+** ListTable proprietary **
+```
+
 ## getTableIndexByField(Function)
+
 Get the index row number or column number displayed in the table according to the field of the data source (Related to transposition, the non-transposition obtains the row number, and the transposed table obtains the column number).
 
- Note: ListTable specific interface
+Note: ListTable specific interface
+
 ```
   /**
-   * Get the index row number or column number displayed in the table according to the field of the data source (Related to transposition, the non-transposition obtains the row number, and the transposed table obtains the column number). 
-   
+   * Get the index row number or column number displayed in the table according to the field of the data source (Related to transposition, the non-transposition obtains the row number, and the transposed table obtains the column number).
+
    Note: ListTable specific interface
    * @param recordIndex
    */
   getTableIndexByField: (field: FieldDef) => number;
 ```
 
-
 ## getRecordShowIndexByCell(Function)
 
 Get the index of the current cell data in the body part, that is, remove the index of the header level number by the row and column number.(Related to transpose, the non-transpose gets the body row number, and the transpose table gets the body column number)
 
 ** ListTable proprietary **
+
 ```
   /** Get the display index of the current cell in the body part,it is ( row / col )- headerLevelCount. Note: ListTable specific interface */
   getRecordShowIndexByCell(col: number, row: number): number
@@ -307,9 +371,10 @@ Get the index of the current cell data in the body part, that is, remove the ind
 
 ## getCellAddrByFieldRecord(Function)
 
-Get the cell row and column number based on the index and field in the data source. 
+Get the cell row and column number based on the index and field in the data source.
 
 Note: ListTable specific interface
+
 ```
   /**
    * Get the cell row and column number based on the index and field in the data source. Note: ListTable specific interface
@@ -319,6 +384,7 @@ Note: ListTable specific interface
    */
   getCellAddrByFieldRecord: (field: FieldDef, recordIndex: number) => CellAddress;
 ```
+
 ## getCellOriginRecord(Function)
 
 Get the source data item of this cell.
@@ -405,7 +471,9 @@ Get the text of the cell with omitted text.
 ```
 
 ## getCellRect(Function)
+
 Get the specific position of the cell in the entire table.
+
 ```
  /**
    * Get the range of cells. The return value is Rect type. Regardless of whether it is a merged cell, the coordinates start from 0
@@ -417,7 +485,9 @@ Get the specific position of the cell in the entire table.
 ```
 
 ## getCellRelativeRect(Function)
+
 Get the specific position of the cell in the entire table. Relative position is based on the upper left corner of the table (scroll condition minus scroll value)
+
 ```
   /**
    * The obtained position is relative to the upper left corner of the table display interface. In case of scrolling, if the cell has rolled out of the top of the table, the y of this cell will be a negative value.
@@ -443,7 +513,6 @@ Get the path to the row list header
 ```
 
 {{ use: ICellHeaderPaths() }}
-
 
 ## getCellHeaderTreeNodes(Function)
 
@@ -492,28 +561,37 @@ For pivot table interfaces, get specific cell addresses based on the header dime
       | IDimensionInfo[]
   ) => CellAddress
 ```
+
 ## getCheckboxState(Function)
+
 Get the selected status of all data in the checkbox under a certain field. The order corresponds to the original incoming data records. It does not correspond to the status value of the row displayed in the table.
+
 ```
 getCheckboxState(field?: string | number): Array
 ```
 
 ## getCellCheckboxState(Function)
+
 Get the status of a cell checkbox
+
 ```
 getCellCheckboxState(col: number, row: number): Array
 ```
 
 ## getScrollTop(Function)
+
 Get the current vertical scroll position
 
 ## getScrollLeft(Function)
+
 Get the current horizontal scroll position
 
 ## setScrollTop(Function)
+
 Set the vertical scroll position (the rendering interface will be updated)
 
 ## setScrollLeft(Function)
+
 Set the horizontal scroll position (the rendering interface will be updated)
 
 ## scrollToCell(Function)
@@ -527,8 +605,11 @@ Scroll to a specific cell location
    */
   scrollToCell(cellAddr: { col?: number; row?: number })=>void
 ```
+
 ## toggleHierarchyState(Function)
+
 Tree expand and collapse state switch
+
 ```
  /**
    * Header switches level status
@@ -537,8 +618,11 @@ Tree expand and collapse state switch
    */
   toggleHierarchyState(col: number, row: number)
 ```
+
 ## getHierarchyState(Function)
+
 Get the tree-shaped expanded or collapsed status of a certain cell
+
 ```
   /**
    * Get the collapsed and expanded status of hierarchical nodes
@@ -554,10 +638,13 @@ enum HierarchyState {
   none = 'none'
 }
 ```
+
 ## getLayoutRowTree(Function)
+
 ** PivotTable Proprietary **
 
 Get the table row header tree structure
+
 ```
   /**
    * Get the table row tree structure
@@ -567,11 +654,13 @@ Get the table row header tree structure
 ```
 
 ## getLayoutRowTreeCount(Function)
+
 ** PivotTable Proprietary **
 
 Get the total number of nodes occupying the table row header tree structure.
 
 Note: The logic distinguishes between flat and tree hierarchies.
+
 ```
   /**
    * Get the total number of nodes occupying the table row header tree structure.
@@ -591,6 +680,18 @@ Update the sort status, ListTable exclusive
    * @param executeSort Whether to execute the internal sorting logic, setting false will only update the icon state
    */
   updateSortState(sortState: SortState[] | SortState | null, executeSort: boolean = true)
+```
+
+## updateSortRules(Function)
+
+Pivot table update sorting rules, exclusive to PivotTable
+
+```
+  /**
+   * Full update of sorting rules
+   * @param sortRules
+   */
+  updateSortRules(sortRules: SortRules)
 ```
 
 ## updatePivotSortState(Function)
@@ -735,6 +836,7 @@ Export a picture of a certain cell range
 ```
 
 ## changeCellValue(Function)
+
 Change the value of a cell:
 
 ```
@@ -743,6 +845,7 @@ Change the value of a cell:
 ```
 
 ## changeCellValues(Function)
+
 Change the value of cells in batches:
 
 ```
@@ -787,13 +890,14 @@ End editing
 Get all data of the current table
 
 ## dataSouce(CachedDataSource)
+
 Set the data source for the VTable table component instance. For specific usage, please refer to [Asynchronous data lazy loading demo](../demo/performance/async-data) and [Tutorial](../guide/data/async_data)
 
 ## addRecords(Function)
 
- Add data, support multiple pieces of data
+Add data, support multiple pieces of data
 
-**  Note: ListTable specific interface ** 
+** Note: ListTable specific interface **
 
 ```
   /**
@@ -808,9 +912,9 @@ Set the data source for the VTable table component instance. For specific usage,
 
 ## addRecord(Function)
 
- Add data, single piece of data
+Add data, single piece of data
 
-**  Note: ListTable specific interface ** 
+** Note: ListTable specific interface **
 
 ```
   /**
@@ -827,7 +931,7 @@ Set the data source for the VTable table component instance. For specific usage,
 
 Delete data supports multiple pieces of data
 
-**  Note: ListTable specific interface ** 
+** Note: ListTable specific interface **
 
 ```
   /**
@@ -836,11 +940,13 @@ Delete data supports multiple pieces of data
    */
   deleteRecords(recordIndexs: number[])
 ```
+
 ## updateRecords(Function)
 
 Modify data to support multiple pieces of data
 
 ** ListTable proprietary **
+
 ```
   /**
    * Modify data to support multiple pieces of data
@@ -862,10 +968,12 @@ Get the display cell range of the table body part
 ## getBodyVisibleColRange(Function)
 
 Get the displayed column number range in the body part of the table
+
 ```
   /** Get the displayed column number range in the body part of the table */
   getBodyVisibleColRange: () => { colStart: number; colEnd: number };
 ```
+
 ## getBodyVisibleRowRange(Function)
 
 Get the displayed row number range of the table body part
@@ -874,3 +982,33 @@ Get the displayed row number range of the table body part
   /** Get the displayed row number range of the table body */
   getBodyVisibleRowRange: () => { rowStart: number; rowEnd: number };
 ```
+
+## getAggregateValuesByField(Function)
+
+Get aggregation summary value
+
+## registerCustomCellStyle(Function)
+
+Register a custom style
+
+```
+registerCustomCellStyle: (customStyleId: string, customStyle: ColumnStyleOption | undefined | null) => void
+```
+
+Custom cell style
+
+- customStyleId: the unique id of the custom style
+- customStyle: Custom cell style, which is the same as the `style` configuration in `column`. The final rendering effect is the fusion of the original style of the cell and the custom style.
+
+## registerCustomCellStyleArrangement(Function)
+
+Assign custom styles
+
+```
+registerCustomCellStyleArrangement: (cellPosition: { col?: number; row?: number; range?: CellRange }, customStyleId: string) => void
+```
+
+- cellPosition: cell position information, supports configuration of single cells and cell areas
+  - Single cell: `{ row: number, column: number }`
+  - Cell range: `{ range: { start: { row: number, column: number }, end: { row: number, column: number} } }`
+- customStyleId: Custom style id, the same as the id defined when registering the custom style

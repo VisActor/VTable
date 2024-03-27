@@ -2,24 +2,25 @@ import type { IGraphic } from '@src/vrender';
 import type { ProgressBarStyle } from '../../body-helper/style/ProgressBarStyle';
 import { CartesianAxis } from '../../components/axis/axis';
 import { getStyleTheme } from '../../core/tableHelper';
-import type { BaseTableAPI } from '../../ts-types/base-table';
+import type { BaseTableAPI, HeaderData } from '../../ts-types/base-table';
 import type { IProgressbarColumnBodyDefine } from '../../ts-types/list-table/define/progressbar-define';
-import { dealWithCustom, getCustomCellMergeCustom } from '../component/custom';
+import { dealWithCustom } from '../component/custom';
 import type { Group } from '../graphic/group';
-import type { Icon } from '../graphic/icon';
 import { updateImageCellContentWhileResize } from '../group-creater/cell-type/image-cell';
 import { createProgressBarCell } from '../group-creater/cell-type/progress-bar-cell';
 import { createSparkLineCellGroup } from '../group-creater/cell-type/spark-line-cell';
-import { resizeCellGroup } from '../group-creater/column-helper';
+import { resizeCellGroup, getCustomCellMergeCustom } from '../group-creater/cell-helper';
 import type { Scenegraph } from '../scenegraph';
 import { getCellMergeInfo } from '../utils/get-cell-merge';
 import { getProp } from '../utils/get-prop';
 import { isMergeCellGroup } from '../utils/is-merge-cell-group';
 import { getQuadProps } from '../utils/padding';
 import { updateCellContentWidth } from '../utils/text-icon-layout';
-import { computeRowHeight, computeRowsHeight } from './compute-row-height';
+import { computeRowHeight } from './compute-row-height';
 import { updateCellHeightForRow } from './update-height';
 import { getHierarchyOffset } from '../utils/get-hierarchy-offset';
+import { getCellMergeRange } from '../../tools/merge-range';
+import type { ColumnDefine } from '../../ts-types';
 // import { updateAutoRowHeight } from './auto-height';
 
 /**
@@ -140,7 +141,8 @@ function updateColunmWidth(
       oldColumnWidth + detaX,
       detaX,
       mode === 'row-body' ? cell.col < scene.table.rowHeaderLevelCount : true,
-      autoRowHeight
+      autoRowHeight,
+      scene.table.internalProps.autoWrapText
     );
     if (isHeightChange) {
       const mergeInfo = getCellMergeInfo(scene.table, cell.col, cell.row);
@@ -245,7 +247,8 @@ function updateCellWidth(
   detaX: number,
   isHeader: boolean,
   // autoColWidth: boolean,
-  autoRowHeight: boolean
+  autoRowHeight: boolean,
+  autoWrapText: boolean
 ): boolean {
   if (cell.attribute.width === distWidth && !cell.needUpdateWidth) {
     return false;
@@ -267,7 +270,7 @@ function updateCellWidth(
 
   // 更新单元格布局
   const type = scene.table.isHeader(col, row)
-    ? scene.table._getHeaderLayoutMap(col, row).headerType
+    ? (scene.table._getHeaderLayoutMap(col, row) as HeaderData).headerType
     : scene.table.getBodyColumnType(col, row);
   let isHeightChange = false;
   if (type === 'progressbar') {
@@ -353,25 +356,31 @@ function updateCellWidth(
         const cellType = scene.table.getCellLocation(col, row);
         if (cellType !== 'body') {
           const define = scene.table.getHeaderDefine(col, row);
-          customRender = define?.headerCustomRender;
-          customLayout = define?.headerCustomLayout;
+          customRender = (define as ColumnDefine)?.headerCustomRender;
+          customLayout = (define as ColumnDefine)?.headerCustomLayout;
         } else {
           const define = scene.table.getBodyColumnDefine(col, row);
-          customRender = define?.customRender || scene.table.customRender;
-          customLayout = define?.customLayout;
+          customRender = (define as ColumnDefine)?.customRender || scene.table.customRender;
+          customLayout = (define as ColumnDefine)?.customLayout;
         }
 
         if (customLayout || customRender) {
           // const { autoRowHeight } = table.internalProps;
           const style = scene.table._getCellStyle(col, row) as ProgressBarStyle;
           const padding = getQuadProps(getProp('padding', style, col, row, scene.table));
+          let width = cellGroup.attribute.width;
+          let height = cellGroup.attribute.height;
+          if (isMergeCellGroup(cellGroup)) {
+            width = scene.table.getColsWidth(cellGroup.mergeStartCol, cellGroup.mergeEndCol);
+            height = scene.table.getRowsHeight(cellGroup.mergeStartRow, cellGroup.mergeEndRow);
+          }
           const customResult = dealWithCustom(
             customLayout,
             customRender,
             col,
             row,
-            cellGroup.attribute.width,
-            cellGroup.attribute.height,
+            width,
+            height,
             false,
             scene.table.heightMode === 'autoHeight',
             padding,
@@ -389,24 +398,18 @@ function updateCellWidth(
         }
       }
     }
-
-    if (renderDefault) {
-      // 处理文字
-      const style = scene.table._getCellStyle(col, row);
-      isHeightChange = updateMergeCellContentWidth(
-        cellGroup,
-        distWidth,
-        detaX,
-        autoRowHeight,
-        getQuadProps(style.padding as number),
-        style.textAlign,
-        style.textBaseline,
-        scene.table
-      );
-    }
+    const cellChange = updateMergeCellContentWidth(
+      cellGroup,
+      distWidth,
+      detaX,
+      autoRowHeight,
+      renderDefault,
+      scene.table
+    );
+    isHeightChange = isHeightChange || cellChange;
   }
 
-  return autoRowHeight ? isHeightChange : false;
+  return autoRowHeight && autoWrapText ? isHeightChange : false;
 }
 
 function updateMergeCellContentWidth(
@@ -414,9 +417,7 @@ function updateMergeCellContentWidth(
   distWidth: number,
   detaX: number,
   autoRowHeight: boolean,
-  padding: [number, number, number, number],
-  textAlign: CanvasTextAlign,
-  textBaseline: CanvasTextBaseline,
+  renderDefault: boolean,
   table: BaseTableAPI
 ) {
   if (isMergeCellGroup(cellGroup)) {
@@ -430,8 +431,12 @@ function updateMergeCellContentWidth(
       cellHeight += table.getRowHeight(row);
     }
 
-    for (let col = cellGroup.mergeStartCol; col <= cellGroup.mergeEndCol; col++) {
-      for (let row = cellGroup.mergeStartRow; row <= cellGroup.mergeEndRow; row++) {
+    const { colStart, colEnd, rowStart, rowEnd } = getCellMergeRange(cellGroup, table.scenegraph);
+    for (let col = colStart; col <= colEnd; col++) {
+      for (let row = rowStart; row <= rowEnd; row++) {
+        if (col === cellGroup.col && row !== cellGroup.row) {
+          continue;
+        }
         const singleCellGroup = table.scenegraph.getCell(col, row);
         singleCellGroup.forEachChildren((child: IGraphic) => {
           child.setAttributes({
@@ -439,26 +444,35 @@ function updateMergeCellContentWidth(
             dy: 0
           });
         });
-        const changed = updateCellContentWidth(
-          singleCellGroup,
-          distWidth,
-          cellHeight,
-          detaX,
-          autoRowHeight,
-          padding,
-          textAlign,
-          textBaseline,
-          table.scenegraph
-        );
 
-        // reset hierarchy offset
-        const hierarchyOffset = getHierarchyOffset(singleCellGroup.col, singleCellGroup.row, table);
-        if (hierarchyOffset) {
-          const text = singleCellGroup.getChildByName('text');
-          const icon = singleCellGroup.getChildByName('expand') || singleCellGroup.getChildByName('collapse');
-          // icon-left deal with hierarchy offset, no need add to text dx
-          if (icon?.role !== 'icon-left' && text) {
-            text.setAttribute('dx', hierarchyOffset);
+        let changed = false;
+        if (renderDefault) {
+          // 处理文字
+          const style = table._getCellStyle(col, row);
+          const padding = getQuadProps(style.padding as number);
+          const textAlign = style.textAlign;
+          const textBaseline = style.textBaseline;
+          changed = updateCellContentWidth(
+            singleCellGroup,
+            distWidth,
+            cellHeight,
+            detaX,
+            autoRowHeight,
+            padding,
+            textAlign,
+            textBaseline,
+            table.scenegraph
+          );
+
+          // reset hierarchy offset
+          const hierarchyOffset = getHierarchyOffset(singleCellGroup.col, singleCellGroup.row, table);
+          if (hierarchyOffset) {
+            const text = singleCellGroup.getChildByName('text');
+            const icon = singleCellGroup.getChildByName('expand') || singleCellGroup.getChildByName('collapse');
+            // icon-left deal with hierarchy offset, no need add to text dx
+            if (icon?.role !== 'icon-left' && text) {
+              text.setAttribute('dx', hierarchyOffset);
+            }
           }
         }
 
@@ -494,6 +508,12 @@ function updateMergeCellContentWidth(
     }
     return isHeightChange;
   }
+
+  // 处理文字
+  const style = table._getCellStyle(cellGroup.col, cellGroup.row);
+  const padding = getQuadProps(style.padding as number);
+  const textAlign = style.textAlign;
+  const textBaseline = style.textBaseline;
   return updateCellContentWidth(
     cellGroup,
     distWidth,

@@ -3,7 +3,7 @@ import type { ListTable, PivotTable, PivotChart } from '@visactor/vtable';
 
 export interface TableContextType {
   table?: ListTable | PivotTable | PivotChart;
-  optionFromChildren: any;
+  // optionFromChildren: any;
   isChildrenUpdated?: boolean;
 }
 

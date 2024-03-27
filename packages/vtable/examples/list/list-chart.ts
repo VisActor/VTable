@@ -4,10 +4,10 @@ import VChart from '@visactor/vchart';
 VTable.register.chartModule('vchart', VChart);
 const CONTAINER_ID = 'vTable';
 export function createTable() {
-  const columns = [
+  const columns: VTable.ColumnsDefine = [
     {
-      field: 'personid',
-      title: 'personid',
+      field: 'id',
+      title: 'id',
       description: '这是一个标题的详细描述',
       sort: true,
       width: 80,
@@ -18,83 +18,160 @@ export function createTable() {
     },
     {
       field: 'areaChart',
-      title: 'vchart area',
+      title: 'multiple vchart type',
       width: '320',
       cellType: 'chart',
       chartModule: 'vchart',
-      chartSpec: {
-        type: 'area',
-        data: {
-          id: 'data'
-        },
-        xField: 'x',
-        yField: 'y',
-        seriesField: 'type',
-        point: {
-          style: {
-            fillOpacity: 1,
-            stroke: '#000',
-            strokeWidth: 4
-          },
-          state: {
-            hover: {
-              fillOpacity: 0.5,
-              stroke: 'blue',
-              strokeWidth: 2
+      chartSpec(args) {
+        if (args.row % 3 == 2)
+          return {
+            type: 'area',
+            data: {
+              id: 'data'
             },
-            selected: {
-              fill: 'red'
-            }
-          }
-        },
-        area: {
-          style: {
-            fillOpacity: 0.3,
-            stroke: '#000',
-            strokeWidth: 4
-          },
-          state: {
-            hover: {
-              fillOpacity: 1
+            xField: 'x',
+            yField: 'y',
+            seriesField: 'type',
+            point: {
+              style: {
+                fillOpacity: 1,
+                stroke: '#000',
+                strokeWidth: 4
+              },
+              state: {
+                hover: {
+                  fillOpacity: 0.5,
+                  stroke: 'blue',
+                  strokeWidth: 2
+                },
+                selected: {
+                  fill: 'red'
+                }
+              }
             },
-            selected: {
-              fill: 'red',
-              fillOpacity: 1
-            }
-          }
-        },
-        line: {
-          state: {
-            hover: {
-              stroke: 'red'
+            area: {
+              style: {
+                fillOpacity: 0.3,
+                stroke: '#000',
+                strokeWidth: 4
+              },
+              state: {
+                hover: {
+                  fillOpacity: 1
+                },
+                selected: {
+                  fill: 'red',
+                  fillOpacity: 1
+                }
+              }
             },
-            selected: {
-              stroke: 'yellow'
-            }
-          }
-        },
+            line: {
+              state: {
+                hover: {
+                  stroke: 'red'
+                },
+                selected: {
+                  stroke: 'yellow'
+                }
+              }
+            },
 
-        axes: [
-          {
-            orient: 'left',
-            range: {
-              min: 0
-            }
-          },
-          {
-            orient: 'bottom',
-            label: {
-              visible: true
-            },
-            type: 'band'
-          }
-        ],
-        legends: [
-          {
-            visible: true,
-            orient: 'bottom'
-          }
-        ]
+            axes: [
+              {
+                orient: 'left',
+                range: {
+                  min: 0
+                }
+              },
+              {
+                orient: 'bottom',
+                label: {
+                  visible: true
+                },
+                type: 'band'
+              }
+            ],
+            legends: [
+              {
+                visible: true,
+                orient: 'bottom'
+              }
+            ]
+          };
+        else if (args.row % 3 == 1)
+          return {
+            type: 'common',
+            series: [
+              {
+                type: 'line',
+                data: {
+                  id: 'data'
+                },
+                xField: 'x',
+                yField: 'y',
+                seriesField: 'type',
+                line: {
+                  state: {
+                    hover: {
+                      strokeWidth: 4
+                    },
+                    selected: {
+                      stroke: 'red'
+                    },
+                    hover_reverse: {
+                      stroke: '#ddd'
+                    }
+                  }
+                },
+                point: {
+                  state: {
+                    hover: {
+                      fill: 'red'
+                    },
+                    selected: {
+                      fill: 'yellow'
+                    },
+                    hover_reverse: {
+                      fill: '#ddd'
+                    }
+                  }
+                },
+                legends: [
+                  {
+                    visible: true,
+                    orient: 'bottom'
+                  }
+                ]
+              }
+            ],
+            axes: [
+              {
+                orient: 'left',
+                range: {
+                  min: 0
+                }
+              },
+              {
+                orient: 'bottom',
+                label: {
+                  visible: true
+                },
+                type: 'band'
+              }
+            ],
+            legends: [
+              {
+                visible: true,
+                orient: 'bottom'
+              }
+            ]
+          };
+        return {
+          type: 'pie',
+          data: { id: 'data1' },
+          categoryField: 'y',
+          valueField: 'x'
+        };
       }
     },
     {
@@ -173,7 +250,7 @@ export function createTable() {
     },
     {
       field: 'barChart',
-      title: 'vchart line',
+      title: 'vchart bar',
       width: '320',
       cellType: 'chart',
       chartModule: 'vchart',
@@ -222,7 +299,7 @@ export function createTable() {
     },
     {
       field: 'scatterChart',
-      title: 'vchart line',
+      title: 'vchart scatter',
       width: '320',
       cellType: 'chart',
       chartModule: 'vchart',
@@ -340,171 +417,12 @@ export function createTable() {
           }
         ]
       }
-    },
-    {
-      field: 'lineChart',
-      title: 'vchart line',
-      width: '320',
-      cellType: 'chart',
-      chartModule: 'vchart',
-      chartSpec: {
-        type: 'common',
-        series: [
-          {
-            type: 'line',
-            data: {
-              id: 'data'
-            },
-            xField: 'x',
-            yField: 'y',
-            seriesField: 'type',
-            line: {
-              state: {
-                hover: {
-                  strokeWidth: 4
-                },
-                selected: {
-                  stroke: 'red'
-                },
-                hover_reverse: {
-                  stroke: '#ddd'
-                }
-              }
-            },
-            point: {
-              state: {
-                hover: {
-                  fill: 'red'
-                },
-                selected: {
-                  fill: 'yellow'
-                },
-                hover_reverse: {
-                  fill: '#ddd'
-                }
-              }
-            },
-            legends: [
-              {
-                visible: true,
-                orient: 'bottom'
-              }
-            ]
-          }
-        ],
-        axes: [
-          {
-            orient: 'left',
-            range: {
-              min: 0
-            }
-          },
-          {
-            orient: 'bottom',
-            label: {
-              visible: true
-            },
-            type: 'band'
-          }
-        ],
-        legends: [
-          {
-            visible: true,
-            orient: 'bottom'
-          }
-        ]
-      }
-    },
-    {
-      field: 'barChart',
-      title: 'vchart line',
-      width: '320',
-      cellType: 'chart',
-      chartModule: 'vchart',
-      chartSpec: {
-        type: 'common',
-        series: [
-          {
-            type: 'bar',
-            data: {
-              id: 'data'
-            },
-            xField: 'x',
-            yField: 'y',
-            seriesField: 'type',
-            bar: {
-              state: {
-                hover: {
-                  fill: 'green'
-                },
-                selected: {
-                  fill: 'orange'
-                },
-                hover_reverse: {
-                  fill: '#ccc'
-                }
-              }
-            }
-          }
-        ],
-        axes: [
-          {
-            orient: 'left',
-            range: {
-              min: 0
-            }
-          },
-          {
-            orient: 'bottom',
-            label: {
-              visible: true
-            },
-            type: 'band'
-          }
-        ]
-      }
-    },
-    {
-      field: 'scatterChart',
-      title: 'vchart line',
-      width: '320',
-      cellType: 'chart',
-      chartModule: 'vchart',
-      chartSpec: {
-        type: 'common',
-        series: [
-          {
-            type: 'scatter',
-            data: {
-              id: 'data'
-            },
-            xField: 'x',
-            yField: 'y',
-            seriesField: 'type'
-          }
-        ],
-        axes: [
-          {
-            orient: 'left',
-            range: {
-              min: 0
-            }
-          },
-          {
-            orient: 'bottom',
-            label: {
-              visible: true
-            },
-            type: 'band'
-          }
-        ]
-      }
     }
   ];
   const records: any[] = []; // = generatePersonsDataSource(10);
-  for (let i = 1; i <= 40; i++)
+  for (let i = 1; i <= 10; i++)
     records.push({
-      personid: i,
+      id: i,
       areaChart: [
         { x: '0', type: 'A', y: 100 * i },
         { x: '1', type: 'A', y: '707' },

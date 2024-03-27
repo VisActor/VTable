@@ -37,6 +37,7 @@ export class Style extends EventTarget implements ColumnStyle {
   private _padding?: PaddingsPropertyDefine;
   private _defaultPadding: PaddingsPropertyDefine = [10, 16, 10, 16];
   private _textStick: boolean;
+  private _textStickBaseOnAlign: boolean;
   private _textOverflow?: TextOverflow;
   private _textAlign?: TextAlignType;
   private _textBaseline?: TextBaselineType;
@@ -46,6 +47,7 @@ export class Style extends EventTarget implements ColumnStyle {
   private _underline?: UnderlinePropertyDefine;
   private _underlineColor?: ColorPropertyDefine;
   private _underlineDash?: LineDashPropertyDefine;
+  private _underlineOffset?: number;
   private _lineThrough?: LineThroughPropertyDefine;
   private _lineThroughColor?: ColorPropertyDefine;
   private _lineThroughDash?: LineDashPropertyDefine;
@@ -76,11 +78,13 @@ export class Style extends EventTarget implements ColumnStyle {
     this._borderColor = style?.borderColor ?? bodyStyle?.borderColor;
     this._textOverflow = style?.textOverflow ?? bodyStyle?.textOverflow; //|| "clip";
     this._textStick = style.textStick ?? bodyStyle?.textStick ?? false;
+    this._textStickBaseOnAlign = style.textStickBaseOnAlign ?? bodyStyle?.textStickBaseOnAlign ?? false;
     this._bgColor = style?.bgColor ?? bodyStyle?.bgColor;
     this._lineHeight = style?.lineHeight ?? bodyStyle?.lineHeight;
     this._underline = style?.underline ?? bodyStyle?.underline;
     this._underlineColor = style?.underlineColor ?? bodyStyle?.underlineColor;
     this._underlineDash = style?.underlineDash ?? bodyStyle?.underlineDash;
+    this._underlineOffset = style?.underlineOffset ?? bodyStyle?.underlineOffset;
     this._lineThrough = style?.lineThrough ?? bodyStyle?.lineThrough;
     this._lineThroughColor = style?.lineThroughColor ?? bodyStyle?.lineThroughColor;
     this._lineThroughDash = style?.lineThroughDash ?? bodyStyle?.lineThroughDash;
@@ -167,6 +171,13 @@ export class Style extends EventTarget implements ColumnStyle {
     this._textStick = textStick;
     // this.doChangeStyle();
   }
+  get textStickBaseOnAlign(): boolean {
+    return this._textStickBaseOnAlign;
+  }
+  set textStickBaseOnAlign(textStickBaseOnAlign: boolean) {
+    this._textStickBaseOnAlign = textStickBaseOnAlign;
+    // this.doChangeStyle();
+  }
   get textAlign(): TextAlignType | undefined {
     return this._textAlign;
   }
@@ -208,6 +219,12 @@ export class Style extends EventTarget implements ColumnStyle {
   set underlineDash(underlineDash: LineDashPropertyDefine | undefined) {
     this._underlineDash = underlineDash;
     // this.doChangeStyle();
+  }
+  get underlineOffset(): number | undefined {
+    return this._underlineOffset;
+  }
+  set underlineOffset(underlineOffset: number | undefined) {
+    this._underlineOffset = underlineOffset;
   }
   get lineThrough(): LineThroughPropertyDefine | undefined {
     return this._lineThrough;

@@ -1,6 +1,6 @@
 {
   "name": "@visactor/react-vtable",
-  "version": "0.19.0",
+  "version": "0.22.2",
   "description": "The react version of VTable",
   "keywords": [
     "react",
@@ -48,11 +48,11 @@
   },
   "dependencies": {
     "@visactor/vtable": "workspace:*",
-    "@visactor/vutils": "~0.17.1",
+    "@visactor/vutils": "~0.18.1",
     "react-is": "^18.2.0"
   },
   "devDependencies": {
-    "@visactor/vchart": "1.9.0",
+    "@visactor/vchart": "1.10.0",
     "@internal/bundler": "workspace:*",
     "@internal/eslint-config": "workspace:*",
     "@internal/ts-config": "workspace:*",

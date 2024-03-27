@@ -7,8 +7,9 @@ import { Style } from './style/Style';
 import { ImageStyle } from './style/ImageStyle';
 import { TextHeaderStyle } from './style';
 import type { ListTable } from '../ListTable';
-import type { BaseTableAPI } from '../ts-types/base-table';
+import type { BaseTableAPI, HeaderData } from '../ts-types/base-table';
 import { CheckboxStyle } from './style/CheckboxStyle';
+import { isValid } from '@visactor/vutils';
 export class HeaderHelper {
   normalIcon: SvgIcon;
   upIcon: SvgIcon;
@@ -50,7 +51,7 @@ export class HeaderHelper {
     const icons: ColumnIconOption[] = [];
     if (this._table.isPivotTable()) {
       // 透视表显示排序按钮
-      const { showSort } = this._table.internalProps.layoutMap.getHeader(col, row);
+      const { showSort } = this._table.internalProps.layoutMap.getHeader(col, row) as HeaderData;
       if (showSort) {
         const order = (this._table as PivotTableAPI).getPivotSortState(col, row);
         const sortIcon = order === 'asc' ? this.downIcon : order === 'desc' ? this.upIcon : this.normalIcon;
@@ -107,7 +108,7 @@ export class HeaderHelper {
       icons.push(...dropDownStateIcons);
     }
 
-    const { headerIcon } = this._table._getHeaderLayoutMap(col, row);
+    const { headerIcon } = this._table._getHeaderLayoutMap(col, row) as HeaderData;
     // captionIcon && icons.push(captionIcon);
 
     const hierarchyIcon = this.getHierarchyIcon(col, row);
@@ -182,7 +183,12 @@ export class HeaderHelper {
     const icon = order === 'asc' ? this.downIcon : order === 'desc' ? this.upIcon : this.normalIcon;
 
     const headerC = _table.getHeaderDefine(col, row) as any;
-    if (!headerC || !(headerC.showSort || headerC.sort) || (headerC.columns && headerC.columns.length > 0)) {
+    if (
+      !headerC ||
+      headerC.showSort === false ||
+      (!isValid(headerC.showSort) && !headerC.sort) ||
+      (headerC.columns && headerC.columns.length > 0)
+    ) {
       return null;
     }
     return icon;
@@ -191,7 +197,7 @@ export class HeaderHelper {
   private getDropDownStateIcons(_table: BaseTableAPI, col: number, row: number): ColumnIconOption[] {
     const headerC = _table.getHeaderDefine(col, row) as any;
     const headerL = _table._getHeaderLayoutMap(col, row);
-    const { dropDownMenu } = headerL;
+    const { dropDownMenu } = headerL as HeaderData;
     const results: ColumnIconOption[] = [];
     if (
       (Array.isArray(dropDownMenu) && dropDownMenu.length) || // header中配置dropDownMenu
@@ -319,7 +325,7 @@ export class HeaderHelper {
   }
 
   getHierarchyIcon(col: number, row: number) {
-    const { hierarchyState } = this._table._getHeaderLayoutMap(col, row);
+    const { hierarchyState } = this._table._getHeaderLayoutMap(col, row) as HeaderData;
     if (hierarchyState) {
       if (hierarchyState === HierarchyState.expand) {
         //展开状态 应该显示-号

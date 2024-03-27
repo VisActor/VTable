@@ -1,17 +1,5 @@
 {{ target: common-option-secondary }}
 
-#${prefix} theme(Object)
-
-{{ use: common-theme(
-  prefix = '#' + ${prefix},
-) }}
-
-#${prefix} title(Object)
-
-{{ use: common-title(
-  prefix = '#' + ${prefix},
-) }}
-
 #${prefix} widthMode('standard' | 'adaptive' | 'autoWidth') = 'standard'
 
 Table column width calculation mode, can be 'standard' (standard mode), 'adaptive' (container width adaptive mode) or 'autoWidth' (automatic width mode), default is 'standard'.
@@ -104,10 +92,10 @@ Enable shortcut key to copy, consistent with the browser's shortcut key.
 
 ##${prefix} pasteValueToCell(boolean) = false
 
-Enable shortcut key to paste, consistent with the browser's shortcut key.
+Enable shortcut key to paste, consistent with the browser's shortcut key.Paste takes effect only for cells with an editor configured
 
 ##${prefix} moveFocusCellOnTab(boolean) = true
- Enable tab key interaction. The default is true. Turn on the tab key to move the selected cell. If you are currently editing a cell, moving to the next cell is also in the editing state.
+Enable tab key interaction. The default is true. Turn on the tab key to move the selected cell. If you are currently editing a cell, moving to the next cell is also in the editing state.
 
 ##${prefix} editCellOnEnter(boolean) = true
 Enable enter key interaction. Default is true. If the selected cell is editable, enter cell editing.
@@ -179,6 +167,12 @@ Do not respond to mouse select interaction.
 
 Separately set the header not to respond to mouse select interaction.
 
+#${prefix} theme(Object)
+
+{{ use: common-theme(
+  prefix = '#' + ${prefix},
+) }}
+
 #${prefix} menu(Object)
 
 Configuration related to the drop-down menu. Disappearance timing: automatically disappears after clicking the area outside the menu. Specific configuration items as follows:
@@ -222,6 +216,12 @@ Set the selected state of the menu. Declaration type is `DropDownMenuHighlightIn
 ```
 
 {{ use: common-IDimensionInfo()}}
+
+#${prefix} title(Object)
+
+{{ use: common-title(
+  prefix = '#' + ${prefix},
+) }}
 
 #${prefix} tooltip(Object)
 
@@ -302,7 +302,9 @@ Where ICustomRenderFuc is defined as:
 ) }}
 
 ## overscrollBehavior(string) = 'auto'
+
 Table scrolling behavior, can be set: 'auto'|'none', the default value is 'auto'.
+
 ```
 'auto': Trigger the browser's default behavior when the table scrolls to the top or bottom;
 'none': triggers the browser's default behavior when the table scrolls to the top or bottom;
@@ -310,10 +312,11 @@ Table scrolling behavior, can be set: 'auto'|'none', the default value is 'auto'
 
 #${prefix} customMergeCell(Function)
 Customize cell merging rules. When the incoming row and column numbers are within the target area, the merging rules are returned:
-* text: Merge text in cells
-* range: merged range
-* style: style of merged cells
-Example: 
+
+- text: Merge text in cells
+- range: merged range
+- style: style of merged cells
+  Example:
 
 ```
   customMergeCell: (col, row, table) => {
@@ -338,3 +341,29 @@ Example:
   }
 
 ```
+
+#${prefix} customCellStyle(Array)
+
+```
+{
+   customCellStyle: {id: string;style: ColumnStyleOption}[]
+}
+```
+
+Custom cell style
+* id: the unique id of the custom style
+* style: Custom cell style, which is the same as the `style` configuration in `column`. The final rendering effect is the fusion of the original style of the cell and the custom style.
+
+#${prefix} customCellStyleArrangement(Array)
+
+```
+{
+   customCellStyleArrangement: {cellPosition: {row?: number; col?: number; range?: {start: {row: number; col: number}; end: {row: number; col: number}}}; customStyleId: string} []
+}
+```
+
+Custom cell style assignment
+* cellPosition: cell position information, supports configuration of single cells and cell areas
+   * Single cell: `{ row: number, column: number }`
+   * Cell range: `{ range: { start: { row: number, column: number }, end: { row: number, column: number} } }`
+* customStyleId: Custom style id, the same as the id defined when registering the custom style

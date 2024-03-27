@@ -80,6 +80,15 @@ export function createCellContent(
         ? getHierarchyOffset(range.start.col, range.start.row, table)
         : getHierarchyOffset(cellGroup.col, cellGroup.row, table);
 
+      let _contentOffset = 0;
+      if (isNumber(table.theme._contentOffset)) {
+        if (textAlign === 'left') {
+          _contentOffset = table.theme._contentOffset;
+        } else if (textAlign === 'right') {
+          _contentOffset = -table.theme._contentOffset;
+        }
+      }
+
       const attribute = {
         text: text.length === 1 ? text[0] : text,
         maxLineWidth: autoColWidth ? Infinity : cellWidth - (padding[1] + padding[3] + hierarchyOffset),
@@ -92,11 +101,12 @@ export function createCellContent(
         // widthLimit: autoColWidth ? -1 : colWidth - (padding[1] + padding[3]),
         heightLimit: autoRowHeight ? -1 : cellHeight - (padding[0] + padding[2]),
         pickable: false,
-        dx: hierarchyOffset,
+        dx: hierarchyOffset + _contentOffset,
         whiteSpace: text.length === 1 && !autoWrapText ? 'no-wrap' : 'normal'
       };
       const wrapText = new Text(cellTheme.text ? (Object.assign({}, cellTheme.text, attribute) as any) : attribute);
       wrapText.name = 'text';
+      (wrapText as any).textBaseline = textBaseline;
 
       cellGroup.appendChild(wrapText);
 
@@ -181,10 +191,23 @@ export function createCellContent(
     let textMark;
     // 直接添加richtext / wrapText
     if (inlineFrontIcons.length === 0 && inlineEndIcons.length === 0) {
+      let _contentOffset = 0;
+      if (isNumber(table.theme._contentOffset)) {
+        if (textAlign === 'left') {
+          _contentOffset = table.theme._contentOffset;
+        } else if (textAlign === 'right') {
+          _contentOffset = -table.theme._contentOffset;
+        }
+      }
+      const hierarchyOffset = range
+        ? getHierarchyOffset(range.start.col, range.start.row, table)
+        : getHierarchyOffset(cellGroup.col, cellGroup.row, table);
       const text = convertInternal(textStr).replace(/\r?\n/g, '\n').replace(/\r/g, '\n').split('\n');
       const attribute = {
         text: text.length === 1 ? text[0] : text,
-        maxLineWidth: autoColWidth ? Infinity : cellWidth - (padding[1] + padding[3]) - leftIconWidth - rightIconWidth,
+        maxLineWidth: autoColWidth
+          ? Infinity
+          : cellWidth - (padding[1] + padding[3]) - leftIconWidth - rightIconWidth - hierarchyOffset,
         // fill: true,
         // textAlign: 'left',
         textBaseline: 'top',
@@ -194,7 +217,8 @@ export function createCellContent(
         autoWrapText,
         lineClamp,
         wordBreak: 'break-word',
-        whiteSpace: text.length === 1 && !autoWrapText ? 'no-wrap' : 'normal'
+        whiteSpace: text.length === 1 && !autoWrapText ? 'no-wrap' : 'normal',
+        dx: _contentOffset + (!contentLeftIcons.length && !contentRightIcons.length ? hierarchyOffset : 0)
       };
       const wrapText = new Text(cellTheme.text ? (Object.assign({}, cellTheme.text, attribute) as any) : attribute);
       wrapText.name = 'text';
@@ -218,9 +242,9 @@ export function createCellContent(
       textConfig[0].textAlign = textAlign;
       const text = new RichText({
         width: autoColWidth ? 0 : cellWidth - (padding[1] + padding[3]) - leftIconWidth - rightIconWidth,
-        height: autoRowHeight ? 0 : cellHeight - (padding[0] + padding[2]),
+        height: autoRowHeight && autoWrapText ? 0 : Math.ceil(cellHeight - (padding[0] + padding[2])),
         textConfig,
-        verticalDirection: autoRowHeight ? 'top' : (textBaseline as any),
+        verticalDirection: autoRowHeight && autoWrapText ? 'top' : (textBaseline as any),
 
         ellipsis: textOption.ellipsis
         // verticalDirection: textBaseline as any
@@ -385,7 +409,7 @@ export function dealWithIcon(
   iconAttribute.marginLeft = (icon.marginLeft ?? 0) + hierarchyOffset;
   iconAttribute.marginRight = icon.marginRight ?? 0;
 
-  if (icon.interactive) {
+  if (icon.interactive === false) {
     iconAttribute.pickable = false;
   }
 
@@ -521,7 +545,7 @@ export function updateCellContentWidth(
     contentHeight = cellContent.AABBBounds.height();
   }
 
-  const oldCellHeight = Math.max(leftIconHeight, rightIconHeight, oldTextHeight) + padding[0] + padding[2];
+  const oldCellHeight = Math.round(Math.max(leftIconHeight, rightIconHeight, oldTextHeight) + padding[0] + padding[2]);
 
   // 更新x方向位置
   cellGroup.forEachChildren((child: any) => {
@@ -532,13 +556,13 @@ export function updateCellContentWidth(
     } else if (child.role === 'icon-absolute-right') {
       child.setAttribute('x', child.attribute.x + detaX);
     } else if (child.name === 'content' || child.name === 'text') {
-      const contentWidth = child.AABBBounds.width();
-      if (textAlign === 'center') {
+      const childTextAlign = child.attribute.textAlign ?? textAlign;
+      if (childTextAlign === 'center') {
         child.setAttribute(
           'x',
           padding[3] + leftIconWidth + (distWidth - (padding[1] + padding[3]) - leftIconWidth - rightIconWidth) / 2
         );
-      } else if (textAlign === 'right') {
+      } else if (childTextAlign === 'right') {
         child.setAttribute('x', padding[3] + distWidth - (padding[1] + padding[3]) - rightIconWidth);
       } else {
         // left: do nothing

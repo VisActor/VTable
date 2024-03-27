@@ -1,6 +1,6 @@
 /* eslint-disable sort-imports */
 import type { ColorsDef, LineDashsDef, LineWidthsDef, LineWidthsPropertyDefine } from '.';
-import type { ITextStyleOption } from './column/style';
+import type { CheckboxStyle, ITextStyleOption } from './column/style';
 import type { ColorPropertyDefine, ColorsPropertyDefine } from './style-define';
 import type { ColumnIconOption } from './icon';
 import type { ICellAxisOption } from './component/axis';
@@ -27,6 +27,7 @@ export type FrameStyle = {
   borderColor?: ColorsDef;
   borderLineWidth?: LineWidthsDef;
   borderLineDash?: LineDashsDef;
+  innerBorder?: boolean;
 };
 export type TableFrameStyle = FrameStyle & {
   shadowBlur?: number; //阴影宽度
@@ -142,8 +143,18 @@ export interface ITableThemeDefine {
     bottomAxisStyle?: Omit<ICellAxisOption, 'type' | 'domain' | 'range' | 'orient' | '__ticksForVTable'>;
   };
 
+  checkboxStyle?: CheckboxStyle;
+
   // style for text pop tip
   textPopTipStyle?: PopTipAttributes;
+
+  // senior config for fs
+  // 表格四侧单元格，靠近边缘的border是否需要再绘制；如配置false的话，当表格左侧frame未设置情况下左侧单元格不显示左边框，其他方向同理
+  cellInnerBorder?: boolean;
+  // cell border clip direction
+  cellBorderClipDirection?: 'top-left' | 'bottom-right'; // default is 'top-left'
+  // text offset, hack for fs
+  _contentOffset?: number;
 }
 
 export type RequiredTableThemeDefine = Required<ITableThemeDefine>;

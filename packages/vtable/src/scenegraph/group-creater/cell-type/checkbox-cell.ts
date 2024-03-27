@@ -5,11 +5,13 @@ import { Group } from '../../graphic/group';
 import type { CellInfo, CheckboxColumnDefine, CheckboxStyleOption, SparklineSpec } from '../../../ts-types';
 import type { BaseTableAPI } from '../../../ts-types/base-table';
 import { isObject } from '@visactor/vutils';
+import type { CheckboxAttributes } from '@visactor/vrender-components';
 import { CheckBox } from '@visactor/vrender-components';
 import { getHierarchyOffset } from '../../utils/get-hierarchy-offset';
 import { getOrApply } from '../../../tools/helper';
 import type { CheckboxStyle } from '../../../body-helper/style/CheckboxStyle';
 import { getProp } from '../../utils/get-prop';
+import { getCellBorderStrokeWidth } from '../../utils/cell-border-stroke-width';
 
 export function createCheckboxCellGroup(
   cellGroup: Group | null,
@@ -30,6 +32,7 @@ export function createCheckboxCellGroup(
 ) {
   // cell
   if (!cellGroup) {
+    const strokeArrayWidth = getCellBorderStrokeWidth(col, row, cellTheme, table);
     cellGroup = new Group({
       x: xOrigin,
       y: yOrigin,
@@ -41,9 +44,10 @@ export function createCheckboxCellGroup(
       fill: cellTheme?.group?.fill ?? undefined,
       stroke: cellTheme?.group?.stroke ?? undefined,
 
-      strokeArrayWidth: (cellTheme?.group as any)?.strokeArrayWidth ?? undefined,
+      strokeArrayWidth: strokeArrayWidth,
       strokeArrayColor: (cellTheme?.group as any)?.strokeArrayColor ?? undefined,
       cursor: (cellTheme?.group as any)?.cursor ?? undefined,
+      lineDash: cellTheme?.group?.lineDash ?? undefined,
 
       lineCap: 'square',
 
@@ -54,7 +58,8 @@ export function createCheckboxCellGroup(
     cellGroup.role = 'cell';
     cellGroup.col = col;
     cellGroup.row = row;
-    columnGroup?.addChild(cellGroup);
+    // columnGroup?.addChild(cellGroup);
+    columnGroup?.addCellGroup(cellGroup);
   }
 
   // checkbox
@@ -100,6 +105,15 @@ function createCheckbox(
   const style = table._getCellStyle(col, row) as CheckboxStyle;
   const size = getProp('size', style, col, row, table);
   const spaceBetweenTextAndIcon = getProp('spaceBetweenTextAndIcon', style, col, row, table);
+  const defaultFill = getProp('defaultFill', style, col, row, table);
+  const defaultStroke = getProp('defaultStroke', style, col, row, table);
+  const disableFill = getProp('disableFill', style, col, row, table);
+  const checkedFill = getProp('checkedFill', style, col, row, table);
+  const checkedStroke = getProp('checkedStroke', style, col, row, table);
+  const disableCheckedFill = getProp('disableCheckedFill', style, col, row, table);
+  const disableCheckedStroke = getProp('disableCheckedStroke', style, col, row, table);
+  const checkIconImage = getProp('checkIconImage', style, col, row, table);
+  const indeterminateIconImage = getProp('indeterminateIconImage', style, col, row, table);
 
   const value = table.getCellValue(col, row) as string | { text: string; checked: boolean; disable: boolean } | boolean;
   const dataValue = table.getCellOriginValue(col, row);
@@ -162,44 +176,40 @@ function createCheckbox(
     whiteSpace: text.length === 1 && !autoWrapText ? 'no-wrap' : 'normal'
   };
   const testAttribute = cellTheme.text ? (Object.assign({}, cellTheme.text, attribute) as any) : attribute;
-  let checkbox;
+  const checkboxAttributes: CheckboxAttributes = {
+    x: 0,
+    y: 0,
+    text: testAttribute,
+    icon: {
+      width: Math.floor(size / 1.4), // icon : box => 10 : 14
+      height: Math.floor(size / 1.4)
+    },
+    box: {
+      width: size,
+      height: size
+    },
+    spaceBetweenTextAndIcon,
+    disabled: isDisabled ?? globalDisable ?? false
+  };
+
   if (isChecked === 'indeterminate') {
-    checkbox = new CheckBox({
-      x: 0,
-      y: 0,
-      text: testAttribute,
-      icon: {
-        width: Math.floor(size / 1.4), // icon : box => 10 : 14
-        height: Math.floor(size / 1.4)
-      },
-      box: {
-        width: size,
-        height: size
-      },
-      spaceBetweenTextAndIcon,
-      checked: undefined,
-      indeterminate: true,
-      disabled: isDisabled ?? globalDisable ?? false
-    });
+    checkboxAttributes.checked = undefined;
+    checkboxAttributes.indeterminate = true;
   } else {
-    checkbox = new CheckBox({
-      x: 0,
-      y: 0,
-      text: testAttribute,
-      icon: {
-        width: Math.floor(size / 1.4), // icon : box => 10 : 14
-        height: Math.floor(size / 1.4)
-      },
-      box: {
-        width: size,
-        height: size
-      },
-      spaceBetweenTextAndIcon,
-      checked: isChecked,
-      indeterminate: undefined,
-      disabled: isDisabled ?? globalDisable ?? false
-    });
+    checkboxAttributes.checked = isChecked;
+    checkboxAttributes.indeterminate = undefined;
   }
+  defaultFill && (checkboxAttributes.box.fill = defaultFill);
+  defaultStroke && (checkboxAttributes.box.stroke = defaultStroke);
+  disableFill && (checkboxAttributes.box.disableFill = disableFill);
+  checkedFill && (checkboxAttributes.box.checkedFill = checkedFill);
+  checkedStroke && (checkboxAttributes.box.checkedStroke = checkedStroke);
+  disableCheckedFill && (checkboxAttributes.box.disableCheckedFill = disableCheckedFill);
+  disableCheckedStroke && (checkboxAttributes.box.disableCheckedStroke = disableCheckedStroke);
+  checkIconImage && (checkboxAttributes.icon.checkIconImage = checkIconImage);
+  indeterminateIconImage && (checkboxAttributes.icon.indeterminateIconImage = indeterminateIconImage);
+
+  const checkbox = new CheckBox(checkboxAttributes);
   checkbox.name = 'checkbox';
 
   return checkbox;

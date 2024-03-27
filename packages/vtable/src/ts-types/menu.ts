@@ -89,4 +89,5 @@ export type DropDownMenuEventInfo = {
 
   cellHeaderPaths?: ICellHeaderPaths;
   cellLocation: CellLocation;
+  event: Event;
 };

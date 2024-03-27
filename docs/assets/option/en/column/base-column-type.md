@@ -11,6 +11,7 @@ ${prefix} field(string)
 ${prefix} fieldFormat(FieldFormat)
 
 Configure data formatting
+
 ```
 type FieldFormat = (record: any) => any;
 ```
@@ -45,9 +46,11 @@ Header cell style, configuration options are slightly different depending on the
 ${prefix} style
 
 Body cell style, type declaration:
+
 ```
 style?: IStyleOption | ((styleArg: StylePropertyFunctionArg) => IStyleOption);
 ```
+
 {{ use: common-StylePropertyFunctionArg() }}
 
 The type structure of IStyleOption is as follows:
@@ -56,6 +59,7 @@ The type structure of IStyleOption is as follows:
   prefix = ${prefix},
   isImage = ${isImage},
   isProgressbar = ${isProgressbar},
+  isCheckbox = ${isCheckbox},
 ) }}
 
 ${prefix} headerIcon(string|Object|Array)
@@ -65,6 +69,7 @@ Header cell icon configuration. Available configuration types are:
 ```
 string | ColumnIconOption | (string | ColumnIconOption)[];
 ```
+
 For the specific configuration of ColumnIconOption, refer to the [definition](/zh/option.html#ListTable-columns-text.icon.ColumnIconOption定义：)
 
 ${prefix} icon(string|Object|Array|Funciton)
@@ -80,9 +85,11 @@ icon?:
 ```
 
 #${prefix} ColumnIconOption definition:
+
 ```
 type ColumnIconOption = ImageIcon | SvgIcon;
 ```
+
 #${prefix} ImageIcon(Object)
 {{ use: image-icon(  prefix = '##' + ${prefix}) }}
 
@@ -119,7 +126,10 @@ ${prefix} headerCustomRender(Function|Object)
 
 Custom rendering of header cell, in function or object form. The type is: `ICustomRenderFuc | ICustomRenderObj`.
 
+[demo link](../demo/custom-render/custom-render) [tutorial link](../guide/custom_define/custom_render)
+
 The definition of ICustomRenderFuc is:
+
 ```
  type ICustomRenderFuc = (args: CustomRenderFunctionArg) => ICustomRenderObj;
 ```
@@ -130,7 +140,6 @@ The definition of ICustomRenderFuc is:
   prefix = '#' + ${prefix},
 ) }}
 
-
 ${prefix} headerCustomLayout(Function)
 
 Custom layout element definition for header cell, suitable for complex layout cell content.
@@ -138,6 +147,7 @@ Custom layout element definition for header cell, suitable for complex layout ce
 ```
 (args: CustomRenderFunctionArg) => ICustomLayoutObj;
 ```
+
 {{ use: common-CustomRenderFunctionArg() }}
 
 {{ use: custom-layout(
@@ -147,16 +157,19 @@ Custom layout element definition for header cell, suitable for complex layout ce
 ${prefix} customRender(Function|Object)
 Custom rendering for body cell header cell, in function or object form. The type is: `ICustomRenderFuc | ICustomRenderObj`.
 
+[demo link](../demo/custom-render/custom-render) [tutorial link](../guide/custom_define/custom_render)
+
 The definition of ICustomRenderFuc is:
+
 ```
  type ICustomRenderFuc = (args: CustomRenderFunctionArg) => ICustomRenderObj;
 ```
+
 {{ use: common-CustomRenderFunctionArg() }}
 
 {{ use: common-custom-render-object(
   prefix = '#' + ${prefix},
 ) }}
-
 
 ${prefix} customLayout(Function)
 
@@ -165,6 +178,7 @@ Custom layout element definition for body cell, suitable for complex layout cont
 ```
 (args: CustomRenderFunctionArg) => ICustomLayoutObj;
 ```
+
 {{ use: common-CustomRenderFunctionArg() }}
 
 {{ use: custom-layout(
@@ -182,6 +196,7 @@ Whether to disable column width adjustment. If it is a transposed table or a piv
 
 ${prefix} tree (boolean)
 Whether to display this column as a tree structure, which needs to be combined with the records data structure to be implemented, the nodes that need to be expanded are configured with `children` to accommodate sub-node data. For example:
+
 ```
 {
     "department": "Human Resources Department",
@@ -204,18 +219,33 @@ Whether to display this column as a tree structure, which needs to be combined w
 ${prefix} editor (string|Object|Function)
 
 Configure the column cell editor
+
 ```
 editor?: string | IEditor | ((args: BaseCellInfo & { table: BaseTableAPI }) => string | IEditor);
 ```
-Among them, IEditor is the editor interface defined in @visactor/vtable-editors. For details, please refer to the source code: https://github.com/VisActor/VTable/blob/main/packages/vtable-editors/src/types.ts .
 
+Among them, IEditor is the editor interface defined in @visactor/vtable-editors. For details, please refer to the source code: https://github.com/VisActor/VTable/blob/main/packages/vtable-editors/src/types.ts .
 
 ${prefix} headerEditor (string|Object|Function)
 
 Configure the display title of this column header
+
 ```
 headerEditor?: string | IEditor | ((args: BaseCellInfo & { table: BaseTableAPI }) => string | IEditor);
 ```
 
 ${prefix} columns (Array)
 Configure arrays with upper columns, nesting structures to describe column grouping relationships.
+
+${prefix} hideColumnsSubHeader(boolean) = false
+Whether to hide the header title of the subtable header. The default value is not hidden.
+
+${prefix} aggregation(Aggregation | CustomAggregation | Array)
+
+Not required.
+
+Data aggregation summary configuration to analyze the column data.
+
+Global options can also be configured to configure aggregation rules for each column.
+
+Please refer to the tutorial document

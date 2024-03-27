@@ -16,7 +16,7 @@ const generatePersons = count => {
 };
 
 export function createTable() {
-  const records = generatePersons(10);
+  const records = generatePersons(1000000);
   const columns: VTable.ColumnsDefine = [
     {
       field: '',
@@ -24,6 +24,11 @@ export function createTable() {
       width: 80,
       fieldFormat(data, col, row, table) {
         return row - 1;
+      },
+      style: {
+        underline: true,
+        underlineDash: [2, 0],
+        underlineOffset: 3
       }
     },
     {
@@ -37,7 +42,12 @@ export function createTable() {
       field: 'email1',
       title: 'email',
       width: 200,
-      sort: true
+      sort: true,
+      style: {
+        underline: true,
+        underlineDash: [2, 0],
+        underlineOffset: 3
+      }
     },
     {
       title: 'full name',
@@ -166,15 +176,25 @@ export function createTable() {
     bottomFrozenRowCount: 2,
     rightFrozenColCount: 2,
     overscrollBehavior: 'none',
-    autoWrapText: true,
-    heightMode: 'adaptive',
-    widthMode: 'adaptive',
     dragHeaderMode: 'all',
     keyboardOptions: {
       pasteValueToCell: true
     },
     eventOptions: {
       preventDefaultContextMenu: false
+    },
+    autoWrapText: true,
+    theme: {
+      headerStyle: {
+        textAlign: 'left',
+        underline: true,
+
+        borderColor: ['#E1E4E8', '#E1E4E8', '#E1E4E8', '#E1E4E8']
+      },
+      scrollStyle: {
+        width: 50,
+        hoverOn: false
+      }
     }
     // widthMode: 'adaptive'
   };
@@ -183,9 +203,14 @@ export function createTable() {
   tableInstance.on('change_cell_value', arg => {
     console.log(arg);
   });
-  // setTimeout(() => {
-  //   tableInstance.addRecord({ id: 333 }, 6);
-  // }, 3000);
+  let count = 0;
+  const intervalId = setTimeout(() => {
+    count++;
+    tableInstance.updateOption(option);
+    if (count > 100) {
+      clearInterval(intervalId);
+    }
+  }, 3000);
   // tableInstance.on('sort_click', args => {
   //   tableInstance.updateSortState(
   //     {

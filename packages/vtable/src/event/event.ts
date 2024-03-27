@@ -1,7 +1,7 @@
 // import { FederatedPointerEvent } from '@src/vrender';
 import type { FederatedPointerEvent, Gesture } from '@src/vrender';
 import { RichText } from '@src/vrender';
-import type { MousePointerCellEvent } from '../ts-types';
+import type { ColumnDefine, MousePointerCellEvent } from '../ts-types';
 import { IconFuncTypeEnum } from '../ts-types';
 import type { StateManager } from '../state/state';
 import type { Group } from '../scenegraph/graphic/group';
@@ -29,8 +29,8 @@ export class EventManager {
   table: BaseTableAPI;
   // _col: number;
   // _resizing: boolean = false;
-  /** 为了能够判断canvas mousedown 事件 以阻止事件冒泡 */
-  isPointerDownOnTable: boolean = false;
+  // /** 为了能够判断canvas mousedown 事件 以阻止事件冒泡 */
+  // isPointerDownOnTable: boolean = false;
   isTouchdown: boolean; // touch scrolling mode on
   touchMovePoints: {
     x: number;
@@ -48,6 +48,8 @@ export class EventManager {
   LastBodyPointerXY: { x: number; y: number };
   isDown = false;
   isDraging = false;
+
+  globalEventListeners: { name: string; env: 'document' | 'body' | 'window'; callback: (e?: any) => void }[] = [];
 
   constructor(table: BaseTableAPI) {
     this.table = table;
@@ -90,12 +92,12 @@ export class EventManager {
 
     // 图标点击
     this.table.on(TABLE_EVENT_TYPE.ICON_CLICK, iconInfo => {
-      const { col, row, x, y, funcType, icon } = iconInfo;
+      const { col, row, x, y, funcType, icon, event } = iconInfo;
       // 下拉菜单按钮点击
       if (funcType === IconFuncTypeEnum.dropDown) {
-        stateManager.triggerDropDownMenu(col, row, x, y);
+        stateManager.triggerDropDownMenu(col, row, x, y, event);
       } else if (funcType === IconFuncTypeEnum.sort) {
-        stateManager.triggerSort(col, row, icon);
+        stateManager.triggerSort(col, row, icon, event);
       } else if (funcType === IconFuncTypeEnum.frozen) {
         stateManager.triggerFreeze(col, row, icon);
       } else if (funcType === IconFuncTypeEnum.drillDown) {
@@ -132,7 +134,7 @@ export class EventManager {
         );
         if (this.table._canResizeColumn(resizeCol.col, resizeCol.row) && resizeCol.col >= 0) {
           this.table.scenegraph.updateAutoColWidth(resizeCol.col);
-
+          this.table.internalProps._widthResizedColMap.add(resizeCol.col);
           // if (this.table.isPivotChart()) {
           this.table.scenegraph.updateChartSize(resizeCol.col);
           // }
@@ -148,6 +150,15 @@ export class EventManager {
               state.columnResize.isRightFrozen
             );
           }
+          const colWidths = [];
+          // 返回所有列宽信息
+          for (let col = 0; col < this.table.colCount; col++) {
+            colWidths.push(this.table.getColWidth(col));
+          }
+          this.table.fireListeners(TABLE_EVENT_TYPE.RESIZE_COLUMN_END, {
+            col: resizeCol.col,
+            colWidths
+          });
         }
       }
     });
@@ -224,14 +235,14 @@ export class EventManager {
       const define = this.table.getBodyColumnDefine(eventArgs.col, eventArgs.row);
       if (
         this.table.isHeader(eventArgs.col, eventArgs.row) &&
-        (define?.disableHeaderSelect || this.table.stateManager.select?.disableHeader)
+        ((define as ColumnDefine)?.disableHeaderSelect || this.table.stateManager.select?.disableHeader)
       ) {
         if (!isSelectMoving) {
           // 如果是点击点表头 取消单元格选中状态
           this.table.stateManager.updateSelectPos(-1, -1);
         }
         return false;
-      } else if (!this.table.isHeader(eventArgs.col, eventArgs.row) && define?.disableSelect) {
+      } else if (!this.table.isHeader(eventArgs.col, eventArgs.row) && (define as ColumnDefine)?.disableSelect) {
         if (!isSelectMoving) {
           this.table.stateManager.updateSelectPos(-1, -1);
         }
@@ -361,7 +372,8 @@ export class EventManager {
         col,
         row,
         funcType: icon.attribute.funcType,
-        icon
+        icon,
+        event
       });
 
       return true;
@@ -376,7 +388,8 @@ export class EventManager {
           col,
           row,
           funcType: (icon.attribute as any).funcType,
-          icon: icon as unknown as Icon
+          icon: icon as unknown as Icon,
+          event
         });
         return true;
       }
@@ -387,5 +400,17 @@ export class EventManager {
   /** TODO 其他的事件并么有做remove */
   release() {
     this.gesture.release();
+
+    // remove global event listerner
+    this.globalEventListeners.forEach(item => {
+      if (item.env === 'document') {
+        document.removeEventListener(item.name, item.callback);
+      } else if (item.env === 'body') {
+        document.body.removeEventListener(item.name, item.callback);
+      } else if (item.env === 'window') {
+        window.removeEventListener(item.name, item.callback);
+      }
+    });
+    this.globalEventListeners = [];
   }
 }
