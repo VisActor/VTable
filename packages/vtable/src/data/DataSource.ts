@@ -131,7 +131,9 @@ function _getIndex(sortedIndexMap: null | (number | number[])[], index: number):
 export interface DataSourceParam {
   get: (index: number) => any;
   length: number;
-  source?: any;
+  records?: any;
+  added?: (index: number, count: number) => any;
+  deleted?: (index: number[]) => any;
 }
 export interface ISortedMapItem {
   asc?: (number | number[])[];
@@ -146,7 +148,7 @@ export class DataSource extends EventTarget implements DataSourceAPI {
   /** 数据条目数 如果是树形结构的数据 则是第一层父节点的数量 */
   private _sourceLength: number;
 
-  private _source: any;
+  private _source: any[] | DataSourceParam | DataSource;
   /**
    * 缓存按字段进行排序的结果
    */
@@ -178,11 +180,12 @@ export class DataSource extends EventTarget implements DataSourceAPI {
       new (dimension: string | string[], formatFun?: any, isRecord?: boolean, aggregationFun?: Function): Aggregator;
     };
   } = {};
+  rowHierarchyType: 'grid' | 'tree';
   // columns对应各个字段的聚合类对象
   fieldAggregators: Aggregator[] = [];
   layoutColumnObjects: ColumnData[] = [];
   constructor(
-    dataSourceObj?: DataSourceParam | DataSource,
+    dataSourceObj?: DataSourceParam,
     dataConfig?: IListTableDataConfig,
     pagination?: IPagination,
     columnObjs?: ColumnData[],
@@ -195,7 +198,7 @@ export class DataSource extends EventTarget implements DataSourceAPI {
     this.dataConfig = dataConfig;
     this._get = dataSourceObj?.get.bind(dataSourceObj) || (undefined as any);
     this.layoutColumnObjects = columnObjs;
-    this._source = this.processRecords(dataSourceObj?.source ?? dataSourceObj);
+    this._source = dataSourceObj?.records ? this.processRecords(dataSourceObj?.records) : dataSourceObj;
     this._sourceLength = this._source?.length || 0;
     this.sortedIndexMap = new Map<string, ISortedMapItem>();
 
@@ -214,6 +217,7 @@ export class DataSource extends EventTarget implements DataSourceAPI {
     if (rowHierarchyType === 'tree') {
       this.initTreeHierarchyState();
     }
+    this.rowHierarchyType = rowHierarchyType;
     this.updatePagerData();
   }
   initTreeHierarchyState() {
@@ -423,7 +427,11 @@ export class DataSource extends EventTarget implements DataSourceAPI {
     }
   }
 
-  get source(): any {
+  get records(): any[] {
+    return Array.isArray(this._source) ? this._source : [];
+  }
+
+  get source(): any[] | DataSourceParam | DataSource {
     return this._source;
   }
   get(index: number): MaybePromiseOrUndefined {
@@ -651,13 +659,15 @@ export class DataSource extends EventTarget implements DataSourceAPI {
    * @param index
    */
   setRecord(record: any, index: number) {
-    const indexed = this.getIndexKey(index);
-    if (!Array.isArray(indexed)) {
-      this.source.splice(indexed, 1, record);
-    } else {
-      const c_node_index = (indexed as Array<any>)[indexed.length - 1];
-      const p_node = this.getOriginalRecord(indexed.slice(0, indexed.length - 1));
-      (p_node as any).children.splice(c_node_index, 1, record);
+    if (Array.isArray(this.records)) {
+      const indexed = this.getIndexKey(index);
+      if (!Array.isArray(indexed)) {
+        this.records.splice(indexed, 1, record);
+      } else {
+        const c_node_index = (indexed as Array<any>)[indexed.length - 1];
+        const p_node = this.getOriginalRecord(indexed.slice(0, indexed.length - 1));
+        (p_node as any).children.splice(c_node_index, 1, record);
+      }
     }
   }
   /**
@@ -666,23 +676,31 @@ export class DataSource extends EventTarget implements DataSourceAPI {
    * @param index 代表的数据源中的index
    */
   addRecord(record: any, index: number) {
-    this.source.splice(index, 0, record);
-    this.currentIndexedData.push(this.currentIndexedData.length);
-    this._sourceLength += 1;
-    this.initTreeHierarchyState();
-    if (this.userPagination) {
-      //如果用户配置了分页
-      this.pagination.totalCount = this._sourceLength;
-      const { perPageCount, currentPage } = this.pagination;
-      const startIndex = perPageCount * (currentPage || 0);
-      const endIndex = startIndex + perPageCount;
-      if (index < endIndex) {
+    if (Array.isArray(this.records)) {
+      this.records.splice(index, 0, record);
+      this.currentIndexedData.push(this.currentIndexedData.length);
+      this._sourceLength += 1;
+      if (this.rowHierarchyType === 'tree') {
+        this.initTreeHierarchyState();
+      }
+      if (this.userPagination) {
+        //如果用户配置了分页
+        this.pagination.totalCount = this._sourceLength;
+        const { perPageCount, currentPage } = this.pagination;
+        const startIndex = perPageCount * (currentPage || 0);
+        const endIndex = startIndex + perPageCount;
+        if (index < endIndex) {
+          this.updatePagerData();
+        }
+      } else {
+        this.pagination.perPageCount = this._sourceLength;
+        this.pagination.totalCount = this._sourceLength;
         this.updatePagerData();
       }
-    } else {
-      this.pagination.perPageCount = this._sourceLength;
-      this.pagination.totalCount = this._sourceLength;
-      this.updatePagerData();
+
+      if ((this.dataSourceObj as DataSourceParam)?.added) {
+        (this.dataSourceObj as DataSourceParam).added(index, 1);
+      }
     }
   }
   /**
@@ -691,27 +709,33 @@ export class DataSource extends EventTarget implements DataSourceAPI {
    * @param index 代表的数据源中的index
    */
   addRecords(recordArr: any, index: number) {
-    if (Array.isArray(recordArr)) {
-      this.source.splice(index, 0, ...recordArr);
-      for (let i = 0; i < recordArr.length; i++) {
-        this.currentIndexedData.push(this.currentIndexedData.length);
+    if (Array.isArray(this.records)) {
+      if (Array.isArray(recordArr)) {
+        this.records.splice(index, 0, ...recordArr);
+        for (let i = 0; i < recordArr.length; i++) {
+          this.currentIndexedData.push(this.currentIndexedData.length);
+        }
+        this._sourceLength += recordArr.length;
       }
-      this._sourceLength += recordArr.length;
-    }
 
-    if (this.userPagination) {
-      //如果用户配置了分页
-      this.pagination.totalCount = this._sourceLength;
-      const { perPageCount, currentPage } = this.pagination;
-      const startIndex = perPageCount * (currentPage || 0);
-      const endIndex = startIndex + perPageCount;
-      if (index < endIndex) {
+      if (this.userPagination) {
+        //如果用户配置了分页
+        this.pagination.totalCount = this._sourceLength;
+        const { perPageCount, currentPage } = this.pagination;
+        const startIndex = perPageCount * (currentPage || 0);
+        const endIndex = startIndex + perPageCount;
+        if (index < endIndex) {
+          this.updatePagerData();
+        }
+      } else {
+        this.pagination.perPageCount = this._sourceLength;
+        this.pagination.totalCount = this._sourceLength;
         this.updatePagerData();
       }
-    } else {
-      this.pagination.perPageCount = this._sourceLength;
-      this.pagination.totalCount = this._sourceLength;
-      this.updatePagerData();
+
+      if ((this.dataSourceObj as DataSourceParam)?.added) {
+        (this.dataSourceObj as DataSourceParam).added(index, recordArr.length);
+      }
     }
   }
 
@@ -721,13 +745,15 @@ export class DataSource extends EventTarget implements DataSourceAPI {
    * @param index 代表的数据源中的index
    */
   addRecordForSorted(record: any) {
-    this.source.push(record);
-    this.currentIndexedData.push(this.currentIndexedData.length);
-    this._sourceLength += 1;
-    this.sortedIndexMap.clear();
-    if (!this.userPagination) {
-      this.pagination.perPageCount = this._sourceLength;
-      this.pagination.totalCount = this._sourceLength;
+    if (Array.isArray(this.records)) {
+      this.records.push(record);
+      this.currentIndexedData.push(this.currentIndexedData.length);
+      this._sourceLength += 1;
+      this.sortedIndexMap.clear();
+      if (!this.userPagination) {
+        this.pagination.perPageCount = this._sourceLength;
+        this.pagination.totalCount = this._sourceLength;
+      }
     }
   }
   /**
@@ -736,17 +762,19 @@ export class DataSource extends EventTarget implements DataSourceAPI {
    * @param index 代表的数据源中的index
    */
   addRecordsForSorted(recordArr: any) {
-    if (Array.isArray(recordArr)) {
-      this.source.push(...recordArr);
-      for (let i = 0; i < recordArr.length; i++) {
-        this.currentIndexedData.push(this.currentIndexedData.length);
+    if (Array.isArray(this.records)) {
+      if (Array.isArray(recordArr)) {
+        this.records.push(...recordArr);
+        for (let i = 0; i < recordArr.length; i++) {
+          this.currentIndexedData.push(this.currentIndexedData.length);
+        }
+        this._sourceLength += recordArr.length;
+        this.sortedIndexMap.clear();
       }
-      this._sourceLength += recordArr.length;
-      this.sortedIndexMap.clear();
-    }
-    if (!this.userPagination) {
-      this.pagination.perPageCount = this._sourceLength;
-      this.pagination.totalCount = this._sourceLength;
+      if (!this.userPagination) {
+        this.pagination.perPageCount = this._sourceLength;
+        this.pagination.totalCount = this._sourceLength;
+      }
     }
   }
 
@@ -754,46 +782,53 @@ export class DataSource extends EventTarget implements DataSourceAPI {
    * 删除多条数据recordIndexs
    */
   deleteRecords(recordIndexs: number[]) {
-    const realDeletedRecordIndexs = [];
-    const recordIndexsMaxToMin = recordIndexs.sort((a, b) => b - a);
-    for (let index = 0; index < recordIndexsMaxToMin.length; index++) {
-      const recordIndex = recordIndexsMaxToMin[index];
-      if (recordIndex >= this._sourceLength || recordIndex < 0) {
-        continue;
+    if (Array.isArray(this.records)) {
+      const realDeletedRecordIndexs = [];
+      const recordIndexsMaxToMin = recordIndexs.sort((a, b) => b - a);
+      for (let index = 0; index < recordIndexsMaxToMin.length; index++) {
+        const recordIndex = recordIndexsMaxToMin[index];
+        if (recordIndex >= this._sourceLength || recordIndex < 0) {
+          continue;
+        }
+        realDeletedRecordIndexs.push(recordIndex);
+        this.records.splice(recordIndex, 1);
+        this.currentIndexedData.pop();
+        this._sourceLength -= 1;
       }
-      realDeletedRecordIndexs.push(recordIndex);
-      this.source.splice(recordIndex, 1);
-      this.currentIndexedData.pop();
-      this._sourceLength -= 1;
+      if (this.userPagination) {
+        // 如果用户配置了分页
+        this.updatePagerData();
+      } else {
+        this.pagination.perPageCount = this._sourceLength;
+        this.pagination.totalCount = this._sourceLength;
+        this.updatePagerData();
+      }
+      if ((this.dataSourceObj as DataSourceParam)?.deleted) {
+        (this.dataSourceObj as DataSourceParam).deleted(realDeletedRecordIndexs);
+      }
+      return realDeletedRecordIndexs;
     }
-    if (this.userPagination) {
-      // 如果用户配置了分页
-      this.updatePagerData();
-    } else {
-      this.pagination.perPageCount = this._sourceLength;
-      this.pagination.totalCount = this._sourceLength;
-      this.updatePagerData();
-    }
-    return realDeletedRecordIndexs;
   }
   /**
    * 删除多条数据recordIndexs
    */
   deleteRecordsForSorted(recordIndexs: number[]) {
-    const recordIndexsMaxToMin = recordIndexs.sort((a, b) => b - a);
-    for (let index = 0; index < recordIndexsMaxToMin.length; index++) {
-      const recordIndex = recordIndexsMaxToMin[index];
-      if (recordIndex >= this._sourceLength || recordIndex < 0) {
-        continue;
+    if (Array.isArray(this.records)) {
+      const recordIndexsMaxToMin = recordIndexs.sort((a, b) => b - a);
+      for (let index = 0; index < recordIndexsMaxToMin.length; index++) {
+        const recordIndex = recordIndexsMaxToMin[index];
+        if (recordIndex >= this._sourceLength || recordIndex < 0) {
+          continue;
+        }
+        const rawIndex = this.currentIndexedData[recordIndex] as number;
+        this.records.splice(rawIndex, 1);
+        this._sourceLength -= 1;
       }
-      const rawIndex = this.currentIndexedData[recordIndex];
-      this.source.splice(rawIndex, 1);
-      this._sourceLength -= 1;
-    }
-    this.sortedIndexMap.clear();
-    if (!this.userPagination) {
-      this.pagination.perPageCount = this._sourceLength;
-      this.pagination.totalCount = this._sourceLength;
+      this.sortedIndexMap.clear();
+      if (!this.userPagination) {
+        this.pagination.perPageCount = this._sourceLength;
+        this.pagination.totalCount = this._sourceLength;
+      }
     }
   }
 
@@ -808,7 +843,7 @@ export class DataSource extends EventTarget implements DataSourceAPI {
         continue;
       }
       realDeletedRecordIndexs.push(recordIndex);
-      this.source[recordIndex] = records[index];
+      this.records[recordIndex] = records[index];
     }
     if (this.userPagination) {
       // 如果用户配置了分页
@@ -832,7 +867,7 @@ export class DataSource extends EventTarget implements DataSourceAPI {
         return;
       }
       realDeletedRecordIndexs.push(recordIndex);
-      this.source[rawIndex] = records[index];
+      this.records[rawIndex] = records[index];
     }
     this.sortedIndexMap.clear();
   }
@@ -922,7 +957,7 @@ export class DataSource extends EventTarget implements DataSourceAPI {
 
   updateFilterRulesForSorted(filterRules?: FilterRules): void {
     this.dataConfig.filterRules = filterRules;
-    this._source = this.processRecords(this.dataSourceObj?.source ?? this.dataSourceObj);
+    this._source = this.processRecords(this.dataSourceObj?.records ?? this.dataSourceObj);
     this._sourceLength = this._source?.length || 0;
     this.sortedIndexMap.clear();
     this.currentIndexedData = Array.from({ length: this._sourceLength }, (_, i) => i);
@@ -934,7 +969,7 @@ export class DataSource extends EventTarget implements DataSourceAPI {
 
   updateFilterRules(filterRules?: FilterRules): void {
     this.dataConfig.filterRules = filterRules;
-    this._source = this.processRecords(this.dataSourceObj?.source ?? this.dataSourceObj);
+    this._source = this.processRecords(this.dataSourceObj?.records ?? this.dataSourceObj);
     this._sourceLength = this._source?.length || 0;
     // 初始化currentIndexedData 正常未排序。设置其状态
     this.currentIndexedData = Array.from({ length: this._sourceLength }, (_, i) => i);
@@ -1008,7 +1043,7 @@ export class DataSource extends EventTarget implements DataSourceAPI {
   }
   protected getOriginalRecord(dataIndex: number | number[]): MaybePromiseOrUndefined {
     if (this.dataConfig?.filterRules) {
-      return (this.source as Array<any>)[dataIndex as number];
+      return (this.records as Array<any>)[dataIndex as number];
     }
     return getValue(this._get(dataIndex), (val: MaybePromiseOrUndefined) => {
       this.recordPromiseCallBack(dataIndex, val);
@@ -1126,6 +1161,7 @@ export class DataSource extends EventTarget implements DataSourceAPI {
     }
     return true;
   }
+  // 拖拽调整数据位置 目前对排序过的数据不过处理，因为自动排序和手动排序融合问题目前没有找到好的解决方式
   reorderRecord(sourceIndex: number, targetIndex: number) {
     if (this.lastOrder === 'asc' || this.lastOrder === 'desc') {
       // const sourceIds = this._currentPagerIndexedData.splice(sourceIndex, 1);
@@ -1174,31 +1210,31 @@ export class DataSource extends EventTarget implements DataSourceAPI {
             sourceIds.unshift(targetI, 0);
             Array.prototype.splice.apply(parent.children, sourceIds);
           } else {
-            const sourceIds = this.source.splice(sourceI, 1);
+            const sourceIds = this.records.splice(sourceI, 1);
             // 将records插入到目标地址targetIndex处
             // 把records变成一个适合splice的数组（包含splice前2个参数的数组） 以通过splice来插入到source数组
             sourceIds.unshift(targetI, 0);
-            Array.prototype.splice.apply(this.source, sourceIds);
+            Array.prototype.splice.apply(this.records, sourceIds);
           }
         } else {
-          sourceI = this.currentPagerIndexedData[sourceIndex];
+          sourceI = this.currentPagerIndexedData[sourceIndex] as number;
           targetI = this.currentPagerIndexedData[targetIndex];
           // 从source的二维数组中取出需要操作的records
-          const records = this.source.splice(sourceI, 1);
+          const records = this.records.splice(sourceI, 1);
           // 将records插入到目标地址targetIndex处
           // 把records变成一个适合splice的数组（包含splice前2个参数的数组） 以通过splice来插入到source数组
           records.unshift(targetI, 0);
-          Array.prototype.splice.apply(this.source, records);
+          Array.prototype.splice.apply(this.records, records);
         }
         this.restoreTreeHierarchyState();
         this.updatePagerData();
       } else {
         // 从source的二维数组中取出需要操作的records
-        const records = this.source.splice(sourceIndex, 1);
+        const records = this.records.splice(sourceIndex, 1);
         // 将records插入到目标地址targetIndex处
         // 把records变成一个适合splice的数组（包含splice前2个参数的数组） 以通过splice来插入到source数组
         records.unshift(targetIndex, 0);
-        Array.prototype.splice.apply(this.source, records);
+        Array.prototype.splice.apply(this.records, records);
       }
     }
   }
