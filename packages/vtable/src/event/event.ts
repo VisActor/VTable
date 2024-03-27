@@ -134,7 +134,7 @@ export class EventManager {
         );
         if (this.table._canResizeColumn(resizeCol.col, resizeCol.row) && resizeCol.col >= 0) {
           this.table.scenegraph.updateAutoColWidth(resizeCol.col);
-
+          this.table.internalProps._widthResizedColMap.add(resizeCol.col);
           // if (this.table.isPivotChart()) {
           this.table.scenegraph.updateChartSize(resizeCol.col);
           // }
@@ -150,6 +150,15 @@ export class EventManager {
               state.columnResize.isRightFrozen
             );
           }
+          const colWidths = [];
+          // 返回所有列宽信息
+          for (let col = 0; col < this.table.colCount; col++) {
+            colWidths.push(this.table.getColWidth(col));
+          }
+          this.table.fireListeners(TABLE_EVENT_TYPE.RESIZE_COLUMN_END, {
+            col: resizeCol.col,
+            colWidths
+          });
         }
       }
     });

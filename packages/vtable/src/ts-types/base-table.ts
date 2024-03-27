@@ -402,6 +402,8 @@ export interface BaseTableConstructorOptions {
   // columnSeriesNumber?: ColumnSeriesNumber[];
   customCellStyle?: CustomCellStyle[];
   customCellStyleArrangement?: CustomCellStyleArrangement[];
+
+  columnWidthComputeMode?: 'normal' | 'only-header' | 'only-body';
 }
 export interface BaseTableAPI {
   /** 数据总条目数 */
@@ -505,6 +507,8 @@ export interface BaseTableAPI {
   canvasWidth?: number;
   canvasHeight?: number;
 
+  columnWidthComputeMode?: 'normal' | 'only-header' | 'only-body';
+
   /** 获取表格绘制的范围 不包括frame的宽度 */
   getDrawRange: () => Rect;
   /** 将鼠标坐标值 转换成表格坐标系中的坐标位置 */
@@ -523,6 +527,7 @@ export interface BaseTableAPI {
   throttleInvalidate: () => void;
   getRowHeight: (row: number) => number;
   getDefaultRowHeight: (row: number) => number | 'auto';
+  getDefaultColumnWidth: (col: number) => number | 'auto';
   _setRowHeight: (row: number, height: number, clearCache?: boolean) => void;
   getColWidth: (col: number) => number;
   getColWidthDefined: (col: number) => string | number;

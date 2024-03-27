@@ -242,9 +242,9 @@ export function createCellContent(
       textConfig[0].textAlign = textAlign;
       const text = new RichText({
         width: autoColWidth ? 0 : cellWidth - (padding[1] + padding[3]) - leftIconWidth - rightIconWidth,
-        height: autoRowHeight ? 0 : cellHeight - (padding[0] + padding[2]),
+        height: autoRowHeight && autoWrapText ? 0 : Math.ceil(cellHeight - (padding[0] + padding[2])),
         textConfig,
-        verticalDirection: autoRowHeight ? 'top' : (textBaseline as any),
+        verticalDirection: autoRowHeight && autoWrapText ? 'top' : (textBaseline as any),
 
         ellipsis: textOption.ellipsis
         // verticalDirection: textBaseline as any
@@ -409,7 +409,7 @@ export function dealWithIcon(
   iconAttribute.marginLeft = (icon.marginLeft ?? 0) + hierarchyOffset;
   iconAttribute.marginRight = icon.marginRight ?? 0;
 
-  if (icon.interactive) {
+  if (icon.interactive === false) {
     iconAttribute.pickable = false;
   }
 
@@ -545,7 +545,7 @@ export function updateCellContentWidth(
     contentHeight = cellContent.AABBBounds.height();
   }
 
-  const oldCellHeight = Math.max(leftIconHeight, rightIconHeight, oldTextHeight) + padding[0] + padding[2];
+  const oldCellHeight = Math.round(Math.max(leftIconHeight, rightIconHeight, oldTextHeight) + padding[0] + padding[2]);
 
   // 更新x方向位置
   cellGroup.forEachChildren((child: any) => {

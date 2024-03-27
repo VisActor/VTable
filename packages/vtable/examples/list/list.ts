@@ -16,7 +16,7 @@ const generatePersons = count => {
 };
 
 export function createTable() {
-  const records = generatePersons(10000);
+  const records = generatePersons(1000000);
   const columns: VTable.ColumnsDefine = [
     {
       field: '',
@@ -203,9 +203,14 @@ export function createTable() {
   tableInstance.on('change_cell_value', arg => {
     console.log(arg);
   });
-  // setTimeout(() => {
-  //   tableInstance.addRecord({ id: 333 }, 6);
-  // }, 3000);
+  let count = 0;
+  const intervalId = setTimeout(() => {
+    count++;
+    tableInstance.updateOption(option);
+    if (count > 100) {
+      clearInterval(intervalId);
+    }
+  }, 3000);
   // tableInstance.on('sort_click', args => {
   //   tableInstance.updateSortState(
   //     {
