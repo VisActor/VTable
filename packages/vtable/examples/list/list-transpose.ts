@@ -68,7 +68,7 @@ export function createTable() {
     records,
     columns,
     widthMode: 'standard',
-    transpose: true,
+    // transpose: true,
     dragHeaderMode: 'all',
     limitMinWidth: 20
   };

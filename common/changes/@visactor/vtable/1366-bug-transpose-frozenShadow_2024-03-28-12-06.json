@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "comment": "fix: transpose with frozenColCount shadowline render #1366\n\n",
+      "type": "none",
+      "packageName": "@visactor/vtable"
+    }
+  ],
+  "packageName": "@visactor/vtable",
+  "email": "892739385@qq.com"
+}

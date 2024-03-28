@@ -103,6 +103,8 @@ export function updateResizeColumn(xInTable: number, yInTable: number, state: St
       state.table.frozenColCount - 1,
       state.columnResize.isRightFrozen
     );
+  } else if (state.table.options.frozenColCount) {
+    state.table.scenegraph.component.setFrozenColumnShadow(state.table.frozenColCount - 1);
   }
 
   // stage rerender
