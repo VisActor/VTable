@@ -243,4 +243,8 @@ export interface TableEventHandlersReturnMap {
   initialized: void;
 
   change_cell_value: void;
+
+  scroll_vertical_end: void;
+
+  scroll_horizontal_end: void;
 }
