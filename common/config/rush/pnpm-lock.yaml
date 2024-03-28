@@ -278,6 +278,7 @@ importers:
       '@types/react-dom': ^18.0.0
       '@visactor/vchart': 1.10.0
       '@visactor/vdataset': ~0.18.1
+      '@visactor/vrender': 0.18.2-alpha.1
       '@visactor/vrender-components': 0.18.2-alpha.1
       '@visactor/vrender-core': 0.18.2-alpha.1
       '@visactor/vrender-kits': 0.18.2-alpha.1
@@ -323,6 +324,7 @@ importers:
       vite-plugin-markdown: ^2.1.0
     dependencies:
       '@visactor/vdataset': 0.18.1
+      '@visactor/vrender': 0.18.2-alpha.1
       '@visactor/vrender-components': 0.18.2-alpha.1
       '@visactor/vrender-core': 0.18.2-alpha.1
       '@visactor/vrender-kits': 0.18.2-alpha.1
@@ -3730,6 +3732,13 @@ packages:
       '@visactor/vrender-core': 0.18.5
       '@visactor/vutils': 0.18.1
       roughjs: 4.5.2
+
+  /@visactor/vrender/0.18.2-alpha.1:
+    resolution: {integrity: sha512-wRL6bXytTpa3z2ZVO7PHUi8Iccj/DcrXtj4x76omLqJ7JFXNvgDiYCaiVQ57lXD3I5KolzuuYKPJHdRH9BhuOw==}
+    dependencies:
+      '@visactor/vrender-core': 0.18.2-alpha.1
+      '@visactor/vrender-kits': 0.18.2-alpha.1
+    dev: false
 
   /@visactor/vscale/0.17.5:
     resolution: {integrity: sha512-2dkS1IlAJ/IdTp8JElbctOOv6lkHKBKPDm8KvwBo0NuGWQeYAebSeyN3QCdwKbj76gMlCub4zc+xWrS5YiA2zA==}
