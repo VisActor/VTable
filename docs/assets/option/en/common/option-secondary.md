@@ -167,14 +167,6 @@ Do not respond to mouse select interaction.
 
 Separately set the header not to respond to mouse select interaction.
 
-#${prefix} scroll(Object)
-
-scroll configuration, specific configuration items as follows:
-
-##${prefix} barToSide(boolean) = false
-
-Place the scroll bar next to the canvas without following the content.
-
 #${prefix} theme(Object)
 
 {{ use: common-theme(
@@ -359,8 +351,9 @@ Customize cell merging rules. When the incoming row and column numbers are withi
 ```
 
 Custom cell style
-* id: the unique id of the custom style
-* style: Custom cell style, which is the same as the `style` configuration in `column`. The final rendering effect is the fusion of the original style of the cell and the custom style.
+
+- id: the unique id of the custom style
+- style: Custom cell style, which is the same as the `style` configuration in `column`. The final rendering effect is the fusion of the original style of the cell and the custom style.
 
 #${prefix} customCellStyleArrangement(Array)
 
@@ -371,7 +364,8 @@ Custom cell style
 ```
 
 Custom cell style assignment
-* cellPosition: cell position information, supports configuration of single cells and cell areas
-   * Single cell: `{ row: number, column: number }`
-   * Cell range: `{ range: { start: { row: number, column: number }, end: { row: number, column: number} } }`
-* customStyleId: Custom style id, the same as the id defined when registering the custom style
+
+- cellPosition: cell position information, supports configuration of single cells and cell areas
+  - Single cell: `{ row: number, column: number }`
+  - Cell range: `{ range: { start: { row: number, column: number }, end: { row: number, column: number} } }`
+- customStyleId: Custom style id, the same as the id defined when registering the custom style

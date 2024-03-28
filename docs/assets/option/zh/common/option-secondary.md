@@ -161,14 +161,6 @@ hover 交互响应模式：十字交叉、整列、整行或者单个单元格�
 
 单独设置表头不响应鼠标 select 交互。
 
-#${prefix} scroll(Object)
-
-滚动条配置，具体配置项如下：
-
-##${prefix} barToSide(boolean) = false
-
-将滚动条放置在画布边，不跟随内容。
-
 #${prefix} theme(Object)
 
 {{ use: common-theme(

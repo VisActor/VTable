@@ -163,7 +163,7 @@ export class TableComponent {
     componentGroup.addChild(this.columnResizeLabel);
 
     const hoverOn = this.table.theme.scrollStyle.hoverOn;
-    if (hoverOn && !this.table.options.scroll?.barToSide) {
+    if (hoverOn && !this.table.theme.scrollStyle.barToSide) {
       componentGroup.addChild(this.hScrollBar);
       componentGroup.addChild(this.vScrollBar);
     } else {
@@ -256,7 +256,7 @@ export class TableComponent {
       const hoverOn = this.table.theme.scrollStyle.hoverOn;
 
       let attrY = 0;
-      if (this.table.options.scroll?.barToSide) {
+      if (this.table.theme.scrollStyle.barToSide) {
         attrY = this.table.tableNoFrameHeight - (hoverOn ? width : -this.table.scenegraph.tableGroup.attribute.y);
       } else {
         attrY = y - (hoverOn ? width : -this.table.scenegraph.tableGroup.attribute.y);
@@ -293,7 +293,7 @@ export class TableComponent {
       let attrX = 0;
       const hoverOn = this.table.theme.scrollStyle.hoverOn;
 
-      if (this.table.options.scroll?.barToSide) {
+      if (this.table.theme.scrollStyle.barToSide) {
         attrX = this.table.tableNoFrameWidth - (hoverOn ? width : -this.table.scenegraph.tableGroup.attribute.x);
       } else {
         attrX = x - (hoverOn ? width : -this.table.scenegraph.tableGroup.attribute.x);
