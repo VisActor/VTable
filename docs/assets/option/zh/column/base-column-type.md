@@ -127,6 +127,8 @@ ${prefix} headerCustomRender(Function|Object)
 
 表头单元格自定义渲染，函数形式或者对象形式。类型为：`ICustomRenderFuc | ICustomRenderObj`。
 
+[示例链接](../demo/custom-render/custom-render) [教程链接](../guide/custom_define/custom_render)
+
 其中 ICustomRenderFuc 定义为：
 
 ```
@@ -155,6 +157,8 @@ ${prefix} headerCustomLayout(Function)
 ${prefix} customRender(Function|Object)
 body 单元格表头单元格自定义渲染，函数形式或者对象形式。类型为：`ICustomRenderFuc | ICustomRenderObj`。
 
+[示例链接](../demo/custom-render/custom-render) [教程链接](../guide/custom_define/custom_render)
+
 其中 ICustomRenderFuc 定义为：
 
 ```
@@ -170,6 +174,8 @@ body 单元格表头单元格自定义渲染，函数形式或者对象形式。
 ${prefix} customLayout(Function)
 
 body 单元格自定义布局元素定义，该自定义形式适合内容复杂布局的单元格。
+
+定义为如下函数：
 
 ```
 (args: CustomRenderFunctionArg) => ICustomLayoutObj;

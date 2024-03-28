@@ -455,7 +455,7 @@ export class TableComponent {
       this.frozenShadowLine.setAttributes({
         visible: true,
         x: colX,
-        height: this.table.getRowsHeight(0, this.table.rowCount - 1)
+        height: this.table.tableNoFrameHeight
       });
     }
   }

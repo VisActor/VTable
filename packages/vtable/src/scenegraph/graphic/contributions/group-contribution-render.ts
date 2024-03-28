@@ -150,7 +150,10 @@ export class SplitGroupAfterRenderContribution implements IGroupRenderContributi
         (Array.isArray(strokeArrayWidth) && strokeArrayWidth.some(width => width & 1))
       ) {
         const table = (group.stage as any).table as BaseTableAPI;
-        const bottomRight = table.theme.cellBorderClipDirection === 'bottom-right';
+        if (!table) {
+          return;
+        }
+        const bottomRight = table?.theme.cellBorderClipDirection === 'bottom-right';
         let deltaWidth = 0;
         let deltaHeight = 0;
         if (bottomRight) {
@@ -493,7 +496,10 @@ export class DashGroupAfterRenderContribution implements IGroupRenderContributio
     let heightForStroke;
     if (lineWidth & 1) {
       const table = (group.stage as any).table as BaseTableAPI;
-      const bottomRight = table.theme.cellBorderClipDirection === 'bottom-right';
+      if (!table) {
+        return;
+      }
+      const bottomRight = table?.theme.cellBorderClipDirection === 'bottom-right';
       let deltaWidth = 0;
       let deltaHeight = 0;
       if (bottomRight) {
@@ -690,7 +696,10 @@ export class AdjustPosGroupAfterRenderContribution implements IGroupRenderContri
       );
       context.beginPath();
       const table = (group.stage as any).table as BaseTableAPI;
-      const bottomRight = table.theme.cellBorderClipDirection === 'bottom-right';
+      if (!table) {
+        return;
+      }
+      const bottomRight = table?.theme.cellBorderClipDirection === 'bottom-right';
       let deltaWidth = 0;
       let deltaHeight = 0;
       if (bottomRight) {
@@ -754,7 +763,7 @@ export class AdjustColorGroupBeforeRenderContribution implements IGroupRenderCon
     // 处理hover颜色
     if ((group as Group).role === 'cell') {
       const table = (group.stage as any).table as BaseTableAPI;
-      if (table.stateManager.interactionState !== InteractionState.scrolling) {
+      if (table && table.stateManager.interactionState !== InteractionState.scrolling) {
         const hoverColor = getCellHoverColor(group as Group, table);
         if (hoverColor) {
           (group.attribute as any)._vtableHoverFill = hoverColor;
@@ -838,6 +847,9 @@ export class ClipBodyGroupBeforeRenderContribution implements IGroupRenderContri
     doFillOrStroke?: { doFill: boolean; doStroke: boolean }
   ) {
     const table = (group.stage as any).table as BaseTableAPI;
+    if (!table) {
+      return;
+    }
     if ((group as Group).role === 'body') {
       const x = -(group.attribute.x ?? 0) + table.getFrozenColsWidth();
       const y = -(group.attribute.y ?? 0) + table.getFrozenRowsHeight();
@@ -959,10 +971,10 @@ function getCellSizeForDraw(group: any, width: number, height: number) {
       height -= 1;
     }
   } else if (group.role === 'corner-frozen') {
-    if (table.scrollLeft) {
+    if (table && table.scrollLeft) {
       width -= 1;
     }
-    if (table.scrollTop) {
+    if (table && table.scrollTop) {
       height -= 1;
     }
   }

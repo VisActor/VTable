@@ -138,14 +138,12 @@ tableInstance.renderWithRecreateCells();
 
 基本表格更新：
 
-基本表格可同时设置排序状态对表格数据排序，sort 设置为 null 清空排序状态，如果不设置则按当前排序状态对传入数据排序。
-
-restoreHierarchyState 可暂时忽略，用的场景比较特殊，可以咨询 VTable 的研发后再决定是否使用。
+基本表格可同时设置排序状态对表格数据排序，sortState 设置为 null 清空排序状态，如果不设置则按当前排序状态对传入数据排序。
 
 ```
 setRecords(
     records: Array<any>,
-    option?: { sort?: SortState | SortState[], restoreHierarchyState: boolean;  }
+    option?: { sortState?: SortState | SortState[] }
   ): void;
 ```
 
@@ -153,6 +151,19 @@ setRecords(
 
 ```
 setRecords(records: Array<any>)
+```
+
+## setRecordChildren(Function)
+
+基本表格树形展示场景下，如果需要动态插入子节点的数据可以配合使用该接口，其他情况不适用
+
+```
+  /**
+   * @param records 设置到单元格其子节点的数据
+   * @param col 需要设置子节点的单元格地址
+   * @param row  需要设置子节点的单元格地址
+   */
+  setRecordChildren(records: any[], col: number, row: number)
 ```
 
 ## getDrawRange(Function)
@@ -975,20 +986,27 @@ use case: 点击图例项后 更新过滤规则 来更新图表
 获取聚合汇总的值
 
 ## registerCustomCellStyle(Function)
+
 注册自定义样式
+
 ```
 registerCustomCellStyle: (customStyleId: string, customStyle: ColumnStyleOption | undefined | null) => void
 ```
+
 自定义单元格样式
-* customStyleId: 自定义样式的唯一id
-* customStyle: 自定义单元格样式，与`column`中的`style`配置相同，最终呈现效果是单元格原有样式与自定义样式融合
+
+- customStyleId: 自定义样式的唯一 id
+- customStyle: 自定义单元格样式，与`column`中的`style`配置相同，最终呈现效果是单元格原有样式与自定义样式融合
 
 ## registerCustomCellStyleArrangement(Function)
+
 分配自定义样式
+
 ```
 registerCustomCellStyleArrangement: (cellPosition: { col?: number; row?: number; range?: CellRange }, customStyleId: string) => void
 ```
-* cellPosition: 单元格位置信息，支持配置单个单元格与单元格区域
-  * 单个单元格：`{ row: number, column: number }`
-  * 单元格区域：`{ range: { start: { row: number, column: number }, end: { row: number, column: number} } }`
-* customStyleId: 自定义样式id，与注册自定义样式时定义的id相同
+
+- cellPosition: 单元格位置信息，支持配置单个单元格与单元格区域
+  - 单个单元格：`{ row: number, column: number }`
+  - 单元格区域：`{ range: { start: { row: number, column: number }, end: { row: number, column: number} } }`
+- customStyleId: 自定义样式 id，与注册自定义样式时定义的 id 相同

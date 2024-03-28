@@ -17,7 +17,14 @@ import type {
 import type { MenuListItem, DropDownMenuEventInfo, DropDownMenuHighlightInfo } from './menu';
 import type { CellStyle } from './style-define';
 import type { ColumnIconOption } from './icon';
-import type { ColumnData, ColumnDefine, ColumnsDefine, HeaderData, IndicatorData } from './list-table/layout-map/api';
+import type {
+  ColumnData,
+  ColumnDefine,
+  ColumnsDefine,
+  HeaderData,
+  IndicatorData,
+  SeriesNumberColumnData
+} from './list-table/layout-map/api';
 export type { HeaderData } from './list-table/layout-map/api';
 import type { TableTheme } from '../themes/theme';
 import type { ICustomRender } from './customElement';
@@ -56,6 +63,8 @@ import type {
   TableEventOptions,
   IPivotChartDataConfig,
   IListTableDataConfig,
+  IRowSeriesNumber,
+  ColumnSeriesNumber,
   ColumnStyleOption
 } from '.';
 import type { TooltipOptions } from './tooltip';
@@ -78,6 +87,7 @@ import type { ITitle } from './component/title';
 import type { DiscreteTableLegend } from '../components/legend/discrete-legend/discrete-legend';
 import type { ContinueTableLegend } from '../components/legend/continue-legend/continue-legend';
 import type { NumberRangeMap } from '../layout/row-height-map';
+import type { RowSeriesNumberHelper } from '../core/row-series-number-helper';
 
 export interface IBaseTableProtected {
   element: HTMLElement;
@@ -103,6 +113,8 @@ export interface IBaseTableProtected {
   // underlayBackgroundColor?: string;
   keyboardOptions?: TableKeyboardOptions;
   eventOptions?: TableEventOptions;
+  rowSeriesNumber?: IRowSeriesNumber;
+  columnSeriesNumber?: ColumnSeriesNumber[];
   // disableRowHeaderColumnResize?: boolean;
   // 列宽调整模式（全列调整；全列不可调整；仅表头单元格可调整；仅内容单元格可调整）
   columnResizeMode?: 'all' | 'none' | 'header' | 'body';
@@ -140,6 +152,7 @@ export interface IBaseTableProtected {
 
   bodyHelper: BodyHelper;
   headerHelper: HeaderHelper;
+  rowSeriesNumberHelper: RowSeriesNumberHelper;
 
   cellTextOverflows: { [at: string]: string };
   // headerDescriptions: { [at: string]: string };
@@ -374,11 +387,12 @@ export interface BaseTableConstructorOptions {
 
   customMergeCell?: CustomMergeCell;
 
-  // for nodejs
+  // #region for nodejs
   mode?: 'node' | 'broswer';
   modeParams?: any;
   canvasWidth?: number;
   canvasHeight?: number;
+  // #endregion
   /**
    * 'auto':和浏览器滚动行为一致 表格滚动到顶部/底部时 触发浏览器默认行为;
    *  设置为 'none' 时, 表格滚动到顶部/底部时, 不再触发父容器滚动
@@ -388,8 +402,12 @@ export interface BaseTableConstructorOptions {
   // resize response time
   resizeTime?: number;
 
+  rowSeriesNumber?: IRowSeriesNumber;
+  // columnSeriesNumber?: ColumnSeriesNumber[];
   customCellStyle?: CustomCellStyle[];
   customCellStyleArrangement?: CustomCellStyleArrangement[];
+
+  columnWidthComputeMode?: 'normal' | 'only-header' | 'only-body';
 }
 export interface BaseTableAPI {
   /** 数据总条目数 */
@@ -493,6 +511,8 @@ export interface BaseTableAPI {
   canvasWidth?: number;
   canvasHeight?: number;
 
+  columnWidthComputeMode?: 'normal' | 'only-header' | 'only-body';
+
   /** 获取表格绘制的范围 不包括frame的宽度 */
   getDrawRange: () => Rect;
   /** 将鼠标坐标值 转换成表格坐标系中的坐标位置 */
@@ -511,6 +531,7 @@ export interface BaseTableAPI {
   throttleInvalidate: () => void;
   getRowHeight: (row: number) => number;
   getDefaultRowHeight: (row: number) => number | 'auto';
+  getDefaultColumnWidth: (col: number) => number | 'auto';
   _setRowHeight: (row: number, height: number, clearCache?: boolean) => void;
   getColWidth: (col: number) => number;
   getColWidthDefined: (col: number) => string | number;
@@ -587,15 +608,15 @@ export interface BaseTableAPI {
   getHeaderField: (col: number, row: number) => any | undefined;
 
   _getHeaderCellBySortState: (sortState: SortState) => CellAddress | undefined;
-  getHeaderDefine: (col: number, row: number) => ColumnDefine;
-  _getHeaderLayoutMap: (col: number, row: number) => HeaderData;
+  getHeaderDefine: (col: number, row: number) => ColumnDefine | IRowSeriesNumber | ColumnSeriesNumber;
+  _getHeaderLayoutMap: (col: number, row: number) => HeaderData | SeriesNumberColumnData;
   getContext: () => CanvasRenderingContext2D;
   getCellRange: (col: number, row: number) => CellRange;
   _resetFrozenColCount: () => void;
   isCellRangeEqual: (col: number, row: number, targetCol: number, targetRow: number) => boolean;
   _getLayoutCellId: (col: number, row: number) => LayoutObjectId;
-  _getBodyLayoutMap: (col: number, row: number) => ColumnData | IndicatorData;
-  getBodyColumnDefine: (col: number, row: number) => ColumnDefine;
+  _getBodyLayoutMap: (col: number, row: number) => ColumnData | IndicatorData | SeriesNumberColumnData;
+  getBodyColumnDefine: (col: number, row: number) => ColumnDefine | IRowSeriesNumber | ColumnSeriesNumber;
   getBodyColumnType: (col: number, row: number) => ColumnTypeOption;
   getCellType: (col: number, row: number) => ColumnTypeOption;
   fireListeners: <TYPE extends keyof TableEventHandlersEventArgumentMap>(
@@ -715,7 +736,6 @@ export interface BaseTableAPI {
    */
   scrollToCell: (cellAddr: { col?: number; row?: number }) => void;
 
-
   registerCustomCellStyle: (customStyleId: string, customStyle: ColumnStyleOption | undefined | null) => void;
   arrangeCustomCellStyle: (cellPos: { col?: number; row?: number; range?: CellRange }, customStyleId: string) => void;
 
@@ -729,6 +749,10 @@ export interface BaseTableAPI {
     targetSize: any;
     moveType: 'column' | 'row';
   };
+  changeRecordOrder: (source: number, target: number) => void;
+  isSeriesNumber: (col: number, row?: number) => boolean;
+  isHasSeriesNumber: () => boolean;
+  leftRowSeriesNumberCount: number;
 }
 export interface ListTableProtected extends IBaseTableProtected {
   /** 表格数据 */

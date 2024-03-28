@@ -1,6 +1,100 @@
 # Change Log - @visactor/vtable
 
-This log was last generated on Thu, 14 Mar 2024 02:24:21 GMT and should not be manually modified.
+This log was last generated on Thu, 28 Mar 2024 07:06:46 GMT and should not be manually modified.
+
+## 0.22.3
+Thu, 28 Mar 2024 07:06:46 GMT
+
+### Updates
+
+- fix: fix legend default selectData
+
+## 0.22.2
+Wed, 27 Mar 2024 06:41:08 GMT
+
+### Updates
+
+- fix: icon set interactive true logic error #1097
+
+
+- fix: customlayout container set width invalid #1263
+
+
+- fix: row height compute error when set autoHeight and has large count columns #1325
+
+
+- fix: compute row height handle with sparkline cellType #1331
+
+
+- fix: pivot-image demo can not scroll #1337
+
+
+- feat: add validateValue api for editor #1374
+
+
+- fix: change-header-position arguments row refix
+
+
+- fix: drawCellInnerBorder with no frameStyle #1381
+
+
+- feat: max/min in progress support funtion #1312
+- fix: fix axis column/row visible in pivotchart #1309
+- fix: fix _widthResizedColMap update in DBLCLICK_CELL #1297
+- fix: fix table text measurement in restore mode #1349
+- fix: fix merge cell custom layout update #1271
+- fix: fix stroke width update in merge cell #1324
+- fix: add _contentOffset in progressbar #1350
+- fix: fix richtext height measurement #1313
+- fix: fix textStickBaseOnAlign in style
+- refactor: setRecords clear reference object #1188
+
+
+
+## 0.22.1
+Fri, 22 Mar 2024 11:26:30 GMT
+
+### Updates
+
+- feat: add openinula-vtable
+
+## 0.22.0
+Fri, 22 Mar 2024 10:54:02 GMT
+
+### Minor changes
+
+- feat: support rowSeriesNumber #968
+
+
+- feat: record data support set hierarchyState
+
+
+
+### Updates
+
+- fix: fix typeError in getCellMergeRange()
+
+## 0.21.3
+Wed, 20 Mar 2024 10:48:31 GMT
+
+### Updates
+
+- fix: mapping colorMap not work #1295
+
+
+- fix: when copy blank cell and paste to cell change to undefined #1298
+
+
+- fix:  bug datasource lazy load edit cell value invalid #1302
+
+
+- docs: add list table tree mode guide
+
+
+- fix: fix cell progress create content size
+- fix: fix row level in getCellAdressByHeaderPath()
+- fix: use default style in exportCellImg()
+- fix: fix typeError in getCellMergeRange()
 
 ## 0.21.2
 Thu, 14 Mar 2024 02:24:21 GMT

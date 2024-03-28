@@ -319,7 +319,7 @@ export function createTable(el: any, v: any) {
         {
           bgColor: {
             indicatorKey: 'sales',
-            mapping(table, value) {
+            mapping({ table, value }) {
               const max: number =
                 table.dataset.indicatorStatistics[table.dataset.indicatorKeys.indexOf('sales')].max.value();
               const min: number =
@@ -331,7 +331,7 @@ export function createTable(el: any, v: any) {
         {
           bgColor: {
             indicatorKey: 'number',
-            mapping(table, value) {
+            mapping({ table, value }) {
               const max: number =
                 table.dataset.indicatorStatistics[table.dataset.indicatorKeys.indexOf('number')].max.value();
               const min: number =

@@ -1,7 +1,7 @@
 // import { FederatedPointerEvent } from '@src/vrender';
 import type { FederatedPointerEvent, Gesture } from '@src/vrender';
 import { RichText } from '@src/vrender';
-import type { MousePointerCellEvent } from '../ts-types';
+import type { ColumnDefine, MousePointerCellEvent } from '../ts-types';
 import { IconFuncTypeEnum } from '../ts-types';
 import type { StateManager } from '../state/state';
 import type { Group } from '../scenegraph/graphic/group';
@@ -134,7 +134,7 @@ export class EventManager {
         );
         if (this.table._canResizeColumn(resizeCol.col, resizeCol.row) && resizeCol.col >= 0) {
           this.table.scenegraph.updateAutoColWidth(resizeCol.col);
-
+          this.table.internalProps._widthResizedColMap.add(resizeCol.col);
           // if (this.table.isPivotChart()) {
           this.table.scenegraph.updateChartSize(resizeCol.col);
           // }
@@ -150,6 +150,15 @@ export class EventManager {
               state.columnResize.isRightFrozen
             );
           }
+          const colWidths = [];
+          // 返回所有列宽信息
+          for (let col = 0; col < this.table.colCount; col++) {
+            colWidths.push(this.table.getColWidth(col));
+          }
+          this.table.fireListeners(TABLE_EVENT_TYPE.RESIZE_COLUMN_END, {
+            col: resizeCol.col,
+            colWidths
+          });
         }
       }
     });
@@ -226,14 +235,14 @@ export class EventManager {
       const define = this.table.getBodyColumnDefine(eventArgs.col, eventArgs.row);
       if (
         this.table.isHeader(eventArgs.col, eventArgs.row) &&
-        (define?.disableHeaderSelect || this.table.stateManager.select?.disableHeader)
+        ((define as ColumnDefine)?.disableHeaderSelect || this.table.stateManager.select?.disableHeader)
       ) {
         if (!isSelectMoving) {
           // 如果是点击点表头 取消单元格选中状态
           this.table.stateManager.updateSelectPos(-1, -1);
         }
         return false;
-      } else if (!this.table.isHeader(eventArgs.col, eventArgs.row) && define?.disableSelect) {
+      } else if (!this.table.isHeader(eventArgs.col, eventArgs.row) && (define as ColumnDefine)?.disableSelect) {
         if (!isSelectMoving) {
           this.table.stateManager.updateSelectPos(-1, -1);
         }

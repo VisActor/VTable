@@ -51,7 +51,7 @@ export function createTable() {
         {
           bgColor: {
             indicatorKey: 'sales',
-            mapping(table, value) {
+            mapping({ table, value }) {
               const max: number =
                 table.dataset.indicatorStatistics[table.dataset.indicatorKeys.indexOf('sales')].max.value();
               const min: number =
@@ -63,7 +63,7 @@ export function createTable() {
         {
           bgColor: {
             indicatorKey: 'number',
-            mapping(table, value) {
+            mapping({ table, value }) {
               const max: number =
                 table.dataset.indicatorStatistics[table.dataset.indicatorKeys.indexOf('number')].max.value();
               const min: number =
@@ -333,6 +333,7 @@ export function createTable() {
         sub_category: '纸张'
       }
     ],
+    dragHeaderMode: 'all',
     widthMode: 'autoWidth' // 宽度模式：standard 标准模式； adaptive 自动填满容器
   };
 

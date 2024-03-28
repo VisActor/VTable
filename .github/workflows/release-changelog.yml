@@ -49,12 +49,12 @@ jobs:
           langs: 'en,zh'
           tag_name: ${{github.event.release.tag_name}}
           file_name: release.md
-          
+
       - name: Build packages
         env:
           NODE_OPTIONS: "--max_old_space_size=4096"
         run: node common/scripts/install-run-rush.js build --only tag:package
-
+        
       - name: Push branch
         run: |
           git add .
