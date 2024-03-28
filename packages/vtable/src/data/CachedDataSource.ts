@@ -33,7 +33,7 @@ export class CachedDataSource extends DataSource {
   /**
    * record cache 当用户定义的CachedDataSource.get为promise的时候 可以用rCache缓存已获取数据条目
    */
-  private _recordCache: { [index: number]: any };
+  private _recordCache: any[];
   /**
    * field cache 当用户定义field为promise的时候 可以用fCache缓存已获取值
    */
@@ -58,7 +58,7 @@ export class CachedDataSource extends DataSource {
           return array[index];
         },
         length: array.length,
-        source: array
+        records: array
       },
       dataConfig,
       pagination,
@@ -76,7 +76,7 @@ export class CachedDataSource extends DataSource {
     hierarchyExpandLevel?: number
   ) {
     super(opt, dataConfig, pagination, columnObjs, rowHierarchyType, hierarchyExpandLevel);
-    this._recordCache = {};
+    this._recordCache = [];
     this._fieldCache = {};
   }
   protected getOriginalRecord(index: number): MaybePromiseOrUndefined {
@@ -104,7 +104,7 @@ export class CachedDataSource extends DataSource {
 
   clearCache(): void {
     if (this._recordCache) {
-      this._recordCache = {};
+      this._recordCache = [];
     }
     if (this._fieldCache) {
       this._fieldCache = {};
@@ -117,8 +117,13 @@ export class CachedDataSource extends DataSource {
   protected recordPromiseCallBack(index: number, record: MaybePromiseOrUndefined): void {
     this._recordCache[index] = record;
   }
+  get records(): any[] {
+    return Array.isArray(this._recordCache) && this._recordCache.length > 0 ? this._recordCache : super.records;
+  }
 
   release(): void {
     super.release?.();
+    this._recordCache = null;
+    this._fieldCache = null;
   }
 }

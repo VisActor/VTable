@@ -52,7 +52,13 @@ export function createTable() {
         return data[index - loadStartIndex]; //获取批次数据列表中的index对应数据
       });
     },
-    length: 10000 //all records count
+    added(index: number, count: number) {
+      this.length += count;
+    },
+    deleted(index: number[]) {
+      this.length -= index.length;
+    },
+    length: 5000 //all records count
   });
 
   const columns: VTable.ColumnsDefine = [
