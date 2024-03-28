@@ -395,29 +395,6 @@ export function hashCode(input: string) {
   return retValue;
 }
 
-/**
- * 从数组array中获取index的值
- * 如：给index=[0,0] 则返回 array[0].children[0]；如果给index=[2] 则返回array[2]； 如果给index=[3,0,4] 则返回array[3].children[0].children[4]
- * @param array
- * @param index
- * @returns
- */
-export function getValueFromDeepArray(array: any, index: number[]) {
-  let result = array;
-  for (let i = 0; i < index.length; i++) {
-    const currentIdx = index[i];
-    if (result[currentIdx]) {
-      result = result[currentIdx];
-    } else {
-      return undefined;
-    }
-    if (result && result.children && i + 1 < index.length) {
-      result = result.children;
-    }
-  }
-  return result;
-}
-
 export function toBoolean(val: unknown): boolean {
   if (typeof val === 'string') {
     if (val === 'false') {
