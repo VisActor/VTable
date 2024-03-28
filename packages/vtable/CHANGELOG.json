@@ -2,6 +2,18 @@
   "name": "@visactor/vtable",
   "entries": [
     {
+      "version": "0.22.3",
+      "tag": "@visactor/vtable_v0.22.3",
+      "date": "Thu, 28 Mar 2024 07:06:46 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "fix: fix legend default selectData"
+          }
+        ]
+      }
+    },
+    {
       "version": "0.22.2",
       "tag": "@visactor/vtable_v0.22.2",
       "date": "Wed, 27 Mar 2024 06:41:08 GMT",

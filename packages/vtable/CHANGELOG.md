@@ -1,6 +1,13 @@
 # Change Log - @visactor/vtable
 
-This log was last generated on Wed, 27 Mar 2024 06:41:08 GMT and should not be manually modified.
+This log was last generated on Thu, 28 Mar 2024 07:06:46 GMT and should not be manually modified.
+
+## 0.22.3
+Thu, 28 Mar 2024 07:06:46 GMT
+
+### Updates
+
+- fix: fix legend default selectData
 
 ## 0.22.2
 Wed, 27 Mar 2024 06:41:08 GMT
