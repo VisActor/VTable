@@ -56,6 +56,8 @@ export type ScrollStyle = {
   visible?: 'always' | 'scrolling' | 'none' | 'focus';
   /*** 悬浮与容器上，还是独立于容器外 */
   hoverOn?: boolean;
+  /** 是否显示到容器的边缘 尽管内容没有撑满的情况下 默认false */
+  barToSide?: boolean;
 };
 /**
  * 气泡框，按钮的的解释信息

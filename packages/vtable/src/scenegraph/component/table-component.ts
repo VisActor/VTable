@@ -161,7 +161,9 @@ export class TableComponent {
     componentGroup.addChild(this.columnResizeBgLine);
     componentGroup.addChild(this.columnResizeLine);
     componentGroup.addChild(this.columnResizeLabel);
-    if (this.table.theme.scrollStyle.hoverOn) {
+
+    const hoverOn = this.table.theme.scrollStyle.hoverOn;
+    if (hoverOn && !this.table.theme.scrollStyle.barToSide) {
       componentGroup.addChild(this.hScrollBar);
       componentGroup.addChild(this.vScrollBar);
     } else {
@@ -250,9 +252,19 @@ export class TableComponent {
     if (totalWidth > tableWidth) {
       const y = Math.min(tableHeight, totalHeight);
       const rangeEnd = Math.max(0.05, (tableWidth - frozenColsWidth) / (totalWidth - frozenColsWidth));
+
+      const hoverOn = this.table.theme.scrollStyle.hoverOn;
+
+      let attrY = 0;
+      if (this.table.theme.scrollStyle.barToSide) {
+        attrY = this.table.tableNoFrameHeight - (hoverOn ? width : -this.table.scenegraph.tableGroup.attribute.y);
+      } else {
+        attrY = y - (hoverOn ? width : -this.table.scenegraph.tableGroup.attribute.y);
+      }
+
       this.hScrollBar.setAttributes({
-        x: frozenColsWidth + (!this.table.theme.scrollStyle.hoverOn ? this.table.scenegraph.tableGroup.attribute.x : 0),
-        y: y - (this.table.theme.scrollStyle.hoverOn ? width : -this.table.scenegraph.tableGroup.attribute.y),
+        x: frozenColsWidth + (!hoverOn ? this.table.scenegraph.tableGroup.attribute.x : 0),
+        y: attrY,
         width: tableWidth - frozenColsWidth - rightFrozenColsWidth,
         range: [0, rangeEnd],
         visible: visible === 'always'
@@ -277,10 +289,19 @@ export class TableComponent {
     if (totalHeight > tableHeight) {
       const x = Math.min(tableWidth, totalWidth);
       const rangeEnd = Math.max(0.05, (tableHeight - frozenRowsHeight) / (totalHeight - frozenRowsHeight));
+
+      let attrX = 0;
+      const hoverOn = this.table.theme.scrollStyle.hoverOn;
+
+      if (this.table.theme.scrollStyle.barToSide) {
+        attrX = this.table.tableNoFrameWidth - (hoverOn ? width : -this.table.scenegraph.tableGroup.attribute.x);
+      } else {
+        attrX = x - (hoverOn ? width : -this.table.scenegraph.tableGroup.attribute.x);
+      }
+
       this.vScrollBar.setAttributes({
-        x: x - (this.table.theme.scrollStyle.hoverOn ? width : -this.table.scenegraph.tableGroup.attribute.x),
-        y:
-          frozenRowsHeight + (!this.table.theme.scrollStyle.hoverOn ? this.table.scenegraph.tableGroup.attribute.y : 0),
+        x: attrX,
+        y: frozenRowsHeight + (!hoverOn ? this.table.scenegraph.tableGroup.attribute.y : 0),
         height: tableHeight - frozenRowsHeight - bottomFrozenRowsHeight,
         range: [0, rangeEnd],
         visible: visible === 'always'
