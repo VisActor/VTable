@@ -2,6 +2,81 @@
   "name": "@visactor/vtable",
   "entries": [
     {
+      "version": "0.22.3",
+      "tag": "@visactor/vtable_v0.22.3",
+      "date": "Thu, 28 Mar 2024 07:06:46 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "fix: fix legend default selectData"
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.22.2",
+      "tag": "@visactor/vtable_v0.22.2",
+      "date": "Wed, 27 Mar 2024 06:41:08 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "fix: icon set interactive true logic error #1097\n\n"
+          },
+          {
+            "comment": "fix: customlayout container set width invalid #1263\n\n"
+          },
+          {
+            "comment": "fix: row height compute error when set autoHeight and has large count columns #1325\n\n"
+          },
+          {
+            "comment": "fix: compute row height handle with sparkline cellType #1331\n\n"
+          },
+          {
+            "comment": "fix: pivot-image demo can not scroll #1337\n\n"
+          },
+          {
+            "comment": "feat: add validateValue api for editor #1374\n\n"
+          },
+          {
+            "comment": "fix: change-header-position arguments row refix\n\n"
+          },
+          {
+            "comment": "fix: drawCellInnerBorder with no frameStyle #1381\n\n"
+          },
+          {
+            "comment": "feat: max/min in progress support funtion #1312"
+          },
+          {
+            "comment": "fix: fix axis column/row visible in pivotchart #1309"
+          },
+          {
+            "comment": "fix: fix _widthResizedColMap update in DBLCLICK_CELL #1297"
+          },
+          {
+            "comment": "fix: fix table text measurement in restore mode #1349"
+          },
+          {
+            "comment": "fix: fix merge cell custom layout update #1271"
+          },
+          {
+            "comment": "fix: fix stroke width update in merge cell #1324"
+          },
+          {
+            "comment": "fix: add _contentOffset in progressbar #1350"
+          },
+          {
+            "comment": "fix: fix richtext height measurement #1313"
+          },
+          {
+            "comment": "fix: fix textStickBaseOnAlign in style"
+          },
+          {
+            "comment": "refactor: setRecords clear reference object #1188\n\n"
+          }
+        ]
+      }
+    },
+    {
       "version": "0.22.1",
       "tag": "@visactor/vtable_v0.22.1",
       "date": "Fri, 22 Mar 2024 11:26:30 GMT",

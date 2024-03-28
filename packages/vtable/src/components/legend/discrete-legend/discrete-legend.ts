@@ -22,7 +22,7 @@ export class DiscreteTableLegend {
     this.orient = option.orient ?? 'left';
     this.visible = option.visible ?? true;
     this.position = option.position ?? 'middle';
-    this.selectedData = option.defaultSelected ?? [];
+    this.selectedData = option.defaultSelected ?? null;
 
     this.createComponent();
     this.initEvent();

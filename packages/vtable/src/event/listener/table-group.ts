@@ -287,7 +287,7 @@ export function bindTableGroupListener(eventManager: EventManager) {
             target: { col: table.stateManager.columnMove.colTarget, row: table.stateManager.columnMove.rowTarget },
             source: {
               col: table.stateManager.columnMove.colSource,
-              row: table.stateManager.columnMove.rowSource //TODO row
+              row: table.stateManager.columnMove.rowSource
             }
           });
         }
@@ -452,7 +452,7 @@ export function bindTableGroupListener(eventManager: EventManager) {
             target: { col: eventArgsSet.eventArgs.col, row: eventArgsSet.eventArgs.row },
             source: {
               col: table.stateManager.columnMove.colSource,
-              row: table.stateManager.columnMove.colSource //TODO row
+              row: table.stateManager.columnMove.rowSource
             }
           });
         }

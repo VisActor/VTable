@@ -36,6 +36,7 @@ export class Style extends EventTarget implements ColumnStyle {
   private _padding: PaddingsPropertyDefine | undefined;
   private _defaultPadding: PaddingsPropertyDefine = [10, 16, 10, 16];
   private _textStick: boolean;
+  private _textStickBaseOnAlign: boolean;
   private _marked: MarkedPropertyDefine;
   // eslint-disable-next-line no-undef
   private _textAlign: TextAlignType;
@@ -80,6 +81,7 @@ export class Style extends EventTarget implements ColumnStyle {
     this._fontStyle = style.fontStyle ?? headerStyle?.fontStyle;
     this._textOverflow = (style.textOverflow ?? headerStyle?.textOverflow) || 'ellipsis';
     this._textStick = style.textStick ?? headerStyle?.textStick ?? false;
+    this._textStickBaseOnAlign = style.textStickBaseOnAlign ?? headerStyle?.textStickBaseOnAlign ?? false;
     this._marked = style.marked ?? headerStyle?.marked ?? false;
     this._textAlign = (style.textAlign ?? headerStyle?.textAlign) || 'left';
     this._textBaseline = (style.textBaseline ?? headerStyle?.textBaseline) || 'middle';
@@ -181,6 +183,13 @@ export class Style extends EventTarget implements ColumnStyle {
   set textStick(textStick: boolean) {
     this._textStick = textStick;
     //this.doChangeStyle();
+  }
+  get textStickBaseOnAlign(): boolean {
+    return this._textStickBaseOnAlign;
+  }
+  set textStickBaseOnAlign(textStickBaseOnAlign: boolean) {
+    this._textStickBaseOnAlign = textStickBaseOnAlign;
+    // this.doChangeStyle();
   }
   get marked(): MarkedPropertyDefine | undefined {
     return this._marked;

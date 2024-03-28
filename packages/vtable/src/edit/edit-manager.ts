@@ -76,8 +76,11 @@ export class EditManeger {
         console.warn("VTable Warn: this is aggregation value, can't be edited");
         return;
       }
+
+      if (!this.editingEditor) {
+        this.editCell = { col, row };
+      }
       this.editingEditor = editor;
-      this.editCell = { col, row };
       const dataValue = this.table.getCellOriginValue(col, row);
       const rect = this.table.getCellRangeRelativeRect(this.table.getCellRange(col, row));
       const referencePosition = { rect: { left: rect.left, top: rect.top, width: rect.width, height: rect.height } };
@@ -128,13 +131,15 @@ export class EditManeger {
     if (!this.editingEditor.getValue) {
       console.warn('VTable Warn: `getValue` is not provided, did you forget to implement it?');
     }
-    const changedValue = this.editingEditor.getValue?.();
-    (this.table as ListTableAPI).changeCellValue(this.editCell.col, this.editCell.row, changedValue);
+    if (!this.editingEditor.validateValue || this.editingEditor.validateValue?.()) {
+      const changedValue = this.editingEditor.getValue?.();
+      (this.table as ListTableAPI).changeCellValue(this.editCell.col, this.editCell.row, changedValue);
 
-    this.editingEditor.exit && console.warn('VTable Warn: `exit` is deprecated, please use `onEnd` instead.');
-    this.editingEditor.exit?.();
-    this.editingEditor.onEnd?.();
-    this.editingEditor = null;
+      this.editingEditor.exit && console.warn('VTable Warn: `exit` is deprecated, please use `onEnd` instead.');
+      this.editingEditor.exit?.();
+      this.editingEditor.onEnd?.();
+      this.editingEditor = null;
+    }
   }
 
   cancelEdit() {
