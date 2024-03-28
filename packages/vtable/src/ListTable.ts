@@ -882,7 +882,6 @@ export class ListTable extends BaseTable implements ListTableAPI {
   }
   updateFilterRules(filterRules: FilterRules) {
     this.scenegraph.clearCells();
-    this.internalProps.dataConfig.filterRules = filterRules;
     if (this.sortState) {
       this.dataSource.updateFilterRulesForSorted(filterRules);
       sortRecords(this);

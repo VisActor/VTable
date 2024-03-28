@@ -185,6 +185,7 @@ export class DataSource extends EventTarget implements DataSourceAPI {
   // columns对应各个字段的聚合类对象
   fieldAggregators: Aggregator[] = [];
   layoutColumnObjects: ColumnData[] = [];
+  lastFilterRules: FilterRules;
   constructor(
     dataSourceObj?: DataSourceParam,
     dataConfig?: IListTableDataConfig,
@@ -306,11 +307,11 @@ export class DataSource extends EventTarget implements DataSourceAPI {
     this._generateFieldAggragations();
     const filteredRecords = [];
     const isHasAggregation = this.fieldAggregators.length >= 1;
-    const isHasFilterRule = this.dataConfig?.filterRules?.length >= 1;
+    const isHasFilterRule = this.dataConfig?.filterRules?.length >= 1 || this.lastFilterRules?.length >= 1;
     if (isHasFilterRule || isHasAggregation) {
       for (let i = 0, len = records.length; i < len; i++) {
         const record = records[i];
-        if (isHasFilterRule) {
+        if (this.dataConfig?.filterRules?.length >= 1) {
           if (this.filterRecord(record)) {
             filteredRecords.push(record);
             if (this.rowHierarchyType === 'tree' && record.children) {
@@ -318,11 +319,15 @@ export class DataSource extends EventTarget implements DataSourceAPI {
             }
             isHasAggregation && this.processRecord(record);
           }
+        } else if (this.lastFilterRules?.length >= 1) {
+          //上次做了过滤 本次做清除过滤规则的情况
+          this.clearFilteredChildren(record);
+          isHasAggregation && this.processRecord(record);
         } else if (isHasAggregation) {
           this.processRecord(record);
         }
       }
-      if (isHasFilterRule) {
+      if (this.dataConfig?.filterRules?.length >= 1) {
         return filteredRecords;
       }
     }
@@ -971,9 +976,15 @@ export class DataSource extends EventTarget implements DataSourceAPI {
     this.fireListeners(EVENT_TYPE.CHANGE_ORDER, null);
   }
 
+  private clearFilteredChildren(record: any) {
+    record.filteredChildren = undefined;
+    for (let i = 0; i < record.children?.length ?? 0; i++) {
+      this.clearFilteredChildren(record.children[i]);
+    }
+  }
   private filterRecord(record: any) {
     let isReserved = true;
-    for (let i = 0; i < this.dataConfig.filterRules.length; i++) {
+    for (let i = 0; i < this.dataConfig.filterRules?.length; i++) {
       const filterRule = this.dataConfig?.filterRules[i];
       if (filterRule.filterKey) {
         const filterValue = record[filterRule.filterKey];
@@ -990,6 +1001,7 @@ export class DataSource extends EventTarget implements DataSourceAPI {
   }
 
   updateFilterRulesForSorted(filterRules?: FilterRules): void {
+    this.lastFilterRules = this.dataConfig.filterRules;
     this.dataConfig.filterRules = filterRules;
     this._source = this.processRecords(this.dataSourceObj?.records ?? this.dataSourceObj);
     this._sourceLength = this._source?.length || 0;
@@ -1002,6 +1014,7 @@ export class DataSource extends EventTarget implements DataSourceAPI {
   }
 
   updateFilterRules(filterRules?: FilterRules): void {
+    this.lastFilterRules = this.dataConfig.filterRules;
     this.dataConfig.filterRules = filterRules;
     this._source = this.processRecords(this.dataSourceObj?.records ?? this.dataSourceObj);
     this._sourceLength = this._source?.length || 0;
@@ -1064,6 +1077,7 @@ export class DataSource extends EventTarget implements DataSourceAPI {
   }
   release(): void {
     super.release?.();
+    this.lastFilterRules = null;
   }
   clearSortedMap() {
     this.currentIndexedData && (this.currentIndexedData.length = 0);
