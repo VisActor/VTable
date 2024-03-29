@@ -53,6 +53,10 @@ The above two steps generate the content that needs to be filled, and use the in
 
 Interface definition: https://visactor.io/vtable/api/Methods#changeCellValues
 
+# Double-click the fill handle icon event
+
+The `dblclick_fill_handle` event is triggered when the fill handle icon is double-clicked. You can fill subsequent cell contents by listening to this event.
+
 # Example demo
 
-Can be transposed: https://visactor.io/vtable/demo/edit/fill-handle
+Example address: https://visactor.io/vtable/demo/edit/fill-handle

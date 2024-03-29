@@ -1,6 +1,6 @@
 ---
 category: examples
-group: Interaction
+group: edit
 title: fill handle
 cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/fill-handle.gif
 link: '../guide/edit/fill-handle'
@@ -9,7 +9,7 @@ option: ListTable#excelOptions.fillHandle
 
 # Fill Handle
 
-When a cell is selected, a fill handle will appear above the cell, and you can drag the fill handle to edit the cell's value. Or double-click the fill handle to change the value of the cell you want to edit.
+When a cell is selected, a fill handle will appear above the cell, and you can drag the fill handle to edit the cell's value. Or double-click the fill handle to change the value of the cell you want to edit (This example does not implement this logic).
 
 ## Key Configurations
 

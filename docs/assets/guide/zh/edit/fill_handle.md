@@ -41,7 +41,7 @@ tableInstance.on('mousedown_fill_handle', arg => {
 
 ## 2. 监听`drag_fill_handle_end`事件
 
-鼠标拖拽填充柄后释放鼠标触发该事件，通过监听该事件得知填充柄的方向和需要填充的具体单元格范围。
+鼠标拖拽填充柄后释放鼠标触发该事件`drag_fill_handle_end`，通过监听该事件得知填充柄的方向和需要填充的具体单元格范围。
 
 如上一步中调用接口 `getSelectedCellRange()`得知当前选中范围，结合填充柄的方向，可以计算出需要填充的单元格范围。
 
@@ -53,6 +53,10 @@ tableInstance.on('mousedown_fill_handle', arg => {
 
 接口定义：https://visactor.io/vtable/api/Methods#changeCellValues
 
+# 双击填充柄图标事件
+
+双击填充柄图标时触发`dblclick_fill_handle`事件，可以通过监听该事件来填充后续单元格内容。
+
 # 示例 demo
 
-可以转置：https://visactor.io/vtable/demo/edit/fill-handle
+示例地址：https://visactor.io/vtable/demo/edit/fill-handle
