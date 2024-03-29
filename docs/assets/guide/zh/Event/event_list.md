@@ -29,6 +29,8 @@
 |点击排序|SORT\_CLICK|点击排序图标事件|
 |点击固定列|FREEZE\_CLICK|点击固定列图标事件|
 |滚动|SCROLL|滚动表格事件|
+|滚动|SCROLL_HORIZONTAL_END|横向滚动右侧事件|
+|滚动|SCROLL_VERTICAL_END|竖向滚动底部事件|
 |点击下拉图标|DROPDOWNMENU\_CLICK|点击下拉菜单图标事件|
 |点击下拉菜单|MENU\_CLICK|点击下拉菜单事件|
 |鼠标经过迷你图|MOUSEOVER\_CHART\_SYMBOL|鼠标经过迷你图标记事件|
@@ -63,6 +65,8 @@ const {
     PASTE_CELL,
     RESIZE_COLUMN,
     SCROLL,
+    SCROLL_HORIZONTAL_END,
+    SCROLL_VERTICAL_END,
     CHANGED_VALUE,
     FREEZE_CLICK,
     SORT_CLICK,

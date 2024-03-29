@@ -2,6 +2,35 @@
   "name": "@visactor/vtable",
   "entries": [
     {
+      "version": "0.23.0",
+      "tag": "@visactor/vtable_v0.23.0",
+      "date": "Fri, 29 Mar 2024 09:26:36 GMT",
+      "comments": {
+        "minor": [
+          {
+            "comment": "feat: add scroll end event and barToSide option #1304\n\n"
+          },
+          {
+            "comment": "feat: add excel options to support fill handle\n\n"
+          }
+        ],
+        "none": [
+          {
+            "comment": "fix: transpose with frozenColCount shadowline render #1366\n\n"
+          },
+          {
+            "comment": "feat: list tree mode support filter #1376\n\n"
+          },
+          {
+            "comment": "fix: datasource support promise mode call addRecords and deleteRecords\n\n"
+          },
+          {
+            "comment": "fix: when click cell should not trigger drag_select_end event #1410\n\n"
+          }
+        ]
+      }
+    },
+    {
       "version": "0.22.3",
       "tag": "@visactor/vtable_v0.22.3",
       "date": "Thu, 28 Mar 2024 07:06:46 GMT",

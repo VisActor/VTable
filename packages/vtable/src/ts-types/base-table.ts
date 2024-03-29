@@ -268,6 +268,9 @@ export interface BaseTableConstructorOptions {
   defaultHeaderColWidth?: (number | 'auto') | (number | 'auto')[];
   /** 快捷键功能设置 */
   keyboardOptions?: TableKeyboardOptions;
+  excelOptions?: {
+    fillHandle?: boolean;
+  };
   /** 事件触发相关设置 */
   eventOptions?: TableEventOptions;
   /**
@@ -671,6 +674,7 @@ export interface BaseTableAPI {
   getCopyValue: () => string;
 
   getSelectedCellInfos: () => CellInfo[][];
+  getSelectedCellRanges: () => CellRange[];
   getCellInfo: (col: number, row: number) => Omit<MousePointerCellEvent, 'target'>;
 
   showTooltip: (col: number, row: number, tooltipOptions?: TooltipOptions) => void;
@@ -731,7 +735,6 @@ export interface BaseTableAPI {
    * @param cellAddr 要滚动到的单元格位置
    */
   scrollToCell: (cellAddr: { col?: number; row?: number }) => void;
-
   registerCustomCellStyle: (customStyleId: string, customStyle: ColumnStyleOption | undefined | null) => void;
   arrangeCustomCellStyle: (cellPos: { col?: number; row?: number; range?: CellRange }, customStyleId: string) => void;
 

@@ -1,21 +1,21 @@
 ---
 category: examples
-group: Basic Features
-title: row series number
-cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/row-series-number.png
+group: Interaction
+title: 移动行
+cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/row-series-number.gif
 link: '../guide/table_type/List_table/list_table_define_and_generate'
 option: ListTable#rowSeriesNumber.dragOrder
 ---
 
-# Row Series Number
+# 移动行
 
-The row numbering capability refers to adding a unique serial number or identifier to each row of the table to mark, sort or reference the rows in the table. This demo will demonstrate the VTable row numbering capabilities: row selection, row dragging position, and row numbering style configuration.
+行序号能力是指给表格的每一行添加一个唯一的序号或标识符，以便对表格中的行进行标记、排序或引用。该 demo 将展示 VTable 行序号能力：行选，行拖拽位置，以及行序号的样式配置。
 
-## Key Configurations
+## 关键配置
 
 -`ListTable.rowSeriesNumber`
 
-## Code demo
+## 代码演示
 
 ```javascript livedemo template=vtable
 let tableInstance;
@@ -86,6 +86,7 @@ fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American
       widthMode: 'standard',
       rowSeriesNumber: {
         title: '序号',
+        dragOrder: true,
         width: 'auto',
         headerStyle: {
           color: 'black',

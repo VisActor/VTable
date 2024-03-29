@@ -62,6 +62,17 @@ export class StateManager {
     headerSelectMode?: 'inline' | 'cell';
     selecting: boolean;
   };
+  fillHandle: {
+    direction?: 'top' | 'bottom' | 'left' | 'right';
+    directionRow?: boolean;
+    isFilling: boolean;
+    startX: number;
+    startY: number;
+    beforeFillMinCol?: number;
+    beforeFillMinRow?: number;
+    beforeFillMaxCol?: number;
+    beforeFillMaxRow?: number;
+  };
   hover: {
     highlightScope: HighlightScope; // hover模式
     singleStyle?: boolean; // hover当前单元格是否使用单独样式
@@ -263,6 +274,11 @@ export class StateManager {
         row: -1
       },
       selecting: false
+    };
+    this.fillHandle = {
+      isFilling: false,
+      startX: undefined,
+      startY: undefined
     };
     this.hover = {
       highlightScope: HighlightScope.single,
@@ -536,6 +552,9 @@ export class StateManager {
   isResizeCol(): boolean {
     return this.columnResize.resizing;
   }
+  isFillHandle(): boolean {
+    return this.fillHandle.isFilling;
+  }
   isSelecting(): boolean {
     return this.select.selecting;
   }
@@ -574,9 +593,45 @@ export class StateManager {
     this.table.scenegraph.component.showResizeCol(col, y, isRightFrozen);
 
     // 调整列宽期间清空选中清空
-    this.table.stateManager.updateSelectPos(-1, -1);
+    this.updateSelectPos(-1, -1);
 
     this.table.scenegraph.updateNextFrame();
+  }
+  startFillSelect(x: number, y: number) {
+    this.fillHandle.isFilling = true;
+    this.fillHandle.startX = x;
+    this.fillHandle.startY = y;
+    const currentRange = this.select.ranges[this.select.ranges.length - 1];
+    this.fillHandle.beforeFillMinCol = Math.min(currentRange.start.col, currentRange.end.col);
+    this.fillHandle.beforeFillMinRow = Math.min(currentRange.start.row, currentRange.end.row);
+    this.fillHandle.beforeFillMaxCol = Math.max(currentRange.start.col, currentRange.end.col);
+    this.fillHandle.beforeFillMaxRow = Math.max(currentRange.start.row, currentRange.end.row);
+    // this.table.scenegraph.updateNextFrame();
+    this.table.fireListeners(TABLE_EVENT_TYPE.MOUSEDOWN_FILL_HANDLE, {});
+  }
+  endFillSelect() {
+    this.fillHandle.isFilling = false;
+    this.fillHandle.startX = undefined;
+    this.fillHandle.startY = undefined;
+    this.fillHandle.directionRow = undefined;
+    const currentMinCol = Math.min(this.select.ranges[0].start.col, this.select.ranges[0].end.col);
+    const currentMinRow = Math.min(this.select.ranges[0].start.row, this.select.ranges[0].end.row);
+    const currentMaxCol = Math.max(this.select.ranges[0].start.col, this.select.ranges[0].end.col);
+    const currentMaxRow = Math.max(this.select.ranges[0].start.row, this.select.ranges[0].end.row);
+    //如果选中区域没有发生变化 不触发事件
+    if (
+      this.fillHandle.beforeFillMinCol !== currentMinCol ||
+      this.fillHandle.beforeFillMinRow !== currentMinRow ||
+      this.fillHandle.beforeFillMaxCol !== currentMaxCol ||
+      this.fillHandle.beforeFillMaxRow !== currentMaxRow
+    ) {
+      this.table.eventManager.isDraging &&
+        this.table.fireListeners(TABLE_EVENT_TYPE.DRAG_FILL_HANDLE_END, { direction: this.fillHandle.direction });
+    }
+    this.fillHandle.beforeFillMaxCol = undefined;
+    this.fillHandle.beforeFillMaxRow = undefined;
+    this.fillHandle.beforeFillMinCol = undefined;
+    this.fillHandle.beforeFillMinRow = undefined;
   }
   updateResizeCol(xInTable: number, yInTable: number) {
     updateResizeColumn(xInTable, yInTable, this);
@@ -633,17 +688,49 @@ export class StateManager {
       this.table.scenegraph.updateFrozenIcon(0, this.table.colCount - 1);
     }
   }
+  checkVerticalScrollBarEnd() {
+    const totalHeight = this.table.getAllRowsHeight();
+    const scrollTop = this.scroll.verticalBarPos;
+    const viewHeight = this.table.tableNoFrameHeight;
 
+    if (scrollTop + viewHeight >= totalHeight) {
+      this.table.fireListeners(TABLE_EVENT_TYPE.SCROLL_VERTICAL_END, {
+        scrollTop,
+        scrollLeft: this.scroll.horizontalBarPos,
+        scrollHeight: this.table.theme.scrollStyle?.width,
+        scrollWidth: this.table.theme.scrollStyle?.width,
+        viewHeight,
+        viewWidth: this.table.tableNoFrameWidth
+      });
+    }
+  }
+  checkHorizontalScrollBarEnd() {
+    const totalWidth = this.table.getAllColsWidth();
+    const scrollLeft = this.scroll.horizontalBarPos;
+    const viewWidth = this.table.tableNoFrameWidth;
+
+    if (scrollLeft + viewWidth >= totalWidth) {
+      this.table.fireListeners(TABLE_EVENT_TYPE.SCROLL_HORIZONTAL_END, {
+        scrollTop: this.scroll.verticalBarPos,
+        scrollLeft,
+        scrollHeight: this.table.theme.scrollStyle?.width,
+        scrollWidth: this.table.theme.scrollStyle?.width,
+        viewHeight: this.table.tableNoFrameHeight,
+        viewWidth
+      });
+    }
+  }
   updateVerticalScrollBar(yRatio: number) {
     const totalHeight = this.table.getAllRowsHeight();
+    const oldVerticalBarPos = this.scroll.verticalBarPos;
     this.scroll.verticalBarPos = Math.ceil(yRatio * (totalHeight - this.table.scenegraph.height));
     this.table.scenegraph.setY(-this.scroll.verticalBarPos, yRatio === 1);
     this.scroll.verticalBarPos -= this.table.scenegraph.proxy.deltaY;
     this.table.scenegraph.proxy.deltaY = 0;
 
     // 滚动期间清空选中清空
-    this.table.stateManager.updateHoverPos(-1, -1);
-    // this.table.stateManager.updateSelectPos(-1, -1);
+    this.updateHoverPos(-1, -1);
+    // this.updateSelectPos(-1, -1);
 
     this.table.fireListeners(TABLE_EVENT_TYPE.SCROLL, {
       scrollTop: this.scroll.verticalBarPos,
@@ -655,9 +742,14 @@ export class StateManager {
       scrollDirection: 'vertical',
       scrollRatioY: yRatio
     });
+
+    if (oldVerticalBarPos !== this.scroll.verticalBarPos) {
+      this.checkVerticalScrollBarEnd();
+    }
   }
   updateHorizontalScrollBar(xRatio: number) {
     const totalWidth = this.table.getAllColsWidth();
+    const oldHorizontalBarPos = this.scroll.horizontalBarPos;
     this.scroll.horizontalBarPos = Math.ceil(xRatio * (totalWidth - this.table.scenegraph.width));
     this.table.scenegraph.setX(-this.scroll.horizontalBarPos, xRatio === 1);
     this.scroll.horizontalBarPos -= this.table.scenegraph.proxy.deltaX;
@@ -669,8 +761,8 @@ export class StateManager {
     //   }
     // };
     // 滚动期间清空选中清空
-    this.table.stateManager.updateHoverPos(-1, -1);
-    // this.table.stateManager.updateSelectPos(-1, -1);
+    this.updateHoverPos(-1, -1);
+    // this.updateSelectPos(-1, -1);
     this.table.fireListeners(TABLE_EVENT_TYPE.SCROLL, {
       scrollTop: this.scroll.verticalBarPos,
       scrollLeft: this.scroll.horizontalBarPos,
@@ -681,6 +773,10 @@ export class StateManager {
       scrollDirection: 'horizontal',
       scrollRatioX: xRatio
     });
+
+    if (oldHorizontalBarPos !== this.scroll.horizontalBarPos) {
+      this.checkHorizontalScrollBarEnd();
+    }
   }
   setScrollTop(top: number) {
     // 矫正top值范围
@@ -689,8 +785,9 @@ export class StateManager {
     top = Math.ceil(top);
     // 滚动期间清空选中清空 如果调用接口hover状态需要保留，但是如果不调用updateHoverPos透视图处于hover状态的图就不能及时更新 所以这里单独判断了isPivotChart
     if (top !== this.scroll.verticalBarPos || this.table.isPivotChart()) {
-      this.table.stateManager.updateHoverPos(-1, -1);
+      this.updateHoverPos(-1, -1);
     }
+    const oldVerticalBarPos = this.scroll.verticalBarPos;
     // this.table.stateManager.updateSelectPos(-1, -1);
     this.scroll.verticalBarPos = top;
 
@@ -710,6 +807,10 @@ export class StateManager {
       scrollDirection: 'vertical',
       scrollRatioY: yRatio
     });
+
+    if (oldVerticalBarPos !== top) {
+      this.checkVerticalScrollBarEnd();
+    }
   }
   setScrollLeft(left: number) {
     // 矫正left值范围
@@ -720,9 +821,10 @@ export class StateManager {
     left = Math.ceil(left);
     // 滚动期间清空选中清空
     if (left !== this.scroll.horizontalBarPos) {
-      this.table.stateManager.updateHoverPos(-1, -1);
+      this.updateHoverPos(-1, -1);
     }
     // this.table.stateManager.updateSelectPos(-1, -1);
+    const oldHorizontalBarPos = this.scroll.horizontalBarPos;
     this.scroll.horizontalBarPos = left;
 
     // 设置scenegraph坐标
@@ -742,6 +844,9 @@ export class StateManager {
       scrollDirection: 'horizontal',
       scrollRatioX: xRatio
     });
+    if (oldHorizontalBarPos !== left) {
+      this.checkHorizontalScrollBarEnd();
+    }
   }
   hideVerticalScrollBar() {
     this.table.scenegraph.component.hideVerticalScrollBar();
