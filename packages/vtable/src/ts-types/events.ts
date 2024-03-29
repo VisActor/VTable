@@ -81,6 +81,22 @@ export interface TableEventHandlersEventArgumentMap {
     scrollRatioX?: number;
     scrollRatioY?: number;
   };
+  scroll_vertical_end: {
+    scrollLeft: number;
+    scrollTop: number;
+    scrollWidth: number;
+    scrollHeight: number;
+    viewWidth: number;
+    viewHeight: number;
+  };
+  scroll_horizontal_end: {
+    scrollLeft: number;
+    scrollTop: number;
+    scrollWidth: number;
+    scrollHeight: number;
+    viewWidth: number;
+    viewHeight: number;
+  };
   resize_column: { col: number; colWidth: number };
   resize_column_end: { col: number; colWidths: number[] };
   change_header_position: { source: CellAddress; target: CellAddress };
@@ -159,6 +175,10 @@ export interface TableEventHandlersEventArgumentMap {
   initialized: null;
 
   change_cell_value: { col: number; row: number; rawValue: string | number; changedValue: string | number };
+
+  mousedown_fill_handle: {};
+  drag_fill_handle_end: { direction?: 'top' | 'bottom' | 'left' | 'right' };
+  dblclick_fill_handle: {};
 }
 export interface DrillMenuEventInfo {
   dimensionKey: string | number;
@@ -227,4 +247,11 @@ export interface TableEventHandlersReturnMap {
   initialized: void;
 
   change_cell_value: void;
+  mousedown_fill_handle: void;
+  drag_fill_handle_end: void;
+  dblclick_fill_handle: void;
+
+  scroll_vertical_end: void;
+
+  scroll_horizontal_end: void;
 }

@@ -1,6 +1,33 @@
 # Change Log - @visactor/vtable
 
-This log was last generated on Thu, 28 Mar 2024 07:06:46 GMT and should not be manually modified.
+This log was last generated on Fri, 29 Mar 2024 09:26:36 GMT and should not be manually modified.
+
+## 0.23.0
+Fri, 29 Mar 2024 09:26:36 GMT
+
+### Minor changes
+
+- feat: add scroll end event and barToSide option #1304
+
+
+- feat: add excel options to support fill handle
+
+
+
+### Updates
+
+- fix: transpose with frozenColCount shadowline render #1366
+
+
+- feat: list tree mode support filter #1376
+
+
+- fix: datasource support promise mode call addRecords and deleteRecords
+
+
+- fix: when click cell should not trigger drag_select_end event #1410
+
+
 
 ## 0.22.3
 Thu, 28 Mar 2024 07:06:46 GMT

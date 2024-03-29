@@ -38,6 +38,8 @@ TABLE_EVENT_TYPE = {
   SORT_CLICK: 'sort_click',
   FREEZE_CLICK: 'freeze_click',
   SCROLL: 'scroll',
+  SCROLL_HORIZONTAL_END: 'scroll_horizontal_end',
+  SCROLL_VERTICAL_END: 'scroll_vertical_end',
   DROPDOWN_MENU_CLICK: 'dropdown_menu_click',
   MOUSEOVER_CHART_SYMBOL: 'mouseover_chart_symbol',
   DRAG_SELECT_END: 'drag_select_end',
@@ -200,6 +202,38 @@ TABLE_EVENT_TYPE = {
 ## SCROLL
 
 滚动表格事件。
+
+事件回调函数的参数类型:
+
+```
+    {
+      scrollLeft: number;
+      scrollTop: number;
+      scrollWidth: number;
+      scrollHeight: number;
+      viewWidth: number;
+      viewHeight: number;
+    }
+```
+## SCROLL_HORIZONTAL_END
+
+横向滚动到右侧结束事件
+
+事件回调函数的参数类型:
+
+```
+    {
+      scrollLeft: number;
+      scrollTop: number;
+      scrollWidth: number;
+      scrollHeight: number;
+      viewWidth: number;
+      viewHeight: number;
+    }
+```
+## SCROLL_VERTICAL_END
+
+竖向滚动条滚动到底部事件
 
 事件回调函数的参数类型:
 

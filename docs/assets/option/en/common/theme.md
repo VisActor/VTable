@@ -54,6 +54,9 @@ Or you can directly define a custom theme:
 #${prefix} underlayBackgroundColor(string)
 The color filled in the canvas outside the table drawing area
 
+#${prefix} cellInnerBorder(boolean)
+Whether the cell draws an inner border. If true, the border of the border cell close to the border will be hidden.
+
 #${prefix} bodyStyle(Object)
 
 Body cell style configuration

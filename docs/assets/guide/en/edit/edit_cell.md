@@ -262,14 +262,15 @@ If this interface is not defined, the editing value will not be verified by defa
 ```ts
 interface ListTableAPI {
   /** Set the value of the cell. Note that it corresponds to the original value of the source data, and the vtable instance records will be modified accordingly */
-  changeCellValue: (col: number, row: number, value: string | number | null) => void;
+  changeCellValue: (col: number, row: number, value: string | number | null, workOnEditableCell = false) => void;
   /**
    * Batch update data of multiple cells
    * @param col The starting column number of pasted data
    * @param row The starting row number of pasted data
    * @param values Data array of multiple cells
+   * @param workOnEditableCell just can change editable cells
    */
-  changeCellValues(startCol: number, startRow: number, values: string[][]);
+  changeCellValues(startCol: number, startRow: number, values: string[][], workOnEditableCell = false);
   /** Get the editor of cell configuration */
   getEditor: (col: number, row: number) => IEditor;
   /** Enable cell editing */

@@ -472,6 +472,10 @@ export const menus = [
     children: [
       {
         path: 'interactive',
+        name: 'fill-handle'
+      },
+      {
+        path: 'interactive',
         name: 'hover'
       },
       {
