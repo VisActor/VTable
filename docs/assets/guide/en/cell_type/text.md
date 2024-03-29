@@ -24,6 +24,7 @@ VTable supports setting various styles for text type data. The following are the
 - `underlineOffset`: The distance between underline and text.
 - `lineThrough`: Set the dash for the cell text content.
 - `textStick`: Set whether the text of the cell has an adsorption effect \[The text can dynamically adjust the position when scrolling]
+- `textStickBaseOnAlign`: When the cell text has an adsorption effect [the text can dynamically adjust its position when scrolling], the basis for adsorption is the horizontal alignment of the cell. For example, when `textStickBaseOnAlign` is `true` and `textAlign` is `'center'`, the text will be adsorbed to the horizontal center of the cell; otherwise, it will be adsorbed to the left or right edge of the cell (depending on the scroll position)
 - `autoWrapText`: Sets whether cells wrap themselves.
 - `lineClamp`: Set the maximum number of rows in a cell, you can set number or'auto ', if set to'auto', it will be automatically calculated
 

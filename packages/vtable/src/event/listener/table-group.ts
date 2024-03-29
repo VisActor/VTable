@@ -489,7 +489,11 @@ export function bindTableGroupListener(eventManager: EventManager) {
           table.stateManager.endFillSelect();
         }
         const eventArgsSet: SceneEvent = getCellEventArgsSet(e);
-        if (eventArgsSet.eventArgs && (table as any).hasListeners(TABLE_EVENT_TYPE.DRAG_SELECT_END)) {
+        if (
+          table.eventManager.isDraging &&
+          eventArgsSet.eventArgs &&
+          (table as any).hasListeners(TABLE_EVENT_TYPE.DRAG_SELECT_END)
+        ) {
           const cellsEvent: MousePointerMultiCellEvent = {
             event: e.nativeEvent,
             cells: [],
