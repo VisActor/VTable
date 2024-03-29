@@ -633,9 +633,41 @@ export class StateManager {
       this.table.scenegraph.updateFrozenIcon(0, this.table.colCount - 1);
     }
   }
+  checkVerticalScrollBarEnd() {
+    const totalHeight = this.table.getAllRowsHeight();
+    const scrollTop = this.scroll.verticalBarPos;
+    const viewHeight = this.table.tableNoFrameHeight;
 
+    if (scrollTop + viewHeight >= totalHeight) {
+      this.table.fireListeners(TABLE_EVENT_TYPE.SCROLL_VERTICAL_END, {
+        scrollTop,
+        scrollLeft: this.scroll.horizontalBarPos,
+        scrollHeight: this.table.theme.scrollStyle?.width,
+        scrollWidth: this.table.theme.scrollStyle?.width,
+        viewHeight,
+        viewWidth: this.table.tableNoFrameWidth
+      });
+    }
+  }
+  checkHorizontalScrollBarEnd() {
+    const totalWidth = this.table.getAllColsWidth();
+    const scrollLeft = this.scroll.horizontalBarPos;
+    const viewWidth = this.table.tableNoFrameWidth;
+
+    if (scrollLeft + viewWidth >= totalWidth) {
+      this.table.fireListeners(TABLE_EVENT_TYPE.SCROLL_HORIZONTAL_END, {
+        scrollTop: this.scroll.verticalBarPos,
+        scrollLeft,
+        scrollHeight: this.table.theme.scrollStyle?.width,
+        scrollWidth: this.table.theme.scrollStyle?.width,
+        viewHeight: this.table.tableNoFrameHeight,
+        viewWidth
+      });
+    }
+  }
   updateVerticalScrollBar(yRatio: number) {
     const totalHeight = this.table.getAllRowsHeight();
+    const oldVerticalBarPos = this.scroll.verticalBarPos;
     this.scroll.verticalBarPos = Math.ceil(yRatio * (totalHeight - this.table.scenegraph.height));
     this.table.scenegraph.setY(-this.scroll.verticalBarPos, yRatio === 1);
     this.scroll.verticalBarPos -= this.table.scenegraph.proxy.deltaY;
@@ -655,9 +687,14 @@ export class StateManager {
       scrollDirection: 'vertical',
       scrollRatioY: yRatio
     });
+
+    if (oldVerticalBarPos !== this.scroll.verticalBarPos) {
+      this.checkVerticalScrollBarEnd();
+    }
   }
   updateHorizontalScrollBar(xRatio: number) {
     const totalWidth = this.table.getAllColsWidth();
+    const oldHorizontalBarPos = this.scroll.horizontalBarPos;
     this.scroll.horizontalBarPos = Math.ceil(xRatio * (totalWidth - this.table.scenegraph.width));
     this.table.scenegraph.setX(-this.scroll.horizontalBarPos, xRatio === 1);
     this.scroll.horizontalBarPos -= this.table.scenegraph.proxy.deltaX;
@@ -681,6 +718,10 @@ export class StateManager {
       scrollDirection: 'horizontal',
       scrollRatioX: xRatio
     });
+
+    if (oldHorizontalBarPos !== this.scroll.horizontalBarPos) {
+      this.checkHorizontalScrollBarEnd();
+    }
   }
   setScrollTop(top: number) {
     // 矫正top值范围
@@ -691,6 +732,7 @@ export class StateManager {
     if (top !== this.scroll.verticalBarPos || this.table.isPivotChart()) {
       this.table.stateManager.updateHoverPos(-1, -1);
     }
+    const oldVerticalBarPos = this.scroll.verticalBarPos;
     // this.table.stateManager.updateSelectPos(-1, -1);
     this.scroll.verticalBarPos = top;
 
@@ -710,6 +752,10 @@ export class StateManager {
       scrollDirection: 'vertical',
       scrollRatioY: yRatio
     });
+
+    if (oldVerticalBarPos !== top) {
+      this.checkVerticalScrollBarEnd();
+    }
   }
   setScrollLeft(left: number) {
     // 矫正left值范围
@@ -723,6 +769,7 @@ export class StateManager {
       this.table.stateManager.updateHoverPos(-1, -1);
     }
     // this.table.stateManager.updateSelectPos(-1, -1);
+    const oldHorizontalBarPos = this.scroll.horizontalBarPos;
     this.scroll.horizontalBarPos = left;
 
     // 设置scenegraph坐标
@@ -742,6 +789,9 @@ export class StateManager {
       scrollDirection: 'horizontal',
       scrollRatioX: xRatio
     });
+    if (oldHorizontalBarPos != left) {
+      this.checkHorizontalScrollBarEnd();
+    }
   }
   hideVerticalScrollBar() {
     this.table.scenegraph.component.hideVerticalScrollBar();

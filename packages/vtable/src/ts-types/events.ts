@@ -81,6 +81,22 @@ export interface TableEventHandlersEventArgumentMap {
     scrollRatioX?: number;
     scrollRatioY?: number;
   };
+  scroll_vertical_end: {
+    scrollLeft: number;
+    scrollTop: number;
+    scrollWidth: number;
+    scrollHeight: number;
+    viewWidth: number;
+    viewHeight: number;
+  };
+  scroll_horizontal_end: {
+    scrollLeft: number;
+    scrollTop: number;
+    scrollWidth: number;
+    scrollHeight: number;
+    viewWidth: number;
+    viewHeight: number;
+  };
   resize_column: { col: number; colWidth: number };
   resize_column_end: { col: number; colWidths: number[] };
   change_header_position: { source: CellAddress; target: CellAddress };
@@ -227,4 +243,8 @@ export interface TableEventHandlersReturnMap {
   initialized: void;
 
   change_cell_value: void;
+
+  scroll_vertical_end: void;
+
+  scroll_horizontal_end: void;
 }

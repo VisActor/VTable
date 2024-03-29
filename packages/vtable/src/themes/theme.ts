@@ -469,6 +469,9 @@ export class TableTheme implements ITableThemeDefine {
         },
         get hoverOn(): boolean | undefined {
           return scroll.hoverOn ?? true;
+        },
+        get barToSide(): boolean | undefined {
+          return scroll.barToSide ?? false;
         }
       };
     }
