@@ -1375,8 +1375,14 @@ export class SimpleHeaderLayoutMap implements LayoutMapAPI {
     const addCellPositions = diffDataIndices.add.map(index => {
       return { col: 0, row: this._table.frozenRowCount + index };
     });
-    const removeCellPositions = diffDataIndices.remove.map(index => {
-      return { col: 0, row: this._table.frozenRowCount + index };
+    const removeCellPositions: any[] = [];
+    diffDataIndices.remove.forEach(index => {
+      if (
+        this._table.frozenRowCount + index >= this._table.scenegraph.proxy.rowStart &&
+        this._table.frozenRowCount + index <= this._table.scenegraph.proxy.rowEnd
+      ) {
+        removeCellPositions.push({ col: 0, row: this._table.frozenRowCount + index });
+      }
     });
     return {
       addCellPositions,
