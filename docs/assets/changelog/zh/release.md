@@ -5,15 +5,15 @@
 
 **🆕 新增功能**
 
-- **@visactor/vtable**: list tree mode support filter [#1376](https://github.com/VisActor/VTable/issues/1376)
-- **@visactor/vtable**: add scroll end event and barToSide option [#1304](https://github.com/VisActor/VTable/issues/1304)
-- **@visactor/vtable**: add excel options to support fill handle
+- **@visactor/vtable**: 列表树模式支持updateFilterRules接口 [#1376](https://github.com/VisActor/VTable/issues/1376)
+- **@visactor/vtable**: 添加滚动结束事件，增加barToSide支持滚动条固定显示到边界 [#1304](https://github.com/VisActor/VTable/issues/1304)
+- **@visactor/vtable**: 添加fillHandle以支持填充手柄
 
 **🐛 功能修复**
 
-- **@visactor/vtable**: transpose with frozenColCount shadowline render [#1366](https://github.com/VisActor/VTable/issues/1366)
-- **@visactor/vtable**: datasource support promise mode call addRecords and deleteRecords
-- **@visactor/vtable**: when click cell should not trigger drag_select_end event [#1410](https://github.com/VisActor/VTable/issues/1410)
+- **@visactor/vtable**: 修复使用frozenColCount时转置模式的阴影线渲染问题 [#1366](https://github.com/VisActor/VTable/issues/1366)
+- **@visactor/vtable**: 数据源promise模式调用addRecords和deleteRecords的问题修复
+- **@visactor/vtable**: 点击单元格时不应触发drag_select_end事件修复 [#1410](https://github.com/VisActor/VTable/issues/1410)
 
 
 
