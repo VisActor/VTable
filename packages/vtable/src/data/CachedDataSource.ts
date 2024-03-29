@@ -1,4 +1,3 @@
-import { getValueFromDeepArray } from '../tools/util';
 import type {
   FieldData,
   FieldDef,
@@ -52,9 +51,9 @@ export class CachedDataSource extends DataSource {
     return new CachedDataSource(
       {
         get: (index: number): any => {
-          if (Array.isArray(index)) {
-            return getValueFromDeepArray(array, index);
-          }
+          // if (Array.isArray(index)) {
+          //   return getValueFromDeepArray(array, index);
+          // }
           return array[index];
         },
         length: array.length,

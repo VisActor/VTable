@@ -131,6 +131,7 @@ function _getIndex(sortedIndexMap: null | (number | number[])[], index: number):
 export interface DataSourceParam {
   get: (index: number) => any;
   length: number;
+  /** 需要异步加载的情况 请不要设置records */
   records?: any;
   added?: (index: number, count: number) => any;
   deleted?: (index: number[]) => any;
@@ -172,7 +173,7 @@ export class DataSource extends EventTarget implements DataSourceAPI {
   }
   hasHierarchyStateExpand: boolean = false;
   // treeDataHierarchyState: Map<number | string, HierarchyState> = new Map();
-  beforeChangedRecordsMap: Record<number, any>[] = [];
+  beforeChangedRecordsMap: Record<number, any>[] = []; // TODO过滤后 或者排序后的对应关系
 
   // 注册聚合类型
   registedAggregators: {
@@ -184,6 +185,7 @@ export class DataSource extends EventTarget implements DataSourceAPI {
   // columns对应各个字段的聚合类对象
   fieldAggregators: Aggregator[] = [];
   layoutColumnObjects: ColumnData[] = [];
+  lastFilterRules: FilterRules;
   constructor(
     dataSourceObj?: DataSourceParam,
     dataConfig?: IListTableDataConfig,
@@ -196,7 +198,7 @@ export class DataSource extends EventTarget implements DataSourceAPI {
     this.registerAggregators();
     this.dataSourceObj = dataSourceObj;
     this.dataConfig = dataConfig;
-    this._get = dataSourceObj?.get.bind(dataSourceObj) || (undefined as any);
+    this._get = dataSourceObj?.get;
     this.layoutColumnObjects = columnObjs;
     this._source = dataSourceObj?.records ? this.processRecords(dataSourceObj?.records) : dataSourceObj;
     this._sourceLength = this._source?.length || 0;
@@ -228,7 +230,8 @@ export class DataSource extends EventTarget implements DataSourceAPI {
     for (let i = 0; i < nodeLength; i++) {
       const indexKey = this.currentIndexedData[i];
       const nodeData = this.getOriginalRecord(indexKey);
-      if ((nodeData as any).children?.length > 0) {
+      const children = (nodeData as any).filteredChildren ?? (nodeData as any).children;
+      if (children?.length > 0) {
         if (this.hierarchyExpandLevel > 1) {
           !nodeData.hierarchyState && (nodeData.hierarchyState = HierarchyState.expand);
         } else {
@@ -304,24 +307,45 @@ export class DataSource extends EventTarget implements DataSourceAPI {
     this._generateFieldAggragations();
     const filteredRecords = [];
     const isHasAggregation = this.fieldAggregators.length >= 1;
-    const isHasFilterRule = this.dataConfig?.filterRules?.length >= 1;
+    const isHasFilterRule = this.dataConfig?.filterRules?.length >= 1 || this.lastFilterRules?.length >= 1;
     if (isHasFilterRule || isHasAggregation) {
       for (let i = 0, len = records.length; i < len; i++) {
         const record = records[i];
-        if (isHasFilterRule) {
+        if (this.dataConfig?.filterRules?.length >= 1) {
           if (this.filterRecord(record)) {
             filteredRecords.push(record);
+            if (this.rowHierarchyType === 'tree' && record.children) {
+              record.filteredChildren = this.filteredChildren(record.children);
+            }
             isHasAggregation && this.processRecord(record);
           }
+        } else if (this.lastFilterRules?.length >= 1) {
+          //上次做了过滤 本次做清除过滤规则的情况
+          this.clearFilteredChildren(record);
+          isHasAggregation && this.processRecord(record);
         } else if (isHasAggregation) {
           this.processRecord(record);
         }
       }
-      if (isHasFilterRule) {
+      if (this.dataConfig?.filterRules?.length >= 1) {
         return filteredRecords;
       }
     }
     return records;
+  }
+
+  filteredChildren(records: any[]) {
+    const filteredRecords = [];
+    for (let i = 0, len = records.length; i < len; i++) {
+      const record = records[i];
+      if (this.filterRecord(record)) {
+        filteredRecords.push(record);
+        if (record.children) {
+          record.filteredChildren = this.filteredChildren(record.children);
+        }
+      }
+    }
+    return filteredRecords;
   }
 
   processRecord(record: any) {
@@ -349,12 +373,12 @@ export class DataSource extends EventTarget implements DataSourceAPI {
     //   return 0;
     // }
     let childTotalLength = 0;
-    const nodeLength = nodeData.children?.length ?? 0;
+    const nodeLength = nodeData.filteredChildren ? nodeData.filteredChildren.length : nodeData.children?.length ?? 0;
     for (let j = 0; j < nodeLength; j++) {
       if (currentLevel <= hierarchyExpandLevel || nodeData.hierarchyState === HierarchyState.expand) {
         childTotalLength += 1;
       }
-      const childNodeData = nodeData.children[j];
+      const childNodeData = nodeData.filteredChildren ? nodeData.filteredChildren[j] : nodeData.children[j];
       const childIndexKey = Array.isArray(indexKey) ? indexKey.concat(j) : [indexKey, j];
       if (currentLevel <= hierarchyExpandLevel || nodeData.hierarchyState === HierarchyState.expand) {
         this.currentIndexedData.splice(
@@ -364,7 +388,9 @@ export class DataSource extends EventTarget implements DataSourceAPI {
           childIndexKey
         );
       }
-      if (childNodeData.children?.length > 0) {
+      if (
+        childNodeData.filteredChildren ? childNodeData.filteredChildren.length > 0 : childNodeData.children?.length > 0
+      ) {
         if (currentLevel < hierarchyExpandLevel || childNodeData.hierarchyState === HierarchyState.expand) {
           // this.treeDataHierarchyState.set(
           //   Array.isArray(childIndexKey) ? childIndexKey.join(',') : childIndexKey,
@@ -519,16 +545,17 @@ export class DataSource extends EventTarget implements DataSourceAPI {
         if (!hierarchyState || hierarchyState === HierarchyState.collapse || hierarchyState === HierarchyState.none) {
           return;
         }
-        if (nodeData.children) {
-          for (let i = 0; i < nodeData.children.length; i++) {
+        const children = nodeData.filteredChildren ? nodeData.filteredChildren : nodeData.children;
+        if (children) {
+          for (let i = 0; i < children.length; i++) {
             childrenLength += 1;
             const childIndex = Array.isArray(indexKey) ? indexKey.concat([i]) : [indexKey, i];
 
             computeChildrenNodeLength(
               childIndex,
               // this.treeDataHierarchyState.get(childIndex.join(',')),
-              nodeData.children[i].hierarchyState,
-              nodeData.children[i]
+              children[i].hierarchyState,
+              children[i]
             );
           }
         }
@@ -561,8 +588,9 @@ export class DataSource extends EventTarget implements DataSourceAPI {
       return 0;
     }
     let childrenLength = 0;
-    if (nodeData.children) {
-      const subNodeSortedIndexArray: Array<number> = Array.from({ length: nodeData.children.length }, (_, i) => i);
+    const children = nodeData.filteredChildren ? nodeData.filteredChildren : nodeData.children;
+    if (children) {
+      const subNodeSortedIndexArray: Array<number> = Array.from({ length: children.length }, (_, i) => i);
       this.lastOrder &&
         this.lastOrder !== 'normal' &&
         this.lastOrderField &&
@@ -574,7 +602,7 @@ export class DataSource extends EventTarget implements DataSourceAPI {
           (index, rel) => {
             subNodeSortedIndexArray[index] = rel;
           },
-          nodeData.children.length,
+          children.length,
           this.lastOrderFn,
           this.lastOrder,
           index =>
@@ -599,15 +627,15 @@ export class DataSource extends EventTarget implements DataSourceAPI {
 
         // const preChildState = this.treeDataHierarchyState.get(childIndex.join(','));
         const childData = this.getOriginalRecord(childIndex);
-        if (!nodeData.children[i].hierarchyState && (childData as any).children) {
+        if (!childData.hierarchyState && (childData.filteredChildren ?? childData.children)) {
           // this.treeDataHierarchyState.set(childIndex.join(','), HierarchyState.collapse);
-          nodeData.children[i].hierarchyState = HierarchyState.collapse;
+          childData.hierarchyState = HierarchyState.collapse;
         }
         childrenLength += this.pushChildrenNode(
           childIndex,
           // this.treeDataHierarchyState.get(childIndex.join(',')),
-          nodeData.children[i].hierarchyState,
-          nodeData.children[subNodeSortedIndexArray[i]]
+          childData.hierarchyState,
+          children[subNodeSortedIndexArray[i]]
         );
       }
     }
@@ -659,14 +687,24 @@ export class DataSource extends EventTarget implements DataSourceAPI {
    * @param index
    */
   setRecord(record: any, index: number) {
-    if (Array.isArray(this.records)) {
+    let isAdd = true;
+    if (this.dataConfig?.filterRules?.length >= 1) {
+      if (this.filterRecord(record)) {
+        if (this.rowHierarchyType === 'tree' && record.children) {
+          record.filteredChildren = this.filteredChildren(record.children);
+        }
+      } else {
+        isAdd = false;
+      }
+    }
+    if (isAdd && Array.isArray(this.records)) {
       const indexed = this.getIndexKey(index);
       if (!Array.isArray(indexed)) {
         this.records.splice(indexed, 1, record);
       } else {
-        const c_node_index = (indexed as Array<any>)[indexed.length - 1];
-        const p_node = this.getOriginalRecord(indexed.slice(0, indexed.length - 1));
-        (p_node as any).children.splice(c_node_index, 1, record);
+        // const c_node_index = (indexed as Array<any>)[indexed.length - 1];
+        // const p_node = this.getOriginalRecord(indexed.slice(0, indexed.length - 1));
+        // (p_node as any).children.splice(c_node_index, 1, record);
       }
     }
   }
@@ -938,9 +976,15 @@ export class DataSource extends EventTarget implements DataSourceAPI {
     this.fireListeners(EVENT_TYPE.CHANGE_ORDER, null);
   }
 
+  private clearFilteredChildren(record: any) {
+    record.filteredChildren = undefined;
+    for (let i = 0; i < record.children?.length ?? 0; i++) {
+      this.clearFilteredChildren(record.children[i]);
+    }
+  }
   private filterRecord(record: any) {
     let isReserved = true;
-    for (let i = 0; i < this.dataConfig.filterRules.length; i++) {
+    for (let i = 0; i < this.dataConfig.filterRules?.length; i++) {
       const filterRule = this.dataConfig?.filterRules[i];
       if (filterRule.filterKey) {
         const filterValue = record[filterRule.filterKey];
@@ -957,6 +1001,7 @@ export class DataSource extends EventTarget implements DataSourceAPI {
   }
 
   updateFilterRulesForSorted(filterRules?: FilterRules): void {
+    this.lastFilterRules = this.dataConfig.filterRules;
     this.dataConfig.filterRules = filterRules;
     this._source = this.processRecords(this.dataSourceObj?.records ?? this.dataSourceObj);
     this._sourceLength = this._source?.length || 0;
@@ -969,6 +1014,7 @@ export class DataSource extends EventTarget implements DataSourceAPI {
   }
 
   updateFilterRules(filterRules?: FilterRules): void {
+    this.lastFilterRules = this.dataConfig.filterRules;
     this.dataConfig.filterRules = filterRules;
     this._source = this.processRecords(this.dataSourceObj?.records ?? this.dataSourceObj);
     this._sourceLength = this._source?.length || 0;
@@ -980,6 +1026,9 @@ export class DataSource extends EventTarget implements DataSourceAPI {
     } else {
       this.pagination.perPageCount = this._sourceLength;
       this.pagination.totalCount = this._sourceLength;
+      if (this.rowHierarchyType === 'tree') {
+        this.initTreeHierarchyState();
+      }
       this.updatePagerData();
     }
   }
@@ -1028,6 +1077,7 @@ export class DataSource extends EventTarget implements DataSourceAPI {
   }
   release(): void {
     super.release?.();
+    this.lastFilterRules = null;
   }
   clearSortedMap() {
     this.currentIndexedData && (this.currentIndexedData.length = 0);
@@ -1043,10 +1093,20 @@ export class DataSource extends EventTarget implements DataSourceAPI {
     this.currentPagerIndexedData.length = 0;
   }
   protected getOriginalRecord(dataIndex: number | number[]): MaybePromiseOrUndefined {
-    if (this.dataConfig?.filterRules) {
-      return (this.records as Array<any>)[dataIndex as number];
+    // if (this.dataConfig?.filterRules) {
+    //   return (this.records as Array<any>)[dataIndex as number];
+    // }
+    let data;
+    if (!this.dataSourceObj.records) {
+      data = this._get(dataIndex);
+    } else {
+      if (Array.isArray(dataIndex)) {
+        data = getValueFromDeepArray(this.records, dataIndex);
+      } else {
+        data = this.records[dataIndex];
+      }
     }
-    return getValue(this._get(dataIndex), (val: MaybePromiseOrUndefined) => {
+    return getValue(data, (val: MaybePromiseOrUndefined) => {
       this.recordPromiseCallBack(dataIndex, val);
     });
   }
@@ -1054,7 +1114,17 @@ export class DataSource extends EventTarget implements DataSourceAPI {
     if (this.beforeChangedRecordsMap?.[dataIndex as number]) {
       return this.beforeChangedRecordsMap[dataIndex as number];
     }
-    return getValue(this._get(dataIndex), (val: MaybePromiseOrUndefined) => {
+    let data;
+    if (!this.dataSourceObj.records) {
+      data = this._get(dataIndex);
+    } else {
+      if (Array.isArray(dataIndex)) {
+        data = getValueFromDeepArray(this.records, dataIndex);
+      } else {
+        data = this.records[dataIndex];
+      }
+    }
+    return getValue(data, (val: MaybePromiseOrUndefined) => {
       this.recordPromiseCallBack(dataIndex, val);
     });
   }
@@ -1207,9 +1277,11 @@ export class DataSource extends EventTarget implements DataSourceAPI {
           targetI = (<number[]>targetIndexs).splice(targetIndexs.length - 1, 1)[0];
           if (sourceIndexs.length >= 1) {
             const parent = this.getOriginalRecord(sourceIndexs);
-            const sourceIds = parent.children.splice(sourceI, 1);
+            const sourceIds = parent.filteredChildren
+              ? parent.filteredChildren.splice(sourceI, 1)
+              : parent.children.splice(sourceI, 1);
             sourceIds.unshift(targetI, 0);
-            Array.prototype.splice.apply(parent.children, sourceIds);
+            Array.prototype.splice.apply(parent.filteredChildren ?? parent.children, sourceIds);
           } else {
             const sourceIds = this.records.splice(sourceI, 1);
             // 将records插入到目标地址targetIndex处
@@ -1245,7 +1317,8 @@ export class DataSource extends EventTarget implements DataSourceAPI {
       for (let i = 0; i < this._sourceLength; i++) {
         //expandLevel为有效值即需要按tree分析展示数据
         const nodeData = this.getOriginalRecord(i);
-        (nodeData as any).children && !nodeData.hierarchyState && (nodeData.hierarchyState = HierarchyState.collapse);
+        const children = (nodeData as any).filteredChildren ?? (nodeData as any).children;
+        children && !nodeData.hierarchyState && (nodeData.hierarchyState = HierarchyState.collapse);
       }
 
       this.currentIndexedData = Array.from({ length: this._sourceLength }, (_, i) => i);
@@ -1253,7 +1326,8 @@ export class DataSource extends EventTarget implements DataSourceAPI {
       for (let i = 0; i < nodeLength; i++) {
         const indexKey = this.currentIndexedData[i];
         const nodeData = this.getOriginalRecord(indexKey);
-        if ((nodeData as any).children?.length > 0 && nodeData.hierarchyState === HierarchyState.expand) {
+        const children = (nodeData as any).filteredChildren ?? (nodeData as any).children;
+        if (children?.length > 0 && nodeData.hierarchyState === HierarchyState.expand) {
           this.hasHierarchyStateExpand = true;
           const childrenLength = this.restoreChildrenNodeHierarchy(indexKey, nodeData);
           i += childrenLength;
@@ -1270,12 +1344,13 @@ export class DataSource extends EventTarget implements DataSourceAPI {
     nodeData: any
   ): number {
     let childTotalLength = 0;
-    const nodeLength = nodeData.children?.length ?? 0;
+    const children = (nodeData as any).filteredChildren ?? (nodeData as any).children;
+    const nodeLength = children?.length ?? 0;
     for (let j = 0; j < nodeLength; j++) {
       if (nodeData.hierarchyState === HierarchyState.expand) {
         childTotalLength += 1;
       }
-      const childNodeData = nodeData.children[j];
+      const childNodeData = children[j];
       const childIndexKey = Array.isArray(indexKey) ? indexKey.concat(j) : [indexKey, j];
       if (nodeData.hierarchyState === HierarchyState.expand) {
         this.currentIndexedData.splice(
@@ -1293,4 +1368,28 @@ export class DataSource extends EventTarget implements DataSourceAPI {
     }
     return childTotalLength;
   }
+}
+
+/**
+ * 从数组array中获取index的值
+ * 如：给index=[0,0] 则返回 array[0].children[0]；如果给index=[2] 则返回array[2]； 如果给index=[3,0,4] 则返回array[3].children[0].children[4]
+ * @param array
+ * @param index
+ * @returns
+ */
+function getValueFromDeepArray(array: any, index: number[]) {
+  let result = array;
+  for (let i = 0; i < index.length; i++) {
+    const currentIdx = index[i];
+    if (result[currentIdx]) {
+      result = result[currentIdx];
+    } else {
+      return undefined;
+    }
+    const children = result.filteredChildren ?? result?.children;
+    if (children && i + 1 < index.length) {
+      result = children;
+    }
+  }
+  return result;
 }
