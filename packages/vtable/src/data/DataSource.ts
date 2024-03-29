@@ -571,7 +571,8 @@ export class DataSource extends EventTarget implements DataSourceAPI {
 
     const newDiff = calculateArrayDiff(
       oldIndexedData.slice(bodyStartIndex, bodyEndIndex + 1),
-      this.currentIndexedData.slice(bodyStartIndex, bodyEndIndex + 1)
+      this.currentIndexedData.slice(bodyStartIndex, bodyEndIndex + 1),
+      bodyStartIndex
     );
     // const oldDiff = diffCellIndices(oldIndexedData, this.currentIndexedData);
 

@@ -739,6 +739,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
     const hierarchyState = this.getHierarchyState(col, row);
     if (hierarchyState === HierarchyState.expand) {
       this._refreshHierarchyState(col, row);
+      this.scenegraph.proxy.bodyBottomRow = this.rowCount - 1 - this.bottomFrozenRowCount;
       this.fireListeners(TABLE_EVENT_TYPE.TREE_HIERARCHY_STATE_CHANGE, {
         col: col,
         row: row,
@@ -750,6 +751,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
         //children 是数组 表示已经有子树节点信息
         this._refreshHierarchyState(col, row);
       }
+      this.scenegraph.proxy.bodyBottomRow = this.rowCount - 1 - this.bottomFrozenRowCount;
       this.fireListeners(TABLE_EVENT_TYPE.TREE_HIERARCHY_STATE_CHANGE, {
         col: col,
         row: row,
@@ -778,7 +780,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
       this.scenegraph.proxy.rowStart - this.columnHeaderLevelCount,
       Math.max(
         this.scenegraph.proxy.rowEnd - this.columnHeaderLevelCount,
-        this.scenegraph.proxy.rowStart - this.columnHeaderLevelCount + this.scenegraph.proxy.rowLimit
+        this.scenegraph.proxy.rowStart - this.columnHeaderLevelCount + this.scenegraph.proxy.rowLimit - 1
       )
     );
     const diffPositions = this.internalProps.layoutMap.toggleHierarchyState(diffDataIndices);
