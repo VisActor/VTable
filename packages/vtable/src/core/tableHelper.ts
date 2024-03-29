@@ -53,10 +53,9 @@ export function _dealWithUpdateDataSource(table: BaseTableAPI, fn: (table: BaseT
 /** @private */
 export function _setRecords(table: ListTableAPI, records: any[] = []): void {
   _dealWithUpdateDataSource(table, () => {
-    const data = records;
     table.internalProps.records = records;
     const newDataSource = (table.internalProps.dataSource = CachedDataSource.ofArray(
-      data,
+      records,
       table.internalProps.dataConfig,
       table.pagination,
       table.internalProps.layoutMap.columnObjects,

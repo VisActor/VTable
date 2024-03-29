@@ -28,6 +28,8 @@ In the above example, we set up value filtering through `filterKey` and `filtere
 
 Specific example: https://visactor.io/vtable/demo/list-table-data-analysis/list-table-data-filter
 
+To clear the data filtering rules, pass the function arguments blank`tableInstance.updateFilterRules()`.
+
 # Data aggregation
 
 The basic table supports aggregation calculation of data, and different aggregation methods can be set for each column, including sum, average, maximum value, minimum value, and custom function summary logic. Multiple aggregation methods can be set for the same column, and the aggregation results will be displayed in multiple rows.
