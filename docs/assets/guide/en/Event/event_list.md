@@ -61,6 +61,8 @@ For a more comprehensive list of events, please refer to: https://visactor.io/vt
         PASTE_CELL,
         RESIZE_COLUMN,
         SCROLL,
+        SCROLL_VERTICAL_END,
+        SCROLL_HORIZONTAL_END,
         CHANGED_VALUE,
         FREEZE_CLICK,
         SORT_CLICK,

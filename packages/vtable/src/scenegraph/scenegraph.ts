@@ -1194,6 +1194,8 @@ export class Scenegraph {
 
     if (!this.isPivot && !(this.table as any).transpose) {
       this.component.setFrozenColumnShadow(this.table.frozenColCount - 1);
+    } else if (this.table.options.frozenColCount) {
+      this.component.setFrozenColumnShadow(this.table.frozenColCount - 1);
     }
     this.table.stateManager.checkFrozen();
     // this.updateContainerAttrWidthAndX();
@@ -1786,6 +1788,8 @@ export class Scenegraph {
     // update frozen shadow
     if (!this.isPivot && !(this.table as any).transpose) {
       this.component.setFrozenColumnShadow(this.table.frozenColCount - 1);
+    } else if (this.table.options.frozenColCount) {
+      this.component.setFrozenColumnShadow(this.table.frozenColCount - 1);
     }
 
     this.component.updateScrollBar();
@@ -1807,6 +1811,8 @@ export class Scenegraph {
 
     // update frozen shadow
     if (!this.isPivot && !(this.table as any).transpose) {
+      this.component.setFrozenColumnShadow(this.table.frozenColCount - 1);
+    } else if (this.table.options.frozenColCount) {
       this.component.setFrozenColumnShadow(this.table.frozenColCount - 1);
     }
 

@@ -68,9 +68,16 @@ export function createTable() {
     records,
     columns,
     widthMode: 'standard',
-    transpose: true,
+    // transpose: true,
     dragHeaderMode: 'all',
-    limitMinWidth: 20
+    limitMinWidth: 20,
+    theme: VTable.themes.DEFAULT.extends({
+      scrollStyle: {
+        hoverOn: false,
+        visible: 'always',
+        barToSide: true
+      }
+    })
   };
   const tableInstance = new VTable.ListTable(option);
   window.tableInstance = tableInstance;
