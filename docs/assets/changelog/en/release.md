@@ -1,3 +1,24 @@
+# v0.23.0
+
+2024-03-29
+
+
+**🆕 New feature**
+
+- **@visactor/vtable**: list tree mode support filter [#1376](https://github.com/VisActor/VTable/issues/1376)
+- **@visactor/vtable**: add scroll end event and barToSide option [#1304](https://github.com/VisActor/VTable/issues/1304)
+- **@visactor/vtable**: add excel options to support fill handle
+
+**🐛 Bug fix**
+
+- **@visactor/vtable**: transpose with frozenColCount shadowline render [#1366](https://github.com/VisActor/VTable/issues/1366)
+- **@visactor/vtable**: datasource support promise mode call addRecords and deleteRecords
+- **@visactor/vtable**: when click cell should not trigger drag_select_end event [#1410](https://github.com/VisActor/VTable/issues/1410)
+
+
+
+[more detail about v0.23.0](https://github.com/VisActor/VTable/releases/tag/v0.23.0)
+
 # v0.22.0
 
 2024-03-22
