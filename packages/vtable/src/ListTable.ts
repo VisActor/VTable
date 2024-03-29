@@ -119,11 +119,11 @@ export class ListTable extends BaseTable implements ListTableAPI {
   }
 
   get records() {
-    return this.dataSource?.source;
+    return this.dataSource?.records;
   }
 
   get recordsCount() {
-    return this.dataSource.source.length;
+    return this.dataSource.records.length;
   }
   // /**
   //  * Gets the define of the header.
