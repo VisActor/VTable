@@ -253,6 +253,8 @@ export function endMoveCol(state: StateManager) {
       state.table.frozenColCount - 1,
       state.columnResize.isRightFrozen
     );
+  } else if (state.table.options.frozenColCount) {
+    state.table.scenegraph.component.setFrozenColumnShadow(state.table.frozenColCount - 1);
   }
   state.table.scenegraph.updateNextFrame();
 }
