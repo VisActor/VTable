@@ -28,6 +28,8 @@ tableInstance.updateFilterRules([
 
 具体示例：https://visactor.io/vtable/demo/list-table-data-analysis/list-table-data-filter
 
+清除数据过滤规则的话，请将函数参数传空`tableInstance.updateFilterRules()`。
+
 # 数据聚合
 
 基础表格支持对数据进行聚合计算，每一列可以设置不同的聚合方式，包括求和、平均、最大值、最小值，以及自定义函数汇总逻辑。同一列可以设置多种聚合方式，聚合结果会展示在多行。
