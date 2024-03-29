@@ -480,7 +480,7 @@ export class DataSource extends EventTarget implements DataSourceAPI {
    * 展开或者收起数据index
    * @param index
    */
-  toggleHierarchyState(index: number) {
+  toggleHierarchyState(index: number, bodyStartIndex: number, bodyEndIndex: number) {
     const oldIndexedData = this.currentIndexedData.slice(0);
     const indexed = this.getIndexKey(index);
     const state = this.getHierarchyState(index);
@@ -534,7 +534,10 @@ export class DataSource extends EventTarget implements DataSourceAPI {
     // 变更了pagerConfig所以需要更新分页数据  TODO待定 因为只关注根节点的数量的话 可能不会影响到
     this.updatePagerData();
 
-    const newDiff = calculateArrayDiff(oldIndexedData, this.currentIndexedData);
+    const newDiff = calculateArrayDiff(
+      oldIndexedData.slice(bodyStartIndex, bodyEndIndex + 1),
+      this.currentIndexedData.slice(bodyStartIndex, bodyEndIndex + 1)
+    );
     // const oldDiff = diffCellIndices(oldIndexedData, this.currentIndexedData);
 
     // return oldDiff;
