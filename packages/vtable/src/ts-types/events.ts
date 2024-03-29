@@ -175,6 +175,10 @@ export interface TableEventHandlersEventArgumentMap {
   initialized: null;
 
   change_cell_value: { col: number; row: number; rawValue: string | number; changedValue: string | number };
+
+  mousedown_fill_handle: {};
+  drag_fill_handle_end: { direction?: 'top' | 'bottom' | 'left' | 'right' };
+  dblclick_fill_handle: {};
 }
 export interface DrillMenuEventInfo {
   dimensionKey: string | number;
@@ -243,6 +247,9 @@ export interface TableEventHandlersReturnMap {
   initialized: void;
 
   change_cell_value: void;
+  mousedown_fill_handle: void;
+  drag_fill_handle_end: void;
+  dblclick_fill_handle: void;
 
   scroll_vertical_end: void;
 

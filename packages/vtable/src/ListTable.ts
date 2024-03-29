@@ -1059,75 +1059,87 @@ export class ListTable extends BaseTable implements ListTableAPI {
     return isValid(editorDefine);
   }
   /** 更改单元格数据 会触发change_cell_value事件*/
-  changeCellValue(col: number, row: number, value: string | number | null) {
-    const recordIndex = this.getRecordShowIndexByCell(col, row);
-    const { field } = this.internalProps.layoutMap.getBody(col, row);
-    const beforeChangeValue = this.getCellRawValue(col, row);
-    if (this.isHeader(col, row)) {
-      this.internalProps.layoutMap.updateColumnTitle(col, row, value as string);
-    } else {
-      this.dataSource.changeFieldValue(value, recordIndex, field, col, row, this);
-    }
-    //改变单元格的值后 聚合值做重新计算
-    const aggregators = this.internalProps.layoutMap.getAggregators(col, row);
-    if (aggregators) {
-      if (Array.isArray(aggregators)) {
-        for (let i = 0; i < aggregators?.length; i++) {
-          aggregators[i].recalculate();
-        }
+  changeCellValue(col: number, row: number, value: string | number | null, workOnEditableCell = false) {
+    if ((workOnEditableCell && this.isHasEditorDefine(col, row)) || workOnEditableCell === false) {
+      const recordIndex = this.getRecordShowIndexByCell(col, row);
+      const { field } = this.internalProps.layoutMap.getBody(col, row);
+      const beforeChangeValue = this.getCellRawValue(col, row);
+      if (this.isHeader(col, row)) {
+        this.internalProps.layoutMap.updateColumnTitle(col, row, value as string);
       } else {
-        aggregators.recalculate();
+        this.dataSource.changeFieldValue(value, recordIndex, field, col, row, this);
       }
-      const aggregatorCells = this.internalProps.layoutMap.getCellAddressHasAggregator(col, row);
-      for (let i = 0; i < aggregatorCells.length; i++) {
-        const range = this.getCellRange(aggregatorCells[i].col, aggregatorCells[i].row);
-        for (let sCol = range.start.col; sCol <= range.end.col; sCol++) {
-          for (let sRow = range.start.row; sRow <= range.end.row; sRow++) {
-            this.scenegraph.updateCellContent(sCol, sRow);
+      const range = this.getCellRange(col, row);
+      //改变单元格的值后 聚合值做重新计算
+      const aggregators = this.internalProps.layoutMap.getAggregatorsByCell(col, row);
+      if (aggregators) {
+        if (Array.isArray(aggregators)) {
+          for (let i = 0; i < aggregators?.length; i++) {
+            aggregators[i].recalculate();
+          }
+        } else {
+          aggregators.recalculate();
+        }
+        const aggregatorCells = this.internalProps.layoutMap.getAggregatorCellAddress(
+          range.start.col,
+          range.start.row,
+          range.end.col,
+          range.end.row
+        );
+        for (let i = 0; i < aggregatorCells.length; i++) {
+          const range = this.getCellRange(aggregatorCells[i].col, aggregatorCells[i].row);
+          for (let sCol = range.start.col; sCol <= range.end.col; sCol++) {
+            for (let sRow = range.start.row; sRow <= range.end.row; sRow++) {
+              this.scenegraph.updateCellContent(sCol, sRow);
+            }
           }
         }
       }
-    }
 
-    // const cell_value = this.getCellValue(col, row);
-    const range = this.getCellRange(col, row);
-    for (let sCol = range.start.col; sCol <= range.end.col; sCol++) {
-      for (let sRow = range.start.row; sRow <= range.end.row; sRow++) {
-        this.scenegraph.updateCellContent(sCol, sRow);
+      // const cell_value = this.getCellValue(col, row);
+
+      for (let sCol = range.start.col; sCol <= range.end.col; sCol++) {
+        for (let sRow = range.start.row; sRow <= range.end.row; sRow++) {
+          this.scenegraph.updateCellContent(sCol, sRow);
+        }
       }
-    }
-    if (this.widthMode === 'adaptive' || (this.autoFillWidth && this.getAllColsWidth() <= this.tableNoFrameWidth)) {
-      if (this.internalProps._widthResizedColMap.size === 0) {
-        //如果没有手动调整过行高列宽 则重新计算一遍并重新分配
-        this.scenegraph.recalculateColWidths();
+      if (this.widthMode === 'adaptive' || (this.autoFillWidth && this.getAllColsWidth() <= this.tableNoFrameWidth)) {
+        if (this.internalProps._widthResizedColMap.size === 0) {
+          //如果没有手动调整过行高列宽 则重新计算一遍并重新分配
+          this.scenegraph.recalculateColWidths();
+        }
+      } else if (!this.internalProps._widthResizedColMap.has(col)) {
+        const oldWidth = this.getColWidth(col);
+        const newWidth = computeColWidth(col, 0, this.rowCount - 1, this, false);
+        if (newWidth !== oldWidth) {
+          this.scenegraph.updateColWidth(col, newWidth - oldWidth);
+        }
       }
-    } else if (!this.internalProps._widthResizedColMap.has(col)) {
-      const oldWidth = this.getColWidth(col);
-      const newWidth = computeColWidth(col, 0, this.rowCount - 1, this, false);
-      if (newWidth !== oldWidth) {
-        this.scenegraph.updateColWidth(col, newWidth - oldWidth);
+      if (
+        this.heightMode === 'adaptive' ||
+        (this.autoFillHeight && this.getAllRowsHeight() <= this.tableNoFrameHeight)
+      ) {
+        this.scenegraph.recalculateRowHeights();
+      } else if (this.heightMode === 'autoHeight') {
+        const oldHeight = this.getRowHeight(row);
+        const newHeight = computeRowHeight(row, 0, this.colCount - 1, this);
+        this.scenegraph.updateRowHeight(row, newHeight - oldHeight);
       }
+      this.fireListeners(TABLE_EVENT_TYPE.CHANGE_CELL_VALUE, {
+        col,
+        row,
+        rawValue: beforeChangeValue,
+        changedValue: this.getCellOriginValue(col, row)
+      });
+      this.scenegraph.updateNextFrame();
     }
-    if (this.heightMode === 'adaptive' || (this.autoFillHeight && this.getAllRowsHeight() <= this.tableNoFrameHeight)) {
-      this.scenegraph.recalculateRowHeights();
-    } else if (this.heightMode === 'autoHeight') {
-      const oldHeight = this.getRowHeight(row);
-      const newHeight = computeRowHeight(row, 0, this.colCount - 1, this);
-      this.scenegraph.updateRowHeight(row, newHeight - oldHeight);
-    }
-    this.fireListeners(TABLE_EVENT_TYPE.CHANGE_CELL_VALUE, {
-      col,
-      row,
-      rawValue: beforeChangeValue,
-      changedValue: this.getCellOriginValue(col, row)
-    });
-    this.scenegraph.updateNextFrame();
   }
   /**
    * 批量更新多个单元格的数据
    * @param col 粘贴数据的起始列号
    * @param row 粘贴数据的起始行号
    * @param values 多个单元格的数据数组
+   * @param workOnEditableCell 是否仅更改可编辑单元格
    */
   changeCellValues(startCol: number, startRow: number, values: (string | number)[][], workOnEditableCell = false) {
     let pasteColEnd = startCol;
@@ -1168,9 +1180,39 @@ export class ListTable extends BaseTable implements ListTableAPI {
       }
       pasteColEnd = Math.max(pasteColEnd, thisRowPasteColEnd);
     }
+
     // const cell_value = this.getCellValue(col, row);
     const startRange = this.getCellRange(startCol, startRow);
     const range = this.getCellRange(pasteColEnd, pasteRowEnd);
+
+    //改变单元格的值后 聚合值做重新计算
+    const aggregators = this.internalProps.layoutMap.getAggregatorsByCellRange(
+      startRange.start.col,
+      startRange.start.row,
+      range.end.col,
+      range.end.row
+    );
+    if (aggregators) {
+      for (let i = 0; i < aggregators?.length; i++) {
+        aggregators[i].recalculate();
+      }
+
+      const aggregatorCells = this.internalProps.layoutMap.getAggregatorCellAddress(
+        startRange.start.col,
+        startRange.start.row,
+        range.end.col,
+        range.end.row
+      );
+      for (let i = 0; i < aggregatorCells.length; i++) {
+        const range = this.getCellRange(aggregatorCells[i].col, aggregatorCells[i].row);
+        for (let sCol = range.start.col; sCol <= range.end.col; sCol++) {
+          for (let sRow = range.start.row; sRow <= range.end.row; sRow++) {
+            this.scenegraph.updateCellContent(sCol, sRow);
+          }
+        }
+      }
+    }
+
     for (let sCol = startRange.start.col; sCol <= range.end.col; sCol++) {
       for (let sRow = startRange.start.row; sRow <= range.end.row; sRow++) {
         this.scenegraph.updateCellContent(sCol, sRow);

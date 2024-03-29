@@ -1,13 +1,13 @@
 ---
 category: examples
-group: Basic Features
-title: row series number
-cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/row-series-number.png
+group: Interaction
+title: move row position
+cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/row-series-number.gif
 link: '../guide/table_type/List_table/list_table_define_and_generate'
 option: ListTable#rowSeriesNumber.dragOrder
 ---
 
-# Row Series Number
+# Move Row Position
 
 The row numbering capability refers to adding a unique serial number or identifier to each row of the table to mark, sort or reference the rows in the table. This demo will demonstrate the VTable row numbering capabilities: row selection, row dragging position, and row numbering style configuration.
 
@@ -87,6 +87,7 @@ fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American
       rowSeriesNumber: {
         title: '序号',
         width: 'auto',
+        dragOrder: true,
         headerStyle: {
           color: 'black',
           bgColor: 'pink'

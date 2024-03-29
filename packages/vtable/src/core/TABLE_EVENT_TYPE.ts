@@ -134,6 +134,19 @@ export interface TableEvents {
   //#endregion
 
   CHANGE_CELL_VALUE: 'change_cell_value';
+
+  /**
+   * 鼠标按下填充柄事件
+   */
+  MOUSEDOWN_FILL_HANDLE: 'mousedown_fill_handle';
+  /**
+   * 拖拽填充柄结束事件
+   */
+  DRAG_FILL_HANDLE_END: 'drag_fill_handle_end';
+  /**
+   * 双击填充柄事件
+   */
+  DBLCLICK_FILL_HANDLE: 'dblclick_fill_handle';
 }
 /**
  * Table event types
@@ -184,5 +197,8 @@ export const TABLE_EVENT_TYPE: TableEvents = {
   CHECKBOX_STATE_CHANGE: 'checkbox_state_change',
   AFTER_RENDER: 'after_render',
   INITIALIZED: 'initialized',
-  CHANGE_CELL_VALUE: 'change_cell_value'
+  CHANGE_CELL_VALUE: 'change_cell_value',
+  DRAG_FILL_HANDLE_END: 'drag_fill_handle_end',
+  MOUSEDOWN_FILL_HANDLE: 'mousedown_fill_handle',
+  DBLCLICK_FILL_HANDLE: 'dblclick_fill_handle'
 } as TableEvents;

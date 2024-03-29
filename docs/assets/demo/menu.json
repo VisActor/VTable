@@ -549,15 +549,13 @@
           "title": {
             "zh": "移动表头位置",
             "en": "Move header position"
-          },
-          "meta": {
-            "title": "Move header position",
-            "keywords": "",
-            "category": "demo",
-            "group": "Interaction",
-            "cover": "https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/move-header-position.gif",
-            "link": "'../../guide/interaction_and_event/drag_header'",
-            "option": ""
+          }
+        },
+        {
+          "path": "move-row-position",
+          "title": {
+            "zh": "移动行",
+            "en": "Move row position"
           }
         },
         {
@@ -899,6 +897,13 @@
           "title": {
             "zh": "动态新增删除数据",
             "en": "Dynamically adjust data"
+          }
+        },
+        {
+          "path": "fill-handle",
+          "title": {
+            "zh": "填充柄效果",
+            "en": "fill handle effect"
           }
         }
       ]
