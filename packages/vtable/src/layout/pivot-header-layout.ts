@@ -246,7 +246,13 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
         if (
           indicatorObject.chartSpec &&
           indicatorObject.chartSpec.series &&
-          indicatorObject.chartSpec.series.length > 1
+          indicatorObject.chartSpec.series.length > 1 &&
+          indicatorObject.chartSpec.axes?.every((axis: any) => {
+            if (axis.orient === (this.indicatorsAsCol ? 'top' : 'right') && axis.visible === false) {
+              return false;
+            }
+            return true;
+          })
         ) {
           return true;
         }

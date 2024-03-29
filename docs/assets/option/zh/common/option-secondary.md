@@ -13,7 +13,7 @@
 表格行高的计算模式，可以是 'standard'（标准模式）、'adaptive'（自适应容器高度模式）或 'autoHeight'（自动行高模式），默认为 'standard'。
 
 - 'standard'：采用 `defaultRowHeight` 及 `defaultHeaderRowHeight` 作为行高。
-- 'adaptive'：使用容器的高度分配每行高度。
+- 'adaptive'：使用容器的高度分配每行高度，基于每行内容计算后的高度比例来分配。
 - 'autoHeight'：根据内容自动计算行高，计算依据 fontSize 和 lineHeight(文字行高)，以及 padding。相关搭配设置项`autoWrapText`自动换行，可以根据换行后的多行文本内容来计算行高。
 
 #${prefix} autoWrapText(boolean) = false

@@ -68,7 +68,7 @@ columns: [
 
 在表格中，用户可以通过`双击`单元格来开始编辑，然后选择使用的编辑器进行输入。
 
-注意：VTable 库中的编辑器都是基于浏览器的原生输入框实现的，因此在某些特殊情况下可能会出现问题，如输入法输入、输入法弹窗等。你可以根据实际需求进行调整和优化。
+注意：VTable-ediotrs 内置的这三种编辑器都是基于浏览器的原生输入框实现的，因此在某些特殊情况下可能会出现问题，如输入法输入、输入法弹窗等。你可以根据实际需求进行调整和优化。
 
 editor 配置可以在 columns 中，也可以在全局 options 中定义，同时可以支持自定义函数写法：
 
@@ -178,9 +178,9 @@ VTable.register.editor('custom-date', custom_date_editor);
 ```ts
 export interface IEditor<V = any> {
   /** * 单元格进入编辑状态时调用 */
-  onStart?: (context: EditContext<V>) => void;
+  onStart: (context: EditContext<V>) => void;
   /** * 单元格退出编辑状态时调用 */
-  onEnd?: () => void;
+  onEnd: () => void;
   /**
    * 如果提供了此函数，VTable 将会在用户点击其他地方时调用此函数。
    * 如果此函数返回了一个假值，VTable 将会调用 `onEnd` 并退出编辑状态。
@@ -188,9 +188,13 @@ export interface IEditor<V = any> {
    * 这意味着，你需要手动调用 `onStart` 中提供的 `endEdit` 来结束编辑模式。
    */
   isEditorElement?: (target: HTMLElement) => boolean;
-  /** * 获取编辑器当前值。将在 `onEnd` 调用后调用。 */
+  /** 获取编辑器当前值。将在 `onEnd` 调用后调用。 */
   getValue: () => V;
-  // ...
+
+  /**
+   * 校验输入新值是否合法
+   */
+  validateValue?: () => boolean;
 }
 
 export interface EditContext<V = any> {
@@ -212,6 +216,8 @@ export interface EditContext<V = any> {
    * 这时你可以保存这个回调并在你需要的时候来手动结束编辑状态。
    */
   endEdit: () => void;
+  col: number;
+  row: number;
 }
 ```
 
@@ -249,7 +255,13 @@ interface ListTableConstructorOptions {
 }
 ```
 
-## 8. 相关 api
+## 8. 编辑值校验
+
+需要校验的情况 请自定义编辑器实现校验函数`validateValue`
+
+如未定义该接口则编辑值值默认不做校验，接口返回 false，校验失败则保留在编辑状态。
+
+## 9. 相关 api
 
 ```ts
 interface ListTableAPI {

@@ -6,11 +6,12 @@ import { getProp } from '../../utils/get-prop';
 import { getQuadProps } from '../../utils/padding';
 import type { BaseTableAPI } from '../../../ts-types/base-table';
 import { isNumber } from '@visactor/vutils';
+import type { StylePropertyFunctionArg } from '../../../ts-types';
 
 export function createProgressBarCell(
   progressBarDefine: {
-    min?: number;
-    max?: number;
+    min?: number | ((args: StylePropertyFunctionArg) => number);
+    max?: number | ((args: StylePropertyFunctionArg) => number);
     barType?: 'default' | 'negative' | 'negative_no_axis'; // 进度图类型
     dependField?: string; // 指定其他列数据（风神使用）,
   },
@@ -29,8 +30,24 @@ export function createProgressBarCell(
   }
 
   progressBarDefine.barType = progressBarDefine.barType ?? 'default';
-  progressBarDefine.min = progressBarDefine.min ?? 0;
-  progressBarDefine.max = progressBarDefine.max ?? progressBarDefine.min + 100;
+  progressBarDefine.min =
+    getOrApply(progressBarDefine.min, {
+      col,
+      row,
+      table,
+      value,
+      dataValue,
+      cellHeaderPaths: undefined
+    }) ?? 0;
+  progressBarDefine.max =
+    getOrApply(progressBarDefine.max, {
+      col,
+      row,
+      table,
+      value,
+      dataValue,
+      cellHeaderPaths: undefined
+    }) ?? progressBarDefine.min + 100;
   const height = table.getRowHeight(row);
   let contentWidth = width;
   let contentHeight = height;

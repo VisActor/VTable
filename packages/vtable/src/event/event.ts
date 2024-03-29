@@ -152,6 +152,15 @@ export class EventManager {
               state.columnResize.isRightFrozen
             );
           }
+          const colWidths = [];
+          // 返回所有列宽信息
+          for (let col = 0; col < this.table.colCount; col++) {
+            colWidths.push(this.table.getColWidth(col));
+          }
+          this.table.fireListeners(TABLE_EVENT_TYPE.RESIZE_COLUMN_END, {
+            col: resizeCol.col,
+            colWidths
+          });
         }
       }
     });
