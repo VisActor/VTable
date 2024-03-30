@@ -1028,7 +1028,6 @@ export class Scenegraph {
     if (row < this.table.frozenRowCount) {
       this.colHeaderGroup.setDeltaHeight(detaY);
       this.cornerHeaderGroup.setDeltaHeight(detaY);
-      this.table.rightFrozenColCount && this.rightTopCornerGroup.setDeltaY(detaY);
       this.rowHeaderGroup.setDeltaY(detaY);
       this.bodyGroup.setDeltaY(detaY);
       this.table.rightFrozenColCount && this.rightFrozenGroup.setDeltaY(detaY);
