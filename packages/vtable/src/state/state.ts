@@ -724,6 +724,9 @@ export class StateManager {
     const totalHeight = this.table.getAllRowsHeight();
     const oldVerticalBarPos = this.scroll.verticalBarPos;
     this.scroll.verticalBarPos = Math.ceil(yRatio * (totalHeight - this.table.scenegraph.height));
+    if (!isValid(this.scroll.verticalBarPos) || isNaN(this.scroll.verticalBarPos)) {
+      this.scroll.verticalBarPos = 0;
+    }
     this.table.scenegraph.setY(-this.scroll.verticalBarPos, yRatio === 1);
     this.scroll.verticalBarPos -= this.table.scenegraph.proxy.deltaY;
     this.table.scenegraph.proxy.deltaY = 0;
@@ -751,6 +754,9 @@ export class StateManager {
     const totalWidth = this.table.getAllColsWidth();
     const oldHorizontalBarPos = this.scroll.horizontalBarPos;
     this.scroll.horizontalBarPos = Math.ceil(xRatio * (totalWidth - this.table.scenegraph.width));
+    if (!isValid(this.scroll.horizontalBarPos) || isNaN(this.scroll.horizontalBarPos)) {
+      this.scroll.horizontalBarPos = 0;
+    }
     this.table.scenegraph.setX(-this.scroll.horizontalBarPos, xRatio === 1);
     this.scroll.horizontalBarPos -= this.table.scenegraph.proxy.deltaX;
     this.table.scenegraph.proxy.deltaX = 0;
@@ -790,7 +796,9 @@ export class StateManager {
     const oldVerticalBarPos = this.scroll.verticalBarPos;
     // this.table.stateManager.updateSelectPos(-1, -1);
     this.scroll.verticalBarPos = top;
-
+    if (!isValid(this.scroll.verticalBarPos) || isNaN(this.scroll.verticalBarPos)) {
+      this.scroll.verticalBarPos = 0;
+    }
     // 设置scenegraph坐标
     this.table.scenegraph.setY(-top);
 
@@ -826,6 +834,9 @@ export class StateManager {
     // this.table.stateManager.updateSelectPos(-1, -1);
     const oldHorizontalBarPos = this.scroll.horizontalBarPos;
     this.scroll.horizontalBarPos = left;
+    if (!isValid(this.scroll.horizontalBarPos) || isNaN(this.scroll.horizontalBarPos)) {
+      this.scroll.horizontalBarPos = 0;
+    }
 
     // 设置scenegraph坐标
     this.table.scenegraph.setX(-left);
