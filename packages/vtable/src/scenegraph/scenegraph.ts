@@ -1076,8 +1076,9 @@ export class Scenegraph {
       return;
     }
     if (
-      (row >= this.proxy.rowStart && row <= this.proxy.rowEnd) ||
-      (row >= this.table.rowCount - this.table.bottomFrozenRowCount && row <= this.table.rowCount - 1)
+      (row >= this.proxy.rowStart && row <= this.proxy.rowEnd) || // body
+      (row >= this.table.rowCount - this.table.bottomFrozenRowCount && row <= this.table.rowCount - 1) || // bottom
+      row < this.table.frozenRowCount
     ) {
       this.updateRowHeight(row, height - oldHeight);
     }
