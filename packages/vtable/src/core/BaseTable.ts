@@ -235,7 +235,6 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     } = options;
     this.container = container;
     this.options = options;
-    this.options.container = container;
     this._widthMode = widthMode;
     this._heightMode = heightMode;
     this._autoFillWidth = autoFillWidth;
