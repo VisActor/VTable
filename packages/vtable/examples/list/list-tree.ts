@@ -4,1031 +4,186 @@ const ListTable = VTable.ListTable;
 const CONTAINER_ID = 'vTable';
 
 export function createTable() {
-  const option = {
-    records: [
-      {
-        item: '项目1',
-        id: 'PARA.206',
-        collapse: false,
-        remark: {},
-        children: [
-          {
-            item: '项目1-1',
-            id: 'PARA.207',
-            collapse: false,
-            remark: {},
-            '2023-11-20 07:30:00': `豫章故郡，洪都新府。星分翼轸，地接衡庐。襟三江而带五湖，控蛮荆而引瓯越。物华天宝，龙
-              光射牛斗之。`
-          }
-        ]
-      },
-      {
-        item: '项目2',
-        id: 'PARA.206',
-        collapse: false,
-        remark: {},
-        children: [
-          {
-            item: '项目2-1',
-            id: 'PARA.207',
-            collapse: false,
-            remark: {},
-            '2023-11-20 07:30:00': 111
-          },
-          {
-            item: '项目2-2',
-            id: 'PARA.207',
-            collapse: false,
-            remark: {},
-            '2023-11-20 07:30:00': 111
-          },
-          {
-            item: '项目2-3',
-            id: 'PARA.207',
-            collapse: false,
-            remark: {},
-            '2023-11-20 07:30:00': 111,
-            children: [
-              {
-                item: '项目2-3-1',
-                id: 'PARA.207',
-                collapse: false,
-                remark: {},
-                '2023-11-20 07:30:00': 111
-              },
-              {
-                item: '项目2-3-2',
-                id: 'PARA.207',
-                collapse: false,
-                remark: {},
-                '2023-11-20 07:30:00': 111
-              },
-              {
-                item: '项目2-3-3',
-                id: 'PARA.207',
-                collapse: false,
-                remark: {},
-                '2023-11-20 07:30:00': 111
-              },
-              {
-                item: '项目6-3',
-                id: 'PARA.207',
-                collapse: false,
-                remark: {},
-                '2023-11-20 07:30:00': 111
-              },
-              {
-                item: '项目6-3',
-                id: 'PARA.207',
-                collapse: false,
-                remark: {},
-                '2023-11-20 07:30:00': 111
-              },
-              {
-                item: '项目6-3',
-                id: 'PARA.207',
-                collapse: false,
-                remark: {},
-                '2023-11-20 07:30:00': 111
-              },
-              {
-                item: '项目6-3',
-                id: 'PARA.207',
-                collapse: false,
-                remark: {},
-                '2023-11-20 07:30:00': 111
-              },
-              {
-                item: '项目6-3',
-                id: 'PARA.207',
-                collapse: false,
-                remark: {},
-                '2023-11-20 07:30:00': 111
-              },
-              {
-                item: '项目6-3',
-                id: 'PARA.207',
-                collapse: false,
-                remark: {},
-                '2023-11-20 07:30:00': 111
-              },
-              {
-                item: '项目6-3',
-                id: 'PARA.207',
-                collapse: false,
-                remark: {},
-                '2023-11-20 07:30:00': 111
-              },
-              {
-                item: '项目6-3',
-                id: 'PARA.207',
-                collapse: false,
-                remark: {},
-                '2023-11-20 07:30:00': 111
-              },
-              {
-                item: '项目6-3',
-                id: 'PARA.207',
-                collapse: false,
-                remark: {},
-                '2023-11-20 07:30:00': 111
-              },
-              {
-                item: '项目6-3',
-                id: 'PARA.207',
-                collapse: false,
-                remark: {},
-                '2023-11-20 07:30:00': 111
-              },
-              {
-                item: '项目6-3',
-                id: 'PARA.207',
-                collapse: false,
-                remark: {},
-                '2023-11-20 07:30:00': 111
-              },
-              {
-                item: '项目6-3',
-                id: 'PARA.207',
-                collapse: false,
-                remark: {},
-                '2023-11-20 07:30:00': 111
-              },
-              {
-                item: '项目6-3',
-                id: 'PARA.207',
-                collapse: false,
-                remark: {},
-                '2023-11-20 07:30:00': 111
-              },
-              {
-                item: '项目6-3',
-                id: 'PARA.207',
-                collapse: false,
-                remark: {},
-                '2023-11-20 07:30:00': 111
-              },
-              {
-                item: '项目6-3',
-                id: 'PARA.207',
-                collapse: false,
-                remark: {},
-                '2023-11-20 07:30:00': 111
-              },
-              {
-                item: '项目6-3',
-                id: 'PARA.207',
-                collapse: false,
-                remark: {},
-                '2023-11-20 07:30:00': 111
-              },
-              {
-                item: '项目6-3',
-                id: 'PARA.207',
-                collapse: false,
-                remark: {},
-                '2023-11-20 07:30:00': 111
-              },
-              {
-                item: '项目6-3',
-                id: 'PARA.207',
-                collapse: false,
-                remark: {},
-                '2023-11-20 07:30:00': 111
-              },
-              {
-                item: '项目6-3',
-                id: 'PARA.207',
-                collapse: false,
-                remark: {},
-                '2023-11-20 07:30:00': 111
-              },
-              {
-                item: '项目6-3',
-                id: 'PARA.207',
-                collapse: false,
-                remark: {},
-                '2023-11-20 07:30:00': 111
-              },
-              {
-                item: '项目6-3',
-                id: 'PARA.207',
-                collapse: false,
-                remark: {},
-                '2023-11-20 07:30:00': 111
-              },
-              {
-                item: '项目6-3',
-                id: 'PARA.207',
-                collapse: false,
-                remark: {},
-                '2023-11-20 07:30:00': 111
-              },
-              {
-                item: '项目6-3',
-                id: 'PARA.207',
-                collapse: false,
-                remark: {},
-                '2023-11-20 07:30:00': 111
-              },
-              {
-                item: '项目6-3',
-                id: 'PARA.207',
-                collapse: false,
-                remark: {},
-                '2023-11-20 07:30:00': 111
-              },
-              {
-                item: '项目6-3',
-                id: 'PARA.207',
-                collapse: false,
-                remark: {},
-                '2023-11-20 07:30:00': 111
-              },
-              {
-                item: '项目6-3',
-                id: 'PARA.207',
-                collapse: false,
-                remark: {},
-                '2023-11-20 07:30:00': 111
-              },
-              {
-                item: '项目6-3',
-                id: 'PARA.207',
-                collapse: false,
-                remark: {},
-                '2023-11-20 07:30:00': 111
-              },
-              {
-                item: '项目6-3',
-                id: 'PARA.207',
-                collapse: false,
-                remark: {},
-                '2023-11-20 07:30:00': 111
-              },
-              {
-                item: '项目6-3',
-                id: 'PARA.207',
-                collapse: false,
-                remark: {},
-                '2023-11-20 07:30:00': 111
-              },
-              {
-                item: '项目6-3',
-                id: 'PARA.207',
-                collapse: false,
-                remark: {},
-                '2023-11-20 07:30:00': 111
-              },
-              {
-                item: '项目6-3',
-                id: 'PARA.207',
-                collapse: false,
-                remark: {},
-                '2023-11-20 07:30:00': 111
-              },
-              {
-                item: '项目6-3',
-                id: 'PARA.207',
-                collapse: false,
-                remark: {},
-                '2023-11-20 07:30:00': 111
-              },
-              {
-                item: '项目6-3',
-                id: 'PARA.207',
-                collapse: false,
-                remark: {},
-                '2023-11-20 07:30:00': 111
-              },
-              {
-                item: '项目6-3',
-                id: 'PARA.207',
-                collapse: false,
-                remark: {},
-                '2023-11-20 07:30:00': 111
-              },
-              {
-                item: '项目6-3',
-                id: 'PARA.207',
-                collapse: false,
-                remark: {},
-                '2023-11-20 07:30:00': 111
-              },
-              {
-                item: '项目6-3',
-                id: 'PARA.207',
-                collapse: false,
-                remark: {},
-                '2023-11-20 07:30:00': 111
-              },
-              {
-                item: '项目6-3',
-                id: 'PARA.207',
-                collapse: false,
-                remark: {},
-                '2023-11-20 07:30:00': 111
-              },
-              {
-                item: '项目6-3',
-                id: 'PARA.207',
-                collapse: false,
-                remark: {},
-                '2023-11-20 07:30:00': 111
-              },
-              {
-                item: '项目6-3',
-                id: 'PARA.207',
-                collapse: false,
-                remark: {},
-                '2023-11-20 07:30:00': 111
-              },
-              {
-                item: '项目6-3',
-                id: 'PARA.207',
-                collapse: false,
-                remark: {},
-                '2023-11-20 07:30:00': 111
-              },
-              {
-                item: '项目6-3',
-                id: 'PARA.207',
-                collapse: false,
-                remark: {},
-                '2023-11-20 07:30:00': 111
-              },
-              {
-                item: '项目6-3',
-                id: 'PARA.207',
-                collapse: false,
-                remark: {},
-                '2023-11-20 07:30:00': 111
-              },
-              {
-                item: '项目6-3',
-                id: 'PARA.207',
-                collapse: false,
-                remark: {},
-                '2023-11-20 07:30:00': 111
-              },
-              {
-                item: '项目6-3',
-                id: 'PARA.207',
-                collapse: false,
-                remark: {},
-                '2023-11-20 07:30:00': 111
-              },
-              {
-                item: '项目6-3',
-                id: 'PARA.207',
-                collapse: false,
-                remark: {},
-                '2023-11-20 07:30:00': 111
-              },
-              {
-                item: '项目6-3',
-                id: 'PARA.207',
-                collapse: false,
-                remark: {},
-                '2023-11-20 07:30:00': 111
-              },
-              {
-                item: '项目6-3',
-                id: 'PARA.207',
-                collapse: false,
-                remark: {},
-                '2023-11-20 07:30:00': 111
-              },
-              {
-                item: '项目6-3',
-                id: 'PARA.207',
-                collapse: false,
-                remark: {},
-                '2023-11-20 07:30:00': 111
-              },
-              {
-                item: '项目6-3',
-                id: 'PARA.207',
-                collapse: false,
-                remark: {},
-                '2023-11-20 07:30:00': 111
-              },
-              {
-                item: '项目6-3',
-                id: 'PARA.207',
-                collapse: false,
-                remark: {},
-                '2023-11-20 07:30:00': 111
-              },
-              {
-                item: '项目6-3',
-                id: 'PARA.207',
-                collapse: false,
-                remark: {},
-                '2023-11-20 07:30:00': 111
-              },
-              {
-                item: '项目6-3',
-                id: 'PARA.207',
-                collapse: false,
-                remark: {},
-                '2023-11-20 07:30:00': 111
-              },
-              {
-                item: '项目6-3',
-                id: 'PARA.207',
-                collapse: false,
-                remark: {},
-                '2023-11-20 07:30:00': 111
-              },
-              {
-                item: '项目6-3',
-                id: 'PARA.207',
-                collapse: false,
-                remark: {},
-                '2023-11-20 07:30:00': 111
-              },
-              {
-                item: '项目6-3',
-                id: 'PARA.207',
-                collapse: false,
-                remark: {},
-                '2023-11-20 07:30:00': 111
-              },
-              {
-                item: '项目6-3',
-                id: 'PARA.207',
-                collapse: false,
-                remark: {},
-                '2023-11-20 07:30:00': 111
-              },
-              {
-                item: '项目6-3',
-                id: 'PARA.207',
-                collapse: false,
-                remark: {},
-                '2023-11-20 07:30:00': 111
-              },
-              {
-                item: '项目6-3',
-                id: 'PARA.207',
-                collapse: false,
-                remark: {},
-                '2023-11-20 07:30:00': 111
-              },
-              {
-                item: '项目6-3',
-                id: 'PARA.207',
-                collapse: false,
-                remark: {},
-                '2023-11-20 07:30:00': 111
-              },
-              {
-                item: '项目6-3',
-                id: 'PARA.207',
-                collapse: false,
-                remark: {},
-                '2023-11-20 07:30:00': 111
-              },
-              {
-                item: '项目6-3',
-                id: 'PARA.207',
-                collapse: false,
-                remark: {},
-                '2023-11-20 07:30:00': 111
-              },
-              {
-                item: '项目6-3',
-                id: 'PARA.207',
-                collapse: false,
-                remark: {},
-                '2023-11-20 07:30:00': 111
-              },
-              {
-                item: '项目6-3',
-                id: 'PARA.207',
-                collapse: false,
-                remark: {},
-                '2023-11-20 07:30:00': 111
-              },
-              {
-                item: '项目6-3',
-                id: 'PARA.207',
-                collapse: false,
-                remark: {},
-                '2023-11-20 07:30:00': 111
-              },
-              {
-                item: '项目6-3',
-                id: 'PARA.207',
-                collapse: false,
-                remark: {},
-                '2023-11-20 07:30:00': 111
-              },
-              {
-                item: '项目6-3',
-                id: 'PARA.207',
-                collapse: false,
-                remark: {},
-                '2023-11-20 07:30:00': 111
-              },
-              {
-                item: '项目6-3',
-                id: 'PARA.207',
-                collapse: false,
-                remark: {},
-                '2023-11-20 07:30:00': 111
-              },
-              {
-                item: '项目6-3',
-                id: 'PARA.207',
-                collapse: false,
-                remark: {},
-                '2023-11-20 07:30:00': 111
-              },
-              {
-                item: '项目6-3',
-                id: 'PARA.207',
-                collapse: false,
-                remark: {},
-                '2023-11-20 07:30:00': 111
-              },
-              {
-                item: '项目6-3',
-                id: 'PARA.207',
-                collapse: false,
-                remark: {},
-                '2023-11-20 07:30:00': 111
-              },
-              {
-                item: '项目6-3',
-                id: 'PARA.207',
-                collapse: false,
-                remark: {},
-                '2023-11-20 07:30:00': 111
-              },
-              {
-                item: '项目6-3',
-                id: 'PARA.207',
-                collapse: false,
-                remark: {},
-                '2023-11-20 07:30:00': 111
-              },
-              {
-                item: '项目6-3',
-                id: 'PARA.207',
-                collapse: false,
-                remark: {},
-                '2023-11-20 07:30:00': 111
-              },
-              {
-                item: '项目6-3',
-                id: 'PARA.207',
-                collapse: false,
-                remark: {},
-                '2023-11-20 07:30:00': 111
-              },
-              {
-                item: '项目6-3',
-                id: 'PARA.207',
-                collapse: false,
-                remark: {},
-                '2023-11-20 07:30:00': 111
-              },
-              {
-                item: '项目6-3',
-                id: 'PARA.207',
-                collapse: false,
-                remark: {},
-                '2023-11-20 07:30:00': 111
-              },
-              {
-                item: '项目6-3',
-                id: 'PARA.207',
-                collapse: false,
-                remark: {},
-                '2023-11-20 07:30:00': 111
-              },
-              {
-                item: '项目6-3',
-                id: 'PARA.207',
-                collapse: false,
-                remark: {},
-                '2023-11-20 07:30:00': 111
-              },
-              {
-                item: '项目6-3',
-                id: 'PARA.207',
-                collapse: false,
-                remark: {},
-                '2023-11-20 07:30:00': 111
-              },
-              {
-                item: '项目6-3',
-                id: 'PARA.207',
-                collapse: false,
-                remark: {},
-                '2023-11-20 07:30:00': 111
-              },
-              {
-                item: '项目6-3',
-                id: 'PARA.207',
-                collapse: false,
-                remark: {},
-                '2023-11-20 07:30:00': 111
-              },
-              {
-                item: '项目6-3',
-                id: 'PARA.207',
-                collapse: false,
-                remark: {},
-                '2023-11-20 07:30:00': 111
-              },
-              {
-                item: '项目6-3',
-                id: 'PARA.207',
-                collapse: false,
-                remark: {},
-                '2023-11-20 07:30:00': 111
-              },
-              {
-                item: '项目6-3',
-                id: 'PARA.207',
-                collapse: false,
-                remark: {},
-                '2023-11-20 07:30:00': 111
-              },
-              {
-                item: '项目6-3',
-                id: 'PARA.207',
-                collapse: false,
-                remark: {},
-                '2023-11-20 07:30:00': 111
-              },
-              {
-                item: '项目6-3',
-                id: 'PARA.207',
-                collapse: false,
-                remark: {},
-                '2023-11-20 07:30:00': 111
-              },
-              {
-                item: '项目6-3',
-                id: 'PARA.207',
-                collapse: false,
-                remark: {},
-                '2023-11-20 07:30:00': 111
-              },
-              {
-                item: '项目6-3',
-                id: 'PARA.207',
-                collapse: false,
-                remark: {},
-                '2023-11-20 07:30:00': 111
-              },
-              {
-                item: '项目6-3',
-                id: 'PARA.207',
-                collapse: false,
-                remark: {},
-                '2023-11-20 07:30:00': 111
-              },
-              {
-                item: '项目6-3',
-                id: 'PARA.207',
-                collapse: false,
-                remark: {},
-                '2023-11-20 07:30:00': 111
-              },
-              {
-                item: '项目6-3',
-                id: 'PARA.207',
-                collapse: false,
-                remark: {},
-                '2023-11-20 07:30:00': 111
-              },
-              {
-                item: '项目6-3',
-                id: 'PARA.207',
-                collapse: false,
-                remark: {},
-                '2023-11-20 07:30:00': 111
-              },
-              {
-                item: '项目6-3',
-                id: 'PARA.207',
-                collapse: false,
-                remark: {},
-                '2023-11-20 07:30:00': 111
-              },
-              {
-                item: '项目6-3',
-                id: 'PARA.207',
-                collapse: false,
-                remark: {},
-                '2023-11-20 07:30:00': 111
-              },
-              {
-                item: '项目6-3',
-                id: 'PARA.207',
-                collapse: false,
-                remark: {},
-                '2023-11-20 07:30:00': 111
-              },
-              {
-                item: '项目6-3',
-                id: 'PARA.207',
-                collapse: false,
-                remark: {},
-                '2023-11-20 07:30:00': 111
-              },
-              {
-                item: '项目6-3',
-                id: 'PARA.207',
-                collapse: false,
-                remark: {},
-                '2023-11-20 07:30:00': 111
-              },
-              {
-                item: '项目6-3',
-                id: 'PARA.207',
-                collapse: false,
-                remark: {},
-                '2023-11-20 07:30:00': 111
-              },
-              {
-                item: '项目6-3',
-                id: 'PARA.207',
-                collapse: false,
-                remark: {},
-                '2023-11-20 07:30:00': 111
-              },
-              {
-                item: '项目6-3',
-                id: 'PARA.207',
-                collapse: false,
-                remark: {},
-                '2023-11-20 07:30:00': 111
-              },
-              {
-                item: '项目6-3',
-                id: 'PARA.207',
-                collapse: false,
-                remark: {},
-                '2023-11-20 07:30:00': 111
-              },
-              {
-                item: '项目6-3',
-                id: 'PARA.207',
-                collapse: false,
-                remark: {},
-                '2023-11-20 07:30:00': 111
-              },
-              {
-                item: '项目6-3',
-                id: 'PARA.207',
-                collapse: false,
-                remark: {},
-                '2023-11-20 07:30:00': 111
-              },
-              {
-                item: '项目6-3',
-                id: 'PARA.207',
-                collapse: false,
-                remark: {},
-                '2023-11-20 07:30:00': 111
-              },
-              {
-                item: '项目6-3',
-                id: 'PARA.207',
-                collapse: false,
-                remark: {},
-                '2023-11-20 07:30:00': 111
-              },
-              {
-                item: '项目6-3',
-                id: 'PARA.207',
-                collapse: false,
-                remark: {},
-                '2023-11-20 07:30:00': 111
-              },
-              {
-                item: '项目6-3',
-                id: 'PARA.207',
-                collapse: false,
-                remark: {},
-                '2023-11-20 07:30:00': 111
-              },
-              {
-                item: '项目6-3',
-                id: 'PARA.207',
-                collapse: false,
-                remark: {},
-                '2023-11-20 07:30:00': 111
-              },
-              {
-                item: '项目6-3',
-                id: 'PARA.207',
-                collapse: false,
-                remark: {},
-                '2023-11-20 07:30:00': 111
-              },
-              {
-                item: '项目6-3',
-                id: 'PARA.207',
-                collapse: false,
-                remark: {},
-                '2023-11-20 07:30:00': 111
-              },
-              {
-                item: '项目6-3',
-                id: 'PARA.207',
-                collapse: false,
-                remark: {},
-                '2023-11-20 07:30:00': 111
-              },
-              {
-                item: '项目6-3',
-                id: 'PARA.207',
-                collapse: false,
-                remark: {},
-                '2023-11-20 07:30:00': 111
-              },
-              {
-                item: '项目6-3',
-                id: 'PARA.207',
-                collapse: false,
-                remark: {},
-                '2023-11-20 07:30:00': 111
-              },
-              {
-                item: '项目6-3',
-                id: 'PARA.207',
-                collapse: false,
-                remark: {},
-                '2023-11-20 07:30:00': 111
-              },
-              {
-                item: '项目6-3',
-                id: 'PARA.207',
-                collapse: false,
-                remark: {},
-                '2023-11-20 07:30:00': 111
-              },
-              {
-                item: '项目6-3',
-                id: 'PARA.207',
-                collapse: false,
-                remark: {},
-                '2023-11-20 07:30:00': 111
-              },
-              {
-                item: '项目6-3',
-                id: 'PARA.207',
-                collapse: false,
-                remark: {},
-                '2023-11-20 07:30:00': 111
-              },
-              {
-                item: '项目6-3',
-                id: 'PARA.207',
-                collapse: false,
-                remark: {},
-                '2023-11-20 07:30:00': 111
-              },
-              {
-                item: '项目6-3',
-                id: 'PARA.207',
-                collapse: false,
-                remark: {},
-                '2023-11-20 07:30:00': 111
-              },
-              {
-                item: '项目6-3',
-                id: 'PARA.207',
-                collapse: false,
-                remark: {},
-                '2023-11-20 07:30:00': 111
-              },
-              {
-                item: '项目6-3-3',
-                id: 'PARA.207',
-                collapse: false,
-                remark: {},
-                '2023-11-20 07:30:00': 111
-              }
-            ]
-          }
-        ]
-      },
-      {
-        item: '项目7',
-        id: 'PARA.207',
-        collapse: false,
-        remark: {},
-        '2023-11-20 07:30:00': 111,
-        children: [
-          {
-            item: '项目7-1',
-            id: 'PARA.207',
-            collapse: false,
-            remark: {},
-            '2023-11-20 07:30:00': 111
-          }
-        ]
-      }
-    ],
+  const data = [
+    {
+      类别: '办公用品',
+      销售额: '129.696',
+      数量: '2',
+      利润: '60.704',
+      children: [
+        {
+          类别: '信封', // 对应原子类别
+          销售额: '125.44',
+          数量: '2',
+          利润: '42.56',
+          children: [
+            {
+              类别: '黄色信封',
+              销售额: '125.44',
+              数量: '2',
+              利润: '42.56'
+            },
+            {
+              类别: '白色信封',
+              销售额: '1375.92',
+              数量: '3',
+              利润: '550.2'
+            }
+          ]
+        },
+        {
+          类别: '器具', // 对应原子类别
+          销售额: '1375.92',
+          数量: '3',
+          利润: '550.2',
+          children: [
+            {
+              类别: '订书机',
+              销售额: '125.44',
+              数量: '2',
+              利润: '42.56'
+            },
+            {
+              类别: '计算器',
+              销售额: '1375.92',
+              数量: '3',
+              利润: '550.2'
+            }
+          ]
+        }
+      ]
+    },
+    {
+      类别: '技术',
+      销售额: '229.696',
+      数量: '20',
+      利润: '90.704',
+      children: [
+        {
+          类别: '设备', // 对应原子类别
+          销售额: '225.44',
+          数量: '5',
+          利润: '462.56'
+        },
+        {
+          类别: '配件', // 对应原子类别
+          销售额: '375.92',
+          数量: '8',
+          利润: '550.2'
+        },
+        {
+          类别: '复印机', // 对应原子类别
+          销售额: '425.44',
+          数量: '7',
+          利润: '34.56'
+        },
+        {
+          类别: '电话', // 对应原子类别
+          销售额: '175.92',
+          数量: '6',
+          利润: '750.2'
+        }
+      ]
+    },
+    {
+      类别: '家具',
+      销售额: '129.696',
+      数量: '2',
+      利润: '-60.704',
+      children: [
+        {
+          类别: '桌子', // 对应原子类别
+          销售额: '125.44',
+          数量: '2',
+          利润: '42.56',
+          children: [
+            {
+              类别: '黄色桌子',
+              销售额: '125.44',
+              数量: '2',
+              利润: '42.56'
+            },
+            {
+              类别: '白色桌子',
+              销售额: '1375.92',
+              数量: '3',
+              利润: '550.2'
+            }
+          ]
+        },
+        {
+          类别: '椅子', // 对应原子类别
+          销售额: '1375.92',
+          数量: '3',
+          利润: '550.2',
+          children: [
+            {
+              类别: '老板椅',
+              销售额: '125.44',
+              数量: '2',
+              利润: '42.56'
+            },
+            {
+              类别: '沙发椅',
+              销售额: '1375.92',
+              数量: '3',
+              利润: '550.2'
+            }
+          ]
+        }
+      ]
+    },
+    {
+      类别: '生活家电（懒加载）',
+      销售额: '229.696',
+      数量: '20',
+      利润: '90.704',
+      children: true
+    }
+  ];
+  const option: VTable.ListTableConstructorOptions = {
+    container: document.getElementById(CONTAINER_ID),
     columns: [
       {
-        field: 'item',
-        title: '项目',
-        width: 286,
-        disableColumnResize: true,
+        field: '类别',
         tree: true,
-        style: {
-          fontSize: 14,
-          fontFamily: 'Microsoft YaHei'
-        }
+        title: '类别',
+        width: 'auto',
+        sort: true
       },
       {
-        field: '2023-11-20 07:30:00',
-        title: '11-20 07:30',
-        disableColumnResize: true,
-        customRender(args) {
-          const { col, row, table } = args;
-          const { width, height } = args.rect;
-          const elements = [
-            {
-              type: 'rect',
-              fill: '#D4FAE6',
-              x: 0,
-              y: args.table.autoWrapText ? 0 : 3,
-              width,
-              height: height - 6
-            }
-          ];
-          return { elements, renderDefault: true };
-        }
+        field: '销售额',
+        title: '销售额',
+        width: 'auto',
+        sort: true
+        // tree: true,
+      },
+      {
+        field: '利润',
+        title: '利润',
+        width: 'auto',
+        sort: true
       }
     ],
-    frozenColCount: 1,
-    defaultRowHeight: 30,
-    defaultColWidth: 200,
-    heightMode: 'autoHeight',
-    defaultHeaderRowHeight: 48,
-    showFrozenIcon: false,
-    autoWrapText: true,
-    hover: {
-      highlightMode: 'cross'
+    showFrozenIcon: true, //显示VTable内置冻结列图标
+    widthMode: 'standard',
+    autoFillHeight: true,
+    // heightMode: 'adaptive',
+    allowFrozenColCount: 2,
+    records: data,
+
+    hierarchyIndent: 20,
+    hierarchyExpandLevel: 2,
+
+    sortState: {
+      field: '销售额',
+      order: 'desc'
     },
-    tooltip: {
-      isShowOverflowTextTooltip: true
-    },
-    menu: {},
-    container: {},
-    transpose: false
+    theme: VTable.themes.BRIGHT,
+    defaultRowHeight: 32
   };
 
-  const instance = new ListTable(document.getElementById(CONTAINER_ID), option);
-
-  // 展开树节点
-  function expandingTree(record) {
-    if (!record || !record.length) {
-      return;
-    }
-    let num = 0;
-    const expand = node => {
-      node.children?.forEach(child => {
-        num += 1;
-        if (node.fatherCollapse) {
-          child.fatherCollapse = true;
-        }
-        if (!child.collapse && child.children?.length && !child.fatherCollapse) {
-          instance.toggleHierarchyState(0, num);
-        }
-        if ((child.collapse || child.fatherCollapse) && child.children?.length) {
-          num -= child.children.length;
-        }
-        expand(child);
-      });
-    };
-    record.forEach(item => {
-      num += 1;
-      if (!item.collapse && item.children?.length) {
-        instance.toggleHierarchyState(0, num);
-      }
-      if (item.collapse && item.children?.length) {
-        num -= item.children.length;
-      }
-      if (item.collapse) {
-        item.fatherCollapse = true;
-      }
-      expand(item);
-    });
-  }
-
-  expandingTree(option.records);
-
+  const instance = new ListTable(option);
   window.tableInstance = instance;
   bindDebugTool(instance.scenegraph.stage, { customGrapicKeys: ['col', 'row'] });
 
