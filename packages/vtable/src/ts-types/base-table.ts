@@ -709,7 +709,7 @@ export interface BaseTableAPI {
   getTargetRowAtConsiderBottomFrozen: (
     absoluteY: number
   ) => { row: number; top: number; bottom: number; height: number } | null;
-  reateCells: () => void;
+  renderWithRecreateCells: () => void;
   //#endregion  tableAPI
 
   _adjustColWidth: (col: number, orgWidth: number) => number;

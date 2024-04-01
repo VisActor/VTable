@@ -2419,18 +2419,18 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     if (absoluteX === 0) {
       return { left: 0, col: 0, right: 0, width: 0 };
     }
-    if (absoluteX > this.tableNoFrameWidth - this.getRightFrozenColsWidth()) {
-      for (let i = 0; i < this.rightFrozenColCount; i++) {
-        if (absoluteX > this.tableNoFrameWidth - this.getColsWidth(this.colCount - i - 1, this.colCount - 1)) {
-          return {
-            col: this.colCount - i - 1,
-            left: undefined,
-            right: undefined,
-            width: undefined
-          };
-        }
-      }
-    }
+    // if (absoluteX > this.tableNoFrameWidth - this.getRightFrozenColsWidth()) {
+    //   for (let i = 0; i < this.rightFrozenColCount; i++) {
+    //     if (absoluteX > this.tableNoFrameWidth - this.getColsWidth(this.colCount - i - 1, this.colCount - 1)) {
+    //       return {
+    //         col: this.colCount - i - 1,
+    //         left: undefined,
+    //         right: undefined,
+    //         width: undefined
+    //       };
+    //     }
+    //   }
+    // }
     const findBefore = (
       startCol: number,
       startRight: number
@@ -2503,18 +2503,18 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     if (absoluteY === 0) {
       return { top: 0, row: 0, bottom: 0, height: 0 };
     }
-    if (absoluteY > this.tableNoFrameHeight - this.getBottomFrozenRowsHeight()) {
-      for (let i = 0; i < this.rightFrozenColCount; i++) {
-        if (absoluteY > this.tableNoFrameHeight - this.getRowsHeight(this.rowCount - i - 1, this.rowCount - 1)) {
-          return {
-            row: this.rowCount - i - 1,
-            top: undefined,
-            bottom: undefined,
-            height: undefined
-          };
-        }
-      }
-    }
+    // if (absoluteY > this.tableNoFrameHeight - this.getBottomFrozenRowsHeight()) {
+    //   for (let i = 0; i < this.rightFrozenColCount; i++) {
+    //     if (absoluteY > this.tableNoFrameHeight - this.getRowsHeight(this.rowCount - i - 1, this.rowCount - 1)) {
+    //       return {
+    //         row: this.rowCount - i - 1,
+    //         top: undefined,
+    //         bottom: undefined,
+    //         height: undefined
+    //       };
+    //     }
+    //   }
+    // }
     const findBefore = (
       startRow: number,
       startBottom: number
