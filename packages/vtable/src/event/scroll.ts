@@ -1,7 +1,12 @@
 import type { StateManager } from '../state/state';
 import { InteractionState } from '../ts-types';
-
-export function handleWhell(event: WheelEvent, state: StateManager) {
+/**
+ *
+ * @param event
+ * @param state
+ * @param isWheelEvent 是否是由鼠标或者触摸板原生滚动事件触发进入？
+ */
+export function handleWhell(event: WheelEvent, state: StateManager, isWheelEvent: boolean = true) {
   let { deltaX, deltaY } = event;
   // 如果按住了shift 则进行横向滚动 纵向不滚动
   if (event.shiftKey && event.deltaY) {
@@ -24,7 +29,7 @@ export function handleWhell(event: WheelEvent, state: StateManager) {
     state.setScrollTop(state.scroll.verticalBarPos + optimizedDeltaY);
     state.showVerticalScrollBar(true);
   }
-  state.resetInteractionState();
+  isWheelEvent && state.resetInteractionState();
   if (
     event.cancelable &&
     (state.table.internalProps.overscrollBehavior === 'none' ||
@@ -91,4 +96,104 @@ function isScrollToLeft(deltaX: number, state: StateManager) {
 function isScrollToRight(deltaX: number, state: StateManager) {
   const totalWidth = state.table.getAllColsWidth() - state.table.scenegraph.width;
   return totalWidth !== 0 && deltaX >= 0 && Math.abs(state.scroll.horizontalBarPos - totalWidth) < 1;
+}
+
+export class InertiaScroll {
+  friction: number;
+  lastTime: number;
+  speedX: number;
+  speedY: number;
+  stateManager: StateManager;
+  runingId: number;
+  scrollHandle: (dx: number, dy: number) => void;
+  constructor(stateManager: StateManager) {
+    this.stateManager = stateManager;
+  }
+  setScrollHandle(scrollHandle: (dx: number, dy: number) => void) {
+    this.scrollHandle = scrollHandle;
+  }
+
+  startInertia(speedX: number, speedY: number, friction: number) {
+    this.lastTime = Date.now();
+    this.speedX = speedX;
+    this.speedY = speedY;
+    this.friction = friction;
+    if (!this.runingId) {
+      this.runingId = requestAnimationFrame(this.inertia.bind(this));
+    }
+  }
+  inertia() {
+    const now = Date.now();
+    const dffTime = now - this.lastTime;
+    let stopped = true;
+    const f = Math.pow(this.friction, dffTime / 16);
+    const newSpeedX = f * this.speedX;
+    const newSpeedY = f * this.speedY;
+    let dx = 0;
+    let dy = 0;
+    if (Math.abs(newSpeedX) > 0.05) {
+      stopped = false;
+      dx = ((this.speedX + newSpeedX) / 2) * dffTime;
+    }
+    if (Math.abs(newSpeedY) > 0.05) {
+      stopped = false;
+      dy = ((this.speedY + newSpeedY) / 2) * dffTime;
+    }
+    this.scrollHandle?.(dx, dy);
+    if (stopped) {
+      this.runingId = null;
+      return;
+    }
+    this.lastTime = now;
+    this.speedX = newSpeedX;
+    this.speedY = newSpeedY;
+
+    this.runingId = requestAnimationFrame(this.inertia.bind(this));
+  }
+  endInertia() {
+    cancelAnimationFrame(this.runingId);
+    this.runingId = null;
+  }
+  isInertiaScrolling() {
+    return !!this.runingId;
+  }
+}
+
+/**
+ * @description: start inertia scrolling, speed decrease by 0.95/16ms
+ * @param {number} vX
+ * @param {number} vY
+ * @param {StateManager} stateManager
+ * @return {*}
+ */
+export function startInertia(vX: number, vY: number, friction: number, stateManager: StateManager) {
+  let time = Date.now();
+  const inertia = () => {
+    const now = Date.now();
+    const dffTime = now - time;
+    let stopped = true;
+    const f = Math.pow(friction, dffTime / 16);
+    const newVX = f * vX;
+    const newVY = f * vY;
+    let dx = 0;
+    let dy = 0;
+    if (Math.abs(newVX) > 0.05) {
+      stopped = false;
+      dx = ((vX + newVX) / 2) * dffTime;
+    }
+    if (Math.abs(newVY) > 0.05) {
+      stopped = false;
+      dy = ((vY + newVY) / 2) * dffTime;
+    }
+    handleWhell({ deltaX: -dx, deltaY: -dy } as any, stateManager);
+    if (stopped) {
+      return;
+    }
+    time = now;
+    vX = newVX;
+    vY = newVY;
+
+    requestAnimationFrame(inertia);
+  };
+  requestAnimationFrame(inertia);
 }

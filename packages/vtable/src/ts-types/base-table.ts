@@ -703,8 +703,13 @@ export interface BaseTableAPI {
 
   getTargetColAt: (absoluteX: number) => { col: number; left: number; right: number; width: number } | null;
   getTargetRowAt: (absoluteY: number) => { row: number; top: number; bottom: number; height: number } | null;
-
-  renderWithRecreateCells: () => void;
+  getTargetColAtConsiderRightFrozen: (
+    absoluteX: number
+  ) => { col: number; left: number; right: number; width: number } | null;
+  getTargetRowAtConsiderBottomFrozen: (
+    absoluteY: number
+  ) => { row: number; top: number; bottom: number; height: number } | null;
+  reateCells: () => void;
   //#endregion  tableAPI
 
   _adjustColWidth: (col: number, orgWidth: number) => number;

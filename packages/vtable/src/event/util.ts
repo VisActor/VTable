@@ -9,9 +9,9 @@ export interface SceneEvent {
   eventArgs?: {
     col: number;
     row: number;
-    event: FederatedPointerEvent;
+    event: FederatedPointerEvent | MouseEvent;
     targetCell: Group;
-    target: IEventTarget;
+    target: IEventTarget | EventTarget;
   };
 }
 
