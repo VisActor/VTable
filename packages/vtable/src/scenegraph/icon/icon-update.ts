@@ -25,6 +25,11 @@ export function hideHoverIcon(col: number, row: number, scene: Scenegraph) {
     (icon: Icon) => icon.attribute.visibleTime === 'mouseenter_cell',
     (icon: Icon) => {
       icon.setAttribute('opacity', 0);
+
+      const iconBack = icon.parent.getChildByName('icon-back') as IRect;
+      if (iconBack) {
+        iconBack.setAttribute('visible', false);
+      }
     },
     scene
   );
