@@ -59,7 +59,6 @@ export class ListTable extends BaseTable implements ListTableAPI {
       }
     }
     super(container as HTMLElement, options);
-
     const internalProps = this.internalProps;
     internalProps.frozenColDragHeaderMode = options.frozenColDragHeaderMode;
     //分页配置
@@ -773,7 +772,14 @@ export class ListTable extends BaseTable implements ListTableAPI {
       }
     }
     const index = this.getRecordShowIndexByCell(col, row);
-    const diffDataIndices = this.dataSource.toggleHierarchyState(index);
+    const diffDataIndices = this.dataSource.toggleHierarchyState(
+      index,
+      this.scenegraph.proxy.rowStart - this.columnHeaderLevelCount,
+      Math.max(
+        this.scenegraph.proxy.rowEnd - this.columnHeaderLevelCount,
+        this.scenegraph.proxy.rowStart - this.columnHeaderLevelCount + this.scenegraph.proxy.rowLimit - 1
+      )
+    );
     const diffPositions = this.internalProps.layoutMap.toggleHierarchyState(diffDataIndices);
     //影响行数
     this.refreshRowColCount();

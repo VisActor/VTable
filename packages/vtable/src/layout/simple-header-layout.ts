@@ -1244,7 +1244,7 @@ export class SimpleHeaderLayoutMap implements LayoutMapAPI {
       return false;
     }
     if (this._table.internalProps.frozenColDragHeaderMode === 'disabled') {
-      if (this._table.isFrozenColumn(target.col) || this._table.isRightFrozenColumn(target.col)) {
+      if (this._table.isFrozenColumn(target.col)) {
         return false;
       }
     }
@@ -1399,6 +1399,28 @@ export class SimpleHeaderLayoutMap implements LayoutMapAPI {
    * 点击某个单元格的展开折叠按钮 改变该节点的状态 维度树重置
    */
   toggleHierarchyState(diffDataIndices: { add: number[]; remove: number[] }) {
+    // const addCellPositions: any[] = [];
+    // diffDataIndices.add.forEach(index => {
+    //   if (
+    //     this._table.frozenRowCount + index >= this._table.scenegraph.proxy.rowStart &&
+    //     this._table.frozenRowCount + index <=
+    //       Math.max(
+    //         this._table.scenegraph.proxy.rowEnd,
+    //         this._table.scenegraph.proxy.rowStart + this._table.scenegraph.proxy.rowLimit
+    //       )
+    //   ) {
+    //     addCellPositions.push({ col: 0, row: this._table.frozenRowCount + index });
+    //   }
+    // });
+    // const removeCellPositions: any[] = [];
+    // diffDataIndices.remove.forEach(index => {
+    //   if (
+    //     this._table.frozenRowCount + index >= this._table.scenegraph.proxy.rowStart &&
+    //     this._table.frozenRowCount + index <= this._table.scenegraph.proxy.rowEnd
+    //   ) {
+    //     removeCellPositions.push({ col: 0, row: this._table.frozenRowCount + index });
+    //   }
+    // });
     const addCellPositions = diffDataIndices.add.map(index => {
       return { col: 0, row: this._table.frozenRowCount + index };
     });

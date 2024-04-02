@@ -15,7 +15,8 @@ export function updateSelectPosition(
   row: number,
   isShift: boolean,
   isCtrl: boolean,
-  isSelectAll: boolean
+  isSelectAll: boolean,
+  isSelectMoving: boolean = false
 ) {
   const { table, interactionState } = state;
   const { scenegraph } = table;
@@ -29,7 +30,7 @@ export function updateSelectPosition(
   //   return;
   // }
   /** 完整显示选中单元格 自动滚动效果*/
-  if (col !== -1 && row !== -1) {
+  if (col !== -1 && row !== -1 && !isSelectMoving) {
     if (interactionState === InteractionState.grabing && state.select.ranges.length > 0) {
       const currentRange = state.select.ranges[state.select.ranges.length - 1];
       if (col > currentRange.start.col && col > currentRange.end.col) {
@@ -75,7 +76,11 @@ export function updateSelectPosition(
     state.select.ranges = [];
     // 隐藏select border
     scenegraph.deleteAllSelectBorder();
-  } else if (interactionState === InteractionState.default && !table.stateManager.isResizeCol()) {
+  } else if (
+    interactionState === InteractionState.default &&
+    !table.eventManager.isDraging &&
+    !table.stateManager.isResizeCol()
+  ) {
     const currentRange = state.select.ranges[state.select.ranges.length - 1];
     if (isShift && currentRange) {
       if (state.select.headerSelectMode !== 'cell' && table.isColumnHeader(col, row)) {
@@ -91,7 +96,6 @@ export function updateSelectPosition(
         const endCol = table.colCount - 1;
         const startRow = Math.min(currentRange.start.row, currentRange.end.row, row);
         const endRow = Math.max(currentRange.start.row, currentRange.end.row, row);
-
         currentRange.start = { col: startCol, row: startRow };
         currentRange.end = { col: endCol, row: endRow };
       } else {
@@ -169,7 +173,10 @@ export function updateSelectPosition(
           extendSelectRange
         );
     }
-  } else if (interactionState === InteractionState.grabing && !table.stateManager.isResizeCol()) {
+  } else if (
+    (interactionState === InteractionState.grabing || table.eventManager.isDraging) &&
+    !table.stateManager.isResizeCol()
+  ) {
     let extendSelectRange = true;
     // 可能有cellPosStart从-1开始grabing的情况
     if (cellPos.col === -1) {

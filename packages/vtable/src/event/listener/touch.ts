@@ -1,7 +1,6 @@
 import type { FederatedPointerEvent } from '@src/vrender';
 import { handleWhell, isHorizontalScrollable, isVerticalScrollable } from '../scroll';
 import type { EventManager } from '../event';
-import type { StateManager } from '../../state/state';
 
 export function bindTouchListener(eventManager: EventManager) {
   const table = eventManager.table;
@@ -85,7 +84,10 @@ export function bindTouchListener(eventManager: EventManager) {
       const vX = (lastPoint.x - firstPoint.x) / (lastPoint.timestamp - firstPoint.timestamp);
       const vY = (lastPoint.y - firstPoint.y) / (lastPoint.timestamp - firstPoint.timestamp);
       //开始惯性滚动
-      startInertia(vX, vY, stateManager);
+      eventManager.inertiaScroll.startInertia(vX, vY, 0.95);
+      table.eventManager.inertiaScroll.setScrollHandle((dx: number, dy: number) => {
+        handleWhell({ deltaX: -dx, deltaY: -dy } as any, table.stateManager);
+      });
     }
 
     eventManager.isTouchdown = false;
@@ -117,44 +119,4 @@ export function bindTouchListener(eventManager: EventManager) {
 
 function isTouchEvent(e: TouchEvent | MouseEvent): e is TouchEvent {
   return !!(e as TouchEvent).changedTouches;
-}
-
-/**
- * @description: start inertia scrolling, speed decrease by 0.95/16ms
- * @param {number} vX
- * @param {number} vY
- * @param {StateManager} stateManager
- * @return {*}
- */
-function startInertia(vX: number, vY: number, stateManager: StateManager) {
-  let time = Date.now();
-  const friction = 0.95;
-  const inertia = () => {
-    const now = Date.now();
-    const dffTime = now - time;
-    let stopped = true;
-    const f = Math.pow(friction, dffTime / 16);
-    const newVX = f * vX;
-    const newVY = f * vY;
-    let dx = 0;
-    let dy = 0;
-    if (Math.abs(newVX) > 0.05) {
-      stopped = false;
-      dx = ((vX + newVX) / 2) * dffTime;
-    }
-    if (Math.abs(newVY) > 0.05) {
-      stopped = false;
-      dy = ((vY + newVY) / 2) * dffTime;
-    }
-    handleWhell({ deltaX: -dx, deltaY: -dy } as any, stateManager);
-    if (stopped) {
-      return;
-    }
-    time = now;
-    vX = newVX;
-    vY = newVY;
-
-    requestAnimationFrame(inertia);
-  };
-  requestAnimationFrame(inertia);
 }
