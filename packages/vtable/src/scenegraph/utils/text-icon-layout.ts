@@ -101,7 +101,7 @@ export function createCellContent(
         // widthLimit: autoColWidth ? -1 : colWidth - (padding[1] + padding[3]),
         heightLimit: autoRowHeight ? -1 : cellHeight - (padding[0] + padding[2]),
         pickable: false,
-        dx: hierarchyOffset + _contentOffset,
+        dx: textAlign === 'left' ? hierarchyOffset + _contentOffset : 0,
         whiteSpace: text.length === 1 && !autoWrapText ? 'no-wrap' : 'normal'
       };
       const wrapText = new Text(cellTheme.text ? (Object.assign({}, cellTheme.text, attribute) as any) : attribute);
@@ -218,7 +218,10 @@ export function createCellContent(
         lineClamp,
         wordBreak: 'break-word',
         whiteSpace: text.length === 1 && !autoWrapText ? 'no-wrap' : 'normal',
-        dx: _contentOffset + (!contentLeftIcons.length && !contentRightIcons.length ? hierarchyOffset : 0)
+        dx:
+          textAlign === 'left'
+            ? _contentOffset + (!contentLeftIcons.length && !contentRightIcons.length ? hierarchyOffset : 0)
+            : 0
       };
       const wrapText = new Text(cellTheme.text ? (Object.assign({}, cellTheme.text, attribute) as any) : attribute);
       wrapText.name = 'text';

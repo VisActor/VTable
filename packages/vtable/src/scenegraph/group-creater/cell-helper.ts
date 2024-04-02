@@ -466,7 +466,7 @@ export function updateCell(col: number, row: number, table: BaseTableAPI, addNew
         // widthLimit: autoColWidth ? -1 : colWidth - (padding[1] + padding[3]),
         heightLimit: cellHeight - (padding[0] + padding[2]),
         pickable: false,
-        dx: hierarchyOffset,
+        dx: textAlign === 'left' ? hierarchyOffset : 0,
         x
       };
       // const oldText = textMark.attribute.text;
