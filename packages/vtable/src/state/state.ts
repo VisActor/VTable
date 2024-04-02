@@ -469,12 +469,13 @@ export class StateManager {
     row: number,
     isShift: boolean = false,
     isCtrl: boolean = false,
-    isSelectAll: boolean = false
+    isSelectAll: boolean = false,
+    isSelectMoving: boolean = false
   ) {
     if (row !== -1 && row !== -1) {
       this.select.selecting = true;
     }
-    updateSelectPosition(this, col, row, isShift, isCtrl, isSelectAll);
+    updateSelectPosition(this, col, row, isShift, isCtrl, isSelectAll, isSelectMoving);
   }
 
   checkCellRangeInSelect(cellPosStart: CellAddress, cellPosEnd: CellAddress) {

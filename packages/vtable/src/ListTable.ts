@@ -59,7 +59,6 @@ export class ListTable extends BaseTable implements ListTableAPI {
       }
     }
     super(container as HTMLElement, options);
-
     const internalProps = this.internalProps;
     internalProps.frozenColDragHeaderMode = options.frozenColDragHeaderMode;
     //分页配置

@@ -1244,7 +1244,7 @@ export class SimpleHeaderLayoutMap implements LayoutMapAPI {
       return false;
     }
     if (this._table.internalProps.frozenColDragHeaderMode === 'disabled') {
-      if (this._table.isFrozenColumn(target.col) || this._table.isRightFrozenColumn(target.col)) {
+      if (this._table.isFrozenColumn(target.col)) {
         return false;
       }
     }

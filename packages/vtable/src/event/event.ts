@@ -24,7 +24,7 @@ import type { PivotTable } from '../PivotTable';
 import { Env } from '../tools/env';
 import type { ListTable } from '../ListTable';
 import { isValid } from '@visactor/vutils';
-import { InteractionState, type KeydownEvent, type ListTableAPI } from '../ts-types';
+import { InertiaScroll } from './scroll';
 
 export class EventManager {
   table: BaseTableAPI;
@@ -49,10 +49,15 @@ export class EventManager {
   LastBodyPointerXY: { x: number; y: number };
   isDown = false;
   isDraging = false;
-  globalEventListeners: { name: string; env: 'document' | 'body' | 'window'; callback: (e?: any) => void }[] = [];
+  scrollYSpeed: number;
+  scrollXSpeed: number;
 
+  //报错已绑定过的事件 后续清除绑定
+  globalEventListeners: { name: string; env: 'document' | 'body' | 'window'; callback: (e?: any) => void }[] = [];
+  inertiaScroll: InertiaScroll;
   constructor(table: BaseTableAPI) {
     this.table = table;
+    this.inertiaScroll = new InertiaScroll(table.stateManager);
     if (Env.mode === 'node') {
       return;
     }
@@ -264,7 +269,9 @@ export class EventManager {
         eventArgs.col,
         eventArgs.row,
         eventArgs.event.shiftKey,
-        eventArgs.event.ctrlKey || eventArgs.event.metaKey
+        eventArgs.event.ctrlKey || eventArgs.event.metaKey,
+        false,
+        isSelectMoving
       );
 
       return true;
@@ -321,14 +328,18 @@ export class EventManager {
           isSelectMoving ? updateCol : currentRange.end.col,
           isSelectMoving ? updateRow : currentRange.end.row,
           true,
-          eventArgs.event.ctrlKey || eventArgs.event.metaKey
+          eventArgs.event.ctrlKey || eventArgs.event.metaKey,
+          false,
+          isSelectMoving
         );
       } else {
         this.table.stateManager.updateSelectPos(
           eventArgs.col,
           eventArgs.row,
           eventArgs.event.shiftKey,
-          eventArgs.event.ctrlKey || eventArgs.event.metaKey
+          eventArgs.event.ctrlKey || eventArgs.event.metaKey,
+          false,
+          isSelectMoving
         );
       }
       return true;

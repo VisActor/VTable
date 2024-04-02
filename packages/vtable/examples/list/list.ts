@@ -178,12 +178,18 @@ export function createTable() {
     overscrollBehavior: 'none',
     dragHeaderMode: 'all',
     keyboardOptions: {
-      pasteValueToCell: true
+      pasteValueToCell: true,
+      copySelected: true,
+      selectAllOnCtrlA: true
     },
     eventOptions: {
       preventDefaultContextMenu: false
     },
-    autoWrapText: true
+    autoWrapText: true,
+    editor: '',
+    excelOptions: {
+      fillHandle: true
+    }
 
     // widthMode: 'adaptive'
   };
