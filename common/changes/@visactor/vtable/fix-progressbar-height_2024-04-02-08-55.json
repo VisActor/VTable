@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vtable",
+      "comment": "fix: fix progressbar cover cell border #1425",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vtable"
+}
