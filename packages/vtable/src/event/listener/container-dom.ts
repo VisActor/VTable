@@ -459,7 +459,6 @@ export function bindContainerDomListener(eventManager: EventManager) {
     // }
     // const eventArgsSet = getCellEventArgsSet(e);
     const { x, y } = table._getMouseAbstractPoint(e, false);
-    console.log('stateManager.interactionState ', stateManager.interactionState);
     // if (stateManager.interactionState === InteractionState.scrolling) {
     //   return;
     // }
@@ -504,31 +503,26 @@ export function bindContainerDomListener(eventManager: EventManager) {
         let top = false;
         let right = false;
         let left = false;
-        if (y > drawRange.bottom - bottomFrozenRowHeight && canScrollY) {
+        if (
+          y > drawRange.bottom - bottomFrozenRowHeight &&
+          canScrollY &&
+          table.scrollTop + table.tableNoFrameWidth < table.getAllRowsHeight()
+        ) {
           bottom = true;
           table.eventManager.scrollYSpeed = -(y - drawRange.bottom + bottomFrozenRowHeight) / 50;
-        } else if (y < drawRange.top + topFrozenRowHeight && canScrollY) {
+        } else if (y < drawRange.top + topFrozenRowHeight && canScrollY && table.scrollTop > 0) {
           top = true;
           table.eventManager.scrollYSpeed = -(y - drawRange.top - topFrozenRowHeight) / 50;
-          // table.eventManager.inertiaScroll.startInertia(0, table.eventManager.scrollYSpeed, 1);
-          // table.eventManager.inertiaScroll.setScrollAfterCallback((dx: number, dy: number) => {
-          //   handleWhell({ deltaX: -dx, deltaY: -dy } as any, table.stateManager, false);
-          //   table.stateManager.updateInteractionState(InteractionState.grabing);
-          //   table.stateManager.updateSelectPos(
-          //     table.getTargetColAt(table.scrollLeft + x).col,
-          //     table.getTargetRowAt(table.scrollTop + topFrozenRowHeight + 20).row,
-          //     false,
-          //     false,
-          //     false,
-          //     true
-          //   );
-          // });
         }
-        console.log('canScrollX', canScrollX);
-        if (x > drawRange.right - rightFrozenColsWidth && canScrollX) {
+
+        if (
+          x > drawRange.right - rightFrozenColsWidth &&
+          canScrollX &&
+          table.scrollLeft + table.tableNoFrameWidth < table.getAllColsWidth()
+        ) {
           right = true;
           table.eventManager.scrollXSpeed = -(x - drawRange.right + rightFrozenColsWidth) / 50;
-        } else if (x < drawRange.left + leftFrozenColsWidth && canScrollX) {
+        } else if (x < drawRange.left + leftFrozenColsWidth && canScrollX && table.scrollLeft > 0) {
           left = true;
           table.eventManager.scrollXSpeed = -(x - drawRange.left - leftFrozenColsWidth) / 50;
         }
@@ -542,24 +536,47 @@ export function bindContainerDomListener(eventManager: EventManager) {
 
           let selectX: number;
           let selectY: number;
+
           if (bottom) {
-            selectX = table.scrollLeft + x;
             selectY = table.scrollTop + drawRange.height - bottomFrozenRowHeight - 20;
           } else if (top) {
-            selectX = table.scrollLeft + x;
             selectY = table.scrollTop + topFrozenRowHeight + 20;
           }
+
           if (right) {
-            selectY = table.scrollTop + y;
             selectX = table.scrollLeft + drawRange.width - rightFrozenColsWidth - 20;
           } else if (left) {
-            selectY = table.scrollTop + y;
             selectX = table.scrollLeft + leftFrozenColsWidth + 20;
+          }
+
+          let considerFrozenY = false;
+          let considerFrozenX = false;
+          if (!right && !left) {
+            if (
+              (x > table.tableNoFrameWidth - table.getRightFrozenColsWidth() && x < table.tableNoFrameWidth) ||
+              (x > 0 && x < table.getFrozenColsWidth())
+            ) {
+              selectX = x;
+              considerFrozenX = true;
+            } else {
+              selectX = table.scrollLeft + x;
+            }
+          }
+          if (!bottom && !top) {
+            if (
+              (y > table.tableNoFrameHeight - table.getBottomFrozenRowsHeight() && y < table.tableNoFrameHeight) ||
+              (y > 0 && y < table.getFrozenRowsHeight())
+            ) {
+              selectY = y;
+              considerFrozenY = true;
+            } else {
+              selectY = table.scrollTop + y;
+            }
           }
           table.stateManager.updateInteractionState(InteractionState.grabing);
           table.stateManager.updateSelectPos(
-            table.getTargetColAtConsiderRightFrozen(selectX).col,
-            table.getTargetRowAtConsiderBottomFrozen(selectY).row,
+            table.getTargetColAtConsiderRightFrozen(selectX, considerFrozenX).col,
+            table.getTargetRowAtConsiderBottomFrozen(selectY, considerFrozenY).row,
             false,
             false,
             false,
