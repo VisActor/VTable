@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vtable",
+      "comment": "fix: hide icon background when hide icon",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vtable"
+}
