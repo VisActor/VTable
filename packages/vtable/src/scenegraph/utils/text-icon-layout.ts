@@ -530,7 +530,10 @@ export function updateCellContentWidth(
   let contentHeight: number;
   if (textMark instanceof Text) {
     oldTextHeight = textMark.AABBBounds.height();
-    textMark.setAttribute('maxLineWidth', distWidth - leftIconWidth - rightIconHeight - (padding[1] + padding[3]));
+    textMark.setAttribute(
+      'maxLineWidth',
+      distWidth - leftIconWidth - rightIconHeight - (padding[1] + padding[3]) - (textMark.attribute.dx ?? 0)
+    );
     // contentWidth = textMark.AABBBounds.width();
     contentHeight = textMark.AABBBounds.height();
   } else if (textMark instanceof RichText) {
