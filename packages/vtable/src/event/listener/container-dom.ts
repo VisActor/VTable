@@ -153,64 +153,66 @@ export function bindContainerDomListener(eventManager: EventManager) {
       const data = table.getCopyValue();
       if (isValid(data)) {
         e.preventDefault();
-        // if (browser.IE) {
-        //   (window as any).clipboardData.setData('Text', data); // IE
-        // } else {
-        //   (e as any).clipboardData.setData('text/plain', data); // Chrome, Firefox
-        // }
+        if (navigator.clipboard?.write) {
+          // 将复制的数据转为html格式
+          const setDataToHTML = (data: string) => {
+            const result = ['<table>'];
+            const META_HEAD = [
+              '<meta name="author" content="Visactor"/>', // 后面可用于vtable之间的快速复制粘贴
+              //white-space:normal，连续的空白字符会被合并为一个空格，并且文本会根据容器的宽度自动换行显示
+              //mso-data-placement:same-cell，excel专用， 在同一个单元格中显示所有数据，而不是默认情况下将数据分散到多个单元格中显示
+              '<style type="text/css">td{white-space:normal}br{mso-data-placement:same-cell}</style>'
+            ].join('');
+            const rows = data.split('\r\n'); // 将数据拆分为行
+            rows.forEach(function (rowCells: any, rowIndex: number) {
+              const cells = rowCells.split('\t'); // 将行数据拆分为单元格
+              const rowValues: string[] = [];
+              if (rowIndex === 0) {
+                result.push('<tbody>');
+              }
+              cells.forEach(function (cell: string, cellIndex: number) {
+                // 单元格数据处理
+                const parsedCellData = !cell
+                  ? ''
+                  : cell
+                      .toString()
+                      .replace(/&/g, '&amp;') // replace & with &amp; to prevent XSS attacks
+                      .replace(/'/g, '&#39;') // replace ' with &#39; to prevent XSS attacks
+                      .replace(/</g, '&lt;') // replace < with &lt; to prevent XSS attacks
+                      .replace(/>/g, '&gt;') // replace > with &gt; to prevent XSS attacks
+                      .replace(/\n/g, '<br>') // replace \n with <br> to prevent XSS attacks
+                      .replace(/(<br(\s*|\/)>(\r\n|\n)?|\r\n|\n)/g, '<br>\r\n') //   replace <br> with <br>\r\n to prevent XSS attacks
+                      .replace(/\x20{2,}/gi, (substring: string | any[]) => {
+                        //  excel连续空格序列化
+                        return `<span style="mso-spacerun: yes">${'&nbsp;'.repeat(substring.length - 1)} </span>`;
+                      }) // replace 2 or more spaces with &nbsp; to prevent XSS attacks
+                      .replace(/\t/gi, '&#9;'); //   replace \t with &#9; to prevent XSS attacks
 
-        // 将复制的数据转为html格式
-        const setDataToHTML = (data: string) => {
-          const result = ['<table>'];
-          const META_HEAD = [
-            '<meta name="author" content="Visactor"/>', // 后面可用于vtable之间的快速复制粘贴
-            //white-space:normal，连续的空白字符会被合并为一个空格，并且文本会根据容器的宽度自动换行显示
-            //mso-data-placement:same-cell，excel专用， 在同一个单元格中显示所有数据，而不是默认情况下将数据分散到多个单元格中显示
-            '<style type="text/css">td{white-space:normal}br{mso-data-placement:same-cell}</style>'
-          ].join('');
-          const rows = data.split('\r\n'); // 将数据拆分为行
-          rows.forEach(function (rowCells: any, rowIndex: number) {
-            const cells = rowCells.split('\t'); // 将行数据拆分为单元格
-            const rowValues: string[] = [];
-            if (rowIndex === 0) {
-              result.push('<tbody>');
-            }
-            cells.forEach(function (cell: string, cellIndex: number) {
-              // 单元格数据处理
-              const parsedCellData = !cell
-                ? ''
-                : cell
-                    .toString()
-                    .replace(/&/g, '&amp;') // replace & with &amp; to prevent XSS attacks
-                    .replace(/'/g, '&#39;') // replace ' with &#39; to prevent XSS attacks
-                    .replace(/</g, '&lt;') // replace < with &lt; to prevent XSS attacks
-                    .replace(/>/g, '&gt;') // replace > with &gt; to prevent XSS attacks
-                    .replace(/\n/g, '<br>') // replace \n with <br> to prevent XSS attacks
-                    .replace(/(<br(\s*|\/)>(\r\n|\n)?|\r\n|\n)/g, '<br>\r\n') //   replace <br> with <br>\r\n to prevent XSS attacks
-                    .replace(/\x20{2,}/gi, (substring: string | any[]) => {
-                      //  excel连续空格序列化
-                      return `<span style="mso-spacerun: yes">${'&nbsp;'.repeat(substring.length - 1)} </span>`;
-                    }) // replace 2 or more spaces with &nbsp; to prevent XSS attacks
-                    .replace(/\t/gi, '&#9;'); //   replace \t with &#9; to prevent XSS attacks
+                rowValues.push(`<td>${parsedCellData}</td>`);
+              });
+              result.push('<tr>', ...rowValues, '</tr>');
 
-              rowValues.push(`<td>${parsedCellData}</td>`);
+              if (rowIndex === rowCells.length - 1) {
+                result.push('</tbody>');
+              }
             });
-            result.push('<tr>', ...rowValues, '</tr>');
-
-            if (rowIndex === rowCells.length - 1) {
-              result.push('</tbody>');
-            }
-          });
-          result.push('</table>');
-          return [META_HEAD, result.join('')].join('');
-        };
-        const dataHTML = setDataToHTML(data);
-        navigator.clipboard.write([
-          new ClipboardItem({
-            'text/html': new Blob([dataHTML], { type: 'text/html' }),
-            'text/plain': new Blob([data], { type: 'text/plain' })
-          })
-        ]);
+            result.push('</table>');
+            return [META_HEAD, result.join('')].join('');
+          };
+          const dataHTML = setDataToHTML(data);
+          navigator.clipboard.write([
+            new ClipboardItem({
+              'text/html': new Blob([dataHTML], { type: 'text/html' }),
+              'text/plain': new Blob([data], { type: 'text/plain' })
+            })
+          ]);
+        } else {
+          if (browser.IE) {
+            (window as any).clipboardData.setData('Text', data); // IE
+          } else {
+            (e as any).clipboardData.setData('text/plain', data); // Chrome, Firefox
+          }
+        }
         table.fireListeners(TABLE_EVENT_TYPE.COPY_DATA, {
           cellRange: table.stateManager.select.ranges,
           copyData: data
@@ -224,19 +226,43 @@ export function bindContainerDomListener(eventManager: EventManager) {
         return;
       }
       if (table.stateManager.select.ranges?.length > 0) {
-        // 读取剪切板数据
-        navigator.clipboard.read().then(clipboardItems => {
-          for (const item of clipboardItems) {
-            // 优先处理 html 格式数据
-            if (item.types.includes('text/html')) {
-              pasteHtmlToTable(item);
-            } else if (item.types.length === 1 && item.types[0] === 'text/plain') {
-              pasteTextToTable(item);
-            } else {
-              // 其他情况
+        if (navigator.clipboard?.read) {
+          // 读取剪切板数据
+          navigator.clipboard.read().then(clipboardItems => {
+            for (const item of clipboardItems) {
+              // 优先处理 html 格式数据
+              if (item.types.includes('text/html')) {
+                pasteHtmlToTable(item);
+              } else if (item.types.length === 1 && item.types[0] === 'text/plain') {
+                pasteTextToTable(item);
+              } else {
+                // 其他情况
+              }
             }
-          }
-        });
+          });
+        } else {
+          const ranges = table.stateManager.select.ranges;
+          const col = Math.min(ranges[0].start.col, ranges[0].end.col);
+          const row = Math.min(ranges[0].start.row, ranges[0].end.row);
+
+          const clipboardData = e.clipboardData || window.Clipboard;
+          const pastedData = clipboardData.getData('text');
+          const rows = pastedData.split('\n'); // 将数据拆分为行
+          const values: (string | number)[][] = [];
+          rows.forEach(function (rowCells: any, rowIndex: number) {
+            const cells = rowCells.split('\t'); // 将行数据拆分为单元格
+            const rowValues: (string | number)[] = [];
+            values.push(rowValues);
+            cells.forEach(function (cell: string, cellIndex: number) {
+              // 去掉单元格数据末尾的 '\r'
+              if (cellIndex === cells.length - 1) {
+                cell = cell.trim();
+              }
+              rowValues.push(cell);
+            });
+          });
+          (table as ListTableAPI).changeCellValues(col, row, values);
+        }
       }
     }
   });
