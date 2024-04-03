@@ -88,7 +88,6 @@ export function createCellContent(
           _contentOffset = -table.theme._contentOffset;
         }
       }
-
       const attribute = {
         text: text.length === 1 ? text[0] : text,
         maxLineWidth: autoColWidth ? Infinity : cellWidth - (padding[1] + padding[3] + hierarchyOffset),
@@ -101,7 +100,7 @@ export function createCellContent(
         // widthLimit: autoColWidth ? -1 : colWidth - (padding[1] + padding[3]),
         heightLimit: autoRowHeight ? -1 : cellHeight - (padding[0] + padding[2]),
         pickable: false,
-        dx: textAlign === 'left' ? hierarchyOffset + _contentOffset : 0,
+        dx: (textAlign === 'left' ? hierarchyOffset : 0) + _contentOffset,
         whiteSpace: text.length === 1 && !autoWrapText ? 'no-wrap' : 'normal'
       };
       const wrapText = new Text(cellTheme.text ? (Object.assign({}, cellTheme.text, attribute) as any) : attribute);
