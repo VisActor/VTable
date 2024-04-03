@@ -236,12 +236,19 @@ export function bindTableGroupListener(eventManager: EventManager) {
   //   });
   // }
   // });
+  table.scenegraph.tableGroup.addEventListener('pointerenter', (e: FederatedPointerEvent) => {
+    stateManager.showHorizontalScrollBar();
+    stateManager.showVerticalScrollBar();
+  });
   table.scenegraph.tableGroup.addEventListener('pointerleave', (e: FederatedPointerEvent) => {
     //resize 列宽 当鼠标离开table也需要继续响应
     if (!stateManager.isResizeCol() && !stateManager.isMoveCol() && !stateManager.isSelecting()) {
       stateManager.updateInteractionState(InteractionState.default);
       stateManager.updateCursor();
     }
+
+    stateManager.hideHorizontalScrollBar();
+    stateManager.hideVerticalScrollBar();
     // 移动到table外部 如移动到表格空白区域 移动到表格浏览器外部
     if ((table as any).hasListeners(TABLE_EVENT_TYPE.MOUSELEAVE_CELL)) {
       if (table.stateManager.hover.cellPos.col !== -1 && table.stateManager.hover.cellPos.row !== -1) {
