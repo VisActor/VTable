@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vtable",
+      "comment": "fix: remove container in table option",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vtable"
+}

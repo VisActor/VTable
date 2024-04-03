@@ -69,7 +69,7 @@ export function updateMoveCol(col: number, row: number, x: number, y: number, st
   const cellLocation = state.table.getCellLocation(state.columnMove.colSource, state.columnMove.rowSource);
   if (cellLocation === 'columnHeader') {
     backX = state.columnMove.x;
-    if (state.table.isFrozenColumn(col)) {
+    if (state.table.isLeftFrozenColumn(col)) {
       lineX =
         state.columnMove.colTarget >= state.columnMove.colSource
           ? state.table.getColsWidth(0, state.columnMove.colTarget)
@@ -204,14 +204,14 @@ export function endMoveCol(state: StateManager) {
       //调整冻结列数量
       if (state.table.internalProps.frozenColDragHeaderMode === 'adjustFrozenCount' && state.table.isListTable()) {
         if (
-          state.table.isFrozenColumn(state.columnMove.colTarget) &&
-          !state.table.isFrozenColumn(state.columnMove.colSource)
+          state.table.isLeftFrozenColumn(state.columnMove.colTarget) &&
+          !state.table.isLeftFrozenColumn(state.columnMove.colSource)
         ) {
           state.table.frozenColCount +=
             (sourceMergeInfo as CellRange).end.col - (sourceMergeInfo as CellRange).start.col + 1;
         } else if (
-          state.table.isFrozenColumn(state.columnMove.colSource) &&
-          !state.table.isFrozenColumn(state.columnMove.colTarget)
+          state.table.isLeftFrozenColumn(state.columnMove.colSource) &&
+          !state.table.isLeftFrozenColumn(state.columnMove.colTarget)
         ) {
           state.table.frozenColCount -=
             (sourceMergeInfo as CellRange).end.col - (sourceMergeInfo as CellRange).start.col + 1;

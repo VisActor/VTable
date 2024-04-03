@@ -1038,15 +1038,15 @@ export class Scenegraph {
       this.cornerHeaderGroup.setDeltaHeight(detaY);
       this.rowHeaderGroup.setDeltaY(detaY);
       this.bodyGroup.setDeltaY(detaY);
-      this.rightFrozenGroup.setDeltaY(detaY);
+      this.table.rightFrozenColCount && this.rightFrozenGroup.setDeltaY(detaY);
     } else if (row >= this.table.rowCount - this.table.bottomFrozenRowCount) {
       this.leftBottomCornerGroup.setDeltaHeight(detaY);
       this.bottomFrozenGroup.setDeltaHeight(detaY);
-      this.rightBottomCornerGroup.setDeltaHeight(detaY);
+      this.table.rightFrozenColCount && this.rightBottomCornerGroup.setDeltaHeight(detaY);
     } else {
       this.rowHeaderGroup.setDeltaHeight(detaY);
       this.bodyGroup.setDeltaHeight(detaY);
-      this.rightFrozenGroup.setDeltaHeight(detaY);
+      this.table.rightFrozenColCount && this.rightFrozenGroup.setDeltaHeight(detaY);
     }
   }
   /**
@@ -1076,8 +1076,9 @@ export class Scenegraph {
       return;
     }
     if (
-      (row >= this.proxy.rowStart && row <= this.proxy.rowEnd) ||
-      (row >= this.table.rowCount - this.table.bottomFrozenRowCount && row <= this.table.rowCount - 1)
+      (row >= this.proxy.rowStart && row <= this.proxy.rowEnd) || // body
+      (row >= this.table.rowCount - this.table.bottomFrozenRowCount && row <= this.table.rowCount - 1) || // bottom
+      row < this.table.frozenRowCount
     ) {
       this.updateRowHeight(row, height - oldHeight);
     }

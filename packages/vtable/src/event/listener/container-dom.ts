@@ -153,64 +153,66 @@ export function bindContainerDomListener(eventManager: EventManager) {
       const data = table.getCopyValue();
       if (isValid(data)) {
         e.preventDefault();
-        // if (browser.IE) {
-        //   (window as any).clipboardData.setData('Text', data); // IE
-        // } else {
-        //   (e as any).clipboardData.setData('text/plain', data); // Chrome, Firefox
-        // }
+        if (navigator.clipboard?.write) {
+          // 将复制的数据转为html格式
+          const setDataToHTML = (data: string) => {
+            const result = ['<table>'];
+            const META_HEAD = [
+              '<meta name="author" content="Visactor"/>', // 后面可用于vtable之间的快速复制粘贴
+              //white-space:normal，连续的空白字符会被合并为一个空格，并且文本会根据容器的宽度自动换行显示
+              //mso-data-placement:same-cell，excel专用， 在同一个单元格中显示所有数据，而不是默认情况下将数据分散到多个单元格中显示
+              '<style type="text/css">td{white-space:normal}br{mso-data-placement:same-cell}</style>'
+            ].join('');
+            const rows = data.split('\r\n'); // 将数据拆分为行
+            rows.forEach(function (rowCells: any, rowIndex: number) {
+              const cells = rowCells.split('\t'); // 将行数据拆分为单元格
+              const rowValues: string[] = [];
+              if (rowIndex === 0) {
+                result.push('<tbody>');
+              }
+              cells.forEach(function (cell: string, cellIndex: number) {
+                // 单元格数据处理
+                const parsedCellData = !cell
+                  ? ''
+                  : cell
+                      .toString()
+                      .replace(/&/g, '&amp;') // replace & with &amp; to prevent XSS attacks
+                      .replace(/'/g, '&#39;') // replace ' with &#39; to prevent XSS attacks
+                      .replace(/</g, '&lt;') // replace < with &lt; to prevent XSS attacks
+                      .replace(/>/g, '&gt;') // replace > with &gt; to prevent XSS attacks
+                      .replace(/\n/g, '<br>') // replace \n with <br> to prevent XSS attacks
+                      .replace(/(<br(\s*|\/)>(\r\n|\n)?|\r\n|\n)/g, '<br>\r\n') //   replace <br> with <br>\r\n to prevent XSS attacks
+                      .replace(/\x20{2,}/gi, (substring: string | any[]) => {
+                        //  excel连续空格序列化
+                        return `<span style="mso-spacerun: yes">${'&nbsp;'.repeat(substring.length - 1)} </span>`;
+                      }) // replace 2 or more spaces with &nbsp; to prevent XSS attacks
+                      .replace(/\t/gi, '&#9;'); //   replace \t with &#9; to prevent XSS attacks
 
-        // 将复制的数据转为html格式
-        const setDataToHTML = (data: string) => {
-          const result = ['<table>'];
-          const META_HEAD = [
-            '<meta name="author" content="Visactor"/>', // 后面可用于vtable之间的快速复制粘贴
-            //white-space:normal，连续的空白字符会被合并为一个空格，并且文本会根据容器的宽度自动换行显示
-            //mso-data-placement:same-cell，excel专用， 在同一个单元格中显示所有数据，而不是默认情况下将数据分散到多个单元格中显示
-            '<style type="text/css">td{white-space:normal}br{mso-data-placement:same-cell}</style>'
-          ].join('');
-          const rows = data.split('\r\n'); // 将数据拆分为行
-          rows.forEach(function (rowCells: any, rowIndex: number) {
-            const cells = rowCells.split('\t'); // 将行数据拆分为单元格
-            const rowValues: string[] = [];
-            if (rowIndex === 0) {
-              result.push('<tbody>');
-            }
-            cells.forEach(function (cell: string, cellIndex: number) {
-              // 单元格数据处理
-              const parsedCellData = !cell
-                ? ''
-                : cell
-                    .toString()
-                    .replace(/&/g, '&amp;') // replace & with &amp; to prevent XSS attacks
-                    .replace(/'/g, '&#39;') // replace ' with &#39; to prevent XSS attacks
-                    .replace(/</g, '&lt;') // replace < with &lt; to prevent XSS attacks
-                    .replace(/>/g, '&gt;') // replace > with &gt; to prevent XSS attacks
-                    .replace(/\n/g, '<br>') // replace \n with <br> to prevent XSS attacks
-                    .replace(/(<br(\s*|\/)>(\r\n|\n)?|\r\n|\n)/g, '<br>\r\n') //   replace <br> with <br>\r\n to prevent XSS attacks
-                    .replace(/\x20{2,}/gi, (substring: string | any[]) => {
-                      //  excel连续空格序列化
-                      return `<span style="mso-spacerun: yes">${'&nbsp;'.repeat(substring.length - 1)} </span>`;
-                    }) // replace 2 or more spaces with &nbsp; to prevent XSS attacks
-                    .replace(/\t/gi, '&#9;'); //   replace \t with &#9; to prevent XSS attacks
+                rowValues.push(`<td>${parsedCellData}</td>`);
+              });
+              result.push('<tr>', ...rowValues, '</tr>');
 
-              rowValues.push(`<td>${parsedCellData}</td>`);
+              if (rowIndex === rowCells.length - 1) {
+                result.push('</tbody>');
+              }
             });
-            result.push('<tr>', ...rowValues, '</tr>');
-
-            if (rowIndex === rowCells.length - 1) {
-              result.push('</tbody>');
-            }
-          });
-          result.push('</table>');
-          return [META_HEAD, result.join('')].join('');
-        };
-        const dataHTML = setDataToHTML(data);
-        navigator.clipboard.write([
-          new ClipboardItem({
-            'text/html': new Blob([dataHTML], { type: 'text/html' }),
-            'text/plain': new Blob([data], { type: 'text/plain' })
-          })
-        ]);
+            result.push('</table>');
+            return [META_HEAD, result.join('')].join('');
+          };
+          const dataHTML = setDataToHTML(data);
+          navigator.clipboard.write([
+            new ClipboardItem({
+              'text/html': new Blob([dataHTML], { type: 'text/html' }),
+              'text/plain': new Blob([data], { type: 'text/plain' })
+            })
+          ]);
+        } else {
+          if (browser.IE) {
+            (window as any).clipboardData.setData('Text', data); // IE
+          } else {
+            (e as any).clipboardData.setData('text/plain', data); // Chrome, Firefox
+          }
+        }
         table.fireListeners(TABLE_EVENT_TYPE.COPY_DATA, {
           cellRange: table.stateManager.select.ranges,
           copyData: data
@@ -224,19 +226,43 @@ export function bindContainerDomListener(eventManager: EventManager) {
         return;
       }
       if (table.stateManager.select.ranges?.length > 0) {
-        // 读取剪切板数据
-        navigator.clipboard.read().then(clipboardItems => {
-          for (const item of clipboardItems) {
-            // 优先处理 html 格式数据
-            if (item.types.includes('text/html')) {
-              pasteHtmlToTable(item);
-            } else if (item.types.length === 1 && item.types[0] === 'text/plain') {
-              pasteTextToTable(item);
-            } else {
-              // 其他情况
+        if (navigator.clipboard?.read) {
+          // 读取剪切板数据
+          navigator.clipboard.read().then(clipboardItems => {
+            for (const item of clipboardItems) {
+              // 优先处理 html 格式数据
+              if (item.types.includes('text/html')) {
+                pasteHtmlToTable(item);
+              } else if (item.types.length === 1 && item.types[0] === 'text/plain') {
+                pasteTextToTable(item);
+              } else {
+                // 其他情况
+              }
             }
-          }
-        });
+          });
+        } else {
+          const ranges = table.stateManager.select.ranges;
+          const col = Math.min(ranges[0].start.col, ranges[0].end.col);
+          const row = Math.min(ranges[0].start.row, ranges[0].end.row);
+
+          const clipboardData = e.clipboardData || window.Clipboard;
+          const pastedData = clipboardData.getData('text');
+          const rows = pastedData.split('\n'); // 将数据拆分为行
+          const values: (string | number)[][] = [];
+          rows.forEach(function (rowCells: any, rowIndex: number) {
+            const cells = rowCells.split('\t'); // 将行数据拆分为单元格
+            const rowValues: (string | number)[] = [];
+            values.push(rowValues);
+            cells.forEach(function (cell: string, cellIndex: number) {
+              // 去掉单元格数据末尾的 '\r'
+              if (cellIndex === cells.length - 1) {
+                cell = cell.trim();
+              }
+              rowValues.push(cell);
+            });
+          });
+          (table as ListTableAPI).changeCellValues(col, row, values);
+        }
       }
     }
   });
@@ -434,6 +460,7 @@ export function bindContainerDomListener(eventManager: EventManager) {
     // console.log('body pointerup', table.eventManager.isDown, table.eventManager.isDraging);
     table.eventManager.isDown = false;
     table.eventManager.isDraging = false;
+    table.eventManager.inertiaScroll.endInertia();
   };
   eventManager.globalEventListeners.push({
     name: 'pointerup',
@@ -458,9 +485,9 @@ export function bindContainerDomListener(eventManager: EventManager) {
     // }
     // const eventArgsSet = getCellEventArgsSet(e);
     const { x, y } = table._getMouseAbstractPoint(e, false);
-    if (stateManager.interactionState === InteractionState.scrolling) {
-      return;
-    }
+    // if (stateManager.interactionState === InteractionState.scrolling) {
+    //   return;
+    // }
     if (stateManager.interactionState === InteractionState.grabing) {
       if (stateManager.isResizeCol()) {
         eventManager.dealColumnResize(x, y);
@@ -470,6 +497,122 @@ export function bindContainerDomListener(eventManager: EventManager) {
             colWidth: table.getColWidth(table.stateManager.columnResize.col)
           });
         }
+      }
+    }
+    const isSelecting = table.stateManager.isSelecting();
+
+    if (eventManager.isDraging && isSelecting) {
+      // 检测鼠标是否离开了table
+      const drawRange = table.getDrawRange();
+      // const element = table.getElement();
+      // const { x: rootLeft, y: rootTop, width: rootWidth } = element.getBoundingClientRect();
+      // const tableLeft = drawRange.left + rootLeft;
+      // const tableTop = drawRange.top + rootTop;
+      // const tableRight = tableLeft + drawRange.width;
+      // const tableBottom = tableTop + drawRange.height;
+      // console.log('x, y', x, y);
+      const topFrozenRowHeight = table.getFrozenRowsHeight();
+      const bottomFrozenRowHeight = table.getBottomFrozenRowsHeight();
+      const leftFrozenColsWidth = table.getFrozenColsWidth();
+      const rightFrozenColsWidth = table.getRightFrozenColsWidth();
+      const startCell = table.stateManager.select.ranges[table.stateManager.select.ranges.length - 1].start;
+      const endCell = table.stateManager.select.ranges[table.stateManager.select.ranges.length - 1].end;
+      const canScrollY = table.isFrozenRow(startCell.row) === false || table.isFrozenRow(endCell.row) === false;
+      const canScrollX = table.isFrozenColumn(startCell.col) === false || table.isFrozenColumn(endCell.col) === false;
+      if (
+        ((y > drawRange.bottom - bottomFrozenRowHeight || y < drawRange.top + topFrozenRowHeight) && canScrollY) ||
+        ((x > drawRange.right - rightFrozenColsWidth || x < drawRange.left + leftFrozenColsWidth) && canScrollX)
+      ) {
+        table.eventManager.scrollXSpeed = 0;
+        table.eventManager.scrollYSpeed = 0;
+        let bottom = false;
+        let top = false;
+        let right = false;
+        let left = false;
+        if (
+          y > drawRange.bottom - bottomFrozenRowHeight &&
+          canScrollY &&
+          table.scrollTop + table.tableNoFrameWidth < table.getAllRowsHeight()
+        ) {
+          bottom = true;
+          table.eventManager.scrollYSpeed = -(y - drawRange.bottom + bottomFrozenRowHeight) / 50;
+        } else if (y < drawRange.top + topFrozenRowHeight && canScrollY && table.scrollTop > 0) {
+          top = true;
+          table.eventManager.scrollYSpeed = -(y - drawRange.top - topFrozenRowHeight) / 50;
+        }
+
+        if (
+          x > drawRange.right - rightFrozenColsWidth &&
+          canScrollX &&
+          table.scrollLeft + table.tableNoFrameWidth < table.getAllColsWidth()
+        ) {
+          right = true;
+          table.eventManager.scrollXSpeed = -(x - drawRange.right + rightFrozenColsWidth) / 50;
+        } else if (x < drawRange.left + leftFrozenColsWidth && canScrollX && table.scrollLeft > 0) {
+          left = true;
+          table.eventManager.scrollXSpeed = -(x - drawRange.left - leftFrozenColsWidth) / 50;
+        }
+        table.eventManager.inertiaScroll.startInertia(
+          table.eventManager.scrollXSpeed,
+          table.eventManager.scrollYSpeed,
+          1
+        );
+        table.eventManager.inertiaScroll.setScrollHandle((dx: number, dy: number) => {
+          handleWhell({ deltaX: -dx, deltaY: -dy } as any, table.stateManager, false);
+
+          let selectX: number;
+          let selectY: number;
+
+          if (bottom) {
+            selectY = table.scrollTop + drawRange.height - bottomFrozenRowHeight - 20;
+          } else if (top) {
+            selectY = table.scrollTop + topFrozenRowHeight + 20;
+          }
+
+          if (right) {
+            selectX = table.scrollLeft + drawRange.width - rightFrozenColsWidth - 20;
+          } else if (left) {
+            selectX = table.scrollLeft + leftFrozenColsWidth + 20;
+          }
+
+          let considerFrozenY = false;
+          let considerFrozenX = false;
+          if (!right && !left) {
+            if (
+              (x > table.tableNoFrameWidth - table.getRightFrozenColsWidth() && x < table.tableNoFrameWidth) ||
+              (x > 0 && x < table.getFrozenColsWidth())
+            ) {
+              selectX = x;
+              considerFrozenX = true;
+            } else {
+              selectX = table.scrollLeft + x;
+            }
+          }
+          if (!bottom && !top) {
+            if (
+              (y > table.tableNoFrameHeight - table.getBottomFrozenRowsHeight() && y < table.tableNoFrameHeight) ||
+              (y > 0 && y < table.getFrozenRowsHeight())
+            ) {
+              selectY = y;
+              considerFrozenY = true;
+            } else {
+              selectY = table.scrollTop + y;
+            }
+          }
+          table.stateManager.updateInteractionState(InteractionState.grabing);
+          table.stateManager.updateSelectPos(
+            table.getTargetColAtConsiderRightFrozen(selectX, considerFrozenX).col,
+            table.getTargetRowAtConsiderBottomFrozen(selectY, considerFrozenY).row,
+            false,
+            false,
+            false,
+            true
+          );
+        });
+      } else if (table.eventManager.inertiaScroll.isInertiaScrolling()) {
+        table.eventManager.inertiaScroll.endInertia();
+      } else {
+        table.eventManager.scrollYSpeed = 0;
       }
     }
   };

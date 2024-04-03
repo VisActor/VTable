@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vtable",
+      "comment": "fix: fix nan verticalBarPos #1232",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vtable"
+}

@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "comment": "refactor: optimize performance when change tree hierarchy state #1406\n\n",
+      "type": "none",
+      "packageName": "@visactor/vtable"
+    }
+  ],
+  "packageName": "@visactor/vtable",
+  "email": "892739385@qq.com"
+}

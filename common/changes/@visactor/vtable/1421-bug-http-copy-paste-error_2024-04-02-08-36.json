@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "comment": "fix: when copy or paste navigator.clipboard?.write occor undefined error in not https #1421\n\n",
+      "type": "none",
+      "packageName": "@visactor/vtable"
+    }
+  ],
+  "packageName": "@visactor/vtable",
+  "email": "892739385@qq.com"
+}
