@@ -1,7 +1,7 @@
 {{ target: common-style }}
 
 #${prefix} bgColor(ColorPropertyDefine)
-  
+
 定义单元格的背景色
 
 {{ use: common-color(
@@ -24,7 +24,6 @@
 {{ use: common-color(
   prefix = ${prefix},
 ) }}
-
 
 #${prefix} fontSize(FontSizePropertyDefine)
 定义单元格的文字大小
@@ -57,7 +56,7 @@
   ) }}
 
 #${prefix} textOverflow(string)
-设置文本的省略形式。如果autoWrapText设置了自动换行，这个无效。
+设置文本的省略形式。如果 autoWrapText 设置了自动换行，这个无效。
 
 #${prefix} borderColor(ColorsPropertyDefine)
 为单元格设置边框的颜色
@@ -85,6 +84,15 @@
 {{ use: common-underline(
   prefix = ${prefix}
   ) }}
+#${prefix} underlineDash(LineDashPropertyDefine)
+为单元格文本内容设置下划线虚线样式
+{{ use: common-underlineDash(
+  prefix = ${prefix}
+  ) }}
+
+#${prefix} underlineOffset(number)
+为单元格文本内容设置下划线与文字的间隔距离
+
 #${prefix} lineThrough(LineThroughPropertyDefine)
 为单元格文本内容设置中划线
 {{ use: common-lineThrough(
@@ -92,19 +100,22 @@
   ) }}
 
 #${prefix} linkColor(ColorPropertyDefine)
-设置link类型的文本颜色
+设置 link 类型的文本颜色
 {{ use: common-color(
   prefix = ${prefix},
 ) }}
 
 #${prefix} cursor(CursorPropertyDefine)
-鼠标hover到单元格的鼠标样式
+鼠标 hover 到单元格的鼠标样式
 {{ use: common-cursor(
   prefix = ${prefix}
   ) }}
 
 #${prefix} textStick(boolean)
 设置单元格的文本是否带有吸附效果【当滚动时文本可动态调整位置】
+
+#${prefix} textStickBaseOnAlign(boolean)
+当单元格的文本有吸附效果【当滚动时文本可动态调整位置】时，吸附的基准是单元格的水平对齐方式。例如当`textStickBaseOnAlign`为`true`时，`textAlign`为`'center'`时，文本会吸附在单元格的水平中心位置；否则就会吸附在单元格左边缘或右边缘（依据滚动位置决定）。
 
 #${prefix} marked(MarkedPropertyDefine)
 设置单元格是否有标记样式
@@ -115,13 +126,13 @@
 设置单元格是否自动换行
 
 #${prefix} lineClamp(number|string)
-设置单元格的最大行数, 可设置number或者'auto',如果设置为'auto', 则会自动计算
+设置单元格的最大行数, 可设置 number 或者'auto',如果设置为'auto', 则会自动计算
 
 {{ if: ${isImage} }}
 
 #${prefix} margin(number)
 
-** image类型专有配置 ** 图片定位在单元格中的边距
+** image 类型专有配置 ** 图片定位在单元格中的边距
 
 {{ /if }}
 
@@ -133,7 +144,7 @@
 
 ```
  showBar?:boolean | ((args: StylePropertyFunctionArg) => boolean)
- ```
+```
 
 #${prefix} barColor(ColorPropertyDefine)
 
@@ -161,7 +172,7 @@
 
 #${prefix} barPadding(Array)
 
-进度条内边距padding，可设置具体高度值或者百分比。类型：`number|string`。
+进度条内边距 padding，可设置具体高度值或者百分比。类型：`number|string`。
 
 #${prefix} barPositiveColor(ColorPropertyDefine)
 
@@ -186,7 +197,6 @@
 {{ use: common-color(
   prefix = ${prefix},
 ) }}
-
 
 #${prefix} barRightToLeft(boolean)
 
@@ -219,5 +229,13 @@
 #${prefix} barMarkPosition(string)
 
 进度条标记位置，可设置`'right' | 'bottom'`，默认`'right'`。
+
+{{ /if }}
+
+{{ if: ${isCheckbox} }}
+
+{{ use: common-checkbox-style (
+  prefix = ${prefix}
+  ) }}
 
 {{ /if }}

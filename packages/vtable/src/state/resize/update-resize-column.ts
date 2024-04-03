@@ -1,5 +1,6 @@
 import type { ListTable } from '../../ListTable';
 import type { PivotHeaderLayoutMap } from '../../layout/pivot-header-layout';
+import type { IndicatorData } from '../../ts-types/list-table/layout-map/api';
 import type { StateManager } from '../state';
 
 // columnResizeType?: 'column' | 'indicator' | 'all' | 'indicatorGroup';
@@ -102,6 +103,8 @@ export function updateResizeColumn(xInTable: number, yInTable: number, state: St
       state.table.frozenColCount - 1,
       state.columnResize.isRightFrozen
     );
+  } else if (state.table.options.frozenColCount) {
+    state.table.scenegraph.component.setFrozenColumnShadow(state.table.frozenColCount - 1);
   }
 
   // stage rerender
@@ -133,7 +136,7 @@ function updateResizeColForAll(detaX: number, state: StateManager) {
     // 是否禁止调整列宽disableColumnResize 对应canResizeColumn的逻辑判断
     if (!(state.table.internalProps.transpose || (state.table.isPivotTable() && !layout.indicatorsAsCol))) {
       const cellDefine = layout.getBody(col, state.table.columnHeaderLevelCount);
-      if (cellDefine?.disableColumnResize) {
+      if ((cellDefine as IndicatorData)?.disableColumnResize) {
         continue;
       }
     }
@@ -188,7 +191,7 @@ function updateResizeColForIndicatorGroup(detaX: number, state: StateManager) {
     // 是否禁止调整列宽disableColumnResize 对应canResizeColumn的逻辑判断
     if (!(state.table.internalProps.transpose || (state.table.isPivotTable() && !layout.indicatorsAsCol))) {
       const cellDefine = layout.getBody(col, state.table.columnHeaderLevelCount);
-      if (cellDefine?.disableColumnResize) {
+      if ((cellDefine as IndicatorData)?.disableColumnResize) {
         continue;
       }
     }

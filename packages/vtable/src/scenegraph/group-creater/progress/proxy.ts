@@ -1,4 +1,4 @@
-import { isNumber } from '@visactor/vutils';
+import { isNumber, isValid } from '@visactor/vutils';
 import type { BaseTableAPI } from '../../../ts-types/base-table';
 import { Group } from '../../graphic/group';
 import { computeColsWidth } from '../../layout/compute-col-width';
@@ -13,6 +13,7 @@ import { updateAutoRow } from './update-position/update-auto-row';
 import { sortVertical } from './update-position/sort-vertical';
 import { sortHorizontal } from './update-position/sort-horizontal';
 import { updateAutoColumn } from './update-position/update-auto-column';
+import { getDefaultHeight, getDefaultWidth } from './default-width-height';
 
 export class SceneProxy {
   table: BaseTableAPI;
@@ -38,6 +39,7 @@ export class SceneProxy {
   screenTopRow: number = 0; // 当前屏幕范围内显示的第一行的row number
   totalActualBodyRowCount: number; // 实际表格body部分的行数
   deltaY: number = 0;
+  deltaHeight: number = 0;
 
   colLimit = 100;
   // bodyLeftCol: number; // table body部分的第一列col number
@@ -57,6 +59,7 @@ export class SceneProxy {
   colUpdateDirection: 'left' | 'right'; // 当前列更新方向
   totalActualBodyColCount: number; // 实际表格body部分的列数
   deltaX: number = 0;
+  deltaWidth: number = 0;
 
   cellCache: Map<number, Group> = new Map(); // 单元格位置快速查找缓存
 
@@ -96,6 +99,7 @@ export class SceneProxy {
     this.totalCol = this.bodyLeftCol + totalActualBodyColCount - 1; // 目标渐进完成的col
     this.colStart = this.bodyLeftCol;
     const defaultColWidth = this.table.defaultColWidth;
+    // const defaultColWidth = getDefaultHeight(this.table);
     this.taskColCount = Math.ceil(this.table.tableNoFrameWidth / defaultColWidth) * 1;
 
     // 确定动态更新限制
@@ -128,6 +132,7 @@ export class SceneProxy {
     this.totalRow = this.bodyTopRow + totalActualBodyRowCount - 1; // 目标渐进完成的row
     this.rowStart = this.bodyTopRow;
     const defaultRowHeight = this.table.defaultRowHeight;
+    // const defaultRowHeight = getDefaultWidth(this.table);
     this.taskRowCount = Math.ceil(this.table.tableNoFrameHeight / defaultRowHeight) * 1;
 
     // 确定动态更新限制
@@ -328,7 +333,7 @@ export class SceneProxy {
     this.currentRow = endRow;
     this.rowEnd = endRow;
     this.rowUpdatePos = this.rowEnd;
-    this.referenceRow = this.rowStart + Math.floor((endRow - this.rowStart) / 2);
+    // this.referenceRow = this.rowStart + Math.floor((endRow - this.rowStart) / 2);
 
     // update container group size and border
     this.table.scenegraph.updateContainer();
@@ -343,7 +348,7 @@ export class SceneProxy {
     // update last merge cell size
     for (let row = 0; row < this.table.rowCount; row++) {
       const cellGroup = this.highPerformanceGetCell(this.currentCol, row);
-      if (isNumber(cellGroup.mergeStartCol) && cellGroup.mergeStartCol > this.currentCol) {
+      if (cellGroup.role === 'cell' && isNumber(cellGroup.mergeStartCol) && cellGroup.mergeStartCol > this.currentCol) {
         this.table.scenegraph.updateCellContent(cellGroup.col, cellGroup.row);
       }
     }
@@ -424,8 +429,8 @@ export class SceneProxy {
     this.currentCol = endCol;
     this.colEnd = endCol;
     this.colUpdatePos = this.colEnd;
-    this.referenceCol = this.colStart + Math.floor((endCol - this.colStart) / 2);
-    console.log('async', this.referenceCol, this.colStart, this.colEnd);
+    // this.referenceCol = this.colStart + Math.floor((endCol - this.colStart) / 2);
+    // console.log('async', this.referenceCol, this.colStart, this.colEnd);
 
     // update container group size and border
     // this.table.scenegraph.updateContainerAttrWidthAndX();
@@ -433,55 +438,61 @@ export class SceneProxy {
     this.table.scenegraph.updateBorderSizeAndPosition();
   }
 
-  async setY(y: number) {
+  async setY(y: number, isEnd = false) {
     const yLimitTop =
       this.table.getRowsHeight(this.bodyTopRow, this.bodyTopRow + (this.rowEnd - this.rowStart + 1)) / 2;
     const yLimitBottom = this.table.getAllRowsHeight() - yLimitTop;
     if (y < yLimitTop && this.rowStart === this.bodyTopRow) {
       // 执行真实body group坐标修改
-      this.table.scenegraph.setBodyAndRowHeaderY(-y);
+      this.updateDeltaY(y);
+      this.updateBody(y - this.deltaY);
     } else if (y > yLimitBottom && this.rowEnd === this.bodyBottomRow) {
       // 执行真实body group坐标修改
-      this.table.scenegraph.setBodyAndRowHeaderY(-y);
+      this.updateDeltaY(y);
+      this.updateBody(y - this.deltaY);
     } else if (
       !this.table.scenegraph.bodyGroup.firstChild ||
       this.table.scenegraph.bodyGroup.firstChild.childrenCount === 0
     ) {
+      this.updateDeltaY(y);
       // 兼容异步加载数据promise的情况 childrenCount=0 如果用户立即调用setScrollTop执行dynamicSetY会出错
-      this.table.scenegraph.setBodyAndRowHeaderY(-y);
+      this.updateBody(y - this.deltaY);
     } else {
       // 执行动态更新节点
-      this.dynamicSetY(y);
+      this.dynamicSetY(y, isEnd);
     }
   }
 
-  async setX(x: number) {
+  async setX(x: number, isEnd = false) {
     const xLimitLeft =
       this.table.getColsWidth(this.bodyLeftCol, this.bodyLeftCol + (this.colEnd - this.colStart + 1)) / 2;
     const xLimitRight = this.table.getAllColsWidth() - xLimitLeft;
     if (x < xLimitLeft && this.colStart === this.bodyLeftCol) {
       // 执行真实body group坐标修改
-      this.table.scenegraph.setBodyAndColHeaderX(-x);
+      this.updateDeltaX(x);
+      this.table.scenegraph.setBodyAndColHeaderX(-x + this.deltaX);
     } else if (x > xLimitRight && this.colEnd === this.bodyRightCol) {
       // 执行真实body group坐标修改
-      this.table.scenegraph.setBodyAndColHeaderX(-x);
+      this.updateDeltaX(x);
+      this.table.scenegraph.setBodyAndColHeaderX(-x + this.deltaX);
     } else if (
       this.table.scenegraph.bodyGroup.firstChild && //注意判断关系 这里不是 || 而是 &&
       this.table.scenegraph.bodyGroup.firstChild.childrenCount === 0
     ) {
       // 兼容异步加载数据promise的情况 childrenCount=0 如果用户立即调用setScrollLeft执行dynamicSetX会出错
-      this.table.scenegraph.setBodyAndColHeaderX(-x);
+      this.updateDeltaX(x);
+      this.table.scenegraph.setBodyAndColHeaderX(-x + this.deltaX);
     } else {
       // 执行动态更新节点
-      this.dynamicSetX(x);
+      this.dynamicSetX(x, isEnd);
     }
   }
 
-  async dynamicSetY(y: number) {
-    dynamicSetY(y, this);
+  async dynamicSetY(y: number, isEnd = false) {
+    dynamicSetY(y, isEnd, this);
   }
-  async dynamicSetX(x: number) {
-    dynamicSetX(x, this);
+  async dynamicSetX(x: number, isEnd = false) {
+    dynamicSetX(x, isEnd, this);
   }
 
   updateBody(y: number) {
@@ -720,6 +731,65 @@ export class SceneProxy {
       this.cellCache.set(col, cellGroup);
     }
     return cellGroup;
+  }
+
+  updateDeltaY(y: number, screenTopY?: number, screenTopRow?: number) {
+    if (this.rowStart === this.bodyTopRow) {
+      const cellGroup = this.table.scenegraph.highPerformanceGetCell(this.colStart, this.rowStart, true);
+      if (cellGroup.role === 'cell') {
+        const deltaY = cellGroup.attribute.y;
+        this.deltaY = -deltaY;
+      }
+    } else if (this.rowEnd === this.bodyBottomRow) {
+      const cellGroup = this.table.scenegraph.highPerformanceGetCell(this.colStart, this.rowEnd, true);
+      if (cellGroup.role === 'cell') {
+        // const deltaY =
+        //   cellGroup.attribute.y +
+        //   cellGroup.attribute.height -
+        //   (this.table.tableNoFrameHeight - this.table.getFrozenRowsHeight() - this.table.getBottomFrozenRowsHeight()) -
+        //   y;
+        const deltaY =
+          cellGroup.attribute.y +
+          cellGroup.attribute.height -
+          (this.table.getAllRowsHeight() - this.table.getFrozenRowsHeight() - this.table.getBottomFrozenRowsHeight());
+        this.deltaY = -deltaY;
+      }
+    } else if (isValid(screenTopY) && isValid(screenTopRow)) {
+      const cellGroup = this.table.scenegraph.highPerformanceGetCell(this.colStart, screenTopRow, true);
+      const bodyY = y - this.deltaY;
+      const distRowYOffset = screenTopY - bodyY; // dist cell 距离表格顶部的位置差
+      const currentRowYOffset = cellGroup.attribute.y - bodyY + this.table.getFrozenRowsHeight(); // current cell 距离表格顶部的位置差
+      // const deltaY = screenTopY - (cellGroup.attribute.y + );
+      this.deltaY = distRowYOffset - currentRowYOffset;
+    }
+  }
+
+  updateDeltaX(x: number, screenLeftX?: number, screenLeftCol?: number) {
+    if (this.colStart === this.bodyLeftCol) {
+      const colGroup = this.table.scenegraph.getColGroup(this.colStart);
+      if (colGroup) {
+        const deltaX = colGroup.attribute.x;
+        this.deltaX = -deltaX;
+      }
+    } else if (this.colEnd === this.bodyRightCol) {
+      const colGroup = this.table.scenegraph.getColGroup(this.colEnd);
+      if (colGroup) {
+        const deltaX =
+          colGroup.attribute.x +
+          colGroup.attribute.width -
+          (this.table.getAllColsWidth() - this.table.getFrozenColsWidth() - this.table.getRightFrozenColsWidth());
+        this.deltaX = -deltaX;
+      }
+    } else if (isValid(screenLeftX) && isValid(screenLeftCol)) {
+      const colGroup =
+        this.table.scenegraph.getColGroup(screenLeftCol) || this.table.scenegraph.getColGroup(screenLeftCol, true);
+      // const deltaX = screenLeftX - (colGroup.attribute.x + this.table.getFrozenColsWidth() + this.deltaX);
+      // this.deltaX = deltaX + this.deltaX;
+      const bodyX = x - this.deltaX;
+      const distColXOffset = screenLeftX - bodyX; // dist col 距离表格左侧的位置差
+      const currentColXOffset = colGroup.attribute.x - bodyX + this.table.getFrozenColsWidth(); // current col 距离表格左侧的位置差
+      this.deltaX = distColXOffset - currentColXOffset;
+    }
   }
 
   release() {

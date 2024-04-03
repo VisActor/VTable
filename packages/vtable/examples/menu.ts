@@ -85,6 +85,18 @@ export const menus = [
       },
       {
         path: 'list',
+        name: 'list-rowSeriesNumber'
+      },
+      {
+        path: 'list',
+        name: 'list-transpose-rowSeriesNumber'
+      },
+      {
+        path: 'list',
+        name: 'list-tree-rowSeriesNumber'
+      },
+      {
+        path: 'list',
         name: 'list-merge-cell'
       },
       {
@@ -102,6 +114,31 @@ export const menus = [
     ]
   },
   {
+    menu: '基本表格分析',
+    children: [
+      {
+        path: 'list-analysis',
+        name: 'list-filter'
+      },
+      {
+        path: 'list-analysis',
+        name: 'list-aggregation'
+      },
+      {
+        path: 'list-analysis',
+        name: 'list-aggregation-global'
+      },
+      {
+        path: 'list-analysis',
+        name: 'list-aggregation-edit'
+      },
+      {
+        path: 'list-analysis',
+        name: 'olympic-winners'
+      }
+    ]
+  },
+  {
     menu: '透视表',
     children: [
       {
@@ -111,6 +148,18 @@ export const menus = [
       {
         path: 'pivot',
         name: 'pivot-tree'
+      },
+      {
+        path: 'pivot',
+        name: 'pivot-rowSeriesNumber'
+      },
+      {
+        path: 'pivot',
+        name: 'pivot-rowSeriesNumber-rowTitle'
+      },
+      {
+        path: 'pivot',
+        name: 'pivot-tree-rowSeriesNumber'
       }
     ]
   },
@@ -228,6 +277,10 @@ export const menus = [
       },
       {
         path: 'type',
+        name: 'progress-sparkline-cellType'
+      },
+      {
+        path: 'type',
         name: 'text'
       },
       {
@@ -302,6 +355,10 @@ export const menus = [
       {
         path: 'pivot',
         name: 'pivot-image'
+      },
+      {
+        path: 'pivot',
+        name: 'pivot-image-on-column'
       },
       {
         path: 'pivot',
@@ -419,6 +476,10 @@ export const menus = [
     children: [
       {
         path: 'interactive',
+        name: 'fill-handle'
+      },
+      {
+        path: 'interactive',
         name: 'hover'
       },
       {
@@ -440,6 +501,10 @@ export const menus = [
       {
         path: 'interactive',
         name: 'resize-container'
+      },
+      {
+        path: 'interactive',
+        name: 'update-column'
       }
     ]
   },
@@ -491,6 +556,10 @@ export const menus = [
       {
         path: 'style',
         name: 'border'
+      },
+      {
+        path: 'style',
+        name: 'custom-cell-style'
       }
     ]
   },
@@ -551,6 +620,10 @@ export const menus = [
       {
         path: 'cell-move',
         name: 'column-move'
+      },
+      {
+        path: 'pivot',
+        name: 'pivot-drag-header'
       },
       {
         path: 'cell-move',

@@ -13,6 +13,7 @@
    */
   updateOption(options: BaseTableConstructorOptions) => void
 ```
+
 如果需要更新单个配置项，请参考下面其他`update**`接口
 
 ## updateTheme(Function)
@@ -26,18 +27,23 @@
    */
   updateTheme(theme: ITableThemeDefine) => void
 ```
+
 使用：
+
 ```
 tableInstance.updateTheme(newTheme)
 ```
+
 对应属性更新接口（可参考教程：https://visactor.io/vtable/guide/basic_function/update_option）:
+
 ```
 // 调用后不会自动重绘
 tableInstance.theme = newTheme;
 ```
+
 ## updateColumns(Function)
 
-更新表格的columns字段配置信息，调用后会自动重绘。
+更新表格的 columns 字段配置信息，调用后会自动重绘。
 
 ```ts
   /**
@@ -46,15 +52,20 @@ tableInstance.theme = newTheme;
    */
   updateColumns(columns: ColumnsDefine) => void
 ```
+
 使用：
+
 ```
 tableInstance.updateColumns(newColumns)
 ```
+
 对应属性更新接口（可参考教程：https://visactor.io/vtable/guide/basic_function/update_option）:
+
 ```
 // 调用后不会自动重绘
 tableInstance.columns = newColumns;
 ```
+
 ## updatePagination(Function)
 
 更新页码配置信息 调用后会自动重绘。
@@ -66,7 +77,9 @@ tableInstance.columns = newColumns;
    */
   updatePagination(pagination: IPagination): void;
 ```
+
 其中类型：
+
 ```
 /**
  * 分页配置
@@ -80,14 +93,17 @@ export interface IPagination {
   currentPage?: number;
 }
 ```
-基本表格和VTable数据分析透视表支持分页，透视组合图不支持分页。
 
-注意! 透视表中perPageCount会自动修正为指标数量的整数倍。
+基本表格和 VTable 数据分析透视表支持分页，透视组合图不支持分页。
+
+注意! 透视表中 perPageCount 会自动修正为指标数量的整数倍。
 
 ## renderWithRecreateCells(Function)
+
 重新组织单元格对象树并重新渲染表格，使用场景如：
 
 批量更新多个配置项后的刷新：
+
 ```
 tableInstance.theme = newThemeObj;
 tableInstance.widthMode = 'autoWidth';
@@ -119,16 +135,42 @@ tableInstance.renderWithRecreateCells();
 ## setRecords(Function)
 
 设置表格数据接口，可作为更新接口调用。
-** 基本表格可同时设置排序状态对表格数据排序，sort设置为空清空排序状态，如果不设置则按当前排序状态对传入数据排序 **
+
+基本表格更新：
+
+基本表格可同时设置排序状态对表格数据排序，sortState 设置为 null 清空排序状态，如果不设置则按当前排序状态对传入数据排序。
 
 ```
-setRecords(records: Array<any>) //透视表
-setRecords(records: Array<any>, sort?: SortState | SortState[]) //** 基本表格可同时设置排序状态对表格数据排序，sort设置为空清空排序状态，如果不设置则按当前排序状态对传入数据排序 **
+setRecords(
+    records: Array<any>,
+    option?: { sortState?: SortState | SortState[] }
+  ): void;
+```
+
+透视表更新：
+
+```
+setRecords(records: Array<any>)
+```
+
+## setRecordChildren(Function)
+
+基本表格树形展示场景下，如果需要动态插入子节点的数据可以配合使用该接口，其他情况不适用
+
+```
+  /**
+   * @param records 设置到单元格其子节点的数据
+   * @param col 需要设置子节点的单元格地址
+   * @param row  需要设置子节点的单元格地址
+   */
+  setRecordChildren(records: any[], col: number, row: number)
 ```
 
 ## getDrawRange(Function)
-获取表格实际绘制内容区域的boundRect的值
+
+获取表格实际绘制内容区域的 boundRect 的值
 如
+
 ```
 {
     "bounds": {
@@ -145,6 +187,7 @@ setRecords(records: Array<any>, sort?: SortState | SortState[]) //** 基本表�
     width: 1580
 }
 ```
+
 ## selectCell(Function)
 
 选中某个单元格。如果传空，则清除当前选中高亮状态。
@@ -169,6 +212,7 @@ setRecords(records: Array<any>, sort?: SortState | SortState[]) //** 基本表�
    */
   selectCells(cellRanges: CellRange[]): void
 ```
+
 其中：
 {{ use: CellRange() }}
 
@@ -200,7 +244,7 @@ setRecords(records: Array<any>, sort?: SortState | SortState[]) //** 基本表�
 
 ## getCellOriginValue(Function)
 
-获取单元格展示数据的format前的值
+获取单元格展示数据的 format 前的值
 
 ```
   /**
@@ -232,6 +276,7 @@ setRecords(records: Array<any>, sort?: SortState | SortState[]) //** 基本表�
    */
   getCellStyle(col: number, row: number) => CellStyle
 ```
+
 ## getRecordByCell(Function)
 
 获取该单元格的数据项
@@ -248,15 +293,16 @@ setRecords(records: Array<any>, sort?: SortState | SortState[]) //** 基本表�
 
 ## getBodyIndexByTableIndex(Function)
 
-根据表格单元格的行列号 获取在body部分的列索引及行索引
+根据表格单元格的行列号 获取在 body 部分的列索引及行索引
 
 ```
   /** 根据表格单元格的行列号 获取在body部分的列索引及行索引 */
   getBodyIndexByTableIndex: (col: number, row: number) => CellAddress;
 ```
+
 ## getTableIndexByBodyIndex(Function)
 
-根据body部分的列索引及行索引，获取单元格的行列号
+根据 body 部分的列索引及行索引，获取单元格的行列号
 
 ```
   /** 根据body部分的列索引及行索引，获取单元格的行列号 */
@@ -264,24 +310,43 @@ setRecords(records: Array<any>, sort?: SortState | SortState[]) //** 基本表�
 ```
 
 ## getTableIndexByRecordIndex(Function)
-根据数据源的index 获取显示到表格中的index 行号或者列号（与转置相关，非转置获取的是行号，转置表获取的是列号）。
 
-** ListTable 专有 ** 
+根据数据源的 index 获取显示到表格中的 index 行号或者列号（与转置相关，非转置获取的是行号，转置表获取的是列号）。
+
+** ListTable 专有 **
 
 ```
   /**
    * 根据数据源的index 获取显示到表格中的index 行号或者列号（与转置相关，非转置获取的是行号，转置表获取的是列号）。
-   
+
    注：ListTable特有接口
    * @param recordIndex
    */
   getTableIndexByRecordIndex: (recordIndex: number) => number;
 ```
 
-## getTableIndexByField(Function)
-根据数据源的field 获取显示到表格中的index 行号或者列号（与转置相关，非转置获取的是行号，转置表获取的是列号）。
+## getRecordIndexByCell(Function)
 
-** ListTable 专有 ** 
+获取当前单元格的数据是数据源中的第几条。
+
+如果是树形模式的表格，将返回数组，如[1,2] 数据源中第 2 条数据中 children 中的第 3 条。
+
+** ListTable 专有 **
+
+```
+  /** 获取当前单元格的数据是数据源中的第几条。
+   * 如果是树形模式的表格，将返回数组，如[1,2] 数据源中第2条数据中children中的第3条
+   * 注：ListTable特有接口 */
+  getRecordIndexByCell(col: number, row: number): number | number[]
+** ListTable 专有 **
+```
+
+## getTableIndexByField(Function)
+
+根据数据源的 field 获取显示到表格中的 index 行号或者列号（与转置相关，非转置获取的是行号，转置表获取的是列号）。
+
+** ListTable 专有 **
+
 ```
   /**
    * 根据数据源的field 获取显示到表格中的index 行号或者列号（与转置相关，非转置获取的是行号，转置表获取的是列号）。注：ListTable特有接口
@@ -290,12 +355,12 @@ setRecords(records: Array<any>, sort?: SortState | SortState[]) //** 基本表�
   getTableIndexByField: (field: FieldDef) => number;
 ```
 
-
 ## getRecordShowIndexByCell(Function)
 
-获取当前单元格数据在body部分的索引，即通过行列号去除表头层级数的索引（与转置相关，非转置获取的是body行号，转置表获取的是body列号）。
+获取当前单元格数据在 body 部分的索引，即通过行列号去除表头层级数的索引（与转置相关，非转置获取的是 body 行号，转置表获取的是 body 列号）。
 
-** ListTable 专有 ** 
+** ListTable 专有 **
+
 ```
   /** 获取当前单元格在body部分的展示索引，即（ row / col ）- headerLevelCount。注：ListTable特有接口 */
   getRecordShowIndexByCell(col: number, row: number): number
@@ -303,9 +368,10 @@ setRecords(records: Array<any>, sort?: SortState | SortState[]) //** 基本表�
 
 ## getCellAddrByFieldRecord(Function)
 
-根据数据源中的index和field获取单元格行列号。
+根据数据源中的 index 和 field 获取单元格行列号。
 
-注：ListTable特有接口
+注：ListTable 特有接口
+
 ```
   /**
    * 根据数据源中的index和field获取单元格行列号。注：ListTable特有接口
@@ -315,6 +381,7 @@ setRecords(records: Array<any>, sort?: SortState | SortState[]) //** 基本表�
    */
   getCellAddrByFieldRecord: (field: FieldDef, recordIndex: number) => CellAddress;
 ```
+
 ## getCellOriginRecord(Function)
 
 获取该单元格的源数据项。
@@ -332,6 +399,7 @@ setRecords(records: Array<any>, sort?: SortState | SortState[]) //** 基本表�
    */
   getCellOriginRecord(col: number, row: number)
 ```
+
 ## getAllCells(Function)
 
 获取所有单元格上下文信息
@@ -400,7 +468,9 @@ setRecords(records: Array<any>, sort?: SortState | SortState[]) //** 基本表�
 ```
 
 ## getCellRect(Function)
+
 获取单元格在整张表格中的具体位置。
+
 ```
  /**
    * 获取单元格的范围 返回值为Rect类型。不考虑是否为合并单元格的情况，坐标从0开始
@@ -412,7 +482,9 @@ setRecords(records: Array<any>, sort?: SortState | SortState[]) //** 基本表�
 ```
 
 ## getCellRelativeRect(Function)
+
 获取单元格在整张表格中的具体位置。相对位置是基于表格左上角（滚动情况减去滚动值）
+
 ```
   /**
    * 获取的位置是相对表格显示界面的左上角 情况滚动情况 如单元格已经滚出表格上方 则这个单元格的y将为负值
@@ -441,7 +513,7 @@ setRecords(records: Array<any>, sort?: SortState | SortState[]) //** 基本表�
 
 ## getCellHeaderTreeNodes(Function)
 
-根据行列号获取表头tree节点，包含了用户在自定义树rowTree及columnTree树上的自定义属性（也是内部布局树的节点，获取后请不要随意修改）。一般情况下用getCellHeaderPaths即可。
+根据行列号获取表头 tree 节点，包含了用户在自定义树 rowTree 及 columnTree 树上的自定义属性（也是内部布局树的节点，获取后请不要随意修改）。一般情况下用 getCellHeaderPaths 即可。
 
 ```
   /**
@@ -455,7 +527,7 @@ setRecords(records: Array<any>, sort?: SortState | SortState[]) //** 基本表�
 
 ## getCellAddress(Function)
 
-根据数据和 field 属性字段名称获取 body 中某条数据的行列号。目前仅支持基本表格ListTable
+根据数据和 field 属性字段名称获取 body 中某条数据的行列号。目前仅支持基本表格 ListTable
 
 ```
   /**
@@ -488,32 +560,41 @@ setRecords(records: Array<any>, sort?: SortState | SortState[]) //** 基本表�
 ```
 
 ## getCheckboxState(Function)
-获取某个字段下checkbox 全部数据的选中状态 顺序对应原始传入数据records 不是对应表格展示row的状态值
+
+获取某个字段下 checkbox 全部数据的选中状态 顺序对应原始传入数据 records 不是对应表格展示 row 的状态值
+
 ```
 getCheckboxState(field?: string | number): Array
 ```
 
 ## getCellCheckboxState(Function)
-获取某个单元格checkbox的状态
+
+获取某个单元格 checkbox 的状态
+
 ```
 getCellCheckboxState(col: number, row: number): Array
 ```
+
 ## getScrollTop(Function)
+
 获取当前竖向滚动位置
 
 ## getScrollLeft(Function)
+
 获取当前横向滚动位置
 
 ## setScrollTop(Function)
+
 设置竖向滚动位置 （会更新渲染界面）
 
 ## setScrollLeft(Function)
+
 设置横向滚动位置（会更新渲染界面）
 
 ## scrollToCell(Function)
 
 滚动到具体某个单元格位置。
-col或者row可以为空，为空的话也就是只移动x方向或者y方向。
+col 或者 row 可以为空，为空的话也就是只移动 x 方向或者 y 方向。
 
 ```
   /**
@@ -522,18 +603,24 @@ col或者row可以为空，为空的话也就是只移动x方向或者y方向。
    */
   scrollToCell(cellAddr: { col?: number; row?: number })=>void
 ```
+
 ## toggleHierarchyState(Function)
+
 树形展开收起状态切换
+
 ```
  /**
    * 表头切换层级状态
    * @param col
    * @param row
    */
-  toggleHierarchyState(col: number, row: number) 
+  toggleHierarchyState(col: number, row: number)
 ```
+
 ## getHierarchyState(Function)
-获取某个单元格树形展开or收起状态
+
+获取某个单元格树形展开 or 收起状态
+
 ```
   /**
    * 获取层级节点收起展开的状态
@@ -551,9 +638,11 @@ enum HierarchyState {
 ```
 
 ## getLayoutRowTree(Function)
-** PivotTable 专有 ** 
+
+** PivotTable 专有 **
 
 获取表格行头树形结构
+
 ```
   /**
    * 获取表格行树状结构
@@ -563,11 +652,13 @@ enum HierarchyState {
 ```
 
 ## getLayoutRowTreeCount(Function)
-** PivotTable 专有 ** 
+
+** PivotTable 专有 **
 
 获取表格行头树形结构的占位的总节点数。
 
 注意：逻辑中区分了平铺和树形层级结构
+
 ```
   /**
    * 获取表格行头树形结构的占位的总节点数。
@@ -588,9 +679,11 @@ enum HierarchyState {
    */
   updateSortState(sortState: SortState[] | SortState | null, executeSort: boolean = true)
 ```
+
 ## updateSortRules(Function)
 
 透视表更新排序规则，PivotTable 专有
+
 ```
   /**
    * 全量更新排序规则
@@ -741,15 +834,17 @@ use case: 点击图例项后 更新过滤规则 来更新图表
 ```
 
 ## changeCellValue(Function)
-更改单元格的value值：
+
+更改单元格的 value 值：
 
 ```
   /** 设置单元格的value值，注意对应的是源数据的原始值，vtable实例records会做对应修改 */
-  changeCellValue: (col: number, row: number, value: string | number | null) => void;
+  changeCellValue: (col: number, row: number, value: string | number | null, workOnEditableCell = false) => void;
 ```
 
 ## changeCellValues(Function)
-批量更改单元格的value：
+
+批量更改单元格的 value：
 
 ```
   /**
@@ -757,8 +852,9 @@ use case: 点击图例项后 更新过滤规则 来更新图表
    * @param col 粘贴数据的起始列号
    * @param row 粘贴数据的起始行号
    * @param values 多个单元格的数据数组
+   * @param workOnEditableCell 是否仅更改可编辑单元格
    */
-  changeCellValues(startCol: number, startRow: number, values: string[][]) 
+  changeCellValues(startCol: number, startRow: number, values: string[][], workOnEditableCell = false)
 ```
 
 ## getEditor(Function)
@@ -793,13 +889,15 @@ use case: 点击图例项后 更新过滤规则 来更新图表
 获取当前表格的全部数据
 
 ## dataSouce(CachedDataSource)
-给VTable表格组件实例设置数据源，具体使用可以参考[异步懒加载数据demo](../demo/performance/async-data)及[教程](../guide/data/async_data)
+
+给 VTable 表格组件实例设置数据源，具体使用可以参考[异步懒加载数据 demo](../demo/performance/async-data)及[教程](../guide/data/async_data)
 
 ## addRecords(Function)
 
- 添加数据，支持多条数据
- 
-** ListTable 专有 ** 
+添加数据，支持多条数据
+
+** ListTable 专有 **
+
 ```
   /**
    * 添加数据 支持多条数据
@@ -808,14 +906,15 @@ use case: 点击图例项后 更新过滤规则 来更新图表
    * 如果设置了排序规则recordIndex无效，会自动适应排序逻辑确定插入顺序。
    * recordIndex 可以通过接口getRecordShowIndexByCell获取
    */
-  addRecords(records: any[], recordIndex?: number) 
+  addRecords(records: any[], recordIndex?: number)
 ```
 
 ## addRecord(Function)
 
- 添加数据，单条数据
+添加数据，单条数据
 
-** ListTable 专有 ** 
+** ListTable 专有 **
+
 ```
   /**
    * 添加数据 单条数据
@@ -831,20 +930,22 @@ use case: 点击图例项后 更新过滤规则 来更新图表
 
 删除数据 支持多条数据
 
-** ListTable 专有 ** 
+** ListTable 专有 **
+
 ```
   /**
    * 删除数据 支持多条数据
    * @param recordIndexs 要删除数据的索引（显示到body中的条目索引）
    */
-  deleteRecords(recordIndexs: number[]) 
+  deleteRecords(recordIndexs: number[])
 ```
 
 ## updateRecords(Function)
 
 修改数据 支持多条数据
 
-** ListTable 专有 ** 
+** ListTable 专有 **
+
 ```
   /**
    * 修改数据 支持多条数据
@@ -856,7 +957,7 @@ use case: 点击图例项后 更新过滤规则 来更新图表
 
 ## getBodyVisibleCellRange(Function)
 
-获取表格body部分的显示单元格范围
+获取表格 body 部分的显示单元格范围
 
 ```
   /** 获取表格body部分的显示单元格范围 */
@@ -865,16 +966,48 @@ use case: 点击图例项后 更新过滤规则 来更新图表
 
 ## getBodyVisibleColRange(Function)
 
-获取表格body部分的显示列号范围
+获取表格 body 部分的显示列号范围
+
 ```
   /** 获取表格body部分的显示列号范围 */
   getBodyVisibleColRange: () => { colStart: number; colEnd: number };
 ```
+
 ## getBodyVisibleRowRange(Function)
 
-获取表格body部分的显示行号范围
+获取表格 body 部分的显示行号范围
 
 ```
   /** 获取表格body部分的显示行号范围 */
   getBodyVisibleRowRange: () => { rowStart: number; rowEnd: number };
 ```
+
+## getAggregateValuesByField(Function)
+
+获取聚合汇总的值
+
+## registerCustomCellStyle(Function)
+
+注册自定义样式
+
+```
+registerCustomCellStyle: (customStyleId: string, customStyle: ColumnStyleOption | undefined | null) => void
+```
+
+自定义单元格样式
+
+- customStyleId: 自定义样式的唯一 id
+- customStyle: 自定义单元格样式，与`column`中的`style`配置相同，最终呈现效果是单元格原有样式与自定义样式融合
+
+## registerCustomCellStyleArrangement(Function)
+
+分配自定义样式
+
+```
+registerCustomCellStyleArrangement: (cellPosition: { col?: number; row?: number; range?: CellRange }, customStyleId: string) => void
+```
+
+- cellPosition: 单元格位置信息，支持配置单个单元格与单元格区域
+  - 单个单元格：`{ row: number, column: number }`
+  - 单元格区域：`{ range: { start: { row: number, column: number }, end: { row: number, column: number} } }`
+- customStyleId: 自定义样式 id，与注册自定义样式时定义的 id 相同

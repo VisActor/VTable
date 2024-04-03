@@ -1,4 +1,6 @@
-import type { SortOrder } from './common';
+import type { ColorPropertyDefine } from '.';
+import type { Either } from '../tools/helper';
+import type { BaseTableAPI } from './base-table';
 
 //#region 总计小计
 export interface TotalsStatus {
@@ -15,7 +17,8 @@ export enum AggregationType {
   MIN = 'MIN',
   MAX = 'MAX',
   AVG = 'AVG',
-  COUNT = 'COUNT'
+  COUNT = 'COUNT',
+  CUSTOM = 'CUSTOM'
 }
 export enum SortType {
   ASC = 'ASC',
@@ -119,12 +122,14 @@ export type SortRules = SortRule[];
 //#endregion 排序规则
 
 //#region 过滤规则
-export interface FilterRule {
-  filterKey?: string;
-  filteredValues?: unknown[];
+export interface FilterFuncRule {
   filterFunc?: (row: Record<string, any>) => boolean;
 }
-export type FilterRules = FilterRule[];
+export interface FilterValueRule {
+  filterKey?: string;
+  filteredValues?: unknown[];
+}
+export type FilterRules = Either<FilterFuncRule, FilterValueRule>[];
 //#endregion 过滤规则
 
 //#region 聚合规则
@@ -135,7 +140,7 @@ export interface AggregationRule<T extends AggregationType> {
   field: T extends AggregationType.RECORD ? string[] | string : string;
   aggregationType: T;
   /**计算结果格式化 */
-  formatFun?: (num: number) => string;
+  formatFun?: (value: number, col: number, row: number, table: BaseTableAPI) => number | string;
 }
 export type AggregationRules = AggregationRule<AggregationType>[];
 //#endregion 聚合规则
@@ -159,7 +164,7 @@ export interface SymbolMapping {
 
 export type MappingFuncRule = {
   indicatorKey: string;
-  mapping?: (table: any, value: number) => string;
+  mapping?: ColorPropertyDefine;
 };
 
 //#endregion 映射规则
@@ -169,9 +174,19 @@ export interface DerivedFieldRule {
 }
 export type DerivedFieldRules = DerivedFieldRule[];
 /**
- * 数据处理配置
+ * 基本表数据处理配置
  */
-export interface IDataConfig {
+export interface IListTableDataConfig {
+  // aggregationRules?: AggregationRules; //按照行列维度聚合值计算规则；
+  // sortRules?: SortTypeRule | SortByRule | SortFuncRule; //排序规则 不能简单的将sortState挪到这里 sort的规则在column中配置的；
+  filterRules?: FilterRules; //过滤规则；
+  // totals?: Totals; //小计或总计；
+  // derivedFieldRules?: DerivedFieldRules;
+}
+/**
+ * 透视表数据处理配置
+ */
+export interface IPivotTableDataConfig {
   aggregationRules?: AggregationRules; //按照行列维度聚合值计算规则；
   sortRules?: SortRules; //排序规则；
   filterRules?: FilterRules; //过滤规则；
@@ -181,17 +196,22 @@ export interface IDataConfig {
    */
   mappingRules?: MappingRules;
   derivedFieldRules?: DerivedFieldRules;
+}
 
+/**
+ * 透视图数据处理配置
+ */
+export interface IPivotChartDataConfig extends IPivotTableDataConfig {
   /**
-   * PivotChart专有  请忽略
+   * PivotChart专有
    */
   collectValuesBy?: Record<string, CollectValueBy>;
   /**
-   * PivotChart专有  请忽略
+   * PivotChart专有
    */
   isPivotChart?: boolean;
   /**
-   * PivotChart专有  请忽略
+   * PivotChart专有
    */
   dimensionSortArray?: string[];
 }
@@ -210,3 +230,18 @@ export type CollectValueBy = {
   sortBy?: string[];
 };
 export type CollectedValue = { max?: number; min?: number } | Array<string>;
+
+//#region 提供给基本表格的类型
+export type Aggregation = {
+  aggregationType: AggregationType;
+  showOnTop?: boolean;
+  formatFun?: (value: number, col: number, row: number, table: BaseTableAPI) => string | number;
+};
+
+export type CustomAggregation = {
+  aggregationType: AggregationType.CUSTOM;
+  aggregationFun: (values: any[], records: any[]) => any;
+  showOnTop?: boolean;
+  formatFun?: (value: number, col: number, row: number, table: BaseTableAPI) => string | number;
+};
+//#endregion

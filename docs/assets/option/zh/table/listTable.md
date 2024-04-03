@@ -36,7 +36,7 @@
 
 分页配置。
 
-基本表格和VTable数据分析透视表支持分页，透视组合图不支持分页。
+基本表格和 VTable 数据分析透视表支持分页，透视组合图不支持分页。
 
 IPagination 的具体类型如下：
 
@@ -44,13 +44,13 @@ IPagination 的具体类型如下：
 
 数据总条数。
 
-非必传！透视表中这个字段VTable会自动补充，帮助用户获取到总共数据条数
+非必传！透视表中这个字段 VTable 会自动补充，帮助用户获取到总共数据条数
 
 ### perPageCount (number)
 
 每页显示数据条数。
 
-注意! 透视表中perPageCount会自动修正为指标数量的整数倍。
+注意! 透视表中 perPageCount 会自动修正为指标数量的整数倍。
 
 ### currentPage (number)
 
@@ -72,14 +72,17 @@ SortState {
 ## editor (string|Object|Function)
 
 全局配置单元格编辑器
+
 ```
 editor?: string | IEditor | ((args: BaseCellInfo & { table: BaseTableAPI }) => string | IEditor);
 ```
-其中IEditor是@visactor/vtable-editors中定义的编辑器接口，具体可以参看源码：https://github.com/VisActor/VTable/blob/main/packages/vtable-editors/src/types.ts。
+
+其中 IEditor 是@visactor/vtable-editors 中定义的编辑器接口，具体可以参看源码：https://github.com/VisActor/VTable/blob/main/packages/vtable-editors/src/types.ts。
 
 ${prefix} headerEditor (string|Object|Function)
 
-全局配置表头显示标题title的编辑器
+全局配置表头显示标题 title 的编辑器
+
 ```
 headerEditor?: string | IEditor | ((args: BaseCellInfo & { table: BaseTableAPI }) => string | IEditor);
 ```
@@ -95,13 +98,51 @@ headerEditor?: string | IEditor | ((args: BaseCellInfo & { table: BaseTableAPI }
 
 ## hierarchyExpandLevel(number)
 
-展示为树形结构时，默认展开层数。默认为1只显示根节点，配置为`Infinity`则全部展开。
-
+展示为树形结构时，默认展开层数。默认为 1 只显示根节点，配置为`Infinity`则全部展开。
 
 ## frozenColDragHeaderMode(string) = 'fixedFrozenCount'
 
-拖拽表头移动位置 针对冻结部分的规则  默认为fixedFrozenCount
+拖拽表头移动位置 针对冻结部分的规则 默认为 fixedFrozenCount
 
 - "disabled"（禁止调整冻结列位置）：不允许其他列的表头移入冻结列，也不允许冻结列移出，冻结列保持不变。
 - "adjustFrozenCount"（根据交互结果调整冻结数量）：允许其他列的表头移入冻结列，及冻结列移出，并根据拖拽的动作调整冻结列的数量。当其他列的表头被拖拽进入冻结列位置时，冻结列数量增加；当其他列的表头被拖拽移出冻结列位置时，冻结列数量减少。
 - "fixedFrozenCount"（可调整冻结列，并维持冻结数量不变）：允许自由拖拽其他列的表头移入或移出冻结列位置，同时保持冻结列的数量不变。
+
+## aggregation(Aggregation|CustomAggregation|Array|Function)
+
+数据聚合汇总分析配置，全局配置每一列都将有聚合逻辑，也可以在列（columns）定义中配置，列中配置的优先级更高。
+
+```
+aggregation?:
+    | Aggregation
+    | CustomAggregation
+    | (Aggregation | CustomAggregation)[]
+    | ((args: {
+        col: number;
+        field: string;
+      }) => Aggregation | CustomAggregation | (Aggregation | CustomAggregation)[] | null);
+```
+
+其中：
+
+```
+type Aggregation = {
+  aggregationType: AggregationType;
+  showOnTop?: boolean;
+  formatFun?: (value: number, col: number, row: number, table: BaseTableAPI) => string | number;
+};
+
+type CustomAggregation = {
+  aggregationType: AggregationType.CUSTOM;
+  aggregationFun: (values: any[], records: any[]) => any;
+  showOnTop?: boolean;
+  formatFun?: (value: number, col: number, row: number, table: BaseTableAPI) => string | number;
+};
+```
+
+## rowSeriesNumber(IRowSeriesNumber)
+
+配置行序号。
+{{ use: row-series-number(
+    prefix = '###',
+) }}

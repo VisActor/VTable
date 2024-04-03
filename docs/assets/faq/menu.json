@@ -140,6 +140,13 @@
         "zh": "20.如何在Vue中使用Vtable？",
         "en": "20.How to use VTable in Vue?"
       }
+    },
+    {
+      "path": "21-How to cancel the bubbling of the table event",
+      "title": {
+        "zh": "21.怎么取消表格mousedown事件的冒泡？",
+        "en": "21.How to cancel the bubbling of the table event?"
+      }
     }
   ]
 }

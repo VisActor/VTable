@@ -328,7 +328,7 @@ describe('pivotTable-analysis init test', () => {
         {
           bgColor: {
             indicatorKey: 'sales',
-            mapping(table, value) {
+            mapping({ table, value }) {
               const max: number =
                 table.dataset.indicatorStatistics[table.dataset.indicatorKeys.indexOf('sales')].max.value();
               const min: number =
@@ -340,7 +340,7 @@ describe('pivotTable-analysis init test', () => {
         {
           bgColor: {
             indicatorKey: 'number',
-            mapping(table, value) {
+            mapping({ table, value }) {
               const max: number =
                 table.dataset.indicatorStatistics[table.dataset.indicatorKeys.indexOf('number')].max.value();
               const min: number =

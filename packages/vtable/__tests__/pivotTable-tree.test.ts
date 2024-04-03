@@ -497,6 +497,15 @@ describe('pivotTableTree init test', () => {
         ]
       })
     ).toEqual({ col: 2, row: 4 });
+
+    expect(
+      pivotTableTree.getCellAddressByHeaderPaths([
+        {
+          indicatorKey: 'Sales',
+          value: 'Sales'
+        }
+      ])
+    ).toEqual({ col: 2, row: 0 });
   });
   pivotTableTree.release();
 });

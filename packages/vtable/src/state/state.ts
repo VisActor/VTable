@@ -34,7 +34,7 @@ import { endMoveCol, startMoveCol, updateMoveCol } from './cell-move';
 import type { FederatedEvent } from '@src/vrender';
 import type { TooltipOptions } from '../ts-types/tooltip';
 import { getIconAndPositionFromTarget } from '../scenegraph/utils/icon';
-import type { BaseTableAPI } from '../ts-types/base-table';
+import type { BaseTableAPI, HeaderData } from '../ts-types/base-table';
 import { debounce } from '../tools/debounce';
 import { updateResizeColumn } from './resize/update-resize-column';
 
@@ -61,6 +61,17 @@ export class StateManager {
     /** 点击表头单元格时连带body整行或整列选中 或仅选中当前单元格，默认或整行或整列选中*/
     headerSelectMode?: 'inline' | 'cell';
     selecting: boolean;
+  };
+  fillHandle: {
+    direction?: 'top' | 'bottom' | 'left' | 'right';
+    directionRow?: boolean;
+    isFilling: boolean;
+    startX: number;
+    startY: number;
+    beforeFillMinCol?: number;
+    beforeFillMinRow?: number;
+    beforeFillMaxCol?: number;
+    beforeFillMaxRow?: number;
   };
   hover: {
     highlightScope: HighlightScope; // hover模式
@@ -108,7 +119,7 @@ export class StateManager {
     col: number;
     row: number;
     field?: string;
-    fieldKey?: string;
+    // fieldKey?: string;
     order: SortOrder;
     icon?: Icon;
   };
@@ -264,6 +275,11 @@ export class StateManager {
       },
       selecting: false
     };
+    this.fillHandle = {
+      isFilling: false,
+      startX: undefined,
+      startY: undefined
+    };
     this.hover = {
       highlightScope: HighlightScope.single,
       cellPos: {
@@ -406,7 +422,7 @@ export class StateManager {
 
   setSortState(sortState: SortState) {
     this.sort.field = sortState?.field as string;
-    this.sort.fieldKey = sortState?.fieldKey as string;
+    // this.sort.fieldKey = sortState?.fieldKey as string;
     this.sort.order = sortState?.order;
     // // 这里有一个问题，目前sortState中一般只传入了fieldKey，但是getCellRangeByField需要field
     // const range = this.table.getCellRangeByField(this.sort.field, 0);
@@ -453,12 +469,13 @@ export class StateManager {
     row: number,
     isShift: boolean = false,
     isCtrl: boolean = false,
-    isSelectAll: boolean = false
+    isSelectAll: boolean = false,
+    isSelectMoving: boolean = false
   ) {
     if (row !== -1 && row !== -1) {
       this.select.selecting = true;
     }
-    updateSelectPosition(this, col, row, isShift, isCtrl, isSelectAll);
+    updateSelectPosition(this, col, row, isShift, isCtrl, isSelectAll, isSelectMoving);
   }
 
   checkCellRangeInSelect(cellPosStart: CellAddress, cellPosEnd: CellAddress) {
@@ -536,6 +553,9 @@ export class StateManager {
   isResizeCol(): boolean {
     return this.columnResize.resizing;
   }
+  isFillHandle(): boolean {
+    return this.fillHandle.isFilling;
+  }
   isSelecting(): boolean {
     return this.select.selecting;
   }
@@ -574,9 +594,45 @@ export class StateManager {
     this.table.scenegraph.component.showResizeCol(col, y, isRightFrozen);
 
     // 调整列宽期间清空选中清空
-    this.table.stateManager.updateSelectPos(-1, -1);
+    this.updateSelectPos(-1, -1);
 
     this.table.scenegraph.updateNextFrame();
+  }
+  startFillSelect(x: number, y: number) {
+    this.fillHandle.isFilling = true;
+    this.fillHandle.startX = x;
+    this.fillHandle.startY = y;
+    const currentRange = this.select.ranges[this.select.ranges.length - 1];
+    this.fillHandle.beforeFillMinCol = Math.min(currentRange.start.col, currentRange.end.col);
+    this.fillHandle.beforeFillMinRow = Math.min(currentRange.start.row, currentRange.end.row);
+    this.fillHandle.beforeFillMaxCol = Math.max(currentRange.start.col, currentRange.end.col);
+    this.fillHandle.beforeFillMaxRow = Math.max(currentRange.start.row, currentRange.end.row);
+    // this.table.scenegraph.updateNextFrame();
+    this.table.fireListeners(TABLE_EVENT_TYPE.MOUSEDOWN_FILL_HANDLE, {});
+  }
+  endFillSelect() {
+    this.fillHandle.isFilling = false;
+    this.fillHandle.startX = undefined;
+    this.fillHandle.startY = undefined;
+    this.fillHandle.directionRow = undefined;
+    const currentMinCol = Math.min(this.select.ranges[0].start.col, this.select.ranges[0].end.col);
+    const currentMinRow = Math.min(this.select.ranges[0].start.row, this.select.ranges[0].end.row);
+    const currentMaxCol = Math.max(this.select.ranges[0].start.col, this.select.ranges[0].end.col);
+    const currentMaxRow = Math.max(this.select.ranges[0].start.row, this.select.ranges[0].end.row);
+    //如果选中区域没有发生变化 不触发事件
+    if (
+      this.fillHandle.beforeFillMinCol !== currentMinCol ||
+      this.fillHandle.beforeFillMinRow !== currentMinRow ||
+      this.fillHandle.beforeFillMaxCol !== currentMaxCol ||
+      this.fillHandle.beforeFillMaxRow !== currentMaxRow
+    ) {
+      this.table.eventManager.isDraging &&
+        this.table.fireListeners(TABLE_EVENT_TYPE.DRAG_FILL_HANDLE_END, { direction: this.fillHandle.direction });
+    }
+    this.fillHandle.beforeFillMaxCol = undefined;
+    this.fillHandle.beforeFillMaxRow = undefined;
+    this.fillHandle.beforeFillMinCol = undefined;
+    this.fillHandle.beforeFillMinRow = undefined;
   }
   updateResizeCol(xInTable: number, yInTable: number) {
     updateResizeColumn(xInTable, yInTable, this);
@@ -599,7 +655,12 @@ export class StateManager {
     const originalFrozenColCount =
       this.table.isListTable() && !this.table.internalProps.transpose
         ? this.table.options.frozenColCount
-        : this.table.rowHeaderLevelCount;
+        : this.table.isPivotChart()
+        ? this.table.rowHeaderLevelCount ?? 0
+        : Math.max(
+            (this.table.rowHeaderLevelCount ?? 0) + this.table.internalProps.layoutMap.leftRowSeriesNumberColumnCount,
+            this.table.options.frozenColCount ?? 0
+          );
     if (originalFrozenColCount) {
       if (this.table.tableNoFrameWidth - this.table.getColsWidth(0, originalFrozenColCount - 1) <= 120) {
         this.table._setFrozenColCount(0);
@@ -628,17 +689,52 @@ export class StateManager {
       this.table.scenegraph.updateFrozenIcon(0, this.table.colCount - 1);
     }
   }
+  checkVerticalScrollBarEnd() {
+    const totalHeight = this.table.getAllRowsHeight();
+    const scrollTop = this.scroll.verticalBarPos;
+    const viewHeight = this.table.tableNoFrameHeight;
 
+    if (scrollTop + viewHeight >= totalHeight) {
+      this.table.fireListeners(TABLE_EVENT_TYPE.SCROLL_VERTICAL_END, {
+        scrollTop,
+        scrollLeft: this.scroll.horizontalBarPos,
+        scrollHeight: this.table.theme.scrollStyle?.width,
+        scrollWidth: this.table.theme.scrollStyle?.width,
+        viewHeight,
+        viewWidth: this.table.tableNoFrameWidth
+      });
+    }
+  }
+  checkHorizontalScrollBarEnd() {
+    const totalWidth = this.table.getAllColsWidth();
+    const scrollLeft = this.scroll.horizontalBarPos;
+    const viewWidth = this.table.tableNoFrameWidth;
+
+    if (scrollLeft + viewWidth >= totalWidth) {
+      this.table.fireListeners(TABLE_EVENT_TYPE.SCROLL_HORIZONTAL_END, {
+        scrollTop: this.scroll.verticalBarPos,
+        scrollLeft,
+        scrollHeight: this.table.theme.scrollStyle?.width,
+        scrollWidth: this.table.theme.scrollStyle?.width,
+        viewHeight: this.table.tableNoFrameHeight,
+        viewWidth
+      });
+    }
+  }
   updateVerticalScrollBar(yRatio: number) {
     const totalHeight = this.table.getAllRowsHeight();
+    const oldVerticalBarPos = this.scroll.verticalBarPos;
     this.scroll.verticalBarPos = Math.ceil(yRatio * (totalHeight - this.table.scenegraph.height));
-    this.table.scenegraph.setY(-this.scroll.verticalBarPos);
+    if (!isValid(this.scroll.verticalBarPos) || isNaN(this.scroll.verticalBarPos)) {
+      this.scroll.verticalBarPos = 0;
+    }
+    this.table.scenegraph.setY(-this.scroll.verticalBarPos, yRatio === 1);
     this.scroll.verticalBarPos -= this.table.scenegraph.proxy.deltaY;
     this.table.scenegraph.proxy.deltaY = 0;
 
     // 滚动期间清空选中清空
-    this.table.stateManager.updateHoverPos(-1, -1);
-    // this.table.stateManager.updateSelectPos(-1, -1);
+    this.updateHoverPos(-1, -1);
+    // this.updateSelectPos(-1, -1);
 
     this.table.fireListeners(TABLE_EVENT_TYPE.SCROLL, {
       scrollTop: this.scroll.verticalBarPos,
@@ -650,11 +746,19 @@ export class StateManager {
       scrollDirection: 'vertical',
       scrollRatioY: yRatio
     });
+
+    if (oldVerticalBarPos !== this.scroll.verticalBarPos) {
+      this.checkVerticalScrollBarEnd();
+    }
   }
   updateHorizontalScrollBar(xRatio: number) {
     const totalWidth = this.table.getAllColsWidth();
+    const oldHorizontalBarPos = this.scroll.horizontalBarPos;
     this.scroll.horizontalBarPos = Math.ceil(xRatio * (totalWidth - this.table.scenegraph.width));
-    this.table.scenegraph.setX(-this.scroll.horizontalBarPos);
+    if (!isValid(this.scroll.horizontalBarPos) || isNaN(this.scroll.horizontalBarPos)) {
+      this.scroll.horizontalBarPos = 0;
+    }
+    this.table.scenegraph.setX(-this.scroll.horizontalBarPos, xRatio === 1);
     this.scroll.horizontalBarPos -= this.table.scenegraph.proxy.deltaX;
     this.table.scenegraph.proxy.deltaX = 0;
     // console.log(this.table.scenegraph.bodyGroup.lastChild.attribute);
@@ -664,8 +768,8 @@ export class StateManager {
     //   }
     // };
     // 滚动期间清空选中清空
-    this.table.stateManager.updateHoverPos(-1, -1);
-    // this.table.stateManager.updateSelectPos(-1, -1);
+    this.updateHoverPos(-1, -1);
+    // this.updateSelectPos(-1, -1);
     this.table.fireListeners(TABLE_EVENT_TYPE.SCROLL, {
       scrollTop: this.scroll.verticalBarPos,
       scrollLeft: this.scroll.horizontalBarPos,
@@ -676,6 +780,10 @@ export class StateManager {
       scrollDirection: 'horizontal',
       scrollRatioX: xRatio
     });
+
+    if (oldHorizontalBarPos !== this.scroll.horizontalBarPos) {
+      this.checkHorizontalScrollBarEnd();
+    }
   }
   setScrollTop(top: number) {
     // 矫正top值范围
@@ -684,11 +792,14 @@ export class StateManager {
     top = Math.ceil(top);
     // 滚动期间清空选中清空 如果调用接口hover状态需要保留，但是如果不调用updateHoverPos透视图处于hover状态的图就不能及时更新 所以这里单独判断了isPivotChart
     if (top !== this.scroll.verticalBarPos || this.table.isPivotChart()) {
-      this.table.stateManager.updateHoverPos(-1, -1);
+      this.updateHoverPos(-1, -1);
     }
+    const oldVerticalBarPos = this.scroll.verticalBarPos;
     // this.table.stateManager.updateSelectPos(-1, -1);
     this.scroll.verticalBarPos = top;
-
+    if (!isValid(this.scroll.verticalBarPos) || isNaN(this.scroll.verticalBarPos)) {
+      this.scroll.verticalBarPos = 0;
+    }
     // 设置scenegraph坐标
     this.table.scenegraph.setY(-top);
 
@@ -705,6 +816,10 @@ export class StateManager {
       scrollDirection: 'vertical',
       scrollRatioY: yRatio
     });
+
+    if (oldVerticalBarPos !== top) {
+      this.checkVerticalScrollBarEnd();
+    }
   }
   setScrollLeft(left: number) {
     // 矫正left值范围
@@ -715,10 +830,14 @@ export class StateManager {
     left = Math.ceil(left);
     // 滚动期间清空选中清空
     if (left !== this.scroll.horizontalBarPos) {
-      this.table.stateManager.updateHoverPos(-1, -1);
+      this.updateHoverPos(-1, -1);
     }
     // this.table.stateManager.updateSelectPos(-1, -1);
+    const oldHorizontalBarPos = this.scroll.horizontalBarPos;
     this.scroll.horizontalBarPos = left;
+    if (!isValid(this.scroll.horizontalBarPos) || isNaN(this.scroll.horizontalBarPos)) {
+      this.scroll.horizontalBarPos = 0;
+    }
 
     // 设置scenegraph坐标
     this.table.scenegraph.setX(-left);
@@ -737,6 +856,9 @@ export class StateManager {
       scrollDirection: 'horizontal',
       scrollRatioX: xRatio
     });
+    if (oldHorizontalBarPos !== left) {
+      this.checkHorizontalScrollBarEnd();
+    }
   }
   hideVerticalScrollBar() {
     this.table.scenegraph.component.hideVerticalScrollBar();
@@ -788,10 +910,11 @@ export class StateManager {
     }
   }
 
-  triggerDropDownMenu(col: number, row: number, x: number, y: number) {
+  triggerDropDownMenu(col: number, row: number, x: number, y: number, event: Event) {
     this.table.fireListeners(TABLE_EVENT_TYPE.DROPDOWN_ICON_CLICK, {
       col,
-      row
+      row,
+      event
     });
     if (this.menu.isShow) {
       this.hideMenu();
@@ -874,7 +997,15 @@ export class StateManager {
     this.menu.dropDownMenuHighlight = cells;
     for (let i = 0; i < cells.length; i++) {
       const { col, row } = cells[i];
-      this.table.scenegraph.updateCellContent(col, row);
+      const range = this.table.getCellRange(col, row);
+      if (!range) {
+        continue;
+      }
+      for (let col = range.start.col; col <= range.end.col; col++) {
+        for (let row = range.start.row; row <= range.end.row; row++) {
+          this.table.scenegraph.updateCellContent(col, row);
+        }
+      }
     }
   }
   dropDownMenuIsHighlight(colNow: number, rowNow: number, index: number): boolean {
@@ -910,7 +1041,7 @@ export class StateManager {
           // 手动查询menuKey对应的dropDownIndex
           const headerC = this.table._getHeaderLayoutMap(col ?? colNow, row ?? rowNow);
 
-          const dropDownMenu = headerC.dropDownMenu || this.table.globalDropDownMenu;
+          const dropDownMenu = (headerC as HeaderData).dropDownMenu || this.table.globalDropDownMenu;
           if (dropDownMenu) {
             for (let i = 0; i < dropDownMenu.length; i++) {
               const item: any = dropDownMenu[i];
@@ -927,7 +1058,7 @@ export class StateManager {
     }
     return false;
   }
-  triggerSort(col: number, row: number, iconMark: Icon) {
+  triggerSort(col: number, row: number, iconMark: Icon, event: Event) {
     if (this.table.isPivotTable()) {
       // 透视表不执行sort操作
       const order = (this.table as PivotTableAPI).getPivotSortState(col, row);
@@ -937,7 +1068,8 @@ export class StateManager {
         row: row,
         order: order || 'normal',
         dimensionInfo: (this.table.internalProps.layoutMap as PivotHeaderLayoutMap).getPivotDimensionInfo(col, row),
-        cellLocation: this.table.getCellLocation(col, row)
+        cellLocation: this.table.getCellLocation(col, row),
+        event
       });
       return;
     }
@@ -945,7 +1077,7 @@ export class StateManager {
     const oldSortCol = this.sort.col;
     const oldSortRow = this.sort.row;
     // 执行sort
-    dealSort(col, row, this.table as ListTableAPI);
+    dealSort(col, row, this.table as ListTableAPI, event);
     this.sort.col = col;
     this.sort.row = row;
 

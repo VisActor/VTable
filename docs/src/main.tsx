@@ -1,4 +1,6 @@
+import React from 'react';
 import ReactDOM from 'react-dom/client';
+import Inula from 'openinula';
 import * as VTable from '@visactor/vtable';
 import * as VChart from '@visactor/vchart';
 import * as VTableEditors from '@visactor/vtable-editors';
@@ -8,6 +10,9 @@ import {
   downloadExcel,
   exportVTableToExcel,
 } from "@visactor/vtable-export";
+import { SearchComponent } from '@visactor/vtable-search';
+import * as ReactVTable from '@visactor/react-vtable';
+import * as InulaVTable from '@visactor/openinula-vtable';
 import { App } from './app';
 
 import '@arco-design/web-react/dist/css/arco.css';
@@ -20,8 +25,15 @@ import '@arco-design/web-react/dist/css/arco.css';
 (window as any).exportVTableToCsv = exportVTableToCsv;
 (window as any).downloadExcel = downloadExcel;
 (window as any).exportVTableToExcel = exportVTableToExcel;
+(window as any).SearchComponent = SearchComponent;
 
 (window as any).CONTAINER_ID = 'chart';
+(window as any).React = React;
+(window as any).ReactDom = ReactDOM;
+(window as any).ReactVTable = ReactVTable;
+
+(window as any).Inula = Inula;
+(window as any).InulaVTable = InulaVTable;
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   // <React.StrictMode>

@@ -57,14 +57,18 @@ export class CartesianAxis {
     );
 
     if (this.orient === 'left' || this.orient === 'right') {
-      const innerOffsetTop = this.option.innerOffset?.top ?? 0;
-      const innerOffsetBottom = this.option.innerOffset?.bottom ?? 0;
+      // const innerOffsetTop = this.option.innerOffset?.top ?? 0;
+      // const innerOffsetBottom = this.option.innerOffset?.bottom ?? 0;
+      const innerOffsetTop = 0;
+      const innerOffsetBottom = 0;
       this.width = width;
       this.height = height - padding[2] - innerOffsetBottom;
       this.y = padding[0] + innerOffsetTop;
     } else if (this.orient === 'top' || this.orient === 'bottom') {
-      const innerOffsetLeft = this.option.innerOffset?.left ?? 0;
-      const innerOffsetRight = this.option.innerOffset?.right ?? 0;
+      // const innerOffsetLeft = this.option.innerOffset?.left ?? 0;
+      // const innerOffsetRight = this.option.innerOffset?.right ?? 0;
+      const innerOffsetLeft = 0;
+      const innerOffsetRight = 0;
       this.width = width - padding[1] - innerOffsetRight;
       this.height = height;
       this.x = padding[3] + innerOffsetLeft;
@@ -255,16 +259,23 @@ export class CartesianAxis {
   }
 
   updateScaleRange() {
+    const right = this.option.innerOffset?.right ?? 0;
+    const left = this.option.innerOffset?.left ?? 0;
+    const top = this.option.innerOffset?.top ?? 0;
+    const bottom = this.option.innerOffset?.bottom ?? 0;
+
     const { width, height } = this.getLayoutRect();
     const inverse = (this.option as any).inverse || false;
     let newRange: [number, number] = [0, 0];
     if (isXAxis(this.orient)) {
       if (isValidNumber(width)) {
-        newRange = inverse ? [width, 0] : [0, width];
+        // newRange = inverse ? [width, 0] : [0, width];
+        newRange = inverse ? [width - right, left] : [left, width - right];
       }
     } else {
       if (isValidNumber(height)) {
-        newRange = inverse ? [0, height] : [height, 0];
+        // newRange = inverse ? [0, height] : [height, 0];
+        newRange = inverse ? [top, height - bottom] : [height - bottom, top];
       }
     }
 

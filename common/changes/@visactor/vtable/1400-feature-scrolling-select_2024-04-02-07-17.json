@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "comment": "feat: select range can extends during scroll #1400\n\n",
+      "type": "none",
+      "packageName": "@visactor/vtable"
+    }
+  ],
+  "packageName": "@visactor/vtable",
+  "email": "892739385@qq.com"
+}

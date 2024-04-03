@@ -234,6 +234,13 @@
             "zh": "单元格合并",
             "en": "cell merge"
           }
+        },
+        {
+          "path": "row_series_number",
+          "title": {
+            "zh": "行序号",
+            "en": "row series number"
+          }
         }
       ]
     },
@@ -351,7 +358,7 @@
         {
           "path": "custom_render",
           "title": {
-            "zh": "单元格自定义渲染",
+            "zh": "单元格自定义渲染(CustomRender)",
             "en": "custom render"
           }
         },
@@ -368,6 +375,13 @@
             "zh": "自定义单元格合并",
             "en": "custom merge"
           }
+        },
+        {
+          "path": "custom_style",
+          "title": {
+            "zh": "自定义单元格样式",
+            "en": "custom style"
+          }
         }
       ]
     },
@@ -383,6 +397,13 @@
           "title": {
             "zh": "编辑表格数据",
             "en": "edit cell"
+          }
+        },
+        {
+          "path": "fill_handle",
+          "title": {
+            "zh": "填充柄",
+            "en": "fill handle"
           }
         }
       ]
@@ -406,6 +427,29 @@
           "title": {
             "zh": "异步懒加载数据",
             "en": "async lazy load data"
+          }
+        }
+      ]
+    },
+    {
+      "path": "data_analysis",
+      "title": {
+        "zh": "数据分析",
+        "en": "data analysis"
+      },
+      "children": [
+        {
+          "path": "pivot_table_dataAnalysis",
+          "title": {
+            "zh": "透视表数据分析",
+            "en": "pivot table data analysis"
+          }
+        },
+        {
+          "path": "list_table_dataAnalysis",
+          "title": {
+            "zh": "基本表数据分析",
+            "en": "list table data analysis"
           }
         }
       ]
@@ -455,6 +499,13 @@
       ]
     },
     {
+      "path": "search",
+      "title": {
+        "zh": "搜索",
+        "en": "search"
+      }
+    },
+    {
       "path": "export",
       "title": {
         "zh": "表格导出",
@@ -492,6 +543,13 @@
           }
         },
         {
+          "path": "openinula",
+          "title": {
+            "zh": "Openinula-VTable",
+            "en": "Openinula-VTable"
+          }
+        },
+        {
           "path": "vue",
           "title": {
             "zh": "Vue VTable",
@@ -499,6 +557,13 @@
           }
         }
       ]
+    },
+    {
+      "path": "multi_language_support",
+      "title": {
+        "zh": "多语言支持",
+        "en": "multi-language support"
+      }
     }
   ]
 }

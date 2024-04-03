@@ -50,13 +50,17 @@
 ```
 
 ## enableDataAnalysis(boolean)
-透视表是否开启数据分析。 默认false
 
-如果传入的数据records是明细数据，需要VTable做聚合分析则开启该配置将其设置为true。
+透视表是否开启数据分析。 默认 false
 
-如传入数据是经过聚合好的，为了提升性能这里设置为false，同时呢要求传入自己组织好的行头树结构columnTree和rowTree。
+如果传入的数据 records 是明细数据，需要 VTable 做聚合分析则开启该配置将其设置为 true。
+
+如传入数据是经过聚合好的，为了提升性能这里设置为 false，同时呢要求传入自己组织好的行头树结构 columnTree 和 rowTree。
+
 ## dataConfig(IDataConfig)
-数据分析相关配置 enableDataAnalysis开启后该配置才会有效。
+
+数据分析相关配置 enableDataAnalysis 开启后该配置才会有效。
+
 ```
 /**
  * 数据处理配置
@@ -75,7 +79,9 @@ export interface IDataConfig {
 ```
 
 ### aggregationRules(AggregationRules)
-求指标的聚合方式；具体AggregationRules的定义如下：
+
+求指标的聚合方式；具体 AggregationRules 的定义如下：
+
 ```
 export type AggregationRules = AggregationRule<AggregationType>[];
 
@@ -89,7 +95,9 @@ export interface AggregationRule<T extends AggregationType> {
   formatFun?: (num: number) => string;
 }
 ```
-其中AggregationType聚合方式有如下6种，最常用的是SUM。RECORD类型主要是给透视图内部使用的。
+
+其中 AggregationType 聚合方式有如下 6 种，最常用的是 SUM。RECORD 类型主要是给透视图内部使用的。
+
 ```
 export enum AggregationType {
   RECORD = 'RECORD',
@@ -101,14 +109,20 @@ export enum AggregationType {
   NONE = 'NONE'
 }
 ```
+
 ### sortRules(SortRules)
+
 排序规则配置，具体定义如下：
+
 ```
 export type SortRules = SortRule[];
 export type SortRule = SortTypeRule | SortByRule | SortByIndicatorRule | SortFuncRule;
 ```
+
 其中排序规则支持四种方式：
+
 1. SortTypeRule: 根据字段排序，如根据年份升序排列:`{"sortField": "Year", "sortType": "ASC"}`。
+
 ```
 //1. 指定排序类型
 export interface SortTypeRule {
@@ -118,7 +132,9 @@ export interface SortTypeRule {
   sortType?: SortType;
 }
 ```
+
 2. SortByRule:按维度成员指定排序，如根据地区维度值排列:`{"sortField": "Region", "sortBy": ["华南","华中","华北","中南","西南"]}`。
+
 ```
 //2. 按维度成员指定排序
 export interface SortByRule {
@@ -128,7 +144,9 @@ export interface SortByRule {
   sortBy?: string[];
 }
 ```
+
 3. SortByIndicatorRule:根据指标值排序，如根据类别办公用下销售金额降序来排列地区维度值:`{sortField:'Region',sortByIndicator: "Sales", sortType: "DESC",query:['办公用品']}`。
+
 ```
 //3. 按指标值排序
 export interface SortByIndicatorRule {
@@ -142,7 +160,9 @@ export interface SortByIndicatorRule {
   query?: string[];
 }
 ```
+
 4. SortFuncRule: 支持通过函数自定义排序规则，如根据计算后的指标值排序:`{"sortField": "Region", sortFunc: (a, b) => a.sales - b.sales}`。
+
 ```
 //4. 自定义排序方法function
 export interface SortFuncRule {
@@ -152,12 +172,17 @@ export interface SortFuncRule {
   sortFunc?: (a: any, b: any) => number;
 }
 ```
+
 ### filterRules(FilterRules)
+
 数据过滤规则，具体类型定义：
+
 ```
 export type FilterRules = FilterRule[];
 ```
+
 过滤规则可设置多重，只有每一项过滤规则都满足的情况下数据才会被保留。
+
 ```
 //#region 过滤规则
 export interface FilterRule {
@@ -166,8 +191,11 @@ export interface FilterRule {
   filterFunc?: (row: Record<string, any>) => boolean;
 }
 ```
+
 ### totals(Totals)
+
 设置汇总，小计总计。
+
 ```
 export interface Totals {
   row?: Total & {
@@ -186,6 +214,7 @@ export interface Totals {
 ```
 
 行或列方法分别设置汇总规则：
+
 ```
 export interface Total {
   // 是否显示总计
@@ -200,18 +229,24 @@ export interface Total {
   subTotalLabel?: string;
 }
 ```
+
 ### derivedFieldRules(DerivedFieldRules)
+
 增加派生字段
+
 ```
 export type DerivedFieldRules = DerivedFieldRule[];
 ```
-具体作用是为源数据生产新字段的方式，由用户自定义，这个功能主要是给每条数据新增了一个字段，这个字段可以用到其他数据规则中，如sort或者作为指标或者作为columns中的某一次维度。
+
+具体作用是为源数据生产新字段的方式，由用户自定义，这个功能主要是给每条数据新增了一个字段，这个字段可以用到其他数据规则中，如 sort 或者作为指标或者作为 columns 中的某一次维度。
+
 ```
 export interface DerivedFieldRule {
   fieldName?: string;
   derivedFunc?: (record: Record<string, any>) => any;
 }
 ```
+
 ## columnTree(Array)
 
 列表头树，类型为:`IDimensionHeaderNode|IIndicatorHeaderNode[]`。其中 IDimensionHeaderNode 指的是维度非指标的维度值节点，IIndicatorHeaderNode 指的是指标名称节点。
@@ -258,6 +293,10 @@ export interface IIndicatorHeaderNode {
 
 {{ use: indicators-define( prefix = '#',) }}
 
+## indicatorsAsCol(boolean) = true
+
+指标显示在列上，默认是 true。如果配置为 false，则显示在行，指标以行展示
+
 ## rowHierarchyType('grid' | 'tree')
 
 层级维度结构显示形式，平铺还是树形结构。
@@ -265,6 +304,7 @@ export interface IIndicatorHeaderNode {
 [平铺示例](../demo/table-type/pivot-table) [树形示例](../demo/table-type/pivot-table-tree)
 
 {{ use: extension-rows-dimension-define( prefix = '#',) }}
+
 ## rowExpandLevel(number)
 
 初始化展开层数。除了这里可以配置统一节点的展开层数，还可以结合配置项`hierarchyState`设置每个结点的展开状态。
@@ -340,12 +380,21 @@ export interface IIndicatorHeaderNode {
 ## editor (string|Object|Function)
 
 全局配置单元格编辑器
+
 ```
 editor?: string | IEditor | ((args: BaseCellInfo & { table: BaseTableAPI }) => string | IEditor);
 ```
-其中IEditor是@visactor/vtable-editors中定义的编辑器接口，具体可以参看源码：https://github.com/VisActor/VTable/blob/main/packages/vtable-editors/src/types.ts。
+
+其中 IEditor 是@visactor/vtable-editors 中定义的编辑器接口，具体可以参看源码：https://github.com/VisActor/VTable/blob/main/packages/vtable-editors/src/types.ts。
 
 {{ use: common-option-secondary(
     prefix = '#',
     tableType = 'listTable'
+) }}
+
+## rowSeriesNumber(IRowSeriesNumber)
+
+配置行序号。
+{{ use: row-series-number(
+    prefix = '###',
 ) }}

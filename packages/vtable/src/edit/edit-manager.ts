@@ -3,6 +3,7 @@ import { TABLE_EVENT_TYPE } from '../core/TABLE_EVENT_TYPE';
 import type { BaseTableAPI } from '../ts-types/base-table';
 import type { ListTableAPI, ListTableConstructorOptions } from '../ts-types';
 import { getCellEventArgsSet } from '../event/util';
+import type { SimpleHeaderLayoutMap } from '../layout';
 
 export class EditManeger {
   table: BaseTableAPI;
@@ -71,8 +72,15 @@ export class EditManeger {
           return;
         }
       }
+      if ((this.table.internalProps.layoutMap as SimpleHeaderLayoutMap)?.isAggregation?.(col, row)) {
+        console.warn("VTable Warn: this is aggregation value, can't be edited");
+        return;
+      }
+
+      if (!this.editingEditor) {
+        this.editCell = { col, row };
+      }
       this.editingEditor = editor;
-      this.editCell = { col, row };
       const dataValue = this.table.getCellOriginValue(col, row);
       const rect = this.table.getCellRangeRelativeRect(this.table.getCellRange(col, row));
       const referencePosition = { rect: { left: rect.left, top: rect.top, width: rect.width, height: rect.height } };
@@ -92,7 +100,9 @@ export class EditManeger {
           this.completeEdit();
         },
         referencePosition,
-        container: this.table.getElement()
+        container: this.table.getElement(),
+        col,
+        row
       });
     }
   }
@@ -121,13 +131,15 @@ export class EditManeger {
     if (!this.editingEditor.getValue) {
       console.warn('VTable Warn: `getValue` is not provided, did you forget to implement it?');
     }
-    const changedValue = this.editingEditor.getValue?.();
-    (this.table as ListTableAPI).changeCellValue(this.editCell.col, this.editCell.row, changedValue);
+    if (!this.editingEditor.validateValue || this.editingEditor.validateValue?.()) {
+      const changedValue = this.editingEditor.getValue?.();
+      (this.table as ListTableAPI).changeCellValue(this.editCell.col, this.editCell.row, changedValue);
 
-    this.editingEditor.exit && console.warn('VTable Warn: `exit` is deprecated, please use `onEnd` instead.');
-    this.editingEditor.exit?.();
-    this.editingEditor.onEnd?.();
-    this.editingEditor = null;
+      this.editingEditor.exit && console.warn('VTable Warn: `exit` is deprecated, please use `onEnd` instead.');
+      this.editingEditor.exit?.();
+      this.editingEditor.onEnd?.();
+      this.editingEditor = null;
+    }
   }
 
   cancelEdit() {

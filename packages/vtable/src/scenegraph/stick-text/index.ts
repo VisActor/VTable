@@ -3,7 +3,7 @@ import type { BaseTableAPI } from '../../ts-types/base-table';
 import type { Group } from '../graphic/group';
 import type { PivotHeaderLayoutMap } from '../../layout/pivot-header-layout';
 import type { ITextStyleOption, StickCell } from '../../ts-types';
-import { isNumber } from '@visactor/vutils';
+import { isNumber, min } from '@visactor/vutils';
 import { getCellMergeRange } from '../../tools/merge-range';
 
 export function handleTextStick(table: BaseTableAPI) {
@@ -30,12 +30,12 @@ export function handleTextStick(table: BaseTableAPI) {
   const colStart = Math.max(colLeft, table.frozenColCount);
   const rowEnd =
     table.getAllRowsHeight() > table.tableNoFrameHeight
-      ? table.getRowAt(scrollTop + table.tableNoFrameHeight - 1).row
-      : table.rowCount - 1;
+      ? table.getRowAt(scrollTop + table.tableNoFrameHeight - table.getBottomFrozenRowsHeight() - 1).row
+      : table.rowCount - table.bottomFrozenRowCount - 1;
   const colEnd =
     table.getAllColsWidth() > table.tableNoFrameWidth
-      ? table.getColAt(scrollLeft + table.tableNoFrameWidth - 1).col
-      : table.colCount - 1;
+      ? table.getColAt(scrollLeft + table.tableNoFrameWidth - table.getRightFrozenColsWidth() - 1).col
+      : table.colCount - table.rightFrozenColCount - 1;
   if (colEnd < 0 || rowEnd < 0) {
     return;
   }
@@ -46,7 +46,8 @@ export function handleTextStick(table: BaseTableAPI) {
       break;
     }
     [colStart, colEnd].forEach((col: number) => {
-      if (table._getCellStyle(col, row)?.textStick) {
+      const style = table._getCellStyle(col, row);
+      if (style?.textStick) {
         const cellGroup = table.scenegraph.getCell(col, row);
         // adjust cell Horizontal
         adjustCellContentHorizontalLayout(
@@ -54,6 +55,7 @@ export function handleTextStick(table: BaseTableAPI) {
           frozenColsWidth + table.tableX,
           table.tableNoFrameWidth - table.getRightFrozenColsWidth() + table.tableX,
           changedCells,
+          style?.textStickBaseOnAlign,
           table
         );
       }
@@ -66,10 +68,8 @@ export function handleTextStick(table: BaseTableAPI) {
       break;
     }
     [rowStart, rowEnd].forEach((row: number) => {
-      if (
-        table._getCellStyle(col, row)?.textStick &&
-        (table.internalProps.layoutMap as PivotHeaderLayoutMap).rowHierarchyType !== 'tree'
-      ) {
+      const style = table._getCellStyle(col, row);
+      if (style?.textStick && (table.internalProps.layoutMap as PivotHeaderLayoutMap).rowHierarchyType !== 'tree') {
         const cellGroup = table.scenegraph.getCell(col, row);
         // adjust cell vertical
         adjustCellContentVerticalLayout(
@@ -77,6 +77,7 @@ export function handleTextStick(table: BaseTableAPI) {
           frozenRowsHeight + table.tableY,
           table.tableNoFrameHeight - table.getBottomFrozenRowsHeight() + table.tableY,
           changedCells,
+          style?.textStickBaseOnAlign,
           table
         );
       }
@@ -89,7 +90,8 @@ export function handleTextStick(table: BaseTableAPI) {
       break;
     }
     [rowStart, rowEnd].forEach((row: number) => {
-      if (table._getCellStyle(col, row)?.textStick) {
+      const style = table._getCellStyle(col, row);
+      if (style?.textStick) {
         const cellGroup = table.scenegraph.getCell(col, row);
         // adjust cell vertical
         adjustCellContentVerticalLayout(
@@ -97,6 +99,7 @@ export function handleTextStick(table: BaseTableAPI) {
           frozenRowsHeight + table.tableY,
           table.tableNoFrameHeight - table.getBottomFrozenRowsHeight() + table.tableY,
           changedCells,
+          style?.textStickBaseOnAlign,
           table
         );
       }
@@ -107,6 +110,7 @@ export function handleTextStick(table: BaseTableAPI) {
       break;
     }
     [colStart, colEnd].forEach((col: number) => {
+      const style = table._getCellStyle(col, row);
       if (table._getCellStyle(col, row)?.textStick) {
         const cellGroup = table.scenegraph.getCell(col, row);
         // adjust cell Horizontal
@@ -115,6 +119,7 @@ export function handleTextStick(table: BaseTableAPI) {
           frozenColsWidth + table.tableX,
           table.tableNoFrameWidth - table.getRightFrozenColsWidth() + table.tableX,
           changedCells,
+          style?.textStickBaseOnAlign,
           table
         );
       }
@@ -132,6 +137,7 @@ function adjustCellContentVerticalLayout(
   minTop: number,
   maxTop: number,
   changedCells: Map<string, StickCell>,
+  textStickBaseOnAlign: boolean | undefined,
   table: BaseTableAPI
 ) {
   if (
@@ -144,15 +150,21 @@ function adjustCellContentVerticalLayout(
     for (let col = colStart; col <= colEnd; col++) {
       for (let row = rowStart; row <= rowEnd; row++) {
         const singleCellGroup = table.scenegraph.getCell(col, row);
-        dealVertical(singleCellGroup, minTop, maxTop, changedCells);
+        dealVertical(singleCellGroup, minTop, maxTop, changedCells, textStickBaseOnAlign);
       }
     }
   } else {
-    dealVertical(cellGroup, minTop, maxTop, changedCells);
+    dealVertical(cellGroup, minTop, maxTop, changedCells, textStickBaseOnAlign);
   }
 }
 
-function dealVertical(cellGroup: Group, minTop: number, maxTop: number, changedCells: Map<string, StickCell>) {
+function dealVertical(
+  cellGroup: Group,
+  minTop: number,
+  maxTop: number,
+  changedCells: Map<string, StickCell>,
+  textStickBaseOnAlign: boolean | undefined
+) {
   // get text element
   const graphic =
     (cellGroup.getChildByName('text', true) as Text) || (cellGroup.getChildByName('image', true) as Image);
@@ -170,16 +182,32 @@ function dealVertical(cellGroup: Group, minTop: number, maxTop: number, changedC
     }
   }
 
+  // const textBaseline = (graphic as any).attribute.textBaseline ?? (graphic as any).textBaseline ?? 'top';
+  const textBaseline = (graphic as any).textBaseline ?? 'top';
+
   graphic.AABBBounds.width();
   const textTop = graphic.globalAABBBounds.y1;
   const textBottom = graphic.globalAABBBounds.y2;
-  // const textCellTop = graphic.AABBBounds.y1;
-  // const textCellBottom = graphic.AABBBounds.y2;
-  // if (textCellTop < cellGroup.attribute.height || textCellBottom < 0) {
-  //   return;
-  // }
 
-  if (textTop < minTop) {
+  if (textBaseline === 'middle' && textStickBaseOnAlign) {
+    const cellTop = cellGroup.globalAABBBounds.y1 + ((cellGroup.firstChild as IGraphic)?.attribute.dy ?? 0);
+    const cellBottom = cellTop + (cellGroup.contentHeight ?? cellGroup.attribute.height ?? 0);
+    if (cellTop < minTop || cellBottom > maxTop) {
+      const visibleCellTop = Math.max(cellTop, minTop);
+      const visibleCellBottom = Math.min(cellBottom, maxTop);
+      const delta = graphic.globalTransMatrix.f - (visibleCellBottom + visibleCellTop) / 2;
+      !changedCells.has(`${cellGroup.col}-${cellGroup.row}`) &&
+        changedCells.set(`${cellGroup.col}-${cellGroup.row}`, {
+          col: cellGroup.col,
+          row: cellGroup.row,
+          dx: (cellGroup.firstChild as IGraphic)?.attribute.dx ?? 0,
+          dy: (cellGroup.firstChild as IGraphic)?.attribute.dy ?? 0
+        });
+      cellGroup.forEachChildren((child: IGraphic) => {
+        child.setAttribute('dy', (child.attribute.dy ?? 0) - delta + 2); // 2 is the buffer
+      });
+    }
+  } else if (textTop < minTop) {
     const deltaHeight = textTop - minTop;
     // text is out of view, move all elements down
     !changedCells.has(`${cellGroup.col}-${cellGroup.row}`) &&
@@ -218,6 +246,7 @@ function adjustCellContentHorizontalLayout(
   minLeft: number,
   maxLeft: number,
   changedCells: Map<string, StickCell>,
+  textStickBaseOnAlign: boolean | undefined,
   table: BaseTableAPI
 ) {
   if (
@@ -230,24 +259,66 @@ function adjustCellContentHorizontalLayout(
     for (let col = colStart; col <= colEnd; col++) {
       for (let row = rowStart; row <= rowEnd; row++) {
         const singleCellGroup = table.scenegraph.getCell(col, row);
-        dealHorizontal(singleCellGroup, minLeft, maxLeft, changedCells);
+        dealHorizontal(singleCellGroup, minLeft, maxLeft, changedCells, textStickBaseOnAlign);
       }
     }
   } else {
-    dealHorizontal(cellGroup, minLeft, maxLeft, changedCells);
+    dealHorizontal(cellGroup, minLeft, maxLeft, changedCells, textStickBaseOnAlign);
   }
 }
 
-function dealHorizontal(cellGroup: Group, minLeft: number, maxLeft: number, changedCells: Map<string, StickCell>) {
+function dealHorizontal(
+  cellGroup: Group,
+  minLeft: number,
+  maxLeft: number,
+  changedCells: Map<string, StickCell>,
+  textStickBaseOnAlign: boolean | undefined
+) {
   // get text element
-  const text = cellGroup.getChildByName('text', true) as Text;
-  if (!text) {
+  // const text = cellGroup.getChildByName('text', true) as Text;
+  // if (!text) {
+  //   return;
+  // }
+
+  // get text element
+  const graphic =
+    (cellGroup.getChildByName('text', true) as Text) || (cellGroup.getChildByName('image', true) as Image);
+  if (!graphic) {
     return;
   }
-  text.AABBBounds.width();
-  const textLeft = text.globalAABBBounds.x1;
-  const textRight = text.globalAABBBounds.x2;
-  if (textLeft < minLeft) {
+  if (graphic.type === 'image') {
+    const { image: url } = graphic.attribute;
+    if (!url || !graphic.resources) {
+      return;
+    }
+    const res = graphic.resources.get(url as any);
+    if (res.state !== 'success') {
+      return;
+    }
+  }
+  const textAlign = (graphic as any).attribute.textAlign ?? (graphic as any).textAlign ?? 'left';
+  graphic.AABBBounds.width();
+  const textLeft = graphic.globalAABBBounds.x1;
+  const textRight = graphic.globalAABBBounds.x2;
+  if (textAlign === 'center' && textStickBaseOnAlign) {
+    const cellLeft = cellGroup.globalAABBBounds.x1 + ((cellGroup.firstChild as IGraphic)?.attribute.dx ?? 0);
+    const cellRight = cellLeft + (cellGroup.contentWidth ?? cellGroup.attribute.width ?? 0);
+    if (cellLeft < minLeft || cellRight > maxLeft) {
+      const visibleCellLeft = Math.max(cellLeft, minLeft);
+      const visibleCellRight = Math.min(cellRight, maxLeft);
+      const delta = graphic.globalTransMatrix.e - (visibleCellRight + visibleCellLeft) / 2;
+      !changedCells.has(`${cellGroup.col}-${cellGroup.row}`) &&
+        changedCells.set(`${cellGroup.col}-${cellGroup.row}`, {
+          col: cellGroup.col,
+          row: cellGroup.row,
+          dx: (cellGroup.firstChild as IGraphic)?.attribute.dx ?? 0,
+          dy: (cellGroup.firstChild as IGraphic)?.attribute.dy ?? 0
+        });
+      cellGroup.forEachChildren((child: IGraphic) => {
+        child.setAttribute('dx', (child.attribute.dx ?? 0) - delta + 2); // 2 is the buffer
+      });
+    }
+  } else if (textLeft < minLeft) {
     const deltaWidth = textLeft - minLeft;
     // text is out of view, move all elements right
     !changedCells.has(`${cellGroup.col}-${cellGroup.row}`) &&

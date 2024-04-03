@@ -5,11 +5,13 @@ import { Group } from '../../graphic/group';
 import { getProp } from '../../utils/get-prop';
 import { getQuadProps } from '../../utils/padding';
 import type { BaseTableAPI } from '../../../ts-types/base-table';
+import { isNumber } from '@visactor/vutils';
+import type { StylePropertyFunctionArg } from '../../../ts-types';
 
 export function createProgressBarCell(
   progressBarDefine: {
-    min?: number;
-    max?: number;
+    min?: number | ((args: StylePropertyFunctionArg) => number);
+    max?: number | ((args: StylePropertyFunctionArg) => number);
     barType?: 'default' | 'negative' | 'negative_no_axis'; // 进度图类型
     dependField?: string; // 指定其他列数据（风神使用）,
   },
@@ -28,14 +30,34 @@ export function createProgressBarCell(
   }
 
   progressBarDefine.barType = progressBarDefine.barType ?? 'default';
-  progressBarDefine.min = progressBarDefine.min ?? 0;
-  progressBarDefine.max = progressBarDefine.max ?? progressBarDefine.min + 100;
+  progressBarDefine.min =
+    getOrApply(progressBarDefine.min, {
+      col,
+      row,
+      table,
+      value,
+      dataValue,
+      cellHeaderPaths: undefined
+    }) ?? 0;
+  progressBarDefine.max =
+    getOrApply(progressBarDefine.max, {
+      col,
+      row,
+      table,
+      value,
+      dataValue,
+      cellHeaderPaths: undefined
+    }) ?? progressBarDefine.min + 100;
   const height = table.getRowHeight(row);
   let contentWidth = width;
   let contentHeight = height;
+  let _contentOffset = 0;
+  if (isNumber(table.theme._contentOffset)) {
+    _contentOffset = table.theme._contentOffset;
+  }
   const percentCompleteBarGroup = new Group({
-    x: 0,
-    y: 0,
+    x: -_contentOffset,
+    y: -_contentOffset,
     width: contentWidth,
     height: contentHeight
   });
@@ -81,20 +103,28 @@ export function createProgressBarCell(
   });
 
   const borderWidth = getQuadProps(getProp('borderLineWidth', style, col, row, table));
-  let barPaddingTop = Math.max((barPadding as number[])[0], borderWidth[0]);
-  const barPaddingRight = Math.max((barPadding as number[])[1], borderWidth[1]);
-  const barPaddingBottom = Math.max((barPadding as number[])[2], borderWidth[2]);
-  let barPaddingLeft = Math.max((barPadding as number[])[3], borderWidth[3]);
+  const barPaddingTop = Math.max((barPadding as number[])[0], Math.ceil(borderWidth[0] / 2));
+  const barPaddingRight = Math.max((barPadding as number[])[1], Math.floor(borderWidth[1] / 2));
+  const barPaddingBottom = Math.max((barPadding as number[])[2], Math.floor(borderWidth[2] / 2));
+  const barPaddingLeft = Math.max((barPadding as number[])[3], Math.ceil(borderWidth[3] / 2));
 
   contentWidth -= barPaddingRight + barPaddingLeft;
   contentHeight -= barPaddingBottom + barPaddingTop;
 
-  if (barPaddingTop & 1) {
-    barPaddingTop += 0.5;
+  if (row === table.rowCount - 1) {
+    // 单元格边框在表格边界会向内缩进1px，为了避免进度图矩形覆盖边框，这里在最后一行向内缩进1px
+    // 详见 packages/vtable/src/scenegraph/graphic/contributions/group-contribution-render.ts getCellSizeForDraw()
+    contentHeight -= 1;
   }
-  if (barPaddingLeft & 1) {
-    barPaddingLeft += 0.5;
-  }
+
+  // if (barPaddingTop & 1) {
+  //   // barPaddingTop += 0.5;
+  //   contentWidth += borderWidth[0];
+  // }
+  // if (barPaddingLeft & 1) {
+  //   // barPaddingLeft += 0.5;
+  //   contentHeight += borderWidth[0];
+  // }
 
   const top = barPaddingTop;
   const left = barPaddingLeft;

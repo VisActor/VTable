@@ -6,14 +6,14 @@ export interface IEditor<V = any> {
    * Warning will be thrown if you don't provide this function
    * after removal of `beginEditing`.
    */
-  onStart?: (context: EditContext<V>) => void;
+  onStart: (context: EditContext<V>) => void;
   /**
    * called when cell exits edit mode.
    *
    * Warning will be thrown if you don't provide this function
    * after removal of `exit`.
    */
-  onEnd?: () => void;
+  onEnd: () => void;
   /**
    * Called when user click somewhere while editor is in edit mode.
    *
@@ -24,6 +24,11 @@ export interface IEditor<V = any> {
    * to end edit mode.
    */
   isEditorElement?: (target: HTMLElement) => boolean;
+  /**
+   * Before set new value to table, use it to validate value.
+   * If the interface returns true, the value takes effect; otherwise, it does not take effect.
+   */
+  validateValue?: () => boolean;
   /**
    * Called when editor mode is exited by any means.
    * Expected to return the current value of the cell.
@@ -74,6 +79,8 @@ export interface EditContext<V = any> {
    * end edit mode.
    */
   endEdit: () => void;
+  col: number;
+  row: number;
 }
 
 export interface RectProps {

@@ -6,7 +6,8 @@ import {
   SplitRectBeforeRenderContribution,
   SplitRectAfterRenderContribution,
   ContainerModule,
-  DrawItemInterceptor
+  DrawItemInterceptor,
+  TextRenderContribution
 } from '@src/vrender';
 import { ChartRender, DefaultCanvasChartRender } from './chart-render';
 import { AfterImageRenderContribution, BeforeImageRenderContribution } from './image-contribution-render';
@@ -27,6 +28,7 @@ import {
   ClipBodyGroupAfterRenderContribution
 } from './group-contribution-render';
 import { VTableDrawItemInterceptorContribution } from './draw-interceptor';
+import { SuffixTextBeforeRenderContribution } from './text-contribution-render';
 
 export default new ContainerModule((bind, unbind, isBound, rebind) => {
   // rect 渲染器注入contributions
@@ -83,4 +85,8 @@ export default new ContainerModule((bind, unbind, isBound, rebind) => {
   // interceptor
   bind(VTableDrawItemInterceptorContribution).toSelf().inSingletonScope();
   bind(DrawItemInterceptor).toService(VTableDrawItemInterceptorContribution);
+
+  // text 渲染器注入contributions
+  bind(SuffixTextBeforeRenderContribution).toSelf().inSingletonScope();
+  bind(TextRenderContribution).toService(SuffixTextBeforeRenderContribution);
 });

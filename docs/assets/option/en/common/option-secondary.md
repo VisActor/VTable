@@ -92,7 +92,7 @@ Enable shortcut key to copy, consistent with the browser's shortcut key.
 
 ##${prefix} pasteValueToCell(boolean) = false
 
-Enable shortcut key to paste, consistent with the browser's shortcut key.
+Enable shortcut key to paste, consistent with the browser's shortcut key.Paste takes effect only for cells with an editor configured
 
 ##${prefix} moveFocusCellOnTab(boolean) = true
 Enable tab key interaction. The default is true. Turn on the tab key to move the selected cell. If you are currently editing a cell, moving to the next cell is also in the editing state.
@@ -114,6 +114,14 @@ Issue settings related to event triggering, specific configuration items:
 
 ##${prefix} preventDefaultContextMenu(boolean) = true
 Organizing the default behavior of the right mouse button
+
+#${prefix} excelOptions(Object)
+
+Align excel advanced capabilities
+
+##${prefix} fillHandle(boolean) = false
+
+Fill handle, when set to true, when a cell is selected, the fill handle will be displayed on the lower right side of the cell. You can drag the fill handle to edit the value of the cell. Or double-click the fill handle to change the value of the cell you want to edit.
 
 #${prefix} columnResizeMode(string) = 'all'
 
@@ -341,3 +349,31 @@ Customize cell merging rules. When the incoming row and column numbers are withi
   }
 
 ```
+
+#${prefix} customCellStyle(Array)
+
+```
+{
+   customCellStyle: {id: string;style: ColumnStyleOption}[]
+}
+```
+
+Custom cell style
+
+- id: the unique id of the custom style
+- style: Custom cell style, which is the same as the `style` configuration in `column`. The final rendering effect is the fusion of the original style of the cell and the custom style.
+
+#${prefix} customCellStyleArrangement(Array)
+
+```
+{
+   customCellStyleArrangement: {cellPosition: {row?: number; col?: number; range?: {start: {row: number; col: number}; end: {row: number; col: number}}}; customStyleId: string} []
+}
+```
+
+Custom cell style assignment
+
+- cellPosition: cell position information, supports configuration of single cells and cell areas
+  - Single cell: `{ row: number, column: number }`
+  - Cell range: `{ range: { start: { row: number, column: number }, end: { row: number, column: number} } }`
+- customStyleId: Custom style id, the same as the id defined when registering the custom style

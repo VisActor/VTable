@@ -16,3 +16,9 @@ Width of the scroll bar
 
 ##${prefix} visible(string)
 Visibility of the scroll bar, available values: `'always' | 'scrolling' | 'none' | 'focus'`, which correspond to: always visible | visible when scrolling | not visible | visible when the canvas is focused
+
+##${prefix} hoverOn(boolean)
+Specifies whether the scroll bar is suspended over the container or is independent of the container. Defaults to true to hover over the container.
+
+##${prefix} barToSide(boolean)
+Whether to display to the edge of the container even though the contents are not full. Default false

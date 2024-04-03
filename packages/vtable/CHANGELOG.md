@@ -1,6 +1,276 @@
 # Change Log - @visactor/vtable
 
-This log was last generated on Mon, 05 Feb 2024 12:36:17 GMT and should not be manually modified.
+This log was last generated on Fri, 29 Mar 2024 09:26:36 GMT and should not be manually modified.
+
+## 0.23.0
+Fri, 29 Mar 2024 09:26:36 GMT
+
+### Minor changes
+
+- feat: add scroll end event and barToSide option #1304
+
+
+- feat: add excel options to support fill handle
+
+
+
+### Updates
+
+- fix: transpose with frozenColCount shadowline render #1366
+
+
+- feat: list tree mode support filter #1376
+
+
+- fix: datasource support promise mode call addRecords and deleteRecords
+
+
+- fix: when click cell should not trigger drag_select_end event #1410
+
+
+
+## 0.22.3
+Thu, 28 Mar 2024 07:06:46 GMT
+
+### Updates
+
+- fix: fix legend default selectData
+
+## 0.22.2
+Wed, 27 Mar 2024 06:41:08 GMT
+
+### Updates
+
+- fix: icon set interactive true logic error #1097
+
+
+- fix: customlayout container set width invalid #1263
+
+
+- fix: row height compute error when set autoHeight and has large count columns #1325
+
+
+- fix: compute row height handle with sparkline cellType #1331
+
+
+- fix: pivot-image demo can not scroll #1337
+
+
+- feat: add validateValue api for editor #1374
+
+
+- fix: change-header-position arguments row refix
+
+
+- fix: drawCellInnerBorder with no frameStyle #1381
+
+
+- feat: max/min in progress support funtion #1312
+- fix: fix axis column/row visible in pivotchart #1309
+- fix: fix _widthResizedColMap update in DBLCLICK_CELL #1297
+- fix: fix table text measurement in restore mode #1349
+- fix: fix merge cell custom layout update #1271
+- fix: fix stroke width update in merge cell #1324
+- fix: add _contentOffset in progressbar #1350
+- fix: fix richtext height measurement #1313
+- fix: fix textStickBaseOnAlign in style
+- refactor: setRecords clear reference object #1188
+
+
+
+## 0.22.1
+Fri, 22 Mar 2024 11:26:30 GMT
+
+### Updates
+
+- feat: add openinula-vtable
+
+## 0.22.0
+Fri, 22 Mar 2024 10:54:02 GMT
+
+### Minor changes
+
+- feat: support rowSeriesNumber #968
+
+
+- feat: record data support set hierarchyState
+
+
+
+### Updates
+
+- fix: fix typeError in getCellMergeRange()
+
+## 0.21.3
+Wed, 20 Mar 2024 10:48:31 GMT
+
+### Updates
+
+- fix: mapping colorMap not work #1295
+
+
+- fix: when copy blank cell and paste to cell change to undefined #1298
+
+
+- fix:  bug datasource lazy load edit cell value invalid #1302
+
+
+- docs: add list table tree mode guide
+
+
+- fix: fix cell progress create content size
+- fix: fix row level in getCellAdressByHeaderPath()
+- fix: use default style in exportCellImg()
+- fix: fix typeError in getCellMergeRange()
+
+## 0.21.2
+Thu, 14 Mar 2024 02:24:21 GMT
+
+### Updates
+
+- fix: after change transpose resize line render error #1239
+
+
+- fix: pivot tree mode when use headerIcon the indent value invalid #1269
+
+
+- feat: add textStickBaseOnAlign config
+- fix: fix progress bar rect height
+
+## 0.21.1
+Mon, 11 Mar 2024 07:05:40 GMT
+
+### Updates
+
+- fix: merge cell render error with summary and pagination #1223
+
+
+- docs: indicatorsAsCol support indicators display in rows #1238
+
+
+
+## 0.21.0
+Mon, 11 Mar 2024 06:03:40 GMT
+
+### Minor changes
+
+- feat: add search component
+
+### Updates
+
+- refactor: pasteValueToCell can only work on editable cell #1063
+
+
+- refactor: support underlineDash and underlineOffset #1132 #1135
+
+
+- fix: records change restoreHierarchyState occor error #1203
+
+
+- fix: call updatePagination mergeCell render error #1207
+
+
+- refactor: onStart funciton add col row arguments #1214
+
+
+- fix: drag header position cell error #1220
+
+
+- test: add unit test getCellAddressByHeaderPaths
+
+
+- feat: add text measure ment config
+- feat: add custom cell style function
+- fix: fix checkbox text space problem
+- fix: fix scroll position delta 
+- feat: add cellInnerBorder&cellBorderClipDirection&_contentOffset in theme comfig
+
+## 0.20.3
+Mon, 04 Mar 2024 04:30:08 GMT
+
+### Updates
+
+- fix: fix checkbox text space problem
+
+## 0.20.2
+Fri, 01 Mar 2024 11:46:26 GMT
+
+### Updates
+
+- fix: rightFrozenCol is bigger then colCount #1162
+
+
+- fix: header description tooltip flicker #1173
+
+
+- feat: add checkbox style theme
+- fix: add fontStyle & fontVariant
+
+## 0.20.1
+Thu, 29 Feb 2024 11:57:42 GMT
+
+### Updates
+
+- fix: hideColumnsSubheader with three levels show error #1105
+
+
+- feat: add api getRecordIndexByCell #1121
+
+
+- refactor: rename resize_column_end event arguments #1129
+
+
+- refactor: api return value type
+
+
+- refactor: setRecords support restoreHierarchyState #1148
+
+
+- fix: customlayout flex render error #1163
+
+
+- refactor: vtable not stop event bubble #892
+- fix: when scroll tooltip hide #905
+
+
+- fix: fix axis innerOffset
+- fix-contextMenuItems-add-col-param
+- fix: add skipFunctionDiff in react-vtable
+- refactor: remove Circular dependency
+
+
+
+## 0.20.0
+Fri, 23 Feb 2024 10:06:24 GMT
+
+### Updates
+
+- feat: add aggregation for list table column
+
+
+- feat: add api getAggregateValuesByField
+
+
+- feat: add custom aggregation
+
+
+- fix: edit right frozen cell input position error
+
+
+- fix: mouseleave_cell event trigger #1112
+
+
+- feat: chartSpec support function #1115
+
+
+- feat: add filter data config #607
+
+
+- fix: fix cellBgColor judgement in isCellHover()
+- fix: fix custom merge cell computed height&width
+- fix: fix content position update problem
+- fix: merge cell update in setDropDownMenuHighlight()
+- fix: fix react-vtable display error in react strict mode #990
 
 ## 0.19.1
 Mon, 05 Feb 2024 12:36:17 GMT

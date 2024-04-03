@@ -17,7 +17,7 @@ Table display type`cellType`Set to`chart`Used to generate charts.
 
 *   cellType: 'chart'//chart chart type
 *   chartModule: 'vchart'//vchart is the name configured during registration
-*   Chart Spec :{ } // chart configuration item
+*   Chart Spec :{ } // chart configuration item, support funciton define
 
 Where the chartSpec configuration item corresponds[VChart configuration](https://visactor.io/vchart/option)
 

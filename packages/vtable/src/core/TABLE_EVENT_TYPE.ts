@@ -72,7 +72,14 @@ export interface TableEvents {
    * 滚动表格事件
    */
   SCROLL: 'scroll';
-
+  /**
+   * 横向滚动条滚动到结束位
+   */
+  SCROLL_HORIZONTAL_END: 'scroll_horizontal_end';
+  /**
+   * 竖向滚动条滚动到结束位
+   */
+  SCROLL_VERTICAL_END: 'scroll_vertical_end';
   /**
    * 点击下拉菜单图标事件
    */
@@ -127,6 +134,19 @@ export interface TableEvents {
   //#endregion
 
   CHANGE_CELL_VALUE: 'change_cell_value';
+
+  /**
+   * 鼠标按下填充柄事件
+   */
+  MOUSEDOWN_FILL_HANDLE: 'mousedown_fill_handle';
+  /**
+   * 拖拽填充柄结束事件
+   */
+  DRAG_FILL_HANDLE_END: 'drag_fill_handle_end';
+  /**
+   * 双击填充柄事件
+   */
+  DBLCLICK_FILL_HANDLE: 'dblclick_fill_handle';
 }
 /**
  * Table event types
@@ -150,6 +170,8 @@ export const TABLE_EVENT_TYPE: TableEvents = {
   SORT_CLICK: 'sort_click',
   FREEZE_CLICK: 'freeze_click',
   SCROLL: 'scroll',
+  SCROLL_HORIZONTAL_END: 'scroll_horizontal_end',
+  SCROLL_VERTICAL_END: 'scroll_vertical_end',
   DROPDOWN_MENU_CLICK: 'dropdown_menu_click',
   MOUSEOVER_CHART_SYMBOL: 'mouseover_chart_symbol',
   DRAG_SELECT_END: 'drag_select_end',
@@ -175,5 +197,8 @@ export const TABLE_EVENT_TYPE: TableEvents = {
   CHECKBOX_STATE_CHANGE: 'checkbox_state_change',
   AFTER_RENDER: 'after_render',
   INITIALIZED: 'initialized',
-  CHANGE_CELL_VALUE: 'change_cell_value'
+  CHANGE_CELL_VALUE: 'change_cell_value',
+  DRAG_FILL_HANDLE_END: 'drag_fill_handle_end',
+  MOUSEDOWN_FILL_HANDLE: 'mousedown_fill_handle',
+  DBLCLICK_FILL_HANDLE: 'dblclick_fill_handle'
 } as TableEvents;

@@ -10,7 +10,7 @@ export function getProp(
   row: number,
   _table: BaseTableAPI
 ) {
-  const prop = cellStyle && isValid(cellStyle[name]) ? cellStyle[name] : null;
+  const prop = cellStyle && isValid(cellStyle[name]) ? cellStyle[name] : undefined;
   // to do 处理回调函数
   if (typeof prop === 'function') {
     const arg: StylePropertyFunctionArg = {
@@ -34,7 +34,7 @@ export function getRawProp(
   row: number,
   _table: BaseTableAPI
 ) {
-  const prop = cellStyle && isValid(cellStyle[name]) ? cellStyle[name] : null;
+  const prop = cellStyle && isValid(cellStyle[name]) ? cellStyle[name] : undefined;
   if (typeof prop === 'function') {
     return undefined;
   }
@@ -49,7 +49,7 @@ export function getFunctionalProp(
   row: number,
   _table: BaseTableAPI
 ) {
-  const prop = cellStyle && isValid(cellStyle[name]) ? cellStyle[name] : null;
+  const prop = cellStyle && isValid(cellStyle[name]) ? cellStyle[name] : undefined;
   if (typeof prop === 'function') {
     const arg: StylePropertyFunctionArg = {
       col,

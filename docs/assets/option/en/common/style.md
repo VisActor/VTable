@@ -1,7 +1,7 @@
 {{ target: common-style }}
 
 #${prefix} bgColor(ColorPropertyDefine)
-  
+
 Define the background color of the cell
 
 {{ use: common-color(
@@ -84,6 +84,14 @@ Set the underline for the text content of the cell
 {{ use: common-underline(
   prefix = ${prefix}
   ) }}
+#${prefix} underlineDash(LineDashPropertyDefine)
+Set the dashed underline style for cell text content
+{{ use: common-underlineDash(
+  prefix = ${prefix}
+  ) }}
+
+#${prefix} underlineOffset(number)
+Set the distance between underline and text for cell text content
 #${prefix} lineThrough(LineThroughPropertyDefine)
 Set the line-through for the text content of the cell
 {{ use: common-lineThrough(
@@ -104,6 +112,9 @@ Mouse cursor style when hovering over the cell
 
 #${prefix} textStick(boolean)
 Set whether the text in the cell has a sticking effect 【Text can dynamically adjust its position when scrolling】
+
+#${prefix} textStickBaseOnAlign(boolean)
+When the cell text has an adsorption effect [the text can dynamically adjust its position when scrolling], the basis for adsorption is the horizontal alignment of the cell. For example, when `textStickBaseOnAlign` is `true` and `textAlign` is `'center'`, the text will be adsorbed to the horizontal center of the cell; otherwise, it will be adsorbed to the left or right edge of the cell (depending on the scroll position)
 
 #${prefix} marked(MarkedPropertyDefine)
 Set whether the cell has a marked style
@@ -132,7 +143,7 @@ Whether to display the progress bar
 
 ```
  showBar?:boolean | ((args: StylePropertyFunctionArg) => boolean)
- ```
+```
 
 #${prefix} barColor(ColorPropertyDefine)
 
@@ -217,5 +228,13 @@ Progress bar mark width
 #${prefix} barMarkPosition(string)
 
 Progress bar mark position, can be set to `'right' | 'bottom'`, default is `'right'`.
+
+{{ /if }}
+
+{{ if: ${isCheckbox} }}
+
+{{ use: common-checkbox-style (
+  prefix = ${prefix}
+  ) }}
 
 {{ /if }}

@@ -5,6 +5,7 @@ import { getCellMergeRange } from '../../tools/merge-range';
 export function updateCell(scenegraph: Scenegraph, col: number, row: number) {
   const cellGroup = scenegraph.highPerformanceGetCell(col, row);
   if (
+    cellGroup.role === 'cell' &&
     isValid(cellGroup.mergeStartCol) &&
     isValid(cellGroup.mergeStartRow) &&
     isValid(cellGroup.mergeEndCol) &&

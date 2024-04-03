@@ -54,6 +54,9 @@ VTable.themes.ARCO.extend({
 #${prefix} underlayBackgroundColor(string)
 表格绘制范围外的canvas上填充的颜色
 
+#${prefix} cellInnerBorder(boolean)
+单元格是否绘制内边框，如果为true，边界单元格靠近边界的边框会被隐藏
+
 #${prefix} bodyStyle(Object)
 
 body单元格的样式配置
@@ -115,6 +118,10 @@ body单元格的样式配置
   ) }}
 
 {{ use: common-tooltip-style (
+  prefix = ${prefix}
+  ) }}
+
+{{ use: common-checkbox-style (
   prefix = ${prefix}
   ) }}
 

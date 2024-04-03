@@ -1,9 +1,7 @@
-import { table } from 'console';
 import type { Group } from '../../../graphic/group';
 import { getCellMergeInfo } from '../../../utils/get-cell-merge';
 import { updateCell } from '../../cell-helper';
 import type { SceneProxy } from '../proxy';
-import { BaseTableAPI } from '../../../../ts-types/base-table';
 
 export function checkFirstRowMerge(row: number, proxy: SceneProxy) {
   for (let col = 0; col < proxy.table.colCount; col++) {

@@ -66,7 +66,7 @@ export class DefaultCanvasChartRender extends BaseRender<Chart> implements IGrap
     const { width = groupAttribute.width, height = groupAttribute.height } = chart.attribute;
     const { table } = chart.getRootNode() as any;
 
-    const { chartInstance, active, cacheCanvas, activeChartInstance } = chart;
+    const { active, cacheCanvas, activeChartInstance } = chart;
     // console.log('render chart', chart.parent.col, chart.parent.row, viewBox, cacheCanvas);
     if (!active && cacheCanvas) {
       if (isArray(cacheCanvas)) {
@@ -139,7 +139,7 @@ export class DefaultCanvasChartRender extends BaseRender<Chart> implements IGrap
               : data ?? [],
             fields: series?.data?.fields
           });
-          if (!chartInstance.updateFullDataSync) {
+          if (!activeChartInstance.updateFullDataSync) {
             activeChartInstance.updateDataSync(
               dataIdStr,
               dataIdAndField

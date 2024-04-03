@@ -13,17 +13,17 @@
     isProgressbar = true,
 ) }}
 
-##${prefix} min(number) = 0
+##${prefix} min(number|Function) = 0
 
 **progressbar 类型专属配置项**
 
-进度条展示范围的最最小数据
+进度条展示范围的最最小数据，支持通过函数动态获取
 
-##${prefix} max(number) = 100
+##${prefix} max(number|Function) = 100
 
 **progressbar 类型专属配置项**
 
-进度条展示范围的最最小数据
+进度条展示范围的最最小数据，支持通过函数动态获取
 
 ##${prefix} barType(string) = 'default'
 

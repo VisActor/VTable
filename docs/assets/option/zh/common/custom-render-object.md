@@ -1,17 +1,35 @@
 {{ target: common-custom-render-object }}
 
-ICustomRenderObj的定义如下：
+ICustomRenderObj 的定义如下：
+
+```
+export type ICustomRenderObj = {
+  /** 配置出来的类型集合 */
+  elements: ICustomRenderElements;
+  /** 期望单元格的高度 */
+  expectedHeight: number;
+  /** 期望单元格的宽度 */
+  expectedWidth: number;
+  /**
+   * 是否还需要默认渲染内容 只有配置true才绘制 默认 不绘制
+   */
+  renderDefault?: boolean;
+};
+```
+
+详细配置说明如下：
 
 ${prefix} elements (Array)
 
 配置出来的类型集合。类型声明为:ICustomRenderElement[]。
 
-ICustomRenderElement的定义如下：
+ICustomRenderElement 的定义如下：
 
 ```
 type ICustomRenderElement = TextElement | RectElement | CircleElement | IconElement | ImageElement | ArcElement;
 ```
-其中依据type属性，接下来分别介绍各种类型的具体配置信息。
+
+其中依据 type 属性，接下来分别介绍各种类型的具体配置信息。
 
 ${prefix} elements.text(string)
 
@@ -60,7 +78,6 @@ ${prefix} elements.icon(string)
 {{ use: icon-custom-element(
   prefix = '#' + ${prefix},
 ) }}
-
 
 ${prefix} expectedHeight (number)
 

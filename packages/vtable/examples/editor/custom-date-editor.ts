@@ -217,6 +217,12 @@ export function createTable() {
       sort: true
     },
     {
+      field: '',
+      title: 'ID',
+      width: 80,
+      sort: true
+    },
+    {
       field: 'email1',
       title: 'email',
       width: 'auto',
@@ -275,7 +281,8 @@ export function createTable() {
     {
       field: 'work',
       title: 'job',
-      width: 200
+      width: 200,
+      editor: 'input'
     },
     {
       field: 'city',
@@ -288,6 +295,8 @@ export function createTable() {
     records,
     columns,
     keyboardOptions: {
+      copySelected: true,
+      pasteValueToCell: true,
       moveFocusCellOnTab: true,
       // editCellOnEnter: false,
       moveEditCellOnArrowKeys: true
@@ -344,7 +353,10 @@ export function createTable() {
       contextMenuItems: ['向下插入数据', '向下插入空行', '向右插入空列', '修改值', '删除该行']
     },
     dragHeaderMode: 'all',
-    heightMode: 'autoHeight'
+    heightMode: 'autoHeight',
+    editor: arg => {
+      return '';
+    }
   };
   const tableInstance = new VTable.ListTable(option);
   tableInstance.on('initialized', args => {

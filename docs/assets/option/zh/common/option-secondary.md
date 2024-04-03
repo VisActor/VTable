@@ -13,7 +13,7 @@
 表格行高的计算模式，可以是 'standard'（标准模式）、'adaptive'（自适应容器高度模式）或 'autoHeight'（自动行高模式），默认为 'standard'。
 
 - 'standard'：采用 `defaultRowHeight` 及 `defaultHeaderRowHeight` 作为行高。
-- 'adaptive'：使用容器的高度分配每行高度。
+- 'adaptive'：使用容器的高度分配每行高度，基于每行内容计算后的高度比例来分配。
 - 'autoHeight'：根据内容自动计算行高，计算依据 fontSize 和 lineHeight(文字行高)，以及 padding。相关搭配设置项`autoWrapText`自动换行，可以根据换行后的多行文本内容来计算行高。
 
 #${prefix} autoWrapText(boolean) = false
@@ -89,7 +89,7 @@
 开启快捷键复制，与浏览器的快捷键一致。
 
 ##${prefix} pasteValueToCell(boolean) = false
-开启快捷键粘贴，与浏览器的快捷键一致。
+开启快捷键粘贴，与浏览器的快捷键一致。粘贴生效仅针对配置了编辑 editor 的单元格
 
 ##${prefix} moveFocusCellOnTab(boolean) = true
 开启 tab 键交互 默认为 true。开启 tab 键移动选中单元格，如果当前是在编辑单元格 则移动到下一个单元格也是编辑状态
@@ -111,6 +111,14 @@
 
 ##${prefix} preventDefaultContextMenu(boolean) = true
 组织鼠标右键的默认行为
+
+#${prefix} excelOptions(Object)
+
+对齐 excel 高级能力
+
+##${prefix} fillHandle(boolean) = false
+
+填充柄，设置为 true 后，当选中单元格后，填充柄会显示在单元格右下方，可以拖动填充柄来编辑单元格的值。或者双击填充柄来改变需要编辑单元格的值。
 
 #${prefix} columnResizeMode(string) = 'all'
 
@@ -282,6 +290,8 @@ html 目前实现较完整，先默认使用 html 渲染方式。目前暂不支
 
 自定义渲染 函数形式或者对象形式。类型为：`ICustomRenderFuc | ICustomRenderObj`。
 
+[示例链接](../demo/custom-render/custom-render) [教程链接](../guide/custom_define/custom_render)
+
 其中 ICustomRenderFuc 定义为：
 
 ```
@@ -334,3 +344,31 @@ html 目前实现较完整，先默认使用 html 渲染方式。目前暂不支
   }
 
 ```
+
+#${prefix} customCellStyle(Array)
+
+```
+{
+  customCellStyle: {id: string;style: ColumnStyleOption}[]
+}
+```
+
+自定义单元格样式
+
+- id: 自定义样式的唯一 id
+- style: 自定义单元格样式，与`column`中的`style`配置相同，最终呈现效果是单元格原有样式与自定义样式融合
+
+#${prefix} customCellStyleArrangement(Array)
+
+```
+{
+  customCellStyleArrangement: {cellPosition: {row?: number; col?: number; range?: {start: {row: number; col: number}; end: {row: number; col: number}}}; customStyleId: string}[]
+}
+```
+
+自定义单元格样式分配
+
+- cellPosition: 单元格位置信息，支持配置单个单元格与单元格区域
+  - 单个单元格：`{ row: number, column: number }`
+  - 单元格区域：`{ range: { start: { row: number, column: number }, end: { row: number, column: number} } }`
+- customStyleId: 自定义样式 id，与注册自定义样式时定义的 id 相同

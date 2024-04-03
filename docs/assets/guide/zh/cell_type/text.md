@@ -17,96 +17,99 @@ VTable 支持为文本类型数据设置多样化的样式，以下为文本类�
 - `fontWeight`：定义文本的字体粗细。
 - `fontVariant`：定义文本的字体粗细。
 - `fontStyle`：定义文本的字体样式。
-- `textOverflow`：设置文本的省略形式，需要注意的是：如果autoWrapText设置了自动换行，该配置无效。
+- `textOverflow`：设置文本的省略形式，需要注意的是：如果 autoWrapText 设置了自动换行，该配置无效。
 - `lineHeight`：为单元格文本内容设置文字行高。
 - `underline`：为单元格文本内容设置下划线。
+- `underlineDash`：下划线的虚线样式。
+- `underlineOffset`：下划线与文字的间隔距离。
 - `lineThrough`：为单元格文本内容设置中划线。
 - `textStick`：设置单元格的文本是否带有吸附效果【当滚动时文本可动态调整位置】
+- `textStickBaseOnAlign`：当单元格的文本有吸附效果【当滚动时文本可动态调整位置】时，吸附的基准是单元格的水平对齐方式。例如当`textStickBaseOnAlign`为`true`时，`textAlign`为`'center'`时，文本会吸附在单元格的水平中心位置；否则就会吸附在单元格左边缘或右边缘（依据滚动位置决定）
 - `autoWrapText`：设置单元格是否自动换行。
-- `lineClamp`：设置单元格的最大行数, 可设置number或者'auto',如果设置为'auto', 则会自动计算
+- `lineClamp`：设置单元格的最大行数, 可设置 number 或者'auto',如果设置为'auto', 则会自动计算
 
 注：以上这些样式在超链接数据格式内容同样适用。
 
 ## 示例：
+
 ```javascript livedemo template=vtable
-let  tableInstance;
+let tableInstance;
 fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American_Superstore_data.json')
-    .then((res) => res.json())
-    .then((data) => {
-
-const columns =[
-    {
-        "field": "Order ID",
-        "title": "Order ID",
-        "width": "auto"
-    },
-    {
-        "field": "Product Name",
-        "title": "Product Name",
-        "width": "auto",
-         style: {
-            textAlign: 'left',
-            textBaseline: 'middle',
-            textOverflow: 'ellipsis',
-            color: '#F66',
-            fontSize: 14,
-            fontFamily: 'Arial',
-            fontWeight: 'bold',
-            fontVariant: 'small-caps',
-            fontStyle: 'italic'
+  .then(res => res.json())
+  .then(data => {
+    const columns = [
+      {
+        field: 'Order ID',
+        title: 'Order ID',
+        width: 'auto'
+      },
+      {
+        field: 'Product Name',
+        title: 'Product Name',
+        width: 'auto',
+        style: {
+          textAlign: 'left',
+          textBaseline: 'middle',
+          textOverflow: 'ellipsis',
+          color: '#F66',
+          fontSize: 14,
+          fontFamily: 'Arial',
+          fontWeight: 'bold',
+          fontVariant: 'small-caps',
+          fontStyle: 'italic'
+        }
+      },
+      {
+        field: 'Category',
+        title: 'Category',
+        width: 'auto'
+      },
+      {
+        field: 'Sub-Category',
+        title: 'Sub-Category',
+        width: 'auto'
+      },
+      {
+        field: 'Region',
+        title: 'Region',
+        width: 'auto'
+      },
+      {
+        field: 'City',
+        title: 'City',
+        width: 'auto'
+      },
+      {
+        field: 'Order Date',
+        title: 'Order Date',
+        width: 'auto'
+      },
+      {
+        field: 'Quantity',
+        title: 'Quantity',
+        width: 'auto'
+      },
+      {
+        field: 'Sales',
+        title: 'Sales',
+        width: 'auto'
+      },
+      {
+        field: 'Profit',
+        title: 'Profit',
+        width: 'auto'
       }
-    },
-    {
-        "field": "Category",
-        "title": "Category",
-        "width": "auto"
-    },
-    {
-        "field": "Sub-Category",
-        "title": "Sub-Category",
-        "width": "auto"
-    },
-    {
-        "field": "Region",
-        "title": "Region",
-        "width": "auto"
-    },
-    {
-        "field": "City",
-        "title": "City",
-        "width": "auto"
-    },
-    {
-        "field": "Order Date",
-        "title": "Order Date",
-        "width": "auto"
-    },
-    {
-        "field": "Quantity",
-        "title": "Quantity",
-        "width": "auto"
-    },
-    {
-        "field": "Sales",
-        "title": "Sales",
-        "width": "auto"
-    },
-    {
-        "field": "Profit",
-        "title": "Profit",
-        "width": "auto"
-    }
-];
+    ];
 
-const option = {
-  records:data,
-  columns,
-  widthMode:'standard',
-  theme:VTable.themes.DEFAULT
-};
-tableInstance = new VTable.ListTable(document.getElementById(CONTAINER_ID), option);
-window['tableInstance'] = tableInstance;
-    })
+    const option = {
+      records: data,
+      columns,
+      widthMode: 'standard',
+      theme: VTable.themes.DEFAULT
+    };
+    tableInstance = new VTable.ListTable(document.getElementById(CONTAINER_ID), option);
+    window['tableInstance'] = tableInstance;
+  });
 ```
 
 结合以上示例，您可以根据实际需求配置文本类型在 VTable 中的展示效果。通过合理调整文本的样式及相关配置项，可以为用户提供清晰易懂的表格展示效果。

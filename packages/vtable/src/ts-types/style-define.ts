@@ -99,7 +99,8 @@ export type CellStyle = {
   underline: boolean;
   // underlineColor: CanvasRenderingContext2D['strokeStyle'];
   underlineWidth: number;
-  // underlineDash: number[];
+  underlineDash: number[];
+  underlineOffset: number;
   lineThrough: boolean;
   // lineThroughColor: CanvasRenderingContext2D['strokeStyle'];
   // lineThroughDash: number[];

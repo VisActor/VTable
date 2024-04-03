@@ -5,7 +5,7 @@ import type { ContainerProps } from '../containers/withContainer';
 import withContainer from '../containers/withContainer';
 import type { TableContextType } from '../context/table';
 import RootTableContext from '../context/table';
-import { isEqual, pickWithout } from '@visactor/vutils';
+import { isEqual, isNil, pickWithout } from '@visactor/vutils';
 import { toArray } from '../util';
 import { REACT_PRIVATE_PROPS } from '../constants';
 import type { IMarkElement } from '../components';
@@ -35,7 +35,7 @@ export interface BaseTableProps extends EventsProps {
   /** option */
   option?: any;
   /** 数据 */
-  records?: any;
+  records?: Record<string, unknown>[];
   /** 画布宽度 */
   width?: number;
   /** 画布高度 */
@@ -61,14 +61,26 @@ const notOptionKeys = [
   'container'
 ];
 
+const getComponentId = (child: React.ReactNode, index: number) => {
+  const componentName = child && (child as any).type && ((child as any).type.displayName || (child as any).type.name);
+  return `${componentName}-${index}`;
+};
+
 const parseOptionFromChildren = (props: Props) => {
   const optionFromChildren: Omit<IOption, 'type' | 'data' | 'width' | 'height'> = {};
 
-  toArray(props.children).map(child => {
+  toArray(props.children).map((child, index) => {
     const parseOption = child && (child as any).type && (child as any).type.parseOption;
 
     if (parseOption && (child as any).props) {
-      const optionResult = parseOption((child as any).props);
+      const childProps = isNil((child as any).props.componentId)
+        ? {
+            ...(child as any).props,
+            componentId: getComponentId(child, index)
+          }
+        : (child as any).props;
+
+      const optionResult = parseOption(childProps);
 
       if (optionResult.isSingle) {
         optionFromChildren[optionResult.optionName] = optionResult.option;
@@ -87,9 +99,7 @@ const parseOptionFromChildren = (props: Props) => {
 
 const BaseTable: React.FC<Props> = React.forwardRef((props, ref) => {
   const [updateId, setUpdateId] = useState<number>(0);
-  const tableContext = useRef<TableContextType>({
-    // optionFromChildren: {}
-  });
+  const tableContext = useRef<TableContextType>({});
   useImperativeHandle(ref, () => tableContext.current?.table);
   const hasOption = !!props.option;
   const hasRecords = !!props.records;
@@ -132,6 +142,7 @@ const BaseTable: React.FC<Props> = React.forwardRef((props, ref) => {
         vtable = new VTable.ListTable(props.container, parseOption(props));
       }
       tableContext.current = { ...tableContext.current, table: vtable };
+      isUnmount.current = false;
     },
     [parseOption]
   );
@@ -171,7 +182,7 @@ const BaseTable: React.FC<Props> = React.forwardRef((props, ref) => {
 
       createTable(props);
       renderTable();
-      bindEventsToTable(tableContext.current.table, props, null, TABLE_EVENTS);
+      // bindEventsToTable(tableContext.current.table, props, null, TABLE_EVENTS);
       // tableContext.current = {
       //   ...tableContext.current,
       //   isChildrenUpdated: false
@@ -191,7 +202,7 @@ const BaseTable: React.FC<Props> = React.forwardRef((props, ref) => {
         !isEqual(eventsBinded.current.records, props.records, { skipFunction: skipFunctionDiff })
       ) {
         eventsBinded.current = props;
-        tableContext.current.table.setRecords(props.records);
+        tableContext.current.table.setRecords(props.records as any[]);
         handleTableRender();
       }
       return;
@@ -202,7 +213,7 @@ const BaseTable: React.FC<Props> = React.forwardRef((props, ref) => {
     if (
       !isEqual(newOption, prevOption.current, { skipFunction: skipFunctionDiff }) ||
       // tableContext.current.isChildrenUpdated
-      !isEqual(newOptionFromChildren, optionFromChildren.current)
+      !isEqual(newOptionFromChildren, optionFromChildren.current, { skipFunction: skipFunctionDiff })
     ) {
       prevOption.current = newOption;
       optionFromChildren.current = newOptionFromChildren;
@@ -229,6 +240,7 @@ const BaseTable: React.FC<Props> = React.forwardRef((props, ref) => {
           tableContext.current = null;
         }
       }
+      eventsBinded.current = null;
       isUnmount.current = true;
     };
   }, []);
@@ -240,9 +252,11 @@ const BaseTable: React.FC<Props> = React.forwardRef((props, ref) => {
           return;
         }
 
-        const componentName =
-          child && (child as any).type && ((child as any).type.displayName || (child as any).type.name);
-        const childId = `${componentName}-${index}`;
+        const childId = getComponentId(child, index);
+
+        // const componentName =
+        //   child && (child as any).type && ((child as any).type.displayName || (child as any).type.name);
+        // const childId = `${componentName}-${index}`;
 
         return (
           // <React.Fragment key={(child as any)?.props?.id ?? (child as any)?.id ?? `child-${index}`}>
