@@ -2841,9 +2841,6 @@ export function createTable() {
     ],
     animation: false,
     theme: {
-      cornerLeftBottomCellStyle: {
-        padding: [0, 0, 0, 0]
-      },
       underlayBackgroundColor: 'rgba(255,255,255,0)',
       bodyStyle: {
         borderColor: 'rgba(0,4,20,0.2)',
@@ -2892,6 +2889,7 @@ export function createTable() {
         }
       },
       cornerLeftBottomCellStyle: {
+        padding: [0, 0, 0, 0],
         borderColor: 'rgba(0,4,20,0.2)',
         borderLineWidth: 0,
         bgColor: 'rgba(255,255,255,0)',
