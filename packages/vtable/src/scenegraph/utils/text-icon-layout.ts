@@ -218,9 +218,8 @@ export function createCellContent(
         wordBreak: 'break-word',
         whiteSpace: text.length === 1 && !autoWrapText ? 'no-wrap' : 'normal',
         dx:
-          textAlign === 'left'
-            ? _contentOffset + (!contentLeftIcons.length && !contentRightIcons.length ? hierarchyOffset : 0)
-            : 0
+          (textAlign === 'left' ? (!contentLeftIcons.length && !contentRightIcons.length ? hierarchyOffset : 0) : 0) +
+          _contentOffset
       };
       const wrapText = new Text(cellTheme.text ? (Object.assign({}, cellTheme.text, attribute) as any) : attribute);
       wrapText.name = 'text';
