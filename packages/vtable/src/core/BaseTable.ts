@@ -235,7 +235,6 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     } = options;
     this.container = container;
     this.options = options;
-    this.options.container = container;
     this._widthMode = widthMode;
     this._heightMode = heightMode;
     this._autoFillWidth = autoFillWidth;
@@ -3895,6 +3894,8 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     }
     const { col: hoverCol, row: hoverRow } = this.stateManager.hover.cellPos;
     this.stateManager.updateHoverPos(-1, -1);
+
+    this.scenegraph.renderSceneGraph();
 
     const c = this.scenegraph.stage.toCanvas(
       false,

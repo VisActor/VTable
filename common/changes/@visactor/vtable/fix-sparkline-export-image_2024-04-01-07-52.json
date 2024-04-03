@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vtable",
+      "comment": "fix: add sync render in exportCellImg #1398",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vtable"
+}

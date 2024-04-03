@@ -111,6 +111,12 @@ export function createProgressBarCell(
   contentWidth -= barPaddingRight + barPaddingLeft;
   contentHeight -= barPaddingBottom + barPaddingTop;
 
+  if (row === table.rowCount - 1) {
+    // 单元格边框在表格边界会向内缩进1px，为了避免进度图矩形覆盖边框，这里在最后一行向内缩进1px
+    // 详见 packages/vtable/src/scenegraph/graphic/contributions/group-contribution-render.ts getCellSizeForDraw()
+    contentHeight -= 1;
+  }
+
   // if (barPaddingTop & 1) {
   //   // barPaddingTop += 0.5;
   //   contentWidth += borderWidth[0];
