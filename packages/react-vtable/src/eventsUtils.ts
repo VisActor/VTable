@@ -61,6 +61,15 @@ export interface EventsProps {
 
   // pivot chart only
   onVChartEventType?: EventCallback<TYPES.TableEventHandlersEventArgumentMap['vchart_event_type']>;
+
+  onChangCellValue?: EventCallback<TYPES.TableEventHandlersEventArgumentMap['change_cell_value']>;
+
+  onMousedownFillHandle?: EventCallback<TYPES.TableEventHandlersEventArgumentMap['mousedown_fill_handle']>;
+  onDragFillHandleEnd?: EventCallback<TYPES.TableEventHandlersEventArgumentMap['drag_fill_handle_end']>;
+  onDblclickFillHandle?: EventCallback<TYPES.TableEventHandlersEventArgumentMap['dblclick_fill_handle']>;
+
+  onScrollVerticalEnd?: EventCallback<TYPES.TableEventHandlersEventArgumentMap['scroll_vertical_end']>;
+  onScrollHorizontalEnd?: EventCallback<TYPES.TableEventHandlersEventArgumentMap['scroll_horizontal_end']>;
 }
 
 export const TABLE_EVENTS = {
@@ -113,7 +122,14 @@ export const TABLE_EVENTS = {
   onDrillMenuClick: EVENT_TYPE.DRILLMENU_CLICK,
 
   // pivot chart only
-  onVChartEventType: EVENT_TYPE.VCHART_EVENT_TYPE
+  onVChartEventType: EVENT_TYPE.VCHART_EVENT_TYPE,
+
+  onChangCellValue: EVENT_TYPE.CHANGE_CELL_VALUE,
+  onMousedownFillHandle: EVENT_TYPE.MOUSEDOWN_FILL_HANDLE,
+  onDragFillHandleEnd: EVENT_TYPE.DRAG_FILL_HANDLE_END,
+  onDblclickFillHandle: EVENT_TYPE.DBLCLICK_FILL_HANDLE,
+  onScrollVerticalEnd: EVENT_TYPE.SCROLL_VERTICAL_END,
+  onScrollHorizontalEnd: EVENT_TYPE.SCROLL_HORIZONTAL_END
 };
 
 export const TABLE_EVENTS_KEYS = Object.keys(TABLE_EVENTS);
