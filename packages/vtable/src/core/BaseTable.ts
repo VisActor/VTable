@@ -1154,6 +1154,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     } else if (row >= 0 && row < this.columnHeaderLevelCount) {
       return this.getDefaultRowHeight(row) === 'auto';
     }
+    return false;
   }
   /**
    * 根据列号获取列宽定义
