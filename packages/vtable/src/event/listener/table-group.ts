@@ -36,9 +36,10 @@ export function bindTableGroupListener(eventManager: EventManager) {
       eventManager.touchSetTimeout = undefined;
     }
     const eventArgsSet = getCellEventArgsSet(e);
-    if (stateManager.interactionState === InteractionState.scrolling) {
-      return;
-    }
+    // if (stateManager.interactionState === InteractionState.scrolling) {
+    //   return;
+    // }
+
     if (stateManager.interactionState === InteractionState.grabing) {
       if (Math.abs(lastX - e.x) + Math.abs(lastY - e.y) >= 1) {
         if (stateManager.isResizeCol()) {
@@ -52,6 +53,8 @@ export function bindTableGroupListener(eventManager: EventManager) {
         }
       }
       return;
+    } else if (table.eventManager.isDraging) {
+      eventManager.dealTableSelect(eventArgsSet, true);
     }
 
     // if (stateManager.menu.isShow && stateManager.menu.bounds.inPoint(e.x, e.y)) {

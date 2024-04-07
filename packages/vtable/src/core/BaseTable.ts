@@ -235,7 +235,6 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     } = options;
     this.container = container;
     this.options = options;
-    this.options.container = container;
     this._widthMode = widthMode;
     this._heightMode = heightMode;
     this._autoFillWidth = autoFillWidth;
@@ -1596,8 +1595,8 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     row: boolean;
     col: boolean;
   } | null {
-    const isFrozenRow = this.isFrozenRow(row) || this.isBottomFrozenRow(row);
-    const isFrozenCol = this.isFrozenColumn(col) || this.isRightFrozenColumn(col);
+    const isFrozenRow = this.isFrozenRow(row);
+    const isFrozenCol = this.isFrozenColumn(col);
     if (isFrozenRow || isFrozenCol) {
       return {
         row: isFrozenRow,
@@ -2406,6 +2405,71 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     }
     return findBefore(candRow, bottom);
   }
+
+  /**
+   * 根据x获取该位置所处列值
+   * @param table
+   * @param absoluteX
+   * @returns
+   */
+  getTargetColAtConsiderRightFrozen(
+    absoluteX: number,
+    isConsider: boolean
+  ): { col: number; left: number; right: number; width: number } | null {
+    if (absoluteX === 0) {
+      return { left: 0, col: 0, right: 0, width: 0 };
+    }
+    if (
+      isConsider &&
+      absoluteX > this.tableNoFrameWidth - this.getRightFrozenColsWidth() &&
+      absoluteX < this.tableNoFrameWidth
+    ) {
+      for (let i = 0; i < this.rightFrozenColCount; i++) {
+        if (absoluteX > this.tableNoFrameWidth - this.getColsWidth(this.colCount - i - 1, this.colCount - 1)) {
+          return {
+            col: this.colCount - i - 1,
+            left: undefined,
+            right: undefined,
+            width: undefined
+          };
+        }
+      }
+    }
+    return this.getTargetColAt(absoluteX);
+  }
+
+  /**
+   * 根据y获取该位置所处行值
+   * @param table
+   * @param absoluteX
+   * @returns
+   */
+  getTargetRowAtConsiderBottomFrozen(
+    absoluteY: number,
+    isConsider: boolean
+  ): { row: number; top: number; bottom: number; height: number } | null {
+    if (absoluteY === 0) {
+      return { top: 0, row: 0, bottom: 0, height: 0 };
+    }
+    if (
+      isConsider &&
+      absoluteY > this.tableNoFrameHeight - this.getBottomFrozenRowsHeight() &&
+      absoluteY < this.tableNoFrameHeight
+    ) {
+      for (let i = 0; i < this.rightFrozenColCount; i++) {
+        if (absoluteY > this.tableNoFrameHeight - this.getRowsHeight(this.rowCount - i - 1, this.rowCount - 1)) {
+          return {
+            row: this.rowCount - i - 1,
+            top: undefined,
+            bottom: undefined,
+            height: undefined
+          };
+        }
+      }
+    }
+    return this.getTargetRowAt(absoluteY);
+  }
+
   /**
    * 根据y值（包括了scroll的）计算所在行
    * @param this
@@ -2914,7 +2978,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
    * @returns
    */
   isFrozenColumn(col: number, row?: number): boolean {
-    return this.internalProps.layoutMap?.isFrozenColumn(col, row);
+    return this.isLeftFrozenColumn(col, row) || this.isRightFrozenColumn(col, row);
   }
   /**
    * 是否属于冻结左侧列
@@ -2942,7 +3006,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
    * @returns
    */
   isFrozenRow(col: number, row?: number): boolean {
-    return this.internalProps.layoutMap?.isFrozenRow(col, row);
+    return this.isTopFrozenRow(col, row) || this.isBottomFrozenRow(col, row);
   }
   /**
    * 是否属于冻结顶部行
@@ -3288,10 +3352,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
    */
   _canDragHeaderPosition(col: number, row: number): boolean {
     if (this.isHeader(col, row) && this.stateManager.isSelected(col, row)) {
-      if (
-        this.internalProps.frozenColDragHeaderMode === 'disabled' &&
-        (this.isFrozenColumn(col) || this.isRightFrozenColumn(col))
-      ) {
+      if (this.internalProps.frozenColDragHeaderMode === 'disabled' && this.isFrozenColumn(col)) {
         return false;
       }
       const selectRange = this.stateManager.select.ranges[0];
@@ -3834,6 +3895,8 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     const { col: hoverCol, row: hoverRow } = this.stateManager.hover.cellPos;
     this.stateManager.updateHoverPos(-1, -1);
 
+    this.scenegraph.renderSceneGraph();
+
     const c = this.scenegraph.stage.toCanvas(
       false,
       new AABBBounds().set(
@@ -4009,4 +4072,8 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
   get leftRowSeriesNumberCount(): number {
     return this.internalProps.layoutMap?.leftRowSeriesNumberColumnCount ?? 0;
   }
+
+  // startInertia() {
+  //   startInertia(0, -1, 1, this.stateManager);
+  // }
 }

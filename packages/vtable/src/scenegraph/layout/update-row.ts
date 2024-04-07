@@ -146,12 +146,12 @@ function removeRow(row: number, scene: Scenegraph) {
   //     }
   //   }
   // }
-  removeCellGroup(row, scene);
 
   const proxy = scene.proxy;
 
   // TODO 需要整体更新proxy的状态
   if (row >= proxy.rowStart && row <= proxy.rowEnd) {
+    removeCellGroup(row, scene);
     proxy.rowEnd--;
     proxy.currentRow--;
   }

@@ -1,6 +1,6 @@
 ---
 category: examples
-group: Interaction
+group: edit
 title: 填充柄
 cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/fill-handle.gif
 link: '../guide/edit/fill-handle'
@@ -9,7 +9,7 @@ option: ListTable#excelOptions.fillHandle
 
 # 填充柄
 
-选中单元格后，填充柄会显示在单元格上方，可以拖动填充柄来编辑单元格的值。或者双击填充柄来改变需要编辑单元格的值。
+选中单元格后，填充柄会显示在单元格上方，可以拖动填充柄来编辑单元格的值。或者双击填充柄来改变需要编辑单元格的值（该示例未实现该逻辑）。
 
 ## 关键配置
 

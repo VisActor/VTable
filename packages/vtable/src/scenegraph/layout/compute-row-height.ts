@@ -15,6 +15,7 @@ import { CheckBox } from '@visactor/vrender-components';
 import { decodeReactDom, dealPercentCalc } from '../component/custom';
 import { getCellMergeRange } from '../../tools/merge-range';
 import { getCellMergeInfo } from '../utils/get-cell-merge';
+import { getHierarchyOffset } from '../utils/get-hierarchy-offset';
 
 const utilTextMark = new Text({
   ignoreBuf: true
@@ -723,7 +724,8 @@ function computeTextHeight(col: number, row: number, cellType: ColumnTypeOption,
         });
       }
     } else if (autoWrapText) {
-      const maxLineWidth = cellWidth - (padding[1] + padding[3]) - iconWidth;
+      const hierarchyOffset = getHierarchyOffset(col, row, table);
+      const maxLineWidth = cellWidth - (padding[1] + padding[3]) - iconWidth - hierarchyOffset;
       utilTextMark.setAttributes({
         maxLineWidth,
         text: lines,

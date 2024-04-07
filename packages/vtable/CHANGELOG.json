@@ -2,6 +2,48 @@
   "name": "@visactor/vtable",
   "entries": [
     {
+      "version": "0.23.1",
+      "tag": "@visactor/vtable_v0.23.1",
+      "date": "Sun, 07 Apr 2024 02:48:06 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "fix: maxLineWidth value should consider hierarchyOffset #1224\n\n"
+          },
+          {
+            "comment": "fix: tree leaf node textAlign right render error #1393\n\n"
+          },
+          {
+            "comment": "feat: select range can extends during scroll #1400\n\n"
+          },
+          {
+            "comment": "fix: when copy or paste navigator.clipboard?.write occor undefined error in not https #1421\n\n"
+          },
+          {
+            "comment": "fix: fix header cell imageAutoSizing #1339"
+          },
+          {
+            "comment": "fix: hide icon background when hide icon"
+          },
+          {
+            "comment": "fix: fix nan verticalBarPos #1232"
+          },
+          {
+            "comment": "fix: fix progressbar cover cell border #1425"
+          },
+          {
+            "comment": "fix: remove container in table option"
+          },
+          {
+            "comment": "fix: add sync render in exportCellImg #1398"
+          },
+          {
+            "comment": "refactor: optimize performance when change tree hierarchy state #1406\n\n"
+          }
+        ]
+      }
+    },
+    {
       "version": "0.23.0",
       "tag": "@visactor/vtable_v0.23.0",
       "date": "Fri, 29 Mar 2024 09:26:36 GMT",
