@@ -35,38 +35,37 @@ export function updateColWidth(scene: Scenegraph, col: number, detaX: number, sk
     scene.table._setColWidth(col, scene.table.getColWidth(col) + detaX, true);
   }
 
-  const autoRowHeight = scene.table.heightMode === 'autoHeight';
   // deal with corner header or column header
   const colOrCornerHeaderColumn = scene.getColGroup(col, true) as Group;
   const rightTopColumn = scene.getColGroupInRightTopCorner(col);
   if (colOrCornerHeaderColumn && !rightTopColumn) {
-    updateColunmWidth(colOrCornerHeaderColumn, detaX, autoRowHeight, 'col-corner', scene);
+    updateColunmWidth(colOrCornerHeaderColumn, detaX, 'col-corner', scene);
   }
   // deal with right bottom frozen cells
   if (rightTopColumn) {
-    updateColunmWidth(rightTopColumn, detaX, autoRowHeight, 'right-top', scene);
+    updateColunmWidth(rightTopColumn, detaX, 'right-top', scene);
   }
 
   // deal with row header or body or right frozen cells
   const rowHeaderOrBodyColumn = scene.getColGroup(col) as Group;
   if (rowHeaderOrBodyColumn) {
-    updateColunmWidth(rowHeaderOrBodyColumn, detaX, autoRowHeight, 'row-body', scene);
+    updateColunmWidth(rowHeaderOrBodyColumn, detaX, 'row-body', scene);
   }
 
   const leftBottomColumn = scene.getColGroupInLeftBottomCorner(col);
   // deal with left bottom frozen cells
   if (leftBottomColumn) {
-    updateColunmWidth(leftBottomColumn, detaX, autoRowHeight, 'left-bottom', scene);
+    updateColunmWidth(leftBottomColumn, detaX, 'left-bottom', scene);
   }
   // deal with bottom frozen cells
   const bottomColumn = scene.getColGroupInBottom(col);
   if (bottomColumn) {
-    updateColunmWidth(bottomColumn, detaX, autoRowHeight, 'bottom', scene);
+    updateColunmWidth(bottomColumn, detaX, 'bottom', scene);
   }
   // deal with right bottom frozen cells
   const rightBottomColumn = scene.getColGroupInRightBottomCorner(col);
   if (rightBottomColumn) {
-    updateColunmWidth(rightBottomColumn, detaX, autoRowHeight, 'right-bottom', scene);
+    updateColunmWidth(rightBottomColumn, detaX, 'right-bottom', scene);
   }
 
   // 更新剩余列位置
@@ -122,7 +121,7 @@ export function updateColWidth(scene: Scenegraph, col: number, detaX: number, sk
 function updateColunmWidth(
   columnGroup: Group,
   detaX: number,
-  autoRowHeight: boolean,
+  // autoRowHeight: boolean,
   mode: 'col-corner' | 'row-body' | 'bottom' | 'left-bottom' | 'right-top' | 'right-bottom',
   scene: Scenegraph
 ) {
@@ -141,7 +140,6 @@ function updateColunmWidth(
       oldColumnWidth + detaX,
       detaX,
       mode === 'row-body' ? cell.col < scene.table.rowHeaderLevelCount : true,
-      autoRowHeight,
       scene.table.internalProps.autoWrapText
     );
     if (isHeightChange) {
@@ -247,7 +245,6 @@ function updateCellWidth(
   detaX: number,
   isHeader: boolean,
   // autoColWidth: boolean,
-  autoRowHeight: boolean,
   autoWrapText: boolean
 ): boolean {
   if (cell.attribute.width === distWidth && !cell.needUpdateWidth) {
@@ -267,7 +264,7 @@ function updateCellWidth(
     // 合并单元格非主单元格，不处理
     return false;
   }
-
+  const autoRowHeight = scene.table.isAutoRowHeight(row);
   // 更新单元格布局
   const type = scene.table.isHeader(col, row)
     ? (scene.table._getHeaderLayoutMap(col, row) as HeaderData).headerType
@@ -382,7 +379,8 @@ function updateCellWidth(
             width,
             height,
             false,
-            scene.table.heightMode === 'autoHeight',
+            // scene.table.heightMode === 'autoHeight',
+            scene.table.isAutoRowHeight(row),
             padding,
             scene.table
           );

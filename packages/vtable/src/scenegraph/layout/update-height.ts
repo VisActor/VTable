@@ -220,7 +220,8 @@ export function updateCellHeight(
             width,
             height,
             false,
-            scene.table.heightMode === 'autoHeight',
+            // scene.table.heightMode === 'autoHeight',
+            scene.table.isAutoRowHeight(row),
             padding,
             scene.table
           );
@@ -254,7 +255,8 @@ export function updateCellHeight(
       cell,
       distHeight,
       detaY,
-      scene.table.heightMode === 'autoHeight',
+      // scene.table.heightMode === 'autoHeight',
+      scene.table.isAutoRowHeight(row),
       renderDefault,
       scene.table
     );

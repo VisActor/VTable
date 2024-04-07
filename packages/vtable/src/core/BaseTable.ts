@@ -1147,7 +1147,14 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     const width = this.getColWidthDefined(col);
     return this._adjustColWidth(col, this._colWidthDefineToPxWidth(width));
   }
-
+  /** 判断某行是否应该计算行高 */
+  isAutoRowHeight(row: number): boolean {
+    if (this.heightMode === 'autoHeight' || this.heightMode === 'adaptive') {
+      return true;
+    } else if (row >= 0 && row < this.columnHeaderLevelCount) {
+      return this.getDefaultRowHeight(row) === 'auto';
+    }
+  }
   /**
    * 根据列号获取列宽定义
    * @param {number} col column number
