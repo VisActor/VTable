@@ -1149,7 +1149,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
   }
   /** 判断某行是否应该计算行高 */
   isAutoRowHeight(row: number): boolean {
-    if (this.heightMode === 'autoHeight' || this.heightMode === 'adaptive') {
+    if (this.heightMode === 'autoHeight') {
       return true;
     } else if (row >= 0 && row < this.columnHeaderLevelCount) {
       return this.getDefaultRowHeight(row) === 'auto';
