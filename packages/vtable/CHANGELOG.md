@@ -1,6 +1,33 @@
 # Change Log - @visactor/vtable
 
-This log was last generated on Fri, 29 Mar 2024 09:26:36 GMT and should not be manually modified.
+This log was last generated on Sun, 07 Apr 2024 02:48:06 GMT and should not be manually modified.
+
+## 0.23.1
+Sun, 07 Apr 2024 02:48:06 GMT
+
+### Updates
+
+- fix: maxLineWidth value should consider hierarchyOffset #1224
+
+
+- fix: tree leaf node textAlign right render error #1393
+
+
+- feat: select range can extends during scroll #1400
+
+
+- fix: when copy or paste navigator.clipboard?.write occor undefined error in not https #1421
+
+
+- fix: fix header cell imageAutoSizing #1339
+- fix: hide icon background when hide icon
+- fix: fix nan verticalBarPos #1232
+- fix: fix progressbar cover cell border #1425
+- fix: remove container in table option
+- fix: add sync render in exportCellImg #1398
+- refactor: optimize performance when change tree hierarchy state #1406
+
+
 
 ## 0.23.0
 Fri, 29 Mar 2024 09:26:36 GMT
