@@ -189,23 +189,12 @@ export function createTable() {
     editor: '',
     excelOptions: {
       fillHandle: true
-    }
-
+    },
+    defaultHeaderRowHeight: [100, 'auto']
     // widthMode: 'adaptive'
   };
   const tableInstance = new VTable.ListTable(option);
   window.tableInstance = tableInstance;
-  tableInstance.on('change_cell_value', arg => {
-    console.log(arg);
-  });
-  let count = 0;
-  const intervalId = setTimeout(() => {
-    count++;
-    tableInstance.updateOption(option);
-    if (count > 100) {
-      clearInterval(intervalId);
-    }
-  }, 3000);
   // tableInstance.on('sort_click', args => {
   //   tableInstance.updateSortState(
   //     {
