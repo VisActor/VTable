@@ -261,7 +261,7 @@ export function renderStroke(
   context.setStrokeStyle(group, group.attribute, x, y, groupAttribute);
   // if (isHighlight) {
   //   context.setLineDash(highlightDash);
-  //   context.lineCap = 'square';
+  //   context.lineCap = 'butt';
   // }
   const lineDash = context.getLineDash();
   let isDash = false;
