@@ -1,3 +1,32 @@
+# v0.23.1
+
+2024-04-07
+
+
+**🆕 新增功能**
+
+- **@visactor/vtable**: select range can extends during scroll [#1400](https://github.com/VisActor/VTable/issues/1400)
+
+**🐛 功能修复**
+
+- **@visactor/vtable**: maxLineWidth value should consider hierarchyOffset [#1224](https://github.com/VisActor/VTable/issues/1224)
+- **@visactor/vtable**: tree leaf node textAlign right render error [#1393](https://github.com/VisActor/VTable/issues/1393)
+- **@visactor/vtable**: when copy or paste navigator.clipboard?.write occor undefined error in not https [#1421](https://github.com/VisActor/VTable/issues/1421)
+- **@visactor/vtable**: fix header cell imageAutoSizing [#1339](https://github.com/VisActor/VTable/issues/1339)
+- **@visactor/vtable**: hide icon background when hide icon
+- **@visactor/vtable**: fix nan verticalBarPos [#1232](https://github.com/VisActor/VTable/issues/1232)
+- **@visactor/vtable**: fix progressbar cover cell border [#1425](https://github.com/VisActor/VTable/issues/1425)
+- **@visactor/vtable**: remove container in table option
+- **@visactor/vtable**: add sync render in exportCellImg [#1398](https://github.com/VisActor/VTable/issues/1398)
+
+**🔨 功能重构**
+
+- **@visactor/vtable**: optimize performance when change tree hierarchy state [#1406](https://github.com/VisActor/VTable/issues/1406)
+
+
+
+[更多详情请查看 v0.23.1](https://github.com/VisActor/VTable/releases/tag/v0.23.1)
+
 # v0.23.0
 
 2024-03-29
