@@ -66,7 +66,7 @@ export function _setRecords(table: ListTableAPI, records: any[] = []): void {
   });
 }
 
-export function _setDataSource(table: ListTableAPI, dataSource: DataSource): void {
+export function _setDataSource(table: BaseTableAPI, dataSource: DataSource): void {
   _dealWithUpdateDataSource(table, () => {
     if (dataSource) {
       if (dataSource instanceof DataSource) {
