@@ -99,7 +99,7 @@ export function createTable() {
     height: 26,
     // funcType: VTable.TYPES.IconFuncTypeEnum.sort,//对应内部特定功能的图标，目前有sort frozen expand等
     name: 'phone', //定义图标的名称，在内部会作为缓存的key值
-    positionType: VTable.TYPES.IconPosition.left, // 指定位置，可以在文本的前后，或者在绝对定位在单元格的左侧右侧
+    positionType: VTable.TYPES.IconPosition.inlineFront, // 指定位置，可以在文本的前后，或者在绝对定位在单元格的左侧右侧
     marginLeft: 0, // 左侧内容间隔 在特定位置position中起作用
     marginRight: 0, // 右侧内容间隔 在特定位置position中起作用
     visibleTime: 'always', // 显示时机， 'always' | 'mouseover_cell' | 'click_cell'
@@ -112,7 +112,10 @@ export function createTable() {
     tooltip: {
       // 气泡框，按钮的的解释信息
       title: '打电话',
-      placement: VTable.TYPES.Placement.left
+      placement: VTable.TYPES.Placement.left,
+      style: {
+        arrowMark: true
+      }
     }
   });
   VTable.register.icon('book', {
