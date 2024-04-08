@@ -165,14 +165,14 @@ export function getAxisConfigInPivotChart(col: number, row: number, layout: Pivo
       const rowPath = layout.getRowKeysPath(col, row);
       const domain = (data[rowPath ?? ''] as Array<string>) ?? [];
 
-      const { axisOption, isPercent, theme } = getAxisOption(col + 1, row, 'left', layout);
+      const { axisOption, theme, chartType } = getAxisOption(col + 1, row, 'left', layout);
       if (axisOption?.visible === false) {
         return;
       }
       // 左侧维度轴
       return merge(
         {
-          domain: Array.from(domain).reverse(),
+          domain: chartType === 'common' ? Array.from(domain) : Array.from(domain).reverse(),
           title: {
             autoRotate: true
           }
@@ -374,7 +374,8 @@ export function getAxisOption(col: number, row: number, orient: string, layout: 
         isPercent: spec.percent,
         isZeroAlign: checkZeroAlign(spec, orient, layout),
         seriesIndice,
-        theme: spec.theme
+        theme: spec.theme,
+        chartType: spec.type
       };
     }
   }
@@ -385,7 +386,8 @@ export function getAxisOption(col: number, row: number, orient: string, layout: 
     axisOption,
     isPercent: false,
     isZeroAlign: checkZeroAlign(spec, orient, layout),
-    theme: spec.theme
+    theme: spec.theme,
+    chartType: spec.type
   };
 }
 
@@ -493,7 +495,7 @@ function getRange(
   defaultSeriesIndice: number,
   layout: PivotHeaderLayoutMap
 ) {
-  const { axisOption, isPercent, isZeroAlign, seriesIndice, theme } = getAxisOption(
+  const { axisOption, isPercent, isZeroAlign, seriesIndice, theme, chartType } = getAxisOption(
     colForAxisOption,
     rowForAxisOption,
     position,
@@ -553,7 +555,8 @@ function getRange(
     isZeroAlign,
     range,
     ticks,
-    theme
+    theme,
+    chartType
   };
 }
 
