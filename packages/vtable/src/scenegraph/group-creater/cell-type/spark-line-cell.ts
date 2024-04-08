@@ -43,7 +43,7 @@ export function createSparkLineCellGroup(
       cursor: (cellTheme?.group as any)?.cursor ?? undefined,
       lineDash: cellTheme?.group?.lineDash ?? undefined,
 
-      lineCap: 'square',
+      lineCap: 'butt',
 
       clip: true,
 
