@@ -39,7 +39,6 @@ export function bindTableGroupListener(eventManager: EventManager) {
     // if (stateManager.interactionState === InteractionState.scrolling) {
     //   return;
     // }
-
     if (stateManager.interactionState === InteractionState.grabing) {
       if (Math.abs(lastX - e.x) + Math.abs(lastY - e.y) >= 1) {
         if (stateManager.isResizeCol()) {
@@ -53,7 +52,7 @@ export function bindTableGroupListener(eventManager: EventManager) {
         }
       }
       return;
-    } else if (table.eventManager.isDraging) {
+    } else if (table.eventManager.isDraging && stateManager.isSelecting()) {
       eventManager.dealTableSelect(eventArgsSet, true);
     }
 
@@ -663,7 +662,7 @@ export function bindTableGroupListener(eventManager: EventManager) {
       eventManager.dealTableSelect();
       stateManager.updateCursor();
       table.scenegraph.updateChartState(null);
-    } else if (table.eventManager.isDraging) {
+    } else if (table.eventManager.isDraging && stateManager.isSelecting()) {
       // 如果鼠标拖拽后是否 则结束选中
       stateManager.endSelectCells();
     }

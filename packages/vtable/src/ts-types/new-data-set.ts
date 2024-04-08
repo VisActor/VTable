@@ -228,6 +228,8 @@ export type CollectValueBy = {
   type?: 'xField' | 'yField' | undefined;
   /** 如果是收集的离散值，离散值的排序依据 */
   sortBy?: string[];
+  /** chartSpec中设置了markLine autoRange的情况 考虑扩展轴范围 */
+  extendRange?: number | 'sum' | 'max';
 };
 export type CollectedValue = { max?: number; min?: number } | Array<string>;
 
