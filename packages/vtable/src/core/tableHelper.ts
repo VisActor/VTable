@@ -428,4 +428,5 @@ export function parseMarkLineGetExtendRange(markLine: any): number | 'sum' | 'ma
       }
     }
   }
+  return undefined;
 }
