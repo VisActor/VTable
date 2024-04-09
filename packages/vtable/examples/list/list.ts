@@ -16,41 +16,13 @@ const generatePersons = count => {
 };
 
 export function createTable() {
-  const records = generatePersons(1000000);
+  const records = generatePersons(10);
   const columns: VTable.ColumnsDefine = [
     {
-      field: '',
-      title: '行号',
-      width: 80,
-      fieldFormat(data, col, row, table) {
-        return row - 1;
+      title: 'full name fgdsg gfdsh bdh dhgdfhh sfg',
+      headerStyle: {
+        fontSize: 50
       },
-      style: {
-        underline: true,
-        underlineDash: [2, 0],
-        underlineOffset: 3
-      }
-    },
-    {
-      field: 'id',
-      title: 'ID',
-      width: 'auto',
-      minWidth: 50,
-      sort: true
-    },
-    {
-      field: 'email1',
-      title: 'email',
-      width: 200,
-      sort: true,
-      style: {
-        underline: true,
-        underlineDash: [2, 0],
-        underlineOffset: 3
-      }
-    },
-    {
-      title: 'full name',
       columns: [
         {
           field: 'name',
@@ -63,118 +35,17 @@ export function createTable() {
           width: 200
         }
       ]
-    },
-    {
-      field: 'date1',
-      title: 'birthday',
-      width: 200
-    },
-    {
-      field: 'sex',
-      title: 'sex',
-      width: 100
-    },
-    {
-      field: 'tel',
-      title: 'telephone',
-      width: 150
-    },
-    {
-      field: 'work',
-      title: 'job',
-      width: 200
-    },
-    {
-      field: 'city',
-      title: 'city',
-      width: 150
-    },
-    {
-      field: 'date1',
-      title: 'birthday',
-      width: 200
-    },
-    {
-      field: 'sex',
-      title: 'sex',
-      width: 100
-    },
-    {
-      field: 'tel',
-      title: 'telephone',
-      width: 150
-    },
-    {
-      field: 'work',
-      title: 'job',
-      width: 200
-    },
-    {
-      field: 'city',
-      title: 'city',
-      width: 150
-    },
-    {
-      field: 'date1',
-      title: 'birthday',
-      width: 200
-    },
-    {
-      field: 'sex',
-      title: 'sex',
-      width: 100
-    },
-    {
-      field: 'tel',
-      title: 'telephone',
-      width: 150
-    },
-    {
-      field: 'work',
-      title: 'job',
-      width: 200
-    },
-    {
-      field: 'city',
-      title: 'city',
-      width: 150
-    },
-    {
-      field: 'date1',
-      title: 'birthday',
-      width: 200
-    },
-    {
-      field: 'sex',
-      title: 'sex',
-      width: 100
-    },
-    {
-      field: 'tel',
-      title: 'telephone',
-      width: 150
-    },
-    {
-      field: 'work',
-      title: 'job',
-      width: 200
-    },
-    {
-      field: 'city',
-      title: 'city',
-      width: 150
     }
   ];
   const option: VTable.ListTableConstructorOptions = {
     container: document.getElementById(CONTAINER_ID),
     records,
     columns,
+    // transpose: true,
     tooltip: {
       isShowOverflowTextTooltip: true
     },
-    frozenColCount: 1,
-    bottomFrozenRowCount: 2,
-    rightFrozenColCount: 2,
+
     overscrollBehavior: 'none',
     dragHeaderMode: 'all',
     keyboardOptions: {
@@ -186,15 +57,29 @@ export function createTable() {
       preventDefaultContextMenu: false
     },
     autoWrapText: true,
+    heightMode: 'standard',
+    defaultHeaderRowHeight: [80, 'auto'],
+    widthMode: 'standard',
+    defaultHeaderColWidth: ['auto', 'auto'],
     editor: '',
     excelOptions: {
       fillHandle: true
-    },
-    defaultHeaderRowHeight: [100, 'auto']
+    }
     // widthMode: 'adaptive'
   };
   const tableInstance = new VTable.ListTable(option);
   window.tableInstance = tableInstance;
+  // tableInstance.on('change_cell_value', arg => {
+  //   console.log(arg);
+  // });
+  // let count = 0;
+  // const intervalId = setTimeout(() => {
+  //   count++;
+  //   tableInstance.updateOption(option);
+  //   if (count > 100) {
+  //     clearInterval(intervalId);
+  //   }
+  // }, 3000);
   // tableInstance.on('sort_click', args => {
   //   tableInstance.updateSortState(
   //     {
