@@ -65,7 +65,6 @@ export function createTable() {
     excelOptions: {
       fillHandle: true
     }
-
     // widthMode: 'adaptive'
   };
   const tableInstance = new VTable.ListTable(option);
