@@ -51,6 +51,7 @@ export class SimpleHeaderLayoutMap implements LayoutMapAPI {
   //透视表中树形结构使用 这里为了table逻辑不报错
   // rowHierarchyIndent?: number = 0;
   hierarchyIndent?: number; // 树形展示缩进值
+  hierarchyTextStartAlignment?: boolean;
   // private _emptyDataCache = new EmptyDataCache();
   _transpose = false;
   _showHeader = true;
@@ -70,7 +71,7 @@ export class SimpleHeaderLayoutMap implements LayoutMapAPI {
     this._columns = [];
     this._headerCellIds = [];
     this.hierarchyIndent = hierarchyIndent ?? 20;
-
+    this.hierarchyTextStartAlignment = table.options.hierarchyTextStartAlignment;
     this.columnTree = new DimensionTree(columns as any, { seqId: 0 }); //seqId这里没有利用上 所有顺便传了0
     this._headerObjects = this._addHeaders(0, columns, []);
     this._headerObjectMap = this._headerObjects.reduce((o, e) => {
