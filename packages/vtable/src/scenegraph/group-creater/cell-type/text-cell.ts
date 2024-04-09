@@ -59,7 +59,8 @@ export function createCellGroup(
   if (cellTheme?.text?.textBaseline) {
     textBaseline = cellTheme?.text?.textBaseline;
   }
-  const autoRowHeight = table.heightMode === 'autoHeight';
+  // let autoRowHeight = table.heightMode === 'autoHeight';
+  const autoRowHeight = table.isAutoRowHeight(row);
   const autoColWidth = colWidth === 'auto';
   const autoWrapText = headerStyle.autoWrapText ?? table.internalProps.autoWrapText;
   const lineClamp = headerStyle.lineClamp;
