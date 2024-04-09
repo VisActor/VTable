@@ -23,6 +23,7 @@
     }
   },
   "scripts": {
+    "compile": "tsc --noEmit",
     "start": "vite ./demo",
     "build": "bundle --clean"
   },

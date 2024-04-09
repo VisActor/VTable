@@ -309,9 +309,26 @@ export class Dataset {
     for (const field in this.collectedValues) {
       if (this.collectValuesBy[field]?.sumBy) {
         for (const byKeys in this.collectedValues[field]) {
-          const max = Object.values(this.collectedValues[field][byKeys]).reduce((acc, cur) => {
-            return cur.value() > acc ? cur.value() : acc;
-          }, Number.MIN_SAFE_INTEGER);
+          let max;
+
+          //考虑有markLine设置sum的情况
+          if (this.collectValuesBy[field]?.extendRange === 'sum') {
+            max = Object.values(this.collectedValues[field][byKeys]).reduce((acc, cur) => {
+              return acc + cur.value();
+            }, 0);
+            max += Math.round(max / 20);
+          } else {
+            // 寻找最大值作为轴范围的max
+            max = Object.values(this.collectedValues[field][byKeys]).reduce((acc, cur) => {
+              return cur.value() > acc ? cur.value() : acc;
+            }, Number.MIN_SAFE_INTEGER);
+            //考虑有markLine设置max的情况
+            if (this.collectValuesBy[field]?.extendRange === 'max') {
+              max += Math.round(max / 20);
+            } else if (typeof this.collectValuesBy[field]?.extendRange === 'number') {
+              max = Math.max(max, this.collectValuesBy[field]?.extendRange as number);
+            }
+          }
           const min = Object.values(this.collectedValues[field][byKeys]).reduce((acc, cur) => {
             return cur.value() < acc ? cur.value() : acc;
           }, Number.MAX_SAFE_INTEGER);

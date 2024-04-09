@@ -188,6 +188,10 @@ export const menus = [
       },
       {
         path: 'pivot-chart',
+        name: 'pivotChart-markLine'
+      },
+      {
+        path: 'pivot-chart',
         name: 'pivotChart-setRecords'
       },
       {
