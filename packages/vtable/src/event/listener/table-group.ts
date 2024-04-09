@@ -4,11 +4,12 @@ import type {
   ListTableAPI,
   MousePointerCellEvent,
   MousePointerMultiCellEvent,
-  MousePointerSparklineEvent
+  MousePointerSparklineEvent,
+  RadioColumnDefine
 } from '../../ts-types';
 import { IconFuncTypeEnum, InteractionState } from '../../ts-types';
 import type { SceneEvent } from '../util';
-import { getCellEventArgsSet } from '../util';
+import { getCellEventArgsSet, regIndexReg } from '../util';
 import { TABLE_EVENT_TYPE } from '../../core/TABLE_EVENT_TYPE';
 import type { Group } from '../../scenegraph/graphic/group';
 import { isValid, last } from '@visactor/vutils';
@@ -19,7 +20,7 @@ import type { EventManager } from '../event';
 import type { BaseTableAPI } from '../../ts-types/base-table';
 import type { IIconGraphicAttribute } from '../../scenegraph/graphic/icon';
 import { getCellMergeInfo } from '../../scenegraph/utils/get-cell-merge';
-import type { CheckBox, CheckboxAttributes } from '@visactor/vrender-components';
+import type { CheckBox, CheckboxAttributes, Radio } from '@visactor/vrender-components';
 
 export function bindTableGroupListener(eventManager: EventManager) {
   const table = eventManager.table;
@@ -745,6 +746,90 @@ export function bindTableGroupListener(eventManager: EventManager) {
       }
     }
     table.fireListeners(TABLE_EVENT_TYPE.CHECKBOX_STATE_CHANGE, cellsEvent);
+
+    table.scenegraph.updateNextFrame();
+  });
+
+  table.scenegraph.tableGroup.addEventListener('radio_checked', (e: FederatedPointerEvent) => {
+    const eventArgsSet: SceneEvent = getCellEventArgsSet(e);
+    const { col, row, target } = eventArgsSet.eventArgs;
+    const cellInfo = table.getCellInfo(col, row);
+    const indexInCell: string | undefined = regIndexReg.exec(target.id as string)?.[1];
+
+    const mergeRange = getCellMergeInfo(table, col, row);
+    if (mergeRange) {
+      // update all radio in merge cells
+      for (let col = mergeRange.start.col; col <= mergeRange.end.col; col++) {
+        for (let row = mergeRange.start.row; row <= mergeRange.end.row; row++) {
+          const cellGroup = table.scenegraph.getCell(col, row);
+          cellGroup.forEachChildren((radio: Radio) => {
+            if (radio.name === 'radio' && radio.id === target.id) {
+              radio.setAttributes({
+                checked: true
+              });
+            }
+          });
+        }
+      }
+    }
+
+    // update other radio
+    const define = table.getBodyColumnDefine(col, row) as RadioColumnDefine;
+    const radioCheckType = define.radioCheckType || 'column';
+
+    if (radioCheckType === 'cell') {
+      // update other radio in this cell
+      if (mergeRange) {
+        // update all radio in merge cells
+        for (let col = mergeRange.start.col; col <= mergeRange.end.col; col++) {
+          for (let row = mergeRange.start.row; row <= mergeRange.end.row; row++) {
+            const cellGroup = table.scenegraph.getCell(col, row);
+            cellGroup.forEachChildren((radio: Radio) => {
+              if (radio.name === 'radio' && radio.id !== target.id) {
+                radio.setAttributes({
+                  checked: false
+                });
+              }
+            });
+          }
+        }
+      } else {
+        // update all radio in single cell
+        const cellGroup = table.scenegraph.getCell(col, row);
+        cellGroup.forEachChildren((radio: Radio) => {
+          if (radio.name === 'radio' && radio.id !== target.id) {
+            radio.setAttributes({
+              checked: false
+            });
+          }
+        });
+      }
+    } else if (radioCheckType === 'column') {
+      // update other radio in this column
+      const columnGroup = table.scenegraph.getColGroup(col);
+      columnGroup.forEachChildren((cellGroup: Group) => {
+        cellGroup.forEachChildren((radio: Radio) => {
+          if (radio.name === 'radio' && radio.id !== target.id) {
+            radio.setAttributes({
+              checked: false
+            });
+          }
+        });
+      });
+    }
+
+    // update state
+    const radioIndexInCell = indexInCell ? Number(indexInCell) : undefined;
+    table.stateManager.setRadioState(col, row, cellInfo.field as string | number, radioCheckType, radioIndexInCell);
+
+    // trigger event
+    const cellsEvent: MousePointerCellEvent & { radioIndexInCell: number | undefined } = {
+      ...cellInfo,
+      event: e.nativeEvent,
+      target: eventArgsSet?.eventArgs?.target,
+      radioIndexInCell
+    };
+    table.fireListeners(TABLE_EVENT_TYPE.RADIO_STATE_CHANGE, cellsEvent);
 
     table.scenegraph.updateNextFrame();
   });

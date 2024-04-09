@@ -37,6 +37,7 @@ import { getIconAndPositionFromTarget } from '../scenegraph/utils/icon';
 import type { BaseTableAPI, HeaderData } from '../ts-types/base-table';
 import { debounce } from '../tools/debounce';
 import { updateResizeColumn } from './resize/update-resize-column';
+import { setRadioState } from './radio';
 
 export class StateManager {
   table: BaseTableAPI;
@@ -166,6 +167,8 @@ export class StateManager {
   _checkboxCellTypeFields: (string | number)[] = [];
 
   _headerCheckFuncs: Record<string | number, Function> = {};
+
+  radioState: Record<string | number, number | Record<number, number>> = {};
   // 供滚动重置为default使用
   resetInteractionState = debounce(() => {
     this.updateInteractionState(InteractionState.default);
@@ -1196,6 +1199,16 @@ export class StateManager {
     this.checkedState?.forEach(recordCheckState => {
       recordCheckState[field] = checked;
     });
+  }
+
+  setRadioState(
+    col: number,
+    row: number,
+    field: string | number,
+    radioType: 'column' | 'cell',
+    indexInCell: number | undefined
+  ) {
+    setRadioState(col, row, field, radioType, indexInCell, this);
   }
 
   //#region CheckedState 状态维护

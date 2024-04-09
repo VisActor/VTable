@@ -227,7 +227,7 @@ export class EventManager {
     const { eventArgs } = eventArgsSet;
 
     if (eventArgs) {
-      if (eventArgs.target.name === 'checkbox') {
+      if (eventArgs.target.name === 'checkbox' || eventArgs.target.name === 'radio') {
         return false;
       }
 

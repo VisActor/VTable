@@ -52,6 +52,7 @@ export interface EventsProps {
   onMouseLeaveAxis?: EventCallback<TYPES.TableEventHandlersEventArgumentMap['mouseleave_axis']>;
 
   onCheckboxStateChange?: EventCallback<TYPES.TableEventHandlersEventArgumentMap['checkbox_state_change']>;
+  onRadioStateChange?: EventCallback<TYPES.TableEventHandlersEventArgumentMap['radio_state_change']>;
   onAfterRender?: EventCallback<TYPES.TableEventHandlersEventArgumentMap['after_render']>;
   onInitialized?: EventCallback<TYPES.TableEventHandlersEventArgumentMap['initialized']>;
 
@@ -114,6 +115,7 @@ export const TABLE_EVENTS = {
   onMouseLeaveAxis: EVENT_TYPE.MOUSELEAVE_AXIS,
 
   onCheckboxStateChange: EVENT_TYPE.CHECKBOX_STATE_CHANGE,
+  onRadioStateChange: EVENT_TYPE.RADIO_STATE_CHANGE,
   onAfterRender: EVENT_TYPE.AFTER_RENDER,
   onInitialized: EVENT_TYPE.INITIALIZED,
 
