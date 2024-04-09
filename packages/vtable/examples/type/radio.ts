@@ -33,8 +33,8 @@ export function createTable() {
       {
         field: 'percent',
         title: 'column radio',
-        // width: 120,
-        width: 'auto',
+        width: 120,
+        // width: 'auto',
         cellType: 'radio'
         // disable: true,
         // checked: true
@@ -42,11 +42,11 @@ export function createTable() {
       {
         field: 'check',
         title: 'cell radio',
-        width: 'auto',
-        // width: 200,
+        // width: 'auto',
+        width: 200,
         cellType: 'radio',
         radioCheckType: 'cell',
-        radioDirectionInCell: 'horizontal',
+        radioDirectionInCell: 'vertical',
         style: {
           spaceBetweenRadio: 10
           // size: 40,
@@ -57,7 +57,7 @@ export function createTable() {
     ],
     showFrozenIcon: true, //显示VTable内置冻结列图标
     widthMode: 'standard',
-    // heightMode: 'autoHeight',
+    heightMode: 'autoHeight',
     // transpose: true
     theme: VTable.themes.DEFAULT.extends({
       checkboxStyle: {
@@ -89,9 +89,9 @@ export function createTable() {
     // customGrapicKeys: ['role', '_updateTag'],
   });
 
-  const { CHECKBOX_STATE_CHANGE } = VTable.ListTable.EVENT_TYPE;
-  instance.on(CHECKBOX_STATE_CHANGE, e => {
-    console.log(e.col, e.row, e.checked);
+  const { RADIO_STATE_CHANGE } = VTable.ListTable.EVENT_TYPE;
+  instance.on(RADIO_STATE_CHANGE, e => {
+    console.log(e.col, e.row, e.radioIndexInCell);
   });
 
   // 只为了方便控制太调试用，不要拷贝
