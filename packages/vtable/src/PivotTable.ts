@@ -38,6 +38,7 @@ import { computeColWidth } from './scenegraph/layout/compute-col-width';
 import { computeRowHeight } from './scenegraph/layout/compute-row-height';
 import { isAllDigits } from './tools/util';
 import type { IndicatorData } from './ts-types/list-table/layout-map/api';
+import { cloneDeepSpec } from '@visactor/vutils-extension';
 export class PivotTable extends BaseTable implements PivotTableAPI {
   declare internalProps: PivotTableProtected;
   declare options: PivotTableConstructorOptions;
@@ -68,7 +69,7 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
     }
     this.internalProps.columns = cloneDeep(options.columns);
     this.internalProps.rows = cloneDeep(options.rows);
-    this.internalProps.indicators = cloneDeep(options.indicators);
+    this.internalProps.indicators = cloneDeepSpec(options.indicators);
     options.indicators?.forEach((indicatorDefine, index) => {
       //如果editor 是一个IEditor的实例  需要这样重新赋值 否则clone后变质了
       if (typeof indicatorDefine === 'object' && indicatorDefine?.editor) {
@@ -215,7 +216,7 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
     super.updateOption(options);
     this.internalProps.columns = cloneDeep(options.columns);
     this.internalProps.rows = cloneDeep(options.rows);
-    this.internalProps.indicators = !options.indicators?.length ? [] : cloneDeep(options.indicators);
+    this.internalProps.indicators = !options.indicators?.length ? [] : cloneDeepSpec(options.indicators);
     options.indicators?.forEach((indicatorDefine, index) => {
       if (typeof indicatorDefine === 'object' && indicatorDefine?.editor) {
         (this.internalProps.indicators[index] as IIndicator).editor = indicatorDefine.editor;
