@@ -100,6 +100,10 @@ headerEditor?: string | IEditor | ((args: BaseCellInfo & { table: BaseTableAPI }
 
 展示为树形结构时，默认展开层数。默认为 1 只显示根节点，配置为`Infinity`则全部展开。
 
+## hierarchyTextStartAlignment(boolean) = false
+
+同层级的结点是否按文字对齐 如没有收起展开图标的节点和有图标的节点文字对齐 默认 false
+
 ## frozenColDragHeaderMode(string) = 'fixedFrozenCount'
 
 拖拽表头移动位置 针对冻结部分的规则 默认为 fixedFrozenCount
