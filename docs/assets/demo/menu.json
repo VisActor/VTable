@@ -254,6 +254,22 @@
           }
         },
         {
+          "path": "radio",
+          "title": {
+            "zh": "单选框类型",
+            "en": "Radio Type"
+          },
+          "meta": {
+            "title": "Radio Type",
+            "keywords": "",
+            "category": "demo",
+            "group": "Cell Type",
+            "cover": "https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/radio.png",
+            "link": "'../../guide/column_type/radio'",
+            "option": ""
+          }
+        },
+        {
           "path": "list-chart",
           "title": {
             "zh": "基本表格集成图表",

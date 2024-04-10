@@ -578,6 +578,22 @@ Get the status of a cell checkbox
 getCellCheckboxState(col: number, row: number): Array
 ```
 
+## getRadioState(Function)
+
+Get the selected status of all radio data under a certain field. The order corresponds to the original incoming data records. It does not correspond to the status value of the row displayed in the table.
+
+```
+getRadioState(field?: string | number): number | Record<number, boolean | number>
+```
+
+## getCellRadioState(Function)
+
+Get the status of a cell radio. If a cell contains multiple radio buttons, the return value is number, which refers to the index of the selected radio in the cell. Otherwise, the return value is boolean.
+
+```
+getCellRadioState(col: number, row: number): boolean | number
+```
+
 ## getScrollTop(Function)
 
 Get the current vertical scroll position

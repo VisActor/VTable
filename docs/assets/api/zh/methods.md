@@ -575,6 +575,22 @@ getCheckboxState(field?: string | number): Array
 getCellCheckboxState(col: number, row: number): Array
 ```
 
+## getRadioState(Function)
+
+获取某个字段下 radio 全部数据的选中状态 顺序对应原始传入数据 records 不是对应表格展示 row 的状态值
+
+```
+getRadioState(field?: string | number): number | Record<number, boolean | number>
+```
+
+## getCellRadioState(Function)
+
+获取某个单元格 radio 的状态，如果一个单元格中包含多个单选框，则返回值为number，指该单元格内选中radio的索引，否则返回值为boolean
+
+```
+getCellRadioState(col: number, row: number): boolean | number
+```
+
 ## getScrollTop(Function)
 
 获取当前竖向滚动位置

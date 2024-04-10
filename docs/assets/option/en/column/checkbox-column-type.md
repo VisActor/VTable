@@ -26,15 +26,3 @@ If headerType is set to `checkbox`, the status of the header checkbox will depen
 **Configuration item exclusive to checkbox type**
 
 Whether the checkbox is in a disabled interactive state
-
-##${prefix} size(number|Function) = 14
-
-**Configuration item exclusive to checkbox type**
-
-checkbox shape size
-
-##${prefix} spaceBetweenTextAndIcon(number|Function) = 8
-
-**Configuration item exclusive to checkbox type**
-
-space between checkbox shape and text
