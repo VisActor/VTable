@@ -18,7 +18,7 @@ import type {
 } from './ts-types';
 import { HierarchyState } from './ts-types';
 import { SimpleHeaderLayoutMap } from './layout';
-import { isValid } from '@visactor/vutils';
+import { isNumber, isObject, isValid } from '@visactor/vutils';
 import { _setDataSource, _setRecords, sortRecords } from './core/tableHelper';
 import { BaseTable } from './core';
 import type { BaseTableAPI, ListTableProtected } from './ts-types/base-table';
@@ -34,6 +34,7 @@ import { computeRowHeight } from './scenegraph/layout/compute-row-height';
 import { defaultOrderFn } from './tools/util';
 import type { IEditor } from '@visactor/vtable-editors';
 import type { ColumnData, ColumnDefine } from './ts-types/list-table/layout-map/api';
+import { getCellRadioState } from './state/radio/radio';
 
 export class ListTable extends BaseTable implements ListTableAPI {
   declare internalProps: ListTableProtected;
@@ -919,6 +920,17 @@ export class ListTable extends BaseTable implements ListTableAPI {
       return this.stateManager.checkedState[dataIndex as number][field as string | number];
     }
     return undefined;
+  }
+  /** 获取某个字段下checkbox 全部数据的选中状态 顺序对应原始传入数据records 不是对应表格展示row的状态值 */
+  getRadioState(field?: string | number) {
+    if (isValid(field)) {
+      return this.stateManager.radioState[field];
+    }
+    return this.stateManager.radioState;
+  }
+  /** 获取某个单元格checkbox的状态 */
+  getCellRadioState(col: number, row: number): boolean | number {
+    return getCellRadioState(col, row, this);
   }
   /**
    * 设置表格数据 及排序状态

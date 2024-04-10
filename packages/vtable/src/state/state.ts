@@ -37,7 +37,7 @@ import { getIconAndPositionFromTarget } from '../scenegraph/utils/icon';
 import type { BaseTableAPI, HeaderData } from '../ts-types/base-table';
 import { debounce } from '../tools/debounce';
 import { updateResizeColumn } from './resize/update-resize-column';
-import { setRadioState } from './radio';
+import { setRadioState, syncRadioState } from './radio/radio';
 
 export class StateManager {
   table: BaseTableAPI;
@@ -1201,16 +1201,6 @@ export class StateManager {
     });
   }
 
-  setRadioState(
-    col: number,
-    row: number,
-    field: string | number,
-    radioType: 'column' | 'cell',
-    indexInCell: number | undefined
-  ) {
-    setRadioState(col, row, field, radioType, indexInCell, this);
-  }
-
   //#region CheckedState 状态维护
 
   /**
@@ -1383,4 +1373,25 @@ export class StateManager {
     }
   }
   //#endregion
+
+  setRadioState(
+    col: number,
+    row: number,
+    field: string | number,
+    radioType: 'column' | 'cell',
+    indexInCell: number | undefined
+  ) {
+    setRadioState(col, row, field, radioType, indexInCell, this);
+  }
+
+  syncRadioState(
+    col: number,
+    row: number,
+    field: string | number,
+    radioType: 'column' | 'cell',
+    indexInCell: number | undefined,
+    isChecked: boolean
+  ) {
+    return syncRadioState(col, row, field, radioType, indexInCell, isChecked, this);
+  }
 }

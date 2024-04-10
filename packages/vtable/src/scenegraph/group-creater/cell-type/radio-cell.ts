@@ -190,7 +190,17 @@ function createRadio(
   const direction = define.radioDirectionInCell ?? 'vertical';
   if (isArray(value)) {
     value.forEach((item, index) => {
-      const radioComponent = createSingleRadio(item, dataValue, col, row, define, autoWrapText, radioAttributes, table);
+      const radioComponent = createSingleRadio(
+        item,
+        dataValue,
+        index,
+        col,
+        row,
+        define,
+        autoWrapText,
+        radioAttributes,
+        table
+      );
       if (radioComponent) {
         cellGroup.appendChild(radioComponent);
       }
@@ -209,7 +219,17 @@ function createRadio(
       }
     });
   } else {
-    const radioComponent = createSingleRadio(value, dataValue, col, row, define, autoWrapText, radioAttributes, table);
+    const radioComponent = createSingleRadio(
+      value,
+      dataValue,
+      undefined,
+      col,
+      row,
+      define,
+      autoWrapText,
+      radioAttributes,
+      table
+    );
     if (radioComponent) {
       cellGroup.appendChild(radioComponent);
     }
@@ -226,6 +246,7 @@ function createRadio(
 function createSingleRadio(
   value: any,
   dataValue: any,
+  indexInCell: number | undefined,
   col: number,
   row: number,
   define: RadioColumnDefine,
@@ -233,9 +254,9 @@ function createSingleRadio(
   cellRadioAttributes: RadioAttributes,
   table: BaseTableAPI
 ) {
-  const isChecked = getChecked(value, dataValue, col, row, define, table);
+  const isChecked = getChecked(value, dataValue, indexInCell, col, row, define, table);
   const isDisabled = getDisable(value, dataValue, col, row, define, table);
-  const text = isObject(value) ? (value as any).text : isBoolean(value) ? '' : value;
+  const text = isObject(value) ? (value as any).text : isBoolean(value) ? '' : value ?? '';
 
   const radioAttributes = merge({}, cellRadioAttributes, {
     checked: isChecked,
@@ -255,11 +276,13 @@ function createSingleRadio(
 function getChecked(
   value: any,
   dataValue: any,
+  indexInCell: number | undefined,
   col: number,
   row: number,
   define: RadioColumnDefine,
   table: BaseTableAPI
 ) {
+  const radioType = define.radioCheckType ?? 'column';
   let isChecked;
   let globalChecked;
   if (isObject(value)) {
@@ -267,7 +290,14 @@ function getChecked(
   } else if (typeof value === 'boolean') {
     isChecked = value;
   }
-  // isChecked = table.stateManager.syncCheckedState(col, row, define.field as string | number, isChecked);
+  isChecked = table.stateManager.syncRadioState(
+    col,
+    row,
+    define.field as string | number,
+    radioType,
+    indexInCell,
+    isChecked
+  );
   if (isChecked === undefined || isChecked === null || typeof isChecked === 'function') {
     //isChecked无效值 取全局设置的值
     globalChecked = getOrApply(define.checked as any, {
@@ -278,7 +308,14 @@ function getChecked(
       value,
       dataValue
     });
-    // isChecked = table.stateManager.syncCheckedState(col, row, define.field as string | number, globalChecked);
+    isChecked = table.stateManager.syncRadioState(
+      col,
+      row,
+      define.field as string | number,
+      radioType,
+      indexInCell,
+      globalChecked
+    );
   }
 
   return isChecked ?? globalChecked ?? false;
