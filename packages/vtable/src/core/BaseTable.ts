@@ -2151,6 +2151,11 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     this.clearCellStyleCache();
     this.clearColWidthCache();
     this.clearRowHeightCache();
+    this.customCellStylePlugin = new CustomCellStylePlugin(
+      this,
+      options.customCellStyle ?? [],
+      options.customCellStyleArrangement ?? []
+    );
   }
   /**
    * 重新创建场景树并重新渲染
