@@ -1266,6 +1266,10 @@ export class StateManager {
    * @param records
    */
   initCheckedState(records: any[]) {
+    // clear checkbox state
+    this.checkedState = [];
+    this.radioState = {};
+
     let isNeedInitHeaderCheckedStateFromRecord = false;
     this._checkboxCellTypeFields = [];
     this._headerCheckFuncs = {};
