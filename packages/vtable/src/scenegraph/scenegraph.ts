@@ -1549,7 +1549,7 @@ export class Scenegraph {
     //   ),
     // } as any);
 
-    const isListTableWithFrozen = !this.isPivot;
+    const isListTableWithFrozen = !this.isPivot && !this.table.internalProps.transpose;
 
     // 设置border
     createFrameBorder(
@@ -1562,9 +1562,9 @@ export class Scenegraph {
       this.rowHeaderGroup,
       this.isPivot
         ? this.table.theme.rowHeaderStyle.frameStyle
-        : // : this.table.internalProps.transpose
-          // ? this.table.theme.headerStyle.frameStyle
-          this.table.theme.bodyStyle.frameStyle,
+        : this.table.internalProps.transpose
+        ? this.table.theme.rowHeaderStyle.frameStyle
+        : this.table.theme.bodyStyle.frameStyle,
       this.rowHeaderGroup.role,
       isListTableWithFrozen ? [true, false, true, true] : undefined
     );
