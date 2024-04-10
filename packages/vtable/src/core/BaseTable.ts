@@ -2051,6 +2051,9 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     if (Env.mode !== 'node') {
       updateRootElementPadding(internalProps.element, this.padding);
     }
+
+    this.columnWidthComputeMode = options.columnWidthComputeMode ?? 'normal';
+
     // internalProps.rowCount = rowCount;
     // internalProps.colCount = colCount;
     internalProps.frozenColCount = frozenColCount;
