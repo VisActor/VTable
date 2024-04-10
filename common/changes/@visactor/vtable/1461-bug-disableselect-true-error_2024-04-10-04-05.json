@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "comment": "fix: set disableSelect drag cells occor error #1461\n\n",
+      "type": "none",
+      "packageName": "@visactor/vtable"
+    }
+  ],
+  "packageName": "@visactor/vtable",
+  "email": "892739385@qq.com"
+}
