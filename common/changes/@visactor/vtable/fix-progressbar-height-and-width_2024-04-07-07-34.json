@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "comment": "fix: 修复进度图部分情况遮挡表格边缘单元格\n\n",
+      "type": "none",
+      "packageName": "@visactor/vtable"
+    }
+  ],
+  "packageName": "@visactor/vtable",
+  "email": "18595927732@163.com"
+}
