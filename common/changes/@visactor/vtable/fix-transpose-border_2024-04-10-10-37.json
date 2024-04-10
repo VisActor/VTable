@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vtable",
+      "comment": "fix: fix transpose border theme #1463",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vtable"
+}

@@ -1549,7 +1549,7 @@ export class Scenegraph {
     //   ),
     // } as any);
 
-    const isListTableWithFrozen = !this.isPivot;
+    const isListTableWithFrozen = !this.isPivot && !this.table.internalProps.transpose;
 
     // 设置border
     createFrameBorder(
@@ -1562,9 +1562,9 @@ export class Scenegraph {
       this.rowHeaderGroup,
       this.isPivot
         ? this.table.theme.rowHeaderStyle.frameStyle
-        : // : this.table.internalProps.transpose
-          // ? this.table.theme.headerStyle.frameStyle
-          this.table.theme.bodyStyle.frameStyle,
+        : this.table.internalProps.transpose
+        ? this.table.theme.rowHeaderStyle.frameStyle
+        : this.table.theme.bodyStyle.frameStyle,
       this.rowHeaderGroup.role,
       isListTableWithFrozen ? [true, false, true, true] : undefined
     );
@@ -1747,6 +1747,7 @@ export class Scenegraph {
   }
 
   updateRow(removeCells: CellAddress[], addCells: CellAddress[], updateCells: CellAddress[] = []) {
+    this.table.internalProps.layoutMap.clearCellRangeMap();
     const addRows = deduplication(addCells.map(cell => cell.row)).sort((a, b) => a - b);
     const updateRows = deduplication(updateCells.map(cell => cell.row)).sort((a, b) => a - b);
     //这个值是后续为了autoFillHeight判断逻辑中用到的 判断是否更新前是未填满的情况

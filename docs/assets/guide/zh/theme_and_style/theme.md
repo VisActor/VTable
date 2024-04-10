@@ -1188,6 +1188,7 @@ const option = {
   },
   widthMode: 'standard',
   rowHierarchyIndent: 20,
+  rowHierarchyTextStartAlignment: true,
   theme: {
     defaultStyle: {
       borderLineWidth: 0

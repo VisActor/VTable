@@ -163,4 +163,7 @@ export class BodyHelper {
     }
     return undefined;
   }
+  getHierarchyIconWidth() {
+    return this.expandIcon.width + this.expandIcon.marginLeft + this.expandIcon.marginRight;
+  }
 }

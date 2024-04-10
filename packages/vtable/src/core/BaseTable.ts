@@ -1147,7 +1147,15 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     const width = this.getColWidthDefined(col);
     return this._adjustColWidth(col, this._colWidthDefineToPxWidth(width));
   }
-
+  /** 判断某行是否应该计算行高 */
+  isAutoRowHeight(row: number): boolean {
+    if (this.heightMode === 'autoHeight') {
+      return true;
+    } else if (row >= 0 && row < this.columnHeaderLevelCount) {
+      return this.getDefaultRowHeight(row) === 'auto';
+    }
+    return false;
+  }
   /**
    * 根据列号获取列宽定义
    * @param {number} col column number
@@ -2043,6 +2051,9 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     if (Env.mode !== 'node') {
       updateRootElementPadding(internalProps.element, this.padding);
     }
+
+    this.columnWidthComputeMode = options.columnWidthComputeMode ?? 'normal';
+
     // internalProps.rowCount = rowCount;
     // internalProps.colCount = colCount;
     internalProps.frozenColCount = frozenColCount;
@@ -2143,6 +2154,11 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     this.clearCellStyleCache();
     this.clearColWidthCache();
     this.clearRowHeightCache();
+    this.customCellStylePlugin = new CustomCellStylePlugin(
+      this,
+      options.customCellStyle ?? [],
+      options.customCellStyleArrangement ?? []
+    );
   }
   /**
    * 重新创建场景树并重新渲染

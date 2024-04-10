@@ -759,6 +759,7 @@ export interface BaseTableAPI {
   isSeriesNumber: (col: number, row?: number) => boolean;
   isHasSeriesNumber: () => boolean;
   leftRowSeriesNumberCount: number;
+  isAutoRowHeight: (row: number) => boolean;
 }
 export interface ListTableProtected extends IBaseTableProtected {
   /** 表格数据 */

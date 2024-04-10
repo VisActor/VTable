@@ -156,7 +156,8 @@ function createCheckbox(
   });
 
   const autoColWidth = colWidth === 'auto';
-  const autoRowHeight = table.heightMode === 'autoHeight';
+  // const autoRowHeight = table.heightMode === 'autoHeight';
+  const autoRowHeight = table.isAutoRowHeight(row);
 
   const attribute = {
     text: text.length === 1 ? text[0] : text,
