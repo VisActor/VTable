@@ -309,6 +309,10 @@ Initial expansion level. In addition to configuring the expansion level of the u
 
 If tree display is set, the indentation distance of content displayed in the child cell compared to its parent cell content.
 
+## rowHierarchyTextStartAlignment(boolean) = false
+
+Whether nodes at the same level are aligned by text, such as nodes without collapsed expansion icons and nodes with icons. Default is false
+
 ## indicatorTitle(string)
 
 Indicator title used to display the value in the corner header

@@ -208,7 +208,8 @@ export interface ListTableConstructorOptions extends BaseTableConstructorOptions
   hierarchyIndent?: number;
   /** 展开层数 默认为1只显示根节点*/
   hierarchyExpandLevel?: number;
-
+  /** 同层级的结点是否按文字对齐 如没有收起展开图标的节点和有图标的节点文字对齐 默认false */
+  hierarchyTextStartAlignment?: boolean;
   /** 分页配置 */
   pagination?: IPagination;
 
@@ -300,6 +301,8 @@ export interface PivotTableConstructorOptions extends BaseTableConstructorOption
   rowExpandLevel?: number;
   /**子层级维度缩进距离 */
   rowHierarchyIndent?: number;
+  /** 同层级的结点是否按文字对齐 如没有收起展开图标的节点和有图标的节点文字对齐 默认false */
+  rowHierarchyTextStartAlignment?: boolean;
   /** 列表头维度结构 */
   columnTree?: IHeaderTreeDefine[];
   /** 行表头维度结构 */
