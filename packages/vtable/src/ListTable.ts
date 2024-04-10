@@ -736,6 +736,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
    * @param row
    */
   toggleHierarchyState(col: number, row: number) {
+    this.stateManager.updateHoverIcon(col, row, undefined, undefined);
     const hierarchyState = this.getHierarchyState(col, row);
     if (hierarchyState === HierarchyState.expand) {
       this._refreshHierarchyState(col, row);

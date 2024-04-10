@@ -489,7 +489,7 @@ export class StateManager {
   }
 
   updateHoverIcon(col: number, row: number, target: any, cellGroup: Group, event?: FederatedEvent) {
-    if (target === this.residentHoverIcon?.icon) {
+    if (this.residentHoverIcon?.icon && target === this.residentHoverIcon?.icon) {
       return; // 常驻hover icon不更新交互
     }
     const iconInfo = getIconAndPositionFromTarget(target);
