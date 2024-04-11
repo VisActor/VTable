@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vtable",
+      "comment": "fix: fix defalultQueryMethod in vtable-search #1448",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vtable"
+}
