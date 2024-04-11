@@ -49,7 +49,7 @@ export function createCheckboxCellGroup(
       cursor: (cellTheme?.group as any)?.cursor ?? undefined,
       lineDash: cellTheme?.group?.lineDash ?? undefined,
 
-      lineCap: 'square',
+      lineCap: 'butt',
 
       clip: true,
 
@@ -156,7 +156,8 @@ function createCheckbox(
   });
 
   const autoColWidth = colWidth === 'auto';
-  const autoRowHeight = table.heightMode === 'autoHeight';
+  // const autoRowHeight = table.heightMode === 'autoHeight';
+  const autoRowHeight = table.isAutoRowHeight(row);
 
   const attribute = {
     text: text.length === 1 ? text[0] : text,

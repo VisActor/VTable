@@ -39,7 +39,6 @@ export function bindTableGroupListener(eventManager: EventManager) {
     // if (stateManager.interactionState === InteractionState.scrolling) {
     //   return;
     // }
-
     if (stateManager.interactionState === InteractionState.grabing) {
       if (Math.abs(lastX - e.x) + Math.abs(lastY - e.y) >= 1) {
         if (stateManager.isResizeCol()) {
@@ -53,7 +52,7 @@ export function bindTableGroupListener(eventManager: EventManager) {
         }
       }
       return;
-    } else if (table.eventManager.isDraging) {
+    } else if (table.eventManager.isDraging && stateManager.isSelecting()) {
       eventManager.dealTableSelect(eventArgsSet, true);
     }
 
@@ -239,11 +238,21 @@ export function bindTableGroupListener(eventManager: EventManager) {
   //   });
   // }
   // });
+  table.scenegraph.tableGroup.addEventListener('pointerenter', (e: FederatedPointerEvent) => {
+    if (table.theme.scrollStyle.visible === 'focus') {
+      stateManager.showHorizontalScrollBar();
+      stateManager.showVerticalScrollBar();
+    }
+  });
   table.scenegraph.tableGroup.addEventListener('pointerleave', (e: FederatedPointerEvent) => {
     //resize 列宽 当鼠标离开table也需要继续响应
     if (!stateManager.isResizeCol() && !stateManager.isMoveCol() && !stateManager.isSelecting()) {
       stateManager.updateInteractionState(InteractionState.default);
       stateManager.updateCursor();
+    }
+    if (table.theme.scrollStyle.visible === 'focus') {
+      stateManager.hideHorizontalScrollBar();
+      stateManager.hideVerticalScrollBar();
     }
     // 移动到table外部 如移动到表格空白区域 移动到表格浏览器外部
     if ((table as any).hasListeners(TABLE_EVENT_TYPE.MOUSELEAVE_CELL)) {
@@ -663,7 +672,7 @@ export function bindTableGroupListener(eventManager: EventManager) {
       eventManager.dealTableSelect();
       stateManager.updateCursor();
       table.scenegraph.updateChartState(null);
-    } else if (table.eventManager.isDraging) {
+    } else if (table.eventManager.isDraging && stateManager.isSelecting()) {
       // 如果鼠标拖拽后是否 则结束选中
       stateManager.endSelectCells();
     }

@@ -99,6 +99,7 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
   rowHierarchyType?: 'grid' | 'tree';
   rowExpandLevel?: number;
   rowHierarchyIndent?: number;
+  rowHierarchyTextStartAlignment?: boolean = false;
   /**
    * 行表头对应的维度key集合
    */
@@ -178,6 +179,7 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
     this.rowHierarchyType = (table as PivotTable).options.rowHierarchyType ?? 'grid';
     this.rowExpandLevel = (table as PivotTable).options.rowExpandLevel ?? 1;
     this.rowHierarchyIndent = (table as PivotTable).options.rowHierarchyIndent ?? 20;
+    this.rowHierarchyTextStartAlignment = (table as PivotTable).options.rowHierarchyTextStartAlignment;
     this.cornerSetting = table.options.corner ?? { titleOnDimension: 'column' };
 
     if (dataset) {

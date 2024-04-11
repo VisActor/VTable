@@ -313,6 +313,10 @@ export interface IIndicatorHeaderNode {
 
 如果设置了树形展示，子节点单元格中显示内容相比其父节点内容的缩进距离。
 
+## rowHierarchyTextStartAlignment(boolean) = false
+
+同层级的结点是否按文字对齐 如没有收起展开图标的节点和有图标的节点文字对齐 默认 false
+
 ## indicatorTitle(string)
 
 指标标题 用于显示到角头的值

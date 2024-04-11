@@ -103,6 +103,10 @@ When displayed as a tree structure, the indentation value of each layer of conte
 
 When displayed as a tree structure, the number of levels is expanded by default. The default value is 1, which only displays the root node. If configured to `Infinity`, all nodes will be expanded.
 
+## hierarchyTextStartAlignment(boolean) = false
+
+Whether nodes at the same level are aligned by text, such as nodes without collapsed expansion icons and nodes with icons. Default is false
+
 ## frozenColDragHeaderMode(string) = 'fixedFrozenCount'
 
 Drag the table header to move the position. Rules for frozen parts. The default is fixedFrozenCount.

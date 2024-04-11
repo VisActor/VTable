@@ -489,7 +489,7 @@ export class StateManager {
   }
 
   updateHoverIcon(col: number, row: number, target: any, cellGroup: Group, event?: FederatedEvent) {
-    if (target === this.residentHoverIcon?.icon) {
+    if (this.residentHoverIcon?.icon && target === this.residentHoverIcon?.icon) {
       return; // 常驻hover icon不更新交互
     }
     const iconInfo = getIconAndPositionFromTarget(target);
@@ -525,7 +525,12 @@ export class StateManager {
             rect: iconInfo.position,
             placement: inlineIcon.attribute.tooltip.placement
           },
-          style: Object.assign({}, this.table.internalProps.theme?.tooltipStyle, inlineIcon.tooltip?.style)
+          style: Object.assign(
+            {},
+            this.table.internalProps.theme?.tooltipStyle,
+            inlineIcon.tooltip?.style,
+            inlineIcon.attribute?.tooltip?.style
+          )
         };
         if (!this.table.internalProps.tooltipHandler.isBinded(tooltipOptions)) {
           this.table.showTooltip(col, row, tooltipOptions);
@@ -560,21 +565,23 @@ export class StateManager {
     return this.select.selecting;
   }
   endSelectCells(fireListener: boolean = true) {
-    this.select.selecting = false;
-    if (this.select.ranges.length === 0) {
-      return;
-    }
-    selectEnd(this.table.scenegraph);
+    if (this.select.selecting) {
+      this.select.selecting = false;
+      if (this.select.ranges.length === 0) {
+        return;
+      }
+      selectEnd(this.table.scenegraph);
 
-    // 触发SELECTED_CELL
-    const lastCol = this.select.ranges[this.select.ranges.length - 1].end.col;
-    const lastRow = this.select.ranges[this.select.ranges.length - 1].end.row;
-    fireListener &&
-      this.table.fireListeners(TABLE_EVENT_TYPE.SELECTED_CELL, {
-        ranges: this.select.ranges,
-        col: lastCol,
-        row: lastRow
-      });
+      // 触发SELECTED_CELL
+      const lastCol = this.select.ranges[this.select.ranges.length - 1].end.col;
+      const lastRow = this.select.ranges[this.select.ranges.length - 1].end.row;
+      fireListener &&
+        this.table.fireListeners(TABLE_EVENT_TYPE.SELECTED_CELL, {
+          ranges: this.select.ranges,
+          col: lastCol,
+          row: lastRow
+        });
+    }
   }
   endResizeCol() {
     setTimeout(() => {

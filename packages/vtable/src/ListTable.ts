@@ -34,6 +34,7 @@ import { computeRowHeight } from './scenegraph/layout/compute-row-height';
 import { defaultOrderFn } from './tools/util';
 import type { IEditor } from '@visactor/vtable-editors';
 import type { ColumnData, ColumnDefine } from './ts-types/list-table/layout-map/api';
+import { cloneDeepSpec } from '@visactor/vutils-extension';
 
 export class ListTable extends BaseTable implements ListTableAPI {
   declare internalProps: ListTableProtected;
@@ -66,9 +67,9 @@ export class ListTable extends BaseTable implements ListTableAPI {
     internalProps.sortState = options.sortState;
     internalProps.dataConfig = {}; //cloneDeep(options.dataConfig ?? {});
     internalProps.columns = options.columns
-      ? cloneDeep(options.columns)
+      ? cloneDeepSpec(options.columns)
       : options.header
-      ? cloneDeep(options.header)
+      ? cloneDeepSpec(options.header)
       : [];
     options.columns?.forEach((colDefine, index) => {
       //如果editor 是一个IEditor的实例  需要这样重新赋值 否则clone后变质了
@@ -142,7 +143,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
    */
   updateColumns(columns: ColumnsDefine) {
     const oldHoverState = { col: this.stateManager.hover.cellPos.col, row: this.stateManager.hover.cellPos.row };
-    this.internalProps.columns = cloneDeep(columns);
+    this.internalProps.columns = cloneDeepSpec(columns);
     columns.forEach((colDefine, index) => {
       if (colDefine.editor) {
         this.internalProps.columns[index].editor = colDefine.editor;
@@ -374,9 +375,9 @@ export class ListTable extends BaseTable implements ListTableAPI {
     //更新protectedSpace
     this.showHeader = options.showHeader ?? true;
     internalProps.columns = options.columns
-      ? cloneDeep(options.columns)
+      ? cloneDeepSpec(options.columns)
       : options.header
-      ? cloneDeep(options.header)
+      ? cloneDeepSpec(options.header)
       : [];
     options.columns.forEach((colDefine, index) => {
       if (colDefine.editor) {
@@ -735,6 +736,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
    * @param row
    */
   toggleHierarchyState(col: number, row: number) {
+    this.stateManager.updateHoverIcon(col, row, undefined, undefined);
     const hierarchyState = this.getHierarchyState(col, row);
     if (hierarchyState === HierarchyState.expand) {
       this._refreshHierarchyState(col, row);

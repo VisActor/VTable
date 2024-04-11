@@ -369,3 +369,64 @@ export function getCellCornerRadius(col: number, row: number, table: BaseTableAP
   }
   return 0;
 }
+
+export function parseMarkLineGetExtendRange(markLine: any): number | 'sum' | 'max' {
+  if (markLine) {
+    if (Array.isArray(markLine)) {
+      let extendRange: number | 'sum' | 'max';
+      for (let i = 0; i < markLine.length; i++) {
+        if (markLine[i].autoRange) {
+          if (
+            markLine[i].y === 'sum' ||
+            markLine[i].x === 'sum' ||
+            markLine[i].y1 === 'sum' ||
+            markLine[i].x1 === 'sum'
+          ) {
+            return 'sum';
+          }
+          if (
+            markLine[i].y === 'max' ||
+            markLine[i].x === 'max' ||
+            markLine[i].y1 === 'max' ||
+            markLine[i].x1 === 'max'
+          ) {
+            extendRange = 'max';
+          }
+          if (typeof markLine[i].y === 'number' && typeof (extendRange ?? 0) === 'number') {
+            extendRange = Math.max(<number>extendRange ?? 0, markLine[i].y);
+          }
+          if (typeof markLine[i].x === 'number' && typeof (extendRange ?? 0) === 'number') {
+            extendRange = Math.max(<number>extendRange ?? 0, markLine[i].x);
+          }
+          if (typeof markLine[i].y1 === 'number' && typeof (extendRange ?? 0) === 'number') {
+            extendRange = Math.max(<number>extendRange ?? 0, markLine[i].y1);
+          }
+          if (typeof markLine[i].x1 === 'number' && typeof (extendRange ?? 0) === 'number') {
+            extendRange = Math.max(<number>extendRange ?? 0, markLine[i].x1);
+          }
+        }
+      }
+      return extendRange;
+    } else if (markLine.autoRange) {
+      if (markLine.y === 'sum' || markLine.x === 'sum' || markLine.y1 === 'sum' || markLine.x1 === 'sum') {
+        return 'sum';
+      }
+      if (markLine.y === 'max' || markLine.x === 'max' || markLine.y1 === 'max' || markLine.x1 === 'max') {
+        return 'max';
+      }
+      if (typeof markLine.y === 'number') {
+        return markLine.y;
+      }
+      if (typeof markLine.x === 'number') {
+        return markLine.x;
+      }
+      if (typeof markLine.y1 === 'number') {
+        return markLine.y1;
+      }
+      if (typeof markLine.x1 === 'number') {
+        return markLine.x1;
+      }
+    }
+  }
+  return undefined;
+}

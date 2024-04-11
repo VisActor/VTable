@@ -501,7 +501,7 @@ export function bindContainerDomListener(eventManager: EventManager) {
     }
     const isSelecting = table.stateManager.isSelecting();
 
-    if (eventManager.isDraging && isSelecting) {
+    if (eventManager.isDraging && isSelecting && table.stateManager.select.ranges?.length > 0) {
       // 检测鼠标是否离开了table
       const drawRange = table.getDrawRange();
       // const element = table.getElement();
