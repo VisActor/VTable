@@ -2,34 +2,31 @@
 
 2024-04-11
 
-
 **🆕 新增功能**
 
-- **@visactor/vtable**: scrollbar visible focus [#1360](https://github.com/VisActor/VTable/issues/1360)
-- **@visactor/vtable**: add rowHierarchyTextStartAlignment for tree mode [#1417](https://github.com/VisActor/VTable/issues/1417)
+- **@visactor/vtable**: 滚动条可支持visible设置为focus，当鼠标聚焦到表格时显示滚动条 [#1360](https://github.com/VisActor/VTable/issues/1360)
+- **@visactor/vtable**: 树模式下添加层级文本对齐方式：rowHierarchyTextStartAlignment [#1417](https://github.com/VisActor/VTable/issues/1417)
 
 **🐛 功能修复**
 
-- **@visactor/vtable**: records api when has merge cell render error [#1286](https://github.com/VisActor/VTable/issues/1286)
-- **@visactor/vtable**: add isAutoRowHeight to handle width row height compute [#1379](https://github.com/VisActor/VTable/issues/1379)
-- **@visactor/vtable**: chart spec clone filtered dom problem [#1422](https://github.com/VisActor/VTable/issues/1422)
-- **@visactor/vtable**: borderlinedash effect error handle with lineCap [#1436](https://github.com/VisActor/VTable/issues/1436)
-- **@visactor/vtable**: trigger event selectedCell [#1444](https://github.com/VisActor/VTable/issues/1444)
-- **@visactor/vtable**: set disableSelect drag cells occor error [#1461](https://github.com/VisActor/VTable/issues/1461)
-- **@visactor/vtable**: left content width error when tree hierarchy state icon back rect showing [#1466](https://github.com/VisActor/VTable/issues/1466)
-- **@visactor/vtable**: fix domain order in  horizontal [#1453](https://github.com/VisActor/VTable/issues/1453)
-- **@visactor/vtable**: add columnWidthComputeMode update in opdateOption [#1465](https://github.com/VisActor/VTable/issues/1465)
-- **@visactor/vtable**: fix inline icon tooltip config [#1456](https://github.com/VisActor/VTable/issues/1456)
-- **@visactor/vtable**: 修复进度图部分情况遮挡表格边缘单元格
-- **@visactor/vtable**: fix transpose border theme [#1463](https://github.com/VisActor/VTable/issues/1463)
+- **@visactor/vtable**: 修复合并单元格时数据操作相关 API 调用后的渲染错误 [#1286](https://github.com/VisActor/VTable/issues/1286)
+- **@visactor/vtable**: 解决当拖拽列宽时自动行高不生效问题，添加isAutoRowHeight来处理行高计算 [#1379](https://github.com/VisActor/VTable/issues/1379)
+- **@visactor/vtable**: 解决图表Tooltip中配置 DOM 生效问题 [#1422](https://github.com/VisActor/VTable/issues/1422)
+- **@visactor/vtable**: 边框虚线效果错误处理lineCap设置问题 [#1436](https://github.com/VisActor/VTable/issues/1436)
+- **@visactor/vtable**: 解决重复触发选中单元格事件 [#1444](https://github.com/VisActor/VTable/issues/1444)
+- **@visactor/vtable**: 解决设置disableSelect禁用选择拖动单元格时出错 [#1461](https://github.com/VisActor/VTable/issues/1461)
+- **@visactor/vtable**: 解决树层级状态图标宽度错误问题 [#1466](https://github.com/VisActor/VTable/issues/1466)
+- **@visactor/vtable**: 修复透视图设置水平方向时轴domain顺序 [#1453](https://github.com/VisActor/VTable/issues/1453)
+- **@visactor/vtable**: 在 opdateOption 中更新 columnWidthComputeMode修复列宽计算问题 [#1465](https://github.com/VisActor/VTable/issues/1465)
+- **@visactor/vtable**: 修复内联图标inline icon tooltip 提示配置 [#1456](https://github.com/VisActor/VTable/issues/1456)
+- **@visactor/vtable**: 修复进度图在某些情况下遮挡表格边缘单元格
+- **@visactor/vtable**: 修复转置表格表头边框获取逻辑 [#1463](https://github.com/VisActor/VTable/issues/1463)
 
 **🔨 功能重构**
 
-- **@visactor/vtable**: update drilldown drillup svg
-- **@visactor/vtable**: handle width chartSpce with markLine [#1420](https://github.com/VisActor/VTable/issues/1420)
-- **@visactor/vtable**: supplement event type for react table [#1434](https://github.com/VisActor/VTable/issues/1434)
-
-
+- **@visactor/vtable**: 更新下钻上钻图标的SVG
+- **@visactor/vtable**: 透视图设置 markLine autoRange 处理轴范围 [#1420](https://github.com/VisActor/VTable/issues/1420)
+- **@visactor/vtable**: 为 react 表格补充事件类型 [#1434](https://github.com/VisActor/VTable/issues/1434)
 
 [更多详情请查看 v0.23.2](https://github.com/VisActor/VTable/releases/tag/v0.23.2)
 
@@ -40,23 +37,23 @@
 
 **🆕 新增功能**
 
-- **@visactor/vtable**: select range can extends during scroll [#1400](https://github.com/VisActor/VTable/issues/1400)
+- **@visactor/vtable**: 滚动时选择范围可以自动滚动扩展 [#1400](https://github.com/VisActor/VTable/issues/1400)
 
 **🐛 功能修复**
 
-- **@visactor/vtable**: maxLineWidth value should consider hierarchyOffset [#1224](https://github.com/VisActor/VTable/issues/1224)
-- **@visactor/vtable**: tree leaf node textAlign right render error [#1393](https://github.com/VisActor/VTable/issues/1393)
-- **@visactor/vtable**: when copy or paste navigator.clipboard?.write occor undefined error in not https [#1421](https://github.com/VisActor/VTable/issues/1421)
-- **@visactor/vtable**: fix header cell imageAutoSizing [#1339](https://github.com/VisActor/VTable/issues/1339)
-- **@visactor/vtable**: hide icon background when hide icon
-- **@visactor/vtable**: fix nan verticalBarPos [#1232](https://github.com/VisActor/VTable/issues/1232)
-- **@visactor/vtable**: fix progressbar cover cell border [#1425](https://github.com/VisActor/VTable/issues/1425)
-- **@visactor/vtable**: remove container in table option
-- **@visactor/vtable**: add sync render in exportCellImg [#1398](https://github.com/VisActor/VTable/issues/1398)
+- **@visactor/vtable**: maxLineWidth 值应考虑 hierarchyOffset [#1224](https://github.com/VisActor/VTable/issues/1224)
+- **@visactor/vtable**: 树叶节点文本右对齐渲染错误 [#1393](https://github.com/VisActor/VTable/issues/1393)
+- **@visactor/vtable**: 复制或粘贴时 navigator.clipboard?.write 在非 https 中未定义错误 [#1421](https://github.com/VisActor/VTable/issues/1421)
+- **@visactor/vtable**: 修复表头单元格图像自动调整大小 [#1339](https://github.com/VisActor/VTable/issues/1339)
+- **@visactor/vtable**: 隐藏图标时隐藏图标背景
+- **@visactor/vtable**: 修复 nan verticalBarPos [#1232](https://github.com/VisActor/VTable/issues/1232)
+- **@visactor/vtable**: 修复进度条覆盖单元格边框 [#1425](https://github.com/VisActor/VTable/issues/1425)
+- **@visactor/vtable**: 在表格选项中移除容器
+- **@visactor/vtable**: 在 exportCellImg 中添加同步渲染 [#1398](https://github.com/VisActor/VTable/issues/1398)
 
 **🔨 功能重构**
 
-- **@visactor/vtable**: optimize performance when change tree hierarchy state [#1406](https://github.com/VisActor/VTable/issues/1406)
+- **@visactor/vtable**: 优化更改树层级状态时的性能 [#1406](https://github.com/VisActor/VTable/issues/1406)
 
 
 
