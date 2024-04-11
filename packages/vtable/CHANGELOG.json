@@ -2,6 +2,66 @@
   "name": "@visactor/vtable",
   "entries": [
     {
+      "version": "0.23.2",
+      "tag": "@visactor/vtable_v0.23.2",
+      "date": "Wed, 10 Apr 2024 13:08:31 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "fix: records api when has merge cell render error #1286\n\n"
+          },
+          {
+            "comment": "refactor: update drilldown drillup svg\n\n"
+          },
+          {
+            "comment": "feat: scrollbar visible focus #1360\n\n"
+          },
+          {
+            "comment": "fix: add isAutoRowHeight to handle width row height compute #1379\n\n"
+          },
+          {
+            "comment": "feat: add rowHierarchyTextStartAlignment for tree mode #1417\n\n"
+          },
+          {
+            "comment": "refactor: handle width chartSpce with markLine #1420\n\n"
+          },
+          {
+            "comment": "fix: chart spec clone filtered dom problem #1422\n\n"
+          },
+          {
+            "comment": "refactor: supplement event type for react table #1434\n\n"
+          },
+          {
+            "comment": "fix: borderlinedash effect error handle with lineCap #1436\n\n"
+          },
+          {
+            "comment": "fix: trigger event selectedCell #1444\n\n"
+          },
+          {
+            "comment": "fix: set disableSelect drag cells occor error #1461\n\n"
+          },
+          {
+            "comment": "fix: left content width error when tree hierarchy state icon back rect showing #1466\n\n"
+          },
+          {
+            "comment": "fix: fix domain order in  horizontal #1453"
+          },
+          {
+            "comment": "fix: add columnWidthComputeMode update in opdateOption #1465"
+          },
+          {
+            "comment": "fix: fix inline icon tooltip config #1456"
+          },
+          {
+            "comment": "fix: 修复进度图部分情况遮挡表格边缘单元格\n\n"
+          },
+          {
+            "comment": "fix: fix transpose border theme #1463"
+          }
+        ]
+      }
+    },
+    {
       "version": "0.23.1",
       "tag": "@visactor/vtable_v0.23.1",
       "date": "Sun, 07 Apr 2024 02:48:06 GMT",

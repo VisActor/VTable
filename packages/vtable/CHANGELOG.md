@@ -1,6 +1,55 @@
 # Change Log - @visactor/vtable
 
-This log was last generated on Sun, 07 Apr 2024 02:48:06 GMT and should not be manually modified.
+This log was last generated on Wed, 10 Apr 2024 13:08:31 GMT and should not be manually modified.
+
+## 0.23.2
+Wed, 10 Apr 2024 13:08:31 GMT
+
+### Updates
+
+- fix: records api when has merge cell render error #1286
+
+
+- refactor: update drilldown drillup svg
+
+
+- feat: scrollbar visible focus #1360
+
+
+- fix: add isAutoRowHeight to handle width row height compute #1379
+
+
+- feat: add rowHierarchyTextStartAlignment for tree mode #1417
+
+
+- refactor: handle width chartSpce with markLine #1420
+
+
+- fix: chart spec clone filtered dom problem #1422
+
+
+- refactor: supplement event type for react table #1434
+
+
+- fix: borderlinedash effect error handle with lineCap #1436
+
+
+- fix: trigger event selectedCell #1444
+
+
+- fix: set disableSelect drag cells occor error #1461
+
+
+- fix: left content width error when tree hierarchy state icon back rect showing #1466
+
+
+- fix: fix domain order in  horizontal #1453
+- fix: add columnWidthComputeMode update in opdateOption #1465
+- fix: fix inline icon tooltip config #1456
+- fix: 修复进度图部分情况遮挡表格边缘单元格
+
+
+- fix: fix transpose border theme #1463
 
 ## 0.23.1
 Sun, 07 Apr 2024 02:48:06 GMT
