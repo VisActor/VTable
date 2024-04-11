@@ -489,7 +489,7 @@ export class StateManager {
   }
 
   updateHoverIcon(col: number, row: number, target: any, cellGroup: Group, event?: FederatedEvent) {
-    if (target === this.residentHoverIcon?.icon) {
+    if (this.residentHoverIcon?.icon && target === this.residentHoverIcon?.icon) {
       return; // 常驻hover icon不更新交互
     }
     const iconInfo = getIconAndPositionFromTarget(target);
@@ -525,7 +525,12 @@ export class StateManager {
             rect: iconInfo.position,
             placement: inlineIcon.attribute.tooltip.placement
           },
-          style: Object.assign({}, this.table.internalProps.theme?.tooltipStyle, inlineIcon.tooltip?.style)
+          style: Object.assign(
+            {},
+            this.table.internalProps.theme?.tooltipStyle,
+            inlineIcon.tooltip?.style,
+            inlineIcon.attribute?.tooltip?.style
+          )
         };
         if (!this.table.internalProps.tooltipHandler.isBinded(tooltipOptions)) {
           this.table.showTooltip(col, row, tooltipOptions);

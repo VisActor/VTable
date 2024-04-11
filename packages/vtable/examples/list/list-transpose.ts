@@ -68,15 +68,31 @@ export function createTable() {
     records,
     columns,
     widthMode: 'standard',
-    // transpose: true,
+    transpose: true,
     dragHeaderMode: 'all',
     limitMinWidth: 20,
     theme: VTable.themes.DEFAULT.extends({
       frameStyle: { borderLineWidth: 10 },
       scrollStyle: {
-        hoverOn: true,
-        visible: 'focus'
-        // barToSide: true
+        hoverOn: false,
+        visible: 'always',
+        barToSide: true
+      },
+      // rowHeaderStyle: {
+      //   // color: 'red',
+      //   // borderColor: 'green',
+      //   frameStyle: {
+      //     borderColor: 'red',
+      //     borderLineWidth: 2
+      //   }
+      // },
+      headerStyle: {
+        // color: 'red',
+        // borderColor: 'green',
+        frameStyle: {
+          borderColor: [null, '#E1E4E8', null, null],
+          borderLineWidth: 2
+        }
       }
     })
   };

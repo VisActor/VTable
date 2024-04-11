@@ -892,6 +892,7 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
   toggleHierarchyState(col: number, row: number) {
     let notFillWidth = false;
     let notFillHeight = false;
+    this.stateManager.updateHoverIcon(col, row, undefined, undefined);
     const checkHasChart = this.internalProps.layoutMap.checkHasChart();
     // 检查当前状态总宽高未撑满autoFill是否在起作用
     if (checkHasChart) {
@@ -917,7 +918,6 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
         originData: this.getCellOriginRecord(col, row)
       });
     }
-
     const result = (this.internalProps.layoutMap as PivotHeaderLayoutMap).toggleHierarchyState(col, row);
     //影响行数
     this.refreshRowColCount();

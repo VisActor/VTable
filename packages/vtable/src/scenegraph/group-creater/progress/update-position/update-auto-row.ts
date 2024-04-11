@@ -1,3 +1,4 @@
+import { isValid } from '@visactor/vutils';
 import type { BaseTableAPI } from '../../../../ts-types/base-table';
 import type { Group } from '../../../graphic/group';
 
@@ -25,14 +26,18 @@ export function updateAutoRow(
         } else if (part) {
           const baseCellGroup = table.scenegraph.highPerformanceGetCell(col, rowEnd + 1, true);
           y = baseCellGroup.attribute.y;
-          for (let r = rowStart; r <= rowEnd; r++) {
-            y -= table.getRowHeight(r);
+          if (isValid(y)) {
+            for (let r = rowStart; r <= rowEnd; r++) {
+              y -= table.getRowHeight(r);
+            }
           }
         } else {
           // 估计位置
           y = table.getRowsHeight(table.columnHeaderLevelCount, cellGroup.row - 1);
         }
-        cellGroup.setAttribute('y', y);
+        if (isValid(y)) {
+          cellGroup.setAttribute('y', y);
+        }
       }
     }
   } else {
