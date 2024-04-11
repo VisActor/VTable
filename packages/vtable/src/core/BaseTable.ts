@@ -46,7 +46,8 @@ import type {
   IRowSeriesNumber,
   ColumnStyleOption,
   MappingRule,
-  TableEventOptions
+  TableEventOptions,
+  ListTableAPI
 } from '../ts-types';
 import { event, style as utilStyle } from '../tools/helper';
 
@@ -1967,7 +1968,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     if (parentElement) {
       parentElement.removeChild(internalProps.element);
     }
-
+    (this as any).editorManager?.editingEditor?.onEnd?.();
     this.isReleased = true;
   }
 
