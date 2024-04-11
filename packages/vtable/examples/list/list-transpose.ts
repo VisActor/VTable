@@ -72,19 +72,26 @@ export function createTable() {
     dragHeaderMode: 'all',
     limitMinWidth: 20,
     theme: VTable.themes.DEFAULT.extends({
+      frameStyle: { borderLineWidth: 10 },
       scrollStyle: {
-        hoverOn: false,
-        visible: 'always',
-        barToSide: true
+        hoverOn: true,
+        visible: 'focus'
+        // barToSide: true
       }
     })
   };
   const tableInstance = new VTable.ListTable(option);
   window.tableInstance = tableInstance;
-  tableInstance.on(VTable.ListTable.EVENT_TYPE.SELECTED_CELL, arg => {
-    console.log('SELECTED_CELL', arg);
+  tableInstance.on(VTable.ListTable.EVENT_TYPE.MOUSEENTER_TABLE, arg => {
+    console.log('MOUSEENTER_TABLE', arg);
+  });
+  tableInstance.on(VTable.ListTable.EVENT_TYPE.MOUSELEAVE_TABLE, arg => {
+    console.log('MOUSELEAVE_TABLE', arg);
   });
 
+  tableInstance.on(VTable.ListTable.EVENT_TYPE.MOUSEDOWN_TABLE, arg => {
+    console.log('mousedown_table', arg);
+  });
   tableInstance.on(VTable.ListTable.EVENT_TYPE.CHANGE_HEADER_POSITION, arg => {
     console.log('CHANGE_HEADER_POSITION', arg);
   });

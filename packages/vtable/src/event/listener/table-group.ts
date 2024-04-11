@@ -243,6 +243,11 @@ export function bindTableGroupListener(eventManager: EventManager) {
       stateManager.showHorizontalScrollBar();
       stateManager.showVerticalScrollBar();
     }
+    if ((table as any).hasListeners(TABLE_EVENT_TYPE.MOUSEENTER_TABLE)) {
+      table.fireListeners(TABLE_EVENT_TYPE.MOUSEENTER_TABLE, {
+        event: e.nativeEvent
+      });
+    }
   });
   table.scenegraph.tableGroup.addEventListener('pointerleave', (e: FederatedPointerEvent) => {
     //resize 列宽 当鼠标离开table也需要继续响应
@@ -274,10 +279,7 @@ export function bindTableGroupListener(eventManager: EventManager) {
     const target = e.target;
     if (target && !target.isDescendantsOf(table.scenegraph.tableGroup)) {
       table.fireListeners(TABLE_EVENT_TYPE.MOUSELEAVE_TABLE, {
-        col: -1,
-        row: -1,
-        event: e.nativeEvent,
-        target: undefined
+        event: e.nativeEvent
       });
     }
   });
@@ -345,8 +347,11 @@ export function bindTableGroupListener(eventManager: EventManager) {
   });
 
   table.scenegraph.tableGroup.addEventListener('pointerdown', (e: FederatedPointerEvent) => {
-    console.log('tableGroup pointerdown');
-    console.log(stateManager.interactionState);
+    if ((table as any).hasListeners(TABLE_EVENT_TYPE.MOUSEDOWN_TABLE)) {
+      table.fireListeners(TABLE_EVENT_TYPE.MOUSEDOWN_TABLE, {
+        event: e.nativeEvent
+      });
+    }
     // table.eventManager.isPointerDownOnTable = true;
     // setTimeout(() => {
     //   table.eventManager.isPointerDownOnTable = false;
