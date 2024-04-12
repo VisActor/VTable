@@ -5,6 +5,7 @@ import { getAxisOption, getAxisRange } from './get-axis-config';
 import { getAxisDomainRangeAndLabels } from './get-axis-domain';
 import { getNewRangeToAlign } from './zero-align';
 import type { IChartIndicator } from '../../ts-types';
+import { cloneDeepSpec } from '@visactor/vutils-extension';
 
 const NO_AXISID_FRO_VTABLE = 'NO_AXISID_FRO_VTABLE';
 
@@ -125,7 +126,7 @@ export function getChartSpec(col: number, row: number, layout: PivotHeaderLayout
   let chartSpec = layout.getRawChartSpec(col, row);
   if (chartSpec) {
     if (layout._table.isPivotChart()) {
-      chartSpec = cloneDeep(chartSpec);
+      chartSpec = cloneDeepSpec(chartSpec);
       chartSpec.sortDataByAxis = true;
       if (isArray(chartSpec.series)) {
         chartSpec.series.forEach((serie: any) => {
