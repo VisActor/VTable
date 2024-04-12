@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "comment": "fix: short table drag to out table occor error #1502\n\n",
+      "type": "none",
+      "packageName": "@visactor/vtable"
+    }
+  ],
+  "packageName": "@visactor/vtable",
+  "email": "892739385@qq.com"
+}
