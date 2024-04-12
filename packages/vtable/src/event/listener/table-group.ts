@@ -616,7 +616,8 @@ export function bindTableGroupListener(eventManager: EventManager) {
         }
       }
     }
-    if (!eventManager.touchMove && (table as any).hasListeners(TABLE_EVENT_TYPE.CLICK_CELL)) {
+
+    if (!eventManager.touchMove && e.button === 0 && (table as any).hasListeners(TABLE_EVENT_TYPE.CLICK_CELL)) {
       const { col, row } = eventArgsSet.eventArgs;
       const cellInfo = table.getCellInfo(col, row);
       let icon;
