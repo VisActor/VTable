@@ -813,22 +813,24 @@ export class StateManager {
     // 更新scrollbar位置
     const yRatio = top / (totalHeight - this.table.scenegraph.height);
     this.table.scenegraph.component.updateVerticalScrollBarPos(yRatio);
-    this.table.fireListeners(TABLE_EVENT_TYPE.SCROLL, {
-      scrollTop: this.scroll.verticalBarPos,
-      scrollLeft: this.scroll.horizontalBarPos,
-      scrollHeight: this.table.theme.scrollStyle?.width,
-      scrollWidth: this.table.theme.scrollStyle?.width,
-      viewHeight: this.table.tableNoFrameHeight,
-      viewWidth: this.table.tableNoFrameWidth,
-      scrollDirection: 'vertical',
-      scrollRatioY: yRatio
-    });
 
     if (oldVerticalBarPos !== top) {
+      this.table.fireListeners(TABLE_EVENT_TYPE.SCROLL, {
+        scrollTop: this.scroll.verticalBarPos,
+        scrollLeft: this.scroll.horizontalBarPos,
+        scrollHeight: this.table.theme.scrollStyle?.width,
+        scrollWidth: this.table.theme.scrollStyle?.width,
+        viewHeight: this.table.tableNoFrameHeight,
+        viewWidth: this.table.tableNoFrameWidth,
+        scrollDirection: 'vertical',
+        scrollRatioY: yRatio
+      });
+
       this.checkVerticalScrollBarEnd();
     }
   }
   setScrollLeft(left: number) {
+    const oldScrollLeft = this.table.scrollLeft;
     // 矫正left值范围
     const totalWidth = this.table.getAllColsWidth();
     const frozenWidth = this.table.getFrozenColsWidth();
@@ -853,17 +855,18 @@ export class StateManager {
     const xRatio = left / (totalWidth - this.table.scenegraph.width);
     this.table.scenegraph.component.updateHorizontalScrollBarPos(xRatio);
 
-    this.table.fireListeners(TABLE_EVENT_TYPE.SCROLL, {
-      scrollTop: this.scroll.verticalBarPos,
-      scrollLeft: this.scroll.horizontalBarPos,
-      scrollHeight: this.table.theme.scrollStyle?.width,
-      scrollWidth: this.table.theme.scrollStyle?.width,
-      viewHeight: this.table.tableNoFrameHeight,
-      viewWidth: this.table.tableNoFrameWidth,
-      scrollDirection: 'horizontal',
-      scrollRatioX: xRatio
-    });
     if (oldHorizontalBarPos !== left) {
+      this.table.fireListeners(TABLE_EVENT_TYPE.SCROLL, {
+        scrollTop: this.scroll.verticalBarPos,
+        scrollLeft: this.scroll.horizontalBarPos,
+        scrollHeight: this.table.theme.scrollStyle?.width,
+        scrollWidth: this.table.theme.scrollStyle?.width,
+        viewHeight: this.table.tableNoFrameHeight,
+        viewWidth: this.table.tableNoFrameWidth,
+        scrollDirection: 'horizontal',
+        scrollRatioX: xRatio
+      });
+
       this.checkHorizontalScrollBarEnd();
     }
   }
