@@ -1001,12 +1001,13 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
   }
 
   getDefaultRowHeight(row: number) {
-    if (this.isColumnHeader(0, row) || this.isCornerHeader(0, row)) {
+    if (this.isColumnHeader(0, row) || this.isCornerHeader(0, row) || this.isSeriesNumberInHeader(0, row)) {
       return Array.isArray(this.defaultHeaderRowHeight)
         ? this.defaultHeaderRowHeight[row] ?? this.internalProps.defaultRowHeight
         : this.defaultHeaderRowHeight;
     }
-    if (this.isBottomFrozenRow(this.rowHeaderLevelCount, row)) {
+    if (this.isBottomFrozenRow(row)) {
+      //底部冻结行默认取用了表头的行高  但针对非表头数据冻结的情况这里可能不妥
       return Array.isArray(this.defaultHeaderRowHeight)
         ? this.defaultHeaderRowHeight[
             this.columnHeaderLevelCount > 0 ? this.columnHeaderLevelCount - this.bottomFrozenRowCount : 0
