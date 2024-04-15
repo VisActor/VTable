@@ -1275,6 +1275,7 @@ export class StateManager {
   initCheckedState(records: any[]) {
     // clear checkbox state
     this.checkedState = [];
+    this.headerCheckedState = {};
     this.radioState = {};
 
     let isNeedInitHeaderCheckedStateFromRecord = false;
