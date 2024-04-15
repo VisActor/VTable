@@ -47,6 +47,8 @@ import type {
   ColumnStyleOption,
   MappingRule,
   TableEventOptions,
+  WidthAdaptiveModeDef,
+  HeightAdaptiveModeDef,
   ListTableAPI
 } from '../ts-types';
 import { event, style as utilStyle } from '../tools/helper';
@@ -143,6 +145,8 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
   _heightMode: HeightModeDef;
   _autoFillWidth: boolean;
   _autoFillHeight: boolean;
+  _widthAdaptiveMode: WidthAdaptiveModeDef;
+  _heightAdaptiveMode: HeightAdaptiveModeDef;
   customRender?: ICustomRender;
 
   canvasWidth?: number;
@@ -207,6 +211,8 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
       heightMode = 'standard',
       autoFillWidth = false,
       autoFillHeight = false,
+      widthAdaptiveMode = 'only-body',
+      heightAdaptiveMode = 'only-body',
       keyboardOptions,
       eventOptions,
       rowSeriesNumber,
@@ -238,6 +244,8 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     this.options = options;
     this._widthMode = widthMode;
     this._heightMode = heightMode;
+    this._widthAdaptiveMode = widthAdaptiveMode;
+    this._heightAdaptiveMode = heightAdaptiveMode;
     this._autoFillWidth = autoFillWidth;
     this._autoFillHeight = autoFillHeight;
     this.customRender = customRender;
@@ -749,6 +757,22 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
   set autoFillHeight(autoFillHeight: boolean) {
     if (autoFillHeight !== this._autoFillHeight) {
       this._autoFillHeight = autoFillHeight;
+    }
+  }
+  get widthAdaptiveMode(): WidthAdaptiveModeDef {
+    return this._widthAdaptiveMode;
+  }
+  set widthAdaptiveMode(widthAdaptiveMode: WidthAdaptiveModeDef) {
+    if (widthAdaptiveMode !== this._widthAdaptiveMode) {
+      this._widthAdaptiveMode = widthAdaptiveMode;
+    }
+  }
+  get heightAdaptiveMode(): HeightAdaptiveModeDef {
+    return this._heightAdaptiveMode;
+  }
+  set heightAdaptiveMode(heightAdaptiveMode: HeightAdaptiveModeDef) {
+    if (heightAdaptiveMode !== this._heightAdaptiveMode) {
+      this._heightAdaptiveMode = heightAdaptiveMode;
     }
   }
   /**
@@ -2015,6 +2039,8 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
       heightMode,
       autoFillWidth,
       autoFillHeight,
+      widthAdaptiveMode,
+      heightAdaptiveMode,
       customRender,
       renderChartAsync,
       renderChartAsyncBatchCount,
@@ -2045,6 +2071,8 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
 
     this.widthMode = widthMode ?? 'standard';
     this.heightMode = heightMode ?? 'standard';
+    this._widthAdaptiveMode = widthAdaptiveMode ?? 'only-body';
+    this._heightAdaptiveMode = heightAdaptiveMode ?? 'only-body';
     this.autoFillWidth = autoFillWidth ?? false;
     this.autoFillHeight = autoFillHeight ?? false;
     this.customRender = customRender;

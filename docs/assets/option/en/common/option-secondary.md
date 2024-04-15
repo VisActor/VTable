@@ -16,6 +16,20 @@ The calculation mode of table row height, which can be 'standard' (standard mode
 - 'adaptive': Use the height of the container to assign the height of each row.
 - 'autoHeight': Automatically calculate line height based on content, based on fontSize and lineHeight(font height)，include padding. The related collocation setting item `autoWrapText` automatically wraps the line, and the line height can be calculated according to the content of the multi-line text after the line wrap.
 
+#${prefix} widthAdaptiveMode('only-body' | 'all') = 'only-body'
+
+The width adaptation strategy in adaptive mode, the default is 'only-body'.
+
+- 'only-body': Only the columns in the body part participate in the width adaptation calculation, and the width of the header part remains unchanged.
+- 'all': All columns participate in width adaptation calculation.
+
+#${prefix} heightAdaptiveMode('only-body' | 'all') = 'only-body'
+
+The height adaptable strategy in adaptive mode, default is 'only-body'.
+
+- 'only-body': Only the rows in the body part participate in the height adaptation calculation, and the height of the header part remains unchanged.
+- 'all': All columns participate in the height adaptation calculation.
+
 #${prefix} autoWrapText(boolean) = false
 
 Whether to automatically wrap text
