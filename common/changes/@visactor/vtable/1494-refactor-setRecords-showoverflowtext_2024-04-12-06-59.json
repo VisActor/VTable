@@ -1,11 +1,11 @@
 {
   "changes": [
     {
-      "comment": "fix: 修复进度图部分情况遮挡表格边缘单元格\n\n",
+      "comment": "refactor: setRecords handle with tooltip overflow #1494\n\n",
       "type": "none",
       "packageName": "@visactor/vtable"
     }
   ],
   "packageName": "@visactor/vtable",
-  "email": "18595927732@163.com"
+  "email": "892739385@qq.com"
 }

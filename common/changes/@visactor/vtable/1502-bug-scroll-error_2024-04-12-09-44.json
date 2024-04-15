@@ -1,7 +1,7 @@
 {
   "changes": [
     {
-      "comment": "fix: chart spec clone filtered dom problem #1422\n\n",
+      "comment": "fix: short table drag to out table occor error #1502\n\n",
       "type": "none",
       "packageName": "@visactor/vtable"
     }

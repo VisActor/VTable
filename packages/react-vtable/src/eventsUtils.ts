@@ -19,6 +19,7 @@ export interface EventsProps {
   onKeyDown?: EventCallback<TYPES.TableEventHandlersEventArgumentMap['keydown']>;
   onMouseEnterTable?: EventCallback<TYPES.TableEventHandlersEventArgumentMap['mouseenter_table']>;
   onMouseLeaveTable?: EventCallback<TYPES.TableEventHandlersEventArgumentMap['mouseleave_table']>;
+  onMouseDownTable?: EventCallback<TYPES.TableEventHandlersEventArgumentMap['mousedown_table']>;
   onMouseMoveCell?: EventCallback<TYPES.TableEventHandlersEventArgumentMap['mousemove_cell']>;
   onMouseEnterCell?: EventCallback<TYPES.TableEventHandlersEventArgumentMap['mouseenter_cell']>;
   onMouseLeaveCell?: EventCallback<TYPES.TableEventHandlersEventArgumentMap['mouseleave_cell']>;
@@ -82,6 +83,7 @@ export const TABLE_EVENTS = {
   onKeyDown: EVENT_TYPE.KEYDOWN,
   onMouseEnterTable: EVENT_TYPE.MOUSEENTER_TABLE,
   onMouseLeaveTable: EVENT_TYPE.MOUSELEAVE_TABLE,
+  onMouseDownTable: EVENT_TYPE.MOUSEDOWN_TABLE,
   onMouseMoveCell: EVENT_TYPE.MOUSEMOVE_CELL,
   onMouseEnterCell: EVENT_TYPE.MOUSEENTER_CELL,
   onMouseLeaveCell: EVENT_TYPE.MOUSELEAVE_CELL,

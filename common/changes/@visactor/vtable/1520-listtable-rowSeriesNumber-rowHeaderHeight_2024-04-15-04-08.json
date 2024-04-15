@@ -1,7 +1,7 @@
 {
   "changes": [
     {
-      "comment": "refactor: handle width chartSpce with markLine #1420\n\n",
+      "comment": "fix: defaultHeaderRowHeight not work with rowSeriesNumber #1520\n\n",
       "type": "none",
       "packageName": "@visactor/vtable"
     }

@@ -362,5 +362,10 @@ export function checkHaveTextStick(table: BaseTableAPI) {
       return true;
     }
   }
+  const themeStick =
+    table.theme.headerStyle.textStick || table.theme.rowHeaderStyle.textStick || table.theme.bodyStyle.textStick;
+  if (themeStick) {
+    return true;
+  }
   return false;
 }

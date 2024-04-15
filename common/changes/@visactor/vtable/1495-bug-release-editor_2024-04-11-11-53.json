@@ -1,7 +1,7 @@
 {
   "changes": [
     {
-      "comment": "fix: add isAutoRowHeight to handle width row height compute #1379\n\n",
+      "comment": "fix: release editor when release tableInstance #1495\n\n",
       "type": "none",
       "packageName": "@visactor/vtable"
     }

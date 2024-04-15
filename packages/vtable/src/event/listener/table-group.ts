@@ -244,6 +244,11 @@ export function bindTableGroupListener(eventManager: EventManager) {
       stateManager.showHorizontalScrollBar();
       stateManager.showVerticalScrollBar();
     }
+    if ((table as any).hasListeners(TABLE_EVENT_TYPE.MOUSEENTER_TABLE)) {
+      table.fireListeners(TABLE_EVENT_TYPE.MOUSEENTER_TABLE, {
+        event: e.nativeEvent
+      });
+    }
   });
   table.scenegraph.tableGroup.addEventListener('pointerleave', (e: FederatedPointerEvent) => {
     //resize 列宽 当鼠标离开table也需要继续响应
@@ -275,10 +280,7 @@ export function bindTableGroupListener(eventManager: EventManager) {
     const target = e.target;
     if (target && !target.isDescendantsOf(table.scenegraph.tableGroup)) {
       table.fireListeners(TABLE_EVENT_TYPE.MOUSELEAVE_TABLE, {
-        col: -1,
-        row: -1,
-        event: e.nativeEvent,
-        target: undefined
+        event: e.nativeEvent
       });
     }
   });
@@ -346,8 +348,11 @@ export function bindTableGroupListener(eventManager: EventManager) {
   });
 
   table.scenegraph.tableGroup.addEventListener('pointerdown', (e: FederatedPointerEvent) => {
-    console.log('tableGroup pointerdown');
-    console.log(stateManager.interactionState);
+    if ((table as any).hasListeners(TABLE_EVENT_TYPE.MOUSEDOWN_TABLE)) {
+      table.fireListeners(TABLE_EVENT_TYPE.MOUSEDOWN_TABLE, {
+        event: e.nativeEvent
+      });
+    }
     // table.eventManager.isPointerDownOnTable = true;
     // setTimeout(() => {
     //   table.eventManager.isPointerDownOnTable = false;
@@ -365,6 +370,7 @@ export function bindTableGroupListener(eventManager: EventManager) {
       return;
     }
     const eventArgsSet: SceneEvent = getCellEventArgsSet(e);
+    eventManager.downIcon = undefined;
     if (stateManager.interactionState !== InteractionState.default) {
       return;
     }
@@ -382,6 +388,7 @@ export function bindTableGroupListener(eventManager: EventManager) {
     const hitIcon = (eventArgsSet?.eventArgs?.target as any)?.role?.startsWith('icon')
       ? eventArgsSet.eventArgs.target
       : undefined;
+    eventManager.downIcon = hitIcon;
     if (!hitIcon || (hitIcon.attribute as IIconGraphicAttribute).interactive === false) {
       if (e.pointerType === 'touch') {
         // 移动端事件特殊处理
@@ -617,7 +624,8 @@ export function bindTableGroupListener(eventManager: EventManager) {
         }
       }
     }
-    if (!eventManager.touchMove && (table as any).hasListeners(TABLE_EVENT_TYPE.CLICK_CELL)) {
+
+    if (!eventManager.touchMove && e.button === 0 && (table as any).hasListeners(TABLE_EVENT_TYPE.CLICK_CELL)) {
       const { col, row } = eventArgsSet.eventArgs;
       const cellInfo = table.getCellInfo(col, row);
       let icon;

@@ -2,7 +2,7 @@
   "changes": [
     {
       "packageName": "@visactor/vtable",
-      "comment": "fix: fix inline icon tooltip config #1456",
+      "comment": "fix: fix defalultQueryMethod in vtable-search #1448",
       "type": "none"
     }
   ],

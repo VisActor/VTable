@@ -90,17 +90,21 @@ export function computeColsWidth(table: BaseTableAPI, colStart?: number, colEnd?
     table._clearColRangeWidthsMap();
     const canvasWidth = table.tableNoFrameWidth;
     let actualHeaderWidth = 0;
-    for (let col = 0; col < table.colCount; col++) {
-      const colWidth = update ? newWidths[col] : table.getColWidth(col);
-      if (
-        col < table.rowHeaderLevelCount ||
-        (table.isPivotChart() && col >= table.colCount - table.rightFrozenColCount)
-      ) {
-        actualHeaderWidth += colWidth;
+    let startCol = 0;
+    let endCol = table.colCount;
+    if (table.widthAdaptiveMode === 'only-body') {
+      for (let col = 0; col < table.colCount; col++) {
+        const colWidth = update ? newWidths[col] : table.getColWidth(col);
+        if (
+          col < table.rowHeaderLevelCount ||
+          (table.isPivotChart() && col >= table.colCount - table.rightFrozenColCount)
+        ) {
+          actualHeaderWidth += colWidth;
+        }
       }
+      startCol = table.rowHeaderLevelCount;
+      endCol = table.isPivotChart() ? table.colCount - table.rightFrozenColCount : table.colCount;
     }
-    const startCol = table.rowHeaderLevelCount;
-    const endCol = table.isPivotChart() ? table.colCount - table.rightFrozenColCount : table.colCount;
     getAdaptiveWidth(canvasWidth - actualHeaderWidth, startCol, endCol, update, newWidths, table);
     // const canvasWidth = table.internalProps.canvas.width;
     // const rowHeaderWidth = table.getColsWidth(0, table.rowHeaderLevelCount - 1);

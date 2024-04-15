@@ -1,7 +1,7 @@
 {
   "changes": [
     {
-      "comment": "fix: left content width error when tree hierarchy state icon back rect showing #1466\n\n",
+      "comment": "fix: row move funciton not work on mobile #1503\n\n",
       "type": "none",
       "packageName": "@visactor/vtable"
     }

@@ -2,7 +2,7 @@
   "changes": [
     {
       "packageName": "@visactor/vtable",
-      "comment": "fix: fix domain order in  horizontal #1453",
+      "comment": "fix: add button jedgement in click_cell event #1484",
       "type": "none"
     }
   ],

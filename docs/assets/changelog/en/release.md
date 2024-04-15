@@ -1,3 +1,38 @@
+# v0.23.2
+
+2024-04-11
+
+
+**🆕 New feature**
+
+- **@visactor/vtable**: scrollbar visible focus [#1360](https://github.com/VisActor/VTable/issues/1360)
+- **@visactor/vtable**: add rowHierarchyTextStartAlignment for tree mode [#1417](https://github.com/VisActor/VTable/issues/1417)
+
+**🐛 Bug fix**
+
+- **@visactor/vtable**: records api when has merge cell render error [#1286](https://github.com/VisActor/VTable/issues/1286)
+- **@visactor/vtable**: add isAutoRowHeight to handle width row height compute [#1379](https://github.com/VisActor/VTable/issues/1379)
+- **@visactor/vtable**: chart spec clone filtered dom problem [#1422](https://github.com/VisActor/VTable/issues/1422)
+- **@visactor/vtable**: borderlinedash effect error handle with lineCap [#1436](https://github.com/VisActor/VTable/issues/1436)
+- **@visactor/vtable**: trigger event selectedCell [#1444](https://github.com/VisActor/VTable/issues/1444)
+- **@visactor/vtable**: set disableSelect drag cells occor error [#1461](https://github.com/VisActor/VTable/issues/1461)
+- **@visactor/vtable**: left content width error when tree hierarchy state icon back rect showing [#1466](https://github.com/VisActor/VTable/issues/1466)
+- **@visactor/vtable**: fix domain order in  horizontal [#1453](https://github.com/VisActor/VTable/issues/1453)
+- **@visactor/vtable**: add columnWidthComputeMode update in opdateOption [#1465](https://github.com/VisActor/VTable/issues/1465)
+- **@visactor/vtable**: fix inline icon tooltip config [#1456](https://github.com/VisActor/VTable/issues/1456)
+- **@visactor/vtable**: 修复进度图部分情况遮挡表格边缘单元格
+- **@visactor/vtable**: fix transpose border theme [#1463](https://github.com/VisActor/VTable/issues/1463)
+
+**🔨 Refactor**
+
+- **@visactor/vtable**: update drilldown drillup svg
+- **@visactor/vtable**: handle width chartSpce with markLine [#1420](https://github.com/VisActor/VTable/issues/1420)
+- **@visactor/vtable**: supplement event type for react table [#1434](https://github.com/VisActor/VTable/issues/1434)
+
+
+
+[more detail about v0.23.2](https://github.com/VisActor/VTable/releases/tag/v0.23.2)
+
 # v0.23.1
 
 2024-04-07
