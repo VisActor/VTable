@@ -257,7 +257,10 @@ export class TableComponent {
 
       let attrY = 0;
       if (this.table.theme.scrollStyle.barToSide) {
-        attrY = this.table.tableNoFrameHeight - (hoverOn ? width : -this.table.scenegraph.tableGroup.attribute.y);
+        attrY =
+          this.table.tableNoFrameHeight -
+          (hoverOn ? width : -this.table.scenegraph.tableGroup.attribute.y) +
+          this.table.tableY;
       } else {
         attrY = y - (hoverOn ? width : -this.table.scenegraph.tableGroup.attribute.y);
       }
@@ -294,7 +297,10 @@ export class TableComponent {
       const hoverOn = this.table.theme.scrollStyle.hoverOn;
 
       if (this.table.theme.scrollStyle.barToSide) {
-        attrX = this.table.tableNoFrameWidth - (hoverOn ? width : -this.table.scenegraph.tableGroup.attribute.x);
+        attrX =
+          this.table.tableNoFrameWidth -
+          (hoverOn ? width : -this.table.scenegraph.tableGroup.attribute.x) +
+          this.table.tableX;
       } else {
         attrX = x - (hoverOn ? width : -this.table.scenegraph.tableGroup.attribute.x);
       }

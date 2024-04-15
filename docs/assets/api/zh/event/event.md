@@ -32,6 +32,9 @@ TABLE_EVENT_TYPE = {
   MOUSEENTER_CELL: 'mouseenter_cell',
   MOUSELEAVE_CELL: 'mouseleave_cell',
   CONTEXTMENU_CELL: 'contextmenu_cell',
+  MOUSEENTER_TABLE: 'mouseenter_table',
+  MOUSELEAVE_TABLE: 'mouseleave_table',
+  MOUSEDOWN_TABLE: 'mousedown_table',
   RESIZE_COLUMN: 'resize_column',
   RESIZE_COLUMN_END: 'resize_column_end',
   CHANGE_HEADER_POSITION: 'change_header_position',
@@ -50,13 +53,17 @@ TABLE_EVENT_TYPE = {
   HIDE_MENU: 'hide_menu',
   ICON_CLICK: 'icon_click',
   // 透视表特有事件
-   DRILLMENU_CLICK: 'drillmenu_click',
+  DRILLMENU_CLICK: 'drillmenu_click',
   PIVOT_SORT_CLICK: 'pivot_sort_click'
 }
 ```
+
 ## INITIALIZED
+
 成功初始化完成后触发
-## AFTER_RENDER	
+
+## AFTER_RENDER
+
 每次渲染完成后触发
 
 ## onVChartEvent
@@ -108,18 +115,6 @@ TABLE_EVENT_TYPE = {
 
 {{ use: KeydownEvent() }}
 
-## MOUSEENTER_TABLE
-
-鼠标进入表格事件
-
-事件回调函数的参数类型请参考 CLICK_CELL 事件中介绍的参数类型。
-
-## MOUSELEAVE_TABLE
-
-鼠标离开表格事件
-
-事件回调函数的参数类型请参考 CLICK_CELL 事件中介绍的参数类型。
-
 ## MOUSEMOVE_CELL
 
 鼠标在某个单元格上移动事件
@@ -143,6 +138,18 @@ TABLE_EVENT_TYPE = {
 单元格右键事件
 
 {{ use: MousePointerMultiCellEvent() }}
+
+## MOUSEENTER_TABLE
+
+鼠标进入表格区域触发该事件
+
+## MOUSELEAVE_TABLE
+
+鼠标离开表格区域触发该事件
+
+## MOUSEDOWN_TABLE
+
+鼠标在表格区域按下触发该事件
 
 ## RESIZE_COLUMN
 
@@ -249,6 +256,7 @@ TABLE_EVENT_TYPE = {
       viewHeight: number;
     }
 ```
+
 ## SCROLL_VERTICAL_END
 
 竖向滚动条滚动到底部事件
@@ -403,6 +411,7 @@ icon 图标点击事件。
 ```
    { model: any; value: any; event: PointerEvent };
 ```
+
 ## MOUSEENTER_AXIS
 
 鼠标进入到坐标轴上事件。**坐标轴专有事件**
@@ -423,6 +432,7 @@ icon 图标点击事件。
 同**MOUSEENTER_AXIS**
 
 ## COPY_DATA
+
 单元格内容复制事件。
 
 事件回调函数的参数类型:
@@ -432,6 +442,7 @@ icon 图标点击事件。
 ```
 
 ## CHANGE_CELL_VALUE
+
 更改单元格值的事件。
 
 事件回调函数的参数类型:
@@ -441,14 +452,15 @@ icon 图标点击事件。
 ```
 
 ## CHECKBOX_STATE_CHANGE
-更改checkbox复选框状态。**ListTable表格专有事件**
+
+更改 checkbox 复选框状态。**ListTable 表格专有事件**
 
 事件回调函数的参数类型:
 
 ```
-{ 
-  col: number; 
-  row: number; 
+{
+  col: number;
+  row: number;
   alue: string | number;
   dataValue: string | number;
   checked: boolean;

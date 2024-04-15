@@ -33,6 +33,10 @@ export interface TableEvents {
    */
   MOUSELEAVE_TABLE: 'mouseleave_table';
   /**
+   * 鼠标点击表格事件
+   */
+  MOUSEDOWN_TABLE: 'mouseleave_table';
+  /**
    * 鼠标在某个单元格上移动事件
    */
   MOUSEMOVE_CELL: 'mousemove_cell';
