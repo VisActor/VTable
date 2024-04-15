@@ -364,6 +364,7 @@ export function bindTableGroupListener(eventManager: EventManager) {
       return;
     }
     const eventArgsSet: SceneEvent = getCellEventArgsSet(e);
+    eventManager.downIcon = undefined;
     if (stateManager.interactionState !== InteractionState.default) {
       return;
     }
@@ -381,6 +382,7 @@ export function bindTableGroupListener(eventManager: EventManager) {
     const hitIcon = (eventArgsSet?.eventArgs?.target as any)?.role?.startsWith('icon')
       ? eventArgsSet.eventArgs.target
       : undefined;
+    eventManager.downIcon = hitIcon;
     if (!hitIcon || (hitIcon.attribute as IIconGraphicAttribute).interactive === false) {
       if (e.pointerType === 'touch') {
         // 移动端事件特殊处理
