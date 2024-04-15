@@ -517,8 +517,12 @@ export function bindContainerDomListener(eventManager: EventManager) {
       const rightFrozenColsWidth = table.getRightFrozenColsWidth();
       const startCell = table.stateManager.select.ranges[table.stateManager.select.ranges.length - 1].start;
       const endCell = table.stateManager.select.ranges[table.stateManager.select.ranges.length - 1].end;
-      const canScrollY = table.isFrozenRow(startCell.row) === false || table.isFrozenRow(endCell.row) === false;
-      const canScrollX = table.isFrozenColumn(startCell.col) === false || table.isFrozenColumn(endCell.col) === false;
+      const canScrollY =
+        (table.isFrozenRow(startCell.row) === false || table.isFrozenRow(endCell.row) === false) &&
+        table.getAllRowsHeight() > table.tableNoFrameHeight;
+      const canScrollX =
+        (table.isFrozenColumn(startCell.col) === false || table.isFrozenColumn(endCell.col) === false) &&
+        table.getAllColsWidth() > table.tableNoFrameWidth;
       if (
         ((y > drawRange.bottom - bottomFrozenRowHeight || y < drawRange.top + topFrozenRowHeight) && canScrollY) ||
         ((x > drawRange.right - rightFrozenColsWidth || x < drawRange.left + leftFrozenColsWidth) && canScrollX)

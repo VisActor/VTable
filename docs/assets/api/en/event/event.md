@@ -30,6 +30,9 @@ Supported event types:
   MOUSEENTER_CELL: 'mouseenter_cell',
   MOUSELEAVE_CELL: 'mouseleave_cell',
   CONTEXTMENU_CELL: 'contextmenu_cell',
+  MOUSEENTER_TABLE: 'mouseenter_table',
+  MOUSELEAVE_TABLE: 'mouseleave_table',
+  MOUSEDOWN_TABLE: 'mousedown_table',
   RESIZE_COLUMN: 'resize_column',
   RESIZE_COLUMN_END: 'resize_column_end',
   CHANGE_HEADER_POSITION: 'change_header_position',
@@ -51,10 +54,13 @@ Supported event types:
    DRILLMENU_CLICK: 'drillmenu_click',
   PIVOT_SORT_CLICK: 'pivot_sort_click'
 }`
+
 ## INITIALIZED
+
 Triggered after successful initialization is completed
 
-## AFTER_RENDER	
+## AFTER_RENDER
+
 Triggered after each rendering is completed
 
 ## onVChartEvent
@@ -106,18 +112,6 @@ keystroke event
 
 {{ use: KeydownEvent() }}
 
-## MOUSEENTER_TABLE
-
-Mouse over form event
-
-Refer to the parameter types introduced in the CLICK_CELL event for the parameter types of the event callback function.
-
-## MOUSELEAVE_TABLE
-
-Mouse off form event
-
-Refer to the parameter types introduced in the CLICK_CELL event for the parameter types of the event callback function.
-
 ## MOUSEMOVE_CELL
 
 Mouse over a cell event
@@ -141,6 +135,18 @@ Refer to the parameter types introduced in the CLICK_CELL event for the paramete
 Cell right-click events
 
 {{ use: MousePointerMultiCellEvent() }}
+
+## MOUSEENTER_TABLE
+
+This event is triggered when the mouse enters the table area
+
+## MOUSELEAVE_TABLE
+
+This event is triggered when the mouse leaves the table area.
+
+## MOUSEDOWN_TABLE
+
+This event is triggered when the mouse is pressed in the table area.
 
 ## RESIZE_COLUMN
 
@@ -246,7 +252,6 @@ Event callback function parameter types.
     viewWidth: number;
     viewHeight: number;
 }`
-
 
 ## MOUSEOVER_CHART_SYMBOL
 
@@ -365,6 +370,7 @@ The parameter type of the event callback function:
 ```
    { model: any; value: any; event: PointerEvent };
 ```
+
 ## LEGEND_CHANGE
 
 Color legend, size legend, this event is triggered after the user operates the legend range. **Legend exclusive event**
@@ -395,6 +401,7 @@ The parameter type of the event callback function:
 Same as **MOUSEENTER_AXIS**
 
 ## COPY_DATA
+
 Cell content copy event.
 
 Parameter types of event callback function:
@@ -404,6 +411,7 @@ Parameter types of event callback function:
 ```
 
 ## CHANGE_CELL_VALUE
+
 Event that changes the cell value.
 
 Parameter types of event callback function:
@@ -413,14 +421,15 @@ Parameter types of event callback function:
 ```
 
 ## CHECKBOX_STATE_CHANGE
+
 Change the checkbox checkbox state. **ListTable table exclusive event**
 
 Parameter types of event callback function:
 
 ```
-{ 
-  col: number; 
-  row: number; 
+{
+  col: number;
+  row: number;
   alue: string | number;
   dataValue: string | number;
   checked: boolean;

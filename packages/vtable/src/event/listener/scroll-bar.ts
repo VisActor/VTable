@@ -5,6 +5,7 @@ import { InteractionState } from '../../ts-types';
 import type { EventManager } from '../event';
 import type { SceneEvent } from '../util';
 import { getCellEventArgsSet } from '../util';
+import { TABLE_EVENT_TYPE } from '../../core/TABLE_EVENT_TYPE';
 
 export function bindScrollBarListener(eventManager: EventManager) {
   const table = eventManager.table;
@@ -38,6 +39,11 @@ export function bindScrollBarListener(eventManager: EventManager) {
     }
     scenegraph.table.stateManager.hideMenu();
     (scenegraph.table as ListTableAPI).editorManager?.completeEdit();
+    if ((scenegraph.table as any).hasListeners(TABLE_EVENT_TYPE.MOUSEDOWN_TABLE)) {
+      scenegraph.table.fireListeners(TABLE_EVENT_TYPE.MOUSEDOWN_TABLE, {
+        event: e.nativeEvent
+      });
+    }
   });
   scenegraph.component.vScrollBar.addEventListener('pointerup', () => {
     stateManager.fastScrolling = false;
@@ -63,6 +69,11 @@ export function bindScrollBarListener(eventManager: EventManager) {
     }
     scenegraph.table.stateManager.hideMenu();
     (scenegraph.table as ListTableAPI).editorManager?.completeEdit();
+    if ((scenegraph.table as any).hasListeners(TABLE_EVENT_TYPE.MOUSEDOWN_TABLE)) {
+      scenegraph.table.fireListeners(TABLE_EVENT_TYPE.MOUSEDOWN_TABLE, {
+        event: e.nativeEvent
+      });
+    }
   });
   scenegraph.component.hScrollBar.addEventListener('pointerup', () => {
     stateManager.fastScrolling = false;

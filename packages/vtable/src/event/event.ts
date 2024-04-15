@@ -1,5 +1,5 @@
 // import { FederatedPointerEvent } from '@src/vrender';
-import type { FederatedPointerEvent, Gesture } from '@src/vrender';
+import type { FederatedPointerEvent, Gesture, IEventTarget } from '@src/vrender';
 import { RichText } from '@src/vrender';
 import type { ColumnDefine, MousePointerCellEvent } from '../ts-types';
 import { IconFuncTypeEnum } from '../ts-types';
@@ -51,7 +51,7 @@ export class EventManager {
   isDraging = false;
   scrollYSpeed: number;
   scrollXSpeed: number;
-
+  downIcon: IEventTarget; // 记录鼠标按下的sicon
   //报错已绑定过的事件 后续清除绑定
   globalEventListeners: { name: string; env: 'document' | 'body' | 'window'; callback: (e?: any) => void }[] = [];
   inertiaScroll: InertiaScroll;
