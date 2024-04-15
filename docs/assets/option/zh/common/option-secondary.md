@@ -16,6 +16,20 @@
 - 'adaptive'：使用容器的高度分配每行高度，基于每行内容计算后的高度比例来分配。
 - 'autoHeight'：根据内容自动计算行高，计算依据 fontSize 和 lineHeight(文字行高)，以及 padding。相关搭配设置项`autoWrapText`自动换行，可以根据换行后的多行文本内容来计算行高。
 
+#${prefix} widthAdaptiveMode('only-body' | 'all') = 'only-body'
+
+adaptive 模式下宽度的适应策略，默认为 'only-body'。
+
+- 'only-body'：只有 body 部分的列参与宽度适应计算，表头部分宽度不变。
+- 'all'：所有列参与宽度适应计算。
+
+#${prefix} heightAdaptiveMode('only-body' | 'all') = 'only-body'
+
+adaptive 模式下高度的适应策略，默认为 'only-body'。
+
+- 'only-body'：只有 body 部分的行参与高度适应计算，表头部分高度不变。
+- 'all'：所有列参与高度适应计算。
+
 #${prefix} autoWrapText(boolean) = false
 
 是否自动换行
