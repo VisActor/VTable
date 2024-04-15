@@ -4,6 +4,7 @@ import { ArcoListEditor } from './ArcoListEditor';
 function App() {
   const editor = new ArcoListEditor();
   VTable.register.editor('list-editor', editor);
+
   const option = {
     header: [
       {

@@ -14,7 +14,7 @@ export class ArcoListEditor {
   container: null | HTMLElement;
   element: null | HTMLElement;
   currentValue: any;
-  constructor(editorConfig: any) {
+  constructor() {
     this.editorType = 'Cascader';
     this.cascaderOptions = null;
     this.field = null;
