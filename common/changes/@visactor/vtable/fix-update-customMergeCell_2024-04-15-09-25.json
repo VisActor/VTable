@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vtable",
+      "comment": "fix: update customMergeCell in updateOption #1493",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vtable"
+}

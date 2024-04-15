@@ -2154,6 +2154,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     this.clearCellStyleCache();
     this.clearColWidthCache();
     this.clearRowHeightCache();
+    internalProps.customMergeCell = options.customMergeCell;
     this.customCellStylePlugin = new CustomCellStylePlugin(
       this,
       options.customCellStyle ?? [],
