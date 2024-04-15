@@ -9,7 +9,7 @@
     "start": "npx concurrently --kill-others \"npm:watch\" \"npm:serve\""
   },
   "dependencies": {
-    "@arco-design/web-react": "2.46.1",
+    "@arco-design/web-react": "2.60.2",
     "@visactor/vtable": "workspace:*",
     "@visactor/react-vtable": "workspace:*",
     "@visactor/openinula-vtable": "workspace:*",
