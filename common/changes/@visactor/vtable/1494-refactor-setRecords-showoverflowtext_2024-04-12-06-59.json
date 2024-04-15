@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "comment": "refactor: setRecords handle with tooltip overflow #1494\n\n",
+      "type": "none",
+      "packageName": "@visactor/vtable"
+    }
+  ],
+  "packageName": "@visactor/vtable",
+  "email": "892739385@qq.com"
+}
