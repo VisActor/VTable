@@ -1,7 +1,7 @@
 /* eslint-disable no-undef */
 import type { IThemeSpec } from '@src/vrender';
 import type { CellLocation, CellRange, ColumnDefine, IRowSeriesNumber, TextColumnDefine } from '../../ts-types';
-import type { Group } from '../graphic/group';
+import { Group } from '../graphic/group';
 import { getProp, getRawProp } from '../utils/get-prop';
 import type { MergeMap } from '../scenegraph';
 import { createCell, dealWithMergeCellSize, resizeCellGroup } from './cell-helper';
@@ -167,6 +167,7 @@ export function createComplexColumn(
 
     // deal with promise data
     if (isPromise(value)) {
+      createEmptyCellGroup(col, row, 0, y, cellWidth, cellHeight, columnGroup);
       dealPromiseData(
         value,
         table,
@@ -301,4 +302,25 @@ function dealMerge(range: CellRange, mergeMap: MergeMap, table: BaseTableAPI, fo
     cellWidth,
     cellHeight
   };
+}
+
+function createEmptyCellGroup(
+  col: number,
+  row: number,
+  x: number,
+  y: number,
+  width: number,
+  height: number,
+  columnGroup: Group
+) {
+  const cellGroup = new Group({
+    x,
+    y,
+    width,
+    height
+  });
+  cellGroup.role = 'cell';
+  cellGroup.col = col;
+  cellGroup.row = row;
+  columnGroup.addChild(cellGroup);
 }

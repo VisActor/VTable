@@ -59,8 +59,10 @@ export function createCell(
     renderDefault: boolean;
   }
 ): Group {
+  let isAsync = false;
   if (isPromise(value)) {
     value = table.getCellValue(col, row);
+    isAsync = true;
   }
   // let bgColorFunc: Function;
   // // 判断是否有mapping  遍历dataset中mappingRules
@@ -176,7 +178,8 @@ export function createCell(
       customElementsGroup,
       renderDefault,
       cellTheme,
-      range
+      range,
+      isAsync
     );
 
     const axisConfig = table.internalProps.layoutMap.getAxisConfigInPivotChart(col, row);
@@ -210,7 +213,8 @@ export function createCell(
       textAlign,
       textBaseline,
       table,
-      cellTheme
+      cellTheme,
+      isAsync
     );
   } else if (type === 'video') {
     // 创建视频单元格
@@ -228,7 +232,8 @@ export function createCell(
       textAlign,
       textBaseline,
       table,
-      cellTheme
+      cellTheme,
+      isAsync
     );
   } else if (type === 'chart') {
     const chartInstance = table.internalProps.layoutMap.getChartInstance(col, row);
@@ -249,7 +254,8 @@ export function createCell(
       table.internalProps.layoutMap.getChartDataId(col, row) ?? 'data',
       table,
       cellTheme,
-      table.internalProps.layoutMap.isShareChartSpec(col, row)
+      table.internalProps.layoutMap.isShareChartSpec(col, row),
+      isAsync
     );
   } else if (type === 'progressbar') {
     const style = table._getCellStyle(col, row) as ProgressBarStyle;
@@ -273,7 +279,8 @@ export function createCell(
       null,
       true,
       cellTheme,
-      range
+      range,
+      isAsync
     );
 
     // 创建bar group
@@ -306,7 +313,8 @@ export function createCell(
       cellHeight,
       padding,
       table,
-      cellTheme
+      cellTheme,
+      isAsync
     );
   } else if (type === 'checkbox') {
     cellGroup = createCheckboxCellGroup(
@@ -324,7 +332,8 @@ export function createCell(
       textBaseline,
       table,
       cellTheme,
-      define as CheckboxColumnDefine
+      define as CheckboxColumnDefine,
+      isAsync
     );
   }
 
