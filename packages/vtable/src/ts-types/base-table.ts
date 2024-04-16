@@ -65,7 +65,9 @@ import type {
   IListTableDataConfig,
   IRowSeriesNumber,
   ColumnSeriesNumber,
-  ColumnStyleOption
+  ColumnStyleOption,
+  WidthAdaptiveModeDef,
+  HeightAdaptiveModeDef
 } from '.';
 import type { TooltipOptions } from './tooltip';
 import type { IWrapTextGraphicAttribute } from '../scenegraph/graphic/text';
@@ -350,6 +352,12 @@ export interface BaseTableConstructorOptions {
   autoFillWidth?: boolean;
   /** 当行高度不能占满容器时，是否需要自动拉高来填充容器的高度。默认false */
   autoFillHeight?: boolean;
+
+  /** adaptive 模式下宽度的适应策略 **/
+  widthAdaptiveMode?: WidthAdaptiveModeDef;
+  /** adaptive 模式下高度的适应策略 **/
+  heightAdaptiveMode?: HeightAdaptiveModeDef;
+
   // /** 行高是否根据内容来计算 */
   // autoRowHeight?: boolean;
   /** 设备的像素比 不配的话默认获取window.devicePixelRatio */
@@ -482,6 +490,11 @@ export interface BaseTableAPI {
   autoFillWidth: boolean;
   /** 当行高度不能占满容器时，是否需要自动拉高来填充容器的高度。默认false */
   autoFillHeight?: boolean;
+
+  /** adaptive 模式下宽度的适应策略 **/
+  widthAdaptiveMode: WidthAdaptiveModeDef;
+  /** adaptive 模式下高度的适应策略 **/
+  heightAdaptiveMode: HeightAdaptiveModeDef;
 
   isReleased: boolean;
 

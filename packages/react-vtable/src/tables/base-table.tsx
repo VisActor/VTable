@@ -193,17 +193,17 @@ const BaseTable: React.FC<Props> = React.forwardRef((props, ref) => {
 
     if (hasOption) {
       if (!isEqual(eventsBinded.current.option, props.option, { skipFunction: skipFunctionDiff })) {
-        eventsBinded.current = props;
         // eslint-disable-next-line promise/catch-or-return
         tableContext.current.table.updateOption(parseOption(props));
         handleTableRender();
+        eventsBinded.current = props;
       } else if (
         hasRecords &&
         !isEqual(eventsBinded.current.records, props.records, { skipFunction: skipFunctionDiff })
       ) {
-        eventsBinded.current = props;
         tableContext.current.table.setRecords(props.records as any[]);
         handleTableRender();
+        eventsBinded.current = props;
       }
       return;
     }
@@ -221,10 +221,12 @@ const BaseTable: React.FC<Props> = React.forwardRef((props, ref) => {
       // eslint-disable-next-line promise/catch-or-return
       tableContext.current.table.updateOption(parseOption(props));
       handleTableRender();
+      eventsBinded.current = props;
     } else if (hasRecords && !isEqual(props.records, prevRecords.current, { skipFunction: skipFunctionDiff })) {
       prevRecords.current = props.records;
       tableContext.current.table.setRecords(props.records);
       handleTableRender();
+      eventsBinded.current = props;
     }
     // tableContext.current = {
     //   ...tableContext.current,
