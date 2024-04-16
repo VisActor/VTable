@@ -151,6 +151,6 @@ export class BodyHelper {
     return undefined;
   }
   getHierarchyIconWidth() {
-    return this.expandIcon.width + this.expandIcon.marginLeft + this.expandIcon.marginRight;
+    return this.expandIcon.width + (this.expandIcon.marginLeft ?? 0) + (this.expandIcon.marginRight ?? 0);
   }
 }
