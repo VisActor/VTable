@@ -22,38 +22,58 @@ export function createSparkLineCellGroup(
   height: number,
   padding: number[],
   table: BaseTableAPI,
-  cellTheme: IThemeSpec
+  cellTheme: IThemeSpec,
+  isAsync: boolean
 ) {
   // cell
   if (!cellGroup) {
     const strokeArrayWidth = getCellBorderStrokeWidth(col, row, cellTheme, table);
-    cellGroup = new Group({
-      x: xOrigin,
-      y: yOrigin,
-      width,
-      height,
 
-      // 背景相关，cell背景由cellGroup绘制
-      lineWidth: cellTheme?.group?.lineWidth ?? undefined,
-      fill: cellTheme?.group?.fill ?? undefined,
-      stroke: cellTheme?.group?.stroke ?? undefined,
-
-      strokeArrayWidth: strokeArrayWidth,
-      strokeArrayColor: (cellTheme?.group as any)?.strokeArrayColor ?? undefined,
-      cursor: (cellTheme?.group as any)?.cursor ?? undefined,
-      lineDash: cellTheme?.group?.lineDash ?? undefined,
-
-      lineCap: 'butt',
-
-      clip: true,
-
-      cornerRadius: cellTheme.group.cornerRadius
-    } as any);
-    cellGroup.role = 'cell';
-    cellGroup.col = col;
-    cellGroup.row = row;
-    // columnGroup?.addChild(cellGroup);
-    columnGroup?.addCellGroup(cellGroup);
+    if (isAsync) {
+      cellGroup = table.scenegraph.highPerformanceGetCell(col, row, true);
+      if (cellGroup && cellGroup.role === 'cell') {
+        cellGroup.setAttributes({
+          x: xOrigin,
+          y: yOrigin,
+          width,
+          height,
+          // 背景相关，cell背景由cellGroup绘制
+          lineWidth: cellTheme?.group?.lineWidth ?? undefined,
+          fill: cellTheme?.group?.fill ?? undefined,
+          stroke: cellTheme?.group?.stroke ?? undefined,
+          strokeArrayWidth: strokeArrayWidth,
+          strokeArrayColor: (cellTheme?.group as any)?.strokeArrayColor ?? undefined,
+          cursor: (cellTheme?.group as any)?.cursor ?? undefined,
+          lineDash: cellTheme?.group?.lineDash ?? undefined,
+          lineCap: 'butt',
+          clip: true,
+          cornerRadius: cellTheme.group.cornerRadius
+        } as any);
+      }
+    }
+    if (!cellGroup || cellGroup.role !== 'cell') {
+      cellGroup = new Group({
+        x: xOrigin,
+        y: yOrigin,
+        width,
+        height,
+        // 背景相关，cell背景由cellGroup绘制
+        lineWidth: cellTheme?.group?.lineWidth ?? undefined,
+        fill: cellTheme?.group?.fill ?? undefined,
+        stroke: cellTheme?.group?.stroke ?? undefined,
+        strokeArrayWidth: strokeArrayWidth,
+        strokeArrayColor: (cellTheme?.group as any)?.strokeArrayColor ?? undefined,
+        cursor: (cellTheme?.group as any)?.cursor ?? undefined,
+        lineDash: cellTheme?.group?.lineDash ?? undefined,
+        lineCap: 'butt',
+        clip: true,
+        cornerRadius: cellTheme.group.cornerRadius
+      } as any);
+      cellGroup.role = 'cell';
+      cellGroup.col = col;
+      cellGroup.row = row;
+      columnGroup?.addCellGroup(cellGroup);
+    }
   }
 
   // chart
