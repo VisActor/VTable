@@ -46,7 +46,10 @@ import type {
   IRowSeriesNumber,
   ColumnStyleOption,
   MappingRule,
-  TableEventOptions
+  TableEventOptions,
+  WidthAdaptiveModeDef,
+  HeightAdaptiveModeDef,
+  ListTableAPI
 } from '../ts-types';
 import { event, style as utilStyle } from '../tools/helper';
 
@@ -77,7 +80,7 @@ import {
   merge,
   cloneDeep
 } from '@visactor/vutils';
-import { textMeasure } from '../scenegraph/utils/text-measure';
+import { measureTextBounds, textMeasure } from '../scenegraph/utils/text-measure';
 import { getProp } from '../scenegraph/utils/get-prop';
 import type {
   ColumnData,
@@ -122,6 +125,8 @@ import type { SimpleHeaderLayoutMap } from '../layout';
 import { RowSeriesNumberHelper } from './row-series-number-helper';
 import { CustomCellStylePlugin, mergeStyle } from '../plugins/custom-cell-style';
 import { hideCellSelectBorder, restoreCellSelectBorder } from '../scenegraph/select/update-select-border';
+import type { ITextGraphicAttribute } from '@src/vrender';
+
 const { toBoxArray } = utilStyle;
 const { isTouchEvent } = event;
 const rangeReg = /^\$(\d+)\$(\d+)$/;
@@ -142,6 +147,8 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
   _heightMode: HeightModeDef;
   _autoFillWidth: boolean;
   _autoFillHeight: boolean;
+  _widthAdaptiveMode: WidthAdaptiveModeDef;
+  _heightAdaptiveMode: HeightAdaptiveModeDef;
   customRender?: ICustomRender;
 
   canvasWidth?: number;
@@ -206,6 +213,8 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
       heightMode = 'standard',
       autoFillWidth = false,
       autoFillHeight = false,
+      widthAdaptiveMode = 'only-body',
+      heightAdaptiveMode = 'only-body',
       keyboardOptions,
       eventOptions,
       rowSeriesNumber,
@@ -237,6 +246,8 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     this.options = options;
     this._widthMode = widthMode;
     this._heightMode = heightMode;
+    this._widthAdaptiveMode = widthAdaptiveMode;
+    this._heightAdaptiveMode = heightAdaptiveMode;
     this._autoFillWidth = autoFillWidth;
     this._autoFillHeight = autoFillHeight;
     this.customRender = customRender;
@@ -750,6 +761,22 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
       this._autoFillHeight = autoFillHeight;
     }
   }
+  get widthAdaptiveMode(): WidthAdaptiveModeDef {
+    return this._widthAdaptiveMode;
+  }
+  set widthAdaptiveMode(widthAdaptiveMode: WidthAdaptiveModeDef) {
+    if (widthAdaptiveMode !== this._widthAdaptiveMode) {
+      this._widthAdaptiveMode = widthAdaptiveMode;
+    }
+  }
+  get heightAdaptiveMode(): HeightAdaptiveModeDef {
+    return this._heightAdaptiveMode;
+  }
+  set heightAdaptiveMode(heightAdaptiveMode: HeightAdaptiveModeDef) {
+    if (heightAdaptiveMode !== this._heightAdaptiveMode) {
+      this._heightAdaptiveMode = heightAdaptiveMode;
+    }
+  }
   /**
    * 根据设置的列宽配置 计算列宽值
    * @param {string|number} width width definition
@@ -1001,12 +1028,13 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
   }
 
   getDefaultRowHeight(row: number) {
-    if (this.isColumnHeader(0, row) || this.isCornerHeader(0, row)) {
+    if (this.isColumnHeader(0, row) || this.isCornerHeader(0, row) || this.isSeriesNumberInHeader(0, row)) {
       return Array.isArray(this.defaultHeaderRowHeight)
         ? this.defaultHeaderRowHeight[row] ?? this.internalProps.defaultRowHeight
         : this.defaultHeaderRowHeight;
     }
-    if (this.isBottomFrozenRow(this.rowHeaderLevelCount, row)) {
+    if (this.isBottomFrozenRow(row)) {
+      //底部冻结行默认取用了表头的行高  但针对非表头数据冻结的情况这里可能不妥
       return Array.isArray(this.defaultHeaderRowHeight)
         ? this.defaultHeaderRowHeight[
             this.columnHeaderLevelCount > 0 ? this.columnHeaderLevelCount - this.bottomFrozenRowCount : 0
@@ -1967,7 +1995,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     if (parentElement) {
       parentElement.removeChild(internalProps.element);
     }
-
+    (this as any).editorManager?.editingEditor?.onEnd?.();
     this.isReleased = true;
   }
 
@@ -2013,6 +2041,8 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
       heightMode,
       autoFillWidth,
       autoFillHeight,
+      widthAdaptiveMode,
+      heightAdaptiveMode,
       customRender,
       renderChartAsync,
       renderChartAsyncBatchCount,
@@ -2043,6 +2073,8 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
 
     this.widthMode = widthMode ?? 'standard';
     this.heightMode = heightMode ?? 'standard';
+    this._widthAdaptiveMode = widthAdaptiveMode ?? 'only-body';
+    this._heightAdaptiveMode = heightAdaptiveMode ?? 'only-body';
     this.autoFillWidth = autoFillWidth ?? false;
     this.autoFillHeight = autoFillHeight ?? false;
     this.customRender = customRender;
@@ -2154,8 +2186,10 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     this.clearCellStyleCache();
     this.clearColWidthCache();
     this.clearRowHeightCache();
-    this.customCellStylePlugin = new CustomCellStylePlugin(
-      this,
+
+    internalProps.customMergeCell = options.customMergeCell;
+
+    this.customCellStylePlugin.updateCustomCell(
       options.customCellStyle ?? [],
       options.customCellStyleArrangement ?? []
     );
@@ -3787,6 +3821,10 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
   /** 计算字体的宽度接口 */
   measureText(text: string, font: { fontSize: number; fontWeight: string | number; fontFamily: string }): ITextSize {
     return textMeasure.measureText(text, font);
+  }
+
+  measureTextBounds(attribute: ITextGraphicAttribute): AABBBounds {
+    return measureTextBounds(attribute);
   }
 
   /** 获取单元格上定义的自定义渲染配置 */

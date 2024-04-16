@@ -1,5 +1,5 @@
 // import { FederatedPointerEvent } from '@src/vrender';
-import type { FederatedPointerEvent, Gesture } from '@src/vrender';
+import type { FederatedPointerEvent, Gesture, IEventTarget } from '@src/vrender';
 import { RichText } from '@src/vrender';
 import type { ColumnDefine, MousePointerCellEvent } from '../ts-types';
 import { IconFuncTypeEnum } from '../ts-types';
@@ -42,7 +42,7 @@ export class EventManager {
   touchEnd: boolean; // is touch event end when default touch event listener response
   touchMove: boolean; // is touch listener working, use to disable document touch scrolling function
   gesture: Gesture;
-  handleTextStickBindId: number;
+  handleTextStickBindId: number[];
 
   //鼠标事件记录。 PointerMove敏感度太高了 记录下上一个鼠标位置 在接收到PointerMove事件时做判断 是否到到触发框选或者移动表头操作的标准，防止误触
   LastPointerXY: { x: number; y: number };
@@ -51,12 +51,13 @@ export class EventManager {
   isDraging = false;
   scrollYSpeed: number;
   scrollXSpeed: number;
-
+  downIcon: IEventTarget; // 记录鼠标按下的sicon
   //报错已绑定过的事件 后续清除绑定
   globalEventListeners: { name: string; env: 'document' | 'body' | 'window'; callback: (e?: any) => void }[] = [];
   inertiaScroll: InertiaScroll;
   constructor(table: BaseTableAPI) {
     this.table = table;
+    this.handleTextStickBindId = [];
     this.inertiaScroll = new InertiaScroll(table.stateManager);
     if (Env.mode === 'node') {
       return;
@@ -78,13 +79,23 @@ export class EventManager {
   updateEventBinder() {
     setTimeout(() => {
       // 处理textStick 是否绑定SCROLL的判断
-      if (checkHaveTextStick(this.table) && !this.handleTextStickBindId) {
-        this.handleTextStickBindId = this.table.on(TABLE_EVENT_TYPE.SCROLL, e => {
-          handleTextStick(this.table);
-        });
+      if (checkHaveTextStick(this.table) && this.handleTextStickBindId?.length === 0) {
+        this.handleTextStickBindId.push(
+          this.table.on(TABLE_EVENT_TYPE.SCROLL, e => {
+            handleTextStick(this.table);
+          })
+        );
+
+        this.handleTextStickBindId.push(
+          this.table.on(TABLE_EVENT_TYPE.RESIZE_COLUMN_END, e => {
+            handleTextStick(this.table);
+          })
+        );
       } else if (!checkHaveTextStick(this.table) && this.handleTextStickBindId) {
-        this.table.off(this.handleTextStickBindId);
-        this.handleTextStickBindId = undefined;
+        this.handleTextStickBindId.forEach(id => {
+          this.table.off(id);
+        });
+        this.handleTextStickBindId = [];
       }
     }, 0);
   }
@@ -119,12 +130,12 @@ export class EventManager {
     });
 
     // 处理textStick
-    if (checkHaveTextStick(this.table)) {
-      this.handleTextStickBindId = this.table.on(TABLE_EVENT_TYPE.SCROLL, e => {
-        handleTextStick(this.table);
-      });
-    }
-
+    // if (checkHaveTextStick(this.table)) {
+    //   this.handleTextStickBindId = this.table.on(TABLE_EVENT_TYPE.SCROLL, e => {
+    //     handleTextStick(this.table);
+    //   });
+    // }
+    this.updateEventBinder();
     // link/image/video点击
     bindMediaClick(this.table);
 

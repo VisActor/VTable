@@ -61,8 +61,9 @@ export interface TableEventHandlersEventArgumentMap {
   selected_cell: SelectedCellEvent;
   click_cell: MousePointerCellEvent;
   dblclick_cell: MousePointerCellEvent;
-  mouseenter_table: MousePointerCellEvent;
-  mouseleave_table: MousePointerCellEvent;
+  mouseenter_table: { event?: MouseEvent | PointerEvent | TouchEvent };
+  mouseleave_table: { event?: MouseEvent | PointerEvent | TouchEvent };
+  mousedown_table: { event?: MouseEvent | PointerEvent | TouchEvent };
   mouseenter_cell: MousePointerCellEvent;
   mouseleave_cell: MousePointerCellEvent;
   mousemove_cell: MousePointerCellEvent;
@@ -195,6 +196,7 @@ export interface TableEventHandlersReturnMap {
   dblclick_cell: void;
   mouseenter_table: void;
   mouseleave_table: void;
+  mousedown_table: void;
   mouseenter_cell: void;
   mouseleave_cell: void;
   // mouseover_cell: void;
