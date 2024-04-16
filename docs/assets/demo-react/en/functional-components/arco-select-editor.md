@@ -1,22 +1,22 @@
 ---
 category: examples
 group: functional-components
-title: 自定义编辑器中使用arco列表选择器
+title: Use arco-design select component in cell editor
 cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/arco-select-editor.png
-link: '../guide/Developer_Ecology/react'
+link: '../guide/edit/edit_cell'
 ---
 
-# 自定义编辑器中使用 arco 列表选择器
+# Use arco-design select component in cell editor
 
-创建自定义编辑器类 ArcoListEditor, 并实现 onStart 方法，创建一个 arco-design 的 Select 组件，并将组件挂载到编辑器容器中。完善 isEditorElement 和 onEnd 方法。
+Create a custom editor class, ArcoListEditor, and implement the onStart method, create an arco-design Select component, and mount the component into the editor container. Refine the isEditorElement and onEnd methods.
 
-参考:
+reference:
 
 https://visactor.io/vtable/guide/edit/edit_cell
 
 https://arco.design/react/components/select
 
-## 代码演示
+## Code Demo
 
 ```javascript livedemo template=vtable-react
 // import * as ReactVTable from '@visactor/react-vtable';
