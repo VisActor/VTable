@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vtable",
+      "comment": "feat: add measureTextBounds api",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vtable"
+}

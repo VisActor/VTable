@@ -16,11 +16,8 @@ import { decodeReactDom, dealPercentCalc } from '../component/custom';
 import { getCellMergeRange } from '../../tools/merge-range';
 import { getCellMergeInfo } from '../utils/get-cell-merge';
 import { getHierarchyOffset } from '../utils/get-hierarchy-offset';
+import { measureTextBounds } from '../utils/text-measure';
 
-const utilTextMark = new Text({
-  ignoreBuf: true
-  // autoWrapText: true
-});
 const utilRichTextMark = new RichText({
   width: 0,
   height: 0,
@@ -690,7 +687,7 @@ function computeTextHeight(col: number, row: number, cellType: ColumnTypeOption,
           spaceBetweenTextAndIcon
         });
         utilCheckBoxMark.render();
-        maxHeight = utilTextMark.AABBBounds.height();
+        maxHeight = utilCheckBoxMark.AABBBounds.height();
       } else {
         maxHeight = Math.max(size, lines.length * lineHeight);
       }
@@ -731,7 +728,7 @@ function computeTextHeight(col: number, row: number, cellType: ColumnTypeOption,
     } else if (autoWrapText) {
       const hierarchyOffset = getHierarchyOffset(col, row, table);
       const maxLineWidth = cellWidth - (padding[1] + padding[3]) - iconWidth - hierarchyOffset;
-      utilTextMark.setAttributes({
+      const bounds = measureTextBounds({
         maxLineWidth,
         text: lines,
         fontSize,
@@ -742,7 +739,7 @@ function computeTextHeight(col: number, row: number, cellType: ColumnTypeOption,
         wordBreak: 'break-word',
         whiteSpace: lines.length === 1 && !autoWrapText ? 'no-wrap' : 'normal'
       });
-      maxHeight = utilTextMark.AABBBounds.height() || (typeof lineHeight === 'number' ? lineHeight : fontSize);
+      maxHeight = bounds.height() || (typeof lineHeight === 'number' ? lineHeight : fontSize);
     } else {
       // autoWrapText = false
       maxHeight = lines.length * lineHeight;
