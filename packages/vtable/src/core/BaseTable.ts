@@ -80,7 +80,7 @@ import {
   merge,
   cloneDeep
 } from '@visactor/vutils';
-import { textMeasure } from '../scenegraph/utils/text-measure';
+import { measureTextBounds, textMeasure } from '../scenegraph/utils/text-measure';
 import { getProp } from '../scenegraph/utils/get-prop';
 import type {
   ColumnData,
@@ -125,6 +125,8 @@ import type { SimpleHeaderLayoutMap } from '../layout';
 import { RowSeriesNumberHelper } from './row-series-number-helper';
 import { CustomCellStylePlugin, mergeStyle } from '../plugins/custom-cell-style';
 import { hideCellSelectBorder, restoreCellSelectBorder } from '../scenegraph/select/update-select-border';
+import type { ITextGraphicAttribute } from '@src/vrender';
+
 const { toBoxArray } = utilStyle;
 const { isTouchEvent } = event;
 const rangeReg = /^\$(\d+)\$(\d+)$/;
@@ -2184,7 +2186,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     this.clearCellStyleCache();
     this.clearColWidthCache();
     this.clearRowHeightCache();
-    
+
     internalProps.customMergeCell = options.customMergeCell;
 
     this.customCellStylePlugin.updateCustomCell(
@@ -3819,6 +3821,10 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
   /** 计算字体的宽度接口 */
   measureText(text: string, font: { fontSize: number; fontWeight: string | number; fontFamily: string }): ITextSize {
     return textMeasure.measureText(text, font);
+  }
+
+  measureTextBounds(attribute: ITextGraphicAttribute): AABBBounds {
+    return measureTextBounds(attribute);
   }
 
   /** 获取单元格上定义的自定义渲染配置 */
