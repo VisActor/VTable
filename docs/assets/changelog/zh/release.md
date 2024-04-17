@@ -5,26 +5,26 @@
 
 **🆕 新增功能**
 
-- **@visactor/vtable**: add widthAdaptiveMode & heightAdaptiveMode config [#1499](https://github.com/VisActor/VTable/issues/1499)
-- **@visactor/vtable**: add measureTextBounds api
+- **@visactor/vtable**: 添加 widthAdaptiveMode & heightAdaptiveMode 配置 [#1499](https://github.com/VisActor/VTable/issues/1499)
+- **@visactor/vtable**: 添加measureTextBounds API
 
 **🐛 功能修复**
 
-- **@visactor/vtable**: release editor when release tableInstance [#1495](https://github.com/VisActor/VTable/issues/1495)
-- **@visactor/vtable**: short table drag to out table occor error [#1502](https://github.com/VisActor/VTable/issues/1502)
-- **@visactor/vtable**: row move funciton not work on mobile [#1503](https://github.com/VisActor/VTable/issues/1503)
-- **@visactor/vtable**: defaultHeaderRowHeight not work with rowSeriesNumber [#1520](https://github.com/VisActor/VTable/issues/1520)
-- **@visactor/vtable**: tree hierarchy state icon use rowHierarchyTextStartAlignment children node render error [#1525](https://github.com/VisActor/VTable/issues/1525)
-- **@visactor/vtable**: resize col width trigger text stick change [#1529](https://github.com/VisActor/VTable/issues/1529)
-- **@visactor/vtable**: fix theme textStick config in checkHaveTextStick() [#1490](https://github.com/VisActor/VTable/issues/1490)
-- **@visactor/vtable**: add button jedgement in click_cell event [#1484](https://github.com/VisActor/VTable/issues/1484)
-- **@visactor/vtable**: fix defalultQueryMethod in vtable-search [#1448](https://github.com/VisActor/VTable/issues/1448)
-- **@visactor/vtable**: update customMergeCell in updateOption [#1493](https://github.com/VisActor/VTable/issues/1493)
+- **@visactor/vtable**: 在释放tableInstance时释放编辑器 [#1495](https://github.com/VisActor/VTable/issues/1495)
+- **@visactor/vtable**: 修复短表格拖动到表格外时发生错误问题 [#1502](https://github.com/VisActor/VTable/issues/1502)
+- **@visactor/vtable**: 行移动功能在移动端不工作 [#1503](https://github.com/VisActor/VTable/issues/1503)
+- **@visactor/vtable**: 解决 defaultHeaderRowHeight与rowSeriesNumber不兼容问题 [#1520](https://github.com/VisActor/VTable/issues/1520)
+- **@visactor/vtable**: 修复树层级状态图标使用rowHierarchyTextStartAlignment子节点渲染错误问题 [#1525](https://github.com/VisActor/VTable/issues/1525)
+- **@visactor/vtable**: 调整列宽度需要触发文本textStick变化 [#1529](https://github.com/VisActor/VTable/issues/1529)
+- **@visactor/vtable**: 在checkHaveTextStick()中修复主题textStick配置 [#1490](https://github.com/VisActor/VTable/issues/1490)
+- **@visactor/vtable**: 在click_cell事件中添加按钮判断 [#1484](https://github.com/VisActor/VTable/issues/1484)
+- **@visactor/vtable**: 修复vtable-search中的defalultQueryMethod [#1448](https://github.com/VisActor/VTable/issues/1448)
+- **@visactor/vtable**: 在updateOption中更新customMergeCell [#1493](https://github.com/VisActor/VTable/issues/1493)
 
 **🔨 功能重构**
 
-- **@visactor/vtable**: add mousedown_table event [#1470](https://github.com/VisActor/VTable/issues/1470)
-- **@visactor/vtable**: setRecords handle with tooltip overflow [#1494](https://github.com/VisActor/VTable/issues/1494)
+- **@visactor/vtable**: 添加mousedown_table事件 [#1470](https://github.com/VisActor/VTable/issues/1470)
+- **@visactor/vtable**: setRecords处理时处理tooltip溢出 [#1494](https://github.com/VisActor/VTable/issues/1494)
 
 
 
