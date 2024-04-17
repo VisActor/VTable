@@ -74,7 +74,13 @@ export function createCellContent(
   if (!Array.isArray(icons) || icons.length === 0) {
     if (isValid(textStr)) {
       // 没有icon，cellGroup只添加WrapText
-      const text = convertInternal(textStr).replace(/\r?\n/g, '\n').replace(/\r/g, '\n').split('\n');
+      // const text = convertInternal(textStr).replace(/\r?\n/g, '\n').replace(/\r/g, '\n').split('\n');
+      let text;
+      if (!table.internalProps.enableLineBreak && !table.options.customConfig?.multilinesForXTable) {
+        text = [convertInternal(textStr)];
+      } else {
+        text = convertInternal(textStr).replace(/\r?\n/g, '\n').replace(/\r/g, '\n').split('\n') || [];
+      }
 
       const hierarchyOffset = range
         ? getHierarchyOffset(range.start.col, range.start.row, table)
@@ -98,7 +104,10 @@ export function createCellContent(
         lineClamp,
         wordBreak: 'break-word',
         // widthLimit: autoColWidth ? -1 : colWidth - (padding[1] + padding[3]),
-        heightLimit: autoRowHeight ? -1 : cellHeight - (padding[0] + padding[2]),
+        heightLimit:
+          autoRowHeight && !table.options.customConfig?.multilinesForXTable
+            ? -1
+            : cellHeight - (padding[0] + padding[2]),
         pickable: false,
         dx: (textAlign === 'left' ? hierarchyOffset : 0) + _contentOffset,
         whiteSpace: text.length === 1 && !autoWrapText ? 'no-wrap' : 'normal'
@@ -201,7 +210,13 @@ export function createCellContent(
       const hierarchyOffset = range
         ? getHierarchyOffset(range.start.col, range.start.row, table)
         : getHierarchyOffset(cellGroup.col, cellGroup.row, table);
-      const text = convertInternal(textStr).replace(/\r?\n/g, '\n').replace(/\r/g, '\n').split('\n');
+      // const text = convertInternal(textStr).replace(/\r?\n/g, '\n').replace(/\r/g, '\n').split('\n');
+      let text;
+      if (!table.internalProps.enableLineBreak && !table.options.customConfig?.multilinesForXTable) {
+        text = [convertInternal(textStr)];
+      } else {
+        text = convertInternal(textStr).replace(/\r?\n/g, '\n').replace(/\r/g, '\n').split('\n') || [];
+      }
       const attribute = {
         text: text.length === 1 ? text[0] : text,
         maxLineWidth: autoColWidth
@@ -211,7 +226,10 @@ export function createCellContent(
         // textAlign: 'left',
         textBaseline: 'top',
         // widthLimit: autoColWidth ? -1 : colWidth - (padding[1] + padding[3]),
-        heightLimit: autoRowHeight ? -1 : cellHeight - (padding[0] + padding[2]),
+        heightLimit:
+          autoRowHeight && !table.options.customConfig?.multilinesForXTable
+            ? -1
+            : cellHeight - (padding[0] + padding[2]),
         pickable: false,
         autoWrapText,
         lineClamp,
