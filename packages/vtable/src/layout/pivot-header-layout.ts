@@ -284,6 +284,15 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
         this.fullRowDimensionKeys = this.fullRowDimensionKeys.concat(rowKeys);
       });
     }
+    if (this.rowsDefine.length > this.fullRowDimensionKeys.length) {
+      for (let i = this.fullRowDimensionKeys.length; i <= this.rowsDefine.length - 1; i++) {
+        this.fullRowDimensionKeys.push(
+          typeof this.rowsDefine[i] === 'string'
+            ? (this.rowsDefine[i] as string)
+            : (this.rowsDefine[i] as IRowDimension).dimensionKey
+        );
+      }
+    }
 
     this.sharedVar.seqId = Math.max(this.sharedVar.seqId, this._headerObjects.length);
     //生成cornerHeaderObjs及_cornerHeaderCellIds

@@ -890,6 +890,33 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
    * @param row
    */
   toggleHierarchyState(col: number, row: number) {
+    const hierarchyState = this.getHierarchyState(col, row);
+    if (hierarchyState === HierarchyState.expand) {
+      this._refreshHierarchyState(col, row);
+      this.fireListeners(PIVOT_TABLE_EVENT_TYPE.TREE_HIERARCHY_STATE_CHANGE, {
+        col: col,
+        row: row,
+        hierarchyState: HierarchyState.collapse
+      });
+    } else if (hierarchyState === HierarchyState.collapse) {
+      const headerPaths = this.internalProps.layoutMap.getCellHeaderPaths(col, row);
+      const headerTreeNode = this.internalProps.layoutMap.getHeadNode(
+        headerPaths.rowHeaderPaths.slice(0, headerPaths.rowHeaderPaths.length)
+      );
+      if (Array.isArray(headerTreeNode.children)) {
+        //children 是数组 表示已经有子树节点信息
+        this._refreshHierarchyState(col, row);
+      }
+      this.fireListeners(PIVOT_TABLE_EVENT_TYPE.TREE_HIERARCHY_STATE_CHANGE, {
+        col: col,
+        row: row,
+        hierarchyState: HierarchyState.expand,
+        originData: headerTreeNode
+      });
+    }
+  }
+
+  _refreshHierarchyState(col: number, row: number) {
     let notFillWidth = false;
     let notFillHeight = false;
     this.stateManager.updateHoverIcon(col, row, undefined, undefined);
@@ -902,21 +929,6 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
       if (this.autoFillHeight) {
         notFillHeight = this.getAllRowsHeight() <= this.tableNoFrameHeight;
       }
-    }
-    const hierarchyState = this.getHierarchyState(col, row);
-    if (hierarchyState === HierarchyState.expand) {
-      this.fireListeners(PIVOT_TABLE_EVENT_TYPE.TREE_HIERARCHY_STATE_CHANGE, {
-        col: col,
-        row: row,
-        hierarchyState: HierarchyState.collapse
-      });
-    } else if (hierarchyState === HierarchyState.collapse) {
-      this.fireListeners(PIVOT_TABLE_EVENT_TYPE.TREE_HIERARCHY_STATE_CHANGE, {
-        col: col,
-        row: row,
-        hierarchyState: HierarchyState.expand,
-        originData: this.getCellOriginRecord(col, row)
-      });
     }
     const result = (this.internalProps.layoutMap as PivotHeaderLayoutMap).toggleHierarchyState(col, row);
     //影响行数
@@ -1337,5 +1349,28 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
 
   changeRecordOrder(source: number, target: number) {
     //
+  }
+
+  /**
+   * 基本表格树形展示场景下，如果需要动态插入子节点的数据可以配合使用该接口，其他情况不适用
+   * @param records 设置到单元格其子节点的数据
+   * @param col 需要设置子节点的单元格地址
+   * @param row  需要设置子节点的单元格地址
+   */
+  setTreeNodeChildren(records: any[], col: number, row: number) {
+    const headerPaths = this.internalProps.layoutMap.getCellHeaderPaths(col, row);
+    const headerTreeNode = this.internalProps.layoutMap.getHeadNode(
+      headerPaths.rowHeaderPaths.slice(0, headerPaths.rowHeaderPaths.length)
+    );
+    headerTreeNode.children = records;
+    // const index = this.getRecordShowIndexByCell(col, row);
+    // this.dataSource.setRecord(record, index);
+    this._refreshHierarchyState(col, row);
+  }
+
+  addRecords(records: any[]) {
+    if (this.flatDataToObjects) {
+      this.flatDataToObjects.addRecords(records);
+    }
   }
 }
