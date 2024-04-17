@@ -1027,3 +1027,27 @@ registerCustomCellStyleArrangement: (cellPosition: { col?: number; row?: number;
   - 单个单元格：`{ row: number, column: number }`
   - 单元格区域：`{ range: { start: { row: number, column: number }, end: { row: number, column: number} } }`
 - customStyleId: 自定义样式 id，与注册自定义样式时定义的 id 相同
+
+## setCellCheckboxState(Function)
+
+设置单元格的 checkbox 状态
+
+```
+setCellCheckboxState(col: number, row: number, checked: boolean) => void
+```
+
+- col: 列号
+- row: 行号
+- checked: 是否选中
+
+## setCellRadioState(Function)
+
+将单元格的 radio 状态设置为选中状态
+
+```
+setCellRadioState(col: number, row: number, index?: number) => void
+```
+
+- col: 列号
+- row: 行号
+- index: 更新的目标radio在单元格中的索引

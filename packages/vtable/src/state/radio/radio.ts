@@ -2,6 +2,7 @@ import { isBoolean, isNumber, isObject, isValid } from '@visactor/vutils';
 import type { StateManager } from '../state';
 import type { BaseTableAPI } from '../../ts-types/base-table';
 import type { ColumnDefine } from '../../ts-types';
+import type { Radio } from '@visactor/vrender-components';
 
 export function setRadioState(
   col: number,
@@ -99,27 +100,41 @@ export function syncRadioState(
           state.radioState[field][dataIndex] = true;
         }
         return true;
-      } else if (!isValid(state.radioState[field][dataIndex]) && isChecked) {
+      } else if (!isValid(state.radioState[field]?.[dataIndex]) && isChecked) {
         if (isNumber(indexInCell)) {
           state.radioState[field][dataIndex] = indexInCell;
         } else {
           state.radioState[field][dataIndex] = true;
         }
         return true;
-      } else if (isBoolean(state.radioState[field][dataIndex]) && !isNumber(indexInCell)) {
+      } else if (isBoolean(state.radioState[field]?.[dataIndex]) && !isNumber(indexInCell)) {
         // single : single
         return state.radioState[field][dataIndex];
-      } else if (isBoolean(state.radioState[field][dataIndex]) && isNumber(indexInCell)) {
+      } else if (isBoolean(state.radioState[field]?.[dataIndex]) && isNumber(indexInCell)) {
         // single : multiple
         return false;
-      } else if (isNumber(state.radioState[field][dataIndex]) && !isNumber(indexInCell)) {
+      } else if (isNumber(state.radioState[field]?.[dataIndex]) && !isNumber(indexInCell)) {
         // multiple : single
         return false;
-      } else if (isNumber(state.radioState[field][dataIndex]) && isNumber(indexInCell)) {
+      } else if (isNumber(state.radioState[field]?.[dataIndex]) && isNumber(indexInCell)) {
         // multiple : multiple
         return state.radioState[field][dataIndex] === indexInCell;
       }
     }
   }
   return isChecked;
+}
+
+export function setCellRadioState(col: number, row: number, index: number | undefined, table: BaseTableAPI) {
+  const cellGoup = table.scenegraph.getCell(col, row);
+  if (!cellGoup) {
+    return;
+  }
+  if (isNumber(index)) {
+    const radio = cellGoup.getChildAt(index) as any;
+    radio?._handlePointerUp();
+  } else {
+    const radio = cellGoup.getChildByName('radio') as any;
+    radio?._handlePointerUp();
+  }
 }

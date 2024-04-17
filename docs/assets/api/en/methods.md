@@ -1028,3 +1028,27 @@ registerCustomCellStyleArrangement: (cellPosition: { col?: number; row?: number;
   - Single cell: `{ row: number, column: number }`
   - Cell range: `{ range: { start: { row: number, column: number }, end: { row: number, column: number} } }`
 - customStyleId: Custom style id, the same as the id defined when registering the custom style
+
+## setCellCheckboxState(Function)
+
+Set the checkbox state of a cell
+
+```
+setCellCheckboxState(col: number, row: number, checked: boolean) => void
+```
+
+- col: column number
+- row: row number
+- checked: whether checked
+
+## setCellRadioState(Function)
+
+Set the cell's radio state to selected
+
+```
+setCellRadioState(col: number, row: number, index?: number) => void
+```
+
+- col: column number
+- row: row number
+- index: the index of the updated target radio in the cell

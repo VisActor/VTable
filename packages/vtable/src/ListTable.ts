@@ -34,8 +34,9 @@ import { computeRowHeight } from './scenegraph/layout/compute-row-height';
 import { defaultOrderFn } from './tools/util';
 import type { IEditor } from '@visactor/vtable-editors';
 import type { ColumnData, ColumnDefine } from './ts-types/list-table/layout-map/api';
-import { getCellRadioState } from './state/radio/radio';
+import { getCellRadioState, setCellRadioState } from './state/radio/radio';
 import { cloneDeepSpec } from '@visactor/vutils-extension';
+import { setCellCheckboxState } from './state/checkbox/checkbox';
 
 export class ListTable extends BaseTable implements ListTableAPI {
   declare internalProps: ListTableProtected;
@@ -933,6 +934,14 @@ export class ListTable extends BaseTable implements ListTableAPI {
   /** 获取某个单元格checkbox的状态 */
   getCellRadioState(col: number, row: number): boolean | number {
     return getCellRadioState(col, row, this);
+  }
+
+  setCellCheckboxState(col: number, row: number, checked: boolean) {
+    setCellCheckboxState(col, row, checked, this);
+  }
+
+  setCellRadioState(col: number, row: number, index?: number) {
+    setCellRadioState(col, row, index, this);
   }
   /**
    * 设置表格数据 及排序状态
