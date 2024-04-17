@@ -2,7 +2,7 @@
   "changes": [
     {
       "comment": "feat: add lazy load for pivot table tree #1521\n\n",
-      "type": "none",
+      "type": "minor",
       "packageName": "@visactor/vtable"
     }
   ],
