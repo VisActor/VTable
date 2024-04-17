@@ -17,6 +17,7 @@ import { getCellMergeRange } from '../../tools/merge-range';
 import { getCellMergeInfo } from '../utils/get-cell-merge';
 import { getHierarchyOffset } from '../utils/get-hierarchy-offset';
 import { measureTextBounds } from '../utils/text-measure';
+import { breakString } from '../utils/break-string';
 
 const utilRichTextMark = new RichText({
   width: 0,
@@ -657,12 +658,7 @@ function computeTextHeight(col: number, row: number, cellType: ColumnTypeOption,
       text = cellValue;
     }
 
-    let lines;
-    if (!table.internalProps.enableLineBreak || table.options.customConfig?.multilinesForXTable) {
-      lines = [validToString(text)];
-    } else {
-      lines = validToString(text).split('\n') || [];
-    }
+    const lines = breakString(text, table);
 
     const cellWidth = table.getColsWidth(col, endCol);
 

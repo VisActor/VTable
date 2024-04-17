@@ -13,6 +13,7 @@ import { getHierarchyOffset } from './get-hierarchy-offset';
 import type { BaseTableAPI } from '../../ts-types/base-table';
 import { isNil, isNumber, isValid } from '@visactor/vutils';
 import { isMergeCellGroup } from './is-merge-cell-group';
+import { breakString } from './break-string';
 
 /**
  * @description: 创建单元格内容
@@ -74,13 +75,7 @@ export function createCellContent(
   if (!Array.isArray(icons) || icons.length === 0) {
     if (isValid(textStr)) {
       // 没有icon，cellGroup只添加WrapText
-      // const text = convertInternal(textStr).replace(/\r?\n/g, '\n').replace(/\r/g, '\n').split('\n');
-      let text;
-      if (!table.internalProps.enableLineBreak && !table.options.customConfig?.multilinesForXTable) {
-        text = [convertInternal(textStr)];
-      } else {
-        text = convertInternal(textStr).replace(/\r?\n/g, '\n').replace(/\r/g, '\n').split('\n') || [];
-      }
+      const text = breakString(textStr, table);
 
       const hierarchyOffset = range
         ? getHierarchyOffset(range.start.col, range.start.row, table)
@@ -210,13 +205,8 @@ export function createCellContent(
       const hierarchyOffset = range
         ? getHierarchyOffset(range.start.col, range.start.row, table)
         : getHierarchyOffset(cellGroup.col, cellGroup.row, table);
-      // const text = convertInternal(textStr).replace(/\r?\n/g, '\n').replace(/\r/g, '\n').split('\n');
-      let text;
-      if (!table.internalProps.enableLineBreak && !table.options.customConfig?.multilinesForXTable) {
-        text = [convertInternal(textStr)];
-      } else {
-        text = convertInternal(textStr).replace(/\r?\n/g, '\n').replace(/\r/g, '\n').split('\n') || [];
-      }
+      const text = breakString(textStr, table);
+
       const attribute = {
         text: text.length === 1 ? text[0] : text,
         maxLineWidth: autoColWidth
