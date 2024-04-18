@@ -2,6 +2,18 @@
   "name": "@visactor/vtable",
   "entries": [
     {
+      "version": "0.23.4",
+      "tag": "@visactor/vtable_v0.23.4",
+      "date": "Thu, 18 Apr 2024 08:13:35 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "fix: fix right & top axis visible"
+          }
+        ]
+      }
+    },
+    {
       "version": "0.23.3",
       "tag": "@visactor/vtable_v0.23.3",
       "date": "Tue, 16 Apr 2024 08:38:10 GMT",
