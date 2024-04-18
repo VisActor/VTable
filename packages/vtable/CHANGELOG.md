@@ -1,6 +1,13 @@
 # Change Log - @visactor/vtable
 
-This log was last generated on Tue, 16 Apr 2024 08:38:10 GMT and should not be manually modified.
+This log was last generated on Thu, 18 Apr 2024 08:13:35 GMT and should not be manually modified.
+
+## 0.23.4
+Thu, 18 Apr 2024 08:13:35 GMT
+
+### Updates
+
+- fix: fix right & top axis visible
 
 ## 0.23.3
 Tue, 16 Apr 2024 08:38:10 GMT
