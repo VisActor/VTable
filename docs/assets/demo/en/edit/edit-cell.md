@@ -214,7 +214,8 @@ const option = {
   columns,
   autoWrapText: true,
   limitMaxAutoWidth: 600,
-  heightMode: 'autoHeight'
+  heightMode: 'autoHeight',
+  editCellTrigger: 'click'
 };
 tableInstance = new VTable.ListTable(option);
 window['tableInstance'] = tableInstance;
