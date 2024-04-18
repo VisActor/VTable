@@ -221,7 +221,7 @@ According to the above traversed structure, a dimension tree will be generated, 
     <p>Correspondence between data source entries and cells</p>
   </div>
 
-### Custom dimension tree
+### Custom header structure width dimension tree
 
 Although multi-dimensional tables with analytical capabilities can automatically analyze the dimension values of each dimension to form a tree structure of row and column headers, and can be sorted according to `dataConfig.sortRules`, scenarios with complex business logic still expect to be able to **customize Row column header dimension value ** and order. Then these business requirement scenarios can be realized through rowTree and columnTree.
 

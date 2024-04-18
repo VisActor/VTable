@@ -1,6 +1,7 @@
 # Pivot data analysis
 
 In the figure below, there are four business dimensions: region, province, year, quarter, and indicators: sales, profit.
+
  <div style="width: 80%; text-align: center;">
      <img src="https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/guide/pivot-analysis.png" />
     <p>Pivot table structure description</p>
@@ -8,8 +9,11 @@ In the figure below, there are four business dimensions: region, province, year,
 Regarding the sales data in the figure, the location is in cell [5, 5], that is, the data in column 5 and row 5: represents the sales profit value of Heilongjiang Province in the Northeast region in the Q2 quarter of 2016. That is to say, it corresponds to the row dimension value: ['Northeast', 'Heilongjiang'], the column dimension: ['2016', '2016-Q2'], and the indicator: 'Profit'. Next, we will introduce how to use VTable to implement this multi-dimensional table.
 
 # VTable implements multi-dimensional tables
+
 ## Concept mapping to configuration items
+
 The configuration of the pivot table above is as follows:
+
 ```
 const option={
   rows:['region','province'], //row dimensions
@@ -28,20 +32,24 @@ const option={
   ]
 }
 ```
+
 This configuration is the simplest configuration for multidimensional tables. As the functional requirements become more complex, various configurations can be added for each function point to meet the needs.
+
 ## Data analysis related configuration:
-|Configuration item|Type|Description|
-|:----|:----|:----|
-|rows|(IRowDimension \| string)[]|Row dimension field array, used to parse out the corresponding dimension members|
-|columns|(IColumnDimension \| string)[]|Column dimension field array, used to parse out the corresponding dimension members|
-|indicators|(IIndicator \| string)[]|Specific display indicators|
-|dataConfig.aggregationRules|aggregationRule[]|Aggregation value calculation rules according to row and column dimensions|
-|dataConfig.derivedFieldRules|DerivedFieldRule[]|Derived fields|
-|dataConfig.sortRules|sortRule[]|Sort rules|
-|dataConfig.filterRules|filterRule[]|Filter Rules|
-|dataConfig.totals|totalRule[]|Subtotal or total|
+
+| Configuration item           | Type                           | Description                                                                         |
+| :--------------------------- | :----------------------------- | :---------------------------------------------------------------------------------- |
+| rows                         | (IRowDimension \| string)[]    | Row dimension field array, used to parse out the corresponding dimension members    |
+| columns                      | (IColumnDimension \| string)[] | Column dimension field array, used to parse out the corresponding dimension members |
+| indicators                   | (IIndicator \| string)[]       | Specific display indicators                                                         |
+| dataConfig.aggregationRules  | aggregationRule[]              | Aggregation value calculation rules according to row and column dimensions          |
+| dataConfig.derivedFieldRules | DerivedFieldRule[]             | Derived fields                                                                      |
+| dataConfig.sortRules         | sortRule[]                     | Sort rules                                                                          |
+| dataConfig.filterRules       | filterRule[]                   | Filter Rules                                                                        |
+| dataConfig.totals            | totalRule[]                    | Subtotal or total                                                                   |
 
 dataConfig configuration definition:
+
 ```
 /**
  * Data processing configuration
@@ -55,10 +63,14 @@ export interface IDataConfig {
   ...
 }
 ```
+
 dataConfig application example:
+
 ### 1. Totals
+
 [option description](../../../option/PivotTable#dataConfig.totals)
 Configuration example:
+
 ```
 dataConfig: {
       totals: {
@@ -80,10 +92,14 @@ dataConfig: {
       }
     },
 ```
+
 Online demo：https://visactor.io/vtable/demo/data-analysis/pivot-analysis-total
+
 ### 2. Sorting rules
+
 [option description](../../../option/PivotTable#dataConfig.sortRules)
 Configuration example:
+
 ```
     sortRules: [
         {
@@ -99,9 +115,12 @@ Configuration example:
 If you need to modify the sorting rules of the pivot table, you can use the interface `updateSortRules`.
 
 Online demo：https://visactor.io/vtable/demo/data-analysis/pivot-analysis-sort-dimension
+
 ### 3. Filter rules
+
 [option description](../../../option/PivotTable#dataConfig.filterRules)
 Configuration example:
+
 ```
 filterRules: [
         {
@@ -111,10 +130,14 @@ filterRules: [
         }
       ]
 ```
+
 Online demo：https://visactor.io/vtable/demo/data-analysis/pivot-analysis-filter
+
 ### 4. Aggregation method
+
 [option description](../../../option/PivotTable#dataConfig.aggregationRules)
 Configuration example:
+
 ```
     aggregationRules: [
         //The basis for doing aggregate calculations, such as sales. If there is no configuration, the cell content will be displayed by default based on the aggregate sum calculation result.
@@ -147,10 +170,14 @@ Configuration example:
         }
       ]
 ```
+
 Online demo：https://visactor.io/vtable/demo/data-analysis/pivot-analysis-aggregation
+
 ### 5. Derive Field
+
 [option description](../../../option/PivotTable#dataConfig.derivedFieldRules)
 Configuration example:
+
 ```
     derivedFieldRules: [
       {
@@ -163,18 +190,26 @@ Configuration example:
       }
     ]
 ```
+
 Online demo：https://visactor.io/vtable/demo/data-analysis/pivot-analysis-derivedField
+
 ## Data analysis process
+
 Dependent configuration: dimensions, indicators and dataConfig.
+
 ### The process of traversing data:
+
 Traverse the records once, parse the row header dimension value to display the header cell, distribute all data in the records to the corresponding row and column path set, and calculate the aggregate value of the body part indicator cell.
+
  <div style="width: 80%; text-align: center;">
      <img src="https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/guide/data-analysis-process.png" />
     <p>Data analysis process</p>
   </div>
 
 ### Data dimension tree
+
 According to the above traversed structure, a dimension tree will be generated, from which the value of the cell and the original data entry of the value can be found.
+
  <div style="width: 80%; text-align: center;">
      <img src="https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/guide/dimension-tree.png" />
     <p>Organize dimension tree to aggregate data</p>
@@ -185,8 +220,10 @@ According to the above traversed structure, a dimension tree will be generated, 
     <p>Correspondence between data source entries and cells</p>
   </div>
 
-### Custom dimension tree
+### Custom header structure width dimension tree
+
 Although multi-dimensional tables with analytical capabilities can automatically analyze the dimension values of each dimension to form a tree structure of row and column headers, and can be sorted according to `dataConfig.sortRules`, scenarios with complex business logic still expect to be able to **customize Row column header dimension value ** and order. Then these business requirement scenarios can be realized through rowTree and columnTree.
+
 - enableDataAnalysis needs to be set to false to turn off the analysis of aggregated data within VTable.
 
    <div style="width: 80%; text-align: center;">
@@ -195,6 +232,7 @@ Although multi-dimensional tables with analytical capabilities can automatically
   </div>
 
 Custom tree configuration:
+
 ```
 const option = {
     rowTree: [{
@@ -329,6 +367,7 @@ const option = {
     ]
 };
 ```
+
 VTable official website example: https://visactor.io/vtable/demo/table-type/pivot-table.
 
 The complexity of the custom tree lies in the formation of the row, column and dimension trees. You can choose to use it according to the business scenario. If you have complex sorting, aggregation or paging rules, you can choose to use a custom method.
