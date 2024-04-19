@@ -26,6 +26,14 @@ export class InputEditor implements IEditor {
     this.element = input;
 
     this.container.appendChild(input);
+
+    // 监听键盘事件
+    input.addEventListener('keydown', (e: KeyboardEvent) => {
+      if (e.key === 'a' && (e.ctrlKey || e.metaKey)) {
+        // 阻止冒泡  防止处理成表格全选事件
+        e.stopPropagation();
+      }
+    });
   }
 
   setValue(value: string) {
