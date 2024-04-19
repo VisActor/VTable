@@ -1315,29 +1315,6 @@
           }
         }
       ]
-    },
-    {
-      "path": "react",
-      "title": {
-        "zh": "react",
-        "en": "react"
-      },
-      "children": [
-        {
-          "path": "table-option",
-          "title": {
-            "zh": "table-option",
-            "en": "table-option"
-          }
-        },
-        {
-          "path": "table-component",
-          "title": {
-            "zh": "table-component",
-            "en": "table-component"
-          }
-        }
-      ]
     }
   ]
 }
