@@ -9,3 +9,5 @@ export * from './percent-calc';
 export * from './arc';
 export * from './tag';
 export * from './group';
+
+export { CheckBox, Radio } from '@visactor/vrender-components';

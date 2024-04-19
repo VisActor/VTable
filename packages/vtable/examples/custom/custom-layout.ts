@@ -64,18 +64,18 @@ export function createTable() {
       {
         field: 'bloggerName',
         title: '主播昵称',
-        width: '260',
+        width: 'auto',
         customLayout: (args: VTable.TYPES.CustomRenderFunctionArg) => {
           const { table, row, col, rect } = args;
           const record = table.getRecordByCell(col, row);
           const { height, width } = rect ?? table.getCellRect(col, row);
           const percentCalc = VTable.CustomLayout.percentCalc;
-
           const container = new VTable.CustomLayout.Group({
             height,
             width,
             display: 'flex',
-            flexDirection: 'row'
+            flexDirection: 'row',
+            flexWrap: 'nowrap'
           });
           const containerLeft = new VTable.CustomLayout.Group({
             height: percentCalc(100),
@@ -101,7 +101,7 @@ export function createTable() {
 
           const containerRight = new VTable.CustomLayout.Group({
             height: percentCalc(100),
-            width: 200,
+            width: percentCalc(100, -50),
             display: 'flex',
             direction: 'column'
             // justifyContent: 'center'
@@ -113,7 +113,8 @@ export function createTable() {
             height: percentCalc(50),
             width: percentCalc(100),
             display: 'flex',
-            alignItems: 'center'
+            alignItems: 'center',
+            flexWrap: 'nowrap'
           });
 
           const containerRightBottom = new VTable.CustomLayout.Group({
@@ -133,7 +134,6 @@ export function createTable() {
             fill: 'black',
             marginLeft: 10
           });
-          bloggerName.getSize(table);
           containerRightTop.add(bloggerName);
 
           const location = new VTable.CustomLayout.Icon({
@@ -149,9 +149,9 @@ export function createTable() {
             text: record.city,
             fontSize: 11,
             fontFamily: 'sans-serif',
-            fill: '#6f7070'
+            fill: '#6f7070',
+            boundsPadding: [0, 10, 0, 0]
           });
-          bloggerName.getSize(table);
           containerRightTop.add(locationName);
 
           for (let i = 0; i < record?.tags?.length ?? 0; i++) {
@@ -185,10 +185,105 @@ export function createTable() {
         fieldFormat(rec) {
           return rec.fansCount + 'w';
         },
+        width: '280',
         style: {
           fontFamily: 'Arial',
           fontSize: 12,
           fontWeight: 'bold'
+        },
+        customLayout: (args: VTable.TYPES.CustomRenderFunctionArg) => {
+          const { table, row, col, rect } = args;
+          const { height, width } = rect ?? table.getCellRect(col, row);
+
+          const container = new VTable.CustomLayout.Group({
+            height,
+            width,
+            display: 'flex',
+            flexDirection: 'column'
+          });
+
+          const checkboxGroup = new VTable.CustomLayout.Group({
+            display: 'flex',
+            flexDirection: 'row',
+            flexWrap: 'no-wrap',
+            boundsPadding: [10, 0, 0, 10]
+          });
+          container.appendChild(checkboxGroup);
+
+          const checkboxText = new VTable.CustomLayout.Text({
+            text: 'checkbox'
+          });
+          checkboxGroup.appendChild(checkboxText);
+
+          const checkbox1 = new VTable.CustomLayout.CheckBox({
+            text: {
+              text: 'checkbox1'
+            }
+            // boundsPadding: [10, 0, 0, 10]
+          });
+          checkbox1.render();
+          checkboxGroup.appendChild(checkbox1);
+          checkbox1.addEventListener('checkbox_state_change', e => {
+            console.log('checkbox_state_change', e);
+          });
+
+          const checkbox2 = new VTable.CustomLayout.CheckBox({
+            text: {
+              text: 'checkbox2'
+            }
+            // boundsPadding: [10, 0, 0, 10]
+          });
+          checkbox2.render();
+          checkboxGroup.appendChild(checkbox2);
+          checkbox2.addEventListener('checkbox_state_change', e => {
+            console.log('checkbox_state_change', e);
+          });
+
+          const radioGroup = new VTable.CustomLayout.Group({
+            display: 'flex',
+            flexDirection: 'row',
+            flexWrap: 'no-wrap',
+            boundsPadding: [10, 0, 0, 10]
+          });
+          container.appendChild(radioGroup);
+
+          const radioText = new VTable.CustomLayout.Text({
+            text: 'radio'
+          });
+          radioGroup.appendChild(radioText);
+
+          const radio1 = new VTable.CustomLayout.Radio({
+            text: {
+              text: 'radio1'
+            }
+          });
+          radio1.render();
+          radioGroup.appendChild(radio1);
+          radio1.addEventListener('radio_checked', () => {
+            if (radio2.attribute.checked) {
+              radio2.setAttribute('checked', false);
+              table.scenegraph.updateNextFrame();
+            }
+          });
+
+          const radio2 = new VTable.CustomLayout.Radio({
+            text: {
+              text: 'radio2'
+            }
+          });
+          radio2.render();
+          radioGroup.appendChild(radio2);
+          radio2.addEventListener('radio_checked', () => {
+            if (radio1.attribute.checked) {
+              radio1.setAttribute('checked', false);
+              table.scenegraph.updateNextFrame();
+            }
+          });
+
+          return {
+            rootContainer: container,
+            renderDefault: false
+          };
         }
       },
       {
