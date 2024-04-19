@@ -490,12 +490,14 @@ export function dealHeader(
   }
 
   if ((hd as ITreeLayoutHeadNode).children?.length >= 1) {
-    layoutMap
-      ._addHeaders(_headerCellIds, row + ((hd as any).levelSpan ?? 1), (hd as ITreeLayoutHeadNode).children ?? [], [
-        ...roots,
-        ...Array((hd as any).levelSpan ?? 1).fill(id)
-      ])
-      .forEach(c => results.push(c));
+    layoutMap._addHeaders(
+      _headerCellIds,
+      row + ((hd as any).levelSpan ?? 1),
+      (hd as ITreeLayoutHeadNode).children ?? [],
+      [...roots, ...Array((hd as any).levelSpan ?? 1).fill(id)],
+      results
+    );
+    // .forEach(c => results.push(c));
   } else {
     // columns.push([""])//代码一个路径
     for (let r = row + 1; r < _headerCellIds.length; r++) {
