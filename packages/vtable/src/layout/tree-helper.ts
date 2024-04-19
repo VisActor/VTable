@@ -593,17 +593,17 @@ export function dealHeaderForTreeMode(
   if (hd.hierarchyState === HierarchyState.expand && (hd as ITreeLayoutHeadNode).children?.length >= 1) {
     //row传值 colIndex++和_addHeaders有区别
     show && layoutMap.colIndex++;
-    layoutMap
-      ._addHeadersForTreeMode(
-        _headerCellIds,
-        row,
-        (hd as ITreeLayoutHeadNode).children ?? [],
-        [...roots, id],
-        totalLevel,
-        show && hd.hierarchyState === HierarchyState.expand, //当前节点show 且当前节点状态为展开 则传给子节点为show：true
-        dimensions
-      )
-      .forEach(c => results.push(c));
+    layoutMap._addHeadersForTreeMode(
+      _headerCellIds,
+      row,
+      (hd as ITreeLayoutHeadNode).children ?? [],
+      [...roots, id],
+      totalLevel,
+      show && hd.hierarchyState === HierarchyState.expand, //当前节点show 且当前节点状态为展开 则传给子节点为show：true
+      dimensions,
+      results
+    );
+    // .forEach(c => results.push(c));
   } else {
     // columns.push([""])//代码一个路径
     show && layoutMap.colIndex++;
