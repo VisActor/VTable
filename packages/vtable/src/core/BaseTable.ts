@@ -2642,7 +2642,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
   abstract getRecordShowIndexByCell(col: number, row: number): number;
   abstract getCellOriginRecord(col: number, row: number): MaybePromiseOrUndefined;
   abstract getCellRawRecord(col: number, row: number): MaybePromiseOrUndefined;
-  abstract getCellValue(col: number, row: number): FieldData;
+  abstract getCellValue(col: number, row: number, skipCustomMerge?: boolean): FieldData;
   abstract getCellOriginValue(col: number, row: number): FieldData;
   abstract getCellRawValue(col: number, row: number): FieldData;
 

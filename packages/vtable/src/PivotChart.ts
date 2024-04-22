@@ -386,10 +386,12 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
   //   return dataValue;
   // }
 
-  getCellValue(col: number, row: number): FieldData {
-    const customMergeText = this.getCustomMergeValue(col, row);
-    if (customMergeText) {
-      return customMergeText;
+  getCellValue(col: number, row: number, skipCustomMerge?: boolean): FieldData {
+    if (!skipCustomMerge) {
+      const customMergeText = this.getCustomMergeValue(col, row);
+      if (customMergeText) {
+        return customMergeText;
+      }
     }
     if (this.internalProps.layoutMap.isHeader(col, row)) {
       if (
