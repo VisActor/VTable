@@ -1,6 +1,32 @@
 # Change Log - @visactor/vtable
 
-This log was last generated on Thu, 18 Apr 2024 08:13:35 GMT and should not be manually modified.
+This log was last generated on Mon, 22 Apr 2024 10:59:12 GMT and should not be manually modified.
+
+## 0.24.0
+Mon, 22 Apr 2024 10:59:12 GMT
+
+### Minor changes
+
+- feat: add lazy load for pivot table tree #1521
+
+
+- feat: add radio column type
+
+### Updates
+
+- fix: handle with editor input ctrl+a event #1552
+
+
+- refactor: optimize performance when row tree node exceed 8000 nodes #1557
+
+
+- fix: when resize window size the editor input size not match cell size #1559
+
+
+- feat: add setCellCheckboxState & setCellRadioState api #1504
+- fix: fix multilines new line style #1531
+- fix: fix cell group order in async data #1517
+- fix: add skipCustomMerge in getCellValue() #1543
 
 ## 0.23.4
 Thu, 18 Apr 2024 08:13:35 GMT
