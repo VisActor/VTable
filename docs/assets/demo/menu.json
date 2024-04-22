@@ -167,6 +167,13 @@
           }
         },
         {
+          "path": "pivot-table-tree-lazy-load",
+          "title": {
+            "zh": "透视表树形懒加载子节点（自定义表头结构）",
+            "en": "Pivot Table Tree Lazy Load"
+          }
+        },
+        {
           "path": "pivot-table-multi-tree",
           "title": {
             "zh": "透视表多列树形展示",

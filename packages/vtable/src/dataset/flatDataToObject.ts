@@ -78,8 +78,8 @@ export class FlatDataToObjects {
       console.log('processRecords:', t1 - t0);
     }
 
-    delete this.rowFlatKeys;
-    delete this.colFlatKeys;
+    // delete this.rowFlatKeys;
+    // delete this.colFlatKeys;
   }
 
   setRecords(records: any[]) {
@@ -257,5 +257,12 @@ export class FlatDataToObjects {
       this.changedTree[flatRowKey] = {};
       this.changedTree[flatRowKey][flatColKey] = newValue;
     }
+  }
+  addRecords(records: any[]) {
+    for (let i = 0, len = records.length; i < len; i++) {
+      const record = records[i];
+      this.processRecord(record);
+    }
+    this.records.push(records);
   }
 }

@@ -155,11 +155,29 @@ setRecords(records: Array<any>)
 
 ## setRecordChildren(Function)
 
+**ListTable 专有**
+
 基本表格树形展示场景下，如果需要动态插入子节点的数据可以配合使用该接口，其他情况不适用
 
 ```
   /**
    * @param records 设置到单元格其子节点的数据
+   * @param col 需要设置子节点的单元格地址
+   * @param row  需要设置子节点的单元格地址
+   */
+  setRecordChildren(records: any[], col: number, row: number)
+```
+
+## setTreeNodeChildren(Function)
+
+**PivotTable 专有**
+
+透视表格树形展示场景下，如果需要动态插入子节点的数据可以配合使用该接口，其他情况不适用。节点数据懒加载可以参考 demo：https://visactor.io/vtable/demo/table-type/pivot-table-tree-lazy-load
+
+```
+  /**
+   * 树形展示场景下，如果需要动态插入子节点的数据可以配合使用该接口，其他情况不适用
+   * @param records 设置到该单元格其子节点的数据
    * @param col 需要设置子节点的单元格地址
    * @param row  需要设置子节点的单元格地址
    */
@@ -313,7 +331,7 @@ setRecords(records: Array<any>)
 
 根据数据源的 index 获取显示到表格中的 index 行号或者列号（与转置相关，非转置获取的是行号，转置表获取的是列号）。
 
-** ListTable 专有 **
+**ListTable 专有**
 
 ```
   /**
@@ -331,21 +349,21 @@ setRecords(records: Array<any>)
 
 如果是树形模式的表格，将返回数组，如[1,2] 数据源中第 2 条数据中 children 中的第 3 条。
 
-** ListTable 专有 **
+**ListTable 专有**
 
 ```
   /** 获取当前单元格的数据是数据源中的第几条。
    * 如果是树形模式的表格，将返回数组，如[1,2] 数据源中第2条数据中children中的第3条
    * 注：ListTable特有接口 */
   getRecordIndexByCell(col: number, row: number): number | number[]
-** ListTable 专有 **
+**ListTable 专有**
 ```
 
 ## getTableIndexByField(Function)
 
 根据数据源的 field 获取显示到表格中的 index 行号或者列号（与转置相关，非转置获取的是行号，转置表获取的是列号）。
 
-** ListTable 专有 **
+**ListTable 专有**
 
 ```
   /**
@@ -359,7 +377,7 @@ setRecords(records: Array<any>)
 
 获取当前单元格数据在 body 部分的索引，即通过行列号去除表头层级数的索引（与转置相关，非转置获取的是 body 行号，转置表获取的是 body 列号）。
 
-** ListTable 专有 **
+**ListTable 专有**
 
 ```
   /** 获取当前单元格在body部分的展示索引，即（ row / col ）- headerLevelCount。注：ListTable特有接口 */
@@ -655,7 +673,7 @@ enum HierarchyState {
 
 ## getLayoutRowTree(Function)
 
-** PivotTable 专有 **
+**PivotTable 专有**
 
 获取表格行头树形结构
 
@@ -669,7 +687,7 @@ enum HierarchyState {
 
 ## getLayoutRowTreeCount(Function)
 
-** PivotTable 专有 **
+**PivotTable 专有**
 
 获取表格行头树形结构的占位的总节点数。
 
@@ -912,7 +930,7 @@ use case: 点击图例项后 更新过滤规则 来更新图表
 
 添加数据，支持多条数据
 
-** ListTable 专有 **
+**ListTable 专有**
 
 ```
   /**
@@ -925,11 +943,13 @@ use case: 点击图例项后 更新过滤规则 来更新图表
   addRecords(records: any[], recordIndex?: number)
 ```
 
+**0.24.0 版本后增加了对透视表的懒加载支持，所以针对这种场景下 透视表可以调用该接口实现懒加载效果。其他透视表场景使用该接口会有问题！**
+
 ## addRecord(Function)
 
 添加数据，单条数据
 
-** ListTable 专有 **
+**ListTable 专有**
 
 ```
   /**
@@ -946,7 +966,7 @@ use case: 点击图例项后 更新过滤规则 来更新图表
 
 删除数据 支持多条数据
 
-** ListTable 专有 **
+**ListTable 专有**
 
 ```
   /**
@@ -960,7 +980,7 @@ use case: 点击图例项后 更新过滤规则 来更新图表
 
 修改数据 支持多条数据
 
-** ListTable 专有 **
+**ListTable 专有**
 
 ```
   /**

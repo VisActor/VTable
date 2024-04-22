@@ -109,6 +109,13 @@
                 "zh": "树形结构",
                 "en": "pivot table tree"
               }
+            },
+            {
+              "path": "custom_header",
+              "title": {
+                "zh": "自定义表头",
+                "en": "pivot table custom header"
+              }
             }
           ]
         },

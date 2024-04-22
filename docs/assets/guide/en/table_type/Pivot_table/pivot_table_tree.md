@@ -20,7 +20,7 @@ The main configuration parameters displayed by the pivot table tree structure:
   - For this kind of multi-column tree structure, the ability to drag and move the header is not supported.
   - After updateOption is called, maintenance of the collapsed and expanded state of non-rowTree nodes is not supported.
 
-## example
+## Basic usage example
 
 Let's configure the key parameters of the pivot table tree display one by one:
 
