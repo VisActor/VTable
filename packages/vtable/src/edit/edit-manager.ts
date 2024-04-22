@@ -51,7 +51,7 @@ export class EditManeger {
       this.completeEdit();
     });
     handler.on(this.table.getElement(), 'resize', (e: WheelEvent) => {
-      if (this.table.autoFillWidth) {
+      if (this.table.autoFillWidth || this.table.autoFillHeight) {
         this.completeEdit();
       }
     });
