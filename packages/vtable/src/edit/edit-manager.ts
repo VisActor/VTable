@@ -50,6 +50,11 @@ export class EditManeger {
     handler.on(this.table.getElement(), 'wheel', (e: WheelEvent) => {
       this.completeEdit();
     });
+    handler.on(this.table.getElement(), 'resize', (e: Event) => {
+      if (this.table.autoFillWidth || this.table.autoFillHeight) {
+        this.completeEdit();
+      }
+    });
   }
 
   startEditCell(col: number, row: number) {
