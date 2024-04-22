@@ -168,11 +168,11 @@ export function computeRowsHeight(
       }
     }
   } else {
-    if (table.rowCount !== table.rowHeightsMap.length) {
-      // for tree mode
-      // table.rowHeightsMap.clear();
-      table.clearRowHeightCache();
-    }
+    // if (table.rowCount !== table.rowHeightsMap.length) {
+    //   // for tree mode
+    //   // table.rowHeightsMap.clear();
+    //   table.clearRowHeightCache();
+    // }
     if (update) {
       for (let row = rowStart; row <= rowEnd; row++) {
         newHeights[row] = table.getRowHeight(row);

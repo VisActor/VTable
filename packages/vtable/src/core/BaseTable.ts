@@ -1069,48 +1069,15 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     }
     startRow = Math.max(startRow, 0);
     endRow = Math.min(endRow, (this.rowCount ?? Infinity) - 1);
-    //通过缓存获取指定范围行高
-    // const cachedRowHeight = this._rowRangeHeightsMap.get(`$${startRow}$${endRow}`);
-    // if (cachedRowHeight !== null && cachedRowHeight !== undefined) {
-    //   return cachedRowHeight;
-    // }
-    // //特殊处理 先尝试获取startRow->endRow-1的行高
-    // const cachedLowerRowHeight = this._rowRangeHeightsMap.get(`$${startRow}$${endRow - 1}`);
-    // if (cachedLowerRowHeight !== null && cachedLowerRowHeight !== undefined) {
-    //   const height = Math.round(
-    //     cachedLowerRowHeight +
-    //       (this.rowHeightsMap.get(endRow) ??
-    //         (this.isColumnHeader(0, endRow) || this.isCornerHeader(0, endRow)
-    //           ? Array.isArray(this.defaultHeaderRowHeight) && isNumber(this.defaultHeaderRowHeight[endRow])
-    //             ? (this.defaultHeaderRowHeight[endRow] as number)
-    //             : isNumber(this.defaultHeaderRowHeight)
-    //             ? (this.defaultHeaderRowHeight as number)
-    //             : this.internalProps.defaultRowHeight
-    //           : this.internalProps.defaultRowHeight))
-    //   );
-    //   if (startRow >= 0 && endRow >= 0) {
-    //     this._rowRangeHeightsMap.set(`$${startRow}$${endRow}`, Math.round(height));
-    //   }
-    //   return height;
-    // }
 
     let h = 0;
-    // for (let i = startRow; i <= endRow; i++) {
-    //   h +=
-    //     this.rowHeightsMap.get(i) ||
-    //     (this.isColumnHeader(0, i) || this.isCornerHeader(0, i)
-    //       ? Array.isArray(this.defaultHeaderRowHeight)
-    //         ? this.defaultHeaderRowHeight[i] ?? this.internalProps.defaultRowHeight
-    //         : this.defaultHeaderRowHeight
-    //       : this.internalProps.defaultRowHeight);
-    // }
     // autoRowHeight || all rows in header, use accumulation
     if (
       this.heightMode === 'standard' &&
       !this.autoFillHeight &&
-      this.internalProps.layoutMap &&
-      endRow >= this.columnHeaderLevelCount &&
-      !this.bottomFrozenRowCount &&
+      // this.internalProps.layoutMap &&
+      // endRow >= this.columnHeaderLevelCount &&
+      // !this.bottomFrozenRowCount &&
       !this.hasAutoImageColumn()
     ) {
       for (let i = startRow; i < this.columnHeaderLevelCount; i++) {
@@ -1120,15 +1087,8 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
       // part in body
       h += this.defaultRowHeight * (endRow - Math.max(this.columnHeaderLevelCount, startRow) + 1);
     } else {
-      // for (let i = startRow; i <= endRow; i++) {
-      //   h += this.getRowHeight(i);
-      // }
       h = this.rowHeightsMap.getSumInRange(startRow, endRow);
     }
-    // if (startRow >= 0 && endRow >= 0 && h > 0) {
-    //   this._rowRangeHeightsMap.set(`$${startRow}$${endRow}`, Math.round(h));
-    // }
-    // }
     return Math.round(h);
   }
   /**
