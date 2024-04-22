@@ -234,13 +234,13 @@ Clear the selection of all cells.
 
 ## getCellValue(Function)
 
-Get cell display value
+Get the cell display value. If used in the customMergeCell function, you need to pass in the skipCustomMerge parameter, otherwise an error will be reported.
 
 ```
   /**
    * Get the cell display value
    */
-  getCellValue(col: number, row: number): FieldData;
+  getCellValue(col: number, row: number, skipCustomMerge?: boolean): FieldData;
 ```
 
 ## getCellOriginValue(Function)

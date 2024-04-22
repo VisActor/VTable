@@ -233,13 +233,13 @@ setRecords(records: Array<any>)
 
 ## getCellValue(Function)
 
-获取单元格展示值
+获取单元格展示值，如果在customMergeCell函数中使用，需要传入 skipCustomMerge 参数，否则会导致报错。
 
 ```
   /**
    * 获取单元格展示值
    */
-  getCellValue(col: number, row: number): FieldData;
+  getCellValue(col: number, row: number, skipCustomMerge?: boolean): FieldData;
 ```
 
 ## getCellOriginValue(Function)

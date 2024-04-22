@@ -642,7 +642,7 @@ export interface BaseTableAPI {
 
   getHeaderDescription: (col: number, row: number) => string | undefined;
   /** 获取单元格展示值 */
-  getCellValue: (col: number, row: number) => string | null;
+  getCellValue: (col: number, row: number, skipCustomMerge?: boolean) => string | null;
   /** 获取单元格展示数据的format前的值 */
   getCellOriginValue: (col: number, row: number) => any;
   /** 获取单元格展示数据源最原始值 */
