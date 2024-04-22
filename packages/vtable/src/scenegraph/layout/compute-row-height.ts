@@ -18,6 +18,7 @@ import { getCellMergeInfo } from '../utils/get-cell-merge';
 import { getHierarchyOffset } from '../utils/get-hierarchy-offset';
 import { computeCheckboxCellHeight, computeRadioCellHeight } from './height-util';
 import { measureTextBounds } from '../utils/text-measure';
+import { breakString } from '../utils/break-string';
 
 const utilRichTextMark = new RichText({
   width: 0,
@@ -395,7 +396,7 @@ function checkFixedStyleAndNoWrap(table: BaseTableAPI): boolean {
   const row = table.columnHeaderLevelCount;
   //设置了全局自动换行的话 不能复用高度计算
   if (
-    (table.internalProps.autoWrapText || table.isPivotChart()) &&
+    (table.internalProps.autoWrapText || table.internalProps.enableLineBreak || table.isPivotChart()) &&
     (table.options.heightMode === 'autoHeight' || table.options.heightMode === 'adaptive')
   ) {
     return false;
@@ -432,7 +433,7 @@ function checkFixedStyleAndNoWrapForTranspose(table: BaseTableAPI, row: number):
   const { layoutMap } = table.internalProps;
   //设置了全局自动换行的话 不能复用高度计算
   if (
-    table.internalProps.autoWrapText &&
+    (table.internalProps.autoWrapText || table.internalProps.enableLineBreak) &&
     (table.options.heightMode === 'autoHeight' || table.options.heightMode === 'adaptive')
   ) {
     return false;
@@ -724,6 +725,9 @@ function computeTextHeight(col: number, row: number, cellType: ColumnTypeOption,
       } else {
         maxHeight = 0;
         lines.forEach((line: string, index: number) => {
+          if (table.options.customConfig?.multilinesForXTable && index !== 0) {
+            return;
+          }
           if (index === 0 && iconInlineFront.length) {
             maxHeight += Math.max(lineHeight, iconInlineFrontHeight);
           } else if (index === lines.length - 1 && iconInlineEnd.length) {

@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vtable",
+      "comment": "fix: add skipCustomMerge in getCellValue() #1543",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vtable"
+}

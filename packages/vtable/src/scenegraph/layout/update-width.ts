@@ -313,7 +313,8 @@ function updateCellWidth(
       cellGroup.attribute.height,
       padding,
       scene.table,
-      getStyleTheme(headerStyle, scene.table, col, row, getProp).theme
+      getStyleTheme(headerStyle, scene.table, col, row, getProp).theme,
+      false
     );
   } else if (type === 'image' || type === 'video') {
     // // 只更新背景边框

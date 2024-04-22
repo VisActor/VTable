@@ -466,12 +466,7 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
   }
   _generateColHeaderIds() {
     if (this.columnDimensionTree.tree.children?.length >= 1) {
-      this.columnHeaderObjs = this._addHeaders(
-        this._columnHeaderCellIds,
-        0,
-        this.columnDimensionTree.tree.children,
-        []
-      );
+      this._addHeaders(this._columnHeaderCellIds, 0, this.columnDimensionTree.tree.children, [], this.columnHeaderObjs);
     }
     // if (typeof this.showColumnHeader !== 'boolean') {
     if (this.columnHeaderTitle) {
@@ -505,18 +500,20 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
   }
   _generateRowHeaderIds() {
     if (this.rowDimensionTree.tree.children?.length >= 1) {
-      this.rowHeaderObjs =
-        this.rowHierarchyType === 'tree'
-          ? this._addHeadersForTreeMode(
-              this._rowHeaderCellIds_FULL,
-              0,
-              this.rowDimensionTree.tree.children,
-              [],
-              this.rowDimensionTree.totalLevel,
-              true,
-              this.rowsDefine
-            )
-          : this._addHeaders(this._rowHeaderCellIds_FULL, 0, this.rowDimensionTree.tree.children, []);
+      if (this.rowHierarchyType === 'tree') {
+        this._addHeadersForTreeMode(
+          this._rowHeaderCellIds_FULL,
+          0,
+          this.rowDimensionTree.tree.children,
+          [],
+          this.rowDimensionTree.totalLevel,
+          true,
+          this.rowsDefine,
+          this.rowHeaderObjs
+        );
+      } else {
+        this._addHeaders(this._rowHeaderCellIds_FULL, 0, this.rowDimensionTree.tree.children, [], this.rowHeaderObjs);
+      }
     }
     // if (typeof this.showRowHeader !== 'boolean') {
     if (this.rowHeaderTitle) {
@@ -548,7 +545,13 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
       this._headerObjects[id] = cell;
     }
   }
-  _addHeaders(_headerCellIds: number[][], row: number, header: ITreeLayoutHeadNode[], roots: number[]): HeaderData[] {
+  _addHeaders(
+    _headerCellIds: number[][],
+    row: number,
+    header: ITreeLayoutHeadNode[],
+    roots: number[],
+    results: HeaderData[]
+  ) {
     const _this = this;
     function _newRow(row: number): number[] {
       const newRow: number[] = (_headerCellIds[row] = []);
@@ -561,7 +564,6 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
       }
       return newRow;
     }
-    const results: HeaderData[] = [];
     if (!_headerCellIds[row]) {
       _newRow(row);
     }
@@ -570,7 +572,6 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
       const hd = header[i];
       dealHeader(hd, _headerCellIds, results, roots, row, this);
     }
-    return results;
   }
   _addHeadersForTreeMode(
     _headerCellIds: number[][],
@@ -579,8 +580,9 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
     roots: number[],
     totalLevel: number,
     show: boolean,
-    dimensions: (IDimension | string)[]
-  ): HeaderData[] {
+    dimensions: (IDimension | string)[],
+    results: HeaderData[]
+  ) {
     const _this = this;
     function _newRow(row: number): number[] {
       const newRow: number[] = (_headerCellIds[row] = []);
@@ -593,7 +595,6 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
       }
       return newRow;
     }
-    const results: HeaderData[] = [];
     if (!_headerCellIds[row]) {
       _newRow(row);
     }
@@ -602,7 +603,6 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
       const hd = header[i];
       dealHeaderForTreeMode(hd, _headerCellIds, results, roots, row, totalLevel, show, dimensions, this);
     }
-    return results;
   }
   private _addCornerHeaders(dimensionKeys: (string | number)[] | null, dimensions: (string | IDimension)[]) {
     const results: HeaderData[] = [];
@@ -731,7 +731,8 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
           [],
           rowExtensionDimensionTree.totalLevel,
           true,
-          extensionRow.rows
+          extensionRow.rows,
+          this.rowHeaderObjs
         );
         for (let i = 0; i < extensionRowTreeHeaderIds[0].length; i++) {
           this._rowHeaderCellIds_FULL.push(row_ids.concat(extensionRowTreeHeaderIds[0][i]));
@@ -1816,14 +1817,15 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
     //过程类似构造函数处理过程
     this.rowDimensionTree.reset(this.rowDimensionTree.tree.children, true);
     this._rowHeaderCellIds_FULL = [];
-    this.rowHeaderObjs = this._addHeadersForTreeMode(
+    this._addHeadersForTreeMode(
       this._rowHeaderCellIds_FULL,
       0,
       this.rowDimensionTree.tree.children,
       [],
       this.rowDimensionTree.totalLevel,
       true,
-      this.rowsDefine
+      this.rowsDefine,
+      this.rowHeaderObjs
     );
 
     if (this.rowHeaderTitle) {

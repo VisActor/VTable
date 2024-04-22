@@ -1,7 +1,7 @@
 ---
 category: examples
 group: usage
-title: 使用完整option
+title: 使用语法化标签
 cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/react-default-new.png
 order: 1-1
 link: '../guide/Developer_Ecology/openinula'

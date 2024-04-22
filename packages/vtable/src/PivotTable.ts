@@ -541,10 +541,12 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
     const colIndex = this.getBodyIndexByCol(col);
     return this.records[rowIndex]?.[colIndex];
   }
-  getCellValue(col: number, row: number): FieldData {
-    const customMergeText = this.getCustomMergeValue(col, row);
-    if (customMergeText) {
-      return customMergeText;
+  getCellValue(col: number, row: number, skipCustomMerge?: boolean): FieldData {
+    if (!skipCustomMerge) {
+      const customMergeText = this.getCustomMergeValue(col, row);
+      if (customMergeText) {
+        return customMergeText;
+      }
     }
     if (this.internalProps.layoutMap.isSeriesNumber(col, row)) {
       if (this.internalProps.layoutMap.isSeriesNumberInHeader(col, row)) {

@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vtable",
+      "comment": "fix: fix cell group order in async data #1517",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vtable"
+}

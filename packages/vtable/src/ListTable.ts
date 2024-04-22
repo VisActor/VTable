@@ -208,13 +208,15 @@ export class ListTable extends BaseTable implements ListTableAPI {
     }
   }
   /** 获取单元格展示值 */
-  getCellValue(col: number, row: number): FieldData {
+  getCellValue(col: number, row: number, skipCustomMerge?: boolean): FieldData {
     if (col === -1 || row === -1) {
       return null;
     }
-    const customMergeText = this.getCustomMergeValue(col, row);
-    if (customMergeText) {
-      return customMergeText;
+    if (!skipCustomMerge) {
+      const customMergeText = this.getCustomMergeValue(col, row);
+      if (customMergeText) {
+        return customMergeText;
+      }
     }
     const table = this;
     if (table.internalProps.layoutMap.isSeriesNumber(col, row)) {
@@ -373,6 +375,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
     internalProps.frozenColDragHeaderMode = options.frozenColDragHeaderMode;
     //分页配置
     this.pagination = options.pagination;
+    internalProps.sortState = options.sortState;
     internalProps.dataConfig = {}; // cloneDeep(options.dataConfig ?? {});
     //更新protectedSpace
     this.showHeader = options.showHeader ?? true;

@@ -573,7 +573,12 @@ function computeTextWidth(col: number, row: number, cellType: ColumnTypeOption, 
   } else {
     text = cellValue;
   }
-  const lines = validToString(text).split('\n') || [];
+  let lines;
+  if (!table.internalProps.enableLineBreak && !table.options.customConfig?.multilinesForXTable) {
+    lines = [validToString(text)];
+  } else {
+    lines = validToString(text).split('\n') || [];
+  }
   if (lines.length >= 1) {
     // eslint-disable-next-line no-loop-func
     lines.forEach((line: string) => {

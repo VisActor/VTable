@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vtable",
+      "comment": "fix: fix multilines new line style #1531",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vtable"
+}
