@@ -228,7 +228,7 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
       !options.indicatorsAsCol && !options.rows?.length && !options.rowTree ? [] : cloneDeep(options.rowTree);
     options.records && (this.internalProps.records = options.records);
     this.stateManager.initCheckedState(this.internalProps.records);
-
+    this.stateManager.updateDrillState(undefined, undefined, false, false, -1, -1);
     //分页配置
     this.pagination = options.pagination;
     // 更新protectedSpace
