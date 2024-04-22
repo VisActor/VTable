@@ -143,7 +143,7 @@ function createCheckbox(
   if (isObject(value)) {
     isChecked = value.checked;
     isDisabled = value.disable;
-    text = value.text;
+    text = value.text ?? '';
   } else if (typeof value === 'boolean') {
     isChecked = value;
     text = '';

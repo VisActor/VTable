@@ -185,6 +185,13 @@ export type CheckboxStyleOption = {
   checkboxStyle?: CheckboxStyle;
 } & ITextStyleOption;
 
+export type RadioStyleOption = {
+  size?: number;
+  spaceBetweenTextAndIcon?: number;
+  spaceBetweenRadio?: number;
+  radioStyle?: RadioStyle;
+} & ITextStyleOption;
+
 export type CheckboxStyle = {
   // 选择框尺寸
   size?: number;
@@ -210,4 +217,33 @@ export type CheckboxStyle = {
   checkIconImage?: string;
   // indeterminate状态图标url
   indeterminateIconImage?: string;
+};
+
+export type RadioStyle = {
+  // 选择框尺寸
+  size?: number;
+  // 选择框与文字间距
+  spaceBetweenTextAndIcon?: number;
+  // 单元格内多个单选框，单选框直接的间距
+  spaceBetweenRadio?: number;
+
+  // 单选框环形图标外半径（会覆盖size）
+  outerRadius?: number;
+  // 单选框环形图标内半径
+  innerRadius?: number;
+
+  // 未选中状态填充颜色
+  defaultFill?: string;
+  // 未选中状态描边颜色
+  defaultStroke?: string;
+  // disable状态填充颜色
+  disableFill?: string;
+  // checked状态填充颜色
+  checkedFill?: string;
+  // checked状态描边颜色
+  checkedStroke?: string;
+  // checked状态填充颜色
+  disableCheckedFill?: string;
+  // checked状态描边颜色
+  disableCheckedStroke?: string;
 };

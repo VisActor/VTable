@@ -147,6 +147,10 @@ export const menus = [
       },
       {
         path: 'pivot',
+        name: 'pivot-tree-lazy-load'
+      },
+      {
+        path: 'pivot',
         name: 'pivot-rowSeriesNumber'
       },
       {
@@ -314,6 +318,10 @@ export const menus = [
       {
         path: 'type',
         name: 'checkbox'
+      },
+      {
+        path: 'type',
+        name: 'radio'
       }
     ]
   },

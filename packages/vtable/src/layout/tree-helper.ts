@@ -148,20 +148,26 @@ export class DimensionTree {
         n.level = (node.level ?? 0) + 1;
         this.setTreeNode(n, size, node);
       });
-    } else if (!node.hierarchyState && node.level + 1 < this.rowExpandLevel && children?.length >= 1) {
+    } else if (
+      !node.hierarchyState &&
+      node.level + 1 < this.rowExpandLevel &&
+      (children?.length >= 1 || children === true)
+    ) {
       //树形展示 有子节点 且下一层需要展开
       node.hierarchyState = HierarchyState.expand;
-      children.forEach((n: any) => {
-        n.level = (node.level ?? 0) + 1;
-        size += this.setTreeNode(n, size, node);
-      });
-    } else if (children?.length >= 1) {
+      children?.length >= 1 &&
+        children.forEach((n: any) => {
+          n.level = (node.level ?? 0) + 1;
+          size += this.setTreeNode(n, size, node);
+        });
+    } else if (children?.length >= 1 || children === true) {
       //树形展示 有子节点 且下一层不需要展开
       node.hierarchyState = HierarchyState.collapse;
-      children.forEach((n: any) => {
-        n.level = (node.level ?? 0) + 1;
-        this.setTreeNode(n, size, node);
-      });
+      children?.length >= 1 &&
+        children.forEach((n: any) => {
+          n.level = (node.level ?? 0) + 1;
+          this.setTreeNode(n, size, node);
+        });
     } else {
       //树形展示 无children子节点。但不能确定是最后一层的叶子节点 totalLevel还不能确定是计算完整棵树的整体深度
       node.hierarchyState = HierarchyState.none;

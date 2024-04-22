@@ -109,6 +109,13 @@
                 "zh": "树形结构",
                 "en": "pivot table tree"
               }
+            },
+            {
+              "path": "custom_header",
+              "title": {
+                "zh": "自定义表头",
+                "en": "pivot table custom header"
+              }
             }
           ]
         },
@@ -168,6 +175,13 @@
           "title": {
             "zh": "复选框",
             "en": "checkbox"
+          }
+        },
+        {
+          "path": "radio",
+          "title": {
+            "zh": "单选框",
+            "en": "radio"
           }
         },
         {

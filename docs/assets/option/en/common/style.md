@@ -238,3 +238,11 @@ Progress bar mark position, can be set to `'right' | 'bottom'`, default is `'rig
   ) }}
 
 {{ /if }}
+
+{{ if: ${isRadio} }}
+
+{{ use: common-radio-style (
+  prefix = ${prefix}
+  ) }}
+
+{{ /if }}
