@@ -50,7 +50,7 @@ export class EditManeger {
     handler.on(this.table.getElement(), 'wheel', (e: WheelEvent) => {
       this.completeEdit();
     });
-    handler.on(this.table.getElement(), 'resize', (e: WheelEvent) => {
+    handler.on(this.table.getElement(), 'resize', (e: Event) => {
       if (this.table.autoFillWidth || this.table.autoFillHeight) {
         this.completeEdit();
       }
@@ -114,7 +114,6 @@ export class EditManeger {
 
   /** 如果是事件触发调用该接口 请传入原始事件对象 将判断事件对象是否在编辑器本身上面  来处理是否结束编辑 */
   completeEdit(e?: Event) {
-    console.trace('completeEdit');
     if (!this.editingEditor) {
       return;
     }
