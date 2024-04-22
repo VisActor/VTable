@@ -2,6 +2,44 @@
   "name": "@visactor/vtable",
   "entries": [
     {
+      "version": "0.24.0",
+      "tag": "@visactor/vtable_v0.24.0",
+      "date": "Mon, 22 Apr 2024 10:59:12 GMT",
+      "comments": {
+        "minor": [
+          {
+            "comment": "feat: add lazy load for pivot table tree #1521\n\n"
+          },
+          {
+            "comment": "feat: add radio column type"
+          }
+        ],
+        "none": [
+          {
+            "comment": "fix: handle with editor input ctrl+a event #1552\n\n"
+          },
+          {
+            "comment": "refactor: optimize performance when row tree node exceed 8000 nodes #1557\n\n"
+          },
+          {
+            "comment": "fix: when resize window size the editor input size not match cell size #1559\n\n"
+          },
+          {
+            "comment": "feat: add setCellCheckboxState & setCellRadioState api #1504"
+          },
+          {
+            "comment": "fix: fix multilines new line style #1531"
+          },
+          {
+            "comment": "fix: fix cell group order in async data #1517"
+          },
+          {
+            "comment": "fix: add skipCustomMerge in getCellValue() #1543"
+          }
+        ]
+      }
+    },
+    {
       "version": "0.23.4",
       "tag": "@visactor/vtable_v0.23.4",
       "date": "Thu, 18 Apr 2024 08:13:35 GMT",

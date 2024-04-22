@@ -166,6 +166,22 @@ In the basic table tree display scenario, if you need to dynamically insert data
   setRecordChildren(records: any[], col: number, row: number)
 ```
 
+## setTreeNodeChildren(Function)
+
+**PivotTable Proprietary**
+
+In the pivot table tree display scenario, if you need to dynamically insert child node data, you can use this interface. It is not applicable in other cases. For lazy loading of node data, please refer to the demo: https://visactor.io/vtable/demo/table-type/pivot-table-tree-lazy-load
+
+```
+/**
+* In the tree display scenario, if you need to dynamically insert child node data, you can use this interface. It is not applicable in other situations.
+* @param records Set the data of the child nodes of this cell
+* @param col needs to set the cell address of the child node
+* @param row needs to set the cell address of the child node
+*/
+setRecordChildren(records: any[], col: number, row: number)
+```
+
 ## getDrawRange(Function)
 
 Get the boundRect value of the actual drawn content area of the table
@@ -332,14 +348,14 @@ Get the number of data in the current cell in the data source.
 
 If it is a table in tree mode, an array will be returned, such as [1,2], the 3rd item in the children of the 2nd item in the data source.
 
-** ListTable proprietary **
+**ListTable proprietary**
 
 ```
   /** Get the number of the data in the current cell in the data source.
    * If it is a table in tree mode, an array will be returned, such as [1,2], the 3rd item in the children of the 2nd item in the data source
    * Note: ListTable specific interface */
   getRecordIndexByCell(col: number, row: number): number | number[]
-** ListTable proprietary **
+**ListTable proprietary**
 ```
 
 ## getTableIndexByField(Function)
@@ -362,7 +378,7 @@ Note: ListTable specific interface
 
 Get the index of the current cell data in the body part, that is, remove the index of the header level number by the row and column number.(Related to transpose, the non-transpose gets the body row number, and the transpose table gets the body column number)
 
-** ListTable proprietary **
+**ListTable proprietary**
 
 ```
   /** Get the display index of the current cell in the body part,it is ( row / col )- headerLevelCount. Note: ListTable specific interface */
@@ -578,6 +594,22 @@ Get the status of a cell checkbox
 getCellCheckboxState(col: number, row: number): Array
 ```
 
+## getRadioState(Function)
+
+Get the selected status of all radio data under a certain field. The order corresponds to the original incoming data records. It does not correspond to the status value of the row displayed in the table.
+
+```
+getRadioState(field?: string | number): number | Record<number, boolean | number>
+```
+
+## getCellRadioState(Function)
+
+Get the status of a cell radio. If a cell contains multiple radio buttons, the return value is number, which refers to the index of the selected radio in the cell. Otherwise, the return value is boolean.
+
+```
+getCellRadioState(col: number, row: number): boolean | number
+```
+
 ## getScrollTop(Function)
 
 Get the current vertical scroll position
@@ -641,7 +673,7 @@ enum HierarchyState {
 
 ## getLayoutRowTree(Function)
 
-** PivotTable Proprietary **
+**PivotTable Proprietary**
 
 Get the table row header tree structure
 
@@ -655,7 +687,7 @@ Get the table row header tree structure
 
 ## getLayoutRowTreeCount(Function)
 
-** PivotTable Proprietary **
+**PivotTable Proprietary**
 
 Get the total number of nodes occupying the table row header tree structure.
 
@@ -897,7 +929,7 @@ Set the data source for the VTable table component instance. For specific usage,
 
 Add data, support multiple pieces of data
 
-** Note: ListTable specific interface **
+**Note: ListTable specific interface**
 
 ```
   /**
@@ -910,11 +942,13 @@ Add data, support multiple pieces of data
   addRecords(records: any[], recordIndex?: number)
 ```
 
+**Lazy loading support for pivot tables has been added since version 0.24.0, so pivot tables can call this interface to achieve lazy loading in this scenario. Using this interface in other pivot table scenarios will cause problems!**
+
 ## addRecord(Function)
 
 Add data, single piece of data
 
-** Note: ListTable specific interface **
+**Note: ListTable specific interface**
 
 ```
   /**
@@ -931,7 +965,7 @@ Add data, single piece of data
 
 Delete data supports multiple pieces of data
 
-** Note: ListTable specific interface **
+**Note: ListTable specific interface**
 
 ```
   /**
@@ -945,7 +979,7 @@ Delete data supports multiple pieces of data
 
 Modify data to support multiple pieces of data
 
-** ListTable proprietary **
+**ListTable proprietary**
 
 ```
   /**
@@ -1012,3 +1046,27 @@ registerCustomCellStyleArrangement: (cellPosition: { col?: number; row?: number;
   - Single cell: `{ row: number, column: number }`
   - Cell range: `{ range: { start: { row: number, column: number }, end: { row: number, column: number} } }`
 - customStyleId: Custom style id, the same as the id defined when registering the custom style
+
+## setCellCheckboxState(Function)
+
+Set the checkbox state of a cell
+
+```
+setCellCheckboxState(col: number, row: number, checked: boolean) => void
+```
+
+- col: column number
+- row: row number
+- checked: whether checked
+
+## setCellRadioState(Function)
+
+Set the cell's radio state to selected
+
+```
+setCellRadioState(col: number, row: number, index?: number) => void
+```
+
+- col: column number
+- row: row number
+- index: the index of the updated target radio in the cell

@@ -1,5 +1,12 @@
 import type { SimpleHeaderLayoutMap } from '../../layout';
-import type { ColumnDefine, ColumnTypeOption, IRowSeriesNumber, TextColumnDefine } from '../../ts-types';
+import type {
+  ColumnDefine,
+  ColumnTypeOption,
+  IRowSeriesNumber,
+  RadioColumnDefine,
+  RadioStyleOption,
+  TextColumnDefine
+} from '../../ts-types';
 import { HierarchyState, IconPosition } from '../../ts-types';
 import * as calc from '../../tools/calc';
 import { validToString } from '../../tools/util';
@@ -10,7 +17,7 @@ import type { PivotHeaderLayoutMap } from '../../layout/pivot-header-layout';
 import { getAxisConfigInPivotChart } from '../../layout/chart-helper/get-axis-config';
 import { computeAxisComponentWidth } from '../../components/axis/get-axis-component-size';
 import { Group as VGroup } from '@src/vrender';
-import { isObject, isValid } from '@visactor/vutils';
+import { isArray, isNumber, isObject, isValid } from '@visactor/vutils';
 import { decodeReactDom, dealPercentCalc } from '../component/custom';
 
 export function computeColsWidth(table: BaseTableAPI, colStart?: number, colEnd?: number, update?: boolean): void {
@@ -336,7 +343,8 @@ function computeAutoColWidth(
       cellType !== 'text' &&
       cellType !== 'link' &&
       cellType !== 'progressbar' &&
-      cellType !== 'checkbox'
+      cellType !== 'checkbox' &&
+      cellType !== 'radio'
     ) {
       // text&link&progressbar测量文字宽度
       // image&video&sparkline使用默认宽度
@@ -542,9 +550,26 @@ function computeTextWidth(col: number, row: number, cellType: ColumnTypeOption, 
   const fontSize = getProp('fontSize', actStyle, col, row, table);
   const fontFamily = getProp('fontFamily', actStyle, col, row, table);
   const fontWeight = getProp('fontWeight', actStyle, col, row, table);
-  let text;
+  let text: string;
   if (cellType === 'checkbox') {
     text = isObject(cellValue) ? (cellValue as any).text : cellValue;
+  } else if (cellType === 'radio') {
+    if (isArray(cellValue)) {
+      text = '';
+      const define = table.getBodyColumnDefine(col, row);
+      const radioDirectionInCell = (define as RadioColumnDefine)?.radioDirectionInCell ?? 'vertical';
+      if (radioDirectionInCell === 'vertical') {
+        cellValue.forEach(line => {
+          text += (isObject(line) ? (line as any).text : line).toString() + '\n';
+        });
+      } else if (radioDirectionInCell === 'horizontal') {
+        cellValue.forEach(line => {
+          text += (isObject(line) ? (line as any).text : line).toString();
+        });
+      }
+    } else {
+      text = isObject(cellValue) ? (cellValue as any).text : cellValue;
+    }
   } else {
     text = cellValue;
   }
@@ -590,6 +615,32 @@ function computeTextWidth(col: number, row: number, cellType: ColumnTypeOption, 
     if (text) {
       const spaceBetweenTextAndIcon = getProp('spaceBetweenTextAndIcon', actStyle, col, row, table);
       maxWidth += spaceBetweenTextAndIcon;
+    }
+  } else if (cellType === 'radio') {
+    const size = getProp('size', actStyle, col, row, table);
+    const outerRadius = getProp('outerRadius', actStyle, col, row, table);
+    const circleSize = isNumber(outerRadius) ? outerRadius * 2 : size;
+    const spaceBetweenTextAndIcon = getProp('spaceBetweenTextAndIcon', actStyle, col, row, table);
+
+    if (isArray(cellValue)) {
+      const define = table.getBodyColumnDefine(col, row);
+      const spaceBetweenRadio = getProp('spaceBetweenRadio', actStyle, col, row, table);
+      const radioDirectionInCell = (define as RadioColumnDefine)?.radioDirectionInCell ?? 'vertical';
+      if (radioDirectionInCell === 'vertical') {
+        // one icon
+        maxWidth += circleSize;
+        maxWidth += spaceBetweenTextAndIcon;
+      } else if (radioDirectionInCell === 'horizontal') {
+        // multi icon
+        maxWidth += (circleSize + spaceBetweenTextAndIcon) * cellValue.length;
+        maxWidth += spaceBetweenRadio * (cellValue.length - 1);
+      }
+    } else {
+      // one icon
+      maxWidth += circleSize;
+      if (text) {
+        maxWidth += spaceBetweenTextAndIcon;
+      }
     }
   }
 

@@ -503,7 +503,7 @@ export interface IDimensionHeaderNode {
   /** 维度成员值 */
   value: string;
   /** 维度成员下的子维度树结构 */
-  children?: IHeaderTreeDefine[] | null;
+  children?: IHeaderTreeDefine[] | true;
   /** 折叠状态 TODO */
   hierarchyState?: HierarchyState;
 }

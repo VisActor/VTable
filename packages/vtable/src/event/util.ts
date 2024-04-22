@@ -49,3 +49,5 @@ function getTargetCell(target: any) {
   }
   return null;
 }
+
+export const regIndexReg = /radio-\d+-\d+-(\d+)/;

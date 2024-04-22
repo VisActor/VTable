@@ -172,6 +172,7 @@ export interface TableEventHandlersEventArgumentMap {
   mouseleave_axis: MousePointerCellEvent & { axisPosition: 'left' | 'right' | 'top' | 'bottom' };
 
   checkbox_state_change: MousePointerCellEvent & { checked: boolean };
+  radio_state_change: MousePointerCellEvent & { radioIndexInCell: number | undefined };
   after_render: null;
   initialized: null;
 
@@ -245,6 +246,7 @@ export interface TableEventHandlersReturnMap {
   mouseleave_axis: void;
 
   checkbox_state_change: void;
+  radio_state_change: void;
   after_render: void;
   initialized: void;
 
