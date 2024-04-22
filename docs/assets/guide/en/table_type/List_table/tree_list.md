@@ -149,6 +149,29 @@ const tableInstance = new ListTable(option);
 window['tableInstance'] = tableInstance;
 ```
 
+## Specify the collapsed or expanded state of a node
+
+In the above example, you can set the `hierarchyState` of the data node to specify the collapsed or expanded state of the node, and its value is `expand` or `collapse`.
+
+For example, specify the first node as expanded: `hierarchyState: 'expand'`.
+
+```javascript
+const records = [
+  {
+    group: 'Human Resources Department',
+    total_children: 30,
+    monthly_expense: '$45000',
+    new_hires_this_month: 6,
+    resignations_this_month: 3,
+    complaints_and_suggestions: 2,
+    hierarchyState: 'expand',
+    children: [
+      // ...
+    ]
+  }
+];
+```
+
 ## Lazy loading of child node data scenarios
 
 In some scenarios, the child node data may be relatively large. In view of the excessive performance pressure on the backend database, and you do not want to obtain all the data at once, you need to call the interface to load the data when you click to expand. Then you can use the following method to achieve:
