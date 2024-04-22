@@ -16,14 +16,15 @@ import { decodeReactDom, dealPercentCalc } from '../component/custom';
 import { getCellMergeRange } from '../../tools/merge-range';
 import { getCellMergeInfo } from '../utils/get-cell-merge';
 import { getHierarchyOffset } from '../utils/get-hierarchy-offset';
+import { computeCheckboxCellHeight, computeRadioCellHeight } from './height-util';
 import { measureTextBounds } from '../utils/text-measure';
+import { breakString } from '../utils/break-string';
 
 const utilRichTextMark = new RichText({
   width: 0,
   height: 0,
   textConfig: []
 });
-const utilCheckBoxMark = new CheckBox({});
 
 export function computeRowsHeight(
   table: BaseTableAPI,
@@ -395,13 +396,16 @@ function checkFixedStyleAndNoWrap(table: BaseTableAPI): boolean {
   const row = table.columnHeaderLevelCount;
   //设置了全局自动换行的话 不能复用高度计算
   if (
-    (table.internalProps.autoWrapText || table.isPivotChart()) &&
+    (table.internalProps.autoWrapText || table.internalProps.enableLineBreak || table.isPivotChart()) &&
     (table.options.heightMode === 'autoHeight' || table.options.heightMode === 'adaptive')
   ) {
     return false;
   }
   for (let col = 0; col < table.colCount; col++) {
     const cellDefine = layoutMap.getBody(col, row);
+    if (cellDefine.cellType === 'radio') {
+      return false;
+    }
     if (
       typeof cellDefine.style === 'function' ||
       typeof (cellDefine as ColumnData).icon === 'function' ||
@@ -429,7 +433,7 @@ function checkFixedStyleAndNoWrapForTranspose(table: BaseTableAPI, row: number):
   const { layoutMap } = table.internalProps;
   //设置了全局自动换行的话 不能复用高度计算
   if (
-    table.internalProps.autoWrapText &&
+    (table.internalProps.autoWrapText || table.internalProps.enableLineBreak) &&
     (table.options.heightMode === 'autoHeight' || table.options.heightMode === 'adaptive')
   ) {
     return false;
@@ -648,50 +652,55 @@ function computeTextHeight(col: number, row: number, cellType: ColumnTypeOption,
   const fontFamily = getProp('fontFamily', actStyle, col, row, table);
   const autoWrapText = getProp('autoWrapText', actStyle, col, row, table);
   let text;
-  if (cellType !== 'text' && cellType !== 'link' && cellType !== 'progressbar' && cellType !== 'checkbox') {
+  if (
+    cellType !== 'text' &&
+    cellType !== 'link' &&
+    cellType !== 'progressbar' &&
+    cellType !== 'checkbox' &&
+    cellType !== 'radio'
+  ) {
     maxHeight = lineHeight;
+  } else if (cellType === 'checkbox') {
+    maxHeight = computeCheckboxCellHeight(
+      cellValue,
+      col,
+      row,
+      endCol,
+      actStyle,
+      autoWrapText,
+      iconWidth,
+      fontSize,
+      fontStyle,
+      fontWeight,
+      fontFamily,
+      lineHeight,
+      padding,
+      table
+    );
+  } else if (cellType === 'radio') {
+    maxHeight = computeRadioCellHeight(
+      cellValue,
+      col,
+      row,
+      endCol,
+      actStyle,
+      autoWrapText,
+      iconWidth,
+      fontSize,
+      fontStyle,
+      fontWeight,
+      fontFamily,
+      lineHeight,
+      padding,
+      table
+    );
   } else {
-    if (cellType === 'checkbox') {
-      text = isObject(cellValue) ? (cellValue as any).text : cellValue;
-    } else {
-      text = cellValue;
-    }
+    // text
+    text = cellValue;
     const lines = validToString(text).split('\n') || [];
-
     const cellWidth = table.getColsWidth(col, endCol);
 
-    if (cellType === 'checkbox') {
-      const size = getProp('size', actStyle, col, row, table);
-      if (autoWrapText) {
-        const spaceBetweenTextAndIcon = getProp('spaceBetweenTextAndIcon', actStyle, col, row, table);
-        const maxLineWidth = cellWidth - (padding[1] + padding[3]) - iconWidth - size - spaceBetweenTextAndIcon;
-        utilCheckBoxMark.setAttributes({
-          text: {
-            maxLineWidth,
-            text: lines,
-            fontSize,
-            fontStyle,
-            fontWeight,
-            fontFamily,
-            lineHeight,
-            wordBreak: 'break-word'
-          },
-          icon: {
-            width: Math.floor(size / 1.4), // icon : box => 10 : 14
-            height: Math.floor(size / 1.4)
-          },
-          box: {
-            width: size,
-            height: size
-          },
-          spaceBetweenTextAndIcon
-        });
-        utilCheckBoxMark.render();
-        maxHeight = utilCheckBoxMark.AABBBounds.height();
-      } else {
-        maxHeight = Math.max(size, lines.length * lineHeight);
-      }
-    } else if (iconInlineFront.length || iconInlineEnd.length) {
+    if (iconInlineFront.length || iconInlineEnd.length) {
       if (autoWrapText) {
         const textOption = Object.assign({
           text: cellValue?.toString(),
@@ -716,6 +725,9 @@ function computeTextHeight(col: number, row: number, cellType: ColumnTypeOption,
       } else {
         maxHeight = 0;
         lines.forEach((line: string, index: number) => {
+          if (table.options.customConfig?.multilinesForXTable && index !== 0) {
+            return;
+          }
           if (index === 0 && iconInlineFront.length) {
             maxHeight += Math.max(lineHeight, iconInlineFrontHeight);
           } else if (index === lines.length - 1 && iconInlineEnd.length) {

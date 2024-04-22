@@ -655,19 +655,6 @@ export class SceneProxy {
     }
 
     const newCellGroup = this.table.scenegraph.updateCellContent(cellGroup.col, cellGroup.row);
-    // 更新内容
-    // const textMark = cellGroup.firstChild as WrapText;
-    // const autoWrapText = Array.isArray(textMark.attribute.text);
-    // const textStr: string = this.table.getCellValue(cellGroup.col, cellGroup.row);
-    // let text;
-    // if (autoWrapText) {
-    //   text = String(textStr).replace(/\r?\n/g, '\n').replace(/\r/g, '\n').split('\n');
-    // } else {
-    //   text = textStr;
-    // }
-
-    // textMark.setAttribute('text', text);
-
     cellGroup.needUpdate = false;
     return newCellGroup || cellGroup;
   }

@@ -167,6 +167,13 @@
           }
         },
         {
+          "path": "pivot-table-tree-lazy-load",
+          "title": {
+            "zh": "透视表树形懒加载子节点（自定义表头结构）",
+            "en": "Pivot Table Tree Lazy Load"
+          }
+        },
+        {
           "path": "pivot-table-multi-tree",
           "title": {
             "zh": "透视表多列树形展示",
@@ -250,6 +257,22 @@
             "group": "Cell Type",
             "cover": "https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/checkbox.png",
             "link": "'../../guide/column_type/checkbox'",
+            "option": ""
+          }
+        },
+        {
+          "path": "radio",
+          "title": {
+            "zh": "单选框类型",
+            "en": "Radio Type"
+          },
+          "meta": {
+            "title": "Radio Type",
+            "keywords": "",
+            "category": "demo",
+            "group": "Cell Type",
+            "cover": "https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/radio.png",
+            "link": "'../../guide/column_type/radio'",
             "option": ""
           }
         },
@@ -1312,29 +1335,6 @@
           "title": {
             "zh": "销售数据气泡图",
             "en": "Sales Bubble"
-          }
-        }
-      ]
-    },
-    {
-      "path": "react",
-      "title": {
-        "zh": "react",
-        "en": "react"
-      },
-      "children": [
-        {
-          "path": "table-option",
-          "title": {
-            "zh": "table-option",
-            "en": "table-option"
-          }
-        },
-        {
-          "path": "table-component",
-          "title": {
-            "zh": "table-component",
-            "en": "table-component"
           }
         }
       ]

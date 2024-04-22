@@ -18,7 +18,7 @@ import type {
 } from './ts-types';
 import { HierarchyState } from './ts-types';
 import { SimpleHeaderLayoutMap } from './layout';
-import { isValid } from '@visactor/vutils';
+import { isNumber, isObject, isValid } from '@visactor/vutils';
 import { _setDataSource, _setRecords, sortRecords } from './core/tableHelper';
 import { BaseTable } from './core';
 import type { BaseTableAPI, ListTableProtected } from './ts-types/base-table';
@@ -34,7 +34,9 @@ import { computeRowHeight } from './scenegraph/layout/compute-row-height';
 import { defaultOrderFn } from './tools/util';
 import type { IEditor } from '@visactor/vtable-editors';
 import type { ColumnData, ColumnDefine } from './ts-types/list-table/layout-map/api';
+import { getCellRadioState, setCellRadioState } from './state/radio/radio';
 import { cloneDeepSpec } from '@visactor/vutils-extension';
+import { setCellCheckboxState } from './state/checkbox/checkbox';
 
 export class ListTable extends BaseTable implements ListTableAPI {
   declare internalProps: ListTableProtected;
@@ -206,13 +208,15 @@ export class ListTable extends BaseTable implements ListTableAPI {
     }
   }
   /** 获取单元格展示值 */
-  getCellValue(col: number, row: number): FieldData {
+  getCellValue(col: number, row: number, skipCustomMerge?: boolean): FieldData {
     if (col === -1 || row === -1) {
       return null;
     }
-    const customMergeText = this.getCustomMergeValue(col, row);
-    if (customMergeText) {
-      return customMergeText;
+    if (!skipCustomMerge) {
+      const customMergeText = this.getCustomMergeValue(col, row);
+      if (customMergeText) {
+        return customMergeText;
+      }
     }
     const table = this;
     if (table.internalProps.layoutMap.isSeriesNumber(col, row)) {
@@ -371,6 +375,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
     internalProps.frozenColDragHeaderMode = options.frozenColDragHeaderMode;
     //分页配置
     this.pagination = options.pagination;
+    internalProps.sortState = options.sortState;
     internalProps.dataConfig = {}; // cloneDeep(options.dataConfig ?? {});
     //更新protectedSpace
     this.showHeader = options.showHeader ?? true;
@@ -921,6 +926,25 @@ export class ListTable extends BaseTable implements ListTableAPI {
       return this.stateManager.checkedState[dataIndex as number][field as string | number];
     }
     return undefined;
+  }
+  /** 获取某个字段下checkbox 全部数据的选中状态 顺序对应原始传入数据records 不是对应表格展示row的状态值 */
+  getRadioState(field?: string | number) {
+    if (isValid(field)) {
+      return this.stateManager.radioState[field];
+    }
+    return this.stateManager.radioState;
+  }
+  /** 获取某个单元格checkbox的状态 */
+  getCellRadioState(col: number, row: number): boolean | number {
+    return getCellRadioState(col, row, this);
+  }
+
+  setCellCheckboxState(col: number, row: number, checked: boolean) {
+    setCellCheckboxState(col, row, checked, this);
+  }
+
+  setCellRadioState(col: number, row: number, index?: number) {
+    setCellRadioState(col, row, index, this);
   }
   /**
    * 设置表格数据 及排序状态

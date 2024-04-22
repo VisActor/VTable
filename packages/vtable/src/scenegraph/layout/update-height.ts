@@ -174,7 +174,8 @@ export function updateCellHeight(
       cell.attribute.height,
       padding,
       scene.table,
-      getStyleTheme(headerStyle, scene.table, col, row, getProp).theme
+      getStyleTheme(headerStyle, scene.table, col, row, getProp).theme,
+      false
     );
   } else if (type === 'image' || type === 'video') {
     updateImageCellContentWhileResize(cell, col, row, scene.table);
