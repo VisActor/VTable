@@ -209,6 +209,7 @@ export interface IBaseTableProtected {
   //重新思考逻辑：如果为false，行高按设置的rowHeight；如果设置为true，则按lineHeight及是否自动换行综合计算行高 2021.11.19 by：lff
 
   autoWrapText?: boolean;
+  enableLineBreak?: boolean;
 
   menuHandler: MenuHandler;
 
@@ -366,6 +367,8 @@ export interface BaseTableConstructorOptions {
   customRender?: ICustomRender;
   /** 开启自动换行 默认false */
   autoWrapText?: boolean;
+  /** 是否处理换行符 */
+  enableLineBreak?: boolean;
   /** 单元格中可显示最大字符数 默认200 */
   maxCharactersNumber?: number; //
   // /** toolip最大字符数 */
@@ -415,6 +418,8 @@ export interface BaseTableConstructorOptions {
   customCellStyleArrangement?: CustomCellStyleArrangement[];
 
   columnWidthComputeMode?: 'normal' | 'only-header' | 'only-body';
+
+  customConfig?: any; // 部分特殊配置，兼容xTable等作用
 }
 export interface BaseTableAPI {
   /** 数据总条目数 */
