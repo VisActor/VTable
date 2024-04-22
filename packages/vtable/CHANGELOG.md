@@ -1,6 +1,49 @@
 # Change Log - @visactor/vtable
 
-This log was last generated on Wed, 10 Apr 2024 13:08:31 GMT and should not be manually modified.
+This log was last generated on Thu, 18 Apr 2024 08:13:35 GMT and should not be manually modified.
+
+## 0.23.4
+Thu, 18 Apr 2024 08:13:35 GMT
+
+### Updates
+
+- fix: fix right & top axis visible
+
+## 0.23.3
+Tue, 16 Apr 2024 08:38:10 GMT
+
+### Updates
+
+- refactor: add mousedown_table event #1470
+
+
+- refactor: setRecords handle with tooltip overflow #1494
+
+
+- fix: release editor when release tableInstance #1495
+
+
+- fix: short table drag to out table occor error #1502
+
+
+- fix: row move funciton not work on mobile #1503
+
+
+- fix: defaultHeaderRowHeight not work with rowSeriesNumber #1520
+
+
+- fix: tree hierarchy state icon use rowHierarchyTextStartAlignment children node render error #1525
+
+
+- fix: resize col width trigger text stick change #1529
+
+
+- fix: fix theme textStick config in checkHaveTextStick() #1490 
+- fix: add button jedgement in click_cell event #1484
+- feat: add widthAdaptiveMode & heightAdaptiveMode config #1499
+- feat: add measureTextBounds api
+- fix: fix defalultQueryMethod in vtable-search #1448
+- fix: update customMergeCell in updateOption #1493
 
 ## 0.23.2
 Wed, 10 Apr 2024 13:08:31 GMT

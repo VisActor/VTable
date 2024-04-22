@@ -4,21 +4,17 @@ import Inula from 'openinula';
 import * as VTable from '@visactor/vtable';
 import * as VChart from '@visactor/vchart';
 import * as VTableEditors from '@visactor/vtable-editors';
-import {
-  downloadCsv,
-  exportVTableToCsv,
-  downloadExcel,
-  exportVTableToExcel,
-} from "@visactor/vtable-export";
+import { downloadCsv, exportVTableToCsv, downloadExcel, exportVTableToExcel } from '@visactor/vtable-export';
 import { SearchComponent } from '@visactor/vtable-search';
 import * as ReactVTable from '@visactor/react-vtable';
 import * as InulaVTable from '@visactor/openinula-vtable';
 import { App } from './app';
-
+import * as ArcoDesign from '@arco-design/web-react';
 import '@arco-design/web-react/dist/css/arco.css';
 
+(window as any).ArcoDesign = ArcoDesign;
 (window as any).VTable = VTable;
-(window as any).VTable_editors=  VTableEditors;
+(window as any).VTable_editors = VTableEditors;
 (window as any).VChart = VChart.VChart;
 
 (window as any).downloadCsv = downloadCsv;

@@ -1208,8 +1208,10 @@ export class Scenegraph {
 
     // 更新滚动条状态
     this.component.updateScrollBar();
-    // 处理单元格内容需要textStick的情况
-    handleTextStick(this.table);
+
+    // 处理单元格内容需要textStick的情况  移动到了proxy progress中
+
+    // handleTextStick(this.table);
 
     this.updateNextFrame();
   }

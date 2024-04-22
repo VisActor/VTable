@@ -252,6 +252,11 @@ export function createTable() {
               right: 20
             }
           }
+
+          // {
+          //   orient: 'right',
+          //   visible: false,
+          // }
         ],
         theme: {
           // axis: {

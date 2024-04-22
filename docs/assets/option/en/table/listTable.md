@@ -89,6 +89,17 @@ headerEditor?: string | IEditor | ((args: BaseCellInfo & { table: BaseTableAPI }
 
 ```
 
+## editCellTrigger('doubleclick' | 'click' | 'api') = 'doubleclick'
+
+The trigger timing for entering the editing state.
+
+```
+
+/\*_\_ Edit triggering time: double click event | single click event | api to manually start editing. Default is double click 'doubleclick' _/
+editCellTrigger?: 'doubleclick' | 'click' | 'api';
+
+```
+
 {{ use: common-option-secondary(
     prefix = '#',
     tableType = 'listTable'

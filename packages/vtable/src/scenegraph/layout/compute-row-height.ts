@@ -17,11 +17,8 @@ import { getCellMergeRange } from '../../tools/merge-range';
 import { getCellMergeInfo } from '../utils/get-cell-merge';
 import { getHierarchyOffset } from '../utils/get-hierarchy-offset';
 import { computeCheckboxCellHeight, computeRadioCellHeight } from './height-util';
+import { measureTextBounds } from '../utils/text-measure';
 
-const utilTextMark = new Text({
-  ignoreBuf: true
-  // autoWrapText: true
-});
 const utilRichTextMark = new RichText({
   width: 0,
   height: 0,
@@ -701,6 +698,7 @@ function computeTextHeight(col: number, row: number, cellType: ColumnTypeOption,
     text = cellValue;
     const lines = validToString(text).split('\n') || [];
     const cellWidth = table.getColsWidth(col, endCol);
+
     if (iconInlineFront.length || iconInlineEnd.length) {
       if (autoWrapText) {
         const textOption = Object.assign({
@@ -738,7 +736,7 @@ function computeTextHeight(col: number, row: number, cellType: ColumnTypeOption,
     } else if (autoWrapText) {
       const hierarchyOffset = getHierarchyOffset(col, row, table);
       const maxLineWidth = cellWidth - (padding[1] + padding[3]) - iconWidth - hierarchyOffset;
-      utilTextMark.setAttributes({
+      const bounds = measureTextBounds({
         maxLineWidth,
         text: lines,
         fontSize,
@@ -749,7 +747,7 @@ function computeTextHeight(col: number, row: number, cellType: ColumnTypeOption,
         wordBreak: 'break-word',
         whiteSpace: lines.length === 1 && !autoWrapText ? 'no-wrap' : 'normal'
       });
-      maxHeight = utilTextMark.AABBBounds.height() || (typeof lineHeight === 'number' ? lineHeight : fontSize);
+      maxHeight = bounds.height() || (typeof lineHeight === 'number' ? lineHeight : fontSize);
     } else {
       // autoWrapText = false
       maxHeight = lines.length * lineHeight;

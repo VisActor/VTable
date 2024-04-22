@@ -14,6 +14,7 @@ import { sortVertical } from './update-position/sort-vertical';
 import { sortHorizontal } from './update-position/sort-horizontal';
 import { updateAutoColumn } from './update-position/update-auto-column';
 import { getDefaultHeight, getDefaultWidth } from './default-width-height';
+import { handleTextStick } from '../../stick-text';
 
 export class SceneProxy {
   table: BaseTableAPI;
@@ -237,6 +238,8 @@ export class SceneProxy {
           await this.createRow();
           await this.progress();
         }
+        handleTextStick(this.table);
+        this.table.scenegraph.updateNextFrame();
         resolve();
       }, 16);
     });

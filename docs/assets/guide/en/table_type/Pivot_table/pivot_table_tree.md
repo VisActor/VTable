@@ -1012,6 +1012,67 @@ const tableInstance = new VTable.PivotTable(option);
 
 It can be seen that the pivot table tree structure display function can clearly present the hierarchical relationship of data, which is convenient for users to perform data analytics.
 
+## Specify the collapse or expansion state of a node in the table header
+
+In the above example, you can set the `hierarchyState` of the data node to specify the collapsed or expanded state of the node, and its value is `expand` or `collapse`.
+
+For example, to specify a node in rowTree as expanded, you can use hierarchyState: 'expand'.
+
+```javascript
+const option = {
+  rowTree: [
+    {
+      dimensionKey: '230627170530016',
+      value: 'Furniture',
+      hierarchyState: 'expand',
+      children: [
+        // ...
+      ]
+    }
+  ]
+};
+```
+
+## Subnode data lazy loading usage
+
+If you do not want to provide all data at initialization, but want to load data when the node is expanded, you can use it as follows.
+
+**Limitation: Lazy loading currently only supports custom header structures. For custom header structures, please refer to: https://visactor.io/vtable/guide/table_type/Pivot_table/custom_header**
+
+There are two important working points for lazy loading:
+
+1. Organize `rowTree` and `columnTree`. If lazy loading is required, the `children` attribute value is `true`, otherwise it is an array child node.
+
+as follows:
+
+```javascript
+rowTree: [
+  {
+    dimensionKey: 'region',
+    value: 'Central South',
+    children: true
+  },
+  {
+    dimensionKey: 'region',
+    value: 'East China',
+    children: true
+  }
+];
+```
+
+2. In the `tree_hierarchy_state_change` event callback, request data based on the currently expanded node, and set it to the `children` property of the corresponding node in the current `rowTree` through the `setTreeNodeChildren` interface. And add the indicator data records to the table through the `addRecords` interface.
+
+```javascript
+tableInstance.on(tree_hierarchy_state_change, args => {
+  if (args.hierarchyState === VTable.TYPES.HierarchyState.expand && args.originData.children === true) {
+    tableInstance.addRecords(newData);
+    tableInstance.setTreeNodeChildren(newChildren, args.col, args.row);
+  }
+});
+```
+
+For specific demo, please refer to: https://visactor.io/vtable/demo/table-type/pivot-table-tree-lazy-load
+
 ## Multi-columns tree structure configuration code example
 
 A common requirement for pivot tables is a one-layer tree structure, but some special businesses want a multi-layer structure to present data, such as the desire to see the sales of different regions under different categories.

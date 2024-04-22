@@ -1011,6 +1011,67 @@ const tableInstance = new VTable.PivotTable(document.getElementById(CONTAINER_ID
 
 可以看到，透视表树形结构展示功能能够清晰地呈现数据的层次关系，方便用户进行数据分析。
 
+## 指定表头某个节点的收起或者展开状态
+
+上述示例中可以设置数据节点的 `hierarchyState` 来指定节点的收起或者展开状态，其值为 `expand` 或者 `collapse`。
+
+例如指定 rowTree 某个节点为展开状态：`hierarchyState: 'expand'`。
+
+```javascript
+const option = {
+  rowTree: [
+    {
+      dimensionKey: '230627170530016',
+      value: 'Furniture',
+      hierarchyState: 'expand',
+      children: [
+        // ...
+      ]
+    }
+  ]
+};
+```
+
+## 子节点数据懒加载用法
+
+如果不期望把所有数据在初始化时都提供到，而是在节点展开时再去加载数据，则可以按如下用法。
+
+**限制：懒加载用法目前仅支持自定义表头结构的情况。自定义表头结构可参考：https://visactor.io/vtable/guide/table_type/Pivot_table/custom_header**
+
+实现懒加载重要的两个工作点有：
+
+1. 组织好`rowTree`和`columnTree`, 如果需要懒加载，则`children`属性值为`true`，否则为数组子节点。
+
+如下：
+
+```javascript
+rowTree: [
+  {
+    dimensionKey: 'region',
+    value: '中南',
+    children: true
+  },
+  {
+    dimensionKey: 'region',
+    value: '华东',
+    children: true
+  }
+];
+```
+
+2. 在`tree_hierarchy_state_change`事件回调中，根据当前展开节点，请求数据，并通过接口`setTreeNodeChildren`设置到当前的`rowTree`中对应节点的的`children`属性上。以及把指标数据 records 通过接口`addRecords`增加到 table 中。
+
+```javascript
+tableInstance.on(tree_hierarchy_state_change, args => {
+  if (args.hierarchyState === VTable.TYPES.HierarchyState.expand && args.originData.children === true) {
+    tableInstance.addRecords(newData);
+    tableInstance.setTreeNodeChildren(newChildren, args.col, args.row);
+  }
+});
+```
+
+具体 demo 可参考： https://visactor.io/vtable/demo/table-type/pivot-table-tree-lazy-load
+
 ## 多层树结构配置代码示例
 
 透视表常见需求是一层树形结构就可以搞定，但某些特殊业务想要多层级结构来展示数据，如期望可以看到不同类别下不同区域的销售情况。

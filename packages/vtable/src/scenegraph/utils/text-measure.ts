@@ -5,7 +5,8 @@ import {
   DefaultTextMeasureContribution,
   TextMeasureContribution,
   ContainerModule,
-  container
+  container,
+  Text
 } from '@src/vrender';
 // eslint-disable-next-line max-len
 // import {
@@ -266,4 +267,14 @@ export function setCustomAlphabetCharSet(str: string) {
 export function restoreMeasureText() {
   textMeasureMode = 'canvas';
   container.load(restoreTextMeasureModule);
+}
+
+const utilTextMark = new Text({
+  ignoreBuf: true
+  // autoWrapText: true
+});
+
+export function measureTextBounds(attribute: ITextGraphicAttribute) {
+  utilTextMark.setAttributes(attribute);
+  return utilTextMark.AABBBounds;
 }

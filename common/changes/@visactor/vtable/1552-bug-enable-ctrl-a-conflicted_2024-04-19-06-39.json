@@ -1,7 +1,7 @@
 {
   "changes": [
     {
-      "comment": "fix: defaultHeaderRowHeight not work with rowSeriesNumber #1520\n\n",
+      "comment": "fix: handle with editor input ctrl+a event #1552\n\n",
       "type": "none",
       "packageName": "@visactor/vtable"
     }
