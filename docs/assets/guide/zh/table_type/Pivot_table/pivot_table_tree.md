@@ -1011,6 +1011,27 @@ const tableInstance = new VTable.PivotTable(document.getElementById(CONTAINER_ID
 
 可以看到，透视表树形结构展示功能能够清晰地呈现数据的层次关系，方便用户进行数据分析。
 
+## 指定表头某个节点的收起或者展开状态
+
+上述示例中可以设置数据节点的 `hierarchyState` 来指定节点的收起或者展开状态，其值为 `expand` 或者 `collapse`。
+
+例如指定 rowTree 某个节点为展开状态：`hierarchyState: 'expand'`。
+
+```javascript
+const option = {
+  rowTree: [
+    {
+      dimensionKey: '230627170530016',
+      value: 'Furniture',
+      hierarchyState: 'expand',
+      children: [
+        // ...
+      ]
+    }
+  ]
+};
+```
+
 ## 子节点数据懒加载用法
 
 如果不期望把所有数据在初始化时都提供到，而是在节点展开时再去加载数据，则可以按如下用法。

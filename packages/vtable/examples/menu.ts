@@ -318,6 +318,10 @@ export const menus = [
       {
         path: 'type',
         name: 'checkbox'
+      },
+      {
+        path: 'type',
+        name: 'radio'
       }
     ]
   },

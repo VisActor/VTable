@@ -9,7 +9,7 @@ export function createTable() {
     columns: [
       {
         field: '',
-        headerType: 'checkbox',
+        // headerType: 'checkbox',
         cellType: 'checkbox',
         width: 'auto',
         checked(args) {
@@ -60,7 +60,7 @@ export function createTable() {
         field: 'check',
         title: '',
         width: 'auto',
-        headerType: 'checkbox',
+        // headerType: 'checkbox',
         cellType: 'checkbox',
         style: {
           size: 40,
@@ -110,4 +110,15 @@ export function createTable() {
 
   // 只为了方便控制太调试用，不要拷贝
   window.tableInstance = instance;
+
+  window.updateRecord = () => {
+    instance.setRecords(records);
+  };
+
+  window.updateOption = () => {
+    instance.updateOption({
+      ...option,
+      records: records
+    });
+  };
 }

@@ -178,6 +178,13 @@
           }
         },
         {
+          "path": "radio",
+          "title": {
+            "zh": "单选框",
+            "en": "radio"
+          }
+        },
+        {
           "path": "sparkline",
           "title": {
             "zh": "迷你图",

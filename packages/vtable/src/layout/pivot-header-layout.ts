@@ -248,15 +248,20 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
         if (
           indicatorObject.chartSpec &&
           indicatorObject.chartSpec.series &&
-          indicatorObject.chartSpec.series.length > 1 &&
-          indicatorObject.chartSpec.axes?.every((axis: any) => {
-            if (axis.orient === (this.indicatorsAsCol ? 'top' : 'right') && axis.visible === false) {
-              return false;
-            }
-            return true;
-          })
+          indicatorObject.chartSpec.series.length > 1
         ) {
-          return true;
+          const axes = indicatorObject.chartSpec.axes ?? (this._table as PivotChart).pivotChartAxes ?? [];
+          if (
+            !axes.length ||
+            axes.every((axis: any) => {
+              if (axis.orient === (this.indicatorsAsCol ? 'top' : 'right') && axis.visible === false) {
+                return false;
+              }
+              return true;
+            })
+          ) {
+            return true;
+          }
         }
         return false;
       });

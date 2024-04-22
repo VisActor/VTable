@@ -593,6 +593,22 @@ getCheckboxState(field?: string | number): Array
 getCellCheckboxState(col: number, row: number): Array
 ```
 
+## getRadioState(Function)
+
+获取某个字段下 radio 全部数据的选中状态 顺序对应原始传入数据 records 不是对应表格展示 row 的状态值
+
+```
+getRadioState(field?: string | number): number | Record<number, boolean | number>
+```
+
+## getCellRadioState(Function)
+
+获取某个单元格 radio 的状态，如果一个单元格中包含多个单选框，则返回值为number，指该单元格内选中radio的索引，否则返回值为boolean
+
+```
+getCellRadioState(col: number, row: number): boolean | number
+```
+
 ## getScrollTop(Function)
 
 获取当前竖向滚动位置
@@ -1031,3 +1047,27 @@ registerCustomCellStyleArrangement: (cellPosition: { col?: number; row?: number;
   - 单个单元格：`{ row: number, column: number }`
   - 单元格区域：`{ range: { start: { row: number, column: number }, end: { row: number, column: number} } }`
 - customStyleId: 自定义样式 id，与注册自定义样式时定义的 id 相同
+
+## setCellCheckboxState(Function)
+
+设置单元格的 checkbox 状态
+
+```
+setCellCheckboxState(col: number, row: number, checked: boolean) => void
+```
+
+- col: 列号
+- row: 行号
+- checked: 是否选中
+
+## setCellRadioState(Function)
+
+将单元格的 radio 状态设置为选中状态
+
+```
+setCellRadioState(col: number, row: number, index?: number) => void
+```
+
+- col: 列号
+- row: 行号
+- index: 更新的目标radio在单元格中的索引

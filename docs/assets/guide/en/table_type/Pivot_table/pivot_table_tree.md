@@ -1012,6 +1012,27 @@ const tableInstance = new VTable.PivotTable(option);
 
 It can be seen that the pivot table tree structure display function can clearly present the hierarchical relationship of data, which is convenient for users to perform data analytics.
 
+## Specify the collapse or expansion state of a node in the table header
+
+In the above example, you can set the `hierarchyState` of the data node to specify the collapsed or expanded state of the node, and its value is `expand` or `collapse`.
+
+For example, to specify a node in rowTree as expanded, you can use hierarchyState: 'expand'.
+
+```javascript
+const option = {
+  rowTree: [
+    {
+      dimensionKey: '230627170530016',
+      value: 'Furniture',
+      hierarchyState: 'expand',
+      children: [
+        // ...
+      ]
+    }
+  ]
+};
+```
+
 ## Subnode data lazy loading usage
 
 If you do not want to provide all data at initialization, but want to load data when the node is expanded, you can use it as follows.

@@ -11,7 +11,8 @@ import type {
   MappingRule,
   ProgressbarColumnDefine,
   IRowSeriesNumber,
-  TextColumnDefine
+  TextColumnDefine,
+  RadioColumnDefine
 } from '../../ts-types';
 import { dealWithCustom } from '../component/custom';
 import type { Group } from '../graphic/group';
@@ -35,6 +36,7 @@ import { getQuadProps } from '../utils/padding';
 import { convertInternal } from '../../tools/util';
 import { updateCellContentHeight, updateCellContentWidth } from '../utils/text-icon-layout';
 import { isArray } from '@visactor/vutils';
+import { createRadioCellGroup } from './cell-type/radio-cell';
 
 export function createCell(
   type: ColumnTypeOption,
@@ -325,6 +327,24 @@ export function createCell(
       table,
       cellTheme,
       define as CheckboxColumnDefine
+    );
+  } else if (type === 'radio') {
+    cellGroup = createRadioCellGroup(
+      null,
+      columnGroup,
+      0,
+      y,
+      col,
+      row,
+      colWidth,
+      cellWidth,
+      cellHeight,
+      padding,
+      textAlign,
+      textBaseline,
+      table,
+      cellTheme,
+      define as RadioColumnDefine
     );
   }
 
