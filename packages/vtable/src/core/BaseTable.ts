@@ -2182,6 +2182,14 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
       },
       options.menu
     );
+
+    Array.isArray(options.menu?.dropDownMenuHighlight) &&
+      this.setDropDownMenuHighlight(options.menu?.dropDownMenuHighlight);
+
+    // 全局下拉菜单
+    Array.isArray(options.menu?.defaultHeaderMenuItems) &&
+      (this.globalDropDownMenu = options.menu.defaultHeaderMenuItems);
+
     if (internalProps.menu.renderMode === 'html' && !internalProps.menuHandler) {
       internalProps.menuHandler = new MenuHandler(this);
     }

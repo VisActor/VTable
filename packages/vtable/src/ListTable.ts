@@ -371,6 +371,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
     internalProps.frozenColDragHeaderMode = options.frozenColDragHeaderMode;
     //分页配置
     this.pagination = options.pagination;
+    internalProps.sortState = options.sortState;
     internalProps.dataConfig = {}; // cloneDeep(options.dataConfig ?? {});
     //更新protectedSpace
     this.showHeader = options.showHeader ?? true;
