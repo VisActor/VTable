@@ -31,8 +31,11 @@ export function dealFrozen(scene: Scenegraph) {
 
   if (!scene.isPivot && !(scene.table as any).transpose) {
     scene.component.setFrozenColumnShadow(scene.table.frozenColCount - 1);
+    scene.component.setRightFrozenColumnShadow(scene.table.colCount - scene.table.rightFrozenColCount);
   } else if (scene.table.options.frozenColCount) {
     scene.component.setFrozenColumnShadow(scene.table.frozenColCount - 1);
+  } else if (scene.table.options.frozenColCount) {
+    scene.component.setRightFrozenColumnShadow(scene.table.colCount - scene.table.rightFrozenColCount);
   }
   scene.hasFrozen = true;
 
@@ -79,8 +82,11 @@ export function resetFrozen(scene: Scenegraph) {
 
   if (!scene.isPivot && !(scene.table as any).transpose) {
     scene.component.setFrozenColumnShadow(scene.table.frozenColCount - 1);
+    scene.component.setRightFrozenColumnShadow(scene.table.colCount - scene.table.rightFrozenColCount);
   } else if (scene.table.options.frozenColCount) {
     scene.component.setFrozenColumnShadow(scene.table.frozenColCount - 1);
+  } else if (scene.table.options.rightFrozenColCount) {
+    scene.component.setRightFrozenColumnShadow(scene.table.colCount - scene.table.rightFrozenColCount);
   }
   scene.hasFrozen = true;
 }

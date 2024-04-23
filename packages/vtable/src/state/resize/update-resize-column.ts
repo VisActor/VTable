@@ -103,8 +103,16 @@ export function updateResizeColumn(xInTable: number, yInTable: number, state: St
       state.table.frozenColCount - 1,
       state.columnResize.isRightFrozen
     );
+  } else if (
+    state.columnResize.col >= state.table.colCount - state.table.rightFrozenColCount &&
+    !state.table.isPivotTable() &&
+    !(state.table as ListTable).transpose
+  ) {
+    state.table.scenegraph.component.setRightFrozenColumnShadow(state.table.colCount - state.table.rightFrozenColCount);
   } else if (state.table.options.frozenColCount) {
     state.table.scenegraph.component.setFrozenColumnShadow(state.table.frozenColCount - 1);
+  } else if (state.table.options.rightFrozenColCount) {
+    state.table.scenegraph.component.setRightFrozenColumnShadow(state.table.colCount - state.table.rightFrozenColCount);
   }
 
   // stage rerender
