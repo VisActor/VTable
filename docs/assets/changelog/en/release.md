@@ -1,3 +1,30 @@
+# v0.24.0
+
+2024-04-22
+
+
+**🆕 New feature**
+
+- **@visactor/vtable**: add setCellCheckboxState & setCellRadioState api [#1504](https://github.com/VisActor/VTable/issues/1504)
+- **@visactor/vtable**: add lazy load for pivot table tree [#1521](https://github.com/VisActor/VTable/issues/1521)
+- **@visactor/vtable**: add radio column type
+
+**🐛 Bug fix**
+
+- **@visactor/vtable**: handle with editor input ctrl+a event [#1552](https://github.com/VisActor/VTable/issues/1552)
+- **@visactor/vtable**: when resize window size the editor input size not match cell size [#1559](https://github.com/VisActor/VTable/issues/1559)
+- **@visactor/vtable**: fix multilines new line style [#1531](https://github.com/VisActor/VTable/issues/1531)
+- **@visactor/vtable**: fix cell group order in async data [#1517](https://github.com/VisActor/VTable/issues/1517)
+- **@visactor/vtable**: add skipCustomMerge in getCellValue() [#1543](https://github.com/VisActor/VTable/issues/1543)
+
+**🔨 Refactor**
+
+- **@visactor/vtable**: optimize performance when row tree node exceed 8000 nodes [#1557](https://github.com/VisActor/VTable/issues/1557)
+
+
+
+[more detail about v0.24.0](https://github.com/VisActor/VTable/releases/tag/v0.24.0)
+
 # v0.23.3
 
 2024-04-16
