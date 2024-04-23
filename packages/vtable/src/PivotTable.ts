@@ -918,7 +918,8 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
     }
   }
 
-  _refreshHierarchyState(col: number, row: number) {
+  // beforeUpdateCell主要用于setTreeNodeChildren方法
+  _refreshHierarchyState(col: number, row: number, beforeUpdateCell?: Function) {
     let notFillWidth = false;
     let notFillHeight = false;
     this.stateManager.updateHoverIcon(col, row, undefined, undefined);
@@ -933,6 +934,7 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
       }
     }
     const result = (this.internalProps.layoutMap as PivotHeaderLayoutMap).toggleHierarchyState(col, row);
+    beforeUpdateCell && beforeUpdateCell();
     //影响行数
     this.refreshRowColCount();
     // this.scenegraph.clearCells();
@@ -1355,24 +1357,28 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
 
   /**
    * 树形展示场景下，如果需要动态插入子节点的数据可以配合使用该接口，其他情况不适用
-   * @param records 设置到该单元格其子节点的数据
+   * @param children 设置到该单元格的子节点
+   * @param records 该节点展开后新增数据
    * @param col 需要设置子节点的单元格地址
    * @param row  需要设置子节点的单元格地址
    */
-  setTreeNodeChildren(records: any[], col: number, row: number) {
-    const headerPaths = this.internalProps.layoutMap.getCellHeaderPaths(col, row);
-    const headerTreeNode = this.internalProps.layoutMap.getHeadNode(
-      headerPaths.rowHeaderPaths.slice(0, headerPaths.rowHeaderPaths.length)
-    );
-    headerTreeNode.children = records;
-    // const index = this.getRecordShowIndexByCell(col, row);
-    // this.dataSource.setRecord(record, index);
-    this._refreshHierarchyState(col, row);
-  }
-
-  addRecords(records: any[]) {
+  setTreeNodeChildren(children: IHeaderTreeDefine[], records: any[], col: number, row: number) {
     if (this.flatDataToObjects) {
-      this.flatDataToObjects.addRecords(records);
+      const headerPaths = this.internalProps.layoutMap.getCellHeaderPaths(col, row);
+      const headerTreeNode = this.internalProps.layoutMap.getHeadNode(
+        headerPaths.rowHeaderPaths.slice(0, headerPaths.rowHeaderPaths.length)
+      );
+      headerTreeNode.children = children;
+      this._refreshHierarchyState(col, row, () => {
+        this.flatDataToObjects.changeDataConfig({
+          rows: this.internalProps.layoutMap.fullRowDimensionKeys,
+          columns: this.internalProps.layoutMap.colDimensionKeys,
+          indicators: this.internalProps.layoutMap.indicatorKeys,
+          indicatorsAsCol: this.internalProps.layoutMap.indicatorsAsCol,
+          indicatorDimensionKey: this.internalProps.layoutMap.indicatorDimensionKey
+        });
+        this.flatDataToObjects.addRecords(records);
+      });
     }
   }
 }
