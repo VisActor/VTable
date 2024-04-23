@@ -1,3 +1,29 @@
+# v0.24.0
+
+2024-04-22
+
+
+**🆕 新增功能**
+
+- **@visactor/vtable**: 添加单选`radio`类型，并添加 setCellCheckboxState 和 setCellRadioState API [#1504](https://github.com/VisActor/VTable/issues/1504)
+- **@visactor/vtable**: 为数据透视表树添加懒加载功能 [#1521](https://github.com/VisActor/VTable/issues/1521)
+
+**🐛 功能修复**
+
+- **@visactor/vtable**: 处理编辑器输入 ctrl+a 事件和表格事件冲突问题 [#1552](https://github.com/VisActor/VTable/issues/1552)
+- **@visactor/vtable**: 当调整窗口大小时，退出编辑状态 [#1559](https://github.com/VisActor/VTable/issues/1559)
+- **@visactor/vtable**: 修复多行新行样式 [#1531](https://github.com/VisActor/VTable/issues/1531)
+- **@visactor/vtable**: 修复异步数据中单元格组顺序问题 [#1517](https://github.com/VisActor/VTable/issues/1517)
+- **@visactor/vtable**: 在 getCellValue() 中添加 skipCustomMerge参数忽略配置的自定义合并配置 [#1543](https://github.com/VisActor/VTable/issues/1543)
+
+**🔨 功能重构**
+
+- **@visactor/vtable**: 当行树节点超过8000个时，优化性能 [#1557](https://github.com/VisActor/VTable/issues/1557)
+
+
+
+[更多详情请查看 v0.24.0](https://github.com/VisActor/VTable/releases/tag/v0.24.0)
+
 # v0.23.3
 
 2024-04-16
