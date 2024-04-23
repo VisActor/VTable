@@ -1106,6 +1106,18 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
     }
     this.eventManager.updateEventBinder();
   }
+  /** 开启单元格编辑 */
+  startEditCell(col?: number, row?: number) {
+    if (isValid(col) && isValid(row)) {
+      this.selectCell(col, row);
+      this.editorManager.startEditCell(col, row);
+    } else if (this.stateManager.select?.cellPos) {
+      const { col, row } = this.stateManager.select.cellPos;
+      if (isValid(col) && isValid(row)) {
+        this.editorManager.startEditCell(col, row);
+      }
+    }
+  }
   /** 结束编辑 */
   completeEditCell() {
     this.editorManager.completeEdit();
