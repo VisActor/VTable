@@ -824,7 +824,7 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
           minWidth = Math.max(obj.minWidth, <number>minWidth ?? 0);
         }
         if (typeof obj.maxWidth === 'number') {
-          maxWidth = Math.min(obj.maxWidth, <number>maxWidth ?? 1000);
+          maxWidth = Math.min(obj.maxWidth, <number>maxWidth ?? Number.MAX_VALUE);
         }
       });
       width = width > 0 ? width : isAuto ? 'auto' : undefined;
