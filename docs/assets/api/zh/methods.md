@@ -177,11 +177,12 @@ setRecords(records: Array<any>)
 ```
   /**
    * 树形展示场景下，如果需要动态插入子节点的数据可以配合使用该接口，其他情况不适用
-   * @param records 设置到该单元格其子节点的数据
+   * @param children 设置到该单元格的子节点
+   * @param records 该节点展开后新增数据
    * @param col 需要设置子节点的单元格地址
    * @param row  需要设置子节点的单元格地址
    */
-  setRecordChildren(records: any[], col: number, row: number)
+  setTreeNodeChildren(children: IHeaderTreeDefine[], records: any[], col: number, row: number)
 ```
 
 ## getDrawRange(Function)
@@ -251,7 +252,7 @@ setRecords(records: Array<any>)
 
 ## getCellValue(Function)
 
-获取单元格展示值，如果在customMergeCell函数中使用，需要传入 skipCustomMerge 参数，否则会导致报错。
+获取单元格展示值，如果在 customMergeCell 函数中使用，需要传入 skipCustomMerge 参数，否则会导致报错。
 
 ```
   /**
@@ -603,7 +604,7 @@ getRadioState(field?: string | number): number | Record<number, boolean | number
 
 ## getCellRadioState(Function)
 
-获取某个单元格 radio 的状态，如果一个单元格中包含多个单选框，则返回值为number，指该单元格内选中radio的索引，否则返回值为boolean
+获取某个单元格 radio 的状态，如果一个单元格中包含多个单选框，则返回值为 number，指该单元格内选中 radio 的索引，否则返回值为 boolean
 
 ```
 getCellRadioState(col: number, row: number): boolean | number
@@ -943,8 +944,6 @@ use case: 点击图例项后 更新过滤规则 来更新图表
   addRecords(records: any[], recordIndex?: number)
 ```
 
-**0.24.0 版本后增加了对透视表的懒加载支持，所以针对这种场景下 透视表可以调用该接口实现懒加载效果。其他透视表场景使用该接口会有问题！**
-
 ## addRecord(Function)
 
 添加数据，单条数据
@@ -1070,4 +1069,4 @@ setCellRadioState(col: number, row: number, index?: number) => void
 
 - col: 列号
 - row: 行号
-- index: 更新的目标radio在单元格中的索引
+- index: 更新的目标 radio 在单元格中的索引

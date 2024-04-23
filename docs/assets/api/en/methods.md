@@ -155,15 +155,18 @@ setRecords(records: Array<any>)
 
 ## setRecordChildren(Function)
 
-In the basic table tree display scenario, if you need to dynamically insert data of sub-nodes, you can use this interface. It is not applicable in other situations.
+**ListTable Proprietary**
+
+In the list table tree display scenario, if you need to dynamically insert data of sub-nodes, you can use this interface. It is not applicable in other situations.
 
 ```
-  /**
-   * @param records The data set to the cell's child nodes
-   * @param col needs to set the cell address of the child node
-   * @param row needs to set the cell address of the child node
-   */
-  setRecordChildren(records: any[], col: number, row: number)
+/**
+* In the tree display scenario, if you need to dynamically insert child node data, you can use this interface. It is not applicable in other situations.
+* @param records Set the data of the child nodes of this cell
+* @param col needs to set the cell address of the child node
+* @param row needs to set the cell address of the child node
+*/
+setRecordChildren(records: any[], col: number, row: number)
 ```
 
 ## setTreeNodeChildren(Function)
@@ -175,11 +178,12 @@ In the pivot table tree display scenario, if you need to dynamically insert chil
 ```
 /**
 * In the tree display scenario, if you need to dynamically insert child node data, you can use this interface. It is not applicable in other situations.
-* @param records Set the data of the child nodes of this cell
+* @param children Set to the child nodes of this cell
+* @param records The node is expanded to add new data
 * @param col needs to set the cell address of the child node
 * @param row needs to set the cell address of the child node
 */
-setRecordChildren(records: any[], col: number, row: number)
+  setTreeNodeChildren(children: IHeaderTreeDefine[], records: any[], col: number, row: number)
 ```
 
 ## getDrawRange(Function)
@@ -941,8 +945,6 @@ Add data, support multiple pieces of data
    */
   addRecords(records: any[], recordIndex?: number)
 ```
-
-**Lazy loading support for pivot tables has been added since version 0.24.0, so pivot tables can call this interface to achieve lazy loading in this scenario. Using this interface in other pivot table scenarios will cause problems!**
 
 ## addRecord(Function)
 
