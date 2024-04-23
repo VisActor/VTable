@@ -463,19 +463,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
 
     if (!transpose) {
       //设置列宽  这里需要优化，考虑转置表格的情况 transpose，转置表格不需要设置colWidth  TODO
-      for (let col = 0; col < layoutMap.columnWidths.length; col++) {
-        const { width, minWidth, maxWidth } = layoutMap.columnWidths?.[col] ?? {};
-        // width 为 "auto" 时先不存储ColWidth
-        if (width && ((typeof width === 'string' && width !== 'auto') || (typeof width === 'number' && width > 0))) {
-          table._setColWidth(col, width);
-        }
-        if (minWidth && ((typeof minWidth === 'number' && minWidth > 0) || typeof minWidth === 'string')) {
-          table.setMinColWidth(col, minWidth);
-        }
-        if (maxWidth && ((typeof maxWidth === 'number' && maxWidth > 0) || typeof maxWidth === 'string')) {
-          table.setMaxColWidth(col, maxWidth);
-        }
-      }
+      this.setMinMaxLimitWidth(true);
     }
     //刷新表头，原来这里是_refreshRowCount 后改名为_refreshRowColCount  因为表头定义会影响行数，而转置模式下会影响列数
     this.refreshRowColCount();
@@ -587,15 +575,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
           //下面代码取自refreshHeader列宽设置逻辑
           //设置列宽极限值 TODO 目前是有问题的 最大最小宽度限制 移动列位置后不正确
           this.colWidthsLimit = {}; //需要先清空
-          for (let col = 0; col < this.internalProps.layoutMap.columnWidths.length; col++) {
-            const { minWidth, maxWidth } = this.internalProps.layoutMap.columnWidths?.[col] ?? {};
-            if (minWidth && ((typeof minWidth === 'number' && minWidth > 0) || typeof minWidth === 'string')) {
-              this.setMinColWidth(col, minWidth);
-            }
-            if (maxWidth && ((typeof maxWidth === 'number' && maxWidth > 0) || typeof maxWidth === 'string')) {
-              this.setMaxColWidth(col, maxWidth);
-            }
-          }
+          this.setMinMaxLimitWidth();
         }
         // // 清空相关缓存
         // const colStart = Math.min(moveContext.sourceIndex, moveContext.targetIndex);

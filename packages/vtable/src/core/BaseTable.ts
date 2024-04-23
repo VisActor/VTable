@@ -4149,7 +4149,27 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
   get leftRowSeriesNumberCount(): number {
     return this.internalProps.layoutMap?.leftRowSeriesNumberColumnCount ?? 0;
   }
-
+  setMinMaxLimitWidth(setWidth: boolean = false) {
+    const internalProps = this.internalProps;
+    //设置列宽
+    for (let col = 0; col < internalProps.layoutMap.columnWidths.length; col++) {
+      const { width, minWidth, maxWidth } = internalProps.layoutMap.columnWidths?.[col] ?? {};
+      // width 为 "auto" 时先不存储ColWidth
+      if (
+        setWidth &&
+        width &&
+        ((typeof width === 'string' && width !== 'auto') || (typeof width === 'number' && width > 0))
+      ) {
+        this._setColWidth(col, width);
+      }
+      if (minWidth && ((typeof minWidth === 'number' && minWidth > 0) || typeof minWidth === 'string')) {
+        this.setMinColWidth(col, minWidth);
+      }
+      if (maxWidth && ((typeof maxWidth === 'number' && maxWidth > 0) || typeof maxWidth === 'string')) {
+        this.setMaxColWidth(col, maxWidth);
+      }
+    }
+  }
   // startInertia() {
   //   startInertia(0, -1, 1, this.stateManager);
   // }
