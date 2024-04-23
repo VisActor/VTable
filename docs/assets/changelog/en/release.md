@@ -5,9 +5,8 @@
 
 **🆕 New feature**
 
-- **@visactor/vtable**: add setCellCheckboxState & setCellRadioState api [#1504](https://github.com/VisActor/VTable/issues/1504)
+- **@visactor/vtable**: add `radio` cell type, and add setCellCheckboxState & setCellRadioState api [#1504](https://github.com/VisActor/VTable/issues/1504)
 - **@visactor/vtable**: add lazy load for pivot table tree [#1521](https://github.com/VisActor/VTable/issues/1521)
-- **@visactor/vtable**: add radio column type
 
 **🐛 Bug fix**
 
