@@ -1064,7 +1064,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
    * @returns
    */
   getRowsHeight(startRow: number, endRow: number): number {
-    if (startRow > endRow) {
+    if (startRow > endRow || this.rowCount === 0) {
       return 0;
     }
     startRow = Math.max(startRow, 0);
@@ -1075,17 +1075,19 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     if (
       this.heightMode === 'standard' &&
       !this.autoFillHeight &&
-      // this.internalProps.layoutMap &&
+      this.internalProps.layoutMap &&
       // endRow >= this.columnHeaderLevelCount &&
       // !this.bottomFrozenRowCount &&
       !this.hasAutoImageColumn()
     ) {
-      for (let i = startRow; i < this.columnHeaderLevelCount; i++) {
-        // part in header
+      // part in header
+      for (let i = startRow; i < Math.min(endRow + 1, this.columnHeaderLevelCount); i++) {
         h += this.getRowHeight(i);
       }
       // part in body
-      h += this.defaultRowHeight * (endRow - Math.max(this.columnHeaderLevelCount, startRow) + 1);
+      if (endRow >= this.columnHeaderLevelCount) {
+        h += this.defaultRowHeight * (endRow - Math.max(this.columnHeaderLevelCount, startRow) + 1);
+      }
     } else {
       h = this.rowHeightsMap.getSumInRange(startRow, endRow);
     }
