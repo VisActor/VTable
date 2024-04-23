@@ -1,3 +1,28 @@
+# v0.24.1
+
+2024-04-23
+
+
+**🆕 New feature**
+
+- **@visactor/vtable**: add startEditCell api [#1573](https://github.com/VisActor/VTable/issues/1573)
+
+**🐛 Bug fix**
+
+- **@visactor/vtable**: when has rowSeriesNumber minWidth maxWidth error [#1572](https://github.com/VisActor/VTable/issues/1572)
+
+**🔨 Refactor**
+
+- **@visactor/vtable**: pivot lazy load modify setTreeNodeChildren api [#1580](https://github.com/VisActor/VTable/issues/1580)
+
+**📖 Site / documentation update**
+
+- **@visactor/vtable**: add drill down drill up demo [#1556](https://github.com/VisActor/VTable/issues/1556)
+
+
+
+[more detail about v0.24.1](https://github.com/VisActor/VTable/releases/tag/v0.24.1)
+
 # v0.24.0
 
 2024-04-22
