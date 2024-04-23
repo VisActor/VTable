@@ -993,6 +993,13 @@
             "zh": "指标聚合方式",
             "en": "Indicator Aggregation Type"
           }
+        },
+        {
+          "path": "pivot-analysis-table-drill",
+          "title": {
+            "zh": "透视表上钻下钻",
+            "en": "Pivot Table Drill"
+          }
         }
       ]
     },
