@@ -74,7 +74,7 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
   private _cornerHeaderCellIds: number[][] = [];
   private _columnHeaderCellIds: number[][] = [];
   private _rowHeaderCellIds: number[][] = [];
-  private _rowHeaderCellIds_FULL: number[][] = [];
+  private _rowHeaderCellIds_FULL: number[][] = []; //分页需求新增  为了保存全量的id  当页的是_rowHeaderCellIds
   private _columnWidths: WidthData[] = [];
   private _columnHeaderLevelCount: number;
   private _rowHeaderLevelCount: number;
@@ -288,15 +288,6 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
         this._extensionRowDimensionKeys.push(rowKeys);
         this.fullRowDimensionKeys = this.fullRowDimensionKeys.concat(rowKeys);
       });
-    }
-    if (this.rowsDefine.length > this.fullRowDimensionKeys.length) {
-      for (let i = this.fullRowDimensionKeys.length; i <= this.rowsDefine.length - 1; i++) {
-        this.fullRowDimensionKeys.push(
-          typeof this.rowsDefine[i] === 'string'
-            ? (this.rowsDefine[i] as string)
-            : (this.rowsDefine[i] as IRowDimension).dimensionKey
-        );
-      }
     }
 
     this.sharedVar.seqId = Math.max(this.sharedVar.seqId, this._headerObjects.length);
@@ -801,7 +792,7 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
       }
     }
     if (this.indicatorsAsCol) {
-      for (let i = this.rowHeaderLevelCount; i < this.colCount; i++) {
+      for (let i = this.rowHeaderLevelCount + this.leftRowSeriesNumberColumnCount; i < this.colCount; i++) {
         const cellDefine = this.getBody(i, this.columnHeaderLevelCount);
         returnWidths[i] = {
           width: cellDefine?.width,
@@ -821,16 +812,16 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
           isAuto = true;
         }
         if (typeof obj.minWidth === 'number') {
-          minWidth = Math.max(obj.minWidth, <number>minWidth);
+          minWidth = Math.max(obj.minWidth, <number>minWidth ?? 0);
         }
         if (typeof obj.maxWidth === 'number') {
-          maxWidth = Math.max(obj.maxWidth, <number>maxWidth);
+          maxWidth = Math.min(obj.maxWidth, <number>maxWidth ?? Number.MAX_VALUE);
         }
       });
       width = width > 0 ? width : isAuto ? 'auto' : undefined;
       returnWidths.fill(
         { width, minWidth, maxWidth },
-        this.rowHeaderLevelCount,
+        this.rowHeaderLevelCount + this.leftRowSeriesNumberColumnCount,
         this.colCount - this.rightFrozenColCount
       );
     }
@@ -1817,6 +1808,9 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
     //过程类似构造函数处理过程
     this.rowDimensionTree.reset(this.rowDimensionTree.tree.children, true);
     this._rowHeaderCellIds_FULL = [];
+    this.rowDimensionKeys = this.rowDimensionTree.dimensionKeys.valueArr();
+    this.fullRowDimensionKeys = [];
+    this.fullRowDimensionKeys = this.fullRowDimensionKeys.concat(this.rowDimensionKeys);
     this._addHeadersForTreeMode(
       this._rowHeaderCellIds_FULL,
       0,

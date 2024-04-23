@@ -1064,71 +1064,42 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
    * @returns
    */
   getRowsHeight(startRow: number, endRow: number): number {
-    if (startRow > endRow) {
+    if (startRow > endRow || this.rowCount === 0) {
       return 0;
     }
     startRow = Math.max(startRow, 0);
     endRow = Math.min(endRow, (this.rowCount ?? Infinity) - 1);
-    //通过缓存获取指定范围行高
-    // const cachedRowHeight = this._rowRangeHeightsMap.get(`$${startRow}$${endRow}`);
-    // if (cachedRowHeight !== null && cachedRowHeight !== undefined) {
-    //   return cachedRowHeight;
-    // }
-    // //特殊处理 先尝试获取startRow->endRow-1的行高
-    // const cachedLowerRowHeight = this._rowRangeHeightsMap.get(`$${startRow}$${endRow - 1}`);
-    // if (cachedLowerRowHeight !== null && cachedLowerRowHeight !== undefined) {
-    //   const height = Math.round(
-    //     cachedLowerRowHeight +
-    //       (this.rowHeightsMap.get(endRow) ??
-    //         (this.isColumnHeader(0, endRow) || this.isCornerHeader(0, endRow)
-    //           ? Array.isArray(this.defaultHeaderRowHeight) && isNumber(this.defaultHeaderRowHeight[endRow])
-    //             ? (this.defaultHeaderRowHeight[endRow] as number)
-    //             : isNumber(this.defaultHeaderRowHeight)
-    //             ? (this.defaultHeaderRowHeight as number)
-    //             : this.internalProps.defaultRowHeight
-    //           : this.internalProps.defaultRowHeight))
-    //   );
-    //   if (startRow >= 0 && endRow >= 0) {
-    //     this._rowRangeHeightsMap.set(`$${startRow}$${endRow}`, Math.round(height));
-    //   }
-    //   return height;
-    // }
 
     let h = 0;
-    // for (let i = startRow; i <= endRow; i++) {
-    //   h +=
-    //     this.rowHeightsMap.get(i) ||
-    //     (this.isColumnHeader(0, i) || this.isCornerHeader(0, i)
-    //       ? Array.isArray(this.defaultHeaderRowHeight)
-    //         ? this.defaultHeaderRowHeight[i] ?? this.internalProps.defaultRowHeight
-    //         : this.defaultHeaderRowHeight
-    //       : this.internalProps.defaultRowHeight);
-    // }
     // autoRowHeight || all rows in header, use accumulation
     if (
       this.heightMode === 'standard' &&
       !this.autoFillHeight &&
       this.internalProps.layoutMap &&
-      endRow >= this.columnHeaderLevelCount &&
-      !this.bottomFrozenRowCount &&
+      // endRow >= this.columnHeaderLevelCount &&
+      // !this.bottomFrozenRowCount &&
       !this.hasAutoImageColumn()
     ) {
-      for (let i = startRow; i < this.columnHeaderLevelCount; i++) {
-        // part in header
+      // part in header
+      for (let i = startRow; i < Math.min(endRow + 1, this.columnHeaderLevelCount); i++) {
         h += this.getRowHeight(i);
       }
       // part in body
-      h += this.defaultRowHeight * (endRow - Math.max(this.columnHeaderLevelCount, startRow) + 1);
+      if (endRow >= this.columnHeaderLevelCount) {
+        h +=
+          this.defaultRowHeight *
+          (Math.min(endRow, this.rowCount - this.bottomFrozenRowCount - 1) -
+            Math.max(this.columnHeaderLevelCount, startRow) +
+            1);
+      }
+      // part in bottom frozen
+      // last axis row height is default header row height in pivot chart
+      for (let i = this.rowCount - this.bottomFrozenRowCount; i < endRow + 1; i++) {
+        h += this.getRowHeight(i);
+      }
     } else {
-      // for (let i = startRow; i <= endRow; i++) {
-      //   h += this.getRowHeight(i);
-      // }
       h = this.rowHeightsMap.getSumInRange(startRow, endRow);
     }
-    // if (startRow >= 0 && endRow >= 0 && h > 0) {
-    //   this._rowRangeHeightsMap.set(`$${startRow}$${endRow}`, Math.round(h));
-    // }
-    // }
     return Math.round(h);
   }
   /**
@@ -4149,7 +4120,27 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
   get leftRowSeriesNumberCount(): number {
     return this.internalProps.layoutMap?.leftRowSeriesNumberColumnCount ?? 0;
   }
-
+  setMinMaxLimitWidth(setWidth: boolean = false) {
+    const internalProps = this.internalProps;
+    //设置列宽
+    for (let col = 0; col < internalProps.layoutMap.columnWidths.length; col++) {
+      const { width, minWidth, maxWidth } = internalProps.layoutMap.columnWidths?.[col] ?? {};
+      // width 为 "auto" 时先不存储ColWidth
+      if (
+        setWidth &&
+        width &&
+        ((typeof width === 'string' && width !== 'auto') || (typeof width === 'number' && width > 0))
+      ) {
+        this._setColWidth(col, width);
+      }
+      if (minWidth && ((typeof minWidth === 'number' && minWidth > 0) || typeof minWidth === 'string')) {
+        this.setMinColWidth(col, minWidth);
+      }
+      if (maxWidth && ((typeof maxWidth === 'number' && maxWidth > 0) || typeof maxWidth === 'string')) {
+        this.setMaxColWidth(col, maxWidth);
+      }
+    }
+  }
   // startInertia() {
   //   startInertia(0, -1, 1, this.stateManager);
   // }

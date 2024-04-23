@@ -285,22 +285,7 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
     //void
   }
   refreshHeader(): void {
-    const internalProps = this.internalProps;
-
-    //设置列宽
-    for (let col = 0; col < internalProps.layoutMap.columnWidths.length; col++) {
-      const { width, minWidth, maxWidth } = internalProps.layoutMap.columnWidths?.[col] ?? {};
-      // width 为 "auto" 时先不存储ColWidth
-      if (width && ((typeof width === 'string' && width !== 'auto') || (typeof width === 'number' && width > 0))) {
-        this._setColWidth(col, width);
-      }
-      if (minWidth && ((typeof minWidth === 'number' && minWidth > 0) || typeof minWidth === 'string')) {
-        this.setMinColWidth(col, minWidth);
-      }
-      if (maxWidth && ((typeof maxWidth === 'number' && maxWidth > 0) || typeof maxWidth === 'string')) {
-        this.setMaxColWidth(col, maxWidth);
-      }
-    }
+    this.setMinMaxLimitWidth(true);
     //刷新表头，原来这里是_refreshRowCount 后改名为_refreshRowColCount  因为表头定义会影响行数，而转置模式下会影响列数
     this.refreshRowColCount();
   }
@@ -604,15 +589,7 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
         this.colWidthsMap.adjustOrder(moveContext.sourceIndex, moveContext.targetIndex, moveContext.sourceSize);
         //下面代码取自refreshHeader列宽设置逻辑
         //设置列宽极限值 TODO 目前是有问题的 最大最小宽度限制 移动列位置后不正确
-        for (let col = 0; col < this.internalProps.layoutMap.columnWidths.length; col++) {
-          const { minWidth, maxWidth } = this.internalProps.layoutMap.columnWidths?.[col] ?? {};
-          if (minWidth && ((typeof minWidth === 'number' && minWidth > 0) || typeof minWidth === 'string')) {
-            this.setMinColWidth(col, minWidth);
-          }
-          if (maxWidth && ((typeof maxWidth === 'number' && maxWidth > 0) || typeof maxWidth === 'string')) {
-            this.setMaxColWidth(col, maxWidth);
-          }
-        }
+        this.setMinMaxLimitWidth();
       } else if (moveContext.moveType === 'row') {
         // 是扁平数据结构 需要将二维数组this.records进行调整
         if (this.options.records?.[0]?.constructor === Array) {

@@ -45,7 +45,7 @@ export function computeColsWidth(table: BaseTableAPI, colStart?: number, colEnd?
     let maxWidth;
     if (
       !table.internalProps.transpose &&
-      (table.internalProps.layoutMap.columnWidths?.[col]?.columnWidthComputeMode === 'only-header' ||
+      (table.internalProps.layoutMap.columnObjects?.[col]?.columnWidthComputeMode === 'only-header' ||
         table.columnWidthComputeMode === 'only-header') &&
       'showHeader' in table.internalProps.layoutMap
     ) {
@@ -55,7 +55,7 @@ export function computeColsWidth(table: BaseTableAPI, colStart?: number, colEnd?
       table.internalProps.layoutMap.showHeader = temp;
     } else if (
       !table.internalProps.transpose &&
-      (table.internalProps.layoutMap.columnWidths?.[col]?.columnWidthComputeMode === 'only-body' ||
+      (table.internalProps.layoutMap.columnObjects?.[col]?.columnWidthComputeMode === 'only-body' ||
         table.columnWidthComputeMode === 'only-body')
     ) {
       maxWidth = computeColWidth(

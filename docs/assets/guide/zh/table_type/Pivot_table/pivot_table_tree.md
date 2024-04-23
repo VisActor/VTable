@@ -1059,13 +1059,12 @@ rowTree: [
 ];
 ```
 
-2. 在`tree_hierarchy_state_change`事件回调中，根据当前展开节点，请求数据，并通过接口`setTreeNodeChildren`设置到当前的`rowTree`中对应节点的的`children`属性上。以及把指标数据 records 通过接口`addRecords`增加到 table 中。
+2. 在`tree_hierarchy_state_change`事件回调中，根据当前展开节点，请求数据，并通过接口`setTreeNodeChildren`设置到当前的`rowTree`中对应节点的的`children`属性上, 以及把指标数据 records 增加到 table 中。
 
 ```javascript
 tableInstance.on(tree_hierarchy_state_change, args => {
   if (args.hierarchyState === VTable.TYPES.HierarchyState.expand && args.originData.children === true) {
-    tableInstance.addRecords(newData);
-    tableInstance.setTreeNodeChildren(newChildren, args.col, args.row);
+    tableInstance.setTreeNodeChildren(newChildren, newData, args.col, args.row);
   }
 });
 ```

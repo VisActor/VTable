@@ -221,7 +221,15 @@ filterRules: [
     <p>数据源条目和单元格的对应关系</p>
   </div>
 
+<<<<<<< HEAD
+
+### 自定义维度树
+
+=======
+
 ### 自定义表头维度树
+
+> > > > > > > origin/develop
 
 虽然具有分析能力的多维表格可以自动分析各个维度的维度值组成行列表头的树形结构，并且可以根据`dataConfig.sortRules`进行排序，但具有复杂业务逻辑的场景还是期望可以能够**自定义行列表头维度值**及顺序。那么可以通过 rowTree 和 columnTree 来实现这些业务需求场景。
 
@@ -375,3 +383,13 @@ VTable 官网示例：https://visactor.io/vtable/demo/table-type/pivot-table.
 自定义树的复杂在于组建行列维度树，可酌情根据业务场景来选择使用，如果具有复杂的排序、汇总或分页规则可选择使用自定义方式。
 
 **注意：如果选择自定义树的配置方式将不开启 VTable 内部的数据聚合能力，即匹配到的数据条目中的某一条作为单元格指标值。**
+
+## 其他相关配置
+
+### 上钻下钻
+
+我们只提供了上钻下载按钮的展示，如果需要该能力需要结合事件和接口自行实现相关逻辑。
+
+在维度配置 rows 或者 columns 中加上 drillDown 的配置项来显示下载按钮，监听点击图标按钮事件`drillmenu_click`,根据事件参数`drillDown` 或者 `drillUp`来确定是维度下钻还是上卷，根据参数`dimensionKey`确定下钻或上钻的维度，将其添加或者删除到 rows 或者 columns 中，并获取新维度层级对应数据源，并调用接口`updateOption`将新的 option 更新至表格。
+
+具体 demo：https://visactor.io/vtable/demo/data-analysis/pivot-analysis-table-drill

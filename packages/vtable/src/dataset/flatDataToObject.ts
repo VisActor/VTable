@@ -81,7 +81,15 @@ export class FlatDataToObjects {
     // delete this.rowFlatKeys;
     // delete this.colFlatKeys;
   }
-
+  changeDataConfig(dataConfig: {
+    rows: string[]; //行维度字段数组；
+    columns: string[]; //列维度字段数组；
+    indicators: string[]; //具体展示指标；
+    indicatorsAsCol: boolean;
+    indicatorDimensionKey: string | number;
+  }) {
+    this.dataConfig = dataConfig;
+  }
   setRecords(records: any[]) {
     this.processRecords();
   }

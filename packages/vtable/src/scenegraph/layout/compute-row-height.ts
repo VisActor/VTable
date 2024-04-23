@@ -168,9 +168,9 @@ export function computeRowsHeight(
       }
     }
   } else {
-    if (table.rowCount !== table.rowHeightsMap.length) {
+    if (table.heightMode === 'adaptive' || table.autoFillHeight) {
       // for tree mode
-      // table.rowHeightsMap.clear();
+      // getRowHeight() in adaptive will return scaled height
       table.clearRowHeightCache();
     }
     if (update) {

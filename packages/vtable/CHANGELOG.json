@@ -2,6 +2,27 @@
   "name": "@visactor/vtable",
   "entries": [
     {
+      "version": "0.24.1",
+      "tag": "@visactor/vtable_v0.24.1",
+      "date": "Tue, 23 Apr 2024 11:19:00 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "docs: add drill down drill up demo #1556\n\n"
+          },
+          {
+            "comment": "fix: when has rowSeriesNumber minWidth maxWidth error #1572\n\n"
+          },
+          {
+            "comment": "feat: add startEditCell api #1573\n\n"
+          },
+          {
+            "comment": "refactor: pivot lazy load modify setTreeNodeChildren api #1580\n\n"
+          }
+        ]
+      }
+    },
+    {
       "version": "0.24.0",
       "tag": "@visactor/vtable_v0.24.0",
       "date": "Mon, 22 Apr 2024 10:59:12 GMT",
