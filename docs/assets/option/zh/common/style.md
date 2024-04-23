@@ -239,3 +239,11 @@
   ) }}
 
 {{ /if }}
+
+{{ if: ${isRadio} }}
+
+{{ use: common-radio-style (
+  prefix = ${prefix}
+  ) }}
+
+{{ /if }}

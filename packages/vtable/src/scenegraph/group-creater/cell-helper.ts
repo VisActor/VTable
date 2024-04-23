@@ -11,7 +11,8 @@ import type {
   MappingRule,
   ProgressbarColumnDefine,
   IRowSeriesNumber,
-  TextColumnDefine
+  TextColumnDefine,
+  RadioColumnDefine
 } from '../../ts-types';
 import { dealWithCustom } from '../component/custom';
 import type { Group } from '../graphic/group';
@@ -35,6 +36,8 @@ import { getQuadProps } from '../utils/padding';
 import { convertInternal } from '../../tools/util';
 import { updateCellContentHeight, updateCellContentWidth } from '../utils/text-icon-layout';
 import { isArray } from '@visactor/vutils';
+import { breakString } from '../utils/break-string';
+import { createRadioCellGroup } from './cell-type/radio-cell';
 
 export function createCell(
   type: ColumnTypeOption,
@@ -59,8 +62,10 @@ export function createCell(
     renderDefault: boolean;
   }
 ): Group {
+  let isAsync = false;
   if (isPromise(value)) {
     value = table.getCellValue(col, row);
+    isAsync = true;
   }
   // let bgColorFunc: Function;
   // // 判断是否有mapping  遍历dataset中mappingRules
@@ -176,7 +181,8 @@ export function createCell(
       customElementsGroup,
       renderDefault,
       cellTheme,
-      range
+      range,
+      isAsync
     );
 
     const axisConfig = table.internalProps.layoutMap.getAxisConfigInPivotChart(col, row);
@@ -210,7 +216,8 @@ export function createCell(
       textAlign,
       textBaseline,
       table,
-      cellTheme
+      cellTheme,
+      isAsync
     );
   } else if (type === 'video') {
     // 创建视频单元格
@@ -228,7 +235,8 @@ export function createCell(
       textAlign,
       textBaseline,
       table,
-      cellTheme
+      cellTheme,
+      isAsync
     );
   } else if (type === 'chart') {
     const chartInstance = table.internalProps.layoutMap.getChartInstance(col, row);
@@ -249,7 +257,8 @@ export function createCell(
       table.internalProps.layoutMap.getChartDataId(col, row) ?? 'data',
       table,
       cellTheme,
-      table.internalProps.layoutMap.isShareChartSpec(col, row)
+      table.internalProps.layoutMap.isShareChartSpec(col, row),
+      isAsync
     );
   } else if (type === 'progressbar') {
     const style = table._getCellStyle(col, row) as ProgressBarStyle;
@@ -273,7 +282,8 @@ export function createCell(
       null,
       true,
       cellTheme,
-      range
+      range,
+      isAsync
     );
 
     // 创建bar group
@@ -306,7 +316,8 @@ export function createCell(
       cellHeight,
       padding,
       table,
-      cellTheme
+      cellTheme,
+      isAsync
     );
   } else if (type === 'checkbox') {
     cellGroup = createCheckboxCellGroup(
@@ -324,7 +335,26 @@ export function createCell(
       textBaseline,
       table,
       cellTheme,
-      define as CheckboxColumnDefine
+      define as CheckboxColumnDefine,
+      isAsync
+    );
+  } else if (type === 'radio') {
+    cellGroup = createRadioCellGroup(
+      null,
+      columnGroup,
+      0,
+      y,
+      col,
+      row,
+      colWidth,
+      cellWidth,
+      cellHeight,
+      padding,
+      textAlign,
+      textBaseline,
+      table,
+      cellTheme,
+      define as RadioColumnDefine
     );
   }
 
@@ -441,7 +471,8 @@ export function updateCell(col: number, row: number, table: BaseTableAPI, addNew
     const textMark = oldCellGroup.getChildByName('text');
     if (textMark) {
       const text = table.getCellValue(col, row);
-      const textArr = convertInternal(text).replace(/\r?\n/g, '\n').replace(/\r/g, '\n').split('\n');
+      const textArr = breakString(text, table);
+
       const hierarchyOffset = getHierarchyOffset(col, row, table);
       const lineClamp = cellStyle.lineClamp;
       const padding = getQuadProps(getProp('padding', cellStyle, col, row, table)) ?? [0, 0, 0, 0];

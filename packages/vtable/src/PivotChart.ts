@@ -339,7 +339,7 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
     if (sourceNode.value === targetNode.value && sourceNode.dimensionKey === targetNode.dimensionKey) {
       targetNode.hierarchyState =
         targetNode.hierarchyState ?? (targetNode?.children ? sourceNode.hierarchyState : undefined);
-      targetNode?.children?.forEach((targetChildNode: IHeaderTreeDefine, index: number) => {
+      (targetNode?.children as IHeaderTreeDefine[])?.forEach((targetChildNode: IHeaderTreeDefine, index: number) => {
         if (sourceNode?.children?.[index] && targetChildNode) {
           this.syncHierarchyState(sourceNode.children[index], targetChildNode);
         }
@@ -386,10 +386,12 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
   //   return dataValue;
   // }
 
-  getCellValue(col: number, row: number): FieldData {
-    const customMergeText = this.getCustomMergeValue(col, row);
-    if (customMergeText) {
-      return customMergeText;
+  getCellValue(col: number, row: number, skipCustomMerge?: boolean): FieldData {
+    if (!skipCustomMerge) {
+      const customMergeText = this.getCustomMergeValue(col, row);
+      if (customMergeText) {
+        return customMergeText;
+      }
     }
     if (this.internalProps.layoutMap.isHeader(col, row)) {
       if (

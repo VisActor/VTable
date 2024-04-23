@@ -46,7 +46,8 @@ export function createCellGroup(
   customElementsGroup: VGroup,
   renderDefault: boolean,
   cellTheme: IThemeSpec,
-  range: CellRange | undefined
+  range: CellRange | undefined,
+  isAsync: boolean
 ): Group {
   const headerStyle = table._getCellStyle(col, row); // to be fixed
   const functionalPadding = getFunctionalProp('padding', headerStyle, col, row, table);
@@ -67,31 +68,55 @@ export function createCellGroup(
 
   // cell
   const strokeArrayWidth = getCellBorderStrokeWidth(col, row, cellTheme, table);
-  const cellGroup = new Group({
-    x: xOrigin,
-    y: yOrigin,
-    width: cellWidth,
-    height: cellHeight,
-    // 背景相关，cell背景由cellGroup绘制
-    lineWidth: cellTheme?.group?.lineWidth ?? undefined,
-    fill: cellTheme?.group?.fill ?? undefined,
-    stroke: cellTheme?.group?.stroke ?? undefined,
-    strokeArrayWidth: strokeArrayWidth ?? undefined,
-    strokeArrayColor: (cellTheme?.group as any)?.strokeArrayColor ?? undefined,
-    cursor: (cellTheme?.group as any)?.cursor ?? undefined,
-    lineDash: cellTheme?.group?.lineDash ?? undefined,
+  let cellGroup;
+  if (isAsync) {
+    cellGroup = table.scenegraph.getCell(col, row, true);
+    if (cellGroup && cellGroup.role === 'cell') {
+      cellGroup.setAttributes({
+        x: xOrigin,
+        y: yOrigin,
+        width: cellWidth,
+        height: cellHeight,
+        // 背景相关，cell背景由cellGroup绘制
+        lineWidth: cellTheme?.group?.lineWidth ?? undefined,
+        fill: cellTheme?.group?.fill ?? undefined,
+        stroke: cellTheme?.group?.stroke ?? undefined,
+        strokeArrayWidth: strokeArrayWidth ?? undefined,
+        strokeArrayColor: (cellTheme?.group as any)?.strokeArrayColor ?? undefined,
+        cursor: (cellTheme?.group as any)?.cursor ?? undefined,
+        lineDash: cellTheme?.group?.lineDash ?? undefined,
+        lineCap: 'butt',
+        clip: true,
+        cornerRadius: cellTheme.group.cornerRadius
+      } as any);
+    }
+  }
+  if (!cellGroup || cellGroup.role !== 'cell') {
+    cellGroup = new Group({
+      x: xOrigin,
+      y: yOrigin,
+      width: cellWidth,
+      height: cellHeight,
+      // 背景相关，cell背景由cellGroup绘制
+      lineWidth: cellTheme?.group?.lineWidth ?? undefined,
+      fill: cellTheme?.group?.fill ?? undefined,
+      stroke: cellTheme?.group?.stroke ?? undefined,
+      strokeArrayWidth: strokeArrayWidth ?? undefined,
+      strokeArrayColor: (cellTheme?.group as any)?.strokeArrayColor ?? undefined,
+      cursor: (cellTheme?.group as any)?.cursor ?? undefined,
+      lineDash: cellTheme?.group?.lineDash ?? undefined,
 
-    lineCap: 'butt',
+      lineCap: 'butt',
 
-    clip: true,
+      clip: true,
 
-    cornerRadius: cellTheme.group.cornerRadius
-  } as any);
-  cellGroup.role = 'cell';
-  cellGroup.col = col;
-  cellGroup.row = row;
-  // columnGroup?.addChild(cellGroup); // fix promise cell row order in column
-  columnGroup?.addCellGroup(cellGroup);
+      cornerRadius: cellTheme.group.cornerRadius
+    } as any);
+    cellGroup.role = 'cell';
+    cellGroup.col = col;
+    cellGroup.row = row;
+    columnGroup?.addCellGroup(cellGroup);
+  }
   if (customElementsGroup) {
     cellGroup.appendChild(customElementsGroup);
   }

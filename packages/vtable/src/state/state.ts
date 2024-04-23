@@ -37,6 +37,15 @@ import { getIconAndPositionFromTarget } from '../scenegraph/utils/icon';
 import type { BaseTableAPI, HeaderData } from '../ts-types/base-table';
 import { debounce } from '../tools/debounce';
 import { updateResizeColumn } from './resize/update-resize-column';
+import { setRadioState, syncRadioState } from './radio/radio';
+import {
+  initCheckedState,
+  initLeftRecordsCheckState,
+  setCheckedState,
+  setHeaderCheckedState,
+  syncCheckedState,
+  updateHeaderCheckedState
+} from './checkbox/checkbox';
 
 export class StateManager {
   table: BaseTableAPI;
@@ -166,6 +175,8 @@ export class StateManager {
   _checkboxCellTypeFields: (string | number)[] = [];
 
   _headerCheckFuncs: Record<string | number, Function> = {};
+
+  radioState: Record<string | number, number | Record<number, number>> = {};
   // 供滚动重置为default使用
   resetInteractionState = debounce(() => {
     this.updateInteractionState(InteractionState.default);
@@ -1190,22 +1201,10 @@ export class StateManager {
     }
   }
   setCheckedState(col: number, row: number, field: string | number, checked: boolean) {
-    const recordIndex = this.table.getRecordShowIndexByCell(col, row);
-    if (recordIndex >= 0) {
-      const dataIndex = this.table.dataSource.getIndexKey(recordIndex) as number;
-      if (this.checkedState[dataIndex]) {
-        this.checkedState[dataIndex][field] = checked;
-      } else {
-        this.checkedState[dataIndex] = {};
-        this.checkedState[dataIndex][field] = checked;
-      }
-    }
+    return setCheckedState(col, row, field, checked, this);
   }
   setHeaderCheckedState(field: string | number, checked: boolean) {
-    this.headerCheckedState[field] = checked;
-    this.checkedState?.forEach(recordCheckState => {
-      recordCheckState[field] = checked;
-    });
+    return setHeaderCheckedState(field, checked, this);
   }
 
   //#region CheckedState 状态维护
@@ -1219,33 +1218,7 @@ export class StateManager {
    * @returns
    */
   syncCheckedState(col: number, row: number, field: string | number, checked: boolean): boolean | 'indeterminate' {
-    if (this.table.isHeader(col, row)) {
-      if (isValid(this.headerCheckedState[field])) {
-        return this.headerCheckedState[field];
-      } else if (typeof checked === 'function') {
-        return undefined;
-      } else if (isValid(checked)) {
-        this.headerCheckedState[field] = checked;
-      } else if (this.checkedState?.length > 0) {
-        const isAllChecked = this.updateHeaderCheckedState(field);
-        return isAllChecked;
-      }
-      return this.headerCheckedState[field];
-    }
-    const recordIndex = this.table.getRecordShowIndexByCell(col, row);
-    if (recordIndex >= 0) {
-      const dataIndex = this.table.dataSource.getIndexKey(recordIndex) as number;
-      if (isValid(this.checkedState[dataIndex]?.[field])) {
-        return this.checkedState[dataIndex][field];
-      }
-      if (this.checkedState[dataIndex]) {
-        this.checkedState[dataIndex][field] = checked;
-      } else {
-        this.checkedState[dataIndex] = {};
-        this.checkedState[dataIndex][field] = checked;
-      }
-    }
-    return checked;
+    return syncCheckedState(col, row, field, checked, this);
   }
   /**
    * 创建表头cell节点时同步状态 如果状态缓存有则用 如果没有则设置缓存
@@ -1273,60 +1246,7 @@ export class StateManager {
    * @param records
    */
   initCheckedState(records: any[]) {
-    let isNeedInitHeaderCheckedStateFromRecord = false;
-    this._checkboxCellTypeFields = [];
-    this._headerCheckFuncs = {};
-    this.table.internalProps.layoutMap.headerObjects.forEach((hd, index) => {
-      if (hd.headerType === 'checkbox') {
-        const headerChecked = (hd.define as CheckboxColumnDefine).checked as boolean;
-
-        if (headerChecked === undefined || headerChecked === null || typeof headerChecked === 'function') {
-          // 如果没有明确指定check的状态 则需要在下面遍历所有数据获取到节点状态 确定这个header的check状态
-          isNeedInitHeaderCheckedStateFromRecord = true;
-          if (typeof headerChecked === 'function') {
-            this._headerCheckFuncs[hd.field as string | number] = headerChecked;
-          }
-        } else {
-          this.headerCheckedState[hd.field as string | number] = headerChecked;
-        }
-        if (hd.define.cellType === 'checkbox' && !hd.fieldFormat) {
-          this._checkboxCellTypeFields.push(hd.field as string | number);
-        }
-      }
-    });
-    //如果没有明确指定check的状态 遍历所有数据获取到节点状态 确定这个header的check状态
-    if (isNeedInitHeaderCheckedStateFromRecord) {
-      records.forEach((record: any, index: number) => {
-        this._checkboxCellTypeFields.forEach(field => {
-          const value = record[field] as string | { text: string; checked: boolean; disable: boolean } | boolean;
-          let isChecked;
-          if (isObject(value)) {
-            isChecked = value.checked;
-          } else if (typeof value === 'boolean') {
-            isChecked = value;
-          }
-          if (isChecked === undefined || isChecked === null) {
-            const headerCheckFunc = this._headerCheckFuncs[field];
-            if (headerCheckFunc) {
-              //如果定义的checked是个函数 则需要每个都去计算这个值
-              const cellAddr = this.table.getCellAddrByFieldRecord(field, index);
-              const globalChecked = getOrApply(headerCheckFunc as any, {
-                col: cellAddr.col,
-                row: cellAddr.row,
-                table: this.table,
-                context: null,
-                value
-              });
-              isChecked = globalChecked;
-            }
-          }
-          if (!this.checkedState[index]) {
-            this.checkedState[index] = {};
-          }
-          this.checkedState[index][field] = isChecked;
-        });
-      });
-    }
+    return initCheckedState(records, this);
   }
   /**
    * 更新header单元checked的状态，依据当前列每一个数据checked的状态。
@@ -1334,50 +1254,35 @@ export class StateManager {
    * @returns
    */
   updateHeaderCheckedState(field: string | number): boolean | 'indeterminate' {
-    const allChecked = this.checkedState.every((state: Record<string | number, boolean>) => {
-      return state[field] === true;
-    });
-    if (allChecked) {
-      this.headerCheckedState[field] = true;
-      return allChecked;
-    }
-    const allUnChecked = this.checkedState.every((state: Record<string | number, boolean>) => {
-      return state[field] === false;
-    });
-    if (allUnChecked) {
-      this.headerCheckedState[field] = false;
-      return false;
-    }
-    const hasChecked = this.checkedState.find((state: Record<string | number, boolean>) => {
-      return state[field] === true;
-    });
-    if (hasChecked) {
-      this.headerCheckedState[field] = 'indeterminate';
-      return 'indeterminate'; //半选状态
-    }
-    return false;
+    return updateHeaderCheckedState(field, this);
   }
   /**
    * setRecords的时候虽然调用了initCheckedState 进行了初始化 但当每个表头的checked状态都用配置了的话 初始化不会遍历全部数据
    * @param records
    */
   initLeftRecordsCheckState(records: any[]) {
-    for (let index = this.checkedState.length; index < records.length; index++) {
-      const record = records[index];
-      this._checkboxCellTypeFields.forEach(field => {
-        const value = record[field] as string | { text: string; checked: boolean; disable: boolean } | boolean;
-        let isChecked;
-        if (isObject(value)) {
-          isChecked = value.checked;
-        } else if (typeof value === 'boolean') {
-          isChecked = value;
-        }
-        if (!this.checkedState[index]) {
-          this.checkedState[index] = {};
-        }
-        this.checkedState[index][field] = isChecked;
-      });
-    }
+    return initLeftRecordsCheckState(records, this);
   }
   //#endregion
+
+  setRadioState(
+    col: number,
+    row: number,
+    field: string | number,
+    radioType: 'column' | 'cell',
+    indexInCell: number | undefined
+  ) {
+    setRadioState(col, row, field, radioType, indexInCell, this);
+  }
+
+  syncRadioState(
+    col: number,
+    row: number,
+    field: string | number,
+    radioType: 'column' | 'cell',
+    indexInCell: number | undefined,
+    isChecked: boolean
+  ) {
+    return syncRadioState(col, row, field, radioType, indexInCell, isChecked, this);
+  }
 }

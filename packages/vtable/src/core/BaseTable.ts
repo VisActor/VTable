@@ -360,6 +360,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     internalProps.rowSeriesNumberHelper = new RowSeriesNumberHelper(this);
 
     internalProps.autoWrapText = options.autoWrapText;
+    internalProps.enableLineBreak = options.enableLineBreak;
 
     internalProps.allowFrozenColCount = options.allowFrozenColCount ?? 0;
     internalProps.limitMaxAutoWidth = options.limitMaxAutoWidth ?? 450;
@@ -2125,6 +2126,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     // internalProps.autoRowHeight = options.autoRowHeight ?? false;
     //是否统一设置为多行文本
     internalProps.autoWrapText = options.autoWrapText;
+    internalProps.enableLineBreak = options.enableLineBreak;
     internalProps.allowFrozenColCount = options.allowFrozenColCount ?? 0;
     internalProps.limitMaxAutoWidth = options.limitMaxAutoWidth ?? 450;
     internalProps.limitMinWidth =
@@ -2180,6 +2182,14 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
       },
       options.menu
     );
+
+    Array.isArray(options.menu?.dropDownMenuHighlight) &&
+      this.setDropDownMenuHighlight(options.menu?.dropDownMenuHighlight);
+
+    // 全局下拉菜单
+    Array.isArray(options.menu?.defaultHeaderMenuItems) &&
+      (this.globalDropDownMenu = options.menu.defaultHeaderMenuItems);
+
     if (internalProps.menu.renderMode === 'html' && !internalProps.menuHandler) {
       internalProps.menuHandler = new MenuHandler(this);
     }
@@ -2642,7 +2652,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
   abstract getRecordShowIndexByCell(col: number, row: number): number;
   abstract getCellOriginRecord(col: number, row: number): MaybePromiseOrUndefined;
   abstract getCellRawRecord(col: number, row: number): MaybePromiseOrUndefined;
-  abstract getCellValue(col: number, row: number): FieldData;
+  abstract getCellValue(col: number, row: number, skipCustomMerge?: boolean): FieldData;
   abstract getCellOriginValue(col: number, row: number): FieldData;
   abstract getCellRawValue(col: number, row: number): FieldData;
 
@@ -2712,6 +2722,19 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
   set autoWrapText(autoWrapText: boolean) {
     this.internalProps.autoWrapText = autoWrapText;
     this.options.autoWrapText = autoWrapText;
+  }
+  /**
+   * Get the enableLineBreak.
+   */
+  get enableLineBreak(): boolean {
+    return this.internalProps.enableLineBreak;
+  }
+  /**
+   * Set the enableLineBreak
+   */
+  set enableLineBreak(enableLineBreak: boolean) {
+    this.internalProps.enableLineBreak = enableLineBreak;
+    this.options.enableLineBreak = enableLineBreak;
   }
   updateAutoWrapText(autoWrapText: boolean) {
     if (this.internalProps.autoWrapText === autoWrapText) {

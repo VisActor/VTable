@@ -150,6 +150,29 @@ const tableInstance = new VTable.ListTable(document.getElementById(CONTAINER_ID)
 window['tableInstance'] = tableInstance;
 ```
 
+## 指定节点的收起或者展开状态
+
+上述示例中可以设置数据节点的 `hierarchyState` 来指定节点的收起或者展开状态，其值为 `expand` 或者 `collapse`。
+
+例如指定第一个节点为展开状态：`hierarchyState: 'expand'`。
+
+```javascript
+const records = [
+  {
+    group: 'Human Resources Department',
+    total_children: 30,
+    monthly_expense: '$45000',
+    new_hires_this_month: 6,
+    resignations_this_month: 3,
+    complaints_and_suggestions: 2,
+    hierarchyState: 'expand',
+    children: [
+      // ...
+    ]
+  }
+];
+```
+
 ## 懒加载子节点数据场景
 
 在一些场景下，子节点数据可能比较大，鉴于后台数据库性能压力过大，并不想一次性获取到全部数据，需要在点击展开时才进行调用接口来加载数据。那么可以使用如下方式来实现：

@@ -148,20 +148,26 @@ export class DimensionTree {
         n.level = (node.level ?? 0) + 1;
         this.setTreeNode(n, size, node);
       });
-    } else if (!node.hierarchyState && node.level + 1 < this.rowExpandLevel && children?.length >= 1) {
+    } else if (
+      !node.hierarchyState &&
+      node.level + 1 < this.rowExpandLevel &&
+      (children?.length >= 1 || children === true)
+    ) {
       //树形展示 有子节点 且下一层需要展开
       node.hierarchyState = HierarchyState.expand;
-      children.forEach((n: any) => {
-        n.level = (node.level ?? 0) + 1;
-        size += this.setTreeNode(n, size, node);
-      });
-    } else if (children?.length >= 1) {
+      children?.length >= 1 &&
+        children.forEach((n: any) => {
+          n.level = (node.level ?? 0) + 1;
+          size += this.setTreeNode(n, size, node);
+        });
+    } else if (children?.length >= 1 || children === true) {
       //树形展示 有子节点 且下一层不需要展开
       node.hierarchyState = HierarchyState.collapse;
-      children.forEach((n: any) => {
-        n.level = (node.level ?? 0) + 1;
-        this.setTreeNode(n, size, node);
-      });
+      children?.length >= 1 &&
+        children.forEach((n: any) => {
+          n.level = (node.level ?? 0) + 1;
+          this.setTreeNode(n, size, node);
+        });
     } else {
       //树形展示 无children子节点。但不能确定是最后一层的叶子节点 totalLevel还不能确定是计算完整棵树的整体深度
       node.hierarchyState = HierarchyState.none;
@@ -490,12 +496,14 @@ export function dealHeader(
   }
 
   if ((hd as ITreeLayoutHeadNode).children?.length >= 1) {
-    layoutMap
-      ._addHeaders(_headerCellIds, row + ((hd as any).levelSpan ?? 1), (hd as ITreeLayoutHeadNode).children ?? [], [
-        ...roots,
-        ...Array((hd as any).levelSpan ?? 1).fill(id)
-      ])
-      .forEach(c => results.push(c));
+    layoutMap._addHeaders(
+      _headerCellIds,
+      row + ((hd as any).levelSpan ?? 1),
+      (hd as ITreeLayoutHeadNode).children ?? [],
+      [...roots, ...Array((hd as any).levelSpan ?? 1).fill(id)],
+      results
+    );
+    // .forEach(c => results.push(c));
   } else {
     // columns.push([""])//代码一个路径
     for (let r = row + 1; r < _headerCellIds.length; r++) {
@@ -591,17 +599,17 @@ export function dealHeaderForTreeMode(
   if (hd.hierarchyState === HierarchyState.expand && (hd as ITreeLayoutHeadNode).children?.length >= 1) {
     //row传值 colIndex++和_addHeaders有区别
     show && layoutMap.colIndex++;
-    layoutMap
-      ._addHeadersForTreeMode(
-        _headerCellIds,
-        row,
-        (hd as ITreeLayoutHeadNode).children ?? [],
-        [...roots, id],
-        totalLevel,
-        show && hd.hierarchyState === HierarchyState.expand, //当前节点show 且当前节点状态为展开 则传给子节点为show：true
-        dimensions
-      )
-      .forEach(c => results.push(c));
+    layoutMap._addHeadersForTreeMode(
+      _headerCellIds,
+      row,
+      (hd as ITreeLayoutHeadNode).children ?? [],
+      [...roots, id],
+      totalLevel,
+      show && hd.hierarchyState === HierarchyState.expand, //当前节点show 且当前节点状态为展开 则传给子节点为show：true
+      dimensions,
+      results
+    );
+    // .forEach(c => results.push(c));
   } else {
     // columns.push([""])//代码一个路径
     show && layoutMap.colIndex++;

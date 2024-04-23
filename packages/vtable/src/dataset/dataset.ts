@@ -1531,11 +1531,15 @@ export class Dataset {
   private _adjustCustomTree(customTree: IHeaderTreeDefine[]) {
     const checkNode = (nodes: IHeaderTreeDefine[], isHasIndicator: boolean) => {
       nodes.forEach((node: IHeaderTreeDefine) => {
-        if (!node.indicatorKey && !isHasIndicator && !node.children?.length) {
+        if (
+          !node.indicatorKey &&
+          !isHasIndicator &&
+          (!(node.children as IHeaderTreeDefine[])?.length || !node.children)
+        ) {
           node.children = this.indicators?.map((indicator: IIndicator): { indicatorKey: string; value: string } => {
             return { indicatorKey: indicator.indicatorKey, value: indicator.title ?? indicator.indicatorKey };
           });
-        } else if (node.children) {
+        } else if (node.children && Array.isArray(node.children)) {
           checkNode(node.children, isHasIndicator || !!node.indicatorKey);
         }
       });

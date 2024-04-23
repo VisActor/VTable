@@ -387,6 +387,17 @@ editor?: string | IEditor | ((args: BaseCellInfo & { table: BaseTableAPI }) => s
 
 Among them, IEditor is the editor interface defined in @visactor/vtable-editors. For details, please refer to the source code: https://github.com/VisActor/VTable/blob/main/packages/vtable-editors/src/types.ts .
 
+## editCellTrigger('doubleclick' | 'click' | 'api') = 'doubleclick'
+
+The trigger timing for entering the editing state.
+
+```
+
+/** Edit triggering time: double click event | single click event | api to manually start editing. Default is double click 'doubleclick' */
+editCellTrigger?: 'doubleclick' | 'click' | 'api';
+
+```
+
 {{ use: common-option-secondary(
     prefix = '#',
     tableType = 'listTable'
