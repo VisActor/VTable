@@ -1086,7 +1086,16 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
       }
       // part in body
       if (endRow >= this.columnHeaderLevelCount) {
-        h += this.defaultRowHeight * (endRow - Math.max(this.columnHeaderLevelCount, startRow) + 1);
+        h +=
+          this.defaultRowHeight *
+          (Math.min(endRow, this.rowCount - this.bottomFrozenRowCount - 1) -
+            Math.max(this.columnHeaderLevelCount, startRow) +
+            1);
+      }
+      // part in bottom frozen
+      // last axis row height is default header row height in pivot chart
+      for (let i = this.rowCount - this.bottomFrozenRowCount; i < endRow + 1; i++) {
+        h += this.getRowHeight(i);
       }
     } else {
       h = this.rowHeightsMap.getSumInRange(startRow, endRow);
