@@ -731,7 +731,33 @@ export class SimpleHeaderLayoutMap implements LayoutMapAPI {
   }
   //对比multi-layout 那个里面有columWidths对象，保持结构一致
   get columnWidths(): WidthData[] {
-    return this._columns;
+    if (this.leftRowSeriesNumberColumnCount) {
+      const widths = this.leftRowSeriesNumberColumn.map(item => {
+        return {
+          width: item.width,
+          minWidth: item.minWidth,
+          maxWidth: item.maxWidth
+        };
+      });
+      widths.push(
+        ...this._columns.map(item => {
+          return {
+            width: item.width,
+            minWidth: item.minWidth,
+            maxWidth: item.maxWidth
+          };
+        })
+      );
+      return widths;
+    }
+
+    return this._columns.map(item => {
+      return {
+        width: item.width,
+        minWidth: item.minWidth,
+        maxWidth: item.maxWidth
+      };
+    });
   }
 
   getColumnWidthDefined(col: number): WidthData {

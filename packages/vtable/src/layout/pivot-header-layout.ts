@@ -792,7 +792,7 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
       }
     }
     if (this.indicatorsAsCol) {
-      for (let i = this.rowHeaderLevelCount; i < this.colCount; i++) {
+      for (let i = this.rowHeaderLevelCount + this.leftRowSeriesNumberColumnCount; i < this.colCount; i++) {
         const cellDefine = this.getBody(i, this.columnHeaderLevelCount);
         returnWidths[i] = {
           width: cellDefine?.width,
@@ -812,16 +812,16 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
           isAuto = true;
         }
         if (typeof obj.minWidth === 'number') {
-          minWidth = Math.max(obj.minWidth, <number>minWidth);
+          minWidth = Math.max(obj.minWidth, <number>minWidth ?? 0);
         }
         if (typeof obj.maxWidth === 'number') {
-          maxWidth = Math.max(obj.maxWidth, <number>maxWidth);
+          maxWidth = Math.min(obj.maxWidth, <number>maxWidth ?? Number.MAX_VALUE);
         }
       });
       width = width > 0 ? width : isAuto ? 'auto' : undefined;
       returnWidths.fill(
         { width, minWidth, maxWidth },
-        this.rowHeaderLevelCount,
+        this.rowHeaderLevelCount + this.leftRowSeriesNumberColumnCount,
         this.colCount - this.rightFrozenColCount
       );
     }

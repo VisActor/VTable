@@ -268,8 +268,7 @@ export function createTable() {
               textStick: true,
               bgColor: '#356b9c',
               color: '#00ffff'
-            },
-            width: 'auto'
+            }
           }
         ],
         rows: [
@@ -315,7 +314,9 @@ export function createTable() {
             indicatorKey: 'Quantity',
             title: 'Quantity',
             width: 'auto',
-            showSort: false
+            showSort: false,
+            minWidth: 50,
+            maxWidth: 50
             // style: {
             //   color: 'black',
             //   fontWeight: 'bold',
@@ -349,7 +350,7 @@ export function createTable() {
           {
             indicatorKey: 'Sales',
             title: 'Sales',
-            width: 'auto',
+            // width: 'auto',
             showSort: false,
             format: value => {
               if (value) {
@@ -389,7 +390,7 @@ export function createTable() {
           {
             indicatorKey: 'Profit',
             title: 'Profit',
-            width: 'auto',
+            // width: 'auto',
             showSort: false,
             format: value => {
               return Number(value).toFixed(2);
@@ -440,11 +441,12 @@ export function createTable() {
         heightMode: 'autoHeight',
         autoWrapText: true,
         // dragHeaderMode: 'all',
+        defaultHeaderColWidth: 100,
+        defaultColWidth: 200,
         rowSeriesNumber: {
-          enable: true,
           title: '行号',
-          field: 'name',
           dragOrder: true,
+          width: 'auto',
           // format: (args: any) => {
           //   return args.value;
           // },
