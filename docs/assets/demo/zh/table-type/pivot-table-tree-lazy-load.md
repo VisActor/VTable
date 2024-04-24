@@ -9,9 +9,7 @@ option: PivotTable#rowHierarchyType('grid'%20%7C%20'tree')
 
 # 透视表格树形节点懒加载
 
-透视表格树形展示支持展开节点时懒加载子节点数据，如果将对应 `rowTree` 中的 children 设置为 true 而非具体的数据集合，点击时可以监听`TREE_HIERARCHY_STATE_CHANGE`事件来请求 `children` 数据，数据需包括子节点对应指标数据 records 和行表头的树形结构 tree，分别通过接口 `addRecords` 和 `setTreeNodeChildren` 设置到表格组件中。
-
-需要注意 `rows` 字段需要配置全面，也就是有几层维度 rows 中必须传入对应数量的维度配置。
+透视表格树形展示支持展开节点时懒加载子节点数据，如果将对应 `rowTree` 中的 children 设置为 true 而非具体的数据集合，点击时可以监听`TREE_HIERARCHY_STATE_CHANGE`事件来请求 `children` 数据，数据需包括子节点对应指标数据 records 和行表头的树形结构 tree，通过接口 `setTreeNodeChildren` 设置到表格组件中。
 
 ## 关键配置
 
@@ -467,8 +465,7 @@ fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/demo/pivot-tre
                   }
                 ];
 
-                tableInstance.addRecords(newData);
-                tableInstance.setTreeNodeChildren(children, args.col, args.row);
+                tableInstance.setTreeNodeChildren(children, newData, args.col, args.row);
               });
           } else if (args.originData.dimensionKey === '220524114340022' && args.originData.value === 'Consumer') {
             fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/demo/pivot-tree-lazy-load-add-2-en.json')
@@ -488,9 +485,7 @@ fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/demo/pivot-tre
                     value: 'Level 3'
                   }
                 ];
-
-                tableInstance.addRecords(newData);
-                tableInstance.setTreeNodeChildren(children, args.col, args.row);
+                tableInstance.setTreeNodeChildren(children, newData, args.col, args.row);
               });
           }
         }, 10);

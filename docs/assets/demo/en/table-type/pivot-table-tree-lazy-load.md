@@ -9,9 +9,7 @@ option: PivotTable#rowHierarchyType('grid'%20%7C%20'tree')
 
 # Pivot table tree lazy load
 
-The pivot table tree display supports lazy loading of child node data when expanding a node. If the children in the corresponding `rowTree` is set to true instead of a specific data set, you can listen to the `TREE_HIERARCHY_STATE_CHANGE` event to request the `children` data when clicking. The data must include the corresponding indicator data records of the child node and the tree structure tree of the row header, which are set to the table component through the interfaces `addRecords` and `setTreeNodeChildren` respectively.
-
-It should be noted that the `rows` field needs to be fully configured, that is, the corresponding number of dimension configurations must be passed in the rows with several layers of dimensions.
+The pivot table tree display supports lazy loading of child node data when expanding a node. If the children in the corresponding `rowTree` is set to true instead of a specific data set, you can listen to the `TREE_HIERARCHY_STATE_CHANGE` event to request the `children` data when clicking. The data must include the corresponding indicator data records of the child node and the tree structure tree of the row header, which are set to the table component through the interfaces `setTreeNodeChildren`.
 
 ## Key Configuration
 
@@ -467,8 +465,7 @@ fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/demo/pivot-tre
                   }
                 ];
 
-                tableInstance.addRecords(newData);
-                tableInstance.setTreeNodeChildren(children, args.col, args.row);
+                tableInstance.setTreeNodeChildren(children, newData, args.col, args.row);
               });
           } else if (args.originData.dimensionKey === '220524114340022' && args.originData.value === 'Consumer') {
             fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/demo/pivot-tree-lazy-load-add-2-en.json')
@@ -488,9 +485,7 @@ fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/demo/pivot-tre
                     value: 'Level 3'
                   }
                 ];
-
-                tableInstance.addRecords(newData);
-                tableInstance.setTreeNodeChildren(children, args.col, args.row);
+                tableInstance.setTreeNodeChildren(children, newData, args.col, args.row);
               });
           }
         }, 10);

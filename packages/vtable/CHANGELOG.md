@@ -1,6 +1,24 @@
 # Change Log - @visactor/vtable
 
-This log was last generated on Mon, 22 Apr 2024 10:59:12 GMT and should not be manually modified.
+This log was last generated on Tue, 23 Apr 2024 11:19:00 GMT and should not be manually modified.
+
+## 0.24.1
+Tue, 23 Apr 2024 11:19:00 GMT
+
+### Updates
+
+- docs: add drill down drill up demo #1556
+
+
+- fix: when has rowSeriesNumber minWidth maxWidth error #1572
+
+
+- feat: add startEditCell api #1573
+
+
+- refactor: pivot lazy load modify setTreeNodeChildren api #1580
+
+
 
 ## 0.24.0
 Mon, 22 Apr 2024 10:59:12 GMT

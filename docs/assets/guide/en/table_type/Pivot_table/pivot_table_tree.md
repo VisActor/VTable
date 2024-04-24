@@ -1060,13 +1060,12 @@ rowTree: [
 ];
 ```
 
-2. In the `tree_hierarchy_state_change` event callback, request data based on the currently expanded node, and set it to the `children` property of the corresponding node in the current `rowTree` through the `setTreeNodeChildren` interface. And add the indicator data records to the table through the `addRecords` interface.
+2. In the `tree_hierarchy_state_change` event callback, request data based on the currently expanded node, and set it to the `children` property of the corresponding node in the current `rowTree` through the `setTreeNodeChildren` interface, And add the indicator data records to the table.
 
 ```javascript
 tableInstance.on(tree_hierarchy_state_change, args => {
   if (args.hierarchyState === VTable.TYPES.HierarchyState.expand && args.originData.children === true) {
-    tableInstance.addRecords(newData);
-    tableInstance.setTreeNodeChildren(newChildren, args.col, args.row);
+    tableInstance.setTreeNodeChildren(newChildren, newData, args.col, args.row);
   }
 });
 ```

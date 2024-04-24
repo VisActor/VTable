@@ -1,3 +1,28 @@
+# v0.24.1
+
+2024-04-23
+
+
+**🆕 新增功能**
+
+- **@visactor/vtable**: add startEditCell api [#1573](https://github.com/VisActor/VTable/issues/1573)
+
+**🐛 功能修复**
+
+- **@visactor/vtable**: when has rowSeriesNumber minWidth maxWidth error [#1572](https://github.com/VisActor/VTable/issues/1572)
+
+**🔨 功能重构**
+
+- **@visactor/vtable**: pivot lazy load modify setTreeNodeChildren api [#1580](https://github.com/VisActor/VTable/issues/1580)
+
+**📖 文档更新**
+
+- **@visactor/vtable**: add drill down drill up demo [#1556](https://github.com/VisActor/VTable/issues/1556)
+
+
+
+[更多详情请查看 v0.24.1](https://github.com/VisActor/VTable/releases/tag/v0.24.1)
+
 # v0.24.0
 
 2024-04-22

@@ -229,7 +229,7 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
       !options.indicatorsAsCol && !options.rows?.length && !options.rowTree ? [] : cloneDeep(options.rowTree);
     options.records && (this.internalProps.records = options.records);
     this.stateManager.initCheckedState(this.internalProps.records);
-
+    this.stateManager.updateDrillState(undefined, undefined, false, false, -1, -1);
     //分页配置
     this.pagination = options.pagination;
     // 更新protectedSpace
@@ -399,21 +399,8 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
   }
 
   refreshHeader(): void {
-    const internalProps = this.internalProps;
     //设置列宽
-    for (let col = 0; col < internalProps.layoutMap.columnWidths.length; col++) {
-      const { width, minWidth, maxWidth } = internalProps.layoutMap.columnWidths?.[col] ?? {};
-      // width 为 "auto" 时先不存储ColWidth
-      if (width && ((typeof width === 'string' && width !== 'auto') || (typeof width === 'number' && width > 0))) {
-        this._setColWidth(col, width);
-      }
-      if (minWidth && ((typeof minWidth === 'number' && minWidth > 0) || typeof minWidth === 'string')) {
-        this.setMinColWidth(col, minWidth);
-      }
-      if (maxWidth && ((typeof maxWidth === 'number' && maxWidth > 0) || typeof maxWidth === 'string')) {
-        this.setMaxColWidth(col, maxWidth);
-      }
-    }
+    this.setMinMaxLimitWidth(true);
     //刷新表头，原来这里是_refreshRowCount 后改名为_refreshRowColCount  因为表头定义会影响行数，而转置模式下会影响列数
     this.refreshRowColCount();
   }
@@ -845,15 +832,7 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
         );
         //下面代码取自refreshHeader列宽设置逻辑
         //设置列宽极限值 TODO 目前是有问题的 最大最小宽度限制 移动列位置后不正确
-        for (let col = 0; col < this.internalProps.layoutMap.columnWidths.length; col++) {
-          const { minWidth, maxWidth } = this.internalProps.layoutMap.columnWidths?.[col] ?? {};
-          if (minWidth && ((typeof minWidth === 'number' && minWidth > 0) || typeof minWidth === 'string')) {
-            this.setMinColWidth(col, minWidth);
-          }
-          if (maxWidth && ((typeof maxWidth === 'number' && maxWidth > 0) || typeof maxWidth === 'string')) {
-            this.setMaxColWidth(col, maxWidth);
-          }
-        }
+        this.setMinMaxLimitWidth();
       } else if (moveContext.moveType === 'row') {
         // 是扁平数据结构 需要将二维数组this.records进行调整
         if (this.options.records?.[0]?.constructor === Array) {
@@ -920,7 +899,8 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
     }
   }
 
-  _refreshHierarchyState(col: number, row: number) {
+  // beforeUpdateCell主要用于setTreeNodeChildren方法
+  _refreshHierarchyState(col: number, row: number, beforeUpdateCell?: Function) {
     let notFillWidth = false;
     let notFillHeight = false;
     this.stateManager.updateHoverIcon(col, row, undefined, undefined);
@@ -935,6 +915,7 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
       }
     }
     const result = (this.internalProps.layoutMap as PivotHeaderLayoutMap).toggleHierarchyState(col, row);
+    beforeUpdateCell && beforeUpdateCell();
     //影响行数
     this.refreshRowColCount();
     // this.scenegraph.clearCells();
@@ -1107,6 +1088,18 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
       this.scenegraph.resize();
     }
     this.eventManager.updateEventBinder();
+  }
+  /** 开启单元格编辑 */
+  startEditCell(col?: number, row?: number) {
+    if (isValid(col) && isValid(row)) {
+      this.selectCell(col, row);
+      this.editorManager.startEditCell(col, row);
+    } else if (this.stateManager.select?.cellPos) {
+      const { col, row } = this.stateManager.select.cellPos;
+      if (isValid(col) && isValid(row)) {
+        this.editorManager.startEditCell(col, row);
+      }
+    }
   }
   /** 结束编辑 */
   completeEditCell() {
@@ -1357,24 +1350,28 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
 
   /**
    * 树形展示场景下，如果需要动态插入子节点的数据可以配合使用该接口，其他情况不适用
-   * @param records 设置到该单元格其子节点的数据
+   * @param children 设置到该单元格的子节点
+   * @param records 该节点展开后新增数据
    * @param col 需要设置子节点的单元格地址
    * @param row  需要设置子节点的单元格地址
    */
-  setTreeNodeChildren(records: any[], col: number, row: number) {
-    const headerPaths = this.internalProps.layoutMap.getCellHeaderPaths(col, row);
-    const headerTreeNode = this.internalProps.layoutMap.getHeadNode(
-      headerPaths.rowHeaderPaths.slice(0, headerPaths.rowHeaderPaths.length)
-    );
-    headerTreeNode.children = records;
-    // const index = this.getRecordShowIndexByCell(col, row);
-    // this.dataSource.setRecord(record, index);
-    this._refreshHierarchyState(col, row);
-  }
-
-  addRecords(records: any[]) {
+  setTreeNodeChildren(children: IHeaderTreeDefine[], records: any[], col: number, row: number) {
     if (this.flatDataToObjects) {
-      this.flatDataToObjects.addRecords(records);
+      const headerPaths = this.internalProps.layoutMap.getCellHeaderPaths(col, row);
+      const headerTreeNode = this.internalProps.layoutMap.getHeadNode(
+        headerPaths.rowHeaderPaths.slice(0, headerPaths.rowHeaderPaths.length)
+      );
+      headerTreeNode.children = children;
+      this._refreshHierarchyState(col, row, () => {
+        this.flatDataToObjects.changeDataConfig({
+          rows: this.internalProps.layoutMap.fullRowDimensionKeys,
+          columns: this.internalProps.layoutMap.colDimensionKeys,
+          indicators: this.internalProps.layoutMap.indicatorKeys,
+          indicatorsAsCol: this.internalProps.layoutMap.indicatorsAsCol,
+          indicatorDimensionKey: this.internalProps.layoutMap.indicatorDimensionKey
+        });
+        this.flatDataToObjects.addRecords(records);
+      });
     }
   }
 }

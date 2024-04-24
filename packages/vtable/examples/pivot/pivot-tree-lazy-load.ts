@@ -2786,8 +2786,8 @@ export function createTable() {
               '220524114340031': '黑龙江'
             }
           ];
-          tableInstance.addRecords(newData);
-          tableInstance.setTreeNodeChildren(children, args.col, args.row);
+
+          tableInstance.setTreeNodeChildren(children, newData, args.col, args.row);
         } else if (args.originData.dimensionKey === '220524114340022' && args.originData.value === '消费者') {
           children = [
             {
@@ -2833,8 +2833,8 @@ export function createTable() {
               '220524114340031': '吉林'
             }
           ];
-          tableInstance.addRecords(newData);
-          tableInstance.setTreeNodeChildren(children, args.col, args.row);
+
+          tableInstance.setTreeNodeChildren(children, newData, args.col, args.row);
         }
       }, 1000);
     }
