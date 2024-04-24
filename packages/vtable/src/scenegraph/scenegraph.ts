@@ -1599,10 +1599,11 @@ export class Scenegraph {
     cellGroup?: Group,
     offset = ResizeColumnHotSpotSize / 2
   ): { col: number; row: number; x?: number; rightFrozen?: boolean } {
+    let cell: { col: number; row: number; x?: number; rightFrozen?: boolean };
     if (!cellGroup) {
       // to do: 处理最后一列外调整列宽
+      cell = this.table.getCellAt(abstractX - offset, abstractY);
     } else {
-      let cell: { col: number; row: number; x?: number; rightFrozen?: boolean };
       if (abstractX < cellGroup.globalAABBBounds.x1 + offset) {
         cell = { col: cellGroup.col - 1, row: cellGroup.row, x: cellGroup.globalAABBBounds.x1 };
       } else if (cellGroup.globalAABBBounds.x2 - offset < abstractX) {
@@ -1622,10 +1623,11 @@ export class Scenegraph {
         cell.col = cell.col + 1;
         cell.rightFrozen = true;
       }
-      if (cell) {
-        return cell;
-      }
     }
+    if (cell) {
+      return cell;
+    }
+    // }
     return { col: -1, row: -1 };
   }
 
