@@ -196,12 +196,15 @@ function updateResizeColForIndicatorGroup(detaX: number, state: StateManager) {
       }
     }
     const prevWidth = state.table.getColWidth(col);
-    // const adjustedWidth = _adjustColWidth(
-    //   state.table,
-    //   col,
-    //   prevWidth + (prevWidth / totalColWidth) * moveX // 计算diff比例
-    // );
-    state.table.scenegraph.updateColWidth(col, (prevWidth / totalColWidth) * moveX);
+
+    // deltaWidth <0.5 & >=-0.5 在updateRowWidth函数中会被Math.round处理为0，导致高度更新失效
+    let deltaWidth = (prevWidth / totalColWidth) * moveX;
+    if (deltaWidth > 0 && deltaWidth < 0.5) {
+      deltaWidth = 0.5;
+    } else if (deltaWidth < 0 && deltaWidth >= -0.5) {
+      deltaWidth = -0.5;
+    }
+    state.table.scenegraph.updateColWidth(col, deltaWidth);
     state.table.internalProps._widthResizedColMap.add(col);
   }
 }

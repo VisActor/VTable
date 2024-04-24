@@ -10,3 +10,14 @@ export function getColX(col: number, table: BaseTableAPI, isRightFrozen?: boolea
   }
   return colX;
 }
+
+export function getRowY(row: number, table: BaseTableAPI, isBottomFrozen?: boolean) {
+  if (isBottomFrozen) {
+    return table.tableNoFrameWidth - table.getRowsHeight(row, table.rowCount - 1);
+  }
+  let rowY = table.getRowsHeight(0, row);
+  if (row >= table.frozenRowCount) {
+    rowY -= table.scrollLeft;
+  }
+  return rowY;
+}

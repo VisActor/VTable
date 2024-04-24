@@ -91,6 +91,11 @@ export class EventManager {
             handleTextStick(this.table);
           })
         );
+        this.handleTextStickBindId.push(
+          this.table.on(TABLE_EVENT_TYPE.RESIZE_ROW_END, e => {
+            handleTextStick(this.table);
+          })
+        );
       } else if (!checkHaveTextStick(this.table) && this.handleTextStickBindId) {
         this.handleTextStickBindId.forEach(id => {
           this.table.off(id);
@@ -499,6 +504,31 @@ export class EventManager {
     return false;
   }
 
+  checkRowResize(eventArgsSet: SceneEvent, update?: boolean): boolean {
+    const { eventArgs } = eventArgsSet;
+    if (eventArgs) {
+      const resizeRow = this.table.scenegraph.getResizeRowAt(
+        eventArgsSet.abstractPos.x,
+        eventArgsSet.abstractPos.y,
+        eventArgs.targetCell
+      );
+
+      if (this.table._canResizeRow(resizeRow.col, resizeRow.row) && resizeRow.row >= 0) {
+        if (update) {
+          this.table.stateManager.startResizeRow(
+            resizeRow.row,
+            eventArgsSet.abstractPos.x,
+            eventArgsSet.abstractPos.y,
+            resizeRow.bottomFrozen
+          );
+        }
+        return true;
+      }
+    }
+
+    return false;
+  }
+
   checkCellFillhandle(eventArgsSet: SceneEvent, update?: boolean): boolean {
     if (this.table.options.excelOptions?.fillHandle) {
       const { eventArgs } = eventArgsSet;
@@ -536,6 +566,10 @@ export class EventManager {
 
   dealColumnResize(xInTable: number, yInTable: number) {
     this.table.stateManager.updateResizeCol(xInTable, yInTable);
+  }
+
+  dealRowResize(xInTable: number, yInTable: number) {
+    this.table.stateManager.updateResizeRow(xInTable, yInTable);
   }
 
   chechColumnMover(eventArgsSet: SceneEvent): boolean {

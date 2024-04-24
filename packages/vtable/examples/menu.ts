@@ -513,6 +513,10 @@ export const menus = [
       {
         path: 'interactive',
         name: 'update-column'
+      },
+      {
+        path: 'interactive',
+        name: 'row-resize'
       }
     ]
   },
