@@ -50,7 +50,7 @@ export class InputEditor implements IEditor {
     if (!this.element) {
       this.createElement();
 
-      if (value) {
+      if (value !== undefined && value !== null) {
         this.setValue(value);
       }
       if (referencePosition?.rect) {
