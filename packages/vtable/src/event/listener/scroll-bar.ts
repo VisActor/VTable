@@ -68,6 +68,14 @@ export function bindScrollBarListener(eventManager: EventManager) {
   scenegraph.component.vScrollBar.addEventListener('scrollUp', (e: FederatedPointerEvent) => {
     scenegraph.table.eventManager.isDraging = false;
   });
+
+  scenegraph.component.hScrollBar.addEventListener('pointermove', (e: FederatedPointerEvent) => {
+    scenegraph.table.stateManager.updateCursor('default');
+    e.stopPropagation(); //防止冒泡到stage上 检测到挨着列间隔线判断成可拖拽
+  });
+  scenegraph.component.hScrollBar.addEventListener('pointerdown', (e: FederatedPointerEvent) => {
+    e.stopPropagation(); //防止冒泡到stage上 检测到挨着列间隔线判断成拖拽状态
+  });
   scenegraph.component.hScrollBar.addEventListener('scrollDown', (e: FederatedPointerEvent) => {
     scenegraph.table.eventManager.LastBodyPointerXY = { x: e.x, y: e.y };
     scenegraph.table.eventManager.isDown = true;
