@@ -1169,8 +1169,10 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
         this.heightMode === 'adaptive' ||
         (this.autoFillHeight && this.getAllRowsHeight() <= this.tableNoFrameHeight)
       ) {
-        this.scenegraph.recalculateRowHeights();
-      } else if (this.heightMode === 'autoHeight') {
+        if (this.internalProps._heightResizedRowMap.size === 0) {
+          this.scenegraph.recalculateRowHeights();
+        }
+      } else if (this.heightMode === 'autoHeight' && !this.internalProps._heightResizedRowMap.has(row)) {
         const oldHeight = this.getRowHeight(row);
         const newHeight = computeRowHeight(row, 0, this.colCount - 1, this);
         this.scenegraph.updateRowHeight(row, newHeight - oldHeight);

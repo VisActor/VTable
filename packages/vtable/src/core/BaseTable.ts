@@ -323,6 +323,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     internalProps._rowRangeHeightsMap = new Map();
     internalProps._colRangeWidthsMap = new Map();
     internalProps._widthResizedColMap = new Set();
+    internalProps._heightResizedRowMap = new Set();
 
     this.colWidthsMap = new NumberMap();
     this.colContentWidthsMap = new NumberMap();
@@ -1089,7 +1090,8 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
       this.internalProps.layoutMap &&
       // endRow >= this.columnHeaderLevelCount &&
       // !this.bottomFrozenRowCount &&
-      !this.hasAutoImageColumn()
+      !this.hasAutoImageColumn() &&
+      this.internalProps._heightResizedRowMap.size === 0
     ) {
       // part in header
       for (let i = startRow; i < Math.min(endRow + 1, this.columnHeaderLevelCount); i++) {
@@ -2096,6 +2098,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     internalProps._colRangeWidthsMap = new Map();
 
     internalProps._widthResizedColMap = new Set();
+    internalProps._heightResizedRowMap = new Set();
 
     this.colWidthsMap = new NumberMap();
     this.colContentWidthsMap = new NumberMap();

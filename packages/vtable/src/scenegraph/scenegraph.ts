@@ -836,7 +836,11 @@ export class Scenegraph {
       // 1. error amplification（误差放大） in dealHeightMode when multiple resize
       // 2. width update caused height update dose not have enlarge/reduce number,
       // will cause scale error in dealHeightMode()
-      this.recalculateRowHeights();
+      if (this.table.internalProps._heightResizedRowMap.size === 0) {
+        this.recalculateRowHeights();
+      } else {
+        this.dealHeightMode();
+      }
       // this.dealHeightMode();
     } else if (this.table.autoFillHeight) {
       this.dealHeightMode();

@@ -299,7 +299,7 @@ export function createTable() {
   const instance = new VTable.PivotTable(document.getElementById(CONTAINER_ID), option);
 
   bindDebugTool(instance.scenegraph.stage as any, {
-    customGrapicKeys: ['role', '_updateTag']
+    customGrapicKeys: ['col', 'row']
   });
 
   // 只为了方便控制太调试用，不要拷贝

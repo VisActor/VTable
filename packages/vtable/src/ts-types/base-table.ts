@@ -153,6 +153,7 @@ export interface IBaseTableProtected {
   _colRangeWidthsMap: Map<string, number>; //存储指定列范围的总宽度
 
   _widthResizedColMap: Set<number>; //记录下被手动调整过列宽的列号
+  _heightResizedRowMap: Set<number>; //记录下被手动调整过行高的行号
 
   bodyHelper: BodyHelper;
   headerHelper: HeaderHelper;

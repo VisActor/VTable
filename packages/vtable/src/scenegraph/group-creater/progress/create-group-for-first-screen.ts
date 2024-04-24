@@ -44,8 +44,10 @@ export function createGroupForFirstScreen(
     computeColsWidth(table, 0, distCol);
   }
 
-  // compute rows height in first screen
-  computeRowsHeight(table, 0, distRow);
+  if (table.internalProps._heightResizedRowMap.size === 0) {
+    // compute rows height in first screen
+    computeRowsHeight(table, 0, distRow);
+  }
 
   if (distCol < table.colCount - table.rightFrozenColCount) {
     // compute right frozen row height

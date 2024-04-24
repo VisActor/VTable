@@ -58,15 +58,15 @@ export function updateResizeRow(xInTable: number, yInTable: number, state: State
 }
 
 function updateResizeColForRow(detaY: number, state: StateManager) {
-  if (state.table.widthMode === 'adaptive' && state.rowResize.row < state.table.colCount - 1) {
+  if (state.table.heightMode === 'adaptive' && state.rowResize.row < state.table.colCount - 1) {
     state.table.scenegraph.updateRowHeight(state.rowResize.row, detaY);
     state.table.scenegraph.updateRowHeight(state.rowResize.row + 1, -detaY);
 
-    // state.table.internalProps._widthResizedRowMap.add(state.rowResize.row);
-    // state.table.internalProps._widthResizedRowMap.add(state.rowResize.row + 1);
+    state.table.internalProps._heightResizedRowMap.add(state.rowResize.row);
+    state.table.internalProps._heightResizedRowMap.add(state.rowResize.row + 1);
   } else {
     state.table.scenegraph.updateRowHeight(state.rowResize.row, detaY);
-    // state.table.internalProps._widthResizedRowMap.add(state.rowResize.row);
+    state.table.internalProps._heightResizedRowMap.add(state.rowResize.row);
   }
 }
 
@@ -82,7 +82,7 @@ function updateResizeColForAll(detaY: number, state: StateManager) {
     //   }
     // }
     state.table.scenegraph.updateRowHeight(row, detaY);
-    // state.table.internalProps._widthResizedColMap.add(row);
+    state.table.internalProps._heightResizedRowMap.add(row);
   }
 }
 
@@ -107,13 +107,13 @@ function updateResizeColForIndicator(detaY: number, state: StateManager) {
     const indicatorKey = layout.getIndicatorKey(state.table.rowHeaderLevelCount, row);
     if (!layout.indicatorsAsCol && indicatorKey === resizeIndicatorKey) {
       state.table.scenegraph.updateRowHeight(row, detaY);
-      // state.table.internalProps._widthResizedColMap.add(row);
+      state.table.internalProps._heightResizedRowMap.add(row);
     } else if (layout.indicatorsAsCol) {
       const headerPaths = layout.getCellHeaderPaths(state.table.rowHeaderLevelCount - 1, row);
       const headerPath = headerPaths?.rowHeaderPaths[headerPaths.rowHeaderPaths.length - 1];
       if (headerPath && resizeDimensionKey === headerPath.dimensionKey && resizeDimensionValue === headerPath.value) {
         state.table.scenegraph.updateRowHeight(row, detaY);
-        // state.table.internalProps._widthResizedColMap.add(row);
+        state.table.internalProps._heightResizedRowMap.add(row);
       }
     }
   }
@@ -149,6 +149,6 @@ function updateResizeColForIndicatorGroup(detaY: number, state: StateManager) {
       deltaHeight = -0.51;
     }
     state.table.scenegraph.updateRowHeight(row, deltaHeight);
-    // state.table.internalProps._widthResizedColMap.add(row);
+    state.table.internalProps._heightResizedRowMap.add(row);
   }
 }
