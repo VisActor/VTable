@@ -546,8 +546,7 @@ export class Scenegraph {
    * @return {*}
    */
   updateNextFrame() {
-    // to do
-    // this.table.invalidate();
+    this.updateContainerSync();
     this.resetAllSelectComponent();
 
     this.stage.renderNextFrame();
@@ -1505,26 +1504,25 @@ export class Scenegraph {
       if (!this._needUpdateContainer) {
         this._needUpdateContainer = true;
         setTimeout(() => {
-          this.updateContainerAttrWidthAndX();
-
-          this.updateTableSize();
-
-          this.component.updateScrollBar();
-          this.updateNextFrame();
-
-          this._needUpdateContainer = false;
+          this.updateContainerSync();
         }, 0);
       }
     } else {
-      this.updateContainerAttrWidthAndX();
-
-      this.updateTableSize();
-
-      this.component.updateScrollBar();
-      this.updateNextFrame();
-
-      this._needUpdateContainer = false;
+      this._needUpdateContainer = true;
+      this.updateContainerSync();
     }
+  }
+
+  updateContainerSync() {
+    if (!this._needUpdateContainer) {
+      return;
+    }
+    this.updateContainerAttrWidthAndX();
+    this.updateTableSize();
+    this.component.updateScrollBar();
+
+    this._needUpdateContainer = false;
+    this.updateNextFrame();
   }
 
   updateCellContentWhileResize(col: number, row: number) {
