@@ -1197,6 +1197,8 @@ export class Scenegraph {
       this.component.setFrozenColumnShadow(this.table.frozenColCount - 1);
     } else if (this.table.options.frozenColCount) {
       this.component.setFrozenColumnShadow(this.table.frozenColCount - 1);
+    } else {
+      this.component.setFrozenColumnShadow(-1);
     }
     this.table.stateManager.checkFrozen();
     // this.updateContainerAttrWidthAndX();
