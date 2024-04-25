@@ -602,18 +602,18 @@ export function updateCellSelectBorder(
 
 export function hideCellSelectBorder(scene: Scenegraph) {
   scene.selectingRangeComponents.forEach((selectComp: { rect: IRect; role: CellSubLocation }, key: string) => {
-    selectComp.rect.setAttribute('visible', false);
+    selectComp.rect.setAttribute('opacity', 0);
   });
   scene.selectedRangeComponents.forEach((selectComp: { rect: IRect; role: CellSubLocation }, key: string) => {
-    selectComp.rect.setAttribute('visible', false);
+    selectComp.rect.setAttribute('opacity', 0);
   });
 }
 
 export function restoreCellSelectBorder(scene: Scenegraph) {
   scene.selectingRangeComponents.forEach((selectComp: { rect: IRect; role: CellSubLocation }, key: string) => {
-    selectComp.rect.setAttribute('visible', false);
+    selectComp.rect.setAttribute('opacity', 1);
   });
   scene.selectedRangeComponents.forEach((selectComp: { rect: IRect; role: CellSubLocation }, key: string) => {
-    selectComp.rect.setAttribute('visible', false);
+    selectComp.rect.setAttribute('opacity', 1);
   });
 }
