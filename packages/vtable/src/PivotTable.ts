@@ -679,12 +679,53 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
     const rowIndex = this.getBodyIndexByRow(row);
     const colIndex = this.getBodyIndexByCol(col);
     const dataValue = this.records[rowIndex]?.[colIndex];
-    console.warn('VTable warning: this raw value may be changed in editable mode');
     return dataValue;
   }
 
   // 获取原始数据
   getCellOriginRecord(col: number, row: number) {
+    const table = this;
+    if (table.internalProps.layoutMap.isHeader(col, row)) {
+      return undefined;
+    }
+    if (this.dataset) {
+      const cellDimensionPath = this.internalProps.layoutMap.getCellHeaderPaths(col, row);
+      const colKeys = cellDimensionPath.colHeaderPaths.map((colPath: any) => {
+        return colPath.indicatorKey ?? colPath.value;
+      });
+      const rowKeys = cellDimensionPath.rowHeaderPaths.map((rowPath: any) => {
+        return rowPath.indicatorKey ?? rowPath.value;
+      });
+      const aggregator = this.dataset.getAggregator(
+        !this.internalProps.layoutMap.indicatorsAsCol ? rowKeys.slice(0, -1) : rowKeys,
+        this.internalProps.layoutMap.indicatorsAsCol ? colKeys.slice(0, -1) : colKeys,
+        (this.internalProps.layoutMap as PivotHeaderLayoutMap).getIndicatorKey(col, row)
+      );
+      return aggregator.records;
+      // return ''
+    } else if (this.flatDataToObjects) {
+      //数据为行列树结构 根据row col获取对应的维度名称 查找到对应值
+      const cellDimensionPath = this.internalProps.layoutMap.getCellHeaderPaths(col, row);
+      const colKeys = cellDimensionPath.colHeaderPaths.map((colPath: any) => {
+        return colPath.indicatorKey ?? colPath.value;
+      });
+      const rowKeys = cellDimensionPath.rowHeaderPaths.map((rowPath: any) => {
+        return rowPath.indicatorKey ?? rowPath.value;
+      });
+      const treeNode = this.flatDataToObjects.getTreeNode(
+        rowKeys,
+        colKeys,
+        (this.internalProps.layoutMap.getBody(col, row) as IndicatorData).indicatorKey
+      );
+      return treeNode?.record;
+    }
+    const rowIndex = this.getBodyIndexByRow(row);
+    const colIndex = this.getBodyIndexByCol(col);
+    const dataValue = this.records[rowIndex]?.[colIndex];
+    return dataValue;
+  }
+
+  getCellRawRecord(col: number, row: number) {
     const table = this;
     if (table.internalProps.layoutMap.isHeader(col, row)) {
       return undefined;
@@ -725,10 +766,6 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
     const colIndex = this.getBodyIndexByCol(col);
     const dataValue = this.records[rowIndex]?.[colIndex];
     return dataValue;
-  }
-
-  getCellRawRecord(col: number, row: number) {
-    return this.getCellOriginRecord(col, row);
   }
   /**
    * 全量更新排序规则
@@ -1105,9 +1142,14 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
   }
   /** 获取单元格对应的编辑器 */
   getEditor(col: number, row: number) {
-    const define = this.getBodyColumnDefine(col, row);
-    let editorDefine = (define as ColumnDefine)?.editor ?? this.options.editor;
-
+    let editorDefine;
+    if (this.isHeader(col, row) && !this.isCornerHeader(col, row)) {
+      const define = this.getHeaderDefine(col, row);
+      editorDefine = (define as ColumnDefine)?.headerEditor ?? this.options.headerEditor;
+    } else {
+      const define = this.getBodyColumnDefine(col, row);
+      editorDefine = (define as ColumnDefine)?.editor ?? this.options.editor;
+    }
     if (typeof editorDefine === 'function') {
       const arg = {
         col,
@@ -1149,8 +1191,13 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
         newValue = parseFloat(value);
       }
       this._changeCellValueToDataSet(col, row, newValue);
-      // const cell_value = this.getCellValue(col, row);
-      this.scenegraph.updateCellContent(col, row);
+      // this.scenegraph.updateCellContent(col, row);
+      const range = this.getCellRange(col, row);
+      for (let sCol = range.start.col; sCol <= range.end.col; sCol++) {
+        for (let sRow = range.start.row; sRow <= range.end.row; sRow++) {
+          this.scenegraph.updateCellContent(sCol, sRow);
+        }
+      }
       if (this.widthMode === 'adaptive' || (this.autoFillWidth && this.getAllColsWidth() <= this.tableNoFrameWidth)) {
         if (this.internalProps._widthResizedColMap.size === 0) {
           //如果没有手动调整过行高列宽 则重新计算一遍并重新分配
@@ -1291,19 +1338,32 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
       );
     } else if (this.flatDataToObjects) {
       const cellDimensionPath = this.internalProps.layoutMap.getCellHeaderPaths(col, row);
-      const colKeys = cellDimensionPath.colHeaderPaths.map((colPath: any) => {
-        return colPath.indicatorKey ?? colPath.value;
-      });
-      const rowKeys = cellDimensionPath.rowHeaderPaths.map((rowPath: any) => {
-        return rowPath.indicatorKey ?? rowPath.value;
-      });
 
-      this.flatDataToObjects.changeTreeNodeValue(
-        rowKeys,
-        colKeys,
-        (this.internalProps.layoutMap.getBody(col, row) as IndicatorData).indicatorKey,
-        newValue
-      );
+      if (this.isHeader(col, row)) {
+        this.internalProps.layoutMap.changeTreeNodeTitle(col, row, newValue as string);
+
+        this.flatDataToObjects.changeRecordFieldValue(
+          cellDimensionPath.colHeaderPaths?.length
+            ? cellDimensionPath.colHeaderPaths[cellDimensionPath.colHeaderPaths.length - 1].indicatorKey ??
+                cellDimensionPath.colHeaderPaths[cellDimensionPath.colHeaderPaths.length - 1].dimensionKey
+            : cellDimensionPath.rowHeaderPaths[cellDimensionPath.rowHeaderPaths.length - 1].indicatorKey ??
+                cellDimensionPath.rowHeaderPaths[cellDimensionPath.rowHeaderPaths.length - 1].dimensionKey,
+          newValue
+        );
+      } else {
+        const colKeys = cellDimensionPath.colHeaderPaths.map((colPath: any) => {
+          return colPath.indicatorKey ?? colPath.value;
+        });
+        const rowKeys = cellDimensionPath.rowHeaderPaths.map((rowPath: any) => {
+          return rowPath.indicatorKey ?? rowPath.value;
+        });
+        this.flatDataToObjects.changeTreeNodeValue(
+          rowKeys,
+          colKeys,
+          (this.internalProps.layoutMap.getBody(col, row) as IndicatorData).indicatorKey,
+          newValue
+        );
+      }
     } else {
       const rowIndex = this.getBodyIndexByRow(row);
       const colIndex = this.getBodyIndexByCol(col);

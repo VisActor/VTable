@@ -58,10 +58,6 @@ export class EditManeger {
   }
 
   startEditCell(col: number, row: number) {
-    //透视表的表头不允许编辑
-    if (this.table.isPivotTable() && this.table.isHeader(col, row)) {
-      return;
-    }
     const editor = (this.table as ListTableAPI).getEditor(col, row);
     if (editor) {
       //自定义内容单元格不允许编辑
