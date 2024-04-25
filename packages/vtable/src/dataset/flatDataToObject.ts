@@ -225,6 +225,7 @@ export class FlatDataToObjects {
         record: this.beforeChangedTree[flatRowKey][flatColKey].record
       };
     }
+    return undefined;
   }
 
   changeTreeNodeValue(rowKey: string[] = [], colKey: string[] = [], indicator: string, newValue: any) {
