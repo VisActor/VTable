@@ -356,6 +356,8 @@ export interface PivotTableConstructorOptions extends BaseTableConstructorOption
 
   extensionRows?: IExtensionRowDefine[];
   editor?: string | IEditor | ((args: BaseCellInfo & { table: BaseTableAPI }) => string | IEditor);
+  /** 全局设置表头编辑器 */
+  headerEditor?: string | IEditor | ((args: BaseCellInfo & { table: BaseTableAPI }) => string | IEditor);
 }
 export interface PivotChartConstructorOptions extends BaseTableConstructorOptions {
   /**
