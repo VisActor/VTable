@@ -1,8 +1,11 @@
 import * as VTable from '../../src';
 import { bindDebugTool } from '../../src/scenegraph/debug-tool';
 import { IconPosition } from '../../src/ts-types';
+import { InputEditor } from '@visactor/vtable-editors';
 import { bearImageUrl, birdImageUrl, catImageUrl, flowerImageUrl, rabbitImageUrl, wolfImageUrl } from '../resource-url';
 const ListTable = VTable.ListTable;
+const input_editor = new InputEditor({});
+VTable.register.editor('input', input_editor);
 const CONTAINER_ID = 'vTable';
 VTable.register.icon('location', {
   type: 'svg',
@@ -394,6 +397,7 @@ export function createTable() {
         tags: ['音乐', '表演', '综艺']
       }
     ],
+    editor: 'input',
     defaultRowHeight: 80
   };
 

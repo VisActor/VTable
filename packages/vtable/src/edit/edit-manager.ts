@@ -60,11 +60,11 @@ export class EditManeger {
   startEditCell(col: number, row: number) {
     const editor = (this.table as ListTableAPI).getEditor(col, row);
     if (editor) {
-      //自定义内容单元格不允许编辑
-      if (this.table.getCustomRender(col, row) || this.table.getCustomLayout(col, row)) {
-        console.warn("VTable Warn: cell has config custom render or layout, can't be edited");
-        return;
-      }
+      // //自定义内容单元格不允许编辑
+      // if (this.table.getCustomRender(col, row) || this.table.getCustomLayout(col, row)) {
+      //   console.warn("VTable Warn: cell has config custom render or layout, can't be edited");
+      //   return;
+      // }
       if (!this.table.isHeader(col, row)) {
         const range = this.table.getCellRange(col, row);
         const isMerge = range.start.col !== range.end.col || range.start.row !== range.end.row;
