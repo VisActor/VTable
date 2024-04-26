@@ -1209,9 +1209,9 @@ export class Scenegraph {
     // 更新滚动条状态
     this.component.updateScrollBar();
 
-    // 处理单元格内容需要textStick的情况  移动到了proxy progress中
+    // 处理单元格内容需要textStick的情况  入股这里不处理 只依赖异步proxy progress中处理 会有闪烁问题
 
-    // handleTextStick(this.table);
+    handleTextStick(this.table);
 
     this.updateNextFrame();
   }
