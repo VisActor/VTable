@@ -1074,3 +1074,19 @@ setCellRadioState(col: number, row: number, index?: number) => void
 - col: 列号
 - row: 行号
 - index: 更新的目标 radio 在单元格中的索引
+
+## getAllRowsHeight(Function)
+
+获取表格所有行的高度
+
+```
+getAllRowsHeight: () => number;
+```
+
+## getAllColsWidth(Function)
+
+获取表格所有列的宽度
+
+```
+getAllColsWidth: () => number;
+```
