@@ -1224,7 +1224,8 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
       this.fireListeners(TABLE_EVENT_TYPE.CHANGE_CELL_VALUE, {
         col,
         row,
-        rawValue: this.getCellRawValue(col, row),
+        rawValue,
+        currentValue: oldValue,
         changedValue: newValue
       });
       this.scenegraph.updateNextFrame();
@@ -1271,6 +1272,7 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
             col: startCol + j,
             row: startRow + i,
             rawValue,
+            currentValue: oldValue,
             changedValue: this.getCellOriginValue(startCol + j, startRow + i)
           });
         }
