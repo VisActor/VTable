@@ -1587,6 +1587,43 @@ export class Dataset {
       this.changedTree[flatRowKey][flatColKey][indicatorIndex] = newValue;
     }
   }
+
+  changeRecordFieldValue(fieldName: string, oldValue: string | number, value: string | number) {
+    let isIndicatorName = false;
+
+    for (let i = 0; i < this.indicatorKeys.length; i++) {
+      if (this.indicatorKeys[i] === fieldName) {
+        isIndicatorName = true;
+      }
+    }
+
+    if (!isIndicatorName) {
+      //常规records是数组的情况
+      if (Array.isArray(this.records)) {
+        for (let i = 0, len = this.records.length; i < len; i++) {
+          const record = this.records[i];
+          if (record[fieldName] === oldValue) {
+            record[fieldName] = value;
+          }
+        }
+      } else {
+        //records是用户传来的按指标分组后的数据
+        for (const key in this.records) {
+          for (let i = 0, len = this.records[key].length; i < len; i++) {
+            const record = this.records[key][i];
+            if (record[fieldName] === oldValue) {
+              record[fieldName] = value;
+            }
+          }
+        }
+      }
+
+      this.rowFlatKeys = {};
+      this.colFlatKeys = {};
+      this.tree = {};
+      this.processRecords();
+    }
+  }
 }
 
 function arraySortByAnotherArray(array: string[], sortArray: string[]) {

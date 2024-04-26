@@ -308,7 +308,7 @@ export class FlatDataToObjects {
     }
     this.records.push(records);
   }
-  changeRecordFieldValue(fieldName: string, value: string | number) {
+  changeRecordFieldValue(fieldName: string, oldValue: string | number, value: string | number) {
     let isIndicatorName = false;
 
     for (let i = 0; i < this.dataConfig.indicators.length; i++) {
@@ -316,16 +316,17 @@ export class FlatDataToObjects {
         isIndicatorName = true;
       }
     }
-
-    this.records.forEach(record => {
-      if (isIndicatorName) {
-      } else {
-        record[fieldName] = value;
+    if (!isIndicatorName) {
+      for (let i = 0, len = this.records.length; i < len; i++) {
+        const record = this.records[i];
+        if (record[fieldName] === oldValue) {
+          record[fieldName] = value;
+        }
       }
-    });
-    this.rowFlatKeys = {};
-    this.colFlatKeys = {};
-    this.tree = {};
-    this.processRecords();
+      this.rowFlatKeys = {};
+      this.colFlatKeys = {};
+      this.tree = {};
+      this.processRecords();
+    }
   }
 }

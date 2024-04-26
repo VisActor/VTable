@@ -1186,11 +1186,12 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
   changeCellValue(col: number, row: number, value: string | undefined, workOnEditableCell = false) {
     if ((workOnEditableCell && this.isHasEditorDefine(col, row)) || workOnEditableCell === false) {
       let newValue: any = value;
+      const oldValue = this.getCellOriginValue(col, row);
       const rawValue = this.getCellRawValue(col, row);
       if (typeof rawValue === 'number' && isAllDigits(value)) {
         newValue = parseFloat(value);
       }
-      this._changeCellValueToDataSet(col, row, newValue);
+      this._changeCellValueToDataSet(col, row, oldValue, newValue);
       // this.scenegraph.updateCellContent(col, row);
       const range = this.getCellRange(col, row);
       for (let sCol = range.start.col; sCol <= range.end.col; sCol++) {
@@ -1259,11 +1260,12 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
         ) {
           const value = rowValues[j];
           let newValue: string | number = value;
+          const oldValue = this.getCellOriginValue(startCol + j, startRow + i);
           const rawValue = this.getCellRawValue(startCol + j, startRow + i);
           if (typeof rawValue === 'number' && isAllDigits(value)) {
             newValue = parseFloat(value);
           }
-          this._changeCellValueToDataSet(startCol + j, startRow + i, newValue);
+          this._changeCellValueToDataSet(startCol + j, startRow + i, oldValue, newValue);
 
           this.fireListeners(TABLE_EVENT_TYPE.CHANGE_CELL_VALUE, {
             col: startCol + j,
@@ -1321,35 +1323,52 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
     this.scenegraph.updateNextFrame();
   }
 
-  private _changeCellValueToDataSet(col: number, row: number, newValue: string | number) {
+  private _changeCellValueToDataSet(col: number, row: number, oldValue: string | number, newValue: string | number) {
     if (this.dataset) {
       const cellDimensionPath = this.internalProps.layoutMap.getCellHeaderPaths(col, row);
-      const colKeys = cellDimensionPath.colHeaderPaths.map((colPath: any) => {
-        return colPath.indicatorKey ?? colPath.value;
-      });
-      const rowKeys = cellDimensionPath.rowHeaderPaths.map((rowPath: any) => {
-        return rowPath.indicatorKey ?? rowPath.value;
-      });
-      this.dataset.changeTreeNodeValue(
-        !this.internalProps.layoutMap.indicatorsAsCol ? rowKeys.slice(0, -1) : rowKeys,
-        this.internalProps.layoutMap.indicatorsAsCol ? colKeys.slice(0, -1) : colKeys,
-        (this.internalProps.layoutMap as PivotHeaderLayoutMap).getIndicatorKey(col, row),
-        newValue
-      );
+      if (this.isHeader(col, row)) {
+        this.internalProps.layoutMap.changeTreeNodeTitle(col, row, newValue as string);
+
+        !this.isCornerHeader(col, row) &&
+          this.dataset.changeRecordFieldValue(
+            cellDimensionPath.colHeaderPaths?.length
+              ? cellDimensionPath.colHeaderPaths[cellDimensionPath.colHeaderPaths.length - 1].indicatorKey ??
+                  cellDimensionPath.colHeaderPaths[cellDimensionPath.colHeaderPaths.length - 1].dimensionKey
+              : cellDimensionPath.rowHeaderPaths[cellDimensionPath.rowHeaderPaths.length - 1].indicatorKey ??
+                  cellDimensionPath.rowHeaderPaths[cellDimensionPath.rowHeaderPaths.length - 1].dimensionKey,
+            oldValue,
+            newValue
+          );
+      } else {
+        const colKeys = cellDimensionPath.colHeaderPaths.map((colPath: any) => {
+          return colPath.indicatorKey ?? colPath.value;
+        });
+        const rowKeys = cellDimensionPath.rowHeaderPaths.map((rowPath: any) => {
+          return rowPath.indicatorKey ?? rowPath.value;
+        });
+        this.dataset.changeTreeNodeValue(
+          !this.internalProps.layoutMap.indicatorsAsCol ? rowKeys.slice(0, -1) : rowKeys,
+          this.internalProps.layoutMap.indicatorsAsCol ? colKeys.slice(0, -1) : colKeys,
+          (this.internalProps.layoutMap as PivotHeaderLayoutMap).getIndicatorKey(col, row),
+          newValue
+        );
+      }
     } else if (this.flatDataToObjects) {
       const cellDimensionPath = this.internalProps.layoutMap.getCellHeaderPaths(col, row);
 
       if (this.isHeader(col, row)) {
         this.internalProps.layoutMap.changeTreeNodeTitle(col, row, newValue as string);
 
-        this.flatDataToObjects.changeRecordFieldValue(
-          cellDimensionPath.colHeaderPaths?.length
-            ? cellDimensionPath.colHeaderPaths[cellDimensionPath.colHeaderPaths.length - 1].indicatorKey ??
-                cellDimensionPath.colHeaderPaths[cellDimensionPath.colHeaderPaths.length - 1].dimensionKey
-            : cellDimensionPath.rowHeaderPaths[cellDimensionPath.rowHeaderPaths.length - 1].indicatorKey ??
-                cellDimensionPath.rowHeaderPaths[cellDimensionPath.rowHeaderPaths.length - 1].dimensionKey,
-          newValue
-        );
+        !this.isCornerHeader(col, row) &&
+          this.flatDataToObjects.changeRecordFieldValue(
+            cellDimensionPath.colHeaderPaths?.length
+              ? cellDimensionPath.colHeaderPaths[cellDimensionPath.colHeaderPaths.length - 1].indicatorKey ??
+                  cellDimensionPath.colHeaderPaths[cellDimensionPath.colHeaderPaths.length - 1].dimensionKey
+              : cellDimensionPath.rowHeaderPaths[cellDimensionPath.rowHeaderPaths.length - 1].indicatorKey ??
+                  cellDimensionPath.rowHeaderPaths[cellDimensionPath.rowHeaderPaths.length - 1].dimensionKey,
+            oldValue,
+            newValue
+          );
       } else {
         const colKeys = cellDimensionPath.colHeaderPaths.map((colPath: any) => {
           return colPath.indicatorKey ?? colPath.value;

@@ -7,39 +7,6 @@ export function createTable() {
   fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American_Superstore_Pivot_data.json')
     .then(res => res.json())
     .then(data => {
-      data = [
-        // {
-        //   Category: 'Office Supplies',
-
-        //   City: 'Aberdeen'
-        // },
-        {
-          Category: 'Office Supplies',
-          Quantity: '3',
-          Sales: '25.5',
-          City: 'Aberdeen'
-        },
-        {
-          Category: 'Office Supplies',
-          Profit: '6.630000114440918',
-          City: 'Aberdeen'
-        },
-        {
-          Category: 'Technology',
-          Quantity: null,
-          City: 'Aberdeen'
-        },
-        {
-          Category: 'Technology',
-          Sales: null,
-          City: 'Aberdeen'
-        },
-        {
-          Category: 'Technology',
-          Profit: null,
-          City: 'Aberdeen'
-        }
-      ];
       const option: VTable.PivotTableConstructorOptions = {
         container: document.getElementById(CONTAINER_ID),
         // records: data,
@@ -54,6 +21,198 @@ export function createTable() {
           {
             dimensionKey: 'City',
             value: 'Abilene'
+          },
+          {
+            dimensionKey: 'City',
+            value: 'Akron'
+          },
+          {
+            dimensionKey: 'City',
+            value: 'Albuquerque'
+          },
+          {
+            dimensionKey: 'City',
+            value: 'Alexandria'
+          },
+          {
+            dimensionKey: 'City',
+            value: 'Allen'
+          },
+          {
+            dimensionKey: 'City',
+            value: 'Allentown'
+          },
+          {
+            dimensionKey: 'City',
+            value: 'Altoona'
+          },
+          {
+            dimensionKey: 'City',
+            value: 'Amarillo'
+          },
+          {
+            dimensionKey: 'City',
+            value: 'Anaheim'
+          },
+          {
+            dimensionKey: 'City',
+            value: 'Andover'
+          },
+          {
+            dimensionKey: 'City',
+            value: 'Ann Arbor'
+          },
+          {
+            dimensionKey: 'City',
+            value: 'Antioch'
+          },
+          {
+            dimensionKey: 'City',
+            value: 'Apopka'
+          },
+          {
+            dimensionKey: 'City',
+            value: 'Apple Valley'
+          },
+          {
+            dimensionKey: 'City',
+            value: 'Appleton'
+          },
+          {
+            dimensionKey: 'City',
+            value: 'Arlington'
+          },
+          {
+            dimensionKey: 'City',
+            value: 'Arlington Heights'
+          },
+          {
+            dimensionKey: 'City',
+            value: 'Arvada'
+          },
+          {
+            dimensionKey: 'City',
+            value: 'Asheville'
+          },
+          {
+            dimensionKey: 'City',
+            value: 'Athens'
+          },
+          {
+            dimensionKey: 'City',
+            value: 'Atlanta'
+          },
+          {
+            dimensionKey: 'City',
+            value: 'Atlantic City'
+          },
+          {
+            dimensionKey: 'City',
+            value: 'Auburn'
+          },
+          {
+            dimensionKey: 'City',
+            value: 'Aurora'
+          },
+          {
+            dimensionKey: 'City',
+            value: 'Austin'
+          },
+          {
+            dimensionKey: 'City',
+            value: 'Avondale'
+          },
+          {
+            dimensionKey: 'City',
+            value: 'Bakersfield'
+          },
+          {
+            dimensionKey: 'City',
+            value: 'Baltimore'
+          },
+          {
+            dimensionKey: 'City',
+            value: 'Bangor'
+          },
+          {
+            dimensionKey: 'City',
+            value: 'Bartlett'
+          },
+          {
+            dimensionKey: 'City',
+            value: 'Bayonne'
+          },
+          {
+            dimensionKey: 'City',
+            value: 'Baytown'
+          },
+          {
+            dimensionKey: 'City',
+            value: 'Beaumont'
+          },
+          {
+            dimensionKey: 'City',
+            value: 'Bedford'
+          },
+          {
+            dimensionKey: 'City',
+            value: 'Belleville'
+          },
+          {
+            dimensionKey: 'City',
+            value: 'Bellevue'
+          },
+          {
+            dimensionKey: 'City',
+            value: 'Bellingham'
+          },
+          {
+            dimensionKey: 'City',
+            value: 'Bethlehem'
+          },
+          {
+            dimensionKey: 'City',
+            value: 'Beverly'
+          },
+          {
+            dimensionKey: 'City',
+            value: 'Billings'
+          },
+          {
+            dimensionKey: 'City',
+            value: 'Bloomington'
+          },
+          {
+            dimensionKey: 'City',
+            value: 'Boca Raton'
+          },
+          {
+            dimensionKey: 'City',
+            value: 'Boise'
+          },
+          {
+            dimensionKey: 'City',
+            value: 'Bolingbrook'
+          },
+          {
+            dimensionKey: 'City',
+            value: 'Bossier City'
+          },
+          {
+            dimensionKey: 'City',
+            value: 'Bowling Green'
+          },
+          {
+            dimensionKey: 'City',
+            value: 'Boynton Beach'
+          },
+          {
+            dimensionKey: 'City',
+            value: 'Bozeman'
+          },
+          {
+            dimensionKey: 'City',
+            value: 'Brentwood'
           }
         ],
         columnTree: [
@@ -62,8 +221,37 @@ export function createTable() {
             value: 'Office Supplies',
             children: [
               {
-                indicatorKey: 'Quantity',
-                value: 'ddddf'
+                indicatorKey: 'Quantity'
+              },
+              {
+                indicatorKey: 'Sales'
+              },
+              {
+                indicatorKey: 'Profit'
+              }
+            ]
+          },
+          {
+            dimensionKey: 'Category',
+            value: 'Technology',
+            children: [
+              {
+                indicatorKey: 'Quantity'
+              },
+              {
+                indicatorKey: 'Sales'
+              },
+              {
+                indicatorKey: 'Profit'
+              }
+            ]
+          },
+          {
+            dimensionKey: 'Category',
+            value: 'Furniture',
+            children: [
+              {
+                indicatorKey: 'Quantity'
               },
               {
                 indicatorKey: 'Sales'

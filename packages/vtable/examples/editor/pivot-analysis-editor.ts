@@ -273,6 +273,7 @@ export function createTable() {
       }
     ],
     editor: 'input',
+    headerEditor: 'input',
     widthMode: 'autoWidth' // 宽度模式：standard 标准模式； adaptive 自动填满容器
   };
 
