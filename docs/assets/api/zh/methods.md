@@ -250,6 +250,10 @@ setRecords(records: Array<any>)
 
 清除所有单元格的选中状态。
 
+## getCopyValue(Function)
+
+获取选中区域的内容 作为复制内容。返回值是个字符串，以`\t`分割单元格，以`\n`分割行。
+
 ## getCellValue(Function)
 
 获取单元格展示值，如果在 customMergeCell 函数中使用，需要传入 skipCustomMerge 参数，否则会导致报错。
