@@ -285,4 +285,8 @@ interface ListTableAPI {
 
 The basic table supports editing the display title in the header. You can enable this by configuring `headerEditor` globally or within a column. The usage is the same as `editor`.
 
+**Editing the header of the pivot table will modify the field name in the records accordingly;**
+
+**If the pivot table has rowTree and columnsTree defined, modifying the cell value in body will modify the indicator value in records accordingly.**
+
 Through the above steps, you can create a table with editing functions, select the appropriate editor type according to business needs, customize the editor, listen to editing events, and obtain edited data. In this way, users can easily edit the data in the table, and you can process the edited data accordingly.

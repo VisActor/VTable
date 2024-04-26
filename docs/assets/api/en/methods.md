@@ -252,6 +252,10 @@ Get the selected cell information, and the returned result is a two-dimensional 
 
 Clear the selection of all cells.
 
+## getCopyValue(Function)
+
+Get the contents of the selected area as the copy content. The return value is a string, with cells separated by `\t` and rows separated by `\n`.
+
 ## getCellValue(Function)
 
 Get the cell display value. If used in the customMergeCell function, you need to pass in the skipCustomMerge parameter, otherwise an error will be reported.
@@ -1072,3 +1076,19 @@ setCellRadioState(col: number, row: number, index?: number) => void
 - col: column number
 - row: row number
 - index: the index of the updated target radio in the cell
+
+## getAllRowsHeight(Function)
+
+get all rows height
+
+```
+getAllRowsHeight: () => number;
+```
+
+## getAllColsWidth(Function)
+
+get all columns width
+
+```
+getAllColsWidth: () => number;
+```
