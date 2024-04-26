@@ -1,16 +1,16 @@
-# Column width adjustment
+# Column width and row height adjustment
 
-In practical applications, data lengths in tables often vary, and columns with longer data may affect the layout of other columns. In order to better display the data, we need to adjust the column width according to the data content. VTable provides a column width adjustment function so that users can easily adjust the table column width according to their needs.
+In practical applications, data lengths in tables often vary, and columns with longer data may affect the layout of other columns. In order to better display the data, we need to adjust the column width and row height according to the data content. VTable provides a column width and row height adjustment function so that users can easily adjust the table column width and row height according to their needs.
 ![image](https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/a2c7623458257d1562627090b.gif)
 
-## Adjust column width switch
+## Adjust column width and row height switch
 
-We can turn on or off the column width adjustment function by setting `columnResizeMode`. This configuration item has the following optional values:
+We can turn on or off the column width adjustment function by setting `columnResizeMode`; turn on or off the row height adjustment function by setting `columnResizeMode`. This configuration item has the following optional values:
 
-- 'all': The entire column, including the cells at the header and body, can adjust the column width.
-- 'none': disable column width adjustment
-- 'header': Column width can only be adjusted in units at the header
-- 'body': Column width can only be adjusted in body cells
+- 'all': The entire column, including the cells at the header and body, can adjust the column width or row height.
+- 'none': disable column width or row height adjustment
+- 'header': Column width or row height can only be adjusted in units at the header
+- 'body': Column width or row height can only be adjusted in body cells
 
 ## Adjust column width limits
 
@@ -32,7 +32,7 @@ In actual projects, we may need to impose certain restrictions on the column wid
 
 After setting, the column width will not exceed the set range when dragging and adjusting.
 
-## Column width adjustment scope
+## Column width and row height adjustment scope
 
 Configuration items (pivot table and perspective chart support):
 
@@ -40,12 +40,16 @@ Configuration items (pivot table and perspective chart support):
   /**
    * The effective range of adjusting column width: 'column' | 'indicator' | 'all' | 'indicatorGroup', single column | by indicator | all columns | multiple indicators belonging to the same dimension value
    */
- columnResizeType?: 'column' | 'indicator' | 'all' | 'indicatorGroup';
+ columnResizeType?: 'column' | 'indicator' | 'all' | 'indicatorGroup';  
+ /**
+   * The effective range of adjusting row height: 'row' | 'indicator' | 'all' | 'indicatorGroup', single row | by indicator | all rows | multiple indicators belonging to the same dimension value
+   */
+ rowResizeType?: 'row' | 'indicator' | 'all' | 'indicatorGroup';
 ```
 
-- `column`: Default value, only adjusts the width of the current column;
-- `indicator`: The column widths of the same indicator columns are adjusted together;
-- `all`: The column widths of all columns are adjusted together;
+- `column`/`row`: Default value, only adjusts the width of the current column/row;
+- `indicator`: The column widths/row heights of the same indicator columns are adjusted together;
+- `all`: The column widths/row heights of all columns are adjusted together;
 - `indicatorGroup`: Indicator columns of the same group are adjusted together. For example, there are two indicators under the Northeast dimension value: sales and profit. When the column width of sales is adjusted, the profit column will also be adjusted;
 
 ## Column width adjustment scope configuration example
@@ -1030,6 +1034,8 @@ const option = {
 const tableInstance = new VTable.PivotTable(document.getElementById(CONTAINER_ID), option);
 ```
 
+The same applies to the range of row height adjustment.
+
 ## Double-click automatic column width
 
 When users are browsing data and find that the data is collapsed and want to view the complete data, they can expand the column width by content through double-click interaction.
@@ -1043,7 +1049,7 @@ But if the content is too long, you will find that the content is still omitted.
 
 ## Adjust column width interaction effect configuration
 
-When adjusting the column width, we can customize the style of the column width mark line. In the `theme.columnResize` object, we can set the following configuration items:
+When adjusting the column width and row height, we can customize the style of the column width mark line. In the `theme.columnResize` object, we can set the following configuration items:
 
 - lineColor: the color of the line
 - bgColor: background line color

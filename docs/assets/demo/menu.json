@@ -561,6 +561,13 @@
           }
         },
         {
+          "path": "resize-row-height",
+          "title": {
+            "zh": "调整行高",
+            "en": "Adjust row height"
+          }
+        },
+        {
           "path": "dblclick-resize-col-width",
           "title": {
             "zh": "双击列宽自动适应内容",

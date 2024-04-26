@@ -146,6 +146,15 @@ Adjust the effective range of column width, configurable items:
 - `indicatorGroup`: Adjust the width of all indicator columns under the same parent dimension
 - `all`: All column widths are adjusted
 
+## rowResizeType(string)
+
+Adjust the effective range of row height, configurable items:
+
+- `row`: adjust the row height only adjust the current row
+- `indicator`: rows corresponding to the same indicator will be adjusted when the row height is adjusted
+- `indicatorGroup`: Adjust the height of all indicator rows under the same parent dimension
+- `all`: All row heights are adjusted
+
 ## renderChartAsync(boolean)
 Whether to enable asynchronous rendering of charts
 

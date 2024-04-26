@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vtable",
+      "comment": "feat: add row resize function",
+      "type": "minor"
+    }
+  ],
+  "packageName": "@visactor/vtable"
+}
