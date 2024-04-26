@@ -183,17 +183,54 @@ export function createTable() {
         }
       },
       {
+        field: 'worksCount',
+        title: '作品数',
+        style: {
+          fontFamily: 'Arial',
+          fontSize: 12,
+          fontWeight: 'bold'
+        }
+      },
+      {
         field: 'fansCount',
         title: '粉丝数',
-        fieldFormat(rec) {
-          return rec.fansCount + 'w';
-        },
-        width: '280',
         style: {
           fontFamily: 'Arial',
           fontSize: 12,
           fontWeight: 'bold'
         },
+        fieldFormat(rec) {
+          return rec.fansCount + 'w';
+        }
+      },
+      {
+        field: 'viewCount',
+        title: '播放量',
+        fieldFormat(rec) {
+          return rec.fansCount + 'w';
+        },
+        style: {
+          fontFamily: 'Arial',
+          fontSize: 12,
+          fontWeight: 'bold'
+        }
+      },
+      {
+        field: 'viewCount',
+        title: '播放量',
+        fieldFormat(rec) {
+          return rec.fansCount + 'w';
+        },
+        style: {
+          fontFamily: 'Arial',
+          fontSize: 12,
+          fontWeight: 'bold'
+        }
+      },
+      {
+        field: '',
+        title: '选项',
+        width: 200,
         customLayout: (args: VTable.TYPES.CustomRenderFunctionArg) => {
           const { table, row, col, rect } = args;
           const { height, width } = rect ?? table.getCellRect(col, row);
@@ -202,27 +239,34 @@ export function createTable() {
             height,
             width,
             display: 'flex',
-            flexDirection: 'column'
+            flexDirection: 'column',
+            // alignItems: 'center',
+            justifyContent: 'center'
           });
 
           const checkboxGroup = new VTable.CustomLayout.Group({
             display: 'flex',
             flexDirection: 'row',
             flexWrap: 'no-wrap',
-            boundsPadding: [10, 0, 0, 10]
+            boundsPadding: [5, 0, 5, 10],
+            justifyContent: 'center'
           });
           container.appendChild(checkboxGroup);
 
           const checkboxText = new VTable.CustomLayout.Text({
-            text: 'checkbox'
+            text: 'operate: ',
+            fontSize: 12,
+            boundsPadding: [0, 10, 0, 0]
           });
           checkboxGroup.appendChild(checkboxText);
 
           const checkbox1 = new VTable.CustomLayout.CheckBox({
             text: {
-              text: 'checkbox1'
-            }
-            // boundsPadding: [10, 0, 0, 10]
+              text: 'like',
+              fontSize: 12
+            },
+            spaceBetweenTextAndIcon: 2,
+            boundsPadding: [0, 10, 0, 0]
           });
           checkbox1.render();
           checkboxGroup.appendChild(checkbox1);
@@ -232,8 +276,10 @@ export function createTable() {
 
           const checkbox2 = new VTable.CustomLayout.CheckBox({
             text: {
-              text: 'checkbox2'
-            }
+              text: 'collect',
+              fontSize: 12
+            },
+            spaceBetweenTextAndIcon: 2
             // boundsPadding: [10, 0, 0, 10]
           });
           checkbox2.render();
@@ -246,19 +292,25 @@ export function createTable() {
             display: 'flex',
             flexDirection: 'row',
             flexWrap: 'no-wrap',
-            boundsPadding: [10, 0, 0, 10]
+            boundsPadding: [5, 0, 5, 10]
           });
           container.appendChild(radioGroup);
 
           const radioText = new VTable.CustomLayout.Text({
-            text: 'radio'
+            text: 'type: ',
+            fontSize: 12,
+            boundsPadding: [0, 10, 0, 0]
           });
           radioGroup.appendChild(radioText);
 
           const radio1 = new VTable.CustomLayout.Radio({
             text: {
-              text: 'radio1'
-            }
+              text: 'normal',
+              fontSize: 12
+            },
+            checked: true,
+            spaceBetweenTextAndIcon: 2,
+            boundsPadding: [0, 10, 0, 0]
           });
           radio1.render();
           radioGroup.appendChild(radio1);
@@ -271,8 +323,10 @@ export function createTable() {
 
           const radio2 = new VTable.CustomLayout.Radio({
             text: {
-              text: 'radio2'
-            }
+              text: 'special',
+              fontSize: 12
+            },
+            spaceBetweenTextAndIcon: 2
           });
           radio2.render();
           radioGroup.appendChild(radio2);
@@ -287,39 +341,6 @@ export function createTable() {
             rootContainer: container,
             renderDefault: false
           };
-        }
-      },
-      {
-        field: 'worksCount',
-        title: '作品数',
-        style: {
-          fontFamily: 'Arial',
-          fontSize: 12,
-          fontWeight: 'bold'
-        }
-      },
-      {
-        field: 'viewCount',
-        title: '播放量',
-        fieldFormat(rec) {
-          return rec.fansCount + 'w';
-        },
-        style: {
-          fontFamily: 'Arial',
-          fontSize: 12,
-          fontWeight: 'bold'
-        }
-      },
-      {
-        field: 'viewCount',
-        title: '播放量',
-        fieldFormat(rec) {
-          return rec.fansCount + 'w';
-        },
-        style: {
-          fontFamily: 'Arial',
-          fontSize: 12,
-          fontWeight: 'bold'
         }
       },
       {

@@ -246,10 +246,12 @@ customLayout 函数返回一个对象，该对象需要有：`rootContainer`来�
 | text     | text, fontSize, fontFamily, fill...                      |
 | image    | image, width, height                                     |
 
-基础自定义组件，目前支持`VTag`
+基础自定义组件，目前支持`VTag` `VRadio` `VCheckbox`
 |图元类型|基础属性|
 |:----|:----|
 |tag|text, textStyle, shape, padding...|
+|radio|checked, disabled, text, icon...|
+|checkbox|checked, disabled, text, icon...|
 
 图元可以配置`boundsPadding`属性，实现 margin 效果
 `boundsPadding: [marginLeft, marginRight, marginTop, marginBottom]`
@@ -357,6 +359,48 @@ customLayout 函数返回一个对象，该对象需要有：`rootContainer`来�
 | alignItems     | 'flex-start' \| 'flex-end' \| 'center'                                      | 交叉轴上的对齐规则                     |
 | alignContent   | 'flex-start' \| 'center' \| 'space-between' \| 'space-around'               | 主轴上的对齐规则                       |
 
+### VTag
+
+标签组件
+
+| key    | type   | description                                       |
+| :----- | :----- | :------------------------------------------------ |
+| textStyle  | ITextGraphicAttribute | 文字样式，同text图元属性 |
+| shape | TagShapeAttributes | 标签中图表的样式配置 |
+| space  | number | 图标与文字之间的距离 |
+| padding  | number[] | 内容与边框之间的距离 |
+| panel  | BackgroundAttributes | 外部边框及背景的样式，同rect图元属性 |
+| minWidth  | number  | 最小宽度 |
+| maxWidth   | number | 最大宽度 |
+
+### VRadio
+
+标签组件
+
+| key    | type   | description                                       |
+| :----- | :----- | :------------------------------------------------ |
+| interactive | boolean | 是否可交互 |
+| disabled  | boolean | 是否禁用 |
+| checked  | boolean | 是否选中 |
+| spaceBetweenTextAndIcon | number | 图标与文字间聚 |
+| text  | ITextGraphicAttribute | 文字样式，同text图元属性 |
+| circle | {disableFill?: IColor;checkedFill?: IColor;checkedStroke?: IColor;disableCheckedFill?: IColor;disableCheckedStroke?: IColor;}  | 图标样式 |
+
+### VCheckbox
+
+标签组件
+
+| key    | type   | description                                       |
+| :----- | :----- | :------------------------------------------------ |
+| interactive | boolean | 是否可交互 |
+| disabled  | boolean | 是否禁用 |
+| checked  | boolean | 是否选中 |
+| indeterminate  | boolean | 是否处于不确定状态 |
+| spaceBetweenTextAndIcon | number  | 图标与文字间聚 |
+| text  | ITextGraphicAttribute | 文字样式，同text图元属性 |
+| icon | {checkIconImage?: string | HTMLImageElement | HTMLCanvasElement;indeterminateIconImage?: string | HTMLImageElement | HTMLCanvasElement;} | 图标样式 |
+| box | {disableFill?: IColor;checkedFill?: IColor;checkedStroke?: IColor;disableCheckedFill?: IColor;disableCheckedStroke?: IColor;}  | 图表背景样式 |
+
 ## CustomLayout 创建图元对象用法
 
 _- customLayout 支持对象创建的写法_
@@ -394,3 +438,6 @@ CustomLayout 常用图元与 jsx 图元对应如下：
 | VText    | CustomLayout.Text   |
 | VImage   | CustomLayout.Image  |
 | VGroup   | CustomLayout.Group  |
+| VTag   | CustomLayout.Tag  |
+| VRadio   | CustomLayout.Radio  |
+| VCheckbox   | CustomLayout.Checkbox  |
