@@ -1072,3 +1072,19 @@ setCellRadioState(col: number, row: number, index?: number) => void
 - col: column number
 - row: row number
 - index: the index of the updated target radio in the cell
+
+## getAllRowsHeight(Function)
+
+get all rows height
+
+```
+getAllRowsHeight: () => number;
+```
+
+## getAllColsWidth(Function)
+
+get all columns width
+
+```
+getAllColsWidth: () => number;
+```
