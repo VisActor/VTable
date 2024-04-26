@@ -3950,13 +3950,44 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     if (col < this.frozenColCount && row < this.frozenRowCount) {
       return true;
     }
+
+    const colHeaderRangeRect = this.getCellRangeRelativeRect({
+      start: {
+        col: 0,
+        row: 0
+      },
+      end: {
+        col: this.colCount - 1,
+        row: this.columnHeaderLevelCount
+      }
+    });
+    const rowHeaderRangeRect = this.getCellRangeRelativeRect({
+      start: {
+        col: 0,
+        row: 0
+      },
+      end: {
+        col: this.rowHeaderLevelCount,
+        row: this.rowCount - 1
+      }
+    });
+
     if (
       rect.top >= drawRange.top &&
       rect.bottom <= drawRange.bottom &&
       rect.left >= drawRange.left &&
       rect.right <= drawRange.right
     ) {
-      return true;
+      // return true;
+      if (this.isHeader(col, row)) {
+        return true;
+      } else if (
+        // body cell drawRange do not intersect colHeaderRangeRect&rowHeaderRangeRect
+        drawRange.top >= colHeaderRangeRect.bottom &&
+        drawRange.left >= rowHeaderRangeRect.right
+      ) {
+        return true;
+      }
     }
     return false;
   }
@@ -3999,6 +4030,9 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     }
     const { col: hoverCol, row: hoverRow } = this.stateManager.hover.cellPos;
     this.stateManager.updateHoverPos(-1, -1);
+    // hide scroll bar
+    this.scenegraph.component.hideVerticalScrollBar();
+    this.scenegraph.component.hideHorizontalScrollBar();
 
     this.scenegraph.renderSceneGraph();
 
@@ -4047,6 +4081,18 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
       start: { col: minCol, row: minRow },
       end: { col: maxCol, row: maxRow }
     });
+
+    // disable hover&select style
+    if (this.stateManager.select?.ranges?.length > 0) {
+      hideCellSelectBorder(this.scenegraph);
+    }
+    const { col: hoverCol, row: hoverRow } = this.stateManager.hover.cellPos;
+    this.stateManager.updateHoverPos(-1, -1);
+    // hide scroll bar
+    this.scenegraph.component.hideVerticalScrollBar();
+    this.scenegraph.component.hideHorizontalScrollBar();
+    this.scenegraph.renderSceneGraph();
+
     const c = this.scenegraph.stage.toCanvas(
       false,
       new AABBBounds().set(
@@ -4062,6 +4108,13 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
       this.setScrollTop(scrollTop);
       this.setScrollLeft(scrollLeft);
     }
+
+    // restore hover&select style
+    if (this.stateManager.select?.ranges?.length > 0) {
+      restoreCellSelectBorder(this.scenegraph);
+    }
+    this.stateManager.updateHoverPos(hoverCol, hoverRow);
+
     return base64Image;
   }
 

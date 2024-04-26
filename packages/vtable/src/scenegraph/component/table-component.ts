@@ -7,9 +7,6 @@ import { DrillIcon } from './drill-icon';
 import { CellMover } from './cell-mover';
 import { getColX, getRowY } from './util';
 import type { BaseTableAPI } from '../../ts-types/base-table';
-import type { SceneEvent } from '../../event/util';
-import { getCellEventArgsSet } from '../../event/util';
-import type { ListTableAPI } from '../../ts-types';
 
 /**
  * @description: 表格内容外组件
@@ -30,6 +27,7 @@ export class TableComponent {
   vScrollBar: ScrollBar; // 表格横向滚动条
   hScrollBar: ScrollBar; // 表格纵向滚动条
   frozenShadowLine: IRect; // 表格冻结列右侧阴影块
+  rightFrozenShadowLine: IRect; // 表格右侧冻结列左侧阴影块
   drillIcon: DrillIcon; // drill icon
   cellMover: CellMover; // 表格列顺序调整标记
 
@@ -199,6 +197,25 @@ export class TableComponent {
         ]
       }
     });
+    this.rightFrozenShadowLine = createRect({
+      visible: true,
+      pickable: false,
+      x: 0,
+      y: 0,
+      width: shadowWidth,
+      height: 0,
+      fill: {
+        gradient: 'linear',
+        x0: 0,
+        y0: 0,
+        x1: 1,
+        y1: 0,
+        stops: [
+          { color: shadowEndColor, offset: 0 },
+          { color: shadowStartColor, offset: 1 }
+        ]
+      }
+    });
 
     // TO BE DONE 冻结列border(theme.frozenColumnLine?.border)
 
@@ -221,6 +238,7 @@ export class TableComponent {
    */
   addToGroup(componentGroup: Group) {
     componentGroup.addChild(this.frozenShadowLine);
+    componentGroup.addChild(this.rightFrozenShadowLine);
     // componentGroup.addChild(this.selectBorder);
     componentGroup.addChild(this.columnResizeBgLine);
     componentGroup.addChild(this.columnResizeLine);
@@ -614,6 +632,27 @@ export class TableComponent {
     }
   }
 
+  /**
+   * @description: 显示右侧冻结列shadow
+   * @param {number} col
+   * @return {*}
+   */
+  setRightFrozenColumnShadow(col: number) {
+    if (col >= this.table.colCount) {
+      this.rightFrozenShadowLine.setAttributes({
+        visible: false
+      });
+    } else {
+      // const colX = this.table.getColsWidth(0, col);
+      const colX = getColX(col, this.table, true);
+      this.rightFrozenShadowLine.setAttributes({
+        visible: true,
+        x: colX - this.rightFrozenShadowLine.attribute.width,
+        height: this.table.getDrawRange().height
+      });
+    }
+  }
+
   hideVerticalScrollBar() {
     const visable = this.table.theme.scrollStyle.visible;
     if (visable !== 'focus' && visable !== 'scrolling') {
@@ -768,6 +807,20 @@ export class TableComponent {
         stops: [
           { color: shadowStartColor, offset: 0 },
           { color: shadowEndColor, offset: 1 }
+        ]
+      }
+    });
+    this.rightFrozenShadowLine.setAttributes({
+      width: shadowWidth,
+      fill: {
+        gradient: 'linear',
+        x0: 0,
+        y0: 0,
+        x1: 1,
+        y1: 0,
+        stops: [
+          { color: shadowEndColor, offset: 0 },
+          { color: shadowStartColor, offset: 1 }
         ]
       }
     });

@@ -417,7 +417,7 @@ Event that changes the cell value.
 Parameter types of event callback function:
 
 ```
-{ col: number; row: number; rawValue: string | number; changedValue: string | number };
+{ col: number; row: number; rawValue: string | number; currentValue: string | number; changedValue: string | number };
 ```
 
 ## CHECKBOX_STATE_CHANGE

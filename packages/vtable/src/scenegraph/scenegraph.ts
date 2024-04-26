@@ -546,8 +546,7 @@ export class Scenegraph {
    * @return {*}
    */
   updateNextFrame() {
-    // to do
-    // this.table.invalidate();
+    this.updateContainerSync();
     this.resetAllSelectComponent();
 
     this.stage.renderNextFrame();
@@ -1199,8 +1198,13 @@ export class Scenegraph {
 
     if (!this.isPivot && !(this.table as any).transpose) {
       this.component.setFrozenColumnShadow(this.table.frozenColCount - 1);
+      this.component.setRightFrozenColumnShadow(this.table.colCount - this.table.rightFrozenColCount);
     } else if (this.table.options.frozenColCount) {
       this.component.setFrozenColumnShadow(this.table.frozenColCount - 1);
+    } else if (this.table.options.rightFrozenColCount) {
+      this.component.setRightFrozenColumnShadow(this.table.colCount - this.table.rightFrozenColCount);
+    } else {
+      this.component.setFrozenColumnShadow(-1);
     }
     this.table.stateManager.checkFrozen();
     // this.updateContainerAttrWidthAndX();
@@ -1213,9 +1217,9 @@ export class Scenegraph {
     // 更新滚动条状态
     this.component.updateScrollBar();
 
-    // 处理单元格内容需要textStick的情况  移动到了proxy progress中
+    // 处理单元格内容需要textStick的情况  入股这里不处理 只依赖异步proxy progress中处理 会有闪烁问题
 
-    // handleTextStick(this.table);
+    handleTextStick(this.table);
 
     this.updateNextFrame();
   }
@@ -1507,26 +1511,25 @@ export class Scenegraph {
       if (!this._needUpdateContainer) {
         this._needUpdateContainer = true;
         setTimeout(() => {
-          this.updateContainerAttrWidthAndX();
-
-          this.updateTableSize();
-
-          this.component.updateScrollBar();
-          this.updateNextFrame();
-
-          this._needUpdateContainer = false;
+          this.updateContainerSync();
         }, 0);
       }
     } else {
-      this.updateContainerAttrWidthAndX();
-
-      this.updateTableSize();
-
-      this.component.updateScrollBar();
-      this.updateNextFrame();
-
-      this._needUpdateContainer = false;
+      this._needUpdateContainer = true;
+      this.updateContainerSync();
     }
+  }
+
+  updateContainerSync() {
+    if (!this._needUpdateContainer) {
+      return;
+    }
+    this.updateContainerAttrWidthAndX();
+    this.updateTableSize();
+    this.component.updateScrollBar();
+
+    this._needUpdateContainer = false;
+    this.updateNextFrame();
   }
 
   updateCellContentWhileResize(col: number, row: number) {
@@ -1603,10 +1606,11 @@ export class Scenegraph {
     cellGroup?: Group,
     offset = ResizeColumnHotSpotSize / 2
   ): { col: number; row: number; x?: number; rightFrozen?: boolean } {
+    let cell: { col: number; row: number; x?: number; rightFrozen?: boolean };
     if (!cellGroup) {
       // to do: 处理最后一列外调整列宽
+      cell = this.table.getCellAt(abstractX - offset, abstractY);
     } else {
-      let cell: { col: number; row: number; x?: number; rightFrozen?: boolean };
       if (abstractX < cellGroup.globalAABBBounds.x1 + offset) {
         cell = { col: cellGroup.col - 1, row: cellGroup.row, x: cellGroup.globalAABBBounds.x1 };
       } else if (cellGroup.globalAABBBounds.x2 - offset < abstractX) {
@@ -1626,10 +1630,11 @@ export class Scenegraph {
         cell.col = cell.col + 1;
         cell.rightFrozen = true;
       }
-      if (cell) {
-        return cell;
-      }
     }
+    if (cell) {
+      return cell;
+    }
+    // }
     return { col: -1, row: -1 };
   }
 
@@ -1827,8 +1832,11 @@ export class Scenegraph {
     // update frozen shadow
     if (!this.isPivot && !(this.table as any).transpose) {
       this.component.setFrozenColumnShadow(this.table.frozenColCount - 1);
+      this.component.setRightFrozenColumnShadow(this.table.colCount - this.table.rightFrozenColCount);
     } else if (this.table.options.frozenColCount) {
       this.component.setFrozenColumnShadow(this.table.frozenColCount - 1);
+    } else if (this.table.options.rightFrozenColCount) {
+      this.component.setRightFrozenColumnShadow(this.table.colCount - this.table.rightFrozenColCount);
     }
 
     this.component.updateScrollBar();
@@ -1851,8 +1859,11 @@ export class Scenegraph {
     // update frozen shadow
     if (!this.isPivot && !(this.table as any).transpose) {
       this.component.setFrozenColumnShadow(this.table.frozenColCount - 1);
+      this.component.setRightFrozenColumnShadow(this.table.colCount - this.table.rightFrozenColCount);
     } else if (this.table.options.frozenColCount) {
       this.component.setFrozenColumnShadow(this.table.frozenColCount - 1);
+    } else if (this.table.options.rightFrozenColCount) {
+      this.component.setRightFrozenColumnShadow(this.table.colCount - this.table.rightFrozenColCount);
     }
 
     this.component.updateScrollBar();

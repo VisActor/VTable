@@ -3,7 +3,9 @@ import type { ICustomLayout } from '../../customLayout';
 import type { FieldFormat } from '../../table-engine';
 import type { ColumnIconOption } from '../../icon';
 import type { MenuListItem } from '../../menu';
-import type { CellInfo } from '../../common';
+import type { BaseCellInfo, CellInfo } from '../../common';
+import type { IEditor } from '@visactor/vtable-editors';
+import type { BaseTableAPI } from '../../base-table';
 
 export interface IBasicDimension {
   /** 维度的唯一标识 对应数据集的字段名称 */
@@ -59,4 +61,6 @@ export interface IBasicDimension {
   disableHeaderHover?: boolean;
   /** 该维度单元格不支持选中 */
   disableHeaderSelect?: boolean;
+  /** 设置表头编辑器 */
+  headerEditor?: string | IEditor | ((args: BaseCellInfo & { table: BaseTableAPI }) => string | IEditor);
 }

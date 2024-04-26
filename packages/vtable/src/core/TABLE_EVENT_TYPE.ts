@@ -35,7 +35,7 @@ export interface TableEvents {
   /**
    * 鼠标点击表格事件
    */
-  MOUSEDOWN_TABLE: 'mouseleave_table';
+  MOUSEDOWN_TABLE: 'mousedown_table';
   /**
    * 鼠标在某个单元格上移动事件
    */
@@ -173,6 +173,7 @@ export const TABLE_EVENT_TYPE: TableEvents = {
   KEYDOWN: 'keydown',
   MOUSEENTER_TABLE: 'mouseenter_table',
   MOUSELEAVE_TABLE: 'mouseleave_table',
+  MOUSEDOWN_TABLE: 'mousedown_table',
   MOUSEMOVE_CELL: 'mousemove_cell',
   MOUSEENTER_CELL: 'mouseenter_cell',
   MOUSELEAVE_CELL: 'mouseleave_cell',

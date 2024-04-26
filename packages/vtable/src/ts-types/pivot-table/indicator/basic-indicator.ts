@@ -39,6 +39,8 @@ export interface IBasicHeaderIndicator {
   disableHeaderHover?: boolean;
   /** 该指标表头单元格不支持选中 */
   disableHeaderSelect?: boolean;
+  /** 设置表头编辑器 */
+  headerEditor?: string | IEditor | ((args: BaseCellInfo & { table: BaseTableAPI }) => string | IEditor);
 }
 
 export interface IBasicColumnIndicator {

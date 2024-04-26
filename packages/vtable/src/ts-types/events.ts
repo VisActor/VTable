@@ -178,7 +178,13 @@ export interface TableEventHandlersEventArgumentMap {
   after_render: null;
   initialized: null;
 
-  change_cell_value: { col: number; row: number; rawValue: string | number; changedValue: string | number };
+  change_cell_value: {
+    col: number;
+    row: number;
+    rawValue: string | number;
+    currentValue: string | number;
+    changedValue: string | number;
+  };
 
   mousedown_fill_handle: {};
   drag_fill_handle_end: { direction?: 'top' | 'bottom' | 'left' | 'right' };

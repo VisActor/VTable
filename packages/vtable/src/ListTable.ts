@@ -1081,6 +1081,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
       const recordIndex = this.getRecordShowIndexByCell(col, row);
       const { field } = this.internalProps.layoutMap.getBody(col, row);
       const beforeChangeValue = this.getCellRawValue(col, row);
+      const oldValue = this.getCellOriginValue(col, row);
       if (this.isHeader(col, row)) {
         this.internalProps.layoutMap.updateColumnTitle(col, row, value as string);
       } else {
@@ -1148,6 +1149,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
         col,
         row,
         rawValue: beforeChangeValue,
+        currentValue: oldValue,
         changedValue: this.getCellOriginValue(col, row)
       });
       this.scenegraph.updateNextFrame();
@@ -1184,6 +1186,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
           const recordIndex = this.getRecordShowIndexByCell(startCol + j, startRow + i);
           const { field } = this.internalProps.layoutMap.getBody(startCol + j, startRow + i);
           const beforeChangeValue = this.getCellRawValue(startCol + j, startRow + i);
+          const oldValue = this.getCellOriginValue(startCol + j, startRow + i);
           if (this.isHeader(startCol + j, startRow + i)) {
             this.internalProps.layoutMap.updateColumnTitle(startCol + j, startRow + i, value as string);
           } else {
@@ -1193,6 +1196,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
             col: startCol + j,
             row: startRow + i,
             rawValue: beforeChangeValue,
+            currentValue: oldValue,
             changedValue: this.getCellOriginValue(startCol + j, startRow + i)
           });
         }

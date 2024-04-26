@@ -478,28 +478,26 @@ export class EventManager {
 
   checkColumnResize(eventArgsSet: SceneEvent, update?: boolean): boolean {
     // return false;
-    const { eventArgs } = eventArgsSet;
-    if (eventArgs) {
-      const resizeCol = this.table.scenegraph.getResizeColAt(
-        eventArgsSet.abstractPos.x,
-        eventArgsSet.abstractPos.y,
-        eventArgs.targetCell
-      );
 
-      if (this.table._canResizeColumn(resizeCol.col, resizeCol.row) && resizeCol.col >= 0) {
-        // this.table.stateManager.updateResizeCol(resizeCol.col, eventArgsSet.abstractPos.x, first);
-        // this._col = resizeCol.col;
-        if (update) {
-          this.table.stateManager.startResizeCol(
-            resizeCol.col,
-            eventArgsSet.abstractPos.x,
-            eventArgsSet.abstractPos.y,
-            resizeCol.rightFrozen
-          );
-        }
-        return true;
+    const { eventArgs } = eventArgsSet;
+    // if (eventArgs) { // 如果是鼠标处理表格外部如最后一列的后面 也期望可以拖拽列宽
+    const resizeCol = this.table.scenegraph.getResizeColAt(
+      eventArgsSet.abstractPos.x,
+      eventArgsSet.abstractPos.y,
+      eventArgs?.targetCell
+    );
+    if (this.table._canResizeColumn(resizeCol.col, resizeCol.row) && resizeCol.col >= 0) {
+      if (update) {
+        this.table.stateManager.startResizeCol(
+          resizeCol.col,
+          eventArgsSet.abstractPos.x,
+          eventArgsSet.abstractPos.y,
+          resizeCol.rightFrozen
+        );
       }
+      return true;
     }
+    // }
 
     return false;
   }

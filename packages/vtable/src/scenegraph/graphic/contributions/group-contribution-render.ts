@@ -263,9 +263,11 @@ export function renderStroke(
   //   context.setLineDash(highlightDash);
   //   context.lineCap = 'butt';
   // }
-  const lineDash = context.getLineDash();
+
+  const { lineDash = groupAttribute.lineDash } = group.attribute as any;
+  // const lineDash = context.getLineDash();
   let isDash = false;
-  if (lineDash.length) {
+  if (lineDash.length && lineDash.some((dash: number[] | null) => Array.isArray(dash))) {
     isDash = true;
   }
   // 单独处理每条边界，目前不考虑圆角
@@ -293,6 +295,9 @@ export function renderStroke(
         context.lineWidth = strokeArrayWidth[0];
       }
       context.lineDashOffset = context.currentMatrix.e / context.currentMatrix.a;
+      if (isDash) {
+        context.setLineDash(lineDash[0] ?? []);
+      }
       context.stroke();
       context.beginPath();
       context.moveTo(x + width, y);
@@ -321,6 +326,9 @@ export function renderStroke(
         context.lineWidth = strokeArrayWidth[1];
       }
       context.lineDashOffset = context.currentMatrix.f / context.currentMatrix.d;
+      if (isDash) {
+        context.setLineDash(lineDash[1] ?? []);
+      }
       context.stroke();
       context.beginPath();
       context.moveTo(x + width, y + height);
@@ -349,6 +357,9 @@ export function renderStroke(
         context.lineWidth = strokeArrayWidth[2];
       }
       context.lineDashOffset = context.currentMatrix.e / context.currentMatrix.a;
+      if (isDash) {
+        context.setLineDash(lineDash[2] ?? []);
+      }
       context.stroke();
       context.beginPath();
       context.moveTo(x, y + height);
@@ -377,6 +388,9 @@ export function renderStroke(
         context.lineWidth = strokeArrayWidth[3];
       }
       context.lineDashOffset = context.currentMatrix.f / context.currentMatrix.d;
+      if (isDash) {
+        context.setLineDash(lineDash[3] ?? []);
+      }
       context.stroke();
       context.beginPath();
       context.moveTo(x, y);
@@ -393,6 +407,7 @@ export function renderStroke(
     context.stroke();
   }
   context.lineDashOffset = 0;
+  context.setLineDash([]);
 }
 
 // DashGroupContribution处理虚线边框对齐
@@ -538,6 +553,7 @@ export class DashGroupAfterRenderContribution implements IGroupRenderContributio
     context.moveTo(x, y);
     context.lineTo(x + widthForStroke, y);
     context.lineDashOffset = context.currentMatrix.e / context.currentMatrix.a;
+    context.setLineDash(lineDash[0] ?? []);
     context.stroke();
 
     // right
@@ -545,6 +561,7 @@ export class DashGroupAfterRenderContribution implements IGroupRenderContributio
     context.moveTo(x + widthForStroke, y);
     context.lineTo(x + widthForStroke, y + heightForStroke);
     context.lineDashOffset = context.currentMatrix.f / context.currentMatrix.d;
+    context.setLineDash(lineDash[1] ?? []);
     context.stroke();
 
     // bottom
@@ -552,6 +569,7 @@ export class DashGroupAfterRenderContribution implements IGroupRenderContributio
     context.moveTo(x, y + heightForStroke);
     context.lineTo(x + widthForStroke, y + heightForStroke);
     context.lineDashOffset = context.currentMatrix.e / context.currentMatrix.a;
+    context.setLineDash(lineDash[2] ?? []);
     context.stroke();
 
     // left
@@ -559,7 +577,11 @@ export class DashGroupAfterRenderContribution implements IGroupRenderContributio
     context.moveTo(x, y);
     context.lineTo(x, y + heightForStroke);
     context.lineDashOffset = context.currentMatrix.f / context.currentMatrix.d;
+    context.setLineDash(lineDash[3] ?? []);
     context.stroke();
+
+    context.lineDashOffset = 0;
+    context.setLineDash([]);
   }
 }
 
