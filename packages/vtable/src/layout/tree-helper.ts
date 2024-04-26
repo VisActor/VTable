@@ -579,7 +579,7 @@ export function dealHeaderForTreeMode(
     },
     hierarchyLevel: hd.level,
     dimensionTotalLevel: totalLevel,
-    hierarchyState: hd.level + 1 === totalLevel ? undefined : hd.hierarchyState,
+    hierarchyState: hd.hierarchyState, //hd.level + 1 === totalLevel ? undefined : hd.hierarchyState,
     width: (dimensionInfo as IRowDimension)?.width,
     minWidth: (dimensionInfo as IRowDimension)?.minWidth,
     maxWidth: (dimensionInfo as IRowDimension)?.maxWidth,
