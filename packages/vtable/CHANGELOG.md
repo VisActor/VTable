@@ -1,6 +1,35 @@
 # Change Log - @visactor/vtable
 
-This log was last generated on Tue, 23 Apr 2024 11:19:00 GMT and should not be manually modified.
+This log was last generated on Sun, 28 Apr 2024 06:22:38 GMT and should not be manually modified.
+
+## 0.25.0
+Sun, 28 Apr 2024 06:22:38 GMT
+
+### Minor changes
+
+- feat: add row resize function
+
+### Updates
+
+- feat: pivot table header cell support edit #1583
+
+
+- feat: customrender or customlayout support edit #1596
+
+
+- fix: editor input value handle with 0value #1590
+
+
+- fix: when set textStick init and updateOption text jump #1592
+
+
+- fix: clear async contain resize task before render #1593
+- fix: hierarchy state icon can not show when only one level
+
+
+- refactor: resize last column width can be more  flexibly #1567
+
+
 
 ## 0.24.1
 Tue, 23 Apr 2024 11:19:00 GMT
