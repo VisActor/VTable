@@ -479,6 +479,13 @@
             "zh": "行序号",
             "en": "row series number"
           }
+        },
+        {
+          "path": "pagination",
+          "title": {
+            "zh": "分页",
+            "en": "pagination"
+          }
         }
       ]
     },
