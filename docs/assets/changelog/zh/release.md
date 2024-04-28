@@ -1,29 +1,3 @@
-# v0.25.0
-
-2024-04-28
-
-
-**🆕 新增功能**
-
-- **@visactor/vtable**: pivot table header cell support edit [#1583](https://github.com/VisActor/VTable/issues/1583)
-- **@visactor/vtable**: customrender or customlayout support edit [#1596](https://github.com/VisActor/VTable/issues/1596)
-- **@visactor/vtable**: add row resize function
-
-**🐛 功能修复**
-
-- **@visactor/vtable**: editor input value handle with 0value [#1590](https://github.com/VisActor/VTable/issues/1590)
-- **@visactor/vtable**: when set textStick init and updateOption text jump [#1592](https://github.com/VisActor/VTable/issues/1592)
-- **@visactor/vtable**: clear async contain resize task before render [#1593](https://github.com/VisActor/VTable/issues/1593)
-- **@visactor/vtable**: hierarchy state icon can not show when only one level
-
-**🔨 功能重构**
-
-- **@visactor/vtable**: resize last column width can be more  flexibly [#1567](https://github.com/VisActor/VTable/issues/1567)
-
-
-
-[更多详情请查看 v0.25.0](https://github.com/VisActor/VTable/releases/tag/v0.25.0)
-
 # v0.24.1
 
 2024-04-23
