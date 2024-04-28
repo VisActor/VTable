@@ -5,7 +5,6 @@ import type { PivotChart } from '../../PivotChart';
 import { getAxisDomainRangeAndLabels } from './get-axis-domain';
 import type { CollectedValue } from '../../ts-types';
 import { getNewRangeToAlign } from './zero-align';
-import { isCartesianChart } from './get-chart-spec';
 
 export function getAxisConfigInPivotChart(col: number, row: number, layout: PivotHeaderLayoutMap): any {
   if (!layout._table.isPivotChart()) {

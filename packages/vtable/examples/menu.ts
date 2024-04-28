@@ -176,6 +176,22 @@ export const menus = [
       },
       {
         path: 'pivot-chart',
+        name: 'pivotChart-wordCloud'
+      },
+      {
+        path: 'pivot-chart',
+        name: 'pivotChart-radar'
+      },
+      {
+        path: 'pivot-chart',
+        name: 'pivotChart-rose'
+      },
+      {
+        path: 'pivot-chart',
+        name: 'pivotChart-gauge'
+      },
+      {
+        path: 'pivot-chart',
         name: 'pivotChart-pie'
       },
       {

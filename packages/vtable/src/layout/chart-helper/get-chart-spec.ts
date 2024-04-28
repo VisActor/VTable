@@ -60,6 +60,9 @@ export function checkHasCartesianChart(layout: PivotHeaderLayoutMap) {
     const columnObj = layout.indicatorsDefine[i] as IChartIndicator;
     if (columnObj.chartSpec) {
       if (
+        columnObj.chartSpec.type !== 'wordCloud' &&
+        columnObj.chartSpec.type !== 'radar' &&
+        columnObj.chartSpec.type !== 'gauge' &&
         columnObj.chartSpec.type !== 'pie' &&
         columnObj.chartSpec.type !== 'funnel' &&
         columnObj.chartSpec.type !== 'rose'
@@ -77,7 +80,14 @@ export function isCartesianChart(col: number, row: number, layout: PivotHeaderLa
   let isHasCartesianChart = true;
   const chartSpec = layout.getRawChartSpec(col, row);
   if (chartSpec) {
-    if (chartSpec.type === 'pie' || chartSpec.type === 'funnel' || chartSpec.type === 'rose') {
+    if (
+      chartSpec.type === 'pie' ||
+      chartSpec.type === 'radar' ||
+      chartSpec.type === 'gauge' ||
+      chartSpec.type === 'wordCloud' ||
+      chartSpec.type === 'funnel' ||
+      chartSpec.type === 'rose'
+    ) {
       isHasCartesianChart = false;
     }
   } else {
@@ -101,6 +111,9 @@ export function isHasCartesianChartInline(
       if (columnObj.chartSpec) {
         if (
           columnObj.chartSpec.type !== 'pie' &&
+          columnObj.chartSpec.type !== 'wordCloud' &&
+          columnObj.chartSpec.type !== 'radar' &&
+          columnObj.chartSpec.type !== 'gauge' &&
           columnObj.chartSpec.type !== 'funnel' &&
           columnObj.chartSpec.type !== 'rose'
         ) {
@@ -112,7 +125,14 @@ export function isHasCartesianChartInline(
   } else {
     const chartSpec = layout.getRawChartSpec(col, row);
     if (chartSpec) {
-      if (chartSpec.type !== 'pie' && chartSpec.type !== 'funnel' && chartSpec.type !== 'rose') {
+      if (
+        chartSpec.type !== 'pie' &&
+        chartSpec.type !== 'radar' &&
+        chartSpec.type !== 'gauge' &&
+        chartSpec.type !== 'wordCloud' &&
+        chartSpec.type !== 'funnel' &&
+        chartSpec.type !== 'rose'
+      ) {
         isHasCartesianChart = true;
       }
     } else {
@@ -133,7 +153,9 @@ export function getChartSpec(col: number, row: number, layout: PivotHeaderLayout
           serie.sortDataByAxis = true;
         });
       }
-      chartSpec.axes = layout.getChartAxes(col, row);
+      if (chartSpec.type !== 'gauge' && chartSpec.type !== 'rose' && chartSpec.type !== 'radar') {
+        chartSpec.axes = layout.getChartAxes(col, row);
+      }
       chartSpec.padding = 0;
       chartSpec.dataZoom = []; // Do not support datazoom temply
       return chartSpec;
