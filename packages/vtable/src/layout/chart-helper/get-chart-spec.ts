@@ -128,7 +128,7 @@ export function isHasCartesianChartInline(
       if (
         chartSpec.type !== 'pie' &&
         chartSpec.type !== 'radar' &&
-        chartSpec.type === 'gauge' &&
+        chartSpec.type !== 'gauge' &&
         chartSpec.type !== 'wordCloud' &&
         chartSpec.type !== 'funnel' &&
         chartSpec.type !== 'rose'

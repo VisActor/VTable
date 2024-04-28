@@ -96,10 +96,5 @@ export function createTable() {
       window.tableInstance = tableInstance;
 
       bindDebugTool(tableInstance.scenegraph.stage, { customGrapicKeys: ['col', 'row'] });
-
-      window.update = () => {
-        theme.cornerLeftBottomCellStyle.borderColor = 'red';
-        tableInstance.updateTheme(theme);
-      };
     });
 }
