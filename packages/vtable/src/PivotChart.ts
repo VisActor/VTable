@@ -724,7 +724,13 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
 
     for (let i = 0, len = indicators?.length; i < len; i++) {
       if (typeof indicators[i] !== 'string' && (indicators[i] as IChartColumnIndicator).chartSpec) {
-        if ((indicators[i] as IChartColumnIndicator).chartSpec?.type === 'pie') {
+        if (
+          (indicators[i] as IChartColumnIndicator).chartSpec?.type === 'pie' ||
+          (indicators[i] as IChartColumnIndicator).chartSpec?.type === 'rose' ||
+          (indicators[i] as IChartColumnIndicator).chartSpec?.type === 'radar' ||
+          (indicators[i] as IChartColumnIndicator).chartSpec?.type === 'gauge' ||
+          (indicators[i] as IChartColumnIndicator).chartSpec?.type === 'wordCloud'
+        ) {
           continue;
         }
         const indicatorDefine = indicators[i] as IIndicator;
