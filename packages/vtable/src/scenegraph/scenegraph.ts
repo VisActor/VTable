@@ -1524,11 +1524,11 @@ export class Scenegraph {
     if (!this._needUpdateContainer) {
       return;
     }
+    this._needUpdateContainer = false;
     this.updateContainerAttrWidthAndX();
     this.updateTableSize();
     this.component.updateScrollBar();
 
-    this._needUpdateContainer = false;
     this.updateNextFrame();
   }
 
