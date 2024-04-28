@@ -18,7 +18,7 @@ import { updateRowHeight } from './layout/update-height';
 import { updateImageCellContentWhileResize } from './group-creater/cell-type/image-cell';
 import { getQuadProps } from './utils/padding';
 import { createFrameBorder, updateCornerRadius, updateFrameBorder, updateFrameBorderSize } from './style/frame-border';
-import { ResizeColumnHotSpotSize } from '../tools/global';
+import { ResizeColumnHotSpotSize, ResizeRowHotSpotSize } from '../tools/global';
 import splitModule from './graphic/contributions';
 import { getFunctionalProp, getProp } from './utils/get-prop';
 import { dealWithIcon } from './utils/text-icon-layout';
@@ -546,8 +546,7 @@ export class Scenegraph {
    * @return {*}
    */
   updateNextFrame() {
-    // to do
-    // this.table.invalidate();
+    this.updateContainerSync();
     this.resetAllSelectComponent();
 
     this.stage.renderNextFrame();
@@ -836,7 +835,11 @@ export class Scenegraph {
       // 1. error amplification（误差放大） in dealHeightMode when multiple resize
       // 2. width update caused height update dose not have enlarge/reduce number,
       // will cause scale error in dealHeightMode()
-      this.recalculateRowHeights();
+      if (this.table.internalProps._heightResizedRowMap.size === 0) {
+        this.recalculateRowHeights();
+      } else {
+        this.dealHeightMode();
+      }
       // this.dealHeightMode();
     } else if (this.table.autoFillHeight) {
       this.dealHeightMode();
@@ -1195,8 +1198,13 @@ export class Scenegraph {
 
     if (!this.isPivot && !(this.table as any).transpose) {
       this.component.setFrozenColumnShadow(this.table.frozenColCount - 1);
+      this.component.setRightFrozenColumnShadow(this.table.colCount - this.table.rightFrozenColCount);
     } else if (this.table.options.frozenColCount) {
       this.component.setFrozenColumnShadow(this.table.frozenColCount - 1);
+    } else if (this.table.options.rightFrozenColCount) {
+      this.component.setRightFrozenColumnShadow(this.table.colCount - this.table.rightFrozenColCount);
+    } else {
+      this.component.setFrozenColumnShadow(-1);
     }
     this.table.stateManager.checkFrozen();
     // this.updateContainerAttrWidthAndX();
@@ -1209,9 +1217,9 @@ export class Scenegraph {
     // 更新滚动条状态
     this.component.updateScrollBar();
 
-    // 处理单元格内容需要textStick的情况  移动到了proxy progress中
+    // 处理单元格内容需要textStick的情况  入股这里不处理 只依赖异步proxy progress中处理 会有闪烁问题
 
-    // handleTextStick(this.table);
+    handleTextStick(this.table);
 
     this.updateNextFrame();
   }
@@ -1503,26 +1511,25 @@ export class Scenegraph {
       if (!this._needUpdateContainer) {
         this._needUpdateContainer = true;
         setTimeout(() => {
-          this.updateContainerAttrWidthAndX();
-
-          this.updateTableSize();
-
-          this.component.updateScrollBar();
-          this.updateNextFrame();
-
-          this._needUpdateContainer = false;
+          this.updateContainerSync();
         }, 0);
       }
     } else {
-      this.updateContainerAttrWidthAndX();
-
-      this.updateTableSize();
-
-      this.component.updateScrollBar();
-      this.updateNextFrame();
-
-      this._needUpdateContainer = false;
+      this._needUpdateContainer = true;
+      this.updateContainerSync();
     }
+  }
+
+  updateContainerSync() {
+    if (!this._needUpdateContainer) {
+      return;
+    }
+    this._needUpdateContainer = false;
+    this.updateContainerAttrWidthAndX();
+    this.updateTableSize();
+    this.component.updateScrollBar();
+
+    this.updateNextFrame();
   }
 
   updateCellContentWhileResize(col: number, row: number) {
@@ -1599,10 +1606,11 @@ export class Scenegraph {
     cellGroup?: Group,
     offset = ResizeColumnHotSpotSize / 2
   ): { col: number; row: number; x?: number; rightFrozen?: boolean } {
+    let cell: { col: number; row: number; x?: number; rightFrozen?: boolean };
     if (!cellGroup) {
       // to do: 处理最后一列外调整列宽
+      cell = this.table.getCellAt(abstractX - offset, abstractY);
     } else {
-      let cell: { col: number; row: number; x?: number; rightFrozen?: boolean };
       if (abstractX < cellGroup.globalAABBBounds.x1 + offset) {
         cell = { col: cellGroup.col - 1, row: cellGroup.row, x: cellGroup.globalAABBBounds.x1 };
       } else if (cellGroup.globalAABBBounds.x2 - offset < abstractX) {
@@ -1621,6 +1629,38 @@ export class Scenegraph {
         // 有右侧冻结列，并且横向没有滚动到最右侧时，右侧冻结列左侧调整对只对右侧冻结列生效
         cell.col = cell.col + 1;
         cell.rightFrozen = true;
+      }
+    }
+    if (cell) {
+      return cell;
+    }
+    // }
+    return { col: -1, row: -1 };
+  }
+
+  getResizeRowAt(abstractX: number, abstractY: number, cellGroup?: Group, offset = ResizeRowHotSpotSize / 2) {
+    if (!cellGroup) {
+      // to do: 处理最后一列外调整列宽
+    } else {
+      let cell: { col: number; row: number; y?: number; bottomFrozen?: boolean };
+      if (abstractY < cellGroup.globalAABBBounds.y1 + offset) {
+        cell = { col: cellGroup.col, row: cellGroup.row - 1, y: cellGroup.globalAABBBounds.y1 };
+      } else if (cellGroup.globalAABBBounds.y2 - offset < abstractY) {
+        cell = { col: cellGroup.col, row: cellGroup.row, y: cellGroup.globalAABBBounds.y2 };
+      }
+      if (
+        cell &&
+        this.table.bottomFrozenRowCount > 0 &&
+        cell.row === this.table.rowCount - this.table.bottomFrozenRowCount - 1 &&
+        this.table.tableNoFrameHeight -
+          this.table.getFrozenRowsHeight() -
+          this.table.getBottomFrozenRowsHeight() +
+          this.table.scrollTop <
+          this.bodyGroup.attribute.height
+      ) {
+        // 有下侧冻结行，并且纵向没有滚动到最下侧时，下侧冻结行左侧调整对只对下侧冻结行生效
+        cell.row = cell.row + 1;
+        cell.bottomFrozen = true;
       }
       if (cell) {
         return cell;
@@ -1792,8 +1832,11 @@ export class Scenegraph {
     // update frozen shadow
     if (!this.isPivot && !(this.table as any).transpose) {
       this.component.setFrozenColumnShadow(this.table.frozenColCount - 1);
+      this.component.setRightFrozenColumnShadow(this.table.colCount - this.table.rightFrozenColCount);
     } else if (this.table.options.frozenColCount) {
       this.component.setFrozenColumnShadow(this.table.frozenColCount - 1);
+    } else if (this.table.options.rightFrozenColCount) {
+      this.component.setRightFrozenColumnShadow(this.table.colCount - this.table.rightFrozenColCount);
     }
 
     this.component.updateScrollBar();
@@ -1816,8 +1859,11 @@ export class Scenegraph {
     // update frozen shadow
     if (!this.isPivot && !(this.table as any).transpose) {
       this.component.setFrozenColumnShadow(this.table.frozenColCount - 1);
+      this.component.setRightFrozenColumnShadow(this.table.colCount - this.table.rightFrozenColCount);
     } else if (this.table.options.frozenColCount) {
       this.component.setFrozenColumnShadow(this.table.frozenColCount - 1);
+    } else if (this.table.options.rightFrozenColCount) {
+      this.component.setRightFrozenColumnShadow(this.table.colCount - this.table.rightFrozenColCount);
     }
 
     this.component.updateScrollBar();

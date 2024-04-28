@@ -100,6 +100,8 @@ export interface TableEventHandlersEventArgumentMap {
   };
   resize_column: { col: number; colWidth: number };
   resize_column_end: { col: number; colWidths: number[] };
+  resize_row: { row: number; rowHeight: number };
+  resize_row_end: { row: number; rowHeight: number };
   change_header_position: { source: CellAddress; target: CellAddress };
   sort_click: {
     field: FieldDef;
@@ -176,7 +178,13 @@ export interface TableEventHandlersEventArgumentMap {
   after_render: null;
   initialized: null;
 
-  change_cell_value: { col: number; row: number; rawValue: string | number; changedValue: string | number };
+  change_cell_value: {
+    col: number;
+    row: number;
+    rawValue: string | number;
+    currentValue: string | number;
+    changedValue: string | number;
+  };
 
   mousedown_fill_handle: {};
   drag_fill_handle_end: { direction?: 'top' | 'bottom' | 'left' | 'right' };
@@ -212,6 +220,8 @@ export interface TableEventHandlersReturnMap {
   blur_table: void;
   resize_column: void;
   resize_column_end: void;
+  resize_row: void;
+  resize_row_end: void;
   change_header_position: void;
   sort_click: boolean;
   freeze_click: void;

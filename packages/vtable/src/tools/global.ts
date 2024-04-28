@@ -16,6 +16,7 @@ export const regUrl = /^(https?|ftp|file):\/\/[-A-Za-z0-9+&@#/%?=~_|!:,.;]+[-A-Z
  * 调整列宽热区宽度
  */
 export const ResizeColumnHotSpotSize = 16;
+export const ResizeRowHotSpotSize = 16;
 
 /** 指标维度 在行列维度分析中占位标识 */
 export const IndicatorDimensionKeyPlaceholder = '$$indicator$$';

@@ -448,7 +448,7 @@ icon 图标点击事件。
 事件回调函数的参数类型:
 
 ```
-{ col: number; row: number; rawValue: string | number; changedValue: string | number };
+{ col: number; row: number; rawValue: string | number;currentValue: string | number;  changedValue: string | number };
 ```
 
 ## CHECKBOX_STATE_CHANGE

@@ -231,7 +231,123 @@ VTable.register.icon('message',{
         fontSize:12,
         fontWeight:'bold'
       }
-    }, 
+    },
+    {
+        field: '',
+        title: 'options',
+        width: 200,
+        customLayout: (args) => {
+          const { table, row, col, rect } = args;
+          const { height, width } = rect ?? table.getCellRect(col, row);
+
+          const container = new VTable.CustomLayout.Group({
+            height,
+            width,
+            display: 'flex',
+            flexDirection: 'column',
+            // alignItems: 'center',
+            justifyContent: 'center'
+          });
+
+          const checkboxGroup = new VTable.CustomLayout.Group({
+            display: 'flex',
+            flexDirection: 'row',
+            flexWrap: 'no-wrap',
+            boundsPadding: [5, 0, 5, 10],
+            justifyContent: 'center'
+          });
+          container.appendChild(checkboxGroup);
+
+          const checkboxText = new VTable.CustomLayout.Text({
+            text: 'operate: ',
+            fontSize: 12,
+            boundsPadding: [0, 10, 0, 0]
+          });
+          checkboxGroup.appendChild(checkboxText);
+
+          const checkbox1 = new VTable.CustomLayout.CheckBox({
+            text: {
+              text: 'like',
+              fontSize: 12
+            },
+            spaceBetweenTextAndIcon: 2,
+            boundsPadding: [0, 10, 0, 0]
+          });
+          checkbox1.render();
+          checkboxGroup.appendChild(checkbox1);
+          checkbox1.addEventListener('checkbox_state_change', e => {
+            console.log('checkbox_state_change', e);
+          });
+
+          const checkbox2 = new VTable.CustomLayout.CheckBox({
+            text: {
+              text: 'collect',
+              fontSize: 12
+            },
+            spaceBetweenTextAndIcon: 2
+            // boundsPadding: [10, 0, 0, 10]
+          });
+          checkbox2.render();
+          checkboxGroup.appendChild(checkbox2);
+          checkbox2.addEventListener('checkbox_state_change', e => {
+            console.log('checkbox_state_change', e);
+          });
+
+          const radioGroup = new VTable.CustomLayout.Group({
+            display: 'flex',
+            flexDirection: 'row',
+            flexWrap: 'no-wrap',
+            boundsPadding: [5, 0, 5, 10]
+          });
+          container.appendChild(radioGroup);
+
+          const radioText = new VTable.CustomLayout.Text({
+            text: 'type: ',
+            fontSize: 12,
+            boundsPadding: [0, 10, 0, 0]
+          });
+          radioGroup.appendChild(radioText);
+
+          const radio1 = new VTable.CustomLayout.Radio({
+            text: {
+              text: 'normal',
+              fontSize: 12
+            },
+            checked: true,
+            spaceBetweenTextAndIcon: 2,
+            boundsPadding: [0, 10, 0, 0]
+          });
+          radio1.render();
+          radioGroup.appendChild(radio1);
+          radio1.addEventListener('radio_checked', () => {
+            if (radio2.attribute.checked) {
+              radio2.setAttribute('checked', false);
+              table.scenegraph.updateNextFrame();
+            }
+          });
+
+          const radio2 = new VTable.CustomLayout.Radio({
+            text: {
+              text: 'special',
+              fontSize: 12
+            },
+            spaceBetweenTextAndIcon: 2
+          });
+          radio2.render();
+          radioGroup.appendChild(radio2);
+          radio2.addEventListener('radio_checked', () => {
+            if (radio1.attribute.checked) {
+              radio1.setAttribute('checked', false);
+              table.scenegraph.updateNextFrame();
+            }
+          });
+
+          return {
+            rootContainer: container,
+            renderDefault: false
+          };
+        }
+      },
     {
       field: '',
       title:'operation',

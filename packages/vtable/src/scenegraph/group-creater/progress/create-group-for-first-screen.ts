@@ -44,8 +44,10 @@ export function createGroupForFirstScreen(
     computeColsWidth(table, 0, distCol);
   }
 
-  // compute rows height in first screen
-  computeRowsHeight(table, 0, distRow);
+  if (table.internalProps._heightResizedRowMap.size === 0) {
+    // compute rows height in first screen
+    computeRowsHeight(table, 0, distRow);
+  }
 
   if (distCol < table.colCount - table.rightFrozenColCount) {
     // compute right frozen row height
@@ -290,7 +292,12 @@ export function createGroupForFirstScreen(
     );
 
   // update progress information
-  if (!bodyGroup.firstChild && !colHeaderGroup.firstChild) {
+  if (
+    !bodyGroup.firstChild &&
+    !colHeaderGroup.firstChild &&
+    !cornerHeaderGroup.firstChild &&
+    !rowHeaderGroup.firstChild
+  ) {
     // 无数据
     proxy.currentRow = proxy.totalRow;
     proxy.rowEnd = proxy.currentRow;
@@ -302,13 +309,18 @@ export function createGroupForFirstScreen(
     proxy.colUpdatePos = proxy.colEnd + 1;
     proxy.referenceCol = proxy.colStart + Math.floor((proxy.colEnd - proxy.colStart) / 2);
   } else {
-    proxy.currentRow = (bodyGroup.firstChild as Group)?.rowNumber ?? proxy.totalRow;
+    proxy.currentRow =
+      (bodyGroup.firstChild as Group)?.rowNumber ?? (rowHeaderGroup.firstChild as Group)?.rowNumber ?? proxy.totalRow;
     proxy.rowEnd = proxy.currentRow;
     proxy.rowUpdatePos = proxy.rowEnd + 1;
     proxy.referenceRow = proxy.rowStart + Math.floor((proxy.rowEnd - proxy.rowStart) / 2);
 
     proxy.currentCol =
-      (bodyGroup.lastChild as Group)?.col ?? (colHeaderGroup.lastChild as Group)?.col ?? proxy.totalCol;
+      (bodyGroup.lastChild as Group)?.col ??
+      (colHeaderGroup.lastChild as Group)?.col ??
+      (rowHeaderGroup.lastChild as Group)?.col ??
+      (cornerHeaderGroup.lastChild as Group)?.col ??
+      proxy.totalCol;
     proxy.colEnd = proxy.currentCol;
     proxy.colUpdatePos = proxy.colEnd + 1;
     proxy.referenceCol = proxy.colStart + Math.floor((proxy.colEnd - proxy.colStart) / 2);

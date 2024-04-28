@@ -2,6 +2,41 @@
   "name": "@visactor/vtable",
   "entries": [
     {
+      "version": "0.25.0",
+      "tag": "@visactor/vtable_v0.25.0",
+      "date": "Sun, 28 Apr 2024 06:22:38 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "feat: pivot table header cell support edit #1583\n\n"
+          },
+          {
+            "comment": "feat: customrender or customlayout support edit #1596\n\n"
+          },
+          {
+            "comment": "fix: editor input value handle with 0value #1590\n\n"
+          },
+          {
+            "comment": "fix: when set textStick init and updateOption text jump #1592\n\n"
+          },
+          {
+            "comment": "fix: clear async contain resize task before render #1593"
+          },
+          {
+            "comment": "fix: hierarchy state icon can not show when only one level\n\n"
+          },
+          {
+            "comment": "refactor: resize last column width can be more  flexibly #1567\n\n"
+          }
+        ],
+        "minor": [
+          {
+            "comment": "feat: add row resize function"
+          }
+        ]
+      }
+    },
+    {
       "version": "0.24.1",
       "tag": "@visactor/vtable_v0.24.1",
       "date": "Tue, 23 Apr 2024 11:19:00 GMT",

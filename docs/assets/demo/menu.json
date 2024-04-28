@@ -540,8 +540,8 @@
         {
           "path": "context-menu",
           "title": {
-            "zh": "右键菜单",
-            "en": "Right click menu"
+            "zh": "右键菜单(复制/粘贴/删除)",
+            "en": "Right click menu(copy/paste/delete)"
           },
           "meta": {
             "title": "Right click menu",
@@ -558,6 +558,13 @@
           "title": {
             "zh": "调整列宽",
             "en": "Adjust column width"
+          }
+        },
+        {
+          "path": "resize-row-height",
+          "title": {
+            "zh": "调整行高",
+            "en": "Adjust row height"
           }
         },
         {

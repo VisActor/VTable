@@ -454,8 +454,9 @@ export class SceneProxy {
       this.updateDeltaY(y);
       this.updateBody(y - this.deltaY);
     } else if (
-      !this.table.scenegraph.bodyGroup.firstChild ||
-      this.table.scenegraph.bodyGroup.firstChild.childrenCount === 0
+      (!this.table.scenegraph.bodyGroup.firstChild || this.table.scenegraph.bodyGroup.firstChild.childrenCount === 0) &&
+      (!this.table.scenegraph.rowHeaderGroup.firstChild ||
+        this.table.scenegraph.rowHeaderGroup.firstChild.childrenCount === 0)
     ) {
       this.updateDeltaY(y);
       // 兼容异步加载数据promise的情况 childrenCount=0 如果用户立即调用setScrollTop执行dynamicSetY会出错
@@ -745,7 +746,10 @@ export class SceneProxy {
         this.deltaY = -deltaY;
       }
     } else if (isValid(screenTopY) && isValid(screenTopRow)) {
-      const cellGroup = this.table.scenegraph.highPerformanceGetCell(this.colStart, screenTopRow, true);
+      let cellGroup = this.table.scenegraph.highPerformanceGetCell(this.colStart, screenTopRow, true);
+      if (cellGroup.role !== 'cell') {
+        cellGroup = this.table.scenegraph.highPerformanceGetCell(0, screenTopRow, true);
+      }
       const bodyY = y - this.deltaY;
       const distRowYOffset = screenTopY - bodyY; // dist cell 距离表格顶部的位置差
       const currentRowYOffset = cellGroup.attribute.y - bodyY + this.table.getFrozenRowsHeight(); // current cell 距离表格顶部的位置差

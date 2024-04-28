@@ -1,16 +1,16 @@
-# 列宽调整
+# 行高列宽调整
 
-在实际应用中，表格中的数据长度往往各不相同，数据较长的列可能会影响其他列的布局。为了更好地展示数据，我们需要根据数据内容调整列宽。VTable 提供了列宽调整功能，以便用户根据需求轻松调整表格列宽。
+在实际应用中，表格中的数据长度往往各不相同，数据较长的列可能会影响其他列的布局。为了更好地展示数据，我们需要根据数据内容调整行高列宽。VTable 提供了行高列宽调整功能，以便用户根据需求轻松调整表格行高列宽。
 ![image](https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/a2c7623458257d1562627090b.gif)
 
-## 调整列宽开关
+## 调整行高列宽开关
 
-我们可以通过设置 `columnResizeMode` 来开启或关闭列宽调整功能。该配置项有以下几种可选值:
+我们可以通过设置 `columnResizeMode` 来开启或关闭列宽调整功能；`rowResizeMode` 来开启或关闭行高调整功能。该配置项有以下几种可选值:
 
-- 'all': 整列包括表头和 body 处的单元格均可调整列宽
-- 'none': 禁止调整列宽
-- 'header': 只能在表头处单元调整列宽
-- 'body': 只能在 body 单元格调整列宽
+- 'all': 整列包括表头和 body 处的单元格均可调整列宽/行高
+- 'none': 禁止调整列宽/行高
+- 'header': 只能在表头处单元调整列宽/行高
+- 'body': 只能在 body 单元格调整列宽/行高
 
 ## 调整列宽限制
 
@@ -30,7 +30,7 @@
 
 设置后，列宽在拖拽调整时将不超过设定范围。
 
-## 列宽调整作用范围
+## 列宽行高调整作用范围
 
 配置项(透视表及透视图支持)：
 
@@ -39,11 +39,15 @@
    * 调整列宽的生效范围：'column' | 'indicator' | 'all' | 'indicatorGroup'，单列|按指标|所有列|属于同一维度值的多个指标
    */
  columnResizeType?: 'column' | 'indicator' | 'all' | 'indicatorGroup';
+   /**
+   * 调整行高的生效范围：'row' | 'indicator' | 'all' | 'indicatorGroup'，单行|按指标|所有行|属于同一维度值的多个指标
+   */
+ rowResizeType?: 'row' | 'indicator' | 'all' | 'indicatorGroup';
 ```
 
-- `column`：默认值，仅调整当前列的宽度；
-- `indicator`：相同指标列的列宽一并调整；
-- `all`：所有列的列宽一并调整；
+- `column`/`row`：默认值，仅调整当前列/行的宽度；
+- `indicator`：相同指标列的列宽/行高一并调整；
+- `all`：所有列的列宽/行高一并调整；
 - `indicatorGroup`：同一组的指标列一并调整，如东北维度值下有两个指标为：销售额和利润，当调整销售额的列宽时，利润列也会进行调整；
 
 ## 列宽调整作用范围配置示例
@@ -1028,6 +1032,8 @@ const option = {
 const tableInstance = new VTable.PivotTable(document.getElementById(CONTAINER_ID), option);
 ```
 
+行高调整作用范围同理。
+
 ## 双击自动列宽
 
 当用户在浏览数据时，发现数据被折叠想要查看完整数据，可以通过双击交互来按内容展开列宽。
@@ -1041,7 +1047,7 @@ const tableInstance = new VTable.PivotTable(document.getElementById(CONTAINER_ID
 
 ## 调整列宽交互效果配置
 
-在进行列宽调整时，我们可以自定义调整列宽标记线的样式。在 `theme.columnResize` 对象中，我们可以设置以下配置项：
+在进行列宽行高调整时，我们可以自定义调整列宽标记线的样式。在 `theme.columnResize` 对象中，我们可以设置以下配置项：
 
 - lineColor: 直线的颜色
 - bgColor: 背景线的颜色

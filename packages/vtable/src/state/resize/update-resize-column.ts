@@ -103,8 +103,16 @@ export function updateResizeColumn(xInTable: number, yInTable: number, state: St
       state.table.frozenColCount - 1,
       state.columnResize.isRightFrozen
     );
+  } else if (
+    state.columnResize.col >= state.table.colCount - state.table.rightFrozenColCount &&
+    !state.table.isPivotTable() &&
+    !(state.table as ListTable).transpose
+  ) {
+    state.table.scenegraph.component.setRightFrozenColumnShadow(state.table.colCount - state.table.rightFrozenColCount);
   } else if (state.table.options.frozenColCount) {
     state.table.scenegraph.component.setFrozenColumnShadow(state.table.frozenColCount - 1);
+  } else if (state.table.options.rightFrozenColCount) {
+    state.table.scenegraph.component.setRightFrozenColumnShadow(state.table.colCount - state.table.rightFrozenColCount);
   }
 
   // stage rerender
@@ -196,12 +204,15 @@ function updateResizeColForIndicatorGroup(detaX: number, state: StateManager) {
       }
     }
     const prevWidth = state.table.getColWidth(col);
-    // const adjustedWidth = _adjustColWidth(
-    //   state.table,
-    //   col,
-    //   prevWidth + (prevWidth / totalColWidth) * moveX // 计算diff比例
-    // );
-    state.table.scenegraph.updateColWidth(col, (prevWidth / totalColWidth) * moveX);
+
+    // deltaWidth <0.5 & >=-0.5 在updateRowWidth函数中会被Math.round处理为0，导致高度更新失效
+    let deltaWidth = (prevWidth / totalColWidth) * moveX;
+    if (deltaWidth > 0 && deltaWidth < 0.5) {
+      deltaWidth = 0.5;
+    } else if (deltaWidth < 0 && deltaWidth >= -0.5) {
+      deltaWidth = -0.5;
+    }
+    state.table.scenegraph.updateColWidth(col, deltaWidth);
     state.table.internalProps._widthResizedColMap.add(col);
   }
 }

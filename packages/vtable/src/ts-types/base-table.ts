@@ -120,7 +120,9 @@ export interface IBaseTableProtected {
   // disableRowHeaderColumnResize?: boolean;
   // 列宽调整模式（全列调整；全列不可调整；仅表头单元格可调整；仅内容单元格可调整）
   columnResizeMode?: 'all' | 'none' | 'header' | 'body';
+  rowResizeMode?: 'all' | 'none' | 'header' | 'body';
   columnResizeType?: 'column' | 'indicator' | 'all' | 'indicatorGroup';
+  rowResizeType?: 'row' | 'indicator' | 'all' | 'indicatorGroup';
   /** 控制拖拽表头移动位置顺序开关 */
   dragHeaderMode?: 'all' | 'none' | 'column' | 'row';
   /** 拖拽表头移动位置 针对冻结部分的规则
@@ -151,6 +153,7 @@ export interface IBaseTableProtected {
   _colRangeWidthsMap: Map<string, number>; //存储指定列范围的总宽度
 
   _widthResizedColMap: Set<number>; //记录下被手动调整过列宽的列号
+  _heightResizedRowMap: Set<number>; //记录下被手动调整过行高的行号
 
   bodyHelper: BodyHelper;
   headerHelper: HeaderHelper;
@@ -223,6 +226,8 @@ export interface IBaseTableProtected {
    */
   limitMinWidth?: number;
 
+  limitMinHeight?: number;
+
   title?: Title;
   legends?: DiscreteTableLegend | ContinueTableLegend;
 
@@ -285,6 +290,7 @@ export interface BaseTableConstructorOptions {
    * 调整列宽 可操作范围。'all' | 'none' | 'header' | 'body'; 整列间隔线|禁止调整|只能在表头处间隔线|只能在body间隔线
    */
   columnResizeMode?: 'all' | 'none' | 'header' | 'body';
+  rowResizeMode?: 'all' | 'none' | 'header' | 'body';
   /** 控制拖拽表头移动位置顺序开关 */
   dragHeaderMode?: 'all' | 'none' | 'column' | 'row';
 
@@ -383,6 +389,7 @@ export interface BaseTableConstructorOptions {
    * 限制列宽最小值。如设置为true 则拖拽改变列宽时限制列宽最小为10px，设置为false则不进行限制。默认为10px
    */
   limitMinWidth?: boolean | number;
+  limitMinHeight?: boolean | number;
 
   // maximum number of data items maintained in table instance
   maintainedDataCount?: number;
@@ -703,6 +710,7 @@ export interface BaseTableAPI {
   ) => ITextSize;
 
   _canResizeColumn: (col: number, row: number) => boolean;
+  _canResizeRow: (col: number, row: number) => boolean;
 
   getCustomRender: (col: number, row: number) => ICustomRender;
   getCustomLayout: (col: number, row: number) => ICustomLayout;

@@ -91,6 +91,11 @@ export class EventManager {
             handleTextStick(this.table);
           })
         );
+        this.handleTextStickBindId.push(
+          this.table.on(TABLE_EVENT_TYPE.RESIZE_ROW_END, e => {
+            handleTextStick(this.table);
+          })
+        );
       } else if (!checkHaveTextStick(this.table) && this.handleTextStickBindId) {
         this.handleTextStickBindId.forEach(id => {
           this.table.off(id);
@@ -473,23 +478,46 @@ export class EventManager {
 
   checkColumnResize(eventArgsSet: SceneEvent, update?: boolean): boolean {
     // return false;
+
+    const { eventArgs } = eventArgsSet;
+    // if (eventArgs) { // 如果是鼠标处理表格外部如最后一列的后面 也期望可以拖拽列宽
+    const resizeCol = this.table.scenegraph.getResizeColAt(
+      eventArgsSet.abstractPos.x,
+      eventArgsSet.abstractPos.y,
+      eventArgs?.targetCell
+    );
+    if (this.table._canResizeColumn(resizeCol.col, resizeCol.row) && resizeCol.col >= 0) {
+      if (update) {
+        this.table.stateManager.startResizeCol(
+          resizeCol.col,
+          eventArgsSet.abstractPos.x,
+          eventArgsSet.abstractPos.y,
+          resizeCol.rightFrozen
+        );
+      }
+      return true;
+    }
+    // }
+
+    return false;
+  }
+
+  checkRowResize(eventArgsSet: SceneEvent, update?: boolean): boolean {
     const { eventArgs } = eventArgsSet;
     if (eventArgs) {
-      const resizeCol = this.table.scenegraph.getResizeColAt(
+      const resizeRow = this.table.scenegraph.getResizeRowAt(
         eventArgsSet.abstractPos.x,
         eventArgsSet.abstractPos.y,
         eventArgs.targetCell
       );
 
-      if (this.table._canResizeColumn(resizeCol.col, resizeCol.row) && resizeCol.col >= 0) {
-        // this.table.stateManager.updateResizeCol(resizeCol.col, eventArgsSet.abstractPos.x, first);
-        // this._col = resizeCol.col;
+      if (this.table._canResizeRow(resizeRow.col, resizeRow.row) && resizeRow.row >= 0) {
         if (update) {
-          this.table.stateManager.startResizeCol(
-            resizeCol.col,
+          this.table.stateManager.startResizeRow(
+            resizeRow.row,
             eventArgsSet.abstractPos.x,
             eventArgsSet.abstractPos.y,
-            resizeCol.rightFrozen
+            resizeRow.bottomFrozen
           );
         }
         return true;
@@ -536,6 +564,10 @@ export class EventManager {
 
   dealColumnResize(xInTable: number, yInTable: number) {
     this.table.stateManager.updateResizeCol(xInTable, yInTable);
+  }
+
+  dealRowResize(xInTable: number, yInTable: number) {
+    this.table.stateManager.updateResizeRow(xInTable, yInTable);
   }
 
   chechColumnMover(eventArgsSet: SceneEvent): boolean {

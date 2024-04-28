@@ -290,6 +290,7 @@ export interface PivotTableConstructorOptions extends BaseTableConstructorOption
    * 调整列宽的生效范围：'column' | 'indicator' | 'all' | 'indicatorGroup'，单列|按指标|所有列|属于同一维度值的多个指标
    */
   columnResizeType?: 'column' | 'indicator' | 'all' | 'indicatorGroup';
+  rowResizeType?: 'row' | 'indicator' | 'all' | 'indicatorGroup';
   /** 设置排序状态，只对应按钮展示效果 无数据排序逻辑 */
   pivotSortState?: {
     dimensions: IDimensionInfo[];
@@ -356,6 +357,8 @@ export interface PivotTableConstructorOptions extends BaseTableConstructorOption
 
   extensionRows?: IExtensionRowDefine[];
   editor?: string | IEditor | ((args: BaseCellInfo & { table: BaseTableAPI }) => string | IEditor);
+  /** 全局设置表头编辑器 */
+  headerEditor?: string | IEditor | ((args: BaseCellInfo & { table: BaseTableAPI }) => string | IEditor);
 }
 export interface PivotChartConstructorOptions extends BaseTableConstructorOptions {
   /**
@@ -366,6 +369,7 @@ export interface PivotChartConstructorOptions extends BaseTableConstructorOption
    * 调整列宽的生效范围：'column' | 'indicator' | 'all' | 'indicatorGroup'，单列|按指标|所有列|属于同一维度值的多个指标
    */
   columnResizeType?: 'column' | 'indicator' | 'all' | 'indicatorGroup';
+  rowResizeType?: 'row' | 'indicator' | 'all' | 'indicatorGroup';
   /** 列表头维度结构 */
   columnTree?: IHeaderTreeDefine[];
   /** 行表头维度结构 */

@@ -1,23 +1,39 @@
 import * as VTable from '../../src';
-import { InputEditor } from '@visactor/vtable-editors';
-const input_editor = new InputEditor({});
-VTable.register.editor('input', input_editor);
-const PivotTable = VTable.PivotTable;
+import { bindDebugTool } from '../../src/scenegraph/debug-tool';
+const ListTable = VTable.ListTable;
 const CONTAINER_ID = 'vTable';
 
 export function createTable() {
-  const option: VTable.PivotTableConstructorOptions = {
+  const option = {
     rows: ['province', 'city'],
     columns: ['category', 'sub_category'],
     indicators: ['sales', 'number'],
-    // rowHierarchyType: 'tree',
+    enableDataAnalysis: true,
     indicatorTitle: '指标名称',
     indicatorsAsCol: false,
+    dataConfig: {
+      totals: {
+        row: {
+          showGrandTotals: true,
+          showSubTotals: true,
+          subTotalsDimensions: ['province'],
+          grandTotalLabel: '行总计',
+          subTotalLabel: '小计'
+        },
+        column: {
+          showGrandTotals: true,
+          showSubTotals: true,
+          subTotalsDimensions: ['category'],
+          grandTotalLabel: '列总计',
+          subTotalLabel: '小计'
+        }
+      }
+    },
     corner: { titleOnDimension: 'row' },
     records: [
       {
         sales: 891,
-        number: 7789,
+        number: 77899999,
         province: '浙江省',
         city: '杭州市',
         category: '家具',
@@ -272,14 +288,20 @@ export function createTable() {
         sub_category: '纸张'
       }
     ],
-    editor: 'input',
-    headerEditor: 'input',
-    widthMode: 'autoWidth' // 宽度模式：standard 标准模式； adaptive 自动填满容器
+    widthMode: 'autoWidth', // 宽度模式：standard 标准模式； adaptive 自动填满容器
+    bottomFrozenRowCount: 2,
+    rightFrozenColCount: 1,
+    dragHeaderMode: 'all',
+    rowResizeType: 'indicatorGroup',
+    rowResizeMode: 'all'
   };
 
-  const instance = new PivotTable(document.getElementById(CONTAINER_ID)!, option);
-  window.tableInstance = instance;
-  instance.on('change_cell_value', arg => {
-    console.log(arg);
+  const instance = new VTable.PivotTable(document.getElementById(CONTAINER_ID), option);
+
+  bindDebugTool(instance.scenegraph.stage as any, {
+    customGrapicKeys: ['col', 'row']
   });
+
+  // 只为了方便控制太调试用，不要拷贝
+  window.tableInstance = instance;
 }

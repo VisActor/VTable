@@ -56,28 +56,18 @@ export function bindTableGroupListener(eventManager: EventManager) {
     } else if (table.eventManager.isDraging && stateManager.isSelecting()) {
       eventManager.dealTableSelect(eventArgsSet, true);
     }
-
-    // if (stateManager.menu.isShow && stateManager.menu.bounds.inPoint(e.x, e.y)) {
-    //   eventManager.dealMenuHover(eventArgsSet);
-    //   return;
-    // }
     // 更新列宽调整pointer
-    if (stateManager.isResizeCol() || eventManager.checkColumnResize(eventArgsSet)) {
-      // 更新填充柄pointer
-      if (table.stateManager.select && eventManager.checkCellFillhandle(eventArgsSet)) {
-        stateManager.updateCursor('crosshair');
-      } else {
-        stateManager.updateCursor('col-resize');
-      }
-    } else {
-      stateManager.updateCursor();
-    }
-    // 更新填充柄pointer
-    // if (table.scenegraph.selectedRangeComponents && eventManager.checkCellFillhandle(eventArgsSet)) {
-    //   stateManager.updateCursor('crosshair');
+    // if (stateManager.isResizeCol() || eventManager.checkColumnResize(eventArgsSet)) {
+    //   // 更新填充柄pointer
+    //   if (table.stateManager.select && eventManager.checkCellFillhandle(eventArgsSet)) {
+    //     stateManager.updateCursor('crosshair');
+    //   } else {
+    //     stateManager.updateCursor('col-resize');
+    //   }
     // } else {
     //   stateManager.updateCursor();
     // }
+
     const cellGoup: any = e.path.find(node => (node as any).role === 'cell');
     if ((table as any).hasListeners(TABLE_EVENT_TYPE.MOUSELEAVE_CELL)) {
       // const cellGoup = eventArgsSet?.eventArgs?.target as unknown as Group;
@@ -302,6 +292,8 @@ export function bindTableGroupListener(eventManager: EventManager) {
     // 同pointerup中的逻辑
     if (stateManager.isResizeCol()) {
       endResizeCol(table);
+    } else if (stateManager.isResizeRow()) {
+      endResizeRow(table);
     } else if (stateManager.isMoveCol()) {
       table.stateManager.endMoveCol();
       if (
@@ -397,7 +389,10 @@ export function bindTableGroupListener(eventManager: EventManager) {
           eventManager.isTouchdown = false;
           eventManager.touchMove = true;
           // 处理列宽调整
-          if (!eventManager.touchEnd && eventManager.checkColumnResize(eventArgsSet, true)) {
+          if (
+            !eventManager.touchEnd &&
+            (eventManager.checkColumnResize(eventArgsSet, true) || eventManager.checkRowResize(eventArgsSet, true))
+          ) {
             // eventManager.startColumnResize(e);
             // eventManager._resizing = true;
             stateManager.updateInteractionState(InteractionState.grabing);
@@ -422,7 +417,10 @@ export function bindTableGroupListener(eventManager: EventManager) {
         eventManager.dealTableHover(eventArgsSet);
       } else {
         // 处理列宽调整
-        if (!eventManager.checkCellFillhandle(eventArgsSet) && eventManager.checkColumnResize(eventArgsSet, true)) {
+        if (
+          !eventManager.checkCellFillhandle(eventArgsSet) &&
+          (eventManager.checkColumnResize(eventArgsSet, true) || eventManager.checkRowResize(eventArgsSet, true))
+        ) {
           // eventManager.startColumnResize(e);
           // eventManager._resizing = true;
           table.scenegraph.updateChartState(null);
@@ -491,6 +489,8 @@ export function bindTableGroupListener(eventManager: EventManager) {
       // eventManager._resizing = false;
       if (stateManager.isResizeCol()) {
         endResizeCol(table);
+      } else if (stateManager.isResizeRow()) {
+        endResizeRow(table);
       } else if (stateManager.isMoveCol()) {
         const eventArgsSet: SceneEvent = getCellEventArgsSet(e);
         table.stateManager.endMoveCol();
@@ -662,6 +662,25 @@ export function bindTableGroupListener(eventManager: EventManager) {
       stateManager.hideMenu();
     }
     (table as ListTableAPI).editorManager?.completeEdit(e.nativeEvent);
+    // 处理列宽调整  这里和tableGroup.addEventListener('pointerdown' 逻辑一样
+    if (!eventManager.checkCellFillhandle(eventArgsSet) && eventManager.checkColumnResize(eventArgsSet, true)) {
+      // eventManager.startColumnResize(e);
+      // eventManager._resizing = true;
+      table.scenegraph.updateChartState(null);
+      stateManager.updateInteractionState(InteractionState.grabing);
+      return;
+    }
+  });
+  table.scenegraph.stage.addEventListener('pointerup', (e: FederatedPointerEvent) => {
+    // 处理列宽调整  这里和tableGroup.addEventListener('pointerup' 逻辑一样
+    if (stateManager.interactionState === 'grabing') {
+      // stateManager.interactionState = 'default';
+      stateManager.updateInteractionState(InteractionState.default);
+      // eventManager._resizing = false;
+      if (stateManager.isResizeCol()) {
+        endResizeCol(table);
+      }
+    }
   });
   // click outside
   table.scenegraph.stage.addEventListener('pointertap', (e: FederatedPointerEvent) => {
@@ -686,7 +705,27 @@ export function bindTableGroupListener(eventManager: EventManager) {
       stateManager.endSelectCells();
     }
   });
-
+  table.scenegraph.stage.addEventListener('pointermove', (e: FederatedPointerEvent) => {
+    const eventArgsSet: SceneEvent = getCellEventArgsSet(e);
+    // 处理列宽调整  这里和tableGroup.addEventListener('pointermove' 逻辑一样
+    if (stateManager.isResizeCol() || eventManager.checkColumnResize(eventArgsSet)) {
+      // 更新填充柄pointer
+      if (table.stateManager.select && eventManager.checkCellFillhandle(eventArgsSet)) {
+        stateManager.updateCursor('crosshair');
+      } else {
+        stateManager.updateCursor('col-resize');
+      }
+    } else if (stateManager.isResizeRow() || eventManager.checkRowResize(eventArgsSet)) {
+      // 更新填充柄pointer
+      if (table.stateManager.select && eventManager.checkCellFillhandle(eventArgsSet)) {
+        stateManager.updateCursor('crosshair');
+      } else {
+        stateManager.updateCursor('row-resize');
+      }
+    } else {
+      stateManager.updateCursor();
+    }
+  });
   // table.scenegraph.tableGroup.addEventListener('dbltap', (e: FederatedPointerEvent) => {
   //   console.log('tableGroup', 'dbltap');
   //   dblclickHandler(e);
@@ -869,6 +908,15 @@ function endResizeCol(table: BaseTableAPI) {
     colWidths: columns
   });
   // }
+}
+
+function endResizeRow(table: BaseTableAPI) {
+  table.stateManager.endResizeRow();
+
+  table.fireListeners(TABLE_EVENT_TYPE.RESIZE_ROW_END, {
+    row: table.stateManager.rowResize.row,
+    rowHeight: table.getRowHeight(table.stateManager.rowResize.row)
+  });
 }
 
 function dblclickHandler(e: FederatedPointerEvent, table: BaseTableAPI) {

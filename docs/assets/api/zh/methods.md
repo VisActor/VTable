@@ -250,6 +250,10 @@ setRecords(records: Array<any>)
 
 清除所有单元格的选中状态。
 
+## getCopyValue(Function)
+
+获取选中区域的内容 作为复制内容。返回值是个字符串，以`\t`分割单元格，以`\n`分割行。
+
 ## getCellValue(Function)
 
 获取单元格展示值，如果在 customMergeCell 函数中使用，需要传入 skipCustomMerge 参数，否则会导致报错。
@@ -1070,3 +1074,19 @@ setCellRadioState(col: number, row: number, index?: number) => void
 - col: 列号
 - row: 行号
 - index: 更新的目标 radio 在单元格中的索引
+
+## getAllRowsHeight(Function)
+
+获取表格所有行的高度
+
+```
+getAllRowsHeight: () => number;
+```
+
+## getAllColsWidth(Function)
+
+获取表格所有列的宽度
+
+```
+getAllColsWidth: () => number;
+```

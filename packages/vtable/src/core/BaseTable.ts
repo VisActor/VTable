@@ -221,6 +221,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
       // columnSeriesNumber,
       // disableRowHeaderColumnResize,
       columnResizeMode,
+      rowResizeMode = 'none',
       dragHeaderMode,
       // showHeader,
       // scrollBar,
@@ -240,7 +241,8 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
       canvasWidth,
       canvasHeight,
       overscrollBehavior,
-      limitMinWidth
+      limitMinWidth,
+      limitMinHeight
     } = options;
     this.container = container;
     this.options = options;
@@ -312,6 +314,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     // internalProps.columnSeriesNumber = columnSeriesNumber;
 
     internalProps.columnResizeMode = columnResizeMode;
+    internalProps.rowResizeMode = rowResizeMode;
     internalProps.dragHeaderMode = dragHeaderMode;
     internalProps.renderChartAsync = renderChartAsync;
     setBatchRenderChartCount(renderChartAsyncBatchCount);
@@ -320,6 +323,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     internalProps._rowRangeHeightsMap = new Map();
     internalProps._colRangeWidthsMap = new Map();
     internalProps._widthResizedColMap = new Set();
+    internalProps._heightResizedRowMap = new Set();
 
     this.colWidthsMap = new NumberMap();
     this.colContentWidthsMap = new NumberMap();
@@ -369,6 +373,14 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
         ? typeof limitMinWidth === 'number'
           ? limitMinWidth
           : limitMinWidth
+          ? 10
+          : 0
+        : 10;
+    internalProps.limitMinHeight =
+      limitMinHeight !== null && limitMinHeight !== undefined
+        ? typeof limitMinHeight === 'number'
+          ? limitMinHeight
+          : limitMinHeight
           ? 10
           : 0
         : 10;
@@ -1078,7 +1090,8 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
       this.internalProps.layoutMap &&
       // endRow >= this.columnHeaderLevelCount &&
       // !this.bottomFrozenRowCount &&
-      !this.hasAutoImageColumn()
+      !this.hasAutoImageColumn() &&
+      this.internalProps._heightResizedRowMap.size === 0
     ) {
       // part in header
       for (let i = startRow; i < Math.min(endRow + 1, this.columnHeaderLevelCount); i++) {
@@ -1999,6 +2012,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
       // columnSeriesNumber,
       // disableRowHeaderColumnResize,
       columnResizeMode,
+      rowResizeMode = 'none',
       dragHeaderMode,
 
       // scrollBar,
@@ -2019,7 +2033,8 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
       renderChartAsync,
       renderChartAsyncBatchCount,
       overscrollBehavior,
-      limitMinWidth
+      limitMinWidth,
+      limitMinHeight
     } = options;
     if (pixelRatio && pixelRatio !== this.internalProps.pixelRatio) {
       this.internalProps.pixelRatio = pixelRatio;
@@ -2072,6 +2087,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     // internalProps.columnSeriesNumber = columnSeriesNumber;
 
     internalProps.columnResizeMode = columnResizeMode;
+    internalProps.rowResizeMode = rowResizeMode;
     internalProps.dragHeaderMode = dragHeaderMode;
     internalProps.renderChartAsync = renderChartAsync;
     setBatchRenderChartCount(renderChartAsyncBatchCount);
@@ -2082,6 +2098,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     internalProps._colRangeWidthsMap = new Map();
 
     internalProps._widthResizedColMap = new Set();
+    internalProps._heightResizedRowMap = new Set();
 
     this.colWidthsMap = new NumberMap();
     this.colContentWidthsMap = new NumberMap();
@@ -2105,6 +2122,14 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
         ? typeof limitMinWidth === 'number'
           ? limitMinWidth
           : limitMinWidth
+          ? 10
+          : 0
+        : 10;
+    internalProps.limitMinHeight =
+      limitMinHeight !== null && limitMinHeight !== undefined
+        ? typeof limitMinHeight === 'number'
+          ? limitMinHeight
+          : limitMinHeight
           ? 10
           : 0
         : 10;
@@ -3354,6 +3379,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
   /**
    * 该列是否可调整列宽
    * @param col
+   * @param row
    * @returns
    */
   _canResizeColumn(col: number, row: number): boolean {
@@ -3389,6 +3415,37 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     }
     return limit.max !== limit.min;
   }
+
+  /**
+   * 该列是否可调整列宽
+   * @param col
+   * @param row
+   * @returns
+   */
+  _canResizeRow(col: number, row: number): boolean {
+    if (!(col >= 0 && row >= 0)) {
+      return false;
+    }
+    if (this.isCellRangeEqual(col, row, col, row + 1)) {
+      return false;
+    }
+
+    if (this.internalProps.rowResizeMode === 'none') {
+      return false;
+    } else if (this.internalProps.rowResizeMode === 'header') {
+      // 判断表头
+      if (!this.isHeader(col, row)) {
+        return false;
+      }
+    } else if (this.internalProps.rowResizeMode === 'body') {
+      // 判断内容
+      if (this.isHeader(col, row)) {
+        return false;
+      }
+    }
+    return true;
+  }
+
   /**
    * 选中位置是否可拖拽调整位置
    * @param col
@@ -3893,13 +3950,44 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     if (col < this.frozenColCount && row < this.frozenRowCount) {
       return true;
     }
+
+    const colHeaderRangeRect = this.getCellRangeRelativeRect({
+      start: {
+        col: 0,
+        row: 0
+      },
+      end: {
+        col: this.colCount - 1,
+        row: this.columnHeaderLevelCount
+      }
+    });
+    const rowHeaderRangeRect = this.getCellRangeRelativeRect({
+      start: {
+        col: 0,
+        row: 0
+      },
+      end: {
+        col: this.rowHeaderLevelCount,
+        row: this.rowCount - 1
+      }
+    });
+
     if (
       rect.top >= drawRange.top &&
       rect.bottom <= drawRange.bottom &&
       rect.left >= drawRange.left &&
       rect.right <= drawRange.right
     ) {
-      return true;
+      // return true;
+      if (this.isHeader(col, row)) {
+        return true;
+      } else if (
+        // body cell drawRange do not intersect colHeaderRangeRect&rowHeaderRangeRect
+        drawRange.top >= colHeaderRangeRect.bottom &&
+        drawRange.left >= rowHeaderRangeRect.right
+      ) {
+        return true;
+      }
     }
     return false;
   }
@@ -3942,6 +4030,9 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     }
     const { col: hoverCol, row: hoverRow } = this.stateManager.hover.cellPos;
     this.stateManager.updateHoverPos(-1, -1);
+    // hide scroll bar
+    this.scenegraph.component.hideVerticalScrollBar();
+    this.scenegraph.component.hideHorizontalScrollBar();
 
     this.scenegraph.renderSceneGraph();
 
@@ -3990,6 +4081,18 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
       start: { col: minCol, row: minRow },
       end: { col: maxCol, row: maxRow }
     });
+
+    // disable hover&select style
+    if (this.stateManager.select?.ranges?.length > 0) {
+      hideCellSelectBorder(this.scenegraph);
+    }
+    const { col: hoverCol, row: hoverRow } = this.stateManager.hover.cellPos;
+    this.stateManager.updateHoverPos(-1, -1);
+    // hide scroll bar
+    this.scenegraph.component.hideVerticalScrollBar();
+    this.scenegraph.component.hideHorizontalScrollBar();
+    this.scenegraph.renderSceneGraph();
+
     const c = this.scenegraph.stage.toCanvas(
       false,
       new AABBBounds().set(
@@ -4005,6 +4108,13 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
       this.setScrollTop(scrollTop);
       this.setScrollLeft(scrollLeft);
     }
+
+    // restore hover&select style
+    if (this.stateManager.select?.ranges?.length > 0) {
+      restoreCellSelectBorder(this.scenegraph);
+    }
+    this.stateManager.updateHoverPos(hoverCol, hoverRow);
+
     return base64Image;
   }
 
