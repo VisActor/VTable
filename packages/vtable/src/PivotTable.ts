@@ -85,6 +85,7 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
     //分页配置
     this.pagination = options.pagination;
     this.internalProps.columnResizeType = options.columnResizeType ?? 'column';
+    this.internalProps.rowResizeType = options.rowResizeType ?? 'row';
     this.internalProps.dataConfig = cloneDeep(options.dataConfig);
 
     // this.internalProps.enableDataAnalysis = options.enableDataAnalysis;
@@ -233,6 +234,7 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
     this.pagination = options.pagination;
     // 更新protectedSpace
     internalProps.columnResizeType = options.columnResizeType ?? 'column';
+    internalProps.rowResizeType = options.rowResizeType ?? 'row';
     internalProps.dataConfig = cloneDeep(options.dataConfig);
     // internalProps.enableDataAnalysis = options.enableDataAnalysis;
     if (!options.rowTree && !options.columnTree) {
@@ -1215,8 +1217,10 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
         this.heightMode === 'adaptive' ||
         (this.autoFillHeight && this.getAllRowsHeight() <= this.tableNoFrameHeight)
       ) {
-        this.scenegraph.recalculateRowHeights();
-      } else if (this.heightMode === 'autoHeight') {
+        if (this.internalProps._heightResizedRowMap.size === 0) {
+          this.scenegraph.recalculateRowHeights();
+        }
+      } else if (this.heightMode === 'autoHeight' && !this.internalProps._heightResizedRowMap.has(row)) {
         const oldHeight = this.getRowHeight(row);
         const newHeight = computeRowHeight(row, 0, this.colCount - 1, this);
         this.scenegraph.updateRowHeight(row, newHeight - oldHeight);

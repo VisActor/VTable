@@ -497,6 +497,14 @@ export function bindContainerDomListener(eventManager: EventManager) {
             colWidth: table.getColWidth(table.stateManager.columnResize.col)
           });
         }
+      } else if (stateManager.isResizeRow()) {
+        eventManager.dealRowResize(x, y);
+        if ((table as any).hasListeners(TABLE_EVENT_TYPE.RESIZE_ROW)) {
+          table.fireListeners(TABLE_EVENT_TYPE.RESIZE_ROW, {
+            row: table.stateManager.rowResize.row,
+            rowHeight: table.getRowHeight(table.stateManager.rowResize.row)
+          });
+        }
       }
     }
     const isSelecting = table.stateManager.isSelecting();

@@ -18,7 +18,7 @@ import { updateRowHeight } from './layout/update-height';
 import { updateImageCellContentWhileResize } from './group-creater/cell-type/image-cell';
 import { getQuadProps } from './utils/padding';
 import { createFrameBorder, updateCornerRadius, updateFrameBorder, updateFrameBorderSize } from './style/frame-border';
-import { ResizeColumnHotSpotSize } from '../tools/global';
+import { ResizeColumnHotSpotSize, ResizeRowHotSpotSize } from '../tools/global';
 import splitModule from './graphic/contributions';
 import { getFunctionalProp, getProp } from './utils/get-prop';
 import { dealWithIcon } from './utils/text-icon-layout';
@@ -835,7 +835,11 @@ export class Scenegraph {
       // 1. error amplification（误差放大） in dealHeightMode when multiple resize
       // 2. width update caused height update dose not have enlarge/reduce number,
       // will cause scale error in dealHeightMode()
-      this.recalculateRowHeights();
+      if (this.table.internalProps._heightResizedRowMap.size === 0) {
+        this.recalculateRowHeights();
+      } else {
+        this.dealHeightMode();
+      }
       // this.dealHeightMode();
     } else if (this.table.autoFillHeight) {
       this.dealHeightMode();
@@ -1520,11 +1524,11 @@ export class Scenegraph {
     if (!this._needUpdateContainer) {
       return;
     }
+    this._needUpdateContainer = false;
     this.updateContainerAttrWidthAndX();
     this.updateTableSize();
     this.component.updateScrollBar();
 
-    this._needUpdateContainer = false;
     this.updateNextFrame();
   }
 
@@ -1631,6 +1635,37 @@ export class Scenegraph {
       return cell;
     }
     // }
+    return { col: -1, row: -1 };
+  }
+
+  getResizeRowAt(abstractX: number, abstractY: number, cellGroup?: Group, offset = ResizeRowHotSpotSize / 2) {
+    if (!cellGroup) {
+      // to do: 处理最后一列外调整列宽
+    } else {
+      let cell: { col: number; row: number; y?: number; bottomFrozen?: boolean };
+      if (abstractY < cellGroup.globalAABBBounds.y1 + offset) {
+        cell = { col: cellGroup.col, row: cellGroup.row - 1, y: cellGroup.globalAABBBounds.y1 };
+      } else if (cellGroup.globalAABBBounds.y2 - offset < abstractY) {
+        cell = { col: cellGroup.col, row: cellGroup.row, y: cellGroup.globalAABBBounds.y2 };
+      }
+      if (
+        cell &&
+        this.table.bottomFrozenRowCount > 0 &&
+        cell.row === this.table.rowCount - this.table.bottomFrozenRowCount - 1 &&
+        this.table.tableNoFrameHeight -
+          this.table.getFrozenRowsHeight() -
+          this.table.getBottomFrozenRowsHeight() +
+          this.table.scrollTop <
+          this.bodyGroup.attribute.height
+      ) {
+        // 有下侧冻结行，并且纵向没有滚动到最下侧时，下侧冻结行左侧调整对只对下侧冻结行生效
+        cell.row = cell.row + 1;
+        cell.bottomFrozen = true;
+      }
+      if (cell) {
+        return cell;
+      }
+    }
     return { col: -1, row: -1 };
   }
 

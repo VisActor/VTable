@@ -61,6 +61,14 @@ export interface TableEvents {
    */
   RESIZE_COLUMN_END: 'resize_column_end';
   /**
+   * 行高调整事件
+   */
+  RESIZE_ROW: 'resize_row';
+  /**
+   * 行高调整结束事件
+   */
+  RESIZE_ROW_END: 'resize_row_end';
+  /**
    * 拖拽表头移动位置的事件
    */
   CHANGE_HEADER_POSITION: 'change_header_position';
@@ -172,6 +180,8 @@ export const TABLE_EVENT_TYPE: TableEvents = {
   CONTEXTMENU_CELL: 'contextmenu_cell',
   RESIZE_COLUMN: 'resize_column',
   RESIZE_COLUMN_END: 'resize_column_end',
+  RESIZE_ROW: 'resize_row',
+  RESIZE_ROW_END: 'resize_row_end',
   CHANGE_HEADER_POSITION: 'change_header_position',
   SORT_CLICK: 'sort_click',
   FREEZE_CLICK: 'freeze_click',

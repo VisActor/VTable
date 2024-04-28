@@ -46,6 +46,7 @@ import {
   syncCheckedState,
   updateHeaderCheckedState
 } from './checkbox/checkbox';
+import { updateResizeRow } from './resize/update-resize-row';
 
 export class StateManager {
   table: BaseTableAPI;
@@ -105,6 +106,13 @@ export class StateManager {
     x: number;
     resizing: boolean;
     isRightFrozen?: boolean;
+  };
+  rowResize: {
+    row: number;
+    /** x坐标是相对table内坐标 */
+    y: number;
+    resizing: boolean;
+    isBottomFrozen?: boolean;
   };
   columnMove: {
     colSource: number;
@@ -231,6 +239,11 @@ export class StateManager {
       x: 0,
       resizing: false
     };
+    this.rowResize = {
+      row: -1,
+      y: 0,
+      resizing: false
+    };
     this.columnMove = {
       colSource: -1,
       colTarget: -1,
@@ -306,6 +319,11 @@ export class StateManager {
     this.columnResize = {
       col: -1,
       x: 0,
+      resizing: false
+    };
+    this.rowResize = {
+      row: -1,
+      y: 0,
       resizing: false
     };
     this.columnMove = {
@@ -569,6 +587,9 @@ export class StateManager {
   isResizeCol(): boolean {
     return this.columnResize.resizing;
   }
+  isResizeRow(): boolean {
+    return this.rowResize.resizing;
+  }
   isFillHandle(): boolean {
     return this.fillHandle.isFilling;
   }
@@ -594,6 +615,7 @@ export class StateManager {
         });
     }
   }
+
   endResizeCol() {
     setTimeout(() => {
       this.columnResize.resizing = false;
@@ -616,6 +638,36 @@ export class StateManager {
 
     this.table.scenegraph.updateNextFrame();
   }
+  updateResizeCol(xInTable: number, yInTable: number) {
+    updateResizeColumn(xInTable, yInTable, this);
+  }
+
+  endResizeRow() {
+    setTimeout(() => {
+      this.rowResize.resizing = false;
+    }, 0);
+    this.table.scenegraph.updateChartSize(this.rowResize.row);
+    // this.checkFrozen();
+    this.table.scenegraph.component.hideResizeRow();
+    this.table.scenegraph.updateNextFrame();
+  }
+  startResizeRow(row: number, x: number, y: number, isBottomFrozen?: boolean) {
+    this.rowResize.resizing = true;
+    this.rowResize.row = row;
+    this.rowResize.y = y;
+    this.rowResize.isBottomFrozen = isBottomFrozen;
+
+    this.table.scenegraph.component.showResizeRow(row, x, isBottomFrozen);
+
+    // 调整列宽期间清空选中清空
+    this.updateSelectPos(-1, -1);
+
+    this.table.scenegraph.updateNextFrame();
+  }
+  updateResizeRow(xInTable: number, yInTable: number) {
+    updateResizeRow(xInTable, yInTable, this);
+  }
+
   startFillSelect(x: number, y: number) {
     this.fillHandle.isFilling = true;
     this.fillHandle.startX = x;
@@ -652,9 +704,7 @@ export class StateManager {
     this.fillHandle.beforeFillMinCol = undefined;
     this.fillHandle.beforeFillMinRow = undefined;
   }
-  updateResizeCol(xInTable: number, yInTable: number) {
-    updateResizeColumn(xInTable, yInTable, this);
-  }
+
   startMoveCol(col: number, row: number, x: number, y: number) {
     startMoveCol(col, row, x, y, this);
   }

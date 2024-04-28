@@ -5,7 +5,7 @@ import type { Group } from '../graphic/group';
 import { MenuHandler } from './menu';
 import { DrillIcon } from './drill-icon';
 import { CellMover } from './cell-mover';
-import { getColX } from './util';
+import { getColX, getRowY } from './util';
 import type { BaseTableAPI } from '../../ts-types/base-table';
 
 /**
@@ -20,6 +20,9 @@ export class TableComponent {
   columnResizeLine: ILine; // 表格列宽调整基准线
   columnResizeBgLine: ILine; // 表格列宽调整基准线背景
   columnResizeLabel: IGroup; // 表格列宽调整标记
+  rowResizeLine: ILine; // 表格列宽调整基准线
+  rowResizeBgLine: ILine; // 表格列宽调整基准线背景
+  rowResizeLabel: IGroup; // 表格列宽调整标记
   menu: MenuHandler; // 表格菜单
   vScrollBar: ScrollBar; // 表格横向滚动条
   hScrollBar: ScrollBar; // 表格纵向滚动条
@@ -107,6 +110,67 @@ export class TableComponent {
     this.columnResizeLabel.appendChild(columnResizeLabelBack);
     this.columnResizeLabel.appendChild(columnResizeLabelText);
 
+    this.rowResizeLine = createLine({
+      visible: false,
+      pickable: false,
+      stroke: columnResizeColor as string,
+      lineWidth: columnResizeWidth as number,
+      x: 0,
+      y: 0,
+      points: [
+        { x: 0, y: 0 },
+        { x: 0, y: 0 }
+      ]
+    });
+    this.rowResizeBgLine = createLine({
+      visible: false,
+      pickable: false,
+      stroke: columnResizeBgColor as string,
+      lineWidth: columnResizeBgWidth as number,
+      x: 0,
+      y: 0,
+      // dx: -(columnResizeBgWidth - columnResizeWidth) / 2,
+      points: [
+        { x: 0, y: 0 },
+        { x: 0, y: 0 }
+      ]
+    });
+
+    // 列宽调整文字标签
+    const rowResizeLabelText = createText({
+      visible: false,
+      pickable: false,
+      x: 0,
+      y: 0,
+      fontSize: labelFontSize, // 10
+      fill: labelColor,
+      fontFamily: labelFontFamily,
+      text: '',
+      textBaseline: 'top',
+      dx: 12 + 4,
+      dy: -labelFontSize / 2
+    });
+    const rowResizeLabelBack = createRect({
+      visible: false,
+      pickable: false,
+      fill: labelBackgroundFill,
+      x: 0,
+      y: 0,
+      width: 5 * labelFontSize * 0.8,
+      height: labelFontSize + 8,
+      cornerRadius: labelBackgroundCornerRadius,
+      dx: 12,
+      dy: -labelFontSize / 2 - 4
+    });
+    this.rowResizeLabel = createGroup({
+      visible: false,
+      pickable: false,
+      x: 0,
+      y: 0
+    });
+    this.rowResizeLabel.appendChild(rowResizeLabelBack);
+    this.rowResizeLabel.appendChild(rowResizeLabelText);
+
     // 列顺序调整基准线
     this.cellMover = new CellMover(this.table);
 
@@ -179,6 +243,9 @@ export class TableComponent {
     componentGroup.addChild(this.columnResizeBgLine);
     componentGroup.addChild(this.columnResizeLine);
     componentGroup.addChild(this.columnResizeLabel);
+    componentGroup.addChild(this.rowResizeBgLine);
+    componentGroup.addChild(this.rowResizeLine);
+    componentGroup.addChild(this.rowResizeLabel);
 
     const hoverOn = this.table.theme.scrollStyle.hoverOn;
     if (hoverOn && !this.table.theme.scrollStyle.barToSide) {
@@ -436,6 +503,87 @@ export class TableComponent {
   }
 
   /**
+   * @description: 隐藏列宽调整组件
+   * @return {*}
+   */
+  hideResizeRow() {
+    // this.columnResizeLine.attribute.visible = false;
+    this.rowResizeLine.setAttribute('visible', false);
+    this.rowResizeBgLine.setAttribute('visible', false);
+    this.rowResizeLabel.setAttribute('visible', false);
+    this.rowResizeLabel.hideAll();
+  }
+
+  /**
+   * @description: 显示列宽调整组件
+   * @param {number} col
+   * @param {number} y
+   * @return {*}
+   */
+  showResizeRow(row: number, x: number, isRightFrozen?: boolean) {
+    // 基准线
+    const rowY = getRowY(row, this.table, isRightFrozen);
+    this.rowResizeLine.setAttributes({
+      visible: true,
+      y: rowY,
+      points: [
+        { y: 0, x: 0 },
+        { y: 0, x: this.table.getColsWidth(0, this.table.colCount - 1) }
+      ]
+    });
+    this.rowResizeBgLine.setAttributes({
+      visible: true,
+      y: rowY,
+      points: [
+        { y: 0, x: 0 },
+        { y: 0, x: this.table.getColsWidth(0, this.table.colCount - 1) }
+      ]
+    });
+
+    // 标签
+    this.rowResizeLabel.showAll();
+    this.rowResizeLabel.setAttributes({
+      visible: true,
+      y: rowY,
+      x
+    });
+    (this.rowResizeLabel.lastChild as Text).setAttribute('text', `${this.table.getRowHeight(row)}px`);
+  }
+
+  /**
+   * @description: 更新列宽调整组件
+   * @param {number} col
+   * @param {number} y 标签显示的y坐标
+   * @return {*}
+   */
+  updateResizeRow(row: number, x: number, isBottomFrozen?: boolean) {
+    // 基准线
+    const rowY = getRowY(row, this.table, isBottomFrozen);
+    // this.columnResizeLine.setAttribute('x', x);
+    this.rowResizeLine.setAttributes({
+      y: rowY,
+      points: [
+        { y: 0, x: 0 },
+        { y: 0, x: this.table.getColsWidth(0, this.table.colCount - 1) } // todo: 优化points赋值
+      ]
+    });
+    this.rowResizeBgLine.setAttributes({
+      y: rowY,
+      points: [
+        { y: 0, x: 0 },
+        { y: 0, x: this.table.getColsWidth(0, this.table.colCount - 1) } // todo: 优化points赋值
+      ]
+    });
+
+    // 标签
+    this.rowResizeLabel.setAttributes({
+      y: rowY,
+      x
+    });
+    (this.rowResizeLabel.lastChild as Text).setAttribute('text', `${Math.floor(this.table.getRowHeight(row))}px`);
+  }
+
+  /**
    * @description: 隐藏列顺序调整组件
    * @return {*}
    */
@@ -621,6 +769,22 @@ export class TableComponent {
     });
     // columnResizeLabelText
     (this.columnResizeLabel.firstChild as IRect).setAttributes({
+      fill: labelBackgroundFill,
+      width: 5 * labelFontSize * 0.8,
+      height: labelFontSize + 8,
+      cornerRadius: labelBackgroundCornerRadius,
+      dy: -labelFontSize / 2 - 4
+    });
+
+    // rowResizeLabelBack
+    (this.rowResizeLabel.lastChild as IText).setAttributes({
+      fontSize: labelFontSize, // 10
+      fill: labelColor,
+      fontFamily: labelFontFamily,
+      dy: -labelFontSize / 2
+    });
+    // rowResizeLabelText
+    (this.rowResizeLabel.firstChild as IRect).setAttributes({
       fill: labelBackgroundFill,
       width: 5 * labelFontSize * 0.8,
       height: labelFontSize + 8,

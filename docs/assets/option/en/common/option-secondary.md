@@ -146,6 +146,15 @@ Mouse hover over the cell right border can drag and adjust column width. This op
 - 'header' Only adjustable in header cells
 - 'body' Only adjustable in body cells
 
+#${prefix} columnResizeMode(string) = 'all'
+
+Mouse hover over the cell bottom border can drag and adjust row height. This operation can trigger the following range:
+
+- 'all' The entire row, including header and body cells, can adjust row height
+- 'none' Disable adjustment
+- 'header' Only adjustable in header cells
+- 'body' Only adjustable in body cells
+
 #${prefix} dragHeaderMode(string) = 'all'
 
 The switch of dragging the header to move the position. After selecting a cell, drag the cell to trigger the move. The range of replaceable cells is limited:

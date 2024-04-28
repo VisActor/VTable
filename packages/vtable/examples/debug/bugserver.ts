@@ -8,6 +8,8 @@ window.BUGSERVER_RELEASE = () => {
   // do nothing
 };
 
+const VCHART_NPM_CDN = 'https://unpkg.com/@visactor/vchart@latest/build/index.min.js';
+
 // your code here
 import('https://unpkg.com/@visactor/vchart@latest/build/index.min.js')
   .then(async () => {
