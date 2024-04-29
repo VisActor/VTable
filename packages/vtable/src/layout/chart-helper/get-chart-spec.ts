@@ -242,15 +242,16 @@ export function getChartAxes(col: number, row: number, layout: PivotHeaderLayout
     const rowPath = layout.getRowKeysPath(col, row);
     const domain = data[rowPath ?? ''] as Set<string>;
 
-    const { axisOption, isPercent } = getAxisOption(col, row, 'left', layout);
+    const { axisOption, isPercent, chartType } = getAxisOption(col, row, 'left', layout);
     axes.push(
       merge(
         {
-          domain: Array.from(domain ?? [])
+          domain: chartType === 'scatter' ? undefined : Array.from(domain ?? []),
+          range: chartType === 'scatter' ? domain : undefined
         },
         axisOption,
         {
-          type: 'band',
+          type: chartType === 'scatter' ? axisOption?.type ?? 'linear' : 'band',
           orient: 'left',
           // visible: true,
           label: { visible: false },
@@ -340,15 +341,16 @@ export function getChartAxes(col: number, row: number, layout: PivotHeaderLayout
     const colPath = layout.getColKeysPath(col, row);
     const domain: string[] | Set<string> = (data?.[colPath ?? ''] as Set<string>) ?? [];
 
-    const { axisOption, isPercent } = getAxisOption(col, row, 'bottom', layout);
+    const { axisOption, isPercent, chartType } = getAxisOption(col, row, 'bottom', layout);
     axes.push(
       merge(
         {
-          domain: Array.from(domain)
+          domain: chartType === 'scatter' ? undefined : Array.from(domain ?? []),
+          range: chartType === 'scatter' ? domain : undefined
         },
         axisOption,
         {
-          type: 'band',
+          type: chartType === 'scatter' ? axisOption?.type ?? 'linear' : 'band',
           orient: 'bottom',
           visible: true,
           label: { visible: false },

@@ -846,7 +846,7 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
             collectValuesBy[yField] = {
               by: rowKeys,
               type: indicatorSpec.direction === 'horizontal' ? 'yField' : undefined,
-              range: indicatorSpec.direction !== 'horizontal',
+              range: indicatorSpec.type === 'scatter' ? true : indicatorSpec.direction !== 'horizontal',
               sortBy:
                 indicatorSpec.direction === 'horizontal' ? indicatorSpec?.data?.fields?.[yField]?.domain : undefined
             };
@@ -858,7 +858,7 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
             const xField = indicatorSpec.xField;
             collectValuesBy[xField] = {
               by: columnKeys,
-              range: indicatorSpec.direction === 'horizontal', // direction默认为'vertical'
+              range: indicatorSpec.type === 'scatter' ? true : indicatorSpec.direction === 'horizontal', // direction默认为'vertical'
               sumBy: indicatorSpec.stack && rowKeys.concat(indicatorSpec?.yField),
               sortBy:
                 indicatorSpec.direction !== 'horizontal' ? indicatorSpec?.data?.fields?.[xField]?.domain : undefined,

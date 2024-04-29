@@ -475,7 +475,7 @@ export class Dataset {
     });
     //#region 按照collectValuesBy 收集维度值
     for (const field in this.collectValuesBy) {
-      if (record[field]) {
+      if (isValid(record[field])) {
         if (!this.collectedValues[field]) {
           this.collectedValues[field] = {};
         }

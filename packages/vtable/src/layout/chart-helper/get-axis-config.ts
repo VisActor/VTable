@@ -137,7 +137,7 @@ export function getAxisConfigInPivotChart(col: number, row: number, layout: Pivo
             text: (indicatorInfo as any)?.title
             // autoRotate: true
           },
-          range: range
+          range
         },
         axisOption,
         {
@@ -171,7 +171,13 @@ export function getAxisConfigInPivotChart(col: number, row: number, layout: Pivo
       // 左侧维度轴
       return merge(
         {
-          domain: chartType === 'common' ? Array.from(domain) : Array.from(domain).reverse(),
+          domain:
+            chartType === 'scatter'
+              ? undefined
+              : chartType === 'common'
+              ? Array.from(domain)
+              : Array.from(domain).reverse(),
+          range: chartType === 'scatter' ? domain : undefined,
           title: {
             autoRotate: true
           }
@@ -179,7 +185,7 @@ export function getAxisConfigInPivotChart(col: number, row: number, layout: Pivo
         axisOption,
         {
           orient: 'left',
-          type: 'band',
+          type: chartType === 'scatter' ? axisOption?.type ?? 'linear' : 'band',
           __vtableChartTheme: theme
         }
       );
@@ -330,7 +336,7 @@ export function getAxisConfigInPivotChart(col: number, row: number, layout: Pivo
       const colPath = layout.getColKeysPath(col, row);
       const domain = (data?.[colPath ?? ''] as Array<string>) ?? [];
 
-      const { axisOption, isPercent, theme } = getAxisOption(col, row - 1, 'bottom', layout);
+      const { axisOption, isPercent, theme, chartType } = getAxisOption(col, row - 1, 'bottom', layout);
       if (axisOption?.visible === false) {
         return;
       }
@@ -342,7 +348,7 @@ export function getAxisConfigInPivotChart(col: number, row: number, layout: Pivo
         axisOption,
         {
           orient: 'bottom',
-          type: 'band',
+          type: chartType === 'scatter' ? axisOption?.type ?? 'linear' : 'band',
           __vtableChartTheme: theme
         }
       );
