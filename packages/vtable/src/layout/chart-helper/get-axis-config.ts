@@ -343,7 +343,14 @@ export function getAxisConfigInPivotChart(col: number, row: number, layout: Pivo
       // 底部维度轴
       return merge(
         {
-          domain: Array.from(domain)
+          // domain: Array.from(domain)
+          domain:
+            chartType === 'scatter'
+              ? undefined
+              : chartType === 'common'
+              ? Array.from(domain)
+              : Array.from(domain).reverse(),
+          range: chartType === 'scatter' ? domain : undefined
         },
         axisOption,
         {
@@ -360,17 +367,32 @@ export function getAxisConfigInPivotChart(col: number, row: number, layout: Pivo
 
 export function getAxisOption(col: number, row: number, orient: string, layout: PivotHeaderLayoutMap) {
   const spec = layout.getRawChartSpec(col, row);
-  if (spec && isArray(spec.axes)) {
-    const axisOption = spec.axes.find((axis: any) => {
+  const axes = spec.axes ?? [];
+  (layout._table as PivotChart).pivotChartAxes.forEach(axis => {
+    const index = axes.findIndex((a: any) => {
+      return axis.orient === a.orient;
+    });
+    if (index === -1) {
+      axes.push(axis);
+    }
+  });
+
+  if (spec && isArray(axes)) {
+    const axisOption = axes.find((axis: any) => {
       return axis.orient === orient;
     });
     if (axisOption) {
       const { seriesIndex, seriesId } = axisOption;
       let seriesIndice;
+      let seriesSpec: any;
       if (isValid(seriesId) && isArray(spec.series)) {
-        seriesIndice = (isArray(seriesId) ? seriesId : [seriesId]).map(id =>
-          spec.series.findIndex((s: any) => s.id === id)
-        );
+        seriesIndice = (isArray(seriesId) ? seriesId : [seriesId]).map(id => {
+          const index = spec.series.findIndex((s: any) => s.id === id);
+          if (index >= 0) {
+            seriesSpec = spec.series[index];
+          }
+          return index;
+        });
       } else if (isValid(seriesIndex) && isArray(spec.series)) {
         seriesIndice = seriesIndex;
       }
@@ -380,7 +402,7 @@ export function getAxisOption(col: number, row: number, orient: string, layout: 
         isZeroAlign: checkZeroAlign(spec, orient, layout),
         seriesIndice,
         theme: spec.theme,
-        chartType: spec.type
+        chartType: seriesSpec?.type ?? spec.type
       };
     }
   }
