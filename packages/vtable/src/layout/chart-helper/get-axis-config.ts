@@ -168,13 +168,14 @@ export function getAxisConfigInPivotChart(col: number, row: number, layout: Pivo
       if (axisOption?.visible === false) {
         return;
       }
+      const spec = layout.getRawChartSpec(col + 1, row);
       // 左侧维度轴
       return merge(
         {
           domain:
             chartType === 'scatter'
               ? undefined
-              : chartType === 'common'
+              : spec?.series?.length >= 1 //chartType === 'common' 原来这样判断的
               ? Array.from(domain)
               : Array.from(domain).reverse(),
           range: chartType === 'scatter' ? domain : undefined,
@@ -344,12 +345,8 @@ export function getAxisConfigInPivotChart(col: number, row: number, layout: Pivo
       return merge(
         {
           // domain: Array.from(domain)
-          domain:
-            chartType === 'scatter'
-              ? undefined
-              : chartType === 'common'
-              ? Array.from(domain)
-              : Array.from(domain).reverse(),
+          domain: chartType === 'scatter' ? undefined : Array.from(domain),
+
           range: chartType === 'scatter' ? domain : undefined
         },
         axisOption,
