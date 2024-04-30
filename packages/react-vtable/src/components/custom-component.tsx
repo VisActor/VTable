@@ -75,7 +75,9 @@ export const CustomComponent: React.FC<CustomComponentProps> = (baseProps: Custo
     styleHeight = height + 'px';
   } else if (displayMode === 'cell') {
     const cellRect =
-      table && col >= 0 && row >= 0 ? table?.getCellRect(col, row) : { width: 0, height: 0, left: -9999, top: -9999 };
+      table && col >= 0 && row >= 0
+        ? table?.getCellRelativeRect(col, row)
+        : { width: 0, height: 0, left: -9999, top: -9999 };
     styleWidth = dealWidthNumber(width, cellRect.width) + 'px';
     styleHeight = dealWidthNumber(height, cellRect.height) + 'px';
     if (anchor === 'top-left') {
