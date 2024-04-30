@@ -350,7 +350,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
 
     if (container) {
       //先清空
-      container.innerHTML = '';
+      // container.innerHTML = '';
       container.appendChild(internalProps.element);
       this._updateSize();
     } else {
