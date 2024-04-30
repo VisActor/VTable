@@ -11,7 +11,7 @@ import {
 } from 'react';
 import React from 'react';
 import RootTableContext from '../context/table';
-import { merge } from '@visactor/vutils';
+import { isNumber, merge } from '@visactor/vutils';
 
 export interface CustomComponentProps
   extends Omit<DetailedHTMLProps<HTMLAttributes<HTMLElement>, HTMLElement>, 'className' | 'ref'> {
@@ -23,17 +23,17 @@ export interface CustomComponentProps
   displayMode: 'position' | 'cell';
   x?: number;
   y?: number;
-  // width?: number | string;
-  // height?: number | string;
-  width?: number;
-  height?: number;
+  width?: number | string;
+  height?: number | string;
+  // width?: number;
+  // height?: number;
   row?: number;
   col?: number;
   anchor?: 'top-left' | 'top-right' | 'bottom-left' | 'bottom-right';
-  // dx?: number | string;
-  // dy?: number | string;
-  dx?: number;
-  dy?: number;
+  dx?: number | string;
+  dy?: number | string;
+  // dx?: number;
+  // dy?: number;
 }
 
 export const CustomComponent: React.FC<CustomComponentProps> = (baseProps: CustomComponentProps, ref) => {
@@ -69,27 +69,27 @@ export const CustomComponent: React.FC<CustomComponentProps> = (baseProps: Custo
   let styleHeight;
 
   if (displayMode === 'position') {
-    styleLeft = x + dx + 'px';
-    styleTop = y + dy + 'px';
+    styleLeft = x + (dx as number) + 'px';
+    styleTop = y + (dy as number) + 'px';
     styleWidth = width + 'px';
     styleHeight = height + 'px';
   } else if (displayMode === 'cell') {
     const cellRect =
       table && col >= 0 && row >= 0 ? table?.getCellRect(col, row) : { width: 0, height: 0, left: -9999, top: -9999 };
-    styleWidth = width + 'px';
-    styleHeight = height + 'px';
+    styleWidth = dealWidthNumber(width, cellRect.width) + 'px';
+    styleHeight = dealWidthNumber(height, cellRect.height) + 'px';
     if (anchor === 'top-left') {
-      styleLeft = cellRect.left + dx + 'px';
-      styleTop = cellRect.top + dy + 'px';
+      styleLeft = cellRect.left + dealWidthNumber(dx, cellRect.width) + 'px';
+      styleTop = cellRect.top + dealWidthNumber(dy, cellRect.height) + 'px';
     } else if (anchor === 'top-right') {
-      styleLeft = cellRect.left + dx + cellRect.width + 'px';
-      styleTop = cellRect.top + dy + 'px';
+      styleLeft = cellRect.left + dealWidthNumber(dx, cellRect.width) + cellRect.width + 'px';
+      styleTop = cellRect.top + dealWidthNumber(dy, cellRect.height) + 'px';
     } else if (anchor === 'bottom-left') {
-      styleLeft = cellRect.left + dx + 'px';
-      styleTop = cellRect.top + dy + cellRect.height + 'px';
+      styleLeft = cellRect.left + dealWidthNumber(dx, cellRect.width) + 'px';
+      styleTop = cellRect.top + dealWidthNumber(dy, cellRect.height) + cellRect.height + 'px';
     } else if (anchor === 'bottom-right') {
-      styleLeft = cellRect.left + dx + cellRect.width + 'px';
-      styleTop = cellRect.top + dy + cellRect.height + 'px';
+      styleLeft = cellRect.left + dealWidthNumber(dx, cellRect.width) + cellRect.width + 'px';
+      styleTop = cellRect.top + dealWidthNumber(dy, cellRect.height) + cellRect.height + 'px';
     }
   }
 
@@ -138,4 +138,16 @@ export default function useMergeProps<PropsType>(
   }, [componentProps, _defaultProps]);
 
   return props;
+}
+
+function dealWidthNumber(value: string | number, refenceValue: number) {
+  if (isNumber(value)) {
+    return value;
+  }
+
+  if (typeof value === 'string' && value.endsWith('%')) {
+    return (Number(value.slice(0, -1)) / 100) * refenceValue;
+  }
+
+  return 0;
 }

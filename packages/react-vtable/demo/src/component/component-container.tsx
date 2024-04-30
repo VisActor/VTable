@@ -2,7 +2,7 @@ import { useMemo, useState } from 'react';
 import { ListTable, CustomComponent } from '../../../src';
 
 function AAA(props: any) {
-  return <div style={{ width: 200, height: 200, border: '1px solid red', backgroundColor: 'green' }}>123</div>;
+  return <div style={{ width: '100%', height: '100%', border: '1px solid red', backgroundColor: 'green' }}>123</div>;
 }
 function App() {
   const [col, setCol] = useState(-1);
@@ -36,9 +36,15 @@ function App() {
       setRow(args.row);
     };
   }, []);
+  const hide = useMemo(() => {
+    return () => {
+      setCol(-1);
+      setRow(-1);
+    };
+  }, []);
   return (
-    <ListTable option={option} onMouseEnterCell={updatePos}>
-      <CustomComponent width={200} height={200} displayMode="cell" col={col} row={row} anchor="top-right">
+    <ListTable option={option} onMouseEnterCell={updatePos} onMouseLeaveTable={hide}>
+      <CustomComponent width="50%" height="100%" displayMode="cell" col={col} row={row} anchor="bottom-right" dx="-50%">
         <AAA />
       </CustomComponent>
     </ListTable>
