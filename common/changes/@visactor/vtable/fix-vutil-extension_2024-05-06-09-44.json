@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vtable",
+      "comment": "fix: update @visactor/vutils-extension version",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vtable"
+}
