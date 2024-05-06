@@ -1090,3 +1090,17 @@ getAllRowsHeight: () => number;
 ```
 getAllColsWidth: () => number;
 ```
+
+## setSortedIndexMap(Function)
+
+设置预排序索引，用在大数据量排序的场景下，提升初次排序性能
+
+```
+setSortedIndexMap: (field: FieldDef, filedMap: ISortedMapItem) => void;
+
+interface ISortedMapItem {
+  asc?: (number | number[])[];
+  desc?: (number | number[])[];
+  normal?: (number | number[])[];
+}
+```

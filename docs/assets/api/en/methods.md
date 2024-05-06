@@ -1092,3 +1092,17 @@ get all columns width
 ```
 getAllColsWidth: () => number;
 ```
+
+## setSortedIndexMap(Function)
+
+Set up a pre-sort index to improve initial sorting performance in scenarios where large amounts of data are sorted.
+
+```
+setSortedIndexMap: (field: FieldDef, filedMap: ISortedMapItem) => void;
+
+interface ISortedMapItem {
+  asc?: (number | number[])[];
+  desc?: (number | number[])[];
+  normal?: (number | number[])[];
+}
+```

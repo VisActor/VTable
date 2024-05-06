@@ -1,10 +1,8 @@
-/* eslint-disable */
 import * as VTable from '../../src';
-import VChart from '@visactor/vchart';
 import { bindDebugTool } from '../../src/scenegraph/debug-tool';
-
+const ListTable = VTable.ListTable;
 const CONTAINER_ID = 'vTable';
-VTable.register.chartModule('vchart', VChart);
+
 export function createTable() {
   fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/test-demo-data/pre-sort.json')
     .then(res => res.json())
@@ -58,11 +56,18 @@ export function createTable() {
         records: data.data,
         columns
       };
-      const tableInstance = new VTable.ListTable(document.getElementById(CONTAINER_ID), option);
-      window['tableInstance'] = tableInstance;
+      const tableInstance = new ListTable(document.getElementById(CONTAINER_ID), option);
+      window.tableInstance = tableInstance;
 
       data.sort.forEach(item => {
         tableInstance.setSortedIndexMap(item.key, item.value);
       });
+
+      bindDebugTool(tableInstance.scenegraph.stage as any, {
+        customGrapicKeys: ['role', '_updateTag']
+      });
+    })
+    .catch(err => {
+      // do nothing
     });
 }
