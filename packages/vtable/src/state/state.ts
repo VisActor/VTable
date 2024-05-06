@@ -47,6 +47,7 @@ import {
   updateHeaderCheckedState
 } from './checkbox/checkbox';
 import { updateResizeRow } from './resize/update-resize-row';
+import { deleteAllSelectingBorder } from '../scenegraph/select/delete-select-border';
 
 export class StateManager {
   table: BaseTableAPI;
@@ -602,7 +603,31 @@ export class StateManager {
       if (this.select.ranges.length === 0) {
         return;
       }
-      selectEnd(this.table.scenegraph);
+
+      // this.select.ranges deduplication
+      const currentRange = this.select.ranges[this.select.ranges.length - 1];
+      let isSame = false;
+      for (let i = 0; i < this.select.ranges.length - 1; i++) {
+        const range = this.select.ranges[i];
+        if (
+          range &&
+          range.start.col === currentRange.start.col &&
+          range.start.row === currentRange.start.row &&
+          range.end.col === currentRange.end.col &&
+          range.end.row === currentRange.end.row
+        ) {
+          isSame = true;
+          break;
+        }
+      }
+      if (isSame) {
+        this.select.ranges.pop();
+        // remove selecting rect
+        deleteAllSelectingBorder(this.table.scenegraph);
+        this.table.scenegraph.selectingRangeComponents.clear();
+      } else {
+        selectEnd(this.table.scenegraph);
+      }
 
       // 触发SELECTED_CELL
       const lastCol = this.select.ranges[this.select.ranges.length - 1].end.col;
