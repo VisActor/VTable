@@ -222,6 +222,13 @@ fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/olympic-winner
           }
         ]);
         removeFilterElement();
+        //更新列头icon
+        columns.forEach(col => {
+          if (col.field === field) {
+            col.headerIcon = 'filtered';
+          }
+        });
+        tableInstance.updateColumns(columns);
       });
     }
     function removeFilterElement() {
