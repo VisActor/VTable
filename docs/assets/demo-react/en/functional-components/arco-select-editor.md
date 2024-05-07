@@ -107,7 +107,7 @@ const editor = new ArcoListEditor();
 VTable.register.editor('list-editor', editor);
 const option = {
   defaultRowHeight: 34,
-  header: [
+  columns: [
     {
       field: '0',
       caption: 'name'

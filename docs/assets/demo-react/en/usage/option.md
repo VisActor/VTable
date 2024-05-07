@@ -15,7 +15,7 @@ You can use the complete option of VTable directly and pass the option into the 
 ```javascript livedemo template=vtable-react
 // import * as ReactVTable from '@visactor/react-vtable';
 const option = {
-  header: [
+  columns: [
     {
       field: '0',
       caption: 'name',
