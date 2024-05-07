@@ -7,6 +7,20 @@ VTable.register.chartModule('vchart', VChart);
 export function createTable() {
   const data = [
     {
+      name: 'citroen ds-21 pallas',
+      milesPerGallon: 0,
+      cylinders: 4,
+      horsepower: 115,
+      origin_country: 'France'
+    },
+    {
+      name: 'amc gremlin',
+      milesPerGallon: 21,
+      cylinders: 6,
+      horsepower: 90,
+      origin_country: 'USA'
+    },
+    {
       name: 'chevrolet chevelle malibu',
       milesPerGallon: 18,
       cylinders: 8,
@@ -76,13 +90,7 @@ export function createTable() {
       horsepower: 190,
       origin_country: 'USA'
     },
-    {
-      name: 'citroen ds-21 pallas',
-      milesPerGallon: 0,
-      cylinders: 4,
-      horsepower: 115,
-      origin_country: 'France'
-    },
+
     {
       name: 'chevrolet chevelle concours (sw)',
       milesPerGallon: 0,
@@ -202,13 +210,7 @@ export function createTable() {
       horsepower: 90,
       origin_country: 'Germany'
     },
-    {
-      name: 'saab 99e',
-      milesPerGallon: 25,
-      cylinders: 4,
-      horsepower: 95,
-      origin_country: 'Sweden'
-    },
+
     {
       name: 'bmw 2002',
       milesPerGallon: 26,
@@ -216,13 +218,7 @@ export function createTable() {
       horsepower: 113,
       origin_country: 'Germany'
     },
-    {
-      name: 'amc gremlin',
-      milesPerGallon: 21,
-      cylinders: 6,
-      horsepower: 90,
-      origin_country: 'USA'
-    },
+
     {
       name: 'ford f250',
       milesPerGallon: 10,
@@ -418,13 +414,6 @@ export function createTable() {
       cylinders: 4,
       horsepower: 70,
       origin_country: 'France'
-    },
-    {
-      name: 'fiat 124b',
-      milesPerGallon: 30,
-      cylinders: 4,
-      horsepower: 76,
-      origin_country: 'Italy'
     },
     {
       name: 'toyota corolla 1200',
@@ -636,20 +625,596 @@ export function createTable() {
       cylinders: 4,
       horsepower: 0,
       origin_country: 'USA'
-    }
+    },
+    {
+      name: 'datsun 810',
+      milesPerGallon: 22,
+      cylinders: 6,
+      horsepower: 97,
+      origin_country: 'Japan'
+    },
+    {
+      name: 'bmw 320i',
+      milesPerGallon: 21.5,
+      cylinders: 4,
+      horsepower: 110,
+      origin_country: 'Germany'
+    },
+    {
+      name: 'volkswagen rabbit custom diesel',
+      milesPerGallon: 43.1,
+      cylinders: 4,
+      horsepower: 48,
+      origin_country: 'Germany'
+    },
+    {
+      name: 'ford fiesta',
+      milesPerGallon: 36.1,
+      cylinders: 4,
+      horsepower: 66,
+      origin_country: 'USA'
+    },
+    {
+      name: 'mazda glc deluxe',
+      milesPerGallon: 32.8,
+      cylinders: 4,
+      horsepower: 52,
+      origin_country: 'Japan'
+    },
+    {
+      name: 'datsun b210 gx',
+      milesPerGallon: 39.4,
+      cylinders: 4,
+      horsepower: 70,
+      origin_country: 'Japan'
+    },
+    {
+      name: 'honda civic cvcc',
+      milesPerGallon: 36.1,
+      cylinders: 4,
+      horsepower: 60,
+      origin_country: 'Japan'
+    },
+    {
+      name: 'oldsmobile cutlass salon brougham',
+      milesPerGallon: 19.9,
+      cylinders: 8,
+      horsepower: 110,
+      origin_country: 'USA'
+    },
+    {
+      name: 'dodge diplomat',
+      milesPerGallon: 19.4,
+      cylinders: 8,
+      horsepower: 140,
+      origin_country: 'USA'
+    },
+    {
+      name: 'mercury monarch ghia',
+      milesPerGallon: 20.2,
+      cylinders: 8,
+      horsepower: 139,
+      origin_country: 'USA'
+    },
+    {
+      name: 'pontiac phoenix lj',
+      milesPerGallon: 19.2,
+      cylinders: 6,
+      horsepower: 105,
+      origin_country: 'USA'
+    },
+    {
+      name: 'chevrolet malibu',
+      milesPerGallon: 20.5,
+      cylinders: 6,
+      horsepower: 95,
+      origin_country: 'USA'
+    },
+    {
+      name: 'ford fairmont (auto)',
+      milesPerGallon: 20.2,
+      cylinders: 6,
+      horsepower: 85,
+      origin_country: 'USA'
+    },
+    {
+      name: 'ford fairmont (man)',
+      milesPerGallon: 25.1,
+      cylinders: 4,
+      horsepower: 88,
+      origin_country: 'USA'
+    },
+    {
+      name: 'plymouth volare',
+      milesPerGallon: 20.5,
+      cylinders: 6,
+      horsepower: 100,
+      origin_country: 'USA'
+    },
+    {
+      name: 'amc concord',
+      milesPerGallon: 19.4,
+      cylinders: 6,
+      horsepower: 90,
+      origin_country: 'USA'
+    },
+    {
+      name: 'buick century special',
+      milesPerGallon: 20.6,
+      cylinders: 6,
+      horsepower: 105,
+      origin_country: 'USA'
+    },
+    {
+      name: 'mercury zephyr',
+      milesPerGallon: 20.8,
+      cylinders: 6,
+      horsepower: 85,
+      origin_country: 'USA'
+    },
+    {
+      name: 'dodge aspen',
+      milesPerGallon: 18.6,
+      cylinders: 6,
+      horsepower: 110,
+      origin_country: 'USA'
+    },
+    {
+      name: 'amc concord d/l',
+      milesPerGallon: 18.1,
+      cylinders: 6,
+      horsepower: 120,
+      origin_country: 'USA'
+    },
+    {
+      name: 'chevrolet monte carlo landau',
+      milesPerGallon: 19.2,
+      cylinders: 8,
+      horsepower: 145,
+      origin_country: 'USA'
+    },
+    {
+      name: 'buick regal sport coupe (turbo)',
+      milesPerGallon: 17.7,
+      cylinders: 6,
+      horsepower: 165,
+      origin_country: 'USA'
+    },
+    {
+      name: 'ford futura',
+      milesPerGallon: 18.1,
+      cylinders: 8,
+      horsepower: 139,
+      origin_country: 'USA'
+    },
+    {
+      name: 'dodge magnum xe',
+      milesPerGallon: 17.5,
+      cylinders: 8,
+      horsepower: 140,
+      origin_country: 'USA'
+    },
+    {
+      name: 'chevrolet chevette',
+      milesPerGallon: 30,
+      cylinders: 4,
+      horsepower: 68,
+      origin_country: 'USA'
+    },
+    {
+      name: 'toyota corona',
+      milesPerGallon: 27.5,
+      cylinders: 4,
+      horsepower: 95,
+      origin_country: 'Japan'
+    },
+    {
+      name: 'datsun 510',
+      milesPerGallon: 27.2,
+      cylinders: 4,
+      horsepower: 97,
+      origin_country: 'Japan'
+    },
+    {
+      name: 'dodge omni',
+      milesPerGallon: 30.9,
+      cylinders: 4,
+      horsepower: 75,
+      origin_country: 'USA'
+    },
+    {
+      name: 'toyota celica gt liftback',
+      milesPerGallon: 21.1,
+      cylinders: 4,
+      horsepower: 95,
+      origin_country: 'Japan'
+    },
+    {
+      name: 'plymouth sapporo',
+      milesPerGallon: 23.2,
+      cylinders: 4,
+      horsepower: 105,
+      origin_country: 'USA'
+    },
+    {
+      name: 'oldsmobile starfire sx',
+      milesPerGallon: 23.8,
+      cylinders: 4,
+      horsepower: 85,
+      origin_country: 'USA'
+    },
+    {
+      name: 'datsun 200-sx',
+      milesPerGallon: 23.9,
+      cylinders: 4,
+      horsepower: 97,
+      origin_country: 'Japan'
+    },
+
+    {
+      name: 'peugeot 604sl',
+      milesPerGallon: 16.2,
+      cylinders: 6,
+      horsepower: 133,
+      origin_country: 'France'
+    },
+    {
+      name: 'volkswagen scirocco',
+      milesPerGallon: 31.5,
+      cylinders: 4,
+      horsepower: 71,
+      origin_country: 'Germany'
+    },
+    {
+      name: 'honda Accelerationord lx',
+      milesPerGallon: 29.5,
+      cylinders: 4,
+      horsepower: 68,
+      origin_country: 'Japan'
+    },
+    {
+      name: 'pontiac lemans v6',
+      milesPerGallon: 21.5,
+      cylinders: 6,
+      horsepower: 115,
+      origin_country: 'USA'
+    },
+    {
+      name: 'mercury zephyr 6',
+      milesPerGallon: 19.8,
+      cylinders: 6,
+      horsepower: 85,
+      origin_country: 'USA'
+    },
+    {
+      name: 'ford fairmont 4',
+      milesPerGallon: 22.3,
+      cylinders: 4,
+      horsepower: 88,
+      origin_country: 'USA'
+    },
+    {
+      name: 'amc concord dl 6',
+      milesPerGallon: 20.2,
+      cylinders: 6,
+      horsepower: 90,
+      origin_country: 'USA'
+    },
+    {
+      name: 'dodge aspen 6',
+      milesPerGallon: 20.6,
+      cylinders: 6,
+      horsepower: 110,
+      origin_country: 'USA'
+    },
+    {
+      name: 'chevrolet caprice classic',
+      milesPerGallon: 17,
+      cylinders: 8,
+      horsepower: 130,
+      origin_country: 'USA'
+    },
+    {
+      name: 'ford ltd landau',
+      milesPerGallon: 17.6,
+      cylinders: 8,
+      horsepower: 129,
+      origin_country: 'USA'
+    },
+    {
+      name: 'mercury grand marquis',
+      milesPerGallon: 16.5,
+      cylinders: 8,
+      horsepower: 138,
+      origin_country: 'USA'
+    },
+    {
+      name: 'dodge st. regis',
+      milesPerGallon: 18.2,
+      cylinders: 8,
+      horsepower: 135,
+      origin_country: 'USA'
+    },
+    {
+      name: 'buick estate wagon (sw)',
+      milesPerGallon: 16.9,
+      cylinders: 8,
+      horsepower: 155,
+      origin_country: 'USA'
+    },
+    {
+      name: 'ford country squire (sw)',
+      milesPerGallon: 15.5,
+      cylinders: 8,
+      horsepower: 142,
+      origin_country: 'USA'
+    },
+    {
+      name: 'chevrolet malibu classic (sw)',
+      milesPerGallon: 19.2,
+      cylinders: 8,
+      horsepower: 125,
+      origin_country: 'USA'
+    },
+    {
+      name: 'chrysler lebaron town @ country (sw)',
+      milesPerGallon: 18.5,
+      cylinders: 8,
+      horsepower: 150,
+      origin_country: 'USA'
+    },
+    {
+      name: 'maxda glc deluxe',
+      milesPerGallon: 34.1,
+      cylinders: 4,
+      horsepower: 65,
+      origin_country: 'Japan'
+    },
+    {
+      name: 'dodge colt hatchback custom',
+      milesPerGallon: 35.7,
+      cylinders: 4,
+      horsepower: 80,
+      origin_country: 'USA'
+    },
+    {
+      name: 'amc spirit dl',
+      milesPerGallon: 27.4,
+      cylinders: 4,
+      horsepower: 80,
+      origin_country: 'USA'
+    },
+    {
+      name: 'cadillac eldorado',
+      milesPerGallon: 23,
+      cylinders: 8,
+      horsepower: 125,
+      origin_country: 'USA'
+    },
+    {
+      name: 'peugeot 504',
+      milesPerGallon: 27.2,
+      cylinders: 4,
+      horsepower: 71,
+      origin_country: 'France'
+    },
+    {
+      name: 'oldsmobile cutlass salon brougham',
+      milesPerGallon: 23.9,
+      cylinders: 8,
+      horsepower: 90,
+      origin_country: 'USA'
+    },
+    {
+      name: 'plymouth horizon',
+      milesPerGallon: 34.2,
+      cylinders: 4,
+      horsepower: 70,
+      origin_country: 'USA'
+    },
+    {
+      name: 'plymouth horizon tc3',
+      milesPerGallon: 34.5,
+      cylinders: 4,
+      horsepower: 70,
+      origin_country: 'USA'
+    },
+    {
+      name: 'datsun 210',
+      milesPerGallon: 31.8,
+      cylinders: 4,
+      horsepower: 65,
+      origin_country: 'Japan'
+    },
+    {
+      name: 'buick skylark limited',
+      milesPerGallon: 28.4,
+      cylinders: 4,
+      horsepower: 90,
+      origin_country: 'USA'
+    },
+    {
+      name: 'chevrolet citation',
+      milesPerGallon: 28.8,
+      cylinders: 6,
+      horsepower: 115,
+      origin_country: 'USA'
+    },
+    {
+      name: 'oldsmobile omega brougham',
+      milesPerGallon: 26.8,
+      cylinders: 6,
+      horsepower: 115,
+      origin_country: 'USA'
+    },
+    {
+      name: 'pontiac phoenix',
+      milesPerGallon: 33.5,
+      cylinders: 4,
+      horsepower: 90,
+      origin_country: 'USA'
+    },
+    {
+      name: 'vw rabbit',
+      milesPerGallon: 41.5,
+      cylinders: 4,
+      horsepower: 76,
+      origin_country: 'Germany'
+    },
+    {
+      name: 'toyota corolla tercel',
+      milesPerGallon: 38.1,
+      cylinders: 4,
+      horsepower: 60,
+      origin_country: 'Japan'
+    },
+    {
+      name: 'chevrolet chevette',
+      milesPerGallon: 32.1,
+      cylinders: 4,
+      horsepower: 70,
+      origin_country: 'USA'
+    },
+    {
+      name: 'datsun 310',
+      milesPerGallon: 37.2,
+      cylinders: 4,
+      horsepower: 65,
+      origin_country: 'Japan'
+    },
+    {
+      name: 'chevrolet citation',
+      milesPerGallon: 28,
+      cylinders: 4,
+      horsepower: 90,
+      origin_country: 'USA'
+    },
+    {
+      name: 'ford fairmont',
+      milesPerGallon: 26.4,
+      cylinders: 4,
+      horsepower: 88,
+      origin_country: 'USA'
+    },
+    {
+      name: 'amc concord',
+      milesPerGallon: 24.3,
+      cylinders: 4,
+      horsepower: 90,
+      origin_country: 'USA'
+    },
+    {
+      name: 'dodge aspen',
+      milesPerGallon: 19.1,
+      cylinders: 6,
+      horsepower: 90,
+      origin_country: 'USA'
+    },
+    {
+      name: 'audi 4000',
+      milesPerGallon: 34.3,
+      cylinders: 4,
+      horsepower: 78,
+      origin_country: 'Germany'
+    },
+    {
+      name: 'toyota corona liftback',
+      milesPerGallon: 29.8,
+      cylinders: 4,
+      horsepower: 90,
+      origin_country: 'Japan'
+    },
+    {
+      name: 'mazda 626',
+      milesPerGallon: 31.3,
+      cylinders: 4,
+      horsepower: 75,
+      origin_country: 'Japan'
+    },
+    { name: 'vokswagen rabbit', milesPerGallon: 29.8, cylinders: 4, horsepower: 62, origin_country: 'Germany' },
+    { name: 'datsun 280-zx', milesPerGallon: 32.7, cylinders: 6, horsepower: 132, origin_country: 'Japan' },
+
+    { name: 'ford mustang cobra', milesPerGallon: 23.6, cylinders: 4, horsepower: 0, origin_country: 'USA' },
+    { name: 'honda Accelerationord', milesPerGallon: 32.4, cylinders: 4, horsepower: 72, origin_country: 'Japan' },
+    { name: 'plymouth reliant', milesPerGallon: 27.2, cylinders: 4, horsepower: 84, origin_country: 'USA' },
+    { name: 'buick skylark', milesPerGallon: 26.6, cylinders: 4, horsepower: 84, origin_country: 'USA' },
+    { name: 'dodge aries wagon (sw)', milesPerGallon: 25.8, cylinders: 4, horsepower: 92, origin_country: 'USA' },
+    { name: 'chevrolet citation', milesPerGallon: 23.5, cylinders: 6, horsepower: 110, origin_country: 'USA' },
+    { name: 'plymouth reliant', milesPerGallon: 30, cylinders: 4, horsepower: 84, origin_country: 'USA' },
+    { name: 'toyota starlet', milesPerGallon: 39.1, cylinders: 4, horsepower: 58, origin_country: 'Japan' },
+    { name: 'plymouth champ', milesPerGallon: 39, cylinders: 4, horsepower: 64, origin_country: 'USA' },
+    { name: 'honda civic 1300', milesPerGallon: 35.1, cylinders: 4, horsepower: 60, origin_country: 'Japan' },
+    { name: 'subaru', milesPerGallon: 32.3, cylinders: 4, horsepower: 67, origin_country: 'Japan' },
+    { name: 'datsun 210', milesPerGallon: 37, cylinders: 4, horsepower: 65, origin_country: 'Japan' },
+    { name: 'toyota tercel', milesPerGallon: 37.7, cylinders: 4, horsepower: 62, origin_country: 'Japan' },
+    { name: 'honda prelude', milesPerGallon: 33.7, cylinders: 4, horsepower: 75, origin_country: 'Japan' },
+    { name: 'toyota corolla', milesPerGallon: 32.4, cylinders: 4, horsepower: 75, origin_country: 'Japan' },
+    { name: 'datsun 200sx', milesPerGallon: 32.9, cylinders: 4, horsepower: 100, origin_country: 'Japan' },
+    { name: 'mazda 626', milesPerGallon: 31.6, cylinders: 4, horsepower: 74, origin_country: 'Japan' },
+    { name: 'peugeot 505s turbo diesel', milesPerGallon: 28.1, cylinders: 4, horsepower: 80, origin_country: 'France' },
+
+    { name: 'toyota cressida', milesPerGallon: 25.4, cylinders: 6, horsepower: 116, origin_country: 'Japan' },
+    { name: 'datsun 810 maxima', milesPerGallon: 24.2, cylinders: 6, horsepower: 120, origin_country: 'Japan' },
+    { name: 'buick century', milesPerGallon: 22.4, cylinders: 6, horsepower: 110, origin_country: 'USA' },
+    { name: 'oldsmobile cutlass ls', milesPerGallon: 26.6, cylinders: 8, horsepower: 105, origin_country: 'USA' },
+    { name: 'ford granada gl', milesPerGallon: 20.2, cylinders: 6, horsepower: 88, origin_country: 'USA' },
+    { name: 'chrysler lebaron salon', milesPerGallon: 17.6, cylinders: 6, horsepower: 85, origin_country: 'USA' },
+    { name: 'chevrolet cavalier', milesPerGallon: 28, cylinders: 4, horsepower: 88, origin_country: 'USA' },
+    { name: 'chevrolet cavalier wagon', milesPerGallon: 27, cylinders: 4, horsepower: 88, origin_country: 'USA' },
+    { name: 'chevrolet cavalier 2-door', milesPerGallon: 34, cylinders: 4, horsepower: 88, origin_country: 'USA' },
+    { name: 'pontiac j2000 se hatchback', milesPerGallon: 31, cylinders: 4, horsepower: 85, origin_country: 'USA' },
+    { name: 'dodge aries se', milesPerGallon: 29, cylinders: 4, horsepower: 84, origin_country: 'USA' },
+    { name: 'pontiac phoenix', milesPerGallon: 27, cylinders: 4, horsepower: 90, origin_country: 'USA' },
+    { name: 'ford fairmont futura', milesPerGallon: 24, cylinders: 4, horsepower: 92, origin_country: 'USA' },
+    { name: 'amc concord dl', milesPerGallon: 23, cylinders: 4, horsepower: 0, origin_country: 'USA' },
+    { name: 'volkswagen rabbit l', milesPerGallon: 36, cylinders: 4, horsepower: 74, origin_country: 'Germany' },
+    { name: 'mazda glc custom l', milesPerGallon: 37, cylinders: 4, horsepower: 68, origin_country: 'Japan' },
+    { name: 'mazda glc custom', milesPerGallon: 31, cylinders: 4, horsepower: 68, origin_country: 'Japan' },
+    { name: 'plymouth horizon miser', milesPerGallon: 38, cylinders: 4, horsepower: 63, origin_country: 'USA' },
+    { name: 'mercury lynx l', milesPerGallon: 36, cylinders: 4, horsepower: 70, origin_country: 'USA' },
+    { name: 'nissan stanza xe', milesPerGallon: 36, cylinders: 4, horsepower: 88, origin_country: 'Japan' },
+    { name: 'honda Accordion', milesPerGallon: 36, cylinders: 4, horsepower: 75, origin_country: 'Japan' },
+    { name: 'toyota corolla', milesPerGallon: 34, cylinders: 4, horsepower: 70, origin_country: 'Japan' },
+    { name: 'honda civic', milesPerGallon: 38, cylinders: 4, horsepower: 67, origin_country: 'Japan' },
+    { name: 'honda civic (auto)', milesPerGallon: 32, cylinders: 4, horsepower: 67, origin_country: 'Japan' },
+    { name: 'datsun 310 gx', milesPerGallon: 38, cylinders: 4, horsepower: 67, origin_country: 'Japan' },
+
+    { name: 'buick century limited', milesPerGallon: 25, cylinders: 6, horsepower: 110, origin_country: 'USA' },
+    {
+      name: 'oldsmobile cutlass ciera (diesel)',
+      milesPerGallon: 38,
+      cylinders: 6,
+      horsepower: 85,
+      origin_country: 'USA'
+    },
+    { name: 'chrysler lebaron medallion', milesPerGallon: 26, cylinders: 4, horsepower: 92, origin_country: 'USA' },
+    { name: 'ford granada l', milesPerGallon: 22, cylinders: 6, horsepower: 112, origin_country: 'USA' },
+    { name: 'toyota celica gt', milesPerGallon: 32, cylinders: 4, horsepower: 96, origin_country: 'Japan' },
+    { name: 'dodge charger 2.2', milesPerGallon: 36, cylinders: 4, horsepower: 84, origin_country: 'USA' },
+    { name: 'chevrolet camaro', milesPerGallon: 27, cylinders: 4, horsepower: 90, origin_country: 'USA' },
+    { name: 'ford mustang gl', milesPerGallon: 27, cylinders: 4, horsepower: 86, origin_country: 'USA' },
+    { name: 'vw pickup', milesPerGallon: 44, cylinders: 4, horsepower: 52, origin_country: 'Germany' },
+    { name: 'dodge rampage', milesPerGallon: 32, cylinders: 4, horsepower: 84, origin_country: 'USA' },
+    { name: 'ford ranger', milesPerGallon: 28, cylinders: 4, horsepower: 79, origin_country: 'USA' },
+    { name: 'chevy s-10', milesPerGallon: 31, cylinders: 4, horsepower: 82, origin_country: 'USA' }
   ];
   const columns = [
     {
       dimensionKey: 'cylinders',
-      title: 'cylinders'
+      title: 'cylinders',
+      headerFormat(value) {
+        return `${value} cylinders`;
+      }
     }
   ];
+
   const rows = [
     {
       dimensionKey: 'origin_country',
       title: 'origin_country'
     }
   ];
+
   const indicators = [
     {
       indicatorKey: 'milesPerGallon',
@@ -741,8 +1306,8 @@ export function createTable() {
   const option = {
     // hideIndicatorName: true,
     // indicatorsAsCol:false,
-    rows,
-    columns,
+    rows: rows,
+    columns: columns,
     indicators,
     records: data,
     defaultRowHeight: 200,

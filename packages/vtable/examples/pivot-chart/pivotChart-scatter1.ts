@@ -164,8 +164,6 @@ export function createTable() {
               cursor: 'pointer'
             }
           },
-          shape: 'M512 512m-512 0a23 23 0 1 0 1024 0 23 23 0 1 0-1024 0Z',
-          size: 6,
 
           scales: [
             {
@@ -182,22 +180,6 @@ export function createTable() {
       }
     ],
     axes: [
-      // {
-      //   title: {
-      //     visible: true,
-      //     text: '利润'
-      //   },
-      //   // seriesId: ['col_57','col_59'],
-      //   orient: 'left',
-      //   range: { min: 0 },
-      //   type: 'linear',
-      //   innerOffset: {
-      //     left: 4,
-      //     right: 4,
-      //     top: 4,
-      //     bottom: 4
-      //   }
-      // },
       {
         title: {
           visible: true,
