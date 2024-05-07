@@ -17,7 +17,7 @@ VTable支持的事件都可以通过openinula的props传入进行监听，具体
 // import * as InulaVTable from '@visactor/openinula-vtable';
 
 const option = {
-  header: [
+  columns: [
     {
       field: '0',
       caption: 'name',

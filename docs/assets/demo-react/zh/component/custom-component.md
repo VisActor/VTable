@@ -1,15 +1,32 @@
-import { useCallback, useRef, useState } from 'react';
-import { Popconfirm, Message, Button } from '@arco-design/web-react';
-import { ListTable, CustomComponent } from '../../../src';
-import '@arco-design/web-react/dist/css/arco.css';
+---
+category: examples
+group: component
+title: 自定义组件
+cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/custom-component.png
+order: 1-1
+link: '../guide/Developer_Ecology/react'
+---
 
-function Tooltip(props: { value: string }) {
+# 自定义组件
+
+自定义组件`CustomComponent`组件方便在React-VTable组件上叠加外部组件。
+
+## 代码演示
+```javascript livedemo template=vtable-react
+// import * as ReactVTable from '@visactor/react-vtable';
+
+const { useCallback, useRef, useState } = React;
+const { ListTable, CustomComponent } = ReactVTable;
+const { Popconfirm, Message, Button } = ArcoDesign;
+
+function Tooltip(props) {
   return (
     <div style={{ width: '100%', height: '100%', border: '1px solid #333', backgroundColor: '#ccc', fontSize: 10 }}>
       {`${props.value}(click to show more)`}
     </div>
   );
 }
+
 function App() {
   const [hoverCol, setHoverCol] = useState(-1);
   const [hoverRow, setHoverRow] = useState(-1);
@@ -41,13 +58,13 @@ function App() {
     records: new Array(1000).fill(['张三', 18, '男', '🏀'])
   };
 
-  const updateHoverPos = useCallback((args: any) => {
+  const updateHoverPos = useCallback((args) => {
     if (visible.current) {
       return;
     }
     setHoverCol(args.col);
     setHoverRow(args.row);
-    const cellValue = (tableInstance.current as any)?.getCellValue(args.col, args.row);
+    const cellValue = tableInstance.current.getCellValue(args.col, args.row);
     setValue(cellValue);
   }, []);
   const hide = useCallback(() => {
@@ -55,12 +72,12 @@ function App() {
     setHoverRow(-1);
   }, []);
 
-  const updateClickPos = useCallback((args: any) => {
+  const updateClickPos = useCallback((args) => {
     setClickCol(args.col);
     setClickRow(args.row);
   }, []);
 
-  const ready = (instance: any, isInitial: boolean) => {
+  const ready = (instance, isInitial) => {
     if (isInitial) {
       tableInstance.current = instance;
     }
@@ -104,7 +121,7 @@ function App() {
             setClickCol(-1);
             setClickRow(-1);
           }}
-          onVisibleChange={(popVisible: boolean) => {
+          onVisibleChange={(popVisible) => {
             visible.current = popVisible;
           }}
         >
@@ -115,4 +132,11 @@ function App() {
   );
 }
 
-export default App;
+const root = ReactDom.createRoot(document.getElementById(CONTAINER_ID));
+root.render(<App />);
+
+// release react instance, do not copy
+window.customRelease = () => {
+  root.unmount();
+};
+```

@@ -1,15 +1,12 @@
 import type { ReactElement } from 'react';
-import {
+import React, {
   type CSSProperties,
-  type ChangeEvent,
   type ReactNode,
   type HTMLAttributes,
   type DetailedHTMLProps,
   useContext,
-  useMemo,
-  forwardRef
+  useMemo
 } from 'react';
-import React from 'react';
 import RootTableContext from '../context/table';
 import { isNumber, merge } from '@visactor/vutils';
 
@@ -36,7 +33,7 @@ export interface CustomComponentProps
   // dy?: number;
 }
 
-export const CustomComponent: React.FC<CustomComponentProps> = (baseProps: CustomComponentProps, ref) => {
+export const CustomComponent: React.FC<CustomComponentProps> = (baseProps: CustomComponentProps) => {
   const context = useContext(RootTableContext);
   const { table } = context;
 
@@ -61,7 +58,7 @@ export const CustomComponent: React.FC<CustomComponentProps> = (baseProps: Custo
     dx: 0,
     dy: 0
   });
-  const { displayMode, x, y, width, height, row, col, anchor, dx, dy, className, children, style, ...rest } = props;
+  const { displayMode, x, y, width, height, row, col, anchor, dx, dy, className, children, style } = props;
 
   let styleLeft;
   let styleTop;

@@ -15,7 +15,7 @@ link: '../guide/Developer_Ecology/openinula'
 ```javascript livedemo template=vtable-openinula
 // import * as InulaVTable from '@visactor/openinula-vtable';
 const option = {
-  header: [
+  columns: [
     {
       field: '0',
       caption: 'name',

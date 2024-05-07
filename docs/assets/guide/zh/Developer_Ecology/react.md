@@ -70,7 +70,7 @@ ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
 );
 ```
 
-参考[demo](https://codesandbox.io/p/sandbox/react-vtable-wjrvpq)
+参考[demo](../../demo-react/usage/option)
 
 ## 使用方式
 
@@ -78,13 +78,13 @@ React-VTable提供两种风格的组件供开发者使用，分别是统一标�
 
 ### 统一标签
 
-统一标签是指是使用一个 Table 标签，接收一个完整的`option`配置，如果项目中已经使用了 VTable ，这种方式可以快速使用React-VTable。上面的例子就是一个使用统一标签的[demo](https://codesandbox.io/p/sandbox/react-vtable-wjrvpq)。
+统一标签是指是使用一个 Table 标签，接收一个完整的`option`配置，如果项目中已经使用了 VTable ，这种方式可以快速使用React-VTable。上面的例子就是一个使用统一标签的[demo](../../demo-react/usage/option)。
 
 与VTable相同React-VTable提供三种表格类型：
 
-- ListTable: 列表表格，用于展示列表数据 [demo](https://codesandbox.io/p/sandbox/list-table-2x3qpr)
-- PivotTable: 透视表格，用于展示交叉透视数据 [demo](https://codesandbox.io/p/sandbox/pivot-table-jyz654)
-- PivotChart: 透视图，用于展示交叉透视数据并以图表方式展示 [demo](https://codesandbox.io/p/sandbox/pivot-chart-3lwn5l)
+- ListTable: 列表表格，用于展示列表数据 [demo](../../demo-react/usage/option)
+- PivotTable: 透视表格，用于展示交叉透视数据 [demo](../../demo-react/grammatical-tag/pivot-table)
+- PivotChart: 透视图，用于展示交叉透视数据并以图表方式展示 [demo](../../demo-react/grammatical-tag/pivot-chart)
 
 这三种React组件，其props定义如下：
 
@@ -131,7 +131,7 @@ function App() {
 }
 ```
 
-语法化标签demo：[demo](https://codesandbox.io/p/sandbox/list-component-2375q5)
+语法化标签demo：[demo](../../demo-react/usage/grammatical-tag)
 
 #### PivotTable&PivotChart
 
@@ -177,7 +177,7 @@ PivotTable&PivotChart接受的props属性与option一致，子组件如下：
   );
 
 ```
-语法化标签demo：[PivotTable demo](https://codesandbox.io/p/sandbox/pivot-component-c8w28h) [PivotChart demo](https://codesandbox.io/p/sandbox/pivot-chart-component-tw8x5c)
+语法化标签demo：[PivotTable demo](../../demo-react/grammatical-tag/pivot-table) [PivotChart demo](../../demo-react/grammatical-tag/pivot-chart)
 
 #### 表格外组件
 
@@ -276,3 +276,43 @@ function App() {
 ```
 
 事件详细描述参考：[事件介绍](../../guide/Event/event_list)
+
+## 自定义外部组件
+
+为了方便在React-VTable组件上叠加外部组件，React-VTable提供了`CustomComponent`工具组件，方便快速将外部组件定位到表格当中。
+
+```jsx
+<ListTable option={option} onMouseEnterCell={updatePos} onMouseLeaveTable={hide} onReady={ready}>
+  <CustomComponent width="50%" height="100%" displayMode="cell" col={col} row={row} anchor="bottom-right" dx="-50%">
+    <UserComponent value={value} />
+  </CustomComponent>
+</ListTable>
+```
+
+其中，`CustomComponent`作为一个容器，用于在表格中定位，并自动匹配尺寸（基于锚定的单元格），具体有两种使用方式：
+
+1. 绝对定位
+
+   绝对定位的方式，需要指定`displayMode`为`position`, 需要指定`x`和`y`属性，用于将容器定位到表格中的指定像素位置（基于左上角），`width`和`height`属性指定容器的像素尺寸。
+
+2. 相对定位
+
+   相对定位的方式，需要指定`displayMode`为`cell`，容器相对为单元格定位、`col`和`row`属性用于指定锚定的单元格坐标，`anchor`属性指定容器相对于单元格的锚定位置，`dx`和`dy`属性指定容器相对于锚定单元格的偏移量，`width`和`height`属性指定容器的尺寸，其中`dx` `dy` `width`和`height`属性的均支持单位为像素或百分比，为百分比时，相对于单元格的尺寸进行计算。
+
+### API
+
+```ts
+interface CustomComponentProps {
+  children: React.ReactNode;
+  displayMode: 'position' | 'cell'; // 定位方式
+  col?: number; // 锚定的列坐标
+  row?: number; // 锚定的行坐标
+  anchor?: 'top-left' | 'top-center' | 'top-right' |'middle-left' |'middle-center' |'middle-right' | 'bottom-left' | 'bottom-center' | 'bottom-right'; // 锚定的位置
+  dx?: number | string; // x方向的偏移
+  dy?: number | string; // y方向的偏移
+  width?: number | string; // 容器的宽度
+  height?: number | string; // 容器的高度
+}
+```
+
+自定义外部组件demo：[custom component demo](../../demo-react/component/custom-component)
