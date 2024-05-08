@@ -16,6 +16,7 @@ import type { BaseTableAPI } from '../../../ts-types/base-table';
 import { getQuadProps } from '../../utils/padding';
 import { getCellMergeInfo } from '../../utils/get-cell-merge';
 import { InteractionState } from '../../../ts-types';
+import { isArray } from '@visactor/vutils';
 
 // const highlightDash: number[] = [];
 
@@ -502,6 +503,9 @@ export class DashGroupAfterRenderContribution implements IGroupRenderContributio
       return;
     }
 
+    // convert lineDash to number[][]
+    const splitLineDash = isArray(lineDash[0]) ? getQuadLineDash(lineDash) : [lineDash, lineDash, lineDash, lineDash];
+
     // const { width = groupAttribute.width, height = groupAttribute.height } = group.attribute;
     let { width = groupAttribute.width, height = groupAttribute.height } = group.attribute;
     width = Math.ceil(width);
@@ -553,7 +557,7 @@ export class DashGroupAfterRenderContribution implements IGroupRenderContributio
     context.moveTo(x, y);
     context.lineTo(x + widthForStroke, y);
     context.lineDashOffset = context.currentMatrix.e / context.currentMatrix.a;
-    context.setLineDash(lineDash[0] ?? []);
+    context.setLineDash(splitLineDash[0] ?? []);
     context.stroke();
 
     // right
@@ -561,7 +565,7 @@ export class DashGroupAfterRenderContribution implements IGroupRenderContributio
     context.moveTo(x + widthForStroke, y);
     context.lineTo(x + widthForStroke, y + heightForStroke);
     context.lineDashOffset = context.currentMatrix.f / context.currentMatrix.d;
-    context.setLineDash(lineDash[1] ?? []);
+    context.setLineDash(splitLineDash[1] ?? []);
     context.stroke();
 
     // bottom
@@ -569,7 +573,7 @@ export class DashGroupAfterRenderContribution implements IGroupRenderContributio
     context.moveTo(x, y + heightForStroke);
     context.lineTo(x + widthForStroke, y + heightForStroke);
     context.lineDashOffset = context.currentMatrix.e / context.currentMatrix.a;
-    context.setLineDash(lineDash[2] ?? []);
+    context.setLineDash(splitLineDash[2] ?? []);
     context.stroke();
 
     // left
@@ -577,7 +581,7 @@ export class DashGroupAfterRenderContribution implements IGroupRenderContributio
     context.moveTo(x, y);
     context.lineTo(x, y + heightForStroke);
     context.lineDashOffset = context.currentMatrix.f / context.currentMatrix.d;
-    context.setLineDash(lineDash[3] ?? []);
+    context.setLineDash(splitLineDash[3] ?? []);
     context.stroke();
 
     context.lineDashOffset = 0;
@@ -1001,4 +1005,14 @@ function getCellSizeForDraw(group: any, width: number, height: number) {
     }
   }
   return { width, height };
+}
+
+function getQuadLineDash(lineDash: number[][]) {
+  if (lineDash.length === 1) {
+    return [lineDash[0], lineDash[0], lineDash[0], lineDash[0]];
+  } else if (lineDash.length === 2) {
+    return [lineDash[0], lineDash[1], lineDash[0], lineDash[1]];
+  }
+  // 不考虑三个数的情况，三个数是用户传错了
+  return lineDash;
 }

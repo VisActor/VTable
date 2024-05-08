@@ -2,6 +2,39 @@
   "name": "@visactor/vtable",
   "entries": [
     {
+      "version": "0.25.1",
+      "tag": "@visactor/vtable_v0.25.1",
+      "date": "Wed, 08 May 2024 08:38:35 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "feat: pivot chart support wordCloud rose radar gauge #1614\n\n"
+          },
+          {
+            "comment": "feat: pivot chart support scatter chart type #1618\n\n"
+          },
+          {
+            "comment": "fix: when copy blank cell paste not work #1646\n\n"
+          },
+          {
+            "comment": "feat: add CustomComponent in react-vtable"
+          },
+          {
+            "comment": "fix: fix custom merge cell size update #1636"
+          },
+          {
+            "comment": "fix: add arg in completeEdit()"
+          },
+          {
+            "comment": "fix: add selecting cell range deduplication #1628"
+          },
+          {
+            "comment": "fix: update @visactor/vutils-extension version"
+          }
+        ]
+      }
+    },
+    {
       "version": "0.25.0",
       "tag": "@visactor/vtable_v0.25.0",
       "date": "Sun, 28 Apr 2024 06:22:38 GMT",

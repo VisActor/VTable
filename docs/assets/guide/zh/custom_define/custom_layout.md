@@ -344,6 +344,16 @@ customLayout 函数返回一个对象，该对象需要有：`rootContainer`来�
 | height | number | 图片高度                                          |
 | image  | string | HTMLImageElement \| HTMLCanvasElement \| 图片内容 |
 
+### VLine
+
+线图元
+
+| key    | type   | description                                       |
+| :----- | :----- | :------------------------------------------------ |
+| points  | {x: number, y: number}[] | 组成line的点坐标 |
+| lineWidth  | number | 描边宽度 |
+| stroke     | string | 描边颜色 |
+
 ### VGroup
 
 容器
@@ -437,6 +447,7 @@ CustomLayout 常用图元与 jsx 图元对应如下：
 | VCircle  | CustomLayout.Circle |
 | VText    | CustomLayout.Text   |
 | VImage   | CustomLayout.Image  |
+| VLine   | CustomLayout.Line  |
 | VGroup   | CustomLayout.Group  |
 | VTag   | CustomLayout.Tag  |
 | VRadio   | CustomLayout.Radio  |

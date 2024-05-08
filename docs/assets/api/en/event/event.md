@@ -422,7 +422,7 @@ Parameter types of event callback function:
 
 ## CHECKBOX_STATE_CHANGE
 
-Change the checkbox checkbox state. **ListTable table exclusive event**
+Change the checkbox state. **ListTable table exclusive event**
 
 Parameter types of event callback function:
 
@@ -435,3 +435,21 @@ Parameter types of event callback function:
   checked: boolean;
 };
 ```
+
+## RADIO_STATE_CHANGE
+
+Change the radio state. **ListTable table exclusive event**
+
+Parameter types of event callback function:
+
+```
+{
+  col: number;
+  row: number;
+  alue: string | number;
+  dataValue: string | number;
+  radioIndexInCell: boolean | number;
+};
+```
+
+If there is only one radio button in the cell, radioIndexInCell is of type boolean, indicating whether it is selected; if there are multiple radio buttons in the cell, radioIndexInCell is of type number, indicating the index of the selected radio button.
