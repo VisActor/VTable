@@ -17,7 +17,7 @@ The onReady callback is triggered after the table completes initialization or up
 // import * as InulaVTable from '@visactor/openinula-vtable';
 
 const option = {
-  header: [
+  columns: [
     {
       field: '0',
       caption: 'name',

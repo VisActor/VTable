@@ -344,6 +344,16 @@ Image Primitive
 | height | number | Image height                                      |
 | image  | string | HTMLImageElement \| HTMLCanvasElement \| Image content |
 
+### VLine
+
+Image Primitive
+
+| key    | type   | description                                       |
+| :----- | :----- | :------------------------------------------------ |
+| points  | {x: number, y: number}[] | The coordinates of the points that make up the line |
+| lineWidth  | number | stroke width |
+| stroke     | string | stroke color |
+
 ### VGroup
 
 Container
@@ -437,6 +447,7 @@ The correspondence between CustomLayout common graphics elements and jsx graphic
 | VCircle  | CustomLayout.Circle |
 | VText    | CustomLayout.Text   |
 | VImage   | CustomLayout.Image  |
+| VLine   | CustomLayout.Line  |
 | VGroup   | CustomLayout.Group  |
 | VTag   | CustomLayout.Tag  |
 | VRadio   | CustomLayout.Radio  |

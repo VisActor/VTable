@@ -1109,6 +1109,7 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
         this._table.isPivotChart() &&
         this.indicatorsAsCol &&
         !this.dataset?.colKeys?.length &&
+        this.columnDimensionTree?.tree?.level === 0 &&
         !this.hasTwoIndicatorAxes
       ) {
         this.columnHeaderLevelCount = 0;

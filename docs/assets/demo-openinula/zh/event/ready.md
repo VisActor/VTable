@@ -17,7 +17,7 @@ onReady回调再表格完成初始化或更新后触发，可以获取表格实�
 // import * as InulaVTable from '@visactor/openinula-vtable';
 
 const option = {
-  header: [
+  columns: [
     {
       field: '0',
       caption: 'name',

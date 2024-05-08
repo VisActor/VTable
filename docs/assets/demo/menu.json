@@ -202,6 +202,27 @@
             "zh": "透视组合图（饼图）",
             "en": "Pivot Chart Pie"
           }
+        },
+        {
+          "path": "pivot-chart-radar",
+          "title": {
+            "zh": "透视组合图（雷达图）",
+            "en": "Pivot Chart Radar"
+          }
+        },
+        {
+          "path": "pivot-chart-scatter",
+          "title": {
+            "zh": "透视组合图（散点图）",
+            "en": "Pivot Chart Scatter"
+          }
+        },
+        {
+          "path": "pivot-chart-wordCloud",
+          "title": {
+            "zh": "透视组合图（词云图）",
+            "en": "Pivot Chart Word Cloud"
+          }
         }
       ]
     },
@@ -378,6 +399,22 @@
           }
         },
         {
+          "path": "pre-sort",
+          "title": {
+            "zh": "预排序",
+            "en": "Pre Sort"
+          },
+          "meta": {
+            "title": "Pre Sort",
+            "keywords": "",
+            "category": "demo",
+            "group": "Basic Features",
+            "cover": "https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/pre-sort.png",
+            "link": "'../../guide/basic_function/sort'",
+            "option": ""
+          }
+        },
+        {
           "path": "merge",
           "title": {
             "zh": "合并单元格",
@@ -478,6 +515,13 @@
           "title": {
             "zh": "行序号",
             "en": "row series number"
+          }
+        },
+        {
+          "path": "pagination",
+          "title": {
+            "zh": "分页",
+            "en": "pagination"
           }
         }
       ]

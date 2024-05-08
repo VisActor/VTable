@@ -17,7 +17,7 @@ VTable支持的事件都可以通过react的props传入进行监听，具体可�
 // import * as ReactVTable from '@visactor/react-vtable';
 
 const option = {
-  header: [
+  columns: [
     {
       field: '0',
       caption: 'name',

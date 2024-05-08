@@ -78,7 +78,7 @@ export function bindContainerDomListener(eventManager: EventManager) {
         (table as ListTableAPI).editorManager.editingEditor
       ) {
         // 开启了方向键切换编辑单元格  并且当前已经在编辑状态下 切换到下一个需先退出再进入下个单元格的编辑
-        (table as ListTableAPI).editorManager.completeEdit();
+        (table as ListTableAPI).editorManager.completeEdit(e);
         table.getElement().focus();
         if ((table as ListTableAPI).getEditor(targetCol, targetRow)) {
           (table as ListTableAPI).editorManager.startEditCell(targetCol, targetRow);
@@ -89,7 +89,7 @@ export function bindContainerDomListener(eventManager: EventManager) {
     } else if (e.key === 'Enter') {
       // 如果按enter键 可以结束当前的编辑 或开启编辑选中的单元格（仅限单选）
       if ((table as ListTableAPI).editorManager.editingEditor) {
-        (table as ListTableAPI).editorManager.completeEdit();
+        (table as ListTableAPI).editorManager.completeEdit(e);
         table.getElement().focus();
       } else {
         if (
@@ -126,7 +126,7 @@ export function bindContainerDomListener(eventManager: EventManager) {
           }
           table.selectCell(targetCol, targetRow);
           if ((table as ListTableAPI).editorManager.editingEditor) {
-            (table as ListTableAPI).editorManager.completeEdit();
+            (table as ListTableAPI).editorManager.completeEdit(e);
             table.getElement().focus();
             if ((table as ListTableAPI).getEditor(targetCol, targetRow)) {
               (table as ListTableAPI).editorManager.startEditCell(targetCol, targetRow);
@@ -173,7 +173,7 @@ export function bindContainerDomListener(eventManager: EventManager) {
               cells.forEach(function (cell: string, cellIndex: number) {
                 // 单元格数据处理
                 const parsedCellData = !cell
-                  ? ''
+                  ? ' '
                   : cell
                       .toString()
                       .replace(/&/g, '&amp;') // replace & with &amp; to prevent XSS attacks
@@ -192,7 +192,7 @@ export function bindContainerDomListener(eventManager: EventManager) {
               });
               result.push('<tr>', ...rowValues, '</tr>');
 
-              if (rowIndex === rowCells.length - 1) {
+              if (rowIndex === rows.length - 1) {
                 result.push('</tbody>');
               }
             });

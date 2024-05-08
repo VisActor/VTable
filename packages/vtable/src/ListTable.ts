@@ -196,7 +196,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
       return;
     }
     this.internalProps.transpose = transpose;
-    this.options.transpose = transpose;
+    // this.options.transpose = transpose; // cause extr update in react
     if (this.internalProps.layoutMap) {
       //后面如果修改是否转置
       this.internalProps.layoutMap.transpose = transpose;

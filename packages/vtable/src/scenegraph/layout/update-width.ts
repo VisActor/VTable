@@ -348,7 +348,19 @@ function updateCellWidth(
       customContainer.removeAllChild();
       cell.removeChild(customContainer);
 
-      if (!getCustomCellMergeCustom(col, row, cell, scene.table)) {
+      const customMergeRange = getCustomCellMergeCustom(col, row, cell, scene.table);
+      if (customMergeRange) {
+        for (let mergeCol = customMergeRange.start.col; mergeCol <= customMergeRange.end.col; mergeCol++) {
+          if (mergeCol === col) {
+            continue;
+          }
+          const mergedCell = scene.getCell(mergeCol, row);
+          const customContainer = mergedCell.getChildByName('custom-container') as Group;
+          customContainer.removeAllChild();
+          mergedCell.removeChild(customContainer);
+          getCustomCellMergeCustom(mergeCol, row, mergedCell, scene.table);
+        }
+      } else {
         let customRender;
         let customLayout;
         const cellType = scene.table.getCellLocation(col, row);
