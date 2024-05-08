@@ -13,7 +13,9 @@ import pivotChartComponent from './pivot-chart/pivot-chart-component';
 import listTableEvent from './event/list-table';
 import eventRebind from './event/event-rebind';
 
-export default listEditor;
+import componentContainer from './component/component-container';
+
+// export default listEditor;
 // export default listOptionRecord;
 // export default listComponent;
 // export default listCustomLayout;
@@ -26,3 +28,5 @@ export default listEditor;
 
 // export default listTableEvent;
 // export default eventRebind;
+
+export default componentContainer;

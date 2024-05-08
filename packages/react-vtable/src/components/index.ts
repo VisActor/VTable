@@ -7,6 +7,8 @@ export { PivotCorner } from './pivot/pivot-corner';
 export { Menu } from './component/menu';
 export { Tooltip } from './component/tooltip';
 
+export { CustomComponent } from './custom-component';
+
 type Props = { updateId?: number };
 
 export interface IMarkElement extends React.ReactElement<Props, React.JSXElementConstructor<Props>> {

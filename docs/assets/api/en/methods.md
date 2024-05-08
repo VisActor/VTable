@@ -586,38 +586,6 @@ For pivot table interfaces, get specific cell addresses based on the header dime
   ) => CellAddress
 ```
 
-## getCheckboxState(Function)
-
-Get the selected status of all data in the checkbox under a certain field. The order corresponds to the original incoming data records. It does not correspond to the status value of the row displayed in the table.
-
-```
-getCheckboxState(field?: string | number): Array
-```
-
-## getCellCheckboxState(Function)
-
-Get the status of a cell checkbox
-
-```
-getCellCheckboxState(col: number, row: number): Array
-```
-
-## getRadioState(Function)
-
-Get the selected status of all radio data under a certain field. The order corresponds to the original incoming data records. It does not correspond to the status value of the row displayed in the table.
-
-```
-getRadioState(field?: string | number): number | Record<number, boolean | number>
-```
-
-## getCellRadioState(Function)
-
-Get the status of a cell radio. If a cell contains multiple radio buttons, the return value is number, which refers to the index of the selected radio in the cell. Otherwise, the return value is boolean.
-
-```
-getCellRadioState(col: number, row: number): boolean | number
-```
-
 ## getScrollTop(Function)
 
 Get the current vertical scroll position
@@ -1053,6 +1021,38 @@ registerCustomCellStyleArrangement: (cellPosition: { col?: number; row?: number;
   - Cell range: `{ range: { start: { row: number, column: number }, end: { row: number, column: number} } }`
 - customStyleId: Custom style id, the same as the id defined when registering the custom style
 
+## getCheckboxState(Function)
+
+Get the selected status of all data in the checkbox under a certain field. The order corresponds to the original incoming data records. It does not correspond to the status value of the row displayed in the table.
+
+```
+getCheckboxState(field?: string | number): Array
+```
+
+## getCellCheckboxState(Function)
+
+Get the status of a cell checkbox
+
+```
+getCellCheckboxState(col: number, row: number): Array
+```
+
+## getRadioState(Function)
+
+Get the selected status of all radio data under a certain field. The order corresponds to the original incoming data records. It does not correspond to the status value of the row displayed in the table.
+
+```
+getRadioState(field?: string | number): number | Record<number, boolean | number>
+```
+
+## getCellRadioState(Function)
+
+Get the status of a cell radio. If a cell contains multiple radio buttons, the return value is number, which refers to the index of the selected radio in the cell. Otherwise, the return value is boolean.
+
+```
+getCellRadioState(col: number, row: number): boolean | number
+```
+
 ## setCellCheckboxState(Function)
 
 Set the checkbox state of a cell
@@ -1091,4 +1091,28 @@ get all columns width
 
 ```
 getAllColsWidth: () => number;
+```
+
+## setSortedIndexMap(Function)
+
+Set up a pre-sort index to improve initial sorting performance in scenarios where large amounts of data are sorted.
+
+```
+setSortedIndexMap: (field: FieldDef, filedMap: ISortedMapItem) => void;
+
+interface ISortedMapItem {
+  asc?: (number | number[])[];
+  desc?: (number | number[])[];
+  normal?: (number | number[])[];
+}
+```
+
+## getHeaderField(Function)
+
+In **ListTable** can get header's field.
+In **PivotTable** get indicatorKey.
+
+```
+  /**get field of header  */
+  getHeaderField: (col: number, row: number)
 ```

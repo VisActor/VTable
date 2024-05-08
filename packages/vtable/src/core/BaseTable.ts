@@ -126,6 +126,7 @@ import { RowSeriesNumberHelper } from './row-series-number-helper';
 import { CustomCellStylePlugin, mergeStyle } from '../plugins/custom-cell-style';
 import { hideCellSelectBorder, restoreCellSelectBorder } from '../scenegraph/select/update-select-border';
 import type { ITextGraphicAttribute } from '@src/vrender';
+import type { ISortedMapItem } from '../data/DataSource';
 
 const { toBoxArray } = utilStyle;
 const { isTouchEvent } = event;
@@ -349,7 +350,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
 
     if (container) {
       //先清空
-      container.innerHTML = '';
+      // container.innerHTML = '';
       container.appendChild(internalProps.element);
       this._updateSize();
     } else {
@@ -4250,6 +4251,9 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
         this.setMaxColWidth(col, maxWidth);
       }
     }
+  }
+  setSortedIndexMap(field: FieldDef, filedMap: ISortedMapItem) {
+    this.dataSource?.setSortedIndexMap(field, filedMap);
   }
   // startInertia() {
   //   startInertia(0, -1, 1, this.stateManager);

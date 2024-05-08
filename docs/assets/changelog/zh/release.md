@@ -1,3 +1,29 @@
+# v0.25.0
+
+2024-04-28
+
+
+**🆕 新增功能**
+
+- **@visactor/vtable**: 透视表表头支持编辑 [#1583](https://github.com/VisActor/VTable/issues/1583)
+- **@visactor/vtable**: customrender/customlayout单元格支持编辑 [#1596](https://github.com/VisActor/VTable/issues/1596)
+- **@visactor/vtable**: 支持拖拽改变行高
+
+**🐛 功能修复**
+
+- **@visactor/vtable**: 增加编辑器0值处理 [#1590](https://github.com/VisActor/VTable/issues/1590)
+- **@visactor/vtable**: 修复textStick显示问题 [#1592](https://github.com/VisActor/VTable/issues/1592)
+- **@visactor/vtable**: 修复异步渲染容器尺寸更新问题 [#1593](https://github.com/VisActor/VTable/issues/1593)
+- **@visactor/vtable**: 修复折叠按钮显示问题
+
+**🔨 功能重构**
+
+- **@visactor/vtable**: 增加调整最后一列宽度灵活性 [#1567](https://github.com/VisActor/VTable/issues/1567)
+
+
+
+[更多详情请查看 v0.25.0](https://github.com/VisActor/VTable/releases/tag/v0.25.0)
+
 # v0.24.1
 
 2024-04-23
@@ -5,19 +31,19 @@
 
 **🆕 新增功能**
 
-- **@visactor/vtable**: add startEditCell api [#1573](https://github.com/VisActor/VTable/issues/1573)
+- **@visactor/vtable**: 增加startEditCell api [#1573](https://github.com/VisActor/VTable/issues/1573)
 
 **🐛 功能修复**
 
-- **@visactor/vtable**: when has rowSeriesNumber minWidth maxWidth error [#1572](https://github.com/VisActor/VTable/issues/1572)
+- **@visactor/vtable**: 修复rowSeriesNumber最大/最小宽度显示问题 [#1572](https://github.com/VisActor/VTable/issues/1572)
 
 **🔨 功能重构**
 
-- **@visactor/vtable**: pivot lazy load modify setTreeNodeChildren api [#1580](https://github.com/VisActor/VTable/issues/1580)
+- **@visactor/vtable**: 在透视懒加载模式下优化setTreeNodeChildren api [#1580](https://github.com/VisActor/VTable/issues/1580)
 
 **📖 文档更新**
 
-- **@visactor/vtable**: add drill down drill up demo [#1556](https://github.com/VisActor/VTable/issues/1556)
+- **@visactor/vtable**: 增加上钻、下钻demo [#1556](https://github.com/VisActor/VTable/issues/1556)
 
 
 

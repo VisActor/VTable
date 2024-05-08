@@ -189,7 +189,19 @@ export function updateCellHeight(
       customContainer.removeAllChild();
       cell.removeChild(customContainer);
 
-      if (!getCustomCellMergeCustom(col, row, cell, scene.table)) {
+      const customMergeRange = getCustomCellMergeCustom(col, row, cell, scene.table);
+      if (customMergeRange) {
+        for (let mergeRow = customMergeRange.start.row; mergeRow <= customMergeRange.end.row; mergeRow++) {
+          if (mergeRow === row) {
+            continue;
+          }
+          const mergedCell = scene.getCell(col, mergeRow);
+          const customContainer = mergedCell.getChildByName('custom-container') as Group;
+          customContainer.removeAllChild();
+          mergedCell.removeChild(customContainer);
+          getCustomCellMergeCustom(col, mergeRow, mergedCell, scene.table);
+        }
+      } else {
         let customRender;
         let customLayout;
         const cellLocation = scene.table.getCellLocation(col, row);
