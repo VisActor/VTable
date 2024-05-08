@@ -2,7 +2,7 @@
 category: examples
 group: table-type
 title: Pivot Chart
-cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/pivot-chart-pie.png
+cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/pivot-chart-radar.png
 link: '../guide/table_type/pivot_chart'
 option: PivotChart-indicators-chart#cellType
 ---
@@ -27,6 +27,7 @@ let tableInstance;
 fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American_Superstore_Pivot_Chart_data.json')
   .then(res => res.json())
   .then(data => {
+    // data=data.splice(0,260);
     const columns = [
       {
         dimensionKey: 'Region',
@@ -54,28 +55,13 @@ fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American
         cellType: 'chart',
         chartModule: 'vchart',
         chartSpec: {
-          // type: 'common',
-          stack: true,
-          type: 'pie',
-          data: {
-            id: 'data',
-            fields: {
-              'Segment-Indicator': {
-                sortIndex: 1,
-                domain: ['Consumer-Quantity', 'Corporate-Quantity', 'Home Office-Quantity']
-              }
-            }
-          },
-          categoryField: 'Segment-Indicator',
+          type: 'radar',
+          categoryField: 'Segment',
+          seriesField: 'Sub-Category',
           valueField: 'Quantity',
-          scales: [
-            {
-              id: 'color',
-              type: 'ordinal',
-              domain: ['Consumer-Quantity', 'Corporate-Quantity', 'Home Office-Quantity'],
-              range: ['#2E62F1', '#4DC36A', '#FF8406']
-            }
-          ]
+          data: {
+            id: 'baseData'
+          }
         },
         style: {
           padding: 1
@@ -94,58 +80,22 @@ fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American
       defaultHeaderColWidth: 100,
       indicatorTitle: '指标',
       autoWrapText: true,
-      widthMode: 'adaptive',
-      heightMode: 'adaptive',
+      // widthMode: 'adaptive',
+      // heightMode: 'adaptive',
       corner: {
         titleOnDimension: 'row',
         headerStyle: {
           autoWrapText: true
         }
       },
-      legends: {
-        orient: 'bottom',
-        type: 'discrete',
-        data: [
-          {
-            label: 'Consumer-Quantity',
-            shape: {
-              fill: '#2E62F1',
-              symbolType: 'circle'
-            }
-          },
-          {
-            label: 'Corporate-Quantity',
-            shape: {
-              fill: '#4DC36A',
-              symbolType: 'square'
-            }
-          },
-          {
-            label: 'Home Office-Quantity',
-            shape: {
-              fill: '#FF8406',
-              symbolType: 'square'
-            }
-          }
-        ]
-      },
+
       pagination: {
         currentPage: 0,
         perPageCount: 8
       }
     };
-
     tableInstance = new VTable.PivotChart(document.getElementById(CONTAINER_ID), option);
-    const { LEGEND_ITEM_CLICK } = VTable.ListTable.EVENT_TYPE;
-    tableInstance.on(LEGEND_ITEM_CLICK, args => {
-      console.log('LEGEND_ITEM_CLICK', args);
-      tableInstance.updateFilterRules([
-        {
-          filterKey: 'Segment-Indicator',
-          filteredValues: args.value
-        }
-      ]);
-    });
+
     window.tableInstance = tableInstance;
   });
 ```

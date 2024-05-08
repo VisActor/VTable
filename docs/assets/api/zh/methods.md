@@ -582,38 +582,6 @@ setRecords(records: Array<any>)
   )=> CellAddress
 ```
 
-## getCheckboxState(Function)
-
-获取某个字段下 checkbox 全部数据的选中状态 顺序对应原始传入数据 records 不是对应表格展示 row 的状态值
-
-```
-getCheckboxState(field?: string | number): Array
-```
-
-## getCellCheckboxState(Function)
-
-获取某个单元格 checkbox 的状态
-
-```
-getCellCheckboxState(col: number, row: number): Array
-```
-
-## getRadioState(Function)
-
-获取某个字段下 radio 全部数据的选中状态 顺序对应原始传入数据 records 不是对应表格展示 row 的状态值
-
-```
-getRadioState(field?: string | number): number | Record<number, boolean | number>
-```
-
-## getCellRadioState(Function)
-
-获取某个单元格 radio 的状态，如果一个单元格中包含多个单选框，则返回值为 number，指该单元格内选中 radio 的索引，否则返回值为 boolean
-
-```
-getCellRadioState(col: number, row: number): boolean | number
-```
-
 ## getScrollTop(Function)
 
 获取当前竖向滚动位置
@@ -1051,6 +1019,38 @@ registerCustomCellStyleArrangement: (cellPosition: { col?: number; row?: number;
   - 单元格区域：`{ range: { start: { row: number, column: number }, end: { row: number, column: number} } }`
 - customStyleId: 自定义样式 id，与注册自定义样式时定义的 id 相同
 
+## getCheckboxState(Function)
+
+获取某个字段下 checkbox 全部数据的选中状态 顺序对应原始传入数据 records 不是对应表格展示 row 的状态值
+
+```
+getCheckboxState(field?: string | number): Array
+```
+
+## getCellCheckboxState(Function)
+
+获取某个单元格 checkbox 的状态
+
+```
+getCellCheckboxState(col: number, row: number): Array
+```
+
+## getRadioState(Function)
+
+获取某个字段下 radio 全部数据的选中状态 顺序对应原始传入数据 records 不是对应表格展示 row 的状态值
+
+```
+getRadioState(field?: string | number): number | Record<number, boolean | number>
+```
+
+## getCellRadioState(Function)
+
+获取某个单元格 radio 的状态，如果一个单元格中包含多个单选框，则返回值为 number，指该单元格内选中 radio 的索引，否则返回值为 boolean
+
+```
+getCellRadioState(col: number, row: number): boolean | number
+```
+
 ## setCellCheckboxState(Function)
 
 设置单元格的 checkbox 状态
@@ -1103,4 +1103,14 @@ interface ISortedMapItem {
   desc?: (number | number[])[];
   normal?: (number | number[])[];
 }
+```
+
+## getHeaderField(Function)
+
+**ListTable**中表示获取对应 header 的 field。
+**PivotTable**中表示获取对应 indicatorKey。
+
+```
+  /**获取对应header的field  */
+  getHeaderField: (col: number, row: number)
 ```
