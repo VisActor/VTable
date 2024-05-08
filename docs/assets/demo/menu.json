@@ -399,6 +399,22 @@
           }
         },
         {
+          "path": "pre-sort",
+          "title": {
+            "zh": "预排序",
+            "en": "Pre Sort"
+          },
+          "meta": {
+            "title": "Pre Sort",
+            "keywords": "",
+            "category": "demo",
+            "group": "Basic Features",
+            "cover": "https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/pre-sort.png",
+            "link": "'../../guide/basic_function/sort'",
+            "option": ""
+          }
+        },
+        {
           "path": "merge",
           "title": {
             "zh": "合并单元格",
