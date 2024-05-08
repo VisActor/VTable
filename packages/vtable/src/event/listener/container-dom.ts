@@ -173,7 +173,7 @@ export function bindContainerDomListener(eventManager: EventManager) {
               cells.forEach(function (cell: string, cellIndex: number) {
                 // 单元格数据处理
                 const parsedCellData = !cell
-                  ? ''
+                  ? ' '
                   : cell
                       .toString()
                       .replace(/&/g, '&amp;') // replace & with &amp; to prevent XSS attacks
@@ -192,7 +192,7 @@ export function bindContainerDomListener(eventManager: EventManager) {
               });
               result.push('<tr>', ...rowValues, '</tr>');
 
-              if (rowIndex === rowCells.length - 1) {
+              if (rowIndex === rows.length - 1) {
                 result.push('</tbody>');
               }
             });
