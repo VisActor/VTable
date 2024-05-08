@@ -5,17 +5,17 @@
 
 **🆕 新增功能**
 
-- **@visactor/vtable**: pivot chart support wordCloud rose radar gauge [#1614](https://github.com/VisActor/VTable/issues/1614)
-- **@visactor/vtable**: pivot chart support scatter chart type [#1618](https://github.com/VisActor/VTable/issues/1618)
-- **@visactor/vtable**: add CustomComponent in react-vtable
+- **@visactor/vtable**: 透视图支持词云、玫瑰图、雷达图、仪表盘 [#1614](https://github.com/VisActor/VTable/issues/1614)
+- **@visactor/vtable**: 透视图支持散点图类型 [#1618](https://github.com/VisActor/VTable/issues/1618)
+- **@visactor/vtable**: 在react-vtable中添加自定义组件
 
 **🐛 功能修复**
 
-- **@visactor/vtable**: when copy blank cell paste not work [#1646](https://github.com/VisActor/VTable/issues/1646)
-- **@visactor/vtable**: fix custom merge cell size update [#1636](https://github.com/VisActor/VTable/issues/1636)
-- **@visactor/vtable**: add arg in completeEdit()
-- **@visactor/vtable**: add selecting cell range deduplication [#1628](https://github.com/VisActor/VTable/issues/1628)
-- **@visactor/vtable**: update @visactor/vutils-extension version
+- **@visactor/vtable**: 修复复制空白单元格无法粘贴的问题 [#1646](https://github.com/VisActor/VTable/issues/1646)
+- **@visactor/vtable**: 修复自定义合并单元格大小更新问题 [#1636](https://github.com/VisActor/VTable/issues/1636)
+- **@visactor/vtable**: 在completeEdit()中添加参数解决用户禁止输入完成编辑功能
+- **@visactor/vtable**: 添加选择单元格范围重复选择逻辑 [#1628](https://github.com/VisActor/VTable/issues/1628)
+- **@visactor/vtable**: 更新@visactor/vutils-extension版本
 
 
 
