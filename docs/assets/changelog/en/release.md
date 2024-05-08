@@ -1,3 +1,26 @@
+# v0.25.1
+
+2024-05-08
+
+
+**🆕 New feature**
+
+- **@visactor/vtable**: pivot chart support wordCloud rose radar gauge [#1614](https://github.com/VisActor/VTable/issues/1614)
+- **@visactor/vtable**: pivot chart support scatter chart type [#1618](https://github.com/VisActor/VTable/issues/1618)
+- **@visactor/vtable**: add CustomComponent in react-vtable
+
+**🐛 Bug fix**
+
+- **@visactor/vtable**: when copy blank cell paste not work [#1646](https://github.com/VisActor/VTable/issues/1646)
+- **@visactor/vtable**: fix custom merge cell size update [#1636](https://github.com/VisActor/VTable/issues/1636)
+- **@visactor/vtable**: add arg in completeEdit()
+- **@visactor/vtable**: add selecting cell range deduplication [#1628](https://github.com/VisActor/VTable/issues/1628)
+- **@visactor/vtable**: update @visactor/vutils-extension version
+
+
+
+[more detail about v0.25.1](https://github.com/VisActor/VTable/releases/tag/v0.25.1)
+
 # v0.25.0
 
 2024-04-28
