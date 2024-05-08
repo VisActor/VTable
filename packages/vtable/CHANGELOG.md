@@ -1,6 +1,13 @@
 # Change Log - @visactor/vtable
 
-This log was last generated on Wed, 08 May 2024 08:38:35 GMT and should not be manually modified.
+This log was last generated on Wed, 08 May 2024 10:48:37 GMT and should not be manually modified.
+
+## 0.25.2
+Wed, 08 May 2024 10:48:37 GMT
+
+### Updates
+
+- fix: fix veritial offset in text stick
 
 ## 0.25.1
 Wed, 08 May 2024 08:38:35 GMT
