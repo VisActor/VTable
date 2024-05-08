@@ -697,7 +697,7 @@ function computeTextHeight(col: number, row: number, cellType: ColumnTypeOption,
   } else {
     // text
     text = cellValue;
-    const lines = validToString(text).split('\n') || [];
+    const lines = breakString(text, table);
     const cellWidth = table.getColsWidth(col, endCol);
 
     if (iconInlineFront.length || iconInlineEnd.length) {

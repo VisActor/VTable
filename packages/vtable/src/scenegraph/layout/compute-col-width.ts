@@ -19,6 +19,7 @@ import { computeAxisComponentWidth } from '../../components/axis/get-axis-compon
 import { Group as VGroup } from '@src/vrender';
 import { isArray, isNumber, isObject, isValid } from '@visactor/vutils';
 import { decodeReactDom, dealPercentCalc } from '../component/custom';
+import { breakString } from '../utils/break-string';
 
 export function computeColsWidth(table: BaseTableAPI, colStart?: number, colEnd?: number, update?: boolean): void {
   const time = typeof window !== 'undefined' ? window.performance.now() : 0;
@@ -573,12 +574,7 @@ function computeTextWidth(col: number, row: number, cellType: ColumnTypeOption, 
   } else {
     text = cellValue;
   }
-  let lines;
-  if (!table.internalProps.enableLineBreak && !table.options.customConfig?.multilinesForXTable) {
-    lines = [validToString(text)];
-  } else {
-    lines = validToString(text).split('\n') || [];
-  }
+  const lines = breakString(text, table);
   if (lines.length >= 1) {
     // eslint-disable-next-line no-loop-func
     lines.forEach((line: string) => {
