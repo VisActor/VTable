@@ -466,3 +466,21 @@ icon 图标点击事件。
   checked: boolean;
 };
 ```
+
+## RADIO_STATE_CHANGE
+
+更改 radio 单选框状态。**ListTable 表格专有事件**
+
+事件回调函数的参数类型:
+
+```
+{
+  col: number;
+  row: number;
+  alue: string | number;
+  dataValue: string | number;
+  radioIndexInCell: boolean | number;
+};
+```
+
+如果单元格中只有一个单选框，radioIndexInCell为boolean类型，表示是否选中；如果单元格中有多个单选框，radioIndexInCell为number类型，表示选中的单选框的索引。
