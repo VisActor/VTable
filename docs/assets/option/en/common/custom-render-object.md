@@ -26,7 +26,7 @@ The configured type collection. The type is declared as: ICustomRenderElement[].
 The definition of ICustomRenderElement is as follows:
 
 ```
-type ICustomRenderElement = TextElement | RectElement | CircleElement | IconElement | ImageElement | ArcElement;
+type ICustomRenderElement = TextElement | RectElement | CircleElement | IconElement | ImageElement | ArcElement | LineElement;
 ```
 Based on the type attribute, this section introduces the specific configuration information for each type.
 
@@ -67,6 +67,14 @@ ${prefix} elements.image(string)
 Placeholder TODO level 4 headings
 
 {{ use: image-custom-element(
+  prefix = '#' + ${prefix},
+) }}
+
+${prefix} elements.line(string)
+
+Placeholder TODO level 4 headings
+
+{{ use: line-custom-element(
   prefix = '#' + ${prefix},
 ) }}
 
