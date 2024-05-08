@@ -74,6 +74,13 @@
             "zh": "提示信息",
             "en": "tooltip"
           }
+        },
+        {
+          "path": "custom-component",
+          "title": {
+            "zh": "自定义组件",
+            "en": "custom component"
+          }
         }
       ]
     },

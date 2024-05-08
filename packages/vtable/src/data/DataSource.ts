@@ -993,6 +993,10 @@ export class DataSource extends EventTarget implements DataSourceAPI {
     this.fireListeners(EVENT_TYPE.CHANGE_ORDER, null);
   }
 
+  setSortedIndexMap(field: FieldDef, filedMap: ISortedMapItem) {
+    this.sortedIndexMap.set(field, filedMap);
+  }
+
   private clearFilteredChildren(record: any) {
     record.filteredChildren = undefined;
     for (let i = 0; i < record.children?.length ?? 0; i++) {

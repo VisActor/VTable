@@ -15,7 +15,7 @@ Records can be separated from options and passed into the table component as a s
 ```javascript livedemo template=vtable-react
 // import * as ReactVTable from '@visactor/react-vtable';
 const option = {
-  header: [
+  columns: [
     {
       field: '0',
       caption: 'name',

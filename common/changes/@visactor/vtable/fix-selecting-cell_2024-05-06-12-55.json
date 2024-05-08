@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vtable",
+      "comment": "fix: add selecting cell range deduplication #1628",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vtable"
+}

@@ -475,3 +475,18 @@ const listTable = new ListTable({
   ]
 });
 ```
+
+## Pre Sort
+
+In the case of large amounts of data, the first sorting may take a long time, and pre-sorting can be used to improve the performance of the sorting function. Set the pre-sorted data fields and sort order through the `setSortedIndexMap` method.
+
+```js
+interface ISortedMapItem {
+  asc?: (number | number[])[];
+  desc?: (number | number[])[];
+  normal?: (number | number[])[];
+}
+
+const tableInstance = new VTable.ListTable(document.getElementById(CONTAINER_ID),option);
+tableInstance.setSortedIndexMap(field, filedMap as ISortedMapItem);
+```

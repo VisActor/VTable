@@ -17,7 +17,7 @@ The events supported by VTable can be monitored through openinula props. For det
 // import * as InulaVTable from '@visactor/openinula-vtable';
 
 const option = {
-  header: [
+  columns: [
     {
       field: '0',
       caption: 'name',

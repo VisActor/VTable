@@ -541,6 +541,10 @@ export const menus = [
       {
         path: 'interactive',
         name: 'row-resize'
+      },
+      {
+        path: 'interactive',
+        name: 'pre-sort'
       }
     ]
   },

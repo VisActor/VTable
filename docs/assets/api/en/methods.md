@@ -1093,12 +1093,26 @@ get all columns width
 getAllColsWidth: () => number;
 ```
 
+## setSortedIndexMap(Function)
+
+Set up a pre-sort index to improve initial sorting performance in scenarios where large amounts of data are sorted.
+
+```
+setSortedIndexMap: (field: FieldDef, filedMap: ISortedMapItem) => void;
+
+interface ISortedMapItem {
+  asc?: (number | number[])[];
+  desc?: (number | number[])[];
+  normal?: (number | number[])[];
+}
+```
+
 ## getHeaderField(Function)
 
 In **ListTable** can get header's field.
 In **PivotTable** get indicatorKey.
 
 ```
-  /**获取对应header的field  */
+  /**get field of header  */
   getHeaderField: (col: number, row: number)
 ```

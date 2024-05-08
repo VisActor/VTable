@@ -17,7 +17,7 @@ The events supported by VTable can be monitored through react props. For details
 // import * as ReactVTable from '@visactor/react-vtable';
 
 const option = {
-  header: [
+  columns: [
     {
       field: '0',
       caption: 'name',
