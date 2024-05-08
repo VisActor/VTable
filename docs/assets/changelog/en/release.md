@@ -13,7 +13,6 @@
 
 - **@visactor/vtable**: when copy blank cell paste not work [#1646](https://github.com/VisActor/VTable/issues/1646)
 - **@visactor/vtable**: fix custom merge cell size update [#1636](https://github.com/VisActor/VTable/issues/1636)
-- **@visactor/vtable**: add arg in completeEdit()
 - **@visactor/vtable**: add selecting cell range deduplication [#1628](https://github.com/VisActor/VTable/issues/1628)
 - **@visactor/vtable**: update @visactor/vutils-extension version
 

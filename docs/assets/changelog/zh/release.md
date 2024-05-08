@@ -13,7 +13,6 @@
 
 - **@visactor/vtable**: 修复复制空白单元格无法粘贴的问题 [#1646](https://github.com/VisActor/VTable/issues/1646)
 - **@visactor/vtable**: 修复自定义合并单元格大小更新问题 [#1636](https://github.com/VisActor/VTable/issues/1636)
-- **@visactor/vtable**: 在completeEdit()中添加参数解决用户禁止输入完成编辑功能
 - **@visactor/vtable**: 添加选择单元格范围重复选择逻辑 [#1628](https://github.com/VisActor/VTable/issues/1628)
 - **@visactor/vtable**: 更新@visactor/vutils-extension版本
 
