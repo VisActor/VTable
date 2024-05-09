@@ -45,6 +45,8 @@ import type { IndicatorData } from './ts-types/list-table/layout-map/api';
 import { cloneDeepSpec } from '@visactor/vutils-extension';
 import type { ITreeLayoutHeadNode } from './layout/tree-helper';
 import { DimensionTree, type LayouTreeNode } from './layout/tree-helper';
+import { IndicatorDimensionKeyPlaceholder } from './tools/global';
+import { checkHasCartesianChart } from './layout/chart-helper/get-chart-spec';
 export class PivotChart extends BaseTable implements PivotChartAPI {
   layoutNodeId: { seqId: number } = { seqId: 0 };
   declare internalProps: PivotChartProtected;
@@ -95,12 +97,18 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
     let columnDimensionTree;
     let rowDimensionTree;
     if (options.columnTree) {
-      columnDimensionTree = new DimensionTree((options.columnTree as ITreeLayoutHeadNode[]) ?? [], this.layoutNodeId);
+      columnDimensionTree = new DimensionTree(
+        (this.internalProps.columnTree as ITreeLayoutHeadNode[]) ?? [],
+        this.layoutNodeId
+      );
     }
     if (options.rowTree) {
-      rowDimensionTree = new DimensionTree((options.rowTree as ITreeLayoutHeadNode[]) ?? [], this.layoutNodeId);
+      rowDimensionTree = new DimensionTree(
+        (this.internalProps.rowTree as ITreeLayoutHeadNode[]) ?? [],
+        this.layoutNodeId
+      );
     }
-    const rowKeys = rowDimensionTree.dimensionKeys?.count
+    const rowKeys = rowDimensionTree?.dimensionKeys?.count
       ? rowDimensionTree.dimensionKeys.valueArr()
       : options.rows?.reduce((keys, rowObj) => {
           if (typeof rowObj === 'string') {
@@ -110,7 +118,7 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
           }
           return keys;
         }, []) ?? [];
-    const columnKeys = columnDimensionTree.dimensionKeys?.count
+    const columnKeys = columnDimensionTree?.dimensionKeys?.count
       ? columnDimensionTree.dimensionKeys.valueArr()
       : options.columns?.reduce((keys, columnObj) => {
           if (typeof columnObj === 'string') {
@@ -146,18 +154,44 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
       this.internalProps.rowTree,
       true
     );
-    if (!options.columnTree) {
-      columnDimensionTree = new DimensionTree(
-        (this.dataset.colHeaderTree as ITreeLayoutHeadNode[]) ?? [],
-        this.layoutNodeId
-      );
+    if (this.options.indicatorsAsCol && checkHasCartesianChart(this.internalProps.indicators)) {
+      const supplyAxisNode = (nodes: IHeaderTreeDefine[]) => {
+        nodes.forEach((node: IHeaderTreeDefine) => {
+          if ((node.children as IHeaderTreeDefine[])?.length) {
+            supplyAxisNode(node.children as IHeaderTreeDefine[]);
+          } else {
+            // 在指标在列上的透视图中，主指标轴（离散轴）显示在左侧，因此需要在原先行表头的布局中最右侧加入一列，用来显示坐标轴
+            // 加入的这一列dimensionKey配置为'axis'，在后续行列计算维度时需要注意，这一列是为了显示坐标轴加入的，不在行列维度信息内
+            node.children = [
+              {
+                dimensionKey: 'axis',
+                value: ''
+              }
+            ];
+          }
+        });
+      };
+      if (this.dataset.rowHeaderTree?.length) {
+        supplyAxisNode(this.dataset.rowHeaderTree);
+      } else {
+        this.dataset.rowHeaderTree = [
+          {
+            dimensionKey: 'axis',
+            value: ''
+          }
+        ];
+      }
     }
-    if (!options.rowTree) {
-      rowDimensionTree = new DimensionTree(
-        (this.dataset.rowHeaderTree as ITreeLayoutHeadNode[]) ?? [],
-        this.layoutNodeId
-      );
-    }
+    this.layoutNodeId = { seqId: 0 };
+    columnDimensionTree = new DimensionTree(
+      (this.dataset.colHeaderTree as ITreeLayoutHeadNode[]) ?? [],
+      this.layoutNodeId
+    );
+    rowDimensionTree = new DimensionTree(
+      (this.dataset.rowHeaderTree as ITreeLayoutHeadNode[]) ?? [],
+      this.layoutNodeId
+    );
+
     this.internalProps.layoutMap = new PivotHeaderLayoutMap(this, this.dataset, columnDimensionTree, rowDimensionTree);
     this.refreshHeader();
     // this.internalProps.frozenColCount = this.options.frozenColCount || this.rowHeaderLevelCount;
@@ -209,6 +243,7 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
     //维护选中状态
     // const range = internalProps.selection.range; //保留原有单元格选中状态
     super.updateOption(options);
+    this.layoutNodeId = { seqId: 0 };
     this.internalProps.columns = cloneDeep(options.columns);
     this.internalProps.rows = cloneDeep(options.rows);
     this.internalProps.indicators = !options.indicators?.length ? [] : cloneDeepSpec(options.indicators);
@@ -232,12 +267,18 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
     let columnDimensionTree;
     let rowDimensionTree;
     if (options.columnTree) {
-      columnDimensionTree = new DimensionTree((options.columnTree as ITreeLayoutHeadNode[]) ?? [], this.layoutNodeId);
+      columnDimensionTree = new DimensionTree(
+        (this.internalProps.columnTree as ITreeLayoutHeadNode[]) ?? [],
+        this.layoutNodeId
+      );
     }
     if (options.rowTree) {
-      rowDimensionTree = new DimensionTree((options.rowTree as ITreeLayoutHeadNode[]) ?? [], this.layoutNodeId);
+      rowDimensionTree = new DimensionTree(
+        (this.internalProps.rowTree as ITreeLayoutHeadNode[]) ?? [],
+        this.layoutNodeId
+      );
     }
-    const rowKeys = rowDimensionTree.dimensionKeys?.count
+    const rowKeys = rowDimensionTree?.dimensionKeys?.count
       ? rowDimensionTree.dimensionKeys.valueArr()
       : options.rows?.reduce((keys, rowObj) => {
           if (typeof rowObj === 'string') {
@@ -247,7 +288,7 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
           }
           return keys;
         }, []) ?? [];
-    const columnKeys = columnDimensionTree.dimensionKeys?.count
+    const columnKeys = columnDimensionTree?.dimensionKeys?.count
       ? columnDimensionTree.dimensionKeys.valueArr()
       : options.columns?.reduce((keys, columnObj) => {
           if (typeof columnObj === 'string') {
@@ -284,19 +325,44 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
       this.internalProps.rowTree,
       true
     );
-    if (!options.columnTree) {
-      columnDimensionTree = new DimensionTree(
-        (this.dataset.colHeaderTree as ITreeLayoutHeadNode[]) ?? [],
-        this.layoutNodeId
-      );
+    if (this.options.indicatorsAsCol && checkHasCartesianChart(this.internalProps.indicators)) {
+      const supplyAxisNode = (nodes: IHeaderTreeDefine[]) => {
+        nodes.forEach((node: IHeaderTreeDefine) => {
+          if ((node.children as IHeaderTreeDefine[])?.length) {
+            supplyAxisNode(node.children as IHeaderTreeDefine[]);
+          } else {
+            // 在指标在列上的透视图中，主指标轴（离散轴）显示在左侧，因此需要在原先行表头的布局中最右侧加入一列，用来显示坐标轴
+            // 加入的这一列dimensionKey配置为'axis'，在后续行列计算维度时需要注意，这一列是为了显示坐标轴加入的，不在行列维度信息内
+            node.children = [
+              {
+                dimensionKey: 'axis',
+                value: ''
+              }
+            ];
+          }
+        });
+      };
+      if (this.dataset.rowHeaderTree?.length) {
+        supplyAxisNode(this.dataset.rowHeaderTree);
+      } else {
+        this.dataset.rowHeaderTree = [
+          {
+            dimensionKey: 'axis',
+            value: ''
+          }
+        ];
+      }
     }
-    if (!options.rowTree) {
-      rowDimensionTree = new DimensionTree(
-        (this.dataset.rowHeaderTree as ITreeLayoutHeadNode[]) ?? [],
-        this.layoutNodeId
-      );
-    }
-    // }
+    columnDimensionTree = new DimensionTree(
+      (this.dataset.colHeaderTree as ITreeLayoutHeadNode[]) ?? [],
+      this.layoutNodeId
+    );
+
+    rowDimensionTree = new DimensionTree(
+      (this.dataset.rowHeaderTree as ITreeLayoutHeadNode[]) ?? [],
+      this.layoutNodeId
+    );
+
     internalProps.layoutMap = new PivotHeaderLayoutMap(this, this.dataset, columnDimensionTree, rowDimensionTree);
     // else {
     //   console.warn('VTable Warn: your option is invalid, please check it!');
@@ -768,6 +834,8 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
    * @returns
    */
   private _generateCollectValuesConfig(columnKeys: string[], rowKeys: string[]): Record<string, CollectValueBy> {
+    columnKeys = columnKeys.filter(key => key !== IndicatorDimensionKeyPlaceholder);
+    rowKeys = rowKeys.filter(key => key !== IndicatorDimensionKeyPlaceholder);
     const indicators = this.internalProps.indicators;
     const collectValuesBy: Record<string, CollectValueBy> = {};
 
@@ -1216,7 +1284,25 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
     const internalProps = this.internalProps;
 
     this.dataset.setRecords(records);
-    internalProps.layoutMap = new PivotHeaderLayoutMap(this, this.dataset);
+    let columnDimensionTree;
+    let rowDimensionTree;
+    if (options.columnTree) {
+      columnDimensionTree = internalProps.layoutMap.columnDimensionTree;
+    } else {
+      columnDimensionTree = new DimensionTree(
+        (this.dataset.colHeaderTree as ITreeLayoutHeadNode[]) ?? [],
+        this.layoutNodeId
+      );
+    }
+    if (options.rowTree) {
+      rowDimensionTree = internalProps.layoutMap.rowDimensionTree;
+    } else {
+      rowDimensionTree = new DimensionTree(
+        (this.dataset.rowHeaderTree as ITreeLayoutHeadNode[]) ?? [],
+        this.layoutNodeId
+      );
+    }
+    internalProps.layoutMap = new PivotHeaderLayoutMap(this, this.dataset, columnDimensionTree, rowDimensionTree);
 
     // 更新表头
     this.refreshHeader();

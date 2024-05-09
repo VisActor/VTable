@@ -40,6 +40,7 @@ import { computeRowHeight } from './scenegraph/layout/compute-row-height';
 import { isAllDigits } from './tools/util';
 import type { IndicatorData } from './ts-types/list-table/layout-map/api';
 import { cloneDeepSpec } from '@visactor/vutils-extension';
+import { IndicatorDimensionKeyPlaceholder } from './tools/global';
 export class PivotTable extends BaseTable implements PivotTableAPI {
   layoutNodeId: { seqId: number } = { seqId: 0 };
   declare internalProps: PivotTableProtected;
@@ -101,10 +102,18 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
       let columnDimensionTree;
       let rowDimensionTree;
       if (options.columnTree) {
-        columnDimensionTree = new DimensionTree((options.columnTree as ITreeLayoutHeadNode[]) ?? [], this.layoutNodeId);
+        columnDimensionTree = new DimensionTree(
+          (this.internalProps.columnTree as ITreeLayoutHeadNode[]) ?? [],
+          this.layoutNodeId
+        );
       }
       if (options.rowTree) {
-        rowDimensionTree = new DimensionTree((options.rowTree as ITreeLayoutHeadNode[]) ?? [], this.layoutNodeId);
+        rowDimensionTree = new DimensionTree(
+          (this.internalProps.rowTree as ITreeLayoutHeadNode[]) ?? [],
+          this.layoutNodeId,
+          this.options.rowHierarchyType,
+          this.options.rowHierarchyType === 'tree' ? this.options.rowExpandLevel : undefined
+        );
       }
       this.internalProps.layoutMap = new PivotHeaderLayoutMap(this, null, columnDimensionTree, rowDimensionTree);
       //判断如果数据是二维数组 则标识已经分析过 直接从二维数组挨个读取渲染即可
@@ -124,13 +133,35 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
     } else {
       let columnDimensionTree;
       let rowDimensionTree;
+      let isNeedResetColumnDimensionTree = false;
+      let isNeedResetRowDimensionTree = false;
       if (options.columnTree) {
-        columnDimensionTree = new DimensionTree((options.columnTree as ITreeLayoutHeadNode[]) ?? [], this.layoutNodeId);
+        columnDimensionTree = new DimensionTree(
+          (this.internalProps.columnTree as ITreeLayoutHeadNode[]) ?? [],
+          this.layoutNodeId
+        );
+        if (
+          this.options.indicatorsAsCol &&
+          !columnDimensionTree.dimensionKeys.contain(IndicatorDimensionKeyPlaceholder)
+        ) {
+          isNeedResetColumnDimensionTree = true;
+        }
       }
       if (options.rowTree) {
-        rowDimensionTree = new DimensionTree((options.rowTree as ITreeLayoutHeadNode[]) ?? [], this.layoutNodeId);
+        rowDimensionTree = new DimensionTree(
+          (this.internalProps.rowTree as ITreeLayoutHeadNode[]) ?? [],
+          this.layoutNodeId,
+          this.options.rowHierarchyType,
+          this.options.rowHierarchyType === 'tree' ? this.options.rowExpandLevel : undefined
+        );
+        if (
+          !this.options.indicatorsAsCol &&
+          !rowDimensionTree.dimensionKeys.contain(IndicatorDimensionKeyPlaceholder)
+        ) {
+          isNeedResetRowDimensionTree = true;
+        }
       }
-      const rowKeys = rowDimensionTree.dimensionKeys?.count
+      const rowKeys = rowDimensionTree?.dimensionKeys?.count
         ? rowDimensionTree.dimensionKeys.valueArr()
         : options.rows?.reduce((keys, rowObj) => {
             if (typeof rowObj === 'string') {
@@ -140,7 +171,7 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
             }
             return keys;
           }, []) ?? [];
-      const columnKeys = columnDimensionTree.dimensionKeys?.count
+      const columnKeys = columnDimensionTree?.dimensionKeys?.count
         ? columnDimensionTree.dimensionKeys.valueArr()
         : options.columns?.reduce((keys, columnObj) => {
             if (typeof columnObj === 'string') {
@@ -174,16 +205,18 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
         this.internalProps.columnTree, //传递自定义树形结构会在dataset中补充指标节点children
         this.internalProps.rowTree
       );
-      if (!options.columnTree) {
+      if (!options.columnTree || isNeedResetColumnDimensionTree) {
         columnDimensionTree = new DimensionTree(
           (this.dataset.colHeaderTree as ITreeLayoutHeadNode[]) ?? [],
           this.layoutNodeId
         );
       }
-      if (!options.rowTree) {
+      if (!options.rowTree || isNeedResetRowDimensionTree) {
         rowDimensionTree = new DimensionTree(
           (this.dataset.rowHeaderTree as ITreeLayoutHeadNode[]) ?? [],
-          this.layoutNodeId
+          this.layoutNodeId,
+          this.options.rowHierarchyType,
+          this.options.rowHierarchyType === 'tree' ? this.options.rowExpandLevel : undefined
         );
       }
       this.internalProps.layoutMap = new PivotHeaderLayoutMap(
@@ -249,6 +282,7 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
     //维护选中状态
     // const range = internalProps.selection.range; //保留原有单元格选中状态
     super.updateOption(options);
+    this.layoutNodeId = { seqId: 0 };
     this.internalProps.columns = cloneDeep(options.columns);
     this.internalProps.rows = cloneDeep(options.rows);
     this.internalProps.indicators = !options.indicators?.length ? [] : cloneDeepSpec(options.indicators);
@@ -298,10 +332,18 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
       let columnDimensionTree;
       let rowDimensionTree;
       if (options.columnTree) {
-        columnDimensionTree = new DimensionTree((options.columnTree as ITreeLayoutHeadNode[]) ?? [], this.layoutNodeId);
+        columnDimensionTree = new DimensionTree(
+          (this.internalProps.columnTree as ITreeLayoutHeadNode[]) ?? [],
+          this.layoutNodeId
+        );
       }
       if (options.rowTree) {
-        rowDimensionTree = new DimensionTree((options.rowTree as ITreeLayoutHeadNode[]) ?? [], this.layoutNodeId);
+        rowDimensionTree = new DimensionTree(
+          (this.internalProps.rowTree as ITreeLayoutHeadNode[]) ?? [],
+          this.layoutNodeId,
+          this.options.rowHierarchyType,
+          this.options.rowHierarchyType === 'tree' ? this.options.rowExpandLevel : undefined
+        );
       }
       internalProps.layoutMap = new PivotHeaderLayoutMap(this, null, columnDimensionTree, rowDimensionTree);
       //判断如果数据是二维数组 则标识已经分析过 直接从二维数组挨个读取渲染即可
@@ -321,13 +363,35 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
     } else {
       let columnDimensionTree;
       let rowDimensionTree;
+      let isNeedResetColumnDimensionTree = false;
+      let isNeedResetRowDimensionTree = false;
       if (options.columnTree) {
-        columnDimensionTree = new DimensionTree((options.columnTree as ITreeLayoutHeadNode[]) ?? [], this.layoutNodeId);
+        columnDimensionTree = new DimensionTree(
+          (this.internalProps.columnTree as ITreeLayoutHeadNode[]) ?? [],
+          this.layoutNodeId
+        );
+        if (
+          this.options.indicatorsAsCol &&
+          !columnDimensionTree.dimensionKeys.contain(IndicatorDimensionKeyPlaceholder)
+        ) {
+          isNeedResetColumnDimensionTree = true;
+        }
       }
       if (options.rowTree) {
-        rowDimensionTree = new DimensionTree((options.rowTree as ITreeLayoutHeadNode[]) ?? [], this.layoutNodeId);
+        rowDimensionTree = new DimensionTree(
+          (this.internalProps.rowTree as ITreeLayoutHeadNode[]) ?? [],
+          this.layoutNodeId,
+          this.options.rowHierarchyType,
+          this.options.rowHierarchyType === 'tree' ? this.options.rowExpandLevel : undefined
+        );
+        if (
+          !this.options.indicatorsAsCol &&
+          !rowDimensionTree.dimensionKeys.contain(IndicatorDimensionKeyPlaceholder)
+        ) {
+          isNeedResetRowDimensionTree = true;
+        }
       }
-      const rowKeys = rowDimensionTree.dimensionKeys?.count
+      const rowKeys = rowDimensionTree?.dimensionKeys?.count
         ? rowDimensionTree.dimensionKeys.valueArr()
         : options.rows?.reduce((keys, rowObj) => {
             if (typeof rowObj === 'string') {
@@ -337,7 +401,7 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
             }
             return keys;
           }, []);
-      const columnKeys = columnDimensionTree.dimensionKeys?.count
+      const columnKeys = columnDimensionTree?.dimensionKeys?.count
         ? columnDimensionTree.dimensionKeys.valueArr()
         : options.columns?.reduce((keys, columnObj) => {
             if (typeof columnObj === 'string') {
@@ -363,21 +427,23 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
         indicatorKeys,
         this.internalProps.indicators,
         options.indicatorsAsCol ?? true,
-        options.records,
+        records,
         options.rowHierarchyType,
         this.internalProps.columnTree, //传递自定义树形结构会在dataset中补充指标节点children
         this.internalProps.rowTree
       );
-      if (!options.columnTree) {
+      if (!options.columnTree || isNeedResetColumnDimensionTree) {
         columnDimensionTree = new DimensionTree(
           (this.dataset.colHeaderTree as ITreeLayoutHeadNode[]) ?? [],
           this.layoutNodeId
         );
       }
-      if (!options.rowTree) {
+      if (!options.rowTree || isNeedResetRowDimensionTree) {
         rowDimensionTree = new DimensionTree(
           (this.dataset.rowHeaderTree as ITreeLayoutHeadNode[]) ?? [],
-          this.layoutNodeId
+          this.layoutNodeId,
+          this.options.rowHierarchyType,
+          this.options.rowHierarchyType === 'tree' ? this.options.rowExpandLevel : undefined
         );
       }
       internalProps.layoutMap = new PivotHeaderLayoutMap(this, this.dataset, columnDimensionTree, rowDimensionTree);
@@ -624,7 +690,15 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
         this.internalProps.layoutMap.indicatorsAsCol ? colKeys.slice(0, -1) : colKeys,
         (this.internalProps.layoutMap as PivotHeaderLayoutMap).getIndicatorKey(col, row)
       );
-      return aggregator.formatValue ? aggregator.formatValue(col, row, this as BaseTableAPI) : '';
+      const { fieldFormat } = this.internalProps.layoutMap.getBody(col, row) as IndicatorData;
+      // return typeof fieldFormat === 'function'
+      //   ? fieldFormat(valueNode?.value, col, row, this as BaseTableAPI)
+      //   : valueNode?.value ?? '';
+      return aggregator.formatValue
+        ? aggregator.formatValue(col, row, this as BaseTableAPI)
+        : typeof fieldFormat === 'function'
+        ? fieldFormat(aggregator?.value(), col, row, this as BaseTableAPI)
+        : aggregator?.value() ?? '';
     } else if (this.flatDataToObjects) {
       //数据为行列树结构 根据row col获取对应的维度名称 查找到对应值
       const cellDimensionPath = this.internalProps.layoutMap.getCellHeaderPaths(col, row);
@@ -1180,7 +1254,9 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
       } else {
         rowDimensionTree = new DimensionTree(
           (this.dataset.rowHeaderTree as ITreeLayoutHeadNode[]) ?? [],
-          this.layoutNodeId
+          this.layoutNodeId,
+          this.options.rowHierarchyType,
+          this.options.rowHierarchyType === 'tree' ? this.options.rowExpandLevel : undefined
         );
       }
       internalProps.layoutMap = new PivotHeaderLayoutMap(this, this.dataset, columnDimensionTree, rowDimensionTree);
@@ -1535,6 +1611,19 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
           indicatorDimensionKey: this.internalProps.layoutMap.indicatorDimensionKey
         });
         this.flatDataToObjects.addRecords(records);
+      });
+    } else {
+      const headerPaths = this.internalProps.layoutMap.getCellHeaderPaths(col, row);
+      const headerTreeNode = this.internalProps.layoutMap.getHeadNode(
+        headerPaths.rowHeaderPaths.slice(0, headerPaths.rowHeaderPaths.length)
+      );
+      headerTreeNode.children = children;
+      this._refreshHierarchyState(col, row, () => {
+        this.dataset.changeDataConfig({
+          rows: this.internalProps.layoutMap.fullRowDimensionKeys,
+          columns: this.internalProps.layoutMap.colDimensionKeys
+        });
+        this.dataset.addRecords(records);
       });
     }
   }

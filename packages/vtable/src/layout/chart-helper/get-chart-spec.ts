@@ -4,7 +4,7 @@ import type { SimpleHeaderLayoutMap } from '../simple-header-layout';
 import { getAxisOption, getAxisRange } from './get-axis-config';
 import { getAxisDomainRangeAndLabels } from './get-axis-domain';
 import { getNewRangeToAlign } from './zero-align';
-import type { IChartIndicator } from '../../ts-types';
+import type { IChartIndicator, IIndicator } from '../../ts-types';
 import { cloneDeepSpec } from '@visactor/vutils-extension';
 
 const NO_AXISID_FRO_VTABLE = 'NO_AXISID_FRO_VTABLE';
@@ -53,11 +53,11 @@ export function isShareChartSpec(col: number, row: number, layout: PivotHeaderLa
   return true;
 }
 /** 检查是否有直角坐标系的图表 */
-export function checkHasCartesianChart(layout: PivotHeaderLayoutMap) {
+export function checkHasCartesianChart(indicatorsDefine: (IIndicator | IChartIndicator | string)[]) {
   let isHasCartesianChart = false;
-  for (let i = 0; i < layout.indicatorsDefine.length; i++) {
+  for (let i = 0; i < indicatorsDefine.length; i++) {
     //columnObjects数量和指标数量一样 并不是每个列都有 所有会快一些
-    const columnObj = layout.indicatorsDefine[i] as IChartIndicator;
+    const columnObj = indicatorsDefine[i] as IChartIndicator;
     if (columnObj.chartSpec) {
       if (
         columnObj.chartSpec.type !== 'wordCloud' &&

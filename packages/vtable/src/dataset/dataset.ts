@@ -929,9 +929,7 @@ export class Dataset {
           value(): any {
             return null;
           },
-          formatValue() {
-            return '';
-          },
+          formatValue: undefined,
           clearCacheValue() {
             // do nothing
           },
@@ -1622,6 +1620,22 @@ export class Dataset {
       this.colFlatKeys = {};
       this.tree = {};
       this.processRecords();
+    }
+  }
+  changeDataConfig(dataConfig: {
+    rows: string[]; //行维度字段数组；
+    columns: string[]; //列维度字段数组；
+  }) {
+    this.rows = dataConfig.rows;
+    this.columns = dataConfig.columns;
+  }
+  addRecords(records: any[]) {
+    for (let i = 0, len = records.length; i < len; i++) {
+      const record = records[i];
+      this.processRecord(record);
+    }
+    if (Array.isArray(this.records)) {
+      this.records.push(records);
     }
   }
 }
