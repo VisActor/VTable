@@ -10,7 +10,7 @@ import { registerDataSetInstanceParser, registerDataSetInstanceTransform } from 
 import type { Parser } from '@visactor/vdataset';
 import { DataView } from '@visactor/vdataset';
 import type { IBaseScale } from '@visactor/vscale';
-import { ticks } from '@visactor/vutils-extension';
+import { ticks } from '@vutils-extension';
 import { LinearAxisScale } from './linear-scale';
 import { doOverlap } from './label-overlap';
 import type { TableTheme } from '../../themes/theme';

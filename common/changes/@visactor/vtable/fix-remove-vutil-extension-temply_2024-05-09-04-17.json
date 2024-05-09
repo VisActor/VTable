@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vtable",
+      "comment": "feat: remove vutil-extension temply",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vtable"
+}
