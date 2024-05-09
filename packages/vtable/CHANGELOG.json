@@ -2,6 +2,18 @@
   "name": "@visactor/vtable",
   "entries": [
     {
+      "version": "0.25.2",
+      "tag": "@visactor/vtable_v0.25.2",
+      "date": "Wed, 08 May 2024 10:48:37 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "fix: fix veritial offset in text stick"
+          }
+        ]
+      }
+    },
+    {
       "version": "0.25.1",
       "tag": "@visactor/vtable_v0.25.1",
       "date": "Wed, 08 May 2024 08:38:35 GMT",
