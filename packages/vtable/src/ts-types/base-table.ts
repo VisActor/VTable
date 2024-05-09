@@ -428,6 +428,8 @@ export interface BaseTableConstructorOptions {
   columnWidthComputeMode?: 'normal' | 'only-header' | 'only-body';
 
   customConfig?: any; // 部分特殊配置，兼容xTable等作用
+
+  _disableColumnAndRowSizeRound?: boolean;
 }
 export interface BaseTableAPI {
   /** 数据总条目数 */

@@ -1064,7 +1064,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
    */
   _setRowHeight(row: number, height: number, clearCache?: boolean): void {
     // this.rowHeightsMap.put(row, Math.round(height));
-    this.rowHeightsMap.put(row, Math.round(height));
+    this.rowHeightsMap.put(row, this.options._disableColumnAndRowSizeRound ? height : Math.round(height));
     // 清楚影响缓存
     if (clearCache) {
       this._clearRowRangeHeightsMap(row);
@@ -1219,7 +1219,10 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
    * @returns
    */
   _setColWidth(col: number, width: string | number, clearCache?: boolean, skipCheckFrozen?: boolean): void {
-    this.colWidthsMap.put(col, typeof width === 'number' ? Math.round(width) : width);
+    this.colWidthsMap.put(
+      col,
+      typeof width === 'number' ? (this.options._disableColumnAndRowSizeRound ? width : Math.round(width)) : width
+    );
     // 清楚影响缓存
     if (clearCache) {
       this._clearColRangeWidthsMap(col);
