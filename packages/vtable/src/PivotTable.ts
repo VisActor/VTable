@@ -38,7 +38,7 @@ import { computeColWidth } from './scenegraph/layout/compute-col-width';
 import { computeRowHeight } from './scenegraph/layout/compute-row-height';
 import { isAllDigits } from './tools/util';
 import type { IndicatorData } from './ts-types/list-table/layout-map/api';
-import { cloneDeepSpec } from '@visactor/vutils-extension';
+import { cloneDeepSpec } from '@vutils-extension';
 export class PivotTable extends BaseTable implements PivotTableAPI {
   declare internalProps: PivotTableProtected;
   declare options: PivotTableConstructorOptions;
