@@ -29,7 +29,8 @@ import type { BaseTableAPI, HeaderData, PivotTableProtected } from './ts-types/b
 import { Title } from './components/title/title';
 import { cloneDeep, isValid } from '@visactor/vutils';
 import { Env } from './tools/env';
-import type { LayouTreeNode } from './layout/tree-helper';
+import type { ITreeLayoutHeadNode } from './layout/tree-helper';
+import { DimensionTree, type LayouTreeNode } from './layout/tree-helper';
 import { TABLE_EVENT_TYPE } from './core/TABLE_EVENT_TYPE';
 import { EditManeger } from './edit/edit-manager';
 import * as editors from './edit/editors';
@@ -40,6 +41,7 @@ import { isAllDigits } from './tools/util';
 import type { IndicatorData } from './ts-types/list-table/layout-map/api';
 import { cloneDeepSpec } from '@visactor/vutils-extension';
 export class PivotTable extends BaseTable implements PivotTableAPI {
+  layoutNodeId: { seqId: number } = { seqId: 0 };
   declare internalProps: PivotTableProtected;
   declare options: PivotTableConstructorOptions;
   pivotSortState: PivotSortState[];
@@ -89,31 +91,65 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
     this.internalProps.dataConfig = cloneDeep(options.dataConfig);
 
     // this.internalProps.enableDataAnalysis = options.enableDataAnalysis;
-    if (!options.rowTree && !options.columnTree) {
-      this.internalProps.enableDataAnalysis = true;
-    } else {
-      this.internalProps.enableDataAnalysis = false;
-    }
+    // if (!options.rowTree && !options.columnTree) {
+    //   this.internalProps.enableDataAnalysis = true;
+    // } else {
+    //   this.internalProps.enableDataAnalysis = false;
+    // }
     const records = this.internalProps.records;
-    if (this.internalProps.enableDataAnalysis && (options.rows || options.columns)) {
-      const rowKeys =
-        options.rows?.reduce((keys, rowObj) => {
-          if (typeof rowObj === 'string') {
-            keys.push(rowObj);
-          } else {
-            keys.push(rowObj.dimensionKey);
-          }
-          return keys;
-        }, []) ?? [];
-      const columnKeys =
-        options.columns?.reduce((keys, columnObj) => {
-          if (typeof columnObj === 'string') {
-            keys.push(columnObj);
-          } else {
-            keys.push(columnObj.dimensionKey);
-          }
-          return keys;
-        }, []) ?? [];
+    if (options.customConfig?.enableDataAnalysis === false) {
+      let columnDimensionTree;
+      let rowDimensionTree;
+      if (options.columnTree) {
+        columnDimensionTree = new DimensionTree((options.columnTree as ITreeLayoutHeadNode[]) ?? [], this.layoutNodeId);
+      }
+      if (options.rowTree) {
+        rowDimensionTree = new DimensionTree((options.rowTree as ITreeLayoutHeadNode[]) ?? [], this.layoutNodeId);
+      }
+      this.internalProps.layoutMap = new PivotHeaderLayoutMap(this, null, columnDimensionTree, rowDimensionTree);
+      //判断如果数据是二维数组 则标识已经分析过 直接从二维数组挨个读取渲染即可
+      //不是二维数组 对应是个object json对象 则表示flat数据，需要对应行列维度进行转成方便数据查询的行列树结构
+      if (records?.[0]?.constructor !== Array) {
+        this.flatDataToObjects = new FlatDataToObjects(
+          {
+            rows: this.internalProps.layoutMap.fullRowDimensionKeys,
+            columns: this.internalProps.layoutMap.colDimensionKeys,
+            indicators: this.internalProps.layoutMap.indicatorKeys,
+            indicatorsAsCol: this.internalProps.layoutMap.indicatorsAsCol,
+            indicatorDimensionKey: this.internalProps.layoutMap.indicatorDimensionKey
+          },
+          records
+        );
+      }
+    } else {
+      let columnDimensionTree;
+      let rowDimensionTree;
+      if (options.columnTree) {
+        columnDimensionTree = new DimensionTree((options.columnTree as ITreeLayoutHeadNode[]) ?? [], this.layoutNodeId);
+      }
+      if (options.rowTree) {
+        rowDimensionTree = new DimensionTree((options.rowTree as ITreeLayoutHeadNode[]) ?? [], this.layoutNodeId);
+      }
+      const rowKeys = rowDimensionTree.dimensionKeys?.count
+        ? rowDimensionTree.dimensionKeys.valueArr()
+        : options.rows?.reduce((keys, rowObj) => {
+            if (typeof rowObj === 'string') {
+              keys.push(rowObj);
+            } else {
+              keys.push(rowObj.dimensionKey);
+            }
+            return keys;
+          }, []) ?? [];
+      const columnKeys = columnDimensionTree.dimensionKeys?.count
+        ? columnDimensionTree.dimensionKeys.valueArr()
+        : options.columns?.reduce((keys, columnObj) => {
+            if (typeof columnObj === 'string') {
+              keys.push(columnObj);
+            } else {
+              keys.push(columnObj.dimensionKey);
+            }
+            return keys;
+          }, []) ?? [];
       const indicatorKeys =
         options.indicators?.reduce((keys, indicatorObj) => {
           if (typeof indicatorObj === 'string') {
@@ -138,26 +174,24 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
         this.internalProps.columnTree, //传递自定义树形结构会在dataset中补充指标节点children
         this.internalProps.rowTree
       );
-      this.internalProps.layoutMap = new PivotHeaderLayoutMap(this, this.dataset);
-    } else if (Array.isArray(this.internalProps.columnTree) || Array.isArray(this.internalProps.rowTree)) {
-      this.internalProps.layoutMap = new PivotHeaderLayoutMap(this, null);
-      //判断如果数据是二维数组 则标识已经分析过 直接从二维数组挨个读取渲染即可
-      //不是二维数组 对应是个object json对象 则表示flat数据，需要对应行列维度进行转成方便数据查询的行列树结构
-      if (records?.[0]?.constructor !== Array) {
-        this.flatDataToObjects = new FlatDataToObjects(
-          {
-            rows: this.internalProps.layoutMap.fullRowDimensionKeys,
-            columns: this.internalProps.layoutMap.colDimensionKeys,
-            indicators: this.internalProps.layoutMap.indicatorKeys,
-            indicatorsAsCol: this.internalProps.layoutMap.indicatorsAsCol,
-            indicatorDimensionKey: this.internalProps.layoutMap.indicatorDimensionKey
-          },
-          records
+      if (!options.columnTree) {
+        columnDimensionTree = new DimensionTree(
+          (this.dataset.colHeaderTree as ITreeLayoutHeadNode[]) ?? [],
+          this.layoutNodeId
         );
       }
-    } else {
-      console.warn('VTable Warn: your option is invalid, please check it!');
-      return;
+      if (!options.rowTree) {
+        rowDimensionTree = new DimensionTree(
+          (this.dataset.rowHeaderTree as ITreeLayoutHeadNode[]) ?? [],
+          this.layoutNodeId
+        );
+      }
+      this.internalProps.layoutMap = new PivotHeaderLayoutMap(
+        this,
+        this.dataset,
+        columnDimensionTree,
+        rowDimensionTree
+      );
     }
     this.pivotSortState = [];
     if (options.pivotSortState) {
@@ -237,11 +271,11 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
     internalProps.rowResizeType = options.rowResizeType ?? 'row';
     internalProps.dataConfig = cloneDeep(options.dataConfig);
     // internalProps.enableDataAnalysis = options.enableDataAnalysis;
-    if (!options.rowTree && !options.columnTree) {
-      internalProps.enableDataAnalysis = true;
-    } else {
-      internalProps.enableDataAnalysis = false;
-    }
+    // if (!options.rowTree && !options.columnTree) {
+    //   internalProps.enableDataAnalysis = true;
+    // } else {
+    //   internalProps.enableDataAnalysis = false;
+    // }
     //维护tree树形结构的展开状态
     if (
       options?.rowHierarchyType === 'tree' &&
@@ -260,23 +294,59 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
     }
     const records = this.internalProps.records;
     //TODO 这里需要加上判断 dataConfig是否有配置变化
-    if (this.internalProps.enableDataAnalysis && (options.rows || options.columns)) {
-      const rowKeys = options.rows?.reduce((keys, rowObj) => {
-        if (typeof rowObj === 'string') {
-          keys.push(rowObj);
-        } else {
-          keys.push(rowObj.dimensionKey);
-        }
-        return keys;
-      }, []);
-      const columnKeys = options.columns?.reduce((keys, columnObj) => {
-        if (typeof columnObj === 'string') {
-          keys.push(columnObj);
-        } else {
-          keys.push(columnObj.dimensionKey);
-        }
-        return keys;
-      }, []);
+    if (options.customConfig?.enableDataAnalysis === false) {
+      let columnDimensionTree;
+      let rowDimensionTree;
+      if (options.columnTree) {
+        columnDimensionTree = new DimensionTree((options.columnTree as ITreeLayoutHeadNode[]) ?? [], this.layoutNodeId);
+      }
+      if (options.rowTree) {
+        rowDimensionTree = new DimensionTree((options.rowTree as ITreeLayoutHeadNode[]) ?? [], this.layoutNodeId);
+      }
+      internalProps.layoutMap = new PivotHeaderLayoutMap(this, null, columnDimensionTree, rowDimensionTree);
+      //判断如果数据是二维数组 则标识已经分析过 直接从二维数组挨个读取渲染即可
+      //不是二维数组 对应是个object json对象 则表示flat数据，需要对应行列维度进行转成方便数据查询的行列树结构
+      if (records?.[0]?.constructor !== Array) {
+        this.flatDataToObjects = new FlatDataToObjects(
+          {
+            rows: internalProps.layoutMap.fullRowDimensionKeys,
+            columns: internalProps.layoutMap.colDimensionKeys,
+            indicators: internalProps.layoutMap.indicatorKeys,
+            indicatorsAsCol: internalProps.layoutMap.indicatorsAsCol,
+            indicatorDimensionKey: internalProps.layoutMap.indicatorDimensionKey
+          },
+          records
+        );
+      }
+    } else {
+      let columnDimensionTree;
+      let rowDimensionTree;
+      if (options.columnTree) {
+        columnDimensionTree = new DimensionTree((options.columnTree as ITreeLayoutHeadNode[]) ?? [], this.layoutNodeId);
+      }
+      if (options.rowTree) {
+        rowDimensionTree = new DimensionTree((options.rowTree as ITreeLayoutHeadNode[]) ?? [], this.layoutNodeId);
+      }
+      const rowKeys = rowDimensionTree.dimensionKeys?.count
+        ? rowDimensionTree.dimensionKeys.valueArr()
+        : options.rows?.reduce((keys, rowObj) => {
+            if (typeof rowObj === 'string') {
+              keys.push(rowObj);
+            } else {
+              keys.push(rowObj.dimensionKey);
+            }
+            return keys;
+          }, []);
+      const columnKeys = columnDimensionTree.dimensionKeys?.count
+        ? columnDimensionTree.dimensionKeys.valueArr()
+        : options.columns?.reduce((keys, columnObj) => {
+            if (typeof columnObj === 'string') {
+              keys.push(columnObj);
+            } else {
+              keys.push(columnObj.dimensionKey);
+            }
+            return keys;
+          }, []);
       const indicatorKeys = options.indicators?.reduce((keys, indicatorObj) => {
         if (typeof indicatorObj === 'string') {
           keys.push(indicatorObj);
@@ -298,26 +368,19 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
         this.internalProps.columnTree, //传递自定义树形结构会在dataset中补充指标节点children
         this.internalProps.rowTree
       );
-      internalProps.layoutMap = new PivotHeaderLayoutMap(this, this.dataset);
-    } else if (Array.isArray(this.internalProps.columnTree) || Array.isArray(this.internalProps.rowTree)) {
-      internalProps.layoutMap = new PivotHeaderLayoutMap(this, null);
-      //判断如果数据是二维数组 则标识已经分析过 直接从二维数组挨个读取渲染即可
-      //不是二维数组 对应是个object json对象 则表示flat数据，需要对应行列维度进行转成方便数据查询的行列树结构
-      if (records?.[0]?.constructor !== Array) {
-        this.flatDataToObjects = new FlatDataToObjects(
-          {
-            rows: internalProps.layoutMap.fullRowDimensionKeys,
-            columns: internalProps.layoutMap.colDimensionKeys,
-            indicators: internalProps.layoutMap.indicatorKeys,
-            indicatorsAsCol: internalProps.layoutMap.indicatorsAsCol,
-            indicatorDimensionKey: internalProps.layoutMap.indicatorDimensionKey
-          },
-          records
+      if (!options.columnTree) {
+        columnDimensionTree = new DimensionTree(
+          (this.dataset.colHeaderTree as ITreeLayoutHeadNode[]) ?? [],
+          this.layoutNodeId
         );
       }
-    } else {
-      console.warn('VTable Warn: your option is invalid, please check it!');
-      return this;
+      if (!options.rowTree) {
+        rowDimensionTree = new DimensionTree(
+          (this.dataset.rowHeaderTree as ITreeLayoutHeadNode[]) ?? [],
+          this.layoutNodeId
+        );
+      }
+      internalProps.layoutMap = new PivotHeaderLayoutMap(this, this.dataset, columnDimensionTree, rowDimensionTree);
     }
     this.pivotSortState = [];
     if (options.pivotSortState) {
@@ -1056,7 +1119,7 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
    */
   getCellHeaderTreeNodes(col: number, row: number): ICellHeaderPaths {
     const layoutMap = this.internalProps.layoutMap;
-    const headerNodes = layoutMap.getCellHeaderPathsWidthTreeNode(col, row);
+    const headerNodes = layoutMap.getCellHeaderPathsWithTreeNode(col, row);
     return headerNodes;
   }
   _hasHierarchyTreeHeader() {
@@ -1085,14 +1148,7 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
     this.options.records = this.internalProps.records = records;
     const options = this.options;
     const internalProps = this.internalProps;
-    if (this.internalProps.enableDataAnalysis && (options.rows || options.columns)) {
-      this.dataset.setRecords(records);
-      internalProps.layoutMap = new PivotHeaderLayoutMap(this, this.dataset);
-      this.pivotSortState = [];
-      if (options.pivotSortState) {
-        this.updatePivotSortState(options.pivotSortState);
-      }
-    } else if (Array.isArray(this.internalProps.columnTree) || Array.isArray(this.internalProps.rowTree)) {
+    if (this.options.customConfig?.enableDataAnalysis === false) {
       //判断如果数据是二维数组 则标识已经分析过 直接从二维数组挨个读取渲染即可
       //不是二维数组 对应是个object json对象 则表示flat数据，需要对应行列维度进行转成方便数据查询的行列树结构
       if (records?.[0]?.constructor !== Array) {
@@ -1106,6 +1162,31 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
           },
           records
         );
+      }
+    } else {
+      this.dataset.setRecords(records);
+      let columnDimensionTree;
+      let rowDimensionTree;
+      if (options.columnTree) {
+        columnDimensionTree = internalProps.layoutMap.columnDimensionTree;
+      } else {
+        columnDimensionTree = new DimensionTree(
+          (this.dataset.colHeaderTree as ITreeLayoutHeadNode[]) ?? [],
+          this.layoutNodeId
+        );
+      }
+      if (options.rowTree) {
+        rowDimensionTree = internalProps.layoutMap.rowDimensionTree;
+      } else {
+        rowDimensionTree = new DimensionTree(
+          (this.dataset.rowHeaderTree as ITreeLayoutHeadNode[]) ?? [],
+          this.layoutNodeId
+        );
+      }
+      internalProps.layoutMap = new PivotHeaderLayoutMap(this, this.dataset, columnDimensionTree, rowDimensionTree);
+      this.pivotSortState = [];
+      if (options.pivotSortState) {
+        this.updatePivotSortState(options.pivotSortState);
       }
     }
 
