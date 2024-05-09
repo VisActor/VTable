@@ -35,7 +35,7 @@ import { defaultOrderFn } from './tools/util';
 import type { IEditor } from '@visactor/vtable-editors';
 import type { ColumnData, ColumnDefine } from './ts-types/list-table/layout-map/api';
 import { getCellRadioState, setCellRadioState } from './state/radio/radio';
-import { cloneDeepSpec } from '@visactor/vutils-extension';
+import { cloneDeepSpec } from '@vutils-extension';
 import { setCellCheckboxState } from './state/checkbox/checkbox';
 
 export class ListTable extends BaseTable implements ListTableAPI {
