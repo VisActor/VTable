@@ -42,6 +42,12 @@ export type BaseCellInfo = {
   /**原始值 */
   dataValue: FieldData;
 };
+export type MergeCellInfo = {
+  colStart: number;
+  colEnd: number;
+  rowStart: number;
+  rowEnd: number;
+};
 export type CellInfo = {
   col: number;
   row: number;
