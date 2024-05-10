@@ -40,7 +40,7 @@ import { computeRowHeight } from './scenegraph/layout/compute-row-height';
 import { isAllDigits } from './tools/util';
 import type { IndicatorData } from './ts-types/list-table/layout-map/api';
 import { cloneDeepSpec } from '@vutils-extension';
-import { IndicatorDimensionKeyPlaceholder } from './tools/global';
+import { parseColKeyRowKeyForPivotTable } from './layout/layout-helper';
 export class PivotTable extends BaseTable implements PivotTableAPI {
   layoutNodeId: { seqId: number } = { seqId: 0 };
   declare internalProps: PivotTableProtected;
@@ -136,78 +136,10 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
           );
         }
       } else {
-        let columnDimensionTree;
-        let rowDimensionTree;
-        let isNeedResetColumnDimensionTree = false;
-        let isNeedResetRowDimensionTree = false;
-        if (options.columnTree) {
-          columnDimensionTree = new DimensionTree(
-            (this.internalProps.columnTree as ITreeLayoutHeadNode[]) ?? [],
-            this.layoutNodeId
-          );
-          if (
-            this.options.indicatorsAsCol !== false &&
-            !columnDimensionTree.dimensionKeys.contain(IndicatorDimensionKeyPlaceholder)
-          ) {
-            isNeedResetColumnDimensionTree = true;
-          }
-        }
-        if (options.rowTree) {
-          rowDimensionTree = new DimensionTree(
-            (this.internalProps.rowTree as ITreeLayoutHeadNode[]) ?? [],
-            this.layoutNodeId,
-            this.options.rowHierarchyType,
-            this.options.rowHierarchyType === 'tree' ? this.options.rowExpandLevel : undefined
-          );
-          if (
-            this.options.indicatorsAsCol === false &&
-            !rowDimensionTree.dimensionKeys.contain(IndicatorDimensionKeyPlaceholder)
-          ) {
-            isNeedResetRowDimensionTree = true;
-          }
-        }
-        const rowKeys = rowDimensionTree?.dimensionKeys?.count
-          ? rowDimensionTree.dimensionKeys.valueArr()
-          : options.rows?.reduce((keys: string[], rowObj) => {
-              if (typeof rowObj === 'string') {
-                keys.push(rowObj);
-              } else {
-                keys.push(rowObj.dimensionKey);
-              }
-              return keys;
-            }, []) ?? [];
-        const columnKeys = columnDimensionTree?.dimensionKeys?.count
-          ? columnDimensionTree.dimensionKeys.valueArr()
-          : options.columns?.reduce((keys: string[], columnObj) => {
-              if (typeof columnObj === 'string') {
-                keys.push(columnObj);
-              } else {
-                keys.push(columnObj.dimensionKey);
-              }
-              return keys;
-            }, []) ?? [];
-        const indicatorKeys =
-          options.indicators?.reduce((keys: string[], indicatorObj) => {
-            if (typeof indicatorObj === 'string') {
-              keys.push(indicatorObj);
-            } else {
-              keys.push(indicatorObj.indicatorKey);
-            }
-            return keys;
-          }, []) ?? [];
-        if (options.rowHierarchyType === 'tree' && (options.extensionRows?.length ?? 0) >= 1) {
-          options.extensionRows?.forEach(extensionRow => {
-            const extension_rowKeys: string[] = [];
-            extensionRow.rows.forEach(row => {
-              if (typeof row === 'string') {
-                extension_rowKeys.push(row);
-              } else {
-                extension_rowKeys.push(row.dimensionKey);
-              }
-            });
-            rowKeys.push(...extension_rowKeys);
-          });
-        }
+        const keysResults = parseColKeyRowKeyForPivotTable(this, options);
+        const { rowKeys, columnKeys, indicatorKeys, isNeedResetColumnDimensionTree, isNeedResetRowDimensionTree } =
+          keysResults;
+        let { columnDimensionTree, rowDimensionTree } = keysResults;
         this.dataset = new Dataset(
           this.internalProps.dataConfig,
           // this.pagination,
@@ -385,77 +317,10 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
         );
       }
     } else {
-      let columnDimensionTree;
-      let rowDimensionTree;
-      let isNeedResetColumnDimensionTree = false;
-      let isNeedResetRowDimensionTree = false;
-      if (options.columnTree) {
-        columnDimensionTree = new DimensionTree(
-          (this.internalProps.columnTree as ITreeLayoutHeadNode[]) ?? [],
-          this.layoutNodeId
-        );
-        if (
-          this.options.indicatorsAsCol !== false &&
-          !columnDimensionTree.dimensionKeys.contain(IndicatorDimensionKeyPlaceholder)
-        ) {
-          isNeedResetColumnDimensionTree = true;
-        }
-      }
-      if (options.rowTree) {
-        rowDimensionTree = new DimensionTree(
-          (this.internalProps.rowTree as ITreeLayoutHeadNode[]) ?? [],
-          this.layoutNodeId,
-          this.options.rowHierarchyType,
-          this.options.rowHierarchyType === 'tree' ? this.options.rowExpandLevel : undefined
-        );
-        if (
-          this.options.indicatorsAsCol === false &&
-          !rowDimensionTree.dimensionKeys.contain(IndicatorDimensionKeyPlaceholder)
-        ) {
-          isNeedResetRowDimensionTree = true;
-        }
-      }
-      const rowKeys = rowDimensionTree?.dimensionKeys?.count
-        ? rowDimensionTree.dimensionKeys.valueArr()
-        : options.rows?.reduce((keys, rowObj) => {
-            if (typeof rowObj === 'string') {
-              keys.push(rowObj);
-            } else {
-              keys.push(rowObj.dimensionKey);
-            }
-            return keys;
-          }, []);
-      const columnKeys = columnDimensionTree?.dimensionKeys?.count
-        ? columnDimensionTree.dimensionKeys.valueArr()
-        : options.columns?.reduce((keys, columnObj) => {
-            if (typeof columnObj === 'string') {
-              keys.push(columnObj);
-            } else {
-              keys.push(columnObj.dimensionKey);
-            }
-            return keys;
-          }, []);
-      const indicatorKeys = options.indicators?.reduce((keys, indicatorObj) => {
-        if (typeof indicatorObj === 'string') {
-          keys.push(indicatorObj);
-        } else {
-          keys.push(indicatorObj.indicatorKey);
-        }
-        return keys;
-      }, []);
-      if (options.rowHierarchyType === 'tree' && (options.extensionRows?.length ?? 0) >= 1) {
-        options.extensionRows?.forEach(extensionRow => {
-          const extension_rowKeys: string[] = [];
-          extensionRow.rows.forEach(row => {
-            if (typeof row === 'string') {
-              extension_rowKeys.push(row);
-            } else {
-              extension_rowKeys.push(row.dimensionKey);
-            }
-          });
-          rowKeys.push(...extension_rowKeys);
-        });
-      }
+      const keysResults = parseColKeyRowKeyForPivotTable(this, options);
+      const { rowKeys, columnKeys, indicatorKeys, isNeedResetColumnDimensionTree, isNeedResetRowDimensionTree } =
+        keysResults;
+      let { columnDimensionTree, rowDimensionTree } = keysResults;
       this.dataset = new Dataset(
         internalProps.dataConfig,
         // this.pagination,
