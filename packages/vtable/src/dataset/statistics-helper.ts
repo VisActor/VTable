@@ -8,7 +8,7 @@ export interface IAggregator {
   className: string;
   push: (record: any) => void;
   recalculate: () => any;
-  formatValue?: () => any;
+  formatValue?: (col?: number, row?: number, table?: BaseTableAPI) => any;
   formatFun?: () => any;
   clearCacheValue: () => any;
   reset: () => void;
