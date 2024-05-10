@@ -671,7 +671,25 @@ export class Dataset {
       }
       for (let i = 0; i < this.indicatorKeys.length; i++) {
         const aggRule = this.getAggregatorRule(this.indicatorKeys[i]);
-        if (!this.tree[flatRowKey]?.[flatColKey]?.[i]) {
+        let needAddToAggregator = false;
+        if (assignedIndicatorKey) {
+          this.indicatorKeys[i] === assignedIndicatorKey && (needAddToAggregator = true);
+        }
+        //加入聚合结果 考虑field为数组的情况
+        else if (aggRule?.field) {
+          if (typeof aggRule?.field === 'string') {
+            aggRule?.field in record && (needAddToAggregator = true);
+          } else {
+            const isPush = aggRule?.field.find((field: string) => {
+              return field in record;
+            });
+            isPush && (needAddToAggregator = true);
+          }
+        } else {
+          //push融合了计算过程
+          this.indicatorKeys[i] in record && (needAddToAggregator = true);
+        }
+        if (!this.tree[flatRowKey]?.[flatColKey]?.[i] && needAddToAggregator) {
           this.tree[flatRowKey][flatColKey][i] = new this.aggregators[aggRule?.aggregationType ?? AggregationType.SUM](
             aggRule?.field ?? this.indicatorKeys[i],
             aggRule?.formatFun ??
@@ -685,22 +703,9 @@ export class Dataset {
               )?.format
           );
         }
-        if (assignedIndicatorKey) {
-          this.indicatorKeys[i] === assignedIndicatorKey && this.tree[flatRowKey]?.[flatColKey]?.[i].push(record);
-        }
-        //加入聚合结果 考虑field为数组的情况
-        else if (aggRule?.field) {
-          if (typeof aggRule?.field === 'string') {
-            aggRule?.field in record && this.tree[flatRowKey]?.[flatColKey]?.[i].push(record);
-          } else {
-            const isPush = aggRule?.field.find((field: string) => {
-              return field in record;
-            });
-            isPush && this.tree[flatRowKey]?.[flatColKey]?.[i].push(record);
-          }
-        } else {
-          //push融合了计算过程
-          this.indicatorKeys[i] in record && this.tree[flatRowKey]?.[flatColKey]?.[i].push(record);
+
+        if (needAddToAggregator) {
+          this.tree[flatRowKey]?.[flatColKey]?.[i].push(record);
         }
       }
     }
@@ -856,12 +861,34 @@ export class Dataset {
     if (typeof rowKey === 'string') {
       flatRowKey = rowKey;
     } else {
+      // flatRowKey = rowKey.join(this.stringJoinChar);
+
+      //考虑 指标key有可能在数组中间位置或者前面的可能 将其删除再添加到尾部
+      // let isHasIndicator = false;
+      rowKey.map((key, i) => {
+        if (key === indicator) {
+          rowKey.splice(i, 1);
+          // isHasIndicator = true;
+        }
+      });
+      // isHasIndicator && rowKey.push(indicator);
       flatRowKey = rowKey.join(this.stringJoinChar);
     }
 
     if (typeof colKey === 'string') {
       flatColKey = colKey;
     } else {
+      // flatColKey = colKey.join(this.stringJoinChar);
+
+      //考虑 指标key有可能在数组中间位置或者前面的可能 将其删除再添加到尾部
+      // let isHasIndicator = false;
+      colKey.map((key, i) => {
+        if (key === indicator) {
+          colKey.splice(i, 1);
+          // isHasIndicator = true;
+        }
+      });
+      // isHasIndicator && colKey.push(indicator);
       flatColKey = colKey.join(this.stringJoinChar);
     }
     //TODO 原有逻辑 但这里先强制跳过

@@ -2601,7 +2601,14 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
     });
   }
 
-  getHeadNode(dimensions: IDimensionInfo[]) {
+  getHeadNode(col: number, row: number) {
+    let dimensions: IDimensionInfo[];
+    const headerPaths = this.getCellHeaderPaths(col, row);
+    if (headerPaths.rowHeaderPaths && (headerPaths.rowHeaderPaths?.length ?? 0) > 0) {
+      dimensions = headerPaths.rowHeaderPaths?.slice(0, headerPaths.rowHeaderPaths.length);
+    } else if (headerPaths.colHeaderPaths && headerPaths.colHeaderPaths.length > 0) {
+      dimensions = headerPaths.colHeaderPaths.slice(0, headerPaths.colHeaderPaths.length);
+    }
     if (!Array.isArray(dimensions)) {
       return undefined;
     }
@@ -2609,6 +2616,11 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
     let rowDimension;
     let colArr = this.columnTree;
     let colDimension;
+
+    if (this.rowHierarchyType === 'tree' && this.extensionRows && col >= 1 + this.leftRowSeriesNumberColumnCount) {
+      const hdId = this.getCellId(col - 1, row);
+      rowArr = this._rowHeaderExtensionTree[hdId].tree.children;
+    }
     for (let i = 0; i < dimensions.length; i++) {
       const highlightDimension = dimensions[i];
       if (
@@ -2641,7 +2653,8 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
       if (isCol) {
         continue;
       }
-      for (let k = 0; k < rowArr.length; k++) {
+
+      for (let k = 0; k < rowArr?.length ?? 0; k++) {
         const dimension = rowArr[k];
         if (
           (isValid(highlightDimension.dimensionKey) &&
@@ -3125,14 +3138,16 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
 
   /** 修改表头值 */
   changeTreeNodeTitle(col: number, row: number, value: string) {
-    const headerPaths = this.getCellHeaderPaths(col, row);
-    if (headerPaths.rowHeaderPaths.length > 0) {
-      const headerTreeNode = this.getHeadNode(headerPaths.rowHeaderPaths.slice(0, headerPaths.rowHeaderPaths.length));
-      headerTreeNode.value = value;
-    } else if (headerPaths.colHeaderPaths.length > 0) {
-      const headerTreeNode = this.getHeadNode(headerPaths.colHeaderPaths.slice(0, headerPaths.colHeaderPaths.length));
-      headerTreeNode.value = value;
-    }
+    // const headerPaths = this.getCellHeaderPaths(col, row);
+    // if (headerPaths.rowHeaderPaths.length > 0) {
+    //   const headerTreeNode = this.getHeadNode(headerPaths.rowHeaderPaths.slice(0, headerPaths.rowHeaderPaths.length));
+    //   headerTreeNode.value = value;
+    // } else if (headerPaths.colHeaderPaths.length > 0) {
+    //   const headerTreeNode = this.getHeadNode(headerPaths.colHeaderPaths.slice(0, headerPaths.colHeaderPaths.length));
+    //   headerTreeNode.value = value;
+    // }
+    const headerTreeNode = this.getHeadNode(col, row);
+    headerTreeNode.value = value;
     const id = this.getCellId(col, row);
     this._headerObjectMap[id as number].title = value;
   }

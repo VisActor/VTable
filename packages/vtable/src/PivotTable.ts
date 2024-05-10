@@ -195,6 +195,19 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
             }
             return keys;
           }, []) ?? [];
+        if (options.rowHierarchyType === 'tree' && (options.extensionRows?.length ?? 0) >= 1) {
+          options.extensionRows?.forEach(extensionRow => {
+            const extension_rowKeys: string[] = [];
+            extensionRow.rows.forEach(row => {
+              if (typeof row === 'string') {
+                extension_rowKeys.push(row);
+              } else {
+                extension_rowKeys.push(row.dimensionKey);
+              }
+            });
+            rowKeys.push(...extension_rowKeys);
+          });
+        }
         this.dataset = new Dataset(
           this.internalProps.dataConfig,
           // this.pagination,
@@ -430,6 +443,19 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
         }
         return keys;
       }, []);
+      if (options.rowHierarchyType === 'tree' && (options.extensionRows?.length ?? 0) >= 1) {
+        options.extensionRows?.forEach(extensionRow => {
+          const extension_rowKeys: string[] = [];
+          extensionRow.rows.forEach(row => {
+            if (typeof row === 'string') {
+              extension_rowKeys.push(row);
+            } else {
+              extension_rowKeys.push(row.dimensionKey);
+            }
+          });
+          rowKeys.push(...extension_rowKeys);
+        });
+      }
       this.dataset = new Dataset(
         internalProps.dataConfig,
         // this.pagination,
@@ -709,8 +735,10 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
         return rowPath.indicatorKey ?? rowPath.value;
       });
       const aggregator = this.dataset.getAggregator(
-        !this.internalProps.layoutMap.indicatorsAsCol ? rowKeys.slice(0, -1) : rowKeys,
-        this.internalProps.layoutMap.indicatorsAsCol ? colKeys.slice(0, -1) : colKeys,
+        // !this.internalProps.layoutMap.indicatorsAsCol ? rowKeys.slice(0, -1) : rowKeys,
+        // this.internalProps.layoutMap.indicatorsAsCol ? colKeys.slice(0, -1) : colKeys,
+        rowKeys,
+        colKeys,
         (this.internalProps.layoutMap as PivotHeaderLayoutMap).getIndicatorKey(col, row)
       );
       const { fieldFormat } = this.internalProps.layoutMap.getBody(col, row) as IndicatorData;
@@ -1074,9 +1102,11 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
         hierarchyState: HierarchyState.collapse
       });
     } else if (hierarchyState === HierarchyState.collapse) {
-      const headerPaths = this.internalProps.layoutMap.getCellHeaderPaths(col, row);
+      // const headerPaths = this.internalProps.layoutMap.getCellHeaderPaths(col, row);
       const headerTreeNode = this.internalProps.layoutMap.getHeadNode(
-        headerPaths.rowHeaderPaths.slice(0, headerPaths.rowHeaderPaths.length)
+        // headerPaths.rowHeaderPaths.slice(0, headerPaths.rowHeaderPaths.length),
+        col,
+        row
       );
       if (Array.isArray(headerTreeNode.children)) {
         //children 是数组 表示已经有子树节点信息
@@ -1619,9 +1649,11 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
    */
   setTreeNodeChildren(children: IHeaderTreeDefine[], records: any[], col: number, row: number) {
     if (this.flatDataToObjects) {
-      const headerPaths = this.internalProps.layoutMap.getCellHeaderPaths(col, row);
+      // const headerPaths = this.internalProps.layoutMap.getCellHeaderPaths(col, row);
       const headerTreeNode = this.internalProps.layoutMap.getHeadNode(
-        headerPaths.rowHeaderPaths.slice(0, headerPaths.rowHeaderPaths.length)
+        // headerPaths.rowHeaderPaths.slice(0, headerPaths.rowHeaderPaths.length),
+        col,
+        row
       );
       headerTreeNode.children = children;
       this._refreshHierarchyState(col, row, () => {
@@ -1635,9 +1667,11 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
         this.flatDataToObjects.addRecords(records);
       });
     } else {
-      const headerPaths = this.internalProps.layoutMap.getCellHeaderPaths(col, row);
+      // const headerPaths = this.internalProps.layoutMap.getCellHeaderPaths(col, row);
       const headerTreeNode = this.internalProps.layoutMap.getHeadNode(
-        headerPaths.rowHeaderPaths.slice(0, headerPaths.rowHeaderPaths.length)
+        // headerPaths.rowHeaderPaths.slice(0, headerPaths.rowHeaderPaths.length),
+        col,
+        row
       );
       headerTreeNode.children = children;
       this._refreshHierarchyState(col, row, () => {
