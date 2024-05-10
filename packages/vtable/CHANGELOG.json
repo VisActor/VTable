@@ -2,6 +2,18 @@
   "name": "@visactor/vtable",
   "entries": [
     {
+      "version": "0.25.3",
+      "tag": "@visactor/vtable_v0.25.3",
+      "date": "Thu, 09 May 2024 11:13:29 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "feat: remove vutil-extension temply"
+          }
+        ]
+      }
+    },
+    {
       "version": "0.25.2",
       "tag": "@visactor/vtable_v0.25.2",
       "date": "Wed, 08 May 2024 10:48:37 GMT",
