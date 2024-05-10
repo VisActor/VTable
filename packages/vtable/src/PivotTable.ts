@@ -668,8 +668,10 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
           return rowPath.indicatorKey ?? rowPath.value;
         });
         const aggregator = this.dataset.getAggregator(
-          !this.internalProps.layoutMap.indicatorsAsCol ? rowKeys.slice(0, -1) : rowKeys,
-          this.internalProps.layoutMap.indicatorsAsCol ? colKeys.slice(0, -1) : colKeys,
+          // !this.internalProps.layoutMap.indicatorsAsCol ? rowKeys.slice(0, -1) : rowKeys,
+          // this.internalProps.layoutMap.indicatorsAsCol ? colKeys.slice(0, -1) : colKeys,
+          rowKeys,
+          colKeys,
           (this.internalProps.layoutMap as PivotHeaderLayoutMap).getIndicatorKey(col, row)
         );
         if (aggregator.records && aggregator.records.length >= 1) {
@@ -728,12 +730,20 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
       return dataValue;
     } else if (this.dataset) {
       const cellDimensionPath = this.internalProps.layoutMap.getCellHeaderPaths(col, row);
-      const colKeys = cellDimensionPath.colHeaderPaths.map((colPath: any) => {
-        return colPath.indicatorKey ?? colPath.value;
-      });
-      const rowKeys = cellDimensionPath.rowHeaderPaths.map((rowPath: any) => {
-        return rowPath.indicatorKey ?? rowPath.value;
-      });
+      const colKeys = cellDimensionPath.colHeaderPaths
+        ?.filter((path: any) => {
+          return !path.virtual;
+        })
+        ?.map((colPath: any) => {
+          return colPath.indicatorKey ?? colPath.value;
+        });
+      const rowKeys = cellDimensionPath.rowHeaderPaths
+        ?.filter((path: any) => {
+          return !path.virtual;
+        })
+        ?.map((rowPath: any) => {
+          return rowPath.indicatorKey ?? rowPath.value;
+        });
       const aggregator = this.dataset.getAggregator(
         // !this.internalProps.layoutMap.indicatorsAsCol ? rowKeys.slice(0, -1) : rowKeys,
         // this.internalProps.layoutMap.indicatorsAsCol ? colKeys.slice(0, -1) : colKeys,
@@ -792,8 +802,10 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
         return rowPath.indicatorKey ?? rowPath.value;
       });
       const aggregator = this.dataset.getAggregator(
-        !this.internalProps.layoutMap.indicatorsAsCol ? rowKeys.slice(0, -1) : rowKeys,
-        this.internalProps.layoutMap.indicatorsAsCol ? colKeys.slice(0, -1) : colKeys,
+        // !this.internalProps.layoutMap.indicatorsAsCol ? rowKeys.slice(0, -1) : rowKeys,
+        // this.internalProps.layoutMap.indicatorsAsCol ? colKeys.slice(0, -1) : colKeys,
+        rowKeys,
+        colKeys,
         (this.internalProps.layoutMap as PivotHeaderLayoutMap).getIndicatorKey(col, row)
       );
       return aggregator.value ? aggregator.value() : undefined;
@@ -840,8 +852,10 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
         return rowPath.indicatorKey ?? rowPath.value;
       });
       const aggregator = this.dataset.getAggregator(
-        !this.internalProps.layoutMap.indicatorsAsCol ? rowKeys.slice(0, -1) : rowKeys,
-        this.internalProps.layoutMap.indicatorsAsCol ? colKeys.slice(0, -1) : colKeys,
+        // !this.internalProps.layoutMap.indicatorsAsCol ? rowKeys.slice(0, -1) : rowKeys,
+        // this.internalProps.layoutMap.indicatorsAsCol ? colKeys.slice(0, -1) : colKeys,
+        rowKeys,
+        colKeys,
         (this.internalProps.layoutMap as PivotHeaderLayoutMap).getIndicatorKey(col, row),
         false
       );
@@ -885,8 +899,10 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
         return rowPath.indicatorKey ?? rowPath.value;
       });
       const aggregator = this.dataset.getAggregator(
-        !this.internalProps.layoutMap.indicatorsAsCol ? rowKeys.slice(0, -1) : rowKeys,
-        this.internalProps.layoutMap.indicatorsAsCol ? colKeys.slice(0, -1) : colKeys,
+        // !this.internalProps.layoutMap.indicatorsAsCol ? rowKeys.slice(0, -1) : rowKeys,
+        // this.internalProps.layoutMap.indicatorsAsCol ? colKeys.slice(0, -1) : colKeys,
+        rowKeys,
+        colKeys,
         (this.internalProps.layoutMap as PivotHeaderLayoutMap).getIndicatorKey(col, row)
       );
       return aggregator.records;
@@ -928,8 +944,10 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
         return rowPath.indicatorKey ?? rowPath.value;
       });
       const aggregator = this.dataset.getAggregator(
-        !this.internalProps.layoutMap.indicatorsAsCol ? rowKeys.slice(0, -1) : rowKeys,
-        this.internalProps.layoutMap.indicatorsAsCol ? colKeys.slice(0, -1) : colKeys,
+        // !this.internalProps.layoutMap.indicatorsAsCol ? rowKeys.slice(0, -1) : rowKeys,
+        // this.internalProps.layoutMap.indicatorsAsCol ? colKeys.slice(0, -1) : colKeys,
+        rowKeys,
+        colKeys,
         (this.internalProps.layoutMap as PivotHeaderLayoutMap).getIndicatorKey(col, row)
       );
       return aggregator.records;

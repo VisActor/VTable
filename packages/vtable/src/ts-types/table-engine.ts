@@ -510,6 +510,8 @@ export interface IDimensionHeaderNode {
   children?: IHeaderTreeDefine[] | true;
   /** 折叠状态 TODO */
   hierarchyState?: HierarchyState;
+  /** 是否为虚拟节点 基于records数据做分析时忽略该维度字段 */
+  virtual?: boolean;
 }
 
 export interface IExtensionRowDefine {

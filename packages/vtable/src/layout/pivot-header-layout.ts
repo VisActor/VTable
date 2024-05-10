@@ -1128,7 +1128,7 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
         this.rowHeaderLevelCount = 1 + extensionRowCount;
         return;
       }
-      const rowLevelCount = this.rowDimensionKeys.length;
+      const rowLevelCount = this.rowDimensionTree.totalLevel;
       // let count = this.indicatorsAsCol
       //   ? rowLevelCount
       //   : this.hideIndicatorName //设置隐藏表头，且表头最下面一级就是指标维度 则-1
@@ -1652,11 +1652,13 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
         dimensionKey?: string;
         indicatorKey?: string;
         value?: string;
+        virtual?: boolean;
       } = {};
       colHeaderPath.dimensionKey = colHeader.dimensionKey;
       colHeaderPath.indicatorKey = colHeader.indicatorKey;
       colHeaderPath.value = colHeader.value ?? this.getIndicatorInfoByIndicatorKey(colHeader.indicatorKey)?.title ?? '';
-      headerPaths.colHeaderPaths.push(colHeaderPath);
+      colHeaderPath.virtual = colHeader.virtual;
+      headerPaths.colHeaderPaths!.push(colHeaderPath);
     });
 
     headerPathsWidthNode.rowHeaderPaths?.forEach((rowHeader: any) => {
@@ -1665,12 +1667,14 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
           dimensionKey?: string;
           indicatorKey?: string;
           value?: string;
+          virtual?: boolean;
         } = {};
         rowHeaderPath.dimensionKey = rowHeader.dimensionKey;
         rowHeaderPath.indicatorKey = rowHeader.indicatorKey;
         rowHeaderPath.value =
           rowHeader.value ?? this.getIndicatorInfoByIndicatorKey(rowHeader.indicatorKey)?.title ?? '';
-        headerPaths.rowHeaderPaths.push(rowHeaderPath);
+        rowHeaderPath.virtual = rowHeader.virtual;
+        headerPaths.rowHeaderPaths!.push(rowHeaderPath);
       }
     });
     return headerPaths;

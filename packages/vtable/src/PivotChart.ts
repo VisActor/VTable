@@ -523,8 +523,10 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
         return rowPath.indicatorKey ?? rowPath.value;
       });
       const aggregator = this.dataset.getAggregator(
-        !this.internalProps.layoutMap.indicatorsAsCol ? rowKeys.slice(0, -1) : rowKeys,
-        this.internalProps.layoutMap.indicatorsAsCol ? colKeys.slice(0, -1) : colKeys,
+        // !this.internalProps.layoutMap.indicatorsAsCol ? rowKeys.slice(0, -1) : rowKeys,
+        // this.internalProps.layoutMap.indicatorsAsCol ? colKeys.slice(0, -1) : colKeys,
+        rowKeys,
+        colKeys,
         (this.internalProps.layoutMap as PivotHeaderLayoutMap).getIndicatorKey(col, row)
       );
       return aggregator.value ? aggregator.value() : undefined;
@@ -572,8 +574,10 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
         return rowPath.indicatorKey ?? rowPath.value;
       });
       const aggregator = this.dataset.getAggregator(
-        !this.internalProps.layoutMap.indicatorsAsCol ? rowKeys.slice(0, -1) : rowKeys,
-        this.internalProps.layoutMap.indicatorsAsCol ? colKeys.slice(0, -1) : colKeys,
+        // !this.internalProps.layoutMap.indicatorsAsCol ? rowKeys.slice(0, -1) : rowKeys,
+        // this.internalProps.layoutMap.indicatorsAsCol ? colKeys.slice(0, -1) : colKeys,
+        rowKeys,
+        colKeys,
         (this.internalProps.layoutMap as PivotHeaderLayoutMap).getIndicatorKey(col, row)
       );
       return aggregator.value ? aggregator.value() : undefined;
@@ -606,8 +610,10 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
         return rowPath.indicatorKey ?? rowPath.value;
       });
       const aggregator = this.dataset.getAggregator(
-        !this.internalProps.layoutMap.indicatorsAsCol ? rowKeys.slice(0, -1) : rowKeys,
-        this.internalProps.layoutMap.indicatorsAsCol ? colKeys.slice(0, -1) : colKeys,
+        // !this.internalProps.layoutMap.indicatorsAsCol ? rowKeys.slice(0, -1) : rowKeys,
+        // this.internalProps.layoutMap.indicatorsAsCol ? colKeys.slice(0, -1) : colKeys,
+        rowKeys,
+        colKeys,
         (this.internalProps.layoutMap as PivotHeaderLayoutMap).getIndicatorKey(col, row)
       );
       return aggregator.records;

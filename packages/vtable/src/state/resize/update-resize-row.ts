@@ -95,9 +95,9 @@ function updateResizeColForIndicator(detaY: number, state: StateManager) {
     resizeIndicatorKey = layout.getIndicatorKey(state.table.rowHeaderLevelCount, state.rowResize.row);
   } else {
     const headerPaths = layout.getCellHeaderPaths(state.table.rowHeaderLevelCount - 1, state.rowResize.row);
-    const headerPath = headerPaths.rowHeaderPaths[headerPaths.rowHeaderPaths.length - 1];
-    resizeDimensionKey = headerPath.dimensionKey;
-    resizeDimensionValue = headerPath.value;
+    const headerPath = headerPaths.rowHeaderPaths?.[headerPaths.rowHeaderPaths.length - 1];
+    resizeDimensionKey = headerPath?.dimensionKey;
+    resizeDimensionValue = headerPath?.value;
   }
   for (
     let row = state.table.columnHeaderLevelCount;
@@ -110,7 +110,7 @@ function updateResizeColForIndicator(detaY: number, state: StateManager) {
       state.table.internalProps._heightResizedRowMap.add(row);
     } else if (layout.indicatorsAsCol) {
       const headerPaths = layout.getCellHeaderPaths(state.table.rowHeaderLevelCount - 1, row);
-      const headerPath = headerPaths?.rowHeaderPaths[headerPaths.rowHeaderPaths.length - 1];
+      const headerPath = headerPaths?.rowHeaderPaths?.[headerPaths.rowHeaderPaths.length - 1];
       if (headerPath && resizeDimensionKey === headerPath.dimensionKey && resizeDimensionValue === headerPath.value) {
         state.table.scenegraph.updateRowHeight(row, detaY);
         state.table.internalProps._heightResizedRowMap.add(row);

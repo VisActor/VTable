@@ -201,9 +201,23 @@ export class Dataset {
       //处理数据
       this.records = records;
       const t0 = typeof window !== 'undefined' ? window.performance.now() : 0;
-      if (records?.[0]?.constructor !== Array) {
-        this.processRecords();
-      }
+      // if (records?.[0]?.constructor !== Array) {
+      // 不能加这个判断来提升性能了，
+      // PivotChart 会有这种设置情况
+      // records: {
+      //   "0": [
+      //     {
+      //       "10001": "数量",
+      //       "10002": "37534",
+      //       "10003": "sum_1700027602758",
+      //       "30001": "数量",
+      //       "1700046734980": "",
+      //       sum_1700027602758: "37534",
+      //     },
+      //   ],
+      // },
+      this.processRecords();
+      // }
 
       //processRecord中按照collectValuesBy 收集了维度值。现在需要对有聚合需求的sumby 处理收集维度值范围
       this.processCollectedValuesWithSumBy();
