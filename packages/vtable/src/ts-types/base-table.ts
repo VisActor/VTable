@@ -800,7 +800,8 @@ export interface ListTableProtected extends IBaseTableProtected {
 
 export interface PivotTableProtected extends IBaseTableProtected {
   /** 表格数据 */
-  records: any[] | null;
+  records: any[] | undefined;
+  recordsIsTwoDimensionalArray?: boolean;
   layoutMap: PivotHeaderLayoutMap;
   dataConfig?: IPivotTableDataConfig;
   /**
