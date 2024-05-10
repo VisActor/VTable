@@ -573,10 +573,10 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
       dealHeaderForTreeMode(hd, _headerCellIds, results, roots, row, totalLevel, show, dimensions, this);
     }
   }
-  private _addCornerHeaders(dimensionKeys: (string | number)[] | null, dimensions: (string | IDimension)[]) {
+  private _addCornerHeaders(dimensionKeys: string[] | null, dimensions: (string | IDimension)[]) {
     const results: HeaderData[] = [];
     if (dimensionKeys) {
-      dimensionKeys.forEach((dimensionKey: string | number, key: number) => {
+      dimensionKeys.forEach((dimensionKey: string, key: number) => {
         const id = ++this.sharedVar.seqId;
         // const dimensionInfo: IDimension =
         //   (this.rowsDefine?.find(dimension =>
