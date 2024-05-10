@@ -247,7 +247,7 @@ interface EventsProps {
   onMouseLeaveAxis?: EventCallback<TYPES.TableEventHandlersEventArgumentMap['mouseleave_axis']>;
 
   onCheckboxStateChange?: EventCallback<TYPES.TableEventHandlersEventArgumentMap['checkbox_state_change']>;
-  onAfterRender?: EventCallback<TYPES.TableEventHandlersEventArgumentMap['after_render']>;
+  onRadioStateChange?: EventCallback<TYPES.TableEventHandlersEventArgumentMap['radio_state_change']>;  onAfterRender?: EventCallback<TYPES.TableEventHandlersEventArgumentMap['after_render']>;
   onInitialized?: EventCallback<TYPES.TableEventHandlersEventArgumentMap['initialized']>;
 
   // pivot table only

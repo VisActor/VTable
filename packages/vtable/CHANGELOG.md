@@ -1,6 +1,33 @@
 # Change Log - @visactor/vtable
 
-This log was last generated on Sun, 28 Apr 2024 06:22:38 GMT and should not be manually modified.
+This log was last generated on Wed, 08 May 2024 10:48:37 GMT and should not be manually modified.
+
+## 0.25.2
+Wed, 08 May 2024 10:48:37 GMT
+
+### Updates
+
+- fix: fix veritial offset in text stick
+
+## 0.25.1
+Wed, 08 May 2024 08:38:35 GMT
+
+### Updates
+
+- feat: pivot chart support wordCloud rose radar gauge #1614
+
+
+- feat: pivot chart support scatter chart type #1618
+
+
+- fix: when copy blank cell paste not work #1646
+
+
+- feat: add CustomComponent in react-vtable
+- fix: fix custom merge cell size update #1636
+- fix: add arg in completeEdit()
+- fix: add selecting cell range deduplication #1628
+- fix: update @visactor/vutils-extension version
 
 ## 0.25.0
 Sun, 28 Apr 2024 06:22:38 GMT

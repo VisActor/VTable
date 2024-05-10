@@ -15,7 +15,7 @@ You can use the complete option of VTable directly and pass the option into the 
 ```javascript livedemo template=vtable-openinula
 // import * as InulaVTable from '@visactor/openinula-vtable';
 const option = {
-  header: [
+  columns: [
     {
       field: '0',
       caption: 'name',

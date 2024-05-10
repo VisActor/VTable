@@ -27,6 +27,17 @@ export function deleteAllSelectBorder(scene: Scenegraph) {
   scene.selectedRangeComponents = new Map();
 }
 
+export function deleteAllSelectingBorder(scene: Scenegraph) {
+  scene.selectingRangeComponents.forEach(
+    (selectComp: { rect: IRect; fillhandle?: IRect; role: CellSubLocation }, key: string) => {
+      selectComp.rect.delete();
+
+      selectComp.fillhandle?.delete();
+    }
+  );
+  scene.selectingRangeComponents = new Map();
+}
+
 export function removeFillHandleFromSelectComponents(scene: Scenegraph) {
   scene.selectedRangeComponents.forEach(
     (selectComp: { rect: IRect; fillhandle?: IRect; role: CellSubLocation }, key: string) => {

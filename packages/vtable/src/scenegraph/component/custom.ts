@@ -271,6 +271,7 @@ function adjustElementToGroup(
       case 'line':
         const line = createLine({
           points: element.points,
+          lineWidth: element.lineWidth ?? 1,
           stroke: element.stroke as string,
           pickable: !!element.pickable,
           cursor: element.cursor as Cursor

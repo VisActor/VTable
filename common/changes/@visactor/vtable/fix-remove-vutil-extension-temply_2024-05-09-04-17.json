@@ -2,7 +2,7 @@
   "changes": [
     {
       "packageName": "@visactor/vtable",
-      "comment": "fix: add arg in completeEdit()",
+      "comment": "feat: remove vutil-extension temply",
       "type": "none"
     }
   ],

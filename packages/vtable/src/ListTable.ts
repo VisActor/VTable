@@ -35,7 +35,7 @@ import { defaultOrderFn } from './tools/util';
 import type { IEditor } from '@visactor/vtable-editors';
 import type { ColumnData, ColumnDefine } from './ts-types/list-table/layout-map/api';
 import { getCellRadioState, setCellRadioState } from './state/radio/radio';
-import { cloneDeepSpec } from '@visactor/vutils-extension';
+import { cloneDeepSpec } from '@vutils-extension';
 import { setCellCheckboxState } from './state/checkbox/checkbox';
 
 export class ListTable extends BaseTable implements ListTableAPI {
@@ -196,7 +196,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
       return;
     }
     this.internalProps.transpose = transpose;
-    this.options.transpose = transpose;
+    // this.options.transpose = transpose; // cause extr update in react
     if (this.internalProps.layoutMap) {
       //后面如果修改是否转置
       this.internalProps.layoutMap.transpose = transpose;

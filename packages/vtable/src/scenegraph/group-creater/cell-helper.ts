@@ -893,7 +893,7 @@ export function getCustomCellMergeCustom(col: number, row: number, cellGroup: Gr
 
         resizeCellGroup(cellGroup, rangeWidth, rangeHeight, customMergeRange, table);
 
-        return customResult;
+        return customMergeRange;
       }
     }
   }
