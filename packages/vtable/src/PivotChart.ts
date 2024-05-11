@@ -182,7 +182,7 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
         ];
       }
     }
-    this.layoutNodeId = { seqId: 0 };
+
     columnDimensionTree = new DimensionTree(
       (this.dataset.colHeaderTree as ITreeLayoutHeadNode[]) ?? [],
       this.layoutNodeId
