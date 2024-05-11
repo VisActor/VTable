@@ -2613,6 +2613,9 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
     } else if (headerPaths.colHeaderPaths && headerPaths.colHeaderPaths.length > 0) {
       dimensions = headerPaths.colHeaderPaths.slice(0, headerPaths.colHeaderPaths.length);
     }
+    return this.getHeadNodeByRowOrColDimensions(dimensions, col, row);
+  }
+  getHeadNodeByRowOrColDimensions(dimensions: IDimensionInfo[], col?: number, row?: number) {
     if (!Array.isArray(dimensions)) {
       return undefined;
     }
@@ -2621,7 +2624,14 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
     let colArr = this.columnTree;
     let colDimension;
 
-    if (this.rowHierarchyType === 'tree' && this.extensionRows && col >= 1 + this.leftRowSeriesNumberColumnCount) {
+    // 处理带有扩展row时 获取node错误问题 rowArr需要变更为有相应扩展后的tree
+    if (
+      isValid(row) &&
+      isValid(col) &&
+      this.rowHierarchyType === 'tree' &&
+      this.extensionRows &&
+      col >= 1 + this.leftRowSeriesNumberColumnCount
+    ) {
       const hdId = this.getCellId(col - 1, row);
       rowArr = this._rowHeaderExtensionTree[hdId].tree.children;
     }
@@ -2657,7 +2667,6 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
       if (isCol) {
         continue;
       }
-
       for (let k = 0; k < rowArr?.length ?? 0; k++) {
         const dimension = rowArr[k];
         if (
@@ -2685,7 +2694,6 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
     }
     return undefined;
   }
-
   clearCellRangeMap() {
     // this._cellRangeMap.clear();
     this._largeCellRangeCache.length = 0;

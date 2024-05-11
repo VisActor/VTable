@@ -123,11 +123,9 @@ function updateResizeColForIndicatorGroup(detaY: number, state: StateManager) {
   // not support for PivotChart temply
   const layout = state.table.internalProps.layoutMap as PivotHeaderLayoutMap;
   //通过getCellHeaderPaths接口获取列表头最后一层指标维度的path
-  // const headerPaths = layout.getCellHeaderPaths(state.table.rowHeaderLevelCount, state.rowResize.row);
-  const node = layout.getHeadNode(
-    // headerPaths.rowHeaderPaths.slice(0, headerPaths.rowHeaderPaths.length - 1),
-    state.table.rowHeaderLevelCount,
-    state.rowResize.row
+  const headerPaths = layout.getCellHeaderPaths(state.table.rowHeaderLevelCount, state.rowResize.row);
+  const node = layout.getHeadNodeByRowOrColDimensions(
+    headerPaths.rowHeaderPaths.slice(0, headerPaths.rowHeaderPaths.length - 1)
   ) as any;
   // 计算宽度受影响列的起止
   const startRow = node.startInTotal + state.table.frozenRowCount;
