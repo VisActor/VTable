@@ -80,7 +80,8 @@ export function parseColKeyRowKeyForPivotTable(table: PivotTable, options: Pivot
     );
     if (
       table.options.indicatorsAsCol !== false &&
-      !columnDimensionTree.dimensionKeys.contain(IndicatorDimensionKeyPlaceholder)
+      !columnDimensionTree.dimensionKeys.contain(IndicatorDimensionKeyPlaceholder) &&
+      options.indicators?.length >= 1
     ) {
       isNeedResetColumnDimensionTree = true;
     }
@@ -94,7 +95,8 @@ export function parseColKeyRowKeyForPivotTable(table: PivotTable, options: Pivot
     );
     if (
       table.options.indicatorsAsCol === false &&
-      !rowDimensionTree.dimensionKeys.contain(IndicatorDimensionKeyPlaceholder)
+      !rowDimensionTree.dimensionKeys.contain(IndicatorDimensionKeyPlaceholder) &&
+      options.indicators?.length >= 1
     ) {
       isNeedResetRowDimensionTree = true;
     }
